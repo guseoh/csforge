@@ -504,8 +504,8 @@ export function getReviews(filters: { due: string; status?: ReviewScheduleStatus
   const params = new URLSearchParams({ due: filters.due, page: String(filters.page), size: String(filters.size) }); if (filters.status) params.set('status', filters.status); if (filters.area) params.set('area', filters.area)
   return request(`/api/reviews?${params.toString()}`)
 }
-export function createReviewQuiz(count = 10, mode = 'DUE'): Promise<QuizCreated> {
-  return request('/api/reviews/quizzes', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ count, mode }) })
+export function createReviewQuiz(count = 10): Promise<QuizCreated> {
+  return request('/api/reviews/quizzes', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ count }) })
 }
 export function scheduleReview(questionId: number): Promise<{ questionId: number; status: ReviewScheduleStatus; stage: number; dueAt: string }> {
   return request(`/api/reviews/questions/${questionId}/schedule`, { method: 'POST' })
