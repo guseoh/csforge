@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import lombok.Getter;
+import org.hibernate.annotations.BatchSize;
 
 import com.guseoh.csforge.learning.domain.AuditedEntity;
 import com.guseoh.csforge.learning.domain.Concept;
@@ -58,13 +59,16 @@ public class Question extends AuditedEntity {
 
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @OrderBy("displayOrder ASC, id ASC")
+    @BatchSize(size = 100)
     private List<QuestionChoice> choices = new ArrayList<>();
 
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @OrderBy("displayOrder ASC, id ASC")
+    @BatchSize(size = 100)
     private List<QuestionAnswer> answers = new ArrayList<>();
 
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @BatchSize(size = 100)
     private List<QuestionConcept> conceptLinks = new ArrayList<>();
 
     protected Question() {
@@ -92,6 +96,48 @@ public class Question extends AuditedEntity {
             String explanationMarkdown) {
         return new Question(contentKey, promptMarkdown, questionType, difficulty, explanationMarkdown);
     }
+
+    public void reviseMetadata(String promptMarkdown, QuestionDifficulty difficulty, String explanationMarkdown) {
+        this.promptMarkdown = requireText(promptMarkdown, "promptMarkdown");
+        this.difficulty = requireRequired(difficulty, "difficulty");
+        this.explanationMarkdown = explanationMarkdown;
+    }
+
+    public void replaceStructure(QuestionType questionType, List<ChoiceDraft> newChoices,
+            String correctChoiceKey, List<String> acceptedAnswers, String modelAnswer, List<Concept> concepts) {
+        this.questionType = requireRequired(questionType, "questionType");
+        choices.clear();
+        answers.clear();
+        conceptLinks.clear();
+        if (newChoices != null) {
+            for (ChoiceDraft choice : newChoices) {
+                addChoice(choice.choiceKey(), choice.contentMarkdown(), choice.displayOrder());
+            }
+        }
+        if (correctChoiceKey != null) {
+            QuestionChoice correctChoice = choices.stream()
+                    .filter(choice -> choice.getChoiceKey().equals(correctChoiceKey))
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalArgumentException("correctChoiceKey must match a choice"));
+            defineCorrectChoice(correctChoice);
+        }
+        if (acceptedAnswers != null) acceptedAnswers.forEach(this::addAcceptedAnswer);
+        if (modelAnswer != null) defineModelAnswer(modelAnswer);
+        if (concepts != null) concepts.forEach(this::linkConcept);
+    }
+
+    public void changeToDraft() {
+        this.status = QuestionStatus.DRAFT;
+    }
+
+    public void setCanonicalStatus(QuestionStatus status) {
+        requireRequired(status, "status");
+        if (status == QuestionStatus.PUBLISHED) publish();
+        else if (status == QuestionStatus.ARCHIVED) archive();
+        else changeToDraft();
+    }
+
+    public record ChoiceDraft(String choiceKey, String contentMarkdown, int displayOrder) { }
 
     public QuestionChoice addChoice(String choiceKey, String contentMarkdown, int displayOrder) {
         requireText(choiceKey, "choiceKey");

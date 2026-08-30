@@ -13,6 +13,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
+/** Topic에 속한 canonical Concept 콘텐츠와 본문을 표현한다. */
 @Entity
 @Table(name = "concept")
 public class Concept extends AuditedEntity {
@@ -54,6 +55,39 @@ public class Concept extends AuditedEntity {
     private int displayOrder;
 
     protected Concept() {
+    }
+
+    private Concept(Topic topic, String contentKey, String slug, String title, String summary,
+            String contentMarkdown, short level, ContentStatus status, int displayOrder) {
+        revise(topic, contentKey, slug, title, summary, contentMarkdown, level, status, displayOrder);
+    }
+
+    public static Concept create(Topic topic, String contentKey, String slug, String title,
+            String summary, String contentMarkdown, short level, ContentStatus status, int displayOrder) {
+        return new Concept(topic, contentKey, slug, title, summary, contentMarkdown, level, status, displayOrder);
+    }
+
+    public void reviseCanonicalContent(Topic topic, String slug, String title, String summary,
+            String contentMarkdown, short level, ContentStatus status, int displayOrder) {
+        revise(topic, contentKey, slug, title, summary, contentMarkdown, level, status, displayOrder);
+    }
+
+    private void revise(Topic topic, String contentKey, String slug, String title, String summary,
+            String contentMarkdown, short level, ContentStatus status, int displayOrder) {
+        if (topic == null || contentKey == null || contentKey.isBlank() || slug == null || slug.isBlank()
+                || title == null || title.isBlank() || contentMarkdown == null || status == null
+                || level < 1 || level > 3 || displayOrder < 0) {
+            throw new IllegalArgumentException("Invalid concept canonical content");
+        }
+        this.topic = topic;
+        this.contentKey = contentKey.trim();
+        this.slug = slug.trim();
+        this.title = title.trim();
+        this.summary = summary;
+        this.contentMarkdown = contentMarkdown;
+        this.level = level;
+        this.status = status;
+        this.displayOrder = displayOrder;
     }
 
     public Long getId() {

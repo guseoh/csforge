@@ -1,0 +1,12 @@
+{
+  "kind": "question",
+  "contentKey": "java.object.equals-hashcode.q1",
+  "promptMarkdown": "equals를 재정의할 때 함께 고려해야 하는 메서드는 무엇인가?",
+  "questionType": "MULTIPLE_CHOICE",
+  "difficulty": "EASY",
+  "status": "PUBLISHED",
+  "conceptKeys": ["java.object.equals-hashcode"],
+  "choices": [{"key":"A","content":"toString","displayOrder":0},{"key":"B","content":"hashCode","displayOrder":1}],
+  "correctChoiceKey": "B",
+  "explanationMarkdown": "hashCode 계약을 함께 지켜야 합니다."
+}

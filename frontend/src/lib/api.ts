@@ -510,3 +510,18 @@ export function createReviewQuiz(count = 10): Promise<QuizCreated> {
 export function scheduleReview(questionId: number): Promise<{ questionId: number; status: ReviewScheduleStatus; stage: number; dueAt: string }> {
   return request(`/api/reviews/questions/${questionId}/schedule`, { method: 'POST' })
 }
+
+export type ImportClassification = 'CREATED' | 'UPDATED' | 'UNCHANGED' | 'SKIPPED' | 'ERROR'
+export interface ImportItem { fileName: string; itemIndex: number; kind: 'TOPIC' | 'CONCEPT' | 'QUESTION' | null; contentKey: string | null; classification: ImportClassification; reason: string | null; errors: { path: string; message: string }[]; diffs: { field: string; before: string | null; after: string | null }[] }
+export interface ImportPreview { previewDigest: string; files: { fileName: string; itemCount: number }[]; totals: { created: number; updated: number; unchanged: number; skipped: number; errors: number }; items: ImportItem[]; canApply: boolean }
+export interface ImportApply { previewDigest: string; totals: { created: number; updated: number; unchanged: number; skipped: number; failed: number }; items: ImportItem[] }
+
+async function importRequest<T>(path: string, files: File[], digest?: string): Promise<T> {
+  const form = new FormData()
+  files.forEach((file) => form.append('files', file))
+  if (digest) form.append('previewDigest', digest)
+  return request<T>(path, { method: 'POST', body: form })
+}
+
+export function previewImports(files: File[]): Promise<ImportPreview> { return importRequest<ImportPreview>('/api/imports/preview', files) }
+export function applyImports(files: File[], digest: string): Promise<ImportApply> { return importRequest<ImportApply>('/api/imports/apply', files, digest) }

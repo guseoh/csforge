@@ -9,6 +9,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
+/** URL identity를 가진 canonical 학습 참고자료를 표현한다. */
 @Entity
 @Table(name = "reference")
 public class Reference extends AuditedEntity {
@@ -37,6 +38,29 @@ public class Reference extends AuditedEntity {
     private String recommendation;
 
     protected Reference() {
+    }
+
+    private Reference(String url, String title, ReferenceType referenceType, String languageCode,
+            String depth, String recommendation) {
+        reviseCanonicalMetadata(url, title, referenceType, languageCode, depth, recommendation);
+    }
+
+    public static Reference create(String url, String title, ReferenceType referenceType,
+            String languageCode, String depth, String recommendation) {
+        return new Reference(url, title, referenceType, languageCode, depth, recommendation);
+    }
+
+    public void reviseCanonicalMetadata(String url, String title, ReferenceType referenceType,
+            String languageCode, String depth, String recommendation) {
+        if (url == null || url.isBlank() || title == null || title.isBlank() || referenceType == null) {
+            throw new IllegalArgumentException("Invalid reference metadata");
+        }
+        this.url = url.trim();
+        this.title = title.trim();
+        this.referenceType = referenceType;
+        this.languageCode = languageCode;
+        this.depth = depth;
+        this.recommendation = recommendation;
     }
 
     public Long getId() {

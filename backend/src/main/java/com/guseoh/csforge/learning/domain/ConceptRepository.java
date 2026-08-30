@@ -2,6 +2,7 @@ package com.guseoh.csforge.learning.domain;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Collection;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -9,7 +10,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+/** contentKey로 Concept canonical aggregate를 묶음 조회하는 저장소이다. */
 public interface ConceptRepository extends JpaRepository<Concept, Long> {
+
+    List<Concept> findByContentKeyIn(Collection<String> contentKeys);
 
     @EntityGraph(attributePaths = {"topic", "topic.learningArea"})
     @Query("""
