@@ -47,15 +47,19 @@ Animal other = new Animal();
 Dog fail = (Dog) other;          // ClassCastException
 ```
 
-cast는 reference의 정적 관점을 바꾸거나 narrowing을 요청할 뿐 object를 변환하지 않는다.
-`instanceof`는 null이면 false이고 실제 객체가 검사 타입과 호환되는지 확인한다. Java 25의
-pattern matching 문법은 검사와 안전한 변수 바인딩을 한 표현식에 묶지만, 설계적으로 cast가
-반복된다면 공통 계약이나 polymorphism으로 분기 자체를 줄일 수 있는지 먼저 본다.
+cast는 reference의 정적 관점을 바꾸거나 narrowing을 요청할 뿐 object 자체의 runtime type을 바꾸지
+않는다. `instanceof`는 null이면 false이고 실제 object가 검사 타입과 호환되는지 확인한다. Java 25의
+pattern matching 문법은 검사와 안전한 변수 바인딩을 한 표현식에 묶지만, 설계적으로 cast가 반복된다면
+공통 계약이나 polymorphism으로 분기 자체를 줄일 수 있는지 먼저 본다.
 
 ```text
-Animal reference ──> 실제 Dog object
-  upcast: 접근 계약만 넓힘
-  downcast: 실제 타입 확인 후 접근 계약을 좁힘
+Dog object를 Animal reference로 봄
+  upcast   → 더 일반적인 Animal 계약으로 본다
+             → Dog 전용 멤버는 Animal reference를 통해 직접 사용할 수 없음
+
+Animal reference를 Dog로 downcast
+  downcast → 더 구체적인 Dog 관점으로 보려는 요청
+             → runtime object가 Dog와 호환되는지 검사 후 Dog 전용 멤버 접근 가능
 ```
 
 ## 실전·면접 연결
@@ -66,6 +70,7 @@ Animal reference ──> 실제 Dog object
 
 ## 흔한 오해
 
-- cast는 object 복사나 타입 변환이 아니다.
-- 선언 타입이 `Dog`라고 실제 object가 Dog라는 보장은 cast 이전에 이미 있어야 한다.
+- cast는 object 복사나 object 자체의 runtime type 변경이 아니다.
+- reference의 정적 타입을 바꾼다고 실제 object가 새 subtype instance로 변환되는 것은 아니다.
+- 잘못된 downcast는 컴파일될 수 있어도 runtime에 `ClassCastException`을 낼 수 있다.
 - `null instanceof Dog`는 예외가 아니라 false다.
