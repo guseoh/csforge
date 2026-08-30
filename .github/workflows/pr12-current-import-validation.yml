@@ -132,7 +132,7 @@ jobs:
 
       - name: Run current Java Pack import validation
         working-directory: backend
-        run: ./gradlew test --tests 'com.guseoh.csforge.importcontent.JavaPackCurrentImportValidationTest'
+        run: bash ./gradlew test --tests 'com.guseoh.csforge.importcontent.JavaPackCurrentImportValidationTest'
 
       - name: Ensure temporary test was not committed
         run: git status --short
