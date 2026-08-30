@@ -154,6 +154,20 @@ Code should look like maintainable production Java/Spring code written by a comp
 - Prefer constructor injection and `final` dependencies. Avoid field injection and static mutable state.
 - Keep visibility as narrow as practical. Do not make types or methods public solely for convenience.
 
+### Domain construction and JPA entity creation
+Domain-object construction is part of domain design, not just syntax. Keep persistence-only construction separate from meaningful domain creation.
+
+Rules:
+- A JPA entity's no-argument constructor exists for persistence/proxy requirements, not as the normal application creation API. Keep it non-public, normally `protected`.
+- When the no-argument constructor contains no special logic, prefer Lombok `@NoArgsConstructor(access = AccessLevel.PROTECTED)` instead of repeating an empty constructor manually.
+- For aggregates/entities whose creation has domain meaning, invariants, defaults, or a lifecycle transition, prefer an intention-revealing static factory such as `WrongNote.open(...)`, `QuizSession.start(...)`, `Question.createDraft(...)`, or `ReviewSchedule.schedule(...)`.
+- Keep the constructor used by such a factory `private` or otherwise narrowly visible so callers cannot bypass creation invariants.
+- Application services may decide whether to load an existing aggregate or create a new one, but the aggregate itself owns how a valid new instance is initialized.
+- Do not construct a domain entity in a controller, response mapper, repository helper, or by calling a public no-arg constructor and then populating it with setters.
+- Do not move entity initialization rules into an application service merely because field assignment is convenient there. The application layer orchestrates; the domain layer owns creation invariants and intrinsic initial state.
+- Do not mandate static factories for trivial data carriers/value holders that have no meaningful creation rule. Use them when they improve intent or protect invariants, not as ceremony.
+- Avoid repeating a generic custom `require(...)` helper in every entity when `Objects.requireNonNull(...)`, Bean Validation, or a named domain validation method expresses the rule more clearly. Add custom validation helpers only when they carry real domain meaning or remove meaningful duplication.
+
 ### Layer and dependency direction
 Each layer must keep its own responsibility. The existence of packages is not enough; dependencies and behavior placement must follow the boundary.
 
@@ -165,14 +179,14 @@ Infrastructure/repository implementations may depend on domain/application contr
 
 Rules:
 - **API/Controller layer** owns HTTP concerns: request parsing, Bean Validation, status codes, response contracts, and delegation.
-- Controllers must not contain persistence logic, transaction orchestration, grading/business policy, or domain state transitions.
+- Controllers must not contain persistence logic, transaction orchestration, grading/business policy, domain-object construction, or domain state transitions.
 - API Request/Response records belong to the API boundary. Application services must not import or return `*Request` / `*Response` API types.
 - Translate API DTOs into application command/query inputs at the API boundary. Translate application results/views into API responses at the API boundary.
-- **Application layer** owns use-case orchestration and transaction boundaries. It coordinates repositories, domain objects, policies, and query components.
+- **Application layer** owns use-case orchestration and transaction boundaries. It coordinates repositories, domain objects, policies, and query components. For creation flows it chooses the use-case path and calls the domain's creation API; it does not manually assemble entity state field by field.
 - Application services should return application result/view models when a boundary result is needed instead of leaking API DTOs or JPA entities directly to controllers.
-- **Domain layer** owns intrinsic invariants, state-specific behavior, and lifecycle transitions.
-- **Repository/Infrastructure layer** owns persistence/query mechanics only. It must not own HTTP contracts or core business rules.
-- **Mapper/Assembler layer** is a transformation boundary only. A mapper may reshape prepared application/domain data into an API response, but it must not validate use-case state, decide grading policy, calculate business statistics, or obtain the current time to make domain decisions.
+- **Domain layer** owns intrinsic invariants, meaningful creation rules, initial valid state, state-specific behavior, and lifecycle transitions.
+- **Repository/Infrastructure layer** owns persistence/query mechanics only. It must not own HTTP contracts, domain creation policy, or core business rules.
+- **Mapper/Assembler layer** is a transformation boundary only. A mapper may reshape prepared application/domain data into an API response, but it must not create aggregates, validate use-case state, decide grading policy, calculate business statistics, or obtain the current time to make domain decisions.
 - Do not build business statistics by first creating API Response objects and then reading those Response objects back. Calculate statistics from domain/application data and map the finalized result afterward.
 - Cross-cutting HTTP error translation belongs in an appropriate `global.api` boundary when it spans multiple features. Do not grow a `LearningExceptionHandler` into a handler for Quiz/Review/Search merely because it already exists.
 - `@Transactional` belongs at the application/use-case boundary unless there is a concrete reason otherwise. Keep controllers transaction-free.
@@ -185,6 +199,7 @@ Use Lombok to remove mechanical boilerplate when it makes the code easier to rea
 Preferred uses:
 - `@RequiredArgsConstructor` for Spring components/services/controllers with final constructor-injected dependencies.
 - `@Getter` for entities/value holders when straightforward getters are appropriate.
+- `@NoArgsConstructor(access = AccessLevel.PROTECTED)` for JPA entities when the required persistence constructor is otherwise an empty protected constructor.
 - `@Slf4j` for classes that genuinely log.
 
 Restrictions:
@@ -222,7 +237,8 @@ Restrictions:
 - Apply SOLID and common patterns as problem-solving tools, not ceremony.
 - Before adding Strategy, Factory, Template Method, Chain of Responsibility, Adapter, Facade, Specification, State, or another pattern, identify the concrete variation, boundary, or complexity it addresses.
 - Use Strategy/polymorphism when behavior meaningfully varies by policy/type and branching would otherwise keep growing.
-- Use factory methods when object creation has invariants, meaningful defaults, or construction policy. Do not hide trivial constructors behind factories without benefit.
+- Use factory methods when object creation has invariants, meaningful defaults, lifecycle meaning, or construction policy. Prefer intention-revealing names over exposing a constructor that allows invalid initialization.
+- Do not hide trivial constructors behind factories without benefit, and do not require factory methods for every data-only type.
 - Use Specification/query composition when optional filtering rules need to compose cleanly. Do not build a generic specification framework for one fixed query.
 - Use Adapter at external-system/library boundaries when it protects the application from vendor/API details.
 - Use State only when state-dependent behavior is substantial enough to justify it; a small enum plus explicit methods is preferable for simple transitions.
@@ -235,7 +251,7 @@ Restrictions:
 
 ### Existing-code migration rule
 - Existing code that predates these rules is technical debt, not precedent.
-- Do not copy, expand, or use an existing low-level JDBC path, DTO bucket, oversized helper, layer violation, or similar deviation as justification for new code.
+- Do not copy, expand, or use an existing low-level JDBC path, DTO bucket, oversized helper, layer violation, public JPA construction path, setter-based entity assembly, or similar deviation as justification for new code.
 - When a future task directly touches such code, improve the touched portion toward these rules when that can be done safely within task scope.
 - Do not launch a broad unrelated refactor solely to make old code conform. Create an explicit refactor task when the change would materially expand scope or risk.
 
@@ -282,11 +298,12 @@ For every task:
 3. Make only the delta required by the current task plus directly necessary supporting changes.
 4. Preserve existing decisions unless the task explicitly changes them.
 5. Keep changed code formatted according to repository conventions without adding redundant formatting-only work.
-6. Review changed Java/Spring code as production code before validation: persistence-stack compliance, layer dependency direction, object responsibility, domain invariants, transaction boundaries, validation placement, class/method cohesion, DTO/type naming, Lombok safety, class-purpose Javadoc, unnecessary nested public types, repeated policy branching, over-fetching/N+1, and design-pattern misuse or overuse.
-7. Explicitly check that application code does not import API request/response types and that response mappers do not own business validation/statistics/policy.
-8. If an existing implementation violates these rules, do not silently copy the pattern. Either improve the touched portion within scope or report why a separate refactor is safer.
-9. Run the smallest meaningful validation first, then the broader project validation appropriate to the change.
-10. Report changed behavior, validation results, and any remaining limitation briefly.
-11. Do not commit, push, open a PR, or modify unrelated files unless the task explicitly asks for it.
+6. Review changed Java/Spring code as production code before validation: persistence-stack compliance, layer dependency direction, object responsibility, domain invariants, domain construction/factory design, JPA no-arg-constructor visibility, transaction boundaries, validation placement, class/method cohesion, DTO/type naming, Lombok safety, class-purpose Javadoc, unnecessary nested public types, repeated policy branching, over-fetching/N+1, and design-pattern misuse or overuse.
+7. Explicitly check that application code does not import API request/response types, controllers/mappers do not construct domain aggregates, application services do not assemble entity state through setters, and response mappers do not own business validation/statistics/policy.
+8. For a newly created JPA entity, explicitly review whether a protected persistence constructor plus an intention-revealing domain factory is appropriate. Use Lombok for an otherwise empty protected no-arg constructor, but do not force factories where creation has no meaningful rule.
+9. If an existing implementation violates these rules, do not silently copy the pattern. Either improve the touched portion within scope or report why a separate refactor is safer.
+10. Run the smallest meaningful validation first, then the broader project validation appropriate to the change.
+11. Report changed behavior, validation results, and any remaining limitation briefly.
+12. Do not commit, push, open a PR, or modify unrelated files unless the task explicitly asks for it.
 
 Prefer one complete vertical change over repeated tiny edits that create avoidable churn.
