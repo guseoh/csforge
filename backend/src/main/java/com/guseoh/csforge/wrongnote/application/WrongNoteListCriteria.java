@@ -1,6 +1,7 @@
 package com.guseoh.csforge.wrongnote.application;
 
 import java.time.Instant;
+import java.util.Objects;
 
 import com.guseoh.csforge.question.domain.QuestionDifficulty;
 
@@ -16,4 +17,27 @@ public record WrongNoteListCriteria(
         WrongNoteReviewFilter reviewFilter,
         WrongNoteSort sort,
         Instant now) {
+
+    public WrongNoteListCriteria(
+            String areaSlug,
+            Long topicId,
+            Short level,
+            QuestionDifficulty difficulty,
+            com.guseoh.csforge.wrongnote.domain.WrongNoteStatus status,
+            WrongNoteReviewFilter reviewFilter,
+            WrongNoteSort sort) {
+        this(areaSlug, topicId, level, difficulty, status, reviewFilter, sort, null);
+    }
+
+    public WrongNoteListCriteria at(Instant now) {
+        return new WrongNoteListCriteria(
+                areaSlug,
+                topicId,
+                level,
+                difficulty,
+                status,
+                reviewFilter,
+                sort,
+                Objects.requireNonNull(now, "now is required"));
+    }
 }
