@@ -1,7 +1,5 @@
 package com.guseoh.csforge.wrongnote.api;
 
-import java.time.Clock;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,9 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.guseoh.csforge.question.domain.QuestionDifficulty;
 import com.guseoh.csforge.quiz.api.QuizApiMapper;
 import com.guseoh.csforge.quiz.api.QuizCreatedResponse;
-import com.guseoh.csforge.question.domain.QuestionDifficulty;
 import com.guseoh.csforge.wrongnote.application.WrongNoteCommandService;
 import com.guseoh.csforge.wrongnote.application.WrongNoteListCriteria;
 import com.guseoh.csforge.wrongnote.application.WrongNoteQueryService;
@@ -37,7 +35,6 @@ public class WrongNoteController {
     private final WrongNoteCommandService commandService;
     private final WrongNoteApiMapper apiMapper;
     private final QuizApiMapper quizApiMapper;
-    private final Clock clock;
 
     @GetMapping
     public WrongNoteListResponse list(
@@ -52,7 +49,10 @@ public class WrongNoteController {
             @RequestParam(defaultValue = "20") int size) {
         int boundedSize = bounded(size);
         if (page < 0) throw new IllegalArgumentException("page must not be negative");
-        return apiMapper.toResponse(queryService.list(new WrongNoteListCriteria(area, topic, level, difficulty, status, review, sort, java.time.Instant.now(clock)), page, boundedSize));
+        return apiMapper.toResponse(queryService.list(
+                new WrongNoteListCriteria(area, topic, level, difficulty, status, review, sort),
+                page,
+                boundedSize));
     }
 
     @GetMapping("/{questionId}")
@@ -61,7 +61,9 @@ public class WrongNoteController {
     }
 
     @GetMapping("/{questionId}/attempts")
-    public WrongNoteAttemptPageResponse attempts(@PathVariable long questionId, @RequestParam(required = false) String cursor,
+    public WrongNoteAttemptPageResponse attempts(
+            @PathVariable long questionId,
+            @RequestParam(required = false) String cursor,
             @RequestParam(defaultValue = "20") int size) {
         return apiMapper.toResponse(queryService.attempts(questionId, cursor, bounded(size)));
     }
@@ -73,7 +75,8 @@ public class WrongNoteController {
 
     @PostMapping("/{questionId}/retry")
     public ResponseEntity<QuizCreatedResponse> retry(@PathVariable long questionId) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(quizApiMapper.toCreatedResponse(commandService.retry(questionId)));
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(quizApiMapper.toCreatedResponse(commandService.retry(questionId)));
     }
 
     private static int bounded(int size) {
