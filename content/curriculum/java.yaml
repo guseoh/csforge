@@ -120,16 +120,35 @@ topics:
     objective: final이 변수의 재대입을 제한하는 것과 객체 자체의 불변성을 보장하는 것은 다르다는 점을 구분하고 method/class의 final 의미도 이해한다.
     density: CORE
     visualization: NONE
-  - key: java.core.language-types.string-immutability-equality-pool
-    title: String immutability, equality, and the pool
+  - key: java.core.language-types.string-immutability-equality
+    title: String immutability and equality
     order: 80
     level: 1
-    objective: String의 불변성, ==와 equals, literal 재사용, string pool과 intern의 의미 및 실무상 결과를 구분한다.
+    objective: String이 불변 객체라는 의미와 ==가 identity를, equals가 문자열 내용을 비교한다는 차이를 코드 결과와 함께 설명한다.
     density: CORE
     visualization: TEXT
     prerequisites:
     - java.core.language-types.primitive-reference-values
-    visualizationNote: 객체 identity와 문자열 내용 equality, literal 재사용 관계를 비교한다.
+    visualizationNote: 서로 다른 String 객체의 identity와 같은 문자열 내용 equality를 비교한다.
+  - key: java.core.language-types.string-pool-interning
+    title: String pool and interning
+    order: 90
+    level: 2
+    objective: 문자열 literal 재사용과 string pool, intern의 의미를 이해하되 이를 모든 String 생성·메모리 동작에 대한 단순 규칙으로 일반화하지 않는다.
+    density: STANDARD
+    visualization: TEXT
+    prerequisites:
+    - java.core.language-types.string-immutability-equality
+    visualizationNote: literal이 재사용되는 경우와 runtime에 별도 String 객체가 만들어지는 경우를 구분한다.
+  - key: java.core.language-types.stringbuilder-mutable-text
+    title: StringBuilder and mutable text construction
+    order: 100
+    level: 1
+    objective: 반복적인 문자열 조립에서 StringBuilder가 mutable buffer를 제공하는 이유와 String 불변성과의 차이를 이해하고 적절한 사용 범위를 판단한다.
+    density: CORE
+    visualization: NONE
+    prerequisites:
+    - java.core.language-types.string-immutability-equality
 - key: java.core.object-model
   title: Object Creation, State & OOP
   order: 20
@@ -451,7 +470,7 @@ topics:
     objective: 접근·순회·삽입·삭제·allocation·locality를 기준으로 ArrayList와 LinkedList를 비교하고 단순 Big-O 암기를 넘어 실제 trade-off를 설명한다.
     density: CORE
     visualization: DIAGRAM
-    visualizationNote: 연속적인 배열 기반 구조와 node link 기반 구조의 접근·삽입 경로를 비교한다.
+    visualizationNote: array-backed storage와 node link 기반 구조의 접근·삽입 경로를 비교하고 물리 메모리 연속 배치를 Java 보장처럼 표현하지 않는다.
   - key: java.core.collections.hashmap-hashing-collision
     title: HashMap hashing and collision
     order: 30
@@ -777,7 +796,7 @@ topics:
     title: Record data modeling
     order: 20
     level: 2
-    objective: data-oriented immutable carrier에 record를 사용하고 generated member, compact/canonical constructor와 invariant 검증의 범위를 이해한다.
+    objective: record를 data-oriented carrier에 사용하고 component field가 final인 shallow immutability와 참조된 mutable object의 변경 가능성을 구분하며 generated member와 constructor invariant 범위를 이해한다.
     density: CORE
     visualization: NONE
   - key: java.core.modern-language.sealed-types-closed-hierarchy
@@ -965,6 +984,8 @@ topics:
     objective: 반복적인 작은 출력 호출을 피하고 StringBuilder·BufferedWriter 등으로 출력을 모아 처리한다.
     density: CORE
     visualization: NONE
+    prerequisites:
+    - java.core.language-types.stringbuilder-mutable-text
   - key: java.core.coding-tests.sorting-arrays-collections
     title: Sorting arrays and collections
     order: 30
@@ -1067,6 +1088,7 @@ topics:
     visualization: DIAGRAM
     prerequisites:
     - java.core.concurrency.shared-mutable-state-race
+    - java.core.concurrency.synchronized-monitor
     visualizationNote: 한 synchronization action이 앞선 write를 이후 read에 보이게 하는 happens-before edge를 그린다.
   - key: java.core.concurrency.safe-publication-final-fields
     title: Safe publication and final fields
@@ -1096,7 +1118,7 @@ topics:
     density: CORE
     visualization: DIAGRAM
     prerequisites:
-    - java.core.concurrency.shared-mutable-state-race
+    - java.core.concurrency.jmm-happens-before-visibility
     visualizationNote: 같은 shared value에 대한 CAS 성공과 실패 후 retry를 보여 준다.
   - key: java.core.concurrency.locks-reentrantlock-condition
     title: Lock, ReentrantLock, and Condition
@@ -1121,25 +1143,35 @@ topics:
     title: BlockingQueue and producer-consumer
     order: 120
     level: 2
-    objective: BlockingQueue의 put/take 같은 blocking contract를 사용해 producer-consumer 사이의 handoff와 backpressure-like capacity 제한을 구현하는 원리를 이해한다.
+    objective: BlockingQueue의 put/take와 bounded capacity를 이용해 producer-consumer 사이의 handoff와 full/empty 상태에서 기다리는 동작을 이해한다.
     density: CORE
     visualization: DIAGRAM
     prerequisites:
     - java.core.concurrency.executor-task-thread-pools
     visualizationNote: producer가 bounded queue에 넣고 consumer가 take하며 full/empty에서 기다리는 흐름을 보여 준다.
-  - key: java.core.concurrency.countdownlatch-semaphore
-    title: CountDownLatch and Semaphore
+  - key: java.core.concurrency.countdownlatch-coordination
+    title: CountDownLatch coordination
     order: 130
     level: 2
-    objective: 여러 작업 완료를 기다리는 CountDownLatch와 동시 접근 permit 수를 제한하는 Semaphore의 목적을 구분하고 적절한 synchronization aid를 선택한다.
+    objective: 여러 작업의 완료를 하나의 thread 또는 여러 thread가 기다리는 one-shot coordination에 CountDownLatch를 사용하는 목적과 count가 0이 되는 의미를 이해한다.
     density: STANDARD
     visualization: TEXT
     prerequisites:
     - java.core.concurrency.thread-lifecycle-interruption
-    visualizationNote: latch count가 0이 될 때 대기 thread가 풀리는 흐름과 semaphore permit 획득/반납을 비교한다.
+    visualizationNote: 여러 작업이 countDown하고 count가 0이 될 때 await 중인 thread가 진행하는 흐름을 보여 준다.
+  - key: java.core.concurrency.semaphore-permits
+    title: Semaphore permits
+    order: 140
+    level: 2
+    objective: 동시에 사용할 수 있는 resource나 작업 수를 permit으로 제한하는 Semaphore의 acquire/release 동작과 concurrency limit 의미를 이해한다.
+    density: STANDARD
+    visualization: TEXT
+    prerequisites:
+    - java.core.concurrency.thread-lifecycle-interruption
+    visualizationNote: 제한된 permit을 여러 thread가 acquire하고 작업 후 release하는 흐름을 보여 준다.
   - key: java.core.concurrency.concurrent-collections
     title: Concurrent collections
-    order: 140
+    order: 150
     level: 2
     objective: ConcurrentHashMap과 concurrent queue가 제공하는 operation-level thread-safety contract를 이해하고 임의의 multi-step logic 전체가 atomic하다고 가정하지 않는다.
     density: CORE
@@ -1148,7 +1180,7 @@ topics:
     - java.core.concurrency.shared-mutable-state-race
   - key: java.core.concurrency.threadlocal-context
     title: ThreadLocal context
-    order: 150
+    order: 160
     level: 3
     objective: ThreadLocal이 값을 thread에 묶는 방식과 cleanup, thread pool reuse, async boundary, virtual thread 환경에서의 주의점을 설명한다.
     density: CORE
@@ -1158,18 +1190,15 @@ topics:
     visualizationNote: pooled worker에 context가 남는 경우와 명시적으로 정리되는 경우를 비교한다.
   - key: java.core.concurrency.scoped-value-context
     title: ScopedValue context
-    order: 160
+    order: 170
     level: 3
-    objective: Java 25의 ScopedValue가 변경 불가능한 context를 동적 scope에 바인딩하는 방식과 ThreadLocal보다 적합한 context 전달 시나리오를 이해한다.
+    objective: Java 25의 ScopedValue가 값을 bounded dynamic scope에 바인딩하여 one-way context 전달에 사용하는 방식과 ThreadLocal과의 선택 trade-off를 이해하며, 참조된 객체 자체를 깊은 불변으로 만든다고 오해하지 않는다.
     density: CORE
     visualization: TEXT
-    prerequisites:
-    - java.core.concurrency.platform-virtual-thread
-    - java.core.concurrency.threadlocal-context
-    visualizationNote: lexical/dynamic scope 안에서만 값이 보이고 scope를 벗어나면 binding이 사라지는 흐름을 보여 준다.
+    visualizationNote: dynamic scope 안에서 binding을 조회하고 scope를 벗어나면 해당 binding을 사용할 수 없는 흐름을 보여 준다.
   - key: java.core.concurrency.future-completablefuture
     title: Future and CompletableFuture
-    order: 170
+    order: 180
     level: 2
     objective: 비동기 결과의 completion과 failure를 다루고 CompletableFuture stage composition과 executor/thread 동작을 이해한다.
     density: CORE
@@ -1179,7 +1208,7 @@ topics:
     visualizationNote: dependent stage가 정상 완료와 exceptional completion으로 이어지는 경로를 보여 준다.
   - key: java.core.concurrency.deadlock-starvation-livelock
     title: Deadlock, starvation, and livelock
-    order: 180
+    order: 190
     level: 3
     objective: circular lock wait, 작업 기회 부족, 서로 반응만 하며 진전하지 못하는 liveness 문제를 구분하고 lock ordering과 progress 관점에서 진단한다.
     density: CORE
@@ -1325,7 +1354,7 @@ topics:
   - key: java.core.metadata-compatibility.dynamic-proxy-invocationhandler
     title: Dynamic proxy and InvocationHandler
     order: 30
-    level: 3
+    level: 2
     objective: JDK dynamic proxy가 interface call을 InvocationHandler로 중계하는 구조를 이해하고 Spring proxy 학습을 위한 Java 기반을 만든다.
     density: CORE
     visualization: DIAGRAM
@@ -1335,7 +1364,7 @@ topics:
   - key: java.core.metadata-compatibility.annotation-processing-vs-reflection
     title: Annotation processing versus reflection
     order: 40
-    level: 3
+    level: 2
     objective: compile-time annotation processing/code generation과 runtime reflection을 실행 시점과 결과물 관점에서 구분한다.
     density: STANDARD
     visualization: TEXT
@@ -1346,7 +1375,7 @@ topics:
   - key: java.core.metadata-compatibility.serialization-contract-risk
     title: Serialization contract risk
     order: 50
-    level: 3
+    level: 2
     objective: Serializable, transient, serialVersionUID를 high-level contract로 이해하고 native Java deserialization을 신뢰 경계에서 위험한 입력 처리로 본다.
     density: STANDARD
     visualization: NONE
@@ -1360,12 +1389,10 @@ topics:
   - key: java.core.metadata-compatibility.binary-compatibility-api-evolution
     title: Binary compatibility and API evolution
     order: 70
-    level: 3
+    level: 2
     objective: library/API를 변경할 때 source compatibility, binary compatibility, runtime compatibility가 서로 다른 문제임을 구분한다.
     density: STANDARD
     visualization: NONE
-    prerequisites:
-    - java.core.metadata-compatibility.jpms-classpath-modulepath
 boundaries:
 - area: Data Structures & Algorithms
   owns: BFS/DFS, shortest path, binary search, DP 같은 알고리즘과 자료구조 이론
