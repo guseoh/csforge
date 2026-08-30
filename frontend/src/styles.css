@@ -1121,6 +1121,21 @@ textarea:focus {
 }
 .history-row strong { color: #f1b278; }
 .history-row time { color: #8793ad; }
+.import-dropzone { display: grid; gap: 8px; padding: 34px; border: 1px dashed #52607a; border-radius: 12px; background: #171d2a; cursor: pointer; }
+.import-dropzone span, .import-file small { color: #8793ad; font-size: 0.8rem; }
+.import-dropzone input { margin-top: 8px; }
+.import-files, .import-result { display: grid; gap: 14px; margin-top: 20px; }
+.import-file { display: flex; align-items: center; gap: 12px; padding: 11px 14px; border: 1px solid #2a3243; border-radius: 8px; background: #171d2a; }
+.import-file span { flex: 1; }
+.import-file button { border: 0; background: transparent; color: #9fb5ff; cursor: pointer; }
+.import-items { display: grid; gap: 8px; }
+.import-item { padding: 13px 15px; border: 1px solid #2a3243; border-radius: 8px; background: #171d2a; }
+.import-item summary { display: flex; gap: 12px; align-items: center; cursor: pointer; list-style: none; }
+.import-item summary span { color: #f1b278; font-size: 0.74rem; }
+.import-item summary small { margin-left: auto; color: #8793ad; }
+.import-diffs { display: grid; gap: 6px; margin-top: 12px; color: #aeb8cc; font-size: 0.8rem; }
+.import-diffs div { display: grid; grid-template-columns: 170px 1fr; gap: 12px; padding-top: 7px; border-top: 1px solid #2a3243; }
+.import-diffs span { overflow-wrap: anywhere; }
 
 @media (max-width: 680px) {
   .topbar {

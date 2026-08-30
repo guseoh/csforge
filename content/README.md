@@ -1,4 +1,5 @@
 # CSForge content
 
-Canonical Markdown and JSON seed/import content will live here in a later task.
-Issue #1 intentionally does not include sample curriculum content or import behavior.
+`examples/` contains a small representative import batch. Markdown uses YAML front matter;
+JSON accepts one object or an array of objects. `references` on a Concept is an explicit
+complete set when present, so omitted links are preserved and declared omissions are removed.

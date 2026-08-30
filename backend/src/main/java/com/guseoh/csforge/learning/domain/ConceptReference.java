@@ -9,6 +9,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
 import jakarta.persistence.Table;
 
+/** Concept와 Reference의 canonical 연결 및 표시 메타데이터를 표현한다. */
 @Entity
 @Table(name = "concept_reference")
 public class ConceptReference {
@@ -33,6 +34,25 @@ public class ConceptReference {
     private String relationNote;
 
     protected ConceptReference() {
+    }
+
+    private ConceptReference(Concept concept, Reference reference, int displayOrder, String relationNote) {
+        this.concept = concept;
+        this.reference = reference;
+        this.id = new ConceptReferenceId(concept.getId(), reference.getId());
+        this.displayOrder = displayOrder;
+        this.relationNote = relationNote;
+    }
+
+    public static ConceptReference link(Concept concept, Reference reference, int displayOrder, String relationNote) {
+        if (concept == null || reference == null || displayOrder < 0) throw new IllegalArgumentException("Invalid concept reference");
+        return new ConceptReference(concept, reference, displayOrder, relationNote);
+    }
+
+    public void reviseRelation(int displayOrder, String relationNote) {
+        if (displayOrder < 0) throw new IllegalArgumentException("displayOrder must be non-negative");
+        this.displayOrder = displayOrder;
+        this.relationNote = relationNote;
     }
 
     public ConceptReferenceId getId() {

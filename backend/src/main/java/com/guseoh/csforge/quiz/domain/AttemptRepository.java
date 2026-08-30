@@ -1,6 +1,7 @@
 package com.guseoh.csforge.quiz.domain;
 
 import java.util.List;
+import java.util.Collection;
 import java.util.Optional;
 import java.time.Instant;
 
@@ -14,6 +15,12 @@ import org.springframework.data.repository.query.Param;
  * Quiz Attempt를 bounded 조회하고 저장하는 JPA repository이다.
  */
 public interface AttemptRepository extends JpaRepository<Attempt, Long> {
+
+    @Query("select count(attempt) from Attempt attempt where attempt.question.id in :questionIds")
+    long countForQuestionIds(@Param("questionIds") List<Long> questionIds);
+
+    @Query("select distinct attempt.question.id from Attempt attempt where attempt.question.id in :questionIds")
+    List<Long> findQuestionIdsWithAttempts(@Param("questionIds") Collection<Long> questionIds);
 
     @EntityGraph(attributePaths = {"question", "selectedChoice"})
     List<Attempt> findByQuizSession_IdOrderByQuestion_IdAsc(long quizSessionId);

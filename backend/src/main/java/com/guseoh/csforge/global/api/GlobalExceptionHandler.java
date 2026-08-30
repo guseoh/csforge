@@ -27,6 +27,8 @@ import com.guseoh.csforge.quiz.domain.QuizInvalidStateException;
 import com.guseoh.csforge.review.application.NoDueReviewsException;
 import com.guseoh.csforge.review.application.ReviewQuestionNotFoundException;
 import com.guseoh.csforge.wrongnote.application.WrongNoteNotFoundException;
+import com.guseoh.csforge.importcontent.application.ImportBoundsException;
+import com.guseoh.csforge.importcontent.application.ImportPreviewStaleException;
 
 /**
  * 애플리케이션 예외를 일관된 HTTP 오류 응답으로 변환하는 전역 예외 처리기이다.
@@ -104,6 +106,16 @@ public class GlobalExceptionHandler {
             QuizExpiredException exception,
             HttpServletRequest request) {
         return error(HttpStatus.CONFLICT, "QUIZ_EXPIRED", exception.getMessage(), request, List.of());
+    }
+
+    @ExceptionHandler(ImportPreviewStaleException.class)
+    public ResponseEntity<ApiError> handleImportPreviewStale(ImportPreviewStaleException exception, HttpServletRequest request) {
+        return error(HttpStatus.CONFLICT, "IMPORT_PREVIEW_STALE", exception.getMessage(), request, List.of());
+    }
+
+    @ExceptionHandler(ImportBoundsException.class)
+    public ResponseEntity<ApiError> handleImportBounds(ImportBoundsException exception, HttpServletRequest request) {
+        return error(HttpStatus.BAD_REQUEST, "IMPORT_BOUNDS_EXCEEDED", exception.getMessage(), request, List.of());
     }
 
     @ExceptionHandler(QuizInvalidStateException.class)

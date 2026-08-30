@@ -1,0 +1,10 @@
+{
+  "kind": "topic",
+  "contentKey": "java.object",
+  "areaSlug": "java",
+  "slug": "object",
+  "title": "Object 계약",
+  "description": "Java Object의 핵심 계약",
+  "displayOrder": 10,
+  "active": true
+}

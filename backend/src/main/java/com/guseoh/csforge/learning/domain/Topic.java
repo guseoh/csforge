@@ -10,6 +10,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
+/** 학습 영역에 속한 canonical Topic 콘텐츠를 표현한다. */
 @Entity
 @Table(name = "topic")
 public class Topic extends AuditedEntity {
@@ -41,6 +42,47 @@ public class Topic extends AuditedEntity {
     private boolean active;
 
     protected Topic() {
+    }
+
+    private Topic(LearningArea learningArea, String contentKey, String slug, String title,
+            String description, int displayOrder, boolean active) {
+        this.learningArea = require(learningArea, "learningArea");
+        this.contentKey = text(contentKey, "contentKey");
+        this.slug = text(slug, "slug");
+        this.title = text(title, "title");
+        this.description = description;
+        this.displayOrder = nonNegative(displayOrder, "displayOrder");
+        this.active = active;
+    }
+
+    public static Topic create(LearningArea area, String contentKey, String slug, String title,
+            String description, int displayOrder, boolean active) {
+        return new Topic(area, contentKey, slug, title, description, displayOrder, active);
+    }
+
+    public void reviseCanonicalContent(LearningArea area, String slug, String title,
+            String description, int displayOrder, boolean active) {
+        this.learningArea = require(area, "learningArea");
+        this.slug = text(slug, "slug");
+        this.title = text(title, "title");
+        this.description = description;
+        this.displayOrder = nonNegative(displayOrder, "displayOrder");
+        this.active = active;
+    }
+
+    private static String text(String value, String name) {
+        if (value == null || value.isBlank()) throw new IllegalArgumentException(name + " is required");
+        return value.trim();
+    }
+
+    private static int nonNegative(int value, String name) {
+        if (value < 0) throw new IllegalArgumentException(name + " must be non-negative");
+        return value;
+    }
+
+    private static <T> T require(T value, String name) {
+        if (value == null) throw new IllegalArgumentException(name + " is required");
+        return value;
     }
 
     public Long getId() {

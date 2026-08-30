@@ -12,6 +12,7 @@ import { WrongNoteDetailPage } from './pages/WrongNoteDetailPage'
 import { ReviewPage } from './pages/ReviewPage'
 import { parseWrongNoteSearch } from './lib/wrong-note-search'
 import { parseReviewSearch } from './lib/review-search'
+import { ImportPage } from './pages/ImportPage'
 
 const navigation = [
   { to: '/', label: 'Dashboard' },
@@ -20,6 +21,7 @@ const navigation = [
   { to: '/wrong-notes', label: 'Wrong Notes' },
   { to: '/review', label: 'Review' },
   { to: '/search', label: 'Search' },
+  { to: '/settings/import', label: 'Import' },
 ] as const
 
 function AppLayout() {
@@ -124,6 +126,7 @@ const wrongNotesRoute = createRoute({ getParentRoute: () => rootRoute, path: '/w
 const wrongNoteDetailRoute = createRoute({ getParentRoute: () => rootRoute, path: '/wrong-notes/$questionId', component: WrongNoteDetailPage })
 const reviewRoute = createRoute({ getParentRoute: () => rootRoute, path: '/review', validateSearch: (search) => parseReviewSearch(search), component: ReviewPage })
 const searchRoute = createRoute({ getParentRoute: () => rootRoute, path: '/search', component: () => <PlaceholderPage title="Search" /> })
+const importRoute = createRoute({ getParentRoute: () => rootRoute, path: '/settings/import', component: ImportPage })
 
 const routeTree = rootRoute.addChildren([
   indexRoute,
@@ -137,6 +140,7 @@ const routeTree = rootRoute.addChildren([
   wrongNoteDetailRoute,
   reviewRoute,
   searchRoute,
+  importRoute,
 ])
 
 export const router = createRouter({
