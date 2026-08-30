@@ -14,6 +14,7 @@ import {
   type ReferenceType,
 } from '../lib/api'
 import { defaultLearningSearch } from '../lib/learning-search'
+import { defaultQuizSearch } from '../lib/quiz-search'
 
 type NoteState = 'saved' | 'saving' | 'error'
 
@@ -127,6 +128,7 @@ function ConceptContent({ data, conceptId }: { data: ConceptDetailModel; concept
         <BookmarkButton conceptId={conceptId} bookmarked={data.progress.bookmarked} />
         <ProgressActionButton conceptId={conceptId} status="COMPLETED" label="완료로 표시" />
         <ProgressActionButton conceptId={conceptId} status="REVIEW_NEEDED" label="복습 필요" />
+        <Link className="secondary-button" to="/quiz" search={{ ...defaultQuizSearch, areas: data.area.slug, concepts: String(conceptId) }}>이 개념 Quiz</Link>
       </div>
 
       <article className="markdown-content">
