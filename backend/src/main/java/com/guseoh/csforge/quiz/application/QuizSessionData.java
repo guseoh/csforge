@@ -2,6 +2,7 @@ package com.guseoh.csforge.quiz.application;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.guseoh.csforge.question.domain.QuestionAnswer;
 import com.guseoh.csforge.question.domain.QuestionChoice;
@@ -10,6 +11,9 @@ import com.guseoh.csforge.quiz.domain.Attempt;
 import com.guseoh.csforge.quiz.domain.QuizQuestion;
 import com.guseoh.csforge.quiz.domain.QuizSession;
 
+/**
+ * 한 퀴즈 세션 조회에 필요한 도메인 데이터를 읽기 전용으로 묶는 애플리케이션 모델이다.
+ */
 public record QuizSessionData(
         QuizSession session,
         List<QuizQuestion> quizQuestions,
@@ -26,9 +30,8 @@ public record QuizSessionData(
         conceptsByQuestionId = immutableLists(conceptsByQuestionId);
     }
 
-    private static <T> Map<Long, List<T>> immutableLists(Map<Long, List<T>> values) {
-        return values.entrySet().stream()
-                .collect(java.util.stream.Collectors.toUnmodifiableMap(Map.Entry::getKey, entry -> List.copyOf(entry.getValue())));
+    public int answeredCount() {
+        return (int) attemptsByQuestionId.values().stream().filter(Attempt::hasAnswer).count();
     }
 
     public QuizQuestion requireQuestion(long questionId) {
@@ -44,5 +47,10 @@ public record QuizSessionData(
             throw new QuizNotFoundException("Attempt is not part of this quiz");
         }
         return attempt;
+    }
+
+    private static <T> Map<Long, List<T>> immutableLists(Map<Long, List<T>> values) {
+        return values.entrySet().stream()
+                .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, entry -> List.copyOf(entry.getValue())));
     }
 }

@@ -1,7 +1,8 @@
 package com.guseoh.csforge.question.domain;
 
+import lombok.Getter;
+
 import jakarta.persistence.Column;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -13,6 +14,10 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
+/**
+ * 문제의 정답 선택지, 허용 단답 또는 모범 답안을 표현하는 도메인 엔티티이다.
+ */
+@Getter
 @Entity
 @Table(name = "question_answer")
 public class QuestionAnswer {
@@ -29,7 +34,7 @@ public class QuestionAnswer {
     @Column(name = "answer_kind", nullable = false, length = 32)
     private QuestionAnswerKind answerKind;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "choice_id")
     private QuestionChoice choice;
 
@@ -65,29 +70,5 @@ public class QuestionAnswer {
         this.choice = choice;
         this.answerText = answerText;
         this.displayOrder = displayOrder;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public Question getQuestion() {
-        return question;
-    }
-
-    public QuestionAnswerKind getAnswerKind() {
-        return answerKind;
-    }
-
-    public QuestionChoice getChoice() {
-        return choice;
-    }
-
-    public String getAnswerText() {
-        return answerText;
-    }
-
-    public int getDisplayOrder() {
-        return displayOrder;
     }
 }

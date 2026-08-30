@@ -2,9 +2,12 @@ package com.guseoh.csforge.quiz.domain;
 
 import java.time.Instant;
 
+import lombok.Getter;
+
+import com.guseoh.csforge.learning.domain.AuditedEntity;
 import com.guseoh.csforge.question.domain.Question;
 import com.guseoh.csforge.question.domain.QuestionChoice;
-import com.guseoh.csforge.learning.domain.AuditedEntity;
+import com.guseoh.csforge.question.domain.QuestionType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -18,6 +21,10 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 
+/**
+ * 한 퀴즈 세션에서 특정 문제의 답안, 채점 상태와 복습 표시를 관리하는 도메인 엔티티이다.
+ */
+@Getter
 @Entity
 @Table(name = "attempt", uniqueConstraints = {
         @UniqueConstraint(name = "uq_attempt_session_question", columnNames = {"quiz_session_id", "question_id"})
@@ -77,8 +84,11 @@ public class Attempt extends AuditedEntity {
     }
 
     public void saveChoice(QuestionChoice choice, Instant answeredAt) {
-        if (choice == null) {
-            throw new QuizAnswerException("selectedChoice is required");
+        if (question.getQuestionType() != QuestionType.MULTIPLE_CHOICE) {
+            throw new QuizAnswerException("Only multiple-choice questions accept a selected choice");
+        }
+        if (choice == null || !sameQuestion(choice.getQuestion(), question)) {
+            throw new QuizAnswerException("selectedChoice must belong to this question");
         }
         this.selectedChoice = choice;
         this.answerText = null;
@@ -86,16 +96,16 @@ public class Attempt extends AuditedEntity {
         resetGrading();
     }
 
-    public void clearChoice(Instant changedAt) {
+    public void clearChoice() {
         this.selectedChoice = null;
         this.answeredAt = null;
         resetGrading();
-        if (answerText == null) {
-            this.gradedAt = null;
-        }
     }
 
     public void saveText(String text, Instant answeredAt) {
+        if (question.getQuestionType() == QuestionType.MULTIPLE_CHOICE) {
+            throw new QuizAnswerException("Multiple-choice questions do not accept text answers");
+        }
         if (text == null || text.isBlank()) {
             this.answerText = null;
             this.answeredAt = null;
@@ -146,12 +156,6 @@ public class Attempt extends AuditedEntity {
         this.gradedAt = checkedAt;
     }
 
-    private void resetGrading() {
-        this.gradingStatus = AttemptGradingStatus.UNANSWERED;
-        this.correct = null;
-        this.gradedAt = null;
-    }
-
     public boolean hasAnswer() {
         return selectedChoice != null || (answerText != null && !answerText.isBlank());
     }
@@ -164,14 +168,16 @@ public class Attempt extends AuditedEntity {
         return isFinalized() && Boolean.FALSE.equals(correct);
     }
 
-    public Long getId() { return id; }
-    public QuizSession getQuizSession() { return quizSession; }
-    public Question getQuestion() { return question; }
-    public QuestionChoice getSelectedChoice() { return selectedChoice; }
-    public String getAnswerText() { return answerText; }
-    public boolean isReviewNeeded() { return reviewNeeded; }
-    public AttemptGradingStatus getGradingStatus() { return gradingStatus; }
-    public Boolean getCorrect() { return correct; }
-    public Instant getAnsweredAt() { return answeredAt; }
-    public Instant getGradedAt() { return gradedAt; }
+    private void resetGrading() {
+        this.gradingStatus = AttemptGradingStatus.UNANSWERED;
+        this.correct = null;
+        this.gradedAt = null;
+    }
+
+    private static boolean sameQuestion(Question left, Question right) {
+        if (left == right) {
+            return true;
+        }
+        return left.getId() != null && left.getId().equals(right.getId());
+    }
 }

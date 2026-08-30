@@ -1,13 +1,8 @@
 package com.guseoh.csforge.quiz.infrastructure;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import com.guseoh.csforge.question.domain.Question;
-import com.guseoh.csforge.question.domain.QuestionStatus;
-import com.guseoh.csforge.quiz.application.QuestionSelectionResult;
-import com.guseoh.csforge.quiz.application.QuizQuestionSelectionCriteria;
-import com.guseoh.csforge.quiz.application.QuizQuestionState;
-import com.guseoh.csforge.quiz.domain.Attempt;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -16,16 +11,25 @@ import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import jakarta.persistence.criteria.Subquery;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import com.guseoh.csforge.learning.domain.ContentStatus;
+import com.guseoh.csforge.question.domain.Question;
+import com.guseoh.csforge.question.domain.QuestionStatus;
+import com.guseoh.csforge.quiz.application.QuestionSelectionResult;
+import com.guseoh.csforge.quiz.application.QuizQuestionSelectionCriteria;
+import com.guseoh.csforge.quiz.application.QuizQuestionState;
+import com.guseoh.csforge.quiz.domain.Attempt;
+
+/**
+ * 퀴즈 생성 조건에 맞는 문제 수와 안정적인 문제 ID 목록을 JPA Criteria로 조회하는 저장소이다.
+ */
 @Repository
+@RequiredArgsConstructor
 public class QuestionSelectionRepository {
 
     private final EntityManager entityManager;
-
-    public QuestionSelectionRepository(EntityManager entityManager) {
-        this.entityManager = entityManager;
-    }
 
     public QuestionSelectionResult select(QuizQuestionSelectionCriteria criteria, int limit) {
         if (limit < 1) {
@@ -65,10 +69,9 @@ public class QuestionSelectionRepository {
         Join<?, ?> topic = concept.join("topic", JoinType.INNER);
         Join<?, ?> area = topic.join("learningArea", JoinType.INNER);
 
-        List<Predicate> predicates = new java.util.ArrayList<>();
+        List<Predicate> predicates = new ArrayList<>();
         predicates.add(builder.equal(question.get("status"), QuestionStatus.PUBLISHED));
-        predicates.add(builder.equal(concept.get("status"),
-                com.guseoh.csforge.learning.domain.ContentStatus.PUBLISHED));
+        predicates.add(builder.equal(concept.get("status"), ContentStatus.PUBLISHED));
         predicates.add(builder.isTrue(topic.get("active")));
         predicates.add(builder.isTrue(area.get("active")));
         if (!criteria.areaSlugs().isEmpty()) {

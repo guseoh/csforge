@@ -2,12 +2,16 @@ package com.guseoh.csforge.quiz.application.grading;
 
 import java.util.List;
 
+import org.springframework.stereotype.Component;
+
 import com.guseoh.csforge.question.domain.Question;
 import com.guseoh.csforge.question.domain.QuestionAnswer;
 import com.guseoh.csforge.question.domain.QuestionType;
 import com.guseoh.csforge.quiz.domain.Attempt;
-import org.springframework.stereotype.Component;
 
+/**
+ * 서술형과 시나리오 문제를 사용자 자기채점 대기 상태로 전환하는 채점 전략이다.
+ */
 @Component
 public class SelfCheckGradingStrategy implements QuestionGradingStrategy {
 

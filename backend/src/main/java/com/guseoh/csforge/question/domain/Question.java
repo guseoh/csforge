@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import lombok.Getter;
+
 import com.guseoh.csforge.learning.domain.AuditedEntity;
 import com.guseoh.csforge.learning.domain.Concept;
 import jakarta.persistence.CascadeType;
@@ -12,15 +14,19 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.Id;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderBy;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 
+/**
+ * 학습 문제의 본문, 유형, 정답 구성과 공개 상태 불변식을 관리하는 도메인 엔티티이다.
+ */
+@Getter
 @Entity
 @Table(name = "question")
 public class Question extends AuditedEntity {
@@ -69,24 +75,22 @@ public class Question extends AuditedEntity {
             String promptMarkdown,
             QuestionType questionType,
             QuestionDifficulty difficulty,
-            QuestionStatus status,
             String explanationMarkdown) {
         this.contentKey = requireText(contentKey, "contentKey");
         this.promptMarkdown = requireText(promptMarkdown, "promptMarkdown");
         this.questionType = requireRequired(questionType, "questionType");
         this.difficulty = requireRequired(difficulty, "difficulty");
-        this.status = requireRequired(status, "status");
+        this.status = QuestionStatus.DRAFT;
         this.explanationMarkdown = explanationMarkdown;
     }
 
-    public static Question create(
+    public static Question createDraft(
             String contentKey,
             String promptMarkdown,
             QuestionType questionType,
             QuestionDifficulty difficulty,
-            QuestionStatus status,
             String explanationMarkdown) {
-        return new Question(contentKey, promptMarkdown, questionType, difficulty, status, explanationMarkdown);
+        return new Question(contentKey, promptMarkdown, questionType, difficulty, explanationMarkdown);
     }
 
     public QuestionChoice addChoice(String choiceKey, String contentMarkdown, int displayOrder) {
@@ -100,7 +104,11 @@ public class Question extends AuditedEntity {
         if (choices.stream().anyMatch(choice -> choice.getDisplayOrder() == displayOrder)) {
             throw new IllegalArgumentException("displayOrder must be unique within a question");
         }
-        QuestionChoice choice = new QuestionChoice(this, choiceKey, requireText(contentMarkdown, "contentMarkdown"), displayOrder);
+        QuestionChoice choice = new QuestionChoice(
+                this,
+                choiceKey,
+                requireText(contentMarkdown, "contentMarkdown"),
+                displayOrder);
         choices.add(choice);
         return choice;
     }
@@ -112,9 +120,9 @@ public class Question extends AuditedEntity {
     }
 
     public void addAcceptedAnswer(String answerText) {
-        String normalized = requireText(answerText, "answerText");
+        String normalized = requireText(answerText, "answerText").trim();
         if (answers.stream().anyMatch(answer -> answer.getAnswerKind() == QuestionAnswerKind.ACCEPTED_TEXT
-                && answer.getAnswerText().equalsIgnoreCase(normalized))) {
+                && answer.getAnswerText().trim().equalsIgnoreCase(normalized))) {
             throw new IllegalArgumentException("accepted answer must be unique within a question");
         }
         int displayOrder = (int) answers.stream()
@@ -124,7 +132,7 @@ public class Question extends AuditedEntity {
     }
 
     public void defineModelAnswer(String answerText) {
-        String normalized = requireText(answerText, "answerText");
+        String normalized = requireText(answerText, "answerText").trim();
         answers.removeIf(answer -> answer.getAnswerKind() == QuestionAnswerKind.MODEL_ANSWER);
         answers.add(QuestionAnswer.modelAnswer(this, normalized));
     }
@@ -139,19 +147,32 @@ public class Question extends AuditedEntity {
         }
     }
 
+    public void publish() {
+        validatePublicationRequirements();
+        this.status = QuestionStatus.PUBLISHED;
+    }
+
+    public void archive() {
+        this.status = QuestionStatus.ARCHIVED;
+    }
+
     @PrePersist
     @PreUpdate
-    private void validatePublication() {
-        if (status != QuestionStatus.PUBLISHED) {
-            return;
+    private void validatePersistedState() {
+        if (status == QuestionStatus.PUBLISHED) {
+            validatePublicationRequirements();
         }
+    }
+
+    private void validatePublicationRequirements() {
         if (conceptLinks.isEmpty()) {
             throw new IllegalStateException("A published question must be linked to at least one concept");
         }
         switch (questionType) {
             case MULTIPLE_CHOICE -> {
                 if (choices.size() < 2 || answers.stream().filter(this::isCorrectChoice).count() != 1) {
-                    throw new IllegalStateException("A published multiple-choice question needs at least two choices and one correct choice");
+                    throw new IllegalStateException(
+                            "A published multiple-choice question needs at least two choices and one correct choice");
                 }
             }
             case SHORT_ANSWER -> {
@@ -178,8 +199,12 @@ public class Question extends AuditedEntity {
     }
 
     private static boolean sameConcept(Concept left, Concept right) {
-        if (left == right) return true;
-        if (left.getId() == null || right.getId() == null) return false;
+        if (left == right) {
+            return true;
+        }
+        if (left.getId() == null || right.getId() == null) {
+            return false;
+        }
         return left.getId().equals(right.getId());
     }
 
@@ -197,14 +222,15 @@ public class Question extends AuditedEntity {
         return value;
     }
 
-    public Long getId() { return id; }
-    public String getContentKey() { return contentKey; }
-    public String getPromptMarkdown() { return promptMarkdown; }
-    public QuestionType getQuestionType() { return questionType; }
-    public QuestionDifficulty getDifficulty() { return difficulty; }
-    public QuestionStatus getStatus() { return status; }
-    public String getExplanationMarkdown() { return explanationMarkdown; }
-    public List<QuestionChoice> getChoices() { return Collections.unmodifiableList(choices); }
-    public List<QuestionAnswer> getAnswers() { return Collections.unmodifiableList(answers); }
-    public List<QuestionConcept> getConceptLinks() { return Collections.unmodifiableList(conceptLinks); }
+    public List<QuestionChoice> getChoices() {
+        return Collections.unmodifiableList(choices);
+    }
+
+    public List<QuestionAnswer> getAnswers() {
+        return Collections.unmodifiableList(answers);
+    }
+
+    public List<QuestionConcept> getConceptLinks() {
+        return Collections.unmodifiableList(conceptLinks);
+    }
 }

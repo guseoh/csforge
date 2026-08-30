@@ -4,88 +4,58 @@ import java.time.Clock;
 import java.time.Instant;
 import java.util.List;
 
-import com.guseoh.csforge.question.domain.QuestionChoice;
-import com.guseoh.csforge.question.domain.QuestionChoiceRepository;
-import com.guseoh.csforge.question.domain.QuestionType;
-import com.guseoh.csforge.quiz.api.QuizAnswerSaveRequest;
-import com.guseoh.csforge.quiz.api.QuizAnswerSavedResponse;
-import com.guseoh.csforge.quiz.api.QuizPositionUpdateRequest;
-import com.guseoh.csforge.quiz.api.QuizSelfCheckRequest;
-import com.guseoh.csforge.quiz.api.QuizSelfCheckResponse;
-import com.guseoh.csforge.quiz.api.QuizSubmissionResponse;
-import com.guseoh.csforge.quiz.application.grading.QuizGradingService;
-import com.guseoh.csforge.quiz.domain.Attempt;
-import com.guseoh.csforge.quiz.domain.AttemptRepository;
-import com.guseoh.csforge.quiz.domain.AttemptGradingStatus;
-import com.guseoh.csforge.quiz.domain.QuizAnswerException;
-import com.guseoh.csforge.quiz.domain.QuizInvalidStateException;
-import com.guseoh.csforge.quiz.domain.QuizQuestion;
-import com.guseoh.csforge.quiz.domain.QuizSessionRepository;
-import com.guseoh.csforge.quiz.domain.QuizSessionStatus;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.guseoh.csforge.question.domain.QuestionChoice;
+import com.guseoh.csforge.question.domain.QuestionChoiceRepository;
+import com.guseoh.csforge.question.domain.QuestionType;
+import com.guseoh.csforge.quiz.application.grading.QuizGradingService;
+import com.guseoh.csforge.quiz.domain.Attempt;
+import com.guseoh.csforge.quiz.domain.AttemptGradingStatus;
+import com.guseoh.csforge.quiz.domain.AttemptRepository;
+import com.guseoh.csforge.quiz.domain.QuizAnswerException;
+import com.guseoh.csforge.quiz.domain.QuizQuestion;
+import com.guseoh.csforge.quiz.domain.QuizQuestionRepository;
+import com.guseoh.csforge.quiz.domain.QuizSession;
+import com.guseoh.csforge.quiz.domain.QuizSessionRepository;
+import com.guseoh.csforge.quiz.domain.QuizSessionStatus;
+
+/**
+ * 퀴즈 답안 저장, 위치 변경, 제출과 자기채점 상태 변경을 처리하는 애플리케이션 서비스이다.
+ */
 @Service
+@RequiredArgsConstructor
 public class QuizSessionCommandService {
 
     private final QuizSessionDataLoader dataLoader;
     private final QuestionChoiceRepository choiceRepository;
     private final AttemptRepository attemptRepository;
+    private final QuizQuestionRepository quizQuestionRepository;
     private final QuizSessionRepository sessionRepository;
     private final QuizGradingService gradingService;
     private final Clock clock;
 
-    public QuizSessionCommandService(
-            QuizSessionDataLoader dataLoader,
-            QuestionChoiceRepository choiceRepository,
-            AttemptRepository attemptRepository,
-            QuizSessionRepository sessionRepository,
-            QuizGradingService gradingService,
-            Clock clock) {
-        this.dataLoader = dataLoader;
-        this.choiceRepository = choiceRepository;
-        this.attemptRepository = attemptRepository;
-        this.sessionRepository = sessionRepository;
-        this.gradingService = gradingService;
-        this.clock = clock;
-    }
-
     @Transactional
-    public QuizAnswerSavedResponse saveAnswer(long quizId, long questionId, QuizAnswerSaveRequest request) {
-        QuizSessionData data = dataLoader.load(quizId);
+    public QuizAnswerSavedResult saveAnswer(long quizId, long questionId, QuizAnswerCommand command) {
+        QuizSession session = requireSession(quizId);
         Instant now = Instant.now(clock);
-        data.session().ensureAcceptingChanges(now);
-        QuizQuestion quizQuestion = data.requireQuestion(questionId);
-        Attempt attempt = data.requireAttempt(questionId);
-        QuestionType type = quizQuestion.getQuestion().getQuestionType();
-        if (request.reviewNeeded() == null) {
-            throw new QuizAnswerException("reviewNeeded is required");
-        }
-        String choiceKey = normalize(request.selectedChoiceKey());
-        if (type == QuestionType.MULTIPLE_CHOICE) {
-            if (request.answerText() != null && !request.answerText().isBlank()) {
-                throw new QuizAnswerException("Multiple-choice answers cannot include answerText");
-            }
-            if (choiceKey == null) {
-                attempt.clearChoice(now);
-            } else {
-                QuestionChoice choice = choiceRepository.findByQuestionIdAndChoiceKey(questionId, choiceKey)
-                        .orElseThrow(() -> new QuizAnswerException("selectedChoiceKey is not a choice for this question"));
-                attempt.saveChoice(choice, now);
-            }
-        } else {
-            if (choiceKey != null) {
-                throw new QuizAnswerException("Only multiple-choice questions accept selectedChoiceKey");
-            }
-            attempt.saveText(request.answerText(), now);
-        }
-        if (request.reviewNeeded()) {
+        session.ensureAcceptingChanges(now);
+
+        QuizQuestion quizQuestion = quizQuestionRepository.findByQuizSession_IdAndQuestion_Id(quizId, questionId)
+                .orElseThrow(() -> new QuizNotFoundException("Question is not part of this quiz"));
+        Attempt attempt = attemptRepository.findByQuizSession_IdAndQuestion_Id(quizId, questionId)
+                .orElseThrow(() -> new QuizNotFoundException("Attempt is not part of this quiz"));
+
+        saveAnswerByType(quizQuestion, attempt, command, now);
+        if (command.reviewNeeded()) {
             attempt.markReviewNeeded();
         } else {
             attempt.clearReviewNeeded();
         }
-        attemptRepository.saveAndFlush(attempt);
-        return new QuizAnswerSavedResponse(
+
+        return new QuizAnswerSavedResult(
                 questionId,
                 attempt.getSelectedChoice() == null ? null : attempt.getSelectedChoice().getChoiceKey(),
                 attempt.getAnswerText(),
@@ -94,17 +64,16 @@ public class QuizSessionCommandService {
     }
 
     @Transactional
-    public void savePosition(long quizId, QuizPositionUpdateRequest request) {
-        QuizSessionData data = dataLoader.load(quizId);
-        Instant now = Instant.now(clock);
-        data.session().ensureAcceptingChanges(now);
-        data.session().recordPosition(request.position(), data.quizQuestions().size());
-        sessionRepository.saveAndFlush(data.session());
+    public void savePosition(long quizId, int position) {
+        QuizSession session = requireSession(quizId);
+        session.ensureAcceptingChanges(Instant.now(clock));
+        int questionCount = Math.toIntExact(quizQuestionRepository.countByQuizSession_Id(quizId));
+        session.recordPosition(position, questionCount);
     }
 
     @Transactional
-    public QuizSubmissionResponse submit(long quizId) {
-        QuizSessionData data = dataLoader.load(quizId);
+    public QuizSubmissionResult submit(long quizId) {
+        QuizSessionData data = dataLoader.loadForGrading(quizId);
         Instant now = Instant.now(clock);
         if (data.session().getStatus() == QuizSessionStatus.IN_PROGRESS) {
             data.session().submit(now);
@@ -116,36 +85,71 @@ public class QuizSessionCommandService {
                         data.answersByQuestionId().getOrDefault(questionId, List.of()),
                         now);
             }
-            attemptRepository.saveAllAndFlush(data.attemptsByQuestionId().values());
             if (selfCheckPending(data) == 0) {
                 data.session().complete(now);
             }
-            sessionRepository.saveAndFlush(data.session());
         }
         return submission(data);
     }
 
     @Transactional
-    public QuizSelfCheckResponse selfCheck(long quizId, long questionId, QuizSelfCheckRequest request) {
-        QuizSessionData data = dataLoader.load(quizId);
-        if (data.session().getStatus() != QuizSessionStatus.SUBMITTED
-                && data.session().getStatus() != QuizSessionStatus.COMPLETED) {
-            throw new QuizInvalidStateException("Quiz must be submitted before self-check");
-        }
-        QuizQuestion quizQuestion = data.requireQuestion(questionId);
+    public QuizSelfCheckResult selfCheck(long quizId, long questionId, boolean correct) {
+        QuizSession session = requireSession(quizId);
+        session.ensureSelfCheckAvailable();
+
+        QuizQuestion quizQuestion = quizQuestionRepository.findByQuizSession_IdAndQuestion_Id(quizId, questionId)
+                .orElseThrow(() -> new QuizNotFoundException("Question is not part of this quiz"));
         QuestionType type = quizQuestion.getQuestion().getQuestionType();
         if (type != QuestionType.DESCRIPTIVE && type != QuestionType.SCENARIO) {
             throw new QuizAnswerException("Only descriptive and scenario questions require self-check");
         }
-        Attempt attempt = data.requireAttempt(questionId);
+
+        Attempt attempt = attemptRepository.findByQuizSession_IdAndQuestion_Id(quizId, questionId)
+                .orElseThrow(() -> new QuizNotFoundException("Attempt is not part of this quiz"));
         Instant now = Instant.now(clock);
-        attempt.completeSelfCheck(request.correct(), now);
-        attemptRepository.saveAndFlush(attempt);
-        if (data.session().getStatus() == QuizSessionStatus.SUBMITTED && selfCheckPending(data) == 0) {
-            data.session().complete(now);
-            sessionRepository.saveAndFlush(data.session());
+        attempt.completeSelfCheck(correct, now);
+
+        long pending = attemptRepository.countByQuizSession_IdAndGradingStatus(
+                quizId,
+                AttemptGradingStatus.SELF_CHECK_REQUIRED);
+        if (session.getStatus() == QuizSessionStatus.SUBMITTED && pending == 0) {
+            session.complete(now);
         }
-        return new QuizSelfCheckResponse(quizId, questionId, attempt.getCorrect(), data.session().getStatus());
+        return new QuizSelfCheckResult(quizId, questionId, attempt.getCorrect(), session.getStatus());
+    }
+
+    private void saveAnswerByType(
+            QuizQuestion quizQuestion,
+            Attempt attempt,
+            QuizAnswerCommand command,
+            Instant now) {
+        QuestionType type = quizQuestion.getQuestion().getQuestionType();
+        String choiceKey = normalize(command.selectedChoiceKey());
+        if (type == QuestionType.MULTIPLE_CHOICE) {
+            if (command.answerText() != null && !command.answerText().isBlank()) {
+                throw new QuizAnswerException("Multiple-choice answers cannot include answerText");
+            }
+            if (choiceKey == null) {
+                attempt.clearChoice();
+                return;
+            }
+            QuestionChoice choice = choiceRepository.findByQuestionIdAndChoiceKey(
+                            quizQuestion.getQuestion().getId(),
+                            choiceKey)
+                    .orElseThrow(() -> new QuizAnswerException("selectedChoiceKey is not a choice for this question"));
+            attempt.saveChoice(choice, now);
+            return;
+        }
+
+        if (choiceKey != null) {
+            throw new QuizAnswerException("Only multiple-choice questions accept selectedChoiceKey");
+        }
+        attempt.saveText(command.answerText(), now);
+    }
+
+    private QuizSession requireSession(long quizId) {
+        return sessionRepository.findById(quizId)
+                .orElseThrow(() -> new QuizNotFoundException("Quiz session was not found"));
     }
 
     private int selfCheckPending(QuizSessionData data) {
@@ -154,8 +158,8 @@ public class QuizSessionCommandService {
                 .count();
     }
 
-    private QuizSubmissionResponse submission(QuizSessionData data) {
-        return new QuizSubmissionResponse(
+    private QuizSubmissionResult submission(QuizSessionData data) {
+        return new QuizSubmissionResult(
                 data.session().getId(),
                 data.session().getStatus(),
                 data.session().getSubmittedAt(),

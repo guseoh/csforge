@@ -132,7 +132,7 @@ CREATE UNIQUE INDEX question_answer_model_answer_uk
     WHERE answer_kind = 'MODEL_ANSWER';
 
 CREATE UNIQUE INDEX question_answer_accepted_text_uk
-    ON question_answer (question_id, lower(answer_text))
+    ON question_answer (question_id, lower(btrim(answer_text)))
     WHERE answer_kind = 'ACCEPTED_TEXT';
 
 CREATE INDEX question_published_selection_idx

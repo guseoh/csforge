@@ -3,20 +3,22 @@ package com.guseoh.csforge.quiz.application.grading;
 import java.time.Instant;
 import java.util.List;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
 import com.guseoh.csforge.question.domain.Question;
 import com.guseoh.csforge.question.domain.QuestionAnswer;
 import com.guseoh.csforge.quiz.domain.Attempt;
 import com.guseoh.csforge.quiz.domain.QuizInvalidStateException;
-import org.springframework.stereotype.Service;
 
+/**
+ * 문제 유형에 맞는 채점 전략을 선택하고 Attempt에 채점 결과를 적용하는 서비스이다.
+ */
 @Service
+@RequiredArgsConstructor
 public class QuizGradingService {
 
     private final List<QuestionGradingStrategy> strategies;
-
-    public QuizGradingService(List<QuestionGradingStrategy> strategies) {
-        this.strategies = List.copyOf(strategies);
-    }
 
     public void grade(Question question, Attempt attempt, List<QuestionAnswer> answers, Instant now) {
         if (!attempt.hasAnswer()) {
@@ -30,8 +32,8 @@ public class QuizGradingService {
         GradeDecision decision = strategy.grade(question, attempt, answers);
         if (decision.kind() == GradeKind.SELF_CHECK) {
             attempt.requireSelfCheck(now);
-        } else {
-            attempt.gradeAutomatically(decision.correct(), now);
+            return;
         }
+        attempt.gradeAutomatically(decision.correct(), now);
     }
 }

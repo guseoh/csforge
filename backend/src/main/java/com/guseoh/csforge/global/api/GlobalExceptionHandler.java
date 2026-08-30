@@ -1,12 +1,11 @@
-package com.guseoh.csforge.learning.api;
+package com.guseoh.csforge.global.api;
 
 import java.time.Instant;
 import java.util.List;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,13 +25,15 @@ import com.guseoh.csforge.quiz.domain.QuizAnswerException;
 import com.guseoh.csforge.quiz.domain.QuizExpiredException;
 import com.guseoh.csforge.quiz.domain.QuizInvalidStateException;
 
+/**
+ * 애플리케이션 예외를 일관된 HTTP 오류 응답으로 변환하는 전역 예외 처리기이다.
+ */
+@Slf4j
 @RestControllerAdvice
-public class LearningExceptionHandler {
-
-    private static final Logger log = LoggerFactory.getLogger(LearningExceptionHandler.class);
+public class GlobalExceptionHandler {
 
     @ExceptionHandler(LearningNotFoundException.class)
-    public ResponseEntity<ApiError> handleNotFound(
+    public ResponseEntity<ApiError> handleLearningNotFound(
             LearningNotFoundException exception,
             HttpServletRequest request) {
         return error(HttpStatus.NOT_FOUND, "LEARNING_NOT_FOUND", exception.getMessage(), request, List.of());
@@ -104,19 +105,19 @@ public class LearningExceptionHandler {
             HttpServletRequest request) {
         return error(
                 HttpStatus.CONFLICT,
-                "LEARNING_CONFLICT",
-                "The requested learning state conflicts with existing data",
+                "DATA_CONFLICT",
+                "The requested state conflicts with existing data",
                 request,
                 List.of());
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiError> handleUnexpected(Exception exception, HttpServletRequest request) {
-        log.error("Unhandled learning API error", exception);
+        log.error("Unhandled API error", exception);
         return error(
                 HttpStatus.INTERNAL_SERVER_ERROR,
-                "LEARNING_ERROR",
-                "Unexpected learning API error",
+                "API_ERROR",
+                "Unexpected API error",
                 request,
                 List.of());
     }

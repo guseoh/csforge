@@ -13,4 +13,8 @@ public interface AttemptRepository extends JpaRepository<Attempt, Long> {
 
     @EntityGraph(attributePaths = {"question", "selectedChoice"})
     Optional<Attempt> findByQuizSession_IdAndQuestion_Id(long quizSessionId, long questionId);
+
+    long countByQuizSession_IdAndAnsweredAtIsNotNull(long quizSessionId);
+
+    long countByQuizSession_IdAndGradingStatus(long quizSessionId, AttemptGradingStatus gradingStatus);
 }

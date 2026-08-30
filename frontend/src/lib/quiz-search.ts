@@ -32,6 +32,21 @@ export function csvValues(value: string): string[] {
   return value.split(',').map((item) => item.trim()).filter(Boolean)
 }
 
+export function csvParam(values: readonly (string | number)[]): string {
+  return values.join(',')
+}
+
+export function isDefaultQuizSearch(search: QuizSearch): boolean {
+  return search.areas === defaultQuizSearch.areas
+    && search.concepts === defaultQuizSearch.concepts
+    && search.levels === defaultQuizSearch.levels
+    && search.difficulties === defaultQuizSearch.difficulties
+    && search.questionTypes === defaultQuizSearch.questionTypes
+    && search.state === defaultQuizSearch.state
+    && search.count === defaultQuizSearch.count
+    && search.timeLimitSeconds === defaultQuizSearch.timeLimitSeconds
+}
+
 export function formatRemaining(expiresAt: string | null, now = Date.now()): string | null {
   if (!expiresAt) return null
   const remainingSeconds = Math.max(0, Math.ceil((new Date(expiresAt).getTime() - now) / 1000))

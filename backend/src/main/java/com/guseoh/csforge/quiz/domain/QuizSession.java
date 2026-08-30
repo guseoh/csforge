@@ -2,6 +2,8 @@ package com.guseoh.csforge.quiz.domain;
 
 import java.time.Instant;
 
+import lombok.Getter;
+
 import com.guseoh.csforge.learning.domain.AuditedEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -10,9 +12,12 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 
+/**
+ * 퀴즈의 진행, 제출, 완료와 재개 위치 및 만료 상태를 관리하는 도메인 엔티티이다.
+ */
+@Getter
 @Entity
 @Table(name = "quiz_session")
 public class QuizSession extends AuditedEntity {
@@ -69,6 +74,16 @@ public class QuizSession extends AuditedEntity {
         }
     }
 
+    public void ensureResultAvailable() {
+        if (status == QuizSessionStatus.IN_PROGRESS) {
+            throw new QuizInvalidStateException("Quiz must be submitted before its result is available");
+        }
+    }
+
+    public void ensureSelfCheckAvailable() {
+        ensureResultAvailable();
+    }
+
     public void recordPosition(int position, int questionCount) {
         if (status != QuizSessionStatus.IN_PROGRESS) {
             throw new QuizInvalidStateException("Quiz position can only change while in progress");
@@ -102,34 +117,9 @@ public class QuizSession extends AuditedEntity {
     }
 
     public boolean isExpired(Instant now) {
+        if (now == null) {
+            throw new IllegalArgumentException("now is required");
+        }
         return expiresAt != null && !now.isBefore(expiresAt);
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public QuizSessionStatus getStatus() {
-        return status;
-    }
-
-    public Instant getStartedAt() {
-        return startedAt;
-    }
-
-    public Instant getSubmittedAt() {
-        return submittedAt;
-    }
-
-    public Instant getCompletedAt() {
-        return completedAt;
-    }
-
-    public Instant getExpiresAt() {
-        return expiresAt;
-    }
-
-    public int getLastPosition() {
-        return lastPosition;
     }
 }

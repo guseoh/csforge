@@ -1,5 +1,7 @@
 package com.guseoh.csforge.question.domain;
 
+import lombok.Getter;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -10,6 +12,10 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
+/**
+ * 객관식 문제에서 사용되는 하나의 선택지를 표현하는 도메인 엔티티이다.
+ */
+@Getter
 @Entity
 @Table(name = "question_choice")
 public class QuestionChoice {
@@ -39,25 +45,5 @@ public class QuestionChoice {
         this.choiceKey = choiceKey;
         this.contentMarkdown = contentMarkdown;
         this.displayOrder = displayOrder;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public Question getQuestion() {
-        return question;
-    }
-
-    public String getChoiceKey() {
-        return choiceKey;
-    }
-
-    public String getContentMarkdown() {
-        return contentMarkdown;
-    }
-
-    public int getDisplayOrder() {
-        return displayOrder;
     }
 }

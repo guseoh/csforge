@@ -1,5 +1,7 @@
 package com.guseoh.csforge.quiz.domain;
 
+import lombok.Getter;
+
 import com.guseoh.csforge.question.domain.Question;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,6 +14,10 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 
+/**
+ * 퀴즈 세션에 포함된 문제와 고정된 출제 순서를 표현하는 도메인 엔티티이다.
+ */
+@Getter
 @Entity
 @Table(name = "quiz_question", uniqueConstraints = {
         @UniqueConstraint(name = "uq_quiz_question_session_question", columnNames = {"quiz_session_id", "question_id"}),
@@ -51,21 +57,5 @@ public class QuizQuestion {
 
     public static QuizQuestion place(QuizSession quizSession, Question question, int position) {
         return new QuizQuestion(quizSession, question, position);
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public QuizSession getQuizSession() {
-        return quizSession;
-    }
-
-    public Question getQuestion() {
-        return question;
-    }
-
-    public int getPosition() {
-        return position;
     }
 }

@@ -1,5 +1,7 @@
 package com.guseoh.csforge.question.domain;
 
+import lombok.Getter;
+
 import com.guseoh.csforge.learning.domain.Concept;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
@@ -9,6 +11,10 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
 import jakarta.persistence.Table;
 
+/**
+ * 문제와 학습 Concept의 다대다 연결을 표현하는 연관 엔티티이다.
+ */
+@Getter
 @Entity
 @Table(name = "question_concept")
 public class QuestionConcept {
@@ -33,17 +39,5 @@ public class QuestionConcept {
         this.question = question;
         this.concept = concept;
         this.id = new QuestionConceptId(null, concept.getId());
-    }
-
-    public QuestionConceptId getId() {
-        return id;
-    }
-
-    public Question getQuestion() {
-        return question;
-    }
-
-    public Concept getConcept() {
-        return concept;
     }
 }

@@ -3,13 +3,17 @@ package com.guseoh.csforge.quiz.application.grading;
 import java.util.List;
 import java.util.Locale;
 
+import org.springframework.stereotype.Component;
+
 import com.guseoh.csforge.question.domain.Question;
 import com.guseoh.csforge.question.domain.QuestionAnswer;
 import com.guseoh.csforge.question.domain.QuestionAnswerKind;
 import com.guseoh.csforge.question.domain.QuestionType;
 import com.guseoh.csforge.quiz.domain.Attempt;
-import org.springframework.stereotype.Component;
 
+/**
+ * 단답형 답안을 trim과 대소문자 정규화 후 허용 답안과 비교해 자동 채점하는 전략이다.
+ */
 @Component
 public class ShortAnswerGradingStrategy implements QuestionGradingStrategy {
 
