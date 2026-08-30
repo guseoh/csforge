@@ -25,7 +25,7 @@ describe('quiz URL search state', () => {
   })
 
   it('falls back to safe defaults for invalid values', () => {
-    expect(parseQuizSearch({ state: 'WRONG', count: '999', timeLimitSeconds: '10' })).toEqual(defaultQuizSearch)
+    expect(parseQuizSearch({ state: 'UNKNOWN', count: '999', timeLimitSeconds: '10' })).toEqual(defaultQuizSearch)
   })
 
   it('keeps URL serialization stable for list settings', () => {

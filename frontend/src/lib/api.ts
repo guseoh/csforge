@@ -225,7 +225,7 @@ export function savePersonalNote(conceptId: number, content: string): Promise<No
 
 export type QuestionType = 'MULTIPLE_CHOICE' | 'SHORT_ANSWER' | 'DESCRIPTIVE' | 'SCENARIO'
 export type QuestionDifficulty = 'EASY' | 'MEDIUM' | 'HARD'
-export type QuizQuestionState = 'ALL' | 'UNSEEN'
+export type QuizQuestionState = 'ALL' | 'UNSEEN' | 'WRONG' | 'REVIEW_NEEDED'
 export type QuizSessionStatus = 'IN_PROGRESS' | 'SUBMITTED' | 'COMPLETED'
 export type AttemptGradingStatus = 'UNANSWERED' | 'GRADED' | 'SELF_CHECK_REQUIRED' | 'SELF_CHECKED'
 
@@ -240,6 +240,7 @@ export interface QuizCreated {
   startedAt: string
   expiresAt: string | null
   lastPosition: number
+  source: 'STANDARD' | 'WRONG_RETRY' | 'REVIEW'
 }
 
 export interface QuizRetry {
@@ -289,6 +290,7 @@ export interface QuizQuestion {
 export interface QuizSession {
   quizId: number
   status: QuizSessionStatus
+  source: 'STANDARD' | 'WRONG_RETRY' | 'REVIEW'
   startedAt: string
   submittedAt: string | null
   completedAt: string | null
@@ -330,6 +332,7 @@ export interface QuizQuestionResult {
 export interface QuizResult {
   quizId: number
   status: QuizSessionStatus
+  source: 'STANDARD' | 'WRONG_RETRY' | 'REVIEW'
   total: number
   correct: number
   wrong: number
@@ -429,4 +432,81 @@ export function selfCheckQuizQuestion(quizId: number, questionId: number, correc
 
 export function retryWrongQuiz(quizId: number): Promise<QuizRetry> {
   return request<QuizRetry>(`/api/quizzes/${quizId}/retry-wrong`, { method: 'POST' })
+}
+
+export type WrongNoteStatus = 'ACTIVE' | 'MASTERED'
+export type ReviewScheduleStatus = 'SCHEDULED' | 'MASTERED'
+
+export interface WrongNoteListItem {
+  questionId: number
+  promptMarkdown: string
+  questionType: QuestionType
+  difficulty: QuestionDifficulty
+  concepts: QuizConcept[]
+  wrongCount: number
+  lastWrongAt: string
+  status: WrongNoteStatus
+  reviewStatus: ReviewScheduleStatus | null
+  reviewStage: number | null
+  dueAt: string | null
+}
+
+export interface WrongNotePage {
+  items: WrongNoteListItem[]
+  page: { page: number; size: number; totalElements: number; totalPages: number; hasNext: boolean; hasPrevious: boolean }
+}
+
+export interface WrongNoteDetail {
+  question: { id: number; promptMarkdown: string; questionType: QuestionType; difficulty: QuestionDifficulty; explanationMarkdown: string | null }
+  concepts: QuizConcept[]
+  latestWrongAttempt: {
+    attemptId: number; quizId: number; source: string; selectedChoiceKey: string | null; answerText: string | null
+    gradingStatus: AttemptGradingStatus; correct: boolean | null; reviewNeeded: boolean; answeredAt: string | null; gradedAt: string | null
+  } | null
+  answer: { correctChoiceKey: string | null; acceptedAnswers: string[]; modelAnswer: string | null }
+  state: { status: WrongNoteStatus; wrongCount: number; firstWrongAt: string; lastWrongAt: string; causeNote: string | null; reviewStatus: ReviewScheduleStatus | null; reviewStage: number | null; dueAt: string | null }
+}
+
+export interface WrongNoteAttempt {
+  attemptId: number; quizId: number; source: string; selectedChoiceKey: string | null; answerText: string | null
+  gradingStatus: AttemptGradingStatus; correct: boolean | null; reviewNeeded: boolean; answeredAt: string | null; gradedAt: string | null; updatedAt: string
+}
+
+export interface WrongNoteAttemptPage { items: WrongNoteAttempt[]; nextCursor: string | null }
+export interface ReviewSummary { overdue: number; dueNow: number; next24Hours: number; next7Days: number; mastered: number }
+export interface ReviewListItem {
+  questionId: number; promptMarkdown: string; questionType: QuestionType; difficulty: QuestionDifficulty; concepts: QuizConcept[]
+  status: ReviewScheduleStatus; stage: number; dueAt: string | null; lastReviewedAt: string | null
+}
+export interface ReviewPage { items: ReviewListItem[]; page: WrongNotePage['page'] }
+
+export function getWrongNotes(filters: { area?: string; topic?: number; level?: number; difficulty?: QuestionDifficulty; status?: WrongNoteStatus; review?: string; sort?: string; page: number; size: number }): Promise<WrongNotePage> {
+  const params = new URLSearchParams({ page: String(filters.page), size: String(filters.size), review: filters.review ?? 'ALL', sort: filters.sort ?? 'RECENT' })
+  if (filters.area) params.set('area', filters.area)
+  if (filters.topic) params.set('topic', String(filters.topic))
+  if (filters.level) params.set('level', String(filters.level))
+  if (filters.difficulty) params.set('difficulty', filters.difficulty)
+  if (filters.status) params.set('status', filters.status)
+  return request<WrongNotePage>(`/api/wrong-notes?${params.toString()}`)
+}
+
+export function getWrongNote(questionId: number): Promise<WrongNoteDetail> { return request(`/api/wrong-notes/${questionId}`) }
+export function getWrongNoteAttempts(questionId: number, cursor?: string): Promise<WrongNoteAttemptPage> {
+  const params = new URLSearchParams({ size: '20' }); if (cursor) params.set('cursor', cursor)
+  return request(`/api/wrong-notes/${questionId}/attempts?${params.toString()}`)
+}
+export function saveWrongNote(questionId: number, content: string): Promise<{ content: string; updatedAt: string }> {
+  return request(`/api/wrong-notes/${questionId}/note`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ content }) })
+}
+export function retryWrongNote(questionId: number): Promise<QuizCreated> { return request(`/api/wrong-notes/${questionId}/retry`, { method: 'POST' }) }
+export function getReviewSummary(): Promise<ReviewSummary> { return request('/api/reviews/summary') }
+export function getReviews(filters: { due: string; status?: ReviewScheduleStatus; area?: string; page: number; size: number }): Promise<ReviewPage> {
+  const params = new URLSearchParams({ due: filters.due, page: String(filters.page), size: String(filters.size) }); if (filters.status) params.set('status', filters.status); if (filters.area) params.set('area', filters.area)
+  return request(`/api/reviews?${params.toString()}`)
+}
+export function createReviewQuiz(count = 10): Promise<QuizCreated> {
+  return request('/api/reviews/quizzes', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ count }) })
+}
+export function scheduleReview(questionId: number): Promise<{ questionId: number; status: ReviewScheduleStatus; stage: number; dueAt: string }> {
+  return request(`/api/reviews/questions/${questionId}/schedule`, { method: 'POST' })
 }

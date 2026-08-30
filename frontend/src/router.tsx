@@ -7,6 +7,11 @@ import { parseQuizSearch } from './lib/quiz-search'
 import { QuizResultPage } from './pages/QuizResultPage'
 import { QuizSessionPage } from './pages/QuizSessionPage'
 import { QuizSetupPage } from './pages/QuizSetupPage'
+import { WrongNotesPage } from './pages/WrongNotesPage'
+import { WrongNoteDetailPage } from './pages/WrongNoteDetailPage'
+import { ReviewPage } from './pages/ReviewPage'
+import { parseWrongNoteSearch } from './lib/wrong-note-search'
+import { parseReviewSearch } from './lib/review-search'
 
 const navigation = [
   { to: '/', label: 'Dashboard' },
@@ -115,8 +120,9 @@ const quizRoute = createRoute({
 })
 const quizSessionRoute = createRoute({ getParentRoute: () => rootRoute, path: '/quiz/$quizId', component: QuizSessionPage })
 const quizResultRoute = createRoute({ getParentRoute: () => rootRoute, path: '/quiz/$quizId/result', component: QuizResultPage })
-const wrongNotesRoute = createRoute({ getParentRoute: () => rootRoute, path: '/wrong-notes', component: () => <PlaceholderPage title="Wrong Notes" /> })
-const reviewRoute = createRoute({ getParentRoute: () => rootRoute, path: '/review', component: () => <PlaceholderPage title="Review" /> })
+const wrongNotesRoute = createRoute({ getParentRoute: () => rootRoute, path: '/wrong-notes', validateSearch: (search) => parseWrongNoteSearch(search), component: WrongNotesPage })
+const wrongNoteDetailRoute = createRoute({ getParentRoute: () => rootRoute, path: '/wrong-notes/$questionId', component: WrongNoteDetailPage })
+const reviewRoute = createRoute({ getParentRoute: () => rootRoute, path: '/review', validateSearch: (search) => parseReviewSearch(search), component: ReviewPage })
 const searchRoute = createRoute({ getParentRoute: () => rootRoute, path: '/search', component: () => <PlaceholderPage title="Search" /> })
 
 const routeTree = rootRoute.addChildren([
@@ -128,6 +134,7 @@ const routeTree = rootRoute.addChildren([
   quizSessionRoute,
   quizResultRoute,
   wrongNotesRoute,
+  wrongNoteDetailRoute,
   reviewRoute,
   searchRoute,
 ])

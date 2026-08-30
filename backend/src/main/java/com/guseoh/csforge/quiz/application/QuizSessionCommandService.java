@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.guseoh.csforge.question.domain.QuestionChoice;
 import com.guseoh.csforge.question.domain.QuestionChoiceRepository;
 import com.guseoh.csforge.question.domain.QuestionType;
+import com.guseoh.csforge.outcome.application.FinalizedAttemptOutcomeCoordinator;
 import com.guseoh.csforge.quiz.application.grading.QuizGradingService;
 import com.guseoh.csforge.quiz.domain.Attempt;
 import com.guseoh.csforge.quiz.domain.AttemptGradingStatus;
@@ -35,6 +36,7 @@ public class QuizSessionCommandService {
     private final QuizQuestionRepository quizQuestionRepository;
     private final QuizSessionRepository sessionRepository;
     private final QuizGradingService gradingService;
+    private final FinalizedAttemptOutcomeCoordinator outcomeCoordinator;
     private final Clock clock;
 
     @Transactional
@@ -85,6 +87,8 @@ public class QuizSessionCommandService {
                         data.answersByQuestionId().getOrDefault(questionId, List.of()),
                         now);
             }
+            attemptRepository.saveAllAndFlush(data.attemptsByQuestionId().values());
+            data.attemptsByQuestionId().values().forEach(outcomeCoordinator::process);
             if (selfCheckPending(data) == 0) {
                 data.session().complete(now);
             }
@@ -108,6 +112,8 @@ public class QuizSessionCommandService {
                 .orElseThrow(() -> new QuizNotFoundException("Attempt is not part of this quiz"));
         Instant now = Instant.now(clock);
         attempt.completeSelfCheck(correct, now);
+        attemptRepository.saveAndFlush(attempt);
+        outcomeCoordinator.process(attempt);
 
         long pending = attemptRepository.countByQuizSession_IdAndGradingStatus(
                 quizId,

@@ -1,8 +1,11 @@
 package com.guseoh.csforge.quiz.domain;
 
 import java.time.Instant;
+import java.util.Objects;
 
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import com.guseoh.csforge.learning.domain.AuditedEntity;
 import com.guseoh.csforge.question.domain.Question;
@@ -29,6 +32,7 @@ import jakarta.persistence.UniqueConstraint;
 @Table(name = "attempt", uniqueConstraints = {
         @UniqueConstraint(name = "uq_attempt_session_question", columnNames = {"quiz_session_id", "question_id"})
 })
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Attempt extends AuditedEntity {
 
     @Id
@@ -66,8 +70,8 @@ public class Attempt extends AuditedEntity {
     @Column(name = "graded_at")
     private Instant gradedAt;
 
-    protected Attempt() {
-    }
+    @Column(name = "outcome_processed_at")
+    private Instant outcomeProcessedAt;
 
     private Attempt(QuizSession quizSession, Question question) {
         if (quizSession == null || question == null) {
@@ -164,6 +168,19 @@ public class Attempt extends AuditedEntity {
         return gradingStatus == AttemptGradingStatus.GRADED || gradingStatus == AttemptGradingStatus.SELF_CHECKED;
     }
 
+    public boolean isOutcomeProcessed() {
+        return outcomeProcessedAt != null;
+    }
+
+    public void markOutcomeProcessed(Instant processedAt) {
+        if (!isFinalized()) {
+            throw new QuizInvalidStateException("Only a finalized attempt can process its learning outcome");
+        }
+        if (outcomeProcessedAt == null) {
+            outcomeProcessedAt = Objects.requireNonNull(processedAt, "processedAt is required");
+        }
+    }
+
     public boolean isWrong() {
         return isFinalized() && Boolean.FALSE.equals(correct);
     }
@@ -172,6 +189,7 @@ public class Attempt extends AuditedEntity {
         this.gradingStatus = AttemptGradingStatus.UNANSWERED;
         this.correct = null;
         this.gradedAt = null;
+        this.outcomeProcessedAt = null;
     }
 
     private static boolean sameQuestion(Question left, Question right) {

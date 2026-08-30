@@ -6,7 +6,7 @@ export const quizSearchSchema = z.object({
   levels: z.string().catch(''),
   difficulties: z.string().catch(''),
   questionTypes: z.string().catch(''),
-  state: z.enum(['ALL', 'UNSEEN']).catch('ALL'),
+  state: z.enum(['ALL', 'UNSEEN', 'WRONG', 'REVIEW_NEEDED']).catch('ALL'),
   count: z.coerce.number().int().min(1).max(50).catch(10),
   timeLimitSeconds: z.coerce.number().int().min(60).max(7200).nullable().catch(null),
 })

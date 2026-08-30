@@ -6,6 +6,9 @@ import java.util.Objects;
 import com.guseoh.csforge.question.domain.QuestionDifficulty;
 import com.guseoh.csforge.question.domain.QuestionType;
 
+/**
+ * 게시된 문제 선택에 사용하는 필터 조건이다.
+ */
 public record QuizQuestionSelectionCriteria(
         List<String> areaSlugs,
         List<Long> conceptIds,

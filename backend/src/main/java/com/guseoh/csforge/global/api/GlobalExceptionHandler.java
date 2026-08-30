@@ -24,6 +24,9 @@ import com.guseoh.csforge.quiz.application.QuizNotFoundException;
 import com.guseoh.csforge.quiz.domain.QuizAnswerException;
 import com.guseoh.csforge.quiz.domain.QuizExpiredException;
 import com.guseoh.csforge.quiz.domain.QuizInvalidStateException;
+import com.guseoh.csforge.review.application.NoDueReviewsException;
+import com.guseoh.csforge.review.application.ReviewQuestionNotFoundException;
+import com.guseoh.csforge.wrongnote.application.WrongNoteNotFoundException;
 
 /**
  * 애플리케이션 예외를 일관된 HTTP 오류 응답으로 변환하는 전역 예외 처리기이다.
@@ -44,6 +47,27 @@ public class GlobalExceptionHandler {
             QuizNotFoundException exception,
             HttpServletRequest request) {
         return error(HttpStatus.NOT_FOUND, "QUIZ_NOT_FOUND", exception.getMessage(), request, List.of());
+    }
+
+    @ExceptionHandler(WrongNoteNotFoundException.class)
+    public ResponseEntity<ApiError> handleWrongNoteNotFound(
+            WrongNoteNotFoundException exception,
+            HttpServletRequest request) {
+        return error(HttpStatus.NOT_FOUND, "WRONG_NOTE_NOT_FOUND", "Wrong note was not found", request, List.of());
+    }
+
+    @ExceptionHandler(ReviewQuestionNotFoundException.class)
+    public ResponseEntity<ApiError> handleReviewQuestionNotFound(
+            ReviewQuestionNotFoundException exception,
+            HttpServletRequest request) {
+        return error(HttpStatus.NOT_FOUND, "REVIEW_QUESTION_NOT_FOUND", exception.getMessage(), request, List.of());
+    }
+
+    @ExceptionHandler(NoDueReviewsException.class)
+    public ResponseEntity<ApiError> handleNoDueReviews(
+            NoDueReviewsException exception,
+            HttpServletRequest request) {
+        return error(HttpStatus.UNPROCESSABLE_CONTENT, "REVIEW_NO_DUE_ITEMS", "No due reviews are available", request, List.of());
     }
 
     @ExceptionHandler(InsufficientQuestionsException.class)
