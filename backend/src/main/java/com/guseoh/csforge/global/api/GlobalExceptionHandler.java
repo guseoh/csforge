@@ -25,6 +25,7 @@ import com.guseoh.csforge.quiz.domain.QuizAnswerException;
 import com.guseoh.csforge.quiz.domain.QuizExpiredException;
 import com.guseoh.csforge.quiz.domain.QuizInvalidStateException;
 import com.guseoh.csforge.review.application.NoDueReviewsException;
+import com.guseoh.csforge.review.application.ReviewQuestionNotFoundException;
 import com.guseoh.csforge.wrongnote.application.WrongNoteNotFoundException;
 
 /**
@@ -53,6 +54,13 @@ public class GlobalExceptionHandler {
             WrongNoteNotFoundException exception,
             HttpServletRequest request) {
         return error(HttpStatus.NOT_FOUND, "WRONG_NOTE_NOT_FOUND", "Wrong note was not found", request, List.of());
+    }
+
+    @ExceptionHandler(ReviewQuestionNotFoundException.class)
+    public ResponseEntity<ApiError> handleReviewQuestionNotFound(
+            ReviewQuestionNotFoundException exception,
+            HttpServletRequest request) {
+        return error(HttpStatus.NOT_FOUND, "REVIEW_QUESTION_NOT_FOUND", exception.getMessage(), request, List.of());
     }
 
     @ExceptionHandler(NoDueReviewsException.class)

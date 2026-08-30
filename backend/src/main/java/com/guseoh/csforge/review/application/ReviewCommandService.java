@@ -9,6 +9,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.guseoh.csforge.question.domain.Question;
 import com.guseoh.csforge.question.domain.QuestionRepository;
 import com.guseoh.csforge.quiz.application.QuizCreatedResult;
 import com.guseoh.csforge.quiz.application.QuizSessionCreator;
@@ -31,8 +32,11 @@ public class ReviewCommandService {
     @Transactional
     public ReviewScheduledView schedule(long questionId) {
         Instant now = Instant.now(clock);
-        ReviewSchedule schedule = scheduleRepository.findByQuestionId(questionId).orElseGet(
-                () -> ReviewSchedule.start(questionRepository.getReferenceById(questionId), null, now));
+        ReviewSchedule schedule = scheduleRepository.findByQuestionId(questionId).orElseGet(() -> {
+            Question question = questionRepository.findById(questionId)
+                    .orElseThrow(ReviewQuestionNotFoundException::new);
+            return ReviewSchedule.start(question, null, now);
+        });
         schedule.scheduleFromFirstStage(now);
         scheduleRepository.save(schedule);
         return new ReviewScheduledView(schedule.getQuestionId(), schedule.getStatus(), schedule.getStage(), schedule.getDueAt());
