@@ -52,7 +52,7 @@ public class LearningAreaQueryRepository {
                 count(case when c.level = 1 then 1 end),
                 count(case when c.level = 2 then 1 end),
                 count(case when c.level = 3 then 1 end),
-                count(case when cp.conceptId is null or cp.status = com.guseoh.csforge.learning.domain.LearningStatus.UNSEEN then 1 end),
+                count(case when c.id is not null and (cp.conceptId is null or cp.status = com.guseoh.csforge.learning.domain.LearningStatus.UNSEEN) then 1 end),
                 count(case when cp.status = com.guseoh.csforge.learning.domain.LearningStatus.LEARNING then 1 end),
                 count(case when cp.status = com.guseoh.csforge.learning.domain.LearningStatus.REVIEW_NEEDED then 1 end)
             )
