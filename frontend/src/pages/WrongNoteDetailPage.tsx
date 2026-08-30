@@ -32,8 +32,9 @@ export function WrongNoteDetailPage() {
       }
       queueMicrotask(() => saveRef.current())
     },
-    onError: () => {
+    onError: (_error, content) => {
       savingRef.current = false
+      if (noteRef.current !== content) queueMicrotask(() => saveRef.current())
     },
   })
   const retryMutation = useMutation({
