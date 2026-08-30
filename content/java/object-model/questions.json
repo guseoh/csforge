@@ -1,0 +1,2172 @@
+[
+  {
+    "kind": "question",
+    "contentKey": "java.core.object-model.class-object-constructor.q1",
+    "promptMarkdown": "클래스와 object의 관계를 가장 정확하게 설명한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.object-model.class-object-constructor"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "클래스는 항상 object 하나만 표현한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "object는 컴파일 시에만 존재하고 실행 시 사라진다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "클래스와 object는 Java에서 같은 개념이다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "클래스는 설계와 동작의 틀이고 object는 그 클래스에서 만들어진 실행 시 인스턴스다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "클래스는 상태와 동작을 선언하는 타입이고, object는 그 타입을 바탕으로 생성되어 실행 중 identity를 갖는 인스턴스다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.object-model.class-object-constructor.q2",
+    "promptMarkdown": "Java constructor에 대한 설명으로 옳은 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.object-model.class-object-constructor"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "항상 `void` 반환 타입을 명시해야 한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "반환 타입이 없고 새 인스턴스의 초기 상태를 설정하는 특별한 선언이다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "이미 존재하는 object의 모든 메서드를 복사한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "클래스당 하나만 선언할 수 있다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "constructor는 메서드처럼 호출하지만 반환 타입을 쓰지 않으며, 생성 시 필요한 초기화와 invariant 검증을 표현한다. 여러 overload도 가능하다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.object-model.class-object-constructor.q3",
+    "promptMarkdown": "다음 클래스에서 `new User(\"mina\")`가 컴파일되지 않는 이유는? `class User { User() {} }`",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.object-model.class-object-constructor"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "constructor는 인자를 받을 수 없다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "String은 object 생성에 사용할 수 없다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "User(String) constructor가 선언되어 있지 않다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "기본 constructor는 private으로만 선언된다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "현재 선언된 constructor는 User()뿐이다. `new User(\"mina\")`에 필요한 User(String) constructor가 없으므로 해당 호출이 컴파일되지 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.object-model.class-object-constructor.q4",
+    "promptMarkdown": "`Account` constructor에서 잔액이 음수이면 예외를 발생시키는 가장 중요한 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.object-model.class-object-constructor"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "생성 직후에도 Account가 허용된 상태라는 invariant를 보장하기 위해서다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "GC를 더 빨리 실행하기 위해서다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "모든 constructor는 외부 입력을 거부해야 하기 때문이다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "예외가 있으면 field가 static이 되기 때문이다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "constructor가 잘못된 상태의 인스턴스를 만들지 않으면 이후 메서드가 불가능한 상태를 매번 방어할 필요가 줄어든다. 입력 자체를 무조건 거부하는 규칙과는 다르다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.object-model.class-object-constructor.q5",
+    "promptMarkdown": "다음 코드의 결과에 대한 설명으로 옳은 것은? `class Box { final int size; Box(int size) { if (size <= 0) throw new IllegalArgumentException(); this.size = size; } }`",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.object-model.class-object-constructor"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "size는 final이어도 constructor에서 대입할 수 없다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "예외가 발생해도 size가 0인 Box가 반환된다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "constructor 안의 this.size는 지역 변수만 가리킨다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "양수 인자로 생성한 Box만 관찰 가능하고, 0 이하 인자는 생성 단계에서 실패한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "blank final field는 constructor에서 한 번 초기화할 수 있다. 검증 전에 잘못된 object를 완성하지 않으므로 `size <= 0` 경로에는 유효한 Box가 반환되지 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.object-model.static-vs-instance-members.q1",
+    "promptMarkdown": "두 `Counter` 인스턴스가 각각 다른 `count`를 가져야 한다면 `count`는 어떻게 선언해야 하는가?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.object-model.static-vs-instance-members"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "static field로 선언한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "항상 final field로 선언한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "instance field로 선언한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "constructor 밖의 지역 변수로 선언한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "instance field는 각 object에 속하므로 인스턴스마다 별도 값을 가진다. static field는 클래스에 하나인 공유 저장소다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.object-model.static-vs-instance-members.q2",
+    "promptMarkdown": "`static int total;`에 대한 설명으로 옳은 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.object-model.static-vs-instance-members"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "각 인스턴스마다 반드시 별도의 복사본이 생긴다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "메서드 호출이 끝나면 항상 사라진다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "static field는 읽기 전용이라 변경할 수 없다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "클래스에 속해 인스턴스들이 공유하는 field다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "static member는 특정 인스턴스가 아니라 클래스에 소속된다. final이 아니라면 공유 상태를 변경할 수 있으며, 이 공유성이 전역 상태의 trade-off가 된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.object-model.static-vs-instance-members.q3",
+    "promptMarkdown": "static method 안에서 `this.value`를 사용할 수 없는 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.object-model.static-vs-instance-members"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "static method는 field를 전혀 읽을 수 없기 때문이다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "static method 호출에는 특정 instance를 가리키는 `this`가 없기 때문이다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "this는 constructor 안에서만 예약어이기 때문이다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "static method는 항상 private이기 때문이다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "static method는 instance receiver 없이 호출될 수 있다. 따라서 instance field는 특정 object를 인자로 받거나 instance method에서 접근해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.object-model.static-vs-instance-members.q4",
+    "promptMarkdown": "다음 코드의 출력은? `class Counter { static int total; Counter() { total++; } }`에서 `new Counter(); new Counter(); System.out.println(Counter.total);`를 실행한다.",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.object-model.static-vs-instance-members"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "0",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "1",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "2",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "컴파일 오류",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "두 constructor 호출이 같은 static field total을 각각 1씩 증가시키므로 최종 값은 2다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.object-model.static-vs-instance-members.q5",
+    "promptMarkdown": "다음 출력은? `class C { static int s = 1; int i = s++; void inc() { i++; s++; } } C a = new C(); C b = new C(); a.inc(); System.out.println(a.i + \":\" + b.i + \":\" + C.s);`",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.object-model.static-vs-instance-members"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "1:2:3",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "2:2:4",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "2:3:4",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "2:2:3",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "a 생성 시 i=1 후 s=2, b 생성 시 i=2 후 s=3이다. a.inc()가 a.i를 2로, 공유 static s를 4로 만든다. 따라서 2:2:4가 출력된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.object-model.initialization-order-constructor-chaining.q1",
+    "promptMarkdown": "static field initializer의 일반적인 실행 시점은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.object-model.initialization-order-constructor-chaining"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "인스턴스가 생성될 때마다 무조건 다시 실행된다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "프로그램 종료 후에 실행된다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "해당 클래스가 초기화될 때, 보통 첫 active use 전에 한 번 실행된다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "항상 컴파일 시에만 실행된다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "클래스 초기화는 static field initializer와 static initializer를 포함하며 클래스 초기화 과정에서 실행된다. 정확한 active use 조건은 JLS가 정의하고, 횟수는 일반적으로 한 번이다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.object-model.initialization-order-constructor-chaining.q2",
+    "promptMarkdown": "상속 관계에서 child constructor body가 실행되기 전에 먼저 필요한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.object-model.initialization-order-constructor-chaining"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "child의 모든 instance method가 먼저 실행된다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "superclass constructor 호출과 superclass 쪽 초기화가 먼저 진행된다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "child field가 항상 마지막에만 초기화된다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "GC가 superclass object를 제거한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "subclass 인스턴스는 superclass 부분도 초기화해야 한다. constructor chaining과 superclass 초기화 순서를 거친 뒤 child의 instance initializer와 body가 진행된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.object-model.initialization-order-constructor-chaining.q3",
+    "promptMarkdown": "다음 출력 순서는? `class Parent { Parent() { System.out.print(\"P\"); } } class Child extends Parent { { System.out.print(\"I\"); } Child() { System.out.print(\"C\"); } }`에서 `new Child()`를 실행한다.",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.object-model.initialization-order-constructor-chaining"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "PCI",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "CIP",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "PIC",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "IPC",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "암시적 super()가 먼저 Parent constructor를 실행해 P를 출력한다. 그 다음 Child instance initializer가 I, constructor body가 C를 출력하므로 PIC다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.object-model.initialization-order-constructor-chaining.q4",
+    "promptMarkdown": "Java SE 25의 flexible constructor body에서 `super(...)` 또는 `this(...)` 앞의 early construction context에 대한 설명으로 옳은 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.object-model.initialization-order-constructor-chaining"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "현재 instance의 field를 읽고 instance method를 호출하는 것도 모두 허용된다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "어떤 statement도 explicit constructor invocation 앞에 둘 수 없다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "인자 검증 같은 statement를 둘 수 있고, 현재 instance field를 assignment로 초기화하는 것도 허용되지만 그 field를 읽거나 instance method를 호출하는 데에는 제한이 있다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "`this(...)`와 `super(...)`를 한 constructor에서 연속으로 둘 다 호출할 수 있다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "Java SE 25 flexible constructor bodies는 explicit constructor invocation 앞의 prologue를 허용한다. early construction context에서는 현재 instance를 읽는 접근과 instance method 호출 등이 제한되지만, assignment operator로 현재 instance field를 초기화하는 것은 허용된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.object-model.initialization-order-constructor-chaining.q5",
+    "promptMarkdown": "다음 코드의 출력은? `class A { A() { System.out.print(\"A\"); } } class B extends A { B() { this(1); System.out.print(\"B\"); } B(int x) { System.out.print(\"X\"); } }`에서 `new B()`를 실행한다.",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.object-model.initialization-order-constructor-chaining"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "BXA",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "ABX",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "AXB",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "컴파일 오류",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "B()는 this(1)로 B(int)에 위임한다. B(int)의 암시적 super()가 A를 먼저 출력하고 X를 출력한 뒤, 원래 B() body가 B를 출력한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.object-model.initialization-order-constructor-chaining.q6",
+    "promptMarkdown": "다음 코드에서 처음 `new Child()`를 실행할 때 출력 순서는? `class Parent { static { System.out.print(\"S\"); } { System.out.print(\"I\"); } Parent() { System.out.print(\"P\"); } } class Child extends Parent { static { System.out.print(\"T\"); } { System.out.print(\"J\"); } Child() { System.out.print(\"C\"); } }`",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.object-model.initialization-order-constructor-chaining"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "STIPJC",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "SITPJC",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "TSIPJC",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "STJPIC",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "처음 Child를 active use하면 superclass Parent의 class initialization(S), Child의 class initialization(T)이 순서대로 진행된다. 인스턴스 생성에서는 Parent instance initializer(I)와 constructor(P), 이어 Child instance initializer(J)와 constructor(C)가 실행되어 STIPJC가 된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.object-model.encapsulation-invariants.q1",
+    "promptMarkdown": "field를 private으로 감싸는 캡슐화의 핵심 목적은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.object-model.encapsulation-invariants"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "private이면 값이 자동으로 암호화된다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "private이면 다른 모든 JVM에서 접근이 불가능하다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "상태 변경 경로를 통제해 object invariant를 보호한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "private field는 절대 변경할 수 없다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "private은 Java 접근 제어이고 암호화나 불변성 그 자체가 아니다. 의미 있는 메서드로 유효한 전이를 허용하면 잘못된 상태를 줄일 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.object-model.encapsulation-invariants.q2",
+    "promptMarkdown": "`order.setPaid(true)`보다 `order.pay(payment)`가 더 의도를 잘 드러낼 수 있는 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.object-model.encapsulation-invariants"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "메서드 이름이 길수록 JVM 최적화가 잘 되기 때문이다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "setPaid는 Java에서 사용할 수 없는 문법이기 때문이다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "결제 조건과 상태 전이를 Order 내부에서 함께 검증할 수 있기 때문이다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "pay는 모든 상태 변경을 무조건 허용하기 때문이다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "의도 중심 메서드는 단순 flag 대입이 아니라 결제가 가능한지와 결제 후 상태를 한 곳에서 표현한다. 호출자는 내부 representation을 알 필요가 없다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.object-model.encapsulation-invariants.q3",
+    "promptMarkdown": "잔액이 음수가 될 수 없는 `Wallet`에 `setBalance(int)`를 공개하는 경우 생기는 대표적인 문제는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.object-model.encapsulation-invariants"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "호출자가 검증되지 않은 값을 넣어 invariant를 우회할 수 있다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "setter는 private field를 읽을 수 없다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "int field는 setter로만 초기화할 수 있다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "setter가 있으면 Wallet이 interface가 된다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "무조건적인 setter는 허용 가능한 전이와 단순 대입을 구분하지 않는다. `deposit`, `withdraw`처럼 의미와 규칙을 함께 가진 연산이 더 안전하다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.object-model.encapsulation-invariants.q4",
+    "promptMarkdown": "생성 시 필수 값인 `email`을 constructor에서 검증하는 설계의 장점은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.object-model.encapsulation-invariants"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "모든 email이 같은 문자열로 정규화된다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "검증되지 않은 상태의 User가 애플리케이션에 퍼지는 것을 막는다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "검증은 controller에서만 가능해진다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "constructor 호출이 항상 성공하도록 만든다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "생성 경계에서 필수 invariant를 확인하면 이후 code가 null이나 형식 오류를 전제로 방어할 범위가 줄어든다. 잘못된 입력을 성공시키는 것이 목적은 아니다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.object-model.encapsulation-invariants.q5",
+    "promptMarkdown": "다음 중 `Order`의 invariant를 가장 잘 보호하는 operation은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.object-model.encapsulation-invariants"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "addItem이 품목을 추가한 뒤 내부 규칙에 따라 total을 갱신한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "항상 공개된 items List를 반환하고 호출자가 total을 직접 바꾸게 한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "total field를 public으로 만들고 문서에 주의사항을 적는다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "모든 상태를 Map<String,Object>에 넣는다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "관련 상태인 items와 total을 같은 의도 중심 operation에서 함께 변경하면 불일치 가능성이 줄어든다. 공개 collection이나 raw map은 invariant 우회를 쉽게 만든다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.object-model.encapsulation-invariants.q6",
+    "promptMarkdown": "`private` field를 사용하는 설계에 대한 설명으로 가장 정확한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.object-model.encapsulation-invariants"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "private이면 객체의 모든 상태 변경 가능성이 사라져 자동으로 immutable이 된다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "private field는 reflection이나 serialization 같은 런타임 메커니즘과 무관하게 절대 관찰될 수 없다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "private을 쓰면 별도의 입력 검증이나 상태 전이 메서드는 필요 없다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "private은 Java의 member 접근 경계를 제공하지만, 객체가 좋은 invariant를 갖는지는 공개된 생성·행동 API 설계까지 함께 봐야 한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "private은 직접 member 접근을 제한하는 언어 경계다. 하지만 무조건적인 setter를 공개하면 invariant가 여전히 깨질 수 있으므로 생성 규칙과 의도 중심 상태 전이까지 함께 설계해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.object-model.abstraction-responsibility.q1",
+    "promptMarkdown": "좋은 abstraction이 호출자에게 주로 제공해야 하는 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.object-model.abstraction-responsibility"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "가능한 모든 내부 field를 공개한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "사용 목적에 필요한 계약과 결과를 제공하고 내부 구현 세부는 숨긴다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "항상 가장 많은 메서드를 가진다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "구현 class의 이름을 API 사용자가 직접 조립하게 한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "abstraction은 복잡성을 없애기보다 중요한 책임과 계약을 드러내고 변경 가능한 구현을 뒤로 숨긴다. 메서드 수가 많다고 좋은 abstraction은 아니다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.object-model.abstraction-responsibility.q2",
+    "promptMarkdown": "서비스가 `PaymentGateway` interface에 의존할 때 얻는 직접적인 이점은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.object-model.abstraction-responsibility"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "모든 provider가 같은 내부 algorithm을 자동으로 사용한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "interface가 네트워크 장애를 자동으로 재시도한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "구현 class를 더 많이 만들수록 결합도가 높아진다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "결제 계약과 실제 provider 구현을 분리해 교체와 테스트가 쉬워진다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "호출자는 계약에만 의존하고 실제 구현은 주입할 수 있다. 다만 interface 자체가 retry, timeout 같은 운영 정책을 자동으로 제공하지는 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.object-model.abstraction-responsibility.q3",
+    "promptMarkdown": "여러 호출자가 쓰지 않는 메서드까지 포함한 거대한 `ApplicationService` interface의 문제는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.object-model.abstraction-responsibility"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "구현체와 호출자가 불필요한 책임에 결합되고 변경 영향 범위가 커진다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "interface는 상속할 수 없게 된다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "private method만 포함할 수 있게 된다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "모든 구현체가 자동으로 immutable해진다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "추상화 경계가 너무 넓으면 작은 요구 변경도 많은 구현체와 호출자에 영향을 준다. 사용 목적에 맞는 작은 계약이 결합도를 낮춘다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.object-model.abstraction-responsibility.q4",
+    "promptMarkdown": "`CheckoutService`가 특정 결제사 SDK를 직접 사용 중이다. 결제사는 교체될 수 있고 애플리케이션은 승인·취소만 필요하며 SDK의 세부 메서드는 외부 경계에 숨기고 싶다. 가장 적절한 설계는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.object-model.abstraction-responsibility"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "도메인과 서비스 전반이 VendorSdk 타입을 직접 사용하게 해 변경을 한 번에 반영한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "Vendor SDK의 모든 메서드를 동일하게 복사한 거대한 interface를 만들어 추상화라고 부른다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "타입 결합을 없애기 위해 모든 요청·응답을 Object와 Map으로 바꾼다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "애플리케이션이 필요한 `PaymentGateway.authorize/cancel` 계약을 두고 Vendor SDK는 adapter 구현 안에 둔다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "좋은 추상화는 외부 SDK 전체를 복제하는 것이 아니라 애플리케이션이 실제로 필요로 하는 책임과 계약을 경계에 둔다. Vendor 세부는 adapter가 맡으면 교체와 테스트의 영향 범위를 줄일 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.object-model.inheritance-is-a.q1",
+    "promptMarkdown": "다음 중 상속의 `is-a` 관계가 자연스러운 예는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.object-model.inheritance-is-a"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`Car`는 `Engine`이다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "`SavingsAccount`는 `Account`로도 다뤄질 수 있다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "`OrderService`는 `Order`이다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "`List`는 `String`이다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "subclass는 superclass가 기대되는 문맥에서 의미가 유지되어야 한다. has-a 관계인 Engine이나 협력자인 Service는 보통 composition이 더 자연스럽다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.object-model.inheritance-is-a.q2",
+    "promptMarkdown": "상속 계층에서 protected field를 자식들이 직접 바꾸게 할 때 커지는 위험은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.object-model.inheritance-is-a"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "superclass invariant와 변경 이유가 여러 subclass에 분산된다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "protected field는 runtime에 존재하지 않는다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "subclass가 superclass method를 override할 수 없게 된다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "protected는 항상 public보다 강한 캡슐화다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "직접 field 접근은 superclass가 상태 변경을 통제하기 어렵게 하고 subclass와 구현 세부를 결합한다. 의미 있는 protected/public operation이 더 안정적인 경계가 될 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.object-model.inheritance-is-a.q3",
+    "promptMarkdown": "코드 재사용만을 위해 `Report`가 `FileUtil`을 상속하는 것이 어색한 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.object-model.inheritance-is-a"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "Java는 class 상속을 지원하지 않기 때문이다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "상속은 method를 재사용할 수 없기 때문이다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "FileUtil은 object가 될 수 없기 때문이다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "Report가 FileUtil이라는 대체 가능성을 의미하지 않아 잘못된 is-a 관계가 되기 때문이다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "상속은 단순 method 복사보다 타입 관계와 substitutability를 표현한다. 기능 재사용이 목적이고 관계가 has-a라면 composition이 결합을 덜 만든다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.object-model.inheritance-is-a.q4",
+    "promptMarkdown": "`Bird`를 상속한 `Penguin`이 `fly()`를 지원할 수 없어서 모든 호출자가 예외를 처리해야 한다면 가장 먼저 의심할 설계 문제는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.object-model.inheritance-is-a"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "Penguin은 항상 Bird를 상속할 수 없다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "superclass의 계약이 모든 subclass의 실제 행동과 맞지 않는 잘못된 abstraction일 수 있다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "override method는 checked exception을 던질 수 없다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "상속 관계에서는 interface를 사용할 수 없다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "subtype은 기반 타입이 약속한 문맥에서 동작해야 한다. 날 수 있음과 새라는 축을 한 타입에 섞으면 Liskov substitutability가 깨질 수 있으므로 capability를 별도 abstraction으로 분리할 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.object-model.composition-collaboration.q1",
+    "promptMarkdown": "composition의 `has-a` 관계를 가장 잘 보여주는 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.object-model.composition-collaboration"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`SavingsAccount`가 `Account`의 subtype이다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "`String`이 `Object`로 대입된다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "`int`가 `long`으로 widening된다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "`Order`가 `PricingPolicy` 협력자를 가진다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "composition은 object가 다른 object를 구성요소나 협력자로 사용한다는 관계다. 이것은 subtype을 의미하는 inheritance와 다르다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.object-model.composition-collaboration.q2",
+    "promptMarkdown": "`Order` constructor에 `PricingPolicy`를 전달하는 방식의 장점은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.object-model.composition-collaboration"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "PricingPolicy의 모든 field가 Order로 복사된다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "constructor injection은 항상 static 상태를 만든다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "composition을 쓰면 policy 구현을 절대 바꿀 수 없다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "Order가 필요한 협력자를 명확히 받고, 테스트에서 대체 policy를 넣을 수 있다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "필수 collaborator를 생성 시 받으면 의존성이 숨지 않고, 계약을 구현한 fake나 다른 policy로 조합할 수 있다. object가 복사되는 것은 아니다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.object-model.composition-collaboration.q3",
+    "promptMarkdown": "할인 규칙이 자주 바뀌는 주문 시스템에서 composition이 상속보다 유리한 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.object-model.composition-collaboration"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "composition은 모든 버그를 자동으로 제거한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "상속만이 runtime dispatch를 지원한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "policy가 없어도 Order가 항상 같은 규칙을 사용한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "Order의 identity를 바꾸지 않고 PricingPolicy collaborator를 교체하거나 조합할 수 있다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "변하는 정책을 별도 collaborator로 분리하면 Order 계층을 계속 늘리지 않고 조합을 바꿀 수 있다. 결합이 사라지는 것이 아니라 더 작은 경계로 이동한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.object-model.composition-collaboration.q4",
+    "promptMarkdown": "결제 서비스를 단위 테스트할 때 `PaymentGateway`의 fake를 주입하는 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.object-model.composition-collaboration"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "fake를 주입하면 production gateway가 자동으로 삭제된다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "composition은 실제 HTTP 호출을 강제한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "외부 결제 시스템의 네트워크 상태와 무관하게 서비스 협력 계약을 검증할 수 있다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "fake는 interface를 구현할 수 없다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "collaborator를 주입하면 테스트는 외부 시스템 대신 통제 가능한 구현을 사용한다. 실제 gateway 연동은 별도의 integration test에서 검증할 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.object-model.composition-collaboration.q5",
+    "promptMarkdown": "다음 요구에 가장 적합한 관계는? `NotificationService`가 이메일과 SMS 전송기를 선택해 사용하며 전송기 종류가 설정에 따라 바뀐다.",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.object-model.composition-collaboration"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "NotificationService가 공통 Sender 계약의 collaborator를 가진다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "NotificationService가 EmailSender를 상속한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "SMS 기능을 NotificationService의 static field로만 둔다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "모든 sender의 field를 NotificationService에 복사한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "sender는 NotificationService의 subtype이 아니라 협력자다. 공통 계약을 가진 collaborator로 조합하면 변경 가능한 선택을 object 구조에 반영할 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.object-model.composition-collaboration.q6",
+    "promptMarkdown": "composition을 적용할 때 오히려 구조를 단순하게 유지해야 할 상황은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.object-model.composition-collaboration"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "실제로 바뀌는 정책이 여러 개이고 런타임 교체가 필요한 경우",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "외부 시스템을 테스트 대역으로 교체해야 하는 경우",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "변경 축도 대체 구현도 없는 짧고 안정적인 내부 계산 하나를 위해 interface·wrapper 계층을 여러 개 추가하려는 경우",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "하나의 객체가 명확한 collaborator 계약을 통해 다른 책임을 위임하는 경우",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "composition은 실제 variation과 협력 경계를 분리할 때 가치가 있다. 대체 가능성이나 변경 이유가 없는 단순 동작까지 여러 interface와 wrapper로 나누면 읽기와 유지보수 비용만 커질 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.object-model.polymorphism-dynamic-dispatch.q1",
+    "promptMarkdown": "다음에서 `sound()` 호출에 사용되는 구현은? `Animal a = new Dog(); a.sound();`",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.object-model.polymorphism-dynamic-dispatch"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "실제 object의 override인 Dog.sound()가 선택된다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "항상 참조 변수 타입 Animal의 private method가 선택된다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "compile time에 임의의 구현이 선택된다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "Dog object가 Animal object로 복사된 뒤 Animal method가 실행된다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "instance method override 호출은 runtime object type에 따라 dynamic dispatch된다. 참조 변수의 static type은 컴파일 시 접근 가능한 계약을 결정한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.object-model.polymorphism-dynamic-dispatch.q2",
+    "promptMarkdown": "다음 코드의 출력은? `class A { void f() { System.out.print(\"A\"); } } class B extends A { @Override void f() { System.out.print(\"B\"); } } A x = new B(); x.f();`",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.object-model.polymorphism-dynamic-dispatch"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "B",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "A",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "AB",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "컴파일 오류",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "x의 static type은 A지만 실제 object는 B이고, f는 override된 instance method이므로 B.f()가 실행된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.object-model.polymorphism-dynamic-dispatch.q3",
+    "promptMarkdown": "다음 중 일반적인 dynamic dispatch 대상이 아닌 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.object-model.polymorphism-dynamic-dispatch"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "instance method override",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "interface 구현 method 호출",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "superclass reference를 통한 overridden method 호출",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "instance field 접근과 static method 호출",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "field 접근과 static method는 선언된 참조/클래스 문맥에 묶인다. runtime object에 따라 바뀌는 대표적인 동작은 instance method override dispatch다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.object-model.polymorphism-dynamic-dispatch.q4",
+    "promptMarkdown": "`List<String> names = new ArrayList<>(); names.add(\"A\");`에서 polymorphism이 사용된 부분은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.object-model.polymorphism-dynamic-dispatch"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "String이 primitive로 변환된다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "List 계약 타입의 변수로 ArrayList object를 다룬다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "ArrayList가 List의 field를 복사한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "List가 ArrayList의 superclass가 된다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "변수의 static type은 List 계약이고 실제 구현 object는 ArrayList다. 호출 가능한 API는 계약에 의해 제한되면서 구현 method가 동작한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.object-model.polymorphism-dynamic-dispatch.q5",
+    "promptMarkdown": "`Shape s = new Circle(); s.area()`처럼 공통 계약으로 여러 shape를 처리하는 이점은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.object-model.polymorphism-dynamic-dispatch"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "호출 code가 구체 subtype마다 분기하지 않고 각 object의 구현을 사용한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "모든 shape가 같은 area 값을 반환하게 된다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "runtime type이 사라져 cast가 항상 필요하다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "Circle의 모든 내부 field가 Shape API로 공개된다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "공통 계약과 dynamic dispatch를 이용하면 새로운 subtype을 호출자 분기 없이 추가할 수 있다. 구현별 결과는 object가 결정한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.object-model.polymorphism-dynamic-dispatch.q6",
+    "promptMarkdown": "다음 출력은? `class A { String value = \"A\"; String label() { return value; } } class B extends A { String value = \"B\"; @Override String label() { return value; } } A x = new B(); System.out.println(x.value + x.label());`",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.object-model.polymorphism-dynamic-dispatch"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "AA",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "AB",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "BA",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "BB",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "field 접근 x.value는 참조의 정적 타입 A에 의해 A.value를 읽어 \"A\"가 된다. instance method label()은 실제 object B로 dynamic dispatch되고 B.label은 B.value인 \"B\"를 반환하므로 AB가 출력된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.object-model.overload-vs-override.q1",
+    "promptMarkdown": "overloading의 조건으로 옳은 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.object-model.overload-vs-override"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "반환 타입만 다르면 overload된다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "같은 이름의 메서드가 서로 다른 parameter 목록을 가진다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "runtime object만 바뀌면 overload된다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "항상 superclass와 subclass 사이에서만 가능하다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "overload는 같은 scope/type 안에서 parameter 수나 타입 등이 다른 선언을 제공하는 compile-time 선택이다. return type만으로는 구분할 수 없다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.object-model.overload-vs-override.q2",
+    "promptMarkdown": "override에 대한 설명으로 옳은 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.object-model.overload-vs-override"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "같은 class 안에서 parameter만 추가하는 것이다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "subclass가 상속 가능한 superclass instance method의 계약을 재정의한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "field의 값을 다시 선언하는 것이다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "반환 타입만 바꿔 새 method를 만드는 것이다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "override는 상속 관계에서 같은 signature의 instance method 동작을 subtype에 맞게 제공한다. `@Override` annotation은 의도와 signature 오류를 확인하는 데 도움을 준다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.object-model.overload-vs-override.q3",
+    "promptMarkdown": "다음 코드의 출력은? `class P { void f(Object x) { System.out.print(\"P\"); } } class C extends P { void f(String x) { System.out.print(\"S\"); } @Override void f(Object x) { System.out.print(\"C\"); } } P p = new C(); p.f(\"x\");`",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.object-model.overload-vs-override"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "P",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "S",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "C",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "컴파일 오류",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "p의 static type P에서 보이는 overload는 f(Object)다. 그 signature의 override를 runtime object C가 제공하므로 C.f(Object)가 실행된다. C의 f(String)은 이 호출 후보가 아니다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.object-model.overload-vs-override.q4",
+    "promptMarkdown": "다음 두 메서드를 한 class에 선언할 수 없는 이유는? `int parse(String s)`와 `long parse(String s)`",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.object-model.overload-vs-override"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "long은 return할 수 없는 타입이기 때문이다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "String parameter는 overload에 사용할 수 없기 때문이다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "parse라는 이름은 하나만 허용되기 때문이다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "method signature 구분에 return type만 사용할 수 없기 때문이다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "호출 시 return type만으로 어느 method를 선택할지 결정할 수 없으므로 Java는 반환 타입만 다른 중복 선언을 허용하지 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.object-model.overload-vs-override.q5",
+    "promptMarkdown": "`void f(Object x)`, `void f(String x)`가 함께 있을 때 `f(null)`에 대한 설명으로 옳은 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.object-model.overload-vs-override"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "null은 두 참조 타입에 전달될 수 있지만 String이 더 구체적이라 f(String)이 선택된다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "null은 primitive 값이므로 두 method 모두 선택되지 않는다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "Object와 String 사이에는 overload 선택 규칙이 없어 항상 컴파일 오류다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "String method는 runtime에만 선택되므로 overload 후보가 아니다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "Object와 String이 함께라면 String이 더 구체적이어서 f(String)이 선택된다. 반대로 서로 무관한 `f(String)`과 `f(Integer)`처럼 더 구체적인 하나를 고를 수 없을 때 ambiguous가 된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.object-model.reference-casting-instanceof.q1",
+    "promptMarkdown": "`Dog dog = new Dog(); Animal animal = dog;`가 허용되는 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.object-model.reference-casting-instanceof"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "Dog가 Animal의 subtype이면 upcast는 안전하게 허용된다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "모든 class는 서로 자동으로 상속된다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "dog object가 복사되어 Animal object가 된다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "Animal이 primitive 타입이기 때문이다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "upcast는 같은 object를 더 일반적인 계약으로 바라보는 참조 변환이다. object가 복사되거나 실제 타입이 바뀌는 것은 아니다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.object-model.reference-casting-instanceof.q2",
+    "promptMarkdown": "`Object value = null;`일 때 `value instanceof String`의 결과는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.object-model.reference-casting-instanceof"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "true",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "NullPointerException",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "컴파일 오류",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "false",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "instanceof는 null reference에 대해 false를 반환한다. null을 해당 subtype의 실제 instance로 간주하지 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.object-model.reference-casting-instanceof.q3",
+    "promptMarkdown": "`Object value = Integer.valueOf(1); String text = (String) value;`의 결과는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.object-model.reference-casting-instanceof"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "컴파일되고 실행 시 ClassCastException이 발생한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "Integer가 String으로 변환된다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "항상 null이 대입된다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "컴파일 시 자동으로 String.valueOf가 호출된다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "Object 참조에서 String으로의 cast 문법은 가능하지만 실제 object는 Integer다. cast는 object를 변환하지 않고 참조가 가리키는 runtime type을 검사한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.object-model.reference-casting-instanceof.q4",
+    "promptMarkdown": "다음 pattern matching 코드의 결과는? `Object value = \"java\"; if (value instanceof String text) System.out.println(text.length());`",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.object-model.reference-casting-instanceof"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "4",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "0",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "ClassCastException",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "컴파일 오류",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "value가 String일 때 조건이 true가 되고 pattern variable text를 해당 타입으로 사용할 수 있다. 문자열 java의 길이는 4다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.object-model.reference-casting-instanceof.q5",
+    "promptMarkdown": "다음 코드가 출력하는 값은? `Object value = \"java\"; if (value instanceof String text) { value = Integer.valueOf(1); System.out.println(text.length()); }`",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.object-model.reference-casting-instanceof"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "4",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "1",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "ClassCastException",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "컴파일 오류",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "pattern variable text는 instanceof가 성공했을 때 원래 String reference를 별도로 바인딩한다. 이후 value 변수를 Integer reference로 재대입해도 text의 binding은 바뀌지 않으므로 \"java\"의 길이 4를 출력한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.object-model.interface-vs-abstract-class.q1",
+    "promptMarkdown": "interface를 사용하는 대표적인 목적은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.object-model.interface-vs-abstract-class"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "서로 다른 class 계층이 제공할 수 있는 공통 계약을 정의한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "모든 구현 field를 private으로 자동 변환한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "구현 class를 하나로 제한한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "모든 method body를 반드시 제공한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "interface는 capability나 계약을 표현해 여러 class가 구현할 수 있게 한다. 구현 선택과 상태 저장 방식까지 항상 결정하는 것은 아니다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.object-model.interface-vs-abstract-class.q2",
+    "promptMarkdown": "한 class가 서로 다른 두 interface를 구현할 수 있다는 사실이 유용한 경우는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.object-model.interface-vs-abstract-class"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "class가 두 개의 superclass를 상속해야 할 때다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "constructor가 두 번 실행되어야 할 때다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "서로 다른 capability 계약을 하나의 object가 제공해야 할 때다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "모든 interface의 내부 field를 공유할 때다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "Java class는 superclass 하나를 직접 상속하지만 여러 interface 계약을 구현할 수 있다. 이는 타입 계층과 capability 조합을 분리하는 데 유용하다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.object-model.interface-vs-abstract-class.q3",
+    "promptMarkdown": "abstract class가 interface보다 자연스러운 경우는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.object-model.interface-vs-abstract-class"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "전혀 관계없는 class에 같은 capability만 부여할 때다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "같은 계층의 subtype이 공유 state와 일부 구현, constructor 규칙을 가져야 할 때다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "여러 superclass를 동시에 상속할 때다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "구현을 전혀 공유하지 않아야 할 때만 가능하다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "abstract class는 공통 state와 구현을 제공하고 직접 인스턴스화되지 않는 계층 기반을 만들 수 있다. interface는 여러 계층에 걸친 계약에 더 가깝다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.object-model.interface-vs-abstract-class.q4",
+    "promptMarkdown": "`Job` 계열은 공통 id, retryCount, constructor 검증과 실행 template을 공유한다. 한편 Job과 무관한 `HttpClient`도 `Retryable` capability를 제공해야 한다. 가장 자연스러운 조합은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.object-model.interface-vs-abstract-class"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "Job과 HttpClient가 모두 하나의 거대한 abstract superclass를 상속한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "공통 상태가 필요해도 모든 것을 interface static field에 저장한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "다중 class 상속으로 JobBase와 RetryBase를 동시에 상속한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "Job 공통 상태·template은 abstract Job에 두고, 독립 capability는 Retryable interface로 분리한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "같은 계층이 공유하는 state·constructor invariant·template은 abstract class가 자연스럽고, 서로 무관한 타입에도 붙는 capability는 interface가 자연스럽다. Java class는 여러 class를 직접 상속할 수 없다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.object-model.immutability-defensive-copy.q1",
+    "promptMarkdown": "`final List<String> names`가 보장하는 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.object-model.immutability-defensive-copy"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "List 내용도 절대로 변경되지 않는다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "List가 thread-safe해진다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "names reference를 다른 List로 재대입할 수 없다는 것뿐이다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "List의 모든 원소가 immutable해진다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "final은 reference binding의 재대입을 막는다. 참조된 List의 mutation과 원소 object의 불변성은 별도 문제다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.object-model.immutability-defensive-copy.q2",
+    "promptMarkdown": "생성자 인자로 받은 mutable `List<String>`을 내부 field에 그대로 저장하면 생길 수 있는 문제는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.object-model.immutability-defensive-copy"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "List가 자동으로 unmodifiable해진다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "constructor가 두 번 호출된다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "모든 String이 null이 된다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "호출자가 원본 List를 바꿔 내부 상태까지 바꿀 수 있다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "같은 List reference를 공유하면 소유권이 모호해진다. 내부가 독립 상태를 가져야 한다면 constructor에서 방어적 복사 또는 적절한 snapshot을 만든다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.object-model.immutability-defensive-copy.q3",
+    "promptMarkdown": "`Collections.unmodifiableList(original)`과 `List.copyOf(original)`의 차이를 가장 정확하게 설명한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.object-model.immutability-defensive-copy"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "둘 다 원소 object까지 재귀적으로 복사하는 deep immutable copy다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "List.copyOf로 만든 list는 add/remove가 가능하지만 unmodifiableList는 불가능하다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "둘의 차이는 오직 generic type inference뿐이며 mutation 계약은 같다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "전자는 backing list의 변경을 볼 수 있는 unmodifiable view이고, 후자는 입력 collection의 이후 구조 변경을 반영하지 않는 unmodifiable snapshot을 제공한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "Collections.unmodifiableList는 backing list에 대한 unmodifiable view라 원본 구조 변경이 보일 수 있다. List.copyOf는 입력 collection의 이후 구조 변경을 반영하지 않는 unmodifiable list를 반환한다. 다만 원소 object까지 deep copy하거나 immutable하게 만들지는 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.object-model.immutability-defensive-copy.q4",
+    "promptMarkdown": "불변 object의 getter가 내부 mutable `Date` reference를 그대로 반환하면 어떤 문제가 있는가?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.object-model.immutability-defensive-copy"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "getter 호출 때마다 object가 자동으로 immutable해진다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "Date는 primitive라 변경할 수 없다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "final field가 getter를 금지한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "호출자가 반환된 Date를 변경해 불변 object의 내부 상태를 바꿀 수 있다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "불변성은 생성자뿐 아니라 외부로 나가는 reference 경계도 보호해야 한다. 반환 시 복사하거나 immutable time type을 사용하면 내부 소유권을 지킬 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.object-model.immutability-defensive-copy.q5",
+    "promptMarkdown": "`List<List<String>>`의 바깥 List만 복사하는 shallow copy의 한계는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.object-model.immutability-defensive-copy"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "바깥 List length가 항상 0이 된다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "String이 모두 mutable로 변한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "안쪽 List reference를 공유하므로 내부 중첩 List 변경이 새 object에도 보일 수 있다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "shallow copy는 어떤 reference도 복사하지 않는다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "shallow copy는 outer collection 구조만 분리하고 nested mutable object의 소유권은 공유한다. 완전한 불변 snapshot이 필요하면 각 변경 가능 계층의 복사/불변화 전략을 정해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.object-model.immutability-defensive-copy.q6",
+    "promptMarkdown": "다음 설계에서 가장 적절한 선택은? 외부에서 받은 `List<Money>`를 나중에 변경되지 않는 주문 snapshot으로 보관해야 한다.",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.object-model.immutability-defensive-copy"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "final field만 붙이고 입력 List를 그대로 저장한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "getter에서 원본 List를 반환해 호출자가 확인하게 한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "collection은 copy하고 Money도 immutable value라면 그 요소 reference를 안전하게 공유한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "모든 요소를 문자열로 바꿔 type 정보를 버린다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "collection 구조를 복사하면 외부 List 변경을 차단할 수 있고, 요소가 정말 immutable이면 요소까지 매번 복사할 필요가 없다. 요소가 mutable이면 요소별 copy나 immutable 변환이 추가로 필요하다."
+  }
+]

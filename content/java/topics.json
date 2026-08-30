@@ -1,0 +1,4 @@
+[
+  {"kind":"topic","contentKey":"java.core.language-types","areaSlug":"java","slug":"language-types","title":"Java Language & Value Semantics","description":"값, 변수, 변환, 배열, final과 문자열의 언어 의미를 정확히 읽는다","displayOrder":10,"active":true},
+  {"kind":"topic","contentKey":"java.core.object-model","areaSlug":"java","slug":"object-model","title":"Object Creation, State & OOP","description":"객체 생성과 초기화, 캡슐화, 상속, 합성, 다형성과 타입 변환을 이해한다","displayOrder":20,"active":true}
+]
