@@ -185,6 +185,34 @@ class ContentImportIntegrationTest {
     }
 
     @Test
+    void topicSlugCreatedAfterPreviewMakesApplyStale() throws Exception {
+        List<Part> parts = List.of(new Part("topic.json", "application/json", "{\"kind\":\"topic\",\"contentKey\":\"new.topic\",\"areaSlug\":\"java\",\"slug\":\"free\",\"title\":\"New\"}"));
+        JsonNode preview = json(post("/api/imports/preview", parts, null)).get("body");
+        jdbc.update("insert into topic (learning_area_id, content_key, slug, title, display_order, active) select id, 'concurrent.topic', 'free', 'Concurrent', 0, true from learning_area where slug = 'java'");
+
+        JsonNode response = json(post("/api/imports/apply", parts, preview.get("previewDigest").asText()));
+
+        assertEquals(409, response.get("status").asInt());
+        assertEquals("IMPORT_PREVIEW_STALE", response.get("body").get("code").asText());
+        assertEquals(0, jdbc.queryForObject("select count(*) from topic where content_key = 'new.topic'", Integer.class));
+    }
+
+    @Test
+    void conceptSlugCreatedAfterPreviewMakesApplyStale() throws Exception {
+        jdbc.update("insert into topic (learning_area_id, content_key, slug, title, display_order, active) select id, 'test.topic', 'test', 'Test', 0, true from learning_area where slug = 'java'");
+        List<Part> parts = List.of(new Part("concept.json", "application/json", "{\"kind\":\"concept\",\"contentKey\":\"new.concept\",\"topicContentKey\":\"test.topic\",\"slug\":\"free\",\"title\":\"New\",\"contentMarkdown\":\"Body\",\"level\":1,\"status\":\"DRAFT\"}"));
+        JsonNode preview = json(post("/api/imports/preview", parts, null)).get("body");
+        long topicId = jdbc.queryForObject("select id from topic where content_key = 'test.topic'", Long.class);
+        jdbc.update("insert into concept (topic_id, content_key, slug, title, content_markdown, level, status, display_order) values (?, 'concurrent.concept', 'free', 'Concurrent', 'Body', 1, 'DRAFT', 0)", topicId);
+
+        JsonNode response = json(post("/api/imports/apply", parts, preview.get("previewDigest").asText()));
+
+        assertEquals(409, response.get("status").asInt());
+        assertEquals("IMPORT_PREVIEW_STALE", response.get("body").get("code").asText());
+        assertEquals(0, jdbc.queryForObject("select count(*) from concept where content_key = 'new.concept'", Integer.class));
+    }
+
+    @Test
     void applyFailureRollsBackEarlierCanonicalMutations() throws Exception {
         jdbc.execute("create function test_import_failure() returns trigger language plpgsql as $$ begin if NEW.content_key = 'new.second' then raise exception 'forced apply failure'; end if; return NEW; end $$");
         jdbc.execute("create trigger test_import_failure_trigger before insert on topic for each row execute function test_import_failure()");

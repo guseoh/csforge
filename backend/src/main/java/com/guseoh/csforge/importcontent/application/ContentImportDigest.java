@@ -21,6 +21,18 @@ public final class ContentImportDigest {
         state.areas().values().stream().sorted(Comparator.comparing(area -> area.getSlug())).forEach(area ->
                 value.append("A|").append(area.getId()).append('|').append(area.getSlug()).append('|')
                         .append(area.isActive()).append('|').append(area.getDisplayOrder()).append('\n'));
+        state.topicSlugConflicts().entrySet().stream().sorted(java.util.Map.Entry.comparingByKey()).forEach(entry -> {
+            Topic topic = entry.getValue();
+            value.append("TS|").append(entry.getKey()).append('|').append(topic.getId()).append('|')
+                    .append(topic.getContentKey()).append('|').append(topic.getTitle()).append('|')
+                    .append(topic.getDisplayOrder()).append('|').append(topic.isActive()).append('\n');
+        });
+        state.conceptSlugConflicts().entrySet().stream().sorted(java.util.Map.Entry.comparingByKey()).forEach(entry -> {
+            Concept concept = entry.getValue();
+            value.append("CS|").append(entry.getKey()).append('|').append(concept.getId()).append('|')
+                    .append(concept.getContentKey()).append('|').append(concept.getTitle()).append('|')
+                    .append(concept.getDisplayOrder()).append('|').append(concept.getStatus()).append('\n');
+        });
         state.topics().values().stream().sorted(Comparator.comparing(Topic::getContentKey)).forEach(t -> {
             value.append("T|").append(t.getContentKey()).append('|').append(t.getSlug()).append('|').append(t.getTitle()).append('|').append(t.getDescription()).append('|').append(t.getDisplayOrder()).append('|').append(t.isActive()).append('\n');
         });
