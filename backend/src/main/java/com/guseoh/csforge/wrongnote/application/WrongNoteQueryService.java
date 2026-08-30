@@ -1,6 +1,7 @@
 package com.guseoh.csforge.wrongnote.application;
 
 import java.nio.charset.StandardCharsets;
+import java.time.Clock;
 import java.time.Instant;
 import java.util.Base64;
 import java.util.LinkedHashMap;
@@ -40,10 +41,12 @@ public class WrongNoteQueryService {
     private final QuestionConceptRepository conceptRepository;
     private final QuestionAnswerRepository answerRepository;
     private final AttemptRepository attemptRepository;
+    private final Clock clock;
 
     @Transactional(readOnly = true)
     public WrongNotePageView list(WrongNoteListCriteria criteria, int page, int size) {
-        Page<WrongNote> result = searchRepository.search(criteria, PageRequest.of(page, size));
+        WrongNoteListCriteria timedCriteria = criteria.at(Instant.now(clock));
+        Page<WrongNote> result = searchRepository.search(timedCriteria, PageRequest.of(page, size));
         List<Long> questionIds = result.getContent().stream().map(note -> note.getQuestion().getId()).toList();
         Map<Long, List<QuestionConcept>> concepts = groupedConcepts(questionIds);
         Map<Long, ReviewSchedule> schedules = scheduleRepository.findByQuestionIdIn(questionIds).stream()
