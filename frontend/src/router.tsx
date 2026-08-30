@@ -1,4 +1,8 @@
-import { Link, createRootRoute, createRoute, createRouter, Outlet } from '@tanstack/react-router'
+import { Link, Outlet, createRootRoute, createRoute, createRouter } from '@tanstack/react-router'
+import { AreaPage } from './pages/AreaPage'
+import { ConceptPage } from './pages/ConceptPage'
+import { LearningPage } from './pages/LearningPage'
+import { parseLearningSearch } from './lib/learning-search'
 
 const navigation = [
   { to: '/', label: 'Dashboard' },
@@ -13,9 +17,7 @@ function AppLayout() {
   return (
     <div className="app-shell">
       <header className="topbar">
-        <Link className="brand" to="/">
-          CSForge
-        </Link>
+        <Link className="brand" to="/">CSForge</Link>
         <span className="environment-badge">LOCAL</span>
       </header>
       <div className="content-layout">
@@ -34,9 +36,7 @@ function AppLayout() {
             ))}
           </nav>
         </aside>
-        <main className="main-content">
-          <Outlet />
-        </main>
+        <main className="main-content"><Outlet /></main>
       </div>
     </div>
   )
@@ -47,19 +47,7 @@ function DashboardPage() {
     <section className="page-card">
       <p className="eyebrow">Welcome to your local workspace</p>
       <h1>Build your CS learning loop.</h1>
-      <p className="lead">
-        The development skeleton is ready. Learning content, quizzes, review, and search will arrive in later tasks.
-      </p>
-      <div className="status-grid">
-        <div className="status-card">
-          <span className="status-label">Backend</span>
-          <strong>Ready for setup</strong>
-        </div>
-        <div className="status-card">
-          <span className="status-label">Content</span>
-          <strong>Nothing imported yet</strong>
-        </div>
-      </div>
+      <p className="lead">Learning data is now available from the Learning navigation. Other study flows arrive in later slices.</p>
     </section>
   )
 }
@@ -67,31 +55,11 @@ function DashboardPage() {
 function PlaceholderPage({ title }: { title: string }) {
   return (
     <section className="page-card">
-      <p className="eyebrow">Coming in a later task</p>
+      <p className="eyebrow">Coming in a later slice</p>
       <h1>{title}</h1>
-      <p className="lead">This navigation entry is reserved for the CSForge learning flow.</p>
+      <p className="lead">This navigation entry is reserved for a future CSForge learning flow.</p>
     </section>
   )
-}
-
-function LearningPage() {
-  return <PlaceholderPage title="Learning" />
-}
-
-function QuizPage() {
-  return <PlaceholderPage title="Quiz" />
-}
-
-function WrongNotesPage() {
-  return <PlaceholderPage title="Wrong Notes" />
-}
-
-function ReviewPage() {
-  return <PlaceholderPage title="Review" />
-}
-
-function SearchPage() {
-  return <PlaceholderPage title="Search" />
 }
 
 function LoadingPage() {
@@ -113,45 +81,38 @@ const rootRoute = createRootRoute({
   notFoundComponent: NotFoundPage,
 })
 
-const indexRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: '/',
-  component: DashboardPage,
-})
+const indexRoute = createRoute({ getParentRoute: () => rootRoute, path: '/', component: DashboardPage })
 
 const learningRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/learning',
+  validateSearch: (search) => parseLearningSearch(search),
   component: LearningPage,
 })
 
-const quizRoute = createRoute({
+const areaRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: '/quiz',
-  component: QuizPage,
+  path: '/learning/$areaSlug',
+  validateSearch: (search) => parseLearningSearch(search),
+  component: AreaPage,
 })
 
-const wrongNotesRoute = createRoute({
+const conceptRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: '/wrong-notes',
-  component: WrongNotesPage,
+  path: '/concepts/$conceptId',
+  component: ConceptPage,
 })
 
-const reviewRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: '/review',
-  component: ReviewPage,
-})
-
-const searchRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: '/search',
-  component: SearchPage,
-})
+const quizRoute = createRoute({ getParentRoute: () => rootRoute, path: '/quiz', component: () => <PlaceholderPage title="Quiz" /> })
+const wrongNotesRoute = createRoute({ getParentRoute: () => rootRoute, path: '/wrong-notes', component: () => <PlaceholderPage title="Wrong Notes" /> })
+const reviewRoute = createRoute({ getParentRoute: () => rootRoute, path: '/review', component: () => <PlaceholderPage title="Review" /> })
+const searchRoute = createRoute({ getParentRoute: () => rootRoute, path: '/search', component: () => <PlaceholderPage title="Search" /> })
 
 const routeTree = rootRoute.addChildren([
   indexRoute,
   learningRoute,
+  areaRoute,
+  conceptRoute,
   quizRoute,
   wrongNotesRoute,
   reviewRoute,

@@ -51,6 +51,7 @@ Pop-Location
 
 Push-Location frontend
 npm ci
+npm run test
 npm run lint
 npm run build
 Pop-Location
