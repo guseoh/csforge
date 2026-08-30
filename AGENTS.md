@@ -121,7 +121,7 @@ Avoid unless a task has a concrete reason:
 Use the smallest structure that cleanly supports the currently approved behavior.
 
 ## 7. Engineering rule: implementation quality and modern stack guardrails
-Code should remain easy for a Java/Spring developer to read and maintain. Do not optimize for shortest agent-generated implementation at the expense of the project structure.
+Code should look like maintainable production Java/Spring code written by a competent team, not like the shortest possible generated implementation. Optimize for clarity, cohesion, changeability, and explicit domain intent.
 
 ### Persistence
 - JPA/Hibernate and Spring Data JPA are the default persistence APIs for canonical application data.
@@ -138,6 +138,47 @@ Code should remain easy for a Java/Spring developer to read and maintain. Do not
 - Prefer domain behavior on entities/value objects when it protects state invariants; avoid anemic setter-driven state mutation.
 - Do not expose JPA entities directly from API controllers.
 
+### Practical object-oriented design
+- Prefer high cohesion and low coupling. A class should have one clear reason to change and should not become a miscellaneous container for unrelated behavior.
+- Encapsulate state changes behind intention-revealing methods such as `complete()`, `markReviewNeeded()`, `bookmark()`, or `recordView()` rather than exposing blanket setters.
+- Protect domain invariants where the state lives. If an object can prevent an invalid transition itself, do not scatter the same validation across controllers and services.
+- Prefer telling an object to perform domain behavior over repeatedly extracting its state and making decisions elsewhere when that behavior naturally belongs to the object.
+- Prefer composition over inheritance. Use inheritance only when there is a real stable is-a relationship and polymorphic behavior benefits from it.
+- Depend on abstractions at meaningful boundaries, but do not create an interface for every class. Introduce an interface when there are multiple implementations, an external boundary, a testing seam with real value, or a likely architectural substitution point.
+- Prefer immutable values where practical. Use `record` for DTOs/value carriers that are genuinely data-oriented, not as a substitute for domain objects that own behavior and invariants.
+- Use enums for closed domain concepts and place behavior on the enum when that removes duplicated type/state branching cleanly.
+- Avoid primitive obsession when a value has validation, units, formatting, or domain meaning strong enough to justify a value object. Do not create value objects for trivial values with no behavior or invariant.
+- Keep nullability explicit. Prefer required constructor arguments and empty collections over nullable collections. Use `Optional` mainly at return boundaries where absence is meaningful, not as entity fields, DTO fields by default, or method parameters.
+- Prefer constructor injection and `final` dependencies. Avoid field injection.
+- Keep visibility as narrow as practical. Do not make types/methods public solely for convenience if package-private or private better expresses the boundary.
+- Avoid static mutable state and utility classes that accumulate domain logic. Stateless technical helpers are fine when they are genuinely cross-cutting and cohesive.
+
+### Design pattern usage
+- Apply SOLID and common design patterns as problem-solving tools, not as ceremony.
+- Before adding Strategy, Factory, Template Method, Chain of Responsibility, Adapter, Facade, Specification, State, or another pattern, identify the concrete variation, boundary, or complexity it addresses.
+- Use Strategy/polymorphism when behavior meaningfully varies by type or policy and branching would otherwise keep growing.
+- Use Factory/factory methods when object creation has invariants, meaningful defaults, or construction policy; do not hide trivial constructors behind factories without benefit.
+- Use Specification or query composition when optional filtering rules need to compose cleanly; do not build a generic specification framework for one fixed query.
+- Use Adapter at external-system/library boundaries when it protects the application from vendor/API details.
+- Use Facade/application service to coordinate a use case, but keep domain rules out of a procedural god service when those rules belong to domain objects.
+- Use State only when state-dependent behavior is substantial enough to justify it; a small enum plus explicit methods is preferable for simple state transitions.
+- Do not force GoF patterns, DDD tactical patterns, or hexagonal/clean architecture structures into simple code merely to appear sophisticated.
+
+### Service and domain behavior
+- Controllers translate HTTP concerns and delegate use cases; they should not contain business rules, persistence logic, or transaction choreography.
+- Application services coordinate a use case and transaction boundary. They may orchestrate repositories and domain objects, but should not become a dumping ground for every validation and branch.
+- Domain entities/value objects own state-specific rules and transitions when those rules are intrinsic to the domain.
+- Repository code owns persistence concerns, not HTTP response shaping or domain workflow decisions.
+- Read-only screen projections may use dedicated query components when needed, but keep them separate from write-side domain behavior and remain within the approved JPA stack.
+- Avoid pass-through methods/classes that only forward arguments without adding a boundary, policy, transaction, or meaningful abstraction.
+
+### Naming and method design
+- Name classes and methods after domain/use-case intent rather than implementation mechanics. Prefer `completeConcept` or `recordConceptView` over generic names such as `process`, `handle`, `executeTask`, or `updateData`.
+- Keep methods focused. Extract a method when it gives a meaningful name to a rule or reduces mixed abstraction levels; do not split straightforward code into tiny methods that make the flow harder to follow.
+- Avoid boolean flag parameters that switch a method between unrelated behaviors. Prefer separate intention-revealing methods or a domain type when the distinction matters.
+- Avoid unexplained magic numbers/strings when they represent domain policy. Use named constants, enums, or configuration at the appropriate boundary.
+- Comments should explain why, trade-offs, or non-obvious constraints. Do not add comments that merely restate readable code.
+
 ### DTO and type naming
 - DTOs must have names that communicate their role and direction. Prefer names such as `ConceptDetailResponse`, `ConceptListItemResponse`, `ConceptProgressUpdateRequest`, `PersonalNoteResponse`, `LearningAreaSummaryResponse` over generic containers such as `LearningDtos`, `Data`, `Result`, `Info`, or `Dto` buckets.
 - Do not place many unrelated request/response/projection records inside one large DTO utility class merely to reduce file count.
@@ -153,6 +194,7 @@ Code should remain easy for a Java/Spring developer to read and maintain. Do not
 - For complex screen-oriented reads, a dedicated JPA projection/query repository is acceptable; it should still have a clear responsibility and not become a catch-all SQL class.
 
 ### Current technology usage
+- Use modern Java features supported by the approved Java version when they improve clarity, but do not chase novelty for its own sake.
 - Do not introduce deprecated APIs, end-of-life libraries, old framework idioms, or superseded Spring configuration styles when the selected stack provides a supported replacement.
 - Do not downgrade or replace an approved technology with an older alternative simply because it is easier for the agent to generate.
 - Before adding a new framework/library, inspect the existing project stack and use a current maintained option compatible with it.
@@ -194,7 +236,7 @@ For every task:
 3. Make only the delta required by the current task plus directly necessary supporting changes.
 4. Preserve existing decisions unless the task explicitly changes them.
 5. Keep changed code formatted according to repository conventions without adding redundant formatting-only work.
-6. Review the changed code for persistence-stack violations, oversized classes/methods, unclear DTO naming, unnecessary nested public types, repeated branching, and responsibility leakage before final validation.
+6. Review the changed code as production Java/Spring code: check persistence-stack compliance, object-oriented responsibility placement, domain invariants, class/method cohesion, DTO/type naming, unnecessary nested public types, repeated branching, misuse or needless use of design patterns, and responsibility leakage.
 7. Run the smallest meaningful validation first, then the broader project validation appropriate to the change.
 8. Report changed behavior, validation results, and any remaining limitation briefly.
 9. Do not commit, push, open a PR, or modify unrelated files unless the task explicitly asks for it.
