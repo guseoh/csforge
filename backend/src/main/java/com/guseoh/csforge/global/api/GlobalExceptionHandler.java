@@ -50,14 +50,14 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiError> handleInsufficientQuestions(
             InsufficientQuestionsException exception,
             HttpServletRequest request) {
-        return error(HttpStatus.UNPROCESSABLE_ENTITY, "QUIZ_INSUFFICIENT_QUESTIONS", exception.getMessage(), request, List.of());
+        return error(HttpStatus.UNPROCESSABLE_CONTENT, "QUIZ_INSUFFICIENT_QUESTIONS", exception.getMessage(), request, List.of());
     }
 
     @ExceptionHandler(NoWrongQuestionsException.class)
     public ResponseEntity<ApiError> handleNoWrongQuestions(
             NoWrongQuestionsException exception,
             HttpServletRequest request) {
-        return error(HttpStatus.UNPROCESSABLE_ENTITY, "QUIZ_NO_WRONG_QUESTIONS", exception.getMessage(), request, List.of());
+        return error(HttpStatus.UNPROCESSABLE_CONTENT, "QUIZ_NO_WRONG_QUESTIONS", exception.getMessage(), request, List.of());
     }
 
     @ExceptionHandler({
