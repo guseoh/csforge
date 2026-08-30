@@ -54,7 +54,7 @@ public class LearningController {
             @RequestParam(required = false) String q,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "30") int size,
-            @RequestParam(defaultValue = "CURRICULUM") ConceptSort sort) {
+            @RequestParam(defaultValue = "CURRICULUM") String sort) {
         return queryService.listConcepts(new ConceptSearchCriteria(
                 area,
                 topicId,
@@ -64,7 +64,7 @@ public class LearningController {
                 q,
                 page,
                 size,
-                sort));
+                ConceptSort.from(sort)));
     }
 
     @GetMapping("/concepts/{conceptId}")
