@@ -1,4 +1,10 @@
 [
   {"kind":"topic","contentKey":"java.core.language-types","areaSlug":"java","slug":"language-types","title":"Java Language & Value Semantics","description":"값, 변수, 변환, 배열, final과 문자열의 언어 의미를 정확히 읽는다","displayOrder":10,"active":true},
-  {"kind":"topic","contentKey":"java.core.object-model","areaSlug":"java","slug":"object-model","title":"Object Creation, State & OOP","description":"객체 생성과 초기화, 캡슐화, 상속, 합성, 다형성과 타입 변환을 이해한다","displayOrder":20,"active":true}
+  {"kind":"topic","contentKey":"java.core.object-model","areaSlug":"java","slug":"object-model","title":"Object Creation, State & OOP","description":"객체 생성과 초기화, 캡슐화, 상속, 합성, 다형성과 타입 변환을 이해한다","displayOrder":20,"active":true},
+  {"kind":"topic","contentKey":"java.core.api-design","areaSlug":"java","slug":"api-design","title":"Object Creation & API Design","description":"생성 API, 의존성 전달, 접근 범위와 메서드 계약을 설계한다","displayOrder":30,"active":true},
+  {"kind":"topic","contentKey":"java.core.object-contracts","areaSlug":"java","slug":"object-contracts","title":"Object Contracts & Ordering","description":"equals, hashCode, toString과 정렬 계약을 일관되게 구현한다","displayOrder":40,"active":true},
+  {"kind":"topic","contentKey":"java.core.enum-modeling","areaSlug":"java","slug":"enum-modeling","title":"Enum & Type-safe Modeling","description":"닫힌 값 집합과 enum 전용 컬렉션을 타입 안전하게 모델링한다","displayOrder":50,"active":true},
+  {"kind":"topic","contentKey":"java.core.design-patterns","areaSlug":"java","slug":"design-patterns","title":"Java Design Patterns","description":"실제 변경 축과 협력 경계에 맞춰 작은 디자인 패턴을 선택한다","displayOrder":60,"active":true},
+  {"kind":"topic","contentKey":"java.core.collections","areaSlug":"java","slug":"collections","title":"Collections & Iteration","description":"Java 컬렉션 계약, 구현체, 반복, 순서와 변경 가능성을 선택한다","displayOrder":70,"active":true},
+  {"kind":"topic","contentKey":"java.core.generics","areaSlug":"java","slug":"generics","title":"Generics & Type Safety","description":"제네릭 타입 시스템과 wildcard, erasure, unchecked 위험을 이해한다","displayOrder":80,"active":true}
 ]
