@@ -1,0 +1,205 @@
+name: PR12 final content validation
+
+on:
+  push:
+    branches: [content/java-core-foundation]
+    paths: [.github/workflows/pr12-final-content-validation.yml]
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: content/java-core-foundation
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '25'
+
+      - name: Validate canonical content metadata and questions
+        shell: bash
+        run: |
+          python -m pip install --quiet pyyaml
+          python - <<'PY'
+          import json
+          import re
+          from collections import Counter, defaultdict
+          from pathlib import Path
+          import yaml
+
+          root = Path('content/java')
+          topics = json.loads((root / 'topics.json').read_text(encoding='utf-8'))
+          assert len(topics) == 2
+          assert [t['contentKey'] for t in topics] == ['java.core.language-types', 'java.core.object-model']
+
+          concept_files = sorted(p for p in root.rglob('*.md'))
+          assert len(concept_files) == 22, len(concept_files)
+          concepts = {}
+          refs = []
+          for p in concept_files:
+              text = p.read_text(encoding='utf-8')
+              m = re.match(r'^---\n(.*?)\n---\n', text, re.S)
+              assert m, p
+              meta = yaml.safe_load(m.group(1))
+              assert meta['kind'] == 'concept'
+              assert meta['status'] == 'PUBLISHED'
+              assert meta['level'] in (1, 2, 3)
+              assert meta['topicContentKey'] in {'java.core.language-types', 'java.core.object-model'}
+              key = meta['contentKey']
+              assert key not in concepts
+              concepts[key] = meta
+              refs.extend(meta.get('references', []))
+              for r in meta.get('references', []):
+                  assert r['url'].startswith('https://')
+                  assert r['referenceType'] in {'OFFICIAL','COMPANY_TECH_BLOG','KOREAN_BLOG','BOOK','PAPER','COURSE','OTHER'}
+                  assert r['language'] in {'ko','en'}
+
+          lang = json.loads((root / 'language-types/questions.json').read_text(encoding='utf-8'))
+          obj = json.loads((root / 'object-model/questions.json').read_text(encoding='utf-8'))
+          questions = lang + obj
+          assert len(questions) == 115
+          assert len({q['contentKey'] for q in questions}) == 115
+          assert len({q['promptMarkdown'] for q in questions}) == 115
+
+          difficulty = Counter()
+          answers = Counter()
+          by_concept = defaultdict(Counter)
+          totals = Counter()
+          for q in questions:
+              assert q['questionType'] == 'MULTIPLE_CHOICE'
+              assert q['status'] == 'PUBLISHED'
+              assert len(q['conceptKeys']) == 1
+              concept = q['conceptKeys'][0]
+              assert concept in concepts
+              assert len(q['choices']) == 4
+              assert [c['key'] for c in q['choices']] == ['A','B','C','D']
+              assert [c['displayOrder'] for c in q['choices']] == [0,1,2,3]
+              assert len({c['content'] for c in q['choices']}) == 4
+              assert q['correctChoiceKey'] in {'A','B','C','D'}
+              difficulty[q['difficulty']] += 1
+              answers[q['correctChoiceKey']] += 1
+              by_concept[concept][q['difficulty']] += 1
+              totals[concept] += 1
+
+          assert difficulty == Counter({'MEDIUM': 56, 'EASY': 35, 'HARD': 24}), difficulty
+          assert answers == Counter({'A': 31, 'D': 29, 'C': 29, 'B': 26}), answers
+          assert len(by_concept) == 22
+          for concept in concepts:
+              assert totals[concept] >= 3
+              for d in ('EASY','MEDIUM','HARD'):
+                  assert by_concept[concept][d] >= 1, (concept, by_concept[concept])
+
+          ref_types = Counter(r['referenceType'] for r in refs)
+          unique_urls = len({r['url'] for r in refs})
+          assert len(refs) == 49, len(refs)
+          assert unique_urls == 18, unique_urls
+          assert ref_types['COMPANY_TECH_BLOG'] == 4
+
+          lines = [
+              '### Final Java Pack content validation',
+              '',
+              '- Topics: **2**',
+              '- Concepts: **22**',
+              '- Questions: **115 MULTIPLE_CHOICE**',
+              f'- Difficulty: **EASY {difficulty["EASY"]} / MEDIUM {difficulty["MEDIUM"]} / HARD {difficulty["HARD"]}**',
+              f'- Correct answer position: **A {answers["A"]} / B {answers["B"]} / C {answers["C"]} / D {answers["D"]}**',
+              f'- References: **{len(refs)} links / {unique_urls} unique URLs**; OFFICIAL {ref_types["OFFICIAL"]}, COMPANY_TECH_BLOG {ref_types["COMPANY_TECH_BLOG"]}',
+              '- Every Concept: EASY >= 1, MEDIUM >= 1, HARD >= 1',
+              '- Duplicate question prompts: 0',
+              '- Question keys / Concept links / 4-choice single-answer contract: PASS',
+              '',
+              'Per-Concept E/M/H:',
+          ]
+          for concept in sorted(by_concept):
+              c = by_concept[concept]
+              lines.append(f'- `{concept}`: E{c["EASY"]} / M{c["MEDIUM"]} / H{c["HARD"]} ({totals[concept]})')
+          Path('/tmp/report.md').write_text('\n'.join(lines) + '\n', encoding='utf-8')
+          print(Path('/tmp/report.md').read_text(encoding='utf-8'))
+          PY
+
+      - name: Compile and execute Java 25 high-risk examples
+        shell: bash
+        run: |
+          cat > /tmp/ReviewSnippets.java <<'JAVA'
+          public class ReviewSnippets {
+              static class SuperType {
+                  SuperType() { check(); }
+                  void check() { }
+              }
+
+              static class BetterSub extends SuperType {
+                  final int x;
+                  BetterSub(int x) {
+                      this.x = x;
+                      super();
+                  }
+                  @Override void check() {
+                      if (x != 42) throw new AssertionError("early field assignment: " + x);
+                  }
+              }
+
+              static class A {
+                  String value = "A";
+                  String label() { return value; }
+              }
+              static class B extends A {
+                  String value = "B";
+                  @Override String label() { return value; }
+              }
+
+              static class C {
+                  static int s = 1;
+                  int i = s++;
+                  void inc() { i++; s++; }
+              }
+
+              public static void main(String[] args) {
+                  BetterSub sub = new BetterSub(42);
+                  if (sub.x != 42) throw new AssertionError();
+
+                  A a = new B();
+                  if (!(a.value + a.label()).equals("AB")) throw new AssertionError("dispatch");
+
+                  C.s = 1;
+                  C first = new C();
+                  C second = new C();
+                  first.inc();
+                  if (first.i != 2 || second.i != 2 || C.s != 4) throw new AssertionError("static");
+
+                  int big = 1_234_567_890;
+                  float approx = big;
+                  if (big == (int) approx) throw new AssertionError("expected int->float precision loss");
+
+                  String literal = "ja" + "va";
+                  String part = "ja";
+                  String runtime = part + "va";
+                  if (literal != "java") throw new AssertionError("constant interning");
+                  if (runtime == "java") throw new AssertionError("runtime concatenation identity");
+
+                  Object value = "java";
+                  if (value instanceof String text) {
+                      value = Integer.valueOf(1);
+                      if (text.length() != 4) throw new AssertionError("pattern binding");
+                  }
+                  System.out.println("Java 25 snippets PASS");
+              }
+          }
+          JAVA
+          javac --release 25 -d /tmp /tmp/ReviewSnippets.java
+          java -cp /tmp ReviewSnippets
+
+      - name: Repository diff validation
+        run: git diff --check
+
+      - name: Post validation report to PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          printf '\n- Java 25 compile/execute high-risk snippets: **PASS**\n- `git diff --check`: **PASS**\n' >> /tmp/report.md
+          gh api repos/${GITHUB_REPOSITORY}/issues/12/comments -F body=@/tmp/report.md
