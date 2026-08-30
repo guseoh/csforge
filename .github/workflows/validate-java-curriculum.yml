@@ -1,0 +1,96 @@
+name: Validate Java Curriculum
+
+on:
+  push:
+    branches:
+      - content/java-curriculum-foundation
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate Java curriculum YAML
+        shell: bash
+        run: |
+          python -m pip install --disable-pip-version-check pyyaml
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          import yaml
+
+          path = Path('content/curriculum/java.yaml')
+          data = yaml.safe_load(path.read_text(encoding='utf-8'))
+
+          assert data['schemaVersion'] == 2, data['schemaVersion']
+          assert data['area']['key'] == 'java'
+          assert data['area']['baseline'] == 'Java SE 25'
+
+          topics = data['topics']
+          assert len(topics) == 18, len(topics)
+          assert [topic['order'] for topic in topics] == list(range(10, 181, 10))
+
+          topic_keys = [topic['key'] for topic in topics]
+          assert len(topic_keys) == len(set(topic_keys)), 'duplicate topic key'
+
+          concepts = [concept for topic in topics for concept in topic['concepts']]
+          assert len(concepts) == 145, len(concepts)
+          concept_keys = [concept['key'] for concept in concepts]
+          assert len(concept_keys) == len(set(concept_keys)), 'duplicate concept key'
+          concept_key_set = set(concept_keys)
+
+          allowed_levels = {1, 2, 3}
+          allowed_density = {'CORE', 'STANDARD'}
+          allowed_visualization = {'NONE', 'TEXT', 'DIAGRAM'}
+
+          for topic in topics:
+              assert topic.get('title')
+              assert topic.get('scope')
+              assert topic.get('boundary')
+              orders = [concept['order'] for concept in topic['concepts']]
+              assert orders == sorted(orders), f"unstable concept order: {topic['key']}"
+              assert len(orders) == len(set(orders)), f"duplicate concept order: {topic['key']}"
+
+              for concept in topic['concepts']:
+                  assert concept['key'].startswith(topic['key'] + '.'), concept['key']
+                  assert concept.get('title'), concept['key']
+                  assert concept.get('objective'), concept['key']
+                  assert concept['level'] in allowed_levels, concept['key']
+                  assert concept['density'] in allowed_density, concept['key']
+                  assert concept['visualization'] in allowed_visualization, concept['key']
+                  if concept['visualization'] != 'NONE':
+                      assert concept.get('visualizationNote'), concept['key']
+                  for prerequisite in concept.get('prerequisites', []):
+                      assert prerequisite in concept_key_set, (concept['key'], prerequisite)
+                      assert prerequisite != concept['key'], concept['key']
+
+          graph = {
+              concept['key']: concept.get('prerequisites', [])
+              for concept in concepts
+          }
+          visiting = set()
+          visited = set()
+
+          def visit(node):
+              if node in visited:
+                  return
+              assert node not in visiting, f'prerequisite cycle at {node}'
+              visiting.add(node)
+              for dependency in graph[node]:
+                  visit(dependency)
+              visiting.remove(node)
+              visited.add(node)
+
+          for key in graph:
+              visit(key)
+
+          readme = Path('content/curriculum/README.md').read_text(encoding='utf-8')
+          assert '18 Topics / 145 Concepts' in readme
+          assert 'schemaVersion`은 `2`' in readme
+
+          boundaries = data.get('boundaries', [])
+          boundary_areas = [item['area'] for item in boundaries]
+          assert len(boundary_areas) == len(set(boundary_areas)), 'duplicate LearningArea boundary'
+
+          print(f'validated topics={len(topics)} concepts={len(concepts)} prerequisites=acyclic')
+          PY
