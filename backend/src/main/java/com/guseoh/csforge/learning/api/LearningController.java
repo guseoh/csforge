@@ -1,7 +1,6 @@
 package com.guseoh.csforge.learning.api;
 
 import java.util.List;
-import java.util.Locale;
 
 import jakarta.validation.Valid;
 
@@ -15,102 +14,80 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.guseoh.csforge.learning.application.LearningBadRequestException;
-import com.guseoh.csforge.learning.application.LearningService;
+import com.guseoh.csforge.learning.application.ConceptSearchCriteria;
+import com.guseoh.csforge.learning.application.ConceptSort;
+import com.guseoh.csforge.learning.application.LearningCommandService;
+import com.guseoh.csforge.learning.application.LearningQueryService;
 import com.guseoh.csforge.learning.domain.LearningStatus;
-import com.guseoh.csforge.learning.infrastructure.LearningQueryRepository.ConceptFilter;
 
 @RestController
 @RequestMapping("/api")
 public class LearningController {
 
-    private final LearningService learningService;
+    private final LearningQueryService queryService;
+    private final LearningCommandService commandService;
 
-    public LearningController(LearningService learningService) {
-        this.learningService = learningService;
+    public LearningController(
+            LearningQueryService queryService,
+            LearningCommandService commandService) {
+        this.queryService = queryService;
+        this.commandService = commandService;
     }
 
     @GetMapping("/learning-areas")
-    public List<LearningDtos.AreaSummary> listAreas() {
-        return learningService.listAreas();
+    public List<LearningAreaSummaryResponse> listAreas() {
+        return queryService.listAreas();
     }
 
     @GetMapping("/learning-areas/{areaSlug}")
-    public LearningDtos.AreaDetail getArea(@PathVariable String areaSlug) {
-        return learningService.getArea(areaSlug);
+    public LearningAreaDetailResponse getArea(@PathVariable String areaSlug) {
+        return queryService.getArea(areaSlug);
     }
 
     @GetMapping("/concepts")
-    public LearningDtos.ConceptPage listConcepts(
+    public ConceptPageResponse listConcepts(
             @RequestParam(required = false) String area,
-            @RequestParam(required = false) Long topic,
+            @RequestParam(name = "topic", required = false) Long topicId,
             @RequestParam(required = false) Short level,
-            @RequestParam(required = false) String learningStatus,
+            @RequestParam(required = false) LearningStatus learningStatus,
             @RequestParam(required = false) Boolean bookmarked,
             @RequestParam(required = false) String q,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "30") int size,
-            @RequestParam(defaultValue = "CURRICULUM") String sort) {
-        ConceptFilter filter = new ConceptFilter(
-                blankToNull(area),
-                topic,
+            @RequestParam(defaultValue = "CURRICULUM") ConceptSort sort) {
+        return queryService.listConcepts(new ConceptSearchCriteria(
+                area,
+                topicId,
                 level,
-                parseLearningStatus(learningStatus),
+                learningStatus,
                 bookmarked,
-                blankToNull(q),
+                q,
                 page,
                 size,
-                parseSort(sort));
-        return learningService.listConcepts(filter);
+                sort));
     }
 
     @GetMapping("/concepts/{conceptId}")
-    public LearningDtos.ConceptDetail getConcept(@PathVariable long conceptId) {
-        return learningService.getConcept(conceptId);
+    public ConceptDetailResponse getConcept(@PathVariable long conceptId) {
+        return queryService.getConcept(conceptId);
     }
 
     @PostMapping("/concepts/{conceptId}/view")
-    public LearningDtos.ProgressResponse recordView(@PathVariable long conceptId) {
-        return learningService.recordView(conceptId);
+    public ConceptProgressResponse recordView(@PathVariable long conceptId) {
+        return commandService.recordView(conceptId);
     }
 
     @PatchMapping("/concepts/{conceptId}/progress")
-    public LearningDtos.ProgressResponse updateProgress(
+    public ConceptProgressResponse updateProgress(
             @PathVariable long conceptId,
-            @RequestBody LearningDtos.ProgressUpdateRequest request) {
-        return learningService.updateProgress(conceptId, request.status(), request.bookmarked());
+            @RequestBody ConceptProgressUpdateRequest request) {
+        return commandService.updateProgress(conceptId, request.status(), request.bookmarked());
     }
 
     @PutMapping("/concepts/{conceptId}/note")
-    public LearningDtos.NoteResponse upsertNote(
+    public PersonalNoteResponse upsertNote(
             @PathVariable long conceptId,
-            @Valid @RequestBody LearningDtos.NoteUpsertRequest request) {
-        return learningService.upsertNote(conceptId, request.content());
-    }
-
-    private LearningStatus parseLearningStatus(String value) {
-        if (value == null || value.isBlank()) {
-            return null;
-        }
-        try {
-            return LearningStatus.valueOf(value.trim().toUpperCase(Locale.ROOT));
-        } catch (IllegalArgumentException exception) {
-            throw new LearningBadRequestException("Unsupported learningStatus: " + value);
-        }
-    }
-
-    private ConceptSort parseSort(String value) {
-        if (value == null || value.isBlank()) {
-            return ConceptSort.CURRICULUM;
-        }
-        try {
-            return ConceptSort.valueOf(value.trim().toUpperCase(Locale.ROOT));
-        } catch (IllegalArgumentException exception) {
-            throw new LearningBadRequestException("Unsupported sort: " + value);
-        }
-    }
-
-    private String blankToNull(String value) {
-        return value == null || value.isBlank() ? null : value.trim();
+            @Valid @RequestBody PersonalNoteUpsertRequest request) {
+        return commandService.upsertNote(conceptId, request.content());
     }
 }
