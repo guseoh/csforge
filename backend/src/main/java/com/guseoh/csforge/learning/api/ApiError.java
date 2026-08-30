@@ -9,8 +9,5 @@ public record ApiError(
         String code,
         String message,
         String path,
-        List<FieldViolation> fieldErrors) {
-
-    public record FieldViolation(String field, String message) {
-    }
+        List<FieldViolationResponse> fieldErrors) {
 }
