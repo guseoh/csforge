@@ -1,9 +1,4 @@
 [
-  {"kind":"topic","contentKey":"java.core.language-types","areaSlug":"java","slug":"language-types","title":"Java 언어와 타입","description":"값, 변수, 참조, 문자열을 이해해 Java 코드를 정확히 읽고 쓰는 기초","displayOrder":10,"active":true},
-  {"kind":"topic","contentKey":"java.core.object-model","areaSlug":"java","slug":"object-model","title":"객체 모델과 객체지향","description":"객체 생성, 캡슐화, 상속, 다형성, Object 계약을 실전 관점에서 익힌다","displayOrder":20,"active":true},
-  {"kind":"topic","contentKey":"java.core.collections-generics","areaSlug":"java","slug":"collections-generics","title":"컬렉션과 제네릭","description":"컬렉션 계약과 구현 선택, 해싱, 제네릭 타입 안전성을 다룬다","displayOrder":30,"active":true},
-  {"kind":"topic","contentKey":"java.core.exceptions-resources","areaSlug":"java","slug":"exceptions-resources","title":"예외와 리소스 관리","description":"예외 경계와 변환, 자원 소유권, try-with-resources를 이해한다","displayOrder":40,"active":true},
-  {"kind":"topic","contentKey":"java.core.modern-java","areaSlug":"java","slug":"modern-java","title":"Modern Java","description":"람다, Stream, Optional, record와 sealed type을 목적에 맞게 사용한다","displayOrder":50,"active":true},
-  {"kind":"topic","contentKey":"java.core.jvm-runtime","areaSlug":"java","slug":"jvm-runtime","title":"JVM 런타임","description":"소스가 JVM에서 실행되는 과정과 클래스 로딩, 메모리, JIT의 핵심을 익힌다","displayOrder":60,"active":true},
-  {"kind":"topic","contentKey":"java.core.concurrency","areaSlug":"java","slug":"concurrency","title":"Java 동시성","description":"스레드, 공유 상태, 가시성, 원자성, 실행기와 virtual thread를 구분한다","displayOrder":70,"active":true}
+  {"kind":"topic","contentKey":"java.core.language-types","areaSlug":"java","slug":"language-types","title":"Java Language & Value Semantics","description":"값, 변수, 변환, 배열, final과 문자열의 언어 의미를 정확히 읽는다","displayOrder":10,"active":true},
+  {"kind":"topic","contentKey":"java.core.object-model","areaSlug":"java","slug":"object-model","title":"Object Creation, State & OOP","description":"객체 생성과 초기화, 캡슐화, 상속, 합성, 다형성과 타입 변환을 이해한다","displayOrder":20,"active":true}
 ]
