@@ -19,6 +19,12 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 
 import com.guseoh.csforge.learning.application.LearningBadRequestException;
 import com.guseoh.csforge.learning.application.LearningNotFoundException;
+import com.guseoh.csforge.quiz.application.InsufficientQuestionsException;
+import com.guseoh.csforge.quiz.application.NoWrongQuestionsException;
+import com.guseoh.csforge.quiz.application.QuizNotFoundException;
+import com.guseoh.csforge.quiz.domain.QuizAnswerException;
+import com.guseoh.csforge.quiz.domain.QuizExpiredException;
+import com.guseoh.csforge.quiz.domain.QuizInvalidStateException;
 
 @RestControllerAdvice
 public class LearningExceptionHandler {
@@ -32,8 +38,31 @@ public class LearningExceptionHandler {
         return error(HttpStatus.NOT_FOUND, "LEARNING_NOT_FOUND", exception.getMessage(), request, List.of());
     }
 
+    @ExceptionHandler(QuizNotFoundException.class)
+    public ResponseEntity<ApiError> handleQuizNotFound(
+            QuizNotFoundException exception,
+            HttpServletRequest request) {
+        return error(HttpStatus.NOT_FOUND, "QUIZ_NOT_FOUND", exception.getMessage(), request, List.of());
+    }
+
+    @ExceptionHandler(InsufficientQuestionsException.class)
+    public ResponseEntity<ApiError> handleInsufficientQuestions(
+            InsufficientQuestionsException exception,
+            HttpServletRequest request) {
+        return error(HttpStatus.UNPROCESSABLE_ENTITY, "QUIZ_INSUFFICIENT_QUESTIONS", exception.getMessage(), request, List.of());
+    }
+
+    @ExceptionHandler(NoWrongQuestionsException.class)
+    public ResponseEntity<ApiError> handleNoWrongQuestions(
+            NoWrongQuestionsException exception,
+            HttpServletRequest request) {
+        return error(HttpStatus.UNPROCESSABLE_ENTITY, "QUIZ_NO_WRONG_QUESTIONS", exception.getMessage(), request, List.of());
+    }
+
     @ExceptionHandler({
             LearningBadRequestException.class,
+            QuizAnswerException.class,
+            IllegalArgumentException.class,
             MethodArgumentTypeMismatchException.class,
             MissingServletRequestParameterException.class,
             HttpMessageNotReadableException.class
@@ -43,6 +72,20 @@ public class LearningExceptionHandler {
                 ? "Request contains an invalid value"
                 : exception.getMessage();
         return error(HttpStatus.BAD_REQUEST, "INVALID_REQUEST", message, request, List.of());
+    }
+
+    @ExceptionHandler(QuizExpiredException.class)
+    public ResponseEntity<ApiError> handleQuizExpired(
+            QuizExpiredException exception,
+            HttpServletRequest request) {
+        return error(HttpStatus.CONFLICT, "QUIZ_EXPIRED", exception.getMessage(), request, List.of());
+    }
+
+    @ExceptionHandler(QuizInvalidStateException.class)
+    public ResponseEntity<ApiError> handleQuizState(
+            QuizInvalidStateException exception,
+            HttpServletRequest request) {
+        return error(HttpStatus.CONFLICT, "QUIZ_INVALID_STATE", exception.getMessage(), request, List.of());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

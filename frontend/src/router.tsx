@@ -3,6 +3,10 @@ import { AreaPage } from './pages/AreaPage'
 import { ConceptPage } from './pages/ConceptPage'
 import { LearningPage } from './pages/LearningPage'
 import { parseLearningSearch } from './lib/learning-search'
+import { parseQuizSearch } from './lib/quiz-search'
+import { QuizResultPage } from './pages/QuizResultPage'
+import { QuizSessionPage } from './pages/QuizSessionPage'
+import { QuizSetupPage } from './pages/QuizSetupPage'
 
 const navigation = [
   { to: '/', label: 'Dashboard' },
@@ -103,7 +107,14 @@ const conceptRoute = createRoute({
   component: ConceptPage,
 })
 
-const quizRoute = createRoute({ getParentRoute: () => rootRoute, path: '/quiz', component: () => <PlaceholderPage title="Quiz" /> })
+const quizRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/quiz',
+  validateSearch: (search) => parseQuizSearch(search),
+  component: QuizSetupPage,
+})
+const quizSessionRoute = createRoute({ getParentRoute: () => rootRoute, path: '/quiz/$quizId', component: QuizSessionPage })
+const quizResultRoute = createRoute({ getParentRoute: () => rootRoute, path: '/quiz/$quizId/result', component: QuizResultPage })
 const wrongNotesRoute = createRoute({ getParentRoute: () => rootRoute, path: '/wrong-notes', component: () => <PlaceholderPage title="Wrong Notes" /> })
 const reviewRoute = createRoute({ getParentRoute: () => rootRoute, path: '/review', component: () => <PlaceholderPage title="Review" /> })
 const searchRoute = createRoute({ getParentRoute: () => rootRoute, path: '/search', component: () => <PlaceholderPage title="Search" /> })
@@ -114,6 +125,8 @@ const routeTree = rootRoute.addChildren([
   areaRoute,
   conceptRoute,
   quizRoute,
+  quizSessionRoute,
+  quizResultRoute,
   wrongNotesRoute,
   reviewRoute,
   searchRoute,
