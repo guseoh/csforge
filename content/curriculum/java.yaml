@@ -1,0 +1,980 @@
+schemaVersion: 1
+
+area:
+  key: java
+  title: Java
+  baseline: "Java SE 25"
+  contentKeyPrefix: java.core
+  status: CANONICAL_FOUNDATION
+
+policies:
+  source:
+    primary:
+      - "Java SE 25 JLS"
+      - "Java SE 25 JVMS"
+      - "Java SE 25 API and Oracle Java guides"
+      - "Applicable OpenJDK JEPs and project documentation"
+    supporting: "Established Java/JVM books and verified Korean/company engineering material may provide discovery and practical context."
+    versionRule: "Runtime and implementation claims must be checked against current Java SE 25 material and must distinguish language, JVM, JDK/HotSpot, and OS behavior."
+    urlRule: "Record only references that were actually verified; never invent a URL."
+  question:
+    everyConcept:
+      minimumByDifficulty: "EASY >= 1, MEDIUM >= 1, HARD >= 1"
+      minimumTotal: 3
+    density:
+      CORE: "roughly 5-8 questions; multiple questions at a useful difficulty are encouraged"
+      STANDARD: "roughly 3-5 questions"
+    difficulty:
+      EASY: "Directly checks the essential principle after study."
+      MEDIUM: "Requires one further reasoning step such as code prediction, comparison, or misconception diagnosis."
+      HARD: "Combines conditions in code, debugging, API design, JVM/concurrency reasoning, or a realistic backend situation; it is not obscure trivia."
+    form: "Multiple-choice first for the fast loop; SHORT_ANSWER, DESCRIPTIVE, and SCENARIO are supplemental where they add value."
+  visualization:
+    default: false
+    rule: "Use true only when relationships, state transitions, or execution order are materially clearer as a diagram or text/ASCII visualization."
+
+topics:
+  - key: java.core.language-types
+    title: "Java Language & Value Semantics"
+    order: 10
+    scope: "Java values, variables, conversions, identity, and the semantics needed to read ordinary code."
+    boundary: "Do not teach memory layout as OS/JVM implementation fact; Java object identity and value semantics remain primary."
+    concepts:
+      - key: java.core.language-types.primitive-reference-values
+        title: "Primitive values and reference values"
+        level: 1
+        objective: "Distinguish primitive values and reference values without equating references with guaranteed physical addresses."
+        density: CORE
+        visualization: true
+        visualizationNote: "Show two variables pointing to one object and separate that from primitive value copying."
+      - key: java.core.language-types.variables-scope-definite-assignment
+        title: "Variables, scope, and definite assignment"
+        level: 1
+        objective: "Distinguish fields, local variables, parameters, scope, initialization, and definite assignment."
+        density: CORE
+        visualization: true
+        visualizationNote: "Show a small scope tree and the point at which each variable becomes readable."
+      - key: java.core.language-types.numeric-conversion-overflow
+        title: "Numeric conversion and overflow"
+        level: 1
+        objective: "Predict widening and narrowing conversions, overflow, and numeric promotion behavior."
+        density: STANDARD
+        visualization: false
+      - key: java.core.language-types.boxing-unboxing-wrapper
+        title: "Boxing, unboxing, and wrappers"
+        level: 2
+        objective: "Understand boxing and unboxing, null pitfalls, wrapper equality, and caching misconceptions."
+        density: CORE
+        visualization: false
+      - key: java.core.language-types.pass-by-value
+        title: "Pass-by-value"
+        level: 1
+        objective: "Explain Java's value passing, including copied reference values and separation between caller and parameter variables."
+        density: CORE
+        visualization: true
+        visualizationNote: "Trace a parameter copy and show why reassigning it cannot rebind the caller's variable."
+      - key: java.core.language-types.string-immutability-equality-pool
+        title: "String immutability, equality, and the pool"
+        level: 1
+        objective: "Distinguish String immutability, ==, equals, literals, pooling, interning, and their practical consequences."
+        density: CORE
+        visualization: true
+        visualizationNote: "Contrast object identity links with String content equality and literal reuse."
+
+  - key: java.core.object-model
+    title: "Object Creation, State & OOP"
+    order: 20
+    scope: "Object creation, initialization, encapsulation, subtype relationships, collaboration, and dispatch."
+    boundary: "Spring owns Bean lifecycle and proxy framework behavior; Java owns the language-level object and dispatch mechanisms."
+    concepts:
+      - key: java.core.object-model.class-object-constructor
+        title: "Class, object, and constructor"
+        level: 1
+        objective: "Understand the roles of classes, objects, and constructors and initialize valid object state."
+        density: STANDARD
+        visualization: false
+      - key: java.core.object-model.initialization-order-this-static
+        title: "Initialization order, this, and static state"
+        level: 2
+        objective: "Predict instance and static field, initializer, constructor, and this initialization behavior at a useful level."
+        density: STANDARD
+        visualization: true
+        visualizationNote: "Order the class initialization and instance construction steps on a timeline."
+      - key: java.core.object-model.encapsulation-invariants
+        title: "Encapsulation and invariants"
+        level: 1
+        objective: "Keep state-change rules and invariants with the object instead of exposing generic mutation."
+        density: CORE
+        visualization: false
+      - key: java.core.object-model.abstraction-responsibility
+        title: "Abstraction and responsibility"
+        level: 2
+        objective: "Model what an object promises without leaking unnecessary implementation detail."
+        density: STANDARD
+        visualization: false
+      - key: java.core.object-model.inheritance-is-a
+        title: "Inheritance and is-a relationships"
+        level: 2
+        objective: "Use inheritance only for meaningful subtype relationships and understand its coupling risks."
+        density: STANDARD
+        visualization: true
+        visualizationNote: "Compare an is-a hierarchy with a has-a collaboration graph."
+      - key: java.core.object-model.composition-collaboration
+        title: "Composition and collaboration"
+        level: 2
+        objective: "Prefer replaceable object collaboration and composition when behavior should vary independently."
+        density: CORE
+        visualization: true
+        visualizationNote: "Show a service delegating to a replaceable collaborator rather than inheriting implementation."
+      - key: java.core.object-model.polymorphism-dynamic-dispatch
+        title: "Polymorphism and dynamic dispatch"
+        level: 2
+        objective: "Predict overridden instance-method dispatch and distinguish it from field and static-method lookup."
+        density: CORE
+        visualization: true
+        visualizationNote: "Trace declared type versus runtime type through an overridden method call."
+      - key: java.core.object-model.overload-vs-override
+        title: "Overload versus override"
+        level: 2
+        objective: "Distinguish compile-time overload selection from runtime overriding behavior."
+        density: CORE
+        visualization: false
+      - key: java.core.object-model.interface-vs-abstract-class
+        title: "Interface versus abstract class"
+        level: 2
+        objective: "Select interfaces or abstract classes based on contract, shared state or implementation, and evolution needs."
+        density: STANDARD
+        visualization: false
+      - key: java.core.object-model.immutability-defensive-copy
+        title: "Immutability and defensive copying"
+        level: 2
+        objective: "Design immutable state and protect mutable inputs and outputs when ownership requires defensive copying."
+        density: CORE
+        visualization: true
+        visualizationNote: "Show ownership before and after copying a mutable collection at an API boundary."
+
+  - key: java.core.api-design
+    title: "Object Creation & API Design"
+    order: 30
+    scope: "Creation APIs, dependency boundaries, visibility, and explicit method contracts."
+    boundary: "Spring dependency injection is a later framework topic; this Topic teaches Java construction and API design without container lifecycle."
+    concepts:
+      - key: java.core.api-design.static-factory-method
+        title: "Static factory method"
+        level: 2
+        objective: "Choose named factories when they improve intent, reuse, subtype return flexibility, or creation invariants."
+        density: CORE
+        visualization: false
+      - key: java.core.api-design.builder-pattern-construction
+        title: "Builder pattern construction"
+        level: 2
+        objective: "Use builders for many optional or named parameters without hiding required invariants."
+        density: STANDARD
+        visualization: false
+      - key: java.core.api-design.dependency-injection-construction
+        title: "Dependency injection and construction"
+        level: 2
+        objective: "Prefer explicit dependency construction or injection over hidden global and static dependencies."
+        density: CORE
+        visualization: true
+        visualizationNote: "Contrast explicit constructor dependencies with a hidden global lookup."
+      - key: java.core.api-design.minimize-accessibility-api-surface
+        title: "Minimize accessibility and API surface"
+        level: 2
+        objective: "Keep types and members as narrow as practical and treat API surface as a compatibility cost."
+        density: STANDARD
+        visualization: false
+      - key: java.core.api-design.method-contract-parameter-validation
+        title: "Method contracts and parameter validation"
+        level: 2
+        objective: "Make preconditions, nullability, valid ranges, and failure contracts explicit."
+        density: STANDARD
+        visualization: false
+
+  - key: java.core.object-contracts
+    title: "Object Contracts & Ordering"
+    order: 40
+    scope: "Equality, hashing, diagnostics, and ordering contracts used by Java APIs and collections."
+    boundary: "Collection implementation details belong to Collections & Iteration; this Topic owns object-level contracts that those APIs consume."
+    concepts:
+      - key: java.core.object-contracts.equals-contract
+        title: "equals contract"
+        level: 2
+        objective: "Apply reflexive, symmetric, transitive, consistent, and null behavior while choosing equality state deliberately."
+        density: CORE
+        visualization: false
+      - key: java.core.object-contracts.hashcode-contract
+        title: "hashCode contract"
+        level: 2
+        objective: "Maintain the equals and hashCode relationship and understand its consequences for hash-based collections."
+        density: CORE
+        visualization: true
+        visualizationNote: "Trace equal objects to the same hash lookup region before equality confirmation."
+      - key: java.core.object-contracts.tostring-diagnostics
+        title: "toString and diagnostics"
+        level: 1
+        objective: "Create useful diagnostic strings without treating toString as stable serialization or a security-safe format."
+        density: STANDARD
+        visualization: false
+      - key: java.core.object-contracts.comparable-natural-order
+        title: "Comparable and natural order"
+        level: 2
+        objective: "Define natural ordering consistently and recognize ordering and equality mismatches."
+        density: STANDARD
+        visualization: false
+      - key: java.core.object-contracts.comparator-custom-order
+        title: "Comparator and custom order"
+        level: 2
+        objective: "Compose custom ordering safely and avoid overflow-prone comparison tricks."
+        density: CORE
+        visualization: false
+
+  - key: java.core.enum-modeling
+    title: "Enum & Type-safe Modeling"
+    order: 50
+    scope: "Closed value sets, enum behavior, and enum-specialized collection APIs."
+    boundary: "Database owns persistence schema choices; Java owns enum behavior and the hazards of exposing ordinal as external identity."
+    concepts:
+      - key: java.core.enum-modeling.enum-closed-values-behavior
+        title: "Enum closed values and behavior"
+        level: 1
+        objective: "Model closed value sets with enum and attach behavior when that improves cohesion."
+        density: CORE
+        visualization: false
+      - key: java.core.enum-modeling.enum-ordinal-name-persistence
+        title: "Enum ordinal, name, and persistence"
+        level: 2
+        objective: "Understand why ordinal is unstable external identity and why persistence and serialization choices matter."
+        density: STANDARD
+        visualization: false
+      - key: java.core.enum-modeling.enumset
+        title: "EnumSet"
+        level: 2
+        objective: "Use EnumSet for compact, type-safe enum sets when the domain fits."
+        density: STANDARD
+        visualization: false
+      - key: java.core.enum-modeling.enummap
+        title: "EnumMap"
+        level: 2
+        objective: "Use EnumMap for enum-keyed mappings instead of generic maps when the domain fits."
+        density: STANDARD
+        visualization: false
+
+  - key: java.core.design-patterns
+    title: "Java Design Patterns"
+    order: 60
+    scope: "Small, practical object-design patterns used to isolate real variation and protect boundaries."
+    boundary: "Patterns are Java design tools, not a duplicate of Spring framework behavior or an excuse for a generic architecture."
+    concepts:
+      - key: java.core.design-patterns.strategy-pattern
+        title: "Strategy pattern"
+        level: 2
+        objective: "Replace growing policy or type branching with interchangeable behavior when variation is real."
+        density: CORE
+        visualization: true
+        visualizationNote: "Show one use case selecting interchangeable policy objects behind a stable contract."
+      - key: java.core.design-patterns.template-method-pattern
+        title: "Template Method pattern"
+        level: 2
+        objective: "Share an algorithm skeleton while varying selected steps and understand the inheritance trade-off."
+        density: STANDARD
+        visualization: false
+      - key: java.core.design-patterns.factory-pattern
+        title: "Factory pattern"
+        level: 2
+        objective: "Centralize meaningful implementation selection without turning every constructor into a factory framework."
+        density: STANDARD
+        visualization: false
+      - key: java.core.design-patterns.adapter-pattern
+        title: "Adapter pattern"
+        level: 2
+        objective: "Protect application code from incompatible external or library interfaces."
+        density: CORE
+        visualization: true
+        visualizationNote: "Map a foreign interface to the application-facing port at one boundary."
+      - key: java.core.design-patterns.decorator-and-proxy-patterns
+        title: "Decorator and proxy patterns"
+        level: 2
+        objective: "Distinguish wrapping for added behavior from access control or interception and connect this foundation to later Spring learning."
+        density: CORE
+        visualization: true
+        visualizationNote: "Compare a call passing through a decorator chain with a proxy controlling access."
+      - key: java.core.design-patterns.observer-and-state-patterns
+        title: "Observer and State patterns"
+        level: 2
+        objective: "Understand event observation and state-dependent behavior, including when simpler alternatives are better."
+        density: STANDARD
+        visualization: false
+
+  - key: java.core.collections-generics
+    title: "Collections & Iteration"
+    order: 70
+    scope: "Collection contracts, implementations, iteration, ordering, and practical lookup or queue choices."
+    boundary: "Data Structures & Algorithms owns algorithm theory; Java owns collection APIs and implementation trade-offs used by algorithms."
+    concepts:
+      - key: java.core.collections-generics.list-set-map-contracts
+        title: "List, Set, and Map contracts"
+        level: 1
+        objective: "Select collection abstractions from order, duplication, lookup, and mapping requirements."
+        density: CORE
+        visualization: false
+      - key: java.core.collections-generics.arraylist-linkedlist-tradeoff
+        title: "ArrayList and LinkedList trade-offs"
+        level: 2
+        objective: "Compare access, traversal, insertion, removal, allocation, and locality without folklore."
+        density: CORE
+        visualization: true
+        visualizationNote: "Contrast contiguous storage with linked nodes for access and insertion paths."
+      - key: java.core.collections-generics.hashmap-hashing-collision
+        title: "HashMap hashing and collision"
+        level: 2
+        objective: "Follow hash, candidate bucket, collision handling, and equality while recognizing mutable-key hazards."
+        density: CORE
+        visualization: true
+        visualizationNote: "Diagram hash-to-bucket lookup, collision comparison, and the effect of a mutated key."
+      - key: java.core.collections-generics.hashset-set-semantics
+        title: "HashSet and Set semantics"
+        level: 2
+        objective: "Connect Set uniqueness to equality and hash contracts."
+        density: STANDARD
+        visualization: false
+      - key: java.core.collections-generics.sorted-collections-tree
+        title: "Sorted collections and tree structures"
+        level: 2
+        objective: "Understand TreeMap and TreeSet ordering requirements and comparison-contract pitfalls."
+        density: STANDARD
+        visualization: false
+      - key: java.core.collections-generics.queue-deque-arraydeque
+        title: "Queue, Deque, and ArrayDeque"
+        level: 1
+        objective: "Use queue, deque, and stack operations appropriately, including ArrayDeque as a strong default for many cases."
+        density: CORE
+        visualization: false
+      - key: java.core.collections-generics.priorityqueue
+        title: "PriorityQueue"
+        level: 2
+        objective: "Understand heap-backed priority retrieval and top-element semantics without confusing it with globally sorted iteration."
+        density: CORE
+        visualization: true
+        visualizationNote: "Show the heap property and why iterating a PriorityQueue is not sorted traversal."
+      - key: java.core.collections-generics.iterable-iterator-foreach-modification
+        title: "Iterable, Iterator, foreach, and modification"
+        level: 2
+        objective: "Explain Iterable, Iterator, enhanced for, and safe modification or fail-fast behavior at the contract level."
+        density: CORE
+        visualization: true
+        visualizationNote: "Trace the iterator cursor and the structural modification check."
+
+  - key: java.core.generics
+    title: "Generics & Type Safety"
+    order: 80
+    scope: "Generic declarations, variance, wildcards, erasure, and compile-time type safety."
+    boundary: "This Topic owns Java type-system behavior; JVM runtime data areas and bytecode mechanics belong to JVM Runtime."
+    concepts:
+      - key: java.core.generics.generic-types-methods
+        title: "Generic types and methods"
+        level: 1
+        objective: "Use generic classes and methods to express reusable compile-time type safety."
+        density: CORE
+        visualization: false
+      - key: java.core.generics.generic-invariance
+        title: "Generic invariance"
+        level: 2
+        objective: "Explain why List<Integer> is not a subtype of List<Number>."
+        density: CORE
+        visualization: true
+        visualizationNote: "Show the unsafe write that would result from treating invariant lists as covariant."
+      - key: java.core.generics.wildcards-pecs
+        title: "Wildcards and PECS"
+        level: 2
+        objective: "Use bounded wildcards based on producer or consumer direction without adding wildcards mechanically."
+        density: CORE
+        visualization: false
+      - key: java.core.generics.raw-types-unchecked
+        title: "Raw types and unchecked operations"
+        level: 2
+        objective: "Recognize the type-safety loss caused by raw types and unchecked conversions."
+        density: STANDARD
+        visualization: false
+      - key: java.core.generics.type-erasure-reifiable-types
+        title: "Type erasure and reifiable types"
+        level: 3
+        objective: "Understand erased generic information and the practical restrictions it creates without turning this into a full JVM implementation course."
+        density: CORE
+        visualization: true
+        visualizationNote: "Separate compile-time generic views from the runtime type information that remains."
+      - key: java.core.generics.generic-varargs-heap-pollution
+        title: "Generic varargs and heap pollution"
+        level: 3
+        objective: "Explain generic varargs hazards, heap pollution, and appropriate SafeVarargs use."
+        density: STANDARD
+        visualization: false
+
+  - key: java.core.exceptions-resources
+    title: "Exceptions & Resource Management"
+    order: 90
+    scope: "Exception taxonomy, propagation and translation, failed-operation boundaries, and resource ownership."
+    boundary: "Database owns transaction and isolation semantics; Java owns exception/resource contracts around calls to such systems."
+    concepts:
+      - key: java.core.exceptions-resources.throwable-checked-unchecked-error
+        title: "Throwable, checked, unchecked, and Error"
+        level: 1
+        objective: "Distinguish Throwable categories and compiler checking without simplistic checked-good or unchecked-bad rules."
+        density: CORE
+        visualization: false
+      - key: java.core.exceptions-resources.exception-propagation-catch-boundary
+        title: "Exception propagation and catch boundaries"
+        level: 2
+        objective: "Catch exceptions only where recovery, translation, or response responsibility exists."
+        density: CORE
+        visualization: true
+        visualizationNote: "Mark the layer responsible for recovery, translation, logging, and HTTP response."
+      - key: java.core.exceptions-resources.exception-translation-cause
+        title: "Exception translation and cause"
+        level: 2
+        objective: "Translate low-level failures at meaningful boundaries while preserving causes."
+        density: CORE
+        visualization: false
+      - key: java.core.exceptions-resources.standard-exceptions-contract
+        title: "Standard exceptions and contracts"
+        level: 2
+        objective: "Choose standard exceptions that accurately communicate contract violations."
+        density: STANDARD
+        visualization: false
+      - key: java.core.exceptions-resources.exception-control-flow-failure-atomicity
+        title: "Exception control flow and failure atomicity"
+        level: 2
+        objective: "Avoid exception misuse for ordinary control flow and limit surprising partial state after failed operations when practical."
+        density: STANDARD
+        visualization: false
+      - key: java.core.exceptions-resources.try-with-resources-suppressed
+        title: "Try-with-resources and suppressed exceptions"
+        level: 2
+        objective: "Understand resource closing order and suppressed exceptions."
+        density: CORE
+        visualization: true
+        visualizationNote: "Show reverse close order and which exception becomes suppressed."
+      - key: java.core.exceptions-resources.autocloseable-resource-ownership
+        title: "AutoCloseable and resource ownership"
+        level: 2
+        objective: "Follow acquire and release ownership contracts rather than memorizing a universal borrowed-resource rule."
+        density: CORE
+        visualization: true
+        visualizationNote: "Show the owner scope that acquires and closes a resource and the boundary that only borrows it."
+
+  - key: java.core.modern-java
+    title: "Lambda & Functional Java"
+    order: 100
+    scope: "Functional interfaces, behavior parameters, lambda typing, capture, and composition."
+    boundary: "Streams and collectors get their own Topic; this Topic focuses on behavior values and lambda language rules."
+    concepts:
+      - key: java.core.modern-java.functional-interface
+        title: "Functional interface"
+        level: 1
+        objective: "Understand the single-abstract-method contract and FunctionalInterface."
+        density: STANDARD
+        visualization: false
+      - key: java.core.modern-java.behavior-parameterization
+        title: "Behavior parameterization"
+        level: 2
+        objective: "Pass behavior explicitly instead of duplicating similar control flow."
+        density: CORE
+        visualization: false
+      - key: java.core.modern-java.lambda-target-typing
+        title: "Lambda target typing"
+        level: 2
+        objective: "Explain how a lambda expression obtains a target functional-interface type."
+        density: CORE
+        visualization: false
+      - key: java.core.modern-java.lambda-capture-effectively-final
+        title: "Lambda capture and effectively final"
+        level: 2
+        objective: "Understand local-variable capture rules and separate them from mutable object state."
+        density: CORE
+        visualization: true
+        visualizationNote: "Contrast a captured local value with mutations inside the referenced object."
+      - key: java.core.modern-java.method-reference-functional-composition
+        title: "Method references and functional composition"
+        level: 2
+        objective: "Use method references and common functional-interface composition when they improve clarity."
+        density: STANDARD
+        visualization: false
+
+  - key: java.core.streams
+    title: "Streams & Collectors"
+    order: 110
+    scope: "Stream pipeline semantics, transformation, reduction, collection, and side-effect boundaries."
+    boundary: "Data Structures & Algorithms owns algorithm theory; Java owns Stream API mechanics. Performance/Operations owns full benchmark and production diagnosis."
+    concepts:
+      - key: java.core.streams.stream-pipeline-laziness
+        title: "Stream pipeline laziness"
+        level: 2
+        objective: "Explain source, intermediate, and terminal operations, laziness, consumption, and short-circuiting."
+        density: CORE
+        visualization: true
+        visualizationNote: "Draw source-to-terminal stages and mark when traversal actually starts."
+      - key: java.core.streams.stream-map-filter-flatmap
+        title: "Stream map, filter, and flatMap"
+        level: 2
+        objective: "Transform, filter, and flatten data while predicting the resulting shapes."
+        density: CORE
+        visualization: true
+        visualizationNote: "Show one-to-one, zero-or-one, and one-to-many element shape changes."
+      - key: java.core.streams.stream-reduce
+        title: "Stream reduce"
+        level: 2
+        objective: "Understand reduction identity and associativity and recognize when a collector or loop is clearer."
+        density: STANDARD
+        visualization: false
+      - key: java.core.streams.collectors-grouping-partitioning
+        title: "Collectors grouping and partitioning"
+        level: 2
+        objective: "Accumulate, group, and partition data without external mutable state."
+        density: CORE
+        visualization: false
+      - key: java.core.streams.tomap-duplicate-keys
+        title: "toMap and duplicate keys"
+        level: 2
+        objective: "Handle duplicate keys and merge policy explicitly when collecting to a map."
+        density: STANDARD
+        visualization: false
+      - key: java.core.streams.stream-side-effects-parallel
+        title: "Stream side effects and parallelism"
+        level: 3
+        objective: "Understand non-interference and statelessness and why parallel streams are not a free performance switch."
+        density: CORE
+        visualization: true
+        visualizationNote: "Contrast a pure pipeline with shared mutable accumulation and parallel interleaving."
+
+  - key: java.core.modern-language
+    title: "Modern Java Language & Modeling"
+    order: 120
+    scope: "Optional, records, sealed types, modern switch/pattern syntax, text blocks, and interface evolution."
+    boundary: "Language syntax and modeling belong here; Spring framework conventions that consume these features remain in the Spring Area."
+    concepts:
+      - key: java.core.modern-language.optional-return-boundary
+        title: "Optional at return boundaries"
+        level: 2
+        objective: "Use Optional mainly to model absence at return boundaries and avoid field or parameter abuse."
+        density: CORE
+        visualization: false
+      - key: java.core.modern-language.record-data-modeling
+        title: "Record data modeling"
+        level: 2
+        objective: "Use records for data-oriented immutable carriers while understanding generated members and constructor invariants."
+        density: CORE
+        visualization: false
+      - key: java.core.modern-language.sealed-types-closed-hierarchy
+        title: "Sealed types and closed hierarchies"
+        level: 2
+        objective: "Model intentionally closed type hierarchies and reason about their permitted subtypes."
+        density: STANDARD
+        visualization: true
+        visualizationNote: "Show the permitted subtype set and exhaustive handling boundary."
+      - key: java.core.modern-language.switch-expressions
+        title: "Switch expressions"
+        level: 1
+        objective: "Use expression-oriented switch safely and understand exhaustiveness and yield."
+        density: STANDARD
+        visualization: false
+      - key: java.core.modern-language.pattern-matching
+        title: "Pattern matching"
+        level: 2
+        objective: "Use stable pattern matching features to reduce unsafe casts while understanding scope and exhaustiveness."
+        density: CORE
+        visualization: false
+      - key: java.core.modern-language.text-blocks
+        title: "Text blocks"
+        level: 1
+        objective: "Use text blocks for multi-line text while understanding indentation and escaping behavior."
+        density: STANDARD
+        visualization: false
+      - key: java.core.modern-language.default-static-interface-methods
+        title: "Default and static interface methods"
+        level: 2
+        objective: "Understand interface evolution, default-method conflict rules, and static interface methods."
+        density: STANDARD
+        visualization: false
+
+  - key: java.core.time-numeric
+    title: "Time & Numeric APIs"
+    order: 130
+    scope: "Java time model, time zones, deterministic clocks, and precise numeric or monetary values."
+    boundary: "Database owns persisted timestamp and transaction policy; Java owns in-process time values, conversions, and numeric API contracts."
+    concepts:
+      - key: java.core.time-numeric.instant-local-zoned-time
+        title: "Instant, local time, and zoned time"
+        level: 2
+        objective: "Distinguish the machine timeline Instant, local calendar time, and zone-aware time."
+        density: CORE
+        visualization: true
+        visualizationNote: "Map an instant to different local representations in different zones."
+      - key: java.core.time-numeric.zoneid-dst
+        title: "ZoneId and daylight saving time"
+        level: 2
+        objective: "Reason about ambiguous and missing local times and daylight saving transitions instead of hard-coding offsets."
+        density: CORE
+        visualization: true
+        visualizationNote: "Show a local clock jump and the two possible interpretations of an overlap."
+      - key: java.core.time-numeric.duration-period
+        title: "Duration and Period"
+        level: 2
+        objective: "Distinguish time-based amounts from date-based amounts."
+        density: STANDARD
+        visualization: false
+      - key: java.core.time-numeric.clock-testable-time
+        title: "Clock and testable time"
+        level: 2
+        objective: "Use Clock when current time affects deterministic policy and testing."
+        density: CORE
+        visualization: false
+      - key: java.core.time-numeric.floating-point-precision
+        title: "Floating-point precision"
+        level: 2
+        objective: "Understand binary floating-point precision limits and comparison pitfalls."
+        density: STANDARD
+        visualization: false
+      - key: java.core.time-numeric.bigdecimal-money-rounding
+        title: "BigDecimal, money, and rounding"
+        level: 2
+        objective: "Construct, round, compare, and model decimal monetary values correctly, including equals versus compareTo."
+        density: CORE
+        visualization: false
+
+  - key: java.core.io-nio
+    title: "Java I/O & NIO"
+    order: 140
+    scope: "Bytes, characters, streams, paths, buffers, channels, and the bounded non-blocking I/O model."
+    boundary: "Network and OS own protocol and syscall theory; Java owns the I/O and NIO abstractions used by Java programs."
+    concepts:
+      - key: java.core.io-nio.byte-character-stream-charset
+        title: "Byte, character stream, and charset"
+        level: 1
+        objective: "Distinguish bytes, characters, charset encoding and decoding, and common mojibake causes."
+        density: CORE
+        visualization: true
+        visualizationNote: "Show bytes crossing an explicit charset boundary into characters."
+      - key: java.core.io-nio.input-output-reader-writer
+        title: "Input/output, Reader, and Writer"
+        level: 1
+        objective: "Choose byte or character I/O abstractions based on the data's meaning."
+        density: STANDARD
+        visualization: false
+      - key: java.core.io-nio.buffered-io
+        title: "Buffered I/O"
+        level: 1
+        objective: "Explain what buffering changes and why many small underlying I/O operations are costly."
+        density: CORE
+        visualization: false
+      - key: java.core.io-nio.path-files-api
+        title: "Path and Files API"
+        level: 2
+        objective: "Use Path and Files for modern file operations and lifecycle or error handling."
+        density: CORE
+        visualization: false
+      - key: java.core.io-nio.nio-channel-buffer
+        title: "NIO Channel and Buffer"
+        level: 2
+        objective: "Understand Channel and Buffer position, limit, capacity, and flip flow at a useful server-developer depth."
+        density: CORE
+        visualization: true
+        visualizationNote: "Diagram the Buffer position-limit-capacity transitions across write and read modes."
+      - key: java.core.io-nio.blocking-nonblocking-selector
+        title: "Blocking, non-blocking, and Selector"
+        level: 3
+        objective: "Understand the Java NIO non-blocking and Selector model sufficiently to reason about event-loop servers without duplicating Network or OS theory."
+        density: CORE
+        visualization: true
+        visualizationNote: "Show one selector coordinating readiness events without assigning one blocking thread per connection."
+
+  - key: java.core.coding-tests
+    title: "Java Coding-Test Toolkit"
+    order: 150
+    scope: "Java implementation tools for coding tests: input, output, sorting, queues, priority, and counting."
+    boundary: "Data Structures & Algorithms owns problem-solving theory; this Topic owns Java APIs and implementation idioms only."
+    concepts:
+      - key: java.core.coding-tests.fast-input-bufferedreader-tokenizer
+        title: "Fast input with BufferedReader and tokenization"
+        level: 1
+        objective: "Parse coding-test input efficiently with BufferedReader, tokenization, and numeric conversion."
+        density: CORE
+        visualization: false
+      - key: java.core.coding-tests.buffered-output-stringbuilder
+        title: "Buffered output and StringBuilder"
+        level: 1
+        objective: "Avoid excessive output calls by collecting and buffering output appropriately."
+        density: CORE
+        visualization: false
+      - key: java.core.coding-tests.sorting-arrays-collections
+        title: "Sorting arrays and collections"
+        level: 1
+        objective: "Use Java sorting APIs correctly and recognize primitive and object differences."
+        density: CORE
+        visualization: false
+      - key: java.core.coding-tests.comparator-for-coding-tests
+        title: "Comparator for coding tests"
+        level: 2
+        objective: "Build ascending, descending, and multi-key comparators safely."
+        density: CORE
+        visualization: false
+      - key: java.core.coding-tests.arraydeque-stack-queue
+        title: "ArrayDeque stack and queue"
+        level: 1
+        objective: "Implement stack, queue, and deque operations with ArrayDeque for algorithm implementations."
+        density: CORE
+        visualization: false
+      - key: java.core.coding-tests.priorityqueue-coding-tests
+        title: "PriorityQueue in coding tests"
+        level: 2
+        objective: "Use PriorityQueue for min, max, and custom-priority problems without confusing heap order with sorted iteration."
+        density: CORE
+        visualization: false
+      - key: java.core.coding-tests.hashmap-hashset-counting
+        title: "HashMap and HashSet counting idioms"
+        level: 1
+        objective: "Use Map and Set idioms for frequency counting, visited membership, and getOrDefault or merge."
+        density: CORE
+        visualization: false
+
+  - key: java.core.concurrency
+    title: "Concurrency & Async"
+    order: 160
+    scope: "Java threads, shared state, JMM visibility, synchronization, executors, futures, and liveness."
+    boundary: "OS owns scheduling and process theory; Java owns the Thread/JMM/API boundary. Performance/Operations owns full production diagnosis."
+    concepts:
+      - key: java.core.concurrency.concurrency-vs-parallelism
+        title: "Concurrency versus parallelism"
+        level: 1
+        objective: "Distinguish overlapping progress from simultaneous CPU execution."
+        density: STANDARD
+        visualization: true
+        visualizationNote: "Compare interleaved progress on one worker with simultaneous progress on multiple workers."
+      - key: java.core.concurrency.thread-lifecycle-interruption
+        title: "Thread lifecycle and interruption"
+        level: 2
+        objective: "Understand Thread lifecycle, start, join, sleep, interruption, and cooperative cancellation fundamentals."
+        density: CORE
+        visualization: true
+        visualizationNote: "Show the lifecycle states and an interruption signal observed by cooperative code."
+      - key: java.core.concurrency.platform-virtual-thread
+        title: "Platform and virtual threads"
+        level: 2
+        objective: "Distinguish Java, platform, and virtual threads and current Java 25 carrier behavior without outdated synchronized-pinning claims."
+        density: CORE
+        visualization: true
+        visualizationNote: "Show virtual threads multiplexed over carrier platform threads and the Java/OS boundary."
+      - key: java.core.concurrency.shared-mutable-state-race
+        title: "Shared mutable state and race"
+        level: 2
+        objective: "Identify shared state, lost updates, race conditions, and the invariants that must be protected."
+        density: CORE
+        visualization: true
+        visualizationNote: "Interleave two read-modify-write operations to expose a lost update."
+      - key: java.core.concurrency.synchronized-monitor
+        title: "Synchronized and monitor"
+        level: 2
+        objective: "Use intrinsic locking for mutual exclusion and understand monitor ownership and reentrancy."
+        density: CORE
+        visualization: true
+        visualizationNote: "Show one monitor owner, waiting threads, and a reentrant lock acquisition."
+      - key: java.core.concurrency.jmm-happens-before-visibility
+        title: "JMM happens-before and visibility"
+        level: 3
+        objective: "Explain visibility and ordering through happens-before rather than CPU-cache folklore."
+        density: CORE
+        visualization: true
+        visualizationNote: "Draw a synchronization edge that makes an earlier write visible to a later read."
+      - key: java.core.concurrency.volatile
+        title: "volatile"
+        level: 3
+        objective: "Understand volatile read and write visibility and ordering and why compound operations remain non-atomic."
+        density: CORE
+        visualization: false
+      - key: java.core.concurrency.atomic-cas
+        title: "Atomic variables and CAS"
+        level: 3
+        objective: "Understand compare-and-set, retry and contention, and when atomic variables fit or do not fit an invariant."
+        density: CORE
+        visualization: true
+        visualizationNote: "Trace a successful and a failed CAS retry against one shared value."
+      - key: java.core.concurrency.locks-reentrantlock-condition
+        title: "Lock, ReentrantLock, and Condition"
+        level: 3
+        objective: "Compare explicit Lock and Condition control with synchronized where additional lock capabilities are actually needed."
+        density: STANDARD
+        visualization: false
+      - key: java.core.concurrency.executor-task-thread-pools
+        title: "Executor, tasks, and thread pools"
+        level: 2
+        objective: "Separate task submission from thread lifecycle and reason about pool, queue, and resource limits."
+        density: CORE
+        visualization: true
+        visualizationNote: "Show tasks entering a bounded queue and workers consuming them."
+      - key: java.core.concurrency.concurrent-collections
+        title: "Concurrent collections"
+        level: 2
+        objective: "Use ConcurrentHashMap and concurrent queues with operation-level contracts rather than assuming arbitrary multi-step atomicity."
+        density: CORE
+        visualization: false
+      - key: java.core.concurrency.threadlocal-context
+        title: "ThreadLocal context"
+        level: 3
+        objective: "Understand thread-bound context, cleanup, thread pools, async boundaries, and virtual-thread considerations."
+        density: CORE
+        visualization: true
+        visualizationNote: "Show context attached to a worker and why pooled-worker reuse requires cleanup."
+      - key: java.core.concurrency.future-completablefuture
+        title: "Future and CompletableFuture"
+        level: 2
+        objective: "Compose asynchronous results, propagate failures, and understand executor and thread behavior."
+        density: CORE
+        visualization: true
+        visualizationNote: "Show dependent stages, completion, and exceptional completion paths."
+      - key: java.core.concurrency.deadlock-starvation-livelock
+        title: "Deadlock, starvation, and livelock"
+        level: 3
+        objective: "Diagnose liveness failures and reason about lock ordering, progress, and contention."
+        density: CORE
+        visualization: true
+        visualizationNote: "Contrast circular lock wait, never-scheduled work, and endlessly reacting workers."
+
+  - key: java.core.jvm-runtime
+    title: "JVM Runtime, Diagnostics & Compatibility"
+    order: 170
+    scope: "JDK/JVM/class files, loading, runtime data areas, GC, JIT, diagnostics, reflection, annotations, and compatibility."
+    boundary: "Performance/Operations owns complete operational diagnosis; Java owns the JVM fundamentals needed to interpret Java runtime behavior. OS owns process and virtual-memory theory."
+    concepts:
+      - key: java.core.jvm-runtime.jdk-jvm-classfile
+        title: "JDK, JVM, and class files"
+        level: 1
+        objective: "Distinguish JDK, JVM, and class files and explain the source to javac to bytecode to runtime flow."
+        density: CORE
+        visualization: true
+        visualizationNote: "Show source compilation and the runtime boundary without treating bytecode as native code."
+      - key: java.core.jvm-runtime.bytecode-javap
+        title: "Bytecode and javap"
+        level: 2
+        objective: "Read simple javap output to connect source constructs to bytecode without memorizing the instruction set."
+        density: STANDARD
+        visualization: false
+      - key: java.core.jvm-runtime.class-loading-linking-initialization
+        title: "Class loading, linking, and initialization"
+        level: 3
+        objective: "Explain loading, verification, preparation, resolution, and initialization with correct specification boundaries."
+        density: CORE
+        visualization: true
+        visualizationNote: "Order the class lifecycle stages and separate preparation from initialization."
+      - key: java.core.jvm-runtime.classloader-delegation-type-identity
+        title: "ClassLoader delegation and type identity"
+        level: 3
+        objective: "Understand defining class loader and delegation and why identical binary names can represent different runtime types."
+        density: CORE
+        visualization: true
+        visualizationNote: "Show two loader namespaces and the resulting type-identity boundary."
+      - key: java.core.jvm-runtime.jvm-runtime-data-areas-frames
+        title: "JVM runtime data areas and frames"
+        level: 3
+        objective: "Understand JVM stacks, frames, local variables, operand stacks, heap, method area, and runtime constant pool as specification abstractions."
+        density: CORE
+        visualization: true
+        visualizationNote: "Map a method call to a frame and distinguish abstract data areas from physical layout."
+      - key: java.core.jvm-runtime.gc-reachability-roots
+        title: "GC reachability and roots"
+        level: 2
+        objective: "Explain object reachability and why source-level scope is not an immediate deallocation rule."
+        density: CORE
+        visualization: true
+        visualizationNote: "Trace root-to-object reachability before and after removing a reference."
+      - key: java.core.jvm-runtime.reference-strengths
+        title: "Reference strengths"
+        level: 3
+        objective: "Understand strong, soft, weak, and phantom references and their limited appropriate use cases."
+        density: STANDARD
+        visualization: false
+      - key: java.core.jvm-runtime.gc-fundamentals-collectors
+        title: "GC fundamentals and collectors"
+        level: 3
+        objective: "Understand GC goals and trade-offs and a practical G1 or ZGC overview without treating collector implementation as language semantics."
+        density: CORE
+        visualization: false
+      - key: java.core.jvm-runtime.java-memory-leaks
+        title: "Java memory leaks"
+        level: 2
+        objective: "Explain how reachable but unneeded objects, caches, listeners, ThreadLocal, and other retention can leak memory despite GC."
+        density: CORE
+        visualization: true
+        visualizationNote: "Show a retained object graph rooted by a cache, listener, or ThreadLocal."
+      - key: java.core.jvm-runtime.heap-metaspace-native-thread-memory
+        title: "Heap, metaspace, native, and thread memory"
+        level: 3
+        objective: "Distinguish heap from metaspace, native, and thread memory when diagnosing process memory."
+        density: CORE
+        visualization: true
+        visualizationNote: "Partition process memory into JVM-managed and native or thread-related regions."
+      - key: java.core.jvm-runtime.jit-hotspot-warmup
+        title: "JIT, HotSpot, and warm-up"
+        level: 3
+        objective: "Scope JIT, profile, and warm-up claims to HotSpot or JVM implementation behavior and understand measurement consequences."
+        density: CORE
+        visualization: false
+      - key: java.core.jvm-runtime.runtime-diagnostics-jcmd-jstack-jfr
+        title: "Runtime diagnostics with jcmd, jstack, and JFR"
+        level: 3
+        objective: "Know what thread dumps, heap information, jcmd, and JFR can reveal and when to use them."
+        density: CORE
+        visualization: false
+      - key: java.core.jvm-runtime.reflection-class-api
+        title: "Reflection and Class API"
+        level: 2
+        objective: "Inspect classes, methods, fields, and constructors reflectively and understand access, type-safety, and runtime-cost boundaries."
+        density: CORE
+        visualization: false
+      - key: java.core.jvm-runtime.annotations-retention-target
+        title: "Annotations, Retention, and Target"
+        level: 2
+        objective: "Understand annotation metadata, Target, Retention, runtime visibility, and meta-annotation basics."
+        density: CORE
+        visualization: false
+      - key: java.core.jvm-runtime.dynamic-proxy-invocationhandler
+        title: "Dynamic proxy and InvocationHandler"
+        level: 3
+        objective: "Understand JDK interface proxies and InvocationHandler as Java groundwork for later Spring proxy and AOP learning."
+        density: CORE
+        visualization: true
+        visualizationNote: "Show an interface call routed through a proxy to an InvocationHandler and target."
+      - key: java.core.jvm-runtime.annotation-processing-vs-reflection
+        title: "Annotation processing versus reflection"
+        level: 3
+        objective: "Distinguish compile-time annotation processing or code generation from runtime reflection."
+        density: STANDARD
+        visualization: true
+        visualizationNote: "Separate the compile-time processor path from the runtime metadata inspection path."
+      - key: java.core.jvm-runtime.serialization-contract-risk
+        title: "Serialization contract risk"
+        level: 3
+        objective: "Understand Serializable, transient, and serialVersionUID at a high level and why native deserialization is a risky boundary."
+        density: STANDARD
+        visualization: false
+      - key: java.core.jvm-runtime.binary-compatibility-api-evolution
+        title: "Binary compatibility and API evolution"
+        level: 3
+        objective: "Understand that source, binary, and runtime compatibility are different when evolving Java libraries and APIs."
+        density: STANDARD
+        visualization: false
+
+boundaries:
+  - area: "Data Structures & Algorithms"
+    owns: "Algorithm theory such as BFS, DFS, shortest path, binary search, and DP."
+    javaBoundary: "Java covers collection APIs, comparators, queues, heaps, maps, sets, and coding-test implementation tools only."
+  - area: "Operating Systems"
+    owns: "Scheduling, processes, virtual memory, and system calls in depth."
+    javaBoundary: "Java covers the Thread/JVM boundary and Java concurrency contracts needed to predict Java code."
+  - area: "Spring"
+    owns: "Container, Bean lifecycle, MVC, transaction, and AOP framework behavior."
+    javaBoundary: "Java covers construction, reflection, annotations, proxies, and threading as framework foundations."
+  - area: "Database"
+    owns: "Database transactions, isolation, locking, and schema behavior."
+    javaBoundary: "Java covers I/O and resource ownership around database clients, not database semantics."
+  - area: "Performance / Observability / Operations"
+    owns: "Full production diagnosis, capacity, and operational remediation."
+    javaBoundary: "Java covers JVM, JFR, jcmd, heap, and thread fundamentals needed to interpret runtime evidence."
