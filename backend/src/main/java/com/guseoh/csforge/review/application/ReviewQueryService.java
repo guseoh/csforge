@@ -42,7 +42,8 @@ public class ReviewQueryService {
 
     @Transactional(readOnly = true)
     public ReviewPageView list(ReviewListCriteria criteria, int page, int size) {
-        Page<ReviewSchedule> result = searchRepository.search(criteria, PageRequest.of(page, size));
+        ReviewListCriteria timedCriteria = criteria.at(Instant.now(clock));
+        Page<ReviewSchedule> result = searchRepository.search(timedCriteria, PageRequest.of(page, size));
         List<Long> ids = result.getContent().stream().map(ReviewSchedule::getQuestionId).toList();
         Map<Long, List<QuestionConcept>> concepts = conceptRepository.findForQuestionIds(ids).stream()
                 .collect(Collectors.groupingBy(item -> item.getQuestion().getId()));
