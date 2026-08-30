@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
 
@@ -117,7 +118,7 @@ class Slice3PersistenceIntegrationTest {
         jdbc.update(
                 "INSERT INTO review_schedule (question_id, status, stage, due_at) VALUES (?, 'SCHEDULED', 1, ?)",
                 questionId,
-                Instant.parse("2026-08-31T00:00:00Z"));
+                Timestamp.from(Instant.parse("2026-08-31T00:00:00Z")));
 
         assertThrows(
                 DataIntegrityViolationException.class,
@@ -136,14 +137,14 @@ class Slice3PersistenceIntegrationTest {
         jdbc.update(
                 "INSERT INTO wrong_note (question_id, status, wrong_count, first_wrong_at, last_wrong_at) VALUES (?, 'ACTIVE', 1, ?, ?)",
                 questionId,
-                now,
-                now);
+                Timestamp.from(now),
+                Timestamp.from(now));
         assertEquals(1, selectionRepository.count(wrong));
 
         jdbc.update(
                 "INSERT INTO review_schedule (question_id, status, stage, due_at) VALUES (?, 'SCHEDULED', 1, ?)",
                 questionId,
-                now.plusSeconds(86_400));
+                Timestamp.from(now.plusSeconds(86_400)));
         assertEquals(1, selectionRepository.count(reviewNeeded));
 
         jdbc.update("UPDATE wrong_note SET status = 'MASTERED' WHERE question_id = ?", questionId);
