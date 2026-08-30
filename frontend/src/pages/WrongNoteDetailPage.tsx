@@ -69,6 +69,7 @@ export function WrongNoteDetailPage() {
   }, [id])
 
   useEffect(() => {
+    pageHidingRef.current = false
     const shortcut = (event: KeyboardEvent) => {
       if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 's') {
         event.preventDefault()
@@ -87,12 +88,17 @@ export function WrongNoteDetailPage() {
         keepalive: true,
       })
     }
+    const pageshow = () => {
+      pageHidingRef.current = false
+    }
     window.addEventListener('keydown', shortcut)
     window.addEventListener('pagehide', pagehide)
+    window.addEventListener('pageshow', pageshow)
     return () => {
       if (!pageHidingRef.current) saveRef.current()
       window.removeEventListener('keydown', shortcut)
       window.removeEventListener('pagehide', pagehide)
+      window.removeEventListener('pageshow', pageshow)
     }
   }, [draftKey, id])
 
