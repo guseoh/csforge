@@ -21,6 +21,12 @@ references:
     language: en
     displayOrder: 2
     relationNote: field/method와 access control 선언 확인
+  - url: "https://techblog.woowahan.com/2644/"
+    title: "우아한형제들 기술블로그: 병아리 개발자의 걸음마 한 발짝"
+    referenceType: COMPANY_TECH_BLOG
+    language: ko
+    displayOrder: 3
+    relationNote: getter/setter와 캡슐화에 대한 실무 코드리뷰 사례 보충
 ---
 # Encapsulation과 invariants
 

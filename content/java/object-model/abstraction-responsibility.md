@@ -21,6 +21,12 @@ references:
     language: en
     displayOrder: 2
     relationNote: interface contract와 abstract method 규칙 확인
+  - url: "https://techblog.woowahan.com/2644/"
+    title: "우아한형제들 기술블로그: 병아리 개발자의 걸음마 한 발짝"
+    referenceType: COMPANY_TECH_BLOG
+    language: ko
+    displayOrder: 3
+    relationNote: 객체 책임과 객체지향 코드리뷰 사례 보충
 ---
 # Abstraction과 responsibility
 

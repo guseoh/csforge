@@ -1,55 +1,1857 @@
 [
-  {"kind":"question","contentKey":"java.core.language-types.primitive-reference-values.q1","promptMarkdown":"다음 코드가 출력하는 값은? `String a = new String(\"cs\"); String b = a; a == b`","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["java.core.language-types.primitive-reference-values"],"choices":[{"key":"A","content":"true","displayOrder":0},{"key":"B","content":"false","displayOrder":1},{"key":"C","content":"컴파일 오류","displayOrder":2},{"key":"D","content":"항상 null","displayOrder":3}],"correctChoiceKey":"A","explanationMarkdown":"b는 a가 가리키던 참조 값을 복사하므로 두 변수가 같은 String object를 가리킨다. ==는 참조형에서 identity를 비교한다."},
-  {"kind":"question","contentKey":"java.core.language-types.primitive-reference-values.q2","promptMarkdown":"다음 코드 실행 후 `b`의 값은? `int a = 3; int b = a; a = 4;`","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["java.core.language-types.primitive-reference-values"],"choices":[{"key":"A","content":"3","displayOrder":0},{"key":"B","content":"4","displayOrder":1},{"key":"C","content":"0","displayOrder":2},{"key":"D","content":"컴파일 오류","displayOrder":3}],"correctChoiceKey":"A","explanationMarkdown":"원시 값 대입은 숫자 값 자체를 복사하므로 a를 나중에 바꿔도 이미 복사된 b는 3이다."},
-  {"kind":"question","contentKey":"java.core.language-types.primitive-reference-values.q3","promptMarkdown":"다음 두 식에 대한 설명으로 가장 정확한 것은? `String a = new String(\"java\"); String b = new String(\"java\");`","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.language-types.primitive-reference-values"],"choices":[{"key":"A","content":"a == b는 true이고 a.equals(b)는 false다","displayOrder":0},{"key":"B","content":"a == b와 a.equals(b)는 모두 false다","displayOrder":1},{"key":"C","content":"a == b는 false이고 a.equals(b)는 true다","displayOrder":2},{"key":"D","content":"두 식 모두 컴파일 오류다","displayOrder":3}],"correctChoiceKey":"C","explanationMarkdown":"new는 서로 다른 object를 만들므로 identity 비교인 ==는 false다. String의 equals는 문자 내용을 비교하므로 true다."},
-  {"kind":"question","contentKey":"java.core.language-types.primitive-reference-values.q4","promptMarkdown":"참조 변수 `Object value = null;`에 대해 항상 참인 설명은?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.language-types.primitive-reference-values"],"choices":[{"key":"A","content":"value는 반드시 물리 메모리 주소 0을 담는다","displayOrder":0},{"key":"B","content":"value는 객체가 없음을 나타내는 참조 값이다","displayOrder":1},{"key":"C","content":"value를 호출하면 Object의 기본 객체가 생성된다","displayOrder":2},{"key":"D","content":"참조 변수에는 null을 대입할 수 없다","displayOrder":3}],"correctChoiceKey":"B","explanationMarkdown":"null은 참조할 객체가 없다는 값이다. 이를 특정 물리 주소나 자동 생성된 객체로 해석하면 Java 계약을 넘어서게 된다."},
-  {"kind":"question","contentKey":"java.core.language-types.primitive-reference-values.q5","promptMarkdown":"다음 호출 뒤 출력되는 결과는? `void add(StringBuilder x) { x.append(\"!\"); } void replace(StringBuilder x) { x = new StringBuilder(\"new\"); }`를 `StringBuilder s = new StringBuilder(\"cs\"); add(s); replace(s); System.out.println(s);` 순서로 실행한다.","questionType":"MULTIPLE_CHOICE","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["java.core.language-types.primitive-reference-values"],"choices":[{"key":"A","content":"cs","displayOrder":0},{"key":"B","content":"cs!","displayOrder":1},{"key":"C","content":"new","displayOrder":2},{"key":"D","content":"컴파일 오류","displayOrder":3}],"correctChoiceKey":"B","explanationMarkdown":"add는 복사된 참조 값으로 원래 builder object를 변경한다. replace의 새 대입은 매개변수 변수만 바꾸므로 s는 cs!를 유지한다."},
-  {"kind":"question","contentKey":"java.core.language-types.primitive-reference-values.q6","promptMarkdown":"Java reference value에 대한 설명 중 언어 계약과 구현 경계를 올바르게 구분한 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["java.core.language-types.primitive-reference-values"],"choices":[{"key":"A","content":"reference value는 언제나 OS가 노출하는 물리 주소다","displayOrder":0},{"key":"B","content":"reference value는 object identity를 식별하며 실제 표현은 JVM 구현에 맡겨진다","displayOrder":1},{"key":"C","content":"reference value는 object 전체의 깊은 복사본이다","displayOrder":2},{"key":"D","content":"reference value는 primitive value와 완전히 같은 의미다","displayOrder":3}],"correctChoiceKey":"B","explanationMarkdown":"Java와 JVM은 참조 값과 object를 통한 동작을 정의하지만, 참조의 물리 표현과 배치는 JVM 구현 세부다."},
-  {"kind":"question","contentKey":"java.core.language-types.variables-scope-definite-assignment.q1","promptMarkdown":"다음 중 object가 생성될 때 `int` field에 적용되는 설명은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["java.core.language-types.variables-scope-definite-assignment"],"choices":[{"key":"A","content":"명시적 대입이 없으면 기본값 0으로 초기화된다","displayOrder":0},{"key":"B","content":"사용 전 반드시 메서드 안에서 대입해야 한다","displayOrder":1},{"key":"C","content":"항상 임의의 값으로 초기화된다","displayOrder":2},{"key":"D","content":"field에는 초기화 규칙이 없다","displayOrder":3}],"correctChoiceKey":"A","explanationMarkdown":"인스턴스 field는 object 초기화 과정에서 기본값을 받는다. 이는 지역 변수의 definite assignment 규칙과 다르다."},
-  {"kind":"question","contentKey":"java.core.language-types.variables-scope-definite-assignment.q2","promptMarkdown":"다음 코드가 컴파일되지 않는 직접적인 이유는? `void f() { int count; System.out.println(count); }`","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["java.core.language-types.variables-scope-definite-assignment"],"choices":[{"key":"A","content":"지역 변수 count가 사용 전에 definite assignment되지 않았다","displayOrder":0},{"key":"B","content":"int 지역 변수는 선언할 수 없다","displayOrder":1},{"key":"C","content":"println은 int를 받을 수 없다","displayOrder":2},{"key":"D","content":"메서드 안에서는 scope가 없다","displayOrder":3}],"correctChoiceKey":"A","explanationMarkdown":"지역 변수는 field처럼 자동 기본값을 받지 않는다. 컴파일러가 사용 시점까지 모든 경로의 대입을 증명해야 한다."},
-  {"kind":"question","contentKey":"java.core.language-types.variables-scope-definite-assignment.q3","promptMarkdown":"다음 코드가 컴파일되도록 만드는 수정은? `int value; if (ready) value = 1; System.out.println(value);`","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.language-types.variables-scope-definite-assignment"],"choices":[{"key":"A","content":"if 뒤에 else에서 value를 대입한다","displayOrder":0},{"key":"B","content":"value를 field로 바꾸지 않고 그대로 둔다","displayOrder":1},{"key":"C","content":"println을 주석 처리하지 않고 임의의 field를 추가한다","displayOrder":2},{"key":"D","content":"ready를 지역 변수로 다시 선언한다","displayOrder":3}],"correctChoiceKey":"A","explanationMarkdown":"ready가 false인 경로도 존재하므로 else에서 대입하거나 모든 경로가 값을 결정하도록 해야 definite assignment가 성립한다."},
-  {"kind":"question","contentKey":"java.core.language-types.variables-scope-definite-assignment.q4","promptMarkdown":"다음 코드에서 `i`를 for문 뒤에 사용할 수 없는 이유는? `for (int i = 0; i < 3; i++) { } System.out.println(i);`","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.language-types.variables-scope-definite-assignment"],"choices":[{"key":"A","content":"i의 lexical scope가 for문 안에서 끝나기 때문이다","displayOrder":0},{"key":"B","content":"for문 변수는 항상 static이어야 하기 때문이다","displayOrder":1},{"key":"C","content":"i는 int로 선언할 수 없기 때문이다","displayOrder":2},{"key":"D","content":"for문은 지역 변수를 만들지 않기 때문이다","displayOrder":3}],"correctChoiceKey":"A","explanationMarkdown":"for 초기화부의 i는 for문이 만든 scope 안에서만 이름을 사용할 수 있다. scope와 object lifetime은 같은 개념이 아니다."},
-  {"kind":"question","contentKey":"java.core.language-types.variables-scope-definite-assignment.q5","promptMarkdown":"다음 `final` 지역 변수 선언이 컴파일되려면 어떤 조건이 필요한가? `final int code; if (ok) code = 200; else code = 400;`","questionType":"MULTIPLE_CHOICE","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["java.core.language-types.variables-scope-definite-assignment"],"choices":[{"key":"A","content":"두 분기에서 각각 한 번씩 대입되어 모든 경로에서 정확히 한 번 결정되어야 한다","displayOrder":0},{"key":"B","content":"한 분기에서만 대입해도 JVM이 나머지 값을 추측한다","displayOrder":1},{"key":"C","content":"final은 지역 변수에 붙일 수 없다","displayOrder":2},{"key":"D","content":"두 분기에서 여러 번 대입해야 한다","displayOrder":3}],"correctChoiceKey":"A","explanationMarkdown":"final 지역 변수는 사용 전에 definite assignment되고 두 번째 대입이 없어야 한다. if/else 양쪽의 단일 대입은 이 조건을 만족한다."},
-  {"kind":"question","contentKey":"java.core.language-types.variables-scope-definite-assignment.q6","promptMarkdown":"다음 constructor 호출의 결과로 `name` field가 초기화되는 것은? `class User { private String name; User(String name) { name = name; } }`","questionType":"MULTIPLE_CHOICE","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["java.core.language-types.variables-scope-definite-assignment"],"choices":[{"key":"A","content":"field name은 null로 남는다","displayOrder":0},{"key":"B","content":"parameter name이 field name에 대입된다","displayOrder":1},{"key":"C","content":"항상 컴파일 오류다","displayOrder":2},{"key":"D","content":"field name에 문자열 name이 자동으로 저장된다","displayOrder":3}],"correctChoiceKey":"A","explanationMarkdown":"같은 이름에서 양쪽 name은 가장 가까운 parameter를 가리키므로 자기 자신에게 대입한다. field를 가리키려면 this.name = name이 필요하다."},
-  {"kind":"question","contentKey":"java.core.language-types.numeric-conversion-overflow.q1","promptMarkdown":"다음 중 별도 cast 없이 허용되는 primitive 변환은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["java.core.language-types.numeric-conversion-overflow"],"choices":[{"key":"A","content":"int를 byte로 대입","displayOrder":0},{"key":"B","content":"long을 int로 대입","displayOrder":1},{"key":"C","content":"int를 long으로 대입","displayOrder":2},{"key":"D","content":"double을 float로 대입","displayOrder":3}],"correctChoiceKey":"C","explanationMarkdown":"int에서 long으로의 widening primitive conversion은 값 범위를 넓히므로 암시적으로 허용된다. 반대 방향은 정보 손실 가능성이 있다."},
-  {"kind":"question","contentKey":"java.core.language-types.numeric-conversion-overflow.q2","promptMarkdown":"다음 결과에 대한 설명으로 옳은 것은? `long total = 2_000_000_000 + 2_000_000_000;`","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.language-types.numeric-conversion-overflow"],"choices":[{"key":"A","content":"long이므로 항상 4_000_000_000이 된다","displayOrder":0},{"key":"B","content":"오른쪽 int 덧셈에서 먼저 overflow가 발생할 수 있다","displayOrder":1},{"key":"C","content":"컴파일러가 자동으로 BigInteger로 변환한다","displayOrder":2},{"key":"D","content":"long에는 정수 대입이 불가능하다","displayOrder":3}],"correctChoiceKey":"B","explanationMarkdown":"두 literal이 int라서 덧셈이 int로 먼저 계산된다. 대입 대상만 long인 것은 중간 계산 overflow를 되돌리지 못한다."},
-  {"kind":"question","contentKey":"java.core.language-types.numeric-conversion-overflow.q3","promptMarkdown":"Java의 8-bit signed byte에서 다음 결과는? `byte value = (byte) 130;`","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.language-types.numeric-conversion-overflow"],"choices":[{"key":"A","content":"130","displayOrder":0},{"key":"B","content":"127","displayOrder":1},{"key":"C","content":"-126","displayOrder":2},{"key":"D","content":"ArithmeticException","displayOrder":3}],"correctChoiceKey":"C","explanationMarkdown":"narrowing cast는 값을 byte 표현 범위에 맞춰 변환하며 130은 byte 범위 밖이라 2의 보수 표현에서 -126으로 해석된다. cast가 예외를 던지는 검증은 아니다."},
-  {"kind":"question","contentKey":"java.core.language-types.numeric-conversion-overflow.q4","promptMarkdown":"다음 코드에 대한 설명으로 옳은 것은? `byte a = 1, b = 2; byte c = a + b;`","questionType":"MULTIPLE_CHOICE","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["java.core.language-types.numeric-conversion-overflow"],"choices":[{"key":"A","content":"c는 byte 3으로 정상 컴파일된다","displayOrder":0},{"key":"B","content":"byte 덧셈은 항상 long으로 승격된다","displayOrder":1},{"key":"C","content":"a + b의 결과가 int로 승격되어 byte 대입에 cast가 필요하다","displayOrder":2},{"key":"D","content":"a와 b가 final이 아니어서만 오류가 난다","displayOrder":3}],"correctChoiceKey":"C","explanationMarkdown":"byte와 short를 포함한 정수 산술은 보통 int로 승격된다. 따라서 결과를 byte에 넣으려면 범위를 확인한 명시적 cast가 필요하다."},
-  {"kind":"question","contentKey":"java.core.language-types.boxing-unboxing-wrapper.q1","promptMarkdown":"다음 코드에서 primitive 값이 wrapper 객체로 바뀌는 부분은? `Integer count = 3;`","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["java.core.language-types.boxing-unboxing-wrapper"],"choices":[{"key":"A","content":"unboxing","displayOrder":0},{"key":"B","content":"boxing","displayOrder":1},{"key":"C","content":"overriding","displayOrder":2},{"key":"D","content":"casting만 일어난다","displayOrder":3}],"correctChoiceKey":"B","explanationMarkdown":"int literal 3이 Integer wrapper로 자동 변환되는 것이 boxing이다. 명시적 new가 없어도 문맥상 변환이 일어날 수 있다."},
-  {"kind":"question","contentKey":"java.core.language-types.boxing-unboxing-wrapper.q2","promptMarkdown":"다음 코드의 실행 결과는? `Integer value = null; int answer = value;`","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["java.core.language-types.boxing-unboxing-wrapper"],"choices":[{"key":"A","content":"answer가 0이 된다","displayOrder":0},{"key":"B","content":"answer가 null이 된다","displayOrder":1},{"key":"C","content":"unboxing 시 NullPointerException이 발생한다","displayOrder":2},{"key":"D","content":"컴파일러가 Integer를 자동으로 1로 만든다","displayOrder":3}],"correctChoiceKey":"C","explanationMarkdown":"null wrapper에서 int를 얻으려면 unboxing해야 하고, null에는 꺼낼 primitive 값이 없어 NullPointerException이 발생한다."},
-  {"kind":"question","contentKey":"java.core.language-types.boxing-unboxing-wrapper.q3","promptMarkdown":"`Integer a = 1000; Integer b = 1000;`에서 값 비교를 하려면 무엇을 사용해야 하는가?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.language-types.boxing-unboxing-wrapper"],"choices":[{"key":"A","content":"항상 ==를 사용한다","displayOrder":0},{"key":"B","content":"wrapper identity를 믿고 ==를 사용한다","displayOrder":1},{"key":"C","content":"equals 또는 null을 고려한 값 비교를 사용한다","displayOrder":2},{"key":"D","content":"두 값을 String으로 바꿔야만 비교할 수 있다","displayOrder":3}],"correctChoiceKey":"C","explanationMarkdown":"Integer의 ==는 object identity이고 wrapper cache 범위에 의존할 수 있다. 숫자 값 equality가 목적이면 equals나 null-safe 비교를 사용한다."},
-  {"kind":"question","contentKey":"java.core.language-types.boxing-unboxing-wrapper.q4","promptMarkdown":"다음 expression의 결과는? `Integer value = null; value == null`","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.language-types.boxing-unboxing-wrapper"],"choices":[{"key":"A","content":"true이며 unboxing이 필요 없다","displayOrder":0},{"key":"B","content":"false이며 null은 0으로 바뀐다","displayOrder":1},{"key":"C","content":"항상 ClassCastException이다","displayOrder":2},{"key":"D","content":"컴파일 오류다","displayOrder":3}],"correctChoiceKey":"A","explanationMarkdown":"한쪽이 null literal인 참조 비교는 wrapper를 primitive로 꺼낼 필요 없이 참조가 null인지 확인하므로 true다."},
-  {"kind":"question","contentKey":"java.core.language-types.boxing-unboxing-wrapper.q5","promptMarkdown":"다음 overload 호출에서 `choose(null)`에 선택되는 메서드는? `choose(int value)`와 `choose(Integer value)`가 함께 선언되어 있다.","questionType":"MULTIPLE_CHOICE","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["java.core.language-types.boxing-unboxing-wrapper"],"choices":[{"key":"A","content":"choose(int)","displayOrder":0},{"key":"B","content":"choose(Integer)","displayOrder":1},{"key":"C","content":"두 메서드가 무작위로 선택된다","displayOrder":2},{"key":"D","content":"항상 ambiguous compile error다","displayOrder":3}],"correctChoiceKey":"B","explanationMarkdown":"null은 reference 값이므로 Integer overload에는 전달할 수 있지만 int로 unboxing할 수 없다. 따라서 choose(Integer)가 선택된다."},
-  {"kind":"question","contentKey":"java.core.language-types.boxing-unboxing-wrapper.q6","promptMarkdown":"다음 loop에서 실무적으로 먼저 확인할 위험은? `for (Integer n : values) total += n;`","questionType":"MULTIPLE_CHOICE","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["java.core.language-types.boxing-unboxing-wrapper"],"choices":[{"key":"A","content":"각 n이 unboxing되므로 null 원소가 있으면 예외가 날 수 있다","displayOrder":0},{"key":"B","content":"Integer는 loop에서 사용할 수 없다","displayOrder":1},{"key":"C","content":"합계가 자동으로 문자열이 된다","displayOrder":2},{"key":"D","content":"모든 n이 반드시 새로운 object로 복사된다","displayOrder":3}],"correctChoiceKey":"A","explanationMarkdown":"+= 계산에서 n이 int로 unboxing된다. values에 null이 있으면 해당 시점에 NullPointerException이 발생할 수 있다."},
-  {"kind":"question","contentKey":"java.core.language-types.pass-by-value.q1","promptMarkdown":"`void increment(int value) { value++; }` 호출 후 호출자의 int 변수가 바뀌지 않는 이유는?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["java.core.language-types.pass-by-value"],"choices":[{"key":"A","content":"원시 값이 복사되어 별도의 parameter 변수가 만들어지기 때문이다","displayOrder":0},{"key":"B","content":"int는 Java에서 전달할 수 없기 때문이다","displayOrder":1},{"key":"C","content":"JVM이 모든 증가 연산을 무시하기 때문이다","displayOrder":2},{"key":"D","content":"호출자는 항상 static이어야 하기 때문이다","displayOrder":3}],"correctChoiceKey":"A","explanationMarkdown":"Java는 primitive든 reference든 값을 전달한다. int 값의 복사본을 증가시키므로 호출자 변수에는 영향이 없다."},
-  {"kind":"question","contentKey":"java.core.language-types.pass-by-value.q2","promptMarkdown":"참조형 매개변수로 전달된 mutable object의 내부 변경이 호출자에게 보일 수 있는 이유는?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["java.core.language-types.pass-by-value"],"choices":[{"key":"A","content":"object 자체가 pass-by-reference로 전달되기 때문이다","displayOrder":0},{"key":"B","content":"참조 값이 복사되어 같은 object를 가리킬 수 있기 때문이다","displayOrder":1},{"key":"C","content":"parameter가 호출자 변수의 alias가 되기 때문이다","displayOrder":2},{"key":"D","content":"GC가 두 변수를 동기화하기 때문이다","displayOrder":3}],"correctChoiceKey":"B","explanationMarkdown":"object가 reference로 전달되는 것이 아니라 reference value가 복사된다. 복사된 값이 같은 object를 가리켜 내부 mutation이 공유될 수 있다."},
-  {"kind":"question","contentKey":"java.core.language-types.pass-by-value.q3","promptMarkdown":"`void replace(StringBuilder b) { b = new StringBuilder(\"new\"); }` 호출 후 호출자의 b가 바뀌지 않는 이유는?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.language-types.pass-by-value"],"choices":[{"key":"A","content":"새 reference 대입은 parameter 변수에만 적용되기 때문이다","displayOrder":0},{"key":"B","content":"StringBuilder는 mutation을 지원하지 않기 때문이다","displayOrder":1},{"key":"C","content":"new는 object를 만들지 않기 때문이다","displayOrder":2},{"key":"D","content":"reference value는 전달될 수 없기 때문이다","displayOrder":3}],"correctChoiceKey":"A","explanationMarkdown":"parameter도 참조 값의 복사본을 담은 별도 변수다. 그 변수에 새 참조를 대입해도 호출자 변수가 가진 참조는 그대로다."},
-  {"kind":"question","contentKey":"java.core.language-types.pass-by-value.q4","promptMarkdown":"다음 `swap(String a, String b)`가 호출자 변수의 문자열 참조를 서로 바꾸지 못하는 핵심 이유는?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.language-types.pass-by-value"],"choices":[{"key":"A","content":"a와 b가 parameter의 복사된 reference 변수이기 때문이다","displayOrder":0},{"key":"B","content":"String은 primitive 타입이기 때문이다","displayOrder":1},{"key":"C","content":"swap이라는 이름은 예약어이기 때문이다","displayOrder":2},{"key":"D","content":"String에는 reference가 없기 때문이다","displayOrder":3}],"correctChoiceKey":"A","explanationMarkdown":"두 parameter를 서로 바꾸는 것은 parameter 변수의 재대입이다. 호출자 변수 자체를 넘겨받지 않으므로 호출자 binding은 바뀌지 않는다."},
-  {"kind":"question","contentKey":"java.core.language-types.pass-by-value.q5","promptMarkdown":"메서드가 호출자의 변수에 새 immutable 값을 반영하게 하려면 가장 명확한 방식은?","questionType":"MULTIPLE_CHOICE","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["java.core.language-types.pass-by-value"],"choices":[{"key":"A","content":"새 값을 return하고 호출자가 직접 재대입한다","displayOrder":0},{"key":"B","content":"parameter를 final로 만든다","displayOrder":1},{"key":"C","content":"메서드 안에서 parameter에 새 값을 대입한다","displayOrder":2},{"key":"D","content":"모든 primitive를 wrapper로 감싼다","displayOrder":3}],"correctChoiceKey":"A","explanationMarkdown":"parameter 재대입은 호출자 변수를 바꾸지 못한다. 새 상태를 반환해 호출자가 명시적으로 대입하면 side effect와 계약이 분명하다."},
-  {"kind":"question","contentKey":"java.core.language-types.pass-by-value.q6","promptMarkdown":"다음 실행 결과로 옳은 것은? `void update(int[] xs) { xs[0] = 9; xs = new int[]{1}; }`를 `int[] a = {0}; update(a);`에 호출한다.","questionType":"MULTIPLE_CHOICE","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["java.core.language-types.pass-by-value"],"choices":[{"key":"A","content":"a[0]은 9다","displayOrder":0},{"key":"B","content":"a[0]은 1이다","displayOrder":1},{"key":"C","content":"a가 null이 된다","displayOrder":2},{"key":"D","content":"두 대입 모두 호출자에 반영된다","displayOrder":3}],"correctChoiceKey":"A","explanationMarkdown":"xs[0] mutation은 같은 배열 object에 반영된다. 하지만 xs를 새 배열로 재대입하는 것은 parameter 변수만 바꾸므로 a는 원래 배열을 계속 가리킨다."},
-  {"kind":"question","contentKey":"java.core.language-types.arrays-covariance-runtime-check.q1","promptMarkdown":"Java 배열의 길이에 대한 설명으로 옳은 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["java.core.language-types.arrays-covariance-runtime-check"],"choices":[{"key":"A","content":"배열은 생성 후 length가 고정된다","displayOrder":0},{"key":"B","content":"배열은 원소를 넣을 때마다 자동 확장된다","displayOrder":1},{"key":"C","content":"배열 length는 항상 0이다","displayOrder":2},{"key":"D","content":"length는 runtime마다 임의로 바뀐다","displayOrder":3}],"correctChoiceKey":"A","explanationMarkdown":"배열은 생성 시 정해진 length를 가지며, 크기를 바꾸려면 새 배열을 만들고 값을 옮겨야 한다."},
-  {"kind":"question","contentKey":"java.core.language-types.arrays-covariance-runtime-check.q2","promptMarkdown":"다음 대입이 컴파일되는 이유는? `String[] names = new String[1]; Object[] values = names;`","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.language-types.arrays-covariance-runtime-check"],"choices":[{"key":"A","content":"참조형 배열이 covariant이기 때문이다","displayOrder":0},{"key":"B","content":"모든 배열은 invariant이기 때문이다","displayOrder":1},{"key":"C","content":"String[]이 primitive 배열이기 때문이다","displayOrder":2},{"key":"D","content":"Object[]가 String[]으로 자동 복사되기 때문이다","displayOrder":3}],"correctChoiceKey":"A","explanationMarkdown":"참조형 배열은 String[]을 Object[]로 upcast할 수 있다. 이는 실제 배열 타입과 변수의 정적 타입을 함께 살펴야 함을 뜻한다."},
-  {"kind":"question","contentKey":"java.core.language-types.arrays-covariance-runtime-check.q3","promptMarkdown":"다음 코드의 실행 결과는? `Object[] values = new String[1]; values[0] = Integer.valueOf(1);`","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.language-types.arrays-covariance-runtime-check"],"choices":[{"key":"A","content":"정상 저장된다","displayOrder":0},{"key":"B","content":"컴파일 시점에만 오류가 난다","displayOrder":1},{"key":"C","content":"ArrayStoreException이 발생한다","displayOrder":2},{"key":"D","content":"Integer가 String으로 자동 변환된다","displayOrder":3}],"correctChoiceKey":"C","explanationMarkdown":"정적 변수 타입 Object[]는 대입을 허용하지만 실제 object는 String[]이다. 배열은 저장 시 실제 component type을 검사한다."},
-  {"kind":"question","contentKey":"java.core.language-types.arrays-covariance-runtime-check.q4","promptMarkdown":"다음 중 `Object[] values = new String[2]`에 안전하게 저장할 수 있는 값은?","questionType":"MULTIPLE_CHOICE","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["java.core.language-types.arrays-covariance-runtime-check"],"choices":[{"key":"A","content":"Integer.valueOf(1)","displayOrder":0},{"key":"B","content":"new Object()","displayOrder":1},{"key":"C","content":"null","displayOrder":2},{"key":"D","content":"new StringBuilder()","displayOrder":3}],"correctChoiceKey":"C","explanationMarkdown":"String[]에는 String 또는 null을 저장할 수 있다. null은 특정 객체 타입의 값을 요구하지 않으므로 runtime store check를 통과한다."},
-  {"kind":"question","contentKey":"java.core.language-types.arrays-covariance-runtime-check.q5","promptMarkdown":"배열 covariance와 generic collection invariance를 비교한 설명으로 옳은 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["java.core.language-types.arrays-covariance-runtime-check"],"choices":[{"key":"A","content":"List<String>은 List<Object>로 대입되지만 배열만 막힌다","displayOrder":0},{"key":"B","content":"String[]은 Object[]로 대입될 수 있지만 List<String>은 List<Object>가 아니다","displayOrder":1},{"key":"C","content":"배열과 List 모두 어떤 타입으로든 대입된다","displayOrder":2},{"key":"D","content":"배열은 항상 compile-time에 저장 타입을 모두 증명한다","displayOrder":3}],"correctChoiceKey":"B","explanationMarkdown":"참조 배열은 covariance를 제공해 runtime store check가 필요하다. 제네릭 List는 기본적으로 invariant라 unsafe write를 compile time에 막는다."},
-  {"kind":"question","contentKey":"java.core.language-types.final-reference-and-immutability.q1","promptMarkdown":"`final int count = 1;`에 대한 설명으로 옳은 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["java.core.language-types.final-reference-and-immutability"],"choices":[{"key":"A","content":"count에 다른 값을 다시 대입할 수 없다","displayOrder":0},{"key":"B","content":"모든 object가 immutable해진다","displayOrder":1},{"key":"C","content":"count는 static field가 된다","displayOrder":2},{"key":"D","content":"count는 thread-safe object가 된다","displayOrder":3}],"correctChoiceKey":"A","explanationMarkdown":"final 변수는 재대입을 제한한다. 이것만으로 객체 불변성, static 소속, thread-safety가 생기지는 않는다."},
-  {"kind":"question","contentKey":"java.core.language-types.final-reference-and-immutability.q2","promptMarkdown":"다음 코드가 가능한 이유는? `final StringBuilder b = new StringBuilder(); b.append(\"x\");`","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["java.core.language-types.final-reference-and-immutability"],"choices":[{"key":"A","content":"final은 참조 재대입만 막고 object mutation은 막지 않기 때문이다","displayOrder":0},{"key":"B","content":"StringBuilder가 primitive이기 때문이다","displayOrder":1},{"key":"C","content":"final field는 항상 복사되기 때문이다","displayOrder":2},{"key":"D","content":"append가 아무 일도 하지 않기 때문이다","displayOrder":3}],"correctChoiceKey":"A","explanationMarkdown":"b가 다른 object를 가리키도록 바꾸는 것은 금지되지만, b가 가리키는 mutable StringBuilder 내부는 append로 바뀔 수 있다."},
-  {"kind":"question","contentKey":"java.core.language-types.final-reference-and-immutability.q3","promptMarkdown":"`final` 메서드와 `final` 클래스의 효과를 올바르게 짝지은 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.language-types.final-reference-and-immutability"],"choices":[{"key":"A","content":"final method는 override를, final class는 inheritance를 제한한다","displayOrder":0},{"key":"B","content":"final method는 field를, final class는 constructor를 삭제한다","displayOrder":1},{"key":"C","content":"둘 다 object mutation만 제한한다","displayOrder":2},{"key":"D","content":"둘 다 primitive conversion만 제한한다","displayOrder":3}],"correctChoiceKey":"A","explanationMarkdown":"final method는 subclass override를 막고 final class는 subclass 자체를 막는다. 변수의 final과도 구분해야 한다."},
-  {"kind":"question","contentKey":"java.core.language-types.final-reference-and-immutability.q4","promptMarkdown":"다음 중 실제로 immutable하다고 판단하려면 추가로 확인해야 하는 것은? `final class Profile { private final List<String> tags; }`","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.language-types.final-reference-and-immutability"],"choices":[{"key":"A","content":"tags를 외부 mutable list 그대로 보관·반환하는지 확인한다","displayOrder":0},{"key":"B","content":"class 이름이 Profile인지 확인하면 충분하다","displayOrder":1},{"key":"C","content":"field가 final이면 내부 list는 반드시 immutable이다","displayOrder":2},{"key":"D","content":"private는 OS 메모리 보호를 보장한다","displayOrder":3}],"correctChoiceKey":"A","explanationMarkdown":"final은 참조 재대입만 막는다. 입력을 복사하고 mutable 내부를 그대로 노출하지 않는지까지 확인해야 immutable 설계가 된다."},
-  {"kind":"question","contentKey":"java.core.language-types.final-reference-and-immutability.q5","promptMarkdown":"constructor에서 `final` field를 안전하게 초기화하는 설계로 가장 적절한 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["java.core.language-types.final-reference-and-immutability"],"choices":[{"key":"A","content":"모든 정상 constructor 경로에서 정확히 한 번 유효한 값을 대입한다","displayOrder":0},{"key":"B","content":"field를 먼저 null로 두고 나중에 setter로 여러 번 바꾼다","displayOrder":1},{"key":"C","content":"컴파일러가 필수 값을 임의로 선택하게 둔다","displayOrder":2},{"key":"D","content":"final field는 constructor에서 대입할 수 없다","displayOrder":3}],"correctChoiceKey":"A","explanationMarkdown":"blank final field는 constructor 경로에서 한 번 대입할 수 있다. 모든 경로가 유효한 값을 결정하도록 해야 object invariant도 지킬 수 있다."},
-  {"kind":"question","contentKey":"java.core.language-types.string-immutability-equality.q1","promptMarkdown":"문자열 내용이 같은지 비교하는 일반적인 Java 코드는?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["java.core.language-types.string-immutability-equality"],"choices":[{"key":"A","content":"a == b","displayOrder":0},{"key":"B","content":"a.equals(b)","displayOrder":1},{"key":"C","content":"a = b","displayOrder":2},{"key":"D","content":"a.hashCode() == b.hashCode()만 확인","displayOrder":3}],"correctChoiceKey":"B","explanationMarkdown":"String의 equals는 문자 내용을 비교한다. ==는 같은 object identity인지 확인하며 hashCode만 같다고 equality가 보장되는 것도 아니다."},
-  {"kind":"question","contentKey":"java.core.language-types.string-immutability-equality.q2","promptMarkdown":"다음 출력 결과는? `String s = \"a\"; s.concat(\"b\"); System.out.println(s);`","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.language-types.string-immutability-equality"],"choices":[{"key":"A","content":"ab","displayOrder":0},{"key":"B","content":"a","displayOrder":1},{"key":"C","content":"null","displayOrder":2},{"key":"D","content":"컴파일 오류","displayOrder":3}],"correctChoiceKey":"B","explanationMarkdown":"String은 immutable이므로 concat은 새 String 값을 반환한다. 반환값을 저장하지 않았으므로 s가 가리키는 값은 a 그대로다."},
-  {"kind":"question","contentKey":"java.core.language-types.string-immutability-equality.q3","promptMarkdown":"`new String(\"java\")` 두 개의 비교에서 올바른 결과는?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.language-types.string-immutability-equality"],"choices":[{"key":"A","content":"==는 true, equals는 false","displayOrder":0},{"key":"B","content":"==는 false, equals는 true","displayOrder":1},{"key":"C","content":"둘 다 false","displayOrder":2},{"key":"D","content":"둘 다 true이며 항상 같은 object다","displayOrder":3}],"correctChoiceKey":"B","explanationMarkdown":"new로 만든 object identity는 다르지만 String.equals는 같은 문자 내용을 보고 true를 반환한다."},
-  {"kind":"question","contentKey":"java.core.language-types.string-immutability-equality.q4","promptMarkdown":"다음 코드의 출력은? `String s = \"a\"; String t = s + \"b\"; System.out.println(s);`","questionType":"MULTIPLE_CHOICE","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["java.core.language-types.string-immutability-equality"],"choices":[{"key":"A","content":"a","displayOrder":0},{"key":"B","content":"ab","displayOrder":1},{"key":"C","content":"b","displayOrder":2},{"key":"D","content":"null","displayOrder":3}],"correctChoiceKey":"A","explanationMarkdown":"+는 결과 String을 만들고 s를 mutation하지 않는다. 새 결과는 t에 대입되므로 s는 immutable 값 a를 유지한다."},
-  {"kind":"question","contentKey":"java.core.language-types.string-immutability-equality.q5","promptMarkdown":"다음 중 null 가능 문자열을 안전하게 특정 값과 비교하는 방법은?","questionType":"MULTIPLE_CHOICE","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["java.core.language-types.string-immutability-equality"],"choices":[{"key":"A","content":"input.equals(\"OK\")","displayOrder":0},{"key":"B","content":"\"OK\".equals(input)","displayOrder":1},{"key":"C","content":"input == \"OK\"만 사용","displayOrder":2},{"key":"D","content":"input.toString().equals(\"OK\")","displayOrder":3}],"correctChoiceKey":"B","explanationMarkdown":"literal은 null이 아니므로 \"OK\".equals(input)은 input이 null이어도 false를 반환한다. input.equals는 null에서 NPE가 날 수 있다."},
-  {"kind":"question","contentKey":"java.core.language-types.string-immutability-equality.q6","promptMarkdown":"String immutability가 backend 코드에 주는 직접적인 이점은?","questionType":"MULTIPLE_CHOICE","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["java.core.language-types.string-immutability-equality"],"choices":[{"key":"A","content":"공유한 문자열을 다른 코드가 몰래 바꿀 수 없게 한다","displayOrder":0},{"key":"B","content":"모든 문자열 비교를 ==로 바꿀 수 있게 한다","displayOrder":1},{"key":"C","content":"모든 문자열 조립 비용을 0으로 만든다","displayOrder":2},{"key":"D","content":"String을 primitive로 만든다","displayOrder":3}],"correctChoiceKey":"A","explanationMarkdown":"불변 객체는 생성 후 관찰 가능한 내용이 바뀌지 않으므로 여러 계층이나 thread가 공유할 때 변경 ownership을 추적하기 쉽다."},
-  {"kind":"question","contentKey":"java.core.language-types.string-pool-interning.q1","promptMarkdown":"다음 중 Java string literal에 대한 설명으로 옳은 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["java.core.language-types.string-pool-interning"],"choices":[{"key":"A","content":"같은 literal은 interned string을 공유할 수 있다","displayOrder":0},{"key":"B","content":"literal은 항상 mutable object다","displayOrder":1},{"key":"C","content":"literal에는 String type이 없다","displayOrder":2},{"key":"D","content":"literal은 실행 중 항상 새 object를 만든다","displayOrder":3}],"correctChoiceKey":"A","explanationMarkdown":"Java 언어는 string literal을 interned string instance로 다룬다. 이것은 String이 immutable이라는 사실과 함께 이해해야 한다."},
-  {"kind":"question","contentKey":"java.core.language-types.string-pool-interning.q2","promptMarkdown":"다음 결과로 옳은 것은? `String a = \"java\"; String b = new String(\"java\"); String c = b.intern();`","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.language-types.string-pool-interning"],"choices":[{"key":"A","content":"a == b만 true다","displayOrder":0},{"key":"B","content":"a == b는 false이고 a == c는 true다","displayOrder":1},{"key":"C","content":"a.equals(b)는 false다","displayOrder":2},{"key":"D","content":"intern은 b object를 mutable하게 바꾼다","displayOrder":3}],"correctChoiceKey":"B","explanationMarkdown":"new String은 별도 object지만 intern은 같은 내용의 canonical interned string을 반환하므로 a와 c가 같은 참조를 갖는다. 내용 비교는 equals다."},
-  {"kind":"question","contentKey":"java.core.language-types.string-pool-interning.q3","promptMarkdown":"다음 문자열 비교에 대한 가장 안전한 판단은? `String a = \"ja\"; String b = a + \"va\";` 이후 `b == \"java\"`를 사용한다.","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.language-types.string-pool-interning"],"choices":[{"key":"A","content":"내용 비교 목적이면 == 대신 equals를 사용해야 한다","displayOrder":0},{"key":"B","content":"+ 결과는 언제나 literal과 같은 identity다","displayOrder":1},{"key":"C","content":"+ 결과는 절대 String이 아니다","displayOrder":2},{"key":"D","content":"intern을 호출하면 String이 mutable해진다","displayOrder":3}],"correctChoiceKey":"A","explanationMarkdown":"literal pool과 runtime concatenation의 identity를 일반 규칙으로 확장할 수 없다. 문자열 내용은 equals로 비교한다."},
-  {"kind":"question","contentKey":"java.core.language-types.string-pool-interning.q4","promptMarkdown":"외부 입력 문자열을 무조건 `intern()`하는 설계에 대한 설명으로 옳은 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["java.core.language-types.string-pool-interning"],"choices":[{"key":"A","content":"항상 메모리를 절약하므로 안전하다","displayOrder":0},{"key":"B","content":"canonical identity가 꼭 필요한 경계가 아니면 pool 비용과 수명을 고려해야 한다","displayOrder":1},{"key":"C","content":"intern은 문자열을 암호화한다","displayOrder":2},{"key":"D","content":"intern한 문자열은 equals를 사용할 수 없다","displayOrder":3}],"correctChoiceKey":"B","explanationMarkdown":"intern은 identity canonicalization을 제공하지만 많은 외부 값에 무조건 적용하는 memory/cost 최적화 마법이 아니다. 목적과 입력 cardinality를 먼저 확인한다."},
-  {"kind":"question","contentKey":"java.core.language-types.stringbuilder-mutable-text.q1","promptMarkdown":"`StringBuilder b = new StringBuilder(\"a\"); b.append(\"b\");` 뒤 `b.toString()`의 결과는?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["java.core.language-types.stringbuilder-mutable-text"],"choices":[{"key":"A","content":"a","displayOrder":0},{"key":"B","content":"b","displayOrder":1},{"key":"C","content":"ab","displayOrder":2},{"key":"D","content":"null","displayOrder":3}],"correctChoiceKey":"C","explanationMarkdown":"append는 builder의 mutable buffer에 b를 추가한다. toString은 현재 buffer의 내용인 ab를 String으로 반환한다."},
-  {"kind":"question","contentKey":"java.core.language-types.stringbuilder-mutable-text.q2","promptMarkdown":"다음 코드에서 `snapshot`을 만든 뒤 builder를 변경하면 어떤 결과인가? `StringBuilder b = new StringBuilder(\"a\"); String snapshot = b.toString(); b.append(\"b\");`","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.language-types.stringbuilder-mutable-text"],"choices":[{"key":"A","content":"snapshot은 ab로 자동 변경된다","displayOrder":0},{"key":"B","content":"snapshot은 a로 유지된다","displayOrder":1},{"key":"C","content":"snapshot은 null이 된다","displayOrder":2},{"key":"D","content":"builder가 immutable이라 append가 실패한다","displayOrder":3}],"correctChoiceKey":"B","explanationMarkdown":"toString은 현재 내용을 가진 String 값을 만들고 String은 immutable이다. 이후 builder buffer 변경은 이미 만든 snapshot을 바꾸지 않는다."},
-  {"kind":"question","contentKey":"java.core.language-types.stringbuilder-mutable-text.q3","promptMarkdown":"반복문에서 문자열을 누적하는 코드에 StringBuilder를 사용하는 주된 이유는?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.language-types.stringbuilder-mutable-text"],"choices":[{"key":"A","content":"mutable buffer에 누적해 불필요한 중간 String 생성을 줄일 수 있다","displayOrder":0},{"key":"B","content":"StringBuilder가 모든 thread에서 자동 동기화된다","displayOrder":1},{"key":"C","content":"StringBuilder가 String보다 항상 immutable하기 때문이다","displayOrder":2},{"key":"D","content":"문자열 내용을 비교할 때 ==를 쓸 수 있기 때문이다","displayOrder":3}],"correctChoiceKey":"A","explanationMarkdown":"builder는 같은 buffer를 변경하며 반복 조립 의도를 표현한다. 다만 단순한 한두 번의 concatenation까지 무조건 바꿀 필요는 없다."},
-  {"kind":"question","contentKey":"java.core.language-types.stringbuilder-mutable-text.q4","promptMarkdown":"다음 출력은? `StringBuilder a = new StringBuilder(\"x\"); StringBuilder b = a; b.append(\"y\"); System.out.println(a);`","questionType":"MULTIPLE_CHOICE","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["java.core.language-types.stringbuilder-mutable-text"],"choices":[{"key":"A","content":"x","displayOrder":0},{"key":"B","content":"y","displayOrder":1},{"key":"C","content":"xy","displayOrder":2},{"key":"D","content":"컴파일 오류","displayOrder":3}],"correctChoiceKey":"C","explanationMarkdown":"a와 b는 같은 mutable StringBuilder object를 가리킨다. b.append mutation은 같은 object를 보는 a에서도 xy로 관찰된다."},
-  {"kind":"question","contentKey":"java.core.language-types.stringbuilder-mutable-text.q5","promptMarkdown":"여러 thread가 하나의 StringBuilder를 공유하는 코드에 대한 설명으로 옳은 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["java.core.language-types.stringbuilder-mutable-text"],"choices":[{"key":"A","content":"mutable 공유 상태이므로 동기화나 thread별 builder 등 별도 설계가 필요하다","displayOrder":0},{"key":"B","content":"StringBuilder는 String처럼 immutable이므로 항상 안전하다","displayOrder":1},{"key":"C","content":"append는 다른 thread의 변경을 절대 보지 못한다","displayOrder":2},{"key":"D","content":"공유하면 자동으로 StringBuffer로 변환된다","displayOrder":3}],"correctChoiceKey":"A","explanationMarkdown":"StringBuilder는 일반적인 단일 thread 조립 용도다. 공유 mutable buffer는 race와 일관성 문제를 만들 수 있으므로 ownership 또는 동기화 계약을 정해야 한다."}
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.primitive-reference-values.q1",
+    "promptMarkdown": "다음 코드가 출력하는 값은? `String a = new String(\"cs\"); String b = a; a == b`",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.language-types.primitive-reference-values"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "true",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "false",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "컴파일 오류",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "항상 null",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "b는 a가 가리키던 참조 값을 복사하므로 두 변수가 같은 String object를 가리킨다. ==는 참조형에서 identity를 비교한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.primitive-reference-values.q2",
+    "promptMarkdown": "다음 코드 실행 후 `b`의 값은? `int a = 3; int b = a; a = 4;`",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.language-types.primitive-reference-values"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "3",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "4",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "0",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "컴파일 오류",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "원시 값 대입은 숫자 값 자체를 복사하므로 a를 나중에 바꿔도 이미 복사된 b는 3이다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.primitive-reference-values.q3",
+    "promptMarkdown": "다음 코드 실행 후 `source[0]`의 값은? `int[] source = {1}; int[] alias = source; alias[0] = 7;`",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.language-types.primitive-reference-values"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "1",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "0",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "컴파일 오류",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "7",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "배열 변수 대입은 배열 object를 복제하지 않고 참조 값을 복사한다. source와 alias가 같은 배열을 가리키므로 alias를 통한 원소 변경을 source에서도 7로 관찰한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.primitive-reference-values.q4",
+    "promptMarkdown": "참조 변수 `Object value = null;`에 대해 항상 참인 설명은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.language-types.primitive-reference-values"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "value는 반드시 물리 메모리 주소 0을 담는다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "value는 객체가 없음을 나타내는 참조 값이다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "value를 호출하면 Object의 기본 객체가 생성된다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "참조 변수에는 null을 대입할 수 없다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "null은 참조할 객체가 없다는 값이다. 이를 특정 물리 주소나 자동 생성된 객체로 해석하면 Java 계약을 넘어서게 된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.primitive-reference-values.q5",
+    "promptMarkdown": "다음 코드의 출력은? `StringBuilder a = new StringBuilder(\"x\"); StringBuilder b = a; b.append(\"y\"); b = new StringBuilder(\"z\"); System.out.println(a + \":\" + b);`",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.language-types.primitive-reference-values"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "x:z",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "xy:z",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "xy:xy",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "z:z",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "처음에는 a와 b가 같은 builder를 가리켜 append가 a에도 보인다. 이후 b의 재대입은 b가 가진 참조 값만 바꾸므로 a는 원래 object의 \"xy\", b는 새 object의 \"z\"를 가리킨다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.primitive-reference-values.q6",
+    "promptMarkdown": "Java reference value에 대한 설명 중 언어 계약과 구현 경계를 올바르게 구분한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.language-types.primitive-reference-values"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "reference value는 언제나 OS가 노출하는 물리 주소다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "reference value는 object 전체의 깊은 복사본이다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "reference value는 object identity를 식별하며 실제 표현은 JVM 구현에 맡겨진다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "reference value는 primitive value와 완전히 같은 의미다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "Java와 JVM은 참조 값과 object를 통한 동작을 정의하지만, 참조의 물리 표현과 배치는 JVM 구현 세부다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.variables-scope-definite-assignment.q1",
+    "promptMarkdown": "다음 중 object가 생성될 때 `int` field에 적용되는 설명은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.language-types.variables-scope-definite-assignment"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "사용 전 반드시 메서드 안에서 대입해야 한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "항상 임의의 값으로 초기화된다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "명시적 대입이 없으면 기본값 0으로 초기화된다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "field에는 초기화 규칙이 없다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "인스턴스 field는 object 초기화 과정에서 기본값을 받는다. 이는 지역 변수의 definite assignment 규칙과 다르다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.variables-scope-definite-assignment.q2",
+    "promptMarkdown": "다음 코드가 컴파일되지 않는 직접적인 이유는? `void f() { int count; System.out.println(count); }`",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.language-types.variables-scope-definite-assignment"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "지역 변수 count가 사용 전에 definite assignment되지 않았다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "int 지역 변수는 선언할 수 없다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "println은 int를 받을 수 없다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "메서드 안에서는 scope가 없다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "지역 변수는 field처럼 자동 기본값을 받지 않는다. 컴파일러가 사용 시점까지 모든 경로의 대입을 증명해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.variables-scope-definite-assignment.q3",
+    "promptMarkdown": "다음 코드가 컴파일되도록 만드는 수정은? `int value; if (ready) value = 1; System.out.println(value);`",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.language-types.variables-scope-definite-assignment"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "value를 field로 바꾸지 않고 그대로 둔다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "println을 주석 처리하지 않고 임의의 field를 추가한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "ready를 지역 변수로 다시 선언한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "if 뒤에 else에서 value를 대입한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "ready가 false인 경로도 존재하므로 else에서 대입하거나 모든 경로가 값을 결정하도록 해야 definite assignment가 성립한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.variables-scope-definite-assignment.q4",
+    "promptMarkdown": "다음 코드에서 `i`를 for문 뒤에 사용할 수 없는 이유는? `for (int i = 0; i < 3; i++) { } System.out.println(i);`",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.language-types.variables-scope-definite-assignment"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "for문 변수는 항상 static이어야 하기 때문이다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "i의 lexical scope가 for문 안에서 끝나기 때문이다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "i는 int로 선언할 수 없기 때문이다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "for문은 지역 변수를 만들지 않기 때문이다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "for 초기화부의 i는 for문이 만든 scope 안에서만 이름을 사용할 수 있다. scope와 object lifetime은 같은 개념이 아니다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.variables-scope-definite-assignment.q5",
+    "promptMarkdown": "다음 `final` 지역 변수 선언이 컴파일되려면 어떤 조건이 필요한가? `final int code; if (ok) code = 200; else code = 400;`",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.language-types.variables-scope-definite-assignment"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "한 분기에서만 대입해도 JVM이 나머지 값을 추측한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "final은 지역 변수에 붙일 수 없다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "두 분기에서 여러 번 대입해야 한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "두 분기에서 각각 한 번씩 대입되어 모든 경로에서 정확히 한 번 결정되어야 한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "final 지역 변수는 사용 전에 definite assignment되고 두 번째 대입이 없어야 한다. if/else 양쪽의 단일 대입은 이 조건을 만족한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.variables-scope-definite-assignment.q6",
+    "promptMarkdown": "다음 코드에 대한 설명으로 옳은 것은? `int value; if (ready) { value = 1; } else { throw new IllegalStateException(); } System.out.println(value);`",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.language-types.variables-scope-definite-assignment"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "ready가 false인 경로에서 value가 미대입이므로 컴파일되지 않는다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "value는 자동으로 0으로 초기화되므로 항상 컴파일된다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "throw가 있는 분기는 definite assignment 분석에서 무조건 true 분기로 취급된다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "컴파일되며 ready가 true이면 1을 출력하고 false이면 출력 전에 예외로 종료한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "println까지 정상적으로 도달하는 경로는 ready가 true인 경우뿐이고 그 경로에서는 value가 대입되어 있다. false 경로는 throw로 정상 완료하지 않으므로 사용 시점의 definite assignment를 깨지 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.numeric-conversion-overflow.q1",
+    "promptMarkdown": "다음 중 별도 cast 없이 허용되는 primitive 변환은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.language-types.numeric-conversion-overflow"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "int를 byte로 대입",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "int를 long으로 대입",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "long을 int로 대입",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "double을 float로 대입",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "int에서 long으로의 widening primitive conversion은 값 범위를 넓히므로 암시적으로 허용된다. 반대 방향은 정보 손실 가능성이 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.numeric-conversion-overflow.q2",
+    "promptMarkdown": "다음 결과에 대한 설명으로 옳은 것은? `long total = 2_000_000_000 + 2_000_000_000;`",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.language-types.numeric-conversion-overflow"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "long이므로 항상 4_000_000_000이 된다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "오른쪽 int 덧셈에서 먼저 overflow가 발생할 수 있다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "컴파일러가 자동으로 BigInteger로 변환한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "long에는 정수 대입이 불가능하다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "두 literal이 int라서 덧셈이 int로 먼저 계산된다. 대입 대상만 long인 것은 중간 계산 overflow를 되돌리지 못한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.numeric-conversion-overflow.q3",
+    "promptMarkdown": "다음 설명으로 가장 정확한 것은? `int big = 1_234_567_890; float approx = big;`",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.language-types.numeric-conversion-overflow"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "widening이므로 approx는 반드시 모든 비트를 정확히 보존한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "int에서 float은 narrowing이므로 명시적 cast 없이는 컴파일되지 않는다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "int에서 float은 widening이라 cast 없이 가능하지만 일부 하위 비트가 반올림되어 precision을 잃을 수 있다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "precision을 잃으면 반드시 ArithmeticException이 발생한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "int→float은 JLS가 정의한 widening primitive conversion이지만 exact widening은 아니다. float 표현 정밀도 때문에 일부 least-significant bits를 잃고 반올림될 수 있으며 런타임 예외는 발생하지 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.numeric-conversion-overflow.q4",
+    "promptMarkdown": "다음 코드에 대한 설명으로 옳은 것은? `byte a = 1, b = 2; byte c = a + b;`",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.language-types.numeric-conversion-overflow"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "a + b의 결과가 int로 승격되어 byte 대입에 cast가 필요하다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "c는 byte 3으로 정상 컴파일된다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "byte 덧셈은 항상 long으로 승격된다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "a와 b가 final이 아니어서만 오류가 난다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "byte와 short를 포함한 정수 산술은 보통 int로 승격된다. 따라서 결과를 byte에 넣으려면 범위를 확인한 명시적 cast가 필요하다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.boxing-unboxing-wrapper.q1",
+    "promptMarkdown": "다음 코드에서 primitive 값이 wrapper 객체로 바뀌는 부분은? `Integer count = 3;`",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.language-types.boxing-unboxing-wrapper"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "boxing",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "unboxing",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "overriding",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "casting만 일어난다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "int literal 3이 Integer wrapper로 자동 변환되는 것이 boxing이다. 명시적 new가 없어도 문맥상 변환이 일어날 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.boxing-unboxing-wrapper.q2",
+    "promptMarkdown": "다음 코드의 실행 결과는? `Integer value = null; int answer = value;`",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.language-types.boxing-unboxing-wrapper"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "unboxing 시 NullPointerException이 발생한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "answer가 0이 된다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "answer가 null이 된다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "컴파일러가 Integer를 자동으로 1로 만든다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "null wrapper에서 int를 얻으려면 unboxing해야 하고, null에는 꺼낼 primitive 값이 없어 NullPointerException이 발생한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.boxing-unboxing-wrapper.q3",
+    "promptMarkdown": "`Integer a = 1000; Integer b = 1000;`에서 값 비교를 하려면 무엇을 사용해야 하는가?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.language-types.boxing-unboxing-wrapper"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "항상 ==를 사용한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "wrapper identity를 믿고 ==를 사용한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "두 값을 String으로 바꿔야만 비교할 수 있다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "equals 또는 null을 고려한 값 비교를 사용한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "Integer의 ==는 object identity이고 wrapper cache 범위에 의존할 수 있다. 숫자 값 equality가 목적이면 equals나 null-safe 비교를 사용한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.boxing-unboxing-wrapper.q4",
+    "promptMarkdown": "다음 expression의 결과는? `Integer value = null; value == null`",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.language-types.boxing-unboxing-wrapper"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "true이며 unboxing이 필요 없다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "false이며 null은 0으로 바뀐다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "항상 ClassCastException이다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "컴파일 오류다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "한쪽이 null literal인 참조 비교는 wrapper를 primitive로 꺼낼 필요 없이 참조가 null인지 확인하므로 true다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.boxing-unboxing-wrapper.q5",
+    "promptMarkdown": "다음 overload 호출에서 `choose(null)`에 선택되는 메서드는? `choose(int value)`와 `choose(Integer value)`가 함께 선언되어 있다.",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.language-types.boxing-unboxing-wrapper"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "choose(int)",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "choose(Integer)",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "두 메서드가 무작위로 선택된다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "항상 ambiguous compile error다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "null은 reference 값이므로 Integer overload에는 전달할 수 있지만 int로 unboxing할 수 없다. 따라서 choose(Integer)가 선택된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.boxing-unboxing-wrapper.q6",
+    "promptMarkdown": "다음 loop에서 실무적으로 먼저 확인할 위험은? `for (Integer n : values) total += n;`",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.language-types.boxing-unboxing-wrapper"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "Integer는 loop에서 사용할 수 없다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "합계가 자동으로 문자열이 된다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "모든 n이 반드시 새로운 object로 복사된다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "각 n이 unboxing되므로 null 원소가 있으면 예외가 날 수 있다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "+= 계산에서 n이 int로 unboxing된다. values에 null이 있으면 해당 시점에 NullPointerException이 발생할 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.pass-by-value.q1",
+    "promptMarkdown": "`void increment(int value) { value++; }` 호출 후 호출자의 int 변수가 바뀌지 않는 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.language-types.pass-by-value"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "int는 Java에서 전달할 수 없기 때문이다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "원시 값이 복사되어 별도의 parameter 변수가 만들어지기 때문이다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "JVM이 모든 증가 연산을 무시하기 때문이다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "호출자는 항상 static이어야 하기 때문이다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "Java는 primitive든 reference든 값을 전달한다. int 값의 복사본을 증가시키므로 호출자 변수에는 영향이 없다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.pass-by-value.q2",
+    "promptMarkdown": "참조형 매개변수로 전달된 mutable object의 내부 변경이 호출자에게 보일 수 있는 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.language-types.pass-by-value"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "object 자체가 pass-by-reference로 전달되기 때문이다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "parameter가 호출자 변수의 alias가 되기 때문이다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "참조 값이 복사되어 같은 object를 가리킬 수 있기 때문이다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "GC가 두 변수를 동기화하기 때문이다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "object가 reference로 전달되는 것이 아니라 reference value가 복사된다. 복사된 값이 같은 object를 가리켜 내부 mutation이 공유될 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.pass-by-value.q3",
+    "promptMarkdown": "`void replace(StringBuilder b) { b = new StringBuilder(\"new\"); }` 호출 후 호출자의 b가 바뀌지 않는 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.language-types.pass-by-value"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "새 reference 대입은 parameter 변수에만 적용되기 때문이다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "StringBuilder는 mutation을 지원하지 않기 때문이다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "new는 object를 만들지 않기 때문이다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "reference value는 전달될 수 없기 때문이다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "parameter도 참조 값의 복사본을 담은 별도 변수다. 그 변수에 새 참조를 대입해도 호출자 변수가 가진 참조는 그대로다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.pass-by-value.q4",
+    "promptMarkdown": "다음 `swap(String a, String b)`가 호출자 변수의 문자열 참조를 서로 바꾸지 못하는 핵심 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.language-types.pass-by-value"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "String이 immutable이기 때문에 매개변수 변수의 재대입만 호출자에 반영되지 않는다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "참조형만 pass-by-reference이지만 String에 한해서 예외가 적용된다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "swap 안에서 임시 변수를 사용하면 호출자 변수도 함께 교환된다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "a와 b는 호출자 변수 자체가 아니라 복사된 참조 값을 담는 별도 매개변수 변수이므로 둘을 재대입해도 호출자 binding은 바뀌지 않는다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "Java는 참조형도 참조 값을 value로 전달한다. a와 b는 호출자의 변수 자체가 아니므로 swap 내부의 재대입은 매개변수 binding만 바꾸고 호출자 binding은 바꾸지 못한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.pass-by-value.q5",
+    "promptMarkdown": "메서드가 호출자의 변수에 새 immutable 값을 반영하게 하려면 가장 명확한 방식은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.language-types.pass-by-value"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "새 값을 return하고 호출자가 직접 재대입한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "parameter를 final로 만든다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "메서드 안에서 parameter에 새 값을 대입한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "모든 primitive를 wrapper로 감싼다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "parameter 재대입은 호출자 변수를 바꾸지 못한다. 새 상태를 반환해 호출자가 명시적으로 대입하면 side effect와 계약이 분명하다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.pass-by-value.q6",
+    "promptMarkdown": "다음 실행 결과로 옳은 것은? `void update(int[] xs) { xs[0] = 9; xs = new int[]{1}; }`를 `int[] a = {0}; update(a);`에 호출한다.",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.language-types.pass-by-value"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "a[0]은 1이다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "a가 null이 된다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "a[0]은 9다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "두 대입 모두 호출자에 반영된다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "xs[0] mutation은 같은 배열 object에 반영된다. 하지만 xs를 새 배열로 재대입하는 것은 parameter 변수만 바꾸므로 a는 원래 배열을 계속 가리킨다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.arrays-covariance-runtime-check.q1",
+    "promptMarkdown": "Java 배열의 길이에 대한 설명으로 옳은 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.language-types.arrays-covariance-runtime-check"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "배열은 생성 후 length가 고정된다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "배열은 원소를 넣을 때마다 자동 확장된다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "배열 length는 항상 0이다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "length는 runtime마다 임의로 바뀐다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "배열은 생성 시 정해진 length를 가지며, 크기를 바꾸려면 새 배열을 만들고 값을 옮겨야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.arrays-covariance-runtime-check.q2",
+    "promptMarkdown": "다음 대입이 컴파일되는 이유는? `String[] names = new String[1]; Object[] values = names;`",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.language-types.arrays-covariance-runtime-check"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "모든 배열은 invariant이기 때문이다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "String[]이 primitive 배열이기 때문이다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "참조형 배열이 covariant이기 때문이다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "Object[]가 String[]으로 자동 복사되기 때문이다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "참조형 배열은 String[]을 Object[]로 upcast할 수 있다. 이는 실제 배열 타입과 변수의 정적 타입을 함께 살펴야 함을 뜻한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.arrays-covariance-runtime-check.q3",
+    "promptMarkdown": "다음 코드의 실행 결과는? `Object[] values = new String[1]; values[0] = Integer.valueOf(1);`",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.language-types.arrays-covariance-runtime-check"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "정상 저장된다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "컴파일 시점에만 오류가 난다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "ArrayStoreException이 발생한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "Integer가 String으로 자동 변환된다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "정적 변수 타입 Object[]는 대입을 허용하지만 실제 object는 String[]이다. 배열은 저장 시 실제 component type을 검사한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.arrays-covariance-runtime-check.q4",
+    "promptMarkdown": "다음 중 `Object[] values = new String[2]`에 안전하게 저장할 수 있는 값은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.language-types.arrays-covariance-runtime-check"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "Integer.valueOf(1)",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "new Object()",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "new StringBuilder()",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "null",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "String[]에는 String 또는 null을 저장할 수 있다. null은 특정 객체 타입의 값을 요구하지 않으므로 runtime store check를 통과한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.arrays-covariance-runtime-check.q5",
+    "promptMarkdown": "다음 코드의 실행 결과로 가장 정확한 것은? `Object[] values = new String[2]; values[0] = \"A\"; Object candidate = Integer.valueOf(1); values[1] = candidate;`",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.language-types.arrays-covariance-runtime-check"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "첫 저장부터 컴파일 오류가 난다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "첫 저장은 성공하지만 두 번째 저장에서 ArrayStoreException이 발생하며 values[0]의 \"A\"는 유지된다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "두 저장 모두 성공하고 Integer가 String으로 변환된다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "두 번째 저장에서 ClassCastException이 발생하고 배열 전체가 초기화된다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "정적 타입 Object[] 때문에 두 대입문은 컴파일된다. 실제 배열 object는 String[]이므로 \"A\" 저장은 성공하지만 Integer 저장 시 runtime store check가 실패해 ArrayStoreException이 발생한다. 이미 성공한 첫 원소 저장은 되돌려지지 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.final-reference-and-immutability.q1",
+    "promptMarkdown": "`final int count = 1;`에 대한 설명으로 옳은 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.language-types.final-reference-and-immutability"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "count에 다른 값을 다시 대입할 수 없다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "모든 object가 immutable해진다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "count는 static field가 된다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "count는 thread-safe object가 된다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "final 변수는 재대입을 제한한다. 이것만으로 객체 불변성, static 소속, thread-safety가 생기지는 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.final-reference-and-immutability.q2",
+    "promptMarkdown": "다음 코드가 가능한 이유는? `final StringBuilder b = new StringBuilder(); b.append(\"x\");`",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.language-types.final-reference-and-immutability"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "StringBuilder가 primitive이기 때문이다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "final field는 항상 복사되기 때문이다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "append가 아무 일도 하지 않기 때문이다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "final은 참조 재대입만 막고 object mutation은 막지 않기 때문이다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "b가 다른 object를 가리키도록 바꾸는 것은 금지되지만, b가 가리키는 mutable StringBuilder 내부는 append로 바뀔 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.final-reference-and-immutability.q3",
+    "promptMarkdown": "`final` 메서드와 `final` 클래스의 효과를 올바르게 짝지은 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.language-types.final-reference-and-immutability"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "final method는 field를, final class는 constructor를 삭제한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "final method는 override를, final class는 inheritance를 제한한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "둘 다 object mutation만 제한한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "둘 다 primitive conversion만 제한한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "final method는 subclass override를 막고 final class는 subclass 자체를 막는다. 변수의 final과도 구분해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.final-reference-and-immutability.q4",
+    "promptMarkdown": "다음 중 실제로 immutable하다고 판단하려면 추가로 확인해야 하는 것은? `final class Profile { private final List<String> tags; }`",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.language-types.final-reference-and-immutability"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "class 이름이 Profile인지 확인하면 충분하다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "field가 final이면 내부 list는 반드시 immutable이다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "tags를 외부 mutable list 그대로 보관·반환하는지 확인한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "private는 OS 메모리 보호를 보장한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "final은 참조 재대입만 막는다. 입력을 복사하고 mutable 내부를 그대로 노출하지 않는지까지 확인해야 immutable 설계가 된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.final-reference-and-immutability.q5",
+    "promptMarkdown": "다음 constructor는 컴파일되는가? `class Token { final int code; Token(boolean valid) { if (valid) code = 200; else throw new IllegalArgumentException(); } }`",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.language-types.final-reference-and-immutability"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "컴파일되지 않는다. final field는 선언과 동시에만 대입할 수 있다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "컴파일된다. 정상적으로 constructor를 완료하는 경로에서는 code가 정확히 한 번 대입되고 다른 경로는 예외로 완료한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "컴파일되지 않는다. else 경로에서 code가 대입되지 않는다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "컴파일되지만 valid가 false이면 code가 자동으로 0인 Token이 반환된다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "blank final field는 constructor에서 대입할 수 있다. 정상 완료하는 valid=true 경로에서는 code가 정확히 한 번 대입되고, false 경로는 예외로 종료되어 미초기화 Token을 반환하지 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.string-immutability-equality.q1",
+    "promptMarkdown": "문자열 내용이 같은지 비교하는 일반적인 Java 코드는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.language-types.string-immutability-equality"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "a == b",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "a = b",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "a.equals(b)",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "a.hashCode() == b.hashCode()만 확인",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "String의 equals는 문자 내용을 비교한다. ==는 같은 object identity인지 확인하며 hashCode만 같다고 equality가 보장되는 것도 아니다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.string-immutability-equality.q2",
+    "promptMarkdown": "다음 출력 결과는? `String s = \"a\"; s.concat(\"b\"); System.out.println(s);`",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.language-types.string-immutability-equality"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "ab",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "null",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "a",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "컴파일 오류",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "String은 immutable이므로 concat은 새 String 값을 반환한다. 반환값을 저장하지 않았으므로 s가 가리키는 값은 a 그대로다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.string-immutability-equality.q3",
+    "promptMarkdown": "`new String(\"java\")` 두 개의 비교에서 올바른 결과는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.language-types.string-immutability-equality"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "==는 true, equals는 false",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "==는 false, equals는 true",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "둘 다 false",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "둘 다 true이며 항상 같은 object다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "new로 만든 object identity는 다르지만 String.equals는 같은 문자 내용을 보고 true를 반환한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.string-immutability-equality.q4",
+    "promptMarkdown": "다음 코드의 출력은? `String s = \"a\"; String t = s + \"b\"; System.out.println(s);`",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.language-types.string-immutability-equality"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "ab",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "b",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "null",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "a",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "+는 결과 String을 만들고 s를 mutation하지 않는다. 새 결과는 t에 대입되므로 s는 immutable 값 a를 유지한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.string-immutability-equality.q5",
+    "promptMarkdown": "다음 중 null 가능 문자열을 안전하게 특정 값과 비교하는 방법은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.language-types.string-immutability-equality"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "\"OK\".equals(input)",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "input.equals(\"OK\")",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "input == \"OK\"만 사용",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "input.toString().equals(\"OK\")",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "literal은 null이 아니므로 \"OK\".equals(input)은 input이 null이어도 false를 반환한다. input.equals는 null에서 NPE가 날 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.string-immutability-equality.q6",
+    "promptMarkdown": "다음 출력으로 옳은 것은? `String a = \"ab\"; String b = new String(\"ab\"); String c = b; b = b.toUpperCase(); System.out.println(a.equals(c) + \":\" + b.equals(c) + \":\" + (b == c));`",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.language-types.string-immutability-equality"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "true:true:true",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "false:false:false",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "true:true:false",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "true:false:false",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "c는 원래 b가 가리키던 내용 \"ab\"의 String object를 계속 가리킨다. a와 c는 내용이 같아 equals가 true다. b.toUpperCase() 결과는 \"AB\"이므로 b.equals(c)는 false이고 b와 c의 identity도 다르다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.string-pool-interning.q1",
+    "promptMarkdown": "다음 중 Java string literal에 대한 설명으로 옳은 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.language-types.string-pool-interning"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "literal은 항상 mutable object다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "literal에는 String type이 없다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "같은 literal은 interned string을 공유할 수 있다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "literal은 실행 중 항상 새 object를 만든다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "Java 언어는 string literal을 interned string instance로 다룬다. 이것은 String이 immutable이라는 사실과 함께 이해해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.string-pool-interning.q2",
+    "promptMarkdown": "다음 결과로 옳은 것은? `String a = \"java\"; String b = new String(\"java\"); String c = b.intern();`",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.language-types.string-pool-interning"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "a == b는 false이고 a == c는 true다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "a == b만 true다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "a.equals(b)는 false다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "intern은 b object를 mutable하게 바꾼다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "new String은 별도 object지만 intern은 같은 내용의 canonical interned string을 반환하므로 a와 c가 같은 참조를 갖는다. 내용 비교는 equals다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.string-pool-interning.q3",
+    "promptMarkdown": "다음 문자열 비교에 대한 가장 안전한 판단은? `String a = \"ja\"; String b = a + \"va\";` 이후 `b == \"java\"`를 사용한다.",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.language-types.string-pool-interning"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "내용 비교 목적이면 == 대신 equals를 사용해야 한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "+ 결과는 언제나 literal과 같은 identity다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "+ 결과는 절대 String이 아니다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "intern을 호출하면 String이 mutable해진다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "literal pool과 runtime concatenation의 identity를 일반 규칙으로 확장할 수 없다. 문자열 내용은 equals로 비교한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.string-pool-interning.q4",
+    "promptMarkdown": "다음 코드 뒤의 비교 결과로 옳은 것은? `String a = \"ja\" + \"va\"; String part = \"ja\"; String b = part + \"va\";`",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.language-types.string-pool-interning"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`a == \"java\"`와 `b == \"java\"`가 모두 true다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "`a == \"java\"`는 false이고 `b == \"java\"`는 true다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "`a == \"java\"`는 true이고 `b == \"java\"`는 false다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "두 비교는 모두 컴파일 오류다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "\"ja\" + \"va\"는 compile-time constant expression이라 interned literal \"java\"와 같은 reference가 된다. part가 변수인 b의 concatenation은 runtime에 평가되므로 내용은 같아도 literal과 같은 identity를 보장하지 않는다. 내용 비교에는 equals를 사용한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.stringbuilder-mutable-text.q1",
+    "promptMarkdown": "`StringBuilder b = new StringBuilder(\"a\"); b.append(\"b\");` 뒤 `b.toString()`의 결과는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.language-types.stringbuilder-mutable-text"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "ab",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "a",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "b",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "null",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "append는 builder의 mutable buffer에 b를 추가한다. toString은 현재 buffer의 내용인 ab를 String으로 반환한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.stringbuilder-mutable-text.q2",
+    "promptMarkdown": "다음 코드에서 `snapshot`을 만든 뒤 builder를 변경하면 어떤 결과인가? `StringBuilder b = new StringBuilder(\"a\"); String snapshot = b.toString(); b.append(\"b\");`",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.language-types.stringbuilder-mutable-text"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "snapshot은 ab로 자동 변경된다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "snapshot은 null이 된다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "snapshot은 a로 유지된다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "builder가 immutable이라 append가 실패한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "toString은 현재 내용을 가진 String 값을 만들고 String은 immutable이다. 이후 builder buffer 변경은 이미 만든 snapshot을 바꾸지 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.stringbuilder-mutable-text.q3",
+    "promptMarkdown": "반복문에서 문자열을 누적하는 코드에 StringBuilder를 사용하는 주된 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.language-types.stringbuilder-mutable-text"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "StringBuilder가 모든 thread에서 자동 동기화된다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "mutable buffer에 누적해 불필요한 중간 String 생성을 줄일 수 있다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "StringBuilder가 String보다 항상 immutable하기 때문이다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "문자열 내용을 비교할 때 ==를 쓸 수 있기 때문이다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "builder는 같은 buffer를 변경하며 반복 조립 의도를 표현한다. 다만 단순한 한두 번의 concatenation까지 무조건 바꿀 필요는 없다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.stringbuilder-mutable-text.q4",
+    "promptMarkdown": "다음 출력은? `StringBuilder a = new StringBuilder(\"x\"); StringBuilder b = a; String snapshot = a.toString(); b.append(\"y\"); b = new StringBuilder(\"z\"); System.out.println(a + \":\" + snapshot + \":\" + b);`",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.language-types.stringbuilder-mutable-text"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "x:xy:z",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "xy:xy:z",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "z:x:z",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "xy:x:z",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "a와 b가 같은 builder를 가리킬 때 append가 원래 builder를 \"xy\"로 바꾼다. snapshot은 append 전에 만든 immutable String \"x\"로 유지된다. 마지막 b 재대입은 b만 새 \"z\" builder를 가리키게 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.stringbuilder-mutable-text.q5",
+    "promptMarkdown": "여러 thread가 하나의 StringBuilder를 공유하는 코드에 대한 설명으로 옳은 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.language-types.stringbuilder-mutable-text"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "StringBuilder의 각 append가 원자적이므로 추가 동기화 없이도 항상 안전하다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "공유 mutable buffer이므로 thread confinement, 외부 동기화 또는 다른 동시성 설계가 필요하다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "여러 thread가 접근하면 JVM이 자동으로 StringBuffer로 교체한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "문제가 되는 것은 읽기뿐이며 여러 thread의 append는 순서까지 보장된다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "StringBuilder는 thread-safe한 공유 버퍼 계약을 제공하지 않는다. 한 thread에 가두는 것이 가장 단순하고, 정말 공유해야 한다면 외부 동기화나 요구에 맞는 다른 설계를 선택해야 한다."
+  }
 ]

@@ -27,18 +27,22 @@ references:
 ## 쉬운 진입
 
 작은 컵에 큰 양의 물을 옮기면 일부가 넘친다. Java의 숫자 타입도 표현할 수 있는 범위가
-다르다. 큰 타입으로 넓히는 변환은 대체로 값을 보존하지만, 작은 타입으로 좁히거나 제한된
-정수 범위를 넘으면 결과를 그대로 믿을 수 없다.
+다르다. Java가 widening으로 분류한 변환은 명시적 cast 없이 허용되지만, "widening = 항상 정확한 값 보존"은 아니다.
+특히 `int -> float`, `long -> float`, `long -> double`은 magnitude를 표현할 수 있어도 일부 정밀도를 잃을 수 있다.
+작은 타입으로 좁히거나 제한된 정수 범위를 넘는 경우에는 별도의 정보 손실도 생길 수 있다.
 
 ## 정확한 메커니즘
 
-`widening primitive conversion`은 더 넓은 표현 범위의 타입으로 바꾸는 변환이고, `narrowing`
-은 명시적 cast가 필요한 경우가 많다. 정수 산술은 피연산자를 `int` 이상으로 승격해 계산하는
-규칙도 있으므로 `short`나 `byte`끼리의 계산 결과가 다시 그 타입으로 나오지 않는다.
+`widening primitive conversion`은 JLS가 정한 암시적 primitive 변환 범주다. 정수형끼리의 widening처럼
+정확히 값이 보존되는 경우도 있지만, `int -> float`, `long -> float`, `long -> double`은 floating-point
+정밀도 때문에 least-significant bits가 반올림될 수 있다. `narrowing`은 명시적 cast가 필요한 경우가 많다.
+또 정수 산술은 피연산자를 `int` 이상으로 승격해 계산하므로 `short`나 `byte`끼리의 결과도 보통 `int`다.
 
 ```java
 int total = 2_000_000_000 + 2_000_000_000; // int overflow, 음수 결과
 long safe = 2_000_000_000L + 2_000_000_000L;
+int big = 1_234_567_890;
+float approx = big;                         // widening이지만 일부 precision 손실 가능
 byte wrapped = (byte) 130;                  // narrowing 후 표현 범위에 맞춘 결과
 ```
 
@@ -54,5 +58,6 @@ cast는 “값이 안전하다”는 확인이 아니라 변환을 개발자가 
 ## 흔한 오해
 
 - `long result = intA * intB`는 곱셈 후 대입하므로 곱셈 자체가 `int` overflow를 낼 수 있다.
+- widening primitive conversion이라고 해서 모든 경우에 숫자 값이 bit 단위까지 정확히 보존되는 것은 아니다.
 - 모든 숫자 변환이 자동 widening인 것은 아니다.
 - narrowing cast는 overflow를 예외로 알려 주는 검증이 아니다.

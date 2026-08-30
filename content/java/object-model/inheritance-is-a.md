@@ -21,6 +21,12 @@ references:
     language: en
     displayOrder: 2
     relationNote: 상속된 메서드 호출 표현식 확인
+  - url: "https://techblog.woowahan.com/2644/"
+    title: "우아한형제들 기술블로그: 병아리 개발자의 걸음마 한 발짝"
+    referenceType: COMPANY_TECH_BLOG
+    language: ko
+    displayOrder: 3
+    relationNote: 구현 재사용 목적 상속의 위험과 합성 선택 사례 보충
 ---
 # Inheritance와 is-a 관계
 

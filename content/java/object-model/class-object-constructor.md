@@ -26,8 +26,8 @@ references:
 
 ## 쉬운 진입
 
-class는 같은 종류의 상태와 행동을 설명하는 설계도이고, object는 그 설계도로 실제 만들어진
-하나의 값이다. constructor는 object가 외부에 사용되기 전에 필요한 초기 상태를 만들기 위한
+class는 같은 종류의 상태와 행동을 설명하는 타입이고, object는 그 class를 바탕으로 실행 중 동적으로 생성된
+class instance(또는 배열)다. object를 가리키는 reference value와 object 자체는 구분한다. constructor는 object가 외부에 사용되기 전에 필요한 초기 상태를 만들기 위한
 생성 경계다. 설계도와 실제 집을 같은 것으로 취급하지 않는 것처럼 class와 object도 구분한다.
 
 ## 정확한 메커니즘

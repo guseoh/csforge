@@ -41,15 +41,16 @@ final class Order {
     }
 
     List<String> items() {
-        return items;                    // immutable list이므로 안전한 공개
+        return items;                    // unmodifiable snapshot이라 list 구조 변경 API는 노출하지 않음
     }
 }
 ```
 
 불변 객체는 생성 후 관찰 가능한 상태가 바뀌지 않고, 내부 mutable 객체의 변경 경로를 외부에
 노출하지 않아야 한다. `final` field는 참조 재대입을 막을 뿐 내부 list의 mutation을 막지 않는다.
-`Collections.unmodifiableList` 같은 view는 원본이 바뀌면 관찰 결과도 바뀔 수 있지만 `List.copyOf`
-는 입력을 복사한 불변 list를 제공한다. 복사는 얕은 복사일 수 있으므로 list 안의 mutable 원소
+`Collections.unmodifiableList` 같은 view는 backing list가 바뀌면 관찰 결과도 바뀔 수 있지만 `List.copyOf`
+는 입력 collection의 이후 구조 변경을 반영하지 않는 unmodifiable list를 제공한다. 이것이 원소까지
+immutable하게 만든다는 뜻은 아니다. 복사는 얕은 복사일 수 있으므로 list 안의 mutable 원소
 ownership까지 필요하면 원소도 별도로 보호해야 한다.
 
 ```text

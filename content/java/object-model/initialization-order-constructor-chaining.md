@@ -21,6 +21,12 @@ references:
     language: en
     displayOrder: 2
     relationNote: constructor declaration와 constructor invocation 확인
+  - url: "https://docs.oracle.com/en/java/javase/25/language/flexible-constructor-bodies.html"
+    title: "Java SE 25 Flexible Constructor Bodies"
+    referenceType: OFFICIAL
+    language: en
+    displayOrder: 3
+    relationNote: Java 25 early construction context와 super 이전 field initialization 규칙 확인
 ---
 # Initialization order와 constructor chaining
 
@@ -49,9 +55,10 @@ class Child extends Parent {
 처음 class initialization이 필요하다면 부모 class의 초기화와 자식 class의 초기화가 준비되고,
 instance 생성에서는 명시적 또는 암시적 `super()`가 먼저 부모 constructor chain을 시작한다.
 그 후 instance field initializer와 instance initializer, constructor 본문이 해당 class 순서로
-진행된다. `this(...)`는 같은 class의 다른 constructor로 위임한다. Java SE 25에서는 제한된
-prologue를 constructor invocation 앞에 둘 수 있지만, 그 구간에서는 `this`와 instance field·method
-접근이 제한된다. 한 constructor에서 `this(...)`와 `super(...)`를 동시에 호출할 수는 없다.
+진행된다. `this(...)`는 같은 class의 다른 constructor로 위임한다. Java SE 25의 flexible constructor bodies는
+explicit constructor invocation 앞에 prologue를 둘 수 있게 한다. 이 early construction context에서는 현재
+instance field를 읽거나 instance method를 호출하는 등의 접근은 제한되지만, assignment operator로 현재
+instance field를 초기화하는 것은 허용된다. 한 constructor에서 `this(...)`와 `super(...)`를 동시에 호출할 수는 없다.
 
 ```text
 class init(필요 시) → super() chain → field/instance initializer → constructor body

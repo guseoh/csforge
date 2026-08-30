@@ -21,6 +21,12 @@ references:
     language: en
     displayOrder: 2
     relationNote: collaborator contract를 interface로 표현하는 규칙 확인
+  - url: "https://techblog.woowahan.com/2644/"
+    title: "우아한형제들 기술블로그: 병아리 개발자의 걸음마 한 발짝"
+    referenceType: COMPANY_TECH_BLOG
+    language: ko
+    displayOrder: 3
+    relationNote: 상속보다 합성을 선택하는 실무 설계 맥락 보충
 ---
 # Composition과 collaboration
 
