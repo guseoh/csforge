@@ -57,25 +57,33 @@ public class ConceptProgress extends AuditedEntity implements Persistable<Long> 
         }
         lastViewedAt = viewedAt;
         if (status == LearningStatus.UNSEEN) {
-            status = LearningStatus.LEARNING;
+            startLearning();
         }
     }
 
-    public void update(LearningStatus requestedStatus, Boolean requestedBookmarked, Instant changedAt) {
-        if (requestedStatus != null) {
-            status = requestedStatus;
-            if (requestedStatus == LearningStatus.COMPLETED) {
-                if (completedAt == null) {
-                    completedAt = changedAt;
-                }
-            } else {
-                // Leaving COMPLETED clears its completion timestamp consistently.
-                completedAt = null;
-            }
+    public void startLearning() {
+        status = LearningStatus.LEARNING;
+        completedAt = null;
+    }
+
+    public void complete(Instant completedAt) {
+        status = LearningStatus.COMPLETED;
+        if (this.completedAt == null) {
+            this.completedAt = completedAt;
         }
-        if (requestedBookmarked != null) {
-            bookmarked = requestedBookmarked;
-        }
+    }
+
+    public void markReviewNeeded() {
+        status = LearningStatus.REVIEW_NEEDED;
+        completedAt = null;
+    }
+
+    public void bookmark() {
+        bookmarked = true;
+    }
+
+    public void unbookmark() {
+        bookmarked = false;
     }
 
     public Long getConceptId() {
