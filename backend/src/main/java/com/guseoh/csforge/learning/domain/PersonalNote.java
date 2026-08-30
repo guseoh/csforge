@@ -33,7 +33,7 @@ public class PersonalNote extends AuditedEntity {
         this.content = content;
     }
 
-    public void updateContent(String content) {
+    public void changeContent(String content) {
         this.content = content;
     }
 
