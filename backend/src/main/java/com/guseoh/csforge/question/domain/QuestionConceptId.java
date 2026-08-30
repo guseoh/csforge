@@ -1,9 +1,13 @@
 package com.guseoh.csforge.question.domain;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import jakarta.persistence.Embeddable;
 
+/**
+ * Question과 Concept 연결 엔티티의 복합 식별자를 표현하는 값 타입이다.
+ */
 @Embeddable
 public class QuestionConceptId implements Serializable {
 
@@ -28,14 +32,18 @@ public class QuestionConceptId implements Serializable {
 
     @Override
     public boolean equals(Object other) {
-        if (this == other) return true;
-        if (!(other instanceof QuestionConceptId that)) return false;
-        return java.util.Objects.equals(questionId, that.questionId)
-                && java.util.Objects.equals(conceptId, that.conceptId);
+        if (this == other) {
+            return true;
+        }
+        if (!(other instanceof QuestionConceptId that)) {
+            return false;
+        }
+        return Objects.equals(questionId, that.questionId)
+                && Objects.equals(conceptId, that.conceptId);
     }
 
     @Override
     public int hashCode() {
-        return java.util.Objects.hash(questionId, conceptId);
+        return Objects.hash(questionId, conceptId);
     }
 }
