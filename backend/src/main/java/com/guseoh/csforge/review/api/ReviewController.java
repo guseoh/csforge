@@ -1,7 +1,5 @@
 package com.guseoh.csforge.review.api;
 
-import java.time.Clock;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,11 +11,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.guseoh.csforge.question.domain.QuestionDifficulty;
 import com.guseoh.csforge.review.application.ReviewCommandService;
 import com.guseoh.csforge.review.application.ReviewDueWindow;
 import com.guseoh.csforge.review.application.ReviewListCriteria;
-import com.guseoh.csforge.review.application.ReviewQuizMode;
 import com.guseoh.csforge.review.application.ReviewQuizSetupCommand;
 import com.guseoh.csforge.review.application.ReviewQueryService;
 import com.guseoh.csforge.review.domain.ReviewScheduleStatus;
@@ -34,7 +30,6 @@ public class ReviewController {
     private final ReviewQueryService queryService;
     private final ReviewCommandService commandService;
     private final ReviewApiMapper apiMapper;
-    private final Clock clock;
 
     @GetMapping("/summary")
     public ReviewSummaryResponse summary() {
@@ -52,15 +47,14 @@ public class ReviewController {
             @RequestParam(defaultValue = "20") int size) {
         if (page < 0) throw new IllegalArgumentException("page must not be negative");
         int boundedSize = bounded(size);
-        return apiMapper.toResponse(queryService.list(new ReviewListCriteria(due, status, area, topic, level, java.time.Instant.now(clock)), page, boundedSize));
+        return apiMapper.toResponse(queryService.list(new ReviewListCriteria(due, status, area, topic, level), page, boundedSize));
     }
 
     @PostMapping("/quizzes")
     public ResponseEntity<ReviewQuizCreatedResponse> createQuiz(@Valid @RequestBody(required = false) ReviewQuizRequest request) {
         int count = request == null || request.count() == null ? 10 : request.count();
-        ReviewQuizMode mode = request == null || request.mode() == null || request.mode().isBlank()
-                ? ReviewQuizMode.DUE : ReviewQuizMode.valueOf(request.mode().trim().toUpperCase());
-        return ResponseEntity.status(HttpStatus.CREATED).body(apiMapper.toResponse(commandService.createQuiz(new ReviewQuizSetupCommand(count, mode))));
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(apiMapper.toResponse(commandService.createQuiz(new ReviewQuizSetupCommand(count))));
     }
 
     @PostMapping("/questions/{questionId}/schedule")
