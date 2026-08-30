@@ -191,7 +191,7 @@ export function getConcepts(filters: {
   if (filters.q) params.set('q', filters.q)
   params.set('page', String(filters.page))
   params.set('size', String(filters.size))
-  params.set('sort', filters.sort)
+  params.set('sort', filters.sort.toUpperCase())
   return request<ConceptPage>(`/api/concepts?${params.toString()}`)
 }
 
