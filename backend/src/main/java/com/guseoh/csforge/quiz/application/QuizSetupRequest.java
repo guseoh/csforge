@@ -5,6 +5,9 @@ import java.util.List;
 import com.guseoh.csforge.question.domain.QuestionDifficulty;
 import com.guseoh.csforge.question.domain.QuestionType;
 
+/**
+ * 표준 Quiz 생성 유스케이스의 애플리케이션 명령 모델이다.
+ */
 public record QuizSetupRequest(
         List<String> areaSlugs,
         List<Long> conceptIds,

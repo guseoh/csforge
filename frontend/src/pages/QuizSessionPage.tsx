@@ -228,7 +228,7 @@ export function QuizSessionPage() {
     <section className="page-section quiz-page">
       <div className="quiz-session-topbar">
         <div>
-          <p className="eyebrow">Quiz session</p>
+          <p className="eyebrow">Quiz session · {session.source.replace('_', ' ')}</p>
           <h1>{position + 1} <span>/ {session.questions.length}</span></h1>
         </div>
         <div className="quiz-session-meta">

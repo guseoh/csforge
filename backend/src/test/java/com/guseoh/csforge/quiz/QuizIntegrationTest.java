@@ -326,11 +326,108 @@ class QuizIntegrationTest {
                 99));
     }
 
+    @Test
+    void finalizedOutcomesCreateWrongNotesAndProgressReviewUntilMastered() throws Exception {
+        long quizId = createQuiz(1, null);
+        request("PUT", "/api/quizzes/" + quizId + "/questions/" + multipleChoiceId + "/answer",
+                "{\"selectedChoiceKey\":\"B\",\"answerText\":null,\"reviewNeeded\":false}");
+        request("POST", "/api/quizzes/" + quizId + "/submit", null);
+        request("POST", "/api/quizzes/" + quizId + "/submit", null);
+
+        JsonNode wrongList = json(request("GET", "/api/wrong-notes?size=20", null));
+        assertEquals(1, wrongList.get("items").size());
+        assertEquals(1, wrongList.get("items").get(0).get("wrongCount").asInt());
+        JsonNode detail = json(request("GET", "/api/wrong-notes/" + multipleChoiceId, null));
+        assertEquals("B", detail.get("latestWrongAttempt").get("selectedChoiceKey").asText());
+        assertEquals(1, json(request("GET", "/api/wrong-notes/" + multipleChoiceId + "/attempts", null)).get("items").size());
+
+        completeReviewCorrectly(1);
+        assertEquals(2, reviewStage());
+        completeReviewCorrectly(3);
+        assertEquals(3, reviewStage());
+        completeReviewCorrectly(7);
+        assertEquals(4, reviewStage());
+        completeReviewCorrectly(14);
+        JsonNode mastered = json(request("GET", "/api/reviews?status=MASTERED&size=20", null));
+        assertEquals(1, mastered.get("items").size());
+        assertTrue(mastered.get("items").get(0).get("dueAt").isNull());
+
+        HttpResponse<String> scheduledResponse = request("POST", "/api/reviews/questions/" + multipleChoiceId + "/schedule", null);
+        assertEquals(200, scheduledResponse.statusCode(), scheduledResponse.body());
+        assertFalse(json(scheduledResponse).get("dueAt").isNull());
+        TEST_CLOCK.set(TEST_CLOCK.instant().plusSeconds(86_401));
+        HttpResponse<String> reactivatedResponse = request("POST", "/api/reviews/quizzes", "{\"count\":1,\"mode\":\"DUE\"}");
+        assertEquals(201, reactivatedResponse.statusCode(), reactivatedResponse.body());
+        JsonNode reactivated = json(reactivatedResponse);
+        long retryQuizId = reactivated.get("quizId").asLong();
+        assertEquals("REVIEW", json(request("GET", "/api/quizzes/" + retryQuizId, null)).get("source").asText());
+        request("PUT", "/api/quizzes/" + retryQuizId + "/questions/" + multipleChoiceId + "/answer",
+                "{\"selectedChoiceKey\":\"B\",\"answerText\":null,\"reviewNeeded\":false}");
+        request("POST", "/api/quizzes/" + retryQuizId + "/submit", null);
+        JsonNode reactivatedList = json(request("GET", "/api/wrong-notes?size=20", null));
+        assertEquals(2, reactivatedList.get("items").get(0).get("wrongCount").asInt());
+        assertEquals("SCHEDULED", json(request("GET", "/api/reviews?size=20", null)).get("items").get(0).get("status").asText());
+    }
+
+    @Test
+    void selfCheckIsNotProcessedUntilFinalizedAndDuplicateCheckIsIdempotent() throws Exception {
+        long quizId = createQuizForQuestion(descriptiveId, "DESCRIPTIVE");
+        request("PUT", "/api/quizzes/" + quizId + "/questions/" + descriptiveId + "/answer",
+                "{\"selectedChoiceKey\":null,\"answerText\":\"my explanation\",\"reviewNeeded\":false}");
+        request("POST", "/api/quizzes/" + quizId + "/submit", null);
+        assertEquals(0, json(request("GET", "/api/wrong-notes?size=20", null)).get("items").size());
+
+        request("PATCH", "/api/quizzes/" + quizId + "/questions/" + descriptiveId + "/self-check", "{\"correct\":false}");
+        request("PATCH", "/api/quizzes/" + quizId + "/questions/" + descriptiveId + "/self-check", "{\"correct\":false}");
+        JsonNode wrong = json(request("GET", "/api/wrong-notes?size=20", null));
+        assertEquals(1, wrong.get("items").size());
+        assertEquals(1, wrong.get("items").get(0).get("wrongCount").asInt());
+    }
+
+    @Test
+    void standardCorrectOnlySchedulesWhenReviewNeededIsExplicit() throws Exception {
+        long firstQuiz = createQuiz(1, null);
+        request("PUT", "/api/quizzes/" + firstQuiz + "/questions/" + multipleChoiceId + "/answer",
+                "{\"selectedChoiceKey\":\"A\",\"answerText\":null,\"reviewNeeded\":false}");
+        request("POST", "/api/quizzes/" + firstQuiz + "/submit", null);
+        assertEquals(0, json(request("GET", "/api/reviews?size=20", null)).get("items").size());
+
+        long secondQuiz = createQuiz(1, null);
+        request("PUT", "/api/quizzes/" + secondQuiz + "/questions/" + multipleChoiceId + "/answer",
+                "{\"selectedChoiceKey\":\"A\",\"answerText\":null,\"reviewNeeded\":true}");
+        request("POST", "/api/quizzes/" + secondQuiz + "/submit", null);
+        JsonNode scheduled = json(request("GET", "/api/reviews?size=20", null));
+        assertEquals(1, scheduled.get("items").size());
+        assertEquals(1, scheduled.get("items").get(0).get("stage").asInt());
+    }
+
+    private void completeReviewCorrectly(int days) throws Exception {
+        TEST_CLOCK.set(TEST_CLOCK.instant().plusSeconds(days * 86_400L + 1));
+        JsonNode created = json(request("POST", "/api/reviews/quizzes", "{\"count\":1,\"mode\":\"OVERDUE_FIRST\"}"));
+        long quizId = created.get("quizId").asLong();
+        assertEquals("REVIEW", json(request("GET", "/api/quizzes/" + quizId, null)).get("source").asText());
+        request("PUT", "/api/quizzes/" + quizId + "/questions/" + multipleChoiceId + "/answer",
+                "{\"selectedChoiceKey\":\"A\",\"answerText\":null,\"reviewNeeded\":false}");
+        request("POST", "/api/quizzes/" + quizId + "/submit", null);
+    }
+
+    private int reviewStage() throws Exception {
+        return json(request("GET", "/api/reviews?size=20", null)).get("items").get(0).get("stage").asInt();
+    }
+
     private long createQuiz(int count, Integer timeLimitSeconds) throws Exception {
         String time = timeLimitSeconds == null ? "null" : timeLimitSeconds.toString();
         HttpResponse<String> response = request("POST", "/api/quizzes", """
                 {"areas":["java"],"concepts":[%d],"levels":[],"difficulties":[],"questionTypes":[],"state":"ALL","count":%d,"timeLimitSeconds":%s}
                 """.formatted(conceptId, count, time));
+        assertEquals(201, response.statusCode(), response.body());
+        return json(response).get("quizId").asLong();
+    }
+
+    private long createQuizForQuestion(long questionId, String questionType) throws Exception {
+        HttpResponse<String> response = request("POST", "/api/quizzes", """
+                {"areas":["java"],"concepts":[%d],"levels":[],"difficulties":[],"questionTypes":["%s"],"state":"ALL","count":1,"timeLimitSeconds":null}
+                """.formatted(conceptId, questionType));
         assertEquals(201, response.statusCode(), response.body());
         return json(response).get("quizId").asLong();
     }

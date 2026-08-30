@@ -46,7 +46,8 @@ public class QuizApiMapper {
                 result.questionCount(),
                 result.startedAt(),
                 result.expiresAt(),
-                result.lastPosition());
+                result.lastPosition(),
+                result.source());
     }
 
     public QuizRetryResponse toRetryResponse(QuizCreatedResult result) {
@@ -55,7 +56,8 @@ public class QuizApiMapper {
                 result.status(),
                 result.questionCount(),
                 result.startedAt(),
-                result.expiresAt());
+                result.expiresAt(),
+                result.source());
     }
 
     public QuizAnswerSavedResponse toResponse(QuizAnswerSavedResult result) {
@@ -89,6 +91,7 @@ public class QuizApiMapper {
         return new QuizSessionResponse(
                 data.session().getId(),
                 data.session().getStatus(),
+                data.session().getSource(),
                 data.session().getStartedAt(),
                 data.session().getSubmittedAt(),
                 data.session().getCompletedAt(),
@@ -104,6 +107,7 @@ public class QuizApiMapper {
         return new QuizResultResponse(
                 data.session().getId(),
                 data.session().getStatus(),
+                data.session().getSource(),
                 view.summary().total(),
                 view.summary().correct(),
                 view.summary().wrong(),

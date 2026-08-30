@@ -21,6 +21,10 @@ import com.guseoh.csforge.quiz.application.QuestionSelectionResult;
 import com.guseoh.csforge.quiz.application.QuizQuestionSelectionCriteria;
 import com.guseoh.csforge.quiz.application.QuizQuestionState;
 import com.guseoh.csforge.quiz.domain.Attempt;
+import com.guseoh.csforge.review.domain.ReviewSchedule;
+import com.guseoh.csforge.review.domain.ReviewScheduleStatus;
+import com.guseoh.csforge.wrongnote.domain.WrongNote;
+import com.guseoh.csforge.wrongnote.domain.WrongNoteStatus;
 
 /**
  * 퀴즈 생성 조건에 맞는 문제 수와 안정적인 문제 ID 목록을 JPA Criteria로 조회하는 저장소이다.
@@ -95,6 +99,22 @@ public class QuestionSelectionRepository {
             attempts.select(builder.literal(1L))
                     .where(builder.equal(attempt.get("question").get("id"), question.get("id")));
             predicates.add(builder.not(builder.exists(attempts)));
+        }
+        if (criteria.state() == QuizQuestionState.WRONG) {
+            Subquery<Long> wrongNotes = query.subquery(Long.class);
+            Root<WrongNote> wrongNote = wrongNotes.from(WrongNote.class);
+            wrongNotes.select(builder.literal(1L)).where(
+                    builder.equal(wrongNote.get("question").get("id"), question.get("id")),
+                    builder.equal(wrongNote.get("status"), WrongNoteStatus.ACTIVE));
+            predicates.add(builder.exists(wrongNotes));
+        }
+        if (criteria.state() == QuizQuestionState.REVIEW_NEEDED) {
+            Subquery<Long> schedules = query.subquery(Long.class);
+            Root<ReviewSchedule> schedule = schedules.from(ReviewSchedule.class);
+            schedules.select(builder.literal(1L)).where(
+                    builder.equal(schedule.get("questionId"), question.get("id")),
+                    builder.equal(schedule.get("status"), ReviewScheduleStatus.SCHEDULED));
+            predicates.add(builder.exists(schedules));
         }
         return predicates.toArray(Predicate[]::new);
     }

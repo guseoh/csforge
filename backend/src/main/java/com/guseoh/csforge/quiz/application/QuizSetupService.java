@@ -2,24 +2,18 @@ package com.guseoh.csforge.quiz.application;
 
 import java.time.Clock;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.guseoh.csforge.question.domain.Question;
-import com.guseoh.csforge.question.domain.QuestionRepository;
 import com.guseoh.csforge.quiz.domain.Attempt;
 import com.guseoh.csforge.quiz.domain.AttemptGradingStatus;
 import com.guseoh.csforge.quiz.domain.AttemptRepository;
 import com.guseoh.csforge.quiz.domain.QuizInvalidStateException;
-import com.guseoh.csforge.quiz.domain.QuizQuestion;
-import com.guseoh.csforge.quiz.domain.QuizQuestionRepository;
-import com.guseoh.csforge.quiz.domain.QuizSession;
-import com.guseoh.csforge.quiz.domain.QuizSessionRepository;
 import com.guseoh.csforge.quiz.domain.QuizSessionStatus;
+import com.guseoh.csforge.quiz.domain.QuizSessionSource;
 import com.guseoh.csforge.quiz.infrastructure.QuestionSelectionRepository;
 
 /**
@@ -30,11 +24,8 @@ import com.guseoh.csforge.quiz.infrastructure.QuestionSelectionRepository;
 public class QuizSetupService {
 
     private final QuestionSelectionRepository selectionRepository;
-    private final QuizSessionRepository sessionRepository;
-    private final QuizQuestionRepository quizQuestionRepository;
-    private final AttemptRepository attemptRepository;
-    private final QuestionRepository questionRepository;
     private final QuizSessionDataLoader dataLoader;
+    private final QuizSessionCreator sessionCreator;
     private final Clock clock;
 
     @Transactional(readOnly = true)
@@ -52,7 +43,7 @@ public class QuizSetupService {
         Instant expiresAt = request.timeLimitSeconds() == null
                 ? null
                 : startedAt.plusSeconds(request.timeLimitSeconds());
-        return persistNewSession(selection.questionIds(), startedAt, expiresAt);
+        return sessionCreator.create(selection.questionIds(), startedAt, expiresAt, QuizSessionSource.STANDARD);
     }
 
     @Transactional
@@ -72,26 +63,6 @@ public class QuizSetupService {
         if (wrongQuestionIds.isEmpty()) {
             throw new NoWrongQuestionsException();
         }
-        return persistNewSession(wrongQuestionIds, Instant.now(clock), null);
-    }
-
-    private QuizCreatedResult persistNewSession(List<Long> questionIds, Instant startedAt, Instant expiresAt) {
-        QuizSession session = sessionRepository.saveAndFlush(QuizSession.start(startedAt, expiresAt));
-        List<QuizQuestion> quizQuestions = new ArrayList<>(questionIds.size());
-        for (int position = 0; position < questionIds.size(); position++) {
-            Question question = questionRepository.getReferenceById(questionIds.get(position));
-            quizQuestions.add(QuizQuestion.place(session, question, position));
-        }
-        quizQuestionRepository.saveAll(quizQuestions);
-        attemptRepository.saveAll(quizQuestions.stream()
-                .map(item -> Attempt.unanswered(session, item.getQuestion()))
-                .toList());
-        return new QuizCreatedResult(
-                session.getId(),
-                session.getStatus(),
-                quizQuestions.size(),
-                session.getStartedAt(),
-                session.getExpiresAt(),
-                session.getLastPosition());
+        return sessionCreator.create(wrongQuestionIds, Instant.now(clock), null, QuizSessionSource.WRONG_RETRY);
     }
 }

@@ -30,6 +30,10 @@ public class QuizSession extends AuditedEntity {
     @Column(nullable = false, length = 24)
     private QuizSessionStatus status;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 24)
+    private QuizSessionSource source;
+
     @Column(name = "started_at", nullable = false)
     private Instant startedAt;
 
@@ -48,21 +52,29 @@ public class QuizSession extends AuditedEntity {
     protected QuizSession() {
     }
 
-    private QuizSession(Instant startedAt, Instant expiresAt) {
+    private QuizSession(Instant startedAt, Instant expiresAt, QuizSessionSource source) {
         this.status = QuizSessionStatus.IN_PROGRESS;
+        this.source = source;
         this.startedAt = startedAt;
         this.expiresAt = expiresAt;
         this.lastPosition = 0;
     }
 
-    public static QuizSession start(Instant startedAt, Instant expiresAt) {
+    public static QuizSession start(Instant startedAt, Instant expiresAt, QuizSessionSource source) {
         if (startedAt == null) {
             throw new IllegalArgumentException("startedAt is required");
         }
         if (expiresAt != null && expiresAt.isBefore(startedAt)) {
             throw new IllegalArgumentException("expiresAt cannot be before startedAt");
         }
-        return new QuizSession(startedAt, expiresAt);
+        if (source == null) {
+            throw new IllegalArgumentException("source is required");
+        }
+        return new QuizSession(startedAt, expiresAt, source);
+    }
+
+    public static QuizSession start(Instant startedAt, Instant expiresAt) {
+        return start(startedAt, expiresAt, QuizSessionSource.STANDARD);
     }
 
     public void ensureAcceptingChanges(Instant now) {

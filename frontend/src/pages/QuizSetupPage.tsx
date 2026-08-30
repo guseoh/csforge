@@ -80,7 +80,7 @@ function readRemembered(): QuizSetupPayload | null {
       questionTypes: Array.isArray(remembered.questionTypes)
         ? remembered.questionTypes.filter((item): item is QuestionType => questionTypes.some((option) => option.value === item))
         : [],
-      state: remembered.state === 'UNSEEN' ? 'UNSEEN' : 'ALL',
+      state: remembered.state === 'UNSEEN' || remembered.state === 'WRONG' || remembered.state === 'REVIEW_NEEDED' ? remembered.state : 'ALL',
       count: typeof remembered.count === 'number' && remembered.count >= 1 && remembered.count <= 50
         ? remembered.count
         : 10,
@@ -259,6 +259,8 @@ export function QuizSetupPage() {
           >
             <option value="ALL">All published</option>
             <option value="UNSEEN">Unseen only</option>
+            <option value="WRONG">Active wrong notes</option>
+            <option value="REVIEW_NEEDED">Scheduled review</option>
           </select>
         </label>
         <label>
