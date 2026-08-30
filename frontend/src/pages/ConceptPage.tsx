@@ -234,7 +234,10 @@ export function ConceptPage() {
   })
   const viewMutation = useMutation({
     mutationFn: () => recordConceptView(conceptId),
-    onSuccess: () => {
+    onSuccess: (progress) => {
+      queryClient.setQueryData<ConceptDetailModel>(['concept', conceptId], (current) =>
+        current ? { ...current, progress } : current,
+      )
       void queryClient.invalidateQueries({ queryKey: ['learning-areas'] })
       void queryClient.invalidateQueries({ queryKey: ['concepts'] })
     },
