@@ -2,7 +2,6 @@ package com.guseoh.csforge.learning.api;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.Locale;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -27,7 +26,9 @@ public class LearningExceptionHandler {
     private static final Logger log = LoggerFactory.getLogger(LearningExceptionHandler.class);
 
     @ExceptionHandler(LearningNotFoundException.class)
-    public ResponseEntity<ApiError> handleNotFound(LearningNotFoundException exception, HttpServletRequest request) {
+    public ResponseEntity<ApiError> handleNotFound(
+            LearningNotFoundException exception,
+            HttpServletRequest request) {
         return error(HttpStatus.NOT_FOUND, "LEARNING_NOT_FOUND", exception.getMessage(), request, List.of());
     }
 
@@ -48,8 +49,8 @@ public class LearningExceptionHandler {
     public ResponseEntity<ApiError> handleValidation(
             MethodArgumentNotValidException exception,
             HttpServletRequest request) {
-        List<ApiError.FieldViolation> fields = exception.getBindingResult().getFieldErrors().stream()
-                .map(field -> new ApiError.FieldViolation(field.getField(), field.getDefaultMessage()))
+        List<FieldViolationResponse> fields = exception.getBindingResult().getFieldErrors().stream()
+                .map(field -> new FieldViolationResponse(field.getField(), field.getDefaultMessage()))
                 .toList();
         return error(HttpStatus.BAD_REQUEST, "VALIDATION_FAILED", "Request validation failed", request, fields);
     }
@@ -58,13 +59,23 @@ public class LearningExceptionHandler {
     public ResponseEntity<ApiError> handleConflict(
             DataIntegrityViolationException exception,
             HttpServletRequest request) {
-        return error(HttpStatus.CONFLICT, "LEARNING_CONFLICT", "The requested learning state conflicts with existing data", request, List.of());
+        return error(
+                HttpStatus.CONFLICT,
+                "LEARNING_CONFLICT",
+                "The requested learning state conflicts with existing data",
+                request,
+                List.of());
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiError> handleUnexpected(Exception exception, HttpServletRequest request) {
         log.error("Unhandled learning API error", exception);
-        return error(HttpStatus.INTERNAL_SERVER_ERROR, "LEARNING_ERROR", "Unexpected learning API error", request, List.of());
+        return error(
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                "LEARNING_ERROR",
+                "Unexpected learning API error",
+                request,
+                List.of());
     }
 
     private ResponseEntity<ApiError> error(
@@ -72,8 +83,14 @@ public class LearningExceptionHandler {
             String code,
             String message,
             HttpServletRequest request,
-            List<ApiError.FieldViolation> fields) {
-        ApiError body = new ApiError(Instant.now(), status.value(), code, message, request.getRequestURI(), fields);
+            List<FieldViolationResponse> fields) {
+        ApiError body = new ApiError(
+                Instant.now(),
+                status.value(),
+                code,
+                message,
+                request.getRequestURI(),
+                fields);
         return ResponseEntity.status(status).body(body);
     }
 }
