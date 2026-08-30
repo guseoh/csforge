@@ -40,12 +40,14 @@ Integer boxed = 10;       // boxing
 int value = boxed + 2;    // unboxing 후 산술
 
 Integer missing = null;
-int fail = missing;        // NullPointerException: null unboxing
+int fail = missing;       // NullPointerException: null unboxing
 ```
 
-wrapper의 `==`는 우선 객체 identity 비교다. 일부 wrapper 값의 객체 재사용이나 cache는 API와
-언어 규칙이 허용하는 범위가 있어도 일반적인 값 equality의 기준으로 삼지 않는다. 값 비교는
-`equals`나 `Objects.equals`를 사용하고, null 가능성을 API에 반영한다.
+`==`는 피연산자의 타입과 변환 문맥을 함께 봐야 한다. `Integer a`, `Integer b`처럼 두 wrapper
+reference를 그대로 비교하면 객체 identity를 비교한다. 반면 `Integer a`와 primitive `int`를
+비교하는 문맥에서는 wrapper가 unboxing되어 숫자 비교가 일어날 수 있다. 일부 wrapper 값의 객체
+재사용이나 cache는 일반적인 값 equality의 기준으로 삼지 않는다. wrapper끼리 숫자 값의 동등성을
+비교하려면 `equals`나 `Objects.equals`를 사용하고, null 가능성을 API에 반영한다.
 
 ## 실전·면접 연결
 
@@ -58,4 +60,5 @@ wrapper의 `==`는 우선 객체 identity 비교다. 일부 wrapper 값의 객�
 
 - `Integer`는 `int`와 같은 객체 identity를 갖는 값 타입이 아니다.
 - wrapper cache가 있다는 사실은 모든 `==` 결과를 예측하는 근거가 아니다.
+- wrapper와 primitive가 섞인 `==` 비교에서는 unboxing이 일어날 수 있으므로 항상 identity 비교라고 볼 수 없다.
 - `null` wrapper는 0으로 자동 대체되지 않는다.
