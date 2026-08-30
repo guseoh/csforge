@@ -8,7 +8,7 @@ backend/frontend 기능이나 runtime YAML parser를 추가하지 않는다.
 
 - Area: `java`
 - Language baseline: Java SE 25
-- Canonical map: **18 Topics / 142 Concepts**
+- Canonical map: **18 Topics / 145 Concepts**
 - Future canonical content identity: `java.core.*`
 - 하나의 Concept는 정확히 하나의 primary Topic 아래에 둔다.
 - Topic은 선형 강의 코스가 아니다. `order`는 기본 탐색/작성 순서이고 실제 선행 지식은 필요한 Concept에만 `prerequisites`로 기록한다.
