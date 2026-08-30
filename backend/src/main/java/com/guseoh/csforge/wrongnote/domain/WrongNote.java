@@ -52,8 +52,8 @@ public class WrongNote extends AuditedEntity {
     @Column(name = "last_wrong_at", nullable = false)
     private Instant lastWrongAt;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "last_wrong_attempt_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "last_wrong_attempt_id")
     private Attempt lastWrongAttempt;
 
     @Column(name = "cause_note", columnDefinition = "TEXT")

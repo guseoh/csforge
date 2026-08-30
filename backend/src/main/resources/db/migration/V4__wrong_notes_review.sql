@@ -25,13 +25,13 @@ CREATE TABLE wrong_note (
     wrong_count INTEGER NOT NULL,
     first_wrong_at TIMESTAMPTZ NOT NULL,
     last_wrong_at TIMESTAMPTZ NOT NULL,
-    last_wrong_attempt_id BIGINT NOT NULL,
+    last_wrong_attempt_id BIGINT,
     cause_note TEXT,
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT wrong_note_question_uk UNIQUE (question_id),
     CONSTRAINT wrong_note_question_fk FOREIGN KEY (question_id) REFERENCES question (id) ON DELETE CASCADE,
-    CONSTRAINT wrong_note_last_attempt_fk FOREIGN KEY (last_wrong_attempt_id) REFERENCES attempt (id) ON DELETE RESTRICT,
+    CONSTRAINT wrong_note_last_attempt_fk FOREIGN KEY (last_wrong_attempt_id) REFERENCES attempt (id) ON DELETE SET NULL,
     CONSTRAINT wrong_note_status_ck CHECK (status IN ('ACTIVE', 'MASTERED')),
     CONSTRAINT wrong_note_count_ck CHECK (wrong_count >= 1)
 );

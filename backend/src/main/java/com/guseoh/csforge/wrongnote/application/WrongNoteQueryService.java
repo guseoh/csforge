@@ -1,7 +1,6 @@
 package com.guseoh.csforge.wrongnote.application;
 
 import java.nio.charset.StandardCharsets;
-import java.time.Clock;
 import java.time.Instant;
 import java.util.Base64;
 import java.util.LinkedHashMap;
@@ -17,8 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.guseoh.csforge.question.domain.QuestionAnswer;
 import com.guseoh.csforge.question.domain.QuestionAnswerKind;
-import com.guseoh.csforge.question.domain.QuestionConcept;
 import com.guseoh.csforge.question.domain.QuestionAnswerRepository;
+import com.guseoh.csforge.question.domain.QuestionConcept;
 import com.guseoh.csforge.question.domain.QuestionConceptRepository;
 import com.guseoh.csforge.quiz.domain.Attempt;
 import com.guseoh.csforge.quiz.domain.AttemptRepository;
@@ -41,7 +40,6 @@ public class WrongNoteQueryService {
     private final QuestionConceptRepository conceptRepository;
     private final QuestionAnswerRepository answerRepository;
     private final AttemptRepository attemptRepository;
-    private final Clock clock;
 
     @Transactional(readOnly = true)
     public WrongNotePageView list(WrongNoteListCriteria criteria, int page, int size) {
@@ -59,7 +57,7 @@ public class WrongNoteQueryService {
     @Transactional(readOnly = true)
     public WrongNoteDetailView detail(long questionId) {
         WrongNote note = wrongNoteRepository.findByQuestionId(questionId)
-                .orElseThrow(() -> new WrongNoteNotFoundException());
+                .orElseThrow(WrongNoteNotFoundException::new);
         List<QuestionConcept> concepts = conceptRepository.findForQuestionIds(List.of(questionId));
         List<QuestionAnswer> answers = answerRepository.findForQuestionIds(List.of(questionId));
         ReviewSchedule schedule = scheduleRepository.findByQuestionId(questionId).orElse(null);
@@ -97,6 +95,7 @@ public class WrongNoteQueryService {
     }
 
     private WrongNoteLatestAttemptView toLatestAttempt(Attempt attempt) {
+        if (attempt == null) return null;
         return new WrongNoteLatestAttemptView(attempt.getId(), attempt.getQuizSession().getId(), attempt.getQuizSession().getSource().name(),
                 attempt.getSelectedChoice() == null ? null : attempt.getSelectedChoice().getChoiceKey(), attempt.getAnswerText(), attempt.getGradingStatus(), attempt.getCorrect(),
                 attempt.isReviewNeeded(), attempt.getAnsweredAt(), attempt.getGradedAt());
