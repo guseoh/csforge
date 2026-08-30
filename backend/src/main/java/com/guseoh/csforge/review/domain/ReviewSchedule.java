@@ -2,8 +2,11 @@ package com.guseoh.csforge.review.domain;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Objects;
 
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import com.guseoh.csforge.question.domain.Question;
 import com.guseoh.csforge.quiz.domain.Attempt;
@@ -24,6 +27,7 @@ import jakarta.persistence.Table;
 @Getter
 @Entity
 @Table(name = "review_schedule")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ReviewSchedule {
 
     private static final Duration FIRST_INTERVAL = Duration.ofDays(1);
@@ -57,15 +61,12 @@ public class ReviewSchedule {
     @JoinColumn(name = "last_processed_attempt_id")
     private Attempt lastProcessedAttempt;
 
-    protected ReviewSchedule() {
-    }
-
     private ReviewSchedule(Question question, Attempt attempt, Instant now) {
-        this.question = require(question, "question");
+        this.question = Objects.requireNonNull(question, "question is required");
         this.questionId = question.getId();
         this.status = ReviewScheduleStatus.SCHEDULED;
         this.stage = 1;
-        this.dueAt = require(now, "now").plus(FIRST_INTERVAL);
+        this.dueAt = Objects.requireNonNull(now, "now is required").plus(FIRST_INTERVAL);
         this.lastProcessedAttempt = attempt;
     }
 
@@ -74,12 +75,14 @@ public class ReviewSchedule {
     }
 
     public boolean processedAttempt(long attemptId) {
-        return lastProcessedAttempt != null && lastProcessedAttempt.getId().equals(attemptId);
+        return lastProcessedAttempt != null
+                && lastProcessedAttempt.getId() != null
+                && lastProcessedAttempt.getId().equals(attemptId);
     }
 
     public void restartFromFirstStage(Attempt attempt, Instant now) {
-        require(attempt, "attempt");
-        require(now, "now");
+        Objects.requireNonNull(attempt, "attempt is required");
+        Objects.requireNonNull(now, "now is required");
         if (processedAttempt(attempt.getId())) {
             return;
         }
@@ -91,7 +94,7 @@ public class ReviewSchedule {
     }
 
     public void scheduleFromFirstStage(Instant now) {
-        require(now, "now");
+        Objects.requireNonNull(now, "now is required");
         if (status == ReviewScheduleStatus.SCHEDULED && stage == 1 && dueAt != null) {
             return;
         }
@@ -103,8 +106,8 @@ public class ReviewSchedule {
     }
 
     public ReviewTransition applyReviewOutcome(Attempt attempt, boolean correct, Instant now) {
-        require(attempt, "attempt");
-        require(now, "now");
+        Objects.requireNonNull(attempt, "attempt is required");
+        Objects.requireNonNull(now, "now is required");
         ReviewResult result = correct ? ReviewResult.CORRECT : ReviewResult.WRONG;
         if (processedAttempt(attempt.getId())) {
             return new ReviewTransition(result, stage, status == ReviewScheduleStatus.MASTERED ? null : (int) stage,
@@ -138,12 +141,5 @@ public class ReviewSchedule {
             case 4 -> FOURTH_INTERVAL;
             default -> throw new IllegalArgumentException("Unsupported review stage: " + stage);
         };
-    }
-
-    private static <T> T require(T value, String name) {
-        if (value == null) {
-            throw new IllegalArgumentException(name + " is required");
-        }
-        return value;
     }
 }

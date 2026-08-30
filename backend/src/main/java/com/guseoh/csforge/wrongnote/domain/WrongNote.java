@@ -1,8 +1,11 @@
 package com.guseoh.csforge.wrongnote.domain;
 
 import java.time.Instant;
+import java.util.Objects;
 
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import com.guseoh.csforge.learning.domain.AuditedEntity;
 import com.guseoh.csforge.question.domain.Question;
@@ -25,6 +28,7 @@ import jakarta.persistence.Table;
 @Getter
 @Entity
 @Table(name = "wrong_note")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class WrongNote extends AuditedEntity {
 
     @Id
@@ -49,22 +53,19 @@ public class WrongNote extends AuditedEntity {
     private Instant lastWrongAt;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "last_wrong_attempt_id")
+    @JoinColumn(name = "last_wrong_attempt_id", nullable = false)
     private Attempt lastWrongAttempt;
 
     @Column(name = "cause_note", columnDefinition = "TEXT")
     private String causeNote;
 
-    protected WrongNote() {
-    }
-
     private WrongNote(Question question, Attempt attempt, Instant occurredAt) {
-        this.question = require(question, "question");
+        this.question = Objects.requireNonNull(question, "question is required");
         this.status = WrongNoteStatus.ACTIVE;
         this.wrongCount = 1;
-        this.firstWrongAt = require(occurredAt, "occurredAt");
+        this.firstWrongAt = Objects.requireNonNull(occurredAt, "occurredAt is required");
         this.lastWrongAt = occurredAt;
-        this.lastWrongAttempt = require(attempt, "attempt");
+        this.lastWrongAttempt = Objects.requireNonNull(attempt, "attempt is required");
     }
 
     public static WrongNote open(Question question, Attempt attempt, Instant occurredAt) {
@@ -72,9 +73,9 @@ public class WrongNote extends AuditedEntity {
     }
 
     public void recordWrong(Attempt attempt, Instant occurredAt) {
-        require(attempt, "attempt");
-        require(occurredAt, "occurredAt");
-        if (lastWrongAttempt != null && lastWrongAttempt.getId().equals(attempt.getId())) {
+        Objects.requireNonNull(attempt, "attempt is required");
+        Objects.requireNonNull(occurredAt, "occurredAt is required");
+        if (sameAttempt(lastWrongAttempt, attempt)) {
             return;
         }
         wrongCount++;
@@ -91,10 +92,10 @@ public class WrongNote extends AuditedEntity {
         this.causeNote = causeNote == null || causeNote.isBlank() ? null : causeNote;
     }
 
-    private static <T> T require(T value, String name) {
-        if (value == null) {
-            throw new IllegalArgumentException(name + " is required");
+    private static boolean sameAttempt(Attempt left, Attempt right) {
+        if (left == right) {
+            return true;
         }
-        return value;
+        return left != null && left.getId() != null && left.getId().equals(right.getId());
     }
 }

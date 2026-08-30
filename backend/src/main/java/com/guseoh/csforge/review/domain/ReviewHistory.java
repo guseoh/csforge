@@ -2,11 +2,13 @@ package com.guseoh.csforge.review.domain;
 
 import java.time.Instant;
 
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+import com.guseoh.csforge.question.domain.Question;
 import com.guseoh.csforge.quiz.domain.Attempt;
 import com.guseoh.csforge.quiz.domain.QuizSession;
-import com.guseoh.csforge.question.domain.Question;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -25,6 +27,7 @@ import jakarta.persistence.Table;
 @Getter
 @Entity
 @Table(name = "review_history")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ReviewHistory {
 
     @Id
@@ -58,9 +61,6 @@ public class ReviewHistory {
 
     @Column(name = "next_due_at")
     private Instant nextDueAt;
-
-    protected ReviewHistory() {
-    }
 
     private ReviewHistory(Attempt attempt, ReviewTransition transition) {
         this.question = attempt.getQuestion();

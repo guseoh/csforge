@@ -20,13 +20,12 @@ import org.springframework.stereotype.Repository;
 
 import com.guseoh.csforge.learning.domain.ContentStatus;
 import com.guseoh.csforge.question.domain.Question;
+import com.guseoh.csforge.review.domain.ReviewSchedule;
+import com.guseoh.csforge.review.domain.ReviewScheduleStatus;
 import com.guseoh.csforge.wrongnote.application.WrongNoteListCriteria;
 import com.guseoh.csforge.wrongnote.application.WrongNoteReviewFilter;
 import com.guseoh.csforge.wrongnote.application.WrongNoteSort;
 import com.guseoh.csforge.wrongnote.domain.WrongNote;
-import com.guseoh.csforge.wrongnote.domain.WrongNoteStatus;
-import com.guseoh.csforge.review.domain.ReviewSchedule;
-import com.guseoh.csforge.review.domain.ReviewScheduleStatus;
 
 /**
  * 오답 노트 목록을 필터·정렬·페이지 단위로 조회하는 JPA adapter이다.
@@ -102,13 +101,11 @@ public class WrongNoteSearchRepository {
                 conditions.add(builder.equal(schedule.get("status"), ReviewScheduleStatus.SCHEDULED));
                 conditions.add(builder.lessThanOrEqualTo(schedule.get("dueAt"), criteria.now()));
             }
-            case NONE -> predicates.add(builder.not(builder.exists(schedules))); 
-            case ALL -> { }
+            case NONE, ALL -> { }
         }
-        if (criteria.reviewFilter() != WrongNoteReviewFilter.NONE) {
-            schedules.where(conditions.toArray(Predicate[]::new));
-            predicates.add(builder.exists(schedules));
-        }
+        schedules.where(conditions.toArray(Predicate[]::new));
+        Predicate exists = builder.exists(schedules);
+        predicates.add(criteria.reviewFilter() == WrongNoteReviewFilter.NONE ? builder.not(exists) : exists);
     }
 
     private jakarta.persistence.criteria.Order[] order(

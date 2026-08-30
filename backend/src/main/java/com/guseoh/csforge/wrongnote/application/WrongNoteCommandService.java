@@ -28,7 +28,7 @@ public class WrongNoteCommandService {
     public WrongNoteNoteView saveNote(long questionId, String content) {
         WrongNote note = wrongNoteRepository.findByQuestionId(questionId).orElseThrow(WrongNoteNotFoundException::new);
         note.replaceCauseNote(content);
-        wrongNoteRepository.save(note);
+        wrongNoteRepository.saveAndFlush(note);
         return new WrongNoteNoteView(note.getCauseNote(), note.getUpdatedAt());
     }
 

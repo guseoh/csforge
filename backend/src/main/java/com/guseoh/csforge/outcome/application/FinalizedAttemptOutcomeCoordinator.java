@@ -29,15 +29,22 @@ public class FinalizedAttemptOutcomeCoordinator {
     private final Clock clock;
 
     public void process(Attempt attempt) {
-        if (!attempt.isFinalized()) {
+        if (!attempt.isFinalized() || attempt.isOutcomeProcessed()) {
             return;
         }
-        Instant outcomeAt = attempt.getGradedAt() == null ? Instant.now(clock) : attempt.getGradedAt();
+
+        Instant processedAt = Instant.now(clock);
+        Instant outcomeAt = attempt.getGradedAt() == null ? processedAt : attempt.getGradedAt();
         boolean correct = Boolean.TRUE.equals(attempt.getCorrect());
         if (attempt.getQuizSession().getSource() == QuizSessionSource.REVIEW) {
             processReview(attempt, correct, outcomeAt);
-            return;
+        } else {
+            processStandard(attempt, correct, outcomeAt);
         }
+        attempt.markOutcomeProcessed(processedAt);
+    }
+
+    private void processStandard(Attempt attempt, boolean correct, Instant outcomeAt) {
         if (!correct) {
             recordWrong(attempt, outcomeAt);
             ReviewSchedule schedule = findOrCreateSchedule(attempt, outcomeAt, false);

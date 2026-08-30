@@ -2,7 +2,9 @@ package com.guseoh.csforge.quiz.domain;
 
 import java.time.Instant;
 
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import com.guseoh.csforge.learning.domain.AuditedEntity;
 import jakarta.persistence.Column;
@@ -20,6 +22,7 @@ import jakarta.persistence.Table;
 @Getter
 @Entity
 @Table(name = "quiz_session")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class QuizSession extends AuditedEntity {
 
     @Id
@@ -48,9 +51,6 @@ public class QuizSession extends AuditedEntity {
 
     @Column(name = "last_position", nullable = false)
     private int lastPosition;
-
-    protected QuizSession() {
-    }
 
     private QuizSession(Instant startedAt, Instant expiresAt, QuizSessionSource source) {
         this.status = QuizSessionStatus.IN_PROGRESS;
