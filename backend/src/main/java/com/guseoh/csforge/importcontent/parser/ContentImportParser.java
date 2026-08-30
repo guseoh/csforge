@@ -98,6 +98,14 @@ public class ContentImportParser {
         List<NormalizedReference> refs = references(values.get("references"), errors);
         List<NormalizedChoice> choices = choices(values.get("choices"), errors);
         List<String> accepted = strings(values.get("acceptedAnswers"));
+        String correctChoiceKey = text(values, "correctChoiceKey");
+        String modelAnswer = normalizeMarkdown(text(values, "modelAnswer"));
+        if (values.containsKey("correctChoiceKey") && correctChoiceKey == null) {
+            errors.add(new ImportValidationError("correctChoiceKey", "비어 있을 수 없습니다"));
+        }
+        if (values.containsKey("modelAnswer") && modelAnswer == null) {
+            errors.add(new ImportValidationError("modelAnswer", "비어 있을 수 없습니다"));
+        }
         if (kind == ImportItemKind.TOPIC) require(errors, slug, "slug");
         if (kind == ImportItemKind.CONCEPT) {
             require(errors, topicKey, "topicContentKey"); require(errors, slug, "slug"); require(errors, title, "title");
@@ -112,15 +120,15 @@ public class ContentImportParser {
                 text(values, "description"), text(values, "summary"), body, number(values.get("level"), (short) 0),
                 upper(values.get("status"), kind == ImportItemKind.QUESTION ? "DRAFT" : "DRAFT"), number(values.get("displayOrder"), 0),
                 bool(values.get("active"), true), refs, values.containsKey("references"), prompt, upper(values.get("questionType"), null), upper(values.get("difficulty"), null),
-                normalizeMarkdown(text(values, "explanationMarkdown")), concepts, choices, text(values, "correctChoiceKey"), accepted,
-                normalizeMarkdown(text(values, "modelAnswer")), errors, null);
+                normalizeMarkdown(text(values, "explanationMarkdown")), concepts, choices, correctChoiceKey, accepted,
+                modelAnswer, errors, null);
     }
 
     private static String titleOrPrompt(Map<String, Object> values, String prompt) { return text(values, "title") != null ? text(values, "title") : prompt; }
     private static void validateLevel(Object value, List<ImportValidationError> errors) { short level = number(value, (short) 0); if (level < 1 || level > 3) errors.add(new ImportValidationError("level", "1..3 범위여야 합니다")); }
     private static void require(List<ImportValidationError> errors, String value, String path) { if (value == null || value.isBlank()) errors.add(new ImportValidationError(path, "필수입니다")); }
-    private static String text(Map<String, Object> values, String key) { Object value = values.get(key); return value == null ? null : String.valueOf(value).trim(); }
-    private static String normalizeMarkdown(String value) { return value == null ? null : value.replace("\r\n", "\n").replace('\r', '\n').trim(); }
+    private static String text(Map<String, Object> values, String key) { Object value = values.get(key); if (value == null) return null; String normalized = String.valueOf(value).trim(); return normalized.isBlank() ? null : normalized; }
+    private static String normalizeMarkdown(String value) { if (value == null) return null; String normalized = value.replace("\r\n", "\n").replace('\r', '\n').trim(); return normalized.isBlank() ? null : normalized; }
     private static String upper(Object value, String fallback) { return value == null ? fallback : String.valueOf(value).trim().toUpperCase(Locale.ROOT); }
     private static boolean bool(Object value, boolean fallback) { return value == null ? fallback : Boolean.parseBoolean(String.valueOf(value)); }
     private static short number(Object value, short fallback) { if (value == null) return fallback; try { return Short.parseShort(String.valueOf(value)); } catch (NumberFormatException e) { return fallback; } }

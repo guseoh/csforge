@@ -15,6 +15,10 @@ public interface ConceptRepository extends JpaRepository<Concept, Long> {
 
     List<Concept> findByContentKeyIn(Collection<String> contentKeys);
 
+    @Query("select c from Concept c join fetch c.topic t where t.contentKey in :topicContentKeys and c.slug in :slugs")
+    List<Concept> findByTopicContentKeyInAndSlugIn(@Param("topicContentKeys") Collection<String> topicContentKeys,
+            @Param("slugs") Collection<String> slugs);
+
     @EntityGraph(attributePaths = {"topic", "topic.learningArea"})
     @Query("""
             select c

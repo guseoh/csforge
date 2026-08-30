@@ -30,7 +30,9 @@ public class ContentImportAnalyzer {
 
     public ImportAnalysis analyze(ImportFilesCommand command) {
         validateBounds(command);
-        List<NormalizedImportItem> items = validator.validate(parser.parse(command));
+        List<NormalizedImportItem> parsedItems = parser.parse(command);
+        validateItemCount(parsedItems.size());
+        List<NormalizedImportItem> items = validator.validate(parsedItems);
         ImportState state = stateLoader.load(items);
         Set<String> batchTopics = items.stream().filter(i -> i.kind() == ImportItemKind.TOPIC).map(NormalizedImportItem::contentKey).collect(java.util.stream.Collectors.toSet());
         Set<String> batchConcepts = items.stream().filter(i -> i.kind() == ImportItemKind.CONCEPT).map(NormalizedImportItem::contentKey).collect(java.util.stream.Collectors.toSet());
@@ -49,7 +51,19 @@ public class ContentImportAnalyzer {
         List<ImportValidationError> errors = new ArrayList<>(item.errors());
         if (item.isSkipped()) return preview(item, ImportClassification.SKIPPED, item.skipReason(), errors, List.of());
         if (item.kind() == ImportItemKind.TOPIC && !state.areas().containsKey(item.areaSlug())) errors.add(new ImportValidationError("areaSlug", "존재하지 않는 LearningArea입니다"));
+        if (item.kind() == ImportItemKind.TOPIC) {
+            Topic conflict = state.topicSlugConflicts().get(item.areaSlug() + "\u0000" + item.slug());
+            if (conflict != null && !conflict.getContentKey().equals(item.contentKey())) {
+                errors.add(new ImportValidationError("slug", "같은 LearningArea에 동일한 slug가 이미 존재합니다"));
+            }
+        }
         if (item.kind() == ImportItemKind.CONCEPT && !state.topics().containsKey(item.topicContentKey()) && !batchTopics.contains(item.topicContentKey())) errors.add(new ImportValidationError("topicContentKey", "존재하지 않는 Topic입니다"));
+        if (item.kind() == ImportItemKind.CONCEPT) {
+            Concept conflict = state.conceptSlugConflicts().get(item.topicContentKey() + "\u0000" + item.slug());
+            if (conflict != null && !conflict.getContentKey().equals(item.contentKey())) {
+                errors.add(new ImportValidationError("slug", "같은 Topic에 동일한 slug가 이미 존재합니다"));
+            }
+        }
         if (item.kind() == ImportItemKind.QUESTION) item.conceptKeys().stream().filter(key -> !state.concepts().containsKey(key) && !batchConcepts.contains(key)).forEach(key -> errors.add(new ImportValidationError("conceptKeys", "존재하지 않는 Concept: " + key)));
         if (!errors.isEmpty()) return preview(item, ImportClassification.ERROR, "검증 오류", errors, List.of());
         Object existing = existing(item, state);
@@ -94,5 +108,23 @@ public class ContentImportAnalyzer {
     private static void diff(List<ImportFieldDiff> diffs, String field, Object before, Object after) { String left = before == null ? null : String.valueOf(before); String right = after == null ? null : String.valueOf(after); if (!java.util.Objects.equals(left, right)) diffs.add(new ImportFieldDiff(field, compact(left), compact(right))); }
     private static String compact(String value) { return value != null && value.length() > 2000 ? value.substring(0, 2000) + "…" : value; }
     private static ImportItemPreview preview(NormalizedImportItem item, ImportClassification classification, String reason, List<ImportValidationError> errors, List<ImportFieldDiff> diffs) { return new ImportItemPreview(item.fileName(), item.itemIndex(), item.kind(), item.contentKey(), classification, reason, errors, diffs); }
-    private static void validateBounds(ImportFilesCommand command) { if (command.files().isEmpty()) throw new ImportBoundsException("At least one file is required"); if (command.files().size() > 100) throw new ImportBoundsException("A batch may contain at most 100 files"); long total = 0; for (ImportSourceFile file : command.files()) { if (file.content().length > 2 * 1024 * 1024) throw new ImportBoundsException("Each file may be at most 2 MiB"); total += file.content().length; } if (total > 20L * 1024 * 1024) throw new ImportBoundsException("A batch may be at most 20 MiB"); }
+    private static final int MAX_FILES_PER_BATCH = 100;
+    private static final int MAX_ITEMS_PER_BATCH = 1_000;
+    private static final int MAX_FILE_BYTES = 2 * 1024 * 1024;
+    private static final long MAX_TOTAL_BYTES = 20L * 1024 * 1024;
+
+    private static void validateBounds(ImportFilesCommand command) {
+        if (command.files().isEmpty()) throw new ImportBoundsException("At least one file is required");
+        if (command.files().size() > MAX_FILES_PER_BATCH) throw new ImportBoundsException("A batch may contain at most " + MAX_FILES_PER_BATCH + " files");
+        long total = 0;
+        for (ImportSourceFile file : command.files()) {
+            if (file.content().length > MAX_FILE_BYTES) throw new ImportBoundsException("Each file may be at most 2 MiB");
+            total += file.content().length;
+        }
+        if (total > MAX_TOTAL_BYTES) throw new ImportBoundsException("A batch may be at most 20 MiB");
+    }
+
+    private static void validateItemCount(int count) {
+        if (count > MAX_ITEMS_PER_BATCH) throw new ImportBoundsException("A batch may contain at most " + MAX_ITEMS_PER_BATCH + " items");
+    }
 }

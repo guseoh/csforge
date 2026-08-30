@@ -18,6 +18,9 @@ public final class ContentImportDigest {
     public static String calculate(java.util.List<NormalizedImportItem> items, ImportState state) {
         StringBuilder value = new StringBuilder();
         items.forEach(item -> value.append(item.toString()).append('\n'));
+        state.areas().values().stream().sorted(Comparator.comparing(area -> area.getSlug())).forEach(area ->
+                value.append("A|").append(area.getId()).append('|').append(area.getSlug()).append('|')
+                        .append(area.isActive()).append('|').append(area.getDisplayOrder()).append('\n'));
         state.topics().values().stream().sorted(Comparator.comparing(Topic::getContentKey)).forEach(t -> {
             value.append("T|").append(t.getContentKey()).append('|').append(t.getSlug()).append('|').append(t.getTitle()).append('|').append(t.getDescription()).append('|').append(t.getDisplayOrder()).append('|').append(t.isActive()).append('\n');
         });
@@ -34,6 +37,7 @@ public final class ContentImportDigest {
             q.getConceptLinks().stream().map(link -> link.getConcept().getContentKey()).sorted().forEach(key -> value.append("QL|").append(key).append('\n'));
         });
         state.conceptReferences().values().stream().flatMap(java.util.Collection::stream).sorted(Comparator.comparing((ConceptReference link) -> link.getConcept().getContentKey()).thenComparing(link -> link.getReference().getUrl())).forEach(link -> value.append("CR|").append(link.getConcept().getContentKey()).append('|').append(link.getReference().getUrl()).append('|').append(link.getDisplayOrder()).append('|').append(link.getRelationNote()).append('\n'));
+        state.questionIdsWithAttempts().stream().sorted().forEach(id -> value.append("QA_EXISTS|").append(id).append('\n'));
         try { return HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256").digest(value.toString().getBytes(StandardCharsets.UTF_8))); }
         catch (NoSuchAlgorithmException e) { throw new IllegalStateException("SHA-256 is unavailable", e); }
     }

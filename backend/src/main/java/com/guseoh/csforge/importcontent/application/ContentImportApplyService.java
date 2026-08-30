@@ -43,8 +43,11 @@ public class ContentImportApplyService {
         Map<String, Concept> concepts = new HashMap<>(analysis.state().concepts());
         Map<String, Reference> references = new HashMap<>(analysis.state().references());
         Map<String, Question> questions = new HashMap<>(analysis.state().questions());
+        Map<ConceptReferenceId, ConceptReference> relationLinks = new HashMap<>();
+        analysis.state().conceptReferences().values().stream().flatMap(List::stream)
+                .forEach(link -> relationLinks.put(link.getId(), link));
         for (NormalizedImportItem item : analysis.items()) if (item.kind() == ImportItemKind.TOPIC && shouldApply(item, analysis)) upsertTopic(item, analysis.state(), topics);
-        for (NormalizedImportItem item : analysis.items()) if (item.kind() == ImportItemKind.CONCEPT && shouldApply(item, analysis)) upsertConcept(item, topics, concepts, references);
+        for (NormalizedImportItem item : analysis.items()) if (item.kind() == ImportItemKind.CONCEPT && shouldApply(item, analysis)) upsertConcept(item, topics, concepts, references, relationLinks);
         for (NormalizedImportItem item : analysis.items()) if (item.kind() == ImportItemKind.QUESTION && shouldApply(item, analysis)) upsertQuestion(item, concepts, questions);
         return new ImportApplyResult(analysis.digest(), count(analysis, ImportClassification.CREATED), count(analysis, ImportClassification.UPDATED), count(analysis, ImportClassification.UNCHANGED), count(analysis, ImportClassification.SKIPPED), 0, analysis.previews());
     }
@@ -61,28 +64,37 @@ public class ContentImportApplyService {
         topics.put(item.contentKey(), topicRepository.save(topic));
     }
 
-    private void upsertConcept(NormalizedImportItem item, Map<String, Topic> topics, Map<String, Concept> concepts, Map<String, Reference> references) {
+    private void upsertConcept(NormalizedImportItem item, Map<String, Topic> topics, Map<String, Concept> concepts,
+            Map<String, Reference> references, Map<ConceptReferenceId, ConceptReference> relationLinks) {
         Topic topic = topics.get(item.topicContentKey()); Concept concept = concepts.get(item.contentKey());
         if (concept == null) concept = Concept.create(topic, item.contentKey(), item.slug(), item.title(), item.summary(), item.contentMarkdown(), item.level(), ContentStatus.valueOf(item.status()), item.displayOrder());
         else concept.reviseCanonicalContent(topic, item.slug(), item.title(), item.summary(), item.contentMarkdown(), item.level(), ContentStatus.valueOf(item.status()), item.displayOrder());
         concept = conceptRepository.save(concept); concepts.put(item.contentKey(), concept);
-        if (item.referencesDeclared()) replaceReferences(concept, item, references);
+        if (item.referencesDeclared()) replaceReferences(concept, item, references, relationLinks);
     }
 
-    private void replaceReferences(Concept concept, NormalizedImportItem item, Map<String, Reference> references) {
+    private void replaceReferences(Concept concept, NormalizedImportItem item, Map<String, Reference> references,
+            Map<ConceptReferenceId, ConceptReference> relationLinks) {
         // references가 명시된 경우에만 complete-set으로 취급한다. 생략된 Concept 링크는 보존한다.
-        List<ConceptReference> existing = conceptReferenceRepository.findAllByConceptId(concept.getId());
+        List<ConceptReference> existing = relationLinks.values().stream()
+                .filter(link -> link.getConcept().getId().equals(concept.getId()))
+                .toList();
         java.util.Set<String> incoming = item.references().stream().map(NormalizedReference::url).collect(java.util.stream.Collectors.toSet());
-        existing.stream().filter(link -> !incoming.contains(link.getReference().getUrl())).forEach(conceptReferenceRepository::delete);
+        existing.stream().filter(link -> !incoming.contains(link.getReference().getUrl())).forEach(link -> {
+            conceptReferenceRepository.delete(link);
+            relationLinks.remove(link.getId());
+        });
         for (NormalizedReference input : item.references()) {
             Reference reference = references.get(input.url());
             if (reference == null) reference = Reference.create(input.url(), input.title(), ReferenceType.valueOf(input.referenceType()), input.language(), input.depth(), input.recommendation());
             else reference.reviseCanonicalMetadata(input.url(), input.title(), ReferenceType.valueOf(input.referenceType()), input.language(), input.depth(), input.recommendation());
             reference = referenceRepository.save(reference); references.put(input.url(), reference);
             ConceptReferenceId id = new ConceptReferenceId(concept.getId(), reference.getId());
-            ConceptReference link = conceptReferenceRepository.findById(id).orElse(null);
+            ConceptReference link = relationLinks.get(id);
             if (link == null) link = ConceptReference.link(concept, reference, input.displayOrder(), input.relationNote());
-            link.reviseRelation(input.displayOrder(), input.relationNote()); conceptReferenceRepository.save(link);
+            link.reviseRelation(input.displayOrder(), input.relationNote());
+            link = conceptReferenceRepository.save(link);
+            relationLinks.put(id, link);
         }
     }
 

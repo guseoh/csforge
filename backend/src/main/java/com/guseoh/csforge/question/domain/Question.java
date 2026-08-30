@@ -105,6 +105,7 @@ public class Question extends AuditedEntity {
 
     public void replaceStructure(QuestionType questionType, List<ChoiceDraft> newChoices,
             String correctChoiceKey, List<String> acceptedAnswers, String modelAnswer, List<Concept> concepts) {
+        validateImportedStructure(questionType, newChoices, correctChoiceKey, acceptedAnswers, modelAnswer);
         this.questionType = requireRequired(questionType, "questionType");
         choices.clear();
         answers.clear();
@@ -138,6 +139,55 @@ public class Question extends AuditedEntity {
     }
 
     public record ChoiceDraft(String choiceKey, String contentMarkdown, int displayOrder) { }
+
+    /** Import preview와 실제 구조 변경이 같은 질문 구조 규칙을 사용하도록 검증한다. */
+    public static void validateImportedStructure(QuestionType type, List<ChoiceDraft> choices,
+            String correctChoiceKey, List<String> acceptedAnswers, String modelAnswer) {
+        requireRequired(type, "questionType");
+        List<ChoiceDraft> safeChoices = choices == null ? List.of() : choices;
+        List<String> safeAccepted = acceptedAnswers == null ? List.of() : acceptedAnswers;
+        java.util.Set<String> choiceKeys = new java.util.HashSet<>();
+        java.util.Set<Integer> orders = new java.util.HashSet<>();
+        for (ChoiceDraft choice : safeChoices) {
+            if (choice == null) throw new IllegalArgumentException("choice is required");
+            requireText(choice.choiceKey(), "choiceKey");
+            requireText(choice.contentMarkdown(), "contentMarkdown");
+            if (choice.displayOrder() < 0 || !orders.add(choice.displayOrder())) {
+                throw new IllegalArgumentException("choice displayOrder must be unique and non-negative");
+            }
+            if (!choiceKeys.add(choice.choiceKey())) throw new IllegalArgumentException("choiceKey must be unique within a question");
+        }
+        switch (type) {
+            case MULTIPLE_CHOICE -> {
+                if (correctChoiceKey != null && !choiceKeys.contains(correctChoiceKey)) {
+                    throw new IllegalArgumentException("correctChoiceKey must match a choice");
+                }
+                if (!safeAccepted.isEmpty() || modelAnswer != null) {
+                    throw new IllegalArgumentException("multiple-choice structure cannot contain text answers");
+                }
+            }
+            case SHORT_ANSWER -> {
+                if (!safeChoices.isEmpty() || correctChoiceKey != null || modelAnswer != null) {
+                    throw new IllegalArgumentException("short-answer structure cannot contain choice or model answer data");
+                }
+                validateAcceptedAnswers(safeAccepted);
+            }
+            case DESCRIPTIVE, SCENARIO -> {
+                if (!safeChoices.isEmpty() || correctChoiceKey != null || !safeAccepted.isEmpty()) {
+                    throw new IllegalArgumentException("self-check structure cannot contain choice answers");
+                }
+                if (modelAnswer != null) requireText(modelAnswer, "modelAnswer");
+            }
+        }
+    }
+
+    private static void validateAcceptedAnswers(List<String> acceptedAnswers) {
+        java.util.Set<String> normalized = new java.util.HashSet<>();
+        for (String answer : acceptedAnswers) {
+            String value = requireText(answer, "answerText").trim().toLowerCase(java.util.Locale.ROOT);
+            if (!normalized.add(value)) throw new IllegalArgumentException("accepted answer must be unique within a question");
+        }
+    }
 
     public QuestionChoice addChoice(String choiceKey, String contentMarkdown, int displayOrder) {
         requireText(choiceKey, "choiceKey");

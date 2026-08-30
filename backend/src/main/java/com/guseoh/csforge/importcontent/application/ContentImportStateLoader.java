@@ -36,17 +36,24 @@ public class ContentImportStateLoader {
     public ImportState load(List<NormalizedImportItem> items) {
         Set<String> areas = new HashSet<>(); Set<String> topics = new HashSet<>(); Set<String> concepts = new HashSet<>();
         Set<String> questions = new HashSet<>(); Set<String> urls = new HashSet<>();
+        Set<String> topicSlugs = new HashSet<>(); Set<String> conceptSlugs = new HashSet<>();
         for (NormalizedImportItem item : items) {
             if (item.areaSlug() != null) areas.add(item.areaSlug());
             if (item.topicContentKey() != null) topics.add(item.topicContentKey());
             if (item.contentKey() != null && item.kind() == ImportItemKind.TOPIC) topics.add(item.contentKey());
             if (item.contentKey() != null && item.kind() == ImportItemKind.CONCEPT) concepts.add(item.contentKey());
             if (item.contentKey() != null && item.kind() == ImportItemKind.QUESTION) questions.add(item.contentKey());
+            if (item.kind() == ImportItemKind.TOPIC && item.slug() != null) topicSlugs.add(item.slug());
+            if (item.kind() == ImportItemKind.CONCEPT && item.slug() != null) conceptSlugs.add(item.slug());
             item.conceptKeys().forEach(concepts::add); item.references().forEach(reference -> urls.add(reference.url()));
         }
         Map<String, LearningArea> areaMap = byArea(areaRepository.findBySlugIn(areas));
         Map<String, Topic> topicMap = byTopic(topicRepository.findByContentKeyIn(topics));
         Map<String, Concept> conceptMap = byConcept(conceptRepository.findByContentKeyIn(concepts));
+        Map<String, Topic> topicSlugMap = byAreaSlug(topicSlugs.isEmpty() || areas.isEmpty()
+                ? List.of() : topicRepository.findByAreaSlugInAndSlugIn(areas, topicSlugs));
+        Map<String, Concept> conceptSlugMap = byTopicSlug(conceptSlugs.isEmpty() || topics.isEmpty()
+                ? List.of() : conceptRepository.findByTopicContentKeyInAndSlugIn(topics, conceptSlugs));
         Map<String, Reference> referenceMap = byReference(referenceRepository.findByUrlIn(urls));
         Map<String, Question> questionMap = byQuestion(questionRepository.findByContentKeyIn(questions));
         Map<Long, List<com.guseoh.csforge.learning.domain.ConceptReference>> links = new HashMap<>();
@@ -54,12 +61,14 @@ public class ContentImportStateLoader {
                 .forEach(link -> links.computeIfAbsent(link.getConcept().getId(), ignored -> new java.util.ArrayList<>()).add(link));
         Set<Long> questionIds = questionMap.values().stream().map(Question::getId).collect(java.util.stream.Collectors.toSet());
         Set<Long> attempted = questionIds.isEmpty() ? Set.of() : new HashSet<>(attemptRepository.findQuestionIdsWithAttempts(questionIds));
-        return new ImportState(areaMap, topicMap, conceptMap, questionMap, referenceMap, links, attempted);
+        return new ImportState(areaMap, topicMap, conceptMap, questionMap, referenceMap, links, attempted, topicSlugMap, conceptSlugMap);
     }
 
     private static Map<String, LearningArea> byArea(Collection<LearningArea> values) { Map<String, LearningArea> result = new HashMap<>(); values.forEach(v -> result.put(v.getSlug(), v)); return result; }
     private static Map<String, Topic> byTopic(Collection<Topic> values) { Map<String, Topic> result = new HashMap<>(); values.forEach(v -> result.put(v.getContentKey(), v)); return result; }
+    private static Map<String, Topic> byAreaSlug(Collection<Topic> values) { Map<String, Topic> result = new HashMap<>(); values.forEach(v -> result.put(v.getLearningArea().getSlug() + "\u0000" + v.getSlug(), v)); return result; }
     private static Map<String, Concept> byConcept(Collection<Concept> values) { Map<String, Concept> result = new HashMap<>(); values.forEach(v -> result.put(v.getContentKey(), v)); return result; }
+    private static Map<String, Concept> byTopicSlug(Collection<Concept> values) { Map<String, Concept> result = new HashMap<>(); values.forEach(v -> result.put(v.getTopic().getContentKey() + "\u0000" + v.getSlug(), v)); return result; }
     private static Map<String, Reference> byReference(Collection<Reference> values) { Map<String, Reference> result = new HashMap<>(); values.forEach(v -> result.put(v.getUrl(), v)); return result; }
     private static Map<String, Question> byQuestion(Collection<Question> values) { Map<String, Question> result = new HashMap<>(); values.forEach(v -> result.put(v.getContentKey(), v)); return result; }
 }
