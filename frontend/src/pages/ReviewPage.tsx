@@ -8,7 +8,7 @@ export function ReviewPage() {
   const navigate = useNavigate({ from: '/review' })
   const summary = useQuery({ queryKey: ['review-summary'], queryFn: getReviewSummary })
   const reviews = useQuery({ queryKey: ['reviews', search], queryFn: () => getReviews({ due: search.due, page: search.page, size: 20 }) })
-  const create = useMutation({ mutationFn: () => createReviewQuiz(10, 'OVERDUE_FIRST'), onSuccess: (quiz) => void navigate({ to: '/quiz/$quizId', params: { quizId: String(quiz.quizId) } }) })
+  const create = useMutation({ mutationFn: () => createReviewQuiz(10), onSuccess: (quiz) => void navigate({ to: '/quiz/$quizId', params: { quizId: String(quiz.quizId) } }) })
   if (summary.isPending || reviews.isPending) return <PageSkeleton rows={5} />
   if (summary.isError || reviews.isError) return <ErrorState message="복습 일정을 불러오지 못했습니다." onRetry={() => { void summary.refetch(); void reviews.refetch() }} />
   const updateDue = (due: string) => void navigate({ search: (current) => ({ ...current, due, page: 0 }) })
