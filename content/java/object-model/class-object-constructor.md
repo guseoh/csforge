@@ -10,7 +10,7 @@ status: PUBLISHED
 displayOrder: 10
 references:
   - url: "https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html"
-    title: "JLS 8 Classes"
+    title: "Java Language Specification 8장: Classes"
     referenceType: OFFICIAL
     language: en
     displayOrder: 1

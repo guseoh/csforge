@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: "Jakarta Bean Validation을 Spring에서 사용하는 integration 계약 확인"
   - url: "https://docs.spring.io/spring-framework/reference/web/webmvc/mvc-controller/ann-validation.html"
-    title: "Spring Framework Reference: Validation in Spring MVC"
+    title: "Spring Framework Reference: Validation"
     referenceType: OFFICIAL
     language: en
     displayOrder: 2

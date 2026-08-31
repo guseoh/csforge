@@ -10,7 +10,7 @@ status: PUBLISHED
 displayOrder: 30
 references:
   - url: "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/math/BigDecimal.html"
-    title: "Java SE 25 BigDecimal"
+    title: "Java SE 25 API: BigDecimal"
     referenceType: OFFICIAL
     language: en
     displayOrder: 1

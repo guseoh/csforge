@@ -10,7 +10,7 @@ status: PUBLISHED
 displayOrder: 20
 references:
 - url: https://www.postgresql.org/docs/current/ddl-constraints.html
-  title: 'PostgreSQL: Constraints'
+  title: "PostgreSQL Documentation: Constraints"
   referenceType: OFFICIAL
   language: en
   displayOrder: 1

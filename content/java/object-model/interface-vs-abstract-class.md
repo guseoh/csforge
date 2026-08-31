@@ -10,13 +10,13 @@ status: PUBLISHED
 displayOrder: 110
 references:
   - url: "https://docs.oracle.com/javase/specs/jls/se25/html/jls-9.html"
-    title: "JLS 9 Interfaces"
+    title: "Java Language Specification 9장: Interfaces"
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
     relationNote: 인터페이스 규칙 확인
   - url: "https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html"
-    title: "JLS 8 Classes"
+    title: "Java Language Specification 8장: Classes"
     referenceType: OFFICIAL
     language: en
     displayOrder: 2

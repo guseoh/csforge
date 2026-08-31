@@ -10,7 +10,7 @@ status: PUBLISHED
 displayOrder: 30
 references:
   - url: "https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html"
-    title: "OWASP Cheat Sheet: XSS Prevention"
+    title: "OWASP Cheat Sheet: Cross Site Scripting Prevention"
     referenceType: OFFICIAL
     language: en
     displayOrder: 1

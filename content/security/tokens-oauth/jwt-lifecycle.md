@@ -10,7 +10,7 @@ status: PUBLISHED
 displayOrder: 20
 references:
   - url: "https://www.rfc-editor.org/rfc/rfc7519"
-    title: "RFC 7519: JSON Web Token"
+    title: "RFC 7519: JSON Web Token (JWT)"
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
