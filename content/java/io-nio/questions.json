@@ -1,0 +1,1122 @@
+[
+  {
+    "kind": "question",
+    "contentKey": "java.core.io-nio.byte-character-stream-charset.q1",
+    "promptMarkdown": "byte와 character의 관계를 가장 정확하게 설명한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.io-nio.byte-character-stream-charset"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "byte는 저장·전송 단위이고 character는 charset을 통해 해석된 문자 단위다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "모든 character는 byte 하나와 일대일이다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "character는 OS에만 존재한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "byte는 항상 UTF-8 문자열이다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "raw bytes와 Java 문자열 사이에는 encoding/decoding과 charset이라는 해석 경계가 있다. 문자 하나가 여러 byte가 될 수도 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.io-nio.byte-character-stream-charset.q2",
+    "promptMarkdown": "같은 UTF-8 bytes를 다른 charset으로 decode하면 생길 수 있는 문제는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.io-nio.byte-character-stream-charset"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "bytes가 자동으로 삭제된다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "원래 의도와 다른 문자나 mojibake가 나타날 수 있다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "모든 문자가 ASCII가 된다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "문자열이 반드시 immutable하지 않게 된다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "bytes 자체에는 사용한 charset 이름이 내장되지 않을 수 있다. 잘못된 decoder를 사용하면 다른 문자로 해석되거나 오류가 난다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.io-nio.byte-character-stream-charset.q3",
+    "promptMarkdown": "text 파일을 읽는 경계에서 StandardCharsets.UTF_8을 명시하는 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.io-nio.byte-character-stream-charset"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "파일 bytes를 자동 압축하기 위해",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "모든 입력을 binary로 만들기 위해",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "process나 OS default charset에 숨은 의존을 줄이기 위해",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "Reader를 close하지 않기 위해",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "encoding/decoding 양쪽에 같은 명시적 charset을 사용하면 환경별 default 차이로 글자가 깨지는 위험을 줄인다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.io-nio.byte-character-stream-charset.q4",
+    "promptMarkdown": "문자열을 이미 잘못 decode한 뒤 다시 UTF-8로 encode하면 원래 bytes가 항상 복구되는가?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.io-nio.byte-character-stream-charset"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "그렇다. charset은 언제나 원본을 추적한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "encode는 file path만 바꾼다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "UTF-8은 decode를 수행하지 않는다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "아니다. 최초 decode에서 정보가 바뀌거나 replacement되면 원본을 잃을 수 있다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "잘못된 해석으로 만들어진 String은 원본 byte와의 일대일 관계를 보장하지 않는다. 올바른 charset을 경계에서 처음부터 사용해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.io-nio.byte-character-stream-charset.q5",
+    "promptMarkdown": "binary 압축 파일을 Reader로 직접 읽는 설계가 위험한 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.io-nio.byte-character-stream-charset"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "Reader는 character decoding을 수행하므로 임의 binary bytes의 보존 계약과 맞지 않을 수 있다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "Reader는 파일을 열 수 없다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "binary는 항상 ASCII이기 때문이다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "charset을 지정하면 압축이 자동 해제된다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "binary format은 bytes의 정확한 순서와 값이 의미다. Reader를 사용하면 charset decoder가 이를 문자로 해석해 데이터 보존을 깨뜨릴 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.io-nio.byte-character-stream-charset.q6",
+    "promptMarkdown": "InputStream에서 Reader로 넘어갈 때 명시해야 하는 핵심 정책은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.io-nio.byte-character-stream-charset"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "항상 buffer를 비활성화할지",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "byte를 character로 decode할 charset과 malformed input 처리",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "모든 byte를 한 character로 묶을지 여부만",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "OS syscall 이름",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "byte-to-character 경계는 charset decoder가 소유한다. UTF-8 같은 인코딩과 오류 시 report/replacement 정책을 함께 정해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.io-nio.input-output-reader-writer.q1",
+    "promptMarkdown": "binary 데이터를 보존하며 복사할 때 자연스러운 abstraction은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.io-nio.input-output-reader-writer"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "Reader와 Writer만",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "Locale과 ZoneId",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "InputStream과 OutputStream",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "Optional과 Predicate",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "binary는 raw bytes로 처리해야 하므로 byte stream abstraction이 자연스럽다. Reader/Writer는 character 경계를 표현한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.io-nio.input-output-reader-writer.q2",
+    "promptMarkdown": "Reader.read()의 반환값을 byte 하나로 단정하면 안 되는 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.io-nio.input-output-reader-writer"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "Reader는 항상 String 전체를 반환하기 때문이다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "Reader.read는 close만 수행하기 때문이다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "byte가 Java에 없기 때문이다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "character를 나타내는 int이거나 EOF를 나타낼 수 있기 때문이다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "Reader의 read()는 character value 또는 -1 EOF를 반환하는 API다. InputStream의 byte read와 범위·의미가 다르다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.io-nio.input-output-reader-writer.q3",
+    "promptMarkdown": "text 입력을 UTF-8로 처리하는 조합으로 가장 적절한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.io-nio.input-output-reader-writer"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "newBufferedReader(path, UTF_8) 같은 Reader 경계",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "파일 bytes를 double로 변환",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "Reader 대신 무조건 ByteBuffer만 사용",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "charset 없이 getBytes()만 호출",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "Files의 reader factory에 charset을 명시하면 byte-to-character decoding 경계가 분명해진다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.io-nio.input-output-reader-writer.q4",
+    "promptMarkdown": "Writer를 사용한 뒤 close/flush lifecycle을 관리해야 하는 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.io-nio.input-output-reader-writer"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "Writer가 close되면 모든 파일을 삭제하기 때문이다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "buffer에 남은 data를 다음 계층으로 내보내고 resource ownership을 마무리해야 하기 때문이다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "String이 mutable해지기 때문이다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "charset이 close 때 최초 결정되기 때문이다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "Writer는 내부 buffer와 underlying resource를 가질 수 있다. flush와 close는 data 전달·소유권·예외 계약의 일부다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.io-nio.buffered-io.q1",
+    "promptMarkdown": "buffered I/O의 기본 목적은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.io-nio.buffered-io"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "모든 data를 자동 암호화하는 것",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "파일 encoding을 추론하는 것",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "작은 read/write를 모아 underlying I/O 호출 횟수를 줄이는 것",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "resource close를 제거하는 것",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "buffer는 application의 작은 작업을 모아 더 큰 단위로 underlying stream과 교환하게 한다. encoding·ownership은 별도 계약이다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.io-nio.buffered-io.q2",
+    "promptMarkdown": "flush의 의미로 옳은 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.io-nio.buffered-io"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "항상 물리 디스크 영구 저장까지 보장한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "underlying resource를 반드시 close한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "읽기 buffer를 자동으로 reset한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "buffer에 남은 data를 다음 I/O 계층으로 밀어내는 요청이다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "flush는 wrapper가 보유한 output을 아래 계층으로 전달한다. durability와 close는 별도의 API·매체 계약이다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.io-nio.buffered-io.q3",
+    "promptMarkdown": "BufferedWriter에 data를 쓴 뒤 scope를 나갈 때의 close 시점에 대한 설명은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.io-nio.buffered-io"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "scope를 나갈 때 close되며 남은 output flush가 수행될 수 있다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "write 즉시 항상 disk durability가 끝난다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "writer는 scope 밖에서도 동일하게 열린다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "close는 input에서만 동작한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "BufferedWriter는 close lifecycle에서 남은 buffer를 flush하고 resource를 닫는다. 실제 storage durability는 별도 보장이다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.io-nio.buffered-io.q4",
+    "promptMarkdown": "중간 결과를 다른 consumer가 바로 보아야 하는 경우 flush 정책은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.io-nio.buffered-io"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "모든 write 뒤 무조건 flush가 공짜다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "필요한 경계에서 명시적 flush를 선택하되 호출 비용과 close 정책을 함께 고려한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "flush가 resource를 재생성한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "buffered output은 외부 consumer가 볼 수 없다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "가시성 요구가 있으면 flush 시점을 설계할 수 있지만 매번 flush하면 batching 이점을 줄인다. ownership과 오류 처리도 함께 본다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.io-nio.path-files-api.q1",
+    "promptMarkdown": "Path와 Files의 역할을 가장 잘 구분한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.io-nio.path-files-api"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "Path가 열린 file descriptor이고 Files는 문자열 formatter다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "둘 다 charset만 처리한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "Path는 경로 값이고 Files는 그 경로에 대한 파일 operation을 제공한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "Files는 classpath에서만 작동한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "Path object를 만드는 것과 실제 filesystem operation은 다르다. Files API가 read/write/copy 등의 작업과 예외를 담당한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.io-nio.path-files-api.q2",
+    "promptMarkdown": "Path.of를 호출했다고 실제 파일이 열린다고 가정하면 안 되는 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.io-nio.path-files-api"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "Path는 항상 null을 반환하기 때문이다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "파일은 String으로만 열 수 있기 때문이다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "Path는 OS와 무관한 숫자다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "Path는 경로 표현 값이고 open/read 같은 operation이 실제 resource 접근을 수행하기 때문이다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "Path construction은 resource acquisition이 아니다. Files.open/read/write 또는 stream factory가 실제 I/O 및 lifecycle 경계를 만든다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.io-nio.path-files-api.q3",
+    "promptMarkdown": "`Files.exists(path)` 뒤에 `Files.readString(path)`를 호출하는 것만으로 race condition이 제거되는가?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.io-nio.path-files-api"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "아니다. 검사와 실제 read 사이에 파일 상태가 바뀔 수 있다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "그렇다. exists가 lock을 자동 획득한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "readString은 path를 사용하지 않는다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "OS가 모든 파일 변경을 금지한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "사전 exists 검사는 advisory check일 뿐 실제 read와 원자적으로 결합되지 않는다. read 실패를 정상적으로 처리하는 계약이 필요하다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.io-nio.path-files-api.q4",
+    "promptMarkdown": "사용자 입력 path로 파일을 저장할 때 추가로 고려할 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.io-nio.path-files-api"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "Path가 모든 traversal을 자동 차단한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "허용 root·normalization·symbolic link·권한을 별도의 보안 정책으로 검증한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "파일명 길이만 확인하면 충분하다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "relative path는 항상 안전하다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "Path API는 표현과 operation을 제공하지만 애플리케이션의 허용 위치·link 추적·권한 정책을 대신 결정하지 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.io-nio.path-files-api.q5",
+    "promptMarkdown": "대용량 파일을 `Files.readString`으로 처리할 때의 설계 판단은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.io-nio.path-files-api"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "readString은 무제한 파일을 자동 paging한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "파일 크기는 JVM heap과 무관하다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "전체를 메모리에 읽는 API의 특성과 파일 크기 bound를 확인하고 stream/chunk 처리를 선택한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "Path가 buffer를 자동 재사용한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "편리한 whole-file API는 memory bound를 없애지 않는다. 입력 크기와 요구에 맞춰 streaming·bounded processing을 선택해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.io-nio.path-files-api.q6",
+    "promptMarkdown": "파일을 안전한 snapshot으로 교체하는 설계에서 Files operation만으로 자동 보장되지 않는 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.io-nio.path-files-api"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "Path가 문자열이라는 사실",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "Reader의 return type",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "파일명에 separator가 있다는 사실",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "temp write·move option·동일 filesystem·crash durability 같은 구체적 원자성/내구성 조건",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "파일 교체의 atomicity·durability는 operation option과 filesystem 조건의 조합이다. 단순히 Files를 호출한다고 모든 crash 시나리오가 해결되지는 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.io-nio.nio-channel-buffer.q1",
+    "promptMarkdown": "Buffer의 capacity, limit, position을 순서대로 설명한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.io-nio.nio-channel-buffer"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "전체 저장 공간, 현재 경계, 다음 read/write 위치",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "다음 위치, 전체 공간, 현재 경계",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "현재 경계, OS offset, file size",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "모두 같은 cursor다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "capacity는 storage 크기, limit은 현재 접근 끝, position은 다음 operation 위치다. 세 cursor를 혼동하면 flip/clear가 어려워진다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.io-nio.nio-channel-buffer.q2",
+    "promptMarkdown": "Channel read로 Buffer를 채운 뒤 읽기 위해 호출하는 일반적인 메서드는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.io-nio.nio-channel-buffer"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "clear()만",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "flip()",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "compact()만",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "rewind OS",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "write mode에서 position이 채운 끝으로 이동한 뒤 flip은 limit을 기존 position으로, position을 0으로 바꾸어 읽기를 준비한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.io-nio.nio-channel-buffer.q3",
+    "promptMarkdown": "Buffer.clear()의 의미는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.io-nio.nio-channel-buffer"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "모든 bytes를 외부 channel에 보낸다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "capacity를 0으로 만든다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "bytes를 물리적으로 0으로 지우기보다 position=0, limit=capacity로 다시 쓰게 한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "읽지 않은 bytes를 자동 보존한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "clear는 cursor 상태를 write mode로 재설정한다. 기존 bytes가 없어지는 것처럼 취급할 뿐 실제 memory zeroing을 의미하지 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.io-nio.nio-channel-buffer.q4",
+    "promptMarkdown": "`capacity=8` Buffer에 3 bytes를 read한 뒤 flip하면 position과 limit은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.io-nio.nio-channel-buffer"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "position=3, limit=8",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "position=8, limit=3",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "position=3, limit=0",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "position=0, limit=3",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "read 후 write position은 3이다. flip은 읽을 범위를 0부터 3까지로 바꾸므로 position=0, limit=3이 된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.io-nio.nio-channel-buffer.q5",
+    "promptMarkdown": "partial read를 처리하는 loop에서 `hasRemaining()`이 필요한 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.io-nio.nio-channel-buffer"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "한 channel call이 모든 data를 소비한다고 가정하지 않고 현재 position부터 limit까지 남은 범위를 처리하기 위해",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "capacity를 무한히 늘리기 위해",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "flip을 매 byte마다 자동 호출하기 위해",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "OS file path를 검증하기 위해",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "Buffer는 position과 limit 사이에 remaining data를 가진다. channel의 partial operation과 application 소비를 함께 고려해 남은 범위를 반복한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.io-nio.nio-channel-buffer.q6",
+    "promptMarkdown": "아직 읽지 않은 bytes를 보존하면서 새 channel read를 이어야 할 때 적절한 조합은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.io-nio.nio-channel-buffer"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "clear()만 호출해 unread bytes를 보존한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "compact()로 unread bytes를 앞에 옮긴 뒤 write mode에서 read하고 다시 flip한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "flip()만 반복해 새 bytes를 기존 앞에 붙인다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "position을 capacity보다 크게 만든다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "compact는 남은 unread data를 앞에 복사하고 position을 그 뒤로 두어 새 data를 이어 받을 수 있게 한다. 다음 소비 전 flip이 필요하다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.io-nio.blocking-nonblocking-selector.q1",
+    "promptMarkdown": "blocking I/O와 non-blocking I/O의 기본 차이는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.io-nio.blocking-nonblocking-selector"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "non-blocking은 항상 모든 data를 반환한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "blocking은 resource를 사용하지 않는다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "blocking 호출은 결과를 기다리며 현재 흐름을 멈출 수 있고 non-blocking은 현재 가능한 결과를 반환한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "둘은 OS에서만 다르고 Java API에는 없다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "non-blocking은 완료를 보장하는 말이 아니라 호출이 기다림 없이 반환할 수 있는 mode를 뜻한다. partial result와 retry loop가 필요할 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.io-nio.blocking-nonblocking-selector.q2",
+    "promptMarkdown": "Selector의 역할은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.io-nio.blocking-nonblocking-selector"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "모든 channel의 application protocol을 자동 구현한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "bytes를 자동으로 완전한 message로 조립한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "모든 blocking API를 삭제한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "여러 selectable channel의 관심 operation과 readiness를 한 관찰 loop에서 다룬다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "Selector는 등록된 channel의 ready operation을 관찰하고 selected key로 처리할 대상을 알려 준다. protocol framing과 message semantics는 application 책임이다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.io-nio.blocking-nonblocking-selector.q3",
+    "promptMarkdown": "non-blocking channel을 Selector에 등록하기 전에 필요한 일반적인 설정은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.io-nio.blocking-nonblocking-selector"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "configureBlocking(false) 후 관심 operation을 등록한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "항상 configureBlocking(true)만 한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "channel을 먼저 close한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "Selector를 String으로 cast한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "SelectableChannel은 non-blocking mode로 전환한 뒤 Selector와 관심 operation을 연결한다. 실제 등록 제약은 API 계약을 따른다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.io-nio.blocking-nonblocking-selector.q4",
+    "promptMarkdown": "selected key가 read-ready라고 해서 보장되지 않는 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.io-nio.blocking-nonblocking-selector"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "read operation을 시도할 수 있는 readiness 정보",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "한 번의 read로 protocol message 전체를 반드시 얻는 것",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "key가 channel과 연관될 수 있다는 것",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "selector loop가 key를 관찰할 수 있다는 것",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "readiness는 현재 operation을 시도할 조건을 나타내지 message framing이나 전체 완료를 보장하지 않는다. partial read와 EOF/close를 처리해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.io-nio.blocking-nonblocking-selector.q5",
+    "promptMarkdown": "Selector loop에서 channel close와 selected key lifecycle을 무시할 때 생길 수 있는 문제는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.io-nio.blocking-nonblocking-selector"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "모든 key가 자동으로 완전한 message가 된다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "non-blocking이 blocking으로 compile-time 변경된다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "닫힌 channel에 계속 작업하거나 stale key를 처리해 busy loop·예외가 생길 수 있다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "Selector가 buffer를 모두 지운다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "selector 기반 loop는 key validity, channel close/cancel과 selected set 정리를 애플리케이션이 관리해야 한다. readiness를 영구 성공 상태로 보면 안 된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.io-nio.blocking-nonblocking-selector.q6",
+    "promptMarkdown": "Selector의 Java API model과 OS readiness 구현을 구분한 설명으로 옳은 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.io-nio.blocking-nonblocking-selector"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "Selector가 모든 OS에서 같은 syscall을 호출한다고 Java가 보장한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "OS readiness는 Java channel과 무관하므로 selector가 동작하지 않는다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "non-blocking mode는 application protocol을 자동 처리한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "Java는 channel·key·readiness abstraction을 제공하지만 특정 OS syscall·thread 수·event 순서를 모두 보장하지 않는다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "API contract와 runtime/OS implementation detail을 구분해야 한다. Java abstraction을 사용할 수 있다는 사실이 특정 syscall 내부를 보장하지는 않는다."
+  }
+]

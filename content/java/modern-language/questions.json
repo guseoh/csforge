@@ -1,0 +1,1402 @@
+[
+  {
+    "kind": "question",
+    "contentKey": "java.core.modern-language.optional-return-boundary.q1",
+    "promptMarkdown": "Optional을 return type으로 사용할 때 표현하는 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.modern-language.optional-return-boundary"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "값이 항상 두 개라는 계약",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "예외가 절대 발생하지 않는다는 보장",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "값이 있거나 없을 수 있다는 명시적 결과 경계",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "값의 thread-safety",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "Optional은 정상적인 값 부재를 타입으로 표현한다. 내부 값의 불변성이나 모든 실패의 부재까지 보장하지 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.modern-language.optional-return-boundary.q2",
+    "promptMarkdown": "`Optional.ofNullable(value)`가 유용한 경우는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.modern-language.optional-return-boundary"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "checked exception을 자동 처리할 때",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "모든 null을 오류로 강제할 때",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "primitive를 항상 String으로 바꿀 때",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "value가 null일 수 있는 결과를 empty 또는 present로 감쌀 때",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "ofNullable은 null이면 empty, 아니면 present Optional을 만든다. null이 절대 아니어야 하는 입력에는 of가 계약 위반을 드러낸다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.modern-language.optional-return-boundary.q3",
+    "promptMarkdown": "present Optional에 `orElse(expensive())`와 `orElseGet(() -> expensive())`를 사용했을 때의 차이는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.modern-language.optional-return-boundary"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "orElse는 인자를 미리 평가할 수 있고 orElseGet은 empty일 때 supplier를 실행한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "둘 다 present일 때만 expensive를 실행한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "orElseGet은 값이 present면 예외를 던진다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "둘은 return type이 항상 다르다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "일반 메서드 인자는 호출 전에 평가되므로 orElse의 비용 있는 표현은 present여도 계산될 수 있다. orElseGet은 필요할 때 공급한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.modern-language.optional-return-boundary.q4",
+    "promptMarkdown": "다음 중 Optional의 일반적인 사용 경계로 가장 자연스러운 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.modern-language.optional-return-boundary"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "모든 JPA entity field",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "값이 없을 수 있는 조회 method의 return type",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "모든 method parameter",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "primitive local 변수의 대체",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "Optional은 호출자가 부재를 처리해야 하는 반환 경계에서 가장 유용하다. 모든 field·parameter에 기계적으로 사용하면 persistence와 API 계약이 복잡해질 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.modern-language.optional-return-boundary.q5",
+    "promptMarkdown": "`find(id).map(User::name).orElseThrow()`의 실행을 가장 정확히 설명한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.modern-language.optional-return-boundary"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "User가 없어도 method reference가 실행된다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "Optional이 null User를 자동으로 생성한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "User가 있으면 name을 변환하고, 없으면 마지막에 예외를 던진다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "map이 항상 String을 empty로 바꾼다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "present 값에만 map이 적용되고, empty인 경우 orElseThrow가 지정한 기본 예외를 던진다. 부재와 변환 실패 경계를 구분한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.modern-language.optional-return-boundary.q6",
+    "promptMarkdown": "조회 결과가 없는 정상 상태와 저장소 장애를 구분해야 할 때 가장 적절한 설계는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.modern-language.optional-return-boundary"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "모든 예외를 Optional.empty로 삼킨다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "Optional을 Error의 대체로 사용한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "present이면 장애도 성공으로 취급한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "부재만 Optional.empty로 표현하고 장애는 적절한 예외 계약으로 전파·번역한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "Optional은 정상적인 값 부재를 표현하는 도구다. 저장소 장애까지 empty로 바꾸면 호출자가 retry와 미존재를 구별할 수 없다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.modern-language.record-data-modeling.q1",
+    "promptMarkdown": "record component의 accessor 이름은 일반적으로 무엇인가?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.modern-language.record-data-modeling"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "component 이름과 같은 `component()` 형태다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "`getComponent()`만 가능하다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "`readComponent()`다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "accessor가 자동 생성되지 않는다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "record의 component에는 component 이름을 가진 accessor가 생성된다. JavaBean getter 규칙과는 다르다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.modern-language.record-data-modeling.q2",
+    "promptMarkdown": "record의 shallow immutability를 가장 정확하게 설명한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.modern-language.record-data-modeling"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "모든 참조 대상까지 deep immutable하다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "component field reference의 재대입은 막지만 참조 대상 mutation까지 막지는 않는다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "record는 인스턴스화할 수 없다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "record component는 모두 static이다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "record component field는 final이지만 List 같은 참조 대상의 mutation은 별도 문제다. 필요하면 canonical constructor에서 방어적 복사를 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.modern-language.record-data-modeling.q3",
+    "promptMarkdown": "record가 특히 잘 맞는 모델은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.modern-language.record-data-modeling"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "긴 lifecycle과 지연 로딩이 필요한 모든 entity",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "상태 변경이 핵심인 mutable aggregate만",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "data-oriented value carrier",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "모든 static global state",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "record는 값 전달과 generated data members가 핵심인 carrier에 자연스럽다. lifecycle·identity·변경 규칙을 가진 모델에는 별도 판단이 필요하다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.modern-language.record-data-modeling.q4",
+    "promptMarkdown": "record의 canonical constructor를 직접 선언하는 유용한 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.modern-language.record-data-modeling"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "component를 static으로 바꾸기 위해",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "accessor를 모두 제거하기 위해",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "record의 final을 해제하기 위해",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "생성 시 null·범위·방어적 복사 같은 invariant를 검증하기 위해",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "canonical constructor는 record가 유효한 상태로 생성되는 경계를 제공한다. generated member를 없애는 용도의 문법은 아니다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.modern-language.record-data-modeling.q5",
+    "promptMarkdown": "`record Basket(List<String> items) {}`에 원본 list가 전달된 뒤 호출자가 list에 원소를 추가했다. record가 완전 불변이 아닌 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.modern-language.record-data-modeling"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "record accessor가 원본 list reference를 가리킬 수 있기 때문이다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "record component는 항상 static이기 때문이다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "List가 primitive이기 때문이다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "canonical constructor가 실행되지 않기 때문이다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "기본 canonical constructor는 component reference를 보관한다. 입력 구조를 snapshot으로 만들려면 `this.items = List.copyOf(items)` 같은 명시적 설계가 필요하다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.modern-language.record-data-modeling.q6",
+    "promptMarkdown": "record와 equals를 함께 사용할 때 옳은 설명은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.modern-language.record-data-modeling"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "record는 identity equality만 사용한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "record는 component 기반 equals/hashCode를 제공하지만 component의 equality semantics를 대신 바꾸지는 않는다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "record의 component가 mutable이면 equals가 자동으로 deep snapshot을 비교한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "record는 hashCode를 생성하지 않는다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "record는 component 값을 기반으로 data-oriented equality를 생성한다. 참조 component의 equals와 이후 mutation 문제는 component 타입의 계약에 달려 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.modern-language.sealed-types-closed-hierarchy.q1",
+    "promptMarkdown": "sealed type이 표현하는 의도는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.modern-language.sealed-types-closed-hierarchy"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "모든 인스턴스를 singleton으로 만든다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "type을 primitive로 바꾼다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "허용된 subtype 집합을 선언해 hierarchy 확장을 제한한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "constructor를 모두 private으로 만든다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "sealed class/interface는 permitted subtype과 확장 방식으로 닫힌 hierarchy를 표현한다. 인스턴스화 금지 자체의 modifier는 아니다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.modern-language.sealed-types-closed-hierarchy.q2",
+    "promptMarkdown": "sealed hierarchy에서 직접 subtype이 선택해야 하는 확장 modifier는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.modern-language.sealed-types-closed-hierarchy"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "static, volatile 중 하나",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "abstract만 가능",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "어떤 modifier도 필요 없다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "final, sealed, non-sealed 중 하나",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "permitted direct subtype은 hierarchy를 닫거나(sealed/final) 다시 열지(non-sealed) 그 정책을 명시해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.modern-language.sealed-types-closed-hierarchy.q3",
+    "promptMarkdown": "sealed hierarchy가 switch 설계에 주는 장점은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.modern-language.sealed-types-closed-hierarchy"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "compiler가 허용된 subtype 집합을 바탕으로 누락 case를 더 잘 검사할 수 있다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "모든 case가 runtime에 자동 병렬화된다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "subtype의 business invariant가 삭제된다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "default가 모든 예외를 처리한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "닫힌 type 집합은 exhaustive pattern/switch reasoning을 compile-time에 돕는다. case 안의 동작이나 예외 정책을 대신하지는 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.modern-language.sealed-types-closed-hierarchy.q4",
+    "promptMarkdown": "`Result`가 `Success`와 `Failure`만 permits하고 switch가 두 pattern을 처리한다. 새 subtype을 추가할 때 생기는 효과로 가장 적절한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.modern-language.sealed-types-closed-hierarchy"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "기존 switch는 항상 수정 없이 성공한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "sealed 규칙과 switch exhaustiveness를 다시 확인해야 하며 누락 case가 compile-time에 드러날 수 있다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "새 subtype은 JVM이 자동으로 무시한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "permits 목록과 무관하게 모든 object가 subtype이 된다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "닫힌 집합에 subtype을 추가하면 허용 목록과 exhaustive handling이라는 두 계약이 영향을 받는다. compiler가 누락을 찾아 수정 지점을 준다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.modern-language.local-variable-type-inference-var.q1",
+    "promptMarkdown": "`var`에 대한 설명으로 옳은 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.modern-language.local-variable-type-inference-var"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "runtime에 변수 타입이 바뀌는 dynamic typing이다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "field와 return type에도 사용할 수 있다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "initializer에서 compile-time static type을 추론하는 local 문법이다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "generic 정보를 항상 raw type으로 만든다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "var는 local variable type inference이며 이후 대입·호출은 추론된 정적 타입에 대해 compiler가 검사한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.modern-language.local-variable-type-inference-var.q2",
+    "promptMarkdown": "다음 중 `var`에 필수인 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.modern-language.local-variable-type-inference-var"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "static modifier",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "명시적 generic 선언",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "getter",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "initializer",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "compiler가 추론할 오른쪽 initializer가 필요하다. `var x = null`처럼 타입을 결정할 정보가 없는 선언은 허용되지 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.modern-language.local-variable-type-inference-var.q3",
+    "promptMarkdown": "`var names = new ArrayList<String>(); names = anotherList;`에서 anotherList의 정적 타입이 List<String>이면 결과는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.modern-language.local-variable-type-inference-var"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "두 번째 대입이 ArrayList<String> 정적 타입과 맞지 않아 컴파일 오류다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "List로 runtime type이 바뀌어 성공한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "var는 어떤 reference도 재대입할 수 없다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "List가 ArrayList로 자동 변환된다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "initializer가 선언한 정적 타입은 ArrayList<String>이다. var는 왼쪽 타입을 List<String>으로 넓히는 dynamic 변수 선언이 아니다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.modern-language.local-variable-type-inference-var.q4",
+    "promptMarkdown": "`var` 대신 명시적 타입이 더 읽기 쉬운 경우는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.modern-language.local-variable-type-inference-var"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "오른쪽 constructor 이름만으로 타입이 명확한 경우",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "factory 반환 타입을 읽어야만 변수의 핵심 계약을 알 수 있는 경우",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "변수에 initializer가 있는 모든 경우",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "primitive를 선언하는 모든 경우",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "var의 장점은 중복을 줄이는 것이지만, 타입이 중요한 문맥에서 독자가 다른 파일을 추적해야 하면 명시적 타입이 계약을 드러낸다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.modern-language.local-variable-type-inference-var.q5",
+    "promptMarkdown": "`var x = new ArrayList<String>();`를 읽을 때 generic 타입 정보에 대한 옳은 설명은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.modern-language.local-variable-type-inference-var"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "x는 raw ArrayList가 되어 어떤 타입이나 받는다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "var가 generic을 runtime reflection으로 바꾼다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "x의 정적 타입에는 ArrayList<String> 정보가 남아 String 원소 계약을 검사한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "x는 List.of의 immutable 구현으로 추론된다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "var는 오른쪽의 parameterized type을 지우지 않는다. add와 재대입은 추론된 ArrayList<String> 타입에 따라 검사된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.modern-language.local-variable-type-inference-var.q6",
+    "promptMarkdown": "다음 선언들의 validity를 판단한 것으로 옳은 것은? `var a = 1; var b = null;`",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.modern-language.local-variable-type-inference-var"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "둘 다 dynamic type이라 성공한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "a도 initializer가 없어 오류다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "b는 Object로 자동 추론된다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "a는 int로 추론되지만 b는 null만으로 타입을 정할 수 없어 컴파일 오류다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "1은 int라는 추론 정보를 제공하지만 null literal만으로는 특정 정적 타입을 결정할 수 없다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.modern-language.switch-expressions.q1",
+    "promptMarkdown": "switch expression의 핵심 특징은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.modern-language.switch-expressions"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "선택 결과가 값을 만들어 대입·return에 사용할 수 있다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "모든 case가 fall-through한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "조건과 무관하게 void만 반환한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "switch는 더 이상 enum을 받을 수 없다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "expression switch는 branch 결과를 값으로 제공한다. arrow label은 기본적으로 fall-through를 만들지 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.modern-language.switch-expressions.q2",
+    "promptMarkdown": "switch expression의 block case에서 값을 내보내는 문법은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.modern-language.switch-expressions"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "continue",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "yield",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "break만",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "throw만",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "여러 문장을 가진 expression case block에서 `yield value`로 해당 expression의 결과를 제공한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.modern-language.switch-expressions.q3",
+    "promptMarkdown": "다음 결과는? `int n = switch (2) { case 1 -> 10; case 2 -> 20; default -> 30; };`",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.modern-language.switch-expressions"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "10",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "30",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "20",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "컴파일 오류",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "selector 2가 case 2의 arrow branch와 일치하므로 expression 값은 20이다. default는 이 경로에서 선택되지 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.modern-language.switch-expressions.q4",
+    "promptMarkdown": "기존 statement가 case 1에는 ONE, case 2에는 TWO라는 결과를 대입한다. 이를 expression으로 옮길 때 올바른 선택은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.modern-language.switch-expressions"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "두 case를 하나로 합쳐 ONE만 반환한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "expression에서는 String 결과를 만들 수 없다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "모든 case에 메서드 return을 써야 한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "각 arrow branch가 서로 다른 값을 직접 제공한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "branch별 결과가 다르므로 각 case가 자신의 값을 제공해야 한다. 하나로 합치면 원래 statement의 의미가 달라진다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.modern-language.pattern-matching.q1",
+    "promptMarkdown": "`if (value instanceof String text)`에서 text를 사용할 수 있는 경로는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.modern-language.pattern-matching"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "pattern test가 성공한 true 경로",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "항상 method 전체",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "조건 이전의 모든 block",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "오직 catch 안",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "pattern variable은 runtime type test가 성공한 흐름에서만 scope와 타입이 보장된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.modern-language.pattern-matching.q2",
+    "promptMarkdown": "`value instanceof String text && !text.isBlank()`가 유효한 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.modern-language.pattern-matching"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "||가 항상 short-circuit하기 때문이다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "&& 오른쪽은 왼쪽 pattern이 true일 때만 평가되기 때문이다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "text가 method field이기 때문이다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "instanceof가 모든 object를 String으로 변환하기 때문이다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "short-circuit &&의 오른쪽에서는 왼쪽 조건이 true이므로 text binding이 definitely matched다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.modern-language.pattern-matching.q3",
+    "promptMarkdown": "`value instanceof String text || text.isBlank()`가 일반적으로 유효하지 않은 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.modern-language.pattern-matching"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "String에 isBlank가 없기 때문이다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "instanceof는 ||와 함께 쓸 수 없다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "|| 오른쪽에서는 왼쪽 pattern이 false일 수 있어 text의 binding이 보장되지 않기 때문이다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "pattern variable은 final이어야 하기 때문이다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "OR의 오른쪽은 첫 조건이 false인 경로에서도 실행된다. 그 경로에는 String text binding이 없으므로 scope 규칙을 만족하지 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.modern-language.pattern-matching.q4",
+    "promptMarkdown": "switch pattern에서 넓은 `Object o` case를 구체적인 `String s` case보다 먼저 두면 생길 수 있는 문제는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.modern-language.pattern-matching"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "Object는 pattern으로 사용할 수 없다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "switch가 자동으로 두 case를 실행한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "String이 Object의 supertype이 된다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "String case가 앞 case에 의해 도달 불가능해질 수 있다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "Object pattern은 모든 String도 포함하므로 뒤의 String pattern이 실행될 수 없다. pattern ordering과 dominance를 함께 검토해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.modern-language.pattern-matching.q5",
+    "promptMarkdown": "`Object value = someString; if (value instanceof String text) { value = 1; System.out.println(text.length()); }`에서 someString의 길이가 4라면 출력은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.modern-language.pattern-matching"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "4",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "1",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "ClassCastException",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "컴파일 오류",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "text는 성공한 pattern에서 String reference로 binding된 별도 변수다. value를 Integer로 재대입해도 text의 문자열은 바뀌지 않아 길이 4를 출력한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.modern-language.pattern-matching.q6",
+    "promptMarkdown": "pattern matching을 sealed hierarchy와 함께 사용할 때 얻는 조합상의 이점은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.modern-language.pattern-matching"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "모든 subtype을 runtime에 자동 생성한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "타입 검사·binding boilerplate를 줄이면서 허용된 subtype의 exhaustive 처리를 점검할 수 있다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "pattern variable의 scope 제한이 사라진다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "instanceof가 object identity 비교로 바뀐다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "pattern은 test와 cast를 결합하고 sealed hierarchy는 가능한 subtype 집합을 닫는다. 두 기능은 서로 다른 문제를 보완한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.modern-language.text-blocks.q1",
+    "promptMarkdown": "text block을 사용하는 대표적인 목적은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.modern-language.text-blocks"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "파일을 자동으로 생성하기 위해",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "charset을 지정하지 않기 위해",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "multi-line text를 source에서 구조적으로 작성하기 위해",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "문자열을 byte로 바꾸기 위해",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "text block은 여러 줄 문자열의 표현을 편하게 한다. 파일 I/O나 encoding 정책을 자동으로 대신하지 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.modern-language.text-blocks.q2",
+    "promptMarkdown": "text block의 incidental indentation에 대한 설명으로 옳은 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.modern-language.text-blocks"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "source의 모든 whitespace가 무조건 제거된다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "text block은 줄바꿈을 저장하지 않는다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "들여쓰기는 OS가 실행 후에만 제거한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "delimiter 위치와 공통 들여쓰기를 고려해 결과 문자열의 incidental indentation이 정리된다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "text block은 source layout을 결과에 그대로 복사하는 것이 아니라 incidental indentation 규칙을 적용한다. 의도적인 공백은 escape와 위치로 표현한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.modern-language.text-blocks.q3",
+    "promptMarkdown": "text block 안의 escape sequence가 필요한 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.modern-language.text-blocks"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "의도적인 공백·줄바꿈 등 일반 들여쓰기 처리와 다른 문자를 표현하기 위해",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "모든 문자를 숫자로 변환하기 위해",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "compiler의 type inference를 끄기 위해",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "문자열을 immutable하게 만들기 위해",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "text block도 string literal이므로 escape가 의미를 가진다. incidental indentation 정리와 보존하려는 whitespace 표현은 별도 요구다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.modern-language.text-blocks.q4",
+    "promptMarkdown": "JSON text block을 API로 전송할 때 별도로 검토해야 하는 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.modern-language.text-blocks"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "text block이면 JSON 문법·charset·외부 validation이 자동으로 해결된다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "문자열 layout과 별개로 JSON escaping/validation 및 전송 charset을 명시해야 한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "text block은 HTTP body로 사용할 수 없다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "모든 whitespace를 제거해야만 JSON이 된다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "text block은 source 표현 문법이다. payload의 JSON 문법과 transport encoding·validation은 별도 계약으로 검증해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.modern-language.default-static-interface-methods.q1",
+    "promptMarkdown": "interface default method의 대표 목적은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.modern-language.default-static-interface-methods"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "모든 구현체를 final로 만드는 것",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "instance state를 자동 공유하는 것",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "기존 구현체를 깨지 않고 기본 동작으로 interface를 진화시키는 것",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "static method를 override하는 것",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "default method는 interface에 구현을 제공해 기존 구현체와의 source/binary evolution 문제를 완화한다. 상태 공유나 static dispatch를 뜻하지 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.modern-language.default-static-interface-methods.q2",
+    "promptMarkdown": "interface static method를 호출하는 자연스러운 방식은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.modern-language.default-static-interface-methods"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "구현 객체의 runtime method로 호출한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "항상 `super`로 호출한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "static method는 호출할 수 없다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "선언 interface 이름으로 호출한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "interface static method는 해당 interface의 utility 계약이며 구현 class에 instance method처럼 상속되지 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.modern-language.default-static-interface-methods.q3",
+    "promptMarkdown": "두 interface가 같은 signature의 default method를 제공하고 한 class가 둘 다 구현하면 일반적으로 필요한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.modern-language.default-static-interface-methods"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "class가 override해 충돌을 해결한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "JVM이 임의의 부모 default를 선택한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "두 superclass를 추가한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "모든 interface를 static으로 바꾼다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "같은 우선순위의 default가 충돌하면 구현 class가 명시적으로 선택·조합하는 method를 제공해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.modern-language.default-static-interface-methods.q4",
+    "promptMarkdown": "`A`와 `B`가 충돌하는 default `label()`을 제공하고 class `C`가 둘 다 구현한다. `C.label()`에서 특정 부모 구현을 선택하려면?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.modern-language.default-static-interface-methods"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`super.super.label()`을 사용한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "`A.super.label()`처럼 명시적 부모 interface default를 호출한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "`C.static.label()`을 사용한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "runtime이 선택할 때까지 method를 선언하지 않는다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "class override에서 `InterfaceName.super.method()` 형태로 부모 default를 선택할 수 있다. 충돌을 암묵적인 runtime 선택에 맡기지 않는다."
+  }
+]

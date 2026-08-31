@@ -1,0 +1,1332 @@
+[
+  {
+    "kind": "question",
+    "contentKey": "java.core.streams.stream-pipeline-laziness.q1",
+    "promptMarkdown": "Stream pipeline에서 실제 traversal이 보통 시작되는 시점은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.streams.stream-pipeline-laziness"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "terminal operation을 호출한 순간",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "source를 stream으로 감싼 순간",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "첫 intermediate operation을 선언한 순간",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "JVM이 class를 load한 순간",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "filter·map 같은 intermediate operation은 lazy하고 count·toList·findFirst 같은 terminal operation이 pipeline 평가를 시작하게 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.streams.stream-pipeline-laziness.q2",
+    "promptMarkdown": "pipeline을 선언한 뒤 구분 기호를 출력하고 s.forEach(x -> {})를 호출한다. peek가 각 원소를 출력할 때 전체 출력은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.streams.stream-pipeline-laziness"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "12 뒤에 구분 기호",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "구분 기호 뒤에 12",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "구분 기호만 출력",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "컴파일 오류",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "pipeline 선언 중 peek는 실행되지 않는다. 구분 기호가 먼저 출력되고 forEach terminal이 traversal을 시작해 1과 2가 출력된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.streams.stream-pipeline-laziness.q3",
+    "promptMarkdown": "다음 중 short-circuit 성격을 가진 terminal operation은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.streams.stream-pipeline-laziness"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "toList",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "count",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "findFirst",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "collectingAndThen만 항상",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "findFirst는 첫 결과가 정해지면 더 많은 원소를 읽을 필요가 없을 수 있다. toList와 count는 일반적으로 전체 결과를 알아야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.streams.stream-pipeline-laziness.q4",
+    "promptMarkdown": "하나의 Stream에 `count()`를 실행한 뒤 다시 `toList()`를 호출하면?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.streams.stream-pipeline-laziness"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "같은 stream이 자동 rewind된다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "두 번째 terminal도 첫 결과를 재사용한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "항상 빈 list가 반환된다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "두 번째 사용에서 IllegalStateException이 발생할 수 있다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "Stream은 terminal operation으로 소비된다. 재사용하려면 source에서 새 stream을 만들거나 결과를 저장해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.streams.stream-pipeline-laziness.q5",
+    "promptMarkdown": "`Stream.of(1,2,3).filter(x -> x > 1).findFirst()`의 결과는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.streams.stream-pipeline-laziness"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "Optional[2]",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "Optional[1]",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "Optional[3]",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "Optional.empty",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "1은 filter에서 제외되고 2가 첫 통과 원소라 findFirst가 Optional[2]를 반환한다. 3까지 볼 필요가 없다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.streams.stream-pipeline-laziness.q6",
+    "promptMarkdown": "`filter`와 `map`을 선언했지만 terminal을 호출하지 않은 pipeline에서 `map` 내부 로그가 나오지 않는 이유를 순서대로 설명한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.streams.stream-pipeline-laziness"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "map은 source를 영구 삭제하기 때문에 로그가 없다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "intermediate operation이 lazy라 terminal이 없으면 source traversal과 map 평가가 시작되지 않는다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "filter가 map을 compiler에서 제거했기 때문이다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "Stream은 lambda를 실행할 수 없기 때문이다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "pipeline은 실행 계획을 구성할 뿐이고 terminal operation이 있어야 traversal이 시작된다. 이때 각 element에 filter와 map이 평가된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.streams.stream-map-filter-flatmap.q1",
+    "promptMarkdown": "`map`의 일반적인 shape 변화는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.streams.stream-map-filter-flatmap"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "T를 반드시 여러 R로 복제한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "T를 boolean으로만 바꾼다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "T 하나를 R 하나로 변환한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "모든 nested stream을 자동 병합한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "map은 각 입력 element에 mapper를 적용해 하나의 결과 element를 만든다. zero/one filtering이나 many flatten은 다른 연산의 역할이다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.streams.stream-map-filter-flatmap.q2",
+    "promptMarkdown": "`filter`가 수행하는 일은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.streams.stream-map-filter-flatmap"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "각 원소를 다른 타입 하나로 변환한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "원소마다 stream 두 개를 만든다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "결과를 map으로 저장한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "조건을 통과한 원소만 흐름에 남긴다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "filter의 predicate가 true인 원소만 downstream으로 전달된다. 원소의 타입을 바꾸지는 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.streams.stream-map-filter-flatmap.q3",
+    "promptMarkdown": "`List<List<Integer>>`를 `List<Integer>`로 만들 때 핵심 연산은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.streams.stream-map-filter-flatmap"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "flatMap(List::stream)을 사용한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "map(List::stream)만 사용한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "filter(List::isEmpty)를 사용한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "reduce로 각 List를 문자열로 만든다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "map(List::stream)은 Stream<List<Integer>>를 Stream<Stream<Integer>>로 만들 뿐이다. flatMap은 내부 stream들을 하나의 흐름으로 펼친다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.streams.stream-map-filter-flatmap.q4",
+    "promptMarkdown": "두 원소를 가진 List와 한 원소를 가진 List를 `Stream.of(first, second).flatMap(List::stream).count()`로 flatten하면 결과는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.streams.stream-map-filter-flatmap"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "1",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "3",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "2",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "컴파일 오류",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "두 내부 list의 원소가 모두 downstream으로 전달되어 총 세 element가 된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.streams.stream-map-filter-flatmap.q5",
+    "promptMarkdown": "mapper가 empty stream을 반환하는 `flatMap`의 효과는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.streams.stream-map-filter-flatmap"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "원본 stream 전체가 재실행된다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "항상 null element 하나가 추가된다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "해당 입력 element에서 downstream 결과가 나오지 않는다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "flatMap이 즉시 예외를 던진다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "flatMap은 mapper가 내보내는 stream의 element를 전달한다. empty stream은 zero output인 입력에 해당한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.streams.stream-map-filter-flatmap.q6",
+    "promptMarkdown": "Stream<Stream<Integer>> nested에 대해 nested.filter(s -> s.count() > 0).mapToLong(Stream::count).sum()이 실패할 수 있는 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.streams.stream-map-filter-flatmap"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "map이 내부 stream을 만들 수 없기 때문이다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "List<Integer>는 flatMap만 받을 수 있기 때문이다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "count는 Stream을 terminal로 사용할 수 없다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "filter가 내부 stream을 소비한 뒤 downstream count에서 같은 내부 stream을 다시 사용하려 하기 때문이다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "filter의 count()가 각 내부 stream을 이미 소비했는데 뒤의 mapToLong이 같은 stream을 다시 count하려 한다. 내부 흐름을 한 번만 사용하거나 목적에 맞게 flatMap으로 flatten해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.streams.stream-reduce.q1",
+    "promptMarkdown": "정수 합계를 `reduce`할 때 자연스러운 identity는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.streams.stream-reduce"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "0",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "1",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "-1",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "null만 가능하다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "덧셈의 identity는 0이다. 어떤 값 x에 0을 더해도 x가 유지되어야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.streams.stream-reduce.q2",
+    "promptMarkdown": "reduce identity가 만족해야 하는 성질은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.streams.stream-reduce"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "identity를 두 번 적용할 때마다 값이 두 배가 되어야 한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "identity와 결합해도 원래 누적 의미를 바꾸지 않아야 한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "identity와 결합해도 다른 값이 되어야 한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "identity는 항상 stream의 첫 element여야 한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "identity는 결합 연산의 중립 원소여야 한다. 병렬 분할에서 빈 부분 결과에도 적용될 수 있으므로 특히 중요하다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.streams.stream-reduce.q3",
+    "promptMarkdown": "`Stream.of(1,2,3).reduce(0, (a,b) -> a - b)`를 sequential로 계산한 결과는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.streams.stream-reduce"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "6",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "0",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "-6",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "2",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "순차 누적은 ((0-1)-2)-3이므로 -6이다. 뺄셈은 결합법칙을 만족하지 않아 parallel reduction에는 적합하지 않다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.streams.stream-reduce.q4",
+    "promptMarkdown": "다음 중 `reduce`보다 collector가 의도를 더 잘 드러내는 작업은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.streams.stream-reduce"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "하나의 최댓값을 구한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "문자열 하나를 연결한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "두 정수를 더한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "여러 원소를 key별 List로 모은다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "key별 collection 결과는 mutable accumulation과 merge 정책이 필요하므로 groupingBy 같은 collector가 결과 구조와 병합 의도를 직접 표현한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.streams.collectors-grouping-partitioning.q1",
+    "promptMarkdown": "`groupingBy(User::team)`의 대표 결과 형태는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.streams.collectors-grouping-partitioning"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "Map<Team, List<User>>",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "List<Map<User, Team>>",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "boolean 하나",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "User 하나",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "groupingBy는 classifier key별로 원소를 모아 기본적으로 Map<K,List<T>> 형태를 만든다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.streams.collectors-grouping-partitioning.q2",
+    "promptMarkdown": "`partitioningBy(user -> user.score() >= 60)`의 key는 무엇인가?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.streams.collectors-grouping-partitioning"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "String",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "boolean/Boolean",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "User",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "정수 점수",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "partitioningBy는 predicate의 true/false를 key로 사용해 두 분할을 표현한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.streams.collectors-grouping-partitioning.q3",
+    "promptMarkdown": "group별 개수만 구하고 싶을 때 적절한 downstream collector는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.streams.collectors-grouping-partitioning"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "Collectors.joining()만",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "Collectors.toUnmodifiableSet()만",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "Collectors.counting()",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "Collectors.identity()",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "groupingBy의 두 번째 collector로 counting을 주면 Map<K,Long>처럼 각 group의 개수를 집계할 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.streams.collectors-grouping-partitioning.q4",
+    "promptMarkdown": "grouping 결과의 key 순서를 입력 순서라고 가정하면 안 되는 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.streams.collectors-grouping-partitioning"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "groupingBy는 key를 만들지 않기 때문이다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "List만 순서를 가질 수 있기 때문이다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "stream은 항상 역순으로 처리하기 때문이다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "Map 결과의 구현체·collector 계약이 순서를 자동으로 입력 순서로 고정하지 않기 때문이다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "기본 groupingBy의 map 순서와 결과 순서는 필요한 경우 별도로 지정해야 한다. 순서가 중요하면 map supplier나 후속 정렬 정책을 명시한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.streams.collectors-grouping-partitioning.q5",
+    "promptMarkdown": "groupingBy에 `mapping(User::name, toSet())` downstream을 주는 목적은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.streams.collectors-grouping-partitioning"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "각 group의 User를 이름으로 변환한 뒤 set으로 모은다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "원소를 group key로 다시 바꾼다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "모든 group을 하나의 문자열로 합친다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "grouping 자체를 수행하지 않는다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "classifier로 group을 만든 뒤 downstream mapping이 각 User를 name으로 바꾸고 toSet이 group별 중복을 제거한다. 두 collector의 역할을 함께 읽어야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.streams.collectors-grouping-partitioning.q6",
+    "promptMarkdown": "외부 `Map<String,List<User>>`에 stream의 forEach로 직접 누적하는 대신 groupingBy를 선택할 때 얻는 이점은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.streams.collectors-grouping-partitioning"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "모든 원소가 자동으로 정렬된다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "집계와 결과 구조를 collector 계약으로 표현해 shared mutable state와 병합 책임을 줄인다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "parallel stream에서도 어떤 side effect든 안전해진다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "Map key equality가 필요 없어 진다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "collector는 결과 container와 accumulator/combiner를 함께 정의한다. 이것이 모든 동시성·순서 문제를 자동 해결한다는 뜻은 아니지만 외부 mutation보다 의도가 명확하다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.streams.tomap-duplicate-keys.q1",
+    "promptMarkdown": "`Collectors.toMap(keyMapper, valueMapper)`에서 duplicate key가 생겼을 때 기본적으로 기대할 동작은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.streams.tomap-duplicate-keys"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "항상 두 값을 list로 보관한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "충돌을 자동 합산한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "merge policy가 없으면 충돌 시 예외가 발생할 수 있다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "충돌을 조용히 무시한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "기본 toMap overload는 duplicate key를 임의로 선택하지 않고 충돌을 알린다. 병합이 필요하면 merge function을 명시한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.streams.tomap-duplicate-keys.q2",
+    "promptMarkdown": "다음 merge function `(oldValue, newValue) -> newValue`의 정책은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.streams.tomap-duplicate-keys"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "첫 값을 유지한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "충돌을 삭제한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "두 값을 곱한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "충돌 시 새 값을 유지한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "merge 함수는 기존 값과 새 값을 받아 결과 하나를 반환한다. 이 함수는 새 값인 newValue를 선택한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.streams.tomap-duplicate-keys.q3",
+    "promptMarkdown": "`toMap`에 merge function을 넣기 전에 먼저 결정해야 하는 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.streams.tomap-duplicate-keys"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "동일 key의 충돌을 first/last/합산/거부 중 어떤 domain 정책으로 처리할지",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "모든 map을 TreeMap으로 바꿀지 여부만",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "stream을 반드시 parallel로 만들지",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "key mapper를 제거할지",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "merge function은 자료구조 선택이 아니라 충돌 semantics를 결정한다. 데이터 손실 여부와 encounter order 의존성도 함께 검토한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.streams.tomap-duplicate-keys.q4",
+    "promptMarkdown": "records가 `(A,1), (B,2), (A,3)`이고 merge가 합계라면 `toMap`의 A 값은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.streams.tomap-duplicate-keys"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "1",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "4",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "2",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "3",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "첫 A에 1을 넣은 뒤 같은 key의 새 값 3이 충돌하고 merge 합계가 적용되어 A는 4가 된다. B는 2로 남는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.streams.stream-side-effects-noninterference.q1",
+    "promptMarkdown": "non-interference가 요구하는 핵심은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.streams.stream-side-effects-noninterference"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "모든 lambda가 static이어야 한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "원소를 반드시 deep copy한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "traversal 중 stream source를 구조적으로 수정하지 않는다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "모든 stream을 parallel로 실행한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "stream이 읽는 source를 traversal 중 add/remove하면 결과가 정의되지 않거나 예측하기 어렵다. source와 pipeline의 간섭을 피한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.streams.stream-side-effects-noninterference.q2",
+    "promptMarkdown": "stateless stream behavior에 가까운 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.streams.stream-side-effects-noninterference"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "외부 counter를 누적해 element마다 결과가 달라지는 lambda",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "공유 list에 add하는 lambda",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "이전 element의 hidden 상태를 읽는 lambda",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "입력 element만 보고 결과를 계산하는 `x -> x * 2`",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "같은 입력과 독립된 계산은 처리 순서와 분할에 덜 의존한다. 외부 누적 상태는 stateless 계약과 충돌하기 쉽다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.streams.stream-side-effects-noninterference.q3",
+    "promptMarkdown": "parallel stream에서 외부 `ArrayList`에 `forEach(list::add)`할 때의 문제는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.streams.stream-side-effects-noninterference"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "공유 mutation의 thread-safety·순서·결과 누락을 보장하기 어렵다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "ArrayList가 자동으로 정렬된다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "forEach가 항상 순서를 보장한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "parallel stream은 side effect를 모두 제거한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "ArrayList의 외부 공유 구조를 병렬 작업이 동시에 수정하면 안전성과 결과 semantics가 깨질 수 있다. collect 등 적절한 accumulation을 사용한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.streams.stream-side-effects-noninterference.q4",
+    "promptMarkdown": "stream pipeline 안에서 source list의 원소를 remove하는 코드를 피해야 하는 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.streams.stream-side-effects-noninterference"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "remove는 Java에서 항상 금지된 method다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "source traversal과 구조 변경이 서로 간섭해 예외나 예측 불가능한 결과가 생길 수 있다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "filter가 삭제를 대신할 수 없기 때문이다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "stream은 원본과 연결되지 않는다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "stream은 source를 읽는 동안 구조 변경을 전제로 하지 않는다. 원하는 결과 collection을 새로 만들고 operation 후 source를 별도로 변경하는 경계를 둔다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.streams.stream-side-effects-noninterference.q5",
+    "promptMarkdown": "`List<Integer> out = new ArrayList<>(); input.stream().filter(x -> x > 0).forEach(out::add);`를 순차에서만 실행하면 항상 설계상 안전한가?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.streams.stream-side-effects-noninterference"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "순차이면 out의 소유권·재사용·실패 경계까지 자동으로 안전하다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "out은 input과 같은 object가 된다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "결과는 얻을 수 있지만 외부 mutable side effect가 pipeline과 결합되어 parallel 전환·재사용·예외 정책이 약해진다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "filter가 실행되지 않는다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "순차 실행에서 당장 결과가 맞을 수 있어도 외부 mutation은 pipeline의 독립성과 변경 가능성을 낮춘다. `filter(...).toList()`처럼 결과를 collector로 표현하는 편이 명확하다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.streams.stream-side-effects-noninterference.q6",
+    "promptMarkdown": "I/O side effect를 stream에 넣어야 한다면 추가로 검토할 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.streams.stream-side-effects-noninterference"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "side effect는 stream이 자동 rollback한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "parallel이면 모든 외부 시스템이 transaction이 된다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "forEach가 실패를 항상 무시한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "실행 순서, 재시도 시 중복, 실패 일부 반영과 ownership을 명시한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "stream의 transformation 계약은 외부 I/O의 원자성·멱등성을 제공하지 않는다. side effect를 넣으면 순서와 재실행·부분 실패를 application 수준에서 설계해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.streams.parallel-stream-tradeoffs.q1",
+    "promptMarkdown": "parallel stream 선택 시 가장 먼저 물어야 할 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.streams.parallel-stream-tradeoffs"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "작업이 독립적이고 충분히 크며 실제 측정으로 이득이 있는가",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "method chain이 한 줄인가",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "모든 결과가 자동 정렬되는가",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "공유 list가 mutable한가만",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "parallel은 분할·스케줄·병합 비용을 추가한다. workload 크기와 독립성, 측정 결과가 선택의 근거다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.streams.parallel-stream-tradeoffs.q2",
+    "promptMarkdown": "parallel stream의 common pool/thread 수에 대해 안전한 표현은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.streams.parallel-stream-tradeoffs"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "Java 언어가 모든 JDK와 OS에서 고정된 worker 수를 보장한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "특정 runtime/JDK 구현과 환경의 세부로, API 보장과 구분해야 한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "parallel이면 새로운 thread를 절대 만들지 않는다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "common pool은 application workload와 무관하다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "parallel stream의 API semantics와 실제 scheduling·pool 구성은 다른 층이다. JDK/runtime 세부를 보편적 Java 언어 보장처럼 말하면 안 된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.streams.parallel-stream-tradeoffs.q3",
+    "promptMarkdown": "다음 작업이 parallel에 특히 불리할 수 있는 이유는? `items.parallelStream().map(this::callBlockingRemote).toList()`",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.streams.parallel-stream-tradeoffs"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "blocking 호출이 stream을 더 순수하게 만든다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "map은 parallel에서 실행할 수 없다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "공통 실행 자원을 blocking I/O가 점유해 unrelated 작업의 병목·지연을 만들 수 있다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "toList는 항상 empty를 반환한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "parallel stream은 blocking 외부 호출을 위한 전용 resource pool이나 back-pressure를 자동 설계하지 않는다. common execution resource를 오래 점유할 위험을 검토한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.streams.parallel-stream-tradeoffs.q4",
+    "promptMarkdown": "`forEachOrdered`를 사용하면 얻는 것과 잃을 수 있는 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.streams.parallel-stream-tradeoffs"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "모든 shared mutation이 안전해진다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "parallel이 sequential로 반드시 변한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "order와 무관하게 결과가 항상 빨라진다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "encounter order 관찰을 요구할 수 있지만 병렬 처리의 자유와 성능 이점을 줄일 수 있다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "ordered terminal은 순서 제약을 추가한다. thread-safe와 성능 향상을 자동 제공하는 것은 아니다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.streams.parallel-stream-tradeoffs.q5",
+    "promptMarkdown": "뺄셈을 parallel reduce에 사용하고 외부 counter도 증가시키는 pipeline이 위험한 조합인 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.streams.parallel-stream-tradeoffs"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "뺄셈의 결합·분할 의미가 안정적이지 않고 counter side effect도 경쟁·순서에 의존하기 때문이다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "parallel stream은 primitive를 처리할 수 없기 때문이다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "counter만 final이면 모든 문제가 해결된다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "reduce는 terminal operation이 아니기 때문이다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "reduce는 부분 결과를 결합할 수 있는 associative 의미가 필요하고 외부 counter는 non-interference·thread-safety를 깨뜨린다. 두 독립성 문제를 함께 해결해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.streams.parallel-stream-tradeoffs.q6",
+    "promptMarkdown": "parallel 전환을 production에 적용하기 전의 검증 순서로 가장 적절한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.streams.parallel-stream-tradeoffs"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "method chain이 길수록 바로 parallel을 붙인다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "먼저 side effect·ordering·reduction 계약을 확인하고 대표 workload에서 sequential과 측정·프로파일링한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "한 번의 작은 local 실행만으로 성능을 확정한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "common pool 설정을 바꾸면 correctness 검토가 필요 없다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "correctness 계약을 먼저 지키고 workload에 맞는 benchmark로 비용을 확인해야 한다. 작은 샘플과 특정 runtime의 결과를 일반화하지 않는다."
+  }
+]
