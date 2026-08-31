@@ -1,0 +1,1472 @@
+[
+  {
+    "kind": "question",
+    "contentKey": "java.core.coding-tests.fast-input-bufferedreader-tokenizer.q1",
+    "promptMarkdown": "BufferedReader의 readLine()이 반환하는 값으로 옳은 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.coding-tests.fast-input-bufferedreader-tokenizer"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "줄 끝을 제외한 한 줄의 문자열",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "전체 입력을 한 번에 담은 숫자 배열",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "자동으로 파싱된 int",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "다음 줄의 StringTokenizer",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "readLine은 줄 끝을 제외한 문자열을 반환하며 숫자 변환은 호출자가 수행한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.coding-tests.fast-input-bufferedreader-tokenizer.q2",
+    "promptMarkdown": "입력이 더 이상 없을 때 BufferedReader.readLine()의 결과는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.coding-tests.fast-input-bufferedreader-tokenizer"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "마지막 줄을 무한히 반복한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "null을 반환한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "빈 문자열만 반환한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "항상 IOException을 던진다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "EOF에서는 null이 반환될 수 있으므로 입력 계약에 맞게 확인해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.coding-tests.fast-input-bufferedreader-tokenizer.q3",
+    "promptMarkdown": "StringTokenizer가 이미 한 줄의 마지막 token까지 소비된 뒤 nextToken()을 호출하면?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.coding-tests.fast-input-bufferedreader-tokenizer"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "마지막 token을 다시 반환한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "항상 빈 token을 반환한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "더 이상 token이 없어 예외가 날 수 있다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "다음 줄을 자동으로 읽는다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "StringTokenizer는 넘겨받은 문자열의 token만 제공하며 다음 줄을 읽지 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.coding-tests.fast-input-bufferedreader-tokenizer.q4",
+    "promptMarkdown": "값의 범위가 int보다 클 수 있는 입력을 누적할 때 가장 적절한 선택은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.coding-tests.fast-input-bufferedreader-tokenizer"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "항상 byte로 먼저 읽는다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "StringTokenizer가 자동으로 long을 만든다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "char 배열로만 저장한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "Long.parseLong과 long 누적을 검토한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "파싱 타입과 누적 타입 모두 범위를 수용해야 하므로 long을 선택한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.coding-tests.fast-input-bufferedreader-tokenizer.q5",
+    "promptMarkdown": "한 줄에 token이 n개라는 보장이 없고 token 수가 줄 사이에 이어질 수 있다. 가장 안전한 구현 방향은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.coding-tests.fast-input-bufferedreader-tokenizer"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "매 줄의 tokenizer를 만들고 비면 다음 줄을 읽는 루프를 둔다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "첫 줄 tokenizer를 입력 끝까지 재사용한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "모든 숫자를 int로 먼저 읽는다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "readLine을 한 번만 호출한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "줄 경계를 넘어 token을 채워야 하므로 줄별 tokenizer의 소진 상태를 확인하며 다음 줄을 읽어야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.coding-tests.fast-input-bufferedreader-tokenizer.q6",
+    "promptMarkdown": "n을 읽은 뒤 다음 줄에 숫자가 하나도 없고 EOF가 먼저 왔다. 정상적인 parser라면?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.coding-tests.fast-input-bufferedreader-tokenizer"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "StringTokenizer가 이전 줄을 복구한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "입력 계약 위반을 감지해 명시적으로 실패한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "null을 숫자 0으로 조용히 바꾼다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "무한히 nextToken을 호출한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "필수 입력이 없을 때 임의의 기본값으로 바꾸면 오답을 숨기므로 계약 위반을 드러내야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.coding-tests.buffered-output-stringbuilder.q1",
+    "promptMarkdown": "StringBuilder를 반복 출력 준비에 쓰는 주된 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.coding-tests.buffered-output-stringbuilder"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "문자열을 자동 정렬하기 위해",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "writer를 자동 close하기 위해",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "mutable buffer에 문자열을 누적하기 위해",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "각 append마다 새 thread를 만들기 위해",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "StringBuilder는 mutable sequence로 결과를 조립한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.coding-tests.buffered-output-stringbuilder.q2",
+    "promptMarkdown": "BufferedWriter.flush()의 의미로 옳은 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.coding-tests.buffered-output-stringbuilder"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "writer를 반드시 닫는다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "파일을 항상 디스크에 영구 저장한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "StringBuilder를 비운다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "현재 writer buffer의 데이터를 다음 계층으로 보낸다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "flush는 보유한 문자를 underlying writer로 밀어내며 close나 영속성 보장과는 다르다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.coding-tests.buffered-output-stringbuilder.q3",
+    "promptMarkdown": "다음 코드의 핵심 장점은? StringBuilder b = new StringBuilder(); for (int x : xs) b.append(x).append(\"\\n\");",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.coding-tests.buffered-output-stringbuilder"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "반복적인 text 조립을 한 mutable buffer에서 처리한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "xs를 자동으로 역순 정렬한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "모든 출력이 즉시 OS에 기록된다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "동시에 여러 thread가 안전하게 수정한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "반복 조립의 중간 문자열 생성을 줄이고 마지막에 결과를 출력할 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.coding-tests.buffered-output-stringbuilder.q4",
+    "promptMarkdown": "출력 writer를 직접 생성해 사용한 뒤 일반적으로 고려할 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.coding-tests.buffered-output-stringbuilder"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "입력 tokenizer 재사용",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "flush와 소유한 resource의 close 정책",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "Comparator의 자연 순서",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "HashMap의 load factor만",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "남은 출력과 resource lifecycle을 정상·예외 경로에서 함께 고려해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.coding-tests.buffered-output-stringbuilder.q5",
+    "promptMarkdown": "큰 결과를 StringBuilder 하나에 모두 쌓는 설계의 trade-off로 가장 정확한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.coding-tests.buffered-output-stringbuilder"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "StringBuilder가 자동 압축을 수행한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "flush를 호출하면 builder가 thread-safe가 된다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "출력 호출은 줄일 수 있지만 결과 전체가 메모리에 머문다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "출력 순서가 항상 사라진다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "조립 비용과 작은 write를 줄이는 대신 결과 buffer의 메모리 수명을 감수한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.coding-tests.buffered-output-stringbuilder.q6",
+    "promptMarkdown": "다음 중 출력이 즉시 다른 consumer에게 보여야 하는 중간 경계가 있는 경우의 판단은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.coding-tests.buffered-output-stringbuilder"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "flush는 close와 같으므로 호출할 필요가 없다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "StringBuilder만 사용하면 외부 consumer가 자동으로 본다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "flush는 출력 순서를 바꾼다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "필요한 경계에서 flush를 고려하되 매번 flush가 최선이라고 단정하지 않는다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "flush는 관찰 가능성을 높일 수 있지만 호출 비용과 resource 의미를 함께 판단한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.coding-tests.sorting-arrays-collections.q1",
+    "promptMarkdown": "Arrays.sort(int[])의 기본 결과는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.coding-tests.sorting-arrays-collections"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "primitive 원소의 오름차순 정렬",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "항상 내림차순 정렬",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "배열 복사본만 정렬하고 원본은 유지",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "Comparator 기반 정렬",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "primitive 배열 overload는 자연스러운 숫자 오름차순으로 대상 배열을 정렬한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.coding-tests.sorting-arrays-collections.q2",
+    "promptMarkdown": "Comparator를 직접 전달할 수 있는 대상은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.coding-tests.sorting-arrays-collections"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "StringBuilder 내부 buffer",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "Integer[] reference 배열",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "int[] primitive 배열",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "단일 int",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "reference 배열 overload와 collection sort는 Comparator를 받을 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.coding-tests.sorting-arrays-collections.q3",
+    "promptMarkdown": "정렬 후 원본 배열을 보존해야 할 때 적절한 방법은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.coding-tests.sorting-arrays-collections"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "Arrays.sort는 자동으로 원본을 보존한다고 믿는다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "int를 Integer로 바꾸면 자동 복사된다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "복사본을 만든 뒤 복사본을 정렬한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "원본을 정렬한 뒤 원본이라고 부르지 않는다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "정렬 메서드가 대상 자체를 변경하므로 별도 복사본이 필요하다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.coding-tests.sorting-arrays-collections.q4",
+    "promptMarkdown": "List<Integer> values에 사용자 comparator를 적용하는 호출은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.coding-tests.sorting-arrays-collections"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "values.parse(comparator)",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "Arrays.sort(values, int.class)",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "values.flush(comparator)",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "values.sort(comparator)",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "List의 sort 메서드는 Comparator를 받아 list 순서를 변경한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.coding-tests.sorting-arrays-collections.q5",
+    "promptMarkdown": "int[] numbers에 Comparator.reverseOrder()로 내림차순 Arrays.sort를 호출하려 할 때의 문제는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.coding-tests.sorting-arrays-collections"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "primitive array overload는 Comparator를 받지 않는다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "내림차순 comparator가 항상 null을 반환한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "Arrays.sort가 숫자를 문자열로 바꾼다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "int[]은 정렬 자체가 불가능하다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "Comparator는 reference 원소 기준 API이며 primitive overload와 타입이 맞지 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.coding-tests.sorting-arrays-collections.q6",
+    "promptMarkdown": "Arrays.sort(values, from, to)를 사용한 뒤 확인해야 할 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.coding-tests.sorting-arrays-collections"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "Comparator가 자동 생성되는지",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "from은 포함되고 to는 제외되는 정렬 구간 계약",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "항상 배열 전체가 두 번 정렬되는지",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "구간 밖 원소가 자동 삭제되는지",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "범위 overload는 지정된 부분 구간만 처리하므로 경계와 원본 변경을 확인한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.coding-tests.comparator-for-coding-tests.q1",
+    "promptMarkdown": "두 int를 overflow 없이 비교하는 방법은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.coding-tests.comparator-for-coding-tests"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "a / b",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "String.valueOf(a).compareTo(String.valueOf(b))",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "Integer.compare(a, b)",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "a - b",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "Integer.compare는 차이값을 계산하지 않고 상대 관계를 안전하게 반환한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.coding-tests.comparator-for-coding-tests.q2",
+    "promptMarkdown": "Comparator.comparingInt(Node::distance)의 역할은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.coding-tests.comparator-for-coding-tests"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "Node를 int로 강제 변환한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "distance를 모두 같은 값으로 만든다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "정렬을 즉시 실행한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "distance key를 기준으로 비교자를 만든다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "key extractor를 이용해 비교 기준을 구성하는 factory다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.coding-tests.comparator-for-coding-tests.q3",
+    "promptMarkdown": "거리 오름차순, id 오름차순을 표현하는 조합은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.coding-tests.comparator-for-coding-tests"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "comparingInt(distance).thenComparingInt(id)",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "comparingInt(id).remove(distance)",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "reversed(distance + id)",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "a.distance() - b.id()",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "첫 key가 같을 때 thenComparingInt로 다음 기준을 적용한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.coding-tests.comparator-for-coding-tests.q4",
+    "promptMarkdown": "전체 comparator가 이미 구성된 order에 reversed()를 적용하면?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.coding-tests.comparator-for-coding-tests"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "overflow가 방지되지 않는다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "전체 비교 순서를 뒤집는다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "첫 번째 key만 뒤집는다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "정렬 대상이 복사된다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "reversed는 해당 comparator가 표현하는 전체 순서를 반전한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.coding-tests.comparator-for-coding-tests.q5",
+    "promptMarkdown": "a.distance()가 Integer.MIN_VALUE이고 b.distance()가 Integer.MAX_VALUE일 때 a.distance()-b.distance() 방식의 위험은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.coding-tests.comparator-for-coding-tests"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "컴파일러가 자동으로 BigInteger로 바꾼다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "두 객체가 삭제된다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "int overflow로 양수처럼 보일 수 있다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "항상 정확히 -1을 반환한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "정수 뺄셈의 실제 차이가 int 범위를 벗어나 비교 관계가 뒤집힐 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.coding-tests.comparator-for-coding-tests.q6",
+    "promptMarkdown": "거리 오름차순이지만 id만 내림차순이어야 할 때 적절한 설계는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.coding-tests.comparator-for-coding-tests"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "전체 order를 reversed한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "두 key를 문자열로 합친다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "두 값을 뺀 하나의 int를 반환한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "거리 comparator 뒤에 id comparator만 reversed해 연결한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "전체 순서를 뒤집으면 distance까지 바뀌므로 두 번째 key에만 reversed를 적용한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.coding-tests.arraydeque-stack-queue.q1",
+    "promptMarkdown": "ArrayDeque를 FIFO queue로 사용할 때 자연스러운 연산 쌍은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.coding-tests.arraydeque-stack-queue"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "addLast와 pollFirst",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "push와 pop",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "addFirst와 pollFirst만",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "peek과 clear만",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "뒤에 넣고 앞에서 빼면 먼저 들어온 원소가 먼저 나온다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.coding-tests.arraydeque-stack-queue.q2",
+    "promptMarkdown": "ArrayDeque를 LIFO stack으로 사용할 때 push(1), push(2) 다음 pop()의 결과는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.coding-tests.arraydeque-stack-queue"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "예외만 발생한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "2",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "1",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "null",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "push는 앞에 넣고 pop은 앞에서 빼므로 마지막 push인 2가 나온다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.coding-tests.arraydeque-stack-queue.q3",
+    "promptMarkdown": "빈 ArrayDeque에서 pollFirst()와 removeFirst()의 차이는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.coding-tests.arraydeque-stack-queue"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "pollFirst만 원소를 추가한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "removeFirst는 원소를 보존한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "pollFirst는 null, removeFirst는 예외를 사용할 수 있다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "둘 다 항상 같은 예외를 던진다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "poll 계열은 빈 상태를 null로 표시하고 remove 계열은 예외를 사용한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.coding-tests.arraydeque-stack-queue.q4",
+    "promptMarkdown": "ArrayDeque에 null을 넣으려 할 때의 올바른 판단은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.coding-tests.arraydeque-stack-queue"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "빈 상태 표시용으로 허용된다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "null이 0으로 바뀐다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "null은 마지막 위치에만 허용된다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "null 원소를 허용하지 않는다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "ArrayDeque는 null을 허용하지 않으므로 empty와 값의 의미를 분리한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.coding-tests.arraydeque-stack-queue.q5",
+    "promptMarkdown": "다음 queue 연산의 결과는? addLast(1), addLast(2), pollFirst(), addFirst(3), pollLast()",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.coding-tests.arraydeque-stack-queue"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "1을 얻고 2를 제거한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "1, 2",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "1, 3",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "1, 2가 아니라 3, 2",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "첫 pollFirst가 1을 반환하고 deque는 [2]가 된다. addFirst(3) 후 [3,2], pollLast는 2를 제거한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.coding-tests.arraydeque-stack-queue.q6",
+    "promptMarkdown": "stack API와 queue API를 한 deque에서 섞을 때 가장 중요한 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.coding-tests.arraydeque-stack-queue"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "null이 자동 삽입된다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "앞·뒤 방향의 의미가 달라져 순서 추론을 깨뜨릴 수 있다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "ArrayDeque가 자동으로 priority queue가 된다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "모든 연산이 O(1)이 아니게 된다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "같은 자료구조라도 사용한 끝과 연산 쌍에 따라 FIFO/LIFO 의미가 달라진다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.coding-tests.priorityqueue-coding-tests.q1",
+    "promptMarkdown": "자연수 PriorityQueue<Integer>의 기본 head는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.coding-tests.priorityqueue-coding-tests"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "가장 먼저 삽입된 원소만",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "임의의 null",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "최소 원소",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "최대 원소",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "기본 natural ordering의 최소 원소가 head다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.coding-tests.priorityqueue-coding-tests.q2",
+    "promptMarkdown": "PriorityQueue에서 peek()의 의미는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.coding-tests.priorityqueue-coding-tests"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "head를 확인하고 제거한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "전체를 정렬한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "queue를 비운다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "head를 확인하지만 제거하지 않는다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "peek은 head를 관찰하고 poll이 제거를 담당한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.coding-tests.priorityqueue-coding-tests.q3",
+    "promptMarkdown": "최대값 우선 queue를 구성하는 방법은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.coding-tests.priorityqueue-coding-tests"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "Comparator.reverseOrder() 같은 역순 comparator 사용",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "기본 생성자만 사용",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "항상 ArrayDeque로 변환",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "원소를 모두 문자열로 저장",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "natural ordering의 반대 comparator를 적용하면 큰 값이 우선된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.coding-tests.priorityqueue-coding-tests.q4",
+    "promptMarkdown": "PriorityQueue iterator의 순회 결과에 대한 설명은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.coding-tests.priorityqueue-coding-tests"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "항상 역순이다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "head가 우선이라는 heap 구조와 전체 순회 정렬은 다르다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "전체 원소가 정렬 순서라고 보장된다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "항상 삽입 순서다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "heap은 head 접근을 보장할 뿐 iterator 전체 정렬을 보장하지 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.coding-tests.priorityqueue-coding-tests.q5",
+    "promptMarkdown": "PriorityQueue에 들어간 Node의 priority field를 외부에서 바꾼 뒤 즉시 peek하면?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.coding-tests.priorityqueue-coding-tests"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "queue가 자동으로 복제된다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "변경은 compile-time 오류다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "내부 순서가 새 priority를 반영한다고 보장되지 않는다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "heap이 반드시 자동 재배치된다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "heap 내부 원소를 직접 변경하면 재삽입 등 재정렬 경계가 필요하다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.coding-tests.priorityqueue-coding-tests.q6",
+    "promptMarkdown": "priority 순서의 모든 원소를 확정된 순서로 소비해야 할 때 가장 안전한 방식은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.coding-tests.priorityqueue-coding-tests"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "iterator를 그대로 사용한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "peek만 반복한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "toArray의 현재 순서를 신뢰한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "반복해서 poll하거나 별도 정렬한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "poll은 매번 현재 head를 제거해 priority 순서의 소비를 표현한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.coding-tests.hashmap-hashset-counting.q1",
+    "promptMarkdown": "getOrDefault(\"java\", 0)의 key가 없을 때 일어나는 일은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.coding-tests.hashmap-hashset-counting"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "0을 반환하지만 자동 삽입하지는 않는다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "0을 반환하고 자동 삽입한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "예외만 던진다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "key를 삭제한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "getOrDefault는 읽기 기본값을 제공할 뿐 map을 변경하지 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.coding-tests.hashmap-hashset-counting.q2",
+    "promptMarkdown": "HashSet.add(x)의 반환값이 true라는 의미는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.coding-tests.hashmap-hashset-counting"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "x가 null로 바뀌었다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "x가 새로 추가되었다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "x가 이미 있어서 무시되었다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "set이 정렬되었다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "add는 set에 없던 원소가 실제로 추가된 경우 true를 반환한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.coding-tests.hashmap-hashset-counting.q3",
+    "promptMarkdown": "빈도 counting에서 count.merge(word, 1, Integer::sum)의 의미는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.coding-tests.hashmap-hashset-counting"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "value를 문자열로 바꾼다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "key가 있을 때만 예외를 던진다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "없으면 1을 넣고 있으면 기존 값과 1을 합친다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "항상 word를 삭제한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "merge는 누락 key에는 value를 넣고 기존 key에는 remapping function을 적용한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.coding-tests.hashmap-hashset-counting.q4",
+    "promptMarkdown": "HashMap의 iteration 순서를 이용해 입력 순서를 출력하려 할 때의 문제는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.coding-tests.hashmap-hashset-counting"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "HashMap은 key를 저장하지 않는다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "iteration은 항상 내림차순이다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "getOrDefault가 정렬한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "HashMap은 입력 순서를 보장하지 않는다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "순서가 필요하면 순서 보장 collection이나 별도 정렬을 사용한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.coding-tests.hashmap-hashset-counting.q5",
+    "promptMarkdown": "visited.add(id)가 false를 반환한 경우의 의미와 처리로 옳은 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.coding-tests.hashmap-hashset-counting"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "id가 이미 set에 있어 중복 방문으로 건너뛸 수 있다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "id가 처음 방문이므로 처리한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "id가 자동 삭제되었다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "id의 frequency가 1 증가한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "Set add의 false는 기존 원소였음을 뜻하므로 첫 방문 처리와 구분한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.coding-tests.hashmap-hashset-counting.q6",
+    "promptMarkdown": "공유 환경에서 containsKey 후 put으로 “없으면 한 번만 등록”을 구현하면?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.coding-tests.hashmap-hashset-counting"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "containsKey가 put까지 포함한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "두 연산 사이에 경쟁이 있어 둘 다 등록할 수 있다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "항상 하나만 등록된다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "HashMap이 자동으로 lock을 제공한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "check와 act가 분리되어 있어 multi-step 전체의 원자성이 없다."
+  }
+]
