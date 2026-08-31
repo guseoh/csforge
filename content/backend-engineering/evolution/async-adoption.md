@@ -11,7 +11,7 @@ displayOrder: 40
 references:
   - url: "https://microservices.io/patterns/data/transactional-outbox.html"
     title: "Transactional Outbox Pattern"
-    referenceType: ARTICLE
+    referenceType: OTHER
     language: en
     displayOrder: 1
     relationNote: "DB 상태 변경과 비동기 메시지 발행 사이의 일관성 문제를 이해하는 참고 자료다."
