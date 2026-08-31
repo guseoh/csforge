@@ -139,6 +139,24 @@ InvocationHandler.invoke(
 
 Target 객체는 자동으로 parameter에 따로 주어지는 것이 아닙니다. 위 예제처럼 handler가 target을 field로 가지고 있어야 실제 target 호출로 넘길 수 있습니다.
 
+### 같은 signature가 여러 interface에 있으면 caller의 interface를 항상 복원할 수 있는 것은 아니다
+
+하나의 proxy가 다음처럼 같은 signature의 method를 가진 여러 interface를 구현할 수도 있습니다.
+
+```java
+interface First {
+    String find(String id);
+}
+
+interface Second {
+    String find(String id);
+}
+```
+
+이때 `InvocationHandler`에 전달된 `Method`의 `getDeclaringClass()`를 보고 **호출자가 First 타입의 참조로 호출했는지 Second 타입의 참조로 호출했는지를 항상 알아낼 수 있다고 가정하면 안 됩니다.** JDK `Proxy` API는 여러 proxy interface에 같은 이름과 매개변수 signature의 method가 있을 때, handler에 전달되는 `Method`의 declaring class가 실제 호출에 사용한 interface와 반드시 일치하지 않을 수 있음을 명시합니다.
+
+따라서 두 interface의 같은 signature에 서로 다른 업무 의미를 부여하고, handler에서 caller가 사용한 interface identity를 추측해 routing하는 설계는 안전하지 않습니다. Proxy가 구현해야 하는 interface 계약과 target delegation 구조를 처음부터 명확하게 정하는 편이 낫습니다.
+
 ### proxy를 다시 호출하면 재귀에 빠질 수 있다
 
 Handler 안에서 잘못해서 target이 아니라 proxy의 같은 method를 다시 호출한다고 생각해 보겠습니다.
@@ -222,10 +240,11 @@ Proxy를 만들었다고 target object의 모든 호출이 전 세계적으로 �
 1. caller가 proxy reference를 호출하는지 target을 직접 호출하는지 확인합니다.
 2. JDK dynamic proxy가 어떤 interface를 구현하는지 봅니다.
 3. `invoke`의 proxy/method/args 역할을 구분합니다.
-4. handler가 target 대신 proxy를 다시 호출해 재귀하지 않는지 봅니다.
-5. 반환 타입과 exception contract를 확인합니다.
-6. JDK proxy mechanism과 Spring AOP 전체 behavior를 같은 것으로 보지 않습니다.
+4. 같은 signature를 가진 여러 interface가 있다면 `Method.getDeclaringClass()`로 caller-interface identity를 항상 복원할 수 있다고 가정하지 않습니다.
+5. handler가 target 대신 proxy를 다시 호출해 재귀하지 않는지 봅니다.
+6. 반환 타입과 exception contract를 확인합니다.
+7. JDK proxy mechanism과 Spring AOP 전체 behavior를 같은 것으로 보지 않습니다.
 
 ### 면접에서 설명한다면
 
-JDK dynamic proxy는 runtime에 interface 구현 proxy를 만들고 proxy의 method 호출을 `InvocationHandler.invoke`로 전달합니다. Handler는 호출된 `Method`와 arguments를 보고 logging, authorization 같은 공통 동작을 수행한 뒤 실제 target을 호출할 수 있습니다. Caller가 반드시 proxy를 통해 호출해야 interception이 일어나며, JDK dynamic proxy는 interface 기반입니다. 이 구조는 Spring transaction/AOP proxy를 이해하는 Java 수준의 기반이 됩니다.
+JDK dynamic proxy는 runtime에 interface 구현 proxy를 만들고 proxy의 method 호출을 `InvocationHandler.invoke`로 전달합니다. Handler는 호출된 `Method`와 arguments를 보고 logging, authorization 같은 공통 동작을 수행한 뒤 실제 target을 호출할 수 있습니다. Caller가 반드시 proxy를 통해 호출해야 interception이 일어나며, JDK dynamic proxy는 interface 기반입니다. 여러 interface가 같은 method signature를 가진 경우에는 handler에 전달된 `Method`만으로 호출자가 사용한 interface를 항상 식별할 수 없다는 제한도 있습니다. 이 구조는 Spring transaction/AOP proxy를 이해하는 Java 수준의 기반이 됩니다.
