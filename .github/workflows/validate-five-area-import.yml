@@ -19,6 +19,25 @@ jobs:
           distribution: temurin
           java-version: '25'
 
+      - name: Add reimport diagnostics
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          path = Path('backend/src/test/java/com/guseoh/csforge/importcontent/CanonicalFiveAreaImportValidationTest.java')
+          text = path.read_text(encoding='utf-8')
+          old = '            assertEquals(0, preview.updated(), "identical reimport must not update canonical items");'
+          new = '''            if (preview.updated() != 0) {
+                preview.items().stream()
+                        .filter(item -> item.classification().name().equals("UPDATED"))
+                        .forEach(item -> System.out.println(
+                                "CANONICAL_REIMPORT_UPDATED key=" + item.contentKey() + " diffs=" + item.diffs()));
+            }
+            assertEquals(0, preview.updated(), "identical reimport must not update canonical items");'''
+          if old not in text:
+              raise SystemExit('diagnostic insertion point not found')
+          path.write_text(text.replace(old, new), encoding='utf-8')
+          PY
+
       - name: Run canonical five-area import validation
         working-directory: backend
         run: |
