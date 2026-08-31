@@ -4,49 +4,68 @@ contentKey: java.core.collections.priorityqueue
 topicContentKey: java.core.collections
 slug: priorityqueue
 title: "PriorityQueue와 우선순위 처리"
-summary: "전체 정렬이 아니라 최소·최대 우선 원소를 반복 추출하는 자료 구조를 이해한다"
+summary: "전체 정렬 목록이 아니라 현재 우선순위가 가장 높은 원소를 반복해서 꺼내는 구조로 PriorityQueue를 이해한다"
 level: 2
 status: PUBLISHED
 displayOrder: 70
 references:
   - url: "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/PriorityQueue.html"
-    title: "PriorityQueue API (Java SE 25)"
+    title: "Java SE 25 API: PriorityQueue"
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
-    relationNote: heap 기반 우선순위 큐와 iterator 비정렬 특성 확인
-  - url: "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Comparator.html"
-    title: "Comparator API (Java SE 25)"
-    referenceType: OFFICIAL
-    language: en
-    displayOrder: 2
-    relationNote: 우선순위 비교 정책 확인
+    relationNote: heap 기반 priority queue의 head와 iteration 계약 확인
 ---
 # PriorityQueue와 우선순위 처리
 
-## 쉬운 진입
+`PriorityQueue`는 원소 전체를 정렬된 List처럼 보여 주는 컬렉션이 아닙니다. 핵심 목적은 **현재 가장 우선순위가 높은 원소를 빠르게 확인하고 제거하는 것**입니다.
 
-응급도가 높은 작업부터 처리하려면 도착 순서만 기억하는 Queue가 부족하다. PriorityQueue는
-매번 가장 우선인 원소를 꺼내는 데 집중한다.
+기본 자연 순서에서는 가장 작은 원소가 head가 됩니다.
 
-## 정확한 메커니즘
+```java
+PriorityQueue<Integer> queue = new PriorityQueue<>();
+queue.offer(30);
+queue.offer(10);
+queue.offer(20);
 
-```text
-add(5), add(1), add(3) -> heap
-poll() -> 1, poll() -> 3, poll() -> 5
+System.out.println(queue.peek()); // 10
+System.out.println(queue.poll()); // 10
 ```
 
-자연 순서나 Comparator로 우선순위를 정하며 `peek/poll`은 최소 원소(비교 기준상 앞선 원소)를
-본다. 내부 배열 전체가 정렬된 것은 아니므로 iterator 순회가 정렬 결과를 보장하지 않는다.
-동률의 제거 순서도 별도 tie-breaker 없이는 제품 계약으로 삼지 않는다.
+### 내부 배열을 출력한 순서가 정렬 결과는 아니다
 
-## 실전·면접 연결
+PriorityQueue는 heap 성질을 유지합니다. heap에서는 부모와 자식 사이의 우선순위 조건을 만족하면 되지 모든 원소가 배열상 완전한 정렬 순서일 필요는 없습니다.
 
-최솟값 반복 추출, 작업 스케줄, top-K에 적합하다. 모든 원소를 정렬해 화면에 보여주는 목적이면
-정렬된 List가 명확하며, 비교기가 mutable priority를 참조하면 heap 질서가 깨질 수 있다.
+따라서 다음처럼 순회하면 전체 오름차순을 기대하면 안 됩니다.
 
-## 흔한 오해
+```java
+for (int value : queue) {
+    System.out.println(value);
+}
+```
 
-- PriorityQueue의 iterator는 우선순위 순서가 아니다.
-- `poll()`이 항상 삽입 순서의 첫 원소를 주는 것은 아니다.
-- comparator의 작은 값이 높은 우선순위인지 도메인 의미를 확인해야 한다.
+정렬 순서로 모두 꺼내고 싶다면 `poll()`을 반복해야 합니다. 단 그 과정은 queue를 비웁니다.
+
+### 최대값 우선 queue도 만들 수 있다
+
+```java
+PriorityQueue<Integer> maxQueue =
+        new PriorityQueue<>(Comparator.reverseOrder());
+```
+
+객체라면 `Comparator.comparing...`을 이용해 우선순위를 명시할 수 있습니다.
+
+### 언제 적합한가
+
+- 작업 중 가장 작은/큰 값 하나를 반복해서 선택할 때
+- top-k 문제
+- 일정 우선순위의 작업 처리
+- Dijkstra 같은 알고리즘에서 다음 후보 선택
+
+알고리즘 이론 자체는 DSA 영역에서 다루고, Java에서는 PriorityQueue API와 comparator 사용을 익히면 됩니다.
+
+### 흔한 실수
+
+queue 안에 넣은 객체의 우선순위 기준 필드를 나중에 바꾸면 이미 구성된 heap이 자동으로 재정렬된다고 기대하면 안 됩니다. 필요하다면 제거 후 다시 넣는 등 명시적인 갱신 전략이 필요합니다.
+
+문제에서는 `peek/poll`이 무엇을 반환하는지와 **iteration order는 sorted order가 아니라는 점**을 특히 확인하세요.

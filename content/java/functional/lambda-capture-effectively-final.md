@@ -3,56 +3,83 @@ kind: concept
 contentKey: java.core.functional.lambda-capture-effectively-final
 topicContentKey: java.core.functional
 slug: lambda-capture-effectively-final
-title: "Lambda capture and effectively final"
-summary: "captured local의 재대입 규칙과 참조된 mutable object의 변경을 구분한다"
+title: "Lambda의 지역 변수 캡처와 effectively final"
+summary: "lambda가 바깥 지역 변수를 사용할 때 final 또는 사실상 final이어야 하는 규칙과 참조 객체 상태 변경을 구분한다"
 level: 2
 status: PUBLISHED
 displayOrder: 40
 references:
-  - url: "https://docs.oracle.com/javase/specs/jls/se25/html/jls-15.html"
-    title: "Java Language Specification 15장: Expressions"
+  - url: "https://docs.oracle.com/javase/specs/jls/se25/html/jls-15.html#jls-15.27.2"
+    title: "JLS 15.27.2 Lambda Body"
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
-    relationNote: lambda capture와 effectively final 규칙 확인
-  - url: "https://docs.oracle.com/javase/specs/jls/se25/html/jls-4.html"
-    title: "Java Language Specification 4장: Types, Values, and Variables"
-    referenceType: OFFICIAL
-    language: en
-    displayOrder: 2
-    relationNote: 참조 타입과 변수 의미 확인
+    relationNote: lambda에서 지역 변수 캡처와 effectively final 관련 규칙 확인
 ---
-# Lambda capture and effectively final
+# Lambda의 지역 변수 캡처와 effectively final
 
-## 쉬운 진입
-
-메서드가 끝난 뒤에도 실행될 수 있는 lambda가 stack local 변수를 그대로 빌려 쓰면 lifetime이
-복잡해진다. Java는 capture하는 local 변수의 값이 final이거나 effectively final이어야 한다.
-다만 그 변수가 가리키는 객체까지 불변이어야 한다는 뜻은 아니다.
-
-## 정확한 메커니즘
+lambda 본문에서는 바깥 메서드의 지역 변수를 읽을 수 있습니다.
 
 ```java
-int limit = 3;
-Predicate<Integer> small = value -> value < limit; // capture 가능
-// limit = 4; // 이미 capture되어 있으면 컴파일 오류
-
-List<String> names = new ArrayList<>();
-Consumer<String> add = names::add; // names reference는 재대입하지 않음
-add.accept("Java");               // 객체의 상태 mutation은 가능
+int minimum = 100;
+Predicate<Integer> enough = value -> value >= minimum;
 ```
 
-effective final은 선언 후 값이 바뀌지 않아 final을 붙여도 되는 local 변수라는 의미다. lambda가
-참조하는 값은 capture 시점의 local binding과 연결되며, 외부 객체 mutation의 thread-safety나
-불변성까지 보장하지 않는다.
+`minimum`에 명시적인 `final`이 없지만 선언 뒤 다시 대입되지 않았기 때문에 **사실상 final(effectively final)** 로 취급됩니다.
 
-## 실전·면접 연결
+### 다시 대입하면 캡처할 수 없다
 
-변하는 누적값이 필요하면 명시적인 collector, loop, 동시성 도구를 선택한다. 단일 원소 배열이나
-mutable holder로 규칙을 우회하면 공유 상태와 가시성 문제가 더 어려워질 수 있다.
+```java
+int minimum = 100;
+minimum = 200;
 
-## 흔한 오해
+// Predicate<Integer> enough = value -> value >= minimum;
+```
 
-- effectively final은 객체가 immutable하다는 뜻이 아니다.
-- `final List`도 list 원소 추가는 가능할 수 있다.
-- lambda를 실행하는 thread가 자동으로 안전한 snapshot을 만든다는 보장은 없다.
+이 지역 변수는 값이 다시 바뀌었으므로 effectively final이 아닙니다. Java는 lambda가 캡처하는 local variable에 이런 제한을 둡니다.
+
+### 참조가 final이어도 객체 상태는 바뀔 수 있다
+
+여기서 `final`의 의미를 다시 구분해야 합니다.
+
+```java
+List<String> names = new ArrayList<>();
+Runnable task = () -> names.add("java");
+```
+
+`names` 변수 자체는 다시 대입되지 않으므로 effectively final입니다. 하지만 그 참조가 가리키는 `ArrayList`는 가변 객체라 `add()`할 수 있습니다.
+
+```text
+captured local reference
+names ─────> ArrayList
+   X 재대입      │
+                 └─ 내부 상태 변경 가능
+```
+
+즉 **캡처된 변수의 재대입 제한과 객체 불변성은 다른 문제**입니다.
+
+### 배열 하나로 우회하는 코드는 위험 신호일 수 있다
+
+```java
+int[] count = {0};
+values.forEach(v -> count[0]++);
+```
+
+컴파일은 되지만 lambda 바깥의 가변 상태를 우회해서 변경합니다. 특히 parallel stream이나 여러 스레드에서 실행되면 race condition으로 이어질 수 있습니다.
+
+단순 합계라면 `mapToInt().sum()`이나 collector처럼 상태 변경을 외부에 노출하지 않는 API가 더 명확할 수 있습니다.
+
+### 왜 이런 규칙이 필요한가
+
+지역 변수는 메서드 호출의 실행 범위와 연결되지만 lambda 객체는 그 메서드가 끝난 뒤에도 사용될 수 있습니다. Java는 지역 변수의 변하는 저장 위치를 lambda와 공유하는 모델 대신 **캡처할 값이 안정적으로 정해져 있는 형태**를 사용합니다.
+
+정확한 JVM 구현 방식은 언어 규칙과 구분해야 합니다. 학습의 핵심은 local variable capture가 final/effectively final을 요구한다는 계약입니다.
+
+### 문제를 풀 때 확인할 것
+
+- lambda가 바깥의 필드인가 지역 변수인가를 사용하고 있는가?
+- 지역 변수라면 선언 뒤 재대입되는가?
+- 참조 변수는 고정되어도 가리키는 객체가 mutable한가?
+- 그 가변 상태를 여러 실행 흐름에서 공유하게 되지는 않는가?
+
+이 네 가지를 나누면 캡처와 동시성 문제를 섞지 않게 됩니다.

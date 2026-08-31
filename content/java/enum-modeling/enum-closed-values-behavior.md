@@ -3,60 +3,103 @@ kind: concept
 contentKey: java.core.enum-modeling.enum-closed-values-behavior
 topicContentKey: java.core.enum-modeling
 slug: enum-closed-values-behavior
-title: "enum의 닫힌 값 집합과 동작"
-summary: "enum을 문자열 상수 모음이 아니라 타입 안전한 값과 행위의 집합으로 모델링한다"
+title: "enum으로 닫힌 값 집합 모델링하기"
+summary: "가능한 값이 정해진 상태를 문자열 상수 대신 enum 타입으로 표현하고 값과 관련 행동을 함께 둘 수 있는 이유를 이해한다"
 level: 1
 status: PUBLISHED
 displayOrder: 10
 references:
-  - url: "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Enum.html"
-    title: "Enum API (Java SE 25)"
+  - url: "https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html#jls-8.9"
+    title: "JLS 8.9 Enum Classes"
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
-    relationNote: enum 인스턴스와 name/valueOf 계약 확인
-  - url: "https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html#jls-8.9"
-    title: "Java Language Specification 8.9장: Enum Classes"
-    referenceType: OFFICIAL
-    language: en
-    displayOrder: 2
-    relationNote: enum 선언과 상수 인스턴스의 언어 규칙 확인
+    relationNote: enum class의 언어 규칙 확인
 ---
-# enum의 닫힌 값 집합과 동작
+# enum으로 닫힌 값 집합 모델링하기
 
-## 쉬운 진입
-
-배송 상태처럼 가능한 값이 애초에 정해진 경우 `"READY"`, `"SHIPPED"` 문자열을 곳곳에서
-비교하면 오탈자와 허용되지 않은 상태가 섞인다. `enum`은 컴파일러가 값의 집합을 함께 추적하게
-하는 작은 타입이다.
-
-## 정확한 메커니즘
-
-enum 상수는 해당 enum 타입의 고유한 인스턴스다. 상수에 필드와 메서드를 둘 수 있고, 공통
-행동은 enum 메서드로 묶어 상태에 맞는 정책을 값 가까이에 둘 수 있다.
+주문 상태가 `READY`, `PAID`, `CANCELLED`처럼 **가능한 값이 미리 정해져 있다면** 단순 문자열보다 enum이 더 분명한 모델이 될 수 있습니다.
 
 ```java
-enum DeliveryStatus {
-    READY(false), SHIPPED(true), DELIVERED(true);
+String status = "PAYED"; // 오타도 문자열 자체는 허용됨
+```
 
-    private final boolean terminal;
-    DeliveryStatus(boolean terminal) { this.terminal = terminal; }
-    boolean isTerminal() { return terminal; }
+문자열은 어떤 값이 가능한지 타입만 보고 알기 어렵고 오타도 컴파일러가 막지 못합니다.
+
+```java
+enum OrderStatus {
+    READY,
+    PAID,
+    CANCELLED
+}
+
+OrderStatus status = OrderStatus.PAID;
+```
+
+이제 변수에는 `OrderStatus`가 정의한 값만 들어갈 수 있습니다.
+
+### enum은 단순 상수 묶음보다 강하다
+
+Java enum의 각 상수는 해당 enum 타입의 인스턴스입니다. 그래서 필드, 생성자, 메서드를 가질 수 있습니다.
+
+```java
+enum OrderStatus {
+    READY(false),
+    PAID(true),
+    CANCELLED(false);
+
+    private final boolean completedPayment;
+
+    OrderStatus(boolean completedPayment) {
+        this.completedPayment = completedPayment;
+    }
+
+    boolean completedPayment() {
+        return completedPayment;
+    }
 }
 ```
 
-`name()`은 선언된 식별자를 반환하고 `valueOf`는 정확히 일치하는 식별자를 찾는다. 외부 입력을
-곧바로 `valueOf`에 넣으면 `IllegalArgumentException`이 날 수 있으므로 입력 경계에서 별도
-파싱 정책을 둔다.
+상태와 직접 관련된 판단을 enum에 둘 수 있어 호출 코드 곳곳의 `if`를 줄일 수 있습니다.
 
-## 실전·면접 연결
+```java
+if (status.completedPayment()) {
+    // ...
+}
+```
 
-닫힌 상태와 상태별 행위에는 enum이 적합하지만, 상태가 사용자 설정이나 데이터베이스에서
-동적으로 늘어나는 도메인이라면 엔티티나 설정 모델이 맞다. enum 안에 모든 서비스 호출을
-넣으면 작은 모델이 거대한 의존성 집합으로 변하므로 계산 가능한 규칙만 둔다.
+다만 모든 비즈니스 정책을 enum에 넣는 것이 목적은 아닙니다. 여러 도메인 객체나 외부 시스템 정보가 필요한 규칙까지 enum이 책임지면 오히려 과도하게 커질 수 있습니다.
 
-## 흔한 오해
+### `switch`와 함께 닫힌 집합의 장점을 얻는다
 
-- enum은 단순한 문자열 상수라서 아무 문자열이나 대입할 수 있다는 생각은 틀리다.
-- `ordinal()`은 비즈니스 식별자가 아니다. 선언 순서를 바꾸면 값이 달라진다.
-- enum이 타입 안전하다고 해서 외부 문자열 입력 검증이 자동으로 되는 것은 아니다.
+```java
+String label = switch (status) {
+    case READY -> "대기";
+    case PAID -> "결제 완료";
+    case CANCELLED -> "취소";
+};
+```
+
+가능한 enum 상수가 정해져 있으므로 컴파일러가 빠진 경우를 검사하는 데 도움을 줄 수 있습니다. 상태가 문자열이었다면 임의의 다른 문자열 가능성까지 생각해야 합니다.
+
+### 실무에서는 외부 표현과 enum 자체를 구분한다
+
+API나 DB에 저장되는 값이 enum 상수 이름과 영원히 같아야 하는 것은 아닙니다. 외부 계약이 오래 유지되어야 한다면 별도의 안정된 code를 둘 수도 있습니다.
+
+```java
+enum OrderStatus {
+    READY("ready"),
+    PAID("paid");
+
+    private final String code;
+    // ...
+}
+```
+
+이렇게 하면 Java 상수 이름을 리팩터링하는 문제와 외부 데이터 계약을 분리할 수 있습니다.
+
+### 선택 기준
+
+`enum`이 특히 자연스러운 경우는 **값의 후보가 닫혀 있고, 그 값들이 하나의 타입으로 같은 의미 체계에 속할 때**입니다. 계속 외부에서 새로운 값이 추가되는 개방형 데이터라면 enum이 맞지 않을 수도 있습니다.
+
+면접에서 “enum의 장점은 상수 관리”라고만 말하기보다 타입 안전성, 가능한 값의 제한, 관련 행동을 함께 둘 수 있다는 점까지 설명하면 좋습니다.

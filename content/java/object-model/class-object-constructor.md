@@ -3,66 +3,124 @@ kind: concept
 contentKey: java.core.object-model.class-object-constructor
 topicContentKey: java.core.object-model
 slug: class-object-constructor
-title: "Class, object와 constructor"
-summary: "class 설계와 object 생성, constructor의 역할을 구분한다"
+title: "클래스, 객체와 생성자"
+summary: "클래스를 객체의 설계로 이해하고 생성자가 새 객체를 유효한 초기 상태로 만드는 역할을 구분한다"
 level: 1
 status: PUBLISHED
 displayOrder: 10
 references:
   - url: "https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html"
-    title: "Java Language Specification 8장: Classes"
+    title: "JLS 8 Classes"
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
-    relationNote: class, field, method, constructor 선언 규칙 확인
-  - url: "https://docs.oracle.com/javase/specs/jls/se25/html/jls-12.html"
-    title: "Java Language Specification 12장: Execution"
-    referenceType: OFFICIAL
-    language: en
-    displayOrder: 2
-    relationNote: class와 instance 생성 실행 순서 확인
+    relationNote: 클래스와 생성자 규칙 확인
 ---
-# Class, object와 constructor
+# 클래스, 객체와 생성자
 
-## 쉬운 진입
-
-class는 같은 종류의 상태와 행동을 설명하는 타입이다. JLS에서 object는 실행 중 동적으로 생성되는
-class instance 또는 array를 뜻하며, 이 Concept에서는 class instance를 중심으로 본다. object 자체와
-그 object를 가리키는 reference value는 서로 다른 개념이다. constructor는 새 class instance가 외부에
-사용되기 전에 필요한 초기 상태와 생성 규칙을 적용하는 경계다.
-
-## 정확한 메커니즘
+Java에서 클래스와 객체를 단순히 “붕어빵 틀과 붕어빵”으로만 기억하면 실제 설계에서 필요한 판단까지 이어지기 어렵습니다. 클래스는 **어떤 상태를 가지고 어떤 동작을 제공할지 정의하는 타입**이고, 객체는 그 클래스를 바탕으로 실제 실행 중 만들어진 하나의 인스턴스입니다.
 
 ```java
-final class User {
-    private final String name;
-
-    User(String name) {
-        this.name = name;
-    }
+class Order {
+    private long id;
+    private int quantity;
 }
 
-User first = new User("A");
-User second = new User("A");
+Order first = new Order();
+Order second = new Order();
 ```
 
-`User`는 타입을 정의하고 `first`, `second`는 서로 다른 reference variable이며 각각 별개의
-`User` instance를 가리킨다. 두 instance가 같은 문자열 상태를 가질 수 있어도 identity는 별개다.
-class instance creation expression의 `new`는 적절한 constructor 호출로 이어지고, constructor끼리의
-연결에는 `this(...)`나 `super(...)`가 사용될 수 있다. constructor는 반환 타입을 선언하지 않는다.
-생성 시 필수 상태를 검증하면 유효하지 않은 object가 외부에 공개되는 일을 줄일 수 있다.
-생성자를 하나도 선언하지 않은 경우에만 컴파일러가 default constructor를 암시적으로 선언할 수 있다.
+`Order`라는 클래스는 하나지만 `first`, `second`가 가리키는 객체는 서로 다른 두 객체입니다. 각 객체는 자신의 인스턴스 필드 상태를 가질 수 있습니다.
 
-## 실전·면접 연결
+### 생성자는 객체를 사용할 수 있는 상태로 만드는 곳이다
 
-entity·value object·service를 만들 때 “어떤 상태가 있어야 유효한가”를 constructor 또는
-factory 계약에 적는다. 모든 field를 public으로 열고 나중에 맞추는 방식은 object가 유효한지
-호출자가 계속 추적하게 만든다. 생성은 Java 언어 규칙이고 Spring Bean lifecycle은 별도 framework
-책임이다.
+생성자는 단순히 필드에 값을 복사하는 문법이 아닙니다. **새 객체가 만들어질 때 필요한 초기 조건을 만족시키는 진입점**으로 보는 편이 좋습니다.
 
-## 흔한 오해
+```java
+class Order {
+    private final long id;
+    private int quantity;
 
-- class를 선언했다고 object가 하나 자동 생성되는 것은 아니다.
-- 같은 field 값을 가진 object가 반드시 같은 identity인 것은 아니다.
-- object 자체와 object를 가리키는 reference value를 같은 것으로 취급하지 않는다.
-- constructor는 일반 메서드처럼 반환 타입을 선언하는 API가 아니다.
+    Order(long id, int quantity) {
+        if (id <= 0) {
+            throw new IllegalArgumentException("id는 양수여야 합니다.");
+        }
+        if (quantity <= 0) {
+            throw new IllegalArgumentException("quantity는 양수여야 합니다.");
+        }
+        this.id = id;
+        this.quantity = quantity;
+    }
+}
+```
+
+이 생성자를 통과한 `Order`는 최소한 `id > 0`, `quantity > 0`이라는 규칙을 만족합니다. 이런 식으로 객체가 항상 지켜야 할 조건을 **불변 조건(invariant)** 이라고 부릅니다.
+
+객체를 만든 뒤 setter를 여러 번 호출해야 비로소 유효해지는 구조는 중간에 잘못된 상태가 존재할 수 있습니다.
+
+```java
+Order order = new Order();
+order.setId(10L);
+// 여기에서 quantity 설정을 빼먹을 수 있음
+```
+
+필수 값이 있다면 생성 과정에서 함께 받는 편이 객체의 유효성을 지키기 쉽습니다.
+
+### `new`는 변수 선언과 다른 일이다
+
+```java
+Order order;
+```
+
+이 코드는 `Order` 타입의 지역 변수만 선언한 것입니다. 아직 `Order` 객체가 만들어진 것은 아닙니다.
+
+```java
+Order order = new Order(1L, 2);
+```
+
+`new Order(...)`가 객체 생성을 시작하고 생성자가 실행됩니다. 그 결과 얻은 참조 값이 `order` 변수에 저장됩니다.
+
+```text
+new Order(1, 2)
+      │
+      ├─ 객체 생성 및 필드 초기화 과정
+      ├─ 생성자 실행
+      ▼
+Order 객체 ─────> 참조 값 ─────> order 변수
+```
+
+정확한 메모리 할당 방식은 JVM 구현의 영역입니다. Java 언어 학습에서는 `new`가 객체 생성 표현식이고 생성자가 초기화 과정에 참여한다는 수준을 구분하면 됩니다.
+
+### 기본 생성자는 언제 생길까
+
+생성자를 하나도 선언하지 않은 클래스에는 컴파일러가 기본 생성자를 제공할 수 있습니다.
+
+```java
+class Member {
+}
+
+Member member = new Member();
+```
+
+하지만 생성자를 하나라도 직접 선언하면 매개변수 없는 생성자가 자동으로 추가되는 것이 아닙니다.
+
+```java
+class Member {
+    Member(String name) {}
+}
+
+// new Member(); // 컴파일 오류
+```
+
+프레임워크가 매개변수 없는 생성자를 요구하는 경우가 있지만, 그것은 해당 프레임워크의 규칙입니다. Java 언어 자체의 객체 설계와 섞어서 “모든 엔티티는 기본 생성자가 필요하다”처럼 일반화하면 안 됩니다.
+
+### 실무에서 생성자를 볼 때 확인할 것
+
+생성자를 설계하거나 리뷰할 때는 “필드가 몇 개냐”보다 다음 질문이 중요합니다.
+
+- 이 객체가 존재하려면 반드시 필요한 값은 무엇인가?
+- 잘못된 값을 생성 시점에 막을 수 있는가?
+- 생성 뒤에 별도 setter를 호출해야만 유효해지는 상태가 있는가?
+- 생성 로직이 너무 복잡해져 별도의 이름 있는 생성 API가 더 이해하기 쉬운가?
+
+생성자가 객체의 유효성을 지키는 첫 경계라는 점을 이해하면 정적 팩터리 메서드나 빌더를 언제 고려해야 하는지도 자연스럽게 연결됩니다.

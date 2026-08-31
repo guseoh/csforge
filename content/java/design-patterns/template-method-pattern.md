@@ -3,57 +3,67 @@ kind: concept
 contentKey: java.core.design-patterns.template-method-pattern
 topicContentKey: java.core.design-patterns
 slug: template-method-pattern
-title: "Template Method 패턴과 고정된 처리 골격"
-summary: "공통 처리 순서를 고정하고 일부 단계만 하위 타입에 맡긴다"
+title: "Template Method 패턴과 공통 실행 흐름"
+summary: "전체 알고리즘 순서는 상위 타입에 두고 일부 단계만 하위 타입이 바꾸는 구조와 상속 결합의 비용을 이해한다"
 level: 2
 status: PUBLISHED
 displayOrder: 20
 references:
-  - url: "https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html#jls-8.4"
-    title: "Java Language Specification 8.4장: Methods"
+  - url: "https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html#jls-8.4.8"
+    title: "JLS 8.4.8 Inheritance, Overriding, and Hiding"
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
-    relationNote: abstract/concrete method와 overriding 규칙 확인
-  - url: "https://refactoring.guru/design-patterns/template-method"
-    title: "Template Method Design Pattern"
-    referenceType: OTHER
-    language: en
-    displayOrder: 2
-    relationNote: 알고리즘 골격과 primitive operation 관계 참고
+    relationNote: 메서드 override의 언어 규칙 확인
 ---
-# Template Method 패턴과 고정된 처리 골격
+# Template Method 패턴과 공통 실행 흐름
 
-## 쉬운 진입
+여러 작업이 **전체 처리 순서는 같고 일부 단계만 다를 때** 공통 흐름을 복사해 두면 유지보수가 어려워집니다.
 
-CSV와 JSON 파일을 처리할 때 “열기 → 검증 → 변환 → 저장” 순서는 같지만 변환만 다를 수
-있다. 공통 골격을 한 곳에 두면 각 구현이 순서를 실수로 바꾸지 않는다.
+```text
+검증 → 변환 → 저장 → 후처리
+```
 
-## 정확한 메커니즘
-
-추상 클래스가 템플릿 메서드를 제공하고, 단계 메서드 중 일부를 abstract 또는 protected
-hook으로 둔다. 템플릿 메서드를 `final`로 제한하면 하위 클래스가 전체 순서를 덮어쓰지 못한다.
+각 구현이 이 순서를 반복한다면 상위 타입이 전체 뼈대를 제공하고 하위 타입이 필요한 단계만 바꾸도록 만들 수 있습니다. 이것을 Template Method 패턴이라고 부릅니다.
 
 ```java
 abstract class ImportJob {
-    public final void run(String text) {
-        validate(text);
-        save(parse(text));
+    final void run() {
+        validate();
+        transform();
+        save();
     }
-    protected abstract Record parse(String text);
-    protected void validate(String text) { if (text.isBlank()) throw new IllegalArgumentException(); }
-    private void save(Record record) { /* 공통 저장 */ }
+
+    abstract void validate();
+    abstract void transform();
+
+    void save() {
+        // 공통 저장
+    }
 }
 ```
 
-## 실전·면접 연결
+`run()`이 알고리즘 순서를 정하고 하위 클래스는 `validate`, `transform`을 구현합니다.
 
-변형점이 소수이고 순서가 강한 경우 유용하지만, 하위 클래스가 부모의 protected 상태를
-과도하게 알아야 하면 결합도가 높아진다. 그때는 단계별 collaborator를 합성하는 Strategy나
-pipeline이 더 낫다.
+### 장점은 흐름이 한곳에 있다는 것이다
 
-## 흔한 오해
+모든 하위 클래스가 “검증 후 변환, 그다음 저장”이라는 순서를 따라야 한다면 상위 타입에서 이를 강제할 수 있습니다. 공통 로깅이나 자원 정리도 한곳에 둘 수 있습니다.
 
-- Template Method는 단순히 abstract class를 쓰는 것과 같지 않다. 고정된 알고리즘 골격이 핵심이다.
-- 하위 클래스가 템플릿 메서드를 자유롭게 override하면 순서 보장이 사라진다.
-- hook이 많아질수록 유연해지는 것이 아니라 부모-자식 계약이 복잡해진다.
+### 단점은 상속 결합이다
+
+하위 클래스는 상위 클래스가 언제 어떤 메서드를 호출하는지 알아야 합니다. 상위 템플릿 순서를 바꾸면 여러 하위 클래스가 영향을 받을 수 있고, 상속 계층이 깊어지면 실제 실행 흐름을 찾기 어려워집니다.
+
+그래서 단순히 중복 코드가 있다는 이유만으로 Template Method를 선택하면 안 됩니다. **하위 타입들이 정말 하나의 공통 알고리즘 계층을 이루는지**가 중요합니다.
+
+### 합성 기반 Strategy와 비교하면
+
+Template Method는 상속을 통해 변경 지점을 제공합니다. Strategy는 별도 협력 객체를 전달해 행동을 교체합니다.
+
+| 관점 | Template Method | Strategy |
+|---|---|---|
+| 변화 방식 | 상속과 override | 협력 객체 교체 |
+| 공통 흐름 | 상위 클래스가 소유 | context가 소유 |
+| 런타임 교체 | 일반적으로 덜 유연 | 비교적 쉬움 |
+| 결합 | 상위 구현과 강함 | 계약 중심으로 낮추기 쉬움 |
+
+프레임워크 callback 구조에서 Template Method와 비슷한 모습을 만날 수 있지만, 실제 구현이 어떤 패턴인지 이름부터 붙이기보다 호출 흐름을 먼저 확인하는 것이 좋습니다.

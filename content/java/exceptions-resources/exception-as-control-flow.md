@@ -3,48 +3,72 @@ kind: concept
 contentKey: java.core.exceptions-resources.exception-as-control-flow
 topicContentKey: java.core.exceptions-resources
 slug: exception-as-control-flow
-title: "Exceptions versus ordinary control flow"
-summary: "예외 상황과 정상 분기를 구분해 예외 남용을 피한다"
+title: "예외와 정상적인 분기 흐름 구분하기"
+summary: "예상되는 정상 분기를 반복적인 exception 발생으로 표현할 때 의미와 성능이 나빠질 수 있는 이유를 이해한다"
 level: 2
 status: PUBLISHED
 displayOrder: 50
 references:
   - url: "https://docs.oracle.com/javase/specs/jls/se25/html/jls-11.html"
-    title: "Java Language Specification 11장: Exceptions"
+    title: "JLS 11 Exceptions"
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
-    relationNote: 예외 처리의 언어 의미 확인
+    relationNote: 예외가 정상 순차 실행을 갑자기 바꾸는 제어 흐름임을 확인
 ---
-# Exceptions versus ordinary control flow
+# 예외와 정상적인 분기 흐름 구분하기
 
-## 쉬운 진입
+예외는 정상적인 실행을 계속할 수 없는 상황을 호출자에게 전달하는 강력한 수단입니다. 하지만 **자주 발생하는 정상 조건을 검사하는 대신 일부러 예외를 발생시켜 분기**하면 코드의 의도가 흐려질 수 있습니다.
 
-빈 큐에서 꺼낼 수 있는지, 값이 있는지처럼 반복해서 예상되는 조건은 `if`나 `Optional` 같은
-정상 결과로 표현하는 편이 읽기 쉽다. 외부 파일이 사라졌거나 불변식이 깨진 것처럼 현재
-작업을 진행할 수 없는 상황은 예외가 적합하다.
-
-## 정확한 메커니즘
-
-예외는 현재 흐름을 중단하고 handler를 찾으며, stack unwind와 stack trace라는 비용과
-의미를 가진다. `Iterator.hasNext()` 후 `next()`처럼 정상적인 프로토콜이 있는 경우에는
-계약을 사용하고, 매번 예외를 던져 종료 조건을 찾는 식의 API 사용은 피한다.
+### 정상 종료 조건을 예외로 표현한 예
 
 ```java
-while (iterator.hasNext()) {
-    consume(iterator.next());
+for (int i = 0; ; i++) {
+    try {
+        process(values.get(i));
+    } catch (IndexOutOfBoundsException e) {
+        break;
+    }
 }
 ```
 
-## 실전·면접 연결
+이 코드는 목록 끝에 도달하는 것이 정상적인 반복 종료 조건인데 예외로 표현합니다.
 
-예외를 숨은 반환 값처럼 쓰면 호출자가 어떤 실패를 예상할 수 있는지 알기 어렵고 로그도
-오염된다. 다만 경쟁 조건 때문에 사전 검사와 실제 연산 사이가 원자적이지 않다면, 검사 후에도
-실패할 수 있는 외부 작업은 예외로 처리해야 한다. 선택은 성능보다 계약과 실패의 의미가
-먼저다.
+```java
+for (int i = 0; i < values.size(); i++) {
+    process(values.get(i));
+}
+```
 
-## 흔한 오해
+두 번째가 “범위 안의 원소를 처리한다”는 의도를 훨씬 직접적으로 보여 줍니다.
 
-- 예외를 전혀 사용하지 않는 것이 항상 좋은 설계는 아니다.
-- `try/catch`가 있다고 정상 분기와 같은 의미가 되지는 않는다.
-- 예외가 드물어야 한다는 말은 모든 입력 경계 검증을 생략하라는 뜻이 아니다.
+### 실패와 부재를 구분해야 한다
+
+Map에서 key가 없는 것은 많은 경우 정상적으로 예상할 수 있는 상황입니다.
+
+```java
+Value value = map.get(key);
+if (value == null) {
+    // 부재 처리
+}
+```
+
+반대로 반드시 존재해야 한다는 계약인데 없으면 시스템 상태가 잘못된 것일 수 있어 예외가 자연스러울 수 있습니다. 즉 같은 “값 없음”도 API 계약에 따라 정상 분기인지 예외 상황인지 달라집니다.
+
+### 성능보다 의미를 먼저 본다
+
+예외 생성은 stack trace 수집 등 일반 조건문보다 비용이 클 수 있습니다. 하지만 “예외는 느리다”만 외워 모든 예외를 반환 코드로 바꾸는 것도 좋은 설계는 아닙니다.
+
+핵심은 **일상적으로 예상되는 흐름인가, 계약을 벗어난 실패인가**입니다. 성능이 중요한 hot path에서 예외가 대량으로 발생한다면 실제 측정으로 비용도 확인해야 합니다.
+
+### API가 이미 예외 기반 계약을 제공할 수도 있다
+
+`Integer.parseInt`는 잘못된 숫자 문자열에 `NumberFormatException`을 던집니다. 호출자가 입력을 받는 경계에서는 이를 적절히 검증하거나 예외를 변환해야 할 수 있습니다. “예외를 제어 흐름에 쓰지 말라”는 원칙이 라이브러리 예외를 절대 catch하지 말라는 뜻은 아닙니다.
+
+### 판단 질문
+
+- 이 상황은 정상 실행 중 자주 발생할 것으로 예상되는가?
+- 호출자가 이 상황을 값이나 조건으로 자연스럽게 처리할 수 있는가?
+- 예외가 실제 계약 위반이나 실패를 더 분명하게 표현하는가?
+
+예외를 쓰는지 여부는 문법 취향보다 **API 의미를 어떻게 표현할지**의 문제입니다.

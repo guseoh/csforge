@@ -3,58 +3,80 @@ kind: concept
 contentKey: java.core.exceptions-resources.exception-translation-cause
 topicContentKey: java.core.exceptions-resources
 slug: exception-translation-cause
-title: "Exception translation and cause"
-summary: "낮은 수준 실패를 의미 있는 예외로 바꾸면서 원인 연결을 보존한다"
+title: "예외 변환과 원인 보존"
+summary: "낮은 수준 기술 예외를 상위 계층이 이해할 의미로 바꾸되 cause를 보존해 진단 가능성을 잃지 않는다"
 level: 2
 status: PUBLISHED
 displayOrder: 30
 references:
-  - url: "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Throwable.html"
-    title: "Java SE 25 API: Throwable"
+  - url: "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Throwable.html#%3Cinit%3E(java.lang.String,java.lang.Throwable)"
+    title: "Java SE 25 API: Throwable cause constructor"
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
-    relationNote: cause chain과 예외 관찰 API 확인
-  - url: "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Exception.html"
-    title: "Java SE 25 API: Exception"
-    referenceType: OFFICIAL
-    language: en
-    displayOrder: 2
-    relationNote: 애플리케이션 예외의 의미와 생성자 확인
+    relationNote: 예외 원인 체인 보존 API 확인
 ---
-# Exception translation and cause
+# 예외 변환과 원인 보존
 
-## 쉬운 진입
+하위 계층의 예외 타입이 상위 계층의 관심사와 맞지 않을 수 있습니다. 예를 들어 주문 서비스가 JDBC 드라이버의 세부 예외 타입까지 알아야 한다면 저장 기술을 바꾸기 어렵고 비즈니스 코드의 의미도 흐려집니다.
 
-저장소가 `SQLException`을 던진다고 해서 화면이나 도메인이 데이터베이스 제품의 용어를
-알아야 하는 것은 아니다. 낮은 계층의 실패를 현재 경계가 이해하는 예외로 번역하되, 원래
-실패를 함께 들고 가면 두 가지 요구를 모두 만족한다.
-
-## 정확한 메커니즘
-
-예외 생성자의 cause 인자 또는 `initCause`로 원인을 연결할 수 있다. 다음 계층은 새 예외의
-메시지와 타입으로 의미를 판단하고, `getCause()`와 stack trace로 원래 실패를 조사한다.
+이럴 때 낮은 수준 예외를 상위 계층의 의미에 맞는 예외로 바꾸는 것을 **예외 변환(exception translation)** 이라고 합니다.
 
 ```java
 try {
-    repository.save(record);
-} catch (IOException cause) {
-    throw new ContentStoreException("콘텐츠 저장에 실패했습니다", cause);
+    dao.insert(order);
+} catch (SqlConstraintException e) {
+    throw new DuplicateOrderException(order.id(), e);
 }
 ```
 
-번역은 추상화 경계를 보호하는 것이지 모든 예외를 무조건 포장하는 규칙이 아니다. 이미
-호출자가 처리해야 할 의미가 유지되고, 추가 context가 없으면 전파가 더 정확할 수 있다.
+호출자는 이제 SQL 세부 대신 “중복 주문”이라는 애플리케이션 의미를 처리할 수 있습니다.
 
-## 실전·면접 연결
+### 원래 예외를 버리면 진단 정보가 사라진다
 
-예외 타입은 복구 가능성이나 사용자 메시지 같은 호출 계약을 표현하고, cause는 진단 정보의
-연결을 표현한다. 새 예외에 원인을 넣지 않은 채 메시지만 복사하면 최초 stack trace와
-제품별 오류 정보가 사라진다. 반대로 민감한 내부 정보를 외부 메시지에 그대로 노출하지 않는
-것도 boundary의 책임이다.
+```java
+catch (IOException e) {
+    throw new ImportException("가져오기 실패");
+}
+```
 
-## 흔한 오해
+메시지만 새로 만들고 원래 예외를 버리면 실제 파일 경로, 원인 stack trace 등 중요한 정보가 사라질 수 있습니다.
 
-- `throw new X(cause)`는 cause를 출력 메시지 문자열에 단순히 이어 붙이는 것과 다르다.
-- custom exception을 만들었다고 자동으로 원인이 보존되지는 않는다.
-- 예외 번역은 실패를 성공 값으로 바꾸는 것이 아니다.
+```java
+catch (IOException e) {
+    throw new ImportException("가져오기 실패", e);
+}
+```
+
+`cause`를 보존하면 상위에서는 추상화된 실패를 다루면서도 운영·디버깅 시 원래 원인까지 따라갈 수 있습니다.
+
+```text
+ImportException
+   └─ cause: IOException
+         └─ cause: 실제 하위 원인 ...
+```
+
+### 모든 예외를 custom exception으로 바꿀 필요는 없다
+
+이미 `IllegalArgumentException`처럼 의미가 충분한 표준 예외라면 새 타입을 만드는 것이 오히려 복잡할 수 있습니다. 변환은 **계층 경계를 보호하거나 상위에서 다른 처리가 필요한 의미를 제공할 때** 가치가 있습니다.
+
+또 모든 `RuntimeException`을 하나의 `ServiceException`으로 감싸면 서로 다른 실패 원인이 다시 뭉개질 수 있습니다.
+
+### 메시지와 cause의 역할을 구분한다
+
+상위 예외 메시지에는 현재 계층에서 중요한 문맥을 넣을 수 있습니다.
+
+```java
+throw new ImportException("파일 " + path + " 처리 실패", e);
+```
+
+다만 비밀번호, access token, 개인정보처럼 로그에 남으면 안 되는 값을 메시지에 포함하지 않도록 주의해야 합니다.
+
+### 실무에서의 기준
+
+- 하위 기술 예외가 상위 API에 그대로 새어 나오는가?
+- 상위에서 구분해 처리할 새로운 의미가 있는가?
+- 원래 cause와 stack trace를 보존했는가?
+- 의미 없는 wrapper 계층만 늘리고 있지는 않은가?
+
+예외 변환의 목적은 예외 이름을 예쁘게 바꾸는 것이 아니라 **추상화 경계를 유지하면서 진단 정보도 잃지 않는 것**입니다.

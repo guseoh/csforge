@@ -3,47 +3,74 @@ kind: concept
 contentKey: java.core.streams.tomap-duplicate-keys
 topicContentKey: java.core.streams
 slug: tomap-duplicate-keys
-title: "toMap and duplicate keys"
-summary: "중복 key의 merge policy를 명시해 수집 실패와 손실을 피한다"
+title: "toMap과 중복 key 처리"
+summary: "여러 원소가 같은 key로 변환될 수 있을 때 toMap의 충돌을 인식하고 비즈니스 의미에 맞는 merge 정책을 명시한다"
 level: 2
 status: PUBLISHED
 displayOrder: 50
 references:
-  - url: "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/stream/Collectors.html"
-    title: "Java SE 25 API: Collectors"
+  - url: "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/stream/Collectors.html#toMap(java.util.function.Function,java.util.function.Function)"
+    title: "Java SE 25 API: Collectors.toMap"
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
-    relationNote: toMap overload와 duplicate key merge 계약 확인
+    relationNote: duplicate key와 merge overload의 계약 확인
 ---
-# toMap and duplicate keys
+# toMap과 중복 key 처리
 
-## 쉬운 진입
-
-이름을 key로 사람을 map에 넣는데 동명이인이 있으면 “나중 값을 쓸지, 합칠지, 거부할지”가
-필요하다. `Collectors.toMap(keyMapper, valueMapper)`는 중복 key를 조용히 임의 병합하지 않고
-기본적으로 실패하므로 정책을 생각하게 만든다.
-
-## 정확한 메커니즘
+Stream의 각 원소를 key와 value로 바꿔 Map을 만들 수 있습니다.
 
 ```java
-Map<String, Integer> latest = records.stream().collect(
-        Collectors.toMap(Record::key, Record::value, (oldValue, newValue) -> newValue));
+Map<Long, Order> byId = orders.stream()
+        .collect(Collectors.toMap(Order::id, Function.identity()));
 ```
 
-세 번째 인자는 같은 key가 다시 나왔을 때 사용할 merge function이다. 합계, 첫 값 유지,
-최신 값 유지, 예외 등 domain 정책을 명시한다. map supplier를 추가하는 overload는 결과
-구현체를 선택하지만 duplicate policy를 대신 정해 주지는 않는다.
+이 코드는 **모든 주문 id가 서로 다르다**는 전제가 숨어 있습니다. 두 원소가 같은 key를 만들면 단순 `toMap(keyMapper, valueMapper)`는 중복 key를 자동으로 덮어쓰는 것이 아니라 실패할 수 있습니다.
 
-## 실전·면접 연결
+### 중복이 가능하면 어떤 값을 남길지 결정해야 한다
 
-key의 equality는 map의 계약이므로 normalize 여부와 case sensitivity를 먼저 정한다.
-“마지막 입력이 최신”이라는 정책도 stream encounter order와 collector 계약을 전제로 해야
-하므로 parallel 사용까지 고려하면 더 신중해야 한다. 데이터 손실이 허용되지 않으면 merge가
-아닌 명시적 충돌 결과를 반환하는 편이 낫다.
+```java
+Map<String, Member> byEmail = members.stream()
+        .collect(Collectors.toMap(
+                Member::email,
+                Function.identity(),
+                (first, second) -> first
+        ));
+```
 
-## 흔한 오해
+이 merge 함수는 같은 이메일이 나오면 첫 값을 유지합니다. 최신 값을 유지하려면 `second`를 선택할 수도 있습니다.
 
-- `toMap`이 duplicate key를 자동으로 list에 모아 주지 않는다.
-- merge function이 없을 때 항상 첫 값이 보존되는 것은 아니다.
-- 같은 문자열처럼 보여도 key normalization을 하지 않으면 다른 key일 수 있다.
+하지만 **어떤 값을 남길지 코드만 편하게 결정하기 전에 중복 자체가 정상인지**를 물어야 합니다. 이메일이 원래 유일해야 하는 도메인이라면 조용히 하나를 버리는 merge는 데이터 오류를 숨길 수 있습니다.
+
+### 합산 같은 자연스러운 merge도 있다
+
+```java
+Map<String, Integer> counts = words.stream()
+        .collect(Collectors.toMap(
+                Function.identity(),
+                word -> 1,
+                Integer::sum
+        ));
+```
+
+같은 단어의 개수를 합치는 것은 중복 key가 곧 집계 대상이라는 의미이므로 자연스럽습니다.
+
+### groupingBy와 선택 기준이 다르다
+
+같은 key에 여러 값을 모두 보존해야 한다면 `groupingBy`가 더 맞습니다.
+
+```java
+Map<String, List<Member>> grouped = members.stream()
+        .collect(Collectors.groupingBy(Member::team));
+```
+
+`toMap` merge는 결국 key 하나당 value 하나를 남깁니다.
+
+### 문제를 풀 때 먼저 key 유일성을 확인한다
+
+- key가 정말 유일한가?
+- 중복이면 오류여야 하는가?
+- 첫 값/마지막 값/합산 중 어떤 정책이 의미 있는가?
+- 여러 값을 모두 보관해야 하는가?
+
+`toMap`에서 발생하는 예외를 단순 API 함정으로 외우지 말고 **Map key의 의미와 데이터 계약 문제**로 이해하면 실무에서도 도움이 됩니다.

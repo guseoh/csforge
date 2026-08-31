@@ -3,56 +3,76 @@ kind: concept
 contentKey: java.core.functional.functional-interface
 topicContentKey: java.core.functional
 slug: functional-interface
-title: "Functional interface"
-summary: "단일 abstract method 계약과 표준 함수형 인터페이스를 구분한다"
+title: "함수형 인터페이스"
+summary: "추상 메서드 하나의 계약을 행동 값의 타입으로 사용하고 Predicate, Function, Consumer, Supplier의 역할을 구분한다"
 level: 1
 status: PUBLISHED
 displayOrder: 10
 references:
-  - url: "https://docs.oracle.com/javase/specs/jls/se25/html/jls-9.html"
-    title: "Java Language Specification 9장: Interfaces"
+  - url: "https://docs.oracle.com/javase/specs/jls/se25/html/jls-9.html#jls-9.8"
+    title: "JLS 9.8 Functional Interfaces"
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
-    relationNote: functional interface의 언어 규칙 확인
-  - url: "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/FunctionalInterface.html"
-    title: "Java SE 25 API: FunctionalInterface"
+    relationNote: 함수형 인터페이스의 언어 규칙 확인
+  - url: "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/function/package-summary.html"
+    title: "Java SE 25 API: java.util.function"
     referenceType: OFFICIAL
     language: en
     displayOrder: 2
-    relationNote: annotation의 검증 역할 확인
+    relationNote: 표준 함수형 인터페이스 확인
 ---
-# Functional interface
+# 함수형 인터페이스
 
-## 쉬운 진입
-
-동작 하나를 전달하고 싶을 때 작은 객체 클래스를 매번 만들면 목적보다 코드가 커진다.
-functional interface는 “이 자리에 어떤 동작 하나를 제공하라”는 타입 계약으로, lambda나
-method reference를 받을 수 있게 한다.
-
-## 정확한 메커니즘
-
-추상 메서드가 하나인 interface가 functional interface다. `Object`의 public method와
-default/static method는 그 수를 단순히 늘리지 않는다. `@FunctionalInterface`는 compiler가
-이 의도를 검증하는 annotation이지 lambda를 실행시키는 마법이 아니다.
+Java에서 lambda를 변수나 매개변수로 전달하려면 그 lambda가 어떤 입력을 받고 어떤 결과를 내는지 나타내는 타입이 필요합니다. **추상 메서드가 하나인 인터페이스**가 그 역할을 할 수 있고, 이런 인터페이스를 함수형 인터페이스(functional interface)라고 합니다.
 
 ```java
 @FunctionalInterface
-interface Formatter { String format(String value); }
-Formatter upper = String::toUpperCase;
+interface DiscountPolicy {
+    long discount(long price);
+}
 ```
 
-표준 라이브러리에는 입력과 출력 형태에 따라 `Predicate<T>`(boolean), `Function<T,R>`(변환),
-`Consumer<T>`(소비), `Supplier<T>`(공급) 등이 있다. `Runnable`은 인자·반환이 없는 동작이다.
+이제 구현 클래스를 만들지 않고도 lambda로 행동을 전달할 수 있습니다.
 
-## 실전·면접 연결
+```java
+DiscountPolicy tenPercent = price -> price * 90 / 100;
+long result = tenPercent.discount(10_000);
+```
 
-함수형 인터페이스를 고르면 호출자가 제공해야 할 정보와 결과가 코드에 드러난다. 검사와
-변환을 하나의 `Function`에 억지로 넣기보다 서로 다른 계약을 사용한다. interface에 두 번째
-abstract method가 필요해지면 lambda API로서의 경계가 깨진다.
+### “메서드가 하나”가 아니라 “추상 메서드가 하나”다
 
-## 흔한 오해
+함수형 인터페이스는 default 메서드나 static 메서드를 가질 수 있습니다.
 
-- abstract method가 하나라고 interface가 상태를 가질 수 없다는 뜻은 아니다.
-- `@FunctionalInterface`가 없으면 lambda를 사용할 수 없는 것은 아니다.
-- lambda의 실제 target type은 별도의 문맥에서 결정된다.
+```java
+@FunctionalInterface
+interface Checker {
+    boolean test(String value); // 유일한 abstract method
+
+    default Checker negate() { ... }
+    static Checker always() { ... }
+}
+```
+
+핵심은 lambda가 구현할 **단 하나의 추상 계약(SAM, Single Abstract Method)** 이 있다는 것입니다. `Object`의 public 메서드와 대응되는 선언 등 세부 규칙도 있어 단순히 소스에 메서드가 몇 줄인지 세는 것으로 판단하면 안 됩니다.
+
+### @FunctionalInterface는 무엇을 해 주나
+
+`@FunctionalInterface`를 붙이면 컴파일러가 해당 인터페이스가 함수형 인터페이스 규칙을 지키는지 검사합니다. 애너테이션이 없어도 규칙을 만족하면 lambda target이 될 수 있지만, 붙여 두면 “이 인터페이스는 lambda 사용을 위한 단일 추상 계약을 유지한다”는 의도를 표현할 수 있습니다.
+
+### 표준 인터페이스를 먼저 익혀 두면 좋다
+
+| 타입 | 입력 | 결과 | 대표 용도 |
+|---|---|---|---|
+| `Predicate<T>` | T | boolean | 조건 검사 |
+| `Function<T,R>` | T | R | 값 변환 |
+| `Consumer<T>` | T | 없음 | 값을 받아 부수효과 수행 |
+| `Supplier<T>` | 없음 | T | 값 생성/지연 제공 |
+| `UnaryOperator<T>` | T | T | 같은 타입 변환 |
+| `BinaryOperator<T>` | T,T | T | 두 값을 같은 타입 결과로 결합 |
+
+이미 표준 타입으로 의미를 충분히 표현할 수 있다면 별도 `StringChecker`, `ValueMapper` 같은 인터페이스를 매번 만들 필요는 없습니다. 반대로 도메인 의미가 중요한 계약이라면 이름 있는 사용자 인터페이스가 더 읽기 좋을 수 있습니다.
+
+### 문제를 풀 때 확인할 것
+
+lambda 앞에서 막히면 먼저 target functional interface의 추상 메서드를 적어 보세요. 매개변수 타입과 반환 타입이 보이면 lambda 본문이 무엇을 받아 무엇을 반환해야 하는지도 자연스럽게 결정됩니다.

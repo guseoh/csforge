@@ -3,56 +3,88 @@ kind: concept
 contentKey: java.core.collections.iterable-iterator-foreach-modification
 topicContentKey: java.core.collections
 slug: iterable-iterator-foreach-modification
-title: "Iterable·Iterator와 foreach 중 수정"
-summary: "반복자 계약, foreach 동작, 구조적 변경과 ConcurrentModificationException의 의미를 구분한다"
+title: "Iterable, Iterator와 순회 중 수정"
+summary: "enhanced for가 Iterator 기반 순회와 어떻게 연결되는지 이해하고 순회 중 구조 변경과 fail-fast의 보장 범위를 구분한다"
 level: 2
 status: PUBLISHED
 displayOrder: 80
 references:
   - url: "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Iterable.html"
-    title: "Iterable API (Java SE 25)"
+    title: "Java SE 25 API: Iterable"
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
-    relationNote: iterator와 forEach 동작 확인
+    relationNote: Iterable 계약 확인
   - url: "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Iterator.html"
-    title: "Iterator API (Java SE 25)"
+    title: "Java SE 25 API: Iterator"
     referenceType: OFFICIAL
     language: en
     displayOrder: 2
-    relationNote: next/remove와 fail-fast 주의 확인
+    relationNote: next/remove 및 iteration 계약 확인
 ---
-# Iterable·Iterator와 foreach 중 수정
+# Iterable, Iterator와 순회 중 수정
 
-## 쉬운 진입
-
-컬렉션에 대한 foreach는 내부를 복사하는 문법이 아니라 Iterator를 사용해 원소를 순회하는
-편의 문법이다. 순회 중 구조를 바꾸면 Iterator가 기대한 상태와 달라질 수 있다.
-
-## 정확한 메커니즘
+다음 enhanced for 문은 간단해 보이지만 Java가 컬렉션 순회를 표현하는 중요한 추상화와 연결됩니다.
 
 ```java
-List<String> names = new ArrayList<>(List.of("java", " "));
-for (Iterator<String> it = names.iterator(); it.hasNext(); ) {
-    if (it.next().isBlank()) it.remove();
+for (String value : values) {
+    System.out.println(value);
 }
 ```
 
-`remove()`는 선택적 연산이다. 위 ArrayList iterator처럼 지원하는 구현에서는 마지막으로
-`next()`가 반환한 원소를 iterator와 조율해 제거한다. `next()` 전이나 같은 원소에 두 번
-호출하면 `IllegalStateException`이 발생한다. 지원하지 않는 구현의 기본 `remove()`는
-`UnsupportedOperationException`을 던진다. 컬렉션의 `remove()`로 직접 구조를 바꾸면 구현에
-따라 `ConcurrentModificationException`이 날 수 있다. fail-fast는
-동시 변경을 발견하면 best-effort로 빠르게 실패하는 진단 장치이지 thread-safety 보장이 아니다.
+`Iterable`은 `iterator()`를 제공하고, `Iterator`는 다음 원소가 있는지 확인하고 순서대로 꺼내는 cursor 역할을 합니다.
 
-## 실전·면접 연결
+```java
+Iterator<String> iterator = values.iterator();
+while (iterator.hasNext()) {
+    String value = iterator.next();
+}
+```
 
-더 복잡한 조건은 수정 가능한 컬렉션이 지원하는 `removeIf`나 새 컬렉션으로 필터링해
-의도를 드러낸다. unmodifiable 컬렉션의 `removeIf`도 수정 권한을 만들어 주지는 않는다. 여러 스레드가 공유
-컬렉션을 수정한다면 동기화·동시성 컬렉션·불변 snapshot을 별도로 선택해야 한다.
+배열의 enhanced for는 별도 규칙을 사용하지만 Iterable 객체 순회는 이런 iterator 개념으로 이해할 수 있습니다.
 
-## 흔한 오해
+### 순회 중 컬렉션을 직접 수정하면 왜 문제일까
 
-- `ConcurrentModificationException`이 항상 발생하는 것은 아니다.
-- 이름에 Concurrent가 있어도 일반 ArrayList가 동시 수정에 안전해지는 것은 아니다.
-- 원소 객체의 내부 field 수정과 컬렉션 구조 수정은 다른 문제다.
+```java
+for (String value : values) {
+    if (value.isBlank()) {
+        values.remove(value);
+    }
+}
+```
+
+iterator는 현재 순회 상태를 관리하고 있는데 바깥에서 collection 구조가 예상하지 못하게 바뀌면 cursor와 실제 구조의 관계가 깨질 수 있습니다. 많은 일반 컬렉션 iterator는 이런 구조적 변경을 감지해 `ConcurrentModificationException`을 던질 수 있습니다.
+
+다만 **fail-fast는 동시성 안전을 보장하는 완벽한 검출 장치가 아닙니다.** API 문서도 일반적으로 best-effort 진단 성격임을 설명합니다. 예외가 안 났다고 thread-safe하다는 뜻은 아닙니다.
+
+### iterator.remove가 지원된다면 그 경로를 쓴다
+
+```java
+Iterator<String> iterator = values.iterator();
+while (iterator.hasNext()) {
+    if (iterator.next().isBlank()) {
+        iterator.remove();
+    }
+}
+```
+
+`Iterator.remove()`는 optional operation입니다. 모든 iterator가 지원하는 것은 아니므로 해당 컬렉션 계약을 확인해야 합니다.
+
+간단한 조건 삭제는 `removeIf`가 의도를 더 잘 드러낼 수도 있습니다.
+
+```java
+values.removeIf(String::isBlank);
+```
+
+### concurrent collection은 별도 iteration 계약을 가진다
+
+`ConcurrentHashMap` 등 concurrent collection의 iterator는 일반 fail-fast iterator와 다른 일관성 특성을 가질 수 있습니다. 여러 스레드에서 수정하며 순회해야 하는 요구는 concurrent collection의 공식 계약을 확인해야 합니다.
+
+### 문제를 풀 때 확인할 것
+
+- 지금 순회가 index 기반인가 Iterator 기반인가?
+- 구조 변경을 collection 자체로 하고 있는가 iterator를 통해 하고 있는가?
+- remove가 optional operation인지?
+- `ConcurrentModificationException`을 thread-safety 보장으로 오해하고 있지 않은가?
+
+순회 코드는 **누가 cursor를 관리하고 누가 구조를 바꾸는지**를 보면 이해하기 쉽습니다.

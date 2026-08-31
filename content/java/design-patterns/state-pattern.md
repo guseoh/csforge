@@ -4,51 +4,70 @@ contentKey: java.core.design-patterns.state-pattern
 topicContentKey: java.core.design-patterns
 slug: state-pattern
 title: "State 패턴과 상태별 행동"
-summary: "상태에 따라 달라지는 행동을 상태 객체로 분리해 조건문 폭증을 막는다"
+summary: "상태별 조건문과 전이가 복잡해질 때 현재 상태를 객체로 분리해 행동과 전이 규칙을 모으는 방법과 적용 한계를 이해한다"
 level: 2
 status: PUBLISHED
 displayOrder: 80
 references:
-  - url: "https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html#jls-8.9"
-    title: "Java Language Specification 8.9장: Enum Classes"
+  - url: "https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html"
+    title: "JLS 8 Classes"
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
-    relationNote: 작은 상태 집합을 enum으로 모델링하는 언어 규칙 확인
-  - url: "https://refactoring.guru/design-patterns/state"
-    title: "State Design Pattern"
-    referenceType: OTHER
-    language: en
-    displayOrder: 2
-    relationNote: 상태 객체로 전이를 위임하는 구조 참고
+    relationNote: 클래스 기반 상태 객체 구현의 언어 기반 확인
 ---
 # State 패턴과 상태별 행동
 
-## 쉬운 진입
+객체 상태가 몇 개 없을 때는 enum과 조건문만으로도 충분합니다.
 
-문서가 DRAFT일 때는 수정할 수 있지만 PUBLISHED에서는 수정할 수 없고 ARCHIVED에서는
-복구만 가능하다. 서비스의 모든 메서드에 상태 `if`를 반복하면 전이 규칙이 흩어진다.
-
-## 정확한 메커니즘
-
-```text
-DocumentContext -> DocumentState
-                    ├─ DraftState: publish 가능
-                    ├─ PublishedState: archive 가능
-                    └─ ArchivedState: restore 가능
+```java
+if (status == READY) { ... }
+else if (status == PAID) { ... }
+else if (status == CANCELLED) { ... }
 ```
 
-Context는 현재 상태에 행동을 위임하고 상태 객체는 허용된 행동과 다음 상태를 결정한다.
-상태가 몇 개이고 전이가 단순하면 enum의 intention-revealing 메서드가 더 작고 명확하다.
-상태별 데이터와 행동이 커질 때만 객체 State 구조를 선택한다.
+하지만 상태마다 가능한 행동과 다음 상태 전이가 계속 늘어나면 하나의 클래스에 큰 `switch`가 반복될 수 있습니다. State 패턴은 **현재 상태를 별도 객체로 표현하고 상태별 행동을 그 객체에 맡기는 방식**입니다.
 
-## 실전·면접 연결
+```text
+Order(Context)
+   │ 현재 state
+   ▼
+OrderState
+   ├─ ReadyState
+   ├─ PaidState
+   └─ CancelledState
+```
 
-전이 표를 먼저 작성하면 허용되지 않은 전이를 테스트하기 쉽다. 상태 객체가 Context를
-무제한으로 호출하면 순환 결합이 생기므로 전이에 필요한 좁은 협력만 제공한다.
+### 상태 객체가 행동을 소유한다
 
-## 흔한 오해
+```java
+interface OrderState {
+    void cancel(OrderContext context);
+}
+```
 
-- 상태 필드가 있다고 모두 State 패턴이 필요한 것은 아니다.
-- 상태 객체로 분리해도 영속화할 현재 상태와 전이의 원자성은 별도 문제다.
-- 조건문 수를 줄이는 것보다 금지된 전이를 막고 규칙의 소유자를 선명하게 하는 것이 목적이다.
+`PaidState`는 취소를 허용하고 `CancelledState`는 거부하는 식으로 상태별 규칙을 각각 둘 수 있습니다. 상태 전이가 일어나면 context가 가리키는 state도 바뀝니다.
+
+### 장점은 큰 조건문을 분산하는 것이 아니라 응집시키는 데 있다
+
+State 클래스를 많이 만든다고 자동으로 좋은 설계가 되지는 않습니다. 가치가 있는 경우는 **특정 상태의 행동과 전이 규칙이 함께 자주 변경될 때**입니다. 그 규칙을 상태 객체 안에 모으면 관련 코드가 가까워집니다.
+
+### enum에 행동을 두는 방법이 더 간단할 수도 있다
+
+상태 수가 적고 규칙이 단순하면 enum 자체에 `canCancel()` 같은 행동을 두는 것으로 충분할 수 있습니다.
+
+```java
+enum OrderStatus {
+    READY, PAID, CANCELLED;
+
+    boolean canCancel() { ... }
+}
+```
+
+State 패턴은 객체와 클래스 수를 늘리므로 복잡성이 실제로 필요한지 판단해야 합니다.
+
+### 상태와 workflow를 구분한다
+
+결제 취소처럼 외부 시스템 호출, transaction, 여러 aggregate 조정이 필요한 유스케이스 전체를 State 객체 하나에 넣는 것은 과할 수 있습니다. State는 객체 내부의 상태별 행동과 전이를 모델링하는 도구이고, 애플리케이션 orchestration은 별도 책임일 수 있습니다.
+
+문제에서는 “상태 조건문이 보이면 무조건 State”가 아니라 **상태별 행동이 독립적으로 커지고 전이 규칙이 복잡한가**를 먼저 판단하세요.

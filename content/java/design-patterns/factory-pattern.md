@@ -3,54 +3,71 @@ kind: concept
 contentKey: java.core.design-patterns.factory-pattern
 topicContentKey: java.core.design-patterns
 slug: factory-pattern
-title: "Factory 패턴과 생성 책임"
-summary: "구체 객체 선택과 생성 규칙을 사용하는 코드에서 분리한다"
+title: "Factory와 객체 생성 책임"
+summary: "구현 선택이나 복잡한 생성 규칙을 사용하는 코드에서 분리해 한 생성 경계로 모으고 불필요한 Factory를 구분한다"
 level: 2
 status: PUBLISHED
 displayOrder: 30
 references:
   - url: "https://docs.oracle.com/javase/specs/jls/se25/html/jls-15.html#jls-15.9"
-    title: "Java Language Specification 15.9장: Class Instance Creation Expressions"
+    title: "JLS 15.9 Class Instance Creation Expressions"
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
-    relationNote: new와 생성자 호출의 언어 의미 확인
-  - url: "https://refactoring.guru/design-patterns/factory-method"
-    title: "Factory Method Design Pattern"
-    referenceType: OTHER
-    language: en
-    displayOrder: 2
-    relationNote: 생성자 선택과 제품 추상화 구조 참고
+    relationNote: Java 객체 생성 표현식의 언어 규칙 확인
 ---
-# Factory 패턴과 생성 책임
+# Factory와 객체 생성 책임
 
-## 쉬운 진입
-
-호출자가 `new PdfExporter(...)`까지 알아야 하면 포맷을 바꿀 때 모든 호출부를 수정해야 한다.
-생성 정책을 factory에 모으면 호출자는 `Exporter`라는 역할만 받는다.
-
-## 정확한 메커니즘
-
-Factory는 제품의 구체 타입 선택, 필수 인자 검증, 생성 순서를 한 곳에서 책임진다. 단순히
-생성자를 감싸는 메서드가 아니라 “어떤 구현을 선택할지”가 변하는 경계에서 가치가 생긴다.
+객체를 사용하는 코드가 구체 구현 선택과 생성 인자 구성까지 모두 담당하면 비즈니스 흐름과 생성 정책이 섞일 수 있습니다.
 
 ```java
-interface Exporter { byte[] export(Report report); }
-final class Exporters {
-    static Exporter forFormat(Format format) {
-        return switch (format) { case PDF -> new PdfExporter(); case CSV -> new CsvExporter(); };
+if (type == CARD) {
+    processor = new CardProcessor(config.cardUrl(), ...);
+} else {
+    processor = new BankProcessor(config.bankUrl(), ...);
+}
+```
+
+이 선택이 여러 곳에 반복되거나 생성 절차가 복잡하다면 **객체를 만드는 책임을 별도 경계에 모으는 Factory**를 고려할 수 있습니다.
+
+```java
+class PaymentProcessorFactory {
+    PaymentProcessor create(PaymentType type) {
+        return switch (type) {
+            case CARD -> new CardProcessor(...);
+            case BANK -> new BankProcessor(...);
+        };
     }
 }
 ```
 
-## 실전·면접 연결
+사용하는 쪽은 어떤 구체 클래스를 `new`해야 하는지 몰라도 됩니다.
 
-생성 로직이 한 번만 쓰이고 분기나 검증이 없다면 직접 생성이 더 간단하다. factory가 서비스
-locator처럼 모든 의존성을 숨기면 테스트와 변경이 어려워지므로, 선택 책임과 객체 협력을
-분리한다.
+### Factory가 숨길 수 있는 것
 
-## 흔한 오해
+Factory는 단순히 `new` 한 줄을 다른 파일로 옮기는 것이 아니라 다음과 같은 **생성 정책**을 숨길 때 가치가 큽니다.
 
-- factory라는 이름을 붙였다고 객체 생성 문제가 해결되는 것은 아니다.
-- factory 내부에 거대한 switch와 전역 상태를 넣으면 결합도가 오히려 커진다.
-- Factory Method와 Abstract Factory는 제품 수와 변형 축이 다른 별도 설계다.
+- 입력에 따른 구현 클래스 선택
+- 여러 의존성을 조합하는 복잡한 생성
+- 객체 재사용 여부
+- 생성 전에 필요한 검증이나 설정 해석
+
+### 정적 팩터리와 이름이 비슷하지만 관점이 다르다
+
+`Money.of(1000)` 같은 정적 팩터리는 보통 클래스 자신이 제공하는 생성 API입니다. Factory 객체는 여러 구현 생성이나 생성 정책 자체를 별도 책임으로 분리하는 경우가 많습니다.
+
+둘을 엄격히 이름만으로 분류하기보다 **생성 책임이 어디에 있고 호출자가 어떤 세부에서 분리되는지**를 보면 됩니다.
+
+### 불필요한 Factory는 피한다
+
+```java
+class MemberFactory {
+    Member create(String name) {
+        return new Member(name);
+    }
+}
+```
+
+생성 규칙도 없고 구현 선택도 없는데 이런 클래스가 하나 더 생기면 단순한 `new Member(name)`보다 얻는 것이 없을 수 있습니다.
+
+Factory는 패턴을 적용했다는 사실보다 **객체 생성의 변화 이유가 실제 사용 로직과 분리될 필요가 있는가**를 기준으로 선택합니다.

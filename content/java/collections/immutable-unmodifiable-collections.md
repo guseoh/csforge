@@ -3,55 +3,92 @@ kind: concept
 contentKey: java.core.collections.immutable-unmodifiable-collections
 topicContentKey: java.core.collections
 slug: immutable-unmodifiable-collections
-title: "불변 컬렉션과 unmodifiable view"
-summary: "원본을 반영하는 unmodifiable view와 구조를 고정한 snapshot을 구분한다"
+title: "변경 불가 컬렉션과 unmodifiable view"
+summary: "List.of·copyOf처럼 수정할 수 없는 컬렉션과 원본을 감싼 unmodifiable view의 변경 전파·소유권 차이를 구분한다"
 level: 2
 status: PUBLISHED
 displayOrder: 90
 references:
-  - url: "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html#copyOf(java.util.Collection)"
-    title: "Java SE 25 List.copyOf API"
+  - url: "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html#of()"
+    title: "Java SE 25 API: List.of"
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
-    relationNote: null 불허와 unmodifiable 결과 및 인스턴스 재사용 계약 확인
-  - url: "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Collections.html#unmodifiableList(java.util.List)"
-    title: "Java SE 25 Collections.unmodifiableList API"
+    relationNote: unmodifiable List factory 계약 확인
+  - url: "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html#copyOf(java.util.Collection)"
+    title: "Java SE 25 API: List.copyOf"
     referenceType: OFFICIAL
     language: en
     displayOrder: 2
-    relationNote: 원본을 바라보는 unmodifiable view 계약 확인
+    relationNote: unmodifiable copy 계약 확인
+  - url: "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Collections.html#unmodifiableList(java.util.List)"
+    title: "Java SE 25 API: Collections.unmodifiableList"
+    referenceType: OFFICIAL
+    language: en
+    displayOrder: 3
+    relationNote: backing list view 계약 확인
 ---
-# 불변 컬렉션과 unmodifiable view
+# 변경 불가 컬렉션과 unmodifiable view
 
-## 쉬운 진입
+컬렉션을 “수정할 수 없다”는 결과만 보고 모두 같은 구조라고 생각하면 소유권 문제를 놓칠 수 있습니다. 특히 `List.copyOf`와 `Collections.unmodifiableList`는 둘 다 호출자가 `add`하지 못하게 만들 수 있지만 **원본과의 관계가 다릅니다.**
 
-`unmodifiableList`는 “이 손잡이로는 수정하지 마”라는 view이고, 원본 자체가 바뀌지 않는다는
-뜻은 아니다. 외부에 소유권을 넘기지 않으려면 snapshot 복사가 필요하다.
-
-## 정확한 메커니즘
+### List.of는 처음부터 변경 불가 컬렉션을 만든다
 
 ```java
-List<String> source = new ArrayList<>(List.of("A"));
-List<String> view = Collections.unmodifiableList(source);
-List<String> snapshot = List.copyOf(source);
-source.add("B"); // view는 [A, B], snapshot은 [A]
+List<String> roles = List.of("USER", "ADMIN");
+// roles.add("MANAGER"); // UnsupportedOperationException
 ```
 
-view의 mutating method는 UnsupportedOperationException을 내지만 source mutation은 관찰한다.
-`List.copyOf`는 null 원소를 허용하지 않는 unmodifiable List를 반환하며 이후 원본의 구조
-변경을 반영하지 않는다. 적합한 unmodifiable List를 입력하면 같은 인스턴스를 재사용할 수도
-있으므로 항상 새 객체를 만든다는 보장은 없다. 원소 참조는 공유되며 원소가 mutable이면
-그 내부 상태 변경은 snapshot에서도 보일 수 있다. 이는 깊은 복사나 완전한 불변 객체가 아니다.
+`List.of`가 반환하는 List는 수정 연산을 지원하지 않습니다. null 원소도 허용하지 않습니다.
 
-## 실전·면접 연결
+### unmodifiableList는 원본을 감싸는 view다
 
-생성자에서 입력을 복사하고 getter에서 unmodifiable view/snapshot을 반환하면 객체의 컬렉션
-소유권이 명확해진다. 큰 데이터나 잦은 변경에서는 매번 복사하는 비용과 API 안전성의 균형을
-정한다.
+```java
+List<String> source = new ArrayList<>();
+source.add("A");
 
-## 흔한 오해
+List<String> view = Collections.unmodifiableList(source);
+source.add("B");
 
-- 원본 구조 변경을 반영하는 view와 구조 변경에서 분리된 snapshot은 다르다.
-- unmodifiable List 안의 mutable object까지 자동으로 불변이 되지 않는다.
-- `List.of`와 `List.copyOf`는 null을 허용하지 않는다.
+System.out.println(view); // 원본 변경이 보임
+```
+
+`view.add()`는 막히지만 원본 `source`가 변경되면 view에서도 그 변경을 볼 수 있습니다.
+
+```text
+source ─────> 실제 가변 List
+                 ▲
+                 │
+unmodifiable view┘
+```
+
+즉 “view를 수정할 수 없다”와 “데이터가 절대 변하지 않는다”는 같은 말이 아닙니다.
+
+### List.copyOf는 원본 변경과 분리할 수 있다
+
+```java
+List<String> snapshot = List.copyOf(source);
+source.add("C");
+```
+
+일반적으로 `snapshot`은 이후 source 변경을 따라가는 view가 아니라 입력 원소를 기반으로 한 변경 불가 List입니다. 다만 입력이 이미 적절한 unmodifiable List라면 API가 같은 인스턴스를 재사용할 수 있으므로 **반드시 새 객체를 만든다**고 말하면 안 됩니다.
+
+또 `List.copyOf`는 원소 객체 자체를 깊게 복사하지 않습니다.
+
+```java
+List<MutableMember> copy = List.copyOf(members);
+```
+
+List 구조는 바꿀 수 없어도 `MutableMember`의 상태가 변하면 관찰 결과는 달라질 수 있습니다.
+
+### 불변성과 소유권을 함께 본다
+
+내부 컬렉션을 외부에 반환할 때 단순 unmodifiable view가 충분한지, snapshot copy가 필요한지는 원본이 이후 변해도 되는지에 따라 달라집니다.
+
+| 방식 | 호출자가 구조 수정 | 원본 변경 반영 | 깊은 복사 |
+|---|---|---|---|
+| `List.of` | 불가 | 별도 원본 없음 | 아님 |
+| `List.copyOf` | 불가 | 일반적으로 원본 변경과 분리 | 아님 |
+| `unmodifiableList(source)` | 불가 | 반영됨 | 아님 |
+
+문제에서는 “수정 메서드가 막힌다”만 보지 말고 **누가 실제 backing data를 소유하고 변경할 수 있는지**까지 추적해야 합니다.

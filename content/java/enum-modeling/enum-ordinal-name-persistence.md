@@ -3,67 +3,76 @@ kind: concept
 contentKey: java.core.enum-modeling.enum-ordinal-name-persistence
 topicContentKey: java.core.enum-modeling
 slug: enum-ordinal-name-persistence
-title: "enum의 ordinal, name과 영속화"
-summary: "enum 선언 순서와 이름의 의미를 구분하고 안전한 저장 키를 선택한다"
+title: "enum ordinal과 외부 저장값"
+summary: "enum의 선언 순서를 나타내는 ordinal을 안정적인 외부 식별자로 사용하기 위험한 이유와 name 기반 저장의 trade-off를 이해한다"
 level: 2
 status: PUBLISHED
 displayOrder: 20
 references:
-  - url: "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Enum.html#ordinal()"
-    title: "Enum.ordinal API (Java SE 25)"
+  - url: "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Enum.html"
+    title: "Java SE 25 API: Enum"
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
-    relationNote: ordinal이 선언 순서라는 점 확인
-  - url: "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Enum.html#name()"
-    title: "Enum.name API (Java SE 25)"
-    referenceType: OFFICIAL
-    language: en
-    displayOrder: 2
-    relationNote: 선언된 enum 식별자와 name 계약 확인
+    relationNote: name과 ordinal의 공식 의미 확인
 ---
-# enum의 ordinal, name과 영속화
+# enum ordinal과 외부 저장값
 
-## 쉬운 진입
+모든 enum 상수에는 `name()`과 `ordinal()`이 있습니다. 둘 다 쉽게 얻을 수 있지만 **DB나 API에 장기간 저장할 식별자로 그대로 써도 된다는 뜻은 아닙니다.**
 
-`LOW`, `MEDIUM`, `HIGH`를 설정 파일에 `0`, `1`, `2`로 저장하면 처음에는 간단해 보인다.
-하지만 중간에 `URGENT`를 추가하거나 선언 순서를 바꾸는 순간 기존 숫자가 다른 의미가 될 수
-있다. 사람이 읽는 안정적인 코드와 선언 위치는 서로 다른 문제다.
-
-## 정확한 메커니즘
-
-`ordinal()`은 enum 선언에서 0부터 시작하는 위치다. API는 EnumSet/EnumMap 같은 enum 기반
-자료 구조를 위한 용도로 설명하며 영구 식별자를 보장하지 않는다. `name()`은 선언 식별자이므로
-순서 변경에는 영향을 받지 않지만 이름 변경은 저장 문자열과의 호환성을 깨뜨릴 수 있다.
-외부 형식에는 명시적인 코드를 두고, 기존 코드를 읽는 변환 규칙까지 함께 관리할 수 있다.
+### ordinal은 선언 위치다
 
 ```java
-enum Priority {
-    LOW("low"), HIGH("high");
-    private final String code;
-    Priority(String code) { this.code = code; }
-    String code() { return code; }
-    static Priority fromCode(String code) {
-        for (Priority value : values()) {
-            if (value.code.equals(code)) return value;
-        }
-        throw new IllegalArgumentException("Unknown priority code: " + code);
-    }
+enum Status {
+    READY,    // ordinal 0
+    PAID,     // ordinal 1
+    CANCELLED // ordinal 2
 }
 ```
 
-이 예시의 parser는 모르는 코드와 null을 거부한다. `LOW`를 `NORMAL`로 바꾸더라도 code를
-`low`로 유지하면 기존 설정을 읽을 수 있다. 코드 자체를 바꿔야 한다면 구버전 alias를 허용할지,
-기존 파일을 변환할지 정한다. 각 상수의 code가 고유한지도 확인해야 한다.
+`ordinal()`은 enum 선언에서 몇 번째 상수인지 나타냅니다. 중간에 새 상수를 끼워 넣으면 뒤 상수의 ordinal이 달라집니다.
 
-## 실전·면접 연결
+```java
+enum Status {
+    READY,
+    PENDING_PAYMENT,
+    PAID,
+    CANCELLED
+}
+```
 
-설정 파일과 전송 문자열이 같은 enum을 표현해도 각각의 외부 호환성 요구는 다를 수 있다.
-내부 enum 이름을 그대로 노출하는 대신 안정적인 wire code를 정의하면 리팩터링과 다국어
-표현을 분리할 수 있다.
+예전에 DB에 `1`을 `PAID`로 저장했다면 새 코드에서는 `1`이 `PENDING_PAYMENT`가 되어 데이터 의미가 뒤집힐 수 있습니다.
 
-## 흔한 오해
+그래서 `ordinal`은 enum 내부 순서가 필요한 일부 API에서 사용할 정보이지 **변하지 않는 비즈니스 식별자**로 간주하면 위험합니다.
 
-- `ordinal()`이 enum의 영구 ID라는 생각은 틀리다.
-- `name()`을 사용해도 이름 변경에 대한 alias나 자동 변환이 생기지는 않는다.
-- 이름을 바꿀 수 없다는 뜻이 아니라, 저장 코드와 Java 식별자를 의식적으로 분리해야 한다는 뜻이다.
+### name은 ordinal보다 읽기 쉽지만 이름 변경에 묶인다
+
+```java
+Status.PAID.name(); // "PAID"
+```
+
+문자열 이름을 저장하면 숫자보다 의미를 읽기 쉽고 상수 순서를 바꿔도 값이 유지됩니다. 하지만 Java 상수 이름 자체를 바꾸면 기존 데이터와 달라집니다.
+
+따라서 외부 계약을 장기간 안정적으로 유지해야 한다면 별도 code를 둘 수 있습니다.
+
+```java
+enum Status {
+    READY("R"),
+    PAID("P"),
+    CANCELLED("C");
+
+    private final String code;
+}
+```
+
+### DB 매핑은 Java enum만의 문제가 아니다
+
+JPA의 `@Enumerated` 같은 실제 persistence 설정은 프레임워크의 계약입니다. 여기서 기억할 것은 Java enum의 `ordinal`과 `name`이 무엇을 뜻하는지, 그리고 외부 데이터의 안정성 요구와 분리해야 한다는 점입니다.
+
+### 문제를 풀 때 확인할 것
+
+- 값이 선언 순서 변경에 영향을 받아도 되는가?
+- Java 코드 이름을 바꿔도 외부 계약은 유지되어야 하는가?
+- 이미 저장된 데이터와 새 코드의 값 매핑이 계속 같아야 하는가?
+
+이 질문에 안정성이 필요하다면 `ordinal`을 외부 identity로 사용하는 것은 피하는 편이 좋습니다.

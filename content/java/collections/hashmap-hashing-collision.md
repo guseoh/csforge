@@ -3,52 +3,90 @@ kind: concept
 contentKey: java.core.collections.hashmap-hashing-collision
 topicContentKey: java.core.collections
 slug: hashmap-hashing-collision
-title: "HashMap의 hashing과 충돌"
-summary: "hashCode와 equals로 key를 찾는 과정, 충돌과 변경 가능한 키의 위험을 설명한다"
+title: "HashMap 조회와 hash 충돌"
+summary: "key의 hashCode로 후보 영역을 좁히고 equals로 실제 key를 확인하는 흐름, 충돌과 mutable key 문제를 이해한다"
 level: 2
 status: PUBLISHED
 displayOrder: 30
 references:
   - url: "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/HashMap.html"
-    title: "HashMap API (Java SE 25)"
+    title: "Java SE 25 API: HashMap"
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
-    relationNote: hashing, equals와 예상 성능 계약 확인
+    relationNote: HashMap의 key-value 및 성능 계약 확인
   - url: "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html#hashCode()"
-    title: "Object.hashCode API (Java SE 25)"
+    title: "Java SE 25 API: Object.hashCode"
     referenceType: OFFICIAL
     language: en
     displayOrder: 2
-    relationNote: equals와 hashCode 일관성 계약 확인
+    relationNote: hashCode 계약 확인
 ---
-# HashMap의 hashing과 충돌
+# HashMap 조회와 hash 충돌
 
-## 쉬운 진입
+`HashMap`의 장점은 key 전체를 처음부터 순서대로 비교하지 않고 **hash 값을 이용해 비교할 후보를 좁힐 수 있다는 점**입니다. 다만 hashCode가 곧 key의 유일한 번호는 아니므로 마지막에는 equality 확인이 필요합니다.
 
-사전에서 단어의 첫 글자 서랍을 먼저 찾고 실제 단어를 비교하는 것처럼 HashMap은 key의
-hashCode로 후보 위치를 찾은 뒤 equals로 같은 key인지 확인한다.
+### 조회 흐름을 단계로 나눈다
 
-## 정확한 메커니즘
+개념적으로 key 조회를 다음처럼 이해할 수 있습니다.
 
 ```text
-key.hashCode() -> bucket 선택 -> 후보 key.equals(input) -> value 반환
-                         └─ 여러 key면 collision 처리
+key
+ │
+ ▼
+hashCode 계산
+ │
+ ▼
+내부에서 후보 위치 결정
+ │
+ ▼
+같은 후보의 key들과 비교
+ │
+ ▼
+equals로 실제 key 확인
 ```
 
-서로 다른 key가 같은 hash를 가질 수 있으므로 hashCode가 유일해야 하는 것은 아니다.
-다만 equals가 true인 key는 같은 hash를 가져야 한다. HashMap의 평균적인 조회 성능은
-좋은 분포를 전제하며, 실제 bucket 구조와 treeification은 JDK 구현 세부사항이므로 계약과
-특정 구현을 구분해야 한다.
+OpenJDK의 `HashMap`은 bucket, node, 특정 조건의 tree 구조 같은 구현 기법을 사용하지만 **그 세부가 `Map` 인터페이스의 언어 보장인 것은 아닙니다.** 문제에서 API 계약과 JDK 구현 설명을 구분해야 합니다.
 
-## 실전·면접 연결
+### hash 충돌은 정상적으로 발생할 수 있다
 
-Map에 넣은 뒤 key의 equals/hashCode에 사용한 필드를 바꾸면 기존 bucket에서 찾지 못할 수
-있다. key는 불변으로 만들거나, 변경 전에 제거하고 새 key로 다시 넣는다. 외부 입력을 key로
-쓸 때는 hash flooding과 과도한 충돌도 방어 관점에서 고려한다.
+서로 다른 객체가 같은 hashCode를 반환할 수 있습니다.
 
-## 흔한 오해
+```java
+!a.equals(b)
+a.hashCode() == b.hashCode()
+```
 
-- hash collision은 곧 key 충돌/덮어쓰기를 뜻하지 않는다. equals가 false면 별도 entry다.
-- hashCode만 같다고 두 key가 같은 것은 아니다.
-- HashMap의 내부 tree 전환을 애플리케이션 계약으로 의존하면 안 된다.
+이 상태는 계약 위반이 아닙니다. HashMap은 같은 후보 위치에서 추가 비교를 통해 key를 구분해야 합니다. 좋은 hash 분포는 평균 성능에 도움을 주지만 충돌 자체를 완전히 없애는 것이 hashCode 계약은 아닙니다.
+
+### equals와 hashCode가 함께 중요한 이유
+
+논리적으로 같은 key라면 같은 hashCode를 반환해야 합니다. 그렇지 않으면 같은 key를 다른 후보 위치에서 찾으려 하여 조회가 실패할 수 있습니다.
+
+```java
+Map<MemberKey, String> map = new HashMap<>();
+map.put(new MemberKey(1L), "kim");
+
+map.get(new MemberKey(1L));
+```
+
+`MemberKey`의 equals/hashCode가 같은 id를 기준으로 일관되게 구현되어야 기대대로 찾을 수 있습니다.
+
+### key를 넣은 뒤 hash 관련 상태를 바꾸면 위험하다
+
+```java
+class Key {
+    String value;
+    // value를 기준으로 equals/hashCode
+}
+```
+
+Map에 key를 넣은 뒤 `value`를 바꾸면 조회 시 계산되는 hash나 equals 결과가 저장 당시와 달라질 수 있습니다. 그러면 Map 안에 객체가 존재하는데도 현재 key로 찾기 어려운 상황이 생깁니다.
+
+그래서 HashMap key에 사용하는 동등성 관련 상태는 가능하면 불변으로 유지하는 편이 안전합니다.
+
+### O(1)을 절대 시간으로 이해하지 않는다
+
+HashMap의 기본 연산은 hash가 적절히 분산된다는 가정 아래 평균적으로 매우 효율적입니다. 하지만 데이터 수, 충돌 분포, resize, key의 hashCode/equals 비용 등에 따라 실제 비용은 달라집니다.
+
+“HashMap은 항상 O(1)”이라는 한 문장보다 **hash로 후보를 좁히고 충돌 시 비교가 더 필요하다**는 흐름을 이해하는 것이 실무와 면접 모두에 도움이 됩니다.

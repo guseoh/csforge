@@ -3,62 +3,108 @@ kind: concept
 contentKey: java.core.object-model.overload-vs-override
 topicContentKey: java.core.object-model
 slug: overload-vs-override
-title: "Overload와 override"
-summary: "compile-time overload 선택과 runtime override dispatch를 분리한다"
+title: "오버로딩과 오버라이딩"
+summary: "컴파일 시점의 overload 선택과 실행 시점의 override된 인스턴스 메서드 선택을 구분해 호출 결과를 예측한다"
 level: 2
 status: PUBLISHED
 displayOrder: 90
 references:
-  - url: "https://docs.oracle.com/javase/specs/jls/se25/html/jls-15.html"
-    title: "Java Language Specification 15장: Expressions"
+  - url: "https://docs.oracle.com/javase/specs/jls/se25/html/jls-15.html#jls-15.12"
+    title: "JLS 15.12 Method Invocation Expressions"
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
-    relationNote: method overload 선택과 invocation 확인
-  - url: "https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html"
-    title: "Java Language Specification 8장: Classes"
+    relationNote: overload resolution과 method invocation 규칙 확인
+  - url: "https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html#jls-8.4.8"
+    title: "JLS 8.4.8 Inheritance, Overriding, and Hiding"
     referenceType: OFFICIAL
     language: en
     displayOrder: 2
-    relationNote: method overriding와 signature 규칙 확인
+    relationNote: override 규칙 확인
 ---
-# Overload와 override
+# 오버로딩과 오버라이딩
 
-## 쉬운 진입
+이름이 비슷하지만 오버로딩(overloading)과 오버라이딩(overriding)은 **메서드가 선택되는 시점부터 다릅니다.** 두 개념을 “같은 이름의 메서드를 다시 만든다”로 묶어 외우면 복합 호출 문제에서 쉽게 헷갈립니다.
 
-같은 “주문 처리”라는 이름이라도 매개변수 종류가 다르면 overload이고, 부모가 정한 같은 행동을
-자식이 다시 구현하면 override다. 하나는 컴파일할 때 어느 메서드 시그니처를 부를지 정하는
-문제이고, 다른 하나는 실제 object가 어떤 구현을 실행할지 정하는 문제다.
-
-## 정확한 메커니즘
+### 오버로딩은 어떤 메서드 서명을 호출할지 고른다
 
 ```java
-class Printer {
-    void print(Object value) { System.out.println("object"); }
-    void print(String value) { System.out.println("string"); }
+void print(Object value) {
+    System.out.println("Object");
 }
 
-class SpecialPrinter extends Printer {
-    @Override void print(Object value) { System.out.println("special object"); }
+void print(String value) {
+    System.out.println("String");
 }
-
-Object value = "Java";
-Printer printer = new SpecialPrinter();
-printer.print(value); // special object: compile-time overload은 Object, runtime override는 SpecialPrinter
 ```
 
-overload 선택은 변수의 정적 타입과 인자 형식을 바탕으로 compile time에 결정된다. 선택된
-signature가 부모 method라면 그 signature에 대한 override가 runtime에 dispatch된다. 반환 타입만
-바꾼 선언은 overload가 되지 않으며, override는 부모 계약을 깨지 않는 대체 구현이어야 한다.
+호출할 때 컴파일러는 인자 표현식의 타입과 적용 가능한 메서드 후보를 보고 어떤 overload를 사용할지 정합니다.
 
-## 실전·면접 연결
+```java
+Object value = "hello";
+print(value); // Object overload
+```
 
-API overload를 늘리면 호출부의 compile-time 타입이 결과를 바꿀 수 있으므로 null과 상속 관계를
-포함한 호출을 테스트한다. 다형성 확장이 목적이면 overload가 아니라 공통 interface와 override가
-더 명확한지 살핀다.
+실제 객체가 `String`이어도 변수 표현식의 컴파일 시점 타입이 `Object`라면 overload 선택에서는 그 타입 정보가 중요합니다.
 
-## 흔한 오해
+### 오버라이딩은 선택된 인스턴스 메서드의 실제 구현을 고른다
 
-- overload가 runtime object 타입을 보고 다시 선택되는 것은 아니다.
-- override는 method name만 같으면 되는 것이 아니라 signature·접근·상속 계약의 제약을 따른다.
-- `static` method hiding은 override와 같은 dynamic dispatch가 아니다.
+```java
+class Parent {
+    void print(Object value) {
+        System.out.println("parent");
+    }
+}
+
+class Child extends Parent {
+    @Override
+    void print(Object value) {
+        System.out.println("child");
+    }
+}
+
+Parent p = new Child();
+p.print("hello"); // child
+```
+
+먼저 `print(Object)`라는 메서드 호출이 정해지고, 실행할 때 실제 객체가 `Child`이므로 override된 `Child.print(Object)`가 선택됩니다.
+
+### 둘이 섞이면 두 단계로 풀어야 한다
+
+```java
+class Parent {
+    void call(Object value) { System.out.println("P-Object"); }
+    void call(String value) { System.out.println("P-String"); }
+}
+
+class Child extends Parent {
+    @Override
+    void call(Object value) { System.out.println("C-Object"); }
+}
+
+Parent target = new Child();
+Object value = "java";
+target.call(value);
+```
+
+이 문제를 한 번에 보지 말고 나눕니다.
+
+1. 컴파일 시점: `target`은 `Parent`, `value`는 `Object`이므로 `call(Object)` overload가 선택됩니다.
+2. 실행 시점: 실제 객체는 `Child`이고 `call(Object)`를 override했으므로 `Child.call(Object)`가 실행됩니다.
+
+결과는 `C-Object`입니다.
+
+### 반환 타입만 바꿔서는 overload할 수 없다
+
+```java
+// int find() {}
+// String find() {}
+```
+
+매개변수 목록이 같고 반환 타입만 다른 메서드를 두 개 선언해 호출을 구분할 수는 없습니다. 호출하는 쪽에서 반환 타입만으로 어느 메서드를 선택해야 하는지 결정할 수 없기 때문입니다.
+
+### 면접에서 설명한다면
+
+오버로딩은 같은 이름의 여러 메서드 중 어떤 메서드 서명을 호출할지 컴파일 시점에 결정하는 과정이고, 오버라이딩은 상속 관계에서 같은 인스턴스 메서드의 하위 구현을 제공하며 실제 객체 타입에 따라 실행 시점에 선택되는 것이라고 설명하면 됩니다.
+
+문제에서는 항상 **먼저 overload resolution, 그다음 override dispatch** 순서로 추적하면 좋습니다.

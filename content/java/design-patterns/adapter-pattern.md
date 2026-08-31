@@ -3,53 +3,72 @@ kind: concept
 contentKey: java.core.design-patterns.adapter-pattern
 topicContentKey: java.core.design-patterns
 slug: adapter-pattern
-title: "Adapter 패턴과 외부 API 경계"
-summary: "호환되지 않는 인터페이스를 애플리케이션이 원하는 역할로 변환한다"
+title: "Adapter로 외부 인터페이스와 경계 분리하기"
+summary: "외부 라이브러리나 다른 인터페이스를 애플리케이션이 기대하는 계약으로 변환해 내부 코드가 외부 세부에 직접 묶이지 않게 한다"
 level: 2
 status: PUBLISHED
 displayOrder: 40
 references:
-  - url: "https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html#jls-8.4"
-    title: "Java Language Specification 8.4장: Methods"
+  - url: "https://docs.oracle.com/javase/specs/jls/se25/html/jls-9.html"
+    title: "JLS 9 Interfaces"
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
-    relationNote: 인터페이스 메서드 구현과 overriding 규칙 확인
-  - url: "https://refactoring.guru/design-patterns/adapter"
-    title: "Adapter Design Pattern"
-    referenceType: OTHER
-    language: en
-    displayOrder: 2
-    relationNote: target와 adaptee 사이 변환 구조 참고
+    relationNote: 인터페이스 기반 계약의 언어 규칙 확인
 ---
-# Adapter 패턴과 외부 API 경계
+# Adapter로 외부 인터페이스와 경계 분리하기
 
-## 쉬운 진입
+외부 라이브러리나 오래된 코드가 제공하는 메서드 형태가 우리 애플리케이션이 원하는 계약과 다를 수 있습니다. 호출 코드마다 외부 API 형식에 맞추는 변환을 반복하면 내부 로직이 그 외부 기술에 퍼져서 의존하게 됩니다.
 
-내부 코드는 `PaymentGateway.pay(Money)`를 기대하지만 외부 SDK는 `charge(long cents)`만
-제공할 수 있다. SDK 호출을 모든 서비스에 흩뜨리지 말고 adapter 하나가 두 언어를 통역하게 한다.
+Adapter는 **한쪽의 인터페이스를 다른 쪽이 기대하는 형태로 바꾸는 경계 객체**입니다.
 
-## 정확한 메커니즘
-
-```text
-Checkout ──> PaymentGateway (Target)
-                    ▲
-                    │ implements
-             SdkPaymentAdapter ──delegates──> VendorSdk (Adaptee)
+```java
+interface MessageSender {
+    void send(String receiver, String message);
+}
 ```
 
-Adapter는 단위 변환, 예외 변환, 요청 객체 조립처럼 경계에 필요한 변환을 수행하지만
-결제 정책 자체를 대신하지 않는다. 객체 adapter는 합성으로 adaptee를 감싸므로 다중 상속이
-필요하지 않다.
+외부 SDK가 다음처럼 전혀 다른 API를 제공한다고 해 보겠습니다.
 
-## 실전·면접 연결
+```java
+externalClient.deliver(new VendorRequest(receiver, message));
+```
 
-외부 API 교체 시 변경 범위를 adapter로 가둘 수 있고, 테스트에서는 Target의 가짜 구현을
-주입할 수 있다. 변환이 너무 커져 도메인 규칙까지 들어가면 anti-corruption layer 또는
-별도 application collaborator가 필요한 신호다.
+Adapter가 변환을 맡을 수 있습니다.
 
-## 흔한 오해
+```java
+class VendorMessageAdapter implements MessageSender {
+    private final VendorClient client;
 
-- Adapter는 기능을 새로 설계하는 Decorator가 아니라 인터페이스 호환을 맞추는 구조다.
-- 외부 예외를 그대로 노출하면 내부 코드가 vendor API에 결합된다.
-- 단순한 메서드 이름 변경에도 무조건 별도 클래스가 필요한 것은 아니다.
+    @Override
+    public void send(String receiver, String message) {
+        client.deliver(new VendorRequest(receiver, message));
+    }
+}
+```
+
+```text
+Application
+   │ MessageSender
+   ▼
+Adapter
+   │ VendorRequest로 변환
+   ▼
+외부 SDK
+```
+
+### 경계를 보호한다는 것이 핵심이다
+
+외부 SDK의 DTO와 예외 타입이 서비스 계층 전체에 퍼지면 SDK를 교체할 때 많은 코드를 수정해야 합니다. Adapter에서 입력·출력과 예외를 애플리케이션 의미로 변환하면 영향 범위를 줄일 수 있습니다.
+
+### 데이터 변환만 한다고 항상 Adapter는 아니다
+
+DTO mapper도 데이터를 변환하지만 모든 변환 클래스를 디자인 패턴의 Adapter라고 부를 필요는 없습니다. 핵심은 **호환되지 않는 인터페이스 사이를 연결해 호출자가 기대하는 계약을 유지하는가**입니다.
+
+### 실무 예시
+
+- 결제 PG SDK를 내부 `PaymentGateway` 계약으로 감싸기
+- 외부 스토리지 API를 내부 파일 저장 계약으로 변환하기
+- 오래된 인터페이스를 새 인터페이스에 맞추기
+
+외부 기술에 대한 의존이 한 경계로 모여야 실제 교체와 테스트가 쉬워집니다.

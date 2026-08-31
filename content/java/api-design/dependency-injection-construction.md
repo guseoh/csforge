@@ -3,65 +3,90 @@ kind: concept
 contentKey: java.core.api-design.dependency-injection-construction
 topicContentKey: java.core.api-design
 slug: dependency-injection-construction
-title: "Dependency injection and construction"
-summary: "필요한 협력 객체를 명시적으로 전달해 결합도와 테스트 가능성을 개선한다"
+title: "의존성을 밖에서 전달하는 설계"
+summary: "객체가 필요한 협력자를 내부에서 숨겨 찾기보다 생성 시 명시적으로 전달해 결합도와 테스트 가능성을 개선한다"
 level: 2
 status: PUBLISHED
 displayOrder: 30
 references:
-  - url: "https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html"
-    title: "Java Language Specification 8장: Classes"
+  - url: "https://docs.oracle.com/javase/tutorial/java/javaOO/constructors.html"
+    title: "Oracle Java Tutorials: Providing Constructors for Your Classes"
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
-    relationNote: class field와 constructor 선언의 Java 의미 확인
-  - url: "https://docs.oracle.com/javase/specs/jls/se25/html/jls-9.html"
-    title: "Java Language Specification 9장: Interfaces"
-    referenceType: OFFICIAL
-    language: en
-    displayOrder: 2
-    relationNote: 협력자 계약을 interface로 표현하는 언어 기반 확인
+    relationNote: 생성자를 통한 객체 구성의 기본 참고
 ---
-# Dependency injection and construction
+# 의존성을 밖에서 전달하는 설계
 
-## 쉬운 진입
+어떤 객체가 일을 하기 위해 다른 객체가 필요하다면 그 다른 객체를 **의존성(dependency)** 이라고 부릅니다. 문제는 의존성이 있다는 사실이 아니라, 그 의존성이 코드에서 보이지 않거나 특정 구현으로 단단히 고정되어 있을 때 생깁니다.
 
-`InvoiceService`가 내부에서 매번 `new TaxClient()`를 하면 테스트가 실제 외부 client에
-묶이고, 설정을 바꾸기도 어렵다. 서비스가 필요한 collaborator를 생성 시 받아 두면 어떤
-협력자를 사용하는지 호출 지점에서 보인다.
-
-## 정확한 메커니즘
-
-plain Java의 constructor injection은 특별한 container 없이 constructor parameter로
-dependency를 전달하는 방식이다.
+### 내부에서 직접 만들어 버리면 선택 책임까지 떠안는다
 
 ```java
-interface TaxPolicy {
-    long taxFor(long amount);
-}
+class OrderService {
+    private final EmailSender sender = new SmtpEmailSender();
 
-final class InvoiceService {
-    private final TaxPolicy taxPolicy;
-
-    InvoiceService(TaxPolicy taxPolicy) {
-        this.taxPolicy = java.util.Objects.requireNonNull(taxPolicy);
+    void complete(Order order) {
+        sender.send(order);
     }
 }
 ```
 
-필수 dependency는 constructor로 받고, 선택 dependency는 기본 정책이 정말 명확할 때만
-별도 factory로 감싼다. `static` global lookup은 의존성을 숨기고 공유 상태·초기화 순서·테스트
-격리 문제를 만든다.
+`OrderService`는 주문 완료뿐 아니라 어떤 이메일 구현을 사용할지까지 결정합니다. `SmtpEmailSender`의 생성 방식이 바뀌거나 테스트에서 가짜 구현을 사용하고 싶을 때 `OrderService` 코드가 함께 영향을 받습니다.
 
-## 실전·면접 연결
+### 필요한 협력자를 생성자로 받는다
 
-여기서 말하는 injection은 Spring container가 bean을 발견하고 lifecycle을 관리한다는 뜻이
-아니다. Java code 자체의 construction boundary다. interface가 필요하지 않은 단일 immutable
-value collaborator까지 모두 interface로 만들면 abstraction 비용이 생기므로, 교체·격리·계약
-검증이라는 실제 이유가 있을 때만 경계를 만든다.
+```java
+class OrderService {
+    private final EmailSender sender;
 
-## 흔한 오해
+    OrderService(EmailSender sender) {
+        this.sender = sender;
+    }
+}
+}
+```
 
-- constructor parameter를 받는다고 dependency가 자동으로 mockable해지는 것은 아니다.
-- interface를 사용한다고 구현 선택과 retry 같은 운영 정책이 자동으로 생기지 않는다.
-- static global을 쓰지 않는다는 규칙이 모든 공유 cache를 금지하는 것은 아니다. 소유권과 동시성 계약을 명시해야 한다.
+이제 `OrderService`는 자신에게 `EmailSender`가 필요하다는 사실만 알고, 어떤 구현을 만들지는 외부에 맡깁니다.
+
+```java
+EmailSender sender = new SmtpEmailSender(...);
+OrderService service = new OrderService(sender);
+```
+
+```text
+구성하는 코드
+ ├─ SmtpEmailSender 생성
+ └─ OrderService 생성
+          │
+          └─ EmailSender를 전달
+```
+
+이처럼 필요한 객체를 외부에서 전달하는 것을 **의존성 주입(Dependency Injection, DI)** 이라고 합니다.
+
+### 테스트가 쉬워지는 이유
+
+```java
+class FakeEmailSender implements EmailSender {
+    int callCount;
+
+    @Override
+    public void send(Order order) {
+        callCount++;
+    }
+}
+```
+
+테스트에서는 실제 메일 서버에 연결하지 않고 `FakeEmailSender`를 전달할 수 있습니다. 핵심은 “mock을 쓰기 위해 DI를 한다”가 아니라 **객체가 특정 구현 생성 책임에서 분리되었기 때문에 다른 협력자를 넣을 수 있게 된 것**입니다.
+
+### Spring DI보다 먼저 이해해야 할 것
+
+Spring은 Bean을 만들고 이런 의존성을 자동으로 연결해 줄 수 있습니다. 하지만 DI 자체는 Spring 기능이 아닙니다. 위 코드는 순수 Java만으로도 완전한 DI입니다.
+
+그래서 Spring을 공부할 때도 `@Autowired` 같은 애너테이션을 외우기 전에 **누가 객체를 만들고, 누가 구현을 선택하며, 누가 연결하는가**를 구분해야 합니다.
+
+### 모든 객체를 인터페이스로 바꿀 필요는 없다
+
+DI는 구현 교체가 필요한 모든 곳에 인터페이스를 강제하는 규칙이 아닙니다. 구체 클래스 자체가 안정된 협력자라면 생성자로 구체 타입을 받아도 의존성이 명시된다는 장점은 그대로 있습니다.
+
+좋은 질문은 “인터페이스를 만들었나?”가 아니라 **이 객체가 필요한 협력자를 숨겨서 직접 찾거나 생성하고 있지는 않은가?** 입니다.

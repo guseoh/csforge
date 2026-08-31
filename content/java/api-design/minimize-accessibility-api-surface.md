@@ -3,66 +3,72 @@ kind: concept
 contentKey: java.core.api-design.minimize-accessibility-api-surface
 topicContentKey: java.core.api-design
 slug: minimize-accessibility-api-surface
-title: "Minimize accessibility and API surface"
-summary: "필요한 공개 범위만 열어 장기 호환성 비용과 변경 결합을 줄인다"
+title: "필요한 범위만 공개하기"
+summary: "클래스와 멤버의 접근 범위를 필요한 만큼만 열어 내부 변경 자유도와 API 호환성을 지키는 이유를 이해한다"
 level: 2
 status: PUBLISHED
 displayOrder: 40
 references:
-  - url: "https://docs.oracle.com/javase/specs/jls/se25/html/jls-6.html"
-    title: "Java Language Specification 6장: Names"
+  - url: "https://docs.oracle.com/javase/specs/jls/se25/html/jls-6.html#jls-6.6"
+    title: "JLS 6.6 Access Control"
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
-    relationNote: Java 접근 제어와 scope 규칙 확인
-  - url: "https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html"
-    title: "Java Language Specification 8장: Classes"
-    referenceType: OFFICIAL
-    language: en
-    displayOrder: 2
-    relationNote: class/member modifier와 상속 가능성 확인
+    relationNote: Java 접근 제어 규칙 확인
 ---
-# Minimize accessibility and API surface
+# 필요한 범위만 공개하기
 
-## 쉬운 진입
+`public`은 단순히 “어디서나 호출 가능”이라는 편의 기능이 아닙니다. 한 번 공개한 타입이나 메서드는 다른 코드가 의존하기 시작할 수 있고, 이후 이름·매개변수·동작을 바꾸기 어려워집니다. 그래서 **공개 API는 장기적인 약속**에 가깝습니다.
 
-오늘은 편해서 public field를 열었는데 내일 그 field의 단위와 변경 방식을 바꾸려 하면 이미
-많은 호출자가 내부 representation에 의존한다. 공개 API는 편의 기능이면서 미래 변경에 대한
-약속이 된다.
-
-## 정확한 메커니즘
-
-Java의 `private`, package-private(무 modifier), `protected`, `public`은 member와 type의
-접근 범위를 제한한다. 기본 선택은 가장 좁은 범위로 두고, 외부 사용 목적이 있을 때만 넓힌다.
+### 내부 구현까지 public이면 변경 비용이 커진다
 
 ```java
-public final class Celsius {
-    private final double value;
-
-    public Celsius(double value) {
-        if (value < -273.15) throw new IllegalArgumentException();
-        this.value = value;
-    }
-
-    public double value() {
-        return value;
-    }
+public class OrderValidator {
+    public boolean internalStep1(Order order) { ... }
+    public boolean internalStep2(Order order) { ... }
 }
 ```
 
-private field와 의도 중심 method는 상태 변경 경로를 줄이고 representation 교체 여지를
-남긴다. 접근 제어는 Java source/type 경계이며 암호화, OS 파일 권한, 네트워크 인증과는 다른
-문제다.
+원래는 `validate()` 내부 구현 단계였는데 모든 메서드를 public으로 만들면 다른 코드가 `internalStep1()`을 직접 호출할 수 있습니다. 나중에 검증 순서를 바꾸거나 메서드를 없애려 할 때 호출부를 모두 고려해야 합니다.
 
-## 실전·면접 연결
+```java
+public boolean validate(Order order) { ... }
+private boolean hasValidItems(Order order) { ... }
+```
 
-public method를 하나 추가하는 것은 쉬워도 제거·의미 변경은 호환성 비용이 크다. framework가
-필요로 하는 reflection/accessibility 예외와 일반 application API를 구분한다. package-private은
-같은 package 내부 협력에 유용하지만 package를 무조건 안정적인 module boundary로 보장하는 것은
-아니다.
+외부가 알아야 할 계약만 공개하고 구현 세부는 숨기면 내부 구조를 바꿀 자유가 커집니다.
 
-## 흔한 오해
+### 접근 제어는 캡슐화 경계를 표현한다
 
-- public이라고 나쁜 설계이고 private이면 무조건 좋은 설계인 것은 아니다.
-- getter를 전부 열면 캡슐화가 완성되는 것이 아니다. 반환 object의 변경 가능성도 확인한다.
-- 접근 제어가 호출자의 악의적인 OS·네트워크 접근을 막는 보안 장치라는 뜻은 아니다.
+Java에서는 `private`, package 접근, `protected`, `public` 등 여러 범위를 제공합니다. 중요한 것은 무조건 가장 좁게 만들라는 기계적인 규칙보다 **실제로 누가 이 멤버를 알아야 하는가**입니다.
+
+예를 들어 같은 패키지의 협력 클래스만 사용해야 하는 구현 타입을 public으로 노출할 필요가 없을 수 있습니다. 반대로 외부 모듈이 사용해야 하는 안정된 계약이라면 public이 맞습니다.
+
+### 반환 타입도 API surface다
+
+```java
+public ArrayList<Order> findAll() { ... }
+```
+
+호출자가 `ArrayList` 구현에 의존할 이유가 없다면 `List<Order>`처럼 필요한 계약만 노출하는 편이 구현을 바꾸기 쉽습니다.
+
+```java
+public List<Order> findAll() { ... }
+```
+
+다만 구체 타입의 특별한 기능이 API 계약에 실제로 필요하다면 구체 타입을 반환할 수도 있습니다. 추상 타입을 쓰는 것 자체가 목적은 아닙니다.
+
+### 백엔드 개발에서 연결되는 지점
+
+서비스 내부 helper, 도메인 생성 메서드, 라이브러리 모듈의 타입을 모두 public으로 열면 사용 가능한 경계가 넓어집니다. 특히 여러 모듈이나 외부 사용자가 있는 라이브러리에서는 공개 API 변경이 호환성 문제로 이어집니다.
+
+단일 애플리케이션 안에서도 공개 범위를 줄이면 “이 메서드는 어디서 호출될 수 있지?”를 추적하기 쉬워집니다.
+
+### 코드 리뷰에서 확인할 것
+
+- 이 타입이나 메서드를 외부에서 실제로 사용해야 하는가?
+- 내부 구현 세부가 public 계약으로 새어나오고 있지 않은가?
+- 반환 타입이 필요 이상으로 구체적이지 않은가?
+- 향후 변경해야 할 가능성이 큰 세부를 공개하고 있지 않은가?
+
+접근 제어는 보안 기능 전체를 대신하지는 않습니다. `private`이라고 공격자가 데이터를 볼 수 없다는 뜻이 아니라 **Java 코드 수준의 사용 경계를 표현하는 도구**입니다.

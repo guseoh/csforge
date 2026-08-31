@@ -3,53 +3,60 @@ kind: concept
 contentKey: java.core.enum-modeling.enummap
 topicContentKey: java.core.enum-modeling
 slug: enummap
-title: "EnumMap으로 enum 키 매핑하기"
-summary: "enum 키를 쓰는 Map에서 타입 안전성, 순서, 기본값 정책을 명확히 한다"
+title: "EnumMap으로 enum key 매핑하기"
+summary: "key가 하나의 enum 타입으로 제한된 Map에서 EnumMap을 사용해 key 범위와 의도를 분명하게 표현한다"
 level: 2
 status: PUBLISHED
 displayOrder: 40
 references:
   - url: "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/EnumMap.html"
-    title: "EnumMap API (Java SE 25)"
+    title: "Java SE 25 API: EnumMap"
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
-    relationNote: enum 키 전용 Map의 계약 확인
-  - url: "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Map.html"
-    title: "Map API (Java SE 25)"
-    referenceType: OFFICIAL
-    language: en
-    displayOrder: 2
-    relationNote: key-value 매핑과 null/containsKey 의미 확인
+    relationNote: EnumMap의 key 제한과 iteration order 계약 확인
 ---
-# EnumMap으로 enum 키 매핑하기
+# EnumMap으로 enum key 매핑하기
 
-## 쉬운 진입
-
-요일별 영업시간처럼 키가 enum으로 고정되어 있다면 `Map<Day, OpeningHours>`가 모델의
-경계를 보여준다. `EnumMap`은 그 키 타입을 생성 시점에 고정하고 enum 순서를 자연스럽게
-활용한다.
-
-## 정확한 메커니즘
+enum 값마다 다른 설정이나 행동 객체를 연결해야 할 때 `Map<Enum, Value>` 형태가 자주 등장합니다. key가 한 enum 타입으로 고정되어 있다면 `EnumMap`이 그 의도를 직접 표현합니다.
 
 ```java
-EnumMap<Day, Integer> closingHour = new EnumMap<>(Day.class);
-closingHour.put(Day.MONDAY, 18);
-int hour = closingHour.getOrDefault(Day.SUNDAY, 0);
+EnumMap<Grade, Integer> discountRates = new EnumMap<>(Grade.class);
+discountRates.put(Grade.BASIC, 0);
+discountRates.put(Grade.VIP, 10);
 ```
 
-`EnumMap`은 enum 키만 허용하고 키 iteration은 enum 선언 순서다. 키를 하나도 모르는 빈
-`Map`과 달리 `Day.class`가 매핑의 타입 기준이 된다. 값에는 일반 Map과 같은 null 정책을
-적용할 수 있으므로, 값이 없다는 의미와 명시적 null을 구분해야 한다.
+`Grade`가 아닌 다른 타입은 key로 들어갈 수 없으므로 가능한 key 범위가 명확합니다.
 
-## 실전·면접 연결
+### switch가 커질 때 대안이 될 수 있다
 
-상태별 핸들러, 권한별 한도, 열거형별 통계처럼 키 집합이 작고 닫힌 경우 `HashMap`보다
-의도가 선명하고 효율적인 선택이 될 수 있다. enum 키의 선언 순서를 화면 표시 순서로
-사용하는 것은 별도 제품 계약으로 결정해야 한다.
+```java
+int rate = switch (grade) {
+    case BASIC -> 0;
+    case VIP -> 10;
+    case VVIP -> 20;
+};
+```
 
-## 흔한 오해
+값이 단순하고 고정되어 있으면 switch가 오히려 가장 읽기 좋을 수 있습니다. 하지만 런타임에 매핑을 구성하거나 enum별 전략 객체를 연결해야 한다면 `EnumMap`이 자연스러울 수 있습니다.
 
-- `EnumMap`은 값도 enum이어야 하는 컬렉션이 아니다. 키만 enum이다.
-- 없는 키의 `get`은 0 같은 숫자 기본값을 자동으로 주지 않는다.
-- enum 선언 순서가 항상 사용자에게 보여줄 정렬 기준이라는 보장은 없다.
+```java
+EnumMap<PaymentType, PaymentHandler> handlers = ...;
+PaymentHandler handler = handlers.get(type);
+```
+
+### 순서를 일반 Map과 동일하게 가정하지 않는다
+
+`EnumMap`은 enum 상수의 자연스러운 선언 순서를 기준으로 key를 다룹니다. 이것은 `HashMap`의 iteration order와 다른 특징입니다. 다만 비즈니스 정렬 규칙을 단순히 enum 선언 순서에 의존하게 만들지는 않는 편이 좋습니다. 상수 순서를 리팩터링하면 의미가 바뀔 수 있기 때문입니다.
+
+### null과 누락 key를 구분한다
+
+Map 조회 결과가 `null`이라면 key가 없거나 값 자체가 null일 수 있습니다. `EnumMap`의 key는 null을 허용하지 않지만 value는 null일 수 있으므로 필요하면 `containsKey`로 구분해야 합니다.
+
+### 사용 기준
+
+- key 종류가 하나의 enum으로 닫혀 있다.
+- enum별 설정·전략·값을 lookup해야 한다.
+- 일반 문자열 key보다 타입 안전성을 얻고 싶다.
+
+이런 상황이면 `HashMap<Grade, ...>`도 기능상 가능하지만 `EnumMap`이 모델 의도를 더 분명하게 전달할 수 있습니다.

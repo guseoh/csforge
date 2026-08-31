@@ -3,51 +3,74 @@ kind: concept
 contentKey: java.core.design-patterns.decorator-pattern
 topicContentKey: java.core.design-patterns
 slug: decorator-pattern
-title: "Decorator 패턴과 조합 가능한 부가 기능"
-summary: "같은 인터페이스를 감싸며 기능을 조합하고 상속 폭발을 피한다"
+title: "Decorator로 책임을 겹쳐 붙이기"
+summary: "원래 객체와 같은 계약을 유지하면서 로깅·검증·압축처럼 추가 책임을 합성으로 감싸는 구조를 이해한다"
 level: 2
 status: PUBLISHED
 displayOrder: 50
 references:
   - url: "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/FilterInputStream.html"
-    title: "FilterInputStream API (Java SE 25)"
+    title: "Java SE 25 API: FilterInputStream"
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
-    relationNote: Java IO의 wrapping 기반 decorator 사례 확인
-  - url: "https://refactoring.guru/design-patterns/decorator"
-    title: "Decorator Design Pattern"
-    referenceType: OTHER
-    language: en
-    displayOrder: 2
-    relationNote: 동일 인터페이스 wrapper 조합 구조 참고
+    relationNote: Java I/O에서 다른 stream을 감싸는 대표 구조 참고
 ---
-# Decorator 패턴과 조합 가능한 부가 기능
+# Decorator로 책임을 겹쳐 붙이기
 
-## 쉬운 진입
+기존 객체의 핵심 동작은 유지하면서 로깅, 압축, 캐싱 같은 기능을 선택적으로 덧붙이고 싶을 수 있습니다. 상속으로 모든 조합을 만들면 클래스 수가 빠르게 늘어납니다.
 
-파일 입력에 버퍼링, 압축, 암호화를 선택적으로 붙이고 싶을 때 기능별 하위 클래스를 모두
-만들면 조합 수가 폭발한다. 같은 인터페이스를 구현하는 wrapper가 다음 wrapper를 감싸면
-필요한 기능만 쌓을 수 있다.
+Decorator는 **원래 객체와 같은 계약을 구현하면서 내부에 같은 계약의 객체를 가지고 호출을 위임**합니다.
 
-## 정확한 메커니즘
+```java
+interface DataReader {
+    byte[] read();
+}
 
-```text
-Client -> MetricsDecorator -> RetryDecorator -> FileStore
-          (Store interface를 모두 구현하고 내부 Store에 위임)
+class LoggingReader implements DataReader {
+    private final DataReader target;
+
+    @Override
+    public byte[] read() {
+        System.out.println("read start");
+        return target.read();
+    }
+}
 ```
 
-Decorator는 핵심 객체와 같은 계약을 제공하며 호출 전후에 부가 행동을 넣는다. Java IO의
-stream wrapper가 대표적인 예다. wrapper 순서가 의미를 가지므로 예외, 측정, 재시도 범위를
-명확히 정해야 한다.
+여러 decorator를 겹칠 수도 있습니다.
 
-## 실전·면접 연결
+```text
+호출자
+  │
+  ▼
+LoggingDecorator
+  │
+  ▼
+CachingDecorator
+  │
+  ▼
+RealReader
+```
 
-합성은 런타임 조합과 단일 책임에 유리하지만, 너무 많은 wrapper는 디버깅과 순서 추론을
-어렵게 한다. 단순한 필드 하나를 보강하는 경우에는 일반 위임 클래스가 더 읽기 쉬울 수 있다.
+### 조합이 유연해진다
 
-## 흔한 오해
+상속으로 `LoggingCachingReader`, `CompressedLoggingReader` 같은 모든 조합을 만들지 않아도 필요에 따라 객체를 감쌀 수 있습니다.
 
-- Decorator는 Adapter처럼 인터페이스를 바꾸는 것이 아니라 같은 인터페이스를 유지한다.
-- wrapper가 내부 호출을 생략하면 Decorator가 아니라 대체 구현이 된다.
-- 순서를 바꿔도 항상 같은 결과라는 보장은 없다.
+```java
+DataReader reader = new LoggingReader(
+        new CachingReader(new FileReader(...))
+);
+```
+
+### 순서가 결과에 영향을 줄 수 있다
+
+Decorator를 여러 개 겹치면 어떤 책임이 먼저 실행되는지가 중요할 수 있습니다. 캐시 바깥에 로깅을 둘 때와 안쪽에 둘 때 측정되는 호출 수가 달라질 수 있습니다.
+
+따라서 조합 가능하다는 이유만 보고 순서를 무시하면 안 됩니다.
+
+### Proxy와 무엇이 다른가
+
+구조만 보면 둘 다 target을 감쌀 수 있습니다. 일반적으로 Decorator는 **기능을 조합해 추가하는 것**에 초점이 있고 Proxy는 대상 접근을 중개하거나 제어하는 역할에 초점이 있습니다. 실제 코드는 둘의 경계가 겹칠 수 있으므로 이름보다 책임을 보는 편이 좋습니다.
+
+Java I/O stream 계층에서 여러 stream을 감싸는 구조를 보면 이런 합성 아이디어를 실제 API에서 확인할 수 있습니다.
