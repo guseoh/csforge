@@ -11,7 +11,7 @@ displayOrder: 10
 references:
 - url: https://aws.amazon.com/builders-library/timeouts-retries-and-backoff-with-jitter/
   title: 'AWS Builders Library: Timeouts, retries, and backoff with jitter'
-  referenceType: REFERENCE
+  referenceType: COMPANY_TECH_BLOG
   language: en
   displayOrder: 1
   relationNote: timeout·retry·backoff·jitter가 부하와 장애 전파에 미치는 영향 확인
