@@ -11,7 +11,7 @@ displayOrder: 30
 references:
   - url: "https://martinfowler.com/articles/is-quality-worth-cost.html"
     title: "Is High Quality Software Worth the Cost?"
-    referenceType: ARTICLE
+    referenceType: OTHER
     language: en
     displayOrder: 1
     relationNote: "내부 품질과 변경 비용의 관계를 생각하는 참고 자료다."

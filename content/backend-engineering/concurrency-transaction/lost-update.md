@@ -10,7 +10,7 @@ status: PUBLISHED
 displayOrder: 10
 references:
 - url: https://www.postgresql.org/docs/current/transaction-iso.html
-  title: 'PostgreSQL: Transaction Isolation'
+  title: "PostgreSQL Documentation: Transaction Isolation"
   referenceType: OFFICIAL
   language: en
   displayOrder: 1

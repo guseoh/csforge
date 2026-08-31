@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: "IoC container와 dependency injection의 공식 정의 확인"
   - url: "https://docs.spring.io/spring-framework/reference/core/beans/dependencies/factory-collaborators.html"
-    title: "Spring Framework Reference: Dependency Injection"
+    title: "Spring Framework Reference: Dependencies and Configuration in Detail"
     referenceType: OFFICIAL
     language: en
     displayOrder: 2

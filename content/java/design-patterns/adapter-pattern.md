@@ -10,7 +10,7 @@ status: PUBLISHED
 displayOrder: 40
 references:
   - url: "https://docs.oracle.com/javase/specs/jls/se25/html/jls-9.html"
-    title: "JLS 9 Interfaces"
+    title: "Java Language Specification 9장: Interfaces"
     referenceType: OFFICIAL
     language: en
     displayOrder: 1

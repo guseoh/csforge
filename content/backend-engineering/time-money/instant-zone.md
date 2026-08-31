@@ -10,7 +10,7 @@ status: PUBLISHED
 displayOrder: 10
 references:
   - url: "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/time/Instant.html"
-    title: "Java SE 25 Instant"
+    title: "Java SE 25 API: Instant"
     referenceType: OFFICIAL
     language: en
     displayOrder: 1

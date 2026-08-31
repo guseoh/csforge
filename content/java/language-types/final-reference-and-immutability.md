@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: final 변수의 한 번만 할당되는 규칙 확인
   - url: "https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html"
-    title: "JLS 8 Classes"
+    title: "Java Language Specification 8장: Classes"
     referenceType: OFFICIAL
     language: en
     displayOrder: 2

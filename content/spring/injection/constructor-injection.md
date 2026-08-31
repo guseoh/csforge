@@ -10,7 +10,7 @@ status: PUBLISHED
 displayOrder: 10
 references:
   - url: "https://docs.spring.io/spring-framework/reference/core/beans/dependencies/factory-collaborators.html"
-    title: "Spring Framework Reference: Dependency Injection"
+    title: "Spring Framework Reference: Dependencies and Configuration in Detail"
     referenceType: OFFICIAL
     language: en
     displayOrder: 1

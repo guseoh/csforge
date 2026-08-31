@@ -10,7 +10,7 @@ status: PUBLISHED
 displayOrder: 20
 references:
   - url: "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/time/Clock.html"
-    title: "Java SE 25 Clock"
+    title: "Java SE 25 API: Clock"
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
