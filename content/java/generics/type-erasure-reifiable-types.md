@@ -21,6 +21,12 @@ references:
     language: en
     displayOrder: 2
     relationNote: 런타임에 완전히 표현 가능한 타입 확인
+  - url: "https://docs.oracle.com/javase/specs/jls/se25/html/jls-15.html#jls-15.20.2"
+    title: "Java Language Specification 15.20.2장: The instanceof Operator"
+    referenceType: OFFICIAL
+    language: en
+    displayOrder: 3
+    relationNote: 피연산자의 정적 타입에 따른 parameterized instanceof 허용 범위 확인
 ---
 # Type erasure와 reifiable type
 
@@ -38,8 +44,12 @@ List<Integer> ──compile──> List
 ```
 
 reifiable type은 실행 시 타입 정보가 완전히 표현되는 타입으로 primitive, non-generic class,
-raw type, unbounded wildcard parameterization 등이 포함된다. 그래서 `new T[]`,
-`value instanceof List<String>`, `List<String>.class` 같은 표현은 허용되지 않는다.
+raw type, unbounded wildcard parameterization 등이 포함된다. 임의의 타입 변수 T에 대한
+`new T[]`와 `List<String>.class`는 허용되지 않는다. `Object value`에 대한
+`value instanceof List<String>`도 String 타입 인자를 런타임에 검사할 수 없어 거부된다.
+Java SE 25의 instanceof 허용 여부는 피연산자의 정적 타입에서 검사 대상 타입으로의
+변환에 unchecked 검사가 필요한지에 달려 있으므로 모든 parameterized 타입 검사를
+무조건 금지한다고 일반화하지 않는다.
 
 ## 실전·면접 연결
 
@@ -50,5 +60,5 @@ bridge method 등 컴파일러 생성물이 보일 수 있지만 이를 일반 A
 ## 흔한 오해
 
 - erasure는 제네릭이 전혀 검증되지 않는다는 뜻이 아니다. 컴파일러가 source type check를 한다.
-- 모든 타입이 완전히 Object로 바뀐다고 단순화하면 bounded type과 primitive specialization의 차이를 놓친다.
-- `instanceof List<?>`는 가능하지만 `instanceof List<String>`은 불가능하다.
+- 타입 변수의 erasure는 bound에 영향을 받으며 모든 타입이 무조건 Object가 되는 것은 아니다.
+- Object 값의 `instanceof List<?>`는 List 종류만 검사하며 원소가 String인지 보장하지 않는다.

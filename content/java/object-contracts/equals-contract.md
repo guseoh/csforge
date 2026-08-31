@@ -50,9 +50,10 @@ public boolean equals(Object other) {
 
 ## 실전·면접 연결
 
-JPA entity, value object, DTO는 identity 정책이 다르다. equality를 구현할 때 nullable id의
-생성 전 상태, subtype 대체 가능성, mutable field 변경 시점을 함께 검토한다. `equals`가
-true라는 것은 두 객체가 모든 field가 같거나 같은 memory object라는 뜻이 아니다.
+주문 번호로 같은 주문을 판단하는 객체와 좌표로 같은 값을 판단하는 객체는 논리적 동등성
+기준이 다르다. subtype 대체 가능성과 equality에 쓰는 상태의 변경 시점을 검토한다.
+`equals`가 true라고 모든 field가 같거나 동일한 객체 참조라는 뜻은 아니다. 값에서 계산한
+캐시처럼 의미상 부수적인 필드는 같은 값의 판단 기준에 자동으로 포함하지 않는다.
 
 ## 흔한 오해
 

@@ -50,9 +50,13 @@ component 자체가 mutable이면 소유권 문제는 여전히 남는다.
 ## 실전·면접 연결
 
 hash code 계산은 충돌을 허용해야 하며, 충돌을 없애는 것이 구현 목표가 아니다. equality에
-참여하는 field를 두 메서드에서 정확히 일치시키고, map/set에 넣은 동안 key를 immutable하게
+사용하는 동등성 규칙에 hash 계산을 맞추고, map/set에 넣은 동안 key를 immutable하게
 유지한다. 고성능을 이유로 `hashCode`가 매번 다른 값을 내도록 만들면 collection 계약을
 깨뜨린다.
+
+hashCode가 equals에 쓰는 모든 필드를 반드시 포함해야 하는 것은 아니다. 일부만 사용해도
+같은 값이 같은 hash를 가지면 필수 계약은 만족하지만 충돌이 늘어 성능에 불리할 수 있다.
+반대로 equals가 무시하는 가변 필드를 hash에 넣으면 동등한 객체의 hash가 달라질 수 있다.
 
 ## 흔한 오해
 

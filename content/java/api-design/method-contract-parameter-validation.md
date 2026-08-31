@@ -54,10 +54,10 @@ public void reserve(int quantity) {
 
 ## 실전·면접 연결
 
-HTTP request shape validation과 domain invariant validation은 경계가 다르다. web layer에서
-필수 field 형식을 확인하더라도 핵심 object method이 직접 호출될 수 있는 경로에서는 domain
-규칙을 보호한다. 문서·명명·반환 타입을 함께 설계하면 caller가 예외를 삼키거나 null을 추측하는
-상황을 줄일 수 있다.
+호출자가 미리 검사하더라도 객체의 공개 메서드는 자신의 상태와 입력 조합을 보호해야 한다.
+예외는 이미 수행한 필드 변경을 자동으로 되돌리지 않으므로, 위 reserve는 검사를 모두 마친
+성공 경로에서만 available을 줄인다. 문서·명명·반환 타입을 함께 설계하면 caller가 실패 후의
+상태나 null의 의미를 추측하는 상황을 줄일 수 있다.
 
 ## 흔한 오해
 

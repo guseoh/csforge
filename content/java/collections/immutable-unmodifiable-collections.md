@@ -4,7 +4,7 @@ contentKey: java.core.collections.immutable-unmodifiable-collections
 topicContentKey: java.core.collections
 slug: immutable-unmodifiable-collections
 title: "불변 컬렉션과 unmodifiable view"
-summary: "수정 불가 view와 진짜 불변 복사의 차이, 소유권 전달을 설계한다"
+summary: "원본을 반영하는 unmodifiable view와 구조를 고정한 snapshot을 구분한다"
 level: 2
 status: PUBLISHED
 displayOrder: 90
@@ -14,7 +14,7 @@ references:
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
-    relationNote: null 불허 copy와 불변 결과 계약 확인
+    relationNote: null 불허와 unmodifiable 결과 및 인스턴스 재사용 계약 확인
   - url: "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Collections.html#unmodifiableList(java.util.List)"
     title: "Java SE 25 Collections.unmodifiableList API"
     referenceType: OFFICIAL
@@ -35,21 +35,23 @@ references:
 List<String> source = new ArrayList<>(List.of("A"));
 List<String> view = Collections.unmodifiableList(source);
 List<String> snapshot = List.copyOf(source);
-source.add("B"); // view에는 보일 수 있지만 snapshot에는 없음
+source.add("B"); // view는 [A, B], snapshot은 [A]
 ```
 
 view의 mutating method는 UnsupportedOperationException을 내지만 source mutation은 관찰한다.
-`List.copyOf`는 null을 허용하지 않는 불변 결과를 만들고 이후 원본 변경을 관찰하지 않는다.
-원소 자체가 mutable이면 컬렉션 불변성만으로 원소 상태까지 보호되지는 않는다.
+`List.copyOf`는 null 원소를 허용하지 않는 unmodifiable List를 반환하며 이후 원본의 구조
+변경을 반영하지 않는다. 적합한 unmodifiable List를 입력하면 같은 인스턴스를 재사용할 수도
+있으므로 항상 새 객체를 만든다는 보장은 없다. 원소 참조는 공유되며 원소가 mutable이면
+그 내부 상태 변경은 snapshot에서도 보일 수 있다. 이는 깊은 복사나 완전한 불변 객체가 아니다.
 
 ## 실전·면접 연결
 
-생성자에서 입력을 복사하고 getter에서 불변 view/snapshot을 반환하면 aggregate의 컬렉션
+생성자에서 입력을 복사하고 getter에서 unmodifiable view/snapshot을 반환하면 객체의 컬렉션
 소유권이 명확해진다. 큰 데이터나 잦은 변경에서는 매번 복사하는 비용과 API 안전성의 균형을
 정한다.
 
 ## 흔한 오해
 
-- unmodifiable view는 immutable snapshot과 다르다.
-- 불변 컬렉션 안의 mutable object까지 자동으로 불변이 되지 않는다.
+- 원본 구조 변경을 반영하는 view와 구조 변경에서 분리된 snapshot은 다르다.
+- unmodifiable List 안의 mutable object까지 자동으로 불변이 되지 않는다.
 - `List.of`와 `List.copyOf`는 null을 허용하지 않는다.

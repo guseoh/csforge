@@ -21,6 +21,12 @@ references:
     language: en
     displayOrder: 2
     relationNote: heap pollution 용어와 참조 타입 변수 의미 확인
+  - url: "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/SafeVarargs.html"
+    title: "Java SE 25 SafeVarargs API"
+    referenceType: OFFICIAL
+    language: en
+    displayOrder: 3
+    relationNote: 가변 인자 생성자와 메서드 적용 조건 및 안전성 보증 확인
 ---
 # Generic varargs와 heap pollution
 
@@ -41,8 +47,9 @@ static <T> List<T> first(List<T>... lists) {
 
 제네릭 varargs는 unchecked 경고를 만들 수 있다. `@SafeVarargs`는 메서드가 varargs 배열을
 외부에 노출하거나 다른 타입을 저장하지 않아 실제로 안전하다는 작성자의 보증일 때만
-사용한다. 단순히 경고를 숨기기 위해 붙이면 오류를 가린다. Java SE 9 이후에는 조건을
-만족하는 static/final/private 메서드에 적용할 수 있다.
+사용한다. 단순히 경고를 숨기기 위해 붙이면 오류를 가린다. Java SE 25에서는 가변 인자
+생성자에도 적용할 수 있다. 가변 인자 메서드에는 오버라이드할 수 없는 static/final/private
+메서드라는 제약이 있다. 선언에 붙일 수 있는 조건과 본문이 실제로 안전한지는 별도로 검토한다.
 
 ## 실전·면접 연결
 

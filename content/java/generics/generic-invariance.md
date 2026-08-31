@@ -10,7 +10,7 @@ status: PUBLISHED
 displayOrder: 20
 references:
   - url: "https://docs.oracle.com/javase/specs/jls/se25/html/jls-4.html#jls-4.10.2"
-    title: "Java Language Specification 4.10.2장: Class and Interface Type Members"
+    title: "Java Language Specification 4.10.2장: Subtyping among Class and Interface Types"
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
@@ -40,8 +40,10 @@ Animal[] animals = new Cat[1]; // 배열은 공변
 animals[0] = new Dog();        // ArrayStoreException
 ```
 
-배열은 런타임 component type을 알고 저장 시 검사하지만, 제네릭 parameterized type은
-대부분 erasure로 실행되므로 안전하지 않은 대입 자체를 컴파일러가 막는다.
+불공변성은 Java의 subtyping 규칙이다. `List<Cat>`을 `List<Animal>`로 허용하면 `Dog`를
+쓰는 코드도 허용되어 Cat 목록의 타입 계약을 깨뜨리므로 이 대입을 컴파일 시점에 거부한다.
+배열은 공변 대입을 허용하되 실제 component type으로 저장을 검사한다.
+erasure는 타입 인자의 런타임 표현에 관한 별도 규칙이며 불공변성의 원인과 동일시하지 않는다.
 
 ## 실전·면접 연결
 
