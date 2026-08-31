@@ -1,0 +1,26 @@
+name: Validate five-area canonical import
+
+on:
+  push:
+    branches:
+      - content/validate-five-areas
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '25'
+
+      - name: Run canonical five-area import validation
+        working-directory: backend
+        run: |
+          chmod +x gradlew
+          ./gradlew test --tests com.guseoh.csforge.importcontent.CanonicalFiveAreaImportValidationTest --info
