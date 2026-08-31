@@ -1,0 +1,359 @@
+schemaVersion: 2
+area:
+  key: spring
+  title: Spring
+  baseline: Spring Framework 7 / Spring Boot 4
+  contentKeyPrefix: spring.core
+  status: CANONICAL_FOUNDATION
+policies:
+  language:
+    authoringLanguage: ko-KR
+    explanationRule: 문제 상황에서 시작해 framework contract, 실제 호출 흐름, 실패 경계와 backend 판단까지 연결된 설명형 문단으로 작성한다.
+  question:
+    minimumPerConcept: 2
+    topicDifficultyCoverage:
+    - EASY
+    - MEDIUM
+    - HARD
+    areaTypeCoverage:
+    - MULTIPLE_CHOICE
+    - SHORT_ANSWER
+    - DESCRIPTIVE
+    - SCENARIO
+    hardRule: 구체적인 코드, 요청 흐름, proxy 경계, transaction 상태, query 수, 운영 증거 중 하나 이상을 주고 추론하게 한다.
+    shortAnswerRule: Concept 제목 자체를 accepted answer로 인정하지 않는다.
+  visualization:
+    values: [NONE, TEXT, DIAGRAM]
+    rule: proxy, request flow, bean lifecycle, JPA state처럼 실행 순서가 핵심일 때만 text/diagram을 사용한다.
+topics:
+- key: spring.core.why
+  title: Spring이 필요한 이유
+  order: 10
+  scope: 객체 생성·연결 책임과 Spring container가 등장하는 문제를 다룬다.
+  boundary: DI 자체의 객체지향 원리는 Java에도 연결하되 Spring container의 조립 규칙은 여기서 소유한다.
+  concepts:
+  - key: spring.core.why.object-graph
+    title: 애플리케이션 객체 그래프
+    order: 10
+    level: 1
+    objective: 객체가 다른 객체와 협력할 때 생성·선택·연결 책임을 누가 가져야 하는지 설명한다.
+    density: CORE
+    visualization: TEXT
+  - key: spring.core.why.coupling
+    title: 결합도와 변경 비용
+    order: 20
+    level: 1
+    objective: 직접 생성이 구현 선택과 사용 책임을 묶어 변경 비용을 키우는 장면을 코드로 판단한다.
+    density: CORE
+    visualization: NONE
+  - key: spring.core.why.ioc-di
+    title: IoC와 의존성 주입
+    order: 30
+    level: 1
+    objective: 객체가 필요한 협력자를 직접 고르지 않고 외부 조립자가 전달하는 구조와 그 이점을 설명한다.
+    density: CORE
+    visualization: TEXT
+- key: spring.core.container
+  title: ApplicationContext와 Bean
+  order: 20
+  scope: Bean metadata, ApplicationContext, singleton identity와 container 책임을 다룬다.
+  boundary: JVM class loading이나 일반 객체 생성 규칙은 Java/JVM 영역에 둔다.
+  concepts:
+  - key: spring.core.container.bean-definition
+    title: Bean 정의와 등록 정보
+    order: 10
+    level: 1
+    objective: BeanDefinition이 객체 인스턴스가 아니라 객체를 만들고 조립하기 위한 metadata라는 점을 설명한다.
+    density: STANDARD
+    visualization: NONE
+  - key: spring.core.container.application-context
+    title: ApplicationContext 역할
+    order: 20
+    level: 1
+    objective: 등록 정보 읽기, Bean 생성, dependency resolution, lifecycle callback과 부가 기능 연결을 구분한다.
+    density: CORE
+    visualization: TEXT
+  - key: spring.core.container.singleton-identity
+    title: singleton scope와 identity
+    order: 30
+    level: 1
+    objective: 같은 Bean definition 조회가 같은 객체 참조를 돌려주는 범위와 공유 mutable state 위험을 판단한다.
+    density: CORE
+    visualization: TEXT
+- key: spring.core.registration
+  title: Bean 등록 방식
+  order: 30
+  scope: Java configuration, component scanning, multiple candidate resolution을 다룬다.
+  boundary: annotation 문법 자체보다 Spring이 후보를 어떻게 발견하고 선택하는지에 집중한다.
+  concepts:
+  - key: spring.core.registration.configuration-bean
+    title: '@Configuration과 @Bean'
+    order: 10
+    level: 1
+    objective: 직접 수정하기 어려운 외부 객체나 명시적 조립을 Java configuration으로 등록하는 이유를 설명한다.
+    density: CORE
+    visualization: NONE
+  - key: spring.core.registration.component-scan
+    title: 컴포넌트 스캔
+    order: 20
+    level: 1
+    objective: scan 시작 위치와 stereotype이 실제 Bean 후보 집합을 만드는 과정을 추론한다.
+    density: CORE
+    visualization: TEXT
+  - key: spring.core.registration.primary-qualifier
+    title: 여러 후보와 선택 규칙
+    order: 30
+    level: 2
+    objective: 같은 타입 후보가 여러 개일 때 parameter name, @Primary, @Qualifier 등 선택 단서를 구분해 모호성을 해결한다.
+    density: CORE
+    visualization: NONE
+- key: spring.core.injection
+  title: Dependency Injection
+  order: 40
+  scope: constructor injection, optional dependency, circular dependency를 다룬다.
+  boundary: service locator나 순수 Java factory와 비교할 수 있지만 Spring container 사용을 전제로 설명한다.
+  concepts:
+  - key: spring.core.injection.constructor-injection
+    title: 생성자 주입
+    order: 10
+    level: 2
+    objective: 필수 dependency가 객체 생성 시점부터 존재하도록 만들고 테스트·불변성·명시성 이점을 설명한다.
+    density: CORE
+    visualization: NONE
+  - key: spring.core.injection.optional-dependency
+    title: 선택적 의존성
+    order: 20
+    level: 2
+    objective: optional dependency가 실제 제품 의미인지 설계 냄새인지 구분하고 ObjectProvider/Optional 등 대안을 판단한다.
+    density: STANDARD
+    visualization: NONE
+  - key: spring.core.injection.circular-dependency
+    title: 순환 의존성
+    order: 30
+    level: 2
+    objective: constructor cycle이 객체 그래프를 완성하지 못하는 이유와 책임 재분리 방향을 설명한다.
+    density: CORE
+    visualization: DIAGRAM
+- key: spring.core.scope-lifecycle
+  title: Scope와 Bean lifecycle
+  order: 50
+  scope: scope별 수명, scope mismatch, lifecycle callbacks를 다룬다.
+  boundary: Servlet request 자체의 lifecycle 상세는 Network/Servlet 맥락과 연결하되 Bean scope 관점에 집중한다.
+  concepts:
+  - key: spring.core.scope-lifecycle.scopes
+    title: singleton·prototype·request scope
+    order: 10
+    level: 2
+    objective: scope가 객체 수명과 조회 identity를 어떻게 바꾸는지 비교하고 singleton을 GoF Singleton과 구분한다.
+    density: CORE
+    visualization: TEXT
+  - key: spring.core.scope-lifecycle.scope-proxy
+    title: scope mismatch와 scoped proxy
+    order: 20
+    level: 2
+    objective: 긴 수명의 Bean이 짧은 request/prototype 객체를 직접 고정해 버리는 문제와 proxy 해결 원리를 설명한다.
+    density: CORE
+    visualization: DIAGRAM
+  - key: spring.core.scope-lifecycle.lifecycle-callback
+    title: 초기화·소멸 callback
+    order: 30
+    level: 2
+    objective: 생성, dependency injection, post-processing, initialization, 사용 가능, destruction 순서를 실제 자원 관리와 연결한다.
+    density: CORE
+    visualization: TEXT
+- key: spring.core.config
+  title: Configuration과 Environment
+  order: 60
+  scope: externalized configuration, profile/precedence, typed binding을 다룬다.
+  boundary: secret 저장소 제품 선택은 Infrastructure/Security에서 더 깊게 다룬다.
+  concepts:
+  - key: spring.core.config.properties-yaml
+    title: properties와 YAML
+    order: 10
+    level: 2
+    objective: 코드와 환경 값을 분리하는 이유와 같은 property를 여러 표현 방식으로 제공할 때의 차이를 설명한다.
+    density: STANDARD
+    visualization: NONE
+  - key: spring.core.config.profiles-precedence
+    title: profiles와 설정 우선순위
+    order: 20
+    level: 2
+    objective: 여러 property source가 같은 key를 제공할 때 실제 최종 값이 어떻게 선택되는지 추론한다.
+    density: CORE
+    visualization: TEXT
+  - key: spring.core.config.configuration-binding
+    title: 타입 안전 configuration binding
+    order: 30
+    level: 2
+    objective: 관련 설정을 객체로 묶고 startup validation으로 잘못된 환경 값을 조기에 실패시키는 이유를 설명한다.
+    density: CORE
+    visualization: NONE
+- key: spring.core.mvc
+  title: Spring MVC request flow
+  order: 70
+  scope: DispatcherServlet, controller/application 경계, argument resolution, message conversion을 다룬다.
+  boundary: HTTP protocol 자체는 Network & HTTP 영역에 두고 Spring MVC 내부 dispatch에 집중한다.
+  concepts:
+  - key: spring.core.mvc.dispatcher-servlet
+    title: DispatcherServlet 진입
+    order: 10
+    level: 2
+    objective: Servlet container에서 들어온 요청이 DispatcherServlet, HandlerMapping, HandlerAdapter를 거쳐 controller에 도달하는 흐름을 설명한다.
+    density: CORE
+    visualization: DIAGRAM
+  - key: spring.core.mvc.controller-service
+    title: Controller와 application service
+    order: 20
+    level: 2
+    objective: HTTP parsing/mapping과 use-case orchestration/domain rule의 책임을 분리한다.
+    density: CORE
+    visualization: NONE
+  - key: spring.core.mvc.argument-resolver
+    title: HandlerMethodArgumentResolver
+    order: 30
+    level: 2
+    objective: method parameter를 누가 어떤 source에서 만들어 controller 호출 인자로 전달하는지 설명한다.
+    density: CORE
+    visualization: TEXT
+  - key: spring.core.mvc.message-converter
+    title: HttpMessageConverter
+    order: 40
+    level: 2
+    objective: request/response body와 Java object 사이 변환이 Content-Type/Accept와 어떤 관계를 갖는지 추론한다.
+    density: CORE
+    visualization: TEXT
+- key: spring.core.validation-error
+  title: Validation과 Error handling
+  order: 80
+  scope: Bean Validation, binding errors, exception-to-HTTP mapping을 다룬다.
+  boundary: domain invariant 자체의 모델링은 Backend Engineering에서 더 깊게 다룬다.
+  concepts:
+  - key: spring.core.validation-error.bean-validation
+    title: Bean Validation 경계
+    order: 10
+    level: 2
+    objective: 외부 입력 형식 제약과 domain invariant를 모두 annotation validation으로 대체하면 안 되는 이유를 판단한다.
+    density: CORE
+    visualization: NONE
+  - key: spring.core.validation-error.binding-errors
+    title: binding error 처리
+    order: 20
+    level: 2
+    objective: type conversion/validation 실패가 field/global error로 수집되고 응답 계약으로 변환되는 흐름을 설명한다.
+    density: CORE
+    visualization: TEXT
+  - key: spring.core.validation-error.exception-handler
+    title: 전역 예외 처리
+    order: 30
+    level: 2
+    objective: '@ControllerAdvice/@ExceptionHandler가 예외를 HTTP status/body로 바꾸는 위치와 내부 정보 노출 위험을 설명한다.'
+    density: CORE
+    visualization: NONE
+- key: spring.core.data-jpa
+  title: Spring Data JPA
+  order: 90
+  scope: repository abstraction, JPA entity lifecycle, fetch plan/N+1을 Spring 사용 관점에서 다룬다.
+  boundary: transaction isolation/index/storage engine 원리는 Database 영역에 둔다.
+  concepts:
+  - key: spring.core.data-jpa.repository-abstraction
+    title: Repository 추상화
+    order: 10
+    level: 2
+    objective: Spring Data repository가 반복 persistence adapter 코드를 줄이는 범위와 query 의미를 숨기지 않는 경계를 설명한다.
+    density: CORE
+    visualization: NONE
+  - key: spring.core.data-jpa.entity-lifecycle
+    title: Entity lifecycle과 persistence context
+    order: 20
+    level: 2
+    objective: transient/managed/detached/removed 상태와 dirty checking이 SQL 실행 시점과 어떻게 연결되는지 설명한다.
+    density: CORE
+    visualization: DIAGRAM
+  - key: spring.core.data-jpa.fetch-plan
+    title: fetch plan과 N+1
+    order: 30
+    level: 2
+    objective: lazy association 접근이 추가 query를 만드는 시점과 fetch join/entity graph/batch fetch 선택을 비교한다.
+    density: CORE
+    visualization: TEXT
+- key: spring.core.transaction-aop
+  title: Transaction과 AOP
+  order: 100
+  scope: transaction proxy, self-invocation, rollback rules를 다룬다.
+  boundary: DB isolation/lock/MVCC는 Database 영역이 소유한다.
+  concepts:
+  - key: spring.core.transaction-aop.transaction-proxy
+    title: '@Transactional proxy'
+    order: 10
+    level: 3
+    objective: proxy가 TransactionInterceptor와 transaction manager를 통해 기존 transaction 참여/신규 시작/commit/rollback을 결정하는 흐름을 설명한다.
+    density: CORE
+    visualization: DIAGRAM
+  - key: spring.core.transaction-aop.self-invocation
+    title: self-invocation 함정
+    order: 20
+    level: 3
+    objective: 같은 객체의 this 호출이 proxy interception을 거치지 않는 이유를 실제 호출 경로로 판단한다.
+    density: CORE
+    visualization: DIAGRAM
+  - key: spring.core.transaction-aop.rollback-rule
+    title: rollback 규칙
+    order: 30
+    level: 3
+    objective: exception type과 rollback-only 상태, checked/unchecked 기본 규칙, rollbackFor 설정을 구분한다.
+    density: CORE
+    visualization: TEXT
+- key: spring.core.testing
+  title: Testing과 observability
+  order: 110
+  scope: slice/context test, mocking boundary, transactional test behavior를 다룬다.
+  boundary: 시스템 전체 observability stack은 Performance/Observability/Operations에서 다룬다.
+  concepts:
+  - key: spring.core.testing.slice-test
+    title: slice test와 context test
+    order: 10
+    level: 3
+    objective: 불러오는 application context 범위와 실제 integration risk를 기준으로 @WebMvcTest/@DataJpaTest/@SpringBootTest를 선택한다.
+    density: CORE
+    visualization: NONE
+  - key: spring.core.testing.mock-boundary
+    title: mock과 외부 경계
+    order: 20
+    level: 3
+    objective: 내부 구현 호출 횟수에 과도하게 결합된 mock과 실제 협력 경계를 격리하는 mock을 구분한다.
+    density: STANDARD
+    visualization: NONE
+  - key: spring.core.testing.test-transaction
+    title: 테스트 transaction 격리
+    order: 30
+    level: 3
+    objective: test method rollback이 production commit 시점·lazy loading·constraint 확인을 가릴 수 있는 사례를 판단한다.
+    density: CORE
+    visualization: TEXT
+- key: spring.core.production
+  title: Production behavior
+  order: 120
+  scope: startup failure, Actuator/metrics, graceful shutdown을 다룬다.
+  boundary: container orchestration/infra deployment 상세는 Infrastructure & Cloud 영역에 둔다.
+  concepts:
+  - key: spring.core.production.startup-failure
+    title: startup 검증과 실패
+    order: 10
+    level: 3
+    objective: 잘못된 configuration/Bean graph/resource 연결을 startup 시점에 실패시키는 것의 운영 이점을 설명한다.
+    density: CORE
+    visualization: NONE
+  - key: spring.core.production.metrics-actuator
+    title: Actuator와 metrics
+    order: 20
+    level: 3
+    objective: health와 metric을 운영 진단에 사용하면서 endpoint 노출·cardinality·민감정보 위험을 함께 판단한다.
+    density: CORE
+    visualization: NONE
+  - key: spring.core.production.graceful-shutdown
+    title: graceful shutdown
+    order: 30
+    level: 3
+    objective: 새 요청 수락 중단, 진행 중 요청 완료, 자원 종료 순서를 배포/종료 상황과 연결한다.
+    density: CORE
+    visualization: TEXT

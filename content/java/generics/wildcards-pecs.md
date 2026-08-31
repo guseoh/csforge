@@ -83,10 +83,10 @@ void inspect(List<?> values) {
 
 ### 문제를 풀 때는 읽기와 쓰기를 따로 본다
 
-| 선언 | 안전하게 읽기 | 안전하게 쓰기 |
-|---|---|---|
-| `List<? extends Number>` | `Number` | 일반적인 Number 값 추가 불가 |
-| `List<? super Integer>` | `Object` | `Integer` 가능 |
-| `List<?>` | `Object` | 일반적인 값 추가 불가 |
+| 선언                     | 안전하게 읽기 | 안전하게 쓰기                |
+| ------------------------ | ------------- | ---------------------------- |
+| `List<? extends Number>` | `Number`      | 일반적인 Number 값 추가 불가 |
+| `List<? super Integer>`  | `Object`      | `Integer` 가능               |
+| `List<?>`                | `Object`      | 일반적인 값 추가 불가        |
 
 실제 API를 설계할 때는 “이 매개변수에서 값을 꺼내 쓰는가, 값을 넣는가?”를 먼저 그려 보면 wildcard 방향이 훨씬 쉽게 보입니다.

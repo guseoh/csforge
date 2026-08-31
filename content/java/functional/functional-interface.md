@@ -62,14 +62,14 @@ interface Checker {
 
 ### 표준 인터페이스를 먼저 익혀 두면 좋다
 
-| 타입 | 입력 | 결과 | 대표 용도 |
-|---|---|---|---|
-| `Predicate<T>` | T | boolean | 조건 검사 |
-| `Function<T,R>` | T | R | 값 변환 |
-| `Consumer<T>` | T | 없음 | 값을 받아 부수효과 수행 |
-| `Supplier<T>` | 없음 | T | 값 생성/지연 제공 |
-| `UnaryOperator<T>` | T | T | 같은 타입 변환 |
-| `BinaryOperator<T>` | T,T | T | 두 값을 같은 타입 결과로 결합 |
+| 타입                | 입력 | 결과    | 대표 용도                     |
+| ------------------- | ---- | ------- | ----------------------------- |
+| `Predicate<T>`      | T    | boolean | 조건 검사                     |
+| `Function<T,R>`     | T    | R       | 값 변환                       |
+| `Consumer<T>`       | T    | 없음    | 값을 받아 부수효과 수행       |
+| `Supplier<T>`       | 없음 | T       | 값 생성/지연 제공             |
+| `UnaryOperator<T>`  | T    | T       | 같은 타입 변환                |
+| `BinaryOperator<T>` | T,T  | T       | 두 값을 같은 타입 결과로 결합 |
 
 이미 표준 타입으로 의미를 충분히 표현할 수 있다면 별도 `StringChecker`, `ValueMapper` 같은 인터페이스를 매번 만들 필요는 없습니다. 반대로 도메인 의미가 중요한 계약이라면 이름 있는 사용자 인터페이스가 더 읽기 좋을 수 있습니다.
 

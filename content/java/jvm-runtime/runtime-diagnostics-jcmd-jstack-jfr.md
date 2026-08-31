@@ -215,14 +215,14 @@ Logs/trace: 실제 request/business path
 
 ### 증상별 첫 관찰 예시
 
-| 증상 | 먼저 볼 수 있는 evidence |
-|---|---|
-| 요청이 멈춘 것처럼 보임 | thread dump, lock/wait stack |
-| CPU가 지속적으로 높음 | JFR/profile, hot thread stack |
-| heap 사용량 계속 증가 | GC/heap metrics, histogram, 필요 시 heap dump |
-| GC pause가 의심됨 | GC metrics/log/JFR |
-| process RSS만 증가 | heap 외 native/thread/direct memory evidence |
-| 간헐적인 수초 지연 | JFR 시간축 + application metrics/log |
+| 증상                    | 먼저 볼 수 있는 evidence                      |
+| ----------------------- | --------------------------------------------- |
+| 요청이 멈춘 것처럼 보임 | thread dump, lock/wait stack                  |
+| CPU가 지속적으로 높음   | JFR/profile, hot thread stack                 |
+| heap 사용량 계속 증가   | GC/heap metrics, histogram, 필요 시 heap dump |
+| GC pause가 의심됨       | GC metrics/log/JFR                            |
+| process RSS만 증가      | heap 외 native/thread/direct memory evidence  |
+| 간헐적인 수초 지연      | JFR 시간축 + application metrics/log          |
 
 이 표는 절대적인 순서가 아니라 "증상과 evidence를 맞춘다"는 사고법입니다.
 

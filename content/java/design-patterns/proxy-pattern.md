@@ -58,7 +58,7 @@ final class MeasuringRepositoryProxy implements OrderRepository {
 
 호출자는 `OrderRepository`만 사용하지만 실제 호출은 Proxy를 거쳐 target으로 전달됩니다.
 
-## 핵심은 target의 business behavior보다 “target에 접근하는 과정”을 소유하는 것이다
+### 핵심은 target의 business behavior보다 “target에 접근하는 과정”을 소유하는 것이다
 
 Proxy가 자주 맡는 책임은 다음과 같습니다.
 
@@ -71,7 +71,7 @@ Remote Proxy     : 원격 호출을 로컬 역할처럼 중개
 
 공통점은 실제 대상이 제공하는 핵심 기능을 새로 정의하기보다 **그 기능에 도달하는 시점과 조건을 관리**한다는 것입니다.
 
-## 검사와 target 생성의 순서는 계약을 바꾼다
+### 검사와 target 생성의 순서는 계약을 바꾼다
 
 권한이 있는 호출에서만 비싼 target을 생성하고 이후 재사용하는 Proxy를 생각해 봅시다.
 
@@ -113,7 +113,7 @@ Client -> permission check -> reuse target -> read
 
 Proxy에서는 “권한 검사도 하고 lazy loading도 한다”는 기능 목록보다 **어느 책임이 먼저 실행되는가**가 실제 의미를 결정합니다.
 
-## Proxy를 우회하는 직접 경로가 있으면 접근 제어가 무력화될 수 있다
+### Proxy를 우회하는 직접 경로가 있으면 접근 제어가 무력화될 수 있다
 
 Protection Proxy가 권한 검사를 하더라도 호출자가 실제 target reference를 직접 얻을 수 있다면 다음처럼 우회할 수 있습니다.
 
@@ -126,7 +126,7 @@ Protection Proxy가 권한 검사를 하더라도 호출자가 실제 target ref
 
 이 점은 접근 제어가 application 전체 보안의 한 요소일 뿐이라는 사실과도 연결됩니다.
 
-## lazy Proxy는 생성 전 상태와 생성 후 상태를 가진다
+### lazy Proxy는 생성 전 상태와 생성 후 상태를 가진다
 
 Virtual Proxy는 사실상 내부적으로 작은 state machine을 갖습니다.
 
@@ -151,7 +151,7 @@ if (target == null) {
 
 반대로 target 두 개가 잠깐 생성되어도 의미상 문제가 없고 비용만 약간 늘어나는 상황이라면 복잡한 동기화를 넣지 않는 선택도 가능합니다. **identity와 생성 비용 요구를 먼저 확인**해야 합니다.
 
-## cache Proxy는 결과의 유효 기간과 key 의미를 함께 가져간다
+### cache Proxy는 결과의 유효 기간과 key 의미를 함께 가져간다
 
 ```java
 Map<Long, Order> cache;
@@ -170,7 +170,7 @@ mutable 결과를 그대로 공유하는가
 
 그래서 Caching Proxy는 “Map 한 번 조회한다”가 아니라 **대상 접근 결과의 수명 정책을 중개**하는 구조입니다.
 
-## JDK dynamic Proxy는 Proxy 패턴을 구현하는 한 방법이다
+### JDK dynamic Proxy는 Proxy 패턴을 구현하는 한 방법이다
 
 `java.lang.reflect.Proxy`는 runtime에 interface 기반 proxy class를 만들고 method 호출을 `InvocationHandler`에 전달할 수 있습니다.
 
@@ -185,7 +185,7 @@ InvocationHandler handler = (proxy, method, args) -> {
 
 JDK dynamic Proxy는 interface 기반이라는 제약과 reflection invocation 비용·예외 처리 규칙을 갖습니다. 이런 구현 세부는 별도 Concept에서 더 깊게 다룰 수 있지만 여기서는 **패턴과 구현 기법을 구분**하는 것이 중요합니다.
 
-## 내부 자기 호출은 바깥 Proxy를 다시 통과하지 않을 수 있다
+### 내부 자기 호출은 바깥 Proxy를 다시 통과하지 않을 수 있다
 
 Proxy가 대상 객체 **밖**에 있다고 생각해 봅시다.
 
@@ -201,7 +201,7 @@ Client -> Proxy -> Target.methodA()
 
 어떤 reference로 method를 호출하는지 call path를 그려 보면 self-invocation 문제를 이해하기 쉽습니다.
 
-## Decorator와는 wrapper의 목적을 보고 구분한다
+### Decorator와는 wrapper의 목적을 보고 구분한다
 
 Decorator도 같은 interface의 target을 감쌀 수 있습니다. 구조만 보면 거의 같습니다.
 
@@ -213,7 +213,7 @@ Decorator는 logging, compression처럼 **기능을 조합해 추가**하는 목
 
 실제 Metrics wrapper처럼 둘 다 설명 가능한 경우도 있습니다. 중요한 것은 패턴 이름을 강제로 하나 붙이는 것이 아니라 그 wrapper의 변경 이유가 무엇인지 파악하는 것입니다.
 
-## Adapter와는 계약 변환 여부가 다르다
+### Adapter와는 계약 변환 여부가 다르다
 
 Adapter는 외부 `VendorClient`를 내부 `PaymentGateway`처럼 사용하게 하면서 interface와 representation을 번역하는 것이 중심입니다. Proxy는 보통 client가 기대하는 **같은 역할을 유지**하고 그 역할에 접근하는 과정에 개입합니다.
 

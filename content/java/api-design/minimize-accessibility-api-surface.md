@@ -37,7 +37,7 @@ private boolean hasValidItems(Order order) { ... }
 
 외부에는 안정된 책임만 제공하고 세부 단계를 숨기면 내부 구현은 더 자유롭게 바꿀 수 있습니다.
 
-## 접근 범위는 객체의 사용 가능한 상태 전이까지 결정할 수 있다
+### 접근 범위는 객체의 사용 가능한 상태 전이까지 결정할 수 있다
 
 접근 제어는 단순한 코드 정리 기능이 아닙니다. 생성 경로와 상태 변경 경로를 얼마나 열어 둘지도 결정합니다.
 
@@ -66,7 +66,7 @@ public void complete() {
 
 같은 이유로 domain 객체의 constructor를 무조건 public으로 둘 필요도 없습니다. 특정 factory를 통해서만 유효한 초기 상태를 만들고 싶다면 constructor 범위를 더 좁게 두는 것이 생성 invariant를 보호할 수 있습니다.
 
-## `private`, package-private, `protected`, `public`은 서로 다른 협력 범위를 표현한다
+### `private`, package-private, `protected`, `public`은 서로 다른 협력 범위를 표현한다
 
 가장 좁은 접근 범위를 기계적으로 선택하는 것이 목표는 아닙니다. 실제로 누가 알아야 하는지를 표현하는 것이 목표입니다.
 
@@ -77,7 +77,7 @@ public void complete() {
 
 특히 `protected`를 “public보다 조금 좁으니 안전하다”라고만 보면 안 됩니다. subclass가 override하거나 호출하도록 열어 둔 method는 상위 class의 구현 순서와 invariant에 하위 class를 결합시킬 수 있습니다. 나중에 signature나 호출 시점을 바꾸면 확장 class가 깨질 수 있습니다.
 
-## 반환 타입과 매개변수 타입도 API surface다
+### 반환 타입과 매개변수 타입도 API surface다
 
 ```java
 public ArrayList<Order> findAll() {
@@ -106,7 +106,7 @@ values.add("x");
 
 이런 경우 기존 계약을 유지하면서 새로운 API를 추가하고 이전 경로를 deprecate하는 식의 migration이 필요할 수 있습니다.
 
-## mutability도 반환 계약의 일부다
+### mutability도 반환 계약의 일부다
 
 다음 두 method는 반환 타입이 같아도 계약이 다를 수 있습니다.
 
@@ -124,7 +124,7 @@ public List<OrderLine> lines() {
 
 따라서 API surface를 줄인다는 것은 method 수만 줄이는 작업이 아닙니다. **공개한 값의 타입, identity, mutability, 예외와 상태 변화 의미**까지 호출자와의 계약이 됩니다.
 
-## public 구현 타입 하나가 package 전체를 외부 계약으로 끌어낼 수 있다
+### public 구현 타입 하나가 package 전체를 외부 계약으로 끌어낼 수 있다
 
 예를 들어 public method signature가 내부 전용 class를 사용하려고 하면 그 타입도 외부에서 접근 가능해야 할 수 있습니다.
 
@@ -136,13 +136,13 @@ public InternalQueryPlan plan() { ... }
 
 백엔드 application에서도 같은 문제가 있습니다. Controller response에 persistence entity나 vendor SDK type을 그대로 내보내면 계층 내부 구현이 HTTP 계약으로 승격됩니다. 이는 단순 visibility modifier보다 더 넓은 의미의 API surface 누출입니다.
 
-## 테스트 때문에 visibility를 넓히기 전에 책임을 확인한다
+### 테스트 때문에 visibility를 넓히기 전에 책임을 확인한다
 
 private helper를 직접 단위 테스트하려고 public으로 바꾸는 경우가 있습니다. 하지만 helper가 정말 독립적으로 검증할 만큼 중요한 규칙이라면 별도 응집된 객체나 package-level collaboration으로 분리해야 하는 것은 아닌지 먼저 봐야 합니다. 단지 구현 단계 하나를 테스트하려는 목적이라면 public API를 늘리지 않고 외부에서 관찰 가능한 행동으로 검증하는 편이 더 안정적일 수 있습니다.
 
 테스트 가능성이 필요하다는 이유만으로 production 계약을 넓히면 테스트가 구현 세부에 결합되고 실제 사용자에게도 필요 없는 API가 생깁니다.
 
-## 작은 surface는 변경 자유도를 확보하지만, 필요한 계약까지 숨기면 안 된다
+### 작은 surface는 변경 자유도를 확보하지만, 필요한 계약까지 숨기면 안 된다
 
 모든 class를 package-private으로 만들고 모든 method를 private으로 줄이면 좋은 설계가 되는 것은 아닙니다. 실제 협력자가 사용해야 하는 책임은 명시적으로 공개되어야 합니다.
 

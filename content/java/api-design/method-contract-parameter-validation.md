@@ -34,7 +34,7 @@ void withdraw(long amount)
 실패 후 상태            : 거부됐을 때 기존 상태가 보존되는가
 ```
 
-## 인자 자체의 조건과 현재 객체 상태는 다른 문제다
+### 인자 자체의 조건과 현재 객체 상태는 다른 문제다
 
 ```java
 void read(int length) {
@@ -59,7 +59,7 @@ throw new IllegalStateException();    // 인자는 가능하지만 현재 객체
 
 도메인에서는 더 의미 있는 예외 타입을 사용할 수도 있습니다. 중요한 것은 특정 예외 이름을 외우는 것이 아니라 **호출자가 무엇을 잘못했고 어떤 상태가 유지되는지 알 수 있는 일관된 실패 계약**입니다.
 
-## 검증은 side effect보다 먼저 배치해야 실패 상태를 통제하기 쉽다
+### 검증은 side effect보다 먼저 배치해야 실패 상태를 통제하기 쉽다
 
 다음 `reserve`는 양수 수량만 받고, 재고가 부족하면 실패하며, 실패 시 기존 재고를 보존해야 한다고 가정합니다.
 
@@ -94,7 +94,7 @@ void reserve(int n) {
 
 먼저 성공 가능성을 판단한 뒤 상태를 변경하면 실패 경로에서 기존 invariant를 유지하기 쉽습니다. 이런 성질을 **failure atomicity** 관점에서 볼 수 있습니다. 반드시 모든 메서드가 완벽한 트랜잭션처럼 동작해야 한다는 뜻은 아니지만, 실패했을 때 어떤 변경이 남는지는 계약의 일부입니다.
 
-## 여러 field가 함께 invariant를 이룬다면 검증도 조합을 봐야 한다
+### 여러 field가 함께 invariant를 이룬다면 검증도 조합을 봐야 한다
 
 ```java
 Period(int start, int end) {
@@ -110,7 +110,7 @@ Period(int start, int end) {
 
 같은 타입을 constructor, static factory, Builder 등 여러 경로에서 만들 수 있다면 모든 정상 생성 경로가 이 invariant를 우회하지 않는지도 확인해야 합니다. 검증 로직을 한 메서드로 재사용할 수는 있지만, 더 중요한 것은 **유효하지 않은 인스턴스가 외부에 관찰되지 않는 생성 경계**를 만드는 것입니다.
 
-## `Objects.requireNonNull`은 null 계약만 표현한다
+### `Objects.requireNonNull`은 null 계약만 표현한다
 
 ```java
 this.name = Objects.requireNonNull(name);
@@ -129,7 +129,7 @@ email format valid
 
 검증 API 하나를 썼다고 도메인 invariant 전체가 해결되는 것은 아닙니다. 타입 자체로 더 잘 표현할 수 있는 값이라면 `Email`, `PositiveQuantity` 같은 value object를 고려할 수도 있고, 단순한 내부 값이면 명시적인 validation method가 더 직접적일 수 있습니다.
 
-## 같은 검증을 모든 계층에 반복하는 것이 안전한 설계는 아니다
+### 같은 검증을 모든 계층에 반복하는 것이 안전한 설계는 아니다
 
 HTTP 요청의 JSON 형식, 필수 필드, 문자열 길이 같은 **입력 shape**는 API boundary에서 검증할 수 있습니다. 반면 “완료된 주문은 취소할 수 없다”처럼 객체 상태에 의존하는 규칙은 domain이 소유하는 편이 자연스럽습니다.
 
@@ -150,7 +150,7 @@ Controller가 `order.status()`를 읽고 취소 가능 여부를 판단한 뒤 D
 
 검증의 목표는 “모든 곳에서 한 번씩 검사한다”가 아니라 **그 규칙을 가장 잘 아는 경계가 소유하고, 하위 코드가 합리적인 전제를 가질 수 있게 하는 것**입니다.
 
-## 외부 side effect가 있으면 실행 순서가 더 중요해진다
+### 외부 side effect가 있으면 실행 순서가 더 중요해진다
 
 ```java
 void complete(Order order) {
@@ -163,7 +163,7 @@ void complete(Order order) {
 
 따라서 먼저 순수하게 검증 가능한 조건을 확인하고, 상태 전이와 외부 작업의 원자성이 실제로 필요한지 판단해야 합니다. 단일 Java 메서드만으로 모든 분산 side effect를 원자적으로 만들 수 있는 것은 아니므로, 백엔드에서는 transaction boundary, outbox, 보상 처리 같은 별도의 설계가 필요할 수 있습니다. 이 Concept의 핵심은 그 기술을 미리 적용하는 것이 아니라 **실패 가능한 지점과 이미 발생한 side effect를 순서대로 추적하는 습관**입니다.
 
-## 예외를 던진다고 객체가 자동으로 원상 복구되지는 않는다
+### 예외를 던진다고 객체가 자동으로 원상 복구되지는 않는다
 
 다음과 같은 오해가 자주 생깁니다.
 

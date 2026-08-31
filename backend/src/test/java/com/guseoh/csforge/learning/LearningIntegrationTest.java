@@ -81,13 +81,14 @@ class LearningIntegrationTest {
     }
 
     @Test
-    void flywaySeedsTheFourteenAreasAndAreaSummaryUsesAggregates() throws Exception {
+    void flywaySeedsTheFifteenAreasAndAreaSummaryUsesAggregates() throws Exception {
         JsonNode areas = json(request("GET", "/api/learning-areas", null));
-        assertEquals(14, areas.size());
+        assertEquals(15, areas.size());
         assertEquals("computer-architecture", areas.get(0).get("slug").asText());
         assertEquals("컴퓨터 구조", areas.get(0).get("name").asText());
         assertEquals("database", areas.get(4).get("slug").asText());
         assertEquals("system-design", areas.get(13).get("slug").asText());
+        assertEquals("security", areas.get(14).get("slug").asText());
         JsonNode javaArea = findBySlug(areas, "java");
         assertEquals(3, javaArea.get("publishedConceptCount").asInt());
         assertEquals(3, javaArea.get("level1").get("total").asInt());

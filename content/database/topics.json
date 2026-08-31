@@ -1,0 +1,14 @@
+[
+  {"kind":"topic","contentKey":"database.core.model","areaSlug":"database","slug":"model","title":"Relational model","description":"relation/tuple, NULL의 3값 논리, 정규화","displayOrder":10,"active":true},
+  {"kind":"topic","contentKey":"database.core.sql","areaSlug":"database","slug":"sql","title":"SQL query semantics","description":"SELECT 논리 순서, JOIN, aggregate, window function","displayOrder":20,"active":true},
+  {"kind":"topic","contentKey":"database.core.schema","areaSlug":"database","slug":"schema","title":"Schema와 constraints","description":"primary key, foreign key, UNIQUE/CHECK constraint","displayOrder":30,"active":true},
+  {"kind":"topic","contentKey":"database.core.index","areaSlug":"database","slug":"index","title":"Index structures","description":"B-tree, composite, covering/index-only, partial index","displayOrder":40,"active":true},
+  {"kind":"topic","contentKey":"database.core.optimizer","areaSlug":"database","slug":"optimizer","title":"Optimizer와 execution plan","description":"cost estimate, EXPLAIN, statistics와 row estimate","displayOrder":50,"active":true},
+  {"kind":"topic","contentKey":"database.core.transaction","areaSlug":"database","slug":"transaction","title":"Transaction fundamentals","description":"ACID, autocommit, multi-statement atomicity","displayOrder":60,"active":true},
+  {"kind":"topic","contentKey":"database.core.isolation","areaSlug":"database","slug":"isolation","title":"Isolation levels","description":"read anomalies, READ COMMITTED, SERIALIZABLE","displayOrder":70,"active":true},
+  {"kind":"topic","contentKey":"database.core.locking","areaSlug":"database","slug":"locking","title":"Locks와 concurrency","description":"row lock, deadlock, pessimistic locking","displayOrder":80,"active":true},
+  {"kind":"topic","contentKey":"database.core.mvcc","areaSlug":"database","slug":"mvcc","title":"MVCC","description":"row versions, snapshot visibility, old version cleanup","displayOrder":90,"active":true},
+  {"kind":"topic","contentKey":"database.core.storage","areaSlug":"database","slug":"storage","title":"Storage와 recovery","description":"page/buffer, WAL, checkpoint와 crash recovery","displayOrder":100,"active":true},
+  {"kind":"topic","contentKey":"database.core.replication","areaSlug":"database","slug":"replication","title":"Replication","description":"primary/replica, lag, failover consistency","displayOrder":110,"active":true},
+  {"kind":"topic","contentKey":"database.core.query-patterns","areaSlug":"database","slug":"query-patterns","title":"Backend query patterns","description":"offset/keyset pagination, batch와 N+1","displayOrder":120,"active":true}
+]

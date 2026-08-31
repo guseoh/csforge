@@ -47,7 +47,7 @@ Publisher
 
 발행자는 각 listener의 구체 작업보다 “완료 이벤트에 관심 있는 구독자들에게 알린다”는 책임을 가집니다.
 
-## Observer는 자동으로 비동기가 되지 않는다
+### Observer는 자동으로 비동기가 되지 않는다
 
 가장 먼저 버려야 할 오해는 `Observer = 비동기`라는 생각입니다. 다음 구현은 완전히 동기적입니다.
 
@@ -74,7 +74,7 @@ A가 3초 걸리면 B도 그 뒤에 호출되고 publisher도 3초 이상 기다
 
 따라서 Observer를 설계할 때는 **누가 언제 실행되는가**를 먼저 정해야 합니다. 비동기 executor나 message broker를 도입하는 것은 별도의 실행 모델 결정입니다.
 
-## 한 listener의 실패가 다른 listener에게 미치는 범위를 정해야 한다
+### 한 listener의 실패가 다른 listener에게 미치는 범위를 정해야 한다
 
 ```java
 for (OrderCompletedListener listener : listeners) {
@@ -98,7 +98,7 @@ for (OrderCompletedListener listener : listeners) {
 
 즉 **후속 반응이 독립적인가, 핵심 transaction의 일부인가**를 구분해야 합니다. 반드시 순서대로 성공해야 하는 workflow를 Observer라는 이름으로 흩어 놓으면 business flow가 보이지 않게 됩니다.
 
-## 구독 목록을 순회하는 동안 등록·해제가 일어날 수 있다
+### 구독 목록을 순회하는 동안 등록·해제가 일어날 수 있다
 
 처음 subscriber가 `[A, B]`라고 해 보겠습니다. A가 자신의 callback 안에서 B를 해제하고 C를 등록합니다.
 
@@ -125,7 +125,7 @@ B 실행 -> 현재 snapshot에 이미 포함됨
 
 이것이 원하는 계약일 수도 있고 아닐 수도 있습니다. “unsubscribe 하면 현재 진행 중인 전달도 즉시 취소되어야 한다”는 요구라면 별도 상태와 확인이 필요합니다. 중요한 것은 snapshot을 썼다는 사실보다 **구독 변경이 현재 전달과 다음 전달 중 어디부터 적용되는지**를 계약으로 정하는 것입니다.
 
-## 알림 순서가 의미 있다면 우연한 collection 순서에 맡기면 안 된다
+### 알림 순서가 의미 있다면 우연한 collection 순서에 맡기면 안 된다
 
 `HashSet`에 listener를 넣고 iteration order를 business 순서처럼 사용하면 안 됩니다. A 후 B가 반드시 실행되어야 한다면 Observer들이 정말 독립적인지부터 다시 봐야 합니다.
 
@@ -133,7 +133,7 @@ B 실행 -> 현재 snapshot에 이미 포함됨
 
 Observer는 direct coupling을 줄이지만 **실행 순서가 덜 눈에 보이는 비용**을 가져옵니다.
 
-## event payload는 과거의 사실인지 live mutable state인지 구분해야 한다
+### event payload는 과거의 사실인지 live mutable state인지 구분해야 한다
 
 다음처럼 domain aggregate 자체를 그대로 event로 전달할 수 있습니다.
 
@@ -160,7 +160,7 @@ Aggregate = 현재 변화 가능한 business object
 
 모든 event를 record로 만들어야 한다는 규칙은 아닙니다. 핵심은 **observer가 publisher의 live mutable 내부 상태에 불필요하게 결합되지 않는가**입니다.
 
-## 오래 사는 publisher의 subscriber 참조는 object lifetime을 늘린다
+### 오래 사는 publisher의 subscriber 참조는 object lifetime을 늘린다
 
 publisher가 listener를 strong reference로 보관하면 listener는 구독되어 있는 동안 reachable 상태로 남습니다.
 
@@ -174,7 +174,7 @@ class Publisher {
 
 그래서 직접 Observer registry를 만들 때는 `subscribe()`만큼 `unsubscribe()`와 구독 종료 시점을 설계해야 합니다.
 
-## publish-subscribe broker는 Observer와 비슷하지만 추가 보장이 별도다
+### publish-subscribe broker는 Observer와 비슷하지만 추가 보장이 별도다
 
 Kafka 같은 broker도 producer와 여러 consumer를 분리한다는 점에서는 publish-subscribe 구조가 닮았습니다. 하지만 durable storage, retry, ordering partition, delivery semantics, consumer offset은 단순 in-memory Observer가 제공하지 않는 별도의 분산 시스템 책임입니다.
 
@@ -191,7 +191,7 @@ Message broker
 
 패턴 이름이 비슷하다는 이유로 두 실행 모델을 같은 것으로 설명하면 안 됩니다.
 
-## 언제 Observer가 자연스럽고 언제 흐름을 숨길 수 있는가
+### 언제 Observer가 자연스럽고 언제 흐름을 숨길 수 있는가
 
 한 변화에 여러 **독립적인 반응**이 추가·삭제될 수 있고 publisher가 구체 반응을 알 필요가 없을 때 Observer는 유용합니다. UI event listener, cache invalidation 알림, 독립적인 audit/metric 반응 같은 경우가 떠오를 수 있습니다.
 

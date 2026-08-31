@@ -78,7 +78,7 @@ CachingReader
 FileDataReader
 ```
 
-## “같은 interface”가 중요한 이유는 대체 가능한 조합에 있다
+### “같은 interface”가 중요한 이유는 대체 가능한 조합에 있다
 
 Decorator가 원본과 같은 계약을 제공하면 호출자는 원본인지 wrapper인지 구분하지 않고 사용할 수 있습니다. 그리고 wrapper 자신도 `DataReader`를 받으므로 다른 Decorator를 다시 감쌀 수 있습니다.
 
@@ -99,7 +99,7 @@ final class UppercaseReader implements TextReader {
 
 이 wrapper가 “delegate가 읽은 text를 대문자로 바꾼다”고 약속했다면 원본을 전혀 사용하지 않고 고정 값을 반환하는 구현은 같은 interface를 구현해도 의미 계약을 깨뜨립니다. **구조적 대체 가능성과 행동 계약은 별개**입니다.
 
-## wrapper 순서는 실제 실행 범위를 바꾼다
+### wrapper 순서는 실제 실행 범위를 바꾼다
 
 Decorator의 가장 중요한 reasoning 포인트 중 하나는 중첩 순서입니다. 다음 두 조합은 타입만 보면 모두 `DataReader`지만 의미가 다를 수 있습니다.
 
@@ -138,7 +138,7 @@ Client
 
 같은 두 Decorator를 썼는데도 metric은 1과 2로 달라집니다. 그래서 “조합 가능하다”는 말은 “순서가 중요하지 않다”는 뜻이 아닙니다. **각 wrapper가 어느 호출 범위를 감싸는지**를 직접 추적해야 합니다.
 
-## 호출 전·후·예외 경로를 함께 봐야 한다
+### 호출 전·후·예외 경로를 함께 봐야 한다
 
 Decorator는 단순히 delegate 호출 전에 한 줄 추가하는 패턴이 아닙니다. 부가 책임은 다음 세 위치 중 어디에 들어가는지에 따라 의미가 달라집니다.
 
@@ -160,7 +160,7 @@ try {
 
 따라서 각 Decorator가 **반환값, exception, side effect를 어떻게 보존하거나 변경하는지** 명확해야 합니다.
 
-## Decorator가 state를 가지면 공유 수명도 고려해야 한다
+### Decorator가 state를 가지면 공유 수명도 고려해야 한다
 
 ```java
 class CachingReader implements DataReader {
@@ -173,11 +173,11 @@ class CachingReader implements DataReader {
 
 Decorator 패턴 자체는 thread-safe를 보장하지 않습니다. **wrapper가 추가한 책임이 어떤 state를 소유하는지**를 확인해야 합니다.
 
-## Java I/O는 wrapper 합성의 대표적인 예를 보여 준다
+### Java I/O는 wrapper 합성의 대표적인 예를 보여 준다
 
 `FilterInputStream` 계열처럼 다른 stream을 감싸는 API에서는 buffering, data 변환 같은 기능을 조합하는 구조를 볼 수 있습니다. 중요한 것은 모든 Java I/O class를 GoF Decorator 이름으로 분류하는 것이 아니라, 실제로 **같은 stream 역할을 유지하면서 다른 stream에 위임하고 책임을 추가하는 구조**를 읽는 것입니다.
 
-## Proxy와 구조는 비슷하지만 설계 의도가 다르다
+### Proxy와 구조는 비슷하지만 설계 의도가 다르다
 
 Decorator와 Proxy 모두 같은 계약을 구현하고 target/delegate를 가질 수 있습니다.
 
@@ -189,7 +189,7 @@ Client -> Wrapper -> Target
 
 예를 들어 `CompressionReader`, `MetricsReader`는 기능 조합에 가깝고, 권한 검사 후에만 실제 repository를 호출하거나 실제 객체 생성을 늦추는 wrapper는 Proxy 의도가 더 강합니다. 실제 코드에서는 둘이 겹칠 수 있으므로 class 이름보다 **왜 wrapper가 존재하는가**를 봐야 합니다.
 
-## 독립적인 변화 축이 있을 때 합성의 가치가 커진다
+### 독립적인 변화 축이 있을 때 합성의 가치가 커진다
 
 로깅과 압축이 서로 독립적으로 켜지고 꺼질 수 있다면 Decorator 조합은 자연스럽습니다. 반대로 항상 함께 실행되는 두 줄짜리 고정 로직을 각각 interface와 Decorator class로 분리하면 구조만 복잡해질 수 있습니다.
 

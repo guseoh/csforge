@@ -73,7 +73,7 @@ Vendor SDK
 
 호출자는 내부 계약만 사용하고 Adapter만 양쪽 세계를 동시에 압니다.
 
-## Adapter는 단순 method 이름 변경보다 더 넓은 번역 경계다
+### Adapter는 단순 method 이름 변경보다 더 넓은 번역 경계다
 
 실제 외부 연동에서는 interface 모양 외에도 다음 차이가 생길 수 있습니다.
 
@@ -87,7 +87,7 @@ Instant                vendor epoch milliseconds
 
 Adapter가 이런 표현 차이를 변환하면 application은 vendor의 representation을 직접 다루지 않아도 됩니다. 중요한 것은 변환 결과가 내부 계약의 의미를 보존하는 것입니다.
 
-## 단위 변환은 값 손상까지 검토해야 한다
+### 단위 변환은 값 손상까지 검토해야 한다
 
 내부 `pay(long euros)`를 외부 `charge(int cents)`에 연결한다고 가정합니다. 다음 cast는 위험합니다.
 
@@ -104,7 +104,7 @@ int vendorCents = Math.toIntExact(cents);
 
 외부 API가 표현할 수 없는 금액이라면 SDK 호출 전에 실패시키는 것이 손상된 값으로 결제를 시도하는 것보다 안전합니다. 이런 범위 검사는 business 할인 정책이 아니라 **representation translation의 정확성**에 해당하므로 Adapter 경계에 자연스럽게 놓일 수 있습니다.
 
-## 외부 예외를 그대로 흘리면 경계가 새기 시작한다
+### 외부 예외를 그대로 흘리면 경계가 새기 시작한다
 
 ```java
 try {
@@ -128,7 +128,7 @@ catch (VendorDeclinedException e) {
 
 원인 exception을 cause로 보존하면 진단 정보도 잃지 않을 수 있습니다. 다만 vendor의 모든 error code를 하나의 일반 예외로 뭉개서 중요한 차이까지 지우면 안 됩니다. 내부 business가 실제로 구분해야 하는 실패는 내부 계약에 드러나야 합니다.
 
-## Adapter가 business policy를 소유하기 시작하면 책임이 섞인다
+### Adapter가 business policy를 소유하기 시작하면 책임이 섞인다
 
 다음 코드는 Adapter가 해야 할 일이 아닐 가능성이 큽니다.
 
@@ -155,7 +155,7 @@ Adapter가 불필요하게 알면 안 되는 것
 
 경계를 만들었다가 모든 연동 관련 코드를 Adapter 하나에 넣으면 새로운 god object가 될 수 있습니다.
 
-## 외부 DTO를 내부까지 반환하면 Adapter를 둔 효과가 약해진다
+### 외부 DTO를 내부까지 반환하면 Adapter를 둔 효과가 약해진다
 
 ```java
 interface PaymentGateway {
@@ -173,13 +173,13 @@ interface PaymentGateway {
 
 내부가 필요한 결과만 표현하면 provider별 세부를 경계 뒤에 둘 수 있습니다. 단, vendor가 제공하는 고유 정보가 실제 product requirement라면 필요한 만큼은 내부 모델에 명시적으로 포함해야 합니다.
 
-## DTO mapper와 Adapter는 겹칠 수 있지만 초점이 다르다
+### DTO mapper와 Adapter는 겹칠 수 있지만 초점이 다르다
 
 DTO mapper는 형태가 다른 두 데이터 구조 사이를 변환할 수 있습니다. Adapter도 내부에서 mapper를 사용할 수 있습니다. 그러나 모든 mapper를 디자인 패턴 Adapter라고 부를 필요는 없습니다.
 
 Adapter의 핵심 질문은 **호환되지 않는 협력 계약 사이에서 한쪽을 다른 쪽처럼 사용할 수 있게 만드는가**입니다. 단순 response field rename만 하는 transformation과 외부 시스템 경계를 보호하는 Adapter는 책임 범위가 다를 수 있습니다.
 
-## Decorator와 Proxy와는 변경하는 대상이 다르다
+### Decorator와 Proxy와는 변경하는 대상이 다르다
 
 Adapter는 보통 호출자가 보는 계약을 바꿉니다.
 
@@ -195,7 +195,7 @@ DataReader -> LoggingDataReader -> DataReader
 
 Proxy도 같은 역할을 앞에 두지만 대상 접근 시점·권한·지연 생성 같은 **접근 중개**가 중심입니다. 구현 class 모양이 비슷해도 “무엇을 변환하거나 제어하려는가”를 보면 구분하기 쉽습니다.
 
-## Adapter를 두었다고 외부 시스템 교체가 공짜가 되는 것은 아니다
+### Adapter를 두었다고 외부 시스템 교체가 공짜가 되는 것은 아니다
 
 두 PG가 기능과 의미까지 완전히 같다는 보장은 없습니다. 한 provider만 partial cancel을 지원하거나 timeout 의미가 다를 수 있습니다. Adapter는 **차이를 한곳에서 다룰 수 있는 경계**를 만들 뿐, 실제 차이를 없애지는 않습니다.
 

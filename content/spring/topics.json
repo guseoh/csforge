@@ -1,0 +1,14 @@
+[
+  {"kind":"topic","contentKey":"spring.core.why","areaSlug":"spring","slug":"why","title":"Spring이 필요한 이유","description":"객체 그래프, 결합도와 변경 비용, IoC와 의존성 주입","displayOrder":10,"active":true},
+  {"kind":"topic","contentKey":"spring.core.container","areaSlug":"spring","slug":"container","title":"ApplicationContext와 Bean","description":"Bean metadata, ApplicationContext, singleton identity","displayOrder":20,"active":true},
+  {"kind":"topic","contentKey":"spring.core.registration","areaSlug":"spring","slug":"registration","title":"Bean 등록 방식","description":"@Configuration/@Bean, component scan, 여러 후보 선택","displayOrder":30,"active":true},
+  {"kind":"topic","contentKey":"spring.core.injection","areaSlug":"spring","slug":"injection","title":"Dependency Injection","description":"생성자 주입, 선택적 의존성, 순환 의존성","displayOrder":40,"active":true},
+  {"kind":"topic","contentKey":"spring.core.scope-lifecycle","areaSlug":"spring","slug":"scope-lifecycle","title":"Scope와 Bean lifecycle","description":"scope별 수명, scope mismatch, lifecycle callbacks","displayOrder":50,"active":true},
+  {"kind":"topic","contentKey":"spring.core.config","areaSlug":"spring","slug":"config","title":"Configuration과 Environment","description":"externalized configuration, profile/precedence, typed binding","displayOrder":60,"active":true},
+  {"kind":"topic","contentKey":"spring.core.mvc","areaSlug":"spring","slug":"mvc","title":"Spring MVC request flow","description":"DispatcherServlet, controller 경계, argument resolution, message conversion","displayOrder":70,"active":true},
+  {"kind":"topic","contentKey":"spring.core.validation-error","areaSlug":"spring","slug":"validation-error","title":"Validation과 Error handling","description":"Bean Validation, binding error, exception-to-HTTP mapping","displayOrder":80,"active":true},
+  {"kind":"topic","contentKey":"spring.core.data-jpa","areaSlug":"spring","slug":"data-jpa","title":"Spring Data JPA","description":"Repository, persistence context/entity lifecycle, fetch plan과 N+1","displayOrder":90,"active":true},
+  {"kind":"topic","contentKey":"spring.core.transaction-aop","areaSlug":"spring","slug":"transaction-aop","title":"Transaction과 AOP","description":"@Transactional proxy, self-invocation, rollback rule","displayOrder":100,"active":true},
+  {"kind":"topic","contentKey":"spring.core.testing","areaSlug":"spring","slug":"testing","title":"Testing과 observability","description":"slice/context test, mock 경계, test transaction","displayOrder":110,"active":true},
+  {"kind":"topic","contentKey":"spring.core.production","areaSlug":"spring","slug":"production","title":"Production behavior","description":"startup failure, Actuator/metrics, graceful shutdown","displayOrder":120,"active":true}
+]

@@ -98,12 +98,12 @@ Volatile read/write 자체의 memory semantics가 있어도 이 **전체 read-mo
 
 ### visibility, ordering, mutual exclusion을 나눠 생각한다
 
-| 요구 | volatile | synchronized/Lock |
-|---|---|---|
-| 같은 volatile field를 통한 visibility/order | 제공 | 제공 가능 |
-| 한 thread만 critical section 진입 | 제공하지 않음 | 제공 |
-| `count++` 같은 복합 invariant 보호 | 단독으로 부족 | critical section으로 가능 |
-| lock 대기/ownership | 없음 | 있음 |
+| 요구                                        | volatile      | synchronized/Lock         |
+| ------------------------------------------- | ------------- | ------------------------- |
+| 같은 volatile field를 통한 visibility/order | 제공          | 제공 가능                 |
+| 한 thread만 critical section 진입           | 제공하지 않음 | 제공                      |
+| `count++` 같은 복합 invariant 보호          | 단독으로 부족 | critical section으로 가능 |
+| lock 대기/ownership                         | 없음          | 있음                      |
 
 그래서 "volatile이 synchronized보다 가볍다"만 보고 대체 관계로 생각하면 안 됩니다. 해결하는 문제가 다릅니다.
 

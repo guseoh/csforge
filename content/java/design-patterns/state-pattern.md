@@ -54,21 +54,21 @@ DocumentState
    └─ ArchivedState
 ```
 
-## 먼저 transition table을 만들면 패턴이 필요한지 판단하기 쉽다
+### 먼저 transition table을 만들면 패턴이 필요한지 판단하기 쉽다
 
 State class를 만들기 전에 상태 전이 자체를 명확히 하는 것이 먼저입니다.
 
-| 현재 상태 | publish | revise | archive |
-|---|---|---|---|
-| DRAFT | PUBLISHED | 거부 | 거부 |
-| PUBLISHED | 거부 | DRAFT | ARCHIVED |
-| ARCHIVED | 거부 | 거부 | 거부 |
+| 현재 상태 | publish   | revise | archive  |
+| --------- | --------- | ------ | -------- |
+| DRAFT     | PUBLISHED | 거부   | 거부     |
+| PUBLISHED | 거부      | DRAFT  | ARCHIVED |
+| ARCHIVED  | 거부      | 거부   | 거부     |
 
 이 표는 단순 문서가 아니라 **테스트 가능한 contract**입니다. 어떤 요청이 성공하고 다음 상태가 무엇인지, 거부된 요청에서 상태가 유지되는지를 분명히 합니다.
 
 State 패턴을 적용해도 이 전이 규칙이 사라지는 것이 아닙니다. 오히려 각 State object가 표의 한 행을 소유하게 됩니다.
 
-## State object는 현재 상태의 행동을 응집한다
+### State object는 현재 상태의 행동을 응집한다
 
 ```java
 interface DocumentState {
@@ -111,7 +111,7 @@ final class Document {
 
 이제 `DRAFT`의 publish/revise/archive 규칙은 `DraftState`에 모이고 `PUBLISHED` 규칙은 `PublishedState`에 모입니다.
 
-## 장점은 조건문을 없애는 것이 아니라 관련 변경 이유를 모으는 데 있다
+### 장점은 조건문을 없애는 것이 아니라 관련 변경 이유를 모으는 데 있다
 
 State class가 많아졌다고 좋은 설계가 되는 것은 아닙니다. 진짜 이점은 특정 상태의 규칙이 함께 변할 때 관련 코드가 같은 위치에 있다는 것입니다.
 
@@ -119,7 +119,7 @@ State class가 많아졌다고 좋은 설계가 되는 것은 아닙니다. 진�
 
 패턴의 목표는 `if`를 0개로 만드는 것이 아니라 **상태별 policy의 응집도를 높이는 것**입니다.
 
-## 실패한 전이는 현재 상태를 유지해야 하는가를 명확히 한다
+### 실패한 전이는 현재 상태를 유지해야 하는가를 명확히 한다
 
 다음 sequence를 생각해 봅시다.
 
@@ -145,7 +145,7 @@ void archive(Document document) {
 
 가능하면 전이 가능성을 확인한 뒤 state를 변경하고, 실패 후 상태가 무엇인지 명시해야 합니다. Java exception은 앞선 field 변경을 자동으로 되돌리지 않습니다.
 
-## “누가 state를 바꾸는가”도 설계 선택이다
+### “누가 state를 바꾸는가”도 설계 선택이다
 
 앞의 예시는 State가 `document.changeState(...)`를 호출했습니다. 다른 설계에서는 State가 다음 상태를 반환하고 Context가 실제 변경을 수행할 수도 있습니다.
 
@@ -165,7 +165,7 @@ void publish() {
 
 중요한 것은 transition 책임이 여러 호출자에 흩어져 `document.setState(...)`를 아무 곳에서나 호출하지 않도록 하는 것입니다. **현재 상태와 전이 규칙이 한 일관된 경계를 통해 변경되는가**를 봐야 합니다.
 
-## 상태와 상태 데이터가 함께 움직이면 State object의 가치가 커질 수 있다
+### 상태와 상태 데이터가 함께 움직이면 State object의 가치가 커질 수 있다
 
 단순 enum 값만 다르게 동작하는 것이 아니라 상태별로 필요한 데이터가 다를 수 있습니다.
 
@@ -179,7 +179,7 @@ ARCHIVED   : archivedAt, reason
 
 반대로 모든 상태가 같은 데이터 구조를 공유하고 행동 차이도 작다면 enum이 더 단순할 수 있습니다.
 
-## enum에 행동을 두는 방식이 더 적절한 경우도 많다
+### enum에 행동을 두는 방식이 더 적절한 경우도 많다
 
 ```java
 enum OrderStatus {
@@ -206,7 +206,7 @@ void cancel() {
 
 이 구조는 class 수가 적고 전체 transition을 한눈에 보기 쉽습니다. State 패턴은 조건문이 보인다는 이유만으로 도입하는 것이 아니라 **상태별 행동이 독립된 책임으로 커지는 시점**에 검토합니다.
 
-## Strategy와 모양이 비슷해도 교체 이유가 다르다
+### Strategy와 모양이 비슷해도 교체 이유가 다르다
 
 State와 Strategy 모두 interface field에 concrete implementation을 넣는 합성 구조가 될 수 있습니다.
 
@@ -218,7 +218,7 @@ Strategy는 보통 호출자나 구성 코드가 **알고리즘/정책을 선택
 
 할인 알고리즘을 GoldPolicy에서 VipPolicy로 외부 설정에 따라 바꾸는 것은 Strategy에 가깝고, 주문이 `PAID -> SHIPPED`로 이동하면서 가능한 행동이 바뀌는 것은 State에 가깝습니다.
 
-## State object 안에 전체 use case orchestration을 넣지 않는다
+### State object 안에 전체 use case orchestration을 넣지 않는다
 
 주문 취소가 다음 작업을 포함한다고 해 보겠습니다.
 
@@ -243,7 +243,7 @@ Application use case
 
 State는 **객체 내부의 상태별 행동과 전이 규칙**을 모델링하는 도구이지 모든 workflow를 흡수하는 패턴이 아닙니다.
 
-## 상태가 늘어날 때 class 수 증가라는 비용도 생긴다
+### 상태가 늘어날 때 class 수 증가라는 비용도 생긴다
 
 10개 상태와 8개 행동이 있다고 해서 무조건 10개 State class가 더 읽기 쉬운 것은 아닙니다. 간단한 규칙까지 class 여러 곳에 흩어지면 전체 transition graph를 보기 어려워질 수 있습니다.
 

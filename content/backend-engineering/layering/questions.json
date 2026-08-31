@@ -1,0 +1,119 @@
+[
+  {
+    "kind": "question",
+    "contentKey": "backend.core.layering.dependency-direction.q1",
+    "promptMarkdown": "의존 방향을 가장 잘 설명한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["backend.core.layering.dependency-direction"],
+    "choices": [
+      {"key": "A", "content": "Domain이 ResponseEntity와 JpaRepository를 직접 사용하면 계층이 명확해진다.", "displayOrder": 0},
+      {"key": "B", "content": "실행 중 바깥 계층이 안쪽 정책을 호출할 수 있어도, 안쪽 정책은 HTTP/JPA 같은 구현 세부의 변경 이유에 끌려가지 않게 한다.", "displayOrder": 1},
+      {"key": "C", "content": "모든 클래스에 interface를 만들면 자동으로 dependency inversion이 된다.", "displayOrder": 2},
+      {"key": "D", "content": "Controller와 Repository만 분리하면 Domain 계층은 필요 없다.", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "의존 방향은 폴더 수가 아니라 변경 이유와 구현 세부가 어느 방향으로 전파되는지를 제한하는 설계다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "backend.core.layering.dependency-direction.q2",
+    "promptMarkdown": "API DTO, Application command, Domain object를 분리하는 이유를 변경 이유 관점에서 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["backend.core.layering.dependency-direction"],
+    "modelAnswer": "HTTP 표현 변경과 domain/persistence 변경의 전파 범위를 제한하고 각 경계가 허용하는 입력·출력을 명확히 하기 위해서다.",
+    "explanationMarkdown": "구조 이름이 아니라 변경 전파를 설명해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "backend.core.layering.dependency-direction.q3",
+    "promptMarkdown": "Controller가 JPA Entity를 request/response로 직접 사용하는 API에서 status 필드를 외부가 수정할 수 있게 되었다. 어느 경계가 새고 있으며 어떻게 고치겠는가?",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["backend.core.layering.dependency-direction"],
+    "modelAnswer": "API가 persistence model을 직접 노출한 문제다. Request DTO에서 client가 바꿀 수 있는 field만 받고 Application command로 변환한 뒤 Domain의 의도 있는 상태 전이를 호출한다.",
+    "explanationMarkdown": "실제 경계 누수와 수정 방향을 연결해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "backend.core.layering.orchestration-rule.q1",
+    "promptMarkdown": "Application orchestration과 Domain rule의 구분으로 맞는 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["backend.core.layering.orchestration-rule"],
+    "choices": [
+      {"key": "A", "content": "여러 repository 호출 순서는 Domain Entity가 결정해야 한다.", "displayOrder": 0},
+      {"key": "B", "content": "상태 전이의 허용 여부는 Domain이, 여러 협력자 호출·transaction·복구 순서는 Application이 주로 소유한다.", "displayOrder": 1},
+      {"key": "C", "content": "모든 business 조건은 Controller에 있어야 중복이 없다.", "displayOrder": 2},
+      {"key": "D", "content": "Domain object는 상태만 저장하고 rule은 Service에 두는 것이 항상 좋다.", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "상태 유효성은 Domain, 여러 협력자의 순서와 transaction·recovery는 Application에 가깝다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "backend.core.layering.orchestration-rule.q2",
+    "promptMarkdown": "주문 취소에서 배송 시작 후 취소 금지와 repository 조회→상태 변경→저장의 책임이 왜 다른지 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["backend.core.layering.orchestration-rule"],
+    "modelAnswer": "전자는 객체가 항상 지켜야 할 invariant이고 후자는 유스케이스 협력 순서이므로 변경 이유와 재사용 범위가 다르다.",
+    "explanationMarkdown": "invariant와 orchestration의 차이를 설명해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "backend.core.layering.orchestration-rule.q3",
+    "promptMarkdown": "취소 Service가 외부 환불 API를 DB transaction 안에서 먼저 호출한 뒤 commit에 실패했다. 어떤 종류의 책임 문제가 드러났는가?",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["backend.core.layering.orchestration-rule"],
+    "modelAnswer": "Application orchestration이 local transaction과 external side effect의 실패 경계를 고려하지 못했다. 외부 idempotency, outbox, compensation 등으로 순서와 복구를 다시 설계해야 한다.",
+    "explanationMarkdown": "local atomicity와 external side effect를 구분해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "backend.core.layering.infrastructure-boundary.q1",
+    "promptMarkdown": "외부 SDK와 내부 Domain 사이 경계를 두는 가장 중요한 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["backend.core.layering.infrastructure-boundary"],
+    "choices": [
+      {"key": "A", "content": "vendor class 이름을 더 짧게 만들기 위해서", "displayOrder": 0},
+      {"key": "B", "content": "외부 타입·오류·protocol 변화가 내부 model로 퍼지는 것을 막고 내부 의미로 번역하기 위해서", "displayOrder": 1},
+      {"key": "C", "content": "모든 외부 호출을 비동기로 만들기 위해서", "displayOrder": 2},
+      {"key": "D", "content": "외부 오류를 모두 같은 RuntimeException으로 바꾸기 위해서", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "경계의 핵심은 vendor 세부를 내부 의미로 번역하고 변경 전파를 제한하는 것이다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "backend.core.layering.infrastructure-boundary.q2",
+    "promptMarkdown": "HTTP 429, vendor error code, request ID를 내부에서 각각 어떻게 다루는 것이 좋은지 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["backend.core.layering.infrastructure-boundary"],
+    "modelAnswer": "429는 retry 가능성 등 내부 failure type으로 번역하고 vendor code는 필요한 의미만 보존하며 request ID는 진단 metadata로 남기되 Domain contract로 누수시키지 않는다.",
+    "explanationMarkdown": "타입뿐 아니라 오류와 관측 metadata도 번역 경계의 일부다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "backend.core.layering.infrastructure-boundary.q3",
+    "promptMarkdown": "결제 Domain method가 StripePaymentIntent를 직접 받는다. provider 교체 요구가 생겼다. 최소 수정 방향을 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["backend.core.layering.infrastructure-boundary"],
+    "modelAnswer": "Infrastructure adapter에서 vendor response를 PaymentResult 같은 내부 모델로 번역하고 Application/Domain은 PaymentGateway 계약과 내부 타입만 알도록 경계를 둔다.",
+    "explanationMarkdown": "vendor model 침투를 끊는 방향을 제시해야 한다."
+  }
+]

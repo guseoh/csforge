@@ -89,12 +89,12 @@ HotSpot 같은 JVM 구현은 interpreter와 JIT compiler를 사용할 수 있습
 
 따라서 다음을 구분합니다.
 
-| 대상 | 의미 |
-|---|---|
-| Java source | 개발자가 작성한 Java 코드 |
-| class file | JVM이 읽을 수 있는 binary format |
-| bytecode | class file의 Code 영역에 들어가는 JVM instruction 중심 표현 |
-| native code | 실제 CPU에서 실행되는 기계어 |
+| 대상        | 의미                                                        |
+| ----------- | ----------------------------------------------------------- |
+| Java source | 개발자가 작성한 Java 코드                                   |
+| class file  | JVM이 읽을 수 있는 binary format                            |
+| bytecode    | class file의 Code 영역에 들어가는 JVM instruction 중심 표현 |
+| native code | 실제 CPU에서 실행되는 기계어                                |
 
 ### "Write once, run anywhere"도 class file만으로 설명하면 부족하다
 

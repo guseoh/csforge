@@ -149,13 +149,13 @@ Bounded queue라면 하나의 lock 아래에서:
 
 ### synchronized보다 항상 좋은 것은 아니다
 
-| 요구 | synchronized | ReentrantLock |
-|---|---|---|
-| 단순 상호 배제 | 간결 | 가능 |
-| 자동 scope 기반 release | O | X, finally 필요 |
-| timed try | 제한적 | `tryLock(timeout)` |
-| interruptible acquisition | 직접 지원 안 함 | `lockInterruptibly()` |
-| 여러 wait condition | 하나의 monitor wait set | 여러 `Condition` 가능 |
+| 요구                      | synchronized            | ReentrantLock         |
+| ------------------------- | ----------------------- | --------------------- |
+| 단순 상호 배제            | 간결                    | 가능                  |
+| 자동 scope 기반 release   | O                       | X, finally 필요       |
+| timed try                 | 제한적                  | `tryLock(timeout)`    |
+| interruptible acquisition | 직접 지원 안 함         | `lockInterruptibly()` |
+| 여러 wait condition       | 하나의 monitor wait set | 여러 `Condition` 가능 |
 
 추가 기능이 필요하지 않다면 synchronized가 실수를 줄일 수 있습니다.
 

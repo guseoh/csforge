@@ -1,0 +1,37 @@
+[
+  {
+    "kind":"question","contentKey":"spring.core.why.object-graph.q1","promptMarkdown":"다음 중 애플리케이션 객체 그래프를 가장 정확히 설명한 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["spring.core.why.object-graph"],
+    "choices":[
+      {"key":"A","content":"class 파일의 상속 관계만을 모아 놓은 구조다.","displayOrder":0},
+      {"key":"B","content":"실행 중인 객체 instance들이 실제 참조를 통해 협력하도록 연결된 구조이며 구현 선택·수명도 조립 문제에 포함된다.","displayOrder":1},
+      {"key":"C","content":"DB table의 foreign key 관계를 Java 객체로 옮긴 것이다.","displayOrder":2},
+      {"key":"D","content":"interface 개수가 많을수록 자동으로 좋은 객체 그래프가 된다.","displayOrder":3}],
+    "correctChoiceKey":"B","explanationMarkdown":"객체 그래프는 실행 중 어떤 instance가 어떤 collaborator와 연결되는지를 뜻한다. 상속 구조나 DB schema와 동일하지 않으며 interface 수 자체가 품질을 보장하지 않는다."
+  },
+  {
+    "kind":"question","contentKey":"spring.core.why.object-graph.q2","promptMarkdown":"`OrderService`가 `OrderRepository`와 `PaymentGateway`를 생성자로 받는다. 이 구조에서 객체 그래프를 완성하기 위해 서비스 밖에서 추가로 결정해야 할 내용을 두 가지 이상 설명하라.","questionType":"DESCRIPTIVE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["spring.core.why.object-graph"],
+    "modelAnswer":"어떤 concrete repository/gateway 구현을 만들지, 각 객체를 언제 몇 개 만들지(scope/lifetime), 필요한 configuration을 무엇으로 채울지, 생성된 객체를 어떤 순서로 연결할지를 외부 조립자가 결정해야 한다.","explanationMarkdown":"dependency를 생성자로 옮기면 조립 책임이 사라지는 것이 아니라 composition/container 경계로 이동한다."
+  },
+  {
+    "kind":"question","contentKey":"spring.core.why.coupling.q1","promptMarkdown":"`OrderService` 내부에서 `new StripePaymentGateway(apiKey)`를 직접 호출한다. 테스트에서 fake gateway를 쓰고 production에서는 다른 PG로 교체하려 한다. 가장 먼저 드러나는 설계 문제는?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["spring.core.why.coupling"],
+    "choices":[
+      {"key":"A","content":"`new` 키워드는 항상 객체지향 원칙 위반이다.","displayOrder":0},
+      {"key":"B","content":"업무 use case가 payment 구현 선택·구성 책임까지 소유해 독립 변경 이유가 결합되어 있다.","displayOrder":1},
+      {"key":"C","content":"interface를 사용하지 않았으므로 JVM이 dynamic dispatch를 못 한다.","displayOrder":2},
+      {"key":"D","content":"생성자 parameter가 적어서 compile time이 느려진다.","displayOrder":3}],
+    "correctChoiceKey":"B","explanationMarkdown":"문제는 `new` 자체가 아니라 협력 구현 선택과 use-case 수행이 같은 class의 변경 이유가 된다는 점이다."
+  },
+  {
+    "kind":"question","contentKey":"spring.core.why.coupling.q2","promptMarkdown":"`OrderService`가 `new Money(...)`를 만드는 것과 `new JpaOrderRepository(...)`를 만드는 것을 결합도 관점에서 왜 다르게 판단할 수 있는지 설명하라.","questionType":"DESCRIPTIVE","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["spring.core.why.coupling"],
+    "modelAnswer":"Money는 주문 use case가 소유하는 내부 값 생성일 수 있어 service 책임과 자연스럽게 결합될 수 있다. 반면 JpaOrderRepository 생성은 persistence 기술 선택·수명·configuration이라는 별도 변경 이유를 끌어온다. 무엇이 독립적으로 바뀌는지로 판단해야 한다.","explanationMarkdown":"모든 생성 코드를 외부화하는 것이 목적이 아니라 독립적인 변경 책임을 분리하는 것이 목적이다."
+  },
+  {
+    "kind":"question","contentKey":"spring.core.why.ioc-di.q1","promptMarkdown":"Constructor DI를 적용했을 때 제어가 역전되었다고 말할 수 있는 핵심 변화는 무엇인가?","questionType":"SHORT_ANSWER","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["spring.core.why.ioc-di"],
+    "acceptedAnswers":["협력 객체의 구현 선택과 생성·연결 책임이 사용하는 객체에서 외부 조립자나 container로 이동한다","dependency를 사용하는 객체가 직접 찾거나 만들지 않고 외부에서 전달받는다"],
+    "explanationMarkdown":"핵심은 annotation 이름이 아니라 dependency 선택·생성·연결 책임의 위치가 바뀌는 것이다."
+  },
+  {
+    "kind":"question","contentKey":"spring.core.why.ioc-di.q2","promptMarkdown":"다음 두 코드 중 constructor DI에 더 가까운 것은 무엇이며 이유는 무엇인가?\n\nA. `repository = context.getBean(OrderRepository.class);`\nB. `OrderService(OrderRepository repository)`","questionType":"SCENARIO","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["spring.core.why.ioc-di"],
+    "modelAnswer":"B다. 필요한 dependency가 constructor contract에 드러나고 외부 조립자가 전달한다. A는 객체가 locator/container를 직접 호출해 dependency를 찾으므로 Service Locator 성격이 강하다.","explanationMarkdown":"DI는 단순히 `new`를 없애는 것이 아니라 dependency를 외부에서 공급하는 구조다."
+  }
+]

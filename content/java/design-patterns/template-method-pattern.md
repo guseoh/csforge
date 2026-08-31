@@ -50,7 +50,7 @@ abstract class ImportJob {
 
 `run()`이 **알고리즘의 골격(template)** 을 결정합니다. `validate()`와 `transform()`은 반드시 구현해야 하는 변형 지점이고, `afterSave()`는 필요한 하위 타입만 override할 수 있는 hook입니다.
 
-## `final` template method는 전체 순서를 계약으로 고정할 수 있다
+### `final` template method는 전체 순서를 계약으로 고정할 수 있다
 
 하위 class가 `run()` 자체를 override할 수 있다면 다음처럼 공통 규칙을 우회할 수 있습니다.
 
@@ -76,7 +76,7 @@ void run() {
 
 `final`이 Template Method의 문법적 필수 조건은 아니지만, **전체 알고리즘 순서가 invariant라면 그 사실을 코드로 보호하는 수단**이 될 수 있습니다.
 
-## abstract operation과 hook은 계약 강도가 다르다
+### abstract operation과 hook은 계약 강도가 다르다
 
 ```java
 protected abstract void validate();
@@ -107,7 +107,7 @@ onFailure?
 
 이렇게 확장점이 계속 늘어나면 상속 계층이 단순한 공통 알고리즘보다 **숨은 lifecycle framework**처럼 변할 수 있습니다. 하위 class 개발자는 어느 hook이 언제 호출되고 어떤 상태가 준비되어 있는지를 모두 알아야 합니다.
 
-## 하위 class는 method signature뿐 아니라 호출 순서에도 결합된다
+### 하위 class는 method signature뿐 아니라 호출 순서에도 결합된다
 
 다음 하위 class를 보겠습니다.
 
@@ -137,7 +137,7 @@ class CsvImportJob extends ImportJob {
 
 이것이 Template Method의 중요한 비용입니다. 하위 타입은 상위 타입의 공개 API만이 아니라 **상위 알고리즘의 내부 호출 protocol**에 결합됩니다. protected field나 여러 hook을 많이 공유할수록 이 결합은 더 강해집니다.
 
-## 예외가 발생하면 이후 단계가 어디까지 실행되는지 명확해야 한다
+### 예외가 발생하면 이후 단계가 어디까지 실행되는지 명확해야 한다
 
 ```java
 final void run() {
@@ -169,7 +169,7 @@ final void run() {
 
 Template Method를 읽을 때는 정상 순서만 보지 말고 **각 단계가 실패했을 때 다음 단계와 cleanup이 어떻게 되는지**도 call sequence로 추적해야 합니다.
 
-## 독립적인 변화 축을 모두 subclass로 표현하면 조합 수가 곱으로 늘어난다
+### 독립적인 변화 축을 모두 subclass로 표현하면 조합 수가 곱으로 늘어난다
 
 Export 과정이 다음 순서를 가진다고 해 봅시다.
 
@@ -227,21 +227,21 @@ abstract class ExportJob {
 
 이렇게 하면 공통 실행 순서를 포기하지 않으면서도 독립적인 변화 축을 subclass 조합으로 폭증시키지 않을 수 있습니다.
 
-## Strategy와의 차이는 변화 지점을 연결하는 방식에 있다
+### Strategy와의 차이는 변화 지점을 연결하는 방식에 있다
 
 Template Method와 Strategy는 둘 다 변하는 부분과 공통 부분을 분리하지만 구조가 다릅니다.
 
-| 관점 | Template Method | Strategy |
-|---|---|---|
-| 변화 방식 | 상속과 override | collaborator 합성 |
-| 공통 흐름 | 상위 class가 소유 | context가 소유 |
-| 변형 선택 | 보통 concrete subtype 선택 | strategy instance 선택 |
-| runtime 교체 | 상대적으로 제한적 | 비교적 자연스러움 |
-| 결합 | 상위 호출 protocol에 결합 | strategy contract에 결합 |
+| 관점         | Template Method            | Strategy                 |
+| ------------ | -------------------------- | ------------------------ |
+| 변화 방식    | 상속과 override            | collaborator 합성        |
+| 공통 흐름    | 상위 class가 소유          | context가 소유           |
+| 변형 선택    | 보통 concrete subtype 선택 | strategy instance 선택   |
+| runtime 교체 | 상대적으로 제한적          | 비교적 자연스러움        |
+| 결합         | 상위 호출 protocol에 결합  | strategy contract에 결합 |
 
 두 패턴은 경쟁 관계만 있는 것이 아닙니다. 앞의 Export 예처럼 **큰 고정 골격은 Template Method, 그 안의 독립 정책은 Strategy**로 조합할 수 있습니다.
 
-## 상속이 자연스러운 하나의 알고리즘 계열인지 먼저 확인한다
+### 상속이 자연스러운 하나의 알고리즘 계열인지 먼저 확인한다
 
 다음 두 작업에 일부 코드 중복이 있다고 해서 곧바로 같은 abstract superclass에 넣는 것은 위험할 수 있습니다.
 
@@ -254,7 +254,7 @@ NightlyDatabaseBackup
 
 Template Method의 전제는 단순한 코드 중복이 아니라 **여러 subtype이 같은 알고리즘 골격을 공유하고 일부 단계만 다르게 수행한다는 안정된 관계**입니다.
 
-## protected state 공유가 많아질수록 하위 타입의 자율성은 줄어든다
+### protected state 공유가 많아질수록 하위 타입의 자율성은 줄어든다
 
 ```java
 abstract class Job {
@@ -274,7 +274,7 @@ protected abstract Parsed transform(Source source);
 
 모든 protected field가 나쁜 것은 아니지만, Template Method가 커질수록 **상속을 통한 암묵적 공유 state**가 얼마나 늘어나는지 확인해야 합니다.
 
-## 단순 중복 제거라면 더 작은 방법이 낫다
+### 단순 중복 제거라면 더 작은 방법이 낫다
 
 두 class에 같은 logging 두 줄이 있다는 이유로 abstract base class를 만들 필요는 없습니다. helper method, 작은 collaborator, utility가 더 직접적일 수 있습니다.
 

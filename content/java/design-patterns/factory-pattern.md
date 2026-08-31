@@ -73,7 +73,7 @@ Concrete object
 
 Factory의 핵심은 `new`를 다른 파일로 이동하는 것이 아니라 **생성에 관한 결정이 실제 사용 코드와 독립적으로 바뀔 이유가 있을 때 그 결정을 한 경계에 모으는 것**입니다.
 
-## 구현 선택이 반복될 때 생성 정책을 한곳에 모을 수 있다
+### 구현 선택이 반복될 때 생성 정책을 한곳에 모을 수 있다
 
 여러 호출자가 각각 같은 switch를 가지고 있다면 새 타입을 추가할 때 모든 호출자를 수정해야 합니다.
 
@@ -94,7 +94,7 @@ parser.parse(source);
 
 이때 단순히 switch가 존재한다는 이유만으로 Factory가 필요한 것은 아닙니다. 한 장소의 짧고 안정적인 switch가 오히려 더 읽기 쉬울 수도 있습니다. Factory의 가치가 커지는 것은 **선택 정책이 여러 곳에 반복되거나 조립 과정 자체가 별도 책임이 될 때**입니다.
 
-## 객체 생성은 class 선택뿐 아니라 수명 정책도 포함한다
+### 객체 생성은 class 선택뿐 아니라 수명 정책도 포함한다
 
 문서 parser와 writer를 만든다고 해 보겠습니다. Parser는 immutable하고 상태를 갖지 않아 형식별로 공유할 수 있지만 Writer는 현재 문서의 output buffer를 내부에 보관한다고 가정합니다.
 
@@ -116,7 +116,7 @@ Factory가 둘 다 무조건 singleton으로 캐시하면 서로 다른 문서�
 
 Factory는 생성 횟수를 줄이는 패턴이 아닙니다. **어떤 state가 누구에게 속하는지에 맞춰 instance 수명을 결정하는 책임**도 가질 수 있습니다.
 
-## Factory는 생성 이후의 business lifecycle까지 소유하지 않는다
+### Factory는 생성 이후의 business lifecycle까지 소유하지 않는다
 
 ```java
 Order order = orderFactory.create(...);
@@ -132,7 +132,7 @@ orderFactory.cancel(order); // 모든 domain behavior를 factory가 가져가는
 
 Factory는 보통 **어떻게 유효한 객체를 얻는가**를 담당하고, 만들어진 객체의 고유한 행동은 그 객체나 해당 use case의 책임으로 남습니다.
 
-## 생성 시 검증과 설정 해석도 Factory가 숨길 수 있다
+### 생성 시 검증과 설정 해석도 Factory가 숨길 수 있다
 
 외부 설정을 읽어 concrete dependency를 조립하는 과정은 호출자가 알 이유가 없을 수 있습니다.
 
@@ -154,7 +154,7 @@ PaymentProcessor create(PaymentType type) {
 
 다만 “Factory가 있으니 모든 validation을 여기 넣는다”는 뜻은 아닙니다. 객체 자체의 invariant는 객체 생성 API가 지켜야 할 수 있고, business 상태 규칙은 domain이 소유할 수 있습니다. Factory는 **조립 정책에 속하는 검증**만 가져가는 편이 응집됩니다.
 
-## 반환 타입은 호출자가 어느 세부에 의존할지 결정한다
+### 반환 타입은 호출자가 어느 세부에 의존할지 결정한다
 
 ```java
 PaymentProcessor create(PaymentType type)
@@ -164,7 +164,7 @@ Factory가 공통 역할을 반환하면 use case는 `CardProcessor`, `BankProce
 
 반대로 호출자가 concrete class의 고유 기능을 실제로 필요로 한다면 무조건 가장 넓은 interface로 숨기면 안 됩니다. 숨긴 차이를 결국 `instanceof`와 cast로 되찾는다면 abstraction이 현재 요구를 제대로 표현하지 못하는 것입니다.
 
-## static factory와 별도 Factory는 생성 책임의 범위가 다르다
+### static factory와 별도 Factory는 생성 책임의 범위가 다르다
 
 ```java
 Money.won(10_000)
@@ -180,7 +180,7 @@ PaymentProcessorFactory.create(type)
 
 둘 중 무엇이 더 “패턴답다”가 중요한 것이 아니라 생성 지식이 어디에 가장 응집되는지가 중요합니다.
 
-## Builder와 Factory도 해결하는 문제가 다르다
+### Builder와 Factory도 해결하는 문제가 다르다
 
 Builder는 한 객체의 선택 인자가 많고 단계적 구성 state가 필요한 문제에 강합니다. Factory는 어떤 implementation이나 object graph를 만들지 선택·조립하는 문제에 강합니다.
 
@@ -195,7 +195,7 @@ Exporter exporter = exporterFactory.create(options.format());
 
 필요하면 함께 쓸 수 있지만 단순한 `new Member(name)`을 `MemberFactory -> MemberBuilder -> Member`처럼 여러 층으로 감싸는 것이 좋은 설계는 아닙니다.
 
-## DI와 Factory는 서로 반대되는 개념이 아니다
+### DI와 Factory는 서로 반대되는 개념이 아니다
 
 DI는 사용하는 객체가 협력자를 직접 만들지 않고 외부에서 받는 구조입니다. 그 외부 조립자 중 하나가 Factory일 수 있습니다.
 
@@ -208,7 +208,7 @@ Factory / composition root
 
 즉 Factory가 생성 책임을 모으고, 만들어진 collaborator를 다른 객체에 주입하면 두 개념은 자연스럽게 연결됩니다.
 
-## 불필요한 Factory는 간접 계층만 늘린다
+### 불필요한 Factory는 간접 계층만 늘린다
 
 ```java
 class MemberFactory {

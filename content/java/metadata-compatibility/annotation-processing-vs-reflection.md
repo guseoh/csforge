@@ -119,14 +119,14 @@ metadata/member 조사
 
 ### 두 방식의 가장 큰 차이는 "결정 시점"이다
 
-| 구분 | Annotation Processing | Reflection |
-|---|---|---|
-| 주요 시점 | compile time | runtime |
-| 보는 대상 | source/type model | load된 Class/member |
-| 오류 발견 | compile 중 가능 | 실행 중 가능 |
-| code generation | 대표적인 사용 방식 | 자체적으로 compile-time source 생성하는 API는 아님 |
-| runtime lookup | 줄일 수 있음 | 필요할 수 있음 |
-| 동적 runtime 정보 | 제한적 | 실제 loaded type을 볼 수 있음 |
+| 구분              | Annotation Processing | Reflection                                         |
+| ----------------- | --------------------- | -------------------------------------------------- |
+| 주요 시점         | compile time          | runtime                                            |
+| 보는 대상         | source/type model     | load된 Class/member                                |
+| 오류 발견         | compile 중 가능       | 실행 중 가능                                       |
+| code generation   | 대표적인 사용 방식    | 자체적으로 compile-time source 생성하는 API는 아님 |
+| runtime lookup    | 줄일 수 있음          | 필요할 수 있음                                     |
+| 동적 runtime 정보 | 제한적                | 실제 loaded type을 볼 수 있음                      |
 
 어느 쪽이 무조건 더 좋은 것이 아니라 문제의 성격이 다릅니다.
 

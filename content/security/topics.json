@@ -1,0 +1,14 @@
+[
+  {"kind":"topic","contentKey":"security.core.foundations","areaSlug":"security","slug":"foundations","title":"Security foundations","description":"asset/threat/vulnerability, trust boundary, CIA와 least privilege","displayOrder":10,"active":true},
+  {"kind":"topic","contentKey":"security.core.authn-authz","areaSlug":"security","slug":"authn-authz","title":"Authentication vs authorization","description":"identity/principal, authentication, authorization","displayOrder":20,"active":true},
+  {"kind":"topic","contentKey":"security.core.password","areaSlug":"security","slug":"password","title":"Password storage","description":"plaintext/reversible storage, salt/password hash, work factor","displayOrder":30,"active":true},
+  {"kind":"topic","contentKey":"security.core.session-cookie","areaSlug":"security","slug":"session-cookie","title":"Session과 cookie","description":"session identifier, cookie flags, fixation와 expiration","displayOrder":40,"active":true},
+  {"kind":"topic","contentKey":"security.core.browser","areaSlug":"security","slug":"browser","title":"SOP·CORS·CSRF·XSS","description":"same-origin policy, CORS, CSRF, XSS를 서로 다른 보안 메커니즘/공격으로 구분","displayOrder":50,"active":true},
+  {"kind":"topic","contentKey":"security.core.injection","areaSlug":"security","slug":"injection","title":"Injection defenses","description":"SQL/JPQL/native query injection과 output encoding","displayOrder":60,"active":true},
+  {"kind":"topic","contentKey":"security.core.access","areaSlug":"security","slug":"access","title":"Access control vulnerabilities","description":"resource ownership, BOLA/IDOR, vertical privilege escalation","displayOrder":70,"active":true},
+  {"kind":"topic","contentKey":"security.core.filter-chain","areaSlug":"security","slug":"filter-chain","title":"Spring Security filter chain","description":"Servlet Filter, FilterChainProxy/SecurityFilterChain, exception translation","displayOrder":80,"active":true},
+  {"kind":"topic","contentKey":"security.core.auth-architecture","areaSlug":"security","slug":"auth-architecture","title":"Authentication architecture","description":"Authentication, AuthenticationManager/Provider, UserDetailsService/PasswordEncoder","displayOrder":90,"active":true},
+  {"kind":"topic","contentKey":"security.core.context-authz","areaSlug":"security","slug":"context-authz","title":"SecurityContext와 authorization","description":"SecurityContextHolder, method security, async/thread context","displayOrder":100,"active":true},
+  {"kind":"topic","contentKey":"security.core.tokens-oauth","areaSlug":"security","slug":"tokens-oauth","title":"JWT·OAuth·OIDC","description":"JWT structure/lifecycle, OAuth authorization, OIDC authentication","displayOrder":110,"active":true},
+  {"kind":"topic","contentKey":"security.core.abuse","areaSlug":"security","slug":"abuse","title":"SSRF·file·abuse·secrets","description":"SSRF, unsafe file handling, rate limiting, secret logging","displayOrder":120,"active":true}
+]

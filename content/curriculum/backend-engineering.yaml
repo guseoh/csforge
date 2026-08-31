@@ -1,0 +1,382 @@
+schemaVersion: 2
+area:
+  key: backend-engineering
+  title: Backend Engineering
+  baseline: Java/Spring backend practice
+  contentKeyPrefix: backend.core
+  status: CANONICAL_FOUNDATION
+policies:
+  language:
+    authoringLanguage: ko-KR
+    explanationRule: API 요청에서 시작해 application/domain/persistence/external boundary와 상태 변화, 실패·복구, 운영 판단까지 이어지는 설명형 문단으로 작성한다.
+  question:
+    minimumPerConcept: 2
+    topicDifficultyCoverage: [EASY, MEDIUM, HARD]
+    areaTypeCoverage: [MULTIPLE_CHOICE, SHORT_ANSWER, DESCRIPTIVE, SCENARIO]
+    hardRule: 구체적인 request, DB state, concurrent timeline, timeout/retry, batch checkpoint, migration 단계, 운영 metric 중 하나 이상을 제시한다.
+    shortAnswerRule: 용어 이름만으로 정답을 인정하지 않는다.
+  architecture:
+    dependency: api -> application -> domain
+    rule: infrastructure/JPA/framework details가 domain policy를 대신하지 않도록 책임과 source of truth를 구분한다.
+  visualization:
+    values: [NONE, TEXT, DIAGRAM]
+    rule: request flow, transaction boundary, retry/idempotency race, batch restart, migration rollout처럼 상태/시간 순서가 중요한 곳에 사용한다.
+topics:
+- key: backend.core.layering
+  title: Layering과 responsibility
+  order: 10
+  scope: dependency direction, orchestration/business rule, infrastructure boundary를 다룬다.
+  boundary: layer 이름 자체보다 변경 책임과 dependency direction을 기준으로 설명한다.
+  concepts:
+  - key: backend.core.layering.dependency-direction
+    title: dependency direction
+    order: 10
+    level: 1
+    objective: API가 application에, application이 domain에 의존하고 domain이 HTTP/JPA 세부를 몰라도 되는 이유를 설명한다.
+    density: CORE
+    visualization: DIAGRAM
+  - key: backend.core.layering.orchestration-rule
+    title: orchestration과 business rule
+    order: 20
+    level: 1
+    objective: 여러 collaborator 호출·transaction coordination과 entity/value object invariant를 서로 다른 책임으로 구분한다.
+    density: CORE
+    visualization: TEXT
+  - key: backend.core.layering.infrastructure-boundary
+    title: infrastructure boundary
+    order: 30
+    level: 1
+    objective: DB/HTTP client/message broker 같은 외부 기술 표현을 내부 use-case/domain model로 번역하는 경계를 설명한다.
+    density: CORE
+    visualization: TEXT
+- key: backend.core.domain
+  title: Domain modeling
+  order: 20
+  scope: entity identity, value object, invariant/lifecycle을 다룬다.
+  boundary: JPA annotation 편의가 domain 모델의 생성·상태 전이 규칙을 결정하지 않도록 한다.
+  concepts:
+  - key: backend.core.domain.entity
+    title: Entity와 identity
+    order: 10
+    level: 1
+    objective: 시간이 지나며 attribute가 변해도 같은 business identity를 유지하는 객체와 DB row/JPA entity 표현을 구분한다.
+    density: CORE
+    visualization: NONE
+  - key: backend.core.domain.value-object
+    title: Value object
+    order: 20
+    level: 1
+    objective: identity보다 값의 조합과 invariant로 동등성을 판단하고 불변 객체로 의미를 묶는 이유를 설명한다.
+    density: CORE
+    visualization: NONE
+  - key: backend.core.domain.invariant-lifecycle
+    title: invariant와 lifecycle
+    order: 30
+    level: 1
+    objective: valid creation, allowed transition, terminal state 규칙을 intention-revealing method로 보호하는 이유를 설명한다.
+    density: CORE
+    visualization: DIAGRAM
+- key: backend.core.api
+  title: API contract design
+  order: 30
+  scope: resource/endpoint, method/status, compatibility를 다룬다.
+  boundary: URI 미학보다 resource semantics와 observable contract를 우선한다.
+  concepts:
+  - key: backend.core.api.resource-endpoint
+    title: resource와 endpoint
+    order: 10
+    level: 1
+    objective: client가 다루는 resource/action을 안정적인 URI와 request/response contract로 표현한다.
+    density: CORE
+    visualization: NONE
+  - key: backend.core.api.methods-status
+    title: HTTP method와 status
+    order: 20
+    level: 1
+    objective: safe/idempotent semantics, creation/update/delete 결과, validation/conflict/not-found를 일관된 method/status로 표현한다.
+    density: CORE
+    visualization: TEXT
+  - key: backend.core.api.compatibility
+    title: 계약 호환성
+    order: 30
+    level: 1
+    objective: 기존 consumer가 의존하는 field 의미·status·ordering을 깨지 않으며 additive/deprecating change를 단계적으로 배포한다.
+    density: CORE
+    visualization: TEXT
+- key: backend.core.dto-validation-error
+  title: DTO·validation·error
+  order: 40
+  scope: request/response DTO, validation layers, error contract를 다룬다.
+  boundary: API DTO를 persistence entity의 serialization view로 사용하지 않는다.
+  concepts:
+  - key: backend.core.dto-validation-error.dto-boundary
+    title: request/response DTO
+    order: 10
+    level: 2
+    objective: 외부 representation과 internal/domain/persistence model을 분리해 over-posting, lazy serialization, accidental compatibility coupling을 줄인다.
+    density: CORE
+    visualization: TEXT
+  - key: backend.core.dto-validation-error.validation-layers
+    title: validation layers
+    order: 20
+    level: 2
+    objective: syntax/type/request shape, business invariant, authorization, DB constraint가 서로 다른 실패를 막는 이유와 중복의 의미를 설명한다.
+    density: CORE
+    visualization: DIAGRAM
+  - key: backend.core.dto-validation-error.error-contract
+    title: error contract
+    order: 30
+    level: 2
+    objective: stable error code, message, field violation, retryability/correlation 정보를 client 계약으로 설계하면서 내부 exception/secret을 노출하지 않는다.
+    density: CORE
+    visualization: NONE
+- key: backend.core.list
+  title: List API
+  order: 50
+  scope: pagination, filter/sort, cursor/keyset을 API 관점에서 다룬다.
+  boundary: DB index 선택은 Database 영역과 연결하되 API가 stable ordering과 bounds를 소유한다.
+  concepts:
+  - key: backend.core.list.pagination
+    title: pagination과 bounded result
+    order: 10
+    level: 2
+    objective: 무제한 list 대신 page size upper bound, stable ordering, total/count 필요성을 product/API 관점에서 설계한다.
+    density: CORE
+    visualization: NONE
+  - key: backend.core.list.filter-sort
+    title: filter와 sort contract
+    order: 20
+    level: 2
+    objective: 허용 가능한 filter/sort field를 명시하고 tie-breaker를 포함한 deterministic ordering을 보장한다.
+    density: CORE
+    visualization: TEXT
+  - key: backend.core.list.cursor
+    title: cursor/keyset API
+    order: 30
+    level: 2
+    objective: opaque cursor가 마지막 sort position을 표현하고 데이터 변화 중 page drift와 deep offset 비용을 줄이는 조건을 설명한다.
+    density: CORE
+    visualization: TEXT
+- key: backend.core.idempotency
+  title: Idempotency
+  order: 60
+  scope: retry duplicate, idempotency key, race/expiry를 다룬다.
+  boundary: HTTP method의 idempotent semantics와 application idempotency-key protocol을 구분한다.
+  concepts:
+  - key: backend.core.idempotency.repeat-request
+    title: 반복 요청과 unknown outcome
+    order: 10
+    level: 2
+    objective: client timeout 후 server 처리 여부를 모르는 상황에서 blind retry가 중복 주문/결제를 만드는 흐름을 설명한다.
+    density: CORE
+    visualization: DIAGRAM
+  - key: backend.core.idempotency.idempotency-key
+    title: idempotency key와 결과 재사용
+    order: 20
+    level: 2
+    objective: 같은 operation identity를 key/fingerprint와 저장된 status/result에 연결해 duplicate execution을 막는 기본 상태 모델을 설계한다.
+    density: CORE
+    visualization: DIAGRAM
+  - key: backend.core.idempotency.race-expiry
+    title: concurrent race와 expiry
+    order: 30
+    level: 3
+    objective: 같은 key 동시 요청, PROCESSING 상태, unique constraint, same-key-different-payload, expiry 후 reuse 정책을 transaction 경계로 판단한다.
+    density: CORE
+    visualization: DIAGRAM
+- key: backend.core.concurrency-transaction
+  title: Concurrency와 transaction
+  order: 70
+  scope: lost update, optimistic version, use-case transaction을 다룬다.
+  boundary: DB isolation/lock 내부 구현은 Database 영역과 연결한다.
+  concepts:
+  - key: backend.core.concurrency-transaction.lost-update
+    title: lost update
+    order: 10
+    level: 2
+    objective: 두 요청이 같은 값을 읽고 독립적으로 수정한 뒤 마지막 write가 앞의 변경을 덮는 흐름을 설명한다.
+    density: CORE
+    visualization: DIAGRAM
+  - key: backend.core.concurrency-transaction.optimistic
+    title: optimistic version
+    order: 20
+    level: 2
+    objective: expected version 조건을 UPDATE predicate에 포함해 stale write를 0-row update/conflict로 감지하고 retry/사용자 충돌 처리를 선택한다.
+    density: CORE
+    visualization: TEXT
+  - key: backend.core.concurrency-transaction.usecase-transaction
+    title: use-case transaction
+    order: 30
+    level: 2
+    objective: 여러 repository 변경의 atomic DB boundary를 application use case에 두되 remote API call을 긴 DB transaction 안에 무조건 포함하지 않는 이유를 설명한다.
+    density: CORE
+    visualization: DIAGRAM
+- key: backend.core.external
+  title: External API integration
+  order: 80
+  scope: timeout, remote response validation, circuit breaker/fallback을 다룬다.
+  boundary: resiliency pattern을 장애를 숨기는 만능 장치로 표현하지 않는다.
+  concepts:
+  - key: backend.core.external.timeouts
+    title: connect/read timeout
+    order: 10
+    level: 2
+    objective: connection establishment와 response wait를 각각 bounded하게 만들고 unbounded wait가 thread/connection pool을 고갈시키는 흐름을 설명한다.
+    density: CORE
+    visualization: TEXT
+  - key: backend.core.external.remote-errors
+    title: remote error와 response validation
+    order: 20
+    level: 2
+    objective: HTTP success만 믿지 않고 schema/required field/business status를 검증하며 remote failure를 내부 error model로 번역한다.
+    density: CORE
+    visualization: NONE
+  - key: backend.core.external.circuit-fallback
+    title: circuit breaker와 fallback
+    order: 30
+    level: 3
+    objective: 반복 실패를 감지해 잠시 호출을 차단하는 state machine과 사용자에게 허용 가능한 fallback/partial result를 구분한다.
+    density: CORE
+    visualization: DIAGRAM
+- key: backend.core.retry
+  title: Retry와 backoff
+  order: 90
+  scope: transient/permanent failure, exponential backoff/jitter, deadline/idempotency를 다룬다.
+  boundary: retry를 모든 exception의 기본 처리로 만들지 않는다.
+  concepts:
+  - key: backend.core.retry.transient-permanent
+    title: transient와 permanent failure
+    order: 10
+    level: 2
+    objective: timeout/temporary unavailable 같은 재시도 후보와 validation/auth/not-found 같은 permanent failure를 구분한다.
+    density: CORE
+    visualization: NONE
+  - key: backend.core.retry.backoff-jitter
+    title: exponential backoff와 jitter
+    order: 20
+    level: 2
+    objective: retry 간격을 늘리고 randomness를 섞어 synchronized retry storm을 완화하는 이유와 max delay/attempt를 판단한다.
+    density: CORE
+    visualization: TEXT
+  - key: backend.core.retry.deadline
+    title: 전체 deadline과 idempotency
+    order: 30
+    level: 3
+    objective: 각 attempt timeout만이 아니라 전체 operation deadline/budget을 두고 side effect operation은 replay safety를 확인한 뒤 retry한다.
+    density: CORE
+    visualization: DIAGRAM
+- key: backend.core.bulk-batch
+  title: File·bulk·batch
+  order: 100
+  scope: File API, bulk semantics, checkpoint/restart를 다룬다.
+  boundary: 특정 batch framework API보다 입력 규모·atomicity·recovery 계약에 집중한다.
+  concepts:
+  - key: backend.core.bulk-batch.file-api
+    title: File API와 streaming boundary
+    order: 10
+    level: 3
+    objective: multipart/count/size 제한, streaming vs in-memory buffering, content/path/access validation을 자원 고갈 관점과 함께 설계한다.
+    density: CORE
+    visualization: TEXT
+  - key: backend.core.bulk-batch.bulk-processing
+    title: bulk processing과 partial result
+    order: 20
+    level: 3
+    objective: all-or-nothing과 per-item partial success를 구분하고 chunk, item-level error, retry/idempotency contract를 설계한다.
+    density: CORE
+    visualization: TEXT
+  - key: backend.core.bulk-batch.batch-recovery
+    title: batch checkpoint와 restart
+    order: 30
+    level: 3
+    objective: chunk commit/checkpoint 이후 실패한 job을 재시작할 때 이미 완료한 item을 중복 반영하지 않는 상태와 operator recovery를 설계한다.
+    density: CORE
+    visualization: DIAGRAM
+- key: backend.core.time-money
+  title: Time과 money
+  order: 110
+  scope: Instant/timezone, Clock/expiry, BigDecimal/rounding을 다룬다.
+  boundary: locale display formatting과 canonical storage/business policy를 구분한다.
+  concepts:
+  - key: backend.core.time-money.instant-zone
+    title: Instant와 business timezone
+    order: 10
+    level: 3
+    objective: 절대 시각 저장과 지역 달력 규칙을 분리하고 DST/offset 변화가 예약·마감 계산에 미치는 영향을 설명한다.
+    density: CORE
+    visualization: TEXT
+  - key: backend.core.time-money.clock-expiry
+    title: Clock과 expiration policy
+    order: 20
+    level: 3
+    objective: 현재 시간을 직접 호출하는 대신 Clock을 dependency로 전달해 expiry 경계를 테스트하고 inclusive/exclusive rule을 명시한다.
+    density: CORE
+    visualization: NONE
+  - key: backend.core.time-money.money-rounding
+    title: BigDecimal과 rounding
+    order: 30
+    level: 3
+    objective: binary floating point 대신 decimal amount/scale/currency/rounding rule을 명시하고 API/DB 경계에서 precision loss를 피한다.
+    density: CORE
+    visualization: NONE
+- key: backend.core.evolution
+  title: Evolution·cache·async
+  order: 120
+  scope: DB migration, API evolution, cache adoption, async adoption을 별도 decision으로 다룬다.
+  boundary: cache/async technology를 측정 없이 기본 정답으로 도입하지 않는다.
+  concepts:
+  - key: backend.core.evolution.migration
+    title: backward-compatible DB migration
+    order: 10
+    level: 3
+    objective: expand/backfill/switch/contract 순서로 old/new application version과 schema가 공존하는 배포를 설계한다.
+    density: CORE
+    visualization: DIAGRAM
+  - key: backend.core.evolution.api-evolution
+    title: API evolution과 deprecation
+    order: 20
+    level: 3
+    objective: 여러 consumer가 다른 version으로 존재할 때 additive change, dual-read/write, deprecation window, semantic break를 관리한다.
+    density: CORE
+    visualization: TEXT
+  - key: backend.core.evolution.cache-decision
+    title: cache 도입 판단
+    order: 30
+    level: 3
+    objective: measured hot read/latency/backend load와 stale tolerance가 있을 때 cache 후보를 검토하고 invalidation/source-of-truth 비용을 비교한다.
+    density: CORE
+    visualization: TEXT
+  - key: backend.core.evolution.async-decision
+    title: async 처리 도입 판단
+    order: 40
+    level: 3
+    objective: request latency에서 분리할 실제 제품 가치가 있을 때 queue/event를 검토하고 delivery/retry/idempotency/observability 비용을 함께 판단한다.
+    density: CORE
+    visualization: DIAGRAM
+- key: backend.core.testing-recovery
+  title: Testing·failure·maintainability
+  order: 130
+  scope: testing strategy, failure/recovery, maintainability trade-off를 다룬다.
+  boundary: 테스트 도구 이름보다 실제 실패 위험과 경계를 기준으로 선택한다.
+  concepts:
+  - key: backend.core.testing-recovery.testing-strategy
+    title: Testing strategy
+    order: 10
+    level: 3
+    objective: pure domain unit, persistence/integration, HTTP contract, external stub/test를 위험과 feedback cost에 맞춰 조합한다.
+    density: CORE
+    visualization: TEXT
+  - key: backend.core.testing-recovery.failure-recovery
+    title: partial failure와 recovery
+    order: 20
+    level: 3
+    objective: 부분 완료 상태를 탐지하고 retry, replay, compensation, manual repair 중 무엇이 실제 invariant를 복구하는지 설계한다.
+    density: CORE
+    visualization: DIAGRAM
+  - key: backend.core.testing-recovery.tradeoffs
+    title: Maintainability trade-off
+    order: 30
+    level: 3
+    objective: 추상화·유연성·성능·명시성·운영 복잡도 사이 비용을 현재 문제와 변경 가능성에 맞춰 선택하고 reversible decision을 구분한다.
+    density: CORE
+    visualization: NONE

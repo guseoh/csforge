@@ -81,13 +81,13 @@ Reader(characters)
 
 파일 확장자나 메서드 이름만 보고 API를 고르는 것이 아니라 데이터의 의미를 봐야 합니다.
 
-| 데이터 | 자연스러운 관점 |
-|---|---|
-| JPEG/PNG | byte |
-| ZIP | byte |
-| 암호화 payload | byte |
-| UTF-8 CSV | character + charset |
-| JSON text | character + charset |
+| 데이터           | 자연스러운 관점     |
+| ---------------- | ------------------- |
+| JPEG/PNG         | byte                |
+| ZIP              | byte                |
+| 암호화 payload   | byte                |
+| UTF-8 CSV        | character + charset |
+| JSON text        | character + charset |
 | 일반 텍스트 로그 | character + charset |
 
 HTTP body도 네트워크에서는 byte로 이동하지만 application layer에서 JSON으로 해석하는 순간 charset과 text parsing 경계를 거칩니다. 층위를 나눠서 보는 것이 중요합니다.

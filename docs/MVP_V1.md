@@ -12,7 +12,7 @@ Content grows through:
 V1 is single-user, no-auth, local-only, and has no cross-device sync.
 
 ## 2. Learning areas
-V1 has 14 independent areas, each with Level 1-3 concepts:
+V1 has 15 independent areas, each with Level 1-3 concepts:
 
 1. Computer Architecture
 2. Data Structures & Algorithms
@@ -28,6 +28,7 @@ V1 has 14 independent areas, each with Level 1-3 concepts:
 12. Performance / Observability / Operations
 13. Distributed Systems
 14. System Design
+15. Security
 
 Question difficulty is independent from concept level.
 
@@ -52,7 +53,7 @@ API baseline:
 - `GET /api/dashboard`
 
 ### Learning Areas `/learning`
-Show all 14 areas with:
+Show all 15 areas with:
 - concept count
 - learned count
 - question count
@@ -76,10 +77,10 @@ Concept progress states:
 Include:
 - breadcrumb
 - title / level / topic
-- concise core explanation
+- connected core explanation rather than glossary fragments
 - diagrams/images when useful
-- examples/tables
-- common misunderstandings
+- examples/tables that are explained in prose
+- common misunderstandings and failure boundaries
 - deeper section
 - references
 - personal note with autosave

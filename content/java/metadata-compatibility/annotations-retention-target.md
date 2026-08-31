@@ -85,11 +85,11 @@ Annotation이 source에 존재한다고 runtime reflection에서 반드시 찾�
 
 `RetentionPolicy`에는 세 가지가 있습니다.
 
-| 정책 | 의미 |
-|---|---|
-| `SOURCE` | source 단계까지만 필요하고 class file에 유지되지 않아도 됨 |
-| `CLASS` | class file에는 기록되지만 runtime reflection에서 사용할 필요는 없음 |
-| `RUNTIME` | runtime에도 유지되어 reflection 등으로 조회 가능 |
+| 정책      | 의미                                                                |
+| --------- | ------------------------------------------------------------------- |
+| `SOURCE`  | source 단계까지만 필요하고 class file에 유지되지 않아도 됨          |
+| `CLASS`   | class file에는 기록되지만 runtime reflection에서 사용할 필요는 없음 |
+| `RUNTIME` | runtime에도 유지되어 reflection 등으로 조회 가능                    |
 
 예를 들어 runtime framework가 annotation을 읽어야 한다면:
 

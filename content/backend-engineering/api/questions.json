@@ -1,0 +1,119 @@
+[
+  {
+    "kind": "question",
+    "contentKey": "backend.core.api.resource-endpoint.q1",
+    "promptMarkdown": "Resource-oriented endpoint 설계에 대한 설명으로 가장 적절한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["backend.core.api.resource-endpoint"],
+    "choices": [
+      {"key": "A", "content": "DB table 이름을 그대로 URI에 노출한다.", "displayOrder": 0},
+      {"key": "B", "content": "URI는 외부 소비자가 이해하는 resource 의미를 중심으로 하고 method/status와 함께 계약을 이룬다.", "displayOrder": 1},
+      {"key": "C", "content": "모든 action은 반드시 `/doSomething` POST로 표현한다.", "displayOrder": 2},
+      {"key": "D", "content": "nested resource는 깊을수록 ownership이 명확해 항상 좋다.", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "URI는 외부 소비자가 이해하는 resource 의미를 중심으로 하고 method/status와 함께 계약을 이룬다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "backend.core.api.resource-endpoint.q2",
+    "promptMarkdown": "`/orders/{id}/cancel`과 `/orders/{id}/cancellations` 중 하나가 무조건 옳지 않은 이유를 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["backend.core.api.resource-endpoint"],
+    "modelAnswer": "취소가 단순 command인지 별도 이력·조회가 필요한 resource인지 product 의미에 따라 표현이 달라지기 때문이다.",
+    "explanationMarkdown": "resource의 의미를 기준으로 판단해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "backend.core.api.resource-endpoint.q3",
+    "promptMarkdown": "`/members/7/orders/42/items/3`처럼 중첩이 계속 깊어지고 동일 item에 여러 URI가 생긴다. 무엇을 기준으로 단순화하겠는가?",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["backend.core.api.resource-endpoint"],
+    "modelAnswer": "부모 ID가 resource 식별/authorization에 실제 필요한지, canonical URI가 무엇인지 기준으로 depth를 줄인다.",
+    "explanationMarkdown": "URI 중첩의 실제 책임을 판단해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "backend.core.api.methods-status.q1",
+    "promptMarkdown": "HTTP idempotence에 대한 설명으로 맞는 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["backend.core.api.methods-status"],
+    "choices": [
+      {"key": "A", "content": "DELETE 두 번째 응답이 404면 idempotent가 아니다.", "displayOrder": 0},
+      {"key": "B", "content": "같은 의도를 여러 번 적용해도 서버의 의도된 추가 효과가 누적되지 않는 의미이며 응답 body가 항상 같다는 뜻은 아니다.", "displayOrder": 1},
+      {"key": "C", "content": "POST는 절대로 idempotent하게 설계할 수 없다.", "displayOrder": 2},
+      {"key": "D", "content": "200 OK만 사용하면 client가 가장 단순해진다.", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "HTTP idempotence는 응답 동일성이 아니라 의도된 효과의 중복 누적 여부를 말한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "backend.core.api.methods-status.q2",
+    "promptMarkdown": "`201 Created`, `202 Accepted`, `409 Conflict`가 각각 어떤 계약을 표현하는지 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["backend.core.api.methods-status"],
+    "modelAnswer": "201은 새 resource 생성 완료, 202는 처리가 접수됐지만 완료되지 않을 수 있음, 409는 현재 resource state와 요청이 충돌함을 표현한다.",
+    "explanationMarkdown": "status를 처리 상태와 연결해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "backend.core.api.methods-status.q3",
+    "promptMarkdown": "결제 요청을 모든 실패 포함 `200 {success:false}`로 반환한다. 어떤 interoperability/contract 문제가 생기는가?",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["backend.core.api.methods-status"],
+    "modelAnswer": "HTTP client/proxy가 transport-level 성공으로만 해석하고 generic failure handling이 어려워진다. 적절한 status와 안정적 error body를 분리해야 한다.",
+    "explanationMarkdown": "HTTP 의미와 product error를 분리해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "backend.core.api.compatibility.q1",
+    "promptMarkdown": "API compatibility에 대해 가장 위험한 변경은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["backend.core.api.compatibility"],
+    "choices": [
+      {"key": "A", "content": "optional response field를 추가한다.", "displayOrder": 0},
+      {"key": "B", "content": "field 타입은 유지하지만 의미를 '할인 전 금액'에서 '최종 결제 금액'으로 조용히 바꾼다.", "displayOrder": 1},
+      {"key": "C", "content": "새 endpoint를 추가한다.", "displayOrder": 2},
+      {"key": "D", "content": "문서 오타를 고친다.", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "semantic breaking change는 schema가 같아도 소비자를 깨뜨릴 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "backend.core.api.compatibility.q2",
+    "promptMarkdown": "enum 값 추가가 왜 일부 client에게 breaking change가 될 수 있는지 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["backend.core.api.compatibility"],
+    "modelAnswer": "strict deserializer나 exhaustive switch가 unknown value를 처리하지 못하면 schema상 작은 확장도 runtime 실패가 될 수 있다.",
+    "explanationMarkdown": "소비자의 실제 처리 방식까지 봐야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "backend.core.api.compatibility.q3",
+    "promptMarkdown": "old/new client가 한 달간 공존해야 하는 필드를 교체하려 한다. 안전한 rollout 순서를 제시하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["backend.core.api.compatibility"],
+    "modelAnswer": "새 field additive 제공→server가 old/new 동시 지원→client migration→usage 관측/deprecation→old field 제거 순으로 공존 기간을 둔다.",
+    "explanationMarkdown": "producer와 consumer의 배포 시점 차이를 고려해야 한다."
+  }
+]
