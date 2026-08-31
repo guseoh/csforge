@@ -1,0 +1,1402 @@
+[
+  {
+    "kind": "question",
+    "contentKey": "java.core.exceptions-resources.throwable-checked-unchecked-error.q1",
+    "promptMarkdown": "Java의 예외 계층을 가장 정확하게 설명한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.exceptions-resources.throwable-checked-unchecked-error"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "Throwable 아래에 Exception과 Error가 있고, RuntimeException은 Exception의 하위 타입이다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "Error는 Throwable과 무관한 JVM 전용 값이다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "checked exception만 Throwable의 하위 타입이다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "RuntimeException은 compile-time에 존재하지 않는 특별한 값이다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "Throwable은 던질 수 있는 최상위 타입이고 Exception과 Error가 주요 가지다. RuntimeException은 Exception 아래에 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.exceptions-resources.throwable-checked-unchecked-error.q2",
+    "promptMarkdown": "다음 중 checked exception을 처리하거나 선언해야 하는 상황은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.exceptions-resources.throwable-checked-unchecked-error"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "RuntimeException을 단순히 호출할 때",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "IOException을 throws 없이 메서드 밖으로 던질 때",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "NullPointerException을 catch하지 않을 때",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "Error의 stack trace를 출력할 때",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "RuntimeException과 Error는 compiler가 catch/throws를 강제하지 않지만, IOException 같은 checked 타입은 호출 경계에서 처리하거나 선언해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.exceptions-resources.throwable-checked-unchecked-error.q3",
+    "promptMarkdown": "`void f() { throw new IllegalArgumentException(); }`에 대한 설명으로 옳은 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.exceptions-resources.throwable-checked-unchecked-error"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "반드시 `throws IllegalArgumentException`을 붙여야 컴파일된다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "IllegalArgumentException은 Error이므로 컴파일되지 않는다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "unchecked 예외이므로 선언 없이 컴파일되지만 실행 시 호출 흐름을 중단할 수 있다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "예외 객체가 아니라 null이 던져진다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "IllegalArgumentException은 RuntimeException의 하위 타입이다. 선언은 강제되지 않지만 실제로 던져지면 handler를 찾으며 전파된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.exceptions-resources.throwable-checked-unchecked-error.q4",
+    "promptMarkdown": "`Error`와 `RuntimeException`을 구분하는 설명으로 가장 적절한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.exceptions-resources.throwable-checked-unchecked-error"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "둘 다 compiler가 반드시 catch를 요구한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "Error만 `Throwable`을 상속할 수 있다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "RuntimeException은 항상 복구 가능하고 Error는 항상 즉시 종료된다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "둘 다 unchecked이지만 Error는 일반 애플리케이션 복구 대상으로 설계되지 않은 심각한 상태를 나타낼 수 있다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "두 타입 모두 checked 검사를 받지 않지만, Error는 JVM·실행 환경의 심각한 문제를 나타내는 경우가 많아 일반 흐름에서 잡아 복구하는 계약으로 보기 어렵다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.exceptions-resources.throwable-checked-unchecked-error.q5",
+    "promptMarkdown": "다음 메서드 조합에 대한 설명으로 옳은 것은? `void a() throws IOException { b(); }`와 `void b() throws IOException { throw new IOException(); }`",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.exceptions-resources.throwable-checked-unchecked-error"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "a가 IOException을 선언했으므로 b의 예외가 전파되고, a의 호출자도 처리하거나 선언해야 한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "b의 checked 예외는 a에 도달하기 전에 자동으로 RuntimeException이 된다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "a의 throws가 있으면 최종 main까지 compiler 검사는 사라진다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "IOException은 Error이므로 b 선언은 무시된다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "b는 IOException을 던지고 a는 그것을 처리하지 않고 선언한다. 따라서 a의 호출자까지 checked 계약이 이어지며 타입이 자동 변환되지는 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.exceptions-resources.exception-propagation-catch-boundary.q1",
+    "promptMarkdown": "현재 메서드에 맞는 catch가 없을 때 일반적으로 일어나는 일은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.exceptions-resources.exception-propagation-catch-boundary"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "예외가 성공 값으로 바뀐다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "호출자 방향으로 handler를 찾으며 전파된다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "항상 Error로 승격된다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "compiler가 실행 중 catch를 새로 삽입한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "현재 실행 중인 메서드의 catch가 처리하지 못하면 호출 stack을 거슬러 올라가 처리 가능한 handler를 찾는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.exceptions-resources.exception-propagation-catch-boundary.q2",
+    "promptMarkdown": "다음 catch 순서가 컴파일되지 않는 이유는? `catch (Exception e) { } catch (IOException e) { }`",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.exceptions-resources.exception-propagation-catch-boundary"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "IOException은 checked라 catch할 수 없다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "catch에는 변수명이 필요 없다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "앞의 Exception이 IOException도 처리할 수 있어 뒤 catch가 도달 불가능하다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "한 try에는 catch를 하나만 둘 수 있다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "IOException은 Exception의 하위 타입이므로 넓은 Exception catch 뒤의 IOException catch는 실행될 수 없다. 구체적인 타입을 먼저 둬야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.exceptions-resources.exception-propagation-catch-boundary.q3",
+    "promptMarkdown": "파일을 읽는 repository와 사용자 응답을 만드는 HTTP 경계가 있을 때 가장 자연스러운 catch 위치는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.exceptions-resources.exception-propagation-catch-boundary"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "모든 메서드의 첫 줄에서 같은 예외를 잡는다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "repository가 IOException을 무조건 빈 문자열로 바꾼다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "예외를 절대 잡지 않고 stack trace를 응답으로 반환한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "복구·번역·사용자 응답 중 실제 책임이 있는 경계에서 잡는다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "예외를 처리할 수 있는 정책이 있는 계층에서 잡아야 한다. 낮은 계층이 의미 없는 값으로 삼키거나 내부 stack trace를 외부에 노출하면 계약이 흐려진다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.exceptions-resources.exception-propagation-catch-boundary.q4",
+    "promptMarkdown": "다음 코드의 결과에 대한 설명으로 옳은 것은? `try { service.run(); } catch (IOException e) { throw new RetryableFailure(e); }`",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.exceptions-resources.exception-propagation-catch-boundary"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "새 예외가 적절한 생성자로 cause를 받으면 호출자는 번역된 계약과 원인을 모두 관찰할 수 있다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "RetryableFailure가 발생하면 원래 IOException의 cause는 자동으로 삭제된다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "checked exception은 catch 안에서 성공으로 간주된다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "새 예외의 타입만 보존되고 stack trace는 항상 새로 시작된다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "예외 번역은 호출자에게 의미 있는 타입을 제공하면서 생성자에 원인을 연결해 진단 chain을 보존할 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.exceptions-resources.exception-propagation-catch-boundary.q5",
+    "promptMarkdown": "`outer()`가 `middle()`을 호출하고, middle은 예외를 잡아 로그만 남긴 뒤 다시 던지며, outer는 `Exception`을 잡아 fallback을 반환한다. 예외가 전파되는 순서는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.exceptions-resources.exception-propagation-catch-boundary"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "middle의 catch가 실행되면 outer는 호출되지 않는다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "middle의 catch가 로그를 남긴 뒤 예외를 다시 던지고 outer의 catch가 fallback을 반환한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "outer가 먼저 예외를 잡고 middle의 catch는 실행되지 않는다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "예외가 자동으로 null로 바뀌어 두 catch 모두 실행되지 않는다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "예외는 발생 지점에서 가장 가까운 일치 handler를 거치고, rethrow되면 호출자 방향으로 계속 전파된다. outer는 그 뒤 fallback 정책을 적용한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.exceptions-resources.exception-propagation-catch-boundary.q6",
+    "promptMarkdown": "다음 설계의 가장 큰 문제는? `repository.find()`의 모든 예외를 catch해 `Optional.empty()`를 반환한다.",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.exceptions-resources.exception-propagation-catch-boundary"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "Optional은 checked exception을 담을 수 없기 때문이다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "repository에서는 어떤 return type도 사용할 수 없기 때문이다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "장애와 정상적인 미존재를 구분할 수 없게 되어 호출자의 retry·응답 정책이 손실될 수 있다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "catch는 항상 controller에서만 가능하기 때문이다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "예외를 empty로 바꾸면 데이터 없음과 저장소 장애라는 서로 다른 상태가 같은 결과가 된다. 실제 recovery boundary에서 의미를 판단해 번역해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.exceptions-resources.exception-translation-cause.q1",
+    "promptMarkdown": "예외 번역 시 원인 cause를 보존하는 주된 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.exceptions-resources.exception-translation-cause"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "새 예외를 checked로 바꾸기 위해서다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "원인 예외의 메시지만 사용자에게 강제로 노출하기 위해서다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "cause를 넣으면 retry가 자동 실행되기 때문이다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "호출자가 원래 실패의 stack trace와 진단 정보를 조사할 수 있게 하기 위해서다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "cause chain은 추상화된 예외와 최초 실패를 연결한다. 사용자 메시지와 내부 진단 정보를 분리할 수도 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.exceptions-resources.exception-translation-cause.q2",
+    "promptMarkdown": "`throw new DomainFailure(message, cause)`의 의미로 옳은 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.exceptions-resources.exception-translation-cause"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "DomainFailure의 getCause()에서 원래 예외를 연결해 볼 수 있다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "cause가 문자열 메시지로만 변환되어 원본 타입을 잃는다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "DomainFailure는 원래 cause와 무관한 새 성공 결과다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "cause가 null이어야만 컴파일된다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "Throwable 생성자에 원인을 전달하면 새 예외의 cause chain에 연결된다. 새 타입의 의미와 원래 실패의 진단 정보가 함께 유지된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.exceptions-resources.exception-translation-cause.q3",
+    "promptMarkdown": "예외 번역이 필요한 상황은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.exceptions-resources.exception-translation-cause"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "호출자에게 낮은 계층 제품의 타입을 그대로 공개하는 것이 항상 계약일 때",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "현재 계층의 복구·응답 정책에 맞는 의미 있는 타입을 제공해야 할 때",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "원인 예외가 전혀 없을 때만",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "모든 RuntimeException을 checked로 바꾸고 싶을 때만",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "번역은 추상화 경계를 보호하고 호출자에게 의미를 제공하는 선택이다. 이미 같은 계약이면 불필요한 wrapping을 하지 않아도 된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.exceptions-resources.exception-translation-cause.q4",
+    "promptMarkdown": "다음 코드에서 장애 진단을 가장 잘 보존하는 수정은? IOException을 잡아 ImportFailure를 만든다.",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.exceptions-resources.exception-translation-cause"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`throw e.getMessage()`로 메시지만 던진다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "예외를 catch한 뒤 아무것도 하지 않는다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "`throw new ImportFailure(message, e)`처럼 cause를 전달한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "IOException을 Error로 cast한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "메시지만 복사하면 원래 예외의 타입과 stack trace 연결이 사라진다. cause를 생성자에 전달하는 것이 번역과 진단을 함께 보존한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.exceptions-resources.exception-translation-cause.q5",
+    "promptMarkdown": "repository 예외를 application 예외로 번역하고 HTTP 경계가 이를 503으로 바꿀 때 올바른 흐름은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.exceptions-resources.exception-translation-cause"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "repository가 503 Response를 직접 생성하고 원인을 제거한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "controller가 JPA 예외의 내부 field를 읽어 새 domain 객체를 만든다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "모든 계층이 같은 exception을 잡아 각각 다른 메시지로 덮어쓴다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "application이 의미 있는 예외를 cause와 함께 던지고 HTTP 경계가 상태 코드로 변환한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "각 boundary가 자신의 책임을 수행한다. persistence 타입은 application에서 번역하고, HTTP status와 외부 메시지는 API 경계가 결정하며 원인은 내부에 남긴다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.exceptions-resources.standard-exceptions-contract.q1",
+    "promptMarkdown": "음수 인자가 허용되지 않는 메서드의 표준 예외로 가장 자연스러운 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.exceptions-resources.standard-exceptions-contract"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "IllegalArgumentException",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "IllegalStateException",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "NoSuchElementException",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "IndexOutOfBoundsException",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "호출자가 전달한 값 자체가 메서드 계약에 맞지 않는 경우 IllegalArgumentException이 의미를 잘 표현한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.exceptions-resources.standard-exceptions-contract.q2",
+    "promptMarkdown": "초기화 전에 `start()`를 호출한 상태 위반에 더 가까운 표준 예외는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.exceptions-resources.standard-exceptions-contract"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "IllegalArgumentException",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "IllegalStateException",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "NumberFormatException",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "ClassCastException",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "인자 값이 아니라 현재 객체 lifecycle 상태에서 호출이 허용되지 않는 상황이므로 IllegalStateException이 적절하다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.exceptions-resources.standard-exceptions-contract.q3",
+    "promptMarkdown": "빈 iterator에서 다음 원소를 요구하는 표준 예외는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.exceptions-resources.standard-exceptions-contract"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "IllegalStateException",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "IllegalArgumentException",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "NoSuchElementException",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "UnsupportedOperationException",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "iterator에 더 가져올 원소가 없는 상황은 NoSuchElementException의 표준 의미와 맞는다. 호출 전 hasNext를 확인하는 계약도 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.exceptions-resources.standard-exceptions-contract.q4",
+    "promptMarkdown": "`read(int index)`가 `index == size`를 받았을 때 가장 적절한 판단은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.exceptions-resources.standard-exceptions-contract"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "size가 0이 아니므로 항상 값을 반환한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "호출자 인자와 무관하므로 IllegalStateException만 가능하다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "존재하지 않는 값이므로 반드시 Optional.empty를 반환한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "인덱스가 유효한 마지막 위치를 벗어났으므로 IndexOutOfBoundsException 계약을 사용한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "유효 범위를 `0 <= index < size`로 정했다면 size는 범위 밖이다. 예외 타입은 method contract가 표현하는 실패 의미에 맞춰 선택한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.exceptions-resources.exception-as-control-flow.q1",
+    "promptMarkdown": "반복 가능한 정상 조건을 exception보다 일반 분기로 표현하기 좋은 예는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.exceptions-resources.exception-as-control-flow"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "iterator.hasNext()로 다음 원소 존재 여부를 확인한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "모든 조건을 Error로 던진다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "정상적인 빈 결과를 매번 예외로 만든다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "catch에서 항상 null을 반환한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "다음 원소가 있는지는 iterator의 정상 프로토콜이다. 예외를 반복적인 종료 조건으로 쓰는 것보다 의도가 명확하다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.exceptions-resources.exception-as-control-flow.q2",
+    "promptMarkdown": "예외를 일반 control flow로 남용할 때 생길 수 있는 문제는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.exceptions-resources.exception-as-control-flow"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "compiler가 모든 loop를 제거한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "호출 경계와 실패 의미가 흐려지고 stack 처리 비용·로그 noise가 생길 수 있다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "예외가 checked로 자동 변경된다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "모든 object가 immutable해진다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "예외는 흐름 중단과 handler 탐색이라는 의미가 있다. 예상 가능한 정상 조건을 예외로 표현하면 API 계약과 관찰성이 나빠진다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.exceptions-resources.exception-as-control-flow.q3",
+    "promptMarkdown": "파일이 외부에서 삭제되어 read가 실패한 경우 예외가 정상 분기보다 자연스러운 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.exceptions-resources.exception-as-control-flow"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "파일이 항상 존재하므로 예외가 불가능하다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "호출 전 exists 검사만 하면 경쟁 조건까지 제거된다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "현재 작업을 진행할 수 없는 외부 실패이며 실제 read가 예외로 알려 주는 경계이기 때문이다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "모든 I/O는 unchecked이기 때문이다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "exists 후 read 사이에도 파일이 사라질 수 있다. 실제 operation의 실패를 예외로 받아 recovery·번역 정책을 적용해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.exceptions-resources.exception-as-control-flow.q4",
+    "promptMarkdown": "`while (true) { try { consume(iterator.next()); } catch (NoSuchElementException end) { break; } }`의 개선 방향은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.exceptions-resources.exception-as-control-flow"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "NoSuchElementException을 Error로 바꾼다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "catch 안에서 iterator를 다시 만든다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "예외를 삼키고 무한 loop를 유지한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "iterator가 제공하는 hasNext()로 정상 종료 조건을 표현한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "next의 정상 종료를 예외에 의존하지 않고 hasNext와 next의 protocol로 표현하면 제어 흐름과 실패를 구분할 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.exceptions-resources.failure-atomicity.q1",
+    "promptMarkdown": "failure atomicity의 목표는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.exceptions-resources.failure-atomicity"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "실패해도 가능한 한 연산 전의 관찰 가능한 상태를 유지한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "예외를 항상 성공으로 바꾼다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "모든 외부 시스템 변경을 JVM이 rollback한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "final field를 모두 제거한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "실패 원자성은 부분 변경으로 호출자가 놀라지 않도록 operation을 all-or-nothing에 가깝게 설계하는 원칙이다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.exceptions-resources.failure-atomicity.q2",
+    "promptMarkdown": "collection에 여러 입력을 반영할 때 실패 원자성을 높이는 방법은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.exceptions-resources.failure-atomicity"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "검증 전에 내부 collection을 먼저 수정한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "검증·임시 결과 생성 후 성공한 경우에 내부 snapshot을 교체한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "예외를 catch해 첫 원소만 남긴다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "입력 list reference를 그대로 저장한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "모든 검증을 끝낸 뒤 결과를 교체하면 중간 실패가 기존 상태에 부분적으로 보이는 것을 줄일 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.exceptions-resources.failure-atomicity.q3",
+    "promptMarkdown": "`final List<Item> items`가 failure atomicity를 자동으로 보장하지 않는 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.exceptions-resources.failure-atomicity"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "final은 local 변수에만 사용할 수 있다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "List는 항상 immutable이기 때문이다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "final은 reference 재대입만 막고 참조된 List의 부분 mutation은 막지 않기 때문이다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "예외가 final field를 삭제하기 때문이다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "reference binding과 대상 객체의 상태는 별개다. final list에 여러 add를 하다 실패하면 부분 변경이 남을 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.exceptions-resources.failure-atomicity.q4",
+    "promptMarkdown": "다음 bulk update의 실패 원자성을 가장 잘 높이는 설계는? `account.debit(a); account.debit(b);` 두 번째 debit 실패 시 첫 번째도 없어야 한다.",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.exceptions-resources.failure-atomicity"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "첫 debit을 먼저 수행하고 실패하면 로그만 남긴다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "두 번째 실패를 catch해 성공 응답으로 반환한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "account reference에 final을 붙인다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "두 계정을 미리 검증하고 하나의 원자적 domain/application 경계에서 변경하거나 rollback 계약을 사용한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "두 변경의 성공 여부를 함께 결정하려면 precondition과 원자적 변경 경계를 설계해야 한다. final reference만으로 이미 수행된 debit을 되돌릴 수 없다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.exceptions-resources.try-with-resources-suppressed.q1",
+    "promptMarkdown": "try-with-resources에서 `A`를 먼저 선언하고 `B`를 다음에 선언하면 close 순서는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.exceptions-resources.try-with-resources-suppressed"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "B 후 A",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "A 후 B",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "둘 다 close되지 않는다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "순서는 실행마다 무작위다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "여러 resource는 선언의 역순으로 닫힌다. 안쪽에서 획득한 B를 먼저 close하고 A를 닫는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.exceptions-resources.try-with-resources-suppressed.q2",
+    "promptMarkdown": "본문 예외와 close 예외가 동시에 발생하면 일반적으로 주 예외는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.exceptions-resources.try-with-resources-suppressed"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "항상 마지막 close 예외다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "본문 예외이고 close 예외는 suppressed로 연결된다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "두 예외가 모두 사라진다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "compiler가 새 IOException을 만든다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "본문에서 먼저 발생한 예외가 주 예외가 되고, 닫는 중 발생한 부가 예외는 getSuppressed()로 관찰할 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.exceptions-resources.try-with-resources-suppressed.q3",
+    "promptMarkdown": "두 resource를 `first` 다음 `second` 순서로 선언했다. open과 close 호출 순서로 옳은 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.exceptions-resources.try-with-resources-suppressed"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "open first, open second, close first, close second",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "open second, open first, close second, close first",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "open first, open second, close second, close first",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "open first, close first, open second, close second",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "resource initializer는 선언 순서로 실행되고, scope를 나갈 때는 역순으로 close되므로 first를 연 뒤 second를 열고 second, first 순으로 닫는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.exceptions-resources.try-with-resources-suppressed.q4",
+    "promptMarkdown": "본문은 `IllegalStateException`, `B.close()`와 `A.close()`는 각각 예외를 던진다. 주 예외의 suppressed 목록에 대한 설명으로 옳은 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.exceptions-resources.try-with-resources-suppressed"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "A의 예외만 있고 B의 예외는 버려진다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "본문 예외가 close 예외로 교체된다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "close가 실행되지 않는다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "본문 예외가 주 예외이고 B, A close 예외가 발생한 순서대로 suppressed로 연결된다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "B가 먼저 닫히고 A가 다음에 닫힌다. 둘의 예외는 본문 예외를 덮지 않고 주 예외에 suppressed로 추가된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.exceptions-resources.try-with-resources-suppressed.q5",
+    "promptMarkdown": "resource가 `AutoCloseable`이고 본문은 정상, close만 실패한다면 일반적인 결과는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.exceptions-resources.try-with-resources-suppressed"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "close 예외가 주 예외가 되어 전파될 수 있다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "본문이 정상이라 모든 close 예외는 반드시 무시된다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "resource가 자동으로 재생성된다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "close 예외가 checked이면 compiler가 삭제한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "본문에 주 예외가 없으므로 close에서 발생한 실패가 operation의 예외가 될 수 있다. close가 성공을 보장하는 것은 아니다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.exceptions-resources.try-with-resources-suppressed.q6",
+    "promptMarkdown": "수동 finally 구현보다 try-with-resources가 특히 유리한 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.exceptions-resources.try-with-resources-suppressed"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "모든 resource를 전역 singleton으로 바꾸기 때문이다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "역순 close와 본문·close 예외의 suppressed 관계를 일관되게 표현하기 때문이다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "close에서 나는 모든 예외를 성공으로 바꾸기 때문이다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "OS가 파일을 즉시 삭제하게 하기 때문이다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "수동 finally에서 close 예외가 본문 예외를 덮어쓰거나 누락되기 쉽다. try-with-resources는 close 순서와 예외 연결을 언어 규칙으로 관리한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.exceptions-resources.autocloseable-resource-ownership.q1",
+    "promptMarkdown": "`AutoCloseable`의 핵심 역할은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.exceptions-resources.autocloseable-resource-ownership"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "모든 object를 thread-safe하게 만든다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "resource를 반드시 static으로 저장한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "close()를 제공해 try-with-resources의 resource 계약에 참여한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "파일 path를 자동으로 검증한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "AutoCloseable은 close 동작을 가진 resource를 try-with-resources에 사용할 수 있게 하는 계약이다. ownership 판단까지 자동으로 해 주지는 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.exceptions-resources.autocloseable-resource-ownership.q2",
+    "promptMarkdown": "메서드가 직접 새 파일 reader를 열어 사용했다면 일반적으로 close 책임은 어디에 두는가?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.exceptions-resources.autocloseable-resource-ownership"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "호출 stack의 아무 thread가 닫는다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "GC가 닫을 때까지 누구도 닫지 않는다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "reader를 받은 최종 사용자가 반드시 두 번 닫는다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "획득한 scope가 사용 후 닫는 계약을 갖는다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "직접 획득한 scope가 owner인 경우가 일반적이다. 다만 API가 명시한 borrower/owner lifecycle이 우선이다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.exceptions-resources.autocloseable-resource-ownership.q3",
+    "promptMarkdown": "호출자가 소유한 shared stream을 단순히 전달받은 함수가 임의로 close하면 생길 수 있는 문제는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.exceptions-resources.autocloseable-resource-ownership"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "호출자가 후속으로 사용해야 할 resource가 조기에 닫힐 수 있다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "stream이 자동으로 immutable해진다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "close는 예외를 절대 던지지 않는다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "owner가 없으므로 JVM이 종료된다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "borrower가 owner처럼 닫으면 resource lifecycle을 공유하는 호출자의 사용을 깨뜨릴 수 있다. ownership은 API 계약으로 정해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.exceptions-resources.autocloseable-resource-ownership.q4",
+    "promptMarkdown": "`Closeable`과 `AutoCloseable`의 관계를 가장 정확하게 설명한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.exceptions-resources.autocloseable-resource-ownership"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "Closeable은 AutoCloseable과 전혀 관련이 없다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "Closeable은 I/O에 특화된 close 계약으로 AutoCloseable과 연결된다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "AutoCloseable만 I/O resource에 사용할 수 있다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "Closeable은 close를 두 번 호출해야 한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "Closeable은 I/O resource에 쓰이는 AutoCloseable 계열 계약이다. 실제 close 후 상태와 반복 close 가능성은 구현 문서를 확인한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.exceptions-resources.autocloseable-resource-ownership.q5",
+    "promptMarkdown": "reader를 생성한 메서드가 문자열 결과를 반환한다. ownership을 가장 명확하게 표현한 구현은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.exceptions-resources.autocloseable-resource-ownership"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "reader를 field에 저장하고 호출자에게 close를 암묵적으로 요구한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "reader를 닫지 않고 GC에 맡긴다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "try-with-resources로 reader를 scope 안에서 사용하고 문자열만 반환한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "호출자가 전달하지 않았어도 반환한 문자열이 reader를 닫는다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "메서드가 resource를 획득하고 반환 값이 resource가 아니라면 scope 안에서 사용 후 close하는 owner 모델이 명확하다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.exceptions-resources.autocloseable-resource-ownership.q6",
+    "promptMarkdown": "wrapper stream의 close 정책을 결정하기 전에 확인할 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.exceptions-resources.autocloseable-resource-ownership"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "wrapper의 generic type만 확인한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "모든 wrapper는 underlying을 절대 닫지 않는다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "close가 없으면 파일을 삭제한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "wrapper가 underlying resource까지 닫는지와 누가 각 resource를 소유하는지 API 계약을 확인한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "close propagation은 wrapper 구현과 API 문서에 따라 달라진다. ownership을 모른 채 닫거나 닫지 않으면 premature-close 또는 leak이 생길 수 있다."
+  }
+]

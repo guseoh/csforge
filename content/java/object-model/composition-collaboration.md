@@ -3,77 +3,90 @@ kind: concept
 contentKey: java.core.object-model.composition-collaboration
 topicContentKey: java.core.object-model
 slug: composition-collaboration
-title: "Composition과 collaboration"
-summary: "변경 가능한 행동을 상속보다 객체 협력으로 분리하는 이유를 이해한다"
+title: "합성과 객체 협력"
+summary: "행동을 상속으로 고정하기보다 협력 객체에 위임하여 각 책임을 독립적으로 변경할 수 있는 구조를 이해한다"
 level: 2
 status: PUBLISHED
 displayOrder: 70
 references:
-  - url: "https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html"
-    title: "Java Language Specification 8장: Classes"
+  - url: "https://docs.oracle.com/javase/tutorial/java/concepts/object.html"
+    title: "Oracle Java Tutorials: What Is an Object?"
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
-    relationNote: field와 class 구성의 언어 기반 확인
-  - url: "https://docs.oracle.com/javase/specs/jls/se25/html/jls-9.html"
-    title: "Java Language Specification 9장: Interfaces"
-    referenceType: OFFICIAL
-    language: en
-    displayOrder: 2
-    relationNote: collaborator contract를 interface로 표현하는 규칙 확인
-  - url: "https://techblog.woowahan.com/2644/"
-    title: "우아한형제들 기술블로그: 병아리 개발자의 걸음마 한 발짝"
-    referenceType: COMPANY_TECH_BLOG
-    language: ko
-    displayOrder: 3
-    relationNote: 상속보다 합성을 선택하는 실무 설계 맥락 보충
+    relationNote: 객체 상태와 동작, 객체 간 협력의 기본 관점 참고
 ---
-# Composition과 collaboration
+# 합성과 객체 협력
 
-## 쉬운 진입
+객체지향 프로그램은 하나의 거대한 객체가 모든 일을 하는 구조보다 **서로 다른 책임을 가진 객체가 메시지를 주고받으며 협력하는 구조**로 이해하는 편이 좋습니다. 다른 기능이 필요할 때 그 구현을 상속받는 대신, 필요한 객체를 필드로 가지고 동작을 요청하는 방식을 **합성(composition)** 이라고 합니다.
 
-커피머신이 히터의 내부 부품을 상속받는 것보다, 히터를 “가지고” 필요할 때 켜는 편이 부품을
-교체하기 쉽다. 객체의 행동을 다른 객체와 협력해 조립하는 것이 composition이다. 상속은 강한
-is-a 계약을 만들지만 composition은 has-a 관계와 위임을 만든다.
-
-## 정확한 메커니즘
+### 구현을 물려받는 대신 일을 맡긴다
 
 ```java
-interface DiscountPolicy {
-    Money discount(Order order);
-}
+class OrderService {
+    private final DiscountPolicy discountPolicy;
 
-final class Checkout {
-    private final DiscountPolicy policy;
-
-    Checkout(DiscountPolicy policy) {
-        this.policy = policy;
+    OrderService(DiscountPolicy discountPolicy) {
+        this.discountPolicy = discountPolicy;
     }
 
-    Money total(Order order) {
-        return order.price().subtract(policy.discount(order));
+    Money calculatePrice(Order order) {
+        return discountPolicy.discount(order);
     }
 }
 ```
 
-`Checkout`은 정책 구현을 상속하지 않고 collaborator에게 책임을 위임한다. 생성자에 정책을
-받으면 운영 구현과 테스트용 fake를 바꿀 수 있고, 정책 변경이 Checkout의 부모 계층을 흔들지
-않는다. 대신 객체가 많아지고 위임 경계를 설계해야 하므로 작은 일에도 무조건 조립 계층을 늘리지는 않는다.
+`OrderService`가 할인 계산 알고리즘을 상속받은 것이 아닙니다. `DiscountPolicy`라는 협력 객체에게 계산을 요청합니다.
 
 ```text
-Checkout ──has-a──> DiscountPolicy
-     ├─ production policy
-     └─ test fake policy
+OrderService
+    │
+    │ discount(order)
+    ▼
+DiscountPolicy
+    │
+    └─ 실제 할인 규칙 수행
 ```
 
-## 실전·면접 연결
+할인 정책이 바뀌어도 `OrderService`의 핵심 책임이 그대로라면 다른 `DiscountPolicy` 구현을 연결할 수 있습니다.
 
-변동하는 계산·외부 연동·권한 정책을 composition으로 분리하면 변경 이유가 한 class에 몰리지
-않는다. 반대로 안정적인 subtype 계약과 공통 구현이 실제로 있고 대체 가능성이 유지된다면
-상속이 더 단순할 수 있다. 판단 기준은 “재사용” 하나가 아니라 결합도와 책임의 변화 방향이다.
+### 합성이 변경에 유리한 이유
 
-## 흔한 오해
+상속은 컴파일 시점에 상위·하위 클래스 관계가 정해지고 하위 클래스가 상위 구현의 영향을 받습니다. 합성은 객체가 **공개된 계약을 통해 협력**하도록 만들 수 있어 내부 구현 결합을 줄이기 쉽습니다.
 
-- composition은 단순히 field를 하나 추가하는 문법이 아니라 책임을 collaborator에 위임하는 설계다.
-- 상속보다 항상 우월한 규칙은 없다.
-- DI container 없이도 constructor로 collaborator를 전달하는 순수 Java 설계가 가능하다.
+예를 들어 할인 정책을 정액 할인에서 비율 할인로 바꾸고 싶다면 새 구현을 만들어 연결할 수 있습니다.
+
+```java
+DiscountPolicy policy = new RateDiscountPolicy(...);
+OrderService service = new OrderService(policy);
+```
+
+이것은 단순히 테스트를 쉽게 만드는 기술이 아니라 **변경 이유가 다른 책임을 별도 객체로 분리하는 방법**입니다.
+
+### 하지만 객체를 잘게 쪼개는 것 자체가 목적은 아니다
+
+합성을 선호한다고 해서 모든 메서드를 별도 클래스로 뽑을 필요는 없습니다. 역할이 명확하지 않은 작은 클래스가 지나치게 많으면 흐름을 따라가기 더 어려울 수 있습니다.
+
+분리할 가치가 큰 경우는 대체로 다음과 같습니다.
+
+- 해당 정책이 독립적으로 변경될 가능성이 높다.
+- 여러 구현이 존재하거나 생길 수 있다.
+- 외부 시스템 접근처럼 별도 경계가 필요하다.
+- 한 객체가 서로 다른 변경 이유를 너무 많이 가지고 있다.
+
+### Spring DI와의 연결
+
+Spring에서는 `OrderService`와 `DiscountPolicy` 같은 객체를 Bean으로 만들고 연결해 줄 수 있습니다. 하지만 핵심 설계는 Spring이 아니라 **어떤 객체가 어떤 책임을 가지고 협력해야 하는가**입니다.
+
+Spring DI를 사용하지 않아도 생성자에서 협력 객체를 전달하는 순수 Java 코드는 충분히 좋은 합성 구조가 될 수 있습니다.
+
+### 상속과 비교하면
+
+| 관점 | 상속 | 합성 |
+|---|---|---|
+| 관계 | is-a 타입 관계 | has-a / 협력 관계 |
+| 재사용 | 상위 구현을 물려받음 | 공개된 동작을 호출 |
+| 변경 결합 | 상위 구현의 영향을 받기 쉬움 | 계약 뒤 구현을 교체하기 쉬움 |
+| 적합한 상황 | 진짜 하위 타입 관계 | 책임 분리·정책 교체·협력 |
+
+문제에서 “상속과 합성 중 무엇이 무조건 더 좋은가”를 찾기보다 **타입 관계가 필요한지, 아니면 다른 책임의 객체와 협력하면 되는지**를 먼저 판단해야 합니다.

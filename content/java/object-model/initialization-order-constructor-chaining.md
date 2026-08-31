@@ -3,89 +3,138 @@ kind: concept
 contentKey: java.core.object-model.initialization-order-constructor-chaining
 topicContentKey: java.core.object-model
 slug: initialization-order-constructor-chaining
-title: "Initialization order와 constructor chaining"
-summary: "class 초기화와 instance 생성, this/super constructor 호출 순서를 예측한다"
+title: "초기화 순서와 생성자 연결"
+summary: "클래스 초기화와 객체 초기화 단계를 구분하고 this·super 생성자 호출이 이어지는 순서를 추적한다"
 level: 2
 status: PUBLISHED
 displayOrder: 30
 references:
-  - url: "https://docs.oracle.com/javase/specs/jls/se25/html/jls-12.html"
-    title: "Java Language Specification 12장: Execution"
+  - url: "https://docs.oracle.com/javase/specs/jls/se25/html/jls-12.html#jls-12.4"
+    title: "JLS 12.4 Initialization of Classes and Interfaces"
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
-    relationNote: class initialization과 instance creation 순서 확인
-  - url: "https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html"
-    title: "Java Language Specification 8장: Classes"
+    relationNote: 클래스 초기화 시점과 순서 확인
+  - url: "https://docs.oracle.com/javase/specs/jls/se25/html/jls-12.html#jls-12.5"
+    title: "JLS 12.5 Creation of New Class Instances"
     referenceType: OFFICIAL
     language: en
     displayOrder: 2
-    relationNote: constructor declaration와 constructor invocation 확인
-  - url: "https://docs.oracle.com/en/java/javase/25/language/flexible-constructor-bodies.html"
-    title: "Java SE 25 Flexible Constructor Bodies"
-    referenceType: OFFICIAL
-    language: en
-    displayOrder: 3
-    relationNote: Java 25 early construction context와 super 이전 field initialization 규칙 확인
+    relationNote: 인스턴스 생성과 생성자 실행 순서 확인
 ---
-# Initialization order와 constructor chaining
+# 초기화 순서와 생성자 연결
 
-## 쉬운 진입
+Java에서 “초기화”라는 말은 하나의 단계만 뜻하지 않습니다. 클래스의 static 상태가 준비되는 **클래스 초기화**와, `new`로 객체를 만들 때 인스턴스 필드와 생성자가 처리되는 **객체 초기화**를 구분해야 합니다.
 
-새 object를 만들 때 constructor 본문만 갑자기 실행되는 것이 아니다. class 차원의 준비가 먼저
-필요할 수 있고, superclass 쪽 생성 과정을 거친 뒤 subclass의 field initializer와 constructor body가
-이어진다. 순서를 모르면 아직 준비되지 않은 값이나 override 메서드를 생성 중에 사용하는 실수를 만든다.
+### 클래스 초기화는 객체 생성보다 별도의 과정이다
 
-## 정확한 메커니즘
+```java
+class Counter {
+    static int base = loadBase();
+    int value = base;
+
+    Counter() {
+        value++;
+    }
+}
+```
+
+`Counter` 클래스가 처음 적극적으로 사용될 때 static 필드 초기화와 static 초기화 블록이 실행됩니다. 이후 `new Counter()`를 할 때마다 인스턴스 필드 초기화와 생성자가 실행됩니다.
+
+즉 static 초기화가 객체마다 반복되는 것이 아닙니다.
+
+```text
+클래스 초기화
+static 필드 / static 블록
+        │
+        ▼
+클래스 사용 가능
+        │
+        ├─ new → 객체 1 초기화
+        └─ new → 객체 2 초기화
+```
+
+정확한 클래스 초기화 시점에는 언어 명세의 조건이 있으므로 단순히 “클래스 파일을 읽는 순간 static이 실행된다”고 외우면 안 됩니다. JVM의 class loading과 initialization 단계는 별도 JVM 주제에서 더 깊게 다룹니다.
+
+### 객체 생성에서는 상위 클래스 초기화가 먼저 연결된다
+
+상속 관계가 있는 객체를 만들면 하위 클래스 생성자만 바로 실행되는 것이 아닙니다.
 
 ```java
 class Parent {
-    static { System.out.println("P static"); }
-    { System.out.println("P instance"); }
-    Parent() { System.out.println("P ctor"); }
+    Parent() {
+        System.out.println("Parent");
+    }
 }
 
 class Child extends Parent {
-    static { System.out.println("C static"); }
-    { System.out.println("C instance"); }
-    Child() { System.out.println("C ctor"); }
+    Child() {
+        System.out.println("Child");
+    }
+}
+
+new Child();
+```
+
+일반적으로 상위 클래스 생성자 과정이 먼저 수행된 뒤 하위 클래스 생성자 본문으로 이어집니다. 그래서 출력은 `Parent`, `Child` 순서입니다.
+
+### `this(...)`와 `super(...)`는 생성 경로를 연결한다
+
+같은 클래스의 다른 생성자를 호출할 때는 `this(...)`, 직접 상위 클래스 생성자를 선택할 때는 `super(...)`를 사용합니다.
+
+```java
+class Order {
+    private final long id;
+    private final int quantity;
+
+    Order(long id) {
+        this(id, 1);
+    }
+
+    Order(long id, int quantity) {
+        this.id = id;
+        this.quantity = quantity;
+    }
 }
 ```
 
-처음 class initialization이 필요하다면 superclass가 먼저 초기화되고 그 뒤 subclass가 초기화된다.
-instance 생성에서는 명시적 또는 암시적 `super()`가 superclass constructor chain을 시작한다. 가장 위의
-superclass부터 돌아오면서 각 class의 instance field initializer와 instance initializer가 실행되고,
-그 class의 constructor body가 이어진다. 이후 제어가 subclass constructor로 돌아오면 같은 순서가
-subclass에 적용된다. `this(...)`는 같은 class의 다른 constructor로 위임한다.
+`Order(10L)`은 `Order(10L, 1)`로 생성 책임을 모읍니다. 이런 방식은 같은 검증·초기화 코드를 여러 생성자에 복사하는 일을 줄여 줍니다.
 
-Java SE 25의 flexible constructor bodies는 explicit constructor invocation 앞에 prologue를 둘 수 있게
-한다. 이 early construction context에서는 현재 instance field를 읽거나 instance method를 호출하는 등의
-접근은 제한되지만, assignment operator로 현재 instance field를 초기화하는 것은 허용된다. 한 constructor에서
-`this(...)`와 `super(...)`를 동시에 호출할 수는 없다.
+Java 25의 생성자 본문 규칙은 예전 설명보다 유연해진 부분이 있으므로 “생성자 첫 줄에는 무조건 `super()`나 `this()`만 올 수 있다”는 오래된 문장을 일반 규칙처럼 사용하면 안 됩니다. 다만 객체가 완전히 초기화되기 전에 현재 객체를 잘못 사용하는 것은 여전히 제한됩니다. 구체적인 문법 문제는 Java 25 명세를 기준으로 판단해야 합니다.
 
-```text
-class initialization (필요 시): superclass → subclass
+### 생성자에서 override 가능한 메서드를 호출하면 위험하다
 
-new Child()
-  → superclass constructor chain 진입
-      → Parent field / instance initializer
-      → Parent constructor body
-  → Child field / instance initializer
-  → Child constructor body
+상위 클래스 생성자가 override 가능한 인스턴스 메서드를 호출하면 하위 클래스의 override 메서드가 실행될 수 있습니다. 그런데 그 시점에는 하위 클래스의 필드 초기화가 아직 끝나지 않았을 수 있습니다.
+
+```java
+class Parent {
+    Parent() {
+        print();
+    }
+
+    void print() {}
+}
+
+class Child extends Parent {
+    private String name = "kim";
+
+    @Override
+    void print() {
+        System.out.println(name); // 생성 중에는 기대와 다른 상태일 수 있음
+    }
+}
 ```
 
-상속 단계가 더 많다면 superclass 부분이 같은 방식으로 반복된다.
+그래서 생성 중인 객체에서 다형적 동작을 호출하는 것은 피하는 편이 안전합니다.
 
-## 실전·면접 연결
+### 문제를 풀 때는 단계별로 적는다
 
-constructor에서 overridable instance method를 호출하면 아직 subclass 초기화가 끝나지 않은 상태를
-관찰할 수 있다. Java 25에서는 필요한 field를 `super()` 전에 안전하게 assignment하는 선택지가 생겼지만,
-초기화 순서를 이용해 복잡한 부작용을 만들기보다 필수 상태를 constructor 인자로 받고 생성 중 외부 협력을
-최소화하는 것이 기본이다. 정확한 class loading 시점과 실제 JVM 최적화는 명세와 구현을 나눠서 설명한다.
+초기화 순서 문제가 나오면 머릿속으로 한 번에 계산하지 말고 다음을 나눠 적습니다.
 
-## 흔한 오해
+1. 해당 클래스의 static 초기화가 이미 되었는가?
+2. 상위 클래스 객체 초기화 단계가 무엇인가?
+3. 현재 클래스의 인스턴스 필드/초기화 블록은 언제 실행되는가?
+4. 어떤 생성자 경로가 `this` 또는 `super`로 연결되는가?
+5. 생성자 안에서 다형적 메서드 호출이 있는가?
 
-- subclass constructor body가 superclass constructor body보다 먼저 실행되는 것은 아니다.
-- Java 25의 `super()` 이전 구간에서 현재 instance를 자유롭게 읽거나 instance method를 호출할 수 있는 것은 아니다.
-- 반대로 Java 25에서 `super()` 앞의 모든 instance field assignment가 금지된 것도 아니다.
-- static initializer는 object마다 한 번씩 실행되는 instance initializer가 아니다.
+이렇게 상태를 나누면 복잡한 출력 순서 문제도 추적하기 쉬워집니다.

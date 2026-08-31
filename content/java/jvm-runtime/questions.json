@@ -1,0 +1,2382 @@
+[
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.jdk-jvm-classfile.q1",
+    "promptMarkdown": "javac의 일반적인 산출물은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.jdk-jvm-classfile"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "JVM이 이해하는 class file bytecode",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "OS별 native executable만",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "JVM heap snapshot",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "실행 중 thread dump",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "javac는 Java source를 class file 형식의 bytecode로 컴파일한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.jdk-jvm-classfile.q2",
+    "promptMarkdown": "JDK와 JVM의 관계로 옳은 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.jdk-jvm-classfile"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "JVM은 javac와 같은 compiler다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "JDK는 개발 도구와 runtime 구성요소를 포함하고 JVM은 실행 모델을 담당한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "JDK는 class file이 하나다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "둘 다 OS kernel이다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "JDK는 개발·실행 도구 배포물이고 JVM은 class file을 실행하는 runtime이다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.jdk-jvm-classfile.q3",
+    "promptMarkdown": "class file에 포함될 수 있는 것으로 옳은 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.jdk-jvm-classfile"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "현재 객체의 모든 heap 값",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "OS process의 thread stack 전체",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "method code와 constant pool 같은 binary metadata",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "사용자 키보드 입력만",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "JVMS class file format은 code, constant pool, fields/methods와 attributes를 표현한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.jdk-jvm-classfile.q4",
+    "promptMarkdown": "bytecode와 native machine code의 관계로 옳은 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.jdk-jvm-classfile"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "둘은 모든 CPU에서 같은 binary다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "native code만 class file에 저장된다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "bytecode는 Java language source와 동일하다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "bytecode는 JVM instruction 형식이고 JVM implementation이 해석 또는 JIT할 수 있다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "class file bytecode와 실제 CPU native code는 다른 실행 계층이다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.jdk-jvm-classfile.q5",
+    "promptMarkdown": "동일한 class file을 두 OS에서 실행했을 때 source를 다시 compile하지 않아도 될 수 있는 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.jdk-jvm-classfile"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "JVM이 class file을 각 실행 환경의 runtime model에서 실행하기 때문이다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "class file이 OS kernel binary이기 때문이다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "javac가 모든 OS native code를 한 파일에 포함하기 때문이다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "heap이 source를 재작성하기 때문이다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "JVM abstraction이 class file을 실행하므로 OS별 launcher/JVM이 같은 class file을 처리할 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.jdk-jvm-classfile.q6",
+    "promptMarkdown": "JDK launcher로 class를 실행했지만 특정 JIT 최적화 결과가 OS마다 달랐다. 이를 가장 정확히 설명한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.jdk-jvm-classfile"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "class file의 Java semantics가 OS마다 임의로 바뀐다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "Java/JVMS 실행 의미와 JDK/JVM implementation 최적화 세부를 분리해야 한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "JDK가 source compatibility를 제거한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "bytecode가 자동으로 다른 source가 된다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "실행의 관찰 가능한 의미와 특정 JVM/OS implementation의 최적화 결과는 다른 층위다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.bytecode-javap.q1",
+    "promptMarkdown": "javap -c의 주된 용도는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.bytecode-javap"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "heap을 강제로 정리한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "source를 compile한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "class method의 bytecode instruction을 사람이 읽게 출력한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "thread를 종료한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "javap는 class disassembly 도구이고 -c는 Code attribute를 출력한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.bytecode-javap.q2",
+    "promptMarkdown": "javap -v를 사용하면 더 자세히 볼 수 있는 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.bytecode-javap"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "OS의 모든 native process",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "실제 DB row",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "GC root의 실시간 전체 graph",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "constant pool과 flags 같은 class file 정보",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "-v는 verbose class file 정보를 출력한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.bytecode-javap.q3",
+    "promptMarkdown": "javap 출력이 source 줄과 일대일로 맞지 않을 수 있는 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.bytecode-javap"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "compiler가 source construct를 여러 JVM 구조와 instruction으로 번역할 수 있기 때문이다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "javap가 source를 다시 작성하기 때문이다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "JVM이 method를 삭제하기 때문이다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "class file에는 method가 없기 때문이다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "source와 JVM representation은 일대일 대응이 아니며 compiler/debug 옵션의 영향도 받는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.bytecode-javap.q4",
+    "promptMarkdown": "debug 정보 없이 compile된 class를 javap -c로 확인하고 source line과 local 변수 이름을 완전히 복원하려 했다. 가장 정확한 결론은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.bytecode-javap"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "JIT native code가 source line을 대신 제공한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "bytecode 구조는 볼 수 있어도 optional debug mapping이 없으면 모든 source mapping을 확정할 수 없다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "javap가 source를 항상 완전히 복원한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "debug 정보가 없으면 class file은 실행 불가다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "javap -c는 Code attribute를 보지만 source line/local variable mapping은 compiler가 넣은 debug metadata에 좌우된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.class-loading-linking-initialization.q1",
+    "promptMarkdown": "class lifecycle에서 preparation의 설명으로 옳은 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.class-loading-linking-initialization"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "객체의 finalize를 호출하는 단계",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "static block의 모든 코드를 실행하는 단계",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "static field를 위한 구조와 기본값을 준비하는 단계",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "source를 javac로 compile하는 단계",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "preparation은 static storage와 default value를 준비하고 initialization code 실행과 다르다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.class-loading-linking-initialization.q2",
+    "promptMarkdown": "linking에 포함되는 단계는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.class-loading-linking-initialization"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "serialization과 reflection만",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "constructor 호출만",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "GC와 JIT만",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "verification, preparation, resolution",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "JVMS는 linking을 verification, preparation, resolution으로 나눈다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.class-loading-linking-initialization.q3",
+    "promptMarkdown": "static block과 field initializer의 실행 시점은 일반적으로?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.class-loading-linking-initialization"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "class initialization 단계",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "GC root 탐색 단계",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "javap 출력 단계",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "class file의 preparation 단계에서 source 그대로",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "개발자가 작성한 static initialization code는 initialization에서 실행된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.class-loading-linking-initialization.q4",
+    "promptMarkdown": "resolution에 대한 설명으로 맞는 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.class-loading-linking-initialization"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "모든 객체를 생성한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "symbolic reference를 사용할 수 있는 runtime entity로 해석하며 시점은 지연될 수 있다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "항상 initialization과 같은 단계다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "항상 source compile 전에 수행된다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "JVMS는 resolution을 lazy하게 수행할 여지를 둔다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.class-loading-linking-initialization.q5",
+    "promptMarkdown": "static int x=42가 constant variable 조건을 만족해 compile-time constant로 사용되고, 다른 static block이 있는 class를 참조한다. 가장 주의할 결론은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.class-loading-linking-initialization"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "resolution은 항상 모든 block을 실행한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "어떤 static code도 절대 실행되지 않는다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "constant variable 사용과 일반 class initialization trigger를 구분해야 한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "preparation이 42를 계산하는 source code를 실행한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "constant variable은 일반적인 active-use initialization 규칙과 다른 사례가 될 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.class-loading-linking-initialization.q6",
+    "promptMarkdown": "class initialization 중 예외가 발생한 뒤 다른 code가 같은 class를 다시 사용한다. 가능한 관찰은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.class-loading-linking-initialization"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "JVM이 모든 thread를 종료한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "항상 정상적으로 static block이 처음부터 재실행된다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "class file이 자동 삭제된다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "초기화 실패가 후속 사용에서 initialization error 계열로 나타날 수 있다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "JVMS의 initialization failure 처리로 후속 사용은 원래 예외와 다른 linkage/error 형태를 관찰할 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.classloader-delegation-type-identity.q1",
+    "promptMarkdown": "runtime type identity에 포함되는 핵심 조합은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.classloader-delegation-type-identity"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "binary name과 defining ClassLoader",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "heap 크기와 OS 이름",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "method line number만",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "source file의 마지막 수정 시간",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "같은 binary name도 defining loader가 다르면 다른 runtime type이 될 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.classloader-delegation-type-identity.q2",
+    "promptMarkdown": "parent delegation의 일반적인 목적은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.classloader-delegation-type-identity"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "GC를 생략하는 것",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "상위 loader가 이미 정의한 type을 재사용해 namespace 중복을 줄이는 것",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "모든 module을 unnamed로 만드는 것",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "모든 class를 child가 먼저 정의하게 하는 것",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "ClassLoader의 delegation 구조는 공통/platform class 중복을 줄이는 데 사용된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.classloader-delegation-type-identity.q3",
+    "promptMarkdown": "두 loader가 같은 binary name의 class를 각각 define하면?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.classloader-delegation-type-identity"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "이름만 같으므로 cast가 반드시 성공한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "JVM이 항상 하나로 합친다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "두 Class 객체가 서로 다른 runtime type일 수 있다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "둘 중 하나가 primitive가 된다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "loader identity가 다르면 type identity도 달라진다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.classloader-delegation-type-identity.q4",
+    "promptMarkdown": "Class.getClassLoader()를 진단에 사용하는 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.classloader-delegation-type-identity"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "OS scheduler를 바꿔서",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "class의 모든 instance를 반환해서",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "JIT code를 덤프해서",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "해당 Class의 defining/loading context를 비교하는 단서가 된다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "loader 정보는 plugin·namespace·cast 문제를 분석하는 runtime evidence다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.classloader-delegation-type-identity.q5",
+    "promptMarkdown": "plugin loader L1이 만든 com.example.Service 객체를 app loader L2가 같은 binary name의 Service로 cast하려 한다. 예상되는 문제는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.classloader-delegation-type-identity"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "이름이 같아도 defining loader가 다르면 ClassCastException이 날 수 있다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "primitive widening이 적용된다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "cast가 class file을 다시 compile한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "항상 자동 변환된다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "runtime type identity에는 loader가 포함되므로 이름 문자열만으로 호환되지 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.classloader-delegation-type-identity.q6",
+    "promptMarkdown": "custom loader가 parent에 먼저 요청하는 방식과 child가 먼저 정의하는 방식을 바꿨다. 결과 분석에서 가장 중요한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.classloader-delegation-type-identity"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "class file 크기만 본다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "어느 loader가 실제 define했는지와 namespace/delegation 경계를 추적한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "JDK 버전만 보고 cast를 확정한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "package 문자열만 비교한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "delegation 정책 변화는 defining loader와 type identity를 바꿀 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.jvm-runtime-data-areas-frames.q1",
+    "promptMarkdown": "method invocation마다 생성되어 method 완료 시 사라지는 JVMS 구조는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.jvm-runtime-data-areas-frames"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "module descriptor",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "heap 전체",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "frame",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "method area",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "frame은 각 method invocation의 실행 context다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.jvm-runtime-data-areas-frames.q2",
+    "promptMarkdown": "JVM stack의 frame에 포함되는 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.jvm-runtime-data-areas-frames"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "모든 class loader namespace",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "모든 thread의 heap 객체",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "OS file descriptor table",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "local variable array와 operand stack",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "frame은 method 실행에 필요한 locals, operand stack 등을 가진다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.jvm-runtime-data-areas-frames.q3",
+    "promptMarkdown": "JVM heap에 대한 설명으로 옳은 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.jvm-runtime-data-areas-frames"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "thread 사이에서 공유되고 객체 allocation을 위한 abstract area다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "OS stack과 항상 동일하다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "오직 primitive local만 저장한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "각 method마다 별도로 생성된다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "JVMS heap은 shared runtime data area로 객체 저장을 설명한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.jvm-runtime-data-areas-frames.q4",
+    "promptMarkdown": "operand stack을 이해하는 실용적 방법은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.jvm-runtime-data-areas-frames"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "GC root와 같은 객체 graph로 본다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "bytecode 계산이 중간 값을 push/pop하는 frame 내부 stack으로 본다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "source parameter 목록과 항상 같은 배열로 본다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "OS kernel queue로 본다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "operand stack은 bytecode instruction의 계산 모델을 설명하는 추상 구조다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.jvm-runtime-data-areas-frames.q5",
+    "promptMarkdown": "재귀 method가 깊어져 StackOverflowError가 발생했다. JVMS 관점의 1차 추론은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.jvm-runtime-data-areas-frames"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "class loader가 두 type을 합친다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "heap의 모든 객체가 unreachable이 된다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "thread별 JVM stack에 frame이 계속 쌓이는 실행 조건을 의심한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "method area가 자동으로 GC된다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "재귀 호출은 frame을 늘려 thread stack 한도와 관련된 증상을 만들 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.jvm-runtime-data-areas-frames.q6",
+    "promptMarkdown": "지역 변수 int x가 javap의 local slot에 보였다는 사실에서 물리 메모리 위치를 단정하면 안 되는 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.jvm-runtime-data-areas-frames"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "local variable은 Java에 존재하지 않기 때문이다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "int는 항상 heap에만 있기 때문이다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "javap가 OS 주소를 숨기기 때문이다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "JVMS local variable array는 abstract area이고 JIT가 저장·최적화 위치를 바꿀 수 있기 때문이다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "source/JVMS 실행 모델과 특정 HotSpot 물리 배치를 분리해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.gc-reachability-roots.q1",
+    "promptMarkdown": "GC가 회수 후보로 보는 객체는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.gc-reachability-roots"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "root에서 더 이상 도달할 수 없는 객체",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "현재 scope 안의 모든 객체",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "항상 가장 오래된 객체",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "모든 static 객체",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "reachability graph에서 root로부터 unreachable한 객체가 reclaim 대상이 된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.gc-reachability-roots.q2",
+    "promptMarkdown": "메서드가 끝났을 때 지역 객체에 대한 설명으로 옳은 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.gc-reachability-roots"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "항상 static으로 이동한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "다른 reachable 참조가 있으면 계속 살아 있을 수 있다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "GC가 예외를 던진다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "항상 즉시 deallocate된다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "source scope 종료와 object lifetime은 동일하지 않다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.gc-reachability-roots.q3",
+    "promptMarkdown": "static cache가 object A를 가리키고 A가 B를 가리킬 때, 지역 변수만 사라져도?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.gc-reachability-roots"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "JVM이 cache를 자동 clear한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "A와 B가 즉시 reclaim된다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "cache root에서 이어지는 A와 B는 여전히 reachable일 수 있다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "B만 반드시 root가 된다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "root에서 참조를 따라 도달 가능하면 지역 scope와 관계없이 보존된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.gc-reachability-roots.q4",
+    "promptMarkdown": "unreachable과 immediately reclaimed의 차이는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.gc-reachability-roots"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "reclaimed는 source scope만을 뜻한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "둘은 항상 같은 시각이다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "unreachable은 반드시 살아 있는 상태다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "unreachable은 회수 가능한 상태이고 실제 회수 시점은 collector/runtime에 달려 있다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "GC timing은 즉시 deallocation 계약이 아니다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.gc-reachability-roots.q5",
+    "promptMarkdown": "긴 loop에서 더 이상 사용하지 않는 큰 local reference를 명시적으로 끊었다. 가능한 효과는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.gc-reachability-roots"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "runtime liveness에 따라 이후 reachability를 일찍 끊어 회수 후보가 될 수 있다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "모든 static cache도 삭제된다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "GC가 비활성화된다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "객체가 즉시 free된다고 보장된다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "null 대입은 collector 실행 시점을 보장하지 않지만 불필요한 참조 경계를 줄일 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.gc-reachability-roots.q6",
+    "promptMarkdown": "System.gc()를 호출한 직후 특정 객체가 사라졌다고 검증하려는 테스트가 불안정한 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.gc-reachability-roots"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "heap 객체는 GC 대상이 될 수 없기 때문이다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "GC 요청과 실제 collector 선택·실행·회수 시점이 deterministic contract가 아니기 때문이다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "source scope가 GC root를 제거하지 않기 때문이다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "System.gc는 항상 syntax error다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "GC는 runtime implementation 정책이며 특정 객체의 즉시 회수를 보장하지 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.reference-strengths.q1",
+    "promptMarkdown": "일반 local variable이 객체를 가리키는 reference strength는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.reference-strengths"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "soft만",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "weak",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "strong",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "phantom",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "일반 참조는 strong reference로 reachability를 유지한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.reference-strengths.q2",
+    "promptMarkdown": "PhantomReference.get()에 대한 설명으로 옳은 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.reference-strengths"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "객체를 새로 생성한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "항상 원래 객체를 반환한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "strong reference로 승격한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "원래 객체를 다시 얻는 방식으로 사용할 수 없다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "phantom reference는 resurrection을 허용하지 않으며 queue 관찰과 cleanup에 사용된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.reference-strengths.q3",
+    "promptMarkdown": "weak reference의 제한적인 용도로 적절한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.reference-strengths"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "strong owner가 없어지면 사라질 수 있는 metadata/canonical mapping 보조",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "반드시 살아 있어야 하는 configuration owner",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "transaction commit 보장",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "모든 cache의 정밀한 TTL 정책",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "weak reference는 optional association에 적합하고 수명 정책을 완전히 통제하지 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.reference-strengths.q4",
+    "promptMarkdown": "WeakReference map만 보유한 canonical 객체가 get에서 null이 된 직후 새 객체를 만들었다. 이전 객체를 계속 cache hit 대상으로 기대하면 안 되는 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.reference-strengths"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "WeakReference는 cache key를 정렬하기 때문이다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "strong owner가 사라지면 weak referent는 GC 처리 시점에 수집 후보가 될 수 있어 lifetime을 보장하지 않기 때문이다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "weak reference가 항상 strong reference로 승격되기 때문이다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "get null은 객체가 반드시 즉시 free됐다는 뜻이기 때문이다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "weak reference는 optional association이고 referent의 존재나 수집 시점을 애플리케이션 cache 정책처럼 보장하지 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.gc-fundamentals-collectors.q1",
+    "promptMarkdown": "GC의 기본 목적은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.gc-fundamentals-collectors"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "모든 thread를 종료하는 것",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "모든 객체를 serialize하는 것",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "더 이상 reachable하지 않은 객체 storage를 회수하는 것",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "source를 다시 compile하는 것",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "GC는 unreachable object가 차지한 storage를 reclaim한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.gc-fundamentals-collectors.q2",
+    "promptMarkdown": "throughput과 latency의 관계를 설명한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.gc-fundamentals-collectors"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "throughput은 source compile 시간만 뜻한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "둘은 항상 동시에 최대가 된다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "latency는 heap과 무관하다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "collector 선택은 처리량과 pause/지연 목표 사이 trade-off를 포함한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "GC 작업 배치와 pause 정책은 서로 다른 성능 목표를 조정한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.gc-fundamentals-collectors.q3",
+    "promptMarkdown": "G1/ZGC에 대한 설명으로 옳은 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.gc-fundamentals-collectors"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "HotSpot/JDK가 제공하는 collector implementation 선택지이지 Java language semantics가 아니다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "두 collector는 항상 같은 pause를 보장한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "collector가 object equality를 바꾼다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "JLS가 모든 JVM에 하나만 강제한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "collector 이름과 세부 동작은 JVM implementation 문서의 영역이다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.gc-fundamentals-collectors.q4",
+    "promptMarkdown": "GC가 실행되었는데 heap이 크게 줄지 않을 수 있는 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.gc-fundamentals-collectors"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "heap 객체는 GC 대상이 아니기 때문이다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "많은 객체가 여전히 reachable이거나 collector가 모든 영역을 같은 방식으로 회수하지 않기 때문이다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "source scope가 모두 root이기 때문이다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "GC는 실행되면 무조건 실패하기 때문이다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "GC는 reachable live set을 보존하며 실행마다 전체 heap을 비우지 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.gc-fundamentals-collectors.q5",
+    "promptMarkdown": "높은 allocation rate와 큰 live set, 짧은 pause 목표가 동시에 관찰된다. 가장 타당한 판단은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.gc-fundamentals-collectors"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "GC가 application leak을 자동 수정한다고 본다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "최신 collector를 근거 없이 고정한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "collector 선택·heap 여유·allocation 패턴을 측정하며 trade-off를 평가한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "System.gc를 모든 request에 넣는다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "collector 선택은 workload와 측정 evidence에 기반해야 하며 보편적인 최고 옵션은 없다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.gc-fundamentals-collectors.q6",
+    "promptMarkdown": "Java 코드의 결과가 G1과 ZGC에서 달라져도 된다고 주장하는 설명의 문제는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.gc-fundamentals-collectors"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "JVM specification은 object lifetime을 전혀 정의하지 않는다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "GC는 Java semantics를 전부 재정의한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "두 collector는 OS process다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "collector는 성능/회수 구현을 바꿀 수 있지만 Java observable semantics를 임의로 깨는 것을 전제로 삼으면 안 된다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "implementation 선택과 language/runtime 의미를 분리해 분석해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.java-memory-leaks.q1",
+    "promptMarkdown": "Java memory leak의 핵심은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.java-memory-leaks"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "필요 없는 객체가 root에서 reachable한 채 retain되는 것",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "모든 object가 static인 것",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "GC가 전혀 실행되지 않는 것",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "unreachable 객체가 너무 빨리 회수되는 것",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "GC가 정상이어도 잘못된 owner가 reference를 계속 유지하면 leak이 된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.java-memory-leaks.q2",
+    "promptMarkdown": "leak 원인이 될 수 있는 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.java-memory-leaks"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "immutable String literal 하나만",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "삭제되지 않는 static cache",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "정상 종료한 method frame",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "짧은 local 변수 하나",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "장수 static collection은 필요 없는 object graph를 계속 retain할 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.java-memory-leaks.q3",
+    "promptMarkdown": "pool task에서 ThreadLocal.remove()를 빠뜨리면?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.java-memory-leaks"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "JVM stack frame이 모두 제거된다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "모든 ThreadLocal 값이 즉시 GC된다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "재사용 worker가 이전 context와 그 graph를 오래 보유할 수 있다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "pool이 자동으로 shutdown된다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "ThreadLocal 값의 lifetime이 요청보다 길어질 수 있어 leak 경로가 된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.java-memory-leaks.q4",
+    "promptMarkdown": "heap dump에서 leak을 찾을 때 retained path를 보는 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.java-memory-leaks"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "class file version을 확인하기 위해",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "모든 source line을 compile하기 위해",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "JIT threshold를 바꾸기 위해",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "큰 객체가 어떤 root를 통해 계속 reachable한지 찾기 위해",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "크기 자체보다 root까지의 참조 경로와 owner 정책이 원인 분석에 중요하다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.java-memory-leaks.q5",
+    "promptMarkdown": "listener registry가 listener를 등록만 하고 해제하지 않는다. 요청 객체가 요청 후에도 남는 경로는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.java-memory-leaks"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "장수 registry root -> listener -> 요청 관련 graph가 이어질 수 있다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "request scope가 모든 static root를 제거한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "listener는 Java object가 아니다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "GC가 listener를 항상 약한 참조로 바꾼다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "등록 해제 없는 listener는 root에서 도달 가능한 retain path를 만든다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.java-memory-leaks.q6",
+    "promptMarkdown": "GC log상 unreachable 객체는 잘 회수되지만 old generation이 계속 커진다. 가능한 진단은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.java-memory-leaks"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "모든 객체가 native만 차지한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "GC는 정상이어도 cache/ThreadLocal 같은 reachable retain policy leak을 의심한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "class file이 source로 바뀐다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "GC가 전혀 동작하지 않는다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "정상적인 reclamation과 unwanted reachability는 동시에 관찰될 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.heap-metaspace-native-thread-memory.q1",
+    "promptMarkdown": "Xmx가 직접 제한하는 대표 영역은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.heap-metaspace-native-thread-memory"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "metaspace와 native library 전체",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "프로세스 RSS 전체",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "Java heap의 상한",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "모든 thread stack",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "Xmx는 heap 설정이며 프로세스의 모든 memory consumer 상한과 같지 않다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.heap-metaspace-native-thread-memory.q2",
+    "promptMarkdown": "metaspace를 이 Concept에서 어떻게 다루는가?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.heap-metaspace-native-thread-memory"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "각 local variable만 저장하는 영역",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "모든 Java 객체가 저장되는 heap의 다른 이름",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "OS file cache와 같은 것",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "class metadata를 위한 HotSpot 관리 영역으로, JVMS abstract method area와 구분한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "metaspace라는 이름과 실제 layout은 HotSpot 구현이며 JVMS method area와 동일시하지 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.heap-metaspace-native-thread-memory.q3",
+    "promptMarkdown": "많은 platform thread가 process memory를 늘릴 수 있는 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.heap-metaspace-native-thread-memory"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "각 thread의 stack reservation과 OS resource가 추가될 수 있어서",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "JIT가 source를 복사해서",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "GC root가 삭제되어서",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "thread는 heap을 전혀 쓰지 않아서",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "platform thread는 OS와 연결된 stack/자원을 사용하며 수가 늘면 process memory가 증가할 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.heap-metaspace-native-thread-memory.q4",
+    "promptMarkdown": "direct ByteBuffer의 Java reference가 heap에 있다는 사실로 확정할 수 없는 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.heap-metaspace-native-thread-memory"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "buffer API가 존재한다는 것",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "backing storage가 전부 Java heap에 있다는 것",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "native allocation이 가능하다는 것",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "reference가 heap 객체일 수 있다는 것",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "wrapper/reference와 실제 backing native memory는 다른 관찰이다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.heap-metaspace-native-thread-memory.q5",
+    "promptMarkdown": "RSS 증가, heap dump는 안정적, thread 수가 급증한 상황의 1차 가설은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.heap-metaspace-native-thread-memory"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "metaspace만이 유일한 원인이다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "heap이 반드시 같은 크기로 증가했다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "thread stack/native resource를 heap leak과 별도로 조사한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "GC를 끄면 원인이 확정된다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "process memory는 heap 외 stack/native/metaspace 등 여러 소비처를 포함한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.heap-metaspace-native-thread-memory.q6",
+    "promptMarkdown": "동적 class loading이 반복되고 metaspace 사용이 증가하며 loader가 해제되지 않는다. 가장 타당한 연결은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.heap-metaspace-native-thread-memory"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "GC는 class metadata와 무관하므로 배제한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "Xmx만 줄이면 항상 해결된다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "local variable stack만 조사한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "ClassLoader와 class metadata의 lifetime/retained reference를 조사한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "HotSpot metaspace와 class loader lifetime은 heap object leak과 다른 process memory 경로를 만들 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.jit-hotspot-warmup.q1",
+    "promptMarkdown": "JIT compilation은 어느 계층의 현상인가?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.jit-hotspot-warmup"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "특정 JVM implementation이 runtime에 bytecode를 native code로 compile하는 동작",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "OS process 생성 규칙",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "Serializable contract",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "Java source 문법의 compile-time 규칙",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "JIT는 JVM runtime implementation behavior다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.jit-hotspot-warmup.q2",
+    "promptMarkdown": "warm-up이란?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.jit-hotspot-warmup"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "class file이 삭제되는 시간",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "반복 실행·profiling 이후 runtime 최적화 상태가 달라지는 초기 구간",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "thread가 항상 sleep하는 상태",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "heap이 무조건 비워지는 시간",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "처음 실행과 충분히 실행한 뒤의 JIT/profile 상태가 달라질 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.jit-hotspot-warmup.q3",
+    "promptMarkdown": "tiered compilation의 설명으로 옳은 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.jit-hotspot-warmup"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "GC collector 이름이다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "JVMS가 모든 JVM에 같은 threshold를 강제한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "HotSpot이 interpreter와 여러 compilation tier/profile을 조합할 수 있는 implementation 전략이다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "javac가 여러 OS native binary를 만드는 기능이다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "tiered compilation은 HotSpot의 실행 최적화 구현 설명이다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.jit-hotspot-warmup.q4",
+    "promptMarkdown": "짧은 microbenchmark가 실제보다 느리거나 빠르게 보일 수 있는 요인은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.jit-hotspot-warmup"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "JIT가 측정 전 모든 code를 최적화하기 때문이다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "Java는 benchmark가 불가능하기 때문이다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "bytecode가 항상 native이기 때문이다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "class loading, JIT warm-up, GC, OS noise가 측정에 섞일 수 있다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "실행 초기 비용과 runtime noise를 측정 구간과 분리해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.jit-hotspot-warmup.q5",
+    "promptMarkdown": "method가 초기에 interpreter로 실행되다가 profiling 후 optimized code로 바뀌었다. 이전 결과와 later 결과를 비교할 때?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.jit-hotspot-warmup"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "같은 source라도 실행 phase와 HotSpot optimization 상태를 함께 기록한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "javac를 매 호출마다 다시 실행한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "GC가 method 반환값을 바꿨다고 본다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "JVMS가 method semantics를 바꿨다고 결론낸다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "performance observation은 implementation state와 warm-up phase의 영향을 받는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.jit-hotspot-warmup.q6",
+    "promptMarkdown": "HotSpot이 speculative optimization을 적용했다가 가정이 깨져 deoptimization했다. 이 사실에서 보장하지 않는 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.jit-hotspot-warmup"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "profiling이 optimization 입력이 될 수 있다는 것",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "모든 JVM이 같은 threshold·deoptimization 정책을 쓴다는 것",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "runtime compilation이 implementation detail이라는 것",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "특정 HotSpot 실행에서 code 상태가 변할 수 있다는 것",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "threshold와 정책은 JVM implementation detail이며 JVMS 일반 보장이 아니다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.runtime-diagnostics-jcmd-jstack-jfr.q1",
+    "promptMarkdown": "jstack이 주로 제공하는 evidence는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.runtime-diagnostics-jcmd-jstack-jfr"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "module descriptor 생성",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "heap object retained path만",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "thread stack trace와 상태·대기 관계",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "class file compile result",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "jstack은 thread dump 중심 도구다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.runtime-diagnostics-jcmd-jstack-jfr.q2",
+    "promptMarkdown": "JFR의 주된 강점은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.runtime-diagnostics-jcmd-jstack-jfr"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "DB query plan을 자동 생성하는 것",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "항상 source를 수정하는 것",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "모든 heap object를 영구 저장하는 것",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "시간축의 runtime event recording을 수집해 성능·GC·thread 현상을 함께 보는 것",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "JFR은 실행 중 event를 recording하고 분석하는 도구다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.runtime-diagnostics-jcmd-jstack-jfr.q3",
+    "promptMarkdown": "jcmd를 선택하기 좋은 상황은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.runtime-diagnostics-jcmd-jstack-jfr"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "대상 JVM에 heap·VM·thread·recording 관련 진단 command를 요청할 때",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "모든 OS process를 kill할 때",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "annotation processor를 compile할 때",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "Java source만 문법 검사할 때",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "jcmd는 실행 중 JVM에 여러 진단 command를 보내는 일반 도구다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.runtime-diagnostics-jcmd-jstack-jfr.q4",
+    "promptMarkdown": "thread가 BLOCKED 상태로 응답하지 않는 증상에서 첫 evidence로 유용한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.runtime-diagnostics-jcmd-jstack-jfr"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "JFR 없이 source scope만 본다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "jstack 또는 jcmd thread 출력으로 lock 대기 관계를 확인한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "Xmx를 즉시 두 배로 만든다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "javap -c로 heap retained path를 찾는다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "thread dump는 누가 어떤 lock을 기다리는지 관찰하는 데 적합하다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.runtime-diagnostics-jcmd-jstack-jfr.q5",
+    "promptMarkdown": "장시간 latency spike와 GC pause, CPU 변동의 시간 관계를 비교하려면?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.runtime-diagnostics-jcmd-jstack-jfr"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "ThreadLocal.remove를 호출한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "jstack 한 장만으로 모든 원인을 확정한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "JFR recording에서 시간축 event를 함께 분석한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "javac를 다시 실행한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "JFR은 여러 runtime event를 시간 관계로 관찰하는 증거를 제공한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.runtime-diagnostics-jcmd-jstack-jfr.q6",
+    "promptMarkdown": "heap 사용량 증가와 thread 대기를 동시에 조사할 때 가장 정확한 도구 조합은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.runtime-diagnostics-jcmd-jstack-jfr"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "JFR은 thread를 보여 주지 않으므로 모든 도구에서 제외한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "jstack만 반복해 heap retained path를 확정한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "javap만 사용한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "heap histogram/dump에 맞는 jcmd command와 jstack을 각각 사용한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "heap evidence와 thread evidence는 서로 다른 도구가 주로 제공하므로 증상별로 조합한다."
+  }
+]

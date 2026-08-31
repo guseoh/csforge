@@ -1,4 +1,20 @@
 [
   {"kind":"topic","contentKey":"java.core.language-types","areaSlug":"java","slug":"language-types","title":"Java Language & Value Semantics","description":"값, 변수, 변환, 배열, final과 문자열의 언어 의미를 정확히 읽는다","displayOrder":10,"active":true},
-  {"kind":"topic","contentKey":"java.core.object-model","areaSlug":"java","slug":"object-model","title":"Object Creation, State & OOP","description":"객체 생성과 초기화, 캡슐화, 상속, 합성, 다형성과 타입 변환을 이해한다","displayOrder":20,"active":true}
+  {"kind":"topic","contentKey":"java.core.object-model","areaSlug":"java","slug":"object-model","title":"Object Creation, State & OOP","description":"객체 생성과 초기화, 캡슐화, 상속, 합성, 다형성과 타입 변환을 이해한다","displayOrder":20,"active":true},
+  {"kind":"topic","contentKey":"java.core.api-design","areaSlug":"java","slug":"api-design","title":"Object Creation & API Design","description":"생성 API, 의존성 전달, 접근 범위와 메서드 계약을 설계한다","displayOrder":30,"active":true},
+  {"kind":"topic","contentKey":"java.core.object-contracts","areaSlug":"java","slug":"object-contracts","title":"Object Contracts & Ordering","description":"equals, hashCode, toString과 정렬 계약을 일관되게 구현한다","displayOrder":40,"active":true},
+  {"kind":"topic","contentKey":"java.core.enum-modeling","areaSlug":"java","slug":"enum-modeling","title":"Enum & Type-safe Modeling","description":"닫힌 값 집합과 enum 전용 컬렉션을 타입 안전하게 모델링한다","displayOrder":50,"active":true},
+  {"kind":"topic","contentKey":"java.core.design-patterns","areaSlug":"java","slug":"design-patterns","title":"Java Design Patterns","description":"실제 변경 축과 협력 경계에 맞춰 작은 디자인 패턴을 선택한다","displayOrder":60,"active":true},
+  {"kind":"topic","contentKey":"java.core.collections","areaSlug":"java","slug":"collections","title":"Collections & Iteration","description":"Java 컬렉션 계약, 구현체, 반복, 순서와 변경 가능성을 선택한다","displayOrder":70,"active":true},
+  {"kind":"topic","contentKey":"java.core.generics","areaSlug":"java","slug":"generics","title":"Generics & Type Safety","description":"제네릭 타입 시스템과 wildcard, erasure, unchecked 위험을 이해한다","displayOrder":80,"active":true},
+  {"kind":"topic","contentKey":"java.core.exceptions-resources","areaSlug":"java","slug":"exceptions-resources","title":"Exceptions & Resource Management","description":"예외 계약과 자원 소유권, 실패 원자성을 이해한다","displayOrder":90,"active":true},
+  {"kind":"topic","contentKey":"java.core.functional","areaSlug":"java","slug":"functional","title":"Lambda & Functional Java","description":"람다, 함수형 인터페이스와 조합을 사용해 동작을 전달한다","displayOrder":100,"active":true},
+  {"kind":"topic","contentKey":"java.core.streams","areaSlug":"java","slug":"streams","title":"Streams & Collectors","description":"지연 파이프라인과 안전한 수집·감소를 설계한다","displayOrder":110,"active":true},
+  {"kind":"topic","contentKey":"java.core.modern-language","areaSlug":"java","slug":"modern-language","title":"Modern Java Language & Modeling","description":"현대 Java 언어 기능으로 명확한 모델과 분기를 만든다","displayOrder":120,"active":true},
+  {"kind":"topic","contentKey":"java.core.time-numeric","areaSlug":"java","slug":"time-numeric","title":"Time & Numeric APIs","description":"시간대와 정밀 숫자를 의미에 맞게 표현한다","displayOrder":130,"active":true},
+  {"kind":"topic","contentKey":"java.core.io-nio","areaSlug":"java","slug":"io-nio","title":"Java I/O & NIO","description":"문자 인코딩, 파일 API와 Buffer·Selector 모델을 이해한다","displayOrder":140,"active":true},
+  {"kind":"topic","contentKey":"java.core.coding-tests","areaSlug":"java","slug":"coding-tests","title":"Java Coding-Test Toolkit","description":"코딩테스트 입력·출력·정렬·queue·heap·counting API를 익힌다","displayOrder":150,"active":true},
+  {"kind":"topic","contentKey":"java.core.concurrency","areaSlug":"java","slug":"concurrency","title":"Concurrency & Async","description":"Java thread, JMM visibility, synchronization, executor와 async composition을 이해한다","displayOrder":160,"active":true},
+  {"kind":"topic","contentKey":"java.core.jvm-runtime","areaSlug":"java","slug":"jvm-runtime","title":"JVM Runtime & Diagnostics","description":"JVM runtime data area, GC, JIT와 기본 진단 도구를 이해한다","displayOrder":170,"active":true},
+  {"kind":"topic","contentKey":"java.core.metadata-compatibility","areaSlug":"java","slug":"metadata-compatibility","title":"Reflection, Metadata & Compatibility","description":"reflection, annotation, proxy, serialization, JPMS와 API 호환성을 이해한다","displayOrder":180,"active":true}
 ]

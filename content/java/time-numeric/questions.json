@@ -1,0 +1,1332 @@
+[
+  {
+    "kind": "question",
+    "contentKey": "java.core.time-numeric.instant-local-zoned-time.q1",
+    "promptMarkdown": "Instant가 표현하는 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.time-numeric.instant-local-zoned-time"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "항상 서울의 달력 날짜",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "timezone 없는 local 숫자만",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "UTC timeline의 한 지점",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "사용자 Locale",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "Instant는 UTC 기준 timeline point다. local 날짜·시간 표시나 사용자 zone은 별도의 표현 단계다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.time-numeric.instant-local-zoned-time.q2",
+    "promptMarkdown": "LocalDateTime에 없는 정보는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.time-numeric.instant-local-zoned-time"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "날짜",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "시각",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "년·월·일",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "ZoneId 또는 offset",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "LocalDateTime은 날짜와 시각 숫자를 담지만 어떤 timezone/offset의 순간인지 나타내지 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.time-numeric.instant-local-zoned-time.q3",
+    "promptMarkdown": "이벤트 발생 시각을 여러 지역에서 같은 순간으로 비교하려면 보통 어떤 type이 자연스러운가?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.time-numeric.instant-local-zoned-time"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "Instant",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "LocalTime",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "문자열의 시각 부분만",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "Locale",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "timeline 비교는 timezone 없는 local 표현보다 Instant가 의도를 직접 표현한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.time-numeric.instant-local-zoned-time.q4",
+    "promptMarkdown": "하나의 Instant를 Asia/Seoul과 America/New_York으로 표시할 때 옳은 설명은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.time-numeric.instant-local-zoned-time"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "Instant 자체가 두 개로 복제된다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "두 출력은 local clock이 다를 수 있지만 timeline point는 같다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "한 zone에서만 유효해진다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "LocalDateTime이 자동으로 offset을 제거한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "같은 Instant를 zone별 local 값으로 표시할 수 있다. 표현이 달라질 뿐 순간의 identity는 달라지지 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.time-numeric.instant-local-zoned-time.q5",
+    "promptMarkdown": "사용자 zone에서 매일 오전 9시 일정을 모델링할 때 Instant 하나만 저장하는 것이 부족할 수 있는 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.time-numeric.instant-local-zoned-time"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "Instant는 날짜를 표현할 수 없기 때문이다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "ZoneId는 문자열이 아니기 때문이다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "반복 규칙인 local time과 ZoneId를 잃으면 DST·zone 규칙에 따른 다음 발생을 계산하기 어렵기 때문이다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "LocalDateTime이 모든 timeline을 자동 저장하기 때문이다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "한 번의 발생 Instant는 현재 순간만 나타낸다. 사용자 달력 규칙은 local time과 지역 규칙을 보존해야 다음 발생을 올바르게 해석할 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.time-numeric.instant-local-zoned-time.q6",
+    "promptMarkdown": "withZoneSameInstant와 withZoneSameLocal을 구분해야 하는 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.time-numeric.instant-local-zoned-time"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "둘 다 항상 같은 결과를 반환하므로 구분할 필요가 없다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "전자는 문자열만 바꾸고 후자는 object를 복사하지 않는다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "후자는 ZoneId를 제거한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "전자는 같은 timeline point를 새 zone으로 표시하고, 후자는 local clock 값을 유지해 다른 instant가 될 수 있다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "변환의 기준이 instant인지 local 값인지가 다르다. 일정·이벤트의 의미에 따라 어느 것을 보존할지 결정해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.time-numeric.zoneid-dst.q1",
+    "promptMarkdown": "+09:00과 Asia/Seoul의 차이는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.time-numeric.zoneid-dst"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "+09:00은 고정 offset이고 Asia/Seoul은 지역 시간대 규칙 ID다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "둘 다 동일하게 DST 미래 규칙을 저장한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "ZoneId는 날짜를 저장할 수 없다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "offset은 항상 문자열이 아니므로 사용할 수 없다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "fixed offset은 해당 offset 값 자체이고 ZoneId는 지역별 시간대 규칙을 참조한다. 같은 시각의 현재 offset이 같아도 미래 규칙 의미는 다르다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.time-numeric.zoneid-dst.q2",
+    "promptMarkdown": "DST gap의 의미는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.time-numeric.zoneid-dst"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "모든 시간이 두 번 존재하는 것",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "local clock이 앞으로 이동해 존재하지 않는 local time 구간이 생기는 것",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "offset이 영원히 고정되는 것",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "Instant가 삭제되는 것",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "시계가 앞으로 건너뛰면 특정 local 시각은 timeline에 대응하지 않는다. 이를 gap이라고 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.time-numeric.zoneid-dst.q3",
+    "promptMarkdown": "DST overlap에서 생길 수 있는 문제는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.time-numeric.zoneid-dst"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "모든 local time이 사라진다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "ZoneId가 fixed offset으로 자동 삭제된다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "같은 local time이 두 offset·두 timeline 후보를 가질 수 있다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "Instant가 local time을 가질 수 없게 된다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "시계가 뒤로 겹치면 같은 wall-clock 값을 서로 다른 offset으로 해석할 수 있다. 예약 정책에서 earlier/later 선택이 필요할 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.time-numeric.zoneid-dst.q4",
+    "promptMarkdown": "사용자가 DST gap에 해당하는 예약 시각을 입력했을 때 애플리케이션이 정해야 하는 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.time-numeric.zoneid-dst"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "항상 OS가 정하므로 기록할 필요가 없다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "fixed offset으로 바꾸면 모든 정책이 사라진다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "local time을 삭제하고 null로 반환한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "자동 보정할지 입력을 거부할지의 업무 정책",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "API의 기본 gap adjustment가 있더라도 업무적으로 올바른 예약인지 자동 결정해 주지 않는다. 보정·거부·사용자 확인 정책을 명시한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.time-numeric.zoneid-dst.q5",
+    "promptMarkdown": "overlap에서 withEarlierOffsetAtOverlap의 역할은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.time-numeric.zoneid-dst"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "모호한 local time에서 earlier offset을 선택하는 의도를 명시한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "모든 DST를 제거한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "LocalDateTime을 Instant와 항상 같게 만든다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "zone database를 업데이트한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "overlap은 두 offset 후보가 있으므로 earlier/later 선택이 도메인 의미가 될 수 있다. method는 그 선택을 명시적으로 표현한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.time-numeric.zoneid-dst.q6",
+    "promptMarkdown": "ZoneId 계산 결과를 OS 동작과 구분해 설명한 것으로 옳은 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.time-numeric.zoneid-dst"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "Java 언어가 모든 국가의 DST 변경을 compile-time에 고정한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "Java time API는 zone 규칙에 따라 값을 해석하지만 특정 OS syscall이나 미래 규칙을 영원히 고정한다는 보장은 아니다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "OS clock만이 ZoneId를 결정하고 Java API는 무관하다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "fixed offset이면 OS 규칙이 자동으로 따라온다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "Java API의 time model과 timezone data 공급·업데이트는 서로 다른 층이다. 특정 runtime data와 OS 내부 구현을 언어 계약으로 과장하지 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.time-numeric.duration-period.q1",
+    "promptMarkdown": "Duration과 Period의 기본 차이는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.time-numeric.duration-period"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "둘 다 고정 초만 표현한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "Period만 Instant를 표현한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "Duration은 시간량, Period는 년·월·일 calendar 양이다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "Duration은 날짜와 무관한 문자열이다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "Duration은 seconds/nanos 기반 시간량이고 Period는 calendar-based date amount다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.time-numeric.duration-period.q2",
+    "promptMarkdown": "타임아웃 90초를 표현하는 데 자연스러운 type은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.time-numeric.duration-period"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "Period.ofMonths(3)",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "문자열 90으로 ZoneId를 만든다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "LocalDateTime만",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "Duration.ofSeconds(90)",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "타임아웃은 경과한 시간량이므로 Duration이 의미를 직접 표현한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.time-numeric.duration-period.q3",
+    "promptMarkdown": "달력 기준으로 1개월 뒤를 계산할 때 Period가 필요한 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.time-numeric.duration-period"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "월의 길이가 고정된 초 수가 아니고 calendar 날짜 조정이 필요하기 때문이다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "Period는 항상 24시간을 뜻하기 때문이다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "Duration은 문자열만 받을 수 있기 때문이다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "Instant에는 날짜 정보가 없기 때문이다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "월 단위는 달마다 길이가 달라 단순한 시간량으로 환산되지 않는다. 날짜 계산은 Period와 날짜 type의 계약을 따른다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.time-numeric.duration-period.q4",
+    "promptMarkdown": "1월 31일에 1개월을 더하는 계산 결과를 판단할 때 필요한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.time-numeric.duration-period"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "항상 정확히 30일을 더한 결과라고 가정한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "calendar의 유효 날짜와 month-end 조정 규칙을 확인해야 한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "Duration.ofHours(24)와 반드시 같은 결과다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "Period는 LocalDate에 적용할 수 없다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "Period의 month addition은 calendar 규칙을 적용하며 원래 day가 다음 달에 없을 수 있다. 단순 30일·고정 초 가정은 잘못이다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.time-numeric.clock-testable-time.q1",
+    "promptMarkdown": "Clock을 주입하는 주된 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.time-numeric.clock-testable-time"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "모든 thread를 하나로 줄인다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "timezone을 자동으로 없앤다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "현재 시각 policy를 고정 시계로 테스트해 결정성을 높인다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "Instant를 문자열로 바꾼다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "Clock은 now의 source를 주입할 수 있게 해 운영 시계와 fixed test clock을 같은 경계에서 사용한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.time-numeric.clock-testable-time.q2",
+    "promptMarkdown": "Clock.fixed(instant, zone)의 테스트 장점은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.time-numeric.clock-testable-time"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "production system clock을 영구히 멈춘다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "모든 zone 계산을 제거한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "예외를 모두 숨긴다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "테스트 중 Clock이 같은 기준 시각을 계속 제공한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "fixed clock은 애플리케이션에 주입된 시각 source를 고정한다. 실제 시스템 시간이 바뀌지 않는 것은 아니다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.time-numeric.clock-testable-time.q3",
+    "promptMarkdown": "now가 deadline과 같은 순간일 때 isBefore(deadline)의 결과는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.time-numeric.clock-testable-time"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "false라서 !isBefore 정책에서는 expired로 해석할 수 있다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "항상 아직 유효하다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "Clock이 null이 된다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "deadline이 하루 연장된다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "isBefore는 같은 순간에 false다. !isBefore를 만료 정책으로 사용하면 deadline 시점부터 expired가 된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.time-numeric.clock-testable-time.q4",
+    "promptMarkdown": "한 요청 안에서 현재 시각을 여러 번 읽을 때의 위험은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.time-numeric.clock-testable-time"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "Clock이 자동으로 다른 timezone이 된다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "경계 시각을 넘으며 같은 요청의 policy 판단 기준이 달라질 수 있다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "Instant가 mutable해진다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "모든 read가 compile-time 상수가 된다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "now 호출 사이에도 시간이 흐르므로 여러 policy 판단이 서로 다른 기준을 볼 수 있다. 필요한 use case는 기준 시각을 한 번 캡처한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.time-numeric.clock-testable-time.q5",
+    "promptMarkdown": "Clock 주입과 business timezone 정책의 관계로 옳은 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.time-numeric.clock-testable-time"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "Clock이 모든 timezone을 하나로 통일한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "Clock.fixed를 쓰면 업무 규칙 테스트가 필요 없다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "Clock은 시각 source를 제공할 뿐 어떤 ZoneId·반올림·inclusive 정책을 자동 결정하지 않는다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "Clock은 만료 판단 method다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "Clock과 policy는 다른 책임이다. 테스트 가능한 now source를 주입한 뒤 zone 변환·만료 경계 같은 업무 규칙을 별도로 구현·검증한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.time-numeric.clock-testable-time.q6",
+    "promptMarkdown": "응답 mapper가 매번 system clock을 읽어 expired를 계산하는 설계보다 application policy가 Clock을 소유하는 편이 나은 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.time-numeric.clock-testable-time"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "mapper는 모든 domain object를 생성해야 하기 때문이다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "system clock은 compile-time 값이기 때문이다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "API response에는 시간이 들어갈 수 없기 때문이다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "business 판단과 기준 시각을 use-case 경계에 모아 테스트와 일관성을 높이기 때문이다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "시간 정책은 application/domain 책임이고 mapper는 변환만 하는 것이 명확하다. mapper가 now를 임의로 읽으면 같은 결과를 재현하기 어렵다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.time-numeric.datetimeformatter-parsing-formatting.q1",
+    "promptMarkdown": "DateTimeFormatter의 pattern에서 MM과 mm을 구분해야 하는 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.time-numeric.datetimeformatter-parsing-formatting"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "대문자 M은 month, 소문자 m은 minute처럼 의미가 다르기 때문이다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "둘 다 항상 year다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "Locale만 결정하고 값은 출력하지 않는다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "pattern은 parse에만 쓰인다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "pattern symbol의 대소문자는 다른 temporal field를 뜻한다. formatter pattern을 문자열 장식으로만 보면 잘못된 날짜가 된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.time-numeric.datetimeformatter-parsing-formatting.q2",
+    "promptMarkdown": "Locale이 DateTimeFormatter 결과에 영향을 줄 수 있는 부분은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.time-numeric.datetimeformatter-parsing-formatting"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "Instant의 물리적 timeline 값",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "월·요일 이름 같은 지역화된 text 표현",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "formatter의 Java type 자체",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "파일 권한",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "Locale은 language/지역화된 text formatting에 영향을 준다. timezone은 ZoneId라는 별도 축이다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.time-numeric.datetimeformatter-parsing-formatting.q3",
+    "promptMarkdown": "zone 없는 LocalDateTime 문자열을 parse한 뒤 의미 없이 system default zone을 붙이는 것이 위험한 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.time-numeric.datetimeformatter-parsing-formatting"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "LocalDateTime은 parse할 수 없기 때문이다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "Locale이 timezone을 자동 대체하기 때문이다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "원래 문자열이 어느 zone의 시각인지 모르면 다른 timeline으로 해석될 수 있다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "formatter는 숫자를 읽지 못하기 때문이다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "zone 정보 없는 local 값에는 여러 timeline 해석이 가능하다. system default를 숨은 정책으로 사용하면 서버 환경에 따라 결과가 달라진다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.time-numeric.datetimeformatter-parsing-formatting.q4",
+    "promptMarkdown": "DateTimeFormatter에서 Locale과 ZoneId는 각각 어떤 축인가?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.time-numeric.datetimeformatter-parsing-formatting"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "둘 다 동일하게 month를 결정한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "Locale은 파일 path, ZoneId는 charset",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "둘 다 parse와 무관하다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "Locale은 언어·지역화, ZoneId는 시간대 규칙",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "Locale과 ZoneId는 서로 다른 설정이다. pattern이 표현할 field를 정하고 locale/zone이 그 field의 표시·해석 문맥을 보완한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.time-numeric.datetimeformatter-parsing-formatting.q5",
+    "promptMarkdown": "Instant를 zone 설정 formatter로 format할 때 일어나는 일은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.time-numeric.datetimeformatter-parsing-formatting"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "같은 timeline point를 formatter의 zone에서 local text로 표시한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "Instant의 값이 zone별로 다른 instant로 변경된다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "Locale이 ZoneId를 대체한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "pattern이 모든 zone을 제거한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "formatting은 표현을 바꾸고 Instant의 timeline identity를 바꾸지 않는다. zone 설정은 표시 문맥을 제공한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.time-numeric.datetimeformatter-parsing-formatting.q6",
+    "promptMarkdown": "외부 입력 parse에서 formatter pattern이 맞더라도 별도 검토할 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.time-numeric.datetimeformatter-parsing-formatting"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "parse 성공이면 어떤 business date든 자동 유효하다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "calendar 유효성·zone 의미·업무 범위 validation을 별도로 확인한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "Locale을 삭제하면 validation이 끝난다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "formatter가 DB transaction을 검증한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "문법적 parse 성공은 field 형식이 맞다는 뜻이다. 업무적으로 허용되는 날짜·zone·기간은 별도 domain validation이다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.time-numeric.floating-point-precision.q1",
+    "promptMarkdown": "0.1 + 0.2를 double로 계산할 때 생길 수 있는 현상은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.time-numeric.floating-point-precision"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "항상 정확히 0이 된다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "double이 문자열로 바뀐다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "binary floating-point 표현 때문에 0.3과 정확히 같지 않을 수 있다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "compiler가 모든 소수를 BigDecimal로 바꾼다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "일부 십진 소수는 binary floating-point로 정확히 표현되지 않는다. 결과 비교는 domain tolerance나 decimal type 정책을 고려해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.time-numeric.floating-point-precision.q2",
+    "promptMarkdown": "부동소수점 equality 비교에서 흔히 필요한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.time-numeric.floating-point-precision"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "항상 문자열 비교",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "모든 값을 int로 버림",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "NaN을 일반 숫자로 간주",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "domain에 맞는 tolerance와 비교 정책",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "근사값은 오차 허용 범위가 의미를 가질 수 있다. 단순 ==가 맞는지 여부는 측정·수치 domain의 계약에 달려 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.time-numeric.floating-point-precision.q3",
+    "promptMarkdown": "금액 계산에서 double 대신 BigDecimal 또는 minor-unit 정수를 고려하는 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.time-numeric.floating-point-precision"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "십진 금액의 정밀도·반올림 정책을 명시적으로 보존하기 위해",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "double은 어떤 산술도 할 수 없기 때문에",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "BigDecimal은 자동으로 통화를 알아내기 때문에",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "정수는 항상 overflow가 없기 때문에",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "금액은 단위와 반올림 계약이 중요하다. decimal value나 minor unit을 선택하면 binary 근사의 함정을 줄일 수 있지만 overflow·currency 정책은 별도다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.time-numeric.floating-point-precision.q4",
+    "promptMarkdown": "NaN을 포함한 floating-point 계산을 다룰 때 필요한 추가 판단은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.time-numeric.floating-point-precision"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "NaN은 모든 숫자와 equals다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "NaN·infinity 같은 특수 값의 비교·전파 정책을 별도로 정한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "rounding하면 NaN이 항상 0이 된다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "특수 값은 compile-time에만 존재한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "floating-point는 일반 finite 값 외에 NaN과 infinity 규칙을 가진다. domain 경계에서 허용·거부·표시 정책을 명시해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.time-numeric.bigdecimal-money-rounding.q1",
+    "promptMarkdown": "new BigDecimal(double)보다 문자열이나 BigDecimal.valueOf를 자주 선택하는 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.time-numeric.bigdecimal-money-rounding"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "BigDecimal은 문자열만 저장하기 때문에",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "valueOf가 항상 scale을 0으로 만들기 때문에",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "double의 binary 근사값을 의도치 않게 그대로 가져오는 것을 피하기 위해",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "constructor는 음수만 허용하기 때문에",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "double은 이미 근사된 값일 수 있다. decimal text 또는 valueOf의 명시된 변환을 사용하면 생성 의도를 더 잘 보존한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.time-numeric.bigdecimal-money-rounding.q2",
+    "promptMarkdown": "BigDecimal equals와 compareTo의 차이는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.time-numeric.bigdecimal-money-rounding"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "둘 다 항상 scale을 무시한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "compareTo는 문자열만 비교한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "equals는 숫자 비교를 하지 않는다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "equals는 scale까지 고려할 수 있고 compareTo는 수치 크기를 비교한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "BigDecimal의 equals와 natural ordering은 scale 처리 의미가 다르다. 수치 동등과 collection key equality를 구분한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.time-numeric.bigdecimal-money-rounding.q3",
+    "promptMarkdown": "나눗셈 결과가 무한 소수가 될 수 있을 때 필요한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.time-numeric.bigdecimal-money-rounding"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "허용 scale과 RoundingMode 같은 반올림 정책",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "항상 equals 호출",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "double로 먼저 변환",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "scale을 무조건 제거",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "BigDecimal도 exact decimal expansion이 끝나지 않는 나눗셈은 무한 정밀도로 완료할 수 없다. scale과 rounding을 명시해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.time-numeric.bigdecimal-money-rounding.q4",
+    "promptMarkdown": "scale이 2인 1.10과 scale이 1인 1.1에 대해 옳은 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.time-numeric.bigdecimal-money-rounding"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "항상 다른 수치다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "수치 비교는 같을 수 있지만 equals는 scale 때문에 false일 수 있다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "둘 다 scale 0이다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "BigDecimal은 소수 자릿수를 저장하지 않는다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "1.10과 1.1은 numerical value가 같지만 scale이 각각 2와 1이다. compareTo와 equals의 계약 차이가 드러나는 사례다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.time-numeric.bigdecimal-money-rounding.q5",
+    "promptMarkdown": "금액 value object가 반올림을 안전하게 다루려면 무엇을 함께 고정해야 하는가?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.time-numeric.bigdecimal-money-rounding"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "BigDecimal의 default toString만",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "항상 double과 같은 계산 순서",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "currency/minor unit, scale, rounding 시점과 비교 의미",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "모든 통화를 scale 0으로 강제",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "BigDecimal type만으로 통화와 반올림 business policy가 결정되지 않는다. value object가 단위·scale·rounding과 equality 의미를 함께 보호해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.time-numeric.bigdecimal-money-rounding.q6",
+    "promptMarkdown": "BigDecimal을 HashSet key로 사용하면서 수치상 같은 1.1과 1.10을 하나로 취급하고 싶을 때의 문제는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.time-numeric.bigdecimal-money-rounding"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "HashSet이 모든 BigDecimal을 자동 compareTo로 합친다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "scale은 출력에만 있으므로 아무 조치도 필요 없다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "BigDecimal은 collection key가 될 수 없다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "BigDecimal equals/hashCode가 scale을 고려하므로 canonicalize하거나 compareTo 기반 정책을 별도로 설계해야 한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "HashSet은 equals/hashCode 계약을 사용하고 BigDecimal은 scale 차이를 equality에 반영할 수 있다. 수치 equality가 필요하면 입력 canonicalization이나 다른 key 정책이 필요하다."
+  }
+]

@@ -1,0 +1,982 @@
+[
+  {
+    "kind": "question",
+    "contentKey": "java.core.functional.functional-interface.q1",
+    "promptMarkdown": "functional interface의 핵심 조건은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.functional.functional-interface"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "abstract method가 정확히 하나인 interface 계약이다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "field가 반드시 하나인 class다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "모든 method가 static인 interface다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "lambda만 구현할 수 있는 final class다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "functional interface는 abstract method 하나를 함수형 계약으로 제공한다. default/static method는 abstract method 수에 같은 방식으로 포함되지 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.functional.functional-interface.q2",
+    "promptMarkdown": "`@FunctionalInterface`의 주된 역할은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.functional.functional-interface"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "lambda의 실행 thread를 정한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "compiler가 함수형 interface 의도를 검증하게 한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "interface를 자동으로 immutable하게 한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "모든 구현체를 생성한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "annotation은 abstract method 수가 함수형 계약과 맞는지 검사하는 표식이다. annotation이 없어도 조건을 만족하는 interface는 target이 될 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.functional.functional-interface.q3",
+    "promptMarkdown": "문자열을 받아 boolean을 반환하는 동작에 가장 자연스러운 표준 타입은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.functional.functional-interface"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "Supplier<String>",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "Consumer<String>",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "Predicate<String>",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "Runnable",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "Predicate<T>는 T를 받아 boolean을 반환하는 조건 계약이다. Supplier는 입력이 없고 Consumer는 반환값이 없다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.functional.functional-interface.q4",
+    "promptMarkdown": "`interface Action { void run(); }`에 대해 옳은 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.functional.functional-interface"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`Action a = () -> {};`는 target이 없어서 항상 불가능하다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "void 반환 때문에 functional interface가 될 수 없다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "interface는 lambda와 함께 사용할 수 없다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "Action은 abstract method가 하나이므로 lambda target이 될 수 있다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "인자 0개와 void 반환도 유효한 단일 abstract method 계약이다. 선언된 변수 타입이 lambda의 target을 제공한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.functional.behavior-parameterization.q1",
+    "promptMarkdown": "behavior parameterization의 핵심 효과는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.functional.behavior-parameterization"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "변화하는 동작을 parameter로 받아 고정 control flow의 중복을 줄인다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "모든 동작을 static field에 저장한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "runtime에 타입을 없앤다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "예외 처리를 자동 제거한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "순회나 호출 구조는 재사용하고 조건·변환 같은 변화 축을 함수형 parameter로 전달하는 설계다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.functional.behavior-parameterization.q2",
+    "promptMarkdown": "다음 메서드에서 `rule`의 역할은? `select(users, rule)`가 내부에서 각 user에 `rule.test(user)`를 호출한다.",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.functional.behavior-parameterization"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "입력 list를 정렬하는 저장소",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "각 원소를 통과시킬지 결정하는 변화 가능한 동작",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "예외를 삼키는 logger",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "항상 같은 결과를 반환하는 cache",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "Predicate parameter는 고정된 select 흐름에 조건 behavior를 공급한다. select 자체가 어떤 조건인지 하드코딩하지 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.functional.behavior-parameterization.q3",
+    "promptMarkdown": "`Function<User, String>`을 받는 메서드가 가장 자연스럽게 할 수 있는 일은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.functional.behavior-parameterization"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "String을 User로만 역변환한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "입력 없이 User를 생성한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "User를 String으로 변환하는 behavior를 호출한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "어떤 타입도 받지 않고 side effect만 실행한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "Function<T,R>는 T 입력을 받아 R 결과를 만든다. User를 받아 String을 만드는 역할과 일치한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.functional.behavior-parameterization.q4",
+    "promptMarkdown": "다음 중 behavior parameterization으로 가장 잘 개선되는 중복은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.functional.behavior-parameterization"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "서로 다른 DB schema를 하나로 삭제한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "각 class의 constructor가 서로 다른 invariant를 검증한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "서로 다른 protocol을 같은 문자열로 만든다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "성인 선택 메서드와 이름 선택 메서드가 같은 순회 코드를 각각 복제한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "고정 순회와 변화하는 조건을 분리하면 두 메서드의 중복을 하나의 선택 함수와 Predicate로 줄일 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.functional.behavior-parameterization.q5",
+    "promptMarkdown": "behavior를 lambda 하나로 넘기기보다 이름 있는 class가 더 적절할 수 있는 경우는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.functional.behavior-parameterization"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "rule이 여러 상태·의존성·lifecycle을 가져 독립적으로 테스트하고 설명해야 할 때",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "조건이 한 줄인 모든 경우",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "함수형 interface가 항상 금지된 경우",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "lambda는 값을 반환할 수 없기 때문",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "작은 behavior는 lambda가 간결하지만 상태와 외부 협력이 커지면 이름 있는 policy 객체가 책임과 테스트 경계를 더 잘 보여 준다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.functional.behavior-parameterization.q6",
+    "promptMarkdown": "`select(data, x -> x > 0)`와 `select(data, x -> x % 2 == 0)`의 공통 부분과 변화 부분은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.functional.behavior-parameterization"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "둘 다 조건을 select 내부에 다시 하드코딩하고 lambda는 장식이다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "select가 순회·결과 수집을 소유하고 lambda가 각 원소의 선택 정책을 소유한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "lambda가 list 순회를 소유하고 select가 결과 타입만 정한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "두 호출은 서로 다른 generic type이라 재사용할 수 없다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "고정된 알고리즘과 변경되는 규칙을 분리한 것이 behavior parameterization이다. 두 lambda는 같은 Predicate target에서 서로 다른 정책을 제공한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.functional.lambda-target-typing.q1",
+    "promptMarkdown": "`x -> x.length()`만 보고 x의 타입을 확정할 수 없는 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.functional.lambda-target-typing"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "lambda의 모든 매개변수는 Object이기 때문이다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "compiler는 lambda를 해석하지 않기 때문이다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "lambda는 target functional interface 문맥에서 매개변수 타입을 결정하기 때문이다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "length 메서드는 Java에 없기 때문이다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "lambda는 독립 선언 타입을 먼저 갖지 않는다. target interface의 함수형 메서드 signature가 x의 타입을 제공한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.functional.lambda-target-typing.q2",
+    "promptMarkdown": "다음 선언에서 lambda의 target type은? `Function<String, Integer> f = text -> text.length();`",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.functional.lambda-target-typing"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "Consumer<String>",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "Supplier<Integer>",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "Object만 알 수 있다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "Function<String, Integer>",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "변수 선언의 Function<String,Integer>가 입력 String과 결과 Integer라는 target 문맥을 제공한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.functional.lambda-target-typing.q3",
+    "promptMarkdown": "`var f = x -> x + 1;`이 허용되지 않는 주된 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.functional.lambda-target-typing"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "lambda를 해석할 target functional interface가 선언에 없기 때문이다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "lambda는 숫자를 반환할 수 없다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "var는 local에서 절대 사용할 수 없다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "x는 항상 final이어야 하기 때문이다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "var는 initializer가 필요하지만 lambda는 그 자체로 standalone type이 아니다. target을 제공할 interface나 명시적 cast가 필요하다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.functional.lambda-target-typing.q4",
+    "promptMarkdown": "`use(x -> x.toString())`에 overload `use(Function<String,String>)`와 `use(UnaryOperator<Object>)`가 모두 있다. 생길 수 있는 문제는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.functional.lambda-target-typing"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "두 target 중 하나가 더 구체적이라고 항상 자동 선택된다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "lambda가 target을 여러 개 가질 수 없어 overload가 모호해질 수 있다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "두 method가 모두 실행된다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "Function은 overload에 사용할 수 없다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "lambda는 overload 후보마다 다른 target으로 해석될 수 있어 하나를 결정하지 못할 수 있다. 명시적 변수나 cast가 의도를 고정한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.functional.lambda-target-typing.q5",
+    "promptMarkdown": "`Predicate<String>`과 `Function<String, Boolean>`을 구분하는 가장 정확한 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.functional.lambda-target-typing"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "둘 다 완전히 같은 interface라 아무 곳에나 대입된다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "Predicate는 입력이 없고 Function만 입력이 있다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "반환값이 boolean처럼 보여도 함수형 interface 타입과 추상 메서드 계약이 다르다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "Boolean은 primitive라 Function에서 사용할 수 없다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "Predicate<T>는 boolean test(T)라는 별도 계약이고 Function<T,R>는 R apply(T) 계약이다. 비슷한 결과 모양이 target type을 같게 만들지는 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.functional.lambda-target-typing.q6",
+    "promptMarkdown": "다음 중 target typing과 overload를 함께 고려한 가장 안전한 표현은? `execute(...)`가 두 함수형 overload를 제공한다.",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.functional.lambda-target-typing"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "모든 overload를 삭제하고 lambda를 Object로 받는다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "lambda를 먼저 `var`로 저장한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "method reference는 target이 필요 없으므로 아무 수정도 하지 않는다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "`execute((Function<String,Integer>) String::length)`처럼 target을 명시한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "명시적 cast는 method reference가 어느 함수형 overload를 만족하는지 compiler에 알려 준다. Object로 받으면 함수 호출 계약이 사라진다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.functional.lambda-capture-effectively-final.q1",
+    "promptMarkdown": "lambda가 capture하는 local 변수에 요구되는 조건은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.functional.lambda-capture-effectively-final"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "final이거나 effectively final이어야 한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "항상 static이어야 한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "참조 대상 객체가 반드시 record여야 한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "lambda 안에서만 선언되어야 한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "capture되는 local binding은 선언 후 재대입되지 않아 final로 취급될 수 있어야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.functional.lambda-capture-effectively-final.q2",
+    "promptMarkdown": "다음 코드가 컴파일되지 않는 이유는? `int limit = 3; Predicate<Integer> p = n -> n < limit; limit = 4;`",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.functional.lambda-capture-effectively-final"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "Predicate는 integer를 받을 수 없다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "capture한 local limit을 이후 재대입해 effectively final이 아니게 되었기 때문이다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "lambda는 비교 연산을 할 수 없다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "limit은 반드시 field여야 한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "lambda가 limit을 capture한 뒤 limit을 재대입하면 final/effectively final 조건을 위반한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.functional.lambda-capture-effectively-final.q3",
+    "promptMarkdown": "`final List<String> names = new ArrayList<>(); names.add(value);`에 대해 옳은 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.functional.lambda-capture-effectively-final"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "final이므로 add가 컴파일되지 않는다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "List가 자동으로 immutable해진다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "reference 재대입은 막지만 참조된 List의 mutation은 가능할 수 있다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "final local은 lambda capture에 사용할 수 없다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "final은 names가 다른 List를 가리키도록 바꾸는 것을 막는다. 대상 ArrayList의 add와 reference final은 별개의 문제다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.functional.lambda-capture-effectively-final.q4",
+    "promptMarkdown": "lambda capture의 규칙과 thread-safety 관계를 가장 정확하게 설명한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.functional.lambda-capture-effectively-final"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "effectively final이면 참조된 object의 모든 mutation이 thread-safe하다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "lambda 실행 thread는 항상 선언 thread와 같다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "final은 volatile과 같은 memory rule이다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "capture는 local binding 재대입을 제한하지만 대상 object의 동시성 계약까지 보장하지 않는다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "capture 규칙은 언어의 local variable lifetime과 관련된다. mutable object의 동시 접근 안전성은 별도의 synchronization/불변성 설계다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.functional.lambda-capture-effectively-final.q5",
+    "promptMarkdown": "다음 방식 중 반복되는 인덱스를 lambda에 안전하게 전달하는 방법은? `for (int i = 0; i < 3; i++)`에서 작업을 저장한다.",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.functional.lambda-capture-effectively-final"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "매 반복마다 `int index = i;`처럼 재대입하지 않는 local binding을 만들고 그것을 capture한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "loop 변수 i를 모든 lambda가 직접 capture한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "i를 static field로 바꿔 공유한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "lambda 안에서 i를 final로 선언한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "반복 변수는 계속 변하므로 capture 조건을 만족하지 않는다. 각 반복의 별도 local binding은 effectively final이며 해당 값으로 capture할 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.functional.lambda-capture-effectively-final.q6",
+    "promptMarkdown": "`List<String> names`를 capture한 lambda가 실행되기 전에 다른 코드가 list에 원소를 추가했다. 가능한 관찰은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.functional.lambda-capture-effectively-final"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "capture 시점에 List 내용까지 deep copy되어 기존 원소만 보인다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "같은 List object를 가리킨다면 lambda가 실행될 때 추가된 원소를 볼 수 있지만 동시성·순서 안전성은 별도 문제다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "names가 final이 아니므로 반드시 컴파일 오류다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "lambda가 실행될 때 names는 null이 된다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "capture되는 것은 local reference binding이지 대상 List의 deep snapshot이 아니다. 대상이 mutation을 허용하면 실행 시점 상태가 관찰될 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.functional.method-reference-functional-composition.q1",
+    "promptMarkdown": "`String::trim`을 lambda로 풀어 쓴 것과 가장 가까운 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.functional.method-reference-functional-composition"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`() -> String.trim()`",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "`x -> trim`",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "`x -> x.trim()`",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "`String -> trim(String)`",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "인스턴스 method reference String::trim은 String 입력을 받아 그 인스턴스의 trim을 호출하는 lambda와 대응한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.functional.method-reference-functional-composition.q2",
+    "promptMarkdown": "`f.andThen(g)`의 적용 순서는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.functional.method-reference-functional-composition"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "g 후 f",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "둘 중 하나만 무작위 실행",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "f와 g를 동시에 실행",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "f 후 g",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "andThen은 현재 Function f의 결과를 다음 Function g에 전달한다. compose는 g 입력을 먼저 f에 보내는 반대 방향이다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.functional.method-reference-functional-composition.q3",
+    "promptMarkdown": "method reference가 lambda보다 오히려 덜 명확해질 수 있는 경우는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.functional.method-reference-functional-composition"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "overloaded method와 여러 함수형 overload로 target이 모호할 때",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "대상 method가 하나뿐일 때",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "target interface가 명확할 때",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "method 이름이 길 때",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "method reference도 target typing이 필요하다. overload 후보가 여럿이면 lambda의 매개변수 타입이나 명시적 cast가 더 읽기 쉬울 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.functional.method-reference-functional-composition.q4",
+    "promptMarkdown": "trim 후 upper를 적용하는 canonical Function에 양끝 공백이 있는 소문자 java를 넣으면 결과는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.functional.method-reference-functional-composition"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "양끝 공백이 남은 대문자 문자열",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "공백이 제거된 대문자 문자열",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "공백이 제거된 소문자 문자열",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "컴파일 오류",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "andThen은 먼저 trim으로 양끝 공백을 제거한 뒤 toUpperCase를 적용하므로 공백이 없는 대문자 문자열이 된다. 두 변환의 방향을 함께 추적해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.functional.lambda-target-typing.q7",
+    "promptMarkdown": "lambda target이 함수형 interface라면 checked exception 사용 가능 여부를 무엇이 결정하는가?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.functional.lambda-target-typing"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "lambda의 모양과 무관하게 모든 checked exception이 허용된다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "target이 Object이면 checked가 unchecked가 된다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "target 함수형 메서드의 throws 계약과 compiler 규칙이 결정한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "@FunctionalInterface가 있으면 checked 검사가 꺼진다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "lambda body는 target interface의 함수형 메서드 계약 안에서 검사된다. 그 메서드가 선언하지 않은 checked exception은 그대로 던질 수 없다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.functional.functional-interface.q5",
+    "promptMarkdown": "Transform과 Normalizer가 같은 String 입력·String 출력의 abstract apply를 제공하고 use가 두 타입으로 overload되었다. use(x -> x.trim())에서 생길 수 있는 문제와 해결은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.functional.functional-interface"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "compiler가 반환 타입만 보고 항상 Transform을 고른다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "functional interface는 반환 타입을 가질 수 없다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "두 overload가 순서대로 모두 실행된다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "두 target이 모두 적용 가능해 overload가 모호할 수 있으므로 변수나 명시적 cast로 target을 고정한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "서로 다른 functional interface가 같은 함수 signature를 가지면 하나의 lambda가 두 target에 모두 맞을 수 있다. compiler가 하나를 고르지 못하면 Transform t = ...처럼 target을 명시한다."
+  }
+]

@@ -3,62 +3,100 @@ kind: concept
 contentKey: java.core.language-types.boxing-unboxing-wrapper
 topicContentKey: java.core.language-types
 slug: boxing-unboxing-wrapper
-title: "Boxing, unboxing과 wrapper"
-summary: "원시 값과 wrapper 객체의 자동 변환, null 위험과 equality를 구분한다"
+title: "Boxing, unboxing과 wrapper 타입"
+summary: "원시 값과 래퍼 객체 사이의 자동 변환, null 역변환 위험, == 비교와 캐시 오해를 구분한다"
 level: 2
 status: PUBLISHED
 displayOrder: 40
 references:
-  - url: "https://docs.oracle.com/javase/specs/jls/se25/html/jls-5.html"
-    title: "Java Language Specification 5장: Conversions and Contexts"
+  - url: "https://docs.oracle.com/javase/specs/jls/se25/html/jls-5.html#jls-5.1.7"
+    title: "JLS 5.1.7 Boxing Conversion"
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
-    relationNote: boxing·unboxing과 widening 조합의 언어 규칙 확인
-  - url: "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Integer.html"
-    title: "Java SE 25 Integer API"
+    relationNote: boxing 규칙과 일부 값의 동일성 보장 범위 확인
+  - url: "https://docs.oracle.com/javase/specs/jls/se25/html/jls-5.html#jls-5.1.8"
+    title: "JLS 5.1.8 Unboxing Conversion"
     referenceType: OFFICIAL
     language: en
     displayOrder: 2
-    relationNote: Integer wrapper API와 값 변환 메서드 확인
+    relationNote: unboxing과 null 처리 규칙 확인
 ---
-# Boxing, unboxing과 wrapper
+# Boxing, unboxing과 wrapper 타입
 
-## 쉬운 진입
+컬렉션이나 제네릭은 `int` 같은 원시 타입을 타입 인자로 직접 사용할 수 없습니다. 그래서 Java에는 원시 값을 객체 형태로 다룰 수 있도록 `Integer`, `Long`, `Boolean` 같은 **래퍼(wrapper) 타입**이 있습니다.
 
-컬렉션처럼 객체만 받을 수 있는 곳에 `int`를 넣을 때 Java가 잠시 `Integer` 상자로 감싸 줄 수
-있다. 반대로 계산하려고 꺼낼 때는 상자 안의 숫자를 다시 원시 값으로 바꾼다. 편리하지만 상자가
-비어 있는 `null`이면 꺼내는 순간 실패한다.
+원시 값을 래퍼 타입으로 바꾸는 것을 **boxing**, 래퍼 객체에서 원시 값을 꺼내는 것을 **unboxing**이라고 합니다. Java는 많은 문맥에서 이 변환을 자동으로 해 주지만, 자동 변환이라는 이유로 비용과 오류 가능성까지 사라지는 것은 아닙니다.
 
-## 정확한 메커니즘
-
-`boxing`은 primitive value를 wrapper 객체로 바꾸고, `unboxing`은 wrapper를 primitive로
-바꾼다. 이 변환은 메서드 호출·대입·산술식의 문맥에서 암묵적으로 일어날 수 있다.
+### 코드에서 자동 변환은 어떻게 보일까
 
 ```java
-Integer boxed = 10;       // boxing
-int value = boxed + 2;    // unboxing 후 산술
-
-Integer missing = null;
-int fail = missing;       // NullPointerException: null unboxing
+Integer boxed = 10;  // int 10을 Integer로 boxing
+int value = boxed;   // Integer를 int로 unboxing
 ```
 
-`==`는 피연산자의 타입과 변환 문맥을 함께 봐야 한다. `Integer a`, `Integer b`처럼 두 wrapper
-reference를 그대로 비교하면 객체 identity를 비교한다. 반면 `Integer a`와 primitive `int`를
-비교하는 문맥에서는 wrapper가 unboxing되어 숫자 비교가 일어날 수 있다. 일부 wrapper 값의 객체
-재사용이나 cache는 일반적인 값 equality의 기준으로 삼지 않는다. wrapper끼리 숫자 값의 동등성을
-비교하려면 `equals`나 `Objects.equals`를 사용하고, null 가능성을 API에 반영한다.
+개념적으로는 다음과 비슷하게 생각할 수 있습니다.
 
-## 실전·면접 연결
+```java
+Integer boxed = Integer.valueOf(10);
+int value = boxed.intValue();
+```
 
-`List<Integer>`의 합계를 구하거나 nullable 입력을 다룰 때 unboxing 지점을 의식한다. hot path에서
-불필요한 boxing은 allocation과 GC 부담을 만들 수 있지만, 성능을 추측해 원시 타입으로 바꾸기
-전에 API 계약과 측정을 함께 본다. DB나 JSON의 nullable 숫자를 primitive 필드에 바로 매핑하는
-경우에도 누락 의미를 먼저 결정한다.
+실제 컴파일 결과의 세부는 구현에 맡겨져 있지만, 코드를 이해할 때는 원시 값과 객체 사이의 변환이 숨어 있다는 사실을 기억하면 됩니다.
 
-## 흔한 오해
+### 가장 위험한 경우는 `null`을 unboxing할 때다
 
-- `Integer`는 `int`와 같은 객체 identity를 갖는 값 타입이 아니다.
-- wrapper cache가 있다는 사실은 모든 `==` 결과를 예측하는 근거가 아니다.
-- wrapper와 primitive가 섞인 `==` 비교에서는 unboxing이 일어날 수 있으므로 항상 identity 비교라고 볼 수 없다.
-- `null` wrapper는 0으로 자동 대체되지 않는다.
+래퍼 타입은 참조 타입이므로 `null`을 가질 수 있습니다.
+
+```java
+Integer count = null;
+int value = count; // NullPointerException
+```
+
+`int`에는 `null`이라는 값이 없으므로 unboxing 과정에서 실제 `Integer` 객체가 필요합니다. 그런데 객체가 없기 때문에 `NullPointerException`이 발생합니다.
+
+백엔드 코드에서는 DB 조회 결과, 요청 DTO, `Map` 조회 결과처럼 `null`이 들어올 수 있는 값을 래퍼 타입으로 표현하는 경우가 많습니다. 이후 산술 연산이나 비교 과정에서 자동 unboxing이 일어나면 예외가 예상하지 못한 위치에서 발생할 수 있습니다.
+
+```java
+Integer stock = repositoryResult;
+if (stock > 0) { // stock이 null이면 비교 전에 unboxing하다 실패
+    // ...
+}
+```
+
+### `Integer`의 `==`는 값 비교가 아니다
+
+```java
+Integer a = 100;
+Integer b = 100;
+System.out.println(a == b);
+```
+
+일부 작은 정수 값에서는 같은 `Integer` 객체가 재사용될 수 있어서 위 결과가 `true`가 될 수 있습니다. Java 언어 명세는 특정 상수 표현식의 boxing에 대해 일부 값 범위에서 동일 객체가 되도록 보장하는 규칙을 두고 있습니다.
+
+하지만 이것을 “Integer는 작은 값이면 항상 `==`로 비교해도 된다”로 사용하면 안 됩니다.
+
+```java
+Integer x = 1000;
+Integer y = 1000;
+System.out.println(x == y);      // 값 비교 용도로 믿으면 안 됨
+System.out.println(x.equals(y)); // true
+```
+
+참조 타입의 `==`는 **같은 객체를 가리키는지** 비교합니다. 숫자 값의 논리적 동등성을 비교하려면 `equals`를 사용하거나, `null` 가능성을 확인한 뒤 원시 값으로 비교해야 합니다.
+
+### 반복문 안의 boxing은 성능에도 영향을 줄 수 있다
+
+boxing은 원시 값을 객체 형태로 다루게 만듭니다. 따라서 대량의 숫자를 `List<Integer>`에 저장하거나 반복적으로 boxing하는 코드는 원시 배열에 비해 객체 관리 비용이 생길 수 있습니다.
+
+다만 “boxing은 무조건 느리니 피한다”가 결론은 아닙니다. 일반적인 도메인 코드에서는 타입 의미와 API 계약이 더 중요할 수 있습니다. 실제 성능 문제가 있다면 allocation과 실행 시간을 측정한 뒤 판단해야 합니다.
+
+### 문제를 풀 때 확인할 것
+
+래퍼 타입이 나오면 세 가지를 확인합니다.
+
+- 현재 값이 원시 값인가, 래퍼 객체인가?
+- 산술·비교 과정에서 자동 unboxing이 숨어 있는가?
+- `==`가 값 비교처럼 보이지만 실제로는 객체 동일성을 비교하고 있지 않은가?
+
+특히 `null`과 `==` 두 지점이 문제에서 자주 함정이 됩니다.
