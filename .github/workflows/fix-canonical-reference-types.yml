@@ -1,4 +1,4 @@
-name: Fix canonical reference types
+name: Normalize canonical references
 
 on:
   push:
@@ -16,19 +16,74 @@ jobs:
         with:
           ref: content/validate-five-areas
 
-      - name: Align remaining reference types
+      - name: Normalize shared reference metadata
         run: |
           python - <<'PY'
           from pathlib import Path
 
-          replacements = {
+          roots = [
+              Path('content/java'),
+              Path('content/spring'),
+              Path('content/database'),
+              Path('content/security'),
+              Path('content/backend-engineering'),
+          ]
+
+          canonical_titles = {
+              'https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html':
+                  'OWASP Cheat Sheet: Cross Site Scripting Prevention',
+              'https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/math/BigDecimal.html':
+                  'Java SE 25 API: BigDecimal',
+              'https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/time/Clock.html':
+                  'Java SE 25 API: Clock',
+              'https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/time/Instant.html':
+                  'Java SE 25 API: Instant',
+              'https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html':
+                  'Java Language Specification 8장: Classes',
+              'https://docs.oracle.com/javase/specs/jls/se25/html/jls-9.html':
+                  'Java Language Specification 9장: Interfaces',
+              'https://docs.spring.io/spring-framework/reference/core/beans/dependencies/factory-collaborators.html':
+                  'Spring Framework Reference: Dependencies and Configuration in Detail',
+              'https://docs.spring.io/spring-framework/reference/web/webmvc/mvc-controller/ann-validation.html':
+                  'Spring Framework Reference: Validation',
+              'https://www.postgresql.org/docs/current/ddl-constraints.html':
+                  'PostgreSQL Documentation: Constraints',
+              'https://www.postgresql.org/docs/current/transaction-iso.html':
+                  'PostgreSQL Documentation: Transaction Isolation',
+              'https://www.rfc-editor.org/rfc/rfc7519':
+                  'RFC 7519: JSON Web Token (JWT)',
+          }
+
+          for root in roots:
+              for path in root.rglob('*.md'):
+                  lines = path.read_text(encoding='utf-8').splitlines()
+                  changed = False
+                  current_url = None
+                  for i, line in enumerate(lines):
+                      stripped = line.strip()
+                      if stripped.startswith('- url:'):
+                          value = stripped.split(':', 1)[1].strip().strip('"').strip("'")
+                          current_url = value
+                          continue
+                      if current_url and stripped.startswith('title:'):
+                          title = canonical_titles.get(current_url)
+                          if title is not None:
+                              indent = line[:len(line) - len(line.lstrip())]
+                              replacement = f'{indent}title: "{title}"'
+                              if replacement != line:
+                                  lines[i] = replacement
+                                  changed = True
+                          current_url = None
+                  if changed:
+                      path.write_text('\n'.join(lines) + '\n', encoding='utf-8')
+
+          type_replacements = {
               Path('content/backend-engineering/retry/transient-permanent.md'):
                   ('referenceType: REFERENCE', 'referenceType: COMPANY_TECH_BLOG'),
               Path('content/backend-engineering/testing-recovery/tradeoffs.md'):
                   ('referenceType: ARTICLE', 'referenceType: OTHER'),
           }
-
-          for path, (before, after) in replacements.items():
+          for path, (before, after) in type_replacements.items():
               text = path.read_text(encoding='utf-8')
               if before in text:
                   path.write_text(text.replace(before, after), encoding='utf-8')
@@ -38,10 +93,10 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add content/backend-engineering/retry/transient-permanent.md content/backend-engineering/testing-recovery/tradeoffs.md
+          git add content/java content/spring content/database content/security content/backend-engineering
           if git diff --cached --quiet; then
-            echo "Reference types already aligned"
+            echo "Canonical reference metadata already normalized"
           else
-            git commit -m "fix: align remaining canonical reference types"
+            git commit -m "fix: normalize shared canonical references"
             git push
           fi
