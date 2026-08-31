@@ -1,0 +1,14 @@
+[
+  {"kind":"topic","contentKey":"operating-systems.core.kernel-boundary","areaSlug":"operating-systems","slug":"kernel-boundary","title":"Kernel Boundary","description":"user/kernel mode, system call과 interrupt 경계를 다룬다.","displayOrder":10,"active":true},
+  {"kind":"topic","contentKey":"operating-systems.core.process","areaSlug":"operating-systems","slug":"process","title":"Process Model","description":"process address space와 lifecycle을 다룬다.","displayOrder":20,"active":true},
+  {"kind":"topic","contentKey":"operating-systems.core.scheduling","areaSlug":"operating-systems","slug":"scheduling","title":"Context Switching and Scheduling","description":"context switch와 CPU scheduling policy를 다룬다.","displayOrder":30,"active":true},
+  {"kind":"topic","contentKey":"operating-systems.core.threads","areaSlug":"operating-systems","slug":"threads","title":"Threads","description":"thread shared/private state와 OS·Java 경계를 다룬다.","displayOrder":40,"active":true},
+  {"kind":"topic","contentKey":"operating-systems.core.race-critical-section","areaSlug":"operating-systems","slug":"race-critical-section","title":"Race and Critical Section","description":"interleaving과 shared state race를 다룬다.","displayOrder":50,"active":true},
+  {"kind":"topic","contentKey":"operating-systems.core.synchronization","areaSlug":"operating-systems","slug":"synchronization","title":"Synchronization","description":"mutex·semaphore·condition과 contention을 다룬다.","displayOrder":60,"active":true},
+  {"kind":"topic","contentKey":"operating-systems.core.deadlock","areaSlug":"operating-systems","slug":"deadlock","title":"Deadlock and Liveness","description":"deadlock 조건과 liveness를 다룬다.","displayOrder":70,"active":true},
+  {"kind":"topic","contentKey":"operating-systems.core.virtual-memory","areaSlug":"operating-systems","slug":"virtual-memory","title":"Virtual Memory","description":"page fault·replacement·working set을 다룬다.","displayOrder":80,"active":true},
+  {"kind":"topic","contentKey":"operating-systems.core.filesystem","areaSlug":"operating-systems","slug":"filesystem","title":"Files and File Systems","description":"file descriptor·inode·page cache·durability를 다룬다.","displayOrder":90,"active":true},
+  {"kind":"topic","contentKey":"operating-systems.core.io","areaSlug":"operating-systems","slug":"io","title":"I/O Model","description":"blocking·readiness·epoll과 zero-copy를 다룬다.","displayOrder":100,"active":true},
+  {"kind":"topic","contentKey":"operating-systems.core.ipc","areaSlug":"operating-systems","slug":"ipc","title":"IPC","description":"process 간 pipe·shared memory·socket 통신을 다룬다.","displayOrder":110,"active":true},
+  {"kind":"topic","contentKey":"operating-systems.core.isolation","areaSlug":"operating-systems","slug":"isolation","title":"Isolation and Resource Control","description":"permission·namespace·cgroup과 container 경계를 다룬다.","displayOrder":120,"active":true}
+]

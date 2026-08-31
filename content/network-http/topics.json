@@ -1,0 +1,17 @@
+[
+  {"kind":"topic","contentKey":"network-http.core.layering","areaSlug":"network-http","slug":"layering","title":"Network Layering","description":"계층 책임과 encapsulation을 다룬다.","displayOrder":10,"active":true},
+  {"kind":"topic","contentKey":"network-http.core.local-delivery","areaSlug":"network-http","slug":"local-delivery","title":"Local Network Delivery","description":"MAC·switch·ARP·NDP와 gateway를 다룬다.","displayOrder":20,"active":true},
+  {"kind":"topic","contentKey":"network-http.core.ip-routing","areaSlug":"network-http","slug":"ip-routing","title":"IP Addressing and Routing","description":"address·subnet·route·forwarding을 다룬다.","displayOrder":30,"active":true},
+  {"kind":"topic","contentKey":"network-http.core.port-nat","areaSlug":"network-http","slug":"port-nat","title":"Ports, Socket Endpoints and NAT","description":"port·socket tuple과 NAT mapping을 다룬다.","displayOrder":40,"active":true},
+  {"kind":"topic","contentKey":"network-http.core.dns","areaSlug":"network-http","slug":"dns","title":"DNS","description":"resolver·authoritative server와 cache를 다룬다.","displayOrder":50,"active":true},
+  {"kind":"topic","contentKey":"network-http.core.tcp","areaSlug":"network-http","slug":"tcp","title":"TCP","description":"stream·sequence·window·congestion과 teardown을 다룬다.","displayOrder":60,"active":true},
+  {"kind":"topic","contentKey":"network-http.core.udp","areaSlug":"network-http","slug":"udp","title":"UDP","description":"datagram과 application reliability를 다룬다.","displayOrder":70,"active":true},
+  {"kind":"topic","contentKey":"network-http.core.tls","areaSlug":"network-http","slug":"tls","title":"TLS","description":"certificate·PKI·handshake와 termination을 다룬다.","displayOrder":80,"active":true},
+  {"kind":"topic","contentKey":"network-http.core.request-journey","areaSlug":"network-http","slug":"request-journey","title":"URL to HTTP Request","description":"URL에서 DNS·transport·TLS를 거쳐 HTTP로 가는 흐름을 다룬다.","displayOrder":90,"active":true},
+  {"kind":"topic","contentKey":"network-http.core.http-message","areaSlug":"network-http","slug":"http-message","title":"HTTP Messages and Representation","description":"message·representation·content negotiation을 다룬다.","displayOrder":100,"active":true},
+  {"kind":"topic","contentKey":"network-http.core.http-methods","areaSlug":"network-http","slug":"http-methods","title":"HTTP Methods and Idempotency","description":"method semantics와 idempotency 경계를 다룬다.","displayOrder":110,"active":true},
+  {"kind":"topic","contentKey":"network-http.core.http-status","areaSlug":"network-http","slug":"http-status","title":"HTTP Status Codes","description":"status class와 실패 상태를 다룬다.","displayOrder":120,"active":true},
+  {"kind":"topic","contentKey":"network-http.core.http-versions","areaSlug":"network-http","slug":"http-versions","title":"HTTP Connection Evolution","description":"HTTP/1.1·HTTP/2·HTTP/3 connection 모델을 다룬다.","displayOrder":130,"active":true},
+  {"kind":"topic","contentKey":"network-http.core.http-cache","areaSlug":"network-http","slug":"http-cache","title":"HTTP Caching","description":"freshness·validator와 private/shared cache를 다룬다.","displayOrder":140,"active":true},
+  {"kind":"topic","contentKey":"network-http.core.http-state-intermediary","areaSlug":"network-http","slug":"http-state-intermediary","title":"HTTP State and Intermediaries","description":"cookie·proxy·gateway·forwarded header와 CDN을 다룬다.","displayOrder":150,"active":true}
+]
