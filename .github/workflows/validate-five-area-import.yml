@@ -22,11 +22,12 @@ jobs:
       - name: Install YAML parser
         run: python -m pip install --quiet pyyaml
 
-      - name: Scan shared reference metadata
+      - name: Enforce shared reference metadata consistency
         run: |
           python - <<'PY'
           from collections import defaultdict
           from pathlib import Path
+          import sys
           import yaml
 
           roots = [
@@ -75,30 +76,11 @@ jobs:
                       print(f'    file={path}')
 
           print(f'REFERENCE_METADATA_CONFLICT_COUNT={conflicts}')
+          if conflicts:
+              sys.exit(1)
           PY
 
-      - name: Collect all reimport diagnostics
-        run: |
-          python - <<'PY'
-          from pathlib import Path
-          path = Path('backend/src/test/java/com/guseoh/csforge/importcontent/CanonicalFiveAreaImportValidationTest.java')
-          text = path.read_text(encoding='utf-8')
-          old_updated = '            assertEquals(0, preview.updated(), "identical reimport must not update canonical items");'
-          diagnostic = '''            if (preview.updated() != 0) {
-                preview.items().stream()
-                        .filter(item -> item.classification().name().equals("UPDATED"))
-                        .forEach(item -> System.out.println(
-                                "CANONICAL_REIMPORT_UPDATED key=" + item.contentKey() + " diffs=" + item.diffs()));
-            }'''
-          old_unchanged = '            assertEquals(itemCount, preview.unchanged(), "every canonical item must classify as UNCHANGED on identical reimport");'
-          if old_updated not in text or old_unchanged not in text:
-              raise SystemExit('diagnostic insertion point not found')
-          text = text.replace(old_updated, diagnostic)
-          text = text.replace(old_unchanged, '            // diagnostic run: collect all UPDATED items before restoring strict idempotency assertions')
-          path.write_text(text, encoding='utf-8')
-          PY
-
-      - name: Run canonical five-area import diagnostic
+      - name: Run strict canonical five-area import validation
         working-directory: backend
         run: |
           chmod +x gradlew
