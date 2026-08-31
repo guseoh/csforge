@@ -1,0 +1,56 @@
+name: Scan canonical reference metadata
+
+on:
+  push:
+    branches:
+      - content/reference-scan-scratch
+
+permissions:
+  contents: read
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install YAML parser
+        run: python -m pip install --quiet pyyaml
+
+      - name: Find inconsistent metadata for shared reference URLs
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from collections import defaultdict
+          import yaml
+
+          roots = [Path('content/java'), Path('content/spring'), Path('content/database'), Path('content/security'), Path('content/backend-engineering')]
+          by_url = defaultdict(list)
+          for root in roots:
+              for path in root.rglob('*.md'):
+                  text = path.read_text(encoding='utf-8')
+                  if not text.startswith('---\n'):
+                      continue
+                  _, fm, _ = text.split('---', 2)
+                  meta = yaml.safe_load(fm) or {}
+                  for ref in meta.get('references') or []:
+                      global_meta = (
+                          ref.get('title'),
+                          ref.get('referenceType'),
+                          ref.get('language'),
+                          ref.get('depth'),
+                          ref.get('recommendation'),
+                      )
+                      by_url[ref.get('url')].append((str(path), global_meta))
+
+          conflicts = 0
+          for url, entries in sorted(by_url.items()):
+              variants = {meta for _, meta in entries}
+              if len(variants) <= 1:
+                  continue
+              conflicts += 1
+              print(f'REFERENCE_METADATA_CONFLICT url={url}')
+              for path, meta in entries:
+                  print(f'  {path} -> {meta}')
+          print(f'REFERENCE_METADATA_CONFLICT_COUNT={conflicts}')
+          PY
