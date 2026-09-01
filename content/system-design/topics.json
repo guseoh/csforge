@@ -1,0 +1,5 @@
+[
+  {"key":"system-design.core.requirements","title":"Requirements and boundaries","displayOrder":10,"status":"PUBLISHED"},
+  {"key":"system-design.core.architecture","title":"Architecture composition","displayOrder":20,"status":"PUBLISHED"},
+  {"key":"system-design.core.reliability","title":"Reliability and evolution","displayOrder":30,"status":"PUBLISHED"}
+]
