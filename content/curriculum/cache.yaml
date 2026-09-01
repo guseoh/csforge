@@ -24,14 +24,14 @@ topics:
 - key: cache.core.models
   title: Cache models and keys
   order: 10
-  scope: cache-aside, read/write-through 선택과 key namespace·serialization 경계를 다룬다.
+  scope: cache-aside, write-through/write-behind 선택과 key namespace·serialization 경계를 다룬다.
   boundary: Redis 명령 자체보다 application use case의 cache contract와 PostgreSQL canonical state를 우선한다.
   concepts:
   - key: cache.core.models.cache-aside
     title: cache-aside read/write flow
     order: 10
     level: 1
-    objective: cache hit/miss, origin read, cache fill과 write invalidation의 기본 흐름을 설명한다.
+    objective: cache hit/miss와 fresh/stale을 구분하고 origin read, cache fill과 write invalidation의 기본 흐름을 설명한다.
     density: CORE
     visualization: DIAGRAM
   - key: cache.core.models.write-strategies
@@ -85,7 +85,7 @@ topics:
     title: eviction과 memory budget
     order: 10
     level: 2
-    objective: maxmemory와 eviction policy, working set과 object size를 hit ratio·write failure와 연결한다.
+    objective: maxmemory와 eviction policy, working set과 object size를 hit ratio·cache write failure와 연결한다.
     density: CORE
     visualization: TEXT
   - key: cache.core.operations.hot-key
