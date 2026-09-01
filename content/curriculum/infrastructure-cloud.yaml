@@ -10,14 +10,13 @@ policies:
     authoringLanguage: ko-KR
     explanationRule: 애플리케이션이 실행되는 infrastructure boundary에서 compute·network·storage 자원과 lifecycle·failure·cost를 연결한다.
   question:
-    minimumPerConcept: 2
     topicDifficultyCoverage: [EASY, MEDIUM, HARD]
     areaTypeCoverage: [MULTIPLE_CHOICE, SHORT_ANSWER, DESCRIPTIVE, SCENARIO]
     hardRule: resource limit, traffic routing, certificate rotation, backup/restore, rollout·health state 또는 IaC drift를 실제 운영 상황으로 판단하게 한다.
     shortAnswerRule: cloud 서비스명이나 container 용어 이름만으로 정답을 인정하지 않는다.
   source:
-    primary: [NIST Cloud Computing Definition, Kubernetes Documentation, OCI/Docker Documentation]
-    rule: provider feature와 portable infrastructure principle, application·platform responsibility를 구분한다.
+    primary: [NIST Cloud Computing Definition, Kubernetes Documentation, Docker Documentation, AWS VPC Documentation]
+    rule: provider feature와 portable infrastructure principle, application·platform responsibility를 구분하고 provider-specific 용어는 해당 provider 문서로 확인한다.
   visualization:
     values: [NONE, TEXT, DIAGRAM]
     rule: request ingress, container lifecycle, health probe, storage recovery와 deployment transition처럼 경계·상태가 핵심인 곳에 사용한다.
@@ -32,14 +31,14 @@ topics:
     title: VM·container·serverless execution models
     order: 10
     level: 1
-    objective: process isolation, image/runtime와 managed execution의 차이 및 운영 책임 이동을 설명한다.
+    objective: process restart와 container/Pod recreation을 구분하고 image/runtime·durable state lifecycle과 managed execution의 운영 책임 이동을 설명한다.
     density: CORE
     visualization: TEXT
   - key: infrastructure.core.compute.resource-boundaries
     title: resource requests와 limits
     order: 20
     level: 2
-    objective: CPU/memory request·limit과 scheduling·throttling·OOM/eviction을 capacity 관점에서 판단한다.
+    objective: CPU/memory request·limit의 scheduling/runtime 역할과 throttling·OOM/eviction을 capacity 관점에서 판단한다.
     density: CORE
     visualization: DIAGRAM
   - key: infrastructure.core.compute.configuration-secrets
@@ -52,14 +51,14 @@ topics:
 - key: infrastructure.core.network
   title: Infrastructure networking
   order: 20
-  scope: subnet/security boundary, load balancing/ingress와 DNS/TLS lifecycle을 다룬다.
-  boundary: Network & HTTP가 protocol semantics를 소유하고 Infrastructure는 routing·isolation·certificate operation을 소유한다.
+  scope: VPC/subnet/security boundary, load balancing/ingress와 DNS/TLS lifecycle을 다룬다.
+  boundary: Network & HTTP가 protocol semantics를 소유하고 Infrastructure는 provider routing·isolation·certificate operation을 소유한다.
   concepts:
   - key: infrastructure.core.network.network-boundaries
     title: VPC·subnet·security boundary
     order: 10
     level: 1
-    objective: public/private network, ingress/egress와 security group/network policy의 allow boundary를 설명한다.
+    objective: AWS VPC/subnet route와 security group, Kubernetes NetworkPolicy처럼 서로 다른 infrastructure allow boundary를 구분하고 public/private ingress·egress를 설명한다.
     density: CORE
     visualization: DIAGRAM
   - key: infrastructure.core.network.load-balancing-ingress
@@ -73,7 +72,7 @@ topics:
     title: DNS와 TLS certificate lifecycle
     order: 30
     level: 2
-    objective: name resolution, certificate issuance·rotation·expiry와 connection failure를 운영 흐름으로 설명한다.
+    objective: name resolution과 HTTP version별 transport/security establishment 차이, certificate issuance·rotation·expiry를 운영 흐름으로 설명한다.
     density: CORE
     visualization: TEXT
 - key: infrastructure.core.reliability
