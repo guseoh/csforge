@@ -31,16 +31,18 @@ GET concept/42
                     └─ cache SET + TTL ─▶ 결과 반환
 ```
 
-### hit와 miss는 상태 전이다
+### hit와 freshness는 같은 뜻이 아니다
 
-hit는 cache 값이 존재하고 아직 이 use case가 허용하는 freshness 범위에 있다는 뜻입니다. miss는 값이 없다는 뜻이지 origin에도 데이터가 없다는 뜻은 아닙니다. 만료, eviction, 장애, key version 변경도 모두 miss를 만들 수 있습니다.
+cache lookup 관점의 **hit는 요청한 key에 사용할 entry가 존재해 cache가 값을 반환했다는 뜻**입니다. 이 값이 현재 use case가 허용하는 freshness 범위를 만족하는지는 별도의 계약입니다. invalidation이 실패했거나 origin 변경을 아직 반영하지 못했다면 cache hit이면서도 stale value일 수 있습니다. 반대로 miss는 cache에서 값을 얻지 못했다는 뜻이지 origin에도 데이터가 없다는 뜻은 아닙니다. 만료, eviction, 장애, key version 변경도 모두 miss를 만들 수 있습니다.
 
-따라서 miss 처리에서 origin의 not found와 cache miss를 같은 오류로 취급하면 안 됩니다.
+따라서 lookup 결과와 business freshness를 분리하고, miss 처리에서도 origin의 not found와 cache miss를 같은 오류로 취급하면 안 됩니다.
 
 ```text
-cache miss
-  ├─ origin row 있음    ─▶ cache fill 후 반환
-  └─ origin row 없음    ─▶ not found 정책
+cache lookup
+  ├─ hit  ─▶ fresh인지 stale인지 freshness contract로 판단
+  └─ miss ─▶ origin 조회
+               ├─ row 있음    ─▶ cache fill 후 반환
+               └─ row 없음    ─▶ not found 정책
 ```
 
 ### write에서는 origin과 cache 순서를 정한다
@@ -72,12 +74,12 @@ hit ratio만 높이고 stale 오류나 origin fallback 폭증을 놓치면 cache
 ### 문제를 풀 때 확인할 것
 
 1. cache 값이 어떤 origin 데이터를 표현하는지 확인합니다.
-2. miss, origin not found, cache unavailable을 구분합니다.
-3. origin commit과 cache invalidation의 실패 순서를 그립니다.
-4. cache가 사라져도 origin에서 복구 가능한지 봅니다.
-5. freshness와 hit ratio를 함께 관측합니다.
+2. hit/miss와 fresh/stale을 서로 다른 상태 축으로 봅니다.
+3. miss, origin not found, cache unavailable을 구분합니다.
+4. origin commit과 cache invalidation의 실패 순서를 그립니다.
+5. cache가 사라져도 origin에서 복구 가능한지와 freshness를 함께 관측합니다.
 
 ### 면접에서 설명한다면
 
-Cache-aside는 application이 cache를 먼저 읽고 miss이면 origin을 조회한 뒤 결과를 cache에 저장하는 패턴입니다. write에서는 보통 origin을 먼저 commit하고 cache를 invalidate하지만 두 저장소 변경이 자동으로 원자화되지는 않습니다. 따라서 cache는 PostgreSQL을 대체하는 source of truth가 아니라 TTL·invalidation·재생성 정책이 있는 derived copy로 설계합니다.
+Cache-aside는 application이 cache를 먼저 읽고 miss이면 origin을 조회한 뒤 결과를 cache에 저장하는 패턴입니다. cache hit 자체는 최신성 보장이 아니므로 freshness는 TTL·invalidation 계약으로 별도 판단합니다. write에서는 보통 origin을 먼저 commit하고 cache를 invalidate하지만 두 저장소 변경이 자동으로 원자화되지는 않습니다. 따라서 cache는 PostgreSQL을 대체하는 source of truth가 아니라 재생성 가능한 derived copy로 설계합니다.
 
