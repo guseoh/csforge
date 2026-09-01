@@ -19,11 +19,9 @@ references:
 ---
 # UDP Use Case
 
-UDP는 connection setup과 ordered stream 비용 없이 짧은 datagram을 보낼 수 있어 discovery, telemetry, real-time media, QUIC의 기반에 사용된다. 대신 application이 필요한 reliability·congestion·security를 선택적으로 구현해야 한다.
+UDP는 connection handshake와 ordered byte stream을 transport에서 제공하지 않으므로, 독립적인 짧은 datagram이나 빠른 첫 전송이 유리한 discovery·telemetry·real-time media에 사용될 수 있다. IPv4 broadcast/IPv6 multicast와 같은 fan-out 요구에도 맞을 수 있고, QUIC처럼 UDP 위에 별도의 reliable·encrypted protocol을 만들 수도 있다. 이때 해당 보장은 raw UDP가 아니라 상위 protocol의 책임이다.
 
-UDP를 선택한다고 latency가 항상 낮아지는 것은 아니다. loss recovery, NAT traversal, rate control, server fan-out 비용을 포함한 end-to-end 결과를 비교한다.
+UDP를 선택한다고 latency가 항상 낮아지는 것은 아니다. application이 loss recovery, congestion/rate control, security, NAT traversal, reordering과 server fan-out을 추가하면 handshake를 아낀 비용보다 상위 protocol 비용이 커질 수 있다. end-to-end latency, loss tolerance, bandwidth fairness와 운영 복잡성을 TCP·QUIC·다른 transport와 같은 조건에서 비교한다.
 
-### Backend 연결
-
-실시간 progress는 일부 최신 값 손실을 허용할 수 있지만 attempt와 answer 저장은 그렇지 않다. 기능별 correctness contract가 transport 선택보다 먼저다.
+Backend의 실시간 progress는 일부 최신 값 손실과 stale sample 폐기를 허용할 수 있지만 attempt와 answer 저장은 중복·누락을 허용하지 않을 수 있다. 기능별 freshness, durability와 processing contract가 먼저이며, raw UDP 전송 성공을 DB transaction commit이나 사용자에게 보이는 성공으로 기록하지 않는다.
 
