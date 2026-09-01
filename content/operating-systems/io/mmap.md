@@ -14,7 +14,7 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "주소 공간 mapping과 page fault를 확인한다."
+    recommendation: "process virtual address space에 mapping을 생성하고 protection을 지정하는 Linux mmap semantics를 확인한다."
     displayOrder: 1
 ---
 # mmap

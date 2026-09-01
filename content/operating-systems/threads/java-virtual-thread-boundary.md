@@ -10,11 +10,9 @@ status: PUBLISHED
 displayOrder: 100
 references:
   - url: "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Thread.html"
-    title: "Thread (Java SE 25 API)"
+    title: "Java SE 25 API: Thread"
     referenceType: OFFICIAL
     language: en
-    depth: section
-    recommendation: "Java 25 virtual thread와 platform thread의 실행 모델 및 lifecycle을 확인한다."
     displayOrder: 1
   - url: "https://openjdk.org/jeps/491"
     title: "Synchronize Virtual Threads without Pinning"

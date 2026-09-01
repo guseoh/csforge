@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: "consumer processing과 topic 기반 workflow 확인"
   - url: "https://microservices.io/patterns/data/transactional-outbox.html"
-    title: "Transactional Outbox Pattern"
+    title: "Microservices.io: Transactional Outbox Pattern"
     referenceType: OTHER
     language: en
     displayOrder: 2

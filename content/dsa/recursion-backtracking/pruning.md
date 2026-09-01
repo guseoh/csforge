@@ -14,7 +14,7 @@ references:
     referenceType: BOOK
     language: en
     depth: section
-    recommendation: "탐색 공간 크기와 실제 수행 비용을 함께 분석하는 관점을 확인한다."
+    recommendation: "입력 크기와 basic operation count를 기준으로 linear scan 비용을 분석한다."
     displayOrder: 1
 ---
 # Pruning

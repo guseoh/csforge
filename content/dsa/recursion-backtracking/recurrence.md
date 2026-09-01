@@ -14,7 +14,7 @@ references:
     referenceType: BOOK
     language: en
     depth: section
-    recommendation: "재귀 호출 수와 입력 크기를 단계별 비용으로 분석하는 방법을 확인한다."
+    recommendation: "입력 크기와 basic operation count를 기준으로 linear scan 비용을 분석한다."
     displayOrder: 1
 ---
 # Recurrence

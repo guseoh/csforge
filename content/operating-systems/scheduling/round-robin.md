@@ -14,7 +14,7 @@ references:
     referenceType: BOOK
     language: ko
     depth: section
-    recommendation: "Round Robin이 response time을 개선하고 time slice 길이가 trade-off를 만드는 이유를 확인한다."
+    recommendation: "SJF가 이상적 workload 가정에서 turnaround를 개선하는 이유와 실행시간 사전 지식의 한계를 확인한다."
     displayOrder: 1
 ---
 # Round Robin

@@ -10,11 +10,9 @@ status: PUBLISHED
 displayOrder: 10
 references:
   - url: "https://www.rfc-editor.org/rfc/rfc1034"
-    title: "Domain Names — Concepts and Facilities"
+    title: "RFC 1034: Domain Names - Concepts and Facilities"
     referenceType: OFFICIAL
     language: en
-    depth: section
-    recommendation: "DNS name hierarchy와 resolution 역할을 확인한다."
     displayOrder: 1
 ---
 # Domain Hierarchy

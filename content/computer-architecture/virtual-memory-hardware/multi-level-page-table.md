@@ -21,7 +21,7 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "hierarchical page table이 sparse virtual address space를 표현하는 방식을 확인한다."
+    recommendation: "hierarchical page table과 large-page mapping의 실제 OS 구조를 확인한다."
     displayOrder: 2
 ---
 # Multi-Level Page Table

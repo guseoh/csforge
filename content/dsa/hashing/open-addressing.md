@@ -14,7 +14,7 @@ references:
     referenceType: BOOK
     language: en
     depth: section
-    recommendation: "linear probing을 포함한 open addressing의 probe와 삭제 조건을 확인한다."
+    recommendation: "separate chaining의 lookup/insert/delete와 chain length 비용을 확인한다."
     displayOrder: 1
 ---
 # Open Addressing

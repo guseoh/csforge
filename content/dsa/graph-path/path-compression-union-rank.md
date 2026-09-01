@@ -14,7 +14,7 @@ references:
     referenceType: BOOK
     language: en
     depth: section
-    recommendation: "weighted union과 path compression이 tree depth를 줄이는 원리를 확인한다."
+    recommendation: "disjoint-set forest와 connectivity operation을 확인한다."
     displayOrder: 1
 ---
 # Path Compression and Union by Rank

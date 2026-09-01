@@ -14,7 +14,7 @@ references:
     referenceType: BOOK
     language: en
     depth: section
-    recommendation: "binary heap의 heapify/sink invariant를 정렬 과정과 연결해 확인한다."
+    recommendation: "priority queue ADT와 binary heap 구현의 비용을 확인한다."
     displayOrder: 1
 ---
 # Heap Sort

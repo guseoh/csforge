@@ -14,7 +14,7 @@ references:
     referenceType: BOOK
     language: en
     depth: section
-    recommendation: "table resize와 rehash가 insertion sequence 비용에 미치는 영향을 확인한다."
+    recommendation: "separate chaining의 lookup/insert/delete와 chain length 비용을 확인한다."
     displayOrder: 1
 ---
 # Hash Table Resize

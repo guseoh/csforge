@@ -14,7 +14,7 @@ references:
     referenceType: BOOK
     language: ko
     depth: section
-    recommendation: "process switching에서 register state 저장·복원과 OS가 CPU control을 되찾는 mechanism을 확인한다."
+    recommendation: "timer interrupt를 이용해 OS가 running process로부터 CPU control을 다시 얻는 mechanism을 확인한다."
     displayOrder: 1
 ---
 # Context Switch

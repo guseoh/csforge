@@ -10,7 +10,7 @@ status: PUBLISHED
 displayOrder: 30
 references:
   - url: "https://kafka.apache.org/documentation/"
-    title: "Apache Kafka Documentation: Design"
+    title: "Apache Kafka Documentation"
     referenceType: OFFICIAL
     language: en
     displayOrder: 1

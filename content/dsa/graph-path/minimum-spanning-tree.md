@@ -14,7 +14,7 @@ references:
     referenceType: BOOK
     language: en
     depth: section
-    recommendation: "spanning tree, cut property와 MST 선택 근거를 확인한다."
+    recommendation: "Prim의 frontier와 cut 기반 greedy 선택을 확인한다."
     displayOrder: 1
 ---
 # Minimum Spanning Tree

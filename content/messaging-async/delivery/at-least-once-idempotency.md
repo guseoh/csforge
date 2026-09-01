@@ -22,7 +22,7 @@ references:
     displayOrder: 2
     relationNote: "at-most-once·at-least-once와 Kafka exactly-once semantics의 적용 범위 확인"
   - url: "https://microservices.io/patterns/data/transactional-outbox.html"
-    title: "Transactional Outbox Pattern"
+    title: "Microservices.io: Transactional Outbox Pattern"
     referenceType: OTHER
     language: en
     displayOrder: 3

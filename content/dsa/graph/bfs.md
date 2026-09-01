@@ -14,7 +14,7 @@ references:
     referenceType: BOOK
     language: en
     depth: section
-    recommendation: "BFS의 queue 기반 탐색과 shortest-path 성질을 확인한다."
+    recommendation: "vertex, edge, path, connectivity 같은 graph 기본 모델을 확인한다."
     displayOrder: 1
 ---
 # BFS

@@ -14,7 +14,7 @@ references:
     referenceType: BOOK
     language: en
     depth: section
-    recommendation: "negative edge를 포함한 shortest path와 relaxation을 확인한다."
+    recommendation: "all-pairs shortest path와 relaxation 관점을 확인한다."
     displayOrder: 1
 ---
 # Bellman-Ford

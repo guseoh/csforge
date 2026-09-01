@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: "topic·consumer·message retention과 version 공존 경계 확인"
   - url: "https://microservices.io/patterns/data/transactional-outbox.html"
-    title: "Pattern: Transactional Outbox"
+    title: "Microservices.io: Transactional Outbox Pattern"
     referenceType: OTHER
     language: en
     displayOrder: 2

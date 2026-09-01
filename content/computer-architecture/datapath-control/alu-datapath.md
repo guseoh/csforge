@@ -14,7 +14,7 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "register file, ALU, memory와 instruction execution datapath의 연결을 확인한다."
+    recommendation: "register와 combinational datapath 사이의 timing 관계를 확인한다."
     displayOrder: 1
 ---
 # ALU and Datapath

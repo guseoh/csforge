@@ -14,7 +14,7 @@ references:
     referenceType: BOOK
     language: en
     depth: section
-    recommendation: "BST search/insert/delete와 tree height 관계를 확인한다."
+    recommendation: "tree path, subtree와 height가 search 비용에 연결되는 방식을 확인한다."
     displayOrder: 1
 ---
 # Binary Search Tree

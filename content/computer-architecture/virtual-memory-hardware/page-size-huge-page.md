@@ -21,7 +21,7 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "large page가 page-table hierarchy의 상위 level에서 mapping될 수 있음을 확인한다."
+    recommendation: "hierarchical page table과 large-page mapping의 실제 OS 구조를 확인한다."
     displayOrder: 2
   - url: "https://www.kernel.org/doc/html/latest/admin-guide/mm/hugetlbpage.html"
     title: "HugeTLB Pages — The Linux Kernel documentation"

@@ -14,7 +14,7 @@ references:
     referenceType: BOOK
     language: en
     depth: section
-    recommendation: "binary heap의 array representation, swim/sink와 heap invariant를 확인한다."
+    recommendation: "priority queue ADT와 binary heap 구현의 비용을 확인한다."
     displayOrder: 1
 ---
 # Heap

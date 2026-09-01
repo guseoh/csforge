@@ -10,8 +10,8 @@ status: PUBLISHED
 displayOrder: 20
 references:
   - url: "https://sre.google/sre-book/handling-overload/"
-    title: "Google SRE - Handling Overload"
-    referenceType: BOOK
+    title: "Google SRE Book: Handling Overload"
+    referenceType: OTHER
     language: en
     displayOrder: 1
     relationNote: "실패와 과부하를 정상적인 시스템 조건으로 다루는 관점을 참고한다."

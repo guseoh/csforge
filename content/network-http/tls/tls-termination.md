@@ -10,11 +10,9 @@ status: PUBLISHED
 displayOrder: 80
 references:
   - url: "https://www.rfc-editor.org/rfc/rfc8446"
-    title: "The Transport Layer Security (TLS) Protocol Version 1.3"
+    title: "RFC 8446: TLS 1.3"
     referenceType: OFFICIAL
     language: en
-    depth: section
-    recommendation: "TLS와 HTTP message 전달 순서를 확인한다."
     displayOrder: 1
 ---
 # TLS Termination

@@ -14,7 +14,7 @@ references:
     referenceType: BOOK
     language: ko
     depth: section
-    recommendation: "turnaround·response time과 fairness가 scheduling policy 비교 기준으로 어떻게 사용되는지 확인한다."
+    recommendation: "SJF가 이상적 workload 가정에서 turnaround를 개선하는 이유와 실행시간 사전 지식의 한계를 확인한다."
     displayOrder: 1
 ---
 # Scheduler Goals

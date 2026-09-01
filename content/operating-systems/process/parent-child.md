@@ -14,7 +14,7 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "fork 이후 parent와 child 사이에서 복제되는 state와 공유되는 open file description을 확인한다."
+    recommendation: "process 생성과 주소 공간을 확인한다."
     displayOrder: 1
 ---
 # Parent and Child Process

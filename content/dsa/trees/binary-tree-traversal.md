@@ -14,7 +14,7 @@ references:
     referenceType: BOOK
     language: en
     depth: section
-    recommendation: "recursive tree traversal과 BST inorder traversal의 의미를 확인한다."
+    recommendation: "tree path, subtree와 height가 search 비용에 연결되는 방식을 확인한다."
     displayOrder: 1
 ---
 # Binary Tree Traversal
