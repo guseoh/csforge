@@ -1,0 +1,5 @@
+[
+  {"kind":"topic","contentKey":"cache.core.models","areaSlug":"cache","slug":"models","title":"Cache models and keys","description":"cache-aside · write-through/write-behind · key와 serialization contract","displayOrder":10,"active":true},
+  {"kind":"topic","contentKey":"cache.core.consistency","areaSlug":"cache","slug":"consistency","title":"Freshness and invalidation","description":"TTL · invalidation ordering · stampede와 request coalescing","displayOrder":20,"active":true},
+  {"kind":"topic","contentKey":"cache.core.operations","areaSlug":"cache","slug":"operations","title":"Cache operations and failure","description":"eviction/memory · hot key · 장애 시 degraded mode","displayOrder":30,"active":true}
+]
