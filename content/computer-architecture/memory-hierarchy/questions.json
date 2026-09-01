@@ -1,20 +1,218 @@
 [
-{"kind":"question","contentKey":"computer-architecture.core.memory-hierarchy.memory-hierarchy.q1","promptMarkdown":"memory hierarchy가 계층으로 구성되는 이유는?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["computer-architecture.core.memory-hierarchy.memory-hierarchy"],"choices":[{"key":"A","content":"속도·용량·가격의 trade-off를 locality로 완화하기 위해서다","displayOrder":0},{"key":"B","content":"모든 저장장치를 같은 latency로 만들기 위해서다","displayOrder":1}],"correctChoiceKey":"A"},
-{"kind":"question","contentKey":"computer-architecture.core.memory-hierarchy.memory-hierarchy.q2","promptMarkdown":"register, cache, main memory, storage의 일반적인 latency와 capacity 관계를 설명하라.","questionType":"SHORT_ANSWER","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["computer-architecture.core.memory-hierarchy.memory-hierarchy"],"acceptedAnswers":["위로 갈수록 빠르고 작으며 아래로 갈수록 느리고 크다"]},
-{"kind":"question","contentKey":"computer-architecture.core.memory-hierarchy.memory-hierarchy.q3","promptMarkdown":"backend database query의 cache 계층을 설계할 때 canonical source와 derived cache를 분리해야 하는 이유를 설명하라.","questionType":"SCENARIO","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["computer-architecture.core.memory-hierarchy.memory-hierarchy"],"modelAnswer":"빠른 cache는 용량·latency 이득을 주지만 eviction과 stale 상태가 생긴다. PostgreSQL 같은 source를 유지하고 cache를 무효화·재생성 가능하게 해야 정확성을 보장한다."},
-{"kind":"question","contentKey":"computer-architecture.core.memory-hierarchy.temporal-spatial-locality.q1","promptMarkdown":"temporal locality의 예는?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["computer-architecture.core.memory-hierarchy.temporal-spatial-locality"],"choices":[{"key":"A","content":"최근 읽은 같은 값이 곧 다시 사용되는 패턴","displayOrder":0},{"key":"B","content":"항상 무작위 주소만 한 번씩 읽는 패턴","displayOrder":1}],"correctChoiceKey":"A"},
-{"kind":"question","contentKey":"computer-architecture.core.memory-hierarchy.temporal-spatial-locality.q2","promptMarkdown":"spatial locality가 cache line 활용률에 미치는 영향을 설명하라.","questionType":"SHORT_ANSWER","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["computer-architecture.core.memory-hierarchy.temporal-spatial-locality"],"acceptedAnswers":["가까운 주소를 함께 읽으면 한 line에 가져온 데이터가 재사용된다"]},
-{"kind":"question","contentKey":"computer-architecture.core.memory-hierarchy.temporal-spatial-locality.q3","promptMarkdown":"backend batch가 큰 배열을 순차 접근할 때 random access보다 유리할 수 있는 이유를 cache 관점에서 설명하라.","questionType":"SCENARIO","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["computer-architecture.core.memory-hierarchy.temporal-spatial-locality"],"modelAnswer":"순차 접근은 인접 bytes가 같은 cache line과 prefetch에 포함되어 miss를 amortize한다. random access는 line 재사용이 낮아 memory latency와 bandwidth 비용이 커진다."},
-{"kind":"question","contentKey":"computer-architecture.core.memory-hierarchy.cache-line.q1","promptMarkdown":"cache line은 무엇을 묶는가?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["computer-architecture.core.memory-hierarchy.cache-line"],"choices":[{"key":"A","content":"cache가 memory에서 함께 전송·저장하는 연속 byte block","displayOrder":0},{"key":"B","content":"서로 무관한 process의 모든 heap","displayOrder":1}],"correctChoiceKey":"A"},
-{"kind":"question","contentKey":"computer-architecture.core.memory-hierarchy.cache-line.q2","promptMarkdown":"cache line이 너무 작거나 클 때의 trade-off를 각각 설명하라.","questionType":"SHORT_ANSWER","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["computer-architecture.core.memory-hierarchy.cache-line"],"acceptedAnswers":["작으면 spatial locality 이득이 작고 크면 낭비와 miss penalty가 커진다"]},
-{"kind":"question","contentKey":"computer-architecture.core.memory-hierarchy.cache-line.q3","promptMarkdown":"Java object를 순차로 읽는 backend와 포인터를 무작위로 따라가는 backend의 cache line 효율 차이를 설명하라.","questionType":"SCENARIO","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["computer-architecture.core.memory-hierarchy.cache-line"],"modelAnswer":"순차 object나 배열은 한 line의 인접 값이 재사용되어 효율적이지만 pointer chasing은 다음 주소를 예측하기 어렵고 line당 유효 값이 적을 수 있다."},
-{"kind":"question","contentKey":"computer-architecture.core.memory-hierarchy.cache-hit-miss.q1","promptMarkdown":"cache hit와 miss의 차이는?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["computer-architecture.core.memory-hierarchy.cache-hit-miss"],"choices":[{"key":"A","content":"요청한 block이 현재 cache에 있는지 여부","displayOrder":0},{"key":"B","content":"HTTP status가 200인지 여부","displayOrder":1}],"correctChoiceKey":"A"},
-{"kind":"question","contentKey":"computer-architecture.core.memory-hierarchy.cache-hit-miss.q2","promptMarkdown":"hit rate와 miss rate의 관계를 쓰라.","questionType":"SHORT_ANSWER","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["computer-architecture.core.memory-hierarchy.cache-hit-miss"],"acceptedAnswers":["miss rate는 1에서 hit rate를 뺀 값이다"]},
-{"kind":"question","contentKey":"computer-architecture.core.memory-hierarchy.cache-hit-miss.q3","promptMarkdown":"backend cache hit rate가 높아도 latency가 높을 수 있는 이유를 설명하라.","questionType":"SCENARIO","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["computer-architecture.core.memory-hierarchy.cache-hit-miss"],"modelAnswer":"cache lookup 자체의 contention·serialization·큰 line transfer·application work가 병목일 수 있다. hit rate만 보지 말고 hit latency와 tail latency를 함께 측정한다."},
-{"kind":"question","contentKey":"computer-architecture.core.memory-hierarchy.latency-vs-bandwidth.q1","promptMarkdown":"latency와 bandwidth의 차이는?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["computer-architecture.core.memory-hierarchy.latency-vs-bandwidth"],"choices":[{"key":"A","content":"latency는 한 작업 시작부터 결과까지의 지연이고 bandwidth는 단위 시간 처리량이다","displayOrder":0},{"key":"B","content":"둘은 항상 같은 수치다","displayOrder":1}],"correctChoiceKey":"A"},
-{"kind":"question","contentKey":"computer-architecture.core.memory-hierarchy.latency-vs-bandwidth.q2","promptMarkdown":"작은 random read와 큰 sequential transfer가 각각 어느 지표에 민감한지 설명하라.","questionType":"SHORT_ANSWER","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["computer-architecture.core.memory-hierarchy.latency-vs-bandwidth"],"acceptedAnswers":["작은 random read는 latency, 큰 sequential transfer는 bandwidth에 민감하다"]},
-{"kind":"question","contentKey":"computer-architecture.core.memory-hierarchy.latency-vs-bandwidth.q3","promptMarkdown":"파일 import throughput이 높아도 개별 API 응답이 느릴 수 있는 이유를 memory 관점에서 설명하라.","questionType":"SCENARIO","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["computer-architecture.core.memory-hierarchy.latency-vs-bandwidth"],"modelAnswer":"batch는 높은 sequential bandwidth를 얻어도 API의 작은 random access는 latency와 queue wait를 겪을 수 있다. aggregate throughput과 per-request latency를 별도 목표로 측정한다."},
-{"kind":"question","contentKey":"computer-architecture.core.memory-hierarchy.miss-penalty.q1","promptMarkdown":"miss penalty는 무엇인가?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["computer-architecture.core.memory-hierarchy.miss-penalty"],"choices":[{"key":"A","content":"cache miss 뒤 다음 memory 계층에서 block을 가져오는 추가 시간","displayOrder":0},{"key":"B","content":"cache hit의 결과를 삭제하는 시간만","displayOrder":1}],"correctChoiceKey":"A"},
-{"kind":"question","contentKey":"computer-architecture.core.memory-hierarchy.miss-penalty.q2","promptMarkdown":"평균 memory access time이 hit time과 miss penalty에 어떻게 의존하는지 설명하라.","questionType":"SHORT_ANSWER","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["computer-architecture.core.memory-hierarchy.miss-penalty"],"acceptedAnswers":["hit time에 miss rate와 miss penalty의 곱이 더해진다"]},
-{"kind":"question","contentKey":"computer-architecture.core.memory-hierarchy.miss-penalty.q3","promptMarkdown":"작은 miss rate 증가가 backend p99 latency를 크게 바꿀 수 있는 조건을 설명하라.","questionType":"SCENARIO","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["computer-architecture.core.memory-hierarchy.miss-penalty"],"modelAnswer":"miss가 DRAM·storage·remote fetch처럼 큰 penalty를 유발하고 요청이 연쇄적으로 기다리면 평균과 tail이 크게 늘어난다. miss source와 service queue를 함께 측정한다."}
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.memory-hierarchy.memory-hierarchy.q1",
+    "promptMarkdown": "memory hierarchy를 여러 계층으로 구성하는 가장 중요한 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.memory-hierarchy.memory-hierarchy"],
+    "choices": [
+      {"key": "A", "content": "작고 빠른 memory와 크고 느린 memory의 trade-off를 locality를 이용해 완화하기 위해서다.", "displayOrder": 0},
+      {"key": "B", "content": "register, cache, DRAM, storage의 latency를 모두 동일하게 만들기 위해서다.", "displayOrder": 1},
+      {"key": "C", "content": "CPU가 memory address를 사용하지 않도록 만들기 위해서다.", "displayOrder": 2},
+      {"key": "D", "content": "모든 data를 항상 가장 빠른 cache에 동시에 저장하기 위해서다.", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "A"
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.memory-hierarchy.memory-hierarchy.q2",
+    "promptMarkdown": "작고 빠른 상위 계층이 전체 memory보다 훨씬 작은데도 많은 access를 처리할 수 있는 이유를 temporal/spatial locality와 연결해 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.memory-hierarchy.memory-hierarchy"],
+    "modelAnswer": "프로그램은 최근 사용한 data를 다시 사용하는 temporal locality와 인접 address를 곧 사용하는 spatial locality를 자주 보인다. 그래서 전체 memory를 상위 cache에 둘 필요 없이 현재 working set과 주변 line만 가까운 계층에 두어도 많은 access가 hit할 수 있다. miss가 나면 lower level에서 필요한 block을 가져오므로 큰 용량은 아래 계층이 담당한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.memory-hierarchy.memory-hierarchy.q3",
+    "promptMarkdown": "L1 cache를 더 크게 만들면 hit rate가 높아질 가능성이 있다. 그럼에도 `L1은 클수록 무조건 좋다`고 결론 내릴 수 없는 이유를 최소 세 가지 trade-off로 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.memory-hierarchy.memory-hierarchy"],
+    "modelAnswer": "큰 L1은 capacity miss를 줄일 수 있지만 lookup 경로와 wiring이 길어져 hit latency가 증가할 수 있고, area와 전력 비용도 커진다. associativity나 line size와의 조합에 따라 conflict behavior도 달라진다. 따라서 hit rate만이 아니라 hit time, miss penalty, area·전력, workload의 working set을 함께 봐야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.memory-hierarchy.temporal-spatial-locality.q1",
+    "promptMarkdown": "다음 중 spatial locality를 가장 직접적으로 활용하는 access pattern은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.memory-hierarchy.temporal-spatial-locality"],
+    "choices": [
+      {"key": "A", "content": "연속된 int 배열을 index 0부터 차례로 읽는다.", "displayOrder": 0},
+      {"key": "B", "content": "매번 전혀 다른 큰 address 범위에서 한 byte만 무작위로 읽는다.", "displayOrder": 1},
+      {"key": "C", "content": "한 값을 register에 올린 뒤 memory를 전혀 읽지 않는다.", "displayOrder": 2},
+      {"key": "D", "content": "working set보다 작은 cache를 매 access마다 강제로 비운다.", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "A"
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.memory-hierarchy.temporal-spatial-locality.q2",
+    "promptMarkdown": "working set이 cache capacity보다 커질 때 temporal locality가 있어도 cache miss가 늘 수 있는 이유를 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.memory-hierarchy.temporal-spatial-locality"],
+    "modelAnswer": "같은 data를 나중에 다시 사용하더라도 그 사이에 접근한 active data가 cache capacity를 넘으면 이전 line이 재사용되기 전에 eviction될 수 있다. 이 경우 temporal reuse 가능성은 존재하지만 cache가 working set을 유지하지 못해 capacity miss가 증가한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.memory-hierarchy.temporal-spatial-locality.q3",
+    "promptMarkdown": "row-major로 저장된 큰 2차원 배열을 같은 계산량으로 순회한다. 한 구현은 row를 따라 연속 접근하고 다른 구현은 column을 따라 큰 stride로 접근한다. 두 구현의 cache behavior가 달라질 수 있는 이유를 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.memory-hierarchy.temporal-spatial-locality"],
+    "modelAnswer": "row-major 배열에서 row 순회는 인접 원소가 같은 cache line에 포함되기 쉬워 한 번의 line fill 뒤 여러 원소를 재사용할 수 있다. column 순회는 row 길이만큼 큰 stride로 이동해 각 access가 다른 line을 요구할 가능성이 커지고 line 안의 가져온 byte를 적게 사용할 수 있다. working set과 prefetcher에 따라 정도는 달라지지만 일반적으로 spatial locality 차이가 miss와 bandwidth 사용량에 영향을 준다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.memory-hierarchy.cache-line.q1",
+    "promptMarkdown": "set-associative cache의 address 해석에서 offset, index, tag의 역할로 맞는 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.memory-hierarchy.cache-line"],
+    "choices": [
+      {"key": "A", "content": "offset은 line 내부 위치, index는 후보 set, tag는 그 set의 어느 memory block인지 구분한다.", "displayOrder": 0},
+      {"key": "B", "content": "offset은 process id, index는 HTTP port, tag는 file descriptor를 나타낸다.", "displayOrder": 1},
+      {"key": "C", "content": "tag만 사용하며 offset과 index는 cache lookup에 필요하지 않다.", "displayOrder": 2},
+      {"key": "D", "content": "index는 line 내부 byte 위치만 결정하고 tag 비교는 하지 않는다.", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "A"
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.memory-hierarchy.cache-line.q2",
+    "promptMarkdown": "cache line size를 크게 만들 때 얻을 수 있는 이점과 동시에 생길 수 있는 비용을 spatial locality와 bandwidth 관점에서 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.memory-hierarchy.cache-line"],
+    "modelAnswer": "큰 line은 한 miss에서 더 많은 인접 byte를 가져와 spatial locality가 높은 workload의 이후 access를 hit로 만들 수 있다. 하지만 사용하지 않을 byte까지 전송하면 bandwidth를 낭비하고 같은 cache capacity에서 보관 가능한 line 수가 줄어 pollution/eviction이 늘 수 있으며 line fill latency도 커질 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.memory-hierarchy.cache-line.q3",
+    "promptMarkdown": "두 thread가 서로 다른 counter를 각각 갱신하므로 논리적으로 data를 공유하지 않는다. 그런데 두 counter가 같은 cache line에 놓인 뒤 multicore 성능이 크게 떨어졌다. 가능한 원인과 개선 방향을 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.memory-hierarchy.cache-line"],
+    "modelAnswer": "coherence가 field가 아니라 cache line 단위로 ownership/state를 관리하므로 서로 다른 counter라도 같은 line에 있으면 각 core의 write가 line ownership을 반복해서 이동시킬 수 있다. 이것이 false sharing이다. data layout을 바꿔 자주 쓰는 독립 write 변수들이 서로 다른 line에 놓이도록 padding/partitioning하는 방법을 검토하되 실제 counter와 hardware metric으로 효과를 확인해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.memory-hierarchy.cache-hit-miss.q1",
+    "promptMarkdown": "cache 전체에는 여유가 있지만 두 memory block이 같은 set에 반복해서 mapping되어 서로를 계속 eviction한다. 이 miss를 가장 잘 설명하는 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.memory-hierarchy.cache-hit-miss"],
+    "choices": [
+      {"key": "A", "content": "Conflict miss", "displayOrder": 0},
+      {"key": "B", "content": "Compulsory miss만", "displayOrder": 1},
+      {"key": "C", "content": "Capacity miss만", "displayOrder": 2},
+      {"key": "D", "content": "Branch misprediction", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "A"
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.memory-hierarchy.cache-hit-miss.q2",
+    "promptMarkdown": "read miss가 발생한 뒤 요청한 data를 사용할 수 있게 될 때까지 cache에서 일어날 수 있는 상태 흐름을 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.memory-hierarchy.cache-hit-miss"],
+    "modelAnswer": "tag lookup에서 일치하는 valid line이 없으면 miss가 된다. 빈 line이 없으면 replacement policy로 victim을 고르고 write-back cache의 dirty victim이면 lower level에 기록해야 할 수 있다. 이후 lower level에 필요한 block을 요청해 line을 채우고 tag/state를 갱신한 뒤 중단된 memory access를 재개한다. 실제 CPU는 일부 단계를 overlap할 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.memory-hierarchy.cache-hit-miss.q3",
+    "promptMarkdown": "cache A는 hit rate 99%이고 miss penalty가 200ns, cache B는 hit rate 96%이고 miss penalty가 20ns라고 하자. hit time이 같다고 가정할 때 hit rate만 보고 A가 더 빠르다고 결론 내릴 수 없는 이유를 정량적으로 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.memory-hierarchy.cache-hit-miss"],
+    "modelAnswer": "A의 miss에 따른 평균 추가 비용은 0.01 × 200ns = 2ns이고 B는 0.04 × 20ns = 0.8ns다. hit time이 같다는 단순 모델에서는 오히려 B의 평균 miss 비용이 더 작다. 실제 판단에는 hit time, multi-level behavior, miss overlap과 bandwidth도 필요하지만 hit rate 하나만 비교하면 miss cost를 놓친다는 점이 핵심이다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.memory-hierarchy.latency-vs-bandwidth.q1",
+    "promptMarkdown": "latency와 bandwidth를 구분한 설명으로 가장 정확한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.memory-hierarchy.latency-vs-bandwidth"],
+    "choices": [
+      {"key": "A", "content": "latency는 한 요청의 결과를 기다리는 시간이고 bandwidth는 단위 시간에 이동 가능한 data 양이다.", "displayOrder": 0},
+      {"key": "B", "content": "bandwidth가 높으면 모든 random load의 latency도 반드시 같은 비율로 줄어든다.", "displayOrder": 1},
+      {"key": "C", "content": "latency는 항상 byte/s로 측정하고 bandwidth는 ns로 측정한다.", "displayOrder": 2},
+      {"key": "D", "content": "둘은 이름만 다르고 같은 물리량이다.", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "A"
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.memory-hierarchy.latency-vs-bandwidth.q2",
+    "promptMarkdown": "여러 independent memory request를 동시에 outstanding 상태로 두면 개별 memory latency 자체가 줄지 않아도 throughput이 높아질 수 있는 이유를 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.memory-hierarchy.latency-vs-bandwidth"],
+    "modelAnswer": "각 request가 결과를 받기까지 걸리는 latency는 그대로여도 서로 독립적이면 대기 구간을 겹칠 수 있다. memory system이 여러 request를 병렬로 처리하면 단위 시간에 완료되는 전체 data/request 수가 증가해 aggregate bandwidth/throughput을 높일 수 있다. dependent load chain은 다음 request를 먼저 낼 수 없어 이런 overlap이 어렵다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.memory-hierarchy.latency-vs-bandwidth.q3",
+    "promptMarkdown": "memory path가 요청마다 100ns의 고정 latency를 가진 뒤 20GB/s로 data를 전송한다고 단순화하자. 64byte 한 번을 읽는 경우와 64MB를 순차 전송하는 경우에 어떤 요소가 상대적으로 더 중요해지는지 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.memory-hierarchy.latency-vs-bandwidth"],
+    "modelAnswer": "64byte 전송 자체는 20GB/s에서 수 ns 수준이라 100ns 고정 latency가 전체 시간의 대부분을 차지하므로 latency-bound에 가깝다. 64MB 전송은 전송 시간만 수 ms 수준이어서 100ns 시작 latency는 상대적으로 미미하고 sustained bandwidth가 전체 시간을 좌우한다. 실제 system에서는 queueing, protocol, cache behavior가 추가되지만 작은 random access와 큰 sequential transfer의 병목이 다른 이유를 보여 준다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.memory-hierarchy.miss-penalty.q1",
+    "promptMarkdown": "한-level cache의 단순 AMAT 모델로 맞는 식은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.memory-hierarchy.miss-penalty"],
+    "choices": [
+      {"key": "A", "content": "AMAT = Hit Time + Miss Rate × Miss Penalty", "displayOrder": 0},
+      {"key": "B", "content": "AMAT = Hit Rate × 0", "displayOrder": 1},
+      {"key": "C", "content": "AMAT = Miss Penalty ÷ Hit Rate만", "displayOrder": 2},
+      {"key": "D", "content": "AMAT는 miss와 무관하고 clock frequency만으로 결정된다.", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "A"
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.memory-hierarchy.miss-penalty.q2",
+    "promptMarkdown": "hit time이 1ns, miss rate가 5%, miss penalty가 80ns인 단순 one-level cache의 AMAT를 계산하라.",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.memory-hierarchy.miss-penalty"],
+    "acceptedAnswers": ["5ns", "5 ns", "5"]
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.memory-hierarchy.miss-penalty.q3",
+    "promptMarkdown": "L1 hit time은 1ns, L1 miss rate는 5%다. L1 miss 시 L2 access는 5ns가 걸리고, L2 local miss rate는 10%이며 L2 miss 뒤 DRAM 추가 penalty는 80ns라고 단순화하자. `1ns + 0.05 × (5ns + 0.10 × 80ns)` 모델로 AMAT를 계산하고 각 항의 의미를 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.memory-hierarchy.miss-penalty"],
+    "modelAnswer": "L2 miss의 평균 추가 비용은 0.10 × 80ns = 8ns이므로 L1 miss 한 번의 평균 하위 계층 비용은 5ns + 8ns = 13ns다. 이를 L1 miss rate 5%에 곱하면 0.65ns이고 L1 hit time 1ns를 더해 AMAT는 1.65ns다. 1ns는 모든 access가 지불하는 L1 lookup, 5%는 L1을 통과해 아래로 내려가는 비율, 5ns는 L2 access, 10% × 80ns는 L2도 miss할 때의 평균 DRAM 추가 비용을 나타낸다."
+  }
 ]
