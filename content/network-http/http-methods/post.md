@@ -17,10 +17,8 @@ references:
 ---
 # POST
 
-POST는 target resource가 요청 content를 처리하도록 요구하며, 새 resource 생성·command 실행·subresource 추가 같은 의미를 가질 수 있다. 처리 결과와 resource identity는 response status와 Location 등으로 전달한다.
+POST는 target resource가 request content를 자체적인 semantics로 처리하도록 요구하는 method다. 새 resource 생성, collection에 subresource 추가, command 실행, import job 시작처럼 target이 processing을 정의하며, 생성된 resource identity나 다음 조회 위치는 `201 Created`, `Location`과 response representation으로 전달할 수 있다.
 
-일반적으로 같은 POST를 반복하면 duplicate effect가 생길 수 있어 자동 retry에 주의한다. server가 idempotency key를 지원하면 key, request fingerprint, 결과 보존 기간을 함께 정의한다.
+POST는 HTTP method 정의상 자동으로 idempotent하지 않으므로 같은 request를 retry하면 새 resource·job·side effect가 여러 번 생길 수 있다. server가 application idempotency key를 지원한다면 key를 identity/operation scope와 payload fingerprint에 묶고, 처리 중·성공·실패 결과의 보존 기간과 충돌 정책을 명시해야 한다. `202 Accepted`는 접수를 뜻할 뿐 작업 완료가 아니다.
 
-### Backend 연결
-
-quiz submit과 import Apply는 POST command로 모델링할 수 있지만 duplicate submission을 막는 canonical key가 필요하다. 202를 반환하면 실제 완료 상태를 별도 조회하게 한다.
+CSForge의 quiz submit과 import Apply는 POST command로 모델링할 수 있지만 attempt/import key, unique constraint와 transaction 결과를 사용해 duplicate submission을 판정한다. client timeout과 server commit의 순서를 고려해 같은 key의 조회·재시도 결과를 안정적으로 반환한다.

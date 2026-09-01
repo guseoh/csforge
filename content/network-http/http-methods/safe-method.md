@@ -17,10 +17,8 @@ references:
 ---
 # Safe Method
 
-safe method는 client가 request를 보낼 때 origin resource의 state change를 의도하지 않는 method다. server가 access log, analytics, cache metadata를 바꾸는 부수 효과까지 없다는 뜻은 아니다.
+safe method는 client가 request를 수행할 때 origin resource의 state change를 의도하지 않는 method다. 이것은 server process가 access log, metrics, cache metadata나 rate-limit counter를 전혀 바꾸지 않는다는 뜻이 아니라, resource에 대한 본질적인 변경을 client가 요청하지 않는다는 protocol semantics다.
 
-GET과 HEAD 같은 safe method는 crawler·prefetch·retry가 상대적으로 안전하지만, query parameter가 destructive action을 트리거하면 protocol contract를 위반한다. method 이름과 실제 route effect를 일치시킨다.
+GET과 HEAD 같은 safe method는 crawler·prefetch·link checker·자동 retry가 실행할 수 있는 전제에서 설계되므로 읽기 경로가 destructive action을 일으키면 안 된다. query parameter에 `delete=true` 같은 flag를 숨겨도 method가 GET인 사실이 실제 effect를 safe하게 만들지 않는다. safe는 authentication이나 authorization을 생략하라는 뜻도 아니다.
 
-### Backend 연결
-
-조회 endpoint에서 삭제·상태변경을 query string으로 숨기지 않는다. safe request의 retry와 cache를 허용하려면 read path에 side effect를 두지 않는다.
+Backend 조회 endpoint에서 삭제·상태변경을 query string으로 숨기지 않고 명시적인 non-safe method와 CSRF·authorization 정책을 사용한다. read path에 부수적인 업무 변경이 있다면 cache와 retry가 resource invariant를 깨뜨리지 않는지 별도로 검토한다.
