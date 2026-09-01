@@ -21,7 +21,7 @@ references:
 
 User/kernel mode가 실제 보호 경계가 되려면 “application은 하지 말아야 한다”는 규칙만 있어서는 안 된다. 악성 코드나 버그가 그 규칙을 무시하더라도 **CPU와 memory-management hardware가 금지된 동작을 실행하지 못하게 강제**해야 한다.
 
-CPU architecture는 현재 privilege level에서 허용되는 instruction과 control state 접근을 제한한다. 예를 들어 RISC-V에서는 hart가 U/S/M 같은 privilege mode 중 하나에서 실행되고, 현재 mode에서 허용되지 않은 privileged operation을 시도하면 exception을 통해 더 높은 privilege의 handler로 control이 넘어갈 수 있다. 이것은 특정 Linux 함수의 정책이 아니라 ISA가 제공하는 protection mechanism의 예다. citeturn206513search8turn206513search3
+CPU architecture는 현재 privilege level에서 허용되는 instruction과 control state 접근을 제한한다. 예를 들어 RISC-V에서는 hart가 U/S/M 같은 privilege mode 중 하나에서 실행되고, 현재 mode에서 허용되지 않은 privileged operation을 시도하면 exception을 통해 더 높은 privilege의 handler로 control이 넘어갈 수 있다. 이것은 특정 Linux 함수의 정책이 아니라 ISA가 제공하는 protection mechanism의 예다.
 
 ### Instruction privilege와 memory protection은 별개 축이다
 
