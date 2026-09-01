@@ -19,10 +19,8 @@ references:
 ---
 # Default Gateway
 
-목적지 IP가 local subnet에 없으면 host는 routing table의 default route를 사용해 gateway를 next hop으로 선택한다. frame destination은 gateway interface의 MAC이고, IP destination은 최종 host 주소를 유지한 채 router가 다음 경로를 결정한다.
+host가 destination IP를 routing table과 비교했을 때 on-link로 판단하면 해당 destination의 link-layer address를 찾아 직접 frame을 만들 수 있다. 일치하는 더 구체적인 route가 없고 destination이 local prefix 밖에 있으면 default route가 가리키는 gateway를 next hop으로 선택한다. 이때 frame destination MAC은 gateway interface의 MAC이고, IP destination은 최종 host address를 유지한 채 gateway가 다음 route를 결정한다.
 
-gateway 설정이 없거나 잘못되면 local service는 되지만 외부 API·DNS·database 연결이 실패할 수 있다. 특정 prefix route가 default보다 우선한다는 longest-prefix rule도 함께 확인한다.
+default gateway는 모든 traffic을 무조건 보내는 별도 protocol이 아니라 routing table의 catch-all 경로다. specific prefix route가 default보다 우선하며, gateway가 실제로 on-link가 아니거나 ARP/NDP·egress interface·return route가 잘못되면 route entry가 있어도 packet은 전달되지 않는다. gateway 설정이 없으면 local service는 되지만 외부 API·DNS·database 연결이 실패할 수 있다.
 
-### Backend 연결
-
-Docker container의 default route와 host의 route는 다를 수 있다. outbound timeout을 조사할 때 application DNS 성공, local gateway 도달, 이후 route를 단계별로 분리한다.
+Docker container의 default route와 host의 route는 network namespace에 따라 다르다. outbound timeout을 조사할 때 application DNS success, selected route, gateway neighbor resolution, egress firewall과 이후 remote path를 단계별로 분리한다.

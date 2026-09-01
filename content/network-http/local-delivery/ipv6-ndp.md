@@ -19,11 +19,9 @@ references:
 ---
 # IPv6 NDP
 
-IPv6 Neighbor Discovery Protocol은 ARP 대신 ICMPv6 message로 neighbor address resolution, router discovery, prefix와 reachability 정보를 교환한다. multicast를 사용해 필요한 node에 전달하며 local link scope를 가진다.
+IPv6 Neighbor Discovery Protocol(NDP)은 ARP에 해당하는 기능을 ICMPv6 message와 multicast로 수행하면서 더 넓은 local-link control을 제공한다. Neighbor Solicitation/Advertisement로 IPv6 address와 link-layer address를 resolve하고 reachability를 확인하며, Router Solicitation/Advertisement로 default router와 prefix 정보를 발견한다. Duplicate Address Detection(DAD)도 address를 실제로 사용하기 전에 중복 여부를 확인하는 흐름에 포함된다.
 
-neighbor cache와 router advertisement가 stale하거나 차단되면 주소가 있어도 통신이 실패할 수 있다. IPv6 security policy에서 ICMPv6를 전부 차단하지 않고 필요한 control message를 허용한다.
+NDP는 local link scope의 state를 neighbor cache와 router information에 반영한다. entry가 stale하거나 Router Advertisement가 잘못되거나 필요한 ICMPv6가 방화벽에서 차단되면 address가 할당되어 있어도 next-hop resolution·route·path MTU discovery가 실패할 수 있다. 따라서 `IPv6 address가 있다 = IPv6 연결이 된다`고 보지 않고 control message와 route state를 함께 본다.
 
-### Backend 연결
-
-dual-stack backend에서 IPv4만 성공한다고 IPv6 path가 준비된 것은 아니다. resolver 선택, NDP, route, firewall을 address family별로 테스트한다.
+dual-stack backend에서 IPv4가 성공한다고 IPv6 path가 준비된 것은 아니다. resolver가 AAAA를 선택한 뒤 interface, NDP, route, listener, ACL/firewall이 모두 IPv6를 처리하는지 address family별로 테스트한다. NDP spoofing이나 rogue Router Advertisement는 별도의 local-link threat이므로 RA guard와 segment policy, TLS를 함께 검토한다.
 
