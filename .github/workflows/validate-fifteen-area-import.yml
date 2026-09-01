@@ -1,0 +1,42 @@
+name: Validate fifteen-area canonical import
+
+on:
+  push:
+    branches:
+      - content/validate-fifteen-areas
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '25'
+
+      - name: Run canonical fifteen-area import validation
+        working-directory: backend
+        run: |
+          chmod +x gradlew
+          set +e
+          ./gradlew test --tests com.guseoh.csforge.importcontent.CanonicalFifteenAreaImportValidationTest --info > validation.log 2>&1
+          status=$?
+          cat validation.log
+          exit $status
+
+      - name: Upload validation output
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fifteen-area-validation-report
+          path: |
+            backend/validation.log
+            backend/build/test-results/test/**
+            backend/build/reports/tests/test/**
+            content/**
+          if-no-files-found: error
