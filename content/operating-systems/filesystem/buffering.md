@@ -4,26 +4,43 @@ contentKey: operating-systems.core.filesystem.buffering
 topicContentKey: operating-systems.core.filesystem
 slug: buffering
 title: "Buffering"
-summary: "사용자·kernel buffer가 write 호출과 device 전송을 분리하는 이유를 설명한다."
+summary: "user-space·kernel·device 계층이 서로 다른 이유로 I/O를 모으고 지연하며 flush 의미가 달라지는 이유를 설명한다."
 level: 1
 status: PUBLISHED
 displayOrder: 90
 references:
-  - url: "https://man7.org/linux/man-pages/man2/open.2.html"
-    title: "open(2) — Linux manual page"
+  - url: "https://pages.cs.wisc.edu/~remzi/OSTEP/file-implementation.pdf"
+    title: "File System Implementation"
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "file descriptor와 filesystem I/O 경계를 확인한다."
+    recommendation: "inode, directory entry, data block, allocation 구조가 file-system access path를 만드는 방식을 확인한다."
     displayOrder: 1
 ---
 # Buffering
 
-user-space library, kernel page cache, device queue가 각각 데이터를 buffer할 수 있다. 작은 write를 모아 큰 I/O로 만들면 syscall과 device overhead를 줄이지만 flush 전 crash 시 보이지 않는 데이터가 생길 수 있다.
+I/O에서 buffer는 producer와 consumer의 속도·단위 차이를 흡수하기 위해 data를 잠시 모아 두는 공간이다. 중요한 점은 **buffer가 한 층에 하나만 존재하는 것이 아니라는 것**이다. application/library의 user-space buffer, kernel page cache, block/device queue, storage controller 내부 cache처럼 여러 단계가 있을 수 있고 각 단계의 flush 의미도 다르다.
 
-buffer의 owner와 flush·close·fsync 시점을 구분한다. “buffer에 복사됐다”, “kernel이 받았다”, “storage에 안정적으로 기록됐다”는 서로 다른 상태다.
+### User-space buffering은 syscall 수를 줄일 수 있다
 
-### Backend 연결
+application이 1 byte씩 `write()`를 호출하면 syscall overhead가 과도해질 수 있다. `BufferedWriter` 같은 library는 여러 작은 write를 user-space buffer에 모았다가 한 번에 kernel로 전달해 호출 횟수를 줄인다. 이때 `flush()`는 보통 **library buffer의 bytes를 다음 계층으로 내보내는 것**이지 durable storage까지 보장하는 연산이 아니다.
 
-CSV/JSON export는 writer flush만으로 성공 처리하지 말고 파일 교체와 durability 요구를 정의한다. 응답으로 다운로드를 시작한 뒤 백그라운드 flush가 실패하는 경우도 상태에 반영한다.
+따라서 다음 상태를 구분해야 한다.
 
+`application object → user-space buffer → kernel/page cache → filesystem/block layer → storage`
+
+앞 단계의 flush 성공이 뒤 단계까지 완료되었다는 뜻은 아니다.
+
+### Kernel buffering은 scheduling과 aggregation에 쓰인다
+
+kernel은 write를 page cache에 받아 dirty page로 유지하면서 여러 write를 묶거나 적절한 시점에 write-back할 수 있다. read path에서도 readahead와 cache를 통해 작은 application read를 더 효율적인 storage access로 바꿀 수 있다. 이는 throughput을 높이고 latency를 숨길 수 있지만 dirty data가 오래 남아 있는 동안 crash가 나면 durability 요구와 충돌할 수 있다.
+
+### Buffer 크기도 trade-off다
+
+너무 작은 buffer는 syscall/device request 수를 늘릴 수 있고, 너무 큰 buffer는 memory 사용량과 flush latency를 키운다. 또한 큰 buffer 하나가 항상 storage에 최적인 것도 아니다. access pattern, compression, network/file pipeline, downstream request size에 따라 적절한 단위가 달라진다.
+
+### flush, close, fsync를 같은 것으로 보지 않는다
+
+language/library의 `flush()`는 해당 library가 가진 buffer를 비우는 계약이고, `close()`는 resource lifetime을 끝내면서 내부 flush를 동반할 수 있지만 durable persistence를 자동 보장한다고 일반화할 수 없다. filesystem durability가 필요하면 OS가 제공하는 `fsync()`/관련 API와 storage semantics까지 확인해야 한다.
+
+Backend export에서 `writer.flush()` 성공 직후 DB 상태를 `DURABLE`로 바꾸는 식의 설계는 계층을 섞은 것이다. 요구사항이 단순히 같은 process가 곧 읽을 수 있는 것인지, process crash 후에도 남아야 하는지, power loss까지 견뎌야 하는지에 따라 필요한 durability boundary를 명시한다.
