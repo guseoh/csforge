@@ -10,13 +10,12 @@ policies:
     authoringLanguage: ko-KR
     explanationRule: 성능 숫자를 단독 최적화하지 않고 workload·saturation·사용자 영향과 연결하며 telemetry에서 운영 조치까지의 feedback loop를 설명한다.
   question:
-    minimumPerConcept: 2
     topicDifficultyCoverage: [EASY, MEDIUM, HARD]
     areaTypeCoverage: [MULTIPLE_CHOICE, SHORT_ANSWER, DESCRIPTIVE, SCENARIO]
     hardRule: p95/p99 latency·queueing, profiler와 load test, signal correlation, SLI/SLO·error budget, cardinality, alert/runbook, incident command 또는 autoscaling trade-off를 판단하게 한다.
     shortAnswerRule: metric·tool 이름만으로 정답을 인정하지 않고 측정 대상과 운영 의미를 함께 요구한다.
   source:
-    primary: [OpenTelemetry Documentation, Prometheus Documentation, Kubernetes Documentation, Oracle Java Flight Recorder Documentation]
+    primary: [OpenTelemetry Documentation, Prometheus Documentation, Google SRE Book, Kubernetes Documentation, Oracle Java Flight Recorder Documentation]
     rule: telemetry와 성능 측정은 시스템 동작을 설명하는 관측 수단이며 원인·목표·운영 조치를 혼동하지 않는다.
   visualization:
     values: [NONE, TEXT, DIAGRAM]
