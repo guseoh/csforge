@@ -1,20 +1,218 @@
 [
-{"kind":"question","contentKey":"computer-architecture.core.data-representation.bit-byte-word.q1","promptMarkdown":"bit·byte·word의 관계로 올바른 설명은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["computer-architecture.core.data-representation.bit-byte-word"],"choices":[{"key":"A","content":"word 폭과 byte 수는 ISA와 memory 계약에 따라 해석해야 한다","displayOrder":0},{"key":"B","content":"64-bit word는 모든 접근이 항상 64 byte라는 뜻이다","displayOrder":1}],"correctChoiceKey":"A"},
-{"kind":"question","contentKey":"computer-architecture.core.data-representation.bit-byte-word.q2","promptMarkdown":"bit, byte, word를 주소와 register 관점에서 구분하라.","questionType":"SHORT_ANSWER","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["computer-architecture.core.data-representation.bit-byte-word"],"acceptedAnswers":["bit는 한 자리이고 byte는 보통 8bit이며 word는 ISA가 정한 처리 폭이다"]},
-{"kind":"question","contentKey":"computer-architecture.core.data-representation.bit-byte-word.q3","promptMarkdown":"backend binary protocol에서 word 폭만 믿고 buffer offset을 계산하면 안 되는 이유를 설명하라.","questionType":"SCENARIO","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["computer-architecture.core.data-representation.bit-byte-word"],"modelAnswer":"word 폭과 wire field 폭은 다를 수 있고 byte address, alignment, endianness를 protocol이 별도로 정하므로 field 크기와 offset을 명시해야 한다."},
-{"kind":"question","contentKey":"computer-architecture.core.data-representation.binary-hex.q1","promptMarkdown":"hexadecimal 표기의 주요 장점은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["computer-architecture.core.data-representation.binary-hex"],"choices":[{"key":"A","content":"한 hex digit이 4 bit를 간결하게 나타낸다","displayOrder":0},{"key":"B","content":"hex는 memory에 저장되는 별도 숫자 형식이다","displayOrder":1}],"correctChoiceKey":"A"},
-{"kind":"question","contentKey":"computer-architecture.core.data-representation.binary-hex.q2","promptMarkdown":"binary와 hexadecimal 사이에서 한 hex digit이 나타내는 bit 수는 얼마인가?","questionType":"SHORT_ANSWER","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["computer-architecture.core.data-representation.binary-hex"],"acceptedAnswers":["4","4 bit"]},
-{"kind":"question","contentKey":"computer-architecture.core.data-representation.binary-hex.q3","promptMarkdown":"주소와 bit mask를 읽을 때 binary와 hex를 함께 사용하는 이유와 주의점을 설명하라.","questionType":"SCENARIO","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["computer-architecture.core.data-representation.binary-hex"],"modelAnswer":"binary는 각 bit의 의미를, hex는 4bit 묶음의 값을 읽기 쉽게 해준다. 둘은 표현법일 뿐 실제 폭·부호·endianness 계약을 대신하지 않는다."},
-{"kind":"question","contentKey":"computer-architecture.core.data-representation.signed-twos-complement.q1","promptMarkdown":"two's complement signed integer의 최상위 bit는 보통 무엇을 나타내는가?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["computer-architecture.core.data-representation.signed-twos-complement"],"choices":[{"key":"A","content":"고정 폭에서 부호와 음수 해석에 관여한다","displayOrder":0},{"key":"B","content":"항상 소수점 위치만 나타낸다","displayOrder":1}],"correctChoiceKey":"A"},
-{"kind":"question","contentKey":"computer-architecture.core.data-representation.signed-twos-complement.q2","promptMarkdown":"two's complement에서 음수를 만드는 기본 변환을 설명하라.","questionType":"SHORT_ANSWER","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["computer-architecture.core.data-representation.signed-twos-complement"],"acceptedAnswers":["bit를 반전하고 1을 더한다","반전 후 1을 더한다"]},
-{"kind":"question","contentKey":"computer-architecture.core.data-representation.signed-twos-complement.q3","promptMarkdown":"Java byte 값을 protocol의 unsigned field로 읽을 때 two's complement 해석이 만드는 함정을 설명하라.","questionType":"SCENARIO","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["computer-architecture.core.data-representation.signed-twos-complement"],"modelAnswer":"같은 8bit pattern도 signed byte와 unsigned 0~255 값의 해석이 다르므로 mask와 widening 시 부호 확장을 명시해야 한다."},
-{"kind":"question","contentKey":"computer-architecture.core.data-representation.fixed-width-overflow.q1","promptMarkdown":"고정 폭 정수 overflow가 발생하는 이유는?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["computer-architecture.core.data-representation.fixed-width-overflow"],"choices":[{"key":"A","content":"표현 가능한 bit pattern 범위를 넘기 때문이다","displayOrder":0},{"key":"B","content":"CPU가 모든 정수를 무한 정밀도로 저장하기 때문이다","displayOrder":1}],"correctChoiceKey":"A"},
-{"kind":"question","contentKey":"computer-architecture.core.data-representation.fixed-width-overflow.q2","promptMarkdown":"signed 8-bit 정수의 표현 범위를 쓰라.","questionType":"SHORT_ANSWER","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["computer-architecture.core.data-representation.fixed-width-overflow"],"acceptedAnswers":["-128부터 127","-128..127"]},
-{"kind":"question","contentKey":"computer-architecture.core.data-representation.fixed-width-overflow.q3","promptMarkdown":"pagination이나 금액 계산에서 overflow가 조용히 발생하면 어떤 backend 문제가 생기는지 설명하라.","questionType":"SCENARIO","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["computer-architecture.core.data-representation.fixed-width-overflow"],"modelAnswer":"count·offset·금액이 음수나 작은 값으로 wrap되어 잘못된 page와 금액을 만들 수 있다. 범위 검증, 더 넓은 타입, overflow 테스트를 적용한다."},
-{"kind":"question","contentKey":"computer-architecture.core.data-representation.floating-point.q1","promptMarkdown":"floating-point 계산에서 0.1을 반복 더한 값이 정확히 기대값과 다를 수 있는 이유는?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["computer-architecture.core.data-representation.floating-point"],"choices":[{"key":"A","content":"많은 십진 분수가 이진 fraction으로 유한하게 표현되지 않기 때문이다","displayOrder":0},{"key":"B","content":"부동소수점은 항상 정수로 반올림되기 때문이다","displayOrder":1}],"correctChoiceKey":"A"},
-{"kind":"question","contentKey":"computer-architecture.core.data-representation.floating-point.q2","promptMarkdown":"floating-point의 sign, exponent, fraction 필드가 맡는 역할을 구분하라.","questionType":"SHORT_ANSWER","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["computer-architecture.core.data-representation.floating-point"],"acceptedAnswers":["부호·스케일·유효숫자를 표현한다","sign exponent fraction"]},
-{"kind":"question","contentKey":"computer-architecture.core.data-representation.floating-point.q3","promptMarkdown":"backend에서 돈을 double로 누적하지 않고 정수 minor unit이나 decimal 타입을 선택하는 이유를 설명하라.","questionType":"SCENARIO","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["computer-architecture.core.data-representation.floating-point"],"modelAnswer":"floating-point rounding error가 누적되어 equality와 금액 합계가 흔들릴 수 있다. 업무 단위의 정수나 정확한 decimal 연산으로 반올림 정책을 명시한다."},
-{"kind":"question","contentKey":"computer-architecture.core.data-representation.endianness.q1","promptMarkdown":"endianness가 결정하는 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["computer-architecture.core.data-representation.endianness"],"choices":[{"key":"A","content":"여러 byte 값이 memory나 wire에 놓이는 순서","displayOrder":0},{"key":"B","content":"정수의 bit 개수를 자동으로 늘리는 규칙","displayOrder":1}],"correctChoiceKey":"A"},
-{"kind":"question","contentKey":"computer-architecture.core.data-representation.endianness.q2","promptMarkdown":"0x12345678을 little-endian byte 순서로 쓰라.","questionType":"SHORT_ANSWER","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["computer-architecture.core.data-representation.endianness"],"acceptedAnswers":["78 56 34 12","78,56,34,12"]},
-{"kind":"question","contentKey":"computer-architecture.core.data-representation.endianness.q3","promptMarkdown":"서로 다른 CPU와 backend가 binary payload를 교환할 때 endianness를 계약에 포함해야 하는 이유를 설명하라.","questionType":"SCENARIO","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["computer-architecture.core.data-representation.endianness"],"modelAnswer":"같은 numeric value도 byte 순서가 다르면 다른 값으로 decode된다. protocol이 byte order를 고정하고 encode/decode 테스트로 양쪽 구현을 검증해야 한다."}
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.data-representation.bit-byte-word.q1",
+    "promptMarkdown": "bit, byte, word에 대한 설명으로 가장 정확한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.data-representation.bit-byte-word"],
+    "choices": [
+      {"key": "A", "content": "bit는 0/1 한 자리, byte는 보통 8 bit의 주소 지정 단위이며 word는 ISA가 자연스럽게 처리하는 폭과 관련된다.", "displayOrder": 0},
+      {"key": "B", "content": "64-bit CPU의 모든 memory access는 반드시 64 byte씩 수행된다.", "displayOrder": 1},
+      {"key": "C", "content": "word와 pointer 크기는 모든 ISA에서 항상 동일하다.", "displayOrder": 2},
+      {"key": "D", "content": "byte는 CPU architecture와 무관하게 항상 하나의 word와 같다.", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "A"
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.data-representation.bit-byte-word.q2",
+    "promptMarkdown": "byte-addressable memory에서 주소 `0x1000`부터 4-byte 값을 저장했다. 이 값이 차지하는 byte address 범위를 쓰라.",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.data-representation.bit-byte-word"],
+    "acceptedAnswers": ["0x1000~0x1003", "0x1000-0x1003", "0x1000부터 0x1003"]
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.data-representation.bit-byte-word.q3",
+    "promptMarkdown": "64-bit CPU에서 3-byte protocol field를 읽는 parser가 `word가 8 byte이므로 offset도 항상 8씩 증가시킨다`고 구현되었다. 왜 잘못된지 machine word와 wire field width를 구분해 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.data-representation.bit-byte-word"],
+    "modelAnswer": "CPU word 폭은 register/ISA의 자연스러운 연산 폭과 관련된 개념이고 protocol field 크기는 wire schema가 정한다. 3-byte field 뒤의 다음 field offset은 protocol layout에 따라 계산해야 하며 CPU가 64-bit라는 이유로 8 byte를 건너뛰면 payload를 잘못 해석한다. alignment padding이 있다면 그것도 protocol/ABI가 별도로 명시해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.data-representation.binary-hex.q1",
+    "promptMarkdown": "binary `1010 0111`과 같은 bit pattern을 hexadecimal로 표현한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.data-representation.binary-hex"],
+    "choices": [
+      {"key": "A", "content": "0xA7", "displayOrder": 0},
+      {"key": "B", "content": "0x7A", "displayOrder": 1},
+      {"key": "C", "content": "0xA07", "displayOrder": 2},
+      {"key": "D", "content": "0x107", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "A"
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.data-representation.binary-hex.q2",
+    "promptMarkdown": "16-bit bit pattern `1111 0000 1010 0101`을 hexadecimal로 쓰라.",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.data-representation.binary-hex"],
+    "acceptedAnswers": ["0xF0A5", "F0A5", "f0a5", "0xf0a5"]
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.data-representation.binary-hex.q3",
+    "promptMarkdown": "로그에 `0xFF`만 남아 있다. 이 값이 255인지 -1인지 즉시 단정할 수 없는 이유와, 장애 분석에 추가로 필요한 정보를 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.data-representation.binary-hex"],
+    "modelAnswer": "hex는 bit pattern을 간결하게 표시할 뿐 signedness와 width를 결정하지 않는다. `0xFF`가 8-bit unsigned면 255이고 8-bit two's-complement signed면 -1일 수 있다. 정확한 해석에는 field width, signed/unsigned type, 필요하면 byte order와 protocol schema가 필요하다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.data-representation.signed-twos-complement.q1",
+    "promptMarkdown": "8-bit two's-complement bit pattern `1111 1111`을 signed integer로 해석한 값은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.data-representation.signed-twos-complement"],
+    "choices": [
+      {"key": "A", "content": "-1", "displayOrder": 0},
+      {"key": "B", "content": "255", "displayOrder": 1},
+      {"key": "C", "content": "-127", "displayOrder": 2},
+      {"key": "D", "content": "0", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "A"
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.data-representation.signed-twos-complement.q2",
+    "promptMarkdown": "8-bit two's-complement에서 `1000 0000`의 signed 값과, 그 값을 같은 8-bit signed 범위 안에서 양수로 표현할 수 없는 이유를 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.data-representation.signed-twos-complement"],
+    "modelAnswer": "8-bit two's-complement의 범위는 -128부터 127이므로 `1000 0000`은 -128이다. +128은 같은 signed 8-bit 범위를 벗어나기 때문에 -128의 절댓값을 8-bit signed 값으로 표현할 수 없다. 이것이 최솟값 negation에서 overflow가 생길 수 있는 이유다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.data-representation.signed-twos-complement.q3",
+    "promptMarkdown": "Java `byte b = (byte)0xFF`를 protocol의 unsigned 8-bit length로 사용해야 한다. `int len = b;`만 수행하면 어떤 값이 되고, 0~255 의미를 얻으려면 왜 unsigned 해석 단계가 필요한지 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.data-representation.signed-twos-complement"],
+    "modelAnswer": "Java byte는 signed 8-bit이므로 0xFF는 -1이고 int로 widening하면 sign extension되어 -1이 된다. protocol field가 unsigned 8-bit라면 같은 bit pattern을 255로 해석해야 하므로 `Byte.toUnsignedInt(b)` 또는 `b & 0xFF`처럼 unsigned conversion을 명시해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.data-representation.fixed-width-overflow.q1",
+    "promptMarkdown": "unsigned 8-bit arithmetic에서 `255 + 1`의 저장 결과 bit pattern은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.data-representation.fixed-width-overflow"],
+    "choices": [
+      {"key": "A", "content": "0000 0000", "displayOrder": 0},
+      {"key": "B", "content": "1111 1111", "displayOrder": 1},
+      {"key": "C", "content": "1 0000 0000을 9 bit 그대로 저장한다.", "displayOrder": 2},
+      {"key": "D", "content": "1000 0000", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "A"
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.data-representation.fixed-width-overflow.q2",
+    "promptMarkdown": "signed 8-bit two's-complement에서 `127 + 1`의 8-bit 결과 pattern과 signed 해석 값을 쓰라.",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.data-representation.fixed-width-overflow"],
+    "acceptedAnswers": ["10000000, -128", "1000 0000, -128", "-128"]
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.data-representation.fixed-width-overflow.q3",
+    "promptMarkdown": "32-bit signed `count * elementSize`로 allocation byte 수를 계산하는 코드에서 두 입력은 각각 양수이고 개별 범위 검사도 통과했다. 곱셈 overflow가 보안·정합성 문제로 이어질 수 있는 경로를 설명하고 안전한 검증 순서를 제시하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.data-representation.fixed-width-overflow"],
+    "modelAnswer": "두 양수의 곱이 32-bit 범위를 넘으면 wrap되어 음수나 작은 양수가 될 수 있고, 그 결과 실제 필요한 크기보다 작은 buffer allocation이나 잘못된 bounds check가 발생할 수 있다. 계산 전에 곱셈 가능 범위를 확인하거나 더 넓은 type/checked arithmetic으로 계산한 뒤 최종 범위를 검증해야 한다. 저장된 overflow 결과를 만든 뒤 검사하면 이미 정보가 손실될 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.data-representation.floating-point.q1",
+    "promptMarkdown": "binary floating-point에서 decimal 0.1이 정확히 표현되지 않을 수 있는 주된 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.data-representation.floating-point"],
+    "choices": [
+      {"key": "A", "content": "0.1의 binary fraction이 유한한 자리에서 끝나지 않아 제한된 significand로 반올림해야 하기 때문이다.", "displayOrder": 0},
+      {"key": "B", "content": "IEEE 754가 모든 소수를 정수로만 저장하기 때문이다.", "displayOrder": 1},
+      {"key": "C", "content": "CPU가 decimal 입력을 항상 버리기 때문이다.", "displayOrder": 2},
+      {"key": "D", "content": "floating-point에는 exponent가 없기 때문이다.", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "A"
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.data-representation.floating-point.q2",
+    "promptMarkdown": "floating-point 덧셈이 일반적으로 결합법칙 `(a+b)+c = a+(b+c)`을 항상 만족하지 않는 이유를 반올림과 유효 정밀도로 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.data-representation.floating-point"],
+    "modelAnswer": "각 intermediate operation의 정확한 수학적 결과가 표현 가능한 floating-point 값으로 반올림된다. 연산 순서를 바꾸면 먼저 더해지는 값의 magnitude와 반올림 시점이 달라져 작은 값이 유효 정밀도 밖으로 사라지거나 다른 representable value로 반올림될 수 있으므로 최종 bit pattern이 달라질 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.data-representation.floating-point.q3",
+    "promptMarkdown": "결제 서비스가 `double`로 가격을 누적한 뒤 `total == expected`로 정합성을 검사한다. 어떤 두 문제가 생길 수 있고, 금액 domain에서는 어떤 representation/rounding contract를 두는 편이 나은지 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.data-representation.floating-point"],
+    "modelAnswer": "decimal 금액이 binary floating-point로 정확히 표현되지 않아 반복 연산의 rounding error가 누적될 수 있고 exact equality가 예상과 다르게 실패할 수 있다. 금액은 정수 minor unit 또는 정확한 decimal type을 사용하고 scale·rounding mode·DB/wire representation을 domain contract로 명시하는 편이 일반적으로 안전하다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.data-representation.endianness.q1",
+    "promptMarkdown": "32-bit value `0x12345678`을 little-endian memory에 낮은 주소부터 저장한 byte 순서는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.data-representation.endianness"],
+    "choices": [
+      {"key": "A", "content": "78 56 34 12", "displayOrder": 0},
+      {"key": "B", "content": "12 34 56 78", "displayOrder": 1},
+      {"key": "C", "content": "87 65 43 21", "displayOrder": 2},
+      {"key": "D", "content": "12 43 65 87", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "A"
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.data-representation.endianness.q2",
+    "promptMarkdown": "wire에 `01 02 03 04` 네 byte가 있고 protocol이 big-endian 32-bit unsigned integer라고 정했다. numeric value를 hexadecimal로 쓰라.",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.data-representation.endianness"],
+    "acceptedAnswers": ["0x01020304", "01020304", "0x1020304"]
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.data-representation.endianness.q3",
+    "promptMarkdown": "little-endian host의 native 32-bit integer memory bytes를 그대로 TCP payload field로 복사했더니 big-endian protocol peer가 다른 값을 읽었다. host endianness와 wire byte order를 구분해 원인과 수정 방법을 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.data-representation.endianness"],
+    "modelAnswer": "host의 native memory layout이 little-endian이어도 protocol field는 big-endian/network order로 정의될 수 있다. native bytes를 그대로 보내면 peer가 가장 중요한 byte 순서를 반대로 해석한다. 송신 시 numeric value를 protocol-defined byte order로 serialize하고 수신 시 같은 order로 decode해야 하며 golden byte fixture로 실제 wire sequence를 검증한다."
+  }
 ]
