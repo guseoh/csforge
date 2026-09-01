@@ -1,23 +1,254 @@
 [
-{"kind":"question","contentKey":"computer-architecture.core.performance.latency-throughput.q1","promptMarkdown":"latency와 throughput의 차이는?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["computer-architecture.core.performance.latency-throughput"],"choices":[{"key":"A","content":"latency는 단일 작업 지연이고 throughput은 단위 시간 완료량이다","displayOrder":0},{"key":"B","content":"둘 다 항상 같은 단일 요청 시간이다","displayOrder":1}],"correctChoiceKey":"A"},
-{"kind":"question","contentKey":"computer-architecture.core.performance.latency-throughput.q2","promptMarkdown":"pipeline이나 batch가 throughput은 높이고 latency는 높일 수 있는 이유를 설명하라.","questionType":"SHORT_ANSWER","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["computer-architecture.core.performance.latency-throughput"],"acceptedAnswers":["작업을 겹치거나 모아 처리해 완료량은 늘지만 첫 결과까지 대기와 batch 지연이 커질 수 있다"]},
-{"kind":"question","contentKey":"computer-architecture.core.performance.latency-throughput.q3","promptMarkdown":"backend import의 처리량 개선이 interactive API 품질을 자동으로 개선하지 않는 이유를 설명하라.","questionType":"SCENARIO","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["computer-architecture.core.performance.latency-throughput"],"modelAnswer":"batch throughput과 request latency는 서로 다른 queue·cache·resource를 사용하고 경쟁할 수 있다. p95/p99 latency와 completed items/sec를 별도 목표로 측정한다."},
-{"kind":"question","contentKey":"computer-architecture.core.performance.cpu-time.q1","promptMarkdown":"CPU time은 무엇을 측정하는가?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["computer-architecture.core.performance.cpu-time"],"choices":[{"key":"A","content":"process나 thread가 CPU에서 실제 실행한 시간","displayOrder":0},{"key":"B","content":"network에서 대기한 모든 wall-clock 시간","displayOrder":1}],"correctChoiceKey":"A"},
-{"kind":"question","contentKey":"computer-architecture.core.performance.cpu-time.q2","promptMarkdown":"wall-clock time과 CPU time의 차이를 설명하라.","questionType":"SHORT_ANSWER","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["computer-architecture.core.performance.cpu-time"],"acceptedAnswers":["wall time은 대기 포함 실제 경과시간이고 CPU time은 CPU 실행시간이다"]},
-{"kind":"question","contentKey":"computer-architecture.core.performance.cpu-time.q3","promptMarkdown":"DB를 오래 기다리는 backend request에서 CPU profiling만으로 전체 latency 원인을 찾기 어려운 이유를 설명하라.","questionType":"SCENARIO","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["computer-architecture.core.performance.cpu-time"],"modelAnswer":"CPU time이 작아도 DB/network queue와 I/O 대기가 wall time 대부분을 차지할 수 있다. CPU, blocked time, downstream span과 queue wait를 함께 측정한다."},
-{"kind":"question","contentKey":"computer-architecture.core.performance.instruction-count-cpi-clock.q1","promptMarkdown":"CPU execution time의 기본 요소로 맞는 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["computer-architecture.core.performance.instruction-count-cpi-clock"],"choices":[{"key":"A","content":"instruction count, CPI, clock cycle time","displayOrder":0},{"key":"B","content":"오직 source code 줄 수","displayOrder":1}],"correctChoiceKey":"A"},
-{"kind":"question","contentKey":"computer-architecture.core.performance.instruction-count-cpi-clock.q2","promptMarkdown":"CPI가 의미하는 바를 쓰라.","questionType":"SHORT_ANSWER","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["computer-architecture.core.performance.instruction-count-cpi-clock"],"acceptedAnswers":["instruction 하나당 평균 cycle 수","cycles per instruction"]},
-{"kind":"question","contentKey":"computer-architecture.core.performance.instruction-count-cpi-clock.q3","promptMarkdown":"compiler 최적화 후 instruction count가 줄었는데 CPI가 늘어 speedup이 작을 수 있는 이유를 설명하라.","questionType":"SCENARIO","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["computer-architecture.core.performance.instruction-count-cpi-clock"],"modelAnswer":"남은 instruction이 cache miss·branch·dependency가 많은 종류이면 평균 CPI가 커질 수 있다. count만이 아니라 CPI와 clock time, 전체 실행시간을 곱으로 비교한다."},
-{"kind":"question","contentKey":"computer-architecture.core.performance.amdahl-law.q1","promptMarkdown":"Amdahl's law가 강조하는 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["computer-architecture.core.performance.amdahl-law"],"choices":[{"key":"A","content":"개선되지 않은 부분이 전체 speedup의 상한을 정한다","displayOrder":0},{"key":"B","content":"작은 부분 개선이 항상 무한 speedup을 만든다","displayOrder":1}],"correctChoiceKey":"A"},
-{"kind":"question","contentKey":"computer-architecture.core.performance.amdahl-law.q2","promptMarkdown":"실행시간의 20%만 개선해 10배 빠르게 만들 수 있을 때 이론상 전체 speedup 상한은 얼마인가?","questionType":"SHORT_ANSWER","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["computer-architecture.core.performance.amdahl-law"],"acceptedAnswers":["약 1.22배","1/(0.8+0.02)=약 1.22"]},
-{"kind":"question","contentKey":"computer-architecture.core.performance.amdahl-law.q3","promptMarkdown":"backend query 한 단계만 빠르게 최적화했는데 전체 API 개선이 작을 때 Amdahl 관점에서 다음 행동을 설명하라.","questionType":"SCENARIO","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["computer-architecture.core.performance.amdahl-law"],"modelAnswer":"그 단계가 전체 latency에서 차지하는 비율이 작거나 다른 병목이 지배할 수 있다. end-to-end trace로 시간 비율을 확인하고 가장 큰 직렬 부분을 우선 개선한다."},
-{"kind":"question","contentKey":"computer-architecture.core.performance.cache-impact.q1","promptMarkdown":"cache miss가 CPU 성능에 미치는 일반적인 효과는?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["computer-architecture.core.performance.cache-impact"],"choices":[{"key":"A","content":"더 느린 memory 계층을 기다리는 시간이 늘어난다","displayOrder":0},{"key":"B","content":"항상 instruction count가 0이 된다","displayOrder":1}],"correctChoiceKey":"A"},
-{"kind":"question","contentKey":"computer-architecture.core.performance.cache-impact.q2","promptMarkdown":"cache miss rate와 miss penalty가 평균 접근시간에 미치는 관계를 설명하라.","questionType":"SHORT_ANSWER","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["computer-architecture.core.performance.cache-impact"],"acceptedAnswers":["miss rate가 penalty와 곱해져 hit time에 추가된다"]},
-{"kind":"question","contentKey":"computer-architecture.core.performance.cache-impact.q3","promptMarkdown":"backend 자료구조 변경 뒤 cache miss가 줄었지만 total latency가 늘 수 있는 이유를 설명하라.","questionType":"SCENARIO","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["computer-architecture.core.performance.cache-impact"],"modelAnswer":"자료구조 변환·memory footprint·lock contention·GC가 늘거나 다른 downstream 병목이 나타날 수 있다. miss counter와 end-to-end latency를 함께 검증한다."},
-{"kind":"question","contentKey":"computer-architecture.core.performance.pipeline-branch-impact.q1","promptMarkdown":"branch misprediction의 직접 비용은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["computer-architecture.core.performance.pipeline-branch-impact"],"choices":[{"key":"A","content":"잘못 fetch한 pipeline instruction을 버리고 target을 다시 채운다","displayOrder":0},{"key":"B","content":"모든 memory를 영구 삭제한다","displayOrder":1}],"correctChoiceKey":"A"},
-{"kind":"question","contentKey":"computer-architecture.core.performance.pipeline-branch-impact.q2","promptMarkdown":"branch misprediction rate가 높아지는 입력 특성을 한 가지 쓰라.","questionType":"SHORT_ANSWER","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["computer-architecture.core.performance.pipeline-branch-impact"],"acceptedAnswers":["조건이 불규칙해 predictor가 방향을 학습하기 어려운 입력"]},
-{"kind":"question","contentKey":"computer-architecture.core.performance.pipeline-branch-impact.q3","promptMarkdown":"backend filter의 조건 분기를 branch-friendly하게 바꾸기 전에 반드시 확인할 correctness 조건을 설명하라.","questionType":"SCENARIO","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["computer-architecture.core.performance.pipeline-branch-impact"],"modelAnswer":"분기 제거·정렬·table lookup이 원래 predicate와 null·경계·error semantics를 보존해야 한다. branch miss 개선과 결과 동일성을 함께 테스트한다."},
-{"kind":"question","contentKey":"computer-architecture.core.performance.microbenchmark-boundary.q1","promptMarkdown":"microbenchmark의 올바른 사용은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["computer-architecture.core.performance.microbenchmark-boundary"],"choices":[{"key":"A","content":"작은 코드 경로의 상대 비용을 통제된 조건에서 비교하는 것","displayOrder":0},{"key":"B","content":"모든 production workload를 한 숫자로 대체하는 것","displayOrder":1}],"correctChoiceKey":"A"},
-{"kind":"question","contentKey":"computer-architecture.core.performance.microbenchmark-boundary.q2","promptMarkdown":"microbenchmark에서 warm-up과 반복 측정이 필요한 이유를 설명하라.","questionType":"SHORT_ANSWER","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["computer-architecture.core.performance.microbenchmark-boundary"],"acceptedAnswers":["JIT·cache·measurement noise의 영향을 안정화하고 분산을 보기 위해서다"]},
-{"kind":"question","contentKey":"computer-architecture.core.performance.microbenchmark-boundary.q3","promptMarkdown":"microbenchmark가 빠른데 production API는 느린 경우 benchmark 경계를 재검토하는 방법을 설명하라.","questionType":"SCENARIO","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["computer-architecture.core.performance.microbenchmark-boundary"],"modelAnswer":"benchmark가 제외한 serialization, DB, network, contention, cold start와 입력 분포가 실제 병목일 수 있다. 대표 workload와 end-to-end trace로 보완하고 micro 결과는 상대 비교로만 사용한다."}
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.performance.latency-throughput.q1",
+    "promptMarkdown": "latency와 throughput을 올바르게 구분한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.performance.latency-throughput"],
+    "choices": [
+      {"key": "A", "content": "latency는 작업 하나의 완료까지 걸린 시간이고 throughput은 단위 시간에 완료한 작업 수다.", "displayOrder": 0},
+      {"key": "B", "content": "throughput이 증가하면 모든 개별 작업 latency도 반드시 같은 비율로 감소한다.", "displayOrder": 1},
+      {"key": "C", "content": "batch size를 키우면 기다리는 시간이 없어져 latency와 throughput이 모두 무조건 개선된다.", "displayOrder": 2},
+      {"key": "D", "content": "CPU instruction throughput과 HTTP request throughput은 측정 단위가 달라도 같은 숫자로 비교할 수 있다.", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "A"
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.performance.latency-throughput.q2",
+    "promptMarkdown": "10초 동안 2,500개의 작업을 완료했다. 평균 throughput을 초당 작업 수로 쓰라.",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.performance.latency-throughput"],
+    "acceptedAnswers": ["250", "250 ops/s", "250 작업/초", "250개/초"]
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.performance.latency-throughput.q3",
+    "promptMarkdown": "Batch size를 10에서 100으로 늘렸더니 items/sec는 40% 증가했지만 p99 request latency는 3배가 되었다. 두 결과가 동시에 가능한 이유를 queueing과 batching 관점에서 설명하고, 어떤 지표를 기준으로 설정을 결정해야 하는지 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.performance.latency-throughput"],
+    "modelAnswer": "큰 batch는 fixed overhead를 더 많은 item에 나눠 aggregate throughput을 높일 수 있지만 batch가 채워질 때까지 기다리는 시간과 queue wait를 늘릴 수 있다. 따라서 interactive workload라면 items/sec만 보지 말고 p95/p99 latency, arrival rate, queue depth와 SLA를 함께 보고 적절한 batch size를 선택해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.performance.cpu-time.q1",
+    "promptMarkdown": "500 ms 걸린 request에서 실제 on-CPU 실행이 40 ms이고 나머지는 DB/network/scheduler wait였다. CPU code를 최적화해 on-CPU 시간을 20 ms로 줄였을 때 다른 시간이 그대로라면 새 elapsed time은 대략 얼마인가?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.performance.cpu-time"],
+    "choices": [
+      {"key": "A", "content": "약 480 ms", "displayOrder": 0},
+      {"key": "B", "content": "250 ms", "displayOrder": 1},
+      {"key": "C", "content": "40 ms", "displayOrder": 2},
+      {"key": "D", "content": "20 ms", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "A"
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.performance.cpu-time.q2",
+    "promptMarkdown": "wall-clock time, process CPU time, machine CPU utilization이 서로 다른 측정값인 이유를 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.performance.cpu-time"],
+    "modelAnswer": "Wall-clock은 대기까지 포함한 실제 경과시간이고 process CPU time은 해당 process/thread가 CPU에서 실행된 시간을 누적한다. Machine CPU utilization은 일정 시간 동안 여러 core의 전체 busy 비율을 나타내므로 한 request나 process가 CPU에서 보낸 시간과 동일하지 않다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.performance.cpu-time.q3",
+    "promptMarkdown": "서비스 p99가 800 ms이고 CPU utilization은 25%다. 이 정보만 보고 'CPU가 병목이 아니다'라고 확정하면 안 되는 이유와 다음에 어떤 시간을 분해해야 하는지 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.performance.cpu-time"],
+    "modelAnswer": "Aggregate CPU utilization 25%는 특정 core/hot thread가 포화되었는지나 request가 scheduler에서 기다렸는지를 보여 주지 않는다. Per-request on-CPU time, runnable/scheduler wait, blocked I/O, DB/network downstream span과 core-level utilization을 함께 확인해 elapsed time의 소유자를 분해해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.performance.instruction-count-cpi-clock.q1",
+    "promptMarkdown": "1,000개의 instruction을 평균 CPI 1.5로 실행했다. 총 cycle 수는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.performance.instruction-count-cpi-clock"],
+    "choices": [
+      {"key": "A", "content": "1,500 cycles", "displayOrder": 0},
+      {"key": "B", "content": "667 cycles", "displayOrder": 1},
+      {"key": "C", "content": "1.5 cycles", "displayOrder": 2},
+      {"key": "D", "content": "1,000 / clock rate와 무관하게 항상 1,000 cycles", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "A"
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.performance.instruction-count-cpi-clock.q2",
+    "promptMarkdown": "2 GHz CPU에서 4,000 cycles가 걸린 작업의 CPU execution time은 몇 μs인가?",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.performance.instruction-count-cpi-clock"],
+    "acceptedAnswers": ["2 μs", "2us", "2 us", "2 microseconds"]
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.performance.instruction-count-cpi-clock.q3",
+    "promptMarkdown": "최적화 전에는 10억 instructions, CPI 1.0, 3 GHz였고 최적화 후에는 7억 instructions, CPI 1.6, 같은 3 GHz다. 두 경우 CPU time의 상대 크기를 계산하고 instruction count만 보고 최적화를 평가하면 안 되는 이유를 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.performance.instruction-count-cpi-clock"],
+    "modelAnswer": "전에는 10억 cycles, 후에는 7억×1.6=11.2억 cycles가 필요하다. Clock rate가 같으므로 최적화 후가 약 12% 더 많은 CPU time을 쓴다. Instruction 수가 줄어도 cache miss, dependency, branch 등으로 평균 CPI가 커지면 전체 cycles와 CPU time은 악화될 수 있으므로 세 항을 함께 비교해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.performance.amdahl-law.q1",
+    "promptMarkdown": "전체 실행 시간의 50%를 차지하는 부분을 2배 빠르게 만들고 나머지는 그대로라면 Amdahl's Law에 따른 전체 speedup은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.performance.amdahl-law"],
+    "choices": [
+      {"key": "A", "content": "약 1.33배", "displayOrder": 0},
+      {"key": "B", "content": "2배", "displayOrder": 1},
+      {"key": "C", "content": "4배", "displayOrder": 2},
+      {"key": "D", "content": "변화 없음", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "A"
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.performance.amdahl-law.q2",
+    "promptMarkdown": "전체 시간의 25%만 개선 가능한 경우 그 부분을 무한히 빠르게 만들 수 있다고 가정했을 때 최대 전체 speedup은 얼마인가?",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.performance.amdahl-law"],
+    "acceptedAnswers": ["약 1.33배", "1.33", "4/3", "1.333"]
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.performance.amdahl-law.q3",
+    "promptMarkdown": "한 API에서 JSON serialization이 baseline latency의 10%, DB wait가 70%, 나머지가 20%다. Serialization을 5배 빠르게 한 뒤 전체 latency 개선이 작았다. Amdahl 식으로 예상 speedup을 계산하고 다음 최적화 우선순위를 어떻게 정할지 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.performance.amdahl-law"],
+    "modelAnswer": "새 normalized time은 0.9 + 0.1/5 = 0.92이므로 전체 speedup은 약 1/0.92 = 1.087배, 즉 약 8.7% 수준이다. Serialization 자체의 큰 speedup이 전체를 크게 바꾸지 못하는 이유는 90%가 그대로이기 때문이다. 개선 후 다시 end-to-end trace를 측정하고 여전히 가장 큰 시간을 차지하는 DB wait의 실제 원인을 우선 검토한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.performance.cache-impact.q1",
+    "promptMarkdown": "hit time이 1 ns, miss rate가 5%, miss penalty가 60 ns인 단순 cache의 AMAT는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.performance.cache-impact"],
+    "choices": [
+      {"key": "A", "content": "4 ns", "displayOrder": 0},
+      {"key": "B", "content": "1.05 ns", "displayOrder": 1},
+      {"key": "C", "content": "60 ns", "displayOrder": 2},
+      {"key": "D", "content": "61 ns", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "A"
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.performance.cache-impact.q2",
+    "promptMarkdown": "cache miss가 instruction count를 바꾸지 않고도 CPI와 CPU time을 늘릴 수 있는 이유를 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.performance.cache-impact"],
+    "modelAnswer": "동일한 load/store instruction이라도 cache miss가 나면 lower-level cache나 DRAM에서 data를 기다리는 stall 또는 latency-hiding work가 필요해 더 많은 cycles가 소비될 수 있다. Architectural instruction 수는 같아도 total cycles와 average CPI가 커져 CPU time이 증가할 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.performance.cache-impact.q3",
+    "promptMarkdown": "자료구조를 압축해 L1 miss를 30% 줄였지만 retired instructions가 50% 증가했고 전체 CPU time은 오히려 늘었다. 이 결과를 'cache 최적화 실패'라고 단순화하지 말고 어떤 trade-off가 생겼는지 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.performance.cache-impact"],
+    "modelAnswer": "압축으로 working set/locality가 좋아져 miss는 줄었지만 encode/decode, index 계산 등 추가 instruction이 생겼을 수 있다. 성능은 instruction count×CPI×cycle time의 결과이므로 miss counter만이 아니라 instructions, cycles, CPI와 end-to-end CPU time을 함께 비교해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.performance.pipeline-branch-impact.q1",
+    "promptMarkdown": "전체 instruction의 20%가 branch이고 branch의 5%가 misprediction이며 penalty가 12 cycles다. 단순 모델에서 branch miss가 더하는 평균 CPI는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.performance.pipeline-branch-impact"],
+    "choices": [
+      {"key": "A", "content": "0.12", "displayOrder": 0},
+      {"key": "B", "content": "1.2", "displayOrder": 1},
+      {"key": "C", "content": "12", "displayOrder": 2},
+      {"key": "D", "content": "0.01", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "A"
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.performance.pipeline-branch-impact.q2",
+    "promptMarkdown": "pipeline을 더 깊게 만들어 clock frequency를 높였는데 branch-heavy workload가 느려질 수도 있는 이유를 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.performance.pipeline-branch-impact"],
+    "modelAnswer": "깊은 pipeline은 stage당 logic을 줄여 cycle time을 줄일 수 있지만 branch가 resolve될 때까지 더 많은 speculative work가 진행되어 misprediction recovery penalty와 CPI가 커질 수 있다. Frequency 이득보다 CPI 증가가 크면 total CPU time은 악화될 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.performance.pipeline-branch-impact.q3",
+    "promptMarkdown": "조건이 99.9% 한 방향으로 예측되는 branch를 branchless table lookup으로 바꿨더니 branch miss는 줄었지만 memory load가 추가되었다. 어느 구현이 더 빠른지 source code만 보고 결정할 수 없는 이유와 측정할 항목을 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.performance.pipeline-branch-impact"],
+    "modelAnswer": "기존 branch가 이미 거의 완벽히 예측되면 misprediction 비용이 매우 작을 수 있고, branchless version의 추가 load/cache miss와 instruction이 더 비쌀 수 있다. 실제 input distribution에서 branch instructions/misses, retired instructions, cache miss, cycles와 total CPU time을 측정하고 semantics도 동일한지 확인해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.performance.microbenchmark-boundary.q1",
+    "promptMarkdown": "JVM microbenchmark에서 계산 결과를 전혀 사용하지 않을 때 특별히 의심해야 할 문제는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.performance.microbenchmark-boundary"],
+    "choices": [
+      {"key": "A", "content": "JIT가 결과가 관찰되지 않는 계산을 제거해 실제 work를 측정하지 않을 수 있다.", "displayOrder": 0},
+      {"key": "B", "content": "결과를 사용하지 않으면 CPU clock이 항상 0 Hz가 된다.", "displayOrder": 1},
+      {"key": "C", "content": "dead-code elimination은 source compiler에만 존재하고 JIT에는 없다.", "displayOrder": 2},
+      {"key": "D", "content": "반복 횟수를 늘리면 어떤 benchmark 설계 오류도 자동으로 사라진다.", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "A"
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.performance.microbenchmark-boundary.q2",
+    "promptMarkdown": "warm-up, input distribution, cache state와 CPU frequency 조건을 기록해야 개선 전후 microbenchmark를 비교할 수 있는 이유를 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.performance.microbenchmark-boundary"],
+    "modelAnswer": "JIT compilation 정도, branch/cache history, working set과 frequency/thermal state가 달라지면 같은 code라도 측정 시간이 달라진다. 환경과 workload 조건을 고정·기록해야 observed difference가 code change 때문인지 다른 상태 때문인지 구분할 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.performance.microbenchmark-boundary.q3",
+    "promptMarkdown": "새 JSON parser가 JMH에서 30% 빨라졌지만 production endpoint latency는 1%만 줄었다. 이 결과가 모순이 아닌 이유를 Amdahl과 benchmark boundary 관점에서 설명하고 다음 검증을 제안하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.performance.microbenchmark-boundary"],
+    "modelAnswer": "JMH는 parser operation 자체의 local cost를 측정하지만 production endpoint에는 DB, network, queue, allocation/GC 등 다른 시간이 포함된다. Parsing이 전체 latency에서 작은 비율이면 Amdahl's Law에 따라 30% local speedup의 전체 효과는 작다. Production trace에서 parsing 비율과 allocation/GC 변화를 확인하고 representative end-to-end load test로 latency와 throughput을 다시 검증해야 한다."
+  }
 ]
