@@ -73,7 +73,8 @@
     "choices": [
       {"key": "A", "content": "아니다. privilege mode는 바뀌어도 다른 task로 CPU가 넘어가지 않을 수 있다.", "displayOrder": 0},
       {"key": "B", "content": "그렇다. 모든 mode switch는 반드시 다른 process로의 context switch다.", "displayOrder": 1},
-      {"key": "C", "content": "그렇다. Kernel mode에서는 항상 새 process가 생성된다.", "displayOrder": 2}
+      {"key": "C", "content": "그렇다. Kernel mode에서는 항상 새 process가 생성된다.", "displayOrder": 2},
+      {"key": "D", "content": "아니다. Mode switch는 user/kernel 권한만 바꾸고 다른 task 실행 여부와는 별개다.", "displayOrder": 3}
     ],
     "correctChoiceKey": "A"
   },
@@ -109,7 +110,8 @@
     "choices": [
       {"key": "A", "content": "아니다. read/write/execute 같은 접근 permission을 별도로 확인해야 한다.", "displayOrder": 0},
       {"key": "B", "content": "그렇다. Mapping만 있으면 항상 read/write/execute가 모두 허용된다.", "displayOrder": 1},
-      {"key": "C", "content": "그렇다. Memory permission은 application role만 결정한다.", "displayOrder": 2}
+      {"key": "C", "content": "그렇다. Memory permission은 application role만 결정한다.", "displayOrder": 2},
+      {"key": "D", "content": "그렇다. Mapping은 address만 정하므로 접근 권한을 별도 검사하지 않는다.", "displayOrder": 3}
     ],
     "correctChoiceKey": "A"
   },
@@ -202,7 +204,8 @@
     "choices": [
       {"key": "A", "content": "user argument 준비 → controlled kernel entry → dispatch/검증 → service → return", "displayOrder": 0},
       {"key": "B", "content": "service 완료 → user argument 준비 → kernel entry", "displayOrder": 1},
-      {"key": "C", "content": "context switch → 새 process 생성 → 항상 service 실패", "displayOrder": 2}
+      {"key": "C", "content": "context switch → 새 process 생성 → 항상 service 실패", "displayOrder": 2},
+      {"key": "D", "content": "return → service dispatch → user argument 준비", "displayOrder": 3}
     ],
     "correctChoiceKey": "A"
   },
@@ -248,7 +251,8 @@
     "choices": [
       {"key": "A", "content": "Trap은 exception 또는 interrupt 때문에 handler로 control이 전달되는 것을 가리킨다.", "displayOrder": 0},
       {"key": "B", "content": "Trap은 exception·interrupt와 무관한 세 번째 외부 hardware event다.", "displayOrder": 1},
-      {"key": "C", "content": "Interrupt만 trap을 만들 수 있고 exception은 handler로 전달되지 않는다.", "displayOrder": 2}
+      {"key": "C", "content": "Interrupt만 trap을 만들 수 있고 exception은 handler로 전달되지 않는다.", "displayOrder": 2},
+      {"key": "D", "content": "Trap은 user program이 읽는 application data의 한 종류다.", "displayOrder": 3}
     ],
     "correctChoiceKey": "A"
   },

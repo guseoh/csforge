@@ -145,7 +145,8 @@
     "choices": [
       {"key": "A", "content": "선형 scan: 100 ms", "displayOrder": 0},
       {"key": "B", "content": "전처리 후 query: 805 ms", "displayOrder": 1},
-      {"key": "C", "content": "둘 다 항상 5 ms", "displayOrder": 2}
+      {"key": "C", "content": "둘 다 항상 5 ms", "displayOrder": 2},
+      {"key": "D", "content": "전처리 후 query: 900 ms", "displayOrder": 3}
     ],
     "correctChoiceKey": "A"
   },
@@ -191,7 +192,8 @@
     "choices": [
       {"key": "A", "content": "전체 입력을 정렬하거나 전처리하는 offline 전략을 검토할 수 있다.", "displayOrder": 0},
       {"key": "B", "content": "미래 입력을 알더라도 반드시 즉시 결정을 확정해야 한다.", "displayOrder": 1},
-      {"key": "C", "content": "모든 입력을 영원히 메모리에 저장해야만 한다.", "displayOrder": 2}
+      {"key": "C", "content": "모든 입력을 영원히 메모리에 저장해야만 한다.", "displayOrder": 2},
+      {"key": "D", "content": "입력을 읽기 전에 결과를 확정해야 한다.", "displayOrder": 3}
     ],
     "correctChoiceKey": "A"
   },
