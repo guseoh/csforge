@@ -19,11 +19,11 @@ references:
 ---
 # NAT Mapping
 
-NAT mapping은 private source tuple과 public translated tuple을 기록해 응답 packet을 원래 내부 flow로 되돌린다. mapping에는 protocol과 idle timeout이 관여하며, TCP FIN/RST나 UDP inactivity가 수명을 바꾼다.
+stateful NAT mapping은 내부 source tuple, translated public tuple, transport protocol과 timeout을 연결하는 per-flow state다. 첫 outbound packet이 mapping을 만들면 이후 response는 translated destination을 내부 endpoint로 reverse translation하고, 장비는 packet activity와 TCP FIN/RST 같은 신호에 따라 state를 갱신하거나 종료한다. UDP에는 TCP handshake나 FIN이 없으므로 inactivity timeout의 역할이 특히 크다.
 
-mapping이 사라진 뒤 늦게 도착한 packet은 폐기될 수 있고, 같은 public port를 재사용하면 오래된 packet과 충돌할 위험을 고려한다. NAT state는 durable application session이 아니므로 reconnect가 필요하다.
+mapping이 사라진 뒤 늦게 도착한 response는 대응할 내부 endpoint를 찾지 못해 폐기될 수 있다. public port를 재사용한 새 flow가 생겨도 장비가 옛 packet을 안전하게 application session으로 복원해 주는 것은 아니므로 sequence/state validation과 reconnect가 필요하다. NAT table의 수명은 DB transaction이나 durable login/session의 수명과 다른 네트워크 자원 state다.
 
-### Backend 연결
+failover 장비가 mapping state를 공유하지 않으면 기존 connection의 response가 새 장비에서 번역되지 않아 timeout이 발생할 수 있다. state replication이 있더라도 replication 지연·timeout·active/standby 전환을 별도 failure mode로 본다.
 
-long polling과 WebSocket이 NAT idle timeout보다 오래 유지되면 heartbeat가 필요할 수 있다. heartbeat가 실제 business progress를 보장하지 않는다는 점도 별도 상태로 둔다.
+Backend의 long polling과 WebSocket이 NAT idle timeout보다 오래 유지되면 protocol-level heartbeat나 주기적인 traffic이 mapping을 유지하는 데 도움이 될 수 있다. 그러나 heartbeat는 network path가 살아 있음을 확인할 뿐 business progress나 peer application의 commit을 보장하지 않는다.
 
