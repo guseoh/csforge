@@ -19,11 +19,11 @@ references:
 ---
 # Domain Hierarchy
 
-DNS name은 root에서 TLD, domain, subdomain으로 내려가는 계층적 label이다. zone을 관리하는 authoritative server는 자신이 책임지는 name에 대한 record를 제공하고, 전체 인터넷 이름을 한 서버가 보유하지 않는다.
+DNS name은 여러 label을 점으로 연결한 계층적 이름이며, 완전한 이름의 오른쪽 끝에는 root를 나타내는 빈 label이 있다. 예를 들어 `www.example.com.`은 root 아래의 `com`, 그 아래의 `example`, 그 아래의 `www`를 순서대로 가리킨다. 이 namespace는 하나의 서버가 전체를 보유하는 방식이 아니라, zone과 delegation 경계마다 관리 책임을 나눈다.
 
-label 비교는 대소문자와 trailing dot 처리 같은 protocol 규칙을 따르며, domain 소유권과 application tenant 권한은 다른 문제다. 이름이 해석되어도 해당 address와 port가 reachable하다는 뜻은 아니다.
+resolver는 name의 오른쪽 계층부터 delegation을 따라가며 어느 authoritative server에 다음 질문을 해야 하는지 알아낸다. 하나의 domain과 하나의 zone이 항상 같은 범위인 것은 아니다. zone cut 아래의 subdomain이 다른 zone으로 위임될 수 있고, parent zone의 NS delegation과 child zone의 authoritative record는 서로 다른 관리 경계를 가진다.
 
-### Backend 연결
+DNS label 비교는 protocol 규칙에 따라 대소문자를 구분하지 않지만, application의 URL 문자열·검색 suffix·trailing dot 처리와는 별도 문제다. domain 소유권이나 DNS 응답을 받았다는 사실도 application tenant 권한, 해당 address의 route, service port의 reachability를 대신 보장하지 않는다.
 
-service hostname을 content나 설정에 저장할 때 DNS name과 URL origin을 구분한다. 운영 환경의 split-horizon DNS가 개발 환경과 다른 address를 반환할 수 있음을 문서화한다.
+Backend 설정에서는 DNS name, URL origin의 scheme/authority, 실제 listener와 trust boundary를 구분한다. split-horizon DNS처럼 client network에 따라 같은 name이 다른 address를 반환할 수 있는 환경에서는 resolver 위치와 view를 함께 기록해야 한다.
 

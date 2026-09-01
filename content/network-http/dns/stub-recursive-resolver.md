@@ -19,11 +19,11 @@ references:
 ---
 # Stub and Recursive Resolver
 
-application의 stub resolver는 보통 로컬 설정이나 configured DNS resolver에 질문을 전달한다. recursive resolver는 cache에 답이 없으면 root·TLD·authoritative server를 따라가 필요한 결과를 대신 수집한다.
+application이 직접 모든 DNS hierarchy를 순회하는 대신, stub resolver는 보통 `/etc/resolv.conf`나 OS 설정에 있는 configured recursive resolver로 query를 전달한다. stub은 질문을 구성하고 local name/source policy를 적용하는 쪽에 가깝고, recursive resolver는 recursion을 요청받아 cache를 확인한 뒤 필요하면 root·TLD·authoritative server에 대신 질의한다.
 
-client와 recursive resolver, resolver와 authoritative server 사이의 timeout·retry·cache가 각각 다르다. “DNS 요청 한 번”이 network에서 한 packet 왕복 하나라는 뜻은 아니다.
+recursive resolver가 이미 fresh한 answer를 가지고 있으면 upstream query 없이 응답할 수 있다. cache miss나 만료가 발생하면 resolver가 여러 referral을 따라가며 수집한 결과를 stub에 돌려주므로, application이 본 하나의 DNS API 호출이 network에서 한 packet 왕복 하나라는 뜻은 아니다. resolver가 forwarder를 다시 사용하는 구성도 있어 실제 경로는 환경별로 다르다.
 
-### Backend 연결
+stub-to-resolver, resolver-to-upstream 각각의 timeout·retry·transport와 cache가 독립적으로 동작한다. 한 계층의 retry를 늘리면 전체 application deadline과 resolver 부하를 잠식할 수 있고, recursive resolver가 답을 반환했다는 사실도 뒤의 TCP connect나 HTTP health를 보장하지 않는다.
 
-Java DNS cache와 OS resolver cache, local Docker DNS의 TTL이 다를 수 있다. 장애 시 application process가 실제로 사용한 resolver와 answer를 함께 기록한다.
+Java DNS cache, OS resolver cache, local Docker DNS와 조직 recursive resolver가 서로 다른 수명과 negative-cache policy를 가질 수 있다. Backend 장애에서는 process가 실제로 사용한 resolver, query name/type, answer와 각 단계의 elapsed time을 함께 기록한다.
 
