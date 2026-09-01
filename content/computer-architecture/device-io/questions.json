@@ -1,20 +1,218 @@
 [
-{"kind":"question","contentKey":"computer-architecture.core.device-io.interrupt-exception-trap.q1","promptMarkdown":"interrupt·exception·trap의 관계로 맞는 설명은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["computer-architecture.core.device-io.interrupt-exception-trap"],"choices":[{"key":"A","content":"interrupt와 exception은 원인이고 trap은 둘 중 하나로 handler에 control을 넘기는 사건이다","displayOrder":0},{"key":"B","content":"trap은 항상 외부 timer가 만들며 exception과는 무관하다","displayOrder":1}],"correctChoiceKey":"A"},
-{"kind":"question","contentKey":"computer-architecture.core.device-io.interrupt-exception-trap.q2","promptMarkdown":"device interrupt가 CPU에 알리는 대표 사건은 무엇인가?","questionType":"SHORT_ANSWER","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["computer-architecture.core.device-io.interrupt-exception-trap"],"acceptedAnswers":["I/O 완료나 device 상태 변화"]},
-{"kind":"question","contentKey":"computer-architecture.core.device-io.interrupt-exception-trap.q3","promptMarkdown":"backend I/O 완료 callback과 interrupt를 같은 application 성공으로 기록하면 안 되는 이유를 설명하라.","questionType":"SCENARIO","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["computer-architecture.core.device-io.interrupt-exception-trap"],"modelAnswer":"interrupt는 kernel의 device 사건이고 callback은 runtime/application의 처리 결과다. bytes 수신, parser 완료, domain commit을 단계별로 구분해야 한다."},
-{"kind":"question","contentKey":"computer-architecture.core.device-io.interrupt-handler-entry.q1","promptMarkdown":"interrupt handler entry에서 먼저 보존해야 하는 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["computer-architecture.core.device-io.interrupt-handler-entry"],"choices":[{"key":"A","content":"중단된 execution context와 handler가 복귀할 정보","displayOrder":0},{"key":"B","content":"현재 request의 application response body","displayOrder":1}],"correctChoiceKey":"A"},
-{"kind":"question","contentKey":"computer-architecture.core.device-io.interrupt-handler-entry.q2","promptMarkdown":"interrupt handler를 짧게 유지해야 하는 직접적인 이유는?","questionType":"SHORT_ANSWER","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["computer-architecture.core.device-io.interrupt-handler-entry"],"acceptedAnswers":["다른 interrupt와 useful work의 지연을 줄이기 위해서다"]},
-{"kind":"question","contentKey":"computer-architecture.core.device-io.interrupt-handler-entry.q3","promptMarkdown":"높은 interrupt 처리 비용이 backend request latency로 전파되는 경로를 설명하라.","questionType":"SCENARIO","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["computer-architecture.core.device-io.interrupt-handler-entry"],"modelAnswer":"CPU가 handler에 머무는 동안 application thread와 다른 interrupt가 지연되고 context·cache 비용이 늘어난다. batching·DMA·deferred work로 처리 경계를 조정한다."},
-{"kind":"question","contentKey":"computer-architecture.core.device-io.programmed-io.q1","promptMarkdown":"programmed I/O의 특징은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["computer-architecture.core.device-io.programmed-io"],"choices":[{"key":"A","content":"CPU가 device register를 직접 읽고 쓰며 진행을 제어한다","displayOrder":0},{"key":"B","content":"CPU가 전혀 관여하지 않고 device가 스스로 buffer를 선택한다","displayOrder":1}],"correctChoiceKey":"A"},
-{"kind":"question","contentKey":"computer-architecture.core.device-io.programmed-io.q2","promptMarkdown":"programmed I/O가 CPU-bound일 수 있는 이유는?","questionType":"SHORT_ANSWER","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["computer-architecture.core.device-io.programmed-io"],"acceptedAnswers":["CPU가 data transfer와 device 상태 확인을 반복하기 때문이다"]},
-{"kind":"question","contentKey":"computer-architecture.core.device-io.programmed-io.q3","promptMarkdown":"대량 backend file transfer에서 programmed I/O가 CPU와 throughput 병목이 되는 경로를 설명하라.","questionType":"SCENARIO","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["computer-architecture.core.device-io.programmed-io"],"modelAnswer":"CPU가 작은 단위로 device를 polling하고 copy를 수행하면 useful application과 memory bandwidth를 경쟁한다. DMA나 batching, zero-copy 경로를 비교한다."},
-{"kind":"question","contentKey":"computer-architecture.core.device-io.memory-mapped-io.q1","promptMarkdown":"memory-mapped I/O는 무엇을 하는가?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["computer-architecture.core.device-io.memory-mapped-io"],"choices":[{"key":"A","content":"device register를 address space에 매핑해 load/store로 접근한다","displayOrder":0},{"key":"B","content":"device register를 일반 database row로 복제해 side effect를 없앤다","displayOrder":1}],"correctChoiceKey":"A"},
-{"kind":"question","contentKey":"computer-architecture.core.device-io.memory-mapped-io.q2","promptMarkdown":"MMIO access가 일반 memory와 다를 수 있는 이유는?","questionType":"SHORT_ANSWER","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["computer-architecture.core.device-io.memory-mapped-io"],"acceptedAnswers":["read/write가 device side effect와 ordering을 유발할 수 있다"]},
-{"kind":"question","contentKey":"computer-architecture.core.device-io.memory-mapped-io.q3","promptMarkdown":"backend가 mapped file과 MMIO를 같은 memory array로 취급하면 안 되는 이유를 설명하라.","questionType":"SCENARIO","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["computer-architecture.core.device-io.memory-mapped-io"],"modelAnswer":"mapped file은 page와 persistence semantics를 가지지만 MMIO access는 device command·side effect·ordering을 가진다. address range와 driver contract를 분리해 다룬다."},
-{"kind":"question","contentKey":"computer-architecture.core.device-io.dma.q1","promptMarkdown":"DMA의 목적은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["computer-architecture.core.device-io.dma"],"choices":[{"key":"A","content":"device가 memory와 직접 data를 옮겨 CPU copy 부담을 줄인다","displayOrder":0},{"key":"B","content":"device가 CPU cache의 모든 coherence 작업을 자동으로 대신한다","displayOrder":1}],"correctChoiceKey":"A"},
-{"kind":"question","contentKey":"computer-architecture.core.device-io.dma.q2","promptMarkdown":"DMA에서 cache coherence나 buffer ownership을 확인해야 하는 이유는?","questionType":"SHORT_ANSWER","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["computer-architecture.core.device-io.dma"],"acceptedAnswers":["CPU cache와 device memory view가 달라 stale data나 race가 생길 수 있다"]},
-{"kind":"question","contentKey":"computer-architecture.core.device-io.dma.q3","promptMarkdown":"backend upload path에서 DMA가 있어도 application이 buffer lifetime을 관리해야 하는 이유를 설명하라.","questionType":"SCENARIO","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["computer-architecture.core.device-io.dma"],"modelAnswer":"device transfer가 비동기로 진행되는 동안 buffer를 재사용·해제하면 device가 잘못된 memory를 읽는다. 완료 notification과 ownership 반환 시점을 명확히 한다."},
-{"kind":"question","contentKey":"computer-architecture.core.device-io.device-cpu-memory-path.q1","promptMarkdown":"device-CPU-memory path에서 DMA와 interrupt의 관계는?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["computer-architecture.core.device-io.device-cpu-memory-path"],"choices":[{"key":"A","content":"DMA가 transfer를 수행하고 interrupt가 완료나 상태 변화를 알릴 수 있다","displayOrder":0},{"key":"B","content":"interrupt가 모든 bytes를 대신 저장해 DMA buffer가 필요 없게 한다","displayOrder":1}],"correctChoiceKey":"A"},
-{"kind":"question","contentKey":"computer-architecture.core.device-io.device-cpu-memory-path.q2","promptMarkdown":"device I/O path의 queue와 completion을 구분하라.","questionType":"SHORT_ANSWER","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["computer-architecture.core.device-io.device-cpu-memory-path"],"acceptedAnswers":["request가 device에 제출된 것과 data transfer가 끝난 것은 다르다"]},
-{"kind":"question","contentKey":"computer-architecture.core.device-io.device-cpu-memory-path.q3","promptMarkdown":"대용량 backend socket response에서 device·kernel·user buffer의 copy 경계를 추적해야 하는 이유를 설명하라.","questionType":"SCENARIO","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["computer-architecture.core.device-io.device-cpu-memory-path"],"modelAnswer":"각 경계의 copy와 buffer ownership이 CPU·memory bandwidth·latency를 결정하고 partial completion과 cancellation을 만든다. sendfile/DMA 가능성과 correctness를 함께 측정한다."}
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.device-io.interrupt-exception-trap.q1",
+    "promptMarkdown": "RISC-V 문맥에서 interrupt, exception, trap의 관계를 가장 정확하게 설명한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.device-io.interrupt-exception-trap"],
+    "choices": [
+      {"key": "A", "content": "interrupt는 비동기 외부 event, exception은 현재 instruction과 연관된 동기 event이고, trap은 이들 때문에 handler로 control이 이전되는 사건이다.", "displayOrder": 0},
+      {"key": "B", "content": "trap은 exception·interrupt와 무관한 세 번째 외부 device event다.", "displayOrder": 1},
+      {"key": "C", "content": "exception은 항상 timer가 만들고 interrupt는 항상 illegal instruction이 만든다.", "displayOrder": 2},
+      {"key": "D", "content": "ECALL은 외부 interrupt이며 실행 중인 instruction과 관계가 없다.", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "A"
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.device-io.interrupt-exception-trap.q2",
+    "promptMarkdown": "ECALL이 software가 의도적으로 요청한 동작인데도 RISC-V에서 synchronous exception/trap 흐름으로 설명할 수 있는 이유를 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.device-io.interrupt-exception-trap"],
+    "modelAnswer": "ECALL은 현재 실행 중인 instruction 자체가 environment call exception을 발생시키므로 asynchronous device interrupt가 아니다. 그 exception 때문에 processor가 privileged handler로 control을 넘기는 사건은 trap이며, handler가 system environment의 policy에 따라 요청을 처리한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.device-io.interrupt-exception-trap.q3",
+    "promptMarkdown": "CPU가 instruction A를 실행하는 중 timer interrupt가 pending되었고, 다음 instruction B는 illegal instruction이다. timer event와 B의 illegal-instruction event를 각각 interrupt/exception으로 분류하고, 둘 모두 최종적으로 어떤 공통 control-transfer mechanism으로 처리될 수 있는지 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.device-io.interrupt-exception-trap"],
+    "modelAnswer": "Timer는 현재 instruction의 의미와 독립적으로 발생하는 asynchronous interrupt이고, illegal instruction은 B의 decode/execute와 직접 연관된 synchronous exception이다. Architecture의 우선순위와 enable 조건에 따라 실제로 어느 event를 먼저 받을지는 달라질 수 있지만, 받아들여진 원인은 trap entry를 통해 handler로 control이 이전되고 cause/PC state가 기록된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.device-io.interrupt-handler-entry.q1",
+    "promptMarkdown": "RISC-V machine-mode trap entry에서 역할의 연결이 올바른 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.device-io.interrupt-handler-entry"],
+    "choices": [
+      {"key": "A", "content": "mepc는 중단/exception instruction 위치, mcause는 원인, mtvec는 handler entry configuration에 사용된다.", "displayOrder": 0},
+      {"key": "B", "content": "mepc는 device payload 전체를 저장하고 mcause는 application HTTP status를 저장한다.", "displayOrder": 1},
+      {"key": "C", "content": "trap entry가 모든 general-purpose register를 반드시 hardware stack에 자동 저장한다.", "displayOrder": 2},
+      {"key": "D", "content": "mtvec가 설정되면 interrupt enable과 pending state는 더 이상 필요 없다.", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "A"
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.device-io.interrupt-handler-entry.q2",
+    "promptMarkdown": "trap entry가 mepc/mcause 같은 일부 architectural state를 저장한다고 해서 handler software가 general-purpose register 보존을 무시할 수 없는 이유를 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.device-io.interrupt-handler-entry"],
+    "modelAnswer": "Interrupt는 임의의 execution point에 들어올 수 있으므로 중단된 code가 사용 중인 general-purpose register를 handler가 덮어쓰면 원래 program state가 손상된다. ISA가 trap entry에서 자동으로 보존하는 state와 software handler가 stack/save area에 추가로 보존해야 하는 state를 구분해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.device-io.interrupt-handler-entry.q3",
+    "promptMarkdown": "level-triggered device interrupt의 handler가 completion을 읽었지만 interrupt source를 acknowledge/clear하지 않고 return한다. CPU 사용률과 application latency에 어떤 현상이 생길 수 있는지 handler-entry 흐름으로 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.device-io.interrupt-handler-entry"],
+    "modelAnswer": "Device가 interrupt condition을 계속 asserted하면 return 직후 같은 interrupt가 다시 pending/accepted되어 trap entry가 반복될 수 있다. CPU가 handler에 계속 머물면서 application thread와 다른 work가 지연되고 interrupt storm처럼 CPU 사용률과 tail latency가 함께 증가할 수 있다. Driver는 device specification에 맞게 source를 consume하고 acknowledge/clear해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.device-io.programmed-io.q1",
+    "promptMarkdown": "busy polling programmed I/O와 interrupt-driven I/O의 trade-off를 올바르게 설명한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.device-io.programmed-io"],
+    "choices": [
+      {"key": "A", "content": "Polling은 completion을 빠르게 감지할 수 있지만 CPU/MMIO access를 계속 소비할 수 있고, interrupt는 기다리는 CPU를 놓아주지만 entry/handler 비용이 있다.", "displayOrder": 0},
+      {"key": "B", "content": "Interrupt를 쓰면 device transfer의 모든 byte가 CPU register를 거치지 않는 것이 항상 보장된다.", "displayOrder": 1},
+      {"key": "C", "content": "Polling interval은 CPU 사용률과 completion latency에 아무 영향이 없다.", "displayOrder": 2},
+      {"key": "D", "content": "Programmed I/O와 DMA는 동일한 mechanism 이름만 다르다.", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "A"
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.device-io.programmed-io.q2",
+    "promptMarkdown": "device가 작업 시작 후 120 μs에 ready가 되고 CPU가 50 μs 간격으로 status를 polling한다. 첫 polling을 0 μs에 수행했다면 ready를 처음 관찰하는 시점은 몇 μs인가?",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.device-io.programmed-io"],
+    "acceptedAnswers": ["150 μs", "150us", "150 us", "150"]
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.device-io.programmed-io.q3",
+    "promptMarkdown": "초저지연 device는 보통 5 μs 안에 완료되지만 초당 수십만 번 event가 발생한다. 무조건 interrupt가 polling보다 낫다고 결론 내릴 수 없는 이유를 CPU cost, wakeup latency, event rate 관점에서 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.device-io.programmed-io"],
+    "modelAnswer": "Event가 매우 짧고 빈번하면 매번 interrupt/trap/context handling을 하는 비용과 wakeup latency가 실제 device wait보다 커질 수 있다. Busy polling은 CPU core를 계속 소비하지만 completion을 빠르게 관찰할 수 있으므로 dedicated core, power budget, interrupt moderation/batching과 실제 latency/CPU utilization을 비교해 선택해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.device-io.memory-mapped-io.q1",
+    "promptMarkdown": "MMIO register access를 일반 RAM access와 동일하게 취급할 수 없는 이유로 가장 적절한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.device-io.memory-mapped-io"],
+    "choices": [
+      {"key": "A", "content": "read/write가 device command, status consumption 같은 side effect와 별도 ordering/cacheability 규칙을 가질 수 있다.", "displayOrder": 0},
+      {"key": "B", "content": "MMIO address는 어떤 architecture에서도 virtual address를 사용할 수 없다.", "displayOrder": 1},
+      {"key": "C", "content": "MMIO read는 항상 side effect가 없고 CPU cache에 무기한 저장해도 된다.", "displayOrder": 2},
+      {"key": "D", "content": "MMIO write는 device specification과 무관하게 항상 8-byte access만 허용한다.", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "A"
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.device-io.memory-mapped-io.q2",
+    "promptMarkdown": "posted MMIO write 때문에 source code의 `write register A; write register B;` 순서와 device가 실제로 관찰하는 완료 시점이 단순히 같다고 볼 수 없는 이유를 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.device-io.memory-mapped-io"],
+    "modelAnswer": "MMIO write가 interconnect나 bridge의 posted buffer에 머문 채 CPU가 다음 instruction으로 진행할 수 있기 때문이다. Device specification과 platform API가 순서를 요구한다면 read-back, ordered accessor 또는 적절한 I/O barrier처럼 documented mechanism을 사용해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.device-io.memory-mapped-io.q3",
+    "promptMarkdown": "어떤 device의 status register는 read-to-clear다. Driver가 디버깅을 위해 같은 register를 두 번 연속 읽고 두 번째 값만 처리했다. 어떤 오류가 생길 수 있으며 왜 normal memory variable을 읽는 것과 다른지 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.device-io.memory-mapped-io"],
+    "modelAnswer": "첫 MMIO read 자체가 status bit를 clear하는 side effect를 만들 수 있어 두 번째 read에서는 event 정보가 사라질 수 있다. Normal RAM read는 일반적으로 값을 관찰하는 것만으로 device state를 소비하지 않지만 MMIO semantics는 device specification이 정하므로 accessor 호출 횟수와 순서도 correctness의 일부다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.device-io.dma.q1",
+    "promptMarkdown": "DMA buffer와 address에 대한 설명으로 가장 정확한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.device-io.dma"],
+    "choices": [
+      {"key": "A", "content": "Device가 사용하는 DMA address는 IOMMU/bus mapping 때문에 CPU virtual address와 같다고 가정할 수 없고 ownership/sync 규칙도 지켜야 한다.", "displayOrder": 0},
+      {"key": "B", "content": "DMA를 사용하면 CPU와 device가 같은 buffer를 아무 synchronization 없이 동시에 수정해도 된다.", "displayOrder": 1},
+      {"key": "C", "content": "DMA completion 전에 software가 buffer를 free해도 controller가 자동으로 새 address를 찾는다.", "displayOrder": 2},
+      {"key": "D", "content": "DMA는 interrupt와 같은 말이므로 data transfer는 여전히 CPU가 byte마다 수행한다.", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "A"
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.device-io.dma.q2",
+    "promptMarkdown": "DMA streaming mapping에서 CPU가 device에 buffer ownership을 넘긴 뒤 해당 buffer를 계속 수정하면 안 되는 이유를 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.device-io.dma"],
+    "modelAnswer": "Device가 비동기적으로 같은 memory를 읽거나 쓰는 동안 CPU가 내용을 바꾸면 transfer data race와 corruption이 생길 수 있다. 또한 non-coherent platform에서는 CPU cache와 device view가 달라질 수 있으므로 DMA API가 요구하는 map/sync/unmap과 ownership 전환 시점을 지켜야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.device-io.dma.q3",
+    "promptMarkdown": "NIC transmit descriptor에 buffer A를 제출한 직후 application이 해당 memory를 object pool에 반환했고 다른 request가 A를 덮어썼다. DMA completion은 아직 오지 않았다. 전송 데이터가 깨질 수 있는 이유와 안전한 lifetime 경계를 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.device-io.dma"],
+    "modelAnswer": "NIC/DMA controller는 descriptor가 가리키는 buffer를 completion 전까지 비동기적으로 읽을 수 있다. Pool 재사용으로 같은 memory가 덮어써지면 device가 원래 payload 대신 변경된 bytes를 전송할 수 있다. Buffer는 DMA ownership이 끝났다는 completion과 필요한 sync를 확인한 뒤에야 재사용/free해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.device-io.device-cpu-memory-path.q1",
+    "promptMarkdown": "DMA 기반 receive path의 일반적인 순서로 가장 자연스러운 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.device-io.device-cpu-memory-path"],
+    "choices": [
+      {"key": "A", "content": "CPU/driver가 descriptor와 buffer를 준비 → device/DMA가 memory에 기록 → completion을 알림 → software가 buffer를 소비", "displayOrder": 0},
+      {"key": "B", "content": "application이 완료 callback 실행 → 그 뒤 device가 처음 data를 수신 → 마지막에 buffer를 할당", "displayOrder": 1},
+      {"key": "C", "content": "interrupt가 모든 bytes를 memory에 복사 → DMA가 application method를 호출", "displayOrder": 2},
+      {"key": "D", "content": "queue에 descriptor를 넣는 순간 physical device transfer도 항상 끝난다", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "A"
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.device-io.device-cpu-memory-path.q2",
+    "promptMarkdown": "`write()`나 `send()` 같은 software API가 성공해 반환한 시점과 physical device가 실제 전송을 완료한 시점을 일반적으로 같은 순간으로 볼 수 없는 이유를 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.device-io.device-cpu-memory-path"],
+    "modelAnswer": "Software API는 data를 kernel buffer/queue에 받아들였거나 일정 contract를 만족했다는 뜻일 수 있고, 이후 queueing, DMA, device transfer가 비동기로 남아 있을 수 있다. 정확한 완료 의미는 API와 device path의 contract를 확인해야 하며 application completion, kernel enqueue, DMA completion, physical transmission을 구분해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.device-io.device-cpu-memory-path.q3",
+    "promptMarkdown": "Storage queue depth를 4에서 128로 높였더니 throughput은 증가했지만 p99 request latency와 in-flight memory가 크게 늘었다. Device-CPU-memory path 관점에서 이 현상을 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.device-io.device-cpu-memory-path"],
+    "modelAnswer": "더 많은 descriptor/request를 동시에 제출하면 device와 DMA가 병렬성을 활용해 utilization과 aggregate throughput을 높일 수 있다. 하지만 각 request가 queue에서 더 오래 기다릴 수 있고 completion 전까지 buffer/descriptor ownership이 유지되어 in-flight memory도 증가한다. 따라서 queue depth는 throughput만이 아니라 queuing latency, memory pressure, cancellation/error recovery와 함께 조정해야 한다."
+  }
 ]
