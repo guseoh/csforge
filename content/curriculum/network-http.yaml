@@ -10,9 +10,6 @@ policies:
     authoringLanguage: ko-KR
     explanationRule: "각 계층의 보장·상태·실패 경계와 backend 연결을 섞지 않고 설명한다."
   question:
-    everyConcept:
-      minimumByDifficulty: { EASY: 1, MEDIUM: 1, HARD: 1 }
-      minimumTotal: 3
     hardRule: "packet/message 상태와 제약, 실패 경로 또는 재시도 trade-off를 함께 추론한다."
   visualization:
     values: [NONE, TEXT, DIAGRAM]

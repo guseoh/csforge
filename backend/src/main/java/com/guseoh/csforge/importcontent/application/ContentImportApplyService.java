@@ -19,6 +19,7 @@ import com.guseoh.csforge.learning.domain.Topic;
 import com.guseoh.csforge.learning.domain.TopicRepository;
 import com.guseoh.csforge.question.domain.Question;
 import com.guseoh.csforge.question.domain.QuestionDifficulty;
+import com.guseoh.csforge.question.domain.QuestionChoiceRepository;
 import com.guseoh.csforge.question.domain.QuestionRepository;
 import com.guseoh.csforge.question.domain.QuestionStatus;
 import com.guseoh.csforge.question.domain.QuestionType;
@@ -32,6 +33,7 @@ public class ContentImportApplyService {
     private final ConceptRepository conceptRepository;
     private final ReferenceRepository referenceRepository;
     private final QuestionRepository questionRepository;
+    private final QuestionChoiceRepository questionChoiceRepository;
     private final com.guseoh.csforge.learning.domain.ConceptReferenceRepository conceptReferenceRepository;
 
     @Transactional
@@ -106,9 +108,29 @@ public class ContentImportApplyService {
         if (newQuestion) question = Question.createDraft(item.contentKey(), item.promptMarkdown(), QuestionType.valueOf(item.questionType()), QuestionDifficulty.valueOf(item.difficulty()), item.explanationMarkdown());
         else question.reviseMetadata(item.promptMarkdown(), QuestionDifficulty.valueOf(item.difficulty()), item.explanationMarkdown());
         if (newQuestion || !sameStructure(item, question)) {
+            prepareChoiceOrderUpdate(question, choices);
             question.replaceStructure(QuestionType.valueOf(item.questionType()), choices, item.correctChoiceKey(), item.acceptedAnswers(), item.modelAnswer(), linkedConcepts);
         }
         question.setCanonicalStatus(QuestionStatus.valueOf(item.status())); questionRepository.save(question); questions.put(item.contentKey(), question);
+    }
+
+    private void prepareChoiceOrderUpdate(Question question, List<Question.ChoiceDraft> incomingChoices) {
+        if (!choiceOrdersMayConflict(question, incomingChoices)) return;
+        int maxIncomingOrder = incomingChoices.stream().mapToInt(Question.ChoiceDraft::displayOrder).max().orElse(0);
+        int maxExistingOrder = question.getChoices().stream().mapToInt(choice -> choice.getDisplayOrder()).max().orElse(0);
+        long offset = (long) maxIncomingOrder + 1L;
+        if (offset > Integer.MAX_VALUE - (long) maxExistingOrder) {
+            throw new IllegalArgumentException("choice displayOrder values leave no safe temporary range");
+        }
+        questionChoiceRepository.shiftDisplayOrders(question.getId(), (int) offset);
+    }
+
+    private static boolean choiceOrdersMayConflict(Question question, List<Question.ChoiceDraft> incomingChoices) {
+        if (question.getChoices().isEmpty() || incomingChoices.isEmpty()) return false;
+        Map<String, Integer> existingOrders = question.getChoices().stream()
+                .collect(java.util.stream.Collectors.toMap(choice -> choice.getChoiceKey(), choice -> choice.getDisplayOrder()));
+        if (existingOrders.size() != incomingChoices.size()) return true;
+        return incomingChoices.stream().anyMatch(choice -> !java.util.Objects.equals(existingOrders.get(choice.choiceKey()), choice.displayOrder()));
     }
 
     private static int count(ImportAnalysis a, ImportClassification c) { return Math.toIntExact(a.count(c)); }

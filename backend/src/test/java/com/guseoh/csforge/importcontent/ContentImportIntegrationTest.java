@@ -173,6 +173,25 @@ class ContentImportIntegrationTest {
     }
 
     @Test
+    void questionChoiceOrderSwapDoesNotViolateUniqueConstraint() throws Exception {
+        List<Part> base = sampleParts();
+        JsonNode initial = json(post("/api/imports/preview", base, null)).get("body");
+        post("/api/imports/apply", base, initial.get("previewDigest").asText());
+        String swappedQuestion = "{\"kind\":\"question\",\"contentKey\":\"test.q1\",\"promptMarkdown\":\"Choose\",\"questionType\":\"MULTIPLE_CHOICE\",\"difficulty\":\"EASY\",\"status\":\"PUBLISHED\",\"conceptKeys\":[\"test.concept\"],\"choices\":[{\"key\":\"A\",\"content\":\"yes\",\"displayOrder\":1},{\"key\":\"B\",\"content\":\"no\",\"displayOrder\":0}],\"correctChoiceKey\":\"A\"}";
+        List<Part> swapped = List.of(base.get(0), base.get(1), new Part("question.json", "application/json", swappedQuestion));
+
+        JsonNode preview = json(post("/api/imports/preview", swapped, null)).get("body");
+
+        assertTrue(preview.get("canApply").asBoolean());
+        assertEquals(200, post("/api/imports/apply", swapped, preview.get("previewDigest").asText()).statusCode());
+        long questionId = jdbc.queryForObject("select id from question where content_key = 'test.q1'", Long.class);
+        assertEquals(1, jdbc.queryForObject("select display_order from question_choice where question_id = ? and choice_key = 'A'", Integer.class, questionId));
+        assertEquals(0, jdbc.queryForObject("select display_order from question_choice where question_id = ? and choice_key = 'B'", Integer.class, questionId));
+        JsonNode identicalPreview = json(post("/api/imports/preview", swapped, null)).get("body");
+        assertEquals(1, identicalPreview.get("totals").get("unchanged").asInt());
+    }
+
+    @Test
     void existingUniqueSlugConflictIsPreviewError() throws Exception {
         jdbc.update("insert into topic (learning_area_id, content_key, slug, title, display_order, active) select id, 'existing.conflict', 'taken', 'Existing', 0, true from learning_area where slug = 'java'");
         List<Part> parts = List.of(new Part("conflict.json", "application/json", "{\"kind\":\"topic\",\"contentKey\":\"new.conflict\",\"areaSlug\":\"java\",\"slug\":\"taken\",\"title\":\"Conflict\"}"));

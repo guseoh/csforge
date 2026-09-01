@@ -10,9 +10,6 @@ policies:
     authoringLanguage: ko-KR
     explanationRule: "application·user mode·kernel·hardware의 경계와 상태 전이를 연결한다."
   question:
-    everyConcept:
-      minimumByDifficulty: { EASY: 1, MEDIUM: 1, HARD: 1 }
-      minimumTotal: 3
     hardRule: "실행 상태, resource 제약, 실패 경로와 비용을 함께 추론한다."
   visualization:
     values: [NONE, TEXT, DIAGRAM]

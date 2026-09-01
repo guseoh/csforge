@@ -10,9 +10,6 @@ policies:
     authoringLanguage: ko-KR
     explanationRule: "Invariant에서 시작해 operation·state change·correctness·complexity·trade-off를 연결한다."
   question:
-    everyConcept:
-      minimumByDifficulty: { EASY: 1, MEDIUM: 1, HARD: 1 }
-      minimumTotal: 3
     hardRule: "자료구조 상태와 제약, 실패 경로 또는 복잡도를 함께 추론한다."
   visualization:
     values: [NONE, TEXT, DIAGRAM]

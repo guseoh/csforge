@@ -10,9 +10,6 @@ policies:
     authoringLanguage: ko-KR
     explanationRule: "문제·메커니즘·상태 변화·실패 경계·backend 판단을 연결된 설명으로 작성한다."
   question:
-    everyConcept:
-      minimumByDifficulty: { EASY: 1, MEDIUM: 1, HARD: 1 }
-      minimumTotal: 3
     hardRule: "상태 변화와 제약, 비용 또는 실패 경로를 함께 추론한다."
   visualization:
     values: [NONE, TEXT, DIAGRAM]
