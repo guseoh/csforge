@@ -21,6 +21,12 @@ references:
     language: en
     displayOrder: 2
     relationNote: "cache entity key namespace 예시 확인"
+  - url: "https://techblog.woowahan.com/22767/"
+    title: "우아한형제들 기술블로그: Spring Cache + Spring Data Redis 사용 시 record 직렬화 오류 원인과 해결"
+    referenceType: BLOG
+    language: ko
+    displayOrder: 3
+    relationNote: "serializer 설정과 Java record type 정보가 기존 cache value 호환성에 영향을 주는 실제 사례 확인"
 ---
 # cache key와 serialization contract
 
@@ -65,4 +71,3 @@ write 뒤 어떤 key를 삭제해야 하는지 모르면 cache hit가 남습니�
 ### 면접에서 설명한다면
 
 Cache key는 namespace와 identity뿐 아니라 tenant와 representation version을 포함하는 계약입니다. value serialization도 배포 간 호환성이 필요하며, 호환되지 않으면 versioned key로 안전하게 miss를 유도할 수 있습니다. deterministic key는 invalidation과 관측을 쉽게 하고, key·value 모두 민감정보와 과도한 크기를 피해야 합니다.
-
