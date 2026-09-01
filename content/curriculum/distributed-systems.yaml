@@ -10,14 +10,13 @@ policies:
     authoringLanguage: ko-KR
     explanationRule: 여러 process·node가 독립적으로 실패하고 통신하는 환경에서 시간·일관성·조정의 보장과 비용을 명시한다.
   question:
-    minimumPerConcept: 2
     topicDifficultyCoverage: [EASY, MEDIUM, HARD]
     areaTypeCoverage: [MULTIPLE_CHOICE, SHORT_ANSWER, DESCRIPTIVE, SCENARIO]
     hardRule: clock skew와 deadline, partial failure·failure detector, replication·quorum, leader election, lease fencing, saga compensation 또는 CAP trade-off를 운영 상황으로 판단하게 한다.
     shortAnswerRule: 분산 시스템 용어 이름만으로 정답을 인정하지 않고 어떤 보장과 failure mode를 다루는지 함께 요구한다.
   source:
-    primary: [IETF RFC 5905, gRPC Documentation, Kubernetes Documentation, etcd Documentation, ACM CAP paper]
-    rule: protocol·coordination primitive의 명시적 보장과 애플리케이션 수준의 추가 계약을 구분한다.
+    primary: [IETF RFC 5905, gRPC Documentation, Kubernetes Documentation, etcd Documentation, Amazon Dynamo paper, ACM CAP paper]
+    rule: protocol·coordination primitive의 명시적 보장과 애플리케이션 수준의 추가 계약을 구분하고, Dynamo-style replica quorum과 consensus majority를 같은 모델로 설명하지 않는다.
   visualization:
     values: [NONE, TEXT, DIAGRAM]
     rule: message delay, replica read/write, quorum, leader transition과 saga compensation처럼 시간·상태·관계가 핵심인 곳에 사용한다.
@@ -46,14 +45,14 @@ topics:
     title: failure detector와 suspicion
     order: 30
     level: 2
-    objective: timeout 기반 liveness 판단의 false positive·false negative와 recovery state를 다룬다.
+    objective: timeout 기반 liveness 판단의 false positive·false negative와 recovery state를 다루고 failure suspicion과 split-brain safety mechanism을 구분한다.
     density: CORE
     visualization: DIAGRAM
 - key: distributed.core.consistency
   title: Replication and consistency
   order: 20
-  scope: replica model, quorum/conflict와 leader election의 보장·비용을 다룬다.
-  boundary: Database의 transaction/isolation과 Messaging의 partition ordering을 반복하지 않고 복제된 state의 관측·조정 semantics를 소유한다.
+  scope: replica model, Dynamo-style read/write quorum·conflict와 consensus majority·leader transition의 서로 다른 보장과 비용을 다룬다.
+  boundary: Database의 transaction/isolation과 Messaging의 partition ordering을 반복하지 않고 복제된 state의 관측·조정 semantics를 소유한다. N/R/W quorum과 Raft-style consensus quorum은 공통 단어만 보고 같은 protocol로 취급하지 않는다.
   concepts:
   - key: distributed.core.consistency.replication-models
     title: replication과 consistency models
@@ -66,14 +65,14 @@ topics:
     title: quorum과 conflict resolution
     order: 20
     level: 2
-    objective: read/write quorum, stale data와 concurrent conflict를 data semantics에 맞게 해결한다.
+    objective: 고정 replica 집합의 N/R/W quorum intersection이 직접 보장하는 것과 보장하지 않는 것을 설명하고, Dynamo-style repair/conflict resolution을 consensus majority와 구분해 data semantics에 맞게 판단한다.
     density: CORE
     visualization: TEXT
   - key: distributed.core.consistency.leader-election
-    title: leader election
+    title: leader election과 consensus boundary
     order: 30
     level: 2
-    objective: single active leader, election interruption과 committed/uncommitted operation 경계를 설명한다.
+    objective: leader election 자체와 consensus를 동일시하지 않고 term/epoch·majority commit·committed/uncommitted operation 경계와 stale leader 차단을 설명한다.
     density: CORE
     visualization: DIAGRAM
 - key: distributed.core.coordination
