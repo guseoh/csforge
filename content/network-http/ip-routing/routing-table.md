@@ -19,11 +19,11 @@ references:
 ---
 # Routing Table
 
-routing table은 destination prefix에 맞는 next hop, interface, metric을 기록한다. packet마다 route lookup을 수행하고, direct-connected subnet과 default route를 포함해 가장 구체적인 경로를 고른다.
+routing table은 destination prefix와 next hop, egress interface, metric 또는 priority를 연결해 packet을 어느 경로로 내보낼지 결정하는 forwarding state다. host나 router는 destination마다 matching entry를 찾고, direct-connected route·더 구체적인 route·default route와 같은 후보의 선택 규칙을 적용한다. route lookup은 connection이 처음 만들어질 때만이 아니라 packet forwarding 경로에서 반복될 수 있다.
 
-route가 존재해도 ARP/NDP로 next hop을 resolve하지 못하거나 firewall이 drop하면 전달되지 않는다. control plane이 배운 route와 실제 forwarding table, network namespace별 table을 구분한다.
+선택된 route는 전달의 필요조건이지 성공 결과가 아니다. next hop이 현재 link에 실제로 도달 가능한지 ARP/NDP로 resolve해야 하고, egress interface가 up인지, firewall/policy가 허용하는지, response가 돌아올 route가 있는지 확인해야 한다. route가 없을 때 ICMP unreachable을 보낼 수도 있지만 policy에 따라 silent drop될 수 있다.
 
-### Backend 연결
+control plane이 routing protocol로 배운 정보, kernel/FIB가 실제 forwarding에 사용하는 entry, network namespace·VRF별 table은 같은 데이터가 아닐 수 있다. 같은 destination도 container·VPN·host에서 다른 source interface와 table을 사용할 수 있으므로 장애 명령의 실행 context를 기록한다.
 
-컨테이너·VPN·호스트에서 같은 destination에 다른 route가 있을 수 있다. 연결 장애 명령을 실행할 때 어느 namespace와 source interface에서 확인했는지 기록한다.
+Backend 연결 장애에서는 DNS가 반환한 address, selected prefix/next hop, neighbor resolution, egress policy와 return path를 순서대로 분리한다. route table만 보고 remote service health를 판단하지 않는다.
 

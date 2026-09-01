@@ -19,11 +19,9 @@ references:
 ---
 # ICMP
 
-ICMP는 IP 전달 실패, unreachable, time exceeded, echo 같은 control message를 전달한다. application payload의 reliable transport가 아니라 network layer의 상태와 오류를 알리는 보조 protocol이다.
+ICMP는 IP 자체의 forwarding과 관련된 error·control message를 전달하는 network-layer protocol이다. destination unreachable, time exceeded, parameter 문제와 echo request/reply 같은 진단 기능을 제공하지만, application payload를 ordered reliable byte stream으로 운반하거나 TCP connection을 대신하지 않는다. ICMP error가 원래 packet의 source에 전달되면 송신 host가 route·MTU·reachability 문제를 더 빨리 알 수 있다.
 
-ICMP가 차단되면 실제 forwarding이 항상 실패하는 것은 아니지만 PMTUD와 진단 정보가 사라질 수 있다. echo reply가 없다는 사실만으로 TCP port가 닫혔다고 결론 내리지 않는다.
+ICMP를 차단해도 모든 IP forwarding이 즉시 실패하는 것은 아니다. 그러나 IPv4/IPv6 Path MTU Discovery에 필요한 feedback이나 unreachable/time-exceeded 진단이 사라져 큰 packet만 통과하지 않는 black hole을 만들 수 있다. echo reply가 없다는 사실만으로 host down, TCP port closed, HTTP service unhealthy를 서로 구분할 수 없다.
 
-### Backend 연결
-
-connect timeout을 조사할 때 ICMP 오류, TCP SYN 응답, TLS와 HTTP 단계를 분리한다. 운영 firewall은 필요한 ICMP 종류와 rate limit을 검토한다.
+connect timeout을 조사할 때 ICMP error, TCP SYN/SYN-ACK, TLS handshake와 HTTP response를 별도 단계로 본다. 운영 firewall은 ICMP를 전부 허용하거나 전부 차단하는 대신 protocol이 요구하는 type/code와 rate limit, 보안 정책을 함께 검토한다.
 

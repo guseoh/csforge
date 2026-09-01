@@ -19,11 +19,11 @@ references:
 ---
 # Private and Public IP
 
-private IPv4 ranges는 조직 내부에서 재사용할 수 있지만 public Internet router가 일반적으로 직접 route하지 않는다. 외부 통신에는 NAT, proxy, VPN, public load balancer처럼 address boundary를 넘는 장치가 필요하다.
+private IPv4 ranges는 조직 내부에서 여러 곳이 재사용할 수 있도록 지정된 address space이며 public Internet에서 globally routable한 endpoint로 취급되지 않는다. 그래서 private host가 Internet service에 나갈 때는 NAT/PAT로 source address와 port를 public mapping으로 바꾸거나, proxy·VPN처럼 다른 routing boundary를 사용한다. 이 변환은 packet reachability를 만드는 기능이지 application authorization을 대신하지 않는다.
 
-public IP가 있다고 application port가 외부에서 열리는 것은 아니다. firewall, security group, listener bind, route와 service health가 모두 맞아야 end-to-end 연결이 된다.
+public IP가 있다고 application port가 외부에서 열리는 것도 아니다. inbound packet이 route를 따라 도착하려면 listener bind, firewall/security group, NAT mapping 또는 load balancer rule과 service health가 모두 맞아야 하며, response의 return path도 필요하다. 반대로 private network 안에서는 NAT 없이도 직접 route할 수 있으므로 `private = 항상 연결 불가`로 일반화하지 않는다.
 
-### Backend 연결
+private address를 Internet DNS에 등록해도 외부 client가 그 address를 route할 수 있게 되지는 않는다. 보통 public load balancer/reverse proxy를 공개 경계로 두고 backend는 private route로 유지하며, 어느 client가 실제로 private network에 들어와 있는지와 DNS view를 환경별로 구분한다.
 
-backend URL에 private database address를 넣을 때 실행 환경의 network reachability를 확인한다. public으로 노출하는 대신 private route와 least-privilege firewall을 우선한다.
+Backend URL에 private database address를 넣을 때는 실행 environment의 route·NAT·security policy를 확인한다. public으로 노출해 문제를 숨기기보다 필요한 private path와 least-privilege rule을 명시한다.
 

@@ -19,10 +19,8 @@ references:
 ---
 # TTL and Hop Limit
 
-IPv4 TTL과 IPv6 Hop Limit은 packet이 router를 지날 때 감소하는 hop counter다. 0이 되면 packet을 폐기해 routing loop가 무한히 network를 점유하는 것을 막고, 필요하면 ICMP time exceeded를 보낸다.
+IPv4 TTL(Time To Live)과 IPv6 Hop Limit은 packet이 forwarding될 때 감소하는 IP-layer lifetime counter다. 이름에 time이 들어가도 일반적인 router에서는 초 단위 timer가 아니라 hop마다 줄어드는 값으로 동작한다. counter가 소진되면 router는 packet을 폐기해 route loop가 network와 queue를 무한히 점유하지 못하게 하고, 가능하면 ICMP Time Exceeded를 source에 보낸다.
 
-counter는 시간 초 단위가 아니라 hop 수에 가까운 lifetime 제한이다. traceroute는 이 값이 0이 되는 응답을 이용해 중간 router를 추정하지만 방화벽과 policy로 응답이 생략될 수 있다.
+송신 host가 작은 TTL/Hop Limit으로 probe를 보내고 중간 router가 소진 응답을 돌려주면 traceroute가 hop을 추정할 수 있다. 하지만 firewall, rate limit, asymmetric path와 router policy가 응답을 막을 수 있으므로 응답이 없다는 사실이 해당 hop의 유일한 증거는 아니다. TTL이 충분해도 route가 없거나 application timeout이 발생할 수 있다.
 
-### Backend 연결
-
-같은 request가 여러 intermediary를 통과할 때 network loop와 HTTP retry loop를 구분한다. TTL이 정상이어도 proxy가 request를 반복 생성할 수 있으므로 request ID를 추적한다.
+같은 request가 여러 intermediary를 통과할 때 IP forwarding loop와 HTTP proxy/retry loop는 별개다. TTL이 정상이어도 proxy가 request를 반복 생성할 수 있으므로 network counter와 application request ID를 함께 추적한다.
