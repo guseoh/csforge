@@ -544,7 +544,7 @@ topics:
         title: "Directory and Path"
         order: 40
         level: 1
-        objective: "directory entry와 path lookup이 inode를 찾는 과정을 설명한다."
+        objective: "absolute·relative pathname의 시작 context와 component별 lookup이 directory entry를 통해 filesystem object를 찾는 과정을 설명한다."
         density: CORE
         visualization: TEXT
       - key: operating-systems.core.filesystem.inode
