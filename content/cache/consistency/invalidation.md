@@ -21,6 +21,12 @@ references:
     language: en
     displayOrder: 2
     relationNote: "cache key 변화 관측과 Pub/Sub의 유실 가능성 확인"
+  - url: "https://techblog.woowahan.com/23138/"
+    title: "우아한형제들 기술블로그: 이제 Redis를 멈춰보겠습니다 - @CacheEvict 파헤치기"
+    referenceType: BLOG
+    language: ko
+    displayOrder: 3
+    relationNote: "Spring Cache의 cache eviction이 Redis 명령과 운영 latency에 연결되는 실제 사례 확인"
 ---
 # invalidation과 update ordering
 
@@ -67,4 +73,3 @@ DB transaction 뒤 invalidation event를 발행할 때 DB commit과 broker publi
 ### 면접에서 설명한다면
 
 Invalidation은 origin 변경 뒤 cache를 지우는 것뿐 아니라 동시에 진행 중인 read/fill과의 ordering을 포함합니다. writer commit 전에 시작한 old read가 invalidation 뒤 늦게 cache를 채우면 stale value가 되살아날 수 있으므로 version이나 namespace 전략을 검토하고, 여러 파생 key와 event delivery 실패까지 설계해야 합니다.
-
