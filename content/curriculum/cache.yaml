@@ -10,7 +10,6 @@ policies:
     authoringLanguage: ko-KR
     explanationRule: cache가 필요한 문제에서 시작해 hit/miss, freshness, invalidation, 메모리·운영 실패와 source of truth 경계를 연결한다.
   question:
-    minimumPerConcept: 2
     topicDifficultyCoverage: [EASY, MEDIUM, HARD]
     areaTypeCoverage: [MULTIPLE_CHOICE, SHORT_ANSWER, DESCRIPTIVE, SCENARIO]
     hardRule: stale data, 동시 만료, eviction, hot key, 장애 복구나 source-of-truth trade-off를 포함해 판단하게 한다.
