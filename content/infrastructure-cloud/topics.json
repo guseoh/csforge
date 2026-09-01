@@ -1,0 +1,5 @@
+[
+  {"kind":"topic","contentKey":"infrastructure.core.compute","areaSlug":"infrastructure-cloud","slug":"compute","title":"Compute and runtime","description":"VM/container/serverless · resource requests/limits · configuration/secrets","displayOrder":10,"active":true},
+  {"kind":"topic","contentKey":"infrastructure.core.network","areaSlug":"infrastructure-cloud","slug":"network","title":"Infrastructure networking","description":"VPC/subnet/security boundary · load balancing/ingress · DNS/TLS lifecycle","displayOrder":20,"active":true},
+  {"kind":"topic","contentKey":"infrastructure.core.reliability","areaSlug":"infrastructure-cloud","slug":"reliability","title":"Storage and delivery reliability","description":"object/block/file storage · backup/restore RPO/RTO · IaC/immutable rollout","displayOrder":30,"active":true}
+]
