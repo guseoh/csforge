@@ -1,17 +1,184 @@
 [
-{"kind":"question","contentKey":"dsa.core.sequential.array.q1","promptMarkdown":"array index 접근이 일반적으로 O(1)인 이유는?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["dsa.core.sequential.array"],"choices":[{"key":"A","content":"base 주소와 element 크기로 위치를 직접 계산한다","displayOrder":0},{"key":"B","content":"항상 앞 원소를 모두 순회한다","displayOrder":1}],"correctChoiceKey":"A"},
-{"kind":"question","contentKey":"dsa.core.sequential.array.q2","promptMarkdown":"array 중간 삽입이 O(n)일 수 있는 이유를 설명하라.","questionType":"SHORT_ANSWER","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["dsa.core.sequential.array"],"acceptedAnswers":["뒤 원소를 이동해 빈 위치를 만들어야 하기 때문이다"]},
-{"kind":"question","contentKey":"dsa.core.sequential.array.q3","promptMarkdown":"backend 결과를 array에 순서대로 쌓을 때 locality 이득과 삽입 비용을 함께 분석하라.","questionType":"SCENARIO","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["dsa.core.sequential.array"],"modelAnswer":"순차 append와 iteration은 연속 memory locality가 좋아 빠를 수 있지만 중간 삽입·삭제는 많은 이동을 만든다. access pattern과 최종 정렬 요구를 보고 선택한다."},
-{"kind":"question","contentKey":"dsa.core.sequential.dynamic-array.q1","promptMarkdown":"dynamic array가 capacity를 다 쓰면 일반적으로 무엇을 하는가?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["dsa.core.sequential.dynamic-array"],"choices":[{"key":"A","content":"더 큰 배열을 할당하고 elements를 복사한다","displayOrder":0},{"key":"B","content":"기존 element를 모두 버린다","displayOrder":1}],"correctChoiceKey":"A"},
-{"kind":"question","contentKey":"dsa.core.sequential.dynamic-array.q2","promptMarkdown":"dynamic array append의 amortized 비용이 작은 이유를 설명하라.","questionType":"DESCRIPTIVE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["dsa.core.sequential.dynamic-array"],"modelAnswer":"resize와 복사처럼 비싼 연산은 capacity를 크게 늘릴 때 드물게 발생하고 여러 append에 분산된다. 따라서 개별 worst-case와 sequence amortized cost를 구분한다."},
-{"kind":"question","contentKey":"dsa.core.sequential.dynamic-array.q3","promptMarkdown":"import batch를 dynamic array에 append할 때 capacity 정책이 memory와 latency에 미치는 trade-off를 분석하라.","questionType":"SCENARIO","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["dsa.core.sequential.dynamic-array"],"modelAnswer":"성장 비율이 크면 resize 횟수와 append latency는 줄지만 unused capacity와 peak memory가 커진다. 입력 상한과 memory budget, batch 결과 보존을 함께 고려한다."},
-{"kind":"question","contentKey":"dsa.core.sequential.singly-linked-list.q1","promptMarkdown":"singly linked list node가 직접 가지는 링크는?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["dsa.core.sequential.singly-linked-list"],"choices":[{"key":"A","content":"다음 node를 가리키는 next link","displayOrder":0},{"key":"B","content":"항상 이전 node와 다음 두 link","displayOrder":1}],"correctChoiceKey":"A"},
-{"kind":"question","contentKey":"dsa.core.sequential.singly-linked-list.q2","promptMarkdown":"삽입할 위치의 predecessor를 이미 알고 있을 때 singly linked list 삽입 비용은?","questionType":"SHORT_ANSWER","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["dsa.core.sequential.singly-linked-list"],"acceptedAnswers":["O(1)","상수 시간"]},
-{"kind":"question","contentKey":"dsa.core.sequential.singly-linked-list.q3","promptMarkdown":"linked list가 random access backend queue에 부적합할 수 있는 이유를 locality와 비용으로 설명하라.","questionType":"SCENARIO","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["dsa.core.sequential.singly-linked-list"],"modelAnswer":"index 접근마다 next를 따라가야 O(n)이고 node가 흩어져 cache locality가 낮을 수 있다. 위치를 알고 하는 link 갱신에는 유리하지만 access pattern이 random이면 array나 다른 구조를 검토한다."},
-{"kind":"question","contentKey":"dsa.core.sequential.doubly-linked-list.q1","promptMarkdown":"doubly linked list가 추가로 저장하는 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["dsa.core.sequential.doubly-linked-list"],"choices":[{"key":"A","content":"이전 node를 가리키는 prev link","displayOrder":0},{"key":"B","content":"각 node의 모든 후손 목록","displayOrder":1}],"correctChoiceKey":"A"},
-{"kind":"question","contentKey":"dsa.core.sequential.doubly-linked-list.q2","promptMarkdown":"중간 node 삭제 시 doubly linked list에서 갱신해야 할 링크를 설명하라.","questionType":"SHORT_ANSWER","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["dsa.core.sequential.doubly-linked-list"],"acceptedAnswers":["앞 node의 next와 뒤 node의 prev를 서로 연결한다"]},
-{"kind":"question","contentKey":"dsa.core.sequential.doubly-linked-list.q3","promptMarkdown":"LRU cache에서 doubly linked list를 hash map과 함께 사용하는 이유를 설명하라.","questionType":"SCENARIO","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["dsa.core.sequential.doubly-linked-list"],"modelAnswer":"map이 key로 node를 O(1)에 찾고 list가 node를 앞뒤로 O(1)에 이동·삭제해 최근 순서를 유지한다. prev/next와 head/tail invariant를 함께 갱신해야 한다."},
-{"kind":"question","contentKey":"dsa.core.sequential.array-vs-linked.q1","promptMarkdown":"array와 linked list의 대표적인 trade-off는?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["dsa.core.sequential.array-vs-linked"],"choices":[{"key":"A","content":"array는 index/locality, linked는 위치를 알 때 link 삽입에 유리하다","displayOrder":0},{"key":"B","content":"둘의 모든 연산 비용은 항상 같다","displayOrder":1}],"correctChoiceKey":"A"},
-{"kind":"question","contentKey":"dsa.core.sequential.array-vs-linked.q2","promptMarkdown":"linked list가 array보다 memory overhead가 커질 수 있는 이유를 설명하라.","questionType":"DESCRIPTIVE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["dsa.core.sequential.array-vs-linked"],"modelAnswer":"각 node가 next/prev pointer와 allocator metadata를 추가로 가지고 흩어진 allocation이 cache locality를 낮출 수 있다. 대신 중간 link 변경은 원소 이동 없이 수행할 수 있다."},
-{"kind":"question","contentKey":"dsa.core.sequential.array-vs-linked.q3","promptMarkdown":"backend의 주된 operation이 순차 조회와 중간 삭제일 때 두 구조 선택을 어떻게 분석할지 설명하라.","questionType":"SCENARIO","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["dsa.core.sequential.array-vs-linked"],"modelAnswer":"순차 조회와 locality는 array에 유리하지만 중간 삭제가 많고 node 위치를 직접 가지면 linked가 유리할 수 있다. lookup 방법, memory overhead, iterator 안정성까지 workload로 비교한다."}
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.sequential.array.q1",
+    "promptMarkdown": "원소 크기가 8 byte인 array의 base address가 `0x1000`일 때 index 5의 원소 시작 주소는?",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.sequential.array"],
+    "acceptedAnswers": ["0x1028", "4136"]
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.sequential.array.q2",
+    "promptMarkdown": "길이 6인 array `[A,B,C,D,E,F]`의 index 2에 `X`를 삽입하면서 기존 원소 순서를 유지하려면 어떤 원소들이 이동해야 하는가?",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.sequential.array"],
+    "modelAnswer": "index 2부터 뒤에 있던 C,D,E,F를 각각 한 칸 뒤로 이동시켜 빈 index 2를 만든 뒤 X를 저장해야 한다. 이동량은 삽입 위치 뒤 원소 수에 비례하므로 중간 삽입이 O(n)이 될 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.sequential.array.q3",
+    "promptMarkdown": "100만 개의 primitive 값을 반복해서 순차 scan하는 workload와, 매 연산마다 중간 위치의 원소를 자주 삽입·삭제하는 workload가 있다. 동일한 Big-O 표기만 보지 말고 array가 각각 어떤 장단점을 가지는지 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.sequential.array"],
+    "modelAnswer": "순차 scan은 연속 배치 덕분에 cache line을 효율적으로 사용하고 주소 계산도 단순해 array에 유리하다. 반면 중간 삽입·삭제는 뒤 원소 이동이 반복되어 비용이 커진다. 따라서 random index 접근·순차 scan 비중과 mutation 위치를 함께 보고 선택해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.sequential.dynamic-array.q1",
+    "promptMarkdown": "dynamic array에서 `size`와 `capacity`의 차이로 맞는 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.sequential.dynamic-array"],
+    "choices": [
+      {"key":"A","content":"size는 현재 저장된 원소 수이고 capacity는 재할당 없이 담을 수 있는 backing storage 크기다","displayOrder":0},
+      {"key":"B","content":"size와 capacity는 언제나 같아야 하며 여유 공간을 둘 수 없다","displayOrder":1},
+      {"key":"C","content":"capacity는 logical element count이고 size는 allocator가 예약한 byte 수다","displayOrder":2},
+      {"key":"D","content":"capacity가 남아 있어도 append마다 항상 새 배열을 할당한다","displayOrder":3}
+    ],
+    "correctChoiceKey": "A"
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.sequential.dynamic-array.q2",
+    "promptMarkdown": "capacity 4인 dynamic array가 가득 찬 상태에서 growth factor 2로 한 원소를 append한다. resize 시 기존 원소 복사 수와 새 capacity를 쓰라.",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.sequential.dynamic-array"],
+    "acceptedAnswers": ["기존 4개를 복사하고 새 capacity는 8", "4개 복사, capacity 8", "4, 8"]
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.sequential.dynamic-array.q3",
+    "promptMarkdown": "대부분 append는 빠른데 특정 요청에서만 큰 latency spike가 보인다. 해당 요청에서 dynamic array가 capacity를 초과했다는 evidence가 있다. amortized O(1)이라는 사실과 이 spike가 동시에 성립할 수 있는 이유를 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.sequential.dynamic-array"],
+    "modelAnswer": "amortized O(1)은 긴 append sequence의 총 비용을 평균 낸 보장이지 각 append의 worst-case가 O(1)이라는 뜻이 아니다. capacity를 넘는 순간 더 큰 storage를 할당하고 기존 원소를 O(n)만큼 복사할 수 있어 단일 요청에는 spike가 생길 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.sequential.dynamic-array.q4",
+    "promptMarkdown": "growth factor를 1.1과 2.0 중 선택한다고 하자. resize 빈도, 한 번의 복사량, unused capacity 관점에서 두 선택의 trade-off를 비교하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.sequential.dynamic-array"],
+    "modelAnswer": "1.1은 여유 capacity가 작아 메모리 낭비는 줄 수 있지만 capacity 부족이 자주 발생해 allocation·copy 횟수가 증가한다. 2.0은 resize 횟수를 크게 줄이지만 resize 직후 unused capacity가 더 크고 한 번에 더 큰 storage를 확보한다. workload의 peak memory와 tail latency를 함께 고려해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.sequential.singly-linked-list.q1",
+    "promptMarkdown": "singly linked list에서 특정 node의 predecessor를 이미 알고 있을 때 그 node 다음에 새 node를 삽입하는 데 필요한 핵심 link 변경은?",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.sequential.singly-linked-list"],
+    "modelAnswer": "새 node의 next를 기존 successor로 연결한 뒤 predecessor의 next를 새 node로 바꾸면 된다. 위치 탐색 비용을 제외하면 link 변경 자체는 상수 개다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.sequential.singly-linked-list.q2",
+    "promptMarkdown": "head만 알고 있는 singly linked list에서 tail node를 삭제하려면 일반적으로 O(n)이 필요한 이유는?",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.sequential.singly-linked-list"],
+    "modelAnswer": "tail을 제거하려면 새 tail이 될 predecessor의 next를 null로 바꿔야 한다. singly list에는 prev link가 없으므로 head에서 next를 따라 tail의 predecessor를 찾아야 해서 일반적으로 O(n) 순회가 필요하다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.sequential.singly-linked-list.q3",
+    "promptMarkdown": "`A → B → C`에서 B를 삭제하면서 A.next를 C로 바꾸기 전에 B.next를 null로 먼저 바꿨고 A.next 갱신 중 예외가 발생했다. 어떤 invariant가 깨졌는지와 안전한 update 순서를 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.sequential.singly-linked-list"],
+    "modelAnswer": "A가 여전히 B를 가리키는데 B.next가 null이 되어 C가 기존 list에서 도달 불가능해졌다. 일반적으로 successor C를 먼저 보존하고 A.next를 C로 연결해 list의 reachability를 유지한 뒤 필요하면 제거된 B의 link를 정리한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.sequential.doubly-linked-list.q1",
+    "promptMarkdown": "doubly linked list의 중간 node `B`가 `A ↔ B ↔ C`에 있을 때 B를 삭제한 뒤 반드시 성립해야 하는 link 쌍은?",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.sequential.doubly-linked-list"],
+    "acceptedAnswers": ["A.next = C, C.prev = A", "A.next=C 그리고 C.prev=A"]
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.sequential.doubly-linked-list.q2",
+    "promptMarkdown": "sentinel node를 사용하면 빈 list와 head/tail 삽입·삭제의 경계 처리가 단순해지는 이유를 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.sequential.doubly-linked-list"],
+    "modelAnswer": "실제 첫·마지막 node에도 항상 predecessor와 successor 역할을 하는 sentinel이 존재하게 만들어 null 여부에 따른 특수 분기를 줄일 수 있다. 그 대신 sentinel 자체는 data node가 아니라는 invariant를 유지해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.sequential.doubly-linked-list.q3",
+    "promptMarkdown": "LRU에서 map은 key K를 node B에 매핑하지만 list에서는 B가 이미 제거되었고 map entry만 남아 있다. 이후 K hit가 발생하면 어떤 문제가 생기며 map+list가 함께 유지해야 할 invariant는 무엇인가?",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.sequential.doubly-linked-list"],
+    "modelAnswer": "map이 stale node를 반환해 이미 list에 없는 B를 이동·삭제하려 하면서 link corruption이나 잘못된 eviction 순서를 만들 수 있다. map의 모든 live entry는 정확히 하나의 live list node를 가리키고, list의 data node도 대응하는 map entry와 일치해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.sequential.array-vs-linked.q1",
+    "promptMarkdown": "원소가 매우 많고 대부분의 작업이 index 기반 random read와 순차 iteration이며 중간 삽입은 거의 없다. 우선 검토할 구조와 이유로 가장 적절한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.sequential.array-vs-linked"],
+    "choices": [
+      {"key":"A","content":"array 계열: 직접 index 계산과 연속 배치 locality가 workload에 맞는다","displayOrder":0},
+      {"key":"B","content":"singly linked list: index 접근이 항상 O(1)이기 때문이다","displayOrder":1},
+      {"key":"C","content":"doubly linked list: prev pointer가 CPU cache miss를 제거하기 때문이다","displayOrder":2},
+      {"key":"D","content":"어떤 구조든 Big-O와 memory layout이 항상 같으므로 차이가 없다","displayOrder":3}
+    ],
+    "correctChoiceKey": "A"
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.sequential.array-vs-linked.q2",
+    "promptMarkdown": "linked list에서 '삽입 O(1)'이라는 표현에 숨어 있는 전제와, 그 전제가 없을 때의 전체 비용을 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.sequential.array-vs-linked"],
+    "modelAnswer": "삽입할 위치의 node 또는 predecessor를 이미 알고 있다는 전제에서 link 변경만 O(1)이다. index나 key로 위치를 먼저 찾아야 하고 별도 index가 없다면 탐색이 O(n)이어서 전체 operation도 O(n)이 될 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.sequential.array-vs-linked.q3",
+    "promptMarkdown": "동일하게 O(n) 순회인 array와 linked list가 실제 CPU 시간에서 크게 다를 수 있는 이유를 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.sequential.array-vs-linked"],
+    "modelAnswer": "점근 복잡도는 원소 수에 따른 성장 차수만 같다고 말한다. array는 연속 memory라 spatial locality와 prefetch에 유리할 수 있지만 linked list는 node allocation이 흩어져 pointer chasing과 cache miss가 늘 수 있다. 실제 workload에서는 memory layout과 allocation overhead도 측정해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.sequential.array-vs-linked.q4",
+    "promptMarkdown": "중간 삭제가 매우 잦은 workload에서 'linked list가 무조건 array보다 빠르다'고 결론내릴 수 없는 이유를 위치 탐색, locality, allocation 관점에서 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.sequential.array-vs-linked"],
+    "modelAnswer": "삭제 대상 위치를 찾는 비용이 O(n)이면 link 변경 O(1)의 이점이 줄어든다. linked node의 pointer/allocator overhead와 낮은 locality도 비용이 될 수 있다. 반대로 array는 이동 비용이 있지만 연속 배치와 별도 index의 조합이 유리할 수 있으므로 실제 operation sequence를 봐야 한다."
+  }
 ]
