@@ -23,7 +23,7 @@ references:
     relationNote: "cache key 변화 관측과 Pub/Sub의 유실 가능성 확인"
   - url: "https://techblog.woowahan.com/23138/"
     title: "우아한형제들 기술블로그: 이제 Redis를 멈춰보겠습니다 - @CacheEvict 파헤치기"
-    referenceType: BLOG
+    referenceType: COMPANY_TECH_BLOG
     language: ko
     displayOrder: 3
     relationNote: "Spring Cache의 cache eviction이 Redis 명령과 운영 latency에 연결되는 실제 사례 확인"
