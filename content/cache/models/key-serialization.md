@@ -23,7 +23,7 @@ references:
     relationNote: "cache entity key namespace 예시 확인"
   - url: "https://techblog.woowahan.com/22767/"
     title: "우아한형제들 기술블로그: Spring Cache + Spring Data Redis 사용 시 record 직렬화 오류 원인과 해결"
-    referenceType: BLOG
+    referenceType: COMPANY_TECH_BLOG
     language: ko
     displayOrder: 3
     relationNote: "serializer 설정과 Java record type 정보가 기존 cache value 호환성에 영향을 주는 실제 사례 확인"
