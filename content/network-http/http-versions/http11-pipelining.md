@@ -19,10 +19,8 @@ references:
 ---
 # HTTP/1.1 Pipelining
 
-HTTP/1.1 pipelining은 이전 response를 기다리지 않고 같은 connection에 여러 request를 순서대로 보낼 수 있게 한다. 그러나 response는 request 순서를 유지해야 하므로 앞선 느린 response가 뒤 request의 관찰을 막는 application-level HOL이 남는다.
+HTTP/1.1 pipelining은 이전 response를 기다리지 않고 같은 persistent connection에 여러 request를 순서대로 보내는 방식이다. 하지만 response는 request 순서를 유지해야 하므로 첫 request의 느린 처리나 loss가 뒤 response의 관찰을 막는 application-level HOL이 남는다. pipelining은 HTTP/2처럼 각 request에 독립 stream을 부여하는 multiplexing이 아니다.
 
-중간 proxy와 origin이 pipelining을 안정적으로 지원해야 하고, 실패한 connection에서 어느 request가 처리됐는지 모호해질 수 있다. 이 복잡성 때문에 HTTP/2 multiplexing이 다른 stream model을 제공한다.
+모든 proxy와 origin이 pipelining을 안정적으로 지원하지 않고, connection이 중간에 끊기면 이미 전송된 여러 request 중 어디까지 server가 처리했는지 모호해진다. 특히 non-idempotent request는 재전송 시 duplicate side effect 위험이 있어 client가 보수적으로 사용하며, 이 복잡성이 HTTP/2 stream model을 선택하는 이유 중 하나다.
 
-### Backend 연결
-
-client library가 pipelining이나 connection reuse를 내부에서 수행해도 non-idempotent request의 retry 경계를 확인한다. request queue와 response order를 trace로 연결한다.
+Backend에서 client library가 pipelining이나 connection reuse를 내부 수행해도 request queue와 response order를 trace로 연결한다. failure 후 retry할 request의 idempotency와 server side effect 불확실성을 별도로 기록한다.

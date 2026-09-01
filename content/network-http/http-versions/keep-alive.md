@@ -19,10 +19,8 @@ references:
 ---
 # Keep-Alive
 
-keep-alive는 connection을 response 뒤에도 유지해 다음 request가 같은 transport를 재사용하게 한다. handshake, TLS, congestion warm-up을 줄일 수 있지만 server socket, memory, NAT mapping을 idle 동안 점유한다.
+HTTP persistent keep-alive는 response 뒤에도 application connection을 열어 두어 다음 HTTP request가 같은 TCP 또는 QUIC transport를 재사용하게 하는 운용 방식이다. TCP/TLS handshake와 congestion warm-up 비용을 줄이고 latency를 낮출 수 있지만 server socket·memory·connection pool·NAT mapping을 idle 동안 점유한다. HTTP/1.1에서는 persistence가 기본이고 `Connection: keep-alive` header가 있다고 무한 lifetime을 의미하지 않는다.
 
-client와 server 중 어느 쪽도 언제든 connection을 닫을 수 있으므로 pooled connection은 stale 상태를 처리해야 한다. keep-alive duration을 너무 길게 두면 resource exhaustion, 너무 짧게 두면 reconnect 비용이 커진다.
+이 개념을 TCP keepalive probe(`SO_KEEPALIVE`)와 혼동하지 않는다. HTTP keep-alive는 다음 application request를 같은 connection에 보내는 재사용 정책이고, TCP keepalive는 오래 idle인 TCP peer가 살아 있는지 확인하는 transport probe다. 어느 쪽도 client와 server가 connection을 영원히 유지한다는 보장은 아니다.
 
-### Backend 연결
-
-HTTP client의 idle eviction, max lifetime, validation과 load balancer timeout을 정렬한다. pool에서 꺼낸 뒤 첫 write 실패를 적절한 request만 재시도한다.
+client와 server 중 어느 쪽도 idle timeout·max lifetime·resource pressure에 따라 connection을 닫을 수 있으므로 pooled socket은 stale 상태를 처리해야 한다. lifetime을 너무 길게 두면 socket·NAT state가 고갈되고, 너무 짧게 두면 reconnect와 handshake 비용이 커진다. pool idle eviction, load balancer timeout과 retry 가능한 method를 함께 조정한다.

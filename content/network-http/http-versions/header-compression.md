@@ -19,11 +19,9 @@ references:
 ---
 # Header Compression
 
-HPACK과 QPACK 같은 방식은 반복 header를 static/dynamic table과 encoding으로 표현해 request overhead를 줄인다. compression context가 connection이나 encoder/decoder state에 묶이므로 단순히 각 header를 독립적으로 압축하는 것이 아니다.
+HPACK(HTTP/2)과 QPACK(HTTP/3)은 자주 반복되는 header field를 static/dynamic table의 index와 literal encoding으로 표현해 header overhead를 줄인다. dynamic table은 connection과 encoder/decoder state에 묶이므로 각 header를 독립적으로 압축하는 방식이 아니며, table context가 맞지 않으면 decoder가 같은 값을 복원할 수 없다. QPACK은 HTTP/3의 별도 encoder/decoder stream과 blocking 제약을 사용한다.
 
-민감한 header와 attacker-controlled 입력이 같은 compression context에 섞이면 길이 관측을 통한 정보 노출 위험이 생길 수 있다. dynamic table size와 indexing policy, protocol version을 함께 설정한다.
+header compression은 TLS encryption이나 authorization이 아니다. 민감한 header와 attacker-controlled 입력이 같은 compression context에 섞이면 response/request length 관측으로 secret을 추론하는 side-channel 위험이 생길 수 있어 dynamic table size, indexing policy와 민감 field 취급을 protocol·deployment별로 정한다.
 
-### Backend 연결
-
-Authorization·Cookie를 compression과 logging에서 다루는 정책을 분리한다. proxy가 HTTP/2를 종료하고 HTTP/1.1로 연결하면 header framing과 connection semantics가 다시 달라진다.
+Backend에서 Authorization·Cookie의 compression, forwarding과 logging 정책을 분리한다. proxy가 HTTP/2를 종료하고 HTTP/1.1로 연결하면 HPACK/QPACK state가 사라지고 header syntax, framing과 connection semantics가 다음 hop에서 다시 달라진다.
 
