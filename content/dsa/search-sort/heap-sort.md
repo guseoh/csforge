@@ -4,25 +4,51 @@ contentKey: dsa.core.search-sort.heap-sort
 topicContentKey: dsa.core.search-sort
 slug: heap-sort
 title: "Heap Sort"
-summary: "heap invariant로 in-place 정렬을 수행하는 과정을 설명한다."
+summary: "max-heap prefix와 sorted suffix invariant를 유지하며 in-place O(n log n) 정렬을 만드는 과정을 설명한다."
 level: 2
 status: PUBLISHED
 displayOrder: 90
 references:
-  - url: "https://algs4.cs.princeton.edu/25applications/"
-    title: "Algorithms, 4th Edition: Sorting Applications"
+  - url: "https://algs4.cs.princeton.edu/24pq/"
+    title: "Algorithms, 4th Edition: Priority Queues"
     referenceType: BOOK
     language: en
     depth: section
-    recommendation: "comparison sort의 decision-tree 하한을 확인한다."
+    recommendation: "binary heap의 heapify/sink invariant를 정렬 과정과 연결해 확인한다."
     displayOrder: 1
 ---
 # Heap Sort
 
-max-heap을 만든 뒤 root를 배열 끝과 swap하고 줄어든 prefix에 sink를 반복하면 끝에서부터 큰 값이 확정된다. 정렬된 suffix와 prefix heap invariant를 동시에 유지하므로 O(n log n), 추가 배열 O(1)을 얻을 수 있다.
+### max-heap의 root를 뒤에서부터 확정한다
 
-heapify에서 마지막 internal node부터 내려가야 모든 child 상태가 준비된다. cache locality와 constant factor는 quicksort보다 불리할 수 있고, 기본 구현은 stable하지 않다.
+ascending heap sort는 먼저 전체 array를 max-heap으로 만든다. 그러면 root에는 현재 가장 큰 값이 있다. root를 array의 마지막 원소와 swap하면 마지막 위치의 값은 최종 sorted position이 확정된다.
 
-### Backend 연결
+그다음 heap 범위를 한 칸 줄이고 새 root를 sink해 남은 prefix의 max-heap invariant를 복구한다.
 
-memory 상한이 엄격하고 worst O(n log n)이 필요할 때 후보가 된다. 결과의 동일 key 순서가 API 계약이면 별도 안정성 처리를 둔다.
+```text
+[ max-heap prefix | sorted suffix ]
+```
+
+반복이 진행될수록 heap prefix는 줄고 sorted suffix는 오른쪽에서 왼쪽으로 커진다.
+
+### 두 invariant를 동시에 유지한다
+
+각 iteration 시작 시 다음이 참이어야 한다.
+
+1. `[0, heapSize)`는 max-heap이다.
+2. `[heapSize, n)`은 이미 최종 위치가 확정된 ascending suffix다.
+3. suffix의 모든 원소는 heap prefix의 원소보다 크거나 같다.
+
+root를 suffix 바로 앞과 swap하고 heapSize를 감소시킨 뒤 sink하면 다음 iteration에서도 같은 invariant가 유지된다.
+
+### build-heap은 O(n), extraction phase는 O(n log n)이다
+
+heap을 n번 insert해 만들 필요 없이 bottom-up heapify를 사용하면 O(n)에 만들 수 있다. 이후 n번에 가까운 root extraction에서 각 sink가 최대 O(log n)이므로 전체 sorting time은 O(n log n)이다.
+
+worst-case도 O(n log n)으로 제한되는 것이 quicksort의 O(n²) worst-case와 비교되는 특징이다.
+
+### extra array 없이 정렬할 수 있지만 stable하지 않다
+
+heap 자체를 input array 안에 만들고 root와 끝을 swap하므로 auxiliary array는 O(1) 수준으로 유지할 수 있다. 하지만 먼 위치의 swap이 equal-key 원소의 기존 상대 순서를 바꿀 수 있어 기본 heap sort는 stable하지 않다.
+
+또한 memory access pattern과 constant factor 때문에 실전 평균 성능에서는 well-implemented quicksort 계열보다 불리할 수 있다. 따라서 `worst O(n log n) + 낮은 extra memory`가 정말 중요한 조건인지 보고 선택한다.
