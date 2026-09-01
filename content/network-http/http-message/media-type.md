@@ -17,10 +17,8 @@ references:
 ---
 # Media Type
 
-media type은 representation data format과 처리 의미를 `type/subtype`으로 표시한다. `application/json`과 `text/html`은 bytes가 모두 UTF-8 문자열일 수 있어도 client processing contract가 다르다.
+media type은 representation의 format과 처리 의미를 `type/subtype` 및 parameter로 표시한다. `application/json`과 `text/html`이 모두 UTF-8 text bytes일 수 있어도 client가 parser·rendering·security policy를 선택하는 contract는 다르다. media type은 파일 확장자나 단순 문자열 인코딩과 같은 값이 아니다.
 
-parameter와 charset, vendor subtype을 parser가 어떻게 처리할지 정의하고 unknown type을 안전하게 거부하거나 download로 취급한다. Content-Encoding은 media type 자체를 바꾸지 않고 content coding을 별도로 표시한다.
+parameter와 charset, vendor subtype의 허용 범위를 parser가 명확히 정의하고 unknown 또는 잘못된 type은 안전하게 거부하거나 다운로드 같은 제한된 처리로 보낸다. `Content-Encoding`은 representation의 content coding을 나타내므로 media type 자체를 `application/json`에서 다른 type으로 바꾸는 값이 아니다. client sniffing에 의존하면 declared type과 실제 실행·표시 방식이 달라질 수 있다.
 
-### Backend 연결
-
-import endpoint는 허용 media type과 schemaVersion을 검증하고 파일 확장자만 믿지 않는다. response Content-Type과 실제 serializer 결과를 같은 contract test로 확인한다.
+import endpoint는 허용 media type, parameter와 schemaVersion을 검증하고 파일 확장자만 믿지 않는다. response `Content-Type`이 실제 serializer 결과와 일치하는지 contract test로 확인하며, upload content의 보안 검사는 선언된 type과 별도로 수행한다.

@@ -17,10 +17,8 @@ references:
 ---
 # Content Negotiation
 
-content negotiation은 client의 Accept 선호와 server가 제공할 수 있는 representation을 조합해 response variant를 고르는 과정이다. media type, language, encoding 등 여러 축이 있으면 선택 규칙과 fallback을 명시해야 재현 가능한 결과가 된다.
+content negotiation은 client가 표현 가능한 형식·언어·encoding을 제시하고 server가 제공 가능한 representation 중 하나를 선택하는 과정이다. media type만이 아니라 `Accept-Language`, `Accept-Encoding` 등 여러 축이 개입하면 선택 순서·q-value·server preference와 fallback을 명시해야 같은 request가 예측 가능한 variant를 얻는다. server-driven negotiation은 선택을 origin이 수행하고, 다른 negotiation 방식은 별도의 metadata와 round trip을 사용할 수 있다.
 
-variant가 달라지면 cache가 서로 다른 응답을 섞지 않도록 Vary와 validator를 맞춘다. client 선호를 무시해도 되는지, 지원 불가를 오류로 볼지 product contract에 둔다.
+variant가 달라지면 cache가 서로 다른 응답을 섞지 않도록 `Vary`, representation metadata와 validator를 맞춘다. negotiation header를 cache key에 반영하지 않으면 한 client의 language·media type response가 다른 client에 노출될 수 있다. client 선호를 무시할 수 있는지, 지원 불가를 `406`으로 볼지 또는 default representation으로 fallback할지는 product contract에 둔다.
 
-### Backend 연결
-
-Markdown·JSON·HTML preview API는 canonical content와 representation 선택을 분리한다. content negotiation 결과를 import identity나 DB canonical value로 저장하지 않는다.
+Markdown·JSON·HTML preview API는 PostgreSQL canonical content와 HTTP representation 선택을 분리한다. 선택된 variant의 schema·ETag·cache policy를 관리하되, content negotiation 결과를 import identity나 DB canonical value로 저장하지 않는다.

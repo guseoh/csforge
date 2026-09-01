@@ -17,10 +17,8 @@ references:
 ---
 # Request Message
 
-HTTP request는 method, target 또는 authority, header field, optional content로 구성된다. method는 원하는 semantics를, target은 resource를, header는 metadata와 processing hint를 표현하며 body의 bytes는 별도 representation이다.
+HTTP request는 method, request-target 또는 authority, header fields와 optional content로 구성된다. method는 resource에 대해 원하는 protocol semantics를, target은 어느 resource/context를 대상으로 하는지를, headers는 framing·content metadata·조건·인증 같은 제어 정보를 표현한다. content의 bytes와 그 bytes가 표현하는 application object는 서로 다른 계층이며, GET이나 다른 method에 content가 올 수 있는지의 의미도 method별 계약으로 판단한다.
 
-한 request에서 header가 말하는 length·media type·condition과 실제 body가 일치해야 parser와 origin policy가 안전하다. request가 server에 도착했다는 것과 domain command가 성공했다는 것은 다르다.
+receiver는 먼저 start-line/pseudo-header와 header를 parse하고, Content-Length·transfer framing·protocol version 규칙으로 content의 경계를 정한 뒤 media type에 맞는 parser를 선택한다. header가 말하는 length·media type·condition과 실제 content가 어긋나면 parser desynchronization, request smuggling 또는 잘못된 business validation이 생길 수 있다. request가 origin에 도착했다는 것과 domain command가 성공했다는 것도 별도다.
 
-### Backend 연결
-
-controller 진입 전에 size, content type, authentication, idempotency key를 검증한다. raw HTTP parser의 framing과 application DTO validation을 같은 단계로 취급하지 않는다.
+Backend는 controller 진입 전 transport framing과 size limit을 적용하고, 그 다음 content type·schema·authentication·idempotency key를 검증한다. raw HTTP parser의 안전성과 Spring DTO validation, domain authorization을 하나의 단계로 취급하지 않는다.

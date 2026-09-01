@@ -17,10 +17,8 @@ references:
 ---
 # Header and Body
 
-header field는 content의 길이·형식·조건·cache·authorization 같은 metadata를 표현하고 body는 실제 content bytes를 운반한다. header parsing과 body framing이 먼저 완료되어야 application serializer가 body를 해석한다.
+header fields는 content length·media type·조건·cache·authorization 같은 metadata와 processing control을 표현하고 content/body는 실제 message bytes를 운반한다. receiver는 header syntax와 field semantics를 먼저 해석한 뒤 HTTP version과 framing 규칙으로 content의 시작·끝을 정해야 application serializer가 올바른 bytes를 읽을 수 있다.
 
-Content-Length, transfer coding, HTTP/2 frame은 서로 다른 framing layer다. body를 JSON으로 parse할 수 있다는 사실이 request가 안전하거나 semantic validation을 통과했다는 뜻은 아니다.
+HTTP/1.1의 Content-Length와 transfer coding은 message framing에 관여하지만, HTTP/2·HTTP/3의 binary frame은 transport/protocol framing일 뿐 application content의 JSON object boundary와 같은 의미가 아니다. 서로 다른 intermediary가 length와 transfer rule을 다르게 해석하면 request smuggling이 생길 수 있고, body를 JSON으로 parse할 수 있다는 사실도 authentication·size·semantic validation을 통과했다는 뜻은 아니다.
 
-### Backend 연결
-
-multipart와 JSON upload의 size·content type·boundary를 서버에서 제한한다. body를 모두 memory에 모으지 않고 streaming할 때도 validation과 cancellation 경계를 유지한다.
+Backend는 multipart boundary, JSON content size·media type과 header line limits를 서버에서 제한한다. body를 모두 memory에 모으지 않고 streaming할 때도 framing이 확정되는 지점, schema validation, cancellation과 downstream transaction 경계를 유지한다.
