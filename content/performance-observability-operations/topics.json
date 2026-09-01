@@ -1,5 +1,5 @@
 [
-  {"key":"performance.core.measurement","title":"Runtime performance measurement","displayOrder":10,"status":"PUBLISHED"},
-  {"key":"performance.core.observability","title":"Observability signals and objectives","displayOrder":20,"status":"PUBLISHED"},
-  {"key":"performance.core.operations","title":"Operational response and capacity","displayOrder":30,"status":"PUBLISHED"}
+  {"kind":"topic","contentKey":"performance.core.measurement","areaSlug":"performance-observability-operations","slug":"measurement","title":"Runtime performance measurement","description":"latency·throughput·saturation·profiling과 load testing으로 runtime 성능을 측정한다.","displayOrder":10,"active":true},
+  {"kind":"topic","contentKey":"performance.core.observability","areaSlug":"performance-observability-operations","slug":"observability","title":"Observability signals and objectives","description":"metrics·logs·traces, SLI/SLO와 telemetry cardinality를 다룬다.","displayOrder":20,"active":true},
+  {"kind":"topic","contentKey":"performance.core.operations","areaSlug":"performance-observability-operations","slug":"operations","title":"Operational response and capacity","description":"alert·incident response·capacity planning과 autoscaling을 다룬다.","displayOrder":30,"active":true}
 ]
