@@ -10,7 +10,6 @@ policies:
     authoringLanguage: ko-KR
     explanationRule: 동기 request에서 분리할 문제와 message delivery semantics를 구분하고 partition·offset·retry·recovery 상태를 시간순으로 설명한다.
   question:
-    minimumPerConcept: 2
     topicDifficultyCoverage: [EASY, MEDIUM, HARD]
     areaTypeCoverage: [MULTIPLE_CHOICE, SHORT_ANSWER, DESCRIPTIVE, SCENARIO]
     hardRule: duplicate delivery, ordering, consumer failure, outbox relay, backpressure, schema compatibility 중 하나 이상을 실제 timeline으로 판단하게 한다.
@@ -39,27 +38,27 @@ topics:
     title: topic·partition·message key
     order: 20
     level: 2
-    objective: partition이 parallelism과 ordering의 단위가 되는 이유와 key 선택이 traffic·ordering을 바꾸는 흐름을 설명한다.
+    objective: partition이 parallelism과 ordering의 단위가 되는 이유와 key 선택·partition 변화가 traffic·ordering을 바꾸는 흐름을 설명한다.
     density: CORE
     visualization: DIAGRAM
   - key: messaging.core.semantics.consumer-offset
     title: consumer group과 offset
     order: 30
     level: 2
-    objective: consumer group의 work sharing, offset commit과 replay·rebalance의 관계를 판단한다.
+    objective: record offset, consumer position과 committed position을 구분하고 replay·rebalance의 관계를 판단한다.
     density: CORE
     visualization: DIAGRAM
 - key: messaging.core.delivery
   title: Delivery, retry, and ordering
   order: 20
-  scope: at-least-once, idempotent consumer, retry/DLQ와 ordering·poison message를 다룬다.
-  boundary: broker delivery guarantee가 business side effect의 exactly-once를 자동으로 보장하지 않는다.
+  scope: at-most-once·at-least-once delivery, exactly-once라는 표현의 보장 경계, idempotent consumer, retry/DLQ와 ordering·poison message를 다룬다.
+  boundary: broker delivery guarantee나 transaction 기능이 외부 business side effect까지 자동으로 exactly-once로 만들지 않는다.
   concepts:
   - key: messaging.core.delivery.at-least-once-idempotency
-    title: at-least-once와 idempotent consumer
+    title: delivery semantics와 idempotent consumer
     order: 10
     level: 2
-    objective: ack 전 consumer crash가 duplicate delivery를 만드는 이유와 business key/idempotency 기록을 설계한다.
+    objective: ack/commit 시점에 따라 loss 또는 duplicate가 생기는 at-most-once·at-least-once 차이를 비교하고, exactly-once 주장은 어느 broker/transaction boundary까지 적용되는지 구분한 뒤 business idempotency를 설계한다.
     density: CORE
     visualization: DIAGRAM
   - key: messaging.core.delivery.retry-dlq
@@ -100,7 +99,7 @@ topics:
     title: message schema evolution
     order: 30
     level: 2
-    objective: producer·consumer가 다른 version으로 공존할 때 additive change, compatibility, replay와 migration을 설계한다.
+    objective: producer·consumer가 다른 version으로 공존할 때 additive change, backward/forward compatibility, replay와 migration을 설계한다.
     density: STANDARD
     visualization: NONE
 boundaries:
