@@ -4,7 +4,7 @@ contentKey: computer-architecture.core.device-io.interrupt-exception-trap
 topicContentKey: computer-architecture.core.device-io
 slug: interrupt-exception-trap
 title: "Interrupt, Exception and Trap"
-summary: "비동기 interrupt와 동기 exception/trap의 진입 원인을 구분한다."
+summary: "interrupt·exception의 발생 원인과 이들이 trap handler로 control을 넘기는 관계를 구분한다."
 level: 1
 status: PUBLISHED
 displayOrder: 10
