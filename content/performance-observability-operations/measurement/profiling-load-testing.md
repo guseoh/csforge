@@ -9,8 +9,8 @@ level: 2
 status: PUBLISHED
 displayOrder: 30
 references:
-  - url: "https://docs.oracle.com/en/java/javase/26/jfapi/flight-recorder-api-programmers-guide.pdf"
-    title: "Oracle Java Documentation: Flight Recorder API Programmer's Guide"
+  - url: "https://docs.oracle.com/en/java/javase/25/jfapi/flight-recorder-api-programmers-guide.pdf"
+    title: "Oracle Java SE 25: Flight Recorder API Programmer's Guide"
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
