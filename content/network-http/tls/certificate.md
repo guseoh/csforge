@@ -19,10 +19,8 @@ references:
 ---
 # Certificate
 
-certificate는 public key와 subject identity, validity, issuer의 서명을 묶은 구조다. client는 trust anchor에서 시작해 서명 chain과 validity를 검증하고 요청 hostname이 certificate의 name에 포함되는지 확인한다.
+certificate는 공개할 수 있는 public key와 service identity, validity information, issuer의 digital signature를 묶어 “이 key를 이 identity와 연결한다”는 assertion을 표현한다. client는 trust anchor에서 시작해 certificate path의 서명과 validity를 확인하고, 요청한 reference identity가 certificate의 SAN 등 허용된 identity 표현과 일치하는지 별도로 검증한다. certificate 자체에 private key가 들어가는 것은 아니다.
 
-certificate가 유효해도 private key를 가진 endpoint가 실제 기대한 application인지, 요청 권한이 있는지는 별도 문제다. 만료·wrong SAN·unknown issuer·revocation policy를 failure 원인으로 구분한다.
+certificate chain이 유효해도 private key를 실제로 소유한 endpoint인지, 그 endpoint가 기대한 application인지와 HTTP 요청 권한이 있는지는 각각 다른 질문이다. 만료·not-yet-valid, wrong SAN, unknown issuer, 잘못 보낸 intermediate, key usage 불일치와 revocation/status policy를 구분해 진단한다. TLS implementation과 client policy에 따라 revocation 확인 방식도 다를 수 있으므로 “CA 서명이 있다”만으로 모든 검증이 끝났다고 하지 않는다.
 
-### Backend 연결
-
-local development에서 TLS verification을 끄는 설정을 production에 복사하지 않는다. certificate rotation은 old/new overlap과 connection pool 재연결을 포함해 계획한다.
+local development에서 TLS verification을 끄는 설정이나 trust-all context를 production에 복사하지 않는다. certificate rotation은 old/new chain overlap, SAN 호환성, private key 보호와 connection pool의 기존 session 재연결을 포함해 계획한다.
