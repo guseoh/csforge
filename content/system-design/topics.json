@@ -1,5 +1,5 @@
 [
-  {"key":"system-design.core.requirements","title":"Requirements and boundaries","displayOrder":10,"status":"PUBLISHED"},
-  {"key":"system-design.core.architecture","title":"Architecture composition","displayOrder":20,"status":"PUBLISHED"},
-  {"key":"system-design.core.reliability","title":"Reliability and evolution","displayOrder":30,"status":"PUBLISHED"}
+  {"kind":"topic","contentKey":"system-design.core.requirements","areaSlug":"system-design","slug":"requirements","title":"Requirements and boundaries","description":"functional/non-functional requirement, capacity와 ownership boundary를 다룬다.","displayOrder":10,"active":true},
+  {"kind":"topic","contentKey":"system-design.core.architecture","areaSlug":"system-design","slug":"architecture","title":"Architecture composition","description":"sync/async, read/write model과 modular monolith/service 경계를 다룬다.","displayOrder":20,"active":true},
+  {"kind":"topic","contentKey":"system-design.core.reliability","areaSlug":"system-design","slug":"reliability","title":"Reliability and evolution","description":"graceful degradation, failure isolation과 progressive rollout을 다룬다.","displayOrder":30,"active":true}
 ]
