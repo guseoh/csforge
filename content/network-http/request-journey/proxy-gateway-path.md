@@ -17,10 +17,8 @@ references:
 ---
 # Proxy and Gateway Path
 
-forward proxy는 client를 대신해 outbound request를 만들고, reverse proxy는 origin 앞에서 inbound request를 받아 backend로 전달한다. gateway는 protocol translation, authentication, routing, rate limit 같은 경계 policy를 함께 수행할 수 있다.
+forward proxy는 client가 요청한 outbound destination으로 가는 중간 endpoint이고, reverse proxy는 origin server 앞에서 inbound request를 받아 하나 이상의 backend로 전달하는 중간 endpoint다. gateway라는 말은 이 중계 경로에 protocol translation, authentication, routing, rate limit, aggregation 같은 경계 policy까지 함께 수행하는 역할을 포함해 사용할 수 있다. 이름보다 실제 connection과 trust boundary를 확인해야 한다.
 
-intermediary마다 connection, timeout, retry, header와 body buffering 정책이 달라 end-to-end contract를 바꿀 수 있다. proxy retry가 POST side effect를 중복하지 않는지와 original client identity를 어떻게 전달하는지 확인한다.
+intermediary마다 client-facing과 upstream-facing connection, timeout, retry, header rewrite, body buffering과 cache 정책이 다르다. 이 때문에 client가 본 504가 backend의 500인지 upstream connect timeout인지 달라지고, proxy retry가 POST side effect를 중복하거나 request body를 다시 읽지 못할 수 있다. original client identity도 forwarded metadata와 trusted proxy 범위를 통해 별도로 전달·검증한다.
 
-### Backend 연결
-
-API gateway와 Spring app의 timeout·max body·status mapping을 정렬한다. proxy가 반환한 502/504와 backend가 반환한 500을 관측에서 구분한다.
+API gateway와 Spring app의 timeout·max body·streaming·status mapping을 정렬하고, proxy가 반환한 502/504, gateway policy가 만든 4xx와 backend가 반환한 500을 관측에서 구분한다. gateway health가 origin application readiness나 DB transaction 상태를 자동으로 보장하지 않는다는 점도 유지한다.

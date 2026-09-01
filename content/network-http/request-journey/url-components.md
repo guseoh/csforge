@@ -19,11 +19,9 @@ references:
 ---
 # URL Components
 
-URL은 scheme, authority(host와 optional port), path, query, fragment 같은 구성 요소로 해석된다. scheme과 authority는 connection 대상 선택에 관여하고 path·query는 HTTP request target에 전달되며 fragment는 보통 client가 처리해 server로 보내지 않는다.
+URL은 보통 scheme, authority(host와 optional port), path, query, fragment를 서로 다른 의미의 구성 요소로 나눈다. scheme은 어떤 application protocol과 처리 규칙을 사용할지 선택하는 입력이고 authority는 connection 후보인 host·port를 표현한다. path와 query는 server로 보낼 HTTP request target의 일부가 될 수 있지만, fragment는 user agent가 문서 내부 위치나 client state로 처리하므로 일반적인 HTTP request에는 포함되지 않는다.
 
-percent-encoding과 path normalization을 임의로 바꾸면 resource identity와 signature가 달라질 수 있다. URL parsing과 business route matching을 분리해 canonicalization 규칙을 하나로 둔다.
+상대 URL은 기준 URL에서 path와 authority를 해석하고, default port·percent-encoding·dot segment·path normalization을 어느 계층에서 적용할지 결정해야 한다. 문자열을 임의로 decode하거나 normalize하면 cache key, signature와 resource identity가 달라질 수 있으므로 URL parsing, HTTP target parsing과 business route matching을 섞지 않는다. 같은 문자열이더라도 scheme/authority와 request target의 처리 주체는 다르다.
 
-### Backend 연결
-
-Spring controller의 path variable, query parameter, fragment를 같은 입력으로 취급하지 않는다. redirect와 cache key를 만들 때 host·scheme 신뢰 경계를 검증한다.
+Spring controller에서 path variable, query parameter, fragment를 같은 입력으로 취급하지 않는다. redirect·absolute URL·cache key를 만들 때 external scheme/host의 신뢰 경계를 검증하고, client가 보낸 fragment에 의존하는 server route를 설계하지 않는다.
 

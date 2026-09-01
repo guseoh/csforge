@@ -19,10 +19,8 @@ references:
 ---
 # DNS to Route
 
-client는 URL hostname을 resolver에 질의해 하나 이상의 IP address를 얻고, local routing table에서 destination에 대한 interface와 next hop을 선택한다. DNS는 이름을 address로 바꾸고 route는 그 address로 packet을 보낼 길을 정한다.
+새 connection이 필요하면 client는 URL hostname을 stub/recursive resolver에 질의해 하나 이상의 address 후보를 얻고, address-family policy와 기존 connection 상태를 고려해 시도 대상을 고른다. 그 뒤 local routing table은 선택한 destination에 가장 적합한 route와 egress interface·next hop을 정한다. DNS는 name-to-address mapping을 제공하고 routing은 그 address로 packet을 보낼 local forwarding 결정을 제공하므로 두 단계의 책임이 다르다.
 
-DNS answer가 맞아도 route·ARP/NDP·firewall·listener가 실패할 수 있고, route가 있어도 DNS address가 잘못되면 목적지 자체가 틀린다. 두 단계의 cache와 timeout을 별도로 진단한다.
+항상 DNS query와 route lookup이 한 번씩 실행되는 것은 아니다. resolver/JVM cache나 connection pool이 있으면 query 또는 connect를 생략할 수 있고, 여러 A/AAAA answer 중 다른 address를 retry할 수도 있다. DNS answer가 맞아도 route·ARP/NDP·firewall·listener가 실패할 수 있으며, route가 있어도 잘못된 DNS address면 목적지 자체가 틀린다. 각 단계의 cache와 timeout을 별도로 진단한다.
 
-### Backend 연결
-
-outbound request trace를 DNS, connect, TLS, HTTP로 나눠 기록한다. private/public endpoint와 dual-stack 선택을 동일한 DNS 성공으로 보고하지 않는다.
+Backend outbound trace를 DNS resolution, connection acquisition, connect, TLS와 HTTP로 나눠 기록한다. private/public endpoint, NAT/proxy와 dual-stack address selection을 단순한 “DNS 성공”으로 합치지 않는다.
