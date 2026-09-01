@@ -3,6 +3,7 @@ package com.guseoh.csforge.question.domain;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -26,4 +27,12 @@ public interface QuestionChoiceRepository extends JpaRepository<QuestionChoice, 
             order by choice.question.id, choice.displayOrder, choice.id
             """)
     List<QuestionChoice> findForQuestionIds(@Param("questionIds") List<Long> questionIds);
+
+    @Modifying(flushAutomatically = true)
+    @Query("""
+            update QuestionChoice choice
+            set choice.displayOrder = choice.displayOrder + :offset
+            where choice.question.id = :questionId
+            """)
+    int shiftDisplayOrders(@Param("questionId") long questionId, @Param("offset") int offset);
 }

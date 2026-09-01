@@ -2,7 +2,9 @@ package com.guseoh.csforge.question.domain;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import lombok.Getter;
 import org.hibernate.annotations.BatchSize;
@@ -107,12 +109,29 @@ public class Question extends AuditedEntity {
             String correctChoiceKey, List<String> acceptedAnswers, String modelAnswer, List<Concept> concepts) {
         validateImportedStructure(questionType, newChoices, correctChoiceKey, acceptedAnswers, modelAnswer);
         this.questionType = requireRequired(questionType, "questionType");
+        QuestionAnswer existingCorrectAnswer = answers.stream()
+                .filter(answer -> answer.getAnswerKind() == QuestionAnswerKind.CORRECT_CHOICE)
+                .findFirst()
+                .orElse(null);
+        QuestionAnswer existingModelAnswer = answers.stream()
+                .filter(answer -> answer.getAnswerKind() == QuestionAnswerKind.MODEL_ANSWER)
+                .findFirst()
+                .orElse(null);
+        Map<String, QuestionChoice> existingChoicesByKey = new HashMap<>();
+        choices.forEach(choice -> existingChoicesByKey.put(choice.getChoiceKey(), choice));
+        Map<String, QuestionConcept> existingConceptLinksByKey = new HashMap<>();
+        conceptLinks.forEach(link -> existingConceptLinksByKey.put(link.getConcept().getContentKey(), link));
         choices.clear();
         answers.clear();
         conceptLinks.clear();
         if (newChoices != null) {
             for (ChoiceDraft choice : newChoices) {
-                addChoice(choice.choiceKey(), choice.contentMarkdown(), choice.displayOrder());
+                QuestionChoice existingChoice = existingChoicesByKey.remove(choice.choiceKey());
+                if (existingChoice == null) addChoice(choice.choiceKey(), choice.contentMarkdown(), choice.displayOrder());
+                else {
+                    existingChoice.reviseCanonicalContent(choice.contentMarkdown(), choice.displayOrder());
+                    choices.add(existingChoice);
+                }
             }
         }
         if (correctChoiceKey != null) {
@@ -120,11 +139,27 @@ public class Question extends AuditedEntity {
                     .filter(choice -> choice.getChoiceKey().equals(correctChoiceKey))
                     .findFirst()
                     .orElseThrow(() -> new IllegalArgumentException("correctChoiceKey must match a choice"));
-            defineCorrectChoice(correctChoice);
+            if (existingCorrectAnswer == null) defineCorrectChoice(correctChoice);
+            else {
+                existingCorrectAnswer.reviseCorrectChoice(correctChoice);
+                answers.add(existingCorrectAnswer);
+            }
         }
         if (acceptedAnswers != null) acceptedAnswers.forEach(this::addAcceptedAnswer);
-        if (modelAnswer != null) defineModelAnswer(modelAnswer);
-        if (concepts != null) concepts.forEach(this::linkConcept);
+        if (modelAnswer != null) {
+            if (existingModelAnswer == null) defineModelAnswer(modelAnswer);
+            else {
+                existingModelAnswer.reviseModelAnswer(modelAnswer);
+                answers.add(existingModelAnswer);
+            }
+        }
+        if (concepts != null) {
+            for (Concept concept : concepts) {
+                QuestionConcept existingLink = existingConceptLinksByKey.remove(concept.getContentKey());
+                if (existingLink == null) linkConcept(concept);
+                else conceptLinks.add(existingLink);
+            }
+        }
     }
 
     public void changeToDraft() {

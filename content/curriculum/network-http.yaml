@@ -1,0 +1,995 @@
+schemaVersion: 2
+area:
+  key: network-http
+  title: "Network & HTTP"
+  baseline: "layering, local delivery, IP, transport, DNS, TLS and HTTP semantics"
+  contentKeyPrefix: network-http.core
+  status: CANONICAL_FOUNDATION
+policies:
+  language:
+    authoringLanguage: ko-KR
+    explanationRule: "각 계층의 보장·상태·실패 경계와 backend 연결을 섞지 않고 설명한다."
+  question:
+    hardRule: "packet/message 상태와 제약, 실패 경로 또는 재시도 trade-off를 함께 추론한다."
+  visualization:
+    values: [NONE, TEXT, DIAGRAM]
+topics:
+  - key: network-http.core.layering
+    title: "Network Layering"
+    order: 10
+    scope: "link·network·transport·application 계층과 encapsulation을 다룬다."
+    boundary: "계층의 책임을 구분하며 특정 protocol 구현의 모든 세부는 각 topic에 둔다."
+    concepts:
+      - key: network-http.core.layering.why-layering
+        title: "Why Layering"
+        order: 10
+        level: 1
+        objective: "계층화가 변경 영향과 책임을 줄이는 이유를 설명한다."
+        density: CORE
+        visualization: TEXT
+      - key: network-http.core.layering.link-network-transport-application
+        title: "Link, Network, Transport and Application"
+        order: 20
+        level: 1
+        objective: "각 계층의 주소·전달·신뢰성 보장을 비교한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: network-http.core.layering.encapsulation
+        title: "Encapsulation"
+        order: 30
+        level: 1
+        objective: "상위 message가 하위 header와 payload로 감싸지는 흐름을 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: network-http.core.layering.decapsulation
+        title: "Decapsulation"
+        order: 40
+        level: 1
+        objective: "수신 host가 각 header를 소비해 상위 payload를 전달하는 흐름을 설명한다."
+        density: STANDARD
+        visualization: DIAGRAM
+      - key: network-http.core.layering.frame-packet-segment-message
+        title: "Frame, Packet, Segment and Message"
+        order: 50
+        level: 1
+        objective: "계층별 데이터 단위와 header 경계를 구분한다."
+        density: CORE
+        visualization: TEXT
+      - key: network-http.core.layering.mtu
+        title: "MTU"
+        order: 60
+        level: 2
+        objective: "link MTU가 packet 크기·fragmentation·전송 실패에 미치는 영향을 설명한다."
+        density: STANDARD
+        visualization: TEXT
+  - key: network-http.core.local-delivery
+    title: "Local Network Delivery"
+    order: 20
+    scope: "MAC, switch, broadcast domain, ARP, IPv6 NDP와 gateway를 다룬다."
+    boundary: "같은 local link 전달과 next hop discovery를 다루며 global routing은 IP topic에 둔다."
+    concepts:
+      - key: network-http.core.local-delivery.mac-address
+        title: "MAC Address"
+        order: 10
+        level: 1
+        objective: "link-local interface 식별자인 MAC의 역할을 설명한다."
+        density: CORE
+        visualization: TEXT
+      - key: network-http.core.local-delivery.switch-forwarding
+        title: "Switch Forwarding"
+        order: 20
+        level: 1
+        objective: "MAC table 학습과 port forwarding 상태를 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: network-http.core.local-delivery.broadcast-domain
+        title: "Broadcast Domain"
+        order: 30
+        level: 1
+        objective: "broadcast가 도달하는 범위와 segment 분할의 이유를 설명한다."
+        density: STANDARD
+        visualization: DIAGRAM
+      - key: network-http.core.local-delivery.arp
+        title: "ARP"
+        order: 40
+        level: 1
+        objective: "IPv4 next-hop address를 MAC으로 찾는 request/reply 흐름을 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: network-http.core.local-delivery.ipv6-ndp
+        title: "IPv6 NDP"
+        order: 50
+        level: 2
+        objective: "IPv6 neighbor discovery와 router advertisement의 역할을 설명한다."
+        density: CORE
+        visualization: TEXT
+      - key: network-http.core.local-delivery.default-gateway
+        title: "Default Gateway"
+        order: 60
+        level: 1
+        objective: "외부 prefix packet을 next-hop gateway로 보내는 판단을 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+  - key: network-http.core.ip-routing
+    title: "IP Addressing and Routing"
+    order: 30
+    scope: "IPv4/IPv6 address, subnet, routing table, forwarding, TTL와 ICMP를 다룬다."
+    boundary: "best-effort network forwarding을 다루며 TCP reliability는 transport topic에 둔다."
+    concepts:
+      - key: network-http.core.ip-routing.ipv4-address
+        title: "IPv4 Address"
+        order: 10
+        level: 1
+        objective: "IPv4 address와 network/host portion을 설명한다."
+        density: CORE
+        visualization: TEXT
+      - key: network-http.core.ip-routing.prefix-subnet
+        title: "Prefix and Subnet"
+        order: 20
+        level: 1
+        objective: "CIDR prefix가 local 여부와 address block을 결정하는 방식을 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: network-http.core.ip-routing.private-public-ip
+        title: "Private and Public IP"
+        order: 30
+        level: 1
+        objective: "routable address와 private address의 reachability 경계를 설명한다."
+        density: STANDARD
+        visualization: TEXT
+      - key: network-http.core.ip-routing.routing-table
+        title: "Routing Table"
+        order: 40
+        level: 1
+        objective: "destination prefix와 next hop/interface의 관계를 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: network-http.core.ip-routing.longest-prefix-match
+        title: "Longest-Prefix Match"
+        order: 50
+        level: 2
+        objective: "여러 route 중 가장 구체적인 prefix를 선택하는 이유를 설명한다."
+        density: CORE
+        visualization: TEXT
+      - key: network-http.core.ip-routing.router-forwarding
+        title: "Router Forwarding"
+        order: 60
+        level: 2
+        objective: "router가 header를 검사·감소·재전송하는 forwarding path를 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: network-http.core.ip-routing.ttl-hop-limit
+        title: "TTL and Hop Limit"
+        order: 70
+        level: 2
+        objective: "hop count 수명이 loop를 제한하고 만료 오류를 만드는 과정을 설명한다."
+        density: CORE
+        visualization: TEXT
+      - key: network-http.core.ip-routing.icmp
+        title: "ICMP"
+        order: 80
+        level: 1
+        objective: "IP delivery 오류와 진단 정보를 전달하는 ICMP의 역할을 설명한다."
+        density: STANDARD
+        visualization: TEXT
+      - key: network-http.core.ip-routing.ipv6-basics
+        title: "IPv6 Basics"
+        order: 90
+        level: 1
+        objective: "IPv6 address 폭·표기와 neighbor discovery 경계를 설명한다."
+        density: STANDARD
+        visualization: TEXT
+  - key: network-http.core.port-nat
+    title: "Ports, Socket Endpoints and NAT"
+    order: 40
+    scope: "transport port, socket endpoint, connection tuple, NAT/PAT와 reachability를 다룬다."
+    boundary: "주소·endpoint translation을 다루며 firewall policy 자체는 소유하지 않는다."
+    concepts:
+      - key: network-http.core.port-nat.transport-port
+        title: "Transport Port"
+        order: 10
+        level: 1
+        objective: "한 host의 여러 transport endpoint를 port가 구분하는 이유를 설명한다."
+        density: CORE
+        visualization: TEXT
+      - key: network-http.core.port-nat.socket-endpoint
+        title: "Socket Endpoint"
+        order: 20
+        level: 1
+        objective: "IP·port·protocol 조합으로 통신 endpoint를 표현한다."
+        density: CORE
+        visualization: TEXT
+      - key: network-http.core.port-nat.connection-tuple
+        title: "Connection Tuple"
+        order: 30
+        level: 2
+        objective: "양 끝 address·port·protocol tuple로 flow를 식별하는 방식을 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: network-http.core.port-nat.nat
+        title: "NAT"
+        order: 40
+        level: 1
+        objective: "private address와 public address를 packet 경계에서 변환하는 흐름을 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: network-http.core.port-nat.pat
+        title: "PAT"
+        order: 50
+        level: 2
+        objective: "port까지 변환해 여러 내부 endpoint가 하나의 public IP를 공유하는 원리를 설명한다."
+        density: CORE
+        visualization: TEXT
+      - key: network-http.core.port-nat.nat-mapping
+        title: "NAT Mapping"
+        order: 60
+        level: 2
+        objective: "outbound flow mapping의 생성·유지·timeout 상태를 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: network-http.core.port-nat.inbound-reachability
+        title: "Inbound Reachability"
+        order: 70
+        level: 2
+        objective: "unsolicited inbound packet이 mapping 없이 도달하기 어려운 이유를 설명한다."
+        density: STANDARD
+        visualization: TEXT
+      - key: network-http.core.port-nat.nat-vs-firewall
+        title: "NAT versus Firewall"
+        order: 80
+        level: 2
+        objective: "주소 변환과 명시적 traffic policy의 책임을 구분한다."
+        density: CORE
+        visualization: TEXT
+  - key: network-http.core.dns
+    title: "DNS"
+    order: 50
+    scope: "domain hierarchy, resolver, authoritative server, record, TTL과 failure를 다룬다."
+    boundary: "이름을 address로 찾는 protocol을 다루며 connection·HTTP health는 보장하지 않는다."
+    concepts:
+      - key: network-http.core.dns.domain-hierarchy
+        title: "Domain Hierarchy"
+        order: 10
+        level: 1
+        objective: "root·TLD·authoritative zone으로 나뉜 namespace를 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: network-http.core.dns.stub-recursive-resolver
+        title: "Stub and Recursive Resolver"
+        order: 20
+        level: 1
+        objective: "application stub과 recursive resolver의 역할을 구분한다."
+        density: CORE
+        visualization: TEXT
+      - key: network-http.core.dns.authoritative-server
+        title: "Authoritative Server"
+        order: 30
+        level: 1
+        objective: "zone의 canonical record을 답하는 서버와 cache의 차이를 설명한다."
+        density: CORE
+        visualization: TEXT
+      - key: network-http.core.dns.iterative-resolution
+        title: "Iterative Resolution"
+        order: 40
+        level: 2
+        objective: "resolver가 root·TLD·authoritative referral을 따라가는 흐름을 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: network-http.core.dns.a-aaaa
+        title: "A and AAAA Records"
+        order: 50
+        level: 1
+        objective: "IPv4 A와 IPv6 AAAA answer의 의미를 구분한다."
+        density: CORE
+        visualization: TEXT
+      - key: network-http.core.dns.cname
+        title: "CNAME"
+        order: 60
+        level: 1
+        objective: "별칭이 canonical name으로 이어지는 record chain을 설명한다."
+        density: STANDARD
+        visualization: DIAGRAM
+      - key: network-http.core.dns.ns-mx
+        title: "NS and MX"
+        order: 70
+        level: 1
+        objective: "zone delegation과 mail delivery destination을 NS/MX로 구분한다."
+        density: STANDARD
+        visualization: TEXT
+      - key: network-http.core.dns.dns-ttl-cache
+        title: "DNS TTL and Cache"
+        order: 80
+        level: 2
+        objective: "TTL이 resolver cache freshness와 변경 전파 지연을 결정하는 방식을 설명한다."
+        density: CORE
+        visualization: TEXT
+      - key: network-http.core.dns.negative-cache
+        title: "Negative Cache"
+        order: 90
+        level: 2
+        objective: "없는 이름의 실패도 일정 시간 cache되는 이유와 위험을 설명한다."
+        density: STANDARD
+        visualization: TEXT
+      - key: network-http.core.dns.dns-failure
+        title: "DNS Failure"
+        order: 100
+        level: 2
+        objective: "NXDOMAIN·SERVFAIL·timeout을 원인별로 구분하고 retry 경계를 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+  - key: network-http.core.tcp
+    title: "TCP"
+    order: 60
+    scope: "byte stream, handshake, sequence/ACK, retransmission, window, congestion과 teardown을 다룬다."
+    boundary: "TCP transport guarantee를 다루며 application message framing은 별도 HTTP/API 계약이다."
+    concepts:
+      - key: network-http.core.tcp.tcp-byte-stream
+        title: "TCP Byte Stream"
+        order: 10
+        level: 1
+        objective: "message 경계 없는 ordered byte stream의 의미를 설명한다."
+        density: CORE
+        visualization: TEXT
+      - key: network-http.core.tcp.three-way-handshake
+        title: "Three-Way Handshake"
+        order: 20
+        level: 1
+        objective: "SYN·SYN-ACK·ACK로 양 끝 상태와 initial sequence를 합의하는 흐름을 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: network-http.core.tcp.sequence-number
+        title: "Sequence Number"
+        order: 30
+        level: 2
+        objective: "byte sequence로 순서·중복·재조립을 추적하는 방식을 설명한다."
+        density: CORE
+        visualization: TEXT
+      - key: network-http.core.tcp.acknowledgement
+        title: "Acknowledgement"
+        order: 40
+        level: 2
+        objective: "누적 ACK가 다음 기대 byte를 나타내는 이유를 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: network-http.core.tcp.retransmission
+        title: "Retransmission"
+        order: 50
+        level: 2
+        objective: "loss 판단 후 unacknowledged data를 다시 보내는 조건을 설명한다."
+        density: CORE
+        visualization: TEXT
+      - key: network-http.core.tcp.rto
+        title: "Retransmission Timeout"
+        order: 60
+        level: 2
+        objective: "RTT 추정과 timeout이 늦은 ACK·loss를 구분하는 방식을 설명한다."
+        density: STANDARD
+        visualization: TEXT
+      - key: network-http.core.tcp.sliding-window
+        title: "Sliding Window"
+        order: 70
+        level: 2
+        objective: "ACK 전 여러 byte를 전송하는 sequence window를 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: network-http.core.tcp.flow-control
+        title: "Flow Control"
+        order: 80
+        level: 2
+        objective: "receiver advertised window가 수신 buffer overflow를 막는 방식을 설명한다."
+        density: CORE
+        visualization: TEXT
+      - key: network-http.core.tcp.congestion-control
+        title: "Congestion Control"
+        order: 90
+        level: 2
+        objective: "network capacity 추정에 따라 sending rate를 조절하는 목적을 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: network-http.core.tcp.connection-teardown
+        title: "Connection Teardown"
+        order: 100
+        level: 1
+        objective: "FIN·ACK 교환과 half-close 상태를 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: network-http.core.tcp.time-wait
+        title: "TIME_WAIT"
+        order: 110
+        level: 2
+        objective: "지연 segment와 마지막 ACK 재전송을 처리하기 위해 기다리는 이유를 설명한다."
+        density: STANDARD
+        visualization: TEXT
+      - key: network-http.core.tcp.tcp-head-of-line
+        title: "TCP Head-of-Line Blocking"
+        order: 120
+        level: 2
+        objective: "앞선 loss가 뒤 byte 전달을 막는 stream-level HOL을 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+  - key: network-http.core.udp
+    title: "UDP"
+    order: 70
+    scope: "datagram, checksum, delivery guarantee와 application reliability를 다룬다."
+    boundary: "얇은 transport를 다루며 QUIC처럼 UDP 위 reliability는 별도 protocol로 구분한다."
+    concepts:
+      - key: network-http.core.udp.udp-datagram
+        title: "UDP Datagram"
+        order: 10
+        level: 1
+        objective: "message boundary를 보존하는 connectionless datagram을 설명한다."
+        density: CORE
+        visualization: TEXT
+      - key: network-http.core.udp.delivery-order-guarantee
+        title: "Delivery and Order Guarantee"
+        order: 20
+        level: 1
+        objective: "UDP가 delivery·ordering·duplicate 제거를 보장하지 않는 경계를 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: network-http.core.udp.checksum
+        title: "UDP Checksum"
+        order: 30
+        level: 1
+        objective: "전송 오류 검출을 위한 checksum과 reliability의 차이를 설명한다."
+        density: STANDARD
+        visualization: TEXT
+      - key: network-http.core.udp.udp-use-case
+        title: "UDP Use Case"
+        order: 40
+        level: 1
+        objective: "지연·broadcast·application control 요구에 따른 UDP 선택을 비교한다."
+        density: STANDARD
+        visualization: TEXT
+      - key: network-http.core.udp.application-reliability
+        title: "Application Reliability over UDP"
+        order: 50
+        level: 2
+        objective: "sequence·ACK·retry를 application이 직접 설계할 때의 비용을 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+  - key: network-http.core.tls
+    title: "TLS"
+    order: 80
+    scope: "confidentiality, certificate, PKI, hostname verification, handshake와 termination을 다룬다."
+    boundary: "channel authentication/encryption을 다루며 HTTP authorization 정책은 소유하지 않는다."
+    concepts:
+      - key: network-http.core.tls.tls-purpose
+        title: "TLS Purpose"
+        order: 10
+        level: 1
+        objective: "도청·변조·server impersonation을 줄이는 TLS 목표를 설명한다."
+        density: CORE
+        visualization: TEXT
+      - key: network-http.core.tls.certificate
+        title: "Certificate"
+        order: 20
+        level: 1
+        objective: "public key와 identity binding을 증명하는 certificate를 설명한다."
+        density: CORE
+        visualization: TEXT
+      - key: network-http.core.tls.pki
+        title: "PKI"
+        order: 30
+        level: 2
+        objective: "CA chain과 trust store가 certificate를 검증하는 경로를 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: network-http.core.tls.hostname-verification
+        title: "Hostname Verification"
+        order: 40
+        level: 2
+        objective: "요청 host와 certificate name을 비교해야 하는 이유를 설명한다."
+        density: CORE
+        visualization: TEXT
+      - key: network-http.core.tls.tls-handshake
+        title: "TLS Handshake"
+        order: 50
+        level: 2
+        objective: "identity·capability·key material을 합의하는 handshake 흐름을 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: network-http.core.tls.key-agreement
+        title: "Key Agreement"
+        order: 60
+        level: 2
+        objective: "양 끝이 shared secret을 직접 전송하지 않고 합의하는 원리를 설명한다."
+        density: CORE
+        visualization: TEXT
+      - key: network-http.core.tls.symmetric-session-key
+        title: "Symmetric Session Key"
+        order: 70
+        level: 1
+        objective: "handshake 후 symmetric key로 payload를 암호화하는 이유를 설명한다."
+        density: CORE
+        visualization: TEXT
+      - key: network-http.core.tls.tls-termination
+        title: "TLS Termination"
+        order: 80
+        level: 2
+        objective: "proxy에서 TLS를 종료할 때 client-backend trust boundary가 바뀌는 점을 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+  - key: network-http.core.request-journey
+    title: "URL to HTTP Request"
+    order: 90
+    scope: "URL, origin, DNS·route·transport·TLS와 HTTP request delivery를 한 흐름으로 다룬다."
+    boundary: "요청 경로의 계층 연결을 다루며 각 계층의 상세 semantics는 해당 topic에 둔다."
+    concepts:
+      - key: network-http.core.request-journey.url-components
+        title: "URL Components"
+        order: 10
+        level: 1
+        objective: "scheme·authority·path·query·fragment의 처리 주체를 구분한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: network-http.core.request-journey.origin
+        title: "Origin"
+        order: 20
+        level: 1
+        objective: "scheme·host·port tuple로 origin을 정의하고 비교한다."
+        density: CORE
+        visualization: TEXT
+      - key: network-http.core.request-journey.dns-to-route
+        title: "DNS to Route"
+        order: 30
+        level: 1
+        objective: "hostname이 address와 next-hop route로 이어지는 흐름을 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: network-http.core.request-journey.transport-establishment
+        title: "Transport Establishment"
+        order: 40
+        level: 1
+        objective: "TCP/QUIC endpoint가 연결 상태를 만드는 시점을 설명한다."
+        density: CORE
+        visualization: TEXT
+      - key: network-http.core.request-journey.tls-before-http
+        title: "TLS before HTTP"
+        order: 50
+        level: 2
+        objective: "HTTPS에서 TLS handshake가 HTTP message보다 먼저 끝나는 이유를 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: network-http.core.request-journey.http-request-delivery
+        title: "HTTP Request Delivery"
+        order: 60
+        level: 2
+        objective: "완성된 request가 intermediary를 지나 origin server에 도달하는 경로를 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: network-http.core.request-journey.host-authority
+        title: "Host and Authority"
+        order: 70
+        level: 2
+        objective: "HTTP Host/authority가 virtual hosting 대상 선택에 쓰이는 이유를 설명한다."
+        density: CORE
+        visualization: TEXT
+      - key: network-http.core.request-journey.proxy-gateway-path
+        title: "Proxy and Gateway Path"
+        order: 80
+        level: 2
+        objective: "forward proxy·reverse proxy·gateway가 request path를 바꾸는 지점을 구분한다."
+        density: CORE
+        visualization: DIAGRAM
+  - key: network-http.core.http-message
+    title: "HTTP Messages and Representation"
+    order: 100
+    scope: "request/response, header/body, representation, media type와 content negotiation을 다룬다."
+    boundary: "HTTP message semantics를 다루며 serialization library 사용법은 다루지 않는다."
+    concepts:
+      - key: network-http.core.http-message.request-message
+        title: "Request Message"
+        order: 10
+        level: 1
+        objective: "method·target·header·body로 request를 구성하는 의미를 설명한다."
+        density: CORE
+        visualization: TEXT
+      - key: network-http.core.http-message.response-message
+        title: "Response Message"
+        order: 20
+        level: 1
+        objective: "status·header·body로 server 결과를 표현하는 구조를 설명한다."
+        density: CORE
+        visualization: TEXT
+      - key: network-http.core.http-message.header-body
+        title: "Header and Body"
+        order: 30
+        level: 1
+        objective: "metadata header와 content body의 parsing·framing 경계를 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: network-http.core.http-message.representation
+        title: "Representation"
+        order: 40
+        level: 1
+        objective: "resource 자체와 전송되는 representation을 구분한다."
+        density: CORE
+        visualization: TEXT
+      - key: network-http.core.http-message.media-type
+        title: "Media Type"
+        order: 50
+        level: 1
+        objective: "representation 형식과 media type label의 관계를 설명한다."
+        density: STANDARD
+        visualization: TEXT
+      - key: network-http.core.http-message.content-type
+        title: "Content-Type"
+        order: 60
+        level: 1
+        objective: "현재 body의 media type을 Content-Type으로 선언하는 이유를 설명한다."
+        density: CORE
+        visualization: TEXT
+      - key: network-http.core.http-message.accept
+        title: "Accept"
+        order: 70
+        level: 1
+        objective: "client가 선호 representation을 Accept로 표현하는 방식을 설명한다."
+        density: STANDARD
+        visualization: TEXT
+      - key: network-http.core.http-message.content-negotiation
+        title: "Content Negotiation"
+        order: 80
+        level: 2
+        objective: "요청 선호와 server available representation을 선택하는 trade-off를 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: network-http.core.http-message.content-length-transfer
+        title: "Content-Length and Transfer"
+        order: 90
+        level: 2
+        objective: "message framing과 Content-Length·transfer encoding의 관계를 설명한다."
+        density: CORE
+        visualization: TEXT
+  - key: network-http.core.http-methods
+    title: "HTTP Methods and Idempotency"
+    order: 110
+    scope: "safe/idempotent method와 GET·POST·PUT·PATCH·DELETE의 semantics를 다룬다."
+    boundary: "HTTP method contract를 다루며 backend idempotency storage 구현은 구분한다."
+    concepts:
+      - key: network-http.core.http-methods.safe-method
+        title: "Safe Method"
+        order: 10
+        level: 1
+        objective: "safe가 의도된 state change가 없다는 의미를 설명한다."
+        density: CORE
+        visualization: TEXT
+      - key: network-http.core.http-methods.idempotent-method
+        title: "Idempotent Method"
+        order: 20
+        level: 1
+        objective: "같은 요청 반복의 의도된 effect가 첫 요청과 같은 조건을 설명한다."
+        density: CORE
+        visualization: TEXT
+      - key: network-http.core.http-methods.get-head
+        title: "GET and HEAD"
+        order: 30
+        level: 1
+        objective: "representation 조회와 header-only 조회의 차이를 설명한다."
+        density: CORE
+        visualization: TEXT
+      - key: network-http.core.http-methods.post
+        title: "POST"
+        order: 40
+        level: 1
+        objective: "target resource에 processing을 요청하는 POST의 non-idempotent 경계를 설명한다."
+        density: CORE
+        visualization: TEXT
+      - key: network-http.core.http-methods.put
+        title: "PUT"
+        order: 50
+        level: 1
+        objective: "target representation을 대체하는 PUT의 idempotency를 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: network-http.core.http-methods.patch
+        title: "PATCH"
+        order: 60
+        level: 2
+        objective: "부분 변경 PATCH의 semantics와 반복 안전성 조건을 설명한다."
+        density: STANDARD
+        visualization: TEXT
+      - key: network-http.core.http-methods.delete
+        title: "DELETE"
+        order: 70
+        level: 1
+        objective: "resource 제거 요청과 이미 없는 resource 반복의 의미를 설명한다."
+        density: CORE
+        visualization: TEXT
+      - key: network-http.core.http-methods.protocol-idempotency-boundary
+        title: "Protocol versus Application Idempotency"
+        order: 80
+        level: 2
+        objective: "HTTP method idempotency와 backend Idempotency-Key 구현을 분리한다."
+        density: CORE
+        visualization: DIAGRAM
+  - key: network-http.core.http-status
+    title: "HTTP Status Codes"
+    order: 120
+    scope: "status class, success, redirect, client error, rate limit과 gateway failure를 다룬다."
+    boundary: "protocol response state를 다루며 domain error code 설계는 application 책임으로 둔다."
+    concepts:
+      - key: network-http.core.http-status.status-class
+        title: "Status Classes"
+        order: 10
+        level: 1
+        objective: "1xx~5xx class가 response state를 요약하는 방식을 설명한다."
+        density: CORE
+        visualization: TEXT
+      - key: network-http.core.http-status.200-201-202-204
+        title: "200, 201, 202 and 204"
+        order: 20
+        level: 1
+        objective: "성공·생성·비동기 수락·무본문 성공을 구분한다."
+        density: CORE
+        visualization: TEXT
+      - key: network-http.core.http-status.redirect-status
+        title: "Redirect Status"
+        order: 30
+        level: 2
+        objective: "redirect code가 다음 request location과 method 처리에 미치는 영향을 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: network-http.core.http-status.400-401-403-404
+        title: "400, 401, 403 and 404"
+        order: 40
+        level: 1
+        objective: "malformed request·authentication·permission·not found state를 구분한다."
+        density: CORE
+        visualization: TEXT
+      - key: network-http.core.http-status.409-412
+        title: "409 and 412"
+        order: 50
+        level: 2
+        objective: "conflict와 precondition failure를 state/version 관점에서 비교한다."
+        density: CORE
+        visualization: TEXT
+      - key: network-http.core.http-status.415-422
+        title: "415 and 422"
+        order: 60
+        level: 2
+        objective: "unsupported media type과 semantic validation failure를 구분한다."
+        density: STANDARD
+        visualization: TEXT
+      - key: network-http.core.http-status.429
+        title: "429"
+        order: 70
+        level: 2
+        objective: "rate limit 초과 상태와 Retry-After 신호의 의미를 설명한다."
+        density: STANDARD
+        visualization: DIAGRAM
+      - key: network-http.core.http-status.500-502-503-504
+        title: "500, 502, 503 and 504"
+        order: 80
+        level: 2
+        objective: "origin exception·bad gateway·unavailable·gateway timeout을 구분한다."
+        density: CORE
+        visualization: DIAGRAM
+  - key: network-http.core.http-versions
+    title: "HTTP Connection Evolution"
+    order: 130
+    scope: "HTTP/1.x connection, persistent connection, HTTP/2 streams와 HTTP/3 QUIC을 다룬다."
+    boundary: "HTTP transport evolution을 다루며 TLS/QUIC 암호 primitive 자체는 TLS topic에 둔다."
+    concepts:
+      - key: network-http.core.http-versions.http10-connection
+        title: "HTTP/1.0 Connection"
+        order: 10
+        level: 1
+        objective: "request별 connection의 비용과 framing을 설명한다."
+        density: STANDARD
+        visualization: TEXT
+      - key: network-http.core.http-versions.http11-persistent
+        title: "HTTP/1.1 Persistent Connection"
+        order: 20
+        level: 1
+        objective: "한 TCP connection 재사용과 Host 요구를 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: network-http.core.http-versions.keep-alive
+        title: "Keep-Alive"
+        order: 30
+        level: 1
+        objective: "idle connection 유지가 handshake 비용과 resource 점유를 바꾸는 방식을 설명한다."
+        density: STANDARD
+        visualization: TEXT
+      - key: network-http.core.http-versions.http11-pipelining
+        title: "HTTP/1.1 Pipelining"
+        order: 40
+        level: 2
+        objective: "응답 순서 제약이 pipelining head-of-line 문제를 만드는 이유를 설명한다."
+        density: STANDARD
+        visualization: DIAGRAM
+      - key: network-http.core.http-versions.http2-stream
+        title: "HTTP/2 Stream"
+        order: 50
+        level: 2
+        objective: "한 connection 안의 독립 stream과 frame을 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: network-http.core.http-versions.http2-multiplexing
+        title: "HTTP/2 Multiplexing"
+        order: 60
+        level: 2
+        objective: "여러 stream frame interleave가 application HOL을 줄이는 방식을 설명한다."
+        density: CORE
+        visualization: TEXT
+      - key: network-http.core.http-versions.header-compression
+        title: "Header Compression"
+        order: 70
+        level: 2
+        objective: "반복 header 전송을 줄이는 compression state와 위험 경계를 설명한다."
+        density: STANDARD
+        visualization: TEXT
+      - key: network-http.core.http-versions.quic
+        title: "QUIC"
+        order: 80
+        level: 2
+        objective: "UDP 위에서 encrypted multiplexed transport를 제공하는 QUIC의 역할을 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: network-http.core.http-versions.http3
+        title: "HTTP/3"
+        order: 90
+        level: 2
+        objective: "HTTP/3가 QUIC stream 위에서 HTTP semantics를 운반하는 방식을 설명한다."
+        density: CORE
+        visualization: TEXT
+      - key: network-http.core.http-versions.transport-head-of-line
+        title: "Transport Head-of-Line"
+        order: 100
+        level: 2
+        objective: "TCP-level HOL과 stream-level multiplexing의 차이를 비교한다."
+        density: CORE
+        visualization: DIAGRAM
+  - key: network-http.core.http-cache
+    title: "HTTP Caching"
+    order: 140
+    scope: "freshness, cache-control, validators, conditional request와 private/shared cache를 다룬다."
+    boundary: "HTTP caching semantics를 다루며 Redis/cache-aside architecture는 다른 영역에 둔다."
+    concepts:
+      - key: network-http.core.http-cache.freshness
+        title: "Freshness"
+        order: 10
+        level: 1
+        objective: "response가 fresh인지 stale인지 판단하는 시간 모델을 설명한다."
+        density: CORE
+        visualization: TEXT
+      - key: network-http.core.http-cache.cache-control
+        title: "Cache-Control"
+        order: 20
+        level: 1
+        objective: "max-age·no-cache·no-store 등 cache directive를 해석한다."
+        density: CORE
+        visualization: TEXT
+      - key: network-http.core.http-cache.expires
+        title: "Expires"
+        order: 30
+        level: 1
+        objective: "absolute expiry와 Cache-Control 우선순위를 설명한다."
+        density: STANDARD
+        visualization: TEXT
+      - key: network-http.core.http-cache.etag
+        title: "ETag"
+        order: 40
+        level: 2
+        objective: "representation version validator로 ETag를 사용하는 이유를 설명한다."
+        density: CORE
+        visualization: TEXT
+      - key: network-http.core.http-cache.last-modified
+        title: "Last-Modified"
+        order: 50
+        level: 1
+        objective: "수정 시각 validator의 정밀도와 clock 경계를 설명한다."
+        density: STANDARD
+        visualization: TEXT
+      - key: network-http.core.http-cache.if-none-match
+        title: "If-None-Match"
+        order: 60
+        level: 2
+        objective: "ETag 조건부 요청이 304 또는 새 representation으로 이어지는 흐름을 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: network-http.core.http-cache.if-modified-since
+        title: "If-Modified-Since"
+        order: 70
+        level: 2
+        objective: "Last-Modified 조건부 요청과 시간 비교의 한계를 설명한다."
+        density: STANDARD
+        visualization: TEXT
+      - key: network-http.core.http-cache.304
+        title: "304 Not Modified"
+        order: 80
+        level: 1
+        objective: "body 없이 cache representation을 재사용하게 하는 response state를 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: network-http.core.http-cache.private-shared-cache
+        title: "Private and Shared Cache"
+        order: 90
+        level: 2
+        objective: "사용자별 cache와 여러 사용자가 공유하는 cache의 안전 경계를 비교한다."
+        density: CORE
+        visualization: TEXT
+      - key: network-http.core.http-cache.intermediary-cache
+        title: "Intermediary Cache"
+        order: 100
+        level: 2
+        objective: "proxy/CDN cache가 origin과 client 사이에서 freshness를 판단하는 경계를 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+  - key: network-http.core.http-state-intermediary
+    title: "HTTP State and Intermediaries"
+    order: 150
+    scope: "cookie, proxy, reverse proxy, gateway, forwarded header와 CDN을 다룬다."
+    boundary: "HTTP state/intermediary mechanics를 다루며 CORS·CSRF·XSS 정책 자체는 Security 영역에 둔다."
+    concepts:
+      - key: network-http.core.http-state-intermediary.cookie
+        title: "Cookie"
+        order: 10
+        level: 1
+        objective: "client가 origin 요청에 state token을 다시 보내는 cookie 흐름을 설명한다."
+        density: CORE
+        visualization: TEXT
+      - key: network-http.core.http-state-intermediary.set-cookie
+        title: "Set-Cookie"
+        order: 20
+        level: 1
+        objective: "server response가 cookie 값을 저장하도록 지시하는 구조를 설명한다."
+        density: CORE
+        visualization: TEXT
+      - key: network-http.core.http-state-intermediary.cookie-scope
+        title: "Cookie Scope"
+        order: 30
+        level: 2
+        objective: "Domain·Path·Secure·SameSite가 전송 범위를 제한하는 방식을 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: network-http.core.http-state-intermediary.proxy
+        title: "Forward Proxy"
+        order: 40
+        level: 1
+        objective: "client 대신 outbound request를 전달하는 forward proxy를 설명한다."
+        density: STANDARD
+        visualization: DIAGRAM
+      - key: network-http.core.http-state-intermediary.reverse-proxy
+        title: "Reverse Proxy"
+        order: 50
+        level: 1
+        objective: "origin 앞에서 inbound request를 backend로 분배하는 reverse proxy를 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: network-http.core.http-state-intermediary.gateway
+        title: "Gateway"
+        order: 60
+        level: 2
+        objective: "protocol·routing·policy를 경계에서 중계하는 gateway의 역할을 설명한다."
+        density: CORE
+        visualization: TEXT
+      - key: network-http.core.http-state-intermediary.forwarded-header
+        title: "Forwarded Header"
+        order: 70
+        level: 2
+        objective: "intermediary가 원래 host·scheme·client 정보를 전달하는 표준 header를 설명한다."
+        density: CORE
+        visualization: TEXT
+      - key: network-http.core.http-state-intermediary.x-forwarded
+        title: "X-Forwarded Headers"
+        order: 80
+        level: 2
+        objective: "비표준 관행 header의 체인과 spoofing 위험을 설명한다."
+        density: STANDARD
+        visualization: TEXT
+      - key: network-http.core.http-state-intermediary.trusted-proxy-boundary
+        title: "Trusted Proxy Boundary"
+        order: 90
+        level: 3
+        objective: "어느 proxy의 forwarded value를 신뢰할지 결정하는 경계를 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: network-http.core.http-state-intermediary.cdn-http-intermediary
+        title: "CDN HTTP Intermediary"
+        order: 100
+        level: 2
+        objective: "edge cache와 origin fetch가 HTTP semantics를 바꾸는 지점을 설명한다."
+        density: CORE
+        visualization: DIAGRAM

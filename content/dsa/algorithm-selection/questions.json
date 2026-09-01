@@ -1,0 +1,265 @@
+[
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.algorithm-selection.constraint-to-complexity.q1",
+    "promptMarkdown": "입력 상한 `n = 100,000`에서 두 후보가 각각 `O(n²)`과 `O(n log n)`이다. 구조적으로 먼저 제외할 가능성이 높은 후보는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.algorithm-selection.constraint-to-complexity"],
+    "choices": [
+      {"key": "A", "content": "O(n²). 약 10¹⁰ 규모의 작업이 되어 요청 경로에서 감당하기 어렵다.", "displayOrder": 0},
+      {"key": "B", "content": "O(n log n). log가 있으므로 항상 n²보다 느리다.", "displayOrder": 1},
+      {"key": "C", "content": "둘은 Big-O가 다르지만 입력 크기와 무관하게 항상 같은 시간이다.", "displayOrder": 2},
+      {"key": "D", "content": "복잡도는 후보 제거에 사용할 수 없다.", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "A"
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.algorithm-selection.constraint-to-complexity.q2",
+    "promptMarkdown": "`n = 1,000`일 때 `n²`의 기본 연산 수는 대략 얼마인가? 숫자로 답하라.",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.algorithm-selection.constraint-to-complexity"],
+    "acceptedAnswers": ["1000000", "1,000,000", "백만", "약 100만"]
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.algorithm-selection.constraint-to-complexity.q3",
+    "promptMarkdown": "개발 환경에서는 최대 500건이라 이중 반복문이 충분히 빨랐지만 production import는 최대 200,000건이다. 같은 구현을 그대로 유지해도 되는지 판단하는 절차를 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.algorithm-selection.constraint-to-complexity"],
+    "modelAnswer": "sample이 아니라 production 상한을 입력 크기로 잡아 O(n²)의 증가량을 먼저 계산한다. 200,000²은 구조적으로 매우 큰 작업량이므로 O(n log n), hashing, sorting/indexing 등 다른 후보를 검토한다. 그 뒤 메모리와 data shape를 확인하고 대표·최악 입력으로 실제 측정한다. Big-O만으로 절대 시간을 단정하지 않지만 명백히 감당하기 어려운 후보를 제거하는 데 사용한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.algorithm-selection.constraint-to-complexity.q4",
+    "promptMarkdown": "두 알고리즘이 모두 `O(n log n)`인데 실제 latency가 크게 다를 수 있는 이유를 두 가지 이상 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.algorithm-selection.constraint-to-complexity"],
+    "modelAnswer": "Big-O는 증가 차수를 표현하므로 allocation, cache locality, branch, I/O, 구현 상수 같은 실제 비용을 숨긴다. 또한 평균·worst-case 전제나 입력 분포가 다를 수 있다. 복잡도로 후보를 줄인 뒤 실제 workload에서 측정해야 한다."
+  },
+
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.algorithm-selection.memory-limit.q1",
+    "promptMarkdown": "primitive `int` 1,000,000개를 연속 배열로 저장할 때 원시 데이터 크기는 대략 얼마인가? (`int = 4 byte`로 계산)",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.algorithm-selection.memory-limit"],
+    "acceptedAnswers": ["4000000 bytes", "4,000,000 bytes", "약 4 MB", "4 MB"]
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.algorithm-selection.memory-limit.q2",
+    "promptMarkdown": "배열 자체가 20 MB인 작업이 최대 30개 동시에 실행된다. 다른 메모리를 무시해도 이 배열들만으로 필요한 메모리는 얼마인가?",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.algorithm-selection.memory-limit"],
+    "acceptedAnswers": ["600 MB", "600MB", "약 600 MB"]
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.algorithm-selection.memory-limit.q3",
+    "promptMarkdown": "hash table resize 중 old table과 new table을 동시에 유지해야 한다. steady-state 크기만 보고 memory budget을 잡았을 때 어떤 문제가 생기는지 분석하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.algorithm-selection.memory-limit"],
+    "modelAnswer": "resize 시점에는 기존 storage와 새 storage가 동시에 존재해 순간 peak가 steady-state보다 커진다. 여기에 concurrent request와 object/bucket overhead까지 더해지면 OOM이 발생할 수 있다. 알고리즘 선택에서는 평균이 아니라 temporary buffer, rebuild 중복 storage, 동시 실행 수를 포함한 peak memory를 계산해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.algorithm-selection.memory-limit.q4",
+    "promptMarkdown": "DP full table을 rolling row로 줄일 때 확인해야 하는 두 가지 조건을 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.algorithm-selection.memory-limit"],
+    "modelAnswer": "미래 전이가 실제로 이전 몇 개 row/state만 참조하는지 확인해야 하고, 갱신 중 필요한 이전 값을 덮어쓰지 않도록 iteration order를 맞춰야 한다. 선택 경로나 predecessor 복원이 필요하다면 값만 남기는 최적화가 필요한 정보를 없애지 않는지도 확인한다."
+  },
+
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.algorithm-selection.data-shape.q1",
+    "promptMarkdown": "정수 1,000,000개를 정렬해야 하는데 모든 값이 `0..999` 범위다. 비교 정렬 외에 우선 검토할 수 있는 후보는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.algorithm-selection.data-shape"],
+    "choices": [
+      {"key": "A", "content": "Counting sort처럼 제한된 key 범위를 사용하는 방법", "displayOrder": 0},
+      {"key": "B", "content": "Key 범위와 관계없이 무조건 O(n²) 비교 정렬", "displayOrder": 1},
+      {"key": "C", "content": "Graph BFS", "displayOrder": 2},
+      {"key": "D", "content": "Union-Find", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "A"
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.algorithm-selection.data-shape.q2",
+    "promptMarkdown": "이미 정렬된 데이터에 exact lookup이 반복된다. 정렬 상태를 활용할 수 있는 대표 탐색 방법을 쓰라.",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.algorithm-selection.data-shape"],
+    "acceptedAnswers": ["binary search", "이진 탐색", "binary-search"]
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.algorithm-selection.data-shape.q3",
+    "promptMarkdown": "`V = 10,000`, `E = 20,000`인 graph에서 adjacency matrix와 adjacency list 중 어느 표현을 우선 검토할지, 그 이유를 공간 관점에서 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.algorithm-selection.data-shape"],
+    "modelAnswer": "E가 V²에 비해 매우 작은 sparse graph이므로 adjacency list를 우선 검토한다. list는 O(V+E) 공간을 쓰지만 matrix는 V², 즉 1억 개의 cell을 준비해야 한다. 다만 edge membership 조회 빈도 등 operation 요구도 함께 비교한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.algorithm-selection.data-shape.q4",
+    "promptMarkdown": "평균 데이터에서는 hash lookup이 빠른데 특정 형태의 key에서 latency가 급격히 증가한다. 어떤 data-shape 가정과 구조적 위험을 확인해야 하는가?",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.algorithm-selection.data-shape"],
+    "modelAnswer": "Key 분포와 hash 결과가 균등하다는 평균 가정이 실제 입력에서 성립하는지 확인한다. 특정 bucket/probe cluster로 collision이 집중되면 expected O(1)과 실제 비용이 달라질 수 있다. duplicate-heavy, skew, adversarial key를 별도 fixture로 측정하고 hash quality, load factor, ordered structure 대안을 비교한다."
+  },
+
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.algorithm-selection.preprocessing-query-cost.q1",
+    "promptMarkdown": "선형 scan 한 번이 100 ms, preprocessing이 800 ms, preprocessing 후 query가 5 ms라면 query 1번만 수행할 때 더 싼 방식은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.algorithm-selection.preprocessing-query-cost"],
+    "choices": [
+      {"key": "A", "content": "선형 scan: 100 ms", "displayOrder": 0},
+      {"key": "B", "content": "전처리 후 query: 805 ms", "displayOrder": 1},
+      {"key": "C", "content": "둘 다 항상 5 ms", "displayOrder": 2}
+    ],
+    "correctChoiceKey": "A"
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.algorithm-selection.preprocessing-query-cost.q2",
+    "promptMarkdown": "같은 조건에서 query가 10번이면 선형 scan 방식과 preprocessing 방식의 총 예상 시간을 각각 계산하라.",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.algorithm-selection.preprocessing-query-cost"],
+    "acceptedAnswers": ["scan 1000 ms, preprocessing 850 ms", "1000ms, 850ms", "선형 1000 ms / 전처리 850 ms"]
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.algorithm-selection.preprocessing-query-cost.q3",
+    "promptMarkdown": "Immutable array에 prefix sum을 만들어 range query를 빠르게 처리하던 구조에서 값 update가 매우 자주 발생하기 시작했다. 무엇을 다시 평가해야 하는지 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.algorithm-selection.preprocessing-query-cost"],
+    "modelAnswer": "기존 prefix sum은 query는 빠르지만 한 값 변경 시 뒤쪽 prefix를 광범위하게 갱신해야 할 수 있다. Query 절감만이 아니라 update/rebuild 비용을 총비용에 포함해야 한다. Update와 range query가 모두 중요하면 Fenwick tree나 segment tree처럼 양쪽 operation을 균형 있게 지원하는 구조를 검토한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.algorithm-selection.preprocessing-query-cost.q4",
+    "promptMarkdown": "파생 index가 빠르지만 원본 데이터보다 오래된 값을 반환할 수 있다. 알고리즘 성능 외에 어떤 correctness contract가 필요한가?",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.algorithm-selection.preprocessing-query-cost"],
+    "modelAnswer": "원본 변경이 index에 반영되는 시점, 허용 가능한 stale 범위, rebuild/recovery 방법을 정의해야 한다. 전처리 구조는 query 비용만 줄이는 것이 아니라 update와 freshness 유지 비용도 가진다."
+  },
+
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.algorithm-selection.online-offline.q1",
+    "promptMarkdown": "전체 입력을 미리 볼 수 있고 결과를 즉시 공개할 필요가 없는 문제에서 가능한 전략은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.algorithm-selection.online-offline"],
+    "choices": [
+      {"key": "A", "content": "전체 입력을 정렬하거나 전처리하는 offline 전략을 검토할 수 있다.", "displayOrder": 0},
+      {"key": "B", "content": "미래 입력을 알더라도 반드시 즉시 결정을 확정해야 한다.", "displayOrder": 1},
+      {"key": "C", "content": "모든 입력을 영원히 메모리에 저장해야만 한다.", "displayOrder": 2}
+    ],
+    "correctChoiceKey": "A"
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.algorithm-selection.online-offline.q2",
+    "promptMarkdown": "끝이 없는 stream에서 최근 100개 값의 maximum만 필요하다. 모든 과거 값을 저장하지 않아도 되는 이유를 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.algorithm-selection.online-offline"],
+    "modelAnswer": "현재 답과 미래 window에 영향을 줄 수 있는 bounded state만 유지하면 된다. Window 밖으로 만료된 값은 다시 답에 포함될 수 없으므로 제거할 수 있고, monotonic deque 같은 구조는 현재 maximum 후보만 보존한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.algorithm-selection.online-offline.q3",
+    "promptMarkdown": "사용자에게 200 ms 안에 추천을 보여줘야 하지만 하루 전체 이벤트를 이용한 더 정확한 최적화도 필요하다. Online/offline 경로를 어떻게 나눌 수 있는가?",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.algorithm-selection.online-offline"],
+    "modelAnswer": "실시간 경로는 현재까지의 bounded/incremental state로 빠른 결과를 만들고, 별도 batch는 하루 snapshot 전체를 사용해 offline으로 더 정확한 결과를 계산할 수 있다. 두 결과의 freshness와 교체 시점을 명시하고, online 경로가 미래 입력을 알고 있다는 가정을 두지 않는다."
+  },
+
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.algorithm-selection.operation-driven-structure-choice.q1",
+    "promptMarkdown": "Exact key lookup이 대부분이고 range query나 정렬 순회가 필요하지 않은 workload에서 우선 검토할 자료구조는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.algorithm-selection.operation-driven-structure-choice"],
+    "choices": [
+      {"key": "A", "content": "Hash table", "displayOrder": 0},
+      {"key": "B", "content": "Heap", "displayOrder": 1},
+      {"key": "C", "content": "Adjacency matrix", "displayOrder": 2},
+      {"key": "D", "content": "Stack", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "A"
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.algorithm-selection.operation-driven-structure-choice.q2",
+    "promptMarkdown": "다음 workload에서 hash table 하나만 사용하는 설계의 약점을 설명하라: exact lookup 70%, insert 10%, delete 5%, range query 15%.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.algorithm-selection.operation-driven-structure-choice"],
+    "modelAnswer": "Hash table은 exact lookup에는 강하지만 ordering이 없어 range query가 전체 scan에 가까워질 수 있다. Range query 15%가 실제 latency에서 충분히 중요하다면 balanced tree, sorted structure 또는 별도 ordered index를 비교해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.algorithm-selection.operation-driven-structure-choice.q3",
+    "promptMarkdown": "Priority가 가장 높은 작업을 반복해서 꺼내야 하지만 arbitrary key lookup은 거의 없다. Heap이 자연스러운 후보인 이유와, heap만으로 해결하기 어려운 요구를 하나 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.algorithm-selection.operation-driven-structure-choice"],
+    "modelAnswer": "Heap은 우선순위 invariant를 유지해 min/max peek과 removal을 효율적으로 수행하므로 repeated priority extraction에 맞는다. 반면 임의 key의 빠른 lookup, ordered range query, prefix search 같은 요구에는 직접 적합하지 않다. 그런 operation이 중요하면 별도 index나 다른 구조를 함께 검토해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.algorithm-selection.operation-driven-structure-choice.q4",
+    "promptMarkdown": "자료구조를 고르기 전에 workload에서 최소한 어떤 정보를 기록해야 하는지 네 가지 이상 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.algorithm-selection.operation-driven-structure-choice"],
+    "modelAnswer": "Lookup/insert/delete/min-max/range/prefix 같은 주요 operation의 종류와 빈도, 입력 크기와 data shape, 필요한 ordering·duplicate·priority invariant, memory budget, worst-case 요구, update/iteration semantics 등을 기록한다. 그 뒤 후보 구조의 operation 비용을 실제 workload와 비교한다."
+  }
+]

@@ -1,0 +1,238 @@
+[
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.complexity.input-size-operation-count.q1",
+    "promptMarkdown": "길이 n인 배열을 한 번 끝까지 순회하며 각 원소에 상수 시간 작업을 한 번 수행한다. 기본 연산 횟수의 증가 차수는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.complexity.input-size-operation-count"],
+    "choices": [
+      {"key": "A", "content": "Θ(1)", "displayOrder": 0},
+      {"key": "B", "content": "Θ(log n)", "displayOrder": 1},
+      {"key": "C", "content": "Θ(n)", "displayOrder": 2},
+      {"key": "D", "content": "Θ(n²)", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "C"
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.complexity.input-size-operation-count.q2",
+    "promptMarkdown": "바깥 loop가 n번 실행되고 i번째 반복에서 안쪽 loop가 정확히 i번 실행된다. 전체 안쪽 연산 횟수를 합으로 쓰고 점근 차수를 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.complexity.input-size-operation-count"],
+    "modelAnswer": "전체 횟수는 1+2+...+n = n(n+1)/2이고 가장 큰 항의 차수가 n²이므로 Θ(n²)이다. 중첩 loop라는 모양만 보고 무조건 n²이라고 하는 것이 아니라 실제 반복 범위를 합산한 결과다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.complexity.input-size-operation-count.q3",
+    "promptMarkdown": "한 API가 최대 1,000개의 row를 받지만 각 row 안에 최대 m개의 tag가 있고 모든 tag 쌍을 비교한다. 입력 크기를 row 수 n 하나만으로 정의하면 비용을 과소평가할 수 있는 이유와 적절한 비용 모델을 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.complexity.input-size-operation-count"],
+    "modelAnswer": "Row마다 tag 수가 달라 내부 작업량이 달라지므로 n만으로는 실제 input size를 설명하지 못한다. 각 row의 tag 수를 mi라고 하면 pair 비교 비용은 대략 Σ mi²이고, 균일 상한 m을 쓰면 O(nm²)로 모델링할 수 있다. 실제 제한도 row count와 nested payload 크기를 함께 둬야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.complexity.big-o-theta-omega.q1",
+    "promptMarkdown": "`f(n)=3n²+2n+1`에 대해 가장 정확한 점근 표현은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.complexity.big-o-theta-omega"],
+    "choices": [
+      {"key": "A", "content": "Θ(n)", "displayOrder": 0},
+      {"key": "B", "content": "Θ(n²)", "displayOrder": 1},
+      {"key": "C", "content": "Θ(n³)", "displayOrder": 2},
+      {"key": "D", "content": "정확한 계수를 버리므로 어떤 Θ도 쓸 수 없다", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "B"
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.complexity.big-o-theta-omega.q2",
+    "promptMarkdown": "`f(n)=Θ(n log n)`이라고 말할 수 있다면 `f(n)=O(n²)`도 참일 수 있는 이유와, 두 표현의 정보량 차이를 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.complexity.big-o-theta-omega"],
+    "modelAnswer": "n log n은 충분히 큰 n에서 n²보다 느리게 성장하므로 n²은 유효한 점근 상한이 될 수 있다. 하지만 Θ(n log n)은 상한과 하한이 같은 차수임을 알려 실제 성장률을 더 좁게 표현하고, O(n²)은 그보다 느슨한 상한 정보만 준다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.complexity.big-o-theta-omega.q3",
+    "promptMarkdown": "알고리즘 A가 Θ(n), B가 Θ(n log n)이다. 현재 production 입력은 n≤20이고 B의 상수 비용이 훨씬 작다. 점근 표기만 보고 A가 현재 workload에서 반드시 빠르다고 결론 내릴 수 없는 이유를 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.complexity.big-o-theta-omega"],
+    "modelAnswer": "점근 표기는 충분히 큰 입력에서의 성장 차수를 비교하며 상수항, cache/I/O, 구현 overhead와 현재 작은 입력 범위를 숨긴다. 장기적인 scalability에는 A가 유리할 가능성이 있지만 현재 n≤20의 실제 latency는 representative benchmark로 확인해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.complexity.best-average-worst.q1",
+    "promptMarkdown": "정렬되지 않은 배열에서 원하는 값이 첫 번째 위치에 있을 때 linear search의 best-case와, 값이 없을 때 worst-case 비용으로 가장 적절한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.complexity.best-average-worst"],
+    "choices": [
+      {"key": "A", "content": "best Θ(1), worst Θ(n)", "displayOrder": 0},
+      {"key": "B", "content": "best Θ(n), worst Θ(1)", "displayOrder": 1},
+      {"key": "C", "content": "둘 다 항상 Θ(log n)", "displayOrder": 2},
+      {"key": "D", "content": "둘 다 항상 Θ(n²)", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "A"
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.complexity.best-average-worst.q2",
+    "promptMarkdown": "average-case complexity를 말하려면 단순히 best와 worst를 평균내는 것으로 충분하지 않은 이유를 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.complexity.best-average-worst"],
+    "modelAnswer": "Average case는 가능한 입력에 어떤 확률 분포를 가정하는지에 따라 기대 비용을 계산해야 한다. Best와 worst 두 값의 산술평균은 실제 입력 분포나 중간 경우의 비용을 반영하지 않으므로 일반적인 average-case 분석이 아니다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.complexity.best-average-worst.q3",
+    "promptMarkdown": "외부 사용자가 직접 key를 선택할 수 있는 자료구조 endpoint에서 평균 O(1) lookup만 보고 resource limit을 잡으면 위험할 수 있는 이유를 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.complexity.best-average-worst"],
+    "modelAnswer": "입력 분포를 사용자가 통제하면 우연 또는 의도적으로 collision 같은 worst-case 상태가 집중될 수 있어 평균 가정이 깨질 수 있다. Worst-case 비용, 입력 제한, hash 방어, timeout/memory budget과 실제 분포별 측정을 함께 검토해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.complexity.time-space-tradeoff.q1",
+    "promptMarkdown": "1,000번 반복 조회하는 값을 첫 조회 때 계산해 map에 저장해 두는 선택은 어떤 대표적인 trade-off인가?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.complexity.time-space-tradeoff"],
+    "choices": [
+      {"key": "A", "content": "추가 memory를 사용해 이후 계산 시간을 줄인다.", "displayOrder": 0},
+      {"key": "B", "content": "memory와 time을 모두 항상 0으로 만든다.", "displayOrder": 1},
+      {"key": "C", "content": "시간 복잡도와 공간 복잡도는 서로 영향을 줄 수 없다는 예다.", "displayOrder": 2},
+      {"key": "D", "content": "캐시한 값은 source보다 항상 최신이라는 보장이다.", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "A"
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.complexity.time-space-tradeoff.q2",
+    "promptMarkdown": "memoization이 time complexity를 줄일 수 있는 조건과 대신 추가되는 space cost를 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.complexity.time-space-tradeoff"],
+    "modelAnswer": "동일한 subproblem/state가 반복될 때 이미 계산한 결과를 key→result 형태로 저장하면 재계산을 줄일 수 있다. 대신 서로 다른 state 수에 비례한 memo table memory와 lookup 관리 비용이 필요하며 state space가 지나치게 크면 space가 병목이 될 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.complexity.time-space-tradeoff.q3",
+    "promptMarkdown": "중복 검사를 위해 request마다 모든 ID를 HashSet에 올리면 DB 조회는 줄지만 heap peak가 memory limit을 넘는다. 어떤 입력 특성과 대안을 비교해야 하는지 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.complexity.time-space-tradeoff"],
+    "modelAnswer": "ID 개수, key 크기, object/table overhead와 동시 request 수를 기준으로 실제 peak space를 계산해야 한다. Batch/chunk 단위 dedup, sort 후 adjacent comparison, DB constraint 등 더 적은 memory를 쓰는 후보와 추가 I/O/CPU 비용을 함께 비교한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.complexity.amortized-analysis.q1",
+    "promptMarkdown": "amortized O(1)이라는 설명으로 가장 정확한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.complexity.amortized-analysis"],
+    "choices": [
+      {"key": "A", "content": "모든 개별 operation이 worst case O(1)이다.", "displayOrder": 0},
+      {"key": "B", "content": "적절한 operation sequence의 총비용을 operation 수로 나누면 상수 bound를 얻을 수 있다.", "displayOrder": 1},
+      {"key": "C", "content": "입력 distribution이 uniform하다고 확률적으로 가정한 평균값이다.", "displayOrder": 2},
+      {"key": "D", "content": "가장 비싼 operation 하나를 분석에서 제외한다.", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "B"
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.complexity.amortized-analysis.q2",
+    "promptMarkdown": "capacity 1에서 시작해 꽉 찰 때마다 2배로 늘리는 dynamic array에 8개 원소를 순서대로 append한다. Resize 때 기존 원소를 복사하는 횟수의 합은 얼마인가?",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.complexity.amortized-analysis"],
+    "acceptedAnswers": ["7", "7회", "1+2+4=7"]
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.complexity.amortized-analysis.q3",
+    "promptMarkdown": "capacity를 꽉 찰 때마다 두 배가 아니라 정확히 1씩만 늘리는 dynamic array에서 n번 append의 총 copy 비용이 왜 O(n²)이 되는지 합으로 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.complexity.amortized-analysis"],
+    "modelAnswer": "거의 매 append마다 기존 1,2,3,...,n-1개 원소를 복사하므로 총 copy 수는 1+2+...+(n-1)=n(n-1)/2=Θ(n²)이다. 따라서 n번 operation의 총비용이 Θ(n²)이고 append 한 번의 amortized cost도 Θ(n)이 된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.complexity.amortized-analysis.q4",
+    "promptMarkdown": "append가 amortized O(1)인 dynamic buffer에서 드물게 수십 MB copy가 발생해 p99 latency가 튄다. 이 현상이 amortized bound와 모순되지 않는 이유와 latency-sensitive 서비스에서 검토할 대응을 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.complexity.amortized-analysis"],
+    "modelAnswer": "Amortized O(1)은 긴 sequence의 총비용/operation 평균 bound이지 각 operation의 worst-case latency가 상수라는 뜻이 아니다. Resize 한 번은 O(n) copy를 만들 수 있다. 예상 크기 기반 reserve, chunked structure, growth factor 조정 등을 memory peak와 함께 비교하고 p99를 실제로 측정해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.complexity.invariant-correctness.q1",
+    "promptMarkdown": "loop invariant를 이용한 correctness reasoning에서 반드시 확인해야 하는 항목으로 가장 적절한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.complexity.invariant-correctness"],
+    "choices": [
+      {"key": "A", "content": "초기 상태에서 invariant가 참이고, 반복이 이를 보존하며, 종료 조건과 합쳐 원하는 postcondition을 얻는지 확인한다.", "displayOrder": 0},
+      {"key": "B", "content": "예제 하나가 성공하면 다른 입력은 검사할 필요가 없다.", "displayOrder": 1},
+      {"key": "C", "content": "invariant가 유지되면 loop가 종료하는지 여부는 항상 자동으로 증명된다.", "displayOrder": 2},
+      {"key": "D", "content": "invariant는 성능만 설명하고 결과 correctness에는 사용하지 않는다.", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "A"
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.complexity.invariant-correctness.q2",
+    "promptMarkdown": "lower-bound binary search에서 `[0,left)`는 target보다 작고 `[right,n)`은 target 이상이라는 invariant를 사용한다. `a[mid] >= target`일 때 `right = mid`로 갱신하는 이유를 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.complexity.invariant-correctness"],
+    "modelAnswer": "a[mid]가 target 이상이면 mid 자체가 lower bound 후보일 수 있으므로 버리면 안 된다. right를 mid로 두면 [mid,n)의 첫 부분이 target 이상이라는 오른쪽 invariant를 유지하면서 후보 구간 [left,mid)를 포함해 계속 탐색할 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.complexity.invariant-correctness.q3",
+    "promptMarkdown": "같은 lower-bound loop에서 `a[mid] < target`인데 `left = mid`로만 갱신하면 어떤 termination 문제가 생길 수 있는지 예를 들어 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.complexity.invariant-correctness"],
+    "modelAnswer": "후보 구간 길이가 2이고 mid가 left와 같은 경우 `left=mid`는 경계를 전혀 이동시키지 않는다. 예를 들어 left=0,right=1 형태에서 mid=0이고 a[0]<target이면 다음 반복도 동일한 상태가 되어 무한 loop가 될 수 있다. `left=mid+1`처럼 progress가 보장되어야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.complexity.invariant-correctness.q4",
+    "promptMarkdown": "doubly linked list에서 node X를 삭제한 뒤 `X.prev.next`는 X.next로 갱신했지만 `X.next.prev`는 그대로 두었다. 즉시 forward traversal은 성공할 수도 있다. 그래도 자료구조가 잘못된 이유를 invariant와 후속 operation 관점에서 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.complexity.invariant-correctness"],
+    "modelAnswer": "Doubly linked list는 인접 node에 대해 next/prev 관계가 서로 일치해야 한다. 한 방향만 수정하면 `next.prev`가 삭제된 X를 계속 가리켜 invariant가 깨진다. Forward traversal 하나는 우연히 성공해도 reverse traversal이나 다음 delete가 stale link를 따라가 실패할 수 있으므로 operation 종료 시 전체 link invariant를 복원해야 한다."
+  }
+]

@@ -1,0 +1,182 @@
+[
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.datapath-control.alu-datapath.q1",
+    "promptMarkdown": "ALU가 datapath에서 주로 담당하는 역할로 가장 적절한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.datapath-control.alu-datapath"],
+    "choices": [
+      {"key": "A", "content": "operand에 산술·논리 연산을 수행하고 비교 결과 등을 계산한다", "displayOrder": 0},
+      {"key": "B", "content": "opcode를 해석해 CPU 전체의 control signal을 생성한다", "displayOrder": 1},
+      {"key": "C", "content": "clock edge 사이에도 값을 영구적으로 보존하는 architectural register 역할을 한다", "displayOrder": 2},
+      {"key": "D", "content": "항상 다음 instruction의 주소를 결정해 PC를 갱신한다", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "A"
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.datapath-control.alu-datapath.q2",
+    "promptMarkdown": "datapath와 control signal이 서로 어떤 역할을 나누는지 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.datapath-control.alu-datapath"],
+    "modelAnswer": "datapath는 register, ALU, mux와 같은 구성 요소를 통해 실제 data를 이동·계산한다. control logic은 현재 instruction에 맞춰 어떤 operand를 선택할지, 어떤 ALU 연산을 할지, memory/register write를 허용할지 같은 signal을 만들어 datapath의 동작을 선택한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.datapath-control.alu-datapath.q3",
+    "promptMarkdown": "`ADD x3, x1, x2`에서 x1=7, x2=5이고 ALU가 12를 정상 계산했지만 `RegWrite`가 비활성화되어 있다. instruction 완료 뒤 architectural state에 어떤 일이 생기는지 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.datapath-control.alu-datapath"],
+    "modelAnswer": "ALU 내부에는 12라는 계산 결과가 만들어지지만 destination register에 write가 허용되지 않으므로 x3의 architectural value는 바뀌지 않는다. 이 사례는 datapath에서 값을 계산하는 것과 control signal이 그 결과를 architectural state로 commit하도록 허용하는 것이 별도 책임임을 보여 준다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.datapath-control.control-unit.q1",
+    "promptMarkdown": "control unit의 책임으로 가장 적절한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.datapath-control.control-unit"],
+    "choices": [
+      {"key": "A", "content": "instruction을 해석해 ALU operation, operand selection, register/memory write 같은 control signal을 결정한다", "displayOrder": 0},
+      {"key": "B", "content": "모든 산술 결과를 장기간 저장하는 register file 자체가 된다", "displayOrder": 1},
+      {"key": "C", "content": "cache miss가 발생할 때마다 DRAM의 물리 cell을 직접 읽는다", "displayOrder": 2},
+      {"key": "D", "content": "instruction 종류와 무관하게 모든 datapath signal을 항상 같은 값으로 유지한다", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "A"
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.datapath-control.control-unit.q2",
+    "promptMarkdown": "hardwired control과 microprogrammed control이 control signal을 만드는 방식을 비교하고 대표적인 trade-off를 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.datapath-control.control-unit"],
+    "modelAnswer": "hardwired control은 조합·순차 논리 회로로 instruction과 상태를 직접 해석해 signal을 만들어 빠른 대신 복잡한 ISA 변경이나 수정이 어렵다. microprogrammed control은 control store의 microinstruction sequence로 signal을 정의해 복잡한 동작을 구조화하고 수정하기 쉽지만 control store 조회와 sequencing 비용이 추가될 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.datapath-control.control-unit.q3",
+    "promptMarkdown": "base register가 0x1000이고 immediate가 0x20인 load instruction에서 control unit이 두 번째 ALU operand로 immediate가 아니라 다른 register 값 0x80을 선택했다. 이후 memory read가 정상 수행된다면 어떤 오류가 생기는지 datapath 흐름으로 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.datapath-control.control-unit"],
+    "modelAnswer": "정상 effective address는 0x1020이어야 하지만 잘못된 operand select 때문에 ALU가 0x1080을 계산한다. memory unit은 자신에게 전달된 주소를 정상적으로 읽을 수 있으므로 엉뚱한 위치의 값을 load하거나 protection/page fault가 발생할 수 있다. ALU 자체가 맞게 계산했어도 control signal이 틀리면 instruction semantics가 깨진다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.datapath-control.clock-cycle.q1",
+    "promptMarkdown": "동기식 CPU에서 clock cycle을 이해한 설명으로 가장 적절한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.datapath-control.clock-cycle"],
+    "choices": [
+      {"key": "A", "content": "조합 논리가 계산할 시간을 둔 뒤 clock edge를 기준으로 순차 상태를 갱신하는 시간 단위다", "displayOrder": 0},
+      {"key": "B", "content": "한 cycle은 microarchitecture와 무관하게 항상 instruction 하나의 전체 실행 시간이다", "displayOrder": 1},
+      {"key": "C", "content": "frequency가 높아지면 workload의 CPI도 반드시 같은 비율로 감소한다", "displayOrder": 2},
+      {"key": "D", "content": "cycle time은 clock frequency와 비례하므로 frequency가 높을수록 길어진다", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "A"
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.datapath-control.clock-cycle.q2",
+    "promptMarkdown": "clock frequency를 `f`라고 할 때 cycle time을 식으로 쓰라.",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.datapath-control.clock-cycle"],
+    "acceptedAnswers": ["1/f", "frequency의 역수", "clock frequency의 역수"]
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.datapath-control.clock-cycle.q3",
+    "promptMarkdown": "같은 instruction 수를 실행하는 CPU A는 3 GHz, 평균 CPI 1.5이고 CPU B는 4 GHz, 평균 CPI 2.4다. instruction 수가 같다는 조건에서 어느 CPU의 실행 시간이 더 짧은지 계산 근거와 함께 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.datapath-control.clock-cycle"],
+    "modelAnswer": "instruction 하나당 평균 시간은 CPI/clock rate로 비교할 수 있다. A는 1.5/3 GHz = 0.5 ns, B는 2.4/4 GHz = 0.6 ns이므로 같은 instruction 수라면 A가 더 짧다. clock rate만 높다고 반드시 빠른 것이 아니라 CPI를 함께 봐야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.datapath-control.critical-path.q1",
+    "promptMarkdown": "동기식 datapath에서 critical path가 clock 설계에 미치는 영향으로 가장 적절한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.datapath-control.critical-path"],
+    "choices": [
+      {"key": "A", "content": "register 사이의 가장 긴 조합 논리 지연이 최소 cycle time의 하한을 제한한다", "displayOrder": 0},
+      {"key": "B", "content": "가장 짧은 논리 경로만 끝나면 다른 경로가 계산 중이어도 다음 clock edge를 안전하게 줄 수 있다", "displayOrder": 1},
+      {"key": "C", "content": "critical path는 instruction count만 결정하고 clock rate에는 영향을 주지 않는다", "displayOrder": 2},
+      {"key": "D", "content": "critical path가 길어질수록 같은 회로에서 안전한 최대 frequency도 자동으로 높아진다", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "A"
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.datapath-control.critical-path.q2",
+    "promptMarkdown": "register timing margin을 이미 포함한 critical path가 1.25 ns라면 이 경로가 허용하는 최대 clock frequency는 대략 얼마인가?",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.datapath-control.critical-path"],
+    "acceptedAnswers": ["800 MHz", "0.8 GHz", "800MHz", "0.8GHz"]
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.datapath-control.critical-path.q3",
+    "promptMarkdown": "한 stage의 critical path가 1.8 ns다. 이를 두 pipeline stage로 나눴더니 조합 논리 지연이 각각 0.85 ns와 0.95 ns가 되었고 각 stage에 register overhead 0.10 ns가 필요하다. 새 최소 cycle time과 이 변경의 latency/throughput trade-off를 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.datapath-control.critical-path"],
+    "modelAnswer": "각 stage는 조합 논리와 register overhead를 합쳐야 하므로 0.95 ns와 1.05 ns가 필요하고 최소 cycle time은 더 긴 1.05 ns다. clock rate는 높일 수 있어 pipeline이 채워진 뒤 throughput은 좋아질 수 있지만 한 작업이 두 stage를 지나므로 cycle 수 기준 latency와 pipeline register 비용, hazard 처리 복잡도는 증가할 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.datapath-control.branch-control-flow.q1",
+    "promptMarkdown": "conditional branch가 pipelined CPU의 fetch에 문제를 만드는 핵심 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.datapath-control.branch-control-flow"],
+    "choices": [
+      {"key": "A", "content": "branch condition과 target이 확정되기 전에는 다음에 fetch할 PC가 불확실할 수 있다", "displayOrder": 0},
+      {"key": "B", "content": "branch instruction은 register나 PC를 전혀 읽지 않으므로 pipeline에 dependency가 생길 수 없다", "displayOrder": 1},
+      {"key": "C", "content": "branch를 만나면 CPU는 항상 pipeline 전체를 종료하고 operating system으로 전환한다", "displayOrder": 2},
+      {"key": "D", "content": "branch prediction이 맞더라도 이미 fetch한 모든 instruction을 반드시 폐기해야 한다", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "A"
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.datapath-control.branch-control-flow.q2",
+    "promptMarkdown": "branch prediction이 틀렸을 때 pipeline에서 어떤 instruction이 잘못된 경로에 들어오며 CPU가 어떻게 복구하는지 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.datapath-control.branch-control-flow"],
+    "modelAnswer": "예측한 PC를 따라 branch 뒤의 instruction들을 미리 fetch/decode했지만 실제 branch 결과가 반대라면 그 instruction들은 architectural state에 반영되면 안 된다. CPU는 잘못된 경로의 work를 squash/flush하고 실제 target PC에서 fetch를 다시 시작하며 그동안의 빈 cycle이 misprediction penalty가 된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.datapath-control.branch-control-flow.q3",
+    "promptMarkdown": "ideal CPI가 1인 pipeline에서 instruction의 20%가 branch이고 branch의 10%가 mispredict되며 misprediction 하나당 12 cycle의 penalty가 추가된다고 하자. 다른 stall이 없다면 평균 CPI를 추정하고, predictor 정확도가 성능에 미치는 영향을 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.datapath-control.branch-control-flow"],
+    "modelAnswer": "instruction당 추가 stall은 0.20 × 0.10 × 12 = 0.24 cycle이므로 평균 CPI는 약 1.24다. branch 비율이나 penalty가 큰 pipeline일수록 같은 정확도 개선이 줄이는 wasted work가 커진다. 다만 실제 성능은 predictor 비용, pipeline depth와 다른 stall도 함께 측정해야 한다."
+  }
+]

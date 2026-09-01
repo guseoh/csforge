@@ -1,0 +1,14 @@
+[
+  {"kind":"topic","contentKey":"dsa.core.complexity","areaSlug":"data-structures-algorithms","slug":"complexity","title":"Complexity and Correctness","description":"점근 비용, amortized analysis와 invariant correctness를 다룬다.","displayOrder":10,"active":true},
+  {"kind":"topic","contentKey":"dsa.core.sequential","areaSlug":"data-structures-algorithms","slug":"sequential","title":"Array and Linked Structures","description":"array와 linked structure의 연산·메모리 trade-off를 다룬다.","displayOrder":20,"active":true},
+  {"kind":"topic","contentKey":"dsa.core.stack-queue-deque","areaSlug":"data-structures-algorithms","slug":"stack-queue-deque","title":"Stack, Queue and Deque","description":"LIFO·FIFO와 양끝 연산 구조를 다룬다.","displayOrder":30,"active":true},
+  {"kind":"topic","contentKey":"dsa.core.hashing","areaSlug":"data-structures-algorithms","slug":"hashing","title":"Hashing","description":"hash table의 bucket·collision·resize를 다룬다.","displayOrder":40,"active":true},
+  {"kind":"topic","contentKey":"dsa.core.trees","areaSlug":"data-structures-algorithms","slug":"trees","title":"Trees and Ordered Structures","description":"tree·BST·heap·trie의 invariant를 다룬다.","displayOrder":50,"active":true},
+  {"kind":"topic","contentKey":"dsa.core.search-sort","areaSlug":"data-structures-algorithms","slug":"search-sort","title":"Searching and Sorting","description":"search boundary와 정렬 알고리즘의 correctness·비용을 다룬다.","displayOrder":60,"active":true},
+  {"kind":"topic","contentKey":"dsa.core.recursion-backtracking","areaSlug":"data-structures-algorithms","slug":"recursion-backtracking","title":"Recursion and Search Space","description":"재귀 상태, recurrence와 backtracking 탐색을 다룬다.","displayOrder":70,"active":true},
+  {"kind":"topic","contentKey":"dsa.core.graph","areaSlug":"data-structures-algorithms","slug":"graph","title":"Graph Foundations","description":"graph 표현과 BFS·DFS·cycle 탐색을 다룬다.","displayOrder":80,"active":true},
+  {"kind":"topic","contentKey":"dsa.core.graph-path","areaSlug":"data-structures-algorithms","slug":"graph-path","title":"Shortest Path and Connectivity","description":"shortest path·union-find·MST를 다룬다.","displayOrder":90,"active":true},
+  {"kind":"topic","contentKey":"dsa.core.greedy","areaSlug":"data-structures-algorithms","slug":"greedy","title":"Greedy","description":"greedy choice와 optimality proof를 다룬다.","displayOrder":100,"active":true},
+  {"kind":"topic","contentKey":"dsa.core.dynamic-programming","areaSlug":"data-structures-algorithms","slug":"dynamic-programming","title":"Dynamic Programming","description":"state·transition·계산 순서로 DP를 다룬다.","displayOrder":110,"active":true},
+  {"kind":"topic","contentKey":"dsa.core.algorithm-selection","areaSlug":"data-structures-algorithms","slug":"algorithm-selection","title":"Practical Algorithm Selection","description":"제약과 data shape에 따른 선택을 다룬다.","displayOrder":120,"active":true}
+]

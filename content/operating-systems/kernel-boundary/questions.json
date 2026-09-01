@@ -1,0 +1,295 @@
+[
+  {
+    "kind": "question",
+    "contentKey": "operating-systems.core.kernel-boundary.os-resource-manager.q1",
+    "promptMarkdown": "운영체제를 resource manager라고 부르는 설명으로 가장 적절한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["operating-systems.core.kernel-boundary.os-resource-manager"],
+    "choices": [
+      {"key": "A", "content": "제한된 CPU·memory·device를 여러 실행 주체에 배분하고 보호·회수한다.", "displayOrder": 0},
+      {"key": "B", "content": "모든 application business rule을 kernel이 대신 결정한다.", "displayOrder": 1},
+      {"key": "C", "content": "각 process에 물리 CPU와 RAM을 영구적으로 하나씩 전용 할당한다.", "displayOrder": 2},
+      {"key": "D", "content": "Hardware resource 사용량과 무관하게 API 이름만 관리한다.", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "A"
+  },
+  {
+    "kind": "question",
+    "contentKey": "operating-systems.core.kernel-boundary.os-resource-manager.q2",
+    "promptMarkdown": "`Spring thread pool → Java thread → scheduler → CPU core` 흐름에서 application policy와 OS resource-management 책임을 구분해 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["operating-systems.core.kernel-boundary.os-resource-manager"],
+    "modelAnswer": "Thread pool size는 application이 동시에 수행할 작업 수를 제한하는 정책이다. Java thread의 실제 CPU 실행 기회는 JVM/runtime 아래에서 OS scheduler가 runnable task들과 CPU core를 조정해 제공한다. Pool size가 CPU core를 직접 소유하거나 생성하는 것은 아니다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "operating-systems.core.kernel-boundary.os-resource-manager.q3",
+    "promptMarkdown": "한 backend process가 file descriptor를 계속 열고 닫지 않아 결국 새 socket을 만들지 못한다. 이 문제를 `resource allocation → protection/limit → reclamation` 관점에서 분석하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["operating-systems.core.kernel-boundary.os-resource-manager"],
+    "modelAnswer": "File descriptor는 kernel이 process에 할당하는 제한된 resource다. Process/file-descriptor limit은 한 process가 무제한 사용하지 못하게 경계를 만들지만, application이 descriptor lifecycle을 끝내지 않으면 회수가 일어나지 않아 limit에 도달한다. Close/lifecycle leak을 고치고 필요한 limit과 pool 상한을 실제 workload에 맞춰야 한다. 단순히 limit만 계속 올리면 leak 자체는 남는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "operating-systems.core.kernel-boundary.os-resource-manager.q4",
+    "promptMarkdown": "Request latency 500 ms 중 Java CPU 실행은 25 ms이고 나머지는 scheduler 대기와 I/O wait가 대부분이었다. CPU 연산 최적화만으로 전체 latency가 크게 줄기 어려운 이유를 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["operating-systems.core.kernel-boundary.os-resource-manager"],
+    "modelAnswer": "Elapsed latency에는 application이 CPU에서 실제 실행한 시간뿐 아니라 OS scheduler가 실행 기회를 주지 않은 시간과 I/O completion을 기다린 시간이 포함된다. CPU work 25 ms만 줄여서는 나머지 wait가 그대로이므로 end-to-end latency 개선 상한이 작다."
+  },
+
+  {
+    "kind": "question",
+    "contentKey": "operating-systems.core.kernel-boundary.user-kernel-mode.q1",
+    "promptMarkdown": "User/kernel mode 보호가 단순한 software convention이 아닌 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["operating-systems.core.kernel-boundary.user-kernel-mode"],
+    "choices": [
+      {"key": "A", "content": "CPU가 현재 privilege level에서 허용되지 않은 operation을 제한하기 때문이다.", "displayOrder": 0},
+      {"key": "B", "content": "Application이 약속만 지키면 CPU protection은 필요 없기 때문이다.", "displayOrder": 1},
+      {"key": "C", "content": "Kernel mode는 더 빠른 clock frequency를 사용하기 때문이다.", "displayOrder": 2},
+      {"key": "D", "content": "User mode에서는 일반 산술 instruction도 실행할 수 없기 때문이다.", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "A"
+  },
+  {
+    "kind": "question",
+    "contentKey": "operating-systems.core.kernel-boundary.user-kernel-mode.q2",
+    "promptMarkdown": "System call로 user mode에서 kernel mode에 들어갔다가 같은 thread가 즉시 복귀했다. 반드시 process context switch가 발생했다고 볼 수 있는가?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["operating-systems.core.kernel-boundary.user-kernel-mode"],
+    "choices": [
+      {"key": "A", "content": "아니다. privilege mode는 바뀌어도 다른 task로 CPU가 넘어가지 않을 수 있다.", "displayOrder": 0},
+      {"key": "B", "content": "그렇다. 모든 mode switch는 반드시 다른 process로의 context switch다.", "displayOrder": 1},
+      {"key": "C", "content": "그렇다. Kernel mode에서는 항상 새 process가 생성된다.", "displayOrder": 2}
+    ],
+    "correctChoiceKey": "A"
+  },
+  {
+    "kind": "question",
+    "contentKey": "operating-systems.core.kernel-boundary.user-kernel-mode.q3",
+    "promptMarkdown": "Java code가 socket read를 호출하는 흐름을 `Java/JVM → OS → hardware` 층으로 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["operating-systems.core.kernel-boundary.user-kernel-mode"],
+    "modelAnswer": "Java API는 JVM/native runtime의 구현을 거쳐 필요할 때 system-call interface로 kernel에 I/O를 요청한다. Kernel network stack과 driver가 NIC 등 hardware resource를 다룬다. Java process가 NIC register를 직접 제어하는 구조가 아니다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "operating-systems.core.kernel-boundary.user-kernel-mode.q4",
+    "promptMarkdown": "User process가 임의의 kernel 주소로 jump하기만 하면 kernel privilege를 얻을 수 있는 CPU를 가정하자. Process isolation에 어떤 문제가 생기는가?",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["operating-systems.core.kernel-boundary.user-kernel-mode"],
+    "modelAnswer": "Controlled entry가 무너지면 application이 kernel code/state에 임의로 진입해 높은 privilege operation을 실행할 수 있으므로 다른 process memory와 device, kernel state를 보호할 수 없다. CPU privilege mechanism은 정해진 entry와 permission을 강제해야 한다."
+  },
+
+  {
+    "kind": "question",
+    "contentKey": "operating-systems.core.kernel-boundary.privilege-protection.q1",
+    "promptMarkdown": "주소가 현재 process에 mapping되어 있다는 사실만으로 가능한 동작을 모두 보장하는가?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["operating-systems.core.kernel-boundary.privilege-protection"],
+    "choices": [
+      {"key": "A", "content": "아니다. read/write/execute 같은 접근 permission을 별도로 확인해야 한다.", "displayOrder": 0},
+      {"key": "B", "content": "그렇다. Mapping만 있으면 항상 read/write/execute가 모두 허용된다.", "displayOrder": 1},
+      {"key": "C", "content": "그렇다. Memory permission은 application role만 결정한다.", "displayOrder": 2}
+    ],
+    "correctChoiceKey": "A"
+  },
+  {
+    "kind": "question",
+    "contentKey": "operating-systems.core.kernel-boundary.privilege-protection.q2",
+    "promptMarkdown": "왜 `present bit` 같은 특정 PTE 이름을 모든 architecture의 공통 memory-protection 계약처럼 설명하면 안 되는가?",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["operating-systems.core.kernel-boundary.privilege-protection"],
+    "modelAnswer": "Page-table entry의 bit 이름과 semantics는 architecture별로 다를 수 있다. 일반 개념에서는 mapping/translation과 read-write-execute permission 같은 역할을 설명하고, present/valid/accessed 등 구체 bit는 특정 ISA/OS 구현 범위를 명시해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "operating-systems.core.kernel-boundary.privilege-protection.q3",
+    "promptMarkdown": "System call이 `(userPointer, length)`를 받는다. Kernel이 최소한 어떤 종류의 입력 검증을 해야 하는지 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["operating-systems.core.kernel-boundary.privilege-protection"],
+    "modelAnswer": "Pointer가 caller의 유효한 user address 범위인지, 요청 방향에 맞는 접근 permission이 있는지, length와 address 계산이 overflow하지 않는지 등을 확인해야 한다. User memory는 kernel privilege로 들어왔다는 이유만으로 신뢰해서는 안 된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "operating-systems.core.kernel-boundary.privilege-protection.q4",
+    "promptMarkdown": "HTTP `ADMIN` role 검사는 통과했지만 Linux process가 `/etc/secret`을 읽을 OS permission은 없다. 요청 결과와 두 permission 층의 관계를 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["operating-systems.core.kernel-boundary.privilege-protection"],
+    "modelAnswer": "Application authorization과 OS file permission은 독립된 층이다. ADMIN role이 business policy를 통과시켜도 process UID/GID/capability가 file access를 허용하지 않으면 OS에서 거부될 수 있다. 반대 방향으로 OS access 가능성이 application authorization을 대신하지도 않는다."
+  },
+
+  {
+    "kind": "question",
+    "contentKey": "operating-systems.core.kernel-boundary.system-call.q1",
+    "promptMarkdown": "System call의 역할로 가장 적절한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["operating-systems.core.kernel-boundary.system-call"],
+    "choices": [
+      {"key": "A", "content": "User application이 kernel이 소유한 service를 요청하는 interface다.", "displayOrder": 0},
+      {"key": "B", "content": "Process 내부의 모든 일반 함수 호출을 의미한다.", "displayOrder": 1},
+      {"key": "C", "content": "항상 다른 process를 생성하는 operation이다.", "displayOrder": 2},
+      {"key": "D", "content": "CPU cache miss를 의미한다.", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "A"
+  },
+  {
+    "kind": "question",
+    "contentKey": "operating-systems.core.kernel-boundary.system-call.q2",
+    "promptMarkdown": "Library function 호출 수와 system call 수가 1:1이라고 볼 수 없는 이유를 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["operating-systems.core.kernel-boundary.system-call"],
+    "modelAnswer": "일부 library function은 user space에서만 실행되고, buffering은 여러 library call을 하나의 syscall로 모을 수 있으며, 하나의 고수준 API가 여러 syscall을 사용할 수도 있다. Library abstraction과 kernel interface 단위는 다르다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "operating-systems.core.kernel-boundary.system-call.q3",
+    "promptMarkdown": "`read(fd, buf, 4096)`이 정상적으로 1024를 반환했다. 반드시 오류인가? 이유를 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["operating-systems.core.kernel-boundary.system-call"],
+    "modelAnswer": "반드시 오류는 아니다. I/O interface는 요청한 길이보다 적은 partial result를 정상적으로 반환할 수 있다. Caller는 return value를 확인해 실제 처리된 byte 수와 EOF/error contract를 구분해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "operating-systems.core.kernel-boundary.system-call.q4",
+    "promptMarkdown": "서로 다른 CPU architecture에서 Linux system call entry를 구현할 때 동일하게 유지해야 할 것과 달라질 수 있는 것을 구분하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["operating-systems.core.kernel-boundary.system-call"],
+    "modelAnswer": "Application 관점의 kernel-service interface와 OS가 제공하는 syscall semantics는 유지될 수 있지만, entry instruction, syscall number 전달 위치, argument register convention 같은 ABI 세부사항은 architecture별로 달라질 수 있다. 일반 OS 개념을 특정 instruction 하나로 고정하면 안 된다."
+  },
+
+  {
+    "kind": "question",
+    "contentKey": "operating-systems.core.kernel-boundary.system-call-flow.q1",
+    "promptMarkdown": "다음 system-call 흐름의 올바른 순서는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["operating-systems.core.kernel-boundary.system-call-flow"],
+    "choices": [
+      {"key": "A", "content": "user argument 준비 → controlled kernel entry → dispatch/검증 → service → return", "displayOrder": 0},
+      {"key": "B", "content": "service 완료 → user argument 준비 → kernel entry", "displayOrder": 1},
+      {"key": "C", "content": "context switch → 새 process 생성 → 항상 service 실패", "displayOrder": 2}
+    ],
+    "correctChoiceKey": "A"
+  },
+  {
+    "kind": "question",
+    "contentKey": "operating-systems.core.kernel-boundary.system-call-flow.q2",
+    "promptMarkdown": "Blocking I/O system call이 resource를 기다려야 할 때 현재 task와 CPU에는 어떤 일이 일어날 수 있는지 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["operating-systems.core.kernel-boundary.system-call-flow"],
+    "modelAnswer": "현재 task가 wait/sleep 상태가 되어 runnable하지 않게 될 수 있고 scheduler는 다른 runnable task에 CPU를 줄 수 있다. Event/completion 후 task가 다시 runnable이 되고 이후 실행 기회를 얻어 syscall return path를 이어간다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "operating-systems.core.kernel-boundary.system-call-flow.q3",
+    "promptMarkdown": "System call 진입과 동시에 무조건 context switch가 발생한다고 설명하는 것이 틀린 이유를 서술하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["operating-systems.core.kernel-boundary.system-call-flow"],
+    "modelAnswer": "System call은 privilege/kernel-entry 전환을 포함할 수 있지만 같은 task가 kernel에서 처리 후 즉시 user mode로 돌아올 수 있다. Context switch는 scheduler가 다른 task로 CPU execution context를 바꿀 때 발생한다. Blocking 등으로 context switch가 뒤따를 수 있지만 둘은 동일한 사건이 아니다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "operating-systems.core.kernel-boundary.system-call-flow.q4",
+    "promptMarkdown": "Socket read가 300 ms 걸렸지만 profiler상 해당 Java thread의 CPU 사용 시간은 매우 작다. System-call flow와 scheduler 관점에서 가능한 상태를 분석하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["operating-systems.core.kernel-boundary.system-call-flow"],
+    "modelAnswer": "Thread가 kernel에 read를 요청한 뒤 data가 준비될 때까지 block/sleep해 CPU를 사용하지 않았을 수 있다. Scheduler는 그동안 다른 task를 실행하고, I/O event 후 해당 task가 다시 runnable이 되어 return한다. Elapsed 300 ms를 곧 CPU execution 300 ms로 해석하면 안 된다."
+  },
+
+  {
+    "kind": "question",
+    "contentKey": "operating-systems.core.kernel-boundary.interrupt-exception-system-call.q1",
+    "promptMarkdown": "RISC-V terminology에서 trap과 interrupt/exception의 관계로 맞는 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["operating-systems.core.kernel-boundary.interrupt-exception-system-call"],
+    "choices": [
+      {"key": "A", "content": "Trap은 exception 또는 interrupt 때문에 handler로 control이 전달되는 것을 가리킨다.", "displayOrder": 0},
+      {"key": "B", "content": "Trap은 exception·interrupt와 무관한 세 번째 외부 hardware event다.", "displayOrder": 1},
+      {"key": "C", "content": "Interrupt만 trap을 만들 수 있고 exception은 handler로 전달되지 않는다.", "displayOrder": 2}
+    ],
+    "correctChoiceKey": "A"
+  },
+  {
+    "kind": "question",
+    "contentKey": "operating-systems.core.kernel-boundary.interrupt-exception-system-call.q2",
+    "promptMarkdown": "Timer interrupt와 illegal-instruction exception을 동기성 및 원인 관점에서 비교하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["operating-systems.core.kernel-boundary.interrupt-exception-system-call"],
+    "modelAnswer": "Timer interrupt는 현재 instruction 자체의 실행 결과와 독립적으로 도착할 수 있는 asynchronous event다. Illegal-instruction exception은 현재 실행하려던 instruction과 직접 연관되어 synchronous하게 발생한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "operating-systems.core.kernel-boundary.interrupt-exception-system-call.q3",
+    "promptMarkdown": "Page fault는 exception이지만 항상 fatal application bug라고 볼 수 없는 이유를 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["operating-systems.core.kernel-boundary.interrupt-exception-system-call"],
+    "modelAnswer": "Exception은 현재 instruction과 연관된 동기 사건이라는 분류이지 반드시 복구 불가능한 오류라는 뜻이 아니다. Demand paging에서는 필요한 page를 준비한 뒤 faulting access를 재개할 수 있다. Protection violation처럼 복구하지 못하는 경우와 구분해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "operating-systems.core.kernel-boundary.interrupt-exception-system-call.q4",
+    "promptMarkdown": "RISC-V `ECALL`을 이용한 system call을 `Application semantics → OS ABI → ISA mechanism` 세 층으로 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["operating-systems.core.kernel-boundary.interrupt-exception-system-call"],
+    "modelAnswer": "Application은 kernel service를 요청한다는 system-call 의미를 가진다. OS ABI는 syscall number와 argument 전달/return 규칙을 정한다. RISC-V ISA에서는 ECALL이 environment-call exception을 발생시켜 trap handler로 controlled transfer를 만든다. System call이라는 고수준 의미와 hardware exception mechanism을 같은 층으로 보면 안 된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "operating-systems.core.kernel-boundary.interrupt-exception-system-call.q5",
+    "promptMarkdown": "공통 trap-entry code가 timer interrupt와 page fault를 모두 받을 수 있다고 하자. Handler가 cause를 구분하지 않으면 어떤 문제가 생길 수 있는가?",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["operating-systems.core.kernel-boundary.interrupt-exception-system-call"],
+    "modelAnswer": "Timer interrupt는 timer source와 scheduling 관련 처리가 필요하고 page fault는 faulting address/access/mapping을 검사해야 한다. Cause를 구분하지 않으면 잘못된 resource state를 변경하거나 faulting instruction의 복귀 정책을 틀리게 적용할 수 있다. 공통 entry 이후 cause/vector/error information으로 적절한 handler와 return semantics를 선택해야 한다."
+  }
+]

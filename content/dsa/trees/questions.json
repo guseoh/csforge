@@ -1,0 +1,278 @@
+[
+  {
+    "kind":"question",
+    "contentKey":"dsa.core.trees.tree-terminology.q1",
+    "promptMarkdown":"root A의 child가 B,C이고 B의 child가 D,E일 때 D의 depth와 B의 height를 각각 쓰라. edge 수 기준이다.",
+    "questionType":"SHORT_ANSWER",
+    "difficulty":"EASY",
+    "status":"PUBLISHED",
+    "conceptKeys":["dsa.core.trees.tree-terminology"],
+    "acceptedAnswers":["D depth=2, B height=1", "2, 1"]
+  },
+  {
+    "kind":"question",
+    "contentKey":"dsa.core.trees.tree-terminology.q2",
+    "promptMarkdown":"node 수가 같은 두 tree에서 한쪽은 균형에 가깝고 다른 쪽은 한 child만 이어지는 chain이다. search path 비용이 달라지는 이유를 height 관점에서 설명하라.",
+    "questionType":"DESCRIPTIVE",
+    "difficulty":"MEDIUM",
+    "status":"PUBLISHED",
+    "conceptKeys":["dsa.core.trees.tree-terminology"],
+    "modelAnswer":"많은 tree operation은 전체 node 수보다 root에서 따라가는 path 길이 h에 비례한다. 균형 tree는 h가 log n 근처일 수 있지만 chain은 h가 n에 가까워 같은 node 수에서도 search 비용이 크게 달라질 수 있다."
+  },
+  {
+    "kind":"question",
+    "contentKey":"dsa.core.trees.tree-terminology.q3",
+    "promptMarkdown":"category data에서 하나의 node가 두 parent를 가지고 다른 경로에는 cycle도 존재한다. 이 구조를 일반 rooted tree라고 가정해 traversal code를 작성할 때 어떤 문제가 생기는지 설명하라.",
+    "questionType":"SCENARIO",
+    "difficulty":"HARD",
+    "status":"PUBLISHED",
+    "conceptKeys":["dsa.core.trees.tree-terminology"],
+    "modelAnswer":"rooted tree는 각 non-root node가 하나의 parent를 갖고 cycle이 없다는 전제를 사용한다. multiple parent는 하나의 path라는 가정을 깨고 cycle은 naive recursion을 무한 반복시킬 수 있다. 실제 model이 graph라면 visited/cycle 정책을 별도로 가져야 한다."
+  },
+  {
+    "kind":"question",
+    "contentKey":"dsa.core.trees.binary-tree-traversal.q1",
+    "promptMarkdown":"tree `A`의 left가 `B`, right가 `C`, B의 left가 `D`, right가 `E`일 때 preorder 순서를 쓰라.",
+    "questionType":"SHORT_ANSWER",
+    "difficulty":"EASY",
+    "status":"PUBLISHED",
+    "conceptKeys":["dsa.core.trees.binary-tree-traversal"],
+    "acceptedAnswers":["A B D E C", "A,B,D,E,C"]
+  },
+  {
+    "kind":"question",
+    "contentKey":"dsa.core.trees.binary-tree-traversal.q2",
+    "promptMarkdown":"같은 tree의 inorder와 postorder 순서를 각각 쓰라.",
+    "questionType":"SHORT_ANSWER",
+    "difficulty":"MEDIUM",
+    "status":"PUBLISHED",
+    "conceptKeys":["dsa.core.trees.binary-tree-traversal"],
+    "acceptedAnswers":["inorder D B E A C, postorder D E B C A", "D B E A C / D E B C A"]
+  },
+  {
+    "kind":"question",
+    "contentKey":"dsa.core.trees.binary-tree-traversal.q3",
+    "promptMarkdown":"parent resource는 child resource가 모두 제거된 뒤에만 삭제할 수 있다. preorder와 postorder 중 어떤 traversal이 이 dependency에 자연스럽고, 왜 그런지 설명하라.",
+    "questionType":"SCENARIO",
+    "difficulty":"HARD",
+    "status":"PUBLISHED",
+    "conceptKeys":["dsa.core.trees.binary-tree-traversal"],
+    "modelAnswer":"postorder가 적합하다. left/right child subtree를 먼저 처리한 뒤 parent를 visit하므로 child cleanup 완료 후 parent cleanup이라는 dependency를 traversal order 자체가 표현한다."
+  },
+  {
+    "kind":"question",
+    "contentKey":"dsa.core.trees.binary-search-tree.q1",
+    "promptMarkdown":"BST에 8,3,12,1,6,10,14가 그림과 같은 ordering으로 저장돼 있을 때 key 10을 찾는 비교 경로는?",
+    "questionType":"SHORT_ANSWER",
+    "difficulty":"EASY",
+    "status":"PUBLISHED",
+    "conceptKeys":["dsa.core.trees.binary-search-tree"],
+    "acceptedAnswers":["8 → 12 → 10", "8,12,10"]
+  },
+  {
+    "kind":"question",
+    "contentKey":"dsa.core.trees.binary-search-tree.q2",
+    "promptMarkdown":"BST search 비용을 O(h)라고 할 때 h가 의미하는 값과, balanced/skewed tree에서 h가 어떻게 달라질 수 있는지 설명하라.",
+    "questionType":"DESCRIPTIVE",
+    "difficulty":"MEDIUM",
+    "status":"PUBLISHED",
+    "conceptKeys":["dsa.core.trees.binary-search-tree"],
+    "modelAnswer":"h는 tree height다. 균형이 좋으면 h가 O(log n)에 가깝지만 정렬 입력 등으로 한쪽으로 치우치면 O(n)까지 커질 수 있어 BST 자체만으로 logarithmic search가 보장되지는 않는다."
+  },
+  {
+    "kind":"question",
+    "contentKey":"dsa.core.trees.binary-search-tree.q3",
+    "promptMarkdown":"BST의 left subtree 안에 있던 key 4를 node를 옮기지 않고 40으로 mutate했다. 이후 search(40)가 실패할 수 있는 이유를 ordering invariant로 설명하라.",
+    "questionType":"SCENARIO",
+    "difficulty":"HARD",
+    "status":"PUBLISHED",
+    "conceptKeys":["dsa.core.trees.binary-search-tree"],
+    "modelAnswer":"40은 root 비교 결과에 따라 right subtree에서 찾아야 할 값이지만 실제 node는 예전 key 4의 위치인 left subtree에 남아 있다. key mutation이 BST ordering을 깨뜨려 search path가 실제 node가 있는 방향을 버릴 수 있다."
+  },
+  {
+    "kind":"question",
+    "contentKey":"dsa.core.trees.balanced-tree-motivation.q1",
+    "promptMarkdown":"1,2,3,4,5를 빈 plain BST에 순서대로 insert했을 때 예상되는 shape와 search worst-case는?",
+    "questionType":"DESCRIPTIVE",
+    "difficulty":"EASY",
+    "status":"PUBLISHED",
+    "conceptKeys":["dsa.core.trees.balanced-tree-motivation"],
+    "modelAnswer":"각 key가 이전 key의 right child가 되는 한쪽 chain에 가까워진다. height가 n에 가까워져 search worst-case가 O(n)이 된다."
+  },
+  {
+    "kind":"question",
+    "contentKey":"dsa.core.trees.balanced-tree-motivation.q2",
+    "promptMarkdown":"balanced search tree가 plain BST보다 update 구현을 복잡하게 만드는 대신 얻는 핵심 보장은 무엇인가?",
+    "questionType":"DESCRIPTIVE",
+    "difficulty":"MEDIUM",
+    "status":"PUBLISHED",
+    "conceptKeys":["dsa.core.trees.balanced-tree-motivation"],
+    "modelAnswer":"height가 한쪽으로 O(n)까지 무너지는 것을 추가 balance invariant와 rotation으로 제한해 search/update path를 O(log n) 수준으로 유지할 수 있다. 그 대가로 metadata와 rebalancing work가 추가된다."
+  },
+  {
+    "kind":"question",
+    "contentKey":"dsa.core.trees.balanced-tree-motivation.q3",
+    "promptMarkdown":"range iteration도 필요하고 external input이 정렬된 순서로 들어올 수 있으며 worst-case latency가 중요하다. plain BST와 balanced tree 중 무엇을 우선 검토할지 근거를 설명하라.",
+    "questionType":"SCENARIO",
+    "difficulty":"HARD",
+    "status":"PUBLISHED",
+    "conceptKeys":["dsa.core.trees.balanced-tree-motivation"],
+    "modelAnswer":"ordered traversal을 유지하면서 입력 순서와 무관하게 height upper bound를 제한해야 하므로 balanced search tree를 우선 검토한다. plain BST는 정렬 입력에서 skew되어 O(n) path가 될 수 있다. update rebalancing 비용과 memory도 함께 비교해야 한다."
+  },
+  {
+    "kind":"question",
+    "contentKey":"dsa.core.trees.tree-rotation.q1",
+    "promptMarkdown":"right rotation 전 subtree가 `y(left=x,right=C)`, `x(left=A,right=B)`라면 rotation 후 inorder key sequence가 바뀌는가?",
+    "questionType":"MULTIPLE_CHOICE",
+    "difficulty":"EASY",
+    "status":"PUBLISHED",
+    "conceptKeys":["dsa.core.trees.tree-rotation"],
+    "choices":[
+      {"key":"A","content":"바뀌지 않는다. A,x,B,y,C 순서를 보존한다","displayOrder":0},
+      {"key":"B","content":"항상 역순 C,y,B,x,A가 된다","displayOrder":1},
+      {"key":"C","content":"rotation은 key 값을 다시 정렬해 새 값으로 바꾼다","displayOrder":2},
+      {"key":"D","content":"inorder 보존 여부는 중요하지 않다","displayOrder":3}
+    ],
+    "correctChoiceKey":"A"
+  },
+  {
+    "kind":"question",
+    "contentKey":"dsa.core.trees.tree-rotation.q2",
+    "promptMarkdown":"위 right rotation에서 subtree B는 rotation 후 어느 위치로 이동하는가?",
+    "questionType":"SHORT_ANSWER",
+    "difficulty":"MEDIUM",
+    "status":"PUBLISHED",
+    "conceptKeys":["dsa.core.trees.tree-rotation"],
+    "acceptedAnswers":["y의 left subtree", "y.left = B"]
+  },
+  {
+    "kind":"question",
+    "contentKey":"dsa.core.trees.tree-rotation.q3",
+    "promptMarkdown":"rotation 중 B를 y.left에 연결하는 갱신을 빠뜨렸다. key ordering 외에 어떤 구조적 문제가 생길 수 있는지 설명하라.",
+    "questionType":"SCENARIO",
+    "difficulty":"HARD",
+    "status":"PUBLISHED",
+    "conceptKeys":["dsa.core.trees.tree-rotation"],
+    "modelAnswer":"B subtree가 새 tree에서 도달 불가능해져 node가 유실되거나, 이전 link를 잘못 유지하면 중복 parent/cycle이 생길 수 있다. rotation은 subtree root, middle subtree, parent 연결을 모두 원자적인 구조 변화로 다뤄야 한다."
+  },
+  {
+    "kind":"question",
+    "contentKey":"dsa.core.trees.tree-rotation.q4",
+    "promptMarkdown":"rotation 전후 BST inorder는 동일하지만 balance metadata(height/color 등)를 갱신하지 않았다. search가 당장은 맞아도 이후 문제가 생길 수 있는 이유를 설명하라.",
+    "questionType":"DESCRIPTIVE",
+    "difficulty":"HARD",
+    "status":"PUBLISHED",
+    "conceptKeys":["dsa.core.trees.tree-rotation"],
+    "modelAnswer":"ordering correctness와 balance invariant는 별개다. stale metadata를 다음 insert/delete가 신뢰하면 필요한 rotation을 빼먹거나 잘못된 rotation을 수행해 height bound나 red-black/AVL 규칙을 깨뜨릴 수 있다."
+  },
+  {
+    "kind":"question",
+    "contentKey":"dsa.core.trees.heap.q1",
+    "promptMarkdown":"0-based array heap에서 index 3의 left/right child index는?",
+    "questionType":"SHORT_ANSWER",
+    "difficulty":"EASY",
+    "status":"PUBLISHED",
+    "conceptKeys":["dsa.core.trees.heap"],
+    "acceptedAnswers":["7과 8", "7,8"]
+  },
+  {
+    "kind":"question",
+    "contentKey":"dsa.core.trees.heap.q2",
+    "promptMarkdown":"min-heap array `[2,5,4,9,7,8]`에 값 1을 append했다. heap invariant를 복구하기 위해 어떤 방향으로 이동해야 하는지 설명하라.",
+    "questionType":"DESCRIPTIVE",
+    "difficulty":"MEDIUM",
+    "status":"PUBLISHED",
+    "conceptKeys":["dsa.core.trees.heap"],
+    "modelAnswer":"새 값 1은 마지막 leaf에 들어간 뒤 parent보다 작으므로 parent와 swap하며 위로 sift-up/swim해야 한다. parent-child invariant가 만족될 때까지 root 방향으로 이동한다."
+  },
+  {
+    "kind":"question",
+    "contentKey":"dsa.core.trees.heap.q3",
+    "promptMarkdown":"min-heap root를 제거한 뒤 마지막 원소 10을 root로 옮겼고 child가 3과 5다. 다음 한 단계에서 무엇을 해야 하며 왜 3을 선택하는가?",
+    "questionType":"SCENARIO",
+    "difficulty":"HARD",
+    "status":"PUBLISHED",
+    "conceptKeys":["dsa.core.trees.heap"],
+    "modelAnswer":"10을 더 작은 child 3과 swap해 아래로 sink한다. min-heap에서는 새 parent가 두 child 모두보다 작거나 같아야 하므로 우선순위가 더 높은 작은 child와 바꿔야 invariant를 회복할 수 있다."
+  },
+  {
+    "kind":"question",
+    "contentKey":"dsa.core.trees.heap.q4",
+    "promptMarkdown":"n개 값을 이미 array로 가지고 있을 때 n번 insert하는 방식과 bottom-up heapify의 일반 시간 복잡도를 비교하라.",
+    "questionType":"SHORT_ANSWER",
+    "difficulty":"MEDIUM",
+    "status":"PUBLISHED",
+    "conceptKeys":["dsa.core.trees.heap"],
+    "acceptedAnswers":["n번 insert는 O(n log n), bottom-up heapify는 O(n)", "O(n log n) vs O(n)"]
+  },
+  {
+    "kind":"question",
+    "contentKey":"dsa.core.trees.priority-queue.q1",
+    "promptMarkdown":"priority queue와 FIFO queue의 ordering 차이를 설명하라.",
+    "questionType":"DESCRIPTIVE",
+    "difficulty":"EASY",
+    "status":"PUBLISHED",
+    "conceptKeys":["dsa.core.trees.priority-queue"],
+    "modelAnswer":"FIFO queue는 먼저 들어온 원소를 먼저 꺼내고, priority queue는 삽입 시점과 무관하게 현재 가장 높은/낮은 priority 원소를 선택한다. 동일 priority의 tie 순서는 별도 계약이다."
+  },
+  {
+    "kind":"question",
+    "contentKey":"dsa.core.trees.priority-queue.q2",
+    "promptMarkdown":"binary heap priority queue에서 peek와 insert, extract-min의 일반 비용을 각각 쓰라.",
+    "questionType":"SHORT_ANSWER",
+    "difficulty":"MEDIUM",
+    "status":"PUBLISHED",
+    "conceptKeys":["dsa.core.trees.priority-queue"],
+    "acceptedAnswers":["peek O(1), insert O(log n), extract-min O(log n)", "O(1), O(log n), O(log n)"]
+  },
+  {
+    "kind":"question",
+    "contentKey":"dsa.core.trees.priority-queue.q3",
+    "promptMarkdown":"같은 priority의 task A,B,C가 있고 시스템 요구사항은 동일 priority에서 FIFO다. 단순 heap에 priority 숫자만 저장하면 요구사항을 보장하기 어려운 이유와 해결 방법을 설명하라.",
+    "questionType":"SCENARIO",
+    "difficulty":"HARD",
+    "status":"PUBLISHED",
+    "conceptKeys":["dsa.core.trees.priority-queue"],
+    "modelAnswer":"heap invariant는 priority equality 사이의 stable insertion order를 보장하지 않는다. `(priority, sequenceNumber)` 같은 secondary key를 포함해 동일 priority에서는 더 이른 sequence가 우선되도록 total ordering을 정의해야 한다."
+  },
+  {
+    "kind":"question",
+    "contentKey":"dsa.core.trees.trie.q1",
+    "promptMarkdown":"trie에 `app`과 `apple`을 함께 저장할 때 `app` node에 terminal marker가 필요한 이유는?",
+    "questionType":"DESCRIPTIVE",
+    "difficulty":"EASY",
+    "status":"PUBLISHED",
+    "conceptKeys":["dsa.core.trees.trie"],
+    "modelAnswer":"`app` path는 `apple`의 prefix이기도 하므로 path 존재만으로 app 자체가 저장된 key인지 알 수 없다. app 마지막 node에 terminal marker를 둬 exact key 종료와 단순 prefix를 구분한다."
+  },
+  {
+    "kind":"question",
+    "contentKey":"dsa.core.trees.trie.q2",
+    "promptMarkdown":"`app`, `apple`, `apt`가 저장된 trie에서 `app`만 삭제할 때 어떤 node/path를 보존해야 하는지 설명하라.",
+    "questionType":"DESCRIPTIVE",
+    "difficulty":"MEDIUM",
+    "status":"PUBLISHED",
+    "conceptKeys":["dsa.core.trees.trie"],
+    "modelAnswer":"app의 terminal marker를 해제하되 `a-p-p` path는 apple이 계속 사용하므로 보존해야 한다. 다른 key가 사용하지 않고 terminal도 아닌 node만 bottom-up으로 제거할 수 있다."
+  },
+  {
+    "kind":"question",
+    "contentKey":"dsa.core.trees.trie.q3",
+    "promptMarkdown":"alphabet이 매우 크고 각 node가 alphabet 크기만큼 fixed child array를 가진 trie가 있다. 실제로 각 node에는 child가 평균 2개뿐이다. 어떤 memory 문제가 생기며 대안의 trade-off를 설명하라.",
+    "questionType":"SCENARIO",
+    "difficulty":"HARD",
+    "status":"PUBLISHED",
+    "conceptKeys":["dsa.core.trees.trie"],
+    "modelAnswer":"대부분 child slot이 비어 큰 memory 낭비가 생긴다. sparse map이나 compressed representation으로 memory를 줄일 수 있지만 child lookup에 hash/tree/pointer overhead가 추가될 수 있다."
+  },
+  {
+    "kind":"question",
+    "contentKey":"dsa.core.trees.trie.q4",
+    "promptMarkdown":"사용자 입력을 trie key로 저장할 때 Unicode normalization 정책이 없으면 visually 같은 문자열이 다른 path가 될 수 있는 이유를 설명하라.",
+    "questionType":"DESCRIPTIVE",
+    "difficulty":"HARD",
+    "status":"PUBLISHED",
+    "conceptKeys":["dsa.core.trees.trie"],
+    "modelAnswer":"겉으로 같은 문자도 서로 다른 code-point sequence로 표현될 수 있어 raw character sequence를 edge로 쓰면 다른 경로가 생성될 수 있다. trie 이전에 canonical normalization/case 정책을 정해 equality 기준을 고정해야 한다."
+  }
+]

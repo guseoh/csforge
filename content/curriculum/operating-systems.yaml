@@ -1,0 +1,767 @@
+schemaVersion: 2
+area:
+  key: operating-systems
+  title: "Operating Systems"
+  baseline: "kernel boundary, processes, scheduling, memory, files, I/O, IPC and isolation"
+  contentKeyPrefix: operating-systems.core
+  status: CANONICAL_FOUNDATION
+policies:
+  language:
+    authoringLanguage: ko-KR
+    explanationRule: "application·user mode·kernel·hardware의 경계와 상태 전이를 연결한다."
+  question:
+    hardRule: "실행 상태, resource 제약, 실패 경로와 비용을 함께 추론한다."
+  visualization:
+    values: [NONE, TEXT, DIAGRAM]
+topics:
+  - key: operating-systems.core.kernel-boundary
+    title: "Kernel Boundary"
+    order: 10
+    scope: "resource manager, privilege, system call, interrupt와 exception 경계를 다룬다."
+    boundary: "kernel과 hardware 경계를 다루며 특정 OS의 모든 subsystem 구현은 다루지 않는다."
+    concepts:
+      - key: operating-systems.core.kernel-boundary.os-resource-manager
+        title: "OS as Resource Manager"
+        order: 10
+        level: 1
+        objective: "CPU·memory·device 자원을 process에 배분하는 OS 역할을 설명한다."
+        density: CORE
+        visualization: TEXT
+      - key: operating-systems.core.kernel-boundary.user-kernel-mode
+        title: "User and Kernel Mode"
+        order: 20
+        level: 1
+        objective: "권한 수준과 mode 전환이 보호를 만드는 이유를 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: operating-systems.core.kernel-boundary.privilege-protection
+        title: "Privilege and Protection"
+        order: 30
+        level: 1
+        objective: "특권 instruction과 보호된 주소 접근의 실패 경계를 설명한다."
+        density: CORE
+        visualization: TEXT
+      - key: operating-systems.core.kernel-boundary.system-call
+        title: "System Call"
+        order: 40
+        level: 1
+        objective: "application이 kernel service를 요청하는 명시적 경계를 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: operating-systems.core.kernel-boundary.system-call-flow
+        title: "System Call Flow"
+        order: 50
+        level: 2
+        objective: "trap entry·argument validation·service·return까지의 상태 변화를 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: operating-systems.core.kernel-boundary.interrupt-exception-system-call
+        title: "Interrupt, Exception and System Call"
+        order: 60
+        level: 2
+        objective: "세 진입 원인의 동기성·발생 주체·복귀 경계를 비교한다."
+        density: CORE
+        visualization: TEXT
+  - key: operating-systems.core.process
+    title: "Process Model"
+    order: 20
+    scope: "program/process, address space, PCB, state, 생성·종료와 parent-child를 다룬다."
+    boundary: "process lifecycle을 다루며 thread 내부 상태는 Threads topic에 둔다."
+    concepts:
+      - key: operating-systems.core.process.program-vs-process
+        title: "Program versus Process"
+        order: 10
+        level: 1
+        objective: "정적 code와 실행 중 resource bundle인 process를 구분한다."
+        density: CORE
+        visualization: TEXT
+      - key: operating-systems.core.process.process-address-space
+        title: "Process Address Space"
+        order: 20
+        level: 1
+        objective: "code·data·heap·stack으로 분리된 process-visible 주소 공간을 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: operating-systems.core.process.pcb
+        title: "Process Control Block"
+        order: 30
+        level: 2
+        objective: "scheduler가 process를 재개하는 데 필요한 PCB metadata를 설명한다."
+        density: CORE
+        visualization: TEXT
+      - key: operating-systems.core.process.process-state
+        title: "Process State"
+        order: 40
+        level: 1
+        objective: "new·ready·running·waiting·terminated 전이 원인을 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: operating-systems.core.process.process-create
+        title: "Process Creation"
+        order: 50
+        level: 2
+        objective: "spawn/fork와 address/resource 초기화의 차이를 설명한다."
+        density: STANDARD
+        visualization: TEXT
+      - key: operating-systems.core.process.process-terminate
+        title: "Process Termination"
+        order: 60
+        level: 2
+        objective: "exit와 resource 회수, 종료 상태 전달의 순서를 설명한다."
+        density: STANDARD
+        visualization: TEXT
+      - key: operating-systems.core.process.parent-child
+        title: "Parent and Child Process"
+        order: 70
+        level: 1
+        objective: "parent-child 관계와 descriptor·signal 상속의 경계를 설명한다."
+        density: STANDARD
+        visualization: DIAGRAM
+      - key: operating-systems.core.process.wait-reap
+        title: "Wait and Reap"
+        order: 80
+        level: 2
+        objective: "parent의 wait가 종료 child의 상태를 회수하는 이유를 설명한다."
+        density: CORE
+        visualization: TEXT
+  - key: operating-systems.core.scheduling
+    title: "Context Switching and Scheduling"
+    order: 30
+    scope: "context switch, preemption, scheduler goals와 FCFS/SJF/RR/priority를 다룬다."
+    boundary: "OS CPU scheduling policy를 다루며 hardware pipeline scheduling은 다루지 않는다."
+    concepts:
+      - key: operating-systems.core.scheduling.context-switch
+        title: "Context Switch"
+        order: 10
+        level: 1
+        objective: "현재 register/context를 저장하고 다른 runnable process를 재개하는 흐름을 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: operating-systems.core.scheduling.timer-interrupt-preemption
+        title: "Timer Interrupt and Preemption"
+        order: 20
+        level: 2
+        objective: "timer interrupt가 실행 process를 선점 가능한 상태로 바꾸는 과정을 설명한다."
+        density: CORE
+        visualization: TEXT
+      - key: operating-systems.core.scheduling.scheduler-goals
+        title: "Scheduler Goals"
+        order: 30
+        level: 1
+        objective: "response time·throughput·fairness·utilization의 trade-off를 비교한다."
+        density: CORE
+        visualization: TEXT
+      - key: operating-systems.core.scheduling.fcfs
+        title: "FCFS"
+        order: 40
+        level: 1
+        objective: "도착 순서 실행과 convoy effect를 설명한다."
+        density: STANDARD
+        visualization: TEXT
+      - key: operating-systems.core.scheduling.sjf
+        title: "SJF"
+        order: 50
+        level: 2
+        objective: "짧은 작업 우선 정책과 평균 대기시간 전제를 설명한다."
+        density: STANDARD
+        visualization: TEXT
+      - key: operating-systems.core.scheduling.round-robin
+        title: "Round Robin"
+        order: 60
+        level: 1
+        objective: "time quantum이 공정성·context switch 비용을 바꾸는 방식을 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: operating-systems.core.scheduling.priority-scheduling
+        title: "Priority Scheduling"
+        order: 70
+        level: 2
+        objective: "우선순위 선택과 낮은 priority의 지연 문제를 설명한다."
+        density: STANDARD
+        visualization: TEXT
+      - key: operating-systems.core.scheduling.starvation-aging
+        title: "Starvation and Aging"
+        order: 80
+        level: 2
+        objective: "기아 상태와 aging으로 우선순위를 보정하는 이유를 설명한다."
+        density: STANDARD
+        visualization: DIAGRAM
+      - key: operating-systems.core.scheduling.multicore-affinity
+        title: "Multicore Affinity"
+        order: 90
+        level: 3
+        objective: "CPU affinity가 cache locality와 load balance에 미치는 trade-off를 추론한다."
+        density: CORE
+        visualization: DIAGRAM
+  - key: operating-systems.core.threads
+    title: "Threads"
+    order: 40
+    scope: "공유 process state, private stack/register, kernel/user thread와 Java 경계를 다룬다."
+    boundary: "OS thread 실행 단위와 Java thread/virtual thread 경계를 다루며 JMM 전체는 다루지 않는다."
+    concepts:
+      - key: operating-systems.core.threads.process-vs-thread
+        title: "Process versus Thread"
+        order: 10
+        level: 1
+        objective: "독립 주소 공간 process와 shared address space thread를 비교한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: operating-systems.core.threads.thread-shared-state
+        title: "Thread-Shared State"
+        order: 20
+        level: 1
+        objective: "code·heap·file descriptor를 공유할 때 communication과 race가 생기는 이유를 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: operating-systems.core.threads.thread-private-state
+        title: "Thread-Private State"
+        order: 30
+        level: 1
+        objective: "stack·register·PC를 thread별로 분리해야 하는 이유를 설명한다."
+        density: CORE
+        visualization: TEXT
+      - key: operating-systems.core.threads.kernel-thread
+        title: "Kernel Thread"
+        order: 40
+        level: 2
+        objective: "kernel scheduler가 인식하는 thread와 blocking의 관계를 설명한다."
+        density: CORE
+        visualization: TEXT
+      - key: operating-systems.core.threads.user-level-thread
+        title: "User-Level Thread"
+        order: 50
+        level: 2
+        objective: "user runtime이 scheduling하는 thread의 빠른 전환과 blocking 한계를 설명한다."
+        density: STANDARD
+        visualization: TEXT
+      - key: operating-systems.core.threads.thread-create-switch-cost
+        title: "Thread Creation and Switch Cost"
+        order: 60
+        level: 2
+        objective: "생성·stack·context switch 비용이 thread 수 선택에 미치는 영향을 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: operating-systems.core.threads.concurrency-vs-parallelism
+        title: "Concurrency versus Parallelism"
+        order: 70
+        level: 1
+        objective: "겹친 진행과 실제 동시 실행을 구분한다."
+        density: CORE
+        visualization: TEXT
+      - key: operating-systems.core.threads.thread-count-workload
+        title: "Thread Count and Workload"
+        order: 80
+        level: 2
+        objective: "CPU-bound·I/O-bound workload에 맞는 thread 수 trade-off를 추론한다."
+        density: CORE
+        visualization: TEXT
+      - key: operating-systems.core.threads.thread-pool
+        title: "Thread Pool"
+        order: 90
+        level: 1
+        objective: "worker 재사용·queue·backpressure로 thread pool의 경계를 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: operating-systems.core.threads.java-virtual-thread-boundary
+        title: "Java Virtual Thread Boundary"
+        order: 100
+        level: 3
+        objective: "virtual thread와 carrier OS thread의 관계 및 pinning 경계를 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+  - key: operating-systems.core.race-critical-section
+    title: "Race and Critical Section"
+    order: 50
+    scope: "shared mutable state, interleaving, race, critical section, atomicity와 spin/block을 다룬다."
+    boundary: "race의 실행 조건을 다루며 구체적인 lock primitive 선택은 Synchronization에 둔다."
+    concepts:
+      - key: operating-systems.core.race-critical-section.shared-mutable-state
+        title: "Shared Mutable State"
+        order: 10
+        level: 1
+        objective: "여러 실행 흐름이 같은 변경 가능한 상태를 읽고 쓰는 위험을 설명한다."
+        density: CORE
+        visualization: TEXT
+      - key: operating-systems.core.race-critical-section.interleaving
+        title: "Interleaving"
+        order: 20
+        level: 1
+        objective: "두 thread의 read-modify-write가 교차하는 timeline을 추적한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: operating-systems.core.race-critical-section.race-condition
+        title: "Race Condition"
+        order: 30
+        level: 1
+        objective: "결과가 실행 순서에 의존하는 race condition의 필요 조건을 설명한다."
+        density: CORE
+        visualization: TEXT
+      - key: operating-systems.core.race-critical-section.critical-section
+        title: "Critical Section"
+        order: 40
+        level: 1
+        objective: "공유 state를 접근하는 구간의 mutual exclusion·progress·bounded waiting을 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: operating-systems.core.race-critical-section.atomic-operation
+        title: "Atomic Operation"
+        order: 50
+        level: 2
+        objective: "관찰 중간 상태가 노출되지 않는 indivisible operation의 경계를 설명한다."
+        density: CORE
+        visualization: TEXT
+      - key: operating-systems.core.race-critical-section.spin-vs-block
+        title: "Spin versus Block"
+        order: 60
+        level: 2
+        objective: "짧은 대기에서 spin과 긴 대기에서 block을 선택하는 비용을 비교한다."
+        density: STANDARD
+        visualization: TEXT
+  - key: operating-systems.core.synchronization
+    title: "Synchronization"
+    order: 60
+    scope: "mutex, semaphore, condition variable, monitor, read-write lock과 contention을 다룬다."
+    boundary: "동기화 primitive의 의미를 다루며 application transaction semantics는 다루지 않는다."
+    concepts:
+      - key: operating-systems.core.synchronization.mutex
+        title: "Mutex"
+        order: 10
+        level: 1
+        objective: "소유자가 한 번에 하나인 mutual exclusion과 unlock 책임을 설명한다."
+        density: CORE
+        visualization: TEXT
+      - key: operating-systems.core.synchronization.semaphore
+        title: "Semaphore"
+        order: 20
+        level: 1
+        objective: "counter와 permit으로 resource 수를 제한하는 동작을 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: operating-systems.core.synchronization.condition-variable
+        title: "Condition Variable"
+        order: 30
+        level: 2
+        objective: "조건이 거짓일 때 lock을 놓고 다시 확인하는 wait/signal 흐름을 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: operating-systems.core.synchronization.monitor
+        title: "Monitor"
+        order: 40
+        level: 2
+        objective: "data·lock·condition protocol을 한 abstraction으로 묶는 이유를 설명한다."
+        density: STANDARD
+        visualization: TEXT
+      - key: operating-systems.core.synchronization.read-write-lock
+        title: "Read-Write Lock"
+        order: 50
+        level: 2
+        objective: "동시 reader와 배타 writer의 허용 조건과 writer starvation을 비교한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: operating-systems.core.synchronization.lock-granularity
+        title: "Lock Granularity"
+        order: 60
+        level: 2
+        objective: "coarse/fine lock이 contention·parallelism·복잡도에 미치는 영향을 설명한다."
+        density: CORE
+        visualization: TEXT
+      - key: operating-systems.core.synchronization.contention
+        title: "Contention"
+        order: 70
+        level: 2
+        objective: "동일 lock 대기와 context switch가 throughput을 떨어뜨리는 경로를 추론한다."
+        density: STANDARD
+        visualization: DIAGRAM
+  - key: operating-systems.core.deadlock
+    title: "Deadlock and Liveness"
+    order: 70
+    scope: "deadlock 조건, resource graph, prevention/avoidance/detection과 liveness를 다룬다."
+    boundary: "OS resource deadlock을 다루며 분산 transaction coordinator는 다루지 않는다."
+    concepts:
+      - key: operating-systems.core.deadlock.deadlock
+        title: "Deadlock"
+        order: 10
+        level: 1
+        objective: "서로 기다려 영원히 진행하지 못하는 상태를 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: operating-systems.core.deadlock.coffman-conditions
+        title: "Coffman Conditions"
+        order: 20
+        level: 2
+        objective: "mutual exclusion·hold and wait·no preemption·circular wait를 연결한다."
+        density: CORE
+        visualization: TEXT
+      - key: operating-systems.core.deadlock.resource-allocation-graph
+        title: "Resource-Allocation Graph"
+        order: 30
+        level: 2
+        objective: "process-resource edge로 cycle과 deadlock 가능성을 추적한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: operating-systems.core.deadlock.deadlock-prevention
+        title: "Deadlock Prevention"
+        order: 40
+        level: 2
+        objective: "Coffman 조건 하나를 설계로 깨서 deadlock을 막는 trade-off를 설명한다."
+        density: CORE
+        visualization: TEXT
+      - key: operating-systems.core.deadlock.deadlock-avoidance
+        title: "Deadlock Avoidance"
+        order: 50
+        level: 3
+        objective: "안전 상태를 유지하도록 자원 요청을 허용하는 판단을 설명한다."
+        density: STANDARD
+        visualization: DIAGRAM
+      - key: operating-systems.core.deadlock.deadlock-detection-recovery
+        title: "Detection and Recovery"
+        order: 60
+        level: 2
+        objective: "deadlock을 탐지한 뒤 victim 선택·rollback·resource 회수의 비용을 비교한다."
+        density: CORE
+        visualization: TEXT
+      - key: operating-systems.core.deadlock.livelock
+        title: "Livelock"
+        order: 70
+        level: 2
+        objective: "상태는 바뀌지만 유효한 진전이 없는 livelock을 deadlock과 구분한다."
+        density: STANDARD
+        visualization: TEXT
+      - key: operating-systems.core.deadlock.starvation
+        title: "Starvation"
+        order: 80
+        level: 2
+        objective: "특정 실행 흐름이 계속 기회를 못 얻는 starvation 원인과 완화책을 설명한다."
+        density: STANDARD
+        visualization: TEXT
+  - key: operating-systems.core.virtual-memory
+    title: "Virtual Memory"
+    order: 80
+    scope: "address space, page/frame, page fault, demand paging, replacement, working set과 COW를 다룬다."
+    boundary: "OS policy와 process-visible memory를 다루며 MMU/TLB hardware 세부는 Computer Architecture에 둔다."
+    concepts:
+      - key: operating-systems.core.virtual-memory.virtual-address-space
+        title: "Virtual Address Space"
+        order: 10
+        level: 1
+        objective: "각 process가 독립적인 연속 주소처럼 보는 이유를 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: operating-systems.core.virtual-memory.page-frame
+        title: "Page and Frame"
+        order: 20
+        level: 1
+        objective: "virtual page와 physical frame으로 memory를 나누는 목적을 설명한다."
+        density: CORE
+        visualization: TEXT
+      - key: operating-systems.core.virtual-memory.page-table
+        title: "Page Table"
+        order: 30
+        level: 1
+        objective: "page-to-frame mapping과 valid/protection bit의 의미를 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: operating-systems.core.virtual-memory.page-fault
+        title: "Page Fault"
+        order: 40
+        level: 2
+        objective: "없는 page 접근이 trap·load·mapping·retry로 이어지는 순서를 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: operating-systems.core.virtual-memory.demand-paging
+        title: "Demand Paging"
+        order: 50
+        level: 2
+        objective: "실제 접근 시점까지 page load를 미루는 이점과 fault 비용을 분석한다."
+        density: CORE
+        visualization: TEXT
+      - key: operating-systems.core.virtual-memory.page-replacement
+        title: "Page Replacement"
+        order: 60
+        level: 2
+        objective: "free frame이 없을 때 victim page를 고르는 policy를 비교한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: operating-systems.core.virtual-memory.locality-working-set
+        title: "Locality and Working Set"
+        order: 70
+        level: 2
+        objective: "최근 참조 집합이 필요한 frame 수와 page fault에 미치는 영향을 설명한다."
+        density: CORE
+        visualization: TEXT
+      - key: operating-systems.core.virtual-memory.thrashing
+        title: "Thrashing"
+        order: 80
+        level: 3
+        objective: "fault 처리에 대부분의 시간을 써서 유효 실행이 줄어드는 조건을 추론한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: operating-systems.core.virtual-memory.copy-on-write
+        title: "Copy-on-Write"
+        order: 90
+        level: 2
+        objective: "공유 page를 write 시 복사하는 방식이 fork 비용을 줄이는 과정을 설명한다."
+        density: CORE
+        visualization: TEXT
+      - key: operating-systems.core.virtual-memory.stack-heap-mapping
+        title: "Stack and Heap Mapping"
+        order: 100
+        level: 1
+        objective: "process address space에서 stack·heap 성장과 lifetime을 비교한다."
+        density: STANDARD
+        visualization: DIAGRAM
+  - key: operating-systems.core.filesystem
+    title: "Files and File Systems"
+    order: 90
+    scope: "file abstraction, descriptor, inode, block allocation, page cache와 durability를 다룬다."
+    boundary: "OS file path와 storage visibility를 다루며 Database transaction durability는 구분한다."
+    concepts:
+      - key: operating-systems.core.filesystem.file-abstraction
+        title: "File Abstraction"
+        order: 10
+        level: 1
+        objective: "바이트 stream과 metadata를 file이라는 공통 abstraction으로 보는 이유를 설명한다."
+        density: CORE
+        visualization: TEXT
+      - key: operating-systems.core.filesystem.file-descriptor
+        title: "File Descriptor"
+        order: 20
+        level: 1
+        objective: "process의 작은 정수 handle이 open file state를 가리키는 구조를 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: operating-systems.core.filesystem.open-file-table
+        title: "Open File Table"
+        order: 30
+        level: 2
+        objective: "descriptor·open-file entry·inode 사이의 offset 공유를 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: operating-systems.core.filesystem.directory-path
+        title: "Directory and Path"
+        order: 40
+        level: 1
+        objective: "absolute·relative pathname의 시작 context와 component별 lookup이 directory entry를 통해 filesystem object를 찾는 과정을 설명한다."
+        density: CORE
+        visualization: TEXT
+      - key: operating-systems.core.filesystem.inode
+        title: "Inode"
+        order: 50
+        level: 1
+        objective: "name과 분리된 metadata·block pointer 구조를 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: operating-systems.core.filesystem.filesystem-block
+        title: "File-System Block"
+        order: 60
+        level: 1
+        objective: "logical file content가 block 단위로 storage에 배치되는 이유를 설명한다."
+        density: STANDARD
+        visualization: TEXT
+      - key: operating-systems.core.filesystem.allocation
+        title: "Block Allocation"
+        order: 70
+        level: 2
+        objective: "연속·연결·indexed allocation의 fragmentation과 lookup 비용을 비교한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: operating-systems.core.filesystem.page-cache
+        title: "Page Cache"
+        order: 80
+        level: 2
+        objective: "file data를 memory page로 cache해 read/write를 가속하는 흐름을 설명한다."
+        density: CORE
+        visualization: TEXT
+      - key: operating-systems.core.filesystem.buffering
+        title: "Buffering"
+        order: 90
+        level: 1
+        objective: "사용자·kernel buffer가 write 호출과 실제 device 전송을 분리하는 이유를 설명한다."
+        density: STANDARD
+        visualization: TEXT
+      - key: operating-systems.core.filesystem.write-flush-fsync
+        title: "write, flush and fsync"
+        order: 100
+        level: 2
+        objective: "write() 성공과 stable storage durability가 다른 이유를 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+  - key: operating-systems.core.io
+    title: "I/O Model"
+    order: 100
+    scope: "device path, blocking/non-blocking, readiness/completion, select/poll/epoll, mmap과 zero-copy를 다룬다."
+    boundary: "OS I/O model을 다루며 application framework의 async abstraction은 연결만 한다."
+    concepts:
+      - key: operating-systems.core.io.device-io-kernel-path
+        title: "Device I/O Kernel Path"
+        order: 10
+        level: 1
+        objective: "user request가 syscall·driver·device를 거쳐 돌아오는 경로를 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: operating-systems.core.io.blocking-io
+        title: "Blocking I/O"
+        order: 20
+        level: 1
+        objective: "완료까지 thread가 sleep하는 blocking 상태와 비용을 설명한다."
+        density: CORE
+        visualization: TEXT
+      - key: operating-systems.core.io.non-blocking-io
+        title: "Non-Blocking I/O"
+        order: 30
+        level: 2
+        objective: "즉시 반환과 partial result를 호출자가 처리해야 하는 경계를 설명한다."
+        density: STANDARD
+        visualization: TEXT
+      - key: operating-systems.core.io.readiness-vs-completion
+        title: "Readiness versus Completion"
+        order: 40
+        level: 2
+        objective: "읽을 수 있음과 I/O 자체가 완료됨을 구분한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: operating-systems.core.io.select-poll
+        title: "select and poll"
+        order: 50
+        level: 2
+        objective: "여러 descriptor의 readiness를 감시하는 방식과 scan 비용을 설명한다."
+        density: CORE
+        visualization: TEXT
+      - key: operating-systems.core.io.epoll
+        title: "epoll"
+        order: 60
+        level: 2
+        objective: "관심 집합과 ready event queue로 대규모 descriptor 감시를 최적화하는 흐름을 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: operating-systems.core.io.async-io
+        title: "Asynchronous I/O"
+        order: 70
+        level: 3
+        objective: "요청 제출과 completion 통지를 분리하는 모델의 책임을 설명한다."
+        density: STANDARD
+        visualization: TEXT
+      - key: operating-systems.core.io.mmap
+        title: "mmap"
+        order: 80
+        level: 2
+        objective: "file과 address space를 mapping해 page fault로 데이터를 가져오는 경계를 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: operating-systems.core.io.sendfile-zero-copy
+        title: "sendfile and Zero-Copy"
+        order: 90
+        level: 2
+        objective: "kernel 내부 copy를 줄여 file-to-socket 전송을 최적화하는 조건을 설명한다."
+        density: CORE
+        visualization: TEXT
+  - key: operating-systems.core.ipc
+    title: "IPC"
+    order: 110
+    scope: "pipe, signal, shared memory, message queue와 local/network socket IPC를 다룬다."
+    boundary: "process 간 통신 primitive를 다루며 application messaging system의 delivery guarantee는 다루지 않는다."
+    concepts:
+      - key: operating-systems.core.ipc.pipe
+        title: "Pipe"
+        order: 10
+        level: 1
+        objective: "kernel buffer를 통한 단방향 byte stream과 EOF 경계를 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: operating-systems.core.ipc.signal
+        title: "Signal"
+        order: 20
+        level: 1
+        objective: "작은 비동기 notification과 handler 실행의 제한을 설명한다."
+        density: STANDARD
+        visualization: TEXT
+      - key: operating-systems.core.ipc.shared-memory
+        title: "Shared Memory IPC"
+        order: 30
+        level: 2
+        objective: "가장 빠른 data sharing 대신 synchronization을 직접 소유해야 하는 이유를 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: operating-systems.core.ipc.message-queue
+        title: "Message Queue"
+        order: 40
+        level: 1
+        objective: "kernel이 message 경계를 보존하는 queue와 copy 비용을 설명한다."
+        density: STANDARD
+        visualization: TEXT
+      - key: operating-systems.core.ipc.unix-domain-socket
+        title: "Unix-Domain Socket"
+        order: 50
+        level: 1
+        objective: "host 내부 endpoint 통신과 network socket 차이를 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: operating-systems.core.ipc.network-socket-ipc
+        title: "Network Socket IPC"
+        order: 60
+        level: 2
+        objective: "process 경계를 넘는 socket과 serialization·failure 책임을 설명한다."
+        density: CORE
+        visualization: TEXT
+      - key: operating-systems.core.ipc.ipc-tradeoff
+        title: "IPC Trade-off"
+        order: 70
+        level: 2
+        objective: "copy·latency·isolation·backpressure 관점에서 IPC를 선택한다."
+        density: CORE
+        visualization: DIAGRAM
+  - key: operating-systems.core.isolation
+    title: "Isolation and Resource Control"
+    order: 120
+    scope: "process isolation, permission, namespace, cgroup과 container process model을 다룬다."
+    boundary: "OS isolation primitive를 다루며 Docker image/build/orchestration은 Infrastructure 영역에 둔다."
+    concepts:
+      - key: operating-systems.core.isolation.process-isolation
+        title: "Process Isolation"
+        order: 10
+        level: 1
+        objective: "process별 주소·권한 경계가 충돌을 막는 이유를 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: operating-systems.core.isolation.user-group-permission
+        title: "User, Group and Permission"
+        order: 20
+        level: 1
+        objective: "owner·group·mode permission이 resource 접근을 제한하는 과정을 설명한다."
+        density: CORE
+        visualization: TEXT
+      - key: operating-systems.core.isolation.namespace
+        title: "Namespace"
+        order: 30
+        level: 2
+        objective: "process가 보는 PID·mount·network view를 분리하는 방식을 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: operating-systems.core.isolation.cgroup
+        title: "cgroup"
+        order: 40
+        level: 2
+        objective: "process 집합의 CPU·memory 등 resource 사용량을 제한·측정하는 경계를 설명한다."
+        density: CORE
+        visualization: TEXT
+      - key: operating-systems.core.isolation.resource-limit
+        title: "Resource Limit"
+        order: 50
+        level: 2
+        objective: "limit과 quota가 과도한 resource 사용을 실패로 바꾸는 과정을 설명한다."
+        density: STANDARD
+        visualization: TEXT
+      - key: operating-systems.core.isolation.container-process-model
+        title: "Container Process Model"
+        order: 60
+        level: 1
+        objective: "container가 isolated process environment라는 모델을 설명한다."
+        density: CORE
+        visualization: DIAGRAM
+      - key: operating-systems.core.isolation.host-kernel-sharing
+        title: "Host Kernel Sharing"
+        order: 70
+        level: 2
+        objective: "container가 별도 kernel이 아니라 host kernel을 공유하는 경계를 설명한다."
+        density: CORE
+        visualization: DIAGRAM

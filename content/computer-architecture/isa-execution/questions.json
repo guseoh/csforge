@@ -1,0 +1,218 @@
+[
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.isa-execution.isa-vs-microarchitecture.q1",
+    "promptMarkdown": "다음 중 ISA가 보장하는 내용과 microarchitecture 구현 세부사항을 올바르게 구분한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.isa-execution.isa-vs-microarchitecture"],
+    "choices": [
+      {"key": "A", "content": "ADD instruction의 architectural 결과는 ISA가 정의하고, pipeline 깊이는 microarchitecture가 선택할 수 있다.", "displayOrder": 0},
+      {"key": "B", "content": "L1 cache 크기는 ISA가 정의하므로 같은 ISA의 모든 CPU에서 동일하다.", "displayOrder": 1},
+      {"key": "C", "content": "branch predictor의 종류는 compiler가 의존할 수 있는 ISA contract다.", "displayOrder": 2},
+      {"key": "D", "content": "같은 ISA를 구현하면 모든 instruction의 cycle 수까지 동일해야 한다.", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "A"
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.isa-execution.isa-vs-microarchitecture.q2",
+    "promptMarkdown": "같은 ISA binary를 실행하는 두 CPU의 instruction count가 같아도 실행 시간이 달라질 수 있는 이유를 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.isa-execution.isa-vs-microarchitecture"],
+    "modelAnswer": "ISA는 instruction semantics 같은 architectural contract를 정의하지만 pipeline, cache, branch predictor, execution unit 등 microarchitecture는 달라질 수 있다. 이 차이가 CPI, cache miss, branch penalty를 바꾸므로 같은 instruction count라도 실행 시간은 달라질 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.isa-execution.isa-vs-microarchitecture.q3",
+    "promptMarkdown": "서비스를 CPU A에서 CPU B로 옮기려 한다. 두 CPU는 같은 ISA와 필요한 extension을 지원하지만 A에서 측정한 특정 instruction sequence의 latency가 40 ns였다. 이 40 ns를 B에서도 보장되는 계약으로 사용할 수 없는 이유와 이식 시 각각 무엇을 검증해야 하는지 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.isa-execution.isa-vs-microarchitecture"],
+    "modelAnswer": "같은 ISA가 보장하는 것은 instruction의 architectural semantics와 지원 feature이지 특정 latency가 아니다. 먼저 B가 필요한 ISA extension과 ABI를 지원해 correctness가 유지되는지 확인하고, 성능은 B의 pipeline·cache·memory system에서 실제 workload를 다시 benchmark해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.isa-execution.instruction-format.q1",
+    "promptMarkdown": "instruction format에 5-bit register field가 하나 있다. 이 field가 구분할 수 있는 register index의 개수는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.isa-execution.instruction-format"],
+    "choices": [
+      {"key": "A", "content": "5개", "displayOrder": 0},
+      {"key": "B", "content": "16개", "displayOrder": 1},
+      {"key": "C", "content": "32개", "displayOrder": 2},
+      {"key": "D", "content": "64개", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "C"
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.isa-execution.instruction-format.q2",
+    "promptMarkdown": "12-bit two's-complement signed immediate가 표현할 수 있는 정수 범위를 쓰라.",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.isa-execution.instruction-format"],
+    "acceptedAnswers": ["-2048부터 2047", "-2048..2047", "-2048 ~ 2047"]
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.isa-execution.instruction-format.q3",
+    "promptMarkdown": "고정 32-bit instruction에서 opcode와 register field에 더 많은 bit를 할당하려 한다. 이 변경이 immediate 범위, encoding 공간, decode 복잡도와 code density에 어떤 trade-off를 만들 수 있는지 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.isa-execution.instruction-format"],
+    "modelAnswer": "전체 instruction 폭이 고정이면 한 field에 bit를 더 주는 만큼 다른 field나 opcode 공간이 줄어든다. register 선택 폭이나 opcode 수는 늘릴 수 있지만 immediate 범위가 줄거나 다른 format이 필요해질 수 있다. 더 많은 기능을 여러 instruction으로 나누면 code density와 fetch bandwidth에도 영향을 줄 수 있으며, field 배치가 복잡해지면 decode hardware 비용도 달라질 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.isa-execution.registers.q1",
+    "promptMarkdown": "architectural register와 CPU cache를 구분한 설명으로 가장 적절한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.isa-execution.registers"],
+    "choices": [
+      {"key": "A", "content": "register는 instruction이 직접 이름으로 읽고 쓰는 architectural state이고, cache는 memory block의 복사본을 hardware가 관리한다.", "displayOrder": 0},
+      {"key": "B", "content": "register와 cache는 모두 ISA에서 동일한 index로 접근하는 같은 저장소다.", "displayOrder": 1},
+      {"key": "C", "content": "cache는 항상 software-visible하지만 register는 software가 볼 수 없다.", "displayOrder": 2},
+      {"key": "D", "content": "register pressure가 증가하면 L1 cache line 수가 자동으로 늘어난다.", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "A"
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.isa-execution.registers.q2",
+    "promptMarkdown": "RISC-V 표준 ABI에서 callee가 변경했다면 return 전에 복구해야 하는 integer saved-register 계열의 ABI 이름은?",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.isa-execution.registers"],
+    "acceptedAnswers": ["s0-s11", "s0 ~ s11", "saved registers s0-s11"]
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.isa-execution.registers.q3",
+    "promptMarkdown": "JIT가 만든 hot loop에서 동시에 살아 있는 값이 많아 일부 값이 stack slot로 spill된다. register pressure가 execution path를 느리게 만드는 과정을 load/store 관점에서 설명하고, source local-variable 개수만으로 이 문제를 확정하면 안 되는 이유도 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.isa-execution.registers"],
+    "modelAnswer": "register에 남지 못한 값은 stack memory에 store되고 다시 필요할 때 load되어 추가 memory operation과 dependency를 만든다. 하지만 compiler/JIT는 variable lifetime, inlining, constant folding, register allocation을 바꾸므로 source local-variable 개수가 실제 architectural register pressure와 1:1 대응하지 않는다. generated code와 spill/load-store를 확인해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.isa-execution.fetch-decode-execute.q1",
+    "promptMarkdown": "conditional branch instruction을 실행한 결과 조건이 참이었다. fetch-decode-execute 관점에서 반드시 달라질 수 있는 architectural state는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.isa-execution.fetch-decode-execute"],
+    "choices": [
+      {"key": "A", "content": "다음 PC", "displayOrder": 0},
+      {"key": "B", "content": "항상 모든 general-purpose register", "displayOrder": 1},
+      {"key": "C", "content": "항상 DRAM 전체", "displayOrder": 2},
+      {"key": "D", "content": "ISA 이름", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "A"
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.isa-execution.fetch-decode-execute.q2",
+    "promptMarkdown": "fetch가 성공한 instruction도 이후 정상 완료되지 않을 수 있다. decode 또는 execute 이후 발생할 수 있는 두 가지 실패 경로를 예로 들어 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.isa-execution.fetch-decode-execute"],
+    "modelAnswer": "decode에서 지원되지 않는 또는 illegal instruction encoding이 발견될 수 있고, execute/load-store 과정에서 권한이 없거나 mapping이 없는 address를 접근해 protection/page/access fault가 발생할 수 있다. 이런 경우 architectural exception path로 control이 이동한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.isa-execution.fetch-decode-execute.q3",
+    "promptMarkdown": "PC=0x1000에서 branch instruction을 fetch했다. branch condition은 참이고 target은 0x1800이며, target instruction을 fetch할 때 instruction page fault가 발생한다. 논리적인 control-flow 상태 변화를 순서대로 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.isa-execution.fetch-decode-execute"],
+    "modelAnswer": "0x1000의 branch를 fetch/decode한 뒤 condition을 평가해 next PC를 0x1800 target으로 선택한다. 이후 target instruction fetch가 address translation 또는 mapping 문제로 page fault를 발생시키므로 target instruction은 정상 execute되지 않고 architecture의 exception path로 control이 넘어간다. OS가 fault를 해결할 수 있으면 이후 해당 fetch를 재시도할 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.isa-execution.addressing-modes.q1",
+    "promptMarkdown": "RV32I load/store에서 base register가 0x1000이고 signed offset이 24라면 effective address는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.isa-execution.addressing-modes"],
+    "choices": [
+      {"key": "A", "content": "0x1018", "displayOrder": 0},
+      {"key": "B", "content": "0x1024", "displayOrder": 1},
+      {"key": "C", "content": "0x0FE8", "displayOrder": 2},
+      {"key": "D", "content": "24", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "A"
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.isa-execution.addressing-modes.q2",
+    "promptMarkdown": "base address가 0x2000이고 4-byte 원소 배열의 index 7을 가리키려면 byte offset은 얼마인가?",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.isa-execution.addressing-modes"],
+    "acceptedAnswers": ["28", "28 bytes", "28 byte"]
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.isa-execution.addressing-modes.q3",
+    "promptMarkdown": "`node.next.value`를 읽는 high-level 표현을 '한 번의 indirect addressing'이라고 단정하면 왜 부정확한가? RISC-V 같은 load/store ISA에서 가능한 machine-level 흐름과 memory fault 경계를 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.isa-execution.addressing-modes"],
+    "modelAnswer": "첫 load가 node의 next pointer를 register로 읽고, 두 번째 load가 그 register를 base로 value field를 읽는 식으로 여러 instruction이 필요할 수 있다. 각 단계의 effective address 계산이 정상이어도 mapping, permission, alignment 등에 따라 실제 memory access에서 별도 fault가 날 수 있다. 일반적인 indirect 개념과 target ISA가 제공하는 실제 addressing mode를 구분해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.isa-execution.procedure-call-machine-level.q1",
+    "promptMarkdown": "RISC-V 표준 calling convention의 procedure call에 대한 설명으로 맞는 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.isa-execution.procedure-call-machine-level"],
+    "choices": [
+      {"key": "A", "content": "JAL/JALR 같은 control-transfer instruction과 ABI의 ra·argument·saved-register 규칙을 조합한다.", "displayOrder": 0},
+      {"key": "B", "content": "모든 call은 ISA가 자동으로 모든 register를 stack에 저장한다.", "displayOrder": 1},
+      {"key": "C", "content": "return address는 어떤 경우에도 register에 있을 수 없다.", "displayOrder": 2},
+      {"key": "D", "content": "함수 호출 규칙은 cache coherence protocol이 정의한다.", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "A"
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.isa-execution.procedure-call-machine-level.q2",
+    "promptMarkdown": "caller-saved와 callee-saved register 규칙이 왜 필요한지, 각각 누가 값을 보존해야 하는지 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.isa-execution.procedure-call-machine-level"],
+    "modelAnswer": "함수 경계를 넘어 어떤 register 값이 유지되는지 공통 ABI 약속이 필요하다. Caller-saved 값이 call 이후에도 필요하면 caller가 call 전에 보존하고, callee-saved register를 callee가 변경했다면 callee가 return 전에 원래 값을 복구한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.isa-execution.procedure-call-machine-level.q3",
+    "promptMarkdown": "callee가 `s1`을 임시 계산에 사용하면서 저장·복구하지 않은 채 return했다. caller는 call 전에 `s1`에 중요한 pointer를 보관하고 있었다. 모든 instruction 자체가 정상 실행됐더라도 프로그램이 깨질 수 있는 이유를 ABI 관점에서 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.isa-execution.procedure-call-machine-level"],
+    "modelAnswer": "RISC-V 표준 ABI에서 s 계열은 callee-saved이므로 caller는 call 뒤에도 원래 값이 유지된다고 가정할 수 있다. Callee가 s1을 바꾸고 복구하지 않으면 ABI contract를 위반해 caller가 잘못된 pointer를 사용하게 된다. 이는 ISA arithmetic 오류가 아니라 calling convention에 따른 machine-state 보존 실패다."
+  }
+]

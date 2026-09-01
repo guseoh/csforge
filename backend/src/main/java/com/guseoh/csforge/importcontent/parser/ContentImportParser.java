@@ -3,6 +3,7 @@ package com.guseoh.csforge.importcontent.parser;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -159,7 +160,7 @@ public class ContentImportParser {
             if (content == null) errors.add(new ImportValidationError("choices[" + index + "].content", "필수입니다"));
             result.add(new NormalizedChoice(key, normalizeMarkdown(content), number(v.get("displayOrder"), index))); index++;
         }
-        return result;
+        return result.stream().sorted(Comparator.comparingInt(NormalizedChoice::displayOrder)).toList();
     }
 
     private static NormalizedImportItem errorItem(String fileName, int index, List<ImportValidationError> errors, String skipReason) {

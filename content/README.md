@@ -64,3 +64,16 @@ adding the word “운영” to a definition question does not make it hard.
 
 Do not force every Concept into the same EASY/MEDIUM/HARD and question-type pattern. Coverage is evaluated across the
 Topic and LearningArea, while each Concept gets the number and forms of questions that actually improve learning.
+
+### Curriculum question coverage contract
+
+Question counts are outputs of the learning design, not quotas. In particular, Wave curriculum entries that still contain
+legacy `everyConcept.minimumByDifficulty` or `minimumTotal` fields must not be interpreted as a requirement to create
+exactly one EASY, one MEDIUM, and one HARD question for every Concept. The canonical authoring rule is Topic/LearningArea
+coverage: choose the number, difficulty, and type of questions that best test each learning objective, then review the Topic
+and LearningArea as a whole for balanced coverage.
+
+A Concept may have fewer or more than three questions when that improves learning. `SHORT_ANSWER` is appropriate when a
+compact value, term, or deterministic result can be graded reliably; causal explanations belong in `DESCRIPTIVE` or
+`SCENARIO`. `HARD` questions must require real multi-step state, constraint, cost, or failure reasoning rather than a
+longer restatement of the definition.

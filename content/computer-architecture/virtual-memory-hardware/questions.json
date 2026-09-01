@@ -1,0 +1,218 @@
+[
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.virtual-memory-hardware.virtual-physical-address.q1",
+    "promptMarkdown": "두 process가 같은 virtual address `0x1000`을 사용하고 있다. 이에 대한 설명으로 가장 정확한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.virtual-memory-hardware.virtual-physical-address"],
+    "choices": [
+      {"key": "A", "content": "각 process의 page table에 따라 서로 다른 physical frame으로 변환될 수 있다.", "displayOrder": 0},
+      {"key": "B", "content": "virtual address 숫자가 같으므로 반드시 같은 physical byte를 가리킨다.", "displayOrder": 1},
+      {"key": "C", "content": "virtual address는 process마다 사용이 금지되고 kernel만 사용할 수 있다.", "displayOrder": 2},
+      {"key": "D", "content": "physical address가 먼저 정해져야만 process가 virtual address를 읽을 수 있다.", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "A"
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.virtual-memory-hardware.virtual-physical-address.q2",
+    "promptMarkdown": "4KiB page를 사용하는 byte-addressable paging model에서 virtual address를 virtual page number와 page offset으로 나눌 때 offset이 12 bit인 이유와 translation 뒤에도 offset이 유지되는 이유를 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.virtual-memory-hardware.virtual-physical-address"],
+    "modelAnswer": "4KiB는 4096=2^12 byte이므로 한 page 내부의 byte 위치를 구분하는 데 12 bit가 필요하다. page table은 virtual page number를 physical frame number로 바꾸고 같은 page 내부 위치는 그대로 유지하므로 physical address는 변환된 frame number와 원래 12-bit offset을 결합해 만든다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.virtual-memory-hardware.virtual-physical-address.q3",
+    "promptMarkdown": "한 JVM process가 매우 큰 virtual address range를 예약했지만 RSS는 훨씬 작다. 이것이 모순이 아닌 이유와, virtual size만 보고 실제 RAM 사용량을 판단하면 안 되는 이유를 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.virtual-memory-hardware.virtual-physical-address"],
+    "modelAnswer": "virtual address range를 예약하거나 mapping할 수 있다고 해서 모든 virtual page에 physical frame이 즉시 resident해야 하는 것은 아니다. demand paging이나 아직 접근하지 않은 mapping은 physical memory를 사용하지 않을 수 있고 shared/file-backed mapping도 별도 accounting이 필요하다. 따라서 virtual address space 크기와 resident physical memory인 RSS를 구분해 관찰해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.virtual-memory-hardware.mmu.q1",
+    "promptMarkdown": "MMU의 역할로 가장 정확한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.virtual-memory-hardware.mmu"],
+    "choices": [
+      {"key": "A", "content": "현재 address-space의 mapping을 이용해 virtual address를 translate하고 memory access permission을 검사한다.", "displayOrder": 0},
+      {"key": "B", "content": "어떤 page를 swap할지 application 대신 직접 정책적으로 선택한다.", "displayOrder": 1},
+      {"key": "C", "content": "모든 TLB miss를 자동으로 disk I/O로 바꾼다.", "displayOrder": 2},
+      {"key": "D", "content": "Java object의 lifetime과 garbage collection policy를 결정한다.", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "A"
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.virtual-memory-hardware.mmu.q2",
+    "promptMarkdown": "MMU가 protection 위반을 발견했을 때의 책임과, 이후 OS가 수행하는 책임을 구분해 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.virtual-memory-hardware.mmu"],
+    "modelAnswer": "MMU는 page-table/TLB의 permission과 요청 access를 비교해 허용되지 않은 접근이면 정상 memory operation을 완료하지 않고 architecture가 정의한 fault/exception을 발생시킨다. OS는 그 원인과 mapping 상태를 해석해 recover 가능한 fault인지, permission violation으로 process에 signal/exception을 전달할지 등을 결정한다. MMU가 page replacement나 application retry 정책을 스스로 선택하는 것은 아니다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.virtual-memory-hardware.mmu.q3",
+    "promptMarkdown": "같은 physical page를 process A에는 read-only로, process B에는 read-write로 mapping했다고 하자. MMU가 두 process에 다른 access 결과를 줄 수 있는 이유와 이 사례가 `physical page의 속성만으로 permission이 정해진다`는 설명이 틀린 이유를 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.virtual-memory-hardware.mmu"],
+    "modelAnswer": "permission은 각 virtual mapping의 page-table state에 포함될 수 있으므로 같은 physical frame을 가리키더라도 A의 mapping은 write를 금지하고 B의 mapping은 허용할 수 있다. MMU는 현재 address-space의 translation과 permission을 집행한다. 따라서 접근 권한은 physical page 하나에만 고정된 global 속성으로 설명할 수 없다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.virtual-memory-hardware.page-table-walk.q1",
+    "promptMarkdown": "TLB miss가 발생했지만 page table에 유효하고 허용된 mapping이 있다. 가장 자연스러운 다음 흐름은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.virtual-memory-hardware.page-table-walk"],
+    "choices": [
+      {"key": "A", "content": "page-table walk로 translation을 찾아 TLB를 채우고 원래 memory access를 계속할 수 있다.", "displayOrder": 0},
+      {"key": "B", "content": "TLB miss 자체가 항상 fatal page fault이므로 process를 종료한다.", "displayOrder": 1},
+      {"key": "C", "content": "physical address translation 없이 virtual address를 그대로 DRAM bus에 보낸다.", "displayOrder": 2},
+      {"key": "D", "content": "page replacement algorithm이 반드시 disk에서 page를 읽어 온다.", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "A"
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.virtual-memory-hardware.page-table-walk.q2",
+    "promptMarkdown": "multi-level page-table walk가 실제 data access 전에 추가 latency를 만들 수 있는 이유와, `4-level table이면 항상 DRAM을 정확히 네 번 더 읽는다`고 단정하면 안 되는 이유를 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.virtual-memory-hardware.page-table-walk"],
+    "modelAnswer": "TLB miss에서는 virtual page number의 각 index를 따라 여러 page-table entry를 읽어 translation을 찾아야 하므로 실제 data access 외의 memory lookup이 추가된다. 하지만 page-table entries가 cache나 page-walk cache에 있을 수 있고 CPU가 일부 access를 최적화할 수 있으며 large-page mapping은 중간 level에서 walk가 끝날 수도 있다. 따라서 level 수와 DRAM access 횟수를 고정적으로 동일시하면 안 된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.virtual-memory-hardware.page-table-walk.q3",
+    "promptMarkdown": "큰 pointer-based index를 random하게 탐색하는 서비스에서 data-cache miss와 TLB miss가 동시에 증가했다. 두 종류의 miss가 각각 어떤 추가 경로를 만들고, 왜 둘을 같은 miss로 기록하면 원인 분석이 어려워지는지 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.virtual-memory-hardware.page-table-walk"],
+    "modelAnswer": "TLB miss는 virtual-to-physical translation을 찾기 위해 page-table walk를 추가할 수 있고, data-cache miss는 translation이 끝난 physical data를 lower cache/DRAM에서 가져오는 경로를 추가한다. 하나는 address translation locality, 다른 하나는 data locality 문제이므로 TLB/page-walk counter와 cache-miss counter를 분리해야 page size, layout, working-set 중 어떤 원인을 개선해야 하는지 판단할 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.virtual-memory-hardware.tlb.q1",
+    "promptMarkdown": "TLB가 주로 cache하는 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.virtual-memory-hardware.tlb"],
+    "choices": [
+      {"key": "A", "content": "virtual page에서 physical frame으로의 최근 translation과 관련 permission 정보", "displayOrder": 0},
+      {"key": "B", "content": "physical memory의 application data cache line 전체", "displayOrder": 1},
+      {"key": "C", "content": "disk block의 durable journal record", "displayOrder": 2},
+      {"key": "D", "content": "JVM GC root와 object mark bit", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "A"
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.virtual-memory-hardware.tlb.q2",
+    "promptMarkdown": "TLB hit와 TLB miss가 memory access 경로를 어떻게 다르게 만드는지, 그리고 TLB miss가 page fault와 동일하지 않은 이유를 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.virtual-memory-hardware.tlb"],
+    "modelAnswer": "TLB hit이면 cached translation과 permission을 사용해 반복적인 page-table walk를 피하고 physical memory hierarchy access를 진행할 수 있다. TLB miss이면 page table에서 translation을 찾아야 하지만 page table에 유효하고 허용된 mapping이 있으면 walk 후 정상적으로 계속할 수 있다. mapping 부재나 permission 문제 등은 별도의 fault 조건이므로 TLB miss 자체와 page fault를 동일시하면 안 된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.virtual-memory-hardware.tlb.q3",
+    "promptMarkdown": "TLB entry가 512개라고 단순화하자. 4KiB page와 2MiB page를 각각 사용할 때 이론적인 TLB reach를 계산하고, huge page가 TLB pressure를 줄일 수 있는 이유를 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.virtual-memory-hardware.tlb"],
+    "modelAnswer": "4KiB page에서는 512 × 4KiB = 2MiB, 2MiB page에서는 512 × 2MiB = 1GiB의 virtual range를 같은 entry 수로 cover할 수 있다. 큰 page는 entry 하나가 더 넓은 range를 mapping하므로 넓은 working set에서 translation miss를 줄일 가능성이 있다. 실제 CPU는 page size별 TLB 구조가 다를 수 있으므로 이 계산은 원리를 보여 주는 단순 모델이다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.virtual-memory-hardware.multi-level-page-table.q1",
+    "promptMarkdown": "multi-level page table이 큰 sparse virtual address space에 유리한 주된 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.virtual-memory-hardware.multi-level-page-table"],
+    "choices": [
+      {"key": "A", "content": "사용하지 않는 큰 virtual range에 대한 lower-level page-table page를 만들지 않을 수 있다.", "displayOrder": 0},
+      {"key": "B", "content": "모든 virtual address를 하나의 physical frame으로 mapping한다.", "displayOrder": 1},
+      {"key": "C", "content": "TLB가 없어도 translation latency가 항상 0이 된다.", "displayOrder": 2},
+      {"key": "D", "content": "page fault와 permission 검사를 제거한다.", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "A"
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.virtual-memory-hardware.multi-level-page-table.q2",
+    "promptMarkdown": "flat page table과 multi-level page table을 page-table memory footprint와 TLB-miss walk cost 관점에서 비교하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.virtual-memory-hardware.multi-level-page-table"],
+    "modelAnswer": "flat table은 conceptual하게 virtual page마다 entry 공간을 필요로 해 큰 sparse address space에서 대부분 unused entry가 될 수 있다. multi-level table은 사용하는 range에 필요한 lower table만 만들 수 있어 memory를 절약하지만 TLB miss 때 여러 level의 entry를 따라가야 해 walk가 복잡해진다. TLB는 반복 translation을 cache해 이 trade-off를 완화한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.virtual-memory-hardware.multi-level-page-table.q3",
+    "promptMarkdown": "large page mapping이 multi-level page-table walk를 마지막 level까지 내려가지 않고 중간 level에서 끝낼 수 있는 이유와, 이 방식이 page-table footprint에 주는 영향을 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.virtual-memory-hardware.multi-level-page-table"],
+    "modelAnswer": "architecture가 상위 page-table entry가 큰 physical range를 직접 mapping하는 leaf 역할을 허용하면 해당 range에 대해 더 낮은-level table이 필요하지 않다. walker도 그 entry에서 translation을 완료할 수 있다. 하나의 large-page entry가 많은 작은-page entries를 대신하므로 lower-level page-table page와 entry 수를 줄일 수 있지만 큰 mapping granularity의 memory-management trade-off가 따른다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.virtual-memory-hardware.page-size-huge-page.q1",
+    "promptMarkdown": "huge page가 넓은 memory working set에서 성능에 도움을 줄 수 있는 대표 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.virtual-memory-hardware.page-size-huge-page"],
+    "choices": [
+      {"key": "A", "content": "TLB entry 하나가 더 큰 virtual range를 cover해 TLB miss와 page-table pressure를 줄일 수 있다.", "displayOrder": 0},
+      {"key": "B", "content": "CPU cache line도 자동으로 page와 같은 크기로 커진다.", "displayOrder": 1},
+      {"key": "C", "content": "모든 data-cache miss와 NUMA remote access가 사라진다.", "displayOrder": 2},
+      {"key": "D", "content": "어떤 OS에서도 huge page는 fragmentation 없이 언제든 확보된다.", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "A"
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.virtual-memory-hardware.page-size-huge-page.q2",
+    "promptMarkdown": "page size를 크게 할 때 TLB/page-table 측면의 이점과 memory-allocation 측면의 비용을 각각 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.virtual-memory-hardware.page-size-huge-page"],
+    "modelAnswer": "큰 page는 entry 하나가 더 넓은 range를 mapping해 TLB reach를 늘리고 필요한 page-table entry 수와 walk pressure를 줄일 수 있다. 반면 작은 양만 사용해도 큰 page granularity로 memory를 차지해 내부 낭비가 커질 수 있고, 큰 정렬·contiguous physical region 확보가 더 어려워 fragmentation/allocation 제약이 커질 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.virtual-memory-hardware.page-size-huge-page.q3",
+    "promptMarkdown": "JVM heap이 크다는 이유만으로 Linux HugeTLB 또는 Transparent Huge Pages를 바로 켜면 안 되는 이유를 설명하고, 적용 전후 비교할 지표를 제시하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.virtual-memory-hardware.page-size-huge-page"],
+    "modelAnswer": "heap이 크더라도 실제 병목이 TLB/page-walk가 아닐 수 있고 huge-page mechanism마다 reservation, allocation, reclaim/split 동작과 memory 낭비 특성이 다르다. 적용 전후 TLB miss/page walk counter, RSS와 page-table memory, fault/allocation behavior, throughput, GC/pause와 p95/p99 latency를 비교해야 한다. HugeTLB와 THP의 OS contract도 별도로 확인한다."
+  }
+]

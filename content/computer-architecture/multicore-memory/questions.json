@@ -1,0 +1,218 @@
+[
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.multicore-memory.multicore-shared-memory.q1",
+    "promptMarkdown": "multicore shared-memory system에 대한 설명으로 가장 정확한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.multicore-memory.multicore-shared-memory"],
+    "choices": [
+      {"key": "A", "content": "여러 core가 같은 physical memory를 접근할 수 있지만 각 core의 register/cache는 private할 수 있어 coherence와 ordering 규칙이 필요하다.", "displayOrder": 0},
+      {"key": "B", "content": "shared memory에서는 모든 load/store가 하나의 중앙 register에서 program order대로만 실행된다.", "displayOrder": 1},
+      {"key": "C", "content": "cache coherence가 있으면 모든 read-modify-write operation이 자동으로 atomic해진다.", "displayOrder": 2},
+      {"key": "D", "content": "여러 core가 같은 memory를 사용하면 software synchronization은 필요하지 않다.", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "A"
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.multicore-memory.multicore-shared-memory.q2",
+    "promptMarkdown": "shared-memory concurrency를 설명할 때 cache coherence, memory ordering, atomicity가 각각 어떤 질문에 답하는지 구분하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.multicore-memory.multicore-shared-memory"],
+    "modelAnswer": "coherence는 같은 memory location/cache line의 여러 cached copy가 최신 값과 write 순서를 모순되게 보지 않도록 하는 문제다. memory ordering은 서로 다른 load/store가 다른 observer에게 어떤 순서로 보장되어야 하는지 정한다. atomicity는 read-modify-write 같은 여러 단계의 state transition을 다른 thread와 중간에 interleave되지 않는 하나의 operation처럼 만들 수 있는지를 다룬다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.multicore-memory.multicore-shared-memory.q3",
+    "promptMarkdown": "두 thread가 동일한 `int x`에 대해 각각 `x++`를 한 번 수행했다. cache coherence는 정상인데 최종 값이 1이 될 수 있다. 가능한 interleaving을 설명하고 coherence가 왜 이 lost update를 막지 못하는지 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.multicore-memory.multicore-shared-memory"],
+    "modelAnswer": "두 thread가 모두 x=0을 읽고 각각 1을 계산한 뒤 차례로 1을 write할 수 있다. coherence는 두 write가 같은 location에 대해 coherent하게 전달되도록 할 수 있지만 `read → add → write` 전체를 하나의 atomic transaction으로 묶지 않는다. 최종 값 2를 보장하려면 atomic RMW나 lock처럼 software/language contract가 제공하는 atomicity가 필요하다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.multicore-memory.private-shared-cache.q1",
+    "promptMarkdown": "core-private L1 cache와 shared lower-level cache를 함께 두는 이유에 대한 설명으로 가장 적절한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.multicore-memory.private-shared-cache"],
+    "choices": [
+      {"key": "A", "content": "private cache로 낮은 per-core latency를 얻고 shared lower level로 capacity와 core 간 data sharing을 보완할 수 있다.", "displayOrder": 0},
+      {"key": "B", "content": "private cache를 사용하면 coherence가 완전히 필요 없어지기 때문이다.", "displayOrder": 1},
+      {"key": "C", "content": "shared cache는 한 core만 접근할 수 있어 contention이 없기 때문이다.", "displayOrder": 2},
+      {"key": "D", "content": "모든 CPU가 반드시 동일한 private/shared cache topology를 사용하기 때문이다.", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "A"
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.multicore-memory.private-shared-cache.q2",
+    "promptMarkdown": "thread가 한 core에서 오래 실행되다 다른 core로 migration되면 correctness는 유지되어도 성능이 달라질 수 있는 이유를 private cache locality와 연결해 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.multicore-memory.private-shared-cache"],
+    "modelAnswer": "이전 core의 private cache에는 thread가 반복 사용하던 working set이 warm하게 남아 있을 수 있다. 다른 core로 migration되면 새 core의 private cache에는 그 line이 없어 lower cache나 다른 core에서 다시 가져와야 할 수 있다. coherence는 올바른 값을 제공하지만 warm-cache locality 손실까지 없애지는 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.multicore-memory.private-shared-cache.q3",
+    "promptMarkdown": "성능 문제를 보고 `thread를 특정 core에 pin하면 cache가 따뜻해지니 항상 더 빠르다`고 결론 내리면 안 되는 이유를 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.multicore-memory.private-shared-cache"],
+    "modelAnswer": "affinity는 private-cache locality와 migration 비용을 줄일 수 있지만 scheduler의 load balancing을 제한하고 특정 core/cache/NUMA node에 workload를 몰아 contention을 높일 수 있다. 실제 효과는 migration rate, cache misses, CPU utilization, throughput과 tail latency를 적용 전후 비교해야 하며 topology와 workload에 따라 달라진다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.multicore-memory.cache-coherence-problem.q1",
+    "promptMarkdown": "cache coherence가 직접 해결하려는 문제는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.multicore-memory.cache-coherence-problem"],
+    "choices": [
+      {"key": "A", "content": "같은 memory line의 여러 cached copy가 write 이후 서로 모순된 최신 값을 계속 사용하는 문제", "displayOrder": 0},
+      {"key": "B", "content": "서로 다른 두 address의 모든 access를 source order 그대로 보장하는 language-level 문제", "displayOrder": 1},
+      {"key": "C", "content": "DB transaction을 durable storage에 commit하는 문제", "displayOrder": 2},
+      {"key": "D", "content": "read-modify-write sequence를 무조건 atomic하게 만드는 문제", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "A"
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.multicore-memory.cache-coherence-problem.q2",
+    "promptMarkdown": "Core A와 B가 같은 line을 read-only로 cache하고 있고 A가 그 line을 write하려 한다. invalidation-based coherence에서 왜 A가 다른 copy와 조정해야 하는지 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.multicore-memory.cache-coherence-problem"],
+    "modelAnswer": "A가 자기 copy만 수정하면 B가 이전 line을 계속 valid한 값으로 읽을 수 있다. 그래서 A는 write permission/ownership을 얻는 과정에서 B의 copy를 invalidate하는 등의 coherence transaction을 수행해야 한다. 이후 B가 다시 읽으면 최신 line을 새로 받아야 해 같은 memory location의 값이 일관되게 유지된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.multicore-memory.cache-coherence-problem.q3",
+    "promptMarkdown": "atomic counter를 사용해 lost update는 없어졌지만 core 수를 2개에서 32개로 늘릴수록 throughput 증가가 거의 멈췄다. coherence 관점에서 가능한 원인을 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.multicore-memory.cache-coherence-problem"],
+    "modelAnswer": "모든 core가 같은 counter가 있는 cache line을 write하면 atomic operation의 correctness와 별개로 write ownership이 core 사이를 반복 이동할 수 있다. invalidation, cache-to-cache transfer, serialization과 interconnect traffic이 늘어 scalability가 제한될 수 있다. striped/per-core aggregation 같은 state partition을 검토하되 cache-to-cache traffic과 throughput으로 원인을 확인해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.multicore-memory.coherence-protocol-model.q1",
+    "promptMarkdown": "MESI 같은 coherence state를 학습할 때 가장 중요한 관점은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.multicore-memory.coherence-protocol-model"],
+    "choices": [
+      {"key": "A", "content": "해당 cache line의 최신 data와 read/write permission을 어느 cache가 가지고 있는지 추적하는 것", "displayOrder": 0},
+      {"key": "B", "content": "모든 CPU가 MESI 네 상태만 정확히 동일하게 사용한다고 외우는 것", "displayOrder": 1},
+      {"key": "C", "content": "cache line state가 Java volatile의 language semantics를 직접 정의한다고 보는 것", "displayOrder": 2},
+      {"key": "D", "content": "coherence state가 disk persistence까지 나타낸다고 보는 것", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "A"
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.multicore-memory.coherence-protocol-model.q2",
+    "promptMarkdown": "snooping coherence와 directory-based coherence가 `어느 cache가 line을 가지고 있는가`를 찾는 방식에서 어떻게 다른지 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.multicore-memory.coherence-protocol-model"],
+    "modelAnswer": "snooping model은 shared interconnect의 coherence transaction을 여러 cache가 관찰해 자기 line과 관련 있는지 확인하는 방식으로 설명할 수 있다. directory 방식은 특정 metadata가 sharer/owner 정보를 추적해 필요한 participant에 request/invalidation을 보내는 식으로 broadcast 범위를 줄일 수 있다. 실제 topology와 protocol detail은 microarchitecture마다 다르다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.multicore-memory.coherence-protocol-model.q3",
+    "promptMarkdown": "Core A와 B가 shared state인 line을 읽고 있다. A가 write ownership을 얻어 수정한 뒤 B가 다시 같은 line을 읽는 invalidation-based protocol의 가능한 상태 흐름을 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.multicore-memory.coherence-protocol-model"],
+    "modelAnswer": "처음에는 두 core가 read 가능한 shared copy를 가질 수 있다. A가 write하려면 다른 sharer인 B의 copy를 invalidate하고 write permission을 얻는다. A가 수정한 뒤 B의 기존 line은 사용할 수 없으므로 B의 다음 read는 coherence miss/request를 발생시키고 최신 data를 A 또는 hierarchy의 최신 source에서 받아 다시 readable state로 전환한다. 정확한 state 이름과 message는 protocol마다 다를 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.multicore-memory.false-sharing.q1",
+    "promptMarkdown": "false sharing에 대한 설명으로 맞는 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.multicore-memory.false-sharing"],
+    "choices": [
+      {"key": "A", "content": "서로 다른 writable 변수라도 같은 cache line에 있으면 독립 thread의 write가 coherence ownership을 경쟁할 수 있다.", "displayOrder": 0},
+      {"key": "B", "content": "같은 변수에 대한 data race가 있을 때만 발생한다.", "displayOrder": 1},
+      {"key": "C", "content": "false sharing이 발생하면 coherence correctness가 깨져 반드시 잘못된 값이 반환된다.", "displayOrder": 2},
+      {"key": "D", "content": "read-only data만 여러 core가 읽을 때 line ownership이 계속 ping-pong하는 현상이다.", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "A"
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.multicore-memory.false-sharing.q2",
+    "promptMarkdown": "false sharing과 true sharing/data race를 구분하고, false sharing이 올바르게 synchronized된 코드에서도 성능 문제로 나타날 수 있는 이유를 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.multicore-memory.false-sharing"],
+    "modelAnswer": "true sharing은 여러 thread가 실제 같은 logical value를 공유하는 것이고 data race는 language synchronization 없이 conflicting access가 발생하는 correctness 문제다. false sharing은 서로 다른 independent values가 우연히 같은 cache line에 배치되어 write ownership을 경쟁하는 hardware performance 문제다. 각각의 variable access가 atomic/synchronized되어 correctness가 맞아도 line granularity 때문에 coherence traffic이 증가할 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.multicore-memory.false-sharing.q3",
+    "promptMarkdown": "32개 worker가 각자 독립 counter를 갱신한다. counter를 인접 배열 slot에 배치했을 때보다 per-worker padded layout에서 throughput이 크게 올랐다. false sharing을 원인으로 확정하기 전에 추가로 확인할 evidence와 padding의 trade-off를 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.multicore-memory.false-sharing"],
+    "modelAnswer": "cache-to-cache transfer, invalidation/false-sharing profiler, core scaling 결과와 실제 object/array layout을 확인해 같은 line의 write contention이 줄었는지 검증해야 한다. lock contention이나 scheduler 변화도 함께 배제한다. padding은 line 경쟁을 줄일 수 있지만 memory footprint와 cache capacity pressure를 늘리므로 throughput·tail latency·memory 사용량을 함께 비교해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.multicore-memory.hardware-memory-reordering.q1",
+    "promptMarkdown": "weak hardware memory ordering에 대한 설명으로 가장 정확한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.multicore-memory.hardware-memory-reordering"],
+    "choices": [
+      {"key": "A", "content": "architecture가 반드시 보존한다고 정한 순서 외에는 다른 core가 일부 memory operation을 program order와 다르게 관찰할 수 있다.", "displayOrder": 0},
+      {"key": "B", "content": "CPU가 모든 instruction을 무조건 source code의 역순으로 실행한다는 뜻이다.", "displayOrder": 1},
+      {"key": "C", "content": "cache coherence가 존재하지 않는 CPU에서만 가능한 현상이다.", "displayOrder": 2},
+      {"key": "D", "content": "Java happens-before relation과 ISA memory model이 완전히 같은 규칙이라는 뜻이다.", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "A"
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.multicore-memory.hardware-memory-reordering.q2",
+    "promptMarkdown": "cache coherence만으로 `data = 42; ready = true;` publication에서 consumer가 `ready == true`를 본 뒤 반드시 최신 data를 본다고 일반화할 수 없는 이유를 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.multicore-memory.hardware-memory-reordering"],
+    "modelAnswer": "coherence는 주로 같은 memory location의 cached copies와 writes를 일관되게 만드는 문제지만 `data`와 `ready`는 서로 다른 locations다. 둘 사이의 관찰 순서를 보장하려면 architecture memory model의 ordering primitive 또는 language-level release/acquire·happens-before가 필요하다. coherence가 존재한다는 사실만으로 모든 address 사이 program order가 publish order로 보존되지는 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.multicore-memory.hardware-memory-reordering.q3",
+    "promptMarkdown": "Java 개발자가 `target CPU가 x86이므로 이 shared flag는 volatile이 아니어도 된다`고 주장했다. hardware memory model과 Java Memory Model의 경계를 기준으로 왜 잘못된 접근인지 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.multicore-memory.hardware-memory-reordering"],
+    "modelAnswer": "Java program의 correctness는 Java Memory Model이 정의하는 happens-before와 data-race rules로 판단해야 한다. JVM/JIT는 target architecture의 ordering strength에 따라 fence나 instruction 선택을 최적화할 수 있지만 source-level synchronization contract가 CPU에 따라 임의로 사라지는 것은 아니다. volatile/lock/atomic 등 필요한 language primitive 없이 hardware 특성에 기대면 compiler optimization과 다른 architecture에서 보장이 깨질 수 있다."
+  }
+]
