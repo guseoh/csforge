@@ -1,0 +1,105 @@
+schemaVersion: 2
+area:
+  key: performance-observability-operations
+  title: Performance, Observability & Operations
+  baseline: measurable runtime behavior, service objectives and operational feedback loops
+  contentKeyPrefix: performance.core
+  status: CANONICAL_FOUNDATION
+policies:
+  language:
+    authoringLanguage: ko-KR
+    explanationRule: 성능 숫자를 단독 최적화하지 않고 workload·saturation·사용자 영향과 연결하며 telemetry에서 운영 조치까지의 feedback loop를 설명한다.
+  question:
+    minimumPerConcept: 2
+    topicDifficultyCoverage: [EASY, MEDIUM, HARD]
+    areaTypeCoverage: [MULTIPLE_CHOICE, SHORT_ANSWER, DESCRIPTIVE, SCENARIO]
+    hardRule: p95/p99 latency·queueing, profiler와 load test, signal correlation, SLI/SLO·error budget, cardinality, alert/runbook, incident command 또는 autoscaling trade-off를 판단하게 한다.
+    shortAnswerRule: metric·tool 이름만으로 정답을 인정하지 않고 측정 대상과 운영 의미를 함께 요구한다.
+  source:
+    primary: [OpenTelemetry Documentation, Prometheus Documentation, Kubernetes Documentation, Oracle Java Flight Recorder Documentation]
+    rule: telemetry와 성능 측정은 시스템 동작을 설명하는 관측 수단이며 원인·목표·운영 조치를 혼동하지 않는다.
+  visualization:
+    values: [NONE, TEXT, DIAGRAM]
+    rule: latency distribution, telemetry correlation, SLO budget burn 또는 incident/capacity feedback loop처럼 시간과 관계가 핵심인 곳에 사용한다.
+topics:
+- key: performance.core.measurement
+  title: Runtime performance measurement
+  order: 10
+  scope: latency·throughput·saturation, queueing과 profiling/load test를 다룬다.
+  boundary: Java·database·network 자체의 상세 구현보다 workload 관측과 성능 판단 방법을 소유한다.
+  concepts:
+  - key: performance.core.measurement.latency-throughput
+    title: latency distribution과 throughput
+    order: 10
+    level: 1
+    objective: 평균 대신 percentile latency와 throughput을 workload·concurrency·error rate와 함께 해석한다.
+    density: CORE
+    visualization: DIAGRAM
+  - key: performance.core.measurement.saturation-queueing
+    title: saturation과 queueing
+    order: 20
+    level: 2
+    objective: bounded resource, queue depth, utilization과 Little's Law 직관을 이용해 latency 증가와 overload를 설명한다.
+    density: CORE
+    visualization: DIAGRAM
+  - key: performance.core.measurement.profiling-load-testing
+    title: profiling과 load testing
+    order: 30
+    level: 2
+    objective: profiler·benchmark·load test의 질문과 한계를 구분하고 재현 가능한 성능 실험을 설계한다.
+    density: CORE
+    visualization: TEXT
+- key: performance.core.observability
+  title: Observability signals and objectives
+  order: 20
+  scope: metrics·logs·traces·context, SLI/SLO/error budget와 cardinality를 다룬다.
+  boundary: telemetry의 수집·질의·sampling 정책과 service objective를 소유하고 개별 business domain의 canonical data는 소유하지 않는다.
+  concepts:
+  - key: performance.core.observability.signals-context
+    title: metrics·logs·traces와 context
+    order: 10
+    level: 1
+    objective: signal별 강점과 trace/span context correlation을 이용해 한 요청의 증상을 연결한다.
+    density: CORE
+    visualization: DIAGRAM
+  - key: performance.core.observability.sli-slo-error-budget
+    title: SLI·SLO와 error budget
+    order: 20
+    level: 2
+    objective: user-visible indicator에서 SLO를 만들고 budget 소비를 release·reliability 의사결정으로 연결한다.
+    density: CORE
+    visualization: DIAGRAM
+  - key: performance.core.observability.metric-cardinality
+    title: metric cardinality와 telemetry cost
+    order: 30
+    level: 2
+    objective: label/attribute 조합이 series와 storage·query 비용을 어떻게 증가시키는지 제어한다.
+    density: CORE
+    visualization: TEXT
+- key: performance.core.operations
+  title: Operational response and capacity
+  order: 30
+  scope: alert·runbook, incident response, capacity planning과 autoscaling을 다룬다.
+  boundary: Backend Engineering의 resilience pattern과 Infrastructure의 resource primitive를 반복하지 않고 운영 signal·decision·action loop를 소유한다.
+  concepts:
+  - key: performance.core.operations.alert-runbook
+    title: alert와 runbook
+    order: 10
+    level: 1
+    objective: actionable alert를 user impact·symptom·threshold·runbook으로 연결하고 alert fatigue를 줄인다.
+    density: CORE
+    visualization: TEXT
+  - key: performance.core.operations.incident-response
+    title: incident response와 postmortem
+    order: 20
+    level: 2
+    objective: incident command, communication, mitigation, evidence 보존과 blameless learning을 운영한다.
+    density: CORE
+    visualization: DIAGRAM
+  - key: performance.core.operations.capacity-autoscaling
+    title: capacity planning과 autoscaling
+    order: 30
+    level: 2
+    objective: demand forecast, headroom, scaling signal과 stabilization을 capacity·cost·reliability trade-off로 판단한다.
+    density: CORE
+    visualization: DIAGRAM

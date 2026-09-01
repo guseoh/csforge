@@ -1,0 +1,5 @@
+[
+  {"key":"performance.core.measurement","title":"Runtime performance measurement","displayOrder":10,"status":"PUBLISHED"},
+  {"key":"performance.core.observability","title":"Observability signals and objectives","displayOrder":20,"status":"PUBLISHED"},
+  {"key":"performance.core.operations","title":"Operational response and capacity","displayOrder":30,"status":"PUBLISHED"}
+]
