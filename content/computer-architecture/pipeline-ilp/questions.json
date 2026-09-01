@@ -1,17 +1,182 @@
 [
-{"kind":"question","contentKey":"computer-architecture.core.pipeline-ilp.pipeline-stages.q1","promptMarkdown":"pipeline의 기본 효과는?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["computer-architecture.core.pipeline-ilp.pipeline-stages"],"choices":[{"key":"A","content":"여러 instruction의 서로 다른 단계를 겹쳐 throughput을 높인다","displayOrder":0},{"key":"B","content":"모든 instruction의 실행 시간을 0으로 만든다","displayOrder":1}],"correctChoiceKey":"A"},
-{"kind":"question","contentKey":"computer-architecture.core.pipeline-ilp.pipeline-stages.q2","promptMarkdown":"pipeline stage를 나누는 목적을 설명하라.","questionType":"SHORT_ANSWER","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["computer-architecture.core.pipeline-ilp.pipeline-stages"],"acceptedAnswers":["긴 조합 논리를 여러 clock 단계로 나누어 각 단계가 겹쳐 실행되게 한다"]},
-{"kind":"question","contentKey":"computer-architecture.core.pipeline-ilp.pipeline-stages.q3","promptMarkdown":"pipeline depth를 늘릴 때 backend에서 함께 검토할 trade-off를 설명하라.","questionType":"SCENARIO","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["computer-architecture.core.pipeline-ilp.pipeline-stages"],"modelAnswer":"clock을 빠르게 할 수 있지만 branch misprediction penalty와 register overhead, forwarding·hazard 복잡도가 커질 수 있다. workload에서 실제 throughput과 tail latency를 측정한다."},
-{"kind":"question","contentKey":"computer-architecture.core.pipeline-ilp.pipeline-hazards.q1","promptMarkdown":"pipeline hazard의 종류로 맞는 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["computer-architecture.core.pipeline-ilp.pipeline-hazards"],"choices":[{"key":"A","content":"data, control, structural hazard","displayOrder":0},{"key":"B","content":"DNS, TLS, HTTP만이 hazard다","displayOrder":1}],"correctChoiceKey":"A"},
-{"kind":"question","contentKey":"computer-architecture.core.pipeline-ilp.pipeline-hazards.q2","promptMarkdown":"data hazard가 발생하는 조건을 설명하라.","questionType":"SHORT_ANSWER","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["computer-architecture.core.pipeline-ilp.pipeline-hazards"],"acceptedAnswers":["앞 instruction의 결과를 뒤 instruction이 아직 준비되기 전에 필요로 한다"]},
-{"kind":"question","contentKey":"computer-architecture.core.pipeline-ilp.pipeline-hazards.q3","promptMarkdown":"hazard를 무시한 최적화가 correctness와 throughput을 동시에 해칠 수 있는 이유를 설명하라.","questionType":"SCENARIO","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["computer-architecture.core.pipeline-ilp.pipeline-hazards"],"modelAnswer":"dependency나 resource 충돌을 무시하면 오래된 값을 읽거나 결과 순서가 틀리고, 이를 복구하는 stall·flush가 더 큰 비용을 만든다. 의존성 invariant를 먼저 보장한다."},
-{"kind":"question","contentKey":"computer-architecture.core.pipeline-ilp.forwarding-and-stall.q1","promptMarkdown":"forwarding의 목적은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["computer-architecture.core.pipeline-ilp.forwarding-and-stall"],"choices":[{"key":"A","content":"결과를 register write-back 전에 필요한 다음 stage로 우회한다","displayOrder":0},{"key":"B","content":"모든 branch를 제거한다","displayOrder":1}],"correctChoiceKey":"A"},
-{"kind":"question","contentKey":"computer-architecture.core.pipeline-ilp.forwarding-and-stall.q2","promptMarkdown":"forwarding으로도 해결되지 않아 stall이 필요한 대표 상황은?","questionType":"SHORT_ANSWER","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["computer-architecture.core.pipeline-ilp.forwarding-and-stall"],"acceptedAnswers":["load 결과가 아직 도착하지 않은 바로 다음 사용","load-use hazard"]},
-{"kind":"question","contentKey":"computer-architecture.core.pipeline-ilp.forwarding-and-stall.q3","promptMarkdown":"DB batch pipeline에서 CPU forwarding과 유사하게 대기 시간을 줄이되 correctness를 보존하려면 무엇을 확인해야 하는가?","questionType":"SCENARIO","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["computer-architecture.core.pipeline-ilp.forwarding-and-stall"],"modelAnswer":"앞 단계의 결과가 완전히 commit되지 않아도 안전하게 읽을 수 있는 dependency만 overlap하고, 불가능한 경우 backpressure나 stall로 순서를 보장해야 한다."},
-{"kind":"question","contentKey":"computer-architecture.core.pipeline-ilp.branch-prediction.q1","promptMarkdown":"branch predictor가 예측하는 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["computer-architecture.core.pipeline-ilp.branch-prediction"],"choices":[{"key":"A","content":"조건 branch의 방향이나 target을 미리 추정한다","displayOrder":0},{"key":"B","content":"모든 memory 값을 미리 영구 저장한다","displayOrder":1}],"correctChoiceKey":"A"},
-{"kind":"question","contentKey":"computer-architecture.core.pipeline-ilp.branch-prediction.q2","promptMarkdown":"branch prediction이 틀리면 어떤 비용이 발생하는가?","questionType":"SHORT_ANSWER","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["computer-architecture.core.pipeline-ilp.branch-prediction"],"acceptedAnswers":["잘못된 instruction을 flush하고 올바른 경로를 다시 채우는 비용"]},
-{"kind":"question","contentKey":"computer-architecture.core.pipeline-ilp.branch-prediction.q3","promptMarkdown":"예측 정확도가 좋은 입력과 나쁜 입력이 backend latency에 미치는 차이를 설명하라.","questionType":"SCENARIO","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["computer-architecture.core.pipeline-ilp.branch-prediction"],"modelAnswer":"규칙적인 branch는 predictor가 높은 정확도를 내어 pipeline을 계속 채우지만 불규칙한 입력은 miss와 flush가 늘어난다. 평균만 보지 말고 입력 분포별 branch miss와 tail을 측정한다."},
-{"kind":"question","contentKey":"computer-architecture.core.pipeline-ilp.superscalar-out-of-order.q1","promptMarkdown":"superscalar·out-of-order CPU의 목표는?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["computer-architecture.core.pipeline-ilp.superscalar-out-of-order"],"choices":[{"key":"A","content":"독립 instruction을 여러 execution unit에서 동시에 실행한다","displayOrder":0},{"key":"B","content":"program order를 무조건 삭제한다","displayOrder":1}],"correctChoiceKey":"A"},
-{"kind":"question","contentKey":"computer-architecture.core.pipeline-ilp.superscalar-out-of-order.q2","promptMarkdown":"out-of-order 실행이 최종 architectural state 순서를 어떻게 보존하는지 설명하라.","questionType":"SHORT_ANSWER","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["computer-architecture.core.pipeline-ilp.superscalar-out-of-order"],"acceptedAnswers":["dependency를 추적하고 retirement/commit을 program order로 수행한다"]},
-{"kind":"question","contentKey":"computer-architecture.core.pipeline-ilp.superscalar-out-of-order.q3","promptMarkdown":"backend query 병렬화에서 CPU의 out-of-order 개념을 그대로 적용하면 안 되는 이유를 설명하라.","questionType":"SCENARIO","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["computer-architecture.core.pipeline-ilp.superscalar-out-of-order"],"modelAnswer":"CPU는 dependency와 commit buffer가 순서를 보존하지만 DB 작업은 외부 side effect와 transaction isolation을 가진다. 독립성이 증명된 read만 병렬화하고 commit·ordering contract를 따로 설계한다."}
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.pipeline-ilp.pipeline-stages.q1",
+    "promptMarkdown": "5-stage pipeline이 충분히 채워지고 hazard가 없다고 가정할 때 가장 정확한 설명은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.pipeline-ilp.pipeline-stages"],
+    "choices": [
+      {"key": "A", "content": "여러 instruction의 서로 다른 stage를 겹쳐 실행해 steady state의 instruction throughput을 높인다.", "displayOrder": 0},
+      {"key": "B", "content": "instruction 하나가 거쳐야 하는 모든 stage를 제거해 latency를 1 cycle로 만든다.", "displayOrder": 1},
+      {"key": "C", "content": "모든 stage가 동시에 같은 instruction을 처리하도록 만든다.", "displayOrder": 2},
+      {"key": "D", "content": "branch와 data dependency가 있어도 별도 제어 없이 항상 CPI 1을 보장한다.", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "A"
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.pipeline-ilp.pipeline-stages.q2",
+    "promptMarkdown": "pipeline이 instruction throughput을 높일 수 있어도 instruction 하나의 latency를 반드시 줄이는 것은 아닌 이유를 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.pipeline-ilp.pipeline-stages"],
+    "modelAnswer": "pipeline은 서로 다른 instruction의 stage를 겹쳐 완료 간격을 줄이는 구조다. instruction 하나는 여전히 여러 stage를 지나야 하고 stage 사이 pipeline register 비용도 생기므로 개별 latency가 반드시 줄지는 않는다. 이상적인 steady state throughput과 한 instruction의 end-to-end latency를 구분해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.pipeline-ilp.pipeline-stages.q3",
+    "promptMarkdown": "어떤 CPU의 stage 조합 논리 지연이 90ps, 170ps, 110ps, 140ps이고 각 pipeline register overhead가 20ps라고 하자. 다른 조건이 같다면 현재 clock period를 제한하는 핵심 요소와, 가장 긴 stage를 둘로 나눌 때도 성능이 무조건 2배가 되지 않는 이유를 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.pipeline-ilp.pipeline-stages"],
+    "modelAnswer": "현재 clock period는 가장 긴 170ps stage와 register overhead의 영향을 가장 크게 받으므로 단순 모델에서는 약 190ps보다 짧게 잡기 어렵다. 긴 stage를 나누면 critical stage 지연은 줄일 수 있지만 pipeline register overhead가 하나 더 생기고 다른 stage가 새 bottleneck이 될 수 있다. 또한 더 깊은 pipeline은 hazard 제어와 branch recovery 비용을 늘릴 수 있으므로 throughput이 정확히 2배가 된다고 볼 수 없다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.pipeline-ilp.pipeline-hazards.q1",
+    "promptMarkdown": "`add r1, r2, r3` 바로 뒤에 `sub r4, r1, r5`가 실행될 때 두 번째 instruction이 첫 번째 instruction의 결과를 필요로 한다. 이 dependency는 무엇인가?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.pipeline-ilp.pipeline-hazards"],
+    "choices": [
+      {"key": "A", "content": "RAW(Read After Write) true dependency", "displayOrder": 0},
+      {"key": "B", "content": "WAR(Write After Read) name dependency", "displayOrder": 1},
+      {"key": "C", "content": "WAW(Write After Write) name dependency", "displayOrder": 2},
+      {"key": "D", "content": "control hazard", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "A"
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.pipeline-ilp.pipeline-hazards.q2",
+    "promptMarkdown": "structural hazard, data hazard, control hazard가 각각 무엇이 준비되지 않아서 발생하는지와 대표 대응 방법을 하나씩 연결해 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.pipeline-ilp.pipeline-hazards"],
+    "modelAnswer": "structural hazard는 같은 cycle에 필요한 hardware resource가 부족할 때 생기며 resource 구성 변경이나 scheduling/stall로 처리한다. data hazard는 필요한 operand가 아직 준비되지 않았을 때 생기며 forwarding이나 stall, out-of-order scheduling 등을 사용한다. control hazard는 다음 PC가 확정되지 않았을 때 생기며 branch prediction으로 진행하고 예측 실패 시 flush와 redirect로 복구한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.pipeline-ilp.pipeline-hazards.q3",
+    "promptMarkdown": "out-of-order CPU에서 앞 instruction이 `r1`을 읽기 전에 뒤 instruction이 같은 architectural register `r1`에 값을 쓰려 한다. 이 관계를 RAW와 구분하고, register renaming이 왜 도움이 되는지 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.pipeline-ilp.pipeline-hazards"],
+    "modelAnswer": "뒤 write가 앞 read를 추월하면 WAR(Write After Read) name dependency가 문제가 된다. 두 instruction이 실제로 같은 생산된 값을 공유해야 하는 RAW true dependency는 아니므로 architectural register 이름을 서로 다른 physical register로 rename하면 불필요한 충돌을 제거할 수 있다. renaming은 true dependency를 제거하는 것이 아니라 이름 재사용으로 생긴 false dependency를 제거한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.pipeline-ilp.forwarding-and-stall.q1",
+    "promptMarkdown": "앞 instruction의 ALU 결과가 이미 계산되었지만 아직 register file에 write-back되지 않았고, 바로 뒤 instruction이 그 결과를 ALU operand로 필요로 한다. 가장 적절한 대응은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.pipeline-ilp.forwarding-and-stall"],
+    "choices": [
+      {"key": "A", "content": "준비된 결과를 다음 execution input으로 forwarding한다.", "displayOrder": 0},
+      {"key": "B", "content": "항상 cache line을 invalidate한다.", "displayOrder": 1},
+      {"key": "C", "content": "branch predictor가 operand 값을 추측하게 한다.", "displayOrder": 2},
+      {"key": "D", "content": "dependency와 관계없이 pipeline 전체를 reset한다.", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "A"
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.pipeline-ilp.forwarding-and-stall.q2",
+    "promptMarkdown": "classic 5-stage pipeline에서 load 직후의 instruction이 그 load 결과를 사용하는 load-use hazard는 forwarding path가 있어도 stall이 필요할 수 있다. 그 이유를 값이 준비되는 시점과 consumer가 필요한 시점을 기준으로 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.pipeline-ilp.forwarding-and-stall"],
+    "modelAnswer": "ALU instruction의 결과는 execute stage가 끝날 때 이미 준비될 수 있지만 load 값은 memory access가 끝난 뒤에야 얻어진다. 바로 다음 consumer가 execute stage에서 operand를 필요로 하는 시점보다 load 결과가 늦게 준비되면 forwarding도 아직 존재하지 않는 값을 전달할 수 없다. 그래서 consumer를 잠시 멈추고 bubble을 넣은 뒤 값이 준비되면 전달해야 한다. 정확한 stall cycle 수는 pipeline과 memory latency에 따라 달라질 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.pipeline-ilp.forwarding-and-stall.q3",
+    "promptMarkdown": "한 instruction이 cache miss로 오래 기다리고 있다. 뒤에는 이 load 결과에 의존하는 instruction 2개와, 전혀 독립적인 정수 연산 3개가 있다. forwarding과 out-of-order execution이 각각 무엇을 할 수 있고 무엇은 해결하지 못하는지 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.pipeline-ilp.forwarding-and-stall"],
+    "modelAnswer": "forwarding은 값이 계산된 뒤 register write-back을 기다리지 않고 consumer로 전달할 수 있지만 cache miss 중 아직 도착하지 않은 load 값을 만들어 낼 수는 없다. 따라서 그 load에 실제로 의존하는 두 instruction은 기다려야 한다. out-of-order engine은 dependency가 없는 정수 연산 3개를 먼저 실행해 일부 stall 시간을 숨길 수 있지만 true dependency chain 자체는 제거하지 못한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.pipeline-ilp.branch-prediction.q1",
+    "promptMarkdown": "conditional branch를 빠르게 fetch하기 위해 direction predictor와 branch target 정보가 각각 해결하는 문제의 조합으로 맞는 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.pipeline-ilp.branch-prediction"],
+    "choices": [
+      {"key": "A", "content": "direction predictor는 taken 여부를 추정하고, target 정보는 taken일 때 다음 fetch 주소를 제공한다.", "displayOrder": 0},
+      {"key": "B", "content": "direction predictor는 register 값을 계산하고, target 정보는 cache coherence를 수행한다.", "displayOrder": 1},
+      {"key": "C", "content": "둘 다 branch가 retire된 뒤에만 사용되므로 fetch와는 관계가 없다.", "displayOrder": 2},
+      {"key": "D", "content": "둘 중 하나만 있으면 모든 indirect branch와 conditional branch를 항상 정확히 예측한다.", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "A"
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.pipeline-ilp.branch-prediction.q2",
+    "promptMarkdown": "branch prediction이 speculative execution을 가능하게 하는 흐름과, prediction이 틀렸을 때 architectural state를 보존하기 위한 복구 과정을 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.pipeline-ilp.branch-prediction"],
+    "modelAnswer": "CPU는 branch 결과가 확정되기 전에 예측한 방향과 target에서 instruction을 fetch하고 speculative하게 진행한다. 실제 결과가 예측과 다르면 잘못된 경로의 instruction이 architectural state에 반영되지 않도록 squash하고 올바른 PC로 redirect한 뒤 pipeline을 다시 채운다. 이때 버린 work와 refill 시간이 misprediction penalty가 된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.pipeline-ilp.branch-prediction.q3",
+    "promptMarkdown": "어떤 workload에서 전체 instruction의 20%가 branch이고 branch misprediction rate가 5%, 한 번의 misprediction penalty가 12 cycle이라고 하자. 다른 stall을 무시할 때 misprediction이 instruction당 평균 몇 cycle의 추가 비용을 만드는지 계산하고, predictor 정확도가 workload latency에 미치는 의미를 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.pipeline-ilp.branch-prediction"],
+    "modelAnswer": "instruction당 branch는 0.20개이고 그중 5%가 miss이므로 instruction당 misprediction은 0.20 × 0.05 = 0.01회다. 한 번에 12 cycle을 잃으므로 평균 추가 비용은 0.01 × 12 = 0.12 cycle/instruction이다. 다른 조건이 같다면 이 비용은 CPI를 약 0.12 높이는 요인이지만 실제 latency 영향은 baseline CPI, cache stall, workload의 branch 분포와 함께 봐야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.pipeline-ilp.superscalar-out-of-order.q1",
+    "promptMarkdown": "superscalar와 out-of-order execution에 대한 설명으로 가장 정확한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.pipeline-ilp.superscalar-out-of-order"],
+    "choices": [
+      {"key": "A", "content": "여러 execution resource로 독립 instruction을 병렬 처리하고, 준비된 instruction을 program order와 다른 시점에 실행할 수 있다.", "displayOrder": 0},
+      {"key": "B", "content": "모든 dependency를 제거해 어떤 두 instruction도 동시에 실행할 수 있게 한다.", "displayOrder": 1},
+      {"key": "C", "content": "architectural state도 항상 실행 완료 순서대로 즉시 공개한다.", "displayOrder": 2},
+      {"key": "D", "content": "cache miss가 발생하면 뒤의 독립 instruction도 반드시 전부 멈춘다.", "displayOrder": 3}
+    ],
+    "correctChoiceKey": "A"
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.pipeline-ilp.superscalar-out-of-order.q2",
+    "promptMarkdown": "out-of-order CPU에서 register renaming이 WAR/WAW dependency에는 도움이 되지만 RAW dependency를 제거할 수 없는 이유를 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.pipeline-ilp.superscalar-out-of-order"],
+    "modelAnswer": "WAR와 WAW는 여러 instruction이 같은 architectural register 이름을 재사용해서 생기는 name dependency이므로 서로 다른 physical register를 할당하면 충돌을 제거할 수 있다. RAW는 consumer가 producer가 만든 실제 값을 필요로 하는 true dependency라서 register 이름을 바꿔도 값이 생산되기 전에 consumer를 실행할 수 없다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.pipeline-ilp.superscalar-out-of-order.q3",
+    "promptMarkdown": "program order상 앞선 instruction A가 long-latency cache miss를 겪고, 뒤의 B와 C는 A와 독립적이며, 더 뒤의 D는 A의 결과에 의존한다고 하자. out-of-order CPU가 B/C/D를 어떻게 다르게 다룰 수 있는지와, A에서 exception이 발생했을 때 precise architectural state를 유지해야 하는 이유를 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["computer-architecture.core.pipeline-ilp.superscalar-out-of-order"],
+    "modelAnswer": "B와 C는 A와 true dependency가 없으므로 operand와 execution resource가 준비되면 A보다 먼저 실행해 cache-miss latency를 일부 숨길 수 있다. D는 A의 실제 결과가 필요하므로 A가 완료될 때까지 기다려야 한다. B/C가 먼저 실행되더라도 A에서 exception이 발생하면 program은 A보다 뒤의 instruction 결과가 이미 architectural state에 반영된 것처럼 보여서는 안 된다. reorder/retirement mechanism이 program order에 맞춰 visible state를 확정해야 precise exception을 제공할 수 있다."
+  }
 ]
