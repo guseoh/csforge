@@ -29,13 +29,14 @@ Cache invalidation은 “key를 지운다”로 끝나지 않습니다. 같은 k
 ### 오래된 값이 되살아나는 timeline
 
 ```text
-T1 reader: cache miss
+T1 reader: cache miss → origin에서 v1 read 시작
 T2 writer: origin = v2 commit
 T3 writer: cache DEL
-T4 reader: origin read가 늦게 끝나 v1을 cache SET
+T4 reader: T1에서 시작한 old read가 늦게 v1을 반환
+T5 reader: cache SET v1
 ```
 
-이제 origin은 v2인데 cache에는 v1이 남습니다. delete를 성공시켰다는 사실만으로 이후의 늦은 fill까지 막았다고 볼 수 없습니다.
+핵심은 reader가 **writer의 v2 commit보다 먼저 시작한 read 결과 v1을 늦게 받아서**, writer의 invalidation이 끝난 뒤 다시 cache에 써 버리는 데 있습니다. 이제 origin은 v2인데 cache에는 v1이 남습니다. delete를 성공시켰다는 사실만으로 이미 진행 중이던 old read의 늦은 fill까지 막았다고 볼 수 없습니다.
 
 ### version과 write ordering을 사용한다
 
@@ -57,13 +58,13 @@ DB transaction 뒤 invalidation event를 발행할 때 DB commit과 broker publi
 
 ### 문제를 풀 때 확인할 것
 
-1. reader fill과 writer invalidation을 시간순으로 그립니다.
-2. 늦은 old read가 cache를 덮을 수 있는지 봅니다.
+1. reader의 origin read 시작 시점과 writer commit/invalidation을 시간순으로 그립니다.
+2. writer commit 전에 시작한 old read가 invalidation 뒤 cache를 다시 덮을 수 있는지 봅니다.
 3. version·CAS·namespace로 역순 write를 막을지 결정합니다.
 4. multi-key derived view의 invalidation 범위를 찾습니다.
 5. event 기반 invalidation의 loss·duplicate·ordering을 확인합니다.
 
 ### 면접에서 설명한다면
 
-Invalidation은 origin 변경 뒤 cache를 지우는 것뿐 아니라 동시에 진행 중인 read/fill과의 ordering을 포함합니다. 늦은 old read가 새 값을 덮을 수 있으므로 version이나 namespace 전략을 검토하고, 여러 파생 key와 event delivery 실패까지 설계해야 합니다.
+Invalidation은 origin 변경 뒤 cache를 지우는 것뿐 아니라 동시에 진행 중인 read/fill과의 ordering을 포함합니다. writer commit 전에 시작한 old read가 invalidation 뒤 늦게 cache를 채우면 stale value가 되살아날 수 있으므로 version이나 namespace 전략을 검토하고, 여러 파생 key와 event delivery 실패까지 설계해야 합니다.
 
