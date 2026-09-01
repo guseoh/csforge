@@ -10,7 +10,6 @@ policies:
     authoringLanguage: ko-KR
     explanationRule: 기능 요구와 품질 속성을 수치화하고 data ownership·traffic·failure·운영 비용을 architecture 선택으로 연결한다.
   question:
-    minimumPerConcept: 2
     topicDifficultyCoverage: [EASY, MEDIUM, HARD]
     areaTypeCoverage: [MULTIPLE_CHOICE, SHORT_ANSWER, DESCRIPTIVE, SCENARIO]
     hardRule: requirement clarification, capacity estimate, ownership boundary, sync/async, read/write model, modularity, failure budget, isolation 또는 rollout·observability trade-off를 설계 상황으로 판단하게 한다.
