@@ -1,0 +1,5 @@
+[
+  {"kind":"topic","contentKey":"messaging.core.semantics","areaSlug":"messaging-async","slug":"semantics","title":"Message and broker semantics","description":"command/event/message · topic/partition/key · consumer group/offset","displayOrder":10,"active":true},
+  {"kind":"topic","contentKey":"messaging.core.delivery","areaSlug":"messaging-async","slug":"delivery","title":"Delivery, retry, and ordering","description":"at-least-once/idempotency · retry/DLQ · ordering/concurrency","displayOrder":20,"active":true},
+  {"kind":"topic","contentKey":"messaging.core.workflow","areaSlug":"messaging-async","slug":"workflow","title":"Reliable async workflows","description":"transactional outbox · backpressure/capacity · schema evolution","displayOrder":30,"active":true}
+]
