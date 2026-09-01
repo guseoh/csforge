@@ -38,7 +38,7 @@ optional field를 추가하는 것은 unknown field를 무시하는 consumer라�
 
 ### version과 compatibility를 명시한다
 
-payload에 schema version을 넣거나 topic을 분리하고, consumer가 지원하는 version 범위를 검증합니다. new producer가 old consumer를 깨뜨리지 않는 backward compatibility와 old message를 new consumer가 읽는 forward compatibility 중 어느 방향이 필요한지 정합니다.
+payload에 schema version을 넣거나 topic을 분리하고, consumer가 지원하는 version 범위를 검증합니다. 일반적인 schema-evolution 용어에서 **backward compatibility**는 새 reader/consumer가 과거에 기록된 old message를 읽을 수 있는 방향이고, **forward compatibility**는 old reader/consumer가 새 producer가 기록한 new message를 읽을 수 있는 방향입니다. 실제 serialization format이나 schema registry가 이 용어를 어떻게 정의하고 검사하는지는 해당 도구의 계약으로 다시 확인합니다.
 
 ```json
 {"eventType":"OrderPlaced","schemaVersion":2,"orderId":"o-7","currency":"KRW"}
@@ -58,5 +58,5 @@ retention message를 재생할 때 현재 domain schema·idempotency·ordering�
 
 ### 면접에서 설명한다면
 
-Message schema는 producer와 consumer가 독립 배포되고 replay될 수 있으므로 장기 계약입니다. Additive field도 strict consumer에서는 breaking일 수 있고 type·unit·의미 변경은 더 위험합니다. version·compatibility 방향·adapter와 replay/idempotency를 배포 전략에 포함해야 합니다.
+Message schema는 producer와 consumer가 독립 배포되고 replay될 수 있으므로 장기 계약입니다. Additive field도 strict consumer에서는 breaking일 수 있고 type·unit·의미 변경은 더 위험합니다. backward/forward compatibility의 방향을 consumer와 data version 기준으로 명확히 한 뒤 version·adapter와 replay/idempotency를 배포 전략에 포함해야 합니다.
 
