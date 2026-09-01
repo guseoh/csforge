@@ -662,7 +662,7 @@ topics:
     title: "IPC"
     order: 110
     scope: "pipe, signal, shared memory, message queue와 local/network socket IPC를 다룬다."
-    boundary: "process 간 통신 primitive를 다루며 application messaging system의 delivery guarantee는 다룬다."
+    boundary: "process 간 통신 primitive를 다루며 application messaging system의 delivery guarantee는 다루지 않는다."
     concepts:
       - key: operating-systems.core.ipc.pipe
         title: "Pipe"

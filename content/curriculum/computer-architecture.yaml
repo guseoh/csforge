@@ -338,19 +338,12 @@ topics:
         title: "TLB"
         order: 40
         level: 2
-        objective: "최근 주소 변환을 cache하는 TLB의 목적과 한계를 설명한다."
+        objective: "TLB hit·miss, page-table walk와 fault의 관계, 주소 변환 cache의 한계를 설명한다."
         density: CORE
         visualization: DIAGRAM
-      - key: computer-architecture.core.virtual-memory-hardware.tlb-miss
-        title: "TLB Miss"
-        order: 50
-        level: 2
-        objective: "TLB miss가 page-table walk와 재시도로 이어지는 과정을 설명한다."
-        density: STANDARD
-        visualization: TEXT
       - key: computer-architecture.core.virtual-memory-hardware.multi-level-page-table
         title: "Multi-Level Page Table"
-        order: 60
+        order: 50
         level: 2
         objective: "다단계 page table이 희소 주소 공간의 메모리를 절약하는 이유를 설명한다."
         density: CORE

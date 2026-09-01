@@ -35,7 +35,7 @@ public class QuestionAnswer {
     @Column(name = "answer_kind", nullable = false, length = 32)
     private QuestionAnswerKind answerKind;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "choice_id")
     private QuestionChoice choice;
 
@@ -58,6 +58,22 @@ public class QuestionAnswer {
 
     static QuestionAnswer modelAnswer(Question question, String answerText) {
         return new QuestionAnswer(question, QuestionAnswerKind.MODEL_ANSWER, null, answerText, 0);
+    }
+
+    void reviseCorrectChoice(QuestionChoice choice) {
+        if (choice == null) {
+            throw new IllegalArgumentException("choice is required");
+        }
+        this.choice = choice;
+        this.answerText = null;
+    }
+
+    void reviseModelAnswer(String answerText) {
+        if (answerText == null || answerText.isBlank()) {
+            throw new IllegalArgumentException("answerText is required");
+        }
+        this.answerText = answerText.trim();
+        this.choice = null;
     }
 
     private QuestionAnswer(

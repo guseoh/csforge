@@ -9,20 +9,18 @@ level: 1
 status: PUBLISHED
 displayOrder: 10
 references:
-  - url: "https://riscv.org/technical/specifications/"
-    title: "RISC-V Technical Specifications"
+  - url: "https://docs.riscv.org/reference/isa/v20240411/unpriv/intro.html"
+    title: "RISC-V Unprivileged ISA: Introduction"
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "register에서 ALU를 거치는 실행 경로를 확인한다."
+    recommendation: "exception·interrupt의 원인과 trap handler로의 transfer 관계를 확인한다."
     displayOrder: 1
 ---
 # Interrupt, Exception and Trap
 
-interrupt는 device timer처럼 현재 instruction과 무관하게 들어오는 비동기 event다. exception은 잘못된 instruction·page fault처럼 현재 instruction 실행에서 동기적으로 생기며, trap은 의도적인 system call 같은 software 요청을 가리키는 문맥으로 쓰인다. CPU는 모두 privilege entry와 return state를 저장하지만 원인과 재개 PC가 다르다.
+interrupt는 timer·device completion처럼 현재 instruction과 무관하게 발생하는 외부 비동기 event다. exception은 현재 instruction과 관련된 비정상 조건이며, illegal instruction이나 page fault가 예다. trap은 이 둘 가운데 하나 때문에 CPU가 trap handler로 control을 넘기는 사건을 가리키므로 exception·interrupt와 나란히 놓인 세 번째 원인이 아니다. ECALL은 software가 요청한 trap이면서 현재 instruction과 관련된 exception으로 분류할 수 있다.
 
-handler는 저장된 PC와 status를 보고 원인을 처리한 뒤 resume 또는 terminate를 선택한다. event를 단순 function call로 보면 user/kernel mode, register save, nested interrupt와 재진입 조건을 놓친다.
-
-### Backend 연결
+handler는 저장된 PC와 status를 보고 원인을 처리한 뒤 resume 또는 terminate를 선택한다. event를 단순 function call로 보면 user/kernel mode, register save, nested interrupt와 재진입 조건을 놓친다. 재개 가능한 exception인지, 외부 interrupt를 다음 instruction 경계에서 처리할지는 ISA와 privilege architecture의 규칙에 따라 확인해야 한다.
 
 signal·system call·device completion을 분석할 때 event source와 handler latency를 분리한다. application retry가 hardware fault를 고치는 것이 아니며, kernel이 어떤 상태를 보존했는지 확인한다.

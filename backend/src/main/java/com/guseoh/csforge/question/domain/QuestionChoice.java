@@ -46,4 +46,15 @@ public class QuestionChoice {
         this.contentMarkdown = contentMarkdown;
         this.displayOrder = displayOrder;
     }
+
+    void reviseCanonicalContent(String contentMarkdown, int displayOrder) {
+        if (contentMarkdown == null || contentMarkdown.isBlank()) {
+            throw new IllegalArgumentException("contentMarkdown is required");
+        }
+        if (displayOrder < 0) {
+            throw new IllegalArgumentException("displayOrder must be non-negative");
+        }
+        this.contentMarkdown = contentMarkdown;
+        this.displayOrder = displayOrder;
+    }
 }

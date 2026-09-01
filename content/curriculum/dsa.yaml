@@ -467,19 +467,12 @@ topics:
         title: "Dijkstra"
         order: 20
         level: 2
-        objective: "최소 tentative distance를 확정하고 relaxation하는 흐름을 설명한다."
+        objective: "음수가 아닌 edge 조건에서 최소 tentative distance를 확정하고 relaxation하는 과정과 invariant를 설명한다."
         density: CORE
         visualization: DIAGRAM
-      - key: dsa.core.graph-path.dijkstra-non-negative
-        title: "Dijkstra Non-Negative Condition"
-        order: 30
-        level: 2
-        objective: "음수 간선에서 확정 invariant가 깨지는 이유를 분석한다."
-        density: CORE
-        visualization: TEXT
       - key: dsa.core.graph-path.bellman-ford
         title: "Bellman-Ford"
-        order: 40
+        order: 30
         level: 2
         objective: "모든 edge relaxation 반복과 negative cycle 감지를 설명한다."
         density: CORE
