@@ -35,7 +35,7 @@ public class QuestionAnswer {
     @Column(name = "answer_kind", nullable = false, length = 32)
     private QuestionAnswerKind answerKind;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "choice_id")
     private QuestionChoice choice;
 
