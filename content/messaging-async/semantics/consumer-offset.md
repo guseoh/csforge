@@ -23,7 +23,7 @@ references:
     relationNote: "consumer group과 partition assignment 기본 개념 확인"
   - url: "https://engineering.linecorp.com/ko/blog/applying-kafka-streams-for-internal-message-delivery-pipeline"
     title: "LINE Engineering: 내부 데이터 파이프라인에 Kafka Streams 적용하기"
-    referenceType: BLOG
+    referenceType: COMPANY_TECH_BLOG
     language: ko
     displayOrder: 3
     relationNote: "Kafka consumer가 topic의 처리 위치를 offset으로 관리하고 여러 consumer가 stream을 처리하는 실제 적용 맥락 확인"
