@@ -74,7 +74,7 @@
       {"key": "A", "content": "아니다. privilege mode는 바뀌어도 다른 task로 CPU가 넘어가지 않을 수 있다.", "displayOrder": 0},
       {"key": "B", "content": "그렇다. 모든 mode switch는 반드시 다른 process로의 context switch다.", "displayOrder": 1},
       {"key": "C", "content": "그렇다. Kernel mode에서는 항상 새 process가 생성된다.", "displayOrder": 2},
-      {"key": "D", "content": "아니다. Mode switch는 user/kernel 권한만 바꾸고 다른 task 실행 여부와는 별개다.", "displayOrder": 3}
+      {"key": "D", "content": "그렇다. System call 진입은 scheduler가 반드시 다른 task를 선택하는 시점이다.", "displayOrder": 3}
     ],
     "correctChoiceKey": "A"
   },
