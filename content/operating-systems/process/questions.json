@@ -1,26 +1,319 @@
 [
-{"kind":"question","contentKey":"operating-systems.core.process.program-vs-process.q1","promptMarkdown":"program과 process의 차이는?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["operating-systems.core.process.program-vs-process"],"choices":[{"key":"A","content":"program은 정적 code이고 process는 실행 중인 resource bundle이다","displayOrder":0},{"key":"B","content":"둘은 항상 같은 개념이다","displayOrder":1}],"correctChoiceKey":"A"},
-{"kind":"question","contentKey":"operating-systems.core.process.program-vs-process.q2","promptMarkdown":"같은 program에서 여러 process가 만들어질 수 있는 이유를 설명하라.","questionType":"SHORT_ANSWER","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["operating-systems.core.process.program-vs-process"],"acceptedAnswers":["code는 공유하거나 재사용할 수 있지만 각 실행은 별도의 address space·state·resource를 가진다"]},
-{"kind":"question","contentKey":"operating-systems.core.process.program-vs-process.q3","promptMarkdown":"같은 binary를 실행한 두 worker가 서로의 전역 변수를 볼 수 없게 해야 하는 이유를 설명하라.","questionType":"SCENARIO","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["operating-systems.core.process.program-vs-process"],"modelAnswer":"process마다 주소 공간과 실행 state를 분리해야 한 worker의 오류와 data race가 다른 worker에 전파되지 않는다. 공유가 필요하면 IPC를 명시한다."},
-{"kind":"question","contentKey":"operating-systems.core.process.process-address-space.q1","promptMarkdown":"전형적인 process address space에 포함되는 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["operating-systems.core.process.process-address-space"],"choices":[{"key":"A","content":"code·data·heap·stack 영역","displayOrder":0},{"key":"B","content":"다른 process의 모든 physical page","displayOrder":1}],"correctChoiceKey":"A"},
-{"kind":"question","contentKey":"operating-systems.core.process.process-address-space.q2","promptMarkdown":"heap과 stack의 lifetime·성장 방향이 다르다는 점이 설계에 주는 의미를 설명하라.","questionType":"SHORT_ANSWER","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["operating-systems.core.process.process-address-space"],"acceptedAnswers":["heap은 동적 allocation lifetime이고 stack은 call frame lifetime이라 각각 별도의 mapping·limit이 필요하다"]},
-{"kind":"question","contentKey":"operating-systems.core.process.process-address-space.q3","promptMarkdown":"사용자 입력으로 heap을 계속 늘리는 process가 stack과 충돌할 수 있는 상황을 방어하는 방법을 설명하라.","questionType":"SCENARIO","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["operating-systems.core.process.process-address-space"],"modelAnswer":"주소 공간의 guard page·resource limit·allocation 실패 처리를 둔다. 무제한 성장을 허용하지 않고 process가 오류를 복구하거나 종료하게 한다."},
-{"kind":"question","contentKey":"operating-systems.core.process.pcb.q1","promptMarkdown":"PCB가 저장하는 정보는?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["operating-systems.core.process.pcb"],"choices":[{"key":"A","content":"process state·register context·scheduling 정보와 resource handle","displayOrder":0},{"key":"B","content":"소스 코드의 주석만","displayOrder":1}],"correctChoiceKey":"A"},
-{"kind":"question","contentKey":"operating-systems.core.process.pcb.q2","promptMarkdown":"context switch에서 PCB가 필요한 이유를 설명하라.","questionType":"DESCRIPTIVE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["operating-systems.core.process.pcb"],"modelAnswer":"중단된 process의 register·program counter·state를 저장해야 나중에 같은 실행 지점에서 재개할 수 있다. scheduler는 PCB로 runnable 후보와 resource 관계를 관리한다."},
-{"kind":"question","contentKey":"operating-systems.core.process.pcb.q3","promptMarkdown":"PCB의 saved program counter가 잘못 저장된 경우 worker가 재개될 때 생기는 장애를 설명하라.","questionType":"SCENARIO","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["operating-systems.core.process.pcb"],"modelAnswer":"잘못된 instruction에서 재개해 중복 처리·data corruption·crash가 발생한다. trap frame과 register save/restore를 원자적으로 검증한다."},
-{"kind":"question","contentKey":"operating-systems.core.process.process-state.q1","promptMarkdown":"I/O를 기다리는 process의 상태는?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["operating-systems.core.process.process-state"],"choices":[{"key":"A","content":"waiting 또는 blocked","displayOrder":0},{"key":"B","content":"항상 running","displayOrder":1}],"correctChoiceKey":"A"},
-{"kind":"question","contentKey":"operating-systems.core.process.process-state.q2","promptMarkdown":"ready와 running의 차이를 설명하라.","questionType":"SHORT_ANSWER","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["operating-systems.core.process.process-state"],"acceptedAnswers":["ready는 CPU를 받을 수 있지만 대기 중이고 running은 현재 CPU에서 실행 중이다"]},
-{"kind":"question","contentKey":"operating-systems.core.process.process-state.q3","promptMarkdown":"I/O 완료 signal을 놓쳐 waiting process가 계속 깨어나지 않는 버그를 상태 전이 관점에서 분석하라.","questionType":"SCENARIO","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["operating-systems.core.process.process-state"],"modelAnswer":"waiting→ready 전이가 누락된 것이다. event 등록과 condition 확인을 원자적으로 묶고 완료 queue와 timeout을 사용해 lost wakeup을 방어한다."},
-{"kind":"question","contentKey":"operating-systems.core.process.process-create.q1","promptMarkdown":"process creation이 새로 만드는 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["operating-systems.core.process.process-create"],"choices":[{"key":"A","content":"새 process identity와 실행 context·resource 관계","displayOrder":0},{"key":"B","content":"부모 process의 모든 state를 무조건 공유","displayOrder":1}],"correctChoiceKey":"A"},
-{"kind":"question","contentKey":"operating-systems.core.process.process-create.q2","promptMarkdown":"fork와 spawn을 address space 관점에서 비교하라.","questionType":"SHORT_ANSWER","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["operating-systems.core.process.process-create"],"acceptedAnswers":["fork는 부모 상태에서 복제된 process를 만들고 spawn은 새 program 실행을 위한 process를 생성하는 의미가 강하다"]},
-{"kind":"question","contentKey":"operating-systems.core.process.process-create.q3","promptMarkdown":"child 생성 후 parent가 descriptor를 닫지 않아 resource가 누적되는 문제를 설명하라.","questionType":"SCENARIO","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["operating-systems.core.process.process-create"],"modelAnswer":"상속된 descriptor의 소유권이 분명하지 않아 pipe가 닫히지 않고 EOF가 오지 않거나 handle leak이 난다. parent·child 각자 필요 없는 end를 즉시 닫는다."},
-{"kind":"question","contentKey":"operating-systems.core.process.process-terminate.q1","promptMarkdown":"process termination 뒤 OS가 해야 하는 일은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["operating-systems.core.process.process-terminate"],"choices":[{"key":"A","content":"resource를 회수하고 종료 상태를 parent에 전달한다","displayOrder":0},{"key":"B","content":"모든 process를 종료한다","displayOrder":1}],"correctChoiceKey":"A"},
-{"kind":"question","contentKey":"operating-systems.core.process.process-terminate.q2","promptMarkdown":"exit status가 parent에게 유용한 이유를 설명하라.","questionType":"SHORT_ANSWER","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["operating-systems.core.process.process-terminate"],"acceptedAnswers":["parent가 성공·실패 원인을 관찰하고 child resource 회수를 완료할 수 있기 때문이다"]},
-{"kind":"question","contentKey":"operating-systems.core.process.process-terminate.q3","promptMarkdown":"종료한 child의 metadata를 parent가 회수하지 않는 상태가 오래 지속될 때 생기는 문제를 설명하라.","questionType":"SCENARIO","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["operating-systems.core.process.process-terminate"],"modelAnswer":"실행은 끝났지만 PCB와 exit status가 남은 zombie가 되어 process table을 점유한다. parent가 wait/reap하거나 supervisor가 회수한다."},
-{"kind":"question","contentKey":"operating-systems.core.process.parent-child.q1","promptMarkdown":"parent-child process 관계에서 상속될 수 있는 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["operating-systems.core.process.parent-child"],"choices":[{"key":"A","content":"일부 descriptor·environment·signal 관계","displayOrder":0},{"key":"B","content":"항상 동일한 process identity","displayOrder":1}],"correctChoiceKey":"A"},
-{"kind":"question","contentKey":"operating-systems.core.process.parent-child.q2","promptMarkdown":"child가 독립적으로 실패할 수 있도록 process를 사용하는 이유를 설명하라.","questionType":"SHORT_ANSWER","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["operating-systems.core.process.parent-child"],"acceptedAnswers":["주소 공간과 실행 state를 분리해 child crash가 parent memory를 직접 훼손하지 않게 하기 위해서다"]},
-{"kind":"question","contentKey":"operating-systems.core.process.parent-child.q3","promptMarkdown":"parent가 재시작되었는데 child가 고아로 남은 경우 lifecycle을 관리하는 방법을 설명하라.","questionType":"SCENARIO","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["operating-systems.core.process.parent-child"],"modelAnswer":"supervisor가 child ownership과 종료 정책을 가져야 한다. orphan adoption·signal 전달·timeout cleanup으로 parent 재시작 뒤에도 resource를 회수한다."},
-{"kind":"question","contentKey":"operating-systems.core.process.wait-reap.q1","promptMarkdown":"wait/reap의 목적은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["operating-systems.core.process.wait-reap"],"choices":[{"key":"A","content":"종료 child의 상태와 metadata를 회수한다","displayOrder":0},{"key":"B","content":"running child의 CPU를 두 배로 만든다","displayOrder":1}],"correctChoiceKey":"A"},
-{"kind":"question","contentKey":"operating-systems.core.process.wait-reap.q2","promptMarkdown":"blocking wait와 non-blocking wait의 차이를 설명하라.","questionType":"SHORT_ANSWER","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["operating-systems.core.process.wait-reap"],"acceptedAnswers":["blocking wait는 child 종료까지 parent가 대기하고 non-blocking은 아직 종료하지 않았음을 즉시 반환할 수 있다"]},
-{"kind":"question","contentKey":"operating-systems.core.process.wait-reap.q3","promptMarkdown":"parent가 여러 child를 polling하면서 wait를 호출할 때 CPU를 낭비하지 않게 만드는 방법을 설명하라.","questionType":"SCENARIO","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["operating-systems.core.process.wait-reap"],"modelAnswer":"무한 busy poll 대신 blocking wait·event notification·backoff를 사용한다. 종료 status를 정확히 한 번 reap하고 timeout 정책을 분리한다."}
+  {
+    "kind":"question",
+    "contentKey":"operating-systems.core.process.program-vs-process.q1",
+    "promptMarkdown":"같은 executable 파일을 두 번 실행했을 때 가장 정확한 설명은?",
+    "questionType":"MULTIPLE_CHOICE",
+    "difficulty":"EASY",
+    "status":"PUBLISHED",
+    "conceptKeys":["operating-systems.core.process.program-vs-process"],
+    "choices":[
+      {"key":"A","content":"Program file은 같아도 서로 다른 PID·address space·runtime state를 가진 process가 만들어질 수 있다.","displayOrder":0},
+      {"key":"B","content":"Executable이 같으면 OS가 반드시 하나의 process state만 공유한다.","displayOrder":1},
+      {"key":"C","content":"두 실행은 항상 같은 stack과 heap object를 사용한다.","displayOrder":2}
+    ],
+    "correctChoiceKey":"A"
+  },
+  {
+    "kind":"question",
+    "contentKey":"operating-systems.core.process.program-vs-process.q2",
+    "promptMarkdown":"`execve`가 성공한 경우를 '항상 새 PID의 process를 하나 더 만든다'고 설명하면 안 되는 이유를 설명하라.",
+    "questionType":"DESCRIPTIVE",
+    "difficulty":"MEDIUM",
+    "status":"PUBLISHED",
+    "conceptKeys":["operating-systems.core.process.program-vs-process"],
+    "modelAnswer":"Unix-like 모델에서 execve는 성공하면 호출한 현재 process의 program image를 새 executable image로 대체한다. 새 process 생성은 fork 같은 creation 단계와 구분해야 하며, exec 자체를 새 PID 생성과 동일시하면 안 된다."
+  },
+  {
+    "kind":"question",
+    "contentKey":"operating-systems.core.process.program-vs-process.q3",
+    "promptMarkdown":"같은 Spring Boot JAR를 두 process로 실행했는데 서로 다른 결과를 보였다. Program 파일이 같아도 process behavior가 달라질 수 있는 runtime state를 네 가지 이상 제시하라.",
+    "questionType":"SCENARIO",
+    "difficulty":"HARD",
+    "status":"PUBLISHED",
+    "conceptKeys":["operating-systems.core.process.program-vs-process"],
+    "modelAnswer":"PID와 독립 address space, environment variable, command-line argument, current working directory, credentials, open file/socket, scheduling/resource state 등이 다를 수 있다. Program은 정적 executable이고 process는 이런 실행 state를 가진 별도 instance다."
+  },
+
+  {
+    "kind":"question",
+    "contentKey":"operating-systems.core.process.process-address-space.q1",
+    "promptMarkdown":"두 process가 같은 virtual address 값을 사용하면 반드시 같은 physical memory를 가리키는가?",
+    "questionType":"MULTIPLE_CHOICE",
+    "difficulty":"EASY",
+    "status":"PUBLISHED",
+    "conceptKeys":["operating-systems.core.process.process-address-space"],
+    "choices":[
+      {"key":"A","content":"아니다. Process별 address-space mapping이 달라 서로 다른 physical frame을 가리킬 수 있다.","displayOrder":0},
+      {"key":"B","content":"그렇다. Virtual address 값이 같으면 전 시스템에서 항상 같은 RAM byte다.","displayOrder":1},
+      {"key":"C","content":"Virtual address는 disk sector 번호이므로 RAM과 무관하다.","displayOrder":2}
+    ],
+    "correctChoiceKey":"A"
+  },
+  {
+    "kind":"question",
+    "contentKey":"operating-systems.core.process.process-address-space.q2",
+    "promptMarkdown":"Address-space 그림의 code/data/heap/stack 배치를 모든 OS와 ABI의 고정 physical layout처럼 해석하면 안 되는 이유를 설명하라.",
+    "questionType":"DESCRIPTIVE",
+    "difficulty":"MEDIUM",
+    "status":"PUBLISHED",
+    "conceptKeys":["operating-systems.core.process.process-address-space"],
+    "modelAnswer":"그 그림은 역할과 virtual mapping을 이해하기 위한 모델이다. 실제 virtual address 배치는 architecture, loader, ABI, ASLR, runtime에 따라 달라질 수 있고 physical page 배치는 별도 translation으로 결정된다."
+  },
+  {
+    "kind":"question",
+    "contentKey":"operating-systems.core.process.process-address-space.q3",
+    "promptMarkdown":"JVM process RSS가 커졌지만 Java heap 사용률은 낮다. Process address space 관점에서 추가로 확인할 영역을 설명하라.",
+    "questionType":"SCENARIO",
+    "difficulty":"HARD",
+    "status":"PUBLISHED",
+    "conceptKeys":["operating-systems.core.process.process-address-space"],
+    "modelAnswer":"Java heap 외에 thread stack, native allocation, direct buffer, metaspace/native library mapping, memory-mapped file 같은 process address-space 사용처를 확인해야 한다. JVM heap 하나가 전체 process memory를 대표하지 않는다."
+  },
+  {
+    "kind":"question",
+    "contentKey":"operating-systems.core.process.process-address-space.q4",
+    "promptMarkdown":"Virtual address에 mapping이 존재한다는 사실만으로 그 page가 현재 physical RAM에 resident한다고 단정할 수 없는 이유를 설명하라.",
+    "questionType":"DESCRIPTIVE",
+    "difficulty":"MEDIUM",
+    "status":"PUBLISHED",
+    "conceptKeys":["operating-systems.core.process.process-address-space"],
+    "modelAnswer":"Demand paging, file-backed mapping, copy-on-write 등에서는 mapping과 physical residency가 분리될 수 있다. 실제 frame은 접근 시 page fault를 통해 준비되거나 다른 mapping과 공유될 수 있다."
+  },
+
+  {
+    "kind":"question",
+    "contentKey":"operating-systems.core.process.pcb.q1",
+    "promptMarkdown":"PCB를 특정 OS의 실제 struct 이름과 완전히 같은 개념으로 보면 안 되는 이유는?",
+    "questionType":"MULTIPLE_CHOICE",
+    "difficulty":"EASY",
+    "status":"PUBLISHED",
+    "conceptKeys":["operating-systems.core.process.pcb"],
+    "choices":[
+      {"key":"A","content":"PCB는 process lifecycle에 필요한 kernel metadata의 개념적 묶음이고 실제 OS는 여러 구조에 state를 나눌 수 있다.","displayOrder":0},
+      {"key":"B","content":"PCB에는 오직 PID 숫자 하나만 있으므로 구현 구조가 없다.","displayOrder":1},
+      {"key":"C","content":"PCB는 application heap에 반드시 존재하는 Java object다.","displayOrder":2}
+    ],
+    "correctChoiceKey":"A"
+  },
+  {
+    "kind":"question",
+    "contentKey":"operating-systems.core.process.pcb.q2",
+    "promptMarkdown":"Task A에서 B로 context switch할 때 kernel이 보존·복원해야 하는 state의 종류를 세 가지 이상 설명하라.",
+    "questionType":"DESCRIPTIVE",
+    "difficulty":"MEDIUM",
+    "status":"PUBLISHED",
+    "conceptKeys":["operating-systems.core.process.pcb"],
+    "modelAnswer":"재개에 필요한 CPU execution context, scheduling state/accounting, address-space relation, task identity와 resource reference 같은 kernel metadata가 필요하다. 구체 register/field 위치는 OS와 architecture에 따라 달라질 수 있다."
+  },
+  {
+    "kind":"question",
+    "contentKey":"operating-systems.core.process.pcb.q3",
+    "promptMarkdown":"Java thread dump에서 RUNNABLE로 보이는 thread를 '현재 물리 CPU core에서 반드시 실행 중'이라고 결론 내리면 안 되는 이유를 OS task state와 연결해 설명하라.",
+    "questionType":"SCENARIO",
+    "difficulty":"HARD",
+    "status":"PUBLISHED",
+    "conceptKeys":["operating-systems.core.process.pcb"],
+    "modelAnswer":"JVM thread state와 OS scheduler가 보는 실제 running/runnable 상태는 동일한 abstraction이 아니다. Runnable thread라도 CPU core보다 runnable task가 많으면 scheduler queue에서 기다릴 수 있다. JVM 관찰과 OS CPU/scheduler metric을 함께 봐야 한다."
+  },
+
+  {
+    "kind":"question",
+    "contentKey":"operating-systems.core.process.process-state.q1",
+    "promptMarkdown":"실행할 조건은 충족됐지만 아직 CPU를 배정받지 못한 task의 교과서적 상태는?",
+    "questionType":"SHORT_ANSWER",
+    "difficulty":"EASY",
+    "status":"PUBLISHED",
+    "conceptKeys":["operating-systems.core.process.process-state"],
+    "acceptedAnswers":["ready", "runnable", "ready 상태", "runnable 상태"]
+  },
+  {
+    "kind":"question",
+    "contentKey":"operating-systems.core.process.process-state.q2",
+    "promptMarkdown":"`running → ready`와 `waiting → ready` 전이가 각각 어떤 종류의 사건으로 발생할 수 있는지 비교하라.",
+    "questionType":"DESCRIPTIVE",
+    "difficulty":"MEDIUM",
+    "status":"PUBLISHED",
+    "conceptKeys":["operating-systems.core.process.process-state"],
+    "modelAnswer":"Running task는 timer/preemption 등으로 CPU에서 내려와 다시 runnable이 될 수 있다. Waiting task는 기다리던 I/O/event/resource condition이 충족돼 runnable이 된다. 결과 state는 같아도 전이 원인이 다르다."
+  },
+  {
+    "kind":"question",
+    "contentKey":"operating-systems.core.process.process-state.q3",
+    "promptMarkdown":"4-core 서버에서 runnable task가 100개이고 CPU 사용률도 매우 높다. '100개 task가 동시에 CPU에서 실행 중'이라는 해석이 왜 틀린지 설명하라.",
+    "questionType":"SCENARIO",
+    "difficulty":"HARD",
+    "status":"PUBLISHED",
+    "conceptKeys":["operating-systems.core.process.process-state"],
+    "modelAnswer":"동시에 실제 core에서 실행할 수 있는 task 수는 CPU core 등 hardware execution capacity에 제한된다. 나머지 runnable task는 실행 가능하지만 scheduler 차례를 기다릴 수 있다. Runnable과 running을 구분해야 한다."
+  },
+  {
+    "kind":"question",
+    "contentKey":"operating-systems.core.process.process-state.q4",
+    "promptMarkdown":"Backend worker 100개가 느릴 때 `runnable queue 증가`와 `대부분 socket I/O wait`가 서로 다른 진단을 요구하는 이유를 설명하라.",
+    "questionType":"DESCRIPTIVE",
+    "difficulty":"MEDIUM",
+    "status":"PUBLISHED",
+    "conceptKeys":["operating-systems.core.process.process-state"],
+    "modelAnswer":"Runnable queue 증가는 CPU contention/scheduling delay 가능성을 시사하지만 I/O wait는 task가 event completion을 기다려 CPU를 더 줘도 즉시 진행하지 못할 수 있음을 뜻한다. CPU metric과 wait reason을 함께 봐야 한다."
+  },
+
+  {
+    "kind":"question",
+    "contentKey":"operating-systems.core.process.process-create.q1",
+    "promptMarkdown":"Unix-like process model에서 `fork`와 `exec`의 역할을 가장 잘 구분한 것은?",
+    "questionType":"MULTIPLE_CHOICE",
+    "difficulty":"EASY",
+    "status":"PUBLISHED",
+    "conceptKeys":["operating-systems.core.process.process-create"],
+    "choices":[
+      {"key":"A","content":"fork는 child process를 만들고, exec는 성공 시 현재 process의 program image를 교체할 수 있다.","displayOrder":0},
+      {"key":"B","content":"fork와 exec 모두 항상 동일한 새 PID를 두 개 만든다.","displayOrder":1},
+      {"key":"C","content":"exec는 memory를 전혀 바꾸지 않고 process 이름만 바꾼다.","displayOrder":2}
+    ],
+    "correctChoiceKey":"A"
+  },
+  {
+    "kind":"question",
+    "contentKey":"operating-systems.core.process.process-create.q2",
+    "promptMarkdown":"Copy-on-write가 `fork 시 모든 physical page를 즉시 복사하지 않아도 된다`는 설명과 어떻게 연결되는지 설명하라.",
+    "questionType":"DESCRIPTIVE",
+    "difficulty":"MEDIUM",
+    "status":"PUBLISHED",
+    "conceptKeys":["operating-systems.core.process.process-create"],
+    "modelAnswer":"Fork 직후 parent/child는 논리적으로 독립된 address space를 갖지만 아직 write되지 않은 physical page를 공유할 수 있다. 한쪽이 write할 때 필요한 page를 복사해 독립성을 유지하므로 초기 전체 physical copy 비용을 미룰 수 있다."
+  },
+  {
+    "kind":"question",
+    "contentKey":"operating-systems.core.process.process-create.q3",
+    "promptMarkdown":"Fork 후 parent fd 3와 child fd 3가 같은 underlying open file description을 참조한다. 이 사실이 'descriptor가 완전 독립 복사'라는 설명과 충돌하는 이유를 설명하라.",
+    "questionType":"SCENARIO",
+    "difficulty":"HARD",
+    "status":"PUBLISHED",
+    "conceptKeys":["operating-systems.core.process.process-create"],
+    "modelAnswer":"Parent와 child는 각자 descriptor table entry를 가지지만 inherited entry가 같은 underlying open file description을 참조할 수 있어 file offset/status 같은 state가 연관될 수 있다. Resource마다 복제와 공유 semantics를 따로 봐야 한다."
+  },
+  {
+    "kind":"question",
+    "contentKey":"operating-systems.core.process.process-create.q4",
+    "promptMarkdown":"Parent가 child를 만든 직후 child가 먼저 실행되면 깨지는 코드가 있다. 무엇이 잘못된 가정인지 설명하라.",
+    "questionType":"DESCRIPTIVE",
+    "difficulty":"MEDIUM",
+    "status":"PUBLISHED",
+    "conceptKeys":["operating-systems.core.process.process-create"],
+    "modelAnswer":"Fork 이후 parent와 child는 별도의 scheduling 대상이며 별도 synchronization 없이 누가 먼저 실행될지 가정하면 안 된다. 실행 순서가 필요하면 pipe, wait, shared synchronization 등 명시적 coordination을 사용해야 한다."
+  },
+
+  {
+    "kind":"question",
+    "contentKey":"operating-systems.core.process.process-terminate.q1",
+    "promptMarkdown":"Child가 종료된 뒤 zombie로 남아 있다는 설명으로 가장 정확한 것은?",
+    "questionType":"MULTIPLE_CHOICE",
+    "difficulty":"EASY",
+    "status":"PUBLISHED",
+    "conceptKeys":["operating-systems.core.process.process-terminate"],
+    "choices":[
+      {"key":"A","content":"Application 실행은 끝났고 주요 resource는 정리됐지만 parent가 status를 수집하기 위한 최소 metadata가 남아 있을 수 있다.","displayOrder":0},
+      {"key":"B","content":"Zombie는 CPU를 계속 100% 사용하는 정상 running process다.","displayOrder":1},
+      {"key":"C","content":"Zombie는 child executable 파일 자체가 삭제된 상태다.","displayOrder":2}
+    ],
+    "correctChoiceKey":"A"
+  },
+  {
+    "kind":"question",
+    "contentKey":"operating-systems.core.process.process-terminate.q2",
+    "promptMarkdown":"Process exit code와 application의 durable side effect를 같은 것으로 보면 안 되는 이유를 설명하라.",
+    "questionType":"DESCRIPTIVE",
+    "difficulty":"MEDIUM",
+    "status":"PUBLISHED",
+    "conceptKeys":["operating-systems.core.process.process-terminate"],
+    "modelAnswer":"Exit status는 process-level 종료 결과다. Process가 종료되기 전에 DB write나 외부 API 호출이 이미 반영됐을 수 있어 exit failure가 모든 domain effect rollback을 뜻하지 않는다. Durable checkpoint/idempotency는 process lifecycle 밖에서 설계해야 한다."
+  },
+  {
+    "kind":"question",
+    "contentKey":"operating-systems.core.process.process-terminate.q3",
+    "promptMarkdown":"Batch worker가 강제 종료된 뒤 단순히 같은 job을 처음부터 재실행한다. 어떤 중복 effect 위험이 있고 어떤 state를 process 밖에 보존해야 하는지 설명하라.",
+    "questionType":"SCENARIO",
+    "difficulty":"HARD",
+    "status":"PUBLISHED",
+    "conceptKeys":["operating-systems.core.process.process-terminate"],
+    "modelAnswer":"이전 process가 일부 item을 이미 commit했을 수 있으므로 재실행 시 duplicate write/message가 생길 수 있다. Stable job/item key, checkpoint, idempotency state 등 durable progress를 process memory 밖에 보존하고 재시도 semantics를 정의해야 한다."
+  },
+
+  {
+    "kind":"question",
+    "contentKey":"operating-systems.core.process.parent-child.q1",
+    "promptMarkdown":"Fork 이후 parent와 child의 관계로 옳은 것은?",
+    "questionType":"MULTIPLE_CHOICE",
+    "difficulty":"EASY",
+    "status":"PUBLISHED",
+    "conceptKeys":["operating-systems.core.process.parent-child"],
+    "choices":[
+      {"key":"A","content":"일부 resource state는 규칙에 따라 상속/공유 관계가 남지만 두 process는 별도 scheduling 대상이다.","displayOrder":0},
+      {"key":"B","content":"Parent와 child는 이후 모든 writable memory를 하나의 변수처럼 공유한다.","displayOrder":1},
+      {"key":"C","content":"Parent가 항상 child보다 먼저 모든 instruction을 실행한다.","displayOrder":2}
+    ],
+    "correctChoiceKey":"A"
+  },
+  {
+    "kind":"question",
+    "contentKey":"operating-systems.core.process.parent-child.q2",
+    "promptMarkdown":"Pipe의 write end가 child 종료 후에도 다른 process에 열려 있으면 reader가 EOF를 받지 못할 수 있는 이유를 descriptor lifecycle과 연결해 설명하라.",
+    "questionType":"DESCRIPTIVE",
+    "difficulty":"MEDIUM",
+    "status":"PUBLISHED",
+    "conceptKeys":["operating-systems.core.process.parent-child"],
+    "modelAnswer":"Pipe EOF는 모든 relevant writer reference가 닫혔다는 조건과 연결된다. Fork로 inherited descriptor가 다른 process에 남아 있으면 한 writer process가 종료돼도 kernel은 write endpoint가 아직 열려 있다고 볼 수 있어 reader가 EOF를 기다릴 수 있다."
+  },
+  {
+    "kind":"question",
+    "contentKey":"operating-systems.core.process.parent-child.q3",
+    "promptMarkdown":"Backend parent process가 종료됐는데 child subprocess가 계속 살아 있다. '부모가 죽으면 child도 반드시 즉시 죽는다'는 가정이 왜 안전하지 않은지 설명하라.",
+    "questionType":"SCENARIO",
+    "difficulty":"HARD",
+    "status":"PUBLISHED",
+    "conceptKeys":["operating-systems.core.process.parent-child"],
+    "modelAnswer":"Parent와 child는 별도 process lifecycle을 갖고 parent termination과 child termination은 동일 사건이 아니다. OS의 reparent/subreaper 규칙이나 process-group/signal 정책에 따라 child가 계속 실행될 수 있으므로 shutdown 시 child termination 정책을 명시해야 한다."
+  },
+
+  {
+    "kind":"question",
+    "contentKey":"operating-systems.core.process.wait-reap.q1",
+    "promptMarkdown":"Parent가 terminated child를 reap하는 대표 Linux interface는?",
+    "questionType":"SHORT_ANSWER",
+    "difficulty":"EASY",
+    "status":"PUBLISHED",
+    "conceptKeys":["operating-systems.core.process.wait-reap"],
+    "acceptedAnswers":["wait", "waitpid", "wait 계열", "wait()", "waitpid()"]
+  },
+  {
+    "kind":"question",
+    "contentKey":"operating-systems.core.process.wait-reap.q2",
+    "promptMarkdown":"Blocking `wait`에서 child가 아직 실행 중이면 parent state가 어떻게 달라질 수 있는지 설명하라.",
+    "questionType":"DESCRIPTIVE",
+    "difficulty":"MEDIUM",
+    "status":"PUBLISHED",
+    "conceptKeys":["operating-systems.core.process.wait-reap"],
+    "modelAnswer":"Parent는 child의 relevant state change를 기다리며 sleep/wait 상태가 될 수 있다. Child가 종료하면 parent가 다시 runnable이 되고 scheduler가 실행시킨 뒤 wait가 termination status를 반환하며 reap을 진행한다."
+  },
+  {
+    "kind":"question",
+    "contentKey":"operating-systems.core.process.wait-reap.q3",
+    "promptMarkdown":"Long-running server가 subprocess를 반복 생성하지만 종료 후 wait/reap을 하지 않는다. 시간이 지나며 어떤 OS-level 문제가 생기는가?",
+    "questionType":"SCENARIO",
+    "difficulty":"HARD",
+    "status":"PUBLISHED",
+    "conceptKeys":["operating-systems.core.process.wait-reap"],
+    "modelAnswer":"종료 child에 대한 zombie metadata가 누적되어 process table/PID 관련 resource를 소비할 수 있다. Zombie가 CPU를 계속 쓰는 문제가 아니라 parent가 termination metadata를 회수하지 않는 lifecycle leak이다."
+  },
+  {
+    "kind":"question",
+    "contentKey":"operating-systems.core.process.wait-reap.q4",
+    "promptMarkdown":"Child stdout pipe를 parent가 충분히 읽지 않아 pipe buffer가 가득 찼고 parent는 child 종료만 blocking wait하고 있다. 발생 가능한 교착성 대기 흐름을 설명하라.",
+    "questionType":"SCENARIO",
+    "difficulty":"HARD",
+    "status":"PUBLISHED",
+    "conceptKeys":["operating-systems.core.process.wait-reap"],
+    "modelAnswer":"Child는 stdout write가 pipe capacity 때문에 block되어 종료 지점에 도달하지 못하고, parent는 output을 drain하지 않은 채 child 종료만 기다릴 수 있다. Subprocess executor는 output consumption과 process wait 순서를 함께 설계해야 한다."
+  }
 ]
