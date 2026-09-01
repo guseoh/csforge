@@ -19,10 +19,8 @@ references:
 ---
 # TCP Head-of-Line Blocking
 
-TCP는 ordered byte stream을 유지하므로 앞선 segment가 loss되면 뒤 segment가 이미 도착해도 application에 연속 stream으로 전달되지 않는다. 이 stream-level head-of-line blocking은 loss 하나가 뒤 bytes의 관찰을 지연시키는 현상이다.
+TCP는 하나의 connection 안에서 모든 byte를 순서대로 application에 전달해야 하므로, 앞선 sequence 범위가 loss되면 뒤 segment가 이미 도착해도 그 뒤의 contiguous stream을 바로 내보낼 수 없다. receiver buffer에 뒤 bytes가 쌓이고 retransmission을 기다리는 이 현상이 TCP stream-level head-of-line blocking이다.
 
-HTTP/2가 여러 request stream을 TCP 하나에 multiplex해도 TCP-level HOL은 남는다. QUIC은 stream별 delivery를 제공해 한 stream loss가 다른 stream의 bytes를 같은 방식으로 막지 않도록 설계됐다.
+HTTP/2는 여러 request/response stream을 하나의 TCP connection에 frame으로 multiplex하지만, TCP 아래에서는 그 frame bytes도 같은 ordered stream에 있다. 따라서 한 packet loss가 HTTP/2의 여러 logical stream 관찰을 함께 지연시킬 수 있다. QUIC 기반 HTTP/3은 stream별 delivery와 UDP 기반 transport state를 사용해 한 stream의 missing data가 다른 stream의 delivery를 같은 방식으로 막지 않도록 설계됐다.
 
-### Backend 연결
-
-HTTP/2와 HTTP/3 latency를 비교할 때 request multiplexing과 packet loss 조건을 함께 재현한다. connection 수를 무작정 늘리는 대신 stream·congestion·server capacity를 관찰한다.
+Backend에서 HTTP/2와 HTTP/3 latency를 비교할 때 request multiplexing만 보지 말고 packet loss·RTT·congestion·server capacity를 같은 조건에서 측정한다. connection 수를 무작정 늘리면 HOL을 줄이는 대신 handshake와 resource pressure가 증가할 수 있다.

@@ -19,10 +19,8 @@ references:
 ---
 # TCP Three-Way Handshake
 
-client의 SYN, server의 SYN-ACK, client의 ACK는 양쪽이 reachable하고 initial sequence를 확인해 connection state를 만들기 위한 교환이다. 이 단계가 끝나야 일반적인 application bytes를 안정적으로 주고받는다.
+TCP three-way handshake는 client와 server가 서로의 initial sequence number와 양방향 control state를 확인한 뒤 established state로 들어가기 위한 교환이다. client가 SYN을 보내면 server는 자신의 SYN과 client sequence를 확인하는 ACK를 함께 보내고, client의 마지막 ACK가 도착하면 일반적인 data exchange를 시작한다. 이 교환은 단순히 두 host가 존재한다는 신호보다 더 구체적인 transport state 합의다.
 
-handshake 성공은 server application이 request를 처리했다는 뜻이 아니며, listen backlog와 accept queue가 별도 병목이 될 수 있다. SYN retransmission과 connect timeout은 HTTP timeout보다 앞선 단계다.
+handshake가 성공해도 server application이 request를 처리했거나 authentication이 끝났다는 뜻은 아니다. SYN backlog, accept queue, listener worker와 application readiness가 각각 다른 경계이므로 connect 성공 직후 request가 거부될 수 있다. SYN retransmission과 TCP connect timeout은 DNS 이후이면서 TLS·HTTP request timeout보다 앞선 단계다.
 
-### Backend 연결
-
-HTTP client latency를 DNS, TCP connect, TLS, request processing으로 나눠 측정한다. connection pool reuse가 handshake 수를 줄이지만 stale connection failure를 처리하는 경로도 필요하다.
+Backend latency를 DNS resolution, route/connect, TLS handshake, request write, response processing으로 나눠 측정한다. connection pool이 established socket을 재사용하면 handshake를 생략할 수 있지만, idle timeout이나 peer FIN으로 stale connection이 된 경우에는 retry와 request replay의 안전성을 별도로 판단한다.

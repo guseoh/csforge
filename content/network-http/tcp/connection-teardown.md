@@ -19,10 +19,8 @@ references:
 ---
 # Connection Teardown
 
-TCP endpoint는 FIN으로 자신의 송신 stream 종료를 알리고 ACK를 받으며, 반대 방향은 별도로 닫을 수 있다. 따라서 한 방향 bytes가 끝났다고 양방향 connection 전체가 즉시 사라지는 것은 아니다.
+TCP endpoint는 FIN으로 자신의 송신 stream에 더 보낼 byte가 없음을 알리고, peer는 ACK 후 자신의 방향을 별도로 닫을 수 있다. 한 endpoint가 FIN을 보낸 뒤에도 반대 방향의 data를 읽을 수 있으므로 half-close는 양방향 connection 전체 종료와 다르다. 양쪽 FIN과 ACK 교환이 끝나고 state machine이 정리되어야 full close가 완료된다.
 
-RST는 비정상 종료나 존재하지 않는 state에 대한 거부를 나타낼 수 있고, FIN은 orderly close의 경계를 나타낸다. application이 close를 성공 응답으로 오인하지 않도록 이미 받은 bytes와 처리 상태를 분리한다.
+RST는 orderly EOF가 아니라 abort 또는 현재 state에 맞지 않는 segment를 거부하는 신호가 될 수 있어, 아직 buffer에 있던 data가 폐기될 수 있다. FIN을 받았다는 것은 peer stream의 EOF를 관찰했다는 뜻이지 peer application이 모든 bytes를 business 처리했다는 뜻은 아니다. application은 transport EOF/RST와 message completeness·commit 상태를 분리한다.
 
-### Backend 연결
-
-HTTP keep-alive connection을 재사용할 때 peer FIN과 pool eviction을 처리한다. response body를 다 읽지 않고 connection을 반환하면 다음 request가 오염될 수 있다.
+HTTP keep-alive pool은 peer FIN/RST와 idle timeout을 감지해 해당 socket을 eviction하고, response body를 framing에 맞게 모두 읽거나 명시적으로 닫은 뒤에만 connection을 재사용한다. body를 다 읽지 않고 pool에 반환하면 남은 bytes가 다음 request의 response로 해석될 수 있다.
