@@ -4,7 +4,7 @@ contentKey: operating-systems.core.virtual-memory.page-table
 topicContentKey: operating-systems.core.virtual-memory
 slug: page-table
 title: "Page Table"
-summary: "page-to-frame mapping과 valid/protection bit의 의미를 설명한다."
+summary: "OS가 virtual page의 mapping·permission·backing 상태를 추적하는 page-table 역할과 architecture 경계를 설명한다."
 level: 1
 status: PUBLISHED
 displayOrder: 30
@@ -16,11 +16,41 @@ references:
     depth: section
     recommendation: "architecture별 PTE helper semantics와 present 상태의 범위를 확인한다."
     displayOrder: 1
+  - url: "https://pages.cs.wisc.edu/~remzi/OSTEP/vm-paging.pdf"
+    title: "Operating Systems: Three Easy Pieces — Paging: Introduction"
+    referenceType: BOOK
+    language: en
+    depth: chapter
+    recommendation: "virtual page와 physical frame, page-table mapping 및 paging의 공간·비용 trade-off를 확인한다."
+    displayOrder: 2
 ---
 # Page Table
 
-page table은 process의 virtual page를 physical frame 또는 다른 backing 상태로 해석하는 자료구조다. PTE의 형식과 bit 이름은 ISA와 OS마다 다르므로 valid·present·resident를 architecture-independent한 동의어로 취급하면 안 된다. 어떤 시스템에서 present는 hardware가 사용할 수 있는 translation을 뜻하고, 다른 OS 내부 상태에서는 page가 memory에 resident인지가 별도 software 상태로 관리될 수 있다. 접근 권한이 맞지 않거나 translation을 사용할 수 없으면 MMU와 kernel의 계약에 따라 fault가 발생한다.
+### virtual page마다 현재 translation에 필요한 상태를 기록한다
 
-큰 주소 공간의 빈 page까지 flat table로 저장하면 낭비가 커서 multi-level table 같은 sparse 구조를 사용한다. page table 자체도 memory를 차지하고 context switch와 TLB invalidation 비용에 영향을 준다. Linux나 특정 ISA의 `present` helper를 설명할 때는 그 구현의 의미를 일반적인 page-table 규칙으로 확대하지 않는다.
+page table은 process의 virtual page가 어떤 physical frame 또는 다른 backing state와 연결되는지, 그리고 해당 mapping에 어떤 접근 권한이 있는지를 표현하는 자료구조다. CPU가 virtual address를 translation할 때 hardware와 OS는 page-table state를 이용해 접근을 허용할지, fault를 발생시킬지 결정한다.
 
-mapped content와 file cache를 사용할 때 logical file size, committed memory, resident page를 분리해 지표화한다. memory limit을 넘는지 virtual allocation만으로 판단하지 않는다.
+개념적으로 page-table entry에는 frame number와 protection information이 있을 수 있지만 실제 bit layout과 의미는 ISA·OS마다 다르다. 특히 `valid`, `present`, `resident`를 모든 시스템에서 같은 뜻이라고 가정하면 안 된다. 어떤 architecture의 present bit는 hardware translation에 바로 사용할 수 있는 mapping을 뜻할 수 있고, OS는 별도의 software metadata로 swap/file backing이나 resident state를 추적할 수 있다.
+
+### mapping 존재와 접근 가능은 다른 질문이다
+
+virtual page가 어떤 frame에 연결되어 있어도 read-only mapping에 write를 시도하면 protection fault가 날 수 있다. 반대로 virtual range 자체는 process에 유효하지만 현재 physical frame이 준비되지 않아 recoverable page fault가 발생할 수도 있다.
+
+따라서 fault를 볼 때는 최소한 다음을 분리한다.
+
+1. address가 process의 valid mapping 범위인가?
+2. 요청한 read/write/execute permission이 허용되는가?
+3. 현재 translation에 사용할 physical page가 resident/ready한가?
+4. OS가 fault를 처리해 mapping을 준비할 수 있는가?
+
+### page table 자체도 memory와 execution cost를 가진다
+
+큰 virtual address space의 모든 possible page에 flat entry를 미리 두면 page-table memory가 매우 커진다. 그래서 multi-level page table 같은 sparse structure를 사용해 실제 필요한 영역 위주로 하위 table을 할당한다.
+
+이 구조는 memory를 절약하지만 TLB miss 뒤 page-table walk가 여러 memory access를 요구할 수 있다. 이 hardware walk 자체는 Computer Architecture 영역에서 다루고, 여기서는 OS가 **process별 mapping state와 lifecycle을 관리한다**는 책임에 집중한다.
+
+### process lifecycle과 mapping lifecycle이 연결된다
+
+`mmap`, heap growth, stack growth, shared library load, file mapping, `fork`/copy-on-write 등은 page-table state를 바꿀 수 있다. context switch에서도 process마다 translation context가 다르므로 address-space switching과 TLB management가 필요할 수 있다.
+
+운영 지표에서는 virtual address reservation, committed memory, resident set을 구분한다. page table에 address range가 표현되어 있다는 사실만으로 모든 backing page가 RAM에 resident하다고 판단하면 안 된다.
