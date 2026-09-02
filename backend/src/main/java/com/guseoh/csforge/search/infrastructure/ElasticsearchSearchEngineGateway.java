@@ -14,7 +14,9 @@ import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import co.elastic.clients.elasticsearch._types.query_dsl.TextQueryType;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
+import co.elastic.clients.elasticsearch.core.search.HighlightField;
 import co.elastic.clients.elasticsearch.core.search.Hit;
+import co.elastic.clients.util.NamedValue;
 import com.guseoh.csforge.search.application.SearchCriteria;
 import com.guseoh.csforge.search.application.SearchDocumentType;
 import com.guseoh.csforge.search.application.SearchEngineGateway;
@@ -140,9 +142,9 @@ public class ElasticsearchSearchEngineGateway implements SearchEngineGateway {
                 .highlight(highlight -> highlight
                         .preTags(PRE_TAG)
                         .postTags(POST_TAG)
-                        .fields("title", field -> field.numberOfFragments(0))
-                        .fields("summary", field -> field.fragmentSize(160).numberOfFragments(1))
-                        .fields("body", field -> field.fragmentSize(180).numberOfFragments(1)));
+                        .fields(NamedValue.of("title", HighlightField.of(field -> field.numberOfFragments(0))))
+                        .fields(NamedValue.of("summary", HighlightField.of(field -> field.fragmentSize(160).numberOfFragments(1))))
+                        .fields(NamedValue.of("body", HighlightField.of(field -> field.fragmentSize(180).numberOfFragments(1)))));
         applySort(builder, criteria.sort());
         return builder.build();
     }
