@@ -14,14 +14,14 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "receive/send window와 sequence-space 진행을 확인한다."
+    recommendation: "transport connection과 application request의 경계를 확인한다."
     displayOrder: 1
   - url: "https://www.rfc-editor.org/rfc/rfc5681"
     title: "TCP Congestion Control"
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "rwnd와 cwnd 중 작은 값이 outstanding data를 제한하는 경계를 확인한다."
+    recommendation: "TCP congestion과 sending rate 조절을 확인한다."
     displayOrder: 2
 ---
 # TCP Sliding Window
