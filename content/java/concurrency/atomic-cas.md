@@ -92,9 +92,9 @@ CAS에 실패했다고 예외 상황은 아닙니다. "내가 계산하는 동�
 
 물론 실제 증가에는 `incrementAndGet()` 같은 이미 제공되는 atomic API를 쓰는 편이 낫습니다. 직접 loop를 만드는 예제는 CAS의 상태 변화를 이해하기 위한 것입니다.
 
-### lock을 기다리는 것과 retry하는 것은 다른 비용 모델이다
+### CAS primitive와 lock-free progress guarantee는 같은 말이 아니다
 
-Lock 기반 코드에서는 다른 thread가 critical section을 소유하면 대기합니다. CAS 기반 알고리즘에서는 값이 바뀌었으면 다시 계산하고 재시도할 수 있습니다.
+Lock 기반 코드에서는 다른 thread가 critical section을 소유하면 대기합니다. CAS 기반 알고리즘에서는 값이 바뀌었으면 다시 계산하고 재시도하도록 구성할 수 있습니다.
 
 경쟁이 적다면 retry가 거의 없을 수 있지만, 많은 thread가 같은 값에 몰리면 여러 thread가 계속 실패하고 재시도하면서 CPU를 사용할 수 있습니다.
 
@@ -103,7 +103,9 @@ Lock 기반 코드에서는 다른 thread가 critical section을 소유하면 �
 높은 contention: CAS 실패 -> retry -> 실패 -> retry ...
 ```
 
-그래서 "lock-free/CAS는 항상 lock보다 빠르다"는 결론을 미리 내리면 안 됩니다. workload와 contention을 봐야 합니다.
+여기서 **CAS라는 atomic primitive를 사용했다는 사실만으로 알고리즘 전체가 자동으로 lock-free라고 결론내리면 안 됩니다.** lock-free, wait-free 같은 용어는 전체 알고리즘이 어떤 progress guarantee를 만족하는지를 설명하는 별도의 성질입니다. CAS는 그런 알고리즘을 구현하는 데 사용할 수 있는 도구이지, 사용 사실 자체가 progress guarantee를 증명하지는 않습니다.
+
+따라서 "CAS 기반 코드는 항상 lock-free이고 lock보다 빠르다"는 결론도 틀립니다. workload, contention, retry 정책과 실제 알고리즘의 progress 특성을 함께 봐야 합니다.
 
 ### AtomicInteger 하나는 하나의 상태를 잘 다룬다
 
@@ -140,14 +142,16 @@ CAS는 "현재 값이 expected와 같은가"를 봅니다. 값이 A에서 B로 �
 3. 실패 후 새 값을 다시 읽고 계산하는지 봅니다.
 4. 경쟁이 높을 때 retry 비용을 생각합니다.
 5. 보호할 invariant가 단일 변수인지 여러 상태의 관계인지 확인합니다.
+6. CAS 사용 여부와 알고리즘의 lock-free/wait-free progress guarantee를 구분합니다.
 
 ### 자주 헷갈리는 부분
 
 - CAS 실패는 예외가 아니라 expected가 더 이상 현재값이 아니라는 결과입니다.
 - AtomicInteger 하나가 여러 field의 업무 invariant를 자동 보호하지 않습니다.
+- CAS primitive를 사용했다는 사실만으로 전체 알고리즘이 lock-free라고 증명되지는 않습니다.
 - CAS retry 방식이 모든 workload에서 lock보다 빠른 것은 아닙니다.
 - CAS는 값이 과거에 어떻게 변했는지 history를 자동으로 기록하지 않습니다.
 
 ### 면접에서 설명한다면
 
-CAS는 현재 값이 내가 예상한 값과 같을 때만 새 값으로 바꾸는 원자적인 조건부 갱신입니다. 다른 thread가 먼저 값을 바꾸면 실패하고 caller는 새 값을 읽어 retry할 수 있습니다. `AtomicInteger` 같은 클래스가 이를 이용한 단일 값 atomic update를 제공하지만 contention이 높으면 retry 비용이 커질 수 있고, 여러 field 사이의 invariant는 별도의 상태 모델이나 lock이 필요할 수 있습니다.
+CAS는 현재 값이 내가 예상한 값과 같을 때만 새 값으로 바꾸는 원자적인 조건부 갱신입니다. 다른 thread가 먼저 값을 바꾸면 실패하고 caller는 새 값을 읽어 retry할 수 있습니다. `AtomicInteger` 같은 클래스가 이를 이용한 단일 값 atomic update를 제공하지만 contention이 높으면 retry 비용이 커질 수 있고, 여러 field 사이의 invariant는 별도의 상태 모델이나 lock이 필요할 수 있습니다. 또한 CAS는 lock-free 알고리즘을 구현하는 데 사용할 수 있는 primitive이지, CAS를 썼다는 사실만으로 전체 알고리즘의 lock-free progress가 자동 보장되는 것은 아닙니다.
