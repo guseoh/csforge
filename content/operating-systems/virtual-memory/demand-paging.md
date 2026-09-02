@@ -16,12 +16,19 @@ references:
     depth: section
     recommendation: "page fault에서 OS가 translation 상태를 해석하고 page-in 또는 실패를 결정하는 흐름을 확인한다."
     displayOrder: 1
+  - url: "https://man7.org/linux/man-pages/man2/mmap.2.html"
+    title: "mmap(2) — Linux manual page"
+    referenceType: OFFICIAL
+    language: en
+    depth: section
+    recommendation: "Linux mmap의 lazy population과 MAP_POPULATE 같은 explicit prefault 선택지를 구분한다."
+    displayOrder: 2
 ---
 # Demand Paging
 
 demand paging은 address space의 모든 page를 process 시작 시점에 physical memory로 올리는 대신, **실제로 접근한 page만 필요할 때 resident 상태로 준비하는 정책**이다. 실행되지 않는 code path나 읽지 않는 file region에 미리 frame과 I/O를 쓰지 않기 때문에 startup 비용과 physical-memory 사용량을 줄일 수 있다.
 
-예를 들어 1GiB file을 `mmap`했다고 해서 즉시 1GiB가 process의 resident memory가 되는 것은 아니다. virtual mapping은 먼저 만들어질 수 있지만, 실제 page를 읽을 때 page fault가 발생하고 해당 부분의 data가 준비된다. anonymous memory도 virtual range가 먼저 확보되고 첫 write에서 zero-filled physical page가 연결되는 방식으로 지연 준비될 수 있다.
+예를 들어 Linux에서 일반적인 lazy file mapping은 1GiB file을 `mmap`했다고 해서 즉시 1GiB 전체를 resident하게 만들 필요가 없다. virtual mapping을 먼저 만들고 실제 접근 시 fault를 통해 필요한 page를 준비할 수 있다. 다만 Linux에는 `MAP_POPULATE`처럼 mapping 시점에 page table을 미리 populate하고 file read-ahead를 요청하는 선택지도 있으므로 `mmap = 항상 첫 접근까지 아무 page도 준비하지 않는다`고 일반화하면 안 된다. anonymous memory 역시 mapping 정책과 kernel 설정에 따라 resident 준비 시점이 달라질 수 있다.
 
 ### 지연한 비용은 첫 접근에서 지불한다
 
