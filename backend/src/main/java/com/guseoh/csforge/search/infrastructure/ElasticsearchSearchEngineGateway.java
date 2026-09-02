@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch._types.FieldValue;
 import co.elastic.clients.elasticsearch._types.SortOrder;
 import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
@@ -34,15 +33,16 @@ public class ElasticsearchSearchEngineGateway implements SearchEngineGateway {
     private static final String PRE_TAG = "[[H]]";
     private static final String POST_TAG = "[[/H]]";
 
-    private final ElasticsearchClient client;
+    private final SearchElasticsearchClientProvider clientProvider;
 
-    public ElasticsearchSearchEngineGateway(ElasticsearchClient client) {
-        this.client = client;
+    public ElasticsearchSearchEngineGateway(SearchElasticsearchClientProvider clientProvider) {
+        this.clientProvider = clientProvider;
     }
 
     @Override
     public SearchPageView search(SearchCriteria criteria) {
         try {
+            var client = clientProvider.client();
             SearchRequest request = buildSearchRequest(criteria);
             @SuppressWarnings("unchecked")
             SearchResponse<Map> response = client.search(request, Map.class);
@@ -58,6 +58,7 @@ public class ElasticsearchSearchEngineGateway implements SearchEngineGateway {
     @Override
     public List<SearchSuggestionView> suggest(String query, int size) {
         try {
+            var client = clientProvider.client();
             Query boolPrefix = Query.of(q -> q.multiMatch(m -> m
                     .query(query)
                     .type(TextQueryType.BoolPrefix)
@@ -95,6 +96,7 @@ public class ElasticsearchSearchEngineGateway implements SearchEngineGateway {
     @Override
     public SearchEngineState state() {
         try {
+            var client = clientProvider.client();
             return client.indices().exists(request -> request.index(ElasticsearchSearchProjectionStore.SEARCH_ALIAS)).value()
                     ? SearchEngineState.READY
                     : SearchEngineState.NOT_READY;
@@ -106,6 +108,7 @@ public class ElasticsearchSearchEngineGateway implements SearchEngineGateway {
     @Override
     public long countDocuments() {
         try {
+            var client = clientProvider.client();
             return client.count(request -> request.index(ElasticsearchSearchProjectionStore.SEARCH_ALIAS)).count();
         } catch (IOException | RuntimeException exception) {
             throw translate(exception);
