@@ -10,7 +10,7 @@ status: PUBLISHED
 displayOrder: 30
 references:
 - url: https://grpc.io/docs/guides/deadlines/
-  title: 'gRPC Guide: Deadlines'
+  title: 'gRPC Documentation: Deadlines'
   referenceType: OFFICIAL
   language: en
   displayOrder: 1

@@ -14,7 +14,7 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "process virtual address space에 mapping을 생성하고 protection을 지정하는 Linux mmap semantics를 확인한다."
+    recommendation: "Linux mmap의 lazy population과 MAP_POPULATE 같은 explicit prefault 선택지를 구분한다."
     displayOrder: 1
 ---
 # mmap

@@ -14,7 +14,7 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "process 생성과 주소 공간을 확인한다."
+    recommendation: "Linux fork가 분리된 address space를 copy-on-write page로 구현하는 경계를 확인한다."
     displayOrder: 1
 ---
 # Parent and Child Process
