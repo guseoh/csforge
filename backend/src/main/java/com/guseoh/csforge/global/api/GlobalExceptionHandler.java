@@ -16,6 +16,7 @@ import com.guseoh.csforge.quiz.domain.QuizInvalidStateException;
 import com.guseoh.csforge.review.application.NoDueReviewsException;
 import com.guseoh.csforge.review.application.ReviewQuestionNotFoundException;
 import com.guseoh.csforge.search.application.SearchNotReadyException;
+import com.guseoh.csforge.search.application.SearchReindexInProgressException;
 import com.guseoh.csforge.search.application.SearchUnavailableException;
 import com.guseoh.csforge.wrongnote.application.WrongNoteNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -101,6 +102,13 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(QuizInvalidStateException.class)
     public ResponseEntity<ApiError> handleQuizState(QuizInvalidStateException exception, HttpServletRequest request) {
         return error(HttpStatus.CONFLICT, "QUIZ_INVALID_STATE", exception.getMessage(), request, List.of());
+    }
+
+    @ExceptionHandler(SearchReindexInProgressException.class)
+    public ResponseEntity<ApiError> handleSearchReindexInProgress(
+            SearchReindexInProgressException exception,
+            HttpServletRequest request) {
+        return error(HttpStatus.CONFLICT, "SEARCH_REINDEX_IN_PROGRESS", exception.getMessage(), request, List.of());
     }
 
     @ExceptionHandler(SearchNotReadyException.class)
