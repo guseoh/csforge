@@ -23,7 +23,7 @@ references:
     relationNote: "local state update와 event publish의 reliable boundary 확인"
   - url: "https://www.cs.princeton.edu/research/techreps/598"
     title: "Sagas (Garcia-Molina and Salem, 1987)"
-    referenceType: PAPER
+    referenceType: OTHER
     language: en
     displayOrder: 3
     relationNote: "long-lived transaction을 local transaction sequence와 compensating transaction으로 나누는 원래 Saga 모델 확인"
