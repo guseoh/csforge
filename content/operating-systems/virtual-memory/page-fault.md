@@ -16,6 +16,13 @@ references:
     depth: section
     recommendation: "page fault에서 OS가 translation 상태를 해석하고 page-in 또는 실패를 결정하는 흐름을 확인한다."
     displayOrder: 1
+  - url: "https://man7.org/linux/man-pages/man2/getrusage.2.html"
+    title: "getrusage(2) — Linux manual page"
+    referenceType: OFFICIAL
+    language: en
+    depth: section
+    recommendation: "Linux가 ru_minflt와 ru_majflt에서 I/O 없이 처리된 fault와 I/O가 필요했던 fault를 구분해 노출하는 방식을 확인한다."
+    displayOrder: 2
 ---
 # Page Fault
 
@@ -33,8 +40,8 @@ instruction을 재시도한다는 점도 중요하다. fault handler가 applicat
 
 ### 비용은 fault 종류에 따라 크게 달라진다
 
-minor fault처럼 storage I/O 없이 mapping만 준비하는 경우와 실제 page-in이 필요한 major fault는 비용 차이가 크다. 따라서 `page fault 수가 1,000회`라는 숫자만으로 latency를 판단하면 안 된다. 어떤 backing store였는지, 이미 page cache에 있었는지, dirty victim을 write-back해야 했는지까지 봐야 한다.
+Linux의 `getrusage()` 같은 운영 지표에서는 I/O 없이 처리된 fault를 `ru_minflt`, I/O가 필요했던 fault를 `ru_majflt`로 구분한다. 흔히 minor/major fault라고 부르지만 이 이름과 계수 방식은 모든 OS의 보편적 page-fault 분류 계약으로 일반화하지 않는다. 따라서 `page fault 수가 1,000회`라는 숫자만으로 latency를 판단하면 안 된다. 어떤 backing store였는지, 이미 page cache에 있었는지, dirty victim을 write-back해야 했는지까지 봐야 한다.
 
 ### 운영에서 보는 경계
 
-대형 file mapping이나 큰 working set의 첫 접근은 warm 상태와 완전히 다른 latency를 만들 수 있다. benchmark에서는 cold start와 steady state를 분리하고, resident memory·major/minor fault·storage I/O를 함께 관찰한다. JVM의 `OutOfMemoryError`와 OS page fault도 같은 사건이 아니므로 application heap 문제와 virtual-memory pressure를 구분해 진단한다.
+대형 file mapping이나 큰 working set의 첫 접근은 warm 상태와 완전히 다른 latency를 만들 수 있다. benchmark에서는 cold start와 steady state를 분리하고, Linux의 minor/major fault 같은 OS별 지표를 사용할 때는 해당 지표의 정의를 확인하면서 resident memory·storage I/O를 함께 관찰한다. JVM의 `OutOfMemoryError`와 OS page fault도 같은 사건이 아니므로 application heap 문제와 virtual-memory pressure를 구분해 진단한다.
