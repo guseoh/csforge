@@ -16,13 +16,20 @@ references:
     depth: section
     recommendation: "HTTP/1.1 persistent connection과 connection option을 확인한다."
     displayOrder: 1
-  - url: "https://www.rfc-editor.org/rfc/rfc9113"
-    title: "HTTP/2"
+  - url: "https://www.rfc-editor.org/rfc/rfc9113.html#section-8.2.2"
+    title: "RFC 9113 Section 8.2.2: Connection-Specific Header Fields"
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "HTTP/2에서 connection-specific header field가 금지되는 경계를 확인한다."
+    recommendation: "HTTP/2에서 Connection·Keep-Alive 같은 connection-specific field가 금지되는 규칙을 확인한다."
     displayOrder: 2
+  - url: "https://www.rfc-editor.org/rfc/rfc9114.html#section-4.2"
+    title: "RFC 9114 Section 4.2: HTTP Fields"
+    referenceType: OFFICIAL
+    language: en
+    depth: section
+    recommendation: "HTTP/3에서 connection-specific field가 금지되는 규칙을 확인한다."
+    displayOrder: 3
 ---
 # Persistent Connection and Keep-Alive
 
