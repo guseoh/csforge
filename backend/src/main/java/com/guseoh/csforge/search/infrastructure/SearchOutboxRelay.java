@@ -9,6 +9,7 @@ import java.util.concurrent.TimeUnit;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.guseoh.csforge.search.application.SearchIndexEvent;
+import com.guseoh.csforge.search.application.SearchProjectionStore;
 import com.guseoh.csforge.search.domain.SearchOutboxEvent;
 import com.guseoh.csforge.search.domain.SearchOutboxEventRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,7 @@ public class SearchOutboxRelay {
     private static final Duration MAX_BACKOFF = Duration.ofMinutes(5);
 
     private final SearchOutboxEventRepository repository;
+    private final SearchProjectionStore projectionStore;
     private final KafkaTemplate<String, String> kafkaTemplate;
     private final ObjectMapper objectMapper;
     private final Clock clock;
@@ -37,6 +39,7 @@ public class SearchOutboxRelay {
     @Scheduled(fixedDelayString = "${csforge.search.outbox-relay-delay-ms:1000}")
     @Transactional
     public void relay() {
+        if (!projectionStore.isReady()) return;
         Instant now = Instant.now(clock);
         List<SearchOutboxEvent> events = repository.findDuePending(now, PageRequest.of(0, BATCH_SIZE));
         for (SearchOutboxEvent event : events) publish(event, now);
