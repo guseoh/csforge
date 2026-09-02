@@ -16,10 +16,12 @@ public class InMemorySearchReindexState implements SearchReindexState {
         return reindexing.get();
     }
 
-    public boolean start() {
+    @Override
+    public boolean tryStart() {
         return reindexing.compareAndSet(false, true);
     }
 
+    @Override
     public void finish() {
         reindexing.set(false);
     }
