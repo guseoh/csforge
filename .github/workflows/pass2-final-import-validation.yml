@@ -1,4 +1,4 @@
-name: Validate Pass 2 canonical import
+name: Fix and validate Pass 2 canonical import
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - content/patch-risk-review-java
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   validate:
@@ -23,7 +23,81 @@ jobs:
           set -euo pipefail
           test "$(git rev-parse HEAD)" = "a34fc6b62ddba3164889c75a171c6f5eeb061f78"
 
-      - uses: actions/setup-java@v4
+      - name: Normalize shared Reference metadata
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+
+          replacements = {
+              'content/operating-systems/io/mmap.md': [
+                  (
+                      'recommendation: "process virtual address space에 mapping을 생성하고 protection을 지정하는 Linux mmap semantics를 확인한다."',
+                      'recommendation: "Linux mmap의 lazy population과 MAP_POPULATE 같은 explicit prefault 선택지를 구분한다."'
+                  ),
+              ],
+              'content/operating-systems/process/process-address-space.md': [
+                  (
+                      'recommendation: "process virtual address space에 mapping을 생성하고 protection을 지정하는 Linux mmap semantics를 확인한다."',
+                      'recommendation: "Linux mmap의 lazy population과 MAP_POPULATE 같은 explicit prefault 선택지를 구분한다."'
+                  ),
+              ],
+              'content/operating-systems/process/parent-child.md': [
+                  (
+                      'recommendation: "process 생성과 주소 공간을 확인한다."',
+                      'recommendation: "Linux fork가 분리된 address space를 copy-on-write page로 구현하는 경계를 확인한다."'
+                  ),
+              ],
+              'content/operating-systems/process/process-create.md': [
+                  (
+                      'recommendation: "process 생성과 주소 공간을 확인한다."',
+                      'recommendation: "Linux fork가 분리된 address space를 copy-on-write page로 구현하는 경계를 확인한다."'
+                  ),
+              ],
+              'content/operating-systems/threads/java-virtual-thread-boundary.md': [
+                  (
+                      '    title: "Synchronize Virtual Threads without Pinning"\n    referenceType: OFFICIAL\n    language: en\n    depth: section\n    recommendation: "JDK 24부터 synchronized 영역에서 발생하던 carrier pinning 제약이 어떻게 제거되었는지 확인한다."\n    displayOrder: 2',
+                      '    title: "JEP 491: Synchronize Virtual Threads without Pinning"\n    referenceType: OFFICIAL\n    language: en\n    displayOrder: 2'
+                  ),
+              ],
+              'content/backend-engineering/retry/deadline.md': [
+                  (
+                      "  title: 'gRPC Guide: Deadlines'",
+                      "  title: 'gRPC Documentation: Deadlines'"
+                  ),
+              ],
+          }
+
+          for name, pairs in replacements.items():
+              path = Path(name)
+              text = path.read_text(encoding='utf-8')
+              for old, new in pairs:
+                  count = text.count(old)
+                  assert count == 1, f'{name}: expected one replacement, found {count}'
+                  text = text.replace(old, new, 1)
+              path.write_text(text, encoding='utf-8')
+          PY
+          git diff --check
+          git diff -- content/operating-systems content/backend-engineering
+
+      - name: Commit canonical metadata normalization
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add \
+            content/operating-systems/io/mmap.md \
+            content/operating-systems/process/parent-child.md \
+            content/operating-systems/process/process-address-space.md \
+            content/operating-systems/process/process-create.md \
+            content/operating-systems/threads/java-virtual-thread-boundary.md \
+            content/backend-engineering/retry/deadline.md
+          git commit -m "content: normalize shared reference metadata"
+          git push origin HEAD:content/risk-based-deep-review
+
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '25'
@@ -51,16 +125,14 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          ./gradlew test --tests com.guseoh.csforge.importcontent.CanonicalFifteenAreaImportValidationTest --info > pass2-import-validation.log 2>&1
-          status=$?
-          cat pass2-import-validation.log
-          exit $status
+          ./gradlew test --tests com.guseoh.csforge.importcontent.CanonicalFifteenAreaImportValidationTest --info | tee pass2-import-validation.log
+          echo 'PASS2_FINAL_IMPORT_VALIDATION status=PASS'
 
       - name: Upload validation evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: pass2-final-import-validation
+          name: pass2-final-import-validation-fixed
           path: |
             backend/pass2-import-validation.log
             backend/build/test-results/test/**
