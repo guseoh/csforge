@@ -6,8 +6,6 @@ import java.time.Instant;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.guseoh.csforge.search.application.SearchIndexEvent;
 import com.guseoh.csforge.search.application.SearchProjectionStore;
 import com.guseoh.csforge.search.domain.SearchOutboxEvent;
@@ -33,7 +31,7 @@ public class SearchOutboxRelay {
     private final SearchOutboxEventRepository repository;
     private final SearchProjectionStore projectionStore;
     private final KafkaTemplate<String, String> kafkaTemplate;
-    private final ObjectMapper objectMapper;
+    private final SearchIndexEventCodec eventCodec;
     private final Clock clock;
 
     @Scheduled(fixedDelayString = "${csforge.search.outbox-relay-delay-ms:1000}")
@@ -53,15 +51,12 @@ public class SearchOutboxRelay {
                     event.getChangeType(),
                     event.getSourceId(),
                     event.getUpdatedAt());
-            String json = objectMapper.writeValueAsString(payload);
             String key = event.getChangeType().name() + ":" + event.getSourceId();
-            kafkaTemplate.send(SearchKafkaConfiguration.INDEX_TOPIC, key, json)
+            kafkaTemplate.send(SearchKafkaConfiguration.INDEX_TOPIC, key, eventCodec.encode(payload))
                     .get(BROKER_ACK_TIMEOUT_SECONDS, TimeUnit.SECONDS);
             event.markPublished(Instant.now(clock));
         } catch (InterruptedException exception) {
             Thread.currentThread().interrupt();
-            markFailed(event, attemptedAt, exception);
-        } catch (JsonProcessingException exception) {
             markFailed(event, attemptedAt, exception);
         } catch (Exception exception) {
             markFailed(event, attemptedAt, exception);
