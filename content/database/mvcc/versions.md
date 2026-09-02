@@ -14,7 +14,13 @@ references:
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
-    relationNote: PostgreSQL MVCC가 statement별 consistent snapshot을 제공하는 목적 확인
+    relationNote: PostgreSQL MVCC가 consistent snapshot을 제공하는 목적 확인
+  - url: "https://www.postgresql.org/docs/current/storage-hot.html"
+    title: "PostgreSQL Documentation: Heap-Only Tuples"
+    referenceType: OFFICIAL
+    language: en
+    displayOrder: 2
+    relationNote: UPDATE가 새 row version을 만들고 old version 정리 비용이 생기는 PostgreSQL storage 특성 확인
 ---
 # MVCC와 row version
 
@@ -27,18 +33,36 @@ references:
 ```text
 논리 row: account #1
 
-old version
+이전 version
 ┌──────────────┐
-│ balance=100  │  ← 이전 snapshot에서 여전히 visible할 수 있음
+│ balance=100  │  ← 오래된 snapshot에서는 아직 visible할 수 있음
 └──────────────┘
 
-new version
+새 version
 ┌──────────────┐
-│ balance=200  │  ← UPDATE transaction commit 이후 새 snapshot에서 visible
+│ balance=200  │  ← UPDATE commit 이후 새 snapshot에서 visible할 수 있음
 └──────────────┘
 ```
 
 실제 PostgreSQL tuple에는 transaction visibility를 판단하기 위한 metadata가 있고, snapshot 규칙에 따라 어떤 tuple version이 보이는지 결정됩니다. 여기서 중요한 것은 내부 field 이름을 외우는 것보다 **reader가 writer의 미완료 상태를 그대로 읽지 않으면서도 과도하게 기다리지 않는 구조**입니다.
+
+### old version과 dead tuple은 같은 뜻이 아니다
+
+새 version이 생겼다고 이전 version이 즉시 모든 transaction에 쓸모없어지는 것은 아닙니다. 이미 오래된 snapshot을 가진 transaction은 이전 version을 계속 볼 수 있습니다. 따라서 여기서는 상태를 다음처럼 구분하는 편이 안전합니다.
+
+```text
+UPDATE 발생
+  │
+  ├─ new/current version
+  │
+  └─ old version ── 오래된 snapshot에는 여전히 visible할 수 있음
+                       │
+                       └─ 어떤 relevant snapshot에서도 더 이상 필요 없음
+                              ↓
+                         dead/reclaimable tuple
+```
+
+즉 “최신 version이 아니다”와 “VACUUM이 안전하게 회수할 수 있다”는 같은 판단이 아닙니다. cleanup 가능 여부는 active snapshot과 transaction horizon까지 봐야 합니다.
 
 ### reader와 writer가 서로 다른 version을 볼 수 있다
 
@@ -56,18 +80,18 @@ T1의 기존 snapshot에서는
 
 ### 여러 version은 공짜가 아니다
 
-old version을 어떤 active transaction도 더 이상 볼 필요가 없게 되면 나중에 정리할 수 있습니다. 하지만 장시간 열린 transaction이 오래된 snapshot을 붙잡으면 그 version을 바로 제거할 수 없습니다.
+UPDATE가 반복되면 새 tuple version과 경우에 따라 새 index entry가 생기고, 더 이상 어떤 relevant snapshot에도 필요하지 않은 version은 나중에 정리되어야 합니다. 장시간 열린 transaction이 오래된 snapshot horizon을 붙잡으면 그 정리가 지연될 수 있습니다.
 
 ```text
-UPDATE 많이 발생
+UPDATE 반복
    │
-   ├─ live version
-   ├─ dead/old version
-   ├─ dead/old version
+   ├─ current version
+   ├─ old version (아직 visible 가능)
+   ├─ dead tuple (회수 가능)
    └─ ...
         │
         ▼
-VACUUM이 재사용 가능 공간으로 정리
+VACUUM/HOT pruning 등이 불필요한 version 비용을 정리
 ```
 
 그래서 MVCC를 “lock 없는 concurrency”라고 부르면 부정확합니다. PostgreSQL은 여전히 row/table lock을 사용하고, MVCC는 주로 **version visibility를 통해 read/write 충돌을 줄이는 방식**입니다.

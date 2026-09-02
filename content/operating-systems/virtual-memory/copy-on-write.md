@@ -14,12 +14,12 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "process 생성과 주소 공간을 확인한다."
+    recommendation: "Linux fork가 분리된 address space를 copy-on-write page로 구현하는 경계를 확인한다."
     displayOrder: 1
 ---
 # Copy-on-Write
 
-`fork()` 직후 parent와 child는 논리적으로 서로 다른 address space를 갖지만, 모든 physical page를 즉시 복사하면 실제로 사용하지 않을 data까지 복제하게 된다. copy-on-write(COW)는 두 process가 같은 physical page를 **읽기 전용 형태로 임시 공유**하고, 둘 중 하나가 수정하려는 순간에만 별도 page를 만드는 방식으로 이 비용을 지연한다.
+POSIX `fork()`의 핵심 계약은 parent와 child가 분리된 memory space를 가지며 fork 시점의 내용이 같다는 것이다. **그 분리를 어떤 방식으로 구현하는지는 별도 층의 문제다.** Linux의 `fork()`는 이 비용을 줄이기 위해 copy-on-write(COW) page를 사용한다. fork 직후 모든 physical page를 즉시 복사하는 대신 두 process가 같은 physical page를 임시 공유하고, 둘 중 하나가 수정하려는 순간에만 별도 page를 만드는 방식으로 복사 비용을 지연한다.
 
 ### 첫 write가 분리의 경계가 된다
 

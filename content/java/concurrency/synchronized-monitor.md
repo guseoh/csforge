@@ -134,7 +134,7 @@ synchronized (lock) {
 
 ### synchronized는 memory visibility에도 의미가 있다
 
-Monitor를 해제(unlock)한 작업은 같은 monitor를 이후 획득(lock)하는 작업과 Java Memory Model의 happens-before 관계를 만들 수 있습니다.
+Java Memory Model에서 **한 monitor의 unlock은 synchronization order상 그 뒤에 오는 같은 monitor의 모든 lock보다 happens-before**합니다.
 
 ```text
 Thread A
@@ -148,7 +148,7 @@ read shared.value
 Thread B
 ```
 
-그래서 synchronized는 단순히 "동시에 못 들어오게 하는 mutex" 역할뿐 아니라 적절한 monitor 경계를 통한 memory visibility/order도 제공합니다.
+같은 thread 안의 program order와 이 unlock→lock edge를 transitivity로 연결하면, unlock 전에 수행한 write를 이후 같은 monitor를 획득한 thread의 read까지 연결해 추론할 수 있습니다. 따라서 synchronized는 단순히 "동시에 못 들어오게 하는 mutex" 역할뿐 아니라 적절한 monitor 경계를 통한 memory visibility/order도 제공합니다.
 
 이것은 Java 언어/JMM 수준의 보장입니다. HotSpot이 내부적으로 어떤 lock representation을 사용하고 OS primitive를 어떻게 쓰는지는 구현 세부입니다.
 
@@ -169,4 +169,4 @@ Thread B
 
 ### 면접에서 설명한다면
 
-`synchronized`는 특정 객체의 intrinsic monitor를 기준으로 한 상호 배제와 memory synchronization을 제공합니다. Instance synchronized method는 `this`, static synchronized method는 해당 `Class` 객체를 monitor로 사용합니다. 중요한 것은 경쟁하는 코드가 같은 monitor를 사용하고 실제 invariant 전체를 critical section 안에서 보호하는지이며, monitor unlock과 이후 lock은 happens-before 관계에도 참여합니다.
+`synchronized`는 특정 객체의 intrinsic monitor를 기준으로 한 상호 배제와 memory synchronization을 제공합니다. Instance synchronized method는 `this`, static synchronized method는 해당 `Class` 객체를 monitor로 사용합니다. 중요한 것은 경쟁하는 코드가 같은 monitor를 사용하고 실제 invariant 전체를 critical section 안에서 보호하는지이며, 한 monitor의 unlock은 이후 같은 monitor의 lock보다 happens-before합니다.

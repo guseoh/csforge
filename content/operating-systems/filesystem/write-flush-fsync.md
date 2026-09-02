@@ -23,6 +23,20 @@ references:
     depth: section
     recommendation: "여러 filesystem metadata/data write가 crash 중 일부만 반영될 때 consistency를 유지하는 방식을 확인한다."
     displayOrder: 2
+  - url: "https://man7.org/linux/man-pages/man2/write.2.html"
+    title: "write(2) — Linux manual page"
+    referenceType: OFFICIAL
+    language: en
+    depth: section
+    recommendation: "Linux write의 partial-write 가능성과 성공 반환이 disk commit을 보장하지 않는 경계를 확인한다."
+    displayOrder: 3
+  - url: "https://man7.org/linux/man-pages/man2/fsync.2.html"
+    title: "fsync(2) — Linux manual page"
+    referenceType: OFFICIAL
+    language: en
+    depth: section
+    recommendation: "Linux fsync의 file data/metadata persistence와 directory entry durability의 별도 경계를 확인한다."
+    displayOrder: 4
 ---
 # write, flush and fsync
 

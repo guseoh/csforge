@@ -15,6 +15,12 @@ references:
     language: en
     displayOrder: 1
     relationNote: MVCC snapshot과 isolation level 전반 확인
+  - url: "https://www.postgresql.org/docs/current/sql-set-transaction.html"
+    title: "PostgreSQL Documentation: SET TRANSACTION"
+    referenceType: OFFICIAL
+    language: en
+    displayOrder: 2
+    relationNote: READ COMMITTED와 REPEATABLE READ의 snapshot 기준 시점 확인
 ---
 # Snapshot visibility를 timeline으로 추론하기
 
@@ -26,32 +32,38 @@ Snapshot을 “그 순간 table을 통째로 복사한 것”이라고 이해할
 T1                                     T2
 ──────────────────────────────────     ─────────────────────────
 BEGIN
-S1 획득
 SELECT price → 10,000
+  └─ statement snapshot S1
                                        UPDATE price=12,000
                                        COMMIT
-S2 획득
 SELECT price → 12,000
+  └─ 새 statement snapshot S2
 COMMIT
 ```
 
-T1은 하나의 transaction이지만 두 statement가 다른 snapshot을 사용하므로 새 commit을 볼 수 있습니다.
+T1은 하나의 transaction이지만 두 command가 서로 다른 snapshot을 사용하므로 두 번째 SELECT는 그 사이 완료된 commit을 볼 수 있습니다.
 
-### REPEATABLE READ에서는 transaction snapshot을 오래 유지한다
+### REPEATABLE READ에서는 첫 query 시점의 snapshot을 유지한다
+
+PostgreSQL `REPEATABLE READ`에서 transaction snapshot이 `BEGIN` 명령 자체와 동시에 고정된다고 생각하면 안 됩니다. 공식 계약상 **첫 query 또는 data-modification statement가 실행될 때** snapshot 기준이 정해지고, 이후 transaction의 statement들이 그 기준을 유지합니다.
 
 ```text
 T1                                     T2
 ──────────────────────────────────     ─────────────────────────
 BEGIN ISOLATION LEVEL REPEATABLE READ
-S1 획득
-SELECT price → 10,000
                                        UPDATE price=12,000
                                        COMMIT
-SELECT price → 10,000  ← S1 기준
+SELECT price → 12,000
+  └─ 여기서 transaction snapshot S1 확정
+                                       UPDATE price=15,000
+                                       COMMIT
+SELECT price → 12,000  ← S1 기준
 COMMIT
 ```
 
-PostgreSQL REPEATABLE READ는 standard가 요구하는 것보다 강하게 phantom read도 허용하지 않는 구현 특성이 있습니다. 다른 DBMS의 같은 이름 isolation level과 세부 동작을 기계적으로 동일시하면 안 됩니다.
+즉 `BEGIN`과 첫 SELECT 사이에 다른 transaction이 commit했다면 그 변경은 첫 snapshot에 포함될 수 있습니다. 반면 첫 query로 snapshot이 정해진 뒤의 concurrent commit은 같은 REPEATABLE READ transaction의 후속 plain SELECT에서 보이지 않습니다.
+
+PostgreSQL REPEATABLE READ는 SQL 표준이 이 level에 최소한으로 요구하는 것보다 강하게 phantom read도 허용하지 않는 구현 특성이 있습니다. 다른 DBMS의 같은 이름 isolation level과 세부 동작을 기계적으로 동일시하면 안 됩니다.
 
 ### visibility와 최신성은 trade-off가 있다
 
@@ -61,4 +73,4 @@ PostgreSQL REPEATABLE READ는 standard가 요구하는 것보다 강하게 phant
 
 오래된 snapshot이 아직 특정 old row version을 볼 수 있다면 VACUUM은 그 version을 다른 모든 transaction에 불필요하다고 단정할 수 없습니다. 따라서 long-running transaction은 단순 connection 하나의 문제가 아니라 **dead tuple 회수와 table bloat에도 영향을 줄 수 있습니다.**
 
-Snapshot visibility를 이해하는 가장 좋은 방법은 isolation 이름을 외우는 것이 아니라 timeline에 **snapshot 획득 시점, 다른 transaction commit 시점, 내가 읽은 version**을 함께 표시하는 것입니다.
+Snapshot visibility를 이해하는 가장 좋은 방법은 isolation 이름을 외우는 것이 아니라 timeline에 **snapshot이 실제로 확정되는 statement, 다른 transaction commit 시점, 내가 읽은 version**을 함께 표시하는 것입니다.

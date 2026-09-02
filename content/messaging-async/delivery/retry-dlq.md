@@ -29,16 +29,20 @@ Consumer failure를 무조건 retry하면 poison message 하나가 partition을 
 ```text
 message M
   ├─ transient timeout ─▶ bounded retry + backoff
-  └─ invalid schema    ─▶ DLQ/failed state + operator action
+  └─ invalid schema    ─▶ failed/DLQ workflow + operator action
 ```
 
 ### retry budget을 제한한다
 
-attempt 수, 최대 delay, 전체 deadline을 정하지 않은 retry는 무한 처리와 같은 의미가 됩니다. exponential backoff와 jitter로 여러 consumer가 같은 시각에 retry하는 storm을 줄이고, 원래 message의 ordering 요구를 깨지 않는 retry topic 구조를 선택해야 합니다.
+attempt 수, 최대 delay, 전체 deadline을 정하지 않은 retry는 무한 처리와 같은 의미가 됩니다. exponential backoff와 jitter로 여러 consumer가 같은 시각에 retry하는 storm을 줄이고, ordering과 freshness 요구를 깨지 않는 재처리 방식을 선택합니다.
+
+### retry topic과 DLQ는 broker guarantee와 구분한다
+
+Kafka의 consumer delivery semantics 자체가 모든 애플리케이션에 “retry topic”, “delay queue”, “DLQ”라는 동일한 workflow를 자동 제공하는 것은 아닙니다. 별도 topic, consumer pause/seek, framework retry 기능, failed-record store 등으로 구현할 수 있으며 각 방식은 ordering·retention·consumer group state를 다르게 바꿉니다. 따라서 이런 이름을 Kafka protocol 보장처럼 외우지 말고 **실패 record를 언제 정상 흐름에서 분리하고 어디에 durable하게 남길지**를 설계합니다.
 
 ### DLQ는 버리는 쓰레기통이 아니다
 
-Dead-letter queue에는 원본 message id, key, payload version, 실패 원인, attempt 수, 최초·최근 시각을 남겨야 운영자가 원인을 조사하고 안전하게 replay할 수 있습니다. DLQ로 옮겼다고 business failure가 해결된 것은 아니며, 사용자에게 pending/failed 상태를 보여 주거나 수동 보상할 수 있습니다.
+Dead-letter workflow에는 원본 message id, key, payload version, 실패 원인, attempt 수, 최초·최근 시각을 남겨야 운영자가 원인을 조사하고 안전하게 replay할 수 있습니다. DLQ로 옮겼다고 business failure가 해결된 것은 아니며, 사용자에게 pending/failed 상태를 보여 주거나 수동 보상할 수 있습니다.
 
 ### retry와 idempotency는 함께 본다
 
@@ -48,11 +52,10 @@ retry는 같은 operation을 다시 실행하므로 consumer가 idempotent하지
 
 1. failure가 transient인지 permanent인지 분류합니다.
 2. retry 횟수·backoff·jitter·deadline을 정합니다.
-3. retry 중 partition ordering과 lag 영향을 계산합니다.
-4. DLQ payload와 replay 절차를 보존합니다.
+3. retry 구현이 partition ordering·lag·committed position을 어떻게 바꾸는지 확인합니다.
+4. failed/DLQ record와 replay 절차를 durable하게 보존합니다.
 5. duplicate side effect와 사용자 상태를 함께 설계합니다.
 
 ### 면접에서 설명한다면
 
-Retry는 일시적 실패에 제한적으로 사용하고 validation·schema 오류 같은 permanent failure는 DLQ나 명시적 failed state로 보냅니다. attempt·delay·deadline을 bounded하게 하고 jitter로 retry storm을 줄이며, 재시도 자체가 duplicate side effect를 만들 수 있으므로 idempotency와 replay 운영을 함께 둡니다.
-
+Retry는 일시적 실패에 제한적으로 사용하고 validation·schema 오류 같은 permanent failure는 정상 processing path에서 격리합니다. Retry topic이나 DLQ는 Kafka가 모든 경우에 자동 제공하는 delivery guarantee가 아니라 application/framework 패턴일 수 있으므로 ordering·retention·replay 계약을 명시해야 합니다. 재시도 자체가 duplicate side effect를 만들 수 있어 idempotency도 함께 필요합니다.

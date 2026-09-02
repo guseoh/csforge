@@ -15,11 +15,9 @@ references:
     language: en
     displayOrder: 1
   - url: "https://openjdk.org/jeps/491"
-    title: "Synchronize Virtual Threads without Pinning"
+    title: "JEP 491: Synchronize Virtual Threads without Pinning"
     referenceType: OFFICIAL
     language: en
-    depth: section
-    recommendation: "JDK 24부터 synchronized 영역에서 발생하던 carrier pinning 제약이 어떻게 제거되었는지 확인한다."
     displayOrder: 2
 ---
 # Java Virtual Thread Boundary

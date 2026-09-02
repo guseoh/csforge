@@ -8,7 +8,13 @@ summary: Deadline은 유스케이스가 언제까지 완료돼야 의미가 있�
 level: 3
 status: PUBLISHED
 displayOrder: 30
-references: []
+references:
+- url: https://grpc.io/docs/guides/deadlines/
+  title: 'gRPC Documentation: Deadlines'
+  referenceType: OFFICIAL
+  language: en
+  displayOrder: 1
+  relationNote: deadline 설정과 하위 RPC propagation에서 elapsed time을 제외한 remaining budget 전달 확인
 ---
 # deadline과 retry budget
 
@@ -36,7 +42,7 @@ Request deadline 2000 ms
         └─ response/render reserve
 ```
 
-하위 호출이 상위 deadline보다 긴 timeout을 가지지 않도록 합니다.
+하위 호출이 상위 deadline보다 긴 timeout을 가지지 않도록 합니다. 예를 들어 gRPC의 deadline propagation은 원래 deadline을 그대로 복사하는 대신 이미 경과한 시간을 제외한 timeout으로 변환해 하위 RPC에 전달할 수 있습니다. application-level HTTP 호출에서도 같은 목적의 remaining-budget 전달을 설계할 수 있지만, 자동 propagation 여부와 cancellation 의미는 사용하는 client/framework 계약을 확인해야 합니다.
 
 ### cancellation과 실제 side effect
 

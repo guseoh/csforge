@@ -4,7 +4,7 @@ contentKey: network-http.core.http-methods.put
 topicContentKey: network-http.core.http-methods
 slug: put
 title: "PUT"
-summary: "target representation을 대체하는 PUT의 idempotency를 설명한다."
+summary: "target representation을 생성·대체하는 PUT의 idempotent semantics를 설명한다."
 level: 1
 status: PUBLISHED
 displayOrder: 50
@@ -17,8 +17,8 @@ references:
 ---
 # PUT
 
-PUT은 request target이 나타내는 resource의 상태를 request content가 표현하는 상태로 생성하거나 대체하도록 요청한다. target URI가 client가 알고 있는 identity를 결정하므로, 같은 전체 representation을 같은 target에 반복하면 의도된 resource effect가 누적되지 않는 idempotent contract를 만들 수 있다. response는 생성이면 `201`, 기존 resource의 처리 결과에 따라 `200` 또는 `204`가 될 수 있다.
+PUT은 request content가 정의한 상태로 **target resource의 상태를 생성하거나 대체하도록 요청하는 method**다. target URI는 client가 원하는 resource identity를 가리키며, RFC 9110은 PUT의 intended effect 자체를 idempotent로 정의한다. 같은 target에 같은 representation을 반복 적용해도 사용자가 요청한 PUT effect가 누적되는 것이 아니라 같은 의도 상태를 다시 요청하는 것이 핵심이다. 생성이면 `201 Created`, 기존 resource를 성공적으로 변경했다면 `200 OK` 또는 `204 No Content`가 사용된다.
 
-partial field patch를 PUT으로 처리하면 누락 field를 삭제할지 이전 값으로 보존할지 모호해져 client의 전체 상태와 server state가 어긋날 수 있다. 전체 representation replacement와 merge/partial modification을 API semantics와 validation으로 분리하고, 동시 업데이트에는 ETag·`If-Match` 같은 precondition을 사용할 수 있다. idempotent method라는 사실이 version conflict나 외부 side effect를 없애지는 않는다.
+PUT이 idempotent라는 사실은 response가 매번 같거나 server의 모든 내부 side effect가 한 번만 생긴다는 뜻이 아니다. 다른 user agent가 중간에 resource를 변경할 수도 있고, origin server가 representation을 처리하면서 다른 resource에 side effect를 만들 수도 있다. 동시 업데이트에서는 ETag·`If-Match` 같은 precondition으로 stale overwrite를 제어할 수 있다.
 
-CSForge content import에서 stable external/content key와 version을 target identity·precondition으로 사용하면 identical reimport가 예측 가능해진다. canonical document 전체 대체인지 부분 metadata update인지 명시적으로 나누고, 검색 projection이나 notification 같은 파생 작업의 중복 처리도 별도 설계한다.
+일반적인 application API에서 일부 field만 merge하는 update를 PUT의 기본 의미처럼 가르치지 않는다. PATCH는 patch document에 따른 부분 변경을 명시하는 별도 method이고, 특정 server가 HTTP 확장 규칙으로 partial PUT을 지원할 수 있는 문제와도 구분한다. CSForge에서 PUT을 사용한다면 target identity와 representation contract를 먼저 명확히 하고, notification·indexing 같은 파생 side effect의 retry safety는 별도로 설계한다.

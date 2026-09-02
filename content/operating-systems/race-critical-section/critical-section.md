@@ -27,7 +27,7 @@ critical section은 shared state의 invariant를 깨지 않도록 concurrent exe
 
 ### 세 가지 고전적 요구를 구분한다
 
-**Mutual exclusion**은 한 thread가 critical section에 있을 때 다른 competing thread가 동시에 그 구간을 실행하지 못하게 한다. **Progress**는 critical section이 비어 있고 진입하려는 thread가 있을 때 선택이 무기한 미뤄지지 않아야 한다는 요구다. **Bounded waiting**은 특정 thread가 다른 thread들에게 계속 추월당하며 무한히 기다리지 않도록 waiting에 상한 성질을 요구한다.
+**Mutual exclusion**은 한 thread가 critical section에 있을 때 다른 competing thread가 동시에 그 구간을 실행하지 못하게 한다. **Progress**는 critical section이 비어 있고 진입하려는 thread가 있을 때 선택이 무기한 미뤄지지 않아야 한다는 요구다. **Bounded waiting**은 어떤 thread/process가 진입을 요청한 뒤 그 요청이 허용되기 전까지 다른 경쟁자가 먼저 critical section에 진입할 수 있는 횟수에 유한한 bound가 있어야 한다는 요구다. 이는 OS scheduler까지 포함한 실제 wall-clock 대기시간 상한이나 latency SLA를 뜻하지 않는다.
 
 mutex 하나를 사용한다고 세 요구가 모든 상황에서 자동으로 완벽히 보장되는 것은 아니다. 실제 fairness와 scheduling 정책은 primitive 구현에 따라 달라질 수 있다.
 

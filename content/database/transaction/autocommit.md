@@ -18,14 +18,16 @@ references:
 ---
 # Autocommit과 transaction 경계
 
-`BEGIN`을 쓰지 않았으니 transaction이 없다고 생각하면 안 됩니다. PostgreSQL에서 각 SQL statement는 transaction 안에서 실행됩니다. 명시적 transaction block이 없으면 client/tool의 autocommit 동작에 따라 각 statement가 독립적으로 commit되는 형태가 일반적입니다.
+`BEGIN`을 쓰지 않았으니 transaction이 없다고 생각하면 안 됩니다. PostgreSQL은 **모든 SQL statement를 transaction 안에서 실행**합니다. 명시적인 `BEGIN`이 없는 statement는 서버 관점에서 implicit transaction으로 실행되고, 성공하면 statement 끝에서 commit되는 것처럼 동작합니다. PostgreSQL 문서도 이 동작을 흔히 autocommit이라고 부릅니다.
+
+다만 애플리케이션에서 보는 `autocommit` 설정은 JDBC driver, client library, SQL tool 같은 **client 계층의 transaction 제어 정책**일 수 있습니다. client가 여러 statement 앞에 `BEGIN`을 자동으로 열거나 connection의 transaction mode를 제어할 수 있으므로, “PostgreSQL 서버의 implicit statement transaction”과 “JDBC/client의 autocommit 옵션”을 같은 설정 하나로 생각하지 않습니다.
 
 ```sql
 UPDATE account SET balance = balance - 100 WHERE id = 1;
 UPDATE account SET balance = balance + 100 WHERE id = 2;
 ```
 
-두 statement가 각각 별도 commit되면 첫 번째 UPDATE가 성공한 뒤 프로세스가 죽었을 때 돈이 빠져나가기만 한 상태가 남을 수 있습니다.
+두 statement가 각각 별도 transaction으로 commit되면 첫 번째 UPDATE가 성공한 뒤 프로세스가 죽었을 때 돈이 빠져나가기만 한 상태가 남을 수 있습니다.
 
 ### 여러 statement가 하나의 business transition이면 경계를 묶는다
 
@@ -52,10 +54,10 @@ BEGIN
   └─ COMMIT
 ```
 
-이렇게 오래 열린 transaction은 connection을 오래 점유하고 lock/old snapshot을 유지하며 다른 작업과 충돌할 수 있습니다. DB atomicity가 필요한 write 범위와 외부 I/O를 분리할 수 있는지 검토해야 합니다.
+이렇게 오래 열린 transaction은 connection을 오래 점유하고 lock이나 오래된 snapshot을 유지해 다른 작업과 충돌할 수 있습니다. DB atomicity가 필요한 write 범위와 외부 I/O를 분리할 수 있는지 검토해야 합니다.
 
 ### framework transaction도 결국 DB 경계로 내려간다
 
 Spring `@Transactional`을 사용하면 Java 코드에서 BEGIN/COMMIT을 직접 쓰지 않더라도 transaction manager가 connection transaction을 관리합니다. 그래서 framework annotation과 DB transaction을 별개 세계로 외우기보다 **application use-case 경계가 JDBC connection과 DB COMMIT/ROLLBACK으로 어떻게 연결되는지** 이해해야 합니다.
 
-Autocommit의 핵심은 설정 이름이 아니라 **현재 statement들이 같은 atomic boundary에 속하는지**를 코드와 DB 양쪽에서 추적하는 것입니다.
+Autocommit의 핵심은 설정 이름이 아니라 **현재 statement들이 실제로 같은 commit/rollback boundary에 속하는지**를 client와 DB 양쪽에서 추적하는 것입니다.

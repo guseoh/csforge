@@ -15,6 +15,12 @@ references:
     language: en
     displayOrder: 1
     relationNote: UPDATE expression과 WHERE 조건을 이용한 원자적 변경 확인
+  - url: "https://www.postgresql.org/docs/current/transaction-iso.html"
+    title: "PostgreSQL Documentation: Transaction Isolation"
+    referenceType: OFFICIAL
+    language: en
+    displayOrder: 2
+    relationNote: READ COMMITTED에서 concurrent UPDATE 대기 후 최신 row version에 WHERE 조건을 다시 평가하는 동작 확인
 ---
 # Read-modify-write보다 원자적 SQL이 강한 경우
 
@@ -37,35 +43,33 @@ WHERE sku_id = :skuId
   AND quantity > 0;
 ```
 
-DB는 UPDATE 대상 row에 필요한 concurrency control을 적용하면서 현재 값을 기준으로 expression을 평가합니다. update count가 1이면 차감 성공, 0이면 재고 없음으로 해석할 수 있습니다.
+PostgreSQL의 `READ COMMITTED`에서 concurrent `UPDATE`가 같은 row를 만나면 뒤의 updater는 먼저 실행 중인 transaction의 종료를 기다릴 수 있습니다. 앞 transaction이 commit해 row version이 바뀌었다면 PostgreSQL은 그 **업데이트된 row version에 `WHERE` 조건을 다시 평가**하고, 여전히 조건을 만족할 때만 UPDATE를 적용합니다. 그래서 단순한 counter·quota·재고처럼 “현재 DB 값이 조건을 만족할 때 한 번 변경한다”는 작은 상태 전이는 애플리케이션 read-modify-write보다 경쟁 구간을 줄일 수 있습니다.
 
 ```text
 요청 A ─┐
-        ├─ DB row update serialization
+        ├─ 같은 row에서 DB concurrency control
 요청 B ─┘
 
 quantity 1
-  │ A UPDATE → 0
-  │ B 조건 quantity > 0 불충족
+  │ A UPDATE → 0, commit
+  │ B가 최신 row version에 quantity > 0 재평가 → false
   ▼
 최종 0
 ```
 
-이 패턴은 애플리케이션으로 값을 꺼냈다가 다시 쓰는 race window를 줄입니다.
+### affected row count의 의미를 과장하지 않는다
 
-### 모든 business rule을 SQL 한 줄에 넣으라는 뜻은 아니다
-
-주문 상태, 쿠폰, 결제 정책처럼 여러 aggregate와 복잡한 domain 판단이 필요한 규칙을 거대한 UPDATE CASE 문으로 밀어 넣으면 가독성과 테스트 가능성이 크게 나빠질 수 있습니다. **DB가 직접 비교·증감하기 좋은 작은 invariant**인지 구분합니다.
-
-### affected row count가 계약이 된다
+update count가 1이면 이 statement가 조건을 만족한 row를 실제로 변경했다는 강한 신호가 됩니다. 하지만 0은 항상 “재고가 0이다”만 뜻하지 않습니다. `sku_id` 자체가 존재하지 않거나 다른 predicate가 불충족해도 0일 수 있습니다. 따라서 애플리케이션 계약이 `0 = OUT_OF_STOCK`으로 해석하려면 대상 row의 존재가 별도로 보장되거나, “row 없음과 조건 불충족을 같은 실패 결과로 취급한다”는 정책이 명시되어야 합니다.
 
 ```java
 int updated = inventoryRepository.decreaseIfAvailable(skuId);
 if (updated == 0) {
-    throw new OutOfStockException();
+    throw new OutOfStockException(); // row 존재가 별도 invariant로 보장될 때
 }
 ```
 
-여기서 update count는 단순 persistence 결과가 아니라 “조건을 만족한 row를 실제로 변경했는가”라는 concurrency-safe outcome의 일부가 됩니다.
+### 모든 business rule을 SQL 한 줄에 넣으라는 뜻은 아니다
+
+주문 상태, 쿠폰, 결제 정책처럼 여러 aggregate와 복잡한 domain 판단이 필요한 규칙을 거대한 UPDATE CASE 문으로 밀어 넣으면 가독성과 테스트 가능성이 크게 나빠질 수 있습니다. **DB가 직접 비교·증감하기 좋은 작은 invariant**인지 구분합니다.
 
 Atomic SQL은 lock이나 optimistic versioning을 모두 대체하는 만능 기법이 아닙니다. 하지만 counter, quota, 재고처럼 **현재 DB 값에 조건을 걸고 작은 상태 전이를 수행할 수 있는 문제**에서는 매우 강력한 선택입니다.

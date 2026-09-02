@@ -1297,7 +1297,7 @@
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.reference-strengths.q4",
-    "promptMarkdown": "WeakReference map만 보유한 canonical 객체가 get에서 null이 된 직후 새 객체를 만들었다. 이전 객체를 계속 cache hit 대상으로 기대하면 안 되는 이유는?",
+    "promptMarkdown": "SoftReference에 대한 Java API 계약과 application cache 정책의 관계로 가장 정확한 것은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "HARD",
     "status": "PUBLISHED",
@@ -1307,27 +1307,27 @@
     "choices": [
       {
         "key": "A",
-        "content": "WeakReference는 cache key를 정렬하기 때문이다",
+        "content": "SoftReference는 TTL을 보장하므로 entry별 만료 정책이 필요 없다",
         "displayOrder": 0
       },
       {
         "key": "B",
-        "content": "strong owner가 사라지면 weak referent는 GC 처리 시점에 수집 후보가 될 수 있어 lifetime을 보장하지 않기 때문이다",
+        "content": "JVM은 OOME를 던지기 전에 softly-reachable 객체의 soft reference를 clear해야 하지만, 일반적인 clear 시각과 순서는 보장하지 않으므로 명시적 cache 정책을 대신하지 않는다",
         "displayOrder": 1
       },
       {
         "key": "C",
-        "content": "weak reference가 항상 strong reference로 승격되기 때문이다",
+        "content": "SoftReference는 strong reference보다 객체를 더 오래 반드시 유지한다",
         "displayOrder": 2
       },
       {
         "key": "D",
-        "content": "get null은 객체가 반드시 즉시 free됐다는 뜻이기 때문이다",
+        "content": "SoftReference.get()은 PhantomReference처럼 항상 null을 반환한다",
         "displayOrder": 3
       }
     ],
     "correctChoiceKey": "B",
-    "explanationMarkdown": "weak reference는 optional association이고 referent의 존재나 수집 시점을 애플리케이션 cache 정책처럼 보장하지 않는다."
+    "explanationMarkdown": "SoftReference는 memory demand에 따라 GC가 clear할 수 있고 softly-reachable referent의 soft reference는 OOME 전에 clear되어야 한다. 하지만 clear 시각·순서나 TTL을 application이 통제하는 cache policy는 제공하지 않는다."
   },
   {
     "kind": "question",
