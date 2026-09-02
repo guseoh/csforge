@@ -12,6 +12,7 @@ import com.guseoh.csforge.search.domain.SearchOutboxEvent;
 import com.guseoh.csforge.search.domain.SearchOutboxEventRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -22,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Component
 @RequiredArgsConstructor
+@ConditionalOnProperty(name = "csforge.search.outbox.relay.enabled", havingValue = "true", matchIfMissing = true)
 public class SearchOutboxRelay {
 
     private static final int BATCH_SIZE = 50;
