@@ -34,13 +34,13 @@ public class SearchReindexService {
         boolean aliasSwapped = false;
         boolean ownedListenerPause = false;
         try {
-            long baselineOutboxId = outboxRepository.findMaxId();
+            long baselineChangeSequence = outboxRepository.findMaxChangeSequence();
             physicalIndex = indexStore.createPhysicalIndex();
             buildFullProjection(physicalIndex);
 
             ownedListenerPause = listenerControl.pauseAndAwait();
-            long highWaterOutboxId = outboxRepository.findMaxId();
-            replayCatchUp(physicalIndex, baselineOutboxId, highWaterOutboxId);
+            long highWaterChangeSequence = outboxRepository.findMaxChangeSequence();
+            replayCatchUp(physicalIndex, baselineChangeSequence, highWaterChangeSequence);
 
             indexStore.refresh(physicalIndex);
             Map<SearchDocumentType, Long> indexedCounts = indexStore.countByDocumentType(physicalIndex);
@@ -51,7 +51,11 @@ public class SearchReindexService {
                 listenerControl.resume();
                 ownedListenerPause = false;
             }
-            return new SearchReindexResult(physicalIndex, baselineOutboxId, highWaterOutboxId, indexedCounts);
+            return new SearchReindexResult(
+                    physicalIndex,
+                    baselineChangeSequence,
+                    highWaterChangeSequence,
+                    indexedCounts);
         } catch (RuntimeException exception) {
             if (!aliasSwapped && physicalIndex != null) deleteFailedTarget(physicalIndex);
             throw exception;
@@ -73,12 +77,12 @@ public class SearchReindexService {
         }
     }
 
-    private void replayCatchUp(String physicalIndex, long baselineOutboxId, long highWaterOutboxId) {
-        long cursor = baselineOutboxId;
-        while (cursor < highWaterOutboxId) {
-            List<SearchOutboxEvent> events = outboxRepository.findBetweenIds(
+    private void replayCatchUp(String physicalIndex, long baselineSequence, long highWaterSequence) {
+        long cursor = baselineSequence;
+        while (cursor < highWaterSequence) {
+            List<SearchOutboxEvent> events = outboxRepository.findBetweenChangeSequences(
                     cursor,
-                    highWaterOutboxId,
+                    highWaterSequence,
                     PageRequest.of(0, CATCH_UP_BATCH_SIZE));
             if (events.isEmpty()) break;
 
@@ -89,7 +93,7 @@ public class SearchReindexService {
             for (SearchOutboxEvent event : latestBySource.values()) {
                 catchUpUpdater.apply(physicalIndex, event.getChangeType(), event.getSourceId());
             }
-            cursor = events.getLast().getId();
+            cursor = events.getLast().getChangeSequence();
         }
     }
 
