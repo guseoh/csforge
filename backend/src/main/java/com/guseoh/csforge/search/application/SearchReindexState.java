@@ -1,6 +1,8 @@
 package com.guseoh.csforge.search.application;
 
-/** Search query/status가 reindex 진행 여부를 조회하는 작은 상태 경계이다. */
+/** single-process V1의 reindex 중복 실행 방지와 product status 공유 경계이다. */
 public interface SearchReindexState {
     boolean isReindexing();
+    boolean tryStart();
+    void finish();
 }
