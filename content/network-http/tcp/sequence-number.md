@@ -14,7 +14,7 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "sequence space, duplicate 처리와 out-of-order segment 요구 수준을 확인한다."
+    recommendation: "transport connection과 application request의 경계를 확인한다."
     displayOrder: 1
 ---
 # TCP Sequence Number
