@@ -5,20 +5,23 @@ import java.util.List;
 import com.guseoh.csforge.search.application.SearchCriteria;
 import com.guseoh.csforge.search.application.SearchDocumentType;
 import com.guseoh.csforge.search.application.SearchQueryService;
+import com.guseoh.csforge.search.application.SearchReindexService;
 import com.guseoh.csforge.search.application.SearchSort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-/** Search 조회/status/filter/suggestion HTTP 계약을 application use case에 연결한다. */
+/** Search 조회/status/filter/suggestion/reindex HTTP 계약을 application use case에 연결한다. */
 @RestController
 @RequestMapping("/api/search")
 @RequiredArgsConstructor
 public class SearchController {
 
     private final SearchQueryService searchQueryService;
+    private final SearchReindexService searchReindexService;
 
     @GetMapping
     public SearchPageResponse search(
@@ -49,5 +52,10 @@ public class SearchController {
     @GetMapping("/status")
     public SearchStatusResponse status() {
         return SearchStatusResponse.from(searchQueryService.status());
+    }
+
+    @PostMapping("/reindex")
+    public SearchReindexResponse reindex() {
+        return SearchReindexResponse.from(searchReindexService.reindex());
     }
 }
