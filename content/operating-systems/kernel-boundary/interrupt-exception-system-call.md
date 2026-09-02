@@ -10,11 +10,11 @@ status: PUBLISHED
 displayOrder: 60
 references:
   - url: "https://docs.riscv.org/reference/isa/unpriv/intro.html"
-    title: "RISC-V ISA: Exceptions, Traps, and Interrupts"
+    title: "RISC-V Unprivileged ISA: Introduction"
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "RISC-V에서 exception·interrupt·trap을 어떻게 구분하고 system call을 requested trap의 예로 설명하는지 확인한다."
+    recommendation: "ISA가 정의하는 software-visible architecture와 구현 선택의 경계를 확인한다."
     displayOrder: 1
 ---
 # Interrupt, Exception and System Call

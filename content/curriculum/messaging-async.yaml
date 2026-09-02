@@ -1,0 +1,114 @@
+schemaVersion: 2
+area:
+  key: messaging-async
+  title: Messaging & Async Processing
+  baseline: Kafka-style event streaming and asynchronous workflows
+  contentKeyPrefix: messaging.core
+  status: CANONICAL_FOUNDATION
+policies:
+  language:
+    authoringLanguage: ko-KR
+    explanationRule: 동기 request에서 분리할 문제와 message delivery semantics를 구분하고 partition·offset·retry·recovery 상태를 시간순으로 설명한다.
+  question:
+    topicDifficultyCoverage: [EASY, MEDIUM, HARD]
+    areaTypeCoverage: [MULTIPLE_CHOICE, SHORT_ANSWER, DESCRIPTIVE, SCENARIO]
+    hardRule: duplicate delivery, ordering, consumer failure, outbox relay, backpressure, schema compatibility 중 하나 이상을 실제 timeline으로 판단하게 한다.
+    shortAnswerRule: broker나 delivery 용어 이름만으로 정답을 인정하지 않는다.
+  source:
+    primary: [Apache Kafka Documentation, Kafka API Documentation, Transactional Outbox Pattern]
+    rule: broker 구현 보장과 application-level idempotency·business ordering을 구분한다.
+  visualization:
+    values: [NONE, TEXT, DIAGRAM]
+    rule: partition offset, consumer group rebalance, retry/DLQ, outbox relay와 backpressure처럼 상태·순서가 핵심인 곳에 사용한다.
+topics:
+- key: messaging.core.semantics
+  title: Message and broker semantics
+  order: 10
+  scope: command/event/message, topic/partition/key와 consumer group/offset을 다룬다.
+  boundary: Kafka API semantics와 business transaction·delivery guarantee를 같은 보장으로 설명하지 않는다.
+  concepts:
+  - key: messaging.core.semantics.message-model
+    title: command·event·message model
+    order: 10
+    level: 1
+    objective: command와 event의 의도·source·consumer 결합 차이를 구분하고 message contract를 설계한다.
+    density: CORE
+    visualization: TEXT
+  - key: messaging.core.semantics.partition-key
+    title: topic·partition·message key
+    order: 20
+    level: 2
+    objective: partition이 parallelism과 ordering의 단위가 되는 이유와 key 선택·partition 변화가 traffic·ordering을 바꾸는 흐름을 설명한다.
+    density: CORE
+    visualization: DIAGRAM
+  - key: messaging.core.semantics.consumer-offset
+    title: consumer group과 offset
+    order: 30
+    level: 2
+    objective: record offset, consumer position과 committed position을 구분하고 replay·rebalance의 관계를 판단한다.
+    density: CORE
+    visualization: DIAGRAM
+- key: messaging.core.delivery
+  title: Delivery, retry, and ordering
+  order: 20
+  scope: at-most-once·at-least-once delivery, exactly-once라는 표현의 보장 경계, idempotent consumer, retry/DLQ와 ordering·poison message를 다룬다.
+  boundary: broker delivery guarantee나 transaction 기능이 외부 business side effect까지 자동으로 exactly-once로 만들지 않는다.
+  concepts:
+  - key: messaging.core.delivery.at-least-once-idempotency
+    title: delivery semantics와 idempotent consumer
+    order: 10
+    level: 2
+    objective: ack/commit 시점에 따라 loss 또는 duplicate가 생기는 at-most-once·at-least-once 차이를 비교하고, exactly-once 주장은 어느 broker/transaction boundary까지 적용되는지 구분한 뒤 business idempotency를 설계한다.
+    density: CORE
+    visualization: DIAGRAM
+  - key: messaging.core.delivery.retry-dlq
+    title: retry와 dead-letter queue
+    order: 20
+    level: 2
+    objective: transient/permanent failure를 분류하고 retry budget·backoff·DLQ와 재처리 운영을 설계한다.
+    density: CORE
+    visualization: TEXT
+  - key: messaging.core.delivery.ordering
+    title: message ordering과 concurrency
+    order: 30
+    level: 3
+    objective: partition-local ordering과 consumer concurrency·parallelism의 trade-off를 business sequence에 적용한다.
+    density: CORE
+    visualization: DIAGRAM
+- key: messaging.core.workflow
+  title: Reliable async workflows
+  order: 30
+  scope: transactional outbox, backpressure·capacity와 message schema evolution을 다룬다.
+  boundary: message broker를 DB transaction의 자동 participant나 모든 문제의 비동기 해결책으로 보지 않는다.
+  concepts:
+  - key: messaging.core.workflow.transactional-outbox
+    title: transactional outbox
+    order: 10
+    level: 3
+    objective: DB commit과 message publish 사이 dual-write gap을 outbox·relay·duplicate consumer로 해결하는 흐름을 설명한다.
+    density: CORE
+    visualization: DIAGRAM
+  - key: messaging.core.workflow.backpressure-capacity
+    title: backpressure와 consumer capacity
+    order: 20
+    level: 2
+    objective: producer rate와 consumer processing capacity 차이가 lag·memory·latency를 만드는 이유와 flow control을 판단한다.
+    density: CORE
+    visualization: TEXT
+  - key: messaging.core.workflow.schema-evolution
+    title: message schema evolution
+    order: 30
+    level: 2
+    objective: producer·consumer가 다른 version으로 공존할 때 additive change, backward/forward compatibility, replay와 migration을 설계한다.
+    density: STANDARD
+    visualization: NONE
+boundaries:
+- area: Database
+  owns: canonical transaction과 durable business state
+  messagingBoundary: outbox는 DB transaction 안의 publish intent이며 broker가 DB state를 소유하지 않는다.
+- area: Backend Engineering
+  owns: API/use-case latency와 async 도입 판단
+  messagingBoundary: 이 영역은 broker delivery·workflow semantics와 recovery를 깊게 다룬다.
+- area: Distributed Systems
+  owns: cross-service failure·consistency와 coordination
+  messagingBoundary: message delivery를 시스템 전체 consistency·availability trade-off와 연결한다.

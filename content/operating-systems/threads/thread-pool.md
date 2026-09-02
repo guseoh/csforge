@@ -10,11 +10,9 @@ status: PUBLISHED
 displayOrder: 90
 references:
   - url: "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/ThreadPoolExecutor.html"
-    title: "ThreadPoolExecutor (Java SE 25 API)"
+    title: "Java SE 25 API: ThreadPoolExecutor"
     referenceType: OFFICIAL
     language: en
-    depth: section
-    recommendation: "worker 수·queue·rejection·shutdown이 하나의 bounded executor 정책을 이루는 방식을 확인한다."
     displayOrder: 1
 ---
 # Thread Pool

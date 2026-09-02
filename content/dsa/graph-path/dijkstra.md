@@ -14,7 +14,7 @@ references:
     referenceType: BOOK
     language: en
     depth: section
-    recommendation: "weighted shortest path의 relaxation과 Dijkstra 조건을 확인한다."
+    recommendation: "all-pairs shortest path와 relaxation 관점을 확인한다."
     displayOrder: 1
 ---
 # Dijkstra

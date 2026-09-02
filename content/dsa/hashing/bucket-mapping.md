@@ -14,7 +14,7 @@ references:
     referenceType: BOOK
     language: en
     depth: section
-    recommendation: "hash value를 table index로 줄이는 과정과 capacity 변화의 영향을 확인한다."
+    recommendation: "separate chaining의 lookup/insert/delete와 chain length 비용을 확인한다."
     displayOrder: 1
 ---
 # Bucket Mapping

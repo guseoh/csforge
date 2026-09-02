@@ -14,7 +14,7 @@ references:
     referenceType: BOOK
     language: en
     depth: section
-    recommendation: "Kruskal의 edge ordering과 cycle avoidance를 확인한다."
+    recommendation: "Prim의 frontier와 cut 기반 greedy 선택을 확인한다."
     displayOrder: 1
 ---
 # Kruskal

@@ -10,11 +10,11 @@ status: PUBLISHED
 displayOrder: 60
 references:
   - url: "https://docs.kernel.org/core-api/dma-api-howto.html"
-    title: "Dynamic DMA Mapping Guide"
+    title: "Dynamic DMA mapping Guide"
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "DMA buffer ownership, mapping과 CPU/device synchronization 경계를 확인한다."
+    recommendation: "coherent·streaming mapping, DMA ownership과 sync 시점을 확인한다."
     displayOrder: 1
 ---
 # Device, CPU and Memory Path

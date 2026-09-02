@@ -14,7 +14,7 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "IPC 방식의 ownership과 backpressure를 비교한다."
+    recommendation: "pipe의 byte-stream semantics, capacity, EOF와 blocking/non-blocking 동작을 확인한다."
     displayOrder: 1
 ---
 # IPC Trade-off

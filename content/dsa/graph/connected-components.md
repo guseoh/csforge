@@ -14,7 +14,7 @@ references:
     referenceType: BOOK
     language: en
     depth: section
-    recommendation: "undirected graph의 connectivity와 component 탐색을 확인한다."
+    recommendation: "vertex, edge, path, connectivity 같은 graph 기본 모델을 확인한다."
     displayOrder: 1
 ---
 # Connected Components

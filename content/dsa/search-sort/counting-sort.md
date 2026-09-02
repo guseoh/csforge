@@ -14,7 +14,7 @@ references:
     referenceType: BOOK
     language: en
     depth: section
-    recommendation: "key-indexed counting의 frequency, cumulative count와 stable distribution을 확인한다."
+    recommendation: "LSD/MSD radix sort와 stable digit pass의 역할을 확인한다."
     displayOrder: 1
 ---
 # Counting Sort

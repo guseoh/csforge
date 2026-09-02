@@ -1,0 +1,5 @@
+[
+  {"kind":"topic","contentKey":"distributed.core.time-failure","areaSlug":"distributed-systems","slug":"time-failure","title":"Time and failure","description":"clock·deadline·partial failure와 failure detector를 다룬다.","displayOrder":10,"active":true},
+  {"kind":"topic","contentKey":"distributed.core.consistency","areaSlug":"distributed-systems","slug":"consistency","title":"Replication and consistency","description":"replication·consistency·quorum과 leader election을 다룬다.","displayOrder":20,"active":true},
+  {"kind":"topic","contentKey":"distributed.core.coordination","areaSlug":"distributed-systems","slug":"coordination","title":"Coordination and trade-offs","description":"lease·fencing·saga와 partition trade-off를 다룬다.","displayOrder":30,"active":true}
+]

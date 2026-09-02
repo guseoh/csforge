@@ -14,7 +14,7 @@ references:
     referenceType: BOOK
     language: en
     depth: section
-    recommendation: "array 기반 자료구조와 linked representation의 operation trade-off를 확인한다."
+    recommendation: "stack의 LIFO operation과 array/linked implementation trade-off를 확인한다."
     displayOrder: 1
 ---
 # Array

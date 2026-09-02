@@ -14,7 +14,7 @@ references:
     referenceType: BOOK
     language: en
     depth: section
-    recommendation: "merge-based sorting의 안정성과 sequential merge 특성을 확인한다."
+    recommendation: "stability가 동일 key 원소의 상대 순서를 보존하는 의미와 sorting application을 확인한다."
     displayOrder: 1
 ---
 # Merge Sort

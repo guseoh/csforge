@@ -14,7 +14,7 @@ references:
     referenceType: BOOK
     language: en
     depth: section
-    recommendation: "BFS 기반 shortest path와 path reconstruction을 확인한다."
+    recommendation: "vertex, edge, path, connectivity 같은 graph 기본 모델을 확인한다."
     displayOrder: 1
 ---
 # Unweighted Shortest Path

@@ -10,7 +10,7 @@ status: PUBLISHED
 displayOrder: 40
 references:
   - url: "https://microservices.io/patterns/data/transactional-outbox.html"
-    title: "Transactional Outbox Pattern"
+    title: "Microservices.io: Transactional Outbox Pattern"
     referenceType: OTHER
     language: en
     displayOrder: 1

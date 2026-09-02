@@ -59,7 +59,7 @@
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.data-representation.binary-hex"],
-    "acceptedAnswers": ["0xF0A5", "F0A5", "f0a5", "0xf0a5"]
+    "acceptedAnswers": ["0xF0A5", "F0A5"]
   },
   {
     "kind": "question",

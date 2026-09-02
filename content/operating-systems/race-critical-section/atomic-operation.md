@@ -14,7 +14,7 @@ references:
     referenceType: BOOK
     language: en
     depth: chapter
-    recommendation: "atomic hardware primitive가 lock과 critical-section 구현의 기반이 되는 방식을 확인한다."
+    recommendation: "mutex/lock이 atomic primitive를 이용해 critical section의 mutual exclusion을 구현하는 방식을 확인한다."
     displayOrder: 1
 ---
 # Atomic Operation

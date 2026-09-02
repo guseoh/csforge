@@ -14,7 +14,7 @@ references:
     referenceType: BOOK
     language: en
     depth: section
-    recommendation: "stack·queue의 push/pop 상태를 기반으로 candidate-only 구조를 이해한다."
+    recommendation: "stack의 LIFO operation과 array/linked implementation trade-off를 확인한다."
     displayOrder: 1
 ---
 # Monotonic Stack and Queue

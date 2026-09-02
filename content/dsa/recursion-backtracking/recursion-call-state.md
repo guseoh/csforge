@@ -14,7 +14,7 @@ references:
     referenceType: BOOK
     language: en
     depth: section
-    recommendation: "recursive algorithm의 call structure와 operation count를 분석한다."
+    recommendation: "입력 크기와 basic operation count를 기준으로 linear scan 비용을 분석한다."
     displayOrder: 1
 ---
 # Recursion Call State

@@ -10,7 +10,7 @@ status: PUBLISHED
 displayOrder: 10
 references:
   - url: "https://www.postgresql.org/docs/current/warm-standby.html"
-    title: "PostgreSQL Documentation: Warm Standby"
+    title: "PostgreSQL Documentation: High Availability, Load Balancing, and Replication"
     referenceType: OFFICIAL
     language: en
     displayOrder: 1

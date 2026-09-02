@@ -14,7 +14,7 @@ references:
     referenceType: BOOK
     language: en
     depth: section
-    recommendation: "directed graph의 DFS와 cycle 판정을 확인한다."
+    recommendation: "DAG, cycle과 topological ordering의 관계를 확인한다."
     displayOrder: 1
 ---
 # Cycle Detection

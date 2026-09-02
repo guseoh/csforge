@@ -14,7 +14,7 @@ references:
     referenceType: BOOK
     language: en
     depth: section
-    recommendation: "unbalanced BST의 height 문제와 balanced search tree의 목적을 확인한다."
+    recommendation: "rotation 전후 ordering invariant와 local link 변화를 확인한다."
     displayOrder: 1
 ---
 # Balanced Tree Motivation

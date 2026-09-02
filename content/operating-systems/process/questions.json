@@ -10,7 +10,8 @@
     "choices":[
       {"key":"A","content":"Program file은 같아도 서로 다른 PID·address space·runtime state를 가진 process가 만들어질 수 있다.","displayOrder":0},
       {"key":"B","content":"Executable이 같으면 OS가 반드시 하나의 process state만 공유한다.","displayOrder":1},
-      {"key":"C","content":"두 실행은 항상 같은 stack과 heap object를 사용한다.","displayOrder":2}
+      {"key":"C","content":"두 실행은 항상 같은 stack과 heap object를 사용한다.","displayOrder":2},
+      {"key":"D","content":"Executable이 같으면 두 실행의 PID도 반드시 같다.","displayOrder":3}
     ],
     "correctChoiceKey":"A"
   },
@@ -46,7 +47,8 @@
     "choices":[
       {"key":"A","content":"아니다. Process별 address-space mapping이 달라 서로 다른 physical frame을 가리킬 수 있다.","displayOrder":0},
       {"key":"B","content":"그렇다. Virtual address 값이 같으면 전 시스템에서 항상 같은 RAM byte다.","displayOrder":1},
-      {"key":"C","content":"Virtual address는 disk sector 번호이므로 RAM과 무관하다.","displayOrder":2}
+      {"key":"C","content":"Virtual address는 disk sector 번호이므로 RAM과 무관하다.","displayOrder":2},
+      {"key":"D","content":"두 process가 같은 virtual address를 쓰면 page table도 반드시 공유한다.","displayOrder":3}
     ],
     "correctChoiceKey":"A"
   },
@@ -92,7 +94,8 @@
     "choices":[
       {"key":"A","content":"PCB는 process lifecycle에 필요한 kernel metadata의 개념적 묶음이고 실제 OS는 여러 구조에 state를 나눌 수 있다.","displayOrder":0},
       {"key":"B","content":"PCB에는 오직 PID 숫자 하나만 있으므로 구현 구조가 없다.","displayOrder":1},
-      {"key":"C","content":"PCB는 application heap에 반드시 존재하는 Java object다.","displayOrder":2}
+      {"key":"C","content":"PCB는 application heap에 반드시 존재하는 Java object다.","displayOrder":2},
+      {"key":"D","content":"PCB는 모든 OS에서 동일한 공개 API struct 하나로 정의된다.","displayOrder":3}
     ],
     "correctChoiceKey":"A"
   },
@@ -169,7 +172,8 @@
     "choices":[
       {"key":"A","content":"fork는 child process를 만들고, exec는 성공 시 현재 process의 program image를 교체할 수 있다.","displayOrder":0},
       {"key":"B","content":"fork와 exec 모두 항상 동일한 새 PID를 두 개 만든다.","displayOrder":1},
-      {"key":"C","content":"exec는 memory를 전혀 바꾸지 않고 process 이름만 바꾼다.","displayOrder":2}
+      {"key":"C","content":"exec는 memory를 전혀 바꾸지 않고 process 이름만 바꾼다.","displayOrder":2},
+      {"key":"D","content":"fork는 현재 image만 교체하고 exec가 child PID를 새로 만든다.","displayOrder":3}
     ],
     "correctChoiceKey":"A"
   },
@@ -215,7 +219,8 @@
     "choices":[
       {"key":"A","content":"Application 실행은 끝났고 주요 resource는 정리됐지만 parent가 status를 수집하기 위한 최소 metadata가 남아 있을 수 있다.","displayOrder":0},
       {"key":"B","content":"Zombie는 CPU를 계속 100% 사용하는 정상 running process다.","displayOrder":1},
-      {"key":"C","content":"Zombie는 child executable 파일 자체가 삭제된 상태다.","displayOrder":2}
+      {"key":"C","content":"Zombie는 child executable 파일 자체가 삭제된 상태다.","displayOrder":2},
+      {"key":"D","content":"Zombie는 parent가 없어져 자동으로 모든 metadata가 즉시 사라진 상태다.","displayOrder":3}
     ],
     "correctChoiceKey":"A"
   },
@@ -251,7 +256,8 @@
     "choices":[
       {"key":"A","content":"일부 resource state는 규칙에 따라 상속/공유 관계가 남지만 두 process는 별도 scheduling 대상이다.","displayOrder":0},
       {"key":"B","content":"Parent와 child는 이후 모든 writable memory를 하나의 변수처럼 공유한다.","displayOrder":1},
-      {"key":"C","content":"Parent가 항상 child보다 먼저 모든 instruction을 실행한다.","displayOrder":2}
+      {"key":"C","content":"Parent가 항상 child보다 먼저 모든 instruction을 실행한다.","displayOrder":2},
+      {"key":"D","content":"Parent와 child는 하나의 PID를 공유하므로 별도 scheduling 대상이 아니다.","displayOrder":3}
     ],
     "correctChoiceKey":"A"
   },

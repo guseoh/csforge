@@ -14,7 +14,7 @@ references:
     referenceType: BOOK
     language: en
     depth: section
-    recommendation: "hash table의 expected lookup과 collision이 만든 긴 search path를 비교한다."
+    recommendation: "separate chaining의 lookup/insert/delete와 chain length 비용을 확인한다."
     displayOrder: 1
 ---
 # Average and Worst Lookup

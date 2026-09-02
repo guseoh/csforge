@@ -10,11 +10,9 @@ status: PUBLISHED
 displayOrder: 90
 references:
   - url: "https://www.rfc-editor.org/rfc/rfc9114"
-    title: "HTTP/3"
+    title: "RFC 9114: HTTP/3"
     referenceType: OFFICIAL
     language: en
-    depth: section
-    recommendation: "HTTP/3와 QUIC stream의 경계를 확인한다."
     displayOrder: 1
 ---
 # HTTP/3

@@ -14,7 +14,7 @@ references:
     referenceType: BOOK
     language: en
     depth: section
-    recommendation: "comparison model의 sorting lower bound와 non-comparison sort의 다른 전제를 비교한다."
+    recommendation: "stability가 동일 key 원소의 상대 순서를 보존하는 의미와 sorting application을 확인한다."
     displayOrder: 1
 ---
 # Comparison Sort Lower Bound

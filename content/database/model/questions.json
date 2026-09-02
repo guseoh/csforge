@@ -13,5 +13,8 @@
   },
   {
     "kind":"question","contentKey":"database.core.model.normalization.q2","promptMarkdown":"주문 당시 배송 주소를 주문에 snapshot으로 저장하는 것이 무조건 정규화 위반이라 제거해야 하는가? 이유를 설명하라.","questionType":"DESCRIPTIVE","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["database.core.model.normalization"],"modelAnswer":"무조건 그렇지 않다. 현재 회원 주소와 주문 당시 배송 주소는 서로 다른 시점의 사실일 수 있다. 과거 주문 기록 보존이라는 요구가 있다면 snapshot은 의도된 모델이며, 현재 원본의 중복과 구분해야 한다.","explanationMarkdown":"정규화는 기계적으로 중복을 제거하는 것이 아니라 사실의 소유와 변경 의미를 명확히 하는 과정이다."
+  },
+  {
+    "kind":"question","contentKey":"database.core.model.relation-tuple.q2","promptMarkdown":"관계형 모델에서 table의 row 순서가 본질적인 속성이 아니라고 보는 이유와, 순서가 필요한 API가 해야 할 일을 설명하라.","questionType":"DESCRIPTIVE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["database.core.model.relation-tuple"],"modelAnswer":"relation은 tuple의 집합과 schema를 표현할 뿐 물리 저장 순서를 결과 계약으로 포함하지 않는다. API가 순서를 필요로 하면 의미 있는 column과 안정적인 tie-breaker를 ORDER BY에 명시해야 한다.","explanationMarkdown":"논리 relation과 storage layout을 분리해야 결과 안정성을 설계할 수 있다."
   }
 ]

@@ -14,7 +14,7 @@ references:
     referenceType: BOOK
     language: en
     depth: section
-    recommendation: "stack/queue operation을 양끝 자료구조 관점에서 비교한다."
+    recommendation: "stack의 LIFO operation과 array/linked implementation trade-off를 확인한다."
     displayOrder: 1
 ---
 # Deque

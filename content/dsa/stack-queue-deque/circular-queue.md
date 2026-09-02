@@ -14,7 +14,7 @@ references:
     referenceType: BOOK
     language: en
     depth: section
-    recommendation: "array queue에서 제거된 앞 공간을 재사용하는 index 관리 원리를 확인한다."
+    recommendation: "stack의 LIFO operation과 array/linked implementation trade-off를 확인한다."
     displayOrder: 1
 ---
 # Circular Queue

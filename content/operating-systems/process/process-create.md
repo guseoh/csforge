@@ -14,7 +14,7 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "fork 이후 parent/child의 address space와 open file description 관계를 확인한다."
+    recommendation: "process 생성과 주소 공간을 확인한다."
     displayOrder: 1
 ---
 # Process Creation

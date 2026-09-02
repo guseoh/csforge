@@ -14,7 +14,7 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "process isolation과 namespace 경계를 확인한다."
+    recommendation: "process가 resource view를 분리하는 Linux namespace와 일반 process 경계를 구분한다."
     displayOrder: 1
 ---
 # Host Kernel Sharing

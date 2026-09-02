@@ -14,7 +14,7 @@ references:
     referenceType: BOOK
     language: en
     depth: section
-    recommendation: "quicksort partition의 pointer invariant와 duplicate 처리 조건을 확인한다."
+    recommendation: "partition invariant, pivot choice와 quicksort의 평균·최악 비용을 확인한다."
     displayOrder: 1
 ---
 # Partition

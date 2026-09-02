@@ -14,7 +14,7 @@ references:
     referenceType: BOOK
     language: en
     depth: section
-    recommendation: "DFS의 경로 탐색과 connected structure 처리를 확인한다."
+    recommendation: "vertex, edge, path, connectivity 같은 graph 기본 모델을 확인한다."
     displayOrder: 1
 ---
 # DFS

@@ -1,0 +1,104 @@
+schemaVersion: 2
+area:
+  key: system-design
+  title: System Design
+  baseline: requirements-first architecture synthesis and explicit trade-offs
+  contentKeyPrefix: system-design.core
+  status: CANONICAL_FOUNDATION
+policies:
+  language:
+    authoringLanguage: ko-KR
+    explanationRule: 기능 요구와 품질 속성을 수치화하고 data ownership·traffic·failure·운영 비용을 architecture 선택으로 연결한다.
+  question:
+    topicDifficultyCoverage: [EASY, MEDIUM, HARD]
+    areaTypeCoverage: [MULTIPLE_CHOICE, SHORT_ANSWER, DESCRIPTIVE, SCENARIO]
+    hardRule: requirement clarification, capacity estimate, ownership boundary, sync/async, read/write model, modularity, failure budget, isolation 또는 rollout·observability trade-off를 설계 상황으로 판단하게 한다.
+    shortAnswerRule: component 나열만으로 정답을 인정하지 않고 요구·보장·trade-off와 검증 방법을 함께 요구한다.
+  source:
+    primary: [AWS Well-Architected Framework, Google SRE Book, Microservices.io Architecture Patterns]
+    rule: provider-specific product recipe가 아니라 requirements·constraints·operational feedback에 따른 architecture decision을 설명한다.
+  visualization:
+    values: [NONE, TEXT, DIAGRAM]
+    rule: requirement-to-architecture mapping, sync/async boundary, data ownership과 failure/rollout flow처럼 trade-off 관계가 핵심인 곳에 사용한다.
+topics:
+- key: system-design.core.requirements
+  title: Requirements and boundaries
+  order: 10
+  scope: functional/non-functional requirement, capacity·data shape와 ownership boundary를 다룬다.
+  boundary: 개별 Database·Infrastructure resource 설명보다 설계 문제를 수치·경계로 정의하는 방법을 소유한다.
+  concepts:
+  - key: system-design.core.requirements.functional-nonfunctional
+    title: functional과 non-functional requirements
+    order: 10
+    level: 1
+    objective: user journey를 기능으로, latency·availability·durability·cost·security를 measurable constraint로 번역한다.
+    density: CORE
+    visualization: TEXT
+  - key: system-design.core.requirements.capacity-data
+    title: capacity estimate와 data shape
+    order: 20
+    level: 1
+    objective: QPS·payload·storage·read/write ratio·growth와 peak를 rough estimate로 연결하고 검증한다.
+    density: CORE
+    visualization: DIAGRAM
+  - key: system-design.core.requirements.ownership-boundaries
+    title: data ownership과 consistency boundary
+    order: 30
+    level: 2
+    objective: aggregate·source of truth·derived view와 team/API ownership을 분리한다.
+    density: CORE
+    visualization: DIAGRAM
+- key: system-design.core.architecture
+  title: Architecture composition
+  order: 20
+  scope: synchronous/asynchronous boundary, read/write model과 modular monolith/services 선택을 다룬다.
+  boundary: Messaging·Distributed Systems의 primitive를 반복하지 않고 요구사항에 맞는 composition과 migration seam을 소유한다.
+  concepts:
+  - key: system-design.core.architecture.sync-async
+    title: synchronous와 asynchronous boundary
+    order: 10
+    level: 1
+    objective: user response와 background workflow를 latency·failure·delivery·state contract에 따라 나눈다.
+    density: CORE
+    visualization: DIAGRAM
+  - key: system-design.core.architecture.read-write-models
+    title: read model과 write model
+    order: 20
+    level: 2
+    objective: transactional write와 query/read projection의 shape·freshness·rebuildability trade-off를 설계한다.
+    density: CORE
+    visualization: DIAGRAM
+  - key: system-design.core.architecture.modular-monolith-services
+    title: modular monolith와 services
+    order: 30
+    level: 2
+    objective: module boundary·team autonomy·deployment coupling·operational cost로 분리 시점을 판단한다.
+    density: CORE
+    visualization: TEXT
+- key: system-design.core.reliability
+  title: Reliability and evolution
+  order: 30
+  scope: failure budget·load protection, isolation과 progressive rollout·observability를 다룬다.
+  boundary: Cache·Security·Performance·Infrastructure의 구현 primitive를 반복하지 않고 end-to-end design decision과 feedback loop를 소유한다.
+  concepts:
+  - key: system-design.core.reliability.failure-budget
+    title: failure budget과 graceful degradation
+    order: 10
+    level: 1
+    objective: SLO·error budget에 맞춰 optional feature를 줄이고 핵심 workflow를 보호한다.
+    density: CORE
+    visualization: DIAGRAM
+  - key: system-design.core.reliability.failure-isolation
+    title: failure isolation과 load protection
+    order: 20
+    level: 2
+    objective: bulkhead·timeout·rate limit·backpressure를 dependency failure와 overload 전파 방지에 배치한다.
+    density: CORE
+    visualization: DIAGRAM
+  - key: system-design.core.reliability.rollout-observability
+    title: rollout과 observability feedback
+    order: 30
+    level: 2
+    objective: canary·rollback·telemetry·SLO gate로 architecture 변경을 점진적으로 검증한다.
+    density: CORE
+    visualization: DIAGRAM

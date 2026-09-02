@@ -14,7 +14,7 @@ references:
     referenceType: BOOK
     language: en
     depth: section
-    recommendation: "collision이 정상적인 상황인 이유와 separate chaining/open addressing의 처리 방식을 확인한다."
+    recommendation: "separate chaining의 lookup/insert/delete와 chain length 비용을 확인한다."
     displayOrder: 1
 ---
 # Collision

@@ -14,7 +14,7 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "Linux에서 system call이 application과 kernel 사이의 기본 interface라는 점과 syscall 목록을 확인한다."
+    recommendation: "OS와 kernel service의 경계를 확인한다."
     displayOrder: 1
 ---
 # System Call

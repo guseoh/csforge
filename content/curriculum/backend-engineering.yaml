@@ -339,14 +339,14 @@ topics:
     objective: 여러 consumer가 다른 version으로 존재할 때 additive change, dual-read/write, deprecation window, semantic break를 관리한다.
     density: CORE
     visualization: TEXT
-  - key: backend.core.evolution.cache-decision
+  - key: backend.core.evolution.cache-adoption
     title: cache 도입 판단
     order: 30
     level: 3
     objective: measured hot read/latency/backend load와 stale tolerance가 있을 때 cache 후보를 검토하고 invalidation/source-of-truth 비용을 비교한다.
     density: CORE
     visualization: TEXT
-  - key: backend.core.evolution.async-decision
+  - key: backend.core.evolution.async-adoption
     title: async 처리 도입 판단
     order: 40
     level: 3

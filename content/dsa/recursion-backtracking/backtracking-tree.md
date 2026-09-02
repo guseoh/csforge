@@ -14,7 +14,7 @@ references:
     referenceType: BOOK
     language: en
     depth: section
-    recommendation: "재귀 탐색에서 상태 수와 실행 비용을 분석하는 관점을 확인한다."
+    recommendation: "입력 크기와 basic operation count를 기준으로 linear scan 비용을 분석한다."
     displayOrder: 1
 ---
 # Backtracking Tree

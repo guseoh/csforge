@@ -14,7 +14,7 @@ references:
     referenceType: BOOK
     language: ko
     depth: section
-    recommendation: "priority 기반 scheduling과 priority boost가 starvation을 줄이는 이유를 확인한다."
+    recommendation: "priority boost가 long-running job starvation을 방지하는 scheduler 설계 이유를 확인한다."
     displayOrder: 1
 ---
 # Priority Scheduling
