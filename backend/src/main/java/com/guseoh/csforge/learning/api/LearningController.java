@@ -2,8 +2,14 @@ package com.guseoh.csforge.learning.api;
 
 import java.util.List;
 
+import com.guseoh.csforge.learning.application.ConceptProgressView;
+import com.guseoh.csforge.learning.application.ConceptSearchCriteria;
+import com.guseoh.csforge.learning.application.ConceptSort;
+import com.guseoh.csforge.learning.application.LearningCommandService;
+import com.guseoh.csforge.learning.application.LearningQueryService;
+import com.guseoh.csforge.learning.application.PersonalNoteView;
+import com.guseoh.csforge.learning.domain.LearningStatus;
 import jakarta.validation.Valid;
-
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,12 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.guseoh.csforge.learning.application.ConceptSearchCriteria;
-import com.guseoh.csforge.learning.application.ConceptSort;
-import com.guseoh.csforge.learning.application.LearningCommandService;
-import com.guseoh.csforge.learning.application.LearningQueryService;
-import com.guseoh.csforge.learning.domain.LearningStatus;
-
+/** Learning/Concept HTTP 요청을 application use case에 연결한다. */
 @RestController
 @RequestMapping("/api")
 public class LearningController {
@@ -27,9 +28,7 @@ public class LearningController {
     private final LearningQueryService queryService;
     private final LearningCommandService commandService;
 
-    public LearningController(
-            LearningQueryService queryService,
-            LearningCommandService commandService) {
+    public LearningController(LearningQueryService queryService, LearningCommandService commandService) {
         this.queryService = queryService;
         this.commandService = commandService;
     }
@@ -56,15 +55,7 @@ public class LearningController {
             @RequestParam(defaultValue = "30") int size,
             @RequestParam(defaultValue = "CURRICULUM") String sort) {
         return queryService.listConcepts(new ConceptSearchCriteria(
-                area,
-                topicId,
-                level,
-                learningStatus,
-                bookmarked,
-                q,
-                page,
-                size,
-                ConceptSort.from(sort)));
+                area, topicId, level, learningStatus, bookmarked, q, page, size, ConceptSort.from(sort)));
     }
 
     @GetMapping("/concepts/{conceptId}")
@@ -74,20 +65,26 @@ public class LearningController {
 
     @PostMapping("/concepts/{conceptId}/view")
     public ConceptProgressResponse recordView(@PathVariable long conceptId) {
-        return commandService.recordView(conceptId);
+        return toProgressResponse(commandService.recordView(conceptId));
     }
 
     @PatchMapping("/concepts/{conceptId}/progress")
     public ConceptProgressResponse updateProgress(
             @PathVariable long conceptId,
             @RequestBody ConceptProgressUpdateRequest request) {
-        return commandService.updateProgress(conceptId, request.status(), request.bookmarked());
+        return toProgressResponse(commandService.updateProgress(conceptId, request.status(), request.bookmarked()));
     }
 
     @PutMapping("/concepts/{conceptId}/note")
     public PersonalNoteResponse upsertNote(
             @PathVariable long conceptId,
             @Valid @RequestBody PersonalNoteUpsertRequest request) {
-        return commandService.upsertNote(conceptId, request.content());
+        PersonalNoteView view = commandService.upsertNote(conceptId, request.content());
+        return new PersonalNoteResponse(view.content(), view.updatedAt());
+    }
+
+    private static ConceptProgressResponse toProgressResponse(ConceptProgressView view) {
+        return new ConceptProgressResponse(
+                view.status(), view.bookmarked(), view.firstViewedAt(), view.lastViewedAt(), view.completedAt());
     }
 }
