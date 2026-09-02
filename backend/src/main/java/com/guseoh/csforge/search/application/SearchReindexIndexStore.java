@@ -9,6 +9,7 @@ public interface SearchReindexIndexStore {
     void bulkUpsert(String indexName, List<SearchProjectionDocument> documents);
     void upsert(String indexName, SearchProjectionDocument document);
     void delete(String indexName, SearchDocumentRef ref);
+    void refresh(String indexName);
     Map<SearchDocumentType, Long> countByDocumentType(String indexName);
     void swapAlias(String indexName);
     void deleteIndex(String indexName);
