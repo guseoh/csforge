@@ -102,6 +102,15 @@ public class ElasticsearchSearchReindexIndexStore implements SearchReindexIndexS
     }
 
     @Override
+    public void refresh(String indexName) {
+        try {
+            clientProvider.client().indices().refresh(request -> request.index(indexName));
+        } catch (IOException | RuntimeException exception) {
+            throw new SearchUnavailableException("Failed to refresh Search reindex target", exception);
+        }
+    }
+
+    @Override
     public Map<SearchDocumentType, Long> countByDocumentType(String indexName) {
         Map<SearchDocumentType, Long> counts = new EnumMap<>(SearchDocumentType.class);
         try {
