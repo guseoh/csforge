@@ -37,6 +37,9 @@ public class SearchOutboxEvent {
     @Column(name = "source_id", nullable = false)
     private long sourceId;
 
+    @Column(name = "change_sequence", nullable = false)
+    private long changeSequence;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
@@ -55,24 +58,33 @@ public class SearchOutboxEvent {
     @Column(name = "last_error", length = 2000)
     private String lastError;
 
-    private SearchOutboxEvent(SearchChangeType changeType, long sourceId, Instant occurredAt) {
-        if (changeType == null || sourceId <= 0 || occurredAt == null) {
+    private SearchOutboxEvent(SearchChangeType changeType, long sourceId, Instant occurredAt, long changeSequence) {
+        if (changeType == null || sourceId <= 0 || occurredAt == null || changeSequence <= 0) {
             throw new IllegalArgumentException("Invalid search outbox event");
         }
         this.eventId = UUID.randomUUID();
         this.changeType = changeType;
         this.sourceId = sourceId;
+        this.changeSequence = changeSequence;
         this.createdAt = occurredAt;
         this.updatedAt = occurredAt;
         this.attemptCount = 0;
     }
 
-    public static SearchOutboxEvent pending(SearchChangeType changeType, long sourceId, Instant occurredAt) {
-        return new SearchOutboxEvent(changeType, sourceId, occurredAt);
+    public static SearchOutboxEvent pending(
+            SearchChangeType changeType,
+            long sourceId,
+            Instant occurredAt,
+            long changeSequence) {
+        return new SearchOutboxEvent(changeType, sourceId, occurredAt, changeSequence);
     }
 
-    public void refresh(Instant occurredAt) {
+    public void refresh(Instant occurredAt, long changeSequence) {
         if (publishedAt != null) throw new IllegalStateException("Published search outbox event cannot be refreshed");
+        if (occurredAt == null || changeSequence <= this.changeSequence) {
+            throw new IllegalArgumentException("Search outbox refresh must advance change sequence");
+        }
+        this.changeSequence = changeSequence;
         this.updatedAt = occurredAt;
         this.nextAttemptAt = null;
         this.lastError = null;
@@ -80,14 +92,12 @@ public class SearchOutboxEvent {
 
     public void markPublished(Instant publishedAt) {
         this.publishedAt = publishedAt;
-        this.updatedAt = publishedAt;
         this.nextAttemptAt = null;
         this.lastError = null;
     }
 
     public void markFailed(Instant attemptedAt, Instant nextAttemptAt, String error) {
         this.attemptCount++;
-        this.updatedAt = attemptedAt;
         this.nextAttemptAt = nextAttemptAt;
         this.lastError = abbreviate(error, 2000);
     }
