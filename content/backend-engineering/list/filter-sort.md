@@ -8,7 +8,19 @@ summary: filter와 sort는 client가 query shape에 영향을 주는 입력 경�
 level: 2
 status: PUBLISHED
 displayOrder: 20
-references: []
+references:
+- url: https://google.aip.dev/132
+  title: 'AIP-132: Standard methods: List'
+  referenceType: OFFICIAL
+  language: en
+  displayOrder: 1
+  relationNote: List API의 filter/order_by와 pagination parameter 계약 확인
+- url: https://google.aip.dev/160
+  title: 'AIP-160: Filtering'
+  referenceType: OFFICIAL
+  language: en
+  displayOrder: 2
+  relationNote: filter syntax와 지원 field·validation·complexity 제한을 API 계약으로 정의하는 방식 확인
 ---
 # filter와 sort
 
@@ -31,7 +43,7 @@ Map<String, SortField> allowed = Map.of(
 
 ### filter의 의미를 계약으로 만든다
 
-`status=PAID,CANCELLED`, `createdFrom`, `createdTo`가 AND인지 OR인지 명확해야 합니다. 빈 문자열과 미지정 값의 의미도 정합니다.
+`status=PAID,CANCELLED`, `createdFrom`, `createdTo`가 AND인지 OR인지 명확해야 합니다. 빈 문자열과 미지정 값의 의미도 정합니다. 어떤 field와 operator를 지원하는지, 잘못된 filter를 어떻게 거절하는지, 지나치게 복잡한 query를 어디까지 허용할지도 API 계약입니다. AIP-160도 filter가 접근할 수 있는 field와 validation/complexity 제한을 service가 명시할 수 있도록 구분합니다.
 
 ### stable sort가 pagination과 결합된다
 
@@ -48,7 +60,7 @@ filter 조건
 page/cursor 경계
 ```
 
-filter가 바뀌면 cursor도 보통 재사용할 수 없습니다. Cursor에 sort/filter context를 포함하거나 API가 새 cursor를 발급하는 이유입니다.
+filter가 바뀌면 cursor도 보통 재사용할 수 없습니다. Cursor에 sort/filter context를 포함하거나 API가 새 cursor를 발급하는 이유입니다. 실제 page-token API에서는 이전 token을 발급한 요청과 이후 요청의 다른 query parameter가 일치해야 한다는 식으로 continuation contract를 둘 수 있습니다.
 
 ### DB index는 실제 query 조합을 보고 결정한다
 
