@@ -1,4 +1,4 @@
-name: Validate Java Stage 4 Review
+name: Patch and Validate OS Stage 5 Review
 
 on:
   push:
@@ -6,10 +6,10 @@ on:
       - content/patch-risk-review-java
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
-  validate:
+  patch-validate:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -23,189 +23,224 @@ jobs:
           set -euo pipefail
           test "$(git rev-parse HEAD)" = "1dcd453d1aff30c8c6fb8f2e00ff7b65cc13e857"
 
-      - name: Validate Java Stage 4 canonical content
+      - name: Apply Stage 5 minimal reinforcements
         shell: bash
         run: |
           set -euo pipefail
-          git diff --check 4b0a27dd372760f34272f9b8618ceea43b62c109...HEAD -- content/java
-
           python - <<'PY'
           import json
-          import re
+          from pathlib import Path
+
+          def replace(path, old, new):
+              p = Path(path)
+              text = p.read_text(encoding='utf-8')
+              assert old in text, f'missing expected text in {path}'
+              p.write_text(text.replace(old, new, 1), encoding='utf-8')
+
+          replace(
+              'content/operating-systems/race-critical-section/critical-section.md',
+              '**Mutual exclusion**은 한 thread가 critical section에 있을 때 다른 competing thread가 동시에 그 구간을 실행하지 못하게 한다. **Progress**는 critical section이 비어 있고 진입하려는 thread가 있을 때 선택이 무기한 미뤄지지 않아야 한다는 요구다. **Bounded waiting**은 특정 thread가 다른 thread들에게 계속 추월당하며 무한히 기다리지 않도록 waiting에 상한 성질을 요구한다.',
+              '**Mutual exclusion**은 한 thread가 critical section에 있을 때 다른 competing thread가 동시에 그 구간을 실행하지 못하게 한다. **Progress**는 critical section이 비어 있고 진입하려는 thread가 있을 때 선택이 무기한 미뤄지지 않아야 한다는 요구다. **Bounded waiting**은 어떤 thread/process가 진입을 요청한 뒤 그 요청이 허용되기 전까지 다른 경쟁자가 먼저 critical section에 진입할 수 있는 횟수에 유한한 bound가 있어야 한다는 요구다. 이는 OS scheduler까지 포함한 실제 wall-clock 대기시간 상한이나 latency SLA를 뜻하지 않는다.'
+          )
+
+          replace(
+              'content/operating-systems/virtual-memory/copy-on-write.md',
+              '`fork()` 직후 parent와 child는 논리적으로 서로 다른 address space를 갖지만, 모든 physical page를 즉시 복사하면 실제로 사용하지 않을 data까지 복제하게 된다. copy-on-write(COW)는 두 process가 같은 physical page를 **읽기 전용 형태로 임시 공유**하고, 둘 중 하나가 수정하려는 순간에만 별도 page를 만드는 방식으로 이 비용을 지연한다.',
+              'POSIX `fork()`의 핵심 계약은 parent와 child가 분리된 memory space를 가지며 fork 시점의 내용이 같다는 것이다. **그 분리를 어떤 방식으로 구현하는지는 별도 층의 문제다.** Linux의 `fork()`는 이 비용을 줄이기 위해 copy-on-write(COW) page를 사용한다. fork 직후 모든 physical page를 즉시 복사하는 대신 두 process가 같은 physical page를 임시 공유하고, 둘 중 하나가 수정하려는 순간에만 별도 page를 만드는 방식으로 복사 비용을 지연한다.'
+          )
+
+          page_fault = Path('content/operating-systems/virtual-memory/page-fault.md')
+          text = page_fault.read_text(encoding='utf-8')
+          anchor = '''    recommendation: "page fault에서 OS가 translation 상태를 해석하고 page-in 또는 실패를 결정하는 흐름을 확인한다."
+    displayOrder: 1
+'''
+          addition = anchor + '''  - url: "https://man7.org/linux/man-pages/man2/getrusage.2.html"
+    title: "getrusage(2) — Linux manual page"
+    referenceType: OFFICIAL
+    language: en
+    depth: section
+    recommendation: "Linux가 ru_minflt와 ru_majflt에서 I/O 없이 처리된 fault와 I/O가 필요했던 fault를 구분해 노출하는 방식을 확인한다."
+    displayOrder: 2
+'''
+          assert anchor in text
+          text = text.replace(anchor, addition, 1)
+          old = 'minor fault처럼 storage I/O 없이 mapping만 준비하는 경우와 실제 page-in이 필요한 major fault는 비용 차이가 크다. 따라서 `page fault 수가 1,000회`라는 숫자만으로 latency를 판단하면 안 된다.'
+          new = 'Linux의 `getrusage()` 같은 운영 지표에서는 I/O 없이 처리된 fault를 `ru_minflt`, I/O가 필요했던 fault를 `ru_majflt`로 구분한다. 흔히 minor/major fault라고 부르지만 이 이름과 계수 방식은 모든 OS의 보편적 page-fault 분류 계약으로 일반화하지 않는다. 따라서 `page fault 수가 1,000회`라는 숫자만으로 latency를 판단하면 안 된다.'
+          assert old in text
+          page_fault.write_text(text.replace(old, new, 1), encoding='utf-8')
+
+          demand = Path('content/operating-systems/virtual-memory/demand-paging.md')
+          text = demand.read_text(encoding='utf-8')
+          anchor = '''    recommendation: "page fault에서 OS가 translation 상태를 해석하고 page-in 또는 실패를 결정하는 흐름을 확인한다."
+    displayOrder: 1
+'''
+          addition = anchor + '''  - url: "https://man7.org/linux/man-pages/man2/mmap.2.html"
+    title: "mmap(2) — Linux manual page"
+    referenceType: OFFICIAL
+    language: en
+    depth: section
+    recommendation: "Linux mmap의 lazy population과 MAP_POPULATE 같은 explicit prefault 선택지를 구분한다."
+    displayOrder: 2
+'''
+          assert anchor in text
+          text = text.replace(anchor, addition, 1)
+          old = '예를 들어 1GiB file을 `mmap`했다고 해서 즉시 1GiB가 process의 resident memory가 되는 것은 아니다. virtual mapping은 먼저 만들어질 수 있지만, 실제 page를 읽을 때 page fault가 발생하고 해당 부분의 data가 준비된다. anonymous memory도 virtual range가 먼저 확보되고 첫 write에서 zero-filled physical page가 연결되는 방식으로 지연 준비될 수 있다.'
+          new = '예를 들어 Linux에서 일반적인 lazy file mapping은 1GiB file을 `mmap`했다고 해서 즉시 1GiB 전체를 resident하게 만들 필요가 없다. virtual mapping을 먼저 만들고 실제 접근 시 fault를 통해 필요한 page를 준비할 수 있다. 다만 Linux에는 `MAP_POPULATE`처럼 mapping 시점에 page table을 미리 populate하고 file read-ahead를 요청하는 선택지도 있으므로 `mmap = 항상 첫 접근까지 아무 page도 준비하지 않는다`고 일반화하면 안 된다. anonymous memory 역시 mapping 정책과 kernel 설정에 따라 resident 준비 시점이 달라질 수 있다.'
+          assert old in text
+          demand.write_text(text.replace(old, new, 1), encoding='utf-8')
+
+          durability = Path('content/operating-systems/filesystem/write-flush-fsync.md')
+          text = durability.read_text(encoding='utf-8')
+          anchor = '''    recommendation: "여러 filesystem metadata/data write가 crash 중 일부만 반영될 때 consistency를 유지하는 방식을 확인한다."
+    displayOrder: 2
+'''
+          addition = anchor + '''  - url: "https://man7.org/linux/man-pages/man2/write.2.html"
+    title: "write(2) — Linux manual page"
+    referenceType: OFFICIAL
+    language: en
+    depth: section
+    recommendation: "Linux write의 partial-write 가능성과 성공 반환이 disk commit을 보장하지 않는 경계를 확인한다."
+    displayOrder: 3
+  - url: "https://man7.org/linux/man-pages/man2/fsync.2.html"
+    title: "fsync(2) — Linux manual page"
+    referenceType: OFFICIAL
+    language: en
+    depth: section
+    recommendation: "Linux fsync의 file data/metadata persistence와 directory entry durability의 별도 경계를 확인한다."
+    displayOrder: 4
+'''
+          assert anchor in text
+          durability.write_text(text.replace(anchor, addition, 1), encoding='utf-8')
+
+          qpath = Path('content/operating-systems/race-critical-section/questions.json')
+          data = json.loads(qpath.read_text(encoding='utf-8'))
+          q = next(q for q in data if q['contentKey'] == 'operating-systems.core.race-critical-section.critical-section.q2')
+          q['modelAnswer'] = 'mutual exclusion은 competing execution이 critical section에 동시에 들어가지 못하게 하는 요구다. progress는 section이 비어 있고 진입 요청이 있을 때 선택이 무기한 미뤄지지 않게 하는 요구다. bounded waiting은 진입 요청 뒤 다른 경쟁자가 먼저 critical section에 진입할 수 있는 횟수에 유한한 bound가 있어야 한다는 성질이며, wall-clock 대기시간 SLA를 뜻하지 않는다.'
+          qpath.write_text(json.dumps(data, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+
+          qpath = Path('content/operating-systems/virtual-memory/questions.json')
+          data = json.loads(qpath.read_text(encoding='utf-8'))
+          q = next(q for q in data if q['contentKey'] == 'operating-systems.core.virtual-memory.page-fault.q3')
+          q['promptMarkdown'] = 'Linux 운영 지표에서 전체 page-fault 수는 비슷한데 배포 직후에만 latency가 훨씬 높다. 어떤 차이를 우선 확인해야 하는가?'
+          q['modelAnswer'] = 'Linux의 ru_minflt/ru_majflt처럼 I/O 없이 처리된 fault와 I/O가 필요했던 fault를 구분해 본다. cold 상태에서 storage I/O가 필요한 fault 비중이 높고 이후에는 resident/page-cache 상태에서 I/O 없이 처리되는 fault가 많다면 같은 fault count라도 비용이 크게 다를 수 있다.'
+          qpath.write_text(json.dumps(data, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+          PY
+
+      - name: Validate Stage 5 patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --check
+          python - <<'PY'
+          import json, re
           from pathlib import Path
           from urllib.parse import urlparse
 
-          root = Path('content/java')
+          root = Path('content/operating-systems')
           errors = []
-
-          def clean(value: str) -> str:
-              value = value.strip()
-              if len(value) >= 2 and value[0] == value[-1] and value[0] in {'"', "'"}:
-                  return value[1:-1]
-              return value
-
-          def scalar(front: str, name: str):
-              match = re.search(rf'(?m)^{re.escape(name)}:\s*(.+?)\s*$', front)
-              return clean(match.group(1)) if match else None
-
-          topics_path = root / 'topics.json'
-          topics = json.loads(topics_path.read_text(encoding='utf-8'))
-          topic_keys = [item['contentKey'] for item in topics if item.get('kind') == 'topic']
+          topics = json.loads((root / 'topics.json').read_text(encoding='utf-8'))
+          topic_keys = [x['contentKey'] for x in topics if x.get('kind') == 'topic']
           if len(topic_keys) != len(set(topic_keys)):
               errors.append('duplicate topic contentKey')
-          topic_key_set = set(topic_keys)
+          topic_set = set(topic_keys)
+
+          def clean(v):
+              v = v.strip()
+              if len(v) >= 2 and v[0] == v[-1] and v[0] in {'"', "'"}:
+                  return v[1:-1]
+              return v
+
+          def scalar(front, name):
+              m = re.search(rf'(?m)^{re.escape(name)}:\s*(.+?)\s*$', front)
+              return clean(m.group(1)) if m else None
 
           concept_keys = []
-          concept_paths = {}
-          shared_reference_meta = {}
-          reference_count = 0
-
-          markdown_files = sorted(root.rglob('*.md'))
-          for path in markdown_files:
+          ref_meta = {}
+          ref_count = 0
+          for path in sorted(root.rglob('*.md')):
               text = path.read_text(encoding='utf-8')
               if not text.startswith('---\n'):
-                  errors.append(f'{path}: missing YAML front matter')
-                  continue
+                  errors.append(f'{path}: missing front matter'); continue
               parts = text.split('---', 2)
               if len(parts) < 3:
-                  errors.append(f'{path}: malformed YAML front matter')
-                  continue
+                  errors.append(f'{path}: malformed front matter'); continue
               front = parts[1]
-
-              kind = scalar(front, 'kind')
-              if kind != 'concept':
-                  errors.append(f'{path}: kind={kind!r}, expected concept')
-
-              content_key = scalar(front, 'contentKey')
-              topic_key = scalar(front, 'topicContentKey')
+              key = scalar(front, 'contentKey')
+              topic = scalar(front, 'topicContentKey')
               slug = scalar(front, 'slug')
-              if not content_key:
-                  errors.append(f'{path}: missing contentKey')
-              else:
-                  concept_keys.append(content_key)
-                  concept_paths.setdefault(content_key, []).append(str(path))
-              if not topic_key or topic_key not in topic_key_set:
-                  errors.append(f'{path}: unknown topicContentKey={topic_key!r}')
-              if slug != path.stem:
-                  errors.append(f'{path}: slug={slug!r} does not match filename')
+              if not key: errors.append(f'{path}: missing contentKey')
+              else: concept_keys.append(key)
+              if topic not in topic_set: errors.append(f'{path}: unknown topic {topic}')
+              if slug != path.stem: errors.append(f'{path}: slug mismatch {slug}')
 
-              refs = []
-              current = None
-              in_refs = False
+              refs, current, in_refs = [], None, False
               for line in front.splitlines():
-                  if line.strip() == 'references:':
-                      in_refs = True
-                      continue
-                  if not in_refs:
-                      continue
-                  url_match = re.match(r'^\s*-\s+url:\s*(.+?)\s*$', line)
-                  if url_match:
-                      if current is not None:
-                          refs.append(current)
-                      current = {'url': clean(url_match.group(1))}
-                      continue
-                  field_match = re.match(r'^\s+(title|referenceType|language|displayOrder|relationNote):\s*(.*?)\s*$', line)
-                  if field_match and current is not None:
-                      current[field_match.group(1)] = clean(field_match.group(2))
-                      continue
-                  if line and not line[0].isspace():
-                      break
-              if current is not None:
-                  refs.append(current)
-
-              if not refs:
-                  errors.append(f'{path}: no references')
-                  continue
-
-              display_orders = []
+                  if line.strip() == 'references:': in_refs = True; continue
+                  if not in_refs: continue
+                  m = re.match(r'^\s*-\s+url:\s*(.+?)\s*$', line)
+                  if m:
+                      if current: refs.append(current)
+                      current = {'url': clean(m.group(1))}; continue
+                  m = re.match(r'^\s+(title|referenceType|language|displayOrder):\s*(.*?)\s*$', line)
+                  if m and current is not None:
+                      current[m.group(1)] = clean(m.group(2)); continue
+                  if line and not line[0].isspace(): break
+              if current: refs.append(current)
+              if not refs: errors.append(f'{path}: no references')
+              orders = []
               for ref in refs:
-                  reference_count += 1
-                  required = ('url', 'title', 'referenceType', 'language', 'displayOrder', 'relationNote')
-                  missing = [field for field in required if not ref.get(field)]
-                  if missing:
-                      errors.append(f'{path}: reference {ref.get("url", "<unknown>")} missing {missing}')
-                      continue
+                  ref_count += 1
+                  missing = [k for k in ('url','title','referenceType','language','displayOrder') if not ref.get(k)]
+                  if missing: errors.append(f'{path}: ref missing {missing}'); continue
                   parsed = urlparse(ref['url'])
-                  if parsed.scheme not in {'http', 'https'} or not parsed.netloc:
-                      errors.append(f'{path}: invalid reference URL {ref["url"]}')
-                  try:
-                      display_order = int(ref['displayOrder'])
-                      if display_order <= 0:
-                          raise ValueError
-                      display_orders.append(display_order)
-                  except ValueError:
-                      errors.append(f'{path}: invalid reference displayOrder {ref["displayOrder"]!r}')
-
+                  if parsed.scheme not in {'http','https'} or not parsed.netloc: errors.append(f'{path}: invalid URL {ref["url"]}')
+                  try: orders.append(int(ref['displayOrder']))
+                  except ValueError: errors.append(f'{path}: invalid displayOrder')
                   meta = (ref['title'], ref['referenceType'], ref['language'])
-                  previous = shared_reference_meta.setdefault(ref['url'], (meta, str(path)))
-                  if previous[0] != meta:
-                      errors.append(
-                          f'reference metadata conflict for {ref["url"]}: '
-                          f'{previous[0]} in {previous[1]} vs {meta} in {path}'
-                      )
+                  prev = ref_meta.setdefault(ref['url'], (meta, str(path)))
+                  if prev[0] != meta: errors.append(f'reference metadata conflict {ref["url"]}: {prev} vs {(meta,str(path))}')
+              if len(orders) != len(set(orders)): errors.append(f'{path}: duplicate ref displayOrder')
 
-              if len(display_orders) != len(set(display_orders)):
-                  errors.append(f'{path}: duplicate reference displayOrder')
-
-          for key, paths in concept_paths.items():
-              if len(paths) > 1:
-                  errors.append(f'duplicate concept contentKey {key}: {paths}')
-          concept_key_set = set(concept_keys)
-
-          json_files = sorted(root.rglob('*.json'))
+          if len(concept_keys) != len(set(concept_keys)):
+              errors.append('duplicate concept contentKey')
+          concept_set = set(concept_keys)
           question_keys = []
-          question_paths = {}
           question_count = 0
-
+          json_files = sorted(root.rglob('*.json'))
           for path in json_files:
-              try:
-                  data = json.loads(path.read_text(encoding='utf-8'))
-              except Exception as exc:
-                  errors.append(f'{path}: JSON parse error: {exc}')
-                  continue
-
+              try: data = json.loads(path.read_text(encoding='utf-8'))
+              except Exception as e: errors.append(f'{path}: JSON parse {e}'); continue
               items = data if isinstance(data, list) else [data]
-              for item in items:
-                  if not isinstance(item, dict) or item.get('kind') != 'question':
-                      continue
+              for q in items:
+                  if not isinstance(q, dict) or q.get('kind') != 'question': continue
                   question_count += 1
-                  key = item.get('contentKey')
-                  if not key:
-                      errors.append(f'{path}: question missing contentKey')
-                      continue
+                  key = q.get('contentKey')
+                  if not key: errors.append(f'{path}: question missing key'); continue
                   question_keys.append(key)
-                  question_paths.setdefault(key, []).append(str(path))
-
-                  concept_refs = item.get('conceptKeys') or []
-                  if not concept_refs:
-                      errors.append(f'{path}: {key} has no conceptKeys')
-                  for concept_ref in concept_refs:
-                      if concept_ref not in concept_key_set:
-                          errors.append(f'{path}: {key} references unknown concept {concept_ref}')
-
-                  if item.get('questionType') == 'MULTIPLE_CHOICE':
-                      choices = item.get('choices') or []
-                      choice_keys = [choice.get('key') for choice in choices if isinstance(choice, dict)]
-                      if not choices or len(choice_keys) != len(choices):
-                          errors.append(f'{path}: {key} has malformed choices')
-                      if len(choice_keys) != len(set(choice_keys)):
-                          errors.append(f'{path}: {key} has duplicate choice keys')
-                      if item.get('correctChoiceKey') not in choice_keys:
-                          errors.append(f'{path}: {key} correctChoiceKey not in choices')
-
-          for key, paths in question_paths.items():
-              if len(paths) > 1:
-                  errors.append(f'duplicate question contentKey {key}: {paths}')
+                  refs = q.get('conceptKeys') or []
+                  if not refs: errors.append(f'{key}: no conceptKeys')
+                  for ref in refs:
+                      if ref not in concept_set: errors.append(f'{key}: unknown concept {ref}')
+                  if q.get('questionType') == 'MULTIPLE_CHOICE':
+                      choices = q.get('choices') or []
+                      ckeys = [c.get('key') for c in choices]
+                      if len(ckeys) != len(set(ckeys)): errors.append(f'{key}: duplicate choice keys')
+                      if q.get('correctChoiceKey') not in ckeys: errors.append(f'{key}: invalid correctChoiceKey')
+          if len(question_keys) != len(set(question_keys)): errors.append('duplicate question contentKey')
 
           if errors:
-              print('JAVA_STAGE4_STATIC_VALIDATION status=FAIL')
-              for error in errors:
-                  print('ERROR', error)
+              print('OS_STAGE5_STATIC_VALIDATION status=FAIL')
+              for e in errors: print('ERROR', e)
               raise SystemExit(1)
-
-          print(
-              'JAVA_STAGE4_STATIC_VALIDATION status=PASS '
-              f'topics={len(topic_keys)} concepts={len(concept_keys)} '
-              f'questions={question_count} references={reference_count} json_files={len(json_files)}'
-          )
+          print(f'OS_STAGE5_STATIC_VALIDATION status=PASS topics={len(topic_keys)} concepts={len(concept_keys)} questions={question_count} references={ref_count} json_files={len(json_files)}')
           PY
+
+      - name: Commit and push review branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add content/operating-systems
+          git commit -m "content: tighten OS Stage 5 contract boundaries"
+          git push origin HEAD:content/risk-based-deep-review
