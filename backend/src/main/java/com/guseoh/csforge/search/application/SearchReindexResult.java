@@ -2,15 +2,17 @@ package com.guseoh.csforge.search.application;
 
 import java.util.Map;
 
-/** 완료된 full reindex의 physical index와 outbox 경계 및 실제 문서 수를 반환한다. */
+/** 완료된 full reindex의 physical index와 outbox change-sequence 경계 및 실제 문서 수를 반환한다. */
 public record SearchReindexResult(
         String physicalIndex,
-        long baselineOutboxId,
-        long highWaterOutboxId,
+        long baselineChangeSequence,
+        long highWaterChangeSequence,
         Map<SearchDocumentType, Long> indexedCounts) {
 
     public SearchReindexResult {
-        if (physicalIndex == null || physicalIndex.isBlank() || baselineOutboxId < 0 || highWaterOutboxId < baselineOutboxId
+        if (physicalIndex == null || physicalIndex.isBlank()
+                || baselineChangeSequence < 0
+                || highWaterChangeSequence < baselineChangeSequence
                 || indexedCounts == null) {
             throw new IllegalArgumentException("Invalid search reindex result");
         }
