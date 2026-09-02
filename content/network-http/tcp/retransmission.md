@@ -21,7 +21,7 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "RTO timer 만료와 earliest unacknowledged segment retransmission을 확인한다."
+    recommendation: "TCP timeout과 retransmission 판단을 확인한다."
     displayOrder: 2
 ---
 # TCP Retransmission
