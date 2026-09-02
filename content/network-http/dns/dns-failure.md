@@ -14,21 +14,21 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "DNS RCODE의 기본 의미를 확인한다."
+    recommendation: "DNS delegation과 service record의 역할을 확인한다."
     displayOrder: 1
   - url: "https://www.rfc-editor.org/rfc/rfc2308"
     title: "Negative Caching of DNS Queries"
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "NXDOMAIN/NODATA negative response semantics를 확인한다."
+    recommendation: "NXDOMAIN/NODATA negative answer와 SOA 기반 negative TTL을 확인한다."
     displayOrder: 2
   - url: "https://www.rfc-editor.org/rfc/rfc9520"
     title: "Negative Caching of DNS Resolution Failures"
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "SERVFAIL·REFUSED·timeout 등 resolution failure와 retry/cache 요구를 확인한다."
+    recommendation: "SERVFAIL·timeout 등 resolution failure cache를 NXDOMAIN/NODATA와 구분한다."
     displayOrder: 3
 ---
 # DNS Failure
