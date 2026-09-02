@@ -9,11 +9,17 @@ level: 2
 status: PUBLISHED
 displayOrder: 20
 references:
+- url: https://grpc.io/docs/guides/retry/
+  title: 'gRPC Guide: Retry'
+  referenceType: OFFICIAL
+  language: en
+  displayOrder: 1
+  relationNote: retry attempt limit, exponential backoff, jitter와 retry throttling의 구현 계약 확인
 - url: https://aws.amazon.com/builders-library/timeouts-retries-and-backoff-with-jitter/
   title: 'AWS Builders Library: Timeouts, retries, and backoff with jitter'
   referenceType: COMPANY_TECH_BLOG
   language: en
-  displayOrder: 1
+  displayOrder: 2
   relationNote: timeout·retry·backoff·jitter가 부하와 장애 전파에 미치는 영향 확인
 ---
 # exponential backoff와 jitter
@@ -40,7 +46,7 @@ attempt 3 → 400 ms
 attempt 4 → 800 ms
 ```
 
-실전에서는 maximum delay를 둡니다. 무한히 커지면 사용자 deadline을 넘기기 때문입니다.
+실전에서는 maximum delay와 maximum attempt를 함께 둡니다. 무한히 커지거나 계속 retry하면 사용자 deadline과 downstream capacity를 침범할 수 있기 때문입니다. 실제 gRPC retry policy도 `maxAttempts`, `initialBackoff`, `maxBackoff`, `backoffMultiplier`, retryable status를 별도 설정으로 둡니다.
 
 ### jitter가 필요한 이유
 
@@ -53,6 +59,8 @@ client B → 388 ms
 client C → 147 ms
 client D → 423 ms
 ```
+
+jitter의 정확한 분포와 범위는 구현 정책입니다. 예를 들어 gRPC는 retry backoff에 random jitter를 적용합니다. `exponential backoff = 특정 jitter 공식 하나`로 일반화하지 않습니다.
 
 ### retry budget
 
