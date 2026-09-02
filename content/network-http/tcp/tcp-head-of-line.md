@@ -14,7 +14,7 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "ordered byte-stream delivery와 out-of-order queue 요구 수준을 확인한다."
+    recommendation: "transport connection과 application request의 경계를 확인한다."
     displayOrder: 1
 ---
 # TCP Head-of-Line Blocking
