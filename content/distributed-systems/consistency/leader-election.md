@@ -23,7 +23,7 @@ references:
     relationNote: "leader failure 중 write/election 보장 확인"
   - url: "https://raft.github.io/raft.pdf"
     title: "In Search of an Understandable Consensus Algorithm (Raft)"
-    referenceType: PAPER
+    referenceType: OTHER
     language: en
     displayOrder: 3
     relationNote: "term·majority election과 replicated-log commit safety를 leader election 자체와 구분해 확인"
