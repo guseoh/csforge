@@ -16,6 +16,7 @@ import jakarta.persistence.LockModeType;
 /** 검색 outbox의 pending/coalescing/replay 조회를 제공하는 JPA 저장소이다. */
 public interface SearchOutboxEventRepository extends JpaRepository<SearchOutboxEvent, Long> {
 
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
     Optional<SearchOutboxEvent> findByChangeTypeAndSourceIdAndPublishedAtIsNull(
             SearchChangeType changeType,
             long sourceId);
