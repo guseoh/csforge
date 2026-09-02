@@ -9,6 +9,8 @@ import com.guseoh.csforge.search.domain.SearchOutboxEvent;
 import com.guseoh.csforge.search.domain.SearchOutboxEventRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 /** 동일 source의 미발행 변경을 한 행으로 합치되 각 변경의 outbox identity는 단조 증가시킨다. */
 @Component
@@ -19,6 +21,7 @@ public class SearchOutboxChangeRecorder implements SearchProjectionChangeRecorde
     private final Clock clock;
 
     @Override
+    @Transactional(propagation = Propagation.MANDATORY)
     public void record(SearchChangeType changeType, long sourceId) {
         Instant now = Instant.now(clock);
         repository.findByChangeTypeAndSourceIdAndPublishedAtIsNull(changeType, sourceId)
