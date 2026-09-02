@@ -14,8 +14,15 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "HTTP/2 stream·frame·identifier·multiplexing을 확인한다."
+    recommendation: "HTTP/2 stream·frame·multiplexing을 확인한다."
     displayOrder: 1
+  - url: "https://www.rfc-editor.org/rfc/rfc9113.html#section-5.1.1"
+    title: "RFC 9113 Section 5.1.1: Stream Identifiers"
+    referenceType: OFFICIAL
+    language: en
+    depth: section
+    recommendation: "HTTP/2 stream identifier의 parity·증가·재사용 금지 규칙을 확인한다."
+    displayOrder: 2
 ---
 # HTTP/2 Stream
 
