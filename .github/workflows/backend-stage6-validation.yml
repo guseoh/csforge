@@ -1,4 +1,4 @@
-name: Validate Backend Stage 6 Review
+name: Validate Pass 2 Canonical Import
 
 on:
   push:
@@ -23,199 +23,43 @@ jobs:
           set -euo pipefail
           test "$(git rev-parse HEAD)" = "a34fc6b62ddba3164889c75a171c6f5eeb061f78"
 
-      - name: Validate Backend Stage 6 canonical content
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '25'
+
+      - name: Restore proven fifteen-area validation test
         shell: bash
         run: |
           set -euo pipefail
-          git diff --check 4b0a27dd372760f34272f9b8618ceea43b62c109...HEAD -- content/backend-engineering
+          git fetch origin content/validate-fifteen-areas
+          mkdir -p backend/src/test/java/com/guseoh/csforge/importcontent
+          git show dd9f9ff541a47b94b98f2c432361f1762c6ea28e:backend/src/test/java/com/guseoh/csforge/importcontent/CanonicalFifteenAreaImportValidationTest.java \
+            > backend/src/test/java/com/guseoh/csforge/importcontent/CanonicalFifteenAreaImportValidationTest.java
+          test -s backend/src/test/java/com/guseoh/csforge/importcontent/CanonicalFifteenAreaImportValidationTest.java
 
-          python - <<'PY'
-          import json
-          import re
-          from pathlib import Path
-          from urllib.parse import urlparse
+      - name: Run parser regression
+        working-directory: backend
+        shell: bash
+        run: |
+          set -euo pipefail
+          chmod +x gradlew
+          ./gradlew test --tests com.guseoh.csforge.importcontent.ContentImportParserTest
 
-          root = Path('content/backend-engineering')
-          errors = []
+      - name: Run canonical fifteen-area import validation
+        working-directory: backend
+        shell: bash
+        run: |
+          set -euo pipefail
+          ./gradlew test --tests com.guseoh.csforge.importcontent.CanonicalFifteenAreaImportValidationTest --info 2>&1 | tee pass2-import-validation.log
 
-          targeted = {
-              'backend.core.retry.transient-permanent',
-              'backend.core.retry.backoff-jitter',
-              'backend.core.retry.deadline',
-              'backend.core.idempotency.repeat-request',
-              'backend.core.idempotency.idempotency-key',
-              'backend.core.idempotency.race-expiry',
-              'backend.core.list.pagination',
-              'backend.core.list.filter-sort',
-              'backend.core.list.cursor',
-              'backend.core.external.timeouts',
-              'backend.core.external.circuit-fallback',
-              'backend.core.concurrency-transaction.usecase-transaction',
-          }
-
-          def clean(value: str) -> str:
-              value = value.strip()
-              if len(value) >= 2 and value[0] == value[-1] and value[0] in {'"', "'"}:
-                  return value[1:-1]
-              return value
-
-          def scalar(front: str, name: str):
-              match = re.search(rf'(?m)^{re.escape(name)}:\s*(.+?)\s*$', front)
-              return clean(match.group(1)) if match else None
-
-          topics = json.loads((root / 'topics.json').read_text(encoding='utf-8'))
-          topic_keys = [item['contentKey'] for item in topics if item.get('kind') == 'topic']
-          if len(topic_keys) != len(set(topic_keys)):
-              errors.append('duplicate topic contentKey')
-          topic_set = set(topic_keys)
-
-          concept_keys = []
-          concept_paths = {}
-          reference_count = 0
-          shared_reference_meta = {}
-          targeted_seen = set()
-
-          for path in sorted(root.rglob('*.md')):
-              text = path.read_text(encoding='utf-8')
-              if not text.startswith('---\n'):
-                  errors.append(f'{path}: missing front matter')
-                  continue
-              parts = text.split('---', 2)
-              if len(parts) < 3:
-                  errors.append(f'{path}: malformed front matter')
-                  continue
-              front = parts[1]
-              key = scalar(front, 'contentKey')
-              topic = scalar(front, 'topicContentKey')
-              slug = scalar(front, 'slug')
-              kind = scalar(front, 'kind')
-              if kind != 'concept':
-                  errors.append(f'{path}: kind={kind!r}')
-              if not key:
-                  errors.append(f'{path}: missing contentKey')
-                  continue
-              concept_keys.append(key)
-              concept_paths.setdefault(key, []).append(str(path))
-              if topic not in topic_set:
-                  errors.append(f'{path}: unknown topicContentKey={topic!r}')
-              if slug != path.stem:
-                  errors.append(f'{path}: slug mismatch {slug!r}')
-
-              refs = []
-              current = None
-              in_refs = False
-              for line in front.splitlines():
-                  if line.strip() == 'references:':
-                      in_refs = True
-                      continue
-                  if not in_refs:
-                      continue
-                  m = re.match(r'^\s*-\s+url:\s*(.+?)\s*$', line)
-                  if m:
-                      if current is not None:
-                          refs.append(current)
-                      current = {'url': clean(m.group(1))}
-                      continue
-                  m = re.match(r'^\s+(title|referenceType|language|displayOrder|relationNote):\s*(.*?)\s*$', line)
-                  if m and current is not None:
-                      current[m.group(1)] = clean(m.group(2))
-                      continue
-                  if line and not line[0].isspace():
-                      break
-              if current is not None:
-                  refs.append(current)
-
-              if key in targeted:
-                  targeted_seen.add(key)
-                  if not refs:
-                      errors.append(f'{path}: targeted concept has no primary/official reference')
-
-              orders = []
-              for ref in refs:
-                  reference_count += 1
-                  required = ('url', 'title', 'referenceType', 'language', 'displayOrder', 'relationNote')
-                  missing = [field for field in required if not ref.get(field)]
-                  if missing:
-                      errors.append(f'{path}: reference {ref.get("url", "<unknown>")} missing {missing}')
-                      continue
-                  parsed = urlparse(ref['url'])
-                  if parsed.scheme not in {'http', 'https'} or not parsed.netloc:
-                      errors.append(f'{path}: invalid reference URL {ref["url"]}')
-                  try:
-                      order = int(ref['displayOrder'])
-                      if order <= 0:
-                          raise ValueError
-                      orders.append(order)
-                  except ValueError:
-                      errors.append(f'{path}: invalid reference displayOrder {ref["displayOrder"]!r}')
-                  meta = (ref['title'], ref['referenceType'], ref['language'])
-                  previous = shared_reference_meta.setdefault(ref['url'], (meta, str(path)))
-                  if previous[0] != meta:
-                      errors.append(
-                          f'reference metadata conflict for {ref["url"]}: '
-                          f'{previous[0]} in {previous[1]} vs {meta} in {path}'
-                      )
-              if len(orders) != len(set(orders)):
-                  errors.append(f'{path}: duplicate reference displayOrder')
-
-          if targeted_seen != targeted:
-              errors.append(f'missing targeted concepts: {sorted(targeted - targeted_seen)}')
-          for key, paths in concept_paths.items():
-              if len(paths) > 1:
-                  errors.append(f'duplicate concept contentKey {key}: {paths}')
-          concept_set = set(concept_keys)
-
-          question_count = 0
-          question_keys = []
-          question_paths = {}
-          json_files = sorted(root.rglob('*.json'))
-          for path in json_files:
-              try:
-                  data = json.loads(path.read_text(encoding='utf-8'))
-              except Exception as exc:
-                  errors.append(f'{path}: JSON parse error: {exc}')
-                  continue
-              items = data if isinstance(data, list) else [data]
-              for item in items:
-                  if not isinstance(item, dict) or item.get('kind') != 'question':
-                      continue
-                  question_count += 1
-                  key = item.get('contentKey')
-                  if not key:
-                      errors.append(f'{path}: question missing contentKey')
-                      continue
-                  question_keys.append(key)
-                  question_paths.setdefault(key, []).append(str(path))
-                  refs = item.get('conceptKeys') or []
-                  if not refs:
-                      errors.append(f'{path}: {key} has no conceptKeys')
-                  for ref in refs:
-                      if ref not in concept_set:
-                          errors.append(f'{path}: {key} references unknown concept {ref}')
-                  if item.get('questionType') == 'MULTIPLE_CHOICE':
-                      choices = item.get('choices') or []
-                      choice_keys = [c.get('key') for c in choices if isinstance(c, dict)]
-                      if not choices or len(choice_keys) != len(choices):
-                          errors.append(f'{path}: {key} malformed choices')
-                      if len(choice_keys) != len(set(choice_keys)):
-                          errors.append(f'{path}: {key} duplicate choice keys')
-                      if item.get('correctChoiceKey') not in choice_keys:
-                          errors.append(f'{path}: {key} invalid correctChoiceKey')
-
-          for key, paths in question_paths.items():
-              if len(paths) > 1:
-                  errors.append(f'duplicate question contentKey {key}: {paths}')
-
-          if errors:
-              print('BACKEND_STAGE6_STATIC_VALIDATION status=FAIL')
-              for error in errors:
-                  print('ERROR', error)
-              raise SystemExit(1)
-
-          print(
-              'BACKEND_STAGE6_STATIC_VALIDATION status=PASS '
-              f'topics={len(topic_keys)} concepts={len(concept_keys)} '
-              f'questions={question_count} references={reference_count} json_files={len(json_files)} '
-              f'targeted={len(targeted)}'
-          )
-          PY
+      - name: Upload validation evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pass2-final-import-validation
+          path: |
+            backend/pass2-import-validation.log
+            backend/build/test-results/test/**
+            backend/build/reports/tests/test/**
+          if-no-files-found: warn
