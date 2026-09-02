@@ -30,17 +30,20 @@ public interface SearchOutboxEventRepository extends JpaRepository<SearchOutboxE
             """)
     List<SearchOutboxEvent> findDuePending(@Param("now") Instant now, Pageable pageable);
 
-    @Query("select coalesce(max(e.id), 0) from SearchOutboxEvent e")
-    long findMaxId();
+    @Query(value = "select nextval('search_outbox_change_sequence_seq')", nativeQuery = true)
+    long nextChangeSequence();
+
+    @Query("select coalesce(max(e.changeSequence), 0) from SearchOutboxEvent e")
+    long findMaxChangeSequence();
 
     @Query("""
             select e from SearchOutboxEvent e
-            where e.id > :afterId and e.id <= :throughId
-            order by e.id
+            where e.changeSequence > :afterSequence and e.changeSequence <= :throughSequence
+            order by e.changeSequence, e.id
             """)
-    List<SearchOutboxEvent> findBetweenIds(
-            @Param("afterId") long afterId,
-            @Param("throughId") long throughId,
+    List<SearchOutboxEvent> findBetweenChangeSequences(
+            @Param("afterSequence") long afterSequence,
+            @Param("throughSequence") long throughSequence,
             Pageable pageable);
 
     long countByPublishedAtIsNull();
