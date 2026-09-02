@@ -1,0 +1,100 @@
+name: Finalize OS Stage 5 Questions
+
+on:
+  push:
+    branches:
+      - content/patch-risk-review-java
+
+permissions:
+  contents: write
+
+jobs:
+  finalize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: content/risk-based-deep-review
+          fetch-depth: 0
+
+      - name: Guard review head
+        run: test "$(git rev-parse HEAD)" = "24cdc84b12e14b8bf4ca08113dbe15f146959aaf"
+
+      - name: Align linked questions
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          path = Path('content/operating-systems/race-critical-section/questions.json')
+          data = json.loads(path.read_text(encoding='utf-8'))
+          q = next(x for x in data if x['contentKey'] == 'operating-systems.core.race-critical-section.critical-section.q2')
+          q['modelAnswer'] = 'mutual exclusion은 competing execution이 critical section에 동시에 들어가지 못하게 하는 요구다. progress는 section이 비어 있고 진입 요청이 있을 때 선택이 무기한 미뤄지지 않게 하는 요구다. bounded waiting은 진입 요청 뒤 다른 경쟁자가 먼저 critical section에 진입할 수 있는 횟수에 유한한 bound가 있어야 한다는 성질이며, wall-clock 대기시간 SLA를 뜻하지 않는다.'
+          path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+
+          path = Path('content/operating-systems/virtual-memory/questions.json')
+          data = json.loads(path.read_text(encoding='utf-8'))
+          q = next(x for x in data if x['contentKey'] == 'operating-systems.core.virtual-memory.page-fault.q3')
+          q['promptMarkdown'] = 'Linux 운영 지표에서 전체 page-fault 수는 비슷한데 배포 직후에만 latency가 훨씬 높다. 어떤 차이를 우선 확인해야 하는가?'
+          q['modelAnswer'] = 'Linux의 ru_minflt/ru_majflt처럼 I/O 없이 처리된 fault와 I/O가 필요했던 fault를 구분해 본다. cold 상태에서 storage I/O가 필요한 fault 비중이 높고 이후에는 resident/page-cache 상태에서 I/O 없이 처리되는 fault가 많다면 같은 fault count라도 비용이 크게 다를 수 있다.'
+          path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+          PY
+
+      - name: Validate OS canonical content
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --check
+          python - <<'PY'
+          import json, re
+          from pathlib import Path
+
+          root = Path('content/operating-systems')
+          topics = json.loads((root / 'topics.json').read_text(encoding='utf-8'))
+          topic_keys = {x['contentKey'] for x in topics if x.get('kind') == 'topic'}
+          concept_keys = []
+          for path in root.rglob('*.md'):
+              text = path.read_text(encoding='utf-8')
+              assert text.startswith('---\n'), path
+              front = text.split('---', 2)[1]
+              key = re.search(r'(?m)^contentKey:\s*(.+)$', front).group(1).strip()
+              topic = re.search(r'(?m)^topicContentKey:\s*(.+)$', front).group(1).strip()
+              slug = re.search(r'(?m)^slug:\s*(.+)$', front).group(1).strip()
+              assert topic in topic_keys, (path, topic)
+              assert slug == path.stem, (path, slug)
+              assert 'references:' in front, path
+              concept_keys.append(key)
+          assert len(concept_keys) == len(set(concept_keys))
+          concept_set = set(concept_keys)
+
+          question_keys = []
+          question_count = 0
+          json_files = list(root.rglob('*.json'))
+          for path in json_files:
+              data = json.loads(path.read_text(encoding='utf-8'))
+              items = data if isinstance(data, list) else [data]
+              for q in items:
+                  if not isinstance(q, dict) or q.get('kind') != 'question':
+                      continue
+                  question_count += 1
+                  question_keys.append(q['contentKey'])
+                  assert q.get('conceptKeys')
+                  assert all(k in concept_set for k in q['conceptKeys']), q['contentKey']
+                  if q.get('questionType') == 'MULTIPLE_CHOICE':
+                      keys = [c['key'] for c in q.get('choices', [])]
+                      assert len(keys) == len(set(keys)), q['contentKey']
+                      assert q.get('correctChoiceKey') in keys, q['contentKey']
+          assert len(question_keys) == len(set(question_keys))
+          print(f'OS_STAGE5_STATIC_VALIDATION status=PASS topics={len(topic_keys)} concepts={len(concept_keys)} questions={question_count} json_files={len(json_files)}')
+          PY
+
+      - name: Commit and push
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add content/operating-systems/race-critical-section/questions.json content/operating-systems/virtual-memory/questions.json
+          git commit -m "content: align OS Stage 5 boundary questions"
+          git push origin HEAD:content/risk-based-deep-review
