@@ -29,7 +29,7 @@ public class KafkaSearchIndexListenerControl implements SearchIndexListenerContr
         boolean ownedPause = !container.isPauseRequested();
         if (ownedPause) container.pause();
         long deadline = System.nanoTime() + PAUSE_TIMEOUT.toNanos();
-        while (!container.isConsumerPaused()) {
+        while (!container.isContainerPaused()) {
             if (!container.isRunning()) return ownedPause;
             if (System.nanoTime() >= deadline) {
                 throw new SearchUnavailableException("Timed out while pausing Search Kafka listener");
