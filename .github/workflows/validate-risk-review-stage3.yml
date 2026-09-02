@@ -1,0 +1,159 @@
+name: Validate Risk Review Stage 3
+
+on:
+  push:
+    branches:
+      - content/validate-risk-review-stage3
+
+jobs:
+  validate-content:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install YAML parser
+        run: python -m pip install --disable-pip-version-check pyyaml
+
+      - name: Validate canonical content structure
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          git diff --check origin/main...HEAD -- content
+
+          python - <<'PY'
+          import json
+          import pathlib
+          import subprocess
+          import yaml
+
+          ROOT = pathlib.Path('content')
+          ALLOWED_REFERENCE_TYPES = {'OFFICIAL', 'COMPANY_TECH_BLOG', 'BOOK', 'ARTICLE', 'OTHER'}
+          GLOBAL_REF_FIELDS = ('title', 'referenceType', 'language', 'depth', 'recommendation')
+
+          def frontmatter(text: str, path: str):
+              if not text.startswith('---\n'):
+                  return None
+              end = text.find('\n---\n', 4)
+              if end < 0:
+                  raise AssertionError(f'unclosed frontmatter: {path}')
+              data = yaml.safe_load(text[4:end]) or {}
+              if not isinstance(data, dict):
+                  raise AssertionError(f'invalid frontmatter mapping: {path}')
+              return data
+
+          concept_keys = set()
+          question_keys = set()
+          shared_refs = {}
+
+          for path in ROOT.rglob('*.md'):
+              data = frontmatter(path.read_text(encoding='utf-8'), str(path))
+              if not data or data.get('kind') != 'concept':
+                  continue
+              key = data.get('contentKey')
+              if not key:
+                  raise AssertionError(f'missing concept contentKey: {path}')
+              if key in concept_keys:
+                  raise AssertionError(f'duplicate concept contentKey: {key}')
+              concept_keys.add(key)
+
+              for ref in data.get('references') or []:
+                  url = ref.get('url')
+                  if not url:
+                      raise AssertionError(f'missing reference url: {path}')
+                  ref_type = ref.get('referenceType')
+                  if ref_type not in ALLOWED_REFERENCE_TYPES:
+                      raise AssertionError(f'unsupported referenceType {ref_type}: {path} {url}')
+                  signature = tuple(ref.get(field) for field in GLOBAL_REF_FIELDS)
+                  previous = shared_refs.setdefault(url, (signature, str(path)))
+                  if previous[0] != signature:
+                      raise AssertionError(
+                          'shared Reference metadata conflict:\n'
+                          f'url={url}\n'
+                          f'first={previous[1]} {previous[0]}\n'
+                          f'next={path} {signature}'
+                      )
+
+          for path in ROOT.rglob('questions.json'):
+              try:
+                  data = json.loads(path.read_text(encoding='utf-8'))
+              except Exception as exc:
+                  raise AssertionError(f'invalid JSON {path}: {exc}') from exc
+              if not isinstance(data, list):
+                  raise AssertionError(f'questions root must be array: {path}')
+
+              for question in data:
+                  if question.get('kind') != 'question':
+                      raise AssertionError(f'invalid question kind: {path}')
+                  qkey = question.get('contentKey')
+                  if not qkey:
+                      raise AssertionError(f'missing question contentKey: {path}')
+                  if qkey in question_keys:
+                      raise AssertionError(f'duplicate question contentKey: {qkey}')
+                  question_keys.add(qkey)
+
+                  for ckey in question.get('conceptKeys') or []:
+                      if ckey not in concept_keys:
+                          raise AssertionError(f'unknown concept key {ckey}: {qkey}')
+
+                  if question.get('questionType') == 'MULTIPLE_CHOICE':
+                      choices = question.get('choices') or []
+                      keys = [choice.get('key') for choice in choices]
+                      if not keys or len(keys) != len(set(keys)):
+                          raise AssertionError(f'invalid MCQ choice keys: {qkey}')
+                      if question.get('correctChoiceKey') not in keys:
+                          raise AssertionError(f'correctChoiceKey not in choices: {qkey}')
+
+                  accepted = question.get('acceptedAnswers') or []
+                  normalized = [str(value).strip().casefold() for value in accepted]
+                  if len(normalized) != len(set(normalized)):
+                      raise AssertionError(f'duplicate normalized acceptedAnswers: {qkey}')
+
+          changed = subprocess.check_output(
+              ['git', 'diff', '--name-only', 'origin/main...HEAD', '--', 'content'], text=True
+          ).splitlines()
+
+          for name in changed:
+              path = pathlib.Path(name)
+              if path.suffix == '.md' and path.exists():
+                  current = frontmatter(path.read_text(encoding='utf-8'), name)
+                  if current and current.get('kind') == 'concept':
+                      try:
+                          old_text = subprocess.check_output(['git', 'show', f'origin/main:{name}'], text=True)
+                      except subprocess.CalledProcessError:
+                          old_text = ''
+                      old = frontmatter(old_text, f'origin/main:{name}') if old_text else None
+                      if old and old.get('contentKey') != current.get('contentKey'):
+                          raise AssertionError(
+                              f'concept contentKey changed: {name}: '
+                              f'{old.get("contentKey")} -> {current.get("contentKey")}'
+                          )
+
+              if path.name == 'questions.json' and path.exists():
+                  try:
+                      old_text = subprocess.check_output(['git', 'show', f'origin/main:{name}'], text=True)
+                  except subprocess.CalledProcessError:
+                      old_text = ''
+                  if old_text:
+                      old = json.loads(old_text)
+                      current = json.loads(path.read_text(encoding='utf-8'))
+                      old_keys = {item.get('contentKey') for item in old}
+                      current_keys = {item.get('contentKey') for item in current}
+                      if old_keys != current_keys:
+                          raise AssertionError(
+                              f'question contentKey inventory changed: {name}: '
+                              f'removed={sorted(old_keys-current_keys)} added={sorted(current_keys-old_keys)}'
+                          )
+
+          print(
+              'STAGE3_STATIC_VALIDATION status=PASS '
+              f'concepts={len(concept_keys)} questions={len(question_keys)} '
+              f'reference_urls={len(shared_refs)} changed_content_files={len(changed)}'
+          )
+          PY
