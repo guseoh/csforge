@@ -21,6 +21,18 @@ references:
     language: en
     displayOrder: 2
     relationNote: timed/interruptible lock acquisition 선택지 확인
+  - url: "https://docs.oracle.com/en/java/javase/25/docs/api/java.management/java/lang/management/ThreadMXBean.html"
+    title: "Java SE 25 API: ThreadMXBean"
+    referenceType: OFFICIAL
+    language: en
+    displayOrder: 3
+    relationNote: platform thread monitoring과 deadlock detection 범위 확인
+  - url: "https://docs.oracle.com/en/java/javase/25/core/virtual-threads.html"
+    title: "Java SE 25 Guide: Virtual Threads"
+    referenceType: OFFICIAL
+    language: en
+    displayOrder: 4
+    relationNote: virtual thread를 포함하는 jcmd thread dump의 관찰 범위 확인
 ---
 # 멈춘 것처럼 보이는 프로그램의 원인은 하나가 아니다
 
@@ -171,6 +183,8 @@ JVM thread dump에서는 thread state와 stack을 확인하고 monitor deadlock�
 - 같은 패턴이 여러 thread에 반복되는가
 
 를 확인합니다.
+
+Java 25에서는 **진단 도구가 어떤 thread를 관찰하는지도 구분해야 합니다.** `ThreadMXBean`은 platform thread의 monitoring과 management만 지원하므로 `findMonitorDeadlockedThreads()`와 `findDeadlockedThreads()`도 platform thread의 deadlock cycle을 대상으로 합니다. 반면 `jcmd Thread.dump_to_file`은 platform thread와 virtual thread를 모두 포함한 thread dump를 만들 수 있습니다. 따라서 `ThreadMXBean`의 deadlock detector가 아무 cycle도 찾지 못했다는 사실만으로 virtual thread가 포함된 hang이나 lock 문제까지 없다고 결론내리면 안 됩니다.
 
 다만 thread dump 한 장만으로 모든 starvation/livelock을 자동 판정할 수 있는 것은 아닙니다. 시간에 따른 상태 변화, CPU 사용량, queue 길이, 요청 latency 같은 관찰과 함께 봅니다.
 
