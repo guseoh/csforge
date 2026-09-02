@@ -3,8 +3,8 @@ kind: concept
 contentKey: network-http.core.http-versions.keep-alive
 topicContentKey: network-http.core.http-versions
 slug: keep-alive
-title: "Keep-Alive"
-summary: "idle connection 유지가 handshake 비용과 resource 점유를 바꾸는 방식을 설명한다."
+title: "Persistent Connection and Keep-Alive"
+summary: "HTTP connection 재사용과 HTTP/1.x Keep-Alive 신호, TCP keepalive probe의 서로 다른 경계를 설명한다."
 level: 1
 status: PUBLISHED
 displayOrder: 30
@@ -14,13 +14,22 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "HTTP/1.1 message framing과 body 경계를 확인한다."
+    recommendation: "HTTP/1.1 persistent connection과 connection option을 확인한다."
     displayOrder: 1
+  - url: "https://www.rfc-editor.org/rfc/rfc9113"
+    title: "HTTP/2"
+    referenceType: OFFICIAL
+    language: en
+    depth: section
+    recommendation: "HTTP/2에서 connection-specific header field가 금지되는 경계를 확인한다."
+    displayOrder: 2
 ---
-# Keep-Alive
+# Persistent Connection and Keep-Alive
 
-HTTP persistent keep-alive는 response 뒤에도 application connection을 열어 두어 다음 HTTP request가 같은 TCP 또는 QUIC transport를 재사용하게 하는 운용 방식이다. TCP/TLS handshake와 congestion warm-up 비용을 줄이고 latency를 낮출 수 있지만 server socket·memory·connection pool·NAT mapping을 idle 동안 점유한다. HTTP/1.1에서는 persistence가 기본이고 `Connection: keep-alive` header가 있다고 무한 lifetime을 의미하지 않는다.
+HTTP connection을 여러 request에 재사용하면 새 transport/TLS handshake를 반복하는 비용을 줄일 수 있다. HTTP/1.1은 persistent connection을 기본으로 하며 `Connection: close` 같은 connection option으로 현재 response 뒤 연결을 닫을 수 있다. HTTP/1.0의 `Connection: keep-alive`는 명시적으로 persistence를 협상하던 호환 mechanism으로 이해해야 하며, `Keep-Alive` header가 HTTP 전체 버전의 공통 connection-lifetime protocol인 것은 아니다.
 
-이 개념을 TCP keepalive probe(`SO_KEEPALIVE`)와 혼동하지 않는다. HTTP keep-alive는 다음 application request를 같은 connection에 보내는 재사용 정책이고, TCP keepalive는 오래 idle인 TCP peer가 살아 있는지 확인하는 transport probe다. 어느 쪽도 client와 server가 connection을 영원히 유지한다는 보장은 아니다.
+특히 HTTP/2와 HTTP/3에서는 connection-specific metadata를 `Connection` header로 전달하지 않는다. endpoint는 `Connection`, `Keep-Alive`, `Proxy-Connection`, `Transfer-Encoding`, `Upgrade` 같은 connection-specific field를 HTTP/2 message에 생성해서는 안 되고, HTTP/3도 connection-specific field를 금지한다. 따라서 HTTP/2/3 connection reuse와 lifetime은 stream/connection protocol state와 implementation policy로 관리하지 `Connection: keep-alive` header로 협상하지 않는다.
 
-client와 server 중 어느 쪽도 idle timeout·max lifetime·resource pressure에 따라 connection을 닫을 수 있으므로 pooled socket은 stale 상태를 처리해야 한다. lifetime을 너무 길게 두면 socket·NAT state가 고갈되고, 너무 짧게 두면 reconnect와 handshake 비용이 커진다. pool idle eviction, load balancer timeout과 retry 가능한 method를 함께 조정한다.
+이 개념은 TCP keepalive probe(`SO_KEEPALIVE`)와도 다르다. HTTP connection persistence는 여러 HTTP exchange가 transport connection을 재사용하는 문제이고, TCP keepalive는 오래 idle인 TCP peer의 transport 상태를 확인하기 위한 probe다. 어느 쪽도 peer가 connection을 일정 시간 반드시 유지한다는 보장은 아니다.
+
+client·server·proxy는 idle timeout, max lifetime, GOAWAY, resource pressure나 network failure에 따라 connection을 끝낼 수 있다. lifetime을 너무 길게 두면 socket·NAT state와 pool slot을 오래 점유하고, 너무 짧게 두면 handshake 비용이 커진다. connection pool은 protocol version별 close/drain signal과 upstream timeout을 따르고, 실패한 request의 자동 retry는 method idempotency와 application side effect를 별도로 판단한다.
