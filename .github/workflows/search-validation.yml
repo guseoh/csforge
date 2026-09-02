@@ -11,12 +11,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '25'
           cache: gradle
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: '22'
           cache: npm
@@ -25,7 +25,12 @@ jobs:
         working-directory: backend
         run: |
           chmod +x gradlew
-          ./gradlew test build
+          set +e
+          ./gradlew test build --stacktrace --info
+          rc=$?
+          echo '--- Spring test failure excerpts ---'
+          grep -R -n -C 6 'NoSuchBeanDefinitionException\|UnsatisfiedDependencyException' build/test-results/test build/reports/tests/test 2>/dev/null | head -n 240 || true
+          exit $rc
       - name: Frontend validation
         working-directory: frontend
         run: |
