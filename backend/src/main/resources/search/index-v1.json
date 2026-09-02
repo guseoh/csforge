@@ -1,0 +1,69 @@
+{
+  "settings": {
+    "number_of_shards": 1,
+    "number_of_replicas": 0,
+    "analysis": {
+      "tokenizer": {
+        "csforge_nori_tokenizer": {
+          "type": "nori_tokenizer",
+          "decompound_mode": "mixed"
+        }
+      },
+      "analyzer": {
+        "csforge_korean": {
+          "type": "custom",
+          "tokenizer": "csforge_nori_tokenizer",
+          "filter": ["lowercase"]
+        }
+      },
+      "normalizer": {
+        "csforge_lowercase": {
+          "type": "custom",
+          "filter": ["lowercase"]
+        }
+      }
+    }
+  },
+  "mappings": {
+    "dynamic": "strict",
+    "properties": {
+      "documentKey": { "type": "keyword" },
+      "documentType": { "type": "keyword" },
+      "sourceId": { "type": "long" },
+      "title": {
+        "type": "text",
+        "analyzer": "csforge_korean",
+        "fields": {
+          "raw": { "type": "keyword", "normalizer": "csforge_lowercase" },
+          "standard": { "type": "text", "analyzer": "standard" },
+          "suggest": { "type": "search_as_you_type", "analyzer": "csforge_korean" }
+        }
+      },
+      "body": {
+        "type": "text",
+        "analyzer": "csforge_korean",
+        "fields": { "standard": { "type": "text", "analyzer": "standard" } }
+      },
+      "summary": {
+        "type": "text",
+        "analyzer": "csforge_korean",
+        "fields": { "standard": { "type": "text", "analyzer": "standard" } }
+      },
+      "areaSlugs": { "type": "keyword" },
+      "areaNames": { "type": "text", "analyzer": "csforge_korean" },
+      "topicContentKeys": { "type": "keyword" },
+      "topicTitles": { "type": "text", "analyzer": "csforge_korean" },
+      "conceptIds": { "type": "long" },
+      "conceptContentKeys": { "type": "keyword" },
+      "levels": { "type": "short" },
+      "updatedAt": { "type": "date" },
+      "conceptId": { "type": "long" },
+      "questionId": { "type": "long" },
+      "referenceUrl": { "type": "keyword" },
+      "questionType": { "type": "keyword" },
+      "difficulty": { "type": "keyword" },
+      "wrongNoteStatus": { "type": "keyword" },
+      "wrongCount": { "type": "integer" }
+    }
+  }
+}
