@@ -1,0 +1,122 @@
+name: Validate OS Stage 5 References
+
+on:
+  push:
+    branches:
+      - content/patch-risk-review-java
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: content/risk-based-deep-review
+          fetch-depth: 0
+
+      - name: Guard review head
+        run: test "$(git rev-parse HEAD)" = "1918366caa0223fbf4b9c00b7eaa0c4d10e70be3"
+
+      - name: Validate references and canonical links
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --check 4b0a27dd372760f34272f9b8618ceea43b62c109...HEAD -- content/operating-systems
+          python - <<'PY'
+          import json, re
+          from pathlib import Path
+          from urllib.parse import urlparse
+
+          root = Path('content/operating-systems')
+          errors = []
+          topics = json.loads((root / 'topics.json').read_text(encoding='utf-8'))
+          topic_keys = [x['contentKey'] for x in topics if x.get('kind') == 'topic']
+          topic_set = set(topic_keys)
+          concept_keys = []
+          reference_count = 0
+          shared = {}
+
+          def clean(v):
+              v = v.strip()
+              if len(v) >= 2 and v[0] == v[-1] and v[0] in {'"', "'"}:
+                  return v[1:-1]
+              return v
+
+          for path in sorted(root.rglob('*.md')):
+              text = path.read_text(encoding='utf-8')
+              if not text.startswith('---\n'):
+                  errors.append(f'{path}: missing front matter'); continue
+              front = text.split('---', 2)[1]
+              key_m = re.search(r'(?m)^contentKey:\s*(.+)$', front)
+              topic_m = re.search(r'(?m)^topicContentKey:\s*(.+)$', front)
+              slug_m = re.search(r'(?m)^slug:\s*(.+)$', front)
+              if not key_m or not topic_m or not slug_m:
+                  errors.append(f'{path}: missing canonical scalar'); continue
+              key, topic, slug = map(lambda m: clean(m.group(1)), (key_m, topic_m, slug_m))
+              concept_keys.append(key)
+              if topic not in topic_set: errors.append(f'{path}: unknown topic {topic}')
+              if slug != path.stem: errors.append(f'{path}: slug mismatch {slug}')
+
+              refs, current, in_refs = [], None, False
+              for line in front.splitlines():
+                  if line.strip() == 'references:': in_refs = True; continue
+                  if not in_refs: continue
+                  m = re.match(r'^\s*-\s+url:\s*(.+?)\s*$', line)
+                  if m:
+                      if current: refs.append(current)
+                      current = {'url': clean(m.group(1))}; continue
+                  m = re.match(r'^\s+(title|referenceType|language|displayOrder):\s*(.*?)\s*$', line)
+                  if m and current is not None:
+                      current[m.group(1)] = clean(m.group(2)); continue
+                  if line and not line[0].isspace(): break
+              if current: refs.append(current)
+              if not refs: errors.append(f'{path}: no references')
+              orders = []
+              for ref in refs:
+                  reference_count += 1
+                  missing = [k for k in ('url','title','referenceType','language','displayOrder') if not ref.get(k)]
+                  if missing:
+                      errors.append(f'{path}: reference missing {missing}'); continue
+                  parsed = urlparse(ref['url'])
+                  if parsed.scheme not in {'http','https'} or not parsed.netloc:
+                      errors.append(f'{path}: invalid reference URL {ref["url"]}')
+                  try:
+                      order = int(ref['displayOrder']); orders.append(order)
+                      if order <= 0: errors.append(f'{path}: invalid displayOrder {order}')
+                  except ValueError:
+                      errors.append(f'{path}: non-integer displayOrder')
+                  meta = (ref['title'], ref['referenceType'], ref['language'])
+                  previous = shared.setdefault(ref['url'], (meta, str(path)))
+                  if previous[0] != meta:
+                      errors.append(f'reference metadata conflict {ref["url"]}: {previous} vs {(meta,str(path))}')
+              if len(orders) != len(set(orders)): errors.append(f'{path}: duplicate reference displayOrder')
+
+          if len(concept_keys) != len(set(concept_keys)): errors.append('duplicate concept contentKey')
+          concept_set = set(concept_keys)
+          question_keys = []
+          question_count = 0
+          json_files = sorted(root.rglob('*.json'))
+          for path in json_files:
+              try: data = json.loads(path.read_text(encoding='utf-8'))
+              except Exception as exc: errors.append(f'{path}: JSON parse error {exc}'); continue
+              for q in (data if isinstance(data, list) else [data]):
+                  if not isinstance(q, dict) or q.get('kind') != 'question': continue
+                  question_count += 1
+                  key = q.get('contentKey')
+                  question_keys.append(key)
+                  for ref in q.get('conceptKeys') or []:
+                      if ref not in concept_set: errors.append(f'{key}: unknown concept {ref}')
+                  if q.get('questionType') == 'MULTIPLE_CHOICE':
+                      keys = [c.get('key') for c in q.get('choices') or []]
+                      if q.get('correctChoiceKey') not in keys: errors.append(f'{key}: invalid correctChoiceKey')
+          if len(question_keys) != len(set(question_keys)): errors.append('duplicate question contentKey')
+
+          if errors:
+              print('OS_STAGE5_REFERENCE_VALIDATION status=FAIL')
+              for e in errors: print('ERROR', e)
+              raise SystemExit(1)
+          print(f'OS_STAGE5_REFERENCE_VALIDATION status=PASS topics={len(topic_keys)} concepts={len(concept_keys)} questions={question_count} references={reference_count} json_files={len(json_files)}')
+          PY
