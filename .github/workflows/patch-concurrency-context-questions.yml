@@ -1,4 +1,4 @@
-name: Patch Java Concurrency Context Questions
+name: Validate Java Stage 4 Review
 
 on:
   push:
@@ -6,10 +6,10 @@ on:
       - content/patch-risk-review-java
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
-  patch:
+  validate:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -21,121 +21,191 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD)" = "9f636853c5f8d6e352f6fa93160baa1943d2db65"
+          test "$(git rev-parse HEAD)" = "1dcd453d1aff30c8c6fb8f2e00ff7b65cc13e857"
 
-      - name: Replace four boundary questions
+      - name: Validate Java Stage 4 canonical content
         shell: bash
         run: |
           set -euo pipefail
+          git diff --check 4b0a27dd372760f34272f9b8618ceea43b62c109...HEAD -- content/java
+
           python - <<'PY'
           import json
+          import re
           from pathlib import Path
+          from urllib.parse import urlparse
 
-          path = Path('content/java/concurrency/questions.json')
-          data = json.loads(path.read_text(encoding='utf-8'))
-          by_key = {q['contentKey']: i for i, q in enumerate(data)}
+          root = Path('content/java')
+          errors = []
 
-          replacements = {
-            'java.core.concurrency.platform-virtual-thread.q6': {
-              'kind': 'question',
-              'contentKey': 'java.core.concurrency.platform-virtual-thread.q6',
-              'promptMarkdown': 'Java 25 virtual thread의 carrier pinning을 가장 정확히 설명한 것은?',
-              'questionType': 'MULTIPLE_CHOICE',
-              'difficulty': 'HARD',
-              'status': 'PUBLISHED',
-              'conceptKeys': ['java.core.concurrency.platform-virtual-thread'],
-              'choices': [
-                {'key': 'A', 'content': 'synchronized block에서 잠들면 Java 25에서도 반드시 carrier에 pin된다', 'displayOrder': 0},
-                {'key': 'B', 'content': 'JDK 24 이후 synchronized 자체의 pinning 제약은 제거됐지만 native method나 foreign function 실행에서는 pinning이 생길 수 있다', 'displayOrder': 1},
-                {'key': 'C', 'content': 'pinning이 발생하면 virtual thread의 Java semantics가 깨진다', 'displayOrder': 2},
-                {'key': 'D', 'content': 'virtual thread는 carrier를 사용하지 않으므로 pinning 개념 자체가 없다', 'displayOrder': 3},
-              ],
-              'correctChoiceKey': 'B',
-              'explanationMarkdown': 'JEP 491로 synchronized monitor 때문에 virtual thread가 carrier에 pin되는 제약은 제거됐다. Java 25에서는 native method나 foreign function 실행이 대표적인 남은 pinning 경계이며, pinning은 correctness보다 scalability에 영향을 줄 수 있다.'
-            },
-            'java.core.concurrency.threadlocal-context.q6': {
-              'kind': 'question',
-              'contentKey': 'java.core.concurrency.threadlocal-context.q6',
-              'promptMarkdown': 'task마다 새 virtual thread를 사용하는 환경에서 ThreadLocal을 설명한 것으로 가장 정확한 것은?',
-              'questionType': 'MULTIPLE_CHOICE',
-              'difficulty': 'HARD',
-              'status': 'PUBLISHED',
-              'conceptKeys': ['java.core.concurrency.threadlocal-context'],
-              'choices': [
-                {'key': 'A', 'content': 'task가 끝난 virtual thread를 다음 task가 재사용하므로 fixed platform pool과 동일한 stale-context 위험이 항상 남는다', 'displayOrder': 0},
-                {'key': 'B', 'content': 'virtual thread는 ThreadLocal을 지원하지 않는다', 'displayOrder': 1},
-                {'key': 'C', 'content': 'per-task thread 종료로 fixed-worker 재사용 위험의 형태는 줄지만, 많은 virtual thread마다 큰 reusable object를 ThreadLocal에 두면 메모리 비용이 커질 수 있다', 'displayOrder': 2},
-                {'key': 'D', 'content': 'ThreadLocal value는 virtual thread가 종료되어도 JVM 종료까지 반드시 유지된다', 'displayOrder': 3},
-              ],
-              'correctChoiceKey': 'C',
-              'explanationMarkdown': 'ThreadLocal 값은 thread lifetime과 연결된다. Per-task virtual thread에서는 같은 worker가 다음 task를 처리하는 stale-context 문제의 형태가 달라지지만, 매우 많은 virtual thread마다 큰 ThreadLocal cache를 만들면 thread-per-task의 메모리 이점을 훼손할 수 있다.'
-            },
-            'java.core.concurrency.scoped-value-context.q6': {
-              'kind': 'question',
-              'contentKey': 'java.core.concurrency.scoped-value-context.q6',
-              'promptMarkdown': 'ScopedValue binding을 다른 thread의 작업에서 읽는 규칙으로 가장 정확한 것은?',
-              'questionType': 'MULTIPLE_CHOICE',
-              'difficulty': 'HARD',
-              'status': 'PUBLISHED',
-              'conceptKeys': ['java.core.concurrency.scoped-value-context'],
-              'choices': [
-                {'key': 'A', 'content': 'binding은 process-global이므로 어떤 executor thread에서도 자동으로 보인다', 'displayOrder': 0},
-                {'key': 'B', 'content': 'binding은 기본적으로 per-thread이며 arbitrary executor에는 자동 전파되지 않지만 StructuredTaskScope가 fork한 subtask에는 API 계약에 따라 상속될 수 있다', 'displayOrder': 1},
-                {'key': 'C', 'content': 'StructuredTaskScope를 사용하면 binding object 자체가 immutable로 변환된다', 'displayOrder': 2},
-                {'key': 'D', 'content': 'ScopedValue는 다른 thread와 값을 공유할 방법을 전혀 제공하지 않는다', 'displayOrder': 3},
-              ],
-              'correctChoiceKey': 'B',
-              'explanationMarkdown': 'ScopedValue binding은 per-thread다. Thread 경계의 상속은 사용하는 API가 명시해야 하며 Java 25의 StructuredTaskScope는 fork된 subtask thread에 scoped-value binding을 상속한다. Arbitrary executor에 대한 자동 전파 계약은 없다.'
-            },
-            'java.core.concurrency.thread-lifecycle-interruption.q1': {
-              'kind': 'question',
-              'contentKey': 'java.core.concurrency.thread-lifecycle-interruption.q1',
-              'promptMarkdown': 'Java 25에서 Thread.run()을 직접 호출하는 동작으로 가장 정확한 것은?',
-              'questionType': 'MULTIPLE_CHOICE',
-              'difficulty': 'EASY',
-              'status': 'PUBLISHED',
-              'conceptKeys': ['java.core.concurrency.thread-lifecycle-interruption'],
-              'choices': [
-                {'key': 'A', 'content': 'Runnable로 만든 platform Thread에서는 caller thread에서 task가 실행될 수 있지만 virtual Thread의 run()을 직접 호출하면 아무 동작도 하지 않는다', 'displayOrder': 0},
-                {'key': 'B', 'content': 'platform과 virtual 모두 새 thread를 start한 것과 동일하다', 'displayOrder': 1},
-                {'key': 'C', 'content': 'virtual Thread에서만 새 OS thread가 만들어진다', 'displayOrder': 2},
-                {'key': 'D', 'content': '모든 Thread에서 IllegalThreadStateException이 반드시 발생한다', 'displayOrder': 3},
-              ],
-              'correctChoiceKey': 'A',
-              'explanationMarkdown': 'Thread.start()가 실제 thread 실행을 schedule하는 API다. Java 25 Thread API에서 platform Thread의 기본 run()은 Runnable을 caller에서 직접 실행할 수 있지만 virtual Thread의 run() 직접 호출은 아무 동작도 하지 않는다.'
-            }
-          }
+          def clean(value: str) -> str:
+              value = value.strip()
+              if len(value) >= 2 and value[0] == value[-1] and value[0] in {'"', "'"}:
+                  return value[1:-1]
+              return value
 
-          assert set(replacements) <= set(by_key), sorted(set(replacements) - set(by_key))
-          for key, replacement in replacements.items():
-              old = data[by_key[key]]
-              assert old.get('contentKey') == key
-              assert old.get('conceptKeys') == replacement['conceptKeys']
-              data[by_key[key]] = replacement
+          def scalar(front: str, name: str):
+              match = re.search(rf'(?m)^{re.escape(name)}:\s*(.+?)\s*$', front)
+              return clean(match.group(1)) if match else None
 
-          path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+          topics_path = root / 'topics.json'
+          topics = json.loads(topics_path.read_text(encoding='utf-8'))
+          topic_keys = [item['contentKey'] for item in topics if item.get('kind') == 'topic']
+          if len(topic_keys) != len(set(topic_keys)):
+              errors.append('duplicate topic contentKey')
+          topic_key_set = set(topic_keys)
+
+          concept_keys = []
+          concept_paths = {}
+          shared_reference_meta = {}
+          reference_count = 0
+
+          markdown_files = sorted(root.rglob('*.md'))
+          for path in markdown_files:
+              text = path.read_text(encoding='utf-8')
+              if not text.startswith('---\n'):
+                  errors.append(f'{path}: missing YAML front matter')
+                  continue
+              parts = text.split('---', 2)
+              if len(parts) < 3:
+                  errors.append(f'{path}: malformed YAML front matter')
+                  continue
+              front = parts[1]
+
+              kind = scalar(front, 'kind')
+              if kind != 'concept':
+                  errors.append(f'{path}: kind={kind!r}, expected concept')
+
+              content_key = scalar(front, 'contentKey')
+              topic_key = scalar(front, 'topicContentKey')
+              slug = scalar(front, 'slug')
+              if not content_key:
+                  errors.append(f'{path}: missing contentKey')
+              else:
+                  concept_keys.append(content_key)
+                  concept_paths.setdefault(content_key, []).append(str(path))
+              if not topic_key or topic_key not in topic_key_set:
+                  errors.append(f'{path}: unknown topicContentKey={topic_key!r}')
+              if slug != path.stem:
+                  errors.append(f'{path}: slug={slug!r} does not match filename')
+
+              refs = []
+              current = None
+              in_refs = False
+              for line in front.splitlines():
+                  if line.strip() == 'references:':
+                      in_refs = True
+                      continue
+                  if not in_refs:
+                      continue
+                  url_match = re.match(r'^\s*-\s+url:\s*(.+?)\s*$', line)
+                  if url_match:
+                      if current is not None:
+                          refs.append(current)
+                      current = {'url': clean(url_match.group(1))}
+                      continue
+                  field_match = re.match(r'^\s+(title|referenceType|language|displayOrder|relationNote):\s*(.*?)\s*$', line)
+                  if field_match and current is not None:
+                      current[field_match.group(1)] = clean(field_match.group(2))
+                      continue
+                  if line and not line[0].isspace():
+                      break
+              if current is not None:
+                  refs.append(current)
+
+              if not refs:
+                  errors.append(f'{path}: no references')
+                  continue
+
+              display_orders = []
+              for ref in refs:
+                  reference_count += 1
+                  required = ('url', 'title', 'referenceType', 'language', 'displayOrder', 'relationNote')
+                  missing = [field for field in required if not ref.get(field)]
+                  if missing:
+                      errors.append(f'{path}: reference {ref.get("url", "<unknown>")} missing {missing}')
+                      continue
+                  parsed = urlparse(ref['url'])
+                  if parsed.scheme not in {'http', 'https'} or not parsed.netloc:
+                      errors.append(f'{path}: invalid reference URL {ref["url"]}')
+                  try:
+                      display_order = int(ref['displayOrder'])
+                      if display_order <= 0:
+                          raise ValueError
+                      display_orders.append(display_order)
+                  except ValueError:
+                      errors.append(f'{path}: invalid reference displayOrder {ref["displayOrder"]!r}')
+
+                  meta = (ref['title'], ref['referenceType'], ref['language'])
+                  previous = shared_reference_meta.setdefault(ref['url'], (meta, str(path)))
+                  if previous[0] != meta:
+                      errors.append(
+                          f'reference metadata conflict for {ref["url"]}: '
+                          f'{previous[0]} in {previous[1]} vs {meta} in {path}'
+                      )
+
+              if len(display_orders) != len(set(display_orders)):
+                  errors.append(f'{path}: duplicate reference displayOrder')
+
+          for key, paths in concept_paths.items():
+              if len(paths) > 1:
+                  errors.append(f'duplicate concept contentKey {key}: {paths}')
+          concept_key_set = set(concept_keys)
+
+          json_files = sorted(root.rglob('*.json'))
+          question_keys = []
+          question_paths = {}
+          question_count = 0
+
+          for path in json_files:
+              try:
+                  data = json.loads(path.read_text(encoding='utf-8'))
+              except Exception as exc:
+                  errors.append(f'{path}: JSON parse error: {exc}')
+                  continue
+
+              items = data if isinstance(data, list) else [data]
+              for item in items:
+                  if not isinstance(item, dict) or item.get('kind') != 'question':
+                      continue
+                  question_count += 1
+                  key = item.get('contentKey')
+                  if not key:
+                      errors.append(f'{path}: question missing contentKey')
+                      continue
+                  question_keys.append(key)
+                  question_paths.setdefault(key, []).append(str(path))
+
+                  concept_refs = item.get('conceptKeys') or []
+                  if not concept_refs:
+                      errors.append(f'{path}: {key} has no conceptKeys')
+                  for concept_ref in concept_refs:
+                      if concept_ref not in concept_key_set:
+                          errors.append(f'{path}: {key} references unknown concept {concept_ref}')
+
+                  if item.get('questionType') == 'MULTIPLE_CHOICE':
+                      choices = item.get('choices') or []
+                      choice_keys = [choice.get('key') for choice in choices if isinstance(choice, dict)]
+                      if not choices or len(choice_keys) != len(choices):
+                          errors.append(f'{path}: {key} has malformed choices')
+                      if len(choice_keys) != len(set(choice_keys)):
+                          errors.append(f'{path}: {key} has duplicate choice keys')
+                      if item.get('correctChoiceKey') not in choice_keys:
+                          errors.append(f'{path}: {key} correctChoiceKey not in choices')
+
+          for key, paths in question_paths.items():
+              if len(paths) > 1:
+                  errors.append(f'duplicate question contentKey {key}: {paths}')
+
+          if errors:
+              print('JAVA_STAGE4_STATIC_VALIDATION status=FAIL')
+              for error in errors:
+                  print('ERROR', error)
+              raise SystemExit(1)
+
+          print(
+              'JAVA_STAGE4_STATIC_VALIDATION status=PASS '
+              f'topics={len(topic_keys)} concepts={len(concept_keys)} '
+              f'questions={question_count} references={reference_count} json_files={len(json_files)}'
+          )
           PY
-
-          git diff --check
-          python - <<'PY'
-          import json
-          from pathlib import Path
-          data = json.loads(Path('content/java/concurrency/questions.json').read_text(encoding='utf-8'))
-          keys = [q['contentKey'] for q in data]
-          assert len(keys) == len(set(keys))
-          for q in data:
-              if q.get('questionType') == 'MULTIPLE_CHOICE':
-                  ck = [c['key'] for c in q.get('choices', [])]
-                  assert q.get('correctChoiceKey') in ck, q['contentKey']
-          print('QUESTION_PATCH_VALIDATION status=PASS replacements=4 questions=' + str(len(data)))
-          PY
-
-      - name: Commit and push review branch
-        shell: bash
-        run: |
-          set -euo pipefail
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add content/java/concurrency/questions.json
-          git commit -m "content: align Java 25 concurrency boundary questions"
-          git push origin HEAD:content/risk-based-deep-review
