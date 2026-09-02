@@ -10,7 +10,7 @@ import com.guseoh.csforge.search.domain.SearchOutboxEventRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-/** 동일 source의 미발행 변경을 하나의 outbox 행으로 합쳐 기록한다. */
+/** 동일 source의 미발행 변경을 한 행으로 합치되 각 변경의 outbox identity는 단조 증가시킨다. */
 @Component
 @RequiredArgsConstructor
 public class SearchOutboxChangeRecorder implements SearchProjectionChangeRecorder {
@@ -21,10 +21,11 @@ public class SearchOutboxChangeRecorder implements SearchProjectionChangeRecorde
     @Override
     public void record(SearchChangeType changeType, long sourceId) {
         Instant now = Instant.now(clock);
-        SearchOutboxEvent event = repository
-                .findByChangeTypeAndSourceIdAndPublishedAtIsNull(changeType, sourceId)
-                .orElseGet(() -> SearchOutboxEvent.pending(changeType, sourceId, now));
-        if (event.getId() != null) event.refresh(now);
-        repository.save(event);
+        repository.findByChangeTypeAndSourceIdAndPublishedAtIsNull(changeType, sourceId)
+                .ifPresent(existing -> {
+                    repository.delete(existing);
+                    repository.flush();
+                });
+        repository.save(SearchOutboxEvent.pending(changeType, sourceId, now));
     }
 }
