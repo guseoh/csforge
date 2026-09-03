@@ -36,7 +36,8 @@ spring:
 server:
   port: ${SERVER_PORT:8080}
   tomcat:
-    max-part-count: 100
+    # The apply endpoint accepts up to 100 files plus the previewDigest form field.
+    max-part-count: 101
 
 management:
   endpoints:

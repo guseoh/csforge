@@ -144,6 +144,28 @@ class ContentImportIntegrationTest {
     }
 
     @Test
+    void declaredMaximumFileBatchCanBeAppliedWithPreviewDigest() throws Exception {
+        List<Part> parts = new ArrayList<>();
+        for (int i = 0; i < 100; i++) {
+            parts.add(new Part(
+                    "topic-" + i + ".json",
+                    "application/json",
+                    "{\"kind\":\"topic\",\"contentKey\":\"batch.topic." + i
+                            + "\",\"areaSlug\":\"java\",\"slug\":\"batch-" + i
+                            + "\",\"title\":\"Batch topic " + i + "\"}"));
+        }
+
+        JsonNode preview = json(post("/api/imports/preview", parts, null)).get("body");
+
+        assertTrue(preview.get("canApply").asBoolean());
+        JsonNode applied = json(post("/api/imports/apply", parts, preview.get("previewDigest").asText()));
+
+        assertEquals(200, applied.get("status").asInt());
+        assertEquals(100, jdbc.queryForObject(
+                "select count(*) from topic where content_key like 'batch.topic.%'", Integer.class));
+    }
+
+    @Test
     void conceptAndQuestionCanonicalUpdatesPreserveLearningAndHistory() throws Exception {
         List<Part> base = sampleParts();
         JsonNode initial = json(post("/api/imports/preview", base, null)).get("body");
