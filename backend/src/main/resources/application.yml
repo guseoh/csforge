@@ -34,13 +34,12 @@ spring:
     uris: ${ELASTICSEARCH_URIS:http://localhost:9200}
   ai:
     model:
-      chat: ${SPRING_AI_MODEL_CHAT:ollama}
+      chat: ${SPRING_AI_MODEL_CHAT:none}
     ollama:
       base-url: ${OLLAMA_BASE_URL:http://localhost:11434}
       chat:
-        options:
-          model: ${CSFORGE_AI_MODEL:llama3.2}
-          temperature: ${CSFORGE_AI_TEMPERATURE:0.2}
+        model: ${CSFORGE_AI_MODEL:llama3.2}
+        temperature: ${CSFORGE_AI_TEMPERATURE:0.2}
         keep-alive: ${CSFORGE_AI_KEEP_ALIVE:5m}
       init:
         pull-model-strategy: never
@@ -74,7 +73,7 @@ management:
 
 csforge:
   ai:
-    # The local provider is opt-in; setting this to true enables the durable processor.
+    # AI is opt-in: enable CSFORGE_AI_ENABLED and SPRING_AI_MODEL_CHAT=ollama together.
     enabled: ${CSFORGE_AI_ENABLED:false}
     provider: ollama
     model: ${CSFORGE_AI_MODEL:llama3.2}
