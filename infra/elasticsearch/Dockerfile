@@ -1,3 +1,3 @@
-FROM docker.elastic.co/elasticsearch/elasticsearch:9.1.0
+FROM docker.elastic.co/elasticsearch/elasticsearch:9.4.5
 
 RUN elasticsearch-plugin install --batch analysis-nori

@@ -1,0 +1,49 @@
+name: Search Validation
+
+on:
+  push:
+    branches:
+      - feat/search
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: gradle
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Backend compile
+        working-directory: backend
+        run: |
+          chmod +x gradlew
+          ./gradlew compileJava --stacktrace
+      - name: Backend tests
+        working-directory: backend
+        run: ./gradlew test --stacktrace
+      - name: Backend build
+        working-directory: backend
+        run: ./gradlew build -x test --stacktrace
+      - name: Backend failure diagnostics
+        if: failure()
+        working-directory: backend
+        run: |
+          echo '--- Gradle test result failures ---'
+          grep -R -n -C 6 '<failure\|<error\|Caused by:\|Exception\|AssertionError' build/test-results/test build/reports/tests/test 2>/dev/null | head -n 320 || true
+      - name: Frontend validation
+        working-directory: frontend
+        run: |
+          npm ci
+          npm test
+          npm run lint
+          npm run build
+      - name: Compose validation
+        run: docker compose config --quiet

@@ -1,4 +1,5 @@
 import { Link, Outlet, createRootRoute, createRoute, createRouter } from '@tanstack/react-router'
+import { SearchPalette } from './components/SearchPalette'
 import { AreaPage } from './pages/AreaPage'
 import { ConceptPage } from './pages/ConceptPage'
 import { LearningPage } from './pages/LearningPage'
@@ -12,7 +13,9 @@ import { WrongNoteDetailPage } from './pages/WrongNoteDetailPage'
 import { ReviewPage } from './pages/ReviewPage'
 import { parseWrongNoteSearch } from './lib/wrong-note-search'
 import { parseReviewSearch } from './lib/review-search'
+import { parseSearchSearch } from './lib/search-search'
 import { ImportPage } from './pages/ImportPage'
+import { SearchPage } from './pages/SearchPage'
 
 const navigation = [
   { to: '/', label: 'Dashboard' },
@@ -29,7 +32,10 @@ function AppLayout() {
     <div className="app-shell">
       <header className="topbar">
         <Link className="brand" to="/">CSForge</Link>
-        <span className="environment-badge">LOCAL</span>
+        <div className="topbar-actions">
+          <SearchPalette />
+          <span className="environment-badge">LOCAL</span>
+        </div>
       </header>
       <div className="content-layout">
         <aside className="sidebar" aria-label="Primary navigation">
@@ -59,16 +65,6 @@ function DashboardPage() {
       <p className="eyebrow">Welcome to your local workspace</p>
       <h1>Build your CS learning loop.</h1>
       <p className="lead">Learning data is now available from the Learning navigation. Other study flows arrive in later slices.</p>
-    </section>
-  )
-}
-
-function PlaceholderPage({ title }: { title: string }) {
-  return (
-    <section className="page-card">
-      <p className="eyebrow">Coming in a later slice</p>
-      <h1>{title}</h1>
-      <p className="lead">This navigation entry is reserved for a future CSForge learning flow.</p>
     </section>
   )
 }
@@ -125,7 +121,7 @@ const quizResultRoute = createRoute({ getParentRoute: () => rootRoute, path: '/q
 const wrongNotesRoute = createRoute({ getParentRoute: () => rootRoute, path: '/wrong-notes', validateSearch: (search) => parseWrongNoteSearch(search), component: WrongNotesPage })
 const wrongNoteDetailRoute = createRoute({ getParentRoute: () => rootRoute, path: '/wrong-notes/$questionId', component: WrongNoteDetailPage })
 const reviewRoute = createRoute({ getParentRoute: () => rootRoute, path: '/review', validateSearch: (search) => parseReviewSearch(search), component: ReviewPage })
-const searchRoute = createRoute({ getParentRoute: () => rootRoute, path: '/search', component: () => <PlaceholderPage title="Search" /> })
+const searchRoute = createRoute({ getParentRoute: () => rootRoute, path: '/search', validateSearch: (search) => parseSearchSearch(search), component: SearchPage })
 const importRoute = createRoute({ getParentRoute: () => rootRoute, path: '/settings/import', component: ImportPage })
 
 const routeTree = rootRoute.addChildren([

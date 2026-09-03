@@ -144,6 +144,28 @@ class ContentImportIntegrationTest {
     }
 
     @Test
+    void declaredMaximumFileBatchCanBeAppliedWithPreviewDigest() throws Exception {
+        List<Part> parts = new ArrayList<>();
+        for (int i = 0; i < 100; i++) {
+            parts.add(new Part(
+                    "topic-" + i + ".json",
+                    "application/json",
+                    "{\"kind\":\"topic\",\"contentKey\":\"batch.topic." + i
+                            + "\",\"areaSlug\":\"java\",\"slug\":\"batch-" + i
+                            + "\",\"title\":\"Batch topic " + i + "\"}"));
+        }
+
+        JsonNode preview = json(post("/api/imports/preview", parts, null)).get("body");
+
+        assertTrue(preview.get("canApply").asBoolean());
+        JsonNode applied = json(post("/api/imports/apply", parts, preview.get("previewDigest").asText()));
+
+        assertEquals(200, applied.get("status").asInt());
+        assertEquals(100, jdbc.queryForObject(
+                "select count(*) from topic where content_key like 'batch.topic.%'", Integer.class));
+    }
+
+    @Test
     void conceptAndQuestionCanonicalUpdatesPreserveLearningAndHistory() throws Exception {
         List<Part> base = sampleParts();
         JsonNode initial = json(post("/api/imports/preview", base, null)).get("body");
@@ -188,7 +210,10 @@ class ContentImportIntegrationTest {
         assertEquals(1, jdbc.queryForObject("select display_order from question_choice where question_id = ? and choice_key = 'A'", Integer.class, questionId));
         assertEquals(0, jdbc.queryForObject("select display_order from question_choice where question_id = ? and choice_key = 'B'", Integer.class, questionId));
         JsonNode identicalPreview = json(post("/api/imports/preview", swapped, null)).get("body");
-        assertEquals(1, identicalPreview.get("totals").get("unchanged").asInt());
+        assertEquals(0, identicalPreview.get("totals").get("created").asInt());
+        assertEquals(0, identicalPreview.get("totals").get("updated").asInt());
+        assertEquals(3, identicalPreview.get("totals").get("unchanged").asInt());
+        assertTrue(identicalPreview.get("canApply").asBoolean());
     }
 
     @Test

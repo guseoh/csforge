@@ -2,11 +2,6 @@ package com.guseoh.csforge.learning.application;
 
 import java.time.Instant;
 
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.guseoh.csforge.learning.api.ConceptProgressResponse;
-import com.guseoh.csforge.learning.api.PersonalNoteResponse;
 import com.guseoh.csforge.learning.domain.Concept;
 import com.guseoh.csforge.learning.domain.ConceptProgress;
 import com.guseoh.csforge.learning.domain.ConceptProgressRepository;
@@ -14,34 +9,33 @@ import com.guseoh.csforge.learning.domain.ConceptRepository;
 import com.guseoh.csforge.learning.domain.LearningStatus;
 import com.guseoh.csforge.learning.domain.PersonalNote;
 import com.guseoh.csforge.learning.domain.PersonalNoteRepository;
+import com.guseoh.csforge.search.application.SearchChangeType;
+import com.guseoh.csforge.search.application.SearchProjectionChangeRecorder;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+/** Concept 진행 상태와 개인 노트 변경 유스케이스를 처리한다. */
 @Service
+@RequiredArgsConstructor
 public class LearningCommandService {
 
     private final ConceptRepository conceptRepository;
     private final ConceptProgressRepository progressRepository;
     private final PersonalNoteRepository noteRepository;
-
-    public LearningCommandService(
-            ConceptRepository conceptRepository,
-            ConceptProgressRepository progressRepository,
-            PersonalNoteRepository noteRepository) {
-        this.conceptRepository = conceptRepository;
-        this.progressRepository = progressRepository;
-        this.noteRepository = noteRepository;
-    }
+    private final SearchProjectionChangeRecorder searchChangeRecorder;
 
     @Transactional
-    public ConceptProgressResponse recordView(long conceptId) {
+    public ConceptProgressView recordView(long conceptId) {
         Concept concept = findPublishedConcept(conceptId);
         ConceptProgress progress = progressRepository.findById(conceptId)
                 .orElseGet(() -> new ConceptProgress(concept));
         progress.recordView(Instant.now());
-        return toProgressResponse(progressRepository.saveAndFlush(progress));
+        return toProgressView(progressRepository.saveAndFlush(progress));
     }
 
     @Transactional
-    public ConceptProgressResponse updateProgress(
+    public ConceptProgressView updateProgress(
             long conceptId,
             LearningStatus requestedStatus,
             Boolean requestedBookmarked) {
@@ -54,17 +48,18 @@ public class LearningCommandService {
 
         applyStatus(progress, requestedStatus, changedAt);
         applyBookmark(progress, requestedBookmarked);
-        return toProgressResponse(progressRepository.saveAndFlush(progress));
+        return toProgressView(progressRepository.saveAndFlush(progress));
     }
 
     @Transactional
-    public PersonalNoteResponse upsertNote(long conceptId, String content) {
+    public PersonalNoteView upsertNote(long conceptId, String content) {
         Concept concept = findPublishedConcept(conceptId);
         PersonalNote note = noteRepository.findByConcept_Id(conceptId)
                 .orElseGet(() -> new PersonalNote(concept, content));
         note.changeContent(content);
         PersonalNote saved = noteRepository.saveAndFlush(note);
-        return new PersonalNoteResponse(saved.getContent(), saved.getUpdatedAt());
+        searchChangeRecorder.record(SearchChangeType.PERSONAL_NOTE, saved.getId());
+        return new PersonalNoteView(saved.getContent(), saved.getUpdatedAt());
     }
 
     private void requireProgressChange(LearningStatus requestedStatus, Boolean requestedBookmarked) {
@@ -77,9 +72,7 @@ public class LearningCommandService {
     }
 
     private void applyStatus(ConceptProgress progress, LearningStatus requestedStatus, Instant changedAt) {
-        if (requestedStatus == null) {
-            return;
-        }
+        if (requestedStatus == null) return;
         switch (requestedStatus) {
             case LEARNING -> progress.startLearning();
             case COMPLETED -> progress.complete(changedAt);
@@ -90,14 +83,9 @@ public class LearningCommandService {
     }
 
     private void applyBookmark(ConceptProgress progress, Boolean requestedBookmarked) {
-        if (requestedBookmarked == null) {
-            return;
-        }
-        if (requestedBookmarked) {
-            progress.bookmark();
-        } else {
-            progress.unbookmark();
-        }
+        if (requestedBookmarked == null) return;
+        if (requestedBookmarked) progress.bookmark();
+        else progress.unbookmark();
     }
 
     private Concept findPublishedConcept(long conceptId) {
@@ -105,8 +93,8 @@ public class LearningCommandService {
                 .orElseThrow(() -> new LearningNotFoundException("Published concept not found: " + conceptId));
     }
 
-    private ConceptProgressResponse toProgressResponse(ConceptProgress progress) {
-        return new ConceptProgressResponse(
+    private ConceptProgressView toProgressView(ConceptProgress progress) {
+        return new ConceptProgressView(
                 progress.getStatus(),
                 progress.isBookmarked(),
                 progress.getFirstViewedAt(),
