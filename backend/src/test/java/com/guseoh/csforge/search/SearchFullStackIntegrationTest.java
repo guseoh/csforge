@@ -191,6 +191,45 @@ class SearchFullStackIntegrationTest {
     }
 
     @Test
+    void searchFiltersSortsAndPaginatesStableResults() throws Exception {
+        insertFilterSortFixture();
+        HttpResponse<String> reindex = request("POST", "/api/search/reindex", null);
+        assertEquals(200, reindex.statusCode(), reindex.body());
+
+        JsonNode concepts = searchWithParameters("SharedFilterMarker", "type=CONCEPT&size=10");
+        assertEquals(2, concepts.get("totalHits").asLong(), concepts.toString());
+
+        JsonNode javaArea = searchWithParameters("SharedFilterMarker", "type=CONCEPT&area=java");
+        assertSingleTitle(javaArea, "Zulu SharedFilterMarker");
+        JsonNode databaseArea = searchWithParameters("SharedFilterMarker", "type=CONCEPT&area=database");
+        assertSingleTitle(databaseArea, "Alpha SharedFilterMarker");
+        JsonNode topic = searchWithParameters(
+                "SharedFilterMarker",
+                "type=CONCEPT&topic=search.it.filter-db-topic");
+        assertSingleTitle(topic, "Alpha SharedFilterMarker");
+        JsonNode level = searchWithParameters("SharedFilterMarker", "type=CONCEPT&level=3");
+        assertSingleTitle(level, "Alpha SharedFilterMarker");
+        JsonNode note = searchWithParameters("SharedFilterMarker", "type=PERSONAL_NOTE");
+        assertEquals(1, note.get("totalHits").asLong(), note.toString());
+        assertEquals("PERSONAL_NOTE", note.get("items").get(0).get("documentType").asText());
+
+        JsonNode byTitle = searchWithParameters("SharedFilterMarker", "type=CONCEPT&sort=TITLE&size=10");
+        assertEquals("Alpha SharedFilterMarker", byTitle.get("items").get(0).get("title").asText());
+        assertEquals("Zulu SharedFilterMarker", byTitle.get("items").get(1).get("title").asText());
+
+        JsonNode byRecent = searchWithParameters("SharedFilterMarker", "type=CONCEPT&sort=RECENT&size=10");
+        assertEquals("Alpha SharedFilterMarker", byRecent.get("items").get(0).get("title").asText());
+        assertEquals("Zulu SharedFilterMarker", byRecent.get("items").get(1).get("title").asText());
+
+        JsonNode firstPage = searchWithParameters("SharedFilterMarker", "type=CONCEPT&sort=TITLE&page=0&size=1");
+        JsonNode secondPage = searchWithParameters("SharedFilterMarker", "type=CONCEPT&sort=TITLE&page=1&size=1");
+        assertEquals(2, firstPage.get("totalHits").asLong());
+        assertEquals(2, firstPage.get("totalPages").asInt());
+        assertEquals("Alpha SharedFilterMarker", firstPage.get("items").get(0).get("title").asText());
+        assertEquals("Zulu SharedFilterMarker", secondPage.get("items").get(0).get("title").asText());
+    }
+
+    @Test
     void malformedSearchEventIsPublishedToDeadLetterTopic() throws Exception {
         Map<String, Object> consumerProperties = new HashMap<>();
         consumerProperties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, KAFKA.getBootstrapServers());
@@ -269,8 +308,8 @@ class SearchFullStackIntegrationTest {
             assertTrue(noteChangeSequence > baselineSequence);
 
             releaseFirstBulk.countDown();
-            HttpResponse<String> reindex = reindexFuture.get(40, TimeUnit.SECONDS);
-            assertEquals(200, reindex.statusCode(), reindex.body());
+            HttpResponse<String> catchUpReindex = reindexFuture.get(40, TimeUnit.SECONDS);
+            assertEquals(200, catchUpReindex.statusCode(), catchUpReindex.body());
 
             JsonNode caughtUpSearch = search("HighWaterCatchUpMarker");
             assertEquals(1, caughtUpSearch.get("totalHits").asLong(), caughtUpSearch.toString());
@@ -349,6 +388,50 @@ class SearchFullStackIntegrationTest {
                 """, conceptId, referenceId);
     }
 
+    private void insertFilterSortFixture() {
+        long javaAreaId = jdbc.queryForObject("select id from learning_area where slug = 'java'", Long.class);
+        long databaseAreaId = jdbc.queryForObject("select id from learning_area where slug = 'database'", Long.class);
+        long javaTopicId = jdbc.queryForObject("""
+                insert into topic (learning_area_id, content_key, slug, title, display_order, active)
+                values (?, 'search.it.filter-java-topic', 'search-it-filter-java-topic', 'Search Java Filter Topic', 996, true)
+                returning id
+                """, Long.class, javaAreaId);
+        long databaseTopicId = jdbc.queryForObject("""
+                insert into topic (learning_area_id, content_key, slug, title, display_order, active)
+                values (?, 'search.it.filter-db-topic', 'search-it-filter-db-topic', 'Search DB Filter Topic', 997, true)
+                returning id
+                """, Long.class, databaseAreaId);
+        long javaConceptId = jdbc.queryForObject("""
+                insert into concept (
+                    topic_id, content_key, slug, title, summary, content_markdown,
+                    level, status, display_order, updated_at)
+                values (?, 'search.it.filter-java-concept', 'search-it-filter-java-concept',
+                        'Zulu SharedFilterMarker', 'SharedFilterMarker java summary',
+                        'SharedFilterMarker java body', 1, 'PUBLISHED', 996,
+                        current_timestamp - interval '1 day')
+                returning id
+                """, Long.class, javaTopicId);
+        jdbc.queryForObject("""
+                insert into concept (
+                    topic_id, content_key, slug, title, summary, content_markdown,
+                    level, status, display_order, updated_at)
+                values (?, 'search.it.filter-db-concept', 'search-it-filter-db-concept',
+                        'Alpha SharedFilterMarker', 'SharedFilterMarker database summary',
+                        'SharedFilterMarker database body', 3, 'PUBLISHED', 997,
+                        current_timestamp)
+                returning id
+                """, Long.class, databaseTopicId);
+        jdbc.update("""
+                insert into personal_note (concept_id, content)
+                values (?, 'SharedFilterMarker personal note')
+                """, javaConceptId);
+    }
+
+    private void assertSingleTitle(JsonNode result, String title) {
+        assertEquals(1, result.get("totalHits").asLong(), result.toString());
+        assertEquals(title, result.get("items").get(0).get("title").asText());
+    }
+
     private void assertSearchContainsType(String query, String documentType) throws Exception {
         JsonNode result = search(query);
         assertTrue(result.get("totalHits").asLong() > 0, result.toString());
@@ -370,8 +453,13 @@ class SearchFullStackIntegrationTest {
     }
 
     private JsonNode search(String query) throws Exception {
+        return searchWithParameters(query, null);
+    }
+
+    private JsonNode searchWithParameters(String query, String parameters) throws Exception {
         String encodedQuery = URLEncoder.encode(query, StandardCharsets.UTF_8);
-        HttpResponse<String> response = request("GET", "/api/search?q=" + encodedQuery, null);
+        String suffix = parameters == null || parameters.isBlank() ? "" : "&" + parameters;
+        HttpResponse<String> response = request("GET", "/api/search?q=" + encodedQuery + suffix, null);
         assertEquals(200, response.statusCode(), response.body());
         return objectMapper.readTree(response.body());
     }
