@@ -13,6 +13,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.guseoh.csforge.question.domain.QuestionDifficulty;
+import com.guseoh.csforge.ai.api.WrongAnswerAnalysisApiMapper;
+import com.guseoh.csforge.ai.api.WrongAnswerAnalysisResponse;
+import com.guseoh.csforge.ai.application.WrongAnswerAnalysisCommandService;
+import com.guseoh.csforge.ai.application.WrongAnswerAnalysisQueryService;
 import com.guseoh.csforge.quiz.api.QuizApiMapper;
 import com.guseoh.csforge.quiz.api.QuizCreatedResponse;
 import com.guseoh.csforge.wrongnote.application.WrongNoteCommandService;
@@ -35,6 +39,9 @@ public class WrongNoteController {
     private final WrongNoteCommandService commandService;
     private final WrongNoteApiMapper apiMapper;
     private final QuizApiMapper quizApiMapper;
+    private final WrongAnswerAnalysisCommandService analysisCommandService;
+    private final WrongAnswerAnalysisQueryService analysisQueryService;
+    private final WrongAnswerAnalysisApiMapper analysisApiMapper;
 
     @GetMapping
     public WrongNoteListResponse list(
@@ -58,6 +65,25 @@ public class WrongNoteController {
     @GetMapping("/{questionId}")
     public WrongNoteDetailResponse detail(@PathVariable long questionId) {
         return apiMapper.toResponse(queryService.detail(questionId));
+    }
+
+    @GetMapping("/{questionId}/ai-analysis")
+    public WrongAnswerAnalysisResponse aiAnalysis(@PathVariable long questionId) {
+        return analysisApiMapper.toResponse(analysisQueryService.current(questionId));
+    }
+
+    @PostMapping("/{questionId}/ai-analysis")
+    public ResponseEntity<WrongAnswerAnalysisResponse> requestAiAnalysis(@PathVariable long questionId) {
+        var request = analysisCommandService.request(questionId);
+        return ResponseEntity.status(request.created() ? HttpStatus.ACCEPTED : HttpStatus.OK)
+                .body(analysisApiMapper.toResponse(analysisQueryService.current(questionId)));
+    }
+
+    @PostMapping("/{questionId}/ai-analysis/retry")
+    public ResponseEntity<WrongAnswerAnalysisResponse> retryAiAnalysis(@PathVariable long questionId) {
+        analysisCommandService.retry(questionId);
+        return ResponseEntity.status(HttpStatus.ACCEPTED)
+                .body(analysisApiMapper.toResponse(analysisQueryService.current(questionId)));
     }
 
     @GetMapping("/{questionId}/attempts")

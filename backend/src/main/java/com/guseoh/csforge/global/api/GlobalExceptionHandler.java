@@ -5,6 +5,9 @@ import java.util.List;
 
 import com.guseoh.csforge.importcontent.application.ImportBoundsException;
 import com.guseoh.csforge.importcontent.application.ImportPreviewStaleException;
+import com.guseoh.csforge.ai.application.AiProviderNotConfiguredException;
+import com.guseoh.csforge.ai.application.WrongAnswerAnalysisEligibilityException;
+import com.guseoh.csforge.ai.application.WrongAnswerAnalysisInvalidStateException;
 import com.guseoh.csforge.learning.application.LearningBadRequestException;
 import com.guseoh.csforge.learning.application.LearningNotFoundException;
 import com.guseoh.csforge.quiz.application.InsufficientQuestionsException;
@@ -49,6 +52,30 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(WrongNoteNotFoundException.class)
     public ResponseEntity<ApiError> handleWrongNoteNotFound(WrongNoteNotFoundException exception, HttpServletRequest request) {
         return error(HttpStatus.NOT_FOUND, "WRONG_NOTE_NOT_FOUND", "Wrong note was not found", request, List.of());
+    }
+
+    @ExceptionHandler(AiProviderNotConfiguredException.class)
+    public ResponseEntity<ApiError> handleAiProviderNotConfigured(
+            AiProviderNotConfiguredException exception,
+            HttpServletRequest request) {
+        return error(HttpStatus.SERVICE_UNAVAILABLE, "AI_PROVIDER_NOT_CONFIGURED",
+                "AI analysis is not configured", request, List.of());
+    }
+
+    @ExceptionHandler(WrongAnswerAnalysisEligibilityException.class)
+    public ResponseEntity<ApiError> handleAiAnalysisEligibility(
+            WrongAnswerAnalysisEligibilityException exception,
+            HttpServletRequest request) {
+        return error(HttpStatus.UNPROCESSABLE_CONTENT, "AI_ANALYSIS_NOT_ELIGIBLE",
+                exception.getMessage(), request, List.of());
+    }
+
+    @ExceptionHandler(WrongAnswerAnalysisInvalidStateException.class)
+    public ResponseEntity<ApiError> handleAiAnalysisState(
+            WrongAnswerAnalysisInvalidStateException exception,
+            HttpServletRequest request) {
+        return error(HttpStatus.CONFLICT, "AI_ANALYSIS_INVALID_STATE",
+                exception.getMessage(), request, List.of());
     }
 
     @ExceptionHandler(ReviewQuestionNotFoundException.class)

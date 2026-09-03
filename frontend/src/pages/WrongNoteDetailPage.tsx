@@ -2,13 +2,30 @@ import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate, useParams } from '@tanstack/react-router'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { ErrorState, PageSkeleton } from '../components/AsyncStates'
-import { getWrongNote, getWrongNoteAttempts, retryWrongNote, saveWrongNote, type WrongNoteAttempt } from '../lib/api'
+import { WrongAnswerAnalysisCard } from '../components/WrongAnswerAnalysisCard'
+import {
+  getWrongNote,
+  getWrongNoteAiAnalysis,
+  getWrongNoteAttempts,
+  requestWrongNoteAiAnalysis,
+  retryWrongNote,
+  retryWrongNoteAiAnalysis,
+  saveWrongNote,
+  type WrongNoteAttempt,
+} from '../lib/api'
+import { wrongAnswerAnalysisPollingInterval } from '../lib/wrong-answer-analysis'
 
 export function WrongNoteDetailPage() {
   const { questionId } = useParams({ from: '/wrong-notes/$questionId' })
   const id = Number(questionId)
   const navigate = useNavigate()
   const detail = useQuery({ queryKey: ['wrong-note', id], queryFn: () => getWrongNote(id) })
+  const aiAnalysis = useQuery({
+    queryKey: ['wrong-note-ai-analysis', id],
+    queryFn: () => getWrongNoteAiAnalysis(id),
+    enabled: Number.isSafeInteger(id),
+    refetchInterval: (query) => wrongAnswerAnalysisPollingInterval(query.state.data?.status),
+  })
   const [note, setNote] = useState('')
   const [dirty, setDirty] = useState(false)
   const [history, setHistory] = useState<WrongNoteAttempt[]>([])
@@ -40,6 +57,14 @@ export function WrongNoteDetailPage() {
   const retryMutation = useMutation({
     mutationFn: () => retryWrongNote(id),
     onSuccess: (quiz) => void navigate({ to: '/quiz/$quizId', params: { quizId: String(quiz.quizId) } }),
+  })
+  const aiRequestMutation = useMutation({
+    mutationFn: () => requestWrongNoteAiAnalysis(id),
+    onSuccess: () => void aiAnalysis.refetch(),
+  })
+  const aiRetryMutation = useMutation({
+    mutationFn: () => retryWrongNoteAiAnalysis(id),
+    onSuccess: () => void aiAnalysis.refetch(),
   })
 
   saveRef.current = () => {
@@ -112,6 +137,7 @@ export function WrongNoteDetailPage() {
   if (detail.isPending) return <PageSkeleton rows={5} />
   if (detail.isError) return <ErrorState message="오답 상세를 불러오지 못했습니다." onRetry={() => void detail.refetch()} />
   const item = detail.data
+  const analysis = aiAnalysis.data
 
   const updateNote = (value: string) => {
     noteRef.current = value
@@ -142,6 +168,26 @@ export function WrongNoteDetailPage() {
         <h2>Why I was wrong</h2>
         <textarea value={note} onChange={(event) => updateNote(event.target.value)} placeholder="실수 원인과 다음에 확인할 점을 적어보세요." />
         <p className={`save-state ${noteMutation.isError ? 'error' : noteMutation.isPending ? 'saving' : dirty ? 'saving' : 'saved'}`}>{noteMutation.isError ? '저장 실패' : noteMutation.isPending ? '저장 중…' : dirty ? '변경 사항 저장 대기 중' : '저장됨'} · Ctrl/Cmd+S</p>
+      </section>
+      <section className="detail-section ai-analysis-section">
+        <div className="section-heading"><div><p className="eyebrow">Learning assistant</p><h2>AI 오답 분석</h2></div>{analysis?.status === 'COMPLETED' && <span className="chip status-completed">Completed</span>}</div>
+        {aiAnalysis.isPending
+          ? <p className="helper-text">AI 분석 상태를 확인하는 중입니다…</p>
+          : aiAnalysis.isError
+            ? <ErrorState message="AI 분석 상태를 불러오지 못했습니다." onRetry={() => void aiAnalysis.refetch()} />
+            : analysis
+              ? (
+                <WrongAnswerAnalysisCard
+                  analysis={analysis}
+                  requestPending={aiRequestMutation.isPending}
+                  requestError={aiRequestMutation.isError}
+                  retryPending={aiRetryMutation.isPending}
+                  retryError={aiRetryMutation.isError}
+                  onRequest={() => aiRequestMutation.mutate()}
+                  onRetry={() => aiRetryMutation.mutate()}
+                />
+              )
+              : null}
       </section>
       <section className="detail-section">
         <h2>Attempt history</h2>
