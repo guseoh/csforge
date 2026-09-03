@@ -13,6 +13,10 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -22,12 +26,17 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.guseoh.csforge.search.application.SearchIndexListenerControl;
 import com.guseoh.csforge.search.application.SearchReindexIndexStore;
+import com.guseoh.csforge.search.infrastructure.SearchKafkaConfiguration;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.common.serialization.StringDeserializer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
@@ -50,6 +59,7 @@ import tools.jackson.databind.ObjectMapper;
         properties = {
                 "spring.autoconfigure.exclude=",
                 "csforge.search.outbox.relay.enabled=true",
+                "csforge.search.kafka.error-handler.enabled=true",
                 "csforge.search.outbox-relay-delay-ms=100",
                 "spring.kafka.consumer.auto-offset-reset=earliest"
         })
@@ -93,6 +103,9 @@ class SearchFullStackIntegrationTest {
 
     @Autowired
     SearchIndexListenerControl listenerControl;
+
+    @Autowired
+    KafkaTemplate<String, String> kafkaTemplate;
 
     @MockitoSpyBean
     SearchReindexIndexStore reindexIndexStore;
@@ -175,6 +188,36 @@ class SearchFullStackIntegrationTest {
         assertSearchContainsType("HTTP/2", "QUESTION");
         assertSearchContainsType("fsync", "WRONG_NOTE");
         assertSearchContainsType("ReferenceOnlyMarker", "REFERENCE");
+    }
+
+    @Test
+    void malformedSearchEventIsPublishedToDeadLetterTopic() throws Exception {
+        Map<String, Object> consumerProperties = new HashMap<>();
+        consumerProperties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, KAFKA.getBootstrapServers());
+        consumerProperties.put(ConsumerConfig.GROUP_ID_CONFIG, "search-it-dlt-" + UUID.randomUUID());
+        consumerProperties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+        consumerProperties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+        consumerProperties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+        String key = "BROKEN:1";
+        String payload = "not-a-valid-search-event";
+
+        try (KafkaConsumer<String, String> consumer = new KafkaConsumer<>(consumerProperties)) {
+            consumer.subscribe(List.of(SearchKafkaConfiguration.INDEX_DLT_TOPIC));
+            consumer.poll(Duration.ofMillis(200));
+            kafkaTemplate.send(SearchKafkaConfiguration.INDEX_TOPIC, key, payload)
+                    .get(10, TimeUnit.SECONDS);
+
+            long deadline = System.nanoTime() + Duration.ofSeconds(15).toNanos();
+            while (System.nanoTime() < deadline) {
+                for (var record : consumer.poll(Duration.ofMillis(500))) {
+                    if (!payload.equals(record.value())) continue;
+                    assertEquals(key, record.key());
+                    assertEquals(SearchKafkaConfiguration.INDEX_DLT_TOPIC, record.topic());
+                    return;
+                }
+            }
+        }
+        throw new AssertionError("Malformed Search event was not published to the DLT");
     }
 
     @Test
