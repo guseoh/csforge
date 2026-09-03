@@ -39,7 +39,9 @@ public class JpaSearchProjectionTargetResolver implements SearchProjectionTarget
         refs.add(new SearchDocumentRef(SearchDocumentType.QUESTION, questionId));
         entityManager.createQuery("select w.id from WrongNote w where w.question.id = :questionId", Long.class)
                 .setParameter("questionId", questionId)
-                .getResultStream()
+                .setMaxResults(1)
+                .getResultList()
+                .stream()
                 .findFirst()
                 .ifPresent(id -> refs.add(new SearchDocumentRef(SearchDocumentType.WRONG_NOTE, id)));
         return refs;
