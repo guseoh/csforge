@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - feat/search
-      - feat/ai-wrong-answer-analysis
   workflow_dispatch:
 
 jobs:
