@@ -36,6 +36,7 @@ public class JpaSearchProjectionLoader implements SearchProjectionLoader, Search
     private EntityManager entityManager;
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<SearchProjectionDocument> load(SearchDocumentRef ref) {
         return switch (ref.documentType()) {
             case CONCEPT -> loadConcept(ref.sourceId());
