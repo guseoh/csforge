@@ -15,7 +15,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-/** Search infrastructure 상태를 제품 복구 상태로 변환하는 application 계약을 검증한다. */
+/** Search query/suggestion과 infrastructure 복구 상태의 application 계약을 검증한다. */
 @ExtendWith(MockitoExtension.class)
 class SearchQueryServiceTest {
 
@@ -84,5 +84,23 @@ class SearchQueryServiceTest {
 
         assertThrows(SearchNotReadyException.class, () -> service.search(criteria));
         verify(searchEngineGateway, never()).search(criteria);
+    }
+
+    @Test
+    void blankSuggestionDoesNotTouchSearchInfrastructure() {
+        assertEquals(List.of(), service.suggest("   ", 8));
+        verify(searchEngineGateway, never()).state();
+        verify(searchEngineGateway, never()).suggest("", 8);
+    }
+
+    @Test
+    void readySuggestionTrimsQueryAndEnforcesBoundedSize() {
+        when(searchEngineGateway.state()).thenReturn(SearchEngineState.READY);
+        when(searchEngineGateway.suggest("HashMap", 10)).thenReturn(List.of());
+
+        assertEquals(List.of(), service.suggest("  HashMap  ", 10));
+        verify(searchEngineGateway).suggest("HashMap", 10);
+        assertThrows(IllegalArgumentException.class, () -> service.suggest("HashMap", 11));
+        assertThrows(IllegalArgumentException.class, () -> service.suggest("x".repeat(101), 8));
     }
 }
