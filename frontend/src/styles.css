@@ -647,6 +647,60 @@ textarea:focus {
   border-top: 1px solid #2a3243;
 }
 
+.section-heading {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.section-heading h2 {
+  margin-bottom: 0;
+}
+
+.ai-analysis-empty {
+  display: grid;
+  justify-items: start;
+  gap: 14px;
+  padding: 18px;
+  border: 1px solid #2a3243;
+  border-radius: 10px;
+  background: #171d2a;
+}
+
+.ai-analysis-empty p {
+  margin: 0;
+  color: #aeb8cc;
+}
+
+.ai-analysis-result {
+  display: grid;
+  gap: 20px;
+  padding: 20px;
+  border: 1px solid #2a3243;
+  border-radius: 10px;
+  background: #171d2a;
+}
+
+.ai-analysis-result h3 {
+  margin-bottom: 8px;
+  color: #eef2ff;
+  font-size: 0.95rem;
+}
+
+.ai-analysis-result p,
+.ai-analysis-result ul,
+.ai-analysis-result ol {
+  margin: 0;
+  color: #c8d1e4;
+  line-height: 1.7;
+}
+
+.ai-analysis-result ul,
+.ai-analysis-result ol {
+  padding-left: 22px;
+}
+
 .save-state {
   font-size: 0.78rem;
 }

@@ -32,6 +32,25 @@ spring:
       port: ${REDIS_PORT:6379}
   elasticsearch:
     uris: ${ELASTICSEARCH_URIS:http://localhost:9200}
+  ai:
+    model:
+      chat: ${SPRING_AI_MODEL_CHAT:ollama}
+    ollama:
+      base-url: ${OLLAMA_BASE_URL:http://localhost:11434}
+      chat:
+        options:
+          model: ${CSFORGE_AI_MODEL:llama3.2}
+          temperature: ${CSFORGE_AI_TEMPERATURE:0.2}
+        keep-alive: ${CSFORGE_AI_KEEP_ALIVE:5m}
+      init:
+        pull-model-strategy: never
+    retry:
+      max-attempts: ${CSFORGE_AI_PROVIDER_MAX_ATTEMPTS:1}
+      on-client-errors: false
+  http:
+    clients:
+      connect-timeout: ${CSFORGE_AI_CONNECT_TIMEOUT:2s}
+      read-timeout: ${CSFORGE_AI_READ_TIMEOUT:2m}
 
 server:
   port: ${SERVER_PORT:8080}
@@ -52,3 +71,18 @@ management:
   health:
     elasticsearch:
       enabled: ${ELASTICSEARCH_HEALTH_ENABLED:false}
+
+csforge:
+  ai:
+    # The local provider is opt-in; setting this to true enables the durable processor.
+    enabled: ${CSFORGE_AI_ENABLED:false}
+    provider: ollama
+    model: ${CSFORGE_AI_MODEL:llama3.2}
+    prompt-version: v1
+    schema-version: v1
+    max-processing-attempts: ${CSFORGE_AI_MAX_PROCESSING_ATTEMPTS:3}
+    retry-initial-delay: ${CSFORGE_AI_RETRY_INITIAL_DELAY:5s}
+    retry-max-delay: ${CSFORGE_AI_RETRY_MAX_DELAY:5m}
+    processing-lease: ${CSFORGE_AI_PROCESSING_LEASE:5m}
+    processor-delay-ms: ${CSFORGE_AI_PROCESSOR_DELAY_MS:1000}
+    processor-batch-size: ${CSFORGE_AI_PROCESSOR_BATCH_SIZE:20}

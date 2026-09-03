@@ -2,13 +2,32 @@ import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate, useParams } from '@tanstack/react-router'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { ErrorState, PageSkeleton } from '../components/AsyncStates'
-import { getWrongNote, getWrongNoteAttempts, retryWrongNote, saveWrongNote, type WrongNoteAttempt } from '../lib/api'
+import {
+  getWrongNote,
+  getWrongNoteAiAnalysis,
+  getWrongNoteAttempts,
+  requestWrongNoteAiAnalysis,
+  retryWrongNote,
+  retryWrongNoteAiAnalysis,
+  saveWrongNote,
+  type WrongAnswerAnalysis,
+  type WrongNoteAttempt,
+} from '../lib/api'
 
 export function WrongNoteDetailPage() {
   const { questionId } = useParams({ from: '/wrong-notes/$questionId' })
   const id = Number(questionId)
   const navigate = useNavigate()
   const detail = useQuery({ queryKey: ['wrong-note', id], queryFn: () => getWrongNote(id) })
+  const aiAnalysis = useQuery({
+    queryKey: ['wrong-note-ai-analysis', id],
+    queryFn: () => getWrongNoteAiAnalysis(id),
+    enabled: Number.isSafeInteger(id),
+    refetchInterval: (query) => {
+      const status = query.state.data?.status
+      return status === 'PENDING' || status === 'PROCESSING' ? 2000 : false
+    },
+  })
   const [note, setNote] = useState('')
   const [dirty, setDirty] = useState(false)
   const [history, setHistory] = useState<WrongNoteAttempt[]>([])
@@ -40,6 +59,14 @@ export function WrongNoteDetailPage() {
   const retryMutation = useMutation({
     mutationFn: () => retryWrongNote(id),
     onSuccess: (quiz) => void navigate({ to: '/quiz/$quizId', params: { quizId: String(quiz.quizId) } }),
+  })
+  const aiRequestMutation = useMutation({
+    mutationFn: () => requestWrongNoteAiAnalysis(id),
+    onSuccess: () => void aiAnalysis.refetch(),
+  })
+  const aiRetryMutation = useMutation({
+    mutationFn: () => retryWrongNoteAiAnalysis(id),
+    onSuccess: () => void aiAnalysis.refetch(),
   })
 
   saveRef.current = () => {
@@ -112,6 +139,31 @@ export function WrongNoteDetailPage() {
   if (detail.isPending) return <PageSkeleton rows={5} />
   if (detail.isError) return <ErrorState message="오답 상세를 불러오지 못했습니다." onRetry={() => void detail.refetch()} />
   const item = detail.data
+  const analysis = aiAnalysis.data
+
+  const renderAnalysis = (current: WrongAnswerAnalysis) => {
+    if (current.status === 'PROVIDER_NOT_CONFIGURED') {
+      return <div className="state-card"><strong>AI 분석을 사용할 수 없습니다.</strong><span>로컬 Ollama provider를 구성하면 명시적으로 분석을 요청할 수 있습니다.</span></div>
+    }
+    if (current.status === 'NOT_REQUESTED') {
+      return <div className="ai-analysis-empty"><p>현재 latest wrong answer와 문제·정답·관련 개념을 바탕으로 오답 원인을 분석합니다.</p><button className="primary-button" type="button" onClick={() => aiRequestMutation.mutate()} disabled={!current.available || aiRequestMutation.isPending}>AI 분석하기</button>{aiRequestMutation.isError && <p className="save-state error">분석 요청에 실패했습니다. 잠시 후 다시 시도하세요.</p>}</div>
+    }
+    if (current.status === 'PENDING' || current.status === 'PROCESSING') {
+      return <div className="state-card" aria-live="polite"><strong>AI 분석을 처리하고 있습니다.</strong><span>{current.status === 'PENDING' ? '분석 작업을 준비하는 중입니다.' : 'Ollama가 오답을 분석하는 중입니다.'}</span><span className="helper-text">이 화면은 자동으로 갱신됩니다.</span></div>
+    }
+    if (current.status === 'FAILED') {
+      return <div className="state-card error-state"><strong>AI 분석에 실패했습니다.</strong><span>provider 상태를 확인한 뒤 다시 시도할 수 있습니다.</span><button className="secondary-button" type="button" onClick={() => aiRetryMutation.mutate()} disabled={!current.retryable || aiRetryMutation.isPending}>다시 시도</button>{aiRetryMutation.isError && <p className="save-state error">재시도 요청에 실패했습니다.</p>}</div>
+    }
+    const result = current.result
+    if (!result) return <div className="state-card error-state"><strong>분석 결과가 비어 있습니다.</strong><span>다시 시도해 주세요.</span></div>
+    return <div className="ai-analysis-result">
+      <div><h3>왜 틀렸는가</h3><p>{result.whyWrong}</p></div>
+      <div><h3>놓친 핵심</h3><ul>{result.missedConcepts.map((concept) => <li key={concept}>{concept}</li>)}</ul></div>
+      <div><h3>올바른 이해</h3><p>{result.correctUnderstanding}</p></div>
+      <div><h3>관련 개념</h3>{result.relatedConcepts.length === 0 ? <p className="helper-text">연결된 개념이 없습니다.</p> : <div className="related-list">{result.relatedConcepts.map((concept) => <Link key={concept.id} to="/concepts/$conceptId" params={{ conceptId: String(concept.id) }}>{concept.title}<span>{concept.areaName} · Level {concept.level}</span></Link>)}</div>}</div>
+      <div><h3>확인 질문</h3><ol>{result.followUpQuestions.map((question) => <li key={question}>{question}</li>)}</ol></div>
+    </div>
+  }
 
   const updateNote = (value: string) => {
     noteRef.current = value
@@ -142,6 +194,10 @@ export function WrongNoteDetailPage() {
         <h2>Why I was wrong</h2>
         <textarea value={note} onChange={(event) => updateNote(event.target.value)} placeholder="실수 원인과 다음에 확인할 점을 적어보세요." />
         <p className={`save-state ${noteMutation.isError ? 'error' : noteMutation.isPending ? 'saving' : dirty ? 'saving' : 'saved'}`}>{noteMutation.isError ? '저장 실패' : noteMutation.isPending ? '저장 중…' : dirty ? '변경 사항 저장 대기 중' : '저장됨'} · Ctrl/Cmd+S</p>
+      </section>
+      <section className="detail-section ai-analysis-section">
+        <div className="section-heading"><div><p className="eyebrow">Learning assistant</p><h2>AI 오답 분석</h2></div>{analysis?.status === 'COMPLETED' && <span className="chip status-completed">Completed</span>}</div>
+        {aiAnalysis.isPending ? <p className="helper-text">AI 분석 상태를 확인하는 중입니다…</p> : aiAnalysis.isError ? <ErrorState message="AI 분석 상태를 불러오지 못했습니다." onRetry={() => void aiAnalysis.refetch()} /> : analysis ? renderAnalysis(analysis) : null}
       </section>
       <section className="detail-section">
         <h2>Attempt history</h2>

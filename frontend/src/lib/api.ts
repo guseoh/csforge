@@ -140,11 +140,13 @@ export interface NoteResponse {
 
 export class ApiRequestError extends Error {
   readonly status: number
+  readonly code: string | null
 
-  constructor(message: string, status: number) {
+  constructor(message: string, status: number, code: string | null = null) {
     super(message)
     this.name = 'ApiRequestError'
     this.status = status
+    this.code = code
   }
 }
 
@@ -157,8 +159,8 @@ async function request<T>(input: RequestInfo | URL, init?: RequestInit): Promise
     },
   })
   if (!response.ok) {
-    const body = (await response.json().catch(() => null)) as { message?: string } | null
-    throw new ApiRequestError(body?.message ?? '요청을 처리하지 못했습니다.', response.status)
+    const body = (await response.json().catch(() => null)) as { message?: string; code?: string } | null
+    throw new ApiRequestError(body?.message ?? '요청을 처리하지 못했습니다.', response.status, body?.code ?? null)
   }
   if (response.status === 204) return null as T
   return response.json() as Promise<T>
@@ -473,6 +475,43 @@ export interface WrongNoteAttempt {
 }
 
 export interface WrongNoteAttemptPage { items: WrongNoteAttempt[]; nextCursor: string | null }
+
+export type WrongAnswerAnalysisStatus =
+  | 'NOT_REQUESTED'
+  | 'PENDING'
+  | 'PROCESSING'
+  | 'COMPLETED'
+  | 'FAILED'
+  | 'PROVIDER_NOT_CONFIGURED'
+
+export interface WrongAnswerAnalysisRelatedConcept extends QuizConcept {
+  contentKey: string
+}
+
+export interface WrongAnswerAnalysisResult {
+  whyWrong: string
+  missedConcepts: string[]
+  correctUnderstanding: string
+  relatedConceptKeys: string[]
+  relatedConcepts: WrongAnswerAnalysisRelatedConcept[]
+  followUpQuestions: string[]
+}
+
+export interface WrongAnswerAnalysis {
+  questionId: number
+  attemptId: number | null
+  status: WrongAnswerAnalysisStatus
+  available: boolean
+  providerConfigured: boolean
+  retryable: boolean
+  result: WrongAnswerAnalysisResult | null
+  requestedAt: string | null
+  startedAt: string | null
+  completedAt: string | null
+  failedAt: string | null
+  errorCode: string | null
+  errorMessage: string | null
+}
 export interface ReviewSummary { overdue: number; dueNow: number; next24Hours: number; next7Days: number; mastered: number }
 export interface ReviewListItem {
   questionId: number; promptMarkdown: string; questionType: QuestionType; difficulty: QuestionDifficulty; concepts: QuizConcept[]
@@ -499,6 +538,15 @@ export function saveWrongNote(questionId: number, content: string): Promise<{ co
   return request(`/api/wrong-notes/${questionId}/note`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ content }) })
 }
 export function retryWrongNote(questionId: number): Promise<QuizCreated> { return request(`/api/wrong-notes/${questionId}/retry`, { method: 'POST' }) }
+export function getWrongNoteAiAnalysis(questionId: number): Promise<WrongAnswerAnalysis> {
+  return request(`/api/wrong-notes/${questionId}/ai-analysis`)
+}
+export function requestWrongNoteAiAnalysis(questionId: number): Promise<WrongAnswerAnalysis> {
+  return request(`/api/wrong-notes/${questionId}/ai-analysis`, { method: 'POST' })
+}
+export function retryWrongNoteAiAnalysis(questionId: number): Promise<WrongAnswerAnalysis> {
+  return request(`/api/wrong-notes/${questionId}/ai-analysis/retry`, { method: 'POST' })
+}
 export function getReviewSummary(): Promise<ReviewSummary> { return request('/api/reviews/summary') }
 export function getReviews(filters: { due: string; status?: ReviewScheduleStatus; area?: string; page: number; size: number }): Promise<ReviewPage> {
   const params = new URLSearchParams({ due: filters.due, page: String(filters.page), size: String(filters.size) }); if (filters.status) params.set('status', filters.status); if (filters.area) params.set('area', filters.area)
