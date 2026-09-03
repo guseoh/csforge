@@ -1,0 +1,88 @@
+package com.guseoh.csforge.search.application;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.List;
+
+import com.guseoh.csforge.search.domain.SearchOutboxEventRepository;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+/** Search infrastructure 상태를 제품 복구 상태로 변환하는 application 계약을 검증한다. */
+@ExtendWith(MockitoExtension.class)
+class SearchQueryServiceTest {
+
+    @Mock
+    SearchEngineGateway searchEngineGateway;
+
+    @Mock
+    SearchFilterOptionsProvider filterOptionsProvider;
+
+    @Mock
+    SearchOutboxEventRepository outboxRepository;
+
+    @Mock
+    SearchReindexState reindexState;
+
+    private SearchQueryService service;
+
+    @BeforeEach
+    void setUp() {
+        service = new SearchQueryService(
+                searchEngineGateway,
+                filterOptionsProvider,
+                outboxRepository,
+                reindexState);
+    }
+
+    @Test
+    void unavailableInfrastructureProducesRecoverableUnavailableStatusWithoutCountingDocuments() {
+        when(searchEngineGateway.state()).thenReturn(SearchEngineState.UNAVAILABLE);
+        when(outboxRepository.countByPublishedAtIsNull()).thenReturn(3L);
+
+        SearchStatusView status = service.status();
+
+        assertEquals(SearchProductState.UNAVAILABLE, status.state());
+        assertEquals(0, status.indexedDocuments());
+        assertEquals(3, status.pendingOutboxEvents());
+        verify(searchEngineGateway, never()).countDocuments();
+    }
+
+    @Test
+    void activeReindexTakesProductStatePrecedenceOverReadyIndex() {
+        when(searchEngineGateway.state()).thenReturn(SearchEngineState.READY);
+        when(reindexState.isReindexing()).thenReturn(true);
+        when(searchEngineGateway.countDocuments()).thenReturn(12L);
+        when(outboxRepository.countByPublishedAtIsNull()).thenReturn(2L);
+
+        SearchStatusView status = service.status();
+
+        assertEquals(SearchProductState.REINDEXING, status.state());
+        assertEquals(12, status.indexedDocuments());
+        assertEquals(2, status.pendingOutboxEvents());
+    }
+
+    @Test
+    void missingIndexRejectsSearchAsNotReadyInsteadOfCallingSearchEngine() {
+        when(searchEngineGateway.state()).thenReturn(SearchEngineState.NOT_READY);
+        SearchCriteria criteria = new SearchCriteria(
+                "HashMap",
+                List.of(),
+                List.of(),
+                List.of(),
+                List.of(),
+                SearchSort.RELEVANCE,
+                0,
+                20);
+
+        assertThrows(SearchNotReadyException.class, () -> service.search(criteria));
+        verify(searchEngineGateway, never()).search(criteria);
+    }
+}
