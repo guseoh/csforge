@@ -23,6 +23,7 @@ public class SearchOutboxChangeRecorder implements SearchProjectionChangeRecorde
     @Override
     @Transactional(propagation = Propagation.MANDATORY)
     public void record(SearchChangeType changeType, long sourceId) {
+        repository.lockSource(changeType.name() + ":" + sourceId);
         Instant now = Instant.now(clock);
         long changeSequence = repository.nextChangeSequence();
         repository.findByChangeTypeAndSourceIdAndPublishedAtIsNull(changeType, sourceId)
