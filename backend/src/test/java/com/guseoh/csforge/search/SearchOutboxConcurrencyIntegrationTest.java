@@ -1,23 +1,36 @@
 package com.guseoh.csforge.search;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
+import java.time.Clock;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import com.guseoh.csforge.search.application.SearchChangeType;
 import com.guseoh.csforge.search.application.SearchProjectionChangeRecorder;
+import com.guseoh.csforge.search.application.SearchProjectionStore;
 import com.guseoh.csforge.search.domain.SearchOutboxEvent;
 import com.guseoh.csforge.search.domain.SearchOutboxEventRepository;
+import com.guseoh.csforge.search.infrastructure.SearchIndexEventCodec;
+import com.guseoh.csforge.search.infrastructure.SearchOutboxRelay;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.SendResult;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -26,7 +39,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-/** 동일 Search source의 동시 변경이 하나의 pending outbox 행으로 안전하게 합쳐지는지 검증한다. */
+/** 동일 Search source의 coalescing과 Kafka relay 대기 중 canonical write isolation을 검증한다. */
 @Testcontainers
 @SpringBootTest
 class SearchOutboxConcurrencyIntegrationTest {
@@ -78,6 +91,79 @@ class SearchOutboxConcurrencyIntegrationTest {
         assertEquals(1, repository.countByPublishedAtIsNull());
     }
 
+    @Test
+    void relayWaitingForBrokerAckDoesNotBlockNewerCanonicalOutboxChange() throws Exception {
+        recordChange();
+        SearchOutboxEvent initial = onlyEvent();
+        long initialSequence = initial.getChangeSequence();
+
+        SearchProjectionStore projectionStore = mock(SearchProjectionStore.class);
+        @SuppressWarnings("unchecked")
+        KafkaTemplate<String, String> kafkaTemplate = mock(KafkaTemplate.class);
+        @SuppressWarnings("unchecked")
+        SendResult<String, String> sendResult = mock(SendResult.class);
+        CompletableFuture<SendResult<String, String>> firstBrokerAck = new CompletableFuture<>();
+        CountDownLatch firstSendStarted = new CountDownLatch(1);
+        AtomicInteger sends = new AtomicInteger();
+
+        when(projectionStore.isReady()).thenReturn(true);
+        when(kafkaTemplate.send(any(), any(), any())).thenAnswer(invocation -> {
+            if (sends.getAndIncrement() == 0) {
+                firstSendStarted.countDown();
+                return firstBrokerAck;
+            }
+            return CompletableFuture.completedFuture(sendResult);
+        });
+
+        SearchOutboxRelay relay = new SearchOutboxRelay(
+                repository,
+                projectionStore,
+                kafkaTemplate,
+                new SearchIndexEventCodec(),
+                Clock.systemUTC(),
+                transactionManager);
+        ExecutorService executor = Executors.newFixedThreadPool(2);
+        Future<?> relayFuture = null;
+        try {
+            relayFuture = executor.submit(relay::relay);
+            assertTrue(firstSendStarted.await(3, TimeUnit.SECONDS));
+
+            Future<?> newerChange = executor.submit(this::recordChange);
+            newerChange.get(3, TimeUnit.SECONDS);
+
+            SearchOutboxEvent refreshed = onlyEvent();
+            long refreshedSequence = refreshed.getChangeSequence();
+            assertTrue(refreshedSequence > initialSequence);
+            assertNull(refreshed.getPublishedAt());
+
+            firstBrokerAck.complete(sendResult);
+            relayFuture.get(5, TimeUnit.SECONDS);
+
+            SearchOutboxEvent afterStaleAck = onlyEvent();
+            assertEquals(refreshedSequence, afterStaleAck.getChangeSequence());
+            assertNull(afterStaleAck.getPublishedAt());
+            assertEquals(1, repository.countByPublishedAtIsNull());
+
+            relay.relay();
+
+            SearchOutboxEvent published = onlyEvent();
+            assertNotNull(published.getPublishedAt());
+            assertEquals(refreshedSequence, published.getChangeSequence());
+            assertEquals(0, repository.countByPublishedAtIsNull());
+            assertEquals(2, sends.get());
+        } finally {
+            firstBrokerAck.complete(sendResult);
+            if (relayFuture != null) {
+                try {
+                    relayFuture.get(1, TimeUnit.SECONDS);
+                } catch (Exception ignored) {
+                    // Best-effort cleanup; assertions above preserve the actual failure.
+                }
+            }
+            executor.shutdownNow();
+        }
+    }
+
     private void runConcurrentRecordWave() throws Exception {
         CountDownLatch ready = new CountDownLatch(CONCURRENT_WRITERS);
         CountDownLatch start = new CountDownLatch(1);
@@ -89,8 +175,7 @@ class SearchOutboxConcurrencyIntegrationTest {
                         if (!start.await(10, TimeUnit.SECONDS)) {
                             throw new AssertionError("Timed out waiting to start concurrent outbox writes");
                         }
-                        new TransactionTemplate(transactionManager).executeWithoutResult(
-                                status -> recorder.record(SearchChangeType.CONCEPT, SOURCE_ID));
+                        recordChange();
                         return null;
                     }))
                     .toList();
@@ -102,6 +187,11 @@ class SearchOutboxConcurrencyIntegrationTest {
             start.countDown();
             executor.shutdownNow();
         }
+    }
+
+    private void recordChange() {
+        new TransactionTemplate(transactionManager).executeWithoutResult(
+                status -> recorder.record(SearchChangeType.CONCEPT, SOURCE_ID));
     }
 
     private SearchOutboxEvent onlyEvent() {
