@@ -188,7 +188,10 @@ class ContentImportIntegrationTest {
         assertEquals(1, jdbc.queryForObject("select display_order from question_choice where question_id = ? and choice_key = 'A'", Integer.class, questionId));
         assertEquals(0, jdbc.queryForObject("select display_order from question_choice where question_id = ? and choice_key = 'B'", Integer.class, questionId));
         JsonNode identicalPreview = json(post("/api/imports/preview", swapped, null)).get("body");
-        assertEquals(1, identicalPreview.get("totals").get("unchanged").asInt());
+        assertEquals(0, identicalPreview.get("totals").get("created").asInt());
+        assertEquals(0, identicalPreview.get("totals").get("updated").asInt());
+        assertEquals(3, identicalPreview.get("totals").get("unchanged").asInt());
+        assertTrue(identicalPreview.get("canApply").asBoolean());
     }
 
     @Test
