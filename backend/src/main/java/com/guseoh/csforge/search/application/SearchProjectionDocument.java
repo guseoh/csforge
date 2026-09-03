@@ -42,7 +42,7 @@ public record SearchProjectionDocument(
         source.put("conceptIds", conceptIds);
         source.put("conceptContentKeys", conceptContentKeys);
         source.put("levels", levels);
-        source.put("updatedAt", updatedAt);
+        source.put("updatedAt", updatedAt.toString());
         putIfNotNull(source, "conceptId", conceptId);
         putIfNotNull(source, "questionId", questionId);
         putIfNotNull(source, "referenceUrl", referenceUrl);
