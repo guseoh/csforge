@@ -164,8 +164,11 @@ class SearchFullStackIntegrationTest {
 
     private void deleteSearchIndices() throws Exception {
         HttpResponse<String> response = elasticsearchGet("/csforge-search-v1-*");
-        if (response.statusCode() == 200) {
-            HttpRequest delete = HttpRequest.newBuilder(URI.create(elasticsearchUrl() + "/csforge-search-v1-*"))
+        if (response.statusCode() == 404) return;
+        assertEquals(200, response.statusCode(), response.body());
+        JsonNode indices = objectMapper.readTree(response.body());
+        for (String indexName : indices.propertyNames()) {
+            HttpRequest delete = HttpRequest.newBuilder(URI.create(elasticsearchUrl() + "/" + indexName))
                     .DELETE()
                     .build();
             HttpResponse<String> deleted = HTTP.send(delete, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
