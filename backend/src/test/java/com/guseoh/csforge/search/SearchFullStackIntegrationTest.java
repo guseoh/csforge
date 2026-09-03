@@ -2,6 +2,9 @@ package com.guseoh.csforge.search;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doAnswer;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -9,7 +12,15 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
+import com.guseoh.csforge.search.application.SearchIndexListenerControl;
+import com.guseoh.csforge.search.application.SearchReindexIndexStore;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +29,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
@@ -78,6 +90,12 @@ class SearchFullStackIntegrationTest {
     @Autowired
     ObjectMapper objectMapper;
 
+    @Autowired
+    SearchIndexListenerControl listenerControl;
+
+    @MockitoSpyBean
+    SearchReindexIndexStore reindexIndexStore;
+
     @Value("${local.server.port}")
     int port;
 
@@ -92,6 +110,7 @@ class SearchFullStackIntegrationTest {
 
     @BeforeEach
     void cleanSearchFixture() throws Exception {
+        listenerControl.resume();
         jdbc.update("delete from search_outbox_event");
         jdbc.update("delete from personal_note");
         jdbc.update("delete from concept_reference");
@@ -127,6 +146,68 @@ class SearchFullStackIntegrationTest {
         assertEquals(0, jdbc.queryForObject(
                 "select count(*) from search_outbox_event where published_at is null",
                 Integer.class));
+    }
+
+    @Test
+    void fullReindexCatchesProjectionCreatedAfterBaselineBeforeAliasSwap() throws Exception {
+        long conceptId = insertPublishedConcept();
+        long baselineSequence = jdbc.queryForObject(
+                "select coalesce(max(change_sequence), 0) from search_outbox_event",
+                Long.class);
+        CountDownLatch firstBulkReached = new CountDownLatch(1);
+        CountDownLatch releaseFirstBulk = new CountDownLatch(1);
+        AtomicBoolean blockFirstBulk = new AtomicBoolean(true);
+        boolean listenerPaused = listenerControl.pauseAndAwait();
+
+        doAnswer(invocation -> {
+            if (blockFirstBulk.compareAndSet(true, false)) {
+                firstBulkReached.countDown();
+                if (!releaseFirstBulk.await(20, TimeUnit.SECONDS)) {
+                    throw new AssertionError("Timed out waiting to release first reindex bulk");
+                }
+            }
+            return invocation.callRealMethod();
+        }).when(reindexIndexStore).bulkUpsert(anyString(), anyList());
+
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        try {
+            Future<HttpResponse<String>> reindexFuture = executor.submit(
+                    () -> request("POST", "/api/search/reindex", null));
+            assertTrue(firstBulkReached.await(30, TimeUnit.SECONDS), "Full reindex did not reach first bulk");
+
+            HttpResponse<String> noteWrite = request(
+                    "PUT",
+                    "/api/concepts/" + conceptId + "/note",
+                    "{\"content\":\"HighWaterCatchUpMarker\"}");
+            assertEquals(200, noteWrite.statusCode(), noteWrite.body());
+            long noteId = jdbc.queryForObject(
+                    "select id from personal_note where concept_id = ?",
+                    Long.class,
+                    conceptId);
+            long noteChangeSequence = jdbc.queryForObject(
+                    """
+                    select change_sequence
+                    from search_outbox_event
+                    where change_type = 'PERSONAL_NOTE' and source_id = ?
+                    order by change_sequence desc
+                    limit 1
+                    """,
+                    Long.class,
+                    noteId);
+            assertTrue(noteChangeSequence > baselineSequence);
+
+            releaseFirstBulk.countDown();
+            HttpResponse<String> reindex = reindexFuture.get(40, TimeUnit.SECONDS);
+            assertEquals(200, reindex.statusCode(), reindex.body());
+
+            JsonNode caughtUpSearch = search("HighWaterCatchUpMarker");
+            assertEquals(1, caughtUpSearch.get("totalHits").asLong(), caughtUpSearch.toString());
+            assertEquals("PERSONAL_NOTE", caughtUpSearch.get("items").get(0).get("documentType").asText());
+        } finally {
+            releaseFirstBulk.countDown();
+            executor.shutdownNow();
+            if (listenerPaused) listenerControl.resume();
+        }
     }
 
     private long insertPublishedConcept() {
