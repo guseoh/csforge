@@ -83,7 +83,7 @@ class SearchOutboxConcurrencyIntegrationTest {
         CountDownLatch start = new CountDownLatch(1);
         ExecutorService executor = Executors.newFixedThreadPool(CONCURRENT_WRITERS);
         try {
-            List<Future<?>> futures = java.util.stream.IntStream.range(0, CONCURRENT_WRITERS)
+            List<Future<Object>> futures = java.util.stream.IntStream.range(0, CONCURRENT_WRITERS)
                     .mapToObj(ignored -> executor.submit(() -> {
                         ready.countDown();
                         if (!start.await(10, TimeUnit.SECONDS)) {
@@ -97,7 +97,7 @@ class SearchOutboxConcurrencyIntegrationTest {
 
             assertTrue(ready.await(10, TimeUnit.SECONDS));
             start.countDown();
-            for (Future<?> future : futures) future.get(20, TimeUnit.SECONDS);
+            for (Future<Object> future : futures) future.get(20, TimeUnit.SECONDS);
         } finally {
             start.countDown();
             executor.shutdownNow();
