@@ -103,7 +103,8 @@ public class WrongAnswerAnalysisQueryService {
     private List<WrongAnswerAnalysisView.RelatedConceptView> resolveConcepts(List<String> keys) {
         if (keys == null || keys.isEmpty()) return List.of();
         Map<String, Concept> concepts = new LinkedHashMap<>();
-        conceptRepository.findByContentKeyIn(keys).forEach(concept -> concepts.put(concept.getContentKey(), concept));
+        conceptRepository.findByContentKeysWithNavigation(keys)
+                .forEach(concept -> concepts.put(concept.getContentKey(), concept));
         return keys.stream()
                 .map(concepts::get)
                 .filter(java.util.Objects::nonNull)
