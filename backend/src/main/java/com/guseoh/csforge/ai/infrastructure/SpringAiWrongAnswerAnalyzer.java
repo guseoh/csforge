@@ -16,7 +16,6 @@ import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.converter.BeanOutputConverter;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import tools.jackson.databind.ObjectMapper;
@@ -25,7 +24,6 @@ import tools.jackson.databind.ObjectMapper;
 @Component
 @RequiredArgsConstructor
 @ConditionalOnProperty(name = "csforge.ai.enabled", havingValue = "true")
-@ConditionalOnBean(ChatModel.class)
 public class SpringAiWrongAnswerAnalyzer implements WrongAnswerAnalyzer {
 
     private final ObjectProvider<ChatModel> chatModelProvider;
