@@ -296,7 +296,7 @@ class WrongAnswerAnalysisIntegrationTest {
     private long insertSecondWrongNote() {
         long secondQuestionId = jdbc.queryForObject(
                 "INSERT INTO question (content_key, prompt_markdown, question_type, difficulty, status, explanation_markdown) VALUES (?, ?, ?, ?, ?, ?) RETURNING id",
-                Long.class, "ai-question-2", "Which second answer?", "MULTIPLE_CHOICE", "EASY", "Second explanation");
+                Long.class, "ai-question-2", "Which second answer?", "MULTIPLE_CHOICE", "EASY", "PUBLISHED", "Second explanation");
         long choiceA = jdbc.queryForObject(
                 "INSERT INTO question_choice (question_id, choice_key, content_markdown, display_order) VALUES (?, ?, ?, ?) RETURNING id",
                 Long.class, secondQuestionId, "A", "Second distractor", 0);
