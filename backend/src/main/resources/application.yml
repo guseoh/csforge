@@ -72,6 +72,7 @@ management:
       enabled: ${ELASTICSEARCH_HEALTH_ENABLED:false}
 
 csforge:
+  time-zone: ${CSFORGE_TIME_ZONE:Asia/Seoul}
   ai:
     # AI is opt-in: enable CSFORGE_AI_ENABLED and SPRING_AI_MODEL_CHAT=ollama together.
     enabled: ${CSFORGE_AI_ENABLED:false}

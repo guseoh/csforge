@@ -16,6 +16,7 @@ import { parseReviewSearch } from './lib/review-search'
 import { parseSearchSearch } from './lib/search-search'
 import { ImportPage } from './pages/ImportPage'
 import { SearchPage } from './pages/SearchPage'
+import { DashboardPage } from './pages/DashboardPage'
 
 const navigation = [
   { to: '/', label: 'Dashboard' },
@@ -56,16 +57,6 @@ function AppLayout() {
         <main className="main-content"><Outlet /></main>
       </div>
     </div>
-  )
-}
-
-function DashboardPage() {
-  return (
-    <section className="page-card">
-      <p className="eyebrow">Welcome to your local workspace</p>
-      <h1>Build your CS learning loop.</h1>
-      <p className="lead">Learning data is now available from the Learning navigation. Other study flows arrive in later slices.</p>
-    </section>
   )
 }
 

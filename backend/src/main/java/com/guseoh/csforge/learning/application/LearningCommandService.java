@@ -1,11 +1,14 @@
 package com.guseoh.csforge.learning.application;
 
+import java.time.Clock;
 import java.time.Instant;
 
 import com.guseoh.csforge.learning.domain.Concept;
 import com.guseoh.csforge.learning.domain.ConceptProgress;
 import com.guseoh.csforge.learning.domain.ConceptProgressRepository;
 import com.guseoh.csforge.learning.domain.ConceptRepository;
+import com.guseoh.csforge.learning.domain.ConceptViewHistory;
+import com.guseoh.csforge.learning.domain.ConceptViewHistoryRepository;
 import com.guseoh.csforge.learning.domain.LearningStatus;
 import com.guseoh.csforge.learning.domain.PersonalNote;
 import com.guseoh.csforge.learning.domain.PersonalNoteRepository;
@@ -22,16 +25,21 @@ public class LearningCommandService {
 
     private final ConceptRepository conceptRepository;
     private final ConceptProgressRepository progressRepository;
+    private final ConceptViewHistoryRepository viewHistoryRepository;
     private final PersonalNoteRepository noteRepository;
     private final SearchProjectionChangeRecorder searchChangeRecorder;
+    private final Clock clock;
 
     @Transactional
     public ConceptProgressView recordView(long conceptId) {
         Concept concept = findPublishedConcept(conceptId);
         ConceptProgress progress = progressRepository.findById(conceptId)
                 .orElseGet(() -> new ConceptProgress(concept));
-        progress.recordView(Instant.now());
-        return toProgressView(progressRepository.saveAndFlush(progress));
+        Instant viewedAt = Instant.now(clock);
+        progress.recordView(viewedAt);
+        ConceptProgress savedProgress = progressRepository.saveAndFlush(progress);
+        viewHistoryRepository.saveAndFlush(ConceptViewHistory.record(concept, viewedAt));
+        return toProgressView(savedProgress);
     }
 
     @Transactional
@@ -44,7 +52,7 @@ public class LearningCommandService {
         Concept concept = findPublishedConcept(conceptId);
         ConceptProgress progress = progressRepository.findById(conceptId)
                 .orElseGet(() -> new ConceptProgress(concept));
-        Instant changedAt = Instant.now();
+        Instant changedAt = Instant.now(clock);
 
         applyStatus(progress, requestedStatus, changedAt);
         applyBookmark(progress, requestedBookmarked);
