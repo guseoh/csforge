@@ -154,6 +154,7 @@ export function WrongNoteDetailPage() {
   const item = detail.data
   const analysis = aiAnalysis.data
   const history = attemptsQuery.data?.pages.flatMap((page) => page.items) ?? []
+  const hasAttemptHistoryData = attemptsQuery.data !== undefined
 
   const updateNote = (value: string) => {
     noteRef.current = value
@@ -211,7 +212,7 @@ export function WrongNoteDetailPage() {
       </section>
       <section className="detail-section">
         <div className="section-heading"><div><p className="eyebrow">History</p><h2>Attempt history</h2></div>{history.length > 0 && <span className="result-count">{history.length} loaded</span>}</div>
-        {attemptsQuery.isPending ? <div className="state-card" aria-busy="true">시도 기록을 불러오는 중입니다…</div> : attemptsQuery.isError ? <ErrorState message="시도 기록을 불러오지 못했습니다." onRetry={() => void attemptsQuery.refetch()} /> : history.length === 0 ? <div className="state-card"><strong>아직 시도 기록이 없습니다.</strong><span>이 문제를 푼 기록이 생기면 여기에 시간순으로 쌓입니다.</span></div> : <div className="history-list">{history.map((attempt) => <div className="history-row" key={attempt.attemptId}><strong>{attempt.correct === true ? 'Correct' : attempt.correct === false ? 'Wrong' : attempt.gradingStatus}</strong><span>{attempt.source} · {attempt.gradingStatus}</span><time>{new Date(attempt.updatedAt).toLocaleString('ko-KR')}</time></div>)}</div>}
+        {attemptsQuery.isPending ? <div className="state-card" aria-busy="true">시도 기록을 불러오는 중입니다…</div> : attemptsQuery.isError && !hasAttemptHistoryData ? <ErrorState message="시도 기록을 불러오지 못했습니다." onRetry={() => void attemptsQuery.refetch()} /> : history.length === 0 ? <div className="state-card"><strong>아직 시도 기록이 없습니다.</strong><span>이 문제를 푼 기록이 생기면 여기에 시간순으로 쌓입니다.</span></div> : <div className="history-list">{history.map((attempt) => <div className="history-row" key={attempt.attemptId}><strong>{attempt.correct === true ? 'Correct' : attempt.correct === false ? 'Wrong' : attempt.gradingStatus}</strong><span>{attempt.source} · {attempt.gradingStatus}</span><time>{new Date(attempt.updatedAt).toLocaleString('ko-KR')}</time></div>)}</div>}
         {attemptsQuery.hasNextPage && <div className="load-more-row"><button className="secondary-button" type="button" disabled={attemptsQuery.isFetchingNextPage} onClick={() => void attemptsQuery.fetchNextPage()}>{attemptsQuery.isFetchingNextPage ? '불러오는 중…' : attemptsQuery.isFetchNextPageError ? '다시 시도' : '더 불러오기'}</button>{attemptsQuery.isFetchNextPageError && <span className="helper-text error-text">추가 기록을 불러오지 못했습니다.</span>}</div>}
       </section>
     </section>
