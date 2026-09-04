@@ -66,7 +66,7 @@ export function DashboardPage() {
       <div className="dashboard-kpi-grid">
         <div className="dashboard-kpi"><span>오늘 푼 문제</span><strong>{dashboard.today.solvedCount}</strong><small>{dashboard.today.correctCount} correct · {dashboard.today.wrongCount} wrong</small></div>
         <div className="dashboard-kpi"><span>오늘 정확도</span><strong>{percent(dashboard.today.accuracyPercent)}</strong><small>{dashboard.today.solvedCount === 0 ? '아직 풀이 기록이 없습니다.' : 'finalized attempts 기준'}</small></div>
-        <div className="dashboard-kpi dashboard-kpi-action"><span>복습 대기</span><strong>{dashboard.today.reviewDueCount}</strong>{dashboard.today.reviewDueCount > 0 ? <small>지금 시작할 수 있습니다.</small> : <button className="text-button" type="button" disabled>복습 시작 →</button>}</div>
+        <div className="dashboard-kpi dashboard-kpi-action"><span>복습 대기</span><strong>{dashboard.today.reviewDueCount}</strong><small>{dashboard.today.reviewDueCount > 0 ? '지금 시작할 수 있습니다.' : '현재 대기 중인 복습이 없습니다.'}</small></div>
         <div className="dashboard-kpi"><span>연속 학습</span><strong>{dashboard.currentStreak}일</strong><small>{dashboard.currentStreak === 0 ? '오늘 다시 시작해 보세요.' : '활동이 이어지고 있습니다.'}</small></div>
       </div>
 

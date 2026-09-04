@@ -2,6 +2,7 @@ package com.guseoh.csforge.review.application;
 
 import java.time.Clock;
 import java.time.Instant;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -16,6 +17,7 @@ import com.guseoh.csforge.question.domain.QuestionConcept;
 import com.guseoh.csforge.question.domain.QuestionConceptRepository;
 import com.guseoh.csforge.review.domain.ReviewSchedule;
 import com.guseoh.csforge.review.domain.ReviewScheduleRepository;
+import com.guseoh.csforge.review.domain.ReviewScheduleStatus;
 import com.guseoh.csforge.review.infrastructure.ReviewScheduleSearchRepository;
 
 /**
@@ -29,20 +31,25 @@ public class ReviewQueryService {
     private final ReviewScheduleSearchRepository searchRepository;
     private final QuestionConceptRepository conceptRepository;
     private final Clock clock;
+    private final ZoneId studyZoneId;
 
     @Transactional(readOnly = true)
     public ReviewSummaryView summary() {
-        Instant now = Instant.now(clock);
-        long dueNow = scheduleRepository.countScheduledDueBefore(com.guseoh.csforge.review.domain.ReviewScheduleStatus.SCHEDULED, now);
-        long overdue = scheduleRepository.countByStatusAndDueAtBefore(com.guseoh.csforge.review.domain.ReviewScheduleStatus.SCHEDULED, now);
-        long next24 = scheduleRepository.countScheduledDueBefore(com.guseoh.csforge.review.domain.ReviewScheduleStatus.SCHEDULED, now.plusSeconds(86_400)) - dueNow;
-        long next7 = scheduleRepository.countScheduledDueBefore(com.guseoh.csforge.review.domain.ReviewScheduleStatus.SCHEDULED, now.plusSeconds(604_800)) - dueNow;
-        return new ReviewSummaryView(overdue, dueNow, next24, next7, scheduleRepository.countByStatus(com.guseoh.csforge.review.domain.ReviewScheduleStatus.MASTERED));
+        ReviewTimeWindow timeWindow = ReviewTimeWindow.from(Instant.now(clock), studyZoneId);
+        long overdue = scheduleRepository.countByStatusAndDueAtBefore(ReviewScheduleStatus.SCHEDULED, timeWindow.startOfToday());
+        long actionable = scheduleRepository.countScheduledDueBefore(ReviewScheduleStatus.SCHEDULED, timeWindow.now());
+        long dueNow = actionable - overdue;
+        long next24 = scheduleRepository.countScheduledDueBetweenExclusiveInclusive(
+                ReviewScheduleStatus.SCHEDULED, timeWindow.now(), timeWindow.next24Hours());
+        long next7 = scheduleRepository.countScheduledDueBetweenExclusiveInclusive(
+                ReviewScheduleStatus.SCHEDULED, timeWindow.next24Hours(), timeWindow.next7Days());
+        return new ReviewSummaryView(overdue, dueNow, next24, next7,
+                scheduleRepository.countByStatus(ReviewScheduleStatus.MASTERED));
     }
 
     @Transactional(readOnly = true)
     public ReviewPageView list(ReviewListCriteria criteria, int page, int size) {
-        ReviewListCriteria timedCriteria = criteria.at(Instant.now(clock));
+        ReviewListCriteria timedCriteria = criteria.at(ReviewTimeWindow.from(Instant.now(clock), studyZoneId));
         Page<ReviewSchedule> result = searchRepository.search(timedCriteria, PageRequest.of(page, size));
         List<Long> ids = result.getContent().stream().map(ReviewSchedule::getQuestionId).toList();
         Map<Long, List<QuestionConcept>> concepts = conceptRepository.findForQuestionIds(ids).stream()

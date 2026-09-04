@@ -900,9 +900,15 @@ textarea:focus {
   color: #f1b278;
 }
 
-.review-timing-upcoming {
+.review-timing-next24,
+.review-timing-next7 {
   border-color: #465b8e;
   color: var(--accent);
+}
+
+.review-timing-scheduled {
+  border-color: #53617b;
+  color: var(--text-muted);
 }
 
 .status-completed {
