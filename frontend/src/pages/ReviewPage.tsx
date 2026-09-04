@@ -61,7 +61,8 @@ export function ReviewPage() {
       </div>
 
       <div className="filter-panel review-filters">
-        <div className="filter-panel-header"><div><p className="eyebrow">Review window</p><strong>복습 시점</strong></div><span className="helper-text">DUE는 Overdue를 포함한 현재 실행 가능한 일정입니다.</span></div>
+        <div className="filter-panel-header"><div><p className="eyebrow">Review window</p><strong>복습 시점</strong></div></div>
+        <p className="helper-text review-filter-helper">DUE는 Overdue를 포함한 현재 실행 가능한 일정입니다.</p>
         <label>Window
           <select value={search.due} onChange={(event) => updateDue(event.target.value)}>
             <option value="ALL">All</option>

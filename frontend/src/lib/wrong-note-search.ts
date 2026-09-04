@@ -53,3 +53,10 @@ export function withWrongNoteArea(search: WrongNoteSearch, area: string): WrongN
 export function withWrongNotePage(search: WrongNoteSearch, page: number): WrongNoteSearch {
   return { ...search, page: Number.isInteger(page) && page >= 0 ? page : 0 }
 }
+
+/** 닫힌 추가 필터에 적용된 URL 상태가 있는지 요약한다. */
+export function countAdvancedWrongNoteFilters(search: WrongNoteSearch) {
+  return [search.area, search.topic, search.level, search.difficulty, search.analysis === 'ALL' ? '' : search.analysis]
+    .filter(Boolean)
+    .length
+}

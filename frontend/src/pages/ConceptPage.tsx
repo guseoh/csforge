@@ -131,7 +131,7 @@ function ConceptContent({ data, conceptId }: { data: ConceptDetailModel; concept
         <BookmarkButton conceptId={conceptId} bookmarked={data.progress.bookmarked} />
       </div>
 
-      <MarkdownContent className="concept-reading-content">{data.contentMarkdown}</MarkdownContent>
+      <MarkdownContent className="concept-reading-content" dedupeLeadingHeading={data.title}>{data.contentMarkdown}</MarkdownContent>
 
       <section className="detail-section">
         <div className="section-heading">

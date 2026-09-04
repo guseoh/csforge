@@ -1,5 +1,20 @@
 import { describe, expect, it } from 'vitest'
-import { compactMarkdownPreview } from './markdown'
+import { compactMarkdownPreview, removeDuplicateLeadingHeading } from './markdown'
+
+describe('removeDuplicateLeadingHeading', () => {
+  it('removes only a matching first heading and keeps following Markdown intact', () => {
+    expect(removeDuplicateLeadingHeading('# Title\n\n## Section\n\nBody', 'Title')).toBe('## Section\n\nBody')
+  })
+
+  it('accepts safe whitespace and closing ATX markers', () => {
+    expect(removeDuplicateLeadingHeading('  #  Title  #\n\nBody', 'Title')).toBe('Body')
+  })
+
+  it('keeps a different first heading or a heading that is not leading content', () => {
+    expect(removeDuplicateLeadingHeading('# Other\n\nBody', 'Title')).toBe('# Other\n\nBody')
+    expect(removeDuplicateLeadingHeading('Intro\n\n# Title\n\nBody', 'Title')).toBe('Intro\n\n# Title\n\nBody')
+  })
+})
 
 describe('compactMarkdownPreview', () => {
   it('removes visible Markdown syntax while keeping readable list context', () => {
