@@ -74,6 +74,7 @@ describe('DashboardPage', () => {
     }))
 
     expect(markup).toContain('JPA 기초')
+    expect(markup).toContain('2/3 finalized correct')
     expect(markup).toContain('1 self-check 대기')
   })
 })

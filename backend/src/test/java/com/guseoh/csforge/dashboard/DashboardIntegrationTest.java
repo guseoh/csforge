@@ -8,6 +8,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.sql.Timestamp;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -103,6 +104,13 @@ class DashboardIntegrationTest {
         assertEquals(1, jdbc.queryForObject(
                 "SELECT COUNT(*) FROM concept_view_history WHERE concept_id = ?", Integer.class, conceptId));
 
+        Instant previousView = NOW.minusSeconds(3600);
+        jdbc.update("UPDATE concept_progress SET last_viewed_at = ? WHERE concept_id = ?",
+                sqlTimestamp(previousView), conceptId);
+        assertTrue(jdbc.queryForObject(
+                "SELECT last_viewed_at = ? FROM concept_progress WHERE concept_id = ?",
+                Boolean.class, sqlTimestamp(previousView), conceptId));
+
         jdbc.execute("CREATE OR REPLACE FUNCTION fail_dashboard_history_insert() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RAISE EXCEPTION 'history failure'; END; $$");
         jdbc.execute("CREATE TRIGGER fail_dashboard_history BEFORE INSERT ON concept_view_history FOR EACH ROW EXECUTE FUNCTION fail_dashboard_history_insert()");
         try {
@@ -111,6 +119,10 @@ class DashboardIntegrationTest {
             jdbc.execute("DROP TRIGGER fail_dashboard_history ON concept_view_history");
             jdbc.execute("DROP FUNCTION fail_dashboard_history_insert()");
         }
+
+        assertTrue(jdbc.queryForObject(
+                "SELECT last_viewed_at = ? FROM concept_progress WHERE concept_id = ?",
+                Boolean.class, sqlTimestamp(previousView), conceptId));
         assertEquals(1, jdbc.queryForObject(
                 "SELECT COUNT(*) FROM concept_progress WHERE concept_id = ?", Integer.class, conceptId));
         assertEquals(1, jdbc.queryForObject(
@@ -120,9 +132,15 @@ class DashboardIntegrationTest {
     @Test
     void dashboardUsesSeoulBoundaryAndAggregatesAreaWeakRecentAndPendingSelfCheck() throws Exception {
         jdbc.update("INSERT INTO concept_progress (concept_id, status, first_viewed_at, last_viewed_at, completed_at) VALUES (?, 'COMPLETED', ?, ?, ?)",
-                conceptId, Instant.parse("2026-09-02T15:00:00Z"), Instant.parse("2026-09-03T01:00:00Z"), NOW);
+                conceptId,
+                sqlTimestamp(Instant.parse("2026-09-02T15:00:00Z")),
+                sqlTimestamp(Instant.parse("2026-09-03T01:00:00Z")),
+                sqlTimestamp(NOW));
         jdbc.update("INSERT INTO concept_view_history (concept_id, viewed_at) VALUES (?, ?), (?, ?)",
-                conceptId, Instant.parse("2026-09-02T15:00:00Z"), conceptId, Instant.parse("2026-09-03T01:00:00Z"));
+                conceptId,
+                sqlTimestamp(Instant.parse("2026-09-02T15:00:00Z")),
+                conceptId,
+                sqlTimestamp(Instant.parse("2026-09-03T01:00:00Z")));
 
         for (int index = 0; index < 3; index++) {
             Instant activityAt = index == 2
@@ -131,12 +149,12 @@ class DashboardIntegrationTest {
             long sessionId = insertSession(index == 2 ? "SUBMITTED" : "COMPLETED", activityAt);
             jdbc.update("INSERT INTO quiz_question (quiz_session_id, question_id, position) VALUES (?, ?, 0)", sessionId, questionId);
             jdbc.update("INSERT INTO attempt (quiz_session_id, question_id, grading_status, correct, answered_at, graded_at) VALUES (?, ?, 'GRADED', ?, ?, ?)",
-                    sessionId, questionId, index == 0, activityAt, activityAt);
+                    sessionId, questionId, index == 0, sqlTimestamp(activityAt), sqlTimestamp(activityAt));
         }
         long pendingSessionId = insertSession("SUBMITTED", NOW.minusSeconds(600));
         jdbc.update("INSERT INTO quiz_question (quiz_session_id, question_id, position) VALUES (?, ?, 0)", pendingSessionId, questionId);
         jdbc.update("INSERT INTO attempt (quiz_session_id, question_id, grading_status, correct, answered_at, graded_at) VALUES (?, ?, 'SELF_CHECK_REQUIRED', NULL, ?, ?)",
-                pendingSessionId, questionId, NOW.minusSeconds(600), NOW.minusSeconds(600));
+                pendingSessionId, questionId, sqlTimestamp(NOW.minusSeconds(600)), sqlTimestamp(NOW.minusSeconds(600)));
 
         HttpResponse<String> dashboardResponse = request("GET", "/api/dashboard", null);
         assertEquals(200, dashboardResponse.statusCode());
@@ -173,9 +191,10 @@ class DashboardIntegrationTest {
     }
 
     private long insertSession(String status, Instant startedAt) {
+        Timestamp timestamp = sqlTimestamp(startedAt);
         return jdbc.queryForObject(
                 "INSERT INTO quiz_session (status, source, started_at, submitted_at, completed_at, last_position) VALUES (?, 'STANDARD', ?, ?, ?, 0) RETURNING id",
-                Long.class, status, startedAt, startedAt, "COMPLETED".equals(status) ? startedAt : null);
+                Long.class, status, timestamp, timestamp, "COMPLETED".equals(status) ? timestamp : null);
     }
 
     private HttpResponse<String> request(String method, String path, String body) throws IOException, InterruptedException {
@@ -202,6 +221,10 @@ class DashboardIntegrationTest {
             if (quiz.get("pendingSelfCheckCount").asInt() == 1) return true;
         }
         return false;
+    }
+
+    private static Timestamp sqlTimestamp(Instant instant) {
+        return Timestamp.from(instant);
     }
 
     @TestConfiguration
