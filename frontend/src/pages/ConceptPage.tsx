@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { EmptyState, ErrorState, PageSkeleton } from '../components/AsyncStates'
+import { useToast } from '../components/toast/ToastProvider'
 import {
   getConcept,
   recordConceptView,
@@ -194,14 +195,17 @@ function ConceptContent({ data, conceptId }: { data: ConceptDetailModel; concept
 
 function BookmarkButton({ conceptId, bookmarked }: { conceptId: number; bookmarked: boolean }) {
   const queryClient = useQueryClient()
+  const { showToast } = useToast()
   const mutation = useMutation({
     mutationFn: () => updateConceptProgress(conceptId, { bookmarked: !bookmarked }),
     onSuccess: () => {
+      showToast('success', bookmarked ? '북마크를 해제했습니다.' : '북마크에 추가했습니다.')
       void queryClient.invalidateQueries({ queryKey: ['concept', conceptId] })
       void queryClient.invalidateQueries({ queryKey: ['concepts'] })
       void queryClient.invalidateQueries({ queryKey: ['learning-areas'] })
       void queryClient.invalidateQueries({ queryKey: ['learning-area'] })
     },
+    onError: () => showToast('error', '북마크 저장에 실패했습니다.'),
   })
   return (
     <button className="secondary-button" type="button" aria-pressed={bookmarked} disabled={mutation.isPending} onClick={() => mutation.mutate()}>
@@ -212,14 +216,17 @@ function BookmarkButton({ conceptId, bookmarked }: { conceptId: number; bookmark
 
 function ProgressActionButton({ conceptId, status, label }: { conceptId: number; status: Exclude<LearningStatus, 'UNSEEN'>; label: string }) {
   const queryClient = useQueryClient()
+  const { showToast } = useToast()
   const mutation = useMutation({
     mutationFn: () => updateConceptProgress(conceptId, { status }),
     onSuccess: () => {
+      showToast('success', status === 'COMPLETED' ? '완료 상태를 저장했습니다.' : '복습 필요 상태를 저장했습니다.')
       void queryClient.invalidateQueries({ queryKey: ['concept', conceptId] })
       void queryClient.invalidateQueries({ queryKey: ['concepts'] })
       void queryClient.invalidateQueries({ queryKey: ['learning-areas'] })
       void queryClient.invalidateQueries({ queryKey: ['learning-area'] })
     },
+    onError: () => showToast('error', '학습 상태 저장에 실패했습니다.'),
   })
   return <button className="primary-button" type="button" disabled={mutation.isPending} onClick={() => mutation.mutate()}>{mutation.isPending ? '저장 중…' : label}</button>
 }
@@ -228,6 +235,7 @@ export function ConceptPage() {
   const { conceptId: conceptIdParam } = useParams({ from: '/concepts/$conceptId' })
   const conceptId = Number(conceptIdParam)
   const queryClient = useQueryClient()
+  const { showToast } = useToast()
   const viewedConceptRef = useRef<number | null>(null)
   const conceptQuery = useQuery({
     queryKey: ['concept', conceptId],
@@ -243,6 +251,7 @@ export function ConceptPage() {
       void queryClient.invalidateQueries({ queryKey: ['learning-areas'] })
       void queryClient.invalidateQueries({ queryKey: ['concepts'] })
     },
+    onError: () => showToast('error', 'Concept 조회 상태를 저장하지 못했습니다.'),
   })
 
   useEffect(() => {

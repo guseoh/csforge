@@ -20,6 +20,9 @@ import com.guseoh.csforge.question.domain.QuestionAnswerKind;
 import com.guseoh.csforge.question.domain.QuestionAnswerRepository;
 import com.guseoh.csforge.question.domain.QuestionConcept;
 import com.guseoh.csforge.question.domain.QuestionConceptRepository;
+import com.guseoh.csforge.ai.domain.WrongAnswerAnalysisRepository;
+import com.guseoh.csforge.ai.domain.WrongAnswerAnalysisStatus;
+import com.guseoh.csforge.ai.domain.WrongAnswerAnalysisStatusProjection;
 import com.guseoh.csforge.quiz.domain.Attempt;
 import com.guseoh.csforge.quiz.domain.AttemptRepository;
 import com.guseoh.csforge.review.domain.ReviewSchedule;
@@ -41,6 +44,7 @@ public class WrongNoteQueryService {
     private final QuestionConceptRepository conceptRepository;
     private final QuestionAnswerRepository answerRepository;
     private final AttemptRepository attemptRepository;
+    private final WrongAnswerAnalysisRepository analysisRepository;
     private final Clock clock;
 
     @Transactional(readOnly = true)
@@ -51,8 +55,15 @@ public class WrongNoteQueryService {
         Map<Long, List<QuestionConcept>> concepts = groupedConcepts(questionIds);
         Map<Long, ReviewSchedule> schedules = scheduleRepository.findByQuestionIdIn(questionIds).stream()
                 .collect(Collectors.toMap(ReviewSchedule::getQuestionId, item -> item));
+        List<Long> attemptIds = result.getContent().stream()
+                .map(WrongNote::getLastWrongAttempt)
+                .filter(java.util.Objects::nonNull)
+                .map(Attempt::getId)
+                .toList();
+        Map<Long, WrongAnswerAnalysisStatus> analysisStatuses = attemptIds.isEmpty() ? Map.of() : analysisRepository.findStatusesByAttemptIdIn(attemptIds).stream()
+                .collect(Collectors.toMap(WrongAnswerAnalysisStatusProjection::getAttemptId, WrongAnswerAnalysisStatusProjection::getStatus));
         List<WrongNoteListItemView> items = result.getContent().stream()
-                .map(note -> toListItem(note, concepts.getOrDefault(note.getQuestion().getId(), List.of()), schedules.get(note.getQuestion().getId())))
+                .map(note -> toListItem(note, concepts.getOrDefault(note.getQuestion().getId(), List.of()), schedules.get(note.getQuestion().getId()), analysisStatuses))
                 .toList();
         return new WrongNotePageView(items, result.getTotalElements(), page, size);
     }
@@ -85,10 +96,12 @@ public class WrongNoteQueryService {
         return new WrongNoteAttemptPageView(page.stream().map(this::toAttempt).toList(), next);
     }
 
-    private WrongNoteListItemView toListItem(WrongNote note, List<QuestionConcept> links, ReviewSchedule schedule) {
+    private WrongNoteListItemView toListItem(WrongNote note, List<QuestionConcept> links, ReviewSchedule schedule, Map<Long, WrongAnswerAnalysisStatus> analysisStatuses) {
+        Attempt lastWrongAttempt = note.getLastWrongAttempt();
         return new WrongNoteListItemView(
                 note.getQuestion().getId(), note.getQuestion().getPromptMarkdown(), note.getQuestion().getQuestionType(), note.getQuestion().getDifficulty(),
                 links.stream().map(this::toConcept).toList(), note.getWrongCount(), note.getLastWrongAt(), note.getStatus().name(),
+                lastWrongAttempt == null ? null : analysisStatuses.get(lastWrongAttempt.getId()),
                 schedule == null ? null : schedule.getStatus(), schedule == null ? null : schedule.getStage(), schedule == null ? null : schedule.getDueAt());
     }
 

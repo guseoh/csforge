@@ -7,10 +7,15 @@ import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Repository;
 
 import com.guseoh.csforge.learning.application.LearningAreaDetailView;
+import com.guseoh.csforge.learning.application.LearningAreaAttemptMetricsView;
+import com.guseoh.csforge.learning.application.LearningAreaQuestionMetricsView;
 import com.guseoh.csforge.learning.application.LearningAreaSummaryView;
 import com.guseoh.csforge.learning.application.TopicSummaryView;
 import com.guseoh.csforge.learning.domain.LearningArea;
 
+/**
+ * Learning Area와 하위 학습 집계에 필요한 JPA query를 제공한다.
+ */
 @Repository
 public class LearningAreaQueryRepository {
 
@@ -38,6 +43,39 @@ public class LearningAreaQueryRepository {
             where la.active = true
             group by la.id, la.slug, la.name, la.description, la.displayOrder
             order by la.displayOrder, la.id
+            """;
+
+    private static final String AREA_QUESTION_METRICS_QUERY = """
+            select new com.guseoh.csforge.learning.application.LearningAreaQuestionMetricsView(
+                la.id,
+                count(distinct q.id)
+            )
+            from LearningArea la
+            join Topic t on t.learningArea = la and t.active = true
+            join Concept c on c.topic = t and c.status = com.guseoh.csforge.learning.domain.ContentStatus.PUBLISHED
+            join QuestionConcept qc on qc.concept = c
+            join qc.question q
+            where la.active = true
+              and q.status = com.guseoh.csforge.question.domain.QuestionStatus.PUBLISHED
+            group by la.id
+            """;
+
+    private static final String AREA_ATTEMPT_METRICS_QUERY = """
+            select new com.guseoh.csforge.learning.application.LearningAreaAttemptMetricsView(
+                la.id,
+                count(distinct a.id),
+                count(distinct case when a.correct = true then a.id else null end)
+            )
+            from LearningArea la
+            join Topic t on t.learningArea = la and t.active = true
+            join Concept c on c.topic = t and c.status = com.guseoh.csforge.learning.domain.ContentStatus.PUBLISHED
+            join QuestionConcept qc on qc.concept = c
+            join qc.question q
+            join Attempt a on a.question = q
+            where la.active = true
+              and q.status = com.guseoh.csforge.question.domain.QuestionStatus.PUBLISHED
+              and a.gradingStatus in (com.guseoh.csforge.quiz.domain.AttemptGradingStatus.GRADED, com.guseoh.csforge.quiz.domain.AttemptGradingStatus.SELF_CHECKED)
+            group by la.id
             """;
 
     private static final String TOPIC_SUMMARY_QUERY = """
@@ -75,6 +113,16 @@ public class LearningAreaQueryRepository {
 
     public List<LearningAreaSummaryView> findAreaSummaries() {
         return entityManager.createQuery(AREA_SUMMARY_QUERY, LearningAreaSummaryView.class)
+                .getResultList();
+    }
+
+    public List<LearningAreaQuestionMetricsView> findAreaQuestionMetrics() {
+        return entityManager.createQuery(AREA_QUESTION_METRICS_QUERY, LearningAreaQuestionMetricsView.class)
+                .getResultList();
+    }
+
+    public List<LearningAreaAttemptMetricsView> findAreaAttemptMetrics() {
+        return entityManager.createQuery(AREA_ATTEMPT_METRICS_QUERY, LearningAreaAttemptMetricsView.class)
                 .getResultList();
     }
 

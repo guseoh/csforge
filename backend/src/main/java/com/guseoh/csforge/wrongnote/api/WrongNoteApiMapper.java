@@ -3,6 +3,7 @@ package com.guseoh.csforge.wrongnote.api;
 import org.springframework.stereotype.Component;
 
 import com.guseoh.csforge.learning.api.PageMetadataResponse;
+import com.guseoh.csforge.ai.api.WrongAnswerAnalysisStatusResponse;
 import com.guseoh.csforge.wrongnote.application.WrongNoteAttemptPageView;
 import com.guseoh.csforge.wrongnote.application.WrongNoteAttemptView;
 import com.guseoh.csforge.wrongnote.application.WrongNoteDetailView;
@@ -43,7 +44,9 @@ public class WrongNoteApiMapper {
     private WrongNoteListItemResponse toItem(WrongNoteListItemView item) {
         return new WrongNoteListItemResponse(item.questionId(), item.promptMarkdown(), item.questionType(), item.difficulty(),
                 item.concepts().stream().map(concept -> new WrongNoteConceptResponse(concept.id(), concept.slug(), concept.title(), concept.areaSlug(), concept.areaName(), concept.level())).toList(),
-                item.wrongCount(), item.lastWrongAt(), item.status(), item.reviewStatus(), item.reviewStage(), item.dueAt());
+                item.wrongCount(), item.lastWrongAt(), item.status(),
+                item.aiAnalysisStatus() == null ? WrongAnswerAnalysisStatusResponse.NOT_REQUESTED : WrongAnswerAnalysisStatusResponse.valueOf(item.aiAnalysisStatus().name()),
+                item.reviewStatus(), item.reviewStage(), item.dueAt());
     }
 
     private WrongNoteAttemptResponse toAttempt(WrongNoteAttemptView item) {

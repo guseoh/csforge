@@ -1,8 +1,9 @@
 import { Link } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { EmptyState, ErrorState, PageSkeleton } from '../components/AsyncStates'
-import { getLearningAreas, type AreaSummary } from '../lib/api'
+import { getConcepts, getLearningAreas, type AreaSummary, type ConceptListItem } from '../lib/api'
 import { defaultLearningSearch } from '../lib/learning-search'
+import { selectRecentConcepts } from '../lib/learning-recent'
 
 function completionPercent(area: AreaSummary) {
   if (area.publishedConceptCount === 0) return 0
@@ -36,6 +37,8 @@ function AreaCard({ area }: { area: AreaSummary }) {
       <div className="area-metrics">
         <span>{area.publishedConceptCount} concepts</span>
         <span>{area.bookmarkedConceptCount} bookmarks</span>
+        <span>{area.publishedQuestionCount} problems</span>
+        <span>{area.finalizedAttemptCount === 0 ? '정확도 —' : `정확도 ${Math.round(area.accuracyPercent)}%`}</span>
       </div>
       <div className="level-progress-list">
         <LevelProgress label="L1" progress={area.level1} />
@@ -46,8 +49,27 @@ function AreaCard({ area }: { area: AreaSummary }) {
   )
 }
 
+function RecentConceptCard({ concept }: { concept: ConceptListItem }) {
+  return (
+    <Link className="recent-concept-card" to="/concepts/$conceptId" params={{ conceptId: String(concept.id) }}>
+      <div className="card-heading">
+        <h3>{concept.title}</h3>
+        <span className="chip">L{concept.level}</span>
+      </div>
+      <p>{concept.areaName} · {concept.topicTitle}</p>
+      <time dateTime={concept.lastViewedAt ?? undefined}>
+        {concept.lastViewedAt ? new Date(concept.lastViewedAt).toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' }) : ''}
+      </time>
+    </Link>
+  )
+}
+
 export function LearningPage() {
   const areasQuery = useQuery({ queryKey: ['learning-areas'], queryFn: getLearningAreas })
+  const recentConceptsQuery = useQuery({
+    queryKey: ['concepts', { page: 0, size: 6, sort: 'VIEWED' }],
+    queryFn: () => getConcepts({ page: 0, size: 6, sort: 'VIEWED' }),
+  })
 
   if (areasQuery.isPending) {
     return <PageSkeleton rows={6} />
@@ -67,6 +89,26 @@ export function LearningPage() {
         </div>
         <span className="result-count">{areasQuery.data.length} areas</span>
       </div>
+      {recentConceptsQuery.isPending && <div className="recent-concepts-state">최근 본 개념 불러오는 중…</div>}
+      {recentConceptsQuery.isError && (
+        <div className="recent-concepts-state error-text" role="alert">
+          최근 본 개념을 불러오지 못했습니다.
+          <button className="text-button" type="button" onClick={() => void recentConceptsQuery.refetch()}>다시 시도</button>
+        </div>
+      )}
+      {recentConceptsQuery.data && selectRecentConcepts(recentConceptsQuery.data.items).length > 0 && (
+        <section className="recent-concepts" aria-labelledby="recent-concepts-heading">
+          <div className="section-heading">
+            <div>
+              <p className="eyebrow">Keep going</p>
+              <h2 id="recent-concepts-heading">최근 본 개념</h2>
+            </div>
+          </div>
+          <div className="recent-concept-grid">
+            {selectRecentConcepts(recentConceptsQuery.data.items).map((concept) => <RecentConceptCard key={concept.id} concept={concept} />)}
+          </div>
+        </section>
+      )}
       {areasQuery.data.length === 0 ? (
         <EmptyState message="활성화된 학습 영역이 없습니다." />
       ) : (

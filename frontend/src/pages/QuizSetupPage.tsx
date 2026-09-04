@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef } from 'react'
-import { Link, useNavigate, useSearch } from '@tanstack/react-router'
+import { Link, useLocation, useNavigate, useSearch } from '@tanstack/react-router'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { ErrorState, PageSkeleton } from '../components/AsyncStates'
 import {
@@ -14,7 +14,9 @@ import {
 import {
   csvParam,
   csvValues,
+  hasExplicitQuizSearch,
   isDefaultQuizSearch,
+  quizSearchForPreset,
   type QuizSearch,
 } from '../lib/quiz-search'
 
@@ -96,6 +98,7 @@ function readRemembered(): QuizSetupPayload | null {
 }
 
 export function QuizSetupPage() {
+  const location = useLocation()
   const search = useSearch({ from: '/quiz' })
   const navigate = useNavigate({ from: '/quiz' })
   const applyingRememberedRef = useRef(false)
@@ -129,7 +132,7 @@ export function QuizSetupPage() {
   useEffect(() => {
     if (initializedRef.current) return
     initializedRef.current = true
-    if (!isDefaultQuizSearch(search)) return
+    if (hasExplicitQuizSearch(location.searchStr) || !isDefaultQuizSearch(search)) return
 
     const remembered = readRemembered()
     if (!remembered) return
@@ -140,7 +143,7 @@ export function QuizSetupPage() {
     void navigate({ search: rememberedSearch, replace: true }).finally(() => {
       applyingRememberedRef.current = false
     })
-  }, [navigate, search])
+  }, [location.searchStr, navigate, search])
 
   useEffect(() => {
     if (applyingRememberedRef.current) return
@@ -171,6 +174,22 @@ export function QuizSetupPage() {
           <p className="lead">필터와 문항 수를 정한 뒤 저장된 세션을 이어서 학습하세요.</p>
         </div>
         <span className="result-count">{questionCountAvailable} available</span>
+      </div>
+
+      <div className="quiz-quick-presets" aria-label="Quiz quick start">
+        <strong>빠른 시작</strong>
+        <button type="button" className="secondary-button" onClick={() => void navigate({ search: quizSearchForPreset('NEW'), replace: true })}>
+          새 문제 10
+        </button>
+        <button type="button" className="secondary-button" onClick={() => void navigate({ search: quizSearchForPreset('WRONG'), replace: true })}>
+          오답 문제 10
+        </button>
+        <button type="button" className="secondary-button" onClick={() => void navigate({ search: quizSearchForPreset('ALL'), replace: true })}>
+          전체 문제 10
+        </button>
+        <button type="button" className="text-button" onClick={() => void navigate({ search: quizSearchForPreset('DEFAULT'), replace: true })}>
+          기본 설정
+        </button>
       </div>
 
       {activeQuery.data && (

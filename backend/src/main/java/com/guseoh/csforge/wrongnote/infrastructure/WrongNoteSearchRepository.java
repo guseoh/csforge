@@ -19,10 +19,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import com.guseoh.csforge.learning.domain.ContentStatus;
+import com.guseoh.csforge.ai.domain.WrongAnswerAnalysis;
+import com.guseoh.csforge.ai.domain.WrongAnswerAnalysisStatus;
 import com.guseoh.csforge.question.domain.Question;
 import com.guseoh.csforge.review.domain.ReviewSchedule;
 import com.guseoh.csforge.review.domain.ReviewScheduleStatus;
 import com.guseoh.csforge.wrongnote.application.WrongNoteListCriteria;
+import com.guseoh.csforge.wrongnote.application.WrongNoteAnalysisFilter;
 import com.guseoh.csforge.wrongnote.application.WrongNoteReviewFilter;
 import com.guseoh.csforge.wrongnote.application.WrongNoteSort;
 import com.guseoh.csforge.wrongnote.domain.WrongNote;
@@ -41,6 +44,7 @@ public class WrongNoteSearchRepository {
         CriteriaQuery<WrongNote> query = builder.createQuery(WrongNote.class);
         Root<WrongNote> root = query.from(WrongNote.class);
         root.fetch("question", JoinType.INNER);
+        root.fetch("lastWrongAttempt", JoinType.LEFT);
         Join<WrongNote, Question> question = root.join("question", JoinType.INNER);
         query.select(root).distinct(true)
                 .where(predicates(builder, query, root, criteria))
@@ -79,7 +83,28 @@ public class WrongNoteSearchRepository {
         if (criteria.difficulty() != null) predicates.add(builder.equal(question.get("difficulty"), criteria.difficulty()));
         if (criteria.status() != null) predicates.add(builder.equal(root.get("status"), criteria.status()));
         addReviewPredicate(builder, query, question, criteria, predicates);
+        addAnalysisPredicate(builder, query, root, criteria, predicates);
         return predicates.toArray(Predicate[]::new);
+    }
+
+    private void addAnalysisPredicate(
+            CriteriaBuilder builder,
+            CriteriaQuery<?> query,
+            Root<WrongNote> wrongNote,
+            WrongNoteListCriteria criteria,
+            List<Predicate> predicates) {
+        if (criteria.analysisFilter() == WrongNoteAnalysisFilter.ALL) return;
+        Subquery<Long> analyses = query.subquery(Long.class);
+        Root<WrongAnswerAnalysis> analysis = analyses.from(WrongAnswerAnalysis.class);
+        List<Predicate> conditions = new ArrayList<>();
+        conditions.add(builder.equal(analysis.get("attempt").get("id"), wrongNote.get("lastWrongAttempt").get("id")));
+        if (criteria.analysisFilter() != WrongNoteAnalysisFilter.NOT_REQUESTED) {
+            WrongAnswerAnalysisStatus status = WrongAnswerAnalysisStatus.valueOf(criteria.analysisFilter().name());
+            conditions.add(builder.equal(analysis.get("status"), status));
+        }
+        analyses.select(builder.literal(1L)).where(conditions.toArray(Predicate[]::new));
+        Predicate exists = builder.exists(analyses);
+        predicates.add(criteria.analysisFilter() == WrongNoteAnalysisFilter.NOT_REQUESTED ? builder.not(exists) : exists);
     }
 
     private void addReviewPredicate(

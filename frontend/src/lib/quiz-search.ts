@@ -13,6 +13,8 @@ export const quizSearchSchema = z.object({
 
 export type QuizSearch = z.infer<typeof quizSearchSchema>
 
+export type QuizQuickPreset = 'NEW' | 'WRONG' | 'ALL' | 'DEFAULT'
+
 export const defaultQuizSearch: QuizSearch = {
   areas: '',
   concepts: '',
@@ -22,6 +24,18 @@ export const defaultQuizSearch: QuizSearch = {
   state: 'ALL',
   count: 10,
   timeLimitSeconds: null,
+}
+
+export function quizSearchForPreset(preset: QuizQuickPreset): QuizSearch {
+  if (preset === 'DEFAULT') return { ...defaultQuizSearch }
+  return { ...defaultQuizSearch, state: preset === 'NEW' ? 'UNSEEN' : preset }
+}
+
+const quizSearchKeys = ['areas', 'concepts', 'levels', 'difficulties', 'questionTypes', 'state', 'count', 'timeLimitSeconds']
+
+export function hasExplicitQuizSearch(searchString: string): boolean {
+  const params = new URLSearchParams(searchString)
+  return quizSearchKeys.some((key) => params.has(key))
 }
 
 export function parseQuizSearch(search: Record<string, unknown>): QuizSearch {

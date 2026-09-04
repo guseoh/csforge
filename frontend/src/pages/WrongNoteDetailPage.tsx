@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from '@tanstack/react-router'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { ErrorState, PageSkeleton } from '../components/AsyncStates'
 import { WrongAnswerAnalysisCard } from '../components/WrongAnswerAnalysisCard'
+import { useToast } from '../components/toast/ToastProvider'
 import {
   getWrongNote,
   getWrongNoteAiAnalysis,
@@ -14,11 +15,13 @@ import {
   type WrongNoteAttempt,
 } from '../lib/api'
 import { wrongAnswerAnalysisPollingInterval } from '../lib/wrong-answer-analysis'
+import { defaultWrongNoteSearch } from '../lib/wrong-note-search'
 
 export function WrongNoteDetailPage() {
   const { questionId } = useParams({ from: '/wrong-notes/$questionId' })
   const id = Number(questionId)
   const navigate = useNavigate()
+  const { showToast } = useToast()
   const detail = useQuery({ queryKey: ['wrong-note', id], queryFn: () => getWrongNote(id) })
   const aiAnalysis = useQuery({
     queryKey: ['wrong-note-ai-analysis', id],
@@ -57,6 +60,7 @@ export function WrongNoteDetailPage() {
   const retryMutation = useMutation({
     mutationFn: () => retryWrongNote(id),
     onSuccess: (quiz) => void navigate({ to: '/quiz/$quizId', params: { quizId: String(quiz.quizId) } }),
+    onError: () => showToast('error', '이 문제를 다시 시작하지 못했습니다.'),
   })
   const aiRequestMutation = useMutation({
     mutationFn: () => requestWrongNoteAiAnalysis(id),
@@ -150,7 +154,7 @@ export function WrongNoteDetailPage() {
   return (
     <section className="page-section wrong-note-detail">
       <div className="breadcrumb">
-        <Link to="/wrong-notes" search={{ page: 0, area: '', status: '', review: 'ALL', sort: 'RECENT' }}>Wrong notes</Link>
+        <Link to="/wrong-notes" search={defaultWrongNoteSearch}>Wrong notes</Link>
         <span>›</span><span>Question {item.question.id}</span>
       </div>
       <div className="page-heading">

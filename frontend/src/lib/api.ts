@@ -26,6 +26,10 @@ export interface AreaSummary {
   level1: LevelProgress
   level2: LevelProgress
   level3: LevelProgress
+  publishedQuestionCount: number
+  finalizedAttemptCount: number
+  correctAttemptCount: number
+  accuracyPercent: number
 }
 
 export interface TopicSummary {
@@ -448,6 +452,7 @@ export interface WrongNoteListItem {
   wrongCount: number
   lastWrongAt: string
   status: WrongNoteStatus
+  aiAnalysisStatus: Exclude<WrongAnswerAnalysisStatus, 'PROVIDER_NOT_CONFIGURED'>
   reviewStatus: ReviewScheduleStatus | null
   reviewStage: number | null
   dueAt: string | null
@@ -519,8 +524,8 @@ export interface ReviewListItem {
 }
 export interface ReviewPage { items: ReviewListItem[]; page: WrongNotePage['page'] }
 
-export function getWrongNotes(filters: { area?: string; topic?: number; level?: number; difficulty?: QuestionDifficulty; status?: WrongNoteStatus; review?: string; sort?: string; page: number; size: number }): Promise<WrongNotePage> {
-  const params = new URLSearchParams({ page: String(filters.page), size: String(filters.size), review: filters.review ?? 'ALL', sort: filters.sort ?? 'RECENT' })
+export function getWrongNotes(filters: { area?: string; topic?: number; level?: number; difficulty?: QuestionDifficulty; status?: WrongNoteStatus; review?: string; analysis?: Exclude<WrongAnswerAnalysisStatus, 'PROVIDER_NOT_CONFIGURED'>; sort?: string; page: number; size: number }): Promise<WrongNotePage> {
+  const params = new URLSearchParams({ page: String(filters.page), size: String(filters.size), review: filters.review ?? 'ALL', analysis: filters.analysis ?? 'ALL', sort: filters.sort ?? 'RECENT' })
   if (filters.area) params.set('area', filters.area)
   if (filters.topic) params.set('topic', String(filters.topic))
   if (filters.level) params.set('level', String(filters.level))
