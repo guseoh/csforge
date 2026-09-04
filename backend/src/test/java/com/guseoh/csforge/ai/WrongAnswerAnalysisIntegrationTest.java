@@ -263,6 +263,21 @@ class WrongAnswerAnalysisIntegrationTest {
     }
 
     @Test
+    void wrongNoteListUsesFailedStatusFromCurrentAttemptInsteadOfOlderCompletedAnalysis() throws Exception {
+        post("/api/wrong-notes/" + questionId + "/ai-analysis");
+        long firstAttemptId = analysisRepository.findAll().get(0).getAttempt().getId();
+        jdbc.update("UPDATE wrong_answer_analysis SET status = 'COMPLETED' WHERE attempt_id = ?", firstAttemptId);
+        long secondAttemptId = insertLaterWrongAttempt();
+        assertEquals(202, post("/api/wrong-notes/" + questionId + "/ai-analysis").statusCode());
+        jdbc.update("UPDATE wrong_answer_analysis SET status = 'FAILED' WHERE attempt_id = ?", secondAttemptId);
+
+        JsonNode item = list("ALL").get("items").get(0);
+        assertEquals("FAILED", item.get("aiAnalysisStatus").asText());
+        assertEquals(1, list("FAILED").get("page").get("totalElements").asInt());
+        assertEquals(0, list("COMPLETED").get("page").get("totalElements").asInt());
+    }
+
+    @Test
     void wrongNoteListEnrichesMultipleRowsWithOneCurrentStatusEach() throws Exception {
         long secondQuestionId = insertSecondWrongNote();
         post("/api/wrong-notes/" + questionId + "/ai-analysis");
