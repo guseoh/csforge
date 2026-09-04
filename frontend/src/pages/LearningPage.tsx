@@ -28,18 +28,17 @@ function AreaCard({ area }: { area: AreaSummary }) {
     <Link className="area-card" to="/learning/$areaSlug" params={{ areaSlug: area.slug }} search={defaultLearningSearch}>
       <div className="card-heading">
         <div>
-          <p className="eyebrow">{area.topicCount} topics</p>
           <h2>{area.name}</h2>
+          <p className="area-card-completion">{completionPercent(area)}% complete</p>
         </div>
         <span className="completion-badge">{completionPercent(area)}%</span>
       </div>
-      <p className="card-description">{area.description ?? '아직 설명이 없습니다.'}</p>
       <div className="area-metrics">
         <span>{area.publishedConceptCount} concepts</span>
-        <span>{area.bookmarkedConceptCount} bookmarks</span>
-        <span>{area.publishedQuestionCount} problems</span>
+        <span>{area.publishedQuestionCount} questions</span>
         <span>{area.finalizedAttemptCount === 0 ? '정확도 —' : `정확도 ${Math.round(area.accuracyPercent)}%`}</span>
       </div>
+      <p className="area-card-context">{area.topicCount} topics · {area.bookmarkedConceptCount} bookmarks</p>
       <div className="level-progress-list">
         <LevelProgress label="L1" progress={area.level1} />
         <LevelProgress label="L2" progress={area.level2} />

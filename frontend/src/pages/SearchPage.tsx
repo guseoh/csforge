@@ -115,8 +115,8 @@ export function SearchPage() {
           <p className="lead">Concept, Question, 개인 메모, 오답 기록, Reference를 한 번에 검색합니다.</p>
         </div>
         <div className={`search-health search-health-${status.data.state.toLowerCase()}`}>
-          <strong>{status.data.state.replace('_', ' ')}</strong>
-          <span>{status.data.indexedDocuments.toLocaleString()} indexed · {status.data.pendingOutboxEvents} pending</span>
+          <strong><span aria-hidden="true">●</span> {status.data.state.replace('_', ' ')}</strong>
+          <small>{status.data.indexedDocuments.toLocaleString()} indexed · {status.data.pendingOutboxEvents} pending</small>
         </div>
       </div>
 
@@ -140,21 +140,21 @@ export function SearchPage() {
           <div className="search-filter-heading"><strong>Filters</strong><button type="button" onClick={() => update({ types: '', areas: '', topics: '', levels: '', page: 0 })}>Clear</button></div>
           <fieldset>
             <legend>Type</legend>
-            {DOCUMENT_TYPES.map((type) => <label key={type.value}><input type="checkbox" checked={csvSearchValues(search.types).includes(type.value)} onChange={() => updateFilter('types', type.value)} />{type.label}</label>)}
+            {DOCUMENT_TYPES.map((type) => <label key={type.value}><input type="checkbox" checked={csvSearchValues(search.types).includes(type.value)} onChange={() => updateFilter('types', type.value)} /><span>{type.label}</span></label>)}
           </fieldset>
           <fieldset>
             <legend>Level</legend>
-            {[1, 2, 3].map((level) => <label key={level}><input type="checkbox" checked={csvSearchValues(search.levels).includes(String(level))} onChange={() => updateFilter('levels', String(level))} />Level {level}</label>)}
+            {[1, 2, 3].map((level) => <label key={level}><input type="checkbox" checked={csvSearchValues(search.levels).includes(String(level))} onChange={() => updateFilter('levels', String(level))} /><span>Level {level}</span></label>)}
           </fieldset>
           <fieldset>
             <legend>Area</legend>
             {filters.isPending && <span className="search-filter-muted">Loading…</span>}
-            {filters.data?.map((area) => <label key={area.areaSlug}><input type="checkbox" checked={selectedAreas.includes(area.areaSlug)} onChange={() => updateFilter('areas', area.areaSlug)} />{area.areaName}</label>)}
+            {filters.data?.map((area) => <label key={area.areaSlug}><input type="checkbox" checked={selectedAreas.includes(area.areaSlug)} onChange={() => updateFilter('areas', area.areaSlug)} /><span>{area.areaName}</span></label>)}
           </fieldset>
           {visibleTopicGroups.length > 0 && (
             <fieldset>
               <legend>Topic</legend>
-              {visibleTopicGroups.flatMap((area) => area.topics.map((topic) => <label key={topic.contentKey}><input type="checkbox" checked={csvSearchValues(search.topics).includes(topic.contentKey)} onChange={() => updateFilter('topics', topic.contentKey)} />{topic.title}</label>))}
+              {visibleTopicGroups.flatMap((area) => area.topics.map((topic) => <label key={topic.contentKey}><input type="checkbox" checked={csvSearchValues(search.topics).includes(topic.contentKey)} onChange={() => updateFilter('topics', topic.contentKey)} /><span>{topic.title}</span></label>))}
             </fieldset>
           )}
         </aside>
@@ -175,7 +175,7 @@ export function SearchPage() {
                 const related = relatedConceptDestination(item)
                 const primary = primarySearchDestination(item)
                 return (
-                  <article className="search-result-card" key={`${item.documentType}:${item.sourceId}`}>
+                  <article className={`search-result-card search-result-${item.documentType.toLowerCase()}`} key={`${item.documentType}:${item.sourceId}`}>
                     <div className="search-result-meta"><span className="search-type-badge">{item.documentType.replace('_', ' ')}</span><span>{resultContext(item)}</span><time dateTime={item.updatedAt}>{new Date(item.updatedAt).toLocaleDateString()}</time></div>
                     <h2><HighlightText value={item.highlightedTitle || item.title} /></h2>
                     <p className="search-snippet"><HighlightText value={item.snippet} /></p>

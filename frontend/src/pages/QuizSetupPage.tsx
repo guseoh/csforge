@@ -19,6 +19,7 @@ import {
   quizSearchForPreset,
   type QuizSearch,
 } from '../lib/quiz-search'
+import { canStartQuiz, quizAvailabilityState } from '../lib/quiz-availability'
 
 const rememberedSettingsKey = 'csforge.quiz.setup'
 const questionTypes: { value: QuestionType; label: string }[] = [
@@ -163,7 +164,8 @@ export function QuizSetupPage() {
     const next = { ...settings, [key]: value }
     void navigate({ search: searchFromSettings(next), replace: true })
   }
-  const questionCountAvailable = availabilityQuery.data?.availableCount ?? 0
+  const questionCountAvailable = availabilityQuery.data?.availableCount
+  const availabilityState = quizAvailabilityState(questionCountAvailable, settings.count, availabilityQuery.isPending, availabilityQuery.isError)
 
   return (
     <section className="page-section quiz-page">
@@ -173,23 +175,7 @@ export function QuizSetupPage() {
           <h1>Quiz setup</h1>
           <p className="lead">필터와 문항 수를 정한 뒤 저장된 세션을 이어서 학습하세요.</p>
         </div>
-        <span className="result-count">{questionCountAvailable} available</span>
-      </div>
-
-      <div className="quiz-quick-presets" aria-label="Quiz quick start">
-        <strong>빠른 시작</strong>
-        <button type="button" className="secondary-button" onClick={() => void navigate({ search: quizSearchForPreset('NEW'), replace: true })}>
-          새 문제 10
-        </button>
-        <button type="button" className="secondary-button" onClick={() => void navigate({ search: quizSearchForPreset('WRONG'), replace: true })}>
-          오답 문제 10
-        </button>
-        <button type="button" className="secondary-button" onClick={() => void navigate({ search: quizSearchForPreset('ALL'), replace: true })}>
-          전체 문제 10
-        </button>
-        <button type="button" className="text-button" onClick={() => void navigate({ search: quizSearchForPreset('DEFAULT'), replace: true })}>
-          기본 설정
-        </button>
+        <span className="result-count">{availabilityQuery.isPending ? '확인 중…' : availabilityQuery.isError ? '확인 필요' : `${questionCountAvailable} available`}</span>
       </div>
 
       {activeQuery.data && (
@@ -204,6 +190,28 @@ export function QuizSetupPage() {
         </div>
       )}
 
+      <div className="quiz-quick-presets" aria-label="Quiz quick start">
+        <div><p className="eyebrow">Quick start</p><strong>빠른 시작</strong></div>
+        <button type="button" className="secondary-button" onClick={() => void navigate({ search: quizSearchForPreset('NEW'), replace: true })}>
+          새 문제 10
+        </button>
+        <button type="button" className="secondary-button" onClick={() => void navigate({ search: quizSearchForPreset('WRONG'), replace: true })}>
+          오답 문제 10
+        </button>
+        <button type="button" className="secondary-button" onClick={() => void navigate({ search: quizSearchForPreset('ALL'), replace: true })}>
+          전체 문제 10
+        </button>
+        <button type="button" className="text-button" onClick={() => void navigate({ search: quizSearchForPreset('DEFAULT'), replace: true })}>
+          기본 설정
+        </button>
+      </div>
+
+      <section className="quiz-config-panel" aria-labelledby="quiz-config-heading">
+        <div className="quiz-config-heading">
+          <div><p className="eyebrow">Detailed setup</p><h2 id="quiz-config-heading">조건 설정</h2></div>
+          <p className="helper-text">필요할 때만 세부 조건을 조정하세요. 선택한 조건은 URL에 보존됩니다.</p>
+        </div>
+        <p className="multi-select-helper">여러 항목을 고르려면 <kbd>Ctrl</kbd>/<kbd>⌘</kbd>를 누른 채 선택하세요.</p>
       <div className="quiz-setup-grid">
         <label>
           Learning areas
@@ -216,9 +224,9 @@ export function QuizSetupPage() {
             {areasQuery.data.map((area) => <option key={area.slug} value={area.slug}>{area.name}</option>)}
           </select>
         </label>
-        <label>
+        <label className="quiz-deep-link-field">
           Concept IDs
-          <p className="helper-text">개념 화면의 Quiz 링크가 자동으로 채웁니다.</p>
+          <p className="helper-text">Concept 화면에서 이어지는 deep link용입니다. 대부분의 학습자는 직접 입력할 필요가 없습니다.</p>
           <input
             value={settings.concepts.join(',')}
             inputMode="numeric"
@@ -327,18 +335,19 @@ export function QuizSetupPage() {
       </div>
 
       <div className="quiz-setup-actions">
-        <span className="helper-text">선택된 조건에서 {questionCountAvailable}문항을 사용할 수 있습니다.</span>
+        <span className="helper-text">{availabilityState === 'LOADING' ? '선택된 조건의 문항 수를 확인하는 중입니다…' : availabilityState === 'ERROR' ? '문항 수를 확인한 뒤 Quiz를 시작할 수 있습니다.' : `선택된 조건에서 ${questionCountAvailable}문항을 사용할 수 있습니다.`}</span>
         <button
           className="primary-button"
           type="button"
-          disabled={createMutation.isPending || availabilityQuery.isPending || questionCountAvailable < settings.count}
+          disabled={!canStartQuiz(availabilityState, createMutation.isPending)}
           onClick={() => createMutation.mutate()}
         >
           {createMutation.isPending ? 'Quiz 생성 중…' : 'Quiz 시작'}
         </button>
       </div>
-      {availabilityQuery.isError && <p className="route-message error">문항 가능 수를 확인하지 못했습니다.</p>}
-      {questionCountAvailable < settings.count && !availabilityQuery.isPending && (
+      </section>
+      {availabilityQuery.isError && <div className="state-card error-state" role="alert"><strong>문항 가능 수를 확인하지 못했습니다.</strong><span>서버 상태를 확인한 뒤 다시 시도하세요.</span><button className="secondary-button" type="button" onClick={() => void availabilityQuery.refetch()}>다시 시도</button></div>}
+      {availabilityState === 'INSUFFICIENT' && (
         <p className="helper-text error-text">요청한 {settings.count}문항보다 가능한 문항이 적습니다.</p>
       )}
       {createMutation.isError && <p className="route-message error">Quiz를 시작하지 못했습니다. 잠시 후 다시 시도하세요.</p>}

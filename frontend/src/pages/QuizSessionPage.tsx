@@ -1,9 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate, useParams } from '@tanstack/react-router'
 import { useMutation, useQuery } from '@tanstack/react-query'
-import ReactMarkdown from 'react-markdown'
-import remarkGfm from 'remark-gfm'
 import { ErrorState, PageSkeleton } from '../components/AsyncStates'
+import { MarkdownContent } from '../components/MarkdownContent'
 import {
   getQuizSession,
   saveQuizAnswer,
@@ -13,6 +12,7 @@ import {
   type QuizSavedAnswer,
 } from '../lib/api'
 import { defaultQuizSearch, formatRemaining } from '../lib/quiz-search'
+import { classifyQuizNavigation, quizNavigationLabel } from '../lib/quiz-navigation'
 
 type DraftAnswer = QuizSavedAnswer
 type SaveState = 'saved' | 'saving' | 'error'
@@ -245,17 +245,41 @@ export function QuizSessionPage() {
       </div>
 
       <div className="quiz-layout">
-        <aside className="quiz-question-nav" aria-label="Question navigation">
-          {session.questions.map((item, index) => (
-            <button
-              key={item.questionId}
-              className={index === position ? 'question-nav-button current' : 'question-nav-button'}
-              type="button"
-              onClick={() => moveTo(index)}
-            >
-              {index + 1}{drafts[item.questionId]?.selectedChoiceKey || drafts[item.questionId]?.answerText?.trim() ? ' ·' : ''}
-            </button>
-          ))}
+        <aside className="quiz-question-nav-panel" aria-label="Question navigation">
+          <div className="quiz-question-nav">
+            {session.questions.map((item, index) => {
+              const itemDraft = drafts[item.questionId] ?? emptyDraft
+              const navigationState = classifyQuizNavigation({
+                isCurrent: index === position,
+                selectedChoiceKey: itemDraft.selectedChoiceKey,
+                answerText: itemDraft.answerText,
+                reviewNeeded: itemDraft.reviewNeeded,
+              })
+              const stateClass = itemDraft.reviewNeeded ? 'review-needed' : navigationState.toLowerCase()
+              const stateLabel = itemDraft.reviewNeeded && index === position
+                ? '현재 · 복습 필요'
+                : quizNavigationLabel(navigationState)
+              return (
+                <button
+                  key={item.questionId}
+                  className={`question-nav-button ${index === position ? 'current ' : ''}nav-${stateClass}`}
+                  type="button"
+                  aria-label={`문항 ${index + 1}, ${stateLabel}`}
+                  aria-current={index === position ? 'step' : undefined}
+                  onClick={() => moveTo(index)}
+                >
+                  <span className="question-nav-index">{index + 1}</span>
+                  <small>{stateLabel}</small>
+                </button>
+              )
+            })}
+          </div>
+          <div className="quiz-question-nav-legend" aria-label="Question states">
+            <span><i className="nav-key current" />현재</span>
+            <span><i className="nav-key answered" />답변 완료</span>
+            <span><i className="nav-key unanswered" />미답변</span>
+            <span><i className="nav-key review-needed" />복습 필요</span>
+          </div>
         </aside>
 
         <article className="quiz-question-card">
@@ -264,9 +288,7 @@ export function QuizSessionPage() {
             <span className="chip">{question.difficulty}</span>
             {question.concepts.map((concept) => <span className="chip" key={concept.id}>{concept.title}</span>)}
           </div>
-          <div className="markdown-content quiz-prompt">
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>{question.promptMarkdown}</ReactMarkdown>
-          </div>
+          <MarkdownContent className="quiz-prompt">{question.promptMarkdown}</MarkdownContent>
 
           {question.questionType === 'MULTIPLE_CHOICE' ? (
             <div className="choice-list">
@@ -279,7 +301,7 @@ export function QuizSessionPage() {
                   onClick={() => updateDraft({ selectedChoiceKey: choice.choiceKey, answerText: null })}
                 >
                   <span>{index + 1}</span>
-                  <ReactMarkdown remarkPlugins={[remarkGfm]}>{choice.contentMarkdown}</ReactMarkdown>
+                  <MarkdownContent>{choice.contentMarkdown}</MarkdownContent>
                 </button>
               ))}
             </div>

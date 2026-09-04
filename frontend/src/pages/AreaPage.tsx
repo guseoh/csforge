@@ -67,6 +67,7 @@ export function AreaPage() {
             className={`topic-card${search.topic === topic.id ? ' selected' : ''}`}
             key={topic.id}
             type="button"
+            aria-pressed={search.topic === topic.id}
             onClick={() => void updateSearch({ topic: search.topic === topic.id ? undefined : topic.id, page: 0 })}
           >
             <span className="topic-card-title">{topic.title}</span>
@@ -81,6 +82,10 @@ export function AreaPage() {
       </div>
 
       <div className="filter-panel" aria-label="Concept filters">
+        <div className="filter-panel-header">
+          <div><p className="eyebrow">Browse tools</p><strong>개념 찾기</strong></div>
+          <span className="helper-text">Topic 카드는 빠른 이동, 아래 필터는 정밀 검색입니다.</span>
+        </div>
         <label>
           Search
           <input
@@ -155,13 +160,13 @@ export function AreaPage() {
             {conceptsQuery.data.items.map((concept) => (
               <Link className="concept-list-item" key={concept.id} to="/concepts/$conceptId" params={{ conceptId: String(concept.id) }}>
                 <div className="concept-list-main">
-                  <div className="chip-row">
-                    <span className="chip">L{concept.level}</span>
-                    <span className={`chip status-${concept.learningStatus.toLowerCase()}`}>{concept.learningStatus.replace('_', ' ')}</span>
-                    {concept.bookmarked && <span className="chip bookmark-chip">★</span>}
-                  </div>
                   <h3>{concept.title}</h3>
                   <p>{concept.summary ?? '요약이 아직 없습니다.'}</p>
+                  <div className="chip-row concept-list-status">
+                    <span className="chip">L{concept.level}</span>
+                    <span className={`chip status-${concept.learningStatus.toLowerCase()}`}>{concept.learningStatus.replace('_', ' ')}</span>
+                    {concept.bookmarked && <span className="chip bookmark-chip">★ Bookmarked</span>}
+                  </div>
                 </div>
                 <span className="concept-topic">{concept.topicTitle}</span>
               </Link>

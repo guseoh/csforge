@@ -67,10 +67,14 @@ public class ReviewScheduleSearchRepository {
         if (criteria.topicId() != null) predicates.add(builder.equal(topic.get("id"), criteria.topicId()));
         if (criteria.level() != null) predicates.add(builder.equal(concept.get("level"), criteria.level()));
         switch (criteria.dueWindow()) {
-            case OVERDUE -> predicates.add(builder.lessThan(root.get("dueAt"), criteria.now()));
+            case OVERDUE -> predicates.add(builder.lessThan(root.get("dueAt"), criteria.startOfToday()));
             case DUE -> predicates.add(builder.lessThanOrEqualTo(root.get("dueAt"), criteria.now()));
-            case NEXT_24H -> predicates.add(builder.between(root.get("dueAt"), criteria.now(), criteria.now().plusSeconds(86_400)));
-            case NEXT_7D -> predicates.add(builder.between(root.get("dueAt"), criteria.now(), criteria.now().plusSeconds(604_800)));
+            case NEXT_24H -> predicates.add(builder.and(
+                    builder.greaterThan(root.get("dueAt"), criteria.now()),
+                    builder.lessThanOrEqualTo(root.get("dueAt"), criteria.now().plusSeconds(86_400))));
+            case NEXT_7D -> predicates.add(builder.and(
+                    builder.greaterThan(root.get("dueAt"), criteria.now().plusSeconds(86_400)),
+                    builder.lessThanOrEqualTo(root.get("dueAt"), criteria.now().plusSeconds(604_800))));
             case ALL -> { }
         }
         return predicates.toArray(Predicate[]::new);

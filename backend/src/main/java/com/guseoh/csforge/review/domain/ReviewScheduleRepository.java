@@ -25,6 +25,12 @@ public interface ReviewScheduleRepository extends JpaRepository<ReviewSchedule, 
     @Query("select count(schedule) from ReviewSchedule schedule where schedule.status = :status and schedule.dueAt <= :until")
     long countScheduledDueBefore(@Param("status") ReviewScheduleStatus status, @Param("until") Instant until);
 
+    @Query("select count(schedule) from ReviewSchedule schedule where schedule.status = :status and schedule.dueAt > :from and schedule.dueAt <= :until")
+    long countScheduledDueBetweenExclusiveInclusive(
+            @Param("status") ReviewScheduleStatus status,
+            @Param("from") Instant from,
+            @Param("until") Instant until);
+
     @Query("select schedule.questionId from ReviewSchedule schedule where schedule.status = :status and schedule.dueAt <= :until order by schedule.dueAt asc, schedule.questionId asc")
     List<Long> findEligibleQuestionIds(
             @Param("status") ReviewScheduleStatus status,

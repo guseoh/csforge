@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
+  countAdvancedWrongNoteFilters,
   defaultWrongNoteSearch,
   parseWrongNoteSearch,
   withWrongNoteArea,
@@ -69,5 +70,10 @@ describe('wrong-note URL search state', () => {
     }
     expect(withWrongNotePage(current, 2)).toEqual({ ...current, page: 2 })
     expect(withWrongNotePage(current, -1)).toEqual({ ...current, page: 0 })
+  })
+
+  it('counts selected advanced filters without changing URL state', () => {
+    expect(countAdvancedWrongNoteFilters({ ...defaultWrongNoteSearch, area: 'java', topic: '4', analysis: 'FAILED' })).toBe(3)
+    expect(countAdvancedWrongNoteFilters(defaultWrongNoteSearch)).toBe(0)
   })
 })

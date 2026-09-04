@@ -1,9 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link, useParams } from '@tanstack/react-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import ReactMarkdown from 'react-markdown'
-import remarkGfm from 'remark-gfm'
 import { EmptyState, ErrorState, PageSkeleton } from '../components/AsyncStates'
+import { MarkdownContent } from '../components/MarkdownContent'
 import { useToast } from '../components/toast/ToastProvider'
 import {
   getConcept,
@@ -125,16 +124,14 @@ function ConceptContent({ data, conceptId }: { data: ConceptDetailModel; concept
         {data.summary && <p className="lead">{data.summary}</p>}
       </div>
 
-      <div className="concept-actions">
-        <BookmarkButton conceptId={conceptId} bookmarked={data.progress.bookmarked} />
+      <div className="concept-actions" aria-label="Concept actions">
         <ProgressActionButton conceptId={conceptId} status="COMPLETED" label="완료로 표시" />
-        <ProgressActionButton conceptId={conceptId} status="REVIEW_NEEDED" label="복습 필요" />
+        <ProgressActionButton conceptId={conceptId} status="REVIEW_NEEDED" label="복습 필요" secondary />
         <Link className="secondary-button" to="/quiz" search={{ ...defaultQuizSearch, areas: data.area.slug, concepts: String(conceptId) }}>이 개념 Quiz</Link>
+        <BookmarkButton conceptId={conceptId} bookmarked={data.progress.bookmarked} />
       </div>
 
-      <article className="markdown-content">
-        <ReactMarkdown remarkPlugins={[remarkGfm]}>{data.contentMarkdown}</ReactMarkdown>
-      </article>
+      <MarkdownContent className="concept-reading-content" dedupeLeadingHeading={data.title}>{data.contentMarkdown}</MarkdownContent>
 
       <section className="detail-section">
         <div className="section-heading">
@@ -179,8 +176,8 @@ function ConceptContent({ data, conceptId }: { data: ConceptDetailModel; concept
       <section className="detail-section navigation-section">
         <p className="eyebrow">Keep learning</p>
         <div className="concept-navigation">
-          {data.previous ? <Link className="navigation-card" to="/concepts/$conceptId" params={{ conceptId: String(data.previous.id) }}><span>← Previous</span><strong>{data.previous.title}</strong></Link> : <span />}
-          {data.next ? <Link className="navigation-card next" to="/concepts/$conceptId" params={{ conceptId: String(data.next.id) }}><span>Next →</span><strong>{data.next.title}</strong></Link> : <span />}
+          {data.previous ? <Link className="navigation-card" to="/concepts/$conceptId" params={{ conceptId: String(data.previous.id) }}><span>← 이전 Concept</span><strong>{data.previous.title}</strong></Link> : <span />}
+          {data.next ? <Link className="navigation-card next" to="/concepts/$conceptId" params={{ conceptId: String(data.next.id) }}><span>다음 Concept →</span><strong>{data.next.title}</strong></Link> : <span />}
         </div>
         {data.relatedConcepts.length > 0 && (
           <div className="related-list">
@@ -214,7 +211,7 @@ function BookmarkButton({ conceptId, bookmarked }: { conceptId: number; bookmark
   )
 }
 
-function ProgressActionButton({ conceptId, status, label }: { conceptId: number; status: Exclude<LearningStatus, 'UNSEEN'>; label: string }) {
+function ProgressActionButton({ conceptId, status, label, secondary = false }: { conceptId: number; status: Exclude<LearningStatus, 'UNSEEN'>; label: string; secondary?: boolean }) {
   const queryClient = useQueryClient()
   const { showToast } = useToast()
   const mutation = useMutation({
@@ -228,7 +225,7 @@ function ProgressActionButton({ conceptId, status, label }: { conceptId: number;
     },
     onError: () => showToast('error', '학습 상태 저장에 실패했습니다.'),
   })
-  return <button className="primary-button" type="button" disabled={mutation.isPending} onClick={() => mutation.mutate()}>{mutation.isPending ? '저장 중…' : label}</button>
+  return <button className={secondary ? 'secondary-button' : 'primary-button'} type="button" disabled={mutation.isPending} onClick={() => mutation.mutate()}>{mutation.isPending ? '저장 중…' : label}</button>
 }
 
 export function ConceptPage() {
