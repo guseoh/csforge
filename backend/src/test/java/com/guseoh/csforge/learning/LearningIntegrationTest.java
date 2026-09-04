@@ -11,6 +11,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.sql.Timestamp;
 
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
@@ -61,6 +62,17 @@ class LearningIntegrationTest {
 
     @BeforeEach
     void setUpFixture() {
+        jdbc.update("DELETE FROM wrong_answer_analysis");
+        jdbc.update("DELETE FROM review_history");
+        jdbc.update("DELETE FROM review_schedule");
+        jdbc.update("DELETE FROM wrong_note");
+        jdbc.update("DELETE FROM attempt");
+        jdbc.update("DELETE FROM quiz_question");
+        jdbc.update("DELETE FROM quiz_session");
+        jdbc.update("DELETE FROM question_concept");
+        jdbc.update("DELETE FROM question_answer");
+        jdbc.update("DELETE FROM question_choice");
+        jdbc.update("DELETE FROM question");
         jdbc.update("DELETE FROM personal_note");
         jdbc.update("DELETE FROM concept_reference");
         jdbc.update("DELETE FROM concept_progress");
@@ -92,6 +104,9 @@ class LearningIntegrationTest {
         JsonNode javaArea = findBySlug(areas, "java");
         assertEquals(3, javaArea.get("publishedConceptCount").asInt());
         assertEquals(3, javaArea.get("level1").get("total").asInt());
+        assertEquals(0, javaArea.get("publishedQuestionCount").asInt());
+        assertEquals(0, javaArea.get("finalizedAttemptCount").asInt());
+        assertEquals(0.0, javaArea.get("accuracyPercent").asDouble());
 
         JsonNode area = json(request("GET", "/api/learning-areas/java", null));
         assertEquals(2, area.get("topics").size());
@@ -113,6 +128,34 @@ class LearningIntegrationTest {
 
         JsonNode filtered = json(request("GET", "/api/concepts?area=java&q=JPA&bookmarked=true", null));
         assertEquals(0, filtered.get("page").get("totalElements").asInt());
+    }
+
+    @Test
+    void areaSummaryCountsPublishedQuestionsAndFinalizedAttemptsWithoutConceptFanout() throws Exception {
+        long springAreaId = jdbc.queryForObject("SELECT id FROM learning_area WHERE slug = 'spring'", Long.class);
+        long springTopicId = insertTopic(springAreaId, "metrics-spring", "metrics-spring", "Metrics Spring", 1);
+        long springConceptId = insertConcept(springTopicId, "metrics-spring-concept", "metrics-spring-concept", "Metrics Spring Concept", 1, 1,
+                "Spring metrics", "# Spring metrics");
+        long sameAreaQuestion = insertPublishedQuestion("metrics-same-area", "Same area question", firstConceptId, secondConceptId);
+        long javaQuestion = insertPublishedQuestion("metrics-java", "Java question", firstConceptId);
+        long crossAreaQuestion = insertPublishedQuestion("metrics-cross-area", "Cross area question", firstConceptId, springConceptId);
+
+        insertAttempt(sameAreaQuestion, "GRADED", true);
+        insertAttempt(sameAreaQuestion, "SELF_CHECKED", false);
+        insertAttempt(javaQuestion, "SELF_CHECK_REQUIRED", null);
+        insertAttempt(crossAreaQuestion, "GRADED", true);
+
+        JsonNode areas = json(request("GET", "/api/learning-areas", null));
+        JsonNode java = findBySlug(areas, "java");
+        JsonNode spring = findBySlug(areas, "spring");
+        assertEquals(3, java.get("publishedQuestionCount").asInt());
+        assertEquals(3, java.get("finalizedAttemptCount").asInt());
+        assertEquals(2, java.get("correctAttemptCount").asInt());
+        assertEquals(200.0 / 3.0, java.get("accuracyPercent").asDouble(), 0.01);
+        assertEquals(1, spring.get("publishedQuestionCount").asInt());
+        assertEquals(1, spring.get("finalizedAttemptCount").asInt());
+        assertEquals(1, spring.get("correctAttemptCount").asInt());
+        assertEquals(100.0, spring.get("accuracyPercent").asDouble());
     }
 
     @Test
@@ -227,6 +270,37 @@ class LearningIntegrationTest {
         return jdbc.queryForObject(
                 "INSERT INTO concept (topic_id, content_key, slug, title, summary, content_markdown, level, status, display_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id",
                 Long.class, topic, contentKey, slug, title, summary, markdown, level, "PUBLISHED", displayOrder);
+    }
+
+    private long insertPublishedQuestion(String contentKey, String prompt, long... conceptIds) {
+        long questionId = jdbc.queryForObject(
+                "INSERT INTO question (content_key, prompt_markdown, question_type, difficulty, status, explanation_markdown) VALUES (?, ?, ?, ?, ?, ?) RETURNING id",
+                Long.class, contentKey, prompt, "MULTIPLE_CHOICE", "MEDIUM", "PUBLISHED", "Metrics explanation");
+        jdbc.queryForObject(
+                "INSERT INTO question_choice (question_id, choice_key, content_markdown, display_order) VALUES (?, ?, ?, ?) RETURNING id",
+                Long.class, questionId, "A", "Distractor", 0);
+        long correct = jdbc.queryForObject(
+                "INSERT INTO question_choice (question_id, choice_key, content_markdown, display_order) VALUES (?, ?, ?, ?) RETURNING id",
+                Long.class, questionId, "B", "Correct", 1);
+        jdbc.update("INSERT INTO question_answer (question_id, answer_kind, choice_id, display_order) VALUES (?, ?, ?, ?)",
+                questionId, "CORRECT_CHOICE", correct, 0);
+        for (long conceptId : conceptIds) {
+            jdbc.update("INSERT INTO question_concept (question_id, concept_id) VALUES (?, ?)", questionId, conceptId);
+        }
+        return questionId;
+    }
+
+    private long insertAttempt(long questionId, String gradingStatus, Boolean correct) {
+        long choiceId = jdbc.queryForObject(
+                "SELECT id FROM question_choice WHERE question_id = ? AND choice_key = 'A'", Long.class, questionId);
+        Timestamp at = Timestamp.valueOf("2026-09-03 00:00:00");
+        long sessionId = jdbc.queryForObject(
+                "INSERT INTO quiz_session (status, source, started_at, completed_at) VALUES (?, ?, ?, ?) RETURNING id",
+                Long.class, "COMPLETED", "STANDARD", at, at);
+        return jdbc.queryForObject(
+                "INSERT INTO attempt (quiz_session_id, question_id, selected_choice_id, review_needed, grading_status, correct, answered_at, graded_at, outcome_processed_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id",
+                Long.class, sessionId, questionId, choiceId, false, gradingStatus, correct,
+                at, correct == null ? null : at, correct == null ? null : at);
     }
 
     private long insertReference(String url, String title) {

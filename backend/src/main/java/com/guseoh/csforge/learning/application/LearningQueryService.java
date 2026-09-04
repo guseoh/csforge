@@ -1,6 +1,9 @@
 package com.guseoh.csforge.learning.application;
 
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -14,8 +17,6 @@ import com.guseoh.csforge.learning.api.ConceptPageResponse;
 import com.guseoh.csforge.learning.api.ConceptProgressResponse;
 import com.guseoh.csforge.learning.api.LearningAreaBreadcrumbResponse;
 import com.guseoh.csforge.learning.api.LearningAreaDetailResponse;
-import com.guseoh.csforge.learning.api.LearningAreaSummaryResponse;
-import com.guseoh.csforge.learning.api.LevelProgressResponse;
 import com.guseoh.csforge.learning.api.PageMetadataResponse;
 import com.guseoh.csforge.learning.api.PersonalNoteResponse;
 import com.guseoh.csforge.learning.api.ReferenceResponse;
@@ -64,9 +65,19 @@ public class LearningQueryService {
         this.conceptReferenceRepository = conceptReferenceRepository;
     }
 
-    public List<LearningAreaSummaryResponse> listAreas() {
+    public List<LearningAreaSummaryView> listAreas() {
+        Map<Long, Long> questionCounts = learningAreaQueryRepository.findAreaQuestionMetrics().stream()
+                .collect(Collectors.toMap(LearningAreaQuestionMetricsView::areaId, LearningAreaQuestionMetricsView::publishedQuestionCount));
+        Map<Long, LearningAreaAttemptMetricsView> attemptMetrics = learningAreaQueryRepository.findAreaAttemptMetrics().stream()
+                .collect(Collectors.toMap(LearningAreaAttemptMetricsView::areaId, Function.identity()));
         return learningAreaQueryRepository.findAreaSummaries().stream()
-                .map(this::toAreaSummaryResponse)
+                .map(area -> {
+                    LearningAreaAttemptMetricsView attempts = attemptMetrics.get(area.id());
+                    return area.withPracticeMetrics(
+                            questionCounts.getOrDefault(area.id(), 0L),
+                            attempts == null ? 0L : attempts.finalizedAttemptCount(),
+                            attempts == null ? 0L : attempts.correctAttemptCount());
+                })
                 .toList();
     }
 
@@ -171,21 +182,6 @@ public class LearningQueryService {
     private Concept findPublishedConcept(long conceptId) {
         return conceptRepository.findPublishedById(conceptId)
                 .orElseThrow(() -> new LearningNotFoundException("Published concept not found: " + conceptId));
-    }
-
-    private LearningAreaSummaryResponse toAreaSummaryResponse(LearningAreaSummaryView area) {
-        return new LearningAreaSummaryResponse(
-                area.id(),
-                area.slug(),
-                area.name(),
-                area.description(),
-                area.topicCount(),
-                area.publishedConceptCount(),
-                area.completedConceptCount(),
-                area.bookmarkedConceptCount(),
-                new LevelProgressResponse(area.level1Total(), area.level1Completed()),
-                new LevelProgressResponse(area.level2Total(), area.level2Completed()),
-                new LevelProgressResponse(area.level3Total(), area.level3Completed()));
     }
 
     private TopicSummaryResponse toTopicSummaryResponse(TopicSummaryView topic) {

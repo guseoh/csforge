@@ -37,6 +37,8 @@ function AreaCard({ area }: { area: AreaSummary }) {
       <div className="area-metrics">
         <span>{area.publishedConceptCount} concepts</span>
         <span>{area.bookmarkedConceptCount} bookmarks</span>
+        <span>{area.publishedQuestionCount} problems</span>
+        <span>{area.finalizedAttemptCount === 0 ? '정확도 —' : `정확도 ${Math.round(area.accuracyPercent)}%`}</span>
       </div>
       <div className="level-progress-list">
         <LevelProgress label="L1" progress={area.level1} />

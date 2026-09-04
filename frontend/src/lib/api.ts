@@ -26,6 +26,10 @@ export interface AreaSummary {
   level1: LevelProgress
   level2: LevelProgress
   level3: LevelProgress
+  publishedQuestionCount: number
+  finalizedAttemptCount: number
+  correctAttemptCount: number
+  accuracyPercent: number
 }
 
 export interface TopicSummary {

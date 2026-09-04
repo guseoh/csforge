@@ -6,6 +6,7 @@ import com.guseoh.csforge.learning.application.ConceptProgressView;
 import com.guseoh.csforge.learning.application.ConceptSearchCriteria;
 import com.guseoh.csforge.learning.application.ConceptSort;
 import com.guseoh.csforge.learning.application.LearningCommandService;
+import com.guseoh.csforge.learning.application.LearningAreaSummaryView;
 import com.guseoh.csforge.learning.application.LearningQueryService;
 import com.guseoh.csforge.learning.application.PersonalNoteView;
 import com.guseoh.csforge.learning.domain.LearningStatus;
@@ -35,7 +36,7 @@ public class LearningController {
 
     @GetMapping("/learning-areas")
     public List<LearningAreaSummaryResponse> listAreas() {
-        return queryService.listAreas();
+        return queryService.listAreas().stream().map(LearningController::toAreaSummaryResponse).toList();
     }
 
     @GetMapping("/learning-areas/{areaSlug}")
@@ -81,6 +82,25 @@ public class LearningController {
             @Valid @RequestBody PersonalNoteUpsertRequest request) {
         PersonalNoteView view = commandService.upsertNote(conceptId, request.content());
         return new PersonalNoteResponse(view.content(), view.updatedAt());
+    }
+
+    private static LearningAreaSummaryResponse toAreaSummaryResponse(LearningAreaSummaryView area) {
+        return new LearningAreaSummaryResponse(
+                area.id(),
+                area.slug(),
+                area.name(),
+                area.description(),
+                area.topicCount(),
+                area.publishedConceptCount(),
+                area.completedConceptCount(),
+                area.bookmarkedConceptCount(),
+                new LevelProgressResponse(area.level1Total(), area.level1Completed()),
+                new LevelProgressResponse(area.level2Total(), area.level2Completed()),
+                new LevelProgressResponse(area.level3Total(), area.level3Completed()),
+                area.publishedQuestionCount(),
+                area.finalizedAttemptCount(),
+                area.correctAttemptCount(),
+                area.accuracyPercent());
     }
 
     private static ConceptProgressResponse toProgressResponse(ConceptProgressView view) {
