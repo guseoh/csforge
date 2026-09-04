@@ -986,6 +986,20 @@ textarea:focus {
   background: #182238;
 }
 
+.quiz-quick-presets {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.quiz-quick-presets strong {
+  margin-right: 4px;
+  color: #e6edff;
+  font-size: 0.82rem;
+}
+
 .quiz-resume-banner div,
 .quiz-breakdown div {
   display: grid;

@@ -1,5 +1,13 @@
 import { describe, expect, it } from 'vitest'
-import { csvParam, csvValues, defaultQuizSearch, isDefaultQuizSearch, parseQuizSearch } from './quiz-search'
+import {
+  csvParam,
+  csvValues,
+  defaultQuizSearch,
+  hasExplicitQuizSearch,
+  isDefaultQuizSearch,
+  parseQuizSearch,
+  quizSearchForPreset,
+} from './quiz-search'
 
 describe('quiz URL search state', () => {
   it('parses quiz filters from URL values', () => {
@@ -33,5 +41,18 @@ describe('quiz URL search state', () => {
     expect(csvValues(csvParam([1, 2, 3]))).toEqual(['1', '2', '3'])
     expect(isDefaultQuizSearch(defaultQuizSearch)).toBe(true)
     expect(isDefaultQuizSearch({ ...defaultQuizSearch, levels: '2' })).toBe(false)
+  })
+
+  it('creates the three quick presets without changing unrelated settings', () => {
+    expect(quizSearchForPreset('NEW')).toEqual({ ...defaultQuizSearch, state: 'UNSEEN' })
+    expect(quizSearchForPreset('WRONG')).toEqual({ ...defaultQuizSearch, state: 'WRONG' })
+    expect(quizSearchForPreset('ALL')).toEqual(defaultQuizSearch)
+    expect(quizSearchForPreset('DEFAULT')).toEqual(defaultQuizSearch)
+  })
+
+  it('distinguishes an explicit default URL from an empty URL', () => {
+    expect(hasExplicitQuizSearch('')).toBe(false)
+    expect(hasExplicitQuizSearch('?state=ALL&count=10')).toBe(true)
+    expect(hasExplicitQuizSearch('?foo=bar')).toBe(false)
   })
 })
