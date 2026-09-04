@@ -43,7 +43,7 @@ describe('quiz URL search state', () => {
     expect(isDefaultQuizSearch({ ...defaultQuizSearch, levels: '2' })).toBe(false)
   })
 
-  it('creates the three quick presets without changing unrelated settings', () => {
+  it('creates the three quick presets from clean default settings', () => {
     expect(quizSearchForPreset('NEW')).toEqual({ ...defaultQuizSearch, state: 'UNSEEN' })
     expect(quizSearchForPreset('WRONG')).toEqual({ ...defaultQuizSearch, state: 'WRONG' })
     expect(quizSearchForPreset('ALL')).toEqual(defaultQuizSearch)
@@ -54,5 +54,14 @@ describe('quiz URL search state', () => {
     expect(hasExplicitQuizSearch('')).toBe(false)
     expect(hasExplicitQuizSearch('?state=ALL&count=10')).toBe(true)
     expect(hasExplicitQuizSearch('?foo=bar')).toBe(false)
+  })
+
+  it('allows remembered settings only for an empty default entry', () => {
+    const shouldRestoreRemembered = (searchString: string, search: typeof defaultQuizSearch) =>
+      !hasExplicitQuizSearch(searchString) && isDefaultQuizSearch(search)
+
+    expect(shouldRestoreRemembered('', defaultQuizSearch)).toBe(true)
+    expect(shouldRestoreRemembered('?state=ALL&count=10', defaultQuizSearch)).toBe(false)
+    expect(shouldRestoreRemembered('', { ...defaultQuizSearch, levels: '2' })).toBe(false)
   })
 })
