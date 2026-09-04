@@ -347,7 +347,7 @@ export function QuizSetupPage() {
       </div>
       </section>
       {availabilityQuery.isError && <div className="state-card error-state" role="alert"><strong>문항 가능 수를 확인하지 못했습니다.</strong><span>서버 상태를 확인한 뒤 다시 시도하세요.</span><button className="secondary-button" type="button" onClick={() => void availabilityQuery.refetch()}>다시 시도</button></div>}
-      {availabilityQuery.data && availabilityQuery.data.availableCount < settings.count && (
+      {availabilityState === 'INSUFFICIENT' && (
         <p className="helper-text error-text">요청한 {settings.count}문항보다 가능한 문항이 적습니다.</p>
       )}
       {createMutation.isError && <p className="route-message error">Quiz를 시작하지 못했습니다. 잠시 후 다시 시도하세요.</p>}
