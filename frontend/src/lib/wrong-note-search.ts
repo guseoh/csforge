@@ -1,5 +1,7 @@
 export interface WrongNoteSearch { page: number; area: string; topic: string; level: string; difficulty: string; status: string; review: string; analysis: string; sort: string }
 
+export type WrongNoteFilterKey = Exclude<keyof WrongNoteSearch, 'page' | 'area'>
+
 export const defaultWrongNoteSearch: WrongNoteSearch = {
   page: 0,
   area: '',
@@ -38,4 +40,16 @@ export function parseWrongNoteSearch(search: Record<string, unknown>): WrongNote
     analysis,
     sort,
   }
+}
+
+export function withWrongNoteFilter(search: WrongNoteSearch, key: WrongNoteFilterKey, value: string): WrongNoteSearch {
+  return { ...search, [key]: value, page: 0 }
+}
+
+export function withWrongNoteArea(search: WrongNoteSearch, area: string): WrongNoteSearch {
+  return { ...search, area, topic: '', page: 0 }
+}
+
+export function withWrongNotePage(search: WrongNoteSearch, page: number): WrongNoteSearch {
+  return { ...search, page: Number.isInteger(page) && page >= 0 ? page : 0 }
 }
