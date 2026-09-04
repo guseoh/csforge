@@ -9,15 +9,15 @@
   align-items: center;
   gap: 10px;
   padding: 7px 10px;
-  border: 1px solid #35425b;
+  border: 1px solid var(--border-default);
   border-radius: 9px;
   background: #171d28;
   color: #c8d2e7;
 }
 
 .search-palette-trigger:hover {
-  border-color: #536684;
-  background: #1d2635;
+  border-color: var(--border-strong);
+  background: var(--surface-interactive);
 }
 
 .search-palette-trigger kbd {
@@ -174,7 +174,12 @@
   font-size: 0.78rem;
 }
 
-.search-health span {
+.search-health strong span {
+  color: var(--state-success);
+  font-size: 0.62rem;
+}
+
+.search-health small {
   color: #8794ac;
   font-size: 0.73rem;
 }
@@ -185,6 +190,20 @@
 
 .search-health-unavailable {
   border-color: #70434c;
+}
+
+.search-health-not_ready,
+.search-health-reindexing {
+  border-color: #675c37;
+}
+
+.search-health-unavailable strong span,
+.search-health-not_ready strong span {
+  color: var(--state-warning);
+}
+
+.search-health-reindexing strong span {
+  color: var(--accent);
 }
 
 .search-form {

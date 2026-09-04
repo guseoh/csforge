@@ -115,8 +115,8 @@ export function SearchPage() {
           <p className="lead">Concept, Question, 개인 메모, 오답 기록, Reference를 한 번에 검색합니다.</p>
         </div>
         <div className={`search-health search-health-${status.data.state.toLowerCase()}`}>
-          <strong>{status.data.state.replace('_', ' ')}</strong>
-          <span>{status.data.indexedDocuments.toLocaleString()} indexed · {status.data.pendingOutboxEvents} pending</span>
+          <strong><span aria-hidden="true">●</span> {status.data.state.replace('_', ' ')}</strong>
+          <small>{status.data.indexedDocuments.toLocaleString()} indexed · {status.data.pendingOutboxEvents} pending</small>
         </div>
       </div>
 

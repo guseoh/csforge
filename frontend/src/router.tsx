@@ -47,6 +47,7 @@ function AppLayout() {
                 key={item.to}
                 className="nav-link"
                 activeProps={{ className: 'nav-link active' }}
+                activeOptions={{ exact: item.to === '/' }}
                 to={item.to}
               >
                 {item.label}

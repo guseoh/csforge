@@ -176,8 +176,20 @@ export function QuizSetupPage() {
         <span className="result-count">{questionCountAvailable} available</span>
       </div>
 
+      {activeQuery.data && (
+        <div className="quiz-resume-banner">
+          <div>
+            <strong>진행 중인 Quiz가 있습니다.</strong>
+            <span>{activeQuery.data.answeredCount}/{activeQuery.data.questionCount} answered</span>
+          </div>
+          <Link className="secondary-button" to="/quiz/$quizId" params={{ quizId: String(activeQuery.data.quizId) }}>
+            이어하기
+          </Link>
+        </div>
+      )}
+
       <div className="quiz-quick-presets" aria-label="Quiz quick start">
-        <strong>빠른 시작</strong>
+        <div><p className="eyebrow">Quick start</p><strong>빠른 시작</strong></div>
         <button type="button" className="secondary-button" onClick={() => void navigate({ search: quizSearchForPreset('NEW'), replace: true })}>
           새 문제 10
         </button>
@@ -192,18 +204,12 @@ export function QuizSetupPage() {
         </button>
       </div>
 
-      {activeQuery.data && (
-        <div className="quiz-resume-banner">
-          <div>
-            <strong>진행 중인 Quiz가 있습니다.</strong>
-            <span>{activeQuery.data.answeredCount}/{activeQuery.data.questionCount} answered</span>
-          </div>
-          <Link className="secondary-button" to="/quiz/$quizId" params={{ quizId: String(activeQuery.data.quizId) }}>
-            이어하기
-          </Link>
+      <section className="quiz-config-panel" aria-labelledby="quiz-config-heading">
+        <div className="quiz-config-heading">
+          <div><p className="eyebrow">Detailed setup</p><h2 id="quiz-config-heading">조건 설정</h2></div>
+          <p className="helper-text">필요할 때만 세부 조건을 조정하세요. 선택한 조건은 URL에 보존됩니다.</p>
         </div>
-      )}
-
+        <p className="multi-select-helper">여러 항목을 고르려면 <kbd>Ctrl</kbd>/<kbd>⌘</kbd>를 누른 채 선택하세요.</p>
       <div className="quiz-setup-grid">
         <label>
           Learning areas
@@ -216,9 +222,9 @@ export function QuizSetupPage() {
             {areasQuery.data.map((area) => <option key={area.slug} value={area.slug}>{area.name}</option>)}
           </select>
         </label>
-        <label>
+        <label className="quiz-deep-link-field">
           Concept IDs
-          <p className="helper-text">개념 화면의 Quiz 링크가 자동으로 채웁니다.</p>
+          <p className="helper-text">Concept 화면에서 이어지는 deep link용입니다. 대부분의 학습자는 직접 입력할 필요가 없습니다.</p>
           <input
             value={settings.concepts.join(',')}
             inputMode="numeric"
@@ -337,6 +343,7 @@ export function QuizSetupPage() {
           {createMutation.isPending ? 'Quiz 생성 중…' : 'Quiz 시작'}
         </button>
       </div>
+      </section>
       {availabilityQuery.isError && <p className="route-message error">문항 가능 수를 확인하지 못했습니다.</p>}
       {questionCountAvailable < settings.count && !availabilityQuery.isPending && (
         <p className="helper-text error-text">요청한 {settings.count}문항보다 가능한 문항이 적습니다.</p>
