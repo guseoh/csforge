@@ -366,6 +366,56 @@ h1 {
   gap: 16px;
 }
 
+.recent-concepts {
+  margin-bottom: 30px;
+}
+
+.recent-concepts h2 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.recent-concept-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.recent-concept-card {
+  display: grid;
+  gap: 9px;
+  padding: 16px;
+  border: 1px solid #2a3243;
+  border-radius: 12px;
+  background: #151b27;
+}
+
+.recent-concept-card:hover {
+  border-color: #596c9d;
+  background: #1b2435;
+}
+
+.recent-concept-card h3 {
+  margin: 0;
+  color: #f4f7ff;
+  font-size: 0.95rem;
+}
+
+.recent-concept-card p,
+.recent-concept-card time {
+  color: #8793ad;
+  font-size: 0.78rem;
+}
+
+.recent-concepts-state {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: -12px 0 24px;
+  color: #8793ad;
+  font-size: 0.8rem;
+}
+
 .area-card,
 .concept-list-item,
 .navigation-card,
@@ -1398,6 +1448,7 @@ textarea:focus {
   .dashboard-two-column { grid-template-columns: 1fr; }
 
   .area-grid,
+  .recent-concept-grid,
   .topic-summary-grid,
   .concept-navigation,
   .quiz-setup-grid,
