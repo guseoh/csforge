@@ -232,6 +232,93 @@ class WrongAnswerAnalysisIntegrationTest {
         assertEquals(2, analysisRepository.count());
     }
 
+    @Test
+    void wrongNoteListFiltersPersistedAnalysisStatusForCurrentAttempt() throws Exception {
+        post("/api/wrong-notes/" + questionId + "/ai-analysis");
+        long attemptId = analysisRepository.findAll().get(0).getAttempt().getId();
+
+        assertEquals(1, list("PENDING").get("page").get("totalElements").asInt());
+        jdbc.update("UPDATE wrong_answer_analysis SET status = 'PROCESSING' WHERE attempt_id = ?", attemptId);
+        assertEquals(1, list("PROCESSING").get("page").get("totalElements").asInt());
+        jdbc.update("UPDATE wrong_answer_analysis SET status = 'COMPLETED' WHERE attempt_id = ?", attemptId);
+        assertEquals(1, list("COMPLETED").get("page").get("totalElements").asInt());
+        jdbc.update("UPDATE wrong_answer_analysis SET status = 'FAILED' WHERE attempt_id = ?", attemptId);
+        assertEquals(1, list("FAILED").get("page").get("totalElements").asInt());
+        jdbc.update("DELETE FROM wrong_answer_analysis WHERE attempt_id = ?", attemptId);
+        assertEquals(1, list("NOT_REQUESTED").get("page").get("totalElements").asInt());
+    }
+
+    @Test
+    void wrongNoteListUsesCurrentAttemptWhenAnOlderAnalysisExists() throws Exception {
+        post("/api/wrong-notes/" + questionId + "/ai-analysis");
+        long firstAttemptId = analysisRepository.findAll().get(0).getAttempt().getId();
+        long secondAttemptId = insertLaterWrongAttempt();
+        jdbc.update("UPDATE wrong_answer_analysis SET status = 'COMPLETED' WHERE attempt_id = ?", firstAttemptId);
+
+        JsonNode item = list("ALL").get("items").get(0);
+        assertEquals("NOT_REQUESTED", item.get("aiAnalysisStatus").asText());
+        assertEquals(1, list("NOT_REQUESTED").get("page").get("totalElements").asInt());
+        assertEquals(0, list("COMPLETED").get("page").get("totalElements").asInt());
+        assertTrue(secondAttemptId > firstAttemptId);
+    }
+
+    @Test
+    void wrongNoteListEnrichesMultipleRowsWithOneCurrentStatusEach() throws Exception {
+        long secondQuestionId = insertSecondWrongNote();
+        post("/api/wrong-notes/" + questionId + "/ai-analysis");
+        post("/api/wrong-notes/" + secondQuestionId + "/ai-analysis");
+        List<JsonNode> items = java.util.stream.StreamSupport.stream(list("ALL").get("items").spliterator(), false).toList();
+
+        assertEquals(2, items.size());
+        assertTrue(items.stream().allMatch(item -> item.get("aiAnalysisStatus").asText().equals("PENDING")));
+        assertEquals(2, list("PENDING").get("page").get("totalElements").asInt());
+    }
+
+    private JsonNode list(String analysis) throws IOException, InterruptedException {
+        return json(get("/api/wrong-notes?page=0&size=20&analysis=" + analysis));
+    }
+
+    private long insertLaterWrongAttempt() {
+        long choiceId = jdbc.queryForObject(
+                "SELECT id FROM question_choice WHERE question_id = ? AND choice_key = 'A'", Long.class, questionId);
+        long sessionId = jdbc.queryForObject(
+                "INSERT INTO quiz_session (status, source, started_at, completed_at) VALUES (?, ?, ?, ?) RETURNING id",
+                Long.class, "COMPLETED", "STANDARD", timestamp(BASE_TIME.plusSeconds(60)), timestamp(BASE_TIME.plusSeconds(90)));
+        long attemptId = jdbc.queryForObject(
+                "INSERT INTO attempt (quiz_session_id, question_id, selected_choice_id, review_needed, grading_status, correct, answered_at, graded_at, outcome_processed_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id",
+                Long.class, sessionId, questionId, choiceId, false, "GRADED", false,
+                timestamp(BASE_TIME.plusSeconds(70)), timestamp(BASE_TIME.plusSeconds(80)), timestamp(BASE_TIME.plusSeconds(85)));
+        jdbc.update("UPDATE wrong_note SET last_wrong_attempt_id = ?, last_wrong_at = ? WHERE question_id = ?",
+                attemptId, timestamp(BASE_TIME.plusSeconds(80)), questionId);
+        return attemptId;
+    }
+
+    private long insertSecondWrongNote() {
+        long secondQuestionId = jdbc.queryForObject(
+                "INSERT INTO question (content_key, prompt_markdown, question_type, difficulty, status, explanation_markdown) VALUES (?, ?, ?, ?, ?, ?) RETURNING id",
+                Long.class, "ai-question-2", "Which second answer?", "MULTIPLE_CHOICE", "EASY", "Second explanation");
+        long choiceA = jdbc.queryForObject(
+                "INSERT INTO question_choice (question_id, choice_key, content_markdown, display_order) VALUES (?, ?, ?, ?) RETURNING id",
+                Long.class, secondQuestionId, "A", "Second distractor", 0);
+        long choiceB = jdbc.queryForObject(
+                "INSERT INTO question_choice (question_id, choice_key, content_markdown, display_order) VALUES (?, ?, ?, ?) RETURNING id",
+                Long.class, secondQuestionId, "B", "Second correct", 1);
+        jdbc.update("INSERT INTO question_answer (question_id, answer_kind, choice_id, display_order) VALUES (?, ?, ?, ?)",
+                secondQuestionId, "CORRECT_CHOICE", choiceB, 0);
+        jdbc.update("INSERT INTO question_concept (question_id, concept_id) VALUES (?, ?)", secondQuestionId, conceptId);
+        long sessionId = jdbc.queryForObject(
+                "INSERT INTO quiz_session (status, source, started_at, completed_at) VALUES (?, ?, ?, ?) RETURNING id",
+                Long.class, "COMPLETED", "STANDARD", timestamp(BASE_TIME.plusSeconds(120)), timestamp(BASE_TIME.plusSeconds(150)));
+        long attemptId = jdbc.queryForObject(
+                "INSERT INTO attempt (quiz_session_id, question_id, selected_choice_id, review_needed, grading_status, correct, answered_at, graded_at, outcome_processed_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id",
+                Long.class, sessionId, secondQuestionId, choiceA, false, "GRADED", false,
+                timestamp(BASE_TIME.plusSeconds(130)), timestamp(BASE_TIME.plusSeconds(140)), timestamp(BASE_TIME.plusSeconds(145)));
+        jdbc.update(
+                "INSERT INTO wrong_note (question_id, status, wrong_count, first_wrong_at, last_wrong_at, last_wrong_attempt_id) VALUES (?, ?, ?, ?, ?, ?)",
+                secondQuestionId, "ACTIVE", 1, timestamp(BASE_TIME.plusSeconds(140)), timestamp(BASE_TIME.plusSeconds(140)), attemptId);
+        return secondQuestionId;
+    }
+
     private HttpResponse<String> get(String path) throws IOException, InterruptedException {
         return HTTP_CLIENT.send(HttpRequest.newBuilder(URI.create("http://localhost:" + port + path))
                 .header("Accept", "application/json").GET().build(), HttpResponse.BodyHandlers.ofString());

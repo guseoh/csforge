@@ -584,6 +584,10 @@ h1 {
   background: #151b27;
 }
 
+.wrong-note-filters {
+  grid-template-columns: repeat(4, minmax(140px, 1fr));
+}
+
 .filter-panel label {
   display: grid;
   gap: 6px;

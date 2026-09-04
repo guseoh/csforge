@@ -14,6 +14,7 @@ import {
   type WrongNoteAttempt,
 } from '../lib/api'
 import { wrongAnswerAnalysisPollingInterval } from '../lib/wrong-answer-analysis'
+import { defaultWrongNoteSearch } from '../lib/wrong-note-search'
 
 export function WrongNoteDetailPage() {
   const { questionId } = useParams({ from: '/wrong-notes/$questionId' })
@@ -150,7 +151,7 @@ export function WrongNoteDetailPage() {
   return (
     <section className="page-section wrong-note-detail">
       <div className="breadcrumb">
-        <Link to="/wrong-notes" search={{ page: 0, area: '', status: '', review: 'ALL', sort: 'RECENT' }}>Wrong notes</Link>
+        <Link to="/wrong-notes" search={defaultWrongNoteSearch}>Wrong notes</Link>
         <span>›</span><span>Question {item.question.id}</span>
       </div>
       <div className="page-heading">

@@ -15,6 +15,7 @@ public record WrongNoteListCriteria(
         QuestionDifficulty difficulty,
         com.guseoh.csforge.wrongnote.domain.WrongNoteStatus status,
         WrongNoteReviewFilter reviewFilter,
+        WrongNoteAnalysisFilter analysisFilter,
         WrongNoteSort sort,
         Instant now) {
 
@@ -25,8 +26,9 @@ public record WrongNoteListCriteria(
             QuestionDifficulty difficulty,
             com.guseoh.csforge.wrongnote.domain.WrongNoteStatus status,
             WrongNoteReviewFilter reviewFilter,
+            WrongNoteAnalysisFilter analysisFilter,
             WrongNoteSort sort) {
-        this(areaSlug, topicId, level, difficulty, status, reviewFilter, sort, null);
+        this(areaSlug, topicId, level, difficulty, status, reviewFilter, analysisFilter, sort, null);
     }
 
     public WrongNoteListCriteria at(Instant now) {
@@ -37,6 +39,7 @@ public record WrongNoteListCriteria(
                 difficulty,
                 status,
                 reviewFilter,
+                analysisFilter,
                 sort,
                 Objects.requireNonNull(now, "now is required"));
     }

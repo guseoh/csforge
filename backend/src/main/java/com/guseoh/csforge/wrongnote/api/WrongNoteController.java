@@ -20,6 +20,7 @@ import com.guseoh.csforge.ai.application.WrongAnswerAnalysisQueryService;
 import com.guseoh.csforge.quiz.api.QuizApiMapper;
 import com.guseoh.csforge.quiz.api.QuizCreatedResponse;
 import com.guseoh.csforge.wrongnote.application.WrongNoteCommandService;
+import com.guseoh.csforge.wrongnote.application.WrongNoteAnalysisFilter;
 import com.guseoh.csforge.wrongnote.application.WrongNoteListCriteria;
 import com.guseoh.csforge.wrongnote.application.WrongNoteQueryService;
 import com.guseoh.csforge.wrongnote.application.WrongNoteReviewFilter;
@@ -51,13 +52,14 @@ public class WrongNoteController {
             @RequestParam(required = false) QuestionDifficulty difficulty,
             @RequestParam(required = false) WrongNoteStatus status,
             @RequestParam(defaultValue = "ALL") WrongNoteReviewFilter review,
+            @RequestParam(defaultValue = "ALL") WrongNoteAnalysisFilter analysis,
             @RequestParam(defaultValue = "RECENT") WrongNoteSort sort,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
         int boundedSize = bounded(size);
         if (page < 0) throw new IllegalArgumentException("page must not be negative");
         return apiMapper.toResponse(queryService.list(
-                new WrongNoteListCriteria(area, topic, level, difficulty, status, review, sort),
+                new WrongNoteListCriteria(area, topic, level, difficulty, status, review, analysis, sort),
                 page,
                 boundedSize));
     }

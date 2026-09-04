@@ -4,8 +4,8 @@ import { EmptyState, ErrorState, PageSkeleton } from '../components/AsyncStates'
 import { createReviewQuiz, getDashboard, type DashboardHeatmapDay } from '../lib/api'
 import { defaultLearningSearch } from '../lib/learning-search'
 import { defaultQuizSearch } from '../lib/quiz-search'
+import { defaultWrongNoteSearch } from '../lib/wrong-note-search'
 
-const defaultWrongNoteSearch = { page: 0, area: '', status: '', review: 'ALL', sort: 'RECENT' }
 
 function percent(value: number) {
   return `${Math.round(value)}%`

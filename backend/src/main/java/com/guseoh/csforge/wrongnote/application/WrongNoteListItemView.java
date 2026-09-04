@@ -3,6 +3,7 @@ package com.guseoh.csforge.wrongnote.application;
 import java.time.Instant;
 import java.util.List;
 
+import com.guseoh.csforge.ai.domain.WrongAnswerAnalysisStatus;
 import com.guseoh.csforge.question.domain.QuestionDifficulty;
 import com.guseoh.csforge.question.domain.QuestionType;
 import com.guseoh.csforge.review.domain.ReviewScheduleStatus;
@@ -19,6 +20,7 @@ public record WrongNoteListItemView(
         int wrongCount,
         Instant lastWrongAt,
         String status,
+        WrongAnswerAnalysisStatus aiAnalysisStatus,
         ReviewScheduleStatus reviewStatus,
         Short reviewStage,
         Instant dueAt) {

@@ -1,6 +1,7 @@
 package com.guseoh.csforge.ai.domain;
 
 import java.time.Instant;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,6 +17,9 @@ import jakarta.persistence.LockModeType;
 public interface WrongAnswerAnalysisRepository extends JpaRepository<WrongAnswerAnalysis, Long> {
 
     Optional<WrongAnswerAnalysis> findByAttemptId(long attemptId);
+
+    @Query("select analysis.attempt.id as attemptId, analysis.status as status from WrongAnswerAnalysis analysis where analysis.attempt.id in :attemptIds")
+    List<WrongAnswerAnalysisStatusProjection> findStatusesByAttemptIdIn(@Param("attemptIds") Collection<Long> attemptIds);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select analysis from WrongAnswerAnalysis analysis where analysis.id = :id")
