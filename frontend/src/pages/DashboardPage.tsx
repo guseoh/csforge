@@ -111,9 +111,10 @@ export function DashboardPage() {
 
         <section className="dashboard-section">
           <div className="section-heading"><div><p className="eyebrow">Study history</p><h2>Recent quizzes</h2></div><Link className="text-link" to="/quiz" search={defaultQuizSearch}>새 Quiz →</Link></div>
-          {dashboard.recentQuizzes.length === 0 ? <EmptyState message="제출된 Quiz가 아직 없습니다." /> : <div className="dashboard-list">{dashboard.recentQuizzes.map((quiz) => <Link className="dashboard-list-item" key={quiz.quizId} to="/quiz/$quizId/result" params={{ quizId: String(quiz.quizId) }}><div><strong>#{quiz.quizId} · {quiz.source.replace('_', ' ')}</strong><span>{quizStatus(quiz.status)} · {formatDate(quiz.startedAt)}</span></div><div className="dashboard-list-metric"><strong>{percent(quiz.accuracyPercent)}</strong><span>{quiz.correctCount}/{quiz.totalCount} correct</span></div></Link>)}</div>}
+          {dashboard.recentQuizzes.length === 0 ? <EmptyState message="제출된 Quiz가 아직 없습니다." /> : <div className="dashboard-list">{dashboard.recentQuizzes.map((quiz) => <Link className="dashboard-list-item" key={quiz.quizId} to="/quiz/$quizId/result" params={{ quizId: String(quiz.quizId) }}><div><strong>#{quiz.quizId} · {quiz.source.replace('_', ' ')}</strong><span>{quizStatus(quiz.status)} · {formatDate(quiz.startedAt)}</span></div><div className="dashboard-list-metric"><strong>{percent(quiz.accuracyPercent)}</strong><span>{quiz.correctCount}/{quiz.finalizedCount} finalized correct{quiz.pendingSelfCheckCount > 0 ? ` · ${quiz.pendingSelfCheckCount} self-check 대기` : ''}</span></div></Link>)}</div>}
         </section>
       </div>
     </section>
   )
 }
+
