@@ -59,12 +59,13 @@ describe('DashboardPage', () => {
     expect(markup).toContain('복습 시작')
   })
 
-  it('renders weak-topic empty state and hides resume when unavailable', () => {
+  it('renders weak-topic empty state and disables review action when nothing is due', () => {
     const markup = render(dashboard({ today: { solvedCount: 0, correctCount: 0, wrongCount: 0, accuracyPercent: 0, reviewDueCount: 0 } }))
 
     expect(markup).toContain('최근 30일에 3회 이상 시도한 약점 Topic이 없습니다.')
     expect(markup).not.toContain('이어 풀기')
-    expect(markup).not.toContain('복습 시작')
+    expect(markup).toContain('class="text-button" type="button" disabled="">복습 시작 →</button>')
+    expect(markup).not.toContain('class="secondary-button" type="button"')
   })
 
   it('renders weak-topic data and pending self-check count in recent quiz', () => {
