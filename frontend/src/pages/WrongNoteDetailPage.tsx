@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from '@tanstack/react-router'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { ErrorState, PageSkeleton } from '../components/AsyncStates'
 import { WrongAnswerAnalysisCard } from '../components/WrongAnswerAnalysisCard'
+import { useToast } from '../components/toast/ToastProvider'
 import {
   getWrongNote,
   getWrongNoteAiAnalysis,
@@ -20,6 +21,7 @@ export function WrongNoteDetailPage() {
   const { questionId } = useParams({ from: '/wrong-notes/$questionId' })
   const id = Number(questionId)
   const navigate = useNavigate()
+  const { showToast } = useToast()
   const detail = useQuery({ queryKey: ['wrong-note', id], queryFn: () => getWrongNote(id) })
   const aiAnalysis = useQuery({
     queryKey: ['wrong-note-ai-analysis', id],
@@ -58,6 +60,7 @@ export function WrongNoteDetailPage() {
   const retryMutation = useMutation({
     mutationFn: () => retryWrongNote(id),
     onSuccess: (quiz) => void navigate({ to: '/quiz/$quizId', params: { quizId: String(quiz.quizId) } }),
+    onError: () => showToast('error', '이 문제를 다시 시작하지 못했습니다.'),
   })
   const aiRequestMutation = useMutation({
     mutationFn: () => requestWrongNoteAiAnalysis(id),

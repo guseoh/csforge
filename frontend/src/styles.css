@@ -541,6 +541,41 @@ h1 {
   text-decoration: underline;
 }
 
+.toast-region {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  z-index: 20;
+  display: grid;
+  gap: 8px;
+  width: min(360px, calc(100vw - 32px));
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 12px 14px;
+  border: 1px solid #465b8e;
+  border-radius: 9px;
+  color: #eaf0ff;
+  background: #182238;
+  box-shadow: 0 12px 28px rgb(0 0 0 / 24%);
+  font-size: 0.82rem;
+}
+
+.toast-error {
+  border-color: #734451;
+  background: #2a1d28;
+}
+
+.toast button {
+  flex: 0 0 auto;
+  color: #b9c7e8;
+  font-size: 0.75rem;
+}
+
 .topic-summary-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));

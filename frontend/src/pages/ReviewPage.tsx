@@ -1,14 +1,16 @@
 import { Link, useNavigate, useSearch } from '@tanstack/react-router'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { ErrorState, PageSkeleton } from '../components/AsyncStates'
+import { useToast } from '../components/toast/ToastProvider'
 import { createReviewQuiz, getReviews, getReviewSummary } from '../lib/api'
 
 export function ReviewPage() {
+  const { showToast } = useToast()
   const search = useSearch({ from: '/review' })
   const navigate = useNavigate({ from: '/review' })
   const summary = useQuery({ queryKey: ['review-summary'], queryFn: getReviewSummary })
   const reviews = useQuery({ queryKey: ['reviews', search], queryFn: () => getReviews({ due: search.due, page: search.page, size: 20 }) })
-  const create = useMutation({ mutationFn: () => createReviewQuiz(10), onSuccess: (quiz) => void navigate({ to: '/quiz/$quizId', params: { quizId: String(quiz.quizId) } }) })
+  const create = useMutation({ mutationFn: () => createReviewQuiz(10), onSuccess: (quiz) => void navigate({ to: '/quiz/$quizId', params: { quizId: String(quiz.quizId) } }), onError: () => showToast('error', 'Review Quiz를 만들지 못했습니다.') })
   if (summary.isPending || reviews.isPending) return <PageSkeleton rows={5} />
   if (summary.isError || reviews.isError) return <ErrorState message="복습 일정을 불러오지 못했습니다." onRetry={() => { void summary.refetch(); void reviews.refetch() }} />
   const updateDue = (due: string) => void navigate({ search: (current) => ({ ...current, due, page: 0 }) })
