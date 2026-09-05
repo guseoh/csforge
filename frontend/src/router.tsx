@@ -1,22 +1,23 @@
-import { Link, Outlet, createRootRoute, createRoute, createRouter } from '@tanstack/react-router'
+import { Link, Outlet, createRootRoute, createRoute, createRouter, lazyRouteComponent } from '@tanstack/react-router'
 import { SearchPalette } from './components/SearchPalette'
-import { AreaPage } from './pages/AreaPage'
-import { ConceptPage } from './pages/ConceptPage'
-import { LearningPage } from './pages/LearningPage'
 import { parseLearningSearch } from './lib/learning-search'
 import { parseQuizSearch } from './lib/quiz-search'
-import { QuizResultPage } from './pages/QuizResultPage'
-import { QuizSessionPage } from './pages/QuizSessionPage'
-import { QuizSetupPage } from './pages/QuizSetupPage'
-import { WrongNotesPage } from './pages/WrongNotesPage'
-import { WrongNoteDetailPage } from './pages/WrongNoteDetailPage'
-import { ReviewPage } from './pages/ReviewPage'
 import { parseWrongNoteSearch } from './lib/wrong-note-search'
 import { parseReviewSearch } from './lib/review-search'
 import { parseSearchSearch } from './lib/search-search'
-import { ImportPage } from './pages/ImportPage'
-import { SearchPage } from './pages/SearchPage'
-import { DashboardPage } from './pages/DashboardPage'
+
+const AreaPage = lazyRouteComponent(() => import('./pages/AreaPage'), 'AreaPage')
+const ConceptPage = lazyRouteComponent(() => import('./pages/ConceptPage'), 'ConceptPage')
+const LearningPage = lazyRouteComponent(() => import('./pages/LearningPage'), 'LearningPage')
+const QuizResultPage = lazyRouteComponent(() => import('./pages/QuizResultPage'), 'QuizResultPage')
+const QuizSessionPage = lazyRouteComponent(() => import('./pages/QuizSessionPage'), 'QuizSessionPage')
+const QuizSetupPage = lazyRouteComponent(() => import('./pages/QuizSetupPage'), 'QuizSetupPage')
+const WrongNotesPage = lazyRouteComponent(() => import('./pages/WrongNotesPage'), 'WrongNotesPage')
+const WrongNoteDetailPage = lazyRouteComponent(() => import('./pages/WrongNoteDetailPage'), 'WrongNoteDetailPage')
+const ReviewPage = lazyRouteComponent(() => import('./pages/ReviewPage'), 'ReviewPage')
+const ImportPage = lazyRouteComponent(() => import('./pages/ImportPage'), 'ImportPage')
+const SearchPage = lazyRouteComponent(() => import('./pages/SearchPage'), 'SearchPage')
+const DashboardPage = lazyRouteComponent(() => import('./pages/DashboardPage'), 'DashboardPage')
 
 const navigation = [
   { to: '/', label: 'Dashboard' },
