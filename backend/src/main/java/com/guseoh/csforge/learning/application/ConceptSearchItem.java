@@ -5,6 +5,7 @@ import java.time.Instant;
 import com.guseoh.csforge.learning.domain.ContentStatus;
 import com.guseoh.csforge.learning.domain.LearningStatus;
 
+/** Concept 검색 결과 한 건을 전달하는 application view이다. */
 public record ConceptSearchItem(
         long id,
         String areaSlug,

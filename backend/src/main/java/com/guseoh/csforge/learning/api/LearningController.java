@@ -2,11 +2,9 @@ package com.guseoh.csforge.learning.api;
 
 import java.util.List;
 
-import com.guseoh.csforge.learning.application.ConceptProgressView;
 import com.guseoh.csforge.learning.application.ConceptSearchCriteria;
 import com.guseoh.csforge.learning.application.ConceptSort;
 import com.guseoh.csforge.learning.application.LearningCommandService;
-import com.guseoh.csforge.learning.application.LearningAreaSummaryView;
 import com.guseoh.csforge.learning.application.LearningQueryService;
 import com.guseoh.csforge.learning.application.PersonalNoteView;
 import com.guseoh.csforge.learning.domain.LearningStatus;
@@ -28,20 +26,25 @@ public class LearningController {
 
     private final LearningQueryService queryService;
     private final LearningCommandService commandService;
+    private final LearningApiMapper apiMapper;
 
-    public LearningController(LearningQueryService queryService, LearningCommandService commandService) {
+    public LearningController(
+            LearningQueryService queryService,
+            LearningCommandService commandService,
+            LearningApiMapper apiMapper) {
         this.queryService = queryService;
         this.commandService = commandService;
+        this.apiMapper = apiMapper;
     }
 
     @GetMapping("/learning-areas")
     public List<LearningAreaSummaryResponse> listAreas() {
-        return queryService.listAreas().stream().map(LearningController::toAreaSummaryResponse).toList();
+        return queryService.listAreas().stream().map(apiMapper::toResponse).toList();
     }
 
     @GetMapping("/learning-areas/{areaSlug}")
     public LearningAreaDetailResponse getArea(@PathVariable String areaSlug) {
-        return queryService.getArea(areaSlug);
+        return apiMapper.toResponse(queryService.getArea(areaSlug));
     }
 
     @GetMapping("/concepts")
@@ -55,25 +58,25 @@ public class LearningController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "30") int size,
             @RequestParam(defaultValue = "CURRICULUM") String sort) {
-        return queryService.listConcepts(new ConceptSearchCriteria(
-                area, topicId, level, learningStatus, bookmarked, q, page, size, ConceptSort.from(sort)));
+        return apiMapper.toResponse(queryService.listConcepts(new ConceptSearchCriteria(
+                area, topicId, level, learningStatus, bookmarked, q, page, size, ConceptSort.from(sort))));
     }
 
     @GetMapping("/concepts/{conceptId}")
     public ConceptDetailResponse getConcept(@PathVariable long conceptId) {
-        return queryService.getConcept(conceptId);
+        return apiMapper.toResponse(queryService.getConcept(conceptId));
     }
 
     @PostMapping("/concepts/{conceptId}/view")
     public ConceptProgressResponse recordView(@PathVariable long conceptId) {
-        return toProgressResponse(commandService.recordView(conceptId));
+        return apiMapper.toResponse(commandService.recordView(conceptId));
     }
 
     @PatchMapping("/concepts/{conceptId}/progress")
     public ConceptProgressResponse updateProgress(
             @PathVariable long conceptId,
             @RequestBody ConceptProgressUpdateRequest request) {
-        return toProgressResponse(commandService.updateProgress(conceptId, request.status(), request.bookmarked()));
+        return apiMapper.toResponse(commandService.updateProgress(conceptId, request.status(), request.bookmarked()));
     }
 
     @PutMapping("/concepts/{conceptId}/note")
@@ -81,30 +84,6 @@ public class LearningController {
             @PathVariable long conceptId,
             @Valid @RequestBody PersonalNoteUpsertRequest request) {
         PersonalNoteView view = commandService.upsertNote(conceptId, request.content());
-        return new PersonalNoteResponse(view.content(), view.updatedAt());
-    }
-
-    private static LearningAreaSummaryResponse toAreaSummaryResponse(LearningAreaSummaryView area) {
-        return new LearningAreaSummaryResponse(
-                area.id(),
-                area.slug(),
-                area.name(),
-                area.description(),
-                area.topicCount(),
-                area.publishedConceptCount(),
-                area.completedConceptCount(),
-                area.bookmarkedConceptCount(),
-                new LevelProgressResponse(area.level1Total(), area.level1Completed()),
-                new LevelProgressResponse(area.level2Total(), area.level2Completed()),
-                new LevelProgressResponse(area.level3Total(), area.level3Completed()),
-                area.publishedQuestionCount(),
-                area.finalizedAttemptCount(),
-                area.correctAttemptCount(),
-                area.accuracyPercent());
-    }
-
-    private static ConceptProgressResponse toProgressResponse(ConceptProgressView view) {
-        return new ConceptProgressResponse(
-                view.status(), view.bookmarked(), view.firstViewedAt(), view.lastViewedAt(), view.completedAt());
+        return apiMapper.toResponse(view);
     }
 }

@@ -10,18 +10,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.guseoh.csforge.learning.api.ConceptDetailResponse;
-import com.guseoh.csforge.learning.api.ConceptListItemResponse;
-import com.guseoh.csforge.learning.api.ConceptNavigationResponse;
-import com.guseoh.csforge.learning.api.ConceptPageResponse;
-import com.guseoh.csforge.learning.api.ConceptProgressResponse;
-import com.guseoh.csforge.learning.api.LearningAreaBreadcrumbResponse;
-import com.guseoh.csforge.learning.api.LearningAreaDetailResponse;
-import com.guseoh.csforge.learning.api.PageMetadataResponse;
-import com.guseoh.csforge.learning.api.PersonalNoteResponse;
-import com.guseoh.csforge.learning.api.ReferenceResponse;
-import com.guseoh.csforge.learning.api.TopicBreadcrumbResponse;
-import com.guseoh.csforge.learning.api.TopicSummaryResponse;
 import com.guseoh.csforge.learning.domain.Concept;
 import com.guseoh.csforge.learning.domain.ConceptProgress;
 import com.guseoh.csforge.learning.domain.ConceptProgressRepository;
@@ -36,6 +24,7 @@ import com.guseoh.csforge.learning.domain.Topic;
 import com.guseoh.csforge.learning.infrastructure.ConceptSearchRepository;
 import com.guseoh.csforge.learning.infrastructure.LearningAreaQueryRepository;
 
+/** Learning Area와 Concept 조회 유스케이스를 application view로 조합하는 서비스이다. */
 @Service
 @Transactional(readOnly = true)
 public class LearningQueryService {
@@ -81,47 +70,40 @@ public class LearningQueryService {
                 .toList();
     }
 
-    public LearningAreaDetailResponse getArea(String areaSlug) {
+    public LearningAreaDetailView getArea(String areaSlug) {
         LearningAreaDetailView area = learningAreaQueryRepository.findAreaDetail(areaSlug)
                 .orElseThrow(() -> new LearningNotFoundException("Learning area not found: " + areaSlug));
-        return new LearningAreaDetailResponse(
-                area.id(),
-                area.slug(),
-                area.name(),
-                area.description(),
-                area.topics().stream().map(this::toTopicSummaryResponse).toList());
+        return area;
     }
 
-    public ConceptPageResponse listConcepts(ConceptSearchCriteria criteria) {
+    public ConceptPageView listConcepts(ConceptSearchCriteria criteria) {
         ConceptSearchResult result = conceptSearchRepository.search(criteria);
         int totalPages = result.totalElements() == 0
                 ? 0
                 : (int) ((result.totalElements() + criteria.size() - 1) / criteria.size());
-        PageMetadataResponse page = new PageMetadataResponse(
+        PageMetadataView page = new PageMetadataView(
                 criteria.page(),
                 criteria.size(),
                 result.totalElements(),
                 totalPages,
                 criteria.page() + 1 < totalPages,
                 criteria.page() > 0);
-        return new ConceptPageResponse(
-                result.items().stream().map(this::toConceptListItemResponse).toList(),
-                page);
+        return new ConceptPageView(result.items(), page);
     }
 
-    public ConceptDetailResponse getConcept(long conceptId) {
+    public ConceptDetailView getConcept(long conceptId) {
         Concept concept = findPublishedConcept(conceptId);
         Topic topic = concept.getTopic();
         LearningArea area = topic.getLearningArea();
 
-        ConceptProgressResponse progress = progressRepository.findById(conceptId)
-                .map(this::toProgressResponse)
+        ConceptProgressView progress = progressRepository.findById(conceptId)
+                .map(this::toProgressView)
                 .orElseGet(this::unseenProgress);
-        PersonalNoteResponse note = noteRepository.findByConcept_Id(conceptId)
-                .map(found -> new PersonalNoteResponse(found.getContent(), found.getUpdatedAt()))
+        PersonalNoteView note = noteRepository.findByConcept_Id(conceptId)
+                .map(found -> new PersonalNoteView(found.getContent(), found.getUpdatedAt()))
                 .orElse(null);
 
-        return new ConceptDetailResponse(
+        return new ConceptDetailView(
                 concept.getId(),
                 concept.getContentKey(),
                 concept.getSlug(),
@@ -130,11 +112,11 @@ public class LearningQueryService {
                 concept.getContentMarkdown(),
                 concept.getLevel(),
                 concept.getStatus(),
-                new LearningAreaBreadcrumbResponse(area.getId(), area.getSlug(), area.getName()),
-                new TopicBreadcrumbResponse(topic.getId(), topic.getSlug(), topic.getTitle()),
+                new LearningAreaBreadcrumbView(area.getId(), area.getSlug(), area.getName()),
+                new TopicBreadcrumbView(topic.getId(), topic.getSlug(), topic.getTitle()),
                 progress,
                 conceptReferenceRepository.findAllByConceptId(conceptId).stream()
-                        .map(this::toReferenceResponse)
+                        .map(this::toReferenceView)
                         .toList(),
                 note,
                 previousConcept(concept, topic, area),
@@ -142,7 +124,7 @@ public class LearningQueryService {
                 relatedConcepts(concept, topic));
     }
 
-    private ConceptNavigationResponse previousConcept(Concept concept, Topic topic, LearningArea area) {
+    private ConceptNavigationView previousConcept(Concept concept, Topic topic, LearningArea area) {
         return conceptRepository.findPreviousPublished(
                         concept.getId(),
                         area.getDisplayOrder(),
@@ -151,11 +133,11 @@ public class LearningQueryService {
                         SINGLE_RESULT)
                 .stream()
                 .findFirst()
-                .map(this::toNavigationResponse)
+                .map(this::toNavigationView)
                 .orElse(null);
     }
 
-    private ConceptNavigationResponse nextConcept(Concept concept, Topic topic, LearningArea area) {
+    private ConceptNavigationView nextConcept(Concept concept, Topic topic, LearningArea area) {
         return conceptRepository.findNextPublished(
                         concept.getId(),
                         area.getDisplayOrder(),
@@ -164,18 +146,18 @@ public class LearningQueryService {
                         SINGLE_RESULT)
                 .stream()
                 .findFirst()
-                .map(this::toNavigationResponse)
+                .map(this::toNavigationView)
                 .orElse(null);
     }
 
-    private List<ConceptNavigationResponse> relatedConcepts(Concept concept, Topic topic) {
+    private List<ConceptNavigationView> relatedConcepts(Concept concept, Topic topic) {
         return conceptRepository.findRelatedPublished(
                         concept.getId(),
                         topic.getId(),
                         concept.getDisplayOrder(),
                         RELATED_RESULTS)
                 .stream()
-                .map(this::toNavigationResponse)
+                .map(this::toNavigationView)
                 .toList();
     }
 
@@ -184,42 +166,8 @@ public class LearningQueryService {
                 .orElseThrow(() -> new LearningNotFoundException("Published concept not found: " + conceptId));
     }
 
-    private TopicSummaryResponse toTopicSummaryResponse(TopicSummaryView topic) {
-        return new TopicSummaryResponse(
-                topic.id(),
-                topic.slug(),
-                topic.title(),
-                topic.description(),
-                topic.publishedConceptCount(),
-                topic.completedConceptCount(),
-                topic.bookmarkedConceptCount(),
-                topic.level1Count(),
-                topic.level2Count(),
-                topic.level3Count(),
-                topic.unseenCount(),
-                topic.learningCount(),
-                topic.reviewNeededCount());
-    }
-
-    private ConceptListItemResponse toConceptListItemResponse(ConceptSearchItem concept) {
-        return new ConceptListItemResponse(
-                concept.id(),
-                concept.areaSlug(),
-                concept.areaName(),
-                concept.topicId(),
-                concept.topicSlug(),
-                concept.topicTitle(),
-                concept.title(),
-                concept.summary(),
-                concept.level(),
-                concept.contentStatus(),
-                concept.learningStatus(),
-                concept.bookmarked(),
-                concept.lastViewedAt());
-    }
-
-    private ConceptProgressResponse toProgressResponse(ConceptProgress progress) {
-        return new ConceptProgressResponse(
+    private ConceptProgressView toProgressView(ConceptProgress progress) {
+        return new ConceptProgressView(
                 progress.getStatus(),
                 progress.isBookmarked(),
                 progress.getFirstViewedAt(),
@@ -227,13 +175,13 @@ public class LearningQueryService {
                 progress.getCompletedAt());
     }
 
-    private ConceptProgressResponse unseenProgress() {
-        return new ConceptProgressResponse(LearningStatus.UNSEEN, false, null, null, null);
+    private ConceptProgressView unseenProgress() {
+        return new ConceptProgressView(LearningStatus.UNSEEN, false, null, null, null);
     }
 
-    private ReferenceResponse toReferenceResponse(ConceptReference conceptReference) {
+    private ReferenceView toReferenceView(ConceptReference conceptReference) {
         Reference reference = conceptReference.getReference();
-        return new ReferenceResponse(
+        return new ReferenceView(
                 reference.getId(),
                 reference.getUrl(),
                 reference.getTitle(),
@@ -245,7 +193,7 @@ public class LearningQueryService {
                 conceptReference.getRelationNote());
     }
 
-    private ConceptNavigationResponse toNavigationResponse(Concept concept) {
-        return new ConceptNavigationResponse(concept.getId(), concept.getTitle(), concept.getLevel());
+    private ConceptNavigationView toNavigationView(Concept concept) {
+        return new ConceptNavigationView(concept.getId(), concept.getTitle(), concept.getLevel());
     }
 }
