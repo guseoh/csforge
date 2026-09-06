@@ -1,0 +1,54 @@
+name: csforge-prod
+
+services:
+  postgres:
+    image: postgres:16.4
+
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-csforge}
+      POSTGRES_USER: ${POSTGRES_USER:-csforge}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
+
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER:-csforge} -d ${POSTGRES_DB:-csforge}"
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
+
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+
+    image: csforge-backend:prod
+
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-csforge}
+      DB_USERNAME: ${POSTGRES_USER:-csforge}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
+
+      CSFORGE_AI_ENABLED: "false"
+      SPRING_AI_MODEL_CHAT: "none"
+      ELASTICSEARCH_HEALTH_ENABLED: "false"
+      SPRING_KAFKA_LISTENER_AUTO_STARTUP: "false"
+      SPRING_KAFKA_ADMIN_AUTO_CREATE: "false"
+      CSFORGE_SEARCH_OUTBOX_RELAY_ENABLED: "false"
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+    restart: unless-stopped
+
+volumes:
+  postgres-data:
