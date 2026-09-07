@@ -29,6 +29,19 @@ Pop-Location
 
 The backend listens on `http://localhost:8080`. Actuator health and Prometheus metrics are available at `/actuator/health` and `/actuator/prometheus`.
 
+## Start production-like Compose
+
+```powershell
+Copy-Item .env.example .env
+# Edit .env and replace POSTGRES_PASSWORD=change-me with a real local secret.
+docker compose -f compose.prod.yaml config
+docker compose -f compose.prod.yaml up -d --build
+docker compose -f compose.prod.yaml ps
+```
+
+The `.env` file is ignored by Git. `docker compose down -v` can delete the
+canonical PostgreSQL volume, so do not use it as the normal shutdown command.
+
 ## Run the frontend
 
 ```powershell
