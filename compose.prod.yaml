@@ -57,7 +57,7 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
-      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false"
 
     volumes:
       - kafka-data:/var/lib/kafka/data
@@ -74,6 +74,40 @@ services:
       start_period: 60s
 
     restart: unless-stopped
+
+  kafka-init:
+    image: apache/kafka:4.0.0
+
+    command:
+      - /bin/sh
+      - -ec
+      - |
+          until /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:9092 --list >/dev/null 2>&1; do
+            echo "Waiting for Kafka at kafka:9092..."
+            sleep 5
+          done
+
+          until /opt/kafka/bin/kafka-topics.sh \
+              --bootstrap-server kafka:9092 \
+              --create \
+              --if-not-exists \
+              --topic csforge.search-index.v1 \
+              --partitions 1 \
+              --replication-factor 1 && \
+            /opt/kafka/bin/kafka-topics.sh \
+              --bootstrap-server kafka:9092 \
+              --create \
+              --if-not-exists \
+              --topic csforge.search-index.v1.DLT \
+              --partitions 1 \
+              --replication-factor 1; do
+            echo "Kafka topic bootstrap failed; retrying in 5s..."
+            sleep 5
+          done
+
+          echo "Kafka topic bootstrap completed."
+
+    restart: on-failure
 
   elasticsearch:
     build:
@@ -122,7 +156,7 @@ services:
       SPRING_AI_MODEL_CHAT: "none"
       ELASTICSEARCH_HEALTH_ENABLED: "false"
       SPRING_KAFKA_LISTENER_AUTO_STARTUP: "true"
-      SPRING_KAFKA_ADMIN_AUTO_CREATE: "true"
+      SPRING_KAFKA_ADMIN_AUTO_CREATE: "false"
       CSFORGE_SEARCH_OUTBOX_RELAY_ENABLED: "true"
 
     depends_on:
