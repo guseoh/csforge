@@ -66,6 +66,12 @@ management:
     health:
       probes:
         enabled: true
+      group:
+        readiness:
+          include:
+            - readinessState
+            - db
+      show-components: always
       show-details: when_authorized
   health:
     elasticsearch:

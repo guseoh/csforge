@@ -18,6 +18,10 @@ FROM eclipse-temurin:25-jre AS runtime
 
 WORKDIR /app
 
+RUN apt-get update \
+    && apt-get install --no-install-recommends --yes curl \
+    && rm -rf /var/lib/apt/lists/*
+
 COPY --from=builder --chown=10001:10001 \
     /workspace/build/libs/csforge-backend-0.0.1-SNAPSHOT.jar \
     /app/app.jar
