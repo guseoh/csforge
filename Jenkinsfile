@@ -27,6 +27,8 @@ pipeline {
                     docker run --rm \
                       --volumes-from "$JENKINS_CONTAINER" \
                       --volume /var/run/docker.sock:/var/run/docker.sock \
+                      --env TESTCONTAINERS_HOST_OVERRIDE=host.docker.internal \
+                      --env TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE=/var/run/docker.sock \
                       --workdir "$WORKSPACE/backend" \
                       "$JAVA_BUILD_IMAGE" \
                       sh -c 'sed -i "s/\\r$//" gradlew && chmod +x gradlew && java -version && ./gradlew test --no-daemon --console=plain && ./gradlew bootJar --no-daemon'
