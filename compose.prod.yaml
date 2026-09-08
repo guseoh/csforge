@@ -11,10 +11,6 @@ services:
     ports:
       - "${WEB_BIND_ADDRESS:-127.0.0.1}:${WEB_PORT:-8080}:80"
 
-    depends_on:
-      backend:
-        condition: service_healthy
-
     restart: unless-stopped
 
   postgres:
@@ -177,7 +173,57 @@ services:
 
     restart: unless-stopped
 
+  prometheus:
+    profiles:
+      - observability
+
+    image: prom/prometheus:v3.5.0
+
+    ports:
+      - "${PROMETHEUS_BIND_ADDRESS:-127.0.0.1}:${PROMETHEUS_PORT:-9090}:9090"
+
+    volumes:
+      - prometheus-data:/prometheus
+      - ./infra/prometheus/prometheus.prod.yml:/etc/prometheus/prometheus.yml:ro
+
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+
+    depends_on:
+      backend:
+        condition: service_healthy
+
+    restart: unless-stopped
+
+  grafana:
+    profiles:
+      - observability
+
+    image: grafana/grafana:12.1.1
+
+    ports:
+      - "${GRAFANA_BIND_ADDRESS:-127.0.0.1}:${GRAFANA_PORT:-3000}:3000"
+
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./infra/grafana/provisioning:/etc/grafana/provisioning:ro
+
+    depends_on:
+      prometheus:
+        condition: service_started
+
+    healthcheck:
+      test: ["CMD-SHELL", "wget --spider --quiet http://localhost:3000/api/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+    restart: unless-stopped
+
 volumes:
   postgres-data:
   kafka-data:
   elasticsearch-data:
+  prometheus-data:
+  grafana-data:
