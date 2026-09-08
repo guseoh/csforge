@@ -81,7 +81,8 @@ class SearchFullStackIntegrationTest {
             .withPassword("csforge");
 
     @Container
-    static final KafkaContainer KAFKA = new KafkaContainer(DockerImageName.parse("apache/kafka:4.0.0"));
+    static final KafkaContainer KAFKA = new KafkaContainer(DockerImageName.parse("apache/kafka:4.0.0"))
+            .withStartupTimeout(Duration.ofMinutes(2));
 
     @Container
     static final GenericContainer<?> ELASTICSEARCH = new GenericContainer<>(ELASTICSEARCH_IMAGE)
@@ -89,7 +90,7 @@ class SearchFullStackIntegrationTest {
             .withEnv("discovery.type", "single-node")
             .withEnv("xpack.security.enabled", "false")
             .withEnv("xpack.security.enrollment.enabled", "false")
-            .withEnv("ES_JAVA_OPTS", "-Xms384m -Xmx384m")
+            .withEnv("ES_JAVA_OPTS", "-Xms512m -Xmx512m")
             .waitingFor(Wait.forHttp("/_cluster/health")
                     .forPort(9200)
                     .forStatusCode(200)
