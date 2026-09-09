@@ -132,19 +132,30 @@ pipeline {
                         attempts=0
                         max_attempts=72
                         readiness=''
+                        search_status=''
+                        reindex_requested=0
                         while [ "$attempts" -lt "$max_attempts" ]; do
                             attempts=$((attempts + 1))
                             readiness="$(docker compose -f compose.prod.yaml exec -T backend curl -fsS http://localhost:8080/actuator/health/readiness 2>/dev/null || true)"
                             web_status="$(curl -sS -o /dev/null -w '%{http_code}' "$WEB_BASE_URL/" || true)"
-                            echo "Readiness poll ${attempts}/${max_attempts}: backend=${readiness:-unavailable} web=${web_status:-unavailable}"
                             if echo "$readiness" | grep -Eq '"status"[[:space:]]*:[[:space:]]*"UP"' && [ "$web_status" = '200' ]; then
-                                echo 'Application readiness: PASS'
+                                search_status="$(curl -fsS "$WEB_BASE_URL/api/search/status" 2>/dev/null || true)"
+                                if echo "$search_status" | grep -Eq '"state"[[:space:]]*:[[:space:]]*"NOT_READY"' && [ "$reindex_requested" -eq 0 ]; then
+                                    if curl --max-time 30 -fsS -X POST "$WEB_BASE_URL/api/search/reindex" >/dev/null; then
+                                        reindex_requested=1
+                                        echo 'Search reindex: requested'
+                                    fi
+                                fi
+                            fi
+                            echo "Readiness poll ${attempts}/${max_attempts}: backend=${readiness:-unavailable} web=${web_status:-unavailable} search=${search_status:-unavailable}"
+                            if echo "$readiness" | grep -Eq '"status"[[:space:]]*:[[:space:]]*"UP"' && [ "$web_status" = '200' ] && echo "$search_status" | grep -Eq '"state"[[:space:]]*:[[:space:]]*"READY"'; then
+                                echo 'Application and Search readiness: PASS'
                                 break
                             fi
                             sleep 5
                         done
 
-                        if ! echo "$readiness" | grep -Eq '"status"[[:space:]]*:[[:space:]]*"UP"' || [ "$web_status" != '200' ]; then
+                        if ! echo "$readiness" | grep -Eq '"status"[[:space:]]*:[[:space:]]*"UP"' || [ "$web_status" != '200' ] || ! echo "$search_status" | grep -Eq '"state"[[:space:]]*:[[:space:]]*"READY"'; then
                             echo 'Bounded readiness polling failed' >&2
                             docker compose -f compose.prod.yaml ps
                             docker compose -f compose.prod.yaml logs --tail 120 backend web postgres kafka elasticsearch
