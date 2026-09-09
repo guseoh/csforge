@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    options {
+        disableConcurrentBuilds()
+    }
+
     environment {
         JENKINS_CONTAINER = 'csforge-jenkins-jenkins-1'
         JAVA_BUILD_IMAGE = 'eclipse-temurin:25-jdk'
@@ -111,14 +115,28 @@ pipeline {
                         postgres_container="${expected_project}-postgres-1"
                         postgres_volume="${expected_project}_postgres-data"
 
+                        if docker inspect "$postgres_container" >/dev/null 2>&1; then
+                            test "$(docker inspect "$postgres_container" --format '{{index .Config.Labels "com.docker.compose.project"}}')" = "$expected_project"
+                            mounted_volume="$(docker inspect "$postgres_container" --format '{{range .Mounts}}{{if eq .Destination "/var/lib/postgresql/data"}}{{.Name}}{{end}}{{end}}')"
+                            test "$mounted_volume" = "$postgres_volume"
+                            echo "Existing PostgreSQL container uses canonical volume: $postgres_volume"
+                        else
+                            echo 'No existing PostgreSQL container; proceeding with fresh/recreated container deployment.'
+                            if docker volume inspect "$postgres_volume" >/dev/null 2>&1; then
+                                echo "Existing canonical PostgreSQL volume will be reused: $postgres_volume"
+                            else
+                                echo "Canonical PostgreSQL volume will be created by Compose: $postgres_volume"
+                            fi
+                        fi
+
+                        echo "Compose project: $expected_project"
+                        docker compose -f compose.prod.yaml up -d --no-build
+
                         test "$(docker inspect "$postgres_container" --format '{{index .Config.Labels "com.docker.compose.project"}}')" = "$expected_project"
                         mounted_volume="$(docker inspect "$postgres_container" --format '{{range .Mounts}}{{if eq .Destination "/var/lib/postgresql/data"}}{{.Name}}{{end}}{{end}}')"
                         test "$mounted_volume" = "$postgres_volume"
                         docker volume inspect "$postgres_volume" >/dev/null
-                        echo "Compose project: $expected_project"
-                        echo "PostgreSQL canonical volume: $postgres_volume"
-
-                        docker compose -f compose.prod.yaml up -d --build
+                        echo "Post-deploy PostgreSQL canonical volume: $postgres_volume"
                     '''
                 }
             }
