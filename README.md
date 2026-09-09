@@ -42,6 +42,32 @@ docker compose -f compose.prod.yaml ps
 The `.env` file is ignored by Git. `docker compose down -v` can delete the
 canonical PostgreSQL volume, so do not use it as the normal shutdown command.
 
+## Run the local Jenkins lab
+
+```powershell
+docker compose -f compose.jenkins.yaml config --quiet
+docker compose -f compose.jenkins.yaml up -d --build
+docker compose -f compose.jenkins.yaml ps
+docker compose -f compose.jenkins.yaml exec jenkins cat /var/jenkins_home/secrets/initialAdminPassword
+Start-Process http://127.0.0.1:8081
+```
+
+Use the printed one-time password to complete Jenkins setup in the browser and
+create the local admin account. The image installs only the Pipeline, Git,
+Credentials Binding, and optional Pipeline Graph View plugins; suggested
+plugins are not required. Create a **Secret text** credential with ID
+`csforge-postgres-password` for the local PostgreSQL password, then create a
+Pipeline job that loads `Jenkinsfile` from this repository and branch `main`.
+When validating an in-progress change, point the job at that working branch
+instead. Do not commit that password or other Jenkins credentials. The Jenkins
+container uses Docker-outside-of-Docker through the Docker Desktop socket; this
+gives Jenkins host Docker daemon control and is only appropriate for this
+single-user, local-only, trusted-code lab. Do not expose it on a public interface
+or use it for untrusted public pull requests.
+
+Stop the lab with `docker compose -f compose.jenkins.yaml down`; do not add
+`-v`, because that can delete the persistent `jenkins-home` volume.
+
 ## Run the frontend
 
 ```powershell

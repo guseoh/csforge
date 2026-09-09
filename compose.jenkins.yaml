@@ -1,0 +1,28 @@
+name: csforge-jenkins
+
+services:
+  jenkins:
+    build:
+      context: ./infra/jenkins
+      dockerfile: Dockerfile
+
+    image: csforge-jenkins:2.568.3-lts-jdk21-docker28.5.1-compose2.40.0
+
+    ports:
+      - "${JENKINS_BIND_ADDRESS:-127.0.0.1}:${JENKINS_PORT:-8081}:8080"
+
+    volumes:
+      - jenkins-home:/var/jenkins_home
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+
+    # Docker Desktop exposes the Linux daemon socket as root:root (gid 0).
+    # Jenkins remains uid 1000; this grants only the socket's supplementary group.
+    group_add:
+      - "0"
+
+    restart: unless-stopped
+
+volumes:
+  jenkins-home:
