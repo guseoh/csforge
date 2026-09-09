@@ -268,6 +268,57 @@ class ContentImportIntegrationTest {
         assertEquals(0, jdbc.queryForObject("select count(*) from topic where content_key = 'new.first'", Integer.class));
     }
 
+    @Test
+    void canonicalBootstrapMovesEmptyDatabaseToReadyAndIsIdempotent() throws Exception {
+        JsonNode empty = json(get("/api/canonical-bootstrap/status")).get("body");
+        assertEquals("EMPTY", empty.get("state").asText());
+        assertEquals(0, empty.get("currentCounts").get("topics").asInt());
+
+        JsonNode first = json(bootstrap()).get("body");
+        assertTrue(first.get("success").asBoolean());
+        assertEquals(3_304, first.get("totals").get("created").asInt());
+        assertEquals(15, jdbc.queryForObject("select count(*) from learning_area", Integer.class));
+        assertEquals(134, jdbc.queryForObject("select count(*) from topic", Integer.class));
+        assertEquals(721, jdbc.queryForObject("select count(*) from concept", Integer.class));
+        assertEquals(2_449, jdbc.queryForObject("select count(*) from question", Integer.class));
+        assertTrue(jdbc.queryForObject("select count(*) from search_outbox_event", Integer.class) > 0);
+
+        JsonNode ready = json(get("/api/canonical-bootstrap/status")).get("body");
+        assertEquals("READY", ready.get("state").asText());
+        assertEquals(ready.get("totalBatches").asInt(), ready.get("readyBatches").asInt());
+
+        JsonNode second = json(bootstrap()).get("body");
+        assertTrue(second.get("success").asBoolean());
+        assertEquals(3_304, second.get("totals").get("unchanged").asInt());
+        assertEquals(0, second.get("totals").get("created").asInt());
+        assertEquals(0, second.get("totals").get("updated").asInt());
+    }
+
+    @Test
+    void canonicalBootstrapRecoversAfterACommittedPartialFailure() throws Exception {
+        jdbc.execute("create function test_bootstrap_failure() returns trigger language plpgsql as $$ begin if NEW.content_key = 'java.core.api-design.builder-pattern-construction' then raise exception 'forced bootstrap failure'; end if; return NEW; end $$");
+        jdbc.execute("create trigger test_bootstrap_failure_trigger before insert or update on concept for each row execute function test_bootstrap_failure()");
+
+        JsonNode failed = json(bootstrap()).get("body");
+
+        assertFalse(failed.get("success").asBoolean());
+        assertEquals("PARTIAL", failed.get("state").asText());
+        assertTrue(failed.get("completedBatches").asInt() > 0);
+        assertTrue(jdbc.queryForObject("select count(*) from topic", Integer.class) > 0);
+        assertTrue(jdbc.queryForObject("select count(*) from concept", Integer.class) > 0);
+        assertTrue(jdbc.queryForObject("select count(*) from concept where content_key = 'java.core.api-design.builder-pattern-construction'", Integer.class) == 0);
+
+        jdbc.execute("drop trigger test_bootstrap_failure_trigger on concept");
+        jdbc.execute("drop function test_bootstrap_failure()");
+        JsonNode recovered = json(bootstrap()).get("body");
+
+        assertTrue(recovered.get("success").asBoolean());
+        assertEquals("READY", recovered.get("state").asText());
+        assertEquals(134, jdbc.queryForObject("select count(*) from topic", Integer.class));
+        assertEquals(721, jdbc.queryForObject("select count(*) from concept", Integer.class));
+        assertEquals(2_449, jdbc.queryForObject("select count(*) from question", Integer.class));
+    }
+
     private long insertAttempt(long questionId) {
         long sessionId = jdbc.queryForObject("insert into quiz_session (started_at, source) values (current_timestamp, 'STANDARD') returning id", Long.class);
         return jdbc.queryForObject("insert into attempt (quiz_session_id, question_id, grading_status, correct, answered_at, graded_at) values (?, ?, 'GRADED', false, current_timestamp, current_timestamp) returning id", Long.class, sessionId, questionId);
@@ -286,6 +337,15 @@ class ContentImportIntegrationTest {
         int length = chunks.stream().mapToInt(bytes -> bytes.length).sum(); byte[] body = new byte[length]; int offset = 0;
         for (byte[] chunk : chunks) { System.arraycopy(chunk, 0, body, offset, chunk.length); offset += chunk.length; }
         return HTTP.send(HttpRequest.newBuilder(URI.create("http://localhost:" + port + path)).header("Content-Type", "multipart/form-data; boundary=" + boundary).POST(HttpRequest.BodyPublishers.ofByteArray(body)).build(), HttpResponse.BodyHandlers.ofString());
+    }
+
+    private HttpResponse<String> get(String path) throws Exception {
+        return HTTP.send(HttpRequest.newBuilder(URI.create("http://localhost:" + port + path)).GET().build(), HttpResponse.BodyHandlers.ofString());
+    }
+
+    private HttpResponse<String> bootstrap() throws Exception {
+        return HTTP.send(HttpRequest.newBuilder(URI.create("http://localhost:" + port + "/api/canonical-bootstrap"))
+                .header("Accept", "application/json").POST(HttpRequest.BodyPublishers.noBody()).build(), HttpResponse.BodyHandlers.ofString());
     }
 
     private static List<Part> sampleParts() {

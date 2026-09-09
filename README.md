@@ -1,6 +1,6 @@
 # CSForge
 
-CSForge is a local-first, single-user workspace for learning computer science and backend engineering. This repository currently contains the runnable development skeleton; learning domains and content import arrive in later issues.
+CSForge is a local-first, single-user workspace for learning computer science and backend engineering. The repository's canonical `content/` pack is bundled into the backend at build time and can be prepared explicitly from the Dashboard or Learning screen on a clean database.
 
 ## Prerequisites
 
@@ -28,6 +28,8 @@ Pop-Location
 ```
 
 The backend listens on `http://localhost:8080`. Actuator health and Prometheus metrics are available at `/actuator/health` and `/actuator/prometheus`.
+
+The local `bootRun` and production-like Compose image use the same canonical pack. Bootstrap is explicit; application startup does not import content automatically. On an empty database, choose `기본 학습 콘텐츠 준비` and wait for the Learning CTA after the import completes.
 
 ## Start production-like Compose
 

@@ -259,6 +259,9 @@ h1 {
 
 .dashboard-empty strong { color: #e8eeff; }
 .dashboard-empty span { flex: 1 1 300px; color: #aeb8cc; font-size: 0.85rem; }
+.canonical-bootstrap-card { margin-top: 0.9rem; flex: 1 1 100%; }
+.canonical-bootstrap-card .primary-button,
+.canonical-bootstrap-card .secondary-button { align-self: flex-start; }
 
 .dashboard-section {
   display: grid;

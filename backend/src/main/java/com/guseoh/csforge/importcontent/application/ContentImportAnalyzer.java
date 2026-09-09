@@ -108,23 +108,18 @@ public class ContentImportAnalyzer {
     private static void diff(List<ImportFieldDiff> diffs, String field, Object before, Object after) { String left = before == null ? null : String.valueOf(before); String right = after == null ? null : String.valueOf(after); if (!java.util.Objects.equals(left, right)) diffs.add(new ImportFieldDiff(field, compact(left), compact(right))); }
     private static String compact(String value) { return value != null && value.length() > 2000 ? value.substring(0, 2000) + "…" : value; }
     private static ImportItemPreview preview(NormalizedImportItem item, ImportClassification classification, String reason, List<ImportValidationError> errors, List<ImportFieldDiff> diffs) { return new ImportItemPreview(item.fileName(), item.itemIndex(), item.kind(), item.contentKey(), classification, reason, errors, diffs); }
-    private static final int MAX_FILES_PER_BATCH = 100;
-    private static final int MAX_ITEMS_PER_BATCH = 1_000;
-    private static final int MAX_FILE_BYTES = 2 * 1024 * 1024;
-    private static final long MAX_TOTAL_BYTES = 20L * 1024 * 1024;
-
     private static void validateBounds(ImportFilesCommand command) {
         if (command.files().isEmpty()) throw new ImportBoundsException("At least one file is required");
-        if (command.files().size() > MAX_FILES_PER_BATCH) throw new ImportBoundsException("A batch may contain at most " + MAX_FILES_PER_BATCH + " files");
+        if (command.files().size() > ImportBatchLimits.MAX_FILES_PER_BATCH) throw new ImportBoundsException("A batch may contain at most " + ImportBatchLimits.MAX_FILES_PER_BATCH + " files");
         long total = 0;
         for (ImportSourceFile file : command.files()) {
-            if (file.content().length > MAX_FILE_BYTES) throw new ImportBoundsException("Each file may be at most 2 MiB");
+            if (file.content().length > ImportBatchLimits.MAX_FILE_BYTES) throw new ImportBoundsException("Each file may be at most 2 MiB");
             total += file.content().length;
         }
-        if (total > MAX_TOTAL_BYTES) throw new ImportBoundsException("A batch may be at most 20 MiB");
+        if (total > ImportBatchLimits.MAX_TOTAL_BYTES) throw new ImportBoundsException("A batch may be at most 20 MiB");
     }
 
     private static void validateItemCount(int count) {
-        if (count > MAX_ITEMS_PER_BATCH) throw new ImportBoundsException("A batch may contain at most " + MAX_ITEMS_PER_BATCH + " items");
+        if (count > ImportBatchLimits.MAX_ITEMS_PER_BATCH) throw new ImportBoundsException("A batch may contain at most " + ImportBatchLimits.MAX_ITEMS_PER_BATCH + " items");
     }
 }

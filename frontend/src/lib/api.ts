@@ -579,6 +579,41 @@ async function importRequest<T>(path: string, files: File[], digest?: string): P
 export function previewImports(files: File[]): Promise<ImportPreview> { return importRequest<ImportPreview>('/api/imports/preview', files) }
 export function applyImports(files: File[], digest: string): Promise<ImportApply> { return importRequest<ImportApply>('/api/imports/apply', files, digest) }
 
+export type CanonicalBootstrapState = 'EMPTY' | 'PARTIAL' | 'READY'
+export interface CanonicalBootstrapCounts { learningAreas: number; topics: number; concepts: number; questions: number }
+export interface CanonicalBootstrapItems { topics: number; concepts: number; questions: number }
+export interface CanonicalBootstrapTotals { created: number; updated: number; unchanged: number; skipped: number; errors: number; failed: number }
+export interface CanonicalBootstrapStatus {
+  state: CanonicalBootstrapState
+  sourceFileCount: number
+  totalBatches: number
+  readyBatches: number
+  totalItems: number
+  canonicalItems: CanonicalBootstrapItems
+  currentCounts: CanonicalBootstrapCounts
+}
+export interface CanonicalBootstrapResult {
+  success: boolean
+  state: CanonicalBootstrapState
+  sourceFileCount: number
+  totalBatches: number
+  completedBatches: number
+  totalItems: number
+  failedBatch: number | null
+  failedKind: 'TOPIC' | 'CONCEPT' | 'QUESTION' | null
+  failureMessage: string | null
+  totals: CanonicalBootstrapTotals
+  currentCounts: CanonicalBootstrapCounts
+}
+
+export function getCanonicalBootstrapStatus(): Promise<CanonicalBootstrapStatus> {
+  return request<CanonicalBootstrapStatus>('/api/canonical-bootstrap/status')
+}
+
+export function bootstrapCanonicalContent(): Promise<CanonicalBootstrapResult> {
+  return request<CanonicalBootstrapResult>('/api/canonical-bootstrap', { method: 'POST' })
+}
+
 export interface DashboardToday {
   solvedCount: number
   correctCount: number
