@@ -53,7 +53,12 @@ Start-Process http://127.0.0.1:8081
 ```
 
 Use the printed one-time password to complete Jenkins setup in the browser and
-create the local admin account. Do not commit that password or other Jenkins
+create the local admin account. The image installs only the Pipeline, Git,
+Credentials Binding, and optional Pipeline Graph View plugins; suggested
+plugins are not required. Create a **Secret text** credential with ID
+`csforge-postgres-password` for the local PostgreSQL password, then create a
+Pipeline job that loads `Jenkinsfile` from this repository and branch
+`feat/jenkins-cicd-lab`. Do not commit that password or other Jenkins
 credentials. The Jenkins container uses Docker-outside-of-Docker through the
 Docker Desktop socket; this gives Jenkins host Docker daemon control and is
 only appropriate for this single-user, local-only, trusted-code lab. Do not
