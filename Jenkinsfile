@@ -18,10 +18,19 @@ pipeline {
         stage('Checkout') {
             steps {
                 checkout scm
+                script {
+                    env.CSFORGE_RELEASE = sh(
+                        script: 'git rev-parse --verify HEAD^{commit}',
+                        returnStdout: true
+                    ).trim()
+                }
                 sh '''
                     set -eu
+                    test "$CSFORGE_RELEASE" = "$(git rev-parse --verify HEAD^{commit})"
+                    echo "$CSFORGE_RELEASE" | grep -Eq '^[0-9a-f]{40}$'
                     echo "branch=$(git branch --show-current)"
-                    echo "commit=$(git rev-parse HEAD)"
+                    echo "commit=$CSFORGE_RELEASE"
+                    echo "release=$CSFORGE_RELEASE"
                     echo "workspace=$WORKSPACE"
                 '''
             }
@@ -85,6 +94,14 @@ pipeline {
                     docker compose -f compose.prod.yaml config --quiet
                     docker compose -f compose.prod.yaml --profile observability config --quiet
 
+                    for image in \
+                      "csforge-backend:$CSFORGE_RELEASE" \
+                      "csforge-frontend:$CSFORGE_RELEASE" \
+                      "csforge-elasticsearch:$CSFORGE_RELEASE"; do
+                      docker compose -f compose.prod.yaml config --images | grep -Fx "$image"
+                    done
+                    echo "Resolved application images for release $CSFORGE_RELEASE: PASS"
+
                     if env -u POSTGRES_PASSWORD docker compose -f compose.prod.yaml config --quiet; then
                       echo 'Expected missing-secret failure did not occur' >&2
                       exit 1
@@ -101,8 +118,83 @@ pipeline {
                         set -eu
                         test -n "$POSTGRES_PASSWORD"
                         docker compose -f compose.prod.yaml build backend web elasticsearch
+                        for image in \
+                          "csforge-backend:$CSFORGE_RELEASE" \
+                          "csforge-frontend:$CSFORGE_RELEASE" \
+                          "csforge-elasticsearch:$CSFORGE_RELEASE"; do
+                          docker image inspect "$image" >/dev/null
+                          echo "Built image: $image"
+                        done
                     '''
                 }
+            }
+        }
+
+        stage('Previous Release Detection') {
+            steps {
+                script {
+                    env.PREVIOUS_RELEASE = sh(
+                        script: '''
+                            set -eu
+                            expected_project="$PROD_PROJECT"
+                            backend_container="${expected_project}-backend-1"
+                            web_container="${expected_project}-web-1"
+                            elasticsearch_container="${expected_project}-elasticsearch-1"
+
+                            existing=0
+                            running=0
+                            for container in "$backend_container" "$web_container" "$elasticsearch_container"; do
+                                if docker inspect "$container" >/dev/null 2>&1; then
+                                    existing=$((existing + 1))
+                                    if [ "$(docker inspect "$container" --format '{{.State.Running}}')" = 'true' ]; then
+                                        running=$((running + 1))
+                                    fi
+                                fi
+                            done
+
+                            if [ "$existing" -ne 0 ] && [ "$existing" -ne 3 ]; then
+                                echo "Inconsistent application container set: $existing/3 containers exist" >&2
+                                exit 1
+                            fi
+                            if [ "$running" -ne 0 ] && [ "$running" -ne 3 ]; then
+                                echo "Inconsistent running application container set: $running/3 containers are running" >&2
+                                exit 1
+                            fi
+                            if [ "$running" -eq 0 ]; then
+                                printf 'none\n'
+                                exit 0
+                            fi
+
+                            for container in "$backend_container" "$web_container" "$elasticsearch_container"; do
+                                test "$(docker inspect "$container" --format '{{index .Config.Labels "com.docker.compose.project"}}')" = "$expected_project"
+                            done
+
+                            backend_image="$(docker inspect "$backend_container" --format '{{.Config.Image}}')"
+                            web_image="$(docker inspect "$web_container" --format '{{.Config.Image}}')"
+                            elasticsearch_image="$(docker inspect "$elasticsearch_container" --format '{{.Config.Image}}')"
+
+                            case "$backend_image" in csforge-backend:*) ;; *) echo "Unexpected backend image: $backend_image" >&2; exit 1 ;; esac
+                            case "$web_image" in csforge-frontend:*) ;; *) echo "Unexpected web image: $web_image" >&2; exit 1 ;; esac
+                            case "$elasticsearch_image" in csforge-elasticsearch:*) ;; *) echo "Unexpected Elasticsearch image: $elasticsearch_image" >&2; exit 1 ;; esac
+
+                            backend_release="${backend_image#csforge-backend:}"
+                            web_release="${web_image#csforge-frontend:}"
+                            elasticsearch_release="${elasticsearch_image#csforge-elasticsearch:}"
+                            if [ "$backend_release" != "$web_release" ] || [ "$backend_release" != "$elasticsearch_release" ]; then
+                                echo "Application containers use different releases: backend=$backend_release web=$web_release elasticsearch=$elasticsearch_release" >&2
+                                exit 1
+                            fi
+
+                            printf '%s\n' "$backend_release"
+                        ''',
+                        returnStdout: true
+                    ).trim()
+                }
+                sh '''
+                    set -eu
+                    echo "Deploying release: $CSFORGE_RELEASE"
+                    echo "Previous release: $PREVIOUS_RELEASE"
+                '''
             }
         }
 
@@ -114,29 +206,54 @@ pipeline {
                         expected_project="$PROD_PROJECT"
                         postgres_container="${expected_project}-postgres-1"
                         postgres_volume="${expected_project}_postgres-data"
+                        expected_backend_image="csforge-backend:$CSFORGE_RELEASE"
+                        expected_web_image="csforge-frontend:$CSFORGE_RELEASE"
+                        expected_elasticsearch_image="csforge-elasticsearch:$CSFORGE_RELEASE"
+
+                        echo "Deploying release: $CSFORGE_RELEASE"
+                        echo "Previous release: $PREVIOUS_RELEASE"
 
                         if docker inspect "$postgres_container" >/dev/null 2>&1; then
                             test "$(docker inspect "$postgres_container" --format '{{index .Config.Labels "com.docker.compose.project"}}')" = "$expected_project"
                             mounted_volume="$(docker inspect "$postgres_container" --format '{{range .Mounts}}{{if eq .Destination "/var/lib/postgresql/data"}}{{.Name}}{{end}}{{end}}')"
                             test "$mounted_volume" = "$postgres_volume"
+                            volume_before="$mounted_volume"
                             echo "Existing PostgreSQL container uses canonical volume: $postgres_volume"
                         else
                             echo 'No existing PostgreSQL container; proceeding with fresh/recreated container deployment.'
                             if docker volume inspect "$postgres_volume" >/dev/null 2>&1; then
+                                volume_before="$postgres_volume"
                                 echo "Existing canonical PostgreSQL volume will be reused: $postgres_volume"
                             else
+                                volume_before='none'
                                 echo "Canonical PostgreSQL volume will be created by Compose: $postgres_volume"
                             fi
                         fi
 
                         echo "Compose project: $expected_project"
-                        docker compose -f compose.prod.yaml up -d --no-build
+                        docker compose -f compose.prod.yaml up -d --no-build --pull never
+
+                        check_application_container() {
+                            container="$1"
+                            expected_image="$2"
+                            test "$(docker inspect "$container" --format '{{index .Config.Labels "com.docker.compose.project"}}')" = "$expected_project"
+                            actual_image="$(docker inspect "$container" --format '{{.Config.Image}}')"
+                            test "$actual_image" = "$expected_image"
+                            echo "Post-deploy image: $actual_image"
+                        }
+                        check_application_container "${expected_project}-backend-1" "$expected_backend_image"
+                        check_application_container "${expected_project}-web-1" "$expected_web_image"
+                        check_application_container "${expected_project}-elasticsearch-1" "$expected_elasticsearch_image"
 
                         test "$(docker inspect "$postgres_container" --format '{{index .Config.Labels "com.docker.compose.project"}}')" = "$expected_project"
                         mounted_volume="$(docker inspect "$postgres_container" --format '{{range .Mounts}}{{if eq .Destination "/var/lib/postgresql/data"}}{{.Name}}{{end}}{{end}}')"
                         test "$mounted_volume" = "$postgres_volume"
+                        if [ "$volume_before" != 'none' ]; then
+                            test "$mounted_volume" = "$volume_before"
+                        fi
                         docker volume inspect "$postgres_volume" >/dev/null
-                        echo "Post-deploy PostgreSQL canonical volume: $postgres_volume"
+                        echo "PostgreSQL canonical volume before deploy: $volume_before"
+                        echo "Post-deploy PostgreSQL canonical volume: $mounted_volume"
                     '''
                 }
             }
@@ -147,6 +264,7 @@ pipeline {
                 withCredentials([string(credentialsId: env.POSTGRES_PASSWORD_CREDENTIAL_ID, variable: 'POSTGRES_PASSWORD')]) {
                     sh '''
                         set -eu
+                        echo "Readiness release: $CSFORGE_RELEASE"
                         attempts=0
                         max_attempts=72
                         readiness=''
@@ -189,6 +307,7 @@ pipeline {
                 withCredentials([string(credentialsId: env.POSTGRES_PASSWORD_CREDENTIAL_ID, variable: 'POSTGRES_PASSWORD')]) {
                     sh '''
                         set -eu
+                        echo "Smoke release: $CSFORGE_RELEASE"
                         http_status() {
                             curl -sS -o /dev/null -w '%{http_code}' "$1"
                         }
@@ -208,6 +327,39 @@ pipeline {
 
                         test "$(docker compose -f compose.prod.yaml port web 80)" = '127.0.0.1:8080'
                         echo 'Smoke tests: PASS'
+                    '''
+                }
+            }
+        }
+
+        stage('Active Release Verification') {
+            steps {
+                withCredentials([string(credentialsId: env.POSTGRES_PASSWORD_CREDENTIAL_ID, variable: 'POSTGRES_PASSWORD')]) {
+                    sh '''
+                        set -eu
+                        expected_project="$PROD_PROJECT"
+                        expected_backend_image="csforge-backend:$CSFORGE_RELEASE"
+                        expected_web_image="csforge-frontend:$CSFORGE_RELEASE"
+                        expected_elasticsearch_image="csforge-elasticsearch:$CSFORGE_RELEASE"
+
+                        verify_active_image() {
+                            container="$1"
+                            expected_image="$2"
+                            test "$(docker inspect "$container" --format '{{index .Config.Labels "com.docker.compose.project"}}')" = "$expected_project"
+                            actual_image="$(docker inspect "$container" --format '{{.Config.Image}}')"
+                            test "$actual_image" = "$expected_image"
+                            printf '%s\n' "${actual_image#*:}"
+                        }
+
+                        backend_release="$(verify_active_image "${expected_project}-backend-1" "$expected_backend_image")"
+                        web_release="$(verify_active_image "${expected_project}-web-1" "$expected_web_image")"
+                        elasticsearch_release="$(verify_active_image "${expected_project}-elasticsearch-1" "$expected_elasticsearch_image")"
+                        test "$backend_release" = "$CSFORGE_RELEASE"
+                        test "$web_release" = "$CSFORGE_RELEASE"
+                        test "$elasticsearch_release" = "$CSFORGE_RELEASE"
+                        test "$backend_release" = "$web_release"
+                        test "$backend_release" = "$elasticsearch_release"
+                        echo "Active release after deploy: $backend_release"
                     '''
                 }
             }

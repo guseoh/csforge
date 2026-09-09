@@ -6,7 +6,7 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
 
-    image: csforge-frontend:prod
+    image: csforge-frontend:${CSFORGE_RELEASE:-prod}
 
     ports:
       - "${WEB_BIND_ADDRESS:-127.0.0.1}:${WEB_PORT:-8080}:80"
@@ -111,7 +111,7 @@ services:
       context: ./infra/elasticsearch
       dockerfile: Dockerfile
 
-    image: csforge-elasticsearch:prod
+    image: csforge-elasticsearch:${CSFORGE_RELEASE:-prod}
 
     environment:
       discovery.type: single-node
@@ -140,7 +140,7 @@ services:
       context: ./backend
       dockerfile: Dockerfile
 
-    image: csforge-backend:prod
+    image: csforge-backend:${CSFORGE_RELEASE:-prod}
 
     environment:
       DB_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-csforge}
