@@ -28,8 +28,12 @@ pipeline {
                 sh '''
                     set -eu
                     docker run --rm \
+                      --user "$(id -u):$(id -g)" \
+                      --group-add 0 \
                       --volumes-from "$JENKINS_CONTAINER" \
                       --volume /var/run/docker.sock:/var/run/docker.sock \
+                      --env HOME=/tmp \
+                      --env GRADLE_USER_HOME=/tmp/gradle-home \
                       --env TESTCONTAINERS_HOST_OVERRIDE=host.docker.internal \
                       --env TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE=/var/run/docker.sock \
                       --env TESTCONTAINERS_RYUK_DISABLED=false \
@@ -59,9 +63,12 @@ pipeline {
                     set -eu
                     docker run --rm \
                       --volumes-from "$JENKINS_CONTAINER" \
+                      --user "$(id -u):$(id -g)" \
                       --workdir "$WORKSPACE/frontend" \
+                      --env HOME=/tmp \
+                      --env npm_config_cache=/tmp/npm-cache \
                       "$NODE_BUILD_IMAGE" \
-                      sh -c 'set -eu; trap '\''rm -rf node_modules'\'' EXIT; node --version; npm --version; rm -rf node_modules; npm ci; npm run lint; npm test; npm run build'
+                      sh -c 'set -eu; node --version; npm --version; rm -rf node_modules; npm ci; npm run lint; npm test; npm run build; rm -rf node_modules'
                 '''
             }
         }
