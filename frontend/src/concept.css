@@ -576,3 +576,26 @@
   .concept-navigation { grid-template-columns: 1fr; gap: 18px; }
   .navigation-card.next { text-align: left; }
 }
+
+/* A concept is a reading page, not a split-pane dashboard. */
+.concept-page { width: min(760px, 100%); }
+.concept-page .breadcrumb { margin-bottom: 30px; font-size: 0.72rem; }
+.concept-page .concept-header h1 { max-width: 760px; font-size: clamp(2.15rem, 4vw, 2.8rem); line-height: 1.12; }
+.concept-page .lead { max-width: 700px; font-size: 0.98rem; line-height: 1.75; }
+.concept-actions { margin: 0 0 42px; padding: 14px 0; }
+.concept-reading-content { width: 100%; max-width: 760px; }
+.concept-reading-content .markdown-content { font-size: 0.98rem; line-height: 1.86; }
+.concept-reading-content h2 { margin-top: 44px; padding-bottom: 0; border-bottom: 0; font-size: 1.35rem; }
+.concept-reading-content pre { max-width: 100%; overflow-x: auto; white-space: pre; }
+.concept-reading-content table { max-width: 100%; }
+.detail-section { width: 100%; max-width: 760px; }
+.concept-related-list { display: grid; gap: 0; margin-top: 30px; }
+.concept-related-list .eyebrow { margin-bottom: 8px; }
+.concept-related-list a { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-width: 0; padding: 12px 0; border-bottom: 1px solid #24212c; color: #b8afc3; font-size: 0.84rem; }
+.concept-related-list a:hover { color: #d0c1ff; }
+.concept-related-list a span { flex: 0 0 auto; color: #837d8f; font-size: 0.72rem; }
+
+@media (max-width: 720px) {
+  .concept-page .concept-header h1 { font-size: 2.2rem; }
+  .concept-related-list a { align-items: flex-start; }
+}

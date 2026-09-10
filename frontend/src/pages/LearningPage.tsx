@@ -30,13 +30,13 @@ function AreaCard({ area }: { area: AreaSummary }) {
       <div className="area-card-heading">
         <div>
           <h2>{area.name}</h2>
-          <p className="area-card-completion">{completionPercent(area)}% 학습 완료 · {area.topicCount}개 Topic</p>
+          <p className="area-card-completion">{completionPercent(area)}% 학습 완료 · {area.topicCount}개 주제</p>
         </div>
         <span className="area-card-arrow" aria-hidden="true">→</span>
       </div>
       <div className="area-metrics">
-        <span>{area.publishedConceptCount}개 Concept</span>
-        <span>{area.publishedQuestionCount}개 Question</span>
+        <span>{area.publishedConceptCount}개 개념</span>
+        <span>{area.publishedQuestionCount}개 문제</span>
         <span>{area.finalizedAttemptCount === 0 ? '정확도 —' : `정확도 ${Math.round(area.accuracyPercent)}%`}</span>
       </div>
       <p className="area-card-context">북마크 {area.bookmarkedConceptCount}개 · 레벨별 학습 흐름</p>
@@ -80,7 +80,7 @@ export function LearningPage() {
   }
 
   return (
-    <section className="page-section">
+    <section className="page-section learning-page">
       <div className="page-heading">
         <div>
           <p className="eyebrow">학습 가이드</p>

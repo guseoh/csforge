@@ -57,6 +57,12 @@
   border-bottom: 1px solid #293246;
 }
 
+.search-palette-form .primary-button {
+  flex: 0 0 auto;
+  min-width: 58px;
+  white-space: nowrap;
+}
+
 .search-palette-form input,
 .search-form input {
   width: 100%;
@@ -453,7 +459,7 @@
   }
 
   .search-palette-trigger::after {
-    content: 'Search';
+    content: '검색';
   }
 
   .search-form {

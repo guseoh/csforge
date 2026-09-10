@@ -315,3 +315,85 @@
     background: #17131f;
   }
 }
+
+/* Learning index and area guide use the same narrow, link-led hierarchy as Foundry's guides. */
+.learning-page { width: min(920px, 100%); }
+.learning-page .page-heading h1 { font-size: clamp(2.2rem, 4vw, 3rem); }
+.learning-page .area-grid { grid-template-columns: 1fr; }
+.learning-page .area-metrics { justify-content: flex-start; max-width: 640px; gap: 24px; }
+.area-guide-page { width: min(736px, 100%); }
+.area-guide-page .page-heading { display: block; margin-bottom: 0; }
+.area-guide-page .page-heading h1 { font-size: clamp(2.2rem, 4vw, 2.8rem); }
+.area-guide-page .page-heading > .text-link { display: inline-block; margin-top: 14px; }
+
+.guide-summary-line { align-items: center; gap: 18px; margin: 28px 0 44px; padding: 18px 0; }
+.guide-summary-stats { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 18px; }
+.guide-summary-stats strong { color: #e8e1ed; font-size: 0.8rem; }
+.guide-summary-stats span { color: #80778b; font-size: 0.78rem; }
+.guide-quiz-link { display: inline-flex; flex: 0 0 auto; align-items: center; gap: 8px; margin-left: auto; color: #af8cff; font-size: 0.78rem; font-weight: 700; }
+.guide-quiz-link:hover { color: #d2c1ff; }
+
+.area-guide-page .topic-index { margin-bottom: 46px; }
+.area-guide-page .topic-index-heading { align-items: baseline; margin-bottom: 15px; }
+.area-guide-page .topic-index-heading h2 { font-size: 1.3rem; }
+.topic-guide-list { display: grid; gap: 34px; }
+.topic-outline { border-top: 1px solid #2a2531; }
+.topic-outline-heading { display: grid; grid-template-columns: 32px minmax(0, 1fr); gap: 14px; padding: 18px 4px 12px; }
+.topic-outline-heading h3 { margin: 0 0 6px; color: #eee9f4; font-size: 0.98rem; }
+.topic-outline-heading span { color: #827a8c; font-size: 0.73rem; }
+.topic-outline-loading { padding: 20px 4px; color: #827a8c; font-size: 0.8rem; }
+.topic-concept-list { border-top: 1px solid #211d28; }
+.topic-concept-row { display: grid; grid-template-columns: 32px minmax(0, 1fr) auto 20px; align-items: center; gap: 14px; padding: 14px 4px 14px 50px; border-bottom: 1px solid #211d28; transition: background 120ms ease, padding 120ms ease; }
+.topic-concept-row:hover { padding-left: 56px; background: #17131f; }
+.topic-concept-index { color: #6f657b; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.68rem; }
+.topic-concept-copy { display: grid; gap: 5px; min-width: 0; }
+.topic-concept-copy strong { overflow: hidden; color: #dcd4e3; font-size: 0.84rem; text-overflow: ellipsis; white-space: nowrap; }
+.topic-concept-copy span { overflow: hidden; color: #80778b; font-size: 0.72rem; text-overflow: ellipsis; white-space: nowrap; }
+.topic-concept-status { color: #736a7d; font-size: 0.68rem; white-space: nowrap; }
+.topic-concept-status.status-learning { color: #b49bff; }
+.topic-concept-status.status-completed { color: #79cda8; }
+.topic-concept-status.status-review_needed { color: #e0b16c; }
+.topic-guide-row { display: grid; grid-template-columns: 32px minmax(0, 1fr) 20px; align-items: center; gap: 14px; padding: 17px 4px; border-bottom: 1px solid #2a2531; transition: background 120ms ease, padding 120ms ease; }
+.topic-guide-row:hover { padding-right: 10px; padding-left: 10px; background: #17131f; }
+.topic-guide-index { color: #6f657b; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.7rem; }
+.topic-guide-copy { display: grid; gap: 6px; min-width: 0; }
+.topic-guide-copy strong { color: #eee9f4; font-size: 0.92rem; font-weight: 700; }
+.topic-guide-copy span { overflow: hidden; color: #827a8c; font-size: 0.73rem; text-overflow: ellipsis; white-space: nowrap; }
+.topic-guide-arrow { color: #9684ae; font-size: 1rem; text-align: right; }
+
+.concept-filter-disclosure { margin: 0 0 42px; border-top: 1px solid #2a2531; border-bottom: 1px solid #2a2531; }
+.concept-filter-disclosure summary { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 17px 4px; color: #837a8e; cursor: pointer; font-size: 0.74rem; list-style: none; }
+.concept-filter-disclosure summary::-webkit-details-marker { display: none; }
+.concept-filter-disclosure summary > span:first-child { display: grid; gap: 5px; }
+.concept-filter-disclosure summary .eyebrow { margin: 0; color: #8c7ba8; font-size: 0.67rem; }
+.concept-filter-disclosure summary strong { color: #e4dce9; font-size: 0.92rem; }
+.concept-filter-disclosure summary:hover strong { color: #f6f1f8; }
+.concept-filter-disclosure .filter-panel { margin: 0; padding: 0 4px 20px; border: 0; border-radius: 0; background: transparent; }
+.concept-filter-disclosure .filter-panel label:first-child { grid-column: 1 / -1; }
+
+.area-guide-page .concept-list-heading { align-items: baseline; margin-bottom: 13px; }
+.area-guide-page .concept-list-heading h2 { font-size: 1.3rem; }
+.area-guide-page .concept-list { gap: 0; border-top: 1px solid #2a2531; }
+.area-guide-page .concept-list-item { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 20px; padding: 18px 4px; border-width: 0 0 1px; border-radius: 0; background: transparent; }
+.area-guide-page .concept-list-item:hover { transform: none; background: #17131f; }
+.area-guide-page .concept-list-item h3 { font-size: 0.94rem; }
+.area-guide-page .concept-list-item p { font-size: 0.76rem; }
+.area-guide-page .concept-topic { align-self: start; padding-top: 2px; text-align: right; }
+
+@media (min-width: 721px) {
+  .area-guide-page .filter-panel { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 720px) {
+  .guide-summary-line { align-items: flex-start; flex-direction: column; }
+  .guide-quiz-link { margin-left: 0; }
+  .topic-guide-row { grid-template-columns: 26px minmax(0, 1fr) 16px; gap: 10px; }
+  .topic-guide-copy span { white-space: normal; }
+  .topic-outline-heading { grid-template-columns: 26px minmax(0, 1fr); gap: 10px; }
+  .topic-concept-row { grid-template-columns: 26px minmax(0, 1fr) 16px; gap: 10px; padding-left: 40px; }
+  .topic-concept-row:hover { padding-left: 44px; }
+  .topic-concept-status { display: none; }
+  .topic-concept-copy span { white-space: normal; }
+  .area-guide-page .concept-list-item { grid-template-columns: 1fr; gap: 8px; }
+  .area-guide-page .concept-topic { text-align: left; }
+}

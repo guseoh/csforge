@@ -1,10 +1,10 @@
-import { Link, Outlet, createRootRoute, createRoute, createRouter, lazyRouteComponent, useRouterState } from '@tanstack/react-router'
+import { Link, Outlet, createRootRoute, createRoute, createRouter, lazyRouteComponent } from '@tanstack/react-router'
 import { SearchPalette } from './components/SearchPalette'
-import { parseLearningSearch } from './lib/learning-search'
-import { parseQuizSearch } from './lib/quiz-search'
-import { parseWrongNoteSearch } from './lib/wrong-note-search'
+import { defaultLearningSearch, parseLearningSearch } from './lib/learning-search'
+import { defaultQuizSearch, parseQuizSearch } from './lib/quiz-search'
+import { defaultWrongNoteSearch, parseWrongNoteSearch } from './lib/wrong-note-search'
 import { parseReviewSearch } from './lib/review-search'
-import { parseSearchSearch } from './lib/search-search'
+import { defaultSearchSearch, parseSearchSearch } from './lib/search-search'
 
 const AreaPage = lazyRouteComponent(() => import('./pages/AreaPage'), 'AreaPage')
 const ConceptPage = lazyRouteComponent(() => import('./pages/ConceptPage'), 'ConceptPage')
@@ -19,46 +19,40 @@ const ImportPage = lazyRouteComponent(() => import('./pages/ImportPage'), 'Impor
 const SearchPage = lazyRouteComponent(() => import('./pages/SearchPage'), 'SearchPage')
 const DashboardPage = lazyRouteComponent(() => import('./pages/DashboardPage'), 'DashboardPage')
 
-const navigation = [
-  { to: '/', label: '대시보드' },
-  { to: '/learning', label: '학습 영역' },
-  { to: '/quiz', label: '문제 풀기' },
-  { to: '/wrong-notes', label: '오답 노트' },
-  { to: '/review', label: '복습 큐' },
-  { to: '/search', label: '전체 검색' },
-  { to: '/settings/import', label: '콘텐츠 가져오기' },
+const headerNavigation = [
+  { to: '/learning', label: '학습', search: defaultLearningSearch },
+  { to: '/quiz', label: '문제', search: defaultQuizSearch },
+  { to: '/wrong-notes', label: '오답 노트', search: defaultWrongNoteSearch },
+  { to: '/review', label: '복습', search: { page: 0, due: 'ALL' } },
+  { to: '/search', label: '검색', search: defaultSearchSearch },
 ] as const
 
 function AppLayout() {
-  const pathname = useRouterState({ select: (state) => state.location.pathname })
-  const isStudyContext = pathname.startsWith('/learning/') || pathname.startsWith('/concepts/') || pathname.startsWith('/quiz/')
-
   return (
-    <div className={`app-shell${isStudyContext ? ' study-context' : ''}`}>
+    <div className="app-shell">
       <header className="topbar">
-        <Link className="brand" to="/">CSForge</Link>
-        <div className="topbar-actions">
-          <SearchPalette />
-          <span className="environment-badge">LOCAL</span>
-        </div>
-      </header>
-      <div className="content-layout">
-        <aside className="sidebar" aria-label="Primary navigation">
-          <p className="eyebrow">학습 공간</p>
-          <nav>
-            {navigation.map((item) => (
+        <div className="topbar-inner">
+          <Link className="brand" to="/">CSForge</Link>
+          <nav className="topbar-nav" aria-label="주요 학습 메뉴">
+            {headerNavigation.map((item) => (
               <Link
                 key={item.to}
-                className="nav-link"
-                activeProps={{ className: 'nav-link active' }}
-                activeOptions={{ exact: item.to === '/' }}
+                className="topbar-nav-link"
+                activeProps={{ className: 'topbar-nav-link active' }}
                 to={item.to}
+                search={item.search}
               >
                 {item.label}
               </Link>
             ))}
           </nav>
-        </aside>
+          <div className="topbar-actions">
+            <SearchPalette />
+            <span className="environment-badge">LOCAL</span>
+          </div>
+        </div>
+      </header>
+      <div className="content-layout">
         <main className="main-content"><Outlet /></main>
       </div>
     </div>

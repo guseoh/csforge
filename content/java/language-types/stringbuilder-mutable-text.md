@@ -47,12 +47,7 @@ String result = builder.toString();
 
 개념적으로는 다음 흐름입니다.
 
-```text
-StringBuilder
-"" → "0," → "0,1," → "0,1,2," → ...
-                                  │
-                                  └─ 마지막에 toString()
-```
+![StringBuilder가 하나의 가변 buffer에 문자열을 누적하는 흐름](/learning/java/stringbuilder-mutable-text.svg?v=2)
 
 내부 저장 공간의 정확한 크기 증가 방식 같은 세부는 JDK 구현에 속합니다. 학습의 핵심은 **StringBuilder가 변경 가능한 문자 시퀀스를 제공해 반복 조립을 표현한다**는 API 계약입니다.
 

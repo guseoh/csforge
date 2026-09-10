@@ -2,7 +2,6 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link, useParams } from '@tanstack/react-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { EmptyState, ErrorState, PageSkeleton } from '../components/AsyncStates'
-import { LearningRail } from '../components/LearningRail'
 import { MarkdownContent } from '../components/MarkdownContent'
 import { useToast } from '../components/toast/ToastProvider'
 import {
@@ -188,7 +187,7 @@ function ConceptContent({ data, conceptId }: { data: ConceptDetailModel; concept
           {data.next ? <Link className="navigation-card next" to="/concepts/$conceptId" params={{ conceptId: String(data.next.id) }}><span>다음 개념 →</span><strong>{data.next.title}</strong></Link> : <span />}
         </div>
         {data.relatedConcepts.length > 0 && (
-          <div className="related-list">
+          <div className="concept-related-list">
             <p className="eyebrow">이 주제의 관련 개념</p>
             {data.relatedConcepts.map((related) => <Link key={related.id} to="/concepts/$conceptId" params={{ conceptId: String(related.id) }}>{related.title} <span>L{related.level}</span></Link>)}
           </div>
@@ -209,6 +208,7 @@ function BookmarkButton({ conceptId, bookmarked }: { conceptId: number; bookmark
       void queryClient.invalidateQueries({ queryKey: ['concepts'] })
       void queryClient.invalidateQueries({ queryKey: ['learning-areas'] })
       void queryClient.invalidateQueries({ queryKey: ['learning-area'] })
+      void queryClient.invalidateQueries({ queryKey: ['learning-outline'] })
     },
     onError: () => showToast('error', '북마크 저장에 실패했습니다.'),
   })
@@ -230,6 +230,7 @@ function ProgressActionButton({ conceptId, status, label, secondary = false }: {
       void queryClient.invalidateQueries({ queryKey: ['concepts'] })
       void queryClient.invalidateQueries({ queryKey: ['learning-areas'] })
       void queryClient.invalidateQueries({ queryKey: ['learning-area'] })
+      void queryClient.invalidateQueries({ queryKey: ['learning-outline'] })
     },
     onError: () => showToast('error', '학습 상태 저장에 실패했습니다.'),
   })
@@ -255,6 +256,7 @@ export function ConceptPage() {
       )
       void queryClient.invalidateQueries({ queryKey: ['learning-areas'] })
       void queryClient.invalidateQueries({ queryKey: ['concepts'] })
+      void queryClient.invalidateQueries({ queryKey: ['learning-outline'] })
     },
     onError: () => showToast('error', '개념 조회 상태를 저장하지 못했습니다.'),
   })
@@ -277,13 +279,6 @@ export function ConceptPage() {
 
   const data = conceptQuery.data
   return (
-    <div className="concept-workspace">
-      <LearningRail
-        areaSlug={data.area.slug}
-        areaName={data.area.name}
-        currentTopicId={data.topic.id}
-        currentConceptId={conceptId}
-      />
       <section className="page-section concept-page">
         <nav className="breadcrumb" aria-label="현재 학습 위치">
           <Link to="/learning" search={defaultLearningSearch}>학습</Link>
@@ -294,6 +289,5 @@ export function ConceptPage() {
         </nav>
         <ConceptContent data={data} conceptId={conceptId} />
       </section>
-    </div>
   )
 }
