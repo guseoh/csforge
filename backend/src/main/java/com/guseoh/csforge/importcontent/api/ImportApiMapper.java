@@ -1,5 +1,6 @@
 package com.guseoh.csforge.importcontent.api;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -14,7 +15,7 @@ import com.guseoh.csforge.importcontent.application.ImportPreviewResult;
 @Component
 public class ImportApiMapper {
     public ImportPreviewResponse toPreview(ImportPreviewResult result) {
-        Map<String, Long> fileCounts = result.items().stream().collect(Collectors.groupingBy(ImportItemPreview::fileName, java.util.LinkedHashMap::new, Collectors.counting()));
+        Map<String, Long> fileCounts = result.items().stream().collect(Collectors.groupingBy(ImportItemPreview::fileName, LinkedHashMap::new, Collectors.counting()));
         return new ImportPreviewResponse(result.previewDigest(), fileCounts.entrySet().stream().map(e -> new ImportFileSummaryResponse(e.getKey(), Math.toIntExact(e.getValue()))).toList(), totals(result.created(), result.updated(), result.unchanged(), result.skipped(), result.errors()), result.items().stream().map(this::toItem).toList(), result.canApply());
     }
     public ImportApplyResponse toApply(ImportApplyResult result) { return new ImportApplyResponse(result.previewDigest(), new ImportApplyTotalsResponse(result.created(), result.updated(), result.unchanged(), result.skipped(), result.failed()), result.items().stream().map(this::toItem).toList()); }
