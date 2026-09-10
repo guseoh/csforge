@@ -19,22 +19,10 @@ spring:
   flyway:
     enabled: true
     baseline-on-migrate: true
-  kafka:
-    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:29092}
-    producer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.apache.kafka.common.serialization.StringSerializer
-    consumer:
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-    listener:
-      ack-mode: record
   data:
     redis:
       host: ${REDIS_HOST:localhost}
       port: ${REDIS_PORT:6379}
-  elasticsearch:
-    uris: ${ELASTICSEARCH_URIS:http://localhost:9200}
   ai:
     model:
       chat: ${SPRING_AI_MODEL_CHAT:none}
@@ -76,10 +64,6 @@ management:
             - db
       show-components: always
       show-details: when_authorized
-  health:
-    elasticsearch:
-      enabled: ${ELASTICSEARCH_HEALTH_ENABLED:false}
-
 csforge:
   time-zone: ${CSFORGE_TIME_ZONE:Asia/Seoul}
   ai:

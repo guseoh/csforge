@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
-/** Search API가 Elasticsearch result window와 필터 범위를 안전하게 제한하는지 검증한다. */
+/** Search API가 bounded PostgreSQL paging과 필터 범위를 안전하게 제한하는지 검증한다. */
 class SearchCriteriaTest {
 
     @Test

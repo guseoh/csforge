@@ -1,5 +1,0 @@
-# Keep the Jenkins controller reproducible and limited to plugins required by the Pipeline job.
-workflow-aggregator:608.v67378e9d3db_1
-git:5.10.1
-credentials-binding:728.v902a_273b_8947
-pipeline-graph-view:1013.v9f83fd83c063

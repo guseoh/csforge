@@ -281,7 +281,6 @@ class ContentImportIntegrationTest {
         assertEquals(134, jdbc.queryForObject("select count(*) from topic", Integer.class));
         assertEquals(721, jdbc.queryForObject("select count(*) from concept", Integer.class));
         assertEquals(2_449, jdbc.queryForObject("select count(*) from question", Integer.class));
-        assertTrue(jdbc.queryForObject("select count(*) from search_outbox_event", Integer.class) > 0);
 
         JsonNode ready = json(get("/api/canonical-bootstrap/status")).get("body");
         assertEquals("READY", ready.get("state").asText());

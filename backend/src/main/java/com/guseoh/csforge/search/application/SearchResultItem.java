@@ -3,7 +3,7 @@ package com.guseoh.csforge.search.application;
 import java.time.Instant;
 import java.util.List;
 
-/** Elasticsearch hit를 HTTP 표현과 분리해 전달하는 Search application item이다. */
+/** PostgreSQL Search 결과 한 건을 HTTP 표현과 분리해 전달하는 application item이다. */
 public record SearchResultItem(
         SearchDocumentType documentType,
         long sourceId,

@@ -18,9 +18,6 @@ import com.guseoh.csforge.quiz.domain.QuizExpiredException;
 import com.guseoh.csforge.quiz.domain.QuizInvalidStateException;
 import com.guseoh.csforge.review.application.NoDueReviewsException;
 import com.guseoh.csforge.review.application.ReviewQuestionNotFoundException;
-import com.guseoh.csforge.search.application.SearchNotReadyException;
-import com.guseoh.csforge.search.application.SearchReindexInProgressException;
-import com.guseoh.csforge.search.application.SearchUnavailableException;
 import com.guseoh.csforge.wrongnote.application.WrongNoteNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -129,23 +126,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(QuizInvalidStateException.class)
     public ResponseEntity<ApiError> handleQuizState(QuizInvalidStateException exception, HttpServletRequest request) {
         return error(HttpStatus.CONFLICT, "QUIZ_INVALID_STATE", exception.getMessage(), request, List.of());
-    }
-
-    @ExceptionHandler(SearchReindexInProgressException.class)
-    public ResponseEntity<ApiError> handleSearchReindexInProgress(
-            SearchReindexInProgressException exception,
-            HttpServletRequest request) {
-        return error(HttpStatus.CONFLICT, "SEARCH_REINDEX_IN_PROGRESS", exception.getMessage(), request, List.of());
-    }
-
-    @ExceptionHandler(SearchNotReadyException.class)
-    public ResponseEntity<ApiError> handleSearchNotReady(SearchNotReadyException exception, HttpServletRequest request) {
-        return error(HttpStatus.SERVICE_UNAVAILABLE, "SEARCH_NOT_READY", exception.getMessage(), request, List.of());
-    }
-
-    @ExceptionHandler(SearchUnavailableException.class)
-    public ResponseEntity<ApiError> handleSearchUnavailable(SearchUnavailableException exception, HttpServletRequest request) {
-        return error(HttpStatus.SERVICE_UNAVAILABLE, "SEARCH_UNAVAILABLE", exception.getMessage(), request, List.of());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

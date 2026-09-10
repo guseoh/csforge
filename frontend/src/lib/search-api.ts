@@ -2,7 +2,6 @@ import { ApiRequestError } from './api'
 
 export type SearchDocumentType = 'CONCEPT' | 'QUESTION' | 'PERSONAL_NOTE' | 'WRONG_NOTE' | 'REFERENCE'
 export type SearchSort = 'RELEVANCE' | 'RECENT' | 'TITLE'
-export type SearchProductState = 'READY' | 'NOT_READY' | 'UNAVAILABLE' | 'REINDEXING'
 
 export interface SearchResultItem {
   documentType: SearchDocumentType
@@ -47,19 +46,8 @@ export interface SearchFilterArea {
 }
 
 export interface SearchStatus {
-  state: SearchProductState
-  indexedDocuments: number
-  pendingOutboxEvents: number
-}
-
-export interface SearchReindexResult {
-  startedAt: string
-  completedAt: string
-  baselineSequence: number
-  highWaterSequence: number
-  targetIndex: string
-  indexedCounts: Partial<Record<SearchDocumentType, number>>
-  totalIndexedCount: number
+  state: 'READY'
+  searchableDocuments: number
 }
 
 async function searchRequest<T>(input: RequestInfo | URL, init?: RequestInit): Promise<T> {
@@ -115,8 +103,4 @@ export function getSearchFilterOptions(): Promise<SearchFilterArea[]> {
 
 export function getSearchStatus(): Promise<SearchStatus> {
   return searchRequest<SearchStatus>('/api/search/status')
-}
-
-export function reindexSearch(): Promise<SearchReindexResult> {
-  return searchRequest<SearchReindexResult>('/api/search/reindex', { method: 'POST' })
 }
