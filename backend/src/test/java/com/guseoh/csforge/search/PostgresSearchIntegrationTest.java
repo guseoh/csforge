@@ -114,6 +114,24 @@ class PostgresSearchIntegrationTest {
     }
 
     @Test
+    void multiTermSearchMatchesTermsSeparatedInTheDocumentAndHighlightsEachTerm() {
+        Fixture fixture = insertFixture();
+        jdbc.update("""
+                update concept
+                set summary = 'volatile visibility details appear here while happens-before ordering appears later'
+                where id = ?
+                """, fixture.conceptId());
+
+        SearchPageView result = search(criteria("volatile happens-before", List.of(SearchDocumentType.CONCEPT),
+                List.of(), List.of(), List.of(), SearchSort.RELEVANCE, 0, 20));
+
+        assertEquals(1, result.totalHits());
+        assertEquals(fixture.conceptId(), result.items().getFirst().sourceId());
+        assertTrue(result.items().getFirst().snippet().contains("[[H]]volatile[[/H]]"));
+        assertTrue(result.items().getFirst().snippet().contains("[[H]]happens-before[[/H]]"));
+    }
+
+    @Test
     void excludesUnpublishedInactiveAndBlankDocuments() {
         long activeAreaId = jdbc.queryForObject("select id from learning_area where slug = 'java'", Long.class);
         long activeTopicId = insertTopic(activeAreaId, "search.it.eligible.topic", "Eligible topic", true);

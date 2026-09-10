@@ -40,12 +40,13 @@ public class JpaSearchQueryGateway implements SearchQueryGateway {
     @Transactional(readOnly = true)
     public SearchPageView search(SearchCriteria criteria) {
         long startedAt = System.nanoTime();
-        long totalHits = count(criteria);
-        Query query = createSearchQuery(criteria);
+        List<String> queryTerms = queryTerms(criteria.query());
+        long totalHits = count(criteria, queryTerms);
+        Query query = createSearchQuery(criteria, queryTerms);
         query.setFirstResult(criteria.from());
         query.setMaxResults(criteria.size());
         List<Object[]> rows = rows(query);
-        List<SearchResultItem> items = rows.stream().map(row -> toResult(row, criteria.query())).toList();
+        List<SearchResultItem> items = rows.stream().map(row -> toResult(row, queryTerms)).toList();
         int totalPages = totalHits == 0 ? 0 : Math.toIntExact((totalHits + criteria.size() - 1) / criteria.size());
         long tookMillis = (System.nanoTime() - startedAt) / 1_000_000;
         return new SearchPageView(
@@ -95,12 +96,12 @@ public class JpaSearchQueryGateway implements SearchQueryGateway {
                 .getSingleResult()).longValue();
     }
 
-    private long count(SearchCriteria criteria) {
-        Query query = createFilteredQuery("select count(*) from " + SEARCH_VIEW, criteria);
+    private long count(SearchCriteria criteria, List<String> queryTerms) {
+        Query query = createFilteredQuery("select count(*) from " + SEARCH_VIEW, criteria, queryTerms);
         return ((Number) query.getSingleResult()).longValue();
     }
 
-    private Query createSearchQuery(SearchCriteria criteria) {
+    private Query createSearchQuery(SearchCriteria criteria, List<String> queryTerms) {
         String sql = """
                 select d.document_type,
                        d.source_id,
@@ -119,7 +120,7 @@ public class JpaSearchQueryGateway implements SearchQueryGateway {
                 from search_document_view d
                 """;
         StringBuilder builder = new StringBuilder(sql);
-        appendSearchFilters(builder, criteria);
+        appendSearchFilters(builder, criteria, queryTerms);
         builder.append(" order by ");
         if (criteria.sort() == SearchSort.RELEVANCE) {
             builder.append(relevanceOrder());
@@ -128,25 +129,36 @@ public class JpaSearchQueryGateway implements SearchQueryGateway {
         } else {
             builder.append("lower(d.title) asc, d.document_key asc");
         }
-        Query query = entityManager.createNativeQuery(builder.toString())
-                .setParameter("pattern", containsPattern(criteria.query()));
+        Query query = entityManager.createNativeQuery(builder.toString());
+        bindSearchTerms(query, queryTerms);
         bindFilters(query, criteria);
-        if (criteria.sort() == SearchSort.RELEVANCE) query.setParameter("query", criteria.query());
+        if (criteria.sort() == SearchSort.RELEVANCE) {
+            query.setParameter("pattern", containsPattern(criteria.query()));
+            query.setParameter("query", criteria.query());
+        }
         return query;
     }
 
-    private Query createFilteredQuery(String select, SearchCriteria criteria) {
-        StringBuilder builder = new StringBuilder(select).append(" d where d.search_text ilike :pattern").append(LIKE_ESCAPE);
+    private Query createFilteredQuery(String select, SearchCriteria criteria, List<String> queryTerms) {
+        StringBuilder builder = new StringBuilder(select).append(" d where 1 = 1");
+        appendTermFilters(builder, queryTerms);
         appendOptionalFilters(builder, criteria);
         Query query = entityManager.createNativeQuery(builder.toString());
-        query.setParameter("pattern", containsPattern(criteria.query()));
+        bindSearchTerms(query, queryTerms);
         bindFilters(query, criteria);
         return query;
     }
 
-    private static void appendSearchFilters(StringBuilder builder, SearchCriteria criteria) {
-        builder.append(" where d.search_text ilike :pattern").append(LIKE_ESCAPE);
+    private static void appendSearchFilters(StringBuilder builder, SearchCriteria criteria, List<String> queryTerms) {
+        builder.append(" where 1 = 1");
+        appendTermFilters(builder, queryTerms);
         appendOptionalFilters(builder, criteria);
+    }
+
+    private static void appendTermFilters(StringBuilder builder, List<String> queryTerms) {
+        for (int index = 0; index < queryTerms.size(); index++) {
+            builder.append(" and d.search_text ilike :termPattern").append(index).append(LIKE_ESCAPE);
+        }
     }
 
     private static void appendOptionalFilters(StringBuilder builder, SearchCriteria criteria) {
@@ -154,6 +166,12 @@ public class JpaSearchQueryGateway implements SearchQueryGateway {
         if (!criteria.areaSlugs().isEmpty()) builder.append(" and exists (select 1 from unnest(d.area_slugs) value where value in (:areaSlugs))");
         if (!criteria.topicContentKeys().isEmpty()) builder.append(" and exists (select 1 from unnest(d.topic_content_keys) value where value in (:topicContentKeys))");
         if (!criteria.levels().isEmpty()) builder.append(" and exists (select 1 from unnest(d.levels) value where value in (:levels))");
+    }
+
+    private static void bindSearchTerms(Query query, List<String> queryTerms) {
+        for (int index = 0; index < queryTerms.size(); index++) {
+            query.setParameter("termPattern" + index, containsPattern(queryTerms.get(index)));
+        }
     }
 
     private static void bindFilters(Query query, SearchCriteria criteria) {
@@ -179,14 +197,14 @@ public class JpaSearchQueryGateway implements SearchQueryGateway {
                 + "                end desc, d.document_key asc";
     }
 
-    private SearchResultItem toResult(Object[] row, String query) {
+    private SearchResultItem toResult(Object[] row, List<String> queryTerms) {
         String title = string(row[2]);
         return new SearchResultItem(
                 SearchDocumentType.valueOf(string(row[0])),
                 number(row[1]).longValue(),
                 title,
-                highlightAll(title, query),
-                snippet(string(row[4]), string(row[3]), query),
+                highlightAll(title, queryTerms),
+                snippet(string(row[4]), string(row[3]), queryTerms),
                 strings(row[5]),
                 strings(row[6]),
                 strings(row[7]),
@@ -213,16 +231,18 @@ public class JpaSearchQueryGateway implements SearchQueryGateway {
         return (List<Object[]>) query.getResultList();
     }
 
-    private static String snippet(String summary, String body, String query) {
-        String source = hasMatch(summary, query) ? summary : hasMatch(body, query) ? body : firstNonBlank(summary, body);
+    private static String snippet(String summary, String body, List<String> queryTerms) {
+        String source = hasMatch(summary, queryTerms)
+                ? summary
+                : hasMatch(body, queryTerms) ? body : firstNonBlank(summary, body);
         if (source == null) return "";
-        String compact = compactAroundMatch(source, query, SNIPPET_LENGTH);
-        return highlightAll(compact, query);
+        String compact = compactAroundMatch(source, queryTerms, SNIPPET_LENGTH);
+        return highlightAll(compact, queryTerms);
     }
 
-    private static String compactAroundMatch(String value, String query, int maxLength) {
+    private static String compactAroundMatch(String value, List<String> queryTerms, int maxLength) {
         String compact = WHITESPACE.matcher(value).replaceAll(" ").trim();
-        Matcher matcher = pattern(query).matcher(compact);
+        Matcher matcher = pattern(queryTerms).matcher(compact);
         if (!matcher.find() || compact.length() <= maxLength) return compact;
         int start = Math.max(0, matcher.start() - 60);
         int end = Math.min(compact.length(), start + maxLength);
@@ -230,13 +250,13 @@ public class JpaSearchQueryGateway implements SearchQueryGateway {
         return (start > 0 ? "..." : "") + compact.substring(start, end) + (end < compact.length() ? "..." : "");
     }
 
-    private static boolean hasMatch(String value, String query) {
-        return value != null && !value.isBlank() && pattern(query).matcher(value).find();
+    private static boolean hasMatch(String value, List<String> queryTerms) {
+        return value != null && !value.isBlank() && pattern(queryTerms).matcher(value).find();
     }
 
-    private static String highlightAll(String value, String query) {
-        if (value == null || value.isBlank() || query == null || query.isBlank()) return value == null ? "" : value;
-        Matcher matcher = pattern(query).matcher(value);
+    private static String highlightAll(String value, List<String> queryTerms) {
+        if (value == null || value.isBlank() || queryTerms.isEmpty()) return value == null ? "" : value;
+        Matcher matcher = pattern(queryTerms).matcher(value);
         StringBuilder highlighted = new StringBuilder();
         int end = 0;
         while (matcher.find()) {
@@ -249,8 +269,20 @@ public class JpaSearchQueryGateway implements SearchQueryGateway {
         return end == 0 ? value : highlighted.append(value, end, value.length()).toString();
     }
 
-    private static Pattern pattern(String query) {
-        return Pattern.compile(Pattern.quote(query), Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
+    private static Pattern pattern(List<String> queryTerms) {
+        String alternatives = String.join("|", queryTerms.stream()
+                .sorted((left, right) -> Integer.compare(right.length(), left.length()))
+                .map(Pattern::quote)
+                .toList());
+        return Pattern.compile(alternatives, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
+    }
+
+    private static List<String> queryTerms(String query) {
+        return Arrays.stream(WHITESPACE.split(query.trim()))
+                .filter(term -> !term.isBlank())
+                .map(term -> term.toLowerCase(Locale.ROOT))
+                .distinct()
+                .toList();
     }
 
     private static String likePattern(String value) {
