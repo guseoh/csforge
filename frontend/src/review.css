@@ -1,0 +1,36 @@
+.review-summary-overdue { border-color: #734451 !important; }
+.review-summary-due { border-color: #74533d !important; }
+.review-summary-mastered { border-color: #356b5a !important; }
+.review-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 9px;
+  margin-bottom: 22px;
+}
+.review-summary-grid div {
+  display: grid;
+  gap: 8px;
+  padding: 15px;
+  border: 1px solid #2a3243;
+  border-radius: 10px;
+  background: #171d2a;
+}
+.review-summary-grid span { color: #8793ad; font-size: 0.72rem; }
+.review-summary-grid strong { color: #e8eeff; font-size: 1.35rem; }
+.review-filters { grid-template-columns: minmax(240px, 320px); align-items: start; }
+.review-filter-helper { grid-column: 1 / -1; margin: 0; max-width: none; }
+.review-filters > label { display: grid; gap: 6px; }
+.history-list { display: grid; gap: 7px; margin-bottom: 14px; }
+.history-row {
+  display: grid;
+  grid-template-columns: 90px 1fr auto;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid #2a3243;
+  border-radius: 8px;
+  color: #aeb8cc;
+  background: #171d2a;
+  font-size: 0.82rem;
+}
+.history-row strong { color: #f1b278; }
+.history-row time { color: #8793ad; }
