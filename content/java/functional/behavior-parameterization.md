@@ -15,6 +15,12 @@ references:
     language: en
     displayOrder: 1
     relationNote: 행동 전달에 사용할 표준 함수형 인터페이스 확인
+  - url: "https://d2.naver.com/helloworld/4911107"
+    title: "네이버 D2: 람다가 이끌어 갈 모던 Java"
+    referenceType: COMPANY_TECH_BLOG
+    language: ko
+    displayOrder: 2
+    relationNote: 람다와 invokedynamic의 연결을 읽을 수 있는 보조 자료
 ---
 # 행동을 매개변수로 전달하기
 

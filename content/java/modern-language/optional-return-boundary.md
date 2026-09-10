@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.modern-language.optional-return-boundary
 topicContentKey: java.core.modern-language
 slug: optional-return-boundary
-title: "Optional at return boundaries"
+title: "반환 경계에서 Optional 사용하기"
 summary: "값이 없을 수 있는 반환 결과를 Optional로 드러내고 null·예외와의 경계를 판단한다"
 level: 2
 status: PUBLISHED
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: Optional 생성·변환·대체값 API와 value-based 의미 확인
 ---
-# Optional at return boundaries
+# 반환 경계에서 Optional 사용하기
 
 조회 메서드가 `User`를 반환한다고 적혀 있는데 실제로는 사용자가 없을 수도 있다면 호출자는 한 가지를 더 알아야 합니다. **결과가 없는 상황이 정상적으로 일어날 수 있는가**입니다. 이 사실을 `null`만으로 표현하면 타입만 보고는 알기 어렵고, 호출자가 null 검사를 빼먹기도 쉽습니다.
 
@@ -138,6 +138,6 @@ Member member = memberRepository.findById(memberId)
 - `Optional.empty()`는 "오류"가 아니라 단순한 "값 없음"일 수 있습니다.
 - `Optional`을 쓴다고 API의 null·실패 정책이 자동으로 결정되지는 않습니다.
 
-### 면접에서 설명한다면
+### 학습 후 스스로 설명해 보기
 
 `Optional`은 값이 없을 수 있는 반환 결과를 명시적으로 표현하는 데 유용하다고 설명하면 됩니다. 특히 호출자가 반환 타입만 보고 부재 가능성을 인식할 수 있고, `map`, `flatMap`, `orElseThrow` 같은 연산으로 부재 처리 정책을 이어서 표현할 수 있습니다. 다만 모든 필드와 매개변수에 사용하는 규칙은 아니며, null·예외·부재의 의미를 API 경계에 맞게 설계해야 합니다.

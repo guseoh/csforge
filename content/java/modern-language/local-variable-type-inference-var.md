@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.modern-language.local-variable-type-inference-var
 topicContentKey: java.core.modern-language
 slug: local-variable-type-inference-var
-title: "Local variable type inference with var"
+title: "var와 지역 변수 타입 추론"
 summary: "var가 실행 중 타입이 바뀌는 기능이 아니라 지역 변수의 정적 타입을 컴파일러가 추론하는 문법임을 이해한다"
 level: 1
 status: PUBLISHED
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: local variable type inference 규칙 확인
 ---
-# Local variable type inference with var
+# var와 지역 변수 타입 추론
 
 `var`를 처음 보면 Java가 JavaScript처럼 실행 중에 변수 타입을 바꾸는 기능을 추가한 것처럼 느낄 수 있습니다. 하지만 실제로는 정반대입니다. **컴파일러가 오른쪽 초기값을 보고 지역 변수의 정적 타입을 결정해 줄 뿐**, 타입 검사는 기존 Java와 똑같이 컴파일 시점에 이루어집니다.
 
@@ -134,6 +134,6 @@ Optional<Member> member = memberRepository.findById(id);
 - `var x = null`처럼 타입을 결정할 근거가 없는 선언은 사용할 수 없습니다.
 - 코드가 짧아진다는 이유만으로 항상 가독성이 좋아지는 것은 아닙니다.
 
-### 면접에서 설명한다면
+### 학습 후 스스로 설명해 보기
 
 `var`는 지역 변수 타입 추론 기능으로, 컴파일러가 초기화 식에서 정적 타입을 결정한다고 설명하면 됩니다. Java의 정적 타입 시스템은 그대로 유지되며 실행 중 타입이 자유롭게 바뀌는 것이 아닙니다. 사용할 때는 타입 이름을 생략해도 초기값과 변수 이름만으로 의도가 분명한지 판단하는 것이 중요합니다.

@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.concurrency.threadlocal-context
 topicContentKey: java.core.concurrency
 slug: threadlocal-context
-title: "ThreadLocal context"
+title: "ThreadLocal과 실행 문맥"
 summary: "ThreadLocal이 값을 thread별로 보관하는 방식과 thread pool 재사용·remove·virtual thread·비동기 경계에서 생기는 문제를 이해한다"
 level: 3
 status: PUBLISHED
@@ -22,7 +22,7 @@ references:
     displayOrder: 2
     relationNote: Java thread와 virtual thread 관련 API 경계 확인
 ---
-# ThreadLocal은 왜 편리하면서도 위험할까
+# ThreadLocal과 실행 문맥
 
 여러 계층의 메서드가 현재 요청의 ID나 사용자 정보를 필요로 하는데 모든 메서드 인자로 계속 넘기고 싶지 않을 때가 있습니다. `ThreadLocal`은 이런 값을 **현재 thread의 독립적인 copy로 연결해 보관**할 수 있게 합니다.
 
@@ -175,6 +175,6 @@ outer caller binds
 - 그렇다고 millions of virtual threads에 큰 ThreadLocal cache를 두는 것이 공짜는 아닙니다.
 - ThreadLocal이 내부 mutable 객체를 자동으로 thread-safe하게 만들지 않습니다.
 
-### 면접에서 설명한다면
+### 학습 후 스스로 설명해 보기
 
 ThreadLocal은 같은 key를 사용해도 각 thread가 독립적인 값을 갖게 하는 API입니다. Long-lived platform thread pool에서는 요청 종료 후 `remove()`하지 않으면 다음 task가 stale context를 보거나 객체가 오래 retain될 수 있습니다. Per-task virtual thread에서는 worker 재사용 문제의 형태는 줄지만, 매우 많은 thread마다 큰 ThreadLocal 상태나 reusable cache를 두면 메모리 비용이 커질 수 있습니다. 또한 일반 ThreadLocal은 다른 executor thread로 자동 전파되지 않으며, one-way bounded context 전달이라면 Java 25의 ScopedValue를 검토할 수 있습니다.

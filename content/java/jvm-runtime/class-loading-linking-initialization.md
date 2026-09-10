@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.jvm-runtime.class-loading-linking-initialization
 topicContentKey: java.core.jvm-runtime
 slug: class-loading-linking-initialization
-title: "Class loading, linking, and initialization"
+title: "Class Loading·Linking·Initialization"
 summary: "class가 사용되기까지 loading·linking·initialization이 어떤 순서와 의미로 진행되는지 이해하고 static 초기화 시점과 오류를 구분한다"
 level: 3
 status: PUBLISHED
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: class lifecycle 단계와 initialization trigger 확인
 ---
-# class는 파일을 찾는 순간 바로 초기화될까
+# Class Loading·Linking·Initialization
 
 Java에서 어떤 class를 처음 사용한다고 해서 "파일을 읽자마자 static block부터 실행된다"고 생각하면 여러 현상을 설명하기 어렵습니다. JVM은 class를 runtime에 가져오고 사용할 준비를 하는 과정을 **loading, linking, initialization**으로 나누어 정의합니다.
 
@@ -133,7 +133,7 @@ JVMS initialization 절차는 `ConstantValue` attribute가 있는 static field�
 
 ### 모든 class 언급이 initialization을 일으키는 것은 아니다
 
-이 부분은 면접에서도 자주 헷갈립니다. class를 어떤 형태로 "참조했다"고 해서 무조건 즉시 initialization되는 것은 아닙니다.
+이 부분은 복습할 때도 자주 헷갈립니다. class를 어떤 형태로 "참조했다"고 해서 무조건 즉시 initialization되는 것은 아닙니다.
 
 예를 들어 compile-time constant 사용, class literal, 배열 class 생성 등은 initialization trigger를 단순한 "이름을 언급했다"로 설명할 수 없습니다.
 
@@ -171,6 +171,6 @@ Initialization이 비정상 종료하면 JVM은 해당 class/interface를 errone
 6. 초기화 코드에서 예외가 나 class가 erroneous state가 된 적이 있는지 봅니다.
 7. 여러 thread의 class initialization이 임의로 두 번 실행된다고 생각하지 않습니다.
 
-### 면접에서 설명한다면
+### 학습 후 스스로 설명해 보기
 
 JVM의 class lifecycle은 크게 loading, linking, initialization으로 나눌 수 있습니다. Linking에는 verification, preparation, resolution이 포함되지만 verification과 preparation은 initialization 전에 완료되어야 하는 반면 resolution은 symbolic reference별로 늦게 수행될 수 있습니다. Preparation에서는 static field의 storage와 기본값을 준비하고, source의 static initializer와 static block 효과는 initialization 단계에서 실행됩니다. 따라서 class가 load됐다고 initialization까지 끝났거나 모든 symbolic reference가 이미 resolve됐다고 보면 안 됩니다.

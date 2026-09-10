@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.jvm-runtime.jvm-runtime-data-areas-frames
 topicContentKey: java.core.jvm-runtime
 slug: jvm-runtime-data-areas-frames
-title: "JVM runtime data areas and frames"
+title: "JVM Runtime Data Area와 Frame"
 summary: "JVM stack·frame·local variable array·operand stack·heap·method area를 JVMS의 추상 실행 영역으로 이해하고 source 변수와 물리 메모리를 단순 대응시키지 않는다"
 level: 3
 status: PUBLISHED
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: JVM stack·frame·heap·method area·runtime constant pool 추상 영역 확인
 ---
-# JVM은 메서드 호출과 객체를 어떤 실행 영역으로 설명할까
+# JVM Runtime Data Area와 Frame
 
 Java 코드를 설명할 때 흔히 "지역 변수는 stack, 객체는 heap"이라는 한 문장으로 끝내곤 합니다. 입문에서는 방향을 잡는 데 도움이 되지만, 이 문장을 물리 메모리 배치 규칙처럼 받아들이면 JIT 최적화나 JVM specification을 잘못 이해하게 됩니다.
 
@@ -161,6 +161,6 @@ JLS/JVMS의 source/runtime 의미와 HotSpot 내부 배치를 분리해야 합�
 5. source 변수 종류를 특정 물리 주소와 일대일 대응시키지 않습니다.
 6. OOM이 보이면 heap만 보지 말고 실제 오류 영역을 확인합니다.
 
-### 면접에서 설명한다면
+### 학습 후 스스로 설명해 보기
 
 JVMS에서는 각 thread가 JVM stack을 가지고 method 호출마다 frame이 생성됩니다. Frame에는 local variable array와 operand stack 등이 있어 bytecode 실행 상태를 담습니다. Heap과 method area는 thread들이 공유하는 논리적 runtime 영역입니다. 다만 이들은 specification의 추상 모델이므로 source local variable을 항상 특정 OS stack 주소에 둔다거나 method area를 HotSpot metaspace와 완전히 같은 개념이라고 설명하면 안 됩니다.

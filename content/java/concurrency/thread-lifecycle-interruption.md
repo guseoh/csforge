@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.concurrency.thread-lifecycle-interruption
 topicContentKey: java.core.concurrency
 slug: thread-lifecycle-interruption
-title: "Thread lifecycle and interruption"
+title: "Thread 생명주기와 중단"
 summary: "Thread의 시작·대기·종료 흐름과 interrupt가 강제 종료가 아닌 협력적 중단 신호라는 점을 이해한다"
 level: 2
 status: PUBLISHED
@@ -21,8 +21,14 @@ references:
     language: en
     displayOrder: 2
     relationNote: Thread.start와 thread termination/join의 happens-before 관계 확인
+  - url: "https://d2.naver.com/helloworld/10963"
+    title: "네이버 D2: 스레드 덤프 분석하기"
+    referenceType: COMPANY_TECH_BLOG
+    language: ko
+    displayOrder: 3
+    relationNote: thread 상태와 blocked/waiting 진단을 실제 장애 흐름으로 연결
 ---
-# Thread lifecycle과 interruption
+# Thread 생명주기와 중단
 
 `new Thread(...)`로 객체를 만들었다고 새 실행 흐름이 이미 시작된 것은 아닙니다. Thread는 생성되고, `start()`를 통해 실행하도록 schedule되며, `run()` 작업이 끝나면 종료됩니다. 중간에는 monitor, 다른 thread의 종료, sleep, I/O 등을 기다릴 수 있습니다.
 
@@ -228,6 +234,6 @@ Backend의 background task나 executor 작업을 설계할 때는 timeout, inter
 - `RUNNABLE`이 반드시 현재 CPU에서 실행 중이라는 뜻은 아닙니다.
 - `join()`은 단순 wait뿐 아니라 JMM의 thread termination happens-before 관계와 연결됩니다.
 
-### 면접에서 설명한다면
+### 학습 후 스스로 설명해 보기
 
 Java thread는 `start()`로 실행을 시작하며, `run()`을 직접 호출하는 것과는 다릅니다. 특히 Java 25에서는 Runnable을 가진 platform Thread의 direct `run()`은 caller에서 task를 실행할 수 있지만 virtual Thread의 `run()`을 직접 호출하면 아무 동작도 하지 않습니다. `interrupt()`는 강제 kill이 아니라 cooperative cancellation mechanism이고, wait/join/sleep에서는 status를 clear한 뒤 `InterruptedException`, InterruptibleChannel에서는 channel close와 `ClosedByInterruptException`, 일반 실행에서는 interrupt status set처럼 현재 상태에 따라 효과가 다릅니다. Successful `join()`은 종료 대기뿐 아니라 happens-before 관점에서도 의미가 있습니다.

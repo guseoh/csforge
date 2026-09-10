@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.streams.collectors-grouping-partitioning
 topicContentKey: java.core.streams
 slug: collectors-grouping-partitioning
-title: "Collector로 grouping과 partitioning 하기"
+title: "Collector로 grouping·partitioning 하기"
 summary: "Stream 결과를 List·Map 같은 컨테이너에 모으고 groupingBy와 partitioningBy로 분류 결과 구조를 설계한다"
 level: 2
 status: PUBLISHED
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: groupingBy, partitioningBy, downstream collector 계약 확인
 ---
-# Collector로 grouping과 partitioning 하기
+# Collector로 grouping·partitioning 하기
 
 Stream에서 원소를 변환한 뒤 최종 결과를 `List`, `Set`, `Map` 같은 구조로 모아야 할 때 `collect`와 `Collectors`를 사용합니다.
 

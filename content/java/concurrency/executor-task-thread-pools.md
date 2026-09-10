@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.concurrency.executor-task-thread-pools
 topicContentKey: java.core.concurrency
 slug: executor-task-thread-pools
-title: "Executor, tasks, and thread pools"
+title: "Executor와 Thread Pool"
 summary: "작업 제출과 thread 생명주기를 분리하고 worker 수·queue·거부 정책이 처리량과 대기 시간에 어떤 영향을 주는지 이해한다"
 level: 2
 status: PUBLISHED
@@ -22,7 +22,7 @@ references:
     displayOrder: 2
     relationNote: worker·queue·rejection 동작 확인
 ---
-# Executor, task와 thread pool
+# Executor와 Thread Pool
 
 요청마다 직접 `new Thread(...)`를 만들면 "할 일"과 "그 일을 실행할 thread를 만들고 관리하는 일"이 한 코드에 섞입니다. 요청이 늘어날수록 thread 생성 비용뿐 아니라 동시에 몇 개까지 실행할지, 기다리는 작업을 어디에 둘지, 종료할 때 무엇을 할지까지 직접 관리해야 합니다.
 
@@ -128,6 +128,6 @@ executor.shutdown();
 5. 포화 시 거부 정책과 caller의 동작을 추적합니다.
 6. 종료 시 새 task, 대기 task, 실행 중 task를 따로 생각합니다.
 
-### 면접에서 설명한다면
+### 학습 후 스스로 설명해 보기
 
 Executor는 작업 제출과 thread 생명주기 관리를 분리하는 실행 추상화입니다. Thread pool에서는 worker 수만 보는 것이 아니라 work queue와 거부 정책을 함께 봐야 합니다. worker나 queue를 크게 만든다고 처리 능력이 무한해지는 것은 아니며 CPU, I/O, DB connection 같은 실제 병목을 측정해 크기를 정해야 합니다.

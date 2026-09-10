@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.coding-tests.buffered-output-stringbuilder
 topicContentKey: java.core.coding-tests
 slug: buffered-output-stringbuilder
-title: "Buffered output and StringBuilder"
+title: "Buffered 출력과 StringBuilder"
 summary: "반복적인 정답 출력을 메모리에서 조립하거나 buffering해 작은 출력 호출을 줄이는 방법을 익힌다"
 level: 1
 status: PUBLISHED
@@ -22,7 +22,7 @@ references:
     displayOrder: 2
     relationNote: output buffering과 flush 계약 확인
 ---
-# Buffered output과 StringBuilder
+# Buffered 출력과 StringBuilder
 
 정답을 수십만 줄 출력하는 문제에서 반복문마다 `System.out.println()`을 호출하면 계산 자체보다 출력 호출이 더 큰 비용이 될 수 있습니다. 코딩테스트에서는 보통 **계산 결과를 먼저 모아 두고 큰 단위로 출력**하는 방식을 자주 사용합니다.
 
@@ -128,6 +128,6 @@ writer.flush();
 - StringBuilder를 사용한다고 I/O 자체가 사라지는 것은 아닙니다.
 - 모든 결과를 한 builder에 저장하는 것도 메모리를 사용합니다.
 
-### 면접에서 설명한다면
+### 학습 후 스스로 설명해 보기
 
 코딩테스트의 대량 출력에서는 반복적인 작은 출력 호출을 줄이기 위해 StringBuilder로 결과를 조립한 뒤 한 번에 출력하거나 BufferedWriter로 출력 자체를 buffering할 수 있습니다. StringBuilder는 문자열 조립용 mutable sequence이고 BufferedWriter는 I/O 계층의 buffer라는 역할 차이가 있으며, 출력량이 매우 크면 메모리 사용도 함께 고려해야 합니다.

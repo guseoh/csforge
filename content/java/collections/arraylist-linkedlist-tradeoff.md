@@ -26,6 +26,8 @@ references:
 
 두 구현을 비교할 때 흔히 “ArrayList는 조회가 빠르고 LinkedList는 삽입·삭제가 빠르다”라고 외웁니다. 하지만 실제 코드는 **삽입 위치까지 어떻게 찾아가는지, 얼마나 자주 순회하는지, 원소 외에 어떤 객체가 필요한지**까지 봐야 합니다.
 
+![ArrayList와 LinkedList의 접근·삽입 경로 비교](/learning/java/array-list-linked-list.svg)
+
 ### ArrayList는 index 접근이 단순하다
 
 `ArrayList`는 JDK API가 설명하듯 크기가 늘어나는 배열 기반 List 구현입니다. index를 이용해 특정 위치에 접근하기 쉽습니다.

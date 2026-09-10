@@ -35,4 +35,18 @@
   {"kind":"question","contentKey":"java.core.design-patterns.state-pattern.q2","promptMarkdown":"상태가 적고 전이가 단순할 때 State 객체 대신 선택할 수 있는 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.design-patterns.state-pattern"],"choices":[{"key":"A","content":"enum의 intention-revealing 메서드","displayOrder":0},{"key":"B","content":"모든 호출자가 상태 문자열을 직접 덮어쓰게 하는 public setter","displayOrder":1},{"key":"C","content":"허용 여부를 호출자마다 중복된 if로 검사하는 방식","displayOrder":2},{"key":"D","content":"상태와 무관하게 항상 성공하는 단일 메서드","displayOrder":3}],"correctChoiceKey":"A","explanationMarkdown":"상태 복잡도가 작으면 enum과 명시적 전이 메서드가 더 간단하다. 객체 State는 상태별 데이터·행동이 커질 때 고려한다."},
   {"kind":"question","contentKey":"java.core.design-patterns.state-pattern.q3","promptMarkdown":"문서의 현재 State에 따라 행동이 위임된다. DRAFT.publish -> PUBLISHED, PUBLISHED.revise -> DRAFT, PUBLISHED.archive -> ARCHIVED이고, 나머지 변경 요청은 예외와 함께 상태를 유지한다. ARCHIVED는 읽기만 허용한다. DRAFT에서 publish, revise, archive, publish, archive를 차례로 호출하며 예외는 잡고 계속한다. 최종 상태와 거부된 호출은?","questionType":"MULTIPLE_CHOICE","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["java.core.design-patterns.state-pattern"],"choices":[{"key":"A","content":"ARCHIVED이며 세 번째 호출 archive만 거부된다","displayOrder":0},{"key":"B","content":"ARCHIVED이며 모든 호출이 성공한다","displayOrder":1},{"key":"C","content":"DRAFT이며 세 번째 호출 이후 모든 요청이 거부된다","displayOrder":2},{"key":"D","content":"PUBLISHED이며 마지막 archive만 거부된다","displayOrder":3}],"correctChoiceKey":"A","explanationMarkdown":"publish 후 PUBLISHED, revise 후 DRAFT다. 따라서 첫 archive는 현재 State에서 거부되어 DRAFT를 유지한다. 이후 publish로 PUBLISHED가 되어 마지막 archive가 성공한다. 객체는 현재 State의 규칙을 매번 적용해야 하며 과거에 publish한 적 있다는 사실만으로 archive를 허용하면 안 된다."},
   {"kind":"question","contentKey":"java.core.design-patterns.state-pattern.q4","promptMarkdown":"State 전이 설계 전에 전이 표를 작성하는 효과는?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.design-patterns.state-pattern"],"choices":[{"key":"A","content":"상태가 바뀌면 이전 상태의 모든 참조가 자동 제거되도록 한다","displayOrder":0},{"key":"B","content":"모든 전이를 허용해야 테스트 경우의 수가 줄어든다","displayOrder":1},{"key":"C","content":"허용·금지된 행동과 다음 상태를 테스트 가능한 계약으로 만든다","displayOrder":2},{"key":"D","content":"상태별 메서드를 만들면 전이 조건 검토가 필요 없어지게 한다","displayOrder":3}],"correctChoiceKey":"C","explanationMarkdown":"전이 표는 상태별 허용 행동을 명시해 누락된 경로와 금지된 경로를 확인하는 기준이 된다."}
+,
+{
+  "kind": "question",
+  "contentKey": "java.core.design-patterns.strategy-pattern.q7",
+  "promptMarkdown": "결제 수단별 수수료 계산 분기가 한 service에 계속 추가된다. Strategy로 분리할 때 어떤 variation을 interface 계약으로 만들고, 단순 if/else가 더 나은 경우는 언제인가?",
+  "questionType": "SCENARIO",
+  "difficulty": "MEDIUM",
+  "status": "PUBLISHED",
+  "conceptKeys": [
+    "java.core.design-patterns.strategy-pattern"
+  ],
+  "modelAnswer": "수수료 계산처럼 같은 책임의 정책이 독립적으로 추가·교체되고 호출자는 공통 입력/출력만 알면 될 때 Strategy 계약으로 분리한다. 정책이 하나뿐이고 변경 축도 작다면 추상화를 늘리지 않고 명확한 if가 더 읽기 좋다.",
+  "explanationMarkdown": "패턴 이름을 적용하는 것이 목표가 아니다. 반복되는 variation과 실제 교체 경계가 있을 때만 Strategy가 변경 비용을 줄인다."
+}
 ]

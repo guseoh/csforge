@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.concurrency.semaphore-permits
 topicContentKey: java.core.concurrency
 slug: semaphore-permits
-title: "Semaphore permits"
+title: "Semaphore와 동시 실행 허가 수"
 summary: "동시에 사용할 수 있는 작업·자원의 수를 permit으로 제한하고 acquire/release·timeout·소유권 차이를 이해한다"
 level: 2
 status: PUBLISHED
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: permit acquire/release·fairness·memory consistency 계약 확인
 ---
-# Semaphore로 동시 사용량 제한하기
+# Semaphore와 동시 실행 허가 수
 
 외부 API가 동시에 10개의 요청까지만 안정적으로 처리할 수 있거나, 한 프로세스에서 무거운 작업을 세 개까지만 실행하고 싶을 수 있습니다. 이 문제는 "한 번에 한 thread만 들어가게 하자"와는 조금 다릅니다. **동시에 N개까지는 허용하되 그 이상만 기다리게 하는 것**이 목표입니다.
 
@@ -150,6 +150,6 @@ int balance;
 5. 실제 하위 resource capacity와 permit 수가 맞는지 봅니다.
 6. Semaphore가 공유 상태 invariant까지 자동 보호한다고 가정하지 않습니다.
 
-### 면접에서 설명한다면
+### 학습 후 스스로 설명해 보기
 
 Semaphore는 permit 개수로 동시에 수행할 수 있는 작업이나 사용할 수 있는 자원 수를 제한하는 동시성 도구입니다. `acquire`로 permit을 얻고 `release`로 돌려주며, permit이 없으면 기다리거나 `tryAcquire`로 실패/timeout을 처리할 수 있습니다. monitor lock과 같은 thread 소유권이 없으므로 release 책임을 정확히 관리해야 하고, Semaphore가 실제 자원 수를 늘리거나 내부 공유 상태를 자동으로 thread-safe하게 만드는 것은 아닙니다.

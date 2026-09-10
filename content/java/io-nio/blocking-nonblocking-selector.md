@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.io-nio.blocking-nonblocking-selector
 topicContentKey: java.core.io-nio
 slug: blocking-nonblocking-selector
-title: "Blocking, non-blocking, and Selector"
+title: "Blocking·Non-blocking I/O와 Selector"
 summary: "Java NIO에서 blocking과 non-blocking 호출의 차이와 Selector가 여러 channel의 준비 상태를 관찰하는 방식을 이해한다"
 level: 3
 status: PUBLISHED
@@ -22,7 +22,7 @@ references:
     displayOrder: 2
     relationNote: selection operation과 selected key의 준비 상태 확인
 ---
-# Blocking, non-blocking, and Selector
+# Blocking·Non-blocking I/O와 Selector
 
 서버가 socket에서 데이터를 읽으려고 했는데 아직 클라이언트가 아무 데이터도 보내지 않았다고 생각해 보겠습니다. **Blocking I/O**에서는 읽기 작업이 진행될 조건이 될 때까지 현재 thread가 그 호출에서 기다릴 수 있습니다. 반면 **non-blocking mode**에서는 지금 당장 가능한 만큼 처리하고 호출이 돌아오도록 구성할 수 있습니다.
 
@@ -146,6 +146,6 @@ Spring MVC에서 직접 Selector loop를 구현하는 경우는 흔하지 않습
 4. selected key의 readiness와 실제 작업 완료를 구분합니다.
 5. 한 번의 read가 protocol message 전체라고 가정하지 않습니다.
 
-### 면접에서 설명한다면
+### 학습 후 스스로 설명해 보기
 
 Blocking I/O는 작업 조건이 충족될 때까지 호출한 thread가 기다릴 수 있고, non-blocking channel은 현재 가능한 결과를 반환해 애플리케이션이 이후 시도를 관리하게 합니다. Selector는 여러 non-blocking selectable channel의 readiness를 한 loop에서 관찰할 수 있게 합니다. Readiness는 작업 완료나 전체 메시지 수신을 의미하지 않으며 Java Selector API와 OS의 구체적인 event mechanism도 구분해야 합니다.

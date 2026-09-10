@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { EmptyState, ErrorState, PageSkeleton } from '../components/AsyncStates'
 import { getConcepts, getLearningArea, type LearningStatus } from '../lib/learning-api'
 import { defaultLearningSearch, type LearningSearch } from '../lib/learning-search'
+import { defaultQuizSearch } from '../lib/quiz-search'
 
 const PAGE_SIZE = 12
 
@@ -59,33 +60,55 @@ export function AreaPage() {
       </nav>
       <div className="page-heading">
         <div>
-          <p className="eyebrow">학습 영역</p>
+          <p className="eyebrow">학습 가이드</p>
           <h1>{area.name}</h1>
           <p className="lead">{area.description ?? '이 영역의 개념을 탐색하세요.'}</p>
         </div>
         <Link className="text-link" to="/learning" search={defaultLearningSearch}>모든 영역</Link>
       </div>
 
-      <div className="topic-summary-grid">
-        {area.topics.length === 0 ? (
-          <EmptyState message="아직 등록된 주제가 없습니다." />
-        ) : area.topics.map((topic) => (
-          <button
-            className={`topic-card${search.topic === topic.id ? ' selected' : ''}`}
-            key={topic.id}
-            type="button"
-            aria-pressed={search.topic === topic.id}
-            onClick={() => void updateSearch({ topic: search.topic === topic.id ? undefined : topic.id, page: 0 })}
-          >
-            <span className="topic-card-title">{topic.title}</span>
-            <span className="topic-card-meta">
-              {topic.publishedConceptCount}개 개념 · {topic.completedConceptCount}개 완료
-            </span>
-            <span className="topic-card-meta">
-              L1 {topic.level1Count} · L2 {topic.level2Count} · L3 {topic.level3Count}
-            </span>
-          </button>
-        ))}
+      <div className="guide-summary-line">
+        <span>{area.topics.length}개 Topic</span>
+        <span>{area.topics.reduce((total, topic) => total + topic.publishedConceptCount, 0)}개 Concept</span>
+        <span>순서대로 읽고 문제로 확인하세요</span>
+        <Link className="primary-button" to="/quiz" search={{ ...defaultQuizSearch, areas: area.slug }}>이 영역 문제 풀기</Link>
+      </div>
+
+      <section className="topic-index" aria-labelledby="topic-index-heading">
+        <div className="topic-index-heading">
+          <div>
+            <p className="eyebrow">학습 순서</p>
+            <h2 id="topic-index-heading">Topic별 Concept</h2>
+          </div>
+          <span className="helper-text">Topic을 고르면 아래 목록이 좁혀집니다.</span>
+        </div>
+        <div className="topic-summary-grid">
+          {area.topics.length === 0 ? (
+            <EmptyState message="아직 등록된 주제가 없습니다." />
+          ) : area.topics.map((topic) => (
+            <button
+              className={`topic-card${search.topic === topic.id ? ' selected' : ''}`}
+              key={topic.id}
+              type="button"
+              aria-pressed={search.topic === topic.id}
+              onClick={() => void updateSearch({ topic: search.topic === topic.id ? undefined : topic.id, page: 0 })}
+            >
+              <span className="topic-card-title">{topic.title}</span>
+              <span className="topic-card-meta">
+                {topic.publishedConceptCount}개 Concept · {topic.completedConceptCount}개 완료
+              </span>
+              <span className="topic-card-meta">
+                L1 {topic.level1Count} · L2 {topic.level2Count} · L3 {topic.level3Count}
+              </span>
+              <span className="topic-card-arrow" aria-hidden="true">{search.topic === topic.id ? '선택됨' : '열어 보기 →'}</span>
+            </button>
+          ))}
+        </div>
+      </section>
+
+      <div className="guide-filter-intro">
+        <p className="eyebrow">정밀하게 찾기</p>
+        <span>상태·레벨·검색어로 Concept을 좁힐 수 있습니다.</span>
       </div>
 
       <div className="filter-panel" aria-label="개념 필터">

@@ -3709,4 +3709,18 @@
     "correctChoiceKey": "B",
     "explanationMarkdown": "lock deadlock과 제한된 worker/resource로 인한 starvation은 별도 liveness 문제다."
   }
+,
+{
+  "kind": "question",
+  "contentKey": "java.core.concurrency.atomic-cas.q7",
+  "promptMarkdown": "재고 수량과 주문 상태를 각각 AtomicInteger와 AtomicReference로 갱신한다. 두 갱신이 항상 함께 성공해야 한다면 단일 atomic 변수만으로 충분한가? 실패 시 재고를 되돌리는 retry 설계의 한계까지 설명하라.",
+  "questionType": "SCENARIO",
+  "difficulty": "HARD",
+  "status": "PUBLISHED",
+  "conceptKeys": [
+    "java.core.concurrency.atomic-cas"
+  ],
+  "modelAnswer": "단일 atomic 변수들은 서로 다른 상태의 복합 invariant를 자동으로 묶지 못한다. 하나만 성공한 중간 상태가 노출될 수 있으므로 한 lock으로 invariant를 보호하거나 하나의 immutable state를 CAS하고, 외부 side effect는 별도 보상·transaction 경계를 설계한다.",
+  "explanationMarkdown": "CAS는 한 번의 비교·갱신을 원자화하지만 여러 변수와 외부 효과까지 transaction으로 만들지는 않는다."
+}
 ]

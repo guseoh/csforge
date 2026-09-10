@@ -1399,4 +1399,18 @@
     "correctChoiceKey": "B",
     "explanationMarkdown": "class override에서 `InterfaceName.super.method()` 형태로 부모 default를 선택할 수 있다. 충돌을 암묵적인 runtime 선택에 맡기지 않는다."
   }
+,
+{
+  "kind": "question",
+  "contentKey": "java.core.modern-language.record-data-modeling.q7",
+  "promptMarkdown": "record OrderLine을 DTO로 사용하다가 검증, 상태 변화, lazy-loaded 연관관계가 필요한 domain 객체로 확장하려 한다. record를 그대로 유지할지 일반 class로 바꿀지 판단 기준을 설명하라.",
+  "questionType": "DESCRIPTIVE",
+  "difficulty": "MEDIUM",
+  "status": "PUBLISHED",
+  "conceptKeys": [
+    "java.core.modern-language.record-data-modeling"
+  ],
+  "modelAnswer": "record는 상태 중심 carrier와 얕은 불변성, 자동 생성된 value semantics가 목적에 맞을 때 유지한다. 검증·상태 전이·identity·지연 로딩처럼 lifecycle과 behavior가 중심이면 일반 class/entity로 분리하고 필요한 계약을 직접 설계한다.",
+  "explanationMarkdown": "record는 모든 객체를 불변으로 만드는 문법이 아니다. 데이터 전달과 domain lifecycle의 책임을 구분해야 한다."
+}
 ]

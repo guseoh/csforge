@@ -60,3 +60,16 @@ Set에 넣은 객체의 equals/hashCode 기준 필드를 나중에 바꾸면 `co
 반대로 동일 사건이 여러 번 발생한 순서를 보존해야 한다면 List가 맞을 수 있습니다.
 
 문제에서는 구현체 이름보다 **중복 기준이 무엇이며 그 기준을 equals/hashCode가 올바르게 표현하는지**를 먼저 확인하세요.
+
+### 중복 판정은 삽입 순간의 계약이다
+
+`HashSet.add(value)`는 단순히 같은 필드가 보이는지를 검사하지 않습니다. 먼저 hash bucket 후보를 찾고, 같은 bucket에서 `equals`까지 확인한 뒤 새 원소를 넣을지 결정합니다. 따라서 삽입 후 key 역할을 하는 필드를 바꾸면 객체가 원래 bucket에 남아 있어도 새 hash 위치에서 찾게 되어 `contains`와 `remove`가 실패할 수 있습니다.
+
+```java
+Set<UserKey> keys = new HashSet<>();
+UserKey key = new UserKey("kim");
+keys.add(key);
+key.changeName("lee"); // Set 내부 위치는 자동으로 다시 계산되지 않는다
+```
+
+이 흐름은 `HashSet`의 성능 문제가 아니라 **컬렉션에 들어간 값의 identity가 바뀌어도 되는가**라는 ownership 문제입니다. key를 불변으로 만들거나, 변경이 필요하면 제거 후 새 값을 넣어 계약을 다시 맞춥니다.

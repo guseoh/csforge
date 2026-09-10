@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.jvm-runtime.runtime-diagnostics-jcmd-jstack-jfr
 topicContentKey: java.core.jvm-runtime
 slug: runtime-diagnostics-jcmd-jstack-jfr
-title: "Runtime diagnostics with jcmd, jstack, and JFR"
+title: "jcmd·jstack·JFR로 JVM 진단하기"
 summary: "증상에 따라 thread dump·jcmd·JFR이 제공하는 runtime evidence를 구분하고 하나의 snapshot만으로 원인을 단정하지 않는 진단 흐름을 익힌다"
 level: 3
 status: PUBLISHED
@@ -27,8 +27,14 @@ references:
     language: en
     displayOrder: 3
     relationNote: Flight Recorder recording 조작과 출력 확인
+  - url: "https://d2.naver.com/helloworld/6043"
+    title: "네이버 D2: Garbage Collection 모니터링 방법"
+    referenceType: COMPANY_TECH_BLOG
+    language: ko
+    displayOrder: 4
+    relationNote: GC 관측 지표와 도구 선택의 실제 맥락 보충
 ---
-# JVM 문제를 만났을 때 무엇부터 관찰해야 할까
+# jcmd·jstack·JFR로 JVM 진단하기
 
 "서버가 느리다"는 말만으로는 원인을 알 수 없습니다. CPU를 과하게 쓰는 thread가 있을 수도 있고, 많은 thread가 lock을 기다릴 수도 있고, GC pause가 길어졌을 수도 있고, 객체 allocation이 갑자기 증가했을 수도 있습니다.
 
@@ -236,6 +242,6 @@ Logs/trace: 실제 request/business path
 6. 진단 도구 자체의 overhead와 민감 정보 위험을 확인합니다.
 7. evidence를 얻기 전에 JVM option이나 기술을 바꾸지 않습니다.
 
-### 면접에서 설명한다면
+### 학습 후 스스로 설명해 보기
 
 JVM 장애 진단에서는 증상에 맞는 evidence를 먼저 선택합니다. `jstack`은 thread stack과 대기 상태를 한 시점에 보는 데 유용하고, `jcmd`는 thread·heap·VM·JFR 등 여러 diagnostic command를 실행하는 입구입니다. JFR은 CPU, GC, allocation, lock 같은 JVM event를 시간축으로 기록해 간헐적인 성능 문제를 분석하는 데 유용합니다. 한 snapshot만으로 원인을 단정하지 않고 metrics, 여러 시점의 dump, application log/trace와 함께 비교해야 합니다.

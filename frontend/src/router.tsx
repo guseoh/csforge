@@ -20,13 +20,13 @@ const SearchPage = lazyRouteComponent(() => import('./pages/SearchPage'), 'Searc
 const DashboardPage = lazyRouteComponent(() => import('./pages/DashboardPage'), 'DashboardPage')
 
 const navigation = [
-  { to: '/', label: 'Dashboard' },
-  { to: '/learning', label: 'Learning' },
-  { to: '/quiz', label: 'Quiz' },
-  { to: '/wrong-notes', label: 'Wrong Notes' },
-  { to: '/review', label: 'Review' },
-  { to: '/search', label: 'Search' },
-  { to: '/settings/import', label: 'Import' },
+  { to: '/', label: '대시보드' },
+  { to: '/learning', label: '학습 영역' },
+  { to: '/quiz', label: '문제 풀기' },
+  { to: '/wrong-notes', label: '오답 노트' },
+  { to: '/review', label: '복습 큐' },
+  { to: '/search', label: '전체 검색' },
+  { to: '/settings/import', label: '콘텐츠 가져오기' },
 ] as const
 
 function AppLayout() {
@@ -41,7 +41,7 @@ function AppLayout() {
       </header>
       <div className="content-layout">
         <aside className="sidebar" aria-label="Primary navigation">
-          <p className="eyebrow">Study workspace</p>
+          <p className="eyebrow">학습 공간</p>
           <nav>
             {navigation.map((item) => (
               <Link

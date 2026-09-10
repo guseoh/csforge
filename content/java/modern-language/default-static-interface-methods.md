@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.modern-language.default-static-interface-methods
 topicContentKey: java.core.modern-language
 slug: default-static-interface-methods
-title: "Default and static interface methods"
+title: "Interface의 default·static 메서드"
 summary: "interface에 구현을 둘 수 있는 이유와 default 충돌·static 호출 규칙을 이해한다"
 level: 2
 status: PUBLISHED
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: default·static method와 interface inheritance 규칙 확인
 ---
-# Default and static interface methods
+# Interface의 default·static 메서드
 
 interface는 구현 클래스가 따라야 할 계약을 표현하는 데 사용됩니다. 그런데 이미 많은 구현체가 사용 중인 interface에 새로운 메서드를 하나 추가하면 기존 구현체가 전부 새 메서드를 구현해야 하는 문제가 생길 수 있습니다.
 
@@ -107,7 +107,7 @@ interface의 기본 구현이 너무 많은 상태나 숨은 전제에 의존하
 
 Spring에서도 interface가 많이 등장하지만 Java의 default method 규칙 자체는 **Java 언어의 메서드 상속·선택 규칙**입니다. Spring AOP proxy가 어떤 메서드를 가로채는지, Bean이 어떤 구현체를 주입하는지는 별도의 framework 동작입니다.
 
-이 층위를 분리하면 면접에서도 "Java interface default method" 질문에 Spring 기능을 섞어 답하는 실수를 줄일 수 있습니다.
+이 층위를 분리하면 복습할 때도 "Java interface default method" 질문에 Spring 기능을 섞어 답하는 실수를 줄일 수 있습니다.
 
 ### 문제를 풀 때 확인할 것
 
@@ -124,6 +124,6 @@ Spring에서도 interface가 많이 등장하지만 Java의 default method 규�
 - default method는 interface에 instance field를 추가하는 기능이 아닙니다.
 - default implementation을 제공할 수 있다는 사실과 그 위치가 좋은 설계라는 판단은 별개입니다.
 
-### 면접에서 설명한다면
+### 학습 후 스스로 설명해 보기
 
 Default method는 interface가 기본 instance 구현을 제공할 수 있게 하여 기존 interface를 진화시키는 데 도움을 주는 기능입니다. 여러 interface의 default가 충돌하면 클래스 메서드 우선, 더 구체적인 interface 등의 규칙을 적용하고 그래도 모호하면 구현 클래스가 직접 override해야 합니다. Static interface method는 interface 이름으로 호출하는 정적 메서드로 default method처럼 구현 객체에 상속되는 것이 아닙니다.

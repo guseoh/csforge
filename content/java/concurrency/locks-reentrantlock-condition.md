@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.concurrency.locks-reentrantlock-condition
 topicContentKey: java.core.concurrency
 slug: locks-reentrantlock-condition
-title: "Lock, ReentrantLock, and Condition"
+title: "Lock, ReentrantLock과 Condition"
 summary: "명시적 Lock이 필요한 경우와 ReentrantLock의 획득·해제·Condition 대기 규칙을 이해한다"
 level: 3
 status: PUBLISHED
@@ -22,7 +22,7 @@ references:
     displayOrder: 2
     relationNote: 재진입과 fairness 설정의 계약 확인
 ---
-# Lock·ReentrantLock·Condition
+# Lock, ReentrantLock과 Condition
 
 단순히 한 번에 한 thread만 critical section에 들어가면 된다면 `synchronized`는 매우 좋은 기본 선택입니다. Scope를 벗어날 때 monitor가 자동으로 해제되므로 lock 반환을 빠뜨릴 위험도 적습니다.
 
@@ -167,6 +167,6 @@ Bounded queue라면 하나의 lock 아래에서:
 4. `Condition.await()` 전 lock을 소유하고 있는지 봅니다.
 5. 깨어난 뒤 조건을 `while`로 다시 검사하는지 확인합니다.
 
-### 면접에서 설명한다면
+### 학습 후 스스로 설명해 보기
 
 `ReentrantLock`은 `synchronized`와 같은 mutual exclusion과 memory synchronization을 제공하면서 timed/interruptible acquisition, 여러 `Condition` 같은 명시적 기능을 제공합니다. 대신 lock/unlock lifecycle을 직접 관리해야 하므로 보통 `try/finally`가 필요합니다. Condition의 `await()`는 기다리는 동안 lock을 놓고, 깨어나 lock을 다시 획득한 뒤 predicate를 재확인해야 합니다. 추가 기능이 필요 없다면 synchronized가 더 단순한 선택일 수 있습니다.

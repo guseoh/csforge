@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.metadata-compatibility.annotation-processing-vs-reflection
 topicContentKey: java.core.metadata-compatibility
 slug: annotation-processing-vs-reflection
-title: "Annotation processing versus reflection"
+title: "Annotation Processing과 Reflection"
 summary: "annotation을 compile 시점에 읽어 code를 생성하는 annotation processing과 실행 중 metadata를 읽는 reflection의 시점·산출물·trade-off를 구분한다"
 level: 2
 status: PUBLISHED
@@ -22,7 +22,7 @@ references:
     displayOrder: 2
     relationNote: runtime reflection phase와 결과 확인
 ---
-# 같은 annotation을 읽어도 처리 시점이 다르면 무엇이 달라질까
+# Annotation Processing과 Reflection
 
 Annotation은 metadata입니다. 그런데 그 metadata를 **언제 읽느냐**에 따라 전체 설계가 달라집니다.
 
@@ -218,6 +218,6 @@ Compile-time에 metadata/index/generated class를 만들고 runtime에 일부 re
 5. Compile-time error 발견과 runtime flexibility 중 어떤 장점이 필요한지 봅니다.
 6. Library 이름이 아니라 실제 phase와 artifact를 확인합니다.
 
-### 면접에서 설명한다면
+### 학습 후 스스로 설명해 보기
 
 Annotation processing은 `javac` compile 과정에서 annotation과 source/type model을 읽어 검증하거나 새 source를 생성할 수 있는 방식입니다. Reflection은 애플리케이션이 실행된 뒤 load된 `Class`, method, field, annotation을 runtime에 조사합니다. Processing은 오류를 compile 시점에 발견하고 generated code를 만들 수 있는 반면 build 과정이 추가되고, reflection은 runtime에 동적으로 알려지는 type을 다루기 쉽습니다. 어떤 방식을 쓸지는 처리 시점과 필요한 유연성을 보고 결정합니다.

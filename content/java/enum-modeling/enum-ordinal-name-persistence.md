@@ -76,3 +76,18 @@ JPA의 `@Enumerated` 같은 실제 persistence 설정은 프레임워크의 계�
 - 이미 저장된 데이터와 새 코드의 값 매핑이 계속 같아야 하는가?
 
 이 질문에 안정성이 필요하다면 `ordinal`을 외부 identity로 사용하는 것은 피하는 편이 좋습니다.
+
+### 외부 값은 enum 선언과 분리된 계약으로 둔다
+
+예를 들어 `READY, PAID, CANCELLED`를 저장한 뒤 중간에 `PACKED`를 삽입하면 ordinal `1`의 의미가 바뀝니다. 반면 명시적인 code를 두면 Java 이름을 리팩터링하더라도 저장·전송 계약을 유지할 수 있습니다.
+
+```java
+enum OrderStatus {
+    READY("ready"), PAID("paid"), CANCELLED("cancelled");
+
+    private final String code;
+    OrderStatus(String code) { this.code = code; }
+}
+```
+
+이렇게 만든 code도 자동으로 안전해지는 것은 아닙니다. 중복·누락을 검증하고 알 수 없는 code를 읽었을 때의 migration 또는 오류 정책까지 함께 둬야 합니다.

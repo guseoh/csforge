@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.jvm-runtime.heap-metaspace-native-thread-memory
 topicContentKey: java.core.jvm-runtime
 slug: heap-metaspace-native-thread-memory
-title: "Heap, metaspace, native, and thread memory"
+title: "Heap·Metaspace·Native·Thread 메모리"
 summary: "Java process의 메모리를 heap 하나로 보지 않고 metaspace·thread stack·direct/native allocation과 구분해 OOM과 RSS 증가를 진단한다"
 level: 3
 status: PUBLISHED
@@ -28,7 +28,7 @@ references:
     displayOrder: 3
     relationNote: NMT가 추적하는 HotSpot 내부 native memory 범위와 한계 확인
 ---
-# Java 프로세스 메모리는 heap만 보면 될까
+# Heap·Metaspace·Native·Thread 메모리
 
 운영 서버에서 컨테이너 메모리가 2GB인데 `-Xmx1g`로 설정했으니 절대 1GB를 넘지 않을 것이라고 생각하면 위험합니다. `Xmx`는 Java heap의 최대 크기와 관련된 설정이지 **Java process 전체 메모리 사용량의 상한**이 아닙니다.
 
@@ -211,6 +211,6 @@ Error 이름 하나보다 **어느 resource가 부족했다고 JVM이 말하는�
 7. OOM message를 보고 부족한 resource 영역을 좁힙니다.
 8. container limit에는 heap 외 영역을 위한 여유가 필요한지 봅니다.
 
-### 면접에서 설명한다면
+### 학습 후 스스로 설명해 보기
 
 Java process memory는 heap만으로 구성되지 않습니다. JVMS는 heap·JVM stack·method area 같은 논리적 runtime 영역을 정의하지만 구체적인 물리 배치는 JVM 구현에 맡깁니다. HotSpot에서는 class metadata를 위한 metaspace, platform thread 관련 stack/native resource, JIT code cache, direct/native allocation 등이 process memory를 사용합니다. 그래서 `-Xmx`는 전체 process memory 상한이 아니며 heap 사용량은 안정적인데 RSS가 증가하면 다른 영역을 따로 확인해야 합니다. NMT도 유용하지만 HotSpot 내부 native memory를 추적하는 도구라 third-party/JDK native allocation까지 process 전체를 설명하지는 않습니다.

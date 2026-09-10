@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.concurrency.atomic-cas
 topicContentKey: java.core.concurrency
 slug: atomic-cas
-title: "Atomic variables and CAS"
+title: "Atomic 변수와 CAS"
 summary: "CAS가 예상값이 그대로일 때만 갱신하는 원자적 연산이라는 점과 retry·contention·복합 invariant의 한계를 이해한다"
 level: 3
 status: PUBLISHED
@@ -152,6 +152,6 @@ CAS는 "현재 값이 expected와 같은가"를 봅니다. 값이 A에서 B로 �
 - CAS retry 방식이 모든 workload에서 lock보다 빠른 것은 아닙니다.
 - CAS는 값이 과거에 어떻게 변했는지 history를 자동으로 기록하지 않습니다.
 
-### 면접에서 설명한다면
+### 학습 후 스스로 설명해 보기
 
 CAS는 현재 값이 내가 예상한 값과 같을 때만 새 값으로 바꾸는 원자적인 조건부 갱신입니다. 다른 thread가 먼저 값을 바꾸면 실패하고 caller는 새 값을 읽어 retry할 수 있습니다. `AtomicInteger` 같은 클래스가 이를 이용한 단일 값 atomic update를 제공하지만 contention이 높으면 retry 비용이 커질 수 있고, 여러 field 사이의 invariant는 별도의 상태 모델이나 lock이 필요할 수 있습니다. 또한 CAS는 lock-free 알고리즘을 구현하는 데 사용할 수 있는 primitive이지, CAS를 썼다는 사실만으로 전체 알고리즘의 lock-free progress가 자동 보장되는 것은 아닙니다.

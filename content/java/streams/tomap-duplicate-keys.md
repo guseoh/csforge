@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.streams.tomap-duplicate-keys
 topicContentKey: java.core.streams
 slug: tomap-duplicate-keys
-title: "toMap과 중복 key 처리"
+title: "toMap의 중복 Key 처리"
 summary: "여러 원소가 같은 key로 변환될 수 있을 때 toMap의 충돌을 인식하고 비즈니스 의미에 맞는 merge 정책을 명시한다"
 level: 2
 status: PUBLISHED
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: duplicate key와 merge overload의 계약 확인
 ---
-# toMap과 중복 key 처리
+# toMap의 중복 Key 처리
 
 Stream의 각 원소를 key와 value로 바꿔 Map을 만들 수 있습니다.
 
@@ -74,3 +74,13 @@ Map<String, List<Member>> grouped = members.stream()
 - 여러 값을 모두 보관해야 하는가?
 
 `toMap`에서 발생하는 예외를 단순 API 함정으로 외우지 말고 **Map key의 의미와 데이터 계약 문제**로 이해하면 실무에서도 도움이 됩니다.
+
+```java
+Map<String, Order> latestByUser = orders.stream()
+    .collect(Collectors.toMap(
+        Order::userId,
+        Function.identity(),
+        (oldOrder, newOrder) -> newOrder));
+```
+
+세 번째 인자는 중복을 조용히 덮어쓰는 장치가 아니라 충돌 시 어떤 값이 도메인상 승자인지 표현하는 merge 정책입니다. 최신 시각 비교나 합산처럼 결정 기준이 필요하면 그 기준을 코드와 테스트에 남기고, 중복 자체가 오류라면 기본 `toMap`의 실패를 보존하는 편이 낫습니다.

@@ -979,4 +979,18 @@
     "correctChoiceKey": "D",
     "explanationMarkdown": "서로 다른 functional interface가 같은 함수 signature를 가지면 하나의 lambda가 두 target에 모두 맞을 수 있다. compiler가 하나를 고르지 못하면 Transform t = ...처럼 target을 명시한다."
   }
+,
+{
+  "kind": "question",
+  "contentKey": "java.core.functional.behavior-parameterization.q7",
+  "promptMarkdown": "같은 주문 목록 순회 코드에서 할인 정책만 바뀐다. 정책을 if/else 플래그로 늘리는 대신 함수형 인터페이스를 전달할 때 얻는 변화와 주의점을 설명하라.",
+  "questionType": "DESCRIPTIVE",
+  "difficulty": "MEDIUM",
+  "status": "PUBLISHED",
+  "conceptKeys": [
+    "java.core.functional.behavior-parameterization"
+  ],
+  "modelAnswer": "공통 순회와 달라지는 계산을 분리해 호출자가 정책을 전달하므로 정책 수가 늘어도 본문이 같은 흐름으로 유지된다. 다만 lambda가 캡처하는 상태의 수명·변경 가능성, 예외와 성능 계약은 별도로 확인한다.",
+  "explanationMarkdown": "함수형 인터페이스는 조건문을 숨기는 장식이 아니라 variation을 명시적인 협력 계약으로 옮기는 경계다."
+}
 ]

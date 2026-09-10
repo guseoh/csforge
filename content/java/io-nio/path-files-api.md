@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.io-nio.path-files-api
 topicContentKey: java.core.io-nio
 slug: path-files-api
-title: "Path and Files API"
+title: "Path와 Files API"
 summary: "파일 경로 값과 실제 파일 작업을 구분하고 상대 경로·실패·보안·자원 경계를 이해한다"
 level: 2
 status: PUBLISHED
@@ -21,8 +21,14 @@ references:
     language: en
     displayOrder: 2
     relationNote: 파일 생성·읽기·쓰기·복사·이동과 stream API 확인
+  - url: "https://d2.naver.com/helloworld/1219"
+    title: "네이버 D2: JDK 7의 NIO.2와 파일 API"
+    referenceType: COMPANY_TECH_BLOG
+    language: ko
+    displayOrder: 3
+    relationNote: Path·Files와 try-with-resources를 실제 파일 처리 흐름으로 연결
 ---
-# Path and Files API
+# Path와 Files API
 
 파일 경로를 단순 문자열로 이어 붙이면 운영체제별 구분자, 상대 경로, `..`, symbolic link 같은 문제를 직접 처리하게 됩니다. `Path`는 **파일 시스템 경로라는 값을 표현하는 타입**이고 `Files`는 그 경로를 대상으로 실제 파일 시스템 작업을 수행하는 API입니다.
 
@@ -111,6 +117,6 @@ Security 영역에서는 path traversal 공격을 더 깊게 다루지만 Java I
 4. 전체 파일을 메모리에 올리는 API인지 확인합니다.
 5. 사용자 입력 경로라면 normalization 외에 허용 root 정책이 있는지 봅니다.
 
-### 면접에서 설명한다면
+### 학습 후 스스로 설명해 보기
 
 `Path`는 파일 시스템 경로를 값으로 표현하고 `Files`는 실제 읽기·쓰기·복사 같은 작업을 수행합니다. Path 생성 자체는 파일 존재 여부나 open을 의미하지 않습니다. 상대 경로의 기준, 실제 I/O 실패, 대용량 파일의 메모리 사용, 사용자 입력 경로의 traversal 위험을 함께 고려해야 합니다.

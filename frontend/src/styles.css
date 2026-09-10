@@ -957,3 +957,32 @@ textarea:focus {
     justify-self: start;
   }
 }
+
+/* Foundry-inspired desktop canvas: quiet chrome, high-contrast reading surface, restrained borders. */
+.topbar {
+  height: 62px;
+  border-bottom-color: #25232e;
+  background: #0f0d13;
+}
+
+.sidebar {
+  border-right-color: #25232e;
+  background: #111016;
+}
+
+.nav-link { color: #8f899a; }
+.nav-link:hover,
+.nav-link.active { background: #1d1926; color: #f4f0f9; }
+
+.main-content {
+  min-width: 0;
+  background: #0e0c12;
+}
+
+.primary-button {
+  border-color: #8f62e8;
+  background: #925de7;
+  color: #fff;
+}
+
+.primary-button:hover { border-color: #b28cff; background: #a06af5; }

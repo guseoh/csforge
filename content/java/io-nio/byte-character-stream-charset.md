@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.io-nio.byte-character-stream-charset
 topicContentKey: java.core.io-nio
 slug: byte-character-stream-charset
-title: "Byte, character stream, and charset"
+title: "바이트·문자 스트림과 Charset"
 summary: "파일·네트워크의 byte와 Java 문자열의 문자 사이에서 charset이 왜 필요한지 이해한다"
 level: 1
 status: PUBLISHED
@@ -22,7 +22,7 @@ references:
     displayOrder: 2
     relationNote: UTF-8 등 반드시 지원되는 표준 charset 상수 확인
 ---
-# Byte, character stream, and charset
+# 바이트·문자 스트림과 Charset
 
 파일과 네트워크가 실제로 주고받는 것은 byte입니다. 반면 Java의 `String`은 사람이 읽는 문자 정보를 다룹니다. 그래서 외부에서 받은 byte를 문자열로 바꾸거나 문자열을 파일·네트워크로 내보낼 때는 **어떤 규칙으로 byte와 문자를 서로 바꿀지**가 필요합니다. 그 규칙이 charset입니다.
 
@@ -129,6 +129,6 @@ Java code
 4. 문자 길이와 byte 길이를 같은 값으로 가정하지 않습니다.
 5. 기본 charset에 숨게 의존하는 호출이 있는지 확인합니다.
 
-### 면접에서 설명한다면
+### 학습 후 스스로 설명해 보기
 
 파일과 네트워크는 byte를 다루고 Java String은 문자를 다루기 때문에 둘 사이에는 charset 기반 encoding/decoding 과정이 필요하다고 설명하면 됩니다. 서로 다른 charset으로 encode/decode하면 같은 byte를 다른 문자로 해석해 글자가 깨질 수 있으므로 외부 데이터 계약에 맞는 charset을 경계에서 명시하는 것이 중요합니다.

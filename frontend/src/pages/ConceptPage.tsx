@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link, useParams } from '@tanstack/react-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { EmptyState, ErrorState, PageSkeleton } from '../components/AsyncStates'
+import { LearningRail } from '../components/LearningRail'
 import { MarkdownContent } from '../components/MarkdownContent'
 import { useToast } from '../components/toast/ToastProvider'
 import {
@@ -117,15 +118,17 @@ function ConceptContent({ data, conceptId }: { data: ConceptDetailModel; concept
 
   return (
     <>
-      <div className="concept-header">
+      <header className="concept-header">
+        <p className="concept-kicker">{data.topic.title} · Java 학습 노트</p>
         <div className="chip-row">
+          <span className="chip topic-chip">{data.area.name}</span>
           <span className="chip">레벨 {data.level}</span>
           <span className={`chip status-${data.progress.learningStatus.toLowerCase()}`}>{learningStatusLabels[data.progress.learningStatus]}</span>
           {data.progress.bookmarked && <span className="chip bookmark-chip">★ 북마크</span>}
         </div>
         <h1>{data.title}</h1>
         {data.summary && <p className="lead">{data.summary}</p>}
-      </div>
+      </header>
 
       <div className="concept-actions" aria-label="개념 학습 동작">
         <ProgressActionButton conceptId={conceptId} status="COMPLETED" label="완료로 표시" />
@@ -134,7 +137,9 @@ function ConceptContent({ data, conceptId }: { data: ConceptDetailModel; concept
         <BookmarkButton conceptId={conceptId} bookmarked={data.progress.bookmarked} />
       </div>
 
-      <MarkdownContent className="concept-reading-content" dedupeLeadingHeading={data.title}>{data.contentMarkdown}</MarkdownContent>
+      <article className="concept-reading-content" aria-label={`${data.title} 학습 노트`}>
+        <MarkdownContent dedupeLeadingHeading={data.title}>{data.contentMarkdown}</MarkdownContent>
+      </article>
 
       <section className="detail-section">
         <div className="section-heading">
@@ -272,15 +277,23 @@ export function ConceptPage() {
 
   const data = conceptQuery.data
   return (
-    <section className="page-section concept-page">
-      <nav className="breadcrumb" aria-label="현재 학습 위치">
-        <Link to="/learning" search={defaultLearningSearch}>학습</Link>
-        <span>/</span>
-        <Link to="/learning/$areaSlug" params={{ areaSlug: data.area.slug }} search={defaultLearningSearch}>{data.area.name}</Link>
-        <span>/</span>
-        <strong>{data.topic.title}</strong>
-      </nav>
-      <ConceptContent data={data} conceptId={conceptId} />
-    </section>
+    <div className="concept-workspace">
+      <LearningRail
+        areaSlug={data.area.slug}
+        areaName={data.area.name}
+        currentTopicId={data.topic.id}
+        currentConceptId={conceptId}
+      />
+      <section className="page-section concept-page">
+        <nav className="breadcrumb" aria-label="현재 학습 위치">
+          <Link to="/learning" search={defaultLearningSearch}>학습</Link>
+          <span>/</span>
+          <Link to="/learning/$areaSlug" params={{ areaSlug: data.area.slug }} search={defaultLearningSearch}>{data.area.name}</Link>
+          <span>/</span>
+          <strong>{data.topic.title}</strong>
+        </nav>
+        <ConceptContent data={data} conceptId={conceptId} />
+      </section>
+    </div>
   )
 }

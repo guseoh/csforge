@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.coding-tests.arraydeque-stack-queue
 topicContentKey: java.core.coding-tests
 slug: arraydeque-stack-queue
-title: "ArrayDeque stack and queue"
+title: "ArrayDeque로 스택과 큐 사용하기"
 summary: "ArrayDeque의 양 끝 연산을 일관되게 사용해 stack·queue·deque 문제를 구현한다"
 level: 1
 status: PUBLISHED
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: head·tail 삽입/조회/제거 API와 null 제한 확인
 ---
-# ArrayDeque로 stack·queue 사용하기
+# ArrayDeque로 스택과 큐 사용하기
 
 `ArrayDeque`는 앞과 뒤 양쪽에서 값을 넣고 뺄 수 있는 deque 구현입니다. 코딩테스트에서는 같은 타입을 **queue, stack, 양방향 deque**로 사용할 수 있어 자주 등장합니다.
 
@@ -119,6 +119,6 @@ BFS에서 queue를 왜 쓰는지, DFS에서 stack을 어떻게 사용하는지�
 4. 빈 상태가 가능한지 보고 poll/remove 계열을 선택합니다.
 5. peek이 제거하지 않는다는 점을 확인합니다.
 
-### 면접이나 문제 풀이에서 설명한다면
+### 학습 후 스스로 설명해 보기
 
 `ArrayDeque`는 양 끝 삽입·제거가 가능한 deque라서 queue와 stack을 모두 표현할 수 있습니다. Queue로는 보통 뒤에 넣고 앞에서 빼며, stack으로는 `push/pop` 같은 한쪽 끝 연산을 사용합니다. `poll`은 빈 경우 null, `remove`는 예외라는 차이와 null 원소를 허용하지 않는다는 점을 알아 두면 좋습니다.

@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.jvm-runtime.reference-strengths
 topicContentKey: java.core.jvm-runtime
 slug: reference-strengths
-title: "Reference strengths"
+title: "Strong·Soft·Weak·Phantom Reference"
 summary: "strong·soft·weak·phantom reference가 객체를 얼마나 강하게 reachable하게 유지하는지 구분하고 cache나 cleanup에 남용하지 않는다"
 level: 3
 status: PUBLISHED
@@ -21,8 +21,14 @@ references:
     language: en
     displayOrder: 2
     relationNote: phantom reference와 ReferenceQueue 사용 확인
+  - url: "https://d2.naver.com/helloworld/329631"
+    title: "네이버 D2: Java Reference와 GC"
+    referenceType: COMPANY_TECH_BLOG
+    language: ko
+    displayOrder: 3
+    relationNote: strong·soft·weak·phantom reference의 학습 흐름 보충
 ---
-# 모든 참조가 객체를 똑같이 살려 두는 것은 아니다
+# Strong·Soft·Weak·Phantom Reference
 
 일반 Java 변수로 객체를 가리키면 보통 strong reference입니다. 이런 강한 참조 경로가 살아 있는 실행에서 이어져 있으면 GC는 그 객체를 회수 대상으로 다루지 않습니다.
 
@@ -153,6 +159,6 @@ Reference type은 "GC 튜닝 꼼수"보다 **ownership과 reachability semantics
 7. ReferenceQueue를 사용하면 Reference 객체 자체도 필요한 기간 동안 reachable하게 유지합니다.
 8. 명시적으로 close 가능한 resource를 GC timing에 맡기지 않습니다.
 
-### 면접에서 설명한다면
+### 학습 후 스스로 설명해 보기
 
 일반 reference는 strong reference라서 live computation에서 그 경로가 살아 있는 동안 객체를 유지합니다. `WeakReference`는 객체가 weakly reachable해졌다고 GC가 판단하면 관련 weak reference가 clear되는 약한 관계입니다. `SoftReference`는 그보다 강한 reachability로 memory demand에 따라 clear되며, JVM이 OOME를 던지기 전에는 softly-reachable 객체의 soft reference가 clear되어야 하지만 일반적인 clear 시각이나 순서는 보장되지 않습니다. `PhantomReference`는 `get()`으로 객체를 되찾는 용도가 아니라 `ReferenceQueue`와 함께 post-mortem cleanup을 관찰·예약하는 데 사용합니다.

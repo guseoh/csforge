@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.metadata-compatibility.reflection-class-api
 topicContentKey: java.core.metadata-compatibility
 slug: reflection-class-api
-title: "Reflection and Class API"
+title: "Reflection과 Class API"
 summary: "실행 중 Class 정보를 보고 method·field·constructor를 찾고 호출하는 reflection의 목적과 타입 안전성·접근 제어 한계를 이해한다"
 level: 2
 status: PUBLISHED
@@ -22,7 +22,7 @@ references:
     displayOrder: 2
     relationNote: runtime type와 member 조회 API 확인
 ---
-# 실행 중에 class 구조를 알아내야 하는 이유
+# Reflection과 Class API
 
 일반 Java 코드는 컴파일할 때 어떤 class와 method를 호출할지 알고 있습니다.
 
@@ -189,6 +189,6 @@ Java/Spring backend에서는 다음과 연결됩니다.
 6. Reflection 자체와 framework behavior를 구분합니다.
 7. 성능을 이야기할 때 lookup 빈도와 실제 측정을 확인합니다.
 
-### 면접에서 설명한다면
+### 학습 후 스스로 설명해 보기
 
 Reflection은 실행 중 `Class`를 통해 method, field, constructor, annotation 같은 runtime metadata를 조사하고 필요하면 호출할 수 있게 하는 Java API입니다. Framework가 미리 알 수 없는 사용자 class를 처리할 때 유용하지만 문자열 기반 lookup과 `Object` 결과 때문에 compile-time type safety가 약해질 수 있고, private access도 JPMS 같은 runtime 접근 경계를 무조건 우회하지는 못합니다. Spring이나 serializer는 reflection을 사용해 metadata를 찾은 뒤 별도의 framework logic으로 실제 behavior를 적용합니다.

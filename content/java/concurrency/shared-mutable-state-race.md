@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.concurrency.shared-mutable-state-race
 topicContentKey: java.core.concurrency
 slug: shared-mutable-state-race
-title: "Shared mutable state and race"
+title: "공유 가변 상태와 Race Condition"
 summary: "여러 thread가 같은 변경 가능한 상태를 읽고 쓸 때 실행 순서에 따라 값이 깨지는 이유와 보호할 상태 경계를 찾는다"
 level: 2
 status: PUBLISHED
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: shared variable, inter-thread action과 data race의 Java Memory Model 확인
 ---
-# Shared mutable state와 race
+# 공유 가변 상태와 Race Condition
 
 동시성 문제는 "thread가 여러 개라서"만 생기는 것이 아닙니다. **여러 thread가 같은 상태를 공유하고, 그 상태를 변경하며, 변경 과정이 서로 겹칠 수 있을 때** 본격적으로 문제가 됩니다.
 
@@ -33,6 +33,8 @@ class Counter {
 ```
 
 코드는 한 줄이지만 증가라는 동작을 논리적으로 풀어 보면 현재 값을 읽고, 1을 더하고, 새 값을 저장하는 과정입니다.
+
+![두 thread가 counter 증가를 잃어버리는 interleaving](/learning/java/race-condition.svg)
 
 ### 두 thread가 같은 값을 읽으면 증가 하나가 사라질 수 있다
 
@@ -124,6 +126,6 @@ atomicity: 여러 단계가 중간에 끼어들 수 없는 하나의 단위인�
 - thread-safe collection을 사용해도 여러 operation으로 만든 업무 규칙이 자동으로 atomic해지지 않습니다.
 - race는 반드시 예외를 던지는 형태로 나타나는 것이 아닙니다. 조용히 잘못된 값이 남을 수 있습니다.
 
-### 면접에서 설명한다면
+### 학습 후 스스로 설명해 보기
 
 공유 가변 상태를 여러 thread가 동시에 읽고 수정하면 실행 순서에 따라 lost update 같은 race condition이 발생할 수 있습니다. `count++`도 read-modify-write의 복합 동작이어서 자동으로 atomic하지 않습니다. 해결할 때는 변수 하나가 아니라 재고 확인과 차감처럼 실제 invariant의 경계를 찾고, 공유 제거·lock·atomic operation 등 그 경계에 맞는 방법을 선택해야 합니다.

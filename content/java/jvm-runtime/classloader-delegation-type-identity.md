@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.jvm-runtime.classloader-delegation-type-identity
 topicContentKey: java.core.jvm-runtime
 slug: classloader-delegation-type-identity
-title: "ClassLoader delegation and type identity"
+title: "ClassLoader 위임과 타입 동일성"
 summary: "class를 어떤 ClassLoader가 정의했는지가 runtime type identity의 일부라는 점과 delegation이 중복 loading을 줄이는 방식을 이해한다"
 level: 3
 status: PUBLISHED
@@ -22,7 +22,7 @@ references:
     displayOrder: 2
     relationNote: binary name과 defining loader의 runtime type identity 확인
 ---
-# 이름이 같은 class가 왜 서로 다른 타입이 될 수 있을까
+# ClassLoader 위임과 타입 동일성
 
 애플리케이션과 plugin이 모두 `com.example.Service`라는 class를 가지고 있다고 해 보겠습니다. package와 class 이름이 완전히 같으니 JVM도 같은 타입으로 볼 것 같지만, 실제 runtime type identity에는 **그 class를 정의한 ClassLoader**도 중요합니다.
 
@@ -154,6 +154,6 @@ Plugin reload나 application redeploy에서 이전 ClassLoader를 static cache�
 5. cast 실패 시 `getClassLoader()`를 진단 단서로 사용합니다.
 6. custom loader가 반드시 parent-first라고 가정하지 않습니다.
 
-### 면접에서 설명한다면
+### 학습 후 스스로 설명해 보기
 
 ClassLoader는 runtime에서 class definition을 찾고 JVM에 정의합니다. 일반적인 loader는 parent delegation으로 상위 loader에 먼저 요청하지만 custom loader는 다른 정책을 가질 수 있습니다. JVM의 runtime type identity에는 binary name뿐 아니라 defining ClassLoader도 중요해서, 같은 이름의 class라도 서로 다른 loader가 정의하면 다른 타입이 될 수 있습니다. 그래서 plugin이나 application server에서는 공통 API를 어떤 loader가 정의하는지가 중요합니다.

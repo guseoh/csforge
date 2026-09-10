@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.metadata-compatibility.jpms-classpath-modulepath
 topicContentKey: java.core.metadata-compatibility
 slug: jpms-classpath-modulepath
-title: "JPMS, classpath, and module path"
+title: "JPMS·Classpath·Module Path"
 summary: "classpath와 JPMS module path의 차이, named/unnamed module, requires/exports를 이해하고 module 경계가 dependency와 접근 가능성을 어떻게 명시하는지 설명한다"
 level: 2
 status: PUBLISHED
@@ -22,7 +22,7 @@ references:
     displayOrder: 2
     relationNote: named·unnamed module runtime metadata 확인
 ---
-# Classpath만으로도 실행되는데 module system은 왜 생겼을까
+# JPMS·Classpath·Module Path
 
 전통적인 Java 애플리케이션은 classpath에 jar와 class directory를 나열하고 필요한 class를 찾았습니다. 이 방식은 단순하고 지금도 매우 널리 쓰이지만, 큰 애플리케이션에서는 **어떤 component가 어떤 다른 component에 의존하는지, 어느 package가 외부에 공개된 API인지**를 classpath만으로 강하게 표현하기 어렵습니다.
 
@@ -238,6 +238,6 @@ JPMS는 dependency/encapsulation을 language/runtime 수준에서 명시할 수 
 5. Classpath code가 unnamed module과 연결된다는 점을 이해합니다.
 6. 모든 Java/Spring 프로젝트에 JPMS가 필수라고 가정하지 않습니다.
 
-### 면접에서 설명한다면
+### 학습 후 스스로 설명해 보기
 
 Classpath는 class와 jar를 찾는 전통적인 실행 경로이고, JPMS는 module 이름과 dependency, 외부에 공개할 package를 명시하는 module graph를 추가합니다. `requires`는 다른 module에 대한 dependency/readability를, `exports`는 외부에서 접근 가능한 package를 표현합니다. Public class라도 package가 export되지 않으면 named module 밖에서 접근할 수 없고, reflection에는 `opens` 같은 추가 경계가 영향을 줄 수 있습니다. 일반 classpath application은 unnamed module로 동작할 수 있으며 JPMS 도입은 실제 encapsulation 요구와 framework compatibility를 보고 판단합니다.

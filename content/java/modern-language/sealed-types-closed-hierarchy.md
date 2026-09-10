@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.modern-language.sealed-types-closed-hierarchy
 topicContentKey: java.core.modern-language
 slug: sealed-types-closed-hierarchy
-title: "Sealed types and closed hierarchies"
+title: "Sealed Type과 닫힌 계층"
 summary: "허용할 하위 타입을 제한해 닫힌 타입 계층을 만들고 누락 없는 처리를 설계한다"
 level: 2
 status: PUBLISHED
@@ -22,7 +22,7 @@ references:
     displayOrder: 2
     relationNote: sealed interface와 허용 하위 타입 확인
 ---
-# Sealed types and closed hierarchies
+# Sealed Type과 닫힌 계층
 
 어떤 타입은 애초에 가능한 종류가 정해져 있습니다. 결제 처리 결과가 `Success`, `Failure`, `Pending` 세 종류뿐이라면, 프로젝트의 아무 클래스나 새로운 결과 타입을 구현할 수 있게 열어 두는 것보다 **허용된 종류를 코드에 명시하는 편이 모델의 의도를 더 잘 보여 줍니다.**
 
@@ -114,6 +114,6 @@ sealed interface PaymentResult permits Success, Failure {
 4. switch가 모든 가능한 subtype을 처리하는지 본다.
 5. 넓은 pattern이 앞에 있어 뒤의 구체적인 pattern을 가리는지 함께 확인한다.
 
-### 면접에서 설명한다면
+### 학습 후 스스로 설명해 보기
 
 sealed type은 상속이나 구현을 완전히 금지하는 것이 아니라, 허용할 직접 하위 타입을 제한하는 기능이라고 설명하면 됩니다. 가능한 subtype 집합을 코드에 명시할 수 있고 pattern matching switch와 결합하면 누락된 subtype 처리를 컴파일러가 확인하는 데 도움이 됩니다. 다만 외부 확장이 중요한 API에는 오히려 제약이 될 수 있으므로 닫힌 도메인 모델에 적합한지 판단해야 합니다.

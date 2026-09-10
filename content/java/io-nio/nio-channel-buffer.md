@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.io-nio.nio-channel-buffer
 topicContentKey: java.core.io-nio
 slug: nio-channel-buffer
-title: "NIO Channel and Buffer"
+title: "NIO Channel과 Buffer"
 summary: "Channel로 데이터를 주고받을 때 Buffer의 position·limit·capacity가 어떻게 바뀌는지 상태 변화로 이해한다"
 level: 2
 status: PUBLISHED
@@ -22,11 +22,13 @@ references:
     displayOrder: 2
     relationNote: Channel의 I/O·open/close abstraction 확인
 ---
-# NIO Channel and Buffer
+# NIO Channel과 Buffer
 
 NIO 코드를 처음 보면 `flip()`, `clear()`가 왜 필요한지 가장 헷갈립니다. 이유는 하나의 `Buffer`가 **데이터를 채울 때와 이미 채운 데이터를 읽을 때 서로 다른 범위를 사용하기 때문**입니다.
 
 Channel은 데이터가 오가는 통로이고 Buffer는 그 데이터를 애플리케이션이 읽고 쓰는 임시 저장 영역입니다.
+
+![NIO Buffer의 write mode와 read mode 전환](/learning/java/nio-buffer-flip.svg)
 
 ### Buffer에는 세 가지 핵심 위치 값이 있다
 
@@ -154,6 +156,6 @@ while (buffer.hasRemaining()) {
 - `position`은 OS file offset과 같은 개념이 아닙니다.
 - 한 번의 Channel read/write가 항상 요청한 전체 데이터를 처리하지는 않습니다.
 
-### 면접에서 설명한다면
+### 학습 후 스스로 설명해 보기
 
 NIO에서 Channel은 I/O 통로이고 Buffer는 데이터가 담기는 영역입니다. Buffer는 `position`, `limit`, `capacity`로 현재 읽기·쓰기 범위를 관리합니다. Channel에서 데이터를 채운 뒤 `flip()`으로 읽기 범위를 만들고, 모두 소비한 뒤 `clear()`로 다시 쓰기 준비를 합니다. 일부 데이터가 남아 다음 입력과 이어야 한다면 `compact()`를 사용할 수 있습니다.

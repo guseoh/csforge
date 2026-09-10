@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.concurrency.scoped-value-context
 topicContentKey: java.core.concurrency
 slug: scoped-value-context
-title: "ScopedValue context"
+title: "ScopedValue로 실행 문맥 전달하기"
 summary: "Java 25의 ScopedValue가 값을 현재 thread의 제한된 dynamic scope에 바인딩하고 StructuredTaskScope 같은 명시적 구조에서 자식 작업으로 상속하는 방식을 이해한다"
 level: 3
 status: PUBLISHED
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: Java 25 ScopedValue의 per-thread binding·rebinding·inheritance 계약 확인
 ---
-# ScopedValue는 어떤 context 전달 문제를 풀까
+# ScopedValue로 실행 문맥 전달하기
 
 요청 ID나 인증 주체처럼 호출 계층 전체에서 읽어야 하는 값이 있습니다. 모든 메서드 인자로 전달하는 것이 가장 명시적이지만 깊은 호출 경로에서는 반복적인 plumbing이 커질 수 있습니다. 그렇다고 `ThreadLocal`에 값을 넣고 여기저기서 바꾸면 값의 생명주기와 정리 책임이 흐려질 수 있습니다.
 
@@ -188,6 +188,6 @@ record RequestContext(
 - binding이 읽기 중심이라고 value object 자체가 immutable해지는 것은 아닙니다.
 - Java 25의 ScopedValue는 정식 API지만 StructuredTaskScope는 preview API입니다.
 
-### 면접에서 설명한다면
+### 학습 후 스스로 설명해 보기
 
 `ScopedValue`는 caller가 값을 현재 thread의 bounded dynamic scope에 바인딩하고 안쪽 호출이 읽도록 하는 Java 25 API입니다. `ThreadLocal`처럼 callee가 thread-local slot을 임의로 변경하고 수동으로 remove하는 모델보다 one-way request context 전달에 적합합니다. Binding은 기본적으로 per-thread이고 arbitrary executor로 자동 전파되지 않지만, `StructuredTaskScope`처럼 명시적으로 지원하는 구조에서는 fork된 subtask thread가 binding을 상속합니다. 바인딩된 객체 자체의 mutability나 thread-safety는 별도 문제입니다.

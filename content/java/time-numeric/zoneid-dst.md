@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.time-numeric.zoneid-dst
 topicContentKey: java.core.time-numeric
 slug: zoneid-dst
-title: "ZoneId and daylight saving time"
+title: "ZoneId와 서머타임 전환"
 summary: "고정 offset과 지역 시간대 규칙을 구분하고 DST로 생기는 존재하지 않거나 중복되는 시간을 이해한다"
 level: 2
 status: PUBLISHED
@@ -22,7 +22,7 @@ references:
     displayOrder: 2
     relationNote: DST gap·overlap에서 local time을 해석하는 규칙 확인
 ---
-# ZoneId and daylight saving time
+# ZoneId와 서머타임 전환
 
 `+09:00`과 `Asia/Seoul`은 비슷해 보이지만 표현하는 정보의 범위가 다릅니다. `+09:00`은 UTC와 몇 시간 차이 나는지를 나타내는 **offset**이고, `Europe/Paris` 같은 `ZoneId`는 날짜에 따라 offset이 어떻게 달라지는지를 포함하는 **지역 시간대 규칙의 식별자**입니다.
 
@@ -108,6 +108,6 @@ calendar 기준 +1 day
 - API가 gap을 자동 조정해 준다고 그 결과가 업무적으로 옳다는 뜻은 아닙니다.
 - 서버의 기본 timezone은 사용자 시간대 정책의 대체물이 아닙니다.
 
-### 면접에서 설명한다면
+### 학습 후 스스로 설명해 보기
 
 `ZoneOffset`은 특정 시점의 UTC 차이를 나타내고 `ZoneId`는 지역의 날짜별 시간대 규칙을 나타낸다고 설명하면 됩니다. DST 전환에서는 존재하지 않는 local time인 gap과 두 번 나타나는 overlap이 생길 수 있으므로 예약이나 반복 일정에서는 Java API의 기본 보정에만 의존하지 말고 업무 정책을 명시해야 합니다.

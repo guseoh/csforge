@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.time-numeric.clock-testable-time
 topicContentKey: java.core.time-numeric
 slug: clock-testable-time
-title: "Clock and testable time"
+title: "Clock으로 테스트 가능한 시간 만들기"
 summary: "현재 시간이 업무 판단에 영향을 줄 때 Clock으로 시간의 출처를 분리해 테스트 가능하게 만든다"
 level: 2
 status: PUBLISHED
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: 시스템 시계와 fixed·offset Clock 등 시간 source 계약 확인
 ---
-# Clock and testable time
+# Clock으로 테스트 가능한 시간 만들기
 
 회원 쿠폰이 "8월 31일 23시 59분까지 유효"하다는 정책을 테스트한다고 생각해 보겠습니다. 코드 안에서 매번 `Instant.now()`를 직접 호출하면 테스트를 실행하는 실제 시각에 따라 결과가 달라집니다. 경계 시각 바로 전과 직후를 재현하려면 컴퓨터의 시간을 바꾸는 식의 불편한 방법이 필요해집니다.
 
@@ -123,6 +123,6 @@ Spring Bean으로 `Clock`을 제공하면 운영 설정과 테스트 대체도 �
 4. 여러 번 현재 시각을 읽어 경계가 달라질 가능성이 있는지 확인합니다.
 5. Clock이 zone·만료 포함 여부 같은 업무 규칙까지 해결한다고 착각하지 않습니다.
 
-### 면접에서 설명한다면
+### 학습 후 스스로 설명해 보기
 
 현재 시각도 파일·네트워크처럼 코드 외부에서 들어오는 입력으로 볼 수 있습니다. `Clock`을 주입하면 운영에서는 시스템 시각을 사용하고 테스트에서는 특정 시각을 고정해 만료·예약 같은 시간 의존 정책을 결정적으로 테스트할 수 있습니다. Clock은 시간의 출처를 분리할 뿐 timezone이나 만료 기준 같은 비즈니스 규칙 자체를 대신하지는 않습니다.

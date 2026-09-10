@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.modern-language.record-data-modeling
 topicContentKey: java.core.modern-language
 slug: record-data-modeling
-title: "Record data modeling"
+title: "Record로 데이터 모델링하기"
 summary: "record가 데이터 중심 타입의 반복 코드를 줄이는 방식과 얕은 불변성의 한계를 이해한다"
 level: 2
 status: PUBLISHED
@@ -22,7 +22,7 @@ references:
     displayOrder: 2
     relationNote: record의 공통 기반 타입과 의미 확인
 ---
-# Record data modeling
+# Record로 데이터 모델링하기
 
 API 응답처럼 "이름, 가격, 상태를 하나의 값 묶음으로 전달한다"는 목적의 타입을 만들 때 일반 클래스는 필드, 생성자, 접근자, `equals`, `hashCode`, `toString` 같은 반복 코드가 많이 생깁니다. 이런 타입은 복잡한 생명주기보다 **어떤 데이터로 구성되어 있는지**가 더 중요합니다.
 
@@ -140,6 +140,6 @@ record를 Response DTO로 사용하면 간결하지만, 내부에 mutable collec
 - record는 단순히 "Lombok을 언어에 넣은 것"이 아니라 데이터 중심 타입을 명시하는 Java 언어 기능입니다.
 - 모든 JPA Entity나 도메인 객체를 record로 바꾸는 것이 좋은 설계는 아닙니다.
 
-### 면접에서 설명한다면
+### 학습 후 스스로 설명해 보기
 
 record는 데이터 중심 클래스를 간결하게 선언하고 component를 기반으로 생성자, 접근자, `equals/hashCode/toString` 같은 반복 코드를 줄여 주는 언어 기능이라고 설명할 수 있습니다. 다만 component 필드가 재대입되지 않는 것과 내부 객체가 불변인 것은 다르므로 mutable collection 등을 보관한다면 방어적 복사가 필요할 수 있습니다.
