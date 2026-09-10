@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.sql.Timestamp;
 import java.time.Instant;
 
+import com.guseoh.csforge.test.PostgresIntegrationTestSupport;
 import javax.sql.DataSource;
 
 import org.flywaydb.core.Flyway;
@@ -25,10 +26,7 @@ class DashboardMigrationIntegrationTest {
     private static final Instant LAST = Instant.parse("2026-09-03T01:00:00Z");
 
     @Container
-    static final PostgreSQLContainer<?> POSTGRES = new PostgreSQLContainer<>("postgres:16.4")
-            .withDatabaseName("csforge_dashboard_migration_test")
-            .withUsername("csforge")
-            .withPassword("csforge");
+    static final PostgreSQLContainer<?> POSTGRES = PostgresIntegrationTestSupport.container("csforge_dashboard_migration_test");
 
     @Test
     void backfillsFirstAndDistinctLastWithoutInventingIntermediateViews() {

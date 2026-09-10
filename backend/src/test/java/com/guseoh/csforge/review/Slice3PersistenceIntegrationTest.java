@@ -26,6 +26,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import com.guseoh.csforge.quiz.application.QuizQuestionSelectionCriteria;
 import com.guseoh.csforge.quiz.application.QuizQuestionState;
+import com.guseoh.csforge.test.PostgresIntegrationTestSupport;
 import com.guseoh.csforge.review.application.ReviewDueWindow;
 import com.guseoh.csforge.review.application.ReviewListCriteria;
 import com.guseoh.csforge.review.application.ReviewTimeWindow;
@@ -42,16 +43,11 @@ import com.guseoh.csforge.review.infrastructure.ReviewScheduleSearchRepository;
 class Slice3PersistenceIntegrationTest {
 
     @Container
-    static final PostgreSQLContainer<?> POSTGRES = new PostgreSQLContainer<>("postgres:16.4")
-            .withDatabaseName("csforge_slice3_test")
-            .withUsername("csforge")
-            .withPassword("csforge");
+    static final PostgreSQLContainer<?> POSTGRES = PostgresIntegrationTestSupport.container("csforge_slice3_test");
 
     @DynamicPropertySource
     static void registerDatabaseProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", POSTGRES::getJdbcUrl);
-        registry.add("spring.datasource.username", POSTGRES::getUsername);
-        registry.add("spring.datasource.password", POSTGRES::getPassword);
+        PostgresIntegrationTestSupport.registerDataSourceProperties(registry, POSTGRES);
     }
 
     @Autowired
