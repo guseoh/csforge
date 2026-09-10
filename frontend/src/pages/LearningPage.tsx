@@ -5,47 +5,74 @@ import { CanonicalBootstrapCard } from '../components/CanonicalBootstrapCard'
 import { getConcepts, getLearningAreas, type AreaSummary, type ConceptListItem } from '../lib/learning-api'
 import { defaultLearningSearch } from '../lib/learning-search'
 import { selectRecentConcepts } from '../lib/learning-recent'
+import { defaultQuizSearch } from '../lib/quiz-search'
 
 function completionPercent(area: AreaSummary) {
   if (area.publishedConceptCount === 0) return 0
   return Math.round((area.completedConceptCount / area.publishedConceptCount) * 100)
 }
 
-function LevelProgress({ label, progress }: { label: string; progress: { total: number; completed: number } }) {
-  const percent = progress.total === 0 ? 0 : Math.round((progress.completed / progress.total) * 100)
-  return (
-    <div className="level-progress">
-      <span>{label}</span>
-      <span>{progress.completed}/{progress.total}</span>
-      <div className="progress-track" aria-hidden="true">
-        <span style={{ width: `${percent}%` }} />
-      </div>
-    </div>
-  )
+const areaVisuals: Record<string, { glyph: string; accent: string }> = {
+  'computer-architecture': { glyph: '▦', accent: 'blue' },
+  'data-structures-algorithms': { glyph: '</>', accent: 'violet' },
+  'operating-systems': { glyph: '▣', accent: 'indigo' },
+  'network-http': { glyph: '◎', accent: 'green' },
+  database: { glyph: '▤', accent: 'orange' },
+  java: { glyph: '☕', accent: 'red' },
+  spring: { glyph: '✦', accent: 'emerald' },
+  'backend-engineering': { glyph: '⌘', accent: 'purple' },
+  cache: { glyph: '◉', accent: 'rose' },
+  'messaging-async': { glyph: '↗', accent: 'teal' },
+  'infrastructure-cloud': { glyph: '◇', accent: 'slate' },
+  'performance-observability-operations': { glyph: '◒', accent: 'cyan' },
+  'distributed-systems': { glyph: '⌘', accent: 'purple' },
+  'system-design': { glyph: '▱', accent: 'slate' },
+  security: { glyph: '◆', accent: 'amber' },
+}
+
+function areaCompletionPercent(area: AreaSummary) {
+  return completionPercent(area)
 }
 
 function AreaCard({ area }: { area: AreaSummary }) {
+  const visual = areaVisuals[area.slug] ?? { glyph: '✦', accent: 'violet' }
+  const completion = areaCompletionPercent(area)
+
   return (
-    <Link className="area-card" to="/learning/$areaSlug" params={{ areaSlug: area.slug }} search={defaultLearningSearch}>
-      <div className="area-card-heading">
-        <div>
-          <h2>{area.name}</h2>
-          <p className="area-card-completion">{completionPercent(area)}% 학습 완료 · {area.topicCount}개 주제</p>
+    <article className={`area-card area-card-${visual.accent}`}>
+      <Link className="area-card-main" to="/learning/$areaSlug" params={{ areaSlug: area.slug }} search={defaultLearningSearch}>
+        <div className="area-card-topline">
+          <span className="area-card-icon" aria-hidden="true">{visual.glyph}</span>
+          <span className="area-card-tag">{area.topicCount}개 주제</span>
         </div>
-        <span className="area-card-arrow" aria-hidden="true">→</span>
+        <div className="area-card-heading">
+          <div>
+            <h2>{area.name}</h2>
+            <p className="area-card-description">{area.description ?? '이 영역의 핵심 개념을 순서대로 학습하세요.'}</p>
+          </div>
+          <span className="area-card-arrow" aria-hidden="true">→</span>
+        </div>
+        <div className="area-metrics">
+          <span>{area.publishedConceptCount}개 개념</span>
+          <span>{area.publishedQuestionCount}개 문제</span>
+          <span>{area.finalizedAttemptCount === 0 ? '정확도 —' : `정확도 ${Math.round(area.accuracyPercent)}%`}</span>
+        </div>
+        <div className="area-card-progress" aria-label={`학습 진행률 ${completion}%`}>
+          <div className="area-card-progress-label">
+            <span>학습 진행률</span>
+            <strong>{completion}%</strong>
+          </div>
+          <div className="progress-track" aria-hidden="true">
+            <span style={{ width: `${completion}%` }} />
+          </div>
+          <p className="area-card-context">L1 {area.level1.completed}/{area.level1.total} · L2 {area.level2.completed}/{area.level2.total} · L3 {area.level3.completed}/{area.level3.total}</p>
+        </div>
+      </Link>
+      <div className="area-card-footer">
+        <Link className="area-card-footer-link" to="/learning/$areaSlug" params={{ areaSlug: area.slug }} search={defaultLearningSearch}>개념 가이드 보기 <span aria-hidden="true">→</span></Link>
+        <Link className="area-card-footer-link area-card-quiz-link" to="/quiz" search={{ ...defaultQuizSearch, areas: area.slug }}>문제 풀어보기 <span aria-hidden="true">→</span></Link>
       </div>
-      <div className="area-metrics">
-        <span>{area.publishedConceptCount}개 개념</span>
-        <span>{area.publishedQuestionCount}개 문제</span>
-        <span>{area.finalizedAttemptCount === 0 ? '정확도 —' : `정확도 ${Math.round(area.accuracyPercent)}%`}</span>
-      </div>
-      <p className="area-card-context">북마크 {area.bookmarkedConceptCount}개 · 레벨별 학습 흐름</p>
-      <div className="level-progress-list">
-        <LevelProgress label="L1" progress={area.level1} />
-        <LevelProgress label="L2" progress={area.level2} />
-        <LevelProgress label="L3" progress={area.level3} />
-      </div>
-    </Link>
+    </article>
   )
 }
 
@@ -81,14 +108,19 @@ export function LearningPage() {
 
   return (
     <section className="page-section learning-page">
-      <div className="page-heading">
-        <div>
-          <p className="eyebrow">학습 가이드</p>
-          <h1>무엇을 공부할까요?</h1>
-          <p className="lead">오늘 공부할 영역을 고르고, 개념을 차근차근 쌓아가세요.</p>
-        </div>
-        <span className="result-count">{areasQuery.data.length}개 영역</span>
+      <div className="learning-hero">
+        <span className="learning-hero-kicker">What you'll learn</span>
+        <h1>신입이 꼭 알아야 할 CS 기초</h1>
+        <p className="lead">자료구조부터 Java와 데이터베이스까지,<br />핵심 개념을 순서대로 학습하세요.</p>
+        <span className="result-count">{areasQuery.data.length}개 학습 영역</span>
       </div>
+      {areasQuery.data.length === 0 ? (
+        <EmptyState message="활성화된 학습 영역이 없습니다." />
+      ) : (
+        <div className="area-grid">
+          {areasQuery.data.map((area) => <AreaCard key={area.id} area={area} />)}
+        </div>
+      )}
       {recentConceptsQuery.isPending && <div className="recent-concepts-state">최근 본 개념 불러오는 중…</div>}
       {recentConceptsQuery.isError && (
         <div className="recent-concepts-state error-text" role="alert">
@@ -110,13 +142,6 @@ export function LearningPage() {
         </section>
       )}
       <CanonicalBootstrapCard />
-      {areasQuery.data.length === 0 ? (
-        <EmptyState message="활성화된 학습 영역이 없습니다." />
-      ) : (
-        <div className="area-grid">
-          {areasQuery.data.map((area) => <AreaCard key={area.id} area={area} />)}
-        </div>
-      )}
     </section>
   )
 }

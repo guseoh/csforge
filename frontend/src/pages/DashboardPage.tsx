@@ -58,12 +58,21 @@ export function DashboardPage() {
     <section className="page-section dashboard-page">
       <div className="dashboard-heading">
         <div>
-          <p className="eyebrow">오늘의 학습</p>
-          <h1>오늘의 학습 흐름</h1>
-          <p className="lead">{dashboard.studyDate} · {dashboard.zoneId} 기준으로 쌓인 학습 기록입니다.</p>
+          <p className="eyebrow">CSForge · 오늘의 학습</p>
+          <h1>기초 지식, 매일 조금씩<br /><span className="dashboard-hero-accent">CSForge와 함께</span></h1>
+          <p className="lead">{hasActivity ? `${dashboard.studyDate} · ${dashboard.zoneId} 기준으로 학습 흐름이 이어지고 있습니다.` : '개념을 읽고, 문제를 풀고, 틀린 내용을 다시 보며 기본기를 쌓아가세요.'}</p>
         </div>
         <span className="dashboard-as-of">기준일 {formatDate(dashboard.asOf)}</span>
       </div>
+
+      <div className="dashboard-action-row">
+        {dashboard.activeQuiz && <Link className="primary-button" to="/quiz/$quizId" params={{ quizId: String(dashboard.activeQuiz.quizId) }}>이어 풀기 · {dashboard.activeQuiz.answeredCount}/{dashboard.activeQuiz.questionCount}</Link>}
+        {dashboard.today.reviewDueCount > 0 && <button className={dashboard.activeQuiz ? 'secondary-button' : 'primary-button'} type="button" disabled={reviewMutation.isPending} onClick={() => reviewMutation.mutate()}>{reviewMutation.isPending ? '복습 준비 중…' : '복습 시작'}</button>}
+        <Link className={dashboard.activeQuiz || dashboard.today.reviewDueCount > 0 ? 'secondary-button' : 'primary-button'} to="/learning" search={defaultLearningSearch}>학습 시작</Link>
+        <Link className="secondary-button" to="/quiz" search={defaultQuizSearch}>새 문제</Link>
+      </div>
+      {!hasActivity && <p className="dashboard-hero-note">가입 없이 개념을 둘러보고, 첫 문제부터 바로 시작할 수 있습니다.</p>}
+      {reviewMutation.isError && <p className="helper-text error-text">복습 Quiz를 시작하지 못했습니다. 다시 시도하세요.</p>}
 
       <div className="dashboard-kpi-grid">
         <div className="dashboard-kpi"><span>오늘 푼 문제</span><strong>{dashboard.today.solvedCount}</strong><small>정답 {dashboard.today.correctCount} · 오답 {dashboard.today.wrongCount}</small></div>
@@ -71,14 +80,6 @@ export function DashboardPage() {
         <div className="dashboard-kpi dashboard-kpi-action"><span>복습 대기</span><strong>{dashboard.today.reviewDueCount}</strong><small>{dashboard.today.reviewDueCount > 0 ? '지금 시작할 수 있습니다.' : '현재 대기 중인 복습이 없습니다.'}</small></div>
         <div className="dashboard-kpi"><span>연속 학습</span><strong>{dashboard.currentStreak}일</strong><small>{dashboard.currentStreak === 0 ? '오늘 다시 시작해 보세요.' : '활동이 이어지고 있습니다.'}</small></div>
       </div>
-
-      <div className="dashboard-action-row">
-        {dashboard.activeQuiz && <Link className="primary-button" to="/quiz/$quizId" params={{ quizId: String(dashboard.activeQuiz.quizId) }}>이어 풀기 · {dashboard.activeQuiz.answeredCount}/{dashboard.activeQuiz.questionCount}</Link>}
-        {dashboard.today.reviewDueCount > 0 && <button className={dashboard.activeQuiz ? 'secondary-button' : 'primary-button'} type="button" disabled={reviewMutation.isPending} onClick={() => reviewMutation.mutate()}>{reviewMutation.isPending ? '복습 준비 중…' : '복습 시작'}</button>}
-        <Link className="secondary-button" to="/learning" search={defaultLearningSearch}>학습 탐색</Link>
-        <Link className="secondary-button" to="/quiz" search={defaultQuizSearch}>새 문제</Link>
-      </div>
-      {reviewMutation.isError && <p className="helper-text error-text">복습 Quiz를 시작하지 못했습니다. 다시 시도하세요.</p>}
 
       {!hasActivity && <div className="dashboard-empty"><strong>첫 학습을 시작해 보세요.</strong><span>Concept를 읽거나 Quiz를 풀면 이곳에 오늘의 활동과 진행률이 쌓입니다.</span><CanonicalBootstrapCard readyAction="learning-link" /></div>}
 
