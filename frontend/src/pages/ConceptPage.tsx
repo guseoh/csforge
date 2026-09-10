@@ -19,17 +19,29 @@ import { defaultQuizSearch } from '../lib/quiz-search'
 type NoteState = 'saved' | 'saving' | 'error'
 
 const referenceTypeLabels: Record<ReferenceType, string> = {
-  OFFICIAL: 'Official',
-  KOREAN_BLOG: 'Korean blog',
-  COMPANY_TECH_BLOG: 'Company tech blog',
-  BOOK: 'Book',
-  PAPER: 'Paper',
-  COURSE: 'Course',
-  OTHER: 'Other',
+  OFFICIAL: '공식 문서',
+  KOREAN_BLOG: '한글 기술 자료',
+  COMPANY_TECH_BLOG: '기업 기술 블로그',
+  BOOK: '도서',
+  PAPER: '논문',
+  COURSE: '강의',
+  OTHER: '기타',
 }
 
-function formatStatus(status: LearningStatus) {
-  return status.replace('_', ' ')
+const learningStatusLabels: Record<LearningStatus, string> = {
+  UNSEEN: '미학습',
+  LEARNING: '학습 중',
+  COMPLETED: '학습 완료',
+  REVIEW_NEEDED: '복습 필요',
+}
+
+function extractOutline(markdown: string) {
+  return markdown
+    .split('\n')
+    .map((line) => line.match(/^#{2,3}\s+(.+)$/)?.[1]?.trim())
+    .filter((heading): heading is string => Boolean(heading))
+    .filter((heading) => !/^면접에서 설명한다면$/i.test(heading))
+    .slice(0, 10)
 }
 
 function ConceptContent({ data, conceptId }: { data: ConceptDetailModel; conceptId: number }) {
@@ -40,6 +52,7 @@ function ConceptContent({ data, conceptId }: { data: ConceptDetailModel; concept
   const hydratedConceptRef = useRef<number | null>(null)
   const noteTimerRef = useRef<number | undefined>(undefined)
   const [noteState, setNoteState] = useState<NoteState>('saved')
+  const outline = extractOutline(data.contentMarkdown)
 
   const noteMutation = useMutation({
     mutationFn: ({ content }: { content: string }) => savePersonalNote(conceptId, content),
@@ -116,18 +129,37 @@ function ConceptContent({ data, conceptId }: { data: ConceptDetailModel; concept
     <>
       <div className="concept-header">
         <div className="chip-row">
-          <span className="chip">Level {data.level}</span>
-          <span className={`chip status-${data.progress.learningStatus.toLowerCase()}`}>{formatStatus(data.progress.learningStatus)}</span>
-          {data.progress.bookmarked && <span className="chip bookmark-chip">★ Bookmarked</span>}
+          <span className="chip">L{data.level}</span>
+          <span className={`chip status-${data.progress.learningStatus.toLowerCase()}`}>{learningStatusLabels[data.progress.learningStatus]}</span>
+          {data.progress.bookmarked && <span className="chip bookmark-chip">★ 북마크됨</span>}
         </div>
         <h1>{data.title}</h1>
-        {data.summary && <p className="lead">{data.summary}</p>}
       </div>
 
-      <div className="concept-actions" aria-label="Concept actions">
-        <ProgressActionButton conceptId={conceptId} status="COMPLETED" label="완료로 표시" />
+      <section className="lesson-overview" aria-label="학습 개요">
+        <div className="lesson-objective">
+          <p className="eyebrow">이번에 배울 것</p>
+          <p>{data.summary ?? `${data.title}의 핵심 동작과 판단 기준을 이해합니다.`}</p>
+          <div className="lesson-context">
+            <span>{data.area.name}</span>
+            <span>›</span>
+            <span>{data.topic.title}</span>
+          </div>
+        </div>
+        {outline.length > 0 && (
+          <div className="lesson-outline">
+            <p className="eyebrow">이 노트의 흐름</p>
+            <ol>
+              {outline.map((heading) => <li key={heading}>{heading}</li>)}
+            </ol>
+          </div>
+        )}
+      </section>
+
+      <div className="concept-actions" aria-label="학습 동작">
+        <Link className="primary-button" to="/quiz" search={{ ...defaultQuizSearch, areas: data.area.slug, concepts: String(conceptId) }}>이 개념으로 퀴즈 풀기</Link>
+        <ProgressActionButton conceptId={conceptId} status="COMPLETED" label="학습 완료" secondary />
         <ProgressActionButton conceptId={conceptId} status="REVIEW_NEEDED" label="복습 필요" secondary />
-        <Link className="secondary-button" to="/quiz" search={{ ...defaultQuizSearch, areas: data.area.slug, concepts: String(conceptId) }}>이 개념 Quiz</Link>
         <BookmarkButton conceptId={conceptId} bookmarked={data.progress.bookmarked} />
       </div>
 
@@ -135,7 +167,7 @@ function ConceptContent({ data, conceptId }: { data: ConceptDetailModel; concept
 
       <section className="detail-section">
         <div className="section-heading">
-          <p className="eyebrow">Personal note</p>
+          <p className="eyebrow">개인 학습 노트</p>
           <span className={`save-state ${noteState}`} role="status">
             {noteState === 'saving' ? '저장 중' : noteState === 'error' ? '저장 실패' : '저장됨'}
           </span>
@@ -143,8 +175,8 @@ function ConceptContent({ data, conceptId }: { data: ConceptDetailModel; concept
         <textarea
           className="note-editor"
           value={noteContent}
-          aria-label="Personal note"
-          placeholder="이 개념에서 기억하고 싶은 내용을 적어보세요."
+          aria-label="개인 학습 노트"
+          placeholder="이 개념에서 기억하고 싶은 내용, 헷갈린 점, 다시 볼 내용을 적어보세요."
           onChange={(event) => queueNoteSave(event.target.value)}
         />
         {noteState === 'error' && (
@@ -155,16 +187,22 @@ function ConceptContent({ data, conceptId }: { data: ConceptDetailModel; concept
 
       <section className="detail-section">
         <div className="section-heading">
-          <p className="eyebrow">References</p>
+          <div>
+            <p className="eyebrow">같이 보면 좋은 자료</p>
+            <p className="section-description">공식 계약을 확인하거나, 개념을 다른 설명과 그림으로 다시 이해할 때 활용하세요.</p>
+          </div>
           <span className="result-count">{data.references.length}</span>
         </div>
-        {data.references.length === 0 ? <EmptyState message="등록된 Reference가 없습니다." /> : (
+        {data.references.length === 0 ? <EmptyState message="등록된 참고 자료가 없습니다." /> : (
           <div className="reference-list">
             {data.references.map((reference) => (
               <a className="reference-item" key={reference.id} href={reference.url} target="_blank" rel="noreferrer">
                 <div>
                   <strong>{reference.title}</strong>
                   <span>{referenceTypeLabels[reference.type]}{reference.language ? ` · ${reference.language}` : ''}{reference.depth ? ` · ${reference.depth}` : ''}</span>
+                  {(reference.recommendation || reference.relationNote) && (
+                    <p>{reference.recommendation ?? reference.relationNote}</p>
+                  )}
                 </div>
                 <span className="external-icon" aria-hidden="true">↗</span>
               </a>
@@ -174,14 +212,14 @@ function ConceptContent({ data, conceptId }: { data: ConceptDetailModel; concept
       </section>
 
       <section className="detail-section navigation-section">
-        <p className="eyebrow">Keep learning</p>
+        <p className="eyebrow">다음 학습</p>
         <div className="concept-navigation">
-          {data.previous ? <Link className="navigation-card" to="/concepts/$conceptId" params={{ conceptId: String(data.previous.id) }}><span>← 이전 Concept</span><strong>{data.previous.title}</strong></Link> : <span />}
-          {data.next ? <Link className="navigation-card next" to="/concepts/$conceptId" params={{ conceptId: String(data.next.id) }}><span>다음 Concept →</span><strong>{data.next.title}</strong></Link> : <span />}
+          {data.previous ? <Link className="navigation-card" to="/concepts/$conceptId" params={{ conceptId: String(data.previous.id) }}><span>← 이전 개념</span><strong>{data.previous.title}</strong></Link> : <span />}
+          {data.next ? <Link className="navigation-card next" to="/concepts/$conceptId" params={{ conceptId: String(data.next.id) }}><span>다음 개념 →</span><strong>{data.next.title}</strong></Link> : <span />}
         </div>
         {data.relatedConcepts.length > 0 && (
           <div className="related-list">
-            <p className="eyebrow">Related in this topic</p>
+            <p className="eyebrow">이 Topic에서 함께 보기</p>
             {data.relatedConcepts.map((related) => <Link key={related.id} to="/concepts/$conceptId" params={{ conceptId: String(related.id) }}>{related.title} <span>L{related.level}</span></Link>)}
           </div>
         )}
@@ -248,7 +286,7 @@ export function ConceptPage() {
       void queryClient.invalidateQueries({ queryKey: ['learning-areas'] })
       void queryClient.invalidateQueries({ queryKey: ['concepts'] })
     },
-    onError: () => showToast('error', 'Concept 조회 상태를 저장하지 못했습니다.'),
+    onError: () => showToast('error', '개념 조회 상태를 저장하지 못했습니다.'),
   })
 
   useEffect(() => {
@@ -263,15 +301,15 @@ export function ConceptPage() {
     return () => { document.title = 'CSForge' }
   }, [conceptQuery.data])
 
-  if (!Number.isSafeInteger(conceptId) || conceptId <= 0) return <ErrorState message="유효하지 않은 Concept입니다." onRetry={() => window.history.back()} />
+  if (!Number.isSafeInteger(conceptId) || conceptId <= 0) return <ErrorState message="유효하지 않은 개념입니다." onRetry={() => window.history.back()} />
   if (conceptQuery.isPending) return <PageSkeleton rows={6} />
-  if (conceptQuery.isError) return <ErrorState message="Concept를 불러오지 못했습니다." onRetry={() => void conceptQuery.refetch()} />
+  if (conceptQuery.isError) return <ErrorState message="개념을 불러오지 못했습니다." onRetry={() => void conceptQuery.refetch()} />
 
   const data = conceptQuery.data
   return (
     <section className="page-section concept-page">
-      <nav className="breadcrumb" aria-label="Breadcrumb">
-        <Link to="/learning" search={defaultLearningSearch}>Learning</Link>
+      <nav className="breadcrumb" aria-label="현재 학습 위치">
+        <Link to="/learning" search={defaultLearningSearch}>학습</Link>
         <span>/</span>
         <Link to="/learning/$areaSlug" params={{ areaSlug: data.area.slug }} search={defaultLearningSearch}>{data.area.name}</Link>
         <span>/</span>
