@@ -37,6 +37,32 @@
   max-width: 790px;
 }
 
+.concept-reading-content > blockquote {
+  margin: 20px 0 26px;
+  padding: 14px 18px;
+  border: 1px solid #354159;
+  border-left: 4px solid var(--accent);
+  border-radius: 9px;
+  color: #dce5f8;
+  background: #171f2e;
+}
+
+.concept-reading-content > blockquote p {
+  margin: 0;
+}
+
+.concept-reading-content img {
+  display: block;
+  width: min(100%, 920px);
+  max-height: 620px;
+  margin: 24px 0 30px;
+  padding: 14px;
+  border: 1px solid #303a50;
+  border-radius: 12px;
+  background: #f7f9fc;
+  object-fit: contain;
+}
+
 .concept-reading-content pre,
 .concept-reading-content table {
   max-width: 100%;
