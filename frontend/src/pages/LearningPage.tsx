@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { EmptyState, ErrorState, PageSkeleton } from '../components/AsyncStates'
+import { CanonicalBootstrapCard } from '../components/CanonicalBootstrapCard'
 import { getConcepts, getLearningAreas, type AreaSummary, type ConceptListItem } from '../lib/api'
 import { defaultLearningSearch } from '../lib/learning-search'
 import { selectRecentConcepts } from '../lib/learning-recent'
@@ -108,6 +109,7 @@ export function LearningPage() {
           </div>
         </section>
       )}
+      <CanonicalBootstrapCard />
       {areasQuery.data.length === 0 ? (
         <EmptyState message="활성화된 학습 영역이 없습니다." />
       ) : (

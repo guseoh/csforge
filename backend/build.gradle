@@ -55,3 +55,45 @@ tasks.named('test') {
 springBoot {
     mainClass = 'com.guseoh.csforge.CsforgeApplication'
 }
+
+def canonicalContentDirectory = file('../content')
+def canonicalContentResourceDirectory = file("${buildDir}/generated/canonical-content-resources")
+
+tasks.register('generateCanonicalContentManifest') {
+    inputs.dir(canonicalContentDirectory)
+    outputs.file(file("${canonicalContentResourceDirectory}/canonical-content/manifest.txt"))
+
+    doLast {
+        def manifest = file("${canonicalContentResourceDirectory}/canonical-content/manifest.txt")
+        def canonicalFiles = fileTree(canonicalContentDirectory) {
+            include '**/*.md'
+            include '**/topics.json'
+            include '**/questions.json'
+            exclude 'examples/**'
+            exclude 'curriculum/**'
+            exclude 'README.md'
+            exclude 'AGENTS.md'
+        }.files.toList().sort { left, right ->
+            project.relativePath(left).replace(File.separator, '/') <=> project.relativePath(right).replace(File.separator, '/')
+        }
+        manifest.parentFile.mkdirs()
+        manifest.text = canonicalFiles.collect { file ->
+            canonicalContentDirectory.toPath().relativize(file.toPath()).toString().replace(File.separator, '/')
+        }.join('\n') + '\n'
+    }
+}
+
+tasks.named('processResources') {
+    dependsOn(tasks.named('generateCanonicalContentManifest'))
+    from(canonicalContentDirectory) {
+        into('canonical-content')
+        include '**/*.md'
+        include '**/topics.json'
+        include '**/questions.json'
+        exclude 'examples/**'
+        exclude 'curriculum/**'
+        exclude 'README.md'
+        exclude 'AGENTS.md'
+    }
+    from(canonicalContentResourceDirectory)
+}

@@ -1,10 +1,11 @@
 import type { ReactNode } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import type { Dashboard } from '../lib/api'
+import type { CanonicalBootstrapStatus, Dashboard } from '../lib/api'
 
 const mocks = vi.hoisted(() => ({
   query: { data: null as Dashboard | null, isPending: false, isError: false, refetch: vi.fn() },
+  bootstrap: { data: null as CanonicalBootstrapStatus | null, isPending: false, isError: false, refetch: vi.fn() },
   navigate: vi.fn(),
 }))
 
@@ -14,7 +15,7 @@ vi.mock('@tanstack/react-router', () => ({
 }))
 
 vi.mock('@tanstack/react-query', () => ({
-  useQuery: () => mocks.query,
+  useQuery: ({ queryKey }: { queryKey: readonly unknown[] }) => queryKey[0] === 'canonical-bootstrap-status' ? mocks.bootstrap : mocks.query,
   useQueryClient: () => ({ invalidateQueries: vi.fn() }),
   useMutation: () => ({ isPending: false, isError: false, mutate: vi.fn() }),
 }))
@@ -42,11 +43,26 @@ function render(data: Dashboard) {
   return renderToStaticMarkup(<DashboardPage />)
 }
 
+function bootstrapStatus(state: CanonicalBootstrapStatus['state']): CanonicalBootstrapStatus {
+  return {
+    state,
+    sourceFileCount: 870,
+    totalBatches: 12,
+    readyBatches: state === 'READY' ? 12 : 0,
+    totalItems: 3304,
+    canonicalItems: { topics: 134, concepts: 721, questions: 2449 },
+    currentCounts: { learningAreas: 15, topics: 0, concepts: 0, questions: 0 },
+  }
+}
+
 describe('DashboardPage', () => {
   beforeEach(() => {
     mocks.query.data = null
     mocks.query.isPending = false
     mocks.query.isError = false
+    mocks.bootstrap.data = null
+    mocks.bootstrap.isPending = false
+    mocks.bootstrap.isError = false
     mocks.navigate.mockReset()
   })
 
@@ -77,5 +93,17 @@ describe('DashboardPage', () => {
     expect(markup).toContain('JPA 기초')
     expect(markup).toContain('2/3 finalized correct')
     expect(markup).toContain('1 self-check 대기')
+  })
+
+  it('keeps the Learning start CTA when READY content has no activity', () => {
+    mocks.bootstrap.data = bootstrapStatus('READY')
+
+    const markup = render(dashboard({
+      today: { solvedCount: 0, correctCount: 0, wrongCount: 0, accuracyPercent: 0, reviewDueCount: 0 },
+      currentStreak: 0,
+      heatmap: [{ date: '2026-09-03', conceptsViewed: 0, questionsSolved: 0, activityCount: 0 }],
+    }))
+
+    expect(markup).toContain('Learning 시작')
   })
 })

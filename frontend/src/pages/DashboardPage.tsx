@@ -1,6 +1,7 @@
 import { Link, useNavigate } from '@tanstack/react-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { EmptyState, ErrorState, PageSkeleton } from '../components/AsyncStates'
+import { CanonicalBootstrapCard } from '../components/CanonicalBootstrapCard'
 import { createReviewQuiz, getDashboard, type DashboardHeatmapDay } from '../lib/api'
 import { defaultLearningSearch } from '../lib/learning-search'
 import { defaultQuizSearch } from '../lib/quiz-search'
@@ -78,7 +79,7 @@ export function DashboardPage() {
       </div>
       {reviewMutation.isError && <p className="helper-text error-text">복습 Quiz를 시작하지 못했습니다. 다시 시도하세요.</p>}
 
-      {!hasActivity && <div className="dashboard-empty"><strong>첫 학습을 시작해 보세요.</strong><span>Concept를 읽거나 Quiz를 풀면 이곳에 오늘의 활동과 진행률이 쌓입니다.</span><Link className="primary-button" to="/learning" search={defaultLearningSearch}>Learning 시작</Link></div>}
+      {!hasActivity && <div className="dashboard-empty"><strong>첫 학습을 시작해 보세요.</strong><span>Concept를 읽거나 Quiz를 풀면 이곳에 오늘의 활동과 진행률이 쌓입니다.</span><CanonicalBootstrapCard readyAction="learning-link" /></div>}
 
       <section className="dashboard-section">
         <div className="section-heading"><div><p className="eyebrow">Activity map</p><h2>최근 365일 활동</h2></div><span className="helper-text">Concept 열람 + 푼 문제</span></div>
