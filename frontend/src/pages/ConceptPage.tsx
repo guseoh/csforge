@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link, useParams } from '@tanstack/react-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { EmptyState, ErrorState, PageSkeleton } from '../components/AsyncStates'
+import { LearningDiagram } from '../components/LearningDiagram'
 import { MarkdownContent } from '../components/MarkdownContent'
 import { useToast } from '../components/toast/ToastProvider'
 import {
@@ -163,6 +164,7 @@ function ConceptContent({ data, conceptId }: { data: ConceptDetailModel; concept
         <BookmarkButton conceptId={conceptId} bookmarked={data.progress.bookmarked} />
       </div>
 
+      <LearningDiagram contentKey={data.contentKey} />
       <MarkdownContent className="concept-reading-content" dedupeLeadingHeading={data.title}>{data.contentMarkdown}</MarkdownContent>
 
       <section className="detail-section">
