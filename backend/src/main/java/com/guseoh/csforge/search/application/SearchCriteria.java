@@ -15,7 +15,7 @@ public record SearchCriteria(
 
     private static final int MAX_QUERY_LENGTH = 200;
     private static final int MAX_SIZE = 50;
-    private static final int MAX_RESULT_WINDOW = 10_000;
+    private static final int MAX_SEARCH_OFFSET = 10_000;
 
     public SearchCriteria {
         query = query == null ? "" : query.trim();
@@ -32,8 +32,8 @@ public record SearchCriteria(
         if (page < 0) throw new IllegalArgumentException("page must be at least 0");
         if (size < 1 || size > MAX_SIZE) throw new IllegalArgumentException("size must be between 1 and 50");
         long from = (long) page * size;
-        if (from + size > MAX_RESULT_WINDOW) {
-            throw new IllegalArgumentException("Search page exceeds the supported result window");
+        if (from + size > MAX_SEARCH_OFFSET) {
+            throw new IllegalArgumentException("Search page exceeds the supported offset");
         }
     }
 

@@ -21,13 +21,11 @@ import com.guseoh.csforge.question.domain.QuestionDifficulty;
 import com.guseoh.csforge.question.domain.QuestionRepository;
 import com.guseoh.csforge.question.domain.QuestionStatus;
 import com.guseoh.csforge.question.domain.QuestionType;
-import com.guseoh.csforge.search.application.SearchChangeType;
-import com.guseoh.csforge.search.application.SearchProjectionChangeRecorder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/** matching preview를 검증한 뒤 canonical aggregate와 Search outbox를 한 transaction에서 upsert한다. */
+/** matching preview를 검증한 뒤 canonical aggregate를 한 transaction에서 upsert한다. */
 @Service
 @RequiredArgsConstructor
 public class ContentImportApplyService {
@@ -38,7 +36,6 @@ public class ContentImportApplyService {
     private final QuestionRepository questionRepository;
     private final QuestionChoiceRepository questionChoiceRepository;
     private final com.guseoh.csforge.learning.domain.ConceptReferenceRepository conceptReferenceRepository;
-    private final SearchProjectionChangeRecorder searchChangeRecorder;
 
     @Transactional
     public ImportApplyResult apply(ImportFilesCommand command, String previewDigest) {
@@ -69,7 +66,6 @@ public class ContentImportApplyService {
         else topic.reviseCanonicalContent(area, item.slug(), item.title(), item.description(), item.displayOrder(), item.active());
         Topic saved = topicRepository.save(topic);
         topics.put(item.contentKey(), saved);
-        searchChangeRecorder.record(SearchChangeType.TOPIC, saved.getId());
     }
 
     private void upsertConcept(NormalizedImportItem item, Map<String, Topic> topics, Map<String, Concept> concepts,
@@ -81,7 +77,6 @@ public class ContentImportApplyService {
         concept = conceptRepository.save(concept);
         concepts.put(item.contentKey(), concept);
         if (item.referencesDeclared()) replaceReferences(concept, item, references, relationLinks);
-        searchChangeRecorder.record(SearchChangeType.CONCEPT, concept.getId());
     }
 
     private void replaceReferences(Concept concept, NormalizedImportItem item, Map<String, Reference> references,
@@ -91,10 +86,8 @@ public class ContentImportApplyService {
                 .toList();
         java.util.Set<String> incoming = item.references().stream().map(NormalizedReference::url).collect(java.util.stream.Collectors.toSet());
         existing.stream().filter(link -> !incoming.contains(link.getReference().getUrl())).forEach(link -> {
-            long removedReferenceId = link.getReference().getId();
             conceptReferenceRepository.delete(link);
             relationLinks.remove(link.getId());
-            searchChangeRecorder.record(SearchChangeType.REFERENCE, removedReferenceId);
         });
         for (NormalizedReference input : item.references()) {
             Reference reference = references.get(input.url());
@@ -108,7 +101,6 @@ public class ContentImportApplyService {
             link.reviseRelation(input.displayOrder(), input.relationNote());
             link = conceptReferenceRepository.save(link);
             relationLinks.put(id, link);
-            searchChangeRecorder.record(SearchChangeType.REFERENCE, reference.getId());
         }
     }
 
@@ -126,7 +118,6 @@ public class ContentImportApplyService {
         question.setCanonicalStatus(QuestionStatus.valueOf(item.status()));
         Question saved = questionRepository.save(question);
         questions.put(item.contentKey(), saved);
-        searchChangeRecorder.record(SearchChangeType.QUESTION, saved.getId());
     }
 
     private void prepareChoiceOrderUpdate(Question question, List<Question.ChoiceDraft> incomingChoices) {

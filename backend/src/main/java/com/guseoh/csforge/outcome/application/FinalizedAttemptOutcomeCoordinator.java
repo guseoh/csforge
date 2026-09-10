@@ -10,8 +10,6 @@ import com.guseoh.csforge.review.domain.ReviewHistoryRepository;
 import com.guseoh.csforge.review.domain.ReviewSchedule;
 import com.guseoh.csforge.review.domain.ReviewScheduleRepository;
 import com.guseoh.csforge.review.domain.ReviewTransition;
-import com.guseoh.csforge.search.application.SearchChangeType;
-import com.guseoh.csforge.search.application.SearchProjectionChangeRecorder;
 import com.guseoh.csforge.wrongnote.domain.WrongNote;
 import com.guseoh.csforge.wrongnote.domain.WrongNoteRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +23,6 @@ public class FinalizedAttemptOutcomeCoordinator {
     private final WrongNoteRepository wrongNoteRepository;
     private final ReviewScheduleRepository reviewScheduleRepository;
     private final ReviewHistoryRepository reviewHistoryRepository;
-    private final SearchProjectionChangeRecorder searchChangeRecorder;
     private final Clock clock;
 
     public void process(Attempt attempt) {
@@ -63,7 +60,6 @@ public class FinalizedAttemptOutcomeCoordinator {
             if (transition.stageAfter() == null && correct) {
                 wrongNoteRepository.findByQuestionId(attempt.getQuestion().getId()).ifPresent(note -> {
                     note.markMastered();
-                    searchChangeRecorder.record(SearchChangeType.WRONG_NOTE, note.getId());
                 });
             }
         }
@@ -73,8 +69,7 @@ public class FinalizedAttemptOutcomeCoordinator {
         WrongNote wrongNote = wrongNoteRepository.findByQuestionId(attempt.getQuestion().getId())
                 .orElseGet(() -> WrongNote.open(attempt.getQuestion(), attempt, outcomeAt));
         wrongNote.recordWrong(attempt, outcomeAt);
-        WrongNote saved = wrongNoteRepository.save(wrongNote);
-        searchChangeRecorder.record(SearchChangeType.WRONG_NOTE, saved.getId());
+        wrongNoteRepository.save(wrongNote);
     }
 
     private ReviewSchedule findOrCreateSchedule(Attempt attempt, Instant outcomeAt, boolean reviewNeeded) {

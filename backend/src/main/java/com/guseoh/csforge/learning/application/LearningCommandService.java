@@ -12,8 +12,6 @@ import com.guseoh.csforge.learning.domain.ConceptViewHistoryRepository;
 import com.guseoh.csforge.learning.domain.LearningStatus;
 import com.guseoh.csforge.learning.domain.PersonalNote;
 import com.guseoh.csforge.learning.domain.PersonalNoteRepository;
-import com.guseoh.csforge.search.application.SearchChangeType;
-import com.guseoh.csforge.search.application.SearchProjectionChangeRecorder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +25,6 @@ public class LearningCommandService {
     private final ConceptProgressRepository progressRepository;
     private final ConceptViewHistoryRepository viewHistoryRepository;
     private final PersonalNoteRepository noteRepository;
-    private final SearchProjectionChangeRecorder searchChangeRecorder;
     private final Clock clock;
 
     @Transactional
@@ -66,7 +63,6 @@ public class LearningCommandService {
                 .orElseGet(() -> new PersonalNote(concept, content));
         note.changeContent(content);
         PersonalNote saved = noteRepository.saveAndFlush(note);
-        searchChangeRecorder.record(SearchChangeType.PERSONAL_NOTE, saved.getId());
         return new PersonalNoteView(saved.getContent(), saved.getUpdatedAt());
     }
 

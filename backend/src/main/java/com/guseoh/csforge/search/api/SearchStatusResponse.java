@@ -1,15 +1,13 @@
 package com.guseoh.csforge.search.api;
 
-import com.guseoh.csforge.search.application.SearchProductState;
 import com.guseoh.csforge.search.application.SearchStatusView;
 
-/** Search recovery UI에 필요한 제품 상태 HTTP 응답이다. */
+/** PostgreSQL Search의 현재 상태와 검색 가능 문서 수를 담는 HTTP 응답이다. */
 public record SearchStatusResponse(
-        SearchProductState state,
-        long indexedDocuments,
-        long pendingOutboxEvents) {
+        String state,
+        long searchableDocuments) {
 
     static SearchStatusResponse from(SearchStatusView view) {
-        return new SearchStatusResponse(view.state(), view.indexedDocuments(), view.pendingOutboxEvents());
+        return new SearchStatusResponse("READY", view.searchableDocuments());
     }
 }

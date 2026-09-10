@@ -15,7 +15,7 @@ describe('Search UI helpers', () => {
   })
 
   it('deduplicates and bounds recent searches', () => {
-    expect(addRecentSearch(['Kafka', 'JPA', 'TCP'], ' kafka ', 3)).toEqual(['kafka', 'JPA', 'TCP'])
+    expect(addRecentSearch(['Redis', 'JPA', 'TCP'], ' redis ', 3)).toEqual(['redis', 'JPA', 'TCP'])
     expect(addRecentSearch(['a', 'b', 'c'], 'd', 3)).toEqual(['d', 'a', 'b'])
   })
 

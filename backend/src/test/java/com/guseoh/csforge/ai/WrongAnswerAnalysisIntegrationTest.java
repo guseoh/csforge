@@ -85,7 +85,6 @@ class WrongAnswerAnalysisIntegrationTest {
         registry.add("spring.datasource.url", POSTGRES::getJdbcUrl);
         registry.add("spring.datasource.username", POSTGRES::getUsername);
         registry.add("spring.datasource.password", POSTGRES::getPassword);
-        registry.add("spring.autoconfigure.exclude", () -> "org.springframework.boot.kafka.autoconfigure.KafkaAutoConfiguration");
         registry.add("spring.ai.model.chat", () -> "none");
         registry.add("csforge.ai.enabled", () -> "true");
         registry.add("csforge.ai.processor-delay-ms", () -> "60000");

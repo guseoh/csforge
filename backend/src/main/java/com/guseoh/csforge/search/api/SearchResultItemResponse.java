@@ -6,7 +6,7 @@ import java.util.List;
 import com.guseoh.csforge.search.application.SearchDocumentType;
 import com.guseoh.csforge.search.application.SearchResultItem;
 
-/** Search hit 한 건의 안전한 highlight/navigation HTTP 응답이다. */
+/** Search 결과 한 건의 안전한 highlight/navigation HTTP 응답이다. */
 public record SearchResultItemResponse(
         SearchDocumentType documentType,
         long sourceId,
