@@ -1,18 +1,10 @@
 package com.guseoh.csforge.search.infrastructure;
 
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.time.Instant;
-import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import com.guseoh.csforge.search.application.SearchCriteria;
-import com.guseoh.csforge.search.application.SearchDocumentType;
 import com.guseoh.csforge.search.application.SearchPageView;
 import com.guseoh.csforge.search.application.SearchQueryGateway;
 import com.guseoh.csforge.search.application.SearchResultItem;
@@ -29,12 +21,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class JpaSearchQueryGateway implements SearchQueryGateway {
 
     private static final String SEARCH_VIEW = "search_document_view";
-    private static final int SNIPPET_LENGTH = 180;
     private static final String LIKE_ESCAPE = " ESCAPE '\\'";
-    private static final Pattern WHITESPACE = Pattern.compile("\\s+");
 
     @PersistenceContext
     private EntityManager entityManager;
+
+    private final SearchResultRowMapper resultRowMapper = new SearchResultRowMapper();
 
     @Override
     @Transactional(readOnly = true)
@@ -45,8 +37,8 @@ public class JpaSearchQueryGateway implements SearchQueryGateway {
         Query query = createSearchQuery(criteria, queryTerms);
         query.setFirstResult(criteria.from());
         query.setMaxResults(criteria.size());
-        List<Object[]> rows = rows(query);
-        List<SearchResultItem> items = rows.stream().map(row -> toResult(row, queryTerms)).toList();
+        List<Object[]> rows = resultRowMapper.rows(query);
+        List<SearchResultItem> items = rows.stream().map(row -> resultRowMapper.toResult(row, queryTerms)).toList();
         int totalPages = totalHits == 0 ? 0 : Math.toIntExact((totalHits + criteria.size() - 1) / criteria.size());
         long tookMillis = (System.nanoTime() - startedAt) / 1_000_000;
         return new SearchPageView(
@@ -86,7 +78,7 @@ public class JpaSearchQueryGateway implements SearchQueryGateway {
                 .setParameter("prefix", prefix)
                 .setParameter("contains", contains)
                 .setMaxResults(size);
-        return rows(suggestionQuery).stream().map(this::toSuggestion).toList();
+        return resultRowMapper.rows(suggestionQuery).stream().map(resultRowMapper::toSuggestion).toList();
     }
 
     @Override
@@ -197,88 +189,8 @@ public class JpaSearchQueryGateway implements SearchQueryGateway {
                 + "                end desc, d.document_key asc";
     }
 
-    private SearchResultItem toResult(Object[] row, List<String> queryTerms) {
-        String title = string(row[2]);
-        return new SearchResultItem(
-                SearchDocumentType.valueOf(string(row[0])),
-                number(row[1]).longValue(),
-                title,
-                highlightAll(title, queryTerms),
-                snippet(string(row[4]), string(row[3]), queryTerms),
-                strings(row[5]),
-                strings(row[6]),
-                strings(row[7]),
-                strings(row[8]),
-                integers(row[9]),
-                instant(row[10]),
-                nullableLong(row[11]),
-                nullableLong(row[12]),
-                nullableString(row[13]));
-    }
-
-    private SearchSuggestionView toSuggestion(Object[] row) {
-        return new SearchSuggestionView(
-                SearchDocumentType.valueOf(string(row[0])),
-                number(row[1]).longValue(),
-                string(row[2]),
-                nullableLong(row[3]),
-                nullableLong(row[4]),
-                nullableString(row[5]));
-    }
-
-    @SuppressWarnings("unchecked")
-    private static List<Object[]> rows(Query query) {
-        return (List<Object[]>) query.getResultList();
-    }
-
-    private static String snippet(String summary, String body, List<String> queryTerms) {
-        String source = hasMatch(summary, queryTerms)
-                ? summary
-                : hasMatch(body, queryTerms) ? body : firstNonBlank(summary, body);
-        if (source == null) return "";
-        String compact = compactAroundMatch(source, queryTerms, SNIPPET_LENGTH);
-        return highlightAll(compact, queryTerms);
-    }
-
-    private static String compactAroundMatch(String value, List<String> queryTerms, int maxLength) {
-        String compact = WHITESPACE.matcher(value).replaceAll(" ").trim();
-        Matcher matcher = pattern(queryTerms).matcher(compact);
-        if (!matcher.find() || compact.length() <= maxLength) return compact;
-        int start = Math.max(0, matcher.start() - 60);
-        int end = Math.min(compact.length(), start + maxLength);
-        if (end - start < maxLength) start = Math.max(0, end - maxLength);
-        return (start > 0 ? "..." : "") + compact.substring(start, end) + (end < compact.length() ? "..." : "");
-    }
-
-    private static boolean hasMatch(String value, List<String> queryTerms) {
-        return value != null && !value.isBlank() && pattern(queryTerms).matcher(value).find();
-    }
-
-    private static String highlightAll(String value, List<String> queryTerms) {
-        if (value == null || value.isBlank() || queryTerms.isEmpty()) return value == null ? "" : value;
-        Matcher matcher = pattern(queryTerms).matcher(value);
-        StringBuilder highlighted = new StringBuilder();
-        int end = 0;
-        while (matcher.find()) {
-            highlighted.append(value, end, matcher.start())
-                    .append("[[H]]")
-                    .append(value, matcher.start(), matcher.end())
-                    .append("[[/H]]");
-            end = matcher.end();
-        }
-        return end == 0 ? value : highlighted.append(value, end, value.length()).toString();
-    }
-
-    private static Pattern pattern(List<String> queryTerms) {
-        String alternatives = String.join("|", queryTerms.stream()
-                .sorted((left, right) -> Integer.compare(right.length(), left.length()))
-                .map(Pattern::quote)
-                .toList());
-        return Pattern.compile(alternatives, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
-    }
-
     private static List<String> queryTerms(String query) {
-        return Arrays.stream(WHITESPACE.split(query.trim()))
+        return Arrays.stream(query.trim().split("\\s+"))
                 .filter(term -> !term.isBlank())
                 .map(term -> term.toLowerCase(Locale.ROOT))
                 .distinct()
@@ -293,53 +205,4 @@ public class JpaSearchQueryGateway implements SearchQueryGateway {
         return "%" + likePattern(value) + "%";
     }
 
-    private static String firstNonBlank(String first, String second) {
-        return first != null && !first.isBlank() ? first : second;
-    }
-
-    private static String string(Object value) {
-        return value == null ? "" : String.valueOf(value);
-    }
-
-    private static String nullableString(Object value) {
-        return value == null ? null : String.valueOf(value);
-    }
-
-    private static Number number(Object value) {
-        return (Number) Objects.requireNonNull(value, "numeric search column is required");
-    }
-
-    private static Long nullableLong(Object value) {
-        return value == null ? null : number(value).longValue();
-    }
-
-    private static Instant instant(Object value) {
-        if (value instanceof Instant instant) return instant;
-        if (value instanceof OffsetDateTime dateTime) return dateTime.toInstant();
-        if (value instanceof Timestamp timestamp) return timestamp.toInstant();
-        return Instant.parse(string(value));
-    }
-
-    private static List<String> strings(Object value) {
-        Object array = unwrapSqlArray(value);
-        if (array instanceof Object[] values) return Arrays.stream(values).filter(Objects::nonNull).map(String::valueOf).toList();
-        return array == null ? List.of() : List.of(String.valueOf(array));
-    }
-
-    private static List<Integer> integers(Object value) {
-        Object array = unwrapSqlArray(value);
-        if (array instanceof Object[] values) {
-            return Arrays.stream(values).filter(Objects::nonNull).map(item -> ((Number) item).intValue()).toList();
-        }
-        return array == null ? List.of() : List.of(((Number) array).intValue());
-    }
-
-    private static Object unwrapSqlArray(Object value) {
-        if (!(value instanceof java.sql.Array sqlArray)) return value;
-        try {
-            return sqlArray.getArray();
-        } catch (SQLException exception) {
-            throw new IllegalStateException("Failed to read PostgreSQL array", exception);
-        }
-    }
 }
