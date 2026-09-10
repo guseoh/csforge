@@ -79,7 +79,7 @@ describe('CanonicalBootstrapCard', () => {
     expect(renderToStaticMarkup(<CanonicalBootstrapCard />)).toContain('일부 콘텐츠가 준비되어 있습니다.')
   })
 
-  it('shows execution loading, failure retry, success and hides READY CTA', () => {
+  it('shows execution loading, failure retry, success and READY actions', () => {
     mocks.status.data = status('EMPTY')
     mocks.mutation.isPending = true
     expect(renderToStaticMarkup(<CanonicalBootstrapCard />)).toContain('기본 학습 콘텐츠 준비 중')
@@ -96,5 +96,6 @@ describe('CanonicalBootstrapCard', () => {
     mocks.mutation.data = null
     mocks.status.data = status('READY')
     expect(renderToStaticMarkup(<CanonicalBootstrapCard />)).not.toContain('기본 학습 콘텐츠 준비')
+    expect(renderToStaticMarkup(<CanonicalBootstrapCard readyAction="learning-link" />)).toContain('Learning 시작')
   })
 })

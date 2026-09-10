@@ -109,7 +109,7 @@ export function LearningPage() {
           </div>
         </section>
       )}
-      {areasQuery.data.every((area) => area.topicCount === 0 && area.publishedConceptCount === 0 && area.publishedQuestionCount === 0) && <CanonicalBootstrapCard />}
+      <CanonicalBootstrapCard />
       {areasQuery.data.length === 0 ? (
         <EmptyState message="활성화된 학습 영역이 없습니다." />
       ) : (

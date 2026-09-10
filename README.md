@@ -29,7 +29,7 @@ Pop-Location
 
 The backend listens on `http://localhost:8080`. Actuator health and Prometheus metrics are available at `/actuator/health` and `/actuator/prometheus`.
 
-The local `bootRun` and production-like Compose image use the same canonical pack. Bootstrap is explicit; application startup does not import content automatically. On an empty database, choose `기본 학습 콘텐츠 준비` and wait for the Learning CTA after the import completes.
+The local `bootRun` and production-like Compose image use the same canonical pack. Canonical bootstrap prepares the repository's bundled baseline content as a first-run product flow, while general Import is the management flow for user-selected Markdown/JSON that is Preview/Diff/Confirm before applying. Bootstrap reuses the existing `contentKey`-based import contract, so rerunning it is idempotent and does not require a database reset or PostgreSQL volume deletion. Bootstrap is explicit; application startup does not import content automatically. On an empty database, choose `기본 학습 콘텐츠 준비` and wait for the Learning CTA after the import completes.
 
 ## Start production-like Compose
 
