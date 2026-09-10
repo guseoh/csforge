@@ -6,6 +6,13 @@ import { defaultLearningSearch, type LearningSearch } from '../lib/learning-sear
 
 const PAGE_SIZE = 12
 
+const learningStatusLabels: Record<LearningStatus, string> = {
+  UNSEEN: '미학습',
+  LEARNING: '학습 중',
+  COMPLETED: '완료',
+  REVIEW_NEEDED: '복습 필요',
+}
+
 function progressPercent(completed: number, total: number) {
   return total === 0 ? 0 : Math.round((completed / total) * 100)
 }
@@ -45,14 +52,14 @@ export function AreaPage() {
 
   return (
     <section className="page-section">
-      <nav className="breadcrumb" aria-label="Breadcrumb">
-        <Link to="/learning" search={defaultLearningSearch}>Learning</Link>
+      <nav className="breadcrumb" aria-label="탐색 경로">
+        <Link to="/learning" search={defaultLearningSearch}>학습</Link>
         <span>/</span>
         <strong>{area.name}</strong>
       </nav>
       <div className="page-heading">
         <div>
-          <p className="eyebrow">Learning area</p>
+          <p className="eyebrow">학습 영역</p>
           <h1>{area.name}</h1>
           <p className="lead">{area.description ?? '이 영역의 개념을 탐색하세요.'}</p>
         </div>
@@ -61,7 +68,7 @@ export function AreaPage() {
 
       <div className="topic-summary-grid">
         {area.topics.length === 0 ? (
-          <EmptyState message="아직 등록된 Topic이 없습니다." />
+          <EmptyState message="아직 등록된 주제가 없습니다." />
         ) : area.topics.map((topic) => (
           <button
             className={`topic-card${search.topic === topic.id ? ' selected' : ''}`}
@@ -72,7 +79,7 @@ export function AreaPage() {
           >
             <span className="topic-card-title">{topic.title}</span>
             <span className="topic-card-meta">
-              {topic.publishedConceptCount} concepts · {topic.completedConceptCount} completed
+              {topic.publishedConceptCount}개 개념 · {topic.completedConceptCount}개 완료
             </span>
             <span className="topic-card-meta">
               L1 {topic.level1Count} · L2 {topic.level2Count} · L3 {topic.level3Count}
@@ -81,13 +88,13 @@ export function AreaPage() {
         ))}
       </div>
 
-      <div className="filter-panel" aria-label="Concept filters">
+      <div className="filter-panel" aria-label="개념 필터">
         <div className="filter-panel-header">
-          <div><p className="eyebrow">Browse tools</p><strong>개념 찾기</strong></div>
-          <span className="helper-text">Topic 카드는 빠른 이동, 아래 필터는 정밀 검색입니다.</span>
+          <div><p className="eyebrow">탐색 도구</p><strong>개념 찾기</strong></div>
+          <span className="helper-text">주제 카드는 빠른 이동, 아래 필터는 정밀 검색입니다.</span>
         </div>
         <label>
-          Search
+          검색
           <input
             type="search"
             value={search.q}
@@ -96,7 +103,7 @@ export function AreaPage() {
           />
         </label>
         <label>
-          Topic
+          주제
           <select
             value={search.topic ?? ''}
             onChange={(event) => void updateSearch({
@@ -104,36 +111,36 @@ export function AreaPage() {
               page: 0,
             })}
           >
-            <option value="">All topics</option>
+            <option value="">모든 주제</option>
             {area.topics.map((topic) => <option key={topic.id} value={topic.id}>{topic.title}</option>)}
           </select>
         </label>
         <label>
-          Level
+          레벨
           <select value={search.level} onChange={(event) => void updateSearch({ level: event.target.value as LearningSearch['level'], page: 0 })}>
-            <option value="all">All levels</option>
-            <option value="1">Level 1</option>
-            <option value="2">Level 2</option>
-            <option value="3">Level 3</option>
+            <option value="all">모든 레벨</option>
+            <option value="1">레벨 1</option>
+            <option value="2">레벨 2</option>
+            <option value="3">레벨 3</option>
           </select>
         </label>
         <label>
-          Progress
+          진행 상태
           <select value={search.status} onChange={(event) => void updateSearch({ status: event.target.value as LearningSearch['status'], page: 0 })}>
-            <option value="ALL">All progress</option>
-            <option value="UNSEEN">Unseen</option>
-            <option value="LEARNING">Learning</option>
-            <option value="COMPLETED">Completed</option>
-            <option value="REVIEW_NEEDED">Review needed</option>
+            <option value="ALL">전체 상태</option>
+            <option value="UNSEEN">미학습</option>
+            <option value="LEARNING">학습 중</option>
+            <option value="COMPLETED">완료</option>
+            <option value="REVIEW_NEEDED">복습 필요</option>
           </select>
         </label>
         <label>
-          Sort
+          정렬
           <select value={search.sort} onChange={(event) => void updateSearch({ sort: event.target.value as LearningSearch['sort'], page: 0 })}>
-            <option value="curriculum">Curriculum order</option>
-            <option value="title">Title</option>
-            <option value="updated">Recently updated</option>
-            <option value="viewed">Recently viewed</option>
+            <option value="curriculum">커리큘럼 순서</option>
+            <option value="title">제목순</option>
+            <option value="updated">최근 수정순</option>
+            <option value="viewed">최근 학습순</option>
           </select>
         </label>
         <label className="checkbox-label">
@@ -142,19 +149,19 @@ export function AreaPage() {
             checked={search.bookmarked === 'true'}
             onChange={(event) => void updateSearch({ bookmarked: event.target.checked ? 'true' : 'false', page: 0 })}
           />
-          Bookmarked only
+          북마크한 개념만
         </label>
       </div>
 
       {conceptsQuery.isPending ? <PageSkeleton rows={4} /> : conceptsQuery.isError ? (
         <ErrorState onRetry={() => void conceptsQuery.refetch()} />
       ) : conceptsQuery.data.items.length === 0 ? (
-        <EmptyState message="현재 필터에 맞는 Published Concept가 없습니다." />
+        <EmptyState message="현재 필터에 맞는 공개 개념이 없습니다." />
       ) : (
         <>
           <div className="concept-list-heading">
-            <h2>Concepts</h2>
-            <span className="result-count">{page?.totalElements ?? 0} results</span>
+            <h2>개념</h2>
+            <span className="result-count">{page?.totalElements ?? 0}개</span>
           </div>
           <div className="concept-list">
             {conceptsQuery.data.items.map((concept) => (
@@ -163,16 +170,16 @@ export function AreaPage() {
                   <h3>{concept.title}</h3>
                   <p>{concept.summary ?? '요약이 아직 없습니다.'}</p>
                   <div className="chip-row concept-list-status">
-                    <span className="chip">L{concept.level}</span>
-                    <span className={`chip status-${concept.learningStatus.toLowerCase()}`}>{concept.learningStatus.replace('_', ' ')}</span>
-                    {concept.bookmarked && <span className="chip bookmark-chip">★ Bookmarked</span>}
+                    <span className="chip">레벨 {concept.level}</span>
+                    <span className={`chip status-${concept.learningStatus.toLowerCase()}`}>{learningStatusLabels[concept.learningStatus]}</span>
+                    {concept.bookmarked && <span className="chip bookmark-chip">★ 북마크</span>}
                   </div>
                 </div>
                 <span className="concept-topic">{concept.topicTitle}</span>
               </Link>
             ))}
           </div>
-          <div className="pagination" aria-label="Concept pagination">
+          <div className="pagination" aria-label="개념 페이지네이션">
             <button className="secondary-button" type="button" disabled={!page?.hasPrevious} onClick={() => void updateSearch({ page: search.page - 1 })}>
               이전
             </button>
@@ -184,12 +191,12 @@ export function AreaPage() {
         </>
       )}
       <div className="area-progress-note">
-        Completed concepts: {area.topics.reduce((total, topic) => total + topic.completedConceptCount, 0)} ·
-        Published concepts: {area.topics.reduce((total, topic) => total + topic.publishedConceptCount, 0)} ·
+        완료 개념: {area.topics.reduce((total, topic) => total + topic.completedConceptCount, 0)} ·
+        공개 개념: {area.topics.reduce((total, topic) => total + topic.publishedConceptCount, 0)} ·
         {progressPercent(
           area.topics.reduce((total, topic) => total + topic.completedConceptCount, 0),
           area.topics.reduce((total, topic) => total + topic.publishedConceptCount, 0),
-        )}% complete
+        )}% 완료
       </div>
     </section>
   )

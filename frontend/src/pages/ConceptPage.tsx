@@ -33,7 +33,6 @@ const learningStatusLabels: Record<LearningStatus, string> = {
   LEARNING: '학습 중',
   COMPLETED: '학습 완료',
   REVIEW_NEEDED: '복습 필요',
-  MASTERED: '숙달',
 }
 
 function ConceptContent({ data, conceptId }: { data: ConceptDetailModel; conceptId: number }) {
