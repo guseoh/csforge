@@ -1,9 +1,7 @@
 package com.guseoh.csforge.wrongnote.application;
 
-import java.nio.charset.StandardCharsets;
 import java.time.Clock;
 import java.time.Instant;
-import java.util.Base64;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -86,13 +84,13 @@ public class WrongNoteQueryService {
     @Transactional(readOnly = true)
     public WrongNoteAttemptPageView attempts(long questionId, String cursor, int size) {
         if (!wrongNoteRepository.findByQuestionId(questionId).isPresent()) throw new WrongNoteNotFoundException();
-        Cursor decoded = Cursor.decode(cursor);
+        AttemptHistoryCursor decoded = AttemptHistoryCursor.decode(cursor);
         List<Attempt> attempts = decoded.at() == null
                 ? attemptRepository.findQuestionHistoryFirst(questionId, PageRequest.of(0, size + 1))
                 : attemptRepository.findQuestionHistoryAfter(questionId, decoded.at(), decoded.id(), PageRequest.of(0, size + 1));
         boolean hasNext = attempts.size() > size;
         List<Attempt> page = hasNext ? attempts.subList(0, size) : attempts;
-        String next = hasNext ? Cursor.encode(page.get(page.size() - 1)) : null;
+        String next = hasNext ? AttemptHistoryCursor.encode(page.get(page.size() - 1)) : null;
         return new WrongNoteAttemptPageView(page.stream().map(this::toAttempt).toList(), next);
     }
 
@@ -142,20 +140,4 @@ public class WrongNoteQueryService {
         return new WrongNoteListItemView.ConceptView(concept.getId(), concept.getSlug(), concept.getTitle(), area.getSlug(), area.getName(), concept.getLevel());
     }
 
-    private record Cursor(Instant at, long id) {
-        static Cursor decode(String value) {
-            if (value == null || value.isBlank()) return new Cursor(null, 0);
-            try {
-                String decoded = new String(Base64.getUrlDecoder().decode(value), StandardCharsets.UTF_8);
-                String[] parts = decoded.split(",", 2);
-                return new Cursor(Instant.parse(parts[0]), Long.parseLong(parts[1]));
-            } catch (RuntimeException exception) {
-                throw new IllegalArgumentException("Invalid cursor");
-            }
-        }
-
-        static String encode(Attempt attempt) {
-            return Base64.getUrlEncoder().withoutPadding().encodeToString((attempt.getUpdatedAt() + "," + attempt.getId()).getBytes(StandardCharsets.UTF_8));
-        }
-    }
 }
