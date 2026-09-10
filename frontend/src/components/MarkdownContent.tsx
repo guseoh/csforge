@@ -10,7 +10,7 @@ interface MarkdownContentProps {
   dedupeLeadingHeading?: string
 }
 
-/** Canonical Markdown을 화면 맥락에 맞게 일관된 GFM 콘텐츠로 렌더링한다. */
+/** Canonical Markdown을 화면 맥락에 맞게 일관된 GFM 학습 콘텐츠로 렌더링한다. */
 export function MarkdownContent({ children, className, fallback, dedupeLeadingHeading }: MarkdownContentProps) {
   const markdown = dedupeLeadingHeading ? removeDuplicateLeadingHeading(children, dedupeLeadingHeading) : children
   const content = markdown.trim() ? markdown : fallback
@@ -19,7 +19,21 @@ export function MarkdownContent({ children, className, fallback, dedupeLeadingHe
   return (
     <div className={['markdown-content', className].filter(Boolean).join(' ')}>
       {typeof content === 'string'
-        ? <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
+        ? (
+          <ReactMarkdown
+            remarkPlugins={[remarkGfm]}
+            components={{
+              img: ({ src, alt }) => (
+                <figure className="learning-figure">
+                  <img src={src} alt={alt ?? ''} loading="lazy" />
+                  {alt && <figcaption>{alt}</figcaption>}
+                </figure>
+              ),
+            }}
+          >
+            {content}
+          </ReactMarkdown>
+        )
         : content}
     </div>
   )
