@@ -1,32 +1,15 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate, useParams } from '@tanstack/react-router'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { ErrorState, PageSkeleton } from '../components/AsyncStates'
 import { MarkdownContent } from '../components/MarkdownContent'
 import {
   getQuizSession,
-  saveQuizAnswer,
-  saveQuizPosition,
   submitQuiz,
-  type QuizQuestion,
-  type QuizSavedAnswer,
 } from '../lib/quiz-api'
 import { defaultQuizSearch, formatRemaining } from '../lib/quiz-search'
 import { classifyQuizNavigation, quizNavigationLabel } from '../lib/quiz-navigation'
-
-type DraftAnswer = QuizSavedAnswer
-type SaveState = 'saved' | 'saving' | 'error'
-
-const emptyDraft: DraftAnswer = {
-  selectedChoiceKey: null,
-  answerText: null,
-  reviewNeeded: false,
-  answeredAt: null,
-}
-
-function draftFromQuestion(question: QuizQuestion): DraftAnswer {
-  return question.answer ? { ...question.answer } : { ...emptyDraft }
-}
+import { emptyQuizDraft, useQuizSessionPersistence } from '../lib/use-quiz-session-persistence'
 
 export function QuizSessionPage() {
   const { quizId: quizIdParam } = useParams({ from: '/quiz/$quizId' })
@@ -37,31 +20,7 @@ export function QuizSessionPage() {
     queryFn: () => getQuizSession(quizId),
     enabled: Number.isSafeInteger(quizId) && quizId > 0,
   })
-  const [position, setPosition] = useState(0)
-  const [drafts, setDrafts] = useState<Record<number, DraftAnswer>>({})
-  const [saveStates, setSaveStates] = useState<Record<number, SaveState>>({})
-  const [positionSaveError, setPositionSaveError] = useState(false)
   const [now, setNow] = useState(() => Date.now())
-  const hydratedQuizRef = useRef<number | null>(null)
-  const dirtyQuestionsRef = useRef(new Set<number>())
-  const draftsRef = useRef<Record<number, DraftAnswer>>({})
-  const sessionStatusRef = useRef<string | null>(null)
-  const expiredRef = useRef(false)
-
-  useEffect(() => {
-    draftsRef.current = drafts
-  }, [drafts])
-
-  useEffect(() => {
-    if (!sessionQuery.data || hydratedQuizRef.current === quizId) return
-    hydratedQuizRef.current = quizId
-    dirtyQuestionsRef.current.clear()
-    setPosition(Math.min(sessionQuery.data.lastPosition, Math.max(sessionQuery.data.questions.length - 1, 0)))
-    setDrafts(Object.fromEntries(
-      sessionQuery.data.questions.map((question) => [question.questionId, draftFromQuestion(question)]),
-    ))
-    setSaveStates({})
-  }, [quizId, sessionQuery.data])
 
   useEffect(() => {
     const timer = window.setInterval(() => setNow(Date.now()), 1000)
@@ -69,53 +28,19 @@ export function QuizSessionPage() {
   }, [])
 
   const session = sessionQuery.data
-  const question = session?.questions[position]
-  const draft = question ? drafts[question.questionId] ?? emptyDraft : emptyDraft
   const locallyExpired = Boolean(session?.expiresAt && formatRemaining(session.expiresAt, now) === '00:00')
   const expired = Boolean(session?.expired || locallyExpired)
-  sessionStatusRef.current = session?.status ?? null
-  expiredRef.current = expired
-
-  const positionMutation = useMutation({
-    mutationFn: (nextPosition: number) => saveQuizPosition(quizId, nextPosition),
-    onSuccess: () => setPositionSaveError(false),
-    onError: () => setPositionSaveError(true),
-  })
-  const answerMutation = useMutation({
-    mutationFn: ({ questionId, answer }: { questionId: number; answer: DraftAnswer }) => saveQuizAnswer(
-      quizId,
-      questionId,
-      {
-        selectedChoiceKey: answer.selectedChoiceKey,
-        answerText: answer.answerText,
-        reviewNeeded: answer.reviewNeeded,
-      },
-    ),
-    onSuccess: (saved, variables) => {
-      setDrafts((current) => {
-        const existing = current[variables.questionId] ?? emptyDraft
-        if (!sameDraft(existing, variables.answer)) return current
-        dirtyQuestionsRef.current.delete(variables.questionId)
-        setSaveStates((states) => ({ ...states, [variables.questionId]: 'saved' }))
-        return { ...current, [variables.questionId]: saved }
-      })
-    },
-    onError: (_error, variables) => {
-      setSaveStates((states) => ({ ...states, [variables.questionId]: 'error' }))
-    },
-  })
-  const saveAnswerMutate = answerMutation.mutate
-  const saveAnswerMutateAsync = answerMutation.mutateAsync
-
-  const flushAllDirtyAnswers = useCallback(async () => {
-    const dirtyIds = Array.from(dirtyQuestionsRef.current)
-    for (const questionId of dirtyIds) {
-      const answer = draftsRef.current[questionId]
-      if (!answer) continue
-      setSaveStates((states) => ({ ...states, [questionId]: 'saving' }))
-      await saveAnswerMutateAsync({ questionId, answer })
-    }
-  }, [saveAnswerMutateAsync])
+  const {
+    position,
+    drafts,
+    draft,
+    question,
+    saveStates,
+    positionSaveError,
+    updateDraft,
+    flushAllDirtyAnswers,
+    moveTo,
+  } = useQuizSessionPersistence({ quizId, session, expired })
 
   const submitMutation = useMutation({
     mutationFn: async () => {
@@ -124,60 +49,6 @@ export function QuizSessionPage() {
     },
     onSuccess: () => void navigate({ to: '/quiz/$quizId/result', params: { quizId: String(quizId) } }),
   })
-
-  useEffect(() => {
-    if (!question || expired || session?.status !== 'IN_PROGRESS' || !dirtyQuestionsRef.current.has(question.questionId)) {
-      return
-    }
-    const timer = window.setTimeout(() => {
-      setSaveStates((states) => ({ ...states, [question.questionId]: 'saving' }))
-      saveAnswerMutate({ questionId: question.questionId, answer: draft })
-    }, 800)
-    return () => window.clearTimeout(timer)
-  }, [draft, expired, question, saveAnswerMutate, session?.status])
-
-  useEffect(() => {
-    return () => {
-      if (sessionStatusRef.current !== 'IN_PROGRESS' || expiredRef.current) return
-      for (const questionId of dirtyQuestionsRef.current) {
-        const answer = draftsRef.current[questionId]
-        if (!answer) continue
-        void saveQuizAnswer(quizId, questionId, {
-          selectedChoiceKey: answer.selectedChoiceKey,
-          answerText: answer.answerText,
-          reviewNeeded: answer.reviewNeeded,
-        })
-      }
-    }
-  }, [quizId])
-
-  const updateDraft = useCallback((patch: Partial<DraftAnswer>) => {
-    if (!question || expired || session?.status !== 'IN_PROGRESS') return
-    setDrafts((current) => ({
-      ...current,
-      [question.questionId]: {
-        ...(current[question.questionId] ?? emptyDraft),
-        ...patch,
-      },
-    }))
-    dirtyQuestionsRef.current.add(question.questionId)
-    setSaveStates((states) => ({ ...states, [question.questionId]: 'saving' }))
-  }, [expired, question, session?.status])
-
-  const flushCurrentAnswer = useCallback(() => {
-    if (!question || expired || session?.status !== 'IN_PROGRESS' || !dirtyQuestionsRef.current.has(question.questionId)) {
-      return
-    }
-    setSaveStates((states) => ({ ...states, [question.questionId]: 'saving' }))
-    saveAnswerMutate({ questionId: question.questionId, answer: draft })
-  }, [draft, expired, question, saveAnswerMutate, session?.status])
-
-  const moveTo = useCallback((nextPosition: number) => {
-    if (!session || nextPosition < 0 || nextPosition >= session.questions.length || nextPosition === position) return
-    flushCurrentAnswer()
-    setPosition(nextPosition)
-    positionMutation.mutate(nextPosition)
-  }, [flushCurrentAnswer, position, positionMutation, session])
 
   useEffect(() => {
     const handleShortcut = (event: KeyboardEvent) => {
@@ -248,7 +119,7 @@ export function QuizSessionPage() {
         <aside className="quiz-question-nav-panel" aria-label="Question navigation">
           <div className="quiz-question-nav">
             {session.questions.map((item, index) => {
-              const itemDraft = drafts[item.questionId] ?? emptyDraft
+              const itemDraft = drafts[item.questionId] ?? emptyQuizDraft
               const navigationState = classifyQuizNavigation({
                 isCurrent: index === position,
                 selectedChoiceKey: itemDraft.selectedChoiceKey,
@@ -359,10 +230,4 @@ export function QuizSessionPage() {
       </div>
     </section>
   )
-}
-
-function sameDraft(left: DraftAnswer, right: DraftAnswer) {
-  return left.selectedChoiceKey === right.selectedChoiceKey
-    && left.answerText === right.answerText
-    && left.reviewNeeded === right.reviewNeeded
 }

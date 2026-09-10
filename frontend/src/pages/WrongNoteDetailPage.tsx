@@ -1,4 +1,3 @@
-import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate, useParams } from '@tanstack/react-router'
 import { useInfiniteQuery, useMutation, useQuery } from '@tanstack/react-query'
 import { ErrorState, PageSkeleton } from '../components/AsyncStates'
@@ -12,10 +11,10 @@ import {
   requestWrongNoteAiAnalysis,
   retryWrongNote,
   retryWrongNoteAiAnalysis,
-  saveWrongNote,
 } from '../lib/wrong-note-api'
 import { wrongAnswerAnalysisPollingInterval } from '../lib/wrong-answer-analysis'
 import { defaultWrongNoteSearch } from '../lib/wrong-note-search'
+import { useWrongNotePersistence } from '../lib/use-wrong-note-persistence'
 
 function ConceptContext({ concepts }: { concepts: { id: number; title: string; areaName: string; level: number }[] }) {
   if (concepts.length === 0) return <p className="concept-context-empty">연결된 Concept가 없습니다.</p>
@@ -50,32 +49,7 @@ export function WrongNoteDetailPage() {
     getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
     enabled: Number.isSafeInteger(id) && id > 0,
   })
-  const [note, setNote] = useState('')
-  const [dirty, setDirty] = useState(false)
-  const noteRef = useRef('')
-  const dirtyRef = useRef(false)
-  const savingRef = useRef(false)
-  const pageHidingRef = useRef(false)
-  const saveRef = useRef<() => void>(() => {})
-  const draftKey = `csforge:wrong-note:${id}:draft`
-
-  const noteMutation = useMutation({
-    mutationFn: (content: string) => saveWrongNote(id, content),
-    onSuccess: (_saved, content) => {
-      savingRef.current = false
-      if (noteRef.current === content) {
-        dirtyRef.current = false
-        setDirty(false)
-        window.localStorage.removeItem(draftKey)
-        return
-      }
-      queueMicrotask(() => saveRef.current())
-    },
-    onError: (_error, content) => {
-      savingRef.current = false
-      if (noteRef.current !== content) queueMicrotask(() => saveRef.current())
-    },
-  })
+  const { note, dirty, updateNote, noteMutation } = useWrongNotePersistence({ id, detail: detail.data })
   const retryMutation = useMutation({
     mutationFn: () => retryWrongNote(id),
     onSuccess: (quiz) => void navigate({ to: '/quiz/$quizId', params: { quizId: String(quiz.quizId) } }),
@@ -90,79 +64,12 @@ export function WrongNoteDetailPage() {
     onSuccess: () => void aiAnalysis.refetch(),
   })
 
-  saveRef.current = () => {
-    if (!dirtyRef.current || savingRef.current) return
-    savingRef.current = true
-    noteMutation.mutate(noteRef.current)
-  }
-
-  useEffect(() => {
-    if (!detail.data || dirtyRef.current) return
-    const serverNote = detail.data.state.causeNote ?? ''
-    const draft = window.localStorage.getItem(draftKey)
-    const initialNote = draft ?? serverNote
-    noteRef.current = initialNote
-    setNote(initialNote)
-    const hasUnsavedDraft = draft !== null && draft !== serverNote
-    dirtyRef.current = hasUnsavedDraft
-    setDirty(hasUnsavedDraft)
-    if (draft !== null && !hasUnsavedDraft) window.localStorage.removeItem(draftKey)
-  }, [detail.data, draftKey])
-
-  useEffect(() => {
-    pageHidingRef.current = false
-    const shortcut = (event: KeyboardEvent) => {
-      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 's') {
-        event.preventDefault()
-        saveRef.current()
-      }
-    }
-    const pagehide = () => {
-      pageHidingRef.current = true
-      if (!dirtyRef.current || !Number.isSafeInteger(id)) return
-      const content = noteRef.current
-      window.localStorage.setItem(draftKey, content)
-      void fetch(`/api/wrong-notes/${id}/note`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({ content }),
-        keepalive: true,
-      })
-    }
-    const pageshow = () => {
-      pageHidingRef.current = false
-    }
-    window.addEventListener('keydown', shortcut)
-    window.addEventListener('pagehide', pagehide)
-    window.addEventListener('pageshow', pageshow)
-    return () => {
-      if (!pageHidingRef.current) saveRef.current()
-      window.removeEventListener('keydown', shortcut)
-      window.removeEventListener('pagehide', pagehide)
-      window.removeEventListener('pageshow', pageshow)
-    }
-  }, [draftKey, id])
-
-  useEffect(() => {
-    if (!dirty) return
-    const timer = window.setTimeout(() => saveRef.current(), 800)
-    return () => window.clearTimeout(timer)
-  }, [note, dirty])
-
   if (detail.isPending) return <PageSkeleton rows={5} />
   if (detail.isError) return <ErrorState message="오답 상세를 불러오지 못했습니다." onRetry={() => void detail.refetch()} />
   const item = detail.data
   const analysis = aiAnalysis.data
   const history = attemptsQuery.data?.pages.flatMap((page) => page.items) ?? []
   const hasAttemptHistoryData = attemptsQuery.data !== undefined
-
-  const updateNote = (value: string) => {
-    noteRef.current = value
-    dirtyRef.current = true
-    window.localStorage.setItem(draftKey, value)
-    setNote(value)
-    setDirty(true)
-  }
 
   return (
     <section className="page-section wrong-note-detail">
