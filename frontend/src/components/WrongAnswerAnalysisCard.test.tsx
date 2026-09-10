@@ -1,6 +1,6 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
-import type { WrongAnswerAnalysis, WrongAnswerAnalysisStatus } from '../lib/api'
+import type { WrongAnswerAnalysis, WrongAnswerAnalysisStatus } from '../lib/wrong-note-api'
 import { WrongAnswerAnalysisCard } from './WrongAnswerAnalysisCard'
 
 function analysis(status: WrongAnswerAnalysisStatus): WrongAnswerAnalysis {

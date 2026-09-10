@@ -1,7 +1,7 @@
 import { Link } from '@tanstack/react-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { defaultLearningSearch } from '../lib/learning-search'
-import { bootstrapCanonicalContent, getCanonicalBootstrapStatus } from '../lib/api'
+import { bootstrapCanonicalContent, getCanonicalBootstrapStatus } from '../lib/import-api'
 
 interface CanonicalBootstrapCardProps {
   readyAction?: 'hide' | 'learning-link'

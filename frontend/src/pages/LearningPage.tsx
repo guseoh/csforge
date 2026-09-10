@@ -2,7 +2,7 @@ import { Link } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { EmptyState, ErrorState, PageSkeleton } from '../components/AsyncStates'
 import { CanonicalBootstrapCard } from '../components/CanonicalBootstrapCard'
-import { getConcepts, getLearningAreas, type AreaSummary, type ConceptListItem } from '../lib/api'
+import { getConcepts, getLearningAreas, type AreaSummary, type ConceptListItem } from '../lib/learning-api'
 import { defaultLearningSearch } from '../lib/learning-search'
 import { selectRecentConcepts } from '../lib/learning-recent'
 

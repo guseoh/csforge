@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from '@tanstack/react-router'
-import { ApiRequestError, applyImports, previewImports, type ImportApply, type ImportItem, type ImportPreview } from '../lib/api'
+import { ApiRequestError } from '../lib/http'
+import { applyImports, previewImports, type ImportApply, type ImportItem, type ImportPreview } from '../lib/import-api'
 
 function mergeFiles(current: File[], incoming: File[]) {
   const seen = new Set(current.map((file) => `${file.name}:${file.size}:${file.lastModified}`))

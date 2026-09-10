@@ -13,7 +13,7 @@ import {
   retryWrongNote,
   retryWrongNoteAiAnalysis,
   saveWrongNote,
-} from '../lib/api'
+} from '../lib/wrong-note-api'
 import { wrongAnswerAnalysisPollingInterval } from '../lib/wrong-answer-analysis'
 import { defaultWrongNoteSearch } from '../lib/wrong-note-search'
 

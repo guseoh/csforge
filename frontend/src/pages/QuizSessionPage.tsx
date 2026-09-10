@@ -10,7 +10,7 @@ import {
   submitQuiz,
   type QuizQuestion,
   type QuizSavedAnswer,
-} from '../lib/api'
+} from '../lib/quiz-api'
 import { defaultQuizSearch, formatRemaining } from '../lib/quiz-search'
 import { classifyQuizNavigation, quizNavigationLabel } from '../lib/quiz-navigation'
 
