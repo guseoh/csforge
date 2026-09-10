@@ -369,45 +369,6 @@ button.text-link {
   font-size: 0.9rem;
 }
 
-.wrong-note-filters {
-  grid-template-columns: 1fr;
-  align-items: stretch;
-}
-
-.wrong-note-primary-filters {
-  display: grid;
-  grid-template-columns: minmax(0, 2fr) minmax(160px, 1fr) auto;
-  align-items: stretch;
-  gap: 10px;
-}
-
-.wrong-note-primary-filters .filter-group {
-  height: 100%;
-}
-
-.wrong-note-primary-filters .filter-group-fields {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-.wrong-note-primary-filters .filter-group-order {
-  grid-column: auto;
-}
-
-.wrong-note-filter-toggle {
-  align-self: end;
-  white-space: nowrap;
-}
-
-.filter-active-count {
-  margin-left: 7px;
-  color: var(--accent);
-  font-size: 0.72rem;
-}
-
-.wrong-note-advanced-filters {
-  grid-column: 1 / -1;
-}
-
 .filter-group {
   min-width: 0;
   margin: 0;
@@ -657,7 +618,7 @@ textarea:focus {
 
 .status-review_needed {
   border-color: #74533d;
-  color: #f1b278;
+  color: #f1d178;
 }
 
 .bookmark-chip {
