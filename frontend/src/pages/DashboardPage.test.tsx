@@ -92,8 +92,8 @@ describe('DashboardPage', () => {
     }))
 
     expect(markup).toContain('JPA 기초')
-    expect(markup).toContain('2/3 finalized correct')
-    expect(markup).toContain('1 self-check 대기')
+    expect(markup).toContain('2/3개 정답')
+    expect(markup).toContain('자기 채점 1개 대기')
   })
 
   it('keeps the Learning start CTA when READY content has no activity', () => {

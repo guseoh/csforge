@@ -1,6 +1,7 @@
 import { Link, useNavigate, useParams, useSearch } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { EmptyState, ErrorState, PageSkeleton } from '../components/AsyncStates'
+import { LearningRail } from '../components/LearningRail'
 import { getConcepts, getLearningArea, type LearningStatus } from '../lib/learning-api'
 import { defaultLearningSearch, type LearningSearch } from '../lib/learning-search'
 import { defaultQuizSearch } from '../lib/quiz-search'
@@ -52,7 +53,13 @@ export function AreaPage() {
   const page = conceptsQuery.data?.page
 
   return (
-    <section className="page-section">
+    <div className="study-workspace area-workspace">
+      <LearningRail
+        areaSlug={area.slug}
+        areaName={area.name}
+        currentTopicId={search.topic}
+      />
+      <section className="page-section">
       <nav className="breadcrumb" aria-label="탐색 경로">
         <Link to="/learning" search={defaultLearningSearch}>학습</Link>
         <span>/</span>
@@ -221,6 +228,7 @@ export function AreaPage() {
           area.topics.reduce((total, topic) => total + topic.publishedConceptCount, 0),
         )}% 완료
       </div>
-    </section>
+      </section>
+    </div>
   )
 }

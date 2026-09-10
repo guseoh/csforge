@@ -13,8 +13,8 @@ const statusMarks: Record<LearningStatus, string> = {
 interface LearningRailProps {
   areaSlug: string
   areaName: string
-  currentTopicId: number
-  currentConceptId: number
+  currentTopicId?: number
+  currentConceptId?: number
 }
 
 /** 현재 학습 영역의 Topic과 Concept 순서를 고정해 주는 데스크톱 학습 navigation이다. */
@@ -26,6 +26,7 @@ export function LearningRail({ areaSlug, areaName, currentTopicId, currentConcep
   const conceptsQuery = useQuery({
     queryKey: ['learning-rail-concepts', areaSlug, currentTopicId],
     queryFn: () => getConcepts({ area: areaSlug, topic: currentTopicId, page: 0, size: 50, sort: 'curriculum' }),
+    enabled: currentTopicId !== undefined,
   })
 
   const area = areaQuery.data
@@ -36,7 +37,7 @@ export function LearningRail({ areaSlug, areaName, currentTopicId, currentConcep
   const completionPercent = publishedConcepts === 0 ? 0 : Math.round((completedConcepts / publishedConcepts) * 100)
 
   return (
-    <aside className="learning-rail" aria-label={`${areaName} 학습 navigation`}>
+    <aside className="learning-rail" aria-label={`${areaName} 학습 탐색`}>
       <Link className="rail-back-link" to="/learning" search={defaultLearningSearch}>← 모든 학습 영역</Link>
       <p className="rail-kicker">현재 학습 영역</p>
       <h2>{areaName}</h2>
@@ -46,7 +47,7 @@ export function LearningRail({ areaSlug, areaName, currentTopicId, currentConcep
       </div>
 
       <div className="rail-topic-list">
-        <p className="rail-section-title">Topic</p>
+        <p className="rail-section-title">학습 주제</p>
         {areaQuery.isPending && <span className="rail-muted">학습 순서 불러오는 중…</span>}
         {area?.topics.map((topic) => (
           <Link
@@ -63,9 +64,9 @@ export function LearningRail({ areaSlug, areaName, currentTopicId, currentConcep
         ))}
       </div>
 
-      <div className="rail-concept-list">
+      {currentTopicId !== undefined && <div className="rail-concept-list">
         <div className="rail-section-title-row">
-          <p className="rail-section-title">이 Topic의 Concept</p>
+          <p className="rail-section-title">이 주제의 개념</p>
           {currentTopic && <span className="rail-muted">{currentTopic.publishedConceptCount}개</span>}
         </div>
         {conceptsQuery.isPending && <span className="rail-muted">Concept 순서 불러오는 중…</span>}
@@ -82,7 +83,7 @@ export function LearningRail({ areaSlug, areaName, currentTopicId, currentConcep
             <span className={`rail-status status-${concept.learningStatus.toLowerCase()}`} aria-label={concept.learningStatus}>{statusMarks[concept.learningStatus]}</span>
           </Link>
         ))}
-      </div>
+      </div>}
     </aside>
   )
 }

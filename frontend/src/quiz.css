@@ -574,3 +574,23 @@
   flex-wrap: wrap;
   gap: 9px;
 }
+
+@media (min-width: 721px) {
+  .study-context .quiz-page {
+    width: min(1000px, 100%);
+    margin: 0 auto;
+  }
+
+  .study-context .quiz-layout {
+    grid-template-columns: 160px minmax(0, 760px);
+    gap: 32px;
+  }
+
+  .study-context .quiz-question-card {
+    max-width: 760px;
+  }
+
+  .study-context .quiz-session-topbar h1 {
+    font-size: clamp(2rem, 3.5vw, 2.8rem);
+  }
+}

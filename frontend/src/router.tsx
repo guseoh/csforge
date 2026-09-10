@@ -1,4 +1,4 @@
-import { Link, Outlet, createRootRoute, createRoute, createRouter, lazyRouteComponent } from '@tanstack/react-router'
+import { Link, Outlet, createRootRoute, createRoute, createRouter, lazyRouteComponent, useRouterState } from '@tanstack/react-router'
 import { SearchPalette } from './components/SearchPalette'
 import { parseLearningSearch } from './lib/learning-search'
 import { parseQuizSearch } from './lib/quiz-search'
@@ -30,8 +30,11 @@ const navigation = [
 ] as const
 
 function AppLayout() {
+  const pathname = useRouterState({ select: (state) => state.location.pathname })
+  const isStudyContext = pathname.startsWith('/learning/') || pathname.startsWith('/concepts/') || pathname.startsWith('/quiz/')
+
   return (
-    <div className="app-shell">
+    <div className={`app-shell${isStudyContext ? ' study-context' : ''}`}>
       <header className="topbar">
         <Link className="brand" to="/">CSForge</Link>
         <div className="topbar-actions">

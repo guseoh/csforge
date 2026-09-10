@@ -236,3 +236,82 @@
 
 .guide-filter-intro .eyebrow { margin: 0; }
 .guide-filter-intro span { color: #777184; font-size: 0.78rem; }
+
+@media (min-width: 721px) {
+  .area-workspace {
+    display: grid;
+    grid-template-columns: 220px minmax(0, 760px);
+    align-items: start;
+    gap: 64px;
+    width: min(1044px, 100%);
+    margin: 0 auto;
+  }
+
+  .area-workspace .page-section {
+    width: 100%;
+    max-width: 760px;
+  }
+
+  .area-workspace .page-heading {
+    display: block;
+    margin-bottom: 0;
+  }
+
+  .area-workspace .page-heading h1 {
+    font-size: clamp(2.05rem, 3.2vw, 2.6rem);
+  }
+
+  .area-workspace .guide-summary-line {
+    margin: 26px 0 40px;
+  }
+
+  .area-workspace .guide-summary-line .primary-button {
+    margin-left: auto;
+  }
+
+  .area-workspace .topic-index {
+    margin-bottom: 38px;
+  }
+
+  .area-workspace .filter-panel {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px 14px;
+    padding: 18px 0;
+    border-width: 1px 0;
+    border-radius: 0;
+    background: transparent;
+  }
+
+  .area-workspace .filter-panel > label:first-of-type,
+  .area-workspace .filter-panel .checkbox-label {
+    grid-column: 1 / -1;
+  }
+
+  .area-workspace .filter-panel-header {
+    align-items: baseline;
+  }
+
+  .area-workspace .filter-panel-header .helper-text {
+    text-align: right;
+  }
+
+  .area-workspace .concept-list {
+    gap: 0;
+  }
+
+  .area-workspace .concept-list-item {
+    padding: 17px 0;
+    border-width: 1px 0 0;
+    border-radius: 0;
+    background: transparent;
+  }
+
+  .area-workspace .concept-list-item:last-child {
+    border-bottom: 1px solid #2a3243;
+  }
+
+  .area-workspace .concept-list-item:hover {
+    transform: none;
+    background: #17131f;
+  }
+}

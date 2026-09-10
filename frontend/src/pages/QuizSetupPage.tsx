@@ -23,15 +23,15 @@ import { canStartQuiz, quizAvailabilityState } from '../lib/quiz-availability'
 
 const rememberedSettingsKey = 'csforge.quiz.setup'
 const questionTypes: { value: QuestionType; label: string }[] = [
-  { value: 'MULTIPLE_CHOICE', label: 'Multiple choice' },
-  { value: 'SHORT_ANSWER', label: 'Short answer' },
-  { value: 'DESCRIPTIVE', label: 'Descriptive' },
-  { value: 'SCENARIO', label: 'Scenario' },
+  { value: 'MULTIPLE_CHOICE', label: '객관식' },
+  { value: 'SHORT_ANSWER', label: '단답형' },
+  { value: 'DESCRIPTIVE', label: '서술형' },
+  { value: 'SCENARIO', label: '시나리오' },
 ]
 const difficulties: { value: QuestionDifficulty; label: string }[] = [
-  { value: 'EASY', label: 'Easy' },
-  { value: 'MEDIUM', label: 'Medium' },
-  { value: 'HARD', label: 'Hard' },
+  { value: 'EASY', label: '쉬움' },
+  { value: 'MEDIUM', label: '보통' },
+  { value: 'HARD', label: '어려움' },
 ]
 
 function settingsFromSearch(search: QuizSearch): QuizSetupPayload {
@@ -171,18 +171,18 @@ export function QuizSetupPage() {
     <section className="page-section quiz-page">
       <div className="page-heading">
         <div>
-          <p className="eyebrow">Question practice</p>
-          <h1>Quiz setup</h1>
+          <p className="eyebrow">문제 풀이</p>
+          <h1>문제 풀기</h1>
           <p className="lead">필터와 문항 수를 정한 뒤 저장된 세션을 이어서 학습하세요.</p>
         </div>
-        <span className="result-count">{availabilityQuery.isPending ? '확인 중…' : availabilityQuery.isError ? '확인 필요' : `${questionCountAvailable} available`}</span>
+        <span className="result-count">{availabilityQuery.isPending ? '확인 중…' : availabilityQuery.isError ? '확인 필요' : `${questionCountAvailable}개 출제 가능`}</span>
       </div>
 
       {activeQuery.data && (
         <div className="quiz-resume-banner">
           <div>
             <strong>진행 중인 Quiz가 있습니다.</strong>
-            <span>{activeQuery.data.answeredCount}/{activeQuery.data.questionCount} answered</span>
+            <span>{activeQuery.data.answeredCount}/{activeQuery.data.questionCount}개 풀이 완료</span>
           </div>
           <Link className="secondary-button" to="/quiz/$quizId" params={{ quizId: String(activeQuery.data.quizId) }}>
             이어하기
@@ -190,8 +190,8 @@ export function QuizSetupPage() {
         </div>
       )}
 
-      <div className="quiz-quick-presets" aria-label="Quiz quick start">
-        <div><p className="eyebrow">Quick start</p><strong>빠른 시작</strong></div>
+      <div className="quiz-quick-presets" aria-label="빠른 문제 시작">
+        <div><p className="eyebrow">빠른 시작</p><strong>바로 풀기</strong></div>
         <button type="button" className="secondary-button" onClick={() => void navigate({ search: quizSearchForPreset('NEW'), replace: true })}>
           새 문제 10
         </button>
@@ -208,13 +208,13 @@ export function QuizSetupPage() {
 
       <section className="quiz-config-panel" aria-labelledby="quiz-config-heading">
         <div className="quiz-config-heading">
-          <div><p className="eyebrow">Detailed setup</p><h2 id="quiz-config-heading">조건 설정</h2></div>
+          <div><p className="eyebrow">세부 설정</p><h2 id="quiz-config-heading">출제 조건</h2></div>
           <p className="helper-text">필요할 때만 세부 조건을 조정하세요. 선택한 조건은 URL에 보존됩니다.</p>
         </div>
         <p className="multi-select-helper">여러 항목을 고르려면 <kbd>Ctrl</kbd>/<kbd>⌘</kbd>를 누른 채 선택하세요.</p>
       <div className="quiz-setup-grid">
         <label>
-          Learning areas
+          학습 영역
           <select
             multiple
             size={6}
@@ -225,7 +225,7 @@ export function QuizSetupPage() {
           </select>
         </label>
         <label className="quiz-deep-link-field">
-          Concept IDs
+          Concept 번호
           <p className="helper-text">Concept 화면에서 이어지는 deep link용입니다. 대부분의 학습자는 직접 입력할 필요가 없습니다.</p>
           <input
             value={settings.concepts.join(',')}
@@ -238,20 +238,20 @@ export function QuizSetupPage() {
           />
         </label>
         <label>
-          Levels
+          레벨
           <select
             multiple
             size={3}
             value={settings.levels.map(String)}
             onChange={(event) => update('levels', Array.from(event.target.selectedOptions, (option) => Number(option.value)))}
           >
-            <option value="1">Level 1</option>
-            <option value="2">Level 2</option>
-            <option value="3">Level 3</option>
+            <option value="1">레벨 1</option>
+            <option value="2">레벨 2</option>
+            <option value="3">레벨 3</option>
           </select>
         </label>
         <label>
-          Difficulty
+          난이도
           <select
             multiple
             size={3}
@@ -265,7 +265,7 @@ export function QuizSetupPage() {
           </select>
         </label>
         <label>
-          Question types
+          문제 유형
           <select
             multiple
             size={4}
@@ -279,19 +279,19 @@ export function QuizSetupPage() {
           </select>
         </label>
         <label>
-          Question state
+          문제 상태
           <select
             value={settings.state}
             onChange={(event) => update('state', event.target.value as QuizSetupPayload['state'])}
           >
-            <option value="ALL">All published</option>
-            <option value="UNSEEN">Unseen only</option>
-            <option value="WRONG">Active wrong notes</option>
-            <option value="REVIEW_NEEDED">Scheduled review</option>
+            <option value="ALL">공개된 문제 전체</option>
+            <option value="UNSEEN">풀지 않은 문제</option>
+            <option value="WRONG">활성 오답 노트</option>
+            <option value="REVIEW_NEEDED">복습 예정</option>
           </select>
         </label>
         <label>
-          Question count
+          문제 수
           <select
             value={[5, 10, 20, 30, 50].includes(settings.count) ? settings.count : 'custom'}
             onChange={(event) => update(
@@ -306,7 +306,7 @@ export function QuizSetupPage() {
             <option value={20}>20</option>
             <option value={30}>30</option>
             <option value={50}>50</option>
-            <option value="custom">Custom</option>
+            <option value="custom">직접 입력</option>
           </select>
           {![5, 10, 20, 30, 50].includes(settings.count) && (
             <input
@@ -314,22 +314,22 @@ export function QuizSetupPage() {
               min={1}
               max={50}
               value={settings.count}
-              aria-label="Custom question count"
+              aria-label="직접 입력 문제 수"
               onChange={(event) => update('count', Math.min(50, Math.max(1, Number(event.target.value) || 1)))}
             />
           )}
         </label>
         <label>
-          Time limit
+          제한 시간
           <select
             value={settings.timeLimitSeconds ?? ''}
             onChange={(event) => update('timeLimitSeconds', event.target.value ? Number(event.target.value) : null)}
           >
-            <option value="">No limit</option>
-            <option value={300}>5 minutes</option>
-            <option value={600}>10 minutes</option>
-            <option value={900}>15 minutes</option>
-            <option value={1800}>30 minutes</option>
+            <option value="">제한 없음</option>
+            <option value={300}>5분</option>
+            <option value={600}>10분</option>
+            <option value={900}>15분</option>
+            <option value={1800}>30분</option>
           </select>
         </label>
       </div>

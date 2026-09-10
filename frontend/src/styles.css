@@ -986,3 +986,18 @@ textarea:focus {
 }
 
 .primary-button:hover { border-color: #b28cff; background: #a06af5; }
+
+/* A study route has one contextual course map. The product chrome stays out of the reading flow. */
+@media (min-width: 721px) {
+  .study-context .content-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .study-context .sidebar {
+    display: none;
+  }
+
+  .study-context .main-content {
+    padding: 46px 32px 120px;
+  }
+}
