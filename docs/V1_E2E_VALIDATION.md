@@ -54,10 +54,10 @@ and do not install or pull a model.
 | Quiz lifecycle | Cover availability, create, active-session resume, answer autosave, position persistence, submit, automatic grading, self-check, wrong-only retry, expiry, and invalid transitions. |
 | Wrong notes/review | Verify grouping by question, historical attempts, retry, schedule stages `1d -> 3d -> 7d -> 14d`, wrong reset to stage 1, and mastered behavior. |
 | Dashboard | Verify Seoul-day aggregation, finalized-attempt accuracy, heatmap, area progress, weak topics, recent quizzes, active quiz, and pending self-check state. |
-| Search | Verify full reindex, all document types, Korean/Nori matching, technical identifiers, filtering/sorting/pagination, incremental outbox convergence, malformed-event DLQ, and recovery after reindex. |
+| Search | Verify all document types, PostgreSQL matching, filtering/sorting/pagination, deterministic highlight and suggestions, eligibility, and immediate visibility after canonical/personal writes. |
 | AI | Verify disabled and unconfigured states; with a real provider, verify request snapshot, current-attempt ownership, retryable failure, bounded retry, and concurrency. |
 | Restart | Stop and restart the application against the isolated database; verify the active quiz, note, progress/bookmark, wrong note, and review state are restored. |
-| Failure handling | Use the automated relay/search/reindex tests for Kafka and Elasticsearch failure paths. Do not stop the user's normal Compose services to simulate an outage. |
+| Failure handling | Verify normal database/API error handling without adding search-specific broker or index recovery flows. Do not stop the user's normal Compose services to simulate an outage. |
 
 ## 2026-09-05 run record
 
@@ -73,9 +73,7 @@ attempt after updating the concept content. An active wrong-only retry was
 blocked until the descriptive self-check was completed, then resumed as a new
 quiz. Restart restored the active quiz and the persisted personal state.
 
-The final frontend gate passed 49 tests, lint, and build. The clean backend
-gate passed 88 tests with zero failures or skips, including five full-stack
-search tests, and the backend build. The normal search projection was rebuilt
-from PostgreSQL and finished `READY` with 1,808 documents and zero pending
-outbox events. Chromium route checks passed at 1440×900 and 1366×768 with no
-page-level errors or horizontal overflow.
+The final frontend gate passed 49 tests, lint, and build. This historical run
+predates the PostgreSQL Search runtime simplification in Issue #47; current
+validation must use the direct PostgreSQL Search integration tests and must not
+expect reindexing, outbox convergence, or external search readiness.

@@ -7,7 +7,7 @@ CSForge is a local-first personal learning system for CS and backend development
 
 Content grows through:
 
-`Markdown/JSON -> Validation -> Preview/Diff -> Import -> PostgreSQL -> Search indexing`
+`Markdown/JSON -> Validation -> Preview/Diff -> Import -> PostgreSQL`
 
 V1 is single-user, no-auth, local-only, and has no cross-device sync.
 
@@ -185,16 +185,17 @@ Search across:
 - Reference
 
 V1 search features:
-- Korean Nori analysis
-- BM25/full text
-- field boosts
+- PostgreSQL-backed direct search with deterministic `ILIKE` matching
+- explainable relevance ordering
 - highlight
 - type/area/level/topic filters
 - sorting
 - autocomplete
 - recent search terms
-- fuzzy/typo tolerance where appropriate
-- stable paging; use Elasticsearch `search_after` for deep paging where useful
+- stable bounded paging
+
+Search reads committed PostgreSQL data directly. It does not require Kafka,
+Elasticsearch, an indexing lifecycle, or a synchronization job.
 
 Global convenience:
 - `Ctrl/Cmd + K` command/search palette
@@ -239,7 +240,6 @@ Baseline entities/tables:
 - `review_schedule`
 - `review_history`
 - `ai_analysis`
-- `outbox_event`
 
 ### Important relations
 - `LearningArea 1:N Topic`
@@ -284,21 +284,16 @@ All list APIs that can grow should have:
 
 Use offset pagination where the UI benefits from page numbers and data volume is moderate. Prefer keyset/cursor pagination for append-heavy histories such as Attempts/ReviewHistory/activity feeds when it improves stability or deep navigation.
 
-Initial migrations must include indexes for known access paths, including at minimum concepts by topic/level/status, questions by level/difficulty/type/status, question-concept reverse lookup, quiz history, attempts by quiz/question/time, wrong notes by status/recent wrong, review schedules by status/due time, personal notes by concept/update time, and outbox publication scans.
+Initial migrations must include indexes for known access paths, including at minimum concepts by topic/level/status, questions by level/difficulty/type/status, question-concept reverse lookup, quiz history, attempts by quiz/question/time, wrong notes by status/recent wrong, review schedules by status/due time, and personal notes by concept/update time.
 
 Indexes are refined later by query-plan measurement, not intentionally omitted until a problem is reproduced.
 
 ## 7. Async and source-of-truth rules
 PostgreSQL is canonical.
 
-Use Kafka for workflows where asynchronous processing has product value, including:
-- search indexing
-- AI wrong-answer analysis
-- analytics/event processing
-
-Use a transactional outbox where DB state and event publication must remain consistent. Do not make synchronous CRUD depend on Kafka unnecessarily.
-
-Elasticsearch stores search projections only and must support reindexing from canonical data.
+AI wrong-answer analysis is an asynchronous workflow backed by PostgreSQL state.
+Search is synchronous and reads committed PostgreSQL data directly; it has no
+outbox, broker, replicated projection, or reindex operation.
 
 Redis is optional/derived infrastructure for cache or temporary state; core learning flows should not require Redis as their only source of truth.
 

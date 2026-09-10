@@ -11,13 +11,13 @@ Primary flow:
 
 Content management flow:
 
-`Markdown/JSON -> Validate -> Preview/Diff -> Import -> PostgreSQL -> async indexing`
+`Markdown/JSON -> Validate -> Preview/Diff -> Import -> PostgreSQL`
 
 ## 2. Current hard constraints
 - Local-only V1. No cloud deployment.
 - Single user. No Member domain, signup, login, OAuth, JWT, roles, or Spring Security unless a later task explicitly changes this.
 - No desktop/laptop data synchronization in V1.
-- PostgreSQL is the source of truth. Elasticsearch, Redis, and Kafka data must be rebuildable or recoverable from canonical data/events.
+- PostgreSQL is the source of truth. Redis is optional derived infrastructure and must be rebuildable from canonical data.
 - Keep the app usable even when optional derived infrastructure such as search/cache is unavailable where practical.
 - Do not introduce paid infrastructure or services as a requirement.
 
@@ -31,7 +31,6 @@ Backend:
 - Bean Validation
 - Flyway
 - Lombok
-- Spring Kafka
 - Spring AI when AI features are implemented
 - Actuator / Micrometer
 
@@ -47,8 +46,7 @@ Frontend:
 
 Local infrastructure:
 - PostgreSQL
-- Elasticsearch with Nori for Korean search
-- Kafka
+- PostgreSQL-backed direct Search with deterministic `ILIKE` queries
 - Redis
 - Prometheus
 - Grafana
@@ -103,7 +101,7 @@ When applicable from the first implementation, include:
 - useful loading, empty, and error states
 - keyboard/search convenience where it materially improves daily use
 
-For append-heavy/history data, consider cursor/keyset pagination rather than forcing offset pagination everywhere. For Elasticsearch deep paging, design with `search_after` when appropriate.
+For append-heavy/history data, consider cursor/keyset pagination rather than forcing offset pagination everywhere. Keep database paging bounded and stable; use keyset pagination when a concrete V1 history/feed query needs it.
 
 Performance measurement is used to validate and refine an already reasonable design, not to justify intentionally shipping missing pagination/indexes first.
 
@@ -287,9 +285,8 @@ For every task that changes code:
 
 ## 10. Search and async rules
 - PostgreSQL owns canonical Concept, Question, Note, Attempt, WrongNote, Review, and AI-analysis records.
-- Elasticsearch owns search projections only.
-- Kafka is for workflows that benefit from asynchronous processing, such as search indexing, AI analysis, and analytics events. Do not route simple synchronous CRUD through Kafka without a reason.
-- When DB state and Kafka publication must stay consistent, use a transactional outbox rather than dual writes.
+- Search reads committed PostgreSQL canonical data directly; it does not require a replicated search projection or indexing lifecycle.
+- Kafka and Elasticsearch are not required V1 runtime technologies. Reconsider them only in a separate change with a measured product need.
 
 ## 11. Codex task workflow
 For every task:
