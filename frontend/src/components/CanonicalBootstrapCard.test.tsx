@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import type { CanonicalBootstrapResult, CanonicalBootstrapStatus } from '../lib/api'
+import type { CanonicalBootstrapResult, CanonicalBootstrapStatus } from '../lib/import-api'
 
 const mocks = vi.hoisted(() => ({
   status: { data: null as CanonicalBootstrapStatus | null, isPending: false, isError: false, refetch: vi.fn() },

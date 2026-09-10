@@ -1,5 +1,6 @@
 package com.guseoh.csforge.wrongnote.infrastructure;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,6 +10,7 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
+import jakarta.persistence.criteria.Order;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import jakarta.persistence.criteria.Subquery;
@@ -133,22 +135,22 @@ public class WrongNoteSearchRepository {
         predicates.add(criteria.reviewFilter() == WrongNoteReviewFilter.NONE ? builder.not(exists) : exists);
     }
 
-    private jakarta.persistence.criteria.Order[] order(
+    private Order[] order(
             CriteriaBuilder builder,
             CriteriaQuery<?> query,
             Root<WrongNote> root,
             Join<WrongNote, Question> question,
             WrongNoteSort sort) {
         return switch (sort) {
-            case WRONG_COUNT -> new jakarta.persistence.criteria.Order[] {builder.desc(root.get("wrongCount")), builder.desc(root.get("id"))};
+            case WRONG_COUNT -> new Order[] {builder.desc(root.get("wrongCount")), builder.desc(root.get("id"))};
             case REVIEW_DUE -> {
-                Subquery<java.time.Instant> dueAt = query.subquery(java.time.Instant.class);
+                Subquery<Instant> dueAt = query.subquery(Instant.class);
                 Root<ReviewSchedule> schedule = dueAt.from(ReviewSchedule.class);
                 dueAt.select(schedule.get("dueAt"))
                         .where(builder.equal(schedule.get("questionId"), question.get("id")));
-                yield new jakarta.persistence.criteria.Order[] {builder.asc(dueAt), builder.desc(root.get("id"))};
+                yield new Order[] {builder.asc(dueAt), builder.desc(root.get("id"))};
             }
-            case RECENT -> new jakarta.persistence.criteria.Order[] {builder.desc(root.get("lastWrongAt")), builder.desc(root.get("id"))};
+            case RECENT -> new Order[] {builder.desc(root.get("lastWrongAt")), builder.desc(root.get("id"))};
         };
     }
 }

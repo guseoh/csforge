@@ -12,7 +12,7 @@ import {
   type ConceptDetail as ConceptDetailModel,
   type LearningStatus,
   type ReferenceType,
-} from '../lib/api'
+} from '../lib/learning-api'
 import { defaultLearningSearch } from '../lib/learning-search'
 import { defaultQuizSearch } from '../lib/quiz-search'
 

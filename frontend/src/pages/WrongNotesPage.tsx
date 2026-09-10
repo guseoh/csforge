@@ -2,14 +2,9 @@ import { useState } from 'react'
 import { Link, useNavigate, useSearch } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { ErrorState, PageSkeleton } from '../components/AsyncStates'
-import {
-  getLearningArea,
-  getLearningAreas,
-  getWrongNotes,
-  type QuestionDifficulty,
-  type WrongAnswerAnalysisStatus,
-  type WrongNoteStatus,
-} from '../lib/api'
+import { getWrongNotes, type WrongAnswerAnalysisStatus, type WrongNoteStatus } from '../lib/wrong-note-api'
+import type { QuestionDifficulty } from '../lib/quiz-api'
+import { getLearningArea, getLearningAreas } from '../lib/learning-api'
 import {
   withWrongNoteArea,
   countAdvancedWrongNoteFilters,

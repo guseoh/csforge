@@ -5,6 +5,13 @@ import { RouterProvider } from '@tanstack/react-router'
 import { router } from './router'
 import { ToastProvider } from './components/toast/ToastProvider'
 import './styles.css'
+import './dashboard.css'
+import './learning.css'
+import './concept.css'
+import './quiz.css'
+import './wrong-note.css'
+import './review.css'
+import './import.css'
 
 const queryClient = new QueryClient()
 

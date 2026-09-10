@@ -1,7 +1,7 @@
 import { Link, useNavigate, useParams, useSearch } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { EmptyState, ErrorState, PageSkeleton } from '../components/AsyncStates'
-import { getConcepts, getLearningArea, type LearningStatus } from '../lib/api'
+import { getConcepts, getLearningArea, type LearningStatus } from '../lib/learning-api'
 import { defaultLearningSearch, type LearningSearch } from '../lib/learning-search'
 
 const PAGE_SIZE = 12

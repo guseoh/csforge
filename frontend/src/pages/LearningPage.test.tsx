@@ -1,7 +1,8 @@
 import type { ReactNode } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import type { AreaSummary, CanonicalBootstrapResult, CanonicalBootstrapStatus, ConceptListItem } from '../lib/api'
+import type { AreaSummary, ConceptListItem } from '../lib/learning-api'
+import type { CanonicalBootstrapResult, CanonicalBootstrapStatus } from '../lib/import-api'
 
 const mocks = vi.hoisted(() => ({
   areas: { data: [] as AreaSummary[], isPending: false, isError: false, refetch: vi.fn() },

@@ -5,12 +5,12 @@ import { ErrorState, PageSkeleton } from '../components/AsyncStates'
 import {
   createQuiz,
   getActiveQuiz,
-  getLearningAreas,
   getQuizAvailability,
   type QuestionDifficulty,
   type QuestionType,
   type QuizSetupPayload,
-} from '../lib/api'
+} from '../lib/quiz-api'
+import { getLearningAreas } from '../lib/learning-api'
 import {
   csvParam,
   csvValues,

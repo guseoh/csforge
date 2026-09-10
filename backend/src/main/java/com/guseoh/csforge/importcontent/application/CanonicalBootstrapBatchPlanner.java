@@ -3,6 +3,7 @@ package com.guseoh.csforge.importcontent.application;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 import com.guseoh.csforge.importcontent.parser.ContentImportParser;
 import lombok.RequiredArgsConstructor;
@@ -50,7 +51,7 @@ public class CanonicalBootstrapBatchPlanner {
 
     private ParsedFile parse(CanonicalContentFile source) {
         List<NormalizedImportItem> items = parser.parse(new ImportFilesCommand(List.of(new ImportSourceFile(source.path(), source.content()))));
-        ImportItemKind kind = items.stream().map(NormalizedImportItem::kind).filter(java.util.Objects::nonNull).findFirst().orElse(null);
+        ImportItemKind kind = items.stream().map(NormalizedImportItem::kind).filter(Objects::nonNull).findFirst().orElse(null);
         return new ParsedFile(source, kind, items.size());
     }
 

@@ -26,6 +26,7 @@ import com.guseoh.csforge.ai.application.WrongAnswerAnalysisResult;
 import com.guseoh.csforge.ai.application.WrongAnswerAnalyzer;
 import com.guseoh.csforge.ai.domain.WrongAnswerAnalysisRepository;
 import com.guseoh.csforge.ai.domain.WrongAnswerAnalysisStatus;
+import com.guseoh.csforge.test.PostgresIntegrationTestSupport;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -54,10 +55,7 @@ class WrongAnswerAnalysisIntegrationTest {
     private static final HttpClient HTTP_CLIENT = HttpClient.newHttpClient();
 
     @Container
-    static final PostgreSQLContainer<?> POSTGRES = new PostgreSQLContainer<>("postgres:16.4")
-            .withDatabaseName("csforge_ai_test")
-            .withUsername("csforge")
-            .withPassword("csforge");
+    static final PostgreSQLContainer<?> POSTGRES = PostgresIntegrationTestSupport.container("csforge_ai_test");
 
     @Autowired
     JdbcTemplate jdbc;
@@ -82,9 +80,7 @@ class WrongAnswerAnalysisIntegrationTest {
 
     @DynamicPropertySource
     static void database(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", POSTGRES::getJdbcUrl);
-        registry.add("spring.datasource.username", POSTGRES::getUsername);
-        registry.add("spring.datasource.password", POSTGRES::getPassword);
+        PostgresIntegrationTestSupport.registerDataSourceProperties(registry, POSTGRES);
         registry.add("spring.ai.model.chat", () -> "none");
         registry.add("csforge.ai.enabled", () -> "true");
         registry.add("csforge.ai.processor-delay-ms", () -> "60000");

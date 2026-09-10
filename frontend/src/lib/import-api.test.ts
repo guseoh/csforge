@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
-import { ApiRequestError, applyImports, previewImports } from './api'
+import { applyImports, previewImports } from './import-api'
+import { ApiRequestError } from './http'
 
 describe('content import API flow', () => {
   it('maps preview requests and multipart files', async () => {

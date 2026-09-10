@@ -20,6 +20,7 @@ import com.guseoh.csforge.question.domain.Question;
 import com.guseoh.csforge.question.domain.QuestionDifficulty;
 import com.guseoh.csforge.question.domain.QuestionRepository;
 import com.guseoh.csforge.question.domain.QuestionType;
+import com.guseoh.csforge.test.PostgresIntegrationTestSupport;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -48,18 +49,13 @@ class QuizIntegrationTest {
     private static final MutableClock TEST_CLOCK = new MutableClock(BASE_TIME);
 
     @Container
-    static final PostgreSQLContainer<?> POSTGRES = new PostgreSQLContainer<>("postgres:16.4")
-            .withDatabaseName("csforge_test")
-            .withUsername("csforge")
-            .withPassword("csforge");
+    static final PostgreSQLContainer<?> POSTGRES = PostgresIntegrationTestSupport.container("csforge_test");
 
     private static final HttpClient HTTP_CLIENT = HttpClient.newHttpClient();
 
     @DynamicPropertySource
     static void registerDatabaseProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", POSTGRES::getJdbcUrl);
-        registry.add("spring.datasource.username", POSTGRES::getUsername);
-        registry.add("spring.datasource.password", POSTGRES::getPassword);
+        PostgresIntegrationTestSupport.registerDataSourceProperties(registry, POSTGRES);
     }
 
     @Autowired

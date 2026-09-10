@@ -13,6 +13,7 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
 
+import com.guseoh.csforge.test.PostgresIntegrationTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,16 +43,11 @@ class DashboardIntegrationTest {
     private static final HttpClient HTTP_CLIENT = HttpClient.newHttpClient();
 
     @Container
-    static final PostgreSQLContainer<?> POSTGRES = new PostgreSQLContainer<>("postgres:16.4")
-            .withDatabaseName("csforge_test")
-            .withUsername("csforge")
-            .withPassword("csforge");
+    static final PostgreSQLContainer<?> POSTGRES = PostgresIntegrationTestSupport.container("csforge_test");
 
     @DynamicPropertySource
     static void registerDatabaseProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", POSTGRES::getJdbcUrl);
-        registry.add("spring.datasource.username", POSTGRES::getUsername);
-        registry.add("spring.datasource.password", POSTGRES::getPassword);
+        PostgresIntegrationTestSupport.registerDataSourceProperties(registry, POSTGRES);
         registry.add("csforge.time-zone", () -> "Asia/Seoul");
     }
 

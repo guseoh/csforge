@@ -1,0 +1,67 @@
+.import-workflow {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+  margin: -4px 0 18px;
+}
+
+.import-step {
+  display: grid;
+  gap: 4px;
+  padding: 10px 11px;
+  border: 1px solid #293348;
+  border-radius: 8px;
+  color: var(--text-muted);
+  background: #131a24;
+  font-size: 0.72rem;
+}
+
+.import-step strong {
+  color: var(--text-default);
+  font-size: 0.77rem;
+}
+
+.import-step.current {
+  border-color: #536b9e;
+  background: #182238;
+}
+
+.import-step.current strong { color: var(--accent); }
+.import-step.done { border-color: #356b5a; }
+.import-step.done strong { color: var(--state-success); }
+
+.import-dropzone { position: relative; display: grid; justify-items: start; gap: 8px; padding: 28px; border: 1px dashed #52607a; border-radius: 12px; background: #171d2a; cursor: pointer; }
+.import-dropzone > span:not(.import-file-picker-trigger), .import-file small { color: #8793ad; font-size: 0.8rem; }
+.import-file-picker-trigger {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  margin-top: 8px;
+  padding: 0 13px;
+  border: 1px solid #3b4965;
+  border-radius: 7px;
+  color: #c9d5ee !important;
+  background: #1a2231;
+  font-size: 0.8rem;
+  font-weight: 650;
+}
+.import-dropzone:hover .import-file-picker-trigger { border-color: #6379af; background: #222d42; }
+.import-dropzone:focus-within { border-color: #8fa9ff; box-shadow: 0 0 0 3px rgb(143 169 255 / 12%); }
+.import-file-input { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; border: 0; opacity: 0; clip: rect(0 0 0 0); white-space: nowrap; }
+.import-files, .import-result { display: grid; gap: 14px; margin-top: 20px; }
+.import-stage {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #2a3243;
+}
+.import-file { display: flex; align-items: center; gap: 12px; padding: 11px 14px; border: 1px solid #2a3243; border-radius: 8px; background: #171d2a; }
+.import-file span { flex: 1; }
+.import-file button { border: 0; background: transparent; color: #9fb5ff; cursor: pointer; }
+.import-items { display: grid; gap: 8px; }
+.import-item { padding: 13px 15px; border: 1px solid #2a3243; border-radius: 8px; background: #171d2a; }
+.import-item summary { display: flex; gap: 12px; align-items: center; cursor: pointer; list-style: none; }
+.import-item summary span { color: #f1b278; font-size: 0.74rem; }
+.import-item summary small { margin-left: auto; color: #8793ad; }
+.import-diffs { display: grid; gap: 6px; max-width: 100%; margin-top: 12px; color: #aeb8cc; font-size: 0.8rem; }
+.import-diffs div { display: grid; grid-template-columns: minmax(120px, 170px) minmax(0, 1fr); gap: 12px; padding-top: 7px; border-top: 1px solid #2a3243; }
+.import-diffs span { overflow-wrap: anywhere; }

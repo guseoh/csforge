@@ -1,7 +1,8 @@
 import type { ReactNode } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import type { CanonicalBootstrapStatus, Dashboard } from '../lib/api'
+import type { CanonicalBootstrapStatus } from '../lib/import-api'
+import type { Dashboard } from '../lib/dashboard-api'
 
 const mocks = vi.hoisted(() => ({
   query: { data: null as Dashboard | null, isPending: false, isError: false, refetch: vi.fn() },

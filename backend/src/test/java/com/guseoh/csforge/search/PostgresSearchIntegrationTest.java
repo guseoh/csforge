@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.guseoh.csforge.learning.application.LearningCommandService;
+import com.guseoh.csforge.test.PostgresIntegrationTestSupport;
 import com.guseoh.csforge.search.application.SearchCriteria;
 import com.guseoh.csforge.search.application.SearchDocumentType;
 import com.guseoh.csforge.search.application.SearchPageView;
@@ -34,10 +35,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 class PostgresSearchIntegrationTest {
 
     @Container
-    static final PostgreSQLContainer<?> POSTGRES = new PostgreSQLContainer<>("postgres:16.4")
-            .withDatabaseName("csforge_postgres_search_test")
-            .withUsername("csforge")
-            .withPassword("csforge");
+    static final PostgreSQLContainer<?> POSTGRES = PostgresIntegrationTestSupport.container("csforge_postgres_search_test");
 
     @Autowired
     JdbcTemplate jdbc;
@@ -53,9 +51,7 @@ class PostgresSearchIntegrationTest {
 
     @DynamicPropertySource
     static void database(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", POSTGRES::getJdbcUrl);
-        registry.add("spring.datasource.username", POSTGRES::getUsername);
-        registry.add("spring.datasource.password", POSTGRES::getPassword);
+        PostgresIntegrationTestSupport.registerDataSourceProperties(registry, POSTGRES);
     }
 
     @BeforeEach

@@ -1,5 +1,5 @@
 import { Link } from '@tanstack/react-router'
-import type { WrongAnswerAnalysis } from '../lib/api'
+import type { WrongAnswerAnalysis } from '../lib/wrong-note-api'
 
 interface WrongAnswerAnalysisCardProps {
   analysis: WrongAnswerAnalysis
