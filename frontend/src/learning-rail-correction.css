@@ -41,9 +41,15 @@
   padding-right: 8px;
 }
 
-/* The guide keeps its readable width when the rail collapses, but recenters inside the reclaimed workspace. */
+/* A collapsed Area rail gives the reclaimed column back to the curriculum surface. */
+.area-workspace:has(.area-learning-rail[data-collapsed='true']) {
+  grid-template-columns: 52px minmax(0, 1fr);
+  gap: 32px;
+}
+
 .area-workspace:has(.area-learning-rail[data-collapsed='true']) .area-guide-page {
-  justify-self: center;
+  width: 100%;
+  justify-self: stretch;
 }
 
 /* Concept reading has a later, fixed three-column layout. Reclaim that column only when the rail is actually collapsed. */
