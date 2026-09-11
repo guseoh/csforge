@@ -141,6 +141,14 @@
   letter-spacing: -0.03em;
 }
 
+.dashboard-section-heading .text-link {
+  color: var(--text-muted);
+}
+
+.dashboard-section-heading .text-link:hover {
+  color: var(--accent-strong);
+}
+
 .dashboard-section-copy {
   margin: -2px 0 2px;
   color: var(--text-muted);
@@ -198,7 +206,7 @@
 }
 
 .dashboard-area-progress b {
-  color: var(--accent);
+  color: var(--text-default);
   font-size: 0.72rem;
   font-weight: 700;
   text-align: right;
@@ -220,12 +228,13 @@
 }
 
 .dashboard-area-arrow {
-  color: var(--accent);
+  color: var(--text-faint);
   font-size: 0.9rem;
-  transition: transform 120ms ease;
+  transition: color 120ms ease, transform 120ms ease;
 }
 
 .dashboard-area-row:hover .dashboard-area-arrow {
+  color: var(--accent-strong);
   transform: translateX(3px);
 }
 
@@ -276,7 +285,7 @@
 }
 
 .dashboard-list-metric strong {
-  color: var(--accent);
+  color: var(--text-default);
   font-size: 0.82rem;
 }
 
