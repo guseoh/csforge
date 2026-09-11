@@ -28,6 +28,8 @@ references:
 
 직관적으로는 "먼저 42를 썼으니 당연하다"고 생각하기 쉽지만 여러 thread가 공유 메모리를 읽고 쓰는 Java 프로그램에서는 **어떤 동기화 관계가 있는지**를 확인해야 합니다. 이 규칙을 정의하는 것이 Java Memory Model(JMM)이고, 핵심 추론 도구 가운데 하나가 **happens-before**입니다.
 
+![happens-before와 synchronization 경계](/learning/java/happens-before.svg)
+
 ### JMM은 CPU cache 이야기가 아니라 Java 프로그램의 관찰 규칙이다
 
 동시성을 설명할 때 "각 CPU cache에 값이 남아 있어서 안 보인다"는 식의 그림을 자주 사용합니다. 하드웨어 이해에 도움은 될 수 있지만 그것만으로 Java의 보장을 설명할 수는 없습니다.

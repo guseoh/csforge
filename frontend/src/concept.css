@@ -440,6 +440,7 @@
 }
 
 .concept-reading-content pre {
+  position: relative;
   overflow-x: auto;
   margin: 22px 0 28px;
   padding: 17px 18px;
@@ -450,6 +451,25 @@
 }
 
 .concept-reading-content pre code { color: #d8d0e8; font-size: 0.84rem; }
+.concept-reading-content pre:has(code.language-java) { padding-top: 42px; border-color: #3a2c4f; background: #15111d; }
+.concept-reading-content pre:has(code.language-java)::before {
+  position: absolute;
+  top: 13px;
+  left: 18px;
+  color: #a98af7;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  content: 'Java';
+}
+.concept-reading-content pre code.language-java .code-keyword { color: #d99cff; }
+.concept-reading-content pre code.language-java .code-type { color: #8fc7ff; }
+.concept-reading-content pre code.language-java .code-string { color: #a7df9b; }
+.concept-reading-content pre code.language-java .code-comment { color: #81798f; }
+.concept-reading-content pre code.language-java .code-number { color: #f7c879; }
+.concept-reading-content pre code.language-java .code-annotation { color: #ffae7a; }
 .concept-reading-content :not(pre) > code { color: #d0bdff; background: #211b2d; }
 
 .concept-reading-content table {

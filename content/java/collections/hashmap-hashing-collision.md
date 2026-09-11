@@ -21,10 +21,18 @@ references:
     language: en
     displayOrder: 2
     relationNote: hashCode 계약 확인
+  - url: "https://d2.naver.com/helloworld/831311"
+    title: "Java HashMap은 어떻게 동작하는가?"
+    referenceType: COMPANY_TECH_BLOG
+    language: ko
+    displayOrder: 3
+    relationNote: hash·bucket·collision과 Java HashMap 구현 흐름을 시각적으로 보충
 ---
 # HashMap 조회와 hash 충돌
 
 `HashMap`의 장점은 key 전체를 처음부터 순서대로 비교하지 않고 **hash 값을 이용해 비교할 후보를 좁힐 수 있다는 점**입니다. 다만 hashCode가 곧 key의 유일한 번호는 아니므로 마지막에는 equality 확인이 필요합니다.
+
+![HashMap의 hash·bucket·equals 조회 흐름](/learning/java/hashmap-buckets.svg)
 
 ### 조회 흐름을 단계로 나눈다
 

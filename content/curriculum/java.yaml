@@ -566,9 +566,10 @@ topics:
     level: 2
     objective: producer와 consumer 방향에 따라 bounded wildcard를 사용하고 PECS를 기계적으로 적용하지 않는다.
     density: CORE
-    visualization: NONE
+    visualization: DIAGRAM
     prerequisites:
     - java.core.generics.generic-invariance
+    visualizationNote: extends는 읽기, super는 쓰기 방향을 데이터 흐름으로 비교한다.
   - key: java.core.generics.raw-types-unchecked
     title: "Raw type과 unchecked 경고"
     order: 40
@@ -614,8 +615,8 @@ topics:
     level: 2
     objective: 예외를 무조건 가까운 곳에서 잡지 않고 recovery, translation, 사용자 응답처럼 책임이 있는 boundary에서 처리한다.
     density: CORE
-    visualization: TEXT
-    visualizationNote: 예외가 여러 layer를 통과할 때 recovery·translation·logging·response 책임 지점을 표시한다.
+    visualization: DIAGRAM
+    visualizationNote: 예외가 여러 layer를 통과할 때 recovery·translation·logging·response 책임 지점을 실제 흐름으로 표시한다.
   - key: java.core.exceptions-resources.exception-translation-cause
     title: "예외 변환과 원인 보존"
     order: 30

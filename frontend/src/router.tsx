@@ -132,6 +132,7 @@ const routeTree = rootRoute.addChildren([
 export const router = createRouter({
   routeTree,
   defaultPendingComponent: LoadingPage,
+  scrollRestoration: true,
 })
 
 declare module '@tanstack/react-router' {

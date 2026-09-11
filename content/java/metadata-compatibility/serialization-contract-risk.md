@@ -21,6 +21,12 @@ references:
     language: en
     displayOrder: 2
     relationNote: object stream format·version·security contract 확인
+  - url: "https://techblog.woowahan.com/2550/"
+    title: "자바 직렬화, 그것이 알고싶다. 훑어보기편"
+    referenceType: COMPANY_TECH_BLOG
+    language: ko
+    displayOrder: 3
+    relationNote: native serialization을 장기 데이터 계약과 운영 위험 관점에서 보충
 ---
 # Serialization이 만드는 장기 계약
 

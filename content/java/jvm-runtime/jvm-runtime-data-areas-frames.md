@@ -15,12 +15,20 @@ references:
     language: en
     displayOrder: 1
     relationNote: JVM stack·frame·heap·method area·runtime constant pool 추상 영역 확인
+  - url: "https://d2.naver.com/helloworld/329631"
+    title: "네이버 D2: Java Reference와 GC"
+    referenceType: COMPANY_TECH_BLOG
+    language: ko
+    displayOrder: 2
+    relationNote: Java 객체와 참조가 runtime memory model에서 어떻게 연결되는지 보충
 ---
 # JVM Runtime Data Area와 Frame
 
 Java 코드를 설명할 때 흔히 "지역 변수는 stack, 객체는 heap"이라는 한 문장으로 끝내곤 합니다. 입문에서는 방향을 잡는 데 도움이 되지만, 이 문장을 물리 메모리 배치 규칙처럼 받아들이면 JIT 최적화나 JVM specification을 잘못 이해하게 됩니다.
 
 JVMS는 실행 중 필요한 구조를 **JVM runtime data areas**라는 추상 모델로 설명합니다. 먼저 그 모델을 이해하고, 실제 HotSpot의 메모리 구현은 별도의 층으로 봐야 합니다.
+
+![JVM Runtime Data Area의 thread별 stack과 공유 영역](/learning/java/jvm-runtime-data-areas.svg)
 
 ### 메서드를 호출할 때 thread의 JVM stack에 frame이 생긴다
 

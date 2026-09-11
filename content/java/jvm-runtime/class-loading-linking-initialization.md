@@ -15,12 +15,20 @@ references:
     language: en
     displayOrder: 1
     relationNote: class lifecycle 단계와 initialization trigger 확인
+  - url: "https://engineering.linecorp.com/en/blog/line-open-jdk/"
+    title: "LINE의 OpenJDK 적용기: 호환성 확인부터 주의 사항까지"
+    referenceType: COMPANY_TECH_BLOG
+    language: ko
+    displayOrder: 2
+    relationNote: JDK 구현과 실행 환경 차이가 class/runtime 호환성에 미치는 영향 보충
 ---
 # Class Loading·Linking·Initialization
 
 Java에서 어떤 class를 처음 사용한다고 해서 "파일을 읽자마자 static block부터 실행된다"고 생각하면 여러 현상을 설명하기 어렵습니다. JVM은 class를 runtime에 가져오고 사용할 준비를 하는 과정을 **loading, linking, initialization**으로 나누어 정의합니다.
 
 각 단계의 의미를 구분하면 `NoClassDefFoundError`, static 초기화 실패, class loader 문제를 훨씬 정확하게 볼 수 있습니다.
+
+![class lifecycle의 loading, linking, initialization 흐름](/learning/java/class-loading-lifecycle.svg)
 
 ### 큰 흐름부터 잡되 resolution 시점을 직선 순서로 고정하지 않는다
 

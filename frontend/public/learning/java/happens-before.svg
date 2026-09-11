@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 430" role="img" aria-labelledby="title desc">
+  <title id="title">Happens-before synchronization</title>
+  <desc id="desc">Thread A의 write가 unlock을 거쳐 Thread B의 lock 이후 read에 보이는 happens-before 관계</desc>
+  <defs><marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0 0L9 4.5L0 9Z" fill="#a56df4"/></marker><style>.bg{fill:#17131f}.title{fill:#f5efff;font:700 25px Inter,Arial,sans-serif}.label{fill:#f0e8fa;font:650 17px Inter,Arial,sans-serif}.small{fill:#a797b5;font:500 14px Inter,Arial,sans-serif}.box{fill:#21192e;stroke:#6d478f;stroke-width:2}.sync{fill:#2a1d3c;stroke:#a56df4;stroke-width:2}.write{fill:#18352e;stroke:#4cc090;stroke-width:2}.line{stroke:#a56df4;stroke-width:2;fill:none;marker-end:url(#arrow)}</style></defs>
+  <rect class="bg" width="1100" height="430" rx="20"/><text class="title" x="48" y="53">happens-before는 관찰 가능한 순서를 만든다</text>
+  <text class="label" x="48" y="135">Thread A</text><path class="line" d="M150 129H1000"/><rect class="write" x="180" y="95" width="180" height="68" rx="12"/><text class="label" x="236" y="136">x = 42</text>
+  <rect class="sync" x="460" y="95" width="180" height="68" rx="12"/><text class="label" x="505" y="136">unlock(lock)</text>
+  <text class="label" x="48" y="280">Thread B</text><path class="line" d="M150 274H1000"/><rect class="sync" x="460" y="240" width="180" height="68" rx="12"/><text class="label" x="514" y="281">lock(lock)</text>
+  <rect class="box" x="760" y="240" width="180" height="68" rx="12"/><text class="label" x="817" y="281">read x</text>
+  <path class="line" d="M550 163V240"/><text class="small" x="575" y="208">synchronizes-with</text><path class="line" d="M640 274H760"/>
+  <text class="small" x="48" y="370">동기화 경계가 없다면 단순히 코드가 앞에 쓰였다는 사실만으로 다른 thread의 read를 보장하지 않는다.</text>
+</svg>

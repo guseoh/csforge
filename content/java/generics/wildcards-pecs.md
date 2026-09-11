@@ -22,6 +22,8 @@ references:
 
 Wildcard는 이런 사용 방향을 API 계약에 표현합니다.
 
+![Wildcard와 PECS의 읽기·쓰기 방향](/learning/java/generics-pecs.svg)
+
 ### 값을 생산해 주는 쪽이면 `? extends`
 
 ```java

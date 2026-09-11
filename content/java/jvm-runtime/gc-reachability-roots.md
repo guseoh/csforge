@@ -21,10 +21,18 @@ references:
     language: en
     displayOrder: 2
     relationNote: reachability와 reference processing 개념 확인
+  - url: "https://d2.naver.com/helloworld/329631"
+    title: "네이버 D2: Java Reference와 GC"
+    referenceType: COMPANY_TECH_BLOG
+    language: ko
+    displayOrder: 3
+    relationNote: strong·soft·weak·phantom reference와 GC reachability를 함께 복습
 ---
 # GC Reachability와 Root
 
 Java에서는 `free()`를 직접 호출하지 않습니다. 그래서 "변수가 scope를 벗어나면 객체가 삭제된다"고 단순하게 이해하기 쉽지만, 실제로 중요한 기준은 **그 객체에 아직 도달할 수 있는 참조 경로가 있는가**입니다.
+
+![GC root에서 reachable한 객체와 끊긴 객체](/learning/java/gc-reachability.svg)
 
 GC는 살아 있는 출발점에서 객체 graph를 따라가며 어떤 객체가 여전히 reachable한지 판단합니다.
 

@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 560" role="img" aria-labelledby="title desc">
+  <title id="title">JVM Runtime Data Areas</title>
+  <desc id="desc">Thread마다 독립적인 stack과 frame이 있고, 여러 thread가 heap과 method area를 공유하는 구조</desc>
+  <defs>
+    <marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0 0L9 4.5L0 9Z" fill="#a56df4"/></marker>
+    <style>
+      .bg{fill:#17131f}.title{fill:#f5efff;font:700 26px Inter,Arial,sans-serif}.label{fill:#d8c9e9;font:600 17px Inter,Arial,sans-serif}.small{fill:#9e8caf;font:500 14px Inter,Arial,sans-serif}.box{fill:#21192e;stroke:#6d478f;stroke-width:2}.shared{fill:#2a1d3c;stroke:#a56df4;stroke-width:2}.thread{fill:#1d1727;stroke:#49345f;stroke-width:2}.frame{fill:#34244a;stroke:#8758bd;stroke-width:1.5}.line{stroke:#a56df4;stroke-width:2;fill:none;marker-end:url(#arrow)}
+    </style>
+  </defs>
+  <rect class="bg" width="1100" height="560" rx="20"/>
+  <text class="title" x="48" y="56">JVM Runtime Data Areas</text>
+  <text class="small" x="48" y="84">thread별 실행 상태와 JVM 전체에서 공유되는 객체·클래스 영역</text>
+  <rect class="thread" x="48" y="125" width="310" height="350" rx="16"/>
+  <text class="label" x="76" y="164">Thread A · JVM Stack</text>
+  <rect class="frame" x="76" y="190" width="254" height="63" rx="8"/><text class="small" x="94" y="227">frame: method C · 현재 실행</text>
+  <rect class="box" x="76" y="265" width="254" height="63" rx="8"/><text class="small" x="94" y="302">frame: method B</text>
+  <rect class="box" x="76" y="340" width="254" height="63" rx="8"/><text class="small" x="94" y="377">frame: method A</text>
+  <text class="small" x="76" y="438">local variable array · operand stack</text>
+  <rect class="thread" x="392" y="125" width="250" height="350" rx="16"/>
+  <text class="label" x="420" y="164">Thread B · JVM Stack</text>
+  <rect class="frame" x="420" y="190" width="194" height="63" rx="8"/><text class="small" x="438" y="227">frame: handle()</text>
+  <rect class="box" x="420" y="265" width="194" height="63" rx="8"/><text class="small" x="438" y="302">frame: main()</text>
+  <text class="small" x="420" y="387">각 thread가 독립 보유</text>
+  <rect class="shared" x="690" y="125" width="362" height="155" rx="16"/>
+  <text class="label" x="720" y="164">Heap · 공유</text>
+  <rect class="box" x="720" y="190" width="140" height="55" rx="8"/><text class="small" x="748" y="223">Order</text>
+  <rect class="box" x="880" y="190" width="140" height="55" rx="8"/><text class="small" x="910" y="223">User</text>
+  <rect class="shared" x="690" y="315" width="362" height="160" rx="16"/>
+  <text class="label" x="720" y="354">Method Area · 공유</text>
+  <text class="small" x="720" y="390">class metadata</text><text class="small" x="720" y="417">runtime constant pool</text><text class="small" x="720" y="444">static field 정보</text>
+  <path class="line" d="M358 235H690"/><path class="line" d="M642 235H690"/><path class="line" d="M358 300C520 300 560 220 720 220"/>
+  <text class="small" x="493" y="207">references</text>
+  <text class="small" x="48" y="520">JVMS의 추상 모델과 HotSpot의 실제 물리 배치를 같은 말로 취급하지 않는다.</text>
+</svg>

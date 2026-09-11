@@ -21,6 +21,12 @@ references:
     language: en
     displayOrder: 2
     relationNote: HotSpot JIT·tiered compilation implementation 범위 확인
+  - url: "https://techblog.woowahan.com/2588/"
+    title: "새로운 포인트 적립 시스템 개발기"
+    referenceType: COMPANY_TECH_BLOG
+    language: ko
+    displayOrder: 3
+    relationNote: JVM warm-up과 실제 서비스 성능 측정 맥락을 보충
 ---
 # JIT·HotSpot과 Warm-up
 
