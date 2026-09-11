@@ -30,10 +30,6 @@ const areaVisuals: Record<string, { glyph: string; accent: string; icon?: 'java'
   security: { glyph: '◆', accent: 'amber' },
 }
 
-function areaCompletionPercent(area: AreaSummary) {
-  return completionPercent(area)
-}
-
 function AreaIcon({ visual }: { visual: { glyph: string; icon?: 'java' | 'spring' } }) {
   if (visual.icon === 'java') {
     return (
@@ -56,7 +52,7 @@ function AreaIcon({ visual }: { visual: { glyph: string; icon?: 'java' | 'spring
 
 function AreaCard({ area }: { area: AreaSummary }) {
   const visual = areaVisuals[area.slug] ?? { glyph: '✦', accent: 'violet' }
-  const completion = areaCompletionPercent(area)
+  const completion = completionPercent(area)
 
   return (
     <article className={`area-card area-card-${visual.accent}`}>
@@ -75,22 +71,21 @@ function AreaCard({ area }: { area: AreaSummary }) {
         <div className="area-metrics">
           <span>{area.publishedConceptCount}개 개념</span>
           <span>{area.publishedQuestionCount}개 문제</span>
-          <span>{area.finalizedAttemptCount === 0 ? '정확도 —' : `정확도 ${Math.round(area.accuracyPercent)}%`}</span>
+          {area.finalizedAttemptCount > 0 && <span>정확도 {Math.round(area.accuracyPercent)}%</span>}
         </div>
         <div className="area-card-progress" aria-label={`학습 진행률 ${completion}%`}>
           <div className="area-card-progress-label">
-            <span>학습 진행률</span>
+            <span>{area.completedConceptCount}/{area.publishedConceptCount}개 완료</span>
             <strong>{completion}%</strong>
           </div>
           <div className="progress-track" aria-hidden="true">
             <span style={{ width: `${completion}%` }} />
           </div>
-          <p className="area-card-context">L1 {area.level1.completed}/{area.level1.total} · L2 {area.level2.completed}/{area.level2.total} · L3 {area.level3.completed}/{area.level3.total}</p>
         </div>
       </Link>
       <div className="area-card-footer">
-        <Link className="area-card-footer-link" to="/learning/$areaSlug" params={{ areaSlug: area.slug }} search={defaultLearningSearch}>개념 가이드 보기 <span aria-hidden="true">→</span></Link>
-        <Link className="area-card-footer-link area-card-quiz-link" to="/quiz" search={{ ...defaultQuizSearch, areas: area.slug }}>문제 풀어보기 <span aria-hidden="true">→</span></Link>
+        <span className="area-card-footer-hint">가이드를 열어 주제 순서대로 학습하세요.</span>
+        <Link className="area-card-footer-link area-card-quiz-link" to="/quiz" search={{ ...defaultQuizSearch, areas: area.slug }}>문제 풀기 <span aria-hidden="true">→</span></Link>
       </div>
     </article>
   )
@@ -101,7 +96,7 @@ function RecentConceptCard({ concept }: { concept: ConceptListItem }) {
     <Link className="recent-concept-card" to="/concepts/$conceptId" params={{ conceptId: String(concept.id) }}>
       <div className="card-heading">
         <h3>{concept.title}</h3>
-        <span className="chip">L{concept.level}</span>
+        <span className="chip">레벨 {concept.level}</span>
       </div>
       <p>{concept.areaName} · {concept.topicTitle}</p>
       <time dateTime={concept.lastViewedAt ?? undefined}>
@@ -118,29 +113,20 @@ export function LearningPage() {
     queryFn: () => getConcepts({ page: 0, size: 6, sort: 'VIEWED' }),
   })
 
-  if (areasQuery.isPending) {
-    return <PageSkeleton rows={6} />
-  }
+  if (areasQuery.isPending) return <PageSkeleton rows={6} />
+  if (areasQuery.isError) return <ErrorState onRetry={() => void areasQuery.refetch()} />
 
-  if (areasQuery.isError) {
-    return <ErrorState onRetry={() => void areasQuery.refetch()} />
-  }
+  const recentConcepts = recentConceptsQuery.data ? selectRecentConcepts(recentConceptsQuery.data.items) : []
 
   return (
     <section className="page-section learning-page">
-      <div className="learning-hero">
-        <span className="learning-hero-kicker">What you'll learn</span>
-        <h1>신입이 꼭 알아야 할 CS 기초</h1>
-        <p className="lead">자료구조부터 Java와 데이터베이스까지,<br />핵심 개념을 순서대로 학습하세요.</p>
+      <header className="learning-hero">
+        <span className="learning-hero-kicker">학습 가이드</span>
+        <h1>CS와 백엔드 핵심을<br />주제별로 차근차근</h1>
+        <p className="lead">읽고 끝나는 문서가 아니라, 개념을 이해하고 문제로 확인한 뒤 다시 복습하는 학습 흐름입니다.</p>
         <span className="result-count">{areasQuery.data.length}개 학습 영역</span>
-      </div>
-      {areasQuery.data.length === 0 ? (
-        <EmptyState message="활성화된 학습 영역이 없습니다." />
-      ) : (
-        <div className="area-grid">
-          {areasQuery.data.map((area) => <AreaCard key={area.id} area={area} />)}
-        </div>
-      )}
+      </header>
+
       {recentConceptsQuery.isPending && <div className="recent-concepts-state">최근 본 개념 불러오는 중…</div>}
       {recentConceptsQuery.isError && (
         <div className="recent-concepts-state error-text" role="alert">
@@ -148,7 +134,7 @@ export function LearningPage() {
           <button className="text-button" type="button" onClick={() => void recentConceptsQuery.refetch()}>다시 시도</button>
         </div>
       )}
-      {recentConceptsQuery.data && selectRecentConcepts(recentConceptsQuery.data.items).length > 0 && (
+      {recentConcepts.length > 0 && (
         <section className="recent-concepts" aria-labelledby="recent-concepts-heading">
           <div className="section-heading">
             <div>
@@ -157,9 +143,25 @@ export function LearningPage() {
             </div>
           </div>
           <div className="recent-concept-grid">
-            {selectRecentConcepts(recentConceptsQuery.data.items).map((concept) => <RecentConceptCard key={concept.id} concept={concept} />)}
+            {recentConcepts.map((concept) => <RecentConceptCard key={concept.id} concept={concept} />)}
           </div>
         </section>
+      )}
+
+      <div className="learning-area-heading">
+        <div>
+          <p className="eyebrow">전체 커리큘럼</p>
+          <h2>학습 영역</h2>
+        </div>
+        <span className="helper-text">영역을 선택하면 주제와 개념 순서가 이어집니다.</span>
+      </div>
+
+      {areasQuery.data.length === 0 ? (
+        <EmptyState message="활성화된 학습 영역이 없습니다." />
+      ) : (
+        <div className="area-grid">
+          {areasQuery.data.map((area) => <AreaCard key={area.id} area={area} />)}
+        </div>
       )}
       <CanonicalBootstrapCard />
     </section>
