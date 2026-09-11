@@ -36,7 +36,14 @@ function AreaRow({ area, index }: { area: AreaSummary; index: number }) {
           <span className="area-row-progress-label"><span>미시작</span><span aria-hidden="true">—</span></span>
         )}
       </span>
-      <Link className="area-row-secondary-action" to="/quiz" search={{ ...defaultQuizSearch, areas: area.slug }} aria-label={`${area.name} 문제 풀기`}>문제 <span aria-hidden="true">→</span></Link>
+      <Link
+        to="/quiz"
+        search={{ ...defaultQuizSearch, areas: area.slug }}
+        aria-label={`${area.name} 문제 풀기`}
+        style={{ justifySelf: 'end', color: 'var(--text-muted)', fontSize: '0.72rem', whiteSpace: 'nowrap' }}
+      >
+        문제 <span aria-hidden="true">→</span>
+      </Link>
     </article>
   )
 }
