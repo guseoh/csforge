@@ -425,6 +425,76 @@
   white-space: nowrap;
 }
 
+.dashboard-heading-study {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  justify-items: stretch;
+  width: 100%;
+  margin: 18px 0 0;
+  text-align: left;
+}
+
+.dashboard-heading-study .eyebrow {
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.dashboard-heading-study h1 {
+  max-width: 760px;
+  font-size: clamp(2.1rem, 3vw, 2.75rem);
+  line-height: 1.12;
+}
+
+.dashboard-heading-study .lead {
+  max-width: 700px;
+  margin: 12px 0 0;
+}
+
+.dashboard-action-row-study {
+  justify-content: flex-start;
+  margin-top: -10px;
+}
+
+.dashboard-activity-disclosure {
+  border-top: 1px solid #2a2630;
+  border-bottom: 1px solid #2a2630;
+}
+
+.dashboard-activity-disclosure summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 16px 2px;
+  color: #847c8d;
+  cursor: pointer;
+  font-size: 0.74rem;
+  list-style: none;
+}
+
+.dashboard-activity-disclosure summary::-webkit-details-marker {
+  display: none;
+}
+
+.dashboard-activity-disclosure summary > span:first-child {
+  display: grid;
+  gap: 5px;
+}
+
+.dashboard-activity-disclosure summary .eyebrow {
+  margin: 0;
+}
+
+.dashboard-activity-disclosure summary strong {
+  color: #e7e1eb;
+  font-size: 0.94rem;
+}
+
+.dashboard-activity-disclosure[open] .heatmap-shell {
+  margin: 0 0 18px;
+}
+
 @media (max-width: 1120px) {
   .area-workspace,
   .concept-workspace {
