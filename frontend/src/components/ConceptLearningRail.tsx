@@ -43,12 +43,13 @@ export function ConceptLearningRail({ concept }: { concept: ConceptDetail }) {
   const loadingOutline = areaQuery.isPending || topicConceptsQuery.isPending
 
   return (
-    <aside className="learning-rail" aria-label={`${concept.area.name} 학습 목차`}>
+    <aside className="learning-rail concept-learning-rail" aria-label={`${concept.area.name} 학습 목차`}>
       <Link
         className="rail-back-link"
         to="/learning/$areaSlug"
         params={{ areaSlug: concept.area.slug }}
         search={defaultLearningSearch}
+        hash={`topic-${concept.topic.id}`}
       >
         ← {concept.area.name} 가이드
       </Link>
@@ -64,28 +65,43 @@ export function ConceptLearningRail({ concept }: { concept: ConceptDetail }) {
         <div className="progress-track" aria-hidden="true">
           <span style={{ width: `${progress}%` }} />
         </div>
+        <p className="rail-progress-copy">{completedConcepts}/{totalConcepts}개 개념 완료</p>
       </div>
 
       <nav aria-label="학습 주제">
         <p className="rail-section-title">주제</p>
         <div className="rail-topic-list">
-          {topics.map((topic, index) => (
-            <Link
-              className={`rail-topic${topic.id === concept.topic.id ? ' active' : ''}`}
-              key={topic.id}
-              to="/learning/$areaSlug"
-              params={{ areaSlug: concept.area.slug }}
-              search={{ ...defaultLearningSearch, topic: topic.id }}
-            >
-              <span>{String(index + 1).padStart(2, '0')} · {topic.title}</span>
-              <small>{topic.completedConceptCount}/{topic.publishedConceptCount}</small>
-            </Link>
-          ))}
+          {topics.map((topic, index) => {
+            const active = topic.id === concept.topic.id
+            const completed = topic.publishedConceptCount > 0
+              && topic.completedConceptCount === topic.publishedConceptCount
+
+            return (
+              <Link
+                className={`rail-topic${active ? ' active' : ''}${completed ? ' completed' : ''}`}
+                key={topic.id}
+                to="/learning/$areaSlug"
+                params={{ areaSlug: concept.area.slug }}
+                search={defaultLearningSearch}
+                hash={`topic-${topic.id}`}
+                aria-current={active ? 'location' : undefined}
+              >
+                <span className="rail-topic-copy">
+                  <span className="rail-topic-state" aria-hidden="true">{completed ? '✓' : active ? '•' : ''}</span>
+                  <span className="rail-topic-title">
+                    <span className="rail-topic-number">{String(index + 1).padStart(2, '0')}</span>
+                    <span>{topic.title}</span>
+                  </span>
+                </span>
+                <small>{topic.completedConceptCount}/{topic.publishedConceptCount}</small>
+              </Link>
+            )
+          })}
         </div>
       </nav>
 
-      <div className="rail-section-title-row">
-        <p className="rail-section-title">현재 주제</p>
+      <div className="rail-section-title-row concept-rail-current-heading">
+        <p className="rail-section-title">{concept.topic.title}</p>
         <span className="rail-muted">{currentTopicConcepts.length}개</span>
       </div>
       <nav className="rail-concept-list" aria-label={`${concept.topic.title} 개념`}>
