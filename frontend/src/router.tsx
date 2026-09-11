@@ -4,7 +4,7 @@ import { defaultLearningSearch, parseLearningSearch } from './lib/learning-searc
 import { defaultQuizSearch, parseQuizSearch } from './lib/quiz-search'
 import { defaultWrongNoteSearch, parseWrongNoteSearch } from './lib/wrong-note-search'
 import { parseReviewSearch } from './lib/review-search'
-import { defaultSearchSearch, parseSearchSearch } from './lib/search-search'
+import { parseSearchSearch } from './lib/search-search'
 
 const AreaPage = lazyRouteComponent(() => import('./pages/AreaPage'), 'AreaPage')
 const ConceptPage = lazyRouteComponent(() => import('./pages/ConceptPage'), 'ConceptPage')
@@ -24,7 +24,6 @@ const headerNavigation = [
   { to: '/quiz', label: '문제', search: defaultQuizSearch },
   { to: '/wrong-notes', label: '오답 노트', search: defaultWrongNoteSearch },
   { to: '/review', label: '복습', search: { page: 0, due: 'ALL' } },
-  { to: '/search', label: '검색', search: defaultSearchSearch },
 ] as const
 
 function AppLayout() {
