@@ -14,6 +14,7 @@ function completionPercent(area: AreaSummary) {
 
 function AreaRow({ area, index }: { area: AreaSummary; index: number }) {
   const completion = completionPercent(area)
+  const started = area.completedConceptCount > 0
 
   return (
     <article className="area-row">
@@ -25,11 +26,17 @@ function AreaRow({ area, index }: { area: AreaSummary; index: number }) {
           <span className="area-row-context">{area.publishedConceptCount}개 개념 · {area.publishedQuestionCount}개 문제{area.finalizedAttemptCount > 0 ? ` · 정확도 ${Math.round(area.accuracyPercent)}%` : ''}</span>
         </span>
       </Link>
-      <span className="area-row-progress" aria-label={`학습 진행률 ${completion}%`}>
-        <span className="area-row-progress-label"><span>{area.completedConceptCount}/{area.publishedConceptCount}개 완료</span><strong>{completion}%</strong></span>
-        <span className="progress-track" aria-hidden="true"><span style={{ width: `${completion}%` }} /></span>
+      <span className="area-row-progress" aria-label={started ? `학습 진행률 ${completion}%` : '아직 학습을 시작하지 않음'}>
+        {started ? (
+          <>
+            <span className="area-row-progress-label"><span>{area.completedConceptCount}/{area.publishedConceptCount}개 완료</span><strong>{completion}%</strong></span>
+            <span className="progress-track" aria-hidden="true"><span style={{ width: `${completion}%` }} /></span>
+          </>
+        ) : (
+          <span className="area-row-progress-label"><span>미시작</span><strong aria-hidden="true">—</strong></span>
+        )}
       </span>
-      <Link className="area-row-quiz" to="/quiz" search={{ ...defaultQuizSearch, areas: area.slug }}>문제 풀기 <span aria-hidden="true">→</span></Link>
+      <Link className="area-row-quiz" to="/quiz" search={{ ...defaultQuizSearch, areas: area.slug }} aria-label={`${area.name} 문제 풀기`}>문제 <span aria-hidden="true">→</span></Link>
     </article>
   )
 }
@@ -93,7 +100,7 @@ export function LearningPage() {
       <div className="learning-section-heading learning-area-heading">
         <div>
           <p className="eyebrow">전체 커리큘럼</p>
-          <h2>{areasQuery.data.length}개 학습 영역</h2>
+          <h2>전체 학습 영역</h2>
         </div>
         <span className="helper-text">영역을 선택하면 주제와 개념 순서가 이어집니다.</span>
       </div>
