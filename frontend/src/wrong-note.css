@@ -180,11 +180,27 @@
 .wrong-note-empty > span:not(.empty-state-icon) { max-width: 440px; color: var(--text-muted); font-size: 0.8rem; }
 .wrong-note-empty .primary-button { margin-top: 4px; }
 
-.wrong-note-list-item { border-color: var(--border-subtle); border-radius: 10px; background: var(--surface-page); }
-.wrong-note-list-item:hover { border-color: var(--border-strong); background: var(--surface-interactive); }
+.wrong-notes-page .concept-list {
+  gap: 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.wrong-note-list-item {
+  border-width: 1px 0 0;
+  border-color: var(--border-subtle);
+  border-radius: 0;
+  background: transparent;
+}
+
+.wrong-note-list-item:hover {
+  border-color: var(--border-subtle);
+  background: var(--surface-interactive);
+  transform: none;
+}
+
 .wrong-note-question-link { color: var(--text-strong); }
 .wrong-note-question-link:hover { color: var(--accent-strong); }
-.wrong-note-list-item .concept-context-list a { border-color: var(--border-subtle); background: var(--surface-page); }
+.wrong-note-list-item .concept-context-list a { border-color: var(--border-subtle); background: transparent; }
 
 .wrong-note-row-meta {
   display: flex;
