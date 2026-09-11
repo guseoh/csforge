@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams, useSearch } from '@tanstack/react-router'
 import { useQueries, useQuery } from '@tanstack/react-query'
 import { AreaLearningRail } from '../components/AreaLearningRail'
@@ -15,10 +16,16 @@ const learningStatusLabels: Record<LearningStatus, string> = {
   REVIEW_NEEDED: '복습 필요',
 }
 
+function topicIdFromHash() {
+  const match = window.location.hash.match(/^#topic-(\d+)$/)
+  return match ? Number(match[1]) : null
+}
+
 export function AreaPage() {
   const { areaSlug } = useParams({ from: '/learning/$areaSlug' })
   const search = useSearch({ from: '/learning/$areaSlug' })
   const navigate = useNavigate({ from: '/learning/$areaSlug' })
+  const [selectedTopicId, setSelectedTopicId] = useState<number | null>(() => topicIdFromHash())
   const updateSearch = (changes: Partial<LearningSearch>, replace = false) => navigate({
     replace,
     search: (previous) => ({ ...previous, ...changes }),
@@ -57,6 +64,12 @@ export function AreaPage() {
     enabled: hasActiveFilters,
   })
 
+  useEffect(() => {
+    const syncTopicFromHash = () => setSelectedTopicId(topicIdFromHash())
+    window.addEventListener('hashchange', syncTopicFromHash)
+    return () => window.removeEventListener('hashchange', syncTopicFromHash)
+  }, [])
+
   if (areaQuery.isPending) return <PageSkeleton rows={5} />
   if (areaQuery.isError) return <ErrorState onRetry={() => void areaQuery.refetch()} />
 
@@ -67,10 +80,27 @@ export function AreaPage() {
   const outlineIsError = outlineQueries.some((query) => query.isError)
   const totalConcepts = area.topics.reduce((total, topic) => total + topic.publishedConceptCount, 0)
   const completedConcepts = area.topics.reduce((total, topic) => total + topic.completedConceptCount, 0)
+  const preferredTopic = area.topics.find((topic) => topic.learningCount > 0 || topic.reviewNeededCount > 0)
+    ?? area.topics.find((topic) => topic.completedConceptCount < topic.publishedConceptCount)
+    ?? area.topics[0]
+  const selectedTopic = area.topics.find((topic) => topic.id === selectedTopicId) ?? preferredTopic
+  const selectedTopicIndex = selectedTopic ? area.topics.findIndex((topic) => topic.id === selectedTopic.id) : -1
+  const selectedTopicConcepts = selectedTopic
+    ? outlineConcepts.filter((concept) => concept.topicId === selectedTopic.id)
+    : []
+  const previousTopic = selectedTopicIndex > 0 ? area.topics[selectedTopicIndex - 1] : null
+  const nextTopic = selectedTopicIndex >= 0 && selectedTopicIndex < area.topics.length - 1
+    ? area.topics[selectedTopicIndex + 1]
+    : null
 
   return (
     <div className="area-workspace">
-      <AreaLearningRail area={area} filterMode={hasActiveFilters} />
+      <AreaLearningRail
+        area={area}
+        filterMode={hasActiveFilters}
+        activeTopicId={hasActiveFilters ? search.topic : selectedTopic?.id}
+        onTopicSelect={setSelectedTopicId}
+      />
       <section className="page-section area-guide-page">
         <nav className="breadcrumb" aria-label="탐색 경로">
           <Link to="/learning" search={defaultLearningSearch}>학습</Link>
@@ -96,58 +126,61 @@ export function AreaPage() {
         </div>
 
         {!hasActiveFilters && (
-          <section className="topic-index" aria-labelledby="topic-index-heading">
-            <div className="topic-index-heading">
-              <div>
-                <p className="eyebrow">추천 학습 순서</p>
-                <h2 id="topic-index-heading">주제별 개념</h2>
+          <section className="topic-index area-topic-guide" aria-labelledby="topic-index-heading">
+            {area.topics.length === 0 ? (
+              <EmptyState message="아직 등록된 주제가 없습니다." />
+            ) : outlineIsPending ? (
+              <div className="topic-outline-loading">학습 순서를 불러오는 중…</div>
+            ) : outlineIsError ? (
+              <ErrorState onRetry={() => void Promise.all(outlineQueries.map((query) => query.refetch()))} />
+            ) : selectedTopic ? (
+              <div className="selected-topic-guide" id={`topic-${selectedTopic.id}`}>
+                <header className="selected-topic-header">
+                  <div className="selected-topic-number">{String(selectedTopicIndex + 1).padStart(2, '0')}</div>
+                  <div className="selected-topic-copy">
+                    <p className="eyebrow">현재 주제</p>
+                    <h2 id="topic-index-heading">{selectedTopic.title}</h2>
+                    <p>{selectedTopic.description ?? '이 주제의 개념을 커리큘럼 순서대로 학습하세요.'}</p>
+                  </div>
+                  <div className="selected-topic-progress" aria-label={`${selectedTopic.completedConceptCount}/${selectedTopic.publishedConceptCount}개 완료`}>
+                    <strong>{selectedTopic.completedConceptCount}/{selectedTopic.publishedConceptCount}</strong>
+                    <span>개념 완료</span>
+                  </div>
+                </header>
+
+                <div className="topic-concept-list curriculum-concept-list">
+                  {selectedTopicConcepts.map((concept, conceptIndex) => (
+                    <Link className="topic-concept-row curriculum-concept-row" key={concept.id} to="/concepts/$conceptId" params={{ conceptId: String(concept.id) }}>
+                      <span className="topic-concept-index">{String(conceptIndex + 1).padStart(2, '0')}</span>
+                      <span className="topic-concept-copy">
+                        <strong>{concept.title}</strong>
+                        <span>{concept.summary ?? '이 개념의 핵심 내용을 읽어보세요.'}</span>
+                        <small>레벨 {concept.level} · {learningStatusLabels[concept.learningStatus]}</small>
+                      </span>
+                      <span className={`topic-concept-status status-${concept.learningStatus.toLowerCase()}`}>
+                        {concept.learningStatus === 'COMPLETED' ? '✓ 완료' : learningStatusLabels[concept.learningStatus]}
+                      </span>
+                      <span className="topic-guide-arrow" aria-hidden="true">→</span>
+                    </Link>
+                  ))}
+                </div>
+
+                <nav className="topic-sequence-nav" aria-label="주제 이동">
+                  {previousTopic ? (
+                    <a href={`#topic-${previousTopic.id}`} onClick={() => setSelectedTopicId(previousTopic.id)}>
+                      <span>← 이전 주제</span>
+                      <strong>{previousTopic.title}</strong>
+                    </a>
+                  ) : <span />}
+                  {nextTopic && (
+                    <a className="next" href={`#topic-${nextTopic.id}`} onClick={() => setSelectedTopicId(nextTopic.id)}>
+                      <span>다음 주제 →</span>
+                      <strong>{nextTopic.title}</strong>
+                    </a>
+                  )}
+                </nav>
               </div>
-              <span className="helper-text">주제를 열고 개념을 선택하면 바로 학습 노트로 이동합니다.</span>
-            </div>
-            <div className="topic-guide-list">
-              {area.topics.length === 0 ? (
-                <EmptyState message="아직 등록된 주제가 없습니다." />
-              ) : outlineIsPending ? (
-                <div className="topic-outline-loading">학습 순서를 불러오는 중…</div>
-              ) : outlineIsError ? (
-                <ErrorState onRetry={() => void Promise.all(outlineQueries.map((query) => query.refetch()))} />
-              ) : area.topics.map((topic, topicIndex) => {
-                const topicConcepts = outlineConcepts.filter((concept) => concept.topicId === topic.id)
-                return (
-                  <details
-                    className="topic-outline"
-                    id={`topic-${topic.id}`}
-                    key={topic.id}
-                    name="topic-guide"
-                    open={topicIndex === 0 || topic.completedConceptCount > 0}
-                  >
-                    <summary className="topic-outline-heading">
-                      <span className="topic-guide-index">{String(topicIndex + 1).padStart(2, '0')}</span>
-                      <div>
-                        <h3>{topic.title}</h3>
-                        <span>{topic.publishedConceptCount}개 개념 · {topic.completedConceptCount}개 완료</span>
-                      </div>
-                      <span className="topic-outline-toggle" aria-hidden="true">+</span>
-                    </summary>
-                    <div className="topic-concept-list">
-                      {topicConcepts.map((concept, conceptIndex) => (
-                        <Link className="topic-concept-row" key={concept.id} to="/concepts/$conceptId" params={{ conceptId: String(concept.id) }}>
-                          <span className="topic-concept-index">{String(conceptIndex + 1).padStart(2, '0')}</span>
-                          <span className="topic-concept-copy">
-                            <strong>{concept.title}</strong>
-                            <span>{concept.summary ?? '이 개념의 핵심 내용을 읽어보세요.'}</span>
-                          </span>
-                          <span className={`topic-concept-status status-${concept.learningStatus.toLowerCase()}`}>
-                            {learningStatusLabels[concept.learningStatus]}
-                          </span>
-                          <span className="topic-guide-arrow" aria-hidden="true">→</span>
-                        </Link>
-                      ))}
-                    </div>
-                  </details>
-                )
-              })}
-            </div>
+            ) : null}
           </section>
         )}
 
