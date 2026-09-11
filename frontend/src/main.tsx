@@ -13,6 +13,7 @@ import './quiz.css'
 import './wrong-note.css'
 import './review.css'
 import './import.css'
+import './learning-guide.css'
 
 const queryClient = new QueryClient()
 
