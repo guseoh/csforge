@@ -9,6 +9,7 @@ import {
   type SearchDocumentType,
   type SearchResultItem,
 } from '../lib/search-api'
+import { compactMarkdownPreview } from '../lib/markdown'
 import { csvSearchValues, toggleCsvValue, type SearchSearch } from '../lib/search-search'
 import { addRecentSearch, primarySearchDestination, relatedConceptDestination, segmentSearchHighlight } from '../lib/search-ui'
 import '../search.css'
@@ -22,7 +23,6 @@ const DOCUMENT_TYPES: { value: SearchDocumentType; label: string }[] = [
 ]
 
 const documentTypeLabels = Object.fromEntries(DOCUMENT_TYPES.map((type) => [type.value, type.label])) as Record<SearchDocumentType, string>
-
 const RECENT_KEY = 'csforge.search.recent.v1'
 
 function HighlightText({ value }: { value: string }): ReactNode {
@@ -72,6 +72,7 @@ export function SearchPage() {
     page: 0,
   })
   const selectedAreas = csvSearchValues(search.areas)
+  const selectedTopics = csvSearchValues(search.topics)
   const visibleTopicGroups = filters.data?.filter((area) => selectedAreas.length === 0 || selectedAreas.includes(area.areaSlug)) ?? []
 
   const submit = (event: FormEvent<HTMLFormElement>) => {
@@ -102,9 +103,9 @@ export function SearchPage() {
     <section className="page-section search-page">
       <div className="page-heading search-heading">
         <div>
-          <p className="eyebrow">Knowledge retrieval</p>
+          <p className="eyebrow">통합 검색</p>
           <h1>검색</h1>
-          <p className="lead">개념, 문제, 개인 메모, 오답 기록, 참고 자료를 한 번에 검색합니다.</p>
+          <p className="lead">개념, 문제, 개인 메모, 오답 기록, 참고 자료를 한 번에 찾습니다.</p>
         </div>
         <div className="search-health search-health-ready">
           <strong><span aria-hidden="true">●</span> 검색 가능</strong>
@@ -134,9 +135,23 @@ export function SearchPage() {
             {filters.data?.map((area) => <label key={area.areaSlug}><input type="checkbox" checked={selectedAreas.includes(area.areaSlug)} onChange={() => updateFilter('areas', area.areaSlug)} /><span>{area.areaName}</span></label>)}
           </fieldset>
           {visibleTopicGroups.length > 0 && (
-            <fieldset>
+            <fieldset className="search-topic-filter">
               <legend>주제</legend>
-              {visibleTopicGroups.flatMap((area) => area.topics.map((topic) => <label key={topic.contentKey}><input type="checkbox" checked={csvSearchValues(search.topics).includes(topic.contentKey)} onChange={() => updateFilter('topics', topic.contentKey)} /><span>{topic.title}</span></label>))}
+              <p className="search-filter-muted">영역별로 펼쳐 필요한 주제만 선택하세요.</p>
+              {visibleTopicGroups.map((area) => {
+                const selectedCount = area.topics.filter((topic) => selectedTopics.includes(topic.contentKey)).length
+                return (
+                  <details className="search-topic-group" key={area.areaSlug} open={selectedAreas.includes(area.areaSlug) || selectedCount > 0}>
+                    <summary>
+                      <span>{area.areaName}</span>
+                      <small>{selectedCount > 0 ? `${selectedCount}개 선택` : `${area.topics.length}개`}</small>
+                    </summary>
+                    <div className="search-topic-options">
+                      {area.topics.map((topic) => <label key={topic.contentKey}><input type="checkbox" checked={selectedTopics.includes(topic.contentKey)} onChange={() => updateFilter('topics', topic.contentKey)} /><span>{topic.title}</span></label>)}
+                    </div>
+                  </details>
+                )
+              })}
             </fieldset>
           )}
         </aside>
@@ -156,11 +171,12 @@ export function SearchPage() {
               {results.data.items.map((item) => {
                 const related = relatedConceptDestination(item)
                 const primary = primarySearchDestination(item)
+                const preview = compactMarkdownPreview(item.snippet, 240)
                 return (
                   <article className={`search-result-card search-result-${item.documentType.toLowerCase()}`} key={`${item.documentType}:${item.sourceId}`}>
                     <div className="search-result-meta"><span className="search-type-badge">{documentTypeLabels[item.documentType]}</span><span>{resultContext(item)}</span><time dateTime={item.updatedAt}>{new Date(item.updatedAt).toLocaleDateString('ko-KR')}</time></div>
                     <h2><HighlightText value={item.highlightedTitle || item.title} /></h2>
-                    <p className="search-snippet"><HighlightText value={item.snippet} /></p>
+                    <p className="search-snippet"><HighlightText value={preview} /></p>
                     <div className="search-result-actions">
                       {primary && <button className="secondary-button" type="button" onClick={() => openResult(item)}>{primary.kind === 'external' ? '자료 열기' : item.documentType === 'WRONG_NOTE' ? '오답 노트 열기' : '개념 열기'}</button>}
                       {item.documentType === 'REFERENCE' && related?.kind === 'concept' && <button className="text-button" type="button" onClick={() => void navigate({ to: '/concepts/$conceptId', params: { conceptId: String(related.conceptId) } })}>관련 개념 보기</button>}
@@ -173,9 +189,9 @@ export function SearchPage() {
 
           {results.data && results.data.totalPages > 0 && (
             <div className="pagination">
-              <button className="secondary-button" type="button" disabled={search.page <= 0} onClick={() => update({ page: Math.max(0, search.page - 1) })}>Previous</button>
+              <button className="secondary-button" type="button" disabled={search.page <= 0} onClick={() => update({ page: Math.max(0, search.page - 1) })}>이전</button>
               <span>{search.page + 1} / {results.data.totalPages}</span>
-              <button className="secondary-button" type="button" disabled={search.page + 1 >= results.data.totalPages} onClick={() => update({ page: search.page + 1 })}>Next</button>
+              <button className="secondary-button" type="button" disabled={search.page + 1 >= results.data.totalPages} onClick={() => update({ page: search.page + 1 })}>다음</button>
             </div>
           )}
         </div>
