@@ -1,4 +1,4 @@
-/* Final learning-rail correction: one page scroll for area navigation, compact concept navigation, and optional rail collapse. */
+/* Final learning-rail correction: use one page scroll for expanded rails and keep curriculum navigation optional. */
 .area-workspace,
 .concept-workspace {
   grid-template-columns: max-content minmax(0, 1fr);
@@ -25,7 +25,7 @@
   transition: width 160ms ease, padding 160ms ease;
 }
 
-.area-learning-rail[data-collapsed='false'] {
+.learning-rail[data-collapsed='false'] {
   position: relative;
   top: auto;
   height: auto;
@@ -88,7 +88,7 @@
   display: none;
 }
 
-.area-learning-rail[data-collapsed='false'] .learning-rail-content {
+.learning-rail[data-collapsed='false'] .learning-rail-content {
   height: auto;
   grid-template-rows: auto auto;
 }
@@ -99,36 +99,12 @@
 
 .learning-rail-scroll {
   min-height: 0;
-  overflow-y: auto;
-  overscroll-behavior: contain;
   padding-right: 8px;
-  scrollbar-color: #4d4558 transparent;
-  scrollbar-width: thin;
 }
 
-.area-learning-rail[data-collapsed='false'] .learning-rail-scroll {
+.learning-rail[data-collapsed='false'] .learning-rail-scroll {
   overflow: visible;
   overscroll-behavior: auto;
-}
-
-.learning-rail-scroll::-webkit-scrollbar {
-  width: 7px;
-}
-
-.learning-rail-scroll::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.learning-rail-scroll::-webkit-scrollbar-thumb {
-  border: 2px solid transparent;
-  border-radius: 999px;
-  background: #4d4558;
-  background-clip: padding-box;
-}
-
-.learning-rail-scroll::-webkit-scrollbar-thumb:hover {
-  background: #6d617a;
-  background-clip: padding-box;
 }
 
 .learning-rail-scroll .rail-topic-list {
