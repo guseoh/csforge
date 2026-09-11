@@ -34,10 +34,16 @@ export function AreaLearningRail({ area }: { area: AreaDetail }) {
         <p className="rail-section-title">주제</p>
         <div className="rail-topic-list">
           {area.topics.map((topic, index) => (
-            <a className="rail-topic" href={`#topic-${topic.id}`} key={topic.id}>
+            <Link
+              className="rail-topic"
+              key={topic.id}
+              to="/learning/$areaSlug"
+              params={{ areaSlug: area.slug }}
+              search={{ ...defaultLearningSearch, topic: topic.id }}
+            >
               <span>{String(index + 1).padStart(2, '0')} · {topic.title}</span>
               <small>{topic.completedConceptCount}/{topic.publishedConceptCount}</small>
-            </a>
+            </Link>
           ))}
         </div>
       </nav>
