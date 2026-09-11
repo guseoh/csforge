@@ -108,7 +108,7 @@ Do not add a new icon library solely for polish. Reuse existing symbols/componen
 
 ## 5. Typography and Korean readability
 
-CSForge is Korean-first while retaining established technical terms such as Java, Spring, HTTP, Quiz, Concept, Learning Area, and AI where they improve precision.
+CSForge is Korean-first. Product-domain labels and instructional/action copy should use natural Korean such as `개념`, `학습 영역`, `문제`, and `복습` when that is the clearest user-facing expression. Keep established technical names such as Java, Spring, HTTP, JVM, API, and AI when translation would reduce precision.
 
 Requirements:
 
