@@ -108,13 +108,20 @@
   font-variant-numeric: tabular-nums;
 }
 
+.review-page .review-list {
+  gap: 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
 .review-page .review-list-item {
+  border-width: 1px 0 0;
   border-color: var(--border-subtle);
-  background: var(--surface-page);
+  border-radius: 0;
+  background: transparent;
 }
 
 .review-page .review-list-item:hover {
-  border-color: var(--border-strong);
+  border-color: var(--border-subtle);
   background: var(--surface-interactive);
 }
 
