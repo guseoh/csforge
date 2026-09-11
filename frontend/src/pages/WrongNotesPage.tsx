@@ -97,40 +97,25 @@ export function WrongNotesPage() {
   return (
     <section className="page-section wrong-notes-page">
       <div className="page-heading"><div><p className="eyebrow">오답 복습</p><h1>오답 노트</h1><p className="lead">틀린 문제를 다시 이해하고, 다음 복습 시점까지 이어가세요.</p></div><span className="result-count">{query.data.page.totalElements}개</span></div>
-      {showFilters && <div className="filter-panel wrong-note-filters">
-        <div className="filter-panel-header">
-          <div><p className="eyebrow">정리하기</p><strong>복습할 문제를 골라보세요</strong></div>
-          <span className="helper-text">상태와 복습 시점을 누르면 바로 결과가 바뀝니다.</span>
-        </div>
-        <div className="wrong-note-primary-filters">
-          <fieldset className="filter-group">
-          <legend>학습 상태</legend>
-          <div className="filter-choice-stack">
+      {showFilters && <div className="wrong-note-filters">
+        <div className="wrong-note-filter-toolbar">
+          <div className="wrong-note-filter-cluster" role="group" aria-label="학습 상태">
             <span>상태</span>
-            <div className="filter-choice-row">
-              <FilterChoice label="전체" selected={!search.status} onClick={() => updateFilter('status', '')} />
-              <FilterChoice label="진행 중" selected={search.status === 'ACTIVE'} onClick={() => updateFilter('status', 'ACTIVE')} />
-              <FilterChoice label="정리 완료" selected={search.status === 'MASTERED'} onClick={() => updateFilter('status', 'MASTERED')} />
-            </div>
+            <FilterChoice label="전체" selected={!search.status} onClick={() => updateFilter('status', '')} />
+            <FilterChoice label="진행 중" selected={search.status === 'ACTIVE'} onClick={() => updateFilter('status', 'ACTIVE')} />
+            <FilterChoice label="정리 완료" selected={search.status === 'MASTERED'} onClick={() => updateFilter('status', 'MASTERED')} />
           </div>
-          <div className="filter-choice-stack">
+          <div className="wrong-note-filter-cluster" role="group" aria-label="복습 상태">
             <span>복습</span>
-            <div className="filter-choice-row">
-              {(Object.entries(reviewLabels) as [keyof typeof reviewLabels, string][]).map(([value, label]) => <FilterChoice key={value} label={label} selected={search.review === value} onClick={() => updateFilter('review', value)} />)}
-            </div>
+            {(Object.entries(reviewLabels) as [keyof typeof reviewLabels, string][]).map(([value, label]) => <FilterChoice key={value} label={label} selected={search.review === value} onClick={() => updateFilter('review', value)} />)}
           </div>
-          </fieldset>
-          <fieldset className="filter-group filter-group-order">
-            <legend>정렬</legend>
-            <div className="filter-choice-stack">
-              <span>순서</span>
-              <div className="filter-choice-row filter-choice-row-vertical">
-                {(Object.entries(sortLabels) as [keyof typeof sortLabels, string][]).map(([value, label]) => <FilterChoice key={value} label={label} selected={search.sort === value} onClick={() => updateFilter('sort', value)} />)}
-              </div>
-            </div>
-          </fieldset>
+          <label className="wrong-note-sort-control">정렬
+            <select value={search.sort} onChange={(event) => updateFilter('sort', event.target.value)}>
+              {(Object.entries(sortLabels) as [keyof typeof sortLabels, string][]).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+            </select>
+          </label>
           <button className="secondary-button wrong-note-filter-toggle" type="button" aria-expanded={advancedFiltersOpen} onClick={() => setAdvancedFiltersOpen((open) => !open)}>
-            {advancedFiltersOpen ? '상세 필터 닫기' : '상세 필터'}{advancedFilterCount > 0 && <span className="filter-active-count">{advancedFilterCount}개</span>}
+            {advancedFiltersOpen ? '상세 필터 닫기' : '상세 필터'}{advancedFilterCount > 0 && <span className="filter-active-count">{advancedFilterCount}</span>}
           </button>
         </div>
         {advancedFiltersOpen && <fieldset className="filter-group wrong-note-advanced-filters">
@@ -164,7 +149,7 @@ export function WrongNotesPage() {
           </div>
         </fieldset>}
       </div>}
-      {query.data.items.length === 0 ? <div className="state-card wrong-note-empty"><span className="empty-state-icon" aria-hidden="true">↺</span><strong>{hasFilterSelection ? '조건에 맞는 오답 노트가 없습니다.' : '아직 오답 노트가 없습니다.'}</strong><span>{hasFilterSelection ? '필터를 조정하거나 전체 오답으로 돌아가 보세요.' : '문제를 제출하면 틀린 문제가 이곳에 쌓이고, 다음 복습 시점까지 이어집니다.'}</span>{!hasFilterSelection && <Link className="primary-button" to="/quiz" search={defaultQuizSearch}>문제 풀러 가기 <span aria-hidden="true">→</span></Link>}</div> : <div className="concept-list">{query.data.items.map((item) => <article className="concept-list-item wrong-note-list-item" key={item.questionId}><div className="concept-list-main"><h3><Link className="wrong-note-question-link" to="/wrong-notes/$questionId" params={{ questionId: String(item.questionId) }}>{compactMarkdownPreview(item.promptMarkdown)}</Link></h3><ConceptContext concepts={item.concepts} /><div className="chip-row concept-list-status"><span className="chip">{questionTypeLabels[item.questionType]}</span><span className="chip">{difficultyLabels[item.difficulty]}</span><span className={`chip state-badge state-${item.status.toLowerCase()}`}>{wrongNoteStatusLabels[item.status]}</span><span className={`chip state-badge ai-state-${item.aiAnalysisStatus.toLowerCase()}`}>{analysisLabels[item.aiAnalysisStatus]}</span></div></div><div className="wrong-note-metrics"><strong>오답 {item.wrongCount}회</strong><span>{item.dueAt ? `복습 ${new Date(item.dueAt).toLocaleDateString('ko-KR')}` : '복습 일정 없음'}</span></div></article>)}</div>}
+      {query.data.items.length === 0 ? <div className="state-card wrong-note-empty"><span className="empty-state-icon" aria-hidden="true">↺</span><strong>{hasFilterSelection ? '조건에 맞는 오답 노트가 없습니다.' : '아직 오답 노트가 없습니다.'}</strong><span>{hasFilterSelection ? '필터를 조정하거나 전체 오답으로 돌아가 보세요.' : '문제를 제출하면 틀린 문제가 이곳에 쌓이고, 다음 복습 시점까지 이어집니다.'}</span>{!hasFilterSelection && <Link className="primary-button" to="/quiz" search={defaultQuizSearch}>문제 풀러 가기 <span aria-hidden="true">→</span></Link>}</div> : <div className="concept-list">{query.data.items.map((item) => <article className="concept-list-item wrong-note-list-item" key={item.questionId}><div className="concept-list-main"><h3><Link className="wrong-note-question-link" to="/wrong-notes/$questionId" params={{ questionId: String(item.questionId) }}>{compactMarkdownPreview(item.promptMarkdown)}</Link></h3><ConceptContext concepts={item.concepts} /><div className="wrong-note-row-meta"><span>{questionTypeLabels[item.questionType]} · {difficultyLabels[item.difficulty]}</span><span className={`state-badge state-${item.status.toLowerCase()}`}>{wrongNoteStatusLabels[item.status]}</span>{item.aiAnalysisStatus !== 'NOT_REQUESTED' && <span className={`state-badge ai-state-${item.aiAnalysisStatus.toLowerCase()}`}>{analysisLabels[item.aiAnalysisStatus]}</span>}</div></div><div className="wrong-note-metrics"><strong>오답 {item.wrongCount}회</strong><span>{item.dueAt ? `복습 ${new Date(item.dueAt).toLocaleDateString('ko-KR')}` : '복습 일정 없음'}</span></div></article>)}</div>}
       {query.data.page.totalPages > 1 && <div className="pagination"><button className="secondary-button" disabled={!query.data.page.hasPrevious} onClick={() => updatePage(Math.max(0, search.page - 1))}>이전</button><span>{search.page + 1} / {query.data.page.totalPages}</span><button className="secondary-button" disabled={!query.data.page.hasNext} onClick={() => updatePage(search.page + 1)}>다음</button></div>}
     </section>
   )
