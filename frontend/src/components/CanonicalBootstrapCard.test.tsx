@@ -91,11 +91,11 @@ describe('CanonicalBootstrapCard', () => {
     mocks.mutation.isError = false
     mocks.mutation.data = result(true)
     expect(renderToStaticMarkup(<CanonicalBootstrapCard />)).toContain('기본 학습 콘텐츠가 준비되었습니다.')
-    expect(renderToStaticMarkup(<CanonicalBootstrapCard />)).toContain('Learning 시작')
+    expect(renderToStaticMarkup(<CanonicalBootstrapCard />)).toContain('학습 시작')
 
     mocks.mutation.data = null
     mocks.status.data = status('READY')
     expect(renderToStaticMarkup(<CanonicalBootstrapCard />)).not.toContain('기본 학습 콘텐츠 준비')
-    expect(renderToStaticMarkup(<CanonicalBootstrapCard readyAction="learning-link" />)).toContain('Learning 시작')
+    expect(renderToStaticMarkup(<CanonicalBootstrapCard readyAction="learning-link" />)).toContain('학습 시작')
   })
 })
