@@ -82,6 +82,8 @@ export function LearningPage() {
         <div className="learning-index-summary"><strong>{areasQuery.data.length}</strong><span>개 영역<br />커리큘럼 색인</span></div>
       </header>
 
+      <CanonicalBootstrapCard />
+
       {recentConceptsQuery.isPending && <div className="recent-concepts-state">최근 본 개념 불러오는 중…</div>}
       {recentConceptsQuery.isError && (
         <div className="recent-concepts-state error-text" role="alert">
@@ -119,7 +121,6 @@ export function LearningPage() {
           {areasQuery.data.map((area, index) => <AreaRow key={area.id} area={area} index={index} />)}
         </div>
       )}
-      <CanonicalBootstrapCard />
     </section>
   )
 }
