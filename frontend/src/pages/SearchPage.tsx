@@ -9,6 +9,7 @@ import {
   type SearchDocumentType,
   type SearchResultItem,
 } from '../lib/search-api'
+import { compactMarkdownPreview } from '../lib/markdown'
 import { csvSearchValues, toggleCsvValue, type SearchSearch } from '../lib/search-search'
 import { addRecentSearch, primarySearchDestination, relatedConceptDestination, segmentSearchHighlight } from '../lib/search-ui'
 import '../search.css'
@@ -22,7 +23,6 @@ const DOCUMENT_TYPES: { value: SearchDocumentType; label: string }[] = [
 ]
 
 const documentTypeLabels = Object.fromEntries(DOCUMENT_TYPES.map((type) => [type.value, type.label])) as Record<SearchDocumentType, string>
-
 const RECENT_KEY = 'csforge.search.recent.v1'
 
 function HighlightText({ value }: { value: string }): ReactNode {
@@ -71,8 +71,27 @@ export function SearchPage() {
     [key]: toggleCsvValue(search[key], value),
     page: 0,
   })
+  const selectedTypes = csvSearchValues(search.types)
   const selectedAreas = csvSearchValues(search.areas)
-  const visibleTopicGroups = filters.data?.filter((area) => selectedAreas.length === 0 || selectedAreas.includes(area.areaSlug)) ?? []
+  const selectedTopics = csvSearchValues(search.topics)
+  const selectedLevels = csvSearchValues(search.levels)
+  const activeFilterCount = selectedTypes.length + selectedAreas.length + selectedTopics.length + selectedLevels.length
+  const visibleTopicGroups = filters.data?.filter((area) => selectedAreas.includes(area.areaSlug)
+    || area.topics.some((topic) => selectedTopics.includes(topic.contentKey))) ?? []
+
+  const toggleArea = (areaSlug: string) => {
+    if (!selectedAreas.includes(areaSlug)) {
+      updateFilter('areas', areaSlug)
+      return
+    }
+    const area = filters.data?.find((candidate) => candidate.areaSlug === areaSlug)
+    const areaTopics = new Set(area?.topics.map((topic) => topic.contentKey) ?? [])
+    update({
+      areas: toggleCsvValue(search.areas, areaSlug),
+      topics: selectedTopics.filter((topic) => !areaTopics.has(topic)).join(','),
+      page: 0,
+    })
+  }
 
   const submit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -102,9 +121,9 @@ export function SearchPage() {
     <section className="page-section search-page">
       <div className="page-heading search-heading">
         <div>
-          <p className="eyebrow">Knowledge retrieval</p>
+          <p className="eyebrow">통합 검색</p>
           <h1>검색</h1>
-          <p className="lead">개념, 문제, 개인 메모, 오답 기록, 참고 자료를 한 번에 검색합니다.</p>
+          <p className="lead">개념, 문제, 개인 메모, 오답 기록, 참고 자료를 한 번에 찾습니다.</p>
         </div>
         <div className="search-health search-health-ready">
           <strong><span aria-hidden="true">●</span> 검색 가능</strong>
@@ -117,27 +136,106 @@ export function SearchPage() {
         <button className="primary-button" type="submit">검색</button>
       </form>
 
-      <div className="search-layout">
-        <aside className="search-filters" aria-label="검색 필터">
-          <div className="search-filter-heading"><strong>필터</strong><button type="button" onClick={() => update({ types: '', areas: '', topics: '', levels: '', page: 0 })}>초기화</button></div>
-          <fieldset>
-            <legend>문서 유형</legend>
-            {DOCUMENT_TYPES.map((type) => <label key={type.value}><input type="checkbox" checked={csvSearchValues(search.types).includes(type.value)} onChange={() => updateFilter('types', type.value)} /><span>{type.label}</span></label>)}
-          </fieldset>
-          <fieldset>
-            <legend>레벨</legend>
-            {[1, 2, 3].map((level) => <label key={level}><input type="checkbox" checked={csvSearchValues(search.levels).includes(String(level))} onChange={() => updateFilter('levels', String(level))} /><span>레벨 {level}</span></label>)}
-          </fieldset>
-          <fieldset>
-            <legend>학습 영역</legend>
+      <div className="search-primary-filters" aria-label="주요 검색 필터">
+        <div className="search-filter-cluster">
+          <span className="search-filter-label">유형</span>
+          <div className="search-filter-chips">
+            {DOCUMENT_TYPES.map((type) => (
+              <button
+                className={selectedTypes.includes(type.value) ? 'search-filter-chip active' : 'search-filter-chip'}
+                key={type.value}
+                type="button"
+                aria-pressed={selectedTypes.includes(type.value)}
+                onClick={() => updateFilter('types', type.value)}
+              >
+                {type.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="search-filter-cluster search-level-cluster">
+          <span className="search-filter-label">레벨</span>
+          <div className="search-filter-chips">
+            {[1, 2, 3].map((level) => (
+              <button
+                className={selectedLevels.includes(String(level)) ? 'search-filter-chip active' : 'search-filter-chip'}
+                key={level}
+                type="button"
+                aria-pressed={selectedLevels.includes(String(level))}
+                onClick={() => updateFilter('levels', String(level))}
+              >
+                L{level}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <details className="search-area-picker">
+          <summary>
+            <span>학습 영역</span>
+            <strong>{selectedAreas.length > 0 ? `${selectedAreas.length}개 선택` : '전체'}</strong>
+            <span aria-hidden="true">⌄</span>
+          </summary>
+          <div className="search-area-picker-menu">
+            <div className="search-area-picker-heading">
+              <strong>학습 영역</strong>
+              {selectedAreas.length > 0 && <button type="button" onClick={() => update({ areas: '', topics: '', page: 0 })}>영역 초기화</button>}
+            </div>
             {filters.isPending && <span className="search-filter-muted">불러오는 중…</span>}
-            {filters.data?.map((area) => <label key={area.areaSlug}><input type="checkbox" checked={selectedAreas.includes(area.areaSlug)} onChange={() => updateFilter('areas', area.areaSlug)} /><span>{area.areaName}</span></label>)}
-          </fieldset>
-          {visibleTopicGroups.length > 0 && (
-            <fieldset>
-              <legend>주제</legend>
-              {visibleTopicGroups.flatMap((area) => area.topics.map((topic) => <label key={topic.contentKey}><input type="checkbox" checked={csvSearchValues(search.topics).includes(topic.contentKey)} onChange={() => updateFilter('topics', topic.contentKey)} /><span>{topic.title}</span></label>))}
-            </fieldset>
+            {filters.data?.map((area) => (
+              <label className={selectedAreas.includes(area.areaSlug) ? 'search-area-option active' : 'search-area-option'} key={area.areaSlug}>
+                <input type="checkbox" checked={selectedAreas.includes(area.areaSlug)} onChange={() => toggleArea(area.areaSlug)} />
+                <span>{area.areaName}</span>
+              </label>
+            ))}
+          </div>
+        </details>
+
+        {activeFilterCount > 0 && (
+          <button className="search-reset-button" type="button" onClick={() => update({ types: '', areas: '', topics: '', levels: '', page: 0 })}>
+            필터 {activeFilterCount}개 초기화
+          </button>
+        )}
+      </div>
+
+      <div className="search-layout search-guide-layout">
+        <aside className="search-topic-rail" aria-label="주제 필터">
+          <div className="search-topic-rail-heading">
+            <div>
+              <p className="eyebrow">세부 필터</p>
+              <strong>주제</strong>
+            </div>
+            {selectedTopics.length > 0 && <span>{selectedTopics.length}개</span>}
+          </div>
+
+          {visibleTopicGroups.length === 0 ? (
+            <div className="search-topic-empty">
+              <strong>학습 영역을 먼저 선택하세요.</strong>
+              <span>영역을 고르면 해당 커리큘럼의 주제만 여기에 표시됩니다.</span>
+            </div>
+          ) : (
+            <div className="search-topic-groups">
+              {visibleTopicGroups.map((area) => {
+                const selectedCount = area.topics.filter((topic) => selectedTopics.includes(topic.contentKey)).length
+                return (
+                  <details className="search-topic-group" key={area.areaSlug} open={selectedAreas.includes(area.areaSlug) || selectedCount > 0}>
+                    <summary>
+                      <span>{area.areaName}</span>
+                      <small>{selectedCount > 0 ? `${selectedCount}개 선택` : `${area.topics.length}개`}</small>
+                    </summary>
+                    <div className="search-topic-options">
+                      {area.topics.map((topic) => (
+                        <label className={selectedTopics.includes(topic.contentKey) ? 'active' : ''} key={topic.contentKey}>
+                          <input type="checkbox" checked={selectedTopics.includes(topic.contentKey)} onChange={() => updateFilter('topics', topic.contentKey)} />
+                          <span>{topic.title}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </details>
+                )
+              })}
+            </div>
           )}
         </aside>
 
@@ -156,11 +254,12 @@ export function SearchPage() {
               {results.data.items.map((item) => {
                 const related = relatedConceptDestination(item)
                 const primary = primarySearchDestination(item)
+                const preview = compactMarkdownPreview(item.snippet, 240)
                 return (
                   <article className={`search-result-card search-result-${item.documentType.toLowerCase()}`} key={`${item.documentType}:${item.sourceId}`}>
                     <div className="search-result-meta"><span className="search-type-badge">{documentTypeLabels[item.documentType]}</span><span>{resultContext(item)}</span><time dateTime={item.updatedAt}>{new Date(item.updatedAt).toLocaleDateString('ko-KR')}</time></div>
                     <h2><HighlightText value={item.highlightedTitle || item.title} /></h2>
-                    <p className="search-snippet"><HighlightText value={item.snippet} /></p>
+                    <p className="search-snippet"><HighlightText value={preview} /></p>
                     <div className="search-result-actions">
                       {primary && <button className="secondary-button" type="button" onClick={() => openResult(item)}>{primary.kind === 'external' ? '자료 열기' : item.documentType === 'WRONG_NOTE' ? '오답 노트 열기' : '개념 열기'}</button>}
                       {item.documentType === 'REFERENCE' && related?.kind === 'concept' && <button className="text-button" type="button" onClick={() => void navigate({ to: '/concepts/$conceptId', params: { conceptId: String(related.conceptId) } })}>관련 개념 보기</button>}
@@ -173,9 +272,9 @@ export function SearchPage() {
 
           {results.data && results.data.totalPages > 0 && (
             <div className="pagination">
-              <button className="secondary-button" type="button" disabled={search.page <= 0} onClick={() => update({ page: Math.max(0, search.page - 1) })}>Previous</button>
+              <button className="secondary-button" type="button" disabled={search.page <= 0} onClick={() => update({ page: Math.max(0, search.page - 1) })}>이전</button>
               <span>{search.page + 1} / {results.data.totalPages}</span>
-              <button className="secondary-button" type="button" disabled={search.page + 1 >= results.data.totalPages} onClick={() => update({ page: search.page + 1 })}>Next</button>
+              <button className="secondary-button" type="button" disabled={search.page + 1 >= results.data.totalPages} onClick={() => update({ page: search.page + 1 })}>다음</button>
             </div>
           )}
         </div>

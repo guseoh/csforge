@@ -24,3 +24,7 @@ export const defaultLearningSearch: LearningSearch = {
 export function parseLearningSearch(search: Record<string, unknown>): LearningSearch {
   return learningSearchSchema.parse(search)
 }
+
+export function learningSearchForTopic(search: LearningSearch, topicId: number): LearningSearch {
+  return { ...search, topic: topicId, page: 0 }
+}

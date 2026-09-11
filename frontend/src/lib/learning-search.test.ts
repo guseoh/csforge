@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { parseLearningSearch } from './learning-search'
+import { learningSearchForTopic, parseLearningSearch } from './learning-search'
 
 describe('learning URL search state', () => {
   it('parses filters and pagination from URL values', () => {
@@ -26,6 +26,26 @@ describe('learning URL search state', () => {
       q: '',
       page: 0,
       sort: 'curriculum',
+    })
+  })
+
+  it('preserves active filters when selecting a topic and resets pagination', () => {
+    expect(learningSearchForTopic({
+      topic: 12,
+      level: '2',
+      status: 'COMPLETED',
+      bookmarked: 'true',
+      q: 'JPA',
+      page: 3,
+      sort: 'title',
+    }, 27)).toEqual({
+      topic: 27,
+      level: '2',
+      status: 'COMPLETED',
+      bookmarked: 'true',
+      q: 'JPA',
+      page: 0,
+      sort: 'title',
     })
   })
 })

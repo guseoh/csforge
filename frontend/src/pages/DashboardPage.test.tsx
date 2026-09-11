@@ -72,6 +72,7 @@ describe('DashboardPage', () => {
       activeQuiz: { quizId: 41, questionCount: 10, answeredCount: 3, lastPosition: 3, startedAt: '2026-09-03T12:00:00Z', expiresAt: null },
     }))
 
+    expect(markup).toContain('풀던 문제를 이어서 마무리하세요.')
     expect(markup).toContain('이어 풀기 · 3/10')
     expect(markup).toContain('복습 시작')
   })
@@ -79,7 +80,7 @@ describe('DashboardPage', () => {
   it('renders weak-topic and review empty states when nothing is due', () => {
     const markup = render(dashboard({ today: { solvedCount: 0, correctCount: 0, wrongCount: 0, accuracyPercent: 0, reviewDueCount: 0 } }))
 
-    expect(markup).toContain('최근 30일에 3회 이상 시도한 약점 Topic이 없습니다.')
+    expect(markup).toContain('최근 30일에 3회 이상 시도한 약점 주제가 없습니다.')
     expect(markup).not.toContain('이어 풀기')
     expect(markup).toContain('현재 대기 중인 복습이 없습니다.')
     expect(markup).not.toContain('복습 시작 →')
@@ -96,7 +97,7 @@ describe('DashboardPage', () => {
     expect(markup).toContain('자기 채점 1개 대기')
   })
 
-  it('keeps the Learning start CTA when READY content has no activity', () => {
+  it('keeps the learning start CTA when READY content has no activity', () => {
     mocks.bootstrap.data = bootstrapStatus('READY')
 
     const markup = render(dashboard({
@@ -105,6 +106,7 @@ describe('DashboardPage', () => {
       heatmap: [{ date: '2026-09-03', conceptsViewed: 0, questionsSolved: 0, activityCount: 0 }],
     }))
 
-    expect(markup).toContain('Learning 시작')
+    expect(markup).toContain('개념 학습')
+    expect(markup).toContain('학습 시작')
   })
 })

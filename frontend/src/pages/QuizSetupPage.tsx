@@ -17,6 +17,7 @@ import {
   hasExplicitQuizSearch,
   isDefaultQuizSearch,
   quizSearchForPreset,
+  type QuizQuickPreset,
   type QuizSearch,
 } from '../lib/quiz-search'
 import { canStartQuiz, quizAvailabilityState } from '../lib/quiz-availability'
@@ -121,6 +122,21 @@ function readRemembered(): QuizSetupPayload | null {
   }
 }
 
+function quickPreset(settings: QuizSetupPayload): Exclude<QuizQuickPreset, 'DEFAULT'> | null {
+  const simple = settings.areas.length === 0
+    && settings.concepts.length === 0
+    && settings.levels.length === 0
+    && settings.difficulties.length === 0
+    && settings.questionTypes.length === 0
+    && settings.count === 10
+    && settings.timeLimitSeconds === null
+  if (!simple) return null
+  if (settings.state === 'UNSEEN') return 'NEW'
+  if (settings.state === 'WRONG') return 'WRONG'
+  if (settings.state === 'ALL') return 'ALL'
+  return null
+}
+
 export function QuizSetupPage() {
   const location = useLocation()
   const search = useSearch({ from: '/quiz' })
@@ -149,7 +165,7 @@ export function QuizSetupPage() {
   })
 
   useEffect(() => {
-    document.title = 'Quiz · CSForge'
+    document.title = '문제 풀기 · CSForge'
     return () => { document.title = 'CSForge' }
   }, [])
 
@@ -189,14 +205,30 @@ export function QuizSetupPage() {
   }
   const questionCountAvailable = availabilityQuery.data?.availableCount
   const availabilityState = quizAvailabilityState(questionCountAvailable, settings.count, availabilityQuery.isPending, availabilityQuery.isError)
+  const selectedPreset = quickPreset(settings)
+  const hasDetailedSettings = Boolean(
+    settings.areas.length
+    || settings.concepts.length
+    || settings.levels.length
+    || settings.difficulties.length
+    || settings.questionTypes.length
+    || settings.state === 'REVIEW_NEEDED'
+    || settings.count !== 10
+    || settings.timeLimitSeconds !== null,
+  )
+  const availabilityMessage = availabilityState === 'LOADING'
+    ? '선택된 조건의 문항 수를 확인하는 중입니다…'
+    : availabilityState === 'ERROR'
+      ? '문항 수를 확인한 뒤 시작할 수 있습니다.'
+      : `현재 조건에서 ${questionCountAvailable}문항을 사용할 수 있습니다.`
 
   return (
-    <section className="page-section quiz-page">
-      <div className="page-heading">
+    <section className="page-section quiz-page quiz-setup-page">
+      <div className="page-heading quiz-setup-heading">
         <div>
           <p className="eyebrow">문제 풀이</p>
           <h1>문제 풀기</h1>
-          <p className="lead">필터와 문항 수를 정한 뒤 저장된 세션을 이어서 학습하세요.</p>
+          <p className="lead">자주 쓰는 방식은 바로 고르고, 필요한 경우에만 세부 조건을 조정하세요.</p>
         </div>
         <span className="result-count">{availabilityQuery.isPending ? '확인 중…' : availabilityQuery.isError ? '확인 필요' : `${questionCountAvailable}개 출제 가능`}</span>
       </div>
@@ -204,135 +236,151 @@ export function QuizSetupPage() {
       {activeQuery.data && (
         <div className="quiz-resume-banner">
           <div>
-            <strong>진행 중인 Quiz가 있습니다.</strong>
+            <strong>진행 중인 문제가 있습니다.</strong>
             <span>{activeQuery.data.answeredCount}/{activeQuery.data.questionCount}개 풀이 완료</span>
           </div>
           <Link className="secondary-button" to="/quiz/$quizId" params={{ quizId: String(activeQuery.data.quizId) }}>
-            이어하기
+            이어 풀기
           </Link>
         </div>
       )}
 
-      <div className="quiz-quick-presets" aria-label="빠른 문제 시작">
-        <div className="quiz-quick-intro"><p className="eyebrow">빠른 시작</p><strong>바로 풀기</strong><span>자주 쓰는 조건으로 즉시 시작합니다.</span></div>
-        <button type="button" className="secondary-button quiz-preset-button" onClick={() => void navigate({ search: quizSearchForPreset('NEW'), replace: true })}>
-          <strong>새 문제</strong><small>10문제 · 미학습 우선</small>
-        </button>
-        <button type="button" className="secondary-button quiz-preset-button" onClick={() => void navigate({ search: quizSearchForPreset('WRONG'), replace: true })}>
-          <strong>오답 문제</strong><small>10문제 · 다시 풀기</small>
-        </button>
-        <button type="button" className="secondary-button quiz-preset-button" onClick={() => void navigate({ search: quizSearchForPreset('ALL'), replace: true })}>
-          <strong>전체 문제</strong><small>10문제 · 랜덤 연습</small>
-        </button>
-        <button type="button" className="text-button" onClick={() => void navigate({ search: quizSearchForPreset('DEFAULT'), replace: true })}>
-          기본 설정
-        </button>
-      </div>
-
-      <section className="quiz-config-panel" aria-labelledby="quiz-config-heading">
-        <div className="quiz-config-heading">
-          <div><p className="eyebrow">문제 큐 만들기</p><h2 id="quiz-config-heading">무엇을 연습할까요?</h2></div>
-          <p className="helper-text">카드를 눌러 여러 조건을 선택하세요. 아무것도 고르지 않으면 전체가 대상입니다.</p>
+      <section className="quiz-quick-start" aria-labelledby="quiz-quick-start-heading">
+        <div className="quiz-quick-intro">
+          <p className="eyebrow">빠른 시작</p>
+          <h2 id="quiz-quick-start-heading">어떤 문제를 풀까요?</h2>
+          <span>기본 10문제 조건을 빠르게 선택합니다.</span>
         </div>
-        <div className="quiz-selection-stack">
-          <fieldset className="quiz-selection-group quiz-area-selection">
-            <legend>학습 영역 <span>{settings.areas.length === 0 ? '전체 영역' : `${settings.areas.length}개 선택`}</span></legend>
-            <div className="quiz-choice-grid quiz-area-choice-grid">
-              {areasQuery.data.map((area) => (
-                <ChoiceOption
-                  key={area.slug}
-                  label={area.name}
-                  meta={`${area.publishedQuestionCount}문항`}
-                  selected={settings.areas.includes(area.slug)}
-                  onClick={() => update('areas', toggleSelection(settings.areas, area.slug))}
-                />
-              ))}
-            </div>
-          </fieldset>
-
-          <div className="quiz-choice-row">
-            <fieldset className="quiz-selection-group">
-              <legend>레벨 <span>{settings.levels.length === 0 ? '전체 레벨' : `${settings.levels.length}개 선택`}</span></legend>
-              <div className="quiz-choice-grid quiz-choice-grid-3">
-                {[1, 2, 3].map((level) => <ChoiceOption key={level} label={`레벨 ${level}`} selected={settings.levels.includes(level)} onClick={() => update('levels', toggleSelection(settings.levels, level))} />)}
-              </div>
-            </fieldset>
-            <fieldset className="quiz-selection-group">
-              <legend>난이도 <span>{settings.difficulties.length === 0 ? '전체 난이도' : `${settings.difficulties.length}개 선택`}</span></legend>
-              <div className="quiz-choice-grid quiz-choice-grid-3">
-                {difficulties.map((item) => <ChoiceOption key={item.value} label={item.label} selected={settings.difficulties.includes(item.value)} onClick={() => update('difficulties', toggleSelection(settings.difficulties, item.value))} />)}
-              </div>
-            </fieldset>
-            <fieldset className="quiz-selection-group">
-              <legend>문제 유형 <span>{settings.questionTypes.length === 0 ? '전체 유형' : `${settings.questionTypes.length}개 선택`}</span></legend>
-              <div className="quiz-choice-grid quiz-choice-grid-4">
-                {questionTypes.map((item) => <ChoiceOption key={item.value} label={item.label} selected={settings.questionTypes.includes(item.value)} onClick={() => update('questionTypes', toggleSelection(settings.questionTypes, item.value))} />)}
-              </div>
-            </fieldset>
-          </div>
+        <div className="quiz-quick-presets" aria-label="빠른 문제 조건">
+          <button type="button" className={`secondary-button quiz-preset-button${selectedPreset === 'NEW' ? ' selected' : ''}`} aria-pressed={selectedPreset === 'NEW'} onClick={() => void navigate({ search: quizSearchForPreset('NEW'), replace: true })}>
+            <strong>새 문제</strong><small>아직 안 푼 문제</small>
+          </button>
+          <button type="button" className={`secondary-button quiz-preset-button${selectedPreset === 'WRONG' ? ' selected' : ''}`} aria-pressed={selectedPreset === 'WRONG'} onClick={() => void navigate({ search: quizSearchForPreset('WRONG'), replace: true })}>
+            <strong>오답 문제</strong><small>틀린 문제 다시 풀기</small>
+          </button>
+          <button type="button" className={`secondary-button quiz-preset-button${selectedPreset === 'ALL' ? ' selected' : ''}`} aria-pressed={selectedPreset === 'ALL'} onClick={() => void navigate({ search: quizSearchForPreset('ALL'), replace: true })}>
+            <strong>전체 문제</strong><small>전체에서 무작위 연습</small>
+          </button>
         </div>
-
-        <details className="quiz-advanced-options" open={settings.concepts.length > 0}>
-          <summary><span>고급 설정</span><small>Concept 번호, 문제 상태, 문항 수, 제한 시간</small></summary>
-          <div className="quiz-advanced-grid">
-            <label className="quiz-deep-link-field">
-              Concept 번호
-              <span>Concept 화면에서 이어질 때만 사용합니다.</span>
-              <input
-                value={settings.concepts.join(',')}
-                inputMode="numeric"
-                placeholder="예: 12,15"
-                onChange={(event) => update(
-                  'concepts',
-                  csvValues(event.target.value).map(Number).filter((value) => Number.isSafeInteger(value) && value > 0),
-                )}
-              />
-            </label>
-            <label>
-              문제 상태
-              <select value={settings.state} onChange={(event) => update('state', event.target.value as QuizSetupPayload['state'])}>
-                <option value="ALL">전체 문제</option>
-                <option value="UNSEEN">아직 안 푼 문제</option>
-                <option value="WRONG">활성 오답 노트</option>
-                <option value="REVIEW_NEEDED">복습 예정</option>
-              </select>
-            </label>
-            <label>
-              문제 수
-              <select
-                value={[5, 10, 20, 30, 50].includes(settings.count) ? settings.count : 'custom'}
-                onChange={(event) => update('count', event.target.value === 'custom' ? (settings.count > 0 && ![5, 10, 20, 30, 50].includes(settings.count) ? settings.count : 15) : Number(event.target.value))}
-              >
-                <option value={5}>5문제</option><option value={10}>10문제</option><option value={20}>20문제</option><option value={30}>30문제</option><option value={50}>50문제</option><option value="custom">직접 입력</option>
-              </select>
-              {![5, 10, 20, 30, 50].includes(settings.count) && <input type="number" min={1} max={50} value={settings.count} aria-label="직접 입력 문제 수" onChange={(event) => update('count', Math.min(50, Math.max(1, Number(event.target.value) || 1)))} />}
-            </label>
-            <label>
-              제한 시간
-              <select value={settings.timeLimitSeconds ?? ''} onChange={(event) => update('timeLimitSeconds', event.target.value ? Number(event.target.value) : null)}>
-                <option value="">제한 없음</option><option value={300}>5분</option><option value={600}>10분</option><option value={900}>15분</option><option value={1800}>30분</option>
-              </select>
-            </label>
-          </div>
-        </details>
-
-      <div className="quiz-setup-actions">
-        <span className="helper-text">{availabilityState === 'LOADING' ? '선택된 조건의 문항 수를 확인하는 중입니다…' : availabilityState === 'ERROR' ? '문항 수를 확인한 뒤 Quiz를 시작할 수 있습니다.' : `현재 조건에서 ${questionCountAvailable}문항을 사용할 수 있습니다.`}</span>
-        <button
-          className="primary-button"
-          type="button"
-          disabled={!canStartQuiz(availabilityState, createMutation.isPending)}
-          onClick={() => createMutation.mutate()}
-        >
-          {createMutation.isPending ? 'Quiz 생성 중…' : 'Quiz 시작'}
-        </button>
-      </div>
+        <div className="quiz-start-strip">
+          <span className={availabilityState === 'INSUFFICIENT' || availabilityState === 'ERROR' ? 'helper-text error-text' : 'helper-text'}>{availabilityMessage}</span>
+          <button
+            className="primary-button"
+            type="button"
+            disabled={!canStartQuiz(availabilityState, createMutation.isPending)}
+            onClick={() => createMutation.mutate()}
+          >
+            {createMutation.isPending ? '문제 준비 중…' : `${settings.count}문제 시작`}
+          </button>
+        </div>
       </section>
+
+      <details className="quiz-config-disclosure" open={hasDetailedSettings ? true : undefined}>
+        <summary>
+          <span><span className="eyebrow">직접 설정</span><strong>학습 범위와 조건 고르기</strong></span>
+          <span>{hasDetailedSettings ? '현재 세부 조건 사용 중' : '영역 · 레벨 · 난이도 · 유형 · 시간'} <span aria-hidden="true">⌄</span></span>
+        </summary>
+        <div className="quiz-config-panel" aria-label="문제 조건 설정">
+          <div className="quiz-selection-stack">
+            <fieldset className="quiz-selection-group quiz-area-selection">
+              <legend>학습 영역 <span>{settings.areas.length === 0 ? '전체 영역' : `${settings.areas.length}개 선택`}</span></legend>
+              <div className="quiz-choice-grid quiz-area-choice-grid">
+                {areasQuery.data.map((area) => (
+                  <ChoiceOption
+                    key={area.slug}
+                    label={area.name}
+                    meta={`${area.publishedQuestionCount}문항`}
+                    selected={settings.areas.includes(area.slug)}
+                    onClick={() => update('areas', toggleSelection(settings.areas, area.slug))}
+                  />
+                ))}
+              </div>
+            </fieldset>
+
+            <div className="quiz-choice-row">
+              <fieldset className="quiz-selection-group">
+                <legend>레벨 <span>{settings.levels.length === 0 ? '전체 레벨' : `${settings.levels.length}개 선택`}</span></legend>
+                <div className="quiz-choice-grid quiz-choice-grid-3">
+                  {[1, 2, 3].map((level) => <ChoiceOption key={level} label={`레벨 ${level}`} selected={settings.levels.includes(level)} onClick={() => update('levels', toggleSelection(settings.levels, level))} />)}
+                </div>
+              </fieldset>
+              <fieldset className="quiz-selection-group">
+                <legend>난이도 <span>{settings.difficulties.length === 0 ? '전체 난이도' : `${settings.difficulties.length}개 선택`}</span></legend>
+                <div className="quiz-choice-grid quiz-choice-grid-3">
+                  {difficulties.map((item) => <ChoiceOption key={item.value} label={item.label} selected={settings.difficulties.includes(item.value)} onClick={() => update('difficulties', toggleSelection(settings.difficulties, item.value))} />)}
+                </div>
+              </fieldset>
+              <fieldset className="quiz-selection-group">
+                <legend>문제 유형 <span>{settings.questionTypes.length === 0 ? '전체 유형' : `${settings.questionTypes.length}개 선택`}</span></legend>
+                <div className="quiz-choice-grid quiz-choice-grid-4">
+                  {questionTypes.map((item) => <ChoiceOption key={item.value} label={item.label} selected={settings.questionTypes.includes(item.value)} onClick={() => update('questionTypes', toggleSelection(settings.questionTypes, item.value))} />)}
+                </div>
+              </fieldset>
+            </div>
+          </div>
+
+          <details className="quiz-advanced-options" open={settings.concepts.length > 0}>
+            <summary><span>고급 설정</span><small>개념 번호, 문제 상태, 문항 수, 제한 시간</small></summary>
+            <div className="quiz-advanced-grid">
+              <label className="quiz-deep-link-field">
+                개념 번호
+                <span>개념 화면에서 이어질 때만 사용합니다.</span>
+                <input
+                  value={settings.concepts.join(',')}
+                  inputMode="numeric"
+                  placeholder="예: 12,15"
+                  onChange={(event) => update(
+                    'concepts',
+                    csvValues(event.target.value).map(Number).filter((value) => Number.isSafeInteger(value) && value > 0),
+                  )}
+                />
+              </label>
+              <label>
+                문제 상태
+                <select value={settings.state} onChange={(event) => update('state', event.target.value as QuizSetupPayload['state'])}>
+                  <option value="ALL">전체 문제</option>
+                  <option value="UNSEEN">아직 안 푼 문제</option>
+                  <option value="WRONG">활성 오답 노트</option>
+                  <option value="REVIEW_NEEDED">복습 예정</option>
+                </select>
+              </label>
+              <label>
+                문제 수
+                <select
+                  value={[5, 10, 20, 30, 50].includes(settings.count) ? settings.count : 'custom'}
+                  onChange={(event) => update('count', event.target.value === 'custom' ? (settings.count > 0 && ![5, 10, 20, 30, 50].includes(settings.count) ? settings.count : 15) : Number(event.target.value))}
+                >
+                  <option value={5}>5문제</option><option value={10}>10문제</option><option value={20}>20문제</option><option value={30}>30문제</option><option value={50}>50문제</option><option value="custom">직접 입력</option>
+                </select>
+                {![5, 10, 20, 30, 50].includes(settings.count) && <input type="number" min={1} max={50} value={settings.count} aria-label="직접 입력 문제 수" onChange={(event) => update('count', Math.min(50, Math.max(1, Number(event.target.value) || 1)))} />}
+              </label>
+              <label>
+                제한 시간
+                <select value={settings.timeLimitSeconds ?? ''} onChange={(event) => update('timeLimitSeconds', event.target.value ? Number(event.target.value) : null)}>
+                  <option value="">제한 없음</option><option value={300}>5분</option><option value={600}>10분</option><option value={900}>15분</option><option value={1800}>30분</option>
+                </select>
+              </label>
+            </div>
+          </details>
+
+          <div className="quiz-setup-actions">
+            <span className={availabilityState === 'INSUFFICIENT' || availabilityState === 'ERROR' ? 'helper-text error-text' : 'helper-text'}>{availabilityMessage}</span>
+            <button
+              className="primary-button"
+              type="button"
+              disabled={!canStartQuiz(availabilityState, createMutation.isPending)}
+              onClick={() => createMutation.mutate()}
+            >
+              {createMutation.isPending ? '문제 준비 중…' : `${settings.count}문제 시작`}
+            </button>
+            <button className="text-button" type="button" onClick={() => void navigate({ search: quizSearchForPreset('DEFAULT'), replace: true })}>기본값으로 초기화</button>
+          </div>
+        </div>
+      </details>
+
       {availabilityQuery.isError && <div className="state-card error-state" role="alert"><strong>문항 가능 수를 확인하지 못했습니다.</strong><span>서버 상태를 확인한 뒤 다시 시도하세요.</span><button className="secondary-button" type="button" onClick={() => void availabilityQuery.refetch()}>다시 시도</button></div>}
-      {availabilityState === 'INSUFFICIENT' && (
-        <p className="helper-text error-text">요청한 {settings.count}문항보다 가능한 문항이 적습니다.</p>
-      )}
-      {createMutation.isError && <p className="route-message error">Quiz를 시작하지 못했습니다. 잠시 후 다시 시도하세요.</p>}
+      {availabilityState === 'INSUFFICIENT' && <p className="helper-text error-text">요청한 {settings.count}문항보다 가능한 문항이 적습니다.</p>}
+      {createMutation.isError && <p className="route-message error">문제 풀이를 시작하지 못했습니다. 잠시 후 다시 시도하세요.</p>}
     </section>
   )
 }

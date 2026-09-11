@@ -28,6 +28,10 @@ function sourceLabel(source: string) {
   return ({ STANDARD: '일반 문제', WRONG_RETRY: '오답 다시 풀기', REVIEW: '복습' } as Record<string, string>)[source] ?? source
 }
 
+function choiceLabel(index: number) {
+  return String.fromCharCode(65 + index)
+}
+
 export function QuizSessionPage() {
   const { quizId: quizIdParam } = useParams({ from: '/quiz/$quizId' })
   const quizId = Number(quizIdParam)
@@ -38,6 +42,11 @@ export function QuizSessionPage() {
     enabled: Number.isSafeInteger(quizId) && quizId > 0,
   })
   const [now, setNow] = useState(() => Date.now())
+
+  useEffect(() => {
+    document.body.classList.add('quiz-focus-mode')
+    return () => document.body.classList.remove('quiz-focus-mode')
+  }, [])
 
   useEffect(() => {
     const timer = window.setInterval(() => setNow(Date.now()), 1000)
@@ -113,138 +122,168 @@ export function QuizSessionPage() {
   const saveState = saveStates[question.questionId] ?? 'saved'
 
   return (
-    <section className="page-section quiz-page">
-      <div className="quiz-session-topbar">
+    <section className="quiz-focus-page">
+      <header className="quiz-focus-header">
         <div>
           <p className="eyebrow">문제 풀이 · {sourceLabel(session.source)}</p>
-          <h1>{position + 1} <span>/ {session.questions.length}</span></h1>
+          <strong>{session.questions.length}문제</strong>
         </div>
-        <div className="quiz-session-meta">
-          <span>{answeredCount}/{session.questions.length}개 풀이 완료</span>
+        <div className="quiz-focus-header-actions">
           {timerLabel && (
             <strong className={expired ? 'timer expired' : 'timer'}>{expired ? '시간 종료' : timerLabel}</strong>
           )}
-          <Link className="text-link" to="/quiz" search={defaultQuizSearch}>설정으로</Link>
+          <Link className="quiz-exit-link" to="/quiz" search={defaultQuizSearch} aria-label="문제 설정으로 나가기">×</Link>
         </div>
-      </div>
+      </header>
 
-      <div className="quiz-progress">
+      <div className="quiz-focus-progress-heading">
+        <strong>문제 {position + 1} / {session.questions.length}</strong>
+        <span>{answeredCount}개 답변 완료</span>
+      </div>
+      <div className="quiz-progress quiz-focus-progress" aria-label={`${position + 1}/${session.questions.length} 진행`}>
         <span style={{ width: `${((position + 1) / session.questions.length) * 100}%` }} />
       </div>
 
-      <div className="quiz-layout">
-        <aside className="quiz-question-nav-panel" aria-label="문제 탐색">
-          <div className="quiz-question-nav">
-            {session.questions.map((item, index) => {
-              const itemDraft = drafts[item.questionId] ?? emptyQuizDraft
-              const navigationState = classifyQuizNavigation({
-                isCurrent: index === position,
-                selectedChoiceKey: itemDraft.selectedChoiceKey,
-                answerText: itemDraft.answerText,
-                reviewNeeded: itemDraft.reviewNeeded,
-              })
-              const stateClass = itemDraft.reviewNeeded ? 'review-needed' : navigationState.toLowerCase()
-              const stateLabel = itemDraft.reviewNeeded && index === position
-                ? '현재 · 복습 필요'
-                : quizNavigationLabel(navigationState)
-              return (
-                <button
-                  key={item.questionId}
-                  className={`question-nav-button ${index === position ? 'current ' : ''}nav-${stateClass}`}
-                  type="button"
-                  aria-label={`문항 ${index + 1}, ${stateLabel}`}
-                  aria-current={index === position ? 'step' : undefined}
-                  onClick={() => moveTo(index)}
-                >
-                  <span className="question-nav-index">{index + 1}</span>
-                  <small>{stateLabel}</small>
-                </button>
-              )
-            })}
-          </div>
-          <div className="quiz-question-nav-legend" aria-label="문제 상태">
-            <span><i className="nav-key current" />현재</span>
-            <span><i className="nav-key answered" />답변 완료</span>
-            <span><i className="nav-key unanswered" />미답변</span>
-            <span><i className="nav-key review-needed" />복습 필요</span>
-          </div>
-        </aside>
-
-        <article className="quiz-question-card">
+      <article className="quiz-question-card quiz-focus-card">
+        <div className="quiz-focus-question-heading">
+          <strong>Q{position + 1}</strong>
           <div className="chip-row">
             <span className="chip">{questionTypeLabel(question.questionType)}</span>
             <span className="chip">{difficultyLabel(question.difficulty)}</span>
             {question.concepts.map((concept) => <span className="chip" key={concept.id}>{concept.title}</span>)}
           </div>
-          <MarkdownContent className="quiz-prompt">{question.promptMarkdown}</MarkdownContent>
+        </div>
 
-          {question.questionType === 'MULTIPLE_CHOICE' ? (
-            <div className="choice-list">
-              {question.choices.map((choice, index) => (
-                <button
-                  key={choice.choiceKey}
-                  type="button"
-                  className={draft.selectedChoiceKey === choice.choiceKey ? 'choice-button selected' : 'choice-button'}
-                  disabled={expired || session.status !== 'IN_PROGRESS'}
-                  onClick={() => updateDraft({ selectedChoiceKey: choice.choiceKey, answerText: null })}
-                >
-                  <span>{index + 1}</span>
-                  <MarkdownContent>{choice.contentMarkdown}</MarkdownContent>
-                </button>
-              ))}
-            </div>
-          ) : (
-            <textarea
-              className="quiz-answer-editor"
-              value={draft.answerText ?? ''}
-              disabled={expired || session.status !== 'IN_PROGRESS'}
-              placeholder="답안을 입력하면 자동 저장됩니다."
-              onChange={(event) => updateDraft({ answerText: event.target.value, selectedChoiceKey: null })}
-            />
-          )}
+        <MarkdownContent className="quiz-prompt quiz-focus-prompt">{question.promptMarkdown}</MarkdownContent>
 
-          <label className="quiz-review-toggle">
-            <input
-              type="checkbox"
-              checked={draft.reviewNeeded}
-              disabled={expired || session.status !== 'IN_PROGRESS'}
-              onChange={(event) => updateDraft({ reviewNeeded: event.target.checked })}
-            />
-            나중에 다시 볼 문항으로 표시
-          </label>
-
-          <div className="quiz-question-actions">
-            <button className="secondary-button" type="button" disabled={position === 0} onClick={() => moveTo(position - 1)}>
-              ← 이전
-            </button>
-            <span className={`save-state ${saveState}`} role="status">
-              {saveState === 'saving' ? '저장 중' : saveState === 'error' ? '저장 실패' : '저장됨'}
-            </span>
-            {position < session.questions.length - 1 ? (
-              <button className="primary-button" type="button" onClick={() => moveTo(position + 1)}>다음 →</button>
-            ) : (
+        {question.questionType === 'MULTIPLE_CHOICE' ? (
+          <div className="choice-list quiz-focus-choice-list">
+            {question.choices.map((choice, index) => (
               <button
-                className="primary-button"
+                key={choice.choiceKey}
                 type="button"
-                disabled={submitMutation.isPending}
-                onClick={() => submitMutation.mutate()}
+                className={draft.selectedChoiceKey === choice.choiceKey ? 'choice-button selected' : 'choice-button'}
+                disabled={expired || session.status !== 'IN_PROGRESS'}
+                onClick={() => updateDraft({ selectedChoiceKey: choice.choiceKey, answerText: null })}
               >
-                {submitMutation.isPending ? '저장 및 제출 중…' : '제출하기'}
+                <span>{choiceLabel(index)}</span>
+                <MarkdownContent>{choice.contentMarkdown}</MarkdownContent>
               </button>
-            )}
+            ))}
           </div>
+        ) : (
+          <textarea
+            className="quiz-answer-editor"
+            value={draft.answerText ?? ''}
+            disabled={expired || session.status !== 'IN_PROGRESS'}
+            placeholder="답안을 입력하면 자동 저장됩니다."
+            onChange={(event) => updateDraft({ answerText: event.target.value, selectedChoiceKey: null })}
+          />
+        )}
 
-          {positionSaveError && (
-            <p className="helper-text error-text">재개 위치를 저장하지 못했습니다. 다음 이동 때 다시 시도합니다.</p>
+        <label className="quiz-review-toggle quiz-focus-review-toggle">
+          <input
+            type="checkbox"
+            checked={draft.reviewNeeded}
+            disabled={expired || session.status !== 'IN_PROGRESS'}
+            onChange={(event) => updateDraft({ reviewNeeded: event.target.checked })}
+          />
+          복습 필요
+          <span>이 문항을 나중에 다시 확인합니다.</span>
+        </label>
+
+        <div className="quiz-question-actions quiz-focus-actions">
+          <button className="secondary-button" type="button" disabled={position === 0} onClick={() => moveTo(position - 1)}>
+            ← 이전
+          </button>
+          <span className={`save-state ${saveState}`} role="status">
+            {saveState === 'saving' ? '저장 중' : saveState === 'error' ? '저장 실패' : '저장됨'}
+          </span>
+          {position < session.questions.length - 1 ? (
+            <button className="primary-button" type="button" onClick={() => moveTo(position + 1)}>다음 →</button>
+          ) : (
+            <button
+              className="primary-button"
+              type="button"
+              disabled={submitMutation.isPending}
+              onClick={() => submitMutation.mutate()}
+            >
+              {submitMutation.isPending ? '저장 및 제출 중…' : '제출하기'}
+            </button>
           )}
-          {expired && (
-            <p className="helper-text error-text">시간이 종료되었습니다. 답안 변경은 막혔지만 제출은 할 수 있습니다.</p>
-          )}
-          {submitMutation.isError && (
-            <p className="helper-text error-text">답안 저장 또는 제출에 실패했습니다. 다시 시도하세요.</p>
-          )}
-        </article>
-      </div>
+        </div>
+
+        {positionSaveError && (
+          <p className="helper-text error-text">재개 위치를 저장하지 못했습니다. 다음 이동 때 다시 시도합니다.</p>
+        )}
+        {expired && (
+          <p className="helper-text error-text">시간이 종료되었습니다. 답안 변경은 막혔지만 제출은 할 수 있습니다.</p>
+        )}
+        {submitMutation.isError && (
+          <p className="helper-text error-text">답안 저장 또는 제출에 실패했습니다. 다시 시도하세요.</p>
+        )}
+      </article>
+
+      <nav className="quiz-progress-dots" aria-label="문제 진행 상태">
+        {session.questions.map((item, index) => {
+          const itemDraft = drafts[item.questionId] ?? emptyQuizDraft
+          const navigationState = classifyQuizNavigation({
+            isCurrent: index === position,
+            selectedChoiceKey: itemDraft.selectedChoiceKey,
+            answerText: itemDraft.answerText,
+            reviewNeeded: itemDraft.reviewNeeded,
+          })
+          const stateClass = itemDraft.reviewNeeded ? 'review-needed' : navigationState.toLowerCase()
+          return (
+            <button
+              key={item.questionId}
+              className={`quiz-progress-dot ${index === position ? 'current ' : ''}nav-${stateClass}`}
+              type="button"
+              aria-label={`문항 ${index + 1}, ${quizNavigationLabel(navigationState)}${itemDraft.reviewNeeded ? ', 복습 필요' : ''}`}
+              aria-current={index === position ? 'step' : undefined}
+              onClick={() => moveTo(index)}
+            />
+          )
+        })}
+      </nav>
+
+      <details className="quiz-question-jump">
+        <summary>문제 바로가기 <span>{answeredCount}/{session.questions.length} 답변</span></summary>
+        <div className="quiz-question-jump-grid">
+          {session.questions.map((item, index) => {
+            const itemDraft = drafts[item.questionId] ?? emptyQuizDraft
+            const navigationState = classifyQuizNavigation({
+              isCurrent: index === position,
+              selectedChoiceKey: itemDraft.selectedChoiceKey,
+              answerText: itemDraft.answerText,
+              reviewNeeded: itemDraft.reviewNeeded,
+            })
+            const stateClass = itemDraft.reviewNeeded ? 'review-needed' : navigationState.toLowerCase()
+            const stateLabel = itemDraft.reviewNeeded && index === position
+              ? '현재 · 복습 필요'
+              : quizNavigationLabel(navigationState)
+            return (
+              <button
+                key={item.questionId}
+                className={`quiz-jump-button ${index === position ? 'current ' : ''}nav-${stateClass}`}
+                type="button"
+                aria-label={`문항 ${index + 1}, ${stateLabel}`}
+                aria-current={index === position ? 'step' : undefined}
+                onClick={() => moveTo(index)}
+              >
+                <strong>{index + 1}</strong>
+                <small>{itemDraft.reviewNeeded ? '복습' : stateLabel}</small>
+              </button>
+            )
+          })}
+        </div>
+        <div className="quiz-question-nav-legend" aria-label="문제 상태">
+          <span><i className="nav-key current" />현재</span>
+          <span><i className="nav-key answered" />답변 완료</span>
+          <span><i className="nav-key unanswered" />미답변</span>
+          <span><i className="nav-key review-needed" />복습 필요</span>
+        </div>
+      </details>
     </section>
   )
 }
