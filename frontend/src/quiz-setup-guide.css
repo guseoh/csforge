@@ -147,9 +147,8 @@
   padding: 14px 16px;
   border: 1px solid var(--border-default);
   border-radius: 10px;
-  background: color-mix(in srgb, var(--surface-elevated) 94%, transparent);
+  background: var(--surface-elevated);
   box-shadow: 0 12px 32px rgb(0 0 0 / 24%);
-  backdrop-filter: blur(10px);
 }
 
 .quiz-unified-start > div:first-child {
