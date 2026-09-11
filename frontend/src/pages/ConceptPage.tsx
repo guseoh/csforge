@@ -19,6 +19,12 @@ import { defaultQuizSearch } from '../lib/quiz-search'
 
 type NoteState = 'saved' | 'saving' | 'error'
 
+type TocHeading = {
+  id: string
+  label: string
+  level: 2 | 3
+}
+
 const referenceTypeLabels: Record<ReferenceType, string> = {
   OFFICIAL: '공식 자료',
   KOREAN_BLOG: '한글 기술 자료',
@@ -34,6 +40,68 @@ const learningStatusLabels: Record<LearningStatus, string> = {
   LEARNING: '학습 중',
   COMPLETED: '학습 완료',
   REVIEW_NEEDED: '복습 필요',
+}
+
+function ConceptArticleToc({ conceptId }: { conceptId: number }) {
+  const [headings, setHeadings] = useState<TocHeading[]>([])
+  const [activeId, setActiveId] = useState('')
+
+  useEffect(() => {
+    const articleHeadings = Array.from(
+      document.querySelectorAll<HTMLElement>('.concept-reading-content h2, .concept-reading-content h3'),
+    )
+    const extraSections = [
+      document.getElementById('personal-note'),
+      document.getElementById('references'),
+    ].filter((element): element is HTMLElement => element !== null)
+    const trackedElements = [...articleHeadings, ...extraSections]
+    const mappedHeadings: TocHeading[] = articleHeadings.map((heading, index) => {
+      const id = `concept-${conceptId}-section-${index + 1}`
+      heading.id = id
+      return {
+        id,
+        label: heading.textContent?.trim() || `섹션 ${index + 1}`,
+        level: heading.tagName === 'H3' ? 3 : 2,
+      }
+    })
+
+    const sectionHeadings: TocHeading[] = [
+      { id: 'personal-note', label: '학습 노트', level: 2 },
+      { id: 'references', label: '함께 볼 자료', level: 2 },
+    ]
+    setHeadings([...mappedHeadings, ...sectionHeadings])
+    setActiveId(mappedHeadings[0]?.id ?? sectionHeadings[0].id)
+
+    const observer = new IntersectionObserver((entries) => {
+      const visible = entries
+        .filter((entry) => entry.isIntersecting)
+        .sort((left, right) => left.boundingClientRect.top - right.boundingClientRect.top)[0]
+      if (visible?.target.id) setActiveId(visible.target.id)
+    }, { rootMargin: '-18% 0px -72% 0px', threshold: [0, 1] })
+
+    trackedElements.forEach((element) => observer.observe(element))
+    return () => observer.disconnect()
+  }, [conceptId])
+
+  if (headings.length === 0) return null
+
+  return (
+    <aside className="concept-toc" aria-label="이 글의 목차">
+      <p className="concept-toc-title">이 글에서</p>
+      <nav>
+        {headings.map((heading) => (
+          <a
+            className={`${heading.level === 3 ? 'toc-level-3' : 'toc-level-2'}${activeId === heading.id ? ' active' : ''}`}
+            href={`#${heading.id}`}
+            key={heading.id}
+            aria-current={activeId === heading.id ? 'location' : undefined}
+          >
+            {heading.label}
+          </a>
+        ))}
+      </nav>
+    </aside>
+  )
 }
 
 function ConceptContent({ data, conceptId }: { data: ConceptDetailModel; conceptId: number }) {
@@ -141,7 +209,7 @@ function ConceptContent({ data, conceptId }: { data: ConceptDetailModel; concept
         <MarkdownContent dedupeLeadingHeading={data.title}>{data.contentMarkdown}</MarkdownContent>
       </article>
 
-      <section className="detail-section personal-note-section">
+      <section className="detail-section personal-note-section" id="personal-note">
         <div className="section-heading">
           <div>
             <p className="eyebrow">내 학습 기록</p>
@@ -164,7 +232,7 @@ function ConceptContent({ data, conceptId }: { data: ConceptDetailModel; concept
         <p className="helper-text">입력 후 0.8초 뒤 자동 저장 · Ctrl/Cmd+S 즉시 저장</p>
       </section>
 
-      <section className="detail-section reference-section">
+      <section className="detail-section reference-section" id="references">
         <div className="section-heading">
           <div>
             <p className="eyebrow">더 깊게 보기</p>
@@ -287,18 +355,26 @@ export function ConceptPage() {
 
   const data = conceptQuery.data
   return (
-    <div className="concept-workspace">
+    <div className="concept-workspace concept-reading-workspace">
       <ConceptLearningRail concept={data} />
       <section className="page-section concept-page">
         <nav className="breadcrumb" aria-label="현재 학습 위치">
           <Link to="/learning" search={defaultLearningSearch}>학습</Link>
           <span>/</span>
-          <Link to="/learning/$areaSlug" params={{ areaSlug: data.area.slug }} search={defaultLearningSearch}>{data.area.name}</Link>
+          <Link
+            to="/learning/$areaSlug"
+            params={{ areaSlug: data.area.slug }}
+            search={defaultLearningSearch}
+            hash={`topic-${data.topic.id}`}
+          >
+            {data.area.name}
+          </Link>
           <span>/</span>
           <strong>{data.topic.title}</strong>
         </nav>
         <ConceptContent data={data} conceptId={conceptId} />
       </section>
+      <ConceptArticleToc conceptId={conceptId} />
     </div>
   )
 }
