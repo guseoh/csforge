@@ -66,7 +66,12 @@ export function DashboardPage() {
         : '개념을 읽고 문제로 확인한 뒤, 틀린 내용은 오답 노트와 복습으로 이어집니다.'
   const progressedAreas = dashboard.areaProgress.filter((area) => area.completedConceptCount > 0)
   const untouchedAreas = dashboard.areaProgress.filter((area) => area.completedConceptCount === 0)
-  const featuredAreas = [...progressedAreas, ...untouchedAreas].slice(0, 6)
+  const showingProgressedAreas = progressedAreas.length > 0
+  const featuredAreas = (showingProgressedAreas ? progressedAreas : untouchedAreas).slice(0, 6)
+  const areaSectionTitle = showingProgressedAreas ? '진행 중인 학습 영역' : '다음 학습 영역'
+  const areaSectionDescription = showingProgressedAreas
+    ? '이미 시작한 영역만 모아 현재 학습 흐름을 이어갑니다.'
+    : '아직 시작한 영역이 없습니다. 관심 있는 영역을 골라 첫 개념부터 시작해 보세요.'
 
   return (
     <section className="page-section dashboard-page">
@@ -99,25 +104,32 @@ export function DashboardPage() {
 
       <section className="dashboard-section dashboard-area-section">
         <div className="dashboard-section-heading">
-          <div><p className="eyebrow">커리큘럼</p><h2>진행 중인 학습 영역</h2></div>
+          <div><p className="eyebrow">커리큘럼</p><h2>{areaSectionTitle}</h2></div>
           <Link className="text-link" to="/learning" search={defaultLearningSearch}>전체 {dashboard.areaProgress.length}개 영역 보기 →</Link>
         </div>
-        <p className="dashboard-section-copy">진행한 영역을 먼저 보여주고, 남는 자리는 다음 학습 영역으로 채웁니다.</p>
+        <p className="dashboard-section-copy">{areaSectionDescription}</p>
         <div className="dashboard-area-list">
-          {featuredAreas.map((area, index) => (
-            <Link className="dashboard-area-row" key={area.areaSlug} to="/learning/$areaSlug" params={{ areaSlug: area.areaSlug }} search={defaultLearningSearch}>
-              <span className="dashboard-area-index" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
-              <span className="dashboard-area-copy">
-                <strong>{area.areaName}</strong>
-                <span>{area.completedConceptCount}/{area.publishedConceptCount}개 개념 완료</span>
-              </span>
-              <span className="dashboard-area-progress">
-                <b>{percent(area.completionPercent)}</b>
-                <span className="dashboard-progress-track" aria-hidden="true"><span style={{ width: `${Math.min(100, area.completionPercent)}%` }} /></span>
-              </span>
-              <span className="dashboard-area-arrow" aria-hidden="true">→</span>
-            </Link>
-          ))}
+          {featuredAreas.map((area, index) => {
+            const started = area.completedConceptCount > 0
+            return (
+              <Link className="dashboard-area-row" key={area.areaSlug} to="/learning/$areaSlug" params={{ areaSlug: area.areaSlug }} search={defaultLearningSearch}>
+                <span className="dashboard-area-index" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+                <span className="dashboard-area-copy">
+                  <strong>{area.areaName}</strong>
+                  <span>{started ? `${area.completedConceptCount}/${area.publishedConceptCount}개 개념 완료` : `${area.publishedConceptCount}개 개념 · 미시작`}</span>
+                </span>
+                <span className="dashboard-area-progress">
+                  {started ? (
+                    <>
+                      <b>{percent(area.completionPercent)}</b>
+                      <span className="dashboard-progress-track" aria-hidden="true"><span style={{ width: `${Math.min(100, area.completionPercent)}%` }} /></span>
+                    </>
+                  ) : <span className="helper-text">미시작</span>}
+                </span>
+                <span className="dashboard-area-arrow" aria-hidden="true">→</span>
+              </Link>
+            )
+          })}
         </div>
       </section>
 
