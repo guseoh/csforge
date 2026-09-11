@@ -62,7 +62,7 @@ export function ConceptLearningRail({ concept }: { concept: ConceptDetail }) {
         title={toggleLabel}
         onClick={toggleCollapsed}
       >
-        <span aria-hidden="true">{collapsed ? '→' : '←'}</span>
+        <span aria-hidden="true">{collapsed ? '목차' : '접기'}</span>
       </button>
 
       <div className="learning-rail-content" id={railContentId} hidden={collapsed}>
