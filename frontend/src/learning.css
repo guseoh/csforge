@@ -556,7 +556,7 @@
 
 .area-row {
   display: grid;
-  grid-template-columns: 34px minmax(0, 1fr) minmax(160px, 220px) auto;
+  grid-template-columns: minmax(0, 1fr) minmax(160px, 220px) auto;
   align-items: center;
   gap: 20px;
   padding: 17px 0;
@@ -566,7 +566,7 @@
 
 .area-row-main {
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
+  grid-template-columns: 34px minmax(0, 1fr);
   min-width: 0;
 }
 
@@ -655,11 +655,12 @@
   }
 
   .area-row {
-    grid-template-columns: 34px minmax(0, 1fr) auto;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 14px;
   }
 
   .area-row-progress {
-    grid-column: 2 / -1;
+    grid-column: 1 / -1;
   }
 }
 
@@ -680,12 +681,16 @@
   }
 
   .area-row {
-    grid-template-columns: 28px minmax(0, 1fr) 20px;
+    grid-template-columns: minmax(0, 1fr) auto;
     gap: 12px;
   }
 
+  .area-row-main {
+    grid-template-columns: 28px minmax(0, 1fr);
+  }
+
   .area-row-progress {
-    grid-column: 2 / -1;
+    grid-column: 1 / -1;
   }
 
   .area-row-progress-label {

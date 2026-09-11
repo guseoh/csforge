@@ -93,7 +93,7 @@ export function LearningPage() {
       <div className="learning-section-heading learning-area-heading">
         <div>
           <p className="eyebrow">전체 커리큘럼</p>
-          <h2>15개 학습 영역</h2>
+          <h2>{areasQuery.data.length}개 학습 영역</h2>
         </div>
         <span className="helper-text">영역을 선택하면 주제와 개념 순서가 이어집니다.</span>
       </div>

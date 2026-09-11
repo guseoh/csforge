@@ -100,7 +100,7 @@ export function DashboardPage() {
       <section className="dashboard-section dashboard-area-section">
         <div className="dashboard-section-heading">
           <div><p className="eyebrow">커리큘럼</p><h2>진행 중인 학습 영역</h2></div>
-          <Link className="text-link" to="/learning" search={defaultLearningSearch}>전체 15개 영역 보기 →</Link>
+          <Link className="text-link" to="/learning" search={defaultLearningSearch}>전체 {dashboard.areaProgress.length}개 영역 보기 →</Link>
         </div>
         <p className="dashboard-section-copy">진행한 영역을 먼저 보여주고, 남는 자리는 다음 학습 영역으로 채웁니다.</p>
         <div className="dashboard-area-list">

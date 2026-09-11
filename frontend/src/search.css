@@ -8,11 +8,11 @@
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  padding: 7px 10px;
+  padding: 6px 9px;
   border: 1px solid var(--border-default);
-  border-radius: 9px;
-  background: #171d28;
-  color: #c8d2e7;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--text-muted);
 }
 
 .search-palette-trigger:hover {
@@ -22,9 +22,9 @@
 
 .search-palette-trigger kbd {
   padding: 2px 6px;
-  border: 1px solid #46546c;
-  border-radius: 5px;
-  color: #91a4c7;
+  border: 1px solid var(--border-default);
+  border-radius: 4px;
+  color: var(--text-muted);
   font: inherit;
   font-size: 0.7rem;
 }
@@ -248,12 +248,12 @@
   padding: 0;
   border: 0;
   background: transparent;
-  color: #91a8d0;
+  color: var(--accent);
 }
 
 .search-filter-heading button:hover,
 .text-button:hover {
-  color: #c4d6f5;
+  color: var(--accent-strong);
 }
 
 .search-filters fieldset {
