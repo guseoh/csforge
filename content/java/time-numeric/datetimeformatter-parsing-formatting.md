@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.time-numeric.datetimeformatter-parsing-formatting
 topicContentKey: java.core.time-numeric
 slug: datetimeformatter-parsing-formatting
-title: "DateTimeFormatter parsing and formatting"
+title: "DateTimeFormatter로 시간 파싱·표시하기"
 summary: "날짜·시간 객체와 문자열 사이의 변환에서 pattern, Locale, ZoneId가 맡는 역할을 구분한다"
 level: 2
 status: PUBLISHED
@@ -22,7 +22,7 @@ references:
     displayOrder: 2
     relationNote: 복합적인 formatter를 조립하는 builder 계약 확인
 ---
-# DateTimeFormatter parsing and formatting
+# DateTimeFormatter로 시간 파싱·표시하기
 
 날짜·시간 객체와 화면이나 API에서 사용하는 문자열은 같은 것이 아닙니다. `LocalDateTime`은 시간 값을 구조화해서 보관하는 객체이고, `"2026-08-31 14:30"`은 문자들의 순서입니다. 두 표현 사이를 오갈 때 **어떤 문자열 형식을 사용할지 명시하는 역할**을 `DateTimeFormatter`가 맡습니다.
 
@@ -117,6 +117,6 @@ String text = formatter.format(Instant.now());
 - parse에 성공했다고 업무상 허용된 시간이라는 뜻까지 보장되는 것은 아닙니다.
 - 화면에서 문자열을 짧게 표시했다고 원래 시간 값의 정밀도가 바뀌는 것은 아닙니다.
 
-### 면접에서 설명한다면
+### 학습 후 스스로 설명해 보기
 
 `DateTimeFormatter`는 Java 시간 객체와 문자열 사이의 parse/format 규칙을 정의합니다. Pattern은 날짜·시간 필드를 정하고 Locale은 언어적 표현, ZoneId는 시간대 표현에 영향을 줍니다. 백엔드에서는 API 교환 형식과 사용자 표시 형식을 분리하고, local time에 zone 정보가 자동으로 생기지 않는다는 점을 주의해야 합니다.

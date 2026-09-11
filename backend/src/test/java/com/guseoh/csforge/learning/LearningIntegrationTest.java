@@ -55,6 +55,7 @@ class LearningIntegrationTest {
     private long topicId;
     private long firstConceptId;
     private long secondConceptId;
+    private long thirdConceptId;
 
     @BeforeEach
     void setUpFixture() {
@@ -84,7 +85,7 @@ class LearningIntegrationTest {
                 "Alpha summary", "# Alpha\n\nFirst concept.");
         secondConceptId = insertConcept(topicId, "java-beta", "beta", "Beta", 1, 2,
                 "Beta summary", "# Beta\n\nSecond concept.");
-        insertConcept(secondTopicId, "jpa-alpha", "alpha", "Alpha", 1, 1,
+        thirdConceptId = insertConcept(secondTopicId, "jpa-alpha", "alpha", "Alpha", 1, 1,
                 "JPA summary", "# JPA Alpha\n\nThird concept.");
     }
 
@@ -175,6 +176,10 @@ class LearningIntegrationTest {
         assertEquals(secondConceptId, detail.get("next").get("id").asLong());
         assertEquals(1, detail.get("relatedConcepts").size());
         assertEquals(secondConceptId, detail.get("relatedConcepts").get(0).get("id").asLong());
+
+        JsonNode secondDetail = json(request("GET", "/api/concepts/" + secondConceptId, null));
+        assertEquals(firstConceptId, secondDetail.get("previous").get("id").asLong());
+        assertEquals(thirdConceptId, secondDetail.get("next").get("id").asLong());
     }
 
     @Test

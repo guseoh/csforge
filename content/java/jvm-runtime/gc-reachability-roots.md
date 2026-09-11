@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.jvm-runtime.gc-reachability-roots
 topicContentKey: java.core.jvm-runtime
 slug: gc-reachability-roots
-title: "GC reachability and roots"
+title: "GC Reachability와 Root"
 summary: "객체가 source scope를 벗어나는 것과 GC 회수 가능 상태를 구분하고 살아 있는 root에서 객체까지의 reachability로 수명을 판단한다"
 level: 2
 status: PUBLISHED
@@ -21,10 +21,18 @@ references:
     language: en
     displayOrder: 2
     relationNote: reachability와 reference processing 개념 확인
+  - url: "https://d2.naver.com/helloworld/329631"
+    title: "네이버 D2: Java Reference와 GC"
+    referenceType: COMPANY_TECH_BLOG
+    language: ko
+    displayOrder: 3
+    relationNote: strong·soft·weak·phantom reference와 GC reachability를 함께 복습
 ---
-# 객체는 언제 GC가 회수할 수 있게 될까
+# GC Reachability와 Root
 
 Java에서는 `free()`를 직접 호출하지 않습니다. 그래서 "변수가 scope를 벗어나면 객체가 삭제된다"고 단순하게 이해하기 쉽지만, 실제로 중요한 기준은 **그 객체에 아직 도달할 수 있는 참조 경로가 있는가**입니다.
+
+![GC root에서 reachable한 객체와 끊긴 객체](/learning/java/gc-reachability.svg)
 
 GC는 살아 있는 출발점에서 객체 graph를 따라가며 어떤 객체가 여전히 reachable한지 판단합니다.
 
@@ -164,6 +172,6 @@ Memory leak은 이 둘이 어긋나는 대표적인 상황입니다.
 5. `System.gc()`가 특정 객체의 즉시 회수를 보장한다고 가정하지 않습니다.
 6. memory leak에서는 "왜 아직 reachable한가"를 찾습니다.
 
-### 면접에서 설명한다면
+### 학습 후 스스로 설명해 보기
 
 Java GC에서 객체 수명은 단순히 local variable의 scope가 끝났는지보다 GC root에서 해당 객체까지 도달 가능한지로 이해해야 합니다. Root에서 strong reference 경로가 남아 있으면 객체는 계속 reachable하고, 그 경로가 사라지면 GC가 회수할 수 있는 후보가 됩니다. Unreachable이 됐다고 즉시 메모리가 해제되는 것은 아니며, GC가 있어도 불필요한 객체가 cache나 static reference 때문에 계속 reachable하면 memory leak이 생길 수 있습니다.

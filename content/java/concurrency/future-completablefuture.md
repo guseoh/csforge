@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.concurrency.future-completablefuture
 topicContentKey: java.core.concurrency
 slug: future-completablefuture
-title: "Future and CompletableFuture"
+title: "Future와 CompletableFuture"
 summary: "아직 끝나지 않은 작업의 결과를 Future로 다루고 CompletableFuture에서 결과·실패·다음 작업을 stage로 연결하는 방식을 이해한다"
 level: 2
 status: PUBLISHED
@@ -22,7 +22,7 @@ references:
     displayOrder: 2
     relationNote: 결과 조회와 cancellation 계약 확인
 ---
-# Future와 CompletableFuture로 비동기 결과 다루기
+# Future와 CompletableFuture
 
 작업을 다른 thread에 맡겼다면 호출 직후에는 아직 결과가 없을 수 있습니다. 그렇다고 결과가 생길 때까지 무조건 현재 thread를 붙잡고 있을 필요는 없습니다. **"나중에 완료될 결과"를 하나의 객체로 표현**하면 제출 시점과 결과 사용 시점을 분리할 수 있습니다.
 
@@ -173,6 +173,6 @@ Task B -> Result B ┘
 5. 정상 완료와 exceptional completion을 따로 추적합니다.
 6. cancellation이 underlying 작업을 실제로 멈추는지 추측하지 않습니다.
 
-### 면접에서 설명한다면
+### 학습 후 스스로 설명해 보기
 
 `Future`는 아직 완료되지 않은 작업의 결과를 나중에 조회할 수 있게 하고, `CompletableFuture`는 결과가 완료됐을 때 다음 변환·비동기 작업·예외 처리를 stage로 연결할 수 있게 합니다. `thenApply`는 값 변환, `thenCompose`는 또 다른 비동기 결과를 이어 붙일 때 사용합니다. Async 실행 위치와 cancellation 동작은 API 계약과 executor를 확인해야 하며, Future를 사용한다고 모든 코드가 자동으로 non-blocking이 되는 것은 아닙니다.

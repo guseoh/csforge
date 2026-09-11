@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.concurrency.countdownlatch-coordination
 topicContentKey: java.core.concurrency
 slug: countdownlatch-coordination
-title: "CountDownLatch coordination"
+title: "CountDownLatch로 작업 조율하기"
 summary: "여러 작업이 끝날 때까지 기다리는 one-shot 동기화 도구로 CountDownLatch를 사용하고 count·await·실패 처리의 의미를 이해한다"
 level: 2
 status: PUBLISHED
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: one-shot countDown/await와 memory consistency 계약 확인
 ---
-# CountDownLatch로 여러 작업의 완료 기다리기
+# CountDownLatch로 작업 조율하기
 
 서버가 시작되기 전에 세 개의 초기화 작업이 모두 끝나야 하거나, 테스트에서 여러 worker가 작업을 마칠 때까지 주 thread가 기다려야 할 수 있습니다. 이때 각 thread를 하나씩 `join()`하는 대신 **"아직 끝나야 할 신호가 몇 개 남았는가"**를 하나의 값으로 관리할 수 있습니다.
 
@@ -132,6 +132,6 @@ boolean completed = done.await(5, TimeUnit.SECONDS);
 5. 재사용이 필요한 문제인지 확인합니다.
 6. 무한 대기 대신 timeout이 필요한지 생각합니다.
 
-### 면접에서 설명한다면
+### 학습 후 스스로 설명해 보기
 
 `CountDownLatch`는 정해진 횟수의 완료 신호가 올 때까지 하나 이상의 thread가 기다리게 하는 one-shot 동기화 도구입니다. 작업마다 `countDown()`을 호출하고 기다리는 쪽은 `await()`를 사용합니다. count가 0이 됐다는 사실과 업무 성공 여부는 별개이며, 예외 경로와 timeout을 함께 설계해야 합니다.

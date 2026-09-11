@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.streams.parallel-stream-tradeoffs
 topicContentKey: java.core.streams
 slug: parallel-stream-tradeoffs
-title: "Parallel Stream을 선택할 때의 trade-off"
+title: "Parallel Stream의 선택 기준"
 summary: "parallel stream이 자동 성능 향상이 아니며 작업 분할·연산 비용·공유 상태·공통 실행 자원과 실제 측정이 필요한 이유를 이해한다"
 level: 3
 status: PUBLISHED
@@ -22,7 +22,7 @@ references:
     displayOrder: 2
     relationNote: 병렬 reduction, statelessness, ordering 관련 계약 확인
 ---
-# Parallel Stream을 선택할 때의 trade-off
+# Parallel Stream의 선택 기준
 
 `parallel()`을 붙였다고 CPU core를 더 사용해 항상 빨라지는 것은 아닙니다. 병렬 처리는 일을 나누고, 여러 worker에서 처리하고, 다시 결과를 합치는 비용을 추가합니다. **나눠 얻는 이익이 이 부가 비용보다 커야** 실제 성능이 좋아집니다.
 
@@ -82,4 +82,4 @@ values.parallelStream().forEach(result::add); // 안전하지 않음
 
 parallel stream 성능은 데이터 크기, CPU 수, JIT warm-up, GC, 다른 workload 등에 따라 달라집니다. microbenchmark라면 JMH처럼 JVM 최적화를 고려하는 도구를 사용하고, 실제 서비스에서는 요청 latency와 자원 사용량을 함께 봐야 합니다.
 
-면접에서도 “parallel stream은 여러 core를 써서 빠르다”가 아니라 **분할·처리·결합 비용과 공유 자원 때문에 workload를 측정해 선택해야 한다**고 설명하는 것이 핵심입니다.
+복습할 때도 “parallel stream은 여러 core를 써서 빠르다”가 아니라 **분할·처리·결합 비용과 공유 자원 때문에 workload를 측정해 선택해야 한다**고 설명하는 것이 핵심입니다.

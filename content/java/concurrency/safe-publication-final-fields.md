@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.concurrency.safe-publication-final-fields
 topicContentKey: java.core.concurrency
 slug: safe-publication-final-fields
-title: "Safe publication and final fields"
+title: "안전한 공개와 final 필드"
 summary: "완성된 객체 참조를 다른 thread에 안전하게 전달하는 방법과 final field가 제공하는 특별한 초기화 규칙을 구분한다"
 level: 3
 status: PUBLISHED
@@ -22,7 +22,7 @@ references:
     displayOrder: 2
     relationNote: inter-thread visibility와 synchronization 관계 확인
 ---
-# Safe publication과 final field
+# 안전한 공개와 final 필드
 
 객체 생성자에서 필드를 올바르게 채웠다는 사실과 **그 객체 참조를 다른 thread에 어떻게 전달했는가**는 일반적으로 별도의 문제입니다. 특히 일반 field나 이후 변경되는 mutable state까지 다른 thread가 올바르게 관찰해야 한다면 volatile, monitor/Lock, static initialization, concurrent collection처럼 Java가 memory consistency를 정의한 publication 경계를 사용해야 합니다.
 
@@ -163,6 +163,6 @@ subsequent mutation
 - 생성자 안에서 객체를 외부에 등록하면 final-field 보장의 전제를 깨뜨릴 수 있습니다.
 - safe publication은 이후 모든 mutable operation을 atomic하게 만들지 않습니다.
 
-### 면접에서 설명한다면
+### 학습 후 스스로 설명해 보기
 
 Safe publication은 한 thread에서 만든 객체의 참조와 필요한 상태를 다른 thread가 올바르게 관찰할 수 있도록 memory consistency가 정의된 경계를 통해 전달하는 것을 말합니다. Volatile reference, monitor/Lock, static initialization, concurrent collection 등의 계약을 활용할 수 있습니다. 다만 Java의 final field는 예외적으로 강한 생성자 semantics를 가지며, 객체가 올바르게 생성되고 `this`가 construction 중 escape하지 않았다면 참조가 data race로 전달되더라도 final field의 correctly initialized value를 관찰하도록 보장합니다. 이 보장이 일반 mutable field나 생성 이후 변경까지 thread-safe하게 만드는 것은 아닙니다.

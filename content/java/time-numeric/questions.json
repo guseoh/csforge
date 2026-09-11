@@ -1329,4 +1329,18 @@
     "correctChoiceKey": "D",
     "explanationMarkdown": "HashSet은 equals/hashCode 계약을 사용하고 BigDecimal은 scale 차이를 equality에 반영할 수 있다. 수치 equality가 필요하면 입력 canonicalization이나 다른 key 정책이 필요하다."
   }
+,
+{
+  "kind": "question",
+  "contentKey": "java.core.time-numeric.instant-local-zoned-time.q7",
+  "promptMarkdown": "주문 생성 시각을 서버에서 저장하고 서울·뉴욕 사용자 화면에 표시하려 한다. 어떤 타입으로 저장하고 어떤 시점에 ZoneId를 적용할지, LocalDateTime만 저장할 때 생기는 문제를 설명하라.",
+  "questionType": "SCENARIO",
+  "difficulty": "MEDIUM",
+  "status": "PUBLISHED",
+  "conceptKeys": [
+    "java.core.time-numeric.instant-local-zoned-time"
+  ],
+  "modelAnswer": "사건의 한 순간은 Instant 또는 UTC 기준 offset-aware 값으로 저장하고, 화면 표시 시 사용자의 ZoneId를 적용한다. LocalDateTime만 저장하면 어느 timeline의 시점인지 잃어 지역 변환과 순서 비교가 모호해진다.",
+  "explanationMarkdown": "저장할 시간의 의미와 표시할 시간의 지역 표현은 다른 책임이다. 타입 선택은 변환 시점과 함께 결정해야 한다."
+}
 ]

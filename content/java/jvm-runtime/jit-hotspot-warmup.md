@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.jvm-runtime.jit-hotspot-warmup
 topicContentKey: java.core.jvm-runtime
 slug: jit-hotspot-warmup
-title: "JIT, HotSpot, and warm-up"
+title: "JIT·HotSpot과 Warm-up"
 summary: "HotSpot이 실행 중 profiling과 JIT compilation으로 code를 최적화할 수 있다는 점과 warm-up·deoptimization이 benchmark 해석에 미치는 영향을 이해한다"
 level: 3
 status: PUBLISHED
@@ -21,8 +21,14 @@ references:
     language: en
     displayOrder: 2
     relationNote: HotSpot JIT·tiered compilation implementation 범위 확인
+  - url: "https://techblog.woowahan.com/2588/"
+    title: "새로운 포인트 적립 시스템 개발기"
+    referenceType: COMPANY_TECH_BLOG
+    language: ko
+    displayOrder: 3
+    relationNote: JVM warm-up과 실제 서비스 성능 측정 맥락을 보충
 ---
-# 같은 Java 코드가 실행 중 더 빨라질 수 있는 이유
+# JIT·HotSpot과 Warm-up
 
 Java 프로그램을 아주 짧게 한 번 실행해 시간을 재면 첫 실행과 반복 실행의 성능이 다르게 나올 수 있습니다. 이유 중 하나는 HotSpot JVM이 프로그램을 실행하면서 어떤 code가 자주 쓰이는지 관찰하고, 그 정보를 바탕으로 **더 최적화된 native code를 JIT(Just-In-Time) compile**할 수 있기 때문입니다.
 
@@ -209,6 +215,6 @@ Warm-up을 제거한 benchmark만 보고 모든 환경에서 같은 결론을 �
 6. microbenchmark와 실제 server workload를 구분합니다.
 7. 무엇을 측정하는지에 따라 warm-up 포함 여부를 결정합니다.
 
-### 면접에서 설명한다면
+### 학습 후 스스로 설명해 보기
 
 HotSpot JVM은 class bytecode를 실행하면서 profiling 정보를 수집하고 자주 실행되는 code를 JIT compile해 최적화된 native code로 실행할 수 있습니다. 실제 type이나 branch 경향을 이용해 speculative optimization을 할 수 있고 가정이 깨지면 deoptimization이 일어날 수도 있습니다. 그래서 Java benchmark에서는 warm-up과 JIT 상태가 결과에 영향을 주며, 구체적인 compilation threshold나 optimization 정책은 Java language가 아니라 JVM implementation의 영역입니다.

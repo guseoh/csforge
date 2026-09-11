@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.jvm-runtime.java-memory-leaks
 topicContentKey: java.core.jvm-runtime
 slug: java-memory-leaks
-title: "Java memory leaks"
+title: "Java 메모리 누수의 원인"
 summary: "GC가 있어도 더 이상 필요하지 않은 객체가 cache·listener·ThreadLocal 등의 참조 때문에 reachable하게 남으면 memory leak이 될 수 있음을 진단한다"
 level: 2
 status: PUBLISHED
@@ -22,7 +22,7 @@ references:
     displayOrder: 2
     relationNote: thread-local value lifecycle 확인
 ---
-# GC가 있는데도 memory leak은 왜 생길까
+# Java 메모리 누수의 원인
 
 Java에는 GC가 있으니 memory leak이 없을 것처럼 느껴질 수 있습니다. 하지만 GC가 하는 일은 **더 이상 reachable하지 않은 객체를 회수하는 것**입니다. 애플리케이션이 이미 필요 없다고 생각하는 객체라도 살아 있는 참조 경로가 남아 있으면 GC는 정상적으로 그 객체를 보존합니다.
 
@@ -217,6 +217,6 @@ Weak reference는 "이 관계가 객체 수명을 연장해서는 안 된다"는
 5. 애플리케이션이 생각하는 수명과 실제 reference 수명이 같은지 봅니다.
 6. `System.gc()`나 WeakReference를 해결책으로 먼저 선택하지 않습니다.
 
-### 면접에서 설명한다면
+### 학습 후 스스로 설명해 보기
 
 Java에서도 memory leak은 생길 수 있습니다. GC는 unreachable 객체만 회수하므로, 업무적으로 더 이상 필요하지 않은 객체가 static cache, listener, ThreadLocal 같은 장수 참조 때문에 reachable하게 남아 있으면 메모리가 계속 유지됩니다. 진단할 때는 heap에서 큰 객체만 찾기보다 GC root까지의 retained path를 따라가 "누가 왜 이 객체를 붙잡고 있는가"를 찾고, owner와 수명 정책을 수정해야 합니다.

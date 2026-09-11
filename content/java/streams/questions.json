@@ -1329,4 +1329,21 @@
     "correctChoiceKey": "B",
     "explanationMarkdown": "correctness 계약을 먼저 지키고 workload에 맞는 benchmark로 비용을 확인해야 한다. 작은 샘플과 특정 runtime의 결과를 일반화하지 않는다."
   }
+,
+{
+  "kind": "question",
+  "contentKey": "java.core.streams.stream-pipeline-laziness.q7",
+  "promptMarkdown": "다음 코드에서 filter의 로그가 출력되지 않는 이유와 출력이 시작되는 호출을 설명하라. `names.stream().filter(name -> { System.out.println(name); return name.length() > 3; });`",
+  "questionType": "SHORT_ANSWER",
+  "difficulty": "EASY",
+  "status": "PUBLISHED",
+  "conceptKeys": [
+    "java.core.streams.stream-pipeline-laziness"
+  ],
+  "acceptedAnswers": [
+    "terminal operation",
+    "terminal operation을 호출할 때"
+  ],
+  "explanationMarkdown": "중간 연산은 pipeline을 구성할 뿐 source를 소비하지 않는다. count·collect·forEach 같은 terminal operation이 실행을 시작한다."
+}
 ]

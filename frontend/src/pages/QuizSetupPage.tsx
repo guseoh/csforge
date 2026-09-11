@@ -23,15 +23,15 @@ import { canStartQuiz, quizAvailabilityState } from '../lib/quiz-availability'
 
 const rememberedSettingsKey = 'csforge.quiz.setup'
 const questionTypes: { value: QuestionType; label: string }[] = [
-  { value: 'MULTIPLE_CHOICE', label: 'Multiple choice' },
-  { value: 'SHORT_ANSWER', label: 'Short answer' },
-  { value: 'DESCRIPTIVE', label: 'Descriptive' },
-  { value: 'SCENARIO', label: 'Scenario' },
+  { value: 'MULTIPLE_CHOICE', label: '객관식' },
+  { value: 'SHORT_ANSWER', label: '단답형' },
+  { value: 'DESCRIPTIVE', label: '서술형' },
+  { value: 'SCENARIO', label: '시나리오' },
 ]
 const difficulties: { value: QuestionDifficulty; label: string }[] = [
-  { value: 'EASY', label: 'Easy' },
-  { value: 'MEDIUM', label: 'Medium' },
-  { value: 'HARD', label: 'Hard' },
+  { value: 'EASY', label: '쉬움' },
+  { value: 'MEDIUM', label: '보통' },
+  { value: 'HARD', label: '어려움' },
 ]
 
 function settingsFromSearch(search: QuizSearch): QuizSetupPayload {
@@ -60,6 +60,29 @@ function searchFromSettings(settings: QuizSetupPayload): QuizSearch {
     count: settings.count,
     timeLimitSeconds: settings.timeLimitSeconds,
   }
+}
+
+function ChoiceOption({
+  label,
+  meta,
+  selected,
+  onClick,
+}: {
+  label: string
+  meta?: string
+  selected: boolean
+  onClick: () => void
+}) {
+  return (
+    <button className={`quiz-choice-option${selected ? ' selected' : ''}`} type="button" aria-pressed={selected} onClick={onClick}>
+      <span>{label}</span>
+      {meta && <small>{meta}</small>}
+    </button>
+  )
+}
+
+function toggleSelection<T>(values: T[], value: T) {
+  return values.includes(value) ? values.filter((item) => item !== value) : [...values, value]
 }
 
 function readRemembered(): QuizSetupPayload | null {
@@ -171,18 +194,18 @@ export function QuizSetupPage() {
     <section className="page-section quiz-page">
       <div className="page-heading">
         <div>
-          <p className="eyebrow">Question practice</p>
-          <h1>Quiz setup</h1>
+          <p className="eyebrow">문제 풀이</p>
+          <h1>문제 풀기</h1>
           <p className="lead">필터와 문항 수를 정한 뒤 저장된 세션을 이어서 학습하세요.</p>
         </div>
-        <span className="result-count">{availabilityQuery.isPending ? '확인 중…' : availabilityQuery.isError ? '확인 필요' : `${questionCountAvailable} available`}</span>
+        <span className="result-count">{availabilityQuery.isPending ? '확인 중…' : availabilityQuery.isError ? '확인 필요' : `${questionCountAvailable}개 출제 가능`}</span>
       </div>
 
       {activeQuery.data && (
         <div className="quiz-resume-banner">
           <div>
             <strong>진행 중인 Quiz가 있습니다.</strong>
-            <span>{activeQuery.data.answeredCount}/{activeQuery.data.questionCount} answered</span>
+            <span>{activeQuery.data.answeredCount}/{activeQuery.data.questionCount}개 풀이 완료</span>
           </div>
           <Link className="secondary-button" to="/quiz/$quizId" params={{ quizId: String(activeQuery.data.quizId) }}>
             이어하기
@@ -190,16 +213,16 @@ export function QuizSetupPage() {
         </div>
       )}
 
-      <div className="quiz-quick-presets" aria-label="Quiz quick start">
-        <div><p className="eyebrow">Quick start</p><strong>빠른 시작</strong></div>
-        <button type="button" className="secondary-button" onClick={() => void navigate({ search: quizSearchForPreset('NEW'), replace: true })}>
-          새 문제 10
+      <div className="quiz-quick-presets" aria-label="빠른 문제 시작">
+        <div className="quiz-quick-intro"><p className="eyebrow">빠른 시작</p><strong>바로 풀기</strong><span>자주 쓰는 조건으로 즉시 시작합니다.</span></div>
+        <button type="button" className="secondary-button quiz-preset-button" onClick={() => void navigate({ search: quizSearchForPreset('NEW'), replace: true })}>
+          <strong>새 문제</strong><small>10문제 · 미학습 우선</small>
         </button>
-        <button type="button" className="secondary-button" onClick={() => void navigate({ search: quizSearchForPreset('WRONG'), replace: true })}>
-          오답 문제 10
+        <button type="button" className="secondary-button quiz-preset-button" onClick={() => void navigate({ search: quizSearchForPreset('WRONG'), replace: true })}>
+          <strong>오답 문제</strong><small>10문제 · 다시 풀기</small>
         </button>
-        <button type="button" className="secondary-button" onClick={() => void navigate({ search: quizSearchForPreset('ALL'), replace: true })}>
-          전체 문제 10
+        <button type="button" className="secondary-button quiz-preset-button" onClick={() => void navigate({ search: quizSearchForPreset('ALL'), replace: true })}>
+          <strong>전체 문제</strong><small>10문제 · 랜덤 연습</small>
         </button>
         <button type="button" className="text-button" onClick={() => void navigate({ search: quizSearchForPreset('DEFAULT'), replace: true })}>
           기본 설정
@@ -208,134 +231,93 @@ export function QuizSetupPage() {
 
       <section className="quiz-config-panel" aria-labelledby="quiz-config-heading">
         <div className="quiz-config-heading">
-          <div><p className="eyebrow">Detailed setup</p><h2 id="quiz-config-heading">조건 설정</h2></div>
-          <p className="helper-text">필요할 때만 세부 조건을 조정하세요. 선택한 조건은 URL에 보존됩니다.</p>
+          <div><p className="eyebrow">문제 큐 만들기</p><h2 id="quiz-config-heading">무엇을 연습할까요?</h2></div>
+          <p className="helper-text">카드를 눌러 여러 조건을 선택하세요. 아무것도 고르지 않으면 전체가 대상입니다.</p>
         </div>
-        <p className="multi-select-helper">여러 항목을 고르려면 <kbd>Ctrl</kbd>/<kbd>⌘</kbd>를 누른 채 선택하세요.</p>
-      <div className="quiz-setup-grid">
-        <label>
-          Learning areas
-          <select
-            multiple
-            size={6}
-            value={settings.areas}
-            onChange={(event) => update('areas', Array.from(event.target.selectedOptions, (option) => option.value))}
-          >
-            {areasQuery.data.map((area) => <option key={area.slug} value={area.slug}>{area.name}</option>)}
-          </select>
-        </label>
-        <label className="quiz-deep-link-field">
-          Concept IDs
-          <p className="helper-text">Concept 화면에서 이어지는 deep link용입니다. 대부분의 학습자는 직접 입력할 필요가 없습니다.</p>
-          <input
-            value={settings.concepts.join(',')}
-            inputMode="numeric"
-            placeholder="예: 12,15"
-            onChange={(event) => update(
-              'concepts',
-              csvValues(event.target.value).map(Number).filter((value) => Number.isSafeInteger(value) && value > 0),
-            )}
-          />
-        </label>
-        <label>
-          Levels
-          <select
-            multiple
-            size={3}
-            value={settings.levels.map(String)}
-            onChange={(event) => update('levels', Array.from(event.target.selectedOptions, (option) => Number(option.value)))}
-          >
-            <option value="1">Level 1</option>
-            <option value="2">Level 2</option>
-            <option value="3">Level 3</option>
-          </select>
-        </label>
-        <label>
-          Difficulty
-          <select
-            multiple
-            size={3}
-            value={settings.difficulties}
-            onChange={(event) => update(
-              'difficulties',
-              Array.from(event.target.selectedOptions, (option) => option.value as QuestionDifficulty),
-            )}
-          >
-            {difficulties.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}
-          </select>
-        </label>
-        <label>
-          Question types
-          <select
-            multiple
-            size={4}
-            value={settings.questionTypes}
-            onChange={(event) => update(
-              'questionTypes',
-              Array.from(event.target.selectedOptions, (option) => option.value as QuestionType),
-            )}
-          >
-            {questionTypes.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}
-          </select>
-        </label>
-        <label>
-          Question state
-          <select
-            value={settings.state}
-            onChange={(event) => update('state', event.target.value as QuizSetupPayload['state'])}
-          >
-            <option value="ALL">All published</option>
-            <option value="UNSEEN">Unseen only</option>
-            <option value="WRONG">Active wrong notes</option>
-            <option value="REVIEW_NEEDED">Scheduled review</option>
-          </select>
-        </label>
-        <label>
-          Question count
-          <select
-            value={[5, 10, 20, 30, 50].includes(settings.count) ? settings.count : 'custom'}
-            onChange={(event) => update(
-              'count',
-              event.target.value === 'custom'
-                ? (settings.count > 0 && ![5, 10, 20, 30, 50].includes(settings.count) ? settings.count : 15)
-                : Number(event.target.value),
-            )}
-          >
-            <option value={5}>5</option>
-            <option value={10}>10</option>
-            <option value={20}>20</option>
-            <option value={30}>30</option>
-            <option value={50}>50</option>
-            <option value="custom">Custom</option>
-          </select>
-          {![5, 10, 20, 30, 50].includes(settings.count) && (
-            <input
-              type="number"
-              min={1}
-              max={50}
-              value={settings.count}
-              aria-label="Custom question count"
-              onChange={(event) => update('count', Math.min(50, Math.max(1, Number(event.target.value) || 1)))}
-            />
-          )}
-        </label>
-        <label>
-          Time limit
-          <select
-            value={settings.timeLimitSeconds ?? ''}
-            onChange={(event) => update('timeLimitSeconds', event.target.value ? Number(event.target.value) : null)}
-          >
-            <option value="">No limit</option>
-            <option value={300}>5 minutes</option>
-            <option value={600}>10 minutes</option>
-            <option value={900}>15 minutes</option>
-            <option value={1800}>30 minutes</option>
-          </select>
-        </label>
-      </div>
+        <div className="quiz-selection-stack">
+          <fieldset className="quiz-selection-group quiz-area-selection">
+            <legend>학습 영역 <span>{settings.areas.length === 0 ? '전체 영역' : `${settings.areas.length}개 선택`}</span></legend>
+            <div className="quiz-choice-grid quiz-area-choice-grid">
+              {areasQuery.data.map((area) => (
+                <ChoiceOption
+                  key={area.slug}
+                  label={area.name}
+                  meta={`${area.publishedQuestionCount}문항`}
+                  selected={settings.areas.includes(area.slug)}
+                  onClick={() => update('areas', toggleSelection(settings.areas, area.slug))}
+                />
+              ))}
+            </div>
+          </fieldset>
+
+          <div className="quiz-choice-row">
+            <fieldset className="quiz-selection-group">
+              <legend>레벨 <span>{settings.levels.length === 0 ? '전체 레벨' : `${settings.levels.length}개 선택`}</span></legend>
+              <div className="quiz-choice-grid quiz-choice-grid-3">
+                {[1, 2, 3].map((level) => <ChoiceOption key={level} label={`레벨 ${level}`} selected={settings.levels.includes(level)} onClick={() => update('levels', toggleSelection(settings.levels, level))} />)}
+              </div>
+            </fieldset>
+            <fieldset className="quiz-selection-group">
+              <legend>난이도 <span>{settings.difficulties.length === 0 ? '전체 난이도' : `${settings.difficulties.length}개 선택`}</span></legend>
+              <div className="quiz-choice-grid quiz-choice-grid-3">
+                {difficulties.map((item) => <ChoiceOption key={item.value} label={item.label} selected={settings.difficulties.includes(item.value)} onClick={() => update('difficulties', toggleSelection(settings.difficulties, item.value))} />)}
+              </div>
+            </fieldset>
+            <fieldset className="quiz-selection-group">
+              <legend>문제 유형 <span>{settings.questionTypes.length === 0 ? '전체 유형' : `${settings.questionTypes.length}개 선택`}</span></legend>
+              <div className="quiz-choice-grid quiz-choice-grid-4">
+                {questionTypes.map((item) => <ChoiceOption key={item.value} label={item.label} selected={settings.questionTypes.includes(item.value)} onClick={() => update('questionTypes', toggleSelection(settings.questionTypes, item.value))} />)}
+              </div>
+            </fieldset>
+          </div>
+        </div>
+
+        <details className="quiz-advanced-options" open={settings.concepts.length > 0}>
+          <summary><span>고급 설정</span><small>Concept 번호, 문제 상태, 문항 수, 제한 시간</small></summary>
+          <div className="quiz-advanced-grid">
+            <label className="quiz-deep-link-field">
+              Concept 번호
+              <span>Concept 화면에서 이어질 때만 사용합니다.</span>
+              <input
+                value={settings.concepts.join(',')}
+                inputMode="numeric"
+                placeholder="예: 12,15"
+                onChange={(event) => update(
+                  'concepts',
+                  csvValues(event.target.value).map(Number).filter((value) => Number.isSafeInteger(value) && value > 0),
+                )}
+              />
+            </label>
+            <label>
+              문제 상태
+              <select value={settings.state} onChange={(event) => update('state', event.target.value as QuizSetupPayload['state'])}>
+                <option value="ALL">전체 문제</option>
+                <option value="UNSEEN">아직 안 푼 문제</option>
+                <option value="WRONG">활성 오답 노트</option>
+                <option value="REVIEW_NEEDED">복습 예정</option>
+              </select>
+            </label>
+            <label>
+              문제 수
+              <select
+                value={[5, 10, 20, 30, 50].includes(settings.count) ? settings.count : 'custom'}
+                onChange={(event) => update('count', event.target.value === 'custom' ? (settings.count > 0 && ![5, 10, 20, 30, 50].includes(settings.count) ? settings.count : 15) : Number(event.target.value))}
+              >
+                <option value={5}>5문제</option><option value={10}>10문제</option><option value={20}>20문제</option><option value={30}>30문제</option><option value={50}>50문제</option><option value="custom">직접 입력</option>
+              </select>
+              {![5, 10, 20, 30, 50].includes(settings.count) && <input type="number" min={1} max={50} value={settings.count} aria-label="직접 입력 문제 수" onChange={(event) => update('count', Math.min(50, Math.max(1, Number(event.target.value) || 1)))} />}
+            </label>
+            <label>
+              제한 시간
+              <select value={settings.timeLimitSeconds ?? ''} onChange={(event) => update('timeLimitSeconds', event.target.value ? Number(event.target.value) : null)}>
+                <option value="">제한 없음</option><option value={300}>5분</option><option value={600}>10분</option><option value={900}>15분</option><option value={1800}>30분</option>
+              </select>
+            </label>
+          </div>
+        </details>
 
       <div className="quiz-setup-actions">
-        <span className="helper-text">{availabilityState === 'LOADING' ? '선택된 조건의 문항 수를 확인하는 중입니다…' : availabilityState === 'ERROR' ? '문항 수를 확인한 뒤 Quiz를 시작할 수 있습니다.' : `선택된 조건에서 ${questionCountAvailable}문항을 사용할 수 있습니다.`}</span>
+        <span className="helper-text">{availabilityState === 'LOADING' ? '선택된 조건의 문항 수를 확인하는 중입니다…' : availabilityState === 'ERROR' ? '문항 수를 확인한 뒤 Quiz를 시작할 수 있습니다.' : `현재 조건에서 ${questionCountAvailable}문항을 사용할 수 있습니다.`}</span>
         <button
           className="primary-button"
           type="button"

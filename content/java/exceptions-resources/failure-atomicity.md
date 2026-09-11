@@ -75,3 +75,15 @@ Java 객체 메서드의 failure atomicity와 DB transaction의 atomicity는 관
 - 실패 후 객체를 계속 사용할 수 있는 상태인지 계약이 분명한가?
 
 예외 처리에서 `catch`만 보는 것이 아니라 **실패 이후 데이터 상태**까지 보는 습관이 중요합니다.
+
+### 검증 후 한 번에 반영하는 흐름
+
+가능한 경우 변경 전 상태를 보존하거나 임시 값으로 계산한 뒤, 모든 검증이 통과하면 실제 상태를 바꿉니다.
+
+```java
+Money next = current.add(price);       // 아직 객체 상태를 바꾸지 않음
+validateLimit(next);
+current = next;                        // 성공한 결과만 공개
+```
+
+이 방식은 메모리 객체의 실패 원자성을 설명하기에는 좋지만 DB commit, 외부 HTTP 호출처럼 이미 밖으로 나간 효과를 되돌려 주지는 않습니다. 그런 경계에서는 transaction·보상·idempotency 같은 별도 계약이 필요합니다.

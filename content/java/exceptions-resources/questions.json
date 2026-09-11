@@ -1399,4 +1399,18 @@
     "correctChoiceKey": "D",
     "explanationMarkdown": "close propagation은 wrapper 구현과 API 문서에 따라 달라진다. ownership을 모른 채 닫거나 닫지 않으면 premature-close 또는 leak이 생길 수 있다."
   }
+,
+{
+  "kind": "question",
+  "contentKey": "java.core.exceptions-resources.failure-atomicity.q5",
+  "promptMarkdown": "주문 객체의 addLineItem()이 금액을 먼저 변경한 뒤 재고 검증에서 예외를 던진다. 호출자가 예외를 잡고 같은 객체를 재사용하면 어떤 문제가 생기며, failure atomicity를 지키는 구현 경계를 제안하라.",
+  "questionType": "SCENARIO",
+  "difficulty": "HARD",
+  "status": "PUBLISHED",
+  "conceptKeys": [
+    "java.core.exceptions-resources.failure-atomicity"
+  ],
+  "modelAnswer": "예외가 난 뒤에도 금액이 일부 변경된 객체가 남아 다음 호출이 잘못된 상태에서 시작할 수 있다. 검증과 계산을 side effect 전에 끝내거나 임시 상태에서 모두 성공한 뒤 한 번에 반영하고, 실패 시 객체가 호출 전 상태로 남는 계약을 둔다.",
+  "explanationMarkdown": "예외를 던지는 것만으로 객체가 원상 복구되지는 않는다. mutation 순서와 실패 후 재사용 가능성을 함께 설계해야 한다."
+}
 ]

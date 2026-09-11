@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.concurrency.concurrency-vs-parallelism
 topicContentKey: java.core.concurrency
 slug: concurrency-vs-parallelism
-title: "Concurrency versus parallelism"
+title: "동시성과 병렬성"
 summary: "여러 작업을 겹쳐 진행하는 동시성과 여러 작업이 실제로 동시에 실행되는 병렬성을 구분한다"
 level: 1
 status: PUBLISHED
@@ -22,7 +22,7 @@ references:
     displayOrder: 2
     relationNote: Java thread와 shared memory 규칙의 언어 수준 경계 확인
 ---
-# Concurrency와 parallelism
+# 동시성과 병렬성
 
 서버가 요청 A의 DB 응답을 기다리는 동안 요청 B를 처리한다고 생각해 보겠습니다. 두 요청이 반드시 같은 순간에 서로 다른 CPU core에서 실행되는 것은 아니지만, 애플리케이션 입장에서는 **여러 작업이 겹쳐 진행되고 있습니다.** 이것이 동시성(concurrency)을 이해하는 출발점입니다.
 
@@ -128,6 +128,6 @@ counter++;
 - thread를 많이 만들면 CPU 성능이 그만큼 늘어나는 것이 아닙니다.
 - Java Thread API는 특정 OS scheduling 순서를 보장하지 않습니다.
 
-### 면접에서 설명한다면
+### 학습 후 스스로 설명해 보기
 
 동시성은 여러 작업의 진행이 시간상 겹치도록 구성하는 개념이고, 병렬성은 여러 작업이 실제로 같은 순간에 동시에 실행되는 것을 말한다고 설명할 수 있습니다. 백엔드의 I/O 작업에서는 기다리는 동안 다른 요청을 진행하는 동시성이 중요하고, CPU 중심 작업에서는 실제 core를 활용한 병렬성이 더 직접적인 의미를 가질 수 있습니다. 어느 경우든 공유 상태와 자원 경쟁은 별도로 고려해야 합니다.

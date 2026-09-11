@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.concurrency.concurrent-collections
 topicContentKey: java.core.concurrency
 slug: concurrent-collections
-title: "Concurrent collections"
+title: "동시성 컬렉션"
 summary: "ConcurrentHashMap과 concurrent queue가 어떤 연산을 thread-safe하게 제공하는지 이해하고 여러 단계의 업무 규칙까지 자동으로 원자화된다고 오해하지 않는다"
 level: 2
 status: PUBLISHED
@@ -22,7 +22,7 @@ references:
     displayOrder: 2
     relationNote: concurrent queue의 offer/poll 계약 확인
 ---
-# Concurrent collection은 어디까지 안전하게 해 줄까
+# 동시성 컬렉션
 
 여러 thread가 같은 `HashMap`을 동시에 읽고 수정하면 collection 내부 상태와 애플리케이션의 결과를 안전하게 보장하기 어렵습니다. 단순히 모든 접근에 큰 외부 lock을 두는 방법도 있지만, Java는 동시 접근을 고려해 설계된 collection을 제공합니다.
 
@@ -135,6 +135,6 @@ concurrent collection의 한두 연산만 필요하다면 제공 API가 적합�
 5. 여러 collection 사이의 invariant가 있는지 확인합니다.
 6. iterator를 snapshot으로 가정하고 있지 않은지 봅니다.
 
-### 면접에서 설명한다면
+### 학습 후 스스로 설명해 보기
 
 Concurrent collection은 여러 thread의 동시 접근을 고려해 개별 연산과 일부 compound operation에 thread-safety 계약을 제공합니다. 하지만 `containsKey` 후 `put`처럼 여러 호출을 조합한 업무 로직 전체나 저장된 mutable 객체의 상태까지 자동으로 원자화하지는 않습니다. 보호해야 할 invariant를 보고 concurrent API 하나로 표현할지 외부 동기화를 사용할지 결정해야 합니다.

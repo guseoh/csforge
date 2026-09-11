@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.concurrency.volatile
 topicContentKey: java.core.concurrency
 slug: volatile
-title: "volatile"
+title: "volatile과 가시성"
 summary: "volatile이 제공하는 visibility와 ordering을 이해하고 복합 갱신의 atomicity와 구분한다"
 level: 3
 status: PUBLISHED
@@ -22,7 +22,7 @@ references:
     displayOrder: 2
     relationNote: volatile write와 이후 같은 field read의 happens-before 관계 확인
 ---
-# volatile
+# volatile과 가시성
 
 한 thread가 "작업을 이제 멈춰라"라는 flag를 true로 바꾸고 다른 thread가 그 flag를 계속 확인한다고 생각해 보겠습니다. 두 thread 사이에 아무 synchronization도 없다면 reader가 write를 안전하게 관찰한다고 근거 없이 가정할 수 없습니다.
 
@@ -152,6 +152,6 @@ balance >= reserved
 - volatile은 CPU cache를 끄는 키워드라고 정의하면 부정확합니다.
 - volatile reference를 사용한다고 참조 대상 객체의 모든 후속 변경이 thread-safe해지는 것은 아닙니다.
 
-### 면접에서 설명한다면
+### 학습 후 스스로 설명해 보기
 
 `volatile`은 같은 field의 write와 이후 read 사이에 happens-before 관계를 만들어 visibility와 ordering을 제공하는 Java Memory Model 기능이라고 설명하면 됩니다. 하지만 mutual exclusion은 제공하지 않으므로 `count++`처럼 read-modify-write가 필요한 복합 연산의 atomicity는 보장하지 않습니다. 단순 상태 flag나 publication에 유용할 수 있지만 여러 필드 invariant에는 lock이나 다른 atomic 상태 모델이 필요할 수 있습니다.

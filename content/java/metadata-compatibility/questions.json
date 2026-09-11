@@ -577,4 +577,18 @@
     "correctChoiceKey": "B",
     "explanationMarkdown": "이미 컴파일된 호출과 재컴파일 시 source overload 선택은 서로 다른 단계와 계약을 따른다."
   }
+,
+{
+  "kind": "question",
+  "contentKey": "java.core.metadata-compatibility.binary-compatibility-api-evolution.q5",
+  "promptMarkdown": "라이브러리 v2에서 public 메서드의 매개변수 타입을 바꾸고 기존 애플리케이션을 재컴파일하지 않았다. 배포 시 어떤 호환성 실패가 발생할 수 있으며 안전한 진화 방법은 무엇인가?",
+  "questionType": "SCENARIO",
+  "difficulty": "HARD",
+  "status": "PUBLISHED",
+  "conceptKeys": [
+    "java.core.metadata-compatibility.binary-compatibility-api-evolution"
+  ],
+  "modelAnswer": "기존 class file이 기대하는 메서드 descriptor를 찾지 못해 linkage 계열 오류가 날 수 있다. 기존 signature를 유지하고 overload/deprecation으로 단계적으로 이동하거나 major version과 재컴파일 경계를 명확히 하며 binary/source compatibility를 각각 검증한다.",
+  "explanationMarkdown": "소스 코드가 다시 컴파일되는지와 이미 컴파일된 client가 실행되는지는 다른 API 계약이다."
+}
 ]

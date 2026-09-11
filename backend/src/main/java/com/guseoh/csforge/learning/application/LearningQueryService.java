@@ -127,7 +127,7 @@ public class LearningQueryService {
     private ConceptNavigationView previousConcept(Concept concept, Topic topic, LearningArea area) {
         return conceptRepository.findPreviousPublished(
                         concept.getId(),
-                        area.getDisplayOrder(),
+                        area.getId(),
                         topic.getDisplayOrder(),
                         concept.getDisplayOrder(),
                         SINGLE_RESULT)
@@ -140,7 +140,7 @@ public class LearningQueryService {
     private ConceptNavigationView nextConcept(Concept concept, Topic topic, LearningArea area) {
         return conceptRepository.findNextPublished(
                         concept.getId(),
-                        area.getDisplayOrder(),
+                        area.getId(),
                         topic.getDisplayOrder(),
                         concept.getDisplayOrder(),
                         SINGLE_RESULT)

@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.io-nio.input-output-reader-writer
 topicContentKey: java.core.io-nio
 slug: input-output-reader-writer
-title: "Input/output, Reader, and Writer"
+title: "입출력과 Reader·Writer"
 summary: "데이터가 binary인지 text인지에 따라 byte stream과 character stream을 선택하고 자원 수명을 관리한다"
 level: 1
 status: PUBLISHED
@@ -22,7 +22,7 @@ references:
     displayOrder: 2
     relationNote: 문자 입력 추상화와 read 계약 확인
 ---
-# Input/output, Reader, and Writer
+# 입출력과 Reader·Writer
 
 이미지 파일과 JSON 파일은 둘 다 디스크에 저장되지만 Java 코드에서 다루는 방식은 같지 않습니다. 이미지는 원래 byte 구조를 그대로 보존해야 하는 binary data이고, JSON은 charset 규칙을 통해 문자로 해석하는 text data입니다.
 
@@ -132,6 +132,6 @@ Character API를 사용해도 byte와 연결되는 경계에는 charset이 필�
 4. read 반환값을 무시하고 있지 않은지 봅니다.
 5. 자원을 누가 열고 누가 닫아야 하는지 ownership을 확인합니다.
 
-### 면접에서 설명한다면
+### 학습 후 스스로 설명해 보기
 
 `InputStream`/`OutputStream`은 byte 기반 I/O이고 `Reader`/`Writer`는 문자 기반 I/O라고 설명할 수 있습니다. Text data를 다룰 때는 byte와 문자 사이의 charset 변환이 필요하며, read 한 번이 전체 데이터를 반환한다고 가정하지 말고 반환값과 EOF를 처리해야 합니다. 외부 자원의 close 책임도 ownership 계약에 맞게 관리해야 합니다.

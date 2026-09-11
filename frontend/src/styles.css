@@ -957,3 +957,171 @@ textarea:focus {
     justify-self: start;
   }
 }
+
+/* Foundry-inspired desktop canvas: quiet chrome, high-contrast reading surface, restrained borders. */
+.topbar {
+  height: 62px;
+  border-bottom-color: #25232e;
+  background: #0f0d13;
+}
+
+.sidebar {
+  border-right-color: #25232e;
+  background: #111016;
+}
+
+.nav-link { color: #8f899a; }
+.nav-link:hover,
+.nav-link.active { background: #1d1926; color: #f4f0f9; }
+
+.main-content {
+  min-width: 0;
+  background: #0e0c12;
+}
+
+.primary-button {
+  border-color: #8f62e8;
+  background: #925de7;
+  color: #fff;
+}
+
+.primary-button:hover { border-color: #b28cff; background: #a06af5; }
+
+/* A study route has one contextual course map. The product chrome stays out of the reading flow. */
+@media (min-width: 721px) {
+  .study-context .content-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .study-context .sidebar {
+    display: none;
+  }
+
+  .study-context .main-content {
+    padding: 46px 32px 120px;
+  }
+}
+
+/* Foundry-style desktop shell: navigation belongs to the header, not the reading canvas. */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  height: 62px;
+  padding: 0 24px;
+  background: rgb(15 13 19 / 94%);
+  backdrop-filter: blur(14px);
+}
+
+.topbar-inner {
+  display: flex;
+  align-items: center;
+  width: min(1320px, 100%);
+  height: 100%;
+  margin: 0 auto;
+}
+
+.brand { display: inline-flex; flex: 0 0 auto; align-items: center; gap: 8px; font-size: 1.02rem; letter-spacing: -0.04em; }
+
+.brand-mark {
+  display: inline-grid;
+  width: 28px;
+  height: 28px;
+  place-items: center;
+  border-radius: 8px;
+  color: #fff;
+  background: #925de7;
+  font-size: 0.9rem;
+  line-height: 1;
+}
+
+.topbar-nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+}
+
+.topbar-nav-link {
+  padding: 7px 10px;
+  border-radius: 6px;
+  color: #8b8497;
+  font-size: 0.78rem;
+  transition: color 120ms ease, background 120ms ease;
+}
+
+.topbar-nav-link:hover,
+.topbar-nav-link.active { color: #f3eff8; background: #1c1824; }
+.topbar-actions { display: flex; align-items: center; margin-left: 14px; }
+
+.content-layout { display: block; min-height: calc(100vh - 62px); }
+
+.main-content {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  min-width: 0;
+  padding: 48px 24px 120px;
+  background: #0e0c12;
+}
+
+.search-palette-trigger {
+  appearance: none;
+  min-width: 150px;
+  height: 34px;
+  padding: 0 9px;
+  border: 1px solid #302a3b;
+  border-radius: 7px;
+  background: #17131f;
+  color: #aaa1b6;
+  font-size: 0.75rem;
+}
+
+.search-palette-trigger:hover { border-color: #5a467d; background: #1d1828; color: #e9e2f0; }
+.search-palette-trigger kbd { border-color: #463a59; color: #8e829d; background: transparent; }
+.environment-badge { margin-left: 6px; padding: 4px 7px; border-color: #302a3b; color: #796f86; font-size: 0.62rem; }
+
+@media (max-width: 720px) {
+  .topbar { padding: 0 16px; }
+  .topbar-nav { display: none; }
+  .main-content { padding: 32px 16px 88px; }
+}
+
+/* Shared action language: one clear primary action, quiet outlined secondary actions. */
+.primary-button,
+.secondary-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 40px;
+  padding: 0 16px;
+  border-radius: 8px;
+  font-size: 0.79rem;
+  font-weight: 750;
+  line-height: 1;
+  white-space: nowrap;
+  transition: transform 140ms ease, background 140ms ease, border-color 140ms ease, box-shadow 140ms ease;
+}
+
+.primary-button:hover,
+.secondary-button:hover { transform: translateY(-1px); }
+
+.primary-button {
+  border-color: #a06af5;
+  background: #925de7;
+  box-shadow: 0 7px 18px rgb(87 44 142 / 22%);
+}
+
+.primary-button:hover { border-color: #bb92ff; background: #a36cf3; box-shadow: 0 9px 22px rgb(87 44 142 / 30%); }
+
+.secondary-button {
+  border-color: #40364f;
+  color: #d1c7dc;
+  background: #17131f;
+}
+
+.secondary-button:hover { border-color: #715195; color: #f2eaff; background: #21192e; }
+
+.primary-button:disabled,
+.secondary-button:disabled { transform: none; box-shadow: none; }

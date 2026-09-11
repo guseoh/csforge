@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.jvm-runtime.bytecode-javap
 topicContentKey: java.core.jvm-runtime
 slug: bytecode-javap
-title: "Bytecode and javap"
+title: "Bytecode와 javap로 실행 흔적 읽기"
 summary: "javap로 class file을 열어 source가 JVM instruction으로 어떻게 표현되는지 큰 흐름을 읽고 bytecode와 JIT native code를 구분한다"
 level: 2
 status: PUBLISHED
@@ -22,7 +22,7 @@ references:
     displayOrder: 2
     relationNote: Code·constant pool 등 class file 구조 확인
 ---
-# Bytecode를 왜 직접 볼까
+# Bytecode와 javap로 실행 흔적 읽기
 
 대부분의 Java 개발에서는 bytecode instruction을 외울 필요가 없습니다. 하지만 source만 봐서는 컴파일러가 어떤 호출과 분기를 만들었는지 헷갈릴 때, class file을 직접 보면 **source와 JVM 실행 모델 사이의 중간 표현**을 확인할 수 있습니다.
 
@@ -167,6 +167,6 @@ Bytecode를 직접 보는 상황은 생각보다 명확합니다.
 5. bytecode와 JIT native code를 구분합니다.
 6. compiler가 만든 구체적인 instruction 배열을 Java language guarantee처럼 말하지 않습니다.
 
-### 면접에서 설명한다면
+### 학습 후 스스로 설명해 보기
 
 `javap`는 class file을 역어셈블해 bytecode와 metadata를 확인하는 JDK 도구입니다. `-c`로 method의 JVM instruction을, `-v`로 constant pool과 flags 같은 더 자세한 class file 정보를 볼 수 있습니다. Bytecode는 JVM의 중간 실행 표현이지 CPU native code와 동일하지 않으며, 실제 runtime에서는 JVM이 이를 해석하거나 JIT compile할 수 있습니다.

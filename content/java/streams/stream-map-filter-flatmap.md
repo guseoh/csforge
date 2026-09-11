@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.streams.stream-map-filter-flatmap
 topicContentKey: java.core.streams
 slug: stream-map-filter-flatmap
-title: "filter, map, flatMap으로 데이터 모양 바꾸기"
+title: "filter·map·flatMap으로 데이터 변환하기"
 summary: "원소를 거르는 filter, 하나를 다른 하나로 바꾸는 map, 중첩된 여러 값을 펼치는 flatMap의 결과 형태를 구분한다"
 level: 2
 status: PUBLISHED
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: filter, map, flatMap 연산의 계약 확인
 ---
-# filter, map, flatMap으로 데이터 모양 바꾸기
+# filter·map·flatMap으로 데이터 변환하기
 
 Stream 코드를 읽을 때는 메서드 이름보다 **각 단계 전후에 원소의 개수와 타입이 어떻게 바뀌는지**를 보면 이해하기 쉽습니다.
 

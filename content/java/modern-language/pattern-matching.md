@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.modern-language.pattern-matching
 topicContentKey: java.core.modern-language
 slug: pattern-matching
-title: "Pattern matching"
+title: "Pattern Matching으로 타입 분기하기"
 summary: "타입 검사와 값 추출을 함께 표현하고 pattern variable의 사용 범위와 switch 분기 규칙을 이해한다"
 level: 2
 status: PUBLISHED
@@ -22,7 +22,7 @@ references:
     displayOrder: 2
     relationNote: instanceof pattern의 조건 평가와 pattern variable 확인
 ---
-# Pattern matching
+# Pattern Matching으로 타입 분기하기
 
 객체가 특정 타입인지 확인한 뒤 바로 그 타입으로 사용하려면 예전에는 검사와 형변환을 따로 작성하는 코드가 흔했습니다.
 
@@ -135,6 +135,6 @@ else if (shape instanceof Rectangle rectangle) { ... }
 - switch case는 순서를 바꿔도 항상 같은 의미가 되는 것이 아닙니다.
 - pattern matching이 모든 타입 분기 코드를 좋은 객체지향 설계로 바꿔 주는 것은 아닙니다.
 
-### 면접에서 설명한다면
+### 학습 후 스스로 설명해 보기
 
 Pattern matching은 타입 검사와 안전한 값 추출을 함께 표현해 반복적인 cast 코드를 줄이는 기능이라고 설명할 수 있습니다. 중요한 부분은 pattern variable의 scope가 단순한 블록 범위가 아니라 조건의 성공이 보장되는 제어 흐름과 연결된다는 점입니다. switch에서는 dominance와 exhaustiveness도 함께 고려해야 합니다.

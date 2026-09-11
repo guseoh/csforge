@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.coding-tests.priorityqueue-coding-tests
 topicContentKey: java.core.coding-tests
 slug: priorityqueue-coding-tests
-title: "PriorityQueue in coding tests"
+title: "코딩 테스트의 PriorityQueue"
 summary: "현재 최우선 원소를 반복해서 꺼내는 문제에서 PriorityQueue의 head·Comparator·동점 처리 규칙을 올바르게 사용한다"
 level: 2
 status: PUBLISHED
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: queue head, natural ordering, iterator ordering과 null 제한 확인
 ---
-# 코딩테스트용 PriorityQueue
+# 코딩 테스트의 PriorityQueue
 
 문제에서 매 단계마다 "현재 가장 작은 값", "가장 큰 값", "가장 우선순위 높은 작업"을 하나씩 꺼내야 한다면 매번 전체 목록을 다시 정렬하는 대신 `PriorityQueue`를 사용할 수 있습니다.
 
@@ -111,6 +111,6 @@ queue.offer(new State(newDistance, node));
 4. iterator 순서를 정렬 결과로 사용하고 있지 않은지 봅니다.
 5. queue에 넣은 객체의 우선순위 값을 나중에 직접 바꾸고 있지 않은지 확인합니다.
 
-### 면접이나 문제 풀이에서 설명한다면
+### 학습 후 스스로 설명해 보기
 
 Java `PriorityQueue`는 comparator 또는 natural ordering 기준으로 head에 가장 우선되는 원소를 두는 queue입니다. 기본적으로 최소 원소가 head이며 최대 우선순위가 필요하면 comparator를 바꿀 수 있습니다. Heap은 전체 iteration 순서를 정렬해 주지 않으므로 정렬된 전체 결과가 필요하면 반복해서 poll해야 하며, 삽입된 객체의 비교 기준을 나중에 변경해도 자동 재배치되지 않는 점을 주의해야 합니다.

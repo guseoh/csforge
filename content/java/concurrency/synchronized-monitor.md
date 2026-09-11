@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.concurrency.synchronized-monitor
 topicContentKey: java.core.concurrency
 slug: synchronized-monitor
-title: "Synchronized and monitor"
+title: "synchronized와 Monitor"
 summary: "synchronized가 어떤 monitor를 기준으로 상호 배제와 memory visibility를 제공하는지 이해한다"
 level: 2
 status: PUBLISHED
@@ -22,7 +22,7 @@ references:
     displayOrder: 2
     relationNote: monitor lock과 happens-before memory consistency 확인
 ---
-# synchronized와 intrinsic monitor
+# synchronized와 Monitor
 
 여러 thread가 같은 재고 값을 수정할 때 "한 번에 한 thread만 확인과 차감을 수행하게 하자"고 결정했다면 Java에서는 `synchronized`를 사용할 수 있습니다. 하지만 `synchronized`라는 단어를 붙였다는 사실보다 **모든 경쟁 thread가 같은 monitor를 기준으로 보호받고 있는가**가 더 중요합니다.
 
@@ -167,6 +167,6 @@ Thread B
 - synchronized가 객체 안의 모든 필드를 자동으로 보호하지 않습니다. 같은 monitor 규칙을 지키는 코드만 협력합니다.
 - Java의 monitor 계약과 HotSpot 내부 lock 구현은 구분해야 합니다.
 
-### 면접에서 설명한다면
+### 학습 후 스스로 설명해 보기
 
 `synchronized`는 특정 객체의 intrinsic monitor를 기준으로 한 상호 배제와 memory synchronization을 제공합니다. Instance synchronized method는 `this`, static synchronized method는 해당 `Class` 객체를 monitor로 사용합니다. 중요한 것은 경쟁하는 코드가 같은 monitor를 사용하고 실제 invariant 전체를 critical section 안에서 보호하는지이며, 한 monitor의 unlock은 이후 같은 monitor의 lock보다 happens-before합니다.

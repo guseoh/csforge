@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.io-nio.buffered-io
 topicContentKey: java.core.io-nio
 slug: buffered-io
-title: "Buffered I/O"
+title: "Buffered I/O와 버퍼링"
 summary: "작은 I/O 요청을 buffer에 모으는 이유와 flush·close가 각각 무엇을 의미하는지 이해한다"
 level: 1
 status: PUBLISHED
@@ -22,7 +22,7 @@ references:
     displayOrder: 2
     relationNote: character output buffer·flush·close 계약 확인
 ---
-# Buffered I/O
+# Buffered I/O와 버퍼링
 
 파일에 문자 한 개를 쓸 때마다 실제 하위 I/O 작업을 수행한다고 생각해 보겠습니다. 작은 작업이 매우 많이 반복되면 애플리케이션과 하위 I/O 계층 사이의 호출 횟수가 커집니다. **Buffering은 작은 읽기·쓰기를 메모리의 임시 공간에 모아 더 큰 단위로 처리하기 위한 방법**입니다.
 
@@ -108,6 +108,6 @@ Buffering이 I/O 호출 수를 줄일 수 있다고 해서 buffer를 크게 만�
 4. 중간 결과를 즉시 보여 줘야 하는 요구가 있는지 확인합니다.
 5. buffer를 사용한다고 물리 storage persistence까지 보장된다고 가정하지 않습니다.
 
-### 면접에서 설명한다면
+### 학습 후 스스로 설명해 보기
 
 Buffered I/O는 작은 읽기·쓰기 요청을 메모리 buffer에 모아 하위 I/O 호출을 줄이는 데 도움을 줍니다. `flush()`는 현재 buffer의 데이터를 다음 계층으로 전달하지만 자원을 닫는 동작은 아니며, `close()`는 resource lifecycle을 종료합니다. Buffering 효과와 실제 디스크 영구 저장이나 OS 동작은 서로 다른 층위로 구분해야 합니다.

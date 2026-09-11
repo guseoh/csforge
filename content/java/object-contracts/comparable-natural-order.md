@@ -62,4 +62,4 @@ SortedSet<BigDecimal> values = new TreeSet<>();
 - 정수 subtraction으로 overflow 가능성을 만들지 않았는가?
 - `compareTo == 0`과 `equals`의 관계가 sorted collection에 어떤 영향을 주는가?
 
-면접에서는 Comparable이 “정렬 인터페이스”라고만 말하기보다 **타입의 자연 순서를 정의하는 계약**이라고 설명하는 편이 정확합니다.
+학습 후는 Comparable이 “정렬 인터페이스”라고만 말하기보다 **타입의 자연 순서를 정의하는 계약**이라고 설명하는 편이 정확합니다.

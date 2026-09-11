@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.metadata-compatibility.annotations-retention-target
 topicContentKey: java.core.metadata-compatibility
 slug: annotations-retention-target
-title: "Annotations, Retention, and Target"
+title: "Annotation의 Retention과 Target"
 summary: "annotation이 metadata라는 점과 @Target·@Retention이 어디에 붙고 언제까지 남는지를 결정한다는 점을 이해한다"
 level: 2
 status: PUBLISHED
@@ -22,7 +22,7 @@ references:
     displayOrder: 2
     relationNote: SOURCE·CLASS·RUNTIME 보존 정책 확인
 ---
-# Annotation은 붙이는 순간 동작하는 코드일까
+# Annotation의 Retention과 Target
 
 Spring을 배우면 `@Service`, `@Transactional`, `@Valid`처럼 annotation을 매우 자주 만납니다. 그래서 annotation 자체가 어떤 기능을 실행한다고 생각하기 쉽습니다.
 
@@ -194,6 +194,6 @@ Spring Framework
 5. annotation inheritance를 자동으로 가정하지 않습니다.
 6. Java 기본 annotation 조회와 Spring 같은 framework의 추가 탐색 규칙을 구분합니다.
 
-### 면접에서 설명한다면
+### 학습 후 스스로 설명해 보기
 
 Annotation은 class나 method 같은 프로그램 요소에 붙이는 metadata입니다. `@Target`은 annotation을 사용할 수 있는 위치를 제한하고, `@Retention`은 metadata를 source까지만 둘지 class file에 남길지 runtime reflection에서도 볼 수 있게 할지를 결정합니다. Annotation 자체가 behavior를 실행하는 것은 아니며 compiler, annotation processor, Spring 같은 framework가 metadata를 읽어 실제 기능을 구현합니다.

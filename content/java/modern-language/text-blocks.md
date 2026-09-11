@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.modern-language.text-blocks
 topicContentKey: java.core.modern-language
 slug: text-blocks
-title: "Text blocks"
+title: "Text Block으로 여러 줄 문자열 쓰기"
 summary: "여러 줄 문자열을 읽기 좋게 작성하되 실제 결과 문자열의 들여쓰기·줄바꿈·escape 규칙을 이해한다"
 level: 1
 status: PUBLISHED
@@ -22,7 +22,7 @@ references:
     displayOrder: 2
     relationNote: String literal과 text block 표현 확인
 ---
-# Text blocks
+# Text Block으로 여러 줄 문자열 쓰기
 
 JSON, SQL, HTML처럼 여러 줄로 구성된 문자열을 일반 string literal로 작성하면 따옴표와 `\n`이 내용보다 더 눈에 띄는 경우가 많습니다.
 
@@ -133,6 +133,6 @@ Text block이 platform default charset 문제를 해결해 주는 기능은 아�
 4. escape가 줄바꿈이나 공백을 어떻게 바꾸는지 확인한다.
 5. formatting, JSON validation, SQL parameter binding, charset 처리는 별도 문제임을 구분한다.
 
-### 면접에서 설명한다면
+### 학습 후 스스로 설명해 보기
 
 Text block은 여러 줄 문자열을 소스에서 읽기 좋게 표현하는 Java 문법이라고 설명하면 됩니다. 단순히 화면에 보이는 공백을 전부 그대로 보존하는 것은 아니며 공통 들여쓰기와 줄바꿈 처리 규칙이 있습니다. 결과는 일반 `String`이므로 SQL 보안, JSON 검증, charset encoding 같은 문제를 대신 해결하지 않습니다.

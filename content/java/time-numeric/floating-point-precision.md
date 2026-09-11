@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.time-numeric.floating-point-precision
 topicContentKey: java.core.time-numeric
 slug: floating-point-precision
-title: "Floating-point precision"
+title: "부동소수점 정밀도와 오차"
 summary: "binary floating-point가 일부 10진수를 근사해 저장하는 이유와 비교·금액 계산에서의 영향을 이해한다"
 level: 2
 status: PUBLISHED
@@ -22,7 +22,7 @@ references:
     displayOrder: 2
     relationNote: Double 비교와 NaN·infinity 같은 특수 값 확인
 ---
-# Floating-point precision
+# 부동소수점 정밀도와 오차
 
 `double`에 `0.1`을 넣었다고 해서 컴퓨터 내부에 사람이 쓰는 십진수 `0.1`이 그대로 저장된다고 생각하면 여러 계산 결과가 이상하게 보일 수 있습니다. Java의 `float`와 `double`은 **2진수 기반의 부동소수점 표현**을 사용하고, 일부 10진수는 이 방식으로 유한하게 정확히 표현할 수 없습니다.
 
@@ -109,6 +109,6 @@ System.out.println(value == value); // false
 - 화면에서 반올림해 출력하는 것과 내부 계산의 정밀도는 다른 문제입니다.
 - `==`를 무조건 금지하는 규칙보다 비교하려는 값의 의미가 중요합니다.
 
-### 면접에서 설명한다면
+### 학습 후 스스로 설명해 보기
 
 Java의 `double`은 IEEE 754 계열의 binary floating-point 표현을 사용하기 때문에 일부 십진 소수를 정확히 표현하지 못하고 근사값을 저장합니다. 그래서 `0.1 + 0.2 == 0.3` 같은 비교가 기대와 달라질 수 있습니다. 측정값은 허용 오차를 고려하고, 금액처럼 정확한 십진 의미가 필요하면 정수 minor unit이나 `BigDecimal` 같은 모델을 검토해야 합니다.

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="240" viewBox="0 0 760 240" role="img" aria-labelledby="title desc">
+  <title id="title">NIO Buffer의 write와 read 전환</title>
+  <desc id="desc">write mode에서 position이 증가하고 flip 후 position은 0, limit은 기록 끝으로 바뀐다.</desc>
+  <rect width="760" height="240" rx="14" fill="#fbfafc"/>
+  <text x="34" y="40" font-family="sans-serif" font-size="18" font-weight="700" fill="#292132">Buffer는 position·limit·capacity로 모드를 기억한다</text>
+  <text x="34" y="76" font-family="sans-serif" font-size="14" font-weight="700" fill="#39275d">write mode · put("ABC") 뒤</text>
+  <g stroke="#7a5ac7" stroke-width="2"><rect x="34" y="94" width="92" height="44" fill="#eee8ff"/><rect x="126" y="94" width="92" height="44" fill="#eee8ff"/><rect x="218" y="94" width="92" height="44" fill="#eee8ff"/><rect x="310" y="94" width="92" height="44" fill="#fbfafc"/></g>
+  <g font-family="monospace" font-size="15" text-anchor="middle" fill="#39275d"><text x="80" y="121">A</text><text x="172" y="121">B</text><text x="264" y="121">C</text><text x="356" y="121">_</text></g>
+  <text x="34" y="162" font-family="monospace" font-size="13" fill="#665c70">position=3 · limit=capacity=4</text>
+  <path d="M438 116h62m-10-8 10 8-10 8" stroke="#8b70ca" stroke-width="2" fill="none"/><text x="438" y="92" font-family="sans-serif" font-size="13" fill="#665c70">flip()</text>
+  <text x="540" y="76" font-family="sans-serif" font-size="14" font-weight="700" fill="#245b40">read mode</text>
+  <g stroke="#4b9b71" stroke-width="2"><rect x="540" y="94" width="92" height="44" fill="#dff4e9"/><rect x="632" y="94" width="92" height="44" fill="#dff4e9"/></g>
+  <text x="586" y="121" text-anchor="middle" font-family="monospace" font-size="15" fill="#245b40">A B C</text>
+  <text x="540" y="162" font-family="monospace" font-size="13" fill="#665c70">position=0 · limit=3</text>
+  <text x="34" y="210" font-family="sans-serif" font-size="13" fill="#665c70">clear()는 기록을 지우는 것이 아니라 다시 쓸 범위를 준비한다</text>
+</svg>

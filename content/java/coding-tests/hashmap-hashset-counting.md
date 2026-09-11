@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.coding-tests.hashmap-hashset-counting
 topicContentKey: java.core.coding-tests
 slug: hashmap-hashset-counting
-title: "HashMap and HashSet counting idioms"
+title: "HashMap·HashSet으로 개수 세기"
 summary: "빈도 계산과 방문 여부 문제에서 Map·Set의 getOrDefault·merge·add 반환값을 간결하게 활용한다"
 level: 1
 status: PUBLISHED
@@ -22,7 +22,7 @@ references:
     displayOrder: 2
     relationNote: add·contains와 Set uniqueness 계약 확인
 ---
-# HashMap·HashSet counting idiom
+# HashMap·HashSet으로 개수 세기
 
 코딩테스트에서는 "각 문자열이 몇 번 등장했는가", "이 좌표를 이미 방문했는가", "서로 다른 값이 몇 개인가" 같은 상태를 자주 저장합니다. 이때 배열 index로 바로 표현하기 어려운 key라면 `HashMap`과 `HashSet`이 구현을 단순하게 해 줍니다.
 
@@ -142,6 +142,6 @@ Set<Position> visited = new HashSet<>();
 - HashMap/HashSet의 iteration order는 정렬이나 입력 순서를 보장하지 않습니다.
 - 일반 HashMap을 여러 thread가 공유한다고 counting 연산이 자동으로 thread-safe해지는 것은 아닙니다.
 
-### 면접이나 문제 풀이에서 설명한다면
+### 학습 후 스스로 설명해 보기
 
 빈도 계산처럼 key마다 값이 필요하면 HashMap, 방문 여부나 중복 제거처럼 membership만 필요하면 HashSet이 자연스럽습니다. `getOrDefault`와 `merge`로 빈도 계산을 간단히 작성할 수 있고 `Set.add`의 반환값으로 처음 방문 여부를 바로 판단할 수 있습니다. 순회 순서는 보장되지 않으므로 출력 순서가 필요하면 별도 정렬이나 다른 collection을 선택해야 합니다.

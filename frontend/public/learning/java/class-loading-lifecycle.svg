@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 360" role="img" aria-labelledby="title desc">
+  <title id="title">Class Loading Linking Initialization</title>
+  <desc id="desc">class lifecycle의 loading, linking, initialization과 실행 단계를 표현한 흐름</desc>
+  <defs><marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0 0L9 4.5L0 9Z" fill="#a56df4"/></marker><style>.bg{fill:#17131f}.title{fill:#f5efff;font:700 25px Inter,Arial,sans-serif}.label{fill:#f0e8fa;font:650 16px Inter,Arial,sans-serif}.small{fill:#a797b5;font:500 13px Inter,Arial,sans-serif}.box{fill:#21192e;stroke:#6d478f;stroke-width:2}.active{fill:#2a1d3c;stroke:#a56df4;stroke-width:2}.line{stroke:#a56df4;stroke-width:2;fill:none;marker-end:url(#arrow)}</style></defs>
+  <rect class="bg" width="1100" height="360" rx="20"/><text class="title" x="48" y="52">Class lifecycle</text><text class="small" x="48" y="78">class file을 읽고 검증한 뒤 초기화하고 사용할 수 있게 된다</text>
+  <rect class="box" x="48" y="135" width="170" height="100" rx="14"/><text class="label" x="94" y="175">Loading</text><text class="small" x="72" y="201">binary representation</text><text class="small" x="86" y="220">찾아 읽기</text>
+  <rect class="active" x="260" y="135" width="170" height="100" rx="14"/><text class="label" x="294" y="168">Linking</text><text class="small" x="282" y="195">verification</text><text class="small" x="282" y="214">preparation · resolution</text>
+  <rect class="box" x="472" y="135" width="170" height="100" rx="14"/><text class="label" x="507" y="175">Initialization</text><text class="small" x="500" y="201">static initializer</text><text class="small" x="514" y="220">실행</text>
+  <rect class="box" x="684" y="135" width="170" height="100" rx="14"/><text class="label" x="742" y="175">Use</text><text class="small" x="710" y="201">method / field 호출</text><text class="small" x="733" y="220">실행 준비 완료</text>
+  <path class="line" d="M218 185H260"/><path class="line" d="M430 185H472"/><path class="line" d="M642 185H684"/>
+  <text class="small" x="48" y="295">resolution은 모든 symbolic reference를 initialization 전에 한 번에 끝내야 한다는 뜻이 아니다.</text>
+</svg>

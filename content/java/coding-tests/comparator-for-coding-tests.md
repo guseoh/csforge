@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.coding-tests.comparator-for-coding-tests
 topicContentKey: java.core.coding-tests
 slug: comparator-for-coding-tests
-title: "Comparator for coding tests"
+title: "코딩 테스트용 Comparator"
 summary: "문제의 다중 정렬 조건을 Comparator로 표현하고 subtraction overflow와 reversed 적용 범위를 피한다"
 level: 2
 status: PUBLISHED
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: compare 결과, comparing·thenComparing·reversed 조합 계약 확인
 ---
-# 코딩테스트용 Comparator
+# 코딩 테스트용 Comparator
 
 "점수는 높은 순서, 점수가 같으면 이름은 사전순" 같은 조건은 코딩테스트에서 매우 자주 나옵니다. Comparator를 잘 쓰려면 문법보다 먼저 **문제의 정렬 조건을 우선순위 순서대로 분해**하면 됩니다.
 
@@ -126,6 +126,6 @@ Comparator<Student> byScore = Comparator.comparingInt(Student::score);
 4. `reversed()`가 전체 comparator를 뒤집는지 특정 key만 뒤집는지 확인합니다.
 5. 동점일 때 추가 기준이 필요한지 확인합니다.
 
-### 면접이나 코드 리뷰에서 설명한다면
+### 학습 후 스스로 설명해 보기
 
 Comparator는 두 객체의 순서 관계를 음수·0·양수로 표현하며 실제 차이값을 반환할 필요는 없습니다. 숫자 비교에서 `a - b`는 overflow 위험이 있어 `Integer.compare`나 `comparingInt` 같은 API가 안전합니다. 여러 정렬 조건은 `thenComparing`으로 표현하고, `reversed()`가 적용되는 범위를 주의해야 합니다.

@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.time-numeric.duration-period
 topicContentKey: java.core.time-numeric
 slug: duration-period
-title: "Duration and Period"
+title: "Duration과 Period의 시간 의미"
 summary: "정확한 경과 시간과 달력상의 날짜 차이를 구분해 Duration과 Period를 선택한다"
 level: 2
 status: PUBLISHED
@@ -22,7 +22,7 @@ references:
     displayOrder: 2
     relationNote: years·months·days 기반 날짜량의 계약 확인
 ---
-# Duration and Period
+# Duration과 Period의 시간 의미
 
 "하루 뒤"라는 말은 상황에 따라 두 가지 뜻이 될 수 있습니다. 정확히 24시간이 지난 뒤를 뜻할 수도 있고, 달력에서 다음 날짜의 같은 시각을 뜻할 수도 있습니다. 평소에는 결과가 같아 보이지만 DST나 월 길이 차이가 끼어들면 서로 다른 결과가 됩니다.
 
@@ -108,6 +108,6 @@ DST 전환으로 하루가 23시간 또는 25시간 길이가 되는 지역에�
 - `Duration`이 timezone을 스스로 선택하는 것은 아닙니다.
 - `Period`는 단순히 더 큰 단위의 `Duration`이 아닙니다.
 
-### 면접에서 설명한다면
+### 학습 후 스스로 설명해 보기
 
 `Duration`은 초·나노초 기반의 경과 시간을, `Period`는 년·월·일 기반의 달력 차이를 표현한다고 설명하면 됩니다. 특히 DST가 있는 zone에서는 24시간 뒤와 달력상 다음 날이 다를 수 있으므로 timeout과 반복 일정처럼 요구사항의 시간 의미에 따라 타입을 선택해야 합니다.

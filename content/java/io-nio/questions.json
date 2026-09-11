@@ -1119,4 +1119,18 @@
     "correctChoiceKey": "D",
     "explanationMarkdown": "API contract와 runtime/OS implementation detail을 구분해야 한다. Java abstraction을 사용할 수 있다는 사실이 특정 syscall 내부를 보장하지는 않는다."
   }
+,
+{
+  "kind": "question",
+  "contentKey": "java.core.io-nio.path-files-api.q7",
+  "promptMarkdown": "사용자가 입력한 `../reports/today.csv`를 그대로 Files.readString()에 넘기려 한다. 경로를 application base 안으로 제한하고 실패를 예측 가능하게 만들기 위해 어떤 검증과 API 선택을 먼저 해야 하는가?",
+  "questionType": "SCENARIO",
+  "difficulty": "HARD",
+  "status": "PUBLISHED",
+  "conceptKeys": [
+    "java.core.io-nio.path-files-api"
+  ],
+  "modelAnswer": "신뢰할 수 있는 base directory를 정하고 입력을 resolve한 뒤 normalize/real path 기준으로 base 밖으로 나가지 않는지 확인한다. 존재 여부·권한·directory 여부 같은 실패를 구분하고, 파일 전체를 메모리에 읽을지 stream으로 처리할지도 크기와 수명에 맞춰 선택한다.",
+  "explanationMarkdown": "Path는 문자열 조립이 아니라 경로 값이고, Files 호출은 filesystem 권한·경계·자원 비용을 함께 드러내는 외부 경계다."
+}
 ]

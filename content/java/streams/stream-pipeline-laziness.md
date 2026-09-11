@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.streams.stream-pipeline-laziness
 topicContentKey: java.core.streams
 slug: stream-pipeline-laziness
-title: "Stream pipeline과 지연 실행"
+title: "Stream Pipeline과 지연 실행"
 summary: "source, 중간 연산, 최종 연산을 구분하고 중간 연산이 즉시 모든 데이터를 처리하지 않는 지연 실행과 short-circuit를 이해한다"
 level: 2
 status: PUBLISHED
@@ -15,8 +15,14 @@ references:
     language: en
     displayOrder: 1
     relationNote: stream pipeline, laziness, non-interference와 consumption 계약 확인
+  - url: "https://d2.naver.com/helloworld/4911107"
+    title: "네이버 D2: 람다가 이끌어 갈 모던 Java"
+    referenceType: COMPANY_TECH_BLOG
+    language: ko
+    displayOrder: 2
+    relationNote: lambda와 stream을 실제 Java 코드에 적용하는 흐름 보충
 ---
-# Stream pipeline과 지연 실행
+# Stream Pipeline과 지연 실행
 
 Stream을 `List` 같은 데이터 저장소로 생각하면 실행 시점을 자주 헷갈립니다. Stream은 원소를 저장하는 컬렉션이라기보다 **source에서 값을 꺼내 여러 연산을 거쳐 결과를 만드는 처리 pipeline**입니다.
 
@@ -28,6 +34,8 @@ long count = names.stream()
 ```
 
 여기에는 source인 `names`, 중간 연산인 `filter`, 최종 연산인 `count`가 있습니다.
+
+![Stream pipeline의 지연 실행 흐름](/learning/java/stream-pipeline.svg)
 
 ### 중간 연산은 pipeline을 구성한다
 

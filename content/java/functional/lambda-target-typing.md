@@ -74,3 +74,9 @@ lambda 결과를 묻는 문제에서는 lambda 본문부터 분석하지 말고 
 4. lambda 본문이 그 계약을 만족하는가?
 
 **target type을 먼저 쓰면** 타입 추론 문제의 절반이 정리됩니다.
+
+### target type은 실행 중에 결정되지 않는다
+
+lambda는 이름만 보고 어떤 함수형 인터페이스로도 변하는 값이 아닙니다. 컴파일러가 대입 위치나 메서드 overload를 통해 target type을 정한 뒤 매개변수·반환값·checked exception 계약을 검사합니다. 그래서 같은 `x -> x + 1`도 `Function<Integer, Integer>`와 `UnaryOperator<Integer>`에서는 호환될 수 있지만, target이 없는 `var f = x -> x + 1`은 컴파일할 수 없습니다.
+
+이 구분은 runtime reflection이나 lambda 실행 속도의 문제가 아니라 **소스 타입 추론과 컴파일 경계**의 문제입니다.

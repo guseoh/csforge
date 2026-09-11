@@ -11,6 +11,23 @@ import { defaultQuizSearch, formatRemaining } from '../lib/quiz-search'
 import { classifyQuizNavigation, quizNavigationLabel } from '../lib/quiz-navigation'
 import { emptyQuizDraft, useQuizSessionPersistence } from '../lib/use-quiz-session-persistence'
 
+function questionTypeLabel(type: string) {
+  return ({
+    MULTIPLE_CHOICE: '객관식',
+    SHORT_ANSWER: '단답형',
+    DESCRIPTIVE: '서술형',
+    SCENARIO: '시나리오',
+  } as Record<string, string>)[type] ?? type
+}
+
+function difficultyLabel(difficulty: string) {
+  return ({ EASY: '쉬움', MEDIUM: '보통', HARD: '어려움' } as Record<string, string>)[difficulty] ?? difficulty
+}
+
+function sourceLabel(source: string) {
+  return ({ STANDARD: '일반 문제', WRONG_RETRY: '오답 다시 풀기', REVIEW: '복습' } as Record<string, string>)[source] ?? source
+}
+
 export function QuizSessionPage() {
   const { quizId: quizIdParam } = useParams({ from: '/quiz/$quizId' })
   const quizId = Number(quizIdParam)
@@ -99,11 +116,11 @@ export function QuizSessionPage() {
     <section className="page-section quiz-page">
       <div className="quiz-session-topbar">
         <div>
-          <p className="eyebrow">Quiz session · {session.source.replace('_', ' ')}</p>
+          <p className="eyebrow">문제 풀이 · {sourceLabel(session.source)}</p>
           <h1>{position + 1} <span>/ {session.questions.length}</span></h1>
         </div>
         <div className="quiz-session-meta">
-          <span>{answeredCount}/{session.questions.length} answered</span>
+          <span>{answeredCount}/{session.questions.length}개 풀이 완료</span>
           {timerLabel && (
             <strong className={expired ? 'timer expired' : 'timer'}>{expired ? '시간 종료' : timerLabel}</strong>
           )}
@@ -116,7 +133,7 @@ export function QuizSessionPage() {
       </div>
 
       <div className="quiz-layout">
-        <aside className="quiz-question-nav-panel" aria-label="Question navigation">
+        <aside className="quiz-question-nav-panel" aria-label="문제 탐색">
           <div className="quiz-question-nav">
             {session.questions.map((item, index) => {
               const itemDraft = drafts[item.questionId] ?? emptyQuizDraft
@@ -145,7 +162,7 @@ export function QuizSessionPage() {
               )
             })}
           </div>
-          <div className="quiz-question-nav-legend" aria-label="Question states">
+          <div className="quiz-question-nav-legend" aria-label="문제 상태">
             <span><i className="nav-key current" />현재</span>
             <span><i className="nav-key answered" />답변 완료</span>
             <span><i className="nav-key unanswered" />미답변</span>
@@ -155,8 +172,8 @@ export function QuizSessionPage() {
 
         <article className="quiz-question-card">
           <div className="chip-row">
-            <span className="chip">{question.questionType.replace('_', ' ')}</span>
-            <span className="chip">{question.difficulty}</span>
+            <span className="chip">{questionTypeLabel(question.questionType)}</span>
+            <span className="chip">{difficultyLabel(question.difficulty)}</span>
             {question.concepts.map((concept) => <span className="chip" key={concept.id}>{concept.title}</span>)}
           </div>
           <MarkdownContent className="quiz-prompt">{question.promptMarkdown}</MarkdownContent>

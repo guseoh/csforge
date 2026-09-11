@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.concurrency.jmm-happens-before-visibility
 topicContentKey: java.core.concurrency
 slug: jmm-happens-before-visibility
-title: "JMM happens-before and visibility"
+title: "JMM의 happens-before와 가시성"
 summary: "여러 thread 사이에서 어떤 write를 안전하게 관찰할 수 있는지 Java Memory Model의 happens-before 관계로 추론한다"
 level: 3
 status: PUBLISHED
@@ -22,11 +22,13 @@ references:
     displayOrder: 2
     relationNote: Executor, Future, concurrent collection 등 고수준 API의 memory consistency effects 확인
 ---
-# JMM의 happens-before와 visibility
+# JMM의 happens-before와 가시성
 
 한 thread가 `data = 42`를 실행한 다음 `ready = true`를 실행했다고 해 보겠습니다. 다른 thread가 `ready == true`를 봤다면 `data == 42`도 반드시 볼 수 있을까요?
 
 직관적으로는 "먼저 42를 썼으니 당연하다"고 생각하기 쉽지만 여러 thread가 공유 메모리를 읽고 쓰는 Java 프로그램에서는 **어떤 동기화 관계가 있는지**를 확인해야 합니다. 이 규칙을 정의하는 것이 Java Memory Model(JMM)이고, 핵심 추론 도구 가운데 하나가 **happens-before**입니다.
+
+![happens-before와 synchronization 경계](/learning/java/happens-before.svg)
 
 ### JMM은 CPU cache 이야기가 아니라 Java 프로그램의 관찰 규칙이다
 
@@ -197,6 +199,6 @@ atomicity      -> 여러 단계 사이에 다른 thread가 끼어들 수 있는�
 
 경로가 없다면 "어차피 먼저 실행될 것 같다"는 추측으로 visibility를 보장하면 안 됩니다.
 
-### 면접에서 설명한다면
+### 학습 후 스스로 설명해 보기
 
 Happens-before는 Java Memory Model에서 한 thread의 action 결과를 다른 thread가 안전하게 관찰할 수 있는 ordering 관계를 추론하는 핵심 규칙이라고 설명할 수 있습니다. 같은 thread의 program order, monitor unlock→이후 lock, volatile write→이후 같은 volatile read, Thread.start/join 등이 대표적인 관계를 만들며 transitivity로 연결됩니다. 이는 특정 CPU cache를 flush한다는 구현 설명과 구분해야 하고, happens-before가 복합 연산의 atomicity까지 자동으로 보장하는 것도 아닙니다.

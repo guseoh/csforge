@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="238" viewBox="0 0 760 238" role="img" aria-labelledby="title desc">
+  <title id="title">StringBuilder의 문자열 누적 흐름</title>
+  <desc id="desc">String 연결은 중간 결과를 만들고 StringBuilder는 하나의 가변 buffer에 append한 뒤 toString으로 String을 만든다.</desc>
+  <rect width="760" height="238" rx="14" fill="#17131f"/>
+  <text x="32" y="38" fill="#b49bff" font-family="Inter, system-ui, sans-serif" font-size="14" font-weight="700">두 방식의 상태 변화</text>
+  <text x="32" y="82" fill="#f0ebf6" font-family="Inter, system-ui, sans-serif" font-size="15" font-weight="700">String +</text>
+  <rect x="138" y="57" width="180" height="44" rx="8" fill="#211d2a" stroke="#3b334b"/>
+  <text x="158" y="84" fill="#d7d0df" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13">result = old + next</text>
+  <path d="M332 79h48" stroke="#8c78ac" stroke-width="2"/>
+  <path d="m372 72 10 7-10 7" fill="none" stroke="#8c78ac" stroke-width="2"/>
+  <rect x="398" y="57" width="286" height="44" rx="8" fill="#211d2a" stroke="#3b334b"/>
+  <text x="418" y="84" fill="#bbb4c6" font-family="Inter, system-ui, sans-serif" font-size="13">새 문자열 · 복사 비용이 누적될 수 있음</text>
+  <text x="32" y="157" fill="#f0ebf6" font-family="Inter, system-ui, sans-serif" font-size="15" font-weight="700">StringBuilder</text>
+  <rect x="178" y="132" width="110" height="44" rx="8" fill="#251c37" stroke="#8d64df"/>
+  <text x="211" y="159" fill="#e7dcff" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13">""</text>
+  <path d="M302 154h40" stroke="#b49bff" stroke-width="2"/>
+  <path d="m334 147 10 7-10 7" fill="none" stroke="#b49bff" stroke-width="2"/>
+  <rect x="360" y="132" width="150" height="44" rx="8" fill="#251c37" stroke="#8d64df"/>
+  <text x="388" y="159" fill="#e7dcff" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13">append("0,")</text>
+  <path d="M524 154h40" stroke="#b49bff" stroke-width="2"/>
+  <path d="m556 147 10 7-10 7" fill="none" stroke="#b49bff" stroke-width="2"/>
+  <rect x="584" y="132" width="100" height="44" rx="8" fill="#251c37" stroke="#8d64df"/>
+  <text x="608" y="159" fill="#e7dcff" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13">toString()</text>
+  <text x="450" y="207" fill="#a99db5" font-family="Inter, system-ui, sans-serif" font-size="12">buffer에 누적 → 마지막에 String 확정</text>
+</svg>

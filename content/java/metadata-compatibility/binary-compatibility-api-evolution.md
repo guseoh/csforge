@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.metadata-compatibility.binary-compatibility-api-evolution
 topicContentKey: java.core.metadata-compatibility
 slug: binary-compatibility-api-evolution
-title: "Binary compatibility and API evolution"
+title: "Binary Compatibility와 API 진화"
 summary: "library를 바꿀 때 source 재컴파일 가능 여부와 이미 컴파일된 client가 새 binary와 계속 연결되는지, 실제 behavior가 유지되는지를 별도 문제로 구분한다"
 level: 2
 status: PUBLISHED
@@ -22,7 +22,7 @@ references:
     displayOrder: 2
     relationNote: binary linkage failure의 runtime 증상 확인
 ---
-# 코드는 다시 컴파일되는데 왜 배포한 뒤 깨질 수 있을까
+# Binary Compatibility와 API 진화
 
 Library를 v1에서 v2로 바꿨을 때 "호환된다"는 말은 생각보다 여러 뜻을 가집니다.
 
@@ -272,6 +272,6 @@ Backend Engineering 영역에서는 HTTP/API evolution을 별도로 더 깊게 �
 6. LinkageError가 보이면 compile-time/runtime dependency version을 비교합니다.
 7. Java binary compatibility와 HTTP API compatibility를 섞지 않습니다.
 
-### 면접에서 설명한다면
+### 학습 후 스스로 설명해 보기
 
 Source compatibility는 기존 source가 새 library와 다시 compile되는지의 문제이고, binary compatibility는 이미 이전 library를 기준으로 compile된 class file이 새 library와 다시 compile 없이 링크될 수 있는지의 문제입니다. Public method의 descriptor를 바꾸거나 삭제하면 기존 binary에서 `NoSuchMethodError` 같은 linkage 문제가 생길 수 있습니다. 반대로 binary linkage가 유지돼도 exception이나 반환 의미가 달라지면 behavior compatibility는 깨질 수 있어서 API evolution에서는 세 층을 따로 봐야 합니다.

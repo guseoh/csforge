@@ -5,47 +5,94 @@ import { CanonicalBootstrapCard } from '../components/CanonicalBootstrapCard'
 import { getConcepts, getLearningAreas, type AreaSummary, type ConceptListItem } from '../lib/learning-api'
 import { defaultLearningSearch } from '../lib/learning-search'
 import { selectRecentConcepts } from '../lib/learning-recent'
+import { defaultQuizSearch } from '../lib/quiz-search'
 
 function completionPercent(area: AreaSummary) {
   if (area.publishedConceptCount === 0) return 0
   return Math.round((area.completedConceptCount / area.publishedConceptCount) * 100)
 }
 
-function LevelProgress({ label, progress }: { label: string; progress: { total: number; completed: number } }) {
-  const percent = progress.total === 0 ? 0 : Math.round((progress.completed / progress.total) * 100)
-  return (
-    <div className="level-progress">
-      <span>{label}</span>
-      <span>{progress.completed}/{progress.total}</span>
-      <div className="progress-track" aria-hidden="true">
-        <span style={{ width: `${percent}%` }} />
-      </div>
-    </div>
-  )
+const areaVisuals: Record<string, { glyph: string; accent: string; icon?: 'java' | 'spring' }> = {
+  'computer-architecture': { glyph: '▦', accent: 'blue' },
+  'data-structures-algorithms': { glyph: '</>', accent: 'violet' },
+  'operating-systems': { glyph: '▣', accent: 'indigo' },
+  'network-http': { glyph: '◎', accent: 'green' },
+  database: { glyph: '▤', accent: 'orange' },
+  java: { glyph: '☕', accent: 'red', icon: 'java' },
+  spring: { glyph: '✦', accent: 'emerald', icon: 'spring' },
+  'backend-engineering': { glyph: '⌘', accent: 'purple' },
+  cache: { glyph: '◉', accent: 'rose' },
+  'messaging-async': { glyph: '↗', accent: 'teal' },
+  'infrastructure-cloud': { glyph: '◇', accent: 'slate' },
+  'performance-observability-operations': { glyph: '◒', accent: 'cyan' },
+  'distributed-systems': { glyph: '⌘', accent: 'purple' },
+  'system-design': { glyph: '▱', accent: 'slate' },
+  security: { glyph: '◆', accent: 'amber' },
+}
+
+function areaCompletionPercent(area: AreaSummary) {
+  return completionPercent(area)
+}
+
+function AreaIcon({ visual }: { visual: { glyph: string; icon?: 'java' | 'spring' } }) {
+  if (visual.icon === 'java') {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M7 9h10v4.5A4.5 4.5 0 0 1 12.5 18h-1A4.5 4.5 0 0 1 7 13.5V9Z" />
+        <path d="M17 10h1.5a2 2 0 0 1 0 4H17M8 20h9M10 5c1 1 .8 1.8 0 2.5M14 4c1.2 1.2 1 2.3 0 3.2" />
+      </svg>
+    )
+  }
+  if (visual.icon === 'spring') {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M5 17c4.5.2 8-2.1 10.2-6.6C16.3 8.2 18.5 6 21 5c-.2 4.8-2 8.2-5.5 10.3C12.2 18.1 8.5 18.3 5 17Z" />
+        <path d="M5 17c2.9-1.2 5.5-3.3 7.6-6.2M5 17c-.3 1.4-.2 2.4.3 3" />
+      </svg>
+    )
+  }
+  return <span>{visual.glyph}</span>
 }
 
 function AreaCard({ area }: { area: AreaSummary }) {
+  const visual = areaVisuals[area.slug] ?? { glyph: '✦', accent: 'violet' }
+  const completion = areaCompletionPercent(area)
+
   return (
-    <Link className="area-card" to="/learning/$areaSlug" params={{ areaSlug: area.slug }} search={defaultLearningSearch}>
-      <div className="card-heading">
-        <div>
-          <h2>{area.name}</h2>
-          <p className="area-card-completion">{completionPercent(area)}% complete</p>
+    <article className={`area-card area-card-${visual.accent}`}>
+      <Link className="area-card-main" to="/learning/$areaSlug" params={{ areaSlug: area.slug }} search={defaultLearningSearch}>
+        <div className="area-card-topline">
+          <span className="area-card-icon"><AreaIcon visual={visual} /></span>
+          <span className="area-card-tag">{area.topicCount}개 주제</span>
         </div>
-        <span className="completion-badge">{completionPercent(area)}%</span>
+        <div className="area-card-heading">
+          <div>
+            <h2>{area.name}</h2>
+            <p className="area-card-description">{area.description ?? '이 영역의 핵심 개념을 순서대로 학습하세요.'}</p>
+          </div>
+          <span className="area-card-arrow" aria-hidden="true">→</span>
+        </div>
+        <div className="area-metrics">
+          <span>{area.publishedConceptCount}개 개념</span>
+          <span>{area.publishedQuestionCount}개 문제</span>
+          <span>{area.finalizedAttemptCount === 0 ? '정확도 —' : `정확도 ${Math.round(area.accuracyPercent)}%`}</span>
+        </div>
+        <div className="area-card-progress" aria-label={`학습 진행률 ${completion}%`}>
+          <div className="area-card-progress-label">
+            <span>학습 진행률</span>
+            <strong>{completion}%</strong>
+          </div>
+          <div className="progress-track" aria-hidden="true">
+            <span style={{ width: `${completion}%` }} />
+          </div>
+          <p className="area-card-context">L1 {area.level1.completed}/{area.level1.total} · L2 {area.level2.completed}/{area.level2.total} · L3 {area.level3.completed}/{area.level3.total}</p>
+        </div>
+      </Link>
+      <div className="area-card-footer">
+        <Link className="area-card-footer-link" to="/learning/$areaSlug" params={{ areaSlug: area.slug }} search={defaultLearningSearch}>개념 가이드 보기 <span aria-hidden="true">→</span></Link>
+        <Link className="area-card-footer-link area-card-quiz-link" to="/quiz" search={{ ...defaultQuizSearch, areas: area.slug }}>문제 풀어보기 <span aria-hidden="true">→</span></Link>
       </div>
-      <div className="area-metrics">
-        <span>{area.publishedConceptCount} concepts</span>
-        <span>{area.publishedQuestionCount} questions</span>
-        <span>{area.finalizedAttemptCount === 0 ? '정확도 —' : `정확도 ${Math.round(area.accuracyPercent)}%`}</span>
-      </div>
-      <p className="area-card-context">{area.topicCount} topics · {area.bookmarkedConceptCount} bookmarks</p>
-      <div className="level-progress-list">
-        <LevelProgress label="L1" progress={area.level1} />
-        <LevelProgress label="L2" progress={area.level2} />
-        <LevelProgress label="L3" progress={area.level3} />
-      </div>
-    </Link>
+    </article>
   )
 }
 
@@ -80,15 +127,20 @@ export function LearningPage() {
   }
 
   return (
-    <section className="page-section">
-      <div className="page-heading">
-        <div>
-          <p className="eyebrow">Curriculum</p>
-          <h1>Learning areas</h1>
-          <p className="lead">오늘 공부할 영역을 고르고, 개념을 차근차근 쌓아가세요.</p>
-        </div>
-        <span className="result-count">{areasQuery.data.length} areas</span>
+    <section className="page-section learning-page">
+      <div className="learning-hero">
+        <span className="learning-hero-kicker">What you'll learn</span>
+        <h1>신입이 꼭 알아야 할 CS 기초</h1>
+        <p className="lead">자료구조부터 Java와 데이터베이스까지,<br />핵심 개념을 순서대로 학습하세요.</p>
+        <span className="result-count">{areasQuery.data.length}개 학습 영역</span>
       </div>
+      {areasQuery.data.length === 0 ? (
+        <EmptyState message="활성화된 학습 영역이 없습니다." />
+      ) : (
+        <div className="area-grid">
+          {areasQuery.data.map((area) => <AreaCard key={area.id} area={area} />)}
+        </div>
+      )}
       {recentConceptsQuery.isPending && <div className="recent-concepts-state">최근 본 개념 불러오는 중…</div>}
       {recentConceptsQuery.isError && (
         <div className="recent-concepts-state error-text" role="alert">
@@ -100,7 +152,7 @@ export function LearningPage() {
         <section className="recent-concepts" aria-labelledby="recent-concepts-heading">
           <div className="section-heading">
             <div>
-              <p className="eyebrow">Keep going</p>
+              <p className="eyebrow">이어 학습하기</p>
               <h2 id="recent-concepts-heading">최근 본 개념</h2>
             </div>
           </div>
@@ -110,13 +162,6 @@ export function LearningPage() {
         </section>
       )}
       <CanonicalBootstrapCard />
-      {areasQuery.data.length === 0 ? (
-        <EmptyState message="활성화된 학습 영역이 없습니다." />
-      ) : (
-        <div className="area-grid">
-          {areasQuery.data.map((area) => <AreaCard key={area.id} area={area} />)}
-        </div>
-      )}
     </section>
   )
 }

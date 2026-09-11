@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.concurrency.blockingqueue-producer-consumer
 topicContentKey: java.core.concurrency
 slug: blockingqueue-producer-consumer
-title: "BlockingQueue and producer-consumer"
+title: "BlockingQueue와 생산자·소비자"
 summary: "생산자와 소비자의 처리 속도가 다를 때 BlockingQueue가 작업을 전달하고 full/empty 상태에서 어떻게 기다리게 하는지 이해한다"
 level: 2
 status: PUBLISHED
@@ -22,7 +22,7 @@ references:
     displayOrder: 2
     relationNote: 고정 capacity queue의 동작 확인
 ---
-# BlockingQueue와 producer-consumer
+# BlockingQueue와 생산자·소비자
 
 파일을 읽는 작업은 빠른데 처리하는 작업은 느리거나, 요청을 받는 쪽과 실제 작업을 수행하는 쪽의 속도가 다를 수 있습니다. 두 쪽을 직접 맞물리게 하면 생산자가 소비자를 계속 기다리거나, 반대로 소비자가 할 일이 올 때까지 반복해서 확인하는 코드가 필요합니다.
 
@@ -143,6 +143,6 @@ Consumer
 5. queue 삽입 성공과 실제 업무 완료를 구분합니다.
 6. shutdown/interruption 경로를 확인합니다.
 
-### 면접에서 설명한다면
+### 학습 후 스스로 설명해 보기
 
 `BlockingQueue`는 producer와 consumer 사이에서 thread-safe하게 작업을 전달하고, queue가 비거나 가득 찬 상태에서 기다리는 API를 제공합니다. bounded queue를 사용하면 처리 속도보다 유입 속도가 계속 빠를 때 queue가 무제한으로 커지는 것을 막을 수 있습니다. 다만 queue에 넣었다는 사실은 실제 업무 처리가 완료됐다는 뜻이 아니므로 실패와 종료 정책은 별도로 설계해야 합니다.

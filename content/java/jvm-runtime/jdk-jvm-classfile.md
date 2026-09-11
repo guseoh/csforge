@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.jvm-runtime.jdk-jvm-classfile
 topicContentKey: java.core.jvm-runtime
 slug: jdk-jvm-classfile
-title: "JDK, JVM, and class files"
+title: "JDK·JVM·Class File의 경계"
 summary: "Java source가 javac를 거쳐 class file이 되고 JVM이 이를 실행하는 흐름을 이해하며 JDK·JVM·bytecode·native code의 역할을 구분한다"
 level: 1
 status: PUBLISHED
@@ -22,11 +22,13 @@ references:
     displayOrder: 2
     relationNote: Java source compile 단계 확인
 ---
-# JDK·JVM·class file은 각각 무엇을 담당할까
+# JDK·JVM·Class File의 경계
 
 Java 코드를 실행할 때 `Hello.java` 파일을 CPU가 그대로 읽는 것은 아닙니다. 먼저 컴파일러가 Java source를 JVM이 이해할 수 있는 class file로 바꾸고, 실행할 때 JVM이 그 class file을 읽어 프로그램을 동작시킵니다.
 
 이 흐름을 이해하면 `JDK`, `JVM`, `bytecode`를 같은 말처럼 섞지 않게 됩니다.
+
+![Java source에서 JVM 실행까지의 경계](/learning/java/java-execution-boundary.svg)
 
 ### Java source는 먼저 class file로 컴파일된다
 
@@ -128,6 +130,6 @@ HotSpot 같은 JVM 구현은 interpreter와 JIT compiler를 사용할 수 있습
 4. compile-time 성공이 runtime dependency까지 보장하는지 따로 봅니다.
 5. JIT 이야기가 나오면 Java language 보장인지 JVM 구현인지 확인합니다.
 
-### 면접에서 설명한다면
+### 학습 후 스스로 설명해 보기
 
 JDK는 Java 개발과 실행에 필요한 compiler·launcher·diagnostic tool 등을 포함한 개발 키트이고, JVM은 class file의 의미를 실행하는 runtime입니다. `javac`가 Java source를 class file의 bytecode로 컴파일하고, JVM은 그 bytecode를 해석하거나 JIT compile하는 등의 방식으로 실행할 수 있습니다. bytecode는 특정 CPU의 native machine code와 같은 것이 아니며, JVM 구현이 각 실행 환경과 연결해 줍니다.

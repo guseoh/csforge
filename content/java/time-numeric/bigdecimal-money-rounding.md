@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.time-numeric.bigdecimal-money-rounding
 topicContentKey: java.core.time-numeric
 slug: bigdecimal-money-rounding
-title: "BigDecimal, money, and rounding"
+title: "BigDecimal로 금액과 반올림 다루기"
 summary: "정확한 십진 값을 다룰 때 BigDecimal의 생성·scale·비교·반올림 정책을 올바르게 선택한다"
 level: 2
 status: PUBLISHED
@@ -22,7 +22,7 @@ references:
     displayOrder: 2
     relationNote: 명시적인 반올림 정책의 종류 확인
 ---
-# BigDecimal, money, and rounding
+# BigDecimal로 금액과 반올림 다루기
 
 금액과 세율처럼 십진수 자체가 업무 의미인 값을 `double`로 다루면 binary floating-point의 근사 오차가 불필요하게 끼어들 수 있습니다. `BigDecimal`은 **십진 값을 명시적으로 표현하고 계산 정밀도와 반올림 정책을 제어**할 수 있게 해 줍니다.
 
@@ -123,6 +123,6 @@ Money
 - `setScale`은 단순 출력 포맷만 바꾸는 메서드가 아닐 수 있으며 반올림이 필요할 수 있습니다.
 - BigDecimal을 쓴다고 통화·반올림 시점·금액 불변식이 자동으로 정해지지 않습니다.
 
-### 면접에서 설명한다면
+### 학습 후 스스로 설명해 보기
 
 `BigDecimal`은 정확한 십진 계산이 필요한 금액 등에 적합하지만 생성과 비교 규칙을 알아야 합니다. `new BigDecimal(double)`은 이미 근사된 binary floating-point 값을 가져올 수 있으므로 문자열이나 `valueOf`를 검토하고, `equals`는 scale까지 보지만 `compareTo`는 수치 크기를 비교합니다. 나눗셈과 금액 계산에서는 반올림 방식과 시점을 비즈니스 규칙으로 명확히 해야 합니다.

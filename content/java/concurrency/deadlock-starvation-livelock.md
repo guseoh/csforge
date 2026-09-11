@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.concurrency.deadlock-starvation-livelock
 topicContentKey: java.core.concurrency
 slug: deadlock-starvation-livelock
-title: "Deadlock, starvation, and livelock"
+title: "Deadlock·Starvation·Livelock 구분하기"
 summary: "thread가 진행하지 못하는 원인을 deadlock·starvation·livelock으로 구분하고 대기 관계와 progress를 기준으로 진단한다"
 level: 3
 status: PUBLISHED
@@ -34,7 +34,7 @@ references:
     displayOrder: 4
     relationNote: virtual thread를 포함하는 jcmd thread dump의 관찰 범위 확인
 ---
-# 멈춘 것처럼 보이는 프로그램의 원인은 하나가 아니다
+# Deadlock·Starvation·Livelock 구분하기
 
 서버 요청이 끝나지 않고 thread들이 오랫동안 살아 있다고 해 보겠습니다. 흔히 "deadlock 아닌가?"부터 떠올리지만, 진행하지 못하는 형태는 여러 가지입니다.
 
@@ -198,6 +198,6 @@ Java 25에서는 **진단 도구가 어떤 thread를 관찰하는지도 구분�
 6. lock 문제가 아니라 외부 I/O/resource exhaustion인지 구분합니다.
 7. prevention과 timeout/recovery를 같은 것으로 착각하지 않습니다.
 
-### 면접에서 설명한다면
+### 학습 후 스스로 설명해 보기
 
 Deadlock은 thread들이 서로 가진 자원을 기다리며 순환 대기에 빠져 아무도 진행하지 못하는 상태입니다. Starvation은 시스템은 진행하지만 특정 thread나 작업이 계속 실행 기회를 얻지 못하는 상태이고, livelock은 thread들이 계속 상태를 바꾸고 반응하지만 실제 작업이 완료되지 않는 상태입니다. 진단할 때는 thread의 겉보기 state보다 자원 소유·대기 관계와 실제 progress를 확인해야 합니다.

@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.metadata-compatibility.serialization-contract-risk
 topicContentKey: java.core.metadata-compatibility
 slug: serialization-contract-risk
-title: "Serialization contract risk"
+title: "Serialization이 만드는 장기 계약"
 summary: "Java native serialization이 객체 graph를 byte stream으로 저장하는 계약이라는 점과 transient·serialVersionUID·신뢰하지 않는 역직렬화의 위험을 이해한다"
 level: 2
 status: PUBLISHED
@@ -21,8 +21,14 @@ references:
     language: en
     displayOrder: 2
     relationNote: object stream format·version·security contract 확인
+  - url: "https://techblog.woowahan.com/2550/"
+    title: "자바 직렬화, 그것이 알고싶다. 훑어보기편"
+    referenceType: COMPANY_TECH_BLOG
+    language: ko
+    displayOrder: 3
+    relationNote: native serialization을 장기 데이터 계약과 운영 위험 관점에서 보충
 ---
-# Java 객체를 그대로 저장하면 왜 장기 계약이 생길까
+# Serialization이 만드는 장기 계약
 
 `Serializable`을 구현하면 Java 객체 graph를 object stream 형태로 기록하고 나중에 다시 객체로 복원할 수 있습니다. 겉으로는 편리하지만, 이는 단순히 "객체를 byte[]로 바꾸는 기능"이 아니라 **class 구조와 object state를 stream 형식에 연결하는 장기 계약**을 만듭니다.
 
@@ -199,6 +205,6 @@ Custom serialization은 강력하지만 유지보수 계약도 커집니다.
 6. Java native serialization과 JSON serialization을 구분합니다.
 7. Untrusted bytes에는 명시적인 data schema/safer format을 우선 검토합니다.
 
-### 면접에서 설명한다면
+### 학습 후 스스로 설명해 보기
 
 `Serializable`은 Java object stream serialization에 참여한다는 marker interface입니다. 기본 대상에서 제외할 field는 `transient`로 표시할 수 있고, `serialVersionUID`는 serialized form과 class version compatibility 판단에 영향을 줍니다. 하지만 native serialization은 Java class 구조와 강하게 결합되고, 특히 신뢰하지 않는 byte stream의 deserialization은 object graph 복원 과정에서 보안 위험이 크기 때문에 외부 입력 포맷으로는 신중하게 다뤄야 합니다.

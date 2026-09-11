@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.metadata-compatibility.dynamic-proxy-invocationhandler
 topicContentKey: java.core.metadata-compatibility
 slug: dynamic-proxy-invocationhandler
-title: "Dynamic proxy and InvocationHandler"
+title: "Dynamic Proxy와 InvocationHandler"
 summary: "JDK dynamic proxy가 interface 호출을 InvocationHandler로 전달하는 구조를 이해하고 target 호출 전후에 공통 동작을 넣는 원리를 익힌다"
 level: 2
 status: PUBLISHED
@@ -22,7 +22,7 @@ references:
     displayOrder: 2
     relationNote: invoke callback contract 확인
 ---
-# Proxy는 왜 실제 객체 앞에 하나를 더 둘까
+# Dynamic Proxy와 InvocationHandler
 
 서비스 method를 호출할 때마다 실행 시간을 재거나 권한을 검사하고 싶다고 해 보겠습니다. 각 method 본문에 같은 코드를 복사할 수도 있지만, 실제 객체 앞에 **대신 호출을 받는 객체(proxy)** 를 두면 공통 동작을 한곳에 모을 수 있습니다.
 
@@ -245,6 +245,6 @@ Proxy를 만들었다고 target object의 모든 호출이 전 세계적으로 �
 6. 반환 타입과 exception contract를 확인합니다.
 7. JDK proxy mechanism과 Spring AOP 전체 behavior를 같은 것으로 보지 않습니다.
 
-### 면접에서 설명한다면
+### 학습 후 스스로 설명해 보기
 
 JDK dynamic proxy는 runtime에 interface 구현 proxy를 만들고 proxy의 method 호출을 `InvocationHandler.invoke`로 전달합니다. Handler는 호출된 `Method`와 arguments를 보고 logging, authorization 같은 공통 동작을 수행한 뒤 실제 target을 호출할 수 있습니다. Caller가 반드시 proxy를 통해 호출해야 interception이 일어나며, JDK dynamic proxy는 interface 기반입니다. 여러 interface가 같은 method signature를 가진 경우에는 handler에 전달된 `Method`만으로 호출자가 사용한 interface를 항상 식별할 수 없다는 제한도 있습니다. 이 구조는 Spring transaction/AOP proxy를 이해하는 Java 수준의 기반이 됩니다.

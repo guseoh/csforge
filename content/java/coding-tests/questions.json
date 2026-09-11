@@ -2,7 +2,7 @@
   {
     "kind": "question",
     "contentKey": "java.core.coding-tests.fast-input-bufferedreader-tokenizer.q1",
-    "promptMarkdown": "BufferedReader의 readLine()이 반환하는 값으로 옳은 것은?",
+    "promptMarkdown": "다음 코드에서 `line`에 저장되는 값으로 옳은 것은?\n\n```java\nBufferedReader reader = new BufferedReader(new StringReader(\"10 20\\n\"));\nString line = reader.readLine();\n```",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
@@ -37,7 +37,7 @@
   {
     "kind": "question",
     "contentKey": "java.core.coding-tests.fast-input-bufferedreader-tokenizer.q2",
-    "promptMarkdown": "입력이 더 이상 없을 때 BufferedReader.readLine()의 결과는?",
+    "promptMarkdown": "다음 코드에서 두 번째 `readLine()`의 결과로 옳은 것은?\n\n```java\nBufferedReader reader = new BufferedReader(new StringReader(\"A\\n\"));\nreader.readLine();\nString eof = reader.readLine();\n```",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
@@ -72,7 +72,7 @@
   {
     "kind": "question",
     "contentKey": "java.core.coding-tests.fast-input-bufferedreader-tokenizer.q3",
-    "promptMarkdown": "StringTokenizer가 이미 한 줄의 마지막 token까지 소비된 뒤 nextToken()을 호출하면?",
+    "promptMarkdown": "다음 코드에서 세 번째 `nextToken()` 호출의 결과로 옳은 것은?\n\n```java\nStringTokenizer tokenizer = new StringTokenizer(\"1 2\");\ntokenizer.nextToken();\ntokenizer.nextToken();\nString token = tokenizer.nextToken();\n```",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
@@ -842,7 +842,7 @@
   {
     "kind": "question",
     "contentKey": "java.core.coding-tests.arraydeque-stack-queue.q1",
-    "promptMarkdown": "ArrayDeque를 FIFO queue로 사용할 때 자연스러운 연산 쌍은?",
+    "promptMarkdown": "다음 코드가 FIFO queue처럼 동작하도록 빈칸에 넣을 연산 조합은?\n\n```java\nDeque<String> queue = new ArrayDeque<>();\nqueue.____(\"A\");\nString first = queue.____();\n```",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
@@ -877,7 +877,7 @@
   {
     "kind": "question",
     "contentKey": "java.core.coding-tests.arraydeque-stack-queue.q2",
-    "promptMarkdown": "ArrayDeque를 LIFO stack으로 사용할 때 push(1), push(2) 다음 pop()의 결과는?",
+    "promptMarkdown": "다음 코드의 출력으로 옳은 것은?\n\n```java\nDeque<Integer> stack = new ArrayDeque<>();\nstack.push(1);\nstack.push(2);\nSystem.out.println(stack.pop());\n```",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
@@ -912,7 +912,7 @@
   {
     "kind": "question",
     "contentKey": "java.core.coding-tests.arraydeque-stack-queue.q3",
-    "promptMarkdown": "빈 ArrayDeque에서 pollFirst()와 removeFirst()의 차이는?",
+    "promptMarkdown": "다음 코드의 출력과 예외를 올바르게 설명한 것은?\n\n```java\nDeque<String> deque = new ArrayDeque<>();\nString polled = deque.pollFirst();\ndeque.removeFirst();\n```",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
@@ -947,7 +947,7 @@
   {
     "kind": "question",
     "contentKey": "java.core.coding-tests.arraydeque-stack-queue.q4",
-    "promptMarkdown": "ArrayDeque에 null을 넣으려 할 때의 올바른 판단은?",
+    "promptMarkdown": "다음 코드에서 `addLast(null)`의 실행 결과로 옳은 것은?\n\n```java\nDeque<String> deque = new ArrayDeque<>();\ndeque.addLast(null);\n```",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",

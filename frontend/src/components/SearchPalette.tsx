@@ -139,12 +139,12 @@ export function SearchPalette() {
 
   return (
     <>
-      <button className="search-palette-trigger" type="button" onClick={openPalette} aria-label="Open global search">
-        <span>Search</span><kbd>Ctrl K</kbd>
+      <button className="search-palette-trigger" type="button" onClick={openPalette} aria-label="전체 검색 열기">
+        <span>검색</span><kbd>Ctrl K</kbd>
       </button>
       {open && (
         <div className="search-palette-backdrop" role="presentation" onMouseDown={closePalette}>
-          <section className="search-palette" role="dialog" aria-modal="true" aria-label="Global search" onMouseDown={(event) => event.stopPropagation()}>
+          <section className="search-palette" role="dialog" aria-modal="true" aria-label="전체 검색" onMouseDown={(event) => event.stopPropagation()}>
             <form className="search-palette-form" onSubmit={(event) => { event.preventDefault(); submitSearch(query) }}>
               <input
                 autoFocus
@@ -152,16 +152,16 @@ export function SearchPalette() {
                 maxLength={200}
                 onChange={(event) => setQuery(event.target.value)}
                 onKeyDown={handleInputKeyDown}
-                placeholder="Search concepts, questions, notes, references…"
-                aria-label="Global search query"
+                placeholder="개념, 문제, 노트, 참고 자료 검색…"
+                aria-label="전체 검색어"
                 aria-activedescendant={activeIndex >= 0 ? `search-palette-option-${activeIndex}` : undefined}
               />
-              <button className="primary-button" type="submit" disabled={!normalized}>Search</button>
+              <button className="primary-button" type="submit" disabled={!normalized}>검색</button>
             </form>
             <div className="search-palette-body">
               {!normalized && (
                 <div>
-                  <p className="palette-section-title">Recent searches</p>
+                  <p className="palette-section-title">최근 검색</p>
                   {visibleRecent.length === 0 ? <p className="palette-muted">최근 검색어가 없습니다.</p> : (
                     <div className="palette-list" role="listbox">
                       {visibleRecent.map((item, index) => (
@@ -174,18 +174,18 @@ export function SearchPalette() {
                           type="button"
                           onMouseEnter={() => setActiveIndex(index)}
                           onClick={() => submitSearch(item)}
-                        ><span>{item}</span><small>Search again</small></button>
+                        ><span>{item}</span><small>다시 검색</small></button>
                       ))}
                     </div>
                   )}
                 </div>
               )}
               {normalized.length === 1 && <p className="palette-muted">두 글자 이상 입력하면 바로가기 제안을 보여줍니다.</p>}
-              {suggestionsLoading && <p className="palette-muted">Suggestions loading…</p>}
+              {suggestionsLoading && <p className="palette-muted">제안을 불러오는 중…</p>}
               {normalized.length >= 2 && debouncedQuery === normalized && suggestions.isError && <p className="palette-muted">제안을 불러오지 못했습니다. Enter로 전체 검색은 계속 사용할 수 있습니다.</p>}
               {normalized.length >= 2 && debouncedQuery === normalized && suggestions.data && (
                 <div>
-                  <p className="palette-section-title">Suggestions</p>
+                  <p className="palette-section-title">바로가기 제안</p>
                   <div className="palette-list" role="listbox">
                     {suggestions.data.length === 0 ? <p className="palette-muted">일치하는 제목 제안이 없습니다.</p> : suggestions.data.map((item, index) => (
                       <button
@@ -203,7 +203,7 @@ export function SearchPalette() {
                 </div>
               )}
             </div>
-            <footer className="search-palette-footer"><span>↑↓ · Move</span><span>Enter · Select</span><span>Esc · Close</span></footer>
+            <footer className="search-palette-footer"><span>↑↓ · 이동</span><span>Enter · 선택</span><span>Esc · 닫기</span></footer>
           </section>
         </div>
       )}

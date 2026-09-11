@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.coding-tests.fast-input-bufferedreader-tokenizer
 topicContentKey: java.core.coding-tests
 slug: fast-input-bufferedreader-tokenizer
-title: "Fast input with BufferedReader and tokenization"
+title: "BufferedReader 입력과 토큰화"
 summary: "코딩테스트 입력을 줄과 token 단위로 나누어 읽고 숫자 범위·EOF·입력 형식을 안전하게 처리한다"
 level: 1
 status: PUBLISHED
@@ -22,7 +22,7 @@ references:
     displayOrder: 2
     relationNote: delimiter 기반 token 순회 API 확인
 ---
-# BufferedReader 입력과 tokenization
+# BufferedReader 입력과 토큰화
 
 코딩테스트 문제를 틀리는 이유가 알고리즘이 아니라 입력 처리인 경우가 생각보다 많습니다. 입력은 보통 "첫 줄에 N, 다음 줄에 N개의 정수"처럼 명확한 형식을 가지고 있으므로, Java 코드도 **줄을 읽는 단계와 그 줄을 값으로 나누는 단계**를 구분하면 실수가 줄어듭니다.
 
@@ -135,6 +135,6 @@ while ((line = reader.readLine()) != null) {
 4. token 수가 한 줄을 넘을 수 있는지 봅니다.
 5. EOF까지 읽는 문제인지 정해진 줄만 읽는 문제인지 구분합니다.
 
-### 면접이나 코드 리뷰에서 설명한다면
+### 학습 후 스스로 설명해 보기
 
 `BufferedReader`는 문자 입력을 buffering하고 `readLine()`으로 줄을 읽습니다. `StringTokenizer`는 한 줄을 공백 등의 delimiter로 나누어 token을 순서대로 꺼내는 데 사용할 수 있습니다. 코딩테스트에서는 입력 형식과 값 범위를 먼저 확인하고, token이 여러 줄에 걸칠 수 있는지와 `int`/`long` overflow 가능성까지 함께 보는 것이 중요합니다.

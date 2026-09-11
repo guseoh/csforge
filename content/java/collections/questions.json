@@ -47,4 +47,18 @@
   {"kind":"question","contentKey":"java.core.collections.immutable-unmodifiable-collections.q4","promptMarkdown":"unmodifiable view에서 `view.add(x)`를 호출하면?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["java.core.collections.immutable-unmodifiable-collections"],"choices":[{"key":"A","content":"view의 참조가 가리키는 원본에 추가된다","displayOrder":0},{"key":"B","content":"원소가 이미 있으면 항상 false를 반환하고 예외가 없다","displayOrder":1},{"key":"C","content":"원본 List가 mutable이면 view.add도 허용된다","displayOrder":2},{"key":"D","content":"UnsupportedOperationException이 발생한다","displayOrder":3}],"correctChoiceKey":"D","explanationMarkdown":"unmodifiable collection의 mutating operation은 지원되지 않으며 보통 UnsupportedOperationException을 던진다."},
   {"kind":"question","contentKey":"java.core.collections.immutable-unmodifiable-collections.q5","promptMarkdown":"생성자 입력 collection을 방어적으로 복사하는 목적은?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.collections.immutable-unmodifiable-collections"],"choices":[{"key":"A","content":"호출자가 전달한 원본을 바꿔도 aggregate 내부 구조가 바뀌지 않게 한다","displayOrder":0},{"key":"B","content":"원소 객체도 자동으로 깊은 복사하여 모든 변경 경로를 차단한다","displayOrder":1},{"key":"C","content":"호출자가 보유한 원본 List를 수정 불가 상태로 바꾼다","displayOrder":2},{"key":"D","content":"getter가 항상 새 identity를 가진 객체를 반환하도록 언어가 강제한다","displayOrder":3}],"correctChoiceKey":"A","explanationMarkdown":"입력 reference의 소유권을 그대로 보관하지 않고 snapshot을 만들면 외부 mutation으로 내부 invariant가 깨지는 것을 막는다."},
   {"kind":"question","contentKey":"java.core.collections.immutable-unmodifiable-collections.q6","promptMarkdown":"문자열 목록을 전달 시점의 구성으로 고정해 반환하려 한다. source는 나중에 add/remove될 수 있다. 맞는 선택은?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.collections.immutable-unmodifiable-collections"],"choices":[{"key":"A","content":"Collections.unmodifiableList(source): 원본 구조 변경까지 차단한다","displayOrder":0},{"key":"B","content":"source 그대로 반환: 문자열 원소가 불변이면 List 구조도 불변이다","displayOrder":1},{"key":"C","content":"Arrays.asList로 감싸기: 모든 상황에서 원소 교체까지 금지된다","displayOrder":2},{"key":"D","content":"List.copyOf(source): 이후 source 구조 변경을 반영하지 않는 unmodifiable 결과","displayOrder":3}],"correctChoiceKey":"D","explanationMarkdown":"String 원소의 불변성과 List 구조의 가변성은 별개다. unmodifiable view는 원본의 구조 변경을 계속 반영하므로 해당 요구에는 copyOf가 맞는다. copyOf가 반드시 새 인스턴스를 만든다는 뜻은 아니다."}
+,
+{
+  "kind": "question",
+  "contentKey": "java.core.collections.arraylist-linkedlist-tradeoff.q7",
+  "promptMarkdown": "목록에 100만 건이 있고 대부분 순회와 index 조회다. 가끔 중간 삽입이 필요하지만 삽입 위치를 찾는 비용도 포함해야 한다면 기본 선택과 확인할 근거는?",
+  "questionType": "SCENARIO",
+  "difficulty": "HARD",
+  "status": "PUBLISHED",
+  "conceptKeys": [
+    "java.core.collections.arraylist-linkedlist-tradeoff"
+  ],
+  "modelAnswer": "대부분 순회와 index 조회라면 ArrayList를 우선 검토한다. LinkedList의 노드 연결 변경이 위치를 이미 알고 있을 때만 유리하며, index로 위치를 찾는 비용과 노드 allocation·cache locality까지 실제 workload로 측정한다.",
+  "explanationMarkdown": "삽입 자체의 복잡도만 고르면 LinkedList를 과대평가하게 된다. 전체 연산 경로와 데이터 접근 패턴이 선택 기준이다."
+}
 ]

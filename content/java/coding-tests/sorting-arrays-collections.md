@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.coding-tests.sorting-arrays-collections
 topicContentKey: java.core.coding-tests
 slug: sorting-arrays-collections
-title: "Sorting arrays and collections"
+title: "배열과 컬렉션 정렬하기"
 summary: "primitive 배열, 객체 배열, List에 맞는 정렬 API를 고르고 원본 변경과 Comparator 사용 범위를 이해한다"
 level: 1
 status: PUBLISHED
@@ -22,7 +22,7 @@ references:
     displayOrder: 2
     relationNote: List.sort와 Comparator 사용 계약 확인
 ---
-# 배열과 collection 정렬
+# 배열과 컬렉션 정렬하기
 
 코딩테스트에서 "정렬한다"는 알고리즘 요구가 같아도 Java 코드에서는 대상이 `int[]`, `Integer[]`, `List<Node>` 중 무엇인지에 따라 사용할 API가 달라집니다. 문제 풀이 전에 **현재 자료형과 원하는 정렬 기준을 먼저 확인**하면 컴파일 오류와 불필요한 변환을 줄일 수 있습니다.
 
@@ -121,6 +121,6 @@ Java 구현 단계에서는 선택한 알고리즘에 맞춰 `Arrays.sort`, `Lis
 - `Arrays.asList(int[])`는 `List<Integer>`가 아닙니다.
 - 변경 불가능한 List는 직접 정렬할 수 없습니다.
 
-### 면접이나 문제 풀이에서 설명한다면
+### 학습 후 스스로 설명해 보기
 
 Java 정렬 API는 자료형에 따라 다릅니다. Primitive array는 해당 `Arrays.sort` overload를 사용하고 Comparator는 reference array나 List에서 활용합니다. 정렬은 보통 대상 자체의 순서를 바꾸므로 원본 보존 여부를 확인하고, primitive array를 객체 collection으로 자동 변환해 준다고 가정하지 않는 것이 중요합니다.

@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.modern-language.switch-expressions
 topicContentKey: java.core.modern-language
 slug: switch-expressions
-title: "Switch expressions"
+title: "Switch Expression으로 값 계산하기"
 summary: "switch가 값을 만드는 expression으로 동작할 때의 exhaustiveness, arrow rule, yield를 이해한다"
 level: 1
 status: PUBLISHED
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: switch expression·yield·exhaustiveness 확인
 ---
-# Switch expressions
+# Switch Expression으로 값 계산하기
 
 여러 상태에 따라 하나의 값을 정해야 할 때 예전 방식의 `switch` statement는 임시 변수를 먼저 만들고 각 `case`에서 값을 대입하는 코드가 자주 필요했습니다. 이 구조에서는 `break`를 빠뜨리거나 특정 분기에서 값을 대입하지 않는 실수가 생기기 쉽습니다.
 
@@ -139,6 +139,6 @@ return switch (command) {
 - switch expression의 case가 반드시 한 줄이어야 하는 것은 아닙니다.
 - `default`는 무조건 넣어야 하는 안전장치가 아닙니다. 닫힌 값 집합에서는 exhaustiveness 검사가 더 유용할 수 있습니다.
 
-### 면접에서 설명한다면
+### 학습 후 스스로 설명해 보기
 
 switch expression은 switch를 단순 제어문뿐 아니라 값을 계산하는 식으로 사용할 수 있게 해 줍니다. arrow rule은 기본 fall-through를 없애고, 여러 문장이 필요한 분기에서는 `yield`로 값을 반환합니다. 특히 enum이나 sealed hierarchy처럼 가능한 값이 정해진 경우 모든 경우를 처리했는지 컴파일러가 확인하는 데 도움이 됩니다.

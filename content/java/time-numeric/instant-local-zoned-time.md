@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.time-numeric.instant-local-zoned-time
 topicContentKey: java.core.time-numeric
 slug: instant-local-zoned-time
-title: "Instant, local time, and zoned time"
+title: "Instant·LocalDateTime·ZonedDateTime"
 summary: "하나의 실제 시점과 지역 달력에 보이는 시간 표현을 구분하고 저장·비교 기준을 판단한다"
 level: 2
 status: PUBLISHED
@@ -22,11 +22,13 @@ references:
     displayOrder: 2
     relationNote: ZoneId 규칙을 적용한 날짜·시간 표현과 변환 확인
 ---
-# Instant, local time, and zoned time
+# Instant·LocalDateTime·ZonedDateTime
 
 백엔드에서 시간을 다루다 보면 모두 `2026-08-31 14:00`처럼 보이는데도 의미가 서로 다른 값이 섞입니다. 주문이 실제로 발생한 **한 순간**을 기록하는 시간과, 사용자가 "서울 시간 오전 9시"라고 입력한 **지역 달력의 시간**은 같은 정보가 아닙니다.
 
 Java Time API는 이 차이를 타입으로 나누어 표현합니다. 핵심은 클래스 이름을 외우는 것이 아니라 **이 값이 실제 timeline의 한 점인지, 지역 달력에 보이는 표현인지**를 먼저 판단하는 것입니다.
+
+![하나의 Instant와 여러 지역 시간 표현](/learning/java/instant-zones.svg)
 
 ### `Instant`는 세계 어디서나 같은 한 순간을 가리킨다
 
@@ -117,6 +119,6 @@ DB column이 `created_at`이라고 해서 타입 선택이 자동으로 정해�
 - `ZoneId`와 고정 offset은 같은 개념이 아닙니다.
 - 문자열에 날짜와 시간이 보인다고 해서 그 값이 실제 순간까지 표현하는 것은 아닙니다.
 
-### 면접에서 설명한다면
+### 학습 후 스스로 설명해 보기
 
 `Instant`는 UTC timeline의 한 시점을, `LocalDateTime`은 zone 없는 지역 날짜·시각을, `ZonedDateTime`은 지역의 ZoneId 규칙이 적용된 날짜·시각을 표현한다고 설명하면 됩니다. 백엔드에서는 생성·만료 시각처럼 사건 자체를 비교할 때와 사용자 일정처럼 지역 시간이 업무 의미인 경우를 구분해 타입과 저장 정책을 정하는 것이 중요합니다.

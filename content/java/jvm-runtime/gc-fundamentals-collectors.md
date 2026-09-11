@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.jvm-runtime.gc-fundamentals-collectors
 topicContentKey: java.core.jvm-runtime
 slug: gc-fundamentals-collectors
-title: "GC fundamentals and collectors"
+title: "GC 기본 원리와 Collector"
 summary: "GC가 unreachable 객체의 storage를 회수하는 이유와 pause·throughput·latency trade-off를 이해하고 G1/ZGC 같은 collector를 JVM 구현 선택으로 구분한다"
 level: 3
 status: PUBLISHED
@@ -21,8 +21,14 @@ references:
     language: en
     displayOrder: 2
     relationNote: heap과 automatic reclamation의 specification 범위 확인
+  - url: "https://d2.naver.com/helloworld/1329"
+    title: "네이버 D2: Java Garbage Collection"
+    referenceType: COMPANY_TECH_BLOG
+    language: ko
+    displayOrder: 3
+    relationNote: GC의 세대별 흐름과 stop-the-world 관찰 포인트 보충
 ---
-# GC는 왜 필요하고 collector는 왜 여러 종류일까
+# GC 기본 원리와 Collector
 
 Java에서는 객체를 만들 때마다 개발자가 직접 `free()`하지 않습니다. 더 이상 사용할 수 없는 객체의 storage는 JVM의 garbage collector가 회수할 수 있습니다. 덕분에 수동 메모리 해제 실수는 크게 줄지만, GC가 "메모리 문제를 신경 쓰지 않아도 된다"는 뜻은 아닙니다.
 
@@ -197,6 +203,6 @@ Collector 변경은 이름 비교가 아니라 실제 목표와 measurement를 �
 5. heap size만 보지 말고 live set과 allocation rate를 봅니다.
 6. GC 문제라고 해서 무조건 heap 증설/collector 변경부터 선택하지 않습니다.
 
-### 면접에서 설명한다면
+### 학습 후 스스로 설명해 보기
 
 GC는 root에서 더 이상 도달할 수 없는 객체의 storage를 JVM이 자동으로 회수할 수 있게 합니다. Collector마다 객체를 추적하고 회수하는 방식, stop-the-world pause와 concurrent 작업의 비율이 달라 throughput과 latency trade-off가 생깁니다. G1과 ZGC는 HotSpot의 collector 구현이지 Java language 보장이 아니며, collector 선택은 heap 크기 하나가 아니라 live set, allocation rate, pause 목표와 실제 측정 결과를 보고 결정해야 합니다.

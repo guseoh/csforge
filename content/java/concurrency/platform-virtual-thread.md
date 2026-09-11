@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.concurrency.platform-virtual-thread
 topicContentKey: java.core.concurrency
 slug: platform-virtual-thread
-title: "Platform and virtual threads"
+title: "Platform Thread와 Virtual Thread"
 summary: "platform thread와 virtual thread의 자원 모델을 구분하고 I/O 중심 백엔드에서 virtual thread가 유리한 이유를 이해한다"
 level: 2
 status: PUBLISHED
@@ -21,8 +21,14 @@ references:
     language: en
     displayOrder: 2
     relationNote: JDK 24부터 synchronized가 virtual thread를 carrier에 pin하지 않도록 바뀐 구현 경계 확인
+  - url: "https://d2.naver.com/news/1203723"
+    title: "네이버 D2: Virtual Thread의 기본 개념 이해하기"
+    referenceType: COMPANY_TECH_BLOG
+    language: ko
+    displayOrder: 3
+    relationNote: Java thread와 Executor를 운영 관점에서 연결해 이해
 ---
-# Platform thread와 virtual thread
+# Platform Thread와 Virtual Thread
 
 전통적인 Java server는 요청을 처리하기 위해 platform thread를 사용해 왔습니다. 문제는 DB나 외부 HTTP 응답을 기다리는 동안 thread가 오랫동안 계산하지 않을 수 있다는 점입니다. Java 25 `Thread` API는 platform thread를 **보통 OS kernel thread와 1:1로 매핑되는 thread**로 설명하며, OS가 유지하는 비교적 큰 stack과 다른 자원을 사용할 수 있어 개수를 무제한으로 늘릴 수 있는 자원은 아닙니다.
 
@@ -170,6 +176,6 @@ One-way context 전달이 목적이면 Java 25 API가 권장하는 `ScopedValue`
 - native/foreign call에서의 pinning은 여전히 scalability 관찰 대상입니다.
 - virtual thread 수를 늘려도 DB connection이나 외부 API capacity는 그대로입니다.
 
-### 면접에서 설명한다면
+### 학습 후 스스로 설명해 보기
 
 Platform thread는 보통 OS kernel thread와 1:1로 매핑되는 비교적 비싼 실행 자원인 반면, virtual thread는 Java runtime이 scheduling하는 가벼운 `Thread`라 많은 blocking I/O task를 thread-per-task 방식으로 표현하기 좋습니다. Virtual thread는 carrier platform thread 위에서 실행되며 지원되는 blocking I/O에서는 carrier를 양보할 수 있습니다. JDK 24 이후 `synchronized` 때문에 pin되는 제약은 제거됐지만 native method나 foreign function 실행에서는 pinning이 생길 수 있습니다. 또한 virtual thread는 CPU나 DB connection 같은 실제 희소 자원의 capacity를 늘려 주는 기능은 아닙니다.
