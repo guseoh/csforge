@@ -1,4 +1,4 @@
-import { useId, useState } from 'react'
+import { useId } from 'react'
 import { Link } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import {
@@ -8,6 +8,7 @@ import {
   type LearningStatus,
 } from '../lib/learning-api'
 import { defaultLearningSearch } from '../lib/learning-search'
+import { useLearningRailCollapsed } from './useLearningRailCollapsed'
 
 const learningStatusLabels: Record<LearningStatus, string> = {
   UNSEEN: '미학습',
@@ -21,7 +22,7 @@ function completionPercent(completed: number, total: number) {
 }
 
 export function ConceptLearningRail({ concept }: { concept: ConceptDetail }) {
-  const [collapsed, setCollapsed] = useState(false)
+  const { collapsed, toggleCollapsed } = useLearningRailCollapsed()
   const railContentId = useId()
   const areaQuery = useQuery({
     queryKey: ['learning-area', concept.area.slug],
@@ -44,6 +45,7 @@ export function ConceptLearningRail({ concept }: { concept: ConceptDetail }) {
   const completedConcepts = topics.reduce((total, topic) => total + topic.completedConceptCount, 0)
   const progress = completionPercent(completedConcepts, totalConcepts)
   const loadingOutline = areaQuery.isPending || topicConceptsQuery.isPending
+  const toggleLabel = collapsed ? '학습 목차 펼치기' : '학습 목차 접기'
 
   return (
     <aside
@@ -56,8 +58,9 @@ export function ConceptLearningRail({ concept }: { concept: ConceptDetail }) {
         type="button"
         aria-controls={railContentId}
         aria-expanded={!collapsed}
-        aria-label={collapsed ? '학습 목차 펼치기' : '학습 목차 접기'}
-        onClick={() => setCollapsed((value) => !value)}
+        aria-label={toggleLabel}
+        title={toggleLabel}
+        onClick={toggleCollapsed}
       >
         <span aria-hidden="true">{collapsed ? '→' : '←'}</span>
       </button>
