@@ -32,7 +32,7 @@ function AppLayout() {
     <div className="app-shell">
       <header className="topbar">
         <div className="topbar-inner">
-          <Link className="brand" to="/"><span className="brand-mark" aria-hidden="true">✦</span><span>CSForge</span></Link>
+          <Link className="brand" to="/"><span className="brand-mark" aria-hidden="true">CF</span><span>CSForge</span></Link>
           <nav className="topbar-nav" aria-label="주요 학습 메뉴">
             {headerNavigation.map((item) => (
               <Link
