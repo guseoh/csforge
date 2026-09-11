@@ -99,8 +99,8 @@ export function QuizResultPage() {
   const selfCheckQuestions = result.questions.filter((question) => question.gradingStatus === 'SELF_CHECK_REQUIRED')
   const wrongQuestions = result.questions.filter((question) => question.correct === false)
   const unansweredQuestions = result.questions.filter((question) => question.gradingStatus === 'UNANSWERED')
+  const reviewQuestions = [...wrongQuestions, ...unansweredQuestions]
   const correctQuestions = result.questions.filter((question) => question.correct === true)
-  const attentionQuestions = [...selfCheckQuestions, ...wrongQuestions, ...unansweredQuestions]
   const focusFirstSelfCheck = () => {
     const target = document.querySelector<HTMLElement>('[data-self-check-target="true"]')
     if (!target) return
@@ -138,17 +138,29 @@ export function QuizResultPage() {
         <button className="primary-button" type="button" onClick={focusFirstSelfCheck}>자기채점 계속하기</button>
       </section>}
 
-      <section className="detail-section result-attention-section">
-        <div className="section-heading">
-          <div><p className="eyebrow">지금 확인할 문제</p><h2>다시 볼 문항</h2></div>
-          <span className="result-count">{attentionQuestions.length}개</span>
-        </div>
-        {attentionQuestions.length > 0 ? (
+      {selfCheckQuestions.length > 0 && (
+        <section className="detail-section result-attention-section result-self-check-section">
+          <div className="section-heading">
+            <div><p className="eyebrow">판정이 필요한 문제</p><h2>자기채점 대기</h2></div>
+            <span className="result-count">{selfCheckQuestions.length}개</span>
+          </div>
           <div className="quiz-result-list quiz-result-attention-list">
-            {attentionQuestions.map((question) => <QuestionResultCard key={question.questionId} quizId={quizId} question={question} />)}
+            {selfCheckQuestions.map((question) => <QuestionResultCard key={question.questionId} quizId={quizId} question={question} />)}
+          </div>
+        </section>
+      )}
+
+      <section className="detail-section result-attention-section result-review-section">
+        <div className="section-heading">
+          <div><p className="eyebrow">다시 확인할 문제</p><h2>오답·미답변</h2></div>
+          <span className="result-count">{reviewQuestions.length}개</span>
+        </div>
+        {reviewQuestions.length > 0 ? (
+          <div className="quiz-result-list quiz-result-attention-list">
+            {reviewQuestions.map((question) => <QuestionResultCard key={question.questionId} quizId={quizId} question={question} />)}
           </div>
         ) : (
-          <div className="result-clear-state"><strong>지금 다시 확인할 문항이 없습니다.</strong><span>정답 문항의 해설이 필요하면 아래에서 펼쳐볼 수 있습니다.</span></div>
+          <div className="result-clear-state"><strong>다시 확인할 오답이나 미답변이 없습니다.</strong><span>정답 문항의 해설이 필요하면 아래에서 펼쳐볼 수 있습니다.</span></div>
         )}
       </section>
 
