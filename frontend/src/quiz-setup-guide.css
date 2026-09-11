@@ -14,7 +14,7 @@
 }
 
 .quiz-setup-page .quiz-setup-heading > .result-count {
-  margin-top: 14px;
+  display: none;
 }
 
 .quiz-quick-start {
