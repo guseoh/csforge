@@ -115,14 +115,15 @@ export function AreaPage() {
           ) : area.topics.map((topic, topicIndex) => {
             const topicConcepts = outlineConcepts.filter((concept) => concept.topicId === topic.id)
             return (
-              <section className="topic-outline" key={topic.id}>
-                <div className="topic-outline-heading">
+              <details className="topic-outline" key={topic.id} name="topic-guide" open={topicIndex === 0 || topic.completedConceptCount > 0}>
+                <summary className="topic-outline-heading">
                   <span className="topic-guide-index">{String(topicIndex + 1).padStart(2, '0')}</span>
                   <div>
                     <h3>{topic.title}</h3>
                     <span>{topic.publishedConceptCount}개 개념 · {topic.completedConceptCount}개 완료 · L1 {topic.level1Count} · L2 {topic.level2Count} · L3 {topic.level3Count}</span>
                   </div>
-                </div>
+                  <span className="topic-outline-toggle" aria-hidden="true">+</span>
+                </summary>
                 <div className="topic-concept-list">
                   {topicConcepts.map((concept, conceptIndex) => (
                     <Link className="topic-concept-row" key={concept.id} to="/concepts/$conceptId" params={{ conceptId: String(concept.id) }}>
@@ -138,7 +139,7 @@ export function AreaPage() {
                     </Link>
                   ))}
                 </div>
-              </section>
+              </details>
             )
           })}
         </div>

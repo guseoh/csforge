@@ -533,6 +533,16 @@
   font-weight: 800;
 }
 
+.area-card-icon svg {
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.7;
+}
+
 .area-card-tag {
   align-self: start;
   padding: 5px 8px;
@@ -696,16 +706,34 @@
   background: linear-gradient(145deg, #17131d 0%, #141118 100%);
 }
 
+.topic-outline > summary { cursor: pointer; list-style: none; }
+.topic-outline > summary::-webkit-details-marker { display: none; }
+.topic-outline > summary:focus-visible { outline: 2px solid #a16af2; outline-offset: -3px; }
+.topic-outline[open] { border-color: #68478d; box-shadow: 0 12px 28px rgb(0 0 0 / 13%); }
+.topic-outline[open] > .topic-outline-heading { border-bottom-color: #38274a; }
+
 .topic-outline:hover {
   border-color: #584179;
 }
 
 .topic-outline-heading {
-  grid-template-columns: 28px minmax(0, 1fr);
+  grid-template-columns: 28px minmax(0, 1fr) 18px;
   gap: 11px;
   padding: 17px 16px 14px;
   border-bottom: 1px solid #292230;
 }
+
+.topic-outline-toggle {
+  display: grid !important;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  color: #a16af2 !important;
+  font-size: 1rem !important;
+  line-height: 1;
+}
+
+.topic-outline[open] .topic-outline-toggle { transform: rotate(45deg); }
 
 .topic-outline-heading h3 {
   overflow: hidden;

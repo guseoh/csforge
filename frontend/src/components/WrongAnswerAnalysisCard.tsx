@@ -23,7 +23,7 @@ export function WrongAnswerAnalysisCard({
   if (analysis.status === 'PROVIDER_NOT_CONFIGURED') {
     return (
       <div className="state-card ai-state-surface" data-state="PROVIDER_NOT_CONFIGURED">
-        <div className="section-heading"><strong>AI 분석을 사용할 수 없습니다.</strong><span className="chip ai-state-unavailable">Not configured</span></div>
+        <div className="section-heading"><strong>AI 분석을 사용할 수 없습니다.</strong><span className="chip ai-state-unavailable">설정되지 않음</span></div>
         <span>로컬 Ollama provider를 구성하면 명시적으로 분석을 요청할 수 있습니다.</span>
       </div>
     )
@@ -32,7 +32,7 @@ export function WrongAnswerAnalysisCard({
   if (analysis.status === 'NOT_REQUESTED') {
     return (
       <div className="ai-analysis-empty ai-state-surface" data-state="NOT_REQUESTED">
-        <div className="section-heading"><strong>아직 분석을 요청하지 않았습니다.</strong><span className="chip ai-state-not_requested">Not requested</span></div>
+        <div className="section-heading"><strong>아직 분석을 요청하지 않았습니다.</strong><span className="chip ai-state-not_requested">미요청</span></div>
         <p>현재 latest wrong answer와 문제·정답·관련 개념을 바탕으로 오답 원인을 분석합니다.</p>
         <button
           className="primary-button"
@@ -50,7 +50,7 @@ export function WrongAnswerAnalysisCard({
   if (analysis.status === 'PENDING' || analysis.status === 'PROCESSING') {
     return (
       <div className="state-card ai-state-surface" data-state={analysis.status} aria-live="polite">
-        <div className="section-heading"><strong>AI 분석을 처리하고 있습니다.</strong><span className="chip ai-state-processing">{analysis.status === 'PENDING' ? 'Pending' : 'Processing'}</span></div>
+        <div className="section-heading"><strong>AI 분석을 처리하고 있습니다.</strong><span className="chip ai-state-processing">{analysis.status === 'PENDING' ? '대기 중' : '분석 중'}</span></div>
         <span>{analysis.status === 'PENDING' ? '분석 작업을 준비하는 중입니다.' : 'Ollama가 오답을 분석하는 중입니다.'}</span>
         <span className="helper-text">이 화면은 자동으로 갱신됩니다.</span>
       </div>
@@ -60,7 +60,7 @@ export function WrongAnswerAnalysisCard({
   if (analysis.status === 'FAILED') {
     return (
       <div className="state-card error-state ai-state-surface" data-state="FAILED">
-        <div className="section-heading"><strong>AI 분석에 실패했습니다.</strong><span className="chip ai-state-failed">Failed</span></div>
+        <div className="section-heading"><strong>AI 분석에 실패했습니다.</strong><span className="chip ai-state-failed">실패</span></div>
         <span>provider 상태를 확인한 뒤 다시 시도할 수 있습니다.</span>
         <button
           className="secondary-button"
@@ -96,9 +96,9 @@ export function WrongAnswerAnalysisCard({
           ? <p className="helper-text">연결된 개념이 없습니다.</p>
           : (
             <div className="related-list">
-              {result.relatedConcepts.map((concept) => (
-                <Link key={concept.id} to="/concepts/$conceptId" params={{ conceptId: String(concept.id) }}>
-                  {concept.title}<span>{concept.areaName} · Level {concept.level}</span>
+                  {result.relatedConcepts.map((concept) => (
+                    <Link key={concept.id} to="/concepts/$conceptId" params={{ conceptId: String(concept.id) }}>
+                  {concept.title}<span>{concept.areaName} · 레벨 {concept.level}</span>
                 </Link>
               ))}
             </div>

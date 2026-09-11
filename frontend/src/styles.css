@@ -1086,3 +1086,42 @@ textarea:focus {
   .topbar-nav { display: none; }
   .main-content { padding: 32px 16px 88px; }
 }
+
+/* Shared action language: one clear primary action, quiet outlined secondary actions. */
+.primary-button,
+.secondary-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 40px;
+  padding: 0 16px;
+  border-radius: 8px;
+  font-size: 0.79rem;
+  font-weight: 750;
+  line-height: 1;
+  white-space: nowrap;
+  transition: transform 140ms ease, background 140ms ease, border-color 140ms ease, box-shadow 140ms ease;
+}
+
+.primary-button:hover,
+.secondary-button:hover { transform: translateY(-1px); }
+
+.primary-button {
+  border-color: #a06af5;
+  background: #925de7;
+  box-shadow: 0 7px 18px rgb(87 44 142 / 22%);
+}
+
+.primary-button:hover { border-color: #bb92ff; background: #a36cf3; box-shadow: 0 9px 22px rgb(87 44 142 / 30%); }
+
+.secondary-button {
+  border-color: #40364f;
+  color: #d1c7dc;
+  background: #17131f;
+}
+
+.secondary-button:hover { border-color: #715195; color: #f2eaff; background: #21192e; }
+
+.primary-button:disabled,
+.secondary-button:disabled { transform: none; box-shadow: none; }

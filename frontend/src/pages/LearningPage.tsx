@@ -12,14 +12,14 @@ function completionPercent(area: AreaSummary) {
   return Math.round((area.completedConceptCount / area.publishedConceptCount) * 100)
 }
 
-const areaVisuals: Record<string, { glyph: string; accent: string }> = {
+const areaVisuals: Record<string, { glyph: string; accent: string; icon?: 'java' | 'spring' }> = {
   'computer-architecture': { glyph: '▦', accent: 'blue' },
   'data-structures-algorithms': { glyph: '</>', accent: 'violet' },
   'operating-systems': { glyph: '▣', accent: 'indigo' },
   'network-http': { glyph: '◎', accent: 'green' },
   database: { glyph: '▤', accent: 'orange' },
-  java: { glyph: '☕', accent: 'red' },
-  spring: { glyph: '✦', accent: 'emerald' },
+  java: { glyph: '☕', accent: 'red', icon: 'java' },
+  spring: { glyph: '✦', accent: 'emerald', icon: 'spring' },
   'backend-engineering': { glyph: '⌘', accent: 'purple' },
   cache: { glyph: '◉', accent: 'rose' },
   'messaging-async': { glyph: '↗', accent: 'teal' },
@@ -34,6 +34,26 @@ function areaCompletionPercent(area: AreaSummary) {
   return completionPercent(area)
 }
 
+function AreaIcon({ visual }: { visual: { glyph: string; icon?: 'java' | 'spring' } }) {
+  if (visual.icon === 'java') {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M7 9h10v4.5A4.5 4.5 0 0 1 12.5 18h-1A4.5 4.5 0 0 1 7 13.5V9Z" />
+        <path d="M17 10h1.5a2 2 0 0 1 0 4H17M8 20h9M10 5c1 1 .8 1.8 0 2.5M14 4c1.2 1.2 1 2.3 0 3.2" />
+      </svg>
+    )
+  }
+  if (visual.icon === 'spring') {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M5 17c4.5.2 8-2.1 10.2-6.6C16.3 8.2 18.5 6 21 5c-.2 4.8-2 8.2-5.5 10.3C12.2 18.1 8.5 18.3 5 17Z" />
+        <path d="M5 17c2.9-1.2 5.5-3.3 7.6-6.2M5 17c-.3 1.4-.2 2.4.3 3" />
+      </svg>
+    )
+  }
+  return <span>{visual.glyph}</span>
+}
+
 function AreaCard({ area }: { area: AreaSummary }) {
   const visual = areaVisuals[area.slug] ?? { glyph: '✦', accent: 'violet' }
   const completion = areaCompletionPercent(area)
@@ -42,7 +62,7 @@ function AreaCard({ area }: { area: AreaSummary }) {
     <article className={`area-card area-card-${visual.accent}`}>
       <Link className="area-card-main" to="/learning/$areaSlug" params={{ areaSlug: area.slug }} search={defaultLearningSearch}>
         <div className="area-card-topline">
-          <span className="area-card-icon" aria-hidden="true">{visual.glyph}</span>
+          <span className="area-card-icon"><AreaIcon visual={visual} /></span>
           <span className="area-card-tag">{area.topicCount}개 주제</span>
         </div>
         <div className="area-card-heading">

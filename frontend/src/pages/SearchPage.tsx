@@ -14,12 +14,14 @@ import { addRecentSearch, primarySearchDestination, relatedConceptDestination, s
 import '../search.css'
 
 const DOCUMENT_TYPES: { value: SearchDocumentType; label: string }[] = [
-  { value: 'CONCEPT', label: 'Concept' },
-  { value: 'QUESTION', label: 'Question' },
-  { value: 'PERSONAL_NOTE', label: 'Personal note' },
-  { value: 'WRONG_NOTE', label: 'Wrong note' },
-  { value: 'REFERENCE', label: 'Reference' },
+  { value: 'CONCEPT', label: '개념' },
+  { value: 'QUESTION', label: '문제' },
+  { value: 'PERSONAL_NOTE', label: '개인 메모' },
+  { value: 'WRONG_NOTE', label: '오답 노트' },
+  { value: 'REFERENCE', label: '참고 자료' },
 ]
+
+const documentTypeLabels = Object.fromEntries(DOCUMENT_TYPES.map((type) => [type.value, type.label])) as Record<SearchDocumentType, string>
 
 const RECENT_KEY = 'csforge.search.recent.v1'
 
@@ -45,7 +47,7 @@ function resultContext(item: SearchResultItem): string {
     return topic ? `${area} · ${topic}` : area
   })
   if (contexts.length > 0) return contexts.join(' / ')
-  return item.levels.length > 0 ? `Level ${item.levels.join(', ')}` : 'Search result'
+  return item.levels.length > 0 ? `레벨 ${item.levels.join(', ')}` : '검색 결과'
 }
 
 export function SearchPage() {
@@ -94,46 +96,46 @@ export function SearchPage() {
   }
 
   if (status.isPending) return <PageSkeleton rows={5} />
-  if (status.isError) return <ErrorState message="Search 상태를 확인하지 못했습니다. 다른 학습 기능은 계속 사용할 수 있습니다." onRetry={() => void status.refetch()} />
+  if (status.isError) return <ErrorState message="검색 상태를 확인하지 못했습니다. 다른 학습 기능은 계속 사용할 수 있습니다." onRetry={() => void status.refetch()} />
 
   return (
     <section className="page-section search-page">
       <div className="page-heading search-heading">
         <div>
           <p className="eyebrow">Knowledge retrieval</p>
-          <h1>Search</h1>
-          <p className="lead">Concept, Question, 개인 메모, 오답 기록, Reference를 한 번에 검색합니다.</p>
+          <h1>검색</h1>
+          <p className="lead">개념, 문제, 개인 메모, 오답 기록, 참고 자료를 한 번에 검색합니다.</p>
         </div>
         <div className="search-health search-health-ready">
-          <strong><span aria-hidden="true">●</span> READY</strong>
-          <small>{status.data.searchableDocuments.toLocaleString()} searchable documents</small>
+          <strong><span aria-hidden="true">●</span> 검색 가능</strong>
+          <small>{status.data.searchableDocuments.toLocaleString()}개 문서</small>
         </div>
       </div>
 
       <form className="search-form" onSubmit={submit}>
-        <input name="q" defaultValue={search.q} key={search.q} maxLength={200} placeholder="예: volatile happens-before, PostgreSQL transaction" aria-label="Search query" />
-        <button className="primary-button" type="submit">Search</button>
+        <input name="q" defaultValue={search.q} key={search.q} maxLength={200} placeholder="예: volatile happens-before, PostgreSQL transaction" aria-label="검색어" />
+        <button className="primary-button" type="submit">검색</button>
       </form>
 
       <div className="search-layout">
-        <aside className="search-filters" aria-label="Search filters">
-          <div className="search-filter-heading"><strong>Filters</strong><button type="button" onClick={() => update({ types: '', areas: '', topics: '', levels: '', page: 0 })}>Clear</button></div>
+        <aside className="search-filters" aria-label="검색 필터">
+          <div className="search-filter-heading"><strong>필터</strong><button type="button" onClick={() => update({ types: '', areas: '', topics: '', levels: '', page: 0 })}>초기화</button></div>
           <fieldset>
-            <legend>Type</legend>
+            <legend>문서 유형</legend>
             {DOCUMENT_TYPES.map((type) => <label key={type.value}><input type="checkbox" checked={csvSearchValues(search.types).includes(type.value)} onChange={() => updateFilter('types', type.value)} /><span>{type.label}</span></label>)}
           </fieldset>
           <fieldset>
-            <legend>Level</legend>
-            {[1, 2, 3].map((level) => <label key={level}><input type="checkbox" checked={csvSearchValues(search.levels).includes(String(level))} onChange={() => updateFilter('levels', String(level))} /><span>Level {level}</span></label>)}
+            <legend>레벨</legend>
+            {[1, 2, 3].map((level) => <label key={level}><input type="checkbox" checked={csvSearchValues(search.levels).includes(String(level))} onChange={() => updateFilter('levels', String(level))} /><span>레벨 {level}</span></label>)}
           </fieldset>
           <fieldset>
-            <legend>Area</legend>
-            {filters.isPending && <span className="search-filter-muted">Loading…</span>}
+            <legend>학습 영역</legend>
+            {filters.isPending && <span className="search-filter-muted">불러오는 중…</span>}
             {filters.data?.map((area) => <label key={area.areaSlug}><input type="checkbox" checked={selectedAreas.includes(area.areaSlug)} onChange={() => updateFilter('areas', area.areaSlug)} /><span>{area.areaName}</span></label>)}
           </fieldset>
           {visibleTopicGroups.length > 0 && (
             <fieldset>
-              <legend>Topic</legend>
+              <legend>주제</legend>
               {visibleTopicGroups.flatMap((area) => area.topics.map((topic) => <label key={topic.contentKey}><input type="checkbox" checked={csvSearchValues(search.topics).includes(topic.contentKey)} onChange={() => updateFilter('topics', topic.contentKey)} /><span>{topic.title}</span></label>))}
             </fieldset>
           )}
@@ -141,8 +143,8 @@ export function SearchPage() {
 
         <div className="search-results-column">
           <div className="search-results-toolbar">
-            <div>{search.q ? <span>{results.data?.totalHits.toLocaleString() ?? '—'} results {results.data ? `· ${results.data.tookMillis}ms` : ''}</span> : <span>검색어를 입력하세요.</span>}</div>
-            <label>Sort<select value={search.sort} onChange={(event) => update({ sort: event.target.value as SearchSearch['sort'], page: 0 })}><option value="RELEVANCE">Relevance</option><option value="RECENT">Recent</option><option value="TITLE">Title</option></select></label>
+            <div>{search.q ? <span>{results.data?.totalHits.toLocaleString() ?? '—'}개 결과 {results.data ? `· ${results.data.tookMillis}ms` : ''}</span> : <span>검색어를 입력하세요.</span>}</div>
+            <label>정렬<select value={search.sort} onChange={(event) => update({ sort: event.target.value as SearchSearch['sort'], page: 0 })}><option value="RELEVANCE">관련도순</option><option value="RECENT">최신순</option><option value="TITLE">제목순</option></select></label>
           </div>
 
           {search.q && results.isPending && <PageSkeleton rows={5} />}
@@ -156,12 +158,12 @@ export function SearchPage() {
                 const primary = primarySearchDestination(item)
                 return (
                   <article className={`search-result-card search-result-${item.documentType.toLowerCase()}`} key={`${item.documentType}:${item.sourceId}`}>
-                    <div className="search-result-meta"><span className="search-type-badge">{item.documentType.replace('_', ' ')}</span><span>{resultContext(item)}</span><time dateTime={item.updatedAt}>{new Date(item.updatedAt).toLocaleDateString()}</time></div>
+                    <div className="search-result-meta"><span className="search-type-badge">{documentTypeLabels[item.documentType]}</span><span>{resultContext(item)}</span><time dateTime={item.updatedAt}>{new Date(item.updatedAt).toLocaleDateString('ko-KR')}</time></div>
                     <h2><HighlightText value={item.highlightedTitle || item.title} /></h2>
                     <p className="search-snippet"><HighlightText value={item.snippet} /></p>
                     <div className="search-result-actions">
-                      {primary && <button className="secondary-button" type="button" onClick={() => openResult(item)}>{primary.kind === 'external' ? 'Open source' : item.documentType === 'WRONG_NOTE' ? 'Open wrong note' : 'Open concept'}</button>}
-                      {item.documentType === 'REFERENCE' && related?.kind === 'concept' && <button className="text-button" type="button" onClick={() => void navigate({ to: '/concepts/$conceptId', params: { conceptId: String(related.conceptId) } })}>Related concept</button>}
+                      {primary && <button className="secondary-button" type="button" onClick={() => openResult(item)}>{primary.kind === 'external' ? '자료 열기' : item.documentType === 'WRONG_NOTE' ? '오답 노트 열기' : '개념 열기'}</button>}
+                      {item.documentType === 'REFERENCE' && related?.kind === 'concept' && <button className="text-button" type="button" onClick={() => void navigate({ to: '/concepts/$conceptId', params: { conceptId: String(related.conceptId) } })}>관련 개념 보기</button>}
                     </div>
                   </article>
                 )
@@ -172,7 +174,7 @@ export function SearchPage() {
           {results.data && results.data.totalPages > 0 && (
             <div className="pagination">
               <button className="secondary-button" type="button" disabled={search.page <= 0} onClick={() => update({ page: Math.max(0, search.page - 1) })}>Previous</button>
-              <span>Page {search.page + 1} / {results.data.totalPages}</span>
+              <span>{search.page + 1} / {results.data.totalPages}</span>
               <button className="secondary-button" type="button" disabled={search.page + 1 >= results.data.totalPages} onClick={() => update({ page: search.page + 1 })}>Next</button>
             </div>
           )}

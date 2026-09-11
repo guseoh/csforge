@@ -490,3 +490,86 @@
     margin-left: 0;
   }
 }
+
+/* Keep the retrieval page in the same calm, purple desktop language as the learning flow. */
+.search-page {
+  width: min(1280px, 100%);
+}
+
+.search-page .search-form {
+  margin: 30px 0 20px;
+}
+
+.search-page .search-form input {
+  min-height: 46px;
+  border-color: #38294b;
+  background: #17131f;
+}
+
+.search-page .search-form input:focus {
+  border-color: #925de7;
+  box-shadow: 0 0 0 3px rgb(146 93 231 / 15%);
+}
+
+.search-page .search-filters,
+.search-page .search-result-card,
+.search-page .state-card {
+  border-color: #30243f;
+  background: #17131f;
+}
+
+.search-page .search-filters {
+  top: 24px;
+  border-radius: 14px;
+  box-shadow: 0 15px 40px rgb(0 0 0 / 13%);
+}
+
+.search-page .search-filter-heading strong,
+.search-page .search-filters legend {
+  color: #f2eaff;
+}
+
+.search-page .search-filter-heading button {
+  padding: 6px 9px;
+  border: 1px solid #49345f;
+  border-radius: 7px;
+  color: #c7a9f4;
+  background: #21192e;
+  font-size: 0.75rem;
+}
+
+.search-page .search-filter-heading button:hover {
+  border-color: #925de7;
+  background: #2a1d3c;
+}
+
+.search-page .search-results-toolbar {
+  padding: 0 2px 12px;
+  border-bottom: 1px solid #2a2035;
+}
+
+.search-page .search-results-toolbar select {
+  border-color: #49345f;
+  background: #17131f;
+}
+
+.search-page .search-result-card:hover {
+  border-color: #7045aa;
+  background: #1b1525;
+}
+
+.search-page .search-type-badge {
+  border-color: #49345f;
+  color: #c7a9f4;
+  background: #21192e;
+}
+
+.search-page .search-result-card h2 {
+  font-size: 1.15rem;
+}
+
+@media (max-width: 900px) {
+  .search-page .search-filters {
+    position: static;
+  }
+}
