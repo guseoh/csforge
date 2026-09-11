@@ -34,13 +34,13 @@ function FilterChoice({ label, selected, onClick }: { label: string; selected: b
 }
 
 function ConceptContext({ concepts }: { concepts: { id: number; title: string; areaName: string; level: number }[] }) {
-  if (concepts.length === 0) return <p className="concept-context-empty">연결된 Concept가 없습니다.</p>
+  if (concepts.length === 0) return <p className="concept-context-empty">연결된 개념이 없습니다.</p>
   return (
     <div className="concept-context-list">
       {concepts.map((concept) => (
         <Link key={concept.id} to="/concepts/$conceptId" params={{ conceptId: String(concept.id) }}>
           <span>{concept.title}</span>
-          <small>{concept.areaName} · L{concept.level}</small>
+          <small>{concept.areaName} · 레벨 {concept.level}</small>
         </Link>
       ))}
     </div>
@@ -86,11 +86,18 @@ export function WrongNotesPage() {
     search: (current) => withWrongNotePage(current, page),
   })
   const advancedFilterCount = countAdvancedWrongNoteFilters(search)
+  const hasFilterSelection = Boolean(
+    search.status
+    || search.review !== 'ALL'
+    || search.sort !== 'RECENT'
+    || advancedFilterCount > 0,
+  )
+  const showFilters = query.data.page.totalElements > 0 || hasFilterSelection
 
   return (
     <section className="page-section wrong-notes-page">
       <div className="page-heading"><div><p className="eyebrow">오답 복습</p><h1>오답 노트</h1><p className="lead">틀린 문제를 다시 이해하고, 다음 복습 시점까지 이어가세요.</p></div><span className="result-count">{query.data.page.totalElements}개</span></div>
-      <div className="filter-panel wrong-note-filters">
+      {showFilters && <div className="filter-panel wrong-note-filters">
         <div className="filter-panel-header">
           <div><p className="eyebrow">정리하기</p><strong>복습할 문제를 골라보세요</strong></div>
           <span className="helper-text">상태와 복습 시점을 누르면 바로 결과가 바뀝니다.</span>
@@ -156,9 +163,9 @@ export function WrongNotesPage() {
             </label>
           </div>
         </fieldset>}
-      </div>
-      {query.data.items.length === 0 ? <div className="state-card wrong-note-empty"><span className="empty-state-icon" aria-hidden="true">↺</span><strong>아직 오답 노트가 없습니다.</strong><span>Quiz를 제출하면 틀린 문제가 이곳에 쌓이고, 다음 복습 시점까지 이어집니다.</span><Link className="primary-button" to="/quiz" search={defaultQuizSearch}>문제 풀러 가기 <span aria-hidden="true">→</span></Link></div> : <div className="concept-list">{query.data.items.map((item) => <article className="concept-list-item wrong-note-list-item" key={item.questionId}><div className="concept-list-main"><h3><Link className="wrong-note-question-link" to="/wrong-notes/$questionId" params={{ questionId: String(item.questionId) }}>{compactMarkdownPreview(item.promptMarkdown)}</Link></h3><ConceptContext concepts={item.concepts} /><div className="chip-row concept-list-status"><span className="chip">{questionTypeLabels[item.questionType]}</span><span className="chip">{difficultyLabels[item.difficulty]}</span><span className={`chip state-badge state-${item.status.toLowerCase()}`}>{wrongNoteStatusLabels[item.status]}</span><span className={`chip state-badge ai-state-${item.aiAnalysisStatus.toLowerCase()}`}>{analysisLabels[item.aiAnalysisStatus]}</span></div></div><div className="wrong-note-metrics"><strong>오답 {item.wrongCount}회</strong><span>{item.dueAt ? `복습 ${new Date(item.dueAt).toLocaleDateString('ko-KR')}` : '복습 일정 없음'}</span></div></article>)}</div>}
-      <div className="pagination"><button className="secondary-button" disabled={!query.data.page.hasPrevious} onClick={() => updatePage(Math.max(0, search.page - 1))}>이전</button><span>{search.page + 1} / {Math.max(1, query.data.page.totalPages)}</span><button className="secondary-button" disabled={!query.data.page.hasNext} onClick={() => updatePage(search.page + 1)}>다음</button></div>
+      </div>}
+      {query.data.items.length === 0 ? <div className="state-card wrong-note-empty"><span className="empty-state-icon" aria-hidden="true">↺</span><strong>{hasFilterSelection ? '조건에 맞는 오답 노트가 없습니다.' : '아직 오답 노트가 없습니다.'}</strong><span>{hasFilterSelection ? '필터를 조정하거나 전체 오답으로 돌아가 보세요.' : '문제를 제출하면 틀린 문제가 이곳에 쌓이고, 다음 복습 시점까지 이어집니다.'}</span>{!hasFilterSelection && <Link className="primary-button" to="/quiz" search={defaultQuizSearch}>문제 풀러 가기 <span aria-hidden="true">→</span></Link>}</div> : <div className="concept-list">{query.data.items.map((item) => <article className="concept-list-item wrong-note-list-item" key={item.questionId}><div className="concept-list-main"><h3><Link className="wrong-note-question-link" to="/wrong-notes/$questionId" params={{ questionId: String(item.questionId) }}>{compactMarkdownPreview(item.promptMarkdown)}</Link></h3><ConceptContext concepts={item.concepts} /><div className="chip-row concept-list-status"><span className="chip">{questionTypeLabels[item.questionType]}</span><span className="chip">{difficultyLabels[item.difficulty]}</span><span className={`chip state-badge state-${item.status.toLowerCase()}`}>{wrongNoteStatusLabels[item.status]}</span><span className={`chip state-badge ai-state-${item.aiAnalysisStatus.toLowerCase()}`}>{analysisLabels[item.aiAnalysisStatus]}</span></div></div><div className="wrong-note-metrics"><strong>오답 {item.wrongCount}회</strong><span>{item.dueAt ? `복습 ${new Date(item.dueAt).toLocaleDateString('ko-KR')}` : '복습 일정 없음'}</span></div></article>)}</div>}
+      {query.data.page.totalPages > 1 && <div className="pagination"><button className="secondary-button" disabled={!query.data.page.hasPrevious} onClick={() => updatePage(Math.max(0, search.page - 1))}>이전</button><span>{search.page + 1} / {query.data.page.totalPages}</span><button className="secondary-button" disabled={!query.data.page.hasNext} onClick={() => updatePage(search.page + 1)}>다음</button></div>}
     </section>
   )
 }
