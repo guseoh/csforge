@@ -121,6 +121,50 @@
   margin-bottom: 16px;
 }
 
+/* Curriculum navigation is supporting chrome. Keep it readable without competing with the page content. */
+.rail-back-link {
+  color: var(--text-muted);
+}
+
+.rail-back-link:hover {
+  color: var(--text-default);
+}
+
+.rail-topic {
+  align-items: flex-start;
+}
+
+.rail-topic.active {
+  background: var(--surface-elevated);
+}
+
+.rail-topic.active small,
+.rail-progress-label strong {
+  color: var(--text-default);
+}
+
+.rail-topic-title {
+  align-items: flex-start;
+}
+
+.rail-topic-title > span:last-child {
+  display: -webkit-box;
+  min-width: 0;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+  text-overflow: clip;
+  white-space: normal;
+  word-break: keep-all;
+}
+
+.rail-topic small,
+.rail-topic-number {
+  color: var(--text-faint);
+}
+
 .concept-rail-current {
   display: grid;
   gap: 8px;
@@ -186,7 +230,7 @@
 
 .rail-topic-disclosure > summary small {
   margin-left: auto;
-  color: #6f6677;
+  color: var(--text-faint);
   font-size: 0.68rem;
 }
 
