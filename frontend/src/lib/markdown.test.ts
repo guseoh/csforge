@@ -24,4 +24,8 @@ describe('compactMarkdownPreview', () => {
   it('replaces fenced code with a compact marker and truncates long text', () => {
     expect(compactMarkdownPreview('앞\n```java\nclass Example {}\n```\n뒤', 8)).toBe('앞 코드 블록…')
   })
+
+  it('keeps search highlight markers while removing Markdown emphasis', () => {
+    expect(compactMarkdownPreview('> **[[H]]학습[[/H]] 목표**를 확인합니다.')).toBe('[[H]]학습[[/H]] 목표를 확인합니다.')
+  })
 })
