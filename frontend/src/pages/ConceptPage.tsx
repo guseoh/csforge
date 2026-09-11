@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link, useParams } from '@tanstack/react-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { EmptyState, ErrorState, PageSkeleton } from '../components/AsyncStates'
+import { ConceptLearningRail } from '../components/ConceptLearningRail'
 import { MarkdownContent } from '../components/MarkdownContent'
 import { useToast } from '../components/toast/ToastProvider'
 import {
@@ -118,7 +119,7 @@ function ConceptContent({ data, conceptId }: { data: ConceptDetailModel; concept
   return (
     <>
       <header className="concept-header">
-        <p className="concept-kicker">{data.topic.title} · Java 학습 노트</p>
+        <p className="concept-kicker">{data.topic.title} · 학습 노트</p>
         <div className="chip-row">
           <span className="chip topic-chip">{data.area.name}</span>
           <span className="chip">레벨 {data.level}</span>
@@ -130,9 +131,9 @@ function ConceptContent({ data, conceptId }: { data: ConceptDetailModel; concept
       </header>
 
       <div className="concept-actions" aria-label="개념 학습 동작">
-        <ProgressActionButton conceptId={conceptId} status="COMPLETED" label="완료로 표시" />
+        <ProgressActionButton conceptId={conceptId} status="COMPLETED" label="학습 완료" />
         <ProgressActionButton conceptId={conceptId} status="REVIEW_NEEDED" label="복습 필요" secondary />
-        <Link className="secondary-button" to="/quiz" search={{ ...defaultQuizSearch, areas: data.area.slug, concepts: String(conceptId) }}>이 개념 퀴즈</Link>
+        <Link className="secondary-button" to="/quiz" search={{ ...defaultQuizSearch, areas: data.area.slug, concepts: String(conceptId) }}>이 개념 문제 풀기</Link>
         <BookmarkButton conceptId={conceptId} bookmarked={data.progress.bookmarked} />
       </div>
 
@@ -140,9 +141,12 @@ function ConceptContent({ data, conceptId }: { data: ConceptDetailModel; concept
         <MarkdownContent dedupeLeadingHeading={data.title}>{data.contentMarkdown}</MarkdownContent>
       </article>
 
-      <section className="detail-section">
+      <section className="detail-section personal-note-section">
         <div className="section-heading">
-          <p className="eyebrow">개인 노트</p>
+          <div>
+            <p className="eyebrow">내 학습 기록</p>
+            <h2>개인 노트</h2>
+          </div>
           <span className={`save-state ${noteState}`} role="status">
             {noteState === 'saving' ? '저장 중' : noteState === 'error' ? '저장 실패' : '저장됨'}
           </span>
@@ -151,18 +155,21 @@ function ConceptContent({ data, conceptId }: { data: ConceptDetailModel; concept
           className="note-editor"
           value={noteContent}
           aria-label="개인 노트"
-          placeholder="이 개념에서 기억하고 싶은 내용을 적어보세요."
+          placeholder="헷갈린 점, 다시 볼 이유, 내 말로 정리한 내용을 남겨보세요."
           onChange={(event) => queueNoteSave(event.target.value)}
         />
         {noteState === 'error' && (
           <button className="text-button" type="button" onClick={flushNote}>다시 저장</button>
         )}
-        <p className="helper-text">입력 후 0.8초 뒤 자동 저장됩니다. Ctrl/Cmd+S로 즉시 저장할 수 있습니다.</p>
+        <p className="helper-text">입력 후 0.8초 뒤 자동 저장 · Ctrl/Cmd+S 즉시 저장</p>
       </section>
 
-      <section className="detail-section">
+      <section className="detail-section reference-section">
         <div className="section-heading">
-          <p className="eyebrow">함께 볼 자료</p>
+          <div>
+            <p className="eyebrow">더 깊게 보기</p>
+            <h2>함께 볼 자료</h2>
+          </div>
           <span className="result-count">{data.references.length}</span>
         </div>
         {data.references.length === 0 ? <EmptyState message="등록된 참고 자료가 없습니다." /> : (
@@ -172,6 +179,7 @@ function ConceptContent({ data, conceptId }: { data: ConceptDetailModel; concept
                 <div>
                   <strong>{reference.title}</strong>
                   <span>{referenceTypeLabels[reference.type]}{reference.language ? ` · ${reference.language}` : ''}{reference.depth ? ` · ${reference.depth}` : ''}</span>
+                  {reference.relationNote && <small>{reference.relationNote}</small>}
                 </div>
                 <span className="external-icon" aria-hidden="true">↗</span>
               </a>
@@ -189,7 +197,7 @@ function ConceptContent({ data, conceptId }: { data: ConceptDetailModel; concept
         {data.relatedConcepts.length > 0 && (
           <div className="concept-related-list">
             <p className="eyebrow">이 주제의 관련 개념</p>
-            {data.relatedConcepts.map((related) => <Link key={related.id} to="/concepts/$conceptId" params={{ conceptId: String(related.id) }}>{related.title} <span>L{related.level}</span></Link>)}
+            {data.relatedConcepts.map((related) => <Link key={related.id} to="/concepts/$conceptId" params={{ conceptId: String(related.id) }}>{related.title} <span>레벨 {related.level}</span></Link>)}
           </div>
         )}
       </section>
@@ -279,6 +287,8 @@ export function ConceptPage() {
 
   const data = conceptQuery.data
   return (
+    <div className="concept-workspace">
+      <ConceptLearningRail concept={data} />
       <section className="page-section concept-page">
         <nav className="breadcrumb" aria-label="현재 학습 위치">
           <Link to="/learning" search={defaultLearningSearch}>학습</Link>
@@ -289,5 +299,6 @@ export function ConceptPage() {
         </nav>
         <ConceptContent data={data} conceptId={conceptId} />
       </section>
+    </div>
   )
 }
