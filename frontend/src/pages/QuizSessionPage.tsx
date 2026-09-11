@@ -140,8 +140,8 @@ export function QuizSessionPage() {
         <strong>현재 문제 {position + 1} / {session.questions.length}</strong>
         <span>답변 {answeredCount} / {session.questions.length}</span>
       </div>
-      <div className="quiz-progress quiz-focus-progress" aria-label={`현재 문제 ${position + 1}/${session.questions.length}`}>
-        <span style={{ width: `${((position + 1) / session.questions.length) * 100}%` }} />
+      <div className="quiz-progress quiz-focus-progress" aria-label={`답변 진행률 ${answeredCount}/${session.questions.length}`}>
+        <span style={{ width: `${(answeredCount / session.questions.length) * 100}%` }} />
       </div>
 
       <article className="quiz-question-card quiz-focus-card">
