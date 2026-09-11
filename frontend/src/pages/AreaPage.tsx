@@ -70,7 +70,7 @@ export function AreaPage() {
 
   return (
     <div className="area-workspace">
-      <AreaLearningRail area={area} />
+      <AreaLearningRail area={area} filterMode={hasActiveFilters} />
       <section className="page-section area-guide-page">
         <nav className="breadcrumb" aria-label="탐색 경로">
           <Link to="/learning" search={defaultLearningSearch}>학습</Link>
