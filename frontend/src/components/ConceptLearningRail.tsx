@@ -1,0 +1,109 @@
+import { Link } from '@tanstack/react-router'
+import { useQueries, useQuery } from '@tanstack/react-query'
+import {
+  getConcepts,
+  getLearningArea,
+  type ConceptDetail,
+  type LearningStatus,
+} from '../lib/learning-api'
+import { defaultLearningSearch } from '../lib/learning-search'
+
+const learningStatusLabels: Record<LearningStatus, string> = {
+  UNSEEN: '미학습',
+  LEARNING: '학습 중',
+  COMPLETED: '완료',
+  REVIEW_NEEDED: '복습 필요',
+}
+
+function completionPercent(completed: number, total: number) {
+  return total === 0 ? 0 : Math.round((completed / total) * 100)
+}
+
+export function ConceptLearningRail({ concept }: { concept: ConceptDetail }) {
+  const areaQuery = useQuery({
+    queryKey: ['learning-area', concept.area.slug],
+    queryFn: () => getLearningArea(concept.area.slug),
+  })
+  const outlineQueries = useQueries({
+    queries: [0, 1].map((page) => ({
+      queryKey: ['learning-outline', concept.area.slug, page],
+      queryFn: () => getConcepts({ area: concept.area.slug, page, size: 100, sort: 'curriculum' }),
+    })),
+  })
+
+  const topics = areaQuery.data?.topics ?? []
+  const outlineConcepts = outlineQueries.flatMap((query) => query.data?.items ?? [])
+  const currentTopicConcepts = outlineConcepts.filter((item) => item.topicId === concept.topic.id)
+  const totalConcepts = topics.reduce((total, topic) => total + topic.publishedConceptCount, 0)
+  const completedConcepts = topics.reduce((total, topic) => total + topic.completedConceptCount, 0)
+  const progress = completionPercent(completedConcepts, totalConcepts)
+  const loadingOutline = areaQuery.isPending || outlineQueries.some((query) => query.isPending)
+
+  return (
+    <aside className="learning-rail" aria-label={`${concept.area.name} 학습 목차`}>
+      <Link
+        className="rail-back-link"
+        to="/learning/$areaSlug"
+        params={{ areaSlug: concept.area.slug }}
+        search={defaultLearningSearch}
+      >
+        ← {concept.area.name} 가이드
+      </Link>
+
+      <p className="rail-kicker">학습 가이드</p>
+      <h2>{concept.area.name}</h2>
+
+      <div className="rail-progress">
+        <div className="rail-progress-label">
+          <span>전체 진행률</span>
+          <strong>{progress}%</strong>
+        </div>
+        <div className="progress-track" aria-hidden="true">
+          <span style={{ width: `${progress}%` }} />
+        </div>
+      </div>
+
+      <nav aria-label="학습 주제">
+        <p className="rail-section-title">주제</p>
+        <div className="rail-topic-list">
+          {topics.map((topic, index) => (
+            <Link
+              className={`rail-topic${topic.id === concept.topic.id ? ' active' : ''}`}
+              key={topic.id}
+              to="/learning/$areaSlug"
+              params={{ areaSlug: concept.area.slug }}
+              search={{ ...defaultLearningSearch, topic: topic.id }}
+            >
+              <span>{String(index + 1).padStart(2, '0')} · {topic.title}</span>
+              <small>{topic.completedConceptCount}/{topic.publishedConceptCount}</small>
+            </Link>
+          ))}
+        </div>
+      </nav>
+
+      <div className="rail-section-title-row">
+        <p className="rail-section-title">현재 주제</p>
+        <span className="rail-muted">{currentTopicConcepts.length}개</span>
+      </div>
+      <nav className="rail-concept-list" aria-label={`${concept.topic.title} 개념`}>
+        {loadingOutline && currentTopicConcepts.length === 0 ? (
+          <span className="rail-muted">개념 목록 불러오는 중…</span>
+        ) : currentTopicConcepts.map((item, index) => (
+          <Link
+            className={`rail-concept${item.id === concept.id ? ' active' : ''}`}
+            key={item.id}
+            to="/concepts/$conceptId"
+            params={{ conceptId: String(item.id) }}
+            aria-current={item.id === concept.id ? 'page' : undefined}
+          >
+            <span className="rail-concept-index">{String(index + 1).padStart(2, '0')}</span>
+            <span className="rail-concept-title">{item.title}</span>
+            <span className={`rail-status status-${item.learningStatus.toLowerCase()}`} title={learningStatusLabels[item.learningStatus]}>
+              {item.learningStatus === 'COMPLETED' ? '✓' : item.learningStatus === 'REVIEW_NEEDED' ? '!' : item.learningStatus === 'LEARNING' ? '•' : ''}
+            </span>
+          </Link>
+        ))}
+      </nav>
+    </aside>
+  )
+}
