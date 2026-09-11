@@ -1,7 +1,7 @@
 import { useId } from 'react'
-import { Link } from '@tanstack/react-router'
+import { Link, useSearch } from '@tanstack/react-router'
 import type { AreaDetail } from '../lib/learning-api'
-import { defaultLearningSearch, learningSearchForTopic, type LearningSearch } from '../lib/learning-search'
+import { defaultLearningSearch, learningSearchForTopic } from '../lib/learning-search'
 import { useLearningRailCollapsed } from './useLearningRailCollapsed'
 
 function completionPercent(completed: number, total: number) {
@@ -11,7 +11,6 @@ function completionPercent(completed: number, total: number) {
 interface AreaLearningRailProps {
   area: AreaDetail
   filterMode?: boolean
-  filterSearch?: LearningSearch
   activeTopicId?: number
   onTopicSelect?: (topicId: number) => void
 }
@@ -19,10 +18,10 @@ interface AreaLearningRailProps {
 export function AreaLearningRail({
   area,
   filterMode = false,
-  filterSearch,
   activeTopicId,
   onTopicSelect,
 }: AreaLearningRailProps) {
+  const filterSearch = useSearch({ from: '/learning/$areaSlug' })
   const { collapsed, toggleCollapsed } = useLearningRailCollapsed()
   const railContentId = useId()
   const totalConcepts = area.topics.reduce((total, topic) => total + topic.publishedConceptCount, 0)
@@ -96,7 +95,7 @@ export function AreaLearningRail({
                     key={topic.id}
                     to="/learning/$areaSlug"
                     params={{ areaSlug: area.slug }}
-                    search={learningSearchForTopic(filterSearch ?? defaultLearningSearch, topic.id)}
+                    search={learningSearchForTopic(filterSearch, topic.id)}
                     aria-current={active ? 'page' : undefined}
                   >
                     {label}
