@@ -8,6 +8,24 @@ import { defaultLearningSearch } from '../lib/learning-search'
 import { defaultQuizSearch } from '../lib/quiz-search'
 import { defaultWrongNoteSearch } from '../lib/wrong-note-search'
 
+const areaGlyphs: Record<string, string> = {
+  'computer-architecture': '▦',
+  'data-structures-algorithms': '</>',
+  'operating-systems': '▣',
+  'network-http': '◎',
+  database: '▤',
+  java: '☕',
+  spring: '✦',
+  'backend-engineering': '⌘',
+  cache: '◉',
+  'messaging-async': '↗',
+  'infrastructure-cloud': '◇',
+  'performance-observability-operations': '◒',
+  'distributed-systems': '⌘',
+  'system-design': '▱',
+  security: '◆',
+}
+
 function percent(value: number) {
   return `${Math.round(value)}%`
 }
@@ -64,6 +82,9 @@ export function DashboardPage() {
       : hasActivity
         ? '최근 흐름을 이어가거나 다른 학습 영역을 선택할 수 있습니다.'
         : '개념을 읽고 문제로 확인한 뒤, 틀린 내용은 오답 노트와 복습으로 이어집니다.'
+  const progressedAreas = dashboard.areaProgress.filter((area) => area.completedConceptCount > 0)
+  const untouchedAreas = dashboard.areaProgress.filter((area) => area.completedConceptCount === 0)
+  const featuredAreas = [...progressedAreas, ...untouchedAreas].slice(0, 6)
 
   return (
     <section className="page-section dashboard-page">
@@ -93,15 +114,24 @@ export function DashboardPage() {
 
       {!hasActivity && <div className="dashboard-empty"><strong>첫 학습 기록을 만들어 보세요.</strong><span>개념을 읽거나 문제를 풀면 오늘의 활동과 진행률이 이곳에 쌓입니다.</span><CanonicalBootstrapCard readyAction="learning-link" /></div>}
 
-      <section className="dashboard-section">
-        <div className="section-heading"><div><p className="eyebrow">커리큘럼 진행률</p><h2>학습 영역별 진행률</h2></div><Link className="text-link" to="/learning" search={defaultLearningSearch}>전체 보기 →</Link></div>
-        <div className="dashboard-area-grid">
-          {dashboard.areaProgress.map((area) => <Link className="dashboard-area-card" key={area.areaSlug} to="/learning/$areaSlug" params={{ areaSlug: area.areaSlug }} search={defaultLearningSearch}>
-            <div className="card-heading"><strong>{area.areaName}</strong><span>{percent(area.completionPercent)}</span></div>
-            <p>{area.completedConceptCount}/{area.publishedConceptCount}개 개념 완료</p>
-            <div className="dashboard-progress-track"><span style={{ width: `${Math.min(100, area.completionPercent)}%` }} /></div>
-            <div className="dashboard-levels">{area.levels.map((level) => <span key={level.level}>L{level.level} {level.completed}/{level.total}</span>)}</div>
-          </Link>)}
+      <section className="dashboard-section dashboard-area-section">
+        <div className="section-heading">
+          <div><p className="eyebrow">커리큘럼</p><h2>진행 중인 학습 영역</h2></div>
+          <Link className="text-link" to="/learning" search={defaultLearningSearch}>전체 15개 영역 보기 →</Link>
+        </div>
+        <p className="dashboard-section-copy">진행한 영역을 먼저 보여주고, 남는 자리는 다음 학습 영역으로 채웁니다.</p>
+        <div className="dashboard-area-grid dashboard-area-grid-compact">
+          {featuredAreas.map((area) => (
+            <Link className="dashboard-area-card dashboard-area-card-compact" key={area.areaSlug} to="/learning/$areaSlug" params={{ areaSlug: area.areaSlug }} search={defaultLearningSearch}>
+              <span className="dashboard-area-icon" aria-hidden="true">{areaGlyphs[area.areaSlug] ?? '✦'}</span>
+              <span className="dashboard-area-copy">
+                <span className="dashboard-area-title-row"><strong>{area.areaName}</strong><b>{percent(area.completionPercent)}</b></span>
+                <span className="dashboard-area-progress-copy">{area.completedConceptCount}/{area.publishedConceptCount}개 개념 완료</span>
+                <span className="dashboard-progress-track" aria-hidden="true"><span style={{ width: `${Math.min(100, area.completionPercent)}%` }} /></span>
+              </span>
+              <span className="dashboard-area-arrow" aria-hidden="true">→</span>
+            </Link>
+          ))}
         </div>
       </section>
 
