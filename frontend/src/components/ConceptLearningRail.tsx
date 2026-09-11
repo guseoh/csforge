@@ -1,5 +1,5 @@
 import { Link } from '@tanstack/react-router'
-import { useQueries, useQuery } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import {
   getConcepts,
   getLearningArea,
@@ -24,20 +24,23 @@ export function ConceptLearningRail({ concept }: { concept: ConceptDetail }) {
     queryKey: ['learning-area', concept.area.slug],
     queryFn: () => getLearningArea(concept.area.slug),
   })
-  const outlineQueries = useQueries({
-    queries: [0, 1].map((page) => ({
-      queryKey: ['learning-outline', concept.area.slug, page],
-      queryFn: () => getConcepts({ area: concept.area.slug, page, size: 100, sort: 'curriculum' }),
-    })),
+  const topicConceptsQuery = useQuery({
+    queryKey: ['learning-outline-topic', concept.topic.id],
+    queryFn: () => getConcepts({
+      area: concept.area.slug,
+      topic: concept.topic.id,
+      page: 0,
+      size: 100,
+      sort: 'curriculum',
+    }),
   })
 
   const topics = areaQuery.data?.topics ?? []
-  const outlineConcepts = outlineQueries.flatMap((query) => query.data?.items ?? [])
-  const currentTopicConcepts = outlineConcepts.filter((item) => item.topicId === concept.topic.id)
+  const currentTopicConcepts = topicConceptsQuery.data?.items ?? []
   const totalConcepts = topics.reduce((total, topic) => total + topic.publishedConceptCount, 0)
   const completedConcepts = topics.reduce((total, topic) => total + topic.completedConceptCount, 0)
   const progress = completionPercent(completedConcepts, totalConcepts)
-  const loadingOutline = areaQuery.isPending || outlineQueries.some((query) => query.isPending)
+  const loadingOutline = areaQuery.isPending || topicConceptsQuery.isPending
 
   return (
     <aside className="learning-rail" aria-label={`${concept.area.name} 학습 목차`}>
