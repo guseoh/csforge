@@ -1,21 +1,24 @@
 :root {
-  --color-page: #0e1213;
-  --surface-page: #141a1b;
-  --surface-elevated: #1a2223;
-  --surface-interactive: #202b2b;
-  --surface-selected: #263735;
-  --border-subtle: #293435;
-  --border-default: #3a4848;
-  --border-strong: #58706b;
-  --text-strong: #edf2f0;
-  --text-default: #c4cfcc;
-  --text-muted: #899795;
-  --text-faint: #657572;
-  --accent: #9bc6b7;
-  --accent-strong: #c0ddd3;
-  --state-success: #8bc9ae;
-  --state-warning: #d7b26d;
-  --state-error: #df9298;
+  --color-page: #080b10;
+  --surface-page: #0e131a;
+  --surface-elevated: #141b24;
+  --surface-interactive: #1b2838;
+  --surface-selected: #183b60;
+  --surface-accent: #10253e;
+  --border-subtle: #263442;
+  --border-default: #3a5065;
+  --border-strong: #557492;
+  --border-accent: #3c73a6;
+  --text-strong: #f4f7fb;
+  --text-default: #c9d4df;
+  --text-muted: #92a1b2;
+  --text-faint: #6d7d8d;
+  --accent: #4ea1ff;
+  --accent-strong: #8cc6ff;
+  --accent-contrast: #07111d;
+  --state-success: #77c8ff;
+  --state-warning: #f0c36f;
+  --state-error: #ff8fa4;
   color: var(--text-strong);
   background: var(--color-page);
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -77,7 +80,7 @@ a {
   height: 60px;
   padding: 0 28px;
   border-bottom: 1px solid var(--border-subtle);
-  background: #111617;
+  background: var(--surface-page);
 }
 
 .brand {
@@ -96,7 +99,7 @@ a {
   height: 26px;
   place-items: center;
   border-radius: 5px;
-  color: #0d1513;
+  color: var(--accent-contrast);
   background: var(--accent);
   font-size: 0.68rem;
   font-weight: 800;
@@ -157,8 +160,8 @@ a {
 
 .sidebar {
   padding: 28px 16px;
-  border-right: 1px solid #242936;
-  background: #131720;
+  border-right: 1px solid var(--border-subtle);
+  background: var(--surface-page);
 }
 
 .eyebrow {
@@ -178,14 +181,14 @@ nav {
 .nav-link {
   padding: 10px 12px;
   border-radius: 8px;
-  color: #9da7bb;
+  color: var(--text-muted);
   transition: background 120ms ease, color 120ms ease;
 }
 
 .nav-link:hover,
 .nav-link.active {
-  background: #222a3a;
-  color: #f3f6ff;
+  background: var(--surface-interactive);
+  color: var(--text-strong);
 }
 
 .main-content {
@@ -233,18 +236,18 @@ h1 {
   display: grid;
   gap: 8px;
   padding: 16px;
-  border: 1px solid #303a50;
+  border: 1px solid var(--border-subtle);
   border-radius: 12px;
-  background: #171d2a;
+  background: var(--surface-elevated);
 }
 
 .status-label {
-  color: #8793ad;
+  color: var(--text-muted);
   font-size: 0.78rem;
 }
 
 .status-card strong {
-  color: #dce5f8;
+  color: var(--text-default);
   font-size: 0.95rem;
   font-weight: 600;
 }
@@ -252,9 +255,9 @@ h1 {
 .route-message {
   width: min(720px, 100%);
   padding: 24px;
-  border: 1px solid #2a3243;
+  border: 1px solid var(--border-subtle);
   border-radius: 12px;
-  color: #c4cce0;
+  color: var(--text-default);
 }
 
 .route-message.error {
@@ -470,7 +473,7 @@ textarea {
   border-radius: 7px;
   outline: none;
   color: var(--text-strong);
-  background: #111819;
+  background: var(--color-page);
 }
 
 input,
@@ -490,7 +493,7 @@ input:focus,
 select:focus,
 textarea:focus {
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgb(155 198 183 / 12%);
+  box-shadow: 0 0 0 3px rgb(78 161 255 / 18%);
 }
 
 .checkbox-label {
@@ -626,62 +629,62 @@ textarea:focus {
 .state-active,
 .ai-state-completed,
 .status-scheduled {
-  border-color: #356b5a;
-  color: var(--state-success);
+  border-color: var(--border-accent);
+  color: var(--accent-strong);
 }
 
 .state-mastered,
 .review-timing-mastered {
-  border-color: #53607a;
-  color: #b3c0d9;
+  border-color: var(--border-strong);
+  color: var(--text-default);
 }
 
 .ai-state-pending,
 .ai-state-processing {
-  border-color: #665b34;
+  border-color: #806a3b;
   color: var(--state-warning);
 }
 
 .ai-state-failed,
 .review-timing-overdue {
-  border-color: #734451;
+  border-color: #8e4658;
   color: var(--state-error);
 }
 
 .review-timing-due {
-  border-color: #74533d;
-  color: #f1b278;
+  border-color: #856438;
+  color: var(--state-warning);
 }
 
 .review-timing-next24,
 .review-timing-next7 {
-  border-color: #465b8e;
-  color: var(--accent);
+  border-color: var(--border-accent);
+  color: var(--accent-strong);
 }
 
 .review-timing-scheduled {
-  border-color: #53617b;
+  border-color: var(--border-strong);
   color: var(--text-muted);
 }
 
 .status-completed {
-  border-color: #356b5a;
-  color: #7ed2ad;
+  border-color: var(--border-accent);
+  color: var(--state-success);
 }
 
 .status-learning {
-  border-color: #465b8e;
-  color: #9fb5ff;
+  border-color: var(--border-accent);
+  color: var(--accent-strong);
 }
 
 .status-review_needed {
-  border-color: #74533d;
-  color: #f1b278;
+  border-color: #856438;
+  color: var(--state-warning);
 }
 
 .bookmark-chip {
-  border-color: #76632d;
-  color: #f2d36f;
+  border-color: #856438;
+  color: var(--state-warning);
 }
 
 .pagination {
@@ -709,7 +712,7 @@ textarea:focus {
 
 .primary-button {
   border: 1px solid var(--accent);
-  color: #0d1513;
+  color: var(--accent-contrast);
   background: var(--accent);
 }
 
@@ -807,7 +810,7 @@ textarea:focus {
 }
 
 .markdown-content a {
-  color: #9fb5ff;
+  color: var(--accent-strong);
   text-decoration: underline;
 }
 
@@ -916,9 +919,9 @@ textarea:focus {
   font-size: 0.78rem;
 }
 
-.save-state.saved { color: #7ed2ad; }
-.save-state.saving { color: #f1d178; }
-.save-state.error { color: #ff9caf; }
+.save-state.saved { color: var(--state-success); }
+.save-state.saving { color: var(--state-warning); }
+.save-state.error { color: var(--state-error); }
 
 .note-editor {
   margin-top: 12px;

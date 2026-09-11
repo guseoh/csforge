@@ -15,7 +15,7 @@
   gap: 10px 16px;
   margin-bottom: 28px;
   padding: 12px 0 18px;
-  border-bottom: 1px solid #2d2438;
+  border-bottom: 1px solid var(--border-subtle);
 }
 
 .search-filter-cluster {
@@ -42,10 +42,10 @@
 .search-reset-button,
 .search-area-picker > summary {
   min-height: 38px;
-  border: 1px solid #443454;
+  border: 1px solid var(--border-default);
   border-radius: 9px;
-  color: #b9afc0;
-  background: #18141d;
+  color: var(--text-default);
+  background: var(--surface-page);
   font: inherit;
   font-size: 0.78rem;
 }
@@ -57,16 +57,16 @@
 .search-filter-chip:hover,
 .search-filter-chip:focus-visible,
 .search-area-picker > summary:hover {
-  border-color: #7553a0;
-  color: #eee6f4;
-  background: #21192a;
+  border-color: var(--border-accent);
+  color: var(--text-strong);
+  background: var(--surface-interactive);
 }
 
 .search-filter-chip.active {
-  border-color: #8f62cf;
-  color: #f5edfb;
-  background: #2a1c3a;
-  box-shadow: inset 0 0 0 1px rgb(143 98 207 / 18%);
+  border-color: var(--accent);
+  color: var(--text-strong);
+  background: var(--surface-selected);
+  box-shadow: inset 0 0 0 1px rgb(78 161 255 / 18%);
 }
 
 .search-area-picker {
@@ -89,13 +89,13 @@
 }
 
 .search-area-picker > summary strong {
-  color: #c7a9f4;
+  color: var(--accent-strong);
   font-size: 0.72rem;
 }
 
 .search-area-picker[open] > summary {
-  border-color: #8f62cf;
-  background: #24182f;
+  border-color: var(--accent);
+  background: var(--surface-accent);
 }
 
 .search-area-picker-menu {
@@ -109,9 +109,9 @@
   overflow-y: auto;
   gap: 4px;
   padding: 12px;
-  border: 1px solid #49375b;
+  border: 1px solid var(--border-default);
   border-radius: 12px;
-  background: #151119;
+  background: var(--surface-elevated);
   box-shadow: 0 24px 64px rgb(0 0 0 / 40%);
 }
 
@@ -132,7 +132,7 @@
 .search-area-picker-heading button {
   padding: 0;
   border: 0;
-  color: #b795df;
+  color: var(--accent-strong);
   background: transparent;
   font-size: 0.72rem;
 }
@@ -160,8 +160,8 @@
 
 .search-area-option.active,
 .search-topic-options label.active {
-  color: #f2eaf7;
-  background: #291d35;
+  color: var(--text-strong);
+  background: var(--surface-accent);
 }
 
 .search-area-option input,
@@ -178,14 +178,14 @@
 
 .search-area-option input:checked,
 .search-topic-options input:checked {
-  border-color: #9b6cff;
-  background: #9b6cff;
-  box-shadow: inset 0 0 0 4px #21172b;
+  border-color: var(--accent);
+  background: var(--accent);
+  box-shadow: inset 0 0 0 4px var(--surface-accent);
 }
 
 .search-area-option input:focus-visible,
 .search-topic-options input:focus-visible {
-  outline: 2px solid #a77cff;
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
 
@@ -196,7 +196,7 @@
 }
 
 .search-reset-button:hover {
-  border-color: #8f62cf;
+  border-color: var(--accent);
   background: #24182f;
 }
 

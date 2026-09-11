@@ -164,6 +164,12 @@ export function QuizSetupPage() {
     onSuccess: (quiz) => void navigate({ to: '/quiz/$quizId', params: { quizId: String(quiz.quizId) } }),
   })
 
+  const navigateToSettings = (nextSearch: QuizSearch) => void navigate({
+    search: nextSearch,
+    replace: true,
+    resetScroll: false,
+  })
+
   useEffect(() => {
     document.title = '문제 풀기 · CSForge'
     return () => { document.title = 'CSForge' }
@@ -180,7 +186,7 @@ export function QuizSetupPage() {
     if (isDefaultQuizSearch(rememberedSearch)) return
 
     applyingRememberedRef.current = true
-    void navigate({ search: rememberedSearch, replace: true }).finally(() => {
+    void navigate({ search: rememberedSearch, replace: true, resetScroll: false }).finally(() => {
       applyingRememberedRef.current = false
     })
   }, [location.searchStr, navigate, search])
@@ -201,7 +207,7 @@ export function QuizSetupPage() {
 
   const update = <K extends keyof QuizSetupPayload>(key: K, value: QuizSetupPayload[K]) => {
     const next = { ...settings, [key]: value }
-    void navigate({ search: searchFromSettings(next), replace: true })
+    navigateToSettings(searchFromSettings(next))
   }
   const questionCountAvailable = availabilityQuery.data?.availableCount
   const availabilityState = quizAvailabilityState(questionCountAvailable, settings.count, availabilityQuery.isPending, availabilityQuery.isError)
@@ -252,13 +258,13 @@ export function QuizSetupPage() {
           <span>기본 10문제 조건을 빠르게 선택합니다.</span>
         </div>
         <div className="quiz-quick-presets" aria-label="빠른 문제 조건">
-          <button type="button" className={`secondary-button quiz-preset-button${selectedPreset === 'NEW' ? ' selected' : ''}`} aria-pressed={selectedPreset === 'NEW'} onClick={() => void navigate({ search: quizSearchForPreset('NEW'), replace: true })}>
+          <button type="button" className={`secondary-button quiz-preset-button${selectedPreset === 'NEW' ? ' selected' : ''}`} aria-pressed={selectedPreset === 'NEW'} onClick={() => navigateToSettings(quizSearchForPreset('NEW'))}>
             <strong>새 문제</strong><small>아직 안 푼 문제</small>
           </button>
-          <button type="button" className={`secondary-button quiz-preset-button${selectedPreset === 'WRONG' ? ' selected' : ''}`} aria-pressed={selectedPreset === 'WRONG'} onClick={() => void navigate({ search: quizSearchForPreset('WRONG'), replace: true })}>
+          <button type="button" className={`secondary-button quiz-preset-button${selectedPreset === 'WRONG' ? ' selected' : ''}`} aria-pressed={selectedPreset === 'WRONG'} onClick={() => navigateToSettings(quizSearchForPreset('WRONG'))}>
             <strong>오답 문제</strong><small>틀린 문제 다시 풀기</small>
           </button>
-          <button type="button" className={`secondary-button quiz-preset-button${selectedPreset === 'ALL' ? ' selected' : ''}`} aria-pressed={selectedPreset === 'ALL'} onClick={() => void navigate({ search: quizSearchForPreset('ALL'), replace: true })}>
+          <button type="button" className={`secondary-button quiz-preset-button${selectedPreset === 'ALL' ? ' selected' : ''}`} aria-pressed={selectedPreset === 'ALL'} onClick={() => navigateToSettings(quizSearchForPreset('ALL'))}>
             <strong>전체 문제</strong><small>전체에서 무작위 연습</small>
           </button>
         </div>
@@ -373,7 +379,7 @@ export function QuizSetupPage() {
             >
               {createMutation.isPending ? '문제 준비 중…' : `${settings.count}문제 시작`}
             </button>
-            <button className="text-button" type="button" onClick={() => void navigate({ search: quizSearchForPreset('DEFAULT'), replace: true })}>기본값으로 초기화</button>
+            <button className="text-button" type="button" onClick={() => navigateToSettings(quizSearchForPreset('DEFAULT'))}>기본값으로 초기화</button>
           </div>
         </div>
       </details>

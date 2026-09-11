@@ -63,13 +63,13 @@
 }
 
 .concept-learning-rail .rail-concept:hover {
-  background: #18151e;
-  color: #d2cad7;
+  background: var(--surface-interactive);
+  color: var(--text-default);
 }
 
 .concept-learning-rail .rail-concept.active {
-  background: #241a30;
-  color: #f2ebf7;
+  background: var(--surface-accent);
+  color: var(--text-strong);
   box-shadow: none;
 }
 
@@ -80,7 +80,7 @@
   left: 0;
   width: 3px;
   border-radius: 999px;
-  background: #9b6cff;
+  background: var(--accent);
   content: '';
 }
 
@@ -104,7 +104,7 @@
 }
 
 .concept-learning-rail .rail-status.status-completed {
-  color: #62c98b;
+  color: var(--state-success);
 }
 
 .concept-learning-rail .rail-status.status-review_needed {
@@ -112,7 +112,7 @@
 }
 
 .concept-learning-rail .rail-status.status-learning {
-  color: #b28dff;
+  color: var(--accent-strong);
 }
 
 .concept-page .breadcrumb {
@@ -134,18 +134,18 @@
 .concept-page .concept-header h1 {
   max-width: 780px;
   margin-top: 19px;
-  color: #fbf8fd;
-  font-size: clamp(2.45rem, 3.25vw, 3.2rem);
-  letter-spacing: -0.05em;
-  line-height: 1.12;
+  color: var(--text-strong);
+  font-size: clamp(2.15rem, 3.25vw, 2.8rem);
+  letter-spacing: -0.04em;
+  line-height: 1.16;
 }
 
 .concept-page .lead {
   max-width: 740px;
   margin-top: 18px;
-  color: #b2aab8;
-  font-size: 1.04rem;
-  line-height: 1.78;
+  color: var(--text-muted);
+  font-size: 1rem;
+  line-height: 1.82;
 }
 
 .concept-actions {
@@ -153,7 +153,7 @@
   gap: 9px;
   margin: 0 0 46px;
   padding: 14px 0 18px;
-  border-bottom: 1px solid #28232d;
+  border-bottom: 1px solid var(--border-subtle);
 }
 
 .concept-actions .primary-button,
@@ -164,8 +164,8 @@
 }
 
 .concept-reading-content .markdown-content {
-  color: #d5ceda;
-  font-size: 1.0625rem;
+  color: var(--text-default);
+  font-size: 1rem;
   line-height: 1.86;
   word-break: keep-all;
 }
@@ -180,19 +180,19 @@
 .concept-reading-content h2 {
   margin-top: 54px;
   margin-bottom: 20px;
-  color: #f5f0f7;
-  font-size: 1.65rem;
-  letter-spacing: -0.025em;
-  line-height: 1.35;
+  color: var(--text-strong);
+  font-size: 1.55rem;
+  letter-spacing: -0.02em;
+  line-height: 1.4;
 }
 
 .concept-reading-content h3 {
   margin-top: 39px;
   margin-bottom: 16px;
-  color: #eee8f1;
-  font-size: 1.28rem;
-  letter-spacing: -0.015em;
-  line-height: 1.42;
+  color: var(--text-strong);
+  font-size: 1.15rem;
+  letter-spacing: -0.01em;
+  line-height: 1.5;
 }
 
 .concept-reading-content p,
@@ -206,25 +206,27 @@
 }
 
 .concept-reading-content strong {
-  color: #eee9f1;
+  color: var(--text-strong);
   font-weight: 700;
 }
 
 .concept-reading-content blockquote {
   margin: 32px 0 38px;
   padding: 20px 22px;
+  border: 1px solid var(--border-accent);
   border-left-width: 3px;
-  background: #191420;
-  color: #c8c0ce;
+  border-left-color: var(--accent);
+  background: var(--surface-accent);
+  color: var(--text-default);
   line-height: 1.78;
 }
 
 .concept-reading-content pre {
   margin: 28px 0 34px;
   padding: 20px 22px;
-  border-color: #332d3a;
+  border-color: var(--border-subtle);
   border-radius: 10px;
-  background: #100e14;
+  background: var(--color-page);
   font-size: 0.93rem;
   line-height: 1.68;
 }
@@ -329,8 +331,8 @@
 }
 
 .concept-toc a.active {
-  background: #201827;
-  color: #d9cdf0;
+  background: var(--surface-accent);
+  color: var(--accent-strong);
 }
 
 .concept-toc a.active::before {
@@ -339,7 +341,7 @@
   bottom: 8px;
   left: -19px;
   width: 2px;
-  background: #9b6cff;
+  background: var(--accent);
   content: '';
 }
 

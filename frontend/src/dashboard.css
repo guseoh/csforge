@@ -346,8 +346,8 @@
   background: #293435;
 }
 
-.heatmap-cell.level-1 { background: #4c625d; }
-.heatmap-cell.level-2 { background: #74988c; }
+.heatmap-cell.level-1 { background: #294967; }
+.heatmap-cell.level-2 { background: #3971a1; }
 .heatmap-cell.level-3 { background: var(--accent); }
 
 .heatmap-legend {

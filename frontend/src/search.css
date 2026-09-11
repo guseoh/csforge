@@ -44,9 +44,9 @@
 .search-palette {
   width: min(680px, 100%);
   overflow: hidden;
-  border: 1px solid #3a465d;
+  border: 1px solid var(--border-default);
   border-radius: 16px;
-  background: #161c27;
+  background: var(--surface-elevated);
   box-shadow: 0 30px 90px rgb(0 0 0 / 48%);
 }
 
@@ -67,11 +67,11 @@
 .search-form input {
   width: 100%;
   min-width: 0;
-  border: 1px solid #344159;
+  border: 1px solid var(--border-default);
   border-radius: 10px;
   outline: none;
-  background: #101620;
-  color: #edf2ff;
+  background: var(--color-page);
+  color: var(--text-strong);
   font: inherit;
 }
 
@@ -86,8 +86,8 @@
 
 .search-palette-form input:focus,
 .search-form input:focus {
-  border-color: #7088b4;
-  box-shadow: 0 0 0 3px rgb(112 136 180 / 12%);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgb(78 161 255 / 18%);
 }
 
 .search-palette-body {
@@ -191,7 +191,7 @@
 }
 
 .search-health-ready {
-  border-color: #34594d;
+  border-color: var(--border-accent);
 }
 
 .search-form {
@@ -411,8 +411,8 @@
 .search-result-card mark {
   padding: 0 2px;
   border-radius: 3px;
-  background: #66552b;
-  color: #fff0b6;
+  background: #1d4770;
+  color: #d9edff;
 }
 
 .search-snippet {
@@ -428,10 +428,10 @@
   margin-top: 10px;
 }
 
-.search-result-reference .search-type-badge { border-color: #356b5a; color: var(--state-success); }
+.search-result-reference .search-type-badge { border-color: var(--border-accent); color: var(--state-success); }
 .search-result-question .search-type-badge { border-color: #536b9e; color: var(--accent); }
 .search-result-wrong_note .search-type-badge { border-color: #74533d; color: var(--state-warning); }
-.search-result-personal_note .search-type-badge { border-color: #596c9d; color: #c4d0ff; }
+.search-result-personal_note .search-type-badge { border-color: var(--border-accent); color: var(--accent-strong); }
 
 @media (max-width: 900px) {
   .search-layout {
@@ -491,7 +491,7 @@
   }
 }
 
-/* Keep the retrieval page in the same calm, purple desktop language as the learning flow. */
+/* Keep retrieval controls aligned with the shared graphite and blue workspace language. */
 .search-page {
   width: min(1280px, 100%);
 }
@@ -502,20 +502,20 @@
 
 .search-page .search-form input {
   min-height: 46px;
-  border-color: #38294b;
-  background: #17131f;
+  border-color: var(--border-default);
+  background: var(--surface-page);
 }
 
 .search-page .search-form input:focus {
-  border-color: #925de7;
-  box-shadow: 0 0 0 3px rgb(146 93 231 / 15%);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgb(78 161 255 / 18%);
 }
 
 .search-page .search-filters,
 .search-page .search-result-card,
 .search-page .state-card {
-  border-color: #30243f;
-  background: #17131f;
+  border-color: var(--border-subtle);
+  background: var(--surface-page);
 }
 
 .search-page .search-filters {
@@ -526,21 +526,21 @@
 
 .search-page .search-filter-heading strong,
 .search-page .search-filters legend {
-  color: #f2eaff;
+  color: var(--text-strong);
 }
 
 .search-page .search-filter-heading button {
   padding: 6px 9px;
-  border: 1px solid #49345f;
+  border: 1px solid var(--border-default);
   border-radius: 7px;
-  color: #c7a9f4;
-  background: #21192e;
+  color: var(--accent-strong);
+  background: var(--surface-accent);
   font-size: 0.75rem;
 }
 
 .search-page .search-filter-heading button:hover {
-  border-color: #925de7;
-  background: #2a1d3c;
+  border-color: var(--accent);
+  background: var(--surface-selected);
 }
 
 .search-page .search-results-toolbar {
@@ -549,19 +549,19 @@
 }
 
 .search-page .search-results-toolbar select {
-  border-color: #49345f;
-  background: #17131f;
+  border-color: var(--border-default);
+  background: var(--surface-page);
 }
 
 .search-page .search-result-card:hover {
-  border-color: #7045aa;
-  background: #1b1525;
+  border-color: var(--border-strong);
+  background: var(--surface-interactive);
 }
 
 .search-page .search-type-badge {
-  border-color: #49345f;
-  color: #c7a9f4;
-  background: #21192e;
+  border-color: var(--border-accent);
+  color: var(--accent-strong);
+  background: var(--surface-accent);
 }
 
 .search-page .search-result-card h2 {

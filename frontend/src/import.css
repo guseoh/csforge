@@ -27,7 +27,7 @@
 }
 
 .import-step.current strong { color: var(--accent); }
-.import-step.done { border-color: #356b5a; }
+.import-step.done { border-color: var(--border-accent); }
 .import-step.done strong { color: var(--state-success); }
 
 .import-dropzone { position: relative; display: grid; justify-items: start; gap: 8px; padding: 28px; border: 1px dashed #52607a; border-radius: 12px; background: #171d2a; cursor: pointer; }
@@ -56,7 +56,7 @@
 }
 .import-file { display: flex; align-items: center; gap: 12px; padding: 11px 14px; border: 1px solid #2a3243; border-radius: 8px; background: #171d2a; }
 .import-file span { flex: 1; }
-.import-file button { border: 0; background: transparent; color: #9fb5ff; cursor: pointer; }
+.import-file button { border: 0; background: transparent; color: var(--accent-strong); cursor: pointer; }
 .import-items { display: grid; gap: 8px; }
 .import-item { padding: 13px 15px; border: 1px solid #2a3243; border-radius: 8px; background: #171d2a; }
 .import-item summary { display: flex; gap: 12px; align-items: center; cursor: pointer; list-style: none; }
