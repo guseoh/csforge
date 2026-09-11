@@ -125,7 +125,7 @@ Pretendard or another Korean webfont is not a default requirement. Font loading,
 
 ### General desktop layout
 
-Use the existing topbar/sidebar shell. Route content should establish one primary column or task center rather than filling all available width indiscriminately.
+Use the existing topbar/content shell. Do not introduce a persistent global sidebar unless an approved task explicitly requires one. Route-local navigation such as the Area/Concept Learning Rail may be used when it directly supports the current learning context. Route content should establish one primary column or task center rather than filling all available width indiscriminately.
 
 Prefer rows and dividers for dense curriculum/result lists. Use cards when a grouped state, summary, or action genuinely benefits from a contained surface.
 
