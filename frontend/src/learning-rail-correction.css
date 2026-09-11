@@ -1,4 +1,4 @@
-/* Final learning-rail correction: avoid nested page scrolling and keep curriculum navigation optional. */
+/* Final learning-rail correction: one page scroll for area navigation, compact concept navigation, and optional rail collapse. */
 .area-workspace,
 .concept-workspace {
   grid-template-columns: max-content minmax(0, 1fr);
@@ -16,6 +16,7 @@
   position: sticky;
   top: 82px;
   display: grid;
+  align-self: start;
   height: calc(100vh - 104px);
   max-height: calc(100vh - 104px);
   overflow: visible;
@@ -24,8 +25,19 @@
   transition: width 160ms ease, padding 160ms ease;
 }
 
+.area-learning-rail[data-collapsed='false'] {
+  position: relative;
+  top: auto;
+  height: auto;
+  max-height: none;
+}
+
 .learning-rail[data-collapsed='true'] {
+  position: sticky;
+  top: 82px;
   width: 52px;
+  height: 44px;
+  max-height: 44px;
   padding-right: 8px;
 }
 
@@ -76,6 +88,11 @@
   display: none;
 }
 
+.area-learning-rail[data-collapsed='false'] .learning-rail-content {
+  height: auto;
+  grid-template-rows: auto auto;
+}
+
 .learning-rail-static {
   padding-right: 50px;
 }
@@ -87,6 +104,11 @@
   padding-right: 8px;
   scrollbar-color: #4d4558 transparent;
   scrollbar-width: thin;
+}
+
+.area-learning-rail[data-collapsed='false'] .learning-rail-scroll {
+  overflow: visible;
+  overscroll-behavior: auto;
 }
 
 .learning-rail-scroll::-webkit-scrollbar {
