@@ -78,6 +78,7 @@ export function SearchPage() {
   const activeFilterCount = selectedTypes.length + selectedAreas.length + selectedTopics.length + selectedLevels.length
   const visibleTopicGroups = filters.data?.filter((area) => selectedAreas.includes(area.areaSlug)
     || area.topics.some((topic) => selectedTopics.includes(topic.contentKey))) ?? []
+  const showTopicRail = visibleTopicGroups.length > 0
 
   const toggleArea = (areaSlug: string) => {
     if (!selectedAreas.includes(areaSlug)) {
@@ -124,10 +125,6 @@ export function SearchPage() {
           <p className="eyebrow">통합 검색</p>
           <h1>검색</h1>
           <p className="lead">개념, 문제, 개인 메모, 오답 기록, 참고 자료를 한 번에 찾습니다.</p>
-        </div>
-        <div className="search-health search-health-ready">
-          <strong><span aria-hidden="true">●</span> 검색 가능</strong>
-          <small>{status.data.searchableDocuments.toLocaleString()}개 문서</small>
         </div>
       </div>
 
@@ -199,22 +196,16 @@ export function SearchPage() {
         )}
       </div>
 
-      <div className="search-layout search-guide-layout">
-        <aside className="search-topic-rail" aria-label="주제 필터">
-          <div className="search-topic-rail-heading">
-            <div>
-              <p className="eyebrow">세부 필터</p>
-              <strong>주제</strong>
+      <div className={`search-layout search-guide-layout${showTopicRail ? ' with-topic-rail' : ''}`}>
+        {showTopicRail && (
+          <aside className="search-topic-rail" aria-label="주제 필터">
+            <div className="search-topic-rail-heading">
+              <div>
+                <p className="eyebrow">세부 필터</p>
+                <strong>주제</strong>
+              </div>
+              {selectedTopics.length > 0 && <span>{selectedTopics.length}개</span>}
             </div>
-            {selectedTopics.length > 0 && <span>{selectedTopics.length}개</span>}
-          </div>
-
-          {visibleTopicGroups.length === 0 ? (
-            <div className="search-topic-empty">
-              <strong>학습 영역을 먼저 선택하세요.</strong>
-              <span>영역을 고르면 해당 커리큘럼의 주제만 여기에 표시됩니다.</span>
-            </div>
-          ) : (
             <div className="search-topic-groups">
               {visibleTopicGroups.map((area) => {
                 const selectedCount = area.topics.filter((topic) => selectedTopics.includes(topic.contentKey)).length
@@ -236,12 +227,12 @@ export function SearchPage() {
                 )
               })}
             </div>
-          )}
-        </aside>
+          </aside>
+        )}
 
         <div className="search-results-column">
           <div className="search-results-toolbar">
-            <div>{search.q ? <span>{results.data?.totalHits.toLocaleString() ?? '—'}개 결과 {results.data ? `· ${results.data.tookMillis}ms` : ''}</span> : <span>검색어를 입력하세요.</span>}</div>
+            <div>{search.q ? <span>{results.data?.totalHits.toLocaleString() ?? '—'}개 결과</span> : <span>검색어를 입력하세요.</span>}</div>
             <label>정렬<select value={search.sort} onChange={(event) => update({ sort: event.target.value as SearchSearch['sort'], page: 0 })}><option value="RELEVANCE">관련도순</option><option value="RECENT">최신순</option><option value="TITLE">제목순</option></select></label>
           </div>
 
