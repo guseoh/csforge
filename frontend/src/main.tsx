@@ -18,6 +18,7 @@ import './concept-reading-guide.css'
 import './quiz-setup-guide.css'
 import './quiz-session-focus.css'
 import './daily-loop-guide.css'
+import './search-guide.css'
 
 const queryClient = new QueryClient()
 
