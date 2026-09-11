@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from '@tanstack/react-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ErrorState, PageSkeleton } from '../components/AsyncStates'
 import { MarkdownContent } from '../components/MarkdownContent'
+import { ApiRequestError } from '../lib/http'
 import { getQuizResult, retryWrongQuiz, selfCheckQuizQuestion, type QuizQuestionResult } from '../lib/quiz-api'
 import { defaultQuizSearch } from '../lib/quiz-search'
 import { hasUnresolvedSelfCheck } from '../lib/quiz-result'
@@ -37,6 +38,41 @@ function QuestionResultCard({ quizId, question }: { quizId: number; question: Qu
   )
 }
 
+function QuizResultRecovery({ quizId, error }: { quizId: number; error: unknown }) {
+  if (error instanceof ApiRequestError && error.status === 409) {
+    return (
+      <section className="page-section quiz-page result-recovery-page">
+        <div className="state-card result-recovery-card">
+          <p className="eyebrow">아직 풀이 중</p>
+          <h1>문제 풀이를 먼저 마무리해 주세요.</h1>
+          <p>제출이 끝난 뒤에 정답, 오답, 해설과 복습 항목을 확인할 수 있습니다.</p>
+          <div className="result-recovery-actions">
+            <Link className="primary-button" to="/quiz/$quizId" params={{ quizId: String(quizId) }}>계속 풀기</Link>
+            <Link className="secondary-button" to="/quiz" search={defaultQuizSearch}>다른 문제 만들기</Link>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  if (error instanceof ApiRequestError && error.status === 404) {
+    return (
+      <section className="page-section quiz-page result-recovery-page">
+        <div className="state-card result-recovery-card">
+          <p className="eyebrow">결과 없음</p>
+          <h1>이 문제 풀이 기록을 찾을 수 없습니다.</h1>
+          <p>삭제되었거나 존재하지 않는 Quiz일 수 있습니다. 새 문제를 시작해 주세요.</p>
+          <div className="result-recovery-actions">
+            <Link className="primary-button" to="/quiz" search={defaultQuizSearch}>새 문제 시작</Link>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  return null
+}
+
 export function QuizResultPage() {
   const { quizId: quizIdParam } = useParams({ from: '/quiz/$quizId/result' })
   const quizId = Number(quizIdParam)
@@ -45,13 +81,18 @@ export function QuizResultPage() {
   const retryMutation = useMutation({ mutationFn: () => retryWrongQuiz(quizId), onSuccess: (quiz) => void navigate({ to: '/quiz/$quizId', params: { quizId: String(quiz.quizId) } }) })
 
   useEffect(() => {
-    document.title = 'Quiz result · CSForge'
+    document.title = '문제 풀이 결과 · CSForge'
     return () => { document.title = 'CSForge' }
   }, [])
 
-  if (!Number.isSafeInteger(quizId) || quizId <= 0) return <ErrorState message="유효하지 않은 Quiz입니다." onRetry={() => window.history.back()} />
+  if (!Number.isSafeInteger(quizId) || quizId <= 0) return <ErrorState message="유효하지 않은 문제 풀이입니다." onRetry={() => window.history.back()} />
   if (resultQuery.isPending) return <PageSkeleton rows={5} />
-  if (resultQuery.isError || !resultQuery.data) return <ErrorState message="Quiz 결과를 불러오지 못했습니다." onRetry={() => void resultQuery.refetch()} />
+  if (resultQuery.isError || !resultQuery.data) {
+    const recovery = <QuizResultRecovery quizId={quizId} error={resultQuery.error} />
+    if (resultQuery.error instanceof ApiRequestError && (resultQuery.error.status === 409 || resultQuery.error.status === 404)) return recovery
+    return <ErrorState message="문제 풀이 결과를 불러오지 못했습니다." onRetry={() => void resultQuery.refetch()} />
+  }
+
   const result = resultQuery.data
   const hasPendingSelfCheck = hasUnresolvedSelfCheck(result.selfCheckPending)
   const accuracyLabel = result.accuracy === null ? '—' : `${Math.round(result.accuracy * 100)}%`
@@ -61,6 +102,7 @@ export function QuizResultPage() {
     target.scrollIntoView({ behavior: 'smooth', block: 'center' })
     window.setTimeout(() => target.querySelector<HTMLButtonElement>('button:not(:disabled)')?.focus(), 0)
   }
+
   return (
     <section className="page-section quiz-page">
       <div className="page-heading"><div><p className="eyebrow">풀이 결과 · {sourceLabel(result.source)}</p><h1>문제 풀이 결과</h1><p className="lead">정답과 해설을 확인하고, 자기채점 문항을 마무리하세요.</p></div></div>
@@ -92,7 +134,7 @@ export function QuizResultPage() {
           <Link className="text-button" to="/quiz" search={defaultQuizSearch}>새 문제</Link>
         </div>
         {result.selfCheckPending > 0 && <span className="helper-text error-text">위 자기 채점을 모두 완료하면 다시 풀 수 있습니다.</span>}
-        {result.selfCheckPending === 0 && result.wrong + result.unanswered === 0 && <span className="helper-text">다시 풀 문제는 없습니다. 관련 Concept을 복습해 보세요.</span>}
+        {result.selfCheckPending === 0 && result.wrong + result.unanswered === 0 && <span className="helper-text">다시 풀 문제는 없습니다. 관련 개념을 복습해 보세요.</span>}
         {retryMutation.isError && <span className="helper-text error-text">다시 풀기를 시작하지 못했습니다.</span>}
       </div>
     </section>
