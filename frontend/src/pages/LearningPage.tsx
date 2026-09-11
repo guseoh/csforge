@@ -29,14 +29,14 @@ function AreaRow({ area, index }: { area: AreaSummary; index: number }) {
       <span className="area-row-progress" aria-label={started ? `학습 진행률 ${completion}%` : '아직 학습을 시작하지 않음'}>
         {started ? (
           <>
-            <span className="area-row-progress-label"><span>{area.completedConceptCount}/{area.publishedConceptCount}개 완료</span><strong>{completion}%</strong></span>
+            <span className="area-row-progress-label"><span>{area.completedConceptCount}/{area.publishedConceptCount}개 완료</span><span>{completion}%</span></span>
             <span className="progress-track" aria-hidden="true"><span style={{ width: `${completion}%` }} /></span>
           </>
         ) : (
-          <span className="area-row-progress-label"><span>미시작</span><strong aria-hidden="true">—</strong></span>
+          <span className="area-row-progress-label"><span>미시작</span><span aria-hidden="true">—</span></span>
         )}
       </span>
-      <Link className="area-row-quiz" to="/quiz" search={{ ...defaultQuizSearch, areas: area.slug }} aria-label={`${area.name} 문제 풀기`}>문제 <span aria-hidden="true">→</span></Link>
+      <Link className="area-row-secondary-action" to="/quiz" search={{ ...defaultQuizSearch, areas: area.slug }} aria-label={`${area.name} 문제 풀기`}>문제 <span aria-hidden="true">→</span></Link>
     </article>
   )
 }
@@ -47,7 +47,7 @@ function RecentConceptRow({ concept, index }: { concept: ConceptListItem; index:
       <span className="recent-concept-index" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
       <span className="recent-concept-copy"><strong>{concept.title}</strong><span>{concept.areaName} · {concept.topicTitle}</span></span>
       <span className="recent-concept-meta"><span>레벨 {concept.level}</span><time dateTime={concept.lastViewedAt ?? undefined}>{concept.lastViewedAt ? new Date(concept.lastViewedAt).toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' }) : '기록 없음'}</time></span>
-      <span className="recent-concept-arrow" aria-hidden="true">→</span>
+      <span aria-hidden="true">→</span>
     </Link>
   )
 }
