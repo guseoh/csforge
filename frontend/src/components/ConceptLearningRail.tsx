@@ -25,7 +25,7 @@ export function ConceptLearningRail({ concept }: { concept: ConceptDetail }) {
     queryFn: () => getLearningArea(concept.area.slug),
   })
   const topicConceptsQuery = useQuery({
-    queryKey: ['learning-outline-topic', concept.topic.id],
+    queryKey: ['learning-outline', 'topic', concept.topic.id],
     queryFn: () => getConcepts({
       area: concept.area.slug,
       topic: concept.topic.id,
