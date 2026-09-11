@@ -308,6 +308,123 @@
   line-height: 1.45;
 }
 
+.learning-page .learning-hero {
+  max-width: 760px;
+  margin-bottom: 44px;
+}
+
+.learning-page .learning-hero-kicker {
+  color: #9f83f5;
+  letter-spacing: 0.06em;
+}
+
+.learning-page .learning-hero h1 {
+  margin-top: 10px;
+  max-width: 720px;
+  font-size: clamp(2.5rem, 4vw, 3.4rem);
+  line-height: 1.08;
+}
+
+.learning-page .learning-hero .lead {
+  max-width: 680px;
+  line-height: 1.75;
+}
+
+.learning-area-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  margin: 48px 0 18px;
+}
+
+.learning-area-heading h2 {
+  margin: 5px 0 0;
+  color: #f2edf5;
+  font-size: 1.4rem;
+}
+
+.area-card-footer-hint {
+  color: #726b7c;
+  font-size: 0.72rem;
+}
+
+.result-recovery-page {
+  width: min(760px, calc(100% - 48px));
+  margin: 72px auto 0;
+}
+
+.result-recovery-card {
+  display: grid;
+  gap: 14px;
+  padding: 34px;
+}
+
+.result-recovery-card h1 {
+  margin: 0;
+  color: #f5f1f8;
+  font-size: 1.8rem;
+  letter-spacing: -0.04em;
+}
+
+.result-recovery-card p:not(.eyebrow) {
+  margin: 0;
+  color: #9f98a8;
+  line-height: 1.7;
+}
+
+.result-recovery-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.search-topic-filter {
+  display: grid;
+  gap: 8px;
+}
+
+.search-topic-group {
+  border-top: 1px solid #2a2630;
+}
+
+.search-topic-group summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 0;
+  color: #bbb3c1;
+  cursor: pointer;
+  font-size: 0.76rem;
+  list-style: none;
+}
+
+.search-topic-group summary::-webkit-details-marker {
+  display: none;
+}
+
+.search-topic-group summary small {
+  color: #746d7b;
+  font-size: 0.67rem;
+}
+
+.search-topic-options {
+  display: grid;
+  gap: 4px;
+  padding: 0 0 10px 8px;
+}
+
+.search-topic-options label {
+  min-width: 0;
+}
+
+.search-topic-options label span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 @media (max-width: 1120px) {
   .area-workspace,
   .concept-workspace {
