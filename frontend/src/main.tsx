@@ -14,6 +14,7 @@ import './wrong-note.css'
 import './review.css'
 import './import.css'
 import './learning-guide.css'
+import './concept-reading-guide.css'
 import './quiz-setup-guide.css'
 
 const queryClient = new QueryClient()
