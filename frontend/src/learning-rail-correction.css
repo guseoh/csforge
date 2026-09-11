@@ -41,6 +41,11 @@
   padding-right: 8px;
 }
 
+/* Concept reading has a later, fixed three-column layout. Reclaim that column only when the rail is actually collapsed. */
+.concept-reading-workspace:has(.concept-learning-rail[data-collapsed='true']) {
+  grid-template-columns: 52px minmax(0, 800px) 168px;
+}
+
 .rail-collapse-toggle {
   position: absolute;
   z-index: 2;
@@ -184,6 +189,12 @@
   margin: 4px 0 10px;
 }
 
+@media (max-width: 1280px) {
+  .concept-reading-workspace:has(.concept-learning-rail[data-collapsed='true']) {
+    grid-template-columns: 52px minmax(0, 800px);
+  }
+}
+
 @media (max-width: 1120px) {
   .area-learning-rail {
     width: 240px;
@@ -195,6 +206,10 @@
 
   .learning-rail[data-collapsed='true'] {
     width: 52px;
+  }
+
+  .concept-reading-workspace:has(.concept-learning-rail[data-collapsed='true']) {
+    grid-template-columns: 52px minmax(0, 1fr);
   }
 }
 
