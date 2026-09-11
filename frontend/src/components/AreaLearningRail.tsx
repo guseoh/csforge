@@ -6,7 +6,7 @@ function completionPercent(completed: number, total: number) {
   return total === 0 ? 0 : Math.round((completed / total) * 100)
 }
 
-export function AreaLearningRail({ area }: { area: AreaDetail }) {
+export function AreaLearningRail({ area, filterMode = false }: { area: AreaDetail; filterMode?: boolean }) {
   const totalConcepts = area.topics.reduce((total, topic) => total + topic.publishedConceptCount, 0)
   const completedConcepts = area.topics.reduce((total, topic) => total + topic.completedConceptCount, 0)
   const progress = completionPercent(completedConcepts, totalConcepts)
@@ -33,18 +33,30 @@ export function AreaLearningRail({ area }: { area: AreaDetail }) {
       <nav aria-label={`${area.name} 주제`}>
         <p className="rail-section-title">주제</p>
         <div className="rail-topic-list">
-          {area.topics.map((topic, index) => (
-            <Link
-              className="rail-topic"
-              key={topic.id}
-              to="/learning/$areaSlug"
-              params={{ areaSlug: area.slug }}
-              search={{ ...defaultLearningSearch, topic: topic.id }}
-            >
-              <span>{String(index + 1).padStart(2, '0')} · {topic.title}</span>
-              <small>{topic.completedConceptCount}/{topic.publishedConceptCount}</small>
-            </Link>
-          ))}
+          {area.topics.map((topic, index) => {
+            const label = (
+              <>
+                <span>{String(index + 1).padStart(2, '0')} · {topic.title}</span>
+                <small>{topic.completedConceptCount}/{topic.publishedConceptCount}</small>
+              </>
+            )
+
+            return filterMode ? (
+              <Link
+                className="rail-topic"
+                key={topic.id}
+                to="/learning/$areaSlug"
+                params={{ areaSlug: area.slug }}
+                search={{ ...defaultLearningSearch, topic: topic.id }}
+              >
+                {label}
+              </Link>
+            ) : (
+              <a className="rail-topic" href={`#topic-${topic.id}`} key={topic.id}>
+                {label}
+              </a>
+            )
+          })}
         </div>
       </nav>
     </aside>
