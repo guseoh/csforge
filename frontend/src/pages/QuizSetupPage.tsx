@@ -275,7 +275,7 @@ export function QuizSetupPage() {
         </div>
       </section>
 
-      <details className="quiz-config-disclosure" defaultOpen={hasDetailedSettings}>
+      <details className="quiz-config-disclosure" open={hasDetailedSettings ? true : undefined}>
         <summary>
           <span><span className="eyebrow">직접 설정</span><strong>학습 범위와 조건 고르기</strong></span>
           <span>{hasDetailedSettings ? '현재 세부 조건 사용 중' : '영역 · 레벨 · 난이도 · 유형 · 시간'} <span aria-hidden="true">⌄</span></span>
