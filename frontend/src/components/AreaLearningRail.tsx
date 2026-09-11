@@ -1,7 +1,8 @@
-import { useId, useState } from 'react'
+import { useId } from 'react'
 import { Link } from '@tanstack/react-router'
 import type { AreaDetail } from '../lib/learning-api'
 import { defaultLearningSearch } from '../lib/learning-search'
+import { useLearningRailCollapsed } from './useLearningRailCollapsed'
 
 function completionPercent(completed: number, total: number) {
   return total === 0 ? 0 : Math.round((completed / total) * 100)
@@ -20,11 +21,12 @@ export function AreaLearningRail({
   activeTopicId,
   onTopicSelect,
 }: AreaLearningRailProps) {
-  const [collapsed, setCollapsed] = useState(false)
+  const { collapsed, toggleCollapsed } = useLearningRailCollapsed()
   const railContentId = useId()
   const totalConcepts = area.topics.reduce((total, topic) => total + topic.publishedConceptCount, 0)
   const completedConcepts = area.topics.reduce((total, topic) => total + topic.completedConceptCount, 0)
   const progress = completionPercent(completedConcepts, totalConcepts)
+  const toggleLabel = collapsed ? '학습 목차 펼치기' : '학습 목차 접기'
 
   return (
     <aside
@@ -37,8 +39,9 @@ export function AreaLearningRail({
         type="button"
         aria-controls={railContentId}
         aria-expanded={!collapsed}
-        aria-label={collapsed ? '학습 목차 펼치기' : '학습 목차 접기'}
-        onClick={() => setCollapsed((value) => !value)}
+        aria-label={toggleLabel}
+        title={toggleLabel}
+        onClick={toggleCollapsed}
       >
         <span aria-hidden="true">{collapsed ? '→' : '←'}</span>
       </button>
