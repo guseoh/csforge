@@ -6,7 +6,19 @@ function completionPercent(completed: number, total: number) {
   return total === 0 ? 0 : Math.round((completed / total) * 100)
 }
 
-export function AreaLearningRail({ area, filterMode = false }: { area: AreaDetail; filterMode?: boolean }) {
+interface AreaLearningRailProps {
+  area: AreaDetail
+  filterMode?: boolean
+  activeTopicId?: number
+  onTopicSelect?: (topicId: number) => void
+}
+
+export function AreaLearningRail({
+  area,
+  filterMode = false,
+  activeTopicId,
+  onTopicSelect,
+}: AreaLearningRailProps) {
   const totalConcepts = area.topics.reduce((total, topic) => total + topic.publishedConceptCount, 0)
   const completedConcepts = area.topics.reduce((total, topic) => total + topic.completedConceptCount, 0)
   const progress = completionPercent(completedConcepts, totalConcepts)
@@ -34,25 +46,42 @@ export function AreaLearningRail({ area, filterMode = false }: { area: AreaDetai
         <p className="rail-section-title">주제</p>
         <div className="rail-topic-list">
           {area.topics.map((topic, index) => {
+            const active = activeTopicId === topic.id
+            const completed = topic.publishedConceptCount > 0
+              && topic.completedConceptCount === topic.publishedConceptCount
+            const className = `rail-topic${active ? ' active' : ''}${completed ? ' completed' : ''}`
             const label = (
               <>
-                <span>{String(index + 1).padStart(2, '0')} · {topic.title}</span>
+                <span className="rail-topic-copy">
+                  <span className="rail-topic-state" aria-hidden="true">{completed ? '✓' : active ? '•' : ''}</span>
+                  <span className="rail-topic-title">
+                    <span className="rail-topic-number">{String(index + 1).padStart(2, '0')}</span>
+                    <span>{topic.title}</span>
+                  </span>
+                </span>
                 <small>{topic.completedConceptCount}/{topic.publishedConceptCount}</small>
               </>
             )
 
             return filterMode ? (
               <Link
-                className="rail-topic"
+                className={className}
                 key={topic.id}
                 to="/learning/$areaSlug"
                 params={{ areaSlug: area.slug }}
                 search={{ ...defaultLearningSearch, topic: topic.id }}
+                aria-current={active ? 'page' : undefined}
               >
                 {label}
               </Link>
             ) : (
-              <a className="rail-topic" href={`#topic-${topic.id}`} key={topic.id}>
+              <a
+                className={className}
+                href={`#topic-${topic.id}`}
+                key={topic.id}
+                aria-current={active ? 'location' : undefined}
+                onClick={() => onTopicSelect?.(topic.id)}
+              >
                 {label}
               </a>
             )
