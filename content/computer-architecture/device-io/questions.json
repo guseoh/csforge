@@ -28,7 +28,7 @@
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.device-io.interrupt-exception-trap.q3",
-    "promptMarkdown": "CPU가 instruction A를 실행하는 중 timer interrupt가 pending되었고, 다음 instruction B는 illegal instruction이다. timer event와 B의 illegal-instruction event를 각각 interrupt/exception으로 분류하고, 둘 모두 최종적으로 어떤 공통 control-transfer mechanism으로 처리될 수 있는지 설명하라.",
+    "promptMarkdown": "상황: CPU가 instruction A를 실행하는 중 timer interrupt가 pending되었고, 다음 instruction B는 illegal instruction이다.\n\n질문: timer event와 B의 illegal-instruction event를 각각 interrupt/exception으로 분류하고, 둘 모두 최종적으로 어떤 공통 control-transfer mechanism으로 처리될 수 있는지 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
@@ -64,7 +64,7 @@
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.device-io.interrupt-handler-entry.q3",
-    "promptMarkdown": "level-triggered device interrupt의 handler가 completion을 읽었지만 interrupt source를 acknowledge/clear하지 않고 return한다. CPU 사용률과 application latency에 어떤 현상이 생길 수 있는지 handler-entry 흐름으로 설명하라.",
+    "promptMarkdown": "상황: level-triggered device interrupt의 handler가 completion을 읽었지만 interrupt source를 acknowledge/clear하지 않고 return한다.\n\n질문: CPU 사용률과 application latency에 어떤 현상이 생길 수 있는지 handler-entry 흐름으로 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
@@ -172,7 +172,7 @@
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.device-io.dma.q3",
-    "promptMarkdown": "NIC transmit descriptor에 buffer A를 제출한 직후 application이 해당 memory를 object pool에 반환했고 다른 request가 A를 덮어썼다. DMA completion은 아직 오지 않았다. 전송 데이터가 깨질 수 있는 이유와 안전한 lifetime 경계를 설명하라.",
+    "promptMarkdown": "상황: NIC transmit descriptor에 buffer A를 제출한 직후 application이 해당 memory를 object pool에 반환했고 다른 request가 A를 덮어썼다.\n\n질문: DMA completion은 아직 오지 않았다. 전송 데이터가 깨질 수 있는 이유와 안전한 lifetime 경계를 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",

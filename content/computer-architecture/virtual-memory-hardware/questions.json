@@ -64,7 +64,7 @@
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.virtual-memory-hardware.mmu.q3",
-    "promptMarkdown": "같은 physical page를 process A에는 read-only로, process B에는 read-write로 mapping했다고 하자. MMU가 두 process에 다른 access 결과를 줄 수 있는 이유와 이 사례가 `physical page의 속성만으로 permission이 정해진다`는 설명이 틀린 이유를 설명하라.",
+    "promptMarkdown": "상황: 같은 physical page를 process A에는 read-only로, process B에는 read-write로 mapping했다고 하자.\n\n질문: MMU가 두 process에 다른 access 결과를 줄 수 있는 이유와 이 사례가 `physical page의 속성만으로 permission이 정해진다`는 설명이 틀린 이유를 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
