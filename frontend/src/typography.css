@@ -1,0 +1,46 @@
+/* Shared typography primitives for a Korean-first technical workspace. Route styles may specialize above this floor. */
+:root {
+  --type-control: 0.82rem;
+  --type-meta: 0.82rem;
+  --type-label: 0.8rem;
+}
+
+.eyebrow {
+  font-size: var(--type-label);
+  letter-spacing: 0.09em;
+}
+
+.result-count,
+.area-metrics,
+.concept-topic,
+.topic-card-meta,
+.helper-text,
+.status-label,
+.save-state {
+  font-size: var(--type-meta);
+}
+
+.primary-button,
+.secondary-button,
+.text-button {
+  font-size: var(--type-control);
+}
+
+.filter-panel label {
+  font-size: var(--type-control);
+}
+
+.filter-group legend {
+  font-size: var(--type-label);
+}
+
+.breadcrumb {
+  font-size: 0.85rem;
+}
+
+@media (max-width: 680px) {
+  :root {
+    --type-control: 0.84rem;
+    --type-meta: 0.82rem;
+  }
+}
