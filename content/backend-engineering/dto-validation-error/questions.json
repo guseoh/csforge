@@ -32,7 +32,7 @@
     "contentKey": "backend.core.dto-validation-error.dto-boundary.q3",
     "promptMarkdown": "Request DTO에 `role`, `status`, `createdAt`까지 Entity field를 그대로 넣었다. 어떤 공격/설계 문제가 생길 수 있는가?",
     "questionType": "SCENARIO",
-    "difficulty": "HARD",
+    "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["backend.core.dto-validation-error.dto-boundary"],
     "modelAnswer": "over-posting과 invariant 우회 위험이 생긴다. client가 설정 가능한 field만 DTO에 두고 server/domain이 소유하는 상태는 생성/전이 로직에서 결정한다.",
