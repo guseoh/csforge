@@ -47,7 +47,7 @@
   {
     "kind":"question",
     "contentKey":"backend.core.bulk-batch.bulk-processing.q2",
-    "promptMarkdown":"100만 건 import를 하나의 transaction으로 처리하는 것과 1,000건 chunk transaction으로 처리하는 것의 trade-off를 비교하라.",
+    "promptMarkdown":"다음 두 transaction 단위를 비교하라.\n\n| 방식 | 단위 |\n| --- | ---: |\n| 하나의 transaction | 1,000,000건 |\n| chunk transaction | 1,000건 |\n\n질문: 두 방식의 trade-off를 설명하라.",
     "questionType":"DESCRIPTIVE",
     "difficulty":"HARD",
     "status":"PUBLISHED",
@@ -69,7 +69,7 @@
   {
     "kind":"question",
     "contentKey":"backend.core.bulk-batch.batch-recovery.q2",
-    "promptMarkdown":"10만 건 중 8만 건 처리 후 프로세스가 죽었다. 재시작 시 첫 8만 건의 외부 알림을 다시 보내지 않으려면 어떤 상태가 필요할까?",
+    "promptMarkdown":"다음 batch 상태를 생각하자.\n\n1. 전체 10만 건 중 8만 건을 처리한다.\n2. 그 시점에 프로세스가 죽는다.\n3. 재시작 후 앞 8만 건의 외부 알림이 다시 전송될 수 있다.\n\n질문: 중복 알림을 피하려면 어떤 상태가 필요할까?",
     "questionType":"SCENARIO",
     "difficulty":"HARD",
     "status":"PUBLISHED",

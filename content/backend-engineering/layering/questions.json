@@ -69,7 +69,7 @@
   {
     "kind": "question",
     "contentKey": "backend.core.layering.orchestration-rule.q3",
-    "promptMarkdown": "취소 Service가 외부 환불 API를 DB transaction 안에서 먼저 호출한 뒤 commit에 실패했다. 어떤 종류의 책임 문제가 드러났는가?",
+    "promptMarkdown": "다음 순서로 취소 작업이 진행됐다.\n\n1. DB transaction 안에서 외부 환불 API가 성공한다.\n2. 그 뒤 local DB commit이 실패한다.\n\n질문: 어떤 종류의 책임 문제가 드러났는가?",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
