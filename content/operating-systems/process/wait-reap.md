@@ -9,13 +9,20 @@ level: 2
 status: PUBLISHED
 displayOrder: 80
 references:
-  - url: "https://man7.org/linux/man-pages/man2/waitpid.2.html"
+  - url: "https://man7.org/linux/man-pages/man2/wait.2.html"
     title: "wait(2), waitpid(2) — Linux manual page"
     referenceType: OFFICIAL
     language: en
     depth: section
     recommendation: "wait 계열 호출이 child state change를 기다리고 terminated child를 reap하는 semantics를 확인한다."
     displayOrder: 1
+  - url: "https://man7.org/linux/man-pages/man7/pipe.7.html"
+    title: "pipe(7) — Linux manual page"
+    referenceType: OFFICIAL
+    language: en
+    depth: section
+    recommendation: "Pipe capacity가 제한되어 있고 full pipe에 대한 blocking write가 reader가 공간을 만들 때까지 멈출 수 있음을 확인한다."
+    displayOrder: 2
 ---
 # Wait and Reap
 
@@ -72,6 +79,6 @@ Parent가 child A, B, C를 순서대로 만들었다고 해서 반드시 A → B
 
 External process를 실행하는 backend에서는 timeout이 발생했다고 `kill`만 보내고 끝내면 lifecycle이 미완성일 수 있다. Process termination 확인, output pipe 처리, exit status 수집, descriptor close, reap 순서를 고려해야 한다.
 
-특히 stdout/stderr pipe를 사용할 때 parent가 읽지 않아 pipe buffer가 가득 차면 child가 write에서 block되어 종료하지 못하는 종류의 문제도 있다. 따라서 process wait와 I/O drain 순서를 함께 설계해야 한다.
+특히 stdout/stderr가 blocking pipe에 연결되어 있고 parent가 output을 충분히 읽지 않으면 pipe buffer가 가득 찰 수 있다. **Linux의 blocking pipe에서는 full pipe에 대한 `write()`가 reader가 충분한 공간을 만들 때까지 멈출 수 있다.** 이때 child는 write에서 진행하지 못해 종료 지점에 도달하지 못하고, parent가 output을 drain하지 않은 채 child 종료만 blocking wait하면 서로의 진행 조건을 기다리는 교착성 대기가 만들어질 수 있다. 따라서 process wait와 I/O drain 순서를 함께 설계해야 한다.
 
 Wait and Reap의 핵심은 “parent가 child를 기다린다”는 한 문장이 아니다. **Child execution 종료와 termination metadata 회수를 분리하고, parent가 OS에 남은 child lifecycle 정보를 명시적으로 소비한다는 것**이다.

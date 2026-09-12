@@ -21,6 +21,8 @@ references:
 
 `mmap()`은 file이나 anonymous memory object를 process의 virtual address range에 연결해 **load/store instruction으로 해당 mapping을 접근할 수 있게 만드는 interface**다. `read()`처럼 application buffer를 명시적으로 넘기는 대신 memory access 자체가 I/O-backed state와 연결된다.
 
+![file mapping과 first-touch page fault 흐름](/learning/operating-systems/mmap-file-access.svg)
+
 ### mapping 생성과 page residency는 다르다
 
 큰 file을 mmap해도 모든 file page가 즉시 RAM에 올라오는 것은 아니다. virtual mapping을 만든 뒤 실제 address를 처음 touch할 때 page fault가 발생하고 page cache/file backing에서 content가 준비될 수 있다. 그래서 mmap latency는 mapping call 하나보다 **first-touch fault와 working-set behavior**까지 봐야 한다.

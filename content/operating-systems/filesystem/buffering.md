@@ -11,7 +11,7 @@ displayOrder: 90
 references:
   - url: "https://pages.cs.wisc.edu/~remzi/OSTEP/file-implementation.pdf"
     title: "File System Implementation"
-    referenceType: OFFICIAL
+    referenceType: BOOK
     language: en
     depth: section
     recommendation: "inode, directory entry, data block, allocation 구조가 file-system access path를 만드는 방식을 확인한다."

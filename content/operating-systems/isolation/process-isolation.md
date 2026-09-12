@@ -16,10 +16,19 @@ references:
     depth: section
     recommendation: "process가 resource view를 분리하는 Linux namespace와 일반 process 경계를 구분한다."
     displayOrder: 1
+  - url: "https://d2.naver.com/helloworld/2922312"
+    title: "최신 브라우저의 내부 살펴보기 1 - CPU, GPU, 메모리 그리고 다중 프로세스 아키텍처"
+    referenceType: COMPANY_TECH_BLOG
+    language: ko
+    depth: article
+    recommendation: "브라우저가 process를 분리해 fault와 권한 경계를 만들고 IPC로 협력하는 사례를 확인한다."
+    displayOrder: 2
 ---
 # Process Isolation
 
 process는 실행 중인 program을 담는 resource context이며, 일반적인 OS 모델에서는 각 process가 자신의 virtual address space를 가진다. 한 process가 잘못된 pointer를 역참조해 page fault를 내거나 자신의 mapped page를 수정해도 page-table과 privilege 검사를 통과하지 않는 한 다른 process의 user memory를 직접 읽거나 덮을 수 없다. 두 process가 상태를 교환하려면 pipe·socket·shared memory 같은 명시적인 IPC나 kernel이 제공하는 공유 resource를 사용해야 한다.
+
+![별도 address space를 가진 process와 명시적 IPC 경계](/learning/operating-systems/process-isolation.svg)
 
 ### 무엇이 분리되고 무엇이 공유되는가
 
@@ -32,4 +41,3 @@ address space는 process 경계의 핵심이지만 process가 모든 상태를 �
 같은 process의 thread는 heap·global state·대부분의 open file을 공유하므로 잘못된 memory write가 같은 process의 다른 thread에 바로 영향을 줄 수 있다. 별도 process는 address-space 경계를 얻는 대신 IPC serialization, context와 memory overhead, 명시적인 lifecycle 관리 비용을 부담한다. 따라서 isolation 강도만으로 항상 process를 선택하지 않고 fault containment와 communication cost를 함께 평가한다.
 
 Backend worker를 별도 process로 분리하면 JVM crash나 native library fault가 API process의 address space를 직접 훼손하는 범위를 줄일 수 있다. 다만 queue와 canonical DB를 경계로 두고 process 재시작 시 중복 작업, partial side effect와 acknowledgement 시점을 복구 가능하게 설계해야 한다.
-

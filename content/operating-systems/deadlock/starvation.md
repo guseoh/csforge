@@ -16,23 +16,47 @@ references:
     depth: chapter
     recommendation: "deadlock의 dependency cycle, Coffman conditions와 prevention 전략을 확인한다."
     displayOrder: 1
+  - url: "https://docs.oracle.com/javase/tutorial/essential/concurrency/starvelive.html"
+    title: "Starvation and Livelock (The Java Tutorials)"
+    referenceType: OFFICIAL
+    language: en
+    depth: section
+    recommendation: "Java concurrency 예시를 통해 starvation과 livelock의 liveness 차이를 확인한다."
+    displayOrder: 2
 ---
 # Starvation
 
-### 전체가 멈추지 않아도 한 execution은 영원히 못 나갈 수 있다
+### System 전체가 움직여도 특정 execution은 계속 기회를 잃을 수 있다
 
-starvation은 system의 다른 task들은 계속 progress하지만 특정 process/thread/request가 CPU, lock, queue service 같은 필요한 기회를 계속 얻지 못하는 liveness 문제다. deadlock처럼 참여자들이 서로 circular wait에 빠질 필요가 없다.
+Starvation은 다른 task들은 계속 완료되는데 특정 process, thread, request가 CPU, lock, queue service 같은 필요한 기회를 장기간 또는 무기한 얻지 못하는 liveness 문제다. Deadlock처럼 참여자 전체가 circular wait에 묶일 필요가 없다.
 
-예를 들어 writer보다 reader를 항상 우선하는 read-write lock에서 reader가 계속 들어오면 writer가 ready 상태로 오래 기다릴 수 있다. scheduler priority에서도 high-priority task가 계속 도착하면 low-priority task가 CPU를 거의 못 받을 수 있다.
+Priority scheduler에서 high-priority task가 계속 도착하는 상황을 단순화하면 다음처럼 볼 수 있다.
 
-### 평균 throughput은 starvation을 숨길 수 있다
+```text
+ready queue:
+L(low)  H1  H2  H3  H4  H5 ...
 
-system 전체 throughput이 높아도 특정 task의 wait time이 무한히 커질 수 있다. 그래서 fairness를 보려면 평균 latency뿐 아니라 oldest task age, max/p99 wait, per-class service share를 봐야 한다.
+dispatch:
+         H1 → H2 → H3 → H4 → H5 → ...
+L waits: ─────────────────────────────→
+```
 
-### 해결책은 공정성을 어디에 넣을지 선택한다
+CPU는 계속 일을 하고 throughput도 나올 수 있지만 L은 service를 받지 못한다.
 
-aging, FIFO/fair lock, weighted queue, quota, minimum service guarantee 등으로 특정 class가 영원히 밀리지 않게 할 수 있다. 하지만 fairness를 강화하면 high-priority request의 response time이나 전체 throughput이 악화될 수 있다.
+### Read-write lock에서도 admission policy에 따라 starvation이 생길 수 있다
 
-starvation 해결책은 priority inversion 해결책과도 구분한다. priority inheritance는 low-priority lock owner 때문에 high-priority waiter가 막히는 inversion을 다루는 protocol이지 일반적인 scheduling starvation의 만능 해법이 아니다.
+Reader를 우선하는 구현에서 writer가 기다리는 중에도 새 reader를 계속 받아 준다면 reader stream이 끊기지 않는 동안 writer가 exclusive ownership을 얻을 순간이 오지 않을 수 있다. 반대로 writer preference를 강하게 두면 새 reader latency가 늘어날 수 있다.
 
-Backend에서는 interactive request와 batch 작업을 같은 executor/queue에 둘 때 한쪽이 다른 쪽을 완전히 밀어내지 않는지 service share와 maximum wait를 관측해야 한다.
+즉 starvation은 lock 종류 하나의 필연적 성질이라기보다 **누구를 다음에 admission할지 정하는 fairness policy**와 연결된다.
+
+### 평균 throughput과 평균 latency는 starvation을 숨길 수 있다
+
+다른 task가 빠르게 끝나면 system 평균 latency는 양호하게 보일 수 있다. 하지만 오래 기다리는 하나의 task는 평균값에서 거의 보이지 않는다.
+
+그래서 fairness를 보려면 oldest task age, 최대 wait time, tail wait latency, class별 service share처럼 **특정 실행 흐름이 계속 배제되는지 드러나는 지표**가 필요하다.
+
+### 공정성을 높이면 다른 목표와 trade-off가 생길 수 있다
+
+Aging, FIFO/fair lock, weighted queue, quota, minimum service guarantee 등을 사용하면 특정 task나 class가 영원히 밀리는 위험을 줄일 수 있다. 그러나 strict fairness는 cache locality, high-priority response time, 전체 throughput 같은 다른 목표를 희생할 수 있다.
+
+Starvation 완화는 priority inversion 해결과도 구분해야 한다. Priority inheritance는 low-priority resource owner 때문에 high-priority waiter가 막히는 inversion을 다루는 protocol이다. Low-priority runnable task가 scheduling policy 때문에 계속 선택되지 않는 일반 starvation에는 aging이나 service guarantee 같은 다른 정책이 필요하다.

@@ -58,6 +58,14 @@ Kernel service는 여러 결과를 낼 수 있다. 요청한 byte보다 적게 �
 
 예를 들어 `read(fd, buffer, 4096)`이 4096 byte를 요청했다고 해서 항상 4096 byte를 반환하는 것은 아니다. File/socket의 상태와 API contract에 따라 더 적은 수가 반환될 수 있고, EOF나 error도 구분해야 한다. Application은 이런 return contract를 이해해야 한다.
 
+### 면접에서 이렇게 나옵니다
+
+#### Q. Library call과 system call은 어떻게 다른가요?
+
+Library call은 application이 사용하는 runtime/library abstraction이고, system call은 user space가 kernel service를 요청하는 OS interface입니다.
+
+Library function이 user space에서만 끝날 수도 있고, buffering으로 여러 library call이 하나의 system call로 합쳐질 수도 있습니다. 반대로 하나의 고수준 API가 여러 system call을 사용할 수도 있으므로 **두 호출 단위를 1:1로 대응시키면 안 됩니다.**
+
 ### Backend에서 보는 system call의 의미
 
 Java Backend가 DB나 network I/O를 수행할 때 Java thread가 CPU에서 application code만 계속 실행하는 것은 아니다. Runtime을 거쳐 kernel에 I/O를 요청한 뒤 현재 thread가 block될 수도 있고, non-blocking descriptor에서는 readiness를 별도로 기다릴 수도 있다.

@@ -16,6 +16,13 @@ references:
     depth: section
     recommendation: "read()의 partial result와 O_NONBLOCK/EAGAIN 계약을 확인한다."
     displayOrder: 1
+  - url: "https://techblog.woowahan.com/2667/"
+    title: "배달의민족 최전방 시스템! ‘가게노출 시스템’을 소개합니다."
+    referenceType: COMPANY_TECH_BLOG
+    language: ko
+    depth: article
+    recommendation: "실제 WebFlux 기반 서비스에서 non-blocking/event-driven I/O를 선택한 배경과 thread resource trade-off를 사례로 확인한다."
+    displayOrder: 2
 ---
 # Non-Blocking I/O
 
@@ -40,3 +47,9 @@ ready event를 받았다고 application-level message 전체가 준비된 것은
 Netty/NIO 같은 event-loop model은 적은 thread로 많은 connection state를 관리할 수 있지만 event-loop thread 안에서 blocking DB query나 file operation을 수행하면 **그 thread가 담당하는 다른 connection의 progress까지 지연**된다. 그래서 transport의 non-blocking 여부와 business/downstream operation의 blocking 여부를 별도로 본다.
 
 non-blocking architecture를 선택할 때는 thread 수 감소만 보지 않고 per-connection state complexity, backpressure, cancellation, partial read/write correctness를 함께 평가한다.
+
+### 면접에서 이렇게 나옵니다
+
+#### Q. Non-blocking I/O와 asynchronous I/O는 같은가요?
+
+같지 않습니다. Non-blocking I/O는 지금 progress할 수 없으면 즉시 반환하고 caller가 나중에 다시 시도하는 semantics이고, completion-oriented async I/O는 operation을 먼저 제출한 뒤 그 결과를 나중에 받는 모델입니다.

@@ -21,6 +21,8 @@ references:
 
 pipe는 kernel이 관리하는 buffer를 사이에 두고 한 execution context가 쓴 bytes를 다른 context가 읽게 하는 IPC다. Unix anonymous pipe는 보통 `pipe()`가 read end와 write end 두 descriptor를 만들고, parent가 `fork()`한 뒤 필요한 end를 parent/child가 나눠 가지는 식으로 자주 사용한다.
 
+![pipe의 producer-consumer buffer와 EOF lifetime](/learning/operating-systems/pipe-buffer-eof.svg)
+
 ### Pipe는 message queue가 아니라 byte stream이다
 
 writer가 `"ABC"`를 한 번 쓰고 이어 `"DEF"`를 썼다고 reader가 반드시 두 번의 read에서 같은 경계로 `ABC`, `DEF`를 받는 것은 아니다. reader는 `ABCDEF`를 한 번에 읽거나 일부만 읽을 수 있다. application protocol이 record/message boundary를 필요로 한다면 length prefix, delimiter 같은 framing을 별도로 정의해야 한다.

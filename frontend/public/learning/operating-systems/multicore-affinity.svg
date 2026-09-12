@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="380" viewBox="0 0 960 380" role="img" aria-labelledby="title desc">
+  <title id="title">Multicore affinity trade-off</title>
+  <desc id="desc">같은 CPU에서 cache locality를 재사용하는 장점과 과도한 pinning으로 load imbalance가 생기는 단점 비교</desc>
+  <rect width="960" height="380" rx="24" fill="#111827"/>
+  <text x="48" y="52" fill="#f9fafb" font-size="28" font-family="Arial, sans-serif" font-weight="700">Multicore Affinity Trade-off</text>
+  <rect x="55" y="90" width="390" height="225" rx="18" fill="#1f2937" stroke="#9ca3af" stroke-width="2"/>
+  <text x="250" y="125" text-anchor="middle" fill="#f9fafb" font-size="20" font-family="Arial, sans-serif" font-weight="700">Affinity 유지</text>
+  <rect x="95" y="155" width="130" height="75" rx="12" fill="#111827" stroke="#6b7280"/><text x="160" y="188" text-anchor="middle" fill="#f9fafb" font-size="18" font-family="Arial, sans-serif">CPU0</text><text x="160" y="212" text-anchor="middle" fill="#d1d5db" font-size="14" font-family="Arial, sans-serif">Task A warm</text>
+  <rect x="275" y="155" width="130" height="75" rx="12" fill="#111827" stroke="#6b7280"/><text x="340" y="188" text-anchor="middle" fill="#f9fafb" font-size="18" font-family="Arial, sans-serif">CPU1</text><text x="340" y="212" text-anchor="middle" fill="#9ca3af" font-size="14" font-family="Arial, sans-serif">idle</text>
+  <text x="250" y="268" text-anchor="middle" fill="#d1d5db" font-size="16" font-family="Arial, sans-serif">cache locality 재사용 가능</text>
+  <text x="250" y="293" text-anchor="middle" fill="#9ca3af" font-size="15" font-family="Arial, sans-serif">하지만 CPU0 queue가 길면 imbalance</text>
+  <rect x="515" y="90" width="390" height="225" rx="18" fill="#1f2937" stroke="#9ca3af" stroke-width="2"/>
+  <text x="710" y="125" text-anchor="middle" fill="#f9fafb" font-size="20" font-family="Arial, sans-serif" font-weight="700">Migration / Load Balance</text>
+  <rect x="555" y="155" width="130" height="75" rx="12" fill="#111827" stroke="#6b7280"/><text x="620" y="188" text-anchor="middle" fill="#f9fafb" font-size="18" font-family="Arial, sans-serif">CPU0</text><text x="620" y="212" text-anchor="middle" fill="#d1d5db" font-size="14" font-family="Arial, sans-serif">A, B</text>
+  <rect x="735" y="155" width="130" height="75" rx="12" fill="#111827" stroke="#6b7280"/><text x="800" y="188" text-anchor="middle" fill="#f9fafb" font-size="18" font-family="Arial, sans-serif">CPU1</text><text x="800" y="212" text-anchor="middle" fill="#d1d5db" font-size="14" font-family="Arial, sans-serif">C, D</text>
+  <text x="710" y="268" text-anchor="middle" fill="#d1d5db" font-size="16" font-family="Arial, sans-serif">load 분산 / queue 감소 가능</text>
+  <text x="710" y="293" text-anchor="middle" fill="#9ca3af" font-size="15" font-family="Arial, sans-serif">migration 시 cache locality 비용 가능</text>
+  <text x="480" y="348" text-anchor="middle" fill="#9ca3af" font-size="16" font-family="Arial, sans-serif">hard affinity를 좁힐수록 scheduler의 load-balancing 선택지도 줄어든다.</text>
+</svg>
