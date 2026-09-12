@@ -104,7 +104,14 @@ export function ReviewPage() {
             : <div className="concept-list">{reviews.data.items.map((item) => {
                 const timing = reviewTiming(item.dueAt, item.status)
                 return <Link className="concept-list-item review-list-item" key={item.questionId} to="/wrong-notes/$questionId" params={{ questionId: String(item.questionId) }}>
-                  <div className="concept-list-main"><h3>{compactMarkdownPreview(item.promptMarkdown)}</h3><p>{item.concepts.map((concept) => `${concept.areaName} · ${concept.title} · 레벨 ${concept.level}`).join(', ')}</p><div className="chip-row concept-list-status"><span className="chip state-badge state-scheduled">단계 {item.stage}</span><span className={`chip state-badge review-timing-${timing.className}`}>{timing.label}</span><span className="chip">{item.status === 'SCHEDULED' ? '진행 중' : '정리 완료'}</span></div></div>
+                  <div className="concept-list-main">
+                    <h3>{compactMarkdownPreview(item.promptMarkdown)}</h3>
+                    <p>{item.concepts.map((concept) => `${concept.areaName} · ${concept.title} · 레벨 ${concept.level}`).join(', ')}</p>
+                    <div className="review-row-meta">
+                      <span>단계 {item.stage} · {item.status === 'SCHEDULED' ? '진행 중' : '정리 완료'}</span>
+                      <span className={`chip state-badge review-timing-${timing.className}`}>{timing.label}</span>
+                    </div>
+                  </div>
                   <div className="wrong-note-metrics"><strong>{item.dueAt ? new Date(item.dueAt).toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' }) : '정리 완료'}</strong><span>{timing.label}</span></div>
                 </Link>
               })}</div>}
