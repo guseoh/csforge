@@ -37,10 +37,10 @@ function AreaRow({ area, index }: { area: AreaSummary; index: number }) {
         )}
       </span>
       <Link
+        className="area-row-quiz"
         to="/quiz"
         search={{ ...defaultQuizSearch, areas: area.slug }}
         aria-label={`${area.name} 문제 풀기`}
-        style={{ justifySelf: 'end', color: 'var(--text-muted)', fontSize: '0.72rem', whiteSpace: 'nowrap' }}
       >
         문제 <span aria-hidden="true">→</span>
       </Link>
