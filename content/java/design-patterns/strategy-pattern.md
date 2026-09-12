@@ -139,7 +139,7 @@ Strategy 구현
 
 ### “런타임 교체”는 setter가 아니라 선택 시점의 문제다
 
-Strategy와 Template Method를 비교할 때 Strategy를 “런타임에 교체 가능한 패턴”이라고 자주 설명합니다. 여기서 runtime은 **컴파일 때 subtype hierarchy 하나로 행동이 고정되는 대신, 실행할 객체를 조립하거나 호출하는 시점에 선택할 수 있다는 의미**로 이해하는 편이 정확합니다.
+Strategy와 Template Method를 비교할 때 Strategy를 “런타임에 교체 가능한 패턴”이라고 자주 설명합니다. 여기서 runtime은 **실행할 전략 객체를 조립하거나 호출하는 시점에 선택할 수 있다는 의미**로 이해하면 됩니다.
 
 ```java
 DiscountPolicy selected = request.isVip()
