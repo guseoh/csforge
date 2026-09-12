@@ -36,7 +36,7 @@ container를 시작하면 entrypoint가 namespace 안의 초기 process가 되�
 
 container restart는 process memory와 in-flight request를 자동 보존하지 않고 writable layer도 업무 데이터의 durable 저장소라는 보장이 아니다. volume, external DB, queue checkpoint와 idempotent recovery를 명시해 ephemeral runtime과 canonical state를 분리한다. namespace가 path를 격리해도 bind mount가 가리키는 host object의 lifetime과 permission은 별도 경계다.
 
-Spring application의 graceful shutdown에서는 termination signal → 신규 작업 수락 중단 → in-flight 작업 정리 → resource close의 순서를 PID 1/entrypoint와 맞춘다. container가 사라져도 PostgreSQL source of truth와 재시도 가능한 outbox가 작업을 복구할 수 있어야 하며, orchestration 설정 자체의 세부는 Infrastructure 영역에서 다룬다.
+Spring application의 graceful shutdown에서는 termination signal → 신규 작업 수락 중단 → in-flight 작업 정리 → resource close의 순서를 PID 1/entrypoint와 맞춘다. 중요한 상태는 process memory 밖의 durable storage에 남겨야 하며, 작업의 전달·재처리 보장이 필요하다면 idempotent retry, durable queue, transactional handoff 같은 복구 경계를 실제 요구사항에 맞게 선택한다. orchestration 설정 자체의 세부는 Infrastructure 영역에서 다룬다.
 
 ### 면접에서 이렇게 나옵니다
 
