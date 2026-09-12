@@ -9,21 +9,23 @@
   align-items: flex-end;
   justify-content: space-between;
   gap: 28px;
-  margin: 26px 0 28px;
+  margin: 22px 0 26px;
 }
 
 .quiz-result-heading h1 {
   margin: 7px 0 10px;
   color: var(--text-strong);
-  font-size: clamp(2.15rem, 3.2vw, 2.85rem);
-  letter-spacing: -0.045em;
+  font-size: clamp(2rem, 2.6vw, 2.45rem);
+  letter-spacing: -0.04em;
+  line-height: 1.14;
 }
 
 .quiz-result-heading .lead {
   max-width: 620px;
   margin: 0;
   color: var(--text-muted);
-  line-height: 1.7;
+  font-size: 0.98rem;
+  line-height: 1.68;
 }
 
 .quiz-result-summary-focused {
@@ -64,13 +66,13 @@
 }
 
 .result-attention-section {
-  margin-top: 42px;
+  margin-top: 38px;
   padding-top: 0;
   border-top: 0;
 }
 
 .result-self-check-section + .result-review-section {
-  margin-top: 34px;
+  margin-top: 32px;
 }
 
 .result-attention-section .section-heading {
@@ -81,7 +83,7 @@
 .result-breakdown-section .section-heading h2 {
   margin: 4px 0 0;
   color: var(--text-strong);
-  font-size: 1.25rem;
+  font-size: 1.22rem;
 }
 
 .quiz-result-attention-list {
@@ -115,7 +117,7 @@
 .quiz-result-attention-list .quiz-prompt {
   margin: 18px 0 14px;
   font-size: 1rem;
-  line-height: 1.75;
+  line-height: 1.72;
 }
 
 .result-clear-state {
@@ -133,7 +135,7 @@
 
 .result-clear-state span {
   color: var(--text-muted);
-  font-size: 0.8rem;
+  font-size: 0.82rem;
 }
 
 .quiz-result-actions-focused {
@@ -145,7 +147,7 @@
 }
 
 .result-breakdown-section {
-  margin-top: 50px;
+  margin-top: 46px;
 }
 
 .result-breakdown-section .quiz-breakdown {
@@ -156,14 +158,14 @@
 }
 
 .correct-result-disclosure {
-  margin-top: 48px;
+  margin-top: 44px;
   border-top: 1px solid var(--border-subtle);
   border-bottom: 1px solid var(--border-subtle);
 }
 
 .correct-result-disclosure > summary {
   display: flex;
-  min-height: 76px;
+  min-height: 72px;
   align-items: center;
   justify-content: space-between;
   gap: 22px;
@@ -187,7 +189,7 @@
 
 .correct-result-disclosure > summary > span:last-child {
   color: var(--text-muted);
-  font-size: 0.76rem;
+  font-size: 0.8rem;
 }
 
 .correct-result-list {
