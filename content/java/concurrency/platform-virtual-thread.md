@@ -34,6 +34,8 @@ references:
 
 Virtual thread는 **Java runtime이 매우 많은 동시 작업을 thread-per-task 방식으로 표현하기 쉽게 만든 가벼운 `Thread`**입니다. 특히 blocking I/O가 많은 backend code에서 기존의 순차적인 코딩 스타일을 유지하면서 더 많은 대기 작업을 다루는 것이 목적입니다.
 
+![Virtual Thread와 carrier platform thread의 실행 관계](/learning/java/virtual-thread-carriers.svg)
+
 ### 둘 다 Java에서는 Thread다
 
 ```java
@@ -179,3 +181,13 @@ One-way context 전달이 목적이면 Java 25 API가 권장하는 `ScopedValue`
 ### 학습 후 스스로 설명해 보기
 
 Platform thread는 보통 OS kernel thread와 1:1로 매핑되는 비교적 비싼 실행 자원인 반면, virtual thread는 Java runtime이 scheduling하는 가벼운 `Thread`라 많은 blocking I/O task를 thread-per-task 방식으로 표현하기 좋습니다. Virtual thread는 carrier platform thread 위에서 실행되며 지원되는 blocking I/O에서는 carrier를 양보할 수 있습니다. JDK 24 이후 `synchronized` 때문에 pin되는 제약은 제거됐지만 native method나 foreign function 실행에서는 pinning이 생길 수 있습니다. 또한 virtual thread는 CPU나 DB connection 같은 실제 희소 자원의 capacity를 늘려 주는 기능은 아닙니다.
+
+### 면접에서 이렇게 나옵니다
+
+#### Q. Virtual Thread를 아주 많이 만들 수 있다면 DB connection도 많이 열어도 되나요?
+
+아닙니다. Virtual thread가 낮추는 것은 요청을 표현하는 Java thread의 비용입니다. DB connection, CPU core, 외부 API quota 같은 downstream 자원은 별도의 capacity를 가지므로 connection pool, Semaphore, rate limit 같은 수단으로 그 자원의 동시 사용량을 따로 제한해야 합니다.
+
+#### Q. Java 25에서도 `synchronized` 안에서 blocking하면 Virtual Thread가 carrier에 반드시 pin되나요?
+
+그렇게 설명하면 오래된 구현 제약을 현재 계약처럼 말하게 됩니다. JDK 24의 JEP 491 이후 monitor를 보유한 채 blocking한다는 이유만으로 carrier에 pin되던 제약은 제거됐습니다. 다만 native method나 foreign function 실행처럼 현재도 pinning이 생길 수 있는 경계는 남아 있으므로 실제 workload에서는 JFR 같은 관찰 수단으로 확인해야 합니다.
