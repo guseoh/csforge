@@ -3,8 +3,10 @@ import { Link, useParams } from '@tanstack/react-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { EmptyState, ErrorState, PageSkeleton } from '../components/AsyncStates'
 import { ConceptLearningRail } from '../components/ConceptLearningRail'
+import { InterviewRecallSection } from '../components/InterviewRecallSection'
 import { MarkdownContent } from '../components/MarkdownContent'
 import { useToast } from '../components/toast/ToastProvider'
+import { extractInterviewSection } from '../lib/interview-section'
 import {
   getConcept,
   recordConceptView,
@@ -50,11 +52,24 @@ function ConceptArticleToc({ conceptId }: { conceptId: number }) {
     const articleHeadings = Array.from(
       document.querySelectorAll<HTMLElement>('.concept-reading-content h2, .concept-reading-content h3'),
     )
-    const extraSections = [
-      document.getElementById('personal-note'),
-      document.getElementById('references'),
-    ].filter((element): element is HTMLElement => element !== null)
-    const trackedElements = [...articleHeadings, ...extraSections]
+    const extraSectionCandidates: { element: HTMLElement | null; heading: TocHeading }[] = [
+      {
+        element: document.getElementById('interview'),
+        heading: { id: 'interview', label: '면접에서 이렇게 나옵니다', level: 2 },
+      },
+      {
+        element: document.getElementById('personal-note'),
+        heading: { id: 'personal-note', label: '학습 노트', level: 2 },
+      },
+      {
+        element: document.getElementById('references'),
+        heading: { id: 'references', label: '함께 볼 자료', level: 2 },
+      },
+    ]
+    const extraSections = extraSectionCandidates.filter(
+      (item): item is { element: HTMLElement; heading: TocHeading } => item.element !== null,
+    )
+    const trackedElements = [...articleHeadings, ...extraSections.map((item) => item.element)]
     const mappedHeadings: TocHeading[] = articleHeadings.map((heading, index) => {
       const id = `concept-${conceptId}-section-${index + 1}`
       heading.id = id
@@ -64,13 +79,10 @@ function ConceptArticleToc({ conceptId }: { conceptId: number }) {
         level: heading.tagName === 'H3' ? 3 : 2,
       }
     })
+    const sectionHeadings = extraSections.map((item) => item.heading)
 
-    const sectionHeadings: TocHeading[] = [
-      { id: 'personal-note', label: '학습 노트', level: 2 },
-      { id: 'references', label: '함께 볼 자료', level: 2 },
-    ]
     setHeadings([...mappedHeadings, ...sectionHeadings])
-    setActiveId(mappedHeadings[0]?.id ?? sectionHeadings[0].id)
+    setActiveId(mappedHeadings[0]?.id ?? sectionHeadings[0]?.id ?? '')
 
     const observer = new IntersectionObserver((entries) => {
       const visible = entries
@@ -112,6 +124,7 @@ function ConceptContent({ data, conceptId }: { data: ConceptDetailModel; concept
   const hydratedConceptRef = useRef<number | null>(null)
   const noteTimerRef = useRef<number | undefined>(undefined)
   const [noteState, setNoteState] = useState<NoteState>('saved')
+  const { bodyMarkdown, interview } = extractInterviewSection(data.contentMarkdown)
 
   const noteMutation = useMutation({
     mutationFn: ({ content }: { content: string }) => savePersonalNote(conceptId, content),
@@ -213,8 +226,10 @@ function ConceptContent({ data, conceptId }: { data: ConceptDetailModel; concept
       </div>
 
       <article className="concept-reading-content" aria-label={`${data.title} 학습 노트`}>
-        <MarkdownContent dedupeLeadingHeading={data.title}>{data.contentMarkdown}</MarkdownContent>
+        <MarkdownContent dedupeLeadingHeading={data.title}>{bodyMarkdown}</MarkdownContent>
       </article>
+
+      {interview && <InterviewRecallSection section={interview} />}
 
       <section className="detail-section personal-note-section" id="personal-note">
         <div className="section-heading">
