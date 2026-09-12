@@ -21,6 +21,8 @@ references:
 
 고동시성 I/O를 설명할 때 readiness와 completion을 같은 event model로 취급하면 state machine이 쉽게 꼬인다. 둘은 kernel이 caller에게 알려주는 **사건의 의미 자체가 다르다.**
 
+![readiness와 completion 모델의 control flow 차이](/learning/operating-systems/readiness-vs-completion.svg)
+
 ### Readiness는 operation을 시도할 조건을 알려준다
 
 readiness model에서 `readable` event는 일반적으로 `지금 read를 시도하면 이전보다 progress할 조건이 있다`는 뜻이다. socket receive buffer에 bytes가 들어왔거나 EOF/error 같은 상태 변화가 있을 수 있다. 하지만 event 하나가 application message 전체의 수신 완료를 의미하지는 않는다.
@@ -47,3 +49,9 @@ completion model에서는 caller가 `이 buffer에 최대 N byte를 읽어 달�
 level-triggered는 조건이 계속 true인 동안 event를 다시 받을 수 있고, edge-triggered는 상태 변화에 더 민감한 방식이라 non-blocking drain loop를 제대로 구현하지 않으면 unread data가 남은 채 다음 notification을 기다리는 오류가 생길 수 있다. 이는 completion vs readiness 구분과 별도의 문제다.
 
 Backend에서는 `socket readable`, `request body parsed`, `business operation completed`, `response bytes fully written`을 별도 state로 둔다. event-loop metric도 ready-event 수만으로 request throughput을 대신 설명하지 않는다.
+
+### 면접에서 이렇게 나옵니다
+
+#### Q. readiness와 completion의 가장 중요한 차이는 무엇인가요?
+
+Readiness는 “지금 I/O를 시도할 수 있다”는 상태를 알려주고 실제 read/write는 application이 수행합니다. Completion은 먼저 제출한 operation의 결과를 나중에 받는 모델입니다. 둘 다 application-level message 완료와는 별개라는 점까지 설명하면 좋습니다.
