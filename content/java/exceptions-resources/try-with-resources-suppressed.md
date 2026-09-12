@@ -21,6 +21,12 @@ references:
     language: en
     displayOrder: 2
     relationNote: suppressed exception 조회 계약 확인
+  - url: "https://d2.naver.com/helloworld/1219"
+    title: "JDK 7"
+    referenceType: COMPANY_TECH_BLOG
+    language: ko
+    displayOrder: 3
+    relationNote: try-with-resources와 JDK 7 자원 관리 문법을 한국어 사례로 보충
 ---
 # try-with-resources와 suppressed exception
 
@@ -61,6 +67,22 @@ close first
 
 의존하는 자원을 나중에 열고 먼저 닫는 구조를 만들 수 있습니다.
 
+### 자원을 여는 중간에도 실패할 수 있다
+
+두 번째 자원을 열다가 실패하면 첫 번째 자원을 그대로 남겨 두면 안 됩니다. try-with-resources는 이미 성공적으로 초기화된 자원에 대해서는 정리 경로를 적용합니다.
+
+```text
+open first  성공
+   ↓
+open second 실패
+   ↓
+close first
+   ↓
+예외 전파
+```
+
+따라서 “try block 본문까지 들어갔을 때만 close된다”라고 이해하면 부족합니다. **어디까지 자원 초기화가 성공했는지**도 자원 수명 추적의 일부입니다.
+
 ### 본문과 close에서 모두 예외가 나면 어떻게 될까
 
 ```java
@@ -79,10 +101,22 @@ WorkException        ← 주 예외
 
 `Throwable.getSuppressed()`로 확인할 수 있습니다.
 
+반대로 본문에서는 정상 종료했고 `close()`에서만 예외가 발생했다면 그 close 예외가 단순 suppressed로만 숨겨지는 것이 아니라 밖으로 전파될 수 있습니다. suppressed는 **이미 주 예외가 존재하는 상황에서 추가 정리 실패를 함께 보존하는 구조**로 이해해야 합니다.
+
 ### close 예외도 무시해도 된다는 뜻은 아니다
 
 suppressed는 중요도가 없다는 뜻이 아니라 **주 예외를 보존하면서 함께 기록하는 방식**입니다. 파일 flush 실패처럼 close 예외가 실제 데이터 손실을 의미할 수도 있으므로 운영 진단에서 확인해야 합니다.
 
 ### 실무에서의 기본 선택
 
-직접 획득한 `AutoCloseable` 자원의 범위가 명확하다면 try-with-resources가 좋은 기본 선택입니다. 다만 connection pool이나 framework가 생명주기를 관리하는 객체를 임의로 닫아야 한다는 뜻은 아닙니다. “누가 닫아야 하는가”는 다음 자원 소유권 주제와 연결됩니다.
+직접 획득한 `AutoCloseable` 자원의 범위가 명확하다면 try-with-resources가 좋은 기본 선택입니다. 다만 connection pool이나 framework가 생명주기를 관리하는 객체를 임의로 닫아야 한다는 뜻은 아닙니다. “누가 닫아야 하는가”는 자원 소유권 주제와 연결됩니다.
+
+### 면접에서 이렇게 나옵니다
+
+#### Q. try-with-resources에서 본문 예외와 `close()` 예외가 동시에 발생하면 어떤 예외가 전달되나요?
+
+본문에서 발생한 예외가 주 예외로 유지되고, 자원 정리 중 발생한 예외는 suppressed exception으로 연결될 수 있습니다. 그래서 본래 작업 실패의 stack trace를 잃지 않으면서 정리 실패도 `getSuppressed()`로 확인할 수 있습니다.
+
+#### Q. 여러 자원을 선언하면 어떤 순서로 닫히나요?
+
+선언한 순서의 역순으로 닫힙니다. 첫 번째 자원을 연 뒤 두 번째 자원을 열었으면 종료 시 두 번째를 먼저 닫고 첫 번째를 나중에 닫습니다. 자원 초기화 도중 실패한 경우에도 이미 성공적으로 열린 앞선 자원의 정리 여부를 함께 추적해야 합니다.
