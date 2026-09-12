@@ -49,13 +49,12 @@
     "kind": "question",
     "contentKey": "dsa.core.sequential.dynamic-array.q2",
     "promptMarkdown": "capacity 4인 dynamic array가 가득 찬 상태에서 growth factor 2로 한 원소를 append한다. resize 시 기존 원소 복사 수와 새 capacity를 쓰라.",
-    "questionType": "DESCRIPTIVE",
+    "questionType": "SHORT_ANSWER",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
-    "conceptKeys": [
-      "dsa.core.sequential.dynamic-array"
-    ],
-    "modelAnswer": "capacity 4가 가득 찬 상태에서는 append 전에 더 큰 backing storage가 필요하다. growth factor 2이면 새 capacity는 8이고 기존 원소 4개를 새 배열로 복사한다."
+    "conceptKeys": ["dsa.core.sequential.dynamic-array"],
+    "acceptedAnswers": ["기존 4개를 복사하고 새 capacity는 8", "4개 복사, capacity 8", "4, 8"],
+    "explanationMarkdown": "capacity 4가 가득 찬 상태에서는 append 전에 더 큰 backing storage가 필요하다. growth factor 2이면 새 capacity는 8이고 기존 원소 4개를 새 배열로 복사한다."
   },
   {
     "kind": "question",
@@ -111,13 +110,12 @@
     "kind": "question",
     "contentKey": "dsa.core.sequential.doubly-linked-list.q1",
     "promptMarkdown": "doubly linked list의 중간 node `B`가 `A ↔ B ↔ C`에 있을 때 B를 삭제한 뒤 반드시 성립해야 하는 link 쌍은?",
-    "questionType": "DESCRIPTIVE",
+    "questionType": "SHORT_ANSWER",
     "difficulty": "EASY",
     "status": "PUBLISHED",
-    "conceptKeys": [
-      "dsa.core.sequential.doubly-linked-list"
-    ],
-    "modelAnswer": "B를 제거한 뒤 A가 새 이웃 C를 가리키도록 `A.next = C`로 바꾸고, 역방향도 `C.prev = A`로 바꿔야 한다. 두 link를 함께 갱신해야 양방향 invariant가 유지된다."
+    "conceptKeys": ["dsa.core.sequential.doubly-linked-list"],
+    "acceptedAnswers": ["A.next = C, C.prev = A", "A.next=C 그리고 C.prev=A"],
+    "explanationMarkdown": "B를 제거한 뒤 A가 새 이웃 C를 가리키도록 `A.next = C`로 바꾸고, 역방향도 `C.prev = A`로 바꿔야 한다. 두 link를 함께 갱신해야 양방향 invariant가 유지된다."
   },
   {
     "kind": "question",

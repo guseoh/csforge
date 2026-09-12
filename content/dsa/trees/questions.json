@@ -3,13 +3,12 @@
     "kind": "question",
     "contentKey": "dsa.core.trees.tree-terminology.q1",
     "promptMarkdown": "root A의 child가 B,C이고 B의 child가 D,E일 때 D의 depth와 B의 height를 각각 쓰라. edge 수 기준이다.",
-    "questionType": "DESCRIPTIVE",
+    "questionType": "SHORT_ANSWER",
     "difficulty": "EASY",
     "status": "PUBLISHED",
-    "conceptKeys": [
-      "dsa.core.trees.tree-terminology"
-    ],
-    "modelAnswer": "Root A에서 D까지 A→B→D의 edge가 두 개이므로 D의 depth는 2다. B의 가장 깊은 descendant는 D 또는 E이고 B→D, B→E가 각각 한 edge이므로 B의 height는 1이다."
+    "conceptKeys": ["dsa.core.trees.tree-terminology"],
+    "acceptedAnswers": ["D depth=2, B height=1", "2, 1"],
+    "explanationMarkdown": "Root A에서 D까지 A→B→D의 edge가 두 개이므로 D의 depth는 2다. B의 가장 깊은 descendant는 D 또는 E이고 B→D, B→E가 각각 한 edge이므로 B의 height는 1이다."
   },
   {
     "kind":"question",
@@ -45,13 +44,12 @@
     "kind": "question",
     "contentKey": "dsa.core.trees.binary-tree-traversal.q2",
     "promptMarkdown": "같은 tree의 inorder와 postorder 순서를 각각 쓰라.",
-    "questionType": "DESCRIPTIVE",
+    "questionType": "SHORT_ANSWER",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
-    "conceptKeys": [
-      "dsa.core.trees.binary-tree-traversal"
-    ],
-    "modelAnswer": "같은 tree에서 inorder는 left→root→right이므로 `D B E A C`다. Postorder는 child subtree를 먼저 처리하므로 `D E B C A`다."
+    "conceptKeys": ["dsa.core.trees.binary-tree-traversal"],
+    "acceptedAnswers": ["inorder D B E A C, postorder D E B C A", "D B E A C / D E B C A"],
+    "explanationMarkdown": "같은 tree에서 inorder는 left→root→right이므로 `D B E A C`다. Postorder는 child subtree를 먼저 처리하므로 `D E B C A`다."
   },
   {
     "kind":"question",
@@ -203,13 +201,12 @@
     "kind": "question",
     "contentKey": "dsa.core.trees.heap.q4",
     "promptMarkdown": "n개 값을 이미 array로 가지고 있을 때 n번 insert하는 방식과 bottom-up heapify의 일반 시간 복잡도를 비교하라.",
-    "questionType": "DESCRIPTIVE",
+    "questionType": "SHORT_ANSWER",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
-    "conceptKeys": [
-      "dsa.core.trees.heap"
-    ],
-    "modelAnswer": "각 값을 순서대로 insert하면 매 insert가 최대 O(log n)이어서 전체가 O(n log n)이다. 이미 배열에 있는 값을 bottom-up으로 sift-down하면 subtree 높이별 작업을 합쳐 O(n)에 heapify할 수 있다."
+    "conceptKeys": ["dsa.core.trees.heap"],
+    "acceptedAnswers": ["n번 insert는 O(n log n), bottom-up heapify는 O(n)", "O(n log n) vs O(n)"],
+    "explanationMarkdown": "각 값을 순서대로 insert하면 매 insert가 최대 O(log n)이어서 전체가 O(n log n)이다. 이미 배열에 있는 값을 bottom-up으로 sift-down하면 subtree 높이별 작업을 합쳐 O(n)에 heapify할 수 있다."
   },
   {
     "kind":"question",
@@ -225,13 +222,12 @@
     "kind": "question",
     "contentKey": "dsa.core.trees.priority-queue.q2",
     "promptMarkdown": "binary heap priority queue에서 peek와 insert, extract-min의 일반 비용을 각각 쓰라.",
-    "questionType": "DESCRIPTIVE",
+    "questionType": "SHORT_ANSWER",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
-    "conceptKeys": [
-      "dsa.core.trees.priority-queue"
-    ],
-    "modelAnswer": "binary heap에서는 root를 읽는 peek가 O(1)이다. insert는 parent 방향 sift-up, extract-min은 마지막 원소를 root로 옮긴 뒤 sift-down하므로 각각 일반적으로 O(log n)이다."
+    "conceptKeys": ["dsa.core.trees.priority-queue"],
+    "acceptedAnswers": ["peek O(1), insert O(log n), extract-min O(log n)", "O(1), O(log n), O(log n)"],
+    "explanationMarkdown": "binary heap에서는 root를 읽는 peek가 O(1)이다. insert는 parent 방향 sift-up, extract-min은 마지막 원소를 root로 옮긴 뒤 sift-down하므로 각각 일반적으로 O(log n)이다."
   },
   {
     "kind":"question",

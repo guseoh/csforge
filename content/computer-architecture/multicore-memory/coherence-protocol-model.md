@@ -48,8 +48,11 @@ Java의 `volatile`, lock, happens-before는 다시 그 위의 language-level con
 ### Backend에서 무엇을 측정할까
 
 shared atomic counter나 concurrent queue가 core 수 증가에 비례해 scale하지 않는다면 lock wait뿐 아니라 cache-to-cache transfer, coherence miss, interconnect traffic과 line sharing을 확인한다. 단순히 `atomic이라 lock-free니까 빠르다`고 결론 내리지 않는다. correctness primitive와 cache-line ownership 비용은 별도 문제다.
+
 ### Shared-to-exclusive transition
+
     A/B read → both Shared
-       A write → invalidate B → A Modified/Exclusive
+       A write → invalidate B → A obtains exclusive write ownership
        B read → coherence request → latest data
-protocol의 state 이름은 다를 수 있지만 write ownership과 stale copy 제거가 핵심이다.
+
+protocol의 state 이름은 다를 수 있지만 write ownership과 stale copy 제거가 핵심이다. MESI를 예로 들면 Shared line에 실제 write가 일어난 뒤 writer의 line은 Modified가 될 수 있으며, Exclusive와 Modified는 같은 상태를 뜻하지 않는다.

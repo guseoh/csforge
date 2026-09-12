@@ -154,13 +154,12 @@
     "kind": "question",
     "contentKey": "dsa.core.algorithm-selection.preprocessing-query-cost.q2",
     "promptMarkdown": "같은 조건에서 query가 10번이면 선형 scan 방식과 preprocessing 방식의 총 예상 시간을 각각 계산하라.",
-    "questionType": "DESCRIPTIVE",
+    "questionType": "SHORT_ANSWER",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
-    "conceptKeys": [
-      "dsa.core.algorithm-selection.preprocessing-query-cost"
-    ],
-    "modelAnswer": "한 번의 선형 scan은 100 ms이므로 10회면 1,000 ms다. preprocessing 방식은 800 ms를 한 번 지불하고 query 10회에 5 ms씩 더해 850 ms다. 따라서 이 조건에서는 preprocessing 방식이 더 짧지만, 원본 변경 시 유지 비용은 별도 계약으로 계산해야 한다."
+    "conceptKeys": ["dsa.core.algorithm-selection.preprocessing-query-cost"],
+    "acceptedAnswers": ["scan 1000 ms, preprocessing 850 ms", "1000ms, 850ms", "선형 1000 ms / 전처리 850 ms"],
+    "explanationMarkdown": "한 번의 선형 scan은 100 ms이므로 10회면 1,000 ms다. preprocessing 방식은 800 ms를 한 번 지불하고 query 10회에 5 ms씩 더해 850 ms다. 이 조건에서는 preprocessing 방식이 더 짧지만 원본 변경 시 유지 비용은 별도 계약으로 계산해야 한다."
   },
   {
     "kind": "question",

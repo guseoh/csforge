@@ -62,8 +62,13 @@ huge page는 TLB miss를 줄일 수 있지만 data cache miss, poor locality, NU
 JVM이나 native process에 huge page를 적용하기 전에는 먼저 TLB miss와 page-walk cost가 의미 있는 병목인지 확인한다. 적용 전후로 throughput뿐 아니라 RSS, page-table memory, allocation 실패/fragmentation, major/minor fault, TLB 관련 counter, startup과 p95/p99 pause를 함께 비교한다.
 
 `heap이 크다 → huge page를 켠다`가 기본 순서는 아니다. workload가 큰 memory range를 지속적으로 사용하고 translation pressure가 실제로 관측될 때 후보가 되며, Linux HugeTLB와 Transparent Huge Pages처럼 서로 다른 mechanism의 운영 특성도 분리해서 검토해야 한다.
+
 ### Page size와 TLB reach
-    TLB entries × page size = covered virtual range
+
+    TLB reach ≈ entry count × page size
+
+    같은 512-entry TLB를 가정한 단순 비교:
     512 × 4 KiB  = 2 MiB
     512 × 2 MiB  = 1 GiB
-큰 page는 translation pressure를 줄일 수 있지만 allocation·fragmentation trade-off가 있다.
+
+실제 CPU에서는 page size별 TLB level과 entry 수가 다를 수 있다. 큰 page는 translation pressure를 줄일 수 있지만 allocation·fragmentation trade-off가 있다.
