@@ -28,6 +28,8 @@ references:
 
 그 중심에 compare-and-set(CAS)라는 개념이 있습니다.
 
+![CAS 성공과 retry 흐름](/learning/java/cas-retry.svg)
+
 ### CAS는 "내가 읽었던 값이 아직 그대로인가"를 확인하고 바꾼다
 
 개념적으로 CAS는 세 값을 생각하면 됩니다.
@@ -155,3 +157,13 @@ CAS는 "현재 값이 expected와 같은가"를 봅니다. 값이 A에서 B로 �
 ### 학습 후 스스로 설명해 보기
 
 CAS는 현재 값이 내가 예상한 값과 같을 때만 새 값으로 바꾸는 원자적인 조건부 갱신입니다. 다른 thread가 먼저 값을 바꾸면 실패하고 caller는 새 값을 읽어 retry할 수 있습니다. `AtomicInteger` 같은 클래스가 이를 이용한 단일 값 atomic update를 제공하지만 contention이 높으면 retry 비용이 커질 수 있고, 여러 field 사이의 invariant는 별도의 상태 모델이나 lock이 필요할 수 있습니다. 또한 CAS는 lock-free 알고리즘을 구현하는 데 사용할 수 있는 primitive이지, CAS를 썼다는 사실만으로 전체 알고리즘의 lock-free progress가 자동 보장되는 것은 아닙니다.
+
+### 면접에서 이렇게 나옵니다
+
+#### Q. CAS를 사용하면 코드는 자동으로 lock-free가 되나요?
+
+아닙니다. CAS는 하나의 원자적인 조건부 갱신 primitive입니다. Lock-free나 wait-free는 전체 알고리즘의 progress guarantee를 설명하는 성질이므로 retry 구조, 다른 blocking 지점, 여러 상태의 협력까지 포함해 알고리즘 전체를 봐야 합니다.
+
+#### Q. `AtomicInteger`를 여러 개 쓰면 여러 값 사이의 invariant도 원자적으로 보호되나요?
+
+각 `AtomicInteger`의 개별 연산은 원자적이지만 서로 다른 atomic 변수 사이의 관계까지 하나의 transaction으로 묶이지는 않습니다. 여러 값이 함께 변해야 한다면 immutable composite state를 `AtomicReference` 하나로 교체하거나 같은 lock으로 보호하는 등 invariant 자체를 한 동기화 경계에 넣어야 합니다.
