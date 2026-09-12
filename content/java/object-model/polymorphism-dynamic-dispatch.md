@@ -15,6 +15,12 @@ references:
     language: en
     displayOrder: 1
     relationNote: 메서드 호출과 런타임 메서드 선택 규칙 확인
+  - url: "https://tecoble.techcourse.co.kr/post/2020-10-27-polymorphism/"
+    title: "Tecoble: 다형성(Polymorphism)이란?"
+    referenceType: KOREAN_BLOG
+    language: ko
+    displayOrder: 2
+    relationNote: 상위 타입 계약으로 여러 구현 객체를 다루는 예시를 한국어로 복습
 ---
 # 다형성과 런타임 메서드 선택
 
@@ -112,3 +118,17 @@ Spring DI는 이런 구현 객체를 연결하는 일을 도와주지만, 다형
 4. 호출 대상이 override 가능한 인스턴스 메서드인가?
 
 이 순서를 지키면 overload, field hiding, static method와 섞인 문제도 구분하기 쉬워집니다.
+
+### 면접에서 이렇게 나옵니다
+
+#### Q. `Animal animal = new Dog()`에서 어떤 타입을 기준으로 메서드가 결정되나요?
+
+한 단계로 답하면 헷갈립니다. **컴파일 시점에는 선언 타입 `Animal`을 기준으로 해당 호출이 가능한지와 어떤 메서드 서명을 사용할지 판단하고, 실행 시점에는 실제 객체 `Dog`를 기준으로 override된 인스턴스 메서드 구현을 선택**합니다.
+
+그래서 `Animal`에 없는 `Dog` 전용 메서드는 바로 호출할 수 없지만, `Animal`에 선언되고 `Dog`가 override한 메서드는 `Dog` 구현이 실행될 수 있습니다.
+
+#### Q. 다형성을 쓰면 `if`/`switch`가 항상 없어지나요?
+
+아닙니다. 다형성은 같은 계약에 대해 객체마다 다른 동작을 제공할 때 유용하지만, 입력 분류나 서로 다른 결과 형식을 처리하는 분기가 자연스러운 경우도 있습니다.
+
+중요한 것은 구체 타입마다 같은 종류의 행동을 반복 분기하고 있다면 **그 행동을 공통 계약과 각 객체의 구현으로 옮길 수 있는지 검토하는 것**이지, 모든 조건문을 없애는 것이 아닙니다.
