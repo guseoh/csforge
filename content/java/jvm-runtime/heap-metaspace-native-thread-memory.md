@@ -34,6 +34,8 @@ references:
 
 JVM process는 heap 외에도 class metadata, thread stack, direct buffer, JIT/code cache, JVM 자체 native allocation 등 여러 곳에서 메모리를 사용합니다.
 
+![Java process memory와 heap 밖 영역](/learning/java/jvm-process-memory.svg)
+
 ### 먼저 process 전체와 Java heap을 구분한다
 
 ```text
@@ -214,3 +216,13 @@ Error 이름 하나보다 **어느 resource가 부족했다고 JVM이 말하는�
 ### 학습 후 스스로 설명해 보기
 
 Java process memory는 heap만으로 구성되지 않습니다. JVMS는 heap·JVM stack·method area 같은 논리적 runtime 영역을 정의하지만 구체적인 물리 배치는 JVM 구현에 맡깁니다. HotSpot에서는 class metadata를 위한 metaspace, platform thread 관련 stack/native resource, JIT code cache, direct/native allocation 등이 process memory를 사용합니다. 그래서 `-Xmx`는 전체 process memory 상한이 아니며 heap 사용량은 안정적인데 RSS가 증가하면 다른 영역을 따로 확인해야 합니다. NMT도 유용하지만 HotSpot 내부 native memory를 추적하는 도구라 third-party/JDK native allocation까지 process 전체를 설명하지는 않습니다.
+
+### 면접에서 이렇게 나옵니다
+
+#### Q. `-Xmx1g`로 설정했는데 Java 프로세스 RSS가 1GB를 넘는 이유는 무엇인가요?
+
+`-Xmx`는 Java heap 최대 크기를 제한하는 옵션이지 process 전체 메모리 상한이 아닙니다. Metaspace, platform thread stack, direct/native allocation, JIT code cache와 JVM 자체 구조가 heap 밖에서도 메모리를 사용할 수 있으므로 RSS는 heap 최대값보다 커질 수 있습니다.
+
+#### Q. Heap 사용량은 안정적인데 container RSS만 계속 증가한다면 무엇을 확인하겠습니까?
+
+Heap leak 하나로 결론내리지 않고 metaspace와 ClassLoader 수명, thread 수와 stack/native resource, direct buffer와 다른 native allocation을 분리해서 봅니다. HotSpot 내부 native memory는 NMT가 유용한 단서가 되지만 NMT가 third-party 또는 JDK native allocation까지 process RSS 전체를 설명하지는 않는다는 범위도 함께 확인합니다.

@@ -14,13 +14,19 @@ references:
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
-    relationNote: UTC timeline의 한 시점을 표현하는 Instant 계약 확인
+    relationNote: timeline의 한 시점을 표현하는 Instant 계약 확인
   - url: "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/time/ZonedDateTime.html"
     title: "Java SE 25 API: ZonedDateTime"
     referenceType: OFFICIAL
     language: en
     displayOrder: 2
     relationNote: ZoneId 규칙을 적용한 날짜·시간 표현과 변환 확인
+  - url: "https://d2.naver.com/helloworld/645609"
+    title: "네이버 D2: Java의 날짜와 시간 API"
+    referenceType: COMPANY_TECH_BLOG
+    language: ko
+    displayOrder: 3
+    relationNote: Java 날짜·시간 API가 local time과 timezone-aware time을 분리한 배경을 한국어로 함께 확인
 ---
 # Instant·LocalDateTime·ZonedDateTime
 
@@ -36,7 +42,7 @@ Java Time API는 이 차이를 타입으로 나누어 표현합니다. 핵심은
 Instant createdAt = Instant.parse("2026-08-31T05:00:00Z");
 ```
 
-`Instant`는 UTC 기준 timeline의 한 지점을 표현합니다. 같은 `Instant`를 서울에서 보든 뉴욕에서 보든 사건이 발생한 순간 자체는 달라지지 않습니다.
+`Instant`는 Java Time API에서 timeline의 한 지점을 표현합니다. 일반적인 백엔드 코드에서는 **지역 시간대와 분리된 하나의 사건 시점**으로 이해하면 충분합니다. 같은 `Instant`를 서울에서 보든 뉴욕에서 보든 사건이 발생한 순간 자체는 달라지지 않습니다.
 
 ```text
 하나의 Instant
@@ -83,6 +89,12 @@ Instant executionTime = scheduled.toInstant();
 ZonedDateTime userTime = createdAt.atZone(ZoneId.of("Asia/Seoul"));
 ```
 
+### `OffsetDateTime`과 `ZonedDateTime`도 같은 정보는 아니다
+
+`OffsetDateTime`은 `+09:00`처럼 **그 시점의 UTC offset**을 포함하지만 `Asia/Seoul` 같은 지역 규칙의 식별자를 보존하지는 않습니다. 한 번 발생한 사건을 offset과 함께 교환하는 데는 충분할 수 있지만, "이 사용자의 지역에서 다음 달 오전 9시"처럼 미래 지역 규칙까지 다시 적용해야 하는 일정에서는 원래 `ZoneId`가 별도로 필요할 수 있습니다.
+
+따라서 offset이 들어 있다고 해서 반복 일정의 지역 의미까지 모두 보존됐다고 생각하면 안 됩니다.
+
 ### 같은 local 시간을 유지하는 것과 같은 순간을 유지하는 것은 다르다
 
 Zone을 바꾸는 API에서는 **무엇을 보존할지**가 중요합니다.
@@ -114,11 +126,21 @@ DB column이 `created_at`이라고 해서 타입 선택이 자동으로 정해�
 
 ### 자주 헷갈리는 부분
 
-- `LocalDateTime`은 시스템 기본 ZoneId를 내부에 가지고 있지 않습니다.
+- `LocalDateTime`은 시스템 기본 `ZoneId`를 내부에 가지고 있지 않습니다.
 - `Instant`를 다른 zone으로 표시해도 사건이 발생한 순간은 바뀌지 않습니다.
 - `ZoneId`와 고정 offset은 같은 개념이 아닙니다.
 - 문자열에 날짜와 시간이 보인다고 해서 그 값이 실제 순간까지 표현하는 것은 아닙니다.
 
 ### 학습 후 스스로 설명해 보기
 
-`Instant`는 UTC timeline의 한 시점을, `LocalDateTime`은 zone 없는 지역 날짜·시각을, `ZonedDateTime`은 지역의 ZoneId 규칙이 적용된 날짜·시각을 표현한다고 설명하면 됩니다. 백엔드에서는 생성·만료 시각처럼 사건 자체를 비교할 때와 사용자 일정처럼 지역 시간이 업무 의미인 경우를 구분해 타입과 저장 정책을 정하는 것이 중요합니다.
+`Instant`는 지역 시간대와 분리된 timeline의 한 시점을, `LocalDateTime`은 zone 없는 지역 날짜·시각을, `ZonedDateTime`은 지역의 `ZoneId` 규칙이 적용된 날짜·시각을 표현한다고 설명하면 됩니다. 백엔드에서는 생성·만료 시각처럼 사건 자체를 비교할 때와 사용자 일정처럼 지역 시간이 업무 의미인 경우를 구분해 타입과 저장 정책을 정하는 것이 중요합니다.
+
+### 면접에서 이렇게 나옵니다
+
+#### Q. 주문 생성 시각을 `LocalDateTime`만으로 저장하면 어떤 문제가 생길 수 있나요?
+
+`LocalDateTime`에는 zone이나 offset이 없으므로 그 값만으로는 세계의 어느 순간인지 정할 수 없습니다. 여러 지역에서 같은 사건을 비교하거나 사용자 지역 시각으로 변환해야 한다면 사건의 timeline 시점과 표시용 `ZoneId` 정책을 분리해 보존해야 합니다.
+
+#### Q. `withZoneSameInstant`와 `withZoneSameLocal`의 차이는 무엇인가요?
+
+전자는 같은 사건 시점을 유지하면서 다른 zone의 local 표현을 계산하고, 후자는 local clock 값을 유지한 채 zone을 바꾸므로 실제 `Instant`가 달라질 수 있습니다. 어떤 값을 보존해야 하는지는 이벤트 표시인지 지역 일정 이동인지 같은 업무 의미에 따라 결정합니다.

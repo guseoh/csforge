@@ -1,0 +1,246 @@
+/* Learning-content components: recall disclosure, structured quiz Markdown, and result explanations. */
+.interview-recall-section {
+  margin-top: 46px;
+  padding-top: 30px;
+  border-top: 1px solid var(--border-subtle);
+  scroll-margin-top: 96px;
+}
+
+.interview-recall-heading {
+  align-items: end;
+  margin-bottom: 10px;
+}
+
+.interview-recall-heading h2 {
+  margin: 0;
+  color: var(--text-strong);
+  font-size: 1.35rem;
+  letter-spacing: -0.02em;
+}
+
+.interview-recall-intro {
+  max-width: 680px;
+  margin: 0 0 18px;
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  line-height: 1.7;
+  word-break: keep-all;
+}
+
+.interview-recall-list {
+  border-top: 1px solid var(--border-subtle);
+}
+
+.interview-recall-item {
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.interview-recall-item > summary {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  min-height: 58px;
+  padding: 10px 2px;
+  color: var(--text-default);
+  cursor: pointer;
+  list-style: none;
+}
+
+.interview-recall-item > summary::-webkit-details-marker {
+  display: none;
+}
+
+.interview-question-index {
+  color: var(--accent-strong);
+  font-size: 0.75rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.interview-recall-item > summary strong {
+  min-width: 0;
+  color: var(--text-strong);
+  font-size: 0.94rem;
+  line-height: 1.55;
+  word-break: keep-all;
+}
+
+.interview-disclosure-label {
+  color: var(--accent-strong);
+  font-size: 0.76rem;
+  font-weight: 650;
+}
+
+.interview-recall-item[open] > summary {
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.interview-recall-answer {
+  padding: 20px 22px 24px 46px;
+  background: color-mix(in srgb, var(--surface-elevated) 70%, transparent);
+}
+
+.interview-recall-answer .eyebrow {
+  margin-bottom: 10px;
+}
+
+.interview-recall-answer .markdown-content {
+  color: var(--text-default);
+  font-size: 0.94rem;
+  line-height: 1.72;
+  word-break: keep-all;
+}
+
+.interview-recall-answer .markdown-content p,
+.interview-recall-answer .markdown-content ul,
+.interview-recall-answer .markdown-content ol {
+  margin: 0 0 14px;
+}
+
+.interview-recall-answer .markdown-content p:last-child,
+.interview-recall-answer .markdown-content ul:last-child,
+.interview-recall-answer .markdown-content ol:last-child {
+  margin-bottom: 0;
+}
+
+.quiz-focus-prompt table,
+.quiz-focus-choice-list table,
+.quiz-result-question .markdown-content table {
+  display: block;
+  width: max-content;
+  max-width: 100%;
+  overflow-x: auto;
+  margin: 18px 0 20px;
+  border-collapse: collapse;
+}
+
+.quiz-focus-prompt th,
+.quiz-focus-prompt td,
+.quiz-focus-choice-list th,
+.quiz-focus-choice-list td,
+.quiz-result-question .markdown-content th,
+.quiz-result-question .markdown-content td {
+  padding: 9px 11px;
+  border: 1px solid var(--border-default);
+  text-align: left;
+  vertical-align: top;
+}
+
+.quiz-focus-prompt th,
+.quiz-focus-choice-list th,
+.quiz-result-question .markdown-content th {
+  color: var(--text-strong);
+  background: var(--surface-interactive);
+}
+
+.quiz-focus-choice-list pre,
+.quiz-result-question .markdown-content pre {
+  max-width: 100%;
+  overflow-x: auto;
+  margin: 14px 0;
+  padding: 14px 16px;
+  border: 1px solid var(--border-default);
+  border-radius: 8px;
+  background: var(--color-page);
+}
+
+.quiz-focus-choice-list code,
+.quiz-result-question .markdown-content code {
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
+.result-answer-comparison {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 18px 0;
+}
+
+.result-answer-panel {
+  min-width: 0;
+  padding: 14px 16px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  background: var(--surface-page);
+}
+
+.result-answer-panel > span {
+  display: block;
+  margin-bottom: 7px;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.result-answer-panel > strong {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--text-strong);
+  font-size: 0.9rem;
+}
+
+.result-answer-panel.user-wrong {
+  border-color: color-mix(in srgb, var(--state-error) 48%, var(--border-subtle));
+}
+
+.result-answer-panel.correct-answer {
+  border-color: color-mix(in srgb, var(--state-success) 45%, var(--border-subtle));
+}
+
+.result-answer-panel .markdown-content {
+  color: var(--text-default);
+  font-size: 0.9rem;
+  line-height: 1.65;
+  word-break: keep-all;
+}
+
+.result-answer-panel .markdown-content p {
+  margin: 0;
+}
+
+.result-explanation {
+  margin-top: 20px;
+  padding: 18px 20px;
+  border-left: 3px solid var(--accent);
+  background: var(--surface-accent);
+}
+
+.result-explanation .eyebrow {
+  margin-bottom: 10px;
+}
+
+.result-explanation .markdown-content {
+  color: var(--text-default);
+  line-height: 1.72;
+  word-break: keep-all;
+}
+
+.result-related-concepts {
+  display: grid;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.result-related-concepts .chip-row {
+  margin: 0;
+}
+
+@media (max-width: 760px) {
+  .interview-recall-item > summary {
+    grid-template-columns: 30px minmax(0, 1fr);
+  }
+
+  .interview-disclosure-label {
+    grid-column: 2;
+  }
+
+  .interview-recall-answer {
+    padding-left: 32px;
+  }
+
+  .result-answer-comparison {
+    grid-template-columns: 1fr;
+  }
+}

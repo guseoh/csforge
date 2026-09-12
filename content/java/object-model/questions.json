@@ -72,7 +72,7 @@
   {
     "kind": "question",
     "contentKey": "java.core.object-model.class-object-constructor.q3",
-    "promptMarkdown": "다음 클래스에서 `new User(\"mina\")`가 컴파일되지 않는 이유는? `class User { User() {} }`",
+    "promptMarkdown": "다음 클래스가 있다.\n\n```java\nclass User {\n    User() {}\n}\n```\n\n`new User(\"mina\")`가 컴파일되지 않는 이유는?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
@@ -102,7 +102,7 @@
       }
     ],
     "correctChoiceKey": "C",
-    "explanationMarkdown": "현재 선언된 constructor는 User()뿐이다. `new User(\"mina\")`에 필요한 User(String) constructor가 없으므로 해당 호출이 컴파일되지 않는다."
+    "explanationMarkdown": "현재 선언된 constructor는 `User()`뿐이다. 호출식 `new User(\"mina\")`에는 `String` 하나를 받는 `User(String)` constructor가 필요하지만 그런 선언이 없으므로 overload resolution 단계에서 맞는 constructor를 찾지 못해 컴파일 오류가 난다."
   },
   {
     "kind": "question",
@@ -142,9 +142,9 @@
   {
     "kind": "question",
     "contentKey": "java.core.object-model.class-object-constructor.q5",
-    "promptMarkdown": "다음 코드의 결과에 대한 설명으로 옳은 것은? `class Box { final int size; Box(int size) { if (size <= 0) throw new IllegalArgumentException(); this.size = size; } }`",
+    "promptMarkdown": "다음 클래스를 본다.\n\n```java\nclass Box {\n    final int size;\n\n    Box(int size) {\n        if (size <= 0) {\n            throw new IllegalArgumentException();\n        }\n        this.size = size;\n    }\n}\n```\n\n이 코드의 생성 결과에 대한 설명으로 옳은 것은?",
     "questionType": "MULTIPLE_CHOICE",
-    "difficulty": "HARD",
+    "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": [
       "java.core.object-model.class-object-constructor"
@@ -172,7 +172,7 @@
       }
     ],
     "correctChoiceKey": "D",
-    "explanationMarkdown": "blank final field는 constructor에서 한 번 초기화할 수 있다. 검증 전에 잘못된 object를 완성하지 않으므로 `size <= 0` 경로에는 유효한 Box가 반환되지 않는다."
+    "explanationMarkdown": "`size`는 선언 시 값이 정해지지 않은 blank final field이므로 constructor에서 한 번 초기화할 수 있다.\n\n`size <= 0`이면 field 대입까지 도달하기 전에 constructor가 예외로 끝나므로 호출자에게 `Box` 인스턴스가 정상 반환되지 않는다. 따라서 관찰 가능한 정상 생성 결과는 양수 `size`를 가진 `Box`뿐이다."
   },
   {
     "kind": "question",
@@ -282,7 +282,7 @@
   {
     "kind": "question",
     "contentKey": "java.core.object-model.static-vs-instance-members.q4",
-    "promptMarkdown": "다음 코드의 출력은? `class Counter { static int total; Counter() { total++; } }`에서 `new Counter(); new Counter(); System.out.println(Counter.total);`를 실행한다.",
+    "promptMarkdown": "다음 코드를 실행한다.\n\n```java\nclass Counter {\n    static int total;\n\n    Counter() {\n        total++;\n    }\n}\n\nnew Counter();\nnew Counter();\nSystem.out.println(Counter.total);\n```\n\n출력은 무엇인가?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
@@ -312,12 +312,12 @@
       }
     ],
     "correctChoiceKey": "C",
-    "explanationMarkdown": "두 constructor 호출이 같은 static field total을 각각 1씩 증가시키므로 최종 값은 2다."
+    "explanationMarkdown": "`total`은 두 객체가 각각 갖는 instance field가 아니라 `Counter` 클래스에 하나만 있는 static field다. 첫 번째 constructor 호출 후 `1`, 두 번째 호출 후 `2`가 되므로 마지막 출력은 `2`다."
   },
   {
     "kind": "question",
     "contentKey": "java.core.object-model.static-vs-instance-members.q5",
-    "promptMarkdown": "다음 출력은? `class C { static int s = 1; int i = s++; void inc() { i++; s++; } } C a = new C(); C b = new C(); a.inc(); System.out.println(a.i + \":\" + b.i + \":\" + C.s);`",
+    "promptMarkdown": "다음 코드를 순서대로 실행한다.\n\n```java\nclass C {\n    static int s = 1;\n    int i = s++;\n\n    void inc() {\n        i++;\n        s++;\n    }\n}\n\nC a = new C();\nC b = new C();\na.inc();\nSystem.out.println(a.i + \":\" + b.i + \":\" + C.s);\n```\n\n출력은 무엇인가?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "HARD",
     "status": "PUBLISHED",
@@ -347,7 +347,7 @@
       }
     ],
     "correctChoiceKey": "B",
-    "explanationMarkdown": "a 생성 시 i=1 후 s=2, b 생성 시 i=2 후 s=3이다. a.inc()가 a.i를 2로, 공유 static s를 4로 만든다. 따라서 2:2:4가 출력된다."
+    "explanationMarkdown": "상태를 생성 순서대로 추적해야 한다.\n\n1. `a` 생성: `i = s++`이므로 `a.i = 1`, 이후 `s = 2`.\n2. `b` 생성: `b.i = 2`, 이후 `s = 3`.\n3. `a.inc()`: `a.i`는 `2`, 공유 static `s`는 `4`.\n\n따라서 `a.i:b.i:C.s`는 `2:2:4`다."
   },
   {
     "kind": "question",
@@ -422,7 +422,7 @@
   {
     "kind": "question",
     "contentKey": "java.core.object-model.initialization-order-constructor-chaining.q3",
-    "promptMarkdown": "다음 출력 순서는? `class Parent { Parent() { System.out.print(\"P\"); } } class Child extends Parent { { System.out.print(\"I\"); } Child() { System.out.print(\"C\"); } }`에서 `new Child()`를 실행한다.",
+    "promptMarkdown": "다음 코드를 실행한다.\n\n```java\nclass Parent {\n    Parent() {\n        System.out.print(\"P\");\n    }\n}\n\nclass Child extends Parent {\n    {\n        System.out.print(\"I\");\n    }\n\n    Child() {\n        System.out.print(\"C\");\n    }\n}\n\nnew Child();\n```\n\n출력 순서는 무엇인가?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
@@ -452,7 +452,7 @@
       }
     ],
     "correctChoiceKey": "C",
-    "explanationMarkdown": "암시적 super()가 먼저 Parent constructor를 실행해 P를 출력한다. 그 다음 Child instance initializer가 I, constructor body가 C를 출력하므로 PIC다."
+    "explanationMarkdown": "`Child()`의 생성 경로는 먼저 superclass 쪽 초기화를 수행한다. 암시적 `super()`로 `Parent()`가 실행되어 `P`가 출력되고, 그 뒤 `Child`의 instance initializer가 `I`, constructor body가 `C`를 출력한다. 따라서 `PIC`다."
   },
   {
     "kind": "question",
@@ -492,7 +492,7 @@
   {
     "kind": "question",
     "contentKey": "java.core.object-model.initialization-order-constructor-chaining.q5",
-    "promptMarkdown": "다음 코드의 출력은? `class A { A() { System.out.print(\"A\"); } } class B extends A { B() { this(1); System.out.print(\"B\"); } B(int x) { System.out.print(\"X\"); } }`에서 `new B()`를 실행한다.",
+    "promptMarkdown": "다음 코드를 실행한다.\n\n```java\nclass A {\n    A() {\n        System.out.print(\"A\");\n    }\n}\n\nclass B extends A {\n    B() {\n        this(1);\n        System.out.print(\"B\");\n    }\n\n    B(int x) {\n        System.out.print(\"X\");\n    }\n}\n\nnew B();\n```\n\n출력 순서는 무엇인가?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "HARD",
     "status": "PUBLISHED",
@@ -522,12 +522,12 @@
       }
     ],
     "correctChoiceKey": "C",
-    "explanationMarkdown": "B()는 this(1)로 B(int)에 위임한다. B(int)의 암시적 super()가 A를 먼저 출력하고 X를 출력한 뒤, 원래 B() body가 B를 출력한다."
+    "explanationMarkdown": "생성자 위임 경로를 먼저 펼치면 된다. `B()`는 `this(1)`로 `B(int)`에 위임하고, `B(int)`에는 명시적 constructor invocation이 없으므로 superclass 생성 경로가 먼저 실행된다.\n\n따라서 `A()`가 `A`, `B(int)` body가 `X`, 마지막으로 원래 `B()` body가 `B`를 출력해 `AXB`가 된다."
   },
   {
     "kind": "question",
     "contentKey": "java.core.object-model.initialization-order-constructor-chaining.q6",
-    "promptMarkdown": "다음 코드에서 처음 `new Child()`를 실행할 때 출력 순서는? `class Parent { static { System.out.print(\"S\"); } { System.out.print(\"I\"); } Parent() { System.out.print(\"P\"); } } class Child extends Parent { static { System.out.print(\"T\"); } { System.out.print(\"J\"); } Child() { System.out.print(\"C\"); } }`",
+    "promptMarkdown": "다음 코드를 **처음** 실행한다고 가정한다.\n\n```java\nclass Parent {\n    static { System.out.print(\"S\"); }\n    { System.out.print(\"I\"); }\n    Parent() { System.out.print(\"P\"); }\n}\n\nclass Child extends Parent {\n    static { System.out.print(\"T\"); }\n    { System.out.print(\"J\"); }\n    Child() { System.out.print(\"C\"); }\n}\n\nnew Child();\n```\n\n출력 순서는 무엇인가?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "HARD",
     "status": "PUBLISHED",
@@ -557,7 +557,7 @@
       }
     ],
     "correctChoiceKey": "A",
-    "explanationMarkdown": "처음 Child를 active use하면 superclass Parent의 class initialization(S), Child의 class initialization(T)이 순서대로 진행된다. 인스턴스 생성에서는 Parent instance initializer(I)와 constructor(P), 이어 Child instance initializer(J)와 constructor(C)가 실행되어 STIPJC가 된다."
+    "explanationMarkdown": "이 문제는 class initialization과 instance initialization을 분리해서 추적해야 한다.\n\n1. 처음 `Child`를 active use하므로 superclass `Parent`의 class initialization이 먼저 실행되어 `S`, 이어 `Child`의 class initialization으로 `T`가 출력된다.\n2. 인스턴스 생성에서는 `Parent`의 instance initializer `I`와 constructor `P`가 먼저 실행된다.\n3. 그 뒤 `Child`의 instance initializer `J`와 constructor `C`가 실행된다.\n\n따라서 최종 출력은 `STIPJC`다."
   },
   {
     "kind": "question",
@@ -704,7 +704,7 @@
     "contentKey": "java.core.object-model.encapsulation-invariants.q5",
     "promptMarkdown": "다음 중 `Order`의 invariant를 가장 잘 보호하는 operation은?",
     "questionType": "MULTIPLE_CHOICE",
-    "difficulty": "HARD",
+    "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": [
       "java.core.object-model.encapsulation-invariants"
@@ -879,7 +879,7 @@
     "contentKey": "java.core.object-model.abstraction-responsibility.q4",
     "promptMarkdown": "`CheckoutService`가 특정 결제사 SDK를 직접 사용 중이다. 결제사는 교체될 수 있고 애플리케이션은 승인·취소만 필요하며 SDK의 세부 메서드는 외부 경계에 숨기고 싶다. 가장 적절한 설계는?",
     "questionType": "MULTIPLE_CHOICE",
-    "difficulty": "HARD",
+    "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": [
       "java.core.object-model.abstraction-responsibility"
@@ -1019,7 +1019,7 @@
     "contentKey": "java.core.object-model.inheritance-is-a.q4",
     "promptMarkdown": "`Bird`를 상속한 `Penguin`이 `fly()`를 지원할 수 없어서 모든 호출자가 예외를 처리해야 한다면 가장 먼저 의심할 설계 문제는?",
     "questionType": "MULTIPLE_CHOICE",
-    "difficulty": "HARD",
+    "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": [
       "java.core.object-model.inheritance-is-a"
@@ -1194,7 +1194,7 @@
     "contentKey": "java.core.object-model.composition-collaboration.q5",
     "promptMarkdown": "다음 요구에 가장 적합한 관계는? `NotificationService`가 이메일과 SMS 전송기를 선택해 사용하며 전송기 종류가 설정에 따라 바뀐다.",
     "questionType": "MULTIPLE_CHOICE",
-    "difficulty": "HARD",
+    "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": [
       "java.core.object-model.composition-collaboration"
@@ -1297,7 +1297,7 @@
   {
     "kind": "question",
     "contentKey": "java.core.object-model.polymorphism-dynamic-dispatch.q2",
-    "promptMarkdown": "다음 코드의 출력은? `class A { void f() { System.out.print(\"A\"); } } class B extends A { @Override void f() { System.out.print(\"B\"); } } A x = new B(); x.f();`",
+    "promptMarkdown": "다음 코드를 실행한다.\n\n```java\nclass A {\n    void f() {\n        System.out.print(\"A\");\n    }\n}\n\nclass B extends A {\n    @Override\n    void f() {\n        System.out.print(\"B\");\n    }\n}\n\nA x = new B();\nx.f();\n```\n\n출력은 무엇인가?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
@@ -1327,7 +1327,7 @@
       }
     ],
     "correctChoiceKey": "A",
-    "explanationMarkdown": "x의 static type은 A지만 실제 object는 B이고, f는 override된 instance method이므로 B.f()가 실행된다."
+    "explanationMarkdown": "컴파일 시에는 선언 타입 `A`에서 `f()` 호출이 가능한지 확인한다. 실행 시에는 실제 객체가 `B`이고 `f()`가 override된 instance method이므로 dynamic dispatch로 `B.f()`가 실행되어 `B`가 출력된다."
   },
   {
     "kind": "question",
@@ -1367,7 +1367,7 @@
   {
     "kind": "question",
     "contentKey": "java.core.object-model.polymorphism-dynamic-dispatch.q4",
-    "promptMarkdown": "`List<String> names = new ArrayList<>(); names.add(\"A\");`에서 polymorphism이 사용된 부분은?",
+    "promptMarkdown": "다음 코드에서 polymorphism이 사용된 부분을 가장 정확하게 설명한 것은?\n\n```java\nList<String> names = new ArrayList<>();\nnames.add(\"A\");\n```",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
@@ -1397,7 +1397,7 @@
       }
     ],
     "correctChoiceKey": "B",
-    "explanationMarkdown": "변수의 static type은 List 계약이고 실제 구현 object는 ArrayList다. 호출 가능한 API는 계약에 의해 제한되면서 구현 method가 동작한다."
+    "explanationMarkdown": "변수의 static type은 `List<String>`이라는 계약이고 실제 구현 객체는 `ArrayList`다. 호출자는 `List` API에 의존하면서 실제 구현의 instance method가 실행되므로 구현 세부에 대한 결합을 줄일 수 있다."
   },
   {
     "kind": "question",
@@ -1437,7 +1437,7 @@
   {
     "kind": "question",
     "contentKey": "java.core.object-model.polymorphism-dynamic-dispatch.q6",
-    "promptMarkdown": "다음 출력은? `class A { String value = \"A\"; String label() { return value; } } class B extends A { String value = \"B\"; @Override String label() { return value; } } A x = new B(); System.out.println(x.value + x.label());`",
+    "promptMarkdown": "다음 코드를 실행한다.\n\n```java\nclass A {\n    String value = \"A\";\n\n    String label() {\n        return value;\n    }\n}\n\nclass B extends A {\n    String value = \"B\";\n\n    @Override\n    String label() {\n        return value;\n    }\n}\n\nA x = new B();\nSystem.out.println(x.value + x.label());\n```\n\n출력은 무엇인가?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "HARD",
     "status": "PUBLISHED",
@@ -1467,7 +1467,7 @@
       }
     ],
     "correctChoiceKey": "B",
-    "explanationMarkdown": "field 접근 x.value는 참조의 정적 타입 A에 의해 A.value를 읽어 \"A\"가 된다. instance method label()은 실제 object B로 dynamic dispatch되고 B.label은 B.value인 \"B\"를 반환하므로 AB가 출력된다."
+    "explanationMarkdown": "두 표현은 같은 선택 규칙을 쓰지 않는다.\n\n- `x.value`는 field 접근이므로 참조의 정적 타입 `A`에 선언된 `value`, 즉 `\"A\"`를 읽는다.\n- `x.label()`은 override된 instance method이므로 실제 객체 `B`로 dynamic dispatch된다. `B.label()` 안의 `value`는 `B.value`, 즉 `\"B\"`다.\n\n따라서 출력은 `AB`다."
   },
   {
     "kind": "question",
@@ -1542,7 +1542,7 @@
   {
     "kind": "question",
     "contentKey": "java.core.object-model.overload-vs-override.q3",
-    "promptMarkdown": "다음 코드의 출력은? `class P { void f(Object x) { System.out.print(\"P\"); } } class C extends P { void f(String x) { System.out.print(\"S\"); } @Override void f(Object x) { System.out.print(\"C\"); } } P p = new C(); p.f(\"x\");`",
+    "promptMarkdown": "다음 코드를 실행한다.\n\n```java\nclass P {\n    void f(Object x) {\n        System.out.print(\"P\");\n    }\n}\n\nclass C extends P {\n    void f(String x) {\n        System.out.print(\"S\");\n    }\n\n    @Override\n    void f(Object x) {\n        System.out.print(\"C\");\n    }\n}\n\nP p = new C();\np.f(\"x\");\n```\n\n출력은 무엇인가?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
@@ -1572,12 +1572,12 @@
       }
     ],
     "correctChoiceKey": "C",
-    "explanationMarkdown": "p의 static type P에서 보이는 overload는 f(Object)다. 그 signature의 override를 runtime object C가 제공하므로 C.f(Object)가 실행된다. C의 f(String)은 이 호출 후보가 아니다."
+    "explanationMarkdown": "먼저 compile time의 overload resolution을 본다. 변수 `p`의 정적 타입은 `P`이므로 호출 후보는 `P`에서 보이는 `f(Object)`다.\n\n그다음 runtime dispatch가 적용된다. 실제 객체는 `C`이고 `C`가 `f(Object)`를 override했으므로 `C.f(Object)`가 실행되어 `C`가 출력된다. `C.f(String)`은 첫 단계의 overload 후보가 아니다."
   },
   {
     "kind": "question",
     "contentKey": "java.core.object-model.overload-vs-override.q4",
-    "promptMarkdown": "다음 두 메서드를 한 class에 선언할 수 없는 이유는? `int parse(String s)`와 `long parse(String s)`",
+    "promptMarkdown": "다음 두 메서드를 한 class에 함께 선언할 수 없는 이유는?\n\n```java\nint parse(String s)\nlong parse(String s)\n```",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
@@ -1607,14 +1607,14 @@
       }
     ],
     "correctChoiceKey": "D",
-    "explanationMarkdown": "호출 시 return type만으로 어느 method를 선택할지 결정할 수 없으므로 Java는 반환 타입만 다른 중복 선언을 허용하지 않는다."
+    "explanationMarkdown": "두 선언은 이름과 parameter list가 같고 반환 타입만 다르다. Java의 overload 구분은 반환 타입만으로 할 수 없으므로 두 메서드는 같은 호출 형태를 차지해 함께 선언할 수 없다."
   },
   {
     "kind": "question",
     "contentKey": "java.core.object-model.overload-vs-override.q5",
-    "promptMarkdown": "`void f(Object x)`, `void f(String x)`가 함께 있을 때 `f(null)`에 대한 설명으로 옳은 것은?",
+    "promptMarkdown": "`void f(Object x)`와 `void f(String x)`가 함께 있을 때 `f(null)`에 대한 설명으로 옳은 것은?",
     "questionType": "MULTIPLE_CHOICE",
-    "difficulty": "HARD",
+    "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": [
       "java.core.object-model.overload-vs-override"
@@ -1642,7 +1642,7 @@
       }
     ],
     "correctChoiceKey": "A",
-    "explanationMarkdown": "Object와 String이 함께라면 String이 더 구체적이어서 f(String)이 선택된다. 반대로 서로 무관한 `f(String)`과 `f(Integer)`처럼 더 구체적인 하나를 고를 수 없을 때 ambiguous가 된다."
+    "explanationMarkdown": "`null`은 참조 타입 parameter인 `Object`와 `String` 모두에 전달할 수 있다. 두 후보가 모두 적용 가능할 때 `String`이 `Object`보다 더 구체적인 타입이므로 `f(String)`이 선택된다. 서로 무관한 `String`과 `Integer` 후보처럼 더 구체적인 하나를 고를 수 없을 때는 ambiguous가 된다."
   },
   {
     "kind": "question",
@@ -1717,7 +1717,7 @@
   {
     "kind": "question",
     "contentKey": "java.core.object-model.reference-casting-instanceof.q3",
-    "promptMarkdown": "`Object value = Integer.valueOf(1); String text = (String) value;`의 결과는?",
+    "promptMarkdown": "다음 코드를 실행하면 어떻게 되는가?\n\n```java\nObject value = Integer.valueOf(1);\nString text = (String) value;\n```",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
@@ -1747,12 +1747,12 @@
       }
     ],
     "correctChoiceKey": "A",
-    "explanationMarkdown": "Object 참조에서 String으로의 cast 문법은 가능하지만 실제 object는 Integer다. cast는 object를 변환하지 않고 참조가 가리키는 runtime type을 검사한다."
+    "explanationMarkdown": "정적 타입 `Object`에서 `String`으로의 cast는 타입 관계상 문법적으로 허용된다. 하지만 실행 시 참조가 가리키는 실제 객체는 `Integer`이므로 `String`으로 사용할 수 없어 `ClassCastException`이 발생한다. cast는 객체 자체를 다른 타입의 객체로 변환하지 않는다."
   },
   {
     "kind": "question",
     "contentKey": "java.core.object-model.reference-casting-instanceof.q4",
-    "promptMarkdown": "다음 pattern matching 코드의 결과는? `Object value = \"java\"; if (value instanceof String text) System.out.println(text.length());`",
+    "promptMarkdown": "다음 pattern matching 코드를 실행한다.\n\n```java\nObject value = \"java\";\nif (value instanceof String text) {\n    System.out.println(text.length());\n}\n```\n\n출력은 무엇인가?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
@@ -1782,14 +1782,14 @@
       }
     ],
     "correctChoiceKey": "A",
-    "explanationMarkdown": "value가 String일 때 조건이 true가 되고 pattern variable text를 해당 타입으로 사용할 수 있다. 문자열 java의 길이는 4다."
+    "explanationMarkdown": "`value`의 실제 객체가 `String`이므로 `instanceof`가 성공하고, 성공한 분기에서 pattern variable `text`를 `String`으로 사용할 수 있다. 문자열 `\"java\"`의 길이는 `4`다."
   },
   {
     "kind": "question",
     "contentKey": "java.core.object-model.reference-casting-instanceof.q5",
-    "promptMarkdown": "다음 코드가 출력하는 값은? `Object value = \"java\"; if (value instanceof String text) { value = Integer.valueOf(1); System.out.println(text.length()); }`",
+    "promptMarkdown": "다음 코드를 실행한다.\n\n```java\nObject value = \"java\";\nif (value instanceof String text) {\n    value = Integer.valueOf(1);\n    System.out.println(text.length());\n}\n```\n\n출력은 무엇인가?",
     "questionType": "MULTIPLE_CHOICE",
-    "difficulty": "HARD",
+    "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": [
       "java.core.object-model.reference-casting-instanceof"
@@ -1817,7 +1817,7 @@
       }
     ],
     "correctChoiceKey": "A",
-    "explanationMarkdown": "pattern variable text는 instanceof가 성공했을 때 원래 String reference를 별도로 바인딩한다. 이후 value 변수를 Integer reference로 재대입해도 text의 binding은 바뀌지 않으므로 \"java\"의 길이 4를 출력한다."
+    "explanationMarkdown": "`instanceof`가 성공할 때 pattern variable `text`는 원래 `String` 참조를 별도로 바인딩한다. 그 뒤 `value` 변수에 `Integer` 참조를 재대입해도 `text`가 가리키는 객체는 바뀌지 않는다. 따라서 `text.length()`는 `\"java\"`의 길이인 `4`를 출력한다."
   },
   {
     "kind": "question",
@@ -1929,7 +1929,7 @@
     "contentKey": "java.core.object-model.interface-vs-abstract-class.q4",
     "promptMarkdown": "`Job` 계열은 공통 id, retryCount, constructor 검증과 실행 template을 공유한다. 한편 Job과 무관한 `HttpClient`도 `Retryable` capability를 제공해야 한다. 가장 자연스러운 조합은?",
     "questionType": "MULTIPLE_CHOICE",
-    "difficulty": "HARD",
+    "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": [
       "java.core.object-model.interface-vs-abstract-class"
@@ -2104,7 +2104,7 @@
     "contentKey": "java.core.object-model.immutability-defensive-copy.q5",
     "promptMarkdown": "`List<List<String>>`의 바깥 List만 복사하는 shallow copy의 한계는?",
     "questionType": "MULTIPLE_CHOICE",
-    "difficulty": "HARD",
+    "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": [
       "java.core.object-model.immutability-defensive-copy"
@@ -2139,7 +2139,7 @@
     "contentKey": "java.core.object-model.immutability-defensive-copy.q6",
     "promptMarkdown": "다음 설계에서 가장 적절한 선택은? 외부에서 받은 `List<Money>`를 나중에 변경되지 않는 주문 snapshot으로 보관해야 한다.",
     "questionType": "MULTIPLE_CHOICE",
-    "difficulty": "HARD",
+    "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": [
       "java.core.object-model.immutability-defensive-copy"
@@ -2167,6 +2167,6 @@
       }
     ],
     "correctChoiceKey": "C",
-    "explanationMarkdown": "collection 구조를 복사하면 외부 List 변경을 차단할 수 있고, 요소가 정말 immutable이면 요소까지 매번 복사할 필요가 없다. 요소가 mutable이면 요소별 copy나 immutable 변환이 추가로 필요하다."
+    "explanationMarkdown": "주문이 독립적인 snapshot을 가져야 하므로 먼저 collection 구조를 복사해 외부 List의 이후 변경을 차단한다. 요소 `Money`까지 실제로 immutable한 value라면 그 reference를 공유해도 해당 요소 상태가 바뀌지 않으므로 요소별 deep copy는 필요하지 않다. 반대로 `Money`가 mutable이라면 요소 복사나 immutable 변환이 추가로 필요하다."
   }
 ]

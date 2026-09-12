@@ -28,6 +28,8 @@ references:
 
 JDK dynamic proxy는 interface 기반으로 이런 proxy 객체를 runtime에 만들 수 있게 합니다.
 
+![Caller가 JDK Proxy와 InvocationHandler를 거쳐 target을 호출하는 흐름](/learning/java/dynamic-proxy-flow.svg)
+
 ### Caller는 target 대신 proxy를 호출한다
 
 ```text
@@ -248,3 +250,13 @@ Proxy를 만들었다고 target object의 모든 호출이 전 세계적으로 �
 ### 학습 후 스스로 설명해 보기
 
 JDK dynamic proxy는 runtime에 interface 구현 proxy를 만들고 proxy의 method 호출을 `InvocationHandler.invoke`로 전달합니다. Handler는 호출된 `Method`와 arguments를 보고 logging, authorization 같은 공통 동작을 수행한 뒤 실제 target을 호출할 수 있습니다. Caller가 반드시 proxy를 통해 호출해야 interception이 일어나며, JDK dynamic proxy는 interface 기반입니다. 여러 interface가 같은 method signature를 가진 경우에는 handler에 전달된 `Method`만으로 호출자가 사용한 interface를 항상 식별할 수 없다는 제한도 있습니다. 이 구조는 Spring transaction/AOP proxy를 이해하는 Java 수준의 기반이 됩니다.
+
+### 면접에서 이렇게 나옵니다
+
+#### Q. JDK dynamic proxy에서 공통 로직이 실행되려면 왜 caller가 target이 아니라 proxy를 호출해야 하나요?
+
+JDK dynamic proxy의 method 호출은 proxy 객체에서 `InvocationHandler.invoke`로 전달됩니다. Target을 직접 호출하면 이 경로 자체를 거치지 않으므로 handler의 logging·authorization·transaction 같은 interception 로직도 실행되지 않습니다. Spring proxy 기반 AOP를 이해할 때도 "실제 호출 경로가 proxy를 지나는가"를 먼저 확인해야 합니다.
+
+#### Q. JDK dynamic proxy와 Spring의 class-based proxy를 같은 기능이라고 설명하면 왜 부정확한가요?
+
+JDK `Proxy` API의 기본 모델은 interface 구현 proxy입니다. Spring은 JDK proxy 외에도 class 기반 proxy 등 framework 차원의 선택과 lifecycle을 제공하므로 JDK dynamic proxy 하나로 Spring AOP 전체를 설명할 수 없습니다. Java 수준에서는 proxy와 `InvocationHandler`의 호출 중계 원리를 이해하고, framework-specific proxy 정책은 Spring 영역에서 따로 봐야 합니다.

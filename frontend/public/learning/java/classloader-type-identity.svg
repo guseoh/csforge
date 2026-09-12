@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 560" role="img" aria-labelledby="title desc">
+  <title id="title">ClassLoader 경계와 runtime type identity</title>
+  <desc id="desc">공통 API는 parent loader에서 공유하고, 서로 다른 plugin loader가 같은 binary name을 각각 정의하면 서로 다른 runtime type이 될 수 있음을 보여 준다.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0 0L9 4.5L0 9Z" fill="#a56df4"/></marker>
+    <style>.bg{fill:#17131f}.title{fill:#f5efff;font:700 25px Inter,Arial,sans-serif}.label{fill:#f0e8fa;font:650 17px Inter,Arial,sans-serif}.small{fill:#a797b5;font:500 14px Inter,Arial,sans-serif}.parent{fill:#2a1d3c;stroke:#a56df4;stroke-width:2}.loader{fill:#21192e;stroke:#77539a;stroke-width:2}.typeA{fill:#18352e;stroke:#4cc090;stroke-width:2}.typeB{fill:#3a2229;stroke:#d06f7d;stroke-width:2}.line{stroke:#a56df4;stroke-width:2;fill:none;marker-end:url(#arrow)}.no{stroke:#d06f7d;stroke-width:3}</style>
+  </defs>
+  <rect class="bg" width="1120" height="560" rx="20"/>
+  <text class="title" x="48" y="55">같은 class 이름이어도 defining ClassLoader가 다르면 runtime type이 달라질 수 있다</text>
+
+  <rect class="parent" x="385" y="105" width="350" height="88" rx="13"/>
+  <text class="label" x="438" y="143">Parent Loader</text><text class="small" x="438" y="169">공통 PluginApi interface 정의</text>
+
+  <rect class="loader" x="115" y="260" width="340" height="92" rx="13"/>
+  <text class="label" x="164" y="300">Plugin Loader A</text><text class="small" x="164" y="326">com.example.Plugin 정의</text>
+  <rect class="loader" x="665" y="260" width="340" height="92" rx="13"/>
+  <text class="label" x="714" y="300">Plugin Loader B</text><text class="small" x="714" y="326">com.example.Plugin 정의</text>
+
+  <path class="line" d="M460 193L330 260"/><path class="line" d="M660 193L790 260"/>
+  <text class="small" x="278" y="229">shared API</text><text class="small" x="766" y="229">shared API</text>
+
+  <rect class="typeA" x="115" y="405" width="340" height="72" rx="12"/>
+  <text class="label" x="160" y="438">Type identity A</text><text class="small" x="160" y="461">name + defining loader A</text>
+  <rect class="typeB" x="665" y="405" width="340" height="72" rx="12"/>
+  <text class="label" x="710" y="438">Type identity B</text><text class="small" x="710" y="461">name + defining loader B</text>
+  <path class="line" d="M285 352V405"/><path class="line" d="M835 352V405"/>
+
+  <line class="no" x1="505" y1="425" x2="615" y2="465"/><line class="no" x1="615" y1="425" x2="505" y2="465"/>
+  <text class="small" x="475" y="512">binary name이 같아도 곧바로 cast-compatible한 동일 타입이 되는 것은 아니다.</text>
+</svg>

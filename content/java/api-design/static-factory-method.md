@@ -15,6 +15,12 @@ references:
     language: en
     displayOrder: 1
     relationNote: class method와 constructor의 언어 규칙 확인
+  - url: "https://tecoble.techcourse.co.kr/post/2020-05-26-static-factory-method/"
+    title: "정적 팩토리 메서드(Static Factory Method)는 왜 사용할까?"
+    referenceType: KOREAN_BLOG
+    language: ko
+    displayOrder: 2
+    relationNote: 이름 있는 생성과 하위 타입 반환 등 정적 팩터리의 대표적인 사용 이유를 한국어 예제로 복습
 ---
 # 정적 팩터리 메서드
 
@@ -192,3 +198,17 @@ constructor는 `new Type(...)`라는 표준 문법으로 쉽게 찾을 수 있�
 또한 모든 constructor를 private으로 막으면 subclass가 constructor를 호출할 수 없어 일반적인 class 상속이 제한됩니다. persistence나 serialization framework가 특정 constructor 접근성을 요구하는 경우에는 그 요구도 별도로 고려해야 합니다.
 
 그래서 static factory를 판단할 때는 단순히 “Effective Java에서 좋다고 했다”는 식으로 선택하지 않습니다. **이름이 필요한 생성 의미가 있는가, instance 수명이나 구현 선택 정책이 있는가, invariant를 한 경계에 모을 가치가 있는가, 그리고 그 이득이 추가 간접성보다 큰가**를 확인해야 합니다.
+
+### 면접에서 이렇게 나옵니다
+
+#### Q. 생성자 대신 정적 팩터리 메서드를 쓰면 무엇이 좋아지나요?
+
+가장 먼저 설명할 수 있는 장점은 **생성 의미에 이름을 붙일 수 있다는 것**입니다. 여기에 필요하면 하위 타입을 반환하거나 기존 instance를 재사용하고, 공개 생성 경로를 한곳으로 모으는 정책도 표현할 수 있습니다.
+
+다만 정적 팩터리가 constructor보다 항상 좋은 것은 아닙니다. 단순한 생성에는 constructor가 더 직접적이고, factory 이름이 많아지면 발견 가능성과 API 복잡성 비용도 생깁니다.
+
+#### Q. 정적 팩터리 메서드는 호출할 때마다 새 객체를 반환하나요?
+
+아닙니다. 정적 팩터리는 일반 static method이므로 **새 객체를 만들 수도 있고 기존 instance를 반환할 수도 있습니다.** 그래서 호출자는 factory 이름만 보고 identity를 가정하지 말고 해당 API의 계약을 확인해야 합니다.
+
+특히 mutable 객체를 재사용하면 서로 독립적이어야 할 호출자가 같은 상태를 공유할 수 있으므로, 캐시 여부보다 먼저 공유 identity가 도메인 의미에 맞는지를 판단해야 합니다.

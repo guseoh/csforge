@@ -21,6 +21,7 @@ import './quiz-setup-guide.css'
 import './quiz-session-focus.css'
 import './daily-loop-guide.css'
 import './search-guide.css'
+import './learning-content.css'
 
 const queryClient = new QueryClient()
 

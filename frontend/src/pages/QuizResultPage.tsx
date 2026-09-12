@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, type ReactNode } from 'react'
 import { Link, useNavigate, useParams } from '@tanstack/react-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ErrorState, PageSkeleton } from '../components/AsyncStates'
@@ -8,14 +8,84 @@ import { getQuizResult, retryWrongQuiz, selfCheckQuizQuestion, type QuizQuestion
 import { defaultQuizSearch } from '../lib/quiz-search'
 import { hasUnresolvedSelfCheck } from '../lib/quiz-result'
 
-function labelFor(question: QuizQuestionResult) {
-  if (question.questionType === 'MULTIPLE_CHOICE') return question.correctChoiceKey ? `정답 선택지: ${question.correctChoiceKey}` : '정답 선택지 없음'
-  if (question.questionType === 'SHORT_ANSWER') return question.acceptedAnswers.length > 0 ? `허용 답안: ${question.acceptedAnswers.join(', ')}` : '허용 답안 없음'
-  return '모범 답안'
-}
-
 function sourceLabel(source: string) {
   return ({ STANDARD: '일반 문제', WRONG_RETRY: '오답 다시 풀기', REVIEW: '복습' } as Record<string, string>)[source] ?? source
+}
+
+function ResultAnswerPanel({
+  label,
+  heading,
+  tone,
+  children,
+}: {
+  label: string
+  heading?: string | null
+  tone?: 'user-wrong' | 'correct-answer'
+  children: ReactNode
+}) {
+  return (
+    <div className={['result-answer-panel', tone].filter(Boolean).join(' ')}>
+      <span>{label}</span>
+      {heading && <strong>{heading}</strong>}
+      {children}
+    </div>
+  )
+}
+
+function MultipleChoiceAnswerReview({ question }: { question: QuizQuestionResult }) {
+  const selectedChoice = question.choices.find((choice) => choice.choiceKey === question.selectedChoiceKey)
+  const correctChoice = question.choices.find((choice) => choice.choiceKey === question.correctChoiceKey)
+
+  return (
+    <div className="result-answer-comparison">
+      <ResultAnswerPanel
+        label="내 답"
+        heading={question.selectedChoiceKey ? `선택지 ${question.selectedChoiceKey}` : '제출하지 않음'}
+        tone={question.correct === false ? 'user-wrong' : undefined}
+      >
+        {selectedChoice
+          ? <MarkdownContent>{selectedChoice.contentMarkdown}</MarkdownContent>
+          : <p className="result-plain-answer">선택한 답이 없습니다.</p>}
+      </ResultAnswerPanel>
+      <ResultAnswerPanel
+        label="정답"
+        heading={question.correctChoiceKey ? `선택지 ${question.correctChoiceKey}` : '정답 선택지 없음'}
+        tone="correct-answer"
+      >
+        {correctChoice
+          ? <MarkdownContent>{correctChoice.contentMarkdown}</MarkdownContent>
+          : <p className="result-plain-answer">등록된 정답 선택지가 없습니다.</p>}
+      </ResultAnswerPanel>
+    </div>
+  )
+}
+
+function TextAnswerReview({ question }: { question: QuizQuestionResult }) {
+  const isSelfChecked = question.questionType === 'DESCRIPTIVE' || question.questionType === 'SCENARIO'
+  const expectedLabel = isSelfChecked ? '모범 답안' : '허용 답안'
+
+  return (
+    <div className="result-answer-comparison">
+      <ResultAnswerPanel
+        label="내 답"
+        heading={question.answerText?.trim() ? null : '제출하지 않음'}
+        tone={question.correct === false ? 'user-wrong' : undefined}
+      >
+        <p className="result-plain-answer">{question.answerText?.trim() || '작성한 답안이 없습니다.'}</p>
+      </ResultAnswerPanel>
+      <ResultAnswerPanel label={expectedLabel} tone="correct-answer">
+        {question.modelAnswer
+          ? <MarkdownContent>{question.modelAnswer}</MarkdownContent>
+          : question.acceptedAnswers.length > 0
+            ? (
+                <ul className="result-accepted-answers">
+                  {question.acceptedAnswers.map((answer) => <li key={answer}>{answer}</li>)}
+                </ul>
+              )
+            : <p className="result-plain-answer">등록된 모범 답안이 없습니다.</p>}
+      </ResultAnswerPanel>
+    </div>
+  )
 }
 
 function QuestionResultCard({ quizId, question }: { quizId: number; question: QuizQuestionResult }) {
@@ -24,16 +94,73 @@ function QuestionResultCard({ quizId, question }: { quizId: number; question: Qu
     mutationFn: (correct: boolean) => selfCheckQuizQuestion(quizId, question.questionId, correct),
     onSuccess: () => void queryClient.invalidateQueries({ queryKey: ['quiz-result', quizId] }),
   })
-  const finalized = question.gradingStatus === 'GRADED' || question.gradingStatus === 'SELF_CHECKED'
-  const stateLabel = question.gradingStatus === 'SELF_CHECK_REQUIRED' ? '자기 채점 대기' : question.correct ? '정답' : question.gradingStatus === 'UNANSWERED' ? '미답변' : '오답'
+  const stateLabel = question.gradingStatus === 'SELF_CHECK_REQUIRED'
+    ? '자기 채점 대기'
+    : question.correct
+      ? '정답'
+      : question.gradingStatus === 'UNANSWERED'
+        ? '미답변'
+        : '오답'
+
   return (
-    <article className={`quiz-result-question ${question.correct === true ? 'correct' : question.correct === false ? 'wrong' : 'pending'}`} data-self-check-target={question.gradingStatus === 'SELF_CHECK_REQUIRED' ? 'true' : undefined}>
-      <div className="section-heading"><span className="chip">Q{question.position + 1}</span><span className={`result-status result-status-${question.correct === true ? 'correct' : question.correct === false ? 'wrong' : 'pending'}`}>{stateLabel}</span></div>
+    <article
+      className={`quiz-result-question ${question.correct === true ? 'correct' : question.correct === false ? 'wrong' : 'pending'}`}
+      data-self-check-target={question.gradingStatus === 'SELF_CHECK_REQUIRED' ? 'true' : undefined}
+    >
+      <div className="section-heading">
+        <span className="chip">Q{question.position + 1}</span>
+        <span className={`result-status result-status-${question.correct === true ? 'correct' : question.correct === false ? 'wrong' : 'pending'}`}>
+          {stateLabel}
+        </span>
+      </div>
+
       <MarkdownContent className="quiz-prompt">{question.promptMarkdown}</MarkdownContent>
-      <p className="helper-text">내 답안: {question.selectedChoiceKey ?? question.answerText ?? '제출하지 않음'}</p>
-      {question.gradingStatus === 'SELF_CHECK_REQUIRED' ? <div className="self-check-actions"><span className="helper-text">모범 답안과 비교해 직접 판정하세요.</span><button className="secondary-button" type="button" disabled={selfCheckMutation.isPending} onClick={() => selfCheckMutation.mutate(true)}>맞았어요</button><button className="secondary-button" type="button" disabled={selfCheckMutation.isPending} onClick={() => selfCheckMutation.mutate(false)}>틀렸어요</button></div> : finalized && <div className="result-answer"><strong>{labelFor(question)}</strong>{question.modelAnswer && <MarkdownContent>{question.modelAnswer}</MarkdownContent>}</div>}
-      {question.explanationMarkdown && <details><summary>해설 보기</summary><MarkdownContent>{question.explanationMarkdown}</MarkdownContent></details>}
-      {question.concepts.length > 0 && <div className="chip-row">{question.concepts.map((concept) => <Link className="chip text-link" key={concept.id} to="/concepts/$conceptId" params={{ conceptId: String(concept.id) }}>{concept.title}</Link>)}</div>}
+
+      {question.questionType === 'MULTIPLE_CHOICE'
+        ? <MultipleChoiceAnswerReview question={question} />
+        : <TextAnswerReview question={question} />}
+
+      {question.gradingStatus === 'SELF_CHECK_REQUIRED' && (
+        <div className="self-check-actions result-self-check-actions">
+          <span className="helper-text">내 답과 모범 답안을 비교한 뒤 직접 판정하세요.</span>
+          <button
+            className="secondary-button"
+            type="button"
+            disabled={selfCheckMutation.isPending}
+            onClick={() => selfCheckMutation.mutate(true)}
+          >
+            맞았어요
+          </button>
+          <button
+            className="secondary-button"
+            type="button"
+            disabled={selfCheckMutation.isPending}
+            onClick={() => selfCheckMutation.mutate(false)}
+          >
+            틀렸어요
+          </button>
+        </div>
+      )}
+
+      {question.explanationMarkdown && (
+        <section className="result-explanation" aria-label="문제 해설">
+          <p className="eyebrow">왜 이렇게 판단하나</p>
+          <MarkdownContent>{question.explanationMarkdown}</MarkdownContent>
+        </section>
+      )}
+
+      {question.concepts.length > 0 && (
+        <div className="result-related-concepts">
+          <span className="helper-text">관련 개념 다시 보기</span>
+          <div className="chip-row">
+            {question.concepts.map((concept) => (
+              <Link className="chip text-link" key={concept.id} to="/concepts/$conceptId" params={{ conceptId: String(concept.id) }}>
+                {concept.title}
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
     </article>
   )
 }
@@ -129,14 +256,16 @@ export function QuizResultPage() {
         </div>
       </div>
 
-      {hasPendingSelfCheck && <section className="self-check-banner" aria-labelledby="self-check-banner-title">
-        <div>
-          <p className="eyebrow">가장 먼저</p>
-          <strong id="self-check-banner-title">자기채점 {result.selfCheckPending}문항을 마무리하세요.</strong>
-          <span>직접 판정이 끝나야 정확한 오답과 다시 풀 문항이 확정됩니다.</span>
-        </div>
-        <button className="primary-button" type="button" onClick={focusFirstSelfCheck}>자기채점 계속하기</button>
-      </section>}
+      {hasPendingSelfCheck && (
+        <section className="self-check-banner" aria-labelledby="self-check-banner-title">
+          <div>
+            <p className="eyebrow">가장 먼저</p>
+            <strong id="self-check-banner-title">자기채점 {result.selfCheckPending}문항을 마무리하세요.</strong>
+            <span>직접 판정이 끝나야 정확한 오답과 다시 풀 문항이 확정됩니다.</span>
+          </div>
+          <button className="primary-button" type="button" onClick={focusFirstSelfCheck}>자기채점 계속하기</button>
+        </section>
+      )}
 
       {selfCheckQuestions.length > 0 && (
         <section className="detail-section result-attention-section result-self-check-section">
@@ -175,10 +304,19 @@ export function QuizResultPage() {
         {retryMutation.isError && <span className="helper-text error-text">다시 풀기를 시작하지 못했습니다.</span>}
       </div>
 
-      {result.breakdown.length > 0 && <section className="detail-section result-breakdown-section">
-        <div className="section-heading"><div><p className="eyebrow">어디서 막혔는지</p><h2>주제별 결과</h2></div></div>
-        <div className="quiz-breakdown-list">{result.breakdown.map((item) => <div className="quiz-breakdown" key={`${item.areaSlug}:${item.topicSlug}`}><div><strong>{item.topicTitle}</strong><span>{item.areaName}</span></div><span>{item.correct}/{item.total}개 정답</span></div>)}</div>
-      </section>}
+      {result.breakdown.length > 0 && (
+        <section className="detail-section result-breakdown-section">
+          <div className="section-heading"><div><p className="eyebrow">어디서 막혔는지</p><h2>주제별 결과</h2></div></div>
+          <div className="quiz-breakdown-list">
+            {result.breakdown.map((item) => (
+              <div className="quiz-breakdown" key={`${item.areaSlug}:${item.topicSlug}`}>
+                <div><strong>{item.topicTitle}</strong><span>{item.areaName}</span></div>
+                <span>{item.correct}/{item.total}개 정답</span>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       {correctQuestions.length > 0 && (
         <details className="correct-result-disclosure">

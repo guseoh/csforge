@@ -28,6 +28,8 @@ Java에는 GC가 있으니 memory leak이 없을 것처럼 느껴질 수 있습�
 
 그래서 Java memory leak은 보통 "GC가 객체를 못 지운다"보다 **필요 없는 객체를 코드가 계속 reachable하게 붙잡고 있다**는 문제입니다.
 
+![GC root부터 불필요한 객체까지 남아 있는 retained path](/learning/java/java-memory-retained-path.svg)
+
 ### 가장 단순한 leak은 끝없이 커지는 장수 collection이다
 
 ```java
@@ -220,3 +222,13 @@ Weak reference는 "이 관계가 객체 수명을 연장해서는 안 된다"는
 ### 학습 후 스스로 설명해 보기
 
 Java에서도 memory leak은 생길 수 있습니다. GC는 unreachable 객체만 회수하므로, 업무적으로 더 이상 필요하지 않은 객체가 static cache, listener, ThreadLocal 같은 장수 참조 때문에 reachable하게 남아 있으면 메모리가 계속 유지됩니다. 진단할 때는 heap에서 큰 객체만 찾기보다 GC root까지의 retained path를 따라가 "누가 왜 이 객체를 붙잡고 있는가"를 찾고, owner와 수명 정책을 수정해야 합니다.
+
+### 면접에서 이렇게 나옵니다
+
+#### Q. Java에는 GC가 있는데도 memory leak이 생길 수 있는 이유는 무엇인가요?
+
+GC는 애플리케이션이 더 이상 필요로 하지 않는지를 판단하지 않고 reachability를 기준으로 회수 대상을 결정합니다. 그래서 static cache, listener registry, ThreadLocal처럼 장수 owner가 불필요한 객체를 계속 가리키면 GC는 그 객체를 정상적으로 보존하고 결과적으로 live set이 계속 커질 수 있습니다.
+
+#### Q. Heap dump에서 가장 큰 객체만 찾으면 memory leak 원인을 알 수 있나요?
+
+항상 그렇지는 않습니다. 객체 자체의 shallow size가 작아도 큰 graph를 붙잡는 owner일 수 있으므로 GC root까지의 retained path를 확인해야 합니다. 누가 그 객체를 계속 보유하고 있고 원래 lifecycle이 언제 끝나야 했는지를 함께 봐야 실제 수정 지점을 찾을 수 있습니다.

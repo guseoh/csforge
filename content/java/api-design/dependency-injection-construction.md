@@ -15,6 +15,12 @@ references:
     language: en
     displayOrder: 1
     relationNote: 생성자를 통한 객체 구성의 기본 참고
+  - url: "https://tecoble.techcourse.co.kr/post/2021-04-27-dependency-injection/"
+    title: "의존관계 주입(Dependency Injection) 쉽게 이해하기"
+    referenceType: KOREAN_BLOG
+    language: ko
+    displayOrder: 2
+    relationNote: 의존 객체의 선택과 생성을 외부로 옮기는 DI 구조를 한국어 예제로 복습
 ---
 # 의존성을 밖에서 전달하는 설계
 
@@ -235,3 +241,17 @@ class OrderService {
 여기서 핵심은 `@Service`나 자동 주입 문법이 아닙니다. `OrderService`는 결제 구현의 생성 방법을 모르고 **PaymentGateway가 제공해야 할 책임만 사용**합니다. 반대로 서비스 내부에서 SDK client를 직접 `new`하거나 static singleton을 찾아가면 Spring을 쓰더라도 DI의 설계 경계를 약하게 만들 수 있습니다.
 
 의존성 주입을 검토할 때는 결국 세 가지를 추적하면 됩니다. **어떤 객체가 협력자를 사용하고, 어떤 바깥 경계가 구현과 수명을 선택하며, 그 선택이 바뀌어도 사용 객체의 핵심 책임이 유지되는가.** 이 구분이 명확할 때 DI는 단순한 프레임워크 기능이 아니라 결합도를 관리하는 객체 설계가 됩니다.
+
+### 면접에서 이렇게 나옵니다
+
+#### Q. DI는 Spring이 제공하는 기능인가요?
+
+DI 자체는 Spring 전용 기능이 아닙니다. **객체가 필요한 협력자를 내부에서 직접 만들거나 찾는 대신 외부에서 전달받는 객체 구성 방식**이고, 순수 Java에서도 constructor에 협력자를 넘기면 구현할 수 있습니다.
+
+Spring container는 Bean 생성·선택·수명 관리와 연결 작업을 자동화해 주지만, 어떤 객체가 어떤 책임에 의존해야 하는지는 객체 설계의 문제입니다.
+
+#### Q. 생성자 주입을 선호하는 이유는 무엇인가요?
+
+필수 의존성이 constructor signature에 드러나기 때문에 **객체가 만들어질 때 필요한 협력자가 무엇인지 명확하고, 완성된 객체가 필수 의존성을 가진 상태로 시작하기 쉽습니다.** 또한 조립하는 곳에서 production 구현과 test double을 바꿔 전달할 수 있습니다.
+
+다만 dependency field를 `final`로 둔다고 협력 객체 자체가 immutable해지거나 올바른 수명으로 공유되는 것은 아닙니다. 같은 mutable collaborator를 여러 객체에 주입하면 상태가 공유될 수 있으므로 타입뿐 아니라 ownership과 lifecycle도 함께 판단해야 합니다.
