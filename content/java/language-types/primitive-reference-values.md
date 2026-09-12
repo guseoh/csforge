@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: 원시 타입과 참조 타입의 언어 규칙 확인
   - url: "https://d2.naver.com/helloworld/329631"
-    title: "Java Reference와 GC"
+    title: "네이버 D2: Java Reference와 GC"
     referenceType: COMPANY_TECH_BLOG
     language: ko
     displayOrder: 2
