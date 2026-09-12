@@ -36,3 +36,9 @@ clock period는 대체로 가장 느린 stage와 pipeline register overhead의 �
 ### Backend 성능과 연결해서 볼 때
 
 CPU pipeline을 backend request 처리 단계와 그대로 같은 개념으로 보면 안 된다. CPU pipeline은 ISA semantics를 보존하도록 hardware가 dependency와 hazard를 처리하는 구조다. backend 성능을 해석할 때는 pipeline 덕분에 instruction throughput이 높아질 수 있다는 점과, 한 request의 end-to-end latency가 lock, queueing, DB I/O, network I/O에 지배될 수 있다는 점을 분리해야 한다. CPU 최적화가 필요한지는 IPC/CPI, branch miss, cache miss 같은 지표와 실제 request latency를 함께 보고 판단한다.
+### Pipeline overlap
+    cycle:  1    2    3    4    5
+    I1:    IF   ID   EX  MEM   WB
+    I2:         IF   ID   EX  MEM
+    I3:              IF   ID   EX
+한 instruction의 latency와 채워진 pipeline의 throughput을 구분한다.

@@ -40,3 +40,9 @@ direct mapping은 한 tag만 비교하면 되므로 hit path가 단순하고 are
 배열이나 ring buffer가 특정 stride에서 갑자기 느려지는 현상을 볼 때 cache capacity만 확인하지 않고 주소 alignment와 set/index collision 가능성을 본다. 다만 Java heap object의 실제 physical/cache mapping을 source code 주소처럼 단순히 계산하기는 어렵다. 필요하면 native profiler나 hardware performance counter로 cache miss 변화를 확인한다.
 
 또한 application-level hash collision과 hardware cache conflict miss는 모두 `충돌`이라는 단어를 쓰지만 다른 mechanism이다. HashMap bucket 충돌을 direct-mapped cache의 conflict miss로 설명하지 않는다.
+### Direct mapping
+    block number mod line_count → exactly one line
+    block A ─┐
+              ├─ same index → eviction competition
+    block B ─┘
+tag가 달라도 index가 같으면 같은 line을 번갈아 차지한다.

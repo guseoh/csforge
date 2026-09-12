@@ -53,3 +53,8 @@ Linux도 architecture별 hardware 제약을 공통 hierarchy로 추상화하고,
 ### Backend에서 확인할 것
 
 많은 작은 `mmap`과 sparse mapping을 만드는 process는 user data뿐 아니라 page-table structure 자체에도 memory를 사용한다. 반대로 huge contiguous region은 page-table footprint와 TLB pressure를 줄일 수 있다. 하지만 application이 page table을 직접 cache처럼 튜닝한다고 생각하기보다 먼저 virtual memory map, RSS/page-table memory, TLB miss와 page fault를 측정하고 OS/JVM의 지원 경계를 따라야 한다.
+### Multi-level walk
+    VPN part 1 → table 1 → VPN part 2 → table 2 → leaf entry
+                                                │
+                                                └─ physical frame
+large-page leaf는 더 낮은 table을 만들지 않고 walk를 일찍 끝낼 수 있다.

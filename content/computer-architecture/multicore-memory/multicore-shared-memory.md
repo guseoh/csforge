@@ -46,3 +46,9 @@ Java programmer가 따라야 하는 correctness contract는 Java Memory Model이
 ### Backend 성능에서 연결할 것
 
 많은 worker가 같은 shared state를 수정하면 lock contention뿐 아니라 cache-line ownership transfer와 interconnect traffic이 증가할 수 있다. 반대로 thread-local/per-core state를 사용하면 coherence traffic은 줄 수 있지만 merge와 memory footprint 비용이 생긴다. 성능 분석에서는 lock wait, context switch, CPU utilization, cache/coherence counter를 분리해 현재 병목이 synchronization policy인지 hardware sharing인지 확인한다.
+### Shared memory의 세 경계
+    thread A ── read/modify/write ──┐
+    thread B ── read/modify/write ──┘
+                         │
+             coherence / ordering / atomicity
+coherence가 있어도 read-modify-write 전체의 atomicity나 application invariant를 자동 보장하지 않는다.

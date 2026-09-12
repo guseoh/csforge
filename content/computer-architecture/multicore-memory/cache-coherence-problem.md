@@ -42,3 +42,8 @@ coherence protocol의 구체적인 state와 message는 microarchitecture마다 �
 ### Backend concurrency와 연결할 때
 
 shared counter의 lost update를 `cache가 늦게 동기화해서`라고만 설명하면 atomicity 문제를 놓친다. 반대로 atomic counter가 correctness를 보장해도 많은 core가 같은 cache line을 계속 수정하면 ownership transfer 때문에 scalability가 떨어질 수 있다. correctness는 language/runtime atomicity contract로, 성능은 coherence traffic과 contention 측정으로 따로 확인해야 한다.
+### Coherence invalidation
+    A cache: Shared ── write request ──> Modified
+    B cache: Shared ── invalidate ─────> Invalid
+    B next read ── coherence request ──> latest owner
+coherence는 line 복사본의 일관성을 다루며 연산 전체의 atomicity와는 다르다.
