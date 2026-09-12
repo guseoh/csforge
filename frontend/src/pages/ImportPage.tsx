@@ -19,7 +19,19 @@ function ItemRow({ item }: { item: ImportItem }) {
 }
 
 function Summary({ totals }: { totals: { created: number; updated: number; unchanged: number; skipped: number; errors?: number; failed?: number } }) {
-  return <div className="review-summary-grid import-summary"><div><span>새로 생성</span><strong>{totals.created}</strong></div><div><span>수정</span><strong>{totals.updated}</strong></div><div><span>변경 없음</span><strong>{totals.unchanged}</strong></div><div><span>건너뜀</span><strong>{totals.skipped}</strong></div><div><span>{totals.errors === undefined ? '실패' : '오류'}</span><strong>{totals.errors ?? totals.failed ?? 0}</strong></div></div>
+  const entries = [
+    ['새로 생성', totals.created],
+    ['수정', totals.updated],
+    ['변경 없음', totals.unchanged],
+    ['건너뜀', totals.skipped],
+    [totals.errors === undefined ? '실패' : '오류', totals.errors ?? totals.failed ?? 0],
+  ] as const
+
+  return (
+    <div className="import-summary" aria-label="가져오기 변경 요약">
+      {entries.map(([label, value]) => <div key={label}><span>{label}</span><strong>{value}</strong></div>)}
+    </div>
+  )
 }
 
 function WorkflowSteps({ current }: { current: number }) {
