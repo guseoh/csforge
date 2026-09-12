@@ -137,22 +137,21 @@ Strategy 구현
 
 선택 규칙 자체도 복잡하고 자주 바뀐다면 Factory나 별도 resolver가 필요할 수 있습니다. 하지만 Strategy를 썼다는 이유만으로 처음부터 Factory까지 추가할 필요는 없습니다. **실제로 독립적인 변경 축이 생겼을 때 다음 경계를 분리**합니다.
 
-### 생성자 주입만으로도 충분한 Strategy가 많다
+### “런타임 교체”는 setter가 아니라 선택 시점의 문제다
 
-Strategy 예제에서 흔히 다음처럼 setter로 실행 중 전략을 바꾸는 코드를 봅니다.
-
-```java
-calculator.setPolicy(otherPolicy);
-```
-
-하지만 Strategy의 핵심은 “runtime setter가 있다”가 아니라 **행동을 대체 가능한 객체로 분리했다**는 데 있습니다. 서비스의 lifetime 동안 하나의 정책만 사용할 거라면 생성자에서 받아 `final` field로 보관하는 편이 더 단순합니다.
+Strategy와 Template Method를 비교할 때 Strategy를 “런타임에 교체 가능한 패턴”이라고 자주 설명합니다. 여기서 runtime은 **컴파일 때 subtype hierarchy 하나로 행동이 고정되는 대신, 실행할 객체를 조립하거나 호출하는 시점에 선택할 수 있다는 의미**로 이해하는 편이 정확합니다.
 
 ```java
-PriceCalculator calculator =
-        new PriceCalculator(new RateDiscountPolicy(10));
+DiscountPolicy selected = request.isVip()
+        ? new RateDiscountPolicy(10)
+        : new FixedDiscountPolicy(0);
+
+PriceCalculator calculator = new PriceCalculator(selected);
 ```
 
-요청마다 전략이 달라져야 한다면 method parameter로 받을 수도 있습니다.
+이 코드는 `PriceCalculator`가 만들어진 뒤 setter로 policy를 바꾸지 않아도 실행 시점의 조건에 따라 다른 Strategy를 선택합니다. 따라서 “Strategy는 반드시 mutable setter가 있어야 한다”는 설명은 틀립니다.
+
+객체 lifetime 동안 하나의 정책만 사용할 거라면 생성자에서 받아 `final` field로 보관하는 편이 더 단순합니다. 호출마다 전략이 달라져야 한다면 method parameter로 받을 수도 있습니다.
 
 ```java
 long calculate(long price, DiscountPolicy policy) {
@@ -160,7 +159,7 @@ long calculate(long price, DiscountPolicy policy) {
 }
 ```
 
-즉 Strategy의 전달 방식은 객체 수명과 선택 시점에 따라 달라질 수 있습니다.
+Strategy의 전달 방식은 객체 수명과 선택 시점에 따라 달라질 수 있습니다.
 
 ### lambda가 Strategy가 될 수 있지만 모든 Strategy를 lambda로 만들 필요는 없다
 
