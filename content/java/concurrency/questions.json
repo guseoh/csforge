@@ -1,127 +1,3726 @@
 [
-  {"kind":"question","contentKey":"java.core.concurrency.concurrency-vs-parallelism.q1","promptMarkdown":"concurrency와 parallelism의 차이를 가장 정확히 설명한 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["java.core.concurrency.concurrency-vs-parallelism"],"choices":[{"key":"A","content":"concurrency는 여러 작업의 진행 구간이 겹치도록 구성하는 것이고 parallelism은 여러 작업이 실제로 동시에 실행되는 것이다","displayOrder":0},{"key":"B","content":"Java에서는 둘이 완전히 같은 뜻이다","displayOrder":1},{"key":"C","content":"parallelism은 반드시 한 thread에서 번갈아 실행하는 것이다","displayOrder":2},{"key":"D","content":"concurrency는 CPU core가 두 개 이상일 때만 가능하다","displayOrder":3}],"correctChoiceKey":"A","explanationMarkdown":"Concurrency는 여러 작업이 같은 시간 구간에 진행되는 구조를 말하므로 하나의 CPU core에서도 interleaving으로 만들 수 있다. Parallelism은 여러 실행 자원이 같은 순간 서로 다른 작업을 실제로 실행하는 경우를 뜻하므로 두 개념을 분리해야 thread 수와 CPU 사용을 정확히 추론할 수 있다."},
-  {"kind":"question","contentKey":"java.core.concurrency.concurrency-vs-parallelism.q2","promptMarkdown":"CPU core가 하나인 환경에서 scheduler가 두 runnable task를 번갈아 실행한다. 가장 정확한 설명은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["java.core.concurrency.concurrency-vs-parallelism"],"choices":[{"key":"A","content":"두 task가 반드시 취소된다","displayOrder":0},{"key":"B","content":"두 task가 겹친 시간 구간에 진행되므로 concurrency는 가능하지만 같은 순간의 CPU parallelism은 아니다","displayOrder":1},{"key":"C","content":"두 task는 같은 call stack을 공유한다","displayOrder":2},{"key":"D","content":"두 task가 서로 다른 CPU core에서 동시에 실행된다","displayOrder":3}],"correctChoiceKey":"B","explanationMarkdown":"한 core가 짧은 시간 단위로 작업 A와 B를 번갈아 실행하면 사용자는 두 작업이 함께 진행되는 것처럼 관찰할 수 있다. 그러나 한 순간에 실행되는 CPU instruction stream은 하나이므로 이 상황만으로 parallel execution이 있었다고 말할 수 없다."},
-  {"kind":"question","contentKey":"java.core.concurrency.concurrency-vs-parallelism.q3","promptMarkdown":"I/O 대기가 긴 backend 작업의 동시성을 늘릴 때 함께 확인해야 할 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.concurrency.concurrency-vs-parallelism"],"choices":[{"key":"A","content":"thread를 늘리면 외부 resource capacity도 같은 비율로 증가한다는 가정","displayOrder":0},{"key":"B","content":"CPU 수만 보고 task 수를 무제한으로 늘리는 것","displayOrder":1},{"key":"C","content":"대기 중 다른 작업이 진행할 수 있는지와 DB connection·외부 API 같은 실제 resource 한도","displayOrder":2},{"key":"D","content":"동시성을 높이면 shared state가 자동으로 immutable해진다는 사실","displayOrder":3}],"correctChoiceKey":"C","explanationMarkdown":"I/O-bound 작업은 CPU를 사용하지 않는 대기 시간이 많아 더 많은 동시 작업이 throughput에 도움이 될 수 있다. 하지만 DB connection pool이나 외부 API quota가 더 작은 한계라면 thread나 task만 늘려도 병목은 그대로이고 대기열과 latency만 커질 수 있다."},
-  {"kind":"question","contentKey":"java.core.concurrency.concurrency-vs-parallelism.q4","promptMarkdown":"하나의 event-loop thread가 작업 A의 네트워크 응답을 기다리는 동안 A를 보류하고 준비된 작업 B를 처리했다. 이 상황을 어떻게 해석해야 하는가?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.concurrency.concurrency-vs-parallelism"],"choices":[{"key":"A","content":"thread 하나이므로 concurrency가 아니다","displayOrder":0},{"key":"B","content":"A가 I/O를 기다리면 event loop도 반드시 blocking된다","displayOrder":1},{"key":"C","content":"두 작업이 서로 다른 CPU core에서 동시에 실행됐음이 증명된다","displayOrder":2},{"key":"D","content":"한 thread에서도 여러 작업의 진행을 interleave해 concurrency를 구성할 수 있지만 CPU parallelism을 뜻하지는 않는다","displayOrder":3}],"correctChoiceKey":"D","explanationMarkdown":"Event loop는 I/O 대기를 작업 상태로 보류하고 실행 가능한 다른 작업을 처리해 여러 요청의 진행 구간을 겹칠 수 있다. 이 모델은 concurrency의 한 형태지만 한 thread가 한 순간에 두 CPU 작업을 동시에 실행하는 것은 아니므로 parallelism과 구분한다."},
-
-  {"kind":"question","contentKey":"java.core.concurrency.thread-lifecycle-interruption.q1","promptMarkdown":"Java 25에서 `Thread.run()`을 직접 호출하는 동작으로 가장 정확한 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.concurrency.thread-lifecycle-interruption"],"choices":[{"key":"A","content":"Runnable로 만든 platform Thread의 기본 run은 caller에서 task를 실행할 수 있지만 virtual Thread의 run을 직접 호출하면 아무 동작도 하지 않는다","displayOrder":0},{"key":"B","content":"platform과 virtual 모두 `start()`와 동일하게 새 thread를 시작한다","displayOrder":1},{"key":"C","content":"virtual Thread에서만 새 OS thread가 만들어진다","displayOrder":2},{"key":"D","content":"모든 Thread에서 반드시 IllegalThreadStateException이 발생한다","displayOrder":3}],"correctChoiceKey":"A","explanationMarkdown":"새 실행 흐름을 시작하는 API는 `start()`다. Java 25 `Thread` 계약에서는 Runnable을 가진 platform thread의 기본 `run()`을 직접 호출하면 caller thread에서 Runnable이 실행될 수 있지만 virtual thread의 `run()` 직접 호출은 아무 동작도 하지 않으므로 오래된 한 줄 규칙으로 둘을 묶으면 부정확하다."},
-  {"kind":"question","contentKey":"java.core.concurrency.thread-lifecycle-interruption.q2","promptMarkdown":"다음 중 `Thread.State`에 정의된 상태가 아닌 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["java.core.concurrency.thread-lifecycle-interruption"],"choices":[{"key":"A","content":"RUNNABLE","displayOrder":0},{"key":"B","content":"SUSPENDED_BY_OS_CACHE","displayOrder":1},{"key":"C","content":"BLOCKED","displayOrder":2},{"key":"D","content":"NEW","displayOrder":3}],"correctChoiceKey":"B","explanationMarkdown":"`Thread.State`는 Java API가 제공하는 관찰 모델로 NEW, RUNNABLE, BLOCKED, WAITING, TIMED_WAITING, TERMINATED 등을 정의한다. 이 이름을 OS scheduler의 내부 상태와 1:1로 대응시키면 안 되며, RUNNABLE도 반드시 현재 CPU에서 실행 중이라는 뜻은 아니다."},
-  {"kind":"question","contentKey":"java.core.concurrency.thread-lifecycle-interruption.q3","promptMarkdown":"`interrupt()`에 대한 설명으로 옳은 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["java.core.concurrency.thread-lifecycle-interruption"],"choices":[{"key":"A","content":"항상 InterruptedException을 interrupt를 호출한 thread에게 던진다","displayOrder":0},{"key":"B","content":"대상 thread를 임의 instruction 위치에서 즉시 강제 종료한다","displayOrder":1},{"key":"C","content":"대상 thread가 현재 operation의 계약에 따라 협력적으로 취소에 반응할 수 있게 하는 신호다","displayOrder":2},{"key":"D","content":"대상 thread가 가진 모든 lock을 강제로 회수한다","displayOrder":3}],"correctChoiceKey":"C","explanationMarkdown":"Interrupt는 강제 kill API가 아니다. wait/join/sleep에서는 status를 clear하고 `InterruptedException`을 던질 수 있고, 일반 실행에서는 interrupted status가 set되는 등 대상 thread가 어떤 operation을 수행 중인지에 따라 반응 방식이 달라진다."},
-  {"kind":"question","contentKey":"java.core.concurrency.thread-lifecycle-interruption.q4","promptMarkdown":"`Thread.sleep()` 중 interrupt를 받아 `InterruptedException`을 catch했다. 상위 계층도 취소 신호를 알아야 하지만 checked exception을 그대로 던지지 않는다면 흔히 어떤 처리를 검토하는가?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.concurrency.thread-lifecycle-interruption"],"choices":[{"key":"A","content":"예외를 아무 기록 없이 무시한다","displayOrder":0},{"key":"B","content":"`start()`를 다시 호출한다","displayOrder":1},{"key":"C","content":"interrupt status를 항상 false로 강제한다","displayOrder":2},{"key":"D","content":"`Thread.currentThread().interrupt()`로 status를 복원한 뒤 종료·전파 정책을 따른다","displayOrder":3}],"correctChoiceKey":"D","explanationMarkdown":"sleep/join/wait이 `InterruptedException`을 던질 때 interrupted status는 clear된다. 현재 계층이 취소를 최종 소비하지 않고 상위 코드나 framework도 그 사실을 알아야 한다면 status를 복원하는 패턴을 사용할 수 있으며, 핵심은 catch 후 신호를 우연히 잃지 않는 것이다."},
-  {"kind":"question","contentKey":"java.core.concurrency.thread-lifecycle-interruption.q5","promptMarkdown":"작업 loop가 각 작은 작업 단위마다 `isInterrupted()`를 검사하고, `sleep()`의 `InterruptedException`을 catch하면 자원을 정리한 뒤 return한다. 다른 thread가 interrupt를 요청했을 때 가장 타당한 결과는?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.concurrency.thread-lifecycle-interruption"],"choices":[{"key":"A","content":"worker가 협력적으로 취소를 인식하고 cleanup 후 종료할 수 있다","displayOrder":0},{"key":"B","content":"JVM 전체가 즉시 종료된다","displayOrder":1},{"key":"C","content":"interrupt는 영구적으로 무시된다","displayOrder":2},{"key":"D","content":"caller에서 `join()`이 자동 실행된다","displayOrder":3}],"correctChoiceKey":"A","explanationMarkdown":"이 코드는 interrupt를 확인하거나 interruptible blocking API의 예외를 처리하는 두 경로를 모두 가지고 있다. 따라서 signal 자체가 worker를 죽이는 것이 아니라 worker 코드가 signal을 관찰하고 정리 후 빠져나오는 cooperative cancellation이 성립한다."},
-  {"kind":"question","contentKey":"java.core.concurrency.thread-lifecycle-interruption.q6","promptMarkdown":"Thread A가 `data = 42`를 쓴 뒤 worker를 `start()`한다. Worker는 추가 값을 계산하고 종료하며, Thread B가 그 worker에 `join()`한 뒤 정상 반환 후 결과를 읽는다. memory-ordering을 가장 정확히 설명한 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["java.core.concurrency.thread-lifecycle-interruption","java.core.concurrency.jmm-happens-before-visibility"],"choices":[{"key":"A","content":"`join()`이 모든 field를 volatile로 바꾼다","displayOrder":0},{"key":"B","content":"start 이전 action은 worker action에, worker 종료 전 action은 성공적인 join 이후 action에 happens-before로 연결될 수 있다","displayOrder":1},{"key":"C","content":"B는 반드시 모든 field의 초기값만 읽는다","displayOrder":2},{"key":"D","content":"start와 join은 scheduling만 다루고 JMM ordering과 무관하다","displayOrder":3}],"correctChoiceKey":"B","explanationMarkdown":"JMM에는 `Thread.start()`와 thread termination 관찰에 대한 happens-before 규칙이 있다. `join()`의 정상 반환은 종료 관찰 방식 중 하나이므로 caller write → start → worker action → termination → join 이후 read라는 경로를 추론할 수 있으며, 이를 field 자체가 volatile로 바뀐다고 설명하면 안 된다."},
-
-  {"kind":"question","contentKey":"java.core.concurrency.platform-virtual-thread.q1","promptMarkdown":"Java 25의 platform thread를 가장 정확히 설명한 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["java.core.concurrency.platform-virtual-thread"],"choices":[{"key":"A","content":"CPU-bound 작업에는 사용할 수 없는 특수 thread다","displayOrder":0},{"key":"B","content":"항상 user-mode에서만 실행되는 Java 객체다","displayOrder":1},{"key":"C","content":"보통 OS kernel thread와 1:1로 매핑되는 Java Thread다","displayOrder":2},{"key":"D","content":"`Thread.currentThread()`가 반환하지 않는 내부 객체다","displayOrder":3}],"correctChoiceKey":"C","explanationMarkdown":"Java 25 `Thread` API는 platform thread를 보통 kernel thread와 1:1로 매핑되는 실행 자원으로 설명한다. 이 때문에 많은 수를 만들 때 native stack과 scheduling 비용이 중요해질 수 있지만, 이것은 Java 언어 문법이 아니라 runtime/thread 구현 층위의 특성이다."},
-  {"kind":"question","contentKey":"java.core.concurrency.platform-virtual-thread.q2","promptMarkdown":"virtual thread가 특히 잘 맞는 workload는?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["java.core.concurrency.platform-virtual-thread"],"choices":[{"key":"A","content":"CPU core보다 훨씬 많은 순수 계산 task를 동시에 실행해 CPU를 늘리는 작업","displayOrder":0},{"key":"B","content":"오직 class loading만 수행하는 작업","displayOrder":1},{"key":"C","content":"OS process를 대체해야 하는 작업","displayOrder":2},{"key":"D","content":"DB나 HTTP처럼 blocking I/O를 기다리는 많은 동시 task","displayOrder":3}],"correctChoiceKey":"D","explanationMarkdown":"Virtual thread의 목표는 많은 blocking task를 thread-per-task 스타일로 표현하기 쉽게 하는 것이다. CPU-bound 작업은 실제 CPU core 수에 제한되므로 virtual thread 개수를 크게 늘린다고 계산 parallelism 자체가 늘어나는 것은 아니다."},
-  {"kind":"question","contentKey":"java.core.concurrency.platform-virtual-thread.q3","promptMarkdown":"virtual thread 안에서 `Thread.currentThread()`를 호출하면 무엇을 얻는가?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.concurrency.platform-virtual-thread"],"choices":[{"key":"A","content":"현재 실행 중인 virtual `Thread` 객체","displayOrder":0},{"key":"B","content":"항상 carrier platform thread","displayOrder":1},{"key":"C","content":"현재 OS process ID","displayOrder":2},{"key":"D","content":"null","displayOrder":3}],"correctChoiceKey":"A","explanationMarkdown":"Virtual thread도 `java.lang.Thread`다. Carrier는 runtime이 virtual thread를 실행하기 위해 사용하는 구현 구조이며 user code의 current-thread identity는 carrier가 아니라 현재 virtual thread다."},
-  {"kind":"question","contentKey":"java.core.concurrency.platform-virtual-thread.q4","promptMarkdown":"virtual thread와 carrier의 관계로 옳은 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.concurrency.platform-virtual-thread"],"choices":[{"key":"A","content":"각 virtual thread는 하나의 carrier에 평생 고정된다","displayOrder":0},{"key":"B","content":"virtual thread는 실행할 때 carrier platform thread에 mount될 수 있고 carrier 구성은 JDK 구현 영역이다","displayOrder":1},{"key":"C","content":"carrier가 virtual thread의 user-visible identity다","displayOrder":2},{"key":"D","content":"carrier 수와 scheduler 설정은 Java language가 고정 보장한다","displayOrder":3}],"correctChoiceKey":"B","explanationMarkdown":"Virtual thread는 runtime scheduler에 의해 carrier에 mount/unmount될 수 있으며 하나의 carrier에 영구적으로 묶인다고 가정하면 안 된다. Carrier pool의 정확한 크기와 scheduling 전략을 correctness 계약으로 사용하는 것도 구현 세부에 의존하는 설계가 된다."},
-  {"kind":"question","contentKey":"java.core.concurrency.platform-virtual-thread.q5","promptMarkdown":"virtual thread를 매우 많이 만들 수 있지만 외부 API가 동시에 100개 요청만 허용한다. 설계 판단으로 가장 적절한 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.concurrency.platform-virtual-thread","java.core.concurrency.semaphore-permits"],"choices":[{"key":"A","content":"virtual thread가 가벼우므로 외부 API 한도는 무시해도 된다","displayOrder":0},{"key":"B","content":"virtual thread 수만큼 외부 요청을 동시에 보내야 한다","displayOrder":1},{"key":"C","content":"virtual thread와 별개로 Semaphore·connection pool 등으로 실제 희소 자원의 동시 사용량을 제한한다","displayOrder":2},{"key":"D","content":"모든 virtual thread를 platform thread로 바꾸면 외부 한도가 사라진다","displayOrder":3}],"correctChoiceKey":"C","explanationMarkdown":"Virtual thread가 줄이는 것은 주로 thread-per-task의 실행 자원 비용이지 외부 시스템 capacity가 아니다. DB connection, API quota, CPU 같은 실제 희소 자원은 별도 제한과 backpressure가 필요하므로 thread 수와 resource concurrency를 같은 숫자로 취급하면 안 된다."},
-  {"kind":"question","contentKey":"java.core.concurrency.platform-virtual-thread.q6","promptMarkdown":"Java 25 virtual thread의 carrier pinning을 가장 정확히 설명한 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.concurrency.platform-virtual-thread"],"choices":[{"key":"A","content":"`synchronized` block 안에서 blocking하면 Java 25에서도 반드시 carrier에 pin된다","displayOrder":0},{"key":"B","content":"JDK 24의 JEP 491 이후 synchronized 자체의 pinning 제약은 제거됐지만 native method나 foreign function 실행 중에는 pinning이 생길 수 있다","displayOrder":1},{"key":"C","content":"pinning이 생기면 Java memory semantics가 깨진다","displayOrder":2},{"key":"D","content":"virtual thread는 carrier를 사용하지 않으므로 pinning이라는 개념이 없다","displayOrder":3}],"correctChoiceKey":"B","explanationMarkdown":"오래된 Java 21 자료의 `synchronized = virtual-thread pinning` 설명을 Java 25에 그대로 적용하면 안 된다. JEP 491은 monitor를 가진 채 blocking할 때의 대표 pinning 제약을 제거했지만 native/foreign call에서의 pinning 가능성은 남아 있으며, 이는 주로 scalability 관찰 문제이지 synchronized의 JMM 의미가 바뀌었다는 뜻이 아니다."},
-
-  {"kind":"question","contentKey":"java.core.concurrency.shared-mutable-state-race.q1","promptMarkdown":"`value++`를 동시성 관점에서 논리 단계로 풀어 쓴 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["java.core.concurrency.shared-mutable-state-race"],"choices":[{"key":"A","content":"read → add → write","displayOrder":0},{"key":"B","content":"lock → sleep → join","displayOrder":1},{"key":"C","content":"parse → sort → poll","displayOrder":2},{"key":"D","content":"load → verify → initialize","displayOrder":3}],"correctChoiceKey":"A","explanationMarkdown":"소스 코드가 한 줄이어도 증가 연산은 현재 값을 읽고 계산한 뒤 다시 저장하는 read-modify-write다. 여러 thread가 이 단계 사이에 interleave할 수 있으므로 한 줄이라는 이유만으로 atomic하다고 판단하면 안 된다."},
-  {"kind":"question","contentKey":"java.core.concurrency.shared-mutable-state-race.q2","promptMarkdown":"초기 `count=0`에서 Thread A와 B가 모두 0을 읽고 각각 1을 계산해 저장했다. 최종 결과로 가능한 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["java.core.concurrency.shared-mutable-state-race"],"choices":[{"key":"A","content":"항상 예외가 발생한다","displayOrder":0},{"key":"B","content":"1이 되어 증가 한 번이 사라질 수 있다","displayOrder":1},{"key":"C","content":"0만 가능하다","displayOrder":2},{"key":"D","content":"반드시 2다","displayOrder":3}],"correctChoiceKey":"B","explanationMarkdown":"두 thread가 같은 이전 값 0을 바탕으로 1을 만들고 마지막 write가 앞선 write를 덮으면 호출은 두 번이지만 결과는 1이 된다. 이런 lost update는 race condition이 예외 없이 조용히 잘못된 값으로 나타날 수 있음을 보여 준다."},
-  {"kind":"question","contentKey":"java.core.concurrency.shared-mutable-state-race.q3","promptMarkdown":"업무 불변식이 `stock >= 0`이고 감소 전에 `stock > 0`을 확인해야 한다. 어떤 경계를 원자적으로 보호해야 하는가?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.concurrency.shared-mutable-state-race"],"choices":[{"key":"A","content":"thread 생성문만","displayOrder":0},{"key":"B","content":"확인만 보호하고 차감은 밖에서 실행한다","displayOrder":1},{"key":"C","content":"재고 확인과 차감을 하나의 invariant 단위로 묶는다","displayOrder":2},{"key":"D","content":"출력문만 보호한다","displayOrder":3}],"correctChoiceKey":"C","explanationMarkdown":"두 thread가 모두 `stock==1`을 확인한 뒤 각각 감소하면 변수의 개별 read/write가 정상이어도 업무 invariant가 깨질 수 있다. Critical section은 필드 하나가 아니라 상태가 올바르기 위해 함께 관찰·변경되어야 하는 논리적 규칙을 기준으로 잡는다."},
-  {"kind":"question","contentKey":"java.core.concurrency.shared-mutable-state-race.q4","promptMarkdown":"visibility와 atomicity의 관계로 옳은 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.concurrency.shared-mutable-state-race"],"choices":[{"key":"A","content":"최신 값이 보이면 read-modify-write도 자동 원자적이다","displayOrder":0},{"key":"B","content":"atomicity가 있으면 visibility는 항상 없다","displayOrder":1},{"key":"C","content":"둘은 CPU cache flush의 다른 이름이다","displayOrder":2},{"key":"D","content":"visibility와 복합 연산의 atomicity는 별개라 한쪽 보장만으로 lost update를 막지 못할 수 있다","displayOrder":3}],"correctChoiceKey":"D","explanationMarkdown":"Visibility는 한 thread의 write를 다른 thread가 어떤 관계로 관찰하는지를 다루고 atomicity는 여러 단계 사이에 다른 thread가 끼어들 수 있는지를 다룬다. 그래서 `volatile count`는 관찰 관계를 제공해도 `count++`의 전체 read-modify-write를 한 단계로 만들지는 않는다."},
-  {"kind":"question","contentKey":"java.core.concurrency.shared-mutable-state-race.q5","promptMarkdown":"`balance`와 `ledgerTotal`이 항상 함께 맞아야 하는데 각각 별도 `AtomicInteger`로 갱신한다. 어떤 문제가 남는가?","questionType":"MULTIPLE_CHOICE","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["java.core.concurrency.shared-mutable-state-race","java.core.concurrency.atomic-cas"],"choices":[{"key":"A","content":"각 변수의 개별 갱신은 atomic해도 두 성공 사이의 중간 상태가 다른 thread에 관찰될 수 있다","displayOrder":0},{"key":"B","content":"두 AtomicInteger는 자동으로 하나의 transaction이 된다","displayOrder":1},{"key":"C","content":"AtomicInteger 하나가 객체의 모든 field를 잠근다","displayOrder":2},{"key":"D","content":"두 값은 JVM에서 반드시 같은 순간에 갱신된다","displayOrder":3}],"correctChoiceKey":"A","explanationMarkdown":"Single-variable atomicity를 multi-variable invariant로 확장할 수 없다. 두 값이 함께 바뀌어야 한다면 한 immutable state를 atomic reference로 교체하거나 하나의 lock/transaction 경계로 묶는 등 실제 invariant 단위에 맞는 설계가 필요하다."},
-  {"kind":"question","contentKey":"java.core.concurrency.shared-mutable-state-race.q6","promptMarkdown":"동기화되지 않은 공유 counter를 사용하는 worker 수를 8개에서 2개로 줄였다. 올바른 결론은?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.concurrency.shared-mutable-state-race"],"choices":[{"key":"A","content":"counter가 immutable해진다","displayOrder":0},{"key":"B","content":"경쟁 발생 빈도는 줄 수 있지만 올바른 결과가 보장되는 것은 아니다","displayOrder":1},{"key":"C","content":"JMM happens-before edge가 자동 추가된다","displayOrder":2},{"key":"D","content":"두 thread 이하면 race가 언어 차원에서 사라진다","displayOrder":3}],"correctChoiceKey":"B","explanationMarkdown":"Race condition은 경쟁이 자주 발생하는가가 아니라 잘못된 interleaving이 가능한가의 문제다. Thread 수를 줄여 재현 빈도가 낮아져도 두 thread가 같은 값을 동시에 읽고 갱신할 수 있다면 correctness 문제는 남는다."},
-
-  {"kind":"question","contentKey":"java.core.concurrency.synchronized-monitor.q1","promptMarkdown":"instance `synchronized` method가 사용하는 monitor는?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["java.core.concurrency.synchronized-monitor"],"choices":[{"key":"A","content":"method의 return value","displayOrder":0},{"key":"B","content":"JVM의 모든 객체가 공유하는 하나의 monitor","displayOrder":1},{"key":"C","content":"해당 instance인 `this`의 monitor","displayOrder":2},{"key":"D","content":"현재 OS process 전체의 lock","displayOrder":3}],"correctChoiceKey":"C","explanationMarkdown":"Instance synchronized method는 해당 객체의 intrinsic monitor를 사용한다. 그래서 같은 method라도 서로 다른 instance에 호출하면 서로 다른 monitor를 사용해 동시에 실행될 수 있다."},
-  {"kind":"question","contentKey":"java.core.concurrency.synchronized-monitor.q2","promptMarkdown":"같은 thread가 이미 가진 monitor를 다시 획득할 수 있는 성질은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["java.core.concurrency.synchronized-monitor"],"choices":[{"key":"A","content":"starvation","displayOrder":0},{"key":"B","content":"serialization","displayOrder":1},{"key":"C","content":"erasure","displayOrder":2},{"key":"D","content":"reentrancy","displayOrder":3}],"correctChoiceKey":"D","explanationMarkdown":"Java intrinsic monitor는 소유 thread의 재진입을 허용한다. 이것은 같은 thread가 중첩 호출에서 같은 monitor를 다시 얻을 수 있다는 뜻이지 다른 thread도 동시에 critical section에 진입할 수 있다는 뜻은 아니다."},
-  {"kind":"question","contentKey":"java.core.concurrency.synchronized-monitor.q3","promptMarkdown":"`Counter a`와 `Counter b`가 각각 `synchronized` instance method를 가진다. 두 method가 동시에 실행될 수 있는 이유는?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.concurrency.synchronized-monitor"],"choices":[{"key":"A","content":"a와 b가 서로 다른 instance monitor를 사용할 수 있기 때문이다","displayOrder":0},{"key":"B","content":"synchronized가 객체가 두 개면 무시되기 때문이다","displayOrder":1},{"key":"C","content":"instance method가 실제로 static이기 때문이다","displayOrder":2},{"key":"D","content":"두 객체가 자동으로 하나의 monitor로 병합되기 때문이다","displayOrder":3}],"correctChoiceKey":"A","explanationMarkdown":"Mutual exclusion의 범위는 `synchronized` 키워드 자체가 아니라 monitor identity로 결정된다. 두 객체가 서로 다른 `this` monitor를 사용하면 한 객체를 잠근 thread가 다른 객체의 method까지 막지는 않는다."},
-  {"kind":"question","contentKey":"java.core.concurrency.synchronized-monitor.q4","promptMarkdown":"`static synchronized` method가 사용하는 monitor는?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.concurrency.synchronized-monitor"],"choices":[{"key":"A","content":"호출할 때마다 새로 만든 Object","displayOrder":0},{"key":"B","content":"해당 class의 `Class` 객체 monitor","displayOrder":1},{"key":"C","content":"현재 OS의 모든 thread가 공유하는 lock","displayOrder":2},{"key":"D","content":"호출자의 local variable","displayOrder":3}],"correctChoiceKey":"B","explanationMarkdown":"Static method에는 특정 instance의 `this`가 없으므로 해당 class를 나타내는 `Class` 객체가 monitor가 된다. 따라서 같은 class의 instance synchronized와 static synchronized가 자동으로 같은 lock을 공유한다고 생각하면 안 된다."},
-  {"kind":"question","contentKey":"java.core.concurrency.synchronized-monitor.q5","promptMarkdown":"write path는 `synchronized(this)`로 `value`를 변경하고 read path는 별도의 `readLock`으로 같은 `value`를 읽는다. 가장 큰 문제는?","questionType":"MULTIPLE_CHOICE","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["java.core.concurrency.synchronized-monitor","java.core.concurrency.jmm-happens-before-visibility"],"choices":[{"key":"A","content":"서로 다른 lock을 사용해 같은 상태에 대한 mutual exclusion과 unlock→lock happens-before 경계를 공유하지 못한다","displayOrder":0},{"key":"B","content":"reentrancy가 두 monitor를 자동으로 하나로 만든다","displayOrder":1},{"key":"C","content":"read path는 어떤 경우에도 최신 값을 읽는다","displayOrder":2},{"key":"D","content":"Java에서는 하나의 field를 두 monitor에서 접근하면 컴파일 오류다","displayOrder":3}],"correctChoiceKey":"A","explanationMarkdown":"`synchronized`의 보호는 경쟁 경로들이 같은 monitor 규칙에 협력할 때 성립한다. Writer가 `this`를 unlock해도 reader가 전혀 다른 monitor를 lock하면 그 두 synchronization action 사이의 monitor happens-before edge를 사용할 수 없으므로 상태 보호 전략이 분리된다."},
-  {"kind":"question","contentKey":"java.core.concurrency.synchronized-monitor.q6","promptMarkdown":"한 `synchronized` instance method가 같은 객체의 다른 `synchronized` instance method를 호출한다. 올바른 설명은?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.concurrency.synchronized-monitor"],"choices":[{"key":"A","content":"같은 monitor라서 항상 self-deadlock이 발생한다","displayOrder":0},{"key":"B","content":"첫 method가 자동으로 monitor를 놓으므로 다른 thread도 들어온다","displayOrder":1},{"key":"C","content":"호출 자체가 컴파일되지 않는다","displayOrder":2},{"key":"D","content":"현재 thread는 같은 monitor에 재진입할 수 있지만 다른 thread는 monitor를 얻을 때까지 기다린다","displayOrder":3}],"correctChoiceKey":"D","explanationMarkdown":"Intrinsic monitor는 reentrant이므로 owner thread의 중첩 획득은 허용된다. Reentrancy는 ownership을 제거하는 기능이 아니므로 다른 thread는 가장 바깥 synchronized 경계가 monitor를 해제할 때까지 진입할 수 없다."},
-
-  {"kind":"question","contentKey":"java.core.concurrency.jmm-happens-before-visibility.q1","promptMarkdown":"한 thread 안의 program order가 JMM에서 제공하는 기본 관계는?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["java.core.concurrency.jmm-happens-before-visibility"],"choices":[{"key":"A","content":"앞선 action이 뒤 action보다 happens-before한다는 관계","displayOrder":0},{"key":"B","content":"모든 thread가 같은 wall-clock 순서로 실행된다는 보장","displayOrder":1},{"key":"C","content":"특정 CPU cache flush instruction","displayOrder":2},{"key":"D","content":"자동 monitor ownership","displayOrder":3}],"correctChoiceKey":"A","explanationMarkdown":"같은 thread에서는 프로그램 순서에 따라 action 사이의 happens-before 관계를 만들 수 있다. 그러나 이 관계만으로 다른 thread의 read까지 이어지는 것은 아니므로 cross-thread synchronization edge를 추가로 찾아야 한다."},
-  {"kind":"question","contentKey":"java.core.concurrency.jmm-happens-before-visibility.q2","promptMarkdown":"한 monitor의 unlock과 synchronization order상 그 뒤에 오는 같은 monitor의 lock 사이 관계는?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["java.core.concurrency.jmm-happens-before-visibility"],"choices":[{"key":"A","content":"서로 독립이다","displayOrder":0},{"key":"B","content":"unlock이 이후 lock보다 happens-before한다","displayOrder":1},{"key":"C","content":"unlock이 모든 field를 volatile로 변환한다","displayOrder":2},{"key":"D","content":"lock이 과거 action을 취소한다","displayOrder":3}],"correctChoiceKey":"B","explanationMarkdown":"Monitor unlock→이후 같은 monitor lock은 대표적인 synchronization edge다. 앞선 thread의 write가 unlock 전에 있고 다른 thread의 read가 lock 뒤에 있다면 program order와 transitivity를 연결해 visibility를 추론할 수 있다."},
-  {"kind":"question","contentKey":"java.core.concurrency.jmm-happens-before-visibility.q3","promptMarkdown":"volatile write와 같은 field의 이후 volatile read가 제공하는 핵심은?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.concurrency.jmm-happens-before-visibility","java.core.concurrency.volatile"],"choices":[{"key":"A","content":"thread termination","displayOrder":0},{"key":"B","content":"critical section의 mutual exclusion","displayOrder":1},{"key":"C","content":"happens-before를 통한 visibility와 ordering 관계","displayOrder":2},{"key":"D","content":"참조 대상 객체의 deep copy","displayOrder":3}],"correctChoiceKey":"C","explanationMarkdown":"같은 volatile field의 write와 이후 read는 thread 사이를 잇는 happens-before edge를 만든다. 이것은 lock ownership이나 복합 update의 atomicity를 주는 기능은 아니므로 volatile과 monitor의 역할을 구분해야 한다."},
-  {"kind":"question","contentKey":"java.core.concurrency.jmm-happens-before-visibility.q4","promptMarkdown":"`Thread.start()`와 성공적인 `join()`의 memory-ordering을 가장 정확히 설명한 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.concurrency.jmm-happens-before-visibility"],"choices":[{"key":"A","content":"둘 다 naming API라 memory ordering과 무관하다","displayOrder":0},{"key":"B","content":"join만 새 thread를 시작한다","displayOrder":1},{"key":"C","content":"start는 이전 write를 지운다","displayOrder":2},{"key":"D","content":"start 전 action은 시작된 thread의 action에, thread 종료 전 action은 성공적으로 join한 thread의 이후 action에 연결된다","displayOrder":3}],"correctChoiceKey":"D","explanationMarkdown":"Thread lifecycle에도 JMM이 정의한 happens-before 관계가 있다. 그래서 안전한 thread handoff를 설명할 때 별도 volatile 없이도 start/join edge를 사용할 수 있지만, 이것을 모든 unrelated thread 사이의 전역 ordering으로 확대해서는 안 된다."},
-  {"kind":"question","contentKey":"java.core.concurrency.jmm-happens-before-visibility.q5","promptMarkdown":"Thread A가 `data = 42`를 수행한 뒤 monitor M을 unlock하고, Thread B가 이후 같은 M을 lock한 뒤 `data`를 읽는다. B의 read를 연결하는 근거는?","questionType":"MULTIPLE_CHOICE","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["java.core.concurrency.jmm-happens-before-visibility"],"choices":[{"key":"A","content":"A의 program order → M unlock/lock synchronization edge → B의 program order를 transitivity로 연결한다","displayOrder":0},{"key":"B","content":"B의 CPU cache가 우연히 먼저 비워졌기 때문이다","displayOrder":1},{"key":"C","content":"monitor가 `data`의 복사본을 전달하기 때문이다","displayOrder":2},{"key":"D","content":"일반 int read는 언제나 최신 write를 읽기 때문이다","displayOrder":3}],"correctChoiceKey":"A","explanationMarkdown":"핵심은 hardware folklore가 아니라 JMM graph를 만드는 것이다. A의 write가 unlock보다 앞서고 unlock이 B의 같은-monitor lock보다 happens-before하며 그 lock이 B의 read보다 앞서므로 transitivity로 write에서 read까지 경로가 생긴다."},
-  {"kind":"question","contentKey":"java.core.concurrency.jmm-happens-before-visibility.q6","promptMarkdown":"`data`는 일반 field이고 `ready`만 volatile이다. Writer는 `data=42` 후 `ready=true`, reader는 `ready`에서 true를 관찰한 뒤 `data`를 읽는다. 가장 정확한 추론은?","questionType":"MULTIPLE_CHOICE","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["java.core.concurrency.jmm-happens-before-visibility","java.core.concurrency.volatile"],"choices":[{"key":"A","content":"data가 volatile이 아니므로 어떤 visibility 경로도 만들 수 없다","displayOrder":0},{"key":"B","content":"writer program order와 ready의 volatile write/read edge, reader program order를 연결해 앞선 data write를 관찰할 근거를 만들 수 있다","displayOrder":1},{"key":"C","content":"reader는 반드시 data의 기본값을 읽는다","displayOrder":2},{"key":"D","content":"ready가 volatile이면 data에 대한 모든 복합 연산도 자동 atomic해진다","displayOrder":3}],"correctChoiceKey":"B","explanationMarkdown":"Volatile publication idiom은 같은 volatile field를 cross-thread edge로 사용하고 그 앞뒤 program order를 transitivity로 연결한다. 이 보장은 앞선 write의 관찰과 관련된 것이며 여러 mutable field의 atomic snapshot이나 `count++` 같은 복합 update까지 원자화하지는 않는다."},
-
-  {"kind":"question","contentKey":"java.core.concurrency.safe-publication-final-fields.q1","promptMarkdown":"일반 mutable 객체를 다른 thread에 전달할 때 safe publication을 고려하는 이유는?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["java.core.concurrency.safe-publication-final-fields"],"choices":[{"key":"A","content":"constructor가 Java에서는 실행되지 않기 때문이다","displayOrder":0},{"key":"B","content":"모든 객체가 stack에만 있기 때문이다","displayOrder":1},{"key":"C","content":"객체 참조와 필요한 초기화 결과를 다른 thread가 어떤 memory relation으로 관찰하는지 보장해야 하기 때문이다","displayOrder":2},{"key":"D","content":"final field는 항상 mutable하기 때문이다","displayOrder":3}],"correctChoiceKey":"C","explanationMarkdown":"한 thread에서 constructor가 끝났다는 사실만으로 unrelated reader thread와 자동 happens-before 관계가 생기는 것은 아니다. 일반 state를 공유하려면 volatile reference, lock, static initialization, concurrent collection처럼 memory consistency가 정의된 handoff를 사용할 수 있다."},
-  {"kind":"question","contentKey":"java.core.concurrency.safe-publication-final-fields.q2","promptMarkdown":"constructor escape의 예로 가장 적절한 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["java.core.concurrency.safe-publication-final-fields"],"choices":[{"key":"A","content":"생성자에서 private field를 대입한다","displayOrder":0},{"key":"B","content":"factory가 `new`를 호출한다","displayOrder":1},{"key":"C","content":"생성자 지역 변수를 계산한다","displayOrder":2},{"key":"D","content":"생성자 안에서 `this`를 외부 registry나 callback에 전달해 생성 완료 전에 다른 코드가 볼 수 있게 한다","displayOrder":3}],"correctChoiceKey":"D","explanationMarkdown":"객체가 완전히 구성되기 전에 `this`가 외부로 빠져나가면 다른 thread나 callback이 아직 초기화 중인 상태를 관찰할 수 있다. 특히 final-field semantics도 올바른 construction을 전제로 하므로 constructor escape는 피하는 것이 중요하다."},
-  {"kind":"question","contentKey":"java.core.concurrency.safe-publication-final-fields.q3","promptMarkdown":"`final List<String> tags = new ArrayList<>();`에 대한 설명으로 옳은 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.concurrency.safe-publication-final-fields"],"choices":[{"key":"A","content":"reference 재대입은 제한하지만 List 내부 변경까지 deep immutable하게 만들지는 않는다","displayOrder":0},{"key":"B","content":"List의 모든 원소가 자동으로 defensive copy된다","displayOrder":1},{"key":"C","content":"final reference가 가리키는 객체는 어떤 method도 호출할 수 없다","displayOrder":2},{"key":"D","content":"final reference에는 null만 저장할 수 있다","displayOrder":3}],"correctChoiceKey":"A","explanationMarkdown":"`final`은 reference field가 다른 객체를 가리키도록 다시 대입하는 것을 제한하며 JMM에는 final field의 특별한 초기화 semantics도 있다. 그러나 참조된 `ArrayList`의 내용은 여전히 mutable이므로 publication 이후 여러 thread가 변경한다면 별도 동기화가 필요하다."},
-  {"kind":"question","contentKey":"java.core.concurrency.safe-publication-final-fields.q4","promptMarkdown":"다음 중 일반 객체 참조의 safe publication 경계로 사용할 수 있는 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.concurrency.safe-publication-final-fields"],"choices":[{"key":"A","content":"아무 synchronization 없는 전역 field 대입만 사용한다","displayOrder":0},{"key":"B","content":"완성된 객체를 volatile reference에 저장하고 reader가 그 volatile reference를 읽는다","displayOrder":1},{"key":"C","content":"객체의 `toString()`을 한 번 호출한다","displayOrder":2},{"key":"D","content":"무관한 local variable을 읽는다","displayOrder":3}],"correctChoiceKey":"B","explanationMarkdown":"Volatile write/read는 앞선 initialization action과 reader의 이후 사용을 happens-before로 연결할 수 있다. Monitor/Lock, static initialization, 규정된 concurrent collection handoff 등도 상황에 따라 publication 경계가 될 수 있다."},
-  {"kind":"question","contentKey":"java.core.concurrency.safe-publication-final-fields.q5","promptMarkdown":"`Config`는 `final int port`와 mutable `List<String> hosts`를 생성자에서 설정하고 완성된 객체를 `volatile Config current`에 publish한다. Reader가 안전하게 말할 수 있는 범위는?","questionType":"MULTIPLE_CHOICE","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["java.core.concurrency.safe-publication-final-fields"],"choices":[{"key":"A","content":"volatile reference에는 객체를 publish할 수 없다","displayOrder":0},{"key":"B","content":"volatile publication이 hosts를 deep-freeze해 이후 mutation도 자동 thread-safe하다","displayOrder":1},{"key":"C","content":"초기화된 참조와 state를 publication edge로 전달할 수 있지만 hosts를 이후 여러 thread가 변경한다면 그 mutation은 별도 보호가 필요하다","displayOrder":2},{"key":"D","content":"final port 하나가 객체 안의 모든 mutable state를 lock한다","displayOrder":3}],"correctChoiceKey":"C","explanationMarkdown":"Safe publication은 객체의 초기 state를 다른 thread에 전달하는 문제이고 이후 mutation의 thread safety는 또 다른 문제다. `final`의 특별한 semantics나 volatile reference를 사용해도 참조 대상 mutable graph가 자동으로 immutable하거나 multi-operation atomic해지지 않는다."},
-  {"kind":"question","contentKey":"java.core.concurrency.safe-publication-final-fields.q6","promptMarkdown":"객체가 모든 중요한 field를 `final`로 선언했지만 생성자 중간에 `this`를 다른 thread가 사용할 callback에 등록한다. 왜 안전하다고 결론내릴 수 없는가?","questionType":"MULTIPLE_CHOICE","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["java.core.concurrency.safe-publication-final-fields"],"choices":[{"key":"A","content":"final field는 Java에서 compile되지 않기 때문이다","displayOrder":0},{"key":"B","content":"callback은 반드시 생성자 thread에서만 실행되기 때문이다","displayOrder":1},{"key":"C","content":"`this`는 객체 reference가 아니기 때문이다","displayOrder":2},{"key":"D","content":"final-field semantics는 올바른 construction을 전제로 하며 `this` escape는 객체가 완성되기 전에 외부 관찰을 가능하게 한다","displayOrder":3}],"correctChoiceKey":"D","explanationMarkdown":"Final field는 일반 field보다 강한 initialization 관찰 규칙을 가지지만 무조건적인 면허가 아니다. 생성자가 끝나기 전에 객체 참조가 공개되면 JMM이 의도한 final-field freeze 전제를 깨뜨릴 수 있으므로 생성과 publication 순서를 분리해야 한다."},
-
-  {"kind":"question","contentKey":"java.core.concurrency.volatile.q1","promptMarkdown":"`volatile` field가 주로 제공하는 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["java.core.concurrency.volatile"],"choices":[{"key":"A","content":"같은 volatile field를 통한 visibility와 ordering 관계","displayOrder":0},{"key":"B","content":"복합 연산 전체의 mutual exclusion","displayOrder":1},{"key":"C","content":"참조 대상의 deep copy","displayOrder":2},{"key":"D","content":"thread 강제 종료","displayOrder":3}],"correctChoiceKey":"A","explanationMarkdown":"JMM에서 volatile write와 같은 field의 이후 read는 happens-before 관계를 만든다. Volatile은 lock을 획득해 한 thread만 critical section에 들이는 기능이 아니므로 visibility/order와 mutual exclusion을 구분해야 한다."},
-  {"kind":"question","contentKey":"java.core.concurrency.volatile.q2","promptMarkdown":"`volatile boolean stopRequested`를 worker loop 조건으로 사용하는 이유로 적절한 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["java.core.concurrency.volatile"],"choices":[{"key":"A","content":"volatile이 `sleep()`을 대체하기 때문에","displayOrder":0},{"key":"B","content":"한 thread의 stop write를 다른 worker가 안정적으로 관찰해야 하는 단순 상태 flag이기 때문에","displayOrder":1},{"key":"C","content":"volatile이 OS scheduler를 고정하기 때문에","displayOrder":2},{"key":"D","content":"stop write가 객체 전체 state를 atomic하게 갱신하기 때문에","displayOrder":3}],"correctChoiceKey":"B","explanationMarkdown":"한 writer가 상태 flag를 변경하고 다른 thread가 그 값을 관찰하는 문제는 volatile이 잘 맞을 수 있다. 다만 실제 worker가 blocking I/O에 들어가 flag를 자주 읽지 못한다면 interrupt 같은 취소 mechanism이 별도로 필요할 수 있다."},
-  {"kind":"question","contentKey":"java.core.concurrency.volatile.q3","promptMarkdown":"`volatile int count`에서 `count++`가 안전한 동시 증가가 아닌 이유는?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.concurrency.volatile"],"choices":[{"key":"A","content":"`count++`는 volatile field에서 compile되지 않는다","displayOrder":0},{"key":"B","content":"volatile field는 read할 수 없다","displayOrder":1},{"key":"C","content":"read → add → write가 하나의 atomic operation으로 합쳐지지 않기 때문이다","displayOrder":2},{"key":"D","content":"int는 volatile로 선언할 수 없다","displayOrder":3}],"correctChoiceKey":"C","explanationMarkdown":"각 volatile read/write는 JMM 의미를 가지지만 증가 전체는 여러 action의 조합이다. 두 thread가 같은 이전 값을 읽고 각각 같은 새 값을 저장하면 lost update가 가능하므로 counter에는 `AtomicInteger.incrementAndGet()`이나 lock 등 요구에 맞는 atomic update가 필요하다."},
-  {"kind":"question","contentKey":"java.core.concurrency.volatile.q4","promptMarkdown":"`volatile`을 "항상 RAM에서 읽고 CPU cache를 끄는 키워드"라고 설명하면 왜 부정확한가?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.concurrency.volatile","java.core.concurrency.jmm-happens-before-visibility"],"choices":[{"key":"A","content":"CPU는 cache를 전혀 사용하지 않기 때문이다","displayOrder":0},{"key":"B","content":"volatile은 Java keyword가 아니기 때문이다","displayOrder":1},{"key":"C","content":"OS가 항상 같은 cache를 사용하기 때문이다","displayOrder":2},{"key":"D","content":"Java가 보장하는 계약은 JMM의 happens-before와 memory ordering이고 실제 barrier/cache 구현은 JVM·CPU 층위이기 때문이다","displayOrder":3}],"correctChoiceKey":"D","explanationMarkdown":"Java 개발자가 correctness 근거로 삼아야 하는 것은 volatile의 JMM semantics다. 특정 processor에서 어떤 memory instruction이나 cache-coherence mechanism으로 구현되는지는 JVM과 hardware의 세부이므로 이를 언어 정의처럼 고정해서 설명하면 portability와 정확성을 잃는다."},
-  {"kind":"question","contentKey":"java.core.concurrency.volatile.q5","promptMarkdown":"초기 `volatile count=0`에서 두 thread가 각각 0을 읽고 1을 계산한 뒤 차례로 write했다. 가능한 최종 값은?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.concurrency.volatile"],"choices":[{"key":"A","content":"1","displayOrder":0},{"key":"B","content":"반드시 2","displayOrder":1},{"key":"C","content":"항상 -1","displayOrder":2},{"key":"D","content":"volatile write가 예외를 던진다","displayOrder":3}],"correctChoiceKey":"A","explanationMarkdown":"두 read가 모두 같은 0을 관찰한 뒤 각자 1을 계산하면 두 volatile write가 차례로 1을 저장할 수 있다. 최신 write의 visibility가 있어도 증가 두 번을 합치는 atomic read-modify-write가 없으므로 최종 count가 1인 lost update가 가능하다."},
-  {"kind":"question","contentKey":"java.core.concurrency.volatile.q6","promptMarkdown":"Writer가 일반 field `data=42`를 쓰고 이어서 volatile `ready=true`를 쓴다. Reader가 `ready==true`를 관찰한 뒤 `data`를 읽는다. JMM 추론으로 옳은 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["java.core.concurrency.volatile","java.core.concurrency.jmm-happens-before-visibility"],"choices":[{"key":"A","content":"data가 volatile이 아니므로 reader는 반드시 0을 읽는다","displayOrder":0},{"key":"B","content":"writer program order와 ready의 volatile write/read edge를 transitivity로 연결해 data write의 관찰 근거를 만들 수 있다","displayOrder":1},{"key":"C","content":"ready 하나가 volatile이면 객체의 모든 복합 invariant가 atomic해진다","displayOrder":2},{"key":"D","content":"volatile은 같은 thread 안에서만 효과가 있다","displayOrder":3}],"correctChoiceKey":"B","explanationMarkdown":"`data=42` → volatile write `ready=true`는 writer program order이고, 그 write를 reader의 volatile read가 관찰하면 cross-thread happens-before edge가 생긴다. 이어지는 data read까지 transitivity로 연결할 수 있지만 이 패턴이 여러 field를 하나의 atomic transaction으로 만드는 것은 아니다."},
-
-  {"kind":"question","contentKey":"java.core.concurrency.atomic-cas.q1","promptMarkdown":"`compareAndSet(expected, update)`가 성공하는 조건은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["java.core.concurrency.atomic-cas"],"choices":[{"key":"A","content":"lock을 영구 점유했을 때","displayOrder":0},{"key":"B","content":"현재 값과 무관하게 항상 update한다","displayOrder":1},{"key":"C","content":"현재 값이 expected와 일치할 때 원자적으로 update한다","displayOrder":2},{"key":"D","content":"expected가 null일 때만 성공한다","displayOrder":3}],"correctChoiceKey":"C","explanationMarkdown":"CAS는 `current == expected`라는 조건이 아직 성립할 때만 새 값으로 바꾸는 조건부 atomic update다. 예상값이 달라졌다면 다른 thread가 먼저 상태를 바꿨을 수 있으므로 update하지 않고 실패 결과를 반환한다."},
-  {"kind":"question","contentKey":"java.core.concurrency.atomic-cas.q2","promptMarkdown":"CAS가 false를 반환했다는 의미는?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["java.core.concurrency.atomic-cas"],"choices":[{"key":"A","content":"항상 예외가 발생했다","displayOrder":0},{"key":"B","content":"변수가 삭제되었다","displayOrder":1},{"key":"C","content":"다른 모든 thread가 종료됐다","displayOrder":2},{"key":"D","content":"현재 값이 expected와 맞지 않아 그 update가 적용되지 않았다","displayOrder":3}],"correctChoiceKey":"D","explanationMarkdown":"CAS 실패는 경쟁 상황에서 정상적으로 발생할 수 있는 결과다. Retry algorithm이라면 최신 current를 다시 읽고 그 값에 맞춰 next를 재계산해야 하며 오래된 expected를 계속 재사용하면 progress할 수 없다."},
-  {"kind":"question","contentKey":"java.core.concurrency.atomic-cas.q3","promptMarkdown":"CAS retry loop에서 첫 시도가 실패한 뒤 일반적으로 필요한 순서는?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.concurrency.atomic-cas"],"choices":[{"key":"A","content":"새 current를 읽고 next를 다시 계산한 뒤 CAS를 재시도한다","displayOrder":0},{"key":"B","content":"오래된 expected를 영원히 그대로 사용한다","displayOrder":1},{"key":"C","content":"변수를 null로 만든다","displayOrder":2},{"key":"D","content":"보유하지 않은 monitor를 unlock한다","displayOrder":3}],"correctChoiceKey":"A","explanationMarkdown":"첫 계산 이후 다른 thread가 값을 바꿨다면 이전 next는 최신 state를 기준으로 한 결과가 아니다. Retry는 현재 상태를 다시 관찰하고 그 상태에서 유효한 새 결과를 계산해 조건부 update하는 과정이다."},
-  {"kind":"question","contentKey":"java.core.concurrency.atomic-cas.q4","promptMarkdown":"contention이 높은 CAS retry loop에서 생길 수 있는 trade-off는?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.concurrency.atomic-cas"],"choices":[{"key":"A","content":"여러 field invariant가 자동으로 하나의 transaction이 된다","displayOrder":0},{"key":"B","content":"많은 thread가 같은 값에 경쟁하며 CAS 실패와 재계산이 반복되어 CPU 비용이 커질 수 있다","displayOrder":1},{"key":"C","content":"CAS는 항상 OS blocking lock으로 바뀐다","displayOrder":2},{"key":"D","content":"실패한 thread는 JVM이 자동 종료한다","displayOrder":3}],"correctChoiceKey":"B","explanationMarkdown":"낮은 contention에서는 CAS가 적은 시도로 성공할 수 있지만 hot counter처럼 경쟁이 몰리면 retry가 많아진다. CAS primitive를 사용했다는 사실만으로 알고리즘 전체가 자동으로 lock-free이거나 lock보다 빠르다고 결론내리지 말고 progress guarantee와 workload를 함께 본다."},
-  {"kind":"question","contentKey":"java.core.concurrency.atomic-cas.q5","promptMarkdown":"`AtomicInteger` 값이 5일 때 Thread A가 5를 읽었다. 그 사이 Thread B가 값을 6으로 변경했고, A가 `compareAndSet(5, 7)`을 호출한다. 결과는?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.concurrency.atomic-cas"],"choices":[{"key":"A","content":"두 update를 합쳐 11이 된다","displayOrder":0},{"key":"B","content":"true를 반환하고 7이 된다","displayOrder":1},{"key":"C","content":"false를 반환하고 값은 6으로 남는다","displayOrder":2},{"key":"D","content":"예외를 던지고 5로 rollback한다","displayOrder":3}],"correctChoiceKey":"C","explanationMarkdown":"A가 기억한 expected 5와 실제 current 6이 다르므로 조건부 갱신은 실패한다. CAS는 다른 thread의 update를 덮어쓰지 않고 실패 사실을 caller에게 알려 주므로 필요하면 6을 다시 읽어 next를 계산한다."},
-  {"kind":"question","contentKey":"java.core.concurrency.atomic-cas.q6","promptMarkdown":"`balance`와 `version`을 각각 별도 atomic 변수로 CAS 갱신한다. 둘이 항상 함께 바뀌어야 하는 invariant를 자동 보장하지 못하는 이유는?","questionType":"MULTIPLE_CHOICE","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["java.core.concurrency.atomic-cas"],"choices":[{"key":"A","content":"CAS는 단일 변수도 원자적으로 바꾸지 못한다","displayOrder":0},{"key":"B","content":"두 atomic 변수가 항상 같은 memory location에 있기 때문이다","displayOrder":1},{"key":"C","content":"version 값은 Java에서 변경할 수 없기 때문이다","displayOrder":2},{"key":"D","content":"각 CAS 사이의 중간 상태가 다른 thread에 관찰되거나 경쟁할 수 있어 두 변수를 하나의 atomic state로 만들지 않기 때문이다","displayOrder":3}],"correctChoiceKey":"D","explanationMarkdown":"Atomic variable 하나의 조건부 update와 여러 변수의 invariant는 범위가 다르다. 관련 값을 immutable state 하나로 묶어 `AtomicReference<State>`를 CAS하거나 lock으로 전체 invariant를 보호하는 것처럼 상태 단위를 다시 설계해야 할 수 있다."},
-  {"kind":"question","contentKey":"java.core.concurrency.atomic-cas.q7","promptMarkdown":"재고 수량과 주문 상태를 각각 `AtomicInteger`와 `AtomicReference`로 갱신한다. 두 변경이 반드시 함께 성공해야 하고, 주문 저장 같은 외부 side effect도 있다. 단일 CAS retry만으로 충분한지와 설계 경계를 설명하라.","questionType":"SCENARIO","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["java.core.concurrency.atomic-cas"],"modelAnswer":"별도 atomic 변수의 성공은 각 변수의 update만 원자화하므로 두 상태의 invariant를 자동으로 묶지 못한다. 한 immutable state 안에 함께 들어갈 수 있는 in-memory 상태라면 그 state 전체를 AtomicReference CAS로 교체하거나 하나의 lock으로 보호할 수 있다. 그러나 DB 저장이나 외부 API 같은 side effect까지 CAS rollback으로 transaction처럼 만들 수는 없으므로 해당 시스템의 transaction·idempotency·보상 경계를 별도로 설계해야 한다.","explanationMarkdown":"CAS는 expected/current 비교와 한 state update를 원자화하는 도구다. In-memory multi-field invariant와 외부 side effect까지 한꺼번에 해결한다고 확대하면 상태 중간 노출, 중복 side effect, retry 안전성 문제가 생기므로 보호하려는 경계를 먼저 구분해야 한다."},
-
-  {"kind":"question","contentKey":"java.core.concurrency.locks-reentrantlock-condition.q1","promptMarkdown":"`ReentrantLock`을 성공적으로 획득한 뒤 일반적으로 `unlock()`을 두는 위치는?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["java.core.concurrency.locks-reentrantlock-condition"],"choices":[{"key":"A","content":"`finally` block","displayOrder":0},{"key":"B","content":"예외가 없는 경우에만 마지막 줄","displayOrder":1},{"key":"C","content":"다른 thread의 constructor","displayOrder":2},{"key":"D","content":"호출하지 않아도 scope가 자동 해제한다","displayOrder":3}],"correctChoiceKey":"A","explanationMarkdown":"`ReentrantLock`은 synchronized처럼 lexical scope를 벗어난다고 자동 release되지 않는다. Lock 획득 뒤 critical section에서 예외가 나더라도 permit처럼 lock을 반드시 돌려줘야 하므로 `try/finally`가 기본 구조다."},
-  {"kind":"question","contentKey":"java.core.concurrency.locks-reentrantlock-condition.q2","promptMarkdown":"`Condition.await()`을 사용하는 일반적인 형태로 옳은 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["java.core.concurrency.locks-reentrantlock-condition"],"choices":[{"key":"A","content":"조건을 한 번 `if`로 확인한 뒤 깨어나면 무조건 진행한다","displayOrder":0},{"key":"B","content":"관련 lock을 보유한 상태에서 predicate를 `while`로 검사하고 거짓이면 await한다","displayOrder":1},{"key":"C","content":"await를 호출하면 thread가 강제 종료된다","displayOrder":2},{"key":"D","content":"관련 lock 없이 아무 곳에서나 호출한다","displayOrder":3}],"correctChoiceKey":"B","explanationMarkdown":"`await()`는 기다리는 동안 lock을 release하고 깨어난 뒤 다시 획득한 다음 반환한다. Spurious wakeup이나 여러 waiter의 경쟁이 가능하므로 signal을 성공 조건으로 보지 말고 lock을 다시 가진 상태에서 실제 predicate를 `while`로 재검사해야 한다."},
-  {"kind":"question","contentKey":"java.core.concurrency.locks-reentrantlock-condition.q3","promptMarkdown":"`Lock` API가 `synchronized`보다 직접 제공하는 추가 선택지로 적절한 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.concurrency.locks-reentrantlock-condition"],"choices":[{"key":"A","content":"OS scheduler를 정확히 제어하는 기능","displayOrder":0},{"key":"B","content":"항상 더 빠른 실행을 보장하는 기능","displayOrder":1},{"key":"C","content":"timed `tryLock`이나 interruptible lock acquisition","displayOrder":2},{"key":"D","content":"공유 객체의 deep immutability","displayOrder":3}],"correctChoiceKey":"C","explanationMarkdown":"`ReentrantLock`은 timed try, interruptible acquisition, 여러 `Condition`처럼 명시적인 lock 정책을 제공한다. 이런 요구가 없다면 scope 기반 release가 자동인 `synchronized`가 더 단순하고 실수 가능성이 낮을 수 있으므로 Lock을 무조건 상위 대체품으로 보지 않는다."},
-  {"kind":"question","contentKey":"java.core.concurrency.locks-reentrantlock-condition.q4","promptMarkdown":"bounded queue의 consumer가 `notEmpty.await()`에서 깨어난 뒤 queue를 다시 확인하지 않고 바로 `removeFirst()`를 호출해 간헐적으로 실패한다. 가장 중요한 수정은?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.concurrency.locks-reentrantlock-condition"],"choices":[{"key":"A","content":"Condition을 ThreadLocal로 바꾼다","displayOrder":0},{"key":"B","content":"signal을 받았다는 사실만 성공 조건으로 사용한다","displayOrder":1},{"key":"C","content":"await 전에 lock을 영구적으로 해제하고 다시 얻지 않는다","displayOrder":2},{"key":"D","content":"lock을 가진 상태에서 `while (queue.isEmpty()) await()` 형태로 predicate를 재검사한다","displayOrder":3}],"correctChoiceKey":"D","explanationMarkdown":"Condition signal은 상태가 바뀌었을 수 있다는 알림이지 queue가 반드시 non-empty라는 예약권이 아니다. 깨어난 여러 consumer가 경쟁할 수도 있고 spurious wakeup도 허용되므로 실제 상태를 보호하는 같은 lock 아래에서 predicate를 다시 검사한다."},
-
-  {"kind":"question","contentKey":"java.core.concurrency.executor-task-thread-pools.q1","promptMarkdown":"Executor가 분리하려는 핵심 관심사는?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["java.core.concurrency.executor-task-thread-pools"],"choices":[{"key":"A","content":"수행할 task 제출과 그 task를 어떤 worker가 언제 실행할지에 대한 실행 정책","displayOrder":0},{"key":"B","content":"class loading과 GC만","displayOrder":1},{"key":"C","content":"equals와 hashCode","displayOrder":2},{"key":"D","content":"source retention과 annotation processing","displayOrder":3}],"correctChoiceKey":"A","explanationMarkdown":"Task는 해야 할 일이고 worker thread는 그 일을 실행하는 자원이다. Executor를 사용하면 caller가 매 작업마다 thread lifecycle을 직접 만들지 않고 queue, worker 수, shutdown 같은 실행 정책을 별도 구성할 수 있다."},
-  {"kind":"question","contentKey":"java.core.concurrency.executor-task-thread-pools.q2","promptMarkdown":"`ThreadPoolExecutor`의 work queue가 담당하는 역할은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["java.core.concurrency.executor-task-thread-pools"],"choices":[{"key":"A","content":"모든 task를 즉시 취소한다","displayOrder":0},{"key":"B","content":"바로 worker에 배정되지 못한 task를 executor 정책에 따라 대기시킨다","displayOrder":1},{"key":"C","content":"ThreadLocal을 자동 삭제한다","displayOrder":2},{"key":"D","content":"실행 결과를 항상 정렬한다","displayOrder":3}],"correctChoiceKey":"B","explanationMarkdown":"모든 worker가 바쁘면 새 task가 queue에서 대기할 수 있다. Queue 종류와 capacity는 언제 추가 worker를 만들고 언제 rejection으로 넘어가는지에도 영향을 주므로 pool size와 queue를 따로 떨어진 숫자로 보면 안 된다."},
-  {"kind":"question","contentKey":"java.core.concurrency.executor-task-thread-pools.q3","promptMarkdown":"bounded work queue와 worker가 모두 포화되었을 때 필요한 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.concurrency.executor-task-thread-pools"],"choices":[{"key":"A","content":"오류를 항상 조용히 버리는 것","displayOrder":0},{"key":"B","content":"queue 크기를 자동으로 무한대로 바꾸는 것","displayOrder":1},{"key":"C","content":"reject, caller-runs, timeout 등 시스템 요구에 맞는 saturation 정책","displayOrder":2},{"key":"D","content":"worker가 자동으로 무제한 증가한다는 가정","displayOrder":3}],"correctChoiceKey":"C","explanationMarkdown":"Bounded capacity는 시스템이 감당할 수 없는 유입을 가시화한다. `AbortPolicy`, `CallerRunsPolicy` 등은 각기 다른 failure/backpressure 효과가 있으므로 어떤 caller가 느려지고 사용자에게 어떤 실패를 돌려줄지까지 포함해 선택한다."},
-  {"kind":"question","contentKey":"java.core.concurrency.executor-task-thread-pools.q4","promptMarkdown":"thread pool에서 task가 끝났다는 사실과 worker thread가 종료됐다는 사실의 관계로 맞는 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.concurrency.executor-task-thread-pools"],"choices":[{"key":"A","content":"task 하나가 끝나면 worker도 반드시 종료된다","displayOrder":0},{"key":"B","content":"worker 하나는 평생 task 하나만 실행한다","displayOrder":1},{"key":"C","content":"shutdown은 모든 task 결과를 자동 반환한다","displayOrder":2},{"key":"D","content":"pool worker는 여러 task에 재사용될 수 있으므로 task completion과 worker lifecycle은 별개다","displayOrder":3}],"correctChoiceKey":"D","explanationMarkdown":"Fixed platform-thread pool에서는 같은 worker가 여러 task를 차례로 실행할 수 있다. 이 차이는 ThreadLocal cleanup이나 shutdown을 이해할 때 중요하며 task의 성공/실패와 executor 자체의 생명주기도 분리해 추적해야 한다."},
-  {"kind":"question","contentKey":"java.core.concurrency.executor-task-thread-pools.q5","promptMarkdown":"`corePoolSize=2`, `maximumPoolSize=4`, capacity 1의 bounded queue인 `ThreadPoolExecutor`가 아직 포화되지 않은 상태에서 task가 계속 들어온다. 일반적인 처리 순서를 가장 잘 설명한 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["java.core.concurrency.executor-task-thread-pools"],"choices":[{"key":"A","content":"core worker 확보 → queue 사용 → queue가 찬 뒤 maximum 범위의 추가 worker 시도 → 모두 불가하면 rejection 순으로 영향을 받는다","displayOrder":0},{"key":"B","content":"모든 task마다 무조건 새 thread를 먼저 만든다","displayOrder":1},{"key":"C","content":"bounded queue는 maximumPoolSize를 항상 무시한다","displayOrder":2},{"key":"D","content":"maximum=4이면 task를 무한히 수용할 수 있다","displayOrder":3}],"correctChoiceKey":"A","explanationMarkdown":"`ThreadPoolExecutor`는 단순히 max worker까지 먼저 늘리고 queue를 쓰는 구조가 아니다. Core worker 수, queue의 `offer` 성공 여부, maximum worker 생성 가능성, rejection 순으로 정책이 연결되므로 실제 saturation behavior를 이해하려면 세 설정을 함께 봐야 한다."},
-  {"kind":"question","contentKey":"java.core.concurrency.executor-task-thread-pools.q6","promptMarkdown":"worker 200개인 executor가 있지만 DB connection pool은 10개뿐이고 대부분의 task가 DB를 사용한다. pool size만 크게 잡을 때 가능한 결과는?","questionType":"MULTIPLE_CHOICE","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["java.core.concurrency.executor-task-thread-pools"],"choices":[{"key":"A","content":"executor queue가 자동으로 사라진다","displayOrder":0},{"key":"B","content":"대부분 worker가 DB connection을 기다리며 latency와 memory/thread 경쟁이 늘 수 있고 처리량은 DB capacity에 막힐 수 있다","displayOrder":1},{"key":"C","content":"task가 자동으로 virtual thread가 된다","displayOrder":2},{"key":"D","content":"executor worker 수가 DB connection 수를 자동 확장한다","displayOrder":3}],"correctChoiceKey":"B","explanationMarkdown":"Executor concurrency는 하위 resource concurrency와 별도다. 실제 병목이 connection pool 10개라면 worker만 늘려도 DB가 동시에 처리할 수 있는 요청 수는 늘지 않으므로 queue wait, connection wait, timeout과 전체 latency를 측정해 함께 조정해야 한다."},
-
-  {"kind":"question","contentKey":"java.core.concurrency.blockingqueue-producer-consumer.q1","promptMarkdown":"빈 `BlockingQueue`에서 `take()`를 호출하면 어떻게 되는가?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["java.core.concurrency.blockingqueue-producer-consumer"],"choices":[{"key":"A","content":"항상 즉시 예외만 던진다","displayOrder":0},{"key":"B","content":"항상 null을 반환한다","displayOrder":1},{"key":"C","content":"원소가 들어올 때까지 호출 thread가 기다릴 수 있다","displayOrder":2},{"key":"D","content":"queue를 삭제한다","displayOrder":3}],"correctChoiceKey":"C","explanationMarkdown":"`take()`는 empty 상태에서 element가 생길 때까지 기다리는 blocking operation이다. 즉시 빈 결과가 필요하다면 `poll()` 계열처럼 다른 계약을 선택해야 하므로 caller latency 요구에 맞춰 API를 고른다."},
-  {"kind":"question","contentKey":"java.core.concurrency.blockingqueue-producer-consumer.q2","promptMarkdown":"가득 찬 bounded `BlockingQueue`에서 `put()`을 호출하면?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["java.core.concurrency.blockingqueue-producer-consumer"],"choices":[{"key":"A","content":"항상 새 원소를 버린다","displayOrder":0},{"key":"B","content":"capacity를 자동으로 무한히 늘린다","displayOrder":1},{"key":"C","content":"consumer를 강제 종료한다","displayOrder":2},{"key":"D","content":"공간이 생길 때까지 호출 thread가 기다릴 수 있다","displayOrder":3}],"correctChoiceKey":"D","explanationMarkdown":"Bounded queue의 `put`은 full 상태를 producer의 대기로 전파할 수 있다. 이 동작은 유입을 늦추는 backpressure의 한 요소가 될 수 있지만 전체 서비스의 timeout·rejection 전략까지 자동으로 결정해 주는 것은 아니다."},
-  {"kind":"question","contentKey":"java.core.concurrency.blockingqueue-producer-consumer.q3","promptMarkdown":"`offer/poll`과 `put/take`의 차이로 옳은 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.concurrency.blockingqueue-producer-consumer"],"choices":[{"key":"A","content":"offer/poll은 즉시 결과를 주는 형태가 있고 put/take는 조건 충족까지 blocking할 수 있다","displayOrder":0},{"key":"B","content":"offer/poll만 thread-safe하다","displayOrder":1},{"key":"C","content":"put/take는 queue를 우선순위 정렬한다","displayOrder":2},{"key":"D","content":"네 method는 항상 같은 실패 계약을 가진다","displayOrder":3}],"correctChoiceKey":"A","explanationMarkdown":"BlockingQueue는 같은 add/remove 의미에도 immediate, blocking, timed 형태의 API를 제공한다. 요청 thread가 무기한 기다려도 되는지, 빨리 실패해야 하는지에 따라 어떤 method를 쓸지가 시스템 behavior를 바꾼다."},
-  {"kind":"question","contentKey":"java.core.concurrency.blockingqueue-producer-consumer.q4","promptMarkdown":"producer가 지속적으로 consumer보다 빠른 시스템에서 bounded queue를 사용하는 대표적인 이유는?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.concurrency.blockingqueue-producer-consumer"],"choices":[{"key":"A","content":"모든 task의 성공을 보장하기 위해","displayOrder":0},{"key":"B","content":"backlog가 무제한 메모리로 숨는 것을 막고 full 상태를 producer 정책에 드러내기 위해","displayOrder":1},{"key":"C","content":"shutdown을 자동 완성하기 위해","displayOrder":2},{"key":"D","content":"producer와 consumer 처리 속도를 물리적으로 같게 만들기 위해","displayOrder":3}],"correctChoiceKey":"B","explanationMarkdown":"소비 속도보다 생산 속도가 계속 높으면 unbounded queue는 지연과 메모리 사용을 계속 누적할 수 있다. Bounded queue는 한계를 명시하지만 full에서 기다릴지 reject할지 같은 정책은 여전히 애플리케이션이 선택해야 한다."},
-  {"kind":"question","contentKey":"java.core.concurrency.blockingqueue-producer-consumer.q5","promptMarkdown":"Consumer가 `take()`로 task를 꺼낸 뒤 처리 중 예외로 실패했다. `BlockingQueue`가 자동 보장하지 않는 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.concurrency.blockingqueue-producer-consumer"],"choices":[{"key":"A","content":"queue의 thread-safe handoff 계약","displayOrder":0},{"key":"B","content":"다른 task의 put/take 가능성","displayOrder":1},{"key":"C","content":"꺼낸 task의 외부 DB/API side effect까지 성공하거나 자동 재시도되는 것","displayOrder":2},{"key":"D","content":"take의 blocking 의미","displayOrder":3}],"correctChoiceKey":"C","explanationMarkdown":"Queue에서 원소를 성공적으로 꺼냈다는 것은 consumer가 소유권을 가져왔다는 뜻이지 업무 처리가 성공했다는 뜻은 아니다. 실패 후 retry, dead-letter, durable delivery가 필요하다면 JVM queue보다 더 높은 application/messaging policy를 별도로 설계해야 한다."},
-  {"kind":"question","contentKey":"java.core.concurrency.blockingqueue-producer-consumer.q6","promptMarkdown":"bounded queue가 가득 차 producer는 `put()`에서 기다리고, consumer는 `take()` loop의 interrupt를 catch한 뒤 무시하고 계속 대기한다. shutdown 요청이 끝나지 않는 가장 직접적인 이유는?","questionType":"MULTIPLE_CHOICE","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["java.core.concurrency.blockingqueue-producer-consumer","java.core.concurrency.thread-lifecycle-interruption"],"choices":[{"key":"A","content":"bounded queue가 모든 thread를 자동 kill하기 때문이다","displayOrder":0},{"key":"B","content":"put은 실제로 non-blocking이기 때문이다","displayOrder":1},{"key":"C","content":"take가 queue의 모든 원소를 삭제하기 때문이다","displayOrder":2},{"key":"D","content":"consumer가 cancellation signal을 소비하고 종료하지 않아 공간이 생기지 않고 producer의 blocking도 풀리지 않는 liveness chain이 생겼기 때문이다","displayOrder":3}],"correctChoiceKey":"D","explanationMarkdown":"BlockingQueue의 blocking call과 interruption policy는 shutdown 설계의 일부다. Consumer가 interrupt를 무시하면 종료되지 않을 뿐 아니라 queue를 비워 producer의 `put`을 진행시켜 줄 주체도 사라질 수 있으므로 worker loop와 producer의 취소 경로를 함께 설계해야 한다."},
-
-  {"kind":"question","contentKey":"java.core.concurrency.countdownlatch-coordination.q1","promptMarkdown":"`CountDownLatch`의 count가 0이 되면 어떤 의미인가?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["java.core.concurrency.countdownlatch-coordination"],"choices":[{"key":"A","content":"`await()` 중인 thread들이 진행할 수 있는 gate가 열린다","displayOrder":0},{"key":"B","content":"count가 자동으로 초기값으로 reset된다","displayOrder":1},{"key":"C","content":"모든 worker가 강제 종료된다","displayOrder":2},{"key":"D","content":"새 task가 자동 제출된다","displayOrder":3}],"correctChoiceKey":"A","explanationMarkdown":"Latch는 남은 신호 수를 0까지 줄이는 one-shot coordination tool이다. 0이 되면 기다리던 thread가 진행할 수 있지만 실제 CPU를 얻는 정확한 순서나 모든 worker의 업무 성공까지 의미하는 것은 아니다."},
-  {"kind":"question","contentKey":"java.core.concurrency.countdownlatch-coordination.q2","promptMarkdown":"`CountDownLatch`의 재사용성에 대한 설명으로 옳은 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["java.core.concurrency.countdownlatch-coordination"],"choices":[{"key":"A","content":"한 thread만 countDown할 수 있다","displayOrder":0},{"key":"B","content":"one-shot이라 count가 0이 된 뒤 다시 초기값으로 채우는 reset API가 없다","displayOrder":1},{"key":"C","content":"await가 count를 증가시킨다","displayOrder":2},{"key":"D","content":"매 라운드 자동으로 cyclic하게 재사용된다","displayOrder":3}],"correctChoiceKey":"B","explanationMarkdown":"CountDownLatch는 한 번의 완료 barrier에 적합하다. 반복되는 세대마다 다시 모여야 하는 문제라면 CyclicBarrier나 Phaser 등 다른 coordination model이 더 자연스러운지 검토해야 한다."},
-  {"kind":"question","contentKey":"java.core.concurrency.countdownlatch-coordination.q3","promptMarkdown":"Worker가 예외로 끝나도 "모든 시도가 끝났음"을 기다리는 thread가 영원히 막히지 않게 하려면 어떤 패턴이 적절한가?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.concurrency.countdownlatch-coordination"],"choices":[{"key":"A","content":"count를 음수로 만든다","displayOrder":0},{"key":"B","content":"실패 worker에서는 countDown을 영구 생략한다","displayOrder":1},{"key":"C","content":"worker의 `finally`에서 `countDown()`하고 성공/실패 결과는 별도로 수집한다","displayOrder":2},{"key":"D","content":"await를 제거한다","displayOrder":3}],"correctChoiceKey":"C","explanationMarkdown":"Latch count가 작업의 "종료 신호"를 뜻한다면 성공 여부와 무관하게 시도가 끝난 경로에서 countDown해야 한다. 그렇지 않으면 실패 하나가 무한 대기로 바뀔 수 있으며, 업무 성공/실패는 별도 result나 Future로 전달한다."},
-  {"kind":"question","contentKey":"java.core.concurrency.countdownlatch-coordination.q4","promptMarkdown":"3개 worker 중 하나가 실패했지만 모든 worker가 `finally`에서 `countDown()`해 `await()`가 반환했다. 올바른 해석은?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.concurrency.countdownlatch-coordination"],"choices":[{"key":"A","content":"latch가 0이므로 세 작업이 모두 업무적으로 성공했다","displayOrder":0},{"key":"B","content":"await가 worker의 모든 예외를 자동 재던진다","displayOrder":1},{"key":"C","content":"countDown이 실패 결과를 정상 결과로 변환한다","displayOrder":2},{"key":"D","content":"정해진 완료 신호가 모두 왔다는 뜻이며 성공 여부는 별도 결과에서 확인해야 한다","displayOrder":3}],"correctChoiceKey":"D","explanationMarkdown":"Coordination state와 business result는 다른 책임이다. Latch는 "몇 개가 끝났는가"를 조정하는 데 강하지만 각 작업이 성공했는지, 어떤 예외가 났는지는 저장하지 않으므로 caller가 별도 상태를 검사해야 한다."},
-
-  {"kind":"question","contentKey":"java.core.concurrency.semaphore-permits.q1","promptMarkdown":"`Semaphore` permit이 표현하는 대표적인 의미는?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["java.core.concurrency.semaphore-permits"],"choices":[{"key":"A","content":"동시에 수행하거나 사용할 수 있는 작업·resource 자리 수","displayOrder":0},{"key":"B","content":"특정 thread의 monitor ownership","displayOrder":1},{"key":"C","content":"객체 serialization 횟수","displayOrder":2},{"key":"D","content":"모든 task를 한 개씩만 실행한다는 강제 규칙","displayOrder":3}],"correctChoiceKey":"A","explanationMarkdown":"Semaphore는 permit 개수만큼 동시 진입을 허용하고 그 이상은 acquire policy에 따라 기다리거나 실패하게 할 수 있다. Mutual exclusion lock이 보통 한 owner를 다루는 것과 달리 N-way concurrency limit을 표현하는 데 적합하다."},
-  {"kind":"question","contentKey":"java.core.concurrency.semaphore-permits.q2","promptMarkdown":"`acquire()` 성공 후 resource 사용 중 예외가 날 수 있다. permit 누수를 막기 위한 일반적인 구조는?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["java.core.concurrency.semaphore-permits"],"choices":[{"key":"A","content":"모든 thread를 interrupt한다","displayOrder":0},{"key":"B","content":"acquire 성공 이후 `try/finally`에서 `release()`한다","displayOrder":1},{"key":"C","content":"queue를 먼저 정렬한다","displayOrder":2},{"key":"D","content":"permit을 영구 보유한다","displayOrder":3}],"correctChoiceKey":"B","explanationMarkdown":"Semaphore는 acquire한 thread가 scope를 벗어났다고 permit을 자동 반환하지 않는다. 실제 획득에 성공한 경로만 `finally`에서 release하도록 구조를 맞춰야 누락이나 잘못된 double release를 피할 수 있다."},
-  {"kind":"question","contentKey":"java.core.concurrency.semaphore-permits.q3","promptMarkdown":"Semaphore와 monitor lock의 중요한 차이로 옳은 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.concurrency.semaphore-permits"],"choices":[{"key":"A","content":"Semaphore는 blocking할 수 없다","displayOrder":0},{"key":"B","content":"Semaphore는 항상 permit 하나만 가진다","displayOrder":1},{"key":"C","content":"permit에는 monitor와 같은 thread ownership 강제가 없어 acquire 없이 release해 permit 수를 잘못 늘리는 코드도 가능하다","displayOrder":2},{"key":"D","content":"monitor도 항상 permit count를 사용한다","displayOrder":3}],"correctChoiceKey":"C","explanationMarkdown":"Intrinsic monitor는 owner thread 개념이 있지만 Semaphore는 permit 수를 조절하는 abstraction이다. 그래서 획득·반환 책임을 코드가 정확히 맞추지 않으면 실제 resource는 늘지 않았는데 permit만 부풀어 concurrency limit이 깨질 수 있다."},
-  {"kind":"question","contentKey":"java.core.concurrency.semaphore-permits.q4","promptMarkdown":"permit 2개인 Semaphore에서 두 작업이 permit을 얻었고 한 작업이 예외로 종료되면서 `release()`를 빠뜨렸다. 가장 직접적인 결과와 수정은?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.concurrency.semaphore-permits"],"choices":[{"key":"A","content":"Semaphore가 ownership을 강제하므로 permit은 자동 복구된다","displayOrder":0},{"key":"B","content":"다음 task가 acquire를 여러 번 부르면 permit이 복구된다","displayOrder":1},{"key":"C","content":"tryAcquire가 과거 permit 누수를 자동 수리한다","displayOrder":2},{"key":"D","content":"실제 available permit이 줄어든 채 남을 수 있으므로 acquire 성공 경로에서 finally release를 보장해야 한다","displayOrder":3}],"correctChoiceKey":"D","explanationMarkdown":"Permit leak은 시간이 지날수록 허용 concurrency를 줄이고 결국 모든 새 작업이 대기하는 현상으로 나타날 수 있다. Resource 사용 코드의 정상·예외 경로를 동일한 acquire/release lifecycle로 묶는 것이 핵심이다."},
-
-  {"kind":"question","contentKey":"java.core.concurrency.concurrent-collections.q1","promptMarkdown":"`ConcurrentHashMap`의 대표적인 목적은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["java.core.concurrency.concurrent-collections"],"choices":[{"key":"A","content":"여러 thread의 concurrent map operation을 지원한다","displayOrder":0},{"key":"B","content":"key를 항상 정렬된 순서로 유지한다","displayOrder":1},{"key":"C","content":"null key와 null value를 모두 허용한다","displayOrder":2},{"key":"D","content":"여러 map을 포함한 모든 business transaction을 자동 원자화한다","displayOrder":3}],"correctChoiceKey":"A","explanationMarkdown":"ConcurrentHashMap은 여러 thread가 map operation을 수행할 수 있도록 설계된 collection이다. 이것이 정렬, null 지원, 임의의 여러-step 업무 transaction까지 보장한다는 뜻은 아니므로 실제 API 단위와 invariant 범위를 확인한다."},
-  {"kind":"question","contentKey":"java.core.concurrency.concurrent-collections.q2","promptMarkdown":"빈 `ConcurrentLinkedQueue`에서 `poll()`을 호출하면 일반적으로 어떻게 되는가?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["java.core.concurrency.concurrent-collections"],"choices":[{"key":"A","content":"`take()`처럼 원소가 올 때까지 반드시 blocking한다","displayOrder":0},{"key":"B","content":"현재 원소가 있으면 제거해 반환하고 없으면 null을 반환할 수 있다","displayOrder":1},{"key":"C","content":"queue 전체를 정렬한다","displayOrder":2},{"key":"D","content":"항상 최소 우선순위 원소를 반환한다","displayOrder":3}],"correctChoiceKey":"B","explanationMarkdown":"ConcurrentLinkedQueue는 non-blocking concurrent queue이며 `poll()`은 현재 head가 없으면 null을 반환한다. Blocking consumer semantics가 필요하다면 이름이 비슷한 queue라고 가정하지 말고 `BlockingQueue` 계열의 계약을 선택해야 한다."},
-  {"kind":"question","contentKey":"java.core.concurrency.concurrent-collections.q3","promptMarkdown":"ConcurrentHashMap에서 `if (!map.containsKey(k)) map.put(k, v);`로 "없으면 추가"를 구현하면 어떤 문제가 남는가?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.concurrency.concurrent-collections"],"choices":[{"key":"A","content":"put은 concurrent map에서 항상 실패한다","displayOrder":0},{"key":"B","content":"ConcurrentHashMap이 두 호출을 자동으로 하나의 operation으로 합친다","displayOrder":1},{"key":"C","content":"containsKey와 put 사이에 다른 thread가 개입할 수 있어 check-then-act 전체가 원자적이지 않다","displayOrder":2},{"key":"D","content":"containsKey가 map 전체 lock을 영구 보유한다","displayOrder":3}],"correctChoiceKey":"C","explanationMarkdown":"각 method가 thread-safe여도 두 method를 조합한 판단은 별도 compound operation이다. "없으면 추가"라는 의미가 필요하면 `putIfAbsent`나 `computeIfAbsent`처럼 그 의미를 하나의 concurrent API 계약으로 표현할 수 있는지 먼저 본다."},
-  {"kind":"question","contentKey":"java.core.concurrency.concurrent-collections.q4","promptMarkdown":"`computeIfAbsent`, `putIfAbsent`, `merge` 같은 API를 검토하는 주된 이유는?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.concurrency.concurrent-collections"],"choices":[{"key":"A","content":"iteration 순서를 정렬하기 위해","displayOrder":0},{"key":"B","content":"value 객체를 자동 immutable하게 만들기 위해","displayOrder":1},{"key":"C","content":"모든 내부 lock을 영구 제거하기 위해","displayOrder":2},{"key":"D","content":"일부 check-and-update 의미를 collection이 제공하는 하나의 atomic operation으로 표현할 수 있기 때문에","displayOrder":3}],"correctChoiceKey":"D","explanationMarkdown":"Concurrent collection이 이미 제공하는 compound operation을 쓰면 caller가 여러 호출 사이의 race를 직접 조립할 필요가 줄어든다. 다만 callback 내부에서 외부 I/O나 다른 shared state transaction까지 수행하면 그 전체가 자동으로 안전해지는 것은 아니다."},
-  {"kind":"question","contentKey":"java.core.concurrency.concurrent-collections.q5","promptMarkdown":"`ConcurrentHashMap<String,Integer>`에서 여러 thread가 `get()` → `+1` → `put()`으로 count를 증가시킨다. 가능한 문제는?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.concurrency.concurrent-collections"],"choices":[{"key":"A","content":"각 map call은 concurrent-safe여도 read-modify-write 조합에서 lost update가 생길 수 있다","displayOrder":0},{"key":"B","content":"Concurrent 접두사가 Integer 증가를 자동 합친다","displayOrder":1},{"key":"C","content":"Integer가 자동 mutable counter가 된다","displayOrder":2},{"key":"D","content":"map이 PriorityQueue로 변환된다","displayOrder":3}],"correctChoiceKey":"A","explanationMarkdown":"Map의 내부 구조가 안전하다는 사실과 value에 대한 여러 호출의 atomicity는 다르다. Frequency counting이라면 `merge`나 `compute`, 높은 contention counter라면 `LongAdder` 조합 등 실제 요구에 맞는 단일 update semantics를 사용한다."},
-  {"kind":"question","contentKey":"java.core.concurrency.concurrent-collections.q6","promptMarkdown":"`ConcurrentHashMap` iterator를 "순회 시작 시점의 완전한 snapshot"이라고 가정하면 왜 위험한가?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.concurrency.concurrent-collections"],"choices":[{"key":"A","content":"iterator가 모든 concurrent 변경을 rollback하기 때문이다","displayOrder":0},{"key":"B","content":"weakly consistent traversal은 concurrent modification을 허용하지만 시작 시점의 완전한 snapshot이나 정렬 순서를 보장하지 않기 때문이다","displayOrder":1},{"key":"C","content":"concurrent collection은 순회 자체가 불가능하기 때문이다","displayOrder":2},{"key":"D","content":"iterator가 반드시 ConcurrentModificationException을 던지기 때문이다","displayOrder":3}],"correctChoiceKey":"B","explanationMarkdown":"ConcurrentHashMap traversal은 일반 fail-fast collection과 다른 관찰 계약을 가진다. 통계나 export처럼 한 시점의 일관된 snapshot이 정말 필요하다면 iterator 성질에 기대지 말고 별도의 snapshot/locking/state-version 정책을 설계해야 한다."},
-
-  {"kind":"question","contentKey":"java.core.concurrency.threadlocal-context.q1","promptMarkdown":"`ThreadLocal`의 값은 무엇에 연결되는가?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["java.core.concurrency.threadlocal-context"],"choices":[{"key":"A","content":"외부 DB row","displayOrder":0},{"key":"B","content":"process의 모든 thread가 공유하는 단일 값","displayOrder":1},{"key":"C","content":"같은 ThreadLocal key를 사용하더라도 각 thread가 가지는 독립적인 값","displayOrder":2},{"key":"D","content":"classloader에 저장된 static final 상수만","displayOrder":3}],"correctChoiceKey":"C","explanationMarkdown":"ThreadLocal 객체 하나를 여러 thread가 공유해도 `get/set`은 현재 thread의 copy를 다룬다. 따라서 논리적 request가 아니라 Java thread identity와 lifetime에 값이 묶인다는 사실이 핵심이다."},
-  {"kind":"question","contentKey":"java.core.concurrency.threadlocal-context.q2","promptMarkdown":"fixed thread pool에서 요청 context를 ThreadLocal에 넣었다면 task 종료 시 `remove()`를 `finally`에서 고려하는 이유는?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["java.core.concurrency.threadlocal-context"],"choices":[{"key":"A","content":"worker thread를 새로 만들기 위해","displayOrder":0},{"key":"B","content":"값을 process 전체로 공유하기 위해","displayOrder":1},{"key":"C","content":"executor를 종료하기 위해","displayOrder":2},{"key":"D","content":"같은 long-lived worker가 다음 task를 처리할 때 이전 context가 남거나 큰 객체가 오래 retain되는 것을 막기 위해","displayOrder":3}],"correctChoiceKey":"D","explanationMarkdown":"Pool worker의 lifetime은 request/task보다 길 수 있다. 그래서 request-scoped ThreadLocal을 정리하지 않으면 다음 요청이 stale context를 잘못 보거나 worker가 살아 있는 동안 불필요한 object graph를 계속 참조할 수 있다."},
-  {"kind":"question","contentKey":"java.core.concurrency.threadlocal-context.q3","promptMarkdown":"ThreadLocal 값이 `CompletableFuture`의 다음 stage나 임의 executor task로 자동 전파된다고 가정하면 안 되는 이유는?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.concurrency.threadlocal-context"],"choices":[{"key":"A","content":"비동기 stage가 다른 Java thread에서 실행될 수 있고 일반 ThreadLocal은 thread-bound storage이기 때문이다","displayOrder":0},{"key":"B","content":"ThreadLocal에는 reference type을 저장할 수 없기 때문이다","displayOrder":1},{"key":"C","content":"Future는 항상 같은 caller thread에서만 실행되기 때문이다","displayOrder":2},{"key":"D","content":"remove를 호출하면 모든 future가 자동 취소되기 때문이다","displayOrder":3}],"correctChoiceKey":"A","explanationMarkdown":"논리적으로 같은 request 흐름이어도 executor boundary를 넘으면 실행 thread가 바뀔 수 있다. 일반 ThreadLocal에는 arbitrary async context propagation 계약이 없으므로 필요한 context를 인자로 전달하거나 framework가 제공하는 명시적 propagation mechanism을 사용해야 한다."},
-  {"kind":"question","contentKey":"java.core.concurrency.threadlocal-context.q4","promptMarkdown":"서로 다른 thread가 같은 mutable `List` reference를 각자의 ThreadLocal value로 저장했다. 무엇이 맞는가?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.concurrency.threadlocal-context"],"choices":[{"key":"A","content":"ThreadLocal이 List를 thread별로 deep-copy한다","displayOrder":0},{"key":"B","content":"slot은 thread별이어도 같은 List 객체를 공유하므로 List mutation에는 여전히 thread-safety 문제가 있을 수 있다","displayOrder":1},{"key":"C","content":"같은 reference를 저장하면 List가 immutable해진다","displayOrder":2},{"key":"D","content":"ThreadLocal은 mutable object를 저장할 수 없다","displayOrder":3}],"correctChoiceKey":"B","explanationMarkdown":"ThreadLocal이 분리하는 것은 접근 slot이지 value 객체 자체가 아니다. 여러 slot에 동일한 mutable reference를 넣었다면 실제 object는 공유되므로 ownership, immutability, synchronization을 별도로 확인해야 한다."},
-  {"kind":"question","contentKey":"java.core.concurrency.threadlocal-context.q5","promptMarkdown":"pool worker W가 request A의 context를 ThreadLocal에 `set()`하고 `remove()`하지 않은 채 request B를 처리한다. B에서 가능한 문제는?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.concurrency.threadlocal-context"],"choices":[{"key":"A","content":"ThreadLocal이 두 값을 자동 merge한다","displayOrder":0},{"key":"B","content":"W가 task마다 자동으로 새 thread가 된다","displayOrder":1},{"key":"C","content":"B가 A의 stale context를 관찰할 수 있다","displayOrder":2},{"key":"D","content":"A context는 task 종료 즉시 반드시 GC된다","displayOrder":3}],"correctChoiceKey":"C","explanationMarkdown":"ThreadLocal value의 lifetime은 task가 아니라 thread와 연결된다. Long-lived worker가 재사용되면 A의 값이 그대로 남아 B의 인증 정보나 request ID처럼 해석될 수 있으므로 request 경계에서 cleanup을 보장해야 한다."},
-  {"kind":"question","contentKey":"java.core.concurrency.threadlocal-context.q6","promptMarkdown":"task마다 새 virtual thread를 만들어 사용하는 Java 25 서버에서 ThreadLocal을 설명한 것으로 가장 정확한 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["java.core.concurrency.threadlocal-context","java.core.concurrency.platform-virtual-thread"],"choices":[{"key":"A","content":"종료된 virtual thread를 다음 task가 같은 identity로 재사용하므로 fixed platform pool과 동일한 stale-context 문제가 항상 남는다","displayOrder":0},{"key":"B","content":"virtual thread는 ThreadLocal을 지원하지 않는다","displayOrder":1},{"key":"C","content":"per-task thread 종료로 fixed-worker 재사용 문제의 형태는 줄지만 매우 많은 virtual thread마다 큰 reusable cache를 두면 메모리 비용이 커질 수 있다","displayOrder":2},{"key":"D","content":"virtual thread의 ThreadLocal value는 thread 종료 뒤에도 JVM 종료까지 반드시 유지된다","displayOrder":3}],"correctChoiceKey":"C","explanationMarkdown":"Per-task virtual thread는 task가 끝나면 thread도 끝나므로 이전 request가 같은 long-lived worker에 남는 문제와는 lifecycle이 다르다. 하지만 virtual thread를 매우 많이 만들 수 있으므로 thread마다 큰 cache를 두는 오래된 ThreadLocal 최적화는 전체 memory footprint를 크게 만들 수 있다."},
-
-  {"kind":"question","contentKey":"java.core.concurrency.scoped-value-context.q1","promptMarkdown":"`ScopedValue.where(KEY, value).run(...)`으로 만든 binding의 기본 lifetime은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["java.core.concurrency.scoped-value-context"],"choices":[{"key":"A","content":"해당 bounded dynamic scope 동안","displayOrder":0},{"key":"B","content":"JVM 전체 lifetime 동안","displayOrder":1},{"key":"C","content":"다음 process 실행까지","displayOrder":2},{"key":"D","content":"ThreadLocal.remove를 호출할 때까지","displayOrder":3}],"correctChoiceKey":"A","explanationMarkdown":"ScopedValue는 caller가 일정 dynamic scope 동안 binding을 만들고 그 안쪽 호출이 읽도록 설계됐다. Scope가 끝나면 이전 binding으로 복원되거나 unbound 상태가 되므로 수동 remove를 중심으로 lifecycle을 관리하는 ThreadLocal과 모델이 다르다."},
-  {"kind":"question","contentKey":"java.core.concurrency.scoped-value-context.q2","promptMarkdown":"binding된 `ScopedValue`를 현재 dynamic scope 안에서 읽는 기본 API는?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["java.core.concurrency.scoped-value-context"],"choices":[{"key":"A","content":"ClassLoader에서 찾는다","displayOrder":0},{"key":"B","content":"`KEY.get()`으로 현재 binding을 읽는다","displayOrder":1},{"key":"C","content":"BlockingQueue에서 take한다","displayOrder":2},{"key":"D","content":"callee가 `set()`으로 언제든 덮어쓴다","displayOrder":3}],"correctChoiceKey":"B","explanationMarkdown":"ScopedValue는 mutable slot에 값을 set하는 API가 아니라 bounded scope에 binding을 만들고 그 scope 안에서 읽는 one-way transmission 모델이다. Binding이 없을 때 `get()`의 동작과 optional access API도 필요에 따라 구분한다."},
-  {"kind":"question","contentKey":"java.core.concurrency.scoped-value-context.q3","promptMarkdown":"`ScopedValue`와 `ThreadLocal`의 대표적인 차이로 옳은 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.concurrency.scoped-value-context","java.core.concurrency.threadlocal-context"],"choices":[{"key":"A","content":"ScopedValue는 process-global mutable map이다","displayOrder":0},{"key":"B","content":"둘은 lifetime과 변경 모델이 완전히 같다","displayOrder":1},{"key":"C","content":"ScopedValue는 bounded scope의 읽기 중심 one-way context에 맞고 ThreadLocal은 thread별 mutable storage를 제공한다","displayOrder":2},{"key":"D","content":"ThreadLocal만 reference value를 저장할 수 있다","displayOrder":3}],"correctChoiceKey":"C","explanationMarkdown":"요청 context처럼 outer caller가 값의 lifetime을 정하고 callee가 읽기만 하면 ScopedValue의 lexical/dynamic scope가 의도를 잘 드러낼 수 있다. 반대로 thread lifetime 동안 mutable slot 자체가 필요한 문제는 ThreadLocal의 다른 사용 모델에 해당한다."},
-  {"kind":"question","contentKey":"java.core.concurrency.scoped-value-context.q4","promptMarkdown":"Mutable `List`를 ScopedValue에 binding하면 무엇이 보장되는가?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.concurrency.scoped-value-context"],"choices":[{"key":"A","content":"List가 자동 deep-copy된다","displayOrder":0},{"key":"B","content":"List가 자동 immutable로 변한다","displayOrder":1},{"key":"C","content":"binding이 process-global static field가 된다","displayOrder":2},{"key":"D","content":"binding lifetime은 제한되지만 List 객체 자체의 mutation/thread-safety는 별도 문제다","displayOrder":3}],"correctChoiceKey":"D","explanationMarkdown":"ScopedValue가 보호하는 것은 binding의 접근 모델과 scope다. 여러 child task가 같은 mutable reference를 상속한다면 그 object graph에 대한 공유 가변 상태 문제는 그대로 남으므로 immutable context를 선호하거나 별도 ownership 규칙을 둬야 한다."},
-  {"kind":"question","contentKey":"java.core.concurrency.scoped-value-context.q5","promptMarkdown":"바깥 scope에서 `KEY=\"outer\"`, 그 안쪽 scope에서 같은 KEY를 `\"inner\"`로 다시 binding했다. inner scope가 끝난 뒤 KEY를 읽으면?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.concurrency.scoped-value-context"],"choices":[{"key":"A","content":"바깥 scope의 `outer` binding이 다시 보인다","displayOrder":0},{"key":"B","content":"KEY가 영구적으로 unbound가 된다","displayOrder":1},{"key":"C","content":"inner가 process 전체에 남는다","displayOrder":2},{"key":"D","content":"항상 null이 반환된다","displayOrder":3}],"correctChoiceKey":"A","explanationMarkdown":"Nested rebinding은 mutable global slot을 덮어쓴 뒤 수동 복구하는 모델이 아니다. 더 안쪽 dynamic scope가 바깥 binding을 일시적으로 가리고, 그 범위를 벗어나면 이전 binding이 다시 관찰된다."},
-  {"kind":"question","contentKey":"java.core.concurrency.scoped-value-context.q6","promptMarkdown":"Java 25에서 ScopedValue binding을 다른 thread의 작업이 보는 규칙으로 가장 정확한 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["java.core.concurrency.scoped-value-context"],"choices":[{"key":"A","content":"binding은 process-global이므로 어떤 executor에서도 자동으로 보인다","displayOrder":0},{"key":"B","content":"binding은 기본적으로 per-thread이며 arbitrary executor로 자동 전파되지는 않지만 StructuredTaskScope가 fork한 subtask에는 API 계약에 따라 상속될 수 있다","displayOrder":1},{"key":"C","content":"StructuredTaskScope가 binding value를 자동 immutable로 만든다","displayOrder":2},{"key":"D","content":"ScopedValue는 어떤 concurrency API에서도 child에게 전달될 수 없다","displayOrder":3}],"correctChoiceKey":"B","explanationMarkdown":"Thread 경계를 넘는 context inheritance는 사용하는 API가 명시적으로 제공해야 한다. Java 25의 ScopedValue는 정식 API이고 `StructuredTaskScope`는 preview API이며, structured subtask inheritance를 arbitrary executor propagation과 같은 일반 규칙으로 확대하면 안 된다."},
-
-  {"kind":"question","contentKey":"java.core.concurrency.future-completablefuture.q1","promptMarkdown":"`Future`의 기본 역할은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["java.core.concurrency.future-completablefuture"],"choices":[{"key":"A","content":"executor queue capacity를 정한다","displayOrder":0},{"key":"B","content":"모든 계산 결과를 submit 순간 즉시 만든다","displayOrder":1},{"key":"C","content":"아직 끝나지 않은 computation의 결과·완료·cancellation을 나중에 관찰하는 handle이다","displayOrder":2},{"key":"D","content":"실행 중 thread를 반드시 강제 kill한다","displayOrder":3}],"correctChoiceKey":"C","explanationMarkdown":"Executor의 `submit`은 task completion과 분리된 Future를 반환할 수 있다. Caller는 다른 일을 한 뒤 결과를 조회할 수 있지만 `get()` 시점에 결과가 준비되지 않았다면 현재 thread가 기다릴 수 있으므로 Future 자체가 non-blocking을 보장하지는 않는다."},
-  {"kind":"question","contentKey":"java.core.concurrency.future-completablefuture.q2","promptMarkdown":"`thenApply`와 `thenCompose`를 구분하는 핵심 기준은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["java.core.concurrency.future-completablefuture"],"choices":[{"key":"A","content":"thenApply만 예외를 처리한다","displayOrder":0},{"key":"B","content":"thenCompose는 항상 현재 thread에서만 실행된다","displayOrder":1},{"key":"C","content":"두 method는 결과 타입과 상관없이 완전히 같다","displayOrder":2},{"key":"D","content":"thenApply는 일반 값 변환에, thenCompose는 함수가 또 CompletionStage를 반환할 때 중첩을 평탄화하는 데 사용한다","displayOrder":3}],"correctChoiceKey":"D","explanationMarkdown":"`User -> String`처럼 일반 값을 만드는 함수는 thenApply가 자연스럽다. `User -> CompletableFuture<Profile>`처럼 다음 함수 자체가 비동기 결과를 만들면 thenCompose가 `Future<Future<T>>` 형태의 중첩 대신 하나의 completion chain으로 연결한다."},
-  {"kind":"question","contentKey":"java.core.concurrency.future-completablefuture.q3","promptMarkdown":"CompletableFuture stage가 exceptional completion되었을 때 맞는 설명은?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.concurrency.future-completablefuture"],"choices":[{"key":"A","content":"후속 stage는 method 계약에 따라 failure를 전파하거나 `exceptionally/handle` 등으로 복구할 수 있다","displayOrder":0},{"key":"B","content":"값이 자동으로 0이 된다","displayOrder":1},{"key":"C","content":"모든 executor thread가 종료된다","displayOrder":2},{"key":"D","content":"예외는 항상 자동 무시된다","displayOrder":3}],"correctChoiceKey":"A","explanationMarkdown":"비동기 계산에서 실패도 completion state의 일부다. `exceptionally`, `handle`, `whenComplete`는 각각 복구·변환·관찰 역할이 다르므로 실패를 무조건 null 같은 정상 값으로 삼키지 말고 caller가 구분해야 하는 계약을 유지한다."},
-  {"kind":"question","contentKey":"java.core.concurrency.future-completablefuture.q4","promptMarkdown":"executor를 명시하지 않은 `thenApplyAsync`의 실행 위치를 어떻게 이해해야 하는가?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.concurrency.future-completablefuture"],"choices":[{"key":"A","content":"호출할 때마다 반드시 새 platform thread를 하나 생성한다","displayOrder":0},{"key":"B","content":"CompletableFuture가 정한 default asynchronous execution facility를 사용하며 특정 thread identity를 고정 보장하지 않는다","displayOrder":1},{"key":"C","content":"항상 caller thread에서 실행한다","displayOrder":2},{"key":"D","content":"운영체제가 Java API와 무관하게 임의의 결과를 만든다","displayOrder":3}],"correctChoiceKey":"B","explanationMarkdown":"Async suffix는 "새 thread 생성"과 같은 뜻이 아니다. 실행 isolation이나 bounded resource가 중요하다면 explicit executor를 넘겨 policy를 드러내고, 기본 facility의 정확한 worker identity에 correctness를 의존하지 않는다."},
-  {"kind":"question","contentKey":"java.core.concurrency.future-completablefuture.q5","promptMarkdown":"`A.thenApply(f).thenApply(g)`에서 두 dependent stage 모두 non-async다. A를 어느 thread가 complete하는지에 따라 실행 thread를 추론할 때 가장 정확한 설명은?","questionType":"MULTIPLE_CHOICE","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["java.core.concurrency.future-completablefuture"],"choices":[{"key":"A","content":"항상 별도 virtual thread에서 실행된다","displayOrder":0},{"key":"B","content":"항상 main thread에서 실행된다","displayOrder":1},{"key":"C","content":"non-async action은 completion을 수행하는 thread나 이미 완료된 stage를 연결하는 caller 등 API가 허용한 맥락에서 실행될 수 있어 특정 thread 하나로 고정하면 안 된다","displayOrder":2},{"key":"D","content":"항상 CompletableFuture 객체를 생성한 thread에서 실행된다","displayOrder":3}],"correctChoiceKey":"C","explanationMarkdown":"Non-async completion action은 thread-affinity API가 아니다. Callback이 blocking I/O나 ThreadLocal context에 의존한다면 "아마 이 thread겠지"라는 가정 대신 explicit async executor나 명시적 context propagation으로 실행 정책을 드러내야 한다."},
-  {"kind":"question","contentKey":"java.core.concurrency.future-completablefuture.q6","promptMarkdown":"`CompletableFuture.cancel(true)`를 호출했지만 underlying 외부 HTTP call은 이미 진행 중이다. 안전한 결론은?","questionType":"MULTIPLE_CHOICE","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["java.core.concurrency.future-completablefuture","java.core.concurrency.thread-lifecycle-interruption"],"choices":[{"key":"A","content":"HTTP socket과 원격 서버 작업이 반드시 즉시 kill된다","displayOrder":0},{"key":"B","content":"cancel은 future의 상태에 아무 영향도 주지 않는다","displayOrder":1},{"key":"C","content":"모든 dependent stage가 정상 값으로 완료된다","displayOrder":2},{"key":"D","content":"future의 cancellation completion과 실제 외부 operation 취소는 별도이며 사용하는 task/I/O API가 cancellation에 협력해야 한다","displayOrder":3}],"correctChoiceKey":"D","explanationMarkdown":"Result graph를 cancelled state로 만드는 것과 이미 시작한 network/DB side effect를 중단하는 것은 다른 계약이다. Timeout, interrupt support, client cancellation API, idempotency 등 underlying operation의 실제 취소 semantics를 확인해야 "취소됐다"는 의미를 정확히 정의할 수 있다."},
-
-  {"kind":"question","contentKey":"java.core.concurrency.deadlock-starvation-livelock.q1","promptMarkdown":"Thread A와 B가 각각 상대가 가진 lock을 기다려 둘 다 진행하지 못하는 전형적인 상태는?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["java.core.concurrency.deadlock-starvation-livelock"],"choices":[{"key":"A","content":"deadlock","displayOrder":0},{"key":"B","content":"starvation","displayOrder":1},{"key":"C","content":"livelock","displayOrder":2},{"key":"D","content":"JIT warm-up","displayOrder":3}],"correctChoiceKey":"A","explanationMarkdown":"서로가 보유한 자원을 기다리는 순환 대기는 deadlock의 전형적인 형태다. 진단할 때 thread가 단순히 오래 멈췄다는 사실보다 어떤 lock을 가지고 무엇을 기다리는지 ownership graph를 그려 보는 것이 중요하다."},
-  {"kind":"question","contentKey":"java.core.concurrency.deadlock-starvation-livelock.q2","promptMarkdown":"시스템 전체는 계속 처리하지만 특정 thread나 task만 오랫동안 실행 기회를 얻지 못하는 현상은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["java.core.concurrency.deadlock-starvation-livelock"],"choices":[{"key":"A","content":"serialization","displayOrder":0},{"key":"B","content":"starvation","displayOrder":1},{"key":"C","content":"class loading","displayOrder":2},{"key":"D","content":"deadlock만 가능하다","displayOrder":3}],"correctChoiceKey":"B","explanationMarkdown":"Starvation에서는 다른 작업은 progress하지만 특정 작업이 계속 밀린다. Fairness 옵션만의 문제가 아니라 pool 크기, priority policy, queue ordering, 긴 critical section 등 어떤 resource가 실행 기회를 독점하는지 함께 봐야 한다."},
-  {"kind":"question","contentKey":"java.core.concurrency.deadlock-starvation-livelock.q3","promptMarkdown":"두 worker가 충돌을 감지할 때마다 서로 양보하고 retry해서 상태 변화와 CPU 사용은 계속되지만 어느 작업도 완료되지 않는다. 무엇에 가까운가?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.concurrency.deadlock-starvation-livelock"],"choices":[{"key":"A","content":"EOF","displayOrder":0},{"key":"B","content":"heap leak","displayOrder":1},{"key":"C","content":"livelock","displayOrder":2},{"key":"D","content":"binary incompatibility","displayOrder":3}],"correctChoiceKey":"C","explanationMarkdown":"Livelock은 thread가 blocked된 채 정지한 것이 아니라 상대 상태에 계속 반응하고 retry하면서도 유용한 progress를 만들지 못하는 문제다. 따라서 RUNNABLE 상태나 높은 CPU 사용만 보고 건강하다고 판단할 수 없다."},
-  {"kind":"question","contentKey":"java.core.concurrency.deadlock-starvation-livelock.q4","promptMarkdown":"여러 lock을 사용하는 코드에서 circular wait를 줄이는 대표적인 예방 정책은?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.concurrency.deadlock-starvation-livelock"],"choices":[{"key":"A","content":"각 코드 경로가 편한 순서대로 lock을 잡는다","displayOrder":0},{"key":"B","content":"lock을 finally에서만 획득한다","displayOrder":1},{"key":"C","content":"thread 수를 0으로 만든다","displayOrder":2},{"key":"D","content":"모든 경로가 동일한 전역 lock ordering을 따른다","displayOrder":3}],"correctChoiceKey":"D","explanationMarkdown":"A가 X→Y, B가 Y→X처럼 반대 순서로 잡으면 서로 하나씩 가진 채 상대 lock을 기다리는 cycle을 만들 수 있다. 모든 경로가 X→Y 같은 동일 순서를 따르면 이 형태의 circular wait 조건을 제거할 수 있다."},
-  {"kind":"question","contentKey":"java.core.concurrency.deadlock-starvation-livelock.q5","promptMarkdown":"Thread A는 L1을 소유하고 L2를 기다리며, Thread B는 L2를 소유하고 L1을 기다린다. 진단으로 옳은 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.concurrency.deadlock-starvation-livelock"],"choices":[{"key":"A","content":"ownership과 wait edge가 cycle을 이루므로 deadlock 상태를 설명할 수 있다","displayOrder":0},{"key":"B","content":"단순 starvation만 확정된다","displayOrder":1},{"key":"C","content":"두 thread가 움직이고 있으므로 livelock이다","displayOrder":2},{"key":"D","content":"JMM이 cycle을 자동 해소한다","displayOrder":3}],"correctChoiceKey":"A","explanationMarkdown":"A→L2→B→L1→A처럼 resource wait graph에 cycle이 생기고 각 thread가 상대 release 없이는 진행할 수 없다. Lock 이름을 외우기보다 실제 owner와 waiter 관계를 그리면 deadlock 여부를 훨씬 명확하게 판단할 수 있다."},
-  {"kind":"question","contentKey":"java.core.concurrency.deadlock-starvation-livelock.q6","promptMarkdown":"모든 code path의 lock ordering을 통일해 monitor deadlock 가능성은 줄였지만, fixed executor의 모든 worker가 timeout 없는 외부 I/O를 기다리고 queue에 새 요청이 계속 쌓인다. 남은 liveness 문제로 가장 타당한 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["java.core.concurrency.deadlock-starvation-livelock","java.core.concurrency.executor-task-thread-pools"],"choices":[{"key":"A","content":"lock ordering을 맞췄으므로 모든 liveness 문제가 해결됐다","displayOrder":0},{"key":"B","content":"monitor deadlock은 아니어도 worker exhaustion으로 queue의 작업이 실행 기회를 얻지 못하는 starvation/전체 progress 지연이 생길 수 있다","displayOrder":1},{"key":"C","content":"외부 I/O는 Java에서 항상 즉시 끝난다","displayOrder":2},{"key":"D","content":"lock ordering이 executor queue capacity를 자동 확장한다","displayOrder":3}],"correctChoiceKey":"B","explanationMarkdown":"Deadlock prevention은 특정 lock cycle을 줄일 뿐 외부 I/O hang, connection exhaustion, bounded worker starvation 같은 다른 liveness 문제까지 해결하지 않는다. Thread dump의 lock graph뿐 아니라 queue length, worker stack, timeout, 외부 dependency latency를 함께 관찰해 "왜 progress가 없는가"를 분류해야 한다."}
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.concurrency-vs-parallelism.q1",
+    "promptMarkdown": "concurrency와 parallelism의 구분으로 옳은 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.concurrency-vs-parallelism"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "concurrency는 작업이 겹쳐 진행되는 구성이고 parallelism은 실제 동시 실행이다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "둘은 Java에서 항상 같은 뜻이다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "parallelism은 항상 한 thread에서 번갈아 실행된다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "concurrency는 오직 여러 CPU가 있을 때만 가능하다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "한 실행 흐름에서 interleave되는 concurrency와 여러 실행 자원에서 동시에 실행되는 parallelism은 구분된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.concurrency-vs-parallelism.q2",
+    "promptMarkdown": "CPU core가 하나인 환경에서 scheduler가 두 runnable task를 번갈아 실행한다. 이를 가장 정확히 해석한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.concurrency-vs-parallelism"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "두 task가 반드시 취소된다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "두 task가 시간상 겹쳐 진행되는 concurrency는 가능하지만 같은 순간의 CPU 병렬 실행은 아니다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "두 task는 언제나 같은 call stack을 공유한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "두 task가 동시에 서로 다른 CPU core에서 실행된다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "하나의 CPU core에서도 실행 시간을 번갈아 배분하면 여러 task가 일정 구간에 걸쳐 진행될 수 있다. 이것은 concurrency를 보여 주지만 같은 순간 여러 core에서 실행되는 parallelism은 아니다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.concurrency-vs-parallelism.q3",
+    "promptMarkdown": "I/O 대기가 많은 작업에서 thread 수를 늘릴 때 고려할 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.concurrency-vs-parallelism"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "OS가 모든 task를 같은 시각에 실행한다는 사실",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "CPU 수만 보고 무조건 무한히 증가",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "대기 중 다른 task가 진행할 기회와 외부 resource 한도",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "thread를 늘리면 shared state가 immutable해진다는 사실",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "I/O 대기와 외부 resource 병목은 CPU-bound 계산과 다른 concurrency trade-off를 만든다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.concurrency-vs-parallelism.q4",
+    "promptMarkdown": "하나의 event-loop thread가 두 I/O 작업을 관리한다. 작업 A가 네트워크 응답을 기다리는 동안 thread를 차단하지 않고 A의 처리를 보류했다가, 준비된 작업 B를 처리했다. 이를 가장 정확히 설명한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.concurrency-vs-parallelism"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "thread 하나이므로 두 작업은 concurrency가 아니다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "A가 응답을 기다리면 event loop도 반드시 blocking된다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "두 작업이 서로 다른 CPU core에서 동시에 실행됐음이 증명된다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "하나의 thread에서도 여러 작업이 겹쳐 진행되는 concurrency를 구성할 수 있지만 CPU parallelism을 뜻하지는 않는다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "I/O 대기를 작업 상태로 보류하고 같은 thread가 준비된 다른 작업을 처리하면 여러 작업이 시간 구간상 겹쳐 진행될 수 있다. 하지만 thread 하나에서 처리했다는 사실만으로 동시에 여러 CPU core에서 실행되는 parallelism은 아니다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.thread-lifecycle-interruption.q1",
+    "promptMarkdown": "Java 25에서 Thread.run()을 직접 호출하는 동작으로 가장 정확한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.thread-lifecycle-interruption"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "Runnable로 만든 platform Thread에서는 caller thread에서 task가 실행될 수 있지만 virtual Thread의 run()을 직접 호출하면 아무 동작도 하지 않는다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "platform과 virtual 모두 새 thread를 start한 것과 동일하다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "virtual Thread에서만 새 OS thread가 만들어진다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "모든 Thread에서 IllegalThreadStateException이 반드시 발생한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "Thread.start()가 실제 thread 실행을 schedule하는 API다. Java 25 Thread API에서 platform Thread의 기본 run()은 Runnable을 caller에서 직접 실행할 수 있지만 virtual Thread의 run() 직접 호출은 아무 동작도 하지 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.thread-lifecycle-interruption.q2",
+    "promptMarkdown": "Thread.State에 포함되지 않는 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.thread-lifecycle-interruption"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "RUNNABLE",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "SUSPENDED_BY_OS_CACHE",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "BLOCKED",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "NEW",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "Java API가 정의한 관찰 상태와 OS 내부 상태를 구분해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.thread-lifecycle-interruption.q3",
+    "promptMarkdown": "interrupt()에 대한 설명으로 옳은 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.thread-lifecycle-interruption"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "항상 InterruptedException을 caller에게 던진다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "대상 thread를 강제로 즉시 종료한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "대상에게 취소를 협력적으로 처리할 신호를 보낸다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "대상 thread의 모든 lock을 회수한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "interrupt는 대상의 실행을 강제 종료하지 않고 interruptible operation이나 코드가 반응해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.thread-lifecycle-interruption.q4",
+    "promptMarkdown": "sleep 중 interrupt를 받아 InterruptedException을 잡은 뒤 취소 의사를 보존하려면?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.thread-lifecycle-interruption"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "예외를 무조건 무시한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "start()를 다시 호출한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "interrupt flag를 false로 만든다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "Thread.currentThread().interrupt()를 다시 호출한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "일부 interruptible API는 예외를 던지며 interrupted status를 지우므로 상위 정책에 전달하려면 복원할 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.thread-lifecycle-interruption.q5",
+    "promptMarkdown": "작업 loop가 매 단위를 처리한 뒤 isInterrupted를 검사하고, sleep에서 InterruptedException을 catch한 뒤 return한다. interrupt 직후 가장 타당한 결과는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.thread-lifecycle-interruption"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "작업 thread가 cleanup 후 return할 수 있다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "작업이 즉시 JVM 전체를 종료한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "interrupt가 영구적으로 무시된다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "join이 자동으로 호출된다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "interrupt는 강제 kill이 아니지만 loop와 catch가 협력적으로 종료하도록 작성되어 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.thread-lifecycle-interruption.q6",
+    "promptMarkdown": "A가 worker.start() 전에 data=42를 쓰고, B가 worker.join()에서 정상 반환한 뒤 data를 읽는다. 이 관계로 옳은 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.thread-lifecycle-interruption"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "join은 data를 자동 volatile로 바꾼다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "join은 worker의 모든 action을 B의 이후 action보다 앞서게 하는 edge를 제공한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "B는 반드시 data의 초기값만 읽는다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "start와 join은 memory ordering과 무관하다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "Thread start와 성공적인 join은 JMM의 happens-before 관계를 형성하므로 worker의 종료 전 action이 join 이후에 연결된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.platform-virtual-thread.q1",
+    "promptMarkdown": "platform thread에 대한 설명으로 옳은 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.platform-virtual-thread"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "CPU 작업에는 사용할 수 없다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "항상 user-mode에서만 실행된다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "보통 OS kernel thread와 1:1로 매핑되는 실행 자원이다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "Thread.currentThread가 반환하지 않는다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "Java 25 Thread API는 platform thread를 보통 OS kernel thread와 매핑되는 thread로 설명한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.platform-virtual-thread.q2",
+    "promptMarkdown": "virtual thread의 일반적인 적합한 workload는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.platform-virtual-thread"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "긴 CPU 계산을 무제한으로 병렬화하는 task",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "오직 class loading만 하는 task",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "OS process를 대체하는 task",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "대부분 blocking I/O를 기다리는 많은 동시 task",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "virtual thread는 적은 자원으로 많은 blocking task를 표현하는 데 적합하며 CPU-bound의 만능 해법은 아니다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.platform-virtual-thread.q3",
+    "promptMarkdown": "virtual thread 안에서 Thread.currentThread()가 반환하는 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.platform-virtual-thread"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "현재 실행 중인 virtual Thread 객체",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "항상 carrier platform Thread",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "OS process ID",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "null",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "virtual thread 코드는 carrier를 직접 인식하지 않으며 currentThread는 virtual Thread를 반환한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.platform-virtual-thread.q4",
+    "promptMarkdown": "virtual thread의 carrier에 관한 설명으로 맞는 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.platform-virtual-thread"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "모든 virtual thread가 하나의 carrier에 영구 고정된다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "virtual thread는 platform carrier 위에서 실행될 수 있지만 carrier 구성은 implementation 영역이다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "carrier가 virtual thread의 user-visible identity다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "carrier 수와 scheduler 설정은 OS와 무관한 Java language guarantee다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "carrier model은 runtime 실행 구조이고 그 수·scheduling은 JDK implementation/OS에 속한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.platform-virtual-thread.q5",
+    "promptMarkdown": "virtual thread 100만 개가 각각 외부 I/O를 기다리지만 실제 외부 서버 동시 요청 한도는 100이다. 적절한 결론은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.platform-virtual-thread"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "I/O 대기가 있으므로 제한이 필요 없다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "virtual thread 수만큼 외부 요청을 허용한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "virtual thread와 별도로 Semaphore 등으로 외부 resource concurrency를 제한한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "virtual thread를 platform thread로 모두 바꾼다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "가벼운 실행 흐름과 외부 resource capacity는 별도 축이므로 명시적 제한이 필요하다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.platform-virtual-thread.q6",
+    "promptMarkdown": "Java 25 virtual thread의 carrier pinning을 가장 정확히 설명한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.platform-virtual-thread"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "synchronized block에서 잠들면 Java 25에서도 반드시 carrier에 pin된다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "JDK 24 이후 synchronized 자체의 pinning 제약은 제거됐지만 native method나 foreign function 실행에서는 pinning이 생길 수 있다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "pinning이 발생하면 virtual thread의 Java semantics가 깨진다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "virtual thread는 carrier를 사용하지 않으므로 pinning 개념 자체가 없다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "JEP 491로 synchronized monitor 때문에 virtual thread가 carrier에 pin되는 제약은 제거됐다. Java 25에서는 native method나 foreign function 실행이 대표적인 남은 pinning 경계이며, pinning은 correctness보다 scalability에 영향을 줄 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.shared-mutable-state-race.q1",
+    "promptMarkdown": "value++를 세 단계로 펼치면?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.shared-mutable-state-race"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "read, add, write",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "lock, sleep, join",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "parse, sort, poll",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "load, verify, initialize",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "증가 연산은 값을 읽고 계산한 뒤 저장하는 compound action이다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.shared-mutable-state-race.q2",
+    "promptMarkdown": "두 thread가 각각 0을 읽고 1을 저장하는 interleaving의 결과는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.shared-mutable-state-race"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "항상 예외",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "1이 되어 한 번의 update가 사라질 수 있다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "0만 가능",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "반드시 2",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "둘의 write가 같은 결과를 덮어써 lost update가 생길 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.shared-mutable-state-race.q3",
+    "promptMarkdown": "재고 invariant가 “stock >= 0”일 때 보호해야 하는 경계는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.shared-mutable-state-race"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "thread 생성문만",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "확인만 또는 차감만",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "재고 확인과 차감을 하나의 원자적 critical section으로 묶는 경계",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "출력문만",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "check와 update 사이의 경쟁이 invariant를 깨뜨릴 수 있으므로 둘을 함께 보호한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.shared-mutable-state-race.q4",
+    "promptMarkdown": "visibility와 atomicity의 관계로 옳은 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.shared-mutable-state-race"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "최신 값을 보이면 read-modify-write도 자동 원자적이다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "atomicity가 있으면 visibility는 항상 없다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "둘 다 OS cache flush의 다른 이름이다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "둘은 별개라 visibility 도구만으로 lost update를 막지 못할 수 있다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "값을 관찰하는 관계와 compound action의 단일성은 서로 다른 보장이다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.shared-mutable-state-race.q5",
+    "promptMarkdown": "두 thread가 balance와 ledgerTotal을 각각 갱신하고 각 field에 별도 AtomicInteger를 썼다. 가능한 문제는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.shared-mutable-state-race"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "두 원자 변수의 갱신 사이에 invariant가 관찰될 수 있다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "두 변수는 자동으로 하나의 transaction이 된다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "AtomicInteger는 모든 field를 잠근다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "두 값은 반드시 동시에 갱신된다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "원자 변수 하나씩의 보장은 여러 변수 관계의 묶음 원자성을 제공하지 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.shared-mutable-state-race.q6",
+    "promptMarkdown": "공유 counter를 보호하지 않고 thread 수만 8에서 2로 줄였을 때의 결론은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.shared-mutable-state-race"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "counter가 immutable해진다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "interleaving 가능성이 줄 수 있어도 invariant 보호가 보장되지는 않는다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "JMM edge가 자동 추가된다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "race가 언어 차원에서 해결된다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "경쟁 빈도와 correctness 보장은 다르며 명시적 state protection이 필요하다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.synchronized-monitor.q1",
+    "promptMarkdown": "instance synchronized method가 소유하는 monitor는 보통?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.synchronized-monitor"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "method의 return value",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "모든 객체의 공통 monitor",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "해당 객체 this",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "현재 OS process",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "instance method는 해당 instance monitor를 사용한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.synchronized-monitor.q2",
+    "promptMarkdown": "같은 thread가 이미 소유한 monitor에 다시 진입할 수 있는 성질은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.synchronized-monitor"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "starvation",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "serialization",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "erasure",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "reentrancy",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "Java intrinsic monitor는 소유 thread의 재진입을 허용한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.synchronized-monitor.q3",
+    "promptMarkdown": "두 개의 Counter 객체의 synchronized instance method가 서로 동시에 실행될 수 있는 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.synchronized-monitor"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "서로 다른 객체 monitor를 사용할 수 있기 때문",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "synchronized가 무시되기 때문",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "method가 static이기 때문",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "두 객체가 자동으로 하나로 합쳐지기 때문",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "mutual exclusion의 범위는 같은 monitor를 공유하는 경로다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.synchronized-monitor.q4",
+    "promptMarkdown": "static synchronized method가 사용하는 lock을 설명한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.synchronized-monitor"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "임의의 새 객체 monitor",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "해당 class의 Class 객체 monitor",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "OS의 모든 thread lock",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "호출자의 local variable",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "static member는 class 수준 monitor를 기준으로 동기화된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.synchronized-monitor.q5",
+    "promptMarkdown": "increment는 synchronized(this) 안에서 value를 바꾸지만 read는 다른 lock 객체로 동기화한다. 가장 큰 문제는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.synchronized-monitor"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "다른 lock은 this와 항상 같은 객체다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "reentrant가 자동 보정한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "같은 state에 대해 하나의 공통 monitor를 사용하지 않아 보호가 깨진다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "read가 항상 최신 값을 반환한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "monitor 보호와 happens-before가 성립하려면 관련 경로가 같은 lock 경계를 공유해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.synchronized-monitor.q6",
+    "promptMarkdown": "synchronized block 안에서 같은 객체의 다른 synchronized method를 호출할 때?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.synchronized-monitor"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "항상 deadlock이 난다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "monitor가 해제되어 모두 진입한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "호출이 compile되지 않는다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "같은 thread의 재진입이 가능하지만 다른 thread는 여전히 monitor를 기다린다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "reentrancy는 owner thread의 중첩 획득을 뜻하며 mutual exclusion을 없애지 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.jmm-happens-before-visibility.q1",
+    "promptMarkdown": "한 thread 내부의 program order가 제공하는 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.jmm-happens-before-visibility"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "앞선 action이 뒤 action보다 happens-before한다는 관계",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "모든 thread의 동시에 같은 순서",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "OS cache flush 명령",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "자동 lock ownership",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "JMM은 한 thread의 program order를 happens-before 관계로 포함한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.jmm-happens-before-visibility.q2",
+    "promptMarkdown": "monitor unlock과 같은 monitor의 이후 lock 관계는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.jmm-happens-before-visibility"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "둘은 항상 독립이다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "unlock이 이후 lock보다 happens-before한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "unlock은 volatile로 변한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "lock이 과거 unlock을 취소한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "JMM의 synchronization order에 해당하는 관계다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.jmm-happens-before-visibility.q3",
+    "promptMarkdown": "volatile write와 같은 field의 이후 read가 만드는 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.jmm-happens-before-visibility"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "thread termination",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "mutual exclusion lock",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "happens-before 관계를 통한 visibility/order 효과",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "객체 deep copy",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "volatile write는 같은 volatile field의 subsequent read에 visibility 관계를 제공한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.jmm-happens-before-visibility.q4",
+    "promptMarkdown": "start와 join의 memory 관계로 옳은 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.jmm-happens-before-visibility"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "둘 다 단순 naming API다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "join만 새 thread를 시작한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "start는 이전 write를 지운다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "start는 새 thread action 전에, successful join은 종료 전 action을 join 이후에 연결한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "Thread API와 concurrent package가 정의한 start/join happens-before를 사용한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.jmm-happens-before-visibility.q5",
+    "promptMarkdown": "A가 data=42를 쓰고 lock.unlock(), B가 같은 lock을 lock()한 뒤 data를 읽는다. B가 42를 볼 수 있는 근거는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.jmm-happens-before-visibility"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "program order와 unlock-lock edge의 transitivity",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "B의 CPU cache가 항상 먼저 flush되기 때문",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "lock이 data를 복사했기 때문",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "data가 final이기 때문",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "A의 write가 unlock 전에 있고 unlock이 B의 lock보다 happens-before이므로 read에 연결된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.jmm-happens-before-visibility.q6",
+    "promptMarkdown": "ready만 volatile이고 data는 일반 field다. A가 data=42 후 ready=true, B가 ready를 읽고 data를 읽는다. 가장 정확한 판단은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.jmm-happens-before-visibility"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "data가 volatile이 아니므로 어떤 edge도 불가능하다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "volatile edge가 A의 앞선 write를 B의 이후 action에 연결할 수 있다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "B가 반드시 0을 읽는다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "ready volatile은 data write를 항상 무관하게 만든다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "같은 volatile write/read edge와 program order의 transitivity로 publication을 구성할 수 있지만 복합 invariant 원자성은 별도다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.safe-publication-final-fields.q1",
+    "promptMarkdown": "safe publication이 필요한 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.safe-publication-final-fields"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "constructor가 실행되지 않기 때문",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "모든 객체가 stack에 있기 때문",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "다른 thread가 객체 초기화 결과를 보게 될 관계를 보장해야 하기 때문",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "final field가 항상 mutable하기 때문",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "객체 생성과 다른 thread에 참조를 전달하는 것은 별도의 memory visibility 경계다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.safe-publication-final-fields.q2",
+    "promptMarkdown": "constructor escape의 예는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.safe-publication-final-fields"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "생성자에서 private field를 대입한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "factory가 new를 호출한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "지역 변수를 return한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "생성자 안에서 this를 전역 registry나 callback에 전달한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "완전히 초기화되기 전 this가 외부에 노출되면 reader가 construction 중 객체를 볼 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.safe-publication-final-fields.q3",
+    "promptMarkdown": "final reference List<String>에 대한 설명으로 옳은 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.safe-publication-final-fields"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "reference 재대입은 제한하지만 list 내부 변경까지 deep immutable하게 만들지는 않는다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "list의 모든 원소가 자동 복사된다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "final은 publication과 무관하다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "final reference는 null만 저장한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "final은 field reference의 재대입과 final-field semantics를 다루며 object graph의 불변성은 별도다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.safe-publication-final-fields.q4",
+    "promptMarkdown": "다음 중 safe publication 경계로 사용할 수 있는 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.safe-publication-final-fields"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "동기화 없는 전역 대입만",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "volatile 참조 교체",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "객체의 toString 호출",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "무관한 local variable 읽기",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "volatile write/read, lock, static initialization 등은 의도한 상태를 전달하는 경계를 만들 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.safe-publication-final-fields.q5",
+    "promptMarkdown": "Config의 final port와 mutable hosts를 생성자에서 초기화하고 volatile Config current에 publish한다. reader가 안전하게 얻는 결론은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.safe-publication-final-fields"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "volatile은 참조를 publish할 수 없다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "current volatile이 hosts를 deep freeze한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "참조와 초기 final 상태의 publication은 돕지만 hosts를 이후 mutate하면 별도 보호가 필요하다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "final port가 hosts 변경도 lock한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "publication, final field semantics, deep immutability는 서로 다른 문제다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.safe-publication-final-fields.q6",
+    "promptMarkdown": "생성자에서 this를 callback에 넘긴 뒤 외부 thread가 callback을 실행한다. final field를 썼다는 이유로 안전하다고 하면 안 되는 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.safe-publication-final-fields"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "final field는 compile되지 않기 때문이다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "callback은 항상 같은 thread에서만 실행되기 때문이다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "this는 객체 참조가 아니기 때문이다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "constructor escape가 초기화 완료와 publication 경계를 앞질러 갈 수 있기 때문이다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "final-field 규칙이 constructor escape로 인해 일반적인 안전 publication을 대신하지는 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.volatile.q1",
+    "promptMarkdown": "volatile field가 주로 제공하는 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.volatile"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "visibility와 ordering 효과",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "복합 연산 전체의 mutual exclusion",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "deep copy",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "thread 강제 종료",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "volatile read/write는 JMM memory consistency 효과를 주지만 lock은 아니다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.volatile.q2",
+    "promptMarkdown": "volatile boolean stop을 loop 조건으로 사용하는 적절한 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.volatile"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "volatile이 sleep을 대체해서",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "한 thread의 stop write를 다른 thread가 관찰해야 해서",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "volatile이 OS scheduler를 고정해서",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "stop=true가 모든 state를 atomic하게 갱신해서",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "독립적인 상태 플래그의 visibility에는 volatile이 유용하다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.volatile.q3",
+    "promptMarkdown": "volatile int count에 대해 count++가 안전하지 않은 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.volatile"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "count++는 항상 compile 오류이기 때문",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "volatile은 read를 금지하기 때문",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "read-add-write 여러 action이 하나로 원자화되지 않기 때문",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "int는 volatile이 될 수 없기 때문",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "volatile visibility와 compound operation atomicity는 별개다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.volatile.q4",
+    "promptMarkdown": "volatile write/read를 CPU cache flush라고만 설명하면 부족한 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.volatile"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "CPU는 cache를 전혀 사용하지 않기 때문",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "volatile은 Java keyword가 아니기 때문",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "OS가 항상 같은 cache를 쓰기 때문",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "정확한 Java guarantee는 JMM happens-before와 memory consistency이며 하드웨어 구현은 별도이기 때문",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "언어/JMM 계약을 특정 CPU 구현 folklore와 혼동하지 않아야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.volatile.q5",
+    "promptMarkdown": "두 thread가 volatile count=0을 각각 읽고 1을 계산한 뒤 쓰는 실행에서 가능한 결과는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.volatile"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "최종 count가 1이 될 수 있다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "반드시 2다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "항상 -1이다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "volatile이 예외를 던진다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "각 read는 보일 수 있어도 두 update의 경쟁으로 한 write가 덮어써질 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.volatile.q6",
+    "promptMarkdown": "data 일반 field를 먼저 쓰고 ready volatile을 true로 쓰는 producer, ready를 읽은 뒤 data를 읽는 consumer의 reasoning은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.volatile"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "consumer가 반드시 data의 기본값을 읽는다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "ready write/read edge와 program order로 앞선 data write가 연결된다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "data를 volatile로 선언해야만 어떠한 visibility도 가능하다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "ready가 volatile이어도 모든 관계가 단절된다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "volatile publication idiom은 관련 앞선 write를 consumer의 이후 action에 연결할 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.atomic-cas.q1",
+    "promptMarkdown": "compareAndSet(expected, update)가 성공하는 조건은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.atomic-cas"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "lock을 영구 점유한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "현재 값과 무관하게 update한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "현재 값이 expected와 일치할 때 update로 바꾼다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "expected를 항상 반환한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "CAS는 expected/current 비교가 맞을 때만 조건부 갱신한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.atomic-cas.q2",
+    "promptMarkdown": "CAS 실패의 의미는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.atomic-cas"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "항상 예외가 발생했다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "변수가 삭제되었다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "다른 모든 thread가 종료되었다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "조건이 맞지 않아 해당 update가 적용되지 않았다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "CAS 실패는 경쟁으로 current가 expected와 달라졌음을 확인하는 일반 결과다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.atomic-cas.q3",
+    "promptMarkdown": "CAS retry loop에서 실패 후 보통 필요한 순서는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.atomic-cas"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "새 current를 읽고 next를 다시 계산한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "오래된 expected를 계속 무한히 사용한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "변수를 null로 만든다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "무조건 lock을 해제한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "실패한 계산은 current 기준으로 유효하지 않을 수 있으므로 다시 읽고 계산해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.atomic-cas.q4",
+    "promptMarkdown": "contention이 높은 CAS loop의 trade-off는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.atomic-cas"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "모든 multi-field invariant가 자동 보호된다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "retry와 CPU 사용이 늘 수 있다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "CAS가 항상 blocking된다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "실패가 항상 sleep으로 바뀐다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "비관적 lock을 피하는 대신 반복 경쟁과 progress 비용을 고려해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.atomic-cas.q5",
+    "promptMarkdown": "AtomicInteger count에 대해 get=5, 다른 thread가 6으로 변경, 첫 thread가 CAS(5,7)를 수행하면?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.atomic-cas"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "CAS가 두 update를 합쳐 11이 된다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "true이고 count는 7이 된다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "false이고 count는 6으로 남는다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "예외와 함께 count는 5로 복구된다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "expected 5와 current 6이 다르므로 조건부 갱신은 실패한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.atomic-cas.q6",
+    "promptMarkdown": "balance와 version을 각각 CAS로 갱신하는 코드가 두 field의 관계를 보장하지 못하는 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.atomic-cas"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "CAS는 한 field도 보호하지 않기 때문",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "두 Atomic 변수가 항상 같은 memory location이기 때문",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "version은 Java에서 갱신할 수 없기 때문",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "두 성공 사이에 다른 thread가 관찰하거나 개입할 수 있어 하나의 invariant 단위가 아니기 때문",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "single-variable atomicity를 여러 변수의 transaction처럼 확장할 수 없다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.locks-reentrantlock-condition.q1",
+    "promptMarkdown": "ReentrantLock 사용 후 unlock을 두는 일반적인 위치는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.locks-reentrantlock-condition"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "finally block",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "catch를 생략한 곳",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "constructor 밖 임의 위치",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "절대 호출하지 않는다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "예외가 나도 lock을 풀도록 finally에 둔다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.locks-reentrantlock-condition.q2",
+    "promptMarkdown": "Condition.await()의 일반적인 사용 형태는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.locks-reentrantlock-condition"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "if 한 번만 검사하고 항상 조건이 참이라고 믿는다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "lock을 보유한 채 predicate를 while로 검사한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "await가 thread를 강제 종료한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "lock 없이 아무 때나 호출한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "await는 lock을 release하고 재획득할 수 있으며 깨어난 뒤 predicate를 재확인해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.locks-reentrantlock-condition.q3",
+    "promptMarkdown": "Lock API가 synchronized보다 제공할 수 있는 선택지는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.locks-reentrantlock-condition"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "OS scheduler 직접 제어",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "항상 더 빠른 실행 보장",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "timed 또는 interruptible acquisition",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "자동 deep immutability",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "tryLock(timeout), lockInterruptibly 등 명시적 획득 정책을 선택할 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.locks-reentrantlock-condition.q4",
+    "promptMarkdown": "bounded queue의 notEmpty Condition에서 await 후 queue가 비어 있었는데도 consume을 실행했다. 가장 중요한 수정은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.locks-reentrantlock-condition"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "Condition을 새 thread로 바꾸면 된다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "signal이 오면 predicate와 무관하게 진행한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "unlock을 await 전에 영구 생략한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "await를 while predicate 안에 두고 lock을 다시 보유한 뒤 조건을 재검사한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "Condition은 깨어난 뒤 predicate가 여전히 거짓일 수 있으므로 lock 경계에서 while로 재검사해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.executor-task-thread-pools.q1",
+    "promptMarkdown": "Executor가 분리하는 관심사는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.executor-task-thread-pools"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "task 제출과 task 실행 정책",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "class loading과 GC만",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "equals와 hashCode",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "source와 annotation retention",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "caller가 worker lifecycle을 직접 조작하는 대신 Executor가 실행 policy를 맡는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.executor-task-thread-pools.q2",
+    "promptMarkdown": "ThreadPoolExecutor의 work queue가 하는 일은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.executor-task-thread-pools"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "모든 task를 취소한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "즉시 처리하지 못한 task를 보관할 수 있다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "thread local을 삭제한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "실행 중 task의 결과를 항상 정렬한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "worker 수와 도착률에 따라 task가 queue에서 대기할 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.executor-task-thread-pools.q3",
+    "promptMarkdown": "bounded queue가 가득 찼을 때 필요한 설계는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.executor-task-thread-pools"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "오류를 조용히 버리는 것만",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "무조건 queue 크기 무한 증가",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "rejection, caller 실행, timeout/backpressure 등 saturation 정책",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "worker가 자동으로 네 배가 된다는 가정",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "capacity limit은 포화 시 관찰 가능한 정책과 자원 제한을 요구한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.executor-task-thread-pools.q4",
+    "promptMarkdown": "task와 worker lifecycle의 구분으로 맞는 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.executor-task-thread-pools"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "task가 제출되면 worker가 반드시 종료된다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "worker 하나는 task 하나만 실행한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "shutdown은 모든 task 결과를 자동 반환한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "task 완료가 worker thread의 종료와 항상 같은 사건은 아니다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "pool worker는 여러 task를 재사용하고 executor shutdown은 별도 lifecycle이다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.executor-task-thread-pools.q5",
+    "promptMarkdown": "core=2, max=4, bounded queue=1인 executor에 task가 계속 들어올 때 일반적인 흐름은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.executor-task-thread-pools"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "먼저 core worker가 실행하고 이후 queue/추가 worker/rejection policy가 영향을 준다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "모든 task가 즉시 새 thread로만 실행된다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "queue가 항상 무시된다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "max=4라서 task가 무한히 수용된다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "ThreadPoolExecutor의 worker·queue·rejection 규칙을 함께 따라야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.executor-task-thread-pools.q6",
+    "promptMarkdown": "CPU-bound task용 pool을 외부 DB connection 10개로 제한된 서비스에 연결한다. pool size만 크게 잡을 때의 위험은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.executor-task-thread-pools"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "queue가 사라진다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "DB connection 한도를 넘어 대기·실패·경쟁이 커질 수 있다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "task가 virtual thread가 된다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "CPU와 DB capacity가 자동으로 같아진다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "executor concurrency와 외부 resource concurrency는 별도 제한이며 bottleneck을 함께 설계해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.blockingqueue-producer-consumer.q1",
+    "promptMarkdown": "빈 BlockingQueue에서 take()의 동작은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.blockingqueue-producer-consumer"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "예외만 던진다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "항상 null을 반환한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "원소가 올 때까지 기다릴 수 있다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "queue를 삭제한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "take는 queue가 non-empty가 될 때까지 blocking할 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.blockingqueue-producer-consumer.q2",
+    "promptMarkdown": "가득 찬 bounded BlockingQueue에서 put()은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.blockingqueue-producer-consumer"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "항상 원소를 버린다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "자동으로 capacity를 무한히 늘린다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "consumer를 종료한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "공간이 생길 때까지 기다릴 수 있다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "put은 capacity가 제한된 queue에서 backpressure를 표현한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.blockingqueue-producer-consumer.q3",
+    "promptMarkdown": "offer/poll과 put/take의 차이로 옳은 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.blockingqueue-producer-consumer"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "offer/poll은 즉시 결과를 주고 put/take는 blocking할 수 있다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "offer/poll만 thread-safe하다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "put/take는 queue를 정렬한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "네 메서드는 항상 동일하다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "BlockingQueue는 blocking 및 즉시/timeout 연산을 구분해 제공한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.blockingqueue-producer-consumer.q4",
+    "promptMarkdown": "producer-consumer에서 bounded capacity의 이점은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.blockingqueue-producer-consumer"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "모든 task 성공을 보장한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "생산 속도가 처리 속도를 앞설 때 메모리와 자원 압력을 제한한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "shutdown을 자동 처리한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "producer와 consumer 속도를 같게 만든다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "bounded queue는 무한 backlog를 숨기지 않게 하지만 포화 정책이 필요하다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.blockingqueue-producer-consumer.q5",
+    "promptMarkdown": "consumer가 take한 task를 처리하던 중 예외가 발생했다. queue가 보장하지 않는 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.blockingqueue-producer-consumer"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "queue capacity 규칙",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "다른 task의 handoff",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "task의 외부 side effect와 성공적인 처리가 자동 보장된다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "take의 blocking semantics",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "queue는 handoff를 담당할 뿐 task의 business 성공·retry까지 자동 처리하지 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.blockingqueue-producer-consumer.q6",
+    "promptMarkdown": "producer가 put에서 기다리고 consumer는 interrupt를 무시한 채 종료하지 않는다. shutdown이 지연되는 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.blockingqueue-producer-consumer"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "bounded queue가 자동으로 thread를 kill하기 때문이다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "put이 항상 non-blocking이기 때문이다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "take가 task를 모두 삭제했기 때문이다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "blocking protocol과 interrupt 협력이 끊겨 consumer가 종료 경계에 도달하지 못하기 때문이다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "blocking API의 취소와 worker loop의 interrupt 처리가 shutdown 설계의 일부다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.countdownlatch-coordination.q1",
+    "promptMarkdown": "CountDownLatch의 count가 0이 되면?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.countdownlatch-coordination"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "await 중인 thread가 진행할 수 있다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "count가 자동으로 초기값으로 돌아간다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "모든 worker가 강제 종료된다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "새 task가 자동 제출된다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "0은 latch의 one-shot gate가 열리는 상태다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.countdownlatch-coordination.q2",
+    "promptMarkdown": "CountDownLatch의 특징은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.countdownlatch-coordination"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "한 thread만 countDown할 수 있다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "one-shot이며 count가 reset되지 않는다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "await가 count를 증가시킨다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "항상 cyclic하다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "반복 가능한 barrier와 달리 한 번 0이 된 latch는 재사용되지 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.countdownlatch-coordination.q3",
+    "promptMarkdown": "worker가 예외로 끝나도 주 thread가 영원히 await하지 않게 하려면?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.countdownlatch-coordination"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "count를 음수로 만든다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "예외를 무시하고 countDown을 생략한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "필요한 countDown을 finally에서 수행하고 실패를 별도 기록한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "await를 제거한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "완료 신호와 성공/실패 결과 전달은 별도 concern으로 설계할 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.countdownlatch-coordination.q4",
+    "promptMarkdown": "3개 worker 중 하나가 예외로 끝났고 주 thread는 latch.await에서 진행했지만 결과 목록에는 실패가 있었다. 올바른 설계 판단은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.countdownlatch-coordination"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "예외 worker는 countDown하지 않아야 항상 성공을 보장한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "await가 worker 예외를 자동으로 재던진다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "countDown이 예외를 정상 결과로 변환한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "finally의 countDown으로 gate를 열고 실패 상태를 별도 전달해 주 thread가 성공 여부를 확인한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "latch는 완료 신호를 조정할 뿐 성공·실패 결과를 전달하지 않으므로 두 책임을 분리한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.semaphore-permits.q1",
+    "promptMarkdown": "Semaphore permit의 목적은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.semaphore-permits"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "동시에 resource를 사용하는 작업 수를 제한한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "특정 thread의 monitor ownership을 기록한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "객체를 serialize한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "모든 task를 순차 실행한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "permit 수가 concurrency limit을 표현한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.semaphore-permits.q2",
+    "promptMarkdown": "acquire 후 resource 사용 중 예외가 나면 일반적으로 필요한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.semaphore-permits"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "모든 thread interrupt",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "finally에서 release하는 정책",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "queue를 정렬",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "permit을 영구 보유",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "acquire/release 누락은 permit 고갈을 만들 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.semaphore-permits.q3",
+    "promptMarkdown": "Semaphore가 monitor lock과 다른 점은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.semaphore-permits"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "Semaphore는 blocking하지 않는다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "Semaphore는 항상 한 permit만 가진다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "permit은 획득 thread ownership을 monitor처럼 강제하지 않는다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "monitor는 permit을 사용한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "Semaphore API는 resource 수 제한을 표현하며 release 호출자의 동일성은 monitor ownership과 다르다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.semaphore-permits.q4",
+    "promptMarkdown": "permit 2개인 Semaphore에서 두 작업이 permit을 얻었고 한 작업이 예외로 빠졌다. 이후 모든 작업이 영원히 대기한다. 원인과 수정은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.semaphore-permits"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "Semaphore가 thread ownership을 강제하므로 release가 불필요하다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "acquire를 더 호출하면 permit이 생긴다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "tryAcquire는 자동 release한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "예외 경로에서 release가 누락되었으므로 finally에서 release하도록 한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "permit은 자동으로 반환되지 않으므로 resource 사용의 성공·실패 경로 모두 release를 보장해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.concurrent-collections.q1",
+    "promptMarkdown": "ConcurrentHashMap이 일반 HashMap과 구별되는 목적은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.concurrent-collections"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "여러 thread의 concurrent map operation을 지원한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "key를 항상 정렬한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "null key/value를 모두 허용한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "모든 business transaction을 보장한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "ConcurrentHashMap은 concurrent access contract를 제공하지만 정렬이나 임의 transaction은 아니다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.concurrent-collections.q2",
+    "promptMarkdown": "ConcurrentLinkedQueue의 poll()은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.concurrent-collections"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "blocking take와 같다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "현재 원소를 제거해 반환하거나 없으면 결과가 없을 수 있다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "queue 전체를 정렬한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "항상 최소값을 반환한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "concurrent queue의 non-blocking poll은 empty 결과를 표현한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.concurrent-collections.q3",
+    "promptMarkdown": "containsKey 후 put으로 “없으면 추가”를 구현하면?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.concurrent-collections"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "put이 항상 실패한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "ConcurrentHashMap이 두 호출을 합친다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "두 연산 사이에 경쟁이 있어 원자적이지 않다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "containsKey가 lock을 영구 보유한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "multi-step logic은 API가 제공하는 compound operation을 선택해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.concurrent-collections.q4",
+    "promptMarkdown": "computeIfAbsent/putIfAbsent/merge를 검토하는 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.concurrent-collections"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "순회 순서를 정렬해서",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "원소를 immutable하게 만들어서",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "모든 lock을 제거해서",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "의도한 일부 check-and-update를 collection API의 atomic operation으로 표현할 수 있어서",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "해당 API 계약이 제공하는 operation-level 원자성을 활용한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.concurrent-collections.q5",
+    "promptMarkdown": "ConcurrentHashMap<String, Integer>에서 get 후 계산 후 put으로 count를 올리면 가능한 문제는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.concurrent-collections"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "동시 update가 서로 덮어써질 수 있다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "Concurrent prefix가 모든 Integer 갱신을 자동 합친다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "Integer가 mutable counter가 된다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "map이 자동으로 queue가 된다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "map 구조의 thread-safety가 value read-modify-write의 원자성을 보장하지 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.concurrent-collections.q6",
+    "promptMarkdown": "concurrent collection iterator를 snapshot 정렬 결과로 사용하려는 코드의 문제는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.concurrent-collections"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "iterator가 모든 변경을 롤백한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "weakly consistent 관찰일 수 있어 생성 시점 이후 변경과 전체 정렬을 보장하지 않는다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "concurrent collection은 순회할 수 없다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "iterator가 항상 ConcurrentModificationException을 던진다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "concurrent collection의 traversal contract는 일반 fail-fast/snapshot 가정과 다를 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.threadlocal-context.q1",
+    "promptMarkdown": "ThreadLocal의 값은 무엇에 연결되는가?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.threadlocal-context"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "외부 DB row",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "모든 thread가 공유하는 하나의 값",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "현재 thread별 별도 값",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "현재 process의 static field만",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "ThreadLocal은 각 thread가 독립적으로 값을 갖게 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.threadlocal-context.q2",
+    "promptMarkdown": "thread pool task에서 ThreadLocal.remove()를 finally에 두는 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.threadlocal-context"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "thread를 새로 생성하기 위해",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "값을 전역 공유하기 위해",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "executor를 종료하기 위해",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "재사용 worker에 이전 task context가 남는 것을 줄이기 위해",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "pool worker lifecycle이 요청 lifecycle보다 길 수 있으므로 cleanup이 필요하다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.threadlocal-context.q3",
+    "promptMarkdown": "ThreadLocal 값이 CompletableFuture의 다음 stage로 자동 전파된다고 가정하면 안 되는 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.threadlocal-context"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "stage가 다른 thread에서 실행될 수 있기 때문이다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "ThreadLocal은 class를 저장할 수 없기 때문이다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "future는 항상 같은 thread에서만 실행되기 때문이다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "remove가 호출되면 모든 stage가 취소되기 때문이다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "ThreadLocal은 thread association이고 async boundary는 실행 thread를 바꿀 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.threadlocal-context.q4",
+    "promptMarkdown": "ThreadLocal이 mutable request context를 담을 때 별도로 필요한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.threadlocal-context"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "OS scheduler 설정",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "context object의 ownership·수명·변경 정책",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "class file 재컴파일",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "모든 값을 static final로 deep freeze",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "per-thread association이 내부 객체의 불변성이나 lifecycle을 자동 보장하지 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.threadlocal-context.q5",
+    "promptMarkdown": "pool worker W가 request A의 context를 set하고 remove하지 않은 채 request B를 처리한다. B에서 가능한 문제는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.threadlocal-context"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "ThreadLocal이 모든 값을 병합한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "W가 자동으로 새 thread가 된다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "B가 A의 stale context를 관찰할 수 있다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "A context가 JVM에서 즉시 GC된다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "worker 재사용 때문에 task별 정리가 없으면 이전 값이 다음 task 경계를 넘는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.threadlocal-context.q6",
+    "promptMarkdown": "task마다 새 virtual thread를 사용하는 환경에서 ThreadLocal을 설명한 것으로 가장 정확한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.threadlocal-context"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "task가 끝난 virtual thread를 다음 task가 재사용하므로 fixed platform pool과 동일한 stale-context 위험이 항상 남는다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "virtual thread는 ThreadLocal을 지원하지 않는다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "per-task thread 종료로 fixed-worker 재사용 위험의 형태는 줄지만, 많은 virtual thread마다 큰 reusable object를 ThreadLocal에 두면 메모리 비용이 커질 수 있다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "ThreadLocal value는 virtual thread가 종료되어도 JVM 종료까지 반드시 유지된다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "ThreadLocal 값은 thread lifetime과 연결된다. Per-task virtual thread에서는 같은 worker가 다음 task를 처리하는 stale-context 문제의 형태가 달라지지만, 매우 많은 virtual thread마다 큰 ThreadLocal cache를 만들면 thread-per-task의 메모리 이점을 훼손할 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.scoped-value-context.q1",
+    "promptMarkdown": "ScopedValue binding의 lifetime은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.scoped-value-context"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "where(...).run/call 같은 bounded dynamic scope 동안",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "JVM 전체 lifetime 동안",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "다음 process까지",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "ThreadLocal.remove 전까지 무조건",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "binding은 지정한 run/call 범위에 묶인다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.scoped-value-context.q2",
+    "promptMarkdown": "ScopedValue를 읽는 기본 방식은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.scoped-value-context"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "ClassLoader에서 찾는다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "현재 dynamic scope에서 get()한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "queue에서 take한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "항상 set()으로 아무 곳에서 덮어쓴다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "ScopedValue는 scope 안의 caller/callee가 binding을 조회하는 API다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.scoped-value-context.q3",
+    "promptMarkdown": "ScopedValue와 ThreadLocal의 차이로 옳은 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.scoped-value-context"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "ScopedValue는 전역 mutable map이다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "둘은 동일하며 lifetime 차이가 없다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "ScopedValue는 bounded 읽기 중심 context이고 ThreadLocal은 thread별 변경 가능한 값을 표현한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "ThreadLocal만 값을 읽을 수 있다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "두 API는 context 전달 모델과 변경/lifetime trade-off가 다르다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.scoped-value-context.q4",
+    "promptMarkdown": "ScopedValue에 mutable List reference를 binding하면?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.scoped-value-context"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "list가 자동 deep copied된다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "list가 자동 immutable이 된다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "binding이 모든 thread의 동일 static field가 된다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "binding 범위는 제한되지만 list 내부 변경은 자동 차단되지 않는다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "binding의 one-way context 의미와 value object의 immutability는 별도다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.scoped-value-context.q5",
+    "promptMarkdown": "ScopedValue.where(KEY,\"outer\").run 안에서 where(KEY,\"inner\").run을 실행한 뒤 inner 범위를 벗어나면?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.scoped-value-context"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "바깥 scope의 outer binding을 다시 관찰할 수 있다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "KEY가 영구히 unbound가 된다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "inner가 process 전역으로 남는다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "항상 null이 반환된다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "nested dynamic binding은 안쪽 scope 동안 가리고 범위를 벗어나면 바깥 binding이 다시 보인다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.scoped-value-context.q6",
+    "promptMarkdown": "ScopedValue binding을 다른 thread의 작업에서 읽는 규칙으로 가장 정확한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.scoped-value-context"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "binding은 process-global이므로 어떤 executor thread에서도 자동으로 보인다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "binding은 기본적으로 per-thread이며 arbitrary executor에는 자동 전파되지 않지만 StructuredTaskScope가 fork한 subtask에는 API 계약에 따라 상속될 수 있다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "StructuredTaskScope를 사용하면 binding object 자체가 immutable로 변환된다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "ScopedValue는 다른 thread와 값을 공유할 방법을 전혀 제공하지 않는다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "ScopedValue binding은 per-thread다. Thread 경계의 상속은 사용하는 API가 명시해야 하며 Java 25의 StructuredTaskScope는 fork된 subtask thread에 scoped-value binding을 상속한다. Arbitrary executor에 대한 자동 전파 계약은 없다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.future-completablefuture.q1",
+    "promptMarkdown": "Future의 기본 역할은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.future-completablefuture"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "queue capacity 설정",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "항상 결과를 즉시 계산하는 값",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "비동기 계산 결과를 나중에 확인하고 cancel 등을 요청하는 handle",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "thread를 강제 종료하는 API",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "Future는 result completion을 관찰하고 get/cancel 등의 기능을 제공한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.future-completablefuture.q2",
+    "promptMarkdown": "thenApply와 thenCompose의 핵심 차이는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.future-completablefuture"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "thenApply만 예외를 처리한다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "thenCompose는 항상 동기다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "둘은 이름만 다르고 결과가 항상 같다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "thenApply는 값 변환, thenCompose는 stage를 평탄화하는 조합이다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "함수가 또 다른 CompletionStage를 반환할 때 compose가 중첩을 줄인다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.future-completablefuture.q3",
+    "promptMarkdown": "CompletableFuture stage가 exceptional completion되면?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.future-completablefuture"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "후속 stage는 completion method 계약에 따라 failure 경로를 따를 수 있다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "값이 자동으로 0이 된다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "모든 thread가 강제 종료된다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "예외가 반드시 무시된다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "exceptionally/handle/whenComplete 등으로 실패 경로를 명시한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.future-completablefuture.q4",
+    "promptMarkdown": "thenApplyAsync에 executor를 명시하지 않을 때의 설명은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.future-completablefuture"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "항상 새 platform thread 하나를 만든다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "CompletableFuture API가 정한 default async execution facility를 사용한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "OS가 Java contract 없이 임의로 결과를 바꾼다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "항상 caller thread를 사용한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "Async method의 기본 executor는 API 문서 범위로 이해하고 필요하면 명시 executor를 준다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.future-completablefuture.q5",
+    "promptMarkdown": "A.thenApply(f).thenApply(g)에서 A를 완료시키는 thread가 있고 두 stage가 non-async일 때 가장 정확한 추론은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.future-completablefuture"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "항상 별도 virtual thread다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "항상 main thread다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "stage 실행은 completion을 수행하는 thread나 caller 등 API가 허용한 실행 맥락을 따르며 특정 thread를 단정하면 안 된다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "항상 A를 만든 thread다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "non-async dependent action은 특정 하나의 thread로 고정된다고 API가 보장하지 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.future-completablefuture.q6",
+    "promptMarkdown": "CompletableFuture.cancel(true)를 호출했는데 underlying 외부 HTTP call이 이미 실행 중이다. 안전한 결론은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.future-completablefuture"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "HTTP call은 항상 즉시 kill된다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "cancel은 future 상태를 바꾸지 않는다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "cancel은 모든 dependent stage를 정상 완료한다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "future의 cancellation completion과 외부 작업 강제 중단은 별도라 underlying 작업이 반드시 멈춘다고 할 수 없다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "CompletableFuture cancellation은 result graph의 상태와 실제 외부 작업 취소 protocol을 분리해 설계해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.deadlock-starvation-livelock.q1",
+    "promptMarkdown": "두 thread가 서로 상대가 가진 lock을 기다리는 상태는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.deadlock-starvation-livelock"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "deadlock",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "starvation",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "livelock",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "warm-up",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "순환 대기는 deadlock의 전형적인 모습이다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.deadlock-starvation-livelock.q2",
+    "promptMarkdown": "특정 thread가 계속 실행 기회를 얻지 못하는 문제는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.deadlock-starvation-livelock"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "serialization",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "starvation",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "class loading",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "deadlock만",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "starvation은 자원·스케줄링 경쟁 때문에 특정 작업의 progress가 굶는 현상이다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.deadlock-starvation-livelock.q3",
+    "promptMarkdown": "두 thread가 충돌을 피하려고 계속 상태를 되돌리지만 유용한 작업을 못 하는 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.deadlock-starvation-livelock"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "EOF",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "heap leak",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "livelock",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "binary incompatibility",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "livelock은 살아서 반응하지만 시스템의 유용한 progress가 없는 상태다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.deadlock-starvation-livelock.q4",
+    "promptMarkdown": "여러 lock을 사용한 deadlock 예방에 유용한 정책은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.deadlock-starvation-livelock"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "각 경로가 임의 순서로 lock을 잡는다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "lock을 finally에서만 획득한다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "thread 수를 0으로 둔다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "모든 경로가 전역 lock ordering을 따르게 한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "일관된 획득 순서는 circular wait 가능성을 줄인다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.deadlock-starvation-livelock.q5",
+    "promptMarkdown": "A가 L1을 잡고 L2를 기다리고 B가 L2를 잡고 L1을 기다린다. 진단 결론은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.deadlock-starvation-livelock"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "두 ownership과 대기 edge가 cycle을 만들어 deadlock 가능성을 보인다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "단순 starvation만 확정된다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "livelock이므로 lock은 없다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "JMM이 cycle을 자동 해소한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "hold-and-wait와 circular wait를 실제 lock graph로 확인해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.deadlock-starvation-livelock.q6",
+    "promptMarkdown": "모든 lock 경로의 순서를 통일했지만 bounded executor의 한 worker가 외부 I/O를 무한히 기다리고 있다. 남는 위험은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.deadlock-starvation-livelock"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "외부 I/O가 interrupt 없이 항상 끝난다",
+        "displayOrder": 0
+      },
+      {
+        "key": "B",
+        "content": "deadlock은 줄어도 pool starvation이나 전체 progress 지연은 남을 수 있다",
+        "displayOrder": 1
+      },
+      {
+        "key": "C",
+        "content": "모든 liveness 문제가 해결된다",
+        "displayOrder": 2
+      },
+      {
+        "key": "D",
+        "content": "lock ordering이 executor queue도 자동 확장한다",
+        "displayOrder": 3
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "lock deadlock과 제한된 worker/resource로 인한 starvation은 별도 liveness 문제다."
+  }
+,
+{
+  "kind": "question",
+  "contentKey": "java.core.concurrency.atomic-cas.q7",
+  "promptMarkdown": "재고 수량과 주문 상태를 각각 AtomicInteger와 AtomicReference로 갱신한다. 두 갱신이 항상 함께 성공해야 한다면 단일 atomic 변수만으로 충분한가? 실패 시 재고를 되돌리는 retry 설계의 한계까지 설명하라.",
+  "questionType": "SCENARIO",
+  "difficulty": "HARD",
+  "status": "PUBLISHED",
+  "conceptKeys": [
+    "java.core.concurrency.atomic-cas"
+  ],
+  "modelAnswer": "단일 atomic 변수들은 서로 다른 상태의 복합 invariant를 자동으로 묶지 못한다. 하나만 성공한 중간 상태가 노출될 수 있으므로 한 lock으로 invariant를 보호하거나 하나의 immutable state를 CAS하고, 외부 side effect는 별도 보상·transaction 경계를 설계한다.",
+  "explanationMarkdown": "CAS는 한 번의 비교·갱신을 원자화하지만 여러 변수와 외부 효과까지 transaction으로 만들지는 않는다."
+}
 ]
