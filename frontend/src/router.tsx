@@ -59,15 +59,15 @@ function AppLayout() {
 }
 
 function LoadingPage() {
-  return <p className="route-message">Loading workspace…</p>
+  return <p className="route-message">화면을 불러오는 중입니다…</p>
 }
 
 function RouteErrorPage() {
-  return <p className="route-message error">Something went wrong while loading this page.</p>
+  return <p className="route-message error">화면을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.</p>
 }
 
 function NotFoundPage() {
-  return <p className="route-message">This page does not exist.</p>
+  return <p className="route-message">요청한 화면을 찾을 수 없습니다.</p>
 }
 
 const rootRoute = createRootRoute({
