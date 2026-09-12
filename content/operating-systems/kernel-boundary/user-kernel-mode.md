@@ -61,6 +61,14 @@ System call로 user mode에서 kernel mode로 들어갔다가 같은 thread로 �
 
 System call 하나가 항상 process context switch를 의미하는 것은 아니다.
 
+### 면접에서 이렇게 나옵니다
+
+#### Q. Mode switch와 context switch는 왜 구분해야 하나요?
+
+System call처럼 같은 task가 user mode에서 kernel mode로 들어갔다가 곧바로 돌아오는 경우에는 privilege level만 바뀌고 다른 task로 실행 주체가 교체되지 않을 수 있습니다.
+
+Context switch는 scheduler가 다른 task를 선택해 CPU execution context를 바꾸는 사건입니다. Blocking system call 때문에 context switch가 뒤따를 수는 있지만, **mode switch 자체가 곧 context switch인 것은 아닙니다.**
+
 ### Java Backend 요청도 이 경계를 통과한다
 
 Java code가 `FileInputStream`, socket, database connection 같은 기능을 사용하면 Java method가 hardware를 직접 조작하는 것이 아니다. JVM과 native library를 거쳐 OS interface를 호출하고, 필요한 경우 system call을 통해 kernel service를 사용한다.
