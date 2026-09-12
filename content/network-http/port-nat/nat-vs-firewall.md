@@ -27,3 +27,7 @@ public listener를 열 때는 destination port allow rule, authentication, rate 
 
 Backend에서 “포트가 외부에 안 보인다”는 사실만으로 보안을 판단하지 않는다. 외부·내부 interface, security group/firewall state, port forwarding, application bind와 authorization을 순서대로 확인해야 하며, NAT table의 우연한 비노출을 least-privilege 정책으로 간주하지 않는다.
 
+### Translation과 policy
+    packet → address/port translation → allow/deny policy → next hop
+              NAT responsibility       firewall responsibility
+mapping 존재와 listener 준비는 각각 확인해야 한다.

@@ -27,3 +27,9 @@ failover 장비가 mapping state를 공유하지 않으면 기존 connection의 
 
 Backend의 long polling과 WebSocket이 NAT idle timeout보다 오래 유지되면 protocol-level heartbeat나 주기적인 traffic이 mapping을 유지하는 데 도움이 될 수 있다. 그러나 heartbeat는 network path가 살아 있음을 확인할 뿐 business progress나 peer application의 commit을 보장하지 않는다.
 
+### Stateful NAT mapping
+    internal tuple ── create ──> translated tuple
+           │                         │
+           └──── traffic refresh ─────┘
+                         │ timeout → removed
+mapping 만료 뒤 reply는 내부 endpoint를 찾지 못할 수 있다.

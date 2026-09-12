@@ -27,3 +27,8 @@ wildcard bind는 하나의 특정 address가 아니라 여러 local interface에
 
 Backend health check에서는 URL의 scheme·hostname·port를 서버의 bind address와 분리해 확인한다. IPv4/IPv6, localhost, container DNS와 published port를 각각 실제 packet path에 대입해야 하며, 이름이 해석됐다는 사실만으로 listener나 service readiness가 보장되지는 않는다.
 
+### Socket endpoint
+    application → bind/listen
+                  → (IP address, port, protocol)
+                  → kernel demultiplexing → socket
+wildcard bind는 여러 interface의 노출 범위를 넓힐 수 있다.

@@ -24,3 +24,8 @@ host가 destination IP를 routing table과 비교했을 때 on-link로 판단하
 default gateway는 모든 traffic을 무조건 보내는 별도 protocol이 아니라 routing table의 catch-all 경로다. specific prefix route가 default보다 우선하며, gateway가 실제로 on-link가 아니거나 ARP/NDP·egress interface·return route가 잘못되면 route entry가 있어도 packet은 전달되지 않는다. gateway 설정이 없으면 local service는 되지만 외부 API·DNS·database 연결이 실패할 수 있다.
 
 Docker container의 default route와 host의 route는 network namespace에 따라 다르다. outbound timeout을 조사할 때 application DNS success, selected route, gateway neighbor resolution, egress firewall과 이후 remote path를 단계별로 분리한다.
+### Local route와 default gateway
+    destination
+      ├─ local prefix ──> ARP/NDP peer ──> same link
+      └─ outside prefix ──> gateway MAC ──> router
+default gateway가 최종 목적지라는 뜻은 아니다.

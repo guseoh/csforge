@@ -27,3 +27,8 @@ NAT는 routing이나 security firewall과 동일하지 않다. mapping이 존재
 
 Backend가 client IP를 감사 정보나 rate limit에 사용할 때는 proxy·NAT가 보이는 address와 원래 client identity를 구분한다. `X-Forwarded-For` 같은 header를 신뢰할 intermediary 범위를 먼저 정하고, 외부 client가 임의로 주입한 값을 원본 주소로 사용하지 않는다.
 
+### NAT 변환
+    10.0.0.5:40000 ──> NAT ──> 203.0.113.9:62000
+          ▲                         │
+          └──── reply reverse mapping ─┘
+NAT는 address/port를 바꾸지만 reliability를 추가하지 않는다.

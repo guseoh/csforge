@@ -27,3 +27,9 @@ control plane이 routing protocol로 배운 정보, kernel/FIB가 실제 forward
 
 Backend 연결 장애에서는 DNS가 반환한 address, selected prefix/next hop, neighbor resolution, egress policy와 return path를 순서대로 분리한다. route table만 보고 remote service health를 판단하지 않는다.
 
+### Route lookup
+    destination IP → matching prefixes
+                   → longest/policy choice
+                   → next hop + egress interface
+                   → ARP/NDP → link frame
+route가 있어도 next-hop resolution과 listener는 별도다.

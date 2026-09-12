@@ -22,3 +22,8 @@ references:
 특히 POST 뒤의 302는 오래된 user-agent 관행으로 GET으로 바뀔 수 있지만, method 보존이 필요하면 307/308을 사용하고 body replay를 감당할 수 있는지 확인한다. PRG처럼 결과 조회로 전환하려면 303을 검토한다. client는 redirect 횟수, scheme downgrade, host/origin 변경과 Authorization·cookie 전달을 검증하고, redirect target을 무조건 신뢰하지 않는다.
 
 reverse proxy 뒤 HTTPS redirect를 만들 때 external scheme과 trusted forwarded header를 정확히 판정한다. POST·payment·import command의 redirect에서는 method 변경과 retry effect를 함께 검증하고, permanent redirect cache가 오래 남을 수 있음을 rollout에 반영한다.
+### Redirect와 method
+    3xx + Location → follow-up request
+    301/302/303: method may change
+    307/308: method and content preserved
+unsafe effect는 redirect 뒤 재실행 위험까지 계약한다.

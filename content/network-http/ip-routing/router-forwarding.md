@@ -25,3 +25,8 @@ IPv4 router는 forwarding 중 TTL을 줄이고 header checksum을 다시 계산�
 
 router는 application message를 생성하거나 HTTP status를 해석하지 않는다. reverse proxy가 client와 backend 사이에 별도 HTTP connection을 만드는 것처럼 application gateway는 다른 계층의 intermediary다. trace와 장애 보고에서 network hop, NAT와 HTTP intermediary를 따로 표시한다.
 
+### Router forwarding
+    incoming frame → decap → IP header / TTL
+        → decrement + route lookup
+        → new outgoing frame → next link
+router는 link header를 새로 만들며 application을 처리하지 않는다.

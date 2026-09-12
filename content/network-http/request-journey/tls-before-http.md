@@ -23,3 +23,7 @@ TLS 1.3 0-RTT early data는 handshake가 완전히 끝나기 전에 일부 appli
 
 certificate·hostname·trust 검증 실패와 HTTP 401·500, proxy-generated response를 서로 다른 계층의 결과로 기록한다. reverse proxy에서 TLS를 종료하면 proxy-to-backend가 새 TLS 또는 평문 hop이 되므로 external scheme, forwarded metadata와 internal trust boundary를 redirect·cookie 정책에 반영한다.
 
+### HTTPS cold path
+    DNS → TCP/QUIC → TLS handshake → HTTP request
+                                             → application
+pool reuse나 resumption이면 일부 단계가 재사용된다.

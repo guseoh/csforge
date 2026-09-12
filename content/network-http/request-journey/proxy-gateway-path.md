@@ -22,3 +22,8 @@ forward proxy는 client가 요청한 outbound destination으로 가는 중간 en
 intermediary마다 client-facing과 upstream-facing connection, timeout, retry, header rewrite, body buffering과 cache 정책이 다르다. 이 때문에 client가 본 504가 backend의 500인지 upstream connect timeout인지 달라지고, proxy retry가 POST side effect를 중복하거나 request body를 다시 읽지 못할 수 있다. original client identity도 forwarded metadata와 trusted proxy 범위를 통해 별도로 전달·검증한다.
 
 API gateway와 Spring app의 timeout·max body·streaming·status mapping을 정렬하고, proxy가 반환한 502/504, gateway policy가 만든 4xx와 backend가 반환한 500을 관측에서 구분한다. gateway health가 origin application readiness나 DB transaction 상태를 자동으로 보장하지 않는다는 점도 유지한다.
+### Intermediary response
+    client → edge gateway
+                 ├─ cache hit → response
+                 └─ miss → origin → response
+edge cache 상태와 origin health 및 hop별 timeout을 분리 관측한다.

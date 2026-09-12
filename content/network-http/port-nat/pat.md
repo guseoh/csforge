@@ -27,3 +27,8 @@ PAT는 외부에서 시작한 connection의 목적지를 자동으로 정하지 
 
 Backend의 대량 outbound HTTP client에서는 NAT port exhaustion이 connect timeout이나 간헐적 새 connection 실패로 나타날 수 있다. connection reuse와 pool lifetime을 조정하면서 NAT gateway의 public address 수, translated-port 사용량, idle timeout을 함께 측정한다.
 
+### PAT multiplexing
+    10.0.0.5:40000 ─┐
+    10.0.0.6:40000 ─┼─> public IP + distinct source ports
+    10.0.0.7:40000 ─┘
+translated port와 mapping state가 각 flow를 구분한다.

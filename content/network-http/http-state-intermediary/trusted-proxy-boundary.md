@@ -29,3 +29,7 @@ proxy를 하나 더 추가하거나 CDN과 ingress 순서를 바꾸면 어느 ho
 
 CSRF origin, redirect, audit actor, rate limit이 forwarded 값에 의존하면 ingress topology와 trusted proxy address/hop 설정을 configuration 및 test fixture에 명시한다. 신뢰할 수 없는 값은 display hint로만 사용하고 authorization이나 tenant identity에 쓰지 않으며, production에서 backend direct access가 가능한지 네트워크 레벨에서도 확인한다.
 
+### Trusted metadata
+    external client → ingress → trusted proxy → backend
+         untrusted header       canonical header
+backend은 허용된 source에서 정규화된 값만 신뢰한다.

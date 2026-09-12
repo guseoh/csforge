@@ -33,3 +33,7 @@ stream identifier는 connection 안에서 lifecycle을 식별하는 protocol sta
 frame 하나가 HTTP message 전체를 담는다는 보장은 없다. 여러 HEADERS·DATA frame과 stream end state를 조합해 request/response를 완성하며, `RST_STREAM`은 특정 stream을 즉시 종료하는 데 사용된다. `GOAWAY`는 connection에서 새 stream을 더 받지 않도록 graceful shutdown 범위를 전달하고, 이미 처리됐을 수 있는 stream과 안전하게 retry할 수 있는 stream을 구분하는 데 영향을 준다.
 
 HTTP/2의 concurrency는 무한하지 않다. peer의 `SETTINGS_MAX_CONCURRENT_STREAMS`, stream/connection-level flow-control window와 server capacity가 실제 동시 진행량을 제한한다. Backend client는 stream reset과 GOAWAY를 connection-wide retry와 혼동하지 않고, request idempotency와 처리 여부를 함께 판단한다.
+### HTTP/2 stream ID
+    connection → stream 1 → stream 3 → stream 5
+                         each stream has request/response state
+이미 사용한 stream ID 재사용은 connection protocol 오류다.

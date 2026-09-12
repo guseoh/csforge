@@ -25,3 +25,8 @@ UDP 자체는 datagram이 목적지에 도착했는지, 전송 순서가 맞는�
 
 UDP telemetry는 일부 손실과 reorder를 허용할 수 있지만 attempt나 결제 command 저장은 그렇지 않을 수 있다. data별 freshness·durability·processing semantics를 먼저 정의한 뒤 transport를 선택하고, loss·duplicate·late sample metric을 숨기지 않는다.
 
+### UDP datagram delivery
+    send: D1 ── D2 ── D3
+    path: D1 lost, D3 arrives, D2 arrives late
+    receiver: order/loss/duplicate policy is application-owned
+UDP는 기본적으로 이 순서를 복구하지 않는다.

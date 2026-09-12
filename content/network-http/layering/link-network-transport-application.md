@@ -27,3 +27,16 @@ link 계층은 하나의 local link에서 frame과 link address를 사용해 다
 
 API 장애에서 DNS resolution, route/connect, TLS handshake, HTTP status, domain result를 별도 span으로 남긴다. “네트워크 오류” 하나로 기록하면 어느 계층의 재시도와 timeout이 필요한지 판단할 수 없다.
 
+### 계층별 전달 경계
+    application message
+            │
+            ▼
+    transport segment
+            │
+            ▼
+    network packet
+            │
+            ▼
+    link frame
+각 계층의 성공은 다음 계층의 전달을 돕지만 application 처리 성공까지 보장하지 않는다.
+

@@ -22,3 +22,8 @@ content negotiation은 client가 표현 가능한 형식·언어·encoding을 �
 variant가 달라지면 cache가 서로 다른 응답을 섞지 않도록 `Vary`, representation metadata와 validator를 맞춘다. negotiation header를 cache key에 반영하지 않으면 한 client의 language·media type response가 다른 client에 노출될 수 있다. client 선호를 무시할 수 있는지, 지원 불가를 `406`으로 볼지 또는 default representation으로 fallback할지는 product contract에 둔다.
 
 Markdown·JSON·HTML preview API는 PostgreSQL canonical content와 HTTP representation 선택을 분리한다. 선택된 variant의 schema·ETag·cache policy를 관리하되, content negotiation 결과를 import identity나 DB canonical value로 저장하지 않는다.
+### Representation 선택
+    Accept / Language / Encoding
+                ↓
+    server selects variant → Vary/cache key
+선택 조건을 cache key에 빠뜨리면 다른 variant를 반환할 수 있다.

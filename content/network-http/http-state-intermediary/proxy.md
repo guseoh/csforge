@@ -26,3 +26,8 @@ proxy가 request를 재시도하거나 body를 buffer하면 streaming, timeout, 
 ### Backend 연결
 
 개발환경의 `HTTP_PROXY`·`HTTPS_PROXY`와 bypass 목록은 외부 API와 private service의 실제 경로를 달리 만들 수 있다. proxy 사용 여부, CONNECT 여부, upstream timeout과 인증 범위를 startup configuration과 outbound metrics에서 관찰 가능하게 하며, proxy 로그에 bearer credential이나 cookie가 남지 않도록 redaction한다.
+### Forward proxy
+    client → forward proxy → origin
+                ├─ policy/logging
+                └─ CONNECT or TLS inspection
+TLS termination 여부가 내용 가시성과 trust boundary를 바꾼다.
