@@ -38,6 +38,14 @@ ORDER BY created_at DESC, id DESC
 LIMIT 20;
 ```
 
+```text
+정렬 순서 (DESC): 803 ─ 802 ─ 801 │ 800 ─ 799 ─ 798
+                              ▲
+                              └─ page 1의 마지막 cursor = (10:00, 801)
+
+다음 page: (created_at, id) < (10:00, 801)인 row만 탐색
+```
+
 ### cursor는 ordering contract를 그대로 담아야 한다
 
 `created_at`이 unique하지 않다면 시각 하나만 cursor로 쓰면 같은 시각의 일부 row를 건너뛸 수 있습니다.
