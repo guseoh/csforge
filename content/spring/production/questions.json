@@ -39,7 +39,7 @@
       {"key":"A","content":"DB connection을 기다리는 요청이 늘어난 경로","displayOrder":0},
       {"key":"B","content":"CPU 연산이 포화된 경로","displayOrder":1},
       {"key":"C","content":"모든 요청의 JSON 직렬화가 느려진 경로","displayOrder":2},
-      {"key":"D","content":"브라우저 CORS 설정","displayOrder":3}
+      {"key":"D","content":"CPU 사용률이 낮으므로 connection pool 대기나 DB 지연은 원인이 될 수 없다는 가설","displayOrder":3}
     ],
     "correctChoiceKey":"A",
     "explanationMarkdown":"pending connection 증가는 connection pool 획득 대기가 늘었다는 강한 신호다. 한 지표만으로 확정하지는 않지만 query latency, active connection, DB 상태를 이어서 확인할 근거가 된다."
