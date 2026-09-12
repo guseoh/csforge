@@ -46,6 +46,11 @@ export interface QuizConcept {
   level: number
 }
 
+export interface QuizChoice {
+  choiceKey: string
+  contentMarkdown: string
+}
+
 export interface QuizSavedAnswer {
   selectedChoiceKey: string | null
   answerText: string | null
@@ -60,7 +65,7 @@ export interface QuizQuestion {
   questionType: QuestionType
   difficulty: QuestionDifficulty
   concepts: QuizConcept[]
-  choices: { choiceKey: string; contentMarkdown: string }[]
+  choices: QuizChoice[]
   answer: QuizSavedAnswer | null
 }
 
@@ -93,6 +98,7 @@ export interface QuizQuestionResult {
   questionType: QuestionType
   difficulty: QuestionDifficulty
   concepts: QuizConcept[]
+  choices: QuizChoice[]
   selectedChoiceKey: string | null
   answerText: string | null
   reviewNeeded: boolean
