@@ -16,10 +16,19 @@ references:
     depth: section
     recommendation: "kernel driver 계층이 다양한 device protocol을 공통 OS I/O 경계 뒤에 숨기는 역할을 확인한다."
     displayOrder: 1
+  - url: "https://d2.naver.com/helloworld/47667"
+    title: "TCP/IP 네트워크 스택 이해하기"
+    referenceType: COMPANY_TECH_BLOG
+    language: ko
+    depth: article
+    recommendation: "Linux network I/O에서 NIC interrupt, NAPI polling, softirq와 driver가 연결되는 실제 사례를 확인한다."
+    displayOrder: 2
 ---
 # Device I/O Kernel Path
 
 application은 일반적으로 network card, disk controller 같은 device register를 직접 조작하지 않는다. file descriptor와 `read`/`write`/`ioctl` 같은 system-call interface를 통해 kernel object에 요청을 전달하고, kernel과 device driver가 hardware-specific protocol을 처리한다. 이 경계 덕분에 application은 device마다 다른 command register나 DMA descriptor 형식을 직접 알지 않아도 된다.
+
+![application I/O 요청이 kernel과 driver/device를 거쳐 완료되는 경로](/learning/operating-systems/device-io-kernel-path.svg)
 
 ### 한 번의 I/O 요청에는 여러 단계가 있다
 

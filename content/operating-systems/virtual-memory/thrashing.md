@@ -11,15 +11,17 @@ displayOrder: 80
 references:
   - url: "https://pages.cs.wisc.edu/~remzi/OSTEP/vm-beyondphys-policy.pdf"
     title: "Beyond Physical Memory: Policies"
-    referenceType: OFFICIAL
+    referenceType: BOOK
     language: en
-    depth: section
+    depth: chapter
     recommendation: "replacement policy와 locality가 hit/miss 및 working-set 유지에 미치는 영향을 확인한다."
     displayOrder: 1
 ---
 # Thrashing
 
 thrashing은 process들의 active working set을 physical memory에 안정적으로 유지할 수 없어 **page를 가져오고 내보내는 작업이 실제 application 실행보다 더 큰 비중을 차지하는 상태**다. 단순히 page fault가 존재한다고 thrashing인 것은 아니다. fault가 매우 자주 발생하고 그 처리 때문에 CPU가 useful work를 하지 못하며 storage I/O와 reclaim이 반복되는 상황을 함께 봐야 한다.
+
+![Working set을 담지 못해 eviction과 page fault가 반복되고 useful work가 줄어드는 thrashing loop](/learning/operating-systems/thrashing-loop.svg)
 
 ### 왜 메모리가 부족하면 CPU 사용률까지 떨어질 수 있는가
 
@@ -38,3 +40,9 @@ working set 자체가 available memory보다 훨씬 크면 LRU 근사나 CLOCK�
 container memory limit 안에서는 JVM heap, native allocation, thread stack, direct buffer, file-backed page가 같은 physical-memory pressure에 영향을 줄 수 있다. heap을 크게 잡아 GC 여유를 얻은 대신 OS page cache가 계속 reclaim되면 file I/O latency가 악화될 수 있다. 반대로 page cache만 의심하면서 실제 heap leak을 놓쳐서도 안 된다.
 
 따라서 thrashing을 진단할 때 CPU, RSS 한 지표만 보지 않고 major/minor fault, reclaim, swap/page-in, storage latency, working-set 크기와 concurrency 변화를 시간축으로 함께 본다.
+
+### 면접에서 이렇게 나옵니다
+
+#### Q. Page fault가 많으면 바로 thrashing이라고 볼 수 있나요?
+
+아니다. Thrashing은 단순 fault count가 아니라 **working set을 resident로 유지하지 못해 fault·reclaim·I/O가 반복되고 useful execution이 크게 줄어드는 상태**다. Fault 종류, storage I/O, reclaim, CPU useful work와 concurrency를 함께 봐야 한다.

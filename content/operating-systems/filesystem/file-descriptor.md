@@ -11,15 +11,24 @@ displayOrder: 20
 references:
   - url: "https://pages.cs.wisc.edu/~remzi/OSTEP/file-intro.pdf"
     title: "Interlude: Files and Directories"
-    referenceType: OFFICIAL
+    referenceType: BOOK
     language: en
     depth: section
     recommendation: "file, pathname, descriptor, shared open-file state를 Unix file-system API 흐름으로 확인한다."
     displayOrder: 1
+  - url: "https://man7.org/linux/man-pages/man2/open.2.html"
+    title: "open(2) — Linux manual page"
+    referenceType: OFFICIAL
+    language: en
+    depth: section
+    recommendation: "Linux에서 file descriptor가 process-local handle이며 open file description을 참조하는 구조를 확인한다."
+    displayOrder: 2
 ---
 # File Descriptor
 
 Unix 계열에서 file descriptor(fd)는 process가 열린 I/O object를 참조할 때 사용하는 작은 정수다. `open()`이 성공하면 kernel은 open state를 만들고 process의 descriptor table에서 사용 가능한 slot을 골라 fd를 반환한다. application은 이후 `read(fd, ...)`, `write(fd, ...)`, `close(fd)`처럼 이 handle을 사용한다.
+
+![process-local descriptor가 kernel open state를 가리키는 구조](/learning/operating-systems/file-descriptor-open-state.svg)
 
 ### fd 숫자는 object identity가 아니다
 
@@ -34,3 +43,9 @@ process의 descriptor entry는 kernel의 open-file description을 가리킨다. 
 fd에는 process별 limit이 있고 socket, pipe, regular file 등 여러 kernel object가 descriptor를 사용한다. close 누수가 누적되면 새 connection이나 file open이 실패한다. pipe의 write end가 의도치 않게 복제된 fd에서 계속 열려 있으면 reader가 EOF를 받지 못하는 식으로 **lifetime 자체가 protocol semantics**에 영향을 줄 수도 있다.
 
 Backend에서는 heap object reference를 놓는 것과 fd를 close하는 것을 같은 자원 회수로 생각하지 않는다. Java stream/socket wrapper가 최종적으로 어떤 native descriptor를 소유하는지, exception과 timeout 경로에서도 close가 보장되는지, subprocess에 descriptor가 의도치 않게 상속되는지를 별도로 확인한다.
+
+### 면접에서 이렇게 나옵니다
+
+#### Q. file descriptor가 그냥 파일 번호라고 설명하면 왜 부족한가요?
+
+fd는 process-local table의 handle이고 close 후 숫자가 재사용될 수 있습니다. 더 깊게 설명하려면 fd entry가 open-file description을 가리키고, `dup()`이나 `fork()`로 같은 open state를 공유할 수 있다는 점까지 연결하면 좋습니다.

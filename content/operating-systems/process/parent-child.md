@@ -16,6 +16,13 @@ references:
     depth: section
     recommendation: "Linux fork가 분리된 address space를 copy-on-write page로 구현하는 경계를 확인한다."
     displayOrder: 1
+  - url: "https://man7.org/linux/man-pages/man2/PR_SET_CHILD_SUBREAPER.2const.html"
+    title: "PR_SET_CHILD_SUBREAPER(2const) — Linux manual page"
+    referenceType: OFFICIAL
+    language: en
+    depth: section
+    recommendation: "Linux에서 orphan descendant가 가장 가까운 살아 있는 child subreaper로 reparent되는 동작을 확인한다."
+    displayOrder: 2
 ---
 # Parent and Child Process
 
@@ -47,7 +54,9 @@ Fork 이후 parent와 child는 scheduler가 다루는 별도의 runnable executi
 
 ### Parent가 먼저 종료할 수도 있다
 
-Parent가 child보다 먼저 종료되는 상황도 가능하다. Unix-like OS는 이런 orphan child를 정해진 system process/subreaper 관계로 다시 연결해 lifecycle을 관리할 수 있다. 구체적인 reparenting 정책은 OS에 따라 확인해야 한다.
+Parent가 child보다 먼저 종료되더라도 child가 반드시 함께 종료되는 것은 아니다. Parent와 child는 서로 다른 process lifecycle을 가지므로, 남은 child를 누가 관리하는지는 운영체제의 reparenting 규칙과 별도의 process-group·signal 정책을 함께 봐야 한다.
+
+**Linux에서는** immediate parent가 종료되어 orphan이 된 process가 있으면 가장 가까운 살아 있는 ancestor 중 `PR_SET_CHILD_SUBREAPER`로 지정된 process가 새 parent 역할을 맡는다. 그런 subreaper가 없다면 해당 관계는 init 역할을 하는 process로 이어진다. PID namespace를 사용하는 환경에서는 단순히 “항상 host의 PID 1로 붙는다”고 설명하면 부정확하다. 어떤 init이 reaper 역할을 하는지는 PID namespace 관계까지 영향을 받을 수 있다.
 
 반대로 child가 먼저 종료하면 parent는 `wait` 계열 interface로 termination status를 수집할 책임이 생길 수 있다. 이때 child가 아직 reap되지 않은 상태가 zombie와 연결된다.
 

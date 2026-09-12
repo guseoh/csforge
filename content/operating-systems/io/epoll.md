@@ -16,10 +16,19 @@ references:
     depth: section
     recommendation: "Linux readiness model에서 interest list와 ready list, level/edge-triggered semantics를 확인한다."
     displayOrder: 1
+  - url: "https://d2.naver.com/helloworld/1469717"
+    title: "HTTPS 전환 과정에서 read timeout 오류 해결 과정"
+    referenceType: COMPANY_TECH_BLOG
+    language: ko
+    depth: article
+    recommendation: "blocking worker 구조에서 Linux epoll/NIO 기반 이벤트 처리로 전환해 timeout과 CPU를 개선한 실제 운영 사례를 확인한다."
+    displayOrder: 2
 ---
 # epoll
 
 `epoll`은 Linux가 제공하는 readiness notification facility다. `select/poll`처럼 매 wait마다 전체 관심 descriptor 배열을 다시 전달하는 대신, **epoll instance에 관심 descriptor를 등록해 둔 interest list와 현재 I/O-ready 상태의 ready list를 분리**한다. application은 등록/수정/삭제와 event wait를 별도 operation으로 수행한다.
+
+![epoll interest list와 ready list의 역할 분리](/learning/operating-systems/epoll-interest-ready.svg)
 
 ### 등록된 수와 실제 ready 수를 분리한다
 

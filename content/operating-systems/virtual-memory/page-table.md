@@ -30,6 +30,8 @@ references:
 
 page table은 process의 virtual page가 어떤 physical frame 또는 다른 backing state와 연결되는지, 그리고 해당 mapping에 어떤 접근 권한이 있는지를 표현하는 자료구조다. CPU가 virtual address를 translation할 때 hardware와 OS는 page-table state를 이용해 접근을 허용할지, fault를 발생시킬지 결정한다.
 
+![Virtual page number와 page offset을 이용해 page table의 mapping을 따라 physical frame으로 접근하는 구조](/learning/operating-systems/page-table-translation.svg)
+
 개념적으로 page-table entry에는 frame number와 protection information이 있을 수 있지만 실제 bit layout과 의미는 ISA·OS마다 다르다. 특히 `valid`, `present`, `resident`를 모든 시스템에서 같은 뜻이라고 가정하면 안 된다. 어떤 architecture의 present bit는 hardware translation에 바로 사용할 수 있는 mapping을 뜻할 수 있고, OS는 별도의 software metadata로 swap/file backing이나 resident state를 추적할 수 있다.
 
 ### mapping 존재와 접근 가능은 다른 질문이다
@@ -54,3 +56,9 @@ virtual page가 어떤 frame에 연결되어 있어도 read-only mapping에 writ
 `mmap`, heap growth, stack growth, shared library load, file mapping, `fork`/copy-on-write 등은 page-table state를 바꿀 수 있다. context switch에서도 process마다 translation context가 다르므로 address-space switching과 TLB management가 필요할 수 있다.
 
 운영 지표에서는 virtual address reservation, committed memory, resident set을 구분한다. page table에 address range가 표현되어 있다는 사실만으로 모든 backing page가 RAM에 resident하다고 판단하면 안 된다.
+
+### 면접에서 이렇게 나옵니다
+
+#### Q. Page table은 단순히 virtual address를 physical address로 바꾸는 표인가요?
+
+Mapping이 핵심 역할이지만 그것만으로 끝나지 않는다. Page-table state는 **어떤 frame과 연결되는지와 함께 read/write/execute 같은 protection 판단에도 참여**할 수 있다. 다만 구체적인 entry bit와 walk 구조는 ISA와 OS에 따라 달라지므로 특정 구현을 보편 규칙처럼 설명하지 않는 것이 중요하다.

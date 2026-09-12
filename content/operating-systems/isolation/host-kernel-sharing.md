@@ -21,6 +21,8 @@ references:
 
 일반적인 Linux container는 process view와 resource budget을 분리해도 host kernel 위에서 system call을 수행한다. 즉 container마다 독립 kernel이 있는 것이 아니라 kernel code, syscall surface, scheduler와 일부 device 경로를 공유한다. namespace와 cgroup이 정상적으로 동작해도 kernel bug나 과도한 capability가 host까지 영향을 줄 수 있으므로 process isolation의 보안 강도는 kernel boundary에 의존한다.
 
+![container와 VM이 host kernel을 대하는 경계 차이](/learning/operating-systems/host-kernel-sharing.svg)
+
 VM은 guest kernel과 user process를 별도로 실행해 host와 guest 사이에 추가 virtual hardware/hypervisor 경계를 만든다. 그래서 guest kernel이 container process와 직접 공유되지 않는 더 강한 fault/security boundary를 제공할 수 있지만, memory·device virtualization과 별도 kernel 운영 비용이 생긴다. container와 VM 중 어느 것이 안전하다는 식의 일반화보다 threat model, kernel trust, performance와 운영 책임을 비교해야 한다.
 
 ### 격리 경계를 약하게 만드는 연결
@@ -29,3 +31,8 @@ VM은 guest kernel과 user process를 별도로 실행해 host와 guest 사이�
 
 로컬 Docker Compose에서도 host bind mount와 privileged 설정은 backend source나 credential에 직접 영향을 줄 수 있다. 개발 편의를 위해 연 설정을 production security boundary로 복사하지 말고, container 안 process가 실제로 어떤 kernel·mount·device 권한을 갖는지 검증한다.
 
+### 면접에서 이렇게 나옵니다
+
+#### Q. Container와 VM의 isolation boundary는 무엇이 다른가요?
+
+일반적인 container는 host kernel을 공유해 namespace·cgroup·permission으로 process를 격리합니다. VM은 guest kernel과 hypervisor 경계가 추가됩니다. 그래서 container는 가볍지만 kernel attack surface를 host와 공유한다는 점까지 함께 설명하면 좋습니다.

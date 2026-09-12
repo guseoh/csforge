@@ -11,14 +11,14 @@ displayOrder: 100
 references:
   - url: "https://pages.cs.wisc.edu/~remzi/OSTEP/file-intro.pdf"
     title: "Interlude: Files and Directories"
-    referenceType: OFFICIAL
+    referenceType: BOOK
     language: en
     depth: section
     recommendation: "file, pathname, descriptor, shared open-file state를 Unix file-system API 흐름으로 확인한다."
     displayOrder: 1
   - url: "https://pages.cs.wisc.edu/~remzi/OSTEP/file-journaling.pdf"
     title: "Crash Consistency: FSCK and Journaling"
-    referenceType: OFFICIAL
+    referenceType: BOOK
     language: en
     depth: section
     recommendation: "여러 filesystem metadata/data write가 crash 중 일부만 반영될 때 consistency를 유지하는 방식을 확인한다."
@@ -42,6 +42,8 @@ references:
 
 file에 bytes를 썼다는 application-level 사건과 그 bytes가 crash 이후에도 남는다는 durability 사건은 같은 시점이 아니다. storage stack에는 user-space buffer, kernel page cache, filesystem metadata, block/device queue와 controller cache 같은 여러 단계가 있을 수 있다. 그래서 어떤 API가 반환했다고 **어느 단계까지 완료되었는지**를 구분해야 한다.
 
+![application write부터 durability boundary까지의 단계](/learning/operating-systems/write-flush-fsync.svg)
+
 ### `write()` 성공은 무엇을 뜻하는가
 
 일반적인 buffered file I/O에서 `write(fd, buf, n)`가 성공하면 kernel이 일부 또는 전체 bytes를 받아 file state에 반영할 책임을 갖게 되지만, 그 data가 이미 stable storage에 기록되었다고 일반화할 수 없다. partial write가 가능한 API에서는 요청한 `n`보다 적은 bytes만 받아들였을 수도 있으므로 return value도 확인해야 한다.
@@ -61,7 +63,7 @@ kernel page cache에 반영된 dirty data는 같은 system의 이후 read에서�
 
 Unix 계열의 `fsync()`는 file의 dirty data와 필요한 metadata를 persistent storage 쪽으로 동기화하도록 요청하는 API다. 하지만 application이 원하는 crash-consistent state가 file 하나의 data만으로 완성되는 것은 아닐 수 있다.
 
-예를 들어 새 temp file을 작성한 뒤 rename으로 `current.dat`을 교체한다고 하자. 요구하는 보장이 `crash 후 새 이름과 새 data가 함께 보인다`라면 file content의 durability뿐 아니라 **directory entry/rename metadata의 durability**도 고려해야 한다. 구체적으로 어떤 directory sync가 필요한지는 OS/filesystem 계약에 따라 확인해야 한다.
+예를 들어 새 temp file을 작성한 뒤 rename으로 `current.dat`을 교체한다고 하자. 요구하는 보장이 `crash 후 새 이름과 새 data가 함께 보인다`라면 file content의 durability뿐 아니라 **directory entry/rename metadata의 durability**도 고려해야 한다. Linux `fsync(2)`도 file의 `fsync()`가 containing directory entry까지 자동으로 durable하게 만든다고 보장하지 않으므로, 대상 OS/filesystem의 directory sync 계약을 별도로 확인해야 한다.
 
 ### 왜 모든 write마다 fsync하지 않는가
 
@@ -72,3 +74,9 @@ persistence를 기다리는 연산은 storage ordering과 flush를 강제해 thr
 file size, data block, allocation metadata, directory entry처럼 여러 on-disk structure가 바뀌는 도중 crash가 나면 일부만 반영될 수 있다. journaling 같은 filesystem 기술은 이런 multi-write update를 복구 가능한 형태로 만들기 위한 메커니즘이다. application `fsync()`와 filesystem 내부 journaling도 같은 책임이 아니며 둘을 구분한다.
 
 Backend에서는 `파일 생성 성공`, `application flush 완료`, `durability 확보`, `DB transaction commit`을 필요하면 별도 상태로 모델링한다. 두 저장소를 동시에 사용하면서 실제 distributed transaction이 없는데 “둘 다 원자적으로 저장된다”고 표현하지 않는다.
+
+### 면접에서 이렇게 나옵니다
+
+#### Q. `write()`, `flush()`, `fsync()`는 어떻게 다른가요?
+
+`write()`는 kernel이 bytes를 받아들이는 I/O 경계, library `flush()`는 user-space buffer를 다음 계층으로 밀어내는 경계, `fsync()`는 file의 dirty state를 persistent storage 쪽으로 동기화하도록 요구하는 더 강한 경계입니다. 새 이름의 durability까지 필요하다면 directory metadata 계약도 따로 봐야 합니다.

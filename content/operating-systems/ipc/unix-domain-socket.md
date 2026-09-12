@@ -21,6 +21,8 @@ references:
 
 Unix-domain socket(AF_UNIX/AF_LOCAL)은 **같은 host 안의 process**가 socket interface로 통신하게 하는 IPC다. application은 `socket`, `bind`, `listen`, `accept`, `connect`, `read/write` 같은 familiar한 socket lifecycle을 사용할 수 있지만 IP routing을 통해 remote host로 전달하는 network socket과는 endpoint 범위가 다르다.
 
+![같은 host의 client/server process를 연결하는 Unix-domain socket](/learning/operating-systems/unix-domain-socket.svg)
+
 ### Stream과 datagram을 구분한다
 
 Unix-domain stream socket은 TCP와 비슷하게 connected byte stream interface를 제공하므로 application message boundary를 직접 framing해야 한다. datagram/seqpacket 계열은 API가 제공하는 message boundary semantics가 다를 수 있으므로 socket type을 명시해야 한다.

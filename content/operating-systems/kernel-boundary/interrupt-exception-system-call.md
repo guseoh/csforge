@@ -9,12 +9,12 @@ level: 2
 status: PUBLISHED
 displayOrder: 60
 references:
-  - url: "https://docs.riscv.org/reference/isa/unpriv/intro.html"
-    title: "RISC-V Unprivileged ISA: Introduction"
+  - url: "https://docs.riscv.org/reference/isa/_attachments/riscv-privileged.pdf"
+    title: "RISC-V Privileged ISA"
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "ISA가 정의하는 software-visible architecture와 구현 선택의 경계를 확인한다."
+    recommendation: "ECALL, exception, interrupt, trap의 ISA 정의와 privilege 경계를 확인한다."
     displayOrder: 1
 ---
 # Interrupt, Exception and System Call
@@ -74,6 +74,14 @@ ISA mechanism
 Interrupt와 exception이 공통 trap-entry infrastructure를 사용할 수 있어도 handler는 cause를 구분해야 한다. Timer interrupt라면 timer source와 scheduling state를 처리하고, page fault라면 faulting address와 access type, mapping 상태를 검사해야 한다. System-call request라면 syscall number와 caller arguments를 해석한다.
 
 복귀 위치도 cause에 따라 달라질 수 있다. 어떤 fault는 원래 instruction을 다시 실행해야 하고, 의도적으로 실행한 system-call instruction은 service가 끝난 뒤 다음 instruction으로 진행하도록 ABI/handler가 state를 조정할 수 있다. 구체적인 saved-PC semantics는 architecture 규칙을 따라야 한다.
+
+### 면접에서 이렇게 나옵니다
+
+#### Q. Interrupt, exception, system call은 어떻게 구분하나요?
+
+Interrupt는 timer나 device처럼 현재 instruction 자체와 독립적으로 도착할 수 있는 **비동기 사건**이고, exception은 현재 instruction 실행과 직접 연관된 **동기 사건**입니다.
+
+System call은 application이 kernel service를 요청한다는 OS/API 관점의 의미입니다. RISC-V의 `ECALL`처럼 system call을 synchronous exception/trap mechanism 위에 구현할 수 있으므로, **system call이라는 소프트웨어 의미와 ISA의 exception mechanism을 같은 층으로 설명하면 안 됩니다.**
 
 ### Backend에서 왜 구분해야 하는가
 
