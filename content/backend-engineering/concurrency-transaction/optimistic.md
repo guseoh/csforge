@@ -4,7 +4,7 @@ contentKey: backend.core.concurrency-transaction.optimistic
 topicContentKey: backend.core.concurrency-transaction
 slug: optimistic
 title: optimistic version
-summary: write 시점에 읽었던 version이 아직 최신인지 비교해 stale write를 감지하고 충돌 해결은 use-case가 결정한다.
+summary: expected version 조건으로 stale write를 감지하되 0-row 결과의 해석과 충돌 해결은 persistence/application contract가 결정한다.
 level: 2
 status: PUBLISHED
 displayOrder: 20
@@ -28,7 +28,9 @@ WHERE id = 42
   AND version = 7;
 ```
 
-영향받은 row가 0이면 다른 transaction이 version을 먼저 바꿨다는 뜻입니다.
+영향받은 row가 0이면 이 `UPDATE`의 predicate를 만족하는 row가 없었다는 뜻입니다. 다른 transaction이 version을 바꿔 stale해졌을 수도 있지만, row가 이미 삭제되었거나 존재하지 않거나 version 외의 predicate가 맞지 않은 경우도 포함될 수 있으므로 affected-row 하나만으로 원인을 항상 version conflict라고 단정하면 안 됩니다.
+
+따라서 persistence boundary에서 “조건부 update가 0건”을 어떤 결과로 해석할지 계약해야 합니다. 이 use case가 row 존재와 version 충돌을 구분해야 한다면 사전 조회, 삭제 상태 기록, 또는 더 구체적인 query/result contract가 필요하고, application이 그 의미를 API의 404·409·재시도 같은 정책으로 번역합니다.
 
 ### 충돌 감지와 충돌 해결은 다르다
 
@@ -36,7 +38,7 @@ WHERE id = 42
 T1 reads v7
 T2 reads v7
 T1 updates → v8 success
-T2 updates WHERE v7 → 0 rows → conflict
+T2 updates WHERE v7 → 0 rows → stale conflict로 해석할 수 있음
 ```
 
 Optimistic locking은 누가 이긴다를 자동 결정하지 않습니다. 실패한 요청을 retry할지, 사용자에게 최신 데이터를 보여줄지, merge할지를 use-case가 선택해야 합니다.

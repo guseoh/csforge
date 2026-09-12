@@ -14,7 +14,7 @@
       {"key":"D","content":"모든 validation을 DTO에만 두기 위해서","displayOrder":3}
     ],
     "correctChoiceKey": "B",
-    "explanationMarkdown": "DTO는 transport representation과 내부 model 사이의 변경 경계를 만든다."
+    "explanationMarkdown": "B의 DTO는 HTTP field와 내부 model의 변경·노출 범위를 분리해 client가 persistence field를 우연히 설정하지 않게 한다. DTO가 JPA lazy loading이나 모든 validation을 자동 해결하는 것은 아니며, 변환과 각 invariant의 책임은 별도 boundary에 남는다."
   },
   {
     "kind": "question",
@@ -25,7 +25,7 @@
     "status": "PUBLISHED",
     "conceptKeys": ["backend.core.dto-validation-error.dto-boundary"],
     "modelAnswer": "조회 use-case는 외부 representation에 필요한 데이터만 읽는 것이 목적이며 domain lifecycle을 복원할 필요가 없는 경우가 있기 때문이다.",
-    "explanationMarkdown": "조회 모델과 Domain 모델의 목적을 구분해야 한다."
+    "explanationMarkdown": "조회 projection은 한 API representation에 필요한 column만 읽으면 되므로 domain aggregate의 전 lifecycle과 모든 association을 복원할 필요가 없다. 읽기 모델을 억지로 Entity graph와 동일하게 만들면 over-fetching·lazy serialization·변경 결합이 커질 수 있다."
   },
   {
     "kind": "question",
@@ -36,7 +36,7 @@
     "status": "PUBLISHED",
     "conceptKeys": ["backend.core.dto-validation-error.dto-boundary"],
     "modelAnswer": "over-posting과 invariant 우회 위험이 생긴다. client가 설정 가능한 field만 DTO에 두고 server/domain이 소유하는 상태는 생성/전이 로직에서 결정한다.",
-    "explanationMarkdown": "외부 입력이 내부 상태를 직접 구성하게 해서는 안 된다."
+    "explanationMarkdown": "`role`, `status`, `createdAt`를 request에 열면 client가 권한·lifecycle·server timestamp를 덮어써 over-posting과 invariant 우회를 일으킬 수 있다. 허용된 입력만 command로 변환하고 서버와 domain이 소유하는 값은 생성·전이 시점에 결정해야 한다."
   },
   {
     "kind": "question",
@@ -53,7 +53,7 @@
       {"key":"D","content":"Controller @Valid가 있으면 DB 검증은 중복이다.","displayOrder":3}
     ],
     "correctChoiceKey": "B",
-    "explanationMarkdown": "사전 조회와 DB unique constraint는 다른 책임을 가진다."
+    "explanationMarkdown": "`existsByEmail()`은 사용자에게 빠른 피드백을 주지만 T1과 T2가 모두 없음으로 본 뒤 동시에 insert하는 race를 막지 못한다. 최종 unique invariant는 DB constraint가 보호하고 application은 그 violation을 안전한 conflict 의미로 번역해야 한다."
   },
   {
     "kind": "question",
@@ -64,18 +64,18 @@
     "status": "PUBLISHED",
     "conceptKeys": ["backend.core.dto-validation-error.validation-layers"],
     "modelAnswer": "요청 shape/길이 검증은 API 계약이고 배송 후 취소 금지 같은 규칙은 모든 진입 경로에서 유지돼야 하는 domain lifecycle 규칙이다.",
-    "explanationMarkdown": "검증 실패의 의미와 소유 경계를 구분해야 한다."
+    "explanationMarkdown": "길이·필수 field는 request가 읽힐 수 있는지에 관한 API contract지만, 배송 후 취소 금지는 현재 domain state를 보는 lifecycle invariant다. batch나 다른 진입 경로도 후자를 지켜야 하므로 controller annotation 하나만으로 대체할 수 없다."
   },
   {
     "kind": "question",
     "contentKey": "backend.core.dto-validation-error.validation-layers.q3",
     "promptMarkdown": "두 요청이 동시에 같은 email 가입을 통과해 한쪽이 unique violation으로 실패했다. client에 SQL 메시지를 그대로 보여줘야 하는가?",
     "questionType": "SCENARIO",
-    "difficulty": "HARD",
+    "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["backend.core.dto-validation-error.validation-layers"],
     "modelAnswer": "아니다. DB exception을 의미 있는 conflict/error code로 번역하고 내부 SQL/constraint 세부는 숨긴다.",
-    "explanationMarkdown": "DB 무결성 실패를 API 의미로 번역해야 한다."
+    "explanationMarkdown": "동시 insert 중 한쪽의 SQL constraint 오류는 client 입력이 이미 존재하는 resource와 충돌했다는 application 의미로 번역할 수 있다. raw SQL·table/constraint 이름은 내부 구조와 민감한 정보를 노출하므로 stable conflict code와 안전한 message만 반환해야 한다."
   },
   {
     "kind": "question",
@@ -92,7 +92,7 @@
       {"key":"D","content":"SQL exception text","displayOrder":3}
     ],
     "correctChoiceKey": "B",
-    "explanationMarkdown": "machine code/type은 사용자 문구와 분리된 안정적 계약이어야 한다."
+    "explanationMarkdown": "B 같은 stable code/type은 사용자 문구나 stack trace가 바뀌어도 client 분기를 유지하게 한다. server 원인과 SQL text는 operator 관측 영역에 두고, API에는 필요한 field violation·correlation 정보만 안전한 형태로 포함해야 한다."
   },
   {
     "kind": "question",
@@ -103,7 +103,7 @@
     "status": "PUBLISHED",
     "conceptKeys": ["backend.core.dto-validation-error.error-contract"],
     "modelAnswer": "status는 generic HTTP 의미를, product code는 구체적인 business failure를 제공해 client와 중간 software 모두 해석할 수 있게 한다.",
-    "explanationMarkdown": "두 정보의 역할이 다르다."
+    "explanationMarkdown": "HTTP status는 4xx/5xx처럼 transport와 일반적인 client/server 의미를 전달하고, product code는 `EMAIL_CONFLICT` 같은 세부 업무 원인을 안정적으로 표현한다. 둘을 합치면 중간 proxy의 처리와 client의 사용자 안내를 동시에 설계할 수 있다."
   },
   {
     "kind": "question",
@@ -114,6 +114,6 @@
     "status": "PUBLISHED",
     "conceptKeys": ["backend.core.dto-validation-error.error-contract"],
     "modelAnswer": "retryability와 idempotency가 명시되지 않았다. 결과 불명확 timeout/5xx를 안전하게 재실행할 operation identity와 정책이 필요하다.",
-    "explanationMarkdown": "실패 응답과 재실행 안전성을 함께 설계해야 한다."
+    "explanationMarkdown": "5xx가 commit 전 validation인지 commit 후 unknown outcome인지 구분되지 않은 채 자동 retry되면 결제 side effect가 두 번 실행될 수 있다. error contract에 retryability를 명시하고 operation에는 idempotency identity·결과 조회·보류 상태 같은 재실행 기준을 둬야 한다."
   }
 ]

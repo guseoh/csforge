@@ -14,7 +14,7 @@
       {"key": "D", "content": "nested resource는 깊을수록 ownership이 명확해 항상 좋다.", "displayOrder": 3}
     ],
     "correctChoiceKey": "B",
-    "explanationMarkdown": "URI는 외부 소비자가 이해하는 resource 의미를 중심으로 하고 method/status와 함께 계약을 이룬다."
+    "explanationMarkdown": "B는 resource 의미와 method/status라는 외부 계약을 함께 보며, DB table 이름이나 동사 URL을 그대로 노출하는 것보다 consumer가 다루는 대상을 안정적으로 표현한다. nested depth나 URI 미학만으로 좋은 API가 결정되지는 않는다."
   },
   {
     "kind": "question",
@@ -25,18 +25,18 @@
     "status": "PUBLISHED",
     "conceptKeys": ["backend.core.api.resource-endpoint"],
     "modelAnswer": "취소가 단순 command인지 별도 이력·조회가 필요한 resource인지 product 의미에 따라 표현이 달라지기 때문이다.",
-    "explanationMarkdown": "resource의 의미를 기준으로 판단해야 한다."
+    "explanationMarkdown": "`cancel`이 단순 command라면 action endpoint가 충분할 수 있지만, 취소 이력 자체를 조회·식별해야 한다면 `cancellations`라는 resource가 더 자연스러울 수 있다. 같은 동작도 상태·이력·재시도 요구가 달라지면 contract가 달라지므로 한 형태를 보편 규칙으로 외우면 안 된다."
   },
   {
     "kind": "question",
     "contentKey": "backend.core.api.resource-endpoint.q3",
     "promptMarkdown": "`/members/7/orders/42/items/3`처럼 중첩이 계속 깊어지고 동일 item에 여러 URI가 생긴다. 무엇을 기준으로 단순화하겠는가?",
     "questionType": "SCENARIO",
-    "difficulty": "HARD",
+    "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["backend.core.api.resource-endpoint"],
     "modelAnswer": "부모 ID가 resource 식별/authorization에 실제 필요한지, canonical URI가 무엇인지 기준으로 depth를 줄인다.",
-    "explanationMarkdown": "URI 중첩의 실제 책임을 판단해야 한다."
+    "explanationMarkdown": "각 부모 ID가 resource identity나 authorization 경계에 실제 필요한지 확인한 뒤 canonical URI 하나를 정하고 불필요한 조상을 제거한다. 여러 alias가 남으면 link·권한·캐시·문서 계약이 분산되므로 단순화는 URL 길이가 아니라 ownership과 식별 semantics로 결정한다."
   },
   {
     "kind": "question",
@@ -53,7 +53,7 @@
       {"key": "D", "content": "200 OK만 사용하면 client가 가장 단순해진다.", "displayOrder": 3}
     ],
     "correctChoiceKey": "B",
-    "explanationMarkdown": "HTTP idempotence는 응답 동일성이 아니라 의도된 효과의 중복 누적 여부를 말한다."
+    "explanationMarkdown": "DELETE의 두 번째 요청이 404를 반환해도 이미 삭제된 의도된 상태가 다시 누적되지 않는다면 idempotent일 수 있다. 반대로 POST도 application key 등으로 중복 효과를 제거하도록 설계할 수 있으므로 응답 body 동일성이나 method 이름만으로 판단하지 않는다."
   },
   {
     "kind": "question",
@@ -64,18 +64,18 @@
     "status": "PUBLISHED",
     "conceptKeys": ["backend.core.api.methods-status"],
     "modelAnswer": "201은 새 resource 생성 완료, 202는 처리가 접수됐지만 완료되지 않을 수 있음, 409는 현재 resource state와 요청이 충돌함을 표현한다.",
-    "explanationMarkdown": "status를 처리 상태와 연결해야 한다."
+    "explanationMarkdown": "201은 새 resource가 생성되어 그 결과를 표현할 수 있다는 뜻이고, 202는 접수만 완료되어 최종 결과가 아직 없을 수 있음을 나타낸다. 409는 현재 resource state와 요청이 충돌해 같은 입력을 단순 재전송할 문제가 아니라는 의미이므로 client의 다음 행동도 달라진다."
   },
   {
     "kind": "question",
     "contentKey": "backend.core.api.methods-status.q3",
     "promptMarkdown": "결제 요청을 모든 실패 포함 `200 {success:false}`로 반환한다. 어떤 interoperability/contract 문제가 생기는가?",
     "questionType": "SCENARIO",
-    "difficulty": "HARD",
+    "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["backend.core.api.methods-status"],
     "modelAnswer": "HTTP client/proxy가 transport-level 성공으로만 해석하고 generic failure handling이 어려워진다. 적절한 status와 안정적 error body를 분리해야 한다.",
-    "explanationMarkdown": "HTTP 의미와 product error를 분리해야 한다."
+    "explanationMarkdown": "실패를 200으로 포장하면 proxy·monitoring·generic client가 transport 성공으로 기록하고 retry나 alert, 사용자 수정 안내를 잘못 판단할 수 있다. HTTP status로 protocol-level 실패를 표현하고 body의 stable product code로 세부 원인과 retryability를 전달해야 한다."
   },
   {
     "kind": "question",
@@ -92,7 +92,7 @@
       {"key": "D", "content": "문서 오타를 고친다.", "displayOrder": 3}
     ],
     "correctChoiceKey": "B",
-    "explanationMarkdown": "semantic breaking change는 schema가 같아도 소비자를 깨뜨릴 수 있다."
+    "explanationMarkdown": "field type이 같아도 할인 전 금액을 최종 결제 금액으로 바꾸면 기존 client의 계산과 화면 의미가 조용히 달라진다. optional field 추가처럼 consumer가 무시할 수 있는 변화와 달리 semantic change는 문서·version·공존 기간을 검토해야 하는 breaking change다."
   },
   {
     "kind": "question",
@@ -103,7 +103,7 @@
     "status": "PUBLISHED",
     "conceptKeys": ["backend.core.api.compatibility"],
     "modelAnswer": "strict deserializer나 exhaustive switch가 unknown value를 처리하지 못하면 schema상 작은 확장도 runtime 실패가 될 수 있다.",
-    "explanationMarkdown": "소비자의 실제 처리 방식까지 봐야 한다."
+    "explanationMarkdown": "새 enum 값이 wire schema에는 additive여도 strict deserializer나 exhaustive switch가 unknown을 예외로 처리하면 구버전 client가 runtime failure를 낸다. consumer의 unknown 정책을 확인하고 fallback·capability negotiation 또는 단계적 rollout으로 의미 변화를 통제해야 한다."
   },
   {
     "kind": "question",
@@ -114,6 +114,6 @@
     "status": "PUBLISHED",
     "conceptKeys": ["backend.core.api.compatibility"],
     "modelAnswer": "새 field additive 제공→server가 old/new 동시 지원→client migration→usage 관측/deprecation→old field 제거 순으로 공존 기간을 둔다.",
-    "explanationMarkdown": "producer와 consumer의 배포 시점 차이를 고려해야 한다."
+    "explanationMarkdown": "먼저 새 field를 additive로 제공하고 server가 old/new를 함께 읽거나 쓰게 한 뒤 client를 이동시키고 실제 사용량을 관측한다. deprecation window 동안 구버전 사용을 확인한 후에만 old field를 제거해야 하며, producer 배포만 먼저 하면 구버전 요청이 깨질 수 있다."
   }
 ]
