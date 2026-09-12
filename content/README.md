@@ -54,6 +54,21 @@ References should point to the most specific verified primary source available. 
 when a stable page for the exact contract exists. Implementation-dependent behavior must not be presented as a language,
 framework, database, browser, JVM, OS, or protocol guarantee.
 
+### Reference identity contract
+
+A Reference URL is a **global canonical identity**, not a Concept-local copy. If the same URL is attached to multiple
+Concepts, the global metadata must stay identical everywhere it appears: `title`, `referenceType`, `language`, `depth`,
+and `recommendation` describe the shared Reference itself.
+
+`displayOrder` and `relationNote` belong to the Concept-to-Reference link, so they may differ by Concept. For example, the
+same Java GC article can be the second reference for one Concept and the third for another, with a different note that
+explains why that Concept links to it.
+
+Before adding a URL that may already exist elsewhere in the canonical pack, search the repository and reuse its existing
+global metadata instead of inventing a second title or classification. Full-pack bootstrap idempotency must remain green:
+a second canonical import must classify every unchanged Topic, Concept, Question, and shared Reference relationship as
+`UNCHANGED`.
+
 ### Reading depth and paragraph rhythm
 
 The main Concept body should make the current learning objective understandable without turning every page into a
