@@ -20,7 +20,7 @@ references:
     referenceType: OFFICIAL
     language: en
     displayOrder: 2
-    relationNote: delimiter 기반 token 순회 API 확인
+    relationNote: delimiter 기반 token 순회 API와 legacy 성격 확인
 ---
 # BufferedReader 입력과 토큰화
 
@@ -115,6 +115,25 @@ while ((line = reader.readLine()) != null) {
 
 다만 이것을 "Scanner는 절대 쓰면 안 된다"는 규칙으로 외울 필요는 없습니다. 입력량이 작고 제한이 넉넉한 문제에서는 가독성이 더 중요할 수 있습니다. 실제 제한과 구현 복잡도를 보고 선택합니다.
 
+### StringTokenizer는 범용 애플리케이션 파서의 정답이 아니다
+
+Java API 문서에서 `StringTokenizer`는 새 코드에 적극 권장되는 현대적인 범용 문자열 처리 API라기보다 호환성을 위해 유지되는 legacy class로 설명됩니다. 그런데 코딩테스트에서는 입력이 단순한 공백 구분 숫자이고 구현 시간을 줄이는 것이 중요해서 여전히 실용적으로 사용됩니다.
+
+이 차이를 구분해야 합니다.
+
+```text
+코딩테스트
+- 형식이 단순하고 고정됨
+- 빠르게 token을 순회하는 구현이 중요
+- StringTokenizer가 실용적일 수 있음
+
+일반 애플리케이션
+- CSV quoting, escape, validation, locale 등 복잡한 계약 가능
+- 해당 형식에 맞는 parser/library 선택
+```
+
+즉 `StringTokenizer`를 자주 쓴다는 사실을 "모든 text parsing에 적합한 최신 표준 API"라고 일반화하면 안 됩니다.
+
 ### 입력 처리 코드도 문제 풀이 상태의 일부다
 
 다음과 같은 실수를 문제 풀이 전에 확인하면 좋습니다.
@@ -137,4 +156,14 @@ while ((line = reader.readLine()) != null) {
 
 ### 학습 후 스스로 설명해 보기
 
-`BufferedReader`는 문자 입력을 buffering하고 `readLine()`으로 줄을 읽습니다. `StringTokenizer`는 한 줄을 공백 등의 delimiter로 나누어 token을 순서대로 꺼내는 데 사용할 수 있습니다. 코딩테스트에서는 입력 형식과 값 범위를 먼저 확인하고, token이 여러 줄에 걸칠 수 있는지와 `int`/`long` overflow 가능성까지 함께 보는 것이 중요합니다.
+`BufferedReader`는 문자 입력을 buffering하고 `readLine()`으로 줄을 읽습니다. `StringTokenizer`는 한 줄을 공백 등의 delimiter로 나누어 token을 순서대로 꺼내는 데 사용할 수 있습니다. 코딩테스트에서는 입력 형식과 값 범위를 먼저 확인하고, token이 여러 줄에 걸칠 수 있는지와 `int`/`long` overflow 가능성까지 함께 보는 것이 중요합니다. `StringTokenizer`는 코딩테스트에서는 편리하지만 복잡한 외부 형식까지 맡기는 범용 parser로 일반화하지 않습니다.
+
+### 면접에서 이렇게 나옵니다
+
+#### Q. `BufferedReader`가 빠르다고 해서 `StringTokenizer` 한 개로 입력 전체를 읽을 수 있나요?
+
+아닙니다. `BufferedReader.readLine()`은 한 줄을 읽고 `StringTokenizer`는 전달받은 그 문자열 안의 token만 순회합니다. 입력 계약상 token이 여러 줄에 걸칠 수 있다면 tokenizer가 소진될 때 다음 줄을 읽어 새 tokenizer를 만드는 등의 로직이 필요합니다.
+
+#### Q. 코딩테스트에서 `StringTokenizer`를 자주 쓰는데 일반 애플리케이션에서도 항상 권장되나요?
+
+그렇게 일반화하기 어렵습니다. 코딩테스트의 단순한 공백 구분 입력에는 구현이 짧고 실용적이지만, 실제 파일이나 프로토콜은 quoting·escape·validation 같은 별도 문법을 가질 수 있습니다. 그 경우 해당 형식의 parser 계약을 사용하는 편이 안전합니다.
