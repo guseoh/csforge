@@ -6,12 +6,20 @@
 .quiz-setup-page .quiz-setup-heading {
   justify-items: start;
   max-width: 760px;
-  margin: 18px 0 30px;
+  margin: 14px 0 28px;
   text-align: left;
+}
+
+.quiz-setup-page .quiz-setup-heading h1 {
+  font-size: clamp(2rem, 2.6vw, 2.45rem);
+  letter-spacing: -0.04em;
+  line-height: 1.14;
 }
 
 .quiz-setup-page .quiz-setup-heading .lead {
   margin: 12px 0 0;
+  font-size: 0.98rem;
+  line-height: 1.68;
 }
 
 .quiz-setup-page .quiz-setup-heading > .result-count {
@@ -21,7 +29,7 @@
 .quiz-quick-start {
   display: grid;
   gap: 18px;
-  padding: 24px 0 28px;
+  padding: 22px 0 26px;
   border-top: 1px solid var(--border-subtle);
   border-bottom: 1px solid var(--border-subtle);
 }
@@ -33,12 +41,12 @@
 .quiz-quick-start .quiz-quick-intro h2 {
   margin: 4px 0 2px;
   color: var(--text-strong);
-  font-size: 1.25rem;
+  font-size: 1.2rem;
 }
 
 .quiz-quick-start .quiz-quick-intro > span {
   color: var(--text-muted);
-  font-size: 0.8rem;
+  font-size: 0.82rem;
 }
 
 .quiz-quick-start .quiz-quick-presets {
@@ -50,6 +58,15 @@
   min-height: 68px;
   border-color: var(--border-subtle);
   background: transparent;
+}
+
+.quiz-quick-start .quiz-preset-button strong {
+  font-size: 0.86rem;
+}
+
+.quiz-quick-start .quiz-preset-button small {
+  font-size: 0.76rem;
+  line-height: 1.4;
 }
 
 .quiz-quick-start .quiz-preset-button:hover {
@@ -64,7 +81,7 @@
 }
 
 .quiz-config-disclosure {
-  margin-top: 30px;
+  margin-top: 28px;
   border-top: 1px solid var(--border-subtle);
   border-bottom: 1px solid var(--border-subtle);
 }
@@ -77,7 +94,7 @@
   padding: 17px 2px;
   color: var(--text-muted);
   cursor: pointer;
-  font-size: 0.74rem;
+  font-size: 0.8rem;
   list-style: none;
 }
 
@@ -96,7 +113,7 @@
 
 .quiz-config-disclosure > summary strong {
   color: var(--text-strong);
-  font-size: 0.95rem;
+  font-size: 0.98rem;
 }
 
 .quiz-config-disclosure > .quiz-config-panel {
@@ -120,9 +137,25 @@
   border-top: 0;
 }
 
+.quiz-config-disclosure .quiz-selection-group legend {
+  font-size: 0.84rem;
+}
+
+.quiz-config-disclosure .quiz-selection-group legend span {
+  font-size: 0.75rem;
+}
+
 .quiz-config-disclosure .quiz-choice-option {
   border-color: var(--border-subtle);
   background: transparent;
+}
+
+.quiz-config-disclosure .quiz-choice-option > span {
+  font-size: 0.8rem;
+}
+
+.quiz-config-disclosure .quiz-choice-option small {
+  font-size: 0.74rem;
 }
 
 .quiz-config-disclosure .quiz-choice-option:hover {
@@ -159,11 +192,12 @@
 
 .quiz-unified-start > div:first-child > strong {
   color: var(--text-strong);
-  font-size: 0.88rem;
+  font-size: 0.9rem;
 }
 
 .quiz-unified-start .helper-text {
   margin: 0;
+  font-size: 0.8rem;
 }
 
 .quiz-unified-start-actions {
