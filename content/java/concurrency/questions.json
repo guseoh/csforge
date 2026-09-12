@@ -107,7 +107,7 @@
   {
     "kind": "question",
     "contentKey": "java.core.concurrency.concurrency-vs-parallelism.q4",
-    "promptMarkdown": "하나의 event-loop thread가 두 I/O 작업을 관리한다. 작업 A가 네트워크 응답을 기다리는 동안 thread를 차단하지 않고 A의 처리를 보류했다가, 준비된 작업 B를 처리했다. 이를 가장 정확히 설명한 것은?",
+    "promptMarkdown": "하나의 event-loop thread가 두 I/O 작업을 다음처럼 관리한다.\n\n1. 작업 A가 network response를 기다린다.\n2. Thread를 block하지 않고 A 처리를 보류한다.\n3. 준비된 작업 B를 처리한다.\n\n이를 concurrency와 parallelism 관점에서 가장 정확히 설명한 것은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "HARD",
     "status": "PUBLISHED",
@@ -492,7 +492,7 @@
   {
     "kind": "question",
     "contentKey": "java.core.concurrency.platform-virtual-thread.q5",
-    "promptMarkdown": "virtual thread 100만 개가 각각 외부 I/O를 기다리지만 실제 외부 서버 동시 요청 한도는 100이다. 적절한 결론은?",
+    "promptMarkdown": "실행 환경의 두 concurrency 한도는 다음과 같다.\n\n- Virtual thread: 1,000,000개가 각각 외부 I/O 대기\n- 외부 server: 동시 요청 최대 100개\n\n가장 적절한 결론은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "HARD",
     "status": "PUBLISHED",
@@ -702,7 +702,7 @@
   {
     "kind": "question",
     "contentKey": "java.core.concurrency.shared-mutable-state-race.q5",
-    "promptMarkdown": "두 thread가 balance와 ledgerTotal을 각각 갱신하고 각 field에 별도 AtomicInteger를 썼다. 가능한 문제는?",
+    "promptMarkdown": "두 thread가 다음 상태를 각각 갱신하며 각 field에 별도 `AtomicInteger`를 사용한다.\n\n- `balance`\n- `ledgerTotal`\n\n두 값이 항상 함께 일치해야 할 때 가능한 문제는?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "HARD",
     "status": "PUBLISHED",
@@ -912,7 +912,7 @@
   {
     "kind": "question",
     "contentKey": "java.core.concurrency.synchronized-monitor.q5",
-    "promptMarkdown": "increment는 synchronized(this) 안에서 value를 바꾸지만 read는 다른 lock 객체로 동기화한다. 가장 큰 문제는?",
+    "promptMarkdown": "같은 `value`에 접근하는 두 경로가 서로 다른 lock을 사용한다.\n\n- `increment`: `synchronized(this)` 안에서 변경\n- `read`: 별도 lock 객체로 동기화해 조회\n\n가장 큰 문제는?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "HARD",
     "status": "PUBLISHED",
@@ -1122,7 +1122,7 @@
   {
     "kind": "question",
     "contentKey": "java.core.concurrency.jmm-happens-before-visibility.q5",
-    "promptMarkdown": "A가 data=42를 쓰고 lock.unlock(), B가 같은 lock을 lock()한 뒤 data를 읽는다. B가 42를 볼 수 있는 근거는?",
+    "promptMarkdown": "두 thread가 다음 순서로 같은 lock을 사용한다.\n\n1. A가 `data=42`를 쓴다.\n2. A가 `lock.unlock()`을 호출한다.\n3. B가 같은 lock의 `lock()`을 호출한다.\n4. B가 `data`를 읽는다.\n\nB가 42를 볼 수 있는 JMM 근거는?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "HARD",
     "status": "PUBLISHED",
@@ -1157,7 +1157,7 @@
   {
     "kind": "question",
     "contentKey": "java.core.concurrency.jmm-happens-before-visibility.q6",
-    "promptMarkdown": "ready만 volatile이고 data는 일반 field다. A가 data=42 후 ready=true, B가 ready를 읽고 data를 읽는다. 가장 정확한 판단은?",
+    "promptMarkdown": "다음 producer-consumer 순서를 가정한다. `ready`만 `volatile`이고 `data`는 일반 field다.\n\n1. A가 `data=42`를 쓴다.\n2. A가 `ready=true`를 쓴다.\n3. B가 `ready`의 true를 읽는다.\n4. B가 `data`를 읽는다.\n\n가장 정확한 판단은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "HARD",
     "status": "PUBLISHED",
@@ -1332,7 +1332,7 @@
   {
     "kind": "question",
     "contentKey": "java.core.concurrency.safe-publication-final-fields.q5",
-    "promptMarkdown": "Config의 final port와 mutable hosts를 생성자에서 초기화하고 volatile Config current에 publish한다. reader가 안전하게 얻는 결론은?",
+    "promptMarkdown": "`Config`의 상태와 publication 경계는 다음과 같다.\n\n- `port`: 생성자에서 초기화한 final field\n- `hosts`: 생성자에서 초기화한 mutable object\n- `current`: 완성된 `Config`를 publish하는 volatile field\n\nReader가 안전하게 얻을 수 있는 결론은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "HARD",
     "status": "PUBLISHED",
@@ -1542,7 +1542,7 @@
   {
     "kind": "question",
     "contentKey": "java.core.concurrency.volatile.q5",
-    "promptMarkdown": "두 thread가 volatile count=0을 각각 읽고 1을 계산한 뒤 쓰는 실행에서 가능한 결과는?",
+    "promptMarkdown": "두 thread가 `volatile int count=0`을 다음처럼 갱신한다.\n\n1. 두 thread가 각각 `count`에서 0을 읽는다.\n2. 각자 1을 계산한다.\n3. 각자 계산 결과를 `count`에 쓴다.\n\n가능한 최종 결과는?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "HARD",
     "status": "PUBLISHED",
@@ -1577,7 +1577,7 @@
   {
     "kind": "question",
     "contentKey": "java.core.concurrency.volatile.q6",
-    "promptMarkdown": "data 일반 field를 먼저 쓰고 ready volatile을 true로 쓰는 producer, ready를 읽은 뒤 data를 읽는 consumer의 reasoning은?",
+    "promptMarkdown": "Producer와 consumer가 다음 순서로 동작한다. `data`는 일반 field이고 `ready`는 volatile이다.\n\n1. Producer가 `data`를 쓴다.\n2. Producer가 `ready=true`를 쓴다.\n3. Consumer가 `ready`의 true를 읽는다.\n4. Consumer가 `data`를 읽는다.\n\n이 publication 흐름에 대한 가장 정확한 reasoning은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "HARD",
     "status": "PUBLISHED",
@@ -1752,7 +1752,7 @@
   {
     "kind": "question",
     "contentKey": "java.core.concurrency.atomic-cas.q5",
-    "promptMarkdown": "AtomicInteger count에 대해 get=5, 다른 thread가 6으로 변경, 첫 thread가 CAS(5,7)를 수행하면?",
+    "promptMarkdown": "`AtomicInteger count`에 다음 순서로 변경이 일어난다.\n\n1. 첫 thread가 `get()`으로 5를 읽는다.\n2. 다른 thread가 값을 6으로 바꾼다.\n3. 첫 thread가 `compareAndSet(5, 7)`을 호출한다.\n\n결과는?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "HARD",
     "status": "PUBLISHED",
@@ -1787,7 +1787,7 @@
   {
     "kind": "question",
     "contentKey": "java.core.concurrency.atomic-cas.q6",
-    "promptMarkdown": "balance와 version을 각각 CAS로 갱신하는 코드가 두 field의 관계를 보장하지 못하는 이유는?",
+    "promptMarkdown": "다음 두 값을 각각 별도 CAS로 갱신한다.\n\n- `balance`\n- `version`\n\n두 field의 관계를 항상 함께 보존해야 할 때 이 코드가 충분하지 않은 이유는?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "HARD",
     "status": "PUBLISHED",
@@ -2102,7 +2102,7 @@
   {
     "kind": "question",
     "contentKey": "java.core.concurrency.executor-task-thread-pools.q5",
-    "promptMarkdown": "core=2, max=4, bounded queue=1인 executor에 task가 계속 들어올 때 일반적인 흐름은?",
+    "promptMarkdown": "`ThreadPoolExecutor` 설정은 다음과 같다.\n\n| 항목 | 값 |\n| --- | ---: |\n| Core pool size | 2 |\n| Maximum pool size | 4 |\n| Bounded queue capacity | 1 |\n\nTask가 계속 들어올 때 worker 생성·queue·rejection의 일반적인 흐름은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "HARD",
     "status": "PUBLISHED",
@@ -2137,7 +2137,7 @@
   {
     "kind": "question",
     "contentKey": "java.core.concurrency.executor-task-thread-pools.q6",
-    "promptMarkdown": "CPU-bound task용 pool을 외부 DB connection 10개로 제한된 서비스에 연결한다. pool size만 크게 잡을 때의 위험은?",
+    "promptMarkdown": "CPU-bound task용 pool이 다음 외부 resource를 사용한다.\n\n- Executor pool: 크기를 크게 늘릴 수 있음\n- DB connection pool: 최대 10개\n\nExecutor pool size만 크게 잡을 때의 위험은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "HARD",
     "status": "PUBLISHED",
@@ -2487,7 +2487,7 @@
   {
     "kind": "question",
     "contentKey": "java.core.concurrency.countdownlatch-coordination.q4",
-    "promptMarkdown": "3개 worker 중 하나가 예외로 끝났고 주 thread는 latch.await에서 진행했지만 결과 목록에는 실패가 있었다. 올바른 설계 판단은?",
+    "promptMarkdown": "3개 worker와 주 thread의 결과는 다음과 같다.\n\n1. Worker 하나가 예외로 끝난다.\n2. 모든 worker가 completion 신호를 보내 latch count는 0이 된다.\n3. 주 thread는 `latch.await()`에서 진행한다.\n4. 결과 목록에는 실패가 남아 있다.\n\n올바른 설계 판단은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "HARD",
     "status": "PUBLISHED",
@@ -2627,7 +2627,7 @@
   {
     "kind": "question",
     "contentKey": "java.core.concurrency.semaphore-permits.q4",
-    "promptMarkdown": "permit 2개인 Semaphore에서 두 작업이 permit을 얻었고 한 작업이 예외로 빠졌다. 이후 모든 작업이 영원히 대기한다. 원인과 수정은?",
+    "promptMarkdown": "Permit 2개인 `Semaphore`에서 다음 순서로 장애가 발생했다.\n\n1. 두 작업이 permit을 하나씩 얻는다.\n2. 한 작업이 예외로 빠지며 permit을 반환하지 않는다.\n3. 이후 작업들이 결국 모두 대기한다.\n\n원인과 수정은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "HARD",
     "status": "PUBLISHED",
@@ -3012,7 +3012,7 @@
   {
     "kind": "question",
     "contentKey": "java.core.concurrency.threadlocal-context.q5",
-    "promptMarkdown": "pool worker W가 request A의 context를 set하고 remove하지 않은 채 request B를 처리한다. B에서 가능한 문제는?",
+    "promptMarkdown": "Thread pool의 worker W가 다음 요청들을 순서대로 처리한다.\n\n1. Request A의 context를 `ThreadLocal`에 설정한다.\n2. Context를 remove하지 않고 A를 종료한다.\n3. 같은 worker가 request B를 처리한다.\n\nB에서 가능한 문제는?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "HARD",
     "status": "PUBLISHED",
@@ -3222,7 +3222,7 @@
   {
     "kind": "question",
     "contentKey": "java.core.concurrency.scoped-value-context.q5",
-    "promptMarkdown": "ScopedValue.where(KEY,\"outer\").run 안에서 where(KEY,\"inner\").run을 실행한 뒤 inner 범위를 벗어나면?",
+    "promptMarkdown": "`ScopedValue` binding이 다음처럼 중첩된다.\n\n1. `where(KEY, \"outer\").run` 범위에 진입한다.\n2. 그 안에서 `where(KEY, \"inner\").run`을 실행한다.\n3. Inner 범위를 벗어나 outer 범위로 돌아온다.\n\n각 단계에서 보이는 binding은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "HARD",
     "status": "PUBLISHED",
@@ -3432,7 +3432,7 @@
   {
     "kind": "question",
     "contentKey": "java.core.concurrency.future-completablefuture.q5",
-    "promptMarkdown": "A.thenApply(f).thenApply(g)에서 A를 완료시키는 thread가 있고 두 stage가 non-async일 때 가장 정확한 추론은?",
+    "promptMarkdown": "다음 `CompletableFuture` chain을 실행한다.\n\n```java\nA.thenApply(f).thenApply(g)\n```\n\nA를 완료시키는 thread가 있고 두 dependent stage는 모두 non-async일 때, stage 실행 thread에 대한 가장 정확한 추론은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "HARD",
     "status": "PUBLISHED",
@@ -3642,7 +3642,7 @@
   {
     "kind": "question",
     "contentKey": "java.core.concurrency.deadlock-starvation-livelock.q5",
-    "promptMarkdown": "A가 L1을 잡고 L2를 기다리고 B가 L2를 잡고 L1을 기다린다. 진단 결론은?",
+    "promptMarkdown": "두 thread의 lock 상태는 다음과 같다.\n\n| Thread | 보유 lock | 대기 lock |\n| --- | --- | --- |\n| A | `L1` | `L2` |\n| B | `L2` | `L1` |\n\n진단 결론은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "HARD",
     "status": "PUBLISHED",
@@ -3713,7 +3713,7 @@
 {
   "kind": "question",
   "contentKey": "java.core.concurrency.atomic-cas.q7",
-  "promptMarkdown": "재고 수량과 주문 상태를 각각 AtomicInteger와 AtomicReference로 갱신한다. 두 갱신이 항상 함께 성공해야 한다면 단일 atomic 변수만으로 충분한가? 실패 시 재고를 되돌리는 retry 설계의 한계까지 설명하라.",
+  "promptMarkdown": "재고와 주문 상태를 다음처럼 별도 atomic variable로 갱신한다.\n\n- 재고 수량: `AtomicInteger`\n- 주문 상태: `AtomicReference`\n- 요구 계약: 두 갱신이 항상 함께 성공해야 함\n\n단일 atomic variable만으로 충분한가? 실패 시 재고를 되돌리는 retry 설계의 한계까지 설명하라.",
   "questionType": "SCENARIO",
   "difficulty": "HARD",
   "status": "PUBLISHED",

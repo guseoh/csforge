@@ -1892,7 +1892,7 @@
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.heap-metaspace-native-thread-memory.q5",
-    "promptMarkdown": "RSS 증가, heap dump는 안정적, thread 수가 급증한 상황의 1차 가설은?",
+    "promptMarkdown": "Process memory에서 다음 결과가 함께 관측된다.\n\n| Signal | 변화 |\n| --- | --- |\n| RSS | 증가 |\n| Heap dump | 안정적 |\n| Thread 수 | 급증 |\n\n가장 먼저 세울 가설은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "HARD",
     "status": "PUBLISHED",
@@ -2383,7 +2383,7 @@
 {
   "kind": "question",
   "contentKey": "java.core.jvm-runtime.runtime-diagnostics-jcmd-jstack-jfr.q7",
-  "promptMarkdown": "API latency가 상승했지만 CPU는 낮다. jstack에서 다수 요청 thread가 같은 외부 호출을 기다리는 상태라면 어떤 가설을 세우고, 한 번의 thread dump만으로 결론 내리지 않기 위해 무엇을 추가로 관찰하겠는가?",
+  "promptMarkdown": "API latency가 상승했지만 CPU는 낮다. `jstack`에서는 다수의 request thread가 같은 외부 호출을 기다린다.\n\n어떤 가설을 세울 수 있으며, 한 번의 thread dump만으로 결론 내리지 않기 위해 무엇을 추가로 관찰해야 하는가?",
   "questionType": "SCENARIO",
   "difficulty": "HARD",
   "status": "PUBLISHED",
