@@ -21,6 +21,12 @@ references:
     language: en
     displayOrder: 2
     relationNote: ZoneId 규칙을 적용한 날짜·시간 표현과 변환 확인
+  - url: "https://d2.naver.com/helloworld/645609"
+    title: "네이버 D2: Java의 날짜와 시간 API"
+    referenceType: COMPANY_TECH_BLOG
+    language: ko
+    displayOrder: 3
+    relationNote: Java 날짜·시간 API가 local time과 timezone-aware time을 분리한 배경을 한국어로 함께 확인
 ---
 # Instant·LocalDateTime·ZonedDateTime
 
@@ -36,7 +42,7 @@ Java Time API는 이 차이를 타입으로 나누어 표현합니다. 핵심은
 Instant createdAt = Instant.parse("2026-08-31T05:00:00Z");
 ```
 
-`Instant`는 UTC-SLS 기반의 Java time-scale 위 한 지점을 표현하며 일반적인 백엔드 코드에서는 **지역 시간대와 분리된 하나의 사건 시점**으로 다루면 이해하기 쉽습니다. 같은 `Instant`를 서울에서 보든 뉴욕에서 보든 사건이 발생한 순간 자체는 달라지지 않습니다.
+`Instant`는 Java Time API에서 timeline의 한 지점을 표현합니다. 일반적인 백엔드 코드에서는 **지역 시간대와 분리된 하나의 사건 시점**으로 이해하면 충분합니다. 같은 `Instant`를 서울에서 보든 뉴욕에서 보든 사건이 발생한 순간 자체는 달라지지 않습니다.
 
 ```text
 하나의 Instant
