@@ -22,7 +22,7 @@ references:
     displayOrder: 2
     relationNote: suppressed exception 조회 계약 확인
   - url: "https://d2.naver.com/helloworld/1219"
-    title: "JDK 7"
+    title: "네이버 D2: JDK 7의 NIO.2와 파일 API"
     referenceType: COMPANY_TECH_BLOG
     language: ko
     displayOrder: 3
