@@ -11,7 +11,7 @@ displayOrder: 70
 references:
   - url: "https://pages.cs.wisc.edu/~remzi/OSTEP/file-implementation.pdf"
     title: "File System Implementation"
-    referenceType: OFFICIAL
+    referenceType: BOOK
     language: en
     depth: section
     recommendation: "inode, directory entry, data block, allocation 구조가 file-system access path를 만드는 방식을 확인한다."
@@ -20,6 +20,8 @@ references:
 # Block Allocation
 
 filesystem은 새 file을 만들거나 기존 file이 커질 때 free-space 상태에서 data block을 골라 file의 logical block과 연결해야 한다. allocation policy는 단순히 빈 공간을 찾는 문제가 아니라 **file 성장, sequential/random access, locality, metadata overhead, fragmentation**을 함께 조정하는 문제다.
+
+![연속·연결·indexed allocation이 만드는 lookup과 fragmentation trade-off](/learning/operating-systems/block-allocation-tradeoff.svg)
 
 ### 단순한 allocation 방식이 보여주는 trade-off
 

@@ -11,7 +11,7 @@ displayOrder: 50
 references:
   - url: "https://pages.cs.wisc.edu/~remzi/OSTEP/file-implementation.pdf"
     title: "File System Implementation"
-    referenceType: OFFICIAL
+    referenceType: BOOK
     language: en
     depth: section
     recommendation: "inode, directory entry, data block, allocation 구조가 file-system access path를 만드는 방식을 확인한다."
@@ -20,6 +20,8 @@ references:
 # Inode
 
 inode는 Unix 계열 filesystem을 설명할 때 file의 **이름과 분리된 내부 object metadata**를 이해하기 위한 핵심 구조다. directory entry가 `name → inode number` 관계를 저장하고, inode는 file type, owner, permission, size, timestamps, link count와 data block 위치를 찾는 정보를 가진다. 실제 inode field와 block-addressing 방식은 filesystem마다 다르지만 이름과 object metadata를 분리한다는 모델이 중요하다.
+
+![directory entry, inode metadata, data block의 관계](/learning/operating-systems/inode-file-layout.svg)
 
 ### 이름은 directory에 있고 inode는 object를 설명한다
 
@@ -36,3 +38,9 @@ inode에는 작은 metadata와 data 위치 정보가 있고 실제 file bytes는
 file을 늘리려면 free block 할당 상태, inode size/block mapping, 실제 data block 등 여러 persistent structure가 바뀔 수 있다. crash가 중간에 발생하면 일부만 기록될 위험이 있기 때문에 journaling이나 copy-on-write filesystem 같은 crash-consistency 설계가 필요해진다.
 
 Backend에서 temp file을 쓰고 rename으로 교체할 때도 pathname만 보면 안 된다. 새 file data, inode metadata, directory entry가 각각 어떤 시점에 durable한지는 별도의 filesystem 계약이다. 중요한 artifact를 저장한다면 application-level 상태와 checksum뿐 아니라 필요한 durability boundary까지 명확히 한다.
+
+### 면접에서 이렇게 나옵니다
+
+#### Q. inode와 filename은 어떤 관계인가요?
+
+Unix-like filesystem에서는 directory entry가 이름을 inode/object identifier에 연결하고, inode는 metadata와 data 위치 정보를 가집니다. 이 구분 덕분에 hard link, rename, unlink 후 열린 descriptor의 lifetime을 설명할 수 있습니다.
