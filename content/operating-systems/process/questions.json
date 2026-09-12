@@ -202,7 +202,7 @@
   {
     "kind": "question",
     "contentKey": "operating-systems.core.process.process-create.q3",
-    "promptMarkdown": "Fork 후 parent fd 3와 child fd 3가 같은 underlying open file description을 참조한다. 이 사실이 'descriptor가 완전 독립 복사'라는 설명과 충돌하는 이유를 설명하라.",
+    "promptMarkdown": "다음 fork 결과를 생각하자.\n\n- Parent의 fd 3 ─┐\n- Child의 fd 3  ─┴→ 같은 underlying open file description\n\n질문: 이 사실이 descriptor가 완전 독립 복사라는 설명과 충돌하는 이유를 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
@@ -335,7 +335,7 @@
   {
     "kind": "question",
     "contentKey": "operating-systems.core.process.wait-reap.q4",
-    "promptMarkdown": "Child stdout pipe를 parent가 충분히 읽지 않아 pipe buffer가 가득 찼고 parent는 child 종료만 blocking wait하고 있다. 발생 가능한 교착성 대기 흐름을 설명하라.",
+    "promptMarkdown": "상황:\n- Child stdout pipe를 parent가 충분히 읽지 않아 pipe buffer가 가득 찬다.\n- Parent는 child 종료만 blocking wait하고 있다.\n\n질문: 이 상태에서 발생 가능한 교착성 대기 흐름을 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",

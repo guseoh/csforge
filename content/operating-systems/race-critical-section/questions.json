@@ -165,7 +165,7 @@
   {
     "kind": "question",
     "contentKey": "operating-systems.core.race-critical-section.race-condition.q3",
-    "promptMarkdown": "두 HTTP 요청이 모두 `존재하지 않음`을 확인한 뒤 같은 unique key를 insert하려 한다. application lock보다 DB unique constraint가 중요한 이유를 설명하라.",
+    "promptMarkdown": "두 HTTP 요청이 다음 순서로 실행된다.\n\n- 요청 A: 같은 unique key가 존재하지 않음을 확인 → insert 시도\n- 요청 B: 같은 unique key가 존재하지 않음을 확인 → insert 시도\n\n질문: application lock보다 DB unique constraint가 중요한 이유를 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
