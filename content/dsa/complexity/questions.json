@@ -228,7 +228,7 @@
   {
     "kind": "question",
     "contentKey": "dsa.core.complexity.invariant-correctness.q4",
-    "promptMarkdown": "doubly linked list에서 node X를 삭제한 뒤 `X.prev.next`는 X.next로 갱신했지만 `X.next.prev`는 그대로 두었다. 즉시 forward traversal은 성공할 수도 있다. 그래도 자료구조가 잘못된 이유를 invariant와 후속 operation 관점에서 설명하라.",
+    "promptMarkdown": "상황: doubly linked list에서 node X를 삭제한 뒤 `X.prev.next`는 X.next로 갱신했지만 `X.next.prev`는 그대로 두었다. 즉시 forward traversal은 성공할 수도 있다.\n\n질문: 그래도 자료구조가 잘못된 이유를 invariant와 후속 operation 관점에서 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
