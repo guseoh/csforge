@@ -41,9 +41,9 @@ LIMIT 20;
 ```text
 정렬 순서 (DESC): 803 ─ 802 ─ 801 │ 800 ─ 799 ─ 798
                               ▲
-                              └─ page 1의 마지막 cursor = (10:00, 801)
+                              └─ page 1의 마지막 cursor = (10:00, 800)
 
-다음 page: (created_at, id) < (10:00, 801)인 row만 탐색
+다음 page: (created_at, id) < (10:00, 800)인 row만 탐색
 ```
 
 ### cursor는 ordering contract를 그대로 담아야 한다
