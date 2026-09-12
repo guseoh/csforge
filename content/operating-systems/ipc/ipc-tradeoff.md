@@ -46,7 +46,7 @@ IPC를 선택할 때 `가장 빠른가` 하나만 비교하면 실제 장애와 
 
 따라서 작은 control message와 명확한 종료 lifecycle에는 pipe·Unix socket·message queue가 읽기 쉬울 수 있고, 큰 local payload에는 shared memory가 후보가 될 수 있다. 다른 host로 확장하거나 이미 표준 request/response protocol이 필요하면 network socket을 선택하되 framing·timeout·재시도 semantics를 명시한다. 성능 숫자를 미리 가정하지 말고 payload 크기, access pattern, contention, failure recovery 비용을 측정한다.
 
-CSForge의 DB outbox와 worker queue 같은 application messaging은 이 OS primitive와 별도의 durability·redelivery 계약을 가진다. 파생 search/AI 작업을 process IPC로 연결하더라도 canonical PostgreSQL state와 중복 delivery 복구를 application boundary에서 보장해야 한다.
+DB-backed job, application queue, external broker 같은 application-level messaging은 이 OS primitive와 별도의 durability·redelivery 계약을 가진다. 어떤 방식을 선택하든 canonical business state와 duplicate processing 복구를 어느 계층이 책임지는지 명시해야 하며, OS IPC 자체가 그 보장을 대신한다고 가정하면 안 된다.
 
 ### 면접에서 이렇게 나옵니다
 
