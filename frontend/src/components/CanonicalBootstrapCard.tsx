@@ -42,5 +42,5 @@ export function CanonicalBootstrapCard({ readyAction = 'hide' }: CanonicalBootst
     return readyAction === 'learning-link' ? <Link className="primary-button" to="/learning" search={defaultLearningSearch}>학습 시작</Link> : null
   }
 
-  return <div className="canonical-bootstrap-card state-card"><strong>기본 학습 콘텐츠가 아직 준비되지 않았습니다.</strong><span>{statusQuery.data.state === 'PARTIAL' ? '일부 콘텐츠가 준비되어 있습니다. 계속 진행하세요.' : '처음 한 번만 실행하면 개념과 문제를 사용할 수 있습니다.'}</span><button className="primary-button" type="button" disabled={bootstrapMutation.isPending} onClick={() => bootstrapMutation.mutate()}>{bootstrapMutation.isPending ? '기본 학습 콘텐츠 준비 중…' : '기본 학습 콘텐츠 준비'}</button></div>
+  return <div className="canonical-bootstrap-card state-card" data-bootstrap-state={statusQuery.data.state}><strong>기본 학습 콘텐츠가 아직 준비되지 않았습니다.</strong><span>{statusQuery.data.state === 'PARTIAL' ? '일부 콘텐츠가 준비되어 있습니다. 계속 진행하세요.' : '처음 한 번만 실행하면 개념과 문제를 사용할 수 있습니다.'}</span><button className="primary-button" type="button" disabled={bootstrapMutation.isPending} onClick={() => bootstrapMutation.mutate()}>{bootstrapMutation.isPending ? '기본 학습 콘텐츠 준비 중…' : '기본 학습 콘텐츠 준비'}</button></div>
 }
