@@ -9,7 +9,7 @@ level: 2
 status: PUBLISHED
 displayOrder: 20
 references:
-  - url: "https://www.rfc-editor.org/rfc/rfc9110.html"
+  - url: "https://www.rfc-editor.org/rfc/rfc9110"
     title: "RFC 9110 HTTP Semantics"
     referenceType: OFFICIAL
     language: en

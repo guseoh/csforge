@@ -15,7 +15,7 @@ references:
     language: en
     displayOrder: 1
     relationNote: "CLOSED/OPEN/HALF_OPEN state와 failure window 동작 확인"
-  - url: "https://www.rfc-editor.org/rfc/rfc9110.html"
+  - url: "https://www.rfc-editor.org/rfc/rfc9110"
     title: "RFC 9110 HTTP Semantics"
     referenceType: OFFICIAL
     language: en
