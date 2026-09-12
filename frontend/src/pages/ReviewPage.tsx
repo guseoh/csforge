@@ -26,11 +26,11 @@ const timingClasses: Record<ReviewTiming, string> = {
 }
 
 const reviewWindowChoices = [
-  { value: 'ALL', label: '전체', description: '모든 복습 일정' },
-  { value: 'OVERDUE', label: '기한 지남', description: '가장 먼저 처리할 문제' },
-  { value: 'DUE', label: '지금 복습', description: '현재 풀 수 있는 문제' },
-  { value: 'NEXT_24H', label: '24시간 내', description: '곧 도래하는 일정' },
-  { value: 'NEXT_7D', label: '7일 내', description: '이번 주 복습 일정' },
+  { value: 'ALL', label: '전체' },
+  { value: 'OVERDUE', label: '기한 지남' },
+  { value: 'DUE', label: '지금 복습' },
+  { value: 'NEXT_24H', label: '24시간 내' },
+  { value: 'NEXT_7D', label: '7일 내' },
 ] as const
 
 function reviewTiming(dueAt: string | null, status: ReviewScheduleStatus) {
@@ -50,7 +50,15 @@ export function ReviewPage() {
   if (summary.isError || reviews.isError) return <ErrorState message="복습 일정을 불러오지 못했습니다." onRetry={() => { void summary.refetch(); void reviews.refetch() }} />
 
   const updateDue = (due: string) => void navigate({ search: (current) => ({ ...current, due, page: 0 }) })
-  const hasSchedules = summary.data.overdue + summary.data.dueNow + summary.data.next24Hours + summary.data.next7Days + summary.data.mastered > 0
+  const totalSchedules = summary.data.overdue + summary.data.dueNow + summary.data.next24Hours + summary.data.next7Days + summary.data.mastered
+  const hasSchedules = totalSchedules > 0
+  const reviewCounts: Record<(typeof reviewWindowChoices)[number]['value'], number> = {
+    ALL: totalSchedules,
+    OVERDUE: summary.data.overdue,
+    DUE: summary.data.dueNow,
+    NEXT_24H: summary.data.next24Hours,
+    NEXT_7D: summary.data.next7Days,
+  }
 
   return (
     <section className="page-section review-page">
@@ -73,19 +81,22 @@ export function ReviewPage() {
         </div>
       ) : (
         <>
-          <div className="review-summary-grid">
-            <div className="review-summary-overdue"><span>기한 지남</span><strong>{summary.data.overdue}</strong></div>
-            <div className="review-summary-due"><span>지금 복습</span><strong>{summary.data.dueNow}</strong></div>
-            <div><span>24시간 내</span><strong>{summary.data.next24Hours}</strong></div>
-            <div><span>7일 내</span><strong>{summary.data.next7Days}</strong></div>
-            <div className="review-summary-mastered"><span>정리 완료</span><strong>{summary.data.mastered}</strong></div>
-          </div>
-
-          <div className="review-window-panel">
-            <div className="filter-panel-header"><div><p className="eyebrow">복습 주기</p><strong>복습 시점</strong></div><span className="helper-text">필요한 일정만 골라 이어서 복습하세요.</span></div>
-            <div className="review-window-choices" role="group" aria-label="복습 시점">
-              {reviewWindowChoices.map((choice) => <button className={`review-window-choice${search.due === choice.value ? ' selected' : ''}`} key={choice.value} type="button" aria-pressed={search.due === choice.value} onClick={() => updateDue(choice.value)}><strong>{choice.label}</strong><span>{choice.description}</span></button>)}
+          <div className="review-window-toolbar" aria-label="복습 시점과 건수">
+            <div className="review-window-tabs" role="group" aria-label="복습 시점">
+              {reviewWindowChoices.map((choice) => (
+                <button
+                  className={`review-window-tab${search.due === choice.value ? ' selected' : ''}`}
+                  key={choice.value}
+                  type="button"
+                  aria-pressed={search.due === choice.value}
+                  onClick={() => updateDue(choice.value)}
+                >
+                  <span>{choice.label}</span>
+                  <strong>{reviewCounts[choice.value]}</strong>
+                </button>
+              ))}
             </div>
+            <span className="review-mastered-count">정리 완료 <strong>{summary.data.mastered}</strong></span>
           </div>
 
           {reviews.data.items.length === 0
@@ -93,7 +104,14 @@ export function ReviewPage() {
             : <div className="concept-list">{reviews.data.items.map((item) => {
                 const timing = reviewTiming(item.dueAt, item.status)
                 return <Link className="concept-list-item review-list-item" key={item.questionId} to="/wrong-notes/$questionId" params={{ questionId: String(item.questionId) }}>
-                  <div className="concept-list-main"><h3>{compactMarkdownPreview(item.promptMarkdown)}</h3><p>{item.concepts.map((concept) => `${concept.areaName} · ${concept.title} · 레벨 ${concept.level}`).join(', ')}</p><div className="chip-row concept-list-status"><span className="chip state-badge state-scheduled">단계 {item.stage}</span><span className={`chip state-badge review-timing-${timing.className}`}>{timing.label}</span><span className="chip">{item.status === 'SCHEDULED' ? '진행 중' : '정리 완료'}</span></div></div>
+                  <div className="concept-list-main">
+                    <h3>{compactMarkdownPreview(item.promptMarkdown)}</h3>
+                    <p>{item.concepts.map((concept) => `${concept.areaName} · ${concept.title} · 레벨 ${concept.level}`).join(', ')}</p>
+                    <div className="review-row-meta">
+                      <span>단계 {item.stage} · {item.status === 'SCHEDULED' ? '진행 중' : '정리 완료'}</span>
+                      <span className={`chip state-badge review-timing-${timing.className}`}>{timing.label}</span>
+                    </div>
+                  </div>
                   <div className="wrong-note-metrics"><strong>{item.dueAt ? new Date(item.dueAt).toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' }) : '정리 완료'}</strong><span>{timing.label}</span></div>
                 </Link>
               })}</div>}

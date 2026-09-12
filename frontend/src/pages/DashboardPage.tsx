@@ -8,24 +8,6 @@ import { defaultLearningSearch } from '../lib/learning-search'
 import { defaultQuizSearch } from '../lib/quiz-search'
 import { defaultWrongNoteSearch } from '../lib/wrong-note-search'
 
-const areaGlyphs: Record<string, string> = {
-  'computer-architecture': '▦',
-  'data-structures-algorithms': '</>',
-  'operating-systems': '▣',
-  'network-http': '◎',
-  database: '▤',
-  java: '☕',
-  spring: '✦',
-  'backend-engineering': '⌘',
-  cache: '◉',
-  'messaging-async': '↗',
-  'infrastructure-cloud': '◇',
-  'performance-observability-operations': '◒',
-  'distributed-systems': '⌘',
-  'system-design': '▱',
-  security: '◆',
-}
-
 function percent(value: number) {
   return `${Math.round(value)}%`
 }
@@ -84,65 +66,81 @@ export function DashboardPage() {
         : '개념을 읽고 문제로 확인한 뒤, 틀린 내용은 오답 노트와 복습으로 이어집니다.'
   const progressedAreas = dashboard.areaProgress.filter((area) => area.completedConceptCount > 0)
   const untouchedAreas = dashboard.areaProgress.filter((area) => area.completedConceptCount === 0)
-  const featuredAreas = [...progressedAreas, ...untouchedAreas].slice(0, 6)
+  const showingProgressedAreas = progressedAreas.length > 0
+  const featuredAreas = (showingProgressedAreas ? progressedAreas : untouchedAreas).slice(0, 6)
+  const areaSectionTitle = showingProgressedAreas ? '진행 중인 학습 영역' : '다음 학습 영역'
+  const areaSectionDescription = showingProgressedAreas
+    ? '이미 시작한 영역만 모아 현재 학습 흐름을 이어갑니다.'
+    : '아직 시작한 영역이 없습니다. 관심 있는 영역을 골라 첫 개념부터 시작해 보세요.'
 
   return (
     <section className="page-section dashboard-page">
-      <div className="dashboard-heading dashboard-heading-study">
-        <div>
-          <p className="eyebrow">오늘의 학습</p>
+      <header className="dashboard-next-action">
+        <div className="dashboard-next-action-copy">
+          <p className="eyebrow">다음 행동</p>
           <h1>{nextActionTitle}</h1>
           <p className="lead">{nextActionDescription}</p>
+          <p className="dashboard-date">{formatDate(dashboard.asOf)} 기준 · 오늘의 학습 상태</p>
         </div>
-        <span className="dashboard-as-of">{formatDate(dashboard.asOf)} 기준</span>
-      </div>
+        <div className="dashboard-next-action-actions">
+          <div className="dashboard-action-row">
+            {dashboard.activeQuiz && <Link className="primary-button" to="/quiz/$quizId" params={{ quizId: String(dashboard.activeQuiz.quizId) }}>이어 풀기 · {dashboard.activeQuiz.answeredCount}/{dashboard.activeQuiz.questionCount}</Link>}
+            {dashboard.today.reviewDueCount > 0 && <button className={dashboard.activeQuiz ? 'secondary-button' : 'primary-button'} type="button" disabled={reviewMutation.isPending} onClick={() => reviewMutation.mutate()}>{reviewMutation.isPending ? '복습 준비 중…' : '복습 시작'}</button>}
+            <Link className={dashboard.activeQuiz || dashboard.today.reviewDueCount > 0 ? 'secondary-button' : 'primary-button'} to="/learning" search={defaultLearningSearch}>개념 학습</Link>
+            <Link className="secondary-button" to="/quiz" search={defaultQuizSearch}>새 문제</Link>
+          </div>
+          {reviewMutation.isError && <p className="helper-text error-text">복습 문제를 시작하지 못했습니다. 다시 시도하세요.</p>}
+        </div>
+      </header>
 
-      <div className="dashboard-action-row dashboard-action-row-study">
-        {dashboard.activeQuiz && <Link className="primary-button" to="/quiz/$quizId" params={{ quizId: String(dashboard.activeQuiz.quizId) }}>이어 풀기 · {dashboard.activeQuiz.answeredCount}/{dashboard.activeQuiz.questionCount}</Link>}
-        {dashboard.today.reviewDueCount > 0 && <button className={dashboard.activeQuiz ? 'secondary-button' : 'primary-button'} type="button" disabled={reviewMutation.isPending} onClick={() => reviewMutation.mutate()}>{reviewMutation.isPending ? '복습 준비 중…' : '복습 시작'}</button>}
-        <Link className={dashboard.activeQuiz || dashboard.today.reviewDueCount > 0 ? 'secondary-button' : 'primary-button'} to="/learning" search={defaultLearningSearch}>개념 학습</Link>
-        <Link className="secondary-button" to="/quiz" search={defaultQuizSearch}>새 문제</Link>
-      </div>
-      {reviewMutation.isError && <p className="helper-text error-text">복습 문제를 시작하지 못했습니다. 다시 시도하세요.</p>}
-
-      <div className="dashboard-kpi-grid">
-        <div className="dashboard-kpi"><span>오늘 푼 문제</span><strong>{dashboard.today.solvedCount}</strong><small>정답 {dashboard.today.correctCount} · 오답 {dashboard.today.wrongCount}</small></div>
-        <div className="dashboard-kpi"><span>오늘 정확도</span><strong>{percent(dashboard.today.accuracyPercent)}</strong><small>{dashboard.today.solvedCount === 0 ? '아직 풀이 기록이 없습니다.' : '채점 완료 문항 기준'}</small></div>
-        <div className="dashboard-kpi dashboard-kpi-action"><span>복습 대기</span><strong>{dashboard.today.reviewDueCount}</strong><small>{dashboard.today.reviewDueCount > 0 ? '지금 시작할 수 있습니다.' : '현재 대기 중인 복습이 없습니다.'}</small></div>
-        <div className="dashboard-kpi"><span>연속 학습</span><strong>{dashboard.currentStreak}일</strong><small>{dashboard.currentStreak === 0 ? '오늘 다시 시작해 보세요.' : '활동이 이어지고 있습니다.'}</small></div>
-      </div>
+      <section className="dashboard-status-strip" aria-label="오늘의 학습 상태">
+        <div className="dashboard-status-item"><span>오늘 푼 문제</span><strong>{dashboard.today.solvedCount}</strong><small>정답 {dashboard.today.correctCount} · 오답 {dashboard.today.wrongCount}</small></div>
+        <div className="dashboard-status-item"><span>오늘 정확도</span><strong>{percent(dashboard.today.accuracyPercent)}</strong><small>{dashboard.today.solvedCount === 0 ? '아직 풀이 기록이 없습니다.' : '채점 완료 문항 기준'}</small></div>
+        <div className="dashboard-status-item dashboard-status-item-attention"><span>복습 대기</span><strong>{dashboard.today.reviewDueCount}</strong><small>{dashboard.today.reviewDueCount > 0 ? '지금 시작할 수 있습니다.' : '현재 대기 중인 복습이 없습니다.'}</small></div>
+        <div className="dashboard-status-item"><span>연속 학습</span><strong>{dashboard.currentStreak}일</strong><small>{dashboard.currentStreak === 0 ? '오늘 다시 시작해 보세요.' : '활동이 이어지고 있습니다.'}</small></div>
+      </section>
 
       {!hasActivity && <div className="dashboard-empty"><strong>첫 학습 기록을 만들어 보세요.</strong><span>개념을 읽거나 문제를 풀면 오늘의 활동과 진행률이 이곳에 쌓입니다.</span><CanonicalBootstrapCard readyAction="learning-link" /></div>}
 
       <section className="dashboard-section dashboard-area-section">
-        <div className="section-heading">
-          <div><p className="eyebrow">커리큘럼</p><h2>진행 중인 학습 영역</h2></div>
-          <Link className="text-link" to="/learning" search={defaultLearningSearch}>전체 15개 영역 보기 →</Link>
+        <div className="dashboard-section-heading">
+          <div><p className="eyebrow">커리큘럼</p><h2>{areaSectionTitle}</h2></div>
+          <Link className="text-link" to="/learning" search={defaultLearningSearch}>전체 {dashboard.areaProgress.length}개 영역 보기 →</Link>
         </div>
-        <p className="dashboard-section-copy">진행한 영역을 먼저 보여주고, 남는 자리는 다음 학습 영역으로 채웁니다.</p>
-        <div className="dashboard-area-grid dashboard-area-grid-compact">
-          {featuredAreas.map((area) => (
-            <Link className="dashboard-area-card dashboard-area-card-compact" key={area.areaSlug} to="/learning/$areaSlug" params={{ areaSlug: area.areaSlug }} search={defaultLearningSearch}>
-              <span className="dashboard-area-icon" aria-hidden="true">{areaGlyphs[area.areaSlug] ?? '✦'}</span>
-              <span className="dashboard-area-copy">
-                <span className="dashboard-area-title-row"><strong>{area.areaName}</strong><b>{percent(area.completionPercent)}</b></span>
-                <span className="dashboard-area-progress-copy">{area.completedConceptCount}/{area.publishedConceptCount}개 개념 완료</span>
-                <span className="dashboard-progress-track" aria-hidden="true"><span style={{ width: `${Math.min(100, area.completionPercent)}%` }} /></span>
-              </span>
-              <span className="dashboard-area-arrow" aria-hidden="true">→</span>
-            </Link>
-          ))}
+        <p className="dashboard-section-copy">{areaSectionDescription}</p>
+        <div className="dashboard-area-list">
+          {featuredAreas.map((area, index) => {
+            const started = area.completedConceptCount > 0
+            return (
+              <Link className="dashboard-area-row" key={area.areaSlug} to="/learning/$areaSlug" params={{ areaSlug: area.areaSlug }} search={defaultLearningSearch}>
+                <span className="dashboard-area-index" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+                <span className="dashboard-area-copy">
+                  <strong>{area.areaName}</strong>
+                  <span>{started ? `${area.completedConceptCount}/${area.publishedConceptCount}개 개념 완료` : `${area.publishedConceptCount}개 개념 · 미시작`}</span>
+                </span>
+                <span className="dashboard-area-progress">
+                  {started ? (
+                    <>
+                      <b>{percent(area.completionPercent)}</b>
+                      <span className="dashboard-progress-track" aria-hidden="true"><span style={{ width: `${Math.min(100, area.completionPercent)}%` }} /></span>
+                    </>
+                  ) : <span className="helper-text">미시작</span>}
+                </span>
+                <span className="dashboard-area-arrow" aria-hidden="true">→</span>
+              </Link>
+            )
+          })}
         </div>
       </section>
 
-      <div className="dashboard-two-column">
+      <div className="dashboard-lower-grid">
         <section className="dashboard-section">
-          <div className="section-heading"><div><p className="eyebrow">최근 약점</p><h2>약점 주제</h2></div><Link className="text-link" to="/wrong-notes" search={defaultWrongNoteSearch}>오답 노트 →</Link></div>
+          <div className="dashboard-section-heading"><div><p className="eyebrow">최근 약점</p><h2>약점 주제</h2></div><Link className="text-link" to="/wrong-notes" search={defaultWrongNoteSearch}>오답 노트 →</Link></div>
           {dashboard.weakTopics.length === 0 ? <EmptyState message="최근 30일에 3회 이상 시도한 약점 주제가 없습니다." /> : <div className="dashboard-list">{dashboard.weakTopics.map((topic) => <Link className="dashboard-list-item" key={topic.topicId} to="/learning/$areaSlug" params={{ areaSlug: topic.areaSlug }} search={defaultLearningSearch}><div><strong>{topic.topicTitle}</strong><span>{topic.areaName}</span></div><div className="dashboard-list-metric"><strong>{percent(topic.accuracyPercent)}</strong><span>{topic.attemptCount}회 시도 · 오답 {topic.wrongCount}</span></div></Link>)}</div>}
         </section>
 
         <section className="dashboard-section">
-          <div className="section-heading"><div><p className="eyebrow">학습 이력</p><h2>최근 문제 풀이</h2></div><Link className="text-link" to="/quiz" search={defaultQuizSearch}>새 문제 →</Link></div>
+          <div className="dashboard-section-heading"><div><p className="eyebrow">학습 이력</p><h2>최근 문제 풀이</h2></div><Link className="text-link" to="/quiz" search={defaultQuizSearch}>새 문제 →</Link></div>
           {dashboard.recentQuizzes.length === 0 ? <EmptyState message="제출된 문제가 아직 없습니다." /> : <div className="dashboard-list">{dashboard.recentQuizzes.map((quiz) => <Link className="dashboard-list-item" key={quiz.quizId} to="/quiz/$quizId/result" params={{ quizId: String(quiz.quizId) }}><div><strong>#{quiz.quizId} · {quiz.source.replace('_', ' ')}</strong><span>{quizStatus(quiz.status)} · {formatDate(quiz.startedAt)}</span></div><div className="dashboard-list-metric"><strong>{percent(quiz.accuracyPercent)}</strong><span>{quiz.correctCount}/{quiz.finalizedCount}개 정답{quiz.pendingSelfCheckCount > 0 ? ` · 자기 채점 ${quiz.pendingSelfCheckCount}개 대기` : ''}</span></div></Link>)}</div>}
         </section>
       </div>

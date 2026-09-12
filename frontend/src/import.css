@@ -1,67 +1,314 @@
+.import-page {
+  width: min(980px, 100%);
+}
+
+.import-page .page-heading {
+  margin-bottom: 24px;
+}
+
+.import-page .page-heading h1 {
+  font-size: clamp(2rem, 2.6vw, 2.45rem);
+  letter-spacing: -0.04em;
+  line-height: 1.14;
+}
+
+.import-page .page-heading .lead {
+  font-size: 0.98rem;
+  line-height: 1.68;
+}
+
 .import-workflow {
+  position: relative;
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 8px;
-  margin: -4px 0 18px;
+  gap: 0;
+  margin: 0 0 28px;
+  padding: 0;
+  list-style: none;
+}
+
+.import-workflow::before {
+  position: absolute;
+  top: 14px;
+  right: 10%;
+  left: 10%;
+  height: 1px;
+  background: var(--border-subtle);
+  content: '';
 }
 
 .import-step {
+  position: relative;
+  z-index: 1;
   display: grid;
-  gap: 4px;
-  padding: 10px 11px;
-  border: 1px solid #293348;
-  border-radius: 8px;
+  justify-items: center;
+  gap: 7px;
+  padding: 0 6px;
   color: var(--text-muted);
-  background: #131a24;
-  font-size: 0.72rem;
+  text-align: center;
+  font-size: 0.78rem;
+}
+
+.import-step-index {
+  display: grid;
+  width: 29px;
+  height: 29px;
+  place-items: center;
+  border: 1px solid var(--border-default);
+  border-radius: 50%;
+  color: var(--text-muted);
+  background: var(--color-page);
+  font-size: 0.75rem;
+  font-weight: 750;
 }
 
 .import-step strong {
-  color: var(--text-default);
-  font-size: 0.77rem;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  font-weight: 650;
 }
 
-.import-step.current {
-  border-color: #536b9e;
-  background: #182238;
+.import-step.current .import-step-index {
+  border-color: var(--accent);
+  color: var(--accent-contrast);
+  background: var(--accent);
 }
 
-.import-step.current strong { color: var(--accent); }
-.import-step.done { border-color: #356b5a; }
-.import-step.done strong { color: var(--state-success); }
+.import-step.current strong {
+  color: var(--text-strong);
+}
 
-.import-dropzone { position: relative; display: grid; justify-items: start; gap: 8px; padding: 28px; border: 1px dashed #52607a; border-radius: 12px; background: #171d2a; cursor: pointer; }
-.import-dropzone > span:not(.import-file-picker-trigger), .import-file small { color: #8793ad; font-size: 0.8rem; }
+.import-step.done .import-step-index {
+  border-color: var(--border-accent);
+  color: var(--state-success);
+  background: var(--surface-page);
+}
+
+.import-dropzone {
+  position: relative;
+  display: grid;
+  width: min(720px, 100%);
+  min-height: 136px;
+  align-content: center;
+  justify-items: start;
+  gap: 7px;
+  margin: 0 auto;
+  padding: 22px 24px;
+  border: 1px dashed var(--border-default);
+  border-radius: 10px;
+  background: var(--surface-page);
+  cursor: pointer;
+}
+
+.import-dropzone > span:not(.import-file-picker-trigger),
+.import-file small {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
 .import-file-picker-trigger {
   display: inline-flex;
   align-items: center;
   min-height: 36px;
-  margin-top: 8px;
+  margin-top: 6px;
   padding: 0 13px;
-  border: 1px solid #3b4965;
+  border: 1px solid var(--border-default);
   border-radius: 7px;
-  color: #c9d5ee !important;
-  background: #1a2231;
+  color: var(--text-default) !important;
+  background: var(--surface-elevated);
   font-size: 0.8rem;
   font-weight: 650;
 }
-.import-dropzone:hover .import-file-picker-trigger { border-color: #6379af; background: #222d42; }
-.import-dropzone:focus-within { border-color: #8fa9ff; box-shadow: 0 0 0 3px rgb(143 169 255 / 12%); }
-.import-file-input { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; border: 0; opacity: 0; clip: rect(0 0 0 0); white-space: nowrap; }
-.import-files, .import-result { display: grid; gap: 14px; margin-top: 20px; }
-.import-stage {
-  margin-top: 20px;
-  padding-top: 20px;
-  border-top: 1px solid #2a3243;
+
+.import-dropzone:hover {
+  border-color: var(--border-accent);
+  background: var(--surface-elevated);
 }
-.import-file { display: flex; align-items: center; gap: 12px; padding: 11px 14px; border: 1px solid #2a3243; border-radius: 8px; background: #171d2a; }
-.import-file span { flex: 1; }
-.import-file button { border: 0; background: transparent; color: #9fb5ff; cursor: pointer; }
-.import-items { display: grid; gap: 8px; }
-.import-item { padding: 13px 15px; border: 1px solid #2a3243; border-radius: 8px; background: #171d2a; }
-.import-item summary { display: flex; gap: 12px; align-items: center; cursor: pointer; list-style: none; }
-.import-item summary span { color: #f1b278; font-size: 0.74rem; }
-.import-item summary small { margin-left: auto; color: #8793ad; }
-.import-diffs { display: grid; gap: 6px; max-width: 100%; margin-top: 12px; color: #aeb8cc; font-size: 0.8rem; }
-.import-diffs div { display: grid; grid-template-columns: minmax(120px, 170px) minmax(0, 1fr); gap: 12px; padding-top: 7px; border-top: 1px solid #2a3243; }
-.import-diffs span { overflow-wrap: anywhere; }
+
+.import-dropzone:hover .import-file-picker-trigger {
+  border-color: var(--border-accent);
+  color: var(--text-strong) !important;
+  background: var(--surface-interactive);
+}
+
+.import-dropzone:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgb(78 161 255 / 12%);
+}
+
+.import-file-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  opacity: 0;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.import-files,
+.import-result {
+  display: grid;
+  gap: 14px;
+  margin-top: 20px;
+}
+
+.import-stage {
+  margin-top: 28px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.import-stage .section-heading h2 {
+  margin: 4px 0 0;
+  color: var(--text-strong);
+  font-size: 1.2rem;
+}
+
+.import-summary {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  border-top: 1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.import-summary > div {
+  display: flex;
+  min-width: 0;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border-right: 1px solid var(--border-subtle);
+}
+
+.import-summary > div:last-child {
+  border-right: 0;
+}
+
+.import-summary span {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+}
+
+.import-summary strong {
+  color: var(--text-strong);
+  font-size: 1rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.import-file {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 4px;
+  border-bottom: 1px solid var(--border-subtle);
+  color: var(--text-default);
+}
+
+.import-file span {
+  flex: 1;
+}
+
+.import-file button {
+  border: 0;
+  color: var(--text-muted);
+  background: transparent;
+  cursor: pointer;
+}
+
+.import-file button:hover {
+  color: var(--text-strong);
+}
+
+.import-items {
+  display: grid;
+  gap: 0;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.import-item {
+  padding: 14px 4px;
+  border-bottom: 1px solid var(--border-subtle);
+  background: transparent;
+}
+
+.import-item summary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.import-item summary span {
+  color: var(--state-warning);
+  font-size: 0.78rem;
+}
+
+.import-item summary small {
+  margin-left: auto;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+}
+
+.import-diffs {
+  display: grid;
+  gap: 6px;
+  max-width: 100%;
+  margin-top: 12px;
+  color: var(--text-default);
+  font-size: 0.82rem;
+}
+
+.import-diffs div {
+  display: grid;
+  grid-template-columns: minmax(120px, 170px) minmax(0, 1fr);
+  gap: 12px;
+  padding-top: 7px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.import-diffs span {
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 720px) {
+  .import-workflow {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .import-workflow::before {
+    display: none;
+  }
+
+  .import-step {
+    grid-template-columns: 29px minmax(0, 1fr);
+    justify-items: start;
+    align-items: center;
+    text-align: left;
+  }
+
+  .import-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .import-summary > div {
+    border-right: 0;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .import-summary > div:last-child {
+    border-bottom: 0;
+  }
+
+  .import-dropzone {
+    width: 100%;
+    min-height: 128px;
+    padding: 20px;
+  }
+}

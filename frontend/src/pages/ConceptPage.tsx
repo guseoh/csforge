@@ -199,10 +199,17 @@ function ConceptContent({ data, conceptId }: { data: ConceptDetailModel; concept
       </header>
 
       <div className="concept-actions" aria-label="개념 학습 동작">
-        <ProgressActionButton conceptId={conceptId} status="COMPLETED" label="학습 완료" />
-        <ProgressActionButton conceptId={conceptId} status="REVIEW_NEEDED" label="복습 필요" secondary />
-        <Link className="secondary-button" to="/quiz" search={{ ...defaultQuizSearch, areas: data.area.slug, concepts: String(conceptId) }}>이 개념 문제 풀기</Link>
-        <BookmarkButton conceptId={conceptId} bookmarked={data.progress.bookmarked} />
+        <div className="concept-status-actions" role="group" aria-label="학습 상태 변경">
+          <span className="concept-action-label">학습 상태 · {learningStatusLabels[data.progress.learningStatus]}</span>
+          <div className="concept-action-buttons">
+            <ProgressActionButton conceptId={conceptId} status="COMPLETED" label="학습 완료" active={data.progress.learningStatus === 'COMPLETED'} />
+            <ProgressActionButton conceptId={conceptId} status="REVIEW_NEEDED" label="복습 필요" active={data.progress.learningStatus === 'REVIEW_NEEDED'} />
+          </div>
+        </div>
+        <div className="concept-utility-actions" aria-label="개념 도구">
+          <Link className="secondary-button" to="/quiz" search={{ ...defaultQuizSearch, areas: data.area.slug, concepts: String(conceptId) }}>이 개념 문제 풀기</Link>
+          <BookmarkButton conceptId={conceptId} bookmarked={data.progress.bookmarked} />
+        </div>
       </div>
 
       <article className="concept-reading-content" aria-label={`${data.title} 학습 노트`}>
@@ -295,7 +302,7 @@ function BookmarkButton({ conceptId, bookmarked }: { conceptId: number; bookmark
   )
 }
 
-function ProgressActionButton({ conceptId, status, label, secondary = false }: { conceptId: number; status: Exclude<LearningStatus, 'UNSEEN'>; label: string; secondary?: boolean }) {
+function ProgressActionButton({ conceptId, status, label, active = false }: { conceptId: number; status: Exclude<LearningStatus, 'UNSEEN'>; label: string; active?: boolean }) {
   const queryClient = useQueryClient()
   const { showToast } = useToast()
   const mutation = useMutation({
@@ -310,7 +317,17 @@ function ProgressActionButton({ conceptId, status, label, secondary = false }: {
     },
     onError: () => showToast('error', '학습 상태 저장에 실패했습니다.'),
   })
-  return <button className={secondary ? 'secondary-button' : 'primary-button'} type="button" disabled={mutation.isPending} onClick={() => mutation.mutate()}>{mutation.isPending ? '저장 중…' : label}</button>
+  return (
+    <button
+      className={`secondary-button concept-status-button${active ? ' active' : ''}`}
+      type="button"
+      aria-pressed={active}
+      disabled={mutation.isPending || active}
+      onClick={() => mutation.mutate()}
+    >
+      {mutation.isPending ? '저장 중…' : label}
+    </button>
+  )
 }
 
 export function ConceptPage() {

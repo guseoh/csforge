@@ -4,7 +4,7 @@ import { defaultLearningSearch, parseLearningSearch } from './lib/learning-searc
 import { defaultQuizSearch, parseQuizSearch } from './lib/quiz-search'
 import { defaultWrongNoteSearch, parseWrongNoteSearch } from './lib/wrong-note-search'
 import { parseReviewSearch } from './lib/review-search'
-import { defaultSearchSearch, parseSearchSearch } from './lib/search-search'
+import { parseSearchSearch } from './lib/search-search'
 
 const AreaPage = lazyRouteComponent(() => import('./pages/AreaPage'), 'AreaPage')
 const ConceptPage = lazyRouteComponent(() => import('./pages/ConceptPage'), 'ConceptPage')
@@ -24,7 +24,6 @@ const headerNavigation = [
   { to: '/quiz', label: '문제', search: defaultQuizSearch },
   { to: '/wrong-notes', label: '오답 노트', search: defaultWrongNoteSearch },
   { to: '/review', label: '복습', search: { page: 0, due: 'ALL' } },
-  { to: '/search', label: '검색', search: defaultSearchSearch },
 ] as const
 
 function AppLayout() {
@@ -32,7 +31,7 @@ function AppLayout() {
     <div className="app-shell">
       <header className="topbar">
         <div className="topbar-inner">
-          <Link className="brand" to="/"><span className="brand-mark" aria-hidden="true">✦</span><span>CSForge</span></Link>
+          <Link className="brand" to="/"><span className="brand-mark" aria-hidden="true">CF</span><span>CSForge</span></Link>
           <nav className="topbar-nav" aria-label="주요 학습 메뉴">
             {headerNavigation.map((item) => (
               <Link
@@ -60,15 +59,15 @@ function AppLayout() {
 }
 
 function LoadingPage() {
-  return <p className="route-message">Loading workspace…</p>
+  return <p className="route-message">화면을 불러오는 중입니다…</p>
 }
 
 function RouteErrorPage() {
-  return <p className="route-message error">Something went wrong while loading this page.</p>
+  return <p className="route-message error">화면을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.</p>
 }
 
 function NotFoundPage() {
-  return <p className="route-message">This page does not exist.</p>
+  return <p className="route-message">요청한 화면을 찾을 수 없습니다.</p>
 }
 
 const rootRoute = createRootRoute({

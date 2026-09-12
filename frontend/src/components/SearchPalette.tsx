@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import { getSearchSuggestions } from '../lib/search-api'
 import { addRecentSearch, primarySearchDestination } from '../lib/search-ui'
+import { defaultSearchSearch } from '../lib/search-search'
 
 const RECENT_KEY = 'csforge.search.recent.v1'
 const SUGGESTION_DEBOUNCE_MS = 180
@@ -45,6 +46,11 @@ export function SearchPalette() {
   }
 
   const closePalette = () => setOpen(false)
+
+  const openSearchWorkspace = () => {
+    closePalette()
+    void navigate({ to: '/search', search: defaultSearchSearch })
+  }
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -161,8 +167,11 @@ export function SearchPalette() {
             <div className="search-palette-body">
               {!normalized && (
                 <div>
-                  <p className="palette-section-title">최근 검색</p>
-                  {visibleRecent.length === 0 ? <p className="palette-muted">최근 검색어가 없습니다.</p> : (
+                  <div className="palette-section-heading">
+                    <p className="palette-section-title">최근 검색</p>
+                    <button className="text-button" type="button" onClick={openSearchWorkspace}>전체 검색 열기 →</button>
+                  </div>
+                  {visibleRecent.length === 0 ? <p className="palette-muted">최근 검색어가 없습니다. 전체 검색에서 영역과 주제를 조합해 탐색할 수 있습니다.</p> : (
                     <div className="palette-list" role="listbox">
                       {visibleRecent.map((item, index) => (
                         <button

@@ -137,11 +137,11 @@ export function QuizSessionPage() {
       </header>
 
       <div className="quiz-focus-progress-heading">
-        <strong>문제 {position + 1} / {session.questions.length}</strong>
-        <span>{answeredCount}개 답변 완료</span>
+        <strong>현재 문제 {position + 1} / {session.questions.length}</strong>
+        <span>답변 {answeredCount} / {session.questions.length}</span>
       </div>
-      <div className="quiz-progress quiz-focus-progress" aria-label={`${position + 1}/${session.questions.length} 진행`}>
-        <span style={{ width: `${((position + 1) / session.questions.length) * 100}%` }} />
+      <div className="quiz-progress quiz-focus-progress" aria-label={`답변 진행률 ${answeredCount}/${session.questions.length}`}>
+        <span style={{ width: `${(answeredCount / session.questions.length) * 100}%` }} />
       </div>
 
       <article className="quiz-question-card quiz-focus-card">
@@ -224,31 +224,8 @@ export function QuizSessionPage() {
         )}
       </article>
 
-      <nav className="quiz-progress-dots" aria-label="문제 진행 상태">
-        {session.questions.map((item, index) => {
-          const itemDraft = drafts[item.questionId] ?? emptyQuizDraft
-          const navigationState = classifyQuizNavigation({
-            isCurrent: index === position,
-            selectedChoiceKey: itemDraft.selectedChoiceKey,
-            answerText: itemDraft.answerText,
-            reviewNeeded: itemDraft.reviewNeeded,
-          })
-          const stateClass = itemDraft.reviewNeeded ? 'review-needed' : navigationState.toLowerCase()
-          return (
-            <button
-              key={item.questionId}
-              className={`quiz-progress-dot ${index === position ? 'current ' : ''}nav-${stateClass}`}
-              type="button"
-              aria-label={`문항 ${index + 1}, ${quizNavigationLabel(navigationState)}${itemDraft.reviewNeeded ? ', 복습 필요' : ''}`}
-              aria-current={index === position ? 'step' : undefined}
-              onClick={() => moveTo(index)}
-            />
-          )
-        })}
-      </nav>
-
       <details className="quiz-question-jump">
-        <summary>문제 바로가기 <span>{answeredCount}/{session.questions.length} 답변</span></summary>
+        <summary>문항 목록 <span>{answeredCount}/{session.questions.length} 답변</span></summary>
         <div className="quiz-question-jump-grid">
           {session.questions.map((item, index) => {
             const itemDraft = drafts[item.questionId] ?? emptyQuizDraft

@@ -164,6 +164,12 @@ export function QuizSetupPage() {
     onSuccess: (quiz) => void navigate({ to: '/quiz/$quizId', params: { quizId: String(quiz.quizId) } }),
   })
 
+  const navigateToSettings = (nextSearch: QuizSearch) => void navigate({
+    search: nextSearch,
+    replace: true,
+    resetScroll: false,
+  })
+
   useEffect(() => {
     document.title = '문제 풀기 · CSForge'
     return () => { document.title = 'CSForge' }
@@ -180,7 +186,7 @@ export function QuizSetupPage() {
     if (isDefaultQuizSearch(rememberedSearch)) return
 
     applyingRememberedRef.current = true
-    void navigate({ search: rememberedSearch, replace: true }).finally(() => {
+    void navigate({ search: rememberedSearch, replace: true, resetScroll: false }).finally(() => {
       applyingRememberedRef.current = false
     })
   }, [location.searchStr, navigate, search])
@@ -201,7 +207,7 @@ export function QuizSetupPage() {
 
   const update = <K extends keyof QuizSetupPayload>(key: K, value: QuizSetupPayload[K]) => {
     const next = { ...settings, [key]: value }
-    void navigate({ search: searchFromSettings(next), replace: true })
+    navigateToSettings(searchFromSettings(next))
   }
   const questionCountAvailable = availabilityQuery.data?.availableCount
   const availabilityState = quizAvailabilityState(questionCountAvailable, settings.count, availabilityQuery.isPending, availabilityQuery.isError)
@@ -249,28 +255,17 @@ export function QuizSetupPage() {
         <div className="quiz-quick-intro">
           <p className="eyebrow">빠른 시작</p>
           <h2 id="quiz-quick-start-heading">어떤 문제를 풀까요?</h2>
-          <span>기본 10문제 조건을 빠르게 선택합니다.</span>
+          <span>자주 쓰는 범위를 먼저 고르고, 아래에서 한 번만 시작합니다.</span>
         </div>
         <div className="quiz-quick-presets" aria-label="빠른 문제 조건">
-          <button type="button" className={`secondary-button quiz-preset-button${selectedPreset === 'NEW' ? ' selected' : ''}`} aria-pressed={selectedPreset === 'NEW'} onClick={() => void navigate({ search: quizSearchForPreset('NEW'), replace: true })}>
+          <button type="button" className={`secondary-button quiz-preset-button${selectedPreset === 'NEW' ? ' selected' : ''}`} aria-pressed={selectedPreset === 'NEW'} onClick={() => navigateToSettings(quizSearchForPreset('NEW'))}>
             <strong>새 문제</strong><small>아직 안 푼 문제</small>
           </button>
-          <button type="button" className={`secondary-button quiz-preset-button${selectedPreset === 'WRONG' ? ' selected' : ''}`} aria-pressed={selectedPreset === 'WRONG'} onClick={() => void navigate({ search: quizSearchForPreset('WRONG'), replace: true })}>
+          <button type="button" className={`secondary-button quiz-preset-button${selectedPreset === 'WRONG' ? ' selected' : ''}`} aria-pressed={selectedPreset === 'WRONG'} onClick={() => navigateToSettings(quizSearchForPreset('WRONG'))}>
             <strong>오답 문제</strong><small>틀린 문제 다시 풀기</small>
           </button>
-          <button type="button" className={`secondary-button quiz-preset-button${selectedPreset === 'ALL' ? ' selected' : ''}`} aria-pressed={selectedPreset === 'ALL'} onClick={() => void navigate({ search: quizSearchForPreset('ALL'), replace: true })}>
+          <button type="button" className={`secondary-button quiz-preset-button${selectedPreset === 'ALL' ? ' selected' : ''}`} aria-pressed={selectedPreset === 'ALL'} onClick={() => navigateToSettings(quizSearchForPreset('ALL'))}>
             <strong>전체 문제</strong><small>전체에서 무작위 연습</small>
-          </button>
-        </div>
-        <div className="quiz-start-strip">
-          <span className={availabilityState === 'INSUFFICIENT' || availabilityState === 'ERROR' ? 'helper-text error-text' : 'helper-text'}>{availabilityMessage}</span>
-          <button
-            className="primary-button"
-            type="button"
-            disabled={!canStartQuiz(availabilityState, createMutation.isPending)}
-            onClick={() => createMutation.mutate()}
-          >
-            {createMutation.isPending ? '문제 준비 중…' : `${settings.count}문제 시작`}
           </button>
         </div>
       </section>
@@ -362,21 +357,26 @@ export function QuizSetupPage() {
               </label>
             </div>
           </details>
-
-          <div className="quiz-setup-actions">
-            <span className={availabilityState === 'INSUFFICIENT' || availabilityState === 'ERROR' ? 'helper-text error-text' : 'helper-text'}>{availabilityMessage}</span>
-            <button
-              className="primary-button"
-              type="button"
-              disabled={!canStartQuiz(availabilityState, createMutation.isPending)}
-              onClick={() => createMutation.mutate()}
-            >
-              {createMutation.isPending ? '문제 준비 중…' : `${settings.count}문제 시작`}
-            </button>
-            <button className="text-button" type="button" onClick={() => void navigate({ search: quizSearchForPreset('DEFAULT'), replace: true })}>기본값으로 초기화</button>
-          </div>
         </div>
       </details>
+
+      <div className="quiz-unified-start" aria-label="문제 풀이 시작">
+        <div>
+          <strong>{settings.count}문제</strong>
+          <span className={availabilityState === 'INSUFFICIENT' || availabilityState === 'ERROR' ? 'helper-text error-text' : 'helper-text'}>{availabilityMessage}</span>
+        </div>
+        <div className="quiz-unified-start-actions">
+          {hasDetailedSettings && <button className="text-button" type="button" onClick={() => navigateToSettings(quizSearchForPreset('DEFAULT'))}>기본값으로 초기화</button>}
+          <button
+            className="primary-button"
+            type="button"
+            disabled={!canStartQuiz(availabilityState, createMutation.isPending)}
+            onClick={() => createMutation.mutate()}
+          >
+            {createMutation.isPending ? '문제 준비 중…' : '선택 조건으로 시작'}
+          </button>
+        </div>
+      </div>
 
       {availabilityQuery.isError && <div className="state-card error-state" role="alert"><strong>문항 가능 수를 확인하지 못했습니다.</strong><span>서버 상태를 확인한 뒤 다시 시도하세요.</span><button className="secondary-button" type="button" onClick={() => void availabilityQuery.refetch()}>다시 시도</button></div>}
       {availabilityState === 'INSUFFICIENT' && <p className="helper-text error-text">요청한 {settings.count}문항보다 가능한 문항이 적습니다.</p>}
