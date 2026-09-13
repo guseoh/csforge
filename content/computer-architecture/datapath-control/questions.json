@@ -64,7 +64,7 @@
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.datapath-control.control-unit.q3",
-    "promptMarkdown": "상황: base register가 0x1000이고 immediate가 0x20인 load instruction에서 control unit이 두 번째 ALU operand로 immediate가 아니라 다른 register 값 0x80을 선택했다.\n\n질문: 이후 memory read가 정상 수행된다면 어떤 오류가 생기는지 datapath 흐름으로 설명하라.",
+    "promptMarkdown": "base register가 0x1000이고 immediate가 0x20인 load instruction에서 control unit이 두 번째 ALU operand로 immediate가 아니라 다른 register 값 0x80을 선택했다. 이후 memory read가 정상 수행된다면 어떤 오류가 생기는지 datapath 흐름으로 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
@@ -136,7 +136,7 @@
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.datapath-control.critical-path.q3",
-    "promptMarkdown": "상황: 한 stage의 critical path가 1.8 ns다.\n\n질문: 이를 두 pipeline stage로 나눴더니 조합 논리 지연이 각각 0.85 ns와 0.95 ns가 되었고 각 stage에 register overhead 0.10 ns가 필요하다. 새 최소 cycle time과 이 변경의 latency/throughput trade-off를 설명하라.",
+    "promptMarkdown": "한 stage의 critical path가 1.8 ns다. 이를 두 pipeline stage로 나눴더니 조합 논리 지연이 각각 0.85 ns와 0.95 ns가 되었고 각 stage에 register overhead 0.10 ns가 필요하다. 새 최소 cycle time과 이 변경의 latency/throughput trade-off를 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
@@ -172,7 +172,7 @@
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.datapath-control.branch-control-flow.q3",
-    "promptMarkdown": "상황: ideal CPI가 1인 pipeline에서 instruction의 20%가 branch이고 branch의 10%가 mispredict되며 misprediction 하나당 12 cycle의 penalty가 추가된다고 하자.\n\n질문: 다른 stall이 없다면 평균 CPI를 추정하고, predictor 정확도가 성능에 미치는 영향을 설명하라.",
+    "promptMarkdown": "ideal CPI가 1인 pipeline에서 instruction의 20%가 branch이고 branch의 10%가 mispredict되며 misprediction 하나당 12 cycle의 penalty가 추가된다고 하자. 다른 stall이 없다면 평균 CPI를 추정하고, predictor 정확도가 성능에 미치는 영향을 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",

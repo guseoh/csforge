@@ -172,7 +172,7 @@
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.multicore-memory.false-sharing.q3",
-    "promptMarkdown": "상황: 32개 worker가 각자 독립 counter를 갱신한다.\n\n질문: counter를 인접 배열 slot에 배치했을 때보다 per-worker padded layout에서 throughput이 크게 올랐다. false sharing을 원인으로 확정하기 전에 추가로 확인할 evidence와 padding의 trade-off를 설명하라.",
+    "promptMarkdown": "32개 worker가 각자 독립 counter를 갱신한다. counter를 인접 배열 slot에 배치했을 때보다 per-worker padded layout에서 throughput이 크게 올랐다. false sharing을 원인으로 확정하기 전에 추가로 확인할 evidence와 padding의 trade-off를 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",

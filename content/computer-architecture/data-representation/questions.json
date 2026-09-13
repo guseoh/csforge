@@ -208,7 +208,7 @@
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.data-representation.endianness.q3",
-    "promptMarkdown": "상황: little-endian host의 native 32-bit integer memory bytes를 그대로 TCP payload field로 복사했더니 big-endian protocol peer가 다른 값을 읽었다.\n\n질문: host endianness와 wire byte order를 구분해 원인과 수정 방법을 설명하라.",
+    "promptMarkdown": "little-endian host의 native 32-bit integer memory bytes를 그대로 TCP payload field로 복사했더니 big-endian protocol peer가 다른 값을 읽었다. host endianness와 wire byte order를 구분해 원인과 수정 방법을 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",

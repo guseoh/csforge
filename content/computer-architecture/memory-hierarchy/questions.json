@@ -136,7 +136,7 @@
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.memory-hierarchy.cache-hit-miss.q3",
-    "promptMarkdown": "상황: cache A는 hit rate 99%이고 miss penalty가 200ns, cache B는 hit rate 96%이고 miss penalty가 20ns라고 하자.\n\n질문: hit time이 같다고 가정할 때 hit rate만 보고 A가 더 빠르다고 결론 내릴 수 없는 이유를 정량적으로 설명하라.",
+    "promptMarkdown": "cache A는 hit rate 99%이고 miss penalty가 200ns, cache B는 hit rate 96%이고 miss penalty가 20ns라고 하자. hit time이 같다고 가정할 때 hit rate만 보고 A가 더 빠르다고 결론 내릴 수 없는 이유를 정량적으로 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
@@ -208,7 +208,7 @@
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.memory-hierarchy.miss-penalty.q3",
-    "promptMarkdown": "상황: L1 hit time은 1ns, L1 miss rate는 5%다.\n\n질문: L1 miss 시 L2 access는 5ns가 걸리고, L2 local miss rate는 10%이며 L2 miss 뒤 DRAM 추가 penalty는 80ns라고 단순화하자. `1ns + 0.05 × (5ns + 0.10 × 80ns)` 모델로 AMAT를 계산하고 각 항의 의미를 설명하라.",
+    "promptMarkdown": "L1 hit time은 1ns, L1 miss rate는 5%다. L1 miss 시 L2 access는 5ns가 걸리고, L2 local miss rate는 10%이며 L2 miss 뒤 DRAM 추가 penalty는 80ns라고 단순화하자. `1ns + 0.05 × (5ns + 0.10 × 80ns)` 모델로 AMAT를 계산하고 각 항의 의미를 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",

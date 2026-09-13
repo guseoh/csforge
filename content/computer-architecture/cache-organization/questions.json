@@ -64,7 +64,7 @@
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.cache-organization.set-associative-cache.q3",
-    "promptMarkdown": "상황: 2-way set-associative cache에서 세 block A, B, C가 모두 같은 set으로 mapping되고 `A → B → C → A → B → C` 패턴이 반복된다.\n\n질문: direct-mapped보다는 associativity가 높아졌는데도 miss가 계속될 수 있는 이유를 설명하라.",
+    "promptMarkdown": "2-way set-associative cache에서 세 block A, B, C가 모두 같은 set으로 mapping되고 `A → B → C → A → B → C` 패턴이 반복된다. direct-mapped보다는 associativity가 높아졌는데도 miss가 계속될 수 있는 이유를 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",

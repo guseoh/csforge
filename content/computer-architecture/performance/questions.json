@@ -100,7 +100,7 @@
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.performance.instruction-count-cpi-clock.q3",
-    "promptMarkdown": "상황: 최적화 전에는 10억 instructions, CPI 1.0, 3 GHz였고 최적화 후에는 7억 instructions, CPI 1.6, 같은 3 GHz다.\n\n질문: 두 경우 CPU time의 상대 크기를 계산하고 instruction count만 보고 최적화를 평가하면 안 되는 이유를 설명하라.",
+    "promptMarkdown": "최적화 전에는 10억 instructions, CPI 1.0, 3 GHz였고 최적화 후에는 7억 instructions, CPI 1.6, 같은 3 GHz다. 두 경우 CPU time의 상대 크기를 계산하고 instruction count만 보고 최적화를 평가하면 안 되는 이유를 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
@@ -136,7 +136,7 @@
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.performance.amdahl-law.q3",
-    "promptMarkdown": "상황: 한 API에서 JSON serialization이 baseline latency의 10%, DB wait가 70%, 나머지가 20%다.\n\n질문: Serialization을 5배 빠르게 한 뒤 전체 latency 개선이 작았다. Amdahl 식으로 예상 speedup을 계산하고 다음 최적화 우선순위를 어떻게 정할지 설명하라.",
+    "promptMarkdown": "한 API에서 JSON serialization이 baseline latency의 10%, DB wait가 70%, 나머지가 20%다. Serialization을 5배 빠르게 한 뒤 전체 latency 개선이 작았다. Amdahl 식으로 예상 speedup을 계산하고 다음 최적화 우선순위를 어떻게 정할지 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",

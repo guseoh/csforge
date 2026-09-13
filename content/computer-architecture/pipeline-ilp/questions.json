@@ -28,7 +28,7 @@
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.pipeline-ilp.pipeline-stages.q3",
-    "promptMarkdown": "상황: 어떤 CPU의 stage 조합 논리 지연이 90ps, 170ps, 110ps, 140ps이고 각 pipeline register overhead가 20ps라고 하자.\n\n질문: 다른 조건이 같다면 현재 clock period를 제한하는 핵심 요소와, 가장 긴 stage를 둘로 나눌 때도 성능이 무조건 2배가 되지 않는 이유를 설명하라.",
+    "promptMarkdown": "어떤 CPU의 stage 조합 논리 지연이 90ps, 170ps, 110ps, 140ps이고 각 pipeline register overhead가 20ps라고 하자. 다른 조건이 같다면 현재 clock period를 제한하는 핵심 요소와, 가장 긴 stage를 둘로 나눌 때도 성능이 무조건 2배가 되지 않는 이유를 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
@@ -100,7 +100,7 @@
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.pipeline-ilp.forwarding-and-stall.q3",
-    "promptMarkdown": "상황: 한 instruction이 cache miss로 오래 기다리고 있다.\n\n질문: 뒤에는 이 load 결과에 의존하는 instruction 2개와, 전혀 독립적인 정수 연산 3개가 있다. forwarding과 out-of-order execution이 각각 무엇을 할 수 있고 무엇은 해결하지 못하는지 설명하라.",
+    "promptMarkdown": "한 instruction이 cache miss로 오래 기다리고 있다. 뒤에는 이 load 결과에 의존하는 instruction 2개와, 전혀 독립적인 정수 연산 3개가 있다. forwarding과 out-of-order execution이 각각 무엇을 할 수 있고 무엇은 해결하지 못하는지 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
@@ -136,7 +136,7 @@
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.pipeline-ilp.branch-prediction.q3",
-    "promptMarkdown": "상황: 어떤 workload에서 전체 instruction의 20%가 branch이고 branch misprediction rate가 5%, 한 번의 misprediction penalty가 12 cycle이라고 하자.\n\n질문: 다른 stall을 무시할 때 misprediction이 instruction당 평균 몇 cycle의 추가 비용을 만드는지 계산하고, predictor 정확도가 workload latency에 미치는 의미를 설명하라.",
+    "promptMarkdown": "어떤 workload에서 전체 instruction의 20%가 branch이고 branch misprediction rate가 5%, 한 번의 misprediction penalty가 12 cycle이라고 하자. 다른 stall을 무시할 때 misprediction이 instruction당 평균 몇 cycle의 추가 비용을 만드는지 계산하고, predictor 정확도가 workload latency에 미치는 의미를 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
@@ -172,7 +172,7 @@
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.pipeline-ilp.superscalar-out-of-order.q3",
-    "promptMarkdown": "상황: program order상 앞선 instruction A가 long-latency cache miss를 겪고, 뒤의 B와 C는 A와 독립적이며, 더 뒤의 D는 A의 결과에 의존한다고 하자.\n\n질문: out-of-order CPU가 B/C/D를 어떻게 다르게 다룰 수 있는지와, A에서 exception이 발생했을 때 precise architectural state를 유지해야 하는 이유를 설명하라.",
+    "promptMarkdown": "program order상 앞선 instruction A가 long-latency cache miss를 겪고, 뒤의 B와 C는 A와 독립적이며, 더 뒤의 D는 A의 결과에 의존한다고 하자. out-of-order CPU가 B/C/D를 어떻게 다르게 다룰 수 있는지와, A에서 exception이 발생했을 때 precise architectural state를 유지해야 하는 이유를 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",

@@ -28,7 +28,7 @@
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.isa-execution.isa-vs-microarchitecture.q3",
-    "promptMarkdown": "상황: 서비스를 CPU A에서 CPU B로 옮기려 한다.\n\n질문: 두 CPU는 같은 ISA와 필요한 extension을 지원하지만 A에서 측정한 특정 instruction sequence의 latency가 40 ns였다. 이 40 ns를 B에서도 보장되는 계약으로 사용할 수 없는 이유와 이식 시 각각 무엇을 검증해야 하는지 설명하라.",
+    "promptMarkdown": "서비스를 CPU A에서 CPU B로 옮기려 한다. 두 CPU는 같은 ISA와 필요한 extension을 지원하지만 A에서 측정한 특정 instruction sequence의 latency가 40 ns였다. 이 40 ns를 B에서도 보장되는 계약으로 사용할 수 없는 이유와 이식 시 각각 무엇을 검증해야 하는지 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
@@ -100,7 +100,7 @@
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.isa-execution.registers.q3",
-    "promptMarkdown": "상황: JIT가 만든 hot loop에서 동시에 살아 있는 값이 많아 일부 값이 stack slot로 spill된다.\n\n질문: register pressure가 execution path를 느리게 만드는 과정을 load/store 관점에서 설명하고, source local-variable 개수만으로 이 문제를 확정하면 안 되는 이유도 설명하라.",
+    "promptMarkdown": "JIT가 만든 hot loop에서 동시에 살아 있는 값이 많아 일부 값이 stack slot로 spill된다. register pressure가 execution path를 느리게 만드는 과정을 load/store 관점에서 설명하고, source local-variable 개수만으로 이 문제를 확정하면 안 되는 이유도 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
@@ -136,7 +136,7 @@
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.isa-execution.fetch-decode-execute.q3",
-    "promptMarkdown": "상황: PC=0x1000에서 branch instruction을 fetch했다.\n\n질문: branch condition은 참이고 target은 0x1800이며, target instruction을 fetch할 때 instruction page fault가 발생한다. 논리적인 control-flow 상태 변화를 순서대로 설명하라.",
+    "promptMarkdown": "PC=0x1000에서 branch instruction을 fetch했다. branch condition은 참이고 target은 0x1800이며, target instruction을 fetch할 때 instruction page fault가 발생한다. 논리적인 control-flow 상태 변화를 순서대로 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
