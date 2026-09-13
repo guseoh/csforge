@@ -53,6 +53,7 @@ class CloudSecurityIntegrationTest {
         registry.add("spring.security.oauth2.client.registration.google.client-id", () -> "test-client");
         registry.add("spring.security.oauth2.client.registration.google.client-secret", () -> "test-secret");
         registry.add("csforge.security.allowed-email", () -> "owner@example.com");
+        registry.add("csforge.security.frontend-origin", () -> "https://frontend.example.com");
     }
 
     @Test
