@@ -33,7 +33,7 @@
 
 전체 Concept는 KEEP / REINFORCE / REWRITE 기준으로 다시 판정했다. 218개는 KEEP, 503개는 한국어 표현·가독성·설명 구조를 보강하는 REINFORCE로 분류했으며, Concept 전체를 다시 쓴 REWRITE는 0개다. 고위험 경계는 기존 Concept 안에서 필요한 부분만 정밀 수정했다.
 
-질문 변경 중 `type` 변경은 0건, 정답 변경은 0건이다. 따라서 변경하지 않은 질문은 1,912개이며, 변경된 질문도 canonical key와 Concept 연결을 보존했다.
+질문 변경 중 정답 key 변경은 0건이다. 전체 품질 검토 과정에서는 질문 계약을 바로잡기 위해 일부 `questionType`·난이도 변경이 있었고, 최종 presentation/readability pass에서는 type·정답을 추가로 바꾸지 않았다. 변경된 질문도 canonical key와 Concept 연결을 보존했다.
 
 ## 정적·자동 검증
 
