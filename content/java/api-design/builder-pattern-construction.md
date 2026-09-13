@@ -248,3 +248,17 @@ class Order {
 JPA Entity에 Builder가 절대 금지되는 것은 아닙니다. 다만 Builder가 `id`, `status`, 감사 필드처럼 application이 임의로 지정하면 안 되는 persistence/domain 상태까지 열어 버리거나 lifecycle invariant를 우회한다면 좋은 선택이 아닙니다. 생성 옵션이 정말 복잡한 value/object 조립 문제인지, 아니면 `place()`, `open()`, `start()`처럼 **의도 있는 domain creation API**가 필요한 문제인지 먼저 구분합니다.
 
 Builder를 선택했다면 마지막으로 확인할 질문은 단순합니다. 호출 코드가 읽기 좋아졌는가만 보지 말고, **완성 전의 가변 상태가 어디에 있고, 유효한 객체가 언제 만들어지며, 그 이후 외부나 Builder의 변경이 완성 객체를 다시 흔들 수 없는가**까지 추적해야 합니다.
+
+### 면접에서 이렇게 나옵니다
+
+#### Q. Builder를 쓰면 결과 객체가 자동으로 불변이 되나요?
+
+아닙니다. Builder는 **완성 전의 구성 상태를 모으는 생성 API**일 뿐이고, 결과 객체의 불변성은 별도로 설계해야 합니다. 결과가 mutable collection을 Builder와 그대로 공유한다면 `final` field여도 Builder의 이후 변경이 완성 객체에 보일 수 있습니다.
+
+따라서 `build()`에서 invariant를 검증하고, 독립 snapshot이 필요하다면 mutable 입력을 적절히 복사하는 것까지 봐야 합니다.
+
+#### Q. Lombok `@Builder`를 붙이면 안전한 객체 생성이 보장되나요?
+
+아닙니다. Lombok은 Builder class와 체이닝 API 같은 **기계적인 생성 코드**를 만들어 줄 뿐입니다. 필수값, field 간 조합 규칙, lifecycle 시작 상태, 방어적 복사 같은 도메인 invariant는 개발자가 직접 설계해야 합니다.
+
+특히 Entity의 모든 field를 Builder로 열어 두면 `id`나 `status`처럼 외부가 임의로 정하면 안 되는 상태까지 생성 경로에 노출할 수 있으므로, 편의보다 생성 책임과 invariant를 먼저 확인해야 합니다.

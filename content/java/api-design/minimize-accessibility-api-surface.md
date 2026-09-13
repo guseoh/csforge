@@ -134,7 +134,7 @@ public InternalQueryPlan plan() { ... }
 
 이 반환 타입이 정말 application 외부가 알아야 하는 개념이 아니라면 구현 세부가 API를 통해 새어 나온 것입니다. 한 번 이런 타입이 여러 곳에 퍼지면 내부 구조를 고칠 때 호출자까지 따라 바꿔야 합니다.
 
-백엔드 application에서도 같은 문제가 있습니다. Controller response에 persistence entity나 vendor SDK type을 그대로 내보내면 계층 내부 구현이 HTTP 계약으로 승격됩니다. 이는 단순 visibility modifier보다 더 넓은 의미의 API surface 누출입니다.
+백엔드 application에서도 같은 문제가 있습니다. Controller 응답에 persistence entity나 vendor SDK type을 그대로 내보내면 계층 내부 구현이 HTTP 계약으로 승격됩니다. 이는 단순 visibility modifier보다 더 넓은 의미의 API surface 누출입니다.
 
 ### 테스트 때문에 visibility를 넓히기 전에 책임을 확인한다
 

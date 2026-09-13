@@ -23,5 +23,10 @@ QUIC은 UDP datagram 위에 connection ID, TLS 1.3과 결합된 encrypted handsh
 
 stream별 delivery와 connection migration은 한 stream의 loss가 다른 stream의 byte delivery를 직접 막는 범위를 줄인다. 그러나 packet loss recovery, congestion, flow control, CPU와 bandwidth 경쟁 비용이 사라지는 것은 아니다. QUIC packet을 raw UDP message처럼 application에서 해석하거나, 중간 장비가 TCP sequence/state를 볼 수 있다고 가정하지 않는다.
 
-HTTP/3 client를 도입할 때는 UDP reachability, firewall/NAT timeout, version negotiation, TCP-based fallback과 observability를 함께 준비한다. connection ID로 network address가 바뀌어도 logical connection을 유지할 수 있으므로 request trace와 server state를 5-tuple 하나에만 묶지 않는다.
+HTTP/3 client를 도입할 때는 UDP reachability, firewall/NAT timeout, version negotiation, TCP-based 대체 처리와 observability를 함께 준비한다. connection ID로 network address가 바뀌어도 logical connection을 유지할 수 있으므로 요청 trace와 server state를 5-tuple 하나에만 묶지 않는다.
 
+### QUIC 위 HTTP/3
+    HTTP/3 → QUIC (UDP)
+                  → encryption + reliability + congestion
+                  → IP network
+UDP path가 막히면 HTTP/2 대체 처리를 별도 고려한다.

@@ -4,7 +4,7 @@ contentKey: operating-systems.core.scheduling.round-robin
 topicContentKey: operating-systems.core.scheduling
 slug: round-robin
 title: "Round Robin"
-summary: "runnable job에 time quantum을 순환 배분할 때 response와 context-switch overhead가 어떻게 바뀌는지 설명한다."
+summary: "runnable job에 time quantum을 순환 배분할 때 응답과 context-switch overhead가 어떻게 바뀌는지 설명한다."
 level: 1
 status: PUBLISHED
 displayOrder: 60
@@ -28,7 +28,9 @@ Round Robin(RR)은 runnable job을 queue에 두고 각 job에 **time quantum(tim
 | A | B | C | A | ...
 ```
 
-FCFS라면 B는 A가 100 ms를 끝낸 뒤에야 첫 실행을 시작하지만, RR에서는 B가 약 10 ms 뒤, C가 약 20 ms 뒤에 첫 service를 받을 수 있다. **Response time 관점의 장점**이 여기서 나온다.
+![Round Robin이 time quantum마다 runnable task를 순환시키는 흐름](/learning/operating-systems/round-robin-quantum.svg)
+
+FCFS라면 B는 A가 100 ms를 끝낸 뒤에야 첫 실행을 시작하지만, RR에서는 B가 약 10 ms 뒤, C가 약 20 ms 뒤에 첫 service를 받을 수 있다. **응답 시간 관점의 장점**이 여기서 나온다.
 
 ### Quantum이 너무 크면 FCFS에 가까워진다
 
@@ -58,14 +60,20 @@ Task가 CPU를 2 ms 사용한 뒤 socket I/O를 기다리게 되면 10 ms quantu
 
 ### Fairness와 동일 완료시간은 다른 개념이다
 
-Round Robin은 runnable task에 반복적으로 CPU 기회를 주므로 starvation을 줄이는 데 도움을 줄 수 있지만 모든 job의 turnaround를 최소화하는 policy는 아니다. 긴 batch와 짧은 request를 똑같은 quantum으로 순환시키면 short task의 completion은 SJF류보다 늦을 수 있다.
+Round Robin은 runnable task에 반복적으로 CPU 기회를 주므로 starvation을 줄이는 데 도움을 줄 수 있지만 모든 job의 turnaround를 최소화하는 policy는 아니다. 긴 batch와 짧은 요청을 똑같은 quantum으로 순환시키면 short task의 completion은 SJF류보다 늦을 수 있다.
 
-즉 RR의 중요한 목표는 **빠른 initial response와 CPU service 기회의 분산**이지 모든 metric의 동시 최적화가 아니다.
+즉 RR의 중요한 목표는 **빠른 initial 응답과 CPU service 기회의 분산**이지 모든 metric의 동시 최적화가 아니다.
 
 ### Backend worker scheduler와 직접 동일시하지 않는다
 
 Application thread pool의 FIFO queue가 있다고 해서 OS가 그 worker threads를 Round Robin으로 정확히 실행한다는 뜻은 아니다. Application queue policy와 OS CPU scheduler는 다른 층이다.
 
-다만 CPU-bound worker 수가 매우 많으면 OS scheduler가 많은 runnable threads 사이에서 CPU 시간을 나누게 되고 context-switch overhead가 증가할 수 있다. Thread count, request queueing, CPU scheduling을 각각 구분해 측정해야 한다.
+다만 CPU-bound worker 수가 매우 많으면 OS scheduler가 많은 runnable threads 사이에서 CPU 시간을 나누게 되고 context-switch overhead가 증가할 수 있다. Thread count, 요청 queueing, CPU scheduling을 각각 구분해 측정해야 한다.
 
-Round Robin의 핵심은 **time quantum이라는 preemption 단위를 통해 여러 runnable task의 response/fairness를 개선하는 대신, quantum 크기에 따라 context-switch 비용과 completion metric이 달라진다는 trade-off**다.
+### 면접에서 이렇게 나옵니다
+
+#### Q. Round Robin에서 quantum을 너무 작게 잡으면 왜 문제가 되나요?
+
+더 자주 CPU 기회를 나누어 응답이 좋아질 수 있지만, quantum이 useful work에 비해 너무 작으면 **context switch와 cache/locality 손실 비율이 커져 처리량이 떨어질 수 있다.** 반대로 너무 크면 FCFS와 비슷해져 초기 응답 장점이 약해진다.
+
+Round Robin의 핵심은 **time quantum이라는 preemption 단위를 통해 여러 runnable task의 응답/fairness를 개선하는 대신, quantum 크기에 따라 context-switch 비용과 completion metric이 달라진다는 trade-off**다.

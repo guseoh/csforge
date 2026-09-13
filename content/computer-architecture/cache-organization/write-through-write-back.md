@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.cache-organization.write-through-write-back
 topicContentKey: computer-architecture.core.cache-organization
 slug: write-through-write-back
-title: "Write-Through and Write-Back"
+title: "Write-Through·Write-Back"
 summary: "cache hit write를 lower level에 언제 반영할지 결정하는 write-through와 write-back의 traffic·dirty eviction trade-off를 설명한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "access pattern과 cache line 재사용을 확인한다."
     displayOrder: 1
 ---
-# Write-Through and Write-Back
+# Write-Through·Write-Back
 
 ### Read cache와 달리 write는 여러 복사본을 어떻게 갱신할지가 문제다
 

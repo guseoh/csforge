@@ -49,6 +49,6 @@ references:
 | 대안        | cache, query rewrite            |
 | 결과        | p95 180ms                       |
 | trade-off   | write cost 증가                 |
-| 재검토 조건 | write throughput 문제가 생길 때 |
+| 재검토 조건 | write 처리량 문제가 생길 때 |
 
 기술 선택의 품질은 '최신 기술을 썼는가'보다 **현재 문제를 설명하고, 대안을 비교하고, 적용 후 결과와 비용을 말할 수 있는가**로 평가하는 편이 낫다.

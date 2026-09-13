@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.data-representation.bit-byte-word
 topicContentKey: computer-architecture.core.data-representation
 slug: bit-byte-word
-title: "Bit, Byte and Word"
+title: "Bit, Byte·Word"
 summary: "bit·byte·word의 폭과 주소·레지스터 관계를 설명한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "고정 폭 정수와 수 표현의 기초를 확인한다."
     displayOrder: 1
 ---
-# Bit, Byte and Word
+# Bit, Byte·Word
 
 ### 기계가 다루는 최소 단위
 

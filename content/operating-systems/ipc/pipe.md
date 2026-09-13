@@ -14,12 +14,14 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "pipe의 byte-stream semantics, capacity, EOF와 blocking/non-blocking 동작을 확인한다."
+    recommendation: "Pipe capacity가 제한되어 있고 full pipe에 대한 blocking write가 reader가 공간을 만들 때까지 멈출 수 있음을 확인한다."
     displayOrder: 1
 ---
 # Pipe
 
 pipe는 kernel이 관리하는 buffer를 사이에 두고 한 execution context가 쓴 bytes를 다른 context가 읽게 하는 IPC다. Unix anonymous pipe는 보통 `pipe()`가 read end와 write end 두 descriptor를 만들고, parent가 `fork()`한 뒤 필요한 end를 parent/child가 나눠 가지는 식으로 자주 사용한다.
+
+![pipe의 producer-consumer buffer와 EOF lifetime](/learning/operating-systems/pipe-buffer-eof.svg)
 
 ### Pipe는 message queue가 아니라 byte stream이다
 
@@ -37,6 +39,6 @@ reader가 EOF를 관찰하려면 해당 pipe의 **모든 write-end reference가 
 
 ### 양방향 통신과 pipe
 
-anonymous pipe 하나는 한 방향 byte stream으로 생각하는 편이 안전하다. 양방향 communication이 필요하면 pipe 두 개를 쓰거나 socketpair/Unix-domain socket 같은 다른 primitive를 선택할 수 있다. 어떤 IPC가 적합한지는 message boundary, bidirectional need, process relation과 failure handling에 따라 달라진다.
+anonymous pipe 하나는 한 방향 byte stream으로 생각하는 편이 안전하다. 양방향 communication이 필요하면 pipe 두 개를 쓰거나 socketpair/Unix-domain socket 같은 다른 primitive를 선택할 수 있다. 어떤 IPC가 적합한지는 message boundary, bidirectional need, process relation과 실패 처리에 따라 달라진다.
 
 Backend가 external parser subprocess를 실행한다면 stdout만 읽고 stderr를 방치해 child가 stderr pipe capacity에서 block되는 상황도 고려한다. 두 stream drain, timeout, process termination, EOF/reap 순서를 하나의 subprocess lifecycle로 설계한다.

@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 600" role="img" aria-labelledby="title desc">
+  <title id="title">Virtual Thread와 carrier platform thread의 실행 관계</title>
+  <desc id="desc">여러 virtual thread가 소수의 carrier platform thread에 mount되어 실행되고, 지원되는 blocking I/O에서 대기하는 동안 carrier를 다른 virtual thread가 사용할 수 있는 흐름을 보여 준다.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0 0L9 4.5L0 9Z" fill="#a56df4"/></marker>
+    <style>.bg{fill:#17131f}.title{fill:#f5efff;font:700 25px Inter,Arial,sans-serif}.label{fill:#f0e8fa;font:650 17px Inter,Arial,sans-serif}.small{fill:#a797b5;font:500 14px Inter,Arial,sans-serif}.vt{fill:#21192e;stroke:#77539a;stroke-width:2}.carrier{fill:#2a1d3c;stroke:#a56df4;stroke-width:2}.wait{fill:#18352e;stroke:#4cc090;stroke-width:2}.scarce{fill:#33251c;stroke:#c48a47;stroke-width:2}.line{stroke:#a56df4;stroke-width:2;fill:none;marker-end:url(#arrow)}.dash{stroke:#4cc090;stroke-width:2;fill:none;stroke-dasharray:8 7;marker-end:url(#arrow)}</style>
+  </defs>
+  <rect class="bg" width="1120" height="600" rx="20"/>
+  <text class="title" x="48" y="55">Virtual Thread는 carrier를 재사용하지만 외부 자원 한도까지 늘리지는 않는다</text>
+
+  <text class="label" x="48" y="118">Virtual threads</text>
+  <rect class="vt" x="48" y="145" width="180" height="58" rx="11"/><text class="label" x="92" y="181">Virtual A</text>
+  <rect class="vt" x="48" y="220" width="180" height="58" rx="11"/><text class="label" x="92" y="256">Virtual B</text>
+  <rect class="vt" x="48" y="295" width="180" height="58" rx="11"/><text class="label" x="92" y="331">Virtual C</text>
+  <rect class="vt" x="48" y="370" width="180" height="58" rx="11"/><text class="label" x="92" y="406">Virtual D</text>
+
+  <text class="label" x="408" y="118">Carrier platform threads</text>
+  <rect class="carrier" x="408" y="170" width="230" height="70" rx="12"/><text class="label" x="457" y="211">Carrier 1</text>
+  <rect class="carrier" x="408" y="315" width="230" height="70" rx="12"/><text class="label" x="457" y="356">Carrier 2</text>
+
+  <path class="line" d="M228 174H408"/><path class="line" d="M228 249C320 249 320 205 408 205"/>
+  <path class="line" d="M228 324H408"/><path class="line" d="M228 399C320 399 320 350 408 350"/>
+  <text class="small" x="280" y="153">mount / schedule</text>
+
+  <rect class="wait" x="733" y="145" width="310" height="100" rx="13"/>
+  <text class="label" x="777" y="184">지원되는 blocking I/O 대기</text>
+  <text class="small" x="777" y="213">virtual thread suspend → carrier 재사용 가능</text>
+  <path class="dash" d="M638 205H733"/>
+
+  <rect class="scarce" x="733" y="315" width="310" height="118" rx="13"/>
+  <text class="label" x="777" y="355">실제 희소 자원</text>
+  <text class="small" x="777" y="384">CPU core · DB connection · 외부 API quota</text>
+  <text class="small" x="777" y="410">virtual thread 수와 별도로 제한해야 함</text>
+  <path class="line" d="M638 350H733"/>
+
+  <text class="small" x="48" y="505">Virtual thread는 특정 carrier에 평생 고정되지 않는다. 지원되는 blocking operation에서는 실행을 양보할 수 있다.</text>
+  <text class="small" x="48" y="535">다만 모든 blocking operation의 unmount를 보장하지 않으며 native/foreign call에서는 carrier pinning이 생길 수 있다.</text>
+  <text class="small" x="48" y="565">Thread가 가벼워져도 CPU·DB·외부 시스템 capacity는 그대로이므로 별도의 concurrency limit가 필요하다.</text>
+</svg>

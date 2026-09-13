@@ -19,7 +19,7 @@ references:
 ---
 # PAT
 
-PAT(Port Address Translation)는 source port까지 변환해 여러 내부 endpoint가 하나의 public IP를 동시에 공유하게 한다. 예를 들어 서로 다른 private source tuple을 같은 public address의 서로 다른 translated source port로 매핑하고, response의 destination port를 통해 각 내부 flow를 구분한다. 이 구분은 TCP와 UDP별로 유지되며 같은 숫자의 port라도 protocol이 다르면 별도 namespace다.
+PAT(Port Address Translation)는 source port까지 변환해 여러 내부 endpoint가 하나의 public IP를 동시에 공유하게 한다. 예를 들어 서로 다른 private source tuple을 같은 public address의 서로 다른 translated source port로 매핑하고, 응답의 destination port를 통해 각 내부 flow를 구분한다. 이 구분은 TCP와 UDP별로 유지되며 같은 숫자의 port라도 protocol이 다르면 별도 namespace다.
 
 동시에 사용할 수 있는 public address·port 조합과 gateway의 state table에는 한계가 있다. 내부 client가 ephemeral port를 많이 만들거나 connection이 짧게 반복되면 translated port allocation과 TIME_WAIT·idle state가 병목이 될 수 있다. mapping이 idle timeout으로 사라지면 다음 packet이 기존 application session을 되살린다는 보장도 없다.
 
@@ -27,3 +27,8 @@ PAT는 외부에서 시작한 connection의 목적지를 자동으로 정하지 
 
 Backend의 대량 outbound HTTP client에서는 NAT port exhaustion이 connect timeout이나 간헐적 새 connection 실패로 나타날 수 있다. connection reuse와 pool lifetime을 조정하면서 NAT gateway의 public address 수, translated-port 사용량, idle timeout을 함께 측정한다.
 
+### PAT multiplexing
+    10.0.0.5:40000 ─┐
+    10.0.0.6:40000 ─┼─> public IP + distinct source ports
+    10.0.0.7:40000 ─┘
+translated port와 mapping state가 각 flow를 구분한다.

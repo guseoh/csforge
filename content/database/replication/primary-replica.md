@@ -64,6 +64,6 @@ Hot Standby: 아직 CREATED
 
 ### standby는 backup과 같은 역할이 아니다
 
-Primary에서 실수로 `DELETE`를 commit하면 그 WAL도 standby에 전달되어 삭제가 복제될 수 있습니다. standby는 high availability/read scaling에 유용하지만 사용자 실수나 logical corruption에서 과거 상태를 복원하는 backup/PITR과 다른 기능입니다.
+Primary에서 실수로 `DELETE`를 commit하면 그 WAL도 standby에 전달되어 삭제가 복제될 수 있습니다. standby는 high 가용성/read scaling에 유용하지만 사용자 실수나 logical corruption에서 과거 상태를 복원하는 backup/PITR과 다른 기능입니다.
 
 Replication은 서버 수를 늘리는 기술이 아니라 **write authority와 복제된 read state 사이에 새로운 최신성·failover 계약을 만드는 아키텍처**입니다.

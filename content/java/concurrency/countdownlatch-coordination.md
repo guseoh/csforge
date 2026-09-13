@@ -101,7 +101,7 @@ count가 0이 된 latch는 다시 3이나 5로 reset되지 않습니다. 그래�
 
 ### 완료 전에 한 작업은 await 이후 관찰과 연결된다
 
-`CountDownLatch` API는 `countDown()` 이전의 작업과 다른 thread에서 성공적으로 `await()`한 이후의 작업 사이에 memory consistency 효과를 정의합니다. 따라서 단순히 숫자만 세는 유틸리티가 아니라 thread 간 완료 지점을 전달하는 동시성 계약을 가집니다.
+`CountDownLatch` API는 `countDown()` 이전의 작업과 다른 thread에서 성공적으로 `await()`한 이후의 작업 사이에 메모리 일관성 효과를 정의합니다. 따라서 단순히 숫자만 세는 유틸리티가 아니라 thread 간 완료 지점을 전달하는 동시성 계약을 가집니다.
 
 이 보장을 "CPU cache를 강제로 비운다" 같은 특정 하드웨어 설명으로 축소하지 말고 Java API의 happens-before 관계로 이해합니다.
 

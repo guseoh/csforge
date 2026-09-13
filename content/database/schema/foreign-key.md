@@ -55,7 +55,7 @@ ON orders(member_id);
 
 회원별 주문 조회가 빈번하거나 부모 삭제 시 child 확인 비용이 중요하다면 이 index가 유용할 수 있습니다. 반대로 사용하지 않는 index는 write 비용과 저장 공간을 늘립니다. 접근 패턴과 query plan을 보고 결정합니다.
 
-### application validation과 DB constraint는 경쟁 관계가 아니다
+### application 검증과 DB constraint는 경쟁 관계가 아니다
 
 API에서 “존재하지 않는 회원입니다”처럼 친절한 오류를 빨리 주기 위해 application check를 할 수 있습니다. 그래도 마지막 race를 막는 authoritative constraint는 DB에 둘 수 있습니다.
 

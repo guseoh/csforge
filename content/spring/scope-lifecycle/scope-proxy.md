@@ -4,7 +4,7 @@ contentKey: spring.core.scope-lifecycle.scope-proxy
 topicContentKey: spring.core.scope-lifecycle
 slug: scope-proxy
 title: "scope mismatch와 scoped proxy"
-summary: "singleton처럼 긴 수명의 객체가 request처럼 짧은 수명의 객체를 직접 주입받을 때 생기는 lifetime mismatch와 proxy가 현재 scope instance를 늦게 찾아주는 원리를 이해한다"
+summary: "singleton처럼 긴 수명의 객체가 요청처럼 짧은 수명의 객체를 직접 주입받을 때 생기는 lifetime mismatch와 proxy가 현재 scope instance를 늦게 찾아주는 원리를 이해한다"
 level: 2
 status: PUBLISHED
 displayOrder: 20
@@ -18,7 +18,7 @@ references:
 ---
 # scope mismatch와 scoped proxy
 
-singleton `AuditService`가 request마다 다른 `RequestContext`를 사용한다고 해 보겠습니다.
+singleton `AuditService`가 요청마다 다른 `RequestContext`를 사용한다고 해 보겠습니다.
 
 ```java
 @Service
@@ -31,7 +31,7 @@ class AuditService {
 }
 ```
 
-`AuditService`는 application 시작 때 한 번 만들어질 수 있지만 request-scoped `RequestContext`는 아직 어떤 request도 시작되지 않았거나, request마다 다른 instance여야 합니다. **긴 수명의 객체가 생성될 때 짧은 수명의 실제 객체를 한 번 고정해서 넣는 방식**으로는 lifetime 의미가 맞지 않습니다.
+`AuditService`는 application 시작 때 한 번 만들어질 수 있지만 request-scoped `RequestContext`는 아직 어떤 요청도 시작되지 않았거나, 요청마다 다른 instance여야 합니다. **긴 수명의 객체가 생성될 때 짧은 수명의 실제 객체를 한 번 고정해서 넣는 방식**으로는 lifetime 의미가 맞지 않습니다.
 
 ### 문제를 시간 순서로 보면 명확하다
 
@@ -47,7 +47,7 @@ Request B
   └─ RequestContext #B 필요
 ```
 
-singleton이 시작 시점의 한 instance를 계속 들고 있다면 A와 B가 같은 request state를 보게 되거나, request 밖에서 객체를 만들 수 없어 실패할 수 있습니다.
+singleton이 시작 시점의 한 instance를 계속 들고 있다면 A와 B가 같은 요청 state를 보게 되거나, 요청 밖에서 객체를 만들 수 없어 실패할 수 있습니다.
 
 ### scoped proxy는 실제 target 조회를 호출 시점으로 늦춘다
 
@@ -63,11 +63,11 @@ RequestContext proxy (singleton-like reference)
    └─ Request B -> RequestContext #B
 ```
 
-`AuditService`에는 안정적인 proxy reference를 주입하고, method를 호출할 때 proxy가 현재 active scope의 target을 찾아 위임합니다. 그래서 singleton 생성 시점과 request target 생성 시점을 분리할 수 있습니다.
+`AuditService`에는 안정적인 proxy reference를 주입하고, method를 호출할 때 proxy가 현재 active scope의 target을 찾아 위임합니다. 그래서 singleton 생성 시점과 요청 target 생성 시점을 분리할 수 있습니다.
 
-### proxy를 썼다고 request context가 어디서나 존재하는 것은 아니다
+### proxy를 썼다고 요청 context가 어디서나 존재하는 것은 아니다
 
-request scope가 active하지 않은 background thread나 startup code에서 target method를 호출하면 실제 request-bound object를 얻지 못할 수 있습니다. proxy는 **없는 scope를 만들어 주는 장치가 아니라 현재 scope의 target lookup을 지연하는 장치**입니다.
+request scope가 active하지 않은 background thread나 시작 code에서 target method를 호출하면 실제 요청-bound object를 얻지 못할 수 있습니다. proxy는 **없는 scope를 만들어 주는 장치가 아니라 현재 scope의 target lookup을 지연하는 장치**입니다.
 
 ```java
 @Async

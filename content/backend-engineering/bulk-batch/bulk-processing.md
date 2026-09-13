@@ -57,4 +57,4 @@ for (int i = 0; i < rows.size(); i++) {
 }
 ```
 
-이 코드도 만능 답은 아니다. ID 생성 전략, JDBC batching, cascade, validation 비용에 따라 실제 SQL을 측정해야 한다. Bulk 처리는 먼저 처리량과 실패 모델을 정한 뒤 framework 기능을 선택하는 문제다.
+이 코드도 만능 답은 아니다. ID 생성 전략, JDBC batching, cascade, 검증 비용에 따라 실제 SQL을 측정해야 한다. Bulk 처리는 먼저 처리량과 실패 모델을 정한 뒤 framework 기능을 선택하는 문제다.

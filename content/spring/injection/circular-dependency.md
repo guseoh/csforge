@@ -70,7 +70,7 @@ CheckoutUseCase
 
 ### setter/lazy로 cycle을 숨기면 설계 문제가 사라지지 않는다
 
-일부 injection 방식이나 `@Lazy` proxy를 사용하면 startup cycle을 우회할 수 있는 경우가 있습니다. 하지만 객체 A와 B가 서로 호출하는 runtime cycle은 그대로 남을 수 있습니다.
+일부 injection 방식이나 `@Lazy` proxy를 사용하면 시작 cycle을 우회할 수 있는 경우가 있습니다. 하지만 객체 A와 B가 서로 호출하는 runtime cycle은 그대로 남을 수 있습니다.
 
 ```text
 A.method()
@@ -83,13 +83,13 @@ A.method()
 
 ### event를 쓰면 무조건 해결되는 것도 아니다
 
-순환 dependency를 끊으려고 모든 직접 호출을 event로 바꾸면 실행 순서와 실패가 더 숨겨질 수 있습니다. 한 transaction 안에서 즉시 보장해야 하는 상태 전이를 비동기로 바꾸면 새로운 consistency 문제가 생깁니다. event는 실제로 producer와 consumer를 분리할 의미가 있을 때 사용해야 합니다.
+순환 dependency를 끊으려고 모든 직접 호출을 event로 바꾸면 실행 순서와 실패가 더 숨겨질 수 있습니다. 한 transaction 안에서 즉시 보장해야 하는 상태 전이를 비동기로 바꾸면 새로운 일관성 문제가 생깁니다. event는 실제로 producer와 consumer를 분리할 의미가 있을 때 사용해야 합니다.
 
 ### cycle을 리뷰할 때 묻는 질문
 
 - A가 B의 어떤 작은 능력만 필요한가, B 전체 service가 필요한가?
 - orchestration을 더 상위 use-case가 맡을 수 있는가?
 - domain state transition을 service끼리 왕복 호출하고 있지 않은가?
-- lazy/proxy workaround가 startup만 숨기고 runtime cycle을 남기지 않는가?
+- lazy/proxy workaround가 시작만 숨기고 runtime cycle을 남기지 않는가?
 
 constructor circular dependency가 빨리 실패하는 것은 불편함이 아니라 **객체 그래프가 완성될 수 없다는 사실을 조기에 보여 주는 신호**일 수 있습니다.

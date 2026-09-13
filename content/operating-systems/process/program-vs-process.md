@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.process.program-vs-process
 topicContentKey: operating-systems.core.process
 slug: program-vs-process
-title: "Program versus Process"
+title: "Program / Process"
 summary: "저장된 executable과 실행 중인 process state를 구분한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "새 program image가 현재 process image를 대체하는 Linux execve semantics를 확인한다."
     displayOrder: 1
 ---
-# Program versus Process
+# Program / Process
 
 Disk에 저장된 executable file과 지금 CPU에서 실행될 수 있는 process는 같은 것이 아니다. **Program**은 instruction과 static data를 담은 실행 가능한 대상이고, **process**는 그 program을 실행하기 위해 운영체제가 관리하는 살아 있는 execution state다.
 

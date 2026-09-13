@@ -25,7 +25,7 @@ references:
 | 위험                         | 적합한 검증 예              |
 | ---------------------------- | --------------------------- |
 | 계산/상태 전이 버그          | 단위 테스트                 |
-| Controller validation/status | MVC/API slice               |
+| Controller 검증/status | MVC/API slice               |
 | JPA mapping/query            | DB integration test         |
 | migration/import idempotency | 실제 PostgreSQL integration |
 | 전체 사용자 흐름             | 소수의 end-to-end           |

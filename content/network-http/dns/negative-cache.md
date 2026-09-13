@@ -4,7 +4,7 @@ contentKey: network-http.core.dns.negative-cache
 topicContentKey: network-http.core.dns
 slug: negative-cache
 title: "DNS Negative Cache"
-summary: "NXDOMAIN·NODATA 같은 negative answer의 cache key와 TTL을 이해하고 resolution-failure cache와 구분한다."
+summary: "NXDOMAIN·NODATA 같은 negative answer의 cache key와 TTL을 이해하고 resolution-실패 cache와 구분한다."
 level: 2
 status: PUBLISHED
 displayOrder: 90
@@ -46,7 +46,7 @@ Authoritative server가 NXDOMAIN이나 NODATA를 cache 가능하게 반환할 �
 
 ### NXDOMAIN/NODATA와 SERVFAIL/timeout cache를 같은 종류로 부르지 않는다
 
-RFC 9520의 용어에서는 NXDOMAIN과 NODATA는 **useful negative response**이고 `resolution failure`가 아니다. 반면 SERVFAIL, REFUSED, 모든 usable server의 timeout/unreachable, DNSSEC validation failure 등으로 resolver가 useful answer를 만들지 못한 경우는 resolution failure가 될 수 있다. 최신 규칙은 resolver가 이런 resolution failure도 잠시 cache하도록 요구하지만, 그 cache key·수명은 NXDOMAIN/NODATA의 SOA-based negative cache와 같은 계약이 아니다.
+RFC 9520의 용어에서는 NXDOMAIN과 NODATA는 **useful negative 응답**이고 `resolution failure`가 아니다. 반면 SERVFAIL, REFUSED, 모든 usable server의 timeout/unreachable, DNSSEC 검증 실패 등으로 resolver가 useful answer를 만들지 못한 경우는 resolution 실패가 될 수 있다. 최신 규칙은 resolver가 이런 resolution 실패도 잠시 cache하도록 요구하지만, 그 cache key·수명은 NXDOMAIN/NODATA의 SOA-based negative cache와 같은 계약이 아니다.
 
 ```text
 NXDOMAIN / NODATA
@@ -58,4 +58,4 @@ SERVFAIL / timeout / unreachable ...
   → resolver가 failure state를 bounded period cache
 ```
 
-운영에서 “DNS 실패가 cache됐다”는 말만 쓰지 말고 **name/type 부재를 cache한 것인지, resolution failure를 잠시 억제한 것인지**를 구분한다. 새 subdomain rollout이라면 authoritative record, SOA-based negative TTL, recursive cache expiry를 비교하고, 장애 중 SERVFAIL/timeout이라면 resolver failure cache와 upstream reachability를 별도로 본다.
+운영에서 “DNS 실패가 cache됐다”는 말만 쓰지 말고 **name/type 부재를 cache한 것인지, resolution 실패를 잠시 억제한 것인지**를 구분한다. 새 subdomain rollout이라면 authoritative record, SOA-based negative TTL, recursive cache expiry를 비교하고, 장애 중 SERVFAIL/timeout이라면 resolver 실패 cache와 upstream reachability를 별도로 본다.

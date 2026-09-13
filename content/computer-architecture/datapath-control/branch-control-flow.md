@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.datapath-control.branch-control-flow
 topicContentKey: computer-architecture.core.datapath-control
 slug: branch-control-flow
-title: "Branch and Control Flow"
+title: "Branch·Control Flow"
 summary: "branch condition·target 계산·next-PC 선택이 control flow를 바꾸는 과정을 설명한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "RV32I instruction formats, registers, load/store와 control-transfer encoding을 확인한다."
     displayOrder: 1
 ---
-# Branch and Control Flow
+# Branch·Control Flow
 
 ### 순차 실행에서는 next PC가 단순하다
 

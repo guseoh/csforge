@@ -33,7 +33,7 @@ CPU가 어떤 address를 읽을 때 cache는 그 byte가 포함된 일정 크기
 
 ### 큰 line과 작은 line 사이에도 trade-off가 있다
 
-line이 너무 작으면 miss 한 번에 가져오는 인접 data가 적어 spatial locality를 충분히 활용하지 못하고 tag metadata 비율도 커질 수 있다. line이 너무 크면 실제 사용하지 않을 byte까지 전송해 memory bandwidth를 쓰고, 같은 cache capacity에서 보관할 수 있는 line 수가 줄어 pollution과 eviction을 늘릴 수 있다. miss 때 채워야 하는 data가 많아져 fill latency가 커질 수도 있다.
+line이 너무 작으면 miss 한 번에 가져오는 인접 data가 적어 spatial locality를 충분히 활용하지 못하고 tag metadata 비율도 커질 수 있다. line이 너무 크면 실제 사용하지 않을 byte까지 전송해 memory bandwidth를 쓰고, 같은 cache capacity에서 보관할 수 있는 line 수가 줄어 pollution과 eviction을 늘릴 수 있다. miss 때 채워야 하는 data가 많아져 fill 지연 시간이 커질 수도 있다.
 
 따라서 `line이 크면 hit rate가 항상 좋아진다`거나 `작으면 항상 latency가 낮다`고 일반화할 수 없다. workload의 access pattern, prefetcher, cache capacity와 lower-level bandwidth를 함께 본다.
 
@@ -44,3 +44,9 @@ multicore system에서 cache coherence는 보통 개별 field가 아니라 cache
 ### Backend 성능에서 확인할 것
 
 Java에서 object가 연속으로 선언되었다고 해서 실제 heap에서 반드시 한 cache line에 연속 배치된다고 가정하면 안 된다. 반면 primitive array나 compact off-heap buffer처럼 layout이 명확한 구조에서는 순차 access가 line 재사용에 유리할 가능성이 크다. 성능을 바꿀 때는 object 수가 아니라 실제 access pattern, cache-miss counter, memory bandwidth를 함께 측정한다.
+### Cache line과 access
+    address → tag / set index / line offset
+                         │
+                         ▼
+              line 전체를 lower level에서 fill
+인접 access는 같은 line을 재사용할 수 있지만 큰 line은 bandwidth·pollution 비용을 만든다.

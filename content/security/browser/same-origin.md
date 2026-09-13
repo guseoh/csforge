@@ -33,7 +33,7 @@ Path `/orders`와 `/admin`이 다르다고 origin이 달라지는 것은 아닙�
 
 ### cross-origin 요청 자체가 항상 금지되는 것은 아니다
 
-HTML form POST, image/embed, navigation처럼 cross-origin write/embed가 가능한 경우가 있습니다. SOP의 핵심 방어 중 하나는 공격자 script가 **다른 origin의 response data를 자유롭게 읽는 것**을 막는 것입니다.
+HTML form POST, image/embed, navigation처럼 cross-origin write/embed가 가능한 경우가 있습니다. SOP의 핵심 방어 중 하나는 공격자 script가 **다른 origin의 응답 data를 자유롭게 읽는 것**을 막는 것입니다.
 
 ```text
 attacker.example script
@@ -44,7 +44,7 @@ Browser가 network request를 보낼 수 있는 경우도 있음
        └─ SOP/CORS 규칙에 따라 response를 script에 노출할지 결정
 ```
 
-이 때문에 “SOP가 있으니 CSRF가 불가능하다”는 결론은 틀립니다. CSRF는 response를 읽지 않아도 state-changing request가 성공하면 공격 목적을 달성할 수 있습니다.
+이 때문에 “SOP가 있으니 CSRF가 불가능하다”는 결론은 틀립니다. CSRF는 응답을 읽지 않아도 state-changing 요청이 성공하면 공격 목적을 달성할 수 있습니다.
 
 ### SOP는 서버 authorization이 아니다
 
@@ -52,6 +52,6 @@ Browser가 network request를 보낼 수 있는 경우도 있음
 
 ### CORS는 SOP를 선택적으로 완화한다
 
-서버가 특정 다른 origin의 script에게 response를 읽을 권한을 주고 싶을 때 CORS response header를 사용합니다. 이것이 다음 Concept의 주제입니다.
+서버가 특정 다른 origin의 script에게 응답을 읽을 권한을 주고 싶을 때 CORS 응답 헤더를 사용합니다. 이것이 다음 Concept의 주제입니다.
 
-SOP를 이해할 때는 “다른 domain 요청 금지” 한 줄이 아니라 **브라우저가 어떤 origin의 script에게 어떤 resource response를 노출할지를 제한하는 client-side isolation**으로 보는 것이 정확합니다.
+SOP를 이해할 때는 “다른 domain 요청 금지” 한 줄이 아니라 **브라우저가 어떤 origin의 script에게 어떤 resource 응답을 노출할지를 제한하는 client-side isolation**으로 보는 것이 정확합니다.

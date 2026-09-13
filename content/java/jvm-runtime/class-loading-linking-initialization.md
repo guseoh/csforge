@@ -174,7 +174,7 @@ Initialization이 비정상 종료하면 JVM은 해당 class/interface를 errone
 1. 지금 class가 loading만 된 상태인지 initialization까지 끝났는지 구분합니다.
 2. verification/preparation은 initialization 전에 끝나야 하지만 resolution은 lazy할 수 있음을 구분합니다.
 3. static field 기본값 설정과 개발자 initializer 실행을 나눕니다.
-4. symbolic reference resolution이 startup 시 전부 끝난다고 가정하지 않습니다.
+4. symbolic reference resolution이 시작 시 전부 끝난다고 가정하지 않습니다.
 5. 어떤 사용이 initialization trigger인지 확인합니다.
 6. 초기화 코드에서 예외가 나 class가 erroneous state가 된 적이 있는지 봅니다.
 7. 여러 thread의 class initialization이 임의로 두 번 실행된다고 생각하지 않습니다.

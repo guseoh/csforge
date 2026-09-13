@@ -16,10 +16,19 @@ references:
     depth: section
     recommendation: "kernel driver 계층이 다양한 device protocol을 공통 OS I/O 경계 뒤에 숨기는 역할을 확인한다."
     displayOrder: 1
+  - url: "https://d2.naver.com/helloworld/47667"
+    title: "TCP/IP 네트워크 스택 이해하기"
+    referenceType: COMPANY_TECH_BLOG
+    language: ko
+    depth: article
+    recommendation: "Linux network I/O에서 NIC interrupt, NAPI polling, softirq와 driver가 연결되는 실제 사례를 확인한다."
+    displayOrder: 2
 ---
 # Device I/O Kernel Path
 
 application은 일반적으로 network card, disk controller 같은 device register를 직접 조작하지 않는다. file descriptor와 `read`/`write`/`ioctl` 같은 system-call interface를 통해 kernel object에 요청을 전달하고, kernel과 device driver가 hardware-specific protocol을 처리한다. 이 경계 덕분에 application은 device마다 다른 command register나 DMA descriptor 형식을 직접 알지 않아도 된다.
+
+![application I/O 요청이 kernel과 driver/device를 거쳐 완료되는 경로](/learning/operating-systems/device-io-kernel-path.svg)
 
 ### 한 번의 I/O 요청에는 여러 단계가 있다
 
@@ -27,7 +36,7 @@ application은 일반적으로 network card, disk controller 같은 device regis
 
 `application → syscall entry → kernel object/filesystem/socket layer → driver → device/DMA → interrupt 또는 completion state → kernel → application`
 
-모든 device가 정확히 이 순서나 같은 메커니즘을 쓰는 것은 아니지만, **요청 제출과 실제 hardware completion이 같은 순간이 아니라는 점**이 중요하다. driver는 request를 queue에 넣고 device가 DMA로 memory를 갱신하도록 설정할 수 있으며, 이후 interrupt나 polling/completion queue를 통해 완료를 인식할 수 있다.
+모든 device가 정확히 이 순서나 같은 메커니즘을 쓰는 것은 아니지만, **요청 제출과 실제 hardware completion이 같은 순간이 아니라는 점**이 중요하다. driver는 요청을 queue에 넣고 device가 DMA로 memory를 갱신하도록 설정할 수 있으며, 이후 interrupt나 polling/completion queue를 통해 완료를 인식할 수 있다.
 
 ### 기다리는 방식은 API와 object에 따라 달라진다
 
@@ -41,4 +50,4 @@ DMA는 device가 CPU가 byte마다 복사하지 않고 memory와 data를 전송�
 
 ### Backend에서 어디까지 볼 것인가
 
-HTTP request가 느릴 때 application method 시간만 보면 실제 wait 위치를 놓칠 수 있다. socket receive 대기, file read, storage queue, downstream network처럼 kernel/device wait가 포함될 수 있다. thread state, syscall latency, queue depth와 device/network metrics를 함께 보되, hardware 세부 tuning을 application correctness의 기본 전제로 만들지는 않는다.
+HTTP 요청이 느릴 때 application method 시간만 보면 실제 wait 위치를 놓칠 수 있다. socket receive 대기, file read, storage queue, downstream network처럼 kernel/device wait가 포함될 수 있다. thread state, syscall 지연 시간, queue depth와 device/network metrics를 함께 보되, hardware 세부 tuning을 application correctness의 기본 전제로 만들지는 않는다.

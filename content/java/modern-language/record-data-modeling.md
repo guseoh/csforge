@@ -100,7 +100,7 @@ record Tags(List<String> values) {
 
 record는 다음처럼 **값 전달과 데이터 표현이 중심인 타입**에 잘 맞습니다.
 
-- API Request/Response
+- API 요청/응답
 - application query result
 - 여러 값을 하나의 의미 있는 값으로 묶는 value carrier
 - 좌표, 기간처럼 identity보다 값 자체가 중요한 모델
@@ -120,7 +120,7 @@ record class는 일반적인 class 상속용 기반 타입으로 사용하는 �
 
 ### 백엔드에서 특히 주의할 점
 
-record를 Response DTO로 사용하면 간결하지만, 내부에 mutable collection을 그대로 넣어 반환할 때는 ownership을 생각해야 합니다. application/domain collection을 그대로 노출하면 호출 측의 변경 가능성이나 이후 내부 상태 변경과 얽힐 수 있습니다.
+record를 응답 DTO로 사용하면 간결하지만, 내부에 mutable collection을 그대로 넣어 반환할 때는 ownership을 생각해야 합니다. application/domain collection을 그대로 노출하면 호출 측의 변경 가능성이나 이후 내부 상태 변경과 얽힐 수 있습니다.
 
 또 record가 `equals/hashCode`를 자동으로 제공한다는 이유로 어떤 객체든 값 객체가 되는 것은 아닙니다. 어떤 필드가 동등성을 결정해야 하는지, 그 동등성 의미가 도메인과 맞는지를 먼저 판단해야 합니다.
 
@@ -143,3 +143,13 @@ record를 Response DTO로 사용하면 간결하지만, 내부에 mutable collec
 ### 학습 후 스스로 설명해 보기
 
 record는 데이터 중심 클래스를 간결하게 선언하고 component를 기반으로 생성자, 접근자, `equals/hashCode/toString` 같은 반복 코드를 줄여 주는 언어 기능이라고 설명할 수 있습니다. 다만 component 필드가 재대입되지 않는 것과 내부 객체가 불변인 것은 다르므로 mutable collection 등을 보관한다면 방어적 복사가 필요할 수 있습니다.
+
+### 면접에서 이렇게 나옵니다
+
+#### Q. Java record는 immutable object인가요?
+
+record component에 대응하는 필드는 재대입할 수 없지만 참조 대상 객체까지 자동으로 불변이 되는 것은 아닙니다. `List` 같은 mutable object를 component로 받으면 외부 alias나 원소 mutation을 통해 관찰되는 상태가 바뀔 수 있으므로 필요한 경계에서는 방어적 복사를 별도로 설계해야 합니다.
+
+#### Q. DTO를 record로 만들기 좋은 경우와 일반 class가 더 나은 경우를 어떻게 구분하나요?
+
+구성 값 자체가 타입의 중심이고 생성 후 상태 변화가 중요하지 않은 data carrier라면 record가 잘 맞습니다. 반대로 identity, 긴 lifecycle, 상태 전이, proxy/lazy-loading 같은 모델 요구가 중심이면 record의 간결함보다 일반 class가 제공하는 명시적 lifecycle과 behavior 설계를 우선합니다.

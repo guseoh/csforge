@@ -48,7 +48,7 @@ release old table
 
 따라서 resize가 발생한 한 번의 insert는 비쌀 수 있다. 그러나 capacity를 충분한 비율로 늘린다면 resize가 매 insert마다 발생하지 않아 sequence 전체에서는 amortized cost로 설명할 수 있다.
 
-### peak memory와 failure boundary가 있다
+### peak memory와 실패 경계가 있다
 
 migration 중에는 old table과 new table이 동시에 존재할 수 있어 peak memory가 평상시 table size보다 커진다. 큰 table에서 이 순간 allocation이 실패하면 현재 table을 잃지 않고 기존 상태를 계속 사용할 수 있어야 한다.
 
@@ -58,4 +58,4 @@ migration 중에는 old table과 new table이 동시에 존재할 수 있어 pea
 
 모든 entry를 한 번에 옮기면 큰 pause가 생길 수 있다. 이를 줄이기 위해 일부 구현은 operation마다 몇 bucket씩 새 table로 옮기는 incremental migration을 사용할 수 있다. 대신 migration이 끝날 때까지 lookup이 old/new table 모두를 확인하거나 migration state를 따라야 해 구현 복잡도가 증가한다.
 
-따라서 resize policy는 단순한 capacity 숫자가 아니라 **평균 비용, 단일-operation tail latency, peak memory, migration complexity**의 trade-off다.
+따라서 resize policy는 단순한 capacity 숫자가 아니라 **평균 비용, 단일-operation 꼬리 지연 시간(tail latency), peak memory, migration complexity**의 trade-off다.

@@ -34,13 +34,13 @@ Redis의 `allkeys-lru`·`volatile-lru`는 최근 사용 정도를, `allkeys-lfu`
 
 ### eviction은 hit ratio를 바꾼다
 
-큰 value 하나가 작은 hot value 여러 개를 밀어내면 memory 사용량은 정상이어도 hit ratio와 origin load가 급격히 나빠질 수 있습니다. entry count만 보지 말고 serialized size, key별 hit, eviction 수와 origin fallback latency를 같이 봐야 합니다.
+큰 value 하나가 작은 hot value 여러 개를 밀어내면 memory 사용량은 정상이어도 hit ratio와 origin load가 급격히 나빠질 수 있습니다. entry count만 보지 말고 serialized size, key별 hit, eviction 수와 origin 대체 처리 지연 시간을 같이 봐야 합니다.
 
 Redis의 근사 LRU/LFU 특성까지 고려하면 eviction 결과를 개별 key 단위로 예언하기보다 workload에서 실제 hit/miss와 eviction rate가 어떻게 변하는지 측정하는 편이 중요합니다. Sample count나 LFU decay parameter를 바꾸는 것도 CPU 비용과 적응 속도의 trade-off가 있으므로 측정 근거 없이 tuning하지 않습니다.
 
 ### cache와 durable data의 policy를 섞지 않는다
 
-`noeviction`이나 memory pressure 때문에 **Redis의 cache SET/UPDATE가 실패하는 것**과 **PostgreSQL의 canonical write가 실패하는 것**은 서로 다른 사건입니다. DB commit이 이미 성공했다면 cache write 실패는 stale/miss·degraded mode·retry 여부를 별도로 결정해야 하고, cache failure가 canonical commit을 자동으로 되돌린다고 가정하면 안 됩니다. 반대로 Redis를 유일한 주문 source로 사용하면서 eviction을 허용한다면 key 제거가 곧 business data loss가 될 수 있으므로 V1의 derived cache 원칙과 맞지 않습니다. CSForge에서는 origin에서 재생성 가능한 값에만 eviction을 허용합니다.
+`noeviction`이나 memory pressure 때문에 **Redis의 cache SET/UPDATE가 실패하는 것**과 **PostgreSQL의 canonical write가 실패하는 것**은 서로 다른 사건입니다. DB commit이 이미 성공했다면 cache write 실패는 stale/miss·degraded mode·retry 여부를 별도로 결정해야 하고, cache 실패가 canonical commit을 자동으로 되돌린다고 가정하면 안 됩니다. 반대로 Redis를 유일한 주문 source로 사용하면서 eviction을 허용한다면 key 제거가 곧 business data loss가 될 수 있으므로 V1의 derived cache 원칙과 맞지 않습니다. CSForge에서는 origin에서 재생성 가능한 값에만 eviction을 허용합니다.
 
 ### 문제를 풀 때 확인할 것
 

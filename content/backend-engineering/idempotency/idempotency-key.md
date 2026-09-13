@@ -55,11 +55,11 @@ idempotency_record
 
 ### 같은 key와 다른 payload
 
-`key=abc`로 10,000원 결제를 한 뒤 같은 key로 20,000원을 보내면 단순히 첫 response를 돌려주는 것은 위험합니다. request fingerprint를 저장해 mismatch를 거부하는 패턴이 유용합니다. Stripe 문서도 동일 key 재사용 시 parameter 차이를 검사하는 사례를 제공합니다.
+`key=abc`로 10,000원 결제를 한 뒤 같은 key로 20,000원을 보내면 단순히 첫 응답을 돌려주는 것은 위험합니다. 요청 fingerprint를 저장해 mismatch를 거부하는 패턴이 유용합니다. Stripe 문서도 동일 key 재사용 시 parameter 차이를 검사하는 사례를 제공합니다.
 
 ### 결과 저장 시점
 
-validation 실패처럼 실제 operation이 시작되지 않았다면 key를 소비할지 정책을 정해야 합니다. 반대로 DB commit까지 끝난 결과는 response 전송 실패가 나도 재요청에 동일 결과를 돌려줘야 중복 side effect를 막을 수 있습니다.
+검증 실패처럼 실제 operation이 시작되지 않았다면 key를 소비할지 정책을 정해야 합니다. 반대로 DB commit까지 끝난 결과는 응답 전송 실패가 나도 재요청에 동일 결과를 돌려줘야 중복 side effect를 막을 수 있습니다.
 
 ### key scope
 
@@ -67,4 +67,4 @@ tenant/account별 namespace가 필요할 수 있습니다. 전역 key만 unique�
 
 ### 보안과 용량
 
-idempotency record에 민감한 response 전체를 장기간 저장하지 않도록 합니다. TTL과 최소 필요한 response snapshot을 정하고, key 자체도 무한히 누적되지 않게 정리합니다.
+idempotency record에 민감한 응답 전체를 장기간 저장하지 않도록 합니다. TTL과 최소 필요한 응답 snapshot을 정하고, key 자체도 무한히 누적되지 않게 정리합니다.

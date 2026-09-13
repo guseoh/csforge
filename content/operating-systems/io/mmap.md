@@ -21,9 +21,11 @@ references:
 
 `mmap()`은 file이나 anonymous memory object를 process의 virtual address range에 연결해 **load/store instruction으로 해당 mapping을 접근할 수 있게 만드는 interface**다. `read()`처럼 application buffer를 명시적으로 넘기는 대신 memory access 자체가 I/O-backed state와 연결된다.
 
+![file mapping과 first-touch page fault 흐름](/learning/operating-systems/mmap-file-access.svg)
+
 ### mapping 생성과 page residency는 다르다
 
-큰 file을 mmap해도 모든 file page가 즉시 RAM에 올라오는 것은 아니다. virtual mapping을 만든 뒤 실제 address를 처음 touch할 때 page fault가 발생하고 page cache/file backing에서 content가 준비될 수 있다. 그래서 mmap latency는 mapping call 하나보다 **first-touch fault와 working-set behavior**까지 봐야 한다.
+큰 file을 mmap해도 모든 file page가 즉시 RAM에 올라오는 것은 아니다. virtual mapping을 만든 뒤 실제 address를 처음 touch할 때 page fault가 발생하고 page cache/file backing에서 content가 준비될 수 있다. 그래서 mmap 지연 시간은 mapping call 하나보다 **first-touch fault와 working-set behavior**까지 봐야 한다.
 
 ### MAP_PRIVATE와 MAP_SHARED는 수정 의미가 다르다
 
@@ -33,7 +35,7 @@ private mapping에서 write는 일반적으로 copy-on-write 방식으로 proces
 
 ### File size와 mapping lifetime을 조심한다
 
-mapped range와 backing file의 크기/lifetime이 어긋나는 상황에서는 access failure가 발생할 수 있다. mapping한 file을 다른 actor가 truncate하거나 replace할 수 있는 workflow라면 pathname 변경과 mapping이 가리키는 underlying object를 구분하고 failure contract를 확인해야 한다.
+mapped range와 backing file의 크기/lifetime이 어긋나는 상황에서는 access 실패가 발생할 수 있다. mapping한 file을 다른 actor가 truncate하거나 replace할 수 있는 workflow라면 pathname 변경과 mapping이 가리키는 underlying object를 구분하고 실패 contract를 확인해야 한다.
 
 ### mmap이 항상 faster 또는 zero-copy는 아니다
 

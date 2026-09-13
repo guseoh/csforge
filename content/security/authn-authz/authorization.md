@@ -56,7 +56,7 @@ orderRepository.findByIdAndMemberId(orderId, currentMemberId)
 
 새 endpoint를 만들 때 명시하지 않아도 public이 되는 구조보다 기본적으로 인증/인가가 필요하고 필요한 public route만 열어 주는 방식이 누락 위험을 줄입니다.
 
-### authorization failure와 authentication failure는 다르다
+### authorization 실패와 authentication 실패는 다르다
 
 - 인증 정보가 없거나 유효하지 않음 → authentication 필요
 - 주체는 확인됐지만 권한 없음 → access denied

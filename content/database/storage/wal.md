@@ -18,7 +18,7 @@ references:
 ---
 # WAL과 write-ahead 원리
 
-DB가 transaction commit 때마다 변경된 모든 table page를 storage에 즉시 기록해야 한다면 random I/O가 많아지고 commit latency가 커질 수 있습니다. PostgreSQL은 WAL(Write-Ahead Log)을 사용해 **data page보다 복구에 필요한 log record를 먼저 안전하게 기록**하는 방식을 사용합니다.
+DB가 transaction commit 때마다 변경된 모든 table page를 storage에 즉시 기록해야 한다면 random I/O가 많아지고 commit 지연 시간이 커질 수 있습니다. PostgreSQL은 WAL(Write-Ahead Log)을 사용해 **data page보다 복구에 필요한 log record를 먼저 안전하게 기록**하는 방식을 사용합니다.
 
 ### write-ahead의 핵심 순서
 
@@ -38,7 +38,7 @@ UPDATE row
           └─ data page는 이후 checkpoint/background write에서 기록 가능
 ```
 
-Crash가 data page write 전에 발생해도 durable WAL record가 있다면 startup recovery에서 변경을 redo할 수 있습니다.
+Crash가 data page write 전에 발생해도 durable WAL record가 있다면 시작 recovery에서 변경을 redo할 수 있습니다.
 
 ### WAL은 undo log와 같은 말이 아니다
 
@@ -46,7 +46,7 @@ PostgreSQL MVCC rollback은 단순히 WAL을 거꾸로 적용해 모든 변경�
 
 ### commit 성공과 durability 설정의 관계
 
-기본적인 synchronous commit 설정에서는 transaction의 commit record가 local WAL에 flush될 때까지 기다린 뒤 성공을 반환하는 것이 durability의 핵심입니다. 하지만 `synchronous_commit` 같은 설정으로 일부 durability/latency trade-off를 바꿀 수 있으므로 “PostgreSQL commit은 모든 환경에서 정확히 같은 storage flush semantics”라고 일반화하면 안 됩니다.
+기본적인 synchronous commit 설정에서는 transaction의 commit record가 local WAL에 flush될 때까지 기다린 뒤 성공을 반환하는 것이 durability의 핵심입니다. 하지만 `synchronous_commit` 같은 설정으로 일부 durability/지연 시간 trade-off를 바꿀 수 있으므로 “PostgreSQL commit은 모든 환경에서 정확히 같은 storage flush semantics”라고 일반화하면 안 됩니다.
 
 ### WAL이 많아지는 workload도 비용이 있다
 

@@ -33,4 +33,4 @@ local variable이라는 이름만으로 object 자체가 thread-private이라고
 
 ### Backend에서 자주 만나는 context 문제
 
-logging MDC, request context, transaction 관련 context를 thread-local 방식으로 보관하는 구현이 있다. 작업이 같은 platform thread에서 계속 실행될 때는 편리하지만 async task나 다른 executor로 실행 흐름이 이동하면 값이 자동으로 따라간다고 가정하면 안 된다. 무엇이 thread-private이고 무엇을 명시적으로 전달해야 하는지 구분해야 한다.
+logging MDC, 요청 context, transaction 관련 context를 thread-local 방식으로 보관하는 구현이 있다. 작업이 같은 platform thread에서 계속 실행될 때는 편리하지만 async task나 다른 executor로 실행 흐름이 이동하면 값이 자동으로 따라간다고 가정하면 안 된다. 무엇이 thread-private이고 무엇을 명시적으로 전달해야 하는지 구분해야 한다.

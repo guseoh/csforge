@@ -47,7 +47,7 @@ IDOR(Insecure Direct Object Reference)라는 표현은 object identifier를 직�
 
 ### sequential ID가 원인은 아니다
 
-`1001, 1002, 1003`처럼 순차 ID면 공격 발견은 쉬워질 수 있지만 UUID로 바꾸는 것만으로 authorization failure가 사라지지 않습니다. 권한 있는 resource인지 매 요청 검사해야 합니다.
+`1001, 1002, 1003`처럼 순차 ID면 공격 발견은 쉬워질 수 있지만 UUID로 바꾸는 것만으로 authorization 실패가 사라지지 않습니다. 권한 있는 resource인지 매 요청 검사해야 합니다.
 
 ### list API도 object-level scope를 제한해야 한다
 

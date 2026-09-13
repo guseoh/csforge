@@ -3,7 +3,7 @@ kind: concept
 contentKey: dsa.core.algorithm-selection.preprocessing-query-cost
 topicContentKey: dsa.core.algorithm-selection
 slug: preprocessing-query-cost
-title: "Preprocessing and Query Cost"
+title: "Preprocessing·Query Cost"
 summary: "전처리 비용과 반복 query 절감량을 합산해 손익분기점을 판단한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "입력 크기와 basic operation count를 기준으로 linear scan 비용을 분석한다."
     displayOrder: 1
 ---
-# Preprocessing and Query Cost
+# Preprocessing·Query Cost
 
 전처리는 **지금 비용을 내고 이후 반복 작업을 싸게 만드는 선택**이다. 데이터를 한 번 정렬해 binary search를 사용하거나, prefix sum을 만들어 range sum query를 `O(1)`에 처리하거나, index를 구축해 반복 lookup을 줄이는 것이 대표적이다.
 

@@ -50,7 +50,7 @@ Library function을 호출했다고 해서 항상 kernel mode로 들어가는 �
 
 System call을 실행하려면 kernel이 어떤 service를 요청했는지와 argument를 전달하는 규칙이 필요하다. Linux는 architecture별 syscall ABI를 정의하며 syscall number와 argument register 배치, entry instruction 같은 세부사항은 CPU architecture마다 다를 수 있다.
 
-예를 들어 RISC-V 환경에서는 `ECALL`이 execution environment에 service request를 일으키는 instruction으로 사용될 수 있고, x86-64 Linux에서는 다른 architecture-specific entry mechanism을 사용한다. 따라서 일반 OS 설명에서 모든 system call을 특정한 하나의 “trap instruction”으로 정의하지 않는다.
+예를 들어 RISC-V 환경에서는 `ECALL`이 execution environment에 service 요청을 일으키는 instruction으로 사용될 수 있고, x86-64 Linux에서는 다른 architecture-specific entry mechanism을 사용한다. 따라서 일반 OS 설명에서 모든 system call을 특정한 하나의 “trap instruction”으로 정의하지 않는다.
 
 ### 요청은 즉시 성공하지 않을 수 있다
 
@@ -58,8 +58,16 @@ Kernel service는 여러 결과를 낼 수 있다. 요청한 byte보다 적게 �
 
 예를 들어 `read(fd, buffer, 4096)`이 4096 byte를 요청했다고 해서 항상 4096 byte를 반환하는 것은 아니다. File/socket의 상태와 API contract에 따라 더 적은 수가 반환될 수 있고, EOF나 error도 구분해야 한다. Application은 이런 return contract를 이해해야 한다.
 
+### 면접에서 이렇게 나옵니다
+
+#### Q. Library call과 system call은 어떻게 다른가요?
+
+Library call은 application이 사용하는 runtime/library abstraction이고, system call은 user space가 kernel service를 요청하는 OS interface입니다.
+
+Library function이 user space에서만 끝날 수도 있고, buffering으로 여러 library call이 하나의 system call로 합쳐질 수도 있습니다. 반대로 하나의 고수준 API가 여러 system call을 사용할 수도 있으므로 **두 호출 단위를 1:1로 대응시키면 안 됩니다.**
+
 ### Backend에서 보는 system call의 의미
 
 Java Backend가 DB나 network I/O를 수행할 때 Java thread가 CPU에서 application code만 계속 실행하는 것은 아니다. Runtime을 거쳐 kernel에 I/O를 요청한 뒤 현재 thread가 block될 수도 있고, non-blocking descriptor에서는 readiness를 별도로 기다릴 수도 있다.
 
-따라서 system call을 이해하는 목적은 low-level assembly를 외우는 데 있지 않다. **고수준 API 아래에서 언제 kernel resource를 사용하고, 어떤 상태 변화와 error/partial result가 생길 수 있는지** 이해하는 것이 핵심이다. 이 경계를 알아야 application latency, thread blocking, file descriptor 고갈 같은 문제를 올바른 층에서 분석할 수 있다.
+따라서 system call을 이해하는 목적은 low-level assembly를 외우는 데 있지 않다. **고수준 API 아래에서 언제 kernel resource를 사용하고, 어떤 상태 변화와 error/partial result가 생길 수 있는지** 이해하는 것이 핵심이다. 이 경계를 알아야 application 지연 시간, thread blocking, file descriptor 고갈 같은 문제를 올바른 층에서 분석할 수 있다.

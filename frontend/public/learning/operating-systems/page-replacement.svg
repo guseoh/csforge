@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="400" viewBox="0 0 960 400" role="img" aria-labelledby="title desc">
+  <title id="title">Page replacement</title>
+  <desc id="desc">Free frame이 없을 때 resident page 중 victim을 선택해 frame을 재사용하는 흐름</desc>
+  <rect width="960" height="400" rx="24" fill="#111827"/>
+  <text x="48" y="52" fill="#f9fafb" font-size="28" font-family="Arial, sans-serif" font-weight="700">Page Replacement</text>
+  <text x="70" y="105" fill="#d1d5db" font-size="17" font-family="Arial, sans-serif">Resident frames — all occupied</text>
+  <g font-family="Arial, sans-serif" text-anchor="middle">
+    <rect x="70" y="135" width="150" height="75" rx="12" fill="#1f2937" stroke="#9ca3af"/><text x="145" y="166" fill="#f9fafb" font-size="18">Page 1</text><text x="145" y="192" fill="#9ca3af" font-size="14">recent</text>
+    <rect x="240" y="135" width="150" height="75" rx="12" fill="#1f2937" stroke="#9ca3af"/><text x="315" y="166" fill="#f9fafb" font-size="18">Page 2</text><text x="315" y="192" fill="#9ca3af" font-size="14">victim candidate</text>
+    <rect x="410" y="135" width="150" height="75" rx="12" fill="#1f2937" stroke="#9ca3af"/><text x="485" y="166" fill="#f9fafb" font-size="18">Page 3</text><text x="485" y="192" fill="#9ca3af" font-size="14">dirty?</text>
+    <rect x="690" y="135" width="190" height="75" rx="12" fill="#1f2937" stroke="#9ca3af"/><text x="785" y="166" fill="#f9fafb" font-size="18">Incoming Page 4</text><text x="785" y="192" fill="#9ca3af" font-size="14">needs a frame</text>
+  </g>
+  <line x1="315" y1="220" x2="315" y2="295" stroke="#e5e7eb" stroke-width="3"/><polygon points="315,295 307,281 323,281" fill="#e5e7eb"/>
+  <text x="315" y="330" text-anchor="middle" fill="#d1d5db" font-size="16" font-family="Arial, sans-serif">evict / write-back if needed</text>
+  <line x1="690" y1="172" x2="575" y2="172" stroke="#e5e7eb" stroke-width="3"/><polygon points="575,172 589,164 589,180" fill="#e5e7eb"/>
+  <text x="625" y="150" text-anchor="middle" fill="#d1d5db" font-size="15" font-family="Arial, sans-serif">reuse frame</text>
+  <text x="690" y="292" fill="#9ca3af" font-size="15" font-family="Arial, sans-serif">Victim 판단:</text>
+  <text x="690" y="318" fill="#9ca3af" font-size="15" font-family="Arial, sans-serif">reuse 가능성 + dirty/write cost</text>
+  <text x="480" y="370" text-anchor="middle" fill="#9ca3af" font-size="16" font-family="Arial, sans-serif">Working set이 budget보다 크면 policy 개선만으로 fault를 없앨 수 없다.</text>
+</svg>

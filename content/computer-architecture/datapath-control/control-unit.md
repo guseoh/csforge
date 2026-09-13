@@ -58,4 +58,4 @@ Pipeline processor에서는 decode 단계에서 만들어진 control information
 
 Hazard나 flush가 발생할 때는 잘못된 instruction의 state-changing control을 무효화하는 것도 중요하다. Branch misprediction 뒤 wrong-path instruction을 버린다는 것은 단순히 instruction bytes를 잊는 것이 아니라, 그 instruction이 architectural state를 변경하지 못하도록 막는다는 뜻이다.
 
-CPU errata나 native failure를 분석할 때도 ISA가 정의한 결과와 특정 processor의 decode/microcode implementation을 구분한다. Application은 undocumented control timing이 아니라 documented architectural semantics에 의존해야 한다.
+CPU errata나 native 실패를 분석할 때도 ISA가 정의한 결과와 특정 processor의 decode/microcode implementation을 구분한다. Application은 undocumented control timing이 아니라 documented architectural semantics에 의존해야 한다.

@@ -33,7 +33,7 @@ daily requests ─▶ peak requests/sec ─▶ bytes/sec
                               └─ replication·index·backup 배수
 ```
 
-평균 QPS만 보면 burst와 autoscaling delay를 놓칩니다. 요청 수와 실제 query·message·row·byte 작업량을 구분하고, response fan-out과 retry가 origin load를 얼마나 증폭시키는지 포함합니다.
+평균 QPS만 보면 burst와 autoscaling delay를 놓칩니다. 요청 수와 실제 query·message·row·byte 작업량을 구분하고, 응답 fan-out과 retry가 origin load를 얼마나 증폭시키는지 포함합니다.
 
 ### data shape가 storage를 결정한다
 
@@ -46,7 +46,7 @@ daily requests ─▶ peak requests/sec ─▶ bytes/sec
 ### 문제를 풀 때 확인할 것
 
 1. 평균·peak·burst와 지속 시간을 구분합니다.
-2. request·query·message·byte의 작업 단위를 정합니다.
+2. 요청·query·message·byte의 작업 단위를 정합니다.
 3. read/write·fan-out·retry·replication 배수를 포함합니다.
 4. record·index·history·backup·retention storage를 계산합니다.
 5. range별 load test와 telemetry로 추정을 보정합니다.

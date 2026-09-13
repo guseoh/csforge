@@ -4,7 +4,7 @@ contentKey: security.core.foundations.trust-boundary
 topicContentKey: security.core.foundations
 slug: trust-boundary
 title: "Trust boundary와 입력 검증 책임"
-summary: "브라우저·외부 API·파일·DB projection 등 신뢰 수준이 다른 경계를 넘어오는 데이터를 다시 검증해야 하는 이유와 client-side validation을 보안 경계로 볼 수 없는 이유를 이해한다."
+summary: "브라우저·외부 API·파일·DB projection 등 신뢰 수준이 다른 경계를 넘어오는 데이터를 다시 검증해야 하는 이유와 client-side 검증을 보안 경계로 볼 수 없는 이유를 이해한다."
 level: 1
 status: PUBLISHED
 displayOrder: 20
@@ -18,7 +18,7 @@ references:
 ---
 # Trust boundary와 입력 검증 책임
 
-프론트엔드가 이미 validation을 했으니 backend는 같은 값을 다시 확인하지 않아도 된다고 생각하면 신뢰 경계를 잘못 잡은 것입니다. 공격자는 브라우저 UI를 거치지 않고 HTTP 요청을 직접 만들 수 있습니다.
+프론트엔드가 이미 검증을 했으니 backend는 같은 값을 다시 확인하지 않아도 된다고 생각하면 신뢰 경계를 잘못 잡은 것입니다. 공격자는 브라우저 UI를 거치지 않고 HTTP 요청을 직접 만들 수 있습니다.
 
 ```text
 사용자 Browser
@@ -33,7 +33,7 @@ Boundary를 넘는 순간 “이 값은 우리가 기대한 형식과 의미인�
 
 ### 입력의 출처가 내부 코드처럼 보여도 경계를 확인한다
 
-외부 결제 API response도 우리가 통제하지 않는 데이터입니다.
+외부 결제 API 응답도 우리가 통제하지 않는 데이터입니다.
 
 ```text
 Backend ── request ──► Payment Provider
@@ -44,7 +44,7 @@ Backend ◄─ response ── Payment Provider
 
 외부 시스템 장애나 계약 변경, compromised upstream까지 고려하면 “서버끼리 통신하니 신뢰”라고 단정할 수 없습니다.
 
-### validation은 한 층에서 끝나지 않는다
+### 검증은 한 층에서 끝나지 않는다
 
 ```text
 HTTP parser / DTO validation
@@ -57,7 +57,7 @@ Persistence / DB constraint
            uniqueness, FK, check
 ```
 
-예를 들어 `quantity=3`이 정수인지 확인하는 것은 API validation이고, 현재 재고보다 작은지는 domain/use-case 규칙이며, quantity가 음수로 저장되지 않는 최종 하한선은 DB CHECK로 보강할 수 있습니다.
+예를 들어 `quantity=3`이 정수인지 확인하는 것은 API 검증이고, 현재 재고보다 작은지는 domain/use-case 규칙이며, quantity가 음수로 저장되지 않는 최종 하한선은 DB CHECK로 보강할 수 있습니다.
 
 ### client가 보내는 identity도 그대로 신뢰하지 않는다
 

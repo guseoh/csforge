@@ -190,4 +190,4 @@ record RequestContext(
 
 ### 학습 후 스스로 설명해 보기
 
-`ScopedValue`는 caller가 값을 현재 thread의 bounded dynamic scope에 바인딩하고 안쪽 호출이 읽도록 하는 Java 25 API입니다. `ThreadLocal`처럼 callee가 thread-local slot을 임의로 변경하고 수동으로 remove하는 모델보다 one-way request context 전달에 적합합니다. Binding은 기본적으로 per-thread이고 arbitrary executor로 자동 전파되지 않지만, `StructuredTaskScope`처럼 명시적으로 지원하는 구조에서는 fork된 subtask thread가 binding을 상속합니다. 바인딩된 객체 자체의 mutability나 thread-safety는 별도 문제입니다.
+`ScopedValue`는 caller가 값을 현재 thread의 bounded dynamic scope에 바인딩하고 안쪽 호출이 읽도록 하는 Java 25 API입니다. `ThreadLocal`처럼 callee가 thread-local slot을 임의로 변경하고 수동으로 remove하는 모델보다 one-way 요청 context 전달에 적합합니다. Binding은 기본적으로 per-thread이고 arbitrary executor로 자동 전파되지 않지만, `StructuredTaskScope`처럼 명시적으로 지원하는 구조에서는 fork된 subtask thread가 binding을 상속합니다. 바인딩된 객체 자체의 mutability나 thread-safety는 별도 문제입니다.

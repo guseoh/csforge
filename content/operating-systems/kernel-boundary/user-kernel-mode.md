@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.kernel-boundary.user-kernel-mode
 topicContentKey: operating-systems.core.kernel-boundary
 slug: user-kernel-mode
-title: "User and Kernel Mode"
+title: "User·Kernel Mode"
 summary: "CPU privilege level과 OS kernel 경계가 application의 직접 hardware 접근을 제한하는 이유를 설명한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "OS와 kernel service의 경계를 확인한다."
     displayOrder: 1
 ---
-# User and Kernel Mode
+# User·Kernel Mode
 
 Application process가 다른 process의 memory를 읽거나 interrupt 설정을 바꾸고 device controller를 직접 조작할 수 있다면 process isolation은 성립하기 어렵다. 그래서 현대 CPU는 모든 instruction을 같은 권한으로 실행하지 않고 **privilege level**을 구분한다. 일반 application은 낮은 권한의 user mode에서 실행되고, OS kernel은 더 높은 권한에서 privileged operation을 수행한다.
 
@@ -61,6 +61,14 @@ System call로 user mode에서 kernel mode로 들어갔다가 같은 thread로 �
 
 System call 하나가 항상 process context switch를 의미하는 것은 아니다.
 
+### 면접에서 이렇게 나옵니다
+
+#### Q. Mode switch와 context switch는 왜 구분해야 하나요?
+
+System call처럼 같은 task가 user mode에서 kernel mode로 들어갔다가 곧바로 돌아오는 경우에는 privilege level만 바뀌고 다른 task로 실행 주체가 교체되지 않을 수 있습니다.
+
+Context switch는 scheduler가 다른 task를 선택해 CPU execution context를 바꾸는 사건입니다. Blocking system call 때문에 context switch가 뒤따를 수는 있지만, **mode switch 자체가 곧 context switch인 것은 아닙니다.**
+
 ### Java Backend 요청도 이 경계를 통과한다
 
 Java code가 `FileInputStream`, socket, database connection 같은 기능을 사용하면 Java method가 hardware를 직접 조작하는 것이 아니다. JVM과 native library를 거쳐 OS interface를 호출하고, 필요한 경우 system call을 통해 kernel service를 사용한다.
@@ -77,6 +85,6 @@ Linux kernel
 filesystem / network stack / driver
 ```
 
-그래서 backend latency를 해석할 때 Java method 실행 시간과 kernel I/O wait를 구분할 필요가 있다. 또한 permission denied, descriptor limit, network error 같은 실패는 application business rule과 다른 OS/runtime layer의 실패다.
+그래서 backend 지연 시간을 해석할 때 Java method 실행 시간과 kernel I/O wait를 구분할 필요가 있다. 또한 permission denied, descriptor limit, network error 같은 실패는 application business rule과 다른 OS/runtime layer의 실패다.
 
 User/kernel mode의 핵심은 “kernel이 더 강력하다”는 정의가 아니다. **CPU privilege mechanism을 이용해 application이 시스템 전체 자원을 직접 제어하지 못하도록 만들고, 필요한 작업만 검증된 kernel entry를 통해 수행하게 하는 보호 구조**다.

@@ -21,4 +21,4 @@ media type은 representation의 format과 처리 의미를 `type/subtype` 및 pa
 
 parameter와 charset, vendor subtype의 허용 범위를 parser가 명확히 정의하고 unknown 또는 잘못된 type은 안전하게 거부하거나 다운로드 같은 제한된 처리로 보낸다. `Content-Encoding`은 representation의 content coding을 나타내므로 media type 자체를 `application/json`에서 다른 type으로 바꾸는 값이 아니다. client sniffing에 의존하면 declared type과 실제 실행·표시 방식이 달라질 수 있다.
 
-import endpoint는 허용 media type, parameter와 schemaVersion을 검증하고 파일 확장자만 믿지 않는다. response `Content-Type`이 실제 serializer 결과와 일치하는지 contract test로 확인하며, upload content의 보안 검사는 선언된 type과 별도로 수행한다.
+import endpoint는 허용 media type, parameter와 schemaVersion을 검증하고 파일 확장자만 믿지 않는다. 응답 `Content-Type`이 실제 serializer 결과와 일치하는지 contract test로 확인하며, upload content의 보안 검사는 선언된 type과 별도로 수행한다.

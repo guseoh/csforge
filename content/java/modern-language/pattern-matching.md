@@ -86,14 +86,14 @@ String describe(Object value) {
 case 순서도 아무렇게나 둘 수 있는 것은 아닙니다.
 
 ```java
-// 잘못된 예의 의도
+// 컴파일되지 않는 순서의 예
 switch (value) {
     case Object object -> ...;
-    case String text -> ...; // 앞의 Object가 이미 String까지 잡아 버린다
+    case String text -> ...; // 앞의 Object가 이미 String까지 처리한다
 }
 ```
 
-`String`은 `Object`이므로 첫 번째 case가 String 값까지 처리해 버립니다. 뒤의 `String` case는 도달할 수 없습니다. 이런 관계를 **dominance**라고 이해할 수 있습니다. 더 넓은 pattern이 더 구체적인 pattern을 앞에서 가리지 않는지 봐야 합니다.
+`String`은 `Object`이므로 첫 번째 case가 String 값까지 처리합니다. 뒤의 `String` case는 도달할 수 없으므로 compiler가 이런 지배 관계를 허용하지 않습니다. 이런 관계를 **dominance**라고 이해할 수 있습니다. 더 넓은 pattern이 더 구체적인 pattern을 앞에서 가리지 않는지 봐야 합니다.
 
 ### record pattern은 데이터 구조를 분해할 때 사용할 수 있다
 
@@ -120,6 +120,8 @@ else if (shape instanceof Rectangle rectangle) { ... }
 
 `Shape`가 자신의 면적을 계산할 책임을 갖는다면 `shape.area()`가 더 좋은 설계일 수 있습니다. 반면 serialization, 화면 표현 변환처럼 **타입 계층 밖에서 여러 subtype을 한 번에 해석해야 하는 작업**에서는 pattern switch가 유용합니다.
 
+sealed hierarchy와 결합하면 가능한 subtype 집합이 닫혀 있다는 정보를 exhaustive switch가 활용할 수 있습니다. 이때도 “모든 행동은 switch로 모아야 한다”는 뜻은 아닙니다. 객체 내부 책임인지, 타입 계층 밖의 해석 책임인지 먼저 구분합니다.
+
 ### 문제를 풀 때 확인할 것
 
 1. pattern이 성공해야만 사용할 수 있는 변수가 무엇인지 확인한다.
@@ -138,3 +140,13 @@ else if (shape instanceof Rectangle rectangle) { ... }
 ### 학습 후 스스로 설명해 보기
 
 Pattern matching은 타입 검사와 안전한 값 추출을 함께 표현해 반복적인 cast 코드를 줄이는 기능이라고 설명할 수 있습니다. 중요한 부분은 pattern variable의 scope가 단순한 블록 범위가 아니라 조건의 성공이 보장되는 제어 흐름과 연결된다는 점입니다. switch에서는 dominance와 exhaustiveness도 함께 고려해야 합니다.
+
+### 면접에서 이렇게 나옵니다
+
+#### Q. `instanceof String text && !text.isBlank()`에서는 `text`를 쓸 수 있는데 `instanceof String text || text.isBlank()`에서는 왜 안 되나요?
+
+`&&`의 오른쪽은 왼쪽 pattern이 성공한 경로에서만 평가되므로 `text`가 String으로 binding되었다는 사실이 보장됩니다. 반대로 `||`의 오른쪽은 왼쪽 검사가 실패한 경로에서 실행될 수 있어 `text`가 존재한다고 보장할 수 없습니다. 이를 pattern variable의 flow scoping으로 이해할 수 있습니다.
+
+#### Q. pattern switch에서 `case Object`를 `case String`보다 먼저 둘 수 없는 이유는 무엇인가요?
+
+`Object` pattern은 String 값도 이미 처리할 수 있으므로 뒤의 String case가 도달 불가능해집니다. Java는 이런 dominance를 검사해 더 넓은 pattern이 뒤의 구체적인 pattern을 가리는 분기를 막습니다.

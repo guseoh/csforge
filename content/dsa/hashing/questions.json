@@ -30,7 +30,7 @@
     "contentKey":"dsa.core.hashing.hash-function.q3",
     "promptMarkdown":"객체의 `email` 필드가 hash/equality에 참여하고 그 객체를 hash table key로 넣은 뒤 email을 변경했다. 이후 새 email 값으로 lookup했을 때 table 안에 객체가 있어도 찾지 못할 수 있는 이유를 설명하라.",
     "questionType":"SCENARIO",
-    "difficulty":"HARD",
+    "difficulty":"MEDIUM",
     "status":"PUBLISHED",
     "conceptKeys":["dsa.core.hashing.hash-function"],
     "modelAnswer":"entry는 저장 당시 email로 계산한 hash와 bucket/probe path에 배치되어 있다. key를 mutate한 뒤 lookup은 새 email의 hash로 다른 후보 위치에서 시작할 수 있어 기존 entry에 도달하지 못한다. hash/equality에 참여하는 key state는 table에 저장된 동안 안정적으로 유지해야 한다."
@@ -60,7 +60,7 @@
     "contentKey":"dsa.core.hashing.bucket-mapping.q3",
     "promptMarkdown":"capacity가 16인 table이 하위 4bit만 mask로 사용한다. 입력 hash들이 모두 하위 4bit가 `0011`로 같고 상위 bit만 다양하다면 어떤 분포 문제가 생기며 원인이 무엇인지 설명하라.",
     "questionType":"SCENARIO",
-    "difficulty":"HARD",
+    "difficulty":"MEDIUM",
     "status":"PUBLISHED",
     "conceptKeys":["dsa.core.hashing.bucket-mapping"],
     "modelAnswer":"모든 key가 동일한 index 3으로 mapping되어 collision이 한 bucket/cluster에 집중된다. power-of-two mask 자체보다 index 계산에 쓰이는 hash bit의 분포가 입력 패턴을 충분히 섞지 못하는 것이 문제다."
@@ -96,7 +96,7 @@
     "contentKey":"dsa.core.hashing.collision.q3",
     "promptMarkdown":"서로 다른 canonical contentKey 두 개가 같은 internal hash bucket에 들어갔지만 DB unique constraint에는 문제가 없다. 이것을 domain duplicate로 처리하면 왜 잘못인지 설명하라.",
     "questionType":"SCENARIO",
-    "difficulty":"HARD",
+    "difficulty":"MEDIUM",
     "status":"PUBLISHED",
     "conceptKeys":["dsa.core.hashing.collision"],
     "modelAnswer":"hash collision은 자료구조 내부에서 서로 다른 key가 같은 후보 위치를 공유하는 정상 상황이고 equality로 구분할 수 있다. DB duplicate는 실제 canonical key 값이 동일해 uniqueness 계약을 위반하는 경우다. 두 층위의 충돌 의미를 분리해야 한다."
@@ -126,10 +126,10 @@
     "contentKey":"dsa.core.hashing.separate-chaining.q3",
     "promptMarkdown":"100개 bucket 중 99개는 길이 1 이하인데 한 bucket만 길이 500이다. 전체 평균 load factor만 보면 양호해 보일 때도 p99 lookup이 나빠질 수 있는 이유를 설명하라.",
     "questionType":"SCENARIO",
-    "difficulty":"HARD",
+    "difficulty":"MEDIUM",
     "status":"PUBLISHED",
     "conceptKeys":["dsa.core.hashing.separate-chaining"],
-    "modelAnswer":"평균은 bucket 간 불균형을 숨긴다. 긴 bucket에 속한 key는 최대 수백 번 equality 비교를 해야 하므로 일부 lookup의 tail latency가 매우 커질 수 있다. bucket length distribution과 최장 chain을 함께 봐야 한다."
+    "modelAnswer":"평균은 bucket 간 불균형을 숨긴다. 긴 bucket에 속한 key는 최대 수백 번 equality 비교를 해야 하므로 일부 lookup의 꼬리 지연 시간(tail latency)이 매우 커질 수 있다. bucket length distribution과 최장 chain을 함께 봐야 한다."
   },
   {
     "kind":"question",
@@ -162,17 +162,17 @@
     "contentKey":"dsa.core.hashing.open-addressing.q3",
     "promptMarkdown":"capacity 8인 linear-probing table에서 slot 2,3,4,5가 연속으로 차 있고 새 key의 initial index가 2다. slot 6이 비어 있다면 새 key 저장 전 확인하는 slot 순서와, 이런 cluster가 커질수록 왜 비용이 증가하는지 설명하라.",
     "questionType":"SCENARIO",
-    "difficulty":"HARD",
+    "difficulty":"MEDIUM",
     "status":"PUBLISHED",
     "conceptKeys":["dsa.core.hashing.open-addressing"],
-    "modelAnswer":"2→3→4→5를 확인한 뒤 6에서 빈 slot을 찾아 저장한다. 같은 cluster에 들어오는 lookup/insert가 연속 occupied slot을 반복 확인하므로 cluster가 커질수록 probe count와 latency가 증가한다."
+    "modelAnswer":"2→3→4→5를 확인한 뒤 6에서 빈 slot을 찾아 저장한다. 같은 cluster에 들어오는 lookup/insert가 연속 occupied slot을 반복 확인하므로 cluster가 커질수록 probe count와 지연 시간이 증가한다."
   },
   {
     "kind":"question",
     "contentKey":"dsa.core.hashing.open-addressing.q4",
     "promptMarkdown":"live entry를 많이 삭제했는데도 lookup probe count가 거의 줄지 않았다. tombstone이 많이 남아 있다는 정보가 있을 때 원인과 가능한 정리 방법을 설명하라.",
     "questionType":"SCENARIO",
-    "difficulty":"HARD",
+    "difficulty":"MEDIUM",
     "status":"PUBLISHED",
     "conceptKeys":["dsa.core.hashing.open-addressing"],
     "modelAnswer":"tombstone은 lookup을 종료시키는 empty가 아니어서 탐색이 계속 지나가야 한다. live load factor는 내려가도 effective probe path는 길 수 있다. rehash/resize로 live entry만 새 table에 재배치해 tombstone을 제거할 수 있다."
@@ -200,12 +200,12 @@
   {
     "kind":"question",
     "contentKey":"dsa.core.hashing.load-factor.q3",
-    "promptMarkdown":"resize threshold를 0.5에서 0.9로 높였다. memory 사용과 lookup/insert latency에 어떤 변화가 가능하며 왜 workload 측정이 필요한지 설명하라.",
+    "promptMarkdown":"resize threshold를 0.5에서 0.9로 높였다. memory 사용과 lookup/insert 지연 시간에 어떤 변화가 가능하며 왜 workload 측정이 필요한지 설명하라.",
     "questionType":"SCENARIO",
-    "difficulty":"HARD",
+    "difficulty":"MEDIUM",
     "status":"PUBLISHED",
     "conceptKeys":["dsa.core.hashing.load-factor"],
-    "modelAnswer":"더 작은 table을 오래 유지해 unused capacity는 줄 수 있지만 collision chain/probe가 길어져 lookup·insert와 tail latency가 증가할 수 있다. hash distribution과 collision strategy에 따라 영향이 달라 실제 probe/chain distribution과 memory를 함께 측정해야 한다."
+    "modelAnswer":"더 작은 table을 오래 유지해 unused capacity는 줄 수 있지만 collision chain/probe가 길어져 lookup·insert와 꼬리 지연 시간(tail latency)이 증가할 수 있다. hash distribution과 collision strategy에 따라 영향이 달라 실제 probe/chain distribution과 memory를 함께 측정해야 한다."
   },
   {
     "kind":"question",
@@ -238,10 +238,10 @@
     "contentKey":"dsa.core.hashing.resize.q3",
     "promptMarkdown":"기존 table 1 GiB를 사용 중이고 resize 중 비슷한 크기의 새 table을 동시에 만들면 steady-state memory만 보고 capacity planning한 시스템에서 어떤 문제가 생길 수 있는지 설명하라.",
     "questionType":"SCENARIO",
-    "difficulty":"HARD",
+    "difficulty":"MEDIUM",
     "status":"PUBLISHED",
     "conceptKeys":["dsa.core.hashing.resize"],
-    "modelAnswer":"migration 동안 old/new table이 동시에 존재해 일시적으로 memory가 크게 증가할 수 있다. steady-state 1 GiB만 기준으로 잡으면 allocation failure나 GC/OS memory pressure가 생길 수 있으므로 resize peak를 별도 예산으로 고려해야 한다."
+    "modelAnswer":"migration 동안 old/new table이 동시에 존재해 일시적으로 memory가 크게 증가할 수 있다. steady-state 1 GiB만 기준으로 잡으면 allocation 실패나 GC/OS memory pressure가 생길 수 있으므로 resize peak를 별도 예산으로 고려해야 한다."
   },
   {
     "kind":"question",
@@ -292,7 +292,7 @@
   {
     "kind":"question",
     "contentKey":"dsa.core.hashing.average-worst-lookup.q4",
-    "promptMarkdown":"외부 사용자가 key를 선택할 수 있는 API에서 hash table의 expected O(1)을 request latency의 hard upper bound로 문서화하면 안 되는 이유를 설명하라.",
+    "promptMarkdown":"외부 사용자가 key를 선택할 수 있는 API에서 hash table의 expected O(1)을 요청 지연 시간의 hard upper bound로 문서화하면 안 되는 이유를 설명하라.",
     "questionType":"DESCRIPTIVE",
     "difficulty":"HARD",
     "status":"PUBLISHED",

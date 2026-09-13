@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.filesystem.directory-path
 topicContentKey: operating-systems.core.filesystem
 slug: directory-path
-title: "Directory and Path"
+title: "Directory·Path"
 summary: "directory entry를 단계적으로 해석해 pathname을 file object로 resolve하는 과정과 이름·identity 경계를 설명한다."
 level: 1
 status: PUBLISHED
@@ -11,13 +11,13 @@ displayOrder: 40
 references:
   - url: "https://pages.cs.wisc.edu/~remzi/OSTEP/file-intro.pdf"
     title: "Interlude: Files and Directories"
-    referenceType: OFFICIAL
+    referenceType: BOOK
     language: en
     depth: section
     recommendation: "file, pathname, descriptor, shared open-file state를 Unix file-system API 흐름으로 확인한다."
     displayOrder: 1
 ---
-# Directory and Path
+# Directory·Path
 
 pathname은 file object 그 자체가 아니라 **filesystem namespace에서 object를 찾아가기 위한 이름의 연쇄**다. Unix-like filesystem 모델에서 directory는 entry name을 다음 directory나 file의 identifier에 연결하며, path resolution은 정해진 시작 directory에서 component를 하나씩 해석한다. 이 개념에서 말하는 directory entry와 identifier의 관계는 inode 기반 filesystem에서 특히 선명하게 드러나지만, 모든 filesystem이 내부적으로 동일한 자료구조를 사용한다는 뜻은 아니다.
 

@@ -62,6 +62,6 @@ WHERE id = :id;
 | ------------------ | ----------------------- | ----------------------------- |
 | atomic SQL         | 단순 counter에 효율적   | 복잡한 rule 표현 어려움       |
 | optimistic version | 충돌이 드문 수정에 좋음 | conflict 처리 필요            |
-| pessimistic lock   | 충돌을 앞에서 직렬화    | wait/deadlock/throughput 비용 |
+| pessimistic lock   | 충돌을 앞에서 직렬화    | wait/deadlock/처리량 비용 |
 
 “동시성 문제 = lock”으로 바로 가지 않고 실제 변경 형태를 먼저 봅니다.

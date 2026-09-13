@@ -27,7 +27,7 @@ producer가 `A`, `B`라는 두 message를 queue에 보내면 receiver는 queue A
 
 ### Queue capacity가 producer와 consumer를 연결한다
 
-consumer보다 producer가 빠르면 queue가 가득 찬다. blocking send라면 공간이 날 때까지 producer가 기다릴 수 있고, non-blocking mode라면 즉시 failure를 받을 수 있다. 이 bounded capacity가 IPC-level backpressure다.
+consumer보다 producer가 빠르면 queue가 가득 찬다. blocking send라면 공간이 날 때까지 producer가 기다릴 수 있고, non-blocking mode라면 즉시 실패를 받을 수 있다. 이 bounded capacity가 IPC-level backpressure다.
 
 `queue가 있으니 무한히 받아 줄 수 있다`고 설계하면 안 된다. process-local/kernel resource limit을 확인하고 overload 시 caller가 무엇을 할지 결정해야 한다.
 

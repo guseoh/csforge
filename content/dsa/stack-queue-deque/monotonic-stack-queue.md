@@ -3,7 +3,7 @@ kind: concept
 contentKey: dsa.core.stack-queue-deque.monotonic-stack-queue
 topicContentKey: dsa.core.stack-queue-deque
 slug: monotonic-stack-queue
-title: "Monotonic Stack and Queue"
+title: "Monotonic Stack·Queue"
 summary: "답 후보만 단조 순서로 유지하고 한 원소가 최대 한 번 push/pop되는 amortized O(n) 원리를 설명한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "stack의 LIFO operation과 array/linked implementation trade-off를 확인한다."
     displayOrder: 1
 ---
-# Monotonic Stack and Queue
+# Monotonic Stack·Queue
 
 ### 모든 과거 원소를 보관하지 않고 앞으로 답이 될 가능성이 있는 후보만 남긴다
 

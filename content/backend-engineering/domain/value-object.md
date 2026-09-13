@@ -50,7 +50,7 @@ Money discounted = price.multiply(new BigDecimal("0.9"));
 
 ### DTO와 다른 점
 
-DTO는 transport shape가 목적이라 field가 API 요구에 따라 바뀝니다. Value Object는 domain meaning이 목적입니다. JSON request에 `MoneyRequest`가 있고 Domain에 `Money`가 따로 있는 것도 자연스럽습니다.
+DTO는 transport shape가 목적이라 field가 API 요구에 따라 바뀝니다. Value Object는 domain meaning이 목적입니다. JSON 요청에 `MoneyRequest`가 있고 Domain에 `Money`가 따로 있는 것도 자연스럽습니다.
 
 | 구분      | Value Object   | DTO                        |
 | --------- | -------------- | -------------------------- |

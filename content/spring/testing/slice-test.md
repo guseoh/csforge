@@ -26,7 +26,7 @@ references:
 
 Spring test를 나눌 때 “unit test는 빠르고 integration test는 느리다”만으로는 실제 선택이 어렵습니다. 먼저 **이번 test가 어떤 Spring 구성요소와 외부 경계를 진짜로 검증해야 하는가**를 봐야 합니다.
 
-예를 들어 controller의 request mapping, validation, JSON error contract만 확인하고 싶다면 전체 database/application context가 필요하지 않을 수 있습니다.
+예를 들어 controller의 요청 mapping, 검증, JSON error contract만 확인하고 싶다면 전체 database/application context가 필요하지 않을 수 있습니다.
 
 ```java
 @WebMvcTest(OrderController.class)
@@ -73,12 +73,12 @@ full application context를 띄우면 configuration wiring과 여러 component i
 | 검증하려는 위험                        | 적합한 시작점                        |
 | -------------------------------------- | ------------------------------------ |
 | pure domain invariant                  | plain unit test                      |
-| MVC mapping/validation/error contract  | web slice                            |
+| MVC mapping/검증/error contract  | web slice                            |
 | JPA mapping/query/constraint           | JPA integration/slice + real DB 고려 |
 | configuration/proxy/transaction wiring | Spring context integration           |
 | 핵심 use case 전체                     | targeted end-to-end/integration      |
 
-같은 기능도 production failure 가능성이 높은 경계에는 더 실제에 가까운 test가 필요합니다.
+같은 기능도 production 실패 가능성이 높은 경계에는 더 실제에 가까운 test가 필요합니다.
 
 ### test double이 많아질수록 “무엇을 검증했나”를 확인한다
 

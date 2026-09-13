@@ -18,7 +18,7 @@ references:
 ---
 # TTL과 freshness window
 
-TTL(Time To Live)은 cache entry를 무조건 그 시각에 정확히 삭제하는 업무 약속이 아니라 **entry가 cache에 남아 있을 수 있는 최대 freshness window를 구현하는 한 수단**입니다. 값이 언제 바뀌고 얼마나 stale해도 되는지를 먼저 정해야 TTL을 고를 수 있습니다.
+TTL(Time To Live)은 cache entry의 보존 시간을 제한하는 기술 수단이지, origin update 시점부터의 freshness나 stale window를 정확히 보장하는 업무 약속은 아닙니다. 값이 언제 바뀌고 얼마나 stale해도 되는지, invalidation 실패를 얼마 동안 허용할지를 먼저 정해야 TTL을 고를 수 있습니다.
 
 ```text
 origin update at t=0
@@ -41,14 +41,14 @@ DB update ── cache DEL 실패 ── TTL 동안 old value 가능
 
 ### 만료가 origin 부하를 만든다
 
-모든 key가 같은 시각에 TTL 만료되면 한꺼번에 miss가 발생합니다. TTL에 작은 jitter를 넣거나 refresh-ahead, request coalescing을 사용하면 expiry traffic을 분산할 수 있지만 stale window와 구현 복잡성이 달라집니다.
+모든 key가 같은 시각에 TTL 만료되면 한꺼번에 miss가 발생합니다. TTL에 작은 jitter를 넣거나 refresh-ahead, 요청 coalescing을 사용하면 expiry traffic을 분산할 수 있지만 stale window와 구현 복잡성이 달라집니다.
 
 ### 운영에서 TTL을 숫자 하나로 보지 않는다
 
 - entry age와 remaining TTL
 - hit/miss와 expiry 직후 origin query 수
 - stale read 비율과 invalidation 실패
-- origin latency와 cache fill latency
+- origin 지연 시간과 cache fill 지연 시간
 - key별 변경 빈도와 허용 stale window
 
 TTL을 늘려 hit ratio만 높이면 오래된 상태를 조용히 반환할 수 있고, 너무 짧으면 cache miss와 origin 부하가 커집니다.

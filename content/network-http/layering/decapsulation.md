@@ -23,5 +23,13 @@ references:
 
 router가 packet을 forwarding하는 경우에는 최종 application까지 decapsulation하지 않고 IP header를 보고 다음 link를 위한 새 frame을 만든다. 반면 destination host에서는 transport가 packet 단위의 도착과 application message의 완성을 분리한다. TCP stream은 여러 packet이 합쳐지거나 나뉘어 전달되므로 sequence로 ordered bytes를 만든 뒤 HTTP Content-Length, transfer coding 또는 다른 framing 규칙이 message 끝을 결정한다.
 
-HTTP parser는 socket read 한 번을 request 하나로 가정하지 않는다. partial read와 pipelined 또는 다음 message의 bytes를 buffer에 보존하고, protocol parser가 소비한 위치와 connection state를 관리한다. link/network 단계에서 drop된 frame은 application log에 남지 않을 수 있으므로 계층별 capture와 counter가 필요하다.
+HTTP parser는 socket read 한 번을 요청 하나로 가정하지 않는다. partial read와 pipelined 또는 다음 message의 bytes를 buffer에 보존하고, protocol parser가 소비한 위치와 connection state를 관리한다. link/network 단계에서 drop된 frame은 application log에 남지 않을 수 있으므로 계층별 capture와 counter가 필요하다.
+
+### 역캡슐화 흐름
+    frame
+      └─ link header 확인
+           └─ IP packet
+                └─ transport segment
+                     └─ application payload
+어느 단계에서 폐기되면 위 계층에는 payload가 도착하지 않는다.
 

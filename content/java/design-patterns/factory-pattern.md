@@ -152,7 +152,7 @@ PaymentProcessor create(PaymentType type) {
 }
 ```
 
-다만 “Factory가 있으니 모든 validation을 여기 넣는다”는 뜻은 아닙니다. 객체 자체의 invariant는 객체 생성 API가 지켜야 할 수 있고, business 상태 규칙은 domain이 소유할 수 있습니다. Factory는 **조립 정책에 속하는 검증**만 가져가는 편이 응집됩니다.
+다만 “Factory가 있으니 모든 검증을 여기 넣는다”는 뜻은 아닙니다. 객체 자체의 invariant는 객체 생성 API가 지켜야 할 수 있고, business 상태 규칙은 domain이 소유할 수 있습니다. Factory는 **조립 정책에 속하는 검증**만 가져가는 편이 응집됩니다.
 
 ### 반환 타입은 호출자가 어느 세부에 의존할지 결정한다
 

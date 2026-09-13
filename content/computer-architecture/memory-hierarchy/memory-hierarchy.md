@@ -29,11 +29,11 @@ CPU가 연산에 필요한 모든 데이터를 큰 DRAM이나 storage에서 매�
 
 프로그램이 매 access마다 완전히 새로운 주소를 무작위로 요청한다면 작은 상위 cache에 데이터를 보관해도 재사용 기회가 적다. 실제 workload는 최근 사용한 값을 다시 사용하는 temporal locality와, 최근 사용한 주소 주변을 사용하는 spatial locality를 자주 보인다. memory hierarchy는 이 패턴을 이용해 작은 빠른 계층이 전체 memory의 일부만 가지고도 많은 access를 처리하도록 한다.
 
-이 구조는 `빠른 memory가 느린 memory를 대체한다`는 뜻이 아니다. 상위 cache의 hit는 접근 비용을 줄이지만 miss가 발생하면 lower level의 latency와 transfer 비용을 지불해야 한다. cache 크기를 키우면 hit rate가 좋아질 수 있지만 lookup latency·area·전력·wiring 비용도 증가하므로 계층마다 목적과 규모가 다르다.
+이 구조는 `빠른 memory가 느린 memory를 대체한다`는 뜻이 아니다. 상위 cache의 hit는 접근 비용을 줄이지만 miss가 발생하면 lower level의 지연 시간과 transfer 비용을 지불해야 한다. cache 크기를 키우면 hit rate가 좋아질 수 있지만 lookup 지연 시간·area·전력·wiring 비용도 증가하므로 계층마다 목적과 규모가 다르다.
 
 ### 평균 성능은 hit와 miss 경로를 함께 봐야 한다
 
-단순한 한-level cache 모델에서는 평균 memory access time을 대략 `hit time + miss rate × miss penalty`로 생각할 수 있다. 실제 multi-level hierarchy에서는 L1 miss 뒤 L2/L3 hit인지, DRAM까지 내려가는지에 따라 비용이 달라진다. 따라서 `L1 hit rate 95%` 같은 숫자 하나만으로 전체 memory 성능을 판단할 수 없다. 남은 5%의 miss가 얼마나 비싼지와, 여러 outstanding request가 지연을 얼마나 겹칠 수 있는지도 중요하다.
+단순한 한-level cache 모델에서는 평균 memory access time을 대략 `hit time + miss rate × miss penalty`로 생각할 수 있다. 실제 multi-level hierarchy에서는 L1 miss 뒤 L2/L3 hit인지, DRAM까지 내려가는지에 따라 비용이 달라진다. 따라서 `L1 hit rate 95%` 같은 숫자 하나만으로 전체 memory 성능을 판단할 수 없다. 남은 5%의 miss가 얼마나 비싼지와, 여러 outstanding 요청이 지연을 얼마나 겹칠 수 있는지도 중요하다.
 
 ### Backend에서 보이는 cache와 hardware memory hierarchy는 층위가 다르다
 

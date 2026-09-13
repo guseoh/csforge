@@ -58,7 +58,7 @@ references:
 
 이렇게 threat scenario를 만들면 필요한 방어도 분명해집니다. ID를 숨기는 것만이 아니라 **서버에서 current principal과 resource owner를 비교**해야 합니다.
 
-### 보안은 failure path 설계이기도 하다
+### 보안은 실패 경로 설계이기도 하다
 
 공격 요청을 막는 것만으로 끝나지 않습니다. 인증 실패와 인가 실패를 구분하고, 로그에는 공격 분석에 필요한 정보는 남기되 password/token 같은 secret은 남기지 않으며, rate limiting이 정상 사용자를 과도하게 차단하지 않는지도 봐야 합니다.
 

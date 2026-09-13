@@ -16,10 +16,19 @@ references:
     depth: section
     recommendation: "POSIX shared-memory object의 생성·mapping·lifetime을 확인한다."
     displayOrder: 1
+  - url: "https://d2.naver.com/helloworld/47656"
+    title: "Android 프로세스의 통신 메커니즘: 바인더"
+    referenceType: COMPANY_TECH_BLOG
+    language: ko
+    depth: article
+    recommendation: "Android Binder가 프로세스 경계에서 copy 비용과 kernel-mediated IPC를 어떻게 다루는지 비교 사례로 확인한다."
+    displayOrder: 2
 ---
 # Shared Memory
 
 shared memory IPC는 서로 다른 process의 virtual address space에 **같은 backing memory를 매핑**해 process 사이에서 data를 직접 공유하게 한다. pipe나 socket처럼 sender가 kernel buffer로 bytes를 쓰고 receiver가 다시 읽는 stream path를 거치지 않아 큰 payload나 빈번한 data exchange에서 copy overhead를 줄일 수 있다.
+
+![서로 다른 virtual address가 같은 shared backing memory를 보는 구조](/learning/operating-systems/shared-memory-mapping.svg)
 
 ### 같은 physical data를 보지만 virtual address는 다를 수 있다
 
@@ -37,6 +46,6 @@ shared-memory object 이름을 제거하는 것과 이미 mapping한 process가 
 
 ### 가장 빠른 IPC가 항상 가장 단순하지는 않다
 
-shared memory는 copy를 줄일 수 있지만 framing·synchronization·crash recovery와 schema compatibility를 application이 더 직접 책임진다. 작은 control message나 low-throughput communication에서는 pipe/socket의 명확한 ownership이 오히려 유지보수에 유리할 수 있다.
+shared memory는 copy를 줄일 수 있지만 framing·synchronization·crash recovery와 schema compatibility를 application이 더 직접 책임진다. 작은 control message나 low-처리량 communication에서는 pipe/socket의 명확한 ownership이 오히려 유지보수에 유리할 수 있다.
 
 CSForge 같은 local-first application에서 shared memory를 도입할 이유가 없다면 단순한 process boundary를 유지한다. 실제 profiling에서 large local IPC copy가 병목으로 확인될 때만 후보로 검토하고 PostgreSQL canonical state와 혼동하지 않는다.

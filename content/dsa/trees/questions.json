@@ -1,13 +1,14 @@
 [
   {
-    "kind":"question",
-    "contentKey":"dsa.core.trees.tree-terminology.q1",
-    "promptMarkdown":"root A의 child가 B,C이고 B의 child가 D,E일 때 D의 depth와 B의 height를 각각 쓰라. edge 수 기준이다.",
-    "questionType":"SHORT_ANSWER",
-    "difficulty":"EASY",
-    "status":"PUBLISHED",
-    "conceptKeys":["dsa.core.trees.tree-terminology"],
-    "acceptedAnswers":["D depth=2, B height=1", "2, 1"]
+    "kind": "question",
+    "contentKey": "dsa.core.trees.tree-terminology.q1",
+    "promptMarkdown": "root A의 child가 B,C이고 B의 child가 D,E일 때 D의 depth와 B의 height를 각각 쓰라. edge 수 기준이다.",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.trees.tree-terminology"],
+    "acceptedAnswers": ["D depth=2, B height=1", "2, 1"],
+    "explanationMarkdown": "Root A에서 D까지 A→B→D의 edge가 두 개이므로 D의 depth는 2다. B의 가장 깊은 descendant는 D 또는 E이고 B→D, B→E가 각각 한 edge이므로 B의 height는 1이다."
   },
   {
     "kind":"question",
@@ -24,7 +25,7 @@
     "contentKey":"dsa.core.trees.tree-terminology.q3",
     "promptMarkdown":"category data에서 하나의 node가 두 parent를 가지고 다른 경로에는 cycle도 존재한다. 이 구조를 일반 rooted tree라고 가정해 traversal code를 작성할 때 어떤 문제가 생기는지 설명하라.",
     "questionType":"SCENARIO",
-    "difficulty":"HARD",
+    "difficulty":"MEDIUM",
     "status":"PUBLISHED",
     "conceptKeys":["dsa.core.trees.tree-terminology"],
     "modelAnswer":"rooted tree는 각 non-root node가 하나의 parent를 갖고 cycle이 없다는 전제를 사용한다. multiple parent는 하나의 path라는 가정을 깨고 cycle은 naive recursion을 무한 반복시킬 수 있다. 실제 model이 graph라면 visited/cycle 정책을 별도로 가져야 한다."
@@ -40,21 +41,22 @@
     "acceptedAnswers":["A B D E C", "A,B,D,E,C"]
   },
   {
-    "kind":"question",
-    "contentKey":"dsa.core.trees.binary-tree-traversal.q2",
-    "promptMarkdown":"같은 tree의 inorder와 postorder 순서를 각각 쓰라.",
-    "questionType":"SHORT_ANSWER",
-    "difficulty":"MEDIUM",
-    "status":"PUBLISHED",
-    "conceptKeys":["dsa.core.trees.binary-tree-traversal"],
-    "acceptedAnswers":["inorder D B E A C, postorder D E B C A", "D B E A C / D E B C A"]
+    "kind": "question",
+    "contentKey": "dsa.core.trees.binary-tree-traversal.q2",
+    "promptMarkdown": "같은 tree의 inorder와 postorder 순서를 각각 쓰라.",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.trees.binary-tree-traversal"],
+    "acceptedAnswers": ["inorder D B E A C, postorder D E B C A", "D B E A C / D E B C A"],
+    "explanationMarkdown": "같은 tree에서 inorder는 left→root→right이므로 `D B E A C`다. Postorder는 child subtree를 먼저 처리하므로 `D E B C A`다."
   },
   {
     "kind":"question",
     "contentKey":"dsa.core.trees.binary-tree-traversal.q3",
     "promptMarkdown":"parent resource는 child resource가 모두 제거된 뒤에만 삭제할 수 있다. preorder와 postorder 중 어떤 traversal이 이 dependency에 자연스럽고, 왜 그런지 설명하라.",
     "questionType":"SCENARIO",
-    "difficulty":"HARD",
+    "difficulty":"MEDIUM",
     "status":"PUBLISHED",
     "conceptKeys":["dsa.core.trees.binary-tree-traversal"],
     "modelAnswer":"postorder가 적합하다. left/right child subtree를 먼저 처리한 뒤 parent를 visit하므로 child cleanup 완료 후 parent cleanup이라는 dependency를 traversal order 자체가 표현한다."
@@ -84,7 +86,7 @@
     "contentKey":"dsa.core.trees.binary-search-tree.q3",
     "promptMarkdown":"BST의 left subtree 안에 있던 key 4를 node를 옮기지 않고 40으로 mutate했다. 이후 search(40)가 실패할 수 있는 이유를 ordering invariant로 설명하라.",
     "questionType":"SCENARIO",
-    "difficulty":"HARD",
+    "difficulty":"MEDIUM",
     "status":"PUBLISHED",
     "conceptKeys":["dsa.core.trees.binary-search-tree"],
     "modelAnswer":"40은 root 비교 결과에 따라 right subtree에서 찾아야 할 값이지만 실제 node는 예전 key 4의 위치인 left subtree에 남아 있다. key mutation이 BST ordering을 깨뜨려 search path가 실제 node가 있는 방향을 버릴 수 있다."
@@ -112,9 +114,9 @@
   {
     "kind":"question",
     "contentKey":"dsa.core.trees.balanced-tree-motivation.q3",
-    "promptMarkdown":"range iteration도 필요하고 external input이 정렬된 순서로 들어올 수 있으며 worst-case latency가 중요하다. plain BST와 balanced tree 중 무엇을 우선 검토할지 근거를 설명하라.",
+    "promptMarkdown":"range iteration도 필요하고 external input이 정렬된 순서로 들어올 수 있으며 worst-case 지연 시간이 중요하다. plain BST와 balanced tree 중 무엇을 우선 검토할지 근거를 설명하라.",
     "questionType":"SCENARIO",
-    "difficulty":"HARD",
+    "difficulty":"MEDIUM",
     "status":"PUBLISHED",
     "conceptKeys":["dsa.core.trees.balanced-tree-motivation"],
     "modelAnswer":"ordered traversal을 유지하면서 입력 순서와 무관하게 height upper bound를 제한해야 하므로 balanced search tree를 우선 검토한다. plain BST는 정렬 입력에서 skew되어 O(n) path가 될 수 있다. update rebalancing 비용과 memory도 함께 비교해야 한다."
@@ -131,7 +133,7 @@
       {"key":"A","content":"바뀌지 않는다. A,x,B,y,C 순서를 보존한다","displayOrder":0},
       {"key":"B","content":"항상 역순 C,y,B,x,A가 된다","displayOrder":1},
       {"key":"C","content":"rotation은 key 값을 다시 정렬해 새 값으로 바꾼다","displayOrder":2},
-      {"key":"D","content":"inorder 보존 여부는 중요하지 않다","displayOrder":3}
+      {"key":"D","content":"inorder가 보존되므로 subtree link와 balance metadata는 확인할 필요가 없다","displayOrder":3}
     ],
     "correctChoiceKey":"A"
   },
@@ -150,7 +152,7 @@
     "contentKey":"dsa.core.trees.tree-rotation.q3",
     "promptMarkdown":"rotation 중 B를 y.left에 연결하는 갱신을 빠뜨렸다. key ordering 외에 어떤 구조적 문제가 생길 수 있는지 설명하라.",
     "questionType":"SCENARIO",
-    "difficulty":"HARD",
+    "difficulty":"MEDIUM",
     "status":"PUBLISHED",
     "conceptKeys":["dsa.core.trees.tree-rotation"],
     "modelAnswer":"B subtree가 새 tree에서 도달 불가능해져 node가 유실되거나, 이전 link를 잘못 유지하면 중복 parent/cycle이 생길 수 있다. rotation은 subtree root, middle subtree, parent 연결을 모두 원자적인 구조 변화로 다뤄야 한다."
@@ -160,7 +162,7 @@
     "contentKey":"dsa.core.trees.tree-rotation.q4",
     "promptMarkdown":"rotation 전후 BST inorder는 동일하지만 balance metadata(height/color 등)를 갱신하지 않았다. search가 당장은 맞아도 이후 문제가 생길 수 있는 이유를 설명하라.",
     "questionType":"DESCRIPTIVE",
-    "difficulty":"HARD",
+    "difficulty":"MEDIUM",
     "status":"PUBLISHED",
     "conceptKeys":["dsa.core.trees.tree-rotation"],
     "modelAnswer":"ordering correctness와 balance invariant는 별개다. stale metadata를 다음 insert/delete가 신뢰하면 필요한 rotation을 빼먹거나 잘못된 rotation을 수행해 height bound나 red-black/AVL 규칙을 깨뜨릴 수 있다."
@@ -196,14 +198,15 @@
     "modelAnswer":"10을 더 작은 child 3과 swap해 아래로 sink한다. min-heap에서는 새 parent가 두 child 모두보다 작거나 같아야 하므로 우선순위가 더 높은 작은 child와 바꿔야 invariant를 회복할 수 있다."
   },
   {
-    "kind":"question",
-    "contentKey":"dsa.core.trees.heap.q4",
-    "promptMarkdown":"n개 값을 이미 array로 가지고 있을 때 n번 insert하는 방식과 bottom-up heapify의 일반 시간 복잡도를 비교하라.",
-    "questionType":"SHORT_ANSWER",
-    "difficulty":"MEDIUM",
-    "status":"PUBLISHED",
-    "conceptKeys":["dsa.core.trees.heap"],
-    "acceptedAnswers":["n번 insert는 O(n log n), bottom-up heapify는 O(n)", "O(n log n) vs O(n)"]
+    "kind": "question",
+    "contentKey": "dsa.core.trees.heap.q4",
+    "promptMarkdown": "n개 값을 이미 array로 가지고 있을 때 n번 insert하는 방식과 bottom-up heapify의 일반 시간 복잡도를 비교하라.",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.trees.heap"],
+    "acceptedAnswers": ["n번 insert는 O(n log n), bottom-up heapify는 O(n)", "O(n log n) vs O(n)"],
+    "explanationMarkdown": "각 값을 순서대로 insert하면 매 insert가 최대 O(log n)이어서 전체가 O(n log n)이다. 이미 배열에 있는 값을 bottom-up으로 sift-down하면 subtree 높이별 작업을 합쳐 O(n)에 heapify할 수 있다."
   },
   {
     "kind":"question",
@@ -216,14 +219,15 @@
     "modelAnswer":"FIFO queue는 먼저 들어온 원소를 먼저 꺼내고, priority queue는 삽입 시점과 무관하게 현재 가장 높은/낮은 priority 원소를 선택한다. 동일 priority의 tie 순서는 별도 계약이다."
   },
   {
-    "kind":"question",
-    "contentKey":"dsa.core.trees.priority-queue.q2",
-    "promptMarkdown":"binary heap priority queue에서 peek와 insert, extract-min의 일반 비용을 각각 쓰라.",
-    "questionType":"SHORT_ANSWER",
-    "difficulty":"MEDIUM",
-    "status":"PUBLISHED",
-    "conceptKeys":["dsa.core.trees.priority-queue"],
-    "acceptedAnswers":["peek O(1), insert O(log n), extract-min O(log n)", "O(1), O(log n), O(log n)"]
+    "kind": "question",
+    "contentKey": "dsa.core.trees.priority-queue.q2",
+    "promptMarkdown": "binary heap priority queue에서 peek와 insert, extract-min의 일반 비용을 각각 쓰라.",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.trees.priority-queue"],
+    "acceptedAnswers": ["peek O(1), insert O(log n), extract-min O(log n)", "O(1), O(log n), O(log n)"],
+    "explanationMarkdown": "binary heap에서는 root를 읽는 peek가 O(1)이다. insert는 parent 방향 sift-up, extract-min은 마지막 원소를 root로 옮긴 뒤 sift-down하므로 각각 일반적으로 O(log n)이다."
   },
   {
     "kind":"question",

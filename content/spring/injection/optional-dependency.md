@@ -34,7 +34,7 @@ class AuditService {
 
 ### “Bean을 못 찾으니 optional로”는 위험하다
 
-startup에서 `NoSuchBeanDefinitionException`이 나자 다음처럼 바꾸는 것은 근본 해결이 아닐 수 있습니다.
+시작에서 `NoSuchBeanDefinitionException`이 나자 다음처럼 바꾸는 것은 근본 해결이 아닐 수 있습니다.
 
 ```java
 @Autowired(required = false)
@@ -78,8 +78,8 @@ class NoopNotifier implements Notifier {
 선택적 의존성을 설계할 때 순서는 다음과 같습니다.
 
 1. collaborator가 없어도 객체/기능이 정상인가?
-2. 부재가 environment configuration인가 request별 business state인가?
+2. 부재가 environment configuration인가 요청별 business state인가?
 3. caller가 부재를 알아야 하는가, implementation이 흡수해야 하는가?
-4. 부재가 실수라면 startup을 실패시키는 편이 낫지 않은가?
+4. 부재가 실수라면 시작을 실패시키는 편이 낫지 않은가?
 
 Spring은 여러 injection 도구를 제공하지만 **무엇이 optional인가를 결정하는 것은 framework가 아니라 application 의미**입니다.

@@ -49,10 +49,10 @@ Private Network / Metadata / localhost
 
 ### network egress restriction을 함께 둔다
 
-Application validation만으로 모든 URL parser/network edge case를 완전히 막기 어렵기 때문에 backend network 자체가 metadata/private admin subnet에 불필요하게 접근하지 못하도록 egress policy를 제한하는 defense-in-depth가 강력합니다.
+Application 검증만으로 모든 URL parser/network edge case를 완전히 막기 어렵기 때문에 backend network 자체가 metadata/private admin subnet에 불필요하게 접근하지 못하도록 egress policy를 제한하는 defense-in-depth가 강력합니다.
 
 ### URL fetch 기능이 정말 필요한지도 먼저 묻는다
 
 사용자가 파일을 직접 upload하게 할 수 있는데 arbitrary URL fetch를 추가하면 outbound attack surface가 커집니다. 제품 가치가 명확한 기능만 열고 가능한 destination 범위를 좁힙니다.
 
-SSRF의 본질은 URL validation 문제가 아니라 **공격자가 서버의 network 위치와 credential을 프록시처럼 이용할 수 있게 되는 trust-boundary 전환**입니다.
+SSRF의 본질은 URL 검증 문제가 아니라 **공격자가 서버의 network 위치와 credential을 프록시처럼 이용할 수 있게 되는 trust-boundary 전환**입니다.

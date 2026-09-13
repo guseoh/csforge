@@ -3,7 +3,7 @@ kind: concept
 contentKey: dsa.core.greedy.greedy-failure
 topicContentKey: dsa.core.greedy
 slug: greedy-failure
-title: "Greedy Failure"
+title: "그리디 알고리즘의 실패"
 summary: "local optimum이 global optimum을 보장하지 않는 반례를 통해 greedy 적용 조건을 검증한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "greedy choice, exchange argument와 interval scheduling의 correctness proof 구조를 확인한다."
     displayOrder: 1
 ---
-# Greedy Failure
+# 그리디 알고리즘의 실패
 
 ### 작은 반례 하나가 greedy proof를 무너뜨린다
 
@@ -67,7 +67,7 @@ Counterexample을 발견한 뒤에는 단순히 "greedy가 안 된다"에서 끝
 
 ### Greedy 실패와 heuristic은 다르다
 
-정확한 optimal solution이 필요하지 않은 문제에서는 greedy heuristic이 충분히 좋은 선택일 수 있다. 예를 들어 recommendation 후보를 빠르게 줄이는 목적이라면 최적 보장보다 latency가 중요할 수 있다.
+정확한 optimal solution이 필요하지 않은 문제에서는 greedy heuristic이 충분히 좋은 선택일 수 있다. 예를 들어 recommendation 후보를 빠르게 줄이는 목적이라면 최적 보장보다 지연 시간이 중요할 수 있다.
 
 하지만 이 경우에는 "항상 최적"이라고 설명하지 않고 quality metric, approximation loss, known counterexample을 관리해야 한다.
 

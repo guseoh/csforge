@@ -62,7 +62,7 @@ Linux는 process/task 상태를 runnable, interruptible sleep, uninterruptible s
 
 ### Backend 장애를 state transition으로 읽는다
 
-Request worker 100개가 모두 느리다고 해도 원인은 다를 수 있다.
+요청 worker 100개가 모두 느리다고 해도 원인은 다를 수 있다.
 
 ```text
 Case A: runnable 100, CPU 100%

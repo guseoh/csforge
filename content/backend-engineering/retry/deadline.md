@@ -54,4 +54,4 @@ deadline이 지났다고 외부 시스템의 작업이 취소됐다는 뜻은 �
 
 ### deadline은 UX와 자원 정책을 연결한다
 
-얼마나 기다릴지를 명시하면 retry count, timeout, queue wait, fallback을 하나의 budget 안에서 설계할 수 있습니다.
+얼마나 기다릴지를 명시하면 retry count, timeout, queue wait, 대체 처리를 하나의 budget 안에서 설계할 수 있습니다.

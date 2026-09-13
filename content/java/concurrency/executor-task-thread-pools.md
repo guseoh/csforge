@@ -107,7 +107,7 @@ CPU 계산 작업에서 worker를 과도하게 늘리면 CPU가 더 생기는 �
 
 pool과 queue가 모두 포화되면 새 작업을 어떻게 할지 결정해야 합니다. `AbortPolicy`처럼 예외로 거부할 수도 있고, `CallerRunsPolicy`처럼 제출한 thread가 직접 task를 실행하도록 할 수도 있습니다.
 
-`CallerRunsPolicy`는 caller를 느리게 만들어 유입 속도를 낮추는 효과가 생길 수 있지만, 어떤 caller가 실행하는지에 따라 request thread가 오래 막히는 부작용도 생깁니다. 따라서 이름만 보고 "자동 backpressure"라고 단정하지 말고 전체 요청 경로를 봐야 합니다.
+`CallerRunsPolicy`는 caller를 느리게 만들어 유입 속도를 낮추는 효과가 생길 수 있지만, 어떤 caller가 실행하는지에 따라 요청 thread가 오래 막히는 부작용도 생깁니다. 따라서 이름만 보고 "자동 backpressure"라고 단정하지 말고 전체 요청 경로를 봐야 합니다.
 
 ### shutdown은 새 작업 접수와 기존 작업 처리를 구분한다
 

@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.isa-execution.isa-vs-microarchitecture
 topicContentKey: computer-architecture.core.isa-execution
 slug: isa-vs-microarchitecture
-title: "ISA versus Microarchitecture"
+title: "ISA / Microarchitecture"
 summary: "software-visible ISA 계약과 이를 실행하는 microarchitecture를 구분한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "ISA가 정의하는 software-visible architecture와 구현 선택의 경계를 확인한다."
     displayOrder: 1
 ---
-# ISA versus Microarchitecture
+# ISA / Microarchitecture
 
 ### 프로그램이 의존할 수 있는 계약
 

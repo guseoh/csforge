@@ -110,9 +110,9 @@ Task next = queue.poll();
 
 일반 `HashMap`의 사용 경험을 그대로 옮기지 말고 실제 concurrent collection의 계약을 확인합니다.
 
-### memory consistency는 API 문서 기준으로 본다
+### 메모리 일관성은 API 문서 기준으로 본다
 
-`java.util.concurrent` package는 여러 동시성 도구에 memory consistency 효과를 명시합니다. Concurrent collection을 통한 객체 전달도 이런 공식 계약을 기준으로 이해해야 합니다. 특정 CPU cache 구현을 collection의 언어 보장처럼 설명하지 않습니다.
+`java.util.concurrent` package는 여러 동시성 도구에 메모리 일관성 효과를 명시합니다. Concurrent collection을 통한 객체 전달도 이런 공식 계약을 기준으로 이해해야 합니다. 특정 CPU cache 구현을 collection의 언어 보장처럼 설명하지 않습니다.
 
 ### 언제 외부 lock이 더 자연스러운가
 

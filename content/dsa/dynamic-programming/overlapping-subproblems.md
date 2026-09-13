@@ -67,7 +67,7 @@ Fibonacci에서 `fib(k)`의 가능한 state는 `0..n` 정도뿐이다. 단순 �
 
 DP의 핵심은 이 차이를 발견하는 것이다.
 
-### Divide and Conquer와의 차이
+### Divide·Conquer와의 차이
 
 Merge sort의 왼쪽 절반과 오른쪽 절반처럼 부분 문제가 서로 겹치지 않는다면 결과를 memoize해도 같은 subproblem을 다시 만나는 일이 거의 없다. 이런 경우는 divide-and-conquer가 자연스럽다.
 

@@ -4,7 +4,7 @@ contentKey: computer-architecture.core.pipeline-ilp.pipeline-stages
 topicContentKey: computer-architecture.core.pipeline-ilp
 slug: pipeline-stages
 title: "Pipeline Stages"
-summary: "instruction 실행을 여러 stage로 나누어 겹쳐 처리할 때 throughput과 latency가 어떻게 달라지는지 설명한다."
+summary: "instruction 실행을 여러 stage로 나누어 겹쳐 처리할 때 처리량과 지연 시간이 어떻게 달라지는지 설명한다."
 level: 1
 status: PUBLISHED
 displayOrder: 10
@@ -25,7 +25,7 @@ CPU가 instruction 하나의 fetch, decode, execute, memory access, register wri
 
 ### Pipeline이 줄이는 것은 주로 처리 간격이다
 
-pipeline이 채워진 뒤에는 이상적인 경우 매 cycle마다 instruction 하나가 완료될 수 있으므로 throughput이 높아진다. 그렇다고 instruction 하나의 latency가 반드시 짧아지는 것은 아니다. 한 instruction은 여전히 여러 stage를 통과해야 하고, stage 사이 register의 setup time과 clock skew 같은 추가 비용도 생긴다. 따라서 `pipeline을 적용하면 모든 instruction이 빨라진다`보다 `여러 instruction의 실행을 겹쳐 단위 시간당 완료 수를 늘린다`고 이해하는 편이 정확하다.
+pipeline이 채워진 뒤에는 이상적인 경우 매 cycle마다 instruction 하나가 완료될 수 있으므로 처리량이 높아진다. 그렇다고 instruction 하나의 지연 시간이 반드시 짧아지는 것은 아니다. 한 instruction은 여전히 여러 stage를 통과해야 하고, stage 사이 register의 setup time과 clock skew 같은 추가 비용도 생긴다. 따라서 `pipeline을 적용하면 모든 instruction이 빨라진다`보다 `여러 instruction의 실행을 겹쳐 단위 시간당 완료 수를 늘린다`고 이해하는 편이 정확하다.
 
 예를 들어 5-stage pipeline이 hazard 없이 동작하고 각 stage가 한 cycle을 사용한다면 첫 instruction은 결과가 나오기까지 여러 cycle이 필요하지만, pipeline이 충분히 채워진 뒤에는 다음 instruction들이 cycle마다 차례로 완료될 수 있다. 실제 CPI는 structural/data/control hazard, cache miss, branch recovery 같은 이유로 이 이상적인 값보다 커진다.
 
@@ -35,4 +35,10 @@ clock period는 대체로 가장 느린 stage와 pipeline register overhead의 �
 
 ### Backend 성능과 연결해서 볼 때
 
-CPU pipeline을 backend request 처리 단계와 그대로 같은 개념으로 보면 안 된다. CPU pipeline은 ISA semantics를 보존하도록 hardware가 dependency와 hazard를 처리하는 구조다. backend 성능을 해석할 때는 pipeline 덕분에 instruction throughput이 높아질 수 있다는 점과, 한 request의 end-to-end latency가 lock, queueing, DB I/O, network I/O에 지배될 수 있다는 점을 분리해야 한다. CPU 최적화가 필요한지는 IPC/CPI, branch miss, cache miss 같은 지표와 실제 request latency를 함께 보고 판단한다.
+CPU pipeline을 backend 요청 처리 단계와 그대로 같은 개념으로 보면 안 된다. CPU pipeline은 ISA semantics를 보존하도록 hardware가 dependency와 hazard를 처리하는 구조다. backend 성능을 해석할 때는 pipeline 덕분에 instruction 처리량이 높아질 수 있다는 점과, 한 요청의 종단 간 지연 시간이 lock, queueing, DB I/O, network I/O에 지배될 수 있다는 점을 분리해야 한다. CPU 최적화가 필요한지는 IPC/CPI, branch miss, cache miss 같은 지표와 실제 요청 지연 시간을 함께 보고 판단한다.
+### Pipeline overlap
+    cycle:  1    2    3    4    5
+    I1:    IF   ID   EX  MEM   WB
+    I2:         IF   ID   EX  MEM
+    I3:              IF   ID   EX
+한 instruction의 지연 시간과 채워진 pipeline의 처리량을 구분한다.

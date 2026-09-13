@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.io.sendfile-zero-copy
 topicContentKey: operating-systems.core.io
 slug: sendfile-zero-copy
-title: "sendfile and Zero-Copy"
+title: "sendfile·Zero-Copy"
 summary: "file-to-output 전송에서 user-space copy를 줄이는 kernel path와 'zero-copy'라는 표현의 구현 경계를 설명한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "file-to-output kernel transfer와 partial result/O_NONBLOCK 경계를 확인한다."
     displayOrder: 1
 ---
-# sendfile and Zero-Copy
+# sendfile·Zero-Copy
 
 전통적인 file-to-socket 전송을 단순화하면 application이 `read(file, userBuffer)`로 data를 user space에 받은 뒤 다시 `write(socket, userBuffer)`로 kernel에 넘길 수 있다. 이 과정에서 application이 bytes 자체를 검사하거나 변환하지 않는다면 user/kernel 사이의 copy와 syscall이 불필요한 overhead가 될 수 있다.
 

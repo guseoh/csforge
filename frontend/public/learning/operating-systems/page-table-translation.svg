@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="400" viewBox="0 0 960 400" role="img" aria-labelledby="title desc">
+  <title id="title">Page table translation</title>
+  <desc id="desc">Virtual address의 virtual page number를 page table에서 찾아 physical frame number로 바꾸고 offset은 유지하는 구조</desc>
+  <rect width="960" height="400" rx="24" fill="#111827"/>
+  <text x="48" y="52" fill="#f9fafb" font-size="28" font-family="Arial, sans-serif" font-weight="700">Page Table Translation</text>
+  <rect x="60" y="110" width="250" height="90" rx="14" fill="#1f2937" stroke="#9ca3af" stroke-width="2"/>
+  <text x="185" y="142" text-anchor="middle" fill="#f9fafb" font-size="18" font-family="Arial, sans-serif">Virtual Address</text>
+  <line x1="185" y1="155" x2="185" y2="190" stroke="#6b7280"/>
+  <text x="125" y="180" text-anchor="middle" fill="#d1d5db" font-size="15" font-family="Arial, sans-serif">VPN</text><text x="245" y="180" text-anchor="middle" fill="#d1d5db" font-size="15" font-family="Arial, sans-serif">offset</text>
+  <rect x="385" y="90" width="190" height="200" rx="16" fill="#1f2937" stroke="#9ca3af" stroke-width="2"/>
+  <text x="480" y="125" text-anchor="middle" fill="#f9fafb" font-size="20" font-family="Arial, sans-serif">Page Table</text>
+  <text x="480" y="164" text-anchor="middle" fill="#d1d5db" font-size="16" font-family="Arial, sans-serif">VPN → PFN</text>
+  <text x="480" y="196" text-anchor="middle" fill="#d1d5db" font-size="16" font-family="Arial, sans-serif">R / W / X</text>
+  <text x="480" y="228" text-anchor="middle" fill="#d1d5db" font-size="16" font-family="Arial, sans-serif">present / mapping state</text>
+  <rect x="650" y="110" width="250" height="90" rx="14" fill="#1f2937" stroke="#9ca3af" stroke-width="2"/>
+  <text x="775" y="142" text-anchor="middle" fill="#f9fafb" font-size="18" font-family="Arial, sans-serif">Physical Address</text>
+  <text x="715" y="180" text-anchor="middle" fill="#d1d5db" font-size="15" font-family="Arial, sans-serif">PFN</text><text x="835" y="180" text-anchor="middle" fill="#d1d5db" font-size="15" font-family="Arial, sans-serif">same offset</text>
+  <line x1="310" y1="155" x2="385" y2="155" stroke="#e5e7eb" stroke-width="3"/><polygon points="385,155 371,147 371,163" fill="#e5e7eb"/>
+  <line x1="575" y1="155" x2="650" y2="155" stroke="#e5e7eb" stroke-width="3"/><polygon points="650,155 636,147 636,163" fill="#e5e7eb"/>
+  <text x="480" y="335" text-anchor="middle" fill="#9ca3af" font-size="16" font-family="Arial, sans-serif">Mapping 존재와 접근 permission은 서로 다른 판단이다.</text>
+</svg>

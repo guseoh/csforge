@@ -80,6 +80,8 @@ map.get(new MemberKey(1L));
 
 `MemberKey`의 equals/hashCode가 같은 id를 기준으로 일관되게 구현되어야 기대대로 찾을 수 있습니다.
 
+반대로 hashCode가 같다고 두 객체가 반드시 equals여야 하는 것은 아닙니다. hashCode는 후보를 좁히는 정보이고, collision은 정상적으로 처리 가능한 상황입니다.
+
 ### key를 넣은 뒤 hash 관련 상태를 바꾸면 위험하다
 
 ```java
@@ -91,10 +93,30 @@ class Key {
 
 Map에 key를 넣은 뒤 `value`를 바꾸면 조회 시 계산되는 hash나 equals 결과가 저장 당시와 달라질 수 있습니다. 그러면 Map 안에 객체가 존재하는데도 현재 key로 찾기 어려운 상황이 생깁니다.
 
-그래서 HashMap key에 사용하는 동등성 관련 상태는 가능하면 불변으로 유지하는 편이 안전합니다.
+```text
+삽입 시: value="kim" → hash A → bucket A
+변경 후: value="lee" → hash B → bucket B에서 검색
+                         └─ 실제 entry는 여전히 bucket A 쪽
+```
+
+HashMap이 key 객체의 필드 변경을 감지해서 entry를 자동 이동시키지는 않습니다. 그래서 HashMap key에 사용하는 동등성 관련 상태는 가능하면 불변으로 유지하는 편이 안전합니다.
 
 ### O(1)을 절대 시간으로 이해하지 않는다
 
 HashMap의 기본 연산은 hash가 적절히 분산된다는 가정 아래 평균적으로 매우 효율적입니다. 하지만 데이터 수, 충돌 분포, resize, key의 hashCode/equals 비용 등에 따라 실제 비용은 달라집니다.
 
 “HashMap은 항상 O(1)”이라는 한 문장보다 **hash로 후보를 좁히고 충돌 시 비교가 더 필요하다**는 흐름을 이해하는 것이 실무와 실전 설명 모두에 도움이 됩니다.
+
+### 구현 세부는 현재 JDK를 이해하는 자료로 사용한다
+
+NAVER D2의 HashMap 자료처럼 bucket collision과 tree 전환을 그림으로 살펴보면 현재 구현을 이해하는 데 도움이 됩니다. 다만 특정 threshold나 내부 node 형태를 `Map` 또는 Java 언어의 영구 계약으로 외우지는 않습니다. 이런 값은 OpenJDK 구현과 버전에 속하는 세부사항입니다.
+
+### 면접에서 이렇게 나옵니다
+
+#### Q. HashMap에서 `hashCode()`와 `equals()`가 왜 둘 다 필요한가요?
+
+`hashCode()`는 전체 key를 모두 비교하지 않고 후보 영역을 좁히는 데 사용되고, 같은 후보 안에서 실제로 같은 논리적 key인지 확인하는 데 `equals()`가 필요합니다. 서로 다른 객체의 hashCode가 같을 수 있으므로 hash 값만으로 동일 key를 확정할 수는 없습니다.
+
+#### Q. HashMap의 key는 왜 불변 객체가 안전한가요?
+
+key를 넣은 뒤 `equals`와 `hashCode`에 참여하는 상태가 바뀌면 저장 당시와 조회 당시의 검색 경로가 달라질 수 있습니다. HashMap은 key 내부 상태 변화를 관찰해 entry를 재배치하지 않기 때문에 `get`, `remove`가 예상대로 동작하지 않을 수 있습니다. 그래서 key의 identity를 결정하는 상태는 불변으로 유지하는 것이 안전합니다.

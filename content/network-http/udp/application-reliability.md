@@ -25,3 +25,9 @@ UDP 위에서 reliable command를 만들려면 message ID/sequence, ACK, timeout
 
 이벤트 전달에서는 at-most-once, at-least-once와 application-level effect를 구분하고 consumer를 idempotent하게 만든다. network retry, ACK 전송과 DB transaction commit의 순서를 별도로 관찰해 “ACK를 받았지만 저장되지 않음” 또는 “저장됐지만 ACK가 유실됨” 상태를 복구할 수 있게 한다.
 
+### UDP 위 reliability
+    send(messageId, seq) → receiver
+              ▲             │
+              └─ timeout ← ACK
+                 retry + dedup state
+ACK 부재는 side effect 부재를 증명하지 않으므로 idempotency가 별도다.

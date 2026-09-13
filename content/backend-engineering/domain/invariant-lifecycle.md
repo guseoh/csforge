@@ -4,7 +4,7 @@ contentKey: backend.core.domain.invariant-lifecycle
 topicContentKey: backend.core.domain
 slug: invariant-lifecycle
 title: invariant와 lifecycle
-summary: Invariant는 “validation annotation 목록”이 아니라 객체가 살아 있는 동안 항상 지켜져야 하는 규칙입니다. 생성할 때 한 번 검사하는 것으로 끝나지 않고 모든 상태 전이 경로가 이를 보존해야 합니다.
+summary: Invariant는 “검증 annotation 목록”이 아니라 객체가 살아 있는 동안 항상 지켜져야 하는 규칙입니다. 생성할 때 한 번 검사하는 것으로 끝나지 않고 모든 상태 전이 경로가 이를 보존해야 합니다.
 level: 1
 status: PUBLISHED
 displayOrder: 30
@@ -12,7 +12,7 @@ references: []
 ---
 # invariant와 lifecycle
 
-Invariant는 “validation annotation 목록”이 아니라 **객체가 살아 있는 동안 항상 지켜져야 하는 규칙**입니다. 생성할 때 한 번 검사하는 것으로 끝나지 않고 모든 상태 전이 경로가 이를 보존해야 합니다.
+Invariant는 “검증 annotation 목록”이 아니라 **객체가 살아 있는 동안 항상 지켜져야 하는 규칙**입니다. 생성할 때 한 번 검사하는 것으로 끝나지 않고 모든 상태 전이 경로가 이를 보존해야 합니다.
 
 ### 유효한 생성만 허용한다
 
@@ -48,7 +48,7 @@ public void ship(TrackingNumber trackingNumber) {
 
 ### 실패 중간 상태를 생각한다
 
-상태 전이 중 외부 API를 호출하면 객체 상태와 외부 상태가 갈릴 수 있습니다. 이때 “한 method에 있으니 atomic하다”는 착각을 피해야 합니다. Domain invariant와 distributed failure recovery는 다른 층위의 문제입니다.
+상태 전이 중 외부 API를 호출하면 객체 상태와 외부 상태가 갈릴 수 있습니다. 이때 “한 method에 있으니 atomic하다”는 착각을 피해야 합니다. Domain invariant와 distributed 실패 복구는 다른 층위의 문제입니다.
 
 ### 좋은 질문
 

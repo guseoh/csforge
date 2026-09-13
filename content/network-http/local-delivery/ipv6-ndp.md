@@ -25,3 +25,9 @@ NDP는 local link scope의 state를 neighbor cache와 router information에 반�
 
 dual-stack backend에서 IPv4가 성공한다고 IPv6 path가 준비된 것은 아니다. resolver가 AAAA를 선택한 뒤 interface, NDP, route, listener, ACL/firewall이 모두 IPv6를 처리하는지 address family별로 테스트한다. NDP spoofing이나 rogue Router Advertisement는 별도의 local-link threat이므로 RA guard와 segment policy, TLS를 함께 검토한다.
 
+### IPv6 Neighbor Discovery
+    host ── Neighbor Solicitation ──> local link
+    host <─ Neighbor Advertisement ── neighbor
+    router ── Router Advertisement ──> host
+                      prefix / default router
+NDP는 neighbor resolution과 router discovery를 함께 다룬다.

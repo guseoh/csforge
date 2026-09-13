@@ -44,11 +44,11 @@ Raft 같은 consensus system은 term과 majority 규칙으로 replicated log 안
 
 ### sent, committed, observed를 분리한다
 
-기존 leader에 operation이 전송됐다는 사실과 consensus상 commit됐다는 사실, client가 성공 response를 관찰했다는 사실은 서로 다릅니다. leader election 중 outstanding operation이 abort되거나 client가 timeout될 수 있고, response를 못 받았다고 commit되지 않았다고 단정할 수도 없습니다. protocol이 제공하는 committed index/revision이나 operation identity를 조회하고, application side effect에는 idempotency/reconciliation을 결합합니다.
+기존 leader에 operation이 전송됐다는 사실과 consensus상 commit됐다는 사실, client가 성공 응답을 관찰했다는 사실은 서로 다릅니다. leader election 중 outstanding operation이 abort되거나 client가 timeout될 수 있고, 응답을 못 받았다고 commit되지 않았다고 단정할 수도 없습니다. protocol이 제공하는 committed index/revision이나 operation identity를 조회하고, application side effect에는 idempotency/reconciliation을 결합합니다.
 
 ### election timeout을 tuning한다
 
-너무 짧으면 GC pause와 순간 network delay를 장애로 오인해 불필요한 election이 늘 수 있고, 너무 길면 실제 장애 recovery가 늦습니다. heartbeat interval, election timeout, quorum RTT와 workload pause를 함께 측정합니다. 다만 timeout tuning은 suspicion과 recovery latency를 조절할 뿐, split-brain safety 자체를 대신하지 않습니다. 그 safety는 해당 protocol의 vote/term/log 규칙이나 lease/version/fencing 계약이 담당합니다.
+너무 짧으면 GC pause와 순간 network delay를 장애로 오인해 불필요한 election이 늘 수 있고, 너무 길면 실제 장애 recovery가 늦습니다. heartbeat interval, election timeout, quorum RTT와 workload pause를 함께 측정합니다. 다만 timeout tuning은 suspicion과 recovery 지연 시간을 조절할 뿐, split-brain safety 자체를 대신하지 않습니다. 그 safety는 해당 protocol의 vote/term/log 규칙이나 lease/version/fencing 계약이 담당합니다.
 
 ### 문제를 풀 때 확인할 것
 

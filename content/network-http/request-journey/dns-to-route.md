@@ -22,3 +22,8 @@ references:
 항상 DNS query와 route lookup이 한 번씩 실행되는 것은 아니다. resolver/JVM cache나 connection pool이 있으면 query 또는 connect를 생략할 수 있고, 여러 A/AAAA answer 중 다른 address를 retry할 수도 있다. DNS answer가 맞아도 route·ARP/NDP·firewall·listener가 실패할 수 있으며, route가 있어도 잘못된 DNS address면 목적지 자체가 틀린다. 각 단계의 cache와 timeout을 별도로 진단한다.
 
 Backend outbound trace를 DNS resolution, connection acquisition, connect, TLS와 HTTP로 나눠 기록한다. private/public endpoint, NAT/proxy와 dual-stack address selection을 단순한 “DNS 성공”으로 합치지 않는다.
+### Name에서 next hop까지
+    hostname → DNS → A/AAAA candidates
+             → address selection → routing table
+             → ARP/NDP → link frame
+DNS 성공은 route나 listener 성공을 보장하지 않는다.

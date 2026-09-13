@@ -186,7 +186,7 @@ JVM thread dump에서는 thread state와 stack을 확인하고 monitor deadlock�
 
 Java 25에서는 **진단 도구가 어떤 thread를 관찰하는지도 구분해야 합니다.** `ThreadMXBean`은 platform thread의 monitoring과 management만 지원하므로 `findMonitorDeadlockedThreads()`와 `findDeadlockedThreads()`도 platform thread의 deadlock cycle을 대상으로 합니다. 반면 `jcmd Thread.dump_to_file`은 platform thread와 virtual thread를 모두 포함한 thread dump를 만들 수 있습니다. 따라서 `ThreadMXBean`의 deadlock detector가 아무 cycle도 찾지 못했다는 사실만으로 virtual thread가 포함된 hang이나 lock 문제까지 없다고 결론내리면 안 됩니다.
 
-다만 thread dump 한 장만으로 모든 starvation/livelock을 자동 판정할 수 있는 것은 아닙니다. 시간에 따른 상태 변화, CPU 사용량, queue 길이, 요청 latency 같은 관찰과 함께 봅니다.
+다만 thread dump 한 장만으로 모든 starvation/livelock을 자동 판정할 수 있는 것은 아닙니다. 시간에 따른 상태 변화, CPU 사용량, queue 길이, 요청 지연 시간 같은 관찰과 함께 봅니다.
 
 ### 문제를 풀 때 확인할 것
 

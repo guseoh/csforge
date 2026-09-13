@@ -4,7 +4,7 @@ contentKey: java.core.jvm-runtime.gc-fundamentals-collectors
 topicContentKey: java.core.jvm-runtime
 slug: gc-fundamentals-collectors
 title: "GC 기본 원리와 Collector"
-summary: "GC가 unreachable 객체의 storage를 회수하는 이유와 pause·throughput·latency trade-off를 이해하고 G1/ZGC 같은 collector를 JVM 구현 선택으로 구분한다"
+summary: "GC가 unreachable 객체의 storage를 회수하는 이유와 pause·처리량·지연 시간 trade-off를 이해하고 G1/ZGC 같은 collector를 JVM 구현 선택으로 구분한다"
 level: 3
 status: PUBLISHED
 displayOrder: 80
@@ -32,7 +32,7 @@ references:
 
 Java에서는 객체를 만들 때마다 개발자가 직접 `free()`하지 않습니다. 더 이상 사용할 수 없는 객체의 storage는 JVM의 garbage collector가 회수할 수 있습니다. 덕분에 수동 메모리 해제 실수는 크게 줄지만, GC가 "메모리 문제를 신경 쓰지 않아도 된다"는 뜻은 아닙니다.
 
-서버에서는 **얼마나 자주 객체를 만들고, 얼마만큼의 객체가 오래 살아 있으며, GC가 애플리케이션 실행을 얼마나 방해하는가**가 latency와 처리량에 영향을 줄 수 있습니다.
+서버에서는 **얼마나 자주 객체를 만들고, 얼마만큼의 객체가 오래 살아 있으며, GC가 애플리케이션 실행을 얼마나 방해하는가**가 지연 시간과 처리량에 영향을 줄 수 있습니다.
 
 ### GC의 출발점은 unreachable 객체를 찾는 것이다
 
@@ -66,13 +66,13 @@ GC work         ███      █████
 
 `Stop-The-World`라는 표현은 JVM이 특정 GC 작업을 위해 애플리케이션 thread들의 실행을 멈추는 구간을 설명할 때 사용합니다. 하지만 모든 collector가 모든 GC 작업을 같은 방식과 같은 길이로 멈춘다고 생각하면 안 됩니다.
 
-### throughput과 latency는 다른 목표다
+### 처리량과 지연 시간은 다른 목표다
 
 GC 튜닝에서 중요한 두 축은 다음처럼 생각할 수 있습니다.
 
-**Throughput**은 전체 시간 중 실제 애플리케이션 작업에 얼마나 많은 시간을 썼는지에 가깝습니다.
+**처리량**은 전체 시간 중 실제 애플리케이션 작업에 얼마나 많은 시간을 썼는지에 가깝습니다.
 
-**Latency**는 개별 요청이나 작업이 얼마나 오래 지연되는지를 봅니다. GC pause가 짧아야 하는 서비스에서는 tail latency에 민감할 수 있습니다.
+**지연 시간**은 개별 요청이나 작업이 얼마나 오래 지연되는지를 봅니다. GC pause가 짧아야 하는 서비스에서는 꼬리 지연 시간(tail latency)에 민감할 수 있습니다.
 
 예를 들어:
 
@@ -87,7 +87,7 @@ Collector B
 - CPU/메모리 overhead가 달라질 수 있음
 ```
 
-무조건 하나가 더 좋다고 할 수 없습니다. Batch workload와 latency-sensitive API 서버의 목표가 다를 수 있기 때문입니다.
+무조건 하나가 더 좋다고 할 수 없습니다. Batch workload와 지연 시간에 민감한 API 서버의 목표가 다를 수 있기 때문입니다.
 
 ### G1, ZGC는 Java language가 아니라 HotSpot collector다
 
@@ -128,9 +128,9 @@ ZGC는 많은 GC 작업을 애플리케이션과 동시에 수행해 pause 시�
 
 > ZGC는 pause가 0이다.
 
-라고 말하면 안 됩니다. 필요한 짧은 stop-the-world phase가 존재할 수 있고 실제 latency는 heap size, allocation rate, CPU 자원과 실행 환경의 영향을 받습니다.
+라고 말하면 안 됩니다. 필요한 짧은 stop-the-world phase가 존재할 수 있고 실제 지연 시간은 heap size, allocation rate, CPU 자원과 실행 환경의 영향을 받습니다.
 
-또 낮은 pause 목표가 모든 workload에서 가장 높은 throughput이나 가장 작은 memory overhead를 의미하지 않습니다.
+또 낮은 pause 목표가 모든 workload에서 가장 높은 처리량이나 가장 작은 memory overhead를 의미하지 않습니다.
 
 ### GC 성능은 live set과 allocation rate를 함께 봐야 한다
 
@@ -161,7 +161,7 @@ allocation rate 매우 높음
 - GC 빈도
 - concurrent cycle 시간
 - CPU 사용량
-- allocation failure / memory pressure
+- allocation 실패 / memory pressure
 
 ### "GC가 자주 돈다"는 증상만으로 원인을 정하지 않는다
 
@@ -185,7 +185,7 @@ GC 빈도가 늘었다면:
 
 ### collector를 선택할 때 질문해야 할 것
 
-1. latency 목표가 중요한가, 총 throughput이 중요한가?
+1. 지연 시간 목표가 중요한가, 총 처리량이 중요한가?
 2. heap과 live set이 얼마나 큰가?
 3. allocation rate는 어떤가?
 4. CPU 여유가 있는가?
@@ -198,11 +198,11 @@ Collector 변경은 이름 비교가 아니라 실제 목표와 measurement를 �
 
 1. unreachable과 reclaim timing을 구분합니다.
 2. pause와 concurrent GC work를 분리해서 봅니다.
-3. throughput과 latency 중 어떤 목표를 묻는지 확인합니다.
+3. 처리량과 지연 시간 중 어떤 목표를 묻는지 확인합니다.
 4. G1/ZGC 특징을 Java language guarantee로 말하지 않습니다.
 5. heap size만 보지 말고 live set과 allocation rate를 봅니다.
 6. GC 문제라고 해서 무조건 heap 증설/collector 변경부터 선택하지 않습니다.
 
 ### 학습 후 스스로 설명해 보기
 
-GC는 root에서 더 이상 도달할 수 없는 객체의 storage를 JVM이 자동으로 회수할 수 있게 합니다. Collector마다 객체를 추적하고 회수하는 방식, stop-the-world pause와 concurrent 작업의 비율이 달라 throughput과 latency trade-off가 생깁니다. G1과 ZGC는 HotSpot의 collector 구현이지 Java language 보장이 아니며, collector 선택은 heap 크기 하나가 아니라 live set, allocation rate, pause 목표와 실제 측정 결과를 보고 결정해야 합니다.
+GC는 root에서 더 이상 도달할 수 없는 객체의 storage를 JVM이 자동으로 회수할 수 있게 합니다. Collector마다 객체를 추적하고 회수하는 방식, stop-the-world pause와 concurrent 작업의 비율이 달라 처리량과 지연 시간 trade-off가 생깁니다. G1과 ZGC는 HotSpot의 collector 구현이지 Java language 보장이 아니며, collector 선택은 heap 크기 하나가 아니라 live set, allocation rate, pause 목표와 실제 측정 결과를 보고 결정해야 합니다.

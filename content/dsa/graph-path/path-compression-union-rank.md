@@ -3,7 +3,7 @@ kind: concept
 contentKey: dsa.core.graph-path.path-compression-union-rank
 topicContentKey: dsa.core.graph-path
 slug: path-compression-union-rank
-title: "Path Compression and Union by Rank"
+title: "Path Compression·Union by Rank"
 summary: "find 경로 압축과 작은 tree 연결로 disjoint-set forest의 높이를 억제한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "disjoint-set forest와 connectivity operation을 확인한다."
     displayOrder: 1
 ---
-# Path Compression and Union by Rank
+# Path Compression·Union by Rank
 
 ### Union-Find의 병목은 깊은 parent chain이다
 

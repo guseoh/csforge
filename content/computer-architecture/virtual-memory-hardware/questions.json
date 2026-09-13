@@ -90,7 +90,7 @@
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.virtual-memory-hardware.page-table-walk.q2",
-    "promptMarkdown": "multi-level page-table walk가 실제 data access 전에 추가 latency를 만들 수 있는 이유와, `4-level table이면 항상 DRAM을 정확히 네 번 더 읽는다`고 단정하면 안 되는 이유를 설명하라.",
+    "promptMarkdown": "multi-level page-table walk가 실제 data access 전에 추가 지연 시간을 만들 수 있는 이유와, `4-level table이면 항상 DRAM을 정확히 네 번 더 읽는다`고 단정하면 안 되는 이유를 설명하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
@@ -154,7 +154,7 @@
     "choices": [
       {"key": "A", "content": "사용하지 않는 큰 virtual range에 대한 lower-level page-table page를 만들지 않을 수 있다.", "displayOrder": 0},
       {"key": "B", "content": "모든 virtual address를 하나의 physical frame으로 mapping한다.", "displayOrder": 1},
-      {"key": "C", "content": "TLB가 없어도 translation latency가 항상 0이 된다.", "displayOrder": 2},
+      {"key": "C", "content": "TLB가 없어도 translation 지연 시간이 항상 0이 된다.", "displayOrder": 2},
       {"key": "D", "content": "page fault와 permission 검사를 제거한다.", "displayOrder": 3}
     ],
     "correctChoiceKey": "A"
@@ -213,6 +213,6 @@
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.virtual-memory-hardware.page-size-huge-page"],
-    "modelAnswer": "heap이 크더라도 실제 병목이 TLB/page-walk가 아닐 수 있고 huge-page mechanism마다 reservation, allocation, reclaim/split 동작과 memory 낭비 특성이 다르다. 적용 전후 TLB miss/page walk counter, RSS와 page-table memory, fault/allocation behavior, throughput, GC/pause와 p95/p99 latency를 비교해야 한다. HugeTLB와 THP의 OS contract도 별도로 확인한다."
+    "modelAnswer": "heap이 크더라도 실제 병목이 TLB/page-walk가 아닐 수 있고 huge-page mechanism마다 reservation, allocation, reclaim/split 동작과 memory 낭비 특성이 다르다. 적용 전후 TLB miss/page walk counter, RSS와 page-table memory, fault/allocation behavior, 처리량, GC/pause와 p95/p99 지연 시간을 비교해야 한다. HugeTLB와 THP의 OS contract도 별도로 확인한다."
   }
 ]

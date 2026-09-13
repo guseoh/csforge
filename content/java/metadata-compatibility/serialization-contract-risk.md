@@ -150,7 +150,7 @@ Java에는 deserialization filter를 사용해 허용 class, graph 크기 같은
 
 라고 결론내리면 안 됩니다.
 
-가능하면 입력 schema가 명확한 JSON/CBOR/Protocol Buffers 같은 데이터 포맷과 명시적인 DTO validation을 사용하고, Java object graph 자체를 외부 protocol로 노출하지 않는 것이 더 단순한 trust boundary가 됩니다.
+가능하면 입력 schema가 명확한 JSON/CBOR/Protocol Buffers 같은 데이터 포맷과 명시적인 DTO 검증을 사용하고, Java object graph 자체를 외부 protocol로 노출하지 않는 것이 더 단순한 trust boundary가 됩니다.
 
 ### Serialization과 일반 JSON serialization을 같은 것으로 부르지 않는다
 
@@ -175,7 +175,7 @@ Serializable class는 custom `writeObject`, `readObject` 같은 hook으로 기�
 이 경우:
 
 - class invariant를 복원하는가
-- validation이 필요한가
+- 검증이 필요한가
 - stream version을 어떻게 처리하는가
 - 예외 발생 시 partially initialized object가 문제되지 않는가
 

@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.performance.pipeline-branch-impact
 topicContentKey: computer-architecture.core.performance
 slug: pipeline-branch-impact
-title: "Pipeline and Branch Impact"
+title: "Pipeline·Branch Impact"
 summary: "branch frequency·misprediction rate·recovery penalty가 CPI와 execution time에 추가하는 비용을 설명한다."
 level: 2
 status: PUBLISHED
@@ -17,11 +17,11 @@ references:
     recommendation: "CPU execution time, latency/throughput와 speedup을 구분해 성능을 계산하는 방법을 확인한다."
     displayOrder: 1
 ---
-# Pipeline and Branch Impact
+# Pipeline·Branch Impact
 
 ### Branch는 다음 instruction을 미리 가져오는 일을 어렵게 한다
 
-Pipeline은 여러 instruction의 stage를 겹쳐 throughput을 높인다. 하지만 conditional branch의 결과가 아직 확정되지 않았다면 fetch stage는 다음 PC를 알기 어렵다. Modern CPU는 predictor를 이용해 방향과 target을 추정하고 speculative path를 계속 진행한다.
+Pipeline은 여러 instruction의 stage를 겹쳐 처리량을 높인다. 하지만 conditional branch의 결과가 아직 확정되지 않았다면 fetch stage는 다음 PC를 알기 어렵다. Modern CPU는 predictor를 이용해 방향과 target을 추정하고 speculative path를 계속 진행한다.
 
 Prediction이 맞으면 기다림을 줄일 수 있지만 틀리면 wrong-path work를 버리고 올바른 PC에서 pipeline을 다시 채워야 한다. 이 recovery에 사용한 cycle이 branch misprediction penalty다.
 
@@ -54,4 +54,4 @@ Data-dependent branch를 conditional move, mask, table lookup 등으로 바꾸�
 
 또한 bounds check, permission check 같은 correctness/security condition을 단순한 branch-cost 문제로 취급해서는 안 된다. Transformation은 원래 semantics를 유지하는 범위에서만 성능 후보가 된다.
 
-Backend hot loop를 최적화할 때 source의 `if` 개수만 세지 않는다. 실제 generated code, branch frequency, branch miss, cycles와 input distribution을 측정한다. 평균 input에서 predictor가 잘 맞더라도 특정 데이터 분포에서 miss가 늘어 tail latency가 바뀔 수 있다.
+Backend hot loop를 최적화할 때 source의 `if` 개수만 세지 않는다. 실제 generated code, branch frequency, branch miss, cycles와 input distribution을 측정한다. 평균 input에서 predictor가 잘 맞더라도 특정 데이터 분포에서 miss가 늘어 꼬리 지연 시간(tail latency)이 바뀔 수 있다.

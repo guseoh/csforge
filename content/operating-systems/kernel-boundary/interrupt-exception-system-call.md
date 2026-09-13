@@ -3,21 +3,21 @@ kind: concept
 contentKey: operating-systems.core.kernel-boundary.interrupt-exception-system-call
 topicContentKey: operating-systems.core.kernel-boundary
 slug: interrupt-exception-system-call
-title: "Interrupt, Exception and System Call"
-summary: "비동기 interrupt, 현재 instruction과 연관된 exception, 의도적인 system-call request의 관계를 구분한다."
+title: "Interrupt, Exception·System Call"
+summary: "비동기 interrupt, 현재 instruction과 연관된 exception, 의도적인 system-call 요청의 관계를 구분한다."
 level: 2
 status: PUBLISHED
 displayOrder: 60
 references:
-  - url: "https://docs.riscv.org/reference/isa/unpriv/intro.html"
-    title: "RISC-V Unprivileged ISA: Introduction"
+  - url: "https://docs.riscv.org/reference/isa/_attachments/riscv-privileged.pdf"
+    title: "RISC-V Privileged ISA"
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "ISA가 정의하는 software-visible architecture와 구현 선택의 경계를 확인한다."
+    recommendation: "ECALL, exception, interrupt, trap의 ISA 정의와 privilege 경계를 확인한다."
     displayOrder: 1
 ---
-# Interrupt, Exception and System Call
+# Interrupt, Exception·System Call
 
 Kernel mode로 control이 넘어가는 원인을 모두 “interrupt”라고 부르면 중요한 차이를 놓치게 된다. **외부에서 비동기적으로 도착한 사건**, **현재 instruction 실행과 직접 연관된 동기적 사건**, **application이 의도적으로 OS service를 요청한 사건**은 발생 원인과 처리 후 복귀 의미가 다르다.
 
@@ -50,7 +50,7 @@ Exception은 현재 실행 중인 instruction과 원인 관계가 있다. 잘못
 
 “Exception = 항상 프로그램 버그”도 아니다. Demand paging에서는 접근한 virtual page가 아직 resident하지 않아 page fault가 발생해도 OS가 page를 준비한 뒤 execution을 이어갈 수 있다. 반면 illegal instruction처럼 정상 복구가 어려운 exception도 있다. **발생 원인이 동기적이라는 것과 복구 가능 여부는 별개의 축**이다.
 
-### System call: application이 의도적으로 만든 kernel-service request
+### System call: application이 의도적으로 만든 kernel-service 요청
 
 System call은 application 관점에서 의도적인 요청이다. 하지만 hardware가 별도의 “system-call event category”를 반드시 가져야 한다는 뜻은 아니다. Architecture가 제공하는 synchronous exception/trap mechanism을 이용해 controlled kernel entry를 구현할 수 있다.
 
@@ -71,12 +71,20 @@ ISA mechanism
 
 ### 같은 handler 진입 구조를 써도 처리 의미는 다르다
 
-Interrupt와 exception이 공통 trap-entry infrastructure를 사용할 수 있어도 handler는 cause를 구분해야 한다. Timer interrupt라면 timer source와 scheduling state를 처리하고, page fault라면 faulting address와 access type, mapping 상태를 검사해야 한다. System-call request라면 syscall number와 caller arguments를 해석한다.
+Interrupt와 exception이 공통 trap-entry infrastructure를 사용할 수 있어도 handler는 cause를 구분해야 한다. Timer interrupt라면 timer source와 scheduling state를 처리하고, page fault라면 faulting address와 access type, mapping 상태를 검사해야 한다. System-call 요청이라면 syscall number와 caller arguments를 해석한다.
 
 복귀 위치도 cause에 따라 달라질 수 있다. 어떤 fault는 원래 instruction을 다시 실행해야 하고, 의도적으로 실행한 system-call instruction은 service가 끝난 뒤 다음 instruction으로 진행하도록 ABI/handler가 state를 조정할 수 있다. 구체적인 saved-PC semantics는 architecture 규칙을 따라야 한다.
+
+### 면접에서 이렇게 나옵니다
+
+#### Q. Interrupt, exception, system call은 어떻게 구분하나요?
+
+Interrupt는 timer나 device처럼 현재 instruction 자체와 독립적으로 도착할 수 있는 **비동기 사건**이고, exception은 현재 instruction 실행과 직접 연관된 **동기 사건**입니다.
+
+System call은 application이 kernel service를 요청한다는 OS/API 관점의 의미입니다. RISC-V의 `ECALL`처럼 system call을 synchronous exception/trap mechanism 위에 구현할 수 있으므로, **system call이라는 소프트웨어 의미와 ISA의 exception mechanism을 같은 층으로 설명하면 안 됩니다.**
 
 ### Backend에서 왜 구분해야 하는가
 
 Backend 개발자가 hardware interrupt handler를 직접 작성하는 경우는 드물지만 이 구분은 I/O와 scheduler를 이해하는 기반이다. Network packet arrival이나 timer 같은 비동기 event, application의 명시적 I/O system call, memory access 중 발생하는 page fault는 서로 다른 원인으로 kernel work를 만든다.
 
-그래서 “kernel에 들어갔다”는 사실만으로 latency 원인을 설명하지 않는다. **누가 사건을 발생시켰는지, 현재 instruction과 동기적인지, handler 뒤 원래 실행을 어떻게 이어가는지**를 구분해야 OS 실행 흐름을 정확히 이해할 수 있다.
+그래서 “kernel에 들어갔다”는 사실만으로 지연 시간 원인을 설명하지 않는다. **누가 사건을 발생시켰는지, 현재 instruction과 동기적인지, handler 뒤 원래 실행을 어떻게 이어가는지**를 구분해야 OS 실행 흐름을 정확히 이해할 수 있다.

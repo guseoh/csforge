@@ -4,7 +4,7 @@ contentKey: spring.core.production.metrics-actuator
 topicContentKey: spring.core.production
 slug: metrics-actuator
 title: "Actuator와 metrics로 애플리케이션 상태 관측하기"
-summary: "health와 metrics가 서로 다른 질문에 답한다는 점을 이해하고, 요청 latency·error·JVM·connection pool 지표를 실제 원인 추적에 연결하며 endpoint 노출 위험을 함께 판단한다."
+summary: "health와 metrics가 서로 다른 질문에 답한다는 점을 이해하고, 요청 지연 시간·error·JVM·connection pool 지표를 실제 원인 추적에 연결하며 endpoint 노출 위험을 함께 판단한다."
 level: 3
 status: PUBLISHED
 displayOrder: 20
@@ -33,13 +33,13 @@ references:
 | 관측                  | 주로 답하는 질문                 |
 | --------------------- | -------------------------------- |
 | health                | 지금 요청을 받아도 되는가?       |
-| request count         | 트래픽이 얼마나 들어오는가?      |
-| latency               | 요청이 얼마나 오래 걸리는가?     |
+| 요청 수         | 트래픽이 얼마나 들어오는가?      |
+| 지연 시간               | 요청이 얼마나 오래 걸리는가?     |
 | error count/rate      | 실패가 증가했는가?               |
 | Hikari active/pending | DB connection이 고갈되고 있는가? |
 | JVM heap/GC           | 메모리 압박이나 긴 GC가 있는가?  |
 
-예를 들어 `500`이 증가했다는 사실만으로 원인을 알 수는 없습니다. 같은 시간대에 DB connection pending이 증가했고 query latency도 같이 올라갔다면 DB 경로를 우선 조사할 근거가 생깁니다.
+예를 들어 `500`이 증가했다는 사실만으로 원인을 알 수는 없습니다. 같은 시간대에 DB connection pending이 증가했고 query 지연 시간도 같이 올라갔다면 DB 경로를 우선 조사할 근거가 생깁니다.
 
 ### 평균값 하나만 보면 장애가 숨는다
 
@@ -51,11 +51,11 @@ references:
  1개 요청: 5,000 ms
 ```
 
-평균만 보면 대략 138ms라 “괜찮아 보일” 수 있지만 실제 사용자 일부는 5초를 기다립니다. 그래서 latency는 histogram/percentile 등 분포를 함께 보는 경우가 많습니다. 다만 percentile을 무작정 많이 활성화하면 저장 비용과 cardinality가 커질 수 있으므로 필요한 SLI에 맞춰 측정합니다.
+평균만 보면 대략 138ms라 “괜찮아 보일” 수 있지만 실제 사용자 일부는 5초를 기다립니다. 그래서 지연 시간은 histogram/percentile 등 분포를 함께 보는 경우가 많습니다. 다만 percentile을 무작정 많이 활성화하면 저장 비용과 cardinality가 커질 수 있으므로 필요한 SLI에 맞춰 측정합니다.
 
 ### tag는 편리하지만 cardinality가 비용을 만든다
 
-다음처럼 사용자 ID를 tag로 넣으면 사용자별 latency를 볼 수 있을 것 같습니다.
+다음처럼 사용자 ID를 tag로 넣으면 사용자별 지연 시간을 볼 수 있을 것 같습니다.
 
 ```java
 registry.counter("order.created", "memberId", memberId.toString()).increment();
@@ -79,4 +79,4 @@ management:
 
 ### 측정은 개선보다 먼저 온다
 
-“Redis를 쓰면 빨라질 것 같다”, “thread pool을 늘리면 될 것 같다”는 판단보다 먼저 현재 latency, query 수, connection wait, CPU, heap, error pattern을 확인합니다. metrics의 목적은 숫자를 많이 모으는 것이 아니라 **문제의 위치를 좁히고 변경 전후를 비교할 근거를 만드는 것**입니다.
+“Redis를 쓰면 빨라질 것 같다”, “thread pool을 늘리면 될 것 같다”는 판단보다 먼저 현재 지연 시간, query 수, connection wait, CPU, heap, error pattern을 확인합니다. metrics의 목적은 숫자를 많이 모으는 것이 아니라 **문제의 위치를 좁히고 변경 전후를 비교할 근거를 만드는 것**입니다.

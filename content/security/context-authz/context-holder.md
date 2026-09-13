@@ -4,7 +4,7 @@ contentKey: security.core.context-authz.context-holder
 topicContentKey: security.core.context-authz
 slug: context-holder
 title: "SecurityContextHolder와 요청 thread의 인증 상태"
-summary: "Spring Security가 현재 Authentication을 SecurityContext에 두고 기본적으로 thread-local strategy로 접근하게 하는 이유와 request 종료 시 context cleanup이 중요한 이유를 이해한다."
+summary: "Spring Security가 현재 Authentication을 SecurityContext에 두고 기본적으로 thread-local strategy로 접근하게 하는 이유와 요청 종료 시 context cleanup이 중요한 이유를 이해한다."
 level: 3
 status: PUBLISHED
 displayOrder: 10
@@ -43,7 +43,7 @@ Servlet 요청 하나가 한 worker thread에서 동기적으로 진행되는 �
 
 ### thread pool에서는 cleanup이 중요하다
 
-Tomcat worker thread는 요청이 끝나도 사라지지 않고 다음 요청에 재사용됩니다. 이전 Authentication이 thread-local에 남으면 다음 요청이 잘못된 principal을 볼 수 있으므로 Spring Security filter lifecycle은 request 경계에서 context를 적절히 설정하고 정리합니다.
+Tomcat worker thread는 요청이 끝나도 사라지지 않고 다음 요청에 재사용됩니다. 이전 Authentication이 thread-local에 남으면 다음 요청이 잘못된 principal을 볼 수 있으므로 Spring Security filter lifecycle은 요청 경계에서 context를 적절히 설정하고 정리합니다.
 
 ```text
 Thread-7
@@ -66,4 +66,4 @@ Domain object가 `SecurityContextHolder`를 호출해 현재 사용자를 읽기
 
 Authentication과 principal 객체가 mutable하면 요청 중 예상치 못한 변경이 공유될 수 있습니다. 가능하면 current identity representation을 작고 안정적으로 유지합니다.
 
-SecurityContextHolder의 핵심은 static API 이름이 아니라 **request security state를 현재 execution context에 연결하고 그 lifetime을 request/thread lifecycle과 맞추는 것**입니다.
+SecurityContextHolder의 핵심은 static API 이름이 아니라 **요청 security state를 현재 execution context에 연결하고 그 lifetime을 요청/thread lifecycle과 맞추는 것**입니다.

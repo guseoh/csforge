@@ -11,7 +11,7 @@
       {"key": "A", "content": "O(n²). 약 10¹⁰ 규모의 작업이 되어 요청 경로에서 감당하기 어렵다.", "displayOrder": 0},
       {"key": "B", "content": "O(n log n). log가 있으므로 항상 n²보다 느리다.", "displayOrder": 1},
       {"key": "C", "content": "둘은 Big-O가 다르지만 입력 크기와 무관하게 항상 같은 시간이다.", "displayOrder": 2},
-      {"key": "D", "content": "복잡도는 후보 제거에 사용할 수 없다.", "displayOrder": 3}
+      {"key": "D", "content": "O(n²)도 상수항이 작으면 입력 상한과 관계없이 항상 안전한 후보다.", "displayOrder": 3}
     ],
     "correctChoiceKey": "A"
   },
@@ -38,7 +38,7 @@
   {
     "kind": "question",
     "contentKey": "dsa.core.algorithm-selection.constraint-to-complexity.q4",
-    "promptMarkdown": "두 알고리즘이 모두 `O(n log n)`인데 실제 latency가 크게 다를 수 있는 이유를 두 가지 이상 설명하라.",
+    "promptMarkdown": "두 알고리즘이 모두 `O(n log n)`인데 실제 지연 시간이 크게 다를 수 있는 이유를 두 가지 이상 설명하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
@@ -74,7 +74,7 @@
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.algorithm-selection.memory-limit"],
-    "modelAnswer": "resize 시점에는 기존 storage와 새 storage가 동시에 존재해 순간 peak가 steady-state보다 커진다. 여기에 concurrent request와 object/bucket overhead까지 더해지면 OOM이 발생할 수 있다. 알고리즘 선택에서는 평균이 아니라 temporary buffer, rebuild 중복 storage, 동시 실행 수를 포함한 peak memory를 계산해야 한다."
+    "modelAnswer": "resize 시점에는 기존 storage와 새 storage가 동시에 존재해 순간 peak가 steady-state보다 커진다. 여기에 concurrent 요청과 object/bucket overhead까지 더해지면 OOM이 발생할 수 있다. 알고리즘 선택에서는 평균이 아니라 temporary buffer, rebuild 중복 storage, 동시 실행 수를 포함한 peak memory를 계산해야 한다."
   },
   {
     "kind": "question",
@@ -98,8 +98,8 @@
     "choices": [
       {"key": "A", "content": "Counting sort처럼 제한된 key 범위를 사용하는 방법", "displayOrder": 0},
       {"key": "B", "content": "Key 범위와 관계없이 무조건 O(n²) 비교 정렬", "displayOrder": 1},
-      {"key": "C", "content": "Graph BFS", "displayOrder": 2},
-      {"key": "D", "content": "Union-Find", "displayOrder": 3}
+      {"key": "C", "content": "값의 범위가 작아도 항상 comparison sort가 더 적합하다.", "displayOrder": 2},
+      {"key": "D", "content": "key range만큼의 count array를 만들면 memory는 항상 입력보다 작다.", "displayOrder": 3}
     ],
     "correctChoiceKey": "A"
   },
@@ -126,7 +126,7 @@
   {
     "kind": "question",
     "contentKey": "dsa.core.algorithm-selection.data-shape.q4",
-    "promptMarkdown": "평균 데이터에서는 hash lookup이 빠른데 특정 형태의 key에서 latency가 급격히 증가한다. 어떤 data-shape 가정과 구조적 위험을 확인해야 하는가?",
+    "promptMarkdown": "평균 데이터에서는 hash lookup이 빠른데 특정 형태의 key에서 지연 시간이 급격히 증가한다. 어떤 data-shape 가정과 구조적 위험을 확인해야 하는가?",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
@@ -145,8 +145,8 @@
     "choices": [
       {"key": "A", "content": "선형 scan: 100 ms", "displayOrder": 0},
       {"key": "B", "content": "전처리 후 query: 805 ms", "displayOrder": 1},
-      {"key": "C", "content": "둘 다 항상 5 ms", "displayOrder": 2},
-      {"key": "D", "content": "전처리 후 query: 900 ms", "displayOrder": 3}
+      {"key": "C", "content": "preprocessing 비용은 query 횟수와 무관하게 매 query마다 다시 발생한다.", "displayOrder": 2},
+      {"key": "D", "content": "전처리 결과는 query가 몇 번이어도 원본 변경 비용을 고려할 필요가 없다.", "displayOrder": 3}
     ],
     "correctChoiceKey": "A"
   },
@@ -158,7 +158,8 @@
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.algorithm-selection.preprocessing-query-cost"],
-    "acceptedAnswers": ["scan 1000 ms, preprocessing 850 ms", "1000ms, 850ms", "선형 1000 ms / 전처리 850 ms"]
+    "acceptedAnswers": ["scan 1000 ms, preprocessing 850 ms", "1000ms, 850ms", "선형 1000 ms / 전처리 850 ms"],
+    "explanationMarkdown": "한 번의 선형 scan은 100 ms이므로 10회면 1,000 ms다. preprocessing 방식은 800 ms를 한 번 지불하고 query 10회에 5 ms씩 더해 850 ms다. 이 조건에서는 preprocessing 방식이 더 짧지만 원본 변경 시 유지 비용은 별도 계약으로 계산해야 한다."
   },
   {
     "kind": "question",
@@ -192,8 +193,8 @@
     "choices": [
       {"key": "A", "content": "전체 입력을 정렬하거나 전처리하는 offline 전략을 검토할 수 있다.", "displayOrder": 0},
       {"key": "B", "content": "미래 입력을 알더라도 반드시 즉시 결정을 확정해야 한다.", "displayOrder": 1},
-      {"key": "C", "content": "모든 입력을 영원히 메모리에 저장해야만 한다.", "displayOrder": 2},
-      {"key": "D", "content": "입력을 읽기 전에 결과를 확정해야 한다.", "displayOrder": 3}
+      {"key": "C", "content": "offline 전략을 쓰면 결과를 한 번 계산한 뒤에는 갱신할 수 없다.", "displayOrder": 2},
+      {"key": "D", "content": "online 알고리즘은 과거 입력을 모두 보존해야만 다음 결정을 내릴 수 있다.", "displayOrder": 3}
     ],
     "correctChoiceKey": "A"
   },
@@ -228,9 +229,9 @@
     "conceptKeys": ["dsa.core.algorithm-selection.operation-driven-structure-choice"],
     "choices": [
       {"key": "A", "content": "Hash table", "displayOrder": 0},
-      {"key": "B", "content": "Heap", "displayOrder": 1},
-      {"key": "C", "content": "Adjacency matrix", "displayOrder": 2},
-      {"key": "D", "content": "Stack", "displayOrder": 3}
+      {"key": "B", "content": "Sorted array와 binary search", "displayOrder": 1},
+      {"key": "C", "content": "Balanced search tree", "displayOrder": 2},
+      {"key": "D", "content": "정렬을 유지하는 ordered map", "displayOrder": 3}
     ],
     "correctChoiceKey": "A"
   },
@@ -242,7 +243,7 @@
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.algorithm-selection.operation-driven-structure-choice"],
-    "modelAnswer": "Hash table은 exact lookup에는 강하지만 ordering이 없어 range query가 전체 scan에 가까워질 수 있다. Range query 15%가 실제 latency에서 충분히 중요하다면 balanced tree, sorted structure 또는 별도 ordered index를 비교해야 한다."
+    "modelAnswer": "Hash table은 exact lookup에는 강하지만 ordering이 없어 range query가 전체 scan에 가까워질 수 있다. Range query 15%가 실제 지연 시간에서 충분히 중요하다면 balanced tree, sorted structure 또는 별도 ordered index를 비교해야 한다."
   },
   {
     "kind": "question",

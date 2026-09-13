@@ -66,7 +66,7 @@ Cycle 판정의 핵심은 "전에 본 적이 있는가"가 아니라 **현재 �
 A -> B -> C -> A
 ```
 
-Prerequisite import validation에서 "cycle이 있습니다"만 반환하는 것보다 어떤 key들이 cycle을 만드는지 보여주는 것이 훨씬 수정하기 쉽다.
+Prerequisite import 검증에서 "cycle이 있습니다"만 반환하는 것보다 어떤 key들이 cycle을 만드는지 보여주는 것이 훨씬 수정하기 쉽다.
 
 ### Topological sort와의 관계
 
@@ -74,6 +74,6 @@ Directed graph에 cycle이 있으면 모든 edge `u -> v`에 대해 u가 v보다
 
 Kahn 알고리즘에서는 모든 vertex를 제거하지 못하고 indegree가 남는 것이 cycle의 증거가 되고, DFS 방식에서는 `IN_PROGRESS` vertex로 돌아가는 back edge가 cycle의 증거가 된다.
 
-### Domain validation에서의 태도
+### Domain 검증에서의 태도
 
-Cycle이 허용되지 않는 canonical prerequisite graph라면 임의로 edge 하나를 삭제해 결과를 "수정"하면 안 된다. Validation은 cycle 경로를 정확히 보고하고 Apply를 차단해야 한다. 어떤 relation을 제거할지는 authoring decision이다.
+Cycle이 허용되지 않는 canonical prerequisite graph라면 임의로 edge 하나를 삭제해 결과를 "수정"하면 안 된다. 검증은 cycle 경로를 정확히 보고하고 Apply를 차단해야 한다. 어떤 relation을 제거할지는 authoring decision이다.

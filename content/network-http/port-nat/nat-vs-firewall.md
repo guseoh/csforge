@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.port-nat.nat-vs-firewall
 topicContentKey: network-http.core.port-nat
 slug: nat-vs-firewall
-title: "NAT versus Firewall"
+title: "NAT / Firewall"
 summary: "address translation과 stateful packet filtering의 역할을 구분한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "NAT mapping과 inbound reachability를 확인한다."
     displayOrder: 1
 ---
-# NAT versus Firewall
+# NAT / Firewall
 
 NAT는 packet의 source/destination address나 port를 바꾸고 mapping state에 따라 reply를 반대 방향으로 변환하는 기능이다. firewall은 source·destination·port·protocol·connection state·identity 같은 조건과 정책을 평가해 traffic을 허용하거나 차단한다. 두 기능이 같은 gateway에 구현될 수 있지만, 주소를 바꿨다는 사실이 특정 traffic을 허용해야 한다는 규칙으로 바뀌지는 않는다.
 
@@ -27,3 +27,7 @@ public listener를 열 때는 destination port allow rule, authentication, rate 
 
 Backend에서 “포트가 외부에 안 보인다”는 사실만으로 보안을 판단하지 않는다. 외부·내부 interface, security group/firewall state, port forwarding, application bind와 authorization을 순서대로 확인해야 하며, NAT table의 우연한 비노출을 least-privilege 정책으로 간주하지 않는다.
 
+### Translation과 policy
+    packet → address/port translation → allow/deny policy → next hop
+              NAT responsibility       firewall responsibility
+mapping 존재와 listener 준비는 각각 확인해야 한다.

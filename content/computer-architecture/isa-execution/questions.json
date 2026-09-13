@@ -28,12 +28,12 @@
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.isa-execution.isa-vs-microarchitecture.q3",
-    "promptMarkdown": "서비스를 CPU A에서 CPU B로 옮기려 한다. 두 CPU는 같은 ISA와 필요한 extension을 지원하지만 A에서 측정한 특정 instruction sequence의 latency가 40 ns였다. 이 40 ns를 B에서도 보장되는 계약으로 사용할 수 없는 이유와 이식 시 각각 무엇을 검증해야 하는지 설명하라.",
+    "promptMarkdown": "서비스를 CPU A에서 CPU B로 옮기려 한다. 두 CPU는 같은 ISA와 필요한 extension을 지원하지만 A에서 측정한 특정 instruction sequence의 지연 시간이 40 ns였다. 이 40 ns를 B에서도 보장되는 계약으로 사용할 수 없는 이유와 이식 시 각각 무엇을 검증해야 하는지 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.isa-execution.isa-vs-microarchitecture"],
-    "modelAnswer": "같은 ISA가 보장하는 것은 instruction의 architectural semantics와 지원 feature이지 특정 latency가 아니다. 먼저 B가 필요한 ISA extension과 ABI를 지원해 correctness가 유지되는지 확인하고, 성능은 B의 pipeline·cache·memory system에서 실제 workload를 다시 benchmark해야 한다."
+    "modelAnswer": "같은 ISA가 보장하는 것은 instruction의 architectural semantics와 지원 feature이지 특정 지연 시간이 아니다. 먼저 B가 필요한 ISA extension과 ABI를 지원해 correctness가 유지되는지 확인하고, 성능은 B의 pipeline·cache·memory system에서 실제 workload를 다시 benchmark해야 한다."
   },
   {
     "kind": "question",

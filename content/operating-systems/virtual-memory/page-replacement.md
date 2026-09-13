@@ -11,15 +11,17 @@ displayOrder: 60
 references:
   - url: "https://pages.cs.wisc.edu/~remzi/OSTEP/vm-beyondphys-policy.pdf"
     title: "Beyond Physical Memory: Policies"
-    referenceType: OFFICIAL
+    referenceType: BOOK
     language: en
-    depth: section
+    depth: chapter
     recommendation: "replacement policy와 locality가 hit/miss 및 working-set 유지에 미치는 영향을 확인한다."
     displayOrder: 1
 ---
 # Page Replacement
 
 새 page를 resident로 만들어야 하는데 사용할 free frame이 부족하면 OS는 기존 resident page 중 하나를 victim으로 골라 frame을 재사용해야 한다. 이 결정을 page replacement라고 한다. 핵심 목표는 단순히 `가장 오래된 page를 지운다`가 아니라 **앞으로 다시 필요할 가능성이 낮고 내보내는 비용도 합리적인 page를 선택해 fault 비용을 줄이는 것**이다.
+
+![Free frame이 없을 때 resident page 중 victim을 골라 내보내고 새 page를 frame에 배치하는 흐름](/learning/operating-systems/page-replacement.svg)
 
 ### 왜 미래를 정확히 알 수 없는가
 
@@ -37,4 +39,4 @@ clean file-backed page는 필요하면 원본 file에서 다시 읽을 수 있�
 
 ### Backend 연결
 
-OS page replacement와 application cache eviction은 서로 다른 계층이지만 physical memory를 두고 경쟁한다. JVM heap이나 in-memory cache를 크게 잡아 file-backed working set을 계속 밀어내면 application cache hit는 좋아져도 major fault와 I/O latency가 증가할 수 있다. heap·RSS·page cache·fault를 하나의 memory budget으로 관찰한다.
+OS page replacement와 application cache eviction은 서로 다른 계층이지만 physical memory를 두고 경쟁한다. JVM heap이나 in-memory cache를 크게 잡아 file-backed working set을 계속 밀어내면 application cache hit는 좋아져도 major fault와 I/O 지연 시간이 증가할 수 있다. heap·RSS·page cache·fault를 하나의 memory budget으로 관찰한다.

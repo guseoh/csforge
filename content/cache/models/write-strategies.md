@@ -4,7 +4,7 @@ contentKey: cache.core.models.write-strategies
 topicContentKey: cache.core.models
 slug: write-strategies
 title: "write-through와 write-behind trade-off"
-summary: "origin과 cache에 write하는 순서와 책임을 비교하고 durability·latency·실패 복구 trade-off를 판단한다"
+summary: "origin과 cache에 write하는 순서와 책임을 비교하고 durability·지연 시간·실패 복구 trade-off를 판단한다"
 level: 2
 status: PUBLISHED
 displayOrder: 20
@@ -38,7 +38,7 @@ origin 변경 뒤 cache를 삭제하거나 새 representation을 기록하는 co
 
 ### write-through는 읽기와 쓰기 경로를 감춘다
 
-write-through에서는 application이 cache layer에 쓰고 layer가 origin 변경까지 수행할 수 있습니다. 이 구조는 cache에 들어오는 모든 write가 origin과 함께 처리된다는 계약을 만들 수 있지만, cache layer가 transaction 경계·validation·error translation까지 떠안으면 domain 책임이 흐려질 수 있습니다.
+write-through에서는 application이 cache layer에 쓰고 layer가 origin 변경까지 수행할 수 있습니다. 이 구조는 cache에 들어오는 모든 write가 origin과 함께 처리된다는 계약을 만들 수 있지만, cache layer가 transaction 경계·검증·error translation까지 떠안으면 domain 책임이 흐려질 수 있습니다.
 
 ```text
 write-through write
@@ -49,7 +49,7 @@ write-through write
 
 ### write-behind는 durability 지연을 의도적으로 선택한다
 
-write-behind는 cache에 먼저 반영하고 origin write를 나중에 처리합니다. latency와 write burst 흡수에는 유리할 수 있지만 process·cache 장애 전에 origin 반영이 끝나지 않으면 데이터 손실이나 순서 역전이 생길 수 있습니다. 결제·재고처럼 즉시 canonical durability가 필요한 상태에는 신중해야 합니다.
+write-behind는 cache에 먼저 반영하고 origin write를 나중에 처리합니다. 지연 시간과 write burst 흡수에는 유리할 수 있지만 process·cache 장애 전에 origin 반영이 끝나지 않으면 데이터 손실이나 순서 역전이 생길 수 있습니다. 결제·재고처럼 즉시 canonical durability가 필요한 상태에는 신중해야 합니다.
 
 ### 전략 선택은 데이터 의미로 시작한다
 
@@ -61,9 +61,9 @@ write-behind는 cache에 먼저 반영하고 origin write를 나중에 처리합
 2. cache write 성공·origin write 실패 순서를 그립니다.
 3. process 장애 시 아직 origin에 가지 않은 변경을 복구할 수 있는지 봅니다.
 4. retry가 순서와 중복을 깨지 않는지 확인합니다.
-5. write latency 개선이 durability 요구를 침해하지 않는지 판단합니다.
+5. write 지연 시간 개선이 durability 요구를 침해하지 않는지 판단합니다.
 
 ### 면접에서 설명한다면
 
-Write-through는 cache layer가 origin write까지 연결하고, write-behind는 cache 반영 후 origin 반영을 지연하는 전략입니다. 전자는 경계를 숨기는 대신 실패·transaction 책임이 복잡해질 수 있고, 후자는 latency를 줄이는 대신 durability·ordering·replay 비용을 가집니다. 어떤 전략도 cache를 canonical source로 만들지 않으며 데이터 의미와 복구 요구를 먼저 확인해야 합니다.
+Write-through는 cache layer가 origin write까지 연결하고, write-behind는 cache 반영 후 origin 반영을 지연하는 전략입니다. 전자는 경계를 숨기는 대신 실패·transaction 책임이 복잡해질 수 있고, 후자는 지연 시간을 줄이는 대신 durability·ordering·replay 비용을 가집니다. 어떤 전략도 cache를 canonical source로 만들지 않으며 데이터 의미와 복구 요구를 먼저 확인해야 합니다.
 

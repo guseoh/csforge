@@ -4,7 +4,7 @@ contentKey: backend.core.idempotency.repeat-request
 topicContentKey: backend.core.idempotency
 slug: repeat-request
 title: 반복 요청 문제
-summary: response를 받지 못해 결과를 모르는 상태에서 재전송이 일어나며 non-idempotent operation에서는 중복 효과가 생길 수 있다.
+summary: 응답을 받지 못해 결과를 모르는 상태에서 재전송이 일어나며 non-idempotent operation에서는 중복 효과가 생길 수 있다.
 level: 2
 status: PUBLISHED
 displayOrder: 10
@@ -24,7 +24,7 @@ references:
 ---
 # 반복 요청 문제
 
-분산된 HTTP 환경에서는 client가 response를 받지 못했다고 해서 server가 작업을 수행하지 않았다는 뜻이 아닙니다. **“결과를 모른다”는 상태** 때문에 동일 요청이 다시 전송되고, non-idempotent operation에서는 중복 효과가 생깁니다.
+분산된 HTTP 환경에서는 client가 응답을 받지 못했다고 해서 server가 작업을 수행하지 않았다는 뜻이 아닙니다. **“결과를 모른다”는 상태** 때문에 동일 요청이 다시 전송되고, non-idempotent operation에서는 중복 효과가 생깁니다.
 
 ### 가장 위험한 실패 지점
 

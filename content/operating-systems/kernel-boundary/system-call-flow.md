@@ -4,7 +4,7 @@ contentKey: operating-systems.core.kernel-boundary.system-call-flow
 topicContentKey: operating-systems.core.kernel-boundary
 slug: system-call-flow
 title: "System Call Flow"
-summary: "user request가 architecture-specific entry를 지나 kernel service를 실행하고 user space로 돌아오는 상태 변화를 추적한다."
+summary: "user 요청이 architecture-specific entry를 지나 kernel service를 실행하고 user space로 돌아오는 상태 변화를 추적한다."
 level: 2
 status: PUBLISHED
 displayOrder: 50
@@ -75,15 +75,15 @@ Service가 끝나면 kernel은 성공 결과나 error를 ABI가 약속한 형태
 
 중요한 것은 실패와 partial result를 호출자가 올바르게 해석하는 것이다. 예를 들어 I/O가 일부만 진행된 경우 “system call이 실패했다”와 “요청보다 적은 양을 정상 처리했다”는 다른 상태일 수 있다.
 
-### Backend latency에서 이 흐름을 어떻게 읽는가
+### Backend 지연 시간에서 이 흐름을 어떻게 읽는가
 
 Backend thread가 socket read에서 오래 머문다고 해서 CPU가 그 thread의 Java code를 계속 실행하고 있다는 뜻은 아니다. Kernel에 요청한 뒤 wait 상태가 되어 CPU를 다른 task가 사용하고 있을 수 있다. 반대로 CPU-bound syscall이나 매우 잦은 짧은 syscall은 kernel/user boundary 자체의 비용과 kernel work를 증가시킬 수 있다.
 
-따라서 request latency를 볼 때는 다음을 구분한다.
+따라서 요청 지연 시간을 볼 때는 다음을 구분한다.
 
 - user-space application/JVM code가 CPU를 사용한 시간
 - kernel service가 CPU를 사용한 시간
 - I/O나 resource를 기다리며 task가 실행되지 않은 시간
 - scheduler가 다시 실행 기회를 줄 때까지의 지연
 
-System Call Flow를 배우는 이유는 모든 kernel 구현 detail을 외우기 위해서가 아니다. **고수준 API 호출이 OS resource request로 바뀌고, 그 과정에서 validation·blocking·scheduling·return이 어떻게 연결되는지 인과관계로 이해하기 위해서**다.
+System Call Flow를 배우는 이유는 모든 kernel 구현 detail을 외우기 위해서가 아니다. **고수준 API 호출이 OS resource 요청으로 바뀌고, 그 과정에서 검증·blocking·scheduling·return이 어떻게 연결되는지 인과관계로 이해하기 위해서**다.

@@ -11,9 +11,9 @@ displayOrder: 40
 references:
   - url: "https://pages.cs.wisc.edu/~remzi/OSTEP/vm-beyondphys.pdf"
     title: "Beyond Physical Memory: Mechanisms"
-    referenceType: OFFICIAL
+    referenceType: BOOK
     language: en
-    depth: section
+    depth: chapter
     recommendation: "page fault에서 OS가 translation 상태를 해석하고 page-in 또는 실패를 결정하는 흐름을 확인한다."
     displayOrder: 1
   - url: "https://man7.org/linux/man-pages/man2/getrusage.2.html"
@@ -28,6 +28,8 @@ references:
 
 page fault는 CPU가 virtual address에 접근했지만 현재 translation과 permission만으로 그 접근을 완료할 수 없어 kernel의 fault handler로 제어가 넘어가는 사건이다. 중요한 점은 **page fault가 곧 disk I/O라는 뜻은 아니라는 것**이다. 아직 physical frame이 배정되지 않은 anonymous page라면 zero-filled frame을 연결하는 것만으로 복구될 수 있고, copy-on-write page라면 새 frame을 복사해 writable mapping으로 바꾸면 된다. file-backed page가 page cache에 없거나 swap-backed page를 다시 가져와야 하는 경우에야 storage I/O가 포함될 수 있다.
 
+![Memory access가 page fault를 일으킨 뒤 mapping과 permission을 검사하고 복구 또는 실패로 이어지는 흐름](/learning/operating-systems/page-fault-flow.svg)
+
 ### Fault가 발생한 뒤 OS가 판단하는 것
 
 fault handler는 먼저 해당 virtual address가 process에 허용된 mapping 안에 있는지, 요청한 read/write/execute 권한이 유효한지 판단한다. mapping 자체가 잘못되었거나 permission 위반이라면 정상적인 demand paging으로 복구할 문제가 아니므로 process에 오류를 전달한다. 반대로 유효한 mapping인데 현재 사용할 수 있는 resident page가 없다면 frame을 확보하고 backing source에서 내용을 준비한 뒤 page-table state를 갱신할 수 있다.
@@ -40,8 +42,14 @@ instruction을 재시도한다는 점도 중요하다. fault handler가 applicat
 
 ### 비용은 fault 종류에 따라 크게 달라진다
 
-Linux의 `getrusage()` 같은 운영 지표에서는 I/O 없이 처리된 fault를 `ru_minflt`, I/O가 필요했던 fault를 `ru_majflt`로 구분한다. 흔히 minor/major fault라고 부르지만 이 이름과 계수 방식은 모든 OS의 보편적 page-fault 분류 계약으로 일반화하지 않는다. 따라서 `page fault 수가 1,000회`라는 숫자만으로 latency를 판단하면 안 된다. 어떤 backing store였는지, 이미 page cache에 있었는지, dirty victim을 write-back해야 했는지까지 봐야 한다.
+Linux의 `getrusage()` 같은 운영 지표에서는 I/O 없이 처리된 fault를 `ru_minflt`, I/O가 필요했던 fault를 `ru_majflt`로 구분한다. 흔히 minor/major fault라고 부르지만 이 이름과 계수 방식은 모든 OS의 보편적 page-fault 분류 계약으로 일반화하지 않는다. 따라서 `page fault 수가 1,000회`라는 숫자만으로 지연 시간을 판단하면 안 된다. 어떤 backing store였는지, 이미 page cache에 있었는지, dirty victim을 write-back해야 했는지까지 봐야 한다.
 
 ### 운영에서 보는 경계
 
-대형 file mapping이나 큰 working set의 첫 접근은 warm 상태와 완전히 다른 latency를 만들 수 있다. benchmark에서는 cold start와 steady state를 분리하고, Linux의 minor/major fault 같은 OS별 지표를 사용할 때는 해당 지표의 정의를 확인하면서 resident memory·storage I/O를 함께 관찰한다. JVM의 `OutOfMemoryError`와 OS page fault도 같은 사건이 아니므로 application heap 문제와 virtual-memory pressure를 구분해 진단한다.
+대형 file mapping이나 큰 working set의 첫 접근은 warm 상태와 완전히 다른 지연 시간을 만들 수 있다. benchmark에서는 cold start와 steady state를 분리하고, Linux의 minor/major fault 같은 OS별 지표를 사용할 때는 해당 지표의 정의를 확인하면서 resident memory·storage I/O를 함께 관찰한다. JVM의 `OutOfMemoryError`와 OS page fault도 같은 사건이 아니므로 application heap 문제와 virtual-memory pressure를 구분해 진단한다.
+
+### 면접에서 이렇게 나옵니다
+
+#### Q. Page fault가 발생하면 항상 디스크에서 page를 읽어오나요?
+
+아니다. Page fault는 **현재 translation으로 memory access를 완료할 수 없어서 kernel이 개입해야 한다는 사건**이다. Anonymous zero-fill이나 copy-on-write처럼 storage I/O 없이 복구되는 fault도 있고, file/swap에서 실제 I/O가 필요한 fault도 있다. Fault 원인과 backing state를 구분해 설명하는 것이 중요하다.

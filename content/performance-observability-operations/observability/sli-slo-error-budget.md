@@ -18,7 +18,7 @@ references:
 ---
 # SLI·SLO와 error budget
 
-SLI(Service Level Indicator)는 사용자가 경험한 availability나 latency를 측정하는 지표이고, SLO(Service Level Objective)는 그 지표가 목표 기간 동안 만족해야 할 수준입니다. Error budget은 SLO를 만족하지 못해도 허용되는 실패 여유이며, 개발 속도와 reliability 투자를 연결하는 공통 언어가 됩니다.
+SLI(Service Level Indicator)는 사용자가 경험한 가용성이나 지연 시간을 측정하는 지표이고, SLO(Service Level Objective)는 그 지표가 목표 기간 동안 만족해야 할 수준입니다. Error budget은 SLO를 만족하지 못해도 허용되는 실패 여유이며, 개발 속도와 reliability 투자를 연결하는 공통 언어가 됩니다.
 
 ### 좋은 SLI는 사용자 행동에서 시작한다
 
@@ -27,15 +27,15 @@ user request ─▶ valid response within deadline? ─▶ good event / total ev
                                       └─ window에서 SLO와 budget 계산
 ```
 
-내부 CPU utilization을 곧바로 availability SLI라고 부르기보다, 성공한 유효 요청과 deadline 내 응답 같은 user-visible event를 정의합니다. traffic이 없는 시간, dependency failure, planned maintenance를 어떻게 분모에 넣는지는 명시해야 합니다.
+내부 CPU utilization을 곧바로 가용성 SLI라고 부르기보다, 성공한 유효 요청과 deadline 내 응답 같은 user-visible event를 정의합니다. traffic이 없는 시간, dependency 실패, planned maintenance를 어떻게 분모에 넣는지는 명시해야 합니다.
 
 ### budget은 단순한 경고 숫자가 아니다
 
-budget 소비가 빠르면 위험한 release를 늦추고 reliability 작업을 우선하는 정책을 만들 수 있습니다. 반대로 budget이 남았다는 이유로 모든 latency regression을 허용하는 것도 잘못입니다. SLO window, burn rate, severity와 release gate를 팀의 운영 계약으로 기록합니다.
+budget 소비가 빠르면 위험한 release를 늦추고 reliability 작업을 우선하는 정책을 만들 수 있습니다. 반대로 budget이 남았다는 이유로 모든 지연 시간 regression을 허용하는 것도 잘못입니다. SLO window, burn rate, severity와 release gate를 팀의 운영 계약으로 기록합니다.
 
 ### 측정 오류도 운영 risk다
 
-instrumentation 누락, retry를 성공으로 이중 집계, health check만 분모에 포함하는 설계는 SLO를 낙관적으로 만들 수 있습니다. SLI query를 known failure와 synthetic check로 검증하고, SLO 변경은 historical 비교가 가능하도록 version과 이유를 남깁니다.
+instrumentation 누락, retry를 성공으로 이중 집계, health check만 분모에 포함하는 설계는 SLO를 낙관적으로 만들 수 있습니다. SLI query를 known 실패와 synthetic check로 검증하고, SLO 변경은 historical 비교가 가능하도록 version과 이유를 남깁니다.
 
 ### 문제를 풀 때 확인할 것
 

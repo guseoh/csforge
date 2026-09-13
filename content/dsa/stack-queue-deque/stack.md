@@ -57,10 +57,10 @@ DFS의 iterative 구현도 아직 탐색할 node를 stack에 두어 가장 최�
 
 array stack은 contiguous memory와 낮은 pointer overhead가 장점이지만 capacity growth가 필요할 수 있다. linked stack은 node 추가로 capacity를 자연스럽게 늘리지만 node allocation과 pointer chasing 비용이 생긴다.
 
-둘 다 abstract operation은 push/pop O(1)을 기대할 수 있지만 실제 locality, allocation, resize tail latency는 다르다.
+둘 다 abstract operation은 push/pop O(1)을 기대할 수 있지만 실제 locality, allocation, resize 꼬리 지연 시간(tail latency)는 다르다.
 
 ### application stack과 call stack은 같은 추상어지만 같은 resource가 아니다
 
-parser가 직접 `Stack<Node>`를 사용하는 것과 recursive call이 OS/JVM thread stack frame을 소비하는 것은 다른 메모리 자원이다. 깊은 nested input에서 둘 다 depth 문제를 만들 수 있지만 limit과 failure mode는 다르다.
+parser가 직접 `Stack<Node>`를 사용하는 것과 recursive call이 OS/JVM thread stack frame을 소비하는 것은 다른 메모리 자원이다. 깊은 nested input에서 둘 다 depth 문제를 만들 수 있지만 limit과 실패 mode는 다르다.
 
-untrusted input을 처리한다면 최대 nesting depth를 먼저 제한하고, recursion과 explicit stack 중 어느 방식이 failure를 더 제어하기 쉬운지도 판단해야 한다.
+untrusted input을 처리한다면 최대 nesting depth를 먼저 제한하고, recursion과 explicit stack 중 어느 방식이 실패를 더 제어하기 쉬운지도 판단해야 한다.

@@ -28,7 +28,7 @@ API가 한번 외부 소비자에게 배포되면 필드 하나도 단순 내부
 
 ### 필드 추가도 항상 안전하지 않다
 
-JSON consumer가 unknown field를 무시한다면 optional response field 추가는 보통 호환적입니다. 하지만 client가 response 전체를 strict schema로 검증하거나 enum switch를 exhaustive하게 작성했다면 새로운 값 하나도 장애가 될 수 있습니다.
+JSON consumer가 unknown field를 무시한다면 선택 응답 필드 추가는 보통 호환적입니다. 하지만 client가 응답 전체를 strict schema로 검증하거나 enum switch를 exhaustive하게 작성했다면 새로운 값 하나도 장애가 될 수 있습니다.
 
 ```json
 {

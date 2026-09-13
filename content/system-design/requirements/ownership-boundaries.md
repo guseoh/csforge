@@ -3,7 +3,7 @@ kind: concept
 contentKey: system-design.core.requirements.ownership-boundaries
 topicContentKey: system-design.core.requirements
 slug: ownership-boundaries
-title: "data ownership과 consistency boundary"
+title: "데이터 소유권과 일관성 경계"
 summary: "aggregate·source of truth·derived view와 team/API ownership을 분리한다"
 level: 2
 status: PUBLISHED
@@ -22,7 +22,7 @@ references:
     displayOrder: 2
     relationNote: "service별 database ownership과 cross-boundary transaction 확인"
 ---
-# data ownership과 consistency boundary
+# 데이터 소유권과 일관성 경계
 
 System의 경계는 URL이나 deploy unit만으로 정해지지 않습니다. 어떤 aggregate가 canonical state를 소유하고 어떤 read model·cache·search index가 derived projection인지, 누가 invariant와 migration을 책임지는지를 정해야 coupling과 recovery를 판단할 수 있습니다.
 
@@ -38,7 +38,7 @@ owner ──local transaction──▶ canonical state
 
 ### boundary는 invariant를 보호해야 한다
 
-한 transaction으로 지켜야 하는 invariant가 여러 service에 걸치면 local transaction과 saga·reservation·compensation의 비용이 생깁니다. 반대로 모든 것을 하나의 shared database에 넣으면 runtime consistency는 쉽지만 schema·배포·team coupling이 커집니다. 경계는 조직 이름보다 변경 이유와 invariant의 위치로 정합니다.
+한 transaction으로 지켜야 하는 invariant가 여러 service에 걸치면 local transaction과 saga·reservation·compensation의 비용이 생깁니다. 반대로 모든 것을 하나의 shared database에 넣으면 runtime 일관성은 쉽지만 schema·배포·team coupling이 커집니다. 경계는 조직 이름보다 변경 이유와 invariant의 위치로 정합니다.
 
 ### API와 ownership을 함께 바꾼다
 
@@ -49,7 +49,7 @@ owner ──local transaction──▶ canonical state
 1. canonical state와 derived projection을 구분합니다.
 2. invariant와 transaction boundary의 위치를 적습니다.
 3. owner의 write 권한·migration·recovery 책임을 정합니다.
-4. cross-boundary query와 consistency/freshness 계약을 둡니다.
+4. cross-boundary query와 일관성/freshness 계약을 둡니다.
 5. projection lag·rebuild·schema evolution 경로를 검증합니다.
 
 ### 면접에서 설명한다면

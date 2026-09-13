@@ -64,12 +64,12 @@ cache에 값이 있다고 해서 그것이 canonical 상태라는 뜻은 아닙�
 ### 운영에서 확인할 지표
 
 - hit ratio와 miss ratio
-- origin fallback query 수와 latency
+- cache miss 후 원본 저장소 조회 수와 지연 시간
 - cache fill/delete 실패 수
 - entry age와 TTL remaining
 - cache 장애 때 origin 부하와 connection pool 사용량
 
-hit ratio만 높이고 stale 오류나 origin fallback 폭증을 놓치면 cache가 실제 사용자 경험을 개선했는지 알 수 없습니다.
+hit ratio만 높이고 stale 오류나 원본 저장소 조회 폭증을 놓치면 cache가 실제 사용자 경험을 개선했는지 알 수 없습니다.
 
 ### 문제를 풀 때 확인할 것
 

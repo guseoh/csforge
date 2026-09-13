@@ -26,7 +26,7 @@ references:
     referenceType: OFFICIAL
     language: en
     displayOrder: 3
-    relationNote: Map 계약 확인
+    relationNote: Map 계약과 keySet/values/entrySet view 확인
 ---
 # List, Set, Map을 요구사항으로 선택하기
 
@@ -52,7 +52,7 @@ roles.add("ADMIN");
 roles.add("ADMIN");
 ```
 
-중복 판단은 구현과 원소의 equality 계약에 영향을 받습니다. `HashSet`은 equals/hashCode, `TreeSet`은 ordering 기준이 특히 중요합니다.
+중복 판단 방식은 구현과 원소의 equality 계약에 영향을 받습니다. `HashSet`은 `equals`/`hashCode`, `TreeSet`은 ordering 기준이 특히 중요합니다.
 
 Set을 사용했다고 정렬 순서나 삽입 순서가 자동으로 보장되는 것은 아닙니다. 필요한 순서가 있다면 해당 구현의 계약을 따로 확인해야 합니다.
 
@@ -64,9 +64,35 @@ membersById.put(1L, member);
 Member found = membersById.get(1L);
 ```
 
-`Map`은 key와 value의 대응 관계를 표현합니다. key는 중복될 수 없고 같은 key로 다시 `put`하면 기존 매핑이 교체될 수 있습니다.
+`Map`은 key와 value의 대응 관계를 표현합니다. key는 중복될 수 없고 같은 key로 다시 `put`하면 기존 mapping의 value가 교체될 수 있습니다.
 
-`Map`은 `Collection`의 하위 인터페이스가 아니라 별도의 key-value 추상화입니다.
+`Map`은 `Collection`의 하위 인터페이스가 아니라 별도의 key-value 추상화입니다. List나 Set처럼 “원소 한 종류의 모음”으로만 보면 `key`, `value`, `entry`라는 세 가지 관점을 놓치기 쉽습니다.
+
+### Map의 keySet, values, entrySet은 원본과 연결된 view다
+
+`Map`에서 얻는 `keySet()`, `values()`, `entrySet()`은 보통 별도의 snapshot 복사본이 아니라 **backing Map과 연결된 view**입니다.
+
+```java
+Map<String, Integer> map = new HashMap<>();
+map.put("A", 1);
+map.put("B", 2);
+
+Set<String> keys = map.keySet();
+keys.remove("A");
+
+System.out.println(map.containsKey("A")); // false
+```
+
+`keys.remove("A")`는 key view만 바꾸는 것이 아니라 backing Map의 해당 mapping도 제거합니다. 반대로 Map에 새로운 key를 추가하면 기존에 얻어 둔 `keySet` view에서도 그 변경을 볼 수 있습니다.
+
+```text
+Map
+ ├─ keySet()  ─┐
+ ├─ values()   ├─ 같은 backing mapping을 바라보는 view
+ └─ entrySet() ┘
+```
+
+따라서 collection을 API 밖으로 노출할 때는 “Set 타입이니까 독립된 값 모음이겠지”라고 가정하지 말고 **snapshot인지 live view인지**를 계약으로 확인해야 합니다.
 
 ### 같은 데이터를 다른 관점으로 볼 수도 있다
 
@@ -81,5 +107,16 @@ Member found = membersById.get(1L);
 - “포함되어 있는가?”가 핵심인가?
 - key를 통해 값을 찾아야 하는가?
 - 정렬된 순서가 필요한가?
+- 반환된 collection이 독립 snapshot인가, backing data와 연결된 view인가?
 
 이 요구를 먼저 정한 뒤 `ArrayList`, `HashSet`, `TreeMap` 같은 구현체의 성능과 세부 특성을 비교해야 합니다.
+
+### 면접에서 이렇게 나옵니다
+
+#### Q. List, Set, Map을 어떻게 구분해서 선택하나요?
+
+구현체 이름보다 먼저 데이터 계약을 봅니다. 순서와 중복을 유지해야 하면 List, 같은 값이 여러 번 있을 의미가 없고 membership이 중요하면 Set, key로 value를 찾는 관계라면 Map이 자연스럽습니다. 그다음에야 정렬, 동시성, 조회 패턴과 성능 요구를 보고 구체 구현을 고릅니다.
+
+#### Q. `map.keySet()`은 Map과 무관한 별도 Set인가요?
+
+아닙니다. `keySet()`은 backing Map과 연결된 view입니다. view를 통해 key를 제거하면 Map의 mapping도 제거되고, Map이 바뀌면 view에서도 그 변화가 보일 수 있습니다. 독립 snapshot이 필요하면 별도로 복사해야 합니다.

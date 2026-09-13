@@ -50,6 +50,6 @@ Hibernate Entity를 그대로 principal에 넣으면 serialization/session lifec
 
 ### principal은 client가 보내는 memberId가 아니다
 
-Request body에 `memberId=42`가 있다고 해서 그 값을 현재 사용자 principal로 신뢰하면 안 됩니다. 현재 authenticated principal은 서버가 검증한 security context에서 얻습니다.
+요청 본문에 `memberId=42`가 있다고 해서 그 값을 현재 사용자 principal로 신뢰하면 안 됩니다. 현재 authenticated principal은 서버가 검증한 security context에서 얻습니다.
 
 Identity/principal을 구분하면 “로그인 이름이 바뀌면 같은 사용자인가?”, “audit에는 무엇을 기록할까?”, “ownership 비교는 어떤 key로 할까?” 같은 backend 설계가 선명해집니다.

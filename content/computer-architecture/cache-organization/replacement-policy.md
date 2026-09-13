@@ -25,4 +25,4 @@ set이 가득 찼을 때 victim line을 고르는 정책이 replacement policy�
 
 ### Backend 연결
 
-cache miss 개선을 위해 eviction policy를 바꿀 때 hit rate와 traffic·전력·tail latency를 함께 비교한다. application LRU cache의 정책과 CPU cache replacement를 같은 configuration으로 취급하지 않는다.
+cache miss 개선을 위해 eviction policy를 바꿀 때 hit rate와 traffic·전력·꼬리 지연 시간(tail latency)을 함께 비교한다. application LRU cache의 정책과 CPU cache replacement를 같은 configuration으로 취급하지 않는다.

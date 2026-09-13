@@ -24,7 +24,7 @@ references:
 ---
 # metric cardinality와 telemetry cost
 
-Metric의 각 label 또는 attribute 조합은 별도의 time series가 됩니다. `route`, `status_class`, `region`처럼 bounded한 차원은 집계에 유용하지만 user ID, email, raw URL, request ID처럼 값이 계속 늘어나는 차원을 metric label로 넣으면 memory·storage·query 비용과 운영 복잡성이 급증합니다.
+Metric의 각 label 또는 attribute 조합은 별도의 time series가 됩니다. `route`, `status_class`, `region`처럼 bounded한 차원은 집계에 유용하지만 user ID, email, raw URL, 요청 ID처럼 값이 계속 늘어나는 차원을 metric label로 넣으면 memory·storage·query 비용과 운영 복잡성이 급증합니다.
 
 ### 이름과 차원을 분리한다
 
@@ -37,7 +37,7 @@ good: http_request_duration_seconds{route="/users/{id}",status_class="2xx"}
 
 ### cardinality는 곱셈으로 커진다
 
-각 차원의 값 수를 곱한 조합이 series 수의 대략적인 상한이 됩니다. 여기에 service, instance, region, version을 더하면 배포 규모와 함께 곱셈이 커집니다. 새로운 label은 “질의에 꼭 필요한가, 값의 상한이 있는가, 비용을 감당할 수 있는가”를 검토하고 series·ingestion·query latency를 관측합니다.
+각 차원의 값 수를 곱한 조합이 series 수의 대략적인 상한이 됩니다. 여기에 service, instance, region, version을 더하면 배포 규모와 함께 곱셈이 커집니다. 새로운 label은 “질의에 꼭 필요한가, 값의 상한이 있는가, 비용을 감당할 수 있는가”를 검토하고 series·ingestion·query 지연 시간을 관측합니다.
 
 ### 상세함과 집계 가능성의 균형
 

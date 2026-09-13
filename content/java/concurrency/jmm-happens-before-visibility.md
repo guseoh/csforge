@@ -10,9 +10,11 @@ status: PUBLISHED
 displayOrder: 60
 references:
   - url: "https://docs.oracle.com/javase/specs/jls/se25/html/jls-17.html#jls-17.4.5"
-    title: "Java SE 25 JLS: Happens-before Order"
+    title: "The Java Language Specification — 17.4.5 Happens-before Order"
     referenceType: OFFICIAL
     language: en
+    depth: section
+    recommendation: "Java에서 conflicting access와 happens-before를 기준으로 data race를 정의하는 정확한 경계를 확인한다."
     displayOrder: 1
     relationNote: happens-before 정의와 synchronization edge 확인
   - url: "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/package-summary.html"
@@ -21,6 +23,12 @@ references:
     language: en
     displayOrder: 2
     relationNote: Executor, Future, concurrent collection 등 고수준 API의 memory consistency effects 확인
+  - url: "https://techblog.lycorp.co.jp/ko/20231216a"
+    title: "LY 기술 블로그: 메모리 모델 입문 - Sequential Consistency와 Total Store Order 이해하기"
+    referenceType: COMPANY_TECH_BLOG
+    language: ko
+    displayOrder: 3
+    relationNote: CPU memory model과 SC-for-DRF 배경을 더 깊게 이해하는 보충 자료. Java의 실제 보장은 JLS의 JMM 계약을 우선한다.
 ---
 # JMM의 happens-before와 가시성
 
@@ -133,7 +141,7 @@ Thread worker = new Thread(() -> use(value));
 worker.start();
 ```
 
-`start()`를 호출하기 전에 수행한 작업은 시작된 thread의 action과 memory consistency 관계를 가집니다.
+`start()`를 호출하기 전에 수행한 작업은 시작된 thread의 action과 메모리 일관성 관계를 가집니다.
 
 반대 방향에서는 worker가 수행한 action들이 다른 thread가 성공적으로 `join()`한 이후 작업과 연결됩니다.
 
@@ -155,7 +163,7 @@ caller reads
 
 ### java.util.concurrent API도 더 높은 수준의 edge를 제공한다
 
-공식 `java.util.concurrent` 문서는 다음과 같은 memory consistency 효과를 정의합니다.
+공식 `java.util.concurrent` 문서는 다음과 같은 메모리 일관성 효과를 정의합니다.
 
 - task를 Executor에 제출하기 전의 action → task 실행 시작 이후
 - concurrent collection에 원소를 넣기 전의 action → 다른 thread가 그 원소에 접근/제거한 이후
@@ -202,3 +210,13 @@ atomicity      -> 여러 단계 사이에 다른 thread가 끼어들 수 있는�
 ### 학습 후 스스로 설명해 보기
 
 Happens-before는 Java Memory Model에서 한 thread의 action 결과를 다른 thread가 안전하게 관찰할 수 있는 ordering 관계를 추론하는 핵심 규칙이라고 설명할 수 있습니다. 같은 thread의 program order, monitor unlock→이후 lock, volatile write→이후 같은 volatile read, Thread.start/join 등이 대표적인 관계를 만들며 transitivity로 연결됩니다. 이는 특정 CPU cache를 flush한다는 구현 설명과 구분해야 하고, happens-before가 복합 연산의 atomicity까지 자동으로 보장하는 것도 아닙니다.
+
+### 면접에서 이렇게 나옵니다
+
+#### Q. happens-before를 "먼저 실행된 코드"라고 설명하면 왜 부족한가요?
+
+Happens-before는 단순한 벽시계 실행 순서가 아니라 JMM이 thread 사이의 memory visibility와 ordering을 추론하기 위해 정의한 관계입니다. 실제 시간상 write가 먼저 일어났더라도 reader까지 이어지는 synchronization edge가 없다면 그 write를 반드시 관찰한다고 말할 수 없습니다.
+
+#### Q. `volatile boolean ready`가 true가 된 뒤 일반 field `data`를 읽어도 되는 이유는 무엇인가요?
+
+Writer가 먼저 `data`를 쓰고 이어서 `ready`에 volatile write를 한 뒤, reader가 그 volatile write를 관찰하는 read를 수행한다면 program order와 volatile happens-before edge를 transitivity로 연결할 수 있습니다. 다만 이것은 `count++` 같은 복합 연산 전체를 atomic하게 만든다는 뜻은 아닙니다.

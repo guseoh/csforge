@@ -20,14 +20,14 @@ references:
 
 Saturation은 CPU, memory, DB connection pool, worker, queue처럼 제한된 자원이 수요에 가까워지는 상태입니다. utilization이 100%가 되기 전에도 queue가 쌓이면 대기 시간이 늘어나고, 결국 timeout·retry가 추가 부하를 만들 수 있습니다.
 
-### queue는 latency의 숨은 구성요소다
+### queue는 지연 시간의 숨은 구성요소다
 
 ```text
 arrival ─▶ [waiting queue] ─▶ worker/service time ─▶ response
              ▲ saturation이 높을수록 대기가 길어짐
 ```
 
-Little's Law의 직관은 평균 시스템 내 작업 수가 도착률과 평균 체류 시간의 곱으로 연결된다는 것입니다. 따라서 같은 throughput을 처리하더라도 queue depth가 증가하면 요청이 시스템에 머무는 시간이 증가합니다. 이 관계는 정확한 capacity 계산의 출발점이지 모든 분산 시스템을 단순한 공식 하나로 설명하는 만능 법칙은 아닙니다.
+Little's Law의 직관은 평균 시스템 내 작업 수가 도착률과 평균 체류 시간의 곱으로 연결된다는 것입니다. 따라서 같은 처리량을 처리하더라도 queue depth가 증가하면 요청이 시스템에 머무는 시간이 증가합니다. 이 관계는 정확한 capacity 계산의 출발점이지 모든 분산 시스템을 단순한 공식 하나로 설명하는 만능 법칙은 아닙니다.
 
 ### 자원별 saturation 신호가 다르다
 
@@ -35,7 +35,7 @@ CPU는 run queue와 throttling, memory는 allocation pressure와 GC/OOM, databas
 
 ### overload를 전파하지 않는다
 
-queue 상한, admission control, timeout budget, bounded concurrency와 load shedding으로 유입량을 제한합니다. 무제한 buffer는 장애를 숨기다가 memory pressure와 긴 tail latency로 바꾸므로, 버려진 작업의 의미와 재처리 정책도 함께 기록해야 합니다.
+queue 상한, admission control, timeout budget, bounded concurrency와 load shedding으로 유입량을 제한합니다. 무제한 buffer는 장애를 숨기다가 memory pressure와 긴 꼬리 지연 시간(tail latency)로 바꾸므로, 버려진 작업의 의미와 재처리 정책도 함께 기록해야 합니다.
 
 ### 문제를 풀 때 확인할 것
 

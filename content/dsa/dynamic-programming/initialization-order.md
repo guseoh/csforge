@@ -3,7 +3,7 @@ kind: concept
 contentKey: dsa.core.dynamic-programming.initialization-order
 topicContentKey: dsa.core.dynamic-programming
 slug: initialization-order
-title: "Initialization and Order"
+title: "Initialization·Order"
 summary: "base·impossible state와 dependency 순서를 정확히 잡아 recurrence가 올바른 값을 읽게 한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "DP의 subproblem 정의, memoization, recurrence와 재사용 구조를 확인한다."
     displayOrder: 1
 ---
-# Initialization and Order
+# Initialization·Order
 
 ### Transition이 맞아도 초기값과 계산 순서가 틀리면 오답이다
 

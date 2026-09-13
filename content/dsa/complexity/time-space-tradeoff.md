@@ -25,4 +25,4 @@ references:
 
 ### Backend 연결
 
-request-level memoization과 process-wide cache를 선택할 때 hit율뿐 아니라 heap·GC·invalidation 비용을 측정한다. 큰 page cache가 downstream 부하를 줄여도 memory pressure로 tail latency를 악화시킬 수 있다.
+요청-level memoization과 process-wide cache를 선택할 때 hit율뿐 아니라 heap·GC·invalidation 비용을 측정한다. 큰 page cache가 downstream 부하를 줄여도 memory pressure로 꼬리 지연 시간(tail latency)을 악화시킬 수 있다.

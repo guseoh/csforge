@@ -3,7 +3,7 @@ kind: concept
 contentKey: dsa.core.recursion-backtracking.divide-and-conquer
 topicContentKey: dsa.core.recursion-backtracking
 slug: divide-and-conquer
-title: "Divide and Conquer"
+title: "Divide·Conquer"
 summary: "분할·정복·결합 단계와 부분 문제 독립성, 비용 구조를 설명한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "입력 크기와 basic operation count를 기준으로 linear scan 비용을 분석한다."
     displayOrder: 1
 ---
-# Divide and Conquer
+# Divide·Conquer
 
 ### 문제를 나누는 것만으로는 충분하지 않다
 

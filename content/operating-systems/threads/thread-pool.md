@@ -31,7 +31,7 @@ worker가 모두 바쁘면 새 task는 즉시 실행되지 않고 queue 또는 r
 
 ### unbounded queue는 overload를 없애지 않고 숨긴다
 
-초당 100개를 처리하는 pool에 초당 150개 task가 지속적으로 들어오면 worker 수가 그대로인 한 queue는 초당 50개씩 증가한다. unbounded queue를 쓰면 잠깐은 요청을 모두 받아들이는 것처럼 보이지만 waiting latency와 memory 사용량은 계속 커진다.
+초당 100개를 처리하는 pool에 초당 150개 task가 지속적으로 들어오면 worker 수가 그대로인 한 queue는 초당 50개씩 증가한다. unbounded queue를 쓰면 잠깐은 요청을 모두 받아들이는 것처럼 보이지만 waiting 지연 시간과 memory 사용량은 계속 커진다.
 
 bounded queue와 rejection/backpressure는 overload를 외부에 드러내는 정책이다. 거부가 나쁘다고 queue를 무한히 키우는 것이 아니라 시스템이 감당할 수 없는 부하를 어디에서 제한할지 정해야 한다.
 
@@ -41,4 +41,4 @@ worker가 2개뿐인 pool에서 task A와 B가 각각 같은 pool에 child task�
 
 ### shutdown도 execution contract다
 
-graceful shutdown에서는 새 task를 더 받을지, queue에 남은 task를 처리할지, running task를 interrupt/cancel할지 정책이 필요하다. request pool, background import pool처럼 workload 성격이 다르면 queue와 shutdown 정책도 분리하는 편이 안전하다.
+graceful shutdown에서는 새 task를 더 받을지, queue에 남은 task를 처리할지, running task를 interrupt/cancel할지 정책이 필요하다. 요청 pool, background import pool처럼 workload 성격이 다르면 queue와 shutdown 정책도 분리하는 편이 안전하다.

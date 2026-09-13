@@ -48,7 +48,7 @@ AWS에서 subnet을 public/private로 구분할 때는 이름 자체보다 route
 
 ### ingress와 egress를 함께 본다
 
-외부 request가 app에 들어오는 경로만 제한해도 app이 모든 내부·외부 목적지로 자유롭게 나갈 수 있으면 SSRF나 credential compromise 이후 blast radius가 커질 수 있습니다. 반대로 egress를 지나치게 막으면 DNS, 외부 API, package repository 같은 정상 dependency가 실패합니다. 현재 workload에 필요한 source·destination·port·protocol과 route를 명시적으로 둡니다.
+외부 요청이 app에 들어오는 경로만 제한해도 app이 모든 내부·외부 목적지로 자유롭게 나갈 수 있으면 SSRF나 credential compromise 이후 blast radius가 커질 수 있습니다. 반대로 egress를 지나치게 막으면 DNS, 외부 API, package repository 같은 정상 dependency가 실패합니다. 현재 workload에 필요한 source·destination·port·protocol과 route를 명시적으로 둡니다.
 
 AWS Security Group은 associated resource의 inbound와 outbound allow rule을 제어하는 stateful boundary입니다. Kubernetes NetworkPolicy는 CNI/network plugin 지원과 policy selection 규칙을 따르는 Pod-level boundary이므로 AWS Security Group과 같은 구현으로 간주하지 않습니다.
 

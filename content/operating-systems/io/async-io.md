@@ -5,7 +5,7 @@ topicContentKey: operating-systems.core.io
 slug: async-io
 title: "Asynchronous I/O"
 summary: "operation을 먼저 제출하고 나중에 completion result를 수집하는 모델과 buffer·cancellation·backpressure 책임을 설명한다."
-level: 2
+level: 3
 status: PUBLISHED
 displayOrder: 70
 references:
@@ -16,6 +16,13 @@ references:
     depth: section
     recommendation: "Linux io_uring의 submission queue와 completion queue가 operation/result를 연결하는 모델을 확인한다."
     displayOrder: 1
+  - url: "https://tech.kakao.com/posts/680"
+    title: "실시간 메시징 시스템 개발기 - 성능 개선 레슨런"
+    referenceType: COMPANY_TECH_BLOG
+    language: ko
+    depth: article
+    recommendation: "실시간 messaging server에서 io_uring 도입을 검토하며 syscall/context-switch 비용과 실제 성능을 평가한 사례를 확인한다."
+    displayOrder: 2
 ---
 # Asynchronous I/O
 
@@ -37,10 +44,16 @@ thread가 block되지 않는다고 operation 수를 무제한으로 제출하면
 
 ### Cancellation도 결과 상태다
 
-timeout future가 완료됐다고 실제 kernel/device operation이 취소되었다는 뜻은 아니다. cancellation request가 race에서 이미 완료된 operation과 교차할 수도 있다. application은 `result를 더 이상 사용하지 않는다`와 `underlying I/O가 실제로 중단되었다`를 분리해 resource lifetime을 안전하게 관리해야 한다.
+timeout future가 완료됐다고 실제 kernel/device operation이 취소되었다는 뜻은 아니다. cancellation 요청이 race에서 이미 완료된 operation과 교차할 수도 있다. application은 `result를 더 이상 사용하지 않는다`와 `underlying I/O가 실제로 중단되었다`를 분리해 resource lifetime을 안전하게 관리해야 한다.
 
 ### Async API가 kernel thread 0개를 뜻하지 않는다
 
 언어/runtime의 asynchronous abstraction은 내부적으로 kernel async facility를 사용할 수도 있고 worker thread에서 blocking call을 대신 수행할 수도 있다. 따라서 `Future를 반환하니 OS thread를 전혀 사용하지 않는다`고 추론하지 않는다. framework/runtime 구현과 실제 thread/I/O metric을 확인한다.
 
-Backend에서는 async HTTP/file pipeline의 처리량을 높일 때 callback 수가 아니라 in-flight operation, completion latency, buffer memory와 downstream capacity를 함께 측정한다.
+Backend에서는 async HTTP/file pipeline의 처리량을 높일 때 callback 수가 아니라 in-flight operation, completion 지연 시간, buffer memory와 downstream capacity를 함께 측정한다.
+
+### 면접에서 이렇게 나옵니다
+
+#### Q. Async I/O에서 backpressure가 필요한 이유는 무엇인가요?
+
+호출 thread가 block되지 않는다는 사실은 device 처리량이 무한하다는 뜻이 아닙니다. Submission이 completion보다 빠르면 outstanding operation과 buffer memory가 계속 쌓이므로 max in-flight, queue depth, deadline 같은 제한이 필요합니다.

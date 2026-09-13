@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.datapath-control.alu-datapath
 topicContentKey: computer-architecture.core.datapath-control
 slug: alu-datapath
-title: "ALU and Datapath"
+title: "ALU·Datapath"
 summary: "register·ALU·memory·writeback 사이에서 instruction data가 이동하는 datapath를 설명한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "register와 combinational datapath 사이의 timing 관계를 확인한다."
     displayOrder: 1
 ---
-# ALU and Datapath
+# ALU·Datapath
 
 ### Instruction의 의미는 값이 흐르는 경로로 구현된다
 

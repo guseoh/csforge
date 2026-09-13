@@ -57,9 +57,9 @@ ROLLBACK
 
 Atomicity는 외부 결제 API 호출까지 자동으로 되돌려 주는 기능은 아닙니다. DB rollback이 HTTP로 이미 전송된 결제를 취소하지는 못합니다.
 
-### Consistency: DB가 어떤 valid state를 허용할지는 규칙이 필요하다
+### 일관성: DB가 어떤 valid state를 허용할지는 규칙이 필요하다
 
-Consistency를 “DB가 business rule을 알아서 지켜 준다”로 오해하면 안 됩니다. PRIMARY KEY, FOREIGN KEY, CHECK 같은 constraint와 올바른 transaction logic이 정의한 invariant를 지키며 valid state에서 valid state로 이동하도록 설계해야 합니다.
+일관성을 “DB가 business rule을 알아서 지켜 준다”로 오해하면 안 됩니다. PRIMARY KEY, FOREIGN KEY, CHECK 같은 constraint와 올바른 transaction logic이 정의한 invariant를 지키며 valid state에서 valid state로 이동하도록 설계해야 합니다.
 
 ### Isolation: 동시에 실행되는 transaction이 서로 간섭하는 방식을 제한한다
 
@@ -69,6 +69,6 @@ Consistency를 “DB가 business rule을 알아서 지켜 준다”로 오해하
 
 Durability는 commit된 변경을 crash 뒤에도 복구할 수 있어야 한다는 성질입니다. PostgreSQL의 일반적인 durable 설정에서는 WAL을 이용해 이 계약을 구현하고, `synchronous_commit`이 `off`가 아닌 local synchronization mode에서는 commit 성공을 반환하기 전에 local WAL flush를 기다립니다.
 
-하지만 PostgreSQL은 성능을 위해 durability를 완화하는 설정도 제공합니다. 예를 들어 `synchronous_commit=off`에서는 성공이 client에 먼저 보고되고 WAL이 나중에 flush될 수 있어, crash 시 최근에 성공으로 응답한 transaction 일부가 유실될 수 있습니다. 따라서 **“COMMIT 성공”이라는 SQL 동작과 “어느 failure까지 성공 응답을 보존하는가”라는 durability 계약을 DB 설정과 분리해 확인해야 합니다.** replica까지 즉시 반영되었는지, 외부 시스템도 같은 상태인지 역시 durability 한 단어가 보장하는 것은 아닙니다.
+하지만 PostgreSQL은 성능을 위해 durability를 완화하는 설정도 제공합니다. 예를 들어 `synchronous_commit=off`에서는 성공이 client에 먼저 보고되고 WAL이 나중에 flush될 수 있어, crash 시 최근에 성공으로 응답한 transaction 일부가 유실될 수 있습니다. 따라서 **“COMMIT 성공”이라는 SQL 동작과 “어느 실패까지 성공 응답을 보존하는가”라는 durability 계약을 DB 설정과 분리해 확인해야 합니다.** replica까지 즉시 반영되었는지, 외부 시스템도 같은 상태인지 역시 durability 한 단어가 보장하는 것은 아닙니다.
 
 ACID는 “transaction 쓰면 안전하다”라는 주문이 아니라 **DB transaction 경계가 해결하는 실패와 동시성 범위를 정확히 나누는 언어**입니다.

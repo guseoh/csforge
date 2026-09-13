@@ -3,7 +3,7 @@ kind: concept
 contentKey: dsa.core.hashing.average-worst-lookup
 topicContentKey: dsa.core.hashing
 slug: average-worst-lookup
-title: "Average and Worst Lookup"
+title: "Average·Worst Lookup"
 summary: "hash table의 expected O(1) lookup이 어떤 분포 가정 위에 있고 언제 O(n)까지 악화되는지 설명한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "separate chaining의 lookup/insert/delete와 chain length 비용을 확인한다."
     displayOrder: 1
 ---
-# Average and Worst Lookup
+# Average·Worst Lookup
 
 ### O(1)은 무조건적인 worst-case 보장이 아니다
 
@@ -43,11 +43,11 @@ separate chaining에서 모든 key가 우연히 같은 bucket으로 가면 하�
 
 ### expected complexity에는 입력 분포 가정이 숨어 있다
 
-평균 O(1)을 사용할 때는 key distribution, hash quality, load factor, resize policy 같은 전제가 있다. 실제 입력이 이 전제와 크게 다르거나 외부 사용자가 의도적으로 collision을 유도할 수 있다면 평균 분석만으로 request path의 upper bound를 설명할 수 없다.
+평균 O(1)을 사용할 때는 key distribution, hash quality, load factor, resize policy 같은 전제가 있다. 실제 입력이 이 전제와 크게 다르거나 외부 사용자가 의도적으로 collision을 유도할 수 있다면 평균 분석만으로 요청 경로의 upper bound를 설명할 수 없다.
 
-따라서 API timeout이나 capacity planning에서 `HashMap이니까 O(1)`이라는 한 문장만으로 latency upper bound를 잡으면 안 된다. 평균 operation count와 worst-case path, 실제 key distribution을 구분해야 한다.
+따라서 API timeout이나 capacity planning에서 `HashMap이니까 O(1)`이라는 한 문장만으로 지연 시간 upper bound를 잡으면 안 된다. 평균 operation count와 worst-case path, 실제 key distribution을 구분해야 한다.
 
-### tail latency를 보려면 평균 외의 상태를 관찰한다
+### 꼬리 지연 시간(tail latency)을 보려면 평균 외의 상태를 관찰한다
 
 평균 lookup이 짧아도 특정 bucket의 chain만 매우 길 수 있다. 운영에서 hash 기반 index를 병목으로 의심한다면 다음처럼 내부 비용을 드러내는 evidence가 더 유용하다.
 

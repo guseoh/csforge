@@ -52,6 +52,6 @@ JSON parser가 microbenchmark에서 30% 빨라졌더라도 전체 endpoint 시�
 그래서 microbenchmark와 macro/end-to-end benchmark는 서로 다른 질문에 답한다.
 
 - microbenchmark: 이 작은 operation의 비용이 실제로 줄었는가?
-- end-to-end measurement: 이 변화가 real request의 bottleneck과 latency/throughput을 개선했는가?
+- end-to-end measurement: 이 변화가 real 요청의 bottleneck과 지연 시간/처리량을 개선했는가?
 
 성능 PR에는 둘을 가능하면 연결한다. Micro 결과와 CPU counter로 local mechanism을 확인하고, representative workload와 production trace에서 전체 효과를 다시 검증한다. 숫자가 좋아졌다는 사실보다 **어떤 병목을 어떤 증거로 개선했는지**가 중요하다.

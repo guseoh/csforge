@@ -59,8 +59,8 @@ bounded queue는 capacity에 도달했을 때 다음 중 하나를 선택해야 
 - 기존/새 item drop
 - upstream에 backpressure 전달
 
-이 선택은 queue 자료구조 위의 workload policy지만, capacity가 유한하다는 사실은 memory와 latency upper bound를 관리하는 데 중요하다.
+이 선택은 queue 자료구조 위의 workload policy지만, capacity가 유한하다는 사실은 memory와 지연 시간 upper bound를 관리하는 데 중요하다.
 
 ### queue depth는 waiting time과 연결된다
 
-처리율이 같아도 depth가 늘면 새 task가 실제 실행되기까지 기다리는 시간이 길어진다. backend worker에서 throughput만 보고 queue wait를 무시하면 처리 자체는 빠른데 end-to-end latency가 커지는 현상을 놓칠 수 있다.
+처리율이 같아도 depth가 늘면 새 task가 실제 실행되기까지 기다리는 시간이 길어진다. backend worker에서 처리량만 보고 queue wait를 무시하면 처리 자체는 빠른데 종단 간 지연 시간이 커지는 현상을 놓칠 수 있다.

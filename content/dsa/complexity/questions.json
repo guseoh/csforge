@@ -30,7 +30,7 @@
     "contentKey": "dsa.core.complexity.input-size-operation-count.q3",
     "promptMarkdown": "한 API가 최대 1,000개의 row를 받지만 각 row 안에 최대 m개의 tag가 있고 모든 tag 쌍을 비교한다. 입력 크기를 row 수 n 하나만으로 정의하면 비용을 과소평가할 수 있는 이유와 적절한 비용 모델을 설명하라.",
     "questionType": "SCENARIO",
-    "difficulty": "HARD",
+    "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.complexity.input-size-operation-count"],
     "modelAnswer": "Row마다 tag 수가 달라 내부 작업량이 달라지므로 n만으로는 실제 input size를 설명하지 못한다. 각 row의 tag 수를 mi라고 하면 pair 비교 비용은 대략 Σ mi²이고, 균일 상한 m을 쓰면 O(nm²)로 모델링할 수 있다. 실제 제한도 row count와 nested payload 크기를 함께 둬야 한다."
@@ -66,10 +66,10 @@
     "contentKey": "dsa.core.complexity.big-o-theta-omega.q3",
     "promptMarkdown": "알고리즘 A가 Θ(n), B가 Θ(n log n)이다. 현재 production 입력은 n≤20이고 B의 상수 비용이 훨씬 작다. 점근 표기만 보고 A가 현재 workload에서 반드시 빠르다고 결론 내릴 수 없는 이유를 설명하라.",
     "questionType": "SCENARIO",
-    "difficulty": "HARD",
+    "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.complexity.big-o-theta-omega"],
-    "modelAnswer": "점근 표기는 충분히 큰 입력에서의 성장 차수를 비교하며 상수항, cache/I/O, 구현 overhead와 현재 작은 입력 범위를 숨긴다. 장기적인 scalability에는 A가 유리할 가능성이 있지만 현재 n≤20의 실제 latency는 representative benchmark로 확인해야 한다."
+    "modelAnswer": "점근 표기는 충분히 큰 입력에서의 성장 차수를 비교하며 상수항, cache/I/O, 구현 overhead와 현재 작은 입력 범위를 숨긴다. 장기적인 scalability에는 A가 유리할 가능성이 있지만 현재 n≤20의 실제 지연 시간은 representative benchmark로 확인해야 한다."
   },
   {
     "kind": "question",
@@ -117,9 +117,9 @@
     "conceptKeys": ["dsa.core.complexity.time-space-tradeoff"],
     "choices": [
       {"key": "A", "content": "추가 memory를 사용해 이후 계산 시간을 줄인다.", "displayOrder": 0},
-      {"key": "B", "content": "memory와 time을 모두 항상 0으로 만든다.", "displayOrder": 1},
+      {"key": "B", "content": "추가 memory를 쓰지만 이후 계산 시간과 memory를 모두 줄인다.", "displayOrder": 1},
       {"key": "C", "content": "시간 복잡도와 공간 복잡도는 서로 영향을 줄 수 없다는 예다.", "displayOrder": 2},
-      {"key": "D", "content": "캐시한 값은 source보다 항상 최신이라는 보장이다.", "displayOrder": 3}
+      {"key": "D", "content": "source가 바뀌어도 cached value는 invalidation 없이 계속 정답이다.", "displayOrder": 3}
     ],
     "correctChoiceKey": "A"
   },
@@ -136,12 +136,12 @@
   {
     "kind": "question",
     "contentKey": "dsa.core.complexity.time-space-tradeoff.q3",
-    "promptMarkdown": "중복 검사를 위해 request마다 모든 ID를 HashSet에 올리면 DB 조회는 줄지만 heap peak가 memory limit을 넘는다. 어떤 입력 특성과 대안을 비교해야 하는지 설명하라.",
+    "promptMarkdown": "중복 검사를 위해 요청마다 모든 ID를 HashSet에 올리면 DB 조회는 줄지만 heap peak가 memory limit을 넘는다. 어떤 입력 특성과 대안을 비교해야 하는지 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.complexity.time-space-tradeoff"],
-    "modelAnswer": "ID 개수, key 크기, object/table overhead와 동시 request 수를 기준으로 실제 peak space를 계산해야 한다. Batch/chunk 단위 dedup, sort 후 adjacent comparison, DB constraint 등 더 적은 memory를 쓰는 후보와 추가 I/O/CPU 비용을 함께 비교한다."
+    "modelAnswer": "ID 개수, key 크기, object/table overhead와 동시 요청 수를 기준으로 실제 peak space를 계산해야 한다. Batch/chunk 단위 dedup, sort 후 adjacent comparison, DB constraint 등 더 적은 memory를 쓰는 후보와 추가 I/O/CPU 비용을 함께 비교한다."
   },
   {
     "kind": "question",
@@ -174,7 +174,7 @@
     "contentKey": "dsa.core.complexity.amortized-analysis.q3",
     "promptMarkdown": "capacity를 꽉 찰 때마다 두 배가 아니라 정확히 1씩만 늘리는 dynamic array에서 n번 append의 총 copy 비용이 왜 O(n²)이 되는지 합으로 설명하라.",
     "questionType": "DESCRIPTIVE",
-    "difficulty": "HARD",
+    "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.complexity.amortized-analysis"],
     "modelAnswer": "거의 매 append마다 기존 1,2,3,...,n-1개 원소를 복사하므로 총 copy 수는 1+2+...+(n-1)=n(n-1)/2=Θ(n²)이다. 따라서 n번 operation의 총비용이 Θ(n²)이고 append 한 번의 amortized cost도 Θ(n)이 된다."
@@ -182,12 +182,12 @@
   {
     "kind": "question",
     "contentKey": "dsa.core.complexity.amortized-analysis.q4",
-    "promptMarkdown": "append가 amortized O(1)인 dynamic buffer에서 드물게 수십 MB copy가 발생해 p99 latency가 튄다. 이 현상이 amortized bound와 모순되지 않는 이유와 latency-sensitive 서비스에서 검토할 대응을 설명하라.",
+    "promptMarkdown": "append가 amortized O(1)인 dynamic buffer에서 드물게 수십 MB copy가 발생해 p99 지연 시간이 튄다. 이 현상이 amortized bound와 모순되지 않는 이유와 지연 시간에 민감한 서비스에서 검토할 대응을 설명하라.",
     "questionType": "SCENARIO",
-    "difficulty": "HARD",
+    "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.complexity.amortized-analysis"],
-    "modelAnswer": "Amortized O(1)은 긴 sequence의 총비용/operation 평균 bound이지 각 operation의 worst-case latency가 상수라는 뜻이 아니다. Resize 한 번은 O(n) copy를 만들 수 있다. 예상 크기 기반 reserve, chunked structure, growth factor 조정 등을 memory peak와 함께 비교하고 p99를 실제로 측정해야 한다."
+    "modelAnswer": "Amortized O(1)은 긴 sequence의 총비용/operation 평균 bound이지 각 operation의 worst-case 지연 시간이 상수라는 뜻이 아니다. Resize 한 번은 O(n) copy를 만들 수 있다. 예상 크기 기반 reserve, chunked structure, growth factor 조정 등을 memory peak와 함께 비교하고 p99를 실제로 측정해야 한다."
   },
   {
     "kind": "question",
@@ -228,7 +228,7 @@
   {
     "kind": "question",
     "contentKey": "dsa.core.complexity.invariant-correctness.q4",
-    "promptMarkdown": "doubly linked list에서 node X를 삭제한 뒤 `X.prev.next`는 X.next로 갱신했지만 `X.next.prev`는 그대로 두었다. 즉시 forward traversal은 성공할 수도 있다. 그래도 자료구조가 잘못된 이유를 invariant와 후속 operation 관점에서 설명하라.",
+    "promptMarkdown": "상황: doubly linked list에서 node X를 삭제한 뒤 `X.prev.next`는 X.next로 갱신했지만 `X.next.prev`는 그대로 두었다. 즉시 forward traversal은 성공할 수도 있다.\n\n질문: 그래도 자료구조가 잘못된 이유를 invariant와 후속 operation 관점에서 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",

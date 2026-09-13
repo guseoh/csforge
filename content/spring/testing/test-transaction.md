@@ -29,7 +29,7 @@ class OrderServiceTest {
 }
 ```
 
-편리하지만 이 구조는 production request와 transaction lifecycle이 같다는 뜻이 아닙니다.
+편리하지만 이 구조는 production 요청과 transaction lifecycle이 같다는 뜻이 아닙니다.
 
 ```text
 Test

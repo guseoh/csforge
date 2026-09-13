@@ -32,7 +32,7 @@ interface PaymentGateway {
 }
 ```
 
-내부에서는 `Money`를 사용하지만 외부 SDK는 다음처럼 센트 단위 정수와 vendor request를 요구한다고 해 보겠습니다.
+내부에서는 `Money`를 사용하지만 외부 SDK는 다음처럼 센트 단위 정수와 vendor 요청을 요구한다고 해 보겠습니다.
 
 ```java
 VendorResponse charge(int cents);
@@ -177,7 +177,7 @@ interface PaymentGateway {
 
 DTO mapper는 형태가 다른 두 데이터 구조 사이를 변환할 수 있습니다. Adapter도 내부에서 mapper를 사용할 수 있습니다. 그러나 모든 mapper를 디자인 패턴 Adapter라고 부를 필요는 없습니다.
 
-Adapter의 핵심 질문은 **호환되지 않는 협력 계약 사이에서 한쪽을 다른 쪽처럼 사용할 수 있게 만드는가**입니다. 단순 response field rename만 하는 transformation과 외부 시스템 경계를 보호하는 Adapter는 책임 범위가 다를 수 있습니다.
+Adapter의 핵심 질문은 **호환되지 않는 협력 계약 사이에서 한쪽을 다른 쪽처럼 사용할 수 있게 만드는가**입니다. 단순 응답 필드 rename만 하는 transformation과 외부 시스템 경계를 보호하는 Adapter는 책임 범위가 다를 수 있습니다.
 
 ### Decorator와 Proxy와는 변경하는 대상이 다르다
 
@@ -201,4 +201,4 @@ Proxy도 같은 역할을 앞에 두지만 대상 접근 시점·권한·지연 
 
 새 provider를 붙일 때 Adapter 안의 복잡한 `if vendor == ...`가 계속 늘어난다면 내부 계약 자체가 provider 차이를 너무 억지로 숨기고 있는 것은 아닌지 다시 봐야 합니다.
 
-백엔드에서 Adapter를 적용할 때는 마지막으로 흐름을 직접 추적하면 좋습니다. 내부 값이 외부 representation으로 어떻게 바뀌는지, overflow나 precision 손실은 없는지, 외부 failure가 어떤 내부 의미로 돌아오는지, 그리고 그 과정에 business policy가 섞이지 않았는지 확인합니다. 좋은 Adapter는 vendor 코드를 단순히 감추는 wrapper가 아니라 **외부 기술의 변화가 application의 책임 모델까지 번지지 않게 하는 번역 경계**입니다.
+백엔드에서 Adapter를 적용할 때는 마지막으로 흐름을 직접 추적하면 좋습니다. 내부 값이 외부 representation으로 어떻게 바뀌는지, overflow나 precision 손실은 없는지, 외부 실패가 어떤 내부 의미로 돌아오는지, 그리고 그 과정에 business policy가 섞이지 않았는지 확인합니다. 좋은 Adapter는 vendor 코드를 단순히 감추는 wrapper가 아니라 **외부 기술의 변화가 application의 책임 모델까지 번지지 않게 하는 번역 경계**입니다.

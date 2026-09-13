@@ -51,7 +51,7 @@ if (invalidRequest(request)) {
 chain.doFilter(request, response);
 ```
 
-Authentication filter가 credential 실패로 response를 끝내면 MVC controller는 호출되지 않을 수 있습니다. 그래서 “controller breakpoint가 안 걸리는데 401이 난다”면 security filter chain을 먼저 볼 필요가 있습니다.
+Authentication filter가 credential 실패로 응답을 끝내면 MVC controller는 호출되지 않을 수 있습니다. 그래서 “controller breakpoint가 안 걸리는데 401이 난다”면 security filter chain을 먼저 볼 필요가 있습니다.
 
 ### Spring bean과 Servlet filter lifecycle 사이를 연결해야 한다
 
@@ -71,6 +71,6 @@ Security filters...
 
 ### filter와 interceptor를 같은 것으로 보면 안 된다
 
-Spring MVC `HandlerInterceptor`는 DispatcherServlet이 handler를 찾는 MVC 경계 안쪽이고 Servlet Filter는 더 바깥쪽입니다. request body wrapping, security context setup처럼 controller mapping 이전에 필요한 책임은 filter가 자연스러울 수 있습니다.
+Spring MVC `HandlerInterceptor`는 DispatcherServlet이 handler를 찾는 MVC 경계 안쪽이고 Servlet Filter는 더 바깥쪽입니다. 요청 본문 wrapping, security context setup처럼 controller mapping 이전에 필요한 책임은 filter가 자연스러울 수 있습니다.
 
 Servlet Filter를 이해하면 Spring Security가 왜 controller annotation보다 앞에서 요청을 거부할 수 있는지, CORS를 security보다 먼저 처리해야 하는 경우가 왜 있는지가 연결됩니다.

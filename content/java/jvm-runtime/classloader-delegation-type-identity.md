@@ -28,6 +28,8 @@ references:
 
 이 원리를 모르고 plugin, application server, hot reload 환경을 다루면 `ClassCastException`이 "같은 클래스끼리 왜 cast가 안 되지?"처럼 보일 수 있습니다.
 
+![ClassLoader 경계와 runtime type identity](/learning/java/classloader-type-identity.svg)
+
 ### ClassLoader는 class의 binary representation을 찾아 JVM에 정의한다
 
 Java에서 class를 사용할 때 class loader는 binary name에 해당하는 class definition을 찾습니다.
@@ -157,3 +159,13 @@ Plugin reload나 application redeploy에서 이전 ClassLoader를 static cache�
 ### 학습 후 스스로 설명해 보기
 
 ClassLoader는 runtime에서 class definition을 찾고 JVM에 정의합니다. 일반적인 loader는 parent delegation으로 상위 loader에 먼저 요청하지만 custom loader는 다른 정책을 가질 수 있습니다. JVM의 runtime type identity에는 binary name뿐 아니라 defining ClassLoader도 중요해서, 같은 이름의 class라도 서로 다른 loader가 정의하면 다른 타입이 될 수 있습니다. 그래서 plugin이나 application server에서는 공통 API를 어떤 loader가 정의하는지가 중요합니다.
+
+### 면접에서 이렇게 나옵니다
+
+#### Q. package와 class 이름이 완전히 같은데도 `ClassCastException`이 발생할 수 있는 이유는 무엇인가요?
+
+JVM의 runtime type identity는 binary name만으로 정해지지 않습니다. 서로 다른 defining ClassLoader가 같은 binary name을 각각 정의하면 서로 다른 runtime type이 될 수 있으므로 이름이 같아도 서로 cast-compatible하다고 보장할 수 없습니다.
+
+#### Q. Plugin 시스템에서 host와 plugin이 함께 사용하는 interface를 어느 ClassLoader에서 정의하는 것이 좋나요?
+
+Host와 여러 plugin이 같은 runtime type으로 보아야 하는 공통 API는 보통 모두가 공유하는 상위 loader에서 정의합니다. 각 plugin loader가 공통 interface까지 제각각 정의하면 source 이름은 같아도 runtime type identity가 갈라질 수 있습니다.

@@ -23,4 +23,4 @@ flow control은 receiver가 TCP receive buffer에 수용할 수 있는 양을 ad
 
 이 조절은 특정 receiver의 capacity를 보호하는 것이며, network path 전체의 queue capacity를 추정하는 congestion control과 다르다. flow control window가 충분해도 congestion window가 작을 수 있고, 반대로 path가 여유 있어도 receiver가 천천히 읽으면 sender가 막힌다. API의 `write()`가 언제 block되거나 partial 결과를 반환하는지는 runtime/socket API contract도 함께 봐야 한다.
 
-HTTP response를 생성하는 producer와 socket writer 사이에 bounded buffer를 두고 slow client의 backpressure를 전달한다. 그렇지 않으면 flow control이 worker를 자연스럽게 늦추는 대신 server memory와 task가 무한히 점유될 수 있으므로 cancellation과 connection close를 application lifecycle에 연결한다.
+HTTP 응답을 생성하는 producer와 socket writer 사이에 bounded buffer를 두고 slow client의 backpressure를 전달한다. 그렇지 않으면 flow control이 worker를 자연스럽게 늦추는 대신 server memory와 task가 무한히 점유될 수 있으므로 cancellation과 connection close를 application lifecycle에 연결한다.

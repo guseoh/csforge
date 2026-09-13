@@ -4,7 +4,7 @@ contentKey: security.core.browser.csrf
 topicContentKey: security.core.browser
 slug: csrf
 title: "CSRF가 자동 credential 전송을 악용하는 방식"
-summary: "공격자 사이트가 victim browser에게 state-changing request를 만들게 하고 browser가 session cookie를 자동 첨부하는 특성을 악용하는 CSRF 흐름과 synchronizer token·SameSite 방어 지점을 이해한다."
+summary: "공격자 사이트가 victim browser에게 state-changing 요청을 만들게 하고 browser가 session cookie를 자동 첨부하는 특성을 악용하는 CSRF 흐름과 synchronizer token·SameSite 방어 지점을 이해한다."
 level: 2
 status: PUBLISHED
 displayOrder: 30
@@ -39,11 +39,11 @@ Browser sends request to bank.example
 Server sees authenticated session
 ```
 
-공격자가 response를 읽을 필요가 없습니다. 송금 state가 바뀌기만 하면 공격은 성공합니다. 그래서 SOP만으로는 충분하지 않습니다.
+공격자가 응답을 읽을 필요가 없습니다. 송금 state가 바뀌기만 하면 공격은 성공합니다. 그래서 SOP만으로는 충분하지 않습니다.
 
 ### CSRF token은 공격자 site가 알 수 없는 값을 요구한다
 
-Server가 session과 연결된 unpredictable token을 발급하고 state-changing request에서 함께 검증합니다.
+Server가 session과 연결된 unpredictable token을 발급하고 state-changing 요청에서 함께 검증합니다.
 
 ```text
 Browser legitimate form

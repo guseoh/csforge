@@ -4,7 +4,7 @@ contentKey: security.core.abuse.file-path
 topicContentKey: security.core.abuse
 slug: file-path
 title: "File upload와 path traversal 경계"
-summary: "사용자 파일명·extension·Content-Type을 신뢰하지 않고 생성된 storage key, size/type validation, web root 분리와 다운로드 authorization을 적용하며 `../` 경로 탈출을 막는 원리를 이해한다."
+summary: "사용자 파일명·extension·Content-Type을 신뢰하지 않고 생성된 storage key, size/type 검증, web root 분리와 다운로드 authorization을 적용하며 `../` 경로 탈출을 막는 원리를 이해한다."
 level: 3
 status: PUBLISHED
 displayOrder: 20

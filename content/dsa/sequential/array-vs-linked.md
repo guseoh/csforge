@@ -3,7 +3,7 @@ kind: concept
 contentKey: dsa.core.sequential.array-vs-linked
 topicContentKey: dsa.core.sequential
 slug: array-vs-linked
-title: "Array versus Linked"
+title: "Array / Linked"
 summary: "random access·삽입 위치 탐색·locality·allocation·reference 안정성으로 연속/linked 구조를 비교한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "stack의 LIFO operation과 array/linked implementation trade-off를 확인한다."
     displayOrder: 1
 ---
-# Array versus Linked
+# Array / Linked
 
 ### Big-O 한 칸만 비교하면 실제 선택 조건을 놓친다
 

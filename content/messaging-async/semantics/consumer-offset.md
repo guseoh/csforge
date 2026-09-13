@@ -58,7 +58,7 @@ record offset 10 처리
   └─ DB commit 먼저 -> process crash -> old committed position에서 redelivery 가능
 ```
 
-그래서 at-least-once consumer는 duplicate를 정상 failure path로 보고 idempotency를 설계하는 경우가 많습니다.
+그래서 at-least-once consumer는 duplicate를 정상 실패 경로로 보고 idempotency를 설계하는 경우가 많습니다.
 
 ### rebalance는 ownership 변화다
 

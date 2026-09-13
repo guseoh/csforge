@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 560" role="img" aria-labelledby="title desc">
+  <title id="title">CAS 성공과 retry 흐름</title>
+  <desc id="desc">expected 값과 current 값이 같으면 update가 성공하고, 다르면 실패하여 최신 값을 다시 읽고 계산한 뒤 재시도하는 흐름을 보여 준다.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0 0L9 4.5L0 9Z" fill="#a56df4"/></marker>
+    <style>.bg{fill:#17131f}.title{fill:#f5efff;font:700 25px Inter,Arial,sans-serif}.label{fill:#f0e8fa;font:650 17px Inter,Arial,sans-serif}.small{fill:#a797b5;font:500 14px Inter,Arial,sans-serif}.box{fill:#21192e;stroke:#77539a;stroke-width:2}.ok{fill:#18352e;stroke:#4cc090;stroke-width:2}.fail{fill:#3a2229;stroke:#d06f7d;stroke-width:2}.line{stroke:#a56df4;stroke-width:2;fill:none;marker-end:url(#arrow)}.retry{stroke:#d06f7d;stroke-width:2;fill:none;stroke-dasharray:8 7;marker-end:url(#arrow)}</style>
+  </defs>
+  <rect class="bg" width="1120" height="560" rx="20"/>
+  <text class="title" x="48" y="55">CAS는 예상값이 그대로일 때만 갱신하고, 경쟁에서 지면 다시 계산한다</text>
+
+  <rect class="box" x="58" y="135" width="220" height="82" rx="12"/>
+  <text class="label" x="98" y="172">1. 현재 값 읽기</text><text class="small" x="98" y="196">expected = current</text>
+  <rect class="box" x="350" y="135" width="220" height="82" rx="12"/>
+  <text class="label" x="390" y="172">2. 새 값 계산</text><text class="small" x="390" y="196">update = f(expected)</text>
+  <rect class="box" x="642" y="135" width="220" height="82" rx="12"/>
+  <text class="label" x="681" y="172">3. compareAndSet</text><text class="small" x="681" y="196">current == expected ?</text>
+  <path class="line" d="M278 176H350"/><path class="line" d="M570 176H642"/>
+
+  <rect class="ok" x="820" y="292" width="240" height="92" rx="12"/>
+  <text class="label" x="864" y="332">성공</text><text class="small" x="864" y="357">current ← update</text>
+  <path class="line" d="M752 217C752 275 805 276 840 292"/>
+  <text class="small" x="770" y="257">같음</text>
+
+  <rect class="fail" x="486" y="292" width="240" height="92" rx="12"/>
+  <text class="label" x="530" y="332">실패</text><text class="small" x="530" y="357">다른 thread가 먼저 변경</text>
+  <path class="retry" d="M692 217C692 258 644 270 606 292"/>
+  <text class="small" x="619" y="257">다름</text>
+  <path class="retry" d="M486 338C340 338 202 300 168 217"/>
+  <text class="small" x="232" y="326">최신 값 다시 읽고 retry</text>
+
+  <text class="small" x="48" y="452">높은 contention에서는 실패와 재계산이 반복되어 CPU 비용이 커질 수 있다.</text>
+  <text class="small" x="48" y="482">CAS primitive를 사용했다는 사실만으로 전체 알고리즘이 lock-free·wait-free라고 증명되지는 않는다.</text>
+  <text class="small" x="48" y="512">여러 변수 사이의 invariant는 AtomicInteger를 각각 쓰는 것만으로 하나의 atomic transaction이 되지 않는다.</text>
+</svg>

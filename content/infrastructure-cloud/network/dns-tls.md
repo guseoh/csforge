@@ -4,7 +4,7 @@ contentKey: infrastructure.core.network.dns-tls
 topicContentKey: infrastructure.core.network
 slug: dns-tls
 title: "DNS와 TLS certificate lifecycle"
-summary: "name resolution과 certificate issuance·rotation·expiry를 connection failure와 연결한다"
+summary: "name resolution과 certificate issuance·rotation·expiry를 connection 실패와 연결한다"
 level: 2
 status: PUBLISHED
 displayOrder: 30
@@ -41,7 +41,7 @@ api.example
 
 HTTP/1.1과 HTTP/2를 HTTPS로 사용할 때는 일반적으로 TCP 연결 위에서 TLS를 수립하지만, HTTP/3는 QUIC 위에서 동작하며 QUIC handshake가 TLS를 통합합니다. 따라서 장애를 분석할 때 “DNS → TCP → TLS → HTTP” 한 줄을 모든 HTTP 요청의 protocol guarantee로 사용하지 않고 실제 negotiated protocol과 client/network 경계를 확인합니다.
 
-DNS record 변경은 TTL·resolver cache 때문에 즉시 모든 client에 반영되지 않을 수 있습니다. TLS certificate는 hostname·validity·trust chain을 만족해야 하며 expiry나 잘못된 SAN은 application-level HTTP response를 받기 전에 연결을 실패시킬 수 있습니다.
+DNS record 변경은 TTL·resolver cache 때문에 즉시 모든 client에 반영되지 않을 수 있습니다. TLS certificate는 hostname·validity·trust chain을 만족해야 하며 expiry나 잘못된 SAN은 application-level HTTP 응답을 받기 전에 연결을 실패시킬 수 있습니다.
 
 ### rotation은 만료 전 transition이다
 
@@ -49,7 +49,7 @@ DNS record 변경은 TTL·resolver cache 때문에 즉시 모든 client에 반�
 
 ### DNS와 TLS를 application retry로 덮지 않는다
 
-DNS misconfiguration이나 certificate expiry를 무한 retry하면 traffic과 alert만 늘어납니다. resolver 결과·negotiated protocol·certificate chain·deployment version을 확인하고, failure가 모든 region/instance에 공통인지 분리합니다.
+DNS misconfiguration이나 certificate expiry를 무한 retry하면 traffic과 alert만 늘어납니다. resolver 결과·negotiated protocol·certificate chain·deployment version을 확인하고, 실패가 모든 region/instance에 공통인지 분리합니다.
 
 ### 문제를 풀 때 확인할 것
 

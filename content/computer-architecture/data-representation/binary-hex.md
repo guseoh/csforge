@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.data-representation.binary-hex
 topicContentKey: computer-architecture.core.data-representation
 slug: binary-hex
-title: "Binary and Hexadecimal"
+title: "Binary·Hexadecimal"
 summary: "binary bit pattern을 hexadecimal로 읽고 변환하는 방법을 설명한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "고정 폭 정수와 수 표현의 기초를 확인한다."
     displayOrder: 1
 ---
-# Binary and Hexadecimal
+# Binary·Hexadecimal
 
 ### 네 bit를 한 자리로 읽기
 

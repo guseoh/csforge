@@ -25,4 +25,4 @@ client는 `If-None-Match`에 ETag를 보내 cache revalidation을 수행하고, 
 
 ### Backend 연결
 
-Concept JSON의 ETag를 canonical content version 하나로 만들더라도 응답에 들어가는 locale, query 결과, compression variant가 바뀌면 같은 tag를 재사용할 수 있는지 확인해야 한다. 조건부 update에 stale `If-Match`가 오면 조용히 덮어쓰지 않고 precondition failure 또는 conflict 흐름으로 돌려, cache revalidation과 optimistic concurrency를 같은 기능으로 취급하지 않는다.
+Concept JSON의 ETag를 canonical content version 하나로 만들더라도 응답에 들어가는 locale, query 결과, compression variant가 바뀌면 같은 tag를 재사용할 수 있는지 확인해야 한다. 조건부 update에 stale `If-Match`가 오면 조용히 덮어쓰지 않고 precondition 실패 또는 conflict 흐름으로 돌려, cache revalidation과 optimistic concurrency를 같은 기능으로 취급하지 않는다.

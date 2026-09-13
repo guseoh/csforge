@@ -45,6 +45,6 @@ cwnd: sender congestion control이 정한 network-side limit
 
 ### bandwidth-delay product는 활용 가능한 in-flight data와 연결된다
 
-network가 감당할 수 있고 receiver도 충분히 빠른데 usable sending window가 path의 bandwidth-delay product보다 작으면 한 RTT 동안 충분한 data를 in flight로 유지하지 못해 throughput이 제한될 수 있다. 반대로 큰 receiver buffer가 존재한다는 이유만으로 sender가 network에 무제한 data를 내보낼 수 있는 것은 아니며 `cwnd`가 별도로 제한한다.
+network가 감당할 수 있고 receiver도 충분히 빠른데 usable sending window가 path의 bandwidth-delay product보다 작으면 한 RTT 동안 충분한 data를 in flight로 유지하지 못해 처리량이 제한될 수 있다. 반대로 큰 receiver buffer가 존재한다는 이유만으로 sender가 network에 무제한 data를 내보낼 수 있는 것은 아니며 `cwnd`가 별도로 제한한다.
 
-대용량 Backend response가 느릴 때 application chunking만 보지 말고 socket send/receive buffer, receiver read rate, advertised `rwnd`, congestion-control state를 계층별로 본다. slow client 때문에 producer가 response를 무한히 메모리에 쌓지 않도록 application에도 bounded buffer와 cancellation/backpressure를 연결한다.
+대용량 Backend 응답이 느릴 때 application chunking만 보지 말고 socket send/receive buffer, receiver read rate, advertised `rwnd`, congestion-control state를 계층별로 본다. slow client 때문에 producer가 응답을 무한히 메모리에 쌓지 않도록 application에도 bounded buffer와 cancellation/backpressure를 연결한다.

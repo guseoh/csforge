@@ -16,28 +16,55 @@ references:
     depth: chapter
     recommendation: "mutex/lock이 atomic primitive를 이용해 critical section의 mutual exclusion을 구현하는 방식을 확인한다."
     displayOrder: 1
+  - url: "https://man7.org/linux/man-pages/man3/pthread_mutex_lock.3p.html"
+    title: "pthread_mutex_lock(3p) — POSIX manual page"
+    referenceType: OFFICIAL
+    language: en
+    depth: section
+    recommendation: "POSIX mutex의 획득·소유·대기와 mutex type별 동작 경계를 확인한다."
+    displayOrder: 2
 ---
 # Mutex
 
-### 하나의 critical section owner를 만든다
+여러 thread가 같은 상태를 바꿀 때 필요한 것은 단순히 `lock()` 호출 한 줄이 아니라, **누가 어떤 상태를 언제까지 독점해서 바꿀 수 있는지**에 대한 공통 규칙입니다. Mutex는 이 규칙을 한 시점에 하나의 owner만 critical section에 들어가도록 표현하는 mutual-exclusion primitive입니다.
 
-mutex는 한 시점에 하나의 execution만 보호된 critical section을 소유하도록 하는 mutual-exclusion primitive다. T1이 mutex를 획득한 상태에서 T2가 같은 mutex를 요청하면 T2는 mutex가 풀릴 때까지 spin하거나 block하는 등의 waiting path로 들어간다.
+### 같은 mutex를 두고 경쟁할 때 어떤 일이 일어나는가
 
+T1이 mutex를 획득한 상태에서 T2가 같은 mutex를 요청하면 T2는 즉시 같은 critical section을 실행할 수 없습니다. 실제 구현은 잠깐 spin하거나 sleep/block할 수 있지만, 핵심 계약은 보호 구간의 실행이 겹치지 않도록 하는 것입니다.
+
+```text
+시간 ─────────────────────────────────────────▶
+
+T1  lock ├──── shared invariant 변경 ────┤ unlock
+T2       └──── wait / retry ─────────────┘ lock ├── ...
 ```
-T1: lock ── critical section ── unlock
-T2:      wait ───────────────── lock → ...
+
+여기서 mutex 객체가 상태를 자동으로 찾아 보호하는 것은 아닙니다. `balance`를 갱신하는 한 경로는 mutex A를 쓰고 다른 경로는 mutex B를 쓴다면 두 경로는 동시에 실행될 수 있습니다. **같은 invariant에 영향을 주는 모든 competing path가 같은 protection protocol을 따라야** mutual exclusion이 실제 correctness로 이어집니다.
+
+### ownership이 semaphore와 다른 이유
+
+전형적인 mutex는 획득에 성공한 실행 흐름이 owner가 되고, 그 owner가 보호 구간을 끝내며 unlock한다는 의미를 가집니다. 이 ownership 덕분에 “지금 누가 이 invariant를 변경할 권한을 갖는가”를 비교적 직접적으로 추론할 수 있습니다.
+
+반면 counting semaphore의 중심 의미는 N개의 permit입니다. binary semaphore를 mutual exclusion처럼 사용할 수는 있어도, 다른 실행 흐름이 signal/post하는 protocol을 표현할 수 있으므로 `count = 1`이라는 사실만으로 mutex와 동일하다고 일반화하면 안 됩니다.
+
+mutex가 recursive한지, waiter 선택이 공정한지, timeout이나 interruption을 지원하는지는 구현과 API 계약에 따라 달라집니다. `mutex`라는 이름만으로 이러한 정책까지 가정하지 않습니다.
+
+### lock hold time은 다른 thread의 대기시간이 된다
+
+critical section 안에서 공유 상태를 짧게 확인하고 변경하면 다른 waiter가 빠르게 다음 차례를 얻을 수 있습니다. 반대로 mutex를 잡은 채 DB나 network I/O를 기다리면 외부 시스템의 지연이 그대로 lock hold time에 들어갑니다.
+
+```text
+T1  lock ├── 상태 확인 ── 외부 API 300ms ── 상태 변경 ┤ unlock
+T2       └──────────────── wait ───────────────────────┘
+T3       └──────────────── wait ───────────────────────┘
 ```
 
-중요한 것은 mutex 객체 자체가 state를 보호하는 것이 아니라 **모든 competing code path가 같은 protection protocol을 지켜야 한다**는 점이다. 같은 shared variable을 한 경로에서는 mutex A로, 다른 경로에서는 mutex B로 보호하면 mutual exclusion이 성립하지 않는다.
+그렇다고 무조건 I/O를 lock 밖으로 옮기면 되는 것도 아닙니다. lock 밖에서 읽은 값이 다시 lock을 잡을 때 stale해져 invariant가 깨질 수 있으므로, **보호해야 하는 상태 전이의 범위와 실제 hold time을 함께** 봐야 합니다.
 
-### ownership이 semaphore와 다른 중요한 차이다
+### 면접에서 이렇게 나옵니다
 
-전형적인 mutex는 lock을 획득한 owner가 release하는 소유권 의미를 가진다. 이 ownership은 누가 critical section 안에 있는지 reasoning하기 쉽게 한다. counting semaphore처럼 permit 수를 표현하는 primitive와 목적이 다르다.
+#### Q. Mutex 하나를 사용하면 race condition이 자동으로 사라지나요?
 
-mutex를 recursive하게 획득할 수 있는지, fairness가 있는지, interrupt/timeout이 가능한지는 구현별 계약이다. `mutex`라는 이름만 보고 모든 구현에 동일한 behavior를 가정하지 않는다.
+아닙니다. 같은 shared invariant에 접근하는 모든 경쟁 경로가 동일한 mutex와 동일한 보호 규칙을 지켜야 합니다.
 
-### lock을 잡고 무엇을 하는지가 성능을 결정한다
-
-critical section 안에서 CPU 계산만 짧게 하고 빠져나오면 contention이 작을 수 있다. 반대로 mutex를 잡은 채 DB/network I/O를 기다리면 lock hold time이 외부 latency에 종속되고, 다른 waiter의 queue가 길어진다.
-
-그래서 mutex 튜닝은 lock 개수보다 **hold time, waiter 수, contention과 보호 invariant**를 함께 본다. lock을 없애는 것보다 올바른 범위를 짧게 유지하는 것이 먼저다.
+서로 다른 mutex를 사용하거나 일부 read/write가 lock 밖에 남아 있으면 mutex가 존재해도 critical section이 실제 invariant 전체를 보호하지 못할 수 있습니다.

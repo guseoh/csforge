@@ -25,7 +25,7 @@ resource limit은 process나 실행 context가 file descriptor, address space, s
 
 ### Limit·quota·capacity를 구분한다
 
-이 Topic에서 limit은 동시에 보유할 수 있는 양이나 최대 크기의 상한을, quota는 특정 subsystem이 기간·그룹·resource에 배정한 사용 budget을 가리키는 넓은 용어로 사용한다. CPU quota의 period throttling, memory cgroup의 max, disk quota와 process `rlimit`은 서로 다른 API와 failure path를 가지므로 실제 설정이 어느 subsystem 소유인지부터 확인해야 한다.
+이 Topic에서 limit은 동시에 보유할 수 있는 양이나 최대 크기의 상한을, quota는 특정 subsystem이 기간·그룹·resource에 배정한 사용 budget을 가리키는 넓은 용어로 사용한다. CPU quota의 period throttling, memory cgroup의 max, disk quota와 process `rlimit`은 서로 다른 API와 실패 경로를 가지므로 실제 설정이 어느 subsystem 소유인지부터 확인해야 한다.
 
-상한을 올리기 전에 leak, unbounded queue, retry 폭주, pool 반환 누락이 왜 limit까지 갔는지 확인한다. PostgreSQL connection pool, executor queue, open file, JVM heap/native memory를 독립적으로 설정하면 합계가 process와 cgroup 예산을 넘을 수 있으므로 startup에 실제 limit을 읽고 queue/rejection/timeout과 함께 안전한 상한을 계산한다.
+상한을 올리기 전에 leak, unbounded queue, retry 폭주, pool 반환 누락이 왜 limit까지 갔는지 확인한다. PostgreSQL connection pool, executor queue, open file, JVM heap/native memory를 독립적으로 설정하면 합계가 process와 cgroup 예산을 넘을 수 있으므로 시작에 실제 limit을 읽고 queue/rejection/timeout과 함께 안전한 상한을 계산한다.
 

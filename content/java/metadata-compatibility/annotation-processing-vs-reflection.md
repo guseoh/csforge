@@ -115,7 +115,7 @@ reflection
 metadata/member 조사
 ```
 
-따라서 reflection 기반 framework는 애플리케이션 startup이나 실제 요청 중에 class 구조를 검사할 수 있습니다.
+따라서 reflection 기반 framework는 애플리케이션 시작이나 실제 요청 중에 class 구조를 검사할 수 있습니다.
 
 ### 두 방식의 가장 큰 차이는 "결정 시점"이다
 

@@ -34,11 +34,11 @@ metric: error rate 상승
 
 ### context를 전파한다
 
-request·trace·span ID와 service, version, environment 같은 resource context를 일관되게 전달하면 signal을 같은 사건으로 묶을 수 있습니다. 사용자 email이나 token 같은 민감 값을 context에 넣지 않고, asynchronous message 경계에서는 parent-child 관계와 correlation key를 명시합니다.
+요청·trace·span ID와 service, version, environment 같은 resource context를 일관되게 전달하면 signal을 같은 사건으로 묶을 수 있습니다. 사용자 email이나 token 같은 민감 값을 context에 넣지 않고, asynchronous message 경계에서는 parent-child 관계와 correlation key를 명시합니다.
 
 ### signal별 보존 비용을 설계한다
 
-모든 request의 모든 body를 log로 남기면 비용과 개인정보 위험이 커집니다. metric으로 전체율을 집계하고, trace는 sampling policy에 따라 대표·오류 요청을 보존하며, log는 구조화된 event와 redaction을 사용합니다. sampling이 원인 분석을 가리지 않도록 tail/error-aware 정책을 검토합니다.
+모든 요청의 모든 body를 log로 남기면 비용과 개인정보 위험이 커집니다. metric으로 전체율을 집계하고, trace는 sampling policy에 따라 대표·오류 요청을 보존하며, log는 구조화된 event와 redaction을 사용합니다. sampling이 원인 분석을 가리지 않도록 tail/error-aware 정책을 검토합니다.
 
 ### 관측은 설명 가능해야 한다
 
@@ -46,7 +46,7 @@ service name, deployment version, route template, status class와 같은 안정�
 
 ### 문제를 풀 때 확인할 것
 
-1. 질문이 추세·상세 event·request path 중 무엇인지 구분합니다.
+1. 질문이 추세·상세 event·요청 경로 중 무엇인지 구분합니다.
 2. trace/log correlation ID와 resource context를 고정합니다.
 3. 민감 정보와 high-cardinality 값의 유입을 차단합니다.
 4. sampling·retention·query 비용을 함께 정합니다.

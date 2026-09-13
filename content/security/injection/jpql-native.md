@@ -46,7 +46,7 @@ Spring Data derived query나 type-safe query builder를 사용하면 문자열 �
 @Query(value = "select * from member where email = :email", nativeQuery = true)
 ```
 
-parameter binding을 사용하면 value는 안전하게 전달할 수 있습니다. 반대로 table/column/sort direction 같은 structural 부분을 request 값으로 직접 붙이면 위험합니다.
+parameter binding을 사용하면 value는 안전하게 전달할 수 있습니다. 반대로 table/column/sort direction 같은 structural 부분을 요청 값으로 직접 붙이면 위험합니다.
 
 ```java
 // 위험한 접근

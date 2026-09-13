@@ -18,7 +18,7 @@ references:
 ---
 # alert와 runbook
 
-Alert는 값이 이상하다는 통계 알림이 아니라 사람이 지금 조사하거나 조치해야 한다는 운영 신호입니다. user impact, symptom, severity, 시작 시각, 담당자와 다음 행동이 있어야 실제 incident response를 시작할 수 있습니다.
+Alert는 값이 이상하다는 통계 알림이 아니라 사람이 지금 조사하거나 조치해야 한다는 운영 신호입니다. user impact, symptom, severity, 시작 시각, 담당자와 다음 행동이 있어야 실제 incident 응답을 시작할 수 있습니다.
 
 ### symptom과 cause를 구분한다
 
@@ -31,7 +31,7 @@ resource trend ─▶ ticket/forecast ─▶ capacity investigation
 
 ### alert는 안정적으로 만든다
 
-짧은 spike에 즉시 page하지 않도록 evaluation window, absent data, deduplication, inhibition과 recovery condition을 정합니다. 다만 window가 너무 길면 detection latency가 늘어납니다. alert rule의 변경은 fixture traffic이나 과거 incident로 false positive와 false negative를 검토합니다.
+짧은 spike에 즉시 page하지 않도록 evaluation window, absent data, deduplication, inhibition과 recovery condition을 정합니다. 다만 window가 너무 길면 detection 지연 시간이 늘어납니다. alert rule의 변경은 fixture traffic이나 과거 incident로 false positive와 false negative를 검토합니다.
 
 ### runbook은 실행 가능한 문서다
 

@@ -26,33 +26,53 @@ references:
 ---
 # Deadlock Prevention
 
-### 현재 상태를 검사하는 것이 아니라 deadlock 조건을 설계에서 없앤다
+### 발생한 deadlock을 찾는 것이 아니라 deadlock 가능한 protocol을 제한한다
 
-prevention은 resource request protocol을 제한해 Coffman condition 중 적어도 하나가 성립하지 못하도록 만드는 전략이다. 대표적인 예가 **global lock order**다.
+Prevention은 요청이 들어올 때마다 현재 state가 안전한지 계산하는 방식이 아니다. Resource 요청 protocol 자체를 제한해 **Coffman condition 중 적어도 하나가 성립하지 못하도록** 만든다.
 
+가장 흔한 예가 global lock order다.
+
+```text
+규칙: L1 < L2 < L3
+
+허용: acquire L1 → acquire L2 → acquire L3
+금지: acquire L2 → acquire L1
 ```
-규칙: L1 < L2 < L3 순서로만 acquire
 
-허용: lock(L1) → lock(L2)
-금지: lock(L2) → lock(L1)
+모든 caller가 낮은 번호에서 높은 번호 방향으로만 lock을 얻으면 높은 lock을 보유한 execution이 다시 낮은 lock을 기다리는 역방향 edge를 만들 수 없다. 결과적으로 circular wait cycle을 구성할 수 없다.
+
+### 어떤 Coffman 조건을 깨느냐에 따라 비용이 달라진다
+
+| 깨려는 조건 | 가능한 설계 | 대표 비용 |
+| --- | --- | --- |
+| Hold and wait | 필요한 resource를 시작 전에 한꺼번에 획득 | 나중에 쓸 resource까지 오래 점유 |
+| No preemption | 안전하게 되돌릴 수 있는 resource를 회수 | rollback/restart 가능한 resource에만 현실적 |
+| Circular wait | global resource ordering | 전체 call graph가 순서를 지켜야 함 |
+
+Mutual exclusion은 writable shared state처럼 본질적으로 배타성이 필요한 resource에서는 제거하기 어렵다. 그래서 실무에서는 circular wait를 lock ordering으로 깨는 접근이 자주 사용된다.
+
+### timeout은 prevention이 아니라 실패/recovery 경로에 가깝다
+
+Acquire timeout은 무한 대기를 끊고 operation을 실패시킬 수 있다. 하지만 timeout 값 하나로 `L1 → L2`, `L2 → L1` 같은 dependency 구조가 없어지는 것은 아니다.
+
+```text
+cycle 형성
+   ↓
+timeout
+   ↓
+abort / held resource release
+   ↓
+retry 또는 terminal failure
 ```
 
-모든 caller가 같은 순서를 지키면 `L1 기다림 → L2 기다림 → 다시 L1` 같은 circular wait cycle을 만들 수 없다.
+이 흐름이 있으면 stuck 상태에서 빠져나올 수는 있지만, circular wait 자체를 금지한 prevention과는 구분해야 한다.
 
-### hold-and-wait를 깨는 방법은 resource utilization을 희생할 수 있다
+### lock을 강제로 빼앗는 것도 일반 해법이 아니다
 
-작업 시작 전에 필요한 resource를 모두 한 번에 획득하도록 하면 일부 resource를 잡은 채 다른 resource를 기다리는 hold-and-wait를 줄일 수 있다. 하지만 나중에야 필요한 resource까지 오래 보유하게 되어 concurrency와 utilization이 나빠질 수 있다.
+CPU time처럼 scheduler가 중단했다 재개할 수 있는 resource와 mutex가 보호하는 mutable invariant는 성질이 다르다. Owner가 state를 절반만 변경한 순간 mutex를 강제 회수하면 다른 execution이 invalid intermediate state를 볼 수 있다.
 
-### preemption은 아무 resource에나 적용할 수 없다
+그래서 `no preemption을 깨면 된다`는 문장은 **안전하게 preempt하거나 rollback할 수 있는 resource인가**라는 전제가 붙어야 한다.
 
-CPU time처럼 scheduler가 execution을 중단하고 나중에 재개할 수 있는 resource와, mutex 보호 중인 mutable invariant처럼 owner에서 lock을 강제로 빼앗으면 state가 깨질 수 있는 resource는 다르다. `timeout이 났으니 lock을 강제 회수한다`는 식으로 no-preemption을 쉽게 없앨 수 있다고 가정하면 안 된다.
+### Prevention rule은 함수 하나가 아니라 전체 acquisition graph의 규칙이다
 
-### timeout은 prevention과 별개다
-
-acquire timeout으로 기다림을 중단한 뒤 **현재 execution이 보유한 resource를 release하고 operation을 abort/rollback하는 protocol**을 두면 deadlock에서 빠져나오는 recovery 성질을 만들 수 있다. 그러나 timeout 값 자체는 circular wait가 만들어지지 않도록 구조를 바꾸지 않는다.
-
-이 구분은 실제 backend에서 중요하다. DB lock timeout을 5초로 두었다고 반대 순서의 row lock acquisition이 안전한 설계가 된 것은 아니다.
-
-### prevention rule은 전체 call graph가 지켜야 한다
-
-service A는 L1→L2 순서를 지키는데 callback B만 L2→L1 순서를 사용하면 global ordering은 깨진다. Linux lockdep 같은 도구가 lock dependency graph를 추적하는 이유도 개별 함수보다 **전체 acquisition relation의 cycle**을 보기 위해서다.
+Service A가 L1→L2 순서를 지켜도 L2를 가진 상태에서 호출한 callback이 L1을 acquire하면 전체 graph에는 L2→L1 edge가 생긴다. Linux lockdep가 개별 함수의 코드 모양보다 lock dependency relation을 추적하는 이유도 이런 cycle을 찾기 위해서다.

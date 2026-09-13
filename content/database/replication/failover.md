@@ -3,8 +3,8 @@ kind: concept
 contentKey: database.core.replication.failover
 topicContentKey: database.core.replication
 slug: failover
-title: "Failover에서 최신성과 가용성 사이 선택"
-summary: "primary 장애 시 standby를 승격할 때 asynchronous replication에서 아직 안전하게 복제되지 않은 commit을 잃을 수 있는 이유와 synchronous replication의 acknowledgement 단계·latency·availability trade-off를 이해한다."
+title: "장애 조치(failover)에서 최신성과 가용성 사이 선택"
+summary: "primary 장애 시 standby를 승격할 때 asynchronous replication에서 아직 안전하게 복제되지 않은 commit을 잃을 수 있는 이유와 synchronous replication의 acknowledgement 단계·지연 시간·가용성 trade-off를 이해한다."
 level: 3
 status: PUBLISHED
 displayOrder: 30
@@ -22,7 +22,7 @@ references:
     displayOrder: 2
     relationNote: synchronous standby와 commit acknowledgement trade-off 확인
 ---
-# Failover에서 최신성과 가용성 사이 선택
+# 장애 조치(failover)에서 최신성과 가용성 사이 선택
 
 Primary가 완전히 죽었을 때 standby를 새 primary로 승격하면 서비스를 복구할 수 있습니다. 하지만 PostgreSQL streaming replication은 기본적으로 asynchronous이므로 primary가 사용자에게 commit 성공을 반환한 뒤 **그 transaction의 WAL이 failover 대상 standby에 안전하게 도착하기 전에 장애**가 날 수 있습니다.
 
@@ -58,7 +58,7 @@ Primary COMMIT
 
 따라서 synchronous replication을 “replica에 보냈으니 zero-RPO”라고 한 문장으로 일반화하지 않습니다. 어떤 standby 집합을 동기로 요구하는지, commit이 remote write/flush/apply 중 어디까지 기다리는지, failover 대상이 그 acknowledgement 계약에 포함되는지를 함께 봐야 합니다.
 
-동기 standby나 network가 느리거나 unavailable한데 설정이 여전히 그 acknowledgement를 요구하면 commit latency가 증가하거나 write progress가 멈출 수 있습니다. data-loss 위험을 줄이는 대신 latency와 availability 비용을 지불하는 셈입니다.
+동기 standby나 network가 느리거나 unavailable한데 설정이 여전히 그 acknowledgement를 요구하면 commit 지연 시간이 증가하거나 write progress가 멈출 수 있습니다. data-loss 위험을 줄이는 대신 지연 시간과 가용성 비용을 지불하는 셈입니다.
 
 ### RPO와 RTO로 요구를 표현한다
 
@@ -71,7 +71,7 @@ Primary COMMIT
 
 ### promotion과 failover orchestration은 같은 기능이 아니다
 
-PostgreSQL은 standby를 `pg_ctl promote` 또는 `pg_promote()`로 승격할 수 있지만, **primary 장애를 자동 판별하고 올바른 standby를 선택해 traffic을 옮기며 old primary를 차단하는 전체 HA orchestrator를 PostgreSQL core가 제공하는 것은 아닙니다.** 실제 failover 시스템은 외부의 failure detection/orchestration과 운영 절차를 결합합니다.
+PostgreSQL은 standby를 `pg_ctl promote` 또는 `pg_promote()`로 승격할 수 있지만, **primary 장애를 자동 판별하고 올바른 standby를 선택해 traffic을 옮기며 old primary를 차단하는 전체 HA orchestrator를 PostgreSQL core가 제공하는 것은 아닙니다.** 실제 failover 시스템은 외부의 실패 detection/orchestration과 운영 절차를 결합합니다.
 
 특히 old primary가 다시 살아나 writer로 요청을 받으면 두 writer가 서로 다른 history를 만들 수 있습니다. PostgreSQL 문서가 설명하듯 old primary가 더 이상 primary가 아님을 확실히 알리거나 STONITH/fencing 같은 방식으로 write 경로에서 제외해야 합니다.
 

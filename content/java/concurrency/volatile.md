@@ -16,9 +16,11 @@ references:
     displayOrder: 1
     relationNote: volatile field의 Java 언어 규칙 확인
   - url: "https://docs.oracle.com/javase/specs/jls/se25/html/jls-17.html#jls-17.4.5"
-    title: "Java SE 25 JLS: Happens-before Order"
+    title: "The Java Language Specification — 17.4.5 Happens-before Order"
     referenceType: OFFICIAL
     language: en
+    depth: section
+    recommendation: "Java에서 conflicting access와 happens-before를 기준으로 data race를 정의하는 정확한 경계를 확인한다."
     displayOrder: 2
     relationNote: volatile write와 이후 같은 field read의 happens-before 관계 확인
 ---
@@ -98,12 +100,12 @@ Volatile read/write 자체의 memory semantics가 있어도 이 **전체 read-mo
 
 ### visibility, ordering, mutual exclusion을 나눠 생각한다
 
-| 요구                                        | volatile      | synchronized/Lock         |
-| ------------------------------------------- | ------------- | ------------------------- |
+| 요구                                         | volatile      | synchronized/Lock         |
+| -------------------------------------------- | ------------- | ------------------------- |
 | 같은 volatile field를 통한 visibility/order | 제공          | 제공 가능                 |
-| 한 thread만 critical section 진입           | 제공하지 않음 | 제공                      |
-| `count++` 같은 복합 invariant 보호          | 단독으로 부족 | critical section으로 가능 |
-| lock 대기/ownership                         | 없음          | 있음                      |
+| 한 thread만 critical section 진입            | 제공하지 않음 | 제공                      |
+| `count++` 같은 복합 invariant 보호           | 단독으로 부족 | critical section으로 가능 |
+| lock 대기/ownership                          | 없음          | 있음                      |
 
 그래서 "volatile이 synchronized보다 가볍다"만 보고 대체 관계로 생각하면 안 됩니다. 해결하는 문제가 다릅니다.
 
@@ -155,3 +157,13 @@ balance >= reserved
 ### 학습 후 스스로 설명해 보기
 
 `volatile`은 같은 field의 write와 이후 read 사이에 happens-before 관계를 만들어 visibility와 ordering을 제공하는 Java Memory Model 기능이라고 설명하면 됩니다. 하지만 mutual exclusion은 제공하지 않으므로 `count++`처럼 read-modify-write가 필요한 복합 연산의 atomicity는 보장하지 않습니다. 단순 상태 flag나 publication에 유용할 수 있지만 여러 필드 invariant에는 lock이나 다른 atomic 상태 모델이 필요할 수 있습니다.
+
+### 면접에서 이렇게 나옵니다
+
+#### Q. `volatile`을 붙이면 `count++`도 thread-safe해지나요?
+
+아닙니다. `count++`는 read, 계산, write가 결합된 복합 연산이라 두 thread가 같은 이전 값을 읽으면 lost update가 생길 수 있습니다. `volatile`은 visibility와 ordering 관계를 제공하지만 그 여러 단계를 하나의 mutual-exclusion 구간이나 atomic increment로 바꾸지는 않습니다.
+
+#### Q. `volatile`을 "항상 RAM에서 읽게 하는 키워드"라고 설명하면 왜 부정확한가요?
+
+그 설명은 특정 하드웨어 구현 이미지를 Java 언어 보장처럼 만든다는 문제가 있습니다. Java 코드가 의존해야 하는 것은 같은 volatile field의 write와 이후 read 사이에 JMM의 happens-before 관계가 생긴다는 계약이며, JVM이 이를 CPU별로 어떻게 구현하는지는 별도 층위입니다.

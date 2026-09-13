@@ -38,6 +38,6 @@ endianness는 일반적으로 multi-byte value 안에서 byte들의 순서를 �
 
 ### Backend 연결
 
-binary request나 file header를 처리할 때 field width와 byte order를 schema에 명시한다. Java `ByteBuffer`는 새 buffer의 초기 order가 BIG_ENDIAN이지만 protocol code에서는 의도를 드러내기 위해 필요한 order를 명시하고 golden byte fixture로 encode/decode 결과를 확인하는 편이 안전하다.
+binary 요청이나 file header를 처리할 때 field width와 byte order를 schema에 명시한다. Java `ByteBuffer`는 새 buffer의 초기 order가 BIG_ENDIAN이지만 protocol code에서는 의도를 드러내기 위해 필요한 order를 명시하고 golden byte fixture로 encode/decode 결과를 확인하는 편이 안전하다.
 
 서로 다른 architecture 간 통신을 테스트할 때 native memory dump를 그대로 wire format이라고 가정하지 않는다. integer value를 protocol-defined byte sequence로 변환하는 serialization 경계를 명확히 둔다.

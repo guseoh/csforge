@@ -4,7 +4,7 @@ contentKey: security.core.filter-chain.security-filter-chain
 topicContentKey: security.core.filter-chain
 slug: security-filter-chain
 title: "SecurityFilterChain 선택과 filter 실행 순서"
-summary: "FilterChainProxy가 request matcher에 맞는 SecurityFilterChain 하나를 선택하고 그 안의 authentication·authorization·CSRF 등 filter를 순서대로 실행하는 구조를 이해한다."
+summary: "FilterChainProxy가 요청 matcher에 맞는 SecurityFilterChain 하나를 선택하고 그 안의 authentication·authorization·CSRF 등 filter를 순서대로 실행하는 구조를 이해한다."
 level: 2
 status: PUBLISHED
 displayOrder: 20
@@ -18,7 +18,7 @@ references:
 ---
 # SecurityFilterChain 선택과 filter 실행 순서
 
-Spring Security 설정에서 `SecurityFilterChain` bean을 만든다고 해서 모든 chain의 filter를 매 요청에 전부 실행하는 것은 아닙니다. `FilterChainProxy`는 request를 보고 **matching되는 SecurityFilterChain을 선택한 뒤 그 chain의 security filters를 실행**합니다.
+Spring Security 설정에서 `SecurityFilterChain` bean을 만든다고 해서 모든 chain의 filter를 매 요청에 전부 실행하는 것은 아닙니다. `FilterChainProxy`는 요청을 보고 **matching되는 SecurityFilterChain을 선택한 뒤 그 chain의 security filters를 실행**합니다.
 
 ```text
 Request /api/orders
@@ -48,7 +48,7 @@ http.addFilterBefore(customFilter, UsernamePasswordAuthenticationFilter.class);
 
 ### `permitAll`과 filter chain 제외는 다르다
 
-`permitAll()`은 authorization 단계에서 접근을 허용하는 것이고, 해당 request가 security filters를 전혀 통과하지 않는다는 뜻이 아닙니다. CSRF/CORS/context 같은 filter 동작은 여전히 적용될 수 있습니다.
+`permitAll()`은 authorization 단계에서 접근을 허용하는 것이고, 해당 요청이 security filters를 전혀 통과하지 않는다는 뜻이 아닙니다. CSRF/CORS/context 같은 filter 동작은 여전히 적용될 수 있습니다.
 
 ### debug할 때는 selected chain부터 본다
 

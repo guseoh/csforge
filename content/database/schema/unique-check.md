@@ -62,4 +62,4 @@ CHECK expression 결과가 TRUE 또는 NULL이면 constraint가 만족된 것으
 
 “주문은 결제 완료 후에만 배송할 수 있다”처럼 여러 entity 상태와 workflow를 포함하는 규칙은 domain/application이 더 자연스럽게 소유할 수 있습니다. DB constraint는 그중 **데이터 자체가 절대 깨지면 안 되는 하한선**을 보호합니다.
 
-좋은 schema는 validation을 중복 구현하는 것이 아니라 각 계층의 역할을 나눕니다. API는 입력 오류를 설명하고, domain은 lifecycle을 보호하고, DB는 concurrent/write 경로에서도 깨지면 안 되는 invariant를 마지막으로 막습니다.
+좋은 schema는 검증을 중복 구현하는 것이 아니라 각 계층의 역할을 나눕니다. API는 입력 오류를 설명하고, domain은 lifecycle을 보호하고, DB는 concurrent/write 경로에서도 깨지면 안 되는 invariant를 마지막으로 막습니다.

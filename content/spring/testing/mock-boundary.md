@@ -52,7 +52,7 @@ Real persistence test
   -> mapping/query/constraint/transaction behavior 검증
 ```
 
-둘은 경쟁 관계가 아니라 다른 failure mode를 잡습니다.
+둘은 경쟁 관계가 아니라 다른 실패 mode를 잡습니다.
 
 ### fake와 stub이 더 읽기 쉬운 때도 있다
 

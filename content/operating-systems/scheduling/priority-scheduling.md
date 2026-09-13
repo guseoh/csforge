@@ -19,7 +19,7 @@ references:
 ---
 # Priority Scheduling
 
-Priority scheduling은 여러 runnable task 중 **더 높은 scheduling priority를 가진 task에 CPU service를 먼저 제공**하는 정책 계열이다. 긴급한 작업, latency-sensitive task, background work를 서로 다른 중요도로 다루고 싶을 때 priority라는 추가 정보를 사용한다.
+Priority scheduling은 여러 runnable task 중 **더 높은 scheduling priority를 가진 task에 CPU service를 먼저 제공**하는 정책 계열이다. 긴급한 작업, 지연 시간에 민감한 task, background work를 서로 다른 중요도로 다루고 싶을 때 priority라는 추가 정보를 사용한다.
 
 단순 모델에서는 높은 priority task가 낮은 priority task보다 먼저 선택된다. 같은 priority 안에서는 FIFO나 Round Robin 같은 다른 rule을 사용할 수 있다. 실제 OS에서는 scheduling class와 priority semantics가 더 복잡할 수 있으므로 특정 숫자가 항상 동일한 의미를 가진다고 일반화하지 않는다.
 
@@ -41,7 +41,7 @@ C: priority low
 
 ### Priority는 공짜가 아니다
 
-High priority task의 response time을 줄이면 lower priority task의 wait가 늘 수 있다. 따라서 priority 정책은 “중요한 것부터”라는 직관만으로 설계하지 않고 **최대 waiting time, minimum service rate, workload arrival rate**를 함께 봐야 한다.
+High priority task의 응답 시간을 줄이면 lower priority task의 wait가 늘 수 있다. 따라서 priority 정책은 “중요한 것부터”라는 직관만으로 설계하지 않고 **최대 waiting time, minimum service rate, workload arrival rate**를 함께 봐야 한다.
 
 특히 외부 사용자가 arbitrary priority 값을 직접 지정할 수 있다면 모두 자신을 high priority로 만들어 policy 의미가 무너질 수 있다. Priority assignment 자체가 별도 policy다.
 
@@ -57,7 +57,7 @@ High priority task의 response time을 줄이면 lower priority task의 wait가 
 
 ### Backend priority queue와 OS priority scheduler는 다른 층이다
 
-Application에서 request를 `HIGH / NORMAL / LOW` queue로 나누는 것은 application scheduling policy다. 그 request를 실행하는 Java thread가 실제 CPU를 언제 받는지는 OS scheduler가 결정한다.
+Application에서 요청을 `HIGH / NORMAL / LOW` queue로 나누는 것은 application scheduling policy다. 그 요청을 실행하는 Java thread가 실제 CPU를 언제 받는지는 OS scheduler가 결정한다.
 
 High-priority application queue를 만들었다고 OS thread priority까지 자동으로 올라가는 것도 아니고, OS priority를 조절했다고 DB connection이나 remote API capacity가 늘어나는 것도 아니다.
 

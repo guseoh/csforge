@@ -48,7 +48,7 @@ n → n-1 → n-2 → ... → 1
 
 정렬된 입력에서 첫 원소를 pivot으로 고르는 단순 구현은 매우 나쁜 분할을 반복할 수 있다. randomization이나 median-of-three 같은 전략은 특정 input pattern에 계속 나쁜 pivot을 고를 가능성을 줄인다.
 
-하지만 어떤 전략도 비교 기반 quicksort의 모든 구현에서 worst-case 자체를 수학적으로 제거한다고 일반화하면 안 된다. production library는 introsort처럼 recursion depth가 커지면 다른 알고리즘으로 fallback하기도 한다.
+하지만 어떤 전략도 비교 기반 quicksort의 모든 구현에서 worst-case 자체를 수학적으로 제거한다고 일반화하면 안 된다. production library는 introsort처럼 recursion depth가 커지면 다른 알고리즘으로 대체 처리하기도 한다.
 
 ### duplicate가 많으면 partition scheme도 중요하다
 

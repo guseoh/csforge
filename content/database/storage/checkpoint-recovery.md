@@ -41,7 +41,7 @@ checkpoint가 너무 오래 전이면 crash 후 더 많은 WAL을 재처리해�
 
 ### checkpoint를 자주 하면 항상 좋은 것도 아니다
 
-checkpoint 때 dirty page write가 몰리면 storage I/O가 증가해 foreground query latency에 영향을 줄 수 있습니다. PostgreSQL은 checkpoint write를 시간에 걸쳐 분산하려고 하지만 설정과 workload에 따라 부담이 커질 수 있습니다.
+checkpoint 때 dirty page write가 몰리면 storage I/O가 증가해 foreground query 지연 시간에 영향을 줄 수 있습니다. PostgreSQL은 checkpoint write를 시간에 걸쳐 분산하려고 하지만 설정과 workload에 따라 부담이 커질 수 있습니다.
 
 | checkpoint 경향 | 장점 | 비용 |
 | --- | --- | --- |
@@ -50,7 +50,7 @@ checkpoint 때 dirty page write가 몰리면 storage I/O가 증가해 foreground
 
 ### `max_wal_size`는 WAL 사용량의 절대 상한이 아니다
 
-`max_wal_size`는 checkpoint scheduling에 영향을 주는 soft limit 성격의 설정입니다. replication slot, archive failure, 오래 걸리는 backup 같은 다른 보존 이유가 있으면 실제 `pg_wal` 사용량이 이를 넘을 수 있습니다. 따라서 “이 값만 설정하면 WAL disk usage가 반드시 그 아래로 제한된다”고 이해하면 안 됩니다.
+`max_wal_size`는 checkpoint scheduling에 영향을 주는 soft limit 성격의 설정입니다. replication slot, archive 실패, 오래 걸리는 backup 같은 다른 보존 이유가 있으면 실제 `pg_wal` 사용량이 이를 넘을 수 있습니다. 따라서 “이 값만 설정하면 WAL disk usage가 반드시 그 아래로 제한된다”고 이해하면 안 됩니다.
 
 ### checkpoint 지표 이름은 PostgreSQL 버전을 확인한다
 
@@ -58,6 +58,6 @@ checkpoint 때 dirty page write가 몰리면 storage I/O가 증가해 foreground
 
 ### checkpoint가 backup과 같은 것은 아니다
 
-checkpoint가 성공했다고 media failure에서 데이터를 복구할 별도 backup이 생긴 것은 아닙니다. WAL/crash recovery는 **database process나 host crash 뒤 기존 storage의 일관된 상태를 복구하는 메커니즘**이고, storage 자체 유실·사용자 실수·원하는 시점 복구에는 backup과 WAL archive/PITR 같은 별도 복구 설계가 필요합니다.
+checkpoint가 성공했다고 media 실패에서 데이터를 복구할 별도 backup이 생긴 것은 아닙니다. WAL/crash recovery는 **database process나 host crash 뒤 기존 storage의 일관된 상태를 복구하는 메커니즘**이고, storage 자체 유실·사용자 실수·원하는 시점 복구에는 backup과 WAL archive/PITR 같은 별도 복구 설계가 필요합니다.
 
 Checkpoint는 단순 주기 작업이 아니라 **평상시 write I/O와 장애 후 recovery 작업량 사이의 비용을 조절하는 운영 메커니즘**입니다.

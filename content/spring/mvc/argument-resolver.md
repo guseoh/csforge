@@ -4,7 +4,7 @@ contentKey: spring.core.mvc.argument-resolver
 topicContentKey: spring.core.mvc
 slug: argument-resolver
 title: "HandlerMethodArgumentResolver"
-summary: "Controller method parameter를 request/context에서 어떤 방식으로 만들지 HandlerMethodArgumentResolver가 결정하며 custom current-user 같은 경계를 확장할 수 있음을 이해한다"
+summary: "Controller method parameter를 요청/context에서 어떤 방식으로 만들지 HandlerMethodArgumentResolver가 결정하며 custom current-user 같은 경계를 확장할 수 있음을 이해한다"
 level: 2
 status: PUBLISHED
 displayOrder: 30
@@ -35,7 +35,7 @@ OrderResponse get(
 ) { ... }
 ```
 
-이 값들은 Java가 자동으로 채우는 것이 아닙니다. Spring MVC가 method parameter의 type/annotation을 보고 **어떤 resolver가 이 parameter를 만들 수 있는지 선택**한 뒤 request/context에서 값을 꺼내 argument를 준비합니다.
+이 값들은 Java가 자동으로 채우는 것이 아닙니다. Spring MVC가 method parameter의 type/annotation을 보고 **어떤 resolver가 이 parameter를 만들 수 있는지 선택**한 뒤 요청/context에서 값을 꺼내 argument를 준비합니다.
 
 ```text
 Handler method parameter

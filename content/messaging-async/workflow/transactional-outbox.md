@@ -47,7 +47,7 @@ transactional outbox
 
 ### outbox는 atomicity 경계를 DB에 둔다
 
-business state와 publish intent를 같은 DB transaction에 저장하면 DB commit이 없을 때 outbox도 남지 않고, commit이 있으면 relay가 나중에 message를 보낼 근거가 남습니다. DB와 broker를 하나의 distributed transaction으로 묶는 대신 durable outbox를 중간 기록으로 사용합니다. Relay는 polling publisher일 수도 있고 CDC 기반일 수도 있으며, 이 구현 선택은 publish latency·ordering·operational ownership을 바꿉니다.
+business state와 publish intent를 같은 DB transaction에 저장하면 DB commit이 없을 때 outbox도 남지 않고, commit이 있으면 relay가 나중에 message를 보낼 근거가 남습니다. DB와 broker를 하나의 distributed transaction으로 묶는 대신 durable outbox를 중간 기록으로 사용합니다. Relay는 polling publisher일 수도 있고 CDC 기반일 수도 있으며, 이 구현 선택은 publish 지연 시간·ordering·operational ownership을 바꿉니다.
 
 ### relay도 duplicate할 수 있다
 
@@ -67,7 +67,7 @@ consumer complete: e42 -> e41   // 내부 parallelism이면 역전 가능
 
 ### outbox 운영 비용
 
-outbox가 계속 쌓이면 DB storage와 relay lag가 증가합니다. publisher가 어느 시점까지 처리했는지, 실패 attempt·next retry·dead state를 기록하고 보존 기간과 cleanup을 정해야 합니다. CDC를 쓰더라도 connector lag, schema evolution, replay와 broker availability를 관측해야 합니다.
+outbox가 계속 쌓이면 DB storage와 relay lag가 증가합니다. publisher가 어느 시점까지 처리했는지, 실패 attempt·next retry·dead state를 기록하고 보존 기간과 cleanup을 정해야 합니다. CDC를 쓰더라도 connector lag, schema evolution, replay와 broker 가용성을 관측해야 합니다.
 
 ### 문제를 풀 때 확인할 것
 

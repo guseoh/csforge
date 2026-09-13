@@ -37,7 +37,7 @@ monotonic ─▶ local timeout·duration·retry backoff
 
 ### timeout보다 deadline을 전파한다
 
-상위 request가 가진 전체 deadline을 downstream call에 전달하면 이미 소비한 시간을 빼고 남은 budget만 사용할 수 있습니다. 각 hop에서 새 timeout을 더하면 serial call 수만큼 전체 대기가 늘어나 caller가 포기한 뒤에도 작업이 계속될 수 있습니다. deadline 도달 시 server가 expensive work를 취소할 수 있는지도 확인합니다.
+상위 요청이 가진 전체 deadline을 downstream call에 전달하면 이미 소비한 시간을 빼고 남은 budget만 사용할 수 있습니다. 각 hop에서 새 timeout을 더하면 serial call 수만큼 전체 대기가 늘어나 caller가 포기한 뒤에도 작업이 계속될 수 있습니다. deadline 도달 시 server가 expensive work를 취소할 수 있는지도 확인합니다.
 
 ### expiry는 안전 여유가 필요하다
 

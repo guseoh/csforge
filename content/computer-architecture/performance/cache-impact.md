@@ -21,7 +21,7 @@ references:
 
 ### Instruction 수가 같아도 memory access 때문에 cycle 수가 달라진다
 
-CPU가 load/store instruction을 실행할 때 필요한 data가 가까운 cache에 있으면 짧은 latency로 진행할 수 있다. 반대로 cache miss가 나서 lower-level cache나 DRAM까지 내려가면 instruction이 data를 기다리거나 out-of-order window가 다른 work로 latency를 숨겨야 한다.
+CPU가 load/store instruction을 실행할 때 필요한 data가 가까운 cache에 있으면 짧은 지연 시간으로 진행할 수 있다. 반대로 cache miss가 나서 lower-level cache나 DRAM까지 내려가면 instruction이 data를 기다리거나 out-of-order window가 다른 work로 지연 시간을 숨겨야 한다.
 
 이 때문에 같은 instruction count와 같은 clock rate를 가진 실행도 cache behavior가 다르면 total cycles와 CPI가 달라질 수 있다.
 
@@ -47,8 +47,8 @@ Data layout을 연속적으로 만들거나 working set을 줄이면 cache hit�
 
 Prefetch도 future miss를 줄일 수 있지만 사용하지 않을 line을 가져오면 memory bandwidth를 낭비하고 useful cache line을 eviction할 수 있다. 따라서 cache optimization은 hit rate 하나만 최대화하는 문제가 아니다.
 
-### Cache miss와 p99 service latency의 관계도 직접적이지 않다
+### Cache miss와 p99 service 지연 시간의 관계도 직접적이지 않다
 
-CPU cache miss가 늘면 CPU-bound section의 latency가 커질 수 있지만 request p99가 항상 같은 비율로 변하는 것은 아니다. DB/network wait가 더 크면 hardware cache 개선의 end-to-end 효과가 작고, 반대로 tight serialization loop가 CPU-bound라면 작은 miss-rate 변화도 크게 보일 수 있다.
+CPU cache miss가 늘면 CPU-bound section의 지연 시간이 커질 수 있지만 요청 p99가 항상 같은 비율로 변하는 것은 아니다. DB/network wait가 더 크면 hardware cache 개선의 end-to-end 효과가 작고, 반대로 tight serialization loop가 CPU-bound라면 작은 miss-rate 변화도 크게 보일 수 있다.
 
-성능 측정에서는 retired instructions, cycles, cache miss와 CPU time을 함께 보고 그 section이 전체 request에서 차지하는 비율을 확인한다. OS page cache, database buffer cache와 application cache는 이름에 cache가 들어가더라도 hardware CPU cache와 다른 계층이므로 지표를 섞지 않는다.
+성능 측정에서는 retired instructions, cycles, cache miss와 CPU time을 함께 보고 그 section이 전체 요청에서 차지하는 비율을 확인한다. OS page cache, database buffer cache와 application cache는 이름에 cache가 들어가더라도 hardware CPU cache와 다른 계층이므로 지표를 섞지 않는다.

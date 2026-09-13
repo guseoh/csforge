@@ -41,11 +41,11 @@ RFC 9457의 Problem Details를 사용한다면 `type`, `title`, `status`, `detai
 
 ### retryability를 명시할 때 조심한다
 
-5xx라고 무조건 retry 가능한 것은 아닙니다. 요청이 서버에서 이미 처리됐지만 response 전달만 실패했을 수도 있습니다. client가 retry할 수 있는 operation이라면 idempotency와 함께 설계해야 합니다.
+5xx라고 무조건 retry 가능한 것은 아닙니다. 요청이 서버에서 이미 처리됐지만 응답 전달만 실패했을 수도 있습니다. client가 retry할 수 있는 operation이라면 idempotency와 함께 설계해야 합니다.
 
 ### 내부 정보를 숨긴다
 
-stack trace, SQL, vendor token, 내부 host를 response에 넣지 않습니다. 대신 server log에는 traceId와 root cause를 남겨 운영자가 같은 사건을 찾을 수 있게 합니다.
+stack trace, SQL, vendor token, 내부 host를 응답에 넣지 않습니다. 대신 server log에는 traceId와 root cause를 남겨 운영자가 같은 사건을 찾을 수 있게 합니다.
 
 ### field error를 stable하게 만든다
 

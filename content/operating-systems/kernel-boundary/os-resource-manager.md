@@ -49,7 +49,7 @@ Application Process
 
 CPU core 수, physical memory, file descriptor, socket buffer는 무한하지 않다. 그래서 운영체제는 queue와 scheduling policy, memory reclaim, descriptor table 같은 구조를 관리한다. 어떤 process가 resource를 요청했다고 해서 항상 즉시 받을 수 있는 것은 아니다. CPU에서는 runnable 상태로 기다릴 수 있고, memory allocation은 실패할 수 있으며, file open은 descriptor limit에 걸릴 수 있다.
 
-이 지점이 application 성능과 연결된다. Backend request가 느릴 때 Java code만 실행 중인 것이 아니라 scheduler에게 CPU를 기다리거나 page fault, disk/network I/O completion을 기다리는 시간이 포함될 수 있다.
+이 지점이 application 성능과 연결된다. Backend 요청이 느릴 때 Java code만 실행 중인 것이 아니라 scheduler에게 CPU를 기다리거나 page fault, disk/network I/O completion을 기다리는 시간이 포함될 수 있다.
 
 ### OS 자원과 application 자원을 같은 것으로 보지 않는다
 

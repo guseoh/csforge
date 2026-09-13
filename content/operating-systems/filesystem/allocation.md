@@ -11,7 +11,7 @@ displayOrder: 70
 references:
   - url: "https://pages.cs.wisc.edu/~remzi/OSTEP/file-implementation.pdf"
     title: "File System Implementation"
-    referenceType: OFFICIAL
+    referenceType: BOOK
     language: en
     depth: section
     recommendation: "inode, directory entry, data block, allocation 구조가 file-system access path를 만드는 방식을 확인한다."
@@ -20,6 +20,8 @@ references:
 # Block Allocation
 
 filesystem은 새 file을 만들거나 기존 file이 커질 때 free-space 상태에서 data block을 골라 file의 logical block과 연결해야 한다. allocation policy는 단순히 빈 공간을 찾는 문제가 아니라 **file 성장, sequential/random access, locality, metadata overhead, fragmentation**을 함께 조정하는 문제다.
+
+![연속·연결·indexed allocation이 만드는 lookup과 fragmentation trade-off](/learning/operating-systems/block-allocation-tradeoff.svg)
 
 ### 단순한 allocation 방식이 보여주는 trade-off
 
@@ -31,10 +33,10 @@ linked allocation은 각 block이 다음 block을 가리키는 식으로 흩어�
 
 ### Free-space 관리와 allocation은 함께 움직인다
 
-어디가 비어 있는지 bitmap이나 free list 같은 구조로 추적해야 allocation이 가능하다. file 하나에 block을 배정하려면 free-space metadata를 갱신하고 file metadata에도 새 block mapping을 반영해야 한다. 이 둘 중 하나만 crash 전에 persistent해지면 leak이나 잘못된 block reference가 생길 수 있으므로 crash consistency와도 연결된다.
+어디가 비어 있는지 bitmap이나 free list 같은 구조로 추적해야 allocation이 가능하다. file 하나에 block을 배정하려면 free-space metadata를 갱신하고 file metadata에도 새 block mapping을 반영해야 한다. 이 둘 중 하나만 crash 전에 persistent해지면 leak이나 잘못된 block reference가 생길 수 있으므로 crash 일관성과도 연결된다.
 
 ### Locality는 file 하나만의 문제가 아니다
 
-한 file의 인접 block을 가깝게 배치하면 sequential access에는 좋지만, directory와 관련 file을 같이 읽는 workload에서는 서로 관련된 metadata/data를 가까이 두는 정책이 더 중요할 수 있다. 또한 SSD에서는 HDD의 seek cost와 다른 trade-off가 있지만 큰 sequential request와 fragmented random I/O의 차이가 완전히 사라지는 것은 아니다.
+한 file의 인접 block을 가깝게 배치하면 sequential access에는 좋지만, directory와 관련 file을 같이 읽는 workload에서는 서로 관련된 metadata/data를 가까이 두는 정책이 더 중요할 수 있다. 또한 SSD에서는 HDD의 seek cost와 다른 trade-off가 있지만 큰 sequential 요청과 fragmented random I/O의 차이가 완전히 사라지는 것은 아니다.
 
 Backend에서 대용량 export, search index segment, append-heavy log를 같은 storage layout 감각으로 다루지 않는다. 먼저 실제 access가 sequential append인지 random range read인지, file이 얼마나 자주 성장하는지 측정하고 filesystem/storage 계층의 allocation 효과는 그 뒤 해석한다.

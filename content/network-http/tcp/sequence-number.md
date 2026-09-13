@@ -27,6 +27,6 @@ TCP가 application에 제공하는 계약은 **순서가 맞는 byte stream**이
 
 다만 “모든 TCP receiver가 out-of-order segment를 반드시 buffer한다”까지 protocol의 절대 보장으로 만들면 과하다. RFC 9293은 구현이 가능하면 out-of-order segment를 queue하는 것을 `SHOULD`로 요구한다. 구현은 뒤 segment를 보관해 missing range가 채워졌을 때 연속 stream으로 전달할 수 있지만, resource 제약 등에서는 보관하지 않고 sender의 retransmission에 의존할 수도 있다. 중요한 보장은 **application에 gap 뒤 bytes가 순서를 어긴 채 노출되지 않는다는 것**이다.
 
-sequence number는 packet ID나 HTTP request ID가 아니라 각 TCP connection의 state다. sequence space는 유한해 wraparound가 발생하므로 protocol은 단순한 정수 대소 비교가 아니라 window 안에서의 순서 규칙을 사용한다. retransmitted segment가 이미 받은 범위와 겹쳐도 receiver는 stream 위치와 유효 범위를 확인해 duplicate bytes를 application stream에 다시 추가하지 않는다.
+sequence number는 packet ID나 HTTP 요청 ID가 아니라 각 TCP connection의 state다. sequence space는 유한해 wraparound가 발생하므로 protocol은 단순한 정수 대소 비교가 아니라 window 안에서의 순서 규칙을 사용한다. retransmitted segment가 이미 받은 범위와 겹쳐도 receiver는 stream 위치와 유효 범위를 확인해 duplicate bytes를 application stream에 다시 추가하지 않는다.
 
-packet capture에서 sequence만 보고 application message 순서를 직접 재구성하지 않는다. 먼저 양 방향 TCP stream과 retransmission·overlap을 복원한 뒤 HTTP framing, request ID와 application 처리 순서를 별도로 분석한다.
+packet capture에서 sequence만 보고 application message 순서를 직접 재구성하지 않는다. 먼저 양 방향 TCP stream과 retransmission·overlap을 복원한 뒤 HTTP framing, 요청 ID와 application 처리 순서를 별도로 분석한다.

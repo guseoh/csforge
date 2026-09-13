@@ -33,7 +33,7 @@ deploy ─▶ canary ─▶ compare SLO/error/latency ─▶ expand or stop/roll
                          └─ version·cohort·dependency별 telemetry
 ```
 
-단순 성공 health check만으로는 schema incompatibility, tail latency, 특정 tenant failure와 background lag를 놓칠 수 있습니다. canary와 control의 traffic·dataset을 비교하고 request error, p95/p99, saturation, business correctness와 cost를 함께 봅니다.
+단순 성공 health check만으로는 schema incompatibility, 꼬리 지연 시간(tail latency), 특정 tenant 실패와 background lag를 놓칠 수 있습니다. canary와 control의 traffic·dataset을 비교하고 요청 error, p95/p99, saturation, business correctness와 cost를 함께 봅니다.
 
 ### rollback의 실제 범위를 적는다
 
