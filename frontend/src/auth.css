@@ -1,0 +1,36 @@
+.auth-page {
+  display: grid;
+  min-height: 70vh;
+  place-items: center;
+  padding: 2rem;
+}
+
+.auth-card {
+  display: grid;
+  gap: 1rem;
+  width: min(100%, 28rem);
+  padding: 2rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: 1rem;
+  background: var(--surface-elevated);
+  box-shadow: 0 1rem 3rem rgb(16 19 26 / 10%);
+}
+
+.auth-card h1,
+.auth-card p {
+  margin: 0;
+}
+
+.auth-email {
+  max-width: 16rem;
+  overflow: hidden;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.auth-error {
+  color: var(--state-error);
+  font-size: 0.75rem;
+}

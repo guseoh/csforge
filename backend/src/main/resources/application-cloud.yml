@@ -1,0 +1,70 @@
+spring:
+  config:
+    activate:
+      on-profile: cloud
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    hikari:
+      maximum-pool-size: ${DB_MAX_POOL_SIZE:3}
+      minimum-idle: ${DB_MIN_IDLE:0}
+      connection-timeout: ${DB_CONNECTION_TIMEOUT:3000}
+      validation-timeout: ${DB_VALIDATION_TIMEOUT:2000}
+      idle-timeout: ${DB_IDLE_TIMEOUT:600000}
+      max-lifetime: ${DB_MAX_LIFETIME:1800000}
+  session:
+    store-type: jdbc
+    jdbc:
+      initialize-schema: never
+      table-name: SPRING_SESSION
+  servlet:
+    session:
+      timeout: ${SESSION_TIMEOUT:8h}
+      cookie:
+        name: SESSION
+        http-only: true
+        secure: true
+        same-site: lax
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            scope:
+              - openid
+              - profile
+              - email
+  data:
+    redis:
+      repositories:
+        enabled: false
+  ai:
+    model:
+      chat: none
+
+server:
+  port: ${SERVER_PORT:${PORT:8080}}
+  forward-headers-strategy: framework
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      probes:
+        enabled: true
+  health:
+    redis:
+      enabled: false
+
+csforge:
+  ai:
+    enabled: false
+  security:
+    mode: cloud
+    allowed-email: ${CSFORGE_ALLOWED_EMAIL:}

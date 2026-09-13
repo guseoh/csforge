@@ -9,7 +9,7 @@ Content grows through:
 
 `Markdown/JSON -> Validation -> Preview/Diff -> Import -> PostgreSQL`
 
-V1 is single-user, no-auth, local-only, and has no cross-device sync.
+V1 remains local-first and single-user. The default local workflow requires no authentication and has no cross-device sync. An optional cloud deployment may enable single-user access authentication, but this does not add a Member domain, signup, roles, or a multi-user model.
 
 ## 2. Learning areas
 V1 has 15 independent areas, each with Level 1-3 concepts:
@@ -347,9 +347,9 @@ Do not add convenience features that duplicate each other or create maintenance 
 
 ## 10. Explicitly out of V1
 Unless a later approved task changes scope:
-- signup/login/auth/member domain
+- signup/password auth/member domain
 - multi-user sharing/social/group/ranking
-- cloud deployment
+- mandatory cloud deployment
 - cross-device synchronization
 - Kubernetes
 - real-time notifications/WebSocket as a requirement

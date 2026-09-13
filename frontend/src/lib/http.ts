@@ -11,12 +11,18 @@ export class ApiRequestError extends Error {
 }
 
 export async function request<T>(input: RequestInfo | URL, init?: RequestInit): Promise<T> {
+  const headers = new Headers(init?.headers)
+  headers.set('Accept', 'application/json')
+  if (isStateChangingMethod(init?.method)) {
+    const csrfToken = readCookie('XSRF-TOKEN')
+    if (csrfToken && !headers.has('X-XSRF-TOKEN')) {
+      headers.set('X-XSRF-TOKEN', csrfToken)
+    }
+  }
   const response = await fetch(input, {
     ...init,
-    headers: {
-      Accept: 'application/json',
-      ...init?.headers,
-    },
+    credentials: init?.credentials ?? 'same-origin',
+    headers,
   })
   if (!response.ok) {
     const body = (await response.json().catch(() => null)) as { message?: string; code?: string } | null
@@ -24,4 +30,17 @@ export async function request<T>(input: RequestInfo | URL, init?: RequestInit): 
   }
   if (response.status === 204) return null as T
   return response.json() as Promise<T>
+}
+
+function isStateChangingMethod(method: string | undefined) {
+  return ['POST', 'PUT', 'PATCH', 'DELETE'].includes(method?.toUpperCase() ?? 'GET')
+}
+
+function readCookie(name: string) {
+  if (typeof document === 'undefined') return null
+  const cookie = document.cookie
+    .split('; ')
+    .find((entry) => entry.startsWith(`${name}=`))
+  if (!cookie) return null
+  return decodeURIComponent(cookie.slice(name.length + 1))
 }

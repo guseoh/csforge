@@ -14,12 +14,12 @@ Content management flow:
 `Markdown/JSON -> Validate -> Preview/Diff -> Import -> PostgreSQL`
 
 ## 2. Current hard constraints
-- Local-only V1. No cloud deployment.
-- Single user. No Member domain, signup, login, OAuth, JWT, roles, or Spring Security unless a later task explicitly changes this.
+- Local-first V1. The default local workflow requires no authentication; an optional cloud deployment may enable single-user access authentication.
+- Single user. No Member domain, signup, password login, OAuth provider domain, JWT, roles, or multi-user model. Cloud authentication only restricts access to the one user's deployment data.
 - No desktop/laptop data synchronization in V1.
 - PostgreSQL is the source of truth. Redis is optional derived infrastructure and must be rebuildable from canonical data.
 - Keep the app usable even when optional derived infrastructure such as search/cache is unavailable where practical.
-- Do not introduce paid infrastructure or services as a requirement.
+- Do not introduce paid infrastructure or services as a requirement. Cloud deployment remains optional.
 
 ## 3. Baseline stack
 Backend:
