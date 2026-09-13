@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
@@ -65,6 +64,7 @@ public class CloudSecurityConfiguration {
     @Bean
     SecurityFilterChain cloudSecurityFilterChain(
             HttpSecurity http,
+            CloudSecurityProperties properties,
             AllowedEmailAuthorizationManager allowedEmailAuthorizationManager,
             CsrfTokenRepository csrfTokenRepository,
             CsrfTokenRequestHandler csrfTokenRequestHandler,
@@ -82,7 +82,8 @@ public class CloudSecurityConfiguration {
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint(authenticationEntryPoint)
                         .accessDeniedHandler(accessDeniedHandler))
-                .oauth2Login(Customizer.withDefaults())
+                .oauth2Login(oauth2 -> oauth2
+                        .defaultSuccessUrl(properties.frontendOrigin(), true))
                 .logout(logout -> logout
                         .logoutUrl("/api/auth/logout")
                         .invalidateHttpSession(true)
