@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import { useEffect } from 'react'
+import { AuthRecoveryActions } from '../components/AuthRecoveryActions'
 import { startGoogleLogin, getAuthSession } from '../lib/auth-api'
 import { ApiRequestError } from '../lib/http'
 
@@ -30,6 +31,7 @@ export function LoginPage() {
           <p className="eyebrow">CSForge</p>
           <h1>접근이 거부되었습니다</h1>
           <p>이 배포에 허용된 Google 계정만 사용할 수 있습니다.</p>
+          <AuthRecoveryActions />
         </section>
       </main>
     )
@@ -44,7 +46,7 @@ export function LoginPage() {
       <section className="auth-card">
         <p className="eyebrow">CSForge</p>
         <h1>계속하려면 로그인하세요</h1>
-        <p>cloud 배포에서는 허용된 한 개의 Google 계정만 접근할 수 있습니다.</p>
+        <p>클라우드 배포에서는 허용된 한 개의 Google 계정만 접근할 수 있습니다.</p>
         <button className="primary-button" type="button" onClick={startGoogleLogin}>
           Google로 로그인
         </button>

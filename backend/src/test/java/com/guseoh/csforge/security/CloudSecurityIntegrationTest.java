@@ -14,8 +14,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.context.ApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.mock.web.MockHttpSession;
+import org.springframework.session.SessionRepository;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.OidcLoginRequestPostProcessor;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -28,7 +30,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 /** cloud 보안 체인의 인증, allowlist, CSRF, 세션 무효화를 검증한다. */
 @Testcontainers
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @ActiveProfiles("cloud")
 class CloudSecurityIntegrationTest {
@@ -41,6 +43,9 @@ class CloudSecurityIntegrationTest {
 
     @Autowired
     JdbcTemplate jdbc;
+
+    @Autowired
+    ApplicationContext applicationContext;
 
     @DynamicPropertySource
     static void cloudProperties(DynamicPropertyRegistry registry) {
@@ -92,6 +97,26 @@ class CloudSecurityIntegrationTest {
                 """, Integer.class);
 
         assertTrue(sessionTables != null && sessionTables == 2);
+    }
+
+    @Test
+    void cloudContextUsesJdbcSessionRepositoryAndFilter() {
+        assertTrue(!applicationContext.getBeansOfType(SessionRepository.class).isEmpty());
+        assertTrue(applicationContext.containsBean("springSessionRepositoryFilter"));
+    }
+
+    @Test
+    void cloudSessionCookieUsesSecureHttpOnlyAndLaxSameSiteAttributes() throws Exception {
+        MvcResult result = mockMvc.perform(get("/api/auth/session").with(allowedLogin()))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        assertTrue(result.getResponse().getHeaders("Set-Cookie").stream()
+                .anyMatch(cookie -> cookie.contains("SESSION=")
+                        && cookie.contains("Secure")
+                        && cookie.contains("HttpOnly")
+                        && cookie.contains("SameSite=Lax")),
+                () -> "Set-Cookie headers: " + result.getResponse().getHeaders("Set-Cookie"));
     }
 
     @Test

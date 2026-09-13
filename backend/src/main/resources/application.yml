@@ -19,8 +19,9 @@ spring:
   flyway:
     enabled: true
     baseline-on-migrate: true
-  session:
-    store-type: none
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.session.jdbc.autoconfigure.JdbcSessionAutoConfiguration
   data:
     redis:
       host: ${REDIS_HOST:localhost}

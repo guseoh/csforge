@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
-import { Link, useNavigate } from '@tanstack/react-router'
+import { useNavigate } from '@tanstack/react-router'
 import { useEffect, type ReactNode } from 'react'
+import { AuthRecoveryActions } from './AuthRecoveryActions'
 import { ApiRequestError } from '../lib/http'
 import { getAuthSession } from '../lib/auth-api'
 
@@ -38,7 +39,7 @@ export function AuthGate({ children }: AuthGateProps) {
           <p className="eyebrow">접근 거부</p>
           <h1>허용된 계정이 아닙니다</h1>
           <p>이 CSForge 배포에 허용된 Google 계정으로 로그인해 주세요.</p>
-          <Link className="primary-button" to="/login">로그인 화면으로 이동</Link>
+          <AuthRecoveryActions />
         </div>
       </section>
     )

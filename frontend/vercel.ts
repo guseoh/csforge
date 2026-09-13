@@ -1,6 +1,6 @@
 const backendOrigin = process.env.CSFORGE_BACKEND_ORIGIN ?? 'http://localhost:8080'
 
-export default {
+export const config = {
   rewrites: [
     { source: '/api/:path*', destination: `${backendOrigin}/api/:path*` },
     { source: '/oauth2/:path*', destination: `${backendOrigin}/oauth2/:path*` },

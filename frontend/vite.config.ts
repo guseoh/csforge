@@ -16,6 +16,14 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
+      workbox: {
+        navigateFallbackDenylist: [
+          /^\/api(?:\/|$)/,
+          /^\/oauth2(?:\/|$)/,
+          /^\/login\/oauth2(?:\/|$)/,
+          /^\/actuator(?:\/|$)/,
+        ],
+      },
       manifest: {
         name: 'CSForge',
         short_name: 'CSForge',

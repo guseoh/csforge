@@ -2,6 +2,8 @@ spring:
   config:
     activate:
       on-profile: cloud
+  autoconfigure:
+    exclude: []
   datasource:
     url: ${DB_URL}
     username: ${DB_USERNAME}
@@ -14,18 +16,9 @@ spring:
       idle-timeout: ${DB_IDLE_TIMEOUT:600000}
       max-lifetime: ${DB_MAX_LIFETIME:1800000}
   session:
-    store-type: jdbc
     jdbc:
       initialize-schema: never
       table-name: SPRING_SESSION
-  servlet:
-    session:
-      timeout: ${SESSION_TIMEOUT:8h}
-      cookie:
-        name: SESSION
-        http-only: true
-        secure: true
-        same-site: lax
   security:
     oauth2:
       client:
@@ -48,6 +41,14 @@ spring:
 server:
   port: ${SERVER_PORT:${PORT:8080}}
   forward-headers-strategy: framework
+  servlet:
+    session:
+      timeout: ${SESSION_TIMEOUT:8h}
+      cookie:
+        name: SESSION
+        http-only: true
+        secure: true
+        same-site: lax
 
 management:
   endpoints:
