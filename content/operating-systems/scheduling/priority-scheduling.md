@@ -19,7 +19,7 @@ references:
 ---
 # Priority Scheduling
 
-Priority scheduling은 여러 runnable task 중 **더 높은 scheduling priority를 가진 task에 CPU service를 먼저 제공**하는 정책 계열이다. 긴급한 작업, 지연 시간-sensitive task, background work를 서로 다른 중요도로 다루고 싶을 때 priority라는 추가 정보를 사용한다.
+Priority scheduling은 여러 runnable task 중 **더 높은 scheduling priority를 가진 task에 CPU service를 먼저 제공**하는 정책 계열이다. 긴급한 작업, 지연 시간에 민감한 task, background work를 서로 다른 중요도로 다루고 싶을 때 priority라는 추가 정보를 사용한다.
 
 단순 모델에서는 높은 priority task가 낮은 priority task보다 먼저 선택된다. 같은 priority 안에서는 FIFO나 Round Robin 같은 다른 rule을 사용할 수 있다. 실제 OS에서는 scheduling class와 priority semantics가 더 복잡할 수 있으므로 특정 숫자가 항상 동일한 의미를 가진다고 일반화하지 않는다.
 
