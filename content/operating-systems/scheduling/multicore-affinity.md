@@ -63,7 +63,7 @@ Linux에서도 scheduler load balancing은 아무 CPU로든 자유롭게 task를
 
 Scheduler가 최근 실행 CPU를 선호하는 soft affinity와, `sched_setaffinity`/container cpuset 같은 mechanism으로 task 실행 CPU를 제한하는 hard affinity는 의미가 다르다.
 
-Hard pinning을 잘못 사용하면 available CPU capacity를 스스로 줄일 수 있다. 예를 들어 8-core host에서 CPU0 하나에 지연 시간-sensitive worker 20개를 모두 pin하면 나머지 core가 있어도 그 task들은 CPU0만 경쟁한다.
+Hard pinning을 잘못 사용하면 available CPU capacity를 스스로 줄일 수 있다. 예를 들어 8-core host에서 CPU0 하나에 지연 시간에 민감한 worker 20개를 모두 pin하면 나머지 core가 있어도 그 task들은 CPU0만 경쟁한다.
 
 ### NUMA에서는 memory locality까지 연결된다
 
