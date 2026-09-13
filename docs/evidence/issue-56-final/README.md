@@ -12,23 +12,23 @@
 
 아래 수치는 통합 시작 커밋과 현재 작업 트리의 canonical content를 비교한 값이다. `changed`에는 한국어 가독성, presentation, 설명 보강, 선택지 품질 수정이 포함된다. `contentKey`, Concept 연결, 정답 key는 유지했다.
 
-| LearningArea | Concepts | Questions reviewed | Questions changed | prompt | explanation | choices | modelAnswer | acceptedAnswers | difficulty | Concept 문서 변경 |
+| LearningArea | Concepts reviewed | Questions reviewed | Questions changed | prompt | explanation | choices | modelAnswer | acceptedAnswers | difficulty | Concept 문서 변경 |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
 | Computer Architecture | 61 | 183 | 38 | 22 | 0 | 7 | 26 | 0 | 0 | 61 |
-| Data Structures & Algorithms | 28 | 293 | 20 | 12 | 0 | 0 | 13 | 0 | 0 | 28 |
+| Data Structures & Algorithms | 84 | 293 | 20 | 12 | 0 | 0 | 13 | 0 | 0 | 28 |
 | Operating Systems | 97 | 331 | 80 | 30 | 51 | 7 | 46 | 0 | 0 | 97 |
 | Network & HTTP | 127 | 381 | 174 | 55 | 0 | 69 | 84 | 0 | 0 | 127 |
 | Database | 38 | 75 | 8 | 3 | 4 | 2 | 4 | 1 | 0 | 38 |
-| Java | 34 | 783 | 30 | 14 | 7 | 14 | 1 | 0 | 0 | 34 |
-| Spring | 25 | 77 | 32 | 10 | 25 | 6 | 13 | 3 | 0 | 25 |
-| Backend Engineering | 28 | 108 | 44 | 11 | 32 | 12 | 16 | 0 | 0 | 28 |
-| Cache | 7 | 27 | 15 | 5 | 9 | 2 | 10 | 0 | 0 | 7 |
-| Messaging & Async Processing | 7 | 27 | 9 | 3 | 3 | 2 | 6 | 0 | 0 | 7 |
-| Infrastructure & Cloud | 5 | 27 | 15 | 4 | 5 | 2 | 10 | 0 | 0 | 5 |
+| Java | 145 | 783 | 30 | 14 | 7 | 14 | 1 | 0 | 0 | 34 |
+| Spring | 37 | 77 | 32 | 10 | 25 | 6 | 13 | 3 | 0 | 25 |
+| Backend Engineering | 40 | 108 | 44 | 11 | 32 | 12 | 16 | 0 | 0 | 28 |
+| Cache | 9 | 27 | 15 | 5 | 9 | 2 | 10 | 0 | 0 | 7 |
+| Messaging & Async Processing | 9 | 27 | 9 | 3 | 3 | 2 | 6 | 0 | 0 | 7 |
+| Infrastructure & Cloud | 9 | 27 | 15 | 4 | 5 | 2 | 10 | 0 | 0 | 5 |
 | Performance / Observability / Operations | 9 | 27 | 20 | 10 | 3 | 4 | 14 | 0 | 1 | 9 |
-| Distributed Systems | 7 | 27 | 16 | 9 | 9 | 3 | 7 | 0 | 0 | 7 |
+| Distributed Systems | 9 | 27 | 16 | 9 | 9 | 3 | 7 | 0 | 0 | 7 |
 | System Design | 9 | 27 | 23 | 8 | 5 | 6 | 14 | 0 | 2 | 9 |
-| Security | 21 | 73 | 30 | 14 | 12 | 3 | 15 | 0 | 2 | 21 |
+| Security | 38 | 73 | 30 | 14 | 12 | 3 | 15 | 0 | 2 | 21 |
 | **합계** | **721** | **2,466** | **554** | **210** | **165** | **139** | **279** | **4** | **5** | **503** |
 
 전체 Concept는 KEEP / REINFORCE / REWRITE 기준으로 다시 판정했다. 218개는 KEEP, 503개는 한국어 표현·가독성·설명 구조를 보강하는 REINFORCE로 분류했으며, Concept 전체를 다시 쓴 REWRITE는 0개다. 고위험 경계는 기존 Concept 안에서 필요한 부분만 정밀 수정했다.
