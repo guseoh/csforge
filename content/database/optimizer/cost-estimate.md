@@ -66,7 +66,7 @@ statistics
 
 ### cost 숫자를 millisecond로 읽으면 안 된다
 
-`EXPLAIN`의 `cost=0.43..128.17` 같은 값은 wall-clock milliseconds가 아니라 planner 내부 비교용 cost unit입니다. 앞은 시작 cost, 뒤는 모든 row를 반환할 때의 total cost를 나타냅니다.
+`EXPLAIN`의 `cost=0.43..128.17` 같은 값은 wall-clock milliseconds가 아니라 planner 내부 비교용 cost unit입니다. 앞은 시작 비용(startup cost), 뒤는 모든 row를 반환할 때의 전체 비용(total cost)을 나타냅니다.
 
 ```text
 Index Scan  (cost=0.43..128.17 rows=20 width=48)
