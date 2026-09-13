@@ -69,3 +69,4 @@ csforge:
   security:
     mode: cloud
     allowed-email: ${CSFORGE_ALLOWED_EMAIL:}
+    frontend-origin: ${CSFORGE_FRONTEND_ORIGIN}
