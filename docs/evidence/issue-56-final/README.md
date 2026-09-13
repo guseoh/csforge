@@ -5,7 +5,7 @@
 통합 시작 커밋: `2a6953424a07c951fc10c95e509f76abeb65593d`  
 대상: 15개 LearningArea, 721 Concepts, 2,466 Questions
 
-관련 이슈: [#56](https://github.com/guseoh/csforge/issues/56)  
+관련 이슈: [#56](https://github.com/guseoh/csforge/issues/56)
 통합 대상 PR: [#57](https://github.com/guseoh/csforge/pull/57), [#58](https://github.com/guseoh/csforge/pull/58), [#59](https://github.com/guseoh/csforge/pull/59), [#60](https://github.com/guseoh/csforge/pull/60)
 
 ## 검토 통계
