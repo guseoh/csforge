@@ -39,7 +39,7 @@ single runtime
 
 ### 분리를 정당화하는 신호
 
-서로 다른 scale·가용성·security boundary, 독립적인 release cadence, 명확한 data ownership, team autonomy와 장애 격리이 실제로 필요할 때 service가 이득을 줄 수 있습니다. 단순히 코드가 크거나 조직이 미래에 커질 것이라는 이유만으로 network boundary를 추가하지 않습니다.
+서로 다른 scale·가용성·security boundary, 독립적인 release cadence, 명확한 data ownership, team autonomy와 장애 격리가 실제로 필요할 때 service가 이득을 줄 수 있습니다. 단순히 코드가 크거나 조직이 미래에 커질 것이라는 이유만으로 network boundary를 추가하지 않습니다.
 
 ### 점진적으로 진화한다
 
