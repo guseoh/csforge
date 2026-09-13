@@ -11,11 +11,18 @@ displayOrder: 80
 references:
   - url: "https://pages.cs.wisc.edu/~remzi/OSTEP/file-implementation.pdf"
     title: "File System Implementation"
-    referenceType: OFFICIAL
+    referenceType: BOOK
     language: en
     depth: section
     recommendation: "inode, directory entry, data block, allocation 구조가 file-system access path를 만드는 방식을 확인한다."
     displayOrder: 1
+  - url: "https://toss.tech/article/flink-realtime-frequency-capping"
+    title: "Apache Flink + RocksDB 튜닝으로 광고 Frequency Capping 실시간 집계를 일주일까지 확장하기"
+    referenceType: COMPANY_TECH_BLOG
+    language: ko
+    depth: article
+    recommendation: "Direct I/O로 OS page cache를 우회했을 때 cache miss와 memory-control trade-off가 어떻게 바뀌는지 실제 운영 사례로 확인한다."
+    displayOrder: 2
 ---
 # Page Cache
 

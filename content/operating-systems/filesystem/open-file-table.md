@@ -11,15 +11,24 @@ displayOrder: 30
 references:
   - url: "https://pages.cs.wisc.edu/~remzi/OSTEP/file-intro.pdf"
     title: "Interlude: Files and Directories"
-    referenceType: OFFICIAL
+    referenceType: BOOK
     language: en
     depth: section
     recommendation: "file, pathname, descriptor, shared open-file state를 Unix file-system API 흐름으로 확인한다."
     displayOrder: 1
+  - url: "https://man7.org/linux/man-pages/man2/dup.2.html"
+    title: "dup(2) — Linux manual page"
+    referenceType: OFFICIAL
+    language: en
+    depth: section
+    recommendation: "duplicated descriptor가 같은 open file description과 offset/status flags를 공유하는 Linux 동작을 확인한다."
+    displayOrder: 2
 ---
 # Open File State
 
 `file descriptor = file`이라고 단순화하면 duplicate descriptor와 concurrent offset 동작을 설명하기 어렵다. Linux를 예로 들면 process의 descriptor table entry는 **open file description**을 가리키고, 그 description이 current offset과 file status flags, underlying file object에 대한 reference를 가진다.
+
+![descriptor entry와 shared open-file description, underlying file object 관계](/learning/operating-systems/file-descriptor-open-state.svg)
 
 개념적으로 다음처럼 나눠 볼 수 있다.
 
@@ -38,3 +47,9 @@ references:
 `O_APPEND` 같은 status flag의 의미도 단순한 application boolean이 아니라 open-file state와 filesystem의 write semantics에 연결된다. 어떤 상태가 descriptor entry에 있고 어떤 상태가 open description이나 file object에 있는지는 실제 OS API 계약을 확인해야 한다.
 
 Backend file processor에서 병렬 range read가 필요하다면 shared mutable offset에 기대기보다 명시적인 positional I/O나 독립 handle을 선택하는 편이 reasoning하기 쉽다. resource pooling을 한다면 이전 사용자의 offset/status가 다음 작업에 그대로 남지 않는지도 확인한다.
+
+### 면접에서 이렇게 나옵니다
+
+#### Q. 같은 파일을 두 번 `open()`한 것과 `dup()`한 것은 무엇이 다른가요?
+
+두 번 `open()`하면 보통 서로 다른 open-file description을 만들어 offset이 독립적입니다. 반면 `dup()`은 같은 open-file description을 공유하므로 offset과 일부 status flag가 연결됩니다. underlying file content와 open stream state를 분리해서 설명하는 것이 핵심입니다.

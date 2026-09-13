@@ -16,10 +16,19 @@ references:
     depth: section
     recommendation: "pipe의 byte-stream semantics, capacity, EOF와 blocking/non-blocking 동작을 확인한다."
     displayOrder: 1
+  - url: "https://d2.naver.com/helloworld/2922312"
+    title: "최신 브라우저의 내부 살펴보기 1 - CPU, GPU, 메모리 그리고 다중 프로세스 아키텍처"
+    referenceType: COMPANY_TECH_BLOG
+    language: ko
+    depth: article
+    recommendation: "실제 browser multi-process architecture에서 IPC와 process isolation을 함께 선택하는 이유를 사례로 확인한다."
+    displayOrder: 2
 ---
 # IPC Trade-off
 
 IPC를 선택할 때 `가장 빠른가` 하나만 비교하면 실제 장애와 운영 비용을 놓친다. 먼저 data가 어디에 존재하고 누가 ownership을 가지는지, kernel이 어떤 buffer·queue·endpoint를 관리하는지, sender와 receiver 사이에 copy가 몇 번 필요한지와 그 copy가 end-to-end latency에 어떤 영향을 주는지를 확인한다. 이어서 message boundary와 synchronization, capacity/backpressure, process 또는 host failure 때 복구할 상태를 비교해야 한다.
+
+![IPC 방식별 copy, isolation, synchronization 책임 비교](/learning/operating-systems/ipc-tradeoff.svg)
 
 | 방식 | data 경로와 경계 | 대표 장점 | 직접 부담하는 문제 |
 | --- | --- | --- | --- |
@@ -37,5 +46,10 @@ IPC를 선택할 때 `가장 빠른가` 하나만 비교하면 실제 장애와 
 
 따라서 작은 control message와 명확한 종료 lifecycle에는 pipe·Unix socket·message queue가 읽기 쉬울 수 있고, 큰 local payload에는 shared memory가 후보가 될 수 있다. 다른 host로 확장하거나 이미 표준 request/response protocol이 필요하면 network socket을 선택하되 framing·timeout·재시도 semantics를 명시한다. 성능 숫자를 미리 가정하지 말고 payload 크기, access pattern, contention, failure recovery 비용을 측정한다.
 
-CSForge의 DB outbox와 worker queue 같은 application messaging은 이 OS primitive와 별도의 durability·redelivery 계약을 가진다. 파생 search/AI 작업을 process IPC로 연결하더라도 canonical PostgreSQL state와 중복 delivery 복구를 application boundary에서 보장해야 한다.
+DB-backed job, application queue, external broker 같은 application-level messaging은 이 OS primitive와 별도의 durability·redelivery 계약을 가진다. 어떤 방식을 선택하든 canonical business state와 duplicate processing 복구를 어느 계층이 책임지는지 명시해야 하며, OS IPC 자체가 그 보장을 대신한다고 가정하면 안 된다.
 
+### 면접에서 이렇게 나옵니다
+
+#### Q. Shared memory가 가장 빠르다면 왜 모든 IPC를 shared memory로 만들지 않나요?
+
+Copy를 줄이는 대신 synchronization, layout compatibility, participant crash recovery와 ownership protocol을 application이 더 직접 책임해야 하기 때문입니다. IPC 선택은 latency만이 아니라 isolation, backpressure, failure recovery까지 함께 비교해야 합니다.

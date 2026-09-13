@@ -16,6 +16,13 @@ references:
     depth: chapter
     recommendation: "address space abstraction이 transparency, efficiency와 process isolation을 제공하는 이유를 확인한다."
     displayOrder: 1
+  - url: "https://d2.naver.com/helloworld/0128759"
+    title: "ZGC의 기본 개념 이해하기"
+    referenceType: COMPANY_TECH_BLOG
+    language: ko
+    depth: article
+    recommendation: "하나의 physical memory를 여러 virtual address view에 매핑하는 JVM 사례를 통해 virtual/physical mapping을 구체적으로 확인한다. OS 일반 계약이 아니라 JVM/Linux 활용 사례로 본다."
+    displayOrder: 2
 ---
 # Virtual Address Space
 
@@ -24,6 +31,8 @@ references:
 virtual address space는 running process가 memory를 바라보는 논리적 view다. process는 code, data, heap, stack과 mapping이 자신의 주소 공간에 놓여 있다고 보고 virtual address로 load/store를 수행한다. 실제 physical memory의 어느 위치에 있는지는 OS와 hardware translation mechanism이 결정한다.
 
 그래서 process A와 B가 둘 다 virtual address `0x400000`을 사용하더라도 같은 physical frame을 가리킬 필요가 없다. 각 process의 translation state가 다르면 같은 숫자의 virtual address가 서로 다른 physical memory를 가리킨다.
+
+![서로 다른 process의 같은 virtual address가 서로 다른 physical frame으로 mapping될 수 있는 구조](/learning/operating-systems/virtual-address-space.svg)
 
 ### 주소 공간 abstraction이 필요한 이유
 
@@ -46,3 +55,9 @@ address range를 예약하거나 file을 map했다고 모든 page가 즉시 phys
 Java heap은 JVM이 관리하는 중요한 memory 영역이지만 process의 전체 virtual address space와 동일하지 않다. native library, thread stack, direct buffer, memory-mapped file, JVM 자체 metadata도 process address space를 사용한다.
 
 그래서 memory 장애를 볼 때 `-Xmx` 하나만 보는 것으로 충분하지 않다. virtual mapping과 RSS, cgroup/container memory limit, native allocation을 함께 구분해서 관측해야 한다.
+
+### 면접에서 이렇게 나옵니다
+
+#### Q. Virtual address space와 실제 RAM 사용량은 왜 같은 숫자가 아닌가요?
+
+Virtual address space는 process가 사용할 수 있도록 **주소와 mapping을 정의한 논리적 공간**이고, resident memory는 그중 현재 physical memory에 실제로 올라와 있는 부분이다. Demand paging, file mapping, 아직 접근하지 않은 page 때문에 큰 virtual range를 갖고도 resident memory는 훨씬 작을 수 있다고 설명하면 좋다.

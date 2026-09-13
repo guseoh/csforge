@@ -11,7 +11,7 @@ displayOrder: 40
 references:
   - url: "https://pages.cs.wisc.edu/~remzi/OSTEP/file-intro.pdf"
     title: "Interlude: Files and Directories"
-    referenceType: OFFICIAL
+    referenceType: BOOK
     language: en
     depth: section
     recommendation: "file, pathname, descriptor, shared open-file state를 Unix file-system API 흐름으로 확인한다."

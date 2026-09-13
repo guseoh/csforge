@@ -28,6 +28,8 @@ Round Robin(RR)은 runnable job을 queue에 두고 각 job에 **time quantum(tim
 | A | B | C | A | ...
 ```
 
+![Round Robin이 time quantum마다 runnable task를 순환시키는 흐름](/learning/operating-systems/round-robin-quantum.svg)
+
 FCFS라면 B는 A가 100 ms를 끝낸 뒤에야 첫 실행을 시작하지만, RR에서는 B가 약 10 ms 뒤, C가 약 20 ms 뒤에 첫 service를 받을 수 있다. **Response time 관점의 장점**이 여기서 나온다.
 
 ### Quantum이 너무 크면 FCFS에 가까워진다
@@ -67,5 +69,11 @@ Round Robin은 runnable task에 반복적으로 CPU 기회를 주므로 starvati
 Application thread pool의 FIFO queue가 있다고 해서 OS가 그 worker threads를 Round Robin으로 정확히 실행한다는 뜻은 아니다. Application queue policy와 OS CPU scheduler는 다른 층이다.
 
 다만 CPU-bound worker 수가 매우 많으면 OS scheduler가 많은 runnable threads 사이에서 CPU 시간을 나누게 되고 context-switch overhead가 증가할 수 있다. Thread count, request queueing, CPU scheduling을 각각 구분해 측정해야 한다.
+
+### 면접에서 이렇게 나옵니다
+
+#### Q. Round Robin에서 quantum을 너무 작게 잡으면 왜 문제가 되나요?
+
+더 자주 CPU 기회를 나누어 response가 좋아질 수 있지만, quantum이 useful work에 비해 너무 작으면 **context switch와 cache/locality 손실 비율이 커져 throughput이 떨어질 수 있다.** 반대로 너무 크면 FCFS와 비슷해져 초기 response 장점이 약해진다.
 
 Round Robin의 핵심은 **time quantum이라는 preemption 단위를 통해 여러 runnable task의 response/fairness를 개선하는 대신, quantum 크기에 따라 context-switch 비용과 completion metric이 달라진다는 trade-off**다.

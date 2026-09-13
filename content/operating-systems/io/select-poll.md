@@ -5,7 +5,7 @@ topicContentKey: operating-systems.core.io
 slug: select-poll
 title: "select and poll"
 summary: "여러 descriptor의 readiness를 한 wait point에서 감시하는 방식과 per-call scan 비용을 설명한다."
-level: 1
+level: 2
 status: PUBLISHED
 displayOrder: 50
 references:

@@ -11,9 +11,9 @@ displayOrder: 50
 references:
   - url: "https://pages.cs.wisc.edu/~remzi/OSTEP/vm-beyondphys.pdf"
     title: "Beyond Physical Memory: Mechanisms"
-    referenceType: OFFICIAL
+    referenceType: BOOK
     language: en
-    depth: section
+    depth: chapter
     recommendation: "page fault에서 OS가 translation 상태를 해석하고 page-in 또는 실패를 결정하는 흐름을 확인한다."
     displayOrder: 1
   - url: "https://man7.org/linux/man-pages/man2/mmap.2.html"

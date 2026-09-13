@@ -16,23 +16,45 @@ references:
     depth: chapter
     recommendation: "deadlock의 dependency cycle, Coffman conditions와 prevention 전략을 확인한다."
     displayOrder: 1
+  - url: "https://docs.oracle.com/javase/tutorial/essential/concurrency/starvelive.html"
+    title: "Starvation and Livelock (The Java Tutorials)"
+    referenceType: OFFICIAL
+    language: en
+    depth: section
+    recommendation: "Java concurrency 예시를 통해 starvation과 livelock의 liveness 차이를 확인한다."
+    displayOrder: 2
 ---
 # Livelock
 
-### 멈춰 있지 않지만 progress도 없다
+### Thread가 멈추지 않았다는 사실만으로 progress하는 것은 아니다
 
-livelock에서는 execution이 block된 채 정지하지 않는다. thread나 process가 계속 retry, rollback, 양보 같은 action을 수행하지만 서로의 action에 반응해 실제 목표 상태에 도달하지 못한다.
+Livelock에서는 execution이 blocked state로 고정되지 않는다. Thread나 process가 계속 retry, rollback, 양보 같은 action을 수행하지만 서로의 action에 반응하면서 실제 목표 work는 완료하지 못한다.
 
-두 사람이 복도에서 서로 비켜 주려고 동시에 왼쪽으로 움직였다가 다시 동시에 오른쪽으로 움직이는 비유가 자주 쓰인다. 상태는 계속 바뀌지만 둘 다 통과하지 못한다.
+두 worker가 충돌할 때마다 둘 다 즉시 rollback하고 같은 delay로 다시 시도한다고 하자.
 
-### retry가 liveness 문제를 만들 수 있다
+```text
+time →
+W1: conflict → rollback → retry → conflict → rollback → retry → ...
+W2: conflict → rollback → retry → conflict → rollback → retry → ...
+                     성공한 work: 0
+```
 
-두 transaction이 충돌할 때 둘 다 즉시 rollback하고 같은 timing으로 재시도하면 다시 같은 conflict를 만들 수 있다. retry가 무조건 progress를 보장하지 않는 이유다.
+상태와 CPU activity는 계속 변하지만 useful progress가 없다는 것이 핵심이다.
 
-randomized/exponential backoff, jitter, priority 변화, retry budget은 symmetry를 깨고 한쪽이 먼저 진행할 기회를 만들 수 있다. 하지만 backoff 자체가 correctness를 보장하는 것은 아니며 terminal failure와 retry-safe effect가 별도로 필요하다.
+### Retry policy가 symmetry를 유지하면 같은 충돌을 재생할 수 있다
 
-### deadlock과 관측 증상이 다르다
+`실패하면 즉시 retry`는 한 번의 실패를 복구하는 간단한 전략처럼 보인다. 하지만 여러 execution이 같은 조건과 timing으로 똑같이 반응하면 서로를 계속 방해해 같은 conflict가 반복될 수 있다.
 
-Deadlock에서는 참여 execution들이 서로 기다리며 CPU 사용이 낮아질 수 있다. Livelock에서는 CPU, network request, lock acquisition attempt가 계속 발생할 수 있어 시스템이 바쁜데 throughput이 낮은 형태로 나타날 수 있다.
+Randomized/exponential backoff와 jitter는 retry timing의 symmetry를 깨 한쪽이 먼저 progress할 기회를 만들 수 있다. Priority 변화나 retry budget도 사용할 수 있다. 다만 backoff는 liveness를 개선하는 도구이지 operation correctness나 idempotency를 자동으로 보장하지 않는다.
 
-Backend에서 conflict retry rate는 높은데 성공 throughput이 오르지 않는다면 livelock 가능성을 본다. 단순히 retry 횟수를 더 늘리는 것은 문제를 악화할 수 있다.
+### Deadlock과는 관측되는 activity가 다르다
+
+Deadlock에서는 참여 execution이 서로 resource를 기다려 activity가 줄 수 있다. Livelock에서는 lock attempt, rollback, network request, CPU 사용량은 높은데 성공 throughput이 낮게 나타날 수 있다.
+
+| 상태 | 내부 activity | useful progress |
+| --- | --- | --- |
+| Deadlock | 대기 중심, 줄어들 수 있음 | 없음 |
+| Livelock | retry·상태 변경이 계속됨 | 없음 또는 매우 낮음 |
+| 정상 retry | 일시적으로 retry | 결국 성공/실패로 종료 |
+
+Backend에서 retry rate만 올라가고 성공 throughput이 회복되지 않는다면 단순히 retry 횟수를 늘리기보다 **같은 충돌을 재생하고 있는지** 확인해야 한다.

@@ -11,9 +11,9 @@ displayOrder: 40
 references:
   - url: "https://pages.cs.wisc.edu/~remzi/OSTEP/vm-beyondphys.pdf"
     title: "Beyond Physical Memory: Mechanisms"
-    referenceType: OFFICIAL
+    referenceType: BOOK
     language: en
-    depth: section
+    depth: chapter
     recommendation: "page fault에서 OS가 translation 상태를 해석하고 page-in 또는 실패를 결정하는 흐름을 확인한다."
     displayOrder: 1
   - url: "https://man7.org/linux/man-pages/man2/getrusage.2.html"
@@ -27,6 +27,8 @@ references:
 # Page Fault
 
 page fault는 CPU가 virtual address에 접근했지만 현재 translation과 permission만으로 그 접근을 완료할 수 없어 kernel의 fault handler로 제어가 넘어가는 사건이다. 중요한 점은 **page fault가 곧 disk I/O라는 뜻은 아니라는 것**이다. 아직 physical frame이 배정되지 않은 anonymous page라면 zero-filled frame을 연결하는 것만으로 복구될 수 있고, copy-on-write page라면 새 frame을 복사해 writable mapping으로 바꾸면 된다. file-backed page가 page cache에 없거나 swap-backed page를 다시 가져와야 하는 경우에야 storage I/O가 포함될 수 있다.
+
+![Memory access가 page fault를 일으킨 뒤 mapping과 permission을 검사하고 복구 또는 실패로 이어지는 흐름](/learning/operating-systems/page-fault-flow.svg)
 
 ### Fault가 발생한 뒤 OS가 판단하는 것
 
@@ -45,3 +47,9 @@ Linux의 `getrusage()` 같은 운영 지표에서는 I/O 없이 처리된 fault�
 ### 운영에서 보는 경계
 
 대형 file mapping이나 큰 working set의 첫 접근은 warm 상태와 완전히 다른 latency를 만들 수 있다. benchmark에서는 cold start와 steady state를 분리하고, Linux의 minor/major fault 같은 OS별 지표를 사용할 때는 해당 지표의 정의를 확인하면서 resident memory·storage I/O를 함께 관찰한다. JVM의 `OutOfMemoryError`와 OS page fault도 같은 사건이 아니므로 application heap 문제와 virtual-memory pressure를 구분해 진단한다.
+
+### 면접에서 이렇게 나옵니다
+
+#### Q. Page fault가 발생하면 항상 디스크에서 page를 읽어오나요?
+
+아니다. Page fault는 **현재 translation으로 memory access를 완료할 수 없어서 kernel이 개입해야 한다는 사건**이다. Anonymous zero-fill이나 copy-on-write처럼 storage I/O 없이 복구되는 fault도 있고, file/swap에서 실제 I/O가 필요한 fault도 있다. Fault 원인과 backing state를 구분해 설명하는 것이 중요하다.

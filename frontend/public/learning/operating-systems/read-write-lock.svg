@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 440" role="img" aria-labelledby="title desc">
+  <title id="title">Read-write lock flow</title>
+  <desc id="desc">여러 reader는 동시에 읽고 writer는 reader가 빠질 때까지 기다린 뒤 배타적으로 쓰는 흐름</desc>
+  <defs>
+    <marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0 0L9 4.5L0 9Z" fill="#a56df4"/></marker>
+    <style>.bg{fill:#17131f}.title{fill:#f5efff;font:700 25px Inter,Arial,sans-serif}.label{fill:#f0e8fa;font:650 17px Inter,Arial,sans-serif}.small{fill:#a797b5;font:500 14px Inter,Arial,sans-serif}.reader{fill:#18352e;stroke:#4cc090;stroke-width:2}.writer{fill:#2a1d3c;stroke:#a56df4;stroke-width:2}.wait{fill:#3a2c19;stroke:#d5a84d;stroke-width:2}.line{stroke:#a56df4;stroke-width:2;fill:none;marker-end:url(#arrow)}</style>
+  </defs>
+  <rect class="bg" width="1100" height="440" rx="20"/>
+  <text class="title" x="48" y="54">Read-Write Lock — reader 공유, writer 배타</text>
+  <text class="small" x="48" y="82">여러 read-only access는 겹칠 수 있지만 write는 다른 reader와 writer가 빠진 뒤 진행한다</text>
+  <rect class="reader" x="65" y="145" width="220" height="62" rx="11"/><text class="label" x="126" y="182">Reader 1</text>
+  <rect class="reader" x="65" y="225" width="220" height="62" rx="11"/><text class="label" x="126" y="262">Reader 2</text>
+  <rect class="reader" x="65" y="305" width="220" height="62" rx="11"/><text class="label" x="126" y="342">Reader 3</text>
+  <path class="line" d="M285 176H450"/><path class="line" d="M285 256H450"/><path class="line" d="M285 336H450"/>
+  <rect class="reader" x="450" y="170" width="255" height="150" rx="14"/><text class="label" x="495" y="214">Shared read region</text><text class="small" x="495" y="244">R1 · R2 · R3 동시 진행</text><text class="small" x="495" y="270">protected state는 변경하지 않음</text>
+  <rect class="wait" x="785" y="145" width="245" height="72" rx="11"/><text class="label" x="850" y="178">Writer</text><text class="small" x="833" y="200">reader가 있는 동안 wait</text>
+  <path class="line" d="M705 245H760V250H785"/>
+  <rect class="writer" x="785" y="260" width="245" height="90" rx="11"/><text class="label" x="831" y="296">Exclusive write</text><text class="small" x="825" y="322">reader/writer 모두 배제</text>
+  <path class="line" d="M907 217V260"/>
+  <text class="small" x="48" y="406">waiting writer가 있을 때 새 reader를 허용할지 등 fairness/admission 정책은 구현 계약을 확인해야 한다.</text>
+</svg>

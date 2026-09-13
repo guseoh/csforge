@@ -11,9 +11,9 @@ displayOrder: 70
 references:
   - url: "https://pages.cs.wisc.edu/~remzi/OSTEP/vm-beyondphys-policy.pdf"
     title: "Beyond Physical Memory: Policies"
-    referenceType: OFFICIAL
+    referenceType: BOOK
     language: en
-    depth: section
+    depth: chapter
     recommendation: "replacement policy와 locality가 hit/miss 및 working-set 유지에 미치는 영향을 확인한다."
     displayOrder: 1
 ---
@@ -30,6 +30,14 @@ working set은 일정 시간 또는 최근 reference window에서 활발히 사�
 ### frame 수가 working set보다 작으면 어떤 일이 생기는가
 
 active set이 5 page인데 process가 실질적으로 3 frame만 활용할 수 있다면 replacement policy는 계속 필요한 page 중 하나를 내보낼 수밖에 없다. 다음 접근에서 방금 eviction한 page가 다시 필요해 fault가 발생하고, 또 다른 active page를 밀어낸다. 이 상태가 심해지면 replacement policy 차이보다 memory shortage 자체가 지배적인 문제가 된다.
+
+```text
+active working set: {1, 2, 3, 4, 5}
+resident budget:    [  ][  ][  ]
+
+1,2,3 적재 → 4 필요 → active page 하나 eviction
+          → 곧 다시 eviction된 page 필요 → fault 반복
+```
 
 ### Backend에서의 locality
 

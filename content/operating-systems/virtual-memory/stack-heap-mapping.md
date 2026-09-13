@@ -11,15 +11,17 @@ displayOrder: 100
 references:
   - url: "https://pages.cs.wisc.edu/~remzi/OSTEP/vm-api.pdf"
     title: "Interlude: Memory API"
-    referenceType: OFFICIAL
+    referenceType: BOOK
     language: en
-    depth: section
+    depth: chapter
     recommendation: "stack/heap lifetime과 dynamic-memory API가 서로 다른 책임을 갖는 이유를 확인한다."
     displayOrder: 1
 ---
 # Stack and Heap Mapping
 
 process의 virtual address space에는 executable mapping, shared library, file mapping, heap, thread stack처럼 목적과 lifetime이 다른 영역이 함께 존재한다. 흔한 그림에서는 stack과 heap을 서로 반대 방향으로 그리지만, **구체적인 배치 주소와 성장 방향은 ABI·OS·runtime 구현에 따라 달라질 수 있다.** 학습에서 중요한 것은 그림의 방향이 아니라 어떤 실행 상태를 누가 관리하는가다.
+
+![Process virtual address space 안에서 code, mapping, heap, thread stack이 서로 다른 영역과 lifetime을 가지는 예시](/learning/operating-systems/stack-heap-address-space.svg)
 
 ### Stack은 실행 흐름의 call state를 담는다
 

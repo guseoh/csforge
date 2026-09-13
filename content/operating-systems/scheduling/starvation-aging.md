@@ -29,6 +29,8 @@ H1 실행 → H2 도착/실행 → H3 도착/실행 → H4 ...
 L  ------------------------------------------------ waiting
 ```
 
+![높은 priority 작업이 계속 도착해 낮은 priority task가 밀리고 aging으로 service 기회를 회복하는 흐름](/learning/operating-systems/starvation-aging.svg)
+
 L은 blocked된 것이 아니다. CPU만 받으면 실행할 수 있지만 policy 때문에 선택되지 않는다.
 
 ### Aging은 기다린 시간을 scheduling 정보에 반영한다
@@ -71,5 +73,11 @@ Priority를 너무 빠르게 올리면 original priority distinction이 곧 사�
 Interactive request를 항상 background job보다 먼저 처리하는 application queue를 만들면 사용자 latency는 좋아질 수 있다. 하지만 interactive traffic이 끊이지 않으면 background compaction/import/reindex가 영원히 실행되지 않을 수 있다.
 
 이 경우 OS aging과 동일한 algorithm을 그대로 쓴다는 뜻은 아니지만, **최대 waiting time, periodic service window, quota/rate share** 같은 starvation-avoidance policy가 필요하다.
+
+### 면접에서 이렇게 나옵니다
+
+#### Q. Starvation과 deadlock의 차이는 무엇인가요?
+
+Starvation에서는 **system 전체는 계속 progress할 수 있지만 특정 runnable task만 service를 받지 못할 수 있다.** Deadlock은 참여 execution이 서로의 resource를 기다리는 cycle 등으로 스스로 progress할 수 없는 상태다. 따라서 aging은 fairness를 회복하는 scheduling policy이고 deadlock cycle을 해결하는 기법은 아니다.
 
 Starvation and Aging의 핵심은 “낮은 priority라서 느리다”가 아니라 **실행 가능한 task가 policy 때문에 무기한 service에서 배제될 수 있다는 liveness 문제와, waiting history를 scheduling decision에 반영해 이를 완화하는 원리**다.
