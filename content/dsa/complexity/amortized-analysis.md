@@ -63,6 +63,6 @@ Potential method는 자료구조 상태에 저장된 future work를 potential fu
 
 ### Amortized O(1)은 지연 시간 spike가 없다는 뜻이 아니다
 
-Backend에서 dynamic buffer나 in-memory queue가 amortized O(1) append를 제공하더라도 resize가 발생한 한 요청은 큰 copy와 allocation으로 지연될 수 있다. Average 처리량에는 문제가 없어도 p99 지연 시간이나 memory peak에는 영향을 줄 수 있다.
+Backend에서 dynamic buffer나 in-memory queue가 amortized O(1) append를 제공하더라도 resize가 발생한 한 요청은 큰 copy와 allocation으로 지연될 수 있다. 평균 처리량에는 문제가 없어도 p99 지연 시간이나 memory peak에는 영향을 줄 수 있다.
 
-그래서 지연 시간-sensitive path에서는 초기 capacity 예약, chunked structure 또는 growth policy 변경을 검토할 수 있다. 다만 예상 최대 크기를 무조건 preallocate하면 memory를 낭비할 수 있으므로 workload size distribution을 측정해 결정한다.
+그래서 지연 시간에 민감한 경로에서는 초기 capacity 예약, chunked structure 또는 growth policy 변경을 검토할 수 있다. 다만 예상 최대 크기를 무조건 preallocate하면 memory를 낭비할 수 있으므로 workload size distribution을 측정해 결정한다.
