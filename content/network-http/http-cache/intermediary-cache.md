@@ -26,3 +26,9 @@ origin의 canonical data가 바뀌었다는 사실과 모든 intermediary가 새
 ### Backend 연결
 
 CSForge에서 PostgreSQL canonical content의 commit, Elasticsearch projection 반영, HTTP intermediary cache의 revalidation은 서로 다른 완료 시점이다. stale search result를 허용할지와 공개 curriculum response를 언제 purge할지는 각각의 contract로 정하고, HTTP cache hit가 DB 또는 Elasticsearch의 현재 상태를 직접 확인했다는 뜻으로 표시하지 않는다.
+### Intermediary cache
+    request → edge cache
+              ├─ fresh hit → response
+              ├─ stale → validate
+              └─ miss → origin → store → response
+edge age와 purge 전파가 달라 잠시 다른 상태가 보일 수 있다.

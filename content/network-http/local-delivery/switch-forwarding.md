@@ -25,3 +25,11 @@ switch가 frame을 전달할 때는 link header의 MAC을 기준으로 하며 IP
 
 잘못된 학습, loop 또는 table miss가 있으면 flooding과 duplicate frame이 늘고 host의 interrupt/CPU와 link utilization이 함께 올라갈 수 있다. 반면 proxy, service mesh와 같은 application intermediary는 frame forwarding과 다른 계층의 hop이다. backend 연결 장애에서는 switch/VLAN counters와 ARP/NDP, route, proxy path를 각각 확인한다.
 
+### Switch forwarding
+    destination MAC
+          │
+          ▼
+    MAC table ── known ──> one egress port
+          └──── unknown/broadcast ──> flood
+switch는 source MAC을 학습하며 IP route를 계산하지 않는다.
+

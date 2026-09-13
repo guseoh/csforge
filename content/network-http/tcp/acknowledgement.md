@@ -24,3 +24,8 @@ TCP ACK의 acknowledgment number는 receiver가 다음에 기대하는 sequence 
 delayed ACK는 매 segment마다 즉시 답하지 않을 수 있고, duplicate ACK는 out-of-order나 missing range의 단서가 될 수 있지만 ACK 도착만으로 remote application의 처리나 business commit을 증명하지는 못한다. ACK 지연, TCP retransmission과 application response 지연을 서로 다른 시간으로 관찰한다.
 
 Backend에서 socket `write()` 반환은 local kernel이 bytes를 받아들였다는 경계에 가깝고, peer TCP가 ACK했다는 사실도 controller가 command를 처리했다는 뜻은 아니다. 중요한 명령은 protocol response나 commit acknowledgement 같은 application-level confirmation을 별도로 요구한다.
+### 누적 ACK
+    sender:   bytes 0 ───── 999 | 1000 ───>
+    receiver: received through 999
+    ACK = 1000 ──────────────────────────>
+transport ACK는 application commit acknowledgement가 아니다.

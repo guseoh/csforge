@@ -25,3 +25,9 @@ DNS label 비교는 protocol 규칙에 따라 대소문자를 구분하지 않�
 
 Backend 설정에서는 DNS name, URL origin의 scheme/authority, 실제 listener와 trust boundary를 구분한다. split-horizon DNS처럼 client network에 따라 같은 name이 다른 address를 반환할 수 있는 환경에서는 resolver 위치와 view를 함께 기록해야 한다.
 
+### DNS namespace와 위임
+    root
+      └─ TLD
+           └─ delegated zone
+                └─ host label
+zone별 authoritative server가 책임 범위를 나눈다.

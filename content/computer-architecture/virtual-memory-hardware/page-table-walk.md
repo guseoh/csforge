@@ -55,3 +55,12 @@ page replacement, anonymous/file-backed page를 어디서 가져올지, memory p
 ### Backend 성능에서 확인할 것
 
 large heap이나 memory-mapped index의 random access가 느릴 때 data-cache miss만 보고 끝내지 않는다. TLB miss와 page-walk 관련 hardware counter, page fault, RSS와 access pattern을 함께 확인한다. huge page는 TLB reach를 늘려 walk 빈도를 줄일 가능성이 있지만, 실제 workload에서 translation이 병목이라는 측정 없이 먼저 적용할 이유는 없다.
+### TLB miss와 data miss
+    virtual address
+          │ TLB miss
+          ▼
+    page-table walk → physical address
+          │ data-cache miss
+          ▼
+    lower cache / DRAM
+translation 비용과 data fetch 비용을 같은 miss로 합치면 병목을 분리할 수 없다.

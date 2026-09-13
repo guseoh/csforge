@@ -27,3 +27,9 @@ load balancer나 reverse proxy가 있으면 client-to-proxy와 proxy-to-backend�
 
 Backend 장애를 분석할 때는 listener의 local tuple, proxy가 본 source tuple, backend가 본 source tuple을 구분하고 connection pool·TIME_WAIT·NAT mapping의 수명도 함께 본다. 한 구간의 tuple이 정상이라는 사실만으로 전체 end-to-end path나 application 처리 완료를 증명할 수 없다.
 
+### Connection tuple
+    protocol + local IP:port + remote IP:port
+                         │
+                         ▼
+                    one flow state
+HTTP resource identity와 transport flow 식별은 다르다.

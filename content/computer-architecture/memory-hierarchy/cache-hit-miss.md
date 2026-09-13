@@ -42,3 +42,8 @@ hit rate가 99%여도 남은 1%의 miss가 매우 비싸다면 평균 latency에
 application cache에서 key를 찾았다는 사실은 CPU cache hit를 뜻하지 않는다. Redis hit가 나도 network round trip이 필요할 수 있고, DB buffer pool hit가 나도 CPU가 memory에서 page를 읽어 처리해야 한다. `cache hit율 99%`라는 말을 사용할 때는 반드시 어느 계층의 cache인지와 hit latency가 무엇인지 명시해야 한다.
 
 backend 성능 문제에서는 높은 application-cache hit rate 하나로 분석을 끝내지 않고 request latency, DB buffer behavior, CPU cache miss, allocation, I/O를 필요한 수준에서 분리해 확인한다.
+### Cache miss 경로
+    lookup
+      ├─ valid tag match → hit → use line
+      └─ miss → victim/write-back → lower level → fill → retry
+miss 종류와 원인에 따라 개선 방향이 달라진다.

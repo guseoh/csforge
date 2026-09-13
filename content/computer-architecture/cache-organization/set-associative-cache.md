@@ -40,3 +40,8 @@ way 수가 늘어나면 같은 set에서 더 많은 tag를 비교하고 hit한 w
 ### Backend 성능에서의 연결
 
 특정 data layout이나 stride가 cache set 일부에 집중되면 cache 크기만 늘리는 것보다 mapping/associativity가 miss behavior에 더 중요한 경우가 있다. 다만 application programmer가 일반 Java code에서 CPU cache associativity를 직접 선택하는 것은 아니다. 실제 개선은 data layout, access order, footprint를 조정하고 hardware counter로 결과를 확인하는 방식이 된다.
+### Set-associative mapping
+    address → set index → [way 0 | way 1 | ... | way N]
+                               │
+                               └─ tag match / replacement
+way 수가 늘면 충돌은 줄지만 comparator와 replacement 비용이 커진다.

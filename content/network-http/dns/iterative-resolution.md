@@ -23,3 +23,7 @@ authoritative server가 CNAME을 반환하면 resolver는 target name을 다시 
 
 DNS latency를 application request latency에 숨기려고 무한 connect retry를 추가하지 않는다. Backend에서는 cache hit/miss, referral 단계, authoritative timeout과 최종 address family를 별도 metric으로 남겨 DNS 실패와 이후 connection 실패를 분리한다.
 
+### Iterative resolution
+    resolver → root → TLD → authoritative
+         ← referral   ← referral   ← answer
+resolver가 referral을 따라가 최종 answer 또는 negative answer를 반환한다.

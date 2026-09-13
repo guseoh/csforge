@@ -24,3 +24,8 @@ TLB는 virtual page number와 physical frame/protection의 최근 mapping을 보
 TLB miss 자체는 page fault가 아니다. page table에 접근 가능한 mapping이 있으면 추가 walk 뒤 정상적으로 진행할 수 있지만, mapping이 없거나 권한이 맞지 않으면 fault 처리로 이어진다. TLB는 capacity가 작고 address space별 context가 필요하다. ASID를 쓰지 않으면 context switch 때 flush가 필요하고, mapping을 바꾼 뒤 stale entry를 제거하지 않으면 잘못된 frame이나 권한이 사용될 수 있다.
 
 heap 크기보다 TLB reach와 page size가 성능에 영향을 주는 경우를 구별한다. 서비스 JVM의 allocation 튜닝을 할 때도 OS page와 hardware TLB 측정 없이는 huge page를 만능 해법으로 삼지 않는다.
+### TLB hit/miss
+    virtual page number → TLB
+          ├─ hit  → physical frame
+          └─ miss → page table → fill TLB → retry access
+TLB miss 자체는 page fault가 아니며 mapping·permission 실패가 별도 fault 경로다.

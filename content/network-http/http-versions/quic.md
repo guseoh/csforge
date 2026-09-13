@@ -25,3 +25,8 @@ stream별 delivery와 connection migration은 한 stream의 loss가 다른 strea
 
 HTTP/3 client를 도입할 때는 UDP reachability, firewall/NAT timeout, version negotiation, TCP-based fallback과 observability를 함께 준비한다. connection ID로 network address가 바뀌어도 logical connection을 유지할 수 있으므로 request trace와 server state를 5-tuple 하나에만 묶지 않는다.
 
+### QUIC 위 HTTP/3
+    HTTP/3 → QUIC (UDP)
+                  → encryption + reliability + congestion
+                  → IP network
+UDP path가 막히면 HTTP/2 fallback을 별도 고려한다.

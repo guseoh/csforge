@@ -29,3 +29,11 @@ IEEE 754 binary floating-point는 sign, biased exponent, significand로 값을 �
 
 집계·rate·좌표·금액은 허용 오차와 직렬화 형식을 먼저 정한다. 성능 때문에 float을 선택하더라도 결과를 equality로 비교하지 말고 rounding policy, overflow/NaN 처리, database representation을 계약으로 고정한다.
 
+### 표현과 반올림
+    sign + exponent + significand
+                    │
+                    ▼
+             rounded binary value
+                    │
+                    └─ arithmetic → round again
+표현과 계산의 반올림이 누적되므로 금액 equality는 별도 contract가 필요하다.

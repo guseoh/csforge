@@ -24,3 +24,9 @@ interrupt는 timer·device completion처럼 현재 instruction과 무관하게 �
 handler는 저장된 PC와 status를 보고 원인을 처리한 뒤 resume 또는 terminate를 선택한다. event를 단순 function call로 보면 user/kernel mode, register save, nested interrupt와 재진입 조건을 놓친다. 재개 가능한 exception인지, 외부 interrupt를 다음 instruction 경계에서 처리할지는 ISA와 privilege architecture의 규칙에 따라 확인해야 한다.
 
 signal·system call·device completion을 분석할 때 event source와 handler latency를 분리한다. application retry가 hardware fault를 고치는 것이 아니며, kernel이 어떤 상태를 보존했는지 확인한다.
+### Event와 trap entry
+    asynchronous device/timer event ─┐
+    synchronous instruction fault ───┼─> trap entry
+                                     ▼
+                              cause + saved PC
+둘 다 handler로 control transfer할 수 있지만 발생 시점과 restart semantics가 다르다.

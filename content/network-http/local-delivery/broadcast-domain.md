@@ -25,3 +25,10 @@ broadcast domain과 IP subnet은 자주 함께 설계되지만 같은 개념은 
 
 broadcast가 많아지면 모든 참여 interface와 host가 frame을 수신·폐기하거나 control processing을 수행해 CPU와 link capacity를 소비한다. 따라서 필요한 범위를 VLAN/L3 boundary로 나누고 discovery scope를 제한한다. container bridge에서 service discovery와 DNS가 host 또는 다른 network namespace의 broadcast를 자동으로 보는 것도 아니므로 실제 bridge, route와 resolver 구성을 검증한다.
 
+### Broadcast 범위
+    Host A ── broadcast ──> Host B, Host C
+                    │
+             VLAN / router boundary
+                    └────────── X
+domain은 link-layer flood 범위다.
+

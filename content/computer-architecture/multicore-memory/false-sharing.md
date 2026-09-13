@@ -55,3 +55,9 @@ coherence protocol이 제대로 동작한다면 false sharing 때문에 잘못�
 metrics counter, striped accumulator, queue metadata처럼 여러 worker가 자주 write하는 field에서 core 수를 늘릴수록 throughput이 비정상적으로 떨어진다면 false sharing을 후보로 볼 수 있다. 하지만 lock contention이나 scheduler migration도 비슷한 결과를 낼 수 있으므로 추측으로 padding부터 넣지 않는다.
 
 perf 같은 profiler의 cache-to-cache/false-sharing 분석, hardware counter, core scaling benchmark를 사용해 동일 line의 write contention이 실제로 있는지 확인하고, layout 변경 전후 throughput·tail latency·memory footprint를 비교한다.
+### False sharing
+    one cache line
+    [counter A][counter B][counter C]
+         core A writes     core B writes
+              └──── invalidation ping-pong ────┘
+padding은 line 경쟁을 줄이는 대신 memory footprint와 cache pressure를 늘린다.

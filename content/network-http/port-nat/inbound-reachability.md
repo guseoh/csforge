@@ -27,3 +27,8 @@ NAT traversal에서는 peer가 먼저 outbound mapping을 만들거나, rendezvo
 
 개발 로컬 서비스의 webhook은 `localhost`나 private IP로 외부에 노출되지 않는다. public ingress나 tunnel을 사용할 때는 translation을 도달성의 한 단계로만 보고 인증, replay 방지, source validation과 listener 범위를 함께 설계한다.
 
+### Unsolicited inbound
+    new external packet
+      ├─ existing mapping → internal endpoint
+      └─ no mapping → drop unless forwarding/policy
+port forwarding 뒤에도 listener와 return route가 필요하다.

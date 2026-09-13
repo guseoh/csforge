@@ -26,3 +26,8 @@ TCP는 하나의 connection 안에서 byte를 순서대로 application에 전달
 HTTP/2는 여러 request/response stream을 하나의 TCP connection에 frame으로 multiplex하지만, TCP 아래에서는 모든 frame bytes가 같은 ordered byte stream에 놓인다. 따라서 transport의 missing byte 범위가 복구될 때까지 그 뒤에 놓인 여러 HTTP/2 stream frame 전달이 함께 지연될 수 있다. QUIC 기반 HTTP/3은 여러 stream의 reliability를 transport에서 분리해 **한 QUIC stream의 missing data가 다른 stream의 ordered delivery를 TCP와 같은 방식으로 막지 않도록** 설계한다. 다만 QUIC connection 자체의 congestion control과 shared network loss가 사라지는 것은 아니다.
 
 Backend에서 HTTP/2와 HTTP/3 latency를 비교할 때 multiplexing 여부만 보지 말고 packet loss·RTT·congestion·server capacity를 같은 조건에서 측정한다. connection 수를 무작정 늘리면 TCP HOL의 영향을 분산할 수 있어도 handshake·socket·memory와 congestion 경쟁 비용이 커질 수 있다.
+### TCP stream HOL
+    stream: [A][A][lost][A][B][B]
+                       ▲ missing byte
+    application delivery: A와 B 모두 대기
+ordered stream은 missing position 뒤 bytes를 먼저 전달하지 않는다.

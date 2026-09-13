@@ -24,3 +24,7 @@ application idempotency는 더 구체적인 logical command를 retry할 때 paym
 HTTP가 PUT·DELETE와 safe methods를 idempotent라고 정의하더라도 application의 모든 side effect를 자동 dedup하지 않는다. 반대로 POST 같은 non-idempotent method도 server가 operation identity와 결과 저장을 제공하면 특정 application contract 안에서 safe retry를 지원할 수 있지만, 그 사실이 POST method 자체를 HTTP 의미상 idempotent로 바꾸는 것은 아니다.
 
 CSForge의 import Apply와 quiz submit은 transport retry와 DB commit이 겹칠 수 있다. stable operation key를 canonical uniqueness와 transaction boundary에 묶고 duplicate request에는 원래 결과 또는 payload mismatch conflict를 반환한다. 검색 indexing·notification처럼 DB 밖의 파생 작업은 별도 idempotent consumer와 recovery를 둔다.
+### Idempotency 경계
+    method semantics → intended effect rule
+    request key ─────→ dedup/replay state → external effect
+method idempotence만으로 payment/email dedup이 되지 않는다.

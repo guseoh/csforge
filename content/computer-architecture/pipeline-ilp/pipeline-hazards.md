@@ -44,3 +44,8 @@ structural hazard는 resource 구성이나 scheduling으로, RAW data hazard는 
 ### Backend 성능과 연결해서 볼 때
 
 source code의 dependency만 보고 실제 pipeline 비용을 단정할 수는 없다. compiler가 instruction을 재배치할 수 있고 target CPU의 execution width, forwarding path, branch predictor, cache hierarchy도 다르다. 성능 문제를 분석할 때는 `pipeline이 느리다`고 뭉뚱그리지 말고 branch miss, stalled cycles, cache miss, IPC 같은 hardware counter와 workload를 함께 봐야 한다. 반대로 Java Memory Model이나 thread 간 happens-before 규칙은 CPU pipeline hazard와 다른 층위의 contract이므로 서로 대체해서 설명하면 안 된다.
+### Hazard 종류
+    structural: 같은 resource를 동시에 요구
+    data:       생산 값이 소비 시점에 아직 없음
+    control:    다음 PC가 아직 결정되지 않음
+원인마다 forwarding, stall, prediction 등 해결 경계가 다르다.

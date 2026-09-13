@@ -23,3 +23,9 @@ header compression은 QPACK state로 제공되고, stream reset·connection clos
 
 HTTP/3를 추가해도 origin application contract, method idempotency와 authorization은 바뀌지 않는다. proxy, CDN, load balancer가 실제로 어느 hop에서 HTTP/3를 종료하고 다음 hop을 HTTP/2/1.1로 변환하는지 trace하며, UDP 차단 시 fallback latency도 별도로 측정한다.
 
+### HTTP/3 stream path
+    HTTP/3 → QUIC connection
+              ├─ stream A
+              ├─ stream B
+              └─ stream C
+stream 분리로 transport HOL은 줄지만 app dependency는 남는다.

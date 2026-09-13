@@ -25,3 +25,9 @@ flow control이 충분해도 여러 flow가 같은 bottleneck을 사용하면 co
 
 Backend는 timeout 직후 모든 request를 동시에 재시도하지 않고 exponential backoff와 jitter, bounded concurrency를 사용한다. autoscaling이나 connection pool 확대도 downstream network와 DB capacity를 넘을 수 있으므로 admission control과 transport metrics를 함께 본다.
 
+### Congestion feedback
+    sender ── in-flight bytes (cwnd) ──> shared path
+                                      │ queue/loss/RTT
+                                      ▼
+                              sender rate adjustment
+rwnd는 receiver buffer, cwnd는 network path 상태의 제한이다.

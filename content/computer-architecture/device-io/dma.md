@@ -24,3 +24,12 @@ CPU가 buffer 주소·길이·방향을 controller에 설정하면 DMA가 device
 CPU가 buffer를 바꾼 직후 DMA가 읽거나 DMA가 쓴 buffer를 CPU cache가 읽으면 stale copy가 될 수 있다. coherent mapping을 쓸지 streaming mapping에서 map/unmap·sync를 수행할지는 platform과 API 계약으로 결정한다. CPU가 device에 buffer ownership을 넘긴 동안에는 buffer를 수정·재사용하지 않고, 완료 후 필요한 memory barrier와 sync를 거쳐 ownership을 되찾는다.
 
 네트워크·storage throughput을 평가할 때 CPU 사용률이 낮다고 전송이 free인 것은 아니다. buffer lifetime, completion queue, backpressure와 error recovery를 함께 설계한다.
+### DMA ownership 흐름
+    CPU prepare buffer/descriptor
+              │ hand ownership to device
+              ▼
+    device/DMA transfer ──> completion/error
+              │
+              ▼
+    CPU sync and reclaim buffer
+completion 전 buffer 재사용은 device가 읽는 bytes를 바꿀 수 있다.

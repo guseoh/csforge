@@ -44,3 +44,8 @@ page mapping에는 physical frame 번호뿐 아니라 읽기·쓰기·실행 가
 ### Backend에서 문제를 분석할 때
 
 segmentation fault나 native access violation을 일반 application exception처럼 retry해서 해결하려고 하면 안 된다. use-after-free, 잘못된 mmap lifetime, protection violation, invalid native pointer처럼 mapping/lifetime correctness를 먼저 확인해야 한다. JVM heap 성능 문제에서도 MMU 자체를 먼저 의심하기보다 TLB miss, page fault, RSS, page-table footprint가 실제로 병목인지 측정한 뒤 판단한다.
+### MMU translation path
+    virtual address → TLB
+          ├─ hit  → physical frame + permission check
+          └─ miss → page-table walk → TLB fill → retry
+permission은 현재 virtual mapping의 조건이며 physical frame만의 전역 속성이 아니다.
