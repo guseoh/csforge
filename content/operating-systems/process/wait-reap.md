@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.process.wait-reap
 topicContentKey: operating-systems.core.process
 slug: wait-reap
-title: "Wait and Reap"
+title: "Wait·Reap"
 summary: "parent가 종료된 child의 status를 수집하고 남은 process metadata를 회수하는 이유를 설명한다."
 level: 2
 status: PUBLISHED
@@ -24,7 +24,7 @@ references:
     recommendation: "Pipe capacity가 제한되어 있고 full pipe에 대한 blocking write가 reader가 공간을 만들 때까지 멈출 수 있음을 확인한다."
     displayOrder: 2
 ---
-# Wait and Reap
+# Wait·Reap
 
 Child process가 실행을 끝냈다고 해서 parent가 알아야 할 정보까지 즉시 사라지면 child의 성공/실패 결과를 수집할 수 없다. Unix-like OS는 parent가 termination status를 확인할 수 있도록 종료된 child에 대한 최소 metadata를 남길 수 있고, parent는 `wait` 계열 interface를 통해 이를 수집한다. 이 회수 과정을 보통 **reap**이라고 부른다.
 

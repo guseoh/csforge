@@ -45,7 +45,7 @@ controller method
 
 client가 JSON body를 보내면서 `Content-Type: text/plain`이라고 하면 JSON converter가 선택되지 않거나 unsupported media type으로 실패할 수 있습니다. JSON 문법이 맞는지보다 **media type contract가 먼저 맞아야** 합니다.
 
-### `Accept`는 response representation 협상과 연결된다
+### `Accept`는 응답 representation 협상과 연결된다
 
 client는 `Accept` header로 받을 수 있는 representation을 표현할 수 있고, Spring MVC는 return value를 쓸 converter/media type을 결정합니다.
 
@@ -54,21 +54,21 @@ client는 `Accept` header로 받을 수 있는 representation을 표현할 수 �
 OrderResponse get(...) { ... }
 ```
 
-response object가 Java object라고 해서 wire에 object memory가 전송되는 것이 아니라 converter가 JSON bytes 등으로 serialize합니다.
+응답 object가 Java object라고 해서 wire에 object memory가 전송되는 것이 아니라 converter가 JSON bytes 등으로 serialize합니다.
 
-### parsing과 validation은 다른 실패다
+### parsing과 검증은 다른 실패다
 
 ```json
 {"quantity":"abc"}
 ```
 
-`quantity`가 int라면 JSON/type conversion 단계에서 request body를 object로 만들지 못할 수 있습니다. 반면:
+`quantity`가 int라면 JSON/type conversion 단계에서 요청 본문을 object로 만들지 못할 수 있습니다. 반면:
 
 ```json
 {"quantity":0}
 ```
 
-object 생성은 가능하지만 `@Min(1)` validation에서 실패할 수 있습니다.
+object 생성은 가능하지만 `@Min(1)` 검증에서 실패할 수 있습니다.
 
 ```text
 invalid JSON/type -> message conversion failure
@@ -77,7 +77,7 @@ valid JSON but rule violation -> validation failure
 
 두 오류를 같은 “400”으로 응답하더라도 log와 field error contract에서 원인을 구분하면 debugging이 쉬워집니다.
 
-### entity를 그대로 response로 반환할 때 문제가 생기는 이유
+### entity를 그대로 응답으로 반환할 때 문제가 생기는 이유
 
 message converter는 getter/property를 따라 serialization할 수 있습니다. JPA entity를 그대로 반환하면 lazy association 접근이 serialization 중 발생해 추가 query나 `LazyInitializationException`을 만들 수 있고, 내부 field가 API에 노출될 수도 있습니다.
 
@@ -91,6 +91,6 @@ JSON serialization
        └─ 의도하지 않은 field 노출 가능
 ```
 
-그래서 API response DTO를 분리하는 이유가 Spring MVC message conversion과 JPA fetch behavior에서 함께 드러납니다.
+그래서 API 응답 DTO를 분리하는 이유가 Spring MVC message conversion과 JPA fetch behavior에서 함께 드러납니다.
 
 `HttpMessageConverter`를 이해하면 `@RequestBody`를 annotation 암기로 보지 않고 **HTTP representation과 Java object 사이의 명확한 변환 경계**로 볼 수 있습니다.

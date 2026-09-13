@@ -20,17 +20,17 @@ references:
 
 Bean scope는 “이 annotation을 붙이면 어떻게 생성된다”는 문법보다 **같은 Bean definition을 조회할 때 어떤 instance를 얼마나 오래 공유할 것인가**를 정하는 수명 정책입니다.
 
-가장 흔한 singleton은 container가 하나의 공유 instance를 관리합니다. prototype은 요청할 때마다 새 instance를 만들고, web-aware context의 request scope는 HTTP request 하나 동안 같은 instance를 사용합니다.
+가장 흔한 singleton은 container가 하나의 공유 instance를 관리합니다. prototype은 요청할 때마다 새 instance를 만들고, web-aware context의 request scope는 HTTP 요청 하나 동안 같은 instance를 사용합니다.
 
 | scope     | instance 공유 범위                      | 대표적인 사용 의미                                |
 | --------- | --------------------------------------- | ------------------------------------------------- |
 | singleton | Spring container의 해당 Bean definition | stateless service, repository, client             |
 | prototype | Bean 요청/생성 시 새 instance           | 독립 mutable 작업 객체가 정말 필요한 경우         |
-| request   | HTTP request 하나                       | request-local state를 Bean으로 표현해야 하는 경우 |
+| 요청   | HTTP 요청 하나                       | 요청-local state를 Bean으로 표현해야 하는 경우 |
 
 ### scope는 “객체가 몇 개인가”보다 “누가 같은 객체를 보는가”가 중요하다
 
-request가 두 개 들어오는 상황을 비교해 보겠습니다.
+요청이 두 개 들어오는 상황을 비교해 보겠습니다.
 
 ```text
 Request A ──► singleton Service #1
@@ -40,7 +40,7 @@ Request A ──► request Bean #A
 Request B ──► request Bean #B
 ```
 
-singleton service field에 request별 값을 저장하면 A와 B가 같은 memory state를 만집니다. request scope Bean은 각 request마다 분리되지만, 그렇다고 모든 request data를 Bean으로 만들 필요는 없습니다. method parameter나 local variable이 더 단순한 경우가 많습니다.
+singleton service field에 요청별 값을 저장하면 A와 B가 같은 memory state를 만집니다. request scope Bean은 각 요청마다 분리되지만, 그렇다고 모든 요청 data를 Bean으로 만들 필요는 없습니다. method parameter나 local variable이 더 단순한 경우가 많습니다.
 
 ### prototype은 “container가 평생 관리해 준다”는 뜻이 아니다
 
@@ -70,7 +70,7 @@ class CounterService {
 ### scope 선택은 실제 state lifetime에서 시작한다
 
 - application 전체에서 공유해도 되는 stateless collaborator인가?
-- request 하나에만 존재해야 하는 mutable state인가?
+- 요청 하나에만 존재해야 하는 mutable state인가?
 - 호출마다 완전히 독립된 객체가 필요한가?
 - 짧은 scope 객체를 긴 scope 객체가 붙잡는 문제는 없는가?
 

@@ -3,7 +3,7 @@ kind: concept
 contentKey: dsa.core.complexity.input-size-operation-count
 topicContentKey: dsa.core.complexity
 slug: input-size-operation-count
-title: "Input Size and Operation Count"
+title: "Input Size·Operation Count"
 summary: "입력 크기와 반복되는 기본 연산 수를 세어 비용을 모델링한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "입력 크기와 basic operation count를 기준으로 linear scan 비용을 분석한다."
     displayOrder: 1
 ---
-# Input Size and Operation Count
+# Input Size·Operation Count
 
 알고리즘 비용을 말하려면 먼저 입력 크기 `n`이 무엇인지 정해야 한다. 배열 길이, 정점과 간선 수, key의 bit 수처럼 실제 반복 횟수를 결정하는 양이 다를 수 있으며, 단순히 객체 개수만 세면 숨은 문자열 길이나 edge 수를 놓친다.
 

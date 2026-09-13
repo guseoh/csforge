@@ -39,4 +39,4 @@ clean file-backed page는 필요하면 원본 file에서 다시 읽을 수 있�
 
 ### Backend 연결
 
-OS page replacement와 application cache eviction은 서로 다른 계층이지만 physical memory를 두고 경쟁한다. JVM heap이나 in-memory cache를 크게 잡아 file-backed working set을 계속 밀어내면 application cache hit는 좋아져도 major fault와 I/O latency가 증가할 수 있다. heap·RSS·page cache·fault를 하나의 memory budget으로 관찰한다.
+OS page replacement와 application cache eviction은 서로 다른 계층이지만 physical memory를 두고 경쟁한다. JVM heap이나 in-memory cache를 크게 잡아 file-backed working set을 계속 밀어내면 application cache hit는 좋아져도 major fault와 I/O 지연 시간이 증가할 수 있다. heap·RSS·page cache·fault를 하나의 memory budget으로 관찰한다.

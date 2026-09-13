@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.io.readiness-vs-completion
 topicContentKey: operating-systems.core.io
 slug: readiness-vs-completion
-title: "Readiness versus Completion"
+title: "Readiness / Completion"
 summary: "I/O를 지금 시도할 수 있다는 readiness와 이미 제출한 operation의 결과가 나온 completion을 구분한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "Linux readiness model에서 interest list와 ready list, level/edge-triggered semantics를 확인한다."
     displayOrder: 1
 ---
-# Readiness versus Completion
+# Readiness / Completion
 
 고동시성 I/O를 설명할 때 readiness와 completion을 같은 event model로 취급하면 state machine이 쉽게 꼬인다. 둘은 kernel이 caller에게 알려주는 **사건의 의미 자체가 다르다.**
 
@@ -29,7 +29,7 @@ readiness model에서 `readable` event는 일반적으로 `지금 read를 시도
 
 예를 들어 HTTP body가 100KiB인데 현재 8KiB만 socket에 도착했다면 readiness 뒤 read는 8KiB만 반환할 수 있다. application은 남은 92KiB를 계속 기다리고 protocol parser state를 유지해야 한다.
 
-write readiness도 비슷하다. `writable`은 send buffer에 어느 정도 공간이 생겼다는 의미일 수 있지만 큰 response 전체가 한 번에 전송되었다는 뜻은 아니다.
+write readiness도 비슷하다. `writable`은 send buffer에 어느 정도 공간이 생겼다는 의미일 수 있지만 큰 응답 전체가 한 번에 전송되었다는 뜻은 아니다.
 
 ### Completion은 제출한 operation의 결과를 알려준다
 
@@ -48,7 +48,7 @@ completion model에서는 caller가 `이 buffer에 최대 N byte를 읽어 달�
 
 level-triggered는 조건이 계속 true인 동안 event를 다시 받을 수 있고, edge-triggered는 상태 변화에 더 민감한 방식이라 non-blocking drain loop를 제대로 구현하지 않으면 unread data가 남은 채 다음 notification을 기다리는 오류가 생길 수 있다. 이는 completion vs readiness 구분과 별도의 문제다.
 
-Backend에서는 `socket readable`, `request body parsed`, `business operation completed`, `response bytes fully written`을 별도 state로 둔다. event-loop metric도 ready-event 수만으로 request throughput을 대신 설명하지 않는다.
+Backend에서는 `socket readable`, `request body parsed`, `business operation completed`, `response bytes fully written`을 별도 state로 둔다. event-loop metric도 ready-event 수만으로 요청 처리량을 대신 설명하지 않는다.
 
 ### 면접에서 이렇게 나옵니다
 

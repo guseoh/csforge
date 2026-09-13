@@ -131,7 +131,7 @@ Text block이 platform default charset 문제를 해결해 주는 기능은 아�
 2. 공통 들여쓰기와 실제 보존하려는 공백을 구분한다.
 3. 마지막 줄바꿈이 결과에 포함되는지 본다.
 4. escape가 줄바꿈이나 공백을 어떻게 바꾸는지 확인한다.
-5. formatting, JSON validation, SQL parameter binding, charset 처리는 별도 문제임을 구분한다.
+5. formatting, JSON 검증, SQL parameter binding, charset 처리는 별도 문제임을 구분한다.
 
 ### 학습 후 스스로 설명해 보기
 

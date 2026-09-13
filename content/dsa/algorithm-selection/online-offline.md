@@ -3,7 +3,7 @@ kind: concept
 contentKey: dsa.core.algorithm-selection.online-offline
 topicContentKey: dsa.core.algorithm-selection
 slug: online-offline
-title: "Online and Offline"
+title: "Online·Offline"
 summary: "미래 입력을 볼 수 있는지 여부가 가능한 정렬·전처리·최적화 전략을 어떻게 제한하는지 설명한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "입력 크기와 basic operation count를 기준으로 linear scan 비용을 분석한다."
     displayOrder: 1
 ---
-# Online and Offline
+# Online·Offline
 
 알고리즘은 입력 전체를 미리 볼 수 있는지에 따라 선택지가 크게 달라진다. **offline** 문제는 전체 입력을 확보한 뒤 정렬, 전처리, 전역 비교를 수행할 수 있다. **online** 문제는 다음 입력을 모르는 상태에서 현재까지의 정보만으로 결정을 내리거나 상태를 갱신해야 한다.
 
@@ -27,7 +27,7 @@ references:
 
 Online 알고리즘의 어려움은 단순히 입력이 stream이라는 데 있지 않다. **현재 선택이 미래 입력 때문에 후회할 선택이 될 수 있는데도 되돌릴 수 없을 수 있다는 것**이 핵심이다. 따라서 offline optimal solution과 같은 품질을 항상 보장하지 못하고, 문제에 따라 competitive ratio나 별도의 approximation 보장을 사용하기도 한다.
 
-반대로 모든 입력을 모을 때까지 기다려 offline으로 바꾸면 더 좋은 전역 최적화를 할 수 있지만 latency와 memory가 늘어난다. 1초 안에 사용자에게 결과를 보여줘야 하는 요청에서 하루치 데이터를 모두 기다리는 방식은 정답이 아니다.
+반대로 모든 입력을 모을 때까지 기다려 offline으로 바꾸면 더 좋은 전역 최적화를 할 수 있지만 지연 시간과 memory가 늘어난다. 1초 안에 사용자에게 결과를 보여줘야 하는 요청에서 하루치 데이터를 모두 기다리는 방식은 정답이 아니다.
 
 ### bounded state가 필요한 이유
 

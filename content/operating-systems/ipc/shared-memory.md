@@ -46,6 +46,6 @@ shared-memory object 이름을 제거하는 것과 이미 mapping한 process가 
 
 ### 가장 빠른 IPC가 항상 가장 단순하지는 않다
 
-shared memory는 copy를 줄일 수 있지만 framing·synchronization·crash recovery와 schema compatibility를 application이 더 직접 책임진다. 작은 control message나 low-throughput communication에서는 pipe/socket의 명확한 ownership이 오히려 유지보수에 유리할 수 있다.
+shared memory는 copy를 줄일 수 있지만 framing·synchronization·crash recovery와 schema compatibility를 application이 더 직접 책임진다. 작은 control message나 low-처리량 communication에서는 pipe/socket의 명확한 ownership이 오히려 유지보수에 유리할 수 있다.
 
 CSForge 같은 local-first application에서 shared memory를 도입할 이유가 없다면 단순한 process boundary를 유지한다. 실제 profiling에서 large local IPC copy가 병목으로 확인될 때만 후보로 검토하고 PostgreSQL canonical state와 혼동하지 않는다.

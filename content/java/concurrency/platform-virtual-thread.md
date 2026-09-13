@@ -123,7 +123,7 @@ virtual thread
             └─ carrier pinning 가능
 ```
 
-Pinning이 곧 correctness 오류라는 뜻은 아닙니다. 다만 pinned virtual thread가 오래 blocking하면 carrier를 다른 virtual thread가 사용할 수 없어 scalability가 떨어질 수 있습니다. 이 문제는 JFR의 virtual-thread 관련 event와 실제 thread/latency 관찰로 확인해야 합니다.
+Pinning이 곧 correctness 오류라는 뜻은 아닙니다. 다만 pinned virtual thread가 오래 blocking하면 carrier를 다른 virtual thread가 사용할 수 없어 scalability가 떨어질 수 있습니다. 이 문제는 JFR의 virtual-thread 관련 event와 실제 thread/지연 시간 관찰로 확인해야 합니다.
 
 ### virtual thread는 CPU를 늘려 주는 기능이 아니다
 
@@ -135,7 +135,7 @@ for (int i = 0; i < 1_000_000; i++) {
 
 CPU-bound 작업을 백만 개의 virtual thread로 만들었다고 CPU core가 백만 개가 되는 것은 아닙니다. 실제 계산은 제한된 CPU 자원에서 실행됩니다.
 
-Virtual thread의 주된 강점은 **많은 blocking task를 값싼 thread 형태로 표현해 throughput 확장에 도움을 주는 것**이지 CPU-bound 계산의 병렬 처리량이나 개별 요청 latency를 자동으로 개선하는 기능이 아닙니다.
+Virtual thread의 주된 강점은 **많은 blocking task를 값싼 thread 형태로 표현해 처리량 확장에 도움을 주는 것**이지 CPU-bound 계산의 병렬 처리량이나 개별 요청 지연 시간을 자동으로 개선하는 기능이 아닙니다.
 
 ### virtual thread를 작은 fixed pool로 재사용하려는 사고를 그대로 가져오지 않는다
 

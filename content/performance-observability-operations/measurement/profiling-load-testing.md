@@ -32,7 +32,7 @@ Profiler 결과는 특정 workload·환경에서의 원인 후보를 찾는 데 
 
 ### 실험을 재현 가능하게 만든다
 
-build version, JVM/runtime, resource limit, dataset, cache state, request mix, duration, warm-up, steady-state 구간을 기록합니다. baseline과 변경 버전을 같은 조건에서 비교하고, 한 번의 최고 기록보다 p95/p99, error rate, GC·CPU·queue 변화의 confidence를 봅니다.
+build version, JVM/runtime, resource limit, dataset, cache state, 요청 mix, duration, warm-up, steady-state 구간을 기록합니다. baseline과 변경 버전을 같은 조건에서 비교하고, 한 번의 최고 기록보다 p95/p99, error rate, GC·CPU·queue 변화의 confidence를 봅니다.
 
 ### production profiling은 안전 경계가 필요하다
 
@@ -48,4 +48,4 @@ sampling과 짧은 recording으로 overhead와 민감 데이터 노출을 제한
 
 ### 면접에서 설명한다면
 
-Profiler는 코드·runtime 내부의 시간과 자원 사용 위치를 찾고, load test는 현실적인 부하에서 capacity와 tail latency를 확인합니다. 둘을 섞지 않고 같은 dataset·resource·warm-up·request mix로 baseline을 만들며, 결과는 p99·error rate·saturation과 함께 해석합니다.
+Profiler는 코드·runtime 내부의 시간과 자원 사용 위치를 찾고, load test는 현실적인 부하에서 capacity와 꼬리 지연 시간(tail latency)을 확인합니다. 둘을 섞지 않고 같은 dataset·resource·warm-up·요청 mix로 baseline을 만들며, 결과는 p99·error rate·saturation과 함께 해석합니다.

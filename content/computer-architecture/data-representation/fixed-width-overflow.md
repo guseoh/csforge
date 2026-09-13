@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.data-representation.fixed-width-overflow
 topicContentKey: computer-architecture.core.data-representation
 slug: fixed-width-overflow
-title: "Fixed-Width Arithmetic and Overflow"
+title: "Fixed-Width Arithmetic·Overflow"
 summary: "고정 폭 연산의 overflow와 wraparound를 추론한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "고정 폭 정수와 수 표현의 기초를 확인한다."
     displayOrder: 1
 ---
-# Fixed-Width Arithmetic and Overflow
+# Fixed-Width Arithmetic·Overflow
 
 ### 저장할 수 있는 폭의 경계
 

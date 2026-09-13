@@ -3,7 +3,7 @@ kind: concept
 contentKey: dsa.core.complexity.invariant-correctness
 topicContentKey: dsa.core.complexity
 slug: invariant-correctness
-title: "Invariant and Correctness"
+title: "Invariant·Correctness"
 summary: "precondition·invariant·progress·termination을 연결해 loop가 왜 정답을 만드는지 증명한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "loop invariant의 initialization, maintenance, progress와 termination reasoning을 확인한다."
     displayOrder: 1
 ---
-# Invariant and Correctness
+# Invariant·Correctness
 
 ### 테스트가 많다고 알고리즘이 모든 입력에서 맞다는 증명이 되지는 않는다
 
@@ -75,7 +75,7 @@ while left < right:
 
 ### 자료구조 invariant도 같은 방식으로 operation을 검증한다
 
-Invariant는 loop에만 쓰이지 않는다. Heap에서는 부모 priority가 자식보다 앞선다는 조건, doubly linked list에서는 `node.next.prev == node` 같은 link consistency, Union-Find에서는 parent pointer가 root로 이어진다는 구조적 조건이 operation 전후에 유지되어야 한다.
+Invariant는 loop에만 쓰이지 않는다. Heap에서는 부모 priority가 자식보다 앞선다는 조건, doubly linked list에서는 `node.next.prev == node` 같은 link 일관성, Union-Find에서는 parent pointer가 root로 이어진다는 구조적 조건이 operation 전후에 유지되어야 한다.
 
 예를 들어 linked list 삭제가 target node를 list에서 제거했더라도 `prev.next`만 수정하고 `next.prev`를 갱신하지 않았다면 자료구조 invariant가 깨진다. 당장 한 번의 조회가 성공해도 다음 reverse traversal이나 삭제에서 실패할 수 있다.
 

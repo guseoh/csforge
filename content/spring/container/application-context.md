@@ -73,7 +73,7 @@ Spring reference에서 `ApplicationContext`는 `BeanFactory` 기능을 포함하
 
 이 기능들을 모두 application service에서 직접 사용해야 한다는 뜻은 아닙니다. 오히려 “container가 제공한다”와 “내 domain object가 알아야 한다”를 구분해야 합니다.
 
-### startup 실패를 읽을 때 context 단계로 나누면 원인이 좁아진다
+### 시작 실패를 읽을 때 context 단계로 나누면 원인이 좁아진다
 
 예를 들어 아래 세 오류는 비슷하게 “Spring이 안 뜬다”로 보이지만 발생 위치가 다릅니다.
 
@@ -87,6 +87,6 @@ Spring reference에서 `ApplicationContext`는 `BeanFactory` 기능을 포함하
 
 ### 모든 객체를 container에 넣는 것이 목적은 아니다
 
-`Money`, `OrderLine`, command DTO처럼 request/use-case 실행 중 잠깐 생성되는 값 객체까지 Bean으로 만들 필요는 없습니다. Spring Bean은 주로 application lifecycle 동안 관리할 collaborator, configuration, infrastructure adapter처럼 **container가 생성·연결·수명을 관리할 가치가 있는 객체**에 사용합니다.
+`Money`, `OrderLine`, command DTO처럼 요청/use-case 실행 중 잠깐 생성되는 값 객체까지 Bean으로 만들 필요는 없습니다. Spring Bean은 주로 application lifecycle 동안 관리할 collaborator, configuration, infrastructure adapter처럼 **container가 생성·연결·수명을 관리할 가치가 있는 객체**에 사용합니다.
 
 `ApplicationContext`를 잘 이해하려면 “Bean을 꺼내는 API”보다 “어떤 객체를 container가 관리해야 하고, 그 객체 그래프가 언제 완성되는가”를 먼저 설명할 수 있어야 합니다.

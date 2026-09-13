@@ -42,7 +42,7 @@ Writer가 실제로 lock을 획득한 동안에는 새로운 reader와 다른 wr
 
 Read-write lock의 핵심 계약은 reader 공유와 writer 배타성이지, 모든 구현의 fairness 정책이 같다는 뜻은 아닙니다. Waiting writer가 있을 때 새 reader를 계속 허용하는지, writer를 우선하는지, 어떤 순서로 waiter를 깨우는지는 implementation과 scheduling policy에 따라 달라질 수 있습니다.
 
-Reader-preference 형태에서는 reader가 계속 들어와 writer가 오래 기다리는 starvation이 생길 수 있습니다. 반대로 writer를 강하게 우선하면 새 reader의 latency가 늘 수 있습니다. 따라서 “read-write lock이면 writer starvation이 반드시 생긴다”가 아니라 **선택한 admission/fairness policy가 어떤 latency trade-off를 만드는지**를 봐야 합니다.
+Reader-preference 형태에서는 reader가 계속 들어와 writer가 오래 기다리는 starvation이 생길 수 있습니다. 반대로 writer를 강하게 우선하면 새 reader의 지연 시간이 늘 수 있습니다. 따라서 “read-write lock이면 writer starvation이 반드시 생긴다”가 아니라 **선택한 admission/fairness policy가 어떤 지연 시간 trade-off를 만드는지**를 봐야 합니다.
 
 Lock upgrade와 downgrade도 공통 보장으로 가정하지 않습니다. 여러 reader가 각자 read lock을 잡은 채 write lock으로 upgrade하려 하면 서로가 reader를 놓기를 기다리는 형태가 될 수 있으므로 API가 어떤 upgrade semantics를 제공하는지 별도로 확인해야 합니다.
 
@@ -50,7 +50,7 @@ Lock upgrade와 downgrade도 공통 보장으로 가정하지 않습니다. 여�
 
 Read가 99%라고 해도 critical section이 매우 짧고 contention이 거의 없다면 reader count 관리, atomic state 변경, wakeup 같은 추가 비용이 단순 mutex보다 클 수 있습니다. 반대로 read critical section이 길고 여러 CPU가 실제로 병렬 read를 수행할 수 있다면 이득이 커질 수 있습니다.
 
-그래서 선택할 때는 read/write 비율뿐 아니라 **critical-section 길이, 동시 thread 수, 실제 contention, writer latency 요구와 fairness 정책**을 함께 측정합니다. JVM 내부의 in-process lock과 DB의 row/table lock은 서로 다른 계층의 동기화이므로 같은 이름만 보고 동일한 semantics로 설명하지 않습니다.
+그래서 선택할 때는 read/write 비율뿐 아니라 **critical-section 길이, 동시 thread 수, 실제 contention, writer 지연 시간 요구와 fairness 정책**을 함께 측정합니다. JVM 내부의 in-process lock과 DB의 row/table lock은 서로 다른 계층의 동기화이므로 같은 이름만 보고 동일한 semantics로 설명하지 않습니다.
 
 ### 면접에서 이렇게 나옵니다
 
@@ -58,4 +58,4 @@ Read가 99%라고 해도 critical section이 매우 짧고 contention이 거의 
 
 아닙니다. Reader concurrency가 실제로 필요한 만큼 contention과 critical-section 길이가 있어야 추가 관리 비용을 상쇄할 수 있습니다.
 
-Writer latency와 fairness도 함께 봐야 하므로 read 비율 하나만으로 결정할 수 없습니다.
+Writer 지연 시간과 fairness도 함께 봐야 하므로 read 비율 하나만으로 결정할 수 없습니다.

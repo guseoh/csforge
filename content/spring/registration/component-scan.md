@@ -4,7 +4,7 @@ contentKey: spring.core.registration.component-scan
 topicContentKey: spring.core.registration
 slug: component-scan
 title: "컴포넌트 스캔"
-summary: "Spring이 scan 시작 package 아래에서 stereotype 후보를 발견해 Bean definition으로 등록하는 흐름과 scan 범위가 startup 결과를 바꾸는 이유를 이해한다"
+summary: "Spring이 scan 시작 package 아래에서 stereotype 후보를 발견해 Bean definition으로 등록하는 흐름과 scan 범위가 시작 결과를 바꾸는 이유를 이해한다"
 level: 1
 status: PUBLISHED
 displayOrder: 20
@@ -70,7 +70,7 @@ BeanDefinition 등록
 @ComponentScan("com") // 보통 너무 넓다.
 ```
 
-이런 설정은 예상하지 못한 Bean 충돌이나 startup side effect를 만들 수 있습니다. application package 구조와 scan boundary를 일치시키면 “왜 이 Bean이 들어왔는지”를 추론하기 쉬워집니다.
+이런 설정은 예상하지 못한 Bean 충돌이나 시작 side effect를 만들 수 있습니다. application package 구조와 scan boundary를 일치시키면 “왜 이 Bean이 들어왔는지”를 추론하기 쉬워집니다.
 
 ### 테스트 slice에서도 scan 범위가 달라진다
 

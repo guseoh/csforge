@@ -58,12 +58,12 @@ maximum speedup = 1 / (1 - p)
 
 ### 병렬화에서도 serial fraction이 남는다
 
-Amdahl's Law는 multicore 병렬화에도 자주 적용된다. 병렬화 가능한 부분을 많은 core로 나누더라도 request setup, synchronization, merge, single-thread section 같은 serial 부분이 남으면 전체 speedup이 제한된다.
+Amdahl's Law는 multicore 병렬화에도 자주 적용된다. 병렬화 가능한 부분을 많은 core로 나누더라도 요청 setup, synchronization, merge, single-thread section 같은 serial 부분이 남으면 전체 speedup이 제한된다.
 
 Core 수를 늘릴수록 coherence, scheduling, memory bandwidth contention 같은 새로운 overhead까지 생길 수 있으므로 실제 결과는 단순한 이론 상한보다 낮을 수 있다.
 
 ### 개선 전에 전체 profile을 먼저 보는 이유
 
-Backend 성능 작업에서는 먼저 end-to-end trace/profile로 시간이 어디에 쓰이는지 측정한다. 특정 query나 function이 10배 빨라졌다는 사실보다 그 부분이 전체 latency에서 차지하던 비율이 중요하다.
+Backend 성능 작업에서는 먼저 end-to-end trace/profile로 시간이 어디에 쓰이는지 측정한다. 특정 query나 function이 10배 빨라졌다는 사실보다 그 부분이 전체 지연 시간에서 차지하던 비율이 중요하다.
 
 따라서 성능 PR에는 `부분 speedup`과 `전체 speedup`을 분리해서 기록한다. 개선 뒤 bottleneck이 다른 구간으로 이동했다면 다시 전체 profile을 측정해 다음 우선순위를 정한다.

@@ -27,7 +27,7 @@ references:
 
 데이터가 이미 정렬돼 있다면 exact lookup에는 binary search를 사용할 수 있고, 두 집합의 교집합이나 합 조건을 찾는 문제에서는 two-pointer가 유리할 수 있다. 하지만 이 정렬 상태를 유지하기 위해 매 insert마다 큰 이동 비용을 지불해야 한다면 write-heavy workload에서는 hash나 tree가 더 나을 수 있다.
 
-중복도 마찬가지다. distinct key가 적으면 counting/frequency 구조가 잘 맞을 수 있고, 중복이 매우 많은 quicksort에서는 pivot 선택과 3-way partition 여부가 실제 비용에 영향을 준다. hash table에서는 key 분포와 hash quality가 좋지 않으면 특정 bucket이나 probe cluster에 작업이 몰려 expected `O(1)`과 실제 latency가 멀어질 수 있다.
+중복도 마찬가지다. distinct key가 적으면 counting/frequency 구조가 잘 맞을 수 있고, 중복이 매우 많은 quicksort에서는 pivot 선택과 3-way partition 여부가 실제 비용에 영향을 준다. hash table에서는 key 분포와 hash quality가 좋지 않으면 특정 bucket이나 probe cluster에 작업이 몰려 expected `O(1)`과 실제 지연 시간이 멀어질 수 있다.
 
 ### 평균 분포와 adversarial input을 구분한다
 

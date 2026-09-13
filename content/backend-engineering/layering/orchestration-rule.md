@@ -48,7 +48,7 @@ public void cancel(Instant cancelledAt) {
 4. 외부 환불 요청 또는 outbox 기록
 ```
 
-3과 4의 순서는 failure semantics를 바꿉니다. 외부 환불을 DB transaction 안에서 먼저 호출하면 외부는 성공했는데 DB가 rollback되는 상태가 생길 수 있습니다. 이런 **협력 순서와 실패 복구 전략**은 Application 계층이 조정합니다.
+3과 4의 순서는 실패 semantics를 바꿉니다. 외부 환불을 DB transaction 안에서 먼저 호출하면 외부는 성공했는데 DB가 rollback되는 상태가 생길 수 있습니다. 이런 **협력 순서와 실패 복구 전략**은 Application 계층이 조정합니다.
 
 ### Service가 규칙을 모두 가지면 생기는 문제
 

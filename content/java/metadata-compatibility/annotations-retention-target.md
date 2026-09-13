@@ -73,7 +73,7 @@ class OrderService {
 예를 들어:
 
 - method 실행을 표시: `METHOD`
-- DTO field constraint: `FIELD` 또는 실제 validation library 계약에 맞는 target
+- DTO field constraint: `FIELD` 또는 실제 검증 library 계약에 맞는 target
 - parameter 정보: `PARAMETER`
 - 타입 사용 위치 자체를 표시: `TYPE_USE`
 

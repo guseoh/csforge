@@ -23,5 +23,5 @@ MTU(Maximum Transmission Unit)는 하나의 link가 fragmentation 없이 운반�
 
 packet이 다음 link MTU보다 크면 IPv4에서는 조건에 따라 fragmentation될 수 있고, DF가 설정되었거나 IPv6 경로인 경우에는 router가 조각내지 않고 drop과 ICMP 오류를 통해 송신자가 더 작은 packet을 선택하도록 할 수 있다. PMTUD가 이 ICMP feedback을 받지 못하면 큰 packet만 통과하지 않는 black hole과 timeout이 생길 수 있다. tunnel·VPN·container overlay는 추가 header 때문에 effective path MTU를 낮출 수 있다.
 
-MTU가 작다고 모든 HTTP 요청이 실패하는 것은 아니다. 작은 packet은 지나가고 특정 payload 크기에서만 문제가 생길 수 있으며, fragmentation은 loss 한 번이 전체 logical transfer에 미치는 영향과 처리 비용을 바꾼다. 따라서 큰 upload/response가 특정 VPN 경로에서만 timeout되면 DF probe, PMTUD state, ICMP 차단, packet loss와 MSS/MTU 설정을 계층별로 확인한다. application chunk size나 retry 횟수를 먼저 키워 network black hole을 숨기지 않는다.
+MTU가 작다고 모든 HTTP 요청이 실패하는 것은 아니다. 작은 packet은 지나가고 특정 payload 크기에서만 문제가 생길 수 있으며, fragmentation은 loss 한 번이 전체 logical transfer에 미치는 영향과 처리 비용을 바꾼다. 따라서 큰 upload/응답이 특정 VPN 경로에서만 timeout되면 DF probe, PMTUD state, ICMP 차단, packet loss와 MSS/MTU 설정을 계층별로 확인한다. application chunk size나 retry 횟수를 먼저 키워 network black hole을 숨기지 않는다.
 

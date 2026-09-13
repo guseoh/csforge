@@ -50,7 +50,7 @@ cycle time = 1 / clock frequency
 
 가령 현재 stage의 가장 느린 경로가 0.9 ns가 필요한데 cycle time을 0.7 ns로 줄이면, 다음 clock edge에서 destination register가 아직 안정되지 않은 값을 볼 수 있다. 단순히 설정에서 frequency 숫자를 높인다고 CPU가 빨라질 수 없는 이유다. 더 높은 frequency를 얻으려면 논리를 단순화하거나 pipeline stage를 나누는 등 실제 hardware 경로를 바꿔야 한다.
 
-### Instruction latency와 throughput은 cycle과 같은 개념이 아니다
+### Instruction 지연 시간과 처리량은 cycle과 같은 개념이 아니다
 
 단순한 single-cycle CPU 모델에서는 instruction 하나가 한 긴 cycle 안에 모든 일을 끝내도록 설계할 수 있다. multi-cycle CPU는 한 instruction의 일을 여러 cycle로 나눈다. pipelined CPU에서는 더 나아가 서로 다른 instruction들이 각기 다른 stage를 동시에 지나간다.
 
@@ -61,7 +61,7 @@ I2                  Fetch     Decode    Execute   Memory
 I3                            Fetch     Decode    Execute
 ```
 
-위 예에서 I1의 latency는 여러 cycle이지만 pipeline이 채워진 뒤에는 이상적인 경우 매 cycle마다 새로운 instruction이 완료될 수 있다. 그래서 **한 instruction이 완료되는 데 걸리는 latency**와 **단위 시간에 몇 instruction을 완료하는지 나타내는 throughput**을 구분해야 한다.
+위 예에서 I1의 지연 시간은 여러 cycle이지만 pipeline이 채워진 뒤에는 이상적인 경우 매 cycle마다 새로운 instruction이 완료될 수 있다. 그래서 **한 instruction이 완료되는 데 걸리는 지연 시간**와 **단위 시간에 몇 instruction을 완료하는지 나타내는 처리량**을 구분해야 한다.
 
 ### Clock rate만으로 CPU 성능을 비교할 수 없는 이유
 
@@ -78,6 +78,6 @@ CPI 역시 고정 상수가 아니다. pipeline hazard, branch misprediction, ca
 
 ### 성능 측정에서는 wall-clock time과 CPU 실행 비용을 분리한다
 
-Backend 요청이 500 ms 걸렸다고 해서 CPU가 500 ms 동안 계산했다는 뜻은 아니다. DB 응답, network I/O, lock, scheduler queue를 기다린 시간이 대부분일 수 있다. 이런 요청은 CPU frequency를 올려도 end-to-end latency 개선 폭이 작다.
+Backend 요청이 500 ms 걸렸다고 해서 CPU가 500 ms 동안 계산했다는 뜻은 아니다. DB 응답, network I/O, lock, scheduler queue를 기다린 시간이 대부분일 수 있다. 이런 요청은 CPU frequency를 올려도 종단 간 지연 시간 개선 폭이 작다.
 
 반대로 CPU-bound 코드에서는 elapsed time만 보는 것보다 cycles, instructions, CPI/IPC, cache miss, branch miss 같은 지표를 함께 보면 시간이 어디에서 소비되는지 더 구체적으로 설명할 수 있다. Clock Cycle을 이해하는 목적은 GHz 숫자를 외우는 것이 아니라 **hardware가 시간을 어떤 단위로 진행시키고, 그 cycle들이 실제 프로그램 실행 시간으로 어떻게 누적되는지 해석하는 데 있다.**

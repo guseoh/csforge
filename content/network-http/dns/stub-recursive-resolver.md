@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.dns.stub-recursive-resolver
 topicContentKey: network-http.core.dns
 slug: stub-recursive-resolver
-title: "Stub and Recursive Resolver"
+title: "Stub·Recursive Resolver"
 summary: "client stub과 recursive resolver가 DNS 질의를 나누어 처리하는 방식을 설명한다."
 level: 1
 status: PUBLISHED
@@ -15,7 +15,7 @@ references:
     language: en
     displayOrder: 1
 ---
-# Stub and Recursive Resolver
+# Stub·Recursive Resolver
 
 application이 직접 모든 DNS hierarchy를 순회하는 대신, stub resolver는 보통 `/etc/resolv.conf`나 OS 설정에 있는 configured recursive resolver로 query를 전달한다. stub은 질문을 구성하고 local name/source policy를 적용하는 쪽에 가깝고, recursive resolver는 recursion을 요청받아 cache를 확인한 뒤 필요하면 root·TLD·authoritative server에 대신 질의한다.
 

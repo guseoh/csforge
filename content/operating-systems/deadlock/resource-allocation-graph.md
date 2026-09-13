@@ -4,7 +4,7 @@ contentKey: operating-systems.core.deadlock.resource-allocation-graph
 topicContentKey: operating-systems.core.deadlock
 slug: resource-allocation-graph
 title: "Resource-Allocation Graph"
-summary: "process-resource request·allocation edge를 이용해 dependency cycle과 deadlock 가능성을 추적한다."
+summary: "process-resource 요청·allocation edge를 이용해 dependency cycle과 deadlock 가능성을 추적한다."
 level: 2
 status: PUBLISHED
 displayOrder: 30
@@ -28,9 +28,9 @@ references:
 
 ### '누가 요청하고 누가 보유하는가'를 방향 있는 edge로 바꾼다
 
-Deadlock을 로그 문장으로만 보면 여러 thread와 resource 관계가 뒤섞이기 쉽다. Resource-allocation graph는 process/thread와 resource를 서로 다른 node로 두고 **request와 allocation을 방향으로 표현**해 dependency를 보이게 한다.
+Deadlock을 로그 문장으로만 보면 여러 thread와 resource 관계가 뒤섞이기 쉽다. Resource-allocation graph는 process/thread와 resource를 서로 다른 node로 두고 **요청과 allocation을 방향으로 표현**해 dependency를 보이게 한다.
 
-![request edge와 allocation edge로 만든 resource-allocation graph](/learning/operating-systems/resource-allocation-graph.svg)
+![요청 edge와 allocation edge로 만든 resource-allocation graph](/learning/operating-systems/resource-allocation-graph.svg)
 
 기본 edge 의미는 다음과 같다.
 
@@ -53,7 +53,7 @@ R1 → P1 → R2 → P2 → R1
 
 ### Multi-instance에서는 cycle만 보고 확정하면 안 된다
 
-같은 resource type에 여러 instance가 있으면 cycle 안의 request를 **다른 available instance가 만족시킬 가능성**이 남을 수 있다. 어떤 process가 먼저 완료해 allocation을 반환하면 cycle에 있던 다른 process도 진행할 수 있다.
+같은 resource type에 여러 instance가 있으면 cycle 안의 요청을 **다른 available instance가 만족시킬 가능성**이 남을 수 있다. 어떤 process가 먼저 완료해 allocation을 반환하면 cycle에 있던 다른 process도 진행할 수 있다.
 
 따라서 multi-instance model에서는 graph 모양만 보지 않고 `Available`, 현재 `Allocation`, 남은 `Request/Need` 수량까지 계산해야 한다. 여기서 중요한 경계는 `cycle이 있다`와 `현재 어떤 completion sequence도 없다`가 같은 말이 아니라는 점이다.
 

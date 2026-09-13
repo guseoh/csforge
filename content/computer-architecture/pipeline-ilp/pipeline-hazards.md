@@ -39,7 +39,7 @@ branch나 jump를 만나면 CPU는 다음에 fetch해야 할 PC가 branch 결과
 
 ### Hazard를 해결하는 방법은 원인마다 다르다
 
-structural hazard는 resource 구성이나 scheduling으로, RAW data hazard는 forwarding 또는 stall로, control hazard는 prediction과 flush로 대응한다. 해결책이 서로 다른 이유는 `무엇이 아직 준비되지 않았는가`가 다르기 때문이다. cache miss처럼 긴 memory latency가 data dependency와 겹치면 단순한 한-cycle stall보다 훨씬 큰 지연이 생길 수도 있다.
+structural hazard는 resource 구성이나 scheduling으로, RAW data hazard는 forwarding 또는 stall로, control hazard는 prediction과 flush로 대응한다. 해결책이 서로 다른 이유는 `무엇이 아직 준비되지 않았는가`가 다르기 때문이다. cache miss처럼 긴 memory 지연 시간이 data dependency와 겹치면 단순한 한-cycle stall보다 훨씬 큰 지연이 생길 수도 있다.
 
 ### Backend 성능과 연결해서 볼 때
 

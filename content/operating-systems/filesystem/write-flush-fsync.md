@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.filesystem.write-flush-fsync
 topicContentKey: operating-systems.core.filesystem
 slug: write-flush-fsync
-title: "write, flush and fsync"
+title: "write, flush·fsync"
 summary: "application write 완료와 user buffer flush, kernel write-back, filesystem durability가 서로 다른 경계인 이유를 설명한다."
 level: 2
 status: PUBLISHED
@@ -38,7 +38,7 @@ references:
     recommendation: "Linux fsync의 file data/metadata persistence와 directory entry durability의 별도 경계를 확인한다."
     displayOrder: 4
 ---
-# write, flush and fsync
+# write, flush·fsync
 
 file에 bytes를 썼다는 application-level 사건과 그 bytes가 crash 이후에도 남는다는 durability 사건은 같은 시점이 아니다. storage stack에는 user-space buffer, kernel page cache, filesystem metadata, block/device queue와 controller cache 같은 여러 단계가 있을 수 있다. 그래서 어떤 API가 반환했다고 **어느 단계까지 완료되었는지**를 구분해야 한다.
 
@@ -67,9 +67,9 @@ Unix 계열의 `fsync()`는 file의 dirty data와 필요한 metadata를 persiste
 
 ### 왜 모든 write마다 fsync하지 않는가
 
-persistence를 기다리는 연산은 storage ordering과 flush를 강제해 throughput과 tail latency 비용을 만들 수 있다. 따라서 로그 한 줄, 임시 cache file, canonical state file이 모두 같은 durability 요구를 가진다고 가정하지 않는다. 업무 invariant에 따라 batching/group commit이나 더 약한 persistence를 선택할 수 있다.
+persistence를 기다리는 연산은 storage ordering과 flush를 강제해 처리량과 꼬리 지연 시간(tail latency) 비용을 만들 수 있다. 따라서 로그 한 줄, 임시 cache file, canonical state file이 모두 같은 durability 요구를 가진다고 가정하지 않는다. 업무 invariant에 따라 batching/group commit이나 더 약한 persistence를 선택할 수 있다.
 
-### Crash consistency는 여러 persistent update의 순서 문제다
+### Crash 일관성은 여러 persistent update의 순서 문제다
 
 file size, data block, allocation metadata, directory entry처럼 여러 on-disk structure가 바뀌는 도중 crash가 나면 일부만 반영될 수 있다. journaling 같은 filesystem 기술은 이런 multi-write update를 복구 가능한 형태로 만들기 위한 메커니즘이다. application `fsync()`와 filesystem 내부 journaling도 같은 책임이 아니며 둘을 구분한다.
 

@@ -41,7 +41,7 @@ DB transaction BEGIN
 COMMIT
 ```
 
-remote latency 동안 DB connection과 lock을 오래 잡을 수 있습니다. 외부 호출이 timeout됐지만 provider에서 실제 처리가 끝났는지도 불명확할 수 있습니다.
+remote 지연 시간 동안 DB connection과 lock을 오래 잡을 수 있습니다. 외부 호출이 timeout됐지만 provider에서 실제 처리가 끝났는지도 불명확할 수 있습니다.
 
 ### local transaction과 distributed side effect를 구분한다
 

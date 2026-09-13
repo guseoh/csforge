@@ -246,7 +246,7 @@
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.process.process-terminate"],
-    "modelAnswer": "Exit status는 process-level 종료 결과다. Process가 종료되기 전에 DB write나 외부 API 호출이 이미 반영됐을 수 있어 exit failure가 모든 domain effect rollback을 뜻하지 않는다. Durable checkpoint/idempotency는 process lifecycle 밖에서 설계해야 한다.",
+    "modelAnswer": "Exit status는 process-level 종료 결과다. Process가 종료되기 전에 DB write나 외부 API 호출이 이미 반영됐을 수 있어 exit 실패가 모든 domain effect rollback을 뜻하지 않는다. Durable checkpoint/idempotency는 process lifecycle 밖에서 설계해야 한다.",
     "explanationMarkdown": "Exit status는 OS가 관찰하는 process 종료 결과이지 DB transaction이나 외부 시스템의 상태를 되돌리는 전역 rollback 신호가 아니다. Process가 실패하기 전에 이미 durable side effect가 commit됐을 수 있으므로 재시도 안전성은 별도의 idempotency·checkpoint 설계가 필요하다."
   },
   {

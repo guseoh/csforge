@@ -51,7 +51,7 @@ Capacity를 `+1`씩만 늘린다고 해 보자. Size가 1, 2, 3, ...일 때 거�
 
 이 경우 n번 append의 총비용이 O(n²)이므로 append amortized cost도 O(n)이 된다. Dynamic array가 보통 multiplicative growth를 사용하는 이유다.
 
-반대로 growth factor를 지나치게 크게 잡으면 resize 횟수는 줄지만 사용하지 않는 capacity와 순간 memory peak가 커진다. 실제 implementation에서는 allocator, memory limit와 copy latency까지 고려해야 한다.
+반대로 growth factor를 지나치게 크게 잡으면 resize 횟수는 줄지만 사용하지 않는 capacity와 순간 memory peak가 커진다. 실제 implementation에서는 allocator, memory limit와 copy 지연 시간까지 고려해야 한다.
 
 ### Aggregate, accounting, potential method는 같은 질문을 다른 방식으로 푼다
 
@@ -61,8 +61,8 @@ Accounting method는 싼 operation에 실제 비용보다 조금 더 큰 'credit
 
 Potential method는 자료구조 상태에 저장된 future work를 potential function으로 표현해 실제 비용과 potential 변화의 합을 amortized cost로 계산한다. 세 방법은 표현 방식이 다르지만 '드문 비싼 operation의 비용이 sequence 전체에서 어떻게 지불되는가'를 설명한다.
 
-### Amortized O(1)은 latency spike가 없다는 뜻이 아니다
+### Amortized O(1)은 지연 시간 spike가 없다는 뜻이 아니다
 
-Backend에서 dynamic buffer나 in-memory queue가 amortized O(1) append를 제공하더라도 resize가 발생한 한 요청은 큰 copy와 allocation으로 지연될 수 있다. Average throughput에는 문제가 없어도 p99 latency나 memory peak에는 영향을 줄 수 있다.
+Backend에서 dynamic buffer나 in-memory queue가 amortized O(1) append를 제공하더라도 resize가 발생한 한 요청은 큰 copy와 allocation으로 지연될 수 있다. Average 처리량에는 문제가 없어도 p99 지연 시간이나 memory peak에는 영향을 줄 수 있다.
 
-그래서 latency-sensitive path에서는 초기 capacity 예약, chunked structure 또는 growth policy 변경을 검토할 수 있다. 다만 예상 최대 크기를 무조건 preallocate하면 memory를 낭비할 수 있으므로 workload size distribution을 측정해 결정한다.
+그래서 지연 시간-sensitive path에서는 초기 capacity 예약, chunked structure 또는 growth policy 변경을 검토할 수 있다. 다만 예상 최대 크기를 무조건 preallocate하면 memory를 낭비할 수 있으므로 workload size distribution을 측정해 결정한다.

@@ -70,12 +70,12 @@ singleton Bean이라면 definition 하나에서 일반적으로 container당 공
 
 ### “등록은 됐는데 왜 객체가 아직 없지?”가 가능한 이유
 
-singleton은 보통 context refresh 과정에서 eagerly 생성되지만 lazy initialization이나 prototype처럼 실제 instance 생성 시점이 달라질 수 있습니다. 따라서 startup 문제를 볼 때도 **definition registration 단계와 instance creation 단계**를 구분하는 것이 중요합니다.
+singleton은 보통 context refresh 과정에서 eagerly 생성되지만 lazy initialization이나 prototype처럼 실제 instance 생성 시점이 달라질 수 있습니다. 따라서 시작 문제를 볼 때도 **definition registration 단계와 instance creation 단계**를 구분하는 것이 중요합니다.
 
 - scan 범위 문제 → definition 자체가 없음
 - 두 후보 충돌 → dependency resolution 단계 실패
 - constructor 예외 → definition은 있지만 instance creation 실패
-- lazy Bean constructor 예외 → startup이 아니라 첫 조회 시 실패할 수 있음
+- lazy Bean constructor 예외 → 시작이 아니라 첫 조회 시 실패할 수 있음
 
 ### 실무에서 BeanDefinition을 직접 다룰 일이 적어도 알아야 하는 이유
 

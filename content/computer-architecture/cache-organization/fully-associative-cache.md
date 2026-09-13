@@ -33,8 +33,8 @@ line 수가 N개라면 요청한 tag가 어느 line에 있는지 빠르게 알�
 
 ### Direct, set-associative와 연결해서 보기
 
-placement 자유도는 `direct-mapped < set-associative < fully-associative` 순으로 커진다. 반대로 lookup/replacement hardware 복잡도도 일반적으로 커진다. 따라서 cache organization은 hit rate 하나만 최대화하는 문제가 아니다. target latency, area, power budget과 expected access pattern을 함께 보고 적절한 associativity를 선택한다.
+placement 자유도는 `direct-mapped < set-associative < fully-associative` 순으로 커진다. 반대로 lookup/replacement hardware 복잡도도 일반적으로 커진다. 따라서 cache organization은 hit rate 하나만 최대화하는 문제가 아니다. target 지연 시간, area, power budget과 expected access pattern을 함께 보고 적절한 associativity를 선택한다.
 
 ### Backend의 자료구조와 직접 동일시하지 않는다
 
-application in-memory cache의 HashMap이 key를 어느 bucket에 둘지 결정하는 문제와 CPU fully-associative tag lookup은 구현 층위가 다르다. 둘 다 placement/search trade-off가 있다는 비유는 가능하지만 CPU cache의 hardware parallel comparison latency를 application hash lookup 비용과 같은 것으로 취급하면 안 된다. backend 성능에서는 JVM 자료구조 비용과 hardware cache behavior를 각각 측정한다.
+application in-memory cache의 HashMap이 key를 어느 bucket에 둘지 결정하는 문제와 CPU fully-associative tag lookup은 구현 층위가 다르다. 둘 다 placement/search trade-off가 있다는 비유는 가능하지만 CPU cache의 hardware parallel comparison 지연 시간을 application hash lookup 비용과 같은 것으로 취급하면 안 된다. backend 성능에서는 JVM 자료구조 비용과 hardware cache behavior를 각각 측정한다.

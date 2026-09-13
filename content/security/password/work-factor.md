@@ -4,7 +4,7 @@ contentKey: security.core.password.work-factor
 topicContentKey: security.core.password
 slug: work-factor
 title: "Work factor와 로그인 검증 비용"
-summary: "password hashing을 공격자에게 비싸게 만들면서 정상 로그인 latency와 서버 자원 고갈을 감당할 수 있도록 cost parameter를 측정·조정하고 알고리즘 upgrade를 계획한다."
+summary: "password hashing을 공격자에게 비싸게 만들면서 정상 로그인 지연 시간과 서버 자원 고갈을 감당할 수 있도록 cost parameter를 측정·조정하고 알고리즘 upgrade를 계획한다."
 level: 1
 status: PUBLISHED
 displayOrder: 30
@@ -43,11 +43,11 @@ candidate 3 → expensive hash
 
 ### work factor는 측정해서 정한다
 
-bcrypt의 cost, PBKDF2 iteration, Argon2의 memory/time parameter는 hardware와 traffic에 맞춰 조정합니다. OWASP 권고를 출발점으로 삼되 실제 production instance에서 로그인 latency와 CPU/memory 사용을 측정해야 합니다.
+bcrypt의 cost, PBKDF2 iteration, Argon2의 memory/time parameter는 hardware와 traffic에 맞춰 조정합니다. OWASP 권고를 출발점으로 삼되 실제 production instance에서 로그인 지연 시간과 CPU/memory 사용을 측정해야 합니다.
 
 | 너무 낮음                 | 너무 높음                |
 | ------------------------- | ------------------------ |
-| offline cracking이 쉬워짐 | 정상 로그인 latency 증가 |
+| offline cracking이 쉬워짐 | 정상 로그인 지연 시간 증가 |
 | 오래된 hardware 기준 설정 | DoS 자원 고갈 위험 증가  |
 
 ### 알고리즘과 cost는 시간이 지나면 낡는다

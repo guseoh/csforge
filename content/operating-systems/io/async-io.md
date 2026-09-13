@@ -44,13 +44,13 @@ thread가 block되지 않는다고 operation 수를 무제한으로 제출하면
 
 ### Cancellation도 결과 상태다
 
-timeout future가 완료됐다고 실제 kernel/device operation이 취소되었다는 뜻은 아니다. cancellation request가 race에서 이미 완료된 operation과 교차할 수도 있다. application은 `result를 더 이상 사용하지 않는다`와 `underlying I/O가 실제로 중단되었다`를 분리해 resource lifetime을 안전하게 관리해야 한다.
+timeout future가 완료됐다고 실제 kernel/device operation이 취소되었다는 뜻은 아니다. cancellation 요청이 race에서 이미 완료된 operation과 교차할 수도 있다. application은 `result를 더 이상 사용하지 않는다`와 `underlying I/O가 실제로 중단되었다`를 분리해 resource lifetime을 안전하게 관리해야 한다.
 
 ### Async API가 kernel thread 0개를 뜻하지 않는다
 
 언어/runtime의 asynchronous abstraction은 내부적으로 kernel async facility를 사용할 수도 있고 worker thread에서 blocking call을 대신 수행할 수도 있다. 따라서 `Future를 반환하니 OS thread를 전혀 사용하지 않는다`고 추론하지 않는다. framework/runtime 구현과 실제 thread/I/O metric을 확인한다.
 
-Backend에서는 async HTTP/file pipeline의 처리량을 높일 때 callback 수가 아니라 in-flight operation, completion latency, buffer memory와 downstream capacity를 함께 측정한다.
+Backend에서는 async HTTP/file pipeline의 처리량을 높일 때 callback 수가 아니라 in-flight operation, completion 지연 시간, buffer memory와 downstream capacity를 함께 측정한다.
 
 ### 면접에서 이렇게 나옵니다
 

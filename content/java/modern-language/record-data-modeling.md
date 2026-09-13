@@ -100,7 +100,7 @@ record Tags(List<String> values) {
 
 record는 다음처럼 **값 전달과 데이터 표현이 중심인 타입**에 잘 맞습니다.
 
-- API Request/Response
+- API 요청/응답
 - application query result
 - 여러 값을 하나의 의미 있는 값으로 묶는 value carrier
 - 좌표, 기간처럼 identity보다 값 자체가 중요한 모델
@@ -120,7 +120,7 @@ record class는 일반적인 class 상속용 기반 타입으로 사용하는 �
 
 ### 백엔드에서 특히 주의할 점
 
-record를 Response DTO로 사용하면 간결하지만, 내부에 mutable collection을 그대로 넣어 반환할 때는 ownership을 생각해야 합니다. application/domain collection을 그대로 노출하면 호출 측의 변경 가능성이나 이후 내부 상태 변경과 얽힐 수 있습니다.
+record를 응답 DTO로 사용하면 간결하지만, 내부에 mutable collection을 그대로 넣어 반환할 때는 ownership을 생각해야 합니다. application/domain collection을 그대로 노출하면 호출 측의 변경 가능성이나 이후 내부 상태 변경과 얽힐 수 있습니다.
 
 또 record가 `equals/hashCode`를 자동으로 제공한다는 이유로 어떤 객체든 값 객체가 되는 것은 아닙니다. 어떤 필드가 동등성을 결정해야 하는지, 그 동등성 의미가 도메인과 맞는지를 먼저 판단해야 합니다.
 

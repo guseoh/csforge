@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.threads.thread-create-switch-cost
 topicContentKey: operating-systems.core.threads
 slug: thread-create-switch-cost
-title: "Thread Creation and Switch Cost"
+title: "Thread Creation·Switch Cost"
 summary: "thread의 stack·metadata·creation·scheduling 비용이 workload 선택에 미치는 영향을 설명한다."
 level: 2
 status: PUBLISHED
@@ -14,10 +14,10 @@ references:
     referenceType: BOOK
     language: en
     depth: chapter
-    recommendation: "thread별 실행 context와 여러 thread가 공유하는 process state를 바탕으로 전환 비용을 이해한다."
+    recommendation: "process 안에서 thread가 공유하는 주소 공간과 thread별 실행 context를 확인한다."
     displayOrder: 1
 ---
-# Thread Creation and Switch Cost
+# Thread Creation·Switch Cost
 
 ### thread 하나에도 상태가 필요하다
 
@@ -48,6 +48,6 @@ TLB 영향은 특히 구분해서 봐야 한다. 같은 process의 thread끼리 
 
 ### 측정할 때 생성 비용과 queue 비용을 나눈다
 
-thread 수를 줄였더니 latency가 나빠졌다고 해서 곧바로 thread creation이 병목이었다고 결론내리면 안 된다. active worker, queue wait, task execution time, context switch, memory usage를 따로 봐야 한다. pool이 작아 queue가 길어진 것과 pool이 커서 scheduling contention이 커진 것은 반대 방향의 문제다.
+thread 수를 줄였더니 지연 시간이 나빠졌다고 해서 곧바로 thread creation이 병목이었다고 결론내리면 안 된다. active worker, queue wait, task execution time, context switch, memory usage를 따로 봐야 한다. pool이 작아 queue가 길어진 것과 pool이 커서 scheduling contention이 커진 것은 반대 방향의 문제다.
 
 Backend executor의 크기도 CPU 수 하나로 정하지 않는다. CPU-bound인지, blocking 시간이 얼마나 되는지, DB connection 같은 downstream capacity가 얼마인지까지 함께 봐야 한다.

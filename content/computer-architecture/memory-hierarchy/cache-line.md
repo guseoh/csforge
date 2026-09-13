@@ -33,7 +33,7 @@ CPU가 어떤 address를 읽을 때 cache는 그 byte가 포함된 일정 크기
 
 ### 큰 line과 작은 line 사이에도 trade-off가 있다
 
-line이 너무 작으면 miss 한 번에 가져오는 인접 data가 적어 spatial locality를 충분히 활용하지 못하고 tag metadata 비율도 커질 수 있다. line이 너무 크면 실제 사용하지 않을 byte까지 전송해 memory bandwidth를 쓰고, 같은 cache capacity에서 보관할 수 있는 line 수가 줄어 pollution과 eviction을 늘릴 수 있다. miss 때 채워야 하는 data가 많아져 fill latency가 커질 수도 있다.
+line이 너무 작으면 miss 한 번에 가져오는 인접 data가 적어 spatial locality를 충분히 활용하지 못하고 tag metadata 비율도 커질 수 있다. line이 너무 크면 실제 사용하지 않을 byte까지 전송해 memory bandwidth를 쓰고, 같은 cache capacity에서 보관할 수 있는 line 수가 줄어 pollution과 eviction을 늘릴 수 있다. miss 때 채워야 하는 data가 많아져 fill 지연 시간이 커질 수도 있다.
 
 따라서 `line이 크면 hit rate가 항상 좋아진다`거나 `작으면 항상 latency가 낮다`고 일반화할 수 없다. workload의 access pattern, prefetcher, cache capacity와 lower-level bandwidth를 함께 본다.
 

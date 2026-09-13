@@ -129,7 +129,7 @@
     "difficulty":"MEDIUM",
     "status":"PUBLISHED",
     "conceptKeys":["dsa.core.hashing.separate-chaining"],
-    "modelAnswer":"평균은 bucket 간 불균형을 숨긴다. 긴 bucket에 속한 key는 최대 수백 번 equality 비교를 해야 하므로 일부 lookup의 tail latency가 매우 커질 수 있다. bucket length distribution과 최장 chain을 함께 봐야 한다."
+    "modelAnswer":"평균은 bucket 간 불균형을 숨긴다. 긴 bucket에 속한 key는 최대 수백 번 equality 비교를 해야 하므로 일부 lookup의 꼬리 지연 시간(tail latency)이 매우 커질 수 있다. bucket length distribution과 최장 chain을 함께 봐야 한다."
   },
   {
     "kind":"question",
@@ -165,7 +165,7 @@
     "difficulty":"MEDIUM",
     "status":"PUBLISHED",
     "conceptKeys":["dsa.core.hashing.open-addressing"],
-    "modelAnswer":"2→3→4→5를 확인한 뒤 6에서 빈 slot을 찾아 저장한다. 같은 cluster에 들어오는 lookup/insert가 연속 occupied slot을 반복 확인하므로 cluster가 커질수록 probe count와 latency가 증가한다."
+    "modelAnswer":"2→3→4→5를 확인한 뒤 6에서 빈 slot을 찾아 저장한다. 같은 cluster에 들어오는 lookup/insert가 연속 occupied slot을 반복 확인하므로 cluster가 커질수록 probe count와 지연 시간이 증가한다."
   },
   {
     "kind":"question",
@@ -200,12 +200,12 @@
   {
     "kind":"question",
     "contentKey":"dsa.core.hashing.load-factor.q3",
-    "promptMarkdown":"resize threshold를 0.5에서 0.9로 높였다. memory 사용과 lookup/insert latency에 어떤 변화가 가능하며 왜 workload 측정이 필요한지 설명하라.",
+    "promptMarkdown":"resize threshold를 0.5에서 0.9로 높였다. memory 사용과 lookup/insert 지연 시간에 어떤 변화가 가능하며 왜 workload 측정이 필요한지 설명하라.",
     "questionType":"SCENARIO",
     "difficulty":"MEDIUM",
     "status":"PUBLISHED",
     "conceptKeys":["dsa.core.hashing.load-factor"],
-    "modelAnswer":"더 작은 table을 오래 유지해 unused capacity는 줄 수 있지만 collision chain/probe가 길어져 lookup·insert와 tail latency가 증가할 수 있다. hash distribution과 collision strategy에 따라 영향이 달라 실제 probe/chain distribution과 memory를 함께 측정해야 한다."
+    "modelAnswer":"더 작은 table을 오래 유지해 unused capacity는 줄 수 있지만 collision chain/probe가 길어져 lookup·insert와 꼬리 지연 시간(tail latency)이 증가할 수 있다. hash distribution과 collision strategy에 따라 영향이 달라 실제 probe/chain distribution과 memory를 함께 측정해야 한다."
   },
   {
     "kind":"question",
@@ -241,7 +241,7 @@
     "difficulty":"MEDIUM",
     "status":"PUBLISHED",
     "conceptKeys":["dsa.core.hashing.resize"],
-    "modelAnswer":"migration 동안 old/new table이 동시에 존재해 일시적으로 memory가 크게 증가할 수 있다. steady-state 1 GiB만 기준으로 잡으면 allocation failure나 GC/OS memory pressure가 생길 수 있으므로 resize peak를 별도 예산으로 고려해야 한다."
+    "modelAnswer":"migration 동안 old/new table이 동시에 존재해 일시적으로 memory가 크게 증가할 수 있다. steady-state 1 GiB만 기준으로 잡으면 allocation 실패나 GC/OS memory pressure가 생길 수 있으므로 resize peak를 별도 예산으로 고려해야 한다."
   },
   {
     "kind":"question",
@@ -292,7 +292,7 @@
   {
     "kind":"question",
     "contentKey":"dsa.core.hashing.average-worst-lookup.q4",
-    "promptMarkdown":"외부 사용자가 key를 선택할 수 있는 API에서 hash table의 expected O(1)을 request latency의 hard upper bound로 문서화하면 안 되는 이유를 설명하라.",
+    "promptMarkdown":"외부 사용자가 key를 선택할 수 있는 API에서 hash table의 expected O(1)을 요청 지연 시간의 hard upper bound로 문서화하면 안 되는 이유를 설명하라.",
     "questionType":"DESCRIPTIVE",
     "difficulty":"HARD",
     "status":"PUBLISHED",

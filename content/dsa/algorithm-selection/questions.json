@@ -38,7 +38,7 @@
   {
     "kind": "question",
     "contentKey": "dsa.core.algorithm-selection.constraint-to-complexity.q4",
-    "promptMarkdown": "두 알고리즘이 모두 `O(n log n)`인데 실제 latency가 크게 다를 수 있는 이유를 두 가지 이상 설명하라.",
+    "promptMarkdown": "두 알고리즘이 모두 `O(n log n)`인데 실제 지연 시간이 크게 다를 수 있는 이유를 두 가지 이상 설명하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
@@ -74,7 +74,7 @@
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.algorithm-selection.memory-limit"],
-    "modelAnswer": "resize 시점에는 기존 storage와 새 storage가 동시에 존재해 순간 peak가 steady-state보다 커진다. 여기에 concurrent request와 object/bucket overhead까지 더해지면 OOM이 발생할 수 있다. 알고리즘 선택에서는 평균이 아니라 temporary buffer, rebuild 중복 storage, 동시 실행 수를 포함한 peak memory를 계산해야 한다."
+    "modelAnswer": "resize 시점에는 기존 storage와 새 storage가 동시에 존재해 순간 peak가 steady-state보다 커진다. 여기에 concurrent 요청과 object/bucket overhead까지 더해지면 OOM이 발생할 수 있다. 알고리즘 선택에서는 평균이 아니라 temporary buffer, rebuild 중복 storage, 동시 실행 수를 포함한 peak memory를 계산해야 한다."
   },
   {
     "kind": "question",
@@ -126,7 +126,7 @@
   {
     "kind": "question",
     "contentKey": "dsa.core.algorithm-selection.data-shape.q4",
-    "promptMarkdown": "평균 데이터에서는 hash lookup이 빠른데 특정 형태의 key에서 latency가 급격히 증가한다. 어떤 data-shape 가정과 구조적 위험을 확인해야 하는가?",
+    "promptMarkdown": "평균 데이터에서는 hash lookup이 빠른데 특정 형태의 key에서 지연 시간이 급격히 증가한다. 어떤 data-shape 가정과 구조적 위험을 확인해야 하는가?",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
@@ -243,7 +243,7 @@
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.algorithm-selection.operation-driven-structure-choice"],
-    "modelAnswer": "Hash table은 exact lookup에는 강하지만 ordering이 없어 range query가 전체 scan에 가까워질 수 있다. Range query 15%가 실제 latency에서 충분히 중요하다면 balanced tree, sorted structure 또는 별도 ordered index를 비교해야 한다."
+    "modelAnswer": "Hash table은 exact lookup에는 강하지만 ordering이 없어 range query가 전체 scan에 가까워질 수 있다. Range query 15%가 실제 지연 시간에서 충분히 중요하다면 balanced tree, sorted structure 또는 별도 ordered index를 비교해야 한다."
   },
   {
     "kind": "question",

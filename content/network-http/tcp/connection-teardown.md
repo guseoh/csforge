@@ -23,7 +23,7 @@ TCP endpoint는 FIN으로 자신의 송신 stream에 더 보낼 byte가 없음�
 
 RST는 orderly EOF가 아니라 abort 또는 현재 state에 맞지 않는 segment를 거부하는 신호가 될 수 있어, 아직 buffer에 있던 data가 폐기될 수 있다. FIN을 받았다는 것은 peer stream의 EOF를 관찰했다는 뜻이지 peer application이 모든 bytes를 business 처리했다는 뜻은 아니다. application은 transport EOF/RST와 message completeness·commit 상태를 분리한다.
 
-HTTP keep-alive pool은 peer FIN/RST와 idle timeout을 감지해 해당 socket을 eviction하고, response body를 framing에 맞게 모두 읽거나 명시적으로 닫은 뒤에만 connection을 재사용한다. body를 다 읽지 않고 pool에 반환하면 남은 bytes가 다음 request의 response로 해석될 수 있다.
+HTTP keep-alive pool은 peer FIN/RST와 idle timeout을 감지해 해당 socket을 eviction하고, 응답 본문을 framing에 맞게 모두 읽거나 명시적으로 닫은 뒤에만 connection을 재사용한다. body를 다 읽지 않고 pool에 반환하면 남은 bytes가 다음 요청의 응답으로 해석될 수 있다.
 ### TCP half-close
     A ── FIN ──> B   A의 송신 종료
     A <─ ACK ─── B

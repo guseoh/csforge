@@ -114,7 +114,7 @@
   {
     "kind":"question",
     "contentKey":"dsa.core.trees.balanced-tree-motivation.q3",
-    "promptMarkdown":"range iteration도 필요하고 external input이 정렬된 순서로 들어올 수 있으며 worst-case latency가 중요하다. plain BST와 balanced tree 중 무엇을 우선 검토할지 근거를 설명하라.",
+    "promptMarkdown":"range iteration도 필요하고 external input이 정렬된 순서로 들어올 수 있으며 worst-case 지연 시간이 중요하다. plain BST와 balanced tree 중 무엇을 우선 검토할지 근거를 설명하라.",
     "questionType":"SCENARIO",
     "difficulty":"MEDIUM",
     "status":"PUBLISHED",

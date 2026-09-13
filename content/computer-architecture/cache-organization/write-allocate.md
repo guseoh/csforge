@@ -43,4 +43,4 @@ no-write-allocate 또는 write-no-allocate에서는 write miss를 cache line fil
 
 큰 byte buffer를 한 번 채우고 다시 읽지 않는 workload나 zeroing/streaming write는 일반 cached write가 불필요한 cache pollution과 memory traffic을 만들 수 있다. 반대로 같은 buffer를 곧 후속 stage에서 읽는다면 cache에 남기는 것이 유리할 수 있다. application 수준에서 이를 최적화할 때는 먼저 실제 write bandwidth와 cache miss가 병목인지 측정하고, JVM/JIT가 어떤 store instruction을 생성하는지까지 필요한 경우 확인한다.
 
-또한 application의 write-behind/write-around cache policy와 CPU write-allocate는 이름이 비슷해도 consistency·durability 책임이 다르다. 동일한 정책으로 취급하지 않는다.
+또한 application의 write-behind/write-around cache policy와 CPU write-allocate는 이름이 비슷해도 일관성·durability 책임이 다르다. 동일한 정책으로 취급하지 않는다.

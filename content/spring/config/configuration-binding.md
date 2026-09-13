@@ -4,7 +4,7 @@ contentKey: spring.core.config.configuration-binding
 topicContentKey: spring.core.config
 slug: configuration-binding
 title: "타입 안전 configuration binding"
-summary: "관련 property를 @ConfigurationProperties 객체로 묶고 duration/URL/range 같은 type과 validation을 startup contract로 만들어 잘못된 환경을 조기에 실패시킨다"
+summary: "관련 property를 @ConfigurationProperties 객체로 묶고 duration/URL/range 같은 type과 검증을 시작 contract로 만들어 잘못된 환경을 조기에 실패시킨다"
 level: 2
 status: PUBLISHED
 displayOrder: 30
@@ -58,7 +58,7 @@ payment:
 
 이것은 단순 편의가 아니라 downstream code가 매번 parsing/단위 확인을 반복하지 않게 만듭니다.
 
-### startup validation으로 환경 자체를 거부할 수 있다
+### 시작 검증으로 환경 자체를 거부할 수 있다
 
 ```java
 @Validated
@@ -69,7 +69,7 @@ public record WorkerProperties(
 ) { }
 ```
 
-production에서 `concurrency=0`이 들어왔다면 요청이 들어온 뒤 이상하게 실패하기보다 application startup에서 configuration error로 멈추는 편이 보통 더 안전합니다.
+production에서 `concurrency=0`이 들어왔다면 요청이 들어온 뒤 이상하게 실패하기보다 application 시작에서 configuration error로 멈추는 편이 보통 더 안전합니다.
 
 ```text
 잘못된 환경 값
@@ -81,9 +81,9 @@ binding / validation 실패
 startup 실패 -> deploy 단계에서 발견
 ```
 
-### validation이 business rule을 대신하지 않는다
+### 검증이 business rule을 대신하지 않는다
 
-`max-retries` 범위 같은 configuration invariant는 properties object에 적합하지만, 주문 가능한 상태나 할인 정책은 request/domain state에 따라 달라집니다. `@ConfigurationProperties` validation이 강력하다고 모든 domain validation을 이곳으로 옮기는 것은 책임 혼합입니다.
+`max-retries` 범위 같은 configuration invariant는 properties object에 적합하지만, 주문 가능한 상태나 할인 정책은 요청/domain state에 따라 달라집니다. `@ConfigurationProperties` 검증이 강력하다고 모든 domain 검증을 이곳으로 옮기는 것은 책임 혼합입니다.
 
 ### secret을 type-safe하게 묶어도 노출 위험은 남는다
 
@@ -101,4 +101,4 @@ application 전체에 `PaymentProperties`를 주입해 모든 class가 설정 �
 Environment -> PaymentProperties -> PaymentClient -> application service
 ```
 
-configuration binding은 file을 record로 바꾸는 기능을 넘어 **실행 환경의 입력을 명시적인 type과 startup invariant로 변환하는 경계**입니다.
+configuration binding은 file을 record로 바꾸는 기능을 넘어 **실행 환경의 입력을 명시적인 type과 시작 invariant로 변환하는 경계**입니다.

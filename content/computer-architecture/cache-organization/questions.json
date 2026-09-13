@@ -280,11 +280,11 @@
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.cache-organization.cache-friendly-access.q3",
-    "promptMarkdown": "자료구조를 linked object graph에서 compact array로 바꾼 뒤 microbenchmark는 빨라졌지만 production request latency는 거의 변하지 않았다. 가능한 이유와 다음 측정 항목을 설명하라.",
+    "promptMarkdown": "자료구조를 linked object graph에서 compact array로 바꾼 뒤 microbenchmark는 빨라졌지만 production 요청 지연 시간은 거의 변하지 않았다. 가능한 이유와 다음 측정 항목을 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.cache-organization.cache-friendly-access"],
-    "modelAnswer": "array layout이 CPU cache locality와 allocation을 개선했더라도 production request가 DB/network I/O, lock, queueing 같은 다른 비용에 지배되면 end-to-end latency 영향은 작을 수 있다. CPU utilization, cache miss/IPC, allocation·GC와 함께 DB/network wait와 p95/p99를 비교해 실제 bottleneck이 어디인지 확인해야 한다."
+    "modelAnswer": "array layout이 CPU cache locality와 allocation을 개선했더라도 production 요청이 DB/network I/O, lock, queueing 같은 다른 비용에 지배되면 종단 간 지연 시간 영향은 작을 수 있다. CPU utilization, cache miss/IPC, allocation·GC와 함께 DB/network wait와 p95/p99를 비교해 실제 bottleneck이 어디인지 확인해야 한다."
   }
 ]

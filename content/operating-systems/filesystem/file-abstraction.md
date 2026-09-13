@@ -29,7 +29,7 @@ hard link가 가능한 filesystem에서는 서로 다른 pathname이 같은 inod
 
 ### content와 metadata도 구분한다
 
-file의 byte content 외에도 size, ownership, permission, timestamp 같은 metadata가 존재한다. metadata 변경과 content write는 서로 다른 persistent update일 수 있으며 crash consistency에서는 이 둘의 기록 순서도 문제가 된다.
+file의 byte content 외에도 size, ownership, permission, timestamp 같은 metadata가 존재한다. metadata 변경과 content write는 서로 다른 persistent update일 수 있으며 crash 일관성에서는 이 둘의 기록 순서도 문제가 된다.
 
 또한 `write()`가 application buffer의 bytes를 kernel에 전달하는 데 성공했다고 해서 그 bytes가 즉시 durable storage에 안전하게 기록되었다는 뜻은 아니다. page cache와 buffering을 거칠 수 있고, durability가 필요한 지점은 `fsync()`와 filesystem/storage 계약을 별도로 이해해야 한다.
 

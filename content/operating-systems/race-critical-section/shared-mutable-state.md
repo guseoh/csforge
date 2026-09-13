@@ -33,4 +33,4 @@ state를 한 owner에게만 맡기고 message로 command를 전달하거나 immu
 
 ### DB transaction과 JVM shared memory는 다른 층이다
 
-여러 request thread가 singleton cache나 in-memory counter를 갱신하는 문제는 JVM/OS thread concurrency 문제다. DB transaction이 성공적으로 commit된다고 Java heap의 read-modify-write가 자동으로 atomic해지는 것은 아니다. 저장소 invariant와 process-local shared-state invariant는 각각의 경계에서 보호해야 한다.
+여러 요청 thread가 singleton cache나 in-memory counter를 갱신하는 문제는 JVM/OS thread concurrency 문제다. DB transaction이 성공적으로 commit된다고 Java heap의 read-modify-write가 자동으로 atomic해지는 것은 아니다. 저장소 invariant와 process-local shared-state invariant는 각각의 경계에서 보호해야 한다.

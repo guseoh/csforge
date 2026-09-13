@@ -50,7 +50,7 @@ C = 110 ms
 
 ### Convoy effect는 단순히 평균값 문제만은 아니다
 
-앞의 긴 job이 CPU를 오래 차지하는 동안 뒤의 interactive/short job들은 response를 시작하지 못한다. CPU와 I/O를 번갈아 사용하는 workload에서는 한 종류의 job이 몰리면서 다른 resource utilization에도 영향을 줄 수 있다.
+앞의 긴 job이 CPU를 오래 차지하는 동안 뒤의 interactive/short job들은 응답을 시작하지 못한다. CPU와 I/O를 번갈아 사용하는 workload에서는 한 종류의 job이 몰리면서 다른 resource utilization에도 영향을 줄 수 있다.
 
 FCFS가 틀린 algorithm이라는 뜻은 아니다. Workload가 비슷한 크기의 job으로 구성되고 순서의 단순성과 예측 가능성이 중요하다면 좋은 선택일 수 있다.
 
@@ -62,6 +62,6 @@ FCFS가 틀린 algorithm이라는 뜻은 아니다. Workload가 비슷한 크기
 
 Application worker queue에서도 FIFO는 단순하고 공정해 보이지만 job cost가 매우 다르면 head-of-line blocking이 생긴다. 10분짜리 import가 queue 맨 앞에 있고 뒤에 50 ms짜리 작업이 많다면 짧은 작업의 queue wait가 커진다.
 
-그렇다고 즉시 size-based priority를 쓰는 것도 정답은 아니다. Long job starvation과 priority policy가 생기기 때문이다. 먼저 job size 분포와 latency objective를 측정하고 queue 분리, concurrency, preemption 가능성 등을 비교해야 한다.
+그렇다고 즉시 size-based priority를 쓰는 것도 정답은 아니다. Long job starvation과 priority policy가 생기기 때문이다. 먼저 job size 분포와 지연 시간 objective를 측정하고 queue 분리, concurrency, preemption 가능성 등을 비교해야 한다.
 
 FCFS의 학습 포인트는 FIFO 정의가 아니라 **도착 순서라는 단순한 invariant가 job duration 차이를 전혀 고려하지 않기 때문에 convoy effect를 만들 수 있다는 것**이다.

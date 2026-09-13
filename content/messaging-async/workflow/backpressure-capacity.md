@@ -4,7 +4,7 @@ contentKey: messaging.core.workflow.backpressure-capacity
 topicContentKey: messaging.core.workflow
 slug: backpressure-capacity
 title: "backpressure와 consumer capacity"
-summary: "producer rate와 consumer 처리 capacity 차이가 lag·memory·latency를 만드는 이유와 flow control을 이해한다"
+summary: "producer rate와 consumer 처리 capacity 차이가 lag·memory·지연 시간을 만드는 이유와 flow control을 이해한다"
 level: 2
 status: PUBLISHED
 displayOrder: 20
@@ -18,7 +18,7 @@ references:
 ---
 # backpressure와 consumer capacity
 
-Producer가 초당 10,000개를 만들고 consumer가 초당 6,000개만 처리하면 남은 4,000개는 lag로 쌓입니다. backlog가 늘어나는 동안 broker storage, consumer memory, 처리 latency와 retry 비용도 함께 증가합니다.
+Producer가 초당 10,000개를 만들고 consumer가 초당 6,000개만 처리하면 남은 4,000개는 lag로 쌓입니다. backlog가 늘어나는 동안 broker storage, consumer memory, 처리 지연 시간과 retry 비용도 함께 증가합니다.
 
 ```text
 producer 10k/s ─▶ broker ─▶ consumer 6k/s
@@ -53,5 +53,5 @@ broker retention이 충분해도 늦은 message는 사용자에게 오래된 결
 
 ### 면접에서 설명한다면
 
-Backpressure는 producer가 consumer capacity보다 빠를 때 backlog·lag·memory·latency가 증가하는 문제입니다. producer rate limit, consumer/partition 확장, retry 분리와 DLQ를 선택하되 broker만 확장하면 downstream DB·외부 API가 포화될 수 있으므로 end-to-end capacity를 계산해야 합니다.
+Backpressure는 producer가 consumer capacity보다 빠를 때 backlog·lag·memory·지연 시간이 증가하는 문제입니다. producer rate limit, consumer/partition 확장, retry 분리와 DLQ를 선택하되 broker만 확장하면 downstream DB·외부 API가 포화될 수 있으므로 end-to-end capacity를 계산해야 합니다.
 

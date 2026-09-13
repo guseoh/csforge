@@ -25,7 +25,7 @@ references:
 
 encapsulation은 하나의 HTTP message가 하나의 segment나 frame이 된다는 뜻이 아니다. MTU, transport segmentation, retransmission, encryption과 application framing 때문에 logical message와 실제 wire unit의 경계가 달라지고, 한 read에 여러 message 일부가 함께 도착할 수도 있다.
 
-HTTP body 크기와 TCP segment 수, Ethernet frame 수를 직접 일대일로 매핑하지 않는다. request size 제한은 application parser의 상한과 framing/transport overhead, path MTU를 함께 고려해야 한다.
+HTTP body 크기와 TCP segment 수, Ethernet frame 수를 직접 일대일로 매핑하지 않는다. 요청 size 제한은 application parser의 상한과 framing/transport overhead, path MTU를 함께 고려해야 한다.
 
 ### 캡슐화 흐름
     [HTTP message]

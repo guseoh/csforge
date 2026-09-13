@@ -62,4 +62,4 @@ Algorithm confusion을 피하기 위해 token header가 요청한 어떤 alg든 
 
 JWE처럼 encrypted JWT 표준도 존재하지만 단순 signed JWT와 구분해야 합니다. “JWT = encrypted token”은 잘못된 설명입니다.
 
-JWT를 이해할 때는 문자열 모양보다 **누가 발급했고, 어떤 key로 무결성을 검증하며, 어떤 claim 조건을 만족해야 이 request에 사용할 수 있는가**를 보는 것이 중요합니다.
+JWT를 이해할 때는 문자열 모양보다 **누가 발급했고, 어떤 key로 무결성을 검증하며, 어떤 claim 조건을 만족해야 이 요청에 사용할 수 있는가**를 보는 것이 중요합니다.

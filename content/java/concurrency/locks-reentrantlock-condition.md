@@ -143,7 +143,7 @@ Bounded queue라면 하나의 lock 아래에서:
 
 ### fairness는 공짜가 아니다
 
-`new ReentrantLock(true)`로 fairness 정책을 요청할 수 있지만 이것이 "모든 thread가 완벽히 공평한 시간만큼 CPU를 받는다"는 의미는 아닙니다. Lock 획득 대기 정책과 관련한 선택이며 throughput에 비용이 있을 수 있습니다.
+`new ReentrantLock(true)`로 fairness 정책을 요청할 수 있지만 이것이 "모든 thread가 완벽히 공평한 시간만큼 CPU를 받는다"는 의미는 아닙니다. Lock 획득 대기 정책과 관련한 선택이며 처리량에 비용이 있을 수 있습니다.
 
 따라서 실제 starvation 요구가 있는지와 성능 특성을 보고 선택합니다.
 

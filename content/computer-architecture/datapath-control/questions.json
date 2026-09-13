@@ -136,12 +136,12 @@
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.datapath-control.critical-path.q3",
-    "promptMarkdown": "한 stage의 critical path가 1.8 ns다. 이를 두 pipeline stage로 나눴더니 조합 논리 지연이 각각 0.85 ns와 0.95 ns가 되었고 각 stage에 register overhead 0.10 ns가 필요하다. 새 최소 cycle time과 이 변경의 latency/throughput trade-off를 설명하라.",
+    "promptMarkdown": "한 stage의 critical path가 1.8 ns다. 이를 두 pipeline stage로 나눴더니 조합 논리 지연이 각각 0.85 ns와 0.95 ns가 되었고 각 stage에 register overhead 0.10 ns가 필요하다. 새 최소 cycle time과 이 변경의 지연 시간/처리량 trade-off를 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.datapath-control.critical-path"],
-    "modelAnswer": "각 stage는 조합 논리와 register overhead를 합쳐야 하므로 0.95 ns와 1.05 ns가 필요하고 최소 cycle time은 더 긴 1.05 ns다. clock rate는 높일 수 있어 pipeline이 채워진 뒤 throughput은 좋아질 수 있지만 한 작업이 두 stage를 지나므로 cycle 수 기준 latency와 pipeline register 비용, hazard 처리 복잡도는 증가할 수 있다."
+    "modelAnswer": "각 stage는 조합 논리와 register overhead를 합쳐야 하므로 0.95 ns와 1.05 ns가 필요하고 최소 cycle time은 더 긴 1.05 ns다. clock rate는 높일 수 있어 pipeline이 채워진 뒤 처리량은 좋아질 수 있지만 한 작업이 두 stage를 지나므로 cycle 수 기준 지연 시간과 pipeline register 비용, hazard 처리 복잡도는 증가할 수 있다."
   },
   {
     "kind": "question",

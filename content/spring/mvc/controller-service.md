@@ -18,7 +18,7 @@ references:
 ---
 # Controller와 application service
 
-Controller는 HTTP 요청이 application으로 들어오는 경계입니다. 그래서 URI/path/query/header/body를 읽고 HTTP status와 response representation을 만드는 책임은 자연스럽습니다. 문제가 생기는 지점은 controller가 **persistence, transaction orchestration, domain state transition까지 모두 직접 수행하기 시작할 때**입니다.
+Controller는 HTTP 요청이 application으로 들어오는 경계입니다. 그래서 URI/path/query/header/body를 읽고 HTTP status와 응답 representation을 만드는 책임은 자연스럽습니다. 문제가 생기는 지점은 controller가 **persistence, transaction orchestration, domain state transition까지 모두 직접 수행하기 시작할 때**입니다.
 
 ```java
 @PostMapping("/orders")
@@ -65,9 +65,9 @@ Domain behavior
 
 이제 controller는 HTTP representation을 application command/result로 변환하고 application service는 use-case 흐름을 담당합니다.
 
-### validation도 어느 경계의 규칙인지 나눈다
+### 검증도 어느 경계의 규칙인지 나눈다
 
-`@NotBlank email`, JSON 형식, page size upper bound처럼 **외부 요청 모양**에 가까운 검증은 request DTO/controller 경계에서 처리할 수 있습니다. 반면 “이미 취소된 주문은 결제할 수 없다” 같은 invariant는 request가 REST인지 batch인지와 무관하므로 domain/application에 있어야 합니다.
+`@NotBlank email`, JSON 형식, page size upper bound처럼 **외부 요청 모양**에 가까운 검증은 요청 DTO/controller 경계에서 처리할 수 있습니다. 반면 “이미 취소된 주문은 결제할 수 없다” 같은 invariant는 요청이 REST인지 batch인지와 무관하므로 domain/application에 있어야 합니다.
 
 ```text
 HTTP 형식 오류          -> API validation

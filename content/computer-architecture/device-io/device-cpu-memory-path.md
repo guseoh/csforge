@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.device-io.device-cpu-memory-path
 topicContentKey: computer-architecture.core.device-io
 slug: device-cpu-memory-path
-title: "Device, CPU and Memory Path"
+title: "Device, CPU·Memory Path"
 summary: "descriptor 준비부터 DMA·completion·interrupt·software consumption까지 device I/O의 end-to-end data path를 설명한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "coherent·streaming mapping, DMA ownership과 sync 시점을 확인한다."
     displayOrder: 1
 ---
-# Device, CPU and Memory Path
+# Device, CPU·Memory Path
 
 ### I/O는 device와 application 사이의 한 번짜리 복사가 아니다
 
@@ -55,10 +55,10 @@ CPU가 device에 descriptor를 제출했다면 그 buffer를 device가 사용하
 
 Interrupt는 일반적으로 '확인할 일이 생겼다'는 notification이다. Handler가 들어왔다고 application I/O가 끝난 것은 아니다. Driver가 completion queue를 읽고 descriptor 상태와 byte count/error를 확인해야 하고, 이후 protocol parsing, copy 또는 page mapping, scheduler wakeup 같은 software 단계가 더 남을 수 있다.
 
-같은 이유로 queue에 request를 넣었다는 사실과 device가 transfer를 끝냈다는 사실도 다르다. Queue depth를 키우면 device utilization과 throughput이 좋아질 수 있지만 queuing latency와 in-flight memory 사용량도 증가한다.
+같은 이유로 queue에 요청을 넣었다는 사실과 device가 transfer를 끝냈다는 사실도 다르다. Queue depth를 키우면 device utilization과 처리량이 좋아질 수 있지만 queuing 지연 시간과 in-flight memory 사용량도 증가한다.
 
 ### Error와 cancellation도 각 단계마다 다르게 나타난다
 
-Device error, DMA mapping failure, partial transfer, timeout, interrupt loss/overload, software queue overflow는 서로 다른 failure다. End-to-end I/O를 단순히 성공/실패 한 bit로 보면 어느 층에서 복구해야 하는지 알기 어렵다.
+Device error, DMA mapping 실패, partial transfer, timeout, interrupt loss/overload, software queue overflow는 서로 다른 실패다. End-to-end I/O를 단순히 성공/실패 한 bit로 보면 어느 층에서 복구해야 하는지 알기 어렵다.
 
-Backend 성능 분석에서는 application latency만 보지 않고 NIC/storage queue depth, DMA/completion latency, interrupt/softirq CPU time, kernel socket/file buffer와 user-space copy 경계를 함께 본다. `send()` 또는 `write()`가 반환한 시점이 physical device 전송 또는 durable storage 완료 시점과 같다는 가정도 API contract 없이 하지 않는다.
+Backend 성능 분석에서는 application 지연 시간만 보지 않고 NIC/storage queue depth, DMA/completion 지연 시간, interrupt/softirq CPU time, kernel socket/file buffer와 user-space copy 경계를 함께 본다. `send()` 또는 `write()`가 반환한 시점이 physical device 전송 또는 durable storage 완료 시점과 같다는 가정도 API contract 없이 하지 않는다.

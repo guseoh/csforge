@@ -70,4 +70,4 @@ insert at arbitrary middle         → O(n) shift
 
 Resize가 발생하는 append는 개별 worst case O(n)이지만 amortized O(1)이고, 중간 insert는 resize 여부와 별개로 shift 때문에 O(n)이다.
 
-Backend에서 import batch나 aggregation buffer를 설계할 때 예상 size를 알면 초기 capacity 예약으로 resize pause를 줄일 수 있다. 하지만 최대 예상치만큼 무조건 preallocate하면 동시 request가 많을 때 heap peak가 커지므로 size distribution과 p99 memory/latency를 함께 본다.
+Backend에서 import batch나 aggregation buffer를 설계할 때 예상 size를 알면 초기 capacity 예약으로 resize pause를 줄일 수 있다. 하지만 최대 예상치만큼 무조건 preallocate하면 동시 요청이 많을 때 heap peak가 커지므로 size distribution과 p99 memory/지연 시간을 함께 본다.

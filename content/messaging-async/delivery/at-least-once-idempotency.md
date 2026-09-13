@@ -52,11 +52,11 @@ read M42
   └─ committed position 갱신 전 -> M42 redelivery 가능
 ```
 
-따라서 at-most-once와 at-least-once는 “좋고 나쁜 옵션”이라기보다 **loss와 duplicate 중 어느 failure를 어떤 boundary에서 허용하고 복구할지**에 대한 선택입니다.
+따라서 at-most-once와 at-least-once는 “좋고 나쁜 옵션”이라기보다 **loss와 duplicate 중 어느 실패를 어떤 boundary에서 허용하고 복구할지**에 대한 선택입니다.
 
 ### idempotency는 duplicate를 business effect 한 번으로 흡수한다
 
-At-least-once를 선택했다면 consumer는 duplicate delivery를 정상 failure model로 취급합니다. `messageId` 또는 domain operation key를 처리 기록에 저장하고 이미 완료된 operation이면 같은 business effect를 다시 만들지 않게 할 수 있습니다.
+At-least-once를 선택했다면 consumer는 duplicate delivery를 정상 실패 모델로 취급합니다. `messageId` 또는 domain operation key를 처리 기록에 저장하고 이미 완료된 operation이면 같은 business effect를 다시 만들지 않게 할 수 있습니다.
 
 ```text
 BEGIN

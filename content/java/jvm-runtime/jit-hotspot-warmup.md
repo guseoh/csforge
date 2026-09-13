@@ -89,7 +89,7 @@ if (user.isPremium()) {
 
 ### tiered compilation은 빠른 시작과 높은 최적화를 함께 노린다
 
-HotSpot은 여러 compilation level을 조합하는 tiered compilation 전략을 사용할 수 있습니다. 처음부터 가장 비싼 최적화를 모든 method에 수행하면 startup 비용이 커질 수 있기 때문에, 실행 정보가 쌓이는 동안 더 빠른 compilation 단계와 더 공격적인 최적화 단계를 조합합니다.
+HotSpot은 여러 compilation level을 조합하는 tiered compilation 전략을 사용할 수 있습니다. 처음부터 가장 비싼 최적화를 모든 method에 수행하면 시작 비용이 커질 수 있기 때문에, 실행 정보가 쌓이는 동안 더 빠른 compilation 단계와 더 공격적인 최적화 단계를 조합합니다.
 
 학습할 때 중요한 것은 compiler 이름과 threshold 숫자를 외우는 것이 아닙니다.
 
@@ -168,7 +168,7 @@ Loop 자체가 최적화 대상이 될 수 있고, 결과를 사용하지 않으
 
 JMH(Java Microbenchmark Harness)는 JVM warm-up, fork, measurement iteration과 compiler optimization 문제를 고려해 microbenchmark를 작성하도록 돕습니다.
 
-그렇다고 JMH 결과가 곧 production API latency라는 뜻은 아닙니다.
+그렇다고 JMH 결과가 곧 production API 지연 시간이라는 뜻은 아닙니다.
 
 ```text
 JMH
@@ -180,9 +180,9 @@ Production load test
 
 측정하려는 질문에 맞는 도구를 선택합니다.
 
-### startup과 steady-state 성능은 다른 질문이다
+### 시작과 steady-state 성능은 다른 질문이다
 
-서버가 수일 동안 실행되는 경우 steady-state throughput이 중요할 수 있습니다. 반면 serverless/CLI처럼 프로세스가 짧게 실행된다면 startup과 warm-up 비용이 더 중요할 수 있습니다.
+서버가 수일 동안 실행되는 경우 steady-state 처리량이 중요할 수 있습니다. 반면 serverless/CLI처럼 프로세스가 짧게 실행된다면 시작과 warm-up 비용이 더 중요할 수 있습니다.
 
 ```text
 Long-running server

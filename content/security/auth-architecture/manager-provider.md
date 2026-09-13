@@ -57,6 +57,6 @@ ProviderManager는 compatible provider에 인증을 요청합니다. Provider가
 
 ### 실패 이유 노출도 경계다
 
-Provider 내부에서는 username not found와 bad credentials를 구분할 수 있어도 외부 login response에서 그대로 노출하면 account enumeration에 이용될 수 있습니다. provider exception과 client-visible error contract를 분리합니다.
+Provider 내부에서는 username not found와 bad credentials를 구분할 수 있어도 외부 login 응답에서 그대로 노출하면 account enumeration에 이용될 수 있습니다. provider exception과 client-visible error contract를 분리합니다.
 
 AuthenticationManager/Provider 구조의 목적은 abstraction 자체가 아니라 **credential 종류별 검증 책임을 교체·조합하면서 성공 결과를 일관된 Authentication으로 만드는 것**입니다.

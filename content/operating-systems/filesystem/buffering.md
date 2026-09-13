@@ -33,11 +33,11 @@ application이 1 byte씩 `write()`를 호출하면 syscall overhead가 과도해
 
 ### Kernel buffering은 scheduling과 aggregation에 쓰인다
 
-kernel은 write를 page cache에 받아 dirty page로 유지하면서 여러 write를 묶거나 적절한 시점에 write-back할 수 있다. read path에서도 readahead와 cache를 통해 작은 application read를 더 효율적인 storage access로 바꿀 수 있다. 이는 throughput을 높이고 latency를 숨길 수 있지만 dirty data가 오래 남아 있는 동안 crash가 나면 durability 요구와 충돌할 수 있다.
+kernel은 write를 page cache에 받아 dirty page로 유지하면서 여러 write를 묶거나 적절한 시점에 write-back할 수 있다. read path에서도 readahead와 cache를 통해 작은 application read를 더 효율적인 storage access로 바꿀 수 있다. 이는 처리량을 높이고 지연 시간을 숨길 수 있지만 dirty data가 오래 남아 있는 동안 crash가 나면 durability 요구와 충돌할 수 있다.
 
 ### Buffer 크기도 trade-off다
 
-너무 작은 buffer는 syscall/device request 수를 늘릴 수 있고, 너무 큰 buffer는 memory 사용량과 flush latency를 키운다. 또한 큰 buffer 하나가 항상 storage에 최적인 것도 아니다. access pattern, compression, network/file pipeline, downstream request size에 따라 적절한 단위가 달라진다.
+너무 작은 buffer는 syscall/device 요청 수를 늘릴 수 있고, 너무 큰 buffer는 memory 사용량과 flush 지연 시간을 키운다. 또한 큰 buffer 하나가 항상 storage에 최적인 것도 아니다. access pattern, compression, network/file pipeline, downstream 요청 size에 따라 적절한 단위가 달라진다.
 
 ### flush, close, fsync를 같은 것으로 보지 않는다
 

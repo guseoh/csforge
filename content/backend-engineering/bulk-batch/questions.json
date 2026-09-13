@@ -53,7 +53,7 @@
     "status":"PUBLISHED",
     "conceptKeys":["backend.core.bulk-batch.bulk-processing","backend.core.bulk-batch.batch-recovery"],
     "modelAnswer":"하나의 transaction은 all-or-nothing이 단순하지만 lock 보유 시간, rollback 양, persistence context/WAL 부담이 커질 수 있다. chunk transaction은 자원과 재시작 범위를 줄이지만 일부 chunk가 이미 commit된 상태를 허용하므로 checkpoint와 idempotency, 실패 보고 정책이 필요하다.",
-    "explanationMarkdown":"한 transaction은 중간 상태가 외부에 보이지 않고 실패 시 전체 rollback이 단순하지만 lock·WAL·persistence context와 재처리 양이 커진다. 1,000건 chunk는 자원을 bounded하게 하지만 앞 chunk commit을 허용하므로 checkpoint, idempotency, partial failure 보고를 함께 정의해야 한다."
+    "explanationMarkdown":"한 transaction은 중간 상태가 외부에 보이지 않고 실패 시 전체 rollback이 단순하지만 lock·WAL·persistence context와 재처리 양이 커진다. 1,000건 chunk는 자원을 bounded하게 하지만 앞 chunk commit을 허용하므로 checkpoint, idempotency, 부분 장애 보고를 함께 정의해야 한다."
   },
   {
     "kind":"question",
@@ -63,8 +63,8 @@
     "difficulty":"HARD",
     "status":"PUBLISHED",
     "conceptKeys":["backend.core.bulk-batch.file-api"],
-    "modelAnswer":"크기 제한과 임시 저장 정책을 명시하고 업로드 완료와 데이터 처리 완료를 분리한다. 업로드가 끝나면 식별자를 반환한 뒤 별도 작업으로 parse/validate/import를 수행하고 진행 상태와 실패 원인을 조회할 수 있게 한다. 파일명은 서버가 생성하고 임시 자원 정리도 실패 경로에 포함한다.",
-    "explanationMarkdown":"2GB를 한 HTTP request와 동기 parse에 묶으면 connection·worker·메모리가 오래 점유되고 timeout 시 완료 여부도 모호해진다. upload 완료를 검증·보관한 뒤 job ID를 반환하고 별도 처리 상태·실패 원인·임시 파일 cleanup을 관리하는 경계가 필요하다."
+    "modelAnswer":"크기 제한과 임시 저장 정책을 명시하고 업로드 완료와 데이터 처리 완료를 분리한다. 업로드가 끝나면 식별자를 반환한 뒤 별도 작업으로 parse/검증/import를 수행하고 진행 상태와 실패 원인을 조회할 수 있게 한다. 파일명은 서버가 생성하고 임시 자원 정리도 실패 경로에 포함한다.",
+    "explanationMarkdown":"2GB를 한 HTTP 요청과 동기 parse에 묶으면 connection·worker·메모리가 오래 점유되고 timeout 시 완료 여부도 모호해진다. upload 완료를 검증·보관한 뒤 job ID를 반환하고 별도 처리 상태·실패 원인·임시 파일 cleanup을 관리하는 경계가 필요하다."
   },
   {
     "kind":"question",

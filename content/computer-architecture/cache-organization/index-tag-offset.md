@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.cache-organization.index-tag-offset
 topicContentKey: computer-architecture.core.cache-organization
 slug: index-tag-offset
-title: "Index, Tag and Offset"
+title: "Index, Tag·Offset"
 summary: "cache capacity·line size·associativity에서 set 수를 구하고 address bit를 offset·index·tag로 나누는 방법을 설명한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "access pattern과 cache line 재사용을 확인한다."
     displayOrder: 1
 ---
-# Index, Tag and Offset
+# Index, Tag·Offset
 
 ### Cache lookup을 계산하려면 먼저 line과 set의 수를 구한다
 

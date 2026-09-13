@@ -35,7 +35,7 @@ lookup은 먼저 hash와 capacity로 bucket을 찾고, 그 bucket 안에서 실�
 
 insert는 새 entry를 bucket collection에 추가하고, lookup/delete는 해당 bucket에서 같은 key를 찾아야 한다. 균등하게 분산된다는 가정 아래 entry 수 `n`, bucket 수 `m`이면 load factor `α = n/m`가 평균 chain length의 직관적인 기준이 된다.
 
-하지만 평균값만으로 최장 chain을 숨길 수 있다. 대부분 bucket이 짧아도 하나의 bucket에 많은 key가 몰리면 해당 key의 lookup은 길어지고 tail latency가 커질 수 있다.
+하지만 평균값만으로 최장 chain을 숨길 수 있다. 대부분 bucket이 짧아도 하나의 bucket에 많은 key가 몰리면 해당 key의 lookup은 길어지고 꼬리 지연 시간(tail latency)이 커질 수 있다.
 
 ### 삭제가 단순한 대신 pointer와 locality 비용을 낸다
 

@@ -44,7 +44,7 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.multicore-memory.private-shared-cache"],
     "choices": [
-      {"key": "A", "content": "private cache로 낮은 per-core latency를 얻고 shared lower level로 capacity와 core 간 data sharing을 보완할 수 있다.", "displayOrder": 0},
+      {"key": "A", "content": "private cache로 낮은 per-core 지연 시간을 얻고 shared lower level로 capacity와 core 간 data sharing을 보완할 수 있다.", "displayOrder": 0},
       {"key": "B", "content": "private cache를 사용하면 coherence가 완전히 필요 없어지기 때문이다.", "displayOrder": 1},
       {"key": "C", "content": "shared cache는 한 core만 접근할 수 있어 contention이 없기 때문이다.", "displayOrder": 2},
       {"key": "D", "content": "모든 CPU가 반드시 동일한 private/shared cache topology를 사용하기 때문이다.", "displayOrder": 3}
@@ -69,7 +69,7 @@
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.multicore-memory.private-shared-cache"],
-    "modelAnswer": "affinity는 private-cache locality와 migration 비용을 줄일 수 있지만 scheduler의 load balancing을 제한하고 특정 core/cache/NUMA node에 workload를 몰아 contention을 높일 수 있다. 실제 효과는 migration rate, cache misses, CPU utilization, throughput과 tail latency를 적용 전후 비교해야 하며 topology와 workload에 따라 달라진다."
+    "modelAnswer": "affinity는 private-cache locality와 migration 비용을 줄일 수 있지만 scheduler의 load balancing을 제한하고 특정 core/cache/NUMA node에 workload를 몰아 contention을 높일 수 있다. 실제 효과는 migration rate, cache misses, CPU utilization, 처리량과 꼬리 지연 시간(tail latency)을 적용 전후 비교해야 하며 topology와 workload에 따라 달라진다."
   },
   {
     "kind": "question",
@@ -100,12 +100,12 @@
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.multicore-memory.cache-coherence-problem.q3",
-    "promptMarkdown": "atomic counter를 사용해 lost update는 없어졌지만 core 수를 2개에서 32개로 늘릴수록 throughput 증가가 거의 멈췄다. coherence 관점에서 가능한 원인을 설명하라.",
+    "promptMarkdown": "atomic counter를 사용해 lost update는 없어졌지만 core 수를 2개에서 32개로 늘릴수록 처리량 증가가 거의 멈췄다. coherence 관점에서 가능한 원인을 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.multicore-memory.cache-coherence-problem"],
-    "modelAnswer": "모든 core가 같은 counter가 있는 cache line을 write하면 atomic operation의 correctness와 별개로 write ownership이 core 사이를 반복 이동할 수 있다. invalidation, cache-to-cache transfer, serialization과 interconnect traffic이 늘어 scalability가 제한될 수 있다. striped/per-core aggregation 같은 state partition을 검토하되 cache-to-cache traffic과 throughput으로 원인을 확인해야 한다."
+    "modelAnswer": "모든 core가 같은 counter가 있는 cache line을 write하면 atomic operation의 correctness와 별개로 write ownership이 core 사이를 반복 이동할 수 있다. invalidation, cache-to-cache transfer, serialization과 interconnect traffic이 늘어 scalability가 제한될 수 있다. striped/per-core aggregation 같은 state partition을 검토하되 cache-to-cache traffic과 처리량으로 원인을 확인해야 한다."
   },
   {
     "kind": "question",
@@ -131,7 +131,7 @@
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.multicore-memory.coherence-protocol-model"],
-    "modelAnswer": "snooping model은 shared interconnect의 coherence transaction을 여러 cache가 관찰해 자기 line과 관련 있는지 확인하는 방식으로 설명할 수 있다. directory 방식은 특정 metadata가 sharer/owner 정보를 추적해 필요한 participant에 request/invalidation을 보내는 식으로 broadcast 범위를 줄일 수 있다. 실제 topology와 protocol detail은 microarchitecture마다 다르다."
+    "modelAnswer": "snooping model은 shared interconnect의 coherence transaction을 여러 cache가 관찰해 자기 line과 관련 있는지 확인하는 방식으로 설명할 수 있다. directory 방식은 특정 metadata가 sharer/owner 정보를 추적해 필요한 participant에 요청/invalidation을 보내는 식으로 broadcast 범위를 줄일 수 있다. 실제 topology와 protocol detail은 microarchitecture마다 다르다."
   },
   {
     "kind": "question",
@@ -141,7 +141,7 @@
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.multicore-memory.coherence-protocol-model"],
-    "modelAnswer": "처음에는 두 core가 read 가능한 shared copy를 가질 수 있다. A가 write하려면 다른 sharer인 B의 copy를 invalidate하고 write permission을 얻는다. A가 수정한 뒤 B의 기존 line은 사용할 수 없으므로 B의 다음 read는 coherence miss/request를 발생시키고 최신 data를 A 또는 hierarchy의 최신 source에서 받아 다시 readable state로 전환한다. 정확한 state 이름과 message는 protocol마다 다를 수 있다."
+    "modelAnswer": "처음에는 두 core가 read 가능한 shared copy를 가질 수 있다. A가 write하려면 다른 sharer인 B의 copy를 invalidate하고 write permission을 얻는다. A가 수정한 뒤 B의 기존 line은 사용할 수 없으므로 B의 다음 read는 coherence miss/요청을 발생시키고 최신 data를 A 또는 hierarchy의 최신 source에서 받아 다시 readable state로 전환한다. 정확한 state 이름과 message는 protocol마다 다를 수 있다."
   },
   {
     "kind": "question",
@@ -172,12 +172,12 @@
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.multicore-memory.false-sharing.q3",
-    "promptMarkdown": "32개 worker가 각자 독립 counter를 갱신한다. counter를 인접 배열 slot에 배치했을 때보다 per-worker padded layout에서 throughput이 크게 올랐다. false sharing을 원인으로 확정하기 전에 추가로 확인할 evidence와 padding의 trade-off를 설명하라.",
+    "promptMarkdown": "32개 worker가 각자 독립 counter를 갱신한다. counter를 인접 배열 slot에 배치했을 때보다 per-worker padded layout에서 처리량이 크게 올랐다. false sharing을 원인으로 확정하기 전에 추가로 확인할 evidence와 padding의 trade-off를 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.multicore-memory.false-sharing"],
-    "modelAnswer": "cache-to-cache transfer, invalidation/false-sharing profiler, core scaling 결과와 실제 object/array layout을 확인해 같은 line의 write contention이 줄었는지 검증해야 한다. lock contention이나 scheduler 변화도 함께 배제한다. padding은 line 경쟁을 줄일 수 있지만 memory footprint와 cache capacity pressure를 늘리므로 throughput·tail latency·memory 사용량을 함께 비교해야 한다."
+    "modelAnswer": "cache-to-cache transfer, invalidation/false-sharing profiler, core scaling 결과와 실제 object/array layout을 확인해 같은 line의 write contention이 줄었는지 검증해야 한다. lock contention이나 scheduler 변화도 함께 배제한다. padding은 line 경쟁을 줄일 수 있지만 memory footprint와 cache capacity pressure를 늘리므로 처리량·꼬리 지연 시간(tail latency)·memory 사용량을 함께 비교해야 한다."
   },
   {
     "kind": "question",

@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.virtual-memory-hardware.page-size-huge-page
 topicContentKey: computer-architecture.core.virtual-memory-hardware
 slug: page-size-huge-page
-title: "Page Size and Huge Page"
+title: "Page Size·Huge Page"
 summary: "page size가 TLB reach·page-table footprint·memory 낭비·allocation/fault 비용에 미치는 trade-off를 설명한다."
 level: 3
 status: PUBLISHED
@@ -31,7 +31,7 @@ references:
     recommendation: "Linux HugeTLB의 TLB 이점과 allocation·reservation 제약을 확인한다."
     displayOrder: 3
 ---
-# Page Size and Huge Page
+# Page Size·Huge Page
 
 ### Page size는 translation의 단위이면서 memory 관리의 단위다
 
@@ -59,7 +59,7 @@ huge page는 TLB miss를 줄일 수 있지만 data cache miss, poor locality, NU
 
 ### Backend/JVM에서 적용할 때 무엇을 측정할까
 
-JVM이나 native process에 huge page를 적용하기 전에는 먼저 TLB miss와 page-walk cost가 의미 있는 병목인지 확인한다. 적용 전후로 throughput뿐 아니라 RSS, page-table memory, allocation 실패/fragmentation, major/minor fault, TLB 관련 counter, startup과 p95/p99 pause를 함께 비교한다.
+JVM이나 native process에 huge page를 적용하기 전에는 먼저 TLB miss와 page-walk cost가 의미 있는 병목인지 확인한다. 적용 전후로 처리량뿐 아니라 RSS, page-table memory, allocation 실패/fragmentation, major/minor fault, TLB 관련 counter, 시작과 p95/p99 pause를 함께 비교한다.
 
 `heap이 크다 → huge page를 켠다`가 기본 순서는 아니다. workload가 큰 memory range를 지속적으로 사용하고 translation pressure가 실제로 관측될 때 후보가 되며, Linux HugeTLB와 Transparent Huge Pages처럼 서로 다른 mechanism의 운영 특성도 분리해서 검토해야 한다.
 

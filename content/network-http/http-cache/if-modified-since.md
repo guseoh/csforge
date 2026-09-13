@@ -25,4 +25,4 @@ conditional header가 있다는 이유로 server가 resource 선택, authorizati
 
 ### Backend 연결
 
-파일과 DB content를 함께 제공할 때 수정 시각의 source를 하나로 정하고, export 과정에서 mtime을 임의로 갱신해 false change를 만들지 않는다. conditional response가 permission check를 우회하지 않도록 resource·권한 선택 후 validator를 평가하는 순서를 고정하며, 초 단위 collision이 중요한 content에는 ETag를 우선 제공한다.
+파일과 DB content를 함께 제공할 때 수정 시각의 source를 하나로 정하고, export 과정에서 mtime을 임의로 갱신해 false change를 만들지 않는다. conditional 응답이 permission check를 우회하지 않도록 resource·권한 선택 후 validator를 평가하는 순서를 고정하며, 초 단위 collision이 중요한 content에는 ETag를 우선 제공한다.

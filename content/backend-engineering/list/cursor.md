@@ -48,7 +48,7 @@ ORDER BY created_at DESC, id DESC
 LIMIT 20;
 ```
 
-마지막으로 본 `(createdAt, id)`보다 뒤쪽만 읽으므로 앞에 새 행이 생겨도 경계가 덜 흔들립니다. 다만 이것도 여러 요청 전체를 동일 snapshot으로 고정하는 보장은 아닙니다. 정렬 key 자체가 수정되거나 row가 삭제되는 workload에서는 별도 consistency 의미를 정의해야 합니다.
+마지막으로 본 `(createdAt, id)`보다 뒤쪽만 읽으므로 앞에 새 행이 생겨도 경계가 덜 흔들립니다. 다만 이것도 여러 요청 전체를 동일 snapshot으로 고정하는 보장은 아닙니다. 정렬 key 자체가 수정되거나 row가 삭제되는 workload에서는 별도 일관성 의미를 정의해야 합니다.
 
 ### cursor는 client에게 opaque한 continuation token으로 다룬다
 

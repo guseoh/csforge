@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.performance.instruction-count-cpi-clock
 topicContentKey: computer-architecture.core.performance
 slug: instruction-count-cpi-clock
-title: "Instruction Count, CPI and Clock"
+title: "Instruction Count, CPI·Clock"
 summary: "CPU time을 instruction count·average CPI·clock cycle time으로 분해하고 각 항의 원인이 서로 영향을 주는 방식을 설명한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "CPU execution time, latency/throughput와 speedup을 구분해 성능을 계산하는 방법을 확인한다."
     displayOrder: 1
 ---
-# Instruction Count, CPI and Clock
+# Instruction Count, CPI·Clock
 
 ### CPU time을 세 요소로 분해한다
 
@@ -68,6 +68,6 @@ Cycle time을 줄이면 같은 cycle 수의 작업은 빨라진다. 그러나 �
 
 ### Backend에서는 CPU 식과 end-to-end 식을 구분한다
 
-이 performance equation은 CPU execution portion을 이해하는 모델이다. HTTP request의 p99에는 scheduler queue, DB, network, disk와 lock wait가 들어간다. CPU hotspot을 최적화할 때 retired instructions와 cycles를 보는 것은 유용하지만, 해당 hotspot이 전체 request time에서 얼마나 큰 비율인지도 함께 측정해야 한다.
+이 performance equation은 CPU execution portion을 이해하는 모델이다. HTTP 요청의 p99에는 scheduler queue, DB, network, disk와 lock wait가 들어간다. CPU hotspot을 최적화할 때 retired instructions와 cycles를 보는 것은 유용하지만, 해당 hotspot이 전체 요청 time에서 얼마나 큰 비율인지도 함께 측정해야 한다.
 
 성능 개선 기록에서는 `instruction count 20% 감소`, `cycles 8% 감소`, `endpoint latency 2% 감소`처럼 층별 결과를 분리하면 최적화가 어디까지 영향을 미쳤는지 설명할 수 있다.

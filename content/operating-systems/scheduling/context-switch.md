@@ -53,15 +53,15 @@ Task B가 실행되면 A가 사용하던 cache working set 일부가 밀려날 �
 
 ### 너무 적어도, 너무 많아도 문제다
 
-Context switch를 줄이겠다고 한 task를 매우 오래 실행시키면 다른 runnable task의 response time과 fairness가 나빠질 수 있다. 반대로 아주 짧은 quantum으로 계속 task를 바꾸면 useful work보다 scheduling/context-switch overhead가 커질 수 있다.
+Context switch를 줄이겠다고 한 task를 매우 오래 실행시키면 다른 runnable task의 응답 시간과 fairness가 나빠질 수 있다. 반대로 아주 짧은 quantum으로 계속 task를 바꾸면 useful work보다 scheduling/context-switch overhead가 커질 수 있다.
 
-따라서 context-switch 수 자체를 낮추는 것이 목표가 아니라 **workload의 latency·throughput·fairness 요구를 만족하는 scheduling 결과를 만드는 것**이 목표다.
+따라서 context-switch 수 자체를 낮추는 것이 목표가 아니라 **workload의 지연 시간·처리량·fairness 요구를 만족하는 scheduling 결과를 만드는 것**이 목표다.
 
 ### Backend worker 수와 연결해서 본다
 
 CPU-bound 작업을 처리하는 worker를 CPU capacity보다 지나치게 많이 만들면 동시에 실제 CPU에서 실행할 수 없는 runnable threads가 늘어 scheduling 경쟁과 context switching이 증가할 수 있다.
 
-하지만 blocking I/O workload에서는 worker가 block되는 동안 다른 task가 CPU를 사용할 수 있으므로 단순히 `threads = cores`가 정답도 아니다. Worker 수를 조정할 때 CPU utilization, runnable queue, context-switch rate, latency와 blocking 비율을 함께 봐야 한다.
+하지만 blocking I/O workload에서는 worker가 block되는 동안 다른 task가 CPU를 사용할 수 있으므로 단순히 `threads = cores`가 정답도 아니다. Worker 수를 조정할 때 CPU utilization, runnable queue, context-switch rate, 지연 시간과 blocking 비율을 함께 봐야 한다.
 
 ### 면접에서 이렇게 나옵니다
 

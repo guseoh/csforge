@@ -104,7 +104,7 @@ reflection
 source -> 문자열/metadata -> runtime lookup/invoke
 ```
 
-그래서 framework는 보통 startup 시 metadata를 미리 검사하거나 결과를 cache해 문제를 일찍 발견하려고 합니다.
+그래서 framework는 보통 시작 시 metadata를 미리 검사하거나 결과를 cache해 문제를 일찍 발견하려고 합니다.
 
 ### `invoke()` 결과와 예외도 호출자가 처리해야 한다
 
@@ -138,7 +138,7 @@ Access control에는:
 
 ### Reflection은 framework가 자동으로 behavior를 만드는 마법이 아니다
 
-Annotation이 붙은 method를 reflection으로 찾았다고 실제 transaction이나 validation이 자동으로 실행되는 것은 아닙니다.
+Annotation이 붙은 method를 reflection으로 찾았다고 실제 transaction이나 검증이 자동으로 실행되는 것은 아닙니다.
 
 ```text
 Annotation metadata
@@ -156,11 +156,11 @@ Reflection은 metadata를 읽고 member를 호출하는 도구입니다. "annota
 
 ### 성능 문제는 "Reflection은 무조건 느리다"보다 사용 위치를 본다
 
-Reflection 호출에는 일반 정적 호출보다 lookup, access, boxing/argument 처리 같은 추가 비용이 생길 수 있습니다. 하지만 framework가 startup에 metadata를 한 번 조사하고 결과를 cache한다면 request마다 모든 것을 다시 scan하는 것과 상황이 다릅니다.
+Reflection 호출에는 일반 정적 호출보다 lookup, access, boxing/argument 처리 같은 추가 비용이 생길 수 있습니다. 하지만 framework가 시작에 metadata를 한 번 조사하고 결과를 cache한다면 요청마다 모든 것을 다시 scan하는 것과 상황이 다릅니다.
 
 그래서 다음처럼 판단합니다.
 
-- startup 시 한 번의 reflection: 많은 framework에서 충분히 합리적
+- 시작 시 한 번의 reflection: 많은 framework에서 충분히 합리적
 - 매우 뜨거운 반복 loop에서 매번 lookup/invoke: 비용을 측정할 가치가 있음
 - 일반 application code: 안정적인 interface/직접 호출이 가능하면 그쪽이 더 단순
 
@@ -173,7 +173,7 @@ Java/Spring backend에서는 다음과 연결됩니다.
 - Spring component/bean metadata 처리
 - JSON serialization/deserialization
 - ORM entity metadata
-- validation annotation
+- 검증 annotation
 - test framework
 - proxy/framework infrastructure
 
@@ -184,7 +184,7 @@ Java/Spring backend에서는 다음과 연결됩니다.
 1. `Class`가 runtime type을 나타낸다는 점을 확인합니다.
 2. inherited public member와 declared member 조회를 구분합니다.
 3. 문자열 기반 lookup에서 compile-time 검사가 줄어드는 부분을 봅니다.
-4. `invoke()`의 실제 target exception과 reflection failure를 구분합니다.
+4. `invoke()`의 실제 target exception과 reflection 실패를 구분합니다.
 5. `setAccessible`이 모든 JPMS boundary를 무조건 뚫는다고 생각하지 않습니다.
 6. Reflection 자체와 framework behavior를 구분합니다.
 7. 성능을 이야기할 때 lookup 빈도와 실제 측정을 확인합니다.

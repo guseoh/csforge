@@ -3,7 +3,7 @@ kind: concept
 contentKey: performance.core.operations.incident-response
 topicContentKey: performance.core.operations
 slug: incident-response
-title: "incident response와 postmortem"
+title: "사고 대응(incident response)과 사후 분석(postmortem)"
 summary: "incident command, communication, mitigation, evidence 보존과 blameless learning을 운영한다"
 level: 2
 status: PUBLISHED
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: "on-call과 incident 대응 책임 확인"
 ---
-# incident response와 postmortem
+# 사고 대응(incident response)과 사후 분석(postmortem)
 
 Incident는 시스템이 기대한 user-visible objective를 위반하거나 위반할 위험이 있는 사건입니다. 초기 목표는 완벽한 root cause를 즉시 증명하는 것이 아니라 영향을 줄이고, 판단권자와 기록을 세우며, 동일한 사실을 사용자·내부 팀에 일관되게 전달하는 것입니다.
 
@@ -47,4 +47,4 @@ blameless postmortem은 개인을 탓하지 않고 trigger, detection gap, contr
 
 ### 면접에서 설명한다면
 
-Incident response의 첫 목표는 root cause 경연이 아니라 영향 축소와 조정 가능한 의사결정입니다. 역할·communication·timeline을 세우고 안전한 mitigation을 실행한 뒤, evidence 기반 postmortem에서 detection·runbook·deployment guard를 바꾸는 actionable item을 남깁니다.
+Incident 응답의 첫 목표는 root cause 경연이 아니라 영향 축소와 조정 가능한 의사결정입니다. 역할·communication·timeline을 세우고 안전한 mitigation을 실행한 뒤, evidence 기반 postmortem에서 detection·runbook·deployment guard를 바꾸는 actionable item을 남깁니다.

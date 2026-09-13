@@ -53,10 +53,10 @@ Clock rate가 같다고 CPU time이 같지 않은 이유이며, 반대로 clock 
 
 CPU utilization은 일정 시간 동안 CPU resource가 얼마나 바빴는지를 나타내는 aggregate 지표다. Service가 여러 thread/core를 사용하면 wall-clock 1초 동안 총 CPU time이 1초보다 클 수도 있다. 예를 들어 네 core를 각각 1초 동안 사용하면 aggregate CPU time은 약 4 CPU-seconds가 될 수 있다.
 
-따라서 `CPU 80%`와 `request가 CPU에서 80%의 시간을 썼다`를 동일하게 해석하지 않는다. Machine-level utilization, process CPU time, per-request on-CPU time은 측정 단위가 다르다.
+따라서 `CPU 80%`와 `request가 CPU에서 80%의 시간을 썼다`를 동일하게 해석하지 않는다. Machine-level utilization, process CPU time, per-요청 on-CPU time은 측정 단위가 다르다.
 
 ### 성능 개선은 먼저 시간의 소유자를 찾는다
 
-Endpoint가 느릴 때 CPU profiler부터 보는 것이 항상 틀린 것은 아니지만 profiler만으로 전체 latency를 설명할 수는 없다. CPU-bound workload라면 hot instruction path를 찾는 것이 중요하지만, blocking I/O가 대부분이면 DB/query/network/queue를 먼저 봐야 한다.
+Endpoint가 느릴 때 CPU profiler부터 보는 것이 항상 틀린 것은 아니지만 profiler만으로 전체 지연 시간을 설명할 수는 없다. CPU-bound workload라면 hot instruction path를 찾는 것이 중요하지만, blocking I/O가 대부분이면 DB/query/network/queue를 먼저 봐야 한다.
 
-그래서 backend 성능 분석에서는 wall-clock trace와 CPU profile을 연결한다. Request span에서 어느 구간이 on-CPU인지, 어느 구간이 blocked/runnable/downstream wait인지 분해한 뒤 최적화 대상을 고른다. CPU time을 줄이는 것과 사용자 latency를 줄이는 것은 겹칠 수 있지만 자동으로 같은 목표는 아니다.
+그래서 backend 성능 분석에서는 wall-clock trace와 CPU profile을 연결한다. 요청 span에서 어느 구간이 on-CPU인지, 어느 구간이 blocked/runnable/downstream wait인지 분해한 뒤 최적화 대상을 고른다. CPU time을 줄이는 것과 사용자 지연 시간을 줄이는 것은 겹칠 수 있지만 자동으로 같은 목표는 아니다.

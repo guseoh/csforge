@@ -24,7 +24,7 @@ references:
 ---
 # Bean Validation 경계
 
-API request에는 application code를 실행하기 전에 거를 수 있는 명확한 형식 제약이 있습니다. 제목은 비어 있으면 안 되고, page size는 1~100이어야 하며, email field는 적어도 email 형식을 가져야 한다는 식입니다.
+API 요청에는 application code를 실행하기 전에 거를 수 있는 명확한 형식 제약이 있습니다. 제목은 비어 있으면 안 되고, page size는 1~100이어야 하며, email field는 적어도 email 형식을 가져야 한다는 식입니다.
 
 ```java
 record CreateMemberRequest(
@@ -38,11 +38,11 @@ Spring MVC는 `@Valid`/`@Validated`와 Bean Validation provider를 연결해 이
 
 ### 요청 형식 검증과 business invariant는 같은 층이 아니다
 
-`@NotBlank title`은 어떤 게시글 상태에서도 비교적 안정적인 request shape 규칙일 수 있습니다. 하지만 다음 규칙은 상황이 다릅니다.
+`@NotBlank title`은 어떤 게시글 상태에서도 비교적 안정적인 요청 shape 규칙일 수 있습니다. 하지만 다음 규칙은 상황이 다릅니다.
 
 > “배송을 시작한 주문은 취소할 수 없다.”
 
-이 규칙은 REST request뿐 아니라 batch, scheduler, admin tool에서도 지켜져야 하며 현재 `Order` 상태를 알아야 합니다. DTO annotation에 억지로 넣기보다 domain behavior가 소유하는 편이 자연스럽습니다.
+이 규칙은 REST 요청뿐 아니라 batch, scheduler, admin tool에서도 지켜져야 하며 현재 `Order` 상태를 알아야 합니다. DTO annotation에 억지로 넣기보다 domain behavior가 소유하는 편이 자연스럽습니다.
 
 ```java
 order.cancel(now); // Order가 자신의 현재 상태를 보고 허용/거부
@@ -55,7 +55,7 @@ JSON/type/shape constraint -> API/Bean Validation
 동시성까지 보장할 unique    -> Database constraint
 ```
 
-### validation을 여러 층에서 하는 것은 모두 중복 낭비가 아니다
+### 검증을 여러 층에서 하는 것은 모두 중복 낭비가 아니다
 
 회원 email 중복을 생각해 보겠습니다.
 
@@ -65,7 +65,7 @@ if (memberRepository.existsByEmail(email)) {
 }
 ```
 
-친절한 사전 검사는 가능하지만 두 request가 동시에 `exists=false`를 본 뒤 모두 insert할 수 있습니다. 정말 unique해야 한다면 DB unique constraint가 최종 invariant를 보호해야 합니다. application check와 DB constraint는 **사용자 경험과 동시성 보장이라는 서로 다른 목적**을 가질 수 있습니다.
+친절한 사전 검사는 가능하지만 두 요청이 동시에 `exists=false`를 본 뒤 모두 insert할 수 있습니다. 정말 unique해야 한다면 DB unique constraint가 최종 invariant를 보호해야 합니다. application check와 DB constraint는 **사용자 경험과 동시성 보장이라는 서로 다른 목적**을 가질 수 있습니다.
 
 ### annotation을 붙였다고 입력이 “안전해진 것”은 아니다
 
@@ -77,8 +77,8 @@ if (memberRepository.existsByEmail(email)) {
 
 Bean Validation은 input contract의 일부이지 전체 보안 계층이 아닙니다.
 
-### validation group은 복잡도를 숨길 수도 있다
+### 검증 group은 복잡도를 숨길 수도 있다
 
-create/update마다 constraint가 달라 group을 사용할 수 있지만 DTO 하나에 많은 group 조건이 쌓이면 서로 다른 API contract를 한 type에 억지로 합친 신호일 수 있습니다. `CreateMemberRequest`, `UpdateProfileRequest`처럼 use case별 request type을 분리하는 편이 더 읽기 쉬운 경우도 많습니다.
+create/update마다 constraint가 달라 group을 사용할 수 있지만 DTO 하나에 많은 group 조건이 쌓이면 서로 다른 API contract를 한 type에 억지로 합친 신호일 수 있습니다. `CreateMemberRequest`, `UpdateProfileRequest`처럼 use case별 요청 type을 분리하는 편이 더 읽기 쉬운 경우도 많습니다.
 
 Bean Validation을 잘 쓰는 기준은 annotation 개수가 아니라 **현재 constraint가 어느 경계에서 항상 참이어야 하는가**를 먼저 정하는 것입니다.

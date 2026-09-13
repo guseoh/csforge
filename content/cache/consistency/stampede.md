@@ -3,7 +3,7 @@ kind: concept
 contentKey: cache.core.consistency.stampede
 topicContentKey: cache.core.consistency
 slug: stampede
-title: "cache stampede와 request coalescing"
+title: "cache stampede와 요청 coalescing"
 summary: "인기 key의 동시 miss가 origin을 폭주시킨다는 원인과 single-flight·lock·early refresh의 trade-off를 이해한다"
 level: 3
 status: PUBLISHED
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: "popular key expiration과 stampede mitigation 확인"
 ---
-# cache stampede와 request coalescing
+# cache stampede와 요청 coalescing
 
 Cache가 있으면 origin query가 항상 한 번만 실행된다고 생각하기 쉽습니다. 인기 key가 만료되는 순간 여러 요청이 동시에 miss를 보면 모두 origin을 조회하고 같은 값을 채우는 **cache stampede**가 생깁니다.
 
@@ -46,7 +46,7 @@ entry가 완전히 만료되기 전에 확률적으로 refresh를 시작하거�
 
 ### coalescing은 origin 부하만 줄이지 않는다
 
-대기 요청이 너무 많으면 local worker, connection pool, queue도 막힐 수 있습니다. 따라서 coalescing group의 최대 대기 수와 wait timeout을 두고, 제한을 넘은 요청은 bounded fallback 또는 명확한 오류로 끝내야 합니다.
+대기 요청이 너무 많으면 local worker, connection pool, queue도 막힐 수 있습니다. 따라서 coalescing group의 최대 대기 수와 wait timeout을 두고, 제한을 넘은 요청은 bounded 대체 처리 또는 명확한 오류로 끝내야 합니다.
 
 ### 문제를 풀 때 확인할 것
 
@@ -54,7 +54,7 @@ entry가 완전히 만료되기 전에 확률적으로 refresh를 시작하거�
 2. fill owner가 죽을 때 lock이 복구되는지 봅니다.
 3. 대기 요청과 origin query 수가 어떻게 변하는지 측정합니다.
 4. stale-while-refresh가 업무상 허용되는지 판단합니다.
-5. lock, timeout, fallback이 또 다른 overload를 만들지 확인합니다.
+5. lock, timeout, 대체 처리가 또 다른 overload를 만들지 확인합니다.
 
 ### 면접에서 설명한다면
 

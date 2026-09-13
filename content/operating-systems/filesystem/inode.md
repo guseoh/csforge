@@ -35,7 +35,7 @@ inode에는 작은 metadata와 data 위치 정보가 있고 실제 file bytes는
 
 ### metadata와 data의 persistent update는 여러 write가 될 수 있다
 
-file을 늘리려면 free block 할당 상태, inode size/block mapping, 실제 data block 등 여러 persistent structure가 바뀔 수 있다. crash가 중간에 발생하면 일부만 기록될 위험이 있기 때문에 journaling이나 copy-on-write filesystem 같은 crash-consistency 설계가 필요해진다.
+file을 늘리려면 free block 할당 상태, inode size/block mapping, 실제 data block 등 여러 persistent structure가 바뀔 수 있다. crash가 중간에 발생하면 일부만 기록될 위험이 있기 때문에 journaling이나 copy-on-write filesystem 같은 crash-일관성 설계가 필요해진다.
 
 Backend에서 temp file을 쓰고 rename으로 교체할 때도 pathname만 보면 안 된다. 새 file data, inode metadata, directory entry가 각각 어떤 시점에 durable한지는 별도의 filesystem 계약이다. 중요한 artifact를 저장한다면 application-level 상태와 checksum뿐 아니라 필요한 durability boundary까지 명확히 한다.
 

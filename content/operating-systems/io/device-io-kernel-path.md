@@ -36,7 +36,7 @@ application은 일반적으로 network card, disk controller 같은 device regis
 
 `application → syscall entry → kernel object/filesystem/socket layer → driver → device/DMA → interrupt 또는 completion state → kernel → application`
 
-모든 device가 정확히 이 순서나 같은 메커니즘을 쓰는 것은 아니지만, **요청 제출과 실제 hardware completion이 같은 순간이 아니라는 점**이 중요하다. driver는 request를 queue에 넣고 device가 DMA로 memory를 갱신하도록 설정할 수 있으며, 이후 interrupt나 polling/completion queue를 통해 완료를 인식할 수 있다.
+모든 device가 정확히 이 순서나 같은 메커니즘을 쓰는 것은 아니지만, **요청 제출과 실제 hardware completion이 같은 순간이 아니라는 점**이 중요하다. driver는 요청을 queue에 넣고 device가 DMA로 memory를 갱신하도록 설정할 수 있으며, 이후 interrupt나 polling/completion queue를 통해 완료를 인식할 수 있다.
 
 ### 기다리는 방식은 API와 object에 따라 달라진다
 
@@ -50,4 +50,4 @@ DMA는 device가 CPU가 byte마다 복사하지 않고 memory와 data를 전송�
 
 ### Backend에서 어디까지 볼 것인가
 
-HTTP request가 느릴 때 application method 시간만 보면 실제 wait 위치를 놓칠 수 있다. socket receive 대기, file read, storage queue, downstream network처럼 kernel/device wait가 포함될 수 있다. thread state, syscall latency, queue depth와 device/network metrics를 함께 보되, hardware 세부 tuning을 application correctness의 기본 전제로 만들지는 않는다.
+HTTP 요청이 느릴 때 application method 시간만 보면 실제 wait 위치를 놓칠 수 있다. socket receive 대기, file read, storage queue, downstream network처럼 kernel/device wait가 포함될 수 있다. thread state, syscall 지연 시간, queue depth와 device/network metrics를 함께 보되, hardware 세부 tuning을 application correctness의 기본 전제로 만들지는 않는다.

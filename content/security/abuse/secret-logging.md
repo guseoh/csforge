@@ -63,7 +63,7 @@ apiKeyFingerprint=sha256:ab12...
 
 ### exception logging도 leakage 경로다
 
-HTTP client exception이 request/response body 전체를 `toString()`에 포함하거나 DB error가 query parameter를 출력할 수 있습니다. 공통 request logger뿐 아니라 SDK/client error logging도 검토해야 합니다.
+HTTP client exception이 요청/응답 body 전체를 `toString()`에 포함하거나 DB error가 query parameter를 출력할 수 있습니다. 공통 요청 logger뿐 아니라 SDK/client error logging도 검토해야 합니다.
 
 ### 민감하지 않은 진단 정보는 충분히 남긴다
 

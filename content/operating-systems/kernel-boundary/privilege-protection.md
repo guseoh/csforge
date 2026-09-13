@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.kernel-boundary.privilege-protection
 topicContentKey: operating-systems.core.kernel-boundary
 slug: privilege-protection
-title: "Privilege and Protection"
+title: "Privilege·Protection"
 summary: "CPU privilege와 memory permission이 kernel의 보호 정책을 어떻게 강제하는지 설명한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "privilege level이 software stack 사이의 protection을 제공하고 허용되지 않은 동작이 exception을 일으키는 구조를 확인한다."
     displayOrder: 1
 ---
-# Privilege and Protection
+# Privilege·Protection
 
 User/kernel mode가 실제 보호 경계가 되려면 “application은 하지 말아야 한다”는 규칙만 있어서는 안 된다. 악성 코드나 버그가 그 규칙을 무시하더라도 **CPU와 memory-management hardware가 금지된 동작을 실행하지 못하게 강제**해야 한다.
 
@@ -46,7 +46,7 @@ System call을 통해 kernel mode로 들어왔다고 해서 user가 넘긴 point
 
 예를 들어 application이 `buffer address + length`를 kernel에 전달한다고 하자. Kernel이 length를 그대로 신뢰해 자신의 memory까지 접근한다면 user/kernel boundary 자체가 공격 경로가 된다. 그래서 kernel interface에서 user memory는 신뢰 경계 밖의 입력으로 취급한다.
 
-또한 validation과 실제 사용 사이에 user memory가 바뀔 수 있는 경우처럼 concurrency/TOCTOU 문제도 별도의 설계 대상이 된다. 중요한 원리는 “kernel mode이므로 안전하다”가 아니라 **높은 privilege를 가진 코드일수록 낮은 privilege에서 넘어온 state를 더 엄격히 검증해야 한다**는 것이다.
+또한 검증과 실제 사용 사이에 user memory가 바뀔 수 있는 경우처럼 concurrency/TOCTOU 문제도 별도의 설계 대상이 된다. 중요한 원리는 “kernel mode이므로 안전하다”가 아니라 **높은 privilege를 가진 코드일수록 낮은 privilege에서 넘어온 state를 더 엄격히 검증해야 한다**는 것이다.
 
 ### OS permission과 application authorization은 다른 층이다
 
@@ -63,4 +63,4 @@ CPU / MMU protection
 privilege mode, address permission
 ```
 
-장애나 보안 문제를 분석할 때 이 층들을 합쳐서 “권한 문제”라고만 부르면 원인을 놓치기 쉽다. Privilege and Protection의 핵심은 CPU의 특권 수준, memory 접근 권한, kernel의 validation이 함께 작동해 **낮은 권한의 실행 주체가 시스템 전체 state를 임의로 변경하지 못하게 하는 것**이다.
+장애나 보안 문제를 분석할 때 이 층들을 합쳐서 “권한 문제”라고만 부르면 원인을 놓치기 쉽다. Privilege and Protection의 핵심은 CPU의 특권 수준, memory 접근 권한, kernel의 검증이 함께 작동해 **낮은 권한의 실행 주체가 시스템 전체 state를 임의로 변경하지 못하게 하는 것**이다.

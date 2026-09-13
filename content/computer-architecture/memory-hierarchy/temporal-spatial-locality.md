@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.memory-hierarchy.temporal-spatial-locality
 topicContentKey: computer-architecture.core.memory-hierarchy
 slug: temporal-spatial-locality
-title: "Temporal and Spatial Locality"
+title: "Temporal·Spatial Locality"
 summary: "최근 사용한 데이터와 인접 데이터를 다시 사용할 가능성이 cache line 재사용과 working set에 어떤 영향을 주는지 설명한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "cache hit·miss와 lower-level access를 확인한다."
     displayOrder: 1
 ---
-# Temporal and Spatial Locality
+# Temporal·Spatial Locality
 
 ### Cache는 미래 access를 정확히 아는 것이 아니라 반복되는 패턴을 이용한다
 
@@ -39,4 +39,4 @@ line을 크게 가져오면 인접 data를 미리 얻을 가능성이 커지지�
 
 대량 데이터를 처리할 때 primitive array나 compact buffer를 순차 scan하는 코드는 pointer를 따라 여러 object로 흩어진 데이터를 방문하는 코드보다 spatial locality가 좋을 가능성이 있다. 하지만 Java object의 실제 layout, GC 이동, JIT 최적화와 hardware prefetcher 동작까지 포함하면 source code만으로 정확한 miss 수를 계산할 수는 없다.
 
-따라서 batch 처리나 in-memory index를 개선할 때는 `allocation을 줄였다`, `array로 바꿨다`는 사실만으로 성공을 선언하지 않고 실제 workload의 throughput, cache miss, memory bandwidth를 측정한다. application-level Redis/cache hit rate와 CPU cache locality도 같은 이름의 cache라는 이유로 섞어 해석하지 않는다.
+따라서 batch 처리나 in-memory index를 개선할 때는 `allocation을 줄였다`, `array로 바꿨다`는 사실만으로 성공을 선언하지 않고 실제 workload의 처리량, cache miss, memory bandwidth를 측정한다. application-level Redis/cache hit rate와 CPU cache locality도 같은 이름의 cache라는 이유로 섞어 해석하지 않는다.

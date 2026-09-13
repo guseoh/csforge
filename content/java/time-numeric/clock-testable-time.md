@@ -113,7 +113,7 @@ boolean ended = !now.isBefore(end);
 
 ### Spring 코드에서는 필요한 책임에 Clock을 둔다
 
-현재 시간이 실제 비즈니스 판단에 영향을 준다면 그 판단을 수행하는 application/domain policy가 `Clock`을 사용하도록 하는 것이 자연스럽습니다. Response mapper가 임의로 `now()`를 읽어 "만료 여부" 같은 업무 상태를 계산하면 책임과 테스트 경계가 흐려질 수 있습니다.
+현재 시간이 실제 비즈니스 판단에 영향을 준다면 그 판단을 수행하는 application/domain policy가 `Clock`을 사용하도록 하는 것이 자연스럽습니다. 응답 mapper가 임의로 `now()`를 읽어 "만료 여부" 같은 업무 상태를 계산하면 책임과 테스트 경계가 흐려질 수 있습니다.
 
 Spring Bean으로 `Clock`을 제공하면 운영 설정과 테스트 대체도 명확하게 할 수 있습니다. 다만 이 Concept의 핵심은 Spring 설정법이 아니라 **시간이라는 외부 입력을 코드에서 분리한다**는 Java 설계 원리입니다.
 

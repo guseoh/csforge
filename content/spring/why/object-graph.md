@@ -67,7 +67,7 @@ class OrderService {
 | 질문                           | 확인하는 문제                     |
 | ------------------------------ | --------------------------------- |
 | 어떤 구현을 연결하는가         | 기능 선택과 환경별 차이           |
-| 몇 개의 instance가 존재하는가  | singleton/request/prototype scope |
+| 몇 개의 instance가 존재하는가  | singleton/요청/prototype scope |
 | 누가 생성과 소멸을 관리하는가  | resource lifecycle                |
 | 두 객체가 서로를 필요로 하는가 | circular dependency               |
 | 여러 후보 중 무엇을 선택하는가 | ambiguity와 qualifier             |

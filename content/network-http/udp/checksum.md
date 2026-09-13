@@ -23,5 +23,5 @@ UDP checksum은 header·payload와 IP pseudo-header에 기반해 전송 중 bit 
 
 checksum은 authentication이나 공격자가 만든 변경을 막는 cryptographic integrity를 제공하지 않는다. 또한 loss, duplicate, ordering과 retry를 다루지 않으므로 sequence·signature·encryption·application acknowledgement가 필요한 protocol은 UDP checksum만으로 충분하지 않다.
 
-관측 data에서는 checksum 검증 실패, network-level drop과 application schema/semantic validation 실패를 별도 metric으로 남긴다. 손상 탐지 뒤 재수집할지 drop할지 data criticality에 따라 결정하고, checksum 통과를 canonical 저장의 business validity로 승격하지 않는다.
+관측 data에서는 checksum 검증 실패, network-level drop과 application schema/semantic 검증 실패를 별도 metric으로 남긴다. 손상 탐지 뒤 재수집할지 drop할지 data criticality에 따라 결정하고, checksum 통과를 canonical 저장의 business validity로 승격하지 않는다.
 

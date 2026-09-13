@@ -40,7 +40,7 @@ read/write data register
 
 Busy polling은 instruction execution뿐 아니라 interconnect와 MMIO access를 반복할 수 있다. Status register가 normal cacheable memory가 아니라 device register라면 일반 load처럼 cheap하다고 가정할 수 없다. Poll interval을 줄이면 completion을 빨리 감지할 수 있지만 CPU와 bus traffic을 더 많이 사용한다.
 
-반대로 polling interval을 너무 길게 잡으면 CPU 사용량은 낮아져도 completion latency가 증가한다. 그래서 polling은 CPU cost와 response latency 사이에서 trade-off를 가진다.
+반대로 polling interval을 너무 길게 잡으면 CPU 사용량은 낮아져도 completion 지연 시간이 증가한다. 그래서 polling은 CPU cost와 응답 지연 시간 사이에서 trade-off를 가진다.
 
 ### Interrupt-driven I/O는 기다리는 CPU를 다른 일에 쓸 수 있게 한다
 
@@ -56,4 +56,4 @@ Interrupt는 CPU에게 event를 알리는 mechanism이고, DMA는 bulk data tran
 CPU setup → device/DMA transfer → completion notification → CPU consumes result
 ```
 
-Programmed I/O, interrupt-driven I/O, DMA를 비교할 때는 event frequency, transfer size, CPU budget, latency requirement와 device capability를 함께 본다. Backend에서 busy loop가 CPU를 많이 쓴다고 곧바로 DMA가 정답인 것은 아니며, 실제 kernel/driver path가 어떤 mechanism을 사용하는지 측정해야 한다.
+Programmed I/O, interrupt-driven I/O, DMA를 비교할 때는 event frequency, transfer size, CPU budget, 지연 시간 requirement와 device capability를 함께 본다. Backend에서 busy loop가 CPU를 많이 쓴다고 곧바로 DMA가 정답인 것은 아니며, 실제 kernel/driver path가 어떤 mechanism을 사용하는지 측정해야 한다.

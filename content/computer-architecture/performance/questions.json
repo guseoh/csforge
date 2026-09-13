@@ -2,23 +2,23 @@
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.performance.latency-throughput.q1",
-    "promptMarkdown": "latency와 throughput을 올바르게 구분한 것은?",
+    "promptMarkdown": "지연 시간과 처리량을 올바르게 구분한 것은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.performance.latency-throughput"],
     "choices": [
-      {"key": "A", "content": "latency는 작업 하나의 완료까지 걸린 시간이고 throughput은 단위 시간에 완료한 작업 수다.", "displayOrder": 0},
-      {"key": "B", "content": "throughput이 증가하면 모든 개별 작업 latency도 반드시 같은 비율로 감소한다.", "displayOrder": 1},
-      {"key": "C", "content": "batch size를 키우면 기다리는 시간이 없어져 latency와 throughput이 모두 무조건 개선된다.", "displayOrder": 2},
-      {"key": "D", "content": "CPU instruction throughput과 HTTP request throughput은 측정 단위가 달라도 같은 숫자로 비교할 수 있다.", "displayOrder": 3}
+      {"key": "A", "content": "지연 시간은 작업 하나의 완료까지 걸린 시간이고 처리량은 단위 시간에 완료한 작업 수다.", "displayOrder": 0},
+      {"key": "B", "content": "처리량이 증가하면 모든 개별 작업 지연 시간도 반드시 같은 비율로 감소한다.", "displayOrder": 1},
+      {"key": "C", "content": "batch size를 키우면 기다리는 시간이 없어져 지연 시간과 처리량이 모두 무조건 개선된다.", "displayOrder": 2},
+      {"key": "D", "content": "CPU instruction 처리량과 HTTP 요청 처리량은 측정 단위가 달라도 같은 숫자로 비교할 수 있다.", "displayOrder": 3}
     ],
     "correctChoiceKey": "A"
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.performance.latency-throughput.q2",
-    "promptMarkdown": "10초 동안 2,500개의 작업을 완료했다. 평균 throughput을 초당 작업 수로 쓰라.",
+    "promptMarkdown": "10초 동안 2,500개의 작업을 완료했다. 평균 처리량을 초당 작업 수로 쓰라.",
     "questionType": "SHORT_ANSWER",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
@@ -28,17 +28,17 @@
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.performance.latency-throughput.q3",
-    "promptMarkdown": "Batch size를 10에서 100으로 늘렸더니 items/sec는 40% 증가했지만 p99 request latency는 3배가 되었다. 두 결과가 동시에 가능한 이유를 queueing과 batching 관점에서 설명하고, 어떤 지표를 기준으로 설정을 결정해야 하는지 설명하라.",
+    "promptMarkdown": "Batch size를 10에서 100으로 늘렸더니 items/sec는 40% 증가했지만 p99 요청 지연 시간은 3배가 되었다. 두 결과가 동시에 가능한 이유를 queueing과 batching 관점에서 설명하고, 어떤 지표를 기준으로 설정을 결정해야 하는지 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.performance.latency-throughput"],
-    "modelAnswer": "큰 batch는 fixed overhead를 더 많은 item에 나눠 aggregate throughput을 높일 수 있지만 batch가 채워질 때까지 기다리는 시간과 queue wait를 늘릴 수 있다. 따라서 interactive workload라면 items/sec만 보지 말고 p95/p99 latency, arrival rate, queue depth와 SLA를 함께 보고 적절한 batch size를 선택해야 한다."
+    "modelAnswer": "큰 batch는 fixed overhead를 더 많은 item에 나눠 aggregate 처리량을 높일 수 있지만 batch가 채워질 때까지 기다리는 시간과 queue wait를 늘릴 수 있다. 따라서 interactive workload라면 items/sec만 보지 말고 p95/p99 지연 시간, arrival rate, queue depth와 SLA를 함께 보고 적절한 batch size를 선택해야 한다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.performance.cpu-time.q1",
-    "promptMarkdown": "500 ms 걸린 request에서 실제 on-CPU 실행이 40 ms이고 나머지는 DB/network/scheduler wait였다. CPU code를 최적화해 on-CPU 시간을 20 ms로 줄였을 때 다른 시간이 그대로라면 새 elapsed time은 대략 얼마인가?",
+    "promptMarkdown": "500 ms 걸린 요청에서 실제 on-CPU 실행이 40 ms이고 나머지는 DB/network/scheduler wait였다. CPU code를 최적화해 on-CPU 시간을 20 ms로 줄였을 때 다른 시간이 그대로라면 새 elapsed time은 대략 얼마인가?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
@@ -59,7 +59,7 @@
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.performance.cpu-time"],
-    "modelAnswer": "Wall-clock은 대기까지 포함한 실제 경과시간이고 process CPU time은 해당 process/thread가 CPU에서 실행된 시간을 누적한다. Machine CPU utilization은 일정 시간 동안 여러 core의 전체 busy 비율을 나타내므로 한 request나 process가 CPU에서 보낸 시간과 동일하지 않다."
+    "modelAnswer": "Wall-clock은 대기까지 포함한 실제 경과시간이고 process CPU time은 해당 process/thread가 CPU에서 실행된 시간을 누적한다. Machine CPU utilization은 일정 시간 동안 여러 core의 전체 busy 비율을 나타내므로 한 요청이나 process가 CPU에서 보낸 시간과 동일하지 않다."
   },
   {
     "kind": "question",
@@ -69,7 +69,7 @@
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.performance.cpu-time"],
-    "modelAnswer": "Aggregate CPU utilization 25%는 특정 core/hot thread가 포화되었는지나 request가 scheduler에서 기다렸는지를 보여 주지 않는다. Per-request on-CPU time, runnable/scheduler wait, blocked I/O, DB/network downstream span과 core-level utilization을 함께 확인해 elapsed time의 소유자를 분해해야 한다."
+    "modelAnswer": "Aggregate CPU utilization 25%는 특정 core/hot thread가 포화되었는지나 요청이 scheduler에서 기다렸는지를 보여 주지 않는다. Per-요청 on-CPU time, runnable/scheduler wait, blocked I/O, DB/network downstream span과 core-level utilization을 함께 확인해 elapsed time의 소유자를 분해해야 한다."
   },
   {
     "kind": "question",
@@ -136,7 +136,7 @@
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.performance.amdahl-law.q3",
-    "promptMarkdown": "한 API에서 JSON serialization이 baseline latency의 10%, DB wait가 70%, 나머지가 20%다. Serialization을 5배 빠르게 한 뒤 전체 latency 개선이 작았다. Amdahl 식으로 예상 speedup을 계산하고 다음 최적화 우선순위를 어떻게 정할지 설명하라.",
+    "promptMarkdown": "한 API에서 JSON serialization이 baseline 지연 시간의 10%, DB wait가 70%, 나머지가 20%다. Serialization을 5배 빠르게 한 뒤 전체 지연 시간 개선이 작았다. Amdahl 식으로 예상 speedup을 계산하고 다음 최적화 우선순위를 어떻게 정할지 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
@@ -167,7 +167,7 @@
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.performance.cache-impact"],
-    "modelAnswer": "동일한 load/store instruction이라도 cache miss가 나면 lower-level cache나 DRAM에서 data를 기다리는 stall 또는 latency-hiding work가 필요해 더 많은 cycles가 소비될 수 있다. Architectural instruction 수는 같아도 total cycles와 average CPI가 커져 CPU time이 증가할 수 있다."
+    "modelAnswer": "동일한 load/store instruction이라도 cache miss가 나면 lower-level cache나 DRAM에서 data를 기다리는 stall 또는 지연 시간-hiding work가 필요해 더 많은 cycles가 소비될 수 있다. Architectural instruction 수는 같아도 total cycles와 average CPI가 커져 CPU time이 증가할 수 있다."
   },
   {
     "kind": "question",
@@ -244,11 +244,11 @@
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.performance.microbenchmark-boundary.q3",
-    "promptMarkdown": "새 JSON parser가 JMH에서 30% 빨라졌지만 production endpoint latency는 1%만 줄었다. 이 결과가 모순이 아닌 이유를 Amdahl과 benchmark boundary 관점에서 설명하고 다음 검증을 제안하라.",
+    "promptMarkdown": "새 JSON parser가 JMH에서 30% 빨라졌지만 production endpoint 지연 시간은 1%만 줄었다. 이 결과가 모순이 아닌 이유를 Amdahl과 benchmark boundary 관점에서 설명하고 다음 검증을 제안하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.performance.microbenchmark-boundary"],
-    "modelAnswer": "JMH는 parser operation 자체의 local cost를 측정하지만 production endpoint에는 DB, network, queue, allocation/GC 등 다른 시간이 포함된다. Parsing이 전체 latency에서 작은 비율이면 Amdahl's Law에 따라 30% local speedup의 전체 효과는 작다. Production trace에서 parsing 비율과 allocation/GC 변화를 확인하고 representative end-to-end load test로 latency와 throughput을 다시 검증해야 한다."
+    "modelAnswer": "JMH는 parser operation 자체의 local cost를 측정하지만 production endpoint에는 DB, network, queue, allocation/GC 등 다른 시간이 포함된다. Parsing이 전체 지연 시간에서 작은 비율이면 Amdahl's Law에 따라 30% local speedup의 전체 효과는 작다. Production trace에서 parsing 비율과 allocation/GC 변화를 확인하고 representative end-to-end load test로 지연 시간과 처리량을 다시 검증해야 한다."
   }
 ]

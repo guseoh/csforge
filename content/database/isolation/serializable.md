@@ -4,7 +4,7 @@ contentKey: database.core.isolation.serializable
 topicContentKey: database.core.isolation
 slug: serializable
 title: "SERIALIZABLE과 transaction 재시도"
-summary: "동시 실행의 읽기·쓰기 관측이 어떤 직렬 실행과 동등하도록 보장하는 SERIALIZABLE의 목표와 PostgreSQL serialization failure가 정상적인 경쟁 결과일 수 있어 전체 transaction 재시도가 필요함을 이해한다."
+summary: "동시 실행의 읽기·쓰기 관측이 어떤 직렬 실행과 동등하도록 보장하는 SERIALIZABLE의 목표와 PostgreSQL serialization 실패가 정상적인 경쟁 결과일 수 있어 전체 transaction 재시도가 필요함을 이해한다."
 level: 2
 status: PUBLISHED
 displayOrder: 30

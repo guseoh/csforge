@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.io.select-poll
 topicContentKey: operating-systems.core.io
 slug: select-poll
-title: "select and poll"
+title: "select·poll"
 summary: "여러 descriptor의 readiness를 한 wait point에서 감시하는 방식과 per-call scan 비용을 설명한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "descriptor 배열의 requested/reported event와 timeout·interruption semantics를 확인한다."
     displayOrder: 1
 ---
-# select and poll
+# select·poll
 
 blocking read 하나는 한 descriptor가 progress할 때까지 기다리는 데 적합하지만, connection 수가 많아지면 descriptor마다 thread 하나를 두는 대신 **여러 descriptor 중 어느 것이 준비됐는지 한 번에 기다리는 I/O multiplexing**이 필요해진다. `select()`와 `poll()`은 이런 readiness multiplexing의 고전적인 interface다.
 

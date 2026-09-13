@@ -53,8 +53,8 @@ acknowledge or clear source
 restore context / return from trap
 ```
 
-### Handler가 길어지면 다른 work의 latency가 늘어난다
+### Handler가 길어지면 다른 work의 지연 시간이 늘어난다
 
 Interrupt handler가 CPU를 오래 점유하면 application thread와 다른 interrupt 처리가 지연된다. 그래서 많은 operating system은 최소한의 urgent work만 interrupt context에서 처리하고 나머지는 deferred work, queue, worker context로 넘긴다. 이 정책은 OS 책임이며 ISA가 직접 정하는 것은 아니다.
 
-Backend latency spike를 볼 때도 interrupt count만 보지 않는다. Interrupt rate, handler CPU time, device queue/completion latency, softirq/deferred processing과 application scheduling 지연을 분리해 측정해야 한다.
+Backend 지연 시간 spike를 볼 때도 interrupt count만 보지 않는다. Interrupt rate, handler CPU time, device queue/completion 지연 시간, softirq/deferred processing과 application scheduling 지연을 분리해 측정해야 한다.

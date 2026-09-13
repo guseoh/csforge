@@ -39,9 +39,9 @@ poll: Placed, Paid
   └─ worker B: Paid   (빠름) -> 완료 순서 역전
 ```
 
-### ordering과 throughput은 trade-off다
+### ordering과 처리량은 trade-off다
 
-모든 message를 하나의 partition으로 보내면 순서는 단순하지만 처리량과 장애 격리가 약해집니다. partition을 늘리면 throughput은 좋아질 수 있으나 key routing, hot partition, cross-key coordination 비용이 생깁니다. business invariant에 정말 순서가 필요한 범위만 좁혀야 합니다.
+모든 message를 하나의 partition으로 보내면 순서는 단순하지만 처리량과 장애 격리가 약해집니다. partition을 늘리면 처리량은 좋아질 수 있으나 key routing, hot partition, cross-key coordination 비용이 생깁니다. business invariant에 정말 순서가 필요한 범위만 좁혀야 합니다.
 
 ### 문제를 풀 때 확인할 것
 
@@ -49,9 +49,9 @@ poll: Placed, Paid
 2. key가 그 aggregate를 같은 partition으로 보내는지 봅니다.
 3. consumer 내부 parallelism이 partition 순서를 무너뜨리는지 확인합니다.
 4. version/sequence check로 역순 적용을 거부할지 정합니다.
-5. ordering 비용과 throughput·lag를 비교합니다.
+5. ordering 비용과 처리량·lag를 비교합니다.
 
 ### 면접에서 설명한다면
 
-Message ordering은 전체 topic의 전역 순서가 아니라 business key와 partition 범위의 계약입니다. 같은 key를 같은 partition으로 보내도 consumer 내부에서 병렬 처리하면 완료 순서가 역전될 수 있으므로, 필요한 key만 직렬화하거나 version check를 사용하고 throughput·hot partition 비용을 함께 판단합니다.
+Message ordering은 전체 topic의 전역 순서가 아니라 business key와 partition 범위의 계약입니다. 같은 key를 같은 partition으로 보내도 consumer 내부에서 병렬 처리하면 완료 순서가 역전될 수 있으므로, 필요한 key만 직렬화하거나 version check를 사용하고 처리량·hot partition 비용을 함께 판단합니다.
 

@@ -8,8 +8,8 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.pipeline-ilp.pipeline-stages"],
     "choices": [
-      {"key": "A", "content": "여러 instruction의 서로 다른 stage를 겹쳐 실행해 steady state의 instruction throughput을 높인다.", "displayOrder": 0},
-      {"key": "B", "content": "instruction 하나가 거쳐야 하는 모든 stage를 제거해 latency를 1 cycle로 만든다.", "displayOrder": 1},
+      {"key": "A", "content": "여러 instruction의 서로 다른 stage를 겹쳐 실행해 steady state의 instruction 처리량을 높인다.", "displayOrder": 0},
+      {"key": "B", "content": "instruction 하나가 거쳐야 하는 모든 stage를 제거해 지연 시간을 1 cycle로 만든다.", "displayOrder": 1},
       {"key": "C", "content": "모든 stage가 동시에 같은 instruction을 처리하도록 만든다.", "displayOrder": 2},
       {"key": "D", "content": "branch와 data dependency가 있어도 별도 제어 없이 항상 CPI 1을 보장한다.", "displayOrder": 3}
     ],
@@ -18,12 +18,12 @@
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.pipeline-ilp.pipeline-stages.q2",
-    "promptMarkdown": "pipeline이 instruction throughput을 높일 수 있어도 instruction 하나의 latency를 반드시 줄이는 것은 아닌 이유를 설명하라.",
+    "promptMarkdown": "pipeline이 instruction 처리량을 높일 수 있어도 instruction 하나의 지연 시간을 반드시 줄이는 것은 아닌 이유를 설명하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.pipeline-ilp.pipeline-stages"],
-    "modelAnswer": "pipeline은 서로 다른 instruction의 stage를 겹쳐 완료 간격을 줄이는 구조다. instruction 하나는 여전히 여러 stage를 지나야 하고 stage 사이 pipeline register 비용도 생기므로 개별 latency가 반드시 줄지는 않는다. 이상적인 steady state throughput과 한 instruction의 end-to-end latency를 구분해야 한다."
+    "modelAnswer": "pipeline은 서로 다른 instruction의 stage를 겹쳐 완료 간격을 줄이는 구조다. instruction 하나는 여전히 여러 stage를 지나야 하고 stage 사이 pipeline register 비용도 생기므로 개별 지연 시간이 반드시 줄지는 않는다. 이상적인 steady state 처리량과 한 instruction의 종단 간 지연 시간을 구분해야 한다."
   },
   {
     "kind": "question",
@@ -33,7 +33,7 @@
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.pipeline-ilp.pipeline-stages"],
-    "modelAnswer": "현재 clock period는 가장 긴 170ps stage와 register overhead의 영향을 가장 크게 받으므로 단순 모델에서는 약 190ps보다 짧게 잡기 어렵다. 긴 stage를 나누면 critical stage 지연은 줄일 수 있지만 pipeline register overhead가 하나 더 생기고 다른 stage가 새 bottleneck이 될 수 있다. 또한 더 깊은 pipeline은 hazard 제어와 branch recovery 비용을 늘릴 수 있으므로 throughput이 정확히 2배가 된다고 볼 수 없다."
+    "modelAnswer": "현재 clock period는 가장 긴 170ps stage와 register overhead의 영향을 가장 크게 받으므로 단순 모델에서는 약 190ps보다 짧게 잡기 어렵다. 긴 stage를 나누면 critical stage 지연은 줄일 수 있지만 pipeline register overhead가 하나 더 생기고 다른 stage가 새 bottleneck이 될 수 있다. 또한 더 깊은 pipeline은 hazard 제어와 branch recovery 비용을 늘릴 수 있으므로 처리량이 정확히 2배가 된다고 볼 수 없다."
   },
   {
     "kind": "question",
@@ -95,7 +95,7 @@
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.pipeline-ilp.forwarding-and-stall"],
-    "modelAnswer": "ALU instruction의 결과는 execute stage가 끝날 때 이미 준비될 수 있지만 load 값은 memory access가 끝난 뒤에야 얻어진다. 바로 다음 consumer가 execute stage에서 operand를 필요로 하는 시점보다 load 결과가 늦게 준비되면 forwarding도 아직 존재하지 않는 값을 전달할 수 없다. 그래서 consumer를 잠시 멈추고 bubble을 넣은 뒤 값이 준비되면 전달해야 한다. 정확한 stall cycle 수는 pipeline과 memory latency에 따라 달라질 수 있다."
+    "modelAnswer": "ALU instruction의 결과는 execute stage가 끝날 때 이미 준비될 수 있지만 load 값은 memory access가 끝난 뒤에야 얻어진다. 바로 다음 consumer가 execute stage에서 operand를 필요로 하는 시점보다 load 결과가 늦게 준비되면 forwarding도 아직 존재하지 않는 값을 전달할 수 없다. 그래서 consumer를 잠시 멈추고 bubble을 넣은 뒤 값이 준비되면 전달해야 한다. 정확한 stall cycle 수는 pipeline과 memory 지연 시간에 따라 달라질 수 있다."
   },
   {
     "kind": "question",
@@ -136,12 +136,12 @@
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.pipeline-ilp.branch-prediction.q3",
-    "promptMarkdown": "어떤 workload에서 전체 instruction의 20%가 branch이고 branch misprediction rate가 5%, 한 번의 misprediction penalty가 12 cycle이라고 하자. 다른 stall을 무시할 때 misprediction이 instruction당 평균 몇 cycle의 추가 비용을 만드는지 계산하고, predictor 정확도가 workload latency에 미치는 의미를 설명하라.",
+    "promptMarkdown": "어떤 workload에서 전체 instruction의 20%가 branch이고 branch misprediction rate가 5%, 한 번의 misprediction penalty가 12 cycle이라고 하자. 다른 stall을 무시할 때 misprediction이 instruction당 평균 몇 cycle의 추가 비용을 만드는지 계산하고, predictor 정확도가 workload 지연 시간에 미치는 의미를 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.pipeline-ilp.branch-prediction"],
-    "modelAnswer": "instruction당 branch는 0.20개이고 그중 5%가 miss이므로 instruction당 misprediction은 0.20 × 0.05 = 0.01회다. 한 번에 12 cycle을 잃으므로 평균 추가 비용은 0.01 × 12 = 0.12 cycle/instruction이다. 다른 조건이 같다면 이 비용은 CPI를 약 0.12 높이는 요인이지만 실제 latency 영향은 baseline CPI, cache stall, workload의 branch 분포와 함께 봐야 한다."
+    "modelAnswer": "instruction당 branch는 0.20개이고 그중 5%가 miss이므로 instruction당 misprediction은 0.20 × 0.05 = 0.01회다. 한 번에 12 cycle을 잃으므로 평균 추가 비용은 0.01 × 12 = 0.12 cycle/instruction이다. 다른 조건이 같다면 이 비용은 CPI를 약 0.12 높이는 요인이지만 실제 지연 시간 영향은 baseline CPI, cache stall, workload의 branch 분포와 함께 봐야 한다."
   },
   {
     "kind": "question",
@@ -172,11 +172,11 @@
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.pipeline-ilp.superscalar-out-of-order.q3",
-    "promptMarkdown": "program order상 앞선 instruction A가 long-latency cache miss를 겪고, 뒤의 B와 C는 A와 독립적이며, 더 뒤의 D는 A의 결과에 의존한다고 하자. out-of-order CPU가 B/C/D를 어떻게 다르게 다룰 수 있는지와, A에서 exception이 발생했을 때 precise architectural state를 유지해야 하는 이유를 설명하라.",
+    "promptMarkdown": "program order상 앞선 instruction A가 long-지연 시간 cache miss를 겪고, 뒤의 B와 C는 A와 독립적이며, 더 뒤의 D는 A의 결과에 의존한다고 하자. out-of-order CPU가 B/C/D를 어떻게 다르게 다룰 수 있는지와, A에서 exception이 발생했을 때 precise architectural state를 유지해야 하는 이유를 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.pipeline-ilp.superscalar-out-of-order"],
-    "modelAnswer": "B와 C는 A와 true dependency가 없으므로 operand와 execution resource가 준비되면 A보다 먼저 실행해 cache-miss latency를 일부 숨길 수 있다. D는 A의 실제 결과가 필요하므로 A가 완료될 때까지 기다려야 한다. B/C가 먼저 실행되더라도 A에서 exception이 발생하면 program은 A보다 뒤의 instruction 결과가 이미 architectural state에 반영된 것처럼 보여서는 안 된다. reorder/retirement mechanism이 program order에 맞춰 visible state를 확정해야 precise exception을 제공할 수 있다."
+    "modelAnswer": "B와 C는 A와 true dependency가 없으므로 operand와 execution resource가 준비되면 A보다 먼저 실행해 cache-miss 지연 시간을 일부 숨길 수 있다. D는 A의 실제 결과가 필요하므로 A가 완료될 때까지 기다려야 한다. B/C가 먼저 실행되더라도 A에서 exception이 발생하면 program은 A보다 뒤의 instruction 결과가 이미 architectural state에 반영된 것처럼 보여서는 안 된다. reorder/retirement mechanism이 program order에 맞춰 visible state를 확정해야 precise exception을 제공할 수 있다."
   }
 ]

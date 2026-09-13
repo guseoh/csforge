@@ -61,4 +61,4 @@ FOR UPDATE;
 
 row lock이라고 해서 “애플리케이션 객체 하나”라는 추상 개념과 항상 같은 범위는 아닙니다. 실제로 조건에 맞는 여러 row를 lock할 수 있고, foreign key나 table-level lock과 상호작용할 수도 있습니다.
 
-Lock은 경쟁을 없애는 도구가 아니라 경쟁을 **기다림으로 변환**하는 도구입니다. 그래서 correctness뿐 아니라 lock hold time, timeout, throughput을 함께 판단해야 합니다.
+Lock은 경쟁을 없애는 도구가 아니라 경쟁을 **기다림으로 변환**하는 도구입니다. 그래서 correctness뿐 아니라 lock hold time, timeout, 처리량을 함께 판단해야 합니다.

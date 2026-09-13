@@ -4,7 +4,7 @@ contentKey: computer-architecture.core.multicore-memory.hardware-memory-reorderi
 topicContentKey: computer-architecture.core.multicore-memory
 slug: hardware-memory-reordering
 title: "Hardware Memory Reordering"
-summary: "memory consistency model이 다른 core에 관찰될 load/store 순서를 제한하는 방식과 Java happens-before가 그 위에서 제공하는 language contract를 구분한다."
+summary: "메모리 일관성 model이 다른 core에 관찰될 load/store 순서를 제한하는 방식과 Java happens-before가 그 위에서 제공하는 language contract를 구분한다."
 level: 3
 status: PUBLISHED
 displayOrder: 60
@@ -28,7 +28,7 @@ references:
 
 ### Source-code 순서와 다른 core가 관찰하는 memory 순서는 항상 같지 않다
 
-single thread의 program semantics가 올바르게 유지되어도 CPU 내부에서는 load/store queue, store buffer, speculative/out-of-order execution과 cache hierarchy를 이용해 memory operation을 효율적으로 처리할 수 있다. 중요한 것은 `instruction이 pipeline에서 어떤 순서로 실행되었는가` 자체보다 architecture memory consistency model이 다른 observer에게 어떤 memory ordering을 반드시 보장하는가다.
+single thread의 program semantics가 올바르게 유지되어도 CPU 내부에서는 load/store queue, store buffer, speculative/out-of-order execution과 cache hierarchy를 이용해 memory operation을 효율적으로 처리할 수 있다. 중요한 것은 `instruction이 pipeline에서 어떤 순서로 실행되었는가` 자체보다 architecture 메모리 일관성 model이 다른 observer에게 어떤 memory ordering을 반드시 보장하는가다.
 
 weak memory model에서는 서로 의존하지 않는 일부 memory operation이 다른 core에서 program order와 다른 순서로 관찰되는 execution을 허용할 수 있다. RISC-V의 RVWMO도 global memory order가 program order 전체를 그대로 보존하는 대신 architecture가 정한 preserved program order, dependency, fence, acquire/release 등의 제약을 만족하도록 정의한다.
 

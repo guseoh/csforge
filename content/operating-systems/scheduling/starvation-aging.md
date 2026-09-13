@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.scheduling.starvation-aging
 topicContentKey: operating-systems.core.scheduling
 slug: starvation-aging
-title: "Starvation and Aging"
+title: "Starvation·Aging"
 summary: "runnable task가 service를 받지 못하는 starvation과 waiting time 기반 priority 보정의 원리를 설명한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "priority boost가 long-running job starvation을 방지하는 scheduler 설계 이유를 확인한다."
     displayOrder: 1
 ---
-# Starvation and Aging
+# Starvation·Aging
 
 Starvation은 task가 **실행 가능한 runnable 상태인데도 scheduling policy와 계속되는 경쟁 때문에 충분한 CPU service를 받지 못하는 현상**이다. Deadlock처럼 서로가 영원히 resource를 기다리는 구조가 없어도 발생할 수 있다.
 
@@ -50,14 +50,14 @@ MLFQ의 periodic priority boost도 비슷한 starvation-avoidance 목적을 가�
 
 ### Aging 속도에도 trade-off가 있다
 
-Priority를 너무 빠르게 올리면 original priority distinction이 곧 사라져 high-priority workload의 latency 목표를 지키기 어려울 수 있다. 너무 천천히 올리면 starvation은 이론적으로 막더라도 실사용 기준에서 tail waiting이 지나치게 길 수 있다.
+Priority를 너무 빠르게 올리면 original priority distinction이 곧 사라져 high-priority workload의 지연 시간 목표를 지키기 어려울 수 있다. 너무 천천히 올리면 starvation은 이론적으로 막더라도 실사용 기준에서 tail waiting이 지나치게 길 수 있다.
 
 따라서 평균 waiting만 보지 말고 다음을 같이 본다.
 
 - task별 최대 waiting time
 - low-priority service rate
 - timeout/expiration 수
-- high-priority latency
+- high-priority 지연 시간
 - queue별 backlog
 
 ### Starvation, Deadlock, Priority Inversion은 다르다
@@ -70,7 +70,7 @@ Priority를 너무 빠르게 올리면 original priority distinction이 곧 사�
 
 ### Backend queue에서도 같은 현상이 나타난다
 
-Interactive request를 항상 background job보다 먼저 처리하는 application queue를 만들면 사용자 latency는 좋아질 수 있다. 하지만 interactive traffic이 끊이지 않으면 background compaction/import/reindex가 영원히 실행되지 않을 수 있다.
+Interactive 요청을 항상 background job보다 먼저 처리하는 application queue를 만들면 사용자 지연 시간은 좋아질 수 있다. 하지만 interactive traffic이 끊이지 않으면 background compaction/import/reindex가 영원히 실행되지 않을 수 있다.
 
 이 경우 OS aging과 동일한 algorithm을 그대로 쓴다는 뜻은 아니지만, **최대 waiting time, periodic service window, quota/rate share** 같은 starvation-avoidance policy가 필요하다.
 

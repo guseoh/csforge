@@ -9,7 +9,7 @@
     "conceptKeys": ["computer-architecture.core.memory-hierarchy.memory-hierarchy"],
     "choices": [
       {"key": "A", "content": "작고 빠른 memory와 크고 느린 memory의 trade-off를 locality를 이용해 완화하기 위해서다.", "displayOrder": 0},
-      {"key": "B", "content": "register, cache, DRAM, storage의 latency를 모두 동일하게 만들기 위해서다.", "displayOrder": 1},
+      {"key": "B", "content": "register, cache, DRAM, storage의 지연 시간을 모두 동일하게 만들기 위해서다.", "displayOrder": 1},
       {"key": "C", "content": "CPU가 memory address를 사용하지 않도록 만들기 위해서다.", "displayOrder": 2},
       {"key": "D", "content": "모든 data를 항상 가장 빠른 cache에 동시에 저장하기 위해서다.", "displayOrder": 3}
     ],
@@ -33,7 +33,7 @@
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.memory-hierarchy.memory-hierarchy"],
-    "modelAnswer": "큰 L1은 capacity miss를 줄일 수 있지만 lookup 경로와 wiring이 길어져 hit latency가 증가할 수 있고, area와 전력 비용도 커진다. associativity나 line size와의 조합에 따라 conflict behavior도 달라진다. 따라서 hit rate만이 아니라 hit time, miss penalty, area·전력, workload의 working set을 함께 봐야 한다."
+    "modelAnswer": "큰 L1은 capacity miss를 줄일 수 있지만 lookup 경로와 wiring이 길어져 hit 지연 시간이 증가할 수 있고, area와 전력 비용도 커진다. associativity나 line size와의 조합에 따라 conflict behavior도 달라진다. 따라서 hit rate만이 아니라 hit time, miss penalty, area·전력, workload의 working set을 함께 봐야 한다."
   },
   {
     "kind": "question",
@@ -95,7 +95,7 @@
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.memory-hierarchy.cache-line"],
-    "modelAnswer": "큰 line은 한 miss에서 더 많은 인접 byte를 가져와 spatial locality가 높은 workload의 이후 access를 hit로 만들 수 있다. 하지만 사용하지 않을 byte까지 전송하면 bandwidth를 낭비하고 같은 cache capacity에서 보관 가능한 line 수가 줄어 pollution/eviction이 늘 수 있으며 line fill latency도 커질 수 있다."
+    "modelAnswer": "큰 line은 한 miss에서 더 많은 인접 byte를 가져와 spatial locality가 높은 workload의 이후 access를 hit로 만들 수 있다. 하지만 사용하지 않을 byte까지 전송하면 bandwidth를 낭비하고 같은 cache capacity에서 보관 가능한 line 수가 줄어 pollution/eviction이 늘 수 있으며 line fill 지연 시간도 커질 수 있다."
   },
   {
     "kind": "question",
@@ -146,15 +146,15 @@
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.memory-hierarchy.latency-vs-bandwidth.q1",
-    "promptMarkdown": "latency와 bandwidth를 구분한 설명으로 가장 정확한 것은?",
+    "promptMarkdown": "지연 시간과 bandwidth를 구분한 설명으로 가장 정확한 것은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.memory-hierarchy.latency-vs-bandwidth"],
     "choices": [
-      {"key": "A", "content": "latency는 한 요청의 결과를 기다리는 시간이고 bandwidth는 단위 시간에 이동 가능한 data 양이다.", "displayOrder": 0},
-      {"key": "B", "content": "bandwidth가 높으면 모든 random load의 latency도 반드시 같은 비율로 줄어든다.", "displayOrder": 1},
-      {"key": "C", "content": "latency는 항상 byte/s로 측정하고 bandwidth는 ns로 측정한다.", "displayOrder": 2},
+      {"key": "A", "content": "지연 시간은 한 요청의 결과를 기다리는 시간이고 bandwidth는 단위 시간에 이동 가능한 data 양이다.", "displayOrder": 0},
+      {"key": "B", "content": "bandwidth가 높으면 모든 random load의 지연 시간도 반드시 같은 비율로 줄어든다.", "displayOrder": 1},
+      {"key": "C", "content": "지연 시간은 항상 byte/s로 측정하고 bandwidth는 ns로 측정한다.", "displayOrder": 2},
       {"key": "D", "content": "둘은 이름만 다르고 같은 물리량이다.", "displayOrder": 3}
     ],
     "correctChoiceKey": "A"
@@ -162,22 +162,22 @@
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.memory-hierarchy.latency-vs-bandwidth.q2",
-    "promptMarkdown": "여러 independent memory request를 동시에 outstanding 상태로 두면 개별 memory latency 자체가 줄지 않아도 throughput이 높아질 수 있는 이유를 설명하라.",
+    "promptMarkdown": "여러 independent memory 요청을 동시에 outstanding 상태로 두면 개별 memory 지연 시간 자체가 줄지 않아도 처리량이 높아질 수 있는 이유를 설명하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.memory-hierarchy.latency-vs-bandwidth"],
-    "modelAnswer": "각 request가 결과를 받기까지 걸리는 latency는 그대로여도 서로 독립적이면 대기 구간을 겹칠 수 있다. memory system이 여러 request를 병렬로 처리하면 단위 시간에 완료되는 전체 data/request 수가 증가해 aggregate bandwidth/throughput을 높일 수 있다. dependent load chain은 다음 request를 먼저 낼 수 없어 이런 overlap이 어렵다."
+    "modelAnswer": "각 요청이 결과를 받기까지 걸리는 지연 시간은 그대로여도 서로 독립적이면 대기 구간을 겹칠 수 있다. memory system이 여러 요청을 병렬로 처리하면 단위 시간에 완료되는 전체 data/요청 수가 증가해 aggregate bandwidth/처리량을 높일 수 있다. dependent load chain은 다음 요청을 먼저 낼 수 없어 이런 overlap이 어렵다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.memory-hierarchy.latency-vs-bandwidth.q3",
-    "promptMarkdown": "memory path가 요청마다 100ns의 고정 latency를 가진 뒤 20GB/s로 data를 전송한다고 단순화하자. 64byte 한 번을 읽는 경우와 64MB를 순차 전송하는 경우에 어떤 요소가 상대적으로 더 중요해지는지 설명하라.",
+    "promptMarkdown": "memory path가 요청마다 100ns의 고정 지연 시간을 가진 뒤 20GB/s로 data를 전송한다고 단순화하자. 64byte 한 번을 읽는 경우와 64MB를 순차 전송하는 경우에 어떤 요소가 상대적으로 더 중요해지는지 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.memory-hierarchy.latency-vs-bandwidth"],
-    "modelAnswer": "64byte 전송 자체는 20GB/s에서 수 ns 수준이라 100ns 고정 latency가 전체 시간의 대부분을 차지하므로 latency-bound에 가깝다. 64MB 전송은 전송 시간만 수 ms 수준이어서 100ns 시작 latency는 상대적으로 미미하고 sustained bandwidth가 전체 시간을 좌우한다. 실제 system에서는 queueing, protocol, cache behavior가 추가되지만 작은 random access와 큰 sequential transfer의 병목이 다른 이유를 보여 준다."
+    "modelAnswer": "64byte 전송 자체는 20GB/s에서 수 ns 수준이라 100ns 고정 지연 시간이 전체 시간의 대부분을 차지하므로 지연 시간-bound에 가깝다. 64MB 전송은 전송 시간만 수 ms 수준이어서 100ns 시작 지연 시간은 상대적으로 미미하고 sustained bandwidth가 전체 시간을 좌우한다. 실제 system에서는 queueing, protocol, cache behavior가 추가되지만 작은 random access와 큰 sequential transfer의 병목이 다른 이유를 보여 준다."
   },
   {
     "kind": "question",

@@ -21,4 +21,4 @@ TLS는 두 TLS endpoint 사이의 channel에서 협상된 cryptographic mechanis
 
 handshake는 protocol version·cipher capability·key material과 인증 상태를 정한 뒤 application data를 보호할 traffic secret을 만든다. 암호화된 bytes가 도착해도 endpoint 내부 memory·로그·trusted proxy에서 평문이 보이는 문제까지 해결하지는 않으며, certificate chain이나 hostname 확인을 끄면 encryption은 남아도 server impersonation 방어가 약해진다. TLS version과 cipher suite가 지원된다는 사실도 application protocol compatibility를 보장하지 않는다.
 
-Backend monitoring에서는 TCP connect, TLS handshake, certificate expiry·hostname·trust chain과 HTTP authorization·response를 별도 상태로 기록한다. HTTPS의 TLS 성공은 HTTP 200이나 business transaction commit과 같은 의미가 아니다.
+Backend monitoring에서는 TCP connect, TLS handshake, certificate expiry·hostname·trust chain과 HTTP authorization·응답을 별도 상태로 기록한다. HTTPS의 TLS 성공은 HTTP 200이나 business transaction commit과 같은 의미가 아니다.

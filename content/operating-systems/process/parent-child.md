@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.process.parent-child
 topicContentKey: operating-systems.core.process
 slug: parent-child
-title: "Parent and Child Process"
+title: "Parent·Child Process"
 summary: "process creation으로 생긴 parent-child 관계와 상속·공유·lifecycle 경계를 설명한다."
 level: 1
 status: PUBLISHED
@@ -24,7 +24,7 @@ references:
     recommendation: "Linux에서 orphan descendant가 가장 가까운 살아 있는 child subreaper로 reparent되는 동작을 확인한다."
     displayOrder: 2
 ---
-# Parent and Child Process
+# Parent·Child Process
 
 Process creation에는 종종 **누가 누구를 만들었는가**라는 관계가 남는다. Unix-like 모델에서 `fork()`를 호출한 process가 parent이고 새로 생성된 process가 child다. 이 관계는 단순한 이름표가 아니라 exit status 수집, signal 전달, inherited resource 이해 같은 lifecycle 관리에 사용된다.
 

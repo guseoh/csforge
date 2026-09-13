@@ -37,9 +37,9 @@ working set 자체가 available memory보다 훨씬 크면 LRU 근사나 CLOCK�
 
 ### JVM/container 환경에서의 해석
 
-container memory limit 안에서는 JVM heap, native allocation, thread stack, direct buffer, file-backed page가 같은 physical-memory pressure에 영향을 줄 수 있다. heap을 크게 잡아 GC 여유를 얻은 대신 OS page cache가 계속 reclaim되면 file I/O latency가 악화될 수 있다. 반대로 page cache만 의심하면서 실제 heap leak을 놓쳐서도 안 된다.
+container memory limit 안에서는 JVM heap, native allocation, thread stack, direct buffer, file-backed page가 같은 physical-memory pressure에 영향을 줄 수 있다. heap을 크게 잡아 GC 여유를 얻은 대신 OS page cache가 계속 reclaim되면 file I/O 지연 시간이 악화될 수 있다. 반대로 page cache만 의심하면서 실제 heap leak을 놓쳐서도 안 된다.
 
-따라서 thrashing을 진단할 때 CPU, RSS 한 지표만 보지 않고 major/minor fault, reclaim, swap/page-in, storage latency, working-set 크기와 concurrency 변화를 시간축으로 함께 본다.
+따라서 thrashing을 진단할 때 CPU, RSS 한 지표만 보지 않고 major/minor fault, reclaim, swap/page-in, storage 지연 시간, working-set 크기와 concurrency 변화를 시간축으로 함께 본다.
 
 ### 면접에서 이렇게 나옵니다
 

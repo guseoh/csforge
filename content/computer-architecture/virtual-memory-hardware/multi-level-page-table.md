@@ -42,7 +42,7 @@ multi-level page table은 virtual page number를 여러 조각의 index로 나�
 
 flat table이라면 conceptual하게 한 entry lookup으로 translation을 찾을 수 있지만 multi-level table은 TLB miss 때 여러 level을 따라가야 한다. 각 level의 entry 자체도 memory에 있으므로 추가 access와 dependency가 생긴다. modern CPU는 page-walk cache나 일반 cache hierarchy를 이용할 수 있어 모든 level access가 항상 DRAM까지 가는 것은 아니지만 hierarchy가 translation path를 더 복잡하게 만드는 trade-off는 남는다.
 
-TLB가 중요한 이유도 여기에 있다. 반복 access의 translation을 TLB가 보관하면 매 load/store마다 page-table hierarchy를 다시 걷지 않아도 된다. 따라서 page-table memory 절약과 walk latency 사이의 절충을 TLB가 완화한다.
+TLB가 중요한 이유도 여기에 있다. 반복 access의 translation을 TLB가 보관하면 매 load/store마다 page-table hierarchy를 다시 걷지 않아도 된다. 따라서 page-table memory 절약과 walk 지연 시간 사이의 절충을 TLB가 완화한다.
 
 ### Large page는 hierarchy를 더 일찍 끝낼 수 있다
 

@@ -66,7 +66,7 @@ jstack <pid>
 
 출력에서는 각 thread가 어떤 stack frame에 있고 어떤 상태인지 확인할 수 있습니다.
 
-예를 들어 여러 request thread가 비슷한 위치에서 `BLOCKED`로 나타난다면 lock 경합을 의심할 수 있습니다.
+예를 들어 여러 요청 thread가 비슷한 위치에서 `BLOCKED`로 나타난다면 lock 경합을 의심할 수 있습니다.
 
 ```text
 http-worker-1
@@ -176,7 +176,7 @@ JFR event를 통해 workload에 따라 다음 같은 정보를 함께 분석할 
 
 ### JFR의 장점은 서로 다른 신호를 같은 시간축에서 보는 데 있다
 
-예를 들어 p99 latency가 16:05에 급증했다고 해 보겠습니다.
+예를 들어 p99 지연 시간이 16:05에 급증했다고 해 보겠습니다.
 
 JFR에서 같은 시각에:
 
@@ -195,7 +195,7 @@ JFR에서 같은 시각에:
 
 JFR이 JVM runtime evidence를 풍부하게 제공한다고 해서 "주문 12345 요청이 어느 service를 거쳤는가" 같은 모든 business context가 자동으로 들어가는 것은 아닙니다.
 
-Application log, metrics, distributed trace, request ID 같은 observability 자료와 JFR을 연결해야 원인을 더 잘 설명할 수 있습니다.
+Application log, metrics, distributed trace, 요청 ID 같은 observability 자료와 JFR을 연결해야 원인을 더 잘 설명할 수 있습니다.
 
 ```text
 Application metrics: p99 상승 시각 확인

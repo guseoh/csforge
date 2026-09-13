@@ -30,13 +30,13 @@
   {
     "kind": "question",
     "contentKey": "backend.core.layering.dependency-direction.q3",
-    "promptMarkdown": "Controller가 JPA Entity를 request/response로 직접 사용하는 API에서 status 필드를 외부가 수정할 수 있게 되었다. 어느 경계가 새고 있으며 어떻게 고치겠는가?",
+    "promptMarkdown": "Controller가 JPA Entity를 요청/응답으로 직접 사용하는 API에서 status 필드를 외부가 수정할 수 있게 되었다. 어느 경계가 새고 있으며 어떻게 고치겠는가?",
     "questionType": "SCENARIO",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["backend.core.layering.dependency-direction"],
-    "modelAnswer": "API가 persistence model을 직접 노출한 문제다. Request DTO에서 client가 바꿀 수 있는 field만 받고 Application command로 변환한 뒤 Domain의 의도 있는 상태 전이를 호출한다.",
-    "explanationMarkdown": "status가 외부에서 수정된 것은 API가 JPA Entity를 입력 모델로 노출해 persistence state와 client input boundary가 합쳐진 사례다. whitelist request→application command→domain transition 흐름으로 바꾸고 createdAt·status 같은 server-owned 값은 domain/application이 결정해야 한다."
+    "modelAnswer": "API가 persistence model을 직접 노출한 문제다. 요청 DTO에서 client가 바꿀 수 있는 field만 받고 Application command로 변환한 뒤 Domain의 의도 있는 상태 전이를 호출한다.",
+    "explanationMarkdown": "status가 외부에서 수정된 것은 API가 JPA Entity를 입력 모델로 노출해 persistence state와 client input boundary가 합쳐진 사례다. whitelist 요청→application command→domain transition 흐름으로 바꾸고 createdAt·status 같은 server-owned 값은 domain/application이 결정해야 한다."
   },
   {
     "kind": "question",
@@ -97,13 +97,13 @@
   {
     "kind": "question",
     "contentKey": "backend.core.layering.infrastructure-boundary.q2",
-    "promptMarkdown": "HTTP 429, vendor error code, request ID를 내부에서 각각 어떻게 다루는 것이 좋은지 설명하라.",
+    "promptMarkdown": "HTTP 429, vendor error code, 요청 ID를 내부에서 각각 어떻게 다루는 것이 좋은지 설명하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["backend.core.layering.infrastructure-boundary"],
-    "modelAnswer": "429는 retry 가능성 등 내부 failure type으로 번역하고 vendor code는 필요한 의미만 보존하며 request ID는 진단 metadata로 남기되 Domain contract로 누수시키지 않는다.",
-    "explanationMarkdown": "429는 내부에서 rate-limit/retry 후보로, vendor code는 업무 판단에 필요한 의미만 typed failure로, request ID는 log/trace correlation metadata로 보존한다. 이 값들을 Domain이 vendor API나 HTTP header로 직접 알아야 한다는 뜻은 아니며 번역 후 경계를 닫아야 한다."
+    "modelAnswer": "429는 retry 가능성 등 내부 실패 type으로 번역하고 vendor code는 필요한 의미만 보존하며 요청 ID는 진단 metadata로 남기되 Domain contract로 누수시키지 않는다.",
+    "explanationMarkdown": "429는 내부에서 rate-limit/retry 후보로, vendor code는 업무 판단에 필요한 의미만 typed 실패로, 요청 ID는 log/trace correlation metadata로 보존한다. 이 값들을 Domain이 vendor API나 HTTP header로 직접 알아야 한다는 뜻은 아니며 번역 후 경계를 닫아야 한다."
   },
   {
     "kind": "question",
@@ -113,7 +113,7 @@
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["backend.core.layering.infrastructure-boundary"],
-    "modelAnswer": "Infrastructure adapter에서 vendor response를 PaymentResult 같은 내부 모델로 번역하고 Application/Domain은 PaymentGateway 계약과 내부 타입만 알도록 경계를 둔다.",
+    "modelAnswer": "Infrastructure adapter에서 vendor 응답을 PaymentResult 같은 내부 모델로 번역하고 Application/Domain은 PaymentGateway 계약과 내부 타입만 알도록 경계를 둔다.",
     "explanationMarkdown": "Domain이 StripePaymentIntent를 받으면 vendor schema와 결제 정책이 같은 변경 이유가 되어 provider 교체가 침투한다. adapter가 내부 PaymentResult/PaymentGateway 계약으로 번역하고 application/domain은 그 내부 의미만 사용하도록 최소 경계를 만든다."
   }
 ]

@@ -46,7 +46,7 @@ class PriceService {
 }
 ```
 
-반대로 request별 값을 field에 저장하면 같은 instance를 여러 thread가 동시에 공유한다는 사실이 바로 버그로 이어집니다.
+반대로 요청별 값을 field에 저장하면 같은 instance를 여러 thread가 동시에 공유한다는 사실이 바로 버그로 이어집니다.
 
 ```java
 @Service
@@ -66,7 +66,7 @@ Thread B: currentOrderId = 20
 Thread A: currentOrderId 읽기 -> 20 가능
 ```
 
-Spring이 singleton Bean의 field access를 자동으로 synchronize해 주지 않습니다. 따라서 일반적인 service/repository Bean은 request별 mutable state를 field에 보관하지 않는 설계가 기본입니다.
+Spring이 singleton Bean의 field access를 자동으로 synchronize해 주지 않습니다. 따라서 일반적인 service/repository Bean은 요청별 mutable state를 field에 보관하지 않는 설계가 기본입니다.
 
 ### Spring singleton과 GoF Singleton은 목적이 다르다
 
@@ -94,7 +94,7 @@ Clock auditClock() { ... }
 
 ### 실무에서 singleton을 볼 때 확인할 것
 
-1. 이 Bean이 request/user별 mutable state를 field에 저장하는가?
+1. 이 Bean이 요청/user별 mutable state를 field에 저장하는가?
 2. dependency 자체가 thread-safe한가, 아니면 호출할 때마다 독립 객체가 필요한가?
 3. 짧은 scope의 객체를 singleton이 직접 고정해 버리고 있지 않은가?
 4. 같은 type의 여러 Bean을 실제로 구분해야 하는가?

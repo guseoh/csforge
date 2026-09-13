@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.isolation.user-group-permission
 topicContentKey: operating-systems.core.isolation
 slug: user-group-permission
-title: "User, Group and Permission"
+title: "User, Group·Permission"
 summary: "파일과 process 접근을 user·group permission으로 제한하는 모델을 설명한다."
 level: 1
 status: PUBLISHED
@@ -24,7 +24,7 @@ references:
     recommendation: "directory traversal와 각 pathname component의 search permission 경계를 확인한다."
     displayOrder: 2
 ---
-# User, Group and Permission
+# User, Group·Permission
 
 OS는 process가 가진 credential과 pathname을 따라가며 만나는 각 object의 permission을 비교해 접근을 허용하거나 거부한다. Unix-like 모델에서는 effective user ID와 supplementary group을 기준으로 owner·group·other의 read/write/execute bit를 선택한다. 여기서 `execute`는 regular file을 실행하는 의미일 뿐 아니라 directory에서는 그 안의 이름을 traverse/search할 수 있는 권한이라는 점이 중요하다.
 

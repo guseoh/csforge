@@ -23,4 +23,4 @@ TCP는 연결된 양 endpoint 사이에 순서가 있는 byte stream을 제공�
 
 TCP는 sequence number와 ACK, retransmission으로 loss·reordering·duplicate를 상위 stream에서 숨긴다. 하지만 이는 established connection이 계속 살아 있거나 peer application이 bytes를 처리했다는 보장은 아니다. FIN은 한 방향의 정상적인 end-of-stream, RST는 즉시적인 abort 신호, timeout은 liveness 판단이므로 서로 다른 상태로 다룬다.
 
-HTTP/1.1 parser는 socket `read()`가 반환한 chunk를 request boundary로 사용하지 않는다. partial header/body를 buffer하고 `Content-Length`, chunked framing 또는 다른 HTTP 규칙이 message 끝을 확정할 때 다음 request bytes와 분리한다. TCP가 stream을 전달했다는 사실과 HTTP server가 request를 성공 처리했다는 사실도 별도다.
+HTTP/1.1 parser는 socket `read()`가 반환한 chunk를 요청 boundary로 사용하지 않는다. partial header/body를 buffer하고 `Content-Length`, chunked framing 또는 다른 HTTP 규칙이 message 끝을 확정할 때 다음 요청 bytes와 분리한다. TCP가 stream을 전달했다는 사실과 HTTP server가 요청을 성공 처리했다는 사실도 별도다.

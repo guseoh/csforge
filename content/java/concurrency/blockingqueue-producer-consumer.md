@@ -116,9 +116,9 @@ Consumer
 
 따라서 "queue에 넣었으니 업무가 완료됐다"고 판단하면 안 됩니다. 성공 확인, 재시도, 영속적인 메시징이 필요한지는 별도의 시스템 요구사항입니다. 이 Concept에서는 JVM 내부의 thread 간 handoff를 다루고, Kafka 같은 durable broker의 전달 보장은 Messaging 영역에서 다룹니다.
 
-### thread 사이에 값을 전달할 때 memory consistency도 중요하다
+### thread 사이에 값을 전달할 때 메모리 일관성도 중요하다
 
-`BlockingQueue`의 공식 API는 한 thread가 원소를 queue에 넣기 전에 수행한 작업과 다른 thread가 그 원소를 제거한 뒤 수행하는 작업 사이에 memory consistency 효과를 정의합니다. 즉 올바른 API를 통한 handoff는 단순한 collection 저장 이상의 동시성 계약을 가집니다.
+`BlockingQueue`의 공식 API는 한 thread가 원소를 queue에 넣기 전에 수행한 작업과 다른 thread가 그 원소를 제거한 뒤 수행하는 작업 사이에 메모리 일관성 효과를 정의합니다. 즉 올바른 API를 통한 handoff는 단순한 collection 저장 이상의 동시성 계약을 가집니다.
 
 다만 queue에 들어 있는 객체가 이후 여러 thread에서 동시에 수정된다면 그 mutable state 자체의 동기화는 별도 문제입니다.
 

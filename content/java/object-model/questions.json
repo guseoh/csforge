@@ -607,12 +607,12 @@
     "choices": [
       {
         "key": "A",
-        "content": "메서드 이름이 길수록 JVM 최적화가 잘 되기 때문이다",
+        "content": "setter를 제공하면 호출 순서와 관계없이 객체의 불변 조건이 자동으로 보장되기 때문이다",
         "displayOrder": 0
       },
       {
         "key": "B",
-        "content": "setPaid는 Java에서 사용할 수 없는 문법이기 때문이다",
+        "content": "boolean setter가 결제 수단과 현재 주문 상태까지 타입으로 표현하기 때문이다",
         "displayOrder": 1
       },
       {
@@ -622,7 +622,7 @@
       },
       {
         "key": "D",
-        "content": "pay는 모든 상태 변경을 무조건 허용하기 때문이다",
+        "content": "행위 메서드는 결제 가능 여부를 호출자만 검사하도록 책임을 옮기기 때문이다",
         "displayOrder": 3
       }
     ],

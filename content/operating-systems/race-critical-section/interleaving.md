@@ -51,7 +51,7 @@ race를 이해할 때 반드시 여러 CPU가 동시에 instruction을 실행한
 
 동시성 bug가 테스트 1,000번 동안 보이지 않아도 scheduler가 위험한 순서를 선택하지 않았을 뿐일 수 있다. 테스트 횟수는 특정 interleaving을 더 자주 만날 기회를 줄 수 있지만 가능한 모든 실행 순서를 증명하지는 못한다.
 
-따라서 correctness를 특정 timing에 기대지 말고 어떤 interleaving에서도 invariant가 유지되는지 reasoning해야 한다. `존재하지 않으면 insert` 같은 check-then-act도 같은 관점으로 볼 수 있다. 두 request가 모두 check 시점에는 없음으로 보고 이후 insert를 시도할 수 있으므로, DB unique constraint처럼 더 강한 canonical invariant를 함께 두는 이유가 여기에 있다.
+따라서 correctness를 특정 timing에 기대지 말고 어떤 interleaving에서도 invariant가 유지되는지 reasoning해야 한다. `존재하지 않으면 insert` 같은 check-then-act도 같은 관점으로 볼 수 있다. 두 요청이 모두 check 시점에는 없음으로 보고 이후 insert를 시도할 수 있으므로, DB unique constraint처럼 더 강한 canonical invariant를 함께 두는 이유가 여기에 있다.
 
 ### 핵심을 다시 연결하면
 

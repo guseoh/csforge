@@ -43,7 +43,7 @@ Map<String, SortField> allowed = Map.of(
 
 ### filter의 의미를 계약으로 만든다
 
-`status=PAID,CANCELLED`, `createdFrom`, `createdTo`가 AND인지 OR인지 명확해야 합니다. 빈 문자열과 미지정 값의 의미도 정합니다. 어떤 field와 operator를 지원하는지, 잘못된 filter를 어떻게 거절하는지, 지나치게 복잡한 query를 어디까지 허용할지도 API 계약입니다. AIP-160도 filter가 접근할 수 있는 field와 validation/complexity 제한을 service가 명시할 수 있도록 구분합니다.
+`status=PAID,CANCELLED`, `createdFrom`, `createdTo`가 AND인지 OR인지 명확해야 합니다. 빈 문자열과 미지정 값의 의미도 정합니다. 어떤 field와 operator를 지원하는지, 잘못된 filter를 어떻게 거절하는지, 지나치게 복잡한 query를 어디까지 허용할지도 API 계약입니다. AIP-160도 filter가 접근할 수 있는 field와 검증/complexity 제한을 service가 명시할 수 있도록 구분합니다.
 
 ### stable sort가 pagination과 결합된다
 

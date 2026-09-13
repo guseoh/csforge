@@ -35,4 +35,4 @@ file descriptor 같은 process resource도 여러 thread가 함께 사용할 수
 
 immutable value, task-local state, message passing을 쓰면 같은 mutable object를 여러 실행 흐름이 직접 수정하는 범위를 줄일 수 있다. 대신 copy, queue, serialization 또는 lifecycle 관리 비용이 생길 수 있다. 따라서 목표는 무조건 lock을 많이 쓰는 것이 아니라 어떤 state를 누가 소유하고 언제 공유하는지 명확히 하는 것이다.
 
-Spring singleton bean의 mutable field, in-memory cache, local counter는 모두 같은 JVM process의 여러 request thread에 공유될 수 있다. DB transaction이 있다고 해서 JVM heap의 race가 자동으로 해결되지는 않는다.
+Spring singleton bean의 mutable field, in-memory cache, local counter는 모두 같은 JVM process의 여러 요청 thread에 공유될 수 있다. DB transaction이 있다고 해서 JVM heap의 race가 자동으로 해결되지는 않는다.

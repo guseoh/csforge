@@ -4,7 +4,7 @@ contentKey: operating-systems.core.deadlock.deadlock-avoidance
 topicContentKey: operating-systems.core.deadlock
 slug: deadlock-avoidance
 title: "Deadlock Avoidance"
-summary: "미래 최대 요구량을 이용해 request 승인 후에도 safe state를 유지하는 avoidance를 설명한다."
+summary: "미래 최대 요구량을 이용해 요청 승인 후에도 safe state를 유지하는 avoidance를 설명한다."
 level: 3
 status: PUBLISHED
 displayOrder: 50
@@ -21,7 +21,7 @@ references:
 
 ### '지금 줄 수 있는가'보다 '주고 나서도 모두 끝낼 수 있는가'를 본다
 
-Avoidance는 Coffman condition을 구조적으로 제거하지 않는다. 대신 resource request를 승인한다고 가정한 뒤에도 **모든 process를 어떤 순서로 완료시킬 수 있는 safe state가 유지되는지** 검사한다.
+Avoidance는 Coffman condition을 구조적으로 제거하지 않는다. 대신 resource 요청을 승인한다고 가정한 뒤에도 **모든 process를 어떤 순서로 완료시킬 수 있는 safe state가 유지되는지** 검사한다.
 
 그러려면 현재 남은 resource만 알아서는 부족하다. 각 process가 이미 받은 allocation과 앞으로 최대 얼마까지 필요할 수 있는지에 대한 정보가 필요하다.
 
@@ -64,8 +64,8 @@ safe sequence: P2 → P1 → P3
 
 이 계산의 목적은 미래 실행 순서를 강제로 고정하는 것이 아니라 **적어도 하나의 completion sequence가 존재하는지 증명하는 것**이다.
 
-### 일반 backend request에 그대로 적용하기 어려운 이유가 있다
+### 일반 backend 요청에 그대로 적용하기 어려운 이유가 있다
 
-웹 request가 앞으로 DB connection, memory, file handle, application lock을 최대 몇 개 필요로 할지 정확히 미리 선언하기는 어렵다. Resource 종류와 process 수가 동적으로 바뀌면 매 승인마다 safe-state를 계산하는 비용도 커진다.
+웹 요청이 앞으로 DB connection, memory, file handle, application lock을 최대 몇 개 필요로 할지 정확히 미리 선언하기는 어렵다. Resource 종류와 process 수가 동적으로 바뀌면 매 승인마다 safe-state를 계산하는 비용도 커진다.
 
 그래서 timeout, lease, retry가 있다는 이유만으로 이를 Banker's-style avoidance라고 부르면 부정확하다. Avoidance의 핵심 비용은 **미래 최대 demand 정보가 필요하고, 현재는 줄 수 있는 resource도 safe state를 깨면 보수적으로 지연해야 한다는 것**이다.

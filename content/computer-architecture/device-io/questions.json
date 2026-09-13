@@ -64,12 +64,12 @@
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.device-io.interrupt-handler-entry.q3",
-    "promptMarkdown": "level-triggered device interrupt의 handler가 completion을 읽었지만 interrupt source를 acknowledge/clear하지 않고 return한다. CPU 사용률과 application latency에 어떤 현상이 생길 수 있는지 handler-entry 흐름으로 설명하라.",
+    "promptMarkdown": "level-triggered device interrupt의 handler가 completion을 읽었지만 interrupt source를 acknowledge/clear하지 않고 return한다. CPU 사용률과 application 지연 시간에 어떤 현상이 생길 수 있는지 handler-entry 흐름으로 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.device-io.interrupt-handler-entry"],
-    "modelAnswer": "Device가 interrupt condition을 계속 asserted하면 return 직후 같은 interrupt가 다시 pending/accepted되어 trap entry가 반복될 수 있다. CPU가 handler에 계속 머물면서 application thread와 다른 work가 지연되고 interrupt storm처럼 CPU 사용률과 tail latency가 함께 증가할 수 있다. Driver는 device specification에 맞게 source를 consume하고 acknowledge/clear해야 한다."
+    "modelAnswer": "Device가 interrupt condition을 계속 asserted하면 return 직후 같은 interrupt가 다시 pending/accepted되어 trap entry가 반복될 수 있다. CPU가 handler에 계속 머물면서 application thread와 다른 work가 지연되고 interrupt storm처럼 CPU 사용률과 꼬리 지연 시간(tail latency)이 함께 증가할 수 있다. Driver는 device specification에 맞게 source를 consume하고 acknowledge/clear해야 한다."
   },
   {
     "kind": "question",
@@ -82,7 +82,7 @@
     "choices": [
       {"key": "A", "content": "Polling은 completion을 빠르게 감지할 수 있지만 CPU/MMIO access를 계속 소비할 수 있고, interrupt는 기다리는 CPU를 놓아주지만 entry/handler 비용이 있다.", "displayOrder": 0},
       {"key": "B", "content": "Interrupt를 쓰면 device transfer의 모든 byte가 CPU register를 거치지 않는 것이 항상 보장된다.", "displayOrder": 1},
-      {"key": "C", "content": "Polling interval은 CPU 사용률과 completion latency에 아무 영향이 없다.", "displayOrder": 2},
+      {"key": "C", "content": "Polling interval은 CPU 사용률과 completion 지연 시간에 아무 영향이 없다.", "displayOrder": 2},
       {"key": "D", "content": "Programmed I/O와 DMA는 동일한 mechanism 이름만 다르다.", "displayOrder": 3}
     ],
     "correctChoiceKey": "A"
@@ -100,12 +100,12 @@
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.device-io.programmed-io.q3",
-    "promptMarkdown": "초저지연 device는 보통 5 μs 안에 완료되지만 초당 수십만 번 event가 발생한다. 무조건 interrupt가 polling보다 낫다고 결론 내릴 수 없는 이유를 CPU cost, wakeup latency, event rate 관점에서 설명하라.",
+    "promptMarkdown": "초저지연 device는 보통 5 μs 안에 완료되지만 초당 수십만 번 event가 발생한다. 무조건 interrupt가 polling보다 낫다고 결론 내릴 수 없는 이유를 CPU cost, wakeup 지연 시간, event rate 관점에서 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.device-io.programmed-io"],
-    "modelAnswer": "Event가 매우 짧고 빈번하면 매번 interrupt/trap/context handling을 하는 비용과 wakeup latency가 실제 device wait보다 커질 수 있다. Busy polling은 CPU core를 계속 소비하지만 completion을 빠르게 관찰할 수 있으므로 dedicated core, power budget, interrupt moderation/batching과 실제 latency/CPU utilization을 비교해 선택해야 한다."
+    "modelAnswer": "Event가 매우 짧고 빈번하면 매번 interrupt/trap/context handling을 하는 비용과 wakeup 지연 시간이 실제 device wait보다 커질 수 있다. Busy polling은 CPU core를 계속 소비하지만 completion을 빠르게 관찰할 수 있으므로 dedicated core, power budget, interrupt moderation/batching과 실제 지연 시간/CPU utilization을 비교해 선택해야 한다."
   },
   {
     "kind": "question",
@@ -172,7 +172,7 @@
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.device-io.dma.q3",
-    "promptMarkdown": "NIC transmit descriptor에 buffer A를 제출한 직후 application이 해당 memory를 object pool에 반환했고 다른 request가 A를 덮어썼다. DMA completion은 아직 오지 않았다. 전송 데이터가 깨질 수 있는 이유와 안전한 lifetime 경계를 설명하라.",
+    "promptMarkdown": "NIC transmit descriptor에 buffer A를 제출한 직후 application이 해당 memory를 object pool에 반환했고 다른 요청이 A를 덮어썼다. DMA completion은 아직 오지 않았다. 전송 데이터가 깨질 수 있는 이유와 안전한 lifetime 경계를 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
@@ -208,11 +208,11 @@
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.device-io.device-cpu-memory-path.q3",
-    "promptMarkdown": "Storage queue depth를 4에서 128로 높였더니 throughput은 증가했지만 p99 request latency와 in-flight memory가 크게 늘었다. Device-CPU-memory path 관점에서 이 현상을 설명하라.",
+    "promptMarkdown": "Storage queue depth를 4에서 128로 높였더니 처리량은 증가했지만 p99 요청 지연 시간과 in-flight memory가 크게 늘었다. Device-CPU-memory path 관점에서 이 현상을 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.device-io.device-cpu-memory-path"],
-    "modelAnswer": "더 많은 descriptor/request를 동시에 제출하면 device와 DMA가 병렬성을 활용해 utilization과 aggregate throughput을 높일 수 있다. 하지만 각 request가 queue에서 더 오래 기다릴 수 있고 completion 전까지 buffer/descriptor ownership이 유지되어 in-flight memory도 증가한다. 따라서 queue depth는 throughput만이 아니라 queuing latency, memory pressure, cancellation/error recovery와 함께 조정해야 한다."
+    "modelAnswer": "더 많은 descriptor/요청을 동시에 제출하면 device와 DMA가 병렬성을 활용해 utilization과 aggregate 처리량을 높일 수 있다. 하지만 각 요청이 queue에서 더 오래 기다릴 수 있고 completion 전까지 buffer/descriptor ownership이 유지되어 in-flight memory도 증가한다. 따라서 queue depth는 처리량만이 아니라 queuing 지연 시간, memory pressure, cancellation/error recovery와 함께 조정해야 한다."
   }
 ]

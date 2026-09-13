@@ -2,7 +2,7 @@
   {
     "kind": "question",
     "contentKey": "spring.core.production.startup-failure.q1",
-    "promptMarkdown": "다음 중 startup에서 실패시키는 편이 가장 타당한 상황은 무엇인가?",
+    "promptMarkdown": "다음 중 시작에서 실패시키는 편이 가장 타당한 상황은 무엇인가?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
@@ -11,10 +11,10 @@
       {"key":"A","content":"선택 기능의 외부 추천 API가 2초 동안 503을 반환했다.","displayOrder":0},
       {"key":"B","content":"필수 payment.base-url이 비어 있어 유효한 외부 호출 경로를 구성할 수 없다.","displayOrder":1},
       {"key":"C","content":"최근 1분의 평균 응답 시간이 평소보다 5% 높다.","displayOrder":2},
-      {"key":"D","content":"한 사용자의 요청 validation이 실패했다.","displayOrder":3}
+      {"key":"D","content":"한 사용자의 요청 검증이 실패했다.","displayOrder":3}
     ],
     "correctChoiceKey":"B",
-    "explanationMarkdown":"필수 payment.base-url이 없으면 application이 정상 요청을 처리할 수 없는 구성 invariant가 깨진다. 반면 선택 외부 API의 일시적 503, 관측 지표 변화, 개별 validation 실패는 실행 중 해당 boundary에서 처리할 문제이므로 같은 startup 기준으로 보지 않는다."
+    "explanationMarkdown":"필수 payment.base-url이 없으면 application이 정상 요청을 처리할 수 없는 구성 invariant가 깨진다. 반면 선택 외부 API의 일시적 503, 관측 지표 변화, 개별 검증 실패는 실행 중 해당 boundary에서 처리할 문제이므로 같은 시작 기준으로 보지 않는다."
   },
   {
     "kind":"question",
@@ -24,8 +24,8 @@
     "difficulty":"MEDIUM",
     "status":"PUBLISHED",
     "conceptKeys":["spring.core.production.startup-failure"],
-    "modelAnswer":"애플리케이션이 요청을 받기 전에 반드시 필요한 invariant인지 먼저 판단해야 한다. 캐시 warming처럼 실패 후 재시도 가능한 작업이면 startup 필수 경로에 두지 않는 편이 낫다. startup에 남겨야 한다면 timeout과 실패 정책을 명확히 해야 한다.",
-    "explanationMarkdown":"외부 전체 다운로드가 요청 처리에 반드시 필요한 invariant인지 먼저 구분해야 한다. 캐시 warming처럼 실패 후 재시도 가능한 작업을 `@PostConstruct`에 묶으면 외부 지연이 application startup 실패로 전파되므로 별도 lifecycle·timeout·retry 경계를 두고, 정말 필수인 초기화만 명시적인 fail-fast 정책으로 남긴다."
+    "modelAnswer":"애플리케이션이 요청을 받기 전에 반드시 필요한 invariant인지 먼저 판단해야 한다. 캐시 warming처럼 실패 후 재시도 가능한 작업이면 시작 필수 경로에 두지 않는 편이 낫다. 시작에 남겨야 한다면 timeout과 실패 정책을 명확히 해야 한다.",
+    "explanationMarkdown":"외부 전체 다운로드가 요청 처리에 반드시 필요한 invariant인지 먼저 구분해야 한다. 캐시 warming처럼 실패 후 재시도 가능한 작업을 `@PostConstruct`에 묶으면 외부 지연이 application 시작 실패로 전파되므로 별도 lifecycle·timeout·retry 경계를 두고, 정말 필수인 초기화만 명시적인 fail-fast 정책으로 남긴다."
   },
   {
     "kind":"question",
@@ -42,7 +42,7 @@
       {"key":"D","content":"CPU 사용률이 낮으므로 connection pool 대기나 DB 지연은 원인이 될 수 없다는 가설","displayOrder":3}
     ],
     "correctChoiceKey":"A",
-    "explanationMarkdown":"`hikaricp.connections.pending` 증가는 pool에서 connection을 기다리는 요청이 많다는 신호이고 낮은 CPU는 I/O 대기 가설과 양립한다. 다만 이것만으로 DB 장애를 확정하지 말고 active/maximum connection, query latency, timeout과 DB 상태를 이어서 확인해야 한다."
+    "explanationMarkdown":"`hikaricp.connections.pending` 증가는 pool에서 connection을 기다리는 요청이 많다는 신호이고 낮은 CPU는 I/O 대기 가설과 양립한다. 다만 이것만으로 DB 장애를 확정하지 말고 active/maximum connection, query 지연 시간, timeout과 DB 상태를 이어서 확인해야 한다."
   },
   {
     "kind":"question",
@@ -63,8 +63,8 @@
     "difficulty":"HARD",
     "status":"PUBLISHED",
     "conceptKeys":["spring.core.production.graceful-shutdown"],
-    "modelAnswer":"아니다. 종료를 부드럽게 해도 commit 이후 응답 손실 같은 결과 불명확 실패는 가능하다. 클라이언트 재시도에 대비해 주문 생성 자체의 idempotency 또는 unique한 request identity가 별도로 필요하다.",
-    "explanationMarkdown":"graceful shutdown은 새 트래픽을 줄이고 진행 중 작업에 완료 기회를 주지만, DB commit 뒤 response 전송 전에 종료되는 결과 불명확 창을 없애지 못한다. 그래서 재시도된 요청이 같은 주문을 만들지 않도록 idempotency key·unique request identity 같은 별도 application contract가 필요하다."
+    "modelAnswer":"아니다. 종료를 부드럽게 해도 commit 이후 응답 손실 같은 결과 불명확 실패는 가능하다. 클라이언트 재시도에 대비해 주문 생성 자체의 idempotency 또는 unique한 요청 identity가 별도로 필요하다.",
+    "explanationMarkdown":"graceful shutdown은 새 트래픽을 줄이고 진행 중 작업에 완료 기회를 주지만, DB commit 뒤 응답 전송 전에 종료되는 결과 불명확 창을 없애지 못한다. 그래서 재시도된 요청이 같은 주문을 만들지 않도록 idempotency key·unique 요청 identity 같은 별도 application contract가 필요하다."
   },
   {
     "kind":"question",
@@ -75,6 +75,6 @@
     "status":"PUBLISHED",
     "conceptKeys":["spring.core.production.graceful-shutdown"],
     "acceptedAnswers":["새 요청 유입을 멈추거나 줄인 뒤 기존 요청을 완료시키기 위해서다","load balancer가 새 트래픽을 보내지 않게 한 뒤 진행 중 요청을 drain하기 위해서다"],
-    "explanationMarkdown":"readiness를 먼저 내려 load balancer가 새 request를 보내지 않게 한 뒤 이미 처리 중인 request를 drain할 시간을 확보한다. 이는 process 종료 순서에 관한 운영 정책이며, 이미 commit된 작업을 rollback하거나 client retry의 중복을 자동 제거하는 보장은 아니다."
+    "explanationMarkdown":"readiness를 먼저 내려 load balancer가 새 요청을 보내지 않게 한 뒤 이미 처리 중인 요청을 drain할 시간을 확보한다. 이는 process 종료 순서에 관한 운영 정책이며, 이미 commit된 작업을 rollback하거나 client retry의 중복을 자동 제거하는 보장은 아니다."
   }
 ]

@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.virtual-memory-hardware.virtual-physical-address
 topicContentKey: computer-architecture.core.virtual-memory-hardware
 slug: virtual-physical-address
-title: "Virtual and Physical Address"
+title: "Virtual·Physical Address"
 summary: "process가 사용하는 virtual address가 address-space별 page mapping을 통해 physical frame으로 변환되는 이유와 보호 경계를 설명한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "MMU의 translation·protection 경계를 확인한다."
     displayOrder: 1
 ---
-# Virtual and Physical Address
+# Virtual·Physical Address
 
 ### Program이 보는 주소와 DRAM의 위치는 같은 개념이 아니다
 

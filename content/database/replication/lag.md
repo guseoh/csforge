@@ -4,7 +4,7 @@ contentKey: database.core.replication.lag
 topicContentKey: database.core.replication
 slug: lag
 title: "Replication lag와 read-after-write"
-summary: "WAL 생성·전송·flush·replay 단계 사이 지연이 replica 최신성 차이를 만들고, lag를 단일 시간 숫자로만 보지 않고 사용자 consistency 요구와 함께 해석한다."
+summary: "WAL 생성·전송·flush·replay 단계 사이 지연이 replica 최신성 차이를 만들고, lag를 단일 시간 숫자로만 보지 않고 사용자 일관성 요구와 함께 해석한다."
 level: 3
 status: PUBLISHED
 displayOrder: 20
@@ -54,10 +54,10 @@ network 지연뿐 아니라 replica CPU/I/O 부족, 긴-running query가 recover
 
 ### 해결은 replica를 더 빠르게 만드는 것만이 아니다
 
-read-after-write가 필요한 짧은 구간만 primary로 보내거나, session/user 단위로 일정 시간 primary stickiness를 적용하거나, replica replay position이 특정 commit 위치를 따라왔는지 기다리는 방식 등을 검토할 수 있습니다. 각각 latency와 복잡성이 다릅니다.
+read-after-write가 필요한 짧은 구간만 primary로 보내거나, session/user 단위로 일정 시간 primary stickiness를 적용하거나, replica replay position이 특정 commit 위치를 따라왔는지 기다리는 방식 등을 검토할 수 있습니다. 각각 지연 시간과 복잡성이 다릅니다.
 
 ### lag metric도 위치를 나눠 본다
 
 PostgreSQL은 replication 상태에서 sent/write/flush/replay 위치 차이를 관측할 수 있습니다. “lag 3초” 하나보다 어디에서 밀렸는지 보면 원인을 더 잘 좁힐 수 있습니다.
 
-Replication lag는 단순 인프라 숫자가 아니라 **읽기 consistency가 느슨해졌다는 product-visible 상태**입니다.
+Replication lag는 단순 인프라 숫자가 아니라 **읽기 일관성이 느슨해졌다는 product-visible 상태**입니다.

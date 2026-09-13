@@ -10,9 +10,11 @@ status: PUBLISHED
 displayOrder: 60
 references:
   - url: "https://docs.oracle.com/javase/specs/jls/se25/html/jls-17.html#jls-17.4.5"
-    title: "Java SE 25 JLS: Happens-before Order"
+    title: "The Java Language Specification — 17.4.5 Happens-before Order"
     referenceType: OFFICIAL
     language: en
+    depth: section
+    recommendation: "Java에서 conflicting access와 happens-before를 기준으로 data race를 정의하는 정확한 경계를 확인한다."
     displayOrder: 1
     relationNote: happens-before 정의와 synchronization edge 확인
   - url: "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/package-summary.html"
@@ -139,7 +141,7 @@ Thread worker = new Thread(() -> use(value));
 worker.start();
 ```
 
-`start()`를 호출하기 전에 수행한 작업은 시작된 thread의 action과 memory consistency 관계를 가집니다.
+`start()`를 호출하기 전에 수행한 작업은 시작된 thread의 action과 메모리 일관성 관계를 가집니다.
 
 반대 방향에서는 worker가 수행한 action들이 다른 thread가 성공적으로 `join()`한 이후 작업과 연결됩니다.
 
@@ -161,7 +163,7 @@ caller reads
 
 ### java.util.concurrent API도 더 높은 수준의 edge를 제공한다
 
-공식 `java.util.concurrent` 문서는 다음과 같은 memory consistency 효과를 정의합니다.
+공식 `java.util.concurrent` 문서는 다음과 같은 메모리 일관성 효과를 정의합니다.
 
 - task를 Executor에 제출하기 전의 action → task 실행 시작 이후
 - concurrent collection에 원소를 넣기 전의 action → 다른 thread가 그 원소에 접근/제거한 이후

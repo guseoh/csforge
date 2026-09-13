@@ -23,7 +23,7 @@ trusted proxy boundary는 backend가 forwarded scheme·host·client address를 �
 
 경계는 backend ingress를 trusted proxy network로 제한하고, 필요하면 mTLS·authenticated proxy protocol·known hop count·고정된 proxy address 같은 증거로 구성한다. trusted edge에서 client가 보낸 기존 forwarded field를 제거·재작성하고, backend는 실제 socket peer가 허용된 proxy인지 확인한 뒤 chain을 해석한다. 단순히 “첫 번째 IP를 사용”하거나 모든 source의 header를 신뢰하는 방식은 chain 주입에 취약하다.
 
-proxy를 하나 더 추가하거나 CDN과 ingress 순서를 바꾸면 어느 hop의 값이 신뢰되는지와 목록 방향이 달라질 수 있다. topology별로 direct request, 단일 proxy, 여러 proxy, header injection, malformed IPv6/quoted value를 테스트하고, 신뢰하지 못한 값은 authorization 판단 대신 관찰용 hint로만 취급한다. trusted proxy가 전달한 값도 원래 사용자 credential을 대신하지 않으며, backend domain authorization은 별도로 수행해야 한다.
+proxy를 하나 더 추가하거나 CDN과 ingress 순서를 바꾸면 어느 hop의 값이 신뢰되는지와 목록 방향이 달라질 수 있다. topology별로 direct 요청, 단일 proxy, 여러 proxy, header injection, malformed IPv6/quoted value를 테스트하고, 신뢰하지 못한 값은 authorization 판단 대신 관찰용 hint로만 취급한다. trusted proxy가 전달한 값도 원래 사용자 credential을 대신하지 않으며, backend domain authorization은 별도로 수행해야 한다.
 
 ### Backend 연결
 

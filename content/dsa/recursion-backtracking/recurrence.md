@@ -66,7 +66,7 @@ level 수 ≈ log₂ n
 
 예를 들어 `solve(n)`이 매번 `solve(n)`을 그대로 호출한다면 `T(n)=T(n)+O(1)` 같은 식을 세워 복잡도를 구하는 것이 의미가 없다. 종료 조건과 progress가 correctness의 전제다.
 
-### 점근식이 실제 latency의 전부는 아니다
+### 점근식이 실제 지연 시간의 전부는 아니다
 
 Recurrence는 알고리즘의 연산 증가 구조를 설명하지만 실제 실행 시간의 모든 비용을 포함하지는 않는다. 같은 `O(n log n)`이라도 allocation, cache locality, function call overhead, I/O가 다르면 실제 성능 차이가 크게 날 수 있다.
 

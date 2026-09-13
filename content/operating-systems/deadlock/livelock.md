@@ -49,7 +49,7 @@ Randomized/exponential backoff와 jitter는 retry timing의 symmetry를 깨 한�
 
 ### Deadlock과는 관측되는 activity가 다르다
 
-Deadlock에서는 참여 execution이 서로 resource를 기다려 activity가 줄 수 있다. Livelock에서는 lock attempt, rollback, network request, CPU 사용량은 높은데 성공 throughput이 낮게 나타날 수 있다.
+Deadlock에서는 참여 execution이 서로 resource를 기다려 activity가 줄 수 있다. Livelock에서는 lock attempt, rollback, network 요청, CPU 사용량은 높은데 성공 처리량이 낮게 나타날 수 있다.
 
 | 상태 | 내부 activity | useful progress |
 | --- | --- | --- |
@@ -57,4 +57,4 @@ Deadlock에서는 참여 execution이 서로 resource를 기다려 activity가 �
 | Livelock | retry·상태 변경이 계속됨 | 없음 또는 매우 낮음 |
 | 정상 retry | 일시적으로 retry | 결국 성공/실패로 종료 |
 
-Backend에서 retry rate만 올라가고 성공 throughput이 회복되지 않는다면 단순히 retry 횟수를 늘리기보다 **같은 충돌을 재생하고 있는지** 확인해야 한다.
+Backend에서 retry rate만 올라가고 성공 처리량이 회복되지 않는다면 단순히 retry 횟수를 늘리기보다 **같은 충돌을 재생하고 있는지** 확인해야 한다.

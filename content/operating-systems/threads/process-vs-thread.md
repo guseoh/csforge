@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.threads.process-vs-thread
 topicContentKey: operating-systems.core.threads
 slug: process-vs-thread
-title: "Process versus Thread"
+title: "Process / Thread"
 summary: "process의 자원·보호 경계와 thread의 실행 흐름 경계를 구분한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "process 안에서 thread가 공유하는 주소 공간과 thread별 실행 context를 확인한다."
     displayOrder: 1
 ---
-# Process versus Thread
+# Process / Thread
 
 ### 자원의 경계와 실행 흐름의 경계는 다르다
 
@@ -33,10 +33,10 @@ process끼리는 기본적으로 서로 다른 virtual address space를 사용�
 
 ### JVM 서버에서 보는 경계
 
-Spring Boot application 하나를 실행하면 JVM process 하나 안에서 GC, request 처리, scheduler 등 여러 thread가 동작한다. singleton bean의 mutable field가 여러 request thread에 노출되는 것은 process 사이 공유 문제가 아니라 **같은 process 내부 thread 공유 문제**다. 반대로 별도 worker process를 띄우면 IPC 비용이 생기지만 address-space와 lifecycle failure를 더 강하게 분리할 수 있다.
+Spring Boot application 하나를 실행하면 JVM process 하나 안에서 GC, 요청 처리, scheduler 등 여러 thread가 동작한다. singleton bean의 mutable field가 여러 요청 thread에 노출되는 것은 process 사이 공유 문제가 아니라 **같은 process 내부 thread 공유 문제**다. 반대로 별도 worker process를 띄우면 IPC 비용이 생기지만 address-space와 lifecycle 실패를 더 강하게 분리할 수 있다.
 
 ### 면접에서 이렇게 나옵니다
 
 #### Q. Process와 thread의 차이를 설명해보세요.
 
-`process는 무겁고 thread는 가볍다`로 끝내기보다 **무엇을 공유하는가와 무엇이 독립적인가**를 먼저 설명하는 편이 정확하다. Process는 기본적으로 별도 virtual address space와 resource/lifecycle 경계를 가지고, 같은 process의 thread들은 그 주소 공간과 여러 process resource를 공유하면서 각자의 stack·register·program counter로 독립적인 실행 흐름을 만든다. 이 차이가 IPC 비용, synchronization 필요성, failure isolation trade-off로 이어진다.
+`process는 무겁고 thread는 가볍다`로 끝내기보다 **무엇을 공유하는가와 무엇이 독립적인가**를 먼저 설명하는 편이 정확하다. Process는 기본적으로 별도 virtual address space와 resource/lifecycle 경계를 가지고, 같은 process의 thread들은 그 주소 공간과 여러 process resource를 공유하면서 각자의 stack·register·program counter로 독립적인 실행 흐름을 만든다. 이 차이가 IPC 비용, synchronization 필요성, 장애 격리 trade-off로 이어진다.

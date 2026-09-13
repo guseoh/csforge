@@ -36,7 +36,7 @@ race condition은 둘 이상의 concurrent action의 상대적인 실행 순서�
 
 `data race`와 `race condition`을 완전히 같은 말로 사용하면 문제의 층위를 놓치기 쉽다. Java Language Specification에서는 같은 variable에 대한 두 **conflicting access**가 happens-before 관계로 정렬되지 않을 때 data race가 있다고 정의한다. 두 access가 conflicting하려면 같은 variable을 대상으로 하고 적어도 하나는 write여야 한다.
 
-즉 Java의 data race는 language memory model 안에서 access와 happens-before를 기준으로 판단하는 구체적인 용어다. 반면 race condition은 file creation, distributed request, check-then-act처럼 동일한 memory address를 직접 공유하지 않아도 상대적인 순서 때문에 잘못된 결과가 생기는 상황까지 넓게 말할 수 있다.
+즉 Java의 data race는 language memory model 안에서 access와 happens-before를 기준으로 판단하는 구체적인 용어다. 반면 race condition은 file creation, distributed 요청, check-then-act처럼 동일한 memory address를 직접 공유하지 않아도 상대적인 순서 때문에 잘못된 결과가 생기는 상황까지 넓게 말할 수 있다.
 
 예를 들어 두 요청이 각각 DB를 조회해 "아직 주문이 없다"고 판단한 뒤 같은 주문을 생성하는 문제는 application memory의 같은 Java variable을 동시에 쓰지 않아도 발생할 수 있다. 이 경우 핵심은 두 요청의 check와 act가 경쟁하면서 business invariant가 깨지는 것이다.
 

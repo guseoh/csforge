@@ -59,7 +59,7 @@
   {
     "kind": "question",
     "contentKey": "dsa.core.sequential.dynamic-array.q3",
-    "promptMarkdown": "대부분 append는 빠른데 특정 요청에서만 큰 latency spike가 보인다. 해당 요청에서 dynamic array가 capacity를 초과했다는 evidence가 있다. amortized O(1)이라는 사실과 이 spike가 동시에 성립할 수 있는 이유를 설명하라.",
+    "promptMarkdown": "대부분 append는 빠른데 특정 요청에서만 큰 지연 시간 spike가 보인다. 해당 요청에서 dynamic array가 capacity를 초과했다는 evidence가 있다. amortized O(1)이라는 사실과 이 spike가 동시에 성립할 수 있는 이유를 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
@@ -74,7 +74,7 @@
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.sequential.dynamic-array"],
-    "modelAnswer": "1.1은 여유 capacity가 작아 메모리 낭비는 줄 수 있지만 capacity 부족이 자주 발생해 allocation·copy 횟수가 증가한다. 2.0은 resize 횟수를 크게 줄이지만 resize 직후 unused capacity가 더 크고 한 번에 더 큰 storage를 확보한다. workload의 peak memory와 tail latency를 함께 고려해야 한다."
+    "modelAnswer": "1.1은 여유 capacity가 작아 메모리 낭비는 줄 수 있지만 capacity 부족이 자주 발생해 allocation·copy 횟수가 증가한다. 2.0은 resize 횟수를 크게 줄이지만 resize 직후 unused capacity가 더 크고 한 번에 더 큰 storage를 확보한다. workload의 peak memory와 꼬리 지연 시간(tail latency)을 함께 고려해야 한다."
   },
   {
     "kind": "question",

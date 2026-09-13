@@ -40,7 +40,7 @@ Cache hit이면 origin query가 없으므로 병목이 사라진다고 생각하
 
 ### 완화책은 freshness와 write를 함께 본다
 
-짧은 TTL의 local in-process cache, replica read, key replication, request coalescing을 조합할 수 있습니다. 그러나 local cache는 여러 application instance 사이 invalidation이 어려워지고 replica는 stale read를 만들 수 있습니다. hot key가 실제로 허용 가능한 stale인지 먼저 판단해야 합니다.
+짧은 TTL의 local in-process cache, replica read, key replication, 요청 coalescing을 조합할 수 있습니다. 그러나 local cache는 여러 application instance 사이 invalidation이 어려워지고 replica는 stale read를 만들 수 있습니다. hot key가 실제로 허용 가능한 stale인지 먼저 판단해야 합니다.
 
 ### hot key와 stampede는 다른 증상이다
 

@@ -19,13 +19,13 @@ references:
 ---
 # HTTP/1.1 Pipelining
 
-HTTP/1.1 pipelining은 이전 response를 기다리지 않고 같은 persistent connection에 여러 request를 순서대로 보내는 방식이다. 하지만 response는 request 순서를 유지해야 하므로 첫 request의 느린 처리나 loss가 뒤 response의 관찰을 막는 application-level HOL이 남는다. pipelining은 HTTP/2처럼 각 request에 독립 stream을 부여하는 multiplexing이 아니다.
+HTTP/1.1 pipelining은 이전 응답을 기다리지 않고 같은 persistent connection에 여러 요청을 순서대로 보내는 방식이다. 하지만 응답은 요청 순서를 유지해야 하므로 첫 요청의 느린 처리나 loss가 뒤 응답의 관찰을 막는 application-level HOL이 남는다. pipelining은 HTTP/2처럼 각 요청에 독립 stream을 부여하는 multiplexing이 아니다.
 
-모든 proxy와 origin이 pipelining을 안정적으로 지원하지 않고, connection이 중간에 끊기면 이미 전송된 여러 request 중 어디까지 server가 처리했는지 모호해진다. 특히 non-idempotent request는 재전송 시 duplicate side effect 위험이 있어 client가 보수적으로 사용하며, 이 복잡성이 HTTP/2 stream model을 선택하는 이유 중 하나다.
+모든 proxy와 origin이 pipelining을 안정적으로 지원하지 않고, connection이 중간에 끊기면 이미 전송된 여러 요청 중 어디까지 server가 처리했는지 모호해진다. 특히 non-idempotent 요청은 재전송 시 duplicate side effect 위험이 있어 client가 보수적으로 사용하며, 이 복잡성이 HTTP/2 stream model을 선택하는 이유 중 하나다.
 
-Backend에서 client library가 pipelining이나 connection reuse를 내부 수행해도 request queue와 response order를 trace로 연결한다. failure 후 retry할 request의 idempotency와 server side effect 불확실성을 별도로 기록한다.
+Backend에서 client library가 pipelining이나 connection reuse를 내부 수행해도 요청 queue와 응답 order를 trace로 연결한다. 실패 후 retry할 요청의 idempotency와 server side effect 불확실성을 별도로 기록한다.
 ### HTTP/1.1 pipelining
     send:     R1 → R2 → R3
-    response: R1 → R2 → R3 (ordered)
+    응답: R1 → R2 → R3 (ordered)
                          R1 slow → later delivery waits
-겹쳐 보내도 connection failure 뒤 처리 여부는 unknown이다.
+겹쳐 보내도 connection 실패 뒤 처리 여부는 unknown이다.

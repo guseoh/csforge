@@ -60,13 +60,13 @@ T1이 L1과 L2를 먼저 모두 획득하고 release한 뒤 T2가 실행되면 �
 
 ### timeout은 멈춤을 끊을 수 있지만 cycle 설계를 없애지는 않는다
 
-Lock acquisition에 timeout을 두면 waiting execution을 failure 경로로 보내 영원한 block을 피할 수 있다. 하지만 timeout 숫자를 추가했다고 `L1 → L2`와 `L2 → L1`의 circular acquisition structure가 사라지는 것은 아니다.
+Lock acquisition에 timeout을 두면 waiting execution을 실패 경로로 보내 영원한 block을 피할 수 있다. 하지만 timeout 숫자를 추가했다고 `L1 → L2`와 `L2 → L1`의 circular acquisition structure가 사라지는 것은 아니다.
 
 Timeout 뒤에는 현재 execution이 보유한 resource를 release하고, 중간 상태를 rollback하거나 operation을 abort해야 한다. 두 execution이 같은 timing과 같은 순서로 즉시 retry하면 deadlock 대신 반복 충돌이나 livelock을 만들 수도 있다.
 
 ### Backend에서는 서로 다른 resource 층도 하나의 cycle을 만들 수 있다
 
-Application mutex, DB row lock, connection-pool permit처럼 서로 다른 종류의 resource가 한 request lifecycle에 섞일 수 있다. 예를 들어 T1이 JVM lock A를 보유한 채 DB row R을 기다리고, T2는 R을 보유한 transaction 안에서 A가 필요한 callback을 기다리면 다음 dependency가 생긴다.
+Application mutex, DB row lock, connection-pool permit처럼 서로 다른 종류의 resource가 한 요청 lifecycle에 섞일 수 있다. 예를 들어 T1이 JVM lock A를 보유한 채 DB row R을 기다리고, T2는 R을 보유한 transaction 안에서 A가 필요한 callback을 기다리면 다음 dependency가 생긴다.
 
 ```text
 T1 ──waits──> R ──held by──> T2

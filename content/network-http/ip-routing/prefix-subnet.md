@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.ip-routing.prefix-subnet
 topicContentKey: network-http.core.ip-routing
 slug: prefix-subnet
-title: "Prefix and Subnet"
+title: "Prefix·Subnet"
 summary: "network prefix 길이로 local subnet과 host 범위를 나누는 방식을 설명한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "IP address와 packet forwarding의 기본을 확인한다."
     displayOrder: 1
 ---
-# Prefix and Subnet
+# Prefix·Subnet
 
 CIDR prefix length는 IP address에서 network portion으로 취급할 bit 수를 정하고, 나머지 bit가 해당 prefix 안의 host address 공간이 된다. 송신 host는 destination과 자신의 interface prefix를 비교해 on-link 후보인지 판단한다. on-link면 target의 link-layer address를 찾고, 그렇지 않으면 routing table의 next hop으로 packet을 보낸다. prefix 비교가 곧 상대 host가 살아 있다는 뜻은 아니다.
 

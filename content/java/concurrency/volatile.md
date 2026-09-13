@@ -16,9 +16,11 @@ references:
     displayOrder: 1
     relationNote: volatile field의 Java 언어 규칙 확인
   - url: "https://docs.oracle.com/javase/specs/jls/se25/html/jls-17.html#jls-17.4.5"
-    title: "Java SE 25 JLS: Happens-before Order"
+    title: "The Java Language Specification — 17.4.5 Happens-before Order"
     referenceType: OFFICIAL
     language: en
+    depth: section
+    recommendation: "Java에서 conflicting access와 happens-before를 기준으로 data race를 정의하는 정확한 경계를 확인한다."
     displayOrder: 2
     relationNote: volatile write와 이후 같은 field read의 happens-before 관계 확인
 ---

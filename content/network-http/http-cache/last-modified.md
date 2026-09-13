@@ -21,7 +21,7 @@ references:
 
 HTTP-date가 표현하는 정밀도는 보통 초 단위이고, origin clock이 조정되거나 여러 origin의 시계가 다르면 실제 변경 순서를 정확히 반영하지 못할 수 있다. 같은 초 안에 두 번 변경된 representation이 같은 timestamp를 가질 수 있으므로 `Last-Modified`는 ETag보다 약한 validator가 될 수 있다. server가 더 정확한 ETag를 제공하고 요청에 두 validator가 함께 있으면 ETag 조건이 우선되는 규칙도 지켜야 한다.
 
-`Last-Modified`는 response가 언제나 실제 파일의 저장 완료 시각을 증명한다는 header가 아니다. copy·restore·timezone 변환으로 mtime 의미가 달라질 수 있고, clock이 미래의 날짜를 만들 수도 있다. 따라서 cache가 이 값을 이용해 body를 생략하는 것과 애플리케이션이 데이터의 업무상 최신성을 판단하는 것은 분리한다.
+`Last-Modified`는 응답이 언제나 실제 파일의 저장 완료 시각을 증명한다는 header가 아니다. copy·restore·timezone 변환으로 mtime 의미가 달라질 수 있고, clock이 미래의 날짜를 만들 수도 있다. 따라서 cache가 이 값을 이용해 body를 생략하는 것과 애플리케이션이 데이터의 업무상 최신성을 판단하는 것은 분리한다.
 
 ### Backend 연결
 

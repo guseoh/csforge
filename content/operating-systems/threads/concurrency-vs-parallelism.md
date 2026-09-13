@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.threads.concurrency-vs-parallelism
 topicContentKey: operating-systems.core.threads
 slug: concurrency-vs-parallelism
-title: "Concurrency versus Parallelism"
+title: "Concurrency / Parallelism"
 summary: "여러 작업의 겹친 진행과 여러 CPU의 실제 동시 실행을 구분한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "process 안에서 thread가 공유하는 주소 공간과 thread별 실행 context를 확인한다."
     displayOrder: 1
 ---
-# Concurrency versus Parallelism
+# Concurrency / Parallelism
 
 ### 동시에 다루는 것과 동시에 실행하는 것은 다르다
 
@@ -38,7 +38,7 @@ core1: B B B B
 
 ### I/O concurrency와 CPU parallelism
 
-I/O-bound server는 한 request가 network나 disk를 기다리는 동안 다른 request를 진행하면 CPU idle 시간을 줄일 수 있다. 이때 큰 이득은 여러 CPU에서 동시에 계산해서라기보다 **대기 시간을 다른 작업으로 겹치는 것**에서 나온다.
+I/O-bound server는 한 요청이 network나 disk를 기다리는 동안 다른 요청을 진행하면 CPU idle 시간을 줄일 수 있다. 이때 큰 이득은 여러 CPU에서 동시에 계산해서라기보다 **대기 시간을 다른 작업으로 겹치는 것**에서 나온다.
 
 반대로 CPU-bound compression이나 image processing은 runnable 작업만 늘린다고 빨라지지 않는다. CPU core가 포화되면 추가 concurrency는 queue와 context switch를 늘릴 뿐이다. 이 경우 필요한 것은 적절한 parallelism과 work partitioning이다.
 

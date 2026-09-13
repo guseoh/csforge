@@ -70,13 +70,13 @@
   {
     "kind": "question",
     "contentKey": "java.core.metadata-compatibility.reflection-class-api.q5",
-    "promptMarkdown": "plugin 설정에 method 이름 문자열을 저장해 startup에서 getDeclaredMethod로 찾는다. library가 method를 rename하면?",
+    "promptMarkdown": "plugin 설정에 method 이름 문자열을 저장해 시작에서 getDeclaredMethod로 찾는다. library가 method를 rename하면?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["java.core.metadata-compatibility.reflection-class-api"],
     "choices": [
-      {"key": "A", "content": "compile-time 호출보다 늦게 실패할 수 있으므로 startup validation과 API contract가 필요하다", "displayOrder": 0},
+      {"key": "A", "content": "compile-time 호출보다 늦게 실패할 수 있으므로 시작 검증과 API contract가 필요하다", "displayOrder": 0},
       {"key": "B", "content": "compiler가 자동으로 새 이름을 찾는다", "displayOrder": 1},
       {"key": "C", "content": "reflection이 binary compatibility를 보장한다", "displayOrder": 2},
       {"key": "D", "content": "method rename은 runtime에 영향을 주지 않는다", "displayOrder": 3}
@@ -99,7 +99,7 @@
       {"key": "D", "content": "setAccessible이 객체를 serialize해야 한다", "displayOrder": 3}
     ],
     "correctChoiceKey": "B",
-    "explanationMarkdown": "reflection access failure는 member 존재와 별개로 access/module policy에서 발생할 수 있다."
+    "explanationMarkdown": "reflection access 실패는 member 존재와 별개로 access/module policy에서 발생할 수 있다."
   },
   {
     "kind": "question",
@@ -552,7 +552,7 @@
     "status": "PUBLISHED",
     "conceptKeys": ["java.core.metadata-compatibility.binary-compatibility-api-evolution"],
     "choices": [
-      {"key": "A", "content": "NoSuchMethodError 같은 linkage failure", "displayOrder": 0},
+      {"key": "A", "content": "NoSuchMethodError 같은 linkage 실패", "displayOrder": 0},
       {"key": "B", "content": "transient field 복구", "displayOrder": 1},
       {"key": "C", "content": "자동 overload 선택", "displayOrder": 2},
       {"key": "D", "content": "항상 source compile 성공", "displayOrder": 3}

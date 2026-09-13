@@ -16,15 +16,19 @@ references:
     displayOrder: 1
     relationNote: start, run, join, interrupt, sleep와 Thread.State 계약 확인
   - url: "https://docs.oracle.com/javase/specs/jls/se25/html/jls-17.html#jls-17.4.5"
-    title: "Java SE 25 JLS: Happens-before Order"
+    title: "The Java Language Specification — 17.4.5 Happens-before Order"
     referenceType: OFFICIAL
     language: en
+    depth: section
+    recommendation: "Java에서 conflicting access와 happens-before를 기준으로 data race를 정의하는 정확한 경계를 확인한다."
     displayOrder: 2
     relationNote: Thread.start와 thread termination/join의 happens-before 관계 확인
   - url: "https://d2.naver.com/helloworld/10963"
-    title: "네이버 D2: 스레드 덤프 분석하기"
+    title: "스레드 덤프 분석하기"
     referenceType: COMPANY_TECH_BLOG
     language: ko
+    depth: article
+    recommendation: "JVM thread dump에서 lock owner와 waiter를 연결해 deadlock cycle을 해석하는 실제 사례를 확인한다."
     displayOrder: 3
     relationNote: thread 상태와 blocked/waiting 진단을 실제 장애 흐름으로 연결
 ---

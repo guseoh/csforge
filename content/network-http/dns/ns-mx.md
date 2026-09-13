@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.dns.ns-mx
 topicContentKey: network-http.core.dns
 slug: ns-mx
-title: "NS and MX"
+title: "NS·MX"
 summary: "NS와 MX record가 name service delegation과 mail delivery를 구분하는 방식을 설명한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "DNS delegation과 service record의 역할을 확인한다."
     displayOrder: 1
 ---
-# NS and MX
+# NS·MX
 
 NS record는 특정 zone을 authoritative하게 서비스하는 name server를 가리키며, parent zone의 delegation과 child zone의 관리 경계를 연결한다. MX record는 domain으로 들어오는 mail을 받을 mail exchanger name과 preference를 표현한다. 따라서 NS/MX 조회는 web service의 A/AAAA 조회와 서로 다른 service contract다.
 

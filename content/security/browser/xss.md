@@ -63,6 +63,6 @@ profile.textContent = nickname;
 
 ### HttpOnly와 CSP는 defense-in-depth다
 
-HttpOnly cookie는 script가 session cookie 값을 직접 읽는 것을 줄이지만 XSS script는 victim origin 권한으로 API request를 보낼 수 있습니다. CSP는 허용할 script source와 inline 실행을 제한해 impact를 줄일 수 있지만 unsafe output handling을 고치지 않고 CSP 하나에 의존하면 안 됩니다.
+HttpOnly cookie는 script가 session cookie 값을 직접 읽는 것을 줄이지만 XSS script는 victim origin 권한으로 API 요청을 보낼 수 있습니다. CSP는 허용할 script source와 inline 실행을 제한해 impact를 줄일 수 있지만 unsafe output handling을 고치지 않고 CSP 하나에 의존하면 안 됩니다.
 
 XSS를 이해하는 핵심은 공격 문자열 목록을 외우는 것이 아니라 **어느 지점에서 데이터와 code의 경계가 무너졌는지**를 추적하는 것입니다.

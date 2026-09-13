@@ -4,7 +4,7 @@ contentKey: system-design.core.architecture.sync-async
 topicContentKey: system-design.core.architecture
 slug: sync-async
 title: "synchronous와 asynchronous boundary"
-summary: "user response와 background workflow를 latency·failure·delivery·state contract에 따라 나눈다"
+summary: "user 응답과 background workflow를 지연 시간·실패·delivery·state contract에 따라 나눈다"
 level: 1
 status: PUBLISHED
 displayOrder: 10
@@ -24,9 +24,9 @@ references:
 ---
 # synchronous와 asynchronous boundary
 
-Synchronous flow는 caller가 response를 기다리며 결과를 같은 request에서 받는 모델이고, asynchronous flow는 작업을 durable하게 접수한 뒤 나중에 처리·조회·알림하는 모델입니다. 비동기라고 해서 실패가 사라지지 않으며, “접수됨”과 “완료됨”을 구분하는 state contract가 필요합니다.
+Synchronous flow는 caller가 응답을 기다리며 결과를 같은 요청에서 받는 모델이고, asynchronous flow는 작업을 durable하게 접수한 뒤 나중에 처리·조회·알림하는 모델입니다. 비동기라고 해서 실패가 사라지지 않으며, “접수됨”과 “완료됨”을 구분하는 state contract가 필요합니다.
 
-### user latency와 workflow를 분리한다
+### user 지연 시간과 workflow를 분리한다
 
 ```text
 POST ─▶ validate + persist PENDING ─▶ 202 operationId
@@ -46,7 +46,7 @@ DB commit과 message publish가 서로 다른 시스템이면 outbox·recovery�
 
 ### 문제를 풀 때 확인할 것
 
-1. caller가 response 시점에 반드시 알아야 하는 결과를 정합니다.
+1. caller가 응답 시점에 반드시 알아야 하는 결과를 정합니다.
 2. 작업 수명·fan-out·외부 side effect·retry 가능성을 계산합니다.
 3. accepted/pending/complete/failed/cancelled 상태를 정의합니다.
 4. deadline·delivery·idempotency·replay와 notification을 설계합니다.

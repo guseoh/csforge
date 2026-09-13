@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.race-critical-section.spin-vs-block
 topicContentKey: operating-systems.core.race-critical-section
 slug: spin-vs-block
-title: "Spin versus Block"
+title: "Spin / Block"
 summary: "waiting 동안 CPU를 소비하는 spin과 scheduler에 CPU를 양보하는 blocking의 비용 모델을 비교한다."
 level: 2
 status: PUBLISHED
@@ -24,7 +24,7 @@ references:
     recommendation: "contended spin lock이 lock 상태를 반복 확인하며 CPU를 소비하는 동작을 확인한다."
     displayOrder: 2
 ---
-# Spin versus Block
+# Spin / Block
 
 ### 기다리는 동안 무엇을 소비하는가
 

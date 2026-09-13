@@ -74,7 +74,7 @@
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["backend.core.api.methods-status"],
-    "modelAnswer": "HTTP client/proxy가 transport-level 성공으로만 해석하고 generic failure handling이 어려워진다. 적절한 status와 안정적 error body를 분리해야 한다.",
+    "modelAnswer": "HTTP client/proxy가 transport-level 성공으로만 해석하고 일반적인 실패 처리가 어려워진다. 적절한 status와 안정적 error body를 분리해야 한다.",
     "explanationMarkdown": "실패를 200으로 포장하면 proxy·monitoring·generic client가 transport 성공으로 기록하고 retry나 alert, 사용자 수정 안내를 잘못 판단할 수 있다. HTTP status로 protocol-level 실패를 표현하고 body의 stable product code로 세부 원인과 retryability를 전달해야 한다."
   },
   {
@@ -86,7 +86,7 @@
     "status": "PUBLISHED",
     "conceptKeys": ["backend.core.api.compatibility"],
     "choices": [
-      {"key": "A", "content": "optional response field를 추가한다.", "displayOrder": 0},
+      {"key": "A", "content": "선택 응답 필드를 추가한다.", "displayOrder": 0},
       {"key": "B", "content": "field 타입은 유지하지만 의미를 '할인 전 금액'에서 '최종 결제 금액'으로 조용히 바꾼다.", "displayOrder": 1},
       {"key": "C", "content": "새 endpoint를 추가한다.", "displayOrder": 2},
       {"key": "D", "content": "문서 오타를 고친다.", "displayOrder": 3}
@@ -103,7 +103,7 @@
     "status": "PUBLISHED",
     "conceptKeys": ["backend.core.api.compatibility"],
     "modelAnswer": "strict deserializer나 exhaustive switch가 unknown value를 처리하지 못하면 schema상 작은 확장도 runtime 실패가 될 수 있다.",
-    "explanationMarkdown": "새 enum 값이 wire schema에는 additive여도 strict deserializer나 exhaustive switch가 unknown을 예외로 처리하면 구버전 client가 runtime failure를 낸다. consumer의 unknown 정책을 확인하고 fallback·capability negotiation 또는 단계적 rollout으로 의미 변화를 통제해야 한다."
+    "explanationMarkdown": "새 enum 값이 wire schema에는 additive여도 strict deserializer나 exhaustive switch가 unknown을 예외로 처리하면 구버전 client가 runtime 실패를 낸다. consumer의 unknown 정책을 확인하고 대체 처리·capability negotiation 또는 단계적 rollout으로 의미 변화를 통제해야 한다."
   },
   {
     "kind": "question",

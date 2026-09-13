@@ -63,15 +63,15 @@
   {
     "kind": "question",
     "contentKey": "operating-systems.core.kernel-boundary.os-resource-manager.q4",
-    "promptMarkdown": "Request latency 500 ms 중 Java CPU 실행은 25 ms이고 나머지는 scheduler 대기와 I/O wait가 대부분이었다. CPU 연산 최적화만으로 전체 latency가 크게 줄기 어려운 이유를 설명하라.",
+    "promptMarkdown": "요청 지연 시간 500 ms 중 Java CPU 실행은 25 ms이고 나머지는 scheduler 대기와 I/O wait가 대부분이었다. CPU 연산 최적화만으로 전체 지연 시간이 크게 줄기 어려운 이유를 설명하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": [
       "operating-systems.core.kernel-boundary.os-resource-manager"
     ],
-    "modelAnswer": "Elapsed latency에는 application이 CPU에서 실제 실행한 시간뿐 아니라 OS scheduler가 실행 기회를 주지 않은 시간과 I/O completion을 기다린 시간이 포함된다. CPU work 25 ms만 줄여서는 나머지 wait가 그대로이므로 end-to-end latency 개선 상한이 작다.",
-    "explanationMarkdown": "500 ms의 elapsed time은 CPU에서 실제 실행한 시간과 scheduler/I/O 대기 시간을 모두 포함한다. CPU work가 25 ms뿐이라면 그 부분을 크게 줄여도 나머지 약 475 ms가 그대로 남을 수 있다. 먼저 latency가 어느 resource와 wait에서 생기는지 측정해야 한다."
+    "modelAnswer": "Elapsed 지연 시간에는 application이 CPU에서 실제 실행한 시간뿐 아니라 OS scheduler가 실행 기회를 주지 않은 시간과 I/O completion을 기다린 시간이 포함된다. CPU work 25 ms만 줄여서는 나머지 wait가 그대로이므로 종단 간 지연 시간 개선 상한이 작다.",
+    "explanationMarkdown": "500 ms의 elapsed time은 CPU에서 실제 실행한 시간과 scheduler/I/O 대기 시간을 모두 포함한다. CPU work가 25 ms뿐이라면 그 부분을 크게 줄여도 나머지 약 475 ms가 그대로 남을 수 있다. 먼저 지연 시간이 어느 resource와 wait에서 생기는지 측정해야 한다."
   },
   {
     "kind": "question",

@@ -21,4 +21,4 @@ TLS는 공개키 signature와 key agreement를 handshake에 사용하고, 대량
 
 session/traffic key는 특정 connection과 handshake transcript 문맥에 묶이며, nonce·key usage limit·key update와 connection 종료에 따라 수명이 관리된다. 같은 key를 여러 독립 connection이나 tenant에 무제한 재사용하면 compromise blast radius가 커진다. TLS가 network payload를 보호해도 endpoint memory, application log, trusted termination proxy에서 평문이 노출되는 문제까지 해결하지 않는다.
 
-Backend에서는 HTTPS 로그에 Authorization header와 민감한 request body를 무심코 남기지 않는다. TLS termination 이후 internal hop이 평문인지 다시 TLS로 보호되는지, mTLS가 필요한지와 각 hop의 key lifecycle을 trust boundary에 명시한다.
+Backend에서는 HTTPS 로그에 Authorization header와 민감한 요청 본문을 무심코 남기지 않는다. TLS termination 이후 internal hop이 평문인지 다시 TLS로 보호되는지, mTLS가 필요한지와 각 hop의 key lifecycle을 trust boundary에 명시한다.

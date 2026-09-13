@@ -557,7 +557,7 @@
       }
     ],
     "correctChoiceKey": "D",
-    "explanationMarkdown": "JVMS의 initialization failure 처리로 후속 사용은 원래 예외와 다른 linkage/error 형태를 관찰할 수 있다."
+    "explanationMarkdown": "JVMS의 initialization 실패 처리로 후속 사용은 원래 예외와 다른 linkage/error 형태를 관찰할 수 있다."
   },
   {
     "kind": "question",
@@ -1367,7 +1367,7 @@
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.gc-fundamentals-collectors.q2",
-    "promptMarkdown": "throughput과 latency의 관계를 설명한 것은?",
+    "promptMarkdown": "처리량과 지연 시간의 관계를 설명한 것은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
@@ -1377,7 +1377,7 @@
     "choices": [
       {
         "key": "A",
-        "content": "throughput은 source compile 시간만 뜻한다",
+        "content": "처리량은 source compile 시간만 뜻한다",
         "displayOrder": 0
       },
       {
@@ -1387,7 +1387,7 @@
       },
       {
         "key": "C",
-        "content": "latency는 heap과 무관하다",
+        "content": "지연 시간은 heap과 무관하다",
         "displayOrder": 2
       },
       {
@@ -1497,7 +1497,7 @@
       },
       {
         "key": "D",
-        "content": "System.gc를 모든 request에 넣는다",
+        "content": "System.gc를 모든 요청에 넣는다",
         "displayOrder": 3
       }
     ],
@@ -2312,7 +2312,7 @@
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.runtime-diagnostics-jcmd-jstack-jfr.q5",
-    "promptMarkdown": "장시간 latency spike와 GC pause, CPU 변동의 시간 관계를 비교하려면?",
+    "promptMarkdown": "장시간 지연 시간 spike와 GC pause, CPU 변동의 시간 관계를 비교하려면?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "HARD",
     "status": "PUBLISHED",
@@ -2383,14 +2383,14 @@
 {
   "kind": "question",
   "contentKey": "java.core.jvm-runtime.runtime-diagnostics-jcmd-jstack-jfr.q7",
-  "promptMarkdown": "API latency가 상승했지만 CPU는 낮다. `jstack`에서는 다수의 request thread가 같은 외부 호출을 기다린다.\n\n어떤 가설을 세울 수 있으며, 한 번의 thread dump만으로 결론 내리지 않기 위해 무엇을 추가로 관찰해야 하는가?",
+  "promptMarkdown": "API 지연 시간이 상승했지만 CPU는 낮다. `jstack`에서는 다수의 요청 thread가 같은 외부 호출을 기다린다.\n\n어떤 가설을 세울 수 있으며, 한 번의 thread dump만으로 결론 내리지 않기 위해 무엇을 추가로 관찰해야 하는가?",
   "questionType": "SCENARIO",
   "difficulty": "HARD",
   "status": "PUBLISHED",
   "conceptKeys": [
     "java.core.jvm-runtime.runtime-diagnostics-jcmd-jstack-jfr"
   ],
-  "modelAnswer": "외부 호출 latency나 connection pool 대기가 병목일 가능성을 세운다. 시간 간격을 둔 여러 thread dump와 request/remote latency, pool 사용량, timeout·error metric을 함께 비교해 thread 상태가 지속되는지와 원인을 분리한다.",
+  "modelAnswer": "외부 호출 지연 시간이나 connection pool 대기가 병목일 가능성을 세운다. 시간 간격을 둔 여러 thread dump와 요청/remote 지연 시간, pool 사용량, timeout·error metric을 함께 비교해 thread 상태가 지속되는지와 원인을 분리한다.",
   "explanationMarkdown": "jstack은 특정 시점의 stack evidence다. 원인과 상관관계를 만들려면 반복 snapshot과 애플리케이션·외부 시스템 지표를 함께 봐야 한다."
 }
 ]

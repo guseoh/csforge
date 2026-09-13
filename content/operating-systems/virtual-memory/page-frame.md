@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.virtual-memory.page-frame
 topicContentKey: operating-systems.core.virtual-memory
 slug: page-frame
-title: "Page and Frame"
+title: "Page·Frame"
 summary: "virtual memory의 page와 physical memory의 frame을 같은 크기 단위로 나누어 mapping하는 이유를 설명한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "virtual page와 physical frame, page-table mapping 및 paging의 공간·비용 trade-off를 확인한다."
     displayOrder: 1
 ---
-# Page and Frame
+# Page·Frame
 
 ### 연속 virtual memory를 연속 physical memory에 둘 필요가 없게 한다
 

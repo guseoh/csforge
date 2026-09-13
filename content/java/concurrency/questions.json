@@ -107,7 +107,7 @@
   {
     "kind": "question",
     "contentKey": "java.core.concurrency.concurrency-vs-parallelism.q4",
-    "promptMarkdown": "하나의 event-loop thread가 두 I/O 작업을 다음처럼 관리한다.\n\n1. 작업 A가 network response를 기다린다.\n2. Thread를 block하지 않고 A 처리를 보류한다.\n3. 준비된 작업 B를 처리한다.\n\n이를 concurrency와 parallelism 관점에서 가장 정확히 설명한 것은?",
+    "promptMarkdown": "하나의 event-loop thread가 두 I/O 작업을 다음처럼 관리한다.\n\n1. 작업 A가 network 응답을 기다린다.\n2. Thread를 block하지 않고 A 처리를 보류한다.\n3. 준비된 작업 B를 처리한다.\n\n이를 concurrency와 parallelism 관점에서 가장 정확히 설명한 것은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "HARD",
     "status": "PUBLISHED",
@@ -1432,7 +1432,7 @@
       }
     ],
     "correctChoiceKey": "A",
-    "explanationMarkdown": "volatile read/write는 JMM memory consistency 효과를 주지만 lock은 아니다."
+    "explanationMarkdown": "volatile read/write는 JMM 메모리 일관성 효과를 주지만 lock은 아니다."
   },
   {
     "kind": "question",
@@ -1532,7 +1532,7 @@
       },
       {
         "key": "D",
-        "content": "정확한 Java guarantee는 JMM happens-before와 memory consistency이며 하드웨어 구현은 별도이기 때문",
+        "content": "정확한 Java guarantee는 JMM happens-before와 메모리 일관성이며 하드웨어 구현은 별도이기 때문",
         "displayOrder": 3
       }
     ],
@@ -2977,7 +2977,7 @@
   {
     "kind": "question",
     "contentKey": "java.core.concurrency.threadlocal-context.q4",
-    "promptMarkdown": "ThreadLocal이 mutable request context를 담을 때 별도로 필요한 것은?",
+    "promptMarkdown": "ThreadLocal이 mutable 요청 context를 담을 때 별도로 필요한 것은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
@@ -3012,7 +3012,7 @@
   {
     "kind": "question",
     "contentKey": "java.core.concurrency.threadlocal-context.q5",
-    "promptMarkdown": "Thread pool의 worker W가 다음 요청들을 순서대로 처리한다.\n\n1. Request A의 context를 `ThreadLocal`에 설정한다.\n2. Context를 remove하지 않고 A를 종료한다.\n3. 같은 worker가 request B를 처리한다.\n\nB에서 가능한 문제는?",
+    "promptMarkdown": "Thread pool의 worker W가 다음 요청들을 순서대로 처리한다.\n\n1. 요청 A의 context를 `ThreadLocal`에 설정한다.\n2. Context를 remove하지 않고 A를 종료한다.\n3. 같은 worker가 요청 B를 처리한다.\n\nB에서 가능한 문제는?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "HARD",
     "status": "PUBLISHED",
@@ -3372,7 +3372,7 @@
     "choices": [
       {
         "key": "A",
-        "content": "후속 stage는 completion method 계약에 따라 failure 경로를 따를 수 있다",
+        "content": "후속 stage는 completion method 계약에 따라 실패 경로를 따를 수 있다",
         "displayOrder": 0
       },
       {

@@ -69,7 +69,7 @@
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.complexity.big-o-theta-omega"],
-    "modelAnswer": "점근 표기는 충분히 큰 입력에서의 성장 차수를 비교하며 상수항, cache/I/O, 구현 overhead와 현재 작은 입력 범위를 숨긴다. 장기적인 scalability에는 A가 유리할 가능성이 있지만 현재 n≤20의 실제 latency는 representative benchmark로 확인해야 한다."
+    "modelAnswer": "점근 표기는 충분히 큰 입력에서의 성장 차수를 비교하며 상수항, cache/I/O, 구현 overhead와 현재 작은 입력 범위를 숨긴다. 장기적인 scalability에는 A가 유리할 가능성이 있지만 현재 n≤20의 실제 지연 시간은 representative benchmark로 확인해야 한다."
   },
   {
     "kind": "question",
@@ -136,12 +136,12 @@
   {
     "kind": "question",
     "contentKey": "dsa.core.complexity.time-space-tradeoff.q3",
-    "promptMarkdown": "중복 검사를 위해 request마다 모든 ID를 HashSet에 올리면 DB 조회는 줄지만 heap peak가 memory limit을 넘는다. 어떤 입력 특성과 대안을 비교해야 하는지 설명하라.",
+    "promptMarkdown": "중복 검사를 위해 요청마다 모든 ID를 HashSet에 올리면 DB 조회는 줄지만 heap peak가 memory limit을 넘는다. 어떤 입력 특성과 대안을 비교해야 하는지 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.complexity.time-space-tradeoff"],
-    "modelAnswer": "ID 개수, key 크기, object/table overhead와 동시 request 수를 기준으로 실제 peak space를 계산해야 한다. Batch/chunk 단위 dedup, sort 후 adjacent comparison, DB constraint 등 더 적은 memory를 쓰는 후보와 추가 I/O/CPU 비용을 함께 비교한다."
+    "modelAnswer": "ID 개수, key 크기, object/table overhead와 동시 요청 수를 기준으로 실제 peak space를 계산해야 한다. Batch/chunk 단위 dedup, sort 후 adjacent comparison, DB constraint 등 더 적은 memory를 쓰는 후보와 추가 I/O/CPU 비용을 함께 비교한다."
   },
   {
     "kind": "question",
@@ -182,12 +182,12 @@
   {
     "kind": "question",
     "contentKey": "dsa.core.complexity.amortized-analysis.q4",
-    "promptMarkdown": "append가 amortized O(1)인 dynamic buffer에서 드물게 수십 MB copy가 발생해 p99 latency가 튄다. 이 현상이 amortized bound와 모순되지 않는 이유와 latency-sensitive 서비스에서 검토할 대응을 설명하라.",
+    "promptMarkdown": "append가 amortized O(1)인 dynamic buffer에서 드물게 수십 MB copy가 발생해 p99 지연 시간이 튄다. 이 현상이 amortized bound와 모순되지 않는 이유와 지연 시간-sensitive 서비스에서 검토할 대응을 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.complexity.amortized-analysis"],
-    "modelAnswer": "Amortized O(1)은 긴 sequence의 총비용/operation 평균 bound이지 각 operation의 worst-case latency가 상수라는 뜻이 아니다. Resize 한 번은 O(n) copy를 만들 수 있다. 예상 크기 기반 reserve, chunked structure, growth factor 조정 등을 memory peak와 함께 비교하고 p99를 실제로 측정해야 한다."
+    "modelAnswer": "Amortized O(1)은 긴 sequence의 총비용/operation 평균 bound이지 각 operation의 worst-case 지연 시간이 상수라는 뜻이 아니다. Resize 한 번은 O(n) copy를 만들 수 있다. 예상 크기 기반 reserve, chunked structure, growth factor 조정 등을 memory peak와 함께 비교하고 p99를 실제로 측정해야 한다."
   },
   {
     "kind": "question",

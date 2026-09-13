@@ -4,7 +4,7 @@ contentKey: operating-systems.core.synchronization.contention
 topicContentKey: operating-systems.core.synchronization
 slug: contention
 title: "Contention"
-summary: "여러 execution이 같은 synchronization resource를 경쟁할 때 queueing과 throughput이 악화되는 과정을 설명한다."
+summary: "여러 execution이 같은 synchronization resource를 경쟁할 때 queueing과 처리량이 악화되는 과정을 설명한다."
 level: 2
 status: PUBLISHED
 displayOrder: 70
@@ -39,9 +39,9 @@ Lock이 코드에 존재한다는 사실과 lock 때문에 성능이 나쁘다�
                     waiting              hold time
 ```
 
-예를 들어 critical section이 평균 1ms라면 다른 비용을 무시한 이상적인 경우에도 하나의 직렬 구간이 처리할 수 있는 횟수에는 한계가 있습니다. 같은 lock을 필요로 하는 작업의 arrival rate가 그 처리 속도에 가까워지거나 넘어가면 작은 hold-time 증가도 queueing과 tail latency를 크게 만들 수 있습니다.
+예를 들어 critical section이 평균 1ms라면 다른 비용을 무시한 이상적인 경우에도 하나의 직렬 구간이 처리할 수 있는 횟수에는 한계가 있습니다. 같은 lock을 필요로 하는 작업의 arrival rate가 그 처리 속도에 가까워지거나 넘어가면 작은 hold-time 증가도 queueing과 꼬리 지연 시간(tail latency)을 크게 만들 수 있습니다.
 
-특히 lock을 잡은 채 DB나 network I/O를 기다리면 외부 시스템의 변동성이 그대로 lock service time으로 들어옵니다. 그래서 `lock 횟수` 하나보다 **hold time, acquisition/wait latency, waiter 수와 요청 latency**를 함께 봅니다.
+특히 lock을 잡은 채 DB나 network I/O를 기다리면 외부 시스템의 변동성이 그대로 lock service time으로 들어옵니다. 그래서 `lock 횟수` 하나보다 **hold time, acquisition/wait 지연 시간, waiter 수와 요청 지연 시간**를 함께 봅니다.
 
 ### 기다리는 방식에 따라 CPU 비용도 달라진다
 
@@ -62,7 +62,7 @@ CPU 3 ─┘
 
 Contention을 줄이는 후보는 critical section 축소, 독립 state 분할, immutable snapshot, batching, 더 적합한 concurrent data structure 등 다양합니다. 하지만 실제 병목이 global lock인지 atomic hot spot인지, 아니면 그 안의 느린 I/O인지에 따라 올바른 해법이 달라집니다.
 
-Backend에서는 thread dump와 profiler, lock wait/acquisition 시간, blocked 또는 spinning CPU time, throughput, p95/p99 latency 등을 함께 확인합니다. 변경 후에는 throughput만 좋아졌는지 보지 말고 tail latency와 correctness까지 다시 확인해야 합니다.
+Backend에서는 thread dump와 profiler, lock wait/acquisition 시간, blocked 또는 spinning CPU time, 처리량, p95/p99 지연 시간 등을 함께 확인합니다. 변경 후에는 처리량만 좋아졌는지 보지 말고 꼬리 지연 시간(tail latency)과 correctness까지 다시 확인해야 합니다.
 
 ### 면접에서 이렇게 나옵니다
 

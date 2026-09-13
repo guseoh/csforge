@@ -33,7 +33,7 @@ Unix-domain stream socket은 TCP와 비슷하게 connected byte stream interface
 
 pathname 기반 Unix socket은 filesystem namespace의 path를 endpoint로 사용할 수 있다. server crash 뒤 socket pathname이 남아 새 bind가 실패하거나, permission 때문에 client가 connect하지 못할 수 있다. Linux에는 abstract namespace 같은 별도 방식도 있지만 이는 portable POSIX pathname semantics와 동일하지 않다.
 
-따라서 server startup/shutdown에서 `endpoint 생성 → listen → client connect → close → stale pathname cleanup` lifecycle을 명시한다.
+따라서 server 시작/shutdown에서 `endpoint 생성 → listen → client connect → close → stale pathname cleanup` lifecycle을 명시한다.
 
 ### Local peer 정보를 활용할 수 있다
 
@@ -43,4 +43,4 @@ pathname 기반 Unix socket은 filesystem namespace의 path를 endpoint로 사�
 
 Unix-domain socket은 host 경계를 넘을 필요가 없는 communication에서 network routing/transport header 처리 일부를 피할 수 있고 local namespace를 활용한다. 반대로 다른 host로 확장할 수 없으므로 deployment boundary가 바뀌면 transport choice도 바뀐다.
 
-Backend에서 같은 machine의 helper daemon, local proxy, database client가 Unix socket을 지원한다면 TCP loopback과 latency/permission/operations trade-off를 비교할 수 있다. 단순히 local이라는 이유로 항상 더 빠르다고 가정하지 않고 실제 workload를 측정한다.
+Backend에서 같은 machine의 helper daemon, local proxy, database client가 Unix socket을 지원한다면 TCP loopback과 지연 시간/permission/operations trade-off를 비교할 수 있다. 단순히 local이라는 이유로 항상 더 빠르다고 가정하지 않고 실제 workload를 측정한다.

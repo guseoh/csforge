@@ -43,7 +43,7 @@ Page 1: [105, 104, 103, ...]
           └─ deterministic ordering이 다음 요청의 경계를 안정시킴
 ```
 
-다만 deterministic ordering이 여러 요청을 하나의 snapshot으로 묶어 주는 것은 아닙니다. 페이지 사이에 insert/delete가 일어나면 offset 기반 pagination에서는 중복이나 누락이 생길 수 있으므로, 목록의 consistency 요구와 pagination 방식을 별도로 판단합니다.
+다만 deterministic ordering이 여러 요청을 하나의 snapshot으로 묶어 주는 것은 아닙니다. 페이지 사이에 insert/delete가 일어나면 offset 기반 pagination에서는 중복이나 누락이 생길 수 있으므로, 목록의 일관성 요구와 pagination 방식을 별도로 판단합니다.
 
 ### offset pagination의 비용
 

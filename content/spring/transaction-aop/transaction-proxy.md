@@ -118,6 +118,6 @@ public void checkout() {
 }
 ```
 
-DB transaction을 연 채 remote API를 오래 기다리면 connection/lock을 오래 점유할 수 있습니다. 모든 상태를 한 atomic boundary에 넣고 싶은 마음과 external system이 DB transaction에 참여하지 않는 현실을 구분해야 합니다. 필요한 경우 state machine, idempotency, outbox/compensation 같은 더 넓은 consistency 설계가 필요합니다.
+DB transaction을 연 채 remote API를 오래 기다리면 connection/lock을 오래 점유할 수 있습니다. 모든 상태를 한 atomic boundary에 넣고 싶은 마음과 external system이 DB transaction에 참여하지 않는 현실을 구분해야 합니다. 필요한 경우 state machine, idempotency, outbox/compensation 같은 더 넓은 일관성 설계가 필요합니다.
 
 `@Transactional`을 이해한다는 것은 annotation option을 암기하는 것이 아니라 **caller가 proxy를 통과한 순간부터 target 반환 이후 completion까지 어디에서 transaction 상태가 바뀌는지**를 설명할 수 있다는 뜻입니다.

@@ -4,7 +4,7 @@ contentKey: backend.core.api.resource-endpoint
 topicContentKey: backend.core.api
 slug: resource-endpoint
 title: resource와 endpoint
-summary: API URI를 설계할 때 가장 먼저 결정할 것은 동사 이름이 아니라 클라이언트가 어떤 자원을 바라보고 어떤 상태를 조작하는가입니다. Endpoint는 단순 URL 문자열이 아니라 method, request/response representation, status code가 합쳐진 계약입니다.
+summary: API URI를 설계할 때 가장 먼저 결정할 것은 동사 이름이 아니라 클라이언트가 어떤 자원을 바라보고 어떤 상태를 조작하는가입니다. Endpoint는 단순 URL 문자열이 아니라 method, 요청/응답 representation, status code가 합쳐진 계약입니다.
 level: 1
 status: PUBLISHED
 displayOrder: 10
@@ -18,7 +18,7 @@ references:
 ---
 # resource와 endpoint
 
-API URI를 설계할 때 가장 먼저 결정할 것은 동사 이름이 아니라 **클라이언트가 어떤 자원을 바라보고 어떤 상태를 조작하는가**입니다. Endpoint는 단순 URL 문자열이 아니라 method, request/response representation, status code가 합쳐진 계약입니다.
+API URI를 설계할 때 가장 먼저 결정할 것은 동사 이름이 아니라 **클라이언트가 어떤 자원을 바라보고 어떤 상태를 조작하는가**입니다. Endpoint는 단순 URL 문자열이 아니라 method, 요청/응답 representation, status code가 합쳐진 계약입니다.
 
 ### action 이름보다 resource를 먼저 본다
 

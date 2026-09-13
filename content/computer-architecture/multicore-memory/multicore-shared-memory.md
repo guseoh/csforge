@@ -25,11 +25,11 @@ multicore processor에서는 여러 core가 하나의 physical address space와 
 
 이 구조는 여러 core가 pointer와 data structure를 직접 공유할 수 있어 communication이 편리하지만, 동시에 `어떤 값을 언제 볼 수 있는가`, `여러 memory operation의 순서를 어떻게 관찰하는가`, `read-modify-write를 하나의 원자적 동작으로 만들 것인가` 같은 문제가 생긴다.
 
-### Coherence와 memory consistency는 다른 질문에 답한다
+### Coherence와 메모리 일관성은 다른 질문에 답한다
 
 cache coherence는 주로 같은 memory location 또는 cache line의 여러 cached copy가 서로 모순된 최신 값을 계속 사용하지 않도록 관리한다. 한 core가 write ownership을 얻으면 다른 core의 copy를 invalidate하거나 protocol에 맞게 갱신해 같은 line에 대한 write/read가 coherent한 순서로 보이도록 만든다.
 
-하지만 coherence만으로 서로 다른 address의 모든 load/store가 source-code program order 그대로 다른 core에 관찰된다고 보장하지 않는다. 어떤 memory operation 순서를 다른 observer가 반드시 보존해야 하는지는 architecture의 memory consistency model이 정한다. weak memory model에서는 일부 순서를 자유롭게 할 수 있고, fence나 acquire/release 같은 ordering primitive가 필요한 경우가 있다.
+하지만 coherence만으로 서로 다른 address의 모든 load/store가 source-code program order 그대로 다른 core에 관찰된다고 보장하지 않는다. 어떤 memory operation 순서를 다른 observer가 반드시 보존해야 하는지는 architecture의 메모리 일관성 model이 정한다. weak memory model에서는 일부 순서를 자유롭게 할 수 있고, fence나 acquire/release 같은 ordering primitive가 필요한 경우가 있다.
 
 ### Atomicity와 application invariant는 또 다른 층위다
 

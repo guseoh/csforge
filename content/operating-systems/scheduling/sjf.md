@@ -64,6 +64,6 @@ Aging, priority boost, separate queue 같은 보완책을 쓸 수 있지만 그 
 
 ### Backend에서 cost-based priority를 사용할 때
 
-Request size나 estimated cost를 보고 짧은 작업을 먼저 처리하면 평균 latency를 줄일 가능성이 있다. 하지만 cost estimate가 틀릴 수 있고 대형 import가 starvation될 수 있다.
+요청 size나 estimated cost를 보고 짧은 작업을 먼저 처리하면 평균 지연 시간을 줄일 가능성이 있다. 하지만 cost estimate가 틀릴 수 있고 대형 import가 starvation될 수 있다.
 
-따라서 실제 적용 시에는 request cost prediction accuracy, long-task max waiting, deadline/SLA, queue split 등을 함께 측정해야 한다. SJF의 핵심은 **short job 우선이 평균 waiting을 줄일 수 있는 원리와, 그 효과가 정확한 job-size 정보와 fairness trade-off에 의존한다는 것**이다.
+따라서 실제 적용 시에는 요청 cost prediction accuracy, long-task max waiting, deadline/SLA, queue split 등을 함께 측정해야 한다. SJF의 핵심은 **short job 우선이 평균 waiting을 줄일 수 있는 원리와, 그 효과가 정확한 job-size 정보와 fairness trade-off에 의존한다는 것**이다.

@@ -35,7 +35,7 @@ associativity를 높인다고 compulsory miss가 없어지는 것은 아니고, 
 
 way 수가 늘어나면 같은 set에서 더 많은 tag를 비교하고 hit한 way의 data를 선택해야 한다. replacement state도 더 복잡해질 수 있다. hardware는 parallel comparator와 mux를 사용해 빠르게 처리하지만 area와 전력, critical path에 영향을 준다. 그래서 `8-way가 4-way보다 hit rate가 조금 높다`는 사실만으로 더 좋은 설계라고 결론 내릴 수 없다.
 
-실제 cache는 level과 목적에 따라 서로 다른 capacity, line size, associativity를 선택한다. 작은 latency-sensitive L1과 큰 lower-level cache가 같은 조직을 사용할 필요가 없다.
+실제 cache는 level과 목적에 따라 서로 다른 capacity, line size, associativity를 선택한다. 작은 지연 시간-sensitive L1과 큰 lower-level cache가 같은 조직을 사용할 필요가 없다.
 
 ### Backend 성능에서의 연결
 

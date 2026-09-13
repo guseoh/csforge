@@ -64,8 +64,8 @@ jitter의 정확한 분포와 범위는 구현 정책입니다. 예를 들어 gR
 
 ### retry budget
 
-한 request에서 5회 retry하고 upstream도 3회 retry하면 최악의 호출 수가 곱셈으로 커질 수 있습니다. 어느 layer가 retry ownership을 가질지 정하고 전체 횟수/시간 budget을 제한합니다.
+한 요청에서 5회 retry하고 upstream도 3회 retry하면 최악의 호출 수가 곱셈으로 커질 수 있습니다. 어느 layer가 retry ownership을 가질지 정하고 전체 횟수/시간 budget을 제한합니다.
 
 ### 모니터링
 
-retry로 최종 성공했다고 original failure를 숨기면 dependency 품질 악화를 늦게 발견합니다. original failure rate, retry success rate, added latency를 따로 봅니다.
+retry로 최종 성공했다고 original 실패를 숨기면 dependency 품질 악화를 늦게 발견합니다. original 실패 rate, retry success rate, added 지연 시간을 따로 봅니다.

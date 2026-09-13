@@ -131,7 +131,7 @@ channel.read(buffer)
    └─ 여러 메시지의 bytes가 함께 들어왔을 수도 있음
 ```
 
-Selector는 protocol framing을 알지 못합니다. HTTP request, 길이-prefix message, line protocol처럼 어디까지가 한 메시지인지 판단하고 partial data를 Buffer에 이어 붙이는 책임은 그 위의 protocol/application logic에 있습니다.
+Selector는 protocol framing을 알지 못합니다. HTTP 요청, 길이-prefix message, line protocol처럼 어디까지가 한 메시지인지 판단하고 partial data를 Buffer에 이어 붙이는 책임은 그 위의 protocol/application logic에 있습니다.
 
 ### Java Selector와 epoll·kqueue는 같은 추상화 층이 아니다
 

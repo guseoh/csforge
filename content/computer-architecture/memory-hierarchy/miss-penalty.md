@@ -37,16 +37,16 @@ multi-level hierarchy에서는 L1 miss가 L2 hit인지, L2도 miss인지가 갈�
 
 ### 실제 penalty는 workload와 동시성에 따라 달라진다
 
-현대 CPU는 여러 cache miss를 동시에 outstanding 상태로 두거나 prefetch로 필요한 line을 미리 가져와 latency를 숨길 수 있다. 따라서 miss 하나가 100ns라고 해서 모든 miss가 CPU 실행 시간을 정확히 100ns씩 늘리는 것은 아니다. 반대로 dependent load chain에서는 다음 address를 앞 결과가 결정하므로 memory-level parallelism을 만들기 어려워 latency가 그대로 critical path에 나타날 수 있다.
+현대 CPU는 여러 cache miss를 동시에 outstanding 상태로 두거나 prefetch로 필요한 line을 미리 가져와 지연 시간을 숨길 수 있다. 따라서 miss 하나가 100ns라고 해서 모든 miss가 CPU 실행 시간을 정확히 100ns씩 늘리는 것은 아니다. 반대로 dependent load chain에서는 다음 address를 앞 결과가 결정하므로 memory-level parallelism을 만들기 어려워 지연 시간이 그대로 critical path에 나타날 수 있다.
 
 memory controller queue, 다른 core의 traffic, dirty write-back, DRAM row behavior도 관측 miss penalty를 바꿀 수 있다. 평균 penalty만으로 tail behavior를 설명하지 못하는 이유다.
 
 ### 무엇을 개선할지 식에서 분리해서 본다
 
-AMAT를 줄이는 방법은 하나가 아니다. hit time을 줄이거나, miss rate를 낮추거나, miss penalty를 낮출 수 있다. cache를 더 크게 만들어 miss rate를 낮추더라도 hit lookup이 느려지면 전체 이득이 제한될 수 있고, 큰 line으로 spatial locality를 활용하면 miss rate가 줄 수 있지만 transfer bandwidth와 fill latency가 늘 수 있다. 그래서 `hit rate 개선` 자체가 최종 목표가 아니라 workload 전체 access cost가 실제로 줄었는지 봐야 한다.
+AMAT를 줄이는 방법은 하나가 아니다. hit time을 줄이거나, miss rate를 낮추거나, miss penalty를 낮출 수 있다. cache를 더 크게 만들어 miss rate를 낮추더라도 hit lookup이 느려지면 전체 이득이 제한될 수 있고, 큰 line으로 spatial locality를 활용하면 miss rate가 줄 수 있지만 transfer bandwidth와 fill 지연 시간이 늘 수 있다. 그래서 `hit rate 개선` 자체가 최종 목표가 아니라 workload 전체 access cost가 실제로 줄었는지 봐야 한다.
 
 ### Backend 성능과 연결할 때의 경계
 
-이 AMAT 식을 Redis나 HTTP cache에 그대로 적용하는 것은 비유 수준에서는 가능하지만 동일한 hardware model은 아니다. backend cache는 network, serialization, consistency, eviction policy 같은 별도 비용을 가진다. 다만 `hit path 비용 + miss 빈도 × miss path 비용`을 분리해 생각한다는 분석 방식은 유용하다.
+이 AMAT 식을 Redis나 HTTP cache에 그대로 적용하는 것은 비유 수준에서는 가능하지만 동일한 hardware model은 아니다. backend cache는 network, serialization, 일관성, eviction policy 같은 별도 비용을 가진다. 다만 `hit path 비용 + miss 빈도 × miss path 비용`을 분리해 생각한다는 분석 방식은 유용하다.
 
-application cache를 도입할 때도 hit rate만 제시하지 말고 hit latency와 miss 시 DB/downstream 비용을 함께 측정해야 한다. miss가 드물어도 매우 비싼 path라면 p99에 큰 영향을 줄 수 있다.
+application cache를 도입할 때도 hit rate만 제시하지 말고 hit 지연 시간과 miss 시 DB/downstream 비용을 함께 측정해야 한다. miss가 드물어도 매우 비싼 path라면 p99에 큰 영향을 줄 수 있다.

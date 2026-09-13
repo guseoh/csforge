@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.data-representation.signed-twos-complement
 topicContentKey: computer-architecture.core.data-representation
 slug: signed-twos-complement
-title: "Signed and Two's Complement"
+title: "Signed·Two's Complement"
 summary: "같은 bit pattern의 signed 해석과 two's complement 규칙을 설명한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "고정 폭 정수와 수 표현의 기초를 확인한다."
     displayOrder: 1
 ---
-# Signed and Two's Complement
+# Signed·Two's Complement
 
 ### 하나의 bit pattern, 두 해석
 

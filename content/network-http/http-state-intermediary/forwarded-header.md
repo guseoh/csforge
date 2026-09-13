@@ -19,7 +19,7 @@ references:
 ---
 # Forwarded Header
 
-`Forwarded`는 proxy가 request를 전달하면서 `for=`, `by=`, `host=`, `proto=` 같은 parameter로 관찰한 hop 정보를 전달하는 표준화된 HTTP field 형식이다. 여러 intermediary가 자신이 본 값을 추가할 수 있어 하나의 값이 “검증된 원래 client”를 자동으로 뜻하지 않는다. quoted value, IPv6 address와 obfuscated identifier parsing도 형식에 맞게 처리해야 한다.
+`Forwarded`는 proxy가 요청을 전달하면서 `for=`, `by=`, `host=`, `proto=` 같은 parameter로 관찰한 hop 정보를 전달하는 표준화된 HTTP field 형식이다. 여러 intermediary가 자신이 본 값을 추가할 수 있어 하나의 값이 “검증된 원래 client”를 자동으로 뜻하지 않는다. quoted value, IPv6 address와 obfuscated identifier parsing도 형식에 맞게 처리해야 한다.
 
 외부 client가 먼저 보낸 `Forwarded`를 ingress가 그대로 넘기면 attacker가 scheme·host·client address를 위조할 수 있다. trusted edge는 inbound header를 제거하거나 정규화한 뒤 자신이 관찰한 값을 추가하고, backend는 허용된 intermediary에서 온 chain만 신뢰해야 한다. header의 정보는 external URL 생성, routing, logging에 사용할 수 있지만 cryptographic authentication proof나 원래 client의 서명된 신원으로 자동 승격하지 않는다.
 

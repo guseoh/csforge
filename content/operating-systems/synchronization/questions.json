@@ -30,13 +30,13 @@
   {
     "kind": "question",
     "contentKey": "operating-systems.core.synchronization.mutex.q3",
-    "promptMarkdown": "mutex를 잡은 채 평균 300ms짜리 외부 API를 호출하고 동일 lock을 50개 request가 경쟁한다. 어떤 문제가 예상되는가?",
+    "promptMarkdown": "mutex를 잡은 채 평균 300ms짜리 외부 API를 호출하고 동일 lock을 50개 요청이 경쟁한다. 어떤 문제가 예상되는가?",
     "questionType": "SCENARIO",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.synchronization.mutex"],
-    "modelAnswer": "외부 API latency가 lock hold time이 되어 request들이 직렬화되고 queue latency가 커진다. 외부 호출을 lock 밖으로 옮길 수 있는지 검토하되 shared invariant가 stale snapshot 때문에 깨지지 않는지도 확인해야 한다.",
-    "explanationMarkdown": "한 owner가 외부 API를 기다리는 300ms 동안 같은 mutex가 필요한 다른 request는 protected state를 사용할 수 없다. 이때 외부 지연이 그대로 **lock service time과 waiter의 acquisition latency**로 전파된다. 다만 I/O를 밖으로 옮길 때는 그 사이 state가 바뀌어 stale한 판단을 하게 되지 않는지까지 확인해야 한다."
+    "modelAnswer": "외부 API 지연 시간이 lock hold time이 되어 요청들이 직렬화되고 queue 지연 시간이 커진다. 외부 호출을 lock 밖으로 옮길 수 있는지 검토하되 shared invariant가 stale snapshot 때문에 깨지지 않는지도 확인해야 한다.",
+    "explanationMarkdown": "한 owner가 외부 API를 기다리는 300ms 동안 같은 mutex가 필요한 다른 요청은 protected state를 사용할 수 없다. 이때 외부 지연이 그대로 **lock service time과 waiter의 acquisition 지연 시간**로 전파된다. 다만 I/O를 밖으로 옮길 때는 그 사이 state가 바뀌어 stale한 판단을 하게 되지 않는지까지 확인해야 한다."
   },
 
   {
@@ -206,8 +206,8 @@
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.synchronization.read-write-lock"],
-    "modelAnswer": "read critical section이 매우 짧으면 reader count와 mode 관리 overhead가 이득보다 클 수 있고 contention 자체가 낮을 수도 있다. thread 수, hold time, writer latency와 fairness를 실제로 측정해야 한다.",
-    "explanationMarkdown": "Read-write lock은 mode와 reader 수를 관리하는 비용을 추가로 가진다. Read 비율이 높아도 critical section이 매우 짧거나 실제 동시 read contention이 낮으면 parallel-read 이득이 작다. **비율보다 hold time, thread 수, 실제 wait와 writer latency 요구**를 함께 측정해야 한다."
+    "modelAnswer": "read critical section이 매우 짧으면 reader count와 mode 관리 overhead가 이득보다 클 수 있고 contention 자체가 낮을 수도 있다. thread 수, hold time, writer 지연 시간과 fairness를 실제로 측정해야 한다.",
+    "explanationMarkdown": "Read-write lock은 mode와 reader 수를 관리하는 비용을 추가로 가진다. Read 비율이 높아도 critical section이 매우 짧거나 실제 동시 read contention이 낮으면 parallel-read 이득이 작다. **비율보다 hold time, thread 수, 실제 wait와 writer 지연 시간 요구**를 함께 측정해야 한다."
   },
   {
     "kind": "question",
@@ -217,8 +217,8 @@
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.synchronization.read-write-lock"],
-    "modelAnswer": "writer starvation 가능성이다. writer preference나 fair policy를 고려할 수 있지만 그러면 새 reader latency가 증가할 수 있으므로 workload와 writer SLO를 기준으로 선택한다.",
-    "explanationMarkdown": "Reader-preference 정책이 새 reader를 계속 받아들이면 waiting writer가 진입할 빈 구간을 얻지 못할 수 있다. 이는 **writer starvation이라는 liveness 문제**다. Writer 우선이나 fairness를 강화하면 이를 줄일 수 있지만 새 reader가 더 기다릴 수 있으므로 한쪽 latency를 공짜로 개선하는 선택은 아니다."
+    "modelAnswer": "writer starvation 가능성이다. writer preference나 fair policy를 고려할 수 있지만 그러면 새 reader 지연 시간이 증가할 수 있으므로 workload와 writer SLO를 기준으로 선택한다.",
+    "explanationMarkdown": "Reader-preference 정책이 새 reader를 계속 받아들이면 waiting writer가 진입할 빈 구간을 얻지 못할 수 있다. 이는 **writer starvation이라는 liveness 문제**다. Writer 우선이나 fairness를 강화하면 이를 줄일 수 있지만 새 reader가 더 기다릴 수 있으므로 한쪽 지연 시간을 공짜로 개선하는 선택은 아니다."
   },
 
   {
@@ -252,7 +252,7 @@
   {
     "kind": "question",
     "contentKey": "operating-systems.core.synchronization.lock-granularity.q3",
-    "promptMarkdown": "contention 측정 없이 global lock을 64개 shard lock으로 바꿨더니 bug와 latency가 모두 늘었다. 가능한 원인을 분석하라.",
+    "promptMarkdown": "contention 측정 없이 global lock을 64개 shard lock으로 바꿨더니 bug와 지연 시간이 모두 늘었다. 가능한 원인을 분석하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
@@ -286,8 +286,8 @@
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.synchronization.contention"],
-    "modelAnswer": "한 owner가 resource를 오래 점유하면 단위 시간당 lock을 통과할 수 있는 service capacity가 줄어들어 arriving waiter가 더 오래 쌓인다. 외부 I/O가 critical section 안에 있으면 그 latency가 hold time으로 전파된다.",
-    "explanationMarkdown": "한 번에 하나만 통과하는 구간에서 owner가 더 오래 머물면 다음 request가 lock을 얻는 주기가 길어진다. 같은 속도로 요청이 계속 도착하면 완료보다 도착이 빨라지는 구간에서 waiter가 누적된다. 특히 외부 I/O를 lock 안에서 기다리면 그 변동성까지 **hold time과 tail latency**에 전파된다."
+    "modelAnswer": "한 owner가 resource를 오래 점유하면 단위 시간당 lock을 통과할 수 있는 service capacity가 줄어들어 arriving waiter가 더 오래 쌓인다. 외부 I/O가 critical section 안에 있으면 그 지연 시간이 hold time으로 전파된다.",
+    "explanationMarkdown": "한 번에 하나만 통과하는 구간에서 owner가 더 오래 머물면 다음 요청이 lock을 얻는 주기가 길어진다. 같은 속도로 요청이 계속 도착하면 완료보다 도착이 빨라지는 구간에서 waiter가 누적된다. 특히 외부 I/O를 lock 안에서 기다리면 그 변동성까지 **hold time과 꼬리 지연 시간(tail latency)**에 전파된다."
   },
   {
     "kind": "question",
@@ -308,7 +308,7 @@
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.synchronization.contention"],
-    "modelAnswer": "lock/primitive별 hold time, wait/acquisition latency, waiter 수, blocked 또는 spinning CPU time, request throughput과 tail latency를 함께 봐야 한다. 실제 hot point를 모른 채 lock을 세분화하면 복잡도만 늘 수 있다.",
-    "explanationMarkdown": "한 지표만으로 원인을 확정하기 어렵다. Hold time은 owner가 얼마나 오래 resource를 점유하는지, acquisition latency와 waiter 수는 실제 경쟁 정도를, blocked/spinning time은 대기 비용을 보여 준다. 여기에 throughput과 p95/p99 같은 request latency를 연결해야 **어떤 synchronization point가 사용자 성능에 영향을 주는지** 판단할 수 있다."
+    "modelAnswer": "lock/primitive별 hold time, wait/acquisition 지연 시간, waiter 수, blocked 또는 spinning CPU time, 요청 처리량과 꼬리 지연 시간(tail latency)을 함께 봐야 한다. 실제 hot point를 모른 채 lock을 세분화하면 복잡도만 늘 수 있다.",
+    "explanationMarkdown": "한 지표만으로 원인을 확정하기 어렵다. Hold time은 owner가 얼마나 오래 resource를 점유하는지, acquisition 지연 시간과 waiter 수는 실제 경쟁 정도를, blocked/spinning time은 대기 비용을 보여 준다. 여기에 처리량과 p95/p99 같은 요청 지연 시간을 연결해야 **어떤 synchronization point가 사용자 성능에 영향을 주는지** 판단할 수 있다."
   }
 ]

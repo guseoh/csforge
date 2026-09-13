@@ -19,7 +19,7 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "virtual thread의 M:N scheduling, carrier, mount/unmount와 platform thread 경계를 확인한다."
+    recommendation: "현재 JDK의 platform thread가 OS thread의 thin wrapper로 구현되고 virtual thread와 어떻게 구분되는지 확인한다."
     displayOrder: 2
   - url: "https://openjdk.org/jeps/491"
     title: "JEP 491: Synchronize Virtual Threads without Pinning"
@@ -57,7 +57,7 @@ JDK가 지원하는 blocking operation에서 virtual thread가 기다려야 하�
 
 virtual thread를 100,000개 만들 수 있다고 DB connection을 100,000개 열 수 있는 것은 아니다. DB pool이 20이면 동시에 DB work를 수행하는 task는 결국 그 capacity를 두고 경쟁한다. Downstream이 병목인데 virtual thread 수만 늘리면 queueing 위치만 connection wait 같은 다른 resource 경계로 이동할 수 있다.
 
-Spring MVC에서 virtual thread를 도입할 때도 CPU utilization, carrier saturation, DB connection wait, external API limit, task latency를 함께 봐야 한다. virtual thread는 resource limit을 제거하는 기술이 아니라 blocking concurrency의 execution cost를 바꾸는 기술이다.
+Spring MVC에서 virtual thread를 도입할 때도 CPU utilization, carrier saturation, DB connection wait, external API limit, task 지연 시간을 함께 봐야 한다. virtual thread는 resource limit을 제거하는 기술이 아니라 blocking concurrency의 execution cost를 바꾸는 기술이다.
 
 ### ThreadLocal 비용도 달라진다
 

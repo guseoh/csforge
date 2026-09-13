@@ -60,11 +60,11 @@ class ReportScheduler {
 }
 ```
 
-constructor는 객체의 기본 invariant를 만드는 데 집중하고, container integration이 끝난 뒤 시작해야 하는 작업은 명시적인 initialization callback을 고려할 수 있습니다. 특히 constructor가 실패하면 Bean creation 자체가 실패하므로 network call을 무분별하게 넣으면 startup이 외부 장애에 과도하게 민감해질 수 있습니다.
+constructor는 객체의 기본 invariant를 만드는 데 집중하고, container integration이 끝난 뒤 시작해야 하는 작업은 명시적인 initialization callback을 고려할 수 있습니다. 특히 constructor가 실패하면 Bean creation 자체가 실패하므로 network call을 무분별하게 넣으면 시작이 외부 장애에 과도하게 민감해질 수 있습니다.
 
-### `@PostConstruct`가 모든 startup orchestration 장소는 아니다
+### `@PostConstruct`가 모든 시작 orchestration 장소는 아니다
 
-초기화 callback은 **그 Bean 자신의 lifecycle 준비**에 적합합니다. 여러 domain use case를 실행하거나 대량 데이터 migration을 수행하는 장소로 사용하면 startup semantics가 숨겨질 수 있습니다. application startup task가 필요하다면 명시적인 runner/job/migration mechanism이 더 적합한지 검토합니다.
+초기화 callback은 **그 Bean 자신의 lifecycle 준비**에 적합합니다. 여러 domain use case를 실행하거나 대량 데이터 migration을 수행하는 장소로 사용하면 시작 semantics가 숨겨질 수 있습니다. application 시작 task가 필요하다면 명시적인 runner/job/migration mechanism이 더 적합한지 검토합니다.
 
 ### 소멸 callback은 resource ownership과 연결된다
 

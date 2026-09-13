@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.deadlock.deadlock-detection-recovery
 topicContentKey: operating-systems.core.deadlock
 slug: deadlock-detection-recovery
-title: "Detection and Recovery"
+title: "Detection·Recovery"
 summary: "deadlock을 허용한 뒤 dependency를 탐지하고 victim abort·rollback·resource 회수로 progress를 복구하는 전략을 설명한다."
 level: 2
 status: PUBLISHED
@@ -24,11 +24,11 @@ references:
     recommendation: "JVM thread dump에서 lock owner와 waiter를 연결해 deadlock cycle을 해석하는 실제 사례를 확인한다."
     displayOrder: 2
 ---
-# Detection and Recovery
+# Detection·Recovery
 
 ### 정상 실행에는 덜 제한을 걸고, 실제 deadlock이 생기면 찾아서 끊는다
 
-Prevention과 avoidance는 deadlock 가능성을 줄이는 대신 정상 request에도 ordering 제약이나 safe-state 계산 비용을 부과한다. Detection strategy는 resource allocation을 더 자유롭게 허용하고, 주기적으로 또는 suspicious wait가 생겼을 때 실제 dependency를 조사한다.
+Prevention과 avoidance는 deadlock 가능성을 줄이는 대신 정상 요청에도 ordering 제약이나 safe-state 계산 비용을 부과한다. Detection strategy는 resource allocation을 더 자유롭게 허용하고, 주기적으로 또는 suspicious wait가 생겼을 때 실제 dependency를 조사한다.
 
 Single-instance resource에서는 wait-for graph cycle을 찾는 방식이 대표적이다. Multi-instance resource에서는 `Available`, `Allocation`, 현재 `Request`를 이용해 어떤 execution도 더 완료할 수 없는 집합을 계산해야 한다.
 
@@ -52,7 +52,7 @@ continue  victim 선택
 
 ### Detection 주기 자체도 비용과 장애 영향의 trade-off다
 
-매 resource request마다 cycle을 검사하면 deadlock을 빠르게 발견할 수 있지만 graph 수집과 탐지 비용이 커진다. 반대로 너무 늦게 검사하면 deadlocked execution이 resource를 오래 보유하고 그 뒤에 새로운 waiter가 쌓여 영향 범위가 커질 수 있다.
+매 resource 요청마다 cycle을 검사하면 deadlock을 빠르게 발견할 수 있지만 graph 수집과 탐지 비용이 커진다. 반대로 너무 늦게 검사하면 deadlocked execution이 resource를 오래 보유하고 그 뒤에 새로운 waiter가 쌓여 영향 범위가 커질 수 있다.
 
 따라서 detection frequency는 알고리즘만의 문제가 아니라 deadlock 발생 빈도, resource hold cost, recovery cost를 함께 고려하는 운영 정책이다.
 

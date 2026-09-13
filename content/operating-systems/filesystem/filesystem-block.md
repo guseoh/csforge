@@ -31,10 +31,10 @@ VM page는 virtual-memory translation과 residency의 단위이고 filesystem bl
 
 ### Block 배치가 locality를 만든다
 
-sequential file의 인접 logical block이 storage에서도 가까이 배치되면 sequential read와 readahead가 효율적으로 동작할 가능성이 높다. free space가 조각나거나 file이 여러 위치에 분산되면 추가 metadata lookup과 device access 비용이 생길 수 있다. modern SSD에서는 고전적인 seek 비용의 의미가 달라져도 locality와 request aggregation 자체가 사라지는 것은 아니다.
+sequential file의 인접 logical block이 storage에서도 가까이 배치되면 sequential read와 readahead가 효율적으로 동작할 가능성이 높다. free space가 조각나거나 file이 여러 위치에 분산되면 추가 metadata lookup과 device access 비용이 생길 수 있다. modern SSD에서는 고전적인 seek 비용의 의미가 달라져도 locality와 요청 aggregation 자체가 사라지는 것은 아니다.
 
 ### 작은 file과 큰 file의 trade-off
 
 block 단위로 공간을 관리하면 free-space bookkeeping이 단순해지지만 file 마지막 block에서 사용하지 않는 공간이 생길 수 있다. 반대로 block을 너무 작게 만들면 큰 file을 표현하기 위해 더 많은 mapping metadata가 필요하다. filesystem은 block 크기와 extent, allocation policy를 통해 이 비용을 조정한다.
 
-Backend에서 큰 export file을 sequential하게 만들거나 random range read를 수행할 때 application buffer 크기만 보지 않고 filesystem/page cache와 실제 access pattern을 함께 관찰한다. 다만 application batch size를 filesystem block size에 무조건 맞추는 것이 정답은 아니며 syscall 수, cache, storage throughput을 실제로 측정해야 한다.
+Backend에서 큰 export file을 sequential하게 만들거나 random range read를 수행할 때 application buffer 크기만 보지 않고 filesystem/page cache와 실제 access pattern을 함께 관찰한다. 다만 application batch size를 filesystem block size에 무조건 맞추는 것이 정답은 아니며 syscall 수, cache, storage 처리량을 실제로 측정해야 한다.

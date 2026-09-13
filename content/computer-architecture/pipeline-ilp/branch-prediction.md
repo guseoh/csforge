@@ -31,7 +31,7 @@ conditional branch를 fetch한 순간에는 조건 계산이 아직 끝나지 �
 
 prediction이 맞으면 CPU는 branch 결과를 기다리지 않고 이미 올바른 경로의 instruction을 가져와 실행 준비를 해 둔 셈이 된다. 반대로 실제 branch 결과가 달랐다면 잘못된 경로에서 fetch·decode되었거나 일부 실행된 instruction을 architectural state에 반영하면 안 된다. CPU는 해당 speculative instruction을 squash하고 올바른 PC로 redirect한 뒤 pipeline을 다시 채운다. 이때 잃는 cycle이 misprediction penalty다.
 
-pipeline이 깊거나 fetch/issue 폭이 넓을수록 한 번의 잘못된 예측 때문에 버려지는 work가 커질 수 있다. 따라서 더 복잡한 predictor는 높은 accuracy로 이 비용을 줄일 수 있지만 predictor table, history state, lookup latency, area와 전력 비용도 사용한다.
+pipeline이 깊거나 fetch/issue 폭이 넓을수록 한 번의 잘못된 예측 때문에 버려지는 work가 커질 수 있다. 따라서 더 복잡한 predictor는 높은 accuracy로 이 비용을 줄일 수 있지만 predictor table, history state, lookup 지연 시간, area와 전력 비용도 사용한다.
 
 ### 규칙적인 branch와 불규칙한 branch의 비용은 다를 수 있다
 
@@ -41,4 +41,4 @@ pipeline이 깊거나 fetch/issue 폭이 넓을수록 한 번의 잘못된 예�
 
 ### Backend 성능과 연결해서 볼 때
 
-parser, filtering, serialization처럼 tight loop가 많은 CPU-bound 경로에서는 input distribution 변화가 branch predictability에 영향을 줄 수 있다. 하지만 DB/network wait가 대부분인 request에서 branch 하나를 없애는 것은 end-to-end latency에 거의 영향을 주지 않을 수도 있다. 먼저 CPU가 병목인지 확인하고, 이후 hardware counter와 benchmark를 사용해 branch 변화가 실제 원인인지 검증한다. 보안 검사를 branchless하게 만드는 문제나 speculative execution의 보안 영향은 별도의 security boundary와 함께 검토해야 하며, 성능상의 branch prediction 설명만으로 안전성을 판단하지 않는다.
+parser, filtering, serialization처럼 tight loop가 많은 CPU-bound 경로에서는 input distribution 변화가 branch predictability에 영향을 줄 수 있다. 하지만 DB/network wait가 대부분인 요청에서 branch 하나를 없애는 것은 종단 간 지연 시간에 거의 영향을 주지 않을 수도 있다. 먼저 CPU가 병목인지 확인하고, 이후 hardware counter와 benchmark를 사용해 branch 변화가 실제 원인인지 검증한다. 보안 검사를 branchless하게 만드는 문제나 speculative execution의 보안 영향은 별도의 security boundary와 함께 검토해야 하며, 성능상의 branch prediction 설명만으로 안전성을 판단하지 않는다.

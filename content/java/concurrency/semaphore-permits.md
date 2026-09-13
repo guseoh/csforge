@@ -90,7 +90,7 @@ try {
 boolean acquired = slots.tryAcquire(500, TimeUnit.MILLISECONDS);
 ```
 
-사용자 요청 처리처럼 latency 한도가 있다면 무한히 기다리는 대신 빠르게 실패하거나 timeout을 주는 것이 더 올바를 수 있습니다.
+사용자 요청 처리처럼 지연 시간 한도가 있다면 무한히 기다리는 대신 빠르게 실패하거나 timeout을 주는 것이 더 올바를 수 있습니다.
 
 ### Semaphore가 실제 자원을 만들어 주지는 않는다
 
@@ -111,7 +111,7 @@ Semaphore는 애플리케이션이 동시에 시도하는 수를 제한할 뿐�
 
 Semaphore는 공정성(fairness) 옵션을 제공할 수 있습니다. 공정 모드는 대기 중인 thread의 순서를 더 고려하지만, 이것이 전체 시스템의 요청이 완전히 공평하게 처리된다는 뜻은 아닙니다.
 
-또 공정성을 높이면 throughput과 비용 사이에 trade-off가 생길 수 있습니다. 필요가 명확하지 않다면 단순히 "공정=true가 더 좋다"고 선택하지 않습니다.
+또 공정성을 높이면 처리량과 비용 사이에 trade-off가 생길 수 있습니다. 필요가 명확하지 않다면 단순히 "공정=true가 더 좋다"고 선택하지 않습니다.
 
 ### 동시 사용량 제한과 상태 보호를 구분한다
 
@@ -124,9 +124,9 @@ int balance;
 
 세 thread가 동시에 critical state인 `balance`를 수정한다면 여전히 race가 생길 수 있습니다. Semaphore의 목적을 "동시에 최대 3개 작업 허용"으로 잡았다면, 그 안의 공유 데이터 invariant는 별도 동기화가 필요할 수 있습니다.
 
-### API가 제공하는 memory consistency
+### API가 제공하는 메모리 일관성
 
-공식 `Semaphore` API는 한 thread에서 `release()` 전에 한 작업과 다른 thread의 성공적인 `acquire()` 이후 작업 사이에 memory consistency 효과를 정의합니다. 따라서 permit 전달은 단순 카운터 조작 이상의 동시성 의미를 가집니다.
+공식 `Semaphore` API는 한 thread에서 `release()` 전에 한 작업과 다른 thread의 성공적인 `acquire()` 이후 작업 사이에 메모리 일관성 효과를 정의합니다. 따라서 permit 전달은 단순 카운터 조작 이상의 동시성 의미를 가집니다.
 
 하지만 이 보장이 외부 DB transaction이나 HTTP 요청 결과까지 원자적으로 묶어 주는 것은 아닙니다.
 

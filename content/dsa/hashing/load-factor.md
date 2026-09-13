@@ -44,6 +44,6 @@ open addressing은 entry가 table slot 안에 직접 들어가므로 α가 1에 
 
 ### load factor만으로 분포 품질을 보장할 수는 없다
 
-α가 낮아도 hash distribution이 나쁘면 특정 bucket 하나에 많은 key가 몰릴 수 있다. 반대로 평균 α가 같더라도 bucket length variance나 probe cluster가 다르면 실제 latency도 다르다.
+α가 낮아도 hash distribution이 나쁘면 특정 bucket 하나에 많은 key가 몰릴 수 있다. 반대로 평균 α가 같더라도 bucket length variance나 probe cluster가 다르면 실제 지연 시간도 다르다.
 
-그래서 운영에서 hash table 비용을 본다면 entry count/capacity뿐 아니라 chain length, probe count, resize 횟수와 tail latency를 함께 봐야 한다.
+그래서 운영에서 hash table 비용을 본다면 entry count/capacity뿐 아니라 chain length, probe count, resize 횟수와 꼬리 지연 시간(tail latency)을 함께 봐야 한다.

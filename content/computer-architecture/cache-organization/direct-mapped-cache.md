@@ -33,7 +33,7 @@ block A와 B가 같은 index로 mapping되고 프로그램이 `A → B → A →
 
 ### 단순한 lookup과 낮은 conflict 사이의 trade-off
 
-direct mapping은 한 tag만 비교하면 되므로 hit path가 단순하고 area·전력 비용도 상대적으로 작다. 반면 conflict에 취약하다. set-associative cache는 같은 index에 여러 way를 두어 conflict를 줄이는 대신 여러 tag를 비교하고 결과를 선택하는 logic과 replacement policy가 필요하다. associativity는 공짜 성능 향상이 아니라 hit latency·area·전력과 miss rate 사이의 절충이다.
+direct mapping은 한 tag만 비교하면 되므로 hit path가 단순하고 area·전력 비용도 상대적으로 작다. 반면 conflict에 취약하다. set-associative cache는 같은 index에 여러 way를 두어 conflict를 줄이는 대신 여러 tag를 비교하고 결과를 선택하는 logic과 replacement policy가 필요하다. associativity는 공짜 성능 향상이 아니라 hit 지연 시간·area·전력과 miss rate 사이의 절충이다.
 
 ### Backend 성능에서의 해석
 

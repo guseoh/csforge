@@ -33,7 +33,7 @@ Wildcard도 임의의 문자열 패턴이 아니다. DNS-ID에서 wildcard가 �
 
 ### SNI와 HTTP Host는 hostname verification 자체가 아니다
 
-TLS의 SNI(Server Name Indication)는 client가 handshake 중 어떤 server name에 접속하려는지 알려 주어 server나 proxy가 적절한 certificate를 선택하는 데 사용할 수 있다. HTTP의 `Host` 또는 HTTP/2·3의 `:authority`는 HTTP request가 어느 authority를 대상으로 하는지 표현한다. 둘 다 deployment에서 같은 서비스 이름과 연결되는 경우가 많지만 **SNI를 보냈다거나 HTTP Host가 일치한다는 사실 자체가 certificate identity 검증을 대신하지는 않는다.**
+TLS의 SNI(Server Name Indication)는 client가 handshake 중 어떤 server name에 접속하려는지 알려 주어 server나 proxy가 적절한 certificate를 선택하는 데 사용할 수 있다. HTTP의 `Host` 또는 HTTP/2·3의 `:authority`는 HTTP 요청이 어느 authority를 대상으로 하는지 표현한다. 둘 다 deployment에서 같은 서비스 이름과 연결되는 경우가 많지만 **SNI를 보냈다거나 HTTP Host가 일치한다는 사실 자체가 certificate identity 검증을 대신하지는 않는다.**
 
 Reverse proxy에서 TLS를 종료하고 backend와 다시 TLS를 맺는 구조라면 두 구간은 별도의 TLS connection이다. Client→proxy에서는 client가 외부 service identity를 검증하고, proxy→backend에서는 proxy가 backend에 대해 어떤 reference identity를 사용할지 별도로 정해야 한다. 내부 IP로 연결한다는 이유로 hostname verification을 끄면 이 두 번째 trust boundary가 사라질 수 있다.
 

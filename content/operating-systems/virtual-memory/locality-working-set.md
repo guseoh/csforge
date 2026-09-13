@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.virtual-memory.locality-working-set
 topicContentKey: operating-systems.core.virtual-memory
 slug: locality-working-set
-title: "Locality and Working Set"
+title: "Locality·Working Set"
 summary: "최근 실제로 반복 사용하는 page 집합이 resident frame 요구량과 fault rate를 결정하는 이유를 설명한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "replacement policy와 locality가 hit/miss 및 working-set 유지에 미치는 영향을 확인한다."
     displayOrder: 1
 ---
-# Locality and Working Set
+# Locality·Working Set
 
 프로그램은 전체 address space를 매 순간 균등하게 접근하지 않는다. loop에서 같은 code와 data를 반복하거나 배열의 인접 원소를 연속으로 읽는 것처럼 일정 기간에는 작은 범위의 page를 집중적으로 사용하는 경향이 있다. temporal locality는 최근 사용한 위치를 다시 사용할 가능성이 높다는 성질이고, spatial locality는 가까운 주소를 곧 사용할 가능성이 높다는 성질이다.
 

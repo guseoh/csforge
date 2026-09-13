@@ -28,7 +28,7 @@ references:
 
 ### 발생한 deadlock을 찾는 것이 아니라 deadlock 가능한 protocol을 제한한다
 
-Prevention은 request가 들어올 때마다 현재 state가 안전한지 계산하는 방식이 아니다. Resource request protocol 자체를 제한해 **Coffman condition 중 적어도 하나가 성립하지 못하도록** 만든다.
+Prevention은 요청이 들어올 때마다 현재 state가 안전한지 계산하는 방식이 아니다. Resource 요청 protocol 자체를 제한해 **Coffman condition 중 적어도 하나가 성립하지 못하도록** 만든다.
 
 가장 흔한 예가 global lock order다.
 
@@ -51,7 +51,7 @@ Prevention은 request가 들어올 때마다 현재 state가 안전한지 계산
 
 Mutual exclusion은 writable shared state처럼 본질적으로 배타성이 필요한 resource에서는 제거하기 어렵다. 그래서 실무에서는 circular wait를 lock ordering으로 깨는 접근이 자주 사용된다.
 
-### timeout은 prevention이 아니라 failure/recovery 경로에 가깝다
+### timeout은 prevention이 아니라 실패/recovery 경로에 가깝다
 
 Acquire timeout은 무한 대기를 끊고 operation을 실패시킬 수 있다. 하지만 timeout 값 하나로 `L1 → L2`, `L2 → L1` 같은 dependency 구조가 없어지는 것은 아니다.
 

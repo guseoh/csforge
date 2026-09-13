@@ -56,7 +56,7 @@ Infrastructure Adapter
 | HTTP 429             | RemoteRateLimited              |
 | vendor SUCCEEDED     | PaymentResult.success()        |
 | milliseconds timeout | use-case deadline 안의 timeout |
-| vendor request ID    | 진단용 metadata                |
+| vendor 요청 ID    | 진단용 metadata                |
 | nullable field       | 내부 계약에 맞는 명시적 상태   |
 
 외부 오류를 전부 `RuntimeException` 하나로 던지면 retry 가능한 오류와 permanent 오류를 구분할 수 없습니다. 반대로 vendor error code를 Domain enum에 전부 복제하면 vendor 변경이 Domain 변경이 됩니다.
@@ -67,4 +67,4 @@ Infrastructure Adapter
 
 ### 장애 분석에도 경계가 도움이 된다
 
-외부 호출 latency, request ID, raw status는 infrastructure에서 관측해야 하지만 business log에는 내부 의미가 필요합니다. 외부 세부를 숨긴다는 말은 운영 증거까지 버린다는 뜻이 아닙니다.
+외부 호출 지연 시간, 요청 ID, raw status는 infrastructure에서 관측해야 하지만 business log에는 내부 의미가 필요합니다. 외부 세부를 숨긴다는 말은 운영 증거까지 버린다는 뜻이 아닙니다.

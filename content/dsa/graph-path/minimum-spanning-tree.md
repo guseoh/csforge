@@ -66,6 +66,6 @@ Graph가 disconnected라면 모든 vertex를 하나의 tree로 연결할 수 없
 
 ### 실제 문제와 맞는지 먼저 확인한다
 
-Network cable 설치 비용처럼 모든 지점을 최소 총비용으로 연결하려는 문제에는 MST가 잘 맞는다. 반면 redundancy, capacity, 장애 우회, source별 latency가 중요하다면 단순 MST는 충분하지 않다.
+Network cable 설치 비용처럼 모든 지점을 최소 총비용으로 연결하려는 문제에는 MST가 잘 맞는다. 반면 redundancy, capacity, 장애 우회, source별 지연 시간이 중요하다면 단순 MST는 충분하지 않다.
 
 즉 MST는 "연결 비용 최소화"라는 매우 구체적인 objective를 가진다. 실제 시스템 요구를 그 objective로 축약해도 되는지 먼저 확인해야 한다.

@@ -49,7 +49,7 @@ Running process
 
 Graceful shutdown에서는 application이 shutdown hook이나 finally block으로 resource를 닫고 진행 중 작업을 정리할 수 있다. 하지만 강제 종료나 crash에서는 원하는 application cleanup sequence가 끝까지 실행되지 않을 수 있다.
 
-그래서 durable consistency를 “process 종료 직전에 memory에서 cleanup하면 된다”에만 의존하면 위험하다. 이미 외부 DB에 write했거나 message를 보냈다면 process가 죽어도 effect는 남을 수 있다.
+그래서 durable 일관성을 “process 종료 직전에 memory에서 cleanup하면 된다”에만 의존하면 위험하다. 이미 외부 DB에 write했거나 message를 보냈다면 process가 죽어도 effect는 남을 수 있다.
 
 ### Zombie는 실행 중인 process가 아니다
 

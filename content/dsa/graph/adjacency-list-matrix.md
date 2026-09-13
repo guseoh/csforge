@@ -3,7 +3,7 @@ kind: concept
 contentKey: dsa.core.graph.adjacency-list-matrix
 topicContentKey: dsa.core.graph
 slug: adjacency-list-matrix
-title: "Adjacency List and Matrix"
+title: "Adjacency List·Matrix"
 summary: "graph density와 operation에 따라 adjacency list와 matrix의 공간·조회·순회 비용을 비교한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "vertex, edge, path, connectivity 같은 graph 기본 모델을 확인한다."
     displayOrder: 1
 ---
-# Adjacency List and Matrix
+# Adjacency List·Matrix
 
 ### 같은 graph도 저장 방식에 따라 operation 비용이 달라진다
 

@@ -109,7 +109,7 @@ values.parallelStream().forEach(result::add); // 안전하지 않음
 
 ### 실제 측정 없이 선택하지 않는다
 
-parallel stream 성능은 데이터 크기, source 분할 특성, CPU 수, 연산 비용, JIT warm-up, GC, 같은 프로세스의 다른 workload 등에 따라 달라집니다. microbenchmark라면 JMH처럼 JVM 최적화를 고려하는 도구를 사용하고, 실제 서비스에서는 요청 latency뿐 아니라 CPU 사용량·throughput·downstream 부하까지 함께 봐야 합니다.
+parallel stream 성능은 데이터 크기, source 분할 특성, CPU 수, 연산 비용, JIT warm-up, GC, 같은 프로세스의 다른 workload 등에 따라 달라집니다. microbenchmark라면 JMH처럼 JVM 최적화를 고려하는 도구를 사용하고, 실제 서비스에서는 요청 지연 시간뿐 아니라 CPU 사용량·처리량·downstream 부하까지 함께 봐야 합니다.
 
 검증 순서는 보통 다음과 같습니다.
 

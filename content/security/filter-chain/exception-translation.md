@@ -60,4 +60,4 @@ Security exception이 DispatcherServlet에 도달하기 전에 filter에서 처�
 
 Authorization denial을 조사하려면 principal ID, endpoint, 필요한 authority 정도가 유용할 수 있지만 Authorization header/token 원문을 통째로 로그에 남기면 안 됩니다.
 
-Exception translation은 예외 이름을 HTTP status로 바꾸는 단순 mapping이 아니라 **security failure가 MVC 경계에 들어오기 전 client-visible contract로 바뀌는 지점**입니다.
+Exception translation은 예외 이름을 HTTP status로 바꾸는 단순 mapping이 아니라 **security 실패가 MVC 경계에 들어오기 전 client-visible contract로 바뀌는 지점**입니다.
