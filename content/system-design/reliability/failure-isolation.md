@@ -54,4 +54,4 @@ optional reports  ─▶ pool B ─▶ slow dependency
 
 ### 면접에서 설명한다면
 
-장애 격리은 느린 dependency가 shared thread·connection·queue를 고갈시켜 전체로 전파되는 것을 막습니다. bulkhead와 bounded concurrency를 두고, end-to-end deadline·cancellation·rate limit·backpressure·load shedding을 workload 우선순위와 함께 정의하며, 보호 장치 자체가 downstream을 overload하지 않는지 검증합니다.
+장애 격리는 느린 dependency가 shared thread·connection·queue를 고갈시켜 전체로 전파되는 것을 막습니다. bulkhead와 bounded concurrency를 두고, end-to-end deadline·cancellation·rate limit·backpressure·load shedding을 workload 우선순위와 함께 정의하며, 보호 장치 자체가 downstream을 overload하지 않는지 검증합니다.
