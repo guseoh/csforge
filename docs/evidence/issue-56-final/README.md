@@ -10,7 +10,7 @@
 
 ## 검토 통계
 
-아래 수치는 통합 시작 커밋과 현재 작업 트리의 canonical content를 비교한 값이다. `changed`에는 한국어 가독성, presentation, 설명 보강, 선택지 품질 수정이 포함된다. `contentKey`, Concept 연결, 정답 key는 유지했다.
+아래 수치는 15개 영역 최종 전수 검토를 완료했을 때 통합 시작 커밋과 canonical content를 비교해 집계한 검토 스냅샷이다. `changed`에는 한국어 가독성, presentation, 설명 보강, 선택지 품질 수정이 포함된다. 이후 PR review에서 발견한 소수의 문구 오탈자·용어 표현과 canonical inventory 검증 assertion은 별도 정정했으며, 그 정정으로 `contentKey`, Concept 연결, 정답 key는 바꾸지 않았다.
 
 | LearningArea | Concepts reviewed | Questions reviewed | Questions changed | prompt | explanation | choices | modelAnswer | acceptedAnswers | difficulty | Concept 문서 변경 |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
