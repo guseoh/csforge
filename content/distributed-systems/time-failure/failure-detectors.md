@@ -24,7 +24,7 @@ references:
 ---
 # 장애 감지기(failure detector)와 의심 판단
 
-장애 감지기(실패 detector)는 node가 실제로 죽었는지 직접 보는 마법이 아니라 heartbeat, 응답 타임아웃, lease expiry 같은 관찰로 “현재 응답하지 않는다고 의심”하는 메커니즘입니다. 네트워크가 느리거나 process가 stop-the-world 중이면 살아 있는 node도 의심할 수 있고, 너무 관대하면 죽은 node를 오래 기다립니다.
+장애 감지기(failure detector)는 node가 실제로 죽었는지 직접 보는 마법이 아니라 heartbeat, 응답 타임아웃, lease expiry 같은 관찰로 “현재 응답하지 않는다고 의심”하는 메커니즘입니다. 네트워크가 느리거나 process가 stop-the-world 중이면 살아 있는 node도 의심할 수 있고, 너무 관대하면 죽은 node를 오래 기다립니다.
 
 ### false positive와 false negative
 
@@ -54,4 +54,4 @@ partition이 끝난 뒤 old node가 재접속하면 stale cache, 미전달 write
 
 ### 면접에서 설명한다면
 
-장애 감지기(실패 detector)는 죽음을 증명하지 않고 일정 시간 응답이 없다는 suspicion을 만듭니다. timeout을 짧게 하면 빠른 복구와 false positive 비용이, 길게 하면 stale owner와 장애 감지 지연이 커집니다. lease·quorum·epoch/fencing으로 의심만으로 잘못된 side effect가 실행되지 않게 합니다.
+장애 감지기(failure detector)는 죽음을 증명하지 않고 일정 시간 응답이 없다는 suspicion을 만듭니다. timeout을 짧게 하면 빠른 복구와 false positive 비용이, 길게 하면 stale owner와 장애 감지 지연이 커집니다. lease·quorum·epoch/fencing으로 의심만으로 잘못된 side effect가 실행되지 않게 합니다.
