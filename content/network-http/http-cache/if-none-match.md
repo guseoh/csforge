@@ -26,3 +26,8 @@ GET 또는 HEAD에서 조건이 일치하면 server는 보통 304를 반환해 c
 ### Backend 연결
 
 목록 query parameter, locale, authorization·tenant context가 response 선택에 영향을 주면 ETag와 cache variation이 그 경계를 함께 반영해야 한다. 304 response에 필요한 cache metadata가 누락되지 않는지, ETag가 일치하지만 권한이 바뀐 사용자의 resource를 재사용하지 않는지 endpoint와 proxy를 함께 테스트한다.
+### If-None-Match 분기
+    validator compare
+      ├─ match → 304 → reuse stored body
+      └─ mismatch → 200 + new representation
+validator 대상과 cache key의 user/locale variation을 함께 확인한다.

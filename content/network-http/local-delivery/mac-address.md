@@ -27,3 +27,8 @@ MAC address가 영구적인 physical identity라는 것도 보편적인 보장�
 
 container와 VM의 virtual interface, bridge, NAT는 capture 위치마다 다른 MAC·IP mapping을 보이게 한다. packet capture를 해석할 때 어느 link와 namespace에서 관찰했는지 기록하고, local delivery 문제와 IP route 문제를 분리한다.
 
+### IP와 MAC의 hop 경계
+    IP packet: client ─────────────> remote server
+    frame 1:  client ──> gateway MAC
+    frame 2:  router ──> next-hop MAC
+IP destination과 각 link의 frame destination은 서로 다른 경계다.

@@ -25,3 +25,9 @@ URL은 보통 scheme, authority(host와 optional port), path, query, fragment를
 
 Spring controller에서 path variable, query parameter, fragment를 같은 입력으로 취급하지 않는다. redirect·absolute URL·cache key를 만들 때 external scheme/host의 신뢰 경계를 검증하고, client가 보낸 fragment에 의존하는 server route를 설계하지 않는다.
 
+### URL과 전송 대상
+    scheme → protocol/TLS
+    authority → host + port
+    path/query → HTTP request-target
+    fragment → user-agent local state (usually not sent)
+fragment를 server routing key로 가정하면 request에서 값이 사라진다.

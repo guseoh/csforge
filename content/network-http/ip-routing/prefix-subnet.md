@@ -27,3 +27,10 @@ overlapping prefix를 서로 독립된 subnet으로 사용하면 route 선택과
 
 Backend allowlist와 service bind 범위에 CIDR를 사용할 때는 실제 client source가 NAT나 proxy 뒤에서 어떤 address로 보이는지 확인한다. prefix가 넓다는 이유만으로 같은 신뢰 경계라고 간주하지 않는다.
 
+### Prefix와 local 판단
+    10.0.1.12/24
+    | network | host |
+    10.0.1.0       .12
+    10.0.1.20 ── same prefix ──> direct link
+    10.0.2.20 ── outside ──> gateway
+prefix는 address block과 local 여부를 결정한다.

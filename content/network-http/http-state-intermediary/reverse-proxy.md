@@ -26,3 +26,8 @@ reverse proxy는 origin 앞에서 routing하는 역할과 HTTP cache 역할을 �
 ### Backend 연결
 
 Spring이 실제 client IP와 외부 HTTPS 여부를 알기 위해 trusted forwarded header의 source와 hop 범위를 제한한다. proxy가 반환한 502/504와 backend가 생성한 500을 서로 다른 알람으로 만들고, proxy retry·timeout이 application request의 중복 처리와 연결되지 않는지 확인한다.
+### Reverse proxy
+    client → reverse proxy → backend
+                ├─ TLS/cache/auth
+                └─ separate upstream connection
+proxy retry와 client IP metadata는 별도 중복·신뢰 경계다.

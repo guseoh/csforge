@@ -25,3 +25,7 @@ QUIC은 stream별 reliable delivery state를 유지해 한 stream의 missing dat
 
 HTTP version 변경의 latency 이득은 정상 network와 loss·reordering·RTT 조건에서 비교한다. Backend trace에서 packet retransmission, stream wait, connection flow control과 application dependency를 구분하고 request timeout, QUIC migration과 HTTP/2 fallback을 같은 테스트 시나리오에 넣는다.
 
+### Transport HOL 비교
+    HTTP/2 streams → one TCP ordered stream → loss blocks all
+    HTTP/3 streams → QUIC independent stream delivery
+HTTP/3도 congestion과 application dependency를 제거하지 않는다.

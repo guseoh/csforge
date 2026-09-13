@@ -46,3 +46,8 @@ Java correctness는 happens-before와 atomicity contract로 판단하고, privat
 ### Backend 성능에서 확인할 것
 
 멀티스레드 queue, counter, in-memory index가 scale하지 않을 때 lock wait만 보지 않고 cache miss, cache-to-cache transfer, core migration과 data placement를 함께 본다. partitioning이나 affinity를 적용했다면 throughput뿐 아니라 tail latency, load balance, memory footprint도 다시 측정한다.
+### Private와 shared cache
+    core A → private L1 ─┐
+    core B → private L1 ─┼─> shared LLC → memory
+    core C → private L1 ─┘
+private locality와 shared contention 및 core migration 비용을 함께 본다.

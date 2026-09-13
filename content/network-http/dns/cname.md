@@ -23,3 +23,8 @@ CNAME chain이 길거나 cycle을 만들면 resolver가 추가 query를 수행�
 
 cloud load balancer나 CDN hostname을 CNAME으로 연결할 때 application은 최종 IP를 고정하지 않고 name을 다시 해석할 수 있어야 한다. Backend rollout에서는 CNAME chain, target TTL, connection pool에 남은 기존 connection과 certificate hostname을 함께 확인한다.
 
+### CNAME alias chain
+    service.example ──CNAME──> edge.example
+                              └─CNAME──> target.example
+                                              └─ A / AAAA
+alias hop은 추가 resolution과 TTL을 만든다.

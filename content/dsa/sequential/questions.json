@@ -24,7 +24,7 @@
     "contentKey": "dsa.core.sequential.array.q3",
     "promptMarkdown": "100만 개의 primitive 값을 반복해서 순차 scan하는 workload와, 매 연산마다 중간 위치의 원소를 자주 삽입·삭제하는 workload가 있다. 동일한 Big-O 표기만 보지 말고 array가 각각 어떤 장단점을 가지는지 설명하라.",
     "questionType": "SCENARIO",
-    "difficulty": "HARD",
+    "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.sequential.array"],
     "modelAnswer": "순차 scan은 연속 배치 덕분에 cache line을 효율적으로 사용하고 주소 계산도 단순해 array에 유리하다. 반면 중간 삽입·삭제는 뒤 원소 이동이 반복되어 비용이 커진다. 따라서 random index 접근·순차 scan 비중과 mutation 위치를 함께 보고 선택해야 한다."
@@ -39,9 +39,9 @@
     "conceptKeys": ["dsa.core.sequential.dynamic-array"],
     "choices": [
       {"key":"A","content":"size는 현재 저장된 원소 수이고 capacity는 재할당 없이 담을 수 있는 backing storage 크기다","displayOrder":0},
-      {"key":"B","content":"size와 capacity는 언제나 같아야 하며 여유 공간을 둘 수 없다","displayOrder":1},
-      {"key":"C","content":"capacity는 logical element count이고 size는 allocator가 예약한 byte 수다","displayOrder":2},
-      {"key":"D","content":"capacity가 남아 있어도 append마다 항상 새 배열을 할당한다","displayOrder":3}
+      {"key":"B","content":"size는 예약된 slot 수이고 capacity는 현재 live 원소 수다","displayOrder":1},
+      {"key":"C","content":"size와 capacity는 모두 allocator가 예약한 byte 수를 뜻한다","displayOrder":2},
+      {"key":"D","content":"capacity가 남아 있어도 append마다 backing storage를 교체해야 한다","displayOrder":3}
     ],
     "correctChoiceKey": "A"
   },
@@ -53,14 +53,15 @@
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.sequential.dynamic-array"],
-    "acceptedAnswers": ["기존 4개를 복사하고 새 capacity는 8", "4개 복사, capacity 8", "4, 8"]
+    "acceptedAnswers": ["기존 4개를 복사하고 새 capacity는 8", "4개 복사, capacity 8", "4, 8"],
+    "explanationMarkdown": "capacity 4가 가득 찬 상태에서는 append 전에 더 큰 backing storage가 필요하다. growth factor 2이면 새 capacity는 8이고 기존 원소 4개를 새 배열로 복사한다."
   },
   {
     "kind": "question",
     "contentKey": "dsa.core.sequential.dynamic-array.q3",
     "promptMarkdown": "대부분 append는 빠른데 특정 요청에서만 큰 latency spike가 보인다. 해당 요청에서 dynamic array가 capacity를 초과했다는 evidence가 있다. amortized O(1)이라는 사실과 이 spike가 동시에 성립할 수 있는 이유를 설명하라.",
     "questionType": "SCENARIO",
-    "difficulty": "HARD",
+    "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.sequential.dynamic-array"],
     "modelAnswer": "amortized O(1)은 긴 append sequence의 총 비용을 평균 낸 보장이지 각 append의 worst-case가 O(1)이라는 뜻이 아니다. capacity를 넘는 순간 더 큰 storage를 할당하고 기존 원소를 O(n)만큼 복사할 수 있어 단일 요청에는 spike가 생길 수 있다."
@@ -113,7 +114,8 @@
     "difficulty": "EASY",
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.sequential.doubly-linked-list"],
-    "acceptedAnswers": ["A.next = C, C.prev = A", "A.next=C 그리고 C.prev=A"]
+    "acceptedAnswers": ["A.next = C, C.prev = A", "A.next=C 그리고 C.prev=A"],
+    "explanationMarkdown": "B를 제거한 뒤 A가 새 이웃 C를 가리키도록 `A.next = C`로 바꾸고, 역방향도 `C.prev = A`로 바꿔야 한다. 두 link를 함께 갱신해야 양방향 invariant가 유지된다."
   },
   {
     "kind": "question",

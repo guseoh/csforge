@@ -44,3 +44,7 @@ memory access는 register dependency보다 더 복잡하다. 서로 다른 load/
 backend hot loop에 독립적인 계산이 많다면 compiler/JIT와 CPU가 ILP를 활용할 여지가 있다. 반대로 pointer chasing처럼 다음 load address가 앞 load 결과에 의존하거나 cache miss chain이 길면 execution unit이 남아도 병렬로 진행할 work가 부족할 수 있다. 이런 경우에는 source code 줄 수보다 dependency chain과 memory behavior가 중요하다.
 
 또한 CPU가 instruction을 out-of-order로 실행한다는 사실은 Java thread가 아무 synchronization 없이 값을 공유해도 된다는 뜻이 아니다. Java Memory Model은 programmer가 관찰할 수 있는 inter-thread ordering과 visibility contract를 별도로 정의한다. hardware의 speculative/OoO mechanism은 그 contract를 깨지 않는 범위 안에서 사용된다.
+### Out-of-order 실행과 retirement
+    issue:   A(miss) ── B/C(ready) ──> execute
+    visible: A ──> B ──> C ──> retirement order
+독립 work는 먼저 실행할 수 있지만 architectural state는 precise order로 확정한다.

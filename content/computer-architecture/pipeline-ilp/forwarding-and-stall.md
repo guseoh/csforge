@@ -40,3 +40,8 @@ stall 동안 dependency가 걸린 instruction은 다음 stage로 진행하지 �
 컴파일러나 JIT가 독립적인 계산을 배치하고 CPU가 out-of-order로 실행하면 source code 한 줄씩의 순서와 실제 execution timing은 다를 수 있다. 그렇다고 application programmer가 임의로 dependency를 무시해도 된다는 뜻은 아니다. single-thread program semantics는 compiler와 CPU가 보존해야 하고, 여러 thread 사이의 visibility와 ordering은 Java Memory Model 같은 별도 contract가 정한다. CPU forwarding은 thread 간 data race를 해결하는 mechanism이 아니다.
 
 성능 분석에서는 dependent load chain, cache miss, stalled cycle이 실제 병목인지 profile과 hardware counter로 확인한다. 단순히 instruction 수를 줄였다는 사실만으로 forwarding이나 stall 비용이 줄었다고 단정하지 않는다.
+### Forwarding과 stall
+    producer EX result ──forward──> consumer EX
+              │
+              └─ result가 아직 없음 → stall
+forwarding은 이미 계산된 값을 앞당길 뿐 cache miss의 값을 만들어내지는 않는다.

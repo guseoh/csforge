@@ -44,3 +44,10 @@ KiB를 byte로 바꾸지 않거나 line 수와 set 수를 혼동하면 index bit
 ### Backend 성능에서의 활용
 
 cache conflict를 설명하는 microbenchmark를 만들 때는 cache capacity만 적지 말고 line size, associativity, address/stride alignment를 함께 기록해야 한다. source-level object 주소와 physical cache index를 단순 동일시하지 말고, 재현 가능한 access pattern과 hardware counter를 기준으로 결과를 확인한다.
+### Address bit 분할
+    high bits                 low bits
+    |       tag       | index | offset |
+    offset → line 내부 byte
+    index  → set 선택
+    tag    → 후보 line identity 확인
+line size와 associativity가 바뀌면 index/offset 폭도 달라진다.

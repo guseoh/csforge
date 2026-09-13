@@ -26,3 +26,8 @@ CDN cache는 origin database의 복제본이나 application Redis cache-aside와
 ### Backend 연결
 
 canonical content publish와 CDN purge를 하나의 atomic transaction으로 표현하지 않는다. purge 실패를 재시도하고 edge별 상태를 관측하며, 사용자에게 현재 origin·Elasticsearch indexing·CDN cache 상태를 구분해 보여준다. 개인화 API response는 공개 curriculum edge object와 별도의 cache scope와 test fixture로 검증한다.
+### CDN cache 경계
+    request → CDN key
+              ├─ safe shared variant → edge hit
+              └─ personalized/unknown → bypass → origin
+purge와 publish는 별도 상태이며 개인화 response는 shared key와 분리한다.

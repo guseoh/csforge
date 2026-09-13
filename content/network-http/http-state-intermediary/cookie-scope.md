@@ -29,3 +29,8 @@ cookie는 port별로 분리되는 저장소가 아니므로 같은 host의 다�
 
 관리자와 일반 UI가 다른 host/path를 사용하면 cookie 이름·scope·CSRF 정책을 분리하고, Path가 authorization을 대신한다고 가정하지 않는다. local HTTP 개발 환경에서는 `Secure` cookie가 저장·전송되지 않는 정상 동작을 profile 설정이 가리지 않게 하고, production HTTPS와 cross-site 흐름을 별도로 테스트한다.
 
+### Cookie scope
+    Set-Cookie → Domain / Path / Secure / SameSite
+                       ↓
+                eligible request only → Cookie
+넓은 Domain은 sibling subdomain까지 credential 경계를 넓힌다.

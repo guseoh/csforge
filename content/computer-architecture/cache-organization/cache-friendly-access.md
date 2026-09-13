@@ -27,3 +27,8 @@ row-major 배열을 연속 주소로 순회하면 한 line을 채운 뒤 이웃 
 
 batch serializer와 in-memory index를 설계할 때 순회 순서·object pointer·allocation을 함께 본다. “배열이라 빠르다”가 아니라 실제 access pattern이 line과 set을 어떻게 사용하는지 측정한다.
 
+### Locality access
+    row-major:    [0][1][2][3] → same line reuse
+    large stride: [0]    [8]    [16] → more line fetches
+    tiling:       small working blocks → reuse before eviction
+배열 자료형보다 실제 접근 순서와 working set을 측정해야 한다.

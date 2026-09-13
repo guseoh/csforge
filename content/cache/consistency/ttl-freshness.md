@@ -18,7 +18,7 @@ references:
 ---
 # TTL과 freshness window
 
-TTL(Time To Live)은 cache entry를 무조건 그 시각에 정확히 삭제하는 업무 약속이 아니라 **entry가 cache에 남아 있을 수 있는 최대 freshness window를 구현하는 한 수단**입니다. 값이 언제 바뀌고 얼마나 stale해도 되는지를 먼저 정해야 TTL을 고를 수 있습니다.
+TTL(Time To Live)은 cache entry의 보존 시간을 제한하는 기술 수단이지, origin update 시점부터의 freshness나 stale window를 정확히 보장하는 업무 약속은 아닙니다. 값이 언제 바뀌고 얼마나 stale해도 되는지, invalidation 실패를 얼마 동안 허용할지를 먼저 정해야 TTL을 고를 수 있습니다.
 
 ```text
 origin update at t=0
