@@ -182,7 +182,7 @@
   {
     "kind": "question",
     "contentKey": "dsa.core.complexity.amortized-analysis.q4",
-    "promptMarkdown": "append가 amortized O(1)인 dynamic buffer에서 드물게 수십 MB copy가 발생해 p99 지연 시간이 튄다. 이 현상이 amortized bound와 모순되지 않는 이유와 지연 시간-sensitive 서비스에서 검토할 대응을 설명하라.",
+    "promptMarkdown": "append가 amortized O(1)인 dynamic buffer에서 드물게 수십 MB copy가 발생해 p99 지연 시간이 튄다. 이 현상이 amortized bound와 모순되지 않는 이유와 지연 시간에 민감한 서비스에서 검토할 대응을 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
