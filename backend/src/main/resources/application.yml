@@ -19,6 +19,9 @@ spring:
   flyway:
     enabled: true
     baseline-on-migrate: true
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.session.jdbc.autoconfigure.JdbcSessionAutoConfiguration
   data:
     redis:
       host: ${REDIS_HOST:localhost}
@@ -66,6 +69,8 @@ management:
       show-details: when_authorized
 csforge:
   time-zone: ${CSFORGE_TIME_ZONE:Asia/Seoul}
+  security:
+    mode: local
   ai:
     # AI is opt-in: enable CSFORGE_AI_ENABLED and SPRING_AI_MODEL_CHAT=ollama together.
     enabled: ${CSFORGE_AI_ENABLED:false}

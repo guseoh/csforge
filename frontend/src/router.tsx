@@ -1,5 +1,8 @@
-import { Link, Outlet, createRootRoute, createRoute, createRouter, lazyRouteComponent } from '@tanstack/react-router'
+import { Link, Outlet, createRootRoute, createRoute, createRouter, lazyRouteComponent, useLocation, useNavigate } from '@tanstack/react-router'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { SearchPalette } from './components/SearchPalette'
+import { AuthGate } from './components/AuthGate'
+import { getAuthSession, logout } from './lib/auth-api'
 import { defaultLearningSearch, parseLearningSearch } from './lib/learning-search'
 import { defaultQuizSearch, parseQuizSearch } from './lib/quiz-search'
 import { defaultWrongNoteSearch, parseWrongNoteSearch } from './lib/wrong-note-search'
@@ -18,6 +21,7 @@ const ReviewPage = lazyRouteComponent(() => import('./pages/ReviewPage'), 'Revie
 const ImportPage = lazyRouteComponent(() => import('./pages/ImportPage'), 'ImportPage')
 const SearchPage = lazyRouteComponent(() => import('./pages/SearchPage'), 'SearchPage')
 const DashboardPage = lazyRouteComponent(() => import('./pages/DashboardPage'), 'DashboardPage')
+const LoginPage = lazyRouteComponent(() => import('./pages/LoginPage'), 'LoginPage')
 
 const headerNavigation = [
   { to: '/learning', label: '학습', search: defaultLearningSearch },
@@ -27,6 +31,11 @@ const headerNavigation = [
 ] as const
 
 function AppLayout() {
+  const location = useLocation()
+  if (location.pathname === '/login') {
+    return <main className="main-content"><Outlet /></main>
+  }
+
   return (
     <div className="app-shell">
       <header className="topbar">
@@ -47,14 +56,46 @@ function AppLayout() {
           </nav>
           <div className="topbar-actions">
             <SearchPalette />
-            <span className="environment-badge">LOCAL</span>
+            <AuthActions />
           </div>
         </div>
       </header>
       <div className="content-layout">
-        <main className="main-content"><Outlet /></main>
+        <main className="main-content"><AuthGate><Outlet /></AuthGate></main>
       </div>
     </div>
+  )
+}
+
+function AuthActions() {
+  const navigate = useNavigate()
+  const queryClient = useQueryClient()
+  const session = useQuery({ queryKey: ['auth-session'], queryFn: getAuthSession, retry: false })
+  const logoutMutation = useMutation({
+    mutationFn: logout,
+    onSuccess: () => {
+      queryClient.clear()
+      void navigate({ to: '/login', replace: true })
+    },
+  })
+
+  if (!session.data) return null
+  if (session.data.mode !== 'CLOUD') return <span className="environment-badge">LOCAL</span>
+
+  return (
+    <>
+      <span className="environment-badge">CLOUD</span>
+      <span className="auth-email">{session.data.email}</span>
+      <button
+        className="text-button"
+        type="button"
+        disabled={logoutMutation.isPending}
+        onClick={() => logoutMutation.mutate()}
+      >
+        로그아웃
+      </button>
+      {logoutMutation.isError && <span className="auth-error">로그아웃하지 못했습니다.</span>}
+    </>
   )
 }
 
@@ -78,6 +119,7 @@ const rootRoute = createRootRoute({
 })
 
 const indexRoute = createRoute({ getParentRoute: () => rootRoute, path: '/', component: DashboardPage })
+const loginRoute = createRoute({ getParentRoute: () => rootRoute, path: '/login', component: LoginPage })
 
 const learningRoute = createRoute({
   getParentRoute: () => rootRoute,
@@ -115,6 +157,7 @@ const importRoute = createRoute({ getParentRoute: () => rootRoute, path: '/setti
 
 const routeTree = rootRoute.addChildren([
   indexRoute,
+  loginRoute,
   learningRoute,
   areaRoute,
   conceptRoute,

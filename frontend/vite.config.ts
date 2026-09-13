@@ -8,12 +8,22 @@ export default defineConfig({
     proxy: {
       '/api': process.env.VITE_API_PROXY_TARGET ?? 'http://localhost:8080',
       '/actuator': process.env.VITE_API_PROXY_TARGET ?? 'http://localhost:8080',
+      '/oauth2': process.env.VITE_API_PROXY_TARGET ?? 'http://localhost:8080',
+      '/login/oauth2': process.env.VITE_API_PROXY_TARGET ?? 'http://localhost:8080',
     },
   },
   plugins: [
     react(),
     VitePWA({
       registerType: 'autoUpdate',
+      workbox: {
+        navigateFallbackDenylist: [
+          /^\/api(?:\/|$)/,
+          /^\/oauth2(?:\/|$)/,
+          /^\/login\/oauth2(?:\/|$)/,
+          /^\/actuator(?:\/|$)/,
+        ],
+      },
       manifest: {
         name: 'CSForge',
         short_name: 'CSForge',
