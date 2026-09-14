@@ -7,6 +7,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.guseoh.csforge.test.PostgresIntegrationTestSupport;
@@ -61,6 +62,22 @@ class CloudSecurityIntegrationTest {
         mockMvc.perform(get("/api/learning-areas"))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.code").value("UNAUTHENTICATED"));
+    }
+
+    @Test
+    void redirectsBackendLoginErrorsToTheFrontend() throws Exception {
+        mockMvc.perform(get("/login").param("error", ""))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("https://frontend.example.com/login?error"));
+    }
+
+    @Test
+    void redirectsOAuthCallbackErrorsToTheFrontend() throws Exception {
+        mockMvc.perform(get("/login/oauth2/code/google")
+                        .param("error", "access_denied")
+                        .param("error_description", "The user denied access"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("https://frontend.example.com/login?error"));
     }
 
     @Test

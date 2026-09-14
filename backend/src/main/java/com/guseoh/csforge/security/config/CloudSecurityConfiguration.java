@@ -83,7 +83,8 @@ public class CloudSecurityConfiguration {
                         .authenticationEntryPoint(authenticationEntryPoint)
                         .accessDeniedHandler(accessDeniedHandler))
                 .oauth2Login(oauth2 -> oauth2
-                        .defaultSuccessUrl(properties.frontendOrigin(), true))
+                        .defaultSuccessUrl(properties.frontendOrigin(), true)
+                        .failureUrl(properties.frontendOrigin() + "/login?error"))
                 .logout(logout -> logout
                         .logoutUrl("/api/auth/logout")
                         .invalidateHttpSession(true)
