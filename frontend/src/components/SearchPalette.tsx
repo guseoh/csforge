@@ -146,7 +146,11 @@ export function SearchPalette() {
   return (
     <>
       <button className="search-palette-trigger" type="button" onClick={openPalette} aria-label="전체 검색 열기">
-        <span>검색</span><kbd>Ctrl K</kbd>
+        <span className="search-trigger-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="6.5" strokeWidth="1.8" /><path d="m16 16 4 4" strokeWidth="1.8" strokeLinecap="round" /></svg>
+        </span>
+        <span className="search-trigger-placeholder">개념, 문제, 오답을 검색하세요</span>
+        <kbd>Ctrl K</kbd>
       </button>
       {open && (
         <div className="search-palette-backdrop" role="presentation" onMouseDown={closePalette}>
@@ -158,7 +162,7 @@ export function SearchPalette() {
                 maxLength={200}
                 onChange={(event) => setQuery(event.target.value)}
                 onKeyDown={handleInputKeyDown}
-                placeholder="개념, 문제, 노트, 참고 자료 검색…"
+                placeholder="개념, 문제, 오답, 노트를 검색하세요"
                 aria-label="전체 검색어"
                 aria-activedescendant={activeIndex >= 0 ? `search-palette-option-${activeIndex}` : undefined}
               />
