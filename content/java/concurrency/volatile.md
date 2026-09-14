@@ -20,17 +20,17 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "Java에서 conflicting access와 happens-before를 기준으로 data race를 정의하는 정확한 경계를 확인한다."
+    recommendation: "volatile write와 이후 같은 field read의 happens-before 관계를 확인한다."
     displayOrder: 2
-    relationNote: volatile write와 이후 같은 field read의 happens-before 관계 확인
+    relationNote: volatile write/read의 happens-before 관계 확인
 ---
 # volatile과 가시성
 
-한 thread가 "작업을 이제 멈춰라"라는 flag를 true로 바꾸고 다른 thread가 그 flag를 계속 확인한다고 생각해 보겠습니다. 두 thread 사이에 아무 synchronization도 없다면 reader가 write를 안전하게 관찰한다고 근거 없이 가정할 수 없습니다.
+한 thread가 중단 flag를 `true`로 바꾸고 다른 thread가 그 flag를 확인한다고 해 보겠습니다. 두 thread 사이에 아무 synchronization도 없다면 writer의 변경을 reader가 언제, 어떤 값으로 관찰하는지 단순 실행 순서만 보고 보장할 수 없습니다.
 
-`volatile`은 이런 **하나의 공유 field에 대한 visibility와 ordering 관계를 명시적으로 만들기 위한 Java 언어 기능**입니다.
+`volatile`은 **특정 shared field의 read/write를 Java Memory Model의 synchronization action으로 만들고 thread 사이에 visibility와 ordering 관계를 제공**합니다.
 
-### 대표적인 사용은 상태 flag다
+### 상태 flag는 volatile의 대표적인 사용 형태다
 
 ```java
 class Worker implements Runnable {
@@ -49,67 +49,19 @@ class Worker implements Runnable {
 }
 ```
 
-Writer의 `stopRequested = true`라는 volatile write와 reader의 이후 같은 field volatile read 사이에는 happens-before 관계가 성립합니다.
+한 thread의 `stopRequested = true`라는 volatile write는 synchronization order상 그 뒤의 같은 field volatile read와 synchronizes-with 관계를 만들고, 따라서 happens-before edge가 됩니다.
 
 ```text
 Thread A                         Thread B
 stopRequested = true
-    (volatile write)
-          │
-          └─────────────────▶ read stopRequested
-                               (volatile read)
+   volatile write
+        │
+        └──────────────────▶ volatile read stopRequested
 ```
 
-따라서 단순한 독립 상태 flag처럼 한 write를 다른 thread가 관찰해야 하는 경우에 적합할 수 있습니다.
+그래서 volatile을 "항상 RAM에서 읽는다"거나 "CPU cache를 끈다"고 정의하면 부정확합니다. Java 코드가 의존할 수 있는 것은 **JMM이 정의한 read/write의 memory semantics**이고, HotSpot과 CPU가 이를 어떤 instruction이나 barrier로 구현하는지는 별도 계층입니다.
 
-### volatile은 "최신값이 보이게 한다"보다 happens-before로 이해한다
-
-"volatile은 CPU cache를 무시한다" 또는 "항상 RAM에서 읽는다"라고 외우면 Java 언어 보장과 특정 하드웨어 구현을 섞게 됩니다.
-
-Java 개발자가 의존할 수 있는 핵심은 **volatile write가 같은 volatile field의 이후 read와 happens-before 관계를 만든다**는 JMM 규칙입니다. JVM이 이를 특정 CPU에서 어떤 memory barrier나 instruction으로 구현하는지는 implementation 영역입니다.
-
-### `count++`는 volatile이어도 안전한 증가가 아니다
-
-```java
-volatile int count;
-
-void increment() {
-    count++;
-}
-```
-
-`count++`는 논리적으로 다음 단계가 있습니다.
-
-```text
-1. count 읽기
-2. 1 더하기
-3. count 쓰기
-```
-
-두 thread가 같은 값을 읽으면 각각 계산한 값을 다시 쓸 수 있습니다.
-
-```text
-A: read 0                 B: read 0
-A: compute 1              B: compute 1
-A: write 1                B: write 1
-
-최종값 = 1
-```
-
-Volatile read/write 자체의 memory semantics가 있어도 이 **전체 read-modify-write 묶음**이 하나의 atomic operation으로 바뀌는 것은 아닙니다.
-
-### visibility, ordering, mutual exclusion을 나눠 생각한다
-
-| 요구                                         | volatile      | synchronized/Lock         |
-| -------------------------------------------- | ------------- | ------------------------- |
-| 같은 volatile field를 통한 visibility/order | 제공          | 제공 가능                 |
-| 한 thread만 critical section 진입            | 제공하지 않음 | 제공                      |
-| `count++` 같은 복합 invariant 보호           | 단독으로 부족 | critical section으로 가능 |
-| lock 대기/ownership                          | 없음          | 있음                      |
-
-그래서 "volatile이 synchronized보다 가볍다"만 보고 대체 관계로 생각하면 안 됩니다. 해결하는 문제가 다릅니다.
-
-### publication flag로 사용할 때는 write 순서를 본다
+### publication flag는 앞선 일반 write까지 연결할 수 있다
 
 ```java
 int data;
@@ -119,51 +71,67 @@ void publish() {
     data = 42;
     ready = true;
 }
+
+void consume() {
+    if (ready) {
+        System.out.println(data);
+    }
+}
 ```
 
-Reader가 `ready`의 volatile write를 이후 read하는 경로가 있다면 program order와 happens-before transitivity를 통해 `data = 42`의 관찰 근거도 연결할 수 있습니다.
-
-하지만 volatile field 하나를 읽었다는 사실이 **어떤 시점의 모든 객체 변경을 무조건 atomic snapshot으로 만든다**는 뜻은 아닙니다. 필요한 state relation이 실제 edge에 포함되는지 추적해야 합니다.
-
-### 여러 필드가 함께 맞아야 하면 다른 도구가 필요할 수 있다
+Writer 안에서 `data = 42`는 volatile write보다 program order상 앞에 있고, reader가 그 뒤의 volatile read를 거쳐 `data`를 읽습니다. Program order, volatile synchronization edge, transitivity를 연결하면 `data`의 초기화 write를 reader의 후속 read와 happens-before로 연결할 수 있습니다.
 
 ```text
-balance >= reserved
+write data=42
+     │
+write ready=true (volatile)
+     │ happens-before
+read ready
+     │
+read data
 ```
 
-처럼 여러 field 사이의 invariant가 있다면 각각 volatile로 선언한다고 두 값을 하나의 일관된 순간으로 갱신/조회하는 것이 자동 보장되지 않습니다.
+이것은 "volatile reference 하나를 읽으면 객체 전체의 모든 미래 변경이 자동으로 안전하다"는 뜻은 아닙니다. Edge 이전의 action과 이후의 action을 실제 순서대로 추적해야 합니다.
 
-- 하나의 immutable state object를 volatile reference로 교체
-- synchronized/Lock으로 여러 field를 한 critical section에서 보호
-- 요구에 맞는 atomic abstraction 사용
+### volatile은 복합 read-modify-write를 하나로 묶지 않는다
 
-같은 방법을 검토할 수 있습니다.
+```java
+volatile int count;
 
-### 문제를 풀 때 확인할 것
+void increment() {
+    count++;
+}
+```
 
-1. volatile field가 무엇인지 표시합니다.
-2. writer와 reader가 같은 volatile field를 통해 연결되는지 봅니다.
-3. 연산이 단순 read/write인지 read-modify-write인지 분해합니다.
-4. 한 field만 맞으면 되는지 여러 field invariant가 있는지 확인합니다.
-5. 상호 배제가 필요한 문제인지 visibility만 필요한 문제인지 구분합니다.
+`count++`는 read, 계산, write의 복합 동작입니다. 각 volatile access에 memory semantics가 있어도 두 thread가 같은 이전 값을 읽고 각각 1을 써서 lost update를 만들 수 있습니다.
 
-### 자주 헷갈리는 부분
+```text
+A: read 0              B: read 0
+A: compute 1           B: compute 1
+A: write 1             B: write 1
 
-- volatile은 mutex가 아닙니다.
-- `volatile count++`는 atomic increment가 아닙니다.
-- volatile은 CPU cache를 끄는 키워드라고 정의하면 부정확합니다.
-- volatile reference를 사용한다고 참조 대상 객체의 모든 후속 변경이 thread-safe해지는 것은 아닙니다.
+최종 count = 1
+```
 
-### 학습 후 스스로 설명해 보기
+따라서 volatile은 mutual exclusion을 제공하지 않고, 복합 갱신 전체를 atomic operation으로 바꾸지도 않습니다.
 
-`volatile`은 같은 field의 write와 이후 read 사이에 happens-before 관계를 만들어 visibility와 ordering을 제공하는 Java Memory Model 기능이라고 설명하면 됩니다. 하지만 mutual exclusion은 제공하지 않으므로 `count++`처럼 read-modify-write가 필요한 복합 연산의 atomicity는 보장하지 않습니다. 단순 상태 flag나 publication에 유용할 수 있지만 여러 필드 invariant에는 lock이나 다른 atomic 상태 모델이 필요할 수 있습니다.
+### 여러 값의 invariant도 volatile field 여러 개로 자동 보호되지 않는다
 
-### 면접에서 이렇게 나옵니다
+```text
+available = 10
+reserved  = 3
 
-#### Q. `volatile`을 붙이면 `count++`도 thread-safe해지나요?
+invariant: reserved <= available
+```
 
-아닙니다. `count++`는 read, 계산, write가 결합된 복합 연산이라 두 thread가 같은 이전 값을 읽으면 lost update가 생길 수 있습니다. `volatile`은 visibility와 ordering 관계를 제공하지만 그 여러 단계를 하나의 mutual-exclusion 구간이나 atomic increment로 바꾸지는 않습니다.
+각 field를 각각 volatile로 선언하면 개별 read/write의 visibility는 강화되지만 두 값을 하나의 일관된 상태 전이로 묶어 주지는 않습니다. 여러 값이 함께 바뀌어야 한다면 같은 lock으로 보호하거나, 관련 상태를 immutable object 하나로 묶어 volatile reference 전체를 교체하거나, 요구에 맞는 atomic abstraction을 사용할 수 있습니다.
 
-#### Q. `volatile`을 "항상 RAM에서 읽게 하는 키워드"라고 설명하면 왜 부정확한가요?
+```text
+volatile이 잘 맞는 질문
+"이 하나의 상태 값을 다른 thread가 어떤 ordering으로 보아야 하는가?"
 
-그 설명은 특정 하드웨어 구현 이미지를 Java 언어 보장처럼 만든다는 문제가 있습니다. Java 코드가 의존해야 하는 것은 같은 volatile field의 write와 이후 read 사이에 JMM의 happens-before 관계가 생긴다는 계약이며, JVM이 이를 CPU별로 어떻게 구현하는지는 별도 층위입니다.
+lock/atomic state model이 필요한 질문
+"여러 단계나 여러 값이 하나의 invariant로 함께 바뀌어야 하는가?"
+```
+
+`volatile`을 사용할 때는 같은 field의 writer와 reader가 어디에서 연결되는지, 연산이 단순 read/write인지 복합 갱신인지, 그리고 보호해야 할 invariant가 한 값에 한정되는지를 확인하세요. 이 세 가지를 분리하면 `volatile`과 `synchronized`나 atomic class를 대체 관계로 오해하지 않게 됩니다.
