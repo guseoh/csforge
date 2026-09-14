@@ -660,6 +660,8 @@ A technically correct Concept that reads like translated documentation is not au
 
 A visually polished Concept page that makes weak content look attractive is also not complete.
 
+For the first redesign vertical slice, browser review must include at least one real long-form Concept rather than placeholder text. Prefer a Concept that currently exposes terminology/readability problems so the design is tested against difficult content, not an easy showcase sample.
+
 ## 17. Acceptance principle
 
 Use this decision order for future UI/UX reviews:
