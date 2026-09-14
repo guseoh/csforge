@@ -1,0 +1,279 @@
+/* Canonical visual foundation for the learning-first rebaseline.
+ *
+ * This layer intentionally loads after legacy route styles while the UI is migrated
+ * route by route. Keep it limited to shared color, typography, focus and primitive
+ * surface rules; route hierarchy belongs to each focused redesign step.
+ */
+:root {
+  color-scheme: light;
+
+  --color-page: #f6f7f9;
+  --surface-page: #ffffff;
+  --surface-elevated: #fbfcfd;
+  --surface-interactive: #eef2f6;
+  --surface-selected: #e9f1ff;
+  --surface-accent: #eef4ff;
+
+  --border-subtle: #e1e5ea;
+  --border-default: #cbd2d9;
+  --border-strong: #98a2ad;
+  --border-accent: #2563eb;
+
+  --text-strong: #171a1f;
+  --text-default: #303740;
+  --text-muted: #606b78;
+  --text-faint: #7b8794;
+
+  --accent: #2563eb;
+  --accent-strong: #1d4ed8;
+  --accent-contrast: #ffffff;
+
+  --state-success: #16794b;
+  --state-warning: #9a6700;
+  --state-error: #c24155;
+
+  --font-sans: "Pretendard Variable", Pretendard, "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+
+  --type-body: 1rem;
+  --type-control: 0.9rem;
+  --type-meta: 0.875rem;
+  --type-label: 0.82rem;
+  --type-reading: 1.09375rem;
+  --line-body: 1.62;
+  --line-reading: 1.82;
+  --reading-measure: 720px;
+
+  color: var(--text-default);
+  background: var(--color-page);
+  font-family: var(--font-sans);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+html {
+  background: var(--color-page);
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  color: var(--text-default);
+  background: var(--color-page);
+  font-family: var(--font-sans);
+  font-size: var(--type-body);
+  line-height: var(--line-body);
+  letter-spacing: -0.012em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--text-strong);
+  font-family: var(--font-sans);
+  font-weight: 750;
+  letter-spacing: -0.035em;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
+h1 {
+  font-size: clamp(2rem, 2.8vw, 2.5rem);
+  line-height: 1.22;
+}
+
+h2 {
+  font-size: clamp(1.45rem, 2vw, 1.65rem);
+  line-height: 1.35;
+}
+
+h3 {
+  font-size: 1.15rem;
+  line-height: 1.45;
+}
+
+p,
+li,
+dd,
+dt,
+blockquote,
+figcaption {
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
+code,
+pre,
+kbd,
+samp {
+  font-family: var(--font-mono);
+  letter-spacing: 0;
+  word-break: normal;
+}
+
+::selection {
+  color: var(--text-strong);
+  background: #dbeafe;
+}
+
+.eyebrow {
+  margin-bottom: 8px;
+  color: var(--text-faint);
+  font-size: var(--type-label);
+  font-weight: 650;
+  letter-spacing: 0.015em;
+  text-transform: none;
+}
+
+.lead {
+  color: var(--text-muted);
+  font-size: 1rem;
+  line-height: 1.75;
+}
+
+.result-count,
+.area-metrics,
+.concept-topic,
+.topic-card-meta,
+.helper-text,
+.status-label,
+.save-state {
+  color: var(--text-muted);
+  font-size: var(--type-meta);
+  line-height: 1.55;
+}
+
+.primary-button,
+.secondary-button,
+.text-button,
+button,
+input,
+select,
+textarea {
+  font-family: var(--font-sans);
+  font-size: var(--type-control);
+}
+
+.primary-button {
+  border-color: var(--accent);
+  color: var(--accent-contrast);
+  background: var(--accent);
+}
+
+.primary-button:hover {
+  border-color: var(--accent-strong);
+  background: var(--accent-strong);
+}
+
+.secondary-button {
+  border-color: var(--border-default);
+  color: var(--text-default);
+  background: var(--surface-page);
+}
+
+.secondary-button:hover {
+  border-color: var(--border-strong);
+  color: var(--text-strong);
+  background: var(--surface-interactive);
+}
+
+.text-link,
+.text-button,
+button.text-link {
+  color: var(--accent);
+}
+
+.text-link:hover,
+.text-button:hover,
+button.text-link:hover {
+  color: var(--accent-strong);
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+summary:focus-visible {
+  outline: 2px solid var(--border-accent);
+  outline-offset: 3px;
+}
+
+input,
+select,
+textarea {
+  border-color: var(--border-default);
+  color: var(--text-strong);
+  background: var(--surface-page);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--text-faint);
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--border-accent);
+  box-shadow: 0 0 0 3px rgb(37 99 235 / 12%);
+}
+
+.page-card,
+.state-card,
+.route-message,
+.filter-panel,
+.area-card,
+.concept-list-item,
+.navigation-card,
+.reference-item {
+  border-color: var(--border-subtle);
+  color: var(--text-default);
+  background: var(--surface-page);
+}
+
+.chip {
+  border-color: var(--border-default);
+  color: var(--text-muted);
+  background: var(--surface-page);
+}
+
+.error-state,
+.route-state-error,
+.route-message.error,
+.toast-error {
+  border-color: #f0b8c2;
+  color: #8f2638;
+  background: #fff3f5;
+}
+
+.skeleton-block {
+  border-color: var(--border-subtle);
+  background: linear-gradient(90deg, #eef1f4, #f8f9fb, #eef1f4);
+  background-size: 220% 100%;
+}
+
+.markdown-content {
+  color: var(--text-default);
+}
+
+.markdown-content strong {
+  color: var(--text-strong);
+}
+
+@media (max-width: 680px) {
+  :root {
+    --type-control: 0.9rem;
+    --type-meta: 0.86rem;
+    --type-reading: 1.04rem;
+  }
+
+  h1 {
+    font-size: clamp(1.85rem, 8vw, 2.2rem);
+  }
+}
