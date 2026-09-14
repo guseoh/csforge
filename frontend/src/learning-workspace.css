@@ -2,8 +2,9 @@
 .area-workspace {
   grid-template-columns: max-content minmax(0, 1fr);
   gap: 40px;
-  width: min(1280px, calc(100% - 56px));
+  width: min(1180px, calc(100% - 56px));
   margin: 0 auto;
+  text-align: left;
 }
 
 /* Match/exceed legacy selectors until the older Learning stylesheet is retired. */
@@ -290,8 +291,9 @@
 
 /* Learning index: medium-density workspace typography, not a landing-page hero. */
 .learning-page {
-  width: min(1180px, 100%);
+  width: min(1080px, 100%);
   margin: 0 auto;
+  text-align: left;
 }
 
 .learning-index-header {

@@ -1,4 +1,4 @@
-/* Step 5-B~E — correction pass after the learning-first rebaseline.
+/* Step 5-B~F — final correction pass after the learning-first rebaseline.
  *
  * Keep this layer focused on light-theme contrast, learning code/table/callout
  * treatment, and the Concept rail/TOC affordance. Route structure and content
@@ -149,11 +149,11 @@
 .result-answer :not(pre) > code,
 .quiz-prompt :not(pre) > code,
 .answer-block :not(pre) > code {
-  padding: 0.08em 0.24em;
-  border: 1px solid #dbe1e8;
-  border-radius: 4px;
-  color: #334155;
-  background: #f1f4f7;
+  padding: 0.06em 0.2em;
+  border: 0;
+  border-radius: 3px;
+  color: #34404c;
+  background: #eef1f4;
   font-size: 0.92em;
   font-weight: 500;
 }
@@ -166,11 +166,11 @@
   overflow-x: auto;
   max-width: 100%;
   margin: 1.35em 0 1.65em;
-  padding: 14px 16px;
-  border: 1px solid var(--border-subtle);
-  border-radius: 7px;
-  color: #26313d;
-  background: #f3f5f7;
+  padding: 13px 15px;
+  border: 1px solid #e2e6ea;
+  border-radius: 5px;
+  color: #303942;
+  background: #f7f8f9;
   font-size: 0.84rem;
   line-height: 1.62;
   box-shadow: none;
@@ -189,15 +189,15 @@
 }
 
 .concept-reading-content pre:has(code.language-java) {
-  padding-top: 34px;
-  border-color: var(--border-subtle);
-  background: #f3f5f7;
+  padding-top: 31px;
+  border-color: #e2e6ea;
+  background: #f7f8f9;
 }
 
 .concept-reading-content pre:has(code.language-java)::before {
   top: 10px;
   left: 16px;
-  color: var(--text-faint);
+  color: #7f8993;
   font-family: var(--font-sans);
   font-size: 0.64rem;
   font-weight: 700;
@@ -206,25 +206,35 @@
   content: 'Java';
 }
 
-.concept-reading-content pre code.language-java .code-keyword { color: #1d4ed8; }
-.concept-reading-content pre code.language-java .code-type { color: #0f766e; }
-.concept-reading-content pre code.language-java .code-string { color: #8a4b08; }
-.concept-reading-content pre code.language-java .code-comment { color: #64748b; }
-.concept-reading-content pre code.language-java .code-number { color: #9a3412; }
-.concept-reading-content pre code.language-java .code-annotation { color: #7c3aed; }
+.concept-reading-content pre code.language-java .code-keyword,
+.concept-reading-content pre code.language-java .code-type,
+.concept-reading-content pre code.language-java .code-annotation { color: #465d73; }
+.concept-reading-content pre code.language-java .code-string,
+.concept-reading-content pre code.language-java .code-number { color: #4b5560; }
+.concept-reading-content pre code.language-java .code-comment { color: #89939d; }
 
 /* 5-D — Structured learning elements: calmer callouts and scan-friendly tables. */
 .markdown-content blockquote,
 .concept-reading-content blockquote {
   max-width: var(--reading-measure);
   margin: 1.45em 0 1.7em;
-  padding: 12px 14px;
+  padding: 2px 0 2px 14px;
   border: 0;
-  border-left: 3px solid var(--accent);
-  border-radius: 0 6px 6px 0;
+  border-left: 2px solid var(--border-strong);
+  border-radius: 0;
   color: var(--text-default);
-  background: #f8fafc;
+  background: transparent;
   line-height: 1.68;
+}
+
+/* Canonical Concept packs commonly open with a learning objective. It is
+ * orientation prose, not a warning or a second hero panel. */
+.concept-reading-content .markdown-content > blockquote:first-child {
+  margin: 0 0 2em;
+  padding: 0;
+  border: 0;
+  color: var(--text-default);
+  background: transparent;
 }
 
 .markdown-content blockquote p,
@@ -240,9 +250,11 @@
   min-width: 0;
   margin: 1.4em 0 1.8em;
   overflow: visible;
-  border: 1px solid var(--border-subtle);
-  border-radius: 8px;
-  border-collapse: separate;
+  border: 0;
+  border-top: 1px solid var(--border-default);
+  border-bottom: 1px solid var(--border-default);
+  border-radius: 0;
+  border-collapse: collapse;
   border-spacing: 0;
   color: var(--text-default);
   background: var(--surface-page);
@@ -266,8 +278,14 @@
 .markdown-content th,
 .concept-reading-content th {
   color: var(--text-strong);
-  background: var(--surface-interactive);
+  background: #f6f7f8;
   font-weight: 700;
+}
+
+.markdown-content tbody td:first-child,
+.concept-reading-content tbody td:first-child {
+  color: var(--text-strong);
+  font-weight: 600;
 }
 
 .markdown-content tr:last-child > *,
@@ -289,28 +307,28 @@
 
 /* 5-E — The collapsed rail is a quiet navigation affordance, not a floating card. */
 .concept-reading-workspace .concept-learning-rail[data-collapsed='true'] {
-  width: 48px;
-  height: 34px;
-  max-height: 34px;
+  width: 42px;
+  height: 30px;
+  max-height: 30px;
   padding: 0;
   border-right: 0;
 }
 
 .concept-reading-workspace:has(.concept-learning-rail[data-collapsed='true']) {
-  grid-template-columns: 48px minmax(0, 760px) 190px;
-  column-gap: 30px;
+  grid-template-columns: 42px minmax(0, 760px) 190px;
+  column-gap: 24px;
 }
 
 .concept-reading-workspace .concept-learning-rail[data-collapsed='true'] .rail-collapse-toggle {
   right: 0;
-  width: 48px;
-  height: 34px;
+  width: 42px;
+  height: 30px;
   border-color: transparent;
-  border-radius: 6px;
-  color: var(--text-muted);
+  border-radius: 4px;
+  color: var(--text-faint);
   background: transparent;
-  font-size: 0.74rem;
-  font-weight: 650;
+  font-size: 0.68rem;
+  font-weight: 600;
 }
 
 .concept-reading-workspace .concept-learning-rail[data-collapsed='true'] .rail-collapse-toggle:hover,
@@ -341,8 +359,30 @@
 
 @media (max-width: 1280px) {
   .concept-reading-workspace:has(.concept-learning-rail[data-collapsed='true']) {
-    grid-template-columns: 48px minmax(0, 760px);
-    column-gap: 24px;
+    grid-template-columns: 42px minmax(0, 760px);
+    column-gap: 20px;
+  }
+}
+
+@media (max-width: 900px) {
+  .concept-reading-workspace .concept-learning-rail[data-collapsed='true'] {
+    width: 100%;
+    height: auto;
+    max-height: none;
+  }
+
+  .concept-reading-workspace:has(.concept-learning-rail[data-collapsed='true']) {
+    display: block;
+    width: 100%;
+  }
+
+  .concept-reading-workspace .concept-learning-rail[data-collapsed='true'] .rail-collapse-toggle {
+    width: 100%;
+    height: 40px;
+    justify-content: space-between;
+    padding: 0 12px;
+    border-color: var(--border-subtle);
+    font-size: 0.84rem;
   }
 }
 
