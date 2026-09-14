@@ -1,0 +1,200 @@
+/* Step 6 browser-QA corrections.
+ *
+ * Desktop only: make the learning workspace easier to scan at 100% browser zoom
+ * while preserving mobile readability. Also keep the Concept TOC anchored near
+ * its expanded-rail position so collapsing the learning rail does not pull the
+ * article/TOC pair toward the center.
+ */
+
+@media (min-width: 901px) {
+  html {
+    font-size: 14px;
+  }
+
+  .main-content {
+    min-height: calc(100vh - 52px);
+    padding: 30px 24px 88px;
+  }
+
+  .topbar {
+    height: 52px;
+    padding: 0 18px;
+  }
+
+  .topbar-inner {
+    gap: 18px;
+  }
+
+  .brand {
+    gap: 6px;
+    font-size: 0.96rem;
+  }
+
+  .brand-mark {
+    width: 26px;
+    height: 26px;
+    border-radius: 6px;
+  }
+
+  .topbar-nav-link {
+    min-height: 34px;
+    padding: 7px 8px 6px;
+  }
+
+  .search-palette-trigger {
+    min-height: 38px;
+  }
+
+  .account-menu > summary {
+    width: 32px;
+    height: 32px;
+  }
+
+  .page-heading {
+    margin-bottom: 24px;
+  }
+
+  .learning-index-header {
+    gap: 24px;
+    padding: 8px 0 22px;
+  }
+
+  .recent-concepts,
+  .learning-area-heading {
+    margin-top: 28px;
+  }
+
+  .learning-section-heading {
+    margin-bottom: 10px;
+  }
+
+  .recent-concept-row {
+    min-height: 52px;
+    padding: 10px 4px;
+  }
+
+  .area-row {
+    min-height: 74px;
+    padding: 12px 4px;
+  }
+
+  .area-row-copy {
+    gap: 3px;
+  }
+
+  .area-row-copy p {
+    line-height: 1.46;
+  }
+
+  .area-workspace {
+    grid-template-columns: 200px minmax(0, 1fr);
+    gap: 30px;
+    width: min(1080px, calc(100% - 44px));
+  }
+
+  .area-learning-rail {
+    width: 200px;
+  }
+
+  .guide-summary-line {
+    margin: 20px 0 28px;
+    padding: 10px 0;
+  }
+
+  .rail-topic {
+    min-height: 38px;
+    padding: 7px 6px;
+  }
+
+  .selected-topic-header {
+    grid-template-columns: 46px minmax(0, 1fr) auto;
+    gap: 14px;
+    padding-bottom: 16px;
+  }
+
+  .curriculum-concept-row,
+  .topic-concept-row {
+    min-height: 58px;
+    padding: 10px 4px;
+  }
+
+  .topic-sequence-nav {
+    margin-top: 20px;
+    padding-top: 16px;
+  }
+
+  .concept-filter-disclosure {
+    margin: 28px 0 34px;
+  }
+
+  .concept-page .breadcrumb {
+    margin-bottom: 16px;
+  }
+
+  .concept-reader-header {
+    margin-bottom: 26px;
+  }
+
+  .concept-page .concept-reader-header h1 {
+    font-size: clamp(1.9rem, 2.45vw, 2.2rem);
+  }
+
+  .concept-page .concept-reader-header .lead {
+    margin-top: 9px;
+    line-height: 1.6;
+  }
+
+  .concept-reader-meta {
+    margin-top: 10px;
+  }
+
+  .concept-reading-content .markdown-content {
+    line-height: 1.7;
+  }
+
+  .concept-reading-content .markdown-content > p,
+  .concept-reading-content .markdown-content > ul,
+  .concept-reading-content .markdown-content > ol {
+    margin-bottom: 1.05em;
+  }
+
+  .concept-reading-content h2 {
+    margin-top: 2.2em;
+    margin-bottom: 0.65em;
+    font-size: 1.32rem;
+  }
+
+  .concept-reading-content h3 {
+    margin-top: 1.7em;
+    margin-bottom: 0.58em;
+    font-size: 1.05rem;
+  }
+
+  /* Root density is smaller on desktop, but code must stay readable. */
+  .markdown-content pre,
+  .concept-reading-content pre,
+  .result-answer pre,
+  .answer-block pre {
+    font-size: 0.96rem;
+    line-height: 1.58;
+  }
+
+  .concept-reading-workspace .concept-learning-rail[data-collapsed='true'] .rail-collapse-toggle {
+    font-size: 0.82rem;
+  }
+}
+
+/* At wide desktop widths, reserve the original rail track even when collapsed.
+ * The button remains small, but the article and right-side TOC no longer jump
+ * left toward the visual center. */
+@media (min-width: 1281px) {
+  .concept-reading-workspace:has(.concept-learning-rail[data-collapsed='true']) {
+    grid-template-columns: 220px minmax(0, 760px) 190px;
+    column-gap: 44px;
+    width: min(1300px, calc(100% - 64px));
+  }
+
+  .concept-reading-workspace .concept-learning-rail[data-collapsed='true'] {
+    justify-self: start;
+  }
+}

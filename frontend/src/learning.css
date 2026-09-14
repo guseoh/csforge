@@ -423,8 +423,9 @@
 }
 
 .learning-page {
-  width: min(1180px, 100%);
+  width: min(1080px, 100%);
   margin: 0 auto;
+  text-align: left;
 }
 
 .learning-index-header {

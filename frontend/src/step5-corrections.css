@@ -1,0 +1,417 @@
+/* Step 5-B~F — final correction pass after the learning-first rebaseline.
+ *
+ * Keep this layer focused on light-theme contrast, learning code/table/callout
+ * treatment, and the Concept rail/TOC affordance. Route structure and content
+ * wording remain unchanged until the dedicated content experience pass.
+ */
+
+/* 5-B — Light contrast: retire dark-theme literal colors that still leak into
+ * current learning surfaces. */
+.review-summary-grid div,
+.history-row,
+.quiz-resume-banner,
+.quiz-config-panel,
+.quiz-setup-grid,
+.quiz-question-card,
+.quiz-result-question,
+.quiz-accuracy-card,
+.quiz-result-stat-grid > div,
+.quiz-stat-grid div,
+.quiz-breakdown,
+.result-answer,
+.quiz-result-question details,
+.self-check-banner {
+  border-color: var(--border-subtle);
+  color: var(--text-default);
+  background: var(--surface-page);
+}
+
+.review-summary-grid span,
+.history-row,
+.history-row time,
+.quiz-resume-banner span,
+.quiz-breakdown span,
+.quiz-setup-grid label,
+.quiz-session-meta,
+.quiz-review-toggle,
+.quiz-accuracy-card span,
+.quiz-result-stat-grid span,
+.quiz-stat-grid span,
+.quiz-result-question > .section-heading strong,
+.self-check-banner span {
+  color: var(--text-muted);
+}
+
+.review-summary-grid strong,
+.review-page .review-list-item strong,
+.review-page .review-list-item h2,
+.review-page .review-list-item h3,
+.review-page .review-list-item a,
+.quiz-quick-presets strong,
+.quiz-resume-banner strong,
+.quiz-breakdown strong,
+.quiz-result-stat-grid strong,
+.quiz-stat-grid strong,
+.quiz-question-card strong,
+.quiz-result-question strong,
+.result-answer strong,
+.self-check-banner strong {
+  color: var(--text-strong);
+}
+
+.review-page .review-list-item,
+.review-page .review-list-item p,
+.review-page .review-list-item span,
+.review-page .review-list-item time {
+  color: var(--text-default);
+}
+
+.review-page .review-row-meta,
+.review-page .review-row-meta span,
+.review-page .review-list-item small {
+  color: var(--text-muted);
+}
+
+.history-row strong {
+  color: var(--state-warning);
+}
+
+.quiz-accuracy-card {
+  border-color: var(--border-default);
+  background: var(--surface-elevated);
+}
+
+.quiz-accuracy-card strong {
+  color: var(--text-strong);
+}
+
+.quiz-result-stat-grid .pending-stat,
+.self-check-banner {
+  border-color: #e4cf9d;
+  background: #fffaf0;
+}
+
+.quiz-config-panel,
+.quiz-setup-grid {
+  background: var(--surface-elevated);
+}
+
+.choice-button,
+.question-nav-button {
+  border-color: var(--border-default);
+  color: var(--text-default);
+  background: var(--surface-page);
+}
+
+.choice-button:hover,
+.choice-button.selected,
+.question-nav-button:hover {
+  color: var(--text-strong);
+  background: var(--surface-interactive);
+}
+
+.question-nav-button.current {
+  border-color: var(--accent);
+  color: var(--accent-contrast);
+  background: var(--accent);
+}
+
+.quiz-progress {
+  background: var(--border-subtle);
+}
+
+.result-answer,
+.quiz-result-question details {
+  background: var(--surface-elevated);
+}
+
+.result-answer strong,
+.quiz-result-question details summary {
+  color: var(--accent-strong);
+}
+
+.related-list a {
+  border-bottom-color: var(--border-subtle);
+  color: var(--text-default);
+}
+
+.related-list a:hover {
+  color: var(--accent-strong);
+}
+
+.related-list a span,
+.area-progress-note {
+  color: var(--text-muted);
+}
+
+/* Final Area summary contrast correction after browser QA. */
+.guide-summary-stats strong {
+  color: var(--text-default);
+  font-size: 0.82rem;
+}
+
+.guide-summary-stats span {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+/* 5-C — Code should support the explanation rather than dominate it. */
+.markdown-content :not(pre) > code,
+.result-answer :not(pre) > code,
+.quiz-prompt :not(pre) > code,
+.answer-block :not(pre) > code {
+  padding: 0.06em 0.2em;
+  border: 0;
+  border-radius: 3px;
+  color: #34404c;
+  background: #eef1f4;
+  font-size: 0.92em;
+  font-weight: 500;
+}
+
+.markdown-content pre,
+.concept-reading-content pre,
+.result-answer pre,
+.answer-block pre {
+  position: relative;
+  overflow-x: auto;
+  max-width: 100%;
+  margin: 1.35em 0 1.65em;
+  padding: 13px 15px;
+  border: 1px solid #e2e6ea;
+  border-radius: 5px;
+  color: #303942;
+  background: #f7f8f9;
+  font-size: 0.92rem;
+  line-height: 1.62;
+  box-shadow: none;
+}
+
+.markdown-content pre code,
+.concept-reading-content pre code,
+.result-answer pre code,
+.answer-block pre code {
+  padding: 0;
+  border: 0;
+  color: inherit;
+  background: transparent;
+  font-size: inherit;
+  font-weight: 400;
+}
+
+.concept-reading-content pre:has(code.language-java) {
+  padding-top: 31px;
+  border-color: #e2e6ea;
+  background: #f7f8f9;
+}
+
+.concept-reading-content pre:has(code.language-java)::before {
+  top: 10px;
+  left: 16px;
+  color: #7f8993;
+  font-family: var(--font-sans);
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: none;
+  content: 'Java';
+}
+
+.concept-reading-content pre code.language-java .code-keyword,
+.concept-reading-content pre code.language-java .code-type,
+.concept-reading-content pre code.language-java .code-annotation { color: #465d73; }
+.concept-reading-content pre code.language-java .code-string,
+.concept-reading-content pre code.language-java .code-number { color: #4b5560; }
+.concept-reading-content pre code.language-java .code-comment { color: #626d78; }
+
+/* 5-D — Structured learning elements: calmer callouts and scan-friendly tables. */
+.markdown-content blockquote,
+.concept-reading-content blockquote {
+  max-width: var(--reading-measure);
+  margin: 1.45em 0 1.7em;
+  padding: 2px 0 2px 14px;
+  border: 0;
+  border-left: 2px solid var(--border-strong);
+  border-radius: 0;
+  color: var(--text-default);
+  background: transparent;
+  line-height: 1.68;
+}
+
+/* Canonical Concept packs commonly open with a learning objective. It is
+ * orientation prose, not a warning or a second hero panel. */
+.concept-reading-content .markdown-content > blockquote:first-child {
+  margin: 0 0 2em;
+  padding: 0;
+  border: 0;
+  color: var(--text-default);
+  background: transparent;
+}
+
+.markdown-content blockquote p,
+.concept-reading-content blockquote p {
+  margin: 0;
+}
+
+.markdown-content table,
+.concept-reading-content table {
+  display: table;
+  width: 100%;
+  max-width: 760px;
+  min-width: 0;
+  margin: 1.4em 0 1.8em;
+  overflow: visible;
+  border: 0;
+  border-top: 1px solid var(--border-default);
+  border-bottom: 1px solid var(--border-default);
+  border-radius: 0;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: var(--text-default);
+  background: var(--surface-page);
+  font-size: 0.84rem;
+  line-height: 1.55;
+}
+
+.markdown-content th,
+.markdown-content td,
+.concept-reading-content th,
+.concept-reading-content td {
+  padding: 9px 12px;
+  border: 0;
+  border-bottom: 1px solid var(--border-subtle);
+  color: var(--text-default);
+  background: var(--surface-page);
+  text-align: left;
+  vertical-align: top;
+}
+
+.markdown-content th,
+.concept-reading-content th {
+  color: var(--text-strong);
+  background: #f6f7f8;
+  font-weight: 700;
+}
+
+.markdown-content tbody td:first-child,
+.concept-reading-content tbody td:first-child {
+  color: var(--text-strong);
+  font-weight: 600;
+}
+
+.markdown-content tr:last-child > *,
+.concept-reading-content tr:last-child > * {
+  border-bottom: 0;
+}
+
+.markdown-content tbody tr:hover td,
+.concept-reading-content tbody tr:hover td {
+  background: #fafbfd;
+}
+
+.answer-block,
+.interview-recall-answer {
+  border-color: var(--border-subtle);
+  color: var(--text-default);
+  background: var(--surface-elevated);
+}
+
+/* 5-E — The collapsed rail is a quiet navigation affordance, not a floating card. */
+.concept-reading-workspace .concept-learning-rail[data-collapsed='true'] {
+  width: 42px;
+  height: 30px;
+  max-height: 30px;
+  padding: 0;
+  border-right: 0;
+}
+
+.concept-reading-workspace:has(.concept-learning-rail[data-collapsed='true']) {
+  grid-template-columns: 42px minmax(0, 760px) 190px;
+  column-gap: 24px;
+}
+
+.concept-reading-workspace .concept-learning-rail[data-collapsed='true'] .rail-collapse-toggle {
+  right: 0;
+  width: 42px;
+  height: 30px;
+  border-color: transparent;
+  border-radius: 4px;
+  color: var(--text-muted);
+  background: transparent;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.concept-reading-workspace .concept-learning-rail[data-collapsed='true'] .rail-collapse-toggle:hover,
+.concept-reading-workspace .concept-learning-rail[data-collapsed='true'] .rail-collapse-toggle:focus-visible {
+  border-color: var(--border-subtle);
+  color: var(--text-strong);
+  background: var(--surface-interactive);
+}
+
+.concept-toc {
+  padding-left: 14px;
+  border-left: 1px solid var(--border-subtle);
+}
+
+.concept-toc-title {
+  color: var(--text-default);
+  font-weight: 700;
+}
+
+.concept-toc a {
+  color: var(--text-muted);
+}
+
+.concept-toc a:hover,
+.concept-toc a.active {
+  color: var(--text-strong);
+}
+
+@media (max-width: 1280px) {
+  .concept-reading-workspace:has(.concept-learning-rail[data-collapsed='true']) {
+    grid-template-columns: 42px minmax(0, 760px);
+    column-gap: 20px;
+  }
+}
+
+@media (max-width: 900px) {
+  .concept-reading-workspace .concept-learning-rail[data-collapsed='true'] {
+    width: 100%;
+    height: auto;
+    max-height: none;
+  }
+
+  .concept-reading-workspace:has(.concept-learning-rail[data-collapsed='true']) {
+    display: block;
+    width: 100%;
+  }
+
+  .concept-reading-workspace .concept-learning-rail[data-collapsed='true'] .rail-collapse-toggle {
+    width: 100%;
+    height: 40px;
+    justify-content: space-between;
+    padding: 0 12px;
+    border-color: var(--border-subtle);
+    font-size: 0.84rem;
+  }
+}
+
+@media (max-width: 680px) {
+  .markdown-content table,
+  .concept-reading-content table {
+    display: block;
+    overflow-x: auto;
+    width: 100%;
+    min-width: 0;
+    border-radius: 7px;
+  }
+
+  .markdown-content pre,
+  .concept-reading-content pre,
+  .result-answer pre,
+  .answer-block pre {
+    padding: 13px 14px;
+    font-size: 0.86rem;
+  }
+}

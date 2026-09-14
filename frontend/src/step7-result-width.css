@@ -1,0 +1,58 @@
+/* Step 7 browser QA correction — let result workflows use the result workspace.
+ *
+ * Concept pages intentionally constrain `.detail-section` to reading width. Quiz results
+ * reuse that class for answer review sections, so the Concept constraint must be scoped out
+ * here. Comparison/review rows can use the wider result workspace, while long explanations
+ * keep a readable measure.
+ */
+
+.quiz-result-page-focused {
+  width: min(1160px, calc(100% - 56px));
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.quiz-result-page-focused .detail-section,
+.quiz-result-page-focused .result-attention-section,
+.quiz-result-page-focused .result-breakdown-section {
+  width: 100%;
+  max-width: none;
+}
+
+.quiz-result-page-focused .quiz-result-attention-list,
+.quiz-result-page-focused .correct-result-list,
+.quiz-result-page-focused .quiz-result-question,
+.quiz-result-page-focused .quiz-result-question-body {
+  width: 100%;
+  max-width: none;
+}
+
+.quiz-result-page-focused .result-answer-comparison {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  width: 100%;
+  max-width: none;
+  gap: 12px;
+}
+
+.quiz-result-page-focused .result-explanation,
+.quiz-result-page-focused .result-related-concepts {
+  width: min(880px, 100%);
+  max-width: 880px;
+}
+
+.quiz-result-page-focused .result-explanation .markdown-content,
+.quiz-result-page-focused .result-explanation .markdown-content > p,
+.quiz-result-page-focused .result-explanation .markdown-content > ul,
+.quiz-result-page-focused .result-explanation .markdown-content > ol {
+  max-width: 100%;
+}
+
+@media (max-width: 900px) {
+  .quiz-result-page-focused {
+    width: min(100%, calc(100% - 28px));
+  }
+
+  .quiz-result-page-focused .result-answer-comparison {
+    grid-template-columns: 1fr;
+  }
+}
