@@ -30,6 +30,7 @@ import './home.css'
 import './concept-reader.css'
 import './density.css'
 import './step5-corrections.css'
+import './step6-learning-area.css'
 
 const queryClient = new QueryClient({
   defaultOptions: {
