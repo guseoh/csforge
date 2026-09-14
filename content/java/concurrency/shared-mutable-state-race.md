@@ -14,11 +14,11 @@ references:
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
-    relationNote: shared variable, inter-thread action과 data race의 Java Memory Model 확인
+    relationNote: shared variable, conflicting access, data race와 Java Memory Model 확인
 ---
 # 공유 가변 상태와 Race Condition
 
-동시성 문제는 "thread가 여러 개라서"만 생기는 것이 아닙니다. **여러 thread가 같은 상태를 공유하고, 그 상태를 변경하며, 변경 과정이 서로 겹칠 수 있을 때** 본격적으로 문제가 됩니다.
+Thread가 여러 개 존재하는 것만으로 상태가 깨지는 것은 아닙니다. 문제가 되는 지점은 **둘 이상의 thread가 같은 변경 가능한 상태에 접근하고, 적어도 하나가 그 상태를 쓰며, 필요한 동기화 없이 접근이 겹칠 수 있을 때**입니다.
 
 가장 단순한 예가 `count++`입니다.
 
@@ -32,42 +32,44 @@ class Counter {
 }
 ```
 
-코드는 한 줄이지만 증가라는 동작을 논리적으로 풀어 보면 현재 값을 읽고, 1을 더하고, 새 값을 저장하는 과정입니다.
+소스에서는 한 줄이지만 의미상으로는 현재 값을 읽고, 1을 더하고, 다시 저장하는 read-modify-write입니다.
 
 ![두 thread가 counter 증가를 잃어버리는 interleaving](/learning/java/race-condition.svg)
 
-### 두 thread가 같은 값을 읽으면 증가 하나가 사라질 수 있다
+### 같은 이전 값을 읽으면 갱신 하나가 사라질 수 있다
 
-초기값이 0이라고 해 보겠습니다.
+초기값이 0인 상태에서 두 thread가 다음처럼 겹칠 수 있습니다.
 
 ```text
 Thread A                  Thread B
-   │                         │
-   ├─ count 읽음: 0          │
-   │                         ├─ count 읽음: 0
-   ├─ 0 + 1 = 1             │
-   │                         ├─ 0 + 1 = 1
-   ├─ count = 1             │
-   │                         └─ count = 1
-   ▼
+read count = 0            read count = 0
+compute 1                 compute 1
+write count = 1           write count = 1
+
 최종 count = 1
 ```
 
-증가 메서드는 두 번 호출됐지만 결과는 2가 아니라 1입니다. 이런 현상을 **lost update**라고 합니다.
+메서드는 두 번 호출됐지만 증가 하나가 사라졌습니다. 이런 결과를 **lost update**라고 부를 수 있습니다. 중요한 것은 `++`라는 문법 자체가 아니라, 여러 단계로 이루어진 갱신 전체가 하나의 원자적 경계로 보호되지 않았다는 점입니다.
 
-문제의 핵심은 source code가 한 줄인지가 아닙니다. 여러 thread의 read-modify-write가 하나의 indivisible operation으로 보호되지 않았다는 점입니다.
+### race condition과 JMM의 data race는 같은 말로 뭉개지 않는다
 
-### race condition은 실행 순서에 따라 올바름이 달라지는 문제다
+일반적으로 race condition은 실행 흐름의 상대적인 순서에 따라 프로그램의 올바름이 달라지는 문제를 가리킵니다.
 
-Thread scheduling 순서는 매번 같지 않을 수 있습니다. 어떤 실행에서는 결과가 2가 나오고 어떤 실행에서는 1이 나올 수 있습니다.
+Java Memory Model은 더 구체적으로 같은 shared variable에 대한 두 **conflicting access**가 있고, 서로 다른 thread에서 수행되며, 두 접근이 happens-before로 정렬되지 않았을 때 **data race**가 있다고 정의합니다. Conflicting access는 둘 중 적어도 하나가 write인 같은 변수의 접근입니다.
 
-이처럼 **여러 실행 흐름의 상대적인 timing/interleaving에 따라 프로그램의 올바른 결과가 달라지는 상황**을 race condition으로 이해할 수 있습니다.
+```text
+race condition
+└─ 실행 순서가 결과의 올바름을 좌우하는 넓은 문제
 
-그래서 동시성 버그는 개발 PC에서 100번 정상 동작했다고 사라지지 않습니다. 특정 실행 순서가 드물게 발생하면 운영 부하에서만 보일 수도 있습니다.
+JMM data race
+└─ conflicting shared-memory access가 happens-before로 정렬되지 않은 경우
+```
 
-### 보호해야 하는 것은 변수 하나가 아니라 invariant일 수 있다
+이 구분은 이후 happens-before를 배울 때 중요합니다. 모든 동시성 논리 오류가 반드시 data race 형태인 것은 아니며, data-race-free라고 해서 여러 operation의 업무 invariant가 자동으로 atomic해지는 것도 아닙니다.
 
-재고 예제를 보겠습니다.
+### 보호해야 하는 단위는 필드 하나보다 invariant일 수 있다
+
+재고가 1개 남았다고 해 보겠습니다.
 
 ```java
 if (stock > 0) {
@@ -75,7 +77,7 @@ if (stock > 0) {
 }
 ```
 
-업무 규칙이 "재고는 0 아래로 내려가면 안 된다"라면 `stock` 변수의 read/write 각각만 보는 것으로 부족합니다. **확인과 차감이 하나의 규칙**입니다.
+두 thread가 모두 `stock == 1`을 확인한 뒤 차감하면 "재고는 음수가 되지 않는다"는 규칙이 깨질 수 있습니다. 여기서 보호해야 하는 것은 단순한 `stock` 읽기 한 번이나 쓰기 한 번이 아니라 **확인과 차감을 함께 묶은 상태 전이**입니다.
 
 ```text
 invariant: stock >= 0
@@ -83,49 +85,29 @@ invariant: stock >= 0
 check stock > 0
        │
        └─ decrement stock
+          ↑ 하나의 논리적 경계로 보호 필요
 ```
 
-두 thread가 모두 `stock == 1`을 확인한 뒤 각각 차감하면 invariant가 깨질 수 있습니다. 따라서 critical section을 정할 때는 "어떤 필드에 lock을 붙일까"보다 **어떤 상태 규칙이 한 덩어리로 보호되어야 하는가**를 먼저 봐야 합니다.
+따라서 동기화 도구를 고르기 전에 어떤 값들이 함께 맞아야 하는지, 어떤 read와 write가 하나의 작업으로 보여야 하는지를 먼저 정해야 합니다.
 
-### 공유를 없애는 것도 강력한 해결책이다
+### 공유 자체를 줄이면 경쟁해야 할 상태도 줄어든다
 
-모든 동시성 문제를 lock으로 해결할 필요는 없습니다.
+Lock은 중요한 해결책이지만 유일한 해결책은 아닙니다. Immutable object를 전달하거나, 작업마다 독립된 상태를 사용하거나, 상태를 한 실행 흐름이 소유하고 다른 thread는 메시지를 통해 요청하는 구조라면 같은 mutable state에 대한 경쟁 자체를 줄일 수 있습니다.
 
-- immutable object를 전달한다.
-- task마다 독립 상태를 사용한다.
-- 하나의 owner thread만 상태를 수정하게 한다.
-- message/queue를 통해 변경을 전달한다.
+동시성 설계에서는 "어떤 lock을 붙일까"보다 **이 상태를 정말 여러 thread가 함께 수정해야 하는가**를 먼저 묻는 편이 좋습니다.
 
-공유 mutable state가 줄어들면 race를 만들 수 있는 표면도 줄어듭니다.
+### 가시성과 원자성은 다른 문제다
 
-### visibility와 atomicity는 서로 다른 문제다
-
-한 thread가 쓴 최신 값이 다른 thread에게 **보이는가**와 여러 단계의 변경이 **하나의 원자적 동작인가**는 다른 질문입니다.
-
-`volatile int count`로 만들면 visibility/order 관련 보장은 생기지만 `count++` 전체를 하나의 atomic update로 바꾸지는 않습니다.
+한 thread의 write가 다른 thread에 올바르게 관찰되는지와, 여러 단계의 갱신 사이에 다른 thread가 끼어들 수 없는지는 별개의 질문입니다.
 
 ```text
-visibility: 다른 thread가 write 결과를 볼 수 있는가?
-atomicity: 여러 단계가 중간에 끼어들 수 없는 하나의 단위인가?
+visibility / ordering
+→ 한 thread의 write를 다른 thread가 어떤 규칙으로 관찰하는가
+
+atomicity
+→ 여러 단계를 하나의 분할 불가능한 상태 전이로 다뤄야 하는가
 ```
 
-이 둘을 구분해야 `volatile`, `synchronized`, `AtomicInteger`를 적절히 선택할 수 있습니다.
+그래서 `volatile int count`는 `count++` 전체를 atomic increment로 만들지 않습니다. 이후의 `volatile`, `synchronized`, atomic class는 각각 이 두 문제를 어떤 범위에서 해결하는지 구분해서 배워야 합니다.
 
-### 문제를 풀 때 확인할 것
-
-1. 여러 thread가 같은 상태를 공유하는지 찾습니다.
-2. 그 상태가 변경 가능한지 확인합니다.
-3. 한 줄 코드를 read/compute/write 같은 실제 논리 단계로 풀어 봅니다.
-4. 어떤 interleaving에서 결과가 깨지는지 표로 적습니다.
-5. 보호해야 할 business invariant의 범위를 정합니다.
-
-### 자주 헷갈리는 부분
-
-- source code 한 줄이 자동으로 atomic한 것은 아닙니다.
-- 최신 값이 보인다고 복합 갱신까지 안전한 것은 아닙니다.
-- thread-safe collection을 사용해도 여러 operation으로 만든 업무 규칙이 자동으로 atomic해지지 않습니다.
-- race는 반드시 예외를 던지는 형태로 나타나는 것이 아닙니다. 조용히 잘못된 값이 남을 수 있습니다.
-
-### 학습 후 스스로 설명해 보기
-
-공유 가변 상태를 여러 thread가 동시에 읽고 수정하면 실행 순서에 따라 lost update 같은 race condition이 발생할 수 있습니다. `count++`도 read-modify-write의 복합 동작이어서 자동으로 atomic하지 않습니다. 해결할 때는 변수 하나가 아니라 재고 확인과 차감처럼 실제 invariant의 경계를 찾고, 공유 제거·lock·atomic operation 등 그 경계에 맞는 방법을 선택해야 합니다.
+동시성 버그를 분석할 때는 공유되는 mutable state를 찾고, 한 줄 연산을 실제 read/compute/write 단계로 풀어 본 뒤, 어떤 interleaving에서 invariant가 깨지는지 그려 보세요. 해결책은 그 다음에 선택해야 합니다.
