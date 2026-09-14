@@ -24,6 +24,7 @@ import './daily-loop-guide.css'
 import './search-guide.css'
 import './learning-content.css'
 import './auth.css'
+import './ui-refresh.css'
 
 const queryClient = new QueryClient({
   defaultOptions: {

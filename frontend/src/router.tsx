@@ -1,5 +1,6 @@
 import { Link, Outlet, createRootRoute, createRoute, createRouter, lazyRouteComponent, useLocation, useNavigate } from '@tanstack/react-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useState } from 'react'
 import { SearchPalette } from './components/SearchPalette'
 import { AuthGate } from './components/AuthGate'
 import { getAuthSession, logout } from './lib/auth-api'
@@ -31,6 +32,7 @@ const headerNavigation = [
 ] as const
 
 function AppLayout() {
+  const [mobileNavOpen, setMobileNavOpen] = useState(false)
   const location = useLocation()
   if (location.pathname === '/login') {
     return <main className="main-content"><Outlet /></main>
@@ -41,7 +43,7 @@ function AppLayout() {
       <header className="topbar">
         <div className="topbar-inner">
           <Link className="brand" to="/"><span className="brand-mark" aria-hidden="true">CF</span><span>CSForge</span></Link>
-          <nav className="topbar-nav" aria-label="주요 학습 메뉴">
+          <nav className={`topbar-nav${mobileNavOpen ? ' mobile-open' : ''}`} id="primary-navigation" aria-label="주요 학습 메뉴">
             {headerNavigation.map((item) => (
               <Link
                 key={item.to}
@@ -49,6 +51,7 @@ function AppLayout() {
                 activeProps={{ className: 'topbar-nav-link active' }}
                 to={item.to}
                 search={item.search}
+                onClick={() => setMobileNavOpen(false)}
               >
                 {item.label}
               </Link>
@@ -57,6 +60,16 @@ function AppLayout() {
           <div className="topbar-actions">
             <SearchPalette />
             <AuthActions />
+            <button
+              className="mobile-menu-toggle"
+              type="button"
+              aria-controls="primary-navigation"
+              aria-expanded={mobileNavOpen}
+              aria-label={mobileNavOpen ? '주요 메뉴 닫기' : '주요 메뉴 열기'}
+              onClick={() => setMobileNavOpen((open) => !open)}
+            >
+              <span aria-hidden="true">{mobileNavOpen ? '×' : '☰'}</span>
+            </button>
           </div>
         </div>
       </header>
@@ -100,15 +113,15 @@ function AuthActions() {
 }
 
 function LoadingPage() {
-  return <p className="route-message">화면을 불러오는 중입니다…</p>
+  return <div className="route-state" role="status"><span className="route-state-mark" aria-hidden="true" />페이지를 불러오는 중입니다…</div>
 }
 
 function RouteErrorPage() {
-  return <p className="route-message error">화면을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.</p>
+  return <div className="route-state route-state-error" role="alert"><strong>페이지를 불러오지 못했습니다.</strong><button className="secondary-button" type="button" onClick={() => window.location.reload()}>다시 시도</button></div>
 }
 
 function NotFoundPage() {
-  return <p className="route-message">요청한 화면을 찾을 수 없습니다.</p>
+  return <div className="route-state"><strong>요청한 페이지를 찾을 수 없습니다.</strong><Link className="secondary-button" to="/">대시보드로 이동</Link></div>
 }
 
 const rootRoute = createRootRoute({

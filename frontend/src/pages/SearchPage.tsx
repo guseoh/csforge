@@ -1,4 +1,4 @@
-import type { FormEvent, ReactNode } from 'react'
+import { useState, type FormEvent, type ReactNode } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useNavigate, useSearch } from '@tanstack/react-router'
 import { ErrorState, PageSkeleton } from '../components/AsyncStates'
@@ -76,6 +76,7 @@ export function SearchPage() {
   const selectedTopics = csvSearchValues(search.topics)
   const selectedLevels = csvSearchValues(search.levels)
   const activeFilterCount = selectedTypes.length + selectedAreas.length + selectedTopics.length + selectedLevels.length
+  const [searchFiltersOpen, setSearchFiltersOpen] = useState(true)
   const visibleTopicGroups = filters.data?.filter((area) => selectedAreas.includes(area.areaSlug)
     || area.topics.some((topic) => selectedTopics.includes(topic.contentKey))) ?? []
   const showTopicRail = visibleTopicGroups.length > 0
@@ -133,7 +134,16 @@ export function SearchPage() {
         <button className="primary-button" type="submit">검색</button>
       </form>
 
-      <div className="search-primary-filters" aria-label="주요 검색 필터">
+      <details
+        className="search-filter-disclosure"
+        open={searchFiltersOpen}
+        onToggle={(event) => setSearchFiltersOpen(event.currentTarget.open)}
+      >
+        <summary>
+          <span><span className="eyebrow">검색 범위</span><strong>주요 필터</strong></span>
+          <span>{activeFilterCount > 0 ? `${activeFilterCount}개 선택됨` : '유형·레벨·영역'} <span aria-hidden="true">⌄</span></span>
+        </summary>
+        <div className="search-primary-filters" aria-label="주요 검색 필터">
         <div className="search-filter-cluster">
           <span className="search-filter-label">유형</span>
           <div className="search-filter-chips">
@@ -194,7 +204,8 @@ export function SearchPage() {
             필터 {activeFilterCount}개 초기화
           </button>
         )}
-      </div>
+        </div>
+      </details>
 
       <div className={`search-layout search-guide-layout${showTopicRail ? ' with-topic-rail' : ''}`}>
         {showTopicRail && (

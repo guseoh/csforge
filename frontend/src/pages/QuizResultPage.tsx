@@ -7,6 +7,7 @@ import { ApiRequestError } from '../lib/http'
 import { getQuizResult, retryWrongQuiz, selfCheckQuizQuestion, type QuizQuestionResult } from '../lib/quiz-api'
 import { defaultQuizSearch } from '../lib/quiz-search'
 import { hasUnresolvedSelfCheck } from '../lib/quiz-result'
+import { compactMarkdownPreview } from '../lib/markdown'
 
 function sourceLabel(source: string) {
   return ({ STANDARD: '일반 문제', WRONG_RETRY: '오답 다시 풀기', REVIEW: '복습' } as Record<string, string>)[source] ?? source
@@ -88,7 +89,7 @@ function TextAnswerReview({ question }: { question: QuizQuestionResult }) {
   )
 }
 
-function QuestionResultCard({ quizId, question }: { quizId: number; question: QuizQuestionResult }) {
+function QuestionResultCard({ quizId, question, defaultOpen = false }: { quizId: number; question: QuizQuestionResult; defaultOpen?: boolean }) {
   const queryClient = useQueryClient()
   const selfCheckMutation = useMutation({
     mutationFn: (correct: boolean) => selfCheckQuizQuestion(quizId, question.questionId, correct),
@@ -101,67 +102,81 @@ function QuestionResultCard({ quizId, question }: { quizId: number; question: Qu
       : question.gradingStatus === 'UNANSWERED'
         ? '미답변'
         : '오답'
+  const stateClass = question.correct === true ? 'correct' : question.correct === false ? 'wrong' : 'pending'
+  const detailHint = question.gradingStatus === 'SELF_CHECK_REQUIRED'
+    ? '판정 필요'
+    : question.correct === false || question.gradingStatus === 'UNANSWERED'
+      ? '답안·해설 보기'
+      : '답안 확인'
 
   return (
-    <article
-      className={`quiz-result-question ${question.correct === true ? 'correct' : question.correct === false ? 'wrong' : 'pending'}`}
+    <details
+      className={`quiz-result-question ${stateClass}`}
+      open={defaultOpen}
       data-self-check-target={question.gradingStatus === 'SELF_CHECK_REQUIRED' ? 'true' : undefined}
     >
-      <div className="section-heading">
-        <span className="chip">Q{question.position + 1}</span>
-        <span className={`result-status result-status-${question.correct === true ? 'correct' : question.correct === false ? 'wrong' : 'pending'}`}>
-          {stateLabel}
+      <summary className="quiz-result-question-summary">
+        <span className="quiz-result-question-number">Q{question.position + 1}</span>
+        <span className="quiz-result-question-summary-copy">
+          <strong>{compactMarkdownPreview(question.promptMarkdown, 180)}</strong>
+          <span className="quiz-result-question-summary-meta">
+            <span className={`result-status result-status-${stateClass}`}>{stateLabel}</span>
+            <span>{detailHint}</span>
+          </span>
         </span>
-      </div>
+        <span className="quiz-result-question-chevron" aria-hidden="true">⌄</span>
+      </summary>
 
-      <MarkdownContent className="quiz-prompt">{question.promptMarkdown}</MarkdownContent>
+      <div className="quiz-result-question-body">
+        <MarkdownContent className="quiz-prompt">{question.promptMarkdown}</MarkdownContent>
 
-      {question.questionType === 'MULTIPLE_CHOICE'
-        ? <MultipleChoiceAnswerReview question={question} />
-        : <TextAnswerReview question={question} />}
+        {question.questionType === 'MULTIPLE_CHOICE'
+          ? <MultipleChoiceAnswerReview question={question} />
+          : <TextAnswerReview question={question} />}
 
-      {question.gradingStatus === 'SELF_CHECK_REQUIRED' && (
-        <div className="self-check-actions result-self-check-actions">
-          <span className="helper-text">내 답과 모범 답안을 비교한 뒤 직접 판정하세요.</span>
-          <button
-            className="secondary-button"
-            type="button"
-            disabled={selfCheckMutation.isPending}
-            onClick={() => selfCheckMutation.mutate(true)}
-          >
-            맞았어요
-          </button>
-          <button
-            className="secondary-button"
-            type="button"
-            disabled={selfCheckMutation.isPending}
-            onClick={() => selfCheckMutation.mutate(false)}
-          >
-            틀렸어요
-          </button>
-        </div>
-      )}
-
-      {question.explanationMarkdown && (
-        <section className="result-explanation" aria-label="문제 해설">
-          <p className="eyebrow">왜 이렇게 판단하나</p>
-          <MarkdownContent>{question.explanationMarkdown}</MarkdownContent>
-        </section>
-      )}
-
-      {question.concepts.length > 0 && (
-        <div className="result-related-concepts">
-          <span className="helper-text">관련 개념 다시 보기</span>
-          <div className="chip-row">
-            {question.concepts.map((concept) => (
-              <Link className="chip text-link" key={concept.id} to="/concepts/$conceptId" params={{ conceptId: String(concept.id) }}>
-                {concept.title}
-              </Link>
-            ))}
+        {question.gradingStatus === 'SELF_CHECK_REQUIRED' && (
+          <div className="self-check-actions result-self-check-actions">
+            <span className="helper-text">내 답과 모범 답안을 비교한 뒤 직접 판정하세요.</span>
+            <button
+              className="secondary-button"
+              type="button"
+              disabled={selfCheckMutation.isPending}
+              onClick={() => selfCheckMutation.mutate(true)}
+            >
+              맞았어요
+            </button>
+            <button
+              className="secondary-button"
+              type="button"
+              disabled={selfCheckMutation.isPending}
+              onClick={() => selfCheckMutation.mutate(false)}
+            >
+              틀렸어요
+            </button>
           </div>
-        </div>
-      )}
-    </article>
+        )}
+
+        {question.explanationMarkdown && (
+          <section className="result-explanation" aria-label="문제 해설">
+            <p className="eyebrow">왜 이렇게 판단하나</p>
+            <MarkdownContent>{question.explanationMarkdown}</MarkdownContent>
+          </section>
+        )}
+
+        {question.concepts.length > 0 && (
+          <div className="result-related-concepts">
+            <span className="helper-text">관련 개념 다시 보기</span>
+            <div className="chip-row">
+              {question.concepts.map((concept) => (
+                <Link className="chip text-link" key={concept.id} to="/concepts/$conceptId" params={{ conceptId: String(concept.id) }}>
+                  {concept.title}
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </details>
   )
 }
 
@@ -274,7 +289,7 @@ export function QuizResultPage() {
             <span className="result-count">{selfCheckQuestions.length}개</span>
           </div>
           <div className="quiz-result-list quiz-result-attention-list">
-            {selfCheckQuestions.map((question) => <QuestionResultCard key={question.questionId} quizId={quizId} question={question} />)}
+            {selfCheckQuestions.map((question) => <QuestionResultCard key={question.questionId} quizId={quizId} question={question} defaultOpen />)}
           </div>
         </section>
       )}
@@ -286,7 +301,7 @@ export function QuizResultPage() {
         </div>
         {reviewQuestions.length > 0 ? (
           <div className="quiz-result-list quiz-result-attention-list">
-            {reviewQuestions.map((question) => <QuestionResultCard key={question.questionId} quizId={quizId} question={question} />)}
+            {reviewQuestions.map((question, index) => <QuestionResultCard key={question.questionId} quizId={quizId} question={question} defaultOpen={index === 0} />)}
           </div>
         ) : (
           <div className="result-clear-state"><strong>다시 확인할 오답이나 미답변이 없습니다.</strong><span>정답 문항의 해설이 필요하면 아래에서 펼쳐볼 수 있습니다.</span></div>
@@ -322,7 +337,7 @@ export function QuizResultPage() {
         <details className="correct-result-disclosure">
           <summary><span><span className="eyebrow">필요할 때만</span><strong>정답 문항 {correctQuestions.length}개 보기</strong></span><span>해설과 답안 확인 ⌄</span></summary>
           <div className="quiz-result-list correct-result-list">
-            {correctQuestions.map((question) => <QuestionResultCard key={question.questionId} quizId={quizId} question={question} />)}
+            {correctQuestions.map((question, index) => <QuestionResultCard key={question.questionId} quizId={quizId} question={question} defaultOpen={index === 0} />)}
           </div>
         </details>
       )}

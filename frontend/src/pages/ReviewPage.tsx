@@ -112,7 +112,7 @@ export function ReviewPage() {
                       <span className={`chip state-badge review-timing-${timing.className}`}>{timing.label}</span>
                     </div>
                   </div>
-                  <div className="wrong-note-metrics"><strong>{item.dueAt ? new Date(item.dueAt).toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' }) : '정리 완료'}</strong><span>{timing.label}</span></div>
+                  <div className="wrong-note-metrics"><strong>{item.dueAt ? new Date(item.dueAt).toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' }) : '정리 완료'}</strong><span>{timing.label}</span><span className="review-row-action" aria-hidden="true">오답 기록 열기 →</span></div>
                 </Link>
               })}</div>}
 

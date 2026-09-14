@@ -1,10 +1,16 @@
-const backendOrigin = process.env.CSFORGE_BACKEND_ORIGIN ?? 'http://localhost:8080'
+import { routes, type VercelConfig } from '@vercel/config/v1'
 
-export const config = {
+const backendOrigin =
+  process.env.CSFORGE_BACKEND_ORIGIN ?? 'http://localhost:8080'
+
+export const config: VercelConfig = {
   rewrites: [
-    { source: '/api/:path*', destination: `${backendOrigin}/api/:path*` },
-    { source: '/oauth2/:path*', destination: `${backendOrigin}/oauth2/:path*` },
-    { source: '/login/oauth2/:path*', destination: `${backendOrigin}/login/oauth2/:path*` },
-    { source: '/(.*)', destination: '/index.html' },
+    routes.rewrite('/api/:path*', `${backendOrigin}/api/:path*`),
+    routes.rewrite('/oauth2/:path*', `${backendOrigin}/oauth2/:path*`),
+    routes.rewrite(
+      '/login/oauth2/:path*',
+      `${backendOrigin}/login/oauth2/:path*`,
+    ),
+    routes.rewrite('/(.*)', '/index.html'),
   ],
 }
