@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, useNavigate, useSearch } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { ErrorState, PageSkeleton } from '../components/AsyncStates'
+import { getAuthSession } from '../lib/auth-api'
 import { getWrongNotes, type WrongAnswerAnalysisStatus, type WrongNoteStatus } from '../lib/wrong-note-api'
 import type { QuestionDifficulty } from '../lib/quiz-api'
 import { getLearningArea, getLearningAreas } from '../lib/learning-api'
@@ -51,8 +52,16 @@ export function WrongNotesPage() {
   const search = useSearch({ from: '/wrong-notes' })
   const navigate = useNavigate({ from: '/wrong-notes' })
   const [advancedFiltersOpen, setAdvancedFiltersOpen] = useState(false)
+  const sessionQuery = useQuery({
+    queryKey: ['auth-session'],
+    queryFn: getAuthSession,
+    retry: false,
+    staleTime: 5 * 60 * 1000,
+  })
+  const aiAvailable = sessionQuery.data?.mode === 'LOCAL'
+  const effectiveAnalysis = aiAvailable ? search.analysis : 'ALL'
   const query = useQuery({
-    queryKey: ['wrong-notes', search],
+    queryKey: ['wrong-notes', search, { aiAvailable }],
     queryFn: () => getWrongNotes({
       page: search.page,
       size: 20,
@@ -62,7 +71,7 @@ export function WrongNotesPage() {
       difficulty: (search.difficulty || undefined) as QuestionDifficulty | undefined,
       status: (search.status || undefined) as WrongNoteStatus | undefined,
       review: search.review,
-      analysis: search.analysis as Exclude<WrongAnswerAnalysisStatus, 'PROVIDER_NOT_CONFIGURED'>,
+      analysis: effectiveAnalysis as Exclude<WrongAnswerAnalysisStatus, 'PROVIDER_NOT_CONFIGURED'>,
       sort: search.sort,
     }),
   })
@@ -85,7 +94,8 @@ export function WrongNotesPage() {
   const updatePage = (page: number) => void navigate({
     search: (current) => withWrongNotePage(current, page),
   })
-  const advancedFilterCount = countAdvancedWrongNoteFilters(search)
+  const effectiveSearch = aiAvailable ? search : { ...search, analysis: 'ALL' }
+  const advancedFilterCount = countAdvancedWrongNoteFilters(effectiveSearch)
   const hasFilterSelection = Boolean(
     search.status
     || search.review !== 'ALL'
@@ -143,13 +153,13 @@ export function WrongNotesPage() {
                 <option value="">모든 난이도</option><option value="EASY">쉬움</option><option value="MEDIUM">보통</option><option value="HARD">어려움</option>
               </select>
             </label>
-            <label>AI 분석
+            {aiAvailable && <label>AI 분석
               <select value={search.analysis} onChange={(event) => updateFilter('analysis', event.target.value)}><option value="ALL">전체</option><option value="NOT_REQUESTED">미요청</option><option value="PENDING">대기 중</option><option value="PROCESSING">분석 중</option><option value="COMPLETED">완료</option><option value="FAILED">실패</option></select>
-            </label>
+            </label>}
           </div>
         </fieldset>}
       </div>}
-      {query.data.items.length === 0 ? <div className="state-card wrong-note-empty"><span className="empty-state-icon" aria-hidden="true">↺</span><strong>{hasFilterSelection ? '조건에 맞는 오답 노트가 없습니다.' : '아직 오답 노트가 없습니다.'}</strong><span>{hasFilterSelection ? '필터를 조정하거나 전체 오답으로 돌아가 보세요.' : '문제를 제출하면 틀린 문제가 이곳에 쌓이고, 다음 복습 시점까지 이어집니다.'}</span>{!hasFilterSelection && <Link className="primary-button" to="/quiz" search={defaultQuizSearch}>문제 풀러 가기 <span aria-hidden="true">→</span></Link>}</div> : <div className="concept-list">{query.data.items.map((item) => <article className="concept-list-item wrong-note-list-item" key={item.questionId}><div className="concept-list-main"><h3><Link className="wrong-note-question-link" to="/wrong-notes/$questionId" params={{ questionId: String(item.questionId) }}>{compactMarkdownPreview(item.promptMarkdown)}</Link></h3><ConceptContext concepts={item.concepts} /><div className="wrong-note-row-meta"><span>{questionTypeLabels[item.questionType]} · {difficultyLabels[item.difficulty]}</span><span className={`state-badge state-${item.status.toLowerCase()}`}>{wrongNoteStatusLabels[item.status]}</span>{item.aiAnalysisStatus !== 'NOT_REQUESTED' && <span className={`state-badge ai-state-${item.aiAnalysisStatus.toLowerCase()}`}>{analysisLabels[item.aiAnalysisStatus]}</span>}</div></div><div className="wrong-note-metrics"><strong>오답 {item.wrongCount}회</strong><span>{item.dueAt ? `복습 ${new Date(item.dueAt).toLocaleDateString('ko-KR')}` : '복습 일정 없음'}</span><span className="wrong-note-row-action" aria-hidden="true">오답 기록 열기 →</span></div></article>)}</div>}
+      {query.data.items.length === 0 ? <div className="state-card wrong-note-empty"><span className="empty-state-icon" aria-hidden="true">↺</span><strong>{hasFilterSelection ? '조건에 맞는 오답 노트가 없습니다.' : '아직 오답 노트가 없습니다.'}</strong><span>{hasFilterSelection ? '필터를 조정하거나 전체 오답으로 돌아가 보세요.' : '문제를 제출하면 틀린 문제가 이곳에 쌓이고, 다음 복습 시점까지 이어집니다.'}</span>{!hasFilterSelection && <Link className="primary-button" to="/quiz" search={defaultQuizSearch}>문제 풀러 가기 <span aria-hidden="true">→</span></Link>}</div> : <div className="concept-list">{query.data.items.map((item) => <article className="concept-list-item wrong-note-list-item" key={item.questionId}><div className="concept-list-main"><h3><Link className="wrong-note-question-link" to="/wrong-notes/$questionId" params={{ questionId: String(item.questionId) }}>{compactMarkdownPreview(item.promptMarkdown)}</Link></h3><ConceptContext concepts={item.concepts} /><div className="wrong-note-row-meta"><span>{questionTypeLabels[item.questionType]} · {difficultyLabels[item.difficulty]}</span><span className={`state-badge state-${item.status.toLowerCase()}`}>{wrongNoteStatusLabels[item.status]}</span>{aiAvailable && item.aiAnalysisStatus !== 'NOT_REQUESTED' && <span className={`state-badge ai-state-${item.aiAnalysisStatus.toLowerCase()}`}>{analysisLabels[item.aiAnalysisStatus]}</span>}</div></div><div className="wrong-note-metrics"><strong>오답 {item.wrongCount}회</strong><span>{item.dueAt ? `복습 ${new Date(item.dueAt).toLocaleDateString('ko-KR')}` : '복습 일정 없음'}</span><span className="wrong-note-row-action" aria-hidden="true">오답 기록 열기 →</span></div></article>)}</div>}
       {query.data.page.totalPages > 1 && <div className="pagination"><button className="secondary-button" disabled={!query.data.page.hasPrevious} onClick={() => updatePage(Math.max(0, search.page - 1))}>이전</button><span>{search.page + 1} / {query.data.page.totalPages}</span><button className="secondary-button" disabled={!query.data.page.hasNext} onClick={() => updatePage(search.page + 1)}>다음</button></div>}
     </section>
   )
