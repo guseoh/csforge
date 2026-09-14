@@ -206,6 +206,7 @@
 }
 
 .account-menu-panel .auth-error {
+  display: inline;
   color: var(--state-error);
   font-size: 0.76rem;
 }
@@ -362,8 +363,13 @@
     display: none;
   }
 
-  .search-trigger-icon {
+  .search-palette-trigger .search-trigger-icon {
+    display: inline-grid;
     width: 100%;
+  }
+
+  .search-palette-trigger::after {
+    content: none;
   }
 
   .account-menu > summary {
