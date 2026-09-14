@@ -79,7 +79,7 @@ export function QuizSessionPage() {
   useEffect(() => {
     const handleShortcut = (event: KeyboardEvent) => {
       const target = event.target as HTMLElement | null
-      if (target?.matches('input, textarea, select, [contenteditable="true"]')) return
+      if (target?.closest('input, textarea, select, button, a, summary, [contenteditable="true"]')) return
       if (event.key === 'ArrowRight' || event.key === 'Enter') {
         event.preventDefault()
         moveTo(position + 1)
@@ -132,6 +132,15 @@ export function QuizSessionPage() {
           {timerLabel && (
             <strong className={expired ? 'timer expired' : 'timer'}>{expired ? '시간 종료' : timerLabel}</strong>
           )}
+          <details className="quiz-shortcuts">
+            <summary aria-label="키보드 단축키 보기">단축키</summary>
+            <div className="quiz-shortcuts-popover" aria-label="키보드 단축키">
+              {question.questionType === 'MULTIPLE_CHOICE' && <span><kbd>1–4</kbd><span>선택지 고르기</span></span>}
+              <span><kbd>←</kbd><span>이전 문제</span></span>
+              <span><kbd>→</kbd><kbd>Enter</kbd><span>다음 문제</span></span>
+              <span><kbd>R</kbd><span>복습 필요 전환</span></span>
+            </div>
+          </details>
           <Link className="quiz-exit-link" to="/quiz" search={defaultQuizSearch} aria-label="문제 설정으로 나가기">×</Link>
         </div>
       </header>
