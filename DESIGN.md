@@ -129,7 +129,7 @@ Do not keep ordinary explanatory nouns in English merely because developers comm
 
 The canonical redesign baseline is light-first because sustained reading is the core task.
 
-The first redesign slice must be visually validated in a light reading environment. Dark mode may be supported as an optional theme, but the product must not be designed as dark-only.
+The first redesign slice must be visually validated in a light reading environment. Dark mode may be supported as an optional theme, but the product must not be designed as dark-only. A theme switcher is not required in the first vertical slice unless explicitly approved; the immediate goal is to establish and validate the new light-first visual language without expanding scope.
 
 A reasonable implementation direction is:
 
