@@ -25,6 +25,7 @@ import './learning-content.css'
 import './auth.css'
 import './ui-refresh.css'
 import './foundation.css'
+import './header-search.css'
 
 const queryClient = new QueryClient({
   defaultOptions: {
