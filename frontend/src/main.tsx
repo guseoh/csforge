@@ -28,6 +28,7 @@ import './foundation.css'
 import './header-search.css'
 import './home.css'
 import './concept-reader.css'
+import './density.css'
 
 const queryClient = new QueryClient({
   defaultOptions: {
