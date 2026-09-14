@@ -33,6 +33,7 @@ import './step5-corrections.css'
 import './step6-learning-area.css'
 import './step6-qa-corrections.css'
 import './step7-quiz.css'
+import './step7-result-width.css'
 
 const queryClient = new QueryClient({
   defaultOptions: {
