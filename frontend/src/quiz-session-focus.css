@@ -54,6 +54,81 @@ body.quiz-focus-mode .main-content {
   font-variant-numeric: tabular-nums;
 }
 
+.quiz-shortcuts {
+  position: relative;
+}
+
+.quiz-shortcuts > summary {
+  display: flex;
+  min-height: 36px;
+  align-items: center;
+  padding: 0 10px;
+  border: 1px solid var(--border-default);
+  border-radius: 8px;
+  color: var(--text-muted);
+  background: transparent;
+  cursor: pointer;
+  font-size: 0.78rem;
+  font-weight: 650;
+  list-style: none;
+}
+
+.quiz-shortcuts > summary::-webkit-details-marker {
+  display: none;
+}
+
+.quiz-shortcuts > summary:hover,
+.quiz-shortcuts[open] > summary {
+  border-color: var(--border-strong);
+  color: var(--text-strong);
+  background: var(--surface-interactive);
+}
+
+.quiz-shortcuts-popover {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 10px);
+  right: 0;
+  display: grid;
+  gap: 8px;
+  min-width: 240px;
+  padding: 12px;
+  border: 1px solid var(--border-default);
+  border-radius: 10px;
+  background: var(--surface-elevated);
+  box-shadow: 0 16px 36px rgb(0 0 0 / 24%);
+}
+
+.quiz-shortcuts-popover > span {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 28px;
+}
+
+.quiz-shortcuts-popover > span > span {
+  margin-left: auto;
+  color: var(--text-muted);
+  font-size: 0.76rem;
+}
+
+.quiz-shortcuts kbd {
+  display: inline-grid;
+  min-width: 28px;
+  min-height: 26px;
+  place-items: center;
+  padding: 2px 6px;
+  border: 1px solid var(--border-default);
+  border-bottom-color: var(--border-strong);
+  border-radius: 6px;
+  color: var(--text-strong);
+  background: var(--surface-page);
+  font-family: inherit;
+  font-size: 0.7rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
 .quiz-exit-link {
   display: grid;
   width: 40px;
@@ -356,6 +431,10 @@ body.quiz-focus-mode .main-content {
   .quiz-focus-page {
     width: min(100% - 28px, 1040px);
     padding-top: 18px;
+  }
+
+  .quiz-shortcuts {
+    display: none;
   }
 
   .quiz-question-card.quiz-focus-card {
