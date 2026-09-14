@@ -93,22 +93,30 @@ function AuthActions() {
   })
 
   if (!session.data) return null
-  if (session.data.mode !== 'CLOUD') return <span className="environment-badge">LOCAL</span>
+  if (session.data.mode !== 'CLOUD') return <span className="environment-badge environment-badge-subtle">LOCAL</span>
+
+  const email = session.data.email ?? 'Cloud 계정'
+  const accountInitial = email.charAt(0).toUpperCase()
 
   return (
-    <>
-      <span className="environment-badge">CLOUD</span>
-      <span className="auth-email">{session.data.email}</span>
-      <button
-        className="text-button"
-        type="button"
-        disabled={logoutMutation.isPending}
-        onClick={() => logoutMutation.mutate()}
-      >
-        로그아웃
-      </button>
-      {logoutMutation.isError && <span className="auth-error">로그아웃하지 못했습니다.</span>}
-    </>
+    <details className="account-menu">
+      <summary aria-label="계정 메뉴 열기" title={email}>{accountInitial}</summary>
+      <div className="account-menu-panel">
+        <div className="account-menu-copy">
+          <strong>{email}</strong>
+          <span>Cloud 환경</span>
+        </div>
+        <button
+          className="text-button"
+          type="button"
+          disabled={logoutMutation.isPending}
+          onClick={() => logoutMutation.mutate()}
+        >
+          {logoutMutation.isPending ? '로그아웃 중…' : '로그아웃'}
+        </button>
+        {logoutMutation.isError && <span className="auth-error">로그아웃하지 못했습니다.</span>}
+      </div>
+    </details>
   )
 }
 
