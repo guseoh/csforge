@@ -662,6 +662,8 @@ A visually polished Concept page that makes weak content look attractive is also
 
 For the first redesign vertical slice, browser review must include at least one real long-form Concept rather than placeholder text. Prefer a Concept that currently exposes terminology/readability problems so the design is tested against difficult content, not an easy showcase sample.
 
+This design review gate does not replace the full canonical content-review workflow. It ensures that the UI is validated against real content while `content/AGENTS.md` and the Content Foundation process continue to govern area-wide Concept and Question quality.
+
 ## 17. Acceptance principle
 
 Use this decision order for future UI/UX reviews:
