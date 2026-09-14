@@ -53,18 +53,10 @@ function ConceptArticleToc({ conceptId }: { conceptId: number }) {
       document.querySelectorAll<HTMLElement>('.concept-reading-content h2, .concept-reading-content h3'),
     )
     const extraSectionCandidates: { element: HTMLElement | null; heading: TocHeading }[] = [
-      {
-        element: document.getElementById('interview'),
-        heading: { id: 'interview', label: '면접에서 이렇게 나옵니다', level: 2 },
-      },
-      {
-        element: document.getElementById('personal-note'),
-        heading: { id: 'personal-note', label: '학습 노트', level: 2 },
-      },
-      {
-        element: document.getElementById('references'),
-        heading: { id: 'references', label: '함께 볼 자료', level: 2 },
-      },
+      { element: document.getElementById('interview'), heading: { id: 'interview', label: '면접에서 이렇게 나옵니다', level: 2 } },
+      { element: document.getElementById('learning-actions'), heading: { id: 'learning-actions', label: '학습 마무리', level: 2 } },
+      { element: document.getElementById('personal-note'), heading: { id: 'personal-note', label: '학습 노트', level: 2 } },
+      { element: document.getElementById('references'), heading: { id: 'references', label: '함께 볼 자료', level: 2 } },
     ]
     const extraSections = extraSectionCandidates.filter(
       (item): item is { element: HTMLElement; heading: TocHeading } => item.element !== null,
@@ -125,6 +117,7 @@ function ConceptContent({ data, conceptId }: { data: ConceptDetailModel; concept
   const noteTimerRef = useRef<number | undefined>(undefined)
   const [noteState, setNoteState] = useState<NoteState>('saved')
   const { bodyMarkdown, interview } = extractInterviewSection(data.contentMarkdown)
+  const isCompleted = data.progress.learningStatus === 'COMPLETED'
 
   const noteMutation = useMutation({
     mutationFn: ({ content }: { content: string }) => savePersonalNote(conceptId, content),
@@ -197,39 +190,67 @@ function ConceptContent({ data, conceptId }: { data: ConceptDetailModel; concept
     if (noteTimerRef.current !== undefined) window.clearTimeout(noteTimerRef.current)
   }, [])
 
+  const completionTitle = isCompleted ? '문제로 이해를 확인해보세요.' : '읽은 내용을 학습 기록에 남기세요.'
+  const completionDescription = isCompleted
+    ? '학습 완료 상태입니다. 관련 문제로 바로 확인하거나, 다시 볼 필요가 있으면 복습 필요로 표시할 수 있습니다.'
+    : data.progress.learningStatus === 'REVIEW_NEEDED'
+      ? '다시 읽은 뒤 이해가 정리되었다면 학습 완료로 바꾸고, 아직 헷갈리면 복습 필요 상태를 유지하세요.'
+      : '본문을 충분히 이해했다면 학습 완료로 표시하세요. 아직 불확실한 부분이 있다면 복습 필요로 남겨두면 됩니다.'
+
   return (
     <>
-      <header className="concept-header">
-        <p className="concept-kicker">{data.topic.title} · 학습 노트</p>
-        <div className="chip-row">
-          <span className="chip topic-chip">{data.area.name}</span>
-          <span className="chip">레벨 {data.level}</span>
-          <span className={`chip status-${data.progress.learningStatus.toLowerCase()}`}>{learningStatusLabels[data.progress.learningStatus]}</span>
-          {data.progress.bookmarked && <span className="chip bookmark-chip">★ 북마크</span>}
-        </div>
+      <header className="concept-header concept-reader-header">
+        <p className="concept-kicker">{data.topic.title}</p>
         <h1>{data.title}</h1>
         {data.summary && <p className="lead">{data.summary}</p>}
+        <div className="concept-reader-meta" aria-label="개념 정보">
+          <span>{data.area.name}</span>
+          <span>레벨 {data.level}</span>
+          <span>{learningStatusLabels[data.progress.learningStatus]}</span>
+          {data.progress.bookmarked && <span>북마크됨</span>}
+        </div>
       </header>
-
-      <div className="concept-actions" aria-label="개념 학습 동작">
-        <div className="concept-status-actions" role="group" aria-label="학습 상태 변경">
-          <span className="concept-action-label">학습 상태 · {learningStatusLabels[data.progress.learningStatus]}</span>
-          <div className="concept-action-buttons">
-            <ProgressActionButton conceptId={conceptId} status="COMPLETED" label="학습 완료" active={data.progress.learningStatus === 'COMPLETED'} />
-            <ProgressActionButton conceptId={conceptId} status="REVIEW_NEEDED" label="복습 필요" active={data.progress.learningStatus === 'REVIEW_NEEDED'} />
-          </div>
-        </div>
-        <div className="concept-utility-actions" aria-label="개념 도구">
-          <Link className="secondary-button" to="/quiz" search={{ ...defaultQuizSearch, areas: data.area.slug, concepts: String(conceptId) }}>이 개념 문제 풀기</Link>
-          <BookmarkButton conceptId={conceptId} bookmarked={data.progress.bookmarked} />
-        </div>
-      </div>
 
       <article className="concept-reading-content" aria-label={`${data.title} 학습 노트`}>
         <MarkdownContent dedupeLeadingHeading={data.title}>{bodyMarkdown}</MarkdownContent>
       </article>
 
       {interview && <InterviewRecallSection section={interview} />}
+
+      <section className="concept-completion-section" id="learning-actions" aria-labelledby="learning-actions-title">
+        <div className="concept-completion-copy">
+          <p className="eyebrow">학습 마무리</p>
+          <h2 id="learning-actions-title">{completionTitle}</h2>
+          <p>{completionDescription}</p>
+        </div>
+        <div className="concept-completion-actions" aria-label="개념 학습 동작">
+          <div className="concept-primary-actions">
+            <ProgressActionButton
+              conceptId={conceptId}
+              status="COMPLETED"
+              label="학습 완료"
+              active={isCompleted}
+              primary={!isCompleted}
+            />
+            <Link
+              className={`${isCompleted ? 'primary-button' : 'secondary-button'} concept-quiz-action`}
+              to="/quiz"
+              search={{ ...defaultQuizSearch, areas: data.area.slug, concepts: String(conceptId) }}
+            >
+              이 개념 문제 풀기
+            </Link>
+          </div>
+          <div className="concept-secondary-actions">
+            <ProgressActionButton
+              conceptId={conceptId}
+              status="REVIEW_NEEDED"
+              label="복습 필요"
+              active={data.progress.learningStatus === 'REVIEW_NEEDED'}
+            />
+            <BookmarkButton conceptId={conceptId} bookmarked={data.progress.bookmarked} />
+          </div>
+        </div>
+      </section>
 
       <section className="detail-section personal-note-section" id="personal-note">
         <div className="section-heading">
@@ -248,9 +269,7 @@ function ConceptContent({ data, conceptId }: { data: ConceptDetailModel; concept
           placeholder="헷갈린 점, 다시 볼 이유, 내 말로 정리한 내용을 남겨보세요."
           onChange={(event) => queueNoteSave(event.target.value)}
         />
-        {noteState === 'error' && (
-          <button className="text-button" type="button" onClick={flushNote}>다시 저장</button>
-        )}
+        {noteState === 'error' && <button className="text-button" type="button" onClick={flushNote}>다시 저장</button>}
         <p className="helper-text">입력 후 0.8초 뒤 자동 저장 · Ctrl/Cmd+S 즉시 저장</p>
       </section>
 
@@ -311,13 +330,25 @@ function BookmarkButton({ conceptId, bookmarked }: { conceptId: number; bookmark
     onError: () => showToast('error', '북마크 저장에 실패했습니다.'),
   })
   return (
-    <button className="secondary-button" type="button" aria-pressed={bookmarked} disabled={mutation.isPending} onClick={() => mutation.mutate()}>
+    <button className="text-button concept-bookmark-button" type="button" aria-pressed={bookmarked} disabled={mutation.isPending} onClick={() => mutation.mutate()}>
       {mutation.isPending ? '저장 중…' : bookmarked ? '북마크 해제' : '북마크'}
     </button>
   )
 }
 
-function ProgressActionButton({ conceptId, status, label, active = false }: { conceptId: number; status: Exclude<LearningStatus, 'UNSEEN'>; label: string; active?: boolean }) {
+function ProgressActionButton({
+  conceptId,
+  status,
+  label,
+  active = false,
+  primary = false,
+}: {
+  conceptId: number
+  status: Exclude<LearningStatus, 'UNSEEN'>
+  label: string
+  active?: boolean
+  primary?: boolean
+}) {
   const queryClient = useQueryClient()
   const { showToast } = useToast()
   const mutation = useMutation({
@@ -334,7 +365,7 @@ function ProgressActionButton({ conceptId, status, label, active = false }: { co
   })
   return (
     <button
-      className={`secondary-button concept-status-button${active ? ' active' : ''}`}
+      className={`${primary ? 'primary-button' : 'secondary-button'} concept-status-button${active ? ' active' : ''}`}
       type="button"
       aria-pressed={active}
       disabled={mutation.isPending || active}
@@ -383,7 +414,7 @@ export function ConceptPage() {
 
   if (!Number.isSafeInteger(conceptId) || conceptId <= 0) return <ErrorState message="유효하지 않은 개념입니다." onRetry={() => window.history.back()} />
   if (conceptQuery.isPending) return <PageSkeleton rows={6} />
-  if (conceptQuery.isError) return <ErrorState message="개념을 불러오지 못했습니다." onRetry={() => void conceptQuery.refetch()} />
+  if (conceptQuery.isError || !conceptQuery.data) return <ErrorState message="개념을 불러오지 못했습니다." onRetry={() => void conceptQuery.refetch()} />
 
   const data = conceptQuery.data
   return (
