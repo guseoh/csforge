@@ -3,9 +3,18 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { CanonicalBootstrapStatus } from '../lib/import-api'
 import type { Dashboard } from '../lib/dashboard-api'
+import type { ConceptListItem, ConceptPage } from '../lib/learning-api'
+
+function conceptPage(items: ConceptListItem[] = []): ConceptPage {
+  return {
+    items,
+    page: { page: 0, size: 4, totalElements: items.length, totalPages: items.length > 0 ? 1 : 0, hasNext: false, hasPrevious: false },
+  }
+}
 
 const mocks = vi.hoisted(() => ({
-  query: { data: null as Dashboard | null, isPending: false, isError: false, refetch: vi.fn() },
+  dashboard: { data: null as Dashboard | null, isPending: false, isError: false, refetch: vi.fn() },
+  recentConcepts: { data: null as ConceptPage | null, isPending: false, isError: false, refetch: vi.fn() },
   bootstrap: { data: null as CanonicalBootstrapStatus | null, isPending: false, isError: false, refetch: vi.fn() },
   navigate: vi.fn(),
 }))
@@ -16,7 +25,11 @@ vi.mock('@tanstack/react-router', () => ({
 }))
 
 vi.mock('@tanstack/react-query', () => ({
-  useQuery: ({ queryKey }: { queryKey: readonly unknown[] }) => queryKey[0] === 'canonical-bootstrap-status' ? mocks.bootstrap : mocks.query,
+  useQuery: ({ queryKey }: { queryKey: readonly unknown[] }) => {
+    if (queryKey[0] === 'canonical-bootstrap-status') return mocks.bootstrap
+    if (queryKey[0] === 'concepts') return mocks.recentConcepts
+    return mocks.dashboard
+  },
   useQueryClient: () => ({ invalidateQueries: vi.fn() }),
   useMutation: () => ({ isPending: false, isError: false, mutate: vi.fn() }),
 }))
@@ -40,7 +53,7 @@ function dashboard(overrides: Partial<Dashboard> = {}): Dashboard {
 }
 
 function render(data: Dashboard) {
-  mocks.query.data = data
+  mocks.dashboard.data = data
   return renderToStaticMarkup(<DashboardPage />)
 }
 
@@ -58,23 +71,28 @@ function bootstrapStatus(state: CanonicalBootstrapStatus['state']): CanonicalBoo
 
 describe('DashboardPage', () => {
   beforeEach(() => {
-    mocks.query.data = null
-    mocks.query.isPending = false
-    mocks.query.isError = false
+    mocks.dashboard.data = null
+    mocks.dashboard.isPending = false
+    mocks.dashboard.isError = false
+    mocks.recentConcepts.data = conceptPage()
+    mocks.recentConcepts.isPending = false
+    mocks.recentConcepts.isError = false
     mocks.bootstrap.data = null
     mocks.bootstrap.isPending = false
     mocks.bootstrap.isError = false
     mocks.navigate.mockReset()
   })
 
-  it('renders active quiz resume and review CTA', () => {
+  it('renders active quiz as the primary continuation and review as a follow-up', () => {
     const markup = render(dashboard({
       activeQuiz: { quizId: 41, questionCount: 10, answeredCount: 3, lastPosition: 3, startedAt: '2026-09-03T12:00:00Z', expiresAt: null },
     }))
 
-    expect(markup).toContain('풀던 문제를 이어서 마무리하세요.')
-    expect(markup).toContain('이어 풀기 · 3/10')
-    expect(markup).toContain('복습 시작')
+    expect(markup).toContain('풀던 퀴즈 이어가기')
+    expect(markup).toContain('10문항 중 3문항까지 답했습니다.')
+    expect(markup).toContain('이어 풀기')
+    expect(markup).toContain('오늘 복습 2개')
+    expect(markup).toContain('복습 시작 →')
   })
 
   it('renders weak-topic and review empty states when nothing is due', () => {
@@ -84,6 +102,33 @@ describe('DashboardPage', () => {
     expect(markup).not.toContain('이어 풀기')
     expect(markup).toContain('현재 대기 중인 복습이 없습니다.')
     expect(markup).not.toContain('복습 시작 →')
+  })
+
+  it('uses the most recently viewed concept as the primary continuation when no urgent work exists', () => {
+    mocks.recentConcepts.data = conceptPage([{
+      id: 77,
+      areaSlug: 'java',
+      areaName: 'Java',
+      topicId: 9,
+      topicSlug: 'jvm',
+      topicTitle: 'JVM',
+      title: '클래스 로딩 과정',
+      summary: '클래스가 JVM에 로딩되고 초기화되는 흐름을 이해합니다.',
+      level: 2,
+      contentStatus: 'PUBLISHED',
+      learningStatus: 'LEARNING',
+      bookmarked: false,
+      lastViewedAt: '2026-09-03T11:00:00Z',
+    }])
+
+    const markup = render(dashboard({
+      today: { solvedCount: 0, correctCount: 0, wrongCount: 0, accuracyPercent: 0, reviewDueCount: 0 },
+    }))
+
+    expect(markup).toContain('최근 본 개념')
+    expect(markup).toContain('클래스 로딩 과정')
+    expect(markup).toContain('Java · JVM · 레벨 2')
+    expect(markup).toContain('계속 읽기')
   })
 
   it('renders weak-topic data and pending self-check count in recent quiz', () => {
@@ -97,7 +142,7 @@ describe('DashboardPage', () => {
     expect(markup).toContain('자기 채점 1개 대기')
   })
 
-  it('keeps the learning start CTA when READY content has no activity', () => {
+  it('keeps a curriculum start action when READY content has no activity', () => {
     mocks.bootstrap.data = bootstrapStatus('READY')
 
     const markup = render(dashboard({
@@ -106,7 +151,7 @@ describe('DashboardPage', () => {
       heatmap: [{ date: '2026-09-03', conceptsViewed: 0, questionsSolved: 0, activityCount: 0 }],
     }))
 
-    expect(markup).toContain('개념 학습')
-    expect(markup).toContain('학습 시작')
+    expect(markup).toContain('학습 영역에서 시작하기')
+    expect(markup).toContain('학습 영역 보기')
   })
 })
