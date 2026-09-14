@@ -1,6 +1,6 @@
 export function PageSkeleton({ rows = 3 }: { rows?: number }) {
   return (
-    <div className="skeleton-stack" aria-busy="true" aria-label="Loading">
+    <div className="skeleton-stack" aria-busy="true" aria-label="페이지를 불러오는 중">
       {Array.from({ length: rows }, (_, index) => (
         <div className="skeleton-block" key={index} />
       ))}

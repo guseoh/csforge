@@ -6,9 +6,11 @@ function readCollapsedPreference() {
   if (typeof window === 'undefined') return false
 
   try {
-    return window.sessionStorage.getItem(LEARNING_RAIL_COLLAPSED_KEY) === 'true'
+    const stored = window.sessionStorage.getItem(LEARNING_RAIL_COLLAPSED_KEY)
+    if (stored !== null) return stored === 'true'
+    return window.matchMedia('(max-width: 720px)').matches
   } catch {
-    return false
+    return window.matchMedia('(max-width: 720px)').matches
   }
 }
 
