@@ -51,6 +51,7 @@ export function ReviewPage() {
 
   const updateDue = (due: string) => void navigate({ search: (current) => ({ ...current, due, page: 0 }) })
   const totalSchedules = summary.data.overdue + summary.data.dueNow + summary.data.next24Hours + summary.data.next7Days + summary.data.mastered
+  const actionableCount = summary.data.overdue + summary.data.dueNow
   const hasSchedules = totalSchedules > 0
   const reviewCounts: Record<(typeof reviewWindowChoices)[number]['value'], number> = {
     ALL: totalSchedules,
@@ -63,12 +64,24 @@ export function ReviewPage() {
   return (
     <section className="page-section review-page">
       <div className="page-heading">
-        <div><p className="eyebrow">간격 반복</p><h1>복습</h1><p className="lead">잊기 전에 다시 풀고, 기억을 오래 남겨 보세요.</p></div>
+        <div>
+          <p className="eyebrow">간격 반복</p>
+          <h1>복습</h1>
+          <p className="lead">다시 풀 시점이 된 문제부터 확인하고 기억을 이어가세요.</p>
+        </div>
         {hasSchedules && (
-          <div className="review-start-action">
-            {hasActionableReviews(summary.data)
-              ? <button className="primary-button" disabled={create.isPending} onClick={() => create.mutate()}>{create.isPending ? '문제 준비 중…' : '복습 문제 10개 시작'}</button>
-              : <span className="helper-text">지금 시작할 복습 문제가 없습니다.</span>}
+          <div className="review-primary-action">
+            {hasActionableReviews(summary.data) ? (
+              <>
+                <div className="review-primary-copy">
+                  <strong>지금 복습 {actionableCount}개</strong>
+                  <span>기한이 지났거나 지금 다시 볼 문제</span>
+                </div>
+                <button className="primary-button" disabled={create.isPending} onClick={() => create.mutate()}>
+                  {create.isPending ? '문제 준비 중…' : '복습 시작'}
+                </button>
+              </>
+            ) : <span className="helper-text">지금 시작할 복습 문제가 없습니다.</span>}
           </div>
         )}
       </div>
@@ -99,24 +112,42 @@ export function ReviewPage() {
             <span className="review-mastered-count">정리 완료 <strong>{summary.data.mastered}</strong></span>
           </div>
 
-          {reviews.data.items.length === 0
-            ? <div className="state-card"><strong>선택한 시점에 복습할 항목이 없습니다.</strong><span>다른 복습 시점을 선택해 보세요.</span></div>
-            : <div className="concept-list">{reviews.data.items.map((item) => {
+          {reviews.data.items.length === 0 ? (
+            <div className="state-card">
+              <strong>선택한 시점에 복습할 항목이 없습니다.</strong>
+              <span>다른 복습 시점을 선택해 보세요.</span>
+            </div>
+          ) : (
+            <div className="review-list">
+              {reviews.data.items.map((item) => {
                 const timing = reviewTiming(item.dueAt, item.status)
-                return <Link className="concept-list-item review-list-item" key={item.questionId} to="/wrong-notes/$questionId" params={{ questionId: String(item.questionId) }}>
-                  <div className="concept-list-main">
-                    <h3>{compactMarkdownPreview(item.promptMarkdown)}</h3>
-                    <p>{item.concepts.map((concept) => `${concept.areaName} · ${concept.title} · 레벨 ${concept.level}`).join(', ')}</p>
-                    <div className="review-row-meta">
-                      <span>단계 {item.stage} · {item.status === 'SCHEDULED' ? '진행 중' : '정리 완료'}</span>
-                      <span className={`chip state-badge review-timing-${timing.className}`}>{timing.label}</span>
+                return (
+                  <Link className="review-list-item" key={item.questionId} to="/wrong-notes/$questionId" params={{ questionId: String(item.questionId) }}>
+                    <div className="review-list-copy">
+                      <h3>{compactMarkdownPreview(item.promptMarkdown)}</h3>
+                      <p className="review-concept-path">{item.concepts.map((concept) => `${concept.areaName} · ${concept.title} · 레벨 ${concept.level}`).join(', ')}</p>
+                      <div className="review-row-meta">
+                        <span>복습 단계 {item.stage}</span>
+                        <span>·</span>
+                        <span>{item.status === 'SCHEDULED' ? '진행 중' : '정리 완료'}</span>
+                      </div>
                     </div>
-                  </div>
-                  <div className="wrong-note-metrics"><strong>{item.dueAt ? new Date(item.dueAt).toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' }) : '정리 완료'}</strong><span>{timing.label}</span><span className="review-row-action" aria-hidden="true">오답 기록 열기 →</span></div>
-                </Link>
-              })}</div>}
+                    <div className="review-list-side">
+                      <span className={`review-timing-label review-timing-${timing.className}`}>{timing.label}</span>
+                      <strong className="review-due-date">{item.dueAt ? new Date(item.dueAt).toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' }) : '정리 완료'}</strong>
+                      <span className="review-row-action" aria-hidden="true">기록 보기 →</span>
+                    </div>
+                  </Link>
+                )
+              })}
+            </div>
+          )}
 
-          <div className="pagination"><button className="secondary-button" disabled={!reviews.data.page.hasPrevious} onClick={() => void navigate({ search: (current) => ({ ...current, page: Math.max(0, search.page - 1) }) })}>이전</button><span>{search.page + 1} 페이지</span><button className="secondary-button" disabled={!reviews.data.page.hasNext} onClick={() => void navigate({ search: (current) => ({ ...current, page: search.page + 1 }) })}>다음</button></div>
+          <div className="pagination">
+            <button className="secondary-button" disabled={!reviews.data.page.hasPrevious} onClick={() => void navigate({ search: (current) => ({ ...current, page: Math.max(0, search.page - 1) }) })}>이전</button>
+            <span>{search.page + 1} / {Math.max(1, reviews.data.page.totalPages)}</span>
+            <button className="secondary-button" disabled={!reviews.data.page.hasNext} onClick={() => void navigate({ search: (current) => ({ ...current, page: search.page + 1 }) })}>다음</button>
+          </div>
         </>
       )}
     </section>
