@@ -1,0 +1,515 @@
+/* Step 7 — Quiz setup/session refinement.
+ *
+ * Keep practice quick to start and keep one question visually dominant. The
+ * established quiz behavior (URL settings, autosave/resume, timer, shortcuts,
+ * review-needed, navigation, submit/recovery) is preserved; this layer only
+ * changes presentation and density.
+ */
+
+/* Quiz setup — quick starts first, configuration second. */
+.quiz-setup-page {
+  width: min(920px, calc(100% - 44px));
+  margin: 0 auto;
+  padding-bottom: 76px;
+}
+
+.quiz-setup-page .quiz-setup-heading {
+  max-width: 680px;
+  margin: 6px 0 20px;
+}
+
+.quiz-setup-page .quiz-setup-heading h1 {
+  font-size: clamp(1.72rem, 2.2vw, 2rem);
+  letter-spacing: -0.035em;
+  line-height: 1.18;
+}
+
+.quiz-setup-page .quiz-setup-heading .lead {
+  margin-top: 8px;
+  font-size: 0.92rem;
+  line-height: 1.58;
+}
+
+.quiz-setup-page .quiz-resume-banner {
+  min-height: 48px;
+  margin: 0 0 18px;
+  padding: 10px 2px 12px;
+  border: 0;
+  border-top: 1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--border-subtle);
+  border-radius: 0;
+  color: var(--text-default);
+  background: transparent;
+  box-shadow: none;
+}
+
+.quiz-setup-page .quiz-resume-banner > div {
+  gap: 2px;
+}
+
+.quiz-setup-page .quiz-resume-banner strong {
+  color: var(--text-strong);
+  font-size: 0.88rem;
+}
+
+.quiz-setup-page .quiz-resume-banner span {
+  color: var(--text-muted);
+  font-size: 0.76rem;
+}
+
+.quiz-setup-page .quiz-resume-banner .secondary-button {
+  min-width: 78px;
+  min-height: 34px;
+  padding: 0 11px;
+}
+
+.quiz-setup-page .quiz-quick-start {
+  gap: 12px;
+  padding: 16px 0 20px;
+}
+
+.quiz-setup-page .quiz-quick-intro h2 {
+  margin: 3px 0 1px;
+  font-size: 1.08rem;
+}
+
+.quiz-setup-page .quiz-quick-intro > span {
+  font-size: 0.78rem;
+}
+
+.quiz-setup-page .quiz-quick-presets {
+  gap: 8px;
+}
+
+.quiz-setup-page .quiz-preset-button {
+  min-height: 52px;
+  padding: 9px 12px;
+  border-radius: 7px;
+  box-shadow: none;
+}
+
+.quiz-setup-page .quiz-preset-button strong {
+  font-size: 0.82rem;
+}
+
+.quiz-setup-page .quiz-preset-button small {
+  font-size: 0.71rem;
+}
+
+.quiz-setup-page .quiz-preset-button:hover {
+  transform: none;
+}
+
+.quiz-setup-page .quiz-preset-button.selected {
+  box-shadow: inset 2px 0 var(--accent);
+}
+
+.quiz-setup-page .quiz-config-disclosure {
+  margin-top: 20px;
+}
+
+.quiz-setup-page .quiz-config-disclosure > summary {
+  gap: 16px;
+  padding: 13px 2px;
+  font-size: 0.76rem;
+}
+
+.quiz-setup-page .quiz-config-disclosure > summary > span:first-child {
+  gap: 3px;
+}
+
+.quiz-setup-page .quiz-config-disclosure > summary strong {
+  font-size: 0.9rem;
+}
+
+.quiz-setup-page .quiz-config-disclosure > .quiz-config-panel {
+  margin-bottom: 16px;
+}
+
+.quiz-setup-page .quiz-selection-stack {
+  gap: 8px;
+}
+
+.quiz-setup-page .quiz-selection-group {
+  padding: 10px 0;
+}
+
+.quiz-setup-page .quiz-selection-group legend {
+  font-size: 0.8rem;
+}
+
+.quiz-setup-page .quiz-selection-group legend span {
+  font-size: 0.7rem;
+}
+
+.quiz-setup-page .quiz-choice-grid {
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.quiz-setup-page .quiz-choice-row {
+  gap: 10px;
+}
+
+.quiz-setup-page .quiz-choice-option {
+  min-height: 40px;
+  padding: 7px 9px;
+  border-radius: 6px;
+  transition: border-color 120ms ease, background 120ms ease, color 120ms ease;
+}
+
+.quiz-setup-page .quiz-choice-option:hover {
+  transform: none;
+}
+
+.quiz-setup-page .quiz-choice-option > span {
+  font-size: 0.76rem;
+}
+
+.quiz-setup-page .quiz-choice-option small {
+  font-size: 0.68rem;
+}
+
+.quiz-setup-page .quiz-advanced-options {
+  margin-top: 10px;
+}
+
+.quiz-setup-page .quiz-advanced-options summary {
+  padding: 12px 2px 3px;
+  color: var(--text-default);
+  font-size: 0.76rem;
+}
+
+.quiz-setup-page .quiz-advanced-options summary small {
+  color: var(--text-muted);
+  font-size: 0.68rem;
+}
+
+.quiz-setup-page .quiz-advanced-grid {
+  gap: 9px;
+  padding: 10px 0 0;
+}
+
+.quiz-setup-page .quiz-advanced-grid label {
+  gap: 5px;
+  color: var(--text-default);
+  font-size: 0.72rem;
+}
+
+.quiz-setup-page .quiz-advanced-grid label > span {
+  color: var(--text-muted);
+  font-size: 0.66rem;
+}
+
+.quiz-setup-page .quiz-advanced-grid .quiz-deep-link-field {
+  padding: 9px;
+  border-color: var(--border-subtle);
+  border-radius: 6px;
+  background: transparent;
+}
+
+.quiz-setup-page .quiz-advanced-grid select,
+.quiz-setup-page .quiz-advanced-grid input {
+  height: 36px;
+}
+
+.quiz-setup-page .quiz-unified-start {
+  bottom: 10px;
+  gap: 16px;
+  margin-top: 18px;
+  padding: 10px 12px;
+  border-color: var(--border-default);
+  border-radius: 8px;
+  background: rgb(255 255 255 / 96%);
+  box-shadow: 0 8px 22px rgb(15 23 42 / 8%);
+  backdrop-filter: blur(8px);
+}
+
+.quiz-setup-page .quiz-unified-start > div:first-child {
+  gap: 2px;
+}
+
+.quiz-setup-page .quiz-unified-start > div:first-child > strong {
+  font-size: 0.84rem;
+}
+
+.quiz-setup-page .quiz-unified-start .helper-text {
+  font-size: 0.74rem;
+}
+
+.quiz-setup-page .quiz-unified-start-actions {
+  gap: 8px;
+}
+
+.quiz-setup-page .quiz-unified-start .primary-button {
+  min-height: 36px;
+  padding: 0 13px;
+}
+
+/* Quiz session — compact focus surface around one question. */
+body.quiz-focus-mode {
+  background: var(--color-page);
+}
+
+.quiz-focus-page {
+  width: min(940px, calc(100% - 52px));
+  padding: 18px 0 64px;
+}
+
+.quiz-focus-header {
+  gap: 18px;
+  min-height: 50px;
+  padding-bottom: 13px;
+}
+
+.quiz-focus-header > div:first-child {
+  gap: 3px;
+}
+
+.quiz-focus-header > div:first-child > strong,
+.quiz-focus-header-actions .timer {
+  font-size: 0.84rem;
+}
+
+.quiz-focus-header-actions {
+  gap: 10px;
+}
+
+.quiz-shortcuts > summary {
+  min-height: 32px;
+  padding: 0 8px;
+  border-radius: 6px;
+  font-size: 0.72rem;
+}
+
+.quiz-shortcuts-popover {
+  top: calc(100% + 8px);
+  min-width: 220px;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 12px 28px rgb(15 23 42 / 12%);
+}
+
+.quiz-shortcuts-popover > span {
+  min-height: 24px;
+}
+
+.quiz-shortcuts kbd {
+  min-width: 25px;
+  min-height: 23px;
+  border-radius: 5px;
+  font-size: 0.66rem;
+}
+
+.quiz-exit-link {
+  width: 34px;
+  height: 34px;
+  font-size: 1.2rem;
+}
+
+.quiz-focus-progress-heading {
+  width: min(840px, 100%);
+  margin-top: 18px;
+}
+
+.quiz-focus-progress-heading strong {
+  font-size: 0.88rem;
+}
+
+.quiz-focus-progress-heading span {
+  font-size: 0.74rem;
+}
+
+.quiz-progress.quiz-focus-progress {
+  width: min(840px, 100%);
+  height: 3px;
+  margin: 8px auto 18px;
+}
+
+.quiz-question-card.quiz-focus-card {
+  width: min(840px, 100%);
+  padding: 22px 24px 20px;
+  border-color: var(--border-default);
+  border-radius: 8px;
+  background: var(--surface-page);
+}
+
+.quiz-focus-question-heading {
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.quiz-focus-question-heading > strong {
+  font-size: 0.9rem;
+}
+
+.quiz-focus-question-heading .chip-row {
+  gap: 5px;
+}
+
+.quiz-focus-question-heading .chip {
+  padding: 3px 7px;
+  font-size: 0.66rem;
+}
+
+.quiz-prompt.quiz-focus-prompt {
+  margin-bottom: 20px;
+  font-size: 1rem;
+  line-height: 1.66;
+}
+
+.quiz-focus-prompt p,
+.quiz-focus-prompt ul,
+.quiz-focus-prompt ol {
+  margin-bottom: 11px;
+}
+
+.quiz-focus-prompt pre {
+  margin: 15px 0 17px;
+  padding: 13px 15px;
+}
+
+.choice-list.quiz-focus-choice-list {
+  gap: 8px;
+}
+
+.quiz-focus-choice-list .choice-button {
+  min-height: 50px;
+  gap: 11px;
+  padding: 11px 13px;
+  border-radius: 7px;
+  font-size: 0.92rem;
+  line-height: 1.52;
+  transition: border-color 120ms ease, background 120ms ease;
+}
+
+.quiz-focus-choice-list .choice-button:hover:not(:disabled) {
+  transform: none;
+}
+
+.quiz-focus-choice-list .choice-button > span {
+  width: 26px;
+  height: 26px;
+  flex-basis: 26px;
+  font-size: 0.72rem;
+}
+
+.quiz-focus-card .quiz-answer-editor {
+  min-height: 126px;
+  padding: 13px 14px;
+  border-color: var(--border-default);
+  border-radius: 7px;
+  font-size: 0.94rem;
+  line-height: 1.62;
+  resize: vertical;
+}
+
+.quiz-review-toggle.quiz-focus-review-toggle {
+  grid-template-columns: 18px auto 1fr;
+  min-height: 42px;
+  gap: 7px;
+  margin-top: 16px;
+  padding: 8px 4px;
+  font-size: 0.8rem;
+}
+
+.quiz-focus-review-toggle input {
+  width: 16px;
+  height: 16px;
+}
+
+.quiz-focus-review-toggle span {
+  font-size: 0.7rem;
+}
+
+.quiz-question-actions.quiz-focus-actions {
+  grid-template-columns: minmax(96px, auto) 1fr minmax(96px, auto);
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.quiz-focus-actions .save-state {
+  font-size: 0.68rem;
+}
+
+.quiz-focus-actions .primary-button,
+.quiz-focus-actions .secondary-button {
+  min-height: 36px;
+  padding: 0 13px;
+}
+
+.quiz-question-jump {
+  width: min(840px, 100%);
+  margin-top: 16px;
+}
+
+.quiz-question-jump > summary {
+  min-height: 44px;
+  padding: 0 2px;
+  font-size: 0.78rem;
+}
+
+.quiz-question-jump > summary span {
+  font-size: 0.68rem;
+}
+
+.quiz-question-jump-grid {
+  gap: 6px;
+  padding: 2px 0 12px;
+}
+
+.quiz-jump-button {
+  min-height: 44px;
+  gap: 1px;
+  padding: 5px;
+  border-radius: 6px;
+}
+
+.quiz-jump-button strong {
+  font-size: 0.8rem;
+}
+
+.quiz-jump-button small {
+  font-size: 0.6rem;
+}
+
+.quiz-question-jump .quiz-question-nav-legend {
+  gap: 11px;
+  padding-bottom: 13px;
+  font-size: 0.64rem;
+}
+
+@media (max-width: 760px) {
+  .quiz-setup-page {
+    width: min(100% - 28px, 920px);
+  }
+
+  .quiz-setup-page .quiz-quick-presets {
+    grid-template-columns: 1fr;
+  }
+
+  .quiz-setup-page .quiz-unified-start {
+    position: static;
+    align-items: stretch;
+    flex-direction: column;
+    background: var(--surface-elevated);
+    backdrop-filter: none;
+  }
+
+  .quiz-focus-page {
+    width: min(100% - 28px, 940px);
+    padding-top: 14px;
+  }
+
+  .quiz-question-card.quiz-focus-card {
+    padding: 18px 16px;
+  }
+
+  .quiz-focus-question-heading {
+    gap: 10px;
+  }
+
+  .quiz-focus-card .quiz-answer-editor {
+    min-height: 140px;
+  }
+}
