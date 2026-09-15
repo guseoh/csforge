@@ -3,8 +3,8 @@ kind: concept
 contentKey: backend.core.external.timeouts
 topicContentKey: backend.core.external
 slug: timeouts
-title: "connect/read timeout"
-summary: "외부 호출에서 연결 수립과 응답 대기를 bounded하게 만들고 전체 요청 deadline과 pool 고갈을 함께 설계한다"
+title: "외부 호출 Timeout과 Deadline"
+summary: "외부 호출의 연결·요청·응답 대기 시간을 bounded하게 만들고, client별 timeout 의미와 상위 요청의 전체 deadline, 재시도와 자원 점유를 함께 판단한다."
 level: 2
 status: PUBLISHED
 displayOrder: 10
@@ -20,7 +20,7 @@ references:
     referenceType: OFFICIAL
     language: en
     displayOrder: 2
-    relationNote: "request timeout과 응답 대기 실패 계약 확인"
+    relationNote: "request timeout 설정 계약 확인"
   - url: "https://docs.spring.io/spring-framework/reference/web/webmvc-client.html"
     title: "Spring Framework Reference: REST Clients"
     referenceType: OFFICIAL
@@ -28,93 +28,80 @@ references:
     displayOrder: 3
     relationNote: "Spring REST client abstraction의 선택 경계 확인"
 ---
-# connect/read timeout
+# 외부 호출 Timeout과 Deadline
 
-외부 API 호출이 멈췄을 때 “timeout을 설정했다”고만 말하면 부족합니다. 연결을 맺는 단계에서 멈춘 것인지, 요청을 보낸 뒤 응답을 기다리는 단계에서 멈춘 것인지에 따라 원인과 자원 점유, retry 안전성이 달라집니다.
+외부 API를 호출할 때 timeout이 없으면 상대 시스템이 느려진 순간 우리 애플리케이션의 thread와 connection 같은 자원도 끝없이 기다릴 수 있습니다. 하지만 "timeout을 3초로 설정했다"는 정보만으로는 충분하지 않습니다. **어느 구간의 시간을 제한하는지와 전체 사용자 요청이 언제까지 끝나야 하는지**를 함께 봐야 합니다.
 
-```text
-request lifecycle
-  ├─ endpoint resolution / connection establishment
-  ├─ request 전송
-  └─ response 대기·수신
+### Timeout 이름은 client마다 같은 의미가 아니다
 
-어느 구간을 connect/read/request timeout이 재는지는 HTTP client 계약으로 확인
-```
-
-`connect timeout`, `read timeout`, `response timeout`, `request timeout`이라는 이름은 library마다 같은 범위를 뜻하지 않습니다. 예를 들어 Java `HttpClient`는 client 수준의 connect timeout과 `HttpRequest` 수준의 요청 timeout을 별도로 제공하지만, 다른 client의 `read timeout`과 완전히 같은 시계라고 가정하면 안 됩니다. DNS resolution이나 TLS handshake가 어느 timeout에 포함되는지도 사용하는 client와 runtime의 계약으로 확인해야 합니다.
-
-### connect timeout은 연결 수립 경계의 실패다
-
-서버가 죽었거나 route가 잘못되었거나 네트워크 경로가 black hole인 경우 connection establishment가 끝나지 않을 수 있습니다. 이 단계가 무한히 기다리면 caller thread나 connection-management resource가 오래 점유될 수 있습니다.
+HTTP 호출에는 여러 단계가 있습니다.
 
 ```text
-worker 1 ── connection establishment 대기 ──┐
-worker 2 ── connection establishment 대기 ──┼─ available capacity 감소
-worker 3 ── connection establishment 대기 ──┘
+endpoint resolution
+      ↓
+connection establishment
+      ↓
+request 전송
+      ↓
+remote 처리
+      ↓
+response 수신
 ```
 
-다만 **connect timeout의 정확한 의미는 client 계약으로 판단해야 합니다.** Java `HttpClient`의 `HttpConnectTimeoutException`처럼 요청을 보낼 connection이 성공적으로 establish되지 못한 경우를 나타내는 API에서는, 이를 요청 전송 뒤 응답 타임아웃과 같은 `outcome unknown` 상태로 취급하면 안 됩니다. 반대로 connection 재사용, proxy, protocol handshake 등 실제 경로가 복잡한 client에서는 어느 단계까지 요청 bytes나 remote side effect가 진행될 수 있는지 구현 계약을 확인합니다.
+`connect timeout`, `read timeout`, `response timeout`, `request timeout` 같은 이름은 라이브러리마다 정확한 측정 범위가 다를 수 있습니다. Java `HttpClient`도 client 수준의 connect timeout과 `HttpRequest`의 timeout을 별도로 제공합니다.
 
-### 요청/read/응답 타임아웃은 remote outcome과 분리한다
+따라서 이름만 보고 DNS, TLS handshake, body read가 어느 timeout에 포함되는지 일반화하지 말고 **사용하는 client의 실제 계약을 확인**해야 합니다.
 
-요청이 remote에 전달된 뒤 응답을 정해진 시간 안에 받지 못했다면 caller는 실패를 관찰해도 remote가 이미 작업을 시작했거나 commit했을 가능성이 남습니다.
+### 요청을 보낸 뒤의 timeout은 remote 실패를 의미하지 않을 수 있다
+
+결제 요청을 remote에 전달한 뒤 응답만 늦었다고 해 보겠습니다.
 
 ```text
-client ── request 전송 ──▶ remote ── side effect/commit 가능
-client ◀─ response 지연·유실
-        │
-        └─ request/response timeout -> caller는 outcome을 모를 수 있음
+client ── request ──▶ payment service
+                         │
+                         └─ 결제 승인/commit
+
+client ◀──── 응답 지연 또는 유실
+   │
+   └─ timeout
 ```
 
-따라서 **요청 전송 뒤의 timeout을 “remote가 실행하지 않았다”는 증거로 사용하면 안 됩니다.** 결제·주문처럼 재전송이 중복 효과를 낼 수 있는 operation은 idempotency key, operation status 조회, reconciliation 같은 별도 계약이 필요합니다.
+클라이언트는 timeout을 보지만 결제사는 이미 성공했을 수 있습니다. 따라서 요청 전송 이후 timeout을 "상대가 아무 일도 하지 않았다"는 증거로 사용하면 안 됩니다.
 
-### 개별 timeout과 전체 deadline은 다르다
+주문·결제처럼 중복 효과가 위험한 작업은 retry 여부를 결정할 때 idempotency key, operation status 조회, reconciliation 가능성을 함께 봐야 합니다.
 
-한 요청이 resolution, connection establishment, remote processing, 응답 parsing을 차례로 거친다면 각 단계에 timeout을 따로 둬도 전체 시간이 API SLA를 넘을 수 있습니다. 상위 요청이 가진 deadline을 하위 호출에 전달하고, 이미 소비한 시간을 제외한 remaining budget 안에서 다음 호출과 retry를 판단하는 구조가 전체 budget을 지킵니다.
+### 개별 호출 timeout과 전체 deadline을 구분한다
+
+상위 API가 1초 안에 끝나야 하는데 하위 호출마다 800ms timeout을 세 번 사용하면 전체 요청은 쉽게 1초를 넘습니다.
 
 ```text
-전체 deadline 800 ms
-  ├─ connection establishment에 사용할 budget
-  ├─ remote response에 남은 budget
-  └─ retry는 remaining budget이 충분할 때만
+전체 deadline: 1000ms
+
+DB 조회       150ms 사용
+외부 호출     남은 budget 안에서 수행
+retry         남은 시간이 충분할 때만
+응답 생성     deadline 이전 종료
 ```
 
-하위 client가 자체 timeout을 갖더라도 caller의 deadline보다 길게 기다리면 상위 요청은 이미 취소된 뒤에도 worker와 connection을 계속 사용할 수 있습니다.
+상위 요청의 남은 시간보다 하위 client가 더 오래 기다리면 사용자는 이미 timeout을 받았는데 서버에서는 worker가 계속 외부 응답을 기다리는 상황이 생길 수 있습니다. 그래서 여러 dependency를 거치는 시스템에서는 **remaining time budget을 아래 호출로 전달하는 설계**가 중요할 수 있습니다.
 
-### timeout과 retry는 자원을 함께 증폭시킨다
+### Timeout과 retry는 함께 자원 사용량을 키울 수 있다
 
-timeout 뒤 무조건 즉시 retry하면 하나의 사용자 요청이 remote에 여러 번 도달하고, 원래 막힌 pool에 추가 work를 밀어 넣습니다. transient 실패인지, operation이 retry-safe한지, 요청이 전송되었을 가능성이 있는지, 남은 deadline이 있는지, retry 횟수와 backoff가 제한되는지를 함께 판단해야 합니다.
+상대가 느린 상황에서 timeout이 발생할 때마다 즉시 재시도하면 하나의 사용자 요청이 remote 호출 여러 개로 증폭됩니다.
 
 ```text
-사용자 요청
-  └─ attempt 1 timeout
-      └─ retry attempt 2
-          └─ retry attempt 3
-
-하나의 logical request가 remote 부하와 local wait를 키울 수 있음
+logical request
+  ├─ attempt 1 ─ timeout
+  ├─ attempt 2 ─ timeout
+  └─ attempt 3 ─ timeout
 ```
 
-### 운영에서는 증상과 경계를 나눠 본다
+원래 느려진 dependency에 추가 부하를 보내고, 우리 쪽에서도 thread·connection을 더 오래 점유할 수 있습니다. 따라서 retry는 transient한 실패인지, 작업이 중복 안전한지, 남은 deadline이 있는지를 확인한 뒤 제한된 횟수와 backoff를 적용해야 합니다.
 
-timeout이 증가했을 때 다음 지표를 함께 확인합니다.
+### 값을 크게 늘리는 것이 해결책은 아니다
 
-1. connection-establishment timeout과 요청/응답 timeout의 비율
-2. connection pool 사용량과 대기 시간
-3. remote 지연 시간의 p95/p99와 error rate
-4. caller deadline 초과와 retry 횟수
-5. 요청 전송 여부와 remote side effect 가능성, 중복 방지 상태
+Timeout이 자주 난다는 이유로 1초를 30초로 늘리면 오류 횟수는 줄어 보일 수 있습니다. 대신 요청 하나가 자원을 30배 오래 잡고 있을 수 있어 pool 고갈과 tail latency가 더 심해질 수 있습니다.
 
-timeout 값 하나를 크게 늘리는 것은 실패를 해결하기보다 pool 고갈과 꼬리 지연 시간(tail latency)을 뒤로 미루는 선택일 수 있습니다.
+운영에서는 timeout 종류와 함께 remote latency, connection pool 사용량, retry 횟수, 상위 요청 deadline 초과를 같이 봐야 합니다.
 
-### 문제를 풀 때 확인할 것
-
-1. 사용하는 client에서 각 timeout이 어느 구간을 재는지 확인합니다.
-2. client timeout이 전체 요청 deadline을 넘지 않는지 봅니다.
-3. 요청 전송 뒤 timeout이면 remote side effect 가능성을 남겨 둡니다.
-4. retry가 허용되는 operation인지와 remaining budget을 함께 판단합니다.
-5. timeout을 thread/connection pool 점유와 연결해 봅니다.
-
-### 면접에서 설명한다면
-
-connect timeout은 connection establishment의 상한이고 read/응답/요청 timeout은 client 계약에 따라 요청 전송 이후 응답을 기다리는 범위를 제한합니다. 이름만 보고 같은 시계라고 가정하지 않고 실제 API 계약을 확인해야 합니다. 특히 요청이 remote에 전달된 뒤 timeout이 발생하면 side effect가 이미 일어났을 수 있으므로 deadline·retry·idempotency·결과 조회를 함께 설계합니다.
-
+외부 호출 timeout의 목적은 느린 호출을 무조건 성공시키는 것이 아니라 **한 호출이 사용할 시간을 bounded하게 만들고, 결과를 모르는 실패에서도 재시도와 자원 사용이 통제되도록 하는 것**입니다.
