@@ -3,8 +3,8 @@ kind: concept
 contentKey: computer-architecture.core.data-representation.endianness
 topicContentKey: computer-architecture.core.data-representation
 slug: endianness
-title: "Endianness"
-summary: "다중 byte 값의 메모리 순서와 직렬화 경계를 설명한다."
+title: "Endianness와 Byte 순서"
+summary: "여러 byte로 이루어진 값을 memory나 binary format에 배치할 때 big-endian과 little-endian이 byte 순서를 어떻게 다르게 정하는지 이해한다."
 level: 1
 status: PUBLISHED
 displayOrder: 60
@@ -24,20 +24,26 @@ references:
     recommendation: "BIG_ENDIAN과 LITTLE_ENDIAN의 byte ordering 정의를 확인한다."
     displayOrder: 2
 ---
-# Endianness
+# Endianness와 Byte 순서
 
-### 값과 byte 배열의 순서
+한 byte 안에 들어가는 값은 순서를 고민할 필요가 없지만, 16-bit·32-bit처럼 여러 byte로 이루어진 값을 memory에 저장하면 **어느 byte를 낮은 주소에 놓을 것인지**를 정해야 합니다. 이 규칙이 endianness입니다.
 
-0x12345678을 네 byte에 저장할 때 little-endian은 낮은 주소부터 `78 56 34 12`, big-endian은 `12 34 56 78` 순서로 둔다. 두 방식은 같은 32-bit numeric value를 서로 다른 byte 배열로 표현한다. CPU register에서 정수 연산을 수행할 때 매번 숫자 자체가 뒤집히는 것이 아니라, 그 값을 여러 byte로 memory에 저장하거나 다시 조립할 때 byte ordering이 중요해진다.
+32-bit 값 `0x12345678`을 주소 1000부터 저장한다고 해 보겠습니다.
 
-protocol이나 file format이 byte order를 정했다면 host의 native order와 다르더라도 encode/decode 경계에서 그 format을 따라야 한다. Internet protocol 문서에서 흔히 말하는 network byte order는 multi-byte integer field를 big-endian 순서로 표현하는 관례다. host가 little-endian인지와 wire contract가 big-endian인지 여부는 별도다.
+```text
+Big-endian
+address 1000  1001  1002  1003
+value     12    34    56    78
 
-### Byte order와 bit order, 문자 encoding은 다른 문제다
+Little-endian
+address 1000  1001  1002  1003
+value     78    56    34    12
+```
 
-endianness는 일반적으로 multi-byte value 안에서 byte들의 순서를 다룬다. 한 byte 내부 bit numbering, bit-field layout, UTF-8/UTF-16 같은 character encoding 문제를 모두 endianness라고 부르면 안 된다. UTF-16처럼 encoding 자체가 byte-order variant를 정의하는 경우도 있지만 그때도 character encoding contract와 machine integer layout을 구분해야 한다.
+두 경우가 표현하는 numeric value는 같습니다. 차이는 그 값을 여러 byte로 분해해 memory에 놓는 순서입니다. CPU가 register 안의 정수를 연산할 때 숫자가 매번 앞뒤로 뒤집히는 것이 아닙니다.
 
-### Backend 연결
+이 구분은 binary protocol이나 file format에서 중요합니다. Host machine의 native byte order와 외부 format이 요구하는 byte order가 다를 수 있으므로, encode/decode 경계에서는 format의 규칙을 따라야 합니다. Internet protocol에서 흔히 말하는 network byte order는 multi-byte integer를 big-endian 순서로 표현하는 관례입니다.
 
-binary 요청이나 file header를 처리할 때 field width와 byte order를 schema에 명시한다. Java `ByteBuffer`는 새 buffer의 초기 order가 BIG_ENDIAN이지만 protocol code에서는 의도를 드러내기 위해 필요한 order를 명시하고 golden byte fixture로 encode/decode 결과를 확인하는 편이 안전하다.
+Endianness와 다른 개념도 구분해야 합니다. Endianness는 보통 **multi-byte value 안에서 byte의 순서**를 말합니다. 한 byte 내부의 bit numbering이나 UTF-8 같은 문자 encoding까지 같은 문제로 보면 안 됩니다. UTF-16처럼 encoding 자체가 byte-order variant를 가질 수는 있지만, 그것은 character encoding 계약 안에서 다뤄야 합니다.
 
-서로 다른 architecture 간 통신을 테스트할 때 native memory dump를 그대로 wire format이라고 가정하지 않는다. integer value를 protocol-defined byte sequence로 변환하는 serialization 경계를 명확히 둔다.
+Java의 `ByteBuffer`처럼 byte order를 선택할 수 있는 API를 사용할 때도 host native order를 그대로 추측하기보다 protocol이나 file schema가 요구하는 order를 명시하는 편이 안전합니다. 핵심은 **memory의 native representation과 외부 binary representation 사이에 명확한 serialization 경계가 있다는 것**입니다.
