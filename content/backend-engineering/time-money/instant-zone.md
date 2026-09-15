@@ -5,7 +5,7 @@ topicContentKey: backend.core.time-money
 slug: instant-zone
 title: "절대 시점과 시간대 계약"
 summary: "발생한 사건의 절대 시점과 사용자가 해석하는 지역 시간을 분리하고 저장소·API·예약 정책 사이에서 timezone 의미가 유실되지 않게 설계한다."
-level: 2
+level: 3
 status: PUBLISHED
 displayOrder: 10
 references:
