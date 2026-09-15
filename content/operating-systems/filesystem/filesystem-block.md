@@ -19,22 +19,25 @@ references:
 ---
 # File-System Block
 
-application은 file을 연속된 byte sequence처럼 보지만 filesystem은 그 bytes를 storage에 관리하기 위해 일정한 allocation unit으로 나눈다. 이 단위를 설명 모델에서 file-system block이라고 부를 수 있다. file의 logical offset이 어느 block에 속하는지 계산하고, inode나 extent 같은 metadata를 통해 그 logical block이 실제 storage의 어느 위치에 배치되었는지 찾는다.
+Application은 file을 연속된 byte sequence로 보지만 filesystem은 persistent data를 관리하기 위해 일정한 크기의 **block 단위**로 나누어 배치한다. File의 logical offset은 어느 logical block과 그 block 내부 위치인지로 나눌 수 있고, filesystem metadata가 logical block을 실제 storage 위치에 연결한다.
 
-예를 들어 block size가 4KiB라면 file offset `9000`은 단순 모델에서 `floor(9000 / 4096) = 2`인 세 번째 logical block에 속하고, block 내부 offset은 `9000 mod 4096 = 808`이다. 하지만 이 logical block 2가 storage에서 file의 앞 block 바로 다음 위치에 있다고 보장되지는 않는다.
+예를 들어 block size가 4KiB라면 offset 9000은 세 번째 logical block의 808번째 byte에 해당한다.
 
-### VM page와 filesystem block은 같은 개념이 아니다
+```text
+9000 / 4096 = logical block 2
+9000 % 4096 = block offset 808
+```
 
-VM page는 virtual-memory translation과 residency의 단위이고 filesystem block은 persistent file data와 free-space allocation을 관리하는 단위다. 두 크기가 우연히 같을 수는 있지만 책임은 다르다. device의 sector나 SSD 내부 flash page도 또 다른 층의 단위다.
+Logical block들이 storage에서 반드시 연속된 물리 위치에 놓이는 것은 아니다.
 
-따라서 `4KiB page를 쓰니 disk도 4KiB atomic write를 보장한다`거나 `filesystem block 하나가 항상 hardware sector 하나다`라고 추론하면 안 된다. durability와 atomicity는 filesystem, block layer, storage device 계약을 따로 확인해야 한다.
+### VM page와 device sector와는 다른 단위다
 
-### Block 배치가 locality를 만든다
+Virtual-memory page는 memory mapping과 residency의 단위이고, filesystem block은 persistent file data와 free-space allocation을 관리하는 단위다. Storage device의 sector나 내부 flash page는 다시 다른 계층의 단위다.
 
-sequential file의 인접 logical block이 storage에서도 가까이 배치되면 sequential read와 readahead가 효율적으로 동작할 가능성이 높다. free space가 조각나거나 file이 여러 위치에 분산되면 추가 metadata lookup과 device access 비용이 생길 수 있다. modern SSD에서는 고전적인 seek 비용의 의미가 달라져도 locality와 요청 aggregation 자체가 사라지는 것은 아니다.
+크기가 우연히 같을 수 있어도 책임은 다르기 때문에 `4KiB VM page = 4KiB filesystem block = device atomic-write unit`이라고 추론하면 안 된다.
 
-### 작은 file과 큰 file의 trade-off
+### Block 크기도 trade-off를 만든다
 
-block 단위로 공간을 관리하면 free-space bookkeeping이 단순해지지만 file 마지막 block에서 사용하지 않는 공간이 생길 수 있다. 반대로 block을 너무 작게 만들면 큰 file을 표현하기 위해 더 많은 mapping metadata가 필요하다. filesystem은 block 크기와 extent, allocation policy를 통해 이 비용을 조정한다.
+큰 block은 큰 file을 적은 metadata로 관리하기 쉽고 sequential access에 유리할 수 있지만 작은 file의 마지막 block에서 낭비되는 공간이 커질 수 있다. 작은 block은 세밀한 allocation이 가능하지만 더 많은 mapping metadata가 필요할 수 있다.
 
-Backend에서 큰 export file을 sequential하게 만들거나 random range read를 수행할 때 application buffer 크기만 보지 않고 filesystem/page cache와 실제 access pattern을 함께 관찰한다. 다만 application batch size를 filesystem block size에 무조건 맞추는 것이 정답은 아니며 syscall 수, cache, storage 처리량을 실제로 측정해야 한다.
+File-System Block의 핵심은 **연속된 file bytes를 persistent storage에 배치하고 추적하기 위한 filesystem의 allocation 단위이며, memory page나 hardware sector와는 다른 층의 개념이라는 점**이다.
