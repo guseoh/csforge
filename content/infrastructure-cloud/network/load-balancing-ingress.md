@@ -3,8 +3,8 @@ kind: concept
 contentKey: infrastructure.core.network.load-balancing-ingress
 topicContentKey: infrastructure.core.network
 slug: load-balancing-ingress
-title: "load balancing과 ingress"
-summary: "client·load balancer·service·instance routing과 health-aware traffic distribution을 설명한다"
+title: "외부 요청의 진입과 부하 분산"
+summary: "외부 요청이 load balancer·ingress·service를 거쳐 준비된 application instance로 전달되는 흐름과 health signal이 traffic routing에 미치는 영향을 이해한다."
 level: 2
 status: PUBLISHED
 displayOrder: 20
@@ -22,40 +22,41 @@ references:
     displayOrder: 2
     relationNote: "stable service endpoint와 backend pod routing 확인"
 ---
-# load balancing과 ingress
+# 외부 요청의 진입과 부하 분산
 
-여러 application instance가 있어도 client가 각 pod IP를 직접 알 필요는 없습니다. Ingress/load balancer가 외부 요청을 받아 host·path·TLS 정책을 적용하고 service가 healthy backend로 전달하는 경계를 만듭니다.
+Application instance가 여러 개라면 client가 각 instance 주소를 직접 알아야 할 필요는 없습니다. 앞단의 load balancer나 ingress가 stable endpoint를 제공하고, route 규칙에 따라 실제 backend로 traffic을 전달할 수 있습니다.
 
 ```text
 Client
-  │ HTTPS /api/concepts
-  ▼
-Ingress / Load Balancer
-  │ route + health check
-  ▼
-Service
-  ├─ instance A
-  ├─ instance B
-  └─ instance C (not ready -> 제외)
+   │ HTTPS
+   ▼
+Load Balancer / Ingress
+   │ host/path routing
+   ▼
+Service / backend pool
+   ├─ instance A
+   ├─ instance B
+   └─ instance C
 ```
 
-### health와 routing은 연결된다
+### 살아 있는 것과 요청을 받을 준비가 된 것은 다르다
 
-backend가 process로 살아 있어도 DB migration 중이거나 overload라 요청을 받을 준비가 안 됐을 수 있습니다. readiness 실패 instance를 traffic pool에서 제외하고, liveness 실패는 restart 후보로 판단하는 식으로 health signal의 의미를 분리해야 합니다.
+Process가 실행 중이어도 startup migration을 수행 중이거나 필수 dependency 연결이 끝나지 않았다면 실제 요청을 받으면 안 될 수 있습니다. Readiness 신호는 이런 instance를 traffic pool에서 제외하는 데 사용할 수 있습니다.
 
-### stateful session은 별도 선택이 필요하다
+반면 liveness는 process를 다시 시작해야 할 정도로 회복 불가능한 상태인지 판단하는 신호입니다. Readiness 실패를 곧바로 restart 사유로 사용하면 일시적인 dependency 장애 때 불필요한 restart가 반복될 수 있습니다.
 
-instance가 local memory에 session을 두면 load balancing이 다음 요청을 다른 instance에 보내 인증 상태를 잃을 수 있습니다. sticky session, shared session store, stateless token 중 선택하되 가용성·revocation·운영 비용을 함께 판단합니다.
+```text
+process running
+  ├─ ready    → traffic 가능
+  └─ not ready → traffic 제외
+```
 
-### 문제를 풀 때 확인할 것
+### Rollout에서도 health가 traffic 전환을 결정한다
 
-1. TLS termination과 downstream encryption 경계를 찾습니다.
-2. readiness와 liveness가 무엇을 의미하는지 분리합니다.
-3. route 변경·instance drain 중 in-flight 요청을 봅니다.
-4. local state가 load distribution과 충돌하는지 확인합니다.
-5. backend별 error·지연 시간·health를 관측합니다.
+새 version을 배포할 때 old/new instance가 잠시 함께 존재할 수 있습니다. 새 instance가 실제로 준비되기 전에 traffic을 보내면 deployment가 곧 사용자 오류가 됩니다. 반대로 종료 중인 instance에서는 새로운 traffic을 끊고 in-flight 요청을 마칠 시간을 줄 수 있어야 합니다.
 
-### 면접에서 설명한다면
+### Local state는 여러 instance와 충돌할 수 있다
 
-Load balancer/ingress는 외부 요청을 stable backend 집합으로 routing하고 TLS·host/path 정책과 health signal을 적용하는 경계입니다. 살아 있음과 traffic을 받을 준비가 됨은 다르므로 readiness와 liveness를 구분하고, session state가 있으면 instance 간 공유·sticky·stateless 중 하나를 명시적으로 선택합니다.
+Session이나 임시 상태를 한 instance memory에만 두면 다음 요청이 다른 instance로 이동했을 때 상태를 찾지 못할 수 있습니다. Sticky routing을 사용할 수도 있지만 instance 장애와 scale-out 제약이 생깁니다. 필요하다면 shared state 또는 stateless contract를 검토합니다.
 
+Load balancing의 핵심은 단순히 요청을 균등하게 나누는 것이 아니라 **현재 요청을 받아도 되는 backend만 traffic 집합에 포함시키고, 배포·장애·종료 중에도 그 집합을 안전하게 바꾸는 것**입니다.
