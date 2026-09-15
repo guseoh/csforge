@@ -3,8 +3,8 @@ kind: concept
 contentKey: computer-architecture.core.device-io.interrupt-exception-trap
 topicContentKey: computer-architecture.core.device-io
 slug: interrupt-exception-trap
-title: "Interrupt, Exception·Trap"
-summary: "interrupt·exception의 발생 원인과 이들이 trap handler로 control을 넘기는 관계를 구분한다."
+title: "Interrupt·Exception과 Trap"
+summary: "interrupt와 exception의 발생 원인을 구분하고 둘이 trap entry로 control을 넘기는 관계를 설명한다."
 level: 1
 status: PUBLISHED
 displayOrder: 10
@@ -17,16 +17,34 @@ references:
     recommendation: "exception·interrupt의 원인과 trap handler로의 transfer 관계를 확인한다."
     displayOrder: 1
 ---
-# Interrupt, Exception·Trap
+# Interrupt·Exception과 Trap
 
-interrupt는 timer·device completion처럼 현재 instruction과 무관하게 발생하는 외부 비동기 event다. exception은 현재 instruction과 관련된 비정상 조건이며, illegal instruction이나 page fault가 예다. trap은 이 둘 가운데 하나 때문에 CPU가 trap handler로 control을 넘기는 사건을 가리키므로 exception·interrupt와 나란히 놓인 세 번째 원인이 아니다. ECALL은 software가 요청한 trap이면서 현재 instruction과 관련된 exception으로 분류할 수 있다.
+CPU가 현재 instruction sequence를 실행하던 중 다른 handler로 control을 넘겨야 하는 사건이 생길 수 있다. 이때 원인이 현재 instruction 바깥에서 비동기적으로 들어왔는지, 현재 instruction 실행 자체에서 발생했는지 먼저 구분하면 interrupt와 exception을 이해하기 쉽다.
 
-handler는 저장된 PC와 status를 보고 원인을 처리한 뒤 resume 또는 terminate를 선택한다. event를 단순 function call로 보면 user/kernel mode, register save, nested interrupt와 재진입 조건을 놓친다. 재개 가능한 exception인지, 외부 interrupt를 다음 instruction 경계에서 처리할지는 ISA와 privilege architecture의 규칙에 따라 확인해야 한다.
+### Interrupt는 외부에서 비동기적으로 들어온다
 
-signal·system call·device completion을 분석할 때 event source와 handler 지연 시간을 분리한다. application retry가 hardware fault를 고치는 것이 아니며, kernel이 어떤 상태를 보존했는지 확인한다.
-### Event와 trap entry
-    asynchronous device/timer event ─┐
-    synchronous instruction fault ───┼─> trap entry
-                                     ▼
-                              cause + saved PC
-둘 다 handler로 control transfer할 수 있지만 발생 시점과 restart semantics가 다르다.
+Timer 만료나 device completion처럼 현재 실행 중인 instruction과 직접 관계없이 발생하는 event를 interrupt라고 한다. CPU는 architecture가 정한 조건과 시점에 interrupt를 받아 handler로 control을 옮긴다.
+
+```text
+CPU executing instructions
+          │
+          └── device/timer event ──> interrupt pending
+```
+
+### Exception은 현재 instruction과 연결된다
+
+Illegal instruction, address translation fault, permission fault처럼 현재 instruction을 처리하는 과정에서 발생한 조건은 exception으로 분류할 수 있다. Software가 명시적으로 trap을 요청하는 instruction도 architecture에 따라 exception 범주에 포함될 수 있다.
+
+### Trap은 원인 이름이 아니라 handler로 들어가는 control transfer다
+
+Interrupt와 exception을 `interrupt / exception / trap`이라는 세 개의 동급 원인으로 외우면 경계가 흐려진다. RISC-V 문맥에서는 interrupt나 exception이 발생해 trap handler로 control이 전달되는 사건을 trap이라고 설명할 수 있다.
+
+```text
+asynchronous interrupt ─┐
+                        ├─> trap entry ─> handler
+synchronous exception ──┘
+```
+
+Trap entry에서는 원인과 재개에 필요한 PC 같은 architectural state가 보존된다. 이후 handler가 원인을 처리하고 원래 execution을 재개할지 종료할지는 exception 종류와 OS policy에 따라 달라진다.
+
+정확히 어느 instruction에서 재개하는지, 어떤 privilege level로 진입하는지, 어떤 state를 hardware가 자동 보존하는지는 ISA와 privileged architecture의 규칙을 따라야 한다. 다음 Concept에서는 이 handler entry의 상태 변화를 더 구체적으로 본다.

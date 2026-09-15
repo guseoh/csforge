@@ -4,8 +4,8 @@ contentKey: network-http.core.tcp.retransmission
 topicContentKey: network-http.core.tcp
 slug: retransmission
 title: "TCP Retransmission"
-summary: "loss나 timeout 뒤 segment를 다시 보내 reliable stream을 유지하는 방식을 설명한다."
-level: 1
+summary: "loss 판단 후 unacknowledged data를 다시 보내는 조건을 설명한다."
+level: 2
 status: PUBLISHED
 displayOrder: 50
 references:
@@ -26,10 +26,24 @@ references:
 ---
 # TCP Retransmission
 
-TCP sender는 **retransmission timer(RTO)가 만료**되거나 fast retransmit 같은 loss 신호를 관찰하면 아직 확인되지 않은 sequence 범위의 data를 다시 보낸다. RFC 6298의 RTO timer가 만료된 경우에는 가장 이른 unacknowledged segment를 retransmit하고 RTO를 backoff한다. 이를 receiver의 delayed-ACK timer 같은 의미의 “ACK timer 만료”라고 부르면 서로 다른 timer를 혼동하기 쉽다.
+TCP는 보낸 data가 확인되지 않았을 때 필요한 byte 범위를 다시 보내 **loss가 application byte stream에 그대로 드러나지 않도록** 복구한다. 대표적인 trigger는 retransmission timer 만료이고, duplicate ACK 같은 loss signal을 이용해 timeout보다 먼저 retransmit하는 방식도 있다.
 
-receiver는 sequence와 overlap을 확인해 이미 application stream에 전달한 duplicate bytes를 다시 추가하지 않는다. 따라서 TCP retransmission은 transport-level packet/segment 중복을 ordered byte stream 아래에서 처리하지만 **application 요청을 정확히 한 번 실행하는 기능은 아니다.**
+### RTO가 만료되면 확인되지 않은 data를 다시 보낸다
 
-retransmission은 loss를 transport에서 복구하는 대신 추가 RTT와 bandwidth를 사용하고 congestion control state에도 영향을 줄 수 있다. application timeout이 먼저 만료되면 client가 같은 logical 요청을 새 connection으로 다시 보낼 수 있으며, 이전 flow의 original 요청이 server에서 이미 처리됐을 가능성도 남는다. TCP는 endpoint 장애나 장시간 route 단절을 application이 원하는 deadline 안에 무한히 복구해 주는 계약도 아니다.
+Sender는 ACK가 오지 않은 data에 대해 retransmission timer를 관리한다. RTO가 만료되면 가장 앞선 unacknowledged data를 다시 보내고, 반복 timeout에서는 더 보수적으로 기다리도록 timeout을 backoff한다.
 
-HTTP 요청 timeout 뒤 재시도를 판단할 때 transport retransmission과 application retry를 분리한다. side effect가 있는 요청은 HTTP method semantics와 idempotency key·deduplication 같은 application 계약으로 replay를 보호하고, TCP retransmission 자체를 exactly-once 처리 근거로 사용하지 않는다.
+```text
+send bytes
+   ↓
+ACK 대기
+   ├─ ACK 도착 → progress
+   └─ RTO 만료 → retransmit
+```
+
+### Retransmission은 duplicate application data를 만들지 않는다
+
+Receiver는 sequence number를 기준으로 이미 받은 byte와 새 byte를 구분한다. 같은 sequence 범위가 retransmit되어도 TCP stream에는 동일 byte가 두 번 추가되지 않는다.
+
+다만 이것은 **transport byte stream의 중복 처리**다. TCP retransmission이 application request의 exactly-once 실행을 보장하는 것은 아니다. Application이 별도 요청을 다시 보내는 retry와 TCP 내부 retransmission은 서로 다른 동작이다.
+
+Retransmission의 핵심은 **ACK와 loss signal을 바탕으로 확인되지 않은 byte 범위를 다시 전송해 reliable ordered stream을 유지하는 것**이다.

@@ -3,8 +3,8 @@ kind: concept
 contentKey: network-http.core.udp.application-reliability
 topicContentKey: network-http.core.udp
 slug: application-reliability
-title: "Application Reliability over UDP"
-summary: "sequence·ACK·retry를 application이 직접 설계할 때의 비용을 설명한다."
+title: "UDP 위에서 신뢰성을 만드는 비용"
+summary: "sequence·ACK·timeout·retry를 상위 protocol이 추가할 때 필요한 상태와 trade-off를 설명한다."
 level: 2
 status: PUBLISHED
 displayOrder: 50
@@ -17,17 +17,16 @@ references:
     recommendation: "UDP datagram과 application reliability 경계를 확인한다."
     displayOrder: 1
 ---
-# Application Reliability over UDP
+# UDP 위에서 신뢰성을 만드는 비용
 
-UDP 위에서 reliable command를 만들려면 message ID/sequence, ACK, timeout, retry와 duplicate suppression을 양 끝 protocol state에 추가해야 한다. 순서가 필요하면 ordering buffer와 missing-range recovery도 필요하고, 대량 retry를 제어하려면 congestion/rate control과 backpressure가 필요하다. security authentication/encryption까지 포함하면 작은 datagram API가 독자적인 transport protocol로 커진다.
+UDP는 loss recovery와 ordering을 제공하지 않지만, 필요하다면 상위 protocol이 그 기능을 직접 만들 수 있다. 가장 단순한 형태에서도 sender는 message나 sequence를 식별하고, receiver는 무엇을 받았는지 ACK로 알려 주며, sender는 일정 시간 응답이 없으면 다시 보내는 상태를 관리해야 한다.
 
-모든 message를 재전송하지 않고 최신 상태만 보내거나 loss를 허용하는 설계도 가능하다. 반대로 retry가 ACK 손실과 구분되지 않으면 server가 같은 command를 두 번 실행할 수 있으므로, ID와 deduplication state의 보존 범위·만료·장애 복구를 정해야 한다. network가 결국 “exactly once execution”을 자동으로 만들어 주는 것은 아니며 business invariant와 storage transaction이 함께 필요하다.
+여기에 순서 보장이 필요하면 out-of-order message를 임시로 보관하고 missing sequence가 채워질 때까지 기다리는 규칙이 추가된다. duplicate를 허용할 수 없다면 이미 처리한 identifier를 기억해야 하고, retry가 몰리지 않게 하려면 rate control과 backoff도 필요하다. 즉 reliability를 높일수록 protocol state와 memory, timer, failure recovery가 늘어난다.
 
-이벤트 전달에서는 at-most-once, at-least-once와 application-level effect를 구분하고 consumer를 idempotent하게 만든다. network retry, ACK 전송과 DB transaction commit의 순서를 별도로 관찰해 “ACK를 받았지만 저장되지 않음” 또는 “저장됐지만 ACK가 유실됨” 상태를 복구할 수 있게 한다.
+### ACK가 없다는 사실만으로 loss 원인을 알 수는 없다
 
-### UDP 위 reliability
-    send(messageId, seq) → receiver
-              ▲             │
-              └─ timeout ← ACK
-                 retry + dedup state
-ACK 부재는 side effect 부재를 증명하지 않으므로 idempotency가 별도다.
+sender가 ACK를 받지 못한 이유는 원래 datagram이 유실되었기 때문일 수도 있고, receiver가 처리한 뒤 보낸 ACK만 유실되었기 때문일 수도 있다. 그래서 단순 retry는 duplicate delivery를 만들 수 있다. protocol은 같은 message를 다시 받았을 때 어떻게 식별하고 처리할지 정의해야 한다.
+
+반대로 모든 message에 이런 비용이 필요한 것도 아니다. 최신 상태만 중요하다면 오래된 sequence를 버리고 새 상태를 계속 보내는 방식이 더 적합할 수 있다. UDP 위 reliability는 `TCP를 다시 구현해야 한다`가 아니라 **application 목적에 필요한 일부 보장만 선택해서 설계할 수 있지만, 선택한 보장의 상태와 실패 처리도 직접 책임져야 한다**는 의미다.
+
+QUIC처럼 이 책임을 체계적으로 구현하면 결과적으로 별도의 transport protocol이 된다. raw UDP가 단순하다는 사실과 UDP 위 protocol 전체가 단순하다는 사실은 구분해야 한다.

@@ -4,8 +4,8 @@ contentKey: operating-systems.core.isolation.container-process-model
 topicContentKey: operating-systems.core.isolation
 slug: container-process-model
 title: "Container Process Model"
-summary: "container가 host kernel 위의 process와 namespace·cgroup으로 구성되는 방식을 설명한다."
-level: 2
+summary: "container가 isolated process environment라는 모델을 설명한다."
+level: 1
 status: PUBLISHED
 displayOrder: 60
 references:
@@ -26,20 +26,20 @@ references:
 ---
 # Container Process Model
 
-일반적인 Linux container는 별도 kernel을 부팅한 virtual machine이 아니라, host kernel이 실행하는 process와 그 descendant를 namespace·cgroup·권한·root filesystem view로 묶은 실행 환경이다. image는 실행 중 process가 아니라 filesystem과 runtime을 구성하는 입력이고, container는 그 입력으로 시작한 process tree와 lifecycle의 단위다.
+일반적인 Linux container는 별도의 guest kernel을 부팅한 virtual machine이 아니다. Host kernel 위에서 실행되는 process와 process tree에 namespace, cgroup, permission, filesystem view 같은 OS mechanism을 조합해 **독립된 실행 환경처럼 보이게 만든 것**이다.
 
 ![host kernel 위 process tree와 namespace/cgroup으로 구성되는 container](/learning/operating-systems/container-process-model.svg)
 
-container를 시작하면 entrypoint가 namespace 안의 초기 process가 되고, 그 process가 보통 해당 namespace의 PID 1 역할을 한다. PID 1은 종료 signal을 적절히 전달하고 orphan child를 회수(reap)해야 하며, signal을 무시하거나 child를 방치하면 graceful shutdown과 zombie 정리가 깨질 수 있다. main process가 종료되면 container runtime이 전체 환경을 종료하므로 child가 별도 durable service처럼 계속 살아 있다고 가정하면 안 된다.
+### Container의 중심에는 process가 있다
 
-### Runtime state와 durable state를 분리한다
+Container를 시작하면 entrypoint process가 실행되고 그 아래 child process가 만들어질 수 있다. Container runtime은 이 process tree의 lifecycle과 namespace/cgroup 구성을 관리한다. Image는 실행 중인 process가 아니라 filesystem과 실행 환경을 구성하기 위한 입력이다.
 
-container restart는 process memory와 in-flight 요청을 자동 보존하지 않고 writable layer도 업무 데이터의 durable 저장소라는 보장이 아니다. volume, external DB, queue checkpoint와 idempotent recovery를 명시해 ephemeral runtime과 canonical state를 분리한다. namespace가 path를 격리해도 bind mount가 가리키는 host object의 lifetime과 permission은 별도 경계다.
+### 격리는 여러 OS primitive의 조합이다
 
-Spring application의 graceful shutdown에서는 termination signal → 신규 작업 수락 중단 → in-flight 작업 정리 → resource close의 순서를 PID 1/entrypoint와 맞춘다. 중요한 상태는 process memory 밖의 durable storage에 남겨야 하며, 작업의 전달·재처리 보장이 필요하다면 idempotent retry, durable queue, transactional handoff 같은 복구 경계를 실제 요구사항에 맞게 선택한다. orchestration 설정 자체의 세부는 Infrastructure 영역에서 다룬다.
+Namespace는 PID·mount·network 같은 view를 분리하고, cgroup은 CPU·memory 같은 resource 사용을 관리한다. Permission과 capability는 어떤 privileged operation을 할 수 있는지 제한한다. Container라는 하나의 이름 뒤에서 서로 다른 OS mechanism이 각각 다른 책임을 가진다.
 
-### 면접에서 이렇게 나옵니다
+### Container 종료는 process lifecycle과 연결된다
 
-#### Q. Container를 작은 VM이라고 설명하면 왜 부정확한가요?
+Container의 main process가 종료되면 container lifecycle도 종료되는 것이 일반적이다. 따라서 container를 "항상 살아 있는 작은 machine"보다 **격리된 process environment와 그 lifecycle**로 이해하는 것이 정확하다.
 
-일반적인 Linux container는 별도 guest kernel을 부팅하는 VM이 아니라 host kernel 위의 process에 namespace·cgroup·filesystem view 등을 적용한 실행 환경입니다. 별도 kernel 경계가 없다는 점이 VM과의 중요한 차이입니다.
+Container process model의 핵심은 별도 kernel을 가진 VM이 아니라 **host kernel 위의 process들을 여러 isolation/resource-control primitive로 묶은 실행 단위**라는 것이다.

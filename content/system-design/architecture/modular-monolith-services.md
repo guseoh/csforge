@@ -3,8 +3,8 @@ kind: concept
 contentKey: system-design.core.architecture.modular-monolith-services
 topicContentKey: system-design.core.architecture
 slug: modular-monolith-services
-title: "modular monolith와 services"
-summary: "module boundary·team autonomy·deployment coupling·operational cost로 분리 시점을 판단한다"
+title: "Modular Monolith와 Service 분리"
+summary: "module boundary를 먼저 명확히 하고 독립 배포·확장·장애 격리의 실제 요구가 운영 복잡성보다 클 때 service 분리를 판단한다."
 level: 2
 status: PUBLISHED
 displayOrder: 30
@@ -22,37 +22,24 @@ references:
     displayOrder: 2
     relationNote: "operational excellence·reliability·cost를 architecture 평가에 포함하는 관점 확인"
 ---
-# modular monolith와 services
+# Modular Monolith와 Service 분리
 
-Modular monolith는 하나의 deployable runtime 안에서 domain module과 dependency boundary를 지키는 구조입니다. Service 분리는 독립 deploy·scale·실패 domain을 얻을 수 있지만 network call, data ownership, observability, deployment, on-call과 recovery 비용을 추가합니다. “monolith가 나쁘고 microservices가 좋다”는 출발점은 설계 근거가 아닙니다.
-
-### 먼저 module boundary를 검증한다
+시스템이 커진다고 반드시 여러 service로 나눠야 하는 것은 아닙니다. 하나의 deployable application 안에서도 module별 public API와 data ownership을 명확히 하면 변경 범위를 제한할 수 있습니다. 반대로 process를 여러 개로 나눠도 서로의 table과 내부 모델을 직접 건드리면 distributed monolith가 될 수 있습니다.
 
 ```text
-single runtime
-  ├─ learning module ── public application API
-  ├─ quiz module      ── explicit domain boundary
-  └─ search adapter   ── rebuildable derived dependency
+one deployable application
+  ├─ member module
+  ├─ learning module
+  └─ quiz module
+       └─ 각 module은 명시적 API와 ownership 유지
 ```
 
-모듈이 서로 private state를 읽고 shared table을 임의로 수정하면 service로 분리해도 distributed monolith가 됩니다. 명시적 command/query API, ownership, event contract와 architecture test로 runtime 안에서 먼저 boundary를 검증합니다.
+그래서 service 분리 전에 먼저 logical boundary가 실제 코드에서 지켜지는지 확인하는 편이 좋습니다. 어떤 module이 어떤 state를 소유하는지, 다른 module이 어떤 API를 통해 접근하는지, 한 transaction으로 함께 지켜야 하는 invariant가 무엇인지 정합니다.
 
-### 분리를 정당화하는 신호
+Service로 분리하면 독립 배포와 확장, 장애 격리, 서로 다른 보안 경계를 얻을 수 있습니다. 그러나 network failure, timeout, data synchronization, observability, CI/CD, on-call과 recovery 같은 운영 비용도 함께 생깁니다.
 
-서로 다른 scale·가용성·security boundary, 독립적인 release cadence, 명확한 data ownership, team autonomy와 장애 격리가 실제로 필요할 때 service가 이득을 줄 수 있습니다. 단순히 코드가 크거나 조직이 미래에 커질 것이라는 이유만으로 network boundary를 추가하지 않습니다.
+따라서 단순히 코드가 많다는 이유보다 **서로 다른 scale 요구, 독립 release cadence, 명확한 data ownership, 장애 격리 또는 조직 자율성이 실제로 필요한가**를 분리 근거로 삼는 편이 좋습니다.
 
-### 점진적으로 진화한다
+경계가 충분히 검증된 modular monolith는 나중에 service로 이동할 때도 유리합니다. Module API와 ownership이 이미 존재하면 특정 module의 runtime과 data를 점진적으로 분리할 수 있습니다. 반대로 경계 없이 먼저 process만 쪼개면 network를 사이에 둔 강한 coupling만 남기기 쉽습니다.
 
-modular monolith에서 module API와 canonical owner를 정한 뒤, traffic·실패·deployment 요구가 확인되면 한 module을 strangler 방식으로 분리합니다. DB shared write를 그대로 둔 채 process만 나누지 말고, data migration·event contract·timeout·SLO·운영 owner를 함께 이동합니다.
-
-### 문제를 풀 때 확인할 것
-
-1. 변경 이유·scale·실패·security boundary를 찾습니다.
-2. module의 public API·data owner·invariant를 정의합니다.
-3. deploy/runtime/network coupling과 on-call 비용을 계산합니다.
-4. modular monolith에서 boundary를 architecture test로 검증합니다.
-5. 분리 시 data migration·observability·rollback·owner를 준비합니다.
-
-### 면접에서 설명한다면
-
-초기에는 한 runtime의 modular monolith가 local 일관성과 운영 단순성을 제공할 수 있습니다. 독립 scale·release·실패·security boundary와 team autonomy가 실제로 필요해질 때 service를 분리하고, 그 전제인 module API·data ownership·event·SLO를 먼저 정해 distributed monolith를 피합니다.
+핵심은 monolith와 microservices 중 하나를 정답으로 고르는 것이 아니라 **얻고 싶은 독립성이 추가되는 운영 비용보다 큰지 확인하는 것**입니다.

@@ -4,7 +4,7 @@ contentKey: network-http.core.http-versions.transport-head-of-line
 topicContentKey: network-http.core.http-versions
 slug: transport-head-of-line
 title: "Transport Head-of-Line"
-summary: "TCP-level HOL과 stream-level multiplexing의 차이를 비교한다."
+summary: "HTTP/2 stream multiplexing 아래에서도 TCP ordered byte stream의 loss가 여러 stream delivery를 함께 지연시키는 이유를 설명한다."
 level: 2
 status: PUBLISHED
 displayOrder: 100
@@ -19,13 +19,18 @@ references:
 ---
 # Transport Head-of-Line
 
-TCP connection에서는 앞선 sequence bytes가 유실되면 뒤 bytes가 도착해도 하나의 ordered stream으로 application에 전달되지 않는 transport-level HOL이 발생한다. HTTP/2 stream multiplexing은 응답-order/application-level HOL을 줄이지만 모든 frame이 같은 TCP ordered byte stream을 공유하므로 이 경계를 제거하지 않는다.
+HTTP/2는 여러 HTTP stream을 하나의 connection에서 multiplex하지만 그 connection이 TCP 위에 있다면 모든 HTTP/2 frame bytes는 하나의 ordered TCP byte stream을 공유한다.
 
-QUIC은 stream별 reliable delivery state를 유지해 한 stream의 missing data가 다른 stream의 delivery를 같은 방식으로 막지 않도록 한다. 그러나 같은 QUIC connection의 congestion window·connection flow control·CPU·bandwidth 경쟁은 여전히 공유되고, 해당 stream 안의 순서와 HOL은 남는다. 따라서 HTTP/3가 모든 지연을 독립적으로 만드는 것은 아니다.
+TCP sequence의 앞부분이 loss되면 뒤 bytes가 network에 먼저 도착해도 application에는 missing bytes 뒤의 data를 순서를 건너 전달할 수 없다. 그 결과 loss된 byte 이후에 위치한 여러 HTTP/2 stream의 frame이 함께 기다릴 수 있다.
 
-HTTP version 변경의 지연 시간 이득은 정상 network와 loss·reordering·RTT 조건에서 비교한다. Backend trace에서 packet retransmission, stream wait, connection flow control과 application dependency를 구분하고 요청 timeout, QUIC migration과 HTTP/2 대체 처리를 같은 테스트 시나리오에 넣는다.
+```text
+HTTP/2 stream A ┐
+HTTP/2 stream B ├─> one TCP ordered byte stream
+HTTP/2 stream C ┘
+                     ↑ missing bytes
+                     → later frame delivery waits
+```
 
-### Transport HOL 비교
-    HTTP/2 streams → one TCP ordered stream → loss blocks all
-    HTTP/3 streams → QUIC independent stream delivery
-HTTP/3도 congestion과 application dependency를 제거하지 않는다.
+이 현상은 HTTP/1.1의 response-order HOL과 다른 계층의 문제다. HTTP/2 multiplexing은 HTTP-level ordering 제약을 줄였지만 TCP transport의 ordered delivery는 그대로 남아 있다.
+
+QUIC은 reliability state를 stream별로 분리해 한 stream의 missing data가 다른 stream의 ordered delivery를 같은 방식으로 막지 않도록 설계한다. 다만 congestion control과 bandwidth 같은 connection-level resource까지 완전히 독립되는 것은 아니다.

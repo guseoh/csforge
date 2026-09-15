@@ -3,8 +3,8 @@ kind: concept
 contentKey: messaging.core.workflow.transactional-outbox
 topicContentKey: messaging.core.workflow
 slug: transactional-outbox
-title: "transactional outbox"
-summary: "DB commit과 message publish 사이 dual-write gap을 outbox·relay·idempotent consumer로 해결한다"
+title: "Transactional Outbox와 이중 쓰기 문제"
+summary: "business DB commit과 broker publish를 따로 수행할 때 생기는 dual-write gap을 outbox row와 relay로 줄이고, relay duplicate를 consumer idempotency로 흡수한다."
 level: 3
 status: PUBLISHED
 displayOrder: 10
@@ -28,56 +28,60 @@ references:
     displayOrder: 3
     relationNote: "outbox event id·aggregate id를 message id/key로 전달하는 CDC relay 구현 사례 확인"
 ---
-# transactional outbox
+# Transactional Outbox와 이중 쓰기 문제
 
-주문 row를 DB에 commit한 뒤 Kafka publish를 수행하면 그 사이 process가 죽어 event가 사라질 수 있습니다. 반대로 message를 먼저 publish하고 DB transaction이 rollback되면 존재하지 않는 주문을 downstream이 처리할 수 있습니다.
-
-```text
-위험한 dual write
-  DB commit ── crash ── Kafka publish 없음
-
-transactional outbox
-  DB transaction
-    ├─ order row
-    └─ outbox row
-          │ commit
-          ▼
-       relay/CDC ─▶ broker
-```
-
-### outbox는 atomicity 경계를 DB에 둔다
-
-business state와 publish intent를 같은 DB transaction에 저장하면 DB commit이 없을 때 outbox도 남지 않고, commit이 있으면 relay가 나중에 message를 보낼 근거가 남습니다. DB와 broker를 하나의 distributed transaction으로 묶는 대신 durable outbox를 중간 기록으로 사용합니다. Relay는 polling publisher일 수도 있고 CDC 기반일 수도 있으며, 이 구현 선택은 publish 지연 시간·ordering·operational ownership을 바꿉니다.
-
-### relay도 duplicate할 수 있다
-
-Polling relay가 broker publish 성공 후 outbox sent 표시 전에 죽거나, CDC pipeline이 restart/replay하면서 같은 logical event를 다시 전달하는 경우처럼 relay boundary에서도 duplicate 가능성을 고려해야 합니다. 따라서 outbox는 exactly-once business effect를 자동 보장하지 않으며 stable event id와 idempotent consumer가 필요합니다.
-
-### aggregate key는 ordering의 재료이지 전체 보장이 아니다
-
-Debezium Outbox Event Router 같은 구현은 aggregate id를 emitted Kafka record의 key로 사용해 같은 aggregate를 같은 partition에 routing할 수 있습니다. 그러나 **outbox row가 생성된 business sequence, relay가 broker에 append하는 순서, consumer가 실제 side effect를 완료하는 순서**는 서로 다른 경계입니다.
+한 요청에서 PostgreSQL을 commit하고 Kafka에도 event를 publish해야 한다고 해 봅시다. 두 작업을 순서대로 실행하면 어느 쪽이 먼저든 **하나만 성공하는 틈**이 생깁니다.
 
 ```text
-DB sequence:       e41 -> e42
-relay append:      e41 -> e42   // 이 순서를 relay가 실제 보존하는지 확인
-consumer complete: e42 -> e41   // 내부 parallelism이면 역전 가능
+DB commit 성공
+   │
+   X process crash
+   │
+Kafka publish 없음
 ```
 
-같은 aggregate의 순서가 invariant라면 outbox에 aggregate sequence/version을 기록하고 relay가 그 순서를 보존하거나 consumer가 sequence gap·역순 적용을 검증하도록 설계합니다. `orderId`를 key로 넣는 것만으로 이미 뒤집힌 publish order를 복구할 수는 없습니다.
+반대로 broker publish를 먼저 성공시키고 DB transaction이 rollback되면 존재하지 않는 business state를 downstream이 처리할 수 있습니다.
 
-### outbox 운영 비용
+### Publish 의도를 business transaction 안에 함께 기록한다
 
-outbox가 계속 쌓이면 DB storage와 relay lag가 증가합니다. publisher가 어느 시점까지 처리했는지, 실패 attempt·next retry·dead state를 기록하고 보존 기간과 cleanup을 정해야 합니다. CDC를 쓰더라도 connector lag, schema evolution, replay와 broker 가용성을 관측해야 합니다.
+Transactional Outbox는 broker publish 자체를 DB transaction에 넣는 대신 **나중에 publish해야 한다는 durable record를 같은 DB에 저장**합니다.
 
-### 문제를 풀 때 확인할 것
+```text
+BEGIN
+  orders INSERT/UPDATE
+  outbox INSERT
+COMMIT
+       │
+       ▼
+relay / CDC
+       │
+       ▼
+Kafka publish
+```
 
-1. DB commit과 broker publish 사이 crash window를 그립니다.
-2. business row와 outbox row가 같은 local transaction인지 봅니다.
-3. polling/CDC relay의 duplicate·restart semantics를 확인합니다.
-4. event id, aggregate key와 aggregate sequence의 역할을 구분합니다.
-5. relay publish order와 consumer completion order가 business invariant를 만족하는지 검증합니다.
-6. outbox backlog·retry·cleanup·relay lag를 운영 metric으로 둡니다.
+DB commit이 성공했다면 business state와 outbox record가 함께 남고, relay가 일시적으로 실패해도 다시 publish를 시도할 근거가 있습니다. DB와 broker를 하나의 distributed transaction으로 묶지 않고도 dual-write gap을 줄이는 이유입니다.
 
-### 면접에서 설명한다면
+### Relay는 같은 event를 다시 보낼 수 있다
 
-Transactional outbox는 business row와 publish intent를 같은 DB transaction에 저장해 DB-broker dual-write gap을 줄이는 패턴입니다. Relay는 이후 broker로 전달하므로 duplicate 가능성이 남고, aggregate key는 partition routing에 도움을 줄 뿐 publish/apply 순서 전체를 자동 보장하지 않습니다. Stable event id, idempotent consumer, sequence 검증과 relay backlog 운영까지 함께 필요합니다.
+Relay가 broker publish에는 성공했지만 outbox 처리 완료 상태를 기록하기 전에 죽을 수 있습니다. CDC도 restart/replay 과정에서 같은 logical event를 다시 내보낼 수 있습니다.
+
+```text
+outbox e42
+  ├─ Kafka publish 성공
+  X relay crash
+  └─ e42 재시도 → duplicate 가능
+```
+
+그래서 stable `eventId`와 idempotent consumer가 여전히 필요합니다. Outbox가 exactly-once business effect를 자동으로 만드는 것은 아닙니다.
+
+### Aggregate 순서도 별도 계약이다
+
+같은 `orderId`를 Kafka key로 사용하면 같은 aggregate의 event를 한 partition에 모으는 데 도움이 됩니다. 하지만 DB에서 만든 순서, relay가 publish한 순서, consumer가 실제 side effect를 완료한 순서는 서로 다른 단계입니다.
+
+순서가 중요한 상태 전이라면 aggregate version이나 sequence를 함께 기록하고 relay 또는 consumer가 역전·누락을 감지할 수 있어야 합니다.
+
+### Outbox 자체도 운영 대상이다
+
+Relay가 멈추면 outbox row는 계속 쌓이고 사용자가 보는 후처리 지연도 커집니다. Outbox backlog, oldest unpublished age, relay 실패율을 관측하고 성공한 row를 언제 정리할지도 정해야 합니다.
+
+Transactional Outbox의 핵심은 Kafka를 더 복잡하게 쓰는 것이 아니라 **business commit과 publish 의도를 하나의 local transaction으로 묶고, 실제 전달은 재시도 가능한 별도 단계로 분리하는 것**입니다.

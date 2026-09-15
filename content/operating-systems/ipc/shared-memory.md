@@ -26,26 +26,22 @@ references:
 ---
 # Shared Memory
 
-shared memory IPC는 서로 다른 process의 virtual address space에 **같은 backing memory를 매핑**해 process 사이에서 data를 직접 공유하게 한다. pipe나 socket처럼 sender가 kernel buffer로 bytes를 쓰고 receiver가 다시 읽는 stream path를 거치지 않아 큰 payload나 빈번한 data exchange에서 copy overhead를 줄일 수 있다.
+Shared memory IPC는 서로 다른 process의 virtual address space에 **같은 backing memory를 매핑**해 data를 직접 공유하게 한다. Pipe나 socket처럼 sender가 kernel buffer에 bytes를 쓰고 receiver가 다시 읽는 stream path를 줄일 수 있어 큰 payload를 자주 교환하는 경우 copy 비용 측면에서 유리할 수 있다.
 
 ![서로 다른 virtual address가 같은 shared backing memory를 보는 구조](/learning/operating-systems/shared-memory-mapping.svg)
 
-### 같은 physical data를 보지만 virtual address는 다를 수 있다
+### 같은 backing을 보더라도 virtual address는 다를 수 있다
 
-process A와 B가 같은 shared-memory object를 매핑해도 각 process에서 보이는 virtual address는 같을 필요가 없다. 그래서 shared region 안에 process-local raw pointer를 저장해 다른 process가 그대로 역참조하는 설계는 안전하지 않다. offset, index, fixed binary layout처럼 mapping address와 독립적인 representation이 필요하다.
+Process A와 B가 같은 shared-memory object를 map해도 각 process의 virtual address는 다를 수 있다. 따라서 shared region 안에 process-local raw pointer를 저장하고 다른 process가 그대로 해석하는 방식은 안전하지 않을 수 있다. Offset이나 index처럼 mapping base와 독립적인 representation이 필요하다.
 
-### 빠른 data access 대신 synchronization을 직접 설계한다
+### Data copy를 줄인 대신 synchronization 책임이 커진다
 
-두 process가 같은 counter나 ring-buffer metadata를 동시에 변경하면 thread shared-memory와 마찬가지로 race가 생긴다. shared mapping 자체는 mutual exclusion, atomicity, memory ordering을 자동 제공하지 않는다. process-shared mutex/semaphore나 atomic protocol, ownership rule을 별도로 정의해야 한다.
+Shared mapping 자체는 mutual exclusion, atomicity, memory ordering을 제공하지 않는다. 두 process가 같은 metadata를 동시에 수정한다면 process-shared mutex/semaphore, atomic protocol 또는 명확한 ownership rule이 필요하다.
 
-예를 들어 producer/consumer ring을 만든다면 최소한 `write index`, `read index`, slot ownership과 publish order가 일관되어야 한다. payload를 다 쓰기 전에 producer index부터 공개하면 consumer가 partially initialized record를 읽을 수 있다.
+예를 들어 producer-consumer ring buffer에서는 payload write와 publish index 갱신 순서가 protocol의 일부다. Payload가 완성되기 전에 producer가 새 index를 공개하면 consumer가 partially initialized data를 읽을 수 있다.
 
-### Lifetime도 별도 상태다
+### Lifetime도 직접 관리한다
 
-shared-memory object 이름을 제거하는 것과 이미 mapping한 process가 해당 memory를 즉시 잃는 것은 같은 사건이 아닐 수 있다. creator crash, participant restart, stale metadata와 version mismatch도 고려해야 한다. persistent file과 달리 shared memory를 process restart 이후 canonical data store처럼 사용할지는 별도 persistence 설계가 필요하다.
+Shared-memory object의 이름을 제거하는 것과 이미 존재하는 mapping의 lifetime이 끝나는 것은 같은 사건이 아닐 수 있다. Participant가 crash하거나 restart하면 shared metadata가 stale한 상태로 남을 수 있으므로 owner, generation과 initialization state를 명확히 해야 한다.
 
-### 가장 빠른 IPC가 항상 가장 단순하지는 않다
-
-shared memory는 copy를 줄일 수 있지만 framing·synchronization·crash recovery와 schema compatibility를 application이 더 직접 책임진다. 작은 control message나 low-처리량 communication에서는 pipe/socket의 명확한 ownership이 오히려 유지보수에 유리할 수 있다.
-
-CSForge 같은 local-first application에서 shared memory를 도입할 이유가 없다면 단순한 process boundary를 유지한다. 실제 profiling에서 large local IPC copy가 병목으로 확인될 때만 후보로 검토하고 PostgreSQL canonical state와 혼동하지 않는다.
+Shared memory의 핵심 trade-off는 **copy를 줄이는 대신 synchronization, layout과 participant lifecycle을 더 직접 책임진다는 것**이다.

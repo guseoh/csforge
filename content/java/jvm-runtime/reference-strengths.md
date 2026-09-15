@@ -30,80 +30,62 @@ references:
 ---
 # Strong·Soft·Weak·Phantom Reference
 
-일반 Java 변수로 객체를 가리키면 보통 strong reference입니다. 이런 강한 참조 경로가 살아 있는 실행에서 이어져 있으면 GC는 그 객체를 회수 대상으로 다루지 않습니다.
+일반 Java reference는 객체를 강하게 reachable하게 유지합니다. 하지만 metadata나 보조 cache처럼 **이 관계 때문에 객체의 본래 수명이 늘어나서는 안 되는 경우**도 있습니다. `java.lang.ref`는 이런 관계를 표현하기 위해 soft, weak, phantom reference를 제공합니다.
 
-그런데 cache나 metadata처럼 "이 참조 때문에 객체를 꼭 살려 둘 필요는 없다"는 관계도 있습니다. Java의 `java.lang.ref`는 이런 관계를 표현하기 위해 soft, weak, phantom reference를 제공합니다.
+핵심은 "GC를 조종하는 특수 포인터"라고 외우는 것이 아니라 **이 reference가 객체 생존에 어느 정도의 소유권을 가지는가**를 이해하는 것입니다.
 
-### strong reference가 기본이다
+### Strong reference가 기본 소유 관계다
 
 ```java
 User user = new User();
 ```
 
-`user`가 live한 strong reference이고 그 참조를 통해 객체에 접근할 수 있다면 객체는 strongly reachable합니다.
+살아 있는 strong reference 경로가 객체까지 이어지면 객체는 strongly reachable합니다.
 
 ```text
-live computation ──▶ strong ref ──▶ User
+live root ──▶ owner ──▶ User
 ```
 
-일반 객체 ownership은 대부분 strong reference로 표현합니다. 다른 reference type은 특별한 수명 정책이 필요할 때만 사용합니다.
+핵심 domain state나 요청 처리에 반드시 필요한 객체는 일반적으로 strong reference로 소유합니다.
 
-### WeakReference는 "이 참조 하나 때문에 살려 두지는 않겠다"에 가깝다
+### WeakReference는 객체 수명을 강제로 연장하지 않는다
 
 ```java
 WeakReference<User> weak = new WeakReference<>(user);
 ```
 
-객체가 strong이나 soft reference로는 도달할 수 없고 weak reference를 통해서만 도달할 수 있는 **weakly reachable** 상태가 되었다고 GC가 판단하면, Java API 계약상 해당 객체에 대한 weak reference들과 관련 weakly-reachable graph의 weak reference를 원자적으로 clear합니다. 등록된 `ReferenceQueue`가 있다면 clear된 reference는 같은 시점 또는 이후에 enqueue됩니다.
+객체가 strong 또는 soft reference로 더 이상 도달되지 않고 weak reference를 통해서만 도달할 수 있는 weakly reachable 상태가 되면, JVM의 reference processing 과정에서 해당 weak reference는 clear될 수 있습니다.
 
 ```text
-strong path 있음
-live path ──▶ User             -> strongly reachable
+strong path 존재
+Root ──▶ User
 
-strong/soft path 사라짐
-WeakReference ──▶ User         -> weakly reachable
-                                  GC가 weak reference clear
+strong/soft path 소멸
+WeakReference ──▶ User
+                   │
+                   └─ weakly reachable
 ```
 
-따라서 `WeakReference.get()`은 referent가 아직 남아 있으면 값을 줄 수 있지만, GC의 reference processing 뒤에는 `null`이 될 수 있습니다. Weak reference를 사용한 코드는 **referent의 존재를 애플리케이션 수명 계약처럼 가정하지 않아야 합니다.**
+따라서 `weak.get()`은 어느 시점에는 객체를 반환하다가 이후 `null`을 반환할 수 있습니다. 이 객체가 반드시 살아 있어야 하는 업무 상태라면 weak reference만으로 보유하면 안 됩니다.
 
-### weak reference의 대표적인 용도는 보조 관계다
+Weak reference는 원본 객체의 수명을 늘리지 않는 metadata 관계나 `WeakHashMap` 같은 특수 구조에 적합할 수 있습니다.
 
-예를 들어 어떤 object에 대한 metadata를 저장하지만 metadata map 때문에 원래 object의 수명이 늘어나면 안 되는 상황이 있습니다. 이런 문제에 weak reference 기반 구조가 사용될 수 있습니다.
+### SoftReference는 application cache 정책을 대신하지 않는다
 
-Java의 `WeakHashMap`도 key가 일반 strong reference가 아니라 weak 관계를 가지는 특수한 map입니다.
+Soft reference는 strong reference는 없지만 soft reference를 통해 reachable한 객체를 표현합니다. JVM은 memory demand에 따라 soft reference를 clear할 수 있으며, Java API는 `OutOfMemoryError`를 던지기 전에 softly-reachable 객체에 대한 soft reference가 clear되어야 한다는 중요한 보장을 둡니다.
 
-하지만 "메모리 절약이 필요하니 모든 map을 WeakHashMap으로 바꾼다"는 식으로 사용하면 안 됩니다. entry의 수명은 application TTL이 아니라 reachability와 GC processing의 영향을 받기 때문입니다.
-
-### SoftReference는 weak보다 강한 reachability지만 cache TTL이 아니다
-
-Soft reference는 객체가 strongly reachable하지 않지만 soft reference를 통해 도달할 수 있는 **softly reachable** 상태를 표현합니다. GC는 memory demand에 대응해 soft reference를 재량에 따라 clear할 수 있습니다.
-
-여기에는 중요한 계약이 하나 있습니다. JVM이 `OutOfMemoryError`를 던지기 전에는 softly-reachable 객체를 가리키는 모든 soft reference가 clear되어 있어야 합니다. 반대로 **언제 어떤 soft reference를 먼저 clear할지에 대한 일반적인 시간·순서 보장은 없습니다.**
+반면 **언제 어떤 soft reference가 먼저 clear되는지에 대한 TTL·LRU·순서 계약은 없습니다.**
 
 ```text
-SoftReference ──▶ object
-      │
-      ├─ memory demand에 따라 GC가 clear할 수 있음
-      └─ OOME 전에는 softly-reachable referent의 soft reference가 clear되어야 함
+SoftReference cache
+   ├─ TTL 보장 없음
+   ├─ 최대 entry 수 보장 없음
+   └─ eviction 순서 보장 없음
 ```
 
-과거에는 "메모리가 부족하면 자동으로 지워지는 cache"라는 설명으로 많이 소개됐지만, 이 규칙은 TTL·최대 entry 수·LRU 같은 application cache 정책을 제공하지 않습니다.
+그래서 일반 애플리케이션 cache에는 최대 크기, TTL, 명시적 eviction, hit/miss 관찰처럼 업무 정책을 표현할 수 있는 cache abstraction이 더 적합한 경우가 많습니다.
 
-애플리케이션 cache에는 보통 다음이 더 중요합니다.
-
-- 최대 entry 수/메모리 크기
-- TTL
-- access pattern
-- 명시적인 eviction
-- stale 허용 범위
-- hit/miss 관찰
-
-SoftReference만으로는 정확히 언제 어떤 entry가 사라질지 애플리케이션이 통제하기 어렵습니다.
-
-### PhantomReference는 객체를 다시 얻는 참조가 아니다
-
-`PhantomReference`는 다른 reference와 목적이 다릅니다.
+### PhantomReference는 객체를 다시 꺼내는 참조가 아니다
 
 ```java
 ReferenceQueue<Resource> queue = new ReferenceQueue<>();
@@ -111,54 +93,40 @@ PhantomReference<Resource> phantom =
         new PhantomReference<>(resource, queue);
 ```
 
-GC가 객체를 phantom reachable하다고 판단하면 관련 phantom reference를 원자적으로 clear하고, queue가 등록되어 있다면 같은 시점 또는 이후에 enqueue합니다. Phantom reference의 `get()`은 항상 `null`을 반환하므로 원래 객체를 되찾아 다시 사용하는 용도가 아닙니다.
+`PhantomReference.get()`은 항상 `null`을 반환합니다. 목적은 referent를 다시 사용하기 위한 것이 아니라 객체가 phantom reachable 단계에 들어간 뒤 `ReferenceQueue`와 함께 **수명 종료 후 bookkeeping이나 cleanup trigger를 관찰하는 것**입니다.
 
-ReferenceQueue와 함께 사용해 **referent가 수명 종료 단계에 들어갔음을 관찰하고 post-mortem cleanup bookkeeping을 예약하는 용도**와 연결됩니다.
+이것도 deterministic destructor는 아닙니다. GC와 reference processing 시점은 애플리케이션이 정확히 지정할 수 없으므로 파일, socket 같은 자원은 가능하면 `try-with-resources`와 명시적 `close()`가 우선입니다.
 
-Native resource 관리 같은 특별한 경우에는 `Cleaner` 등 더 높은 수준 API를 검토할 수 있습니다. 그래도 파일이나 socket 같은 자원은 가능하면 `try-with-resources`처럼 deterministic한 명시적 close가 우선입니다.
+### ReferenceQueue를 쓰면 Reference 객체 자체도 관리해야 한다
 
-### ReferenceQueue를 쓰려면 Reference 객체 자체의 수명도 관리해야 한다
-
-Reference object를 queue와 연결하면 JVM의 reference processing 이후 enqueue된 reference를 애플리케이션이 처리할 수 있습니다.
+Reference를 queue에 등록했다고 queue가 그 `Reference` 객체의 수명을 대신 보장하는 것은 아닙니다. Notification을 처리할 필요가 있는 동안에는 프로그램이 reference object 자체도 reachable하게 유지해야 합니다.
 
 ```text
 referent reachability 변화
-         │
-         ▼
-JVM reference processing
-         │
-         ▼
+        │
+        ▼
+reference processing
+        │
+        ▼
 ReferenceQueue
-         │
-         ▼
-cleanup/bookkeeping worker
+        │
+        ▼
+cleanup/bookkeeping
 ```
 
-하지만 queue가 등록된 `Reference` 객체를 대신 강하게 보관해 주는 것은 아닙니다. Java API는 **프로그램이 referent의 상태 변화에 관심을 가지는 동안 Reference 객체 자체도 reachable하게 유지할 책임이 프로그램에 있다**고 명시합니다. Reference 객체가 먼저 unreachable해지면 해당 notification을 기대할 수 없습니다.
+이 점을 놓치면 "queue에 등록했는데 왜 알림을 못 받았지?" 같은 잘못된 기대를 만들 수 있습니다.
 
-또 이 구조는 정확한 시각을 보장하는 destructor가 아닙니다. GC와 reference processing이 언제 일어날지는 애플리케이션이 즉시 제어하는 lifecycle callback이 아니기 때문입니다.
+### reference strength를 고를 때 ownership부터 묻는다
 
-### reference strength와 객체 ownership을 섞지 않는다
+Reference type을 선택하기 전에 먼저 다음 질문을 합니다.
 
-다음 질문을 먼저 해야 합니다.
+> 이 객체가 살아 있어야 할 책임은 누가 가지고 있는가?
 
-> 이 객체가 살아 있어야 하는 책임은 누가 가지고 있는가?
+- 반드시 살아 있어야 한다면 strong ownership이 필요합니다.
+- 이 관계 때문에 원본 수명이 늘어나면 안 된다면 weak 관계를 검토할 수 있습니다.
+- memory-sensitive 보조 cache라 해도 SoftReference 하나로 cache 정책 전체를 대체하지 않습니다.
+- 수명 종료 이후 cleanup 관찰이 필요하면 PhantomReference/ReferenceQueue 또는 더 높은 수준 API를 검토합니다.
 
-핵심 domain state나 요청 처리에 반드시 필요한 object를 weak reference로만 보유하면 필요할 때 referent가 사라질 수 있습니다. 반대로 단순 metadata가 원래 object의 수명을 늘려서는 안 된다면 weak 관계가 맞을 수 있습니다.
+### 정리
 
-Reference type은 "GC 튜닝 꼼수"보다 **ownership과 reachability semantics를 표현하는 도구**로 이해하는 편이 좋습니다.
-
-### 문제를 풀 때 확인할 것
-
-1. 다른 strong reference 경로가 남아 있는지 먼저 봅니다.
-2. soft/weak/phantom 중 어떤 reachability 단계인지 구분합니다.
-3. WeakReference의 referent가 weakly reachable해지면 GC가 관련 weak reference를 clear한다는 계약을 확인합니다.
-4. SoftReference의 OOME 전 clear 보장과, 그 외 clear 시각·순서는 미정이라는 점을 구분합니다.
-5. `get()` 결과가 나중에 null일 수 있음을 처리하는지 봅니다.
-6. PhantomReference에서 원래 객체를 다시 얻으려 하지 않습니다.
-7. ReferenceQueue를 사용하면 Reference 객체 자체도 필요한 기간 동안 reachable하게 유지합니다.
-8. 명시적으로 close 가능한 resource를 GC timing에 맡기지 않습니다.
-
-### 학습 후 스스로 설명해 보기
-
-일반 reference는 strong reference라서 live computation에서 그 경로가 살아 있는 동안 객체를 유지합니다. `WeakReference`는 객체가 weakly reachable해졌다고 GC가 판단하면 관련 weak reference가 clear되는 약한 관계입니다. `SoftReference`는 그보다 강한 reachability로 memory demand에 따라 clear되며, JVM이 OOME를 던지기 전에는 softly-reachable 객체의 soft reference가 clear되어야 하지만 일반적인 clear 시각이나 순서는 보장되지 않습니다. `PhantomReference`는 `get()`으로 객체를 되찾는 용도가 아니라 `ReferenceQueue`와 함께 post-mortem cleanup을 관찰·예약하는 데 사용합니다.
+Strong reference는 객체를 일반적으로 살아 있게 유지하는 기본 소유 관계입니다. WeakReference는 원본 객체의 수명을 강하게 연장하지 않는 관계에 적합하고, SoftReference는 memory pressure에 따라 clear될 수 있지만 TTL이나 eviction 정책을 제공하지 않습니다. PhantomReference는 referent를 다시 얻는 API가 아니라 ReferenceQueue와 함께 수명 종료 이후를 관찰하는 도구입니다. Reference strength는 GC 꼼수보다 ownership과 lifecycle을 표현하는 계약으로 이해하는 것이 중요합니다.

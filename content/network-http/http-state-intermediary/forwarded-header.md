@@ -4,7 +4,7 @@ contentKey: network-http.core.http-state-intermediary.forwarded-header
 topicContentKey: network-http.core.http-state-intermediary
 slug: forwarded-header
 title: "Forwarded Header"
-summary: "intermediary가 원래 host·scheme·client 정보를 전달하는 표준 header를 설명한다."
+summary: "proxy가 자신이 관찰한 client·host·scheme·hop 정보를 표준 Forwarded field로 전달하는 방식을 설명한다."
 level: 2
 status: PUBLISHED
 displayOrder: 70
@@ -19,13 +19,16 @@ references:
 ---
 # Forwarded Header
 
-`Forwarded`는 proxy가 요청을 전달하면서 `for=`, `by=`, `host=`, `proto=` 같은 parameter로 관찰한 hop 정보를 전달하는 표준화된 HTTP field 형식이다. 여러 intermediary가 자신이 본 값을 추가할 수 있어 하나의 값이 “검증된 원래 client”를 자동으로 뜻하지 않는다. quoted value, IPv6 address와 obfuscated identifier parsing도 형식에 맞게 처리해야 한다.
+HTTP proxy가 request를 다음 hop으로 전달하면 backend가 보는 socket peer나 host·scheme은 원래 client가 사용한 값과 달라질 수 있다. `Forwarded` field는 intermediary가 자신이 관찰한 정보를 `for`, `by`, `host`, `proto` 같은 parameter로 다음 hop에 전달하기 위한 표준 형식이다.
 
-외부 client가 먼저 보낸 `Forwarded`를 ingress가 그대로 넘기면 attacker가 scheme·host·client address를 위조할 수 있다. trusted edge는 inbound header를 제거하거나 정규화한 뒤 자신이 관찰한 값을 추가하고, backend는 허용된 intermediary에서 온 chain만 신뢰해야 한다. header의 정보는 external URL 생성, routing, logging에 사용할 수 있지만 cryptographic authentication proof나 원래 client의 서명된 신원으로 자동 승격하지 않는다.
+예를 들어 TLS를 edge proxy에서 종료한 뒤 backend에 HTTP로 전달하면 backend의 local connection만 보고는 client가 원래 HTTPS를 사용했는지 알기 어렵다. Proxy는 `proto=https` 같은 정보를 전달할 수 있다.
 
-`proto=https`는 보통 client와 trusted edge 사이에서 관찰한 scheme을 전달할 뿐 backend-to-upstream channel까지 HTTPS라는 보장은 아니다. `host`를 이용해 redirect나 absolute URL을 만들 때도 허용된 public host 목록과 함께 검증해야 하며, 여러 hop의 값을 어느 순서로 해석하는지는 topology와 trust policy에 포함한다.
+```text
+client ── HTTPS ──> proxy ── HTTP ──> backend
+                    │
+                    └─ Forwarded: proto=https; ...
+```
 
-### Backend 연결
+여러 intermediary가 존재하면 hop마다 Forwarded element가 추가될 수 있다. 따라서 하나의 값만 보고 항상 최초 client를 의미한다고 가정하면 안 된다.
 
-Spring의 external URL 생성과 secure redirect는 trusted proxy가 정규화한 scheme·host만 사용하고, 허용 host 목록 밖의 값으로 redirect하지 않는다. ingress 앞에서 이미 존재하는 forwarded header를 덮어쓰는지, backend가 직접 노출될 때 header를 신뢰하지 않는지 integration test로 확인한다.
-
+더 중요한 점은 **Forwarded field가 존재한다는 사실 자체가 그 값을 신뢰할 수 있다는 증거가 아니라는 것**이다. External client도 같은 이름의 field를 보낼 수 있으므로, 어떤 intermediary가 값을 제거·정규화·추가하며 backend가 어느 hop을 신뢰할지는 별도의 trusted-proxy policy가 결정해야 한다.

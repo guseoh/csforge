@@ -3,8 +3,8 @@ kind: concept
 contentKey: network-http.core.http-message.request-message
 topicContentKey: network-http.core.http-message
 slug: request-message
-title: "HTTP 요청 메시지"
-summary: "method·target·header·body로 요청을 구성하는 의미를 설명한다."
+title: "HTTP Request Message"
+summary: "method·target·header fields·optional content가 HTTP request에서 각각 어떤 의미를 가지는지 설명한다."
 level: 1
 status: PUBLISHED
 displayOrder: 10
@@ -15,10 +15,22 @@ references:
     language: en
     displayOrder: 1
 ---
-# HTTP 요청 메시지
+# HTTP Request Message
 
-HTTP 요청은 method, 요청-target 또는 authority, header fields와 optional content로 구성된다. method는 resource에 대해 원하는 protocol semantics를, target은 어느 resource/context를 대상으로 하는지를, headers는 framing·content metadata·조건·인증 같은 제어 정보를 표현한다. content의 bytes와 그 bytes가 표현하는 application object는 서로 다른 계층이며, GET이나 다른 method에 content가 올 수 있는지의 의미도 method별 계약으로 판단한다.
+HTTP request는 client가 server에 **어떤 target에 대해 어떤 동작을 원하는지** 표현하는 message다. 핵심 정보는 method, request target, header fields와 필요한 경우의 content로 나눠 볼 수 있다.
 
-receiver는 먼저 start-line/pseudo-header와 header를 parse하고, Content-Length·transfer framing·protocol version 규칙으로 content의 경계를 정한 뒤 media type에 맞는 parser를 선택한다. header가 말하는 length·media type·condition과 실제 content가 어긋나면 parser desynchronization, 요청 smuggling 또는 잘못된 business 검증이 생길 수 있다. 요청이 origin에 도착했다는 것과 domain command가 성공했다는 것도 별도다.
+method는 `GET`, `POST`, `PUT`처럼 요청의 protocol semantics를 표현한다. request target은 현재 요청이 대상으로 하는 resource를 나타내고, header fields는 authority, representation metadata, 조건부 요청, 인증 정보처럼 request를 해석하는 데 필요한 추가 정보를 전달한다. content가 있다면 application data를 message 안에 실어 보낸다.
 
-Backend는 controller 진입 전 transport framing과 size limit을 적용하고, 그 다음 content type·schema·authentication·idempotency key를 검증한다. raw HTTP parser의 안전성과 Spring DTO 검증, domain authorization을 하나의 단계로 취급하지 않는다.
+```text
+Request
+├─ method
+├─ target
+├─ header fields
+└─ optional content
+```
+
+### HTTP message 구조와 application object는 같은 것이 아니다
+
+HTTP content가 JSON bytes라고 해서 HTTP 자체가 Java DTO나 domain object를 아는 것은 아니다. HTTP는 bytes와 media type 같은 metadata를 전달하고, application이 그 bytes를 자신이 이해하는 구조로 parse한다.
+
+또한 `request가 server에 도착했다`는 사실과 `요청한 작업이 성공했다`는 사실도 다르다. HTTP request message는 client의 의도를 전달하는 protocol 단위이고, 실제 resource 상태 변경 여부는 method semantics와 server 처리 결과를 response에서 판단해야 한다.

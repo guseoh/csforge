@@ -3,8 +3,8 @@ kind: concept
 contentKey: network-http.core.http-message.content-length-transfer
 topicContentKey: network-http.core.http-message
 slug: content-length-transfer
-title: "Content-Length·Transfer"
-summary: "message framing과 Content-Length·transfer encoding의 관계를 설명한다."
+title: "Content-Length와 HTTP/1.1 Message Framing"
+summary: "HTTP/1.1에서 Content-Length와 Transfer-Encoding이 message body 경계를 결정하는 방식을 설명한다."
 level: 2
 status: PUBLISHED
 displayOrder: 90
@@ -17,11 +17,18 @@ references:
     recommendation: "HTTP/1.1 message framing과 body 경계를 확인한다."
     displayOrder: 1
 ---
-# Content-Length·Transfer
+# Content-Length와 HTTP/1.1 Message Framing
 
-`Content-Length`는 message content의 octet 수를 표현해 receiver가 고정된 content 경계를 판단하는 데 사용한다. HTTP/1.1 transfer coding은 content를 connection에 전달하는 framing/encoding 방식을 별도로 표현하며, receiver는 method·status·HTTP version·header 조합의 규칙을 적용해 body의 시작과 끝을 결정한다. Content-Length가 있다고 해서 application object의 JSON 길이나 전체 TCP connection 길이를 뜻하는 것은 아니다.
+HTTP/1.1은 하나의 connection에서 여러 message를 주고받을 수 있으므로 receiver가 **현재 message body가 어디에서 끝나는지** 정확히 알아야 한다. `Content-Length`는 content가 포함된 일반적인 message에서 body의 예상 octet 수를 알려 주어 그 경계를 결정하는 데 사용할 수 있다.
 
-HTTP/1.1에서 conflicting length fields, 잘못된 transfer coding 또는 intermediary와 origin의 서로 다른 precedence는 한 hop이 읽은 요청과 다음 hop이 읽은 요청을 어긋나게 해 요청 smuggling 위험을 만든다. HTTP/2·HTTP/3은 자체 binary framing을 사용해 HTTP/1.1 chunked transfer coding을 같은 방식으로 사용하지 않지만, content length의 일관성과 stream termination은 여전히 검증해야 한다. invalid message는 parser 간에 임의로 보정하지 말고 명확히 거부한다.
+예를 들어 `Content-Length: 120`이면 framing 규칙상 receiver는 해당 body에서 120 octet을 읽어야 한다. 이 숫자는 JSON object의 field 수나 TCP segment 수를 뜻하지 않는다. HTTP message를 구성하는 body의 byte 길이에 관한 정보다.
 
-upload/download gateway는 요청 본문 size limit과 streaming parser를 둔다. server가 생성하는 chunked 응답과 application content length를 임의로 동시에 설정하지 말고, 압축·proxy buffering 뒤의 실제 framing과 client가 관찰하는 length를 별도 테스트한다.
+### Transfer-Encoding은 HTTP/1.1 message 전송 방식이다
 
+body 크기를 미리 알 수 없는 경우 HTTP/1.1에서는 `Transfer-Encoding: chunked`를 사용해 content를 여러 chunk로 나누고 마지막 chunk로 끝을 표시할 수 있다. transfer coding은 representation 자체의 형식인 `Content-Encoding`과 다르며, HTTP message를 connection 위에 전달하는 과정의 속성이다.
+
+`Content-Length`와 `Transfer-Encoding`이 충돌하는 message는 매우 조심해서 처리해야 한다. RFC 9112에서 Transfer-Encoding이 framing precedence를 가지지만, 둘을 동시에 받은 상황 자체가 request smuggling 같은 parser disagreement 위험과 연결될 수 있으므로 정상적인 sender는 함께 보내지 않아야 한다.
+
+HTTP/2와 HTTP/3은 HTTP/1.1의 chunked transfer coding을 그대로 사용하지 않고 stream/frame 구조로 content를 운반한다. 따라서 `Content-Length`와 chunked를 HTTP 전체의 유일한 framing 방식으로 일반화하면 안 된다.
+
+핵심은 **representation이 무엇을 의미하는가**와 **wire에서 이번 HTTP message의 bytes가 어디까지인가**를 분리하는 것이다. `Content-Type`은 전자를, HTTP version별 framing은 후자를 다룬다.

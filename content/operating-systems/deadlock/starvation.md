@@ -26,37 +26,31 @@ references:
 ---
 # Starvation
 
-### System 전체가 움직여도 특정 execution은 계속 기회를 잃을 수 있다
+Starvation은 **시스템 전체는 계속 progress하지만 특정 execution만 필요한 CPU나 resource 기회를 계속 얻지 못하는 liveness 문제**다.
 
-Starvation은 다른 task들은 계속 완료되는데 특정 process, thread, 요청이 CPU, lock, queue service 같은 필요한 기회를 장기간 또는 무기한 얻지 못하는 liveness 문제다. Deadlock처럼 참여자 전체가 circular wait에 묶일 필요가 없다.
-
-Priority scheduler에서 high-priority task가 계속 도착하는 상황을 단순화하면 다음처럼 볼 수 있다.
+Priority scheduler에서 높은 priority task가 계속 선택되는 동안 낮은 priority task가 runnable 상태로 남아 있다고 하자.
 
 ```text
-ready queue:
-L(low)  H1  H2  H3  H4  H5 ...
-
-dispatch:
-         H1 → H2 → H3 → H4 → H5 → ...
-L waits: ─────────────────────────────→
+dispatch: H1 → H2 → H3 → H4 → ...
+L waits:  ───────────────────────→
 ```
 
-CPU는 계속 일을 하고 처리량도 나올 수 있지만 L은 service를 받지 못한다.
+CPU는 계속 일을 하고 다른 task도 완료되지만 L은 service를 받지 못한다.
 
-### Read-write lock에서도 admission policy에 따라 starvation이 생길 수 있다
+### Deadlock과 Livelock과 비교한다
 
-Reader를 우선하는 구현에서 writer가 기다리는 중에도 새 reader를 계속 받아 준다면 reader stream이 끊기지 않는 동안 writer가 exclusive ownership을 얻을 순간이 오지 않을 수 있다. 반대로 writer preference를 강하게 두면 새 reader 지연 시간이 늘어날 수 있다.
+세 문제는 모두 progress와 관련되지만 실패 모양이 다르다.
 
-즉 starvation은 lock 종류 하나의 필연적 성질이라기보다 **누구를 다음에 admission할지 정하는 fairness policy**와 연결된다.
+| 문제 | 전체/참여 execution의 상태 |
+| --- | --- |
+| Deadlock | 서로 기다리는 cycle 때문에 참여자들이 진행하지 못함 |
+| Livelock | 계속 행동하지만 서로 방해해 유효한 progress가 없음 |
+| Starvation | 다른 execution은 progress하지만 특정 execution만 계속 배제됨 |
 
-### 평균 처리량과 평균 지연 시간은 starvation을 숨길 수 있다
+Starvation의 구체적인 원인은 scheduler priority뿐 아니라 lock이나 queue의 admission policy일 수도 있다. Reader를 계속 우선하는 read-write lock에서 writer가 장기간 선택되지 않는 경우가 한 예다.
 
-다른 task가 빠르게 끝나면 system 평균 지연 시간은 양호하게 보일 수 있다. 하지만 오래 기다리는 하나의 task는 평균값에서 거의 보이지 않는다.
+### 해결 방향은 fairness를 회복하는 것이다
 
-그래서 fairness를 보려면 oldest task age, 최대 wait time, tail wait 지연 시간, class별 service share처럼 **특정 실행 흐름이 계속 배제되는지 드러나는 지표**가 필요하다.
+Aging, fair admission, 최소 service 보장처럼 특정 execution이 무기한 배제되지 않게 만드는 정책을 사용할 수 있다. 다만 fairness를 강화하면 높은 priority 응답 시간이나 throughput 같은 다른 목표와 trade-off가 생길 수 있다.
 
-### 공정성을 높이면 다른 목표와 trade-off가 생길 수 있다
-
-Aging, FIFO/fair lock, weighted queue, quota, minimum service guarantee 등을 사용하면 특정 task나 class가 영원히 밀리는 위험을 줄일 수 있다. 그러나 strict fairness는 cache locality, high-priority 응답 시간, 전체 처리량 같은 다른 목표를 희생할 수 있다.
-
-Starvation 완화는 priority inversion 해결과도 구분해야 한다. Priority inheritance는 low-priority resource owner 때문에 high-priority waiter가 막히는 inversion을 다루는 protocol이다. Low-priority runnable task가 scheduling policy 때문에 계속 선택되지 않는 일반 starvation에는 aging이나 service guarantee 같은 다른 정책이 필요하다.
+Scheduling Topic에서 aging을 이미 다뤘으므로 여기서의 핵심은 해결 알고리즘보다 **starvation이 다른 execution의 progress는 유지된 채 특정 execution만 service에서 배제되는 liveness failure라는 점**을 deadlock과 livelock에서 구분하는 것이다.

@@ -19,9 +19,19 @@ references:
 ---
 # Frame, Packet, Segment·Message
 
-frame, IP packet, TCP segment, UDP datagram과 application message는 서로 다른 계층이 소유하는 data unit이다. frame은 한 link에서 전달되는 단위이고, packet은 IP forwarding의 단위이며, segment/datagram은 transport header와 payload를 가진다. message는 HTTP 요청/응답처럼 application protocol이 정의한 논리 단위다. 문서와 도구에 따라 `packet`이라는 말을 넓게 쓰기도 하므로 이름보다 header·address·reassembly 책임을 확인해야 한다.
+Network에서 사용하는 `frame`, `packet`, `segment`, `message`는 모두 data를 뜻하지만 **각기 다른 계층의 경계를 가리키는 이름**이다.
 
-하나의 HTTP message는 여러 TCP segment와 frame으로 쪼개질 수 있고, 하나의 read에서 여러 message 또는 message 일부가 함께 올 수 있다. TCP가 sequence로 ordered byte stream을 복원해도 message boundary를 보존하지 않으므로 Content-Length, transfer coding 또는 application framing이 최종 경계를 정한다. UDP는 datagram 경계를 transport API에 전달하지만 delivery와 ordering 보장은 별도 문제다.
+- Frame은 하나의 local link에서 전달되는 link-layer data unit이다.
+- Packet은 일반적으로 IP forwarding의 data unit을 가리킨다.
+- TCP segment와 UDP datagram은 transport header와 payload를 가진 transport unit이다.
+- Message는 HTTP request/response나 DNS query처럼 application protocol이 정의한 논리 단위다.
 
-Backend 요청 본문 parser와 socket/network buffer를 분리하고 최대 message size와 partial read state를 관리한다. packet capture의 unit 수를 API 요청 수와 직접 비교하지 않으며, capture 지점이 host·link·proxy 중 어디인지 함께 기록한다.
+도구와 문서에서는 `packet`이라는 말을 더 넓게 사용하기도 있으므로 용어만 보고 단정하지 말고 어떤 header와 protocol unit을 뜻하는지 확인해야 한다.
 
+### 계층별 unit의 경계는 서로 일치하지 않는다
+
+하나의 HTTP message가 여러 TCP segment와 IP packet, link frame으로 나뉠 수 있다. TCP가 수신 측에서 ordered byte stream을 복원해도 원래 application message boundary가 자동으로 복원되는 것은 아니다. HTTP 같은 상위 protocol이 자신의 framing 규칙으로 message 끝을 결정한다.
+
+UDP는 datagram boundary를 transport API에 전달하지만 delivery와 ordering 보장은 별도의 문제다.
+
+핵심은 **각 계층이 자신의 data unit과 header 경계를 가지며, 상위 message 하나와 하위 wire unit 하나를 일대일로 대응시키면 안 된다는 것**이다.

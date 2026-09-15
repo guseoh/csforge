@@ -4,7 +4,7 @@ contentKey: network-http.core.http-state-intermediary.cookie-scope
 topicContentKey: network-http.core.http-state-intermediary
 slug: cookie-scope
 title: "Cookie Scope"
-summary: "Domain·Path·Secure·SameSite가 전송 범위를 제한하는 방식을 설명한다."
+summary: "Domain·Path·Secure·SameSite가 cookie가 어느 요청에 포함될 수 있는지 제한하는 방식을 설명한다."
 level: 2
 status: PUBLISHED
 displayOrder: 30
@@ -19,18 +19,18 @@ references:
 ---
 # Cookie Scope
 
-user agent는 요청의 host와 path, scheme, site context를 cookie의 attribute와 비교해 전송 여부를 결정한다. `Domain`이 없으면 보통 설정한 host에만 묶이고, 명시하면 허용된 하위 host까지 넓어질 수 있다. `Path`는 요청 경로가 cookie path의 범위에 맞는지 결정하지만, 같은 host의 다른 애플리케이션이 그 경로를 보안 경계로 삼을 수 있게 만드는 authorization mechanism은 아니다.
+user agent는 저장된 cookie를 모든 요청에 붙이지 않는다. request의 host와 path, secure channel 여부와 site context를 cookie attribute와 비교해 해당 cookie가 이번 요청에 포함될 수 있는지 결정한다.
 
-`Secure`는 cookie를 secure channel, 일반적으로 HTTPS인 요청에만 보내도록 제한한다. 이는 cookie 값의 무결성이나 HTTPS endpoint 자체의 올바른 인증을 혼자 보장하는 flag가 아니다. `SameSite`는 origin이 아니라 site와 요청 context를 기준으로 cross-site 전송을 제한하며, Strict·Lax·None의 실제 허용 범위와 browser 정책을 확인해야 한다. 현대 user agent에서는 `SameSite=None`에 `Secure`를 요구하는 경우가 많지만 client 정책을 서버의 유일한 security boundary로 삼지 않는다.
+`Domain`을 생략하면 cookie는 설정한 host에 묶이는 host-only cookie가 된다. 허용된 `Domain`을 지정하면 그 domain의 하위 host까지 전송 범위가 넓어질 수 있다. `Path`는 request path가 어느 범위에 있을 때 cookie를 보낼지 제한한다. 다만 Path는 같은 host의 application 사이를 격리하는 authorization boundary가 아니다.
 
-cookie는 port별로 분리되는 저장소가 아니므로 같은 host의 다른 port를 별도 보안 영역이라고 가정하면 안 된다. 또한 너무 넓은 Domain은 덜 신뢰하는 sibling subdomain에 session scope를 노출할 수 있고, 오래 사는 cookie는 탈취 시 피해 시간을 늘린다. 가능한 경우 host-only와 최소 Path를 사용하고, 엄격한 host cookie가 필요한 session에는 `__Host-` prefix 규칙을 검토하되 prefix 지원과 server 검증을 함께 확인한다.
+`Secure`는 cookie를 secure transport를 사용하는 요청에만 보내도록 제한한다. `HttpOnly`는 script API에서 cookie에 접근하는 것을 제한하는 속성이고, `SameSite`는 cross-site context에서 cookie를 전송할 조건을 제한한다. 이 속성들은 서로 다른 위험을 줄이므로 하나를 설정했다고 나머지 역할까지 대신하지 않는다.
 
-### Backend 연결
+```text
+저장된 cookie
+   ↓ Domain / Path 확인
+   ↓ Secure 조건 확인
+   ↓ SameSite context 확인
+eligible request에만 Cookie로 포함
+```
 
-관리자와 일반 UI가 다른 host/path를 사용하면 cookie 이름·scope·CSRF 정책을 분리하고, Path가 authorization을 대신한다고 가정하지 않는다. local HTTP 개발 환경에서는 `Secure` cookie가 저장·전송되지 않는 정상 동작을 profile 설정이 가리지 않게 하고, production HTTPS와 cross-site 흐름을 별도로 테스트한다.
-
-### Cookie scope
-    Set-Cookie → Domain / Path / Secure / SameSite
-                       ↓
-                eligible 요청 only → Cookie
-넓은 Domain은 sibling subdomain까지 credential 경계를 넓힌다.
+Cookie 저장소는 port별로 완전히 분리되는 모델이 아니다. 따라서 같은 hostname의 다른 port를 독립된 cookie security boundary로 가정하면 안 된다. **Cookie scope는 어떤 HTTP 요청에 credential-like state가 자동 포함될 수 있는지를 정하는 전송 범위**로 이해하는 것이 핵심이다.

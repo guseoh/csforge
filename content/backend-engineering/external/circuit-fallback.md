@@ -3,8 +3,8 @@ kind: concept
 contentKey: backend.core.external.circuit-fallback
 topicContentKey: backend.core.external
 slug: circuit-fallback
-title: "circuit breaker와 대체 처리"
-summary: "반복 실패를 감지해 호출을 차단하는 상태 machine과 사용자에게 허용 가능한 대체 처리를 구분한다"
+title: "Circuit Breaker와 대체 처리"
+summary: "반복되는 원격 실패가 local 자원을 계속 소모할 때 circuit breaker가 호출 허용 상태를 바꾸는 원리와 timeout·bulkhead·fallback의 서로 다른 책임을 구분한다."
 level: 3
 status: PUBLISHED
 displayOrder: 30
@@ -14,7 +14,7 @@ references:
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
-    relationNote: "CLOSED/OPEN/HALF_OPEN state와 failure window 동작 확인"
+    relationNote: "CLOSED/OPEN/HALF_OPEN 상태와 failure/slow-call window 동작 확인"
   - url: "https://www.rfc-editor.org/rfc/rfc9110"
     title: "RFC 9110 HTTP Semantics"
     referenceType: OFFICIAL
@@ -26,89 +26,74 @@ references:
     referenceType: OFFICIAL
     language: en
     displayOrder: 3
-    relationNote: "SemaphoreBulkhead와 ThreadPoolBulkhead의 bounded concurrency/resource isolation 경계 확인"
+    relationNote: "bounded concurrency와 resource isolation 경계 확인"
 ---
-# circuit breaker와 대체 처리
+# Circuit Breaker와 대체 처리
 
-외부 결제·추천·배송 API가 계속 실패할 때 매 요청이 같은 remote를 다시 두드리면 caller thread와 remote 부하가 함께 악화됩니다. Circuit breaker는 실패 신호를 관찰해 일정 시간 호출을 차단하고, 복구 여부를 제한된 probe로 확인하는 보호 장치입니다.
-
-```text
-                 실패 threshold
-       ┌────────────────────────────┐
-       │                            ▼
-   CLOSED ───────────────────────▶ OPEN
-       ▲                            │
-       │ probe window가 healthy      │ wait duration
-       │                            ▼
-       └──────────────────────── HALF_OPEN
-                         unhealthy ──┘
-```
-
-### state는 호출 정책을 바꾼다
-
-- `CLOSED`: 호출을 허용하고 outcome을 기록합니다.
-- `OPEN`: remote 호출을 즉시 거절해 실패가 전파되는 것을 줄입니다.
-- `HALF_OPEN`: 복구 여부를 확인할 제한된 probe만 허용합니다.
-
-실제 library는 sliding window, minimum call 수, 실패/slow-call threshold와 특수 상태를 추가할 수 있습니다. 예를 들어 Resilience4j는 HALF_OPEN에서 configurable한 수의 호출을 허용하고 그 결과의 실패/slow-call rate를 기준으로 OPEN 또는 CLOSED 전이를 판단합니다. 따라서 `probe 하나 성공 = 즉시 CLOSED`처럼 상태 machine을 일반화하면 안 됩니다.
-
-### circuit breaker와 bulkhead는 보호하는 실패 경계가 다르다
-
-breaker가 OPEN인지 판단하고 호출 허가를 제어하는 것과 remote 함수 실행 시간을 보호하는 것은 다른 책임입니다. CLOSED 상태에서는 여러 caller가 동시에 remote를 호출할 수 있습니다.
-
-Bulkhead는 한 dependency나 작업 종류가 사용할 수 있는 **동시 실행 capacity를 bounded하거나 별도 execution resource로 격리해**, 그 dependency의 지연·고갈이 다른 작업의 capacity까지 모두 점유하는 것을 줄이는 패턴입니다. Resilience4j의 `SemaphoreBulkhead`는 concurrent execution 수를 제한하고, `FixedThreadPoolBulkhead`는 bounded queue와 별도 fixed thread pool을 사용합니다. 구현마다 isolation unit이 다르므로 `bulkhead = 항상 별도 thread pool`이라고 일반화하지 않습니다.
+외부 서비스가 계속 timeout이나 5xx를 반환하는데 모든 사용자 요청이 같은 dependency를 계속 호출하면 실패 자체보다 **기다리는 local thread·connection과 원격 부하가 함께 누적되는 문제**가 커질 수 있습니다. Circuit breaker는 이런 반복 실패를 관찰해 일정 조건에서 호출을 빠르게 거절하고, 이후 제한된 호출로 복구 여부를 확인하는 패턴입니다.
 
 ```text
-circuit breaker -> 호출을 허용할지와 실패 window
-bulkhead         -> dependency별 동시 실행/resource capacity 경계
-timeout          -> 한 호출이 얼마나 기다릴지
+정상 호출 허용
+   CLOSED
+      │ failure/slow-call threshold 초과
+      ▼
+    OPEN
+      │ wait duration 경과
+      ▼
+ HALF_OPEN
+   │      │
+회복     실패 지속
+   │      │
+   ▼      ▼
+CLOSED   OPEN
 ```
 
-bulkhead가 있다고 remote 자체가 건강해지는 것은 아니며, capacity가 가득 찼을 때의 rejection/wait 정책도 application 계약으로 정해야 합니다. 반대로 global connection pool 하나만 두고 dependency별 budget이 없다면 특정 slow dependency가 공용 capacity를 소진할 수 있으므로 실제 isolation scope를 확인합니다.
+Resilience4j 같은 구현에서는 최소 표본 수, sliding window, failure rate, slow-call rate, HALF_OPEN에서 허용할 호출 수가 설정에 따라 달라집니다. 따라서 "한 번 실패하면 OPEN", "probe 한 번 성공하면 CLOSED" 같은 규칙으로 일반화하지 않습니다.
 
-### 대체 처리는 실패를 숨기는 것이 아니다
+### Circuit breaker는 timeout을 대신하지 않는다
 
-대체 처리는 remote 결과를 대신해 반환할 수 있는 **허용된 의미**가 있을 때만 사용합니다. 캐시된 추천 목록이나 읽기 전용 기본값은 stale임을 표시하고 사용할 수 있지만, 결제 승인이나 재고 차감 결과를 임의의 성공으로 바꾸면 canonical 상태를 오염시킵니다.
+Breaker가 `CLOSED` 상태라면 실제 remote 호출은 여전히 실행됩니다. 한 호출이 얼마나 오래 기다릴지는 timeout/deadline이 제한해야 합니다.
 
 ```text
-추천 API 실패 ─▶ 오래된 추천 목록 + stale 표시     가능할 수 있음
-결제 승인 실패 ─▶ 결제 성공으로 응답               금지
-재고 조회 실패 ─▶ “재고 충분”으로 추정             위험
+timeout          → 한 호출이 기다릴 수 있는 시간
+circuit breaker  → 최근 실패 상태를 보고 새 호출을 허용할지
 ```
 
-대체 처리의 결과는 정상 결과와 동일한 신뢰 수준인지, 사용자가 재시도할 수 있는지, 나중에 reconciliation이 필요한지까지 계약에 포함해야 합니다.
+Timeout이 없는데 breaker만 둔다면 첫 호출들이 매우 오래 매달릴 수 있고, breaker가 OPEN되기 위한 결과 자체도 늦게 쌓일 수 있습니다.
 
-### HALF_OPEN probe도 비용과 동시성을 제한한다
+### 동시 실행량을 제한하는 책임도 별개다
 
-OPEN에서 바로 모든 traffic을 풀면 remote가 아직 회복되지 않았을 때 다시 폭주할 수 있습니다. 제한된 probe만 통과시키고 configured probe 결과를 평가해 CLOSED 또는 OPEN으로 전이해야 합니다. probe를 몇 개 허용하고 어떤 실패/slow-call rate를 건강으로 볼지는 library/configuration 계약입니다. 다시 OPEN이 되었을 때 얼마나 기다릴지도 backoff와 운영 목표에 맞춰 정합니다.
+Remote가 느릴 때 CLOSED 상태에서 수백 개 요청이 동시에 들어오면 breaker가 아직 열리기 전 local capacity가 소진될 수 있습니다. Bulkhead는 특정 dependency가 사용할 수 있는 **동시 실행량이나 별도 execution resource를 제한**해 다른 작업까지 함께 고갈되는 것을 줄이는 패턴입니다.
 
-### 어떤 실패를 기록할지 선택한다
+```text
+Circuit breaker → 호출 허용 여부
+Bulkhead        → 동시에 사용할 수 있는 capacity
+Timeout         → 호출 하나의 시간 상한
+```
 
-사용자 입력 오류, 인증 실패, 존재하지 않는 자원은 remote가 정상적으로 거절한 permanent 실패일 수 있습니다. 이를 모두 circuit 실패로 기록하면 정상적인 4xx가 회로를 열어버립니다. 반대로 timeout, connection refusal, 5xx, slow 응답처럼 remote 가용성을 나타내는 신호는 breaker 판단에 포함할 후보입니다. 정확히 어떤 exception/status를 기록하는지는 client adapter와 breaker configuration에서 명시합니다.
+이 세 가지를 항상 모두 도입해야 한다는 뜻은 아닙니다. 실제 장애에서 어떤 자원이 고갈되는지 측정한 뒤 필요한 보호 수단을 선택합니다.
 
-### 운영에서는 state와 대체 처리를 함께 관측한다
+### Fallback은 실패를 성공으로 꾸미는 기능이 아니다
 
-다음 지표를 별도로 봅니다.
+외부 호출에 실패했을 때 대체할 수 있는 결과가 제품 의미상 존재할 때만 fallback이 안전합니다.
 
-1. 현재 circuit state와 state transition 횟수
-2. 실패 rate와 slow-call rate, 최소 표본 수
-3. OPEN으로 거절된 호출 수
-4. HALF_OPEN probe 성공·실패 수
-5. bulkhead active/wait/rejected execution과 사용 capacity
-6. 대체 처리 응답 비율과 stale age
-7. remote 정상화 뒤 복구까지 걸린 시간
+```text
+추천 서비스 실패
+→ 최근 캐시된 추천 + stale 표시       가능할 수 있음
 
-breaker가 자주 열리는 것만 보고 threshold를 높이면 장애 신호를 늦출 수 있습니다. 반대로 threshold를 너무 낮추면 짧은 일시 오류에도 사용자 traffic을 대체 처리로 보낼 수 있으므로 실제 workload와 허용된 degraded mode를 기준으로 조정합니다.
+결제 승인 실패
+→ "결제 성공"으로 임의 응답          허용하면 안 됨
 
-### 문제를 풀 때 확인할 것
+재고 조회 실패
+→ 재고 충분하다고 추정                위험
+```
 
-1. 어떤 실패를 circuit 실패로 셀지 확인합니다.
-2. OPEN이 호출 부하를 줄이는지, 동시 실행/resource isolation은 bulkhead로 별도 설계됐는지 구분합니다.
-3. HALF_OPEN probe 수와 실패/slow-call 평가 조건을 봅니다.
-4. 대체 처리가 정상 결과와 의미가 같은지, stale/partial임을 표현하는지 판단합니다.
-5. 결제·재고처럼 성공을 추정하면 안 되는 side effect는 대체 처리하지 않습니다.
+Fallback 결과가 정상 결과보다 오래됐거나 기능이 줄어든 상태라면 그 차이를 사용자나 상위 로직이 알아야 할 수 있습니다. 대체 처리는 availability 숫자를 높이는 것이 목적이 아니라 **제품이 허용한 degraded mode를 명시적으로 제공하는 것**입니다.
 
-### 면접에서 설명한다면
+### 어떤 실패를 breaker 통계에 포함할지도 정책이다
 
-Circuit breaker는 반복되는 timeout·unavailable·slow 응답을 관찰해 CLOSED, OPEN, HALF_OPEN 같은 상태로 호출 허용 여부를 바꾸는 보호 장치입니다. 이는 timeout이나 bulkhead를 대체하지 않습니다. Bulkhead는 dependency별 동시 실행이나 execution resource를 bounded해 실패 capacity를 격리하고, 대체 처리는 사용자에게 의미적으로 허용되는 stale/partial 대체 결과만 제공합니다. 세 패턴의 책임과 실패 경계를 따로 설명해야 합니다.
+사용자가 잘못된 요청을 보내 remote가 정상적으로 400을 반환한 경우와, remote가 timeout·connection failure·5xx를 내는 경우는 의미가 다릅니다. 모든 4xx까지 실패율에 넣으면 상대 시스템이 건강한데도 잘못된 사용자 요청 때문에 circuit이 열릴 수 있습니다.
 
+따라서 adapter가 공급자 응답을 먼저 의미 있는 실패로 분류하고, **remote 가용성을 나타내는 실패만 breaker 판단에 포함할지** 명시적으로 정합니다.
+
+Circuit breaker를 도입할 때 가장 먼저 봐야 할 것은 라이브러리 annotation이 아니라 **반복 실패가 실제로 어떤 local capacity와 remote 부하를 증폭시키고 있는가, 그리고 호출 차단·동시성 제한·시간 제한·대체 처리 중 어떤 책임이 필요한가**입니다.

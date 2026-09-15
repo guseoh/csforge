@@ -4,8 +4,8 @@ contentKey: network-http.core.tcp.sliding-window
 topicContentKey: network-http.core.tcp
 slug: sliding-window
 title: "TCP Sliding Window"
-summary: "ACK 전송 범위 안에서 여러 byte를 전송하는 sequence window와 receive/congestion limit의 관계를 설명한다."
-level: 1
+summary: "ACK 전 여러 byte를 전송하는 sequence window를 설명한다."
+level: 2
 status: PUBLISHED
 displayOrder: 70
 references:
@@ -26,25 +26,21 @@ references:
 ---
 # TCP Sliding Window
 
-sliding window는 sender가 byte 하나나 segment 하나를 보낼 때마다 ACK를 기다리지 않고 **여러 byte를 outstanding 상태로 유지하면서 sequence space를 전진**할 수 있게 하는 구조다. 누적 ACK가 진행되면 이미 확인된 왼쪽 범위가 빠지고 이후 sequence를 보낼 여지가 생긴다. 따라서 window는 packet 개수보다 byte sequence 범위로 이해하는 편이 정확하다.
-
-### 하나의 임의 window가 receiver와 network를 동시에 보호하는 것이 아니다
-
-실제 sender가 outstanding으로 둘 수 있는 data는 서로 다른 두 제약을 함께 받는다.
+TCP는 byte 하나나 segment 하나를 보낼 때마다 ACK를 기다리는 stop-and-wait 방식이 아니라, 일정한 sequence 범위의 data를 **ACK 전에 여러 개 outstanding 상태로 유지**할 수 있다. ACK가 진행되면 확인된 왼쪽 범위가 빠지고 새로운 sequence 범위를 보낼 수 있게 되는데, 이를 sliding window 관점으로 이해할 수 있다.
 
 ```text
-rwnd: receiver가 광고한 receive-window limit
-cwnd: sender congestion control이 정한 network-side limit
-
-실제 outstanding 전송 한계 ≈ min(rwnd, cwnd)
+sequence space
+[ ACKed ][ outstanding ][ send 가능 ][ 아직 보낼 수 없음 ]
+          ↑ ACK 진행
+window가 오른쪽으로 이동
 ```
 
-`rwnd`는 receiver가 감당할 수 있는 receive space를 표현해 flow control을 담당하고, `cwnd`는 sender가 network 혼잡 상태에 맞춰 유지하는 congestion-control state다. RFC 5681도 sender가 `cwnd`와 `rwnd` 중 더 작은 제한을 넘겨 새 data를 보내지 않도록 규정한다.
+### Window는 byte sequence 범위다
 
-따라서 “sliding window 값을 크게 잡으면 receiver buffer와 network capacity를 모두 넘긴다”처럼 하나의 knob로 설명하면 두 mechanism을 섞게 된다. receiver가 천천히 읽으면 advertised `rwnd`가 sender를 제한하고, path에서 congestion 신호가 나타나면 congestion-control algorithm이 `cwnd`를 조절한다.
+TCP window는 단순한 packet 개수가 아니라 byte sequence 범위를 기준으로 한다. Segment 크기가 달라도 어떤 bytes가 이미 ACK되었고 어떤 bytes가 아직 outstanding인지 sequence number로 추적한다.
 
-### bandwidth-delay product는 활용 가능한 in-flight data와 연결된다
+### 실제 전송 가능 범위에는 여러 제약이 있다
 
-network가 감당할 수 있고 receiver도 충분히 빠른데 usable sending window가 path의 bandwidth-delay product보다 작으면 한 RTT 동안 충분한 data를 in flight로 유지하지 못해 처리량이 제한될 수 있다. 반대로 큰 receiver buffer가 존재한다는 이유만으로 sender가 network에 무제한 data를 내보낼 수 있는 것은 아니며 `cwnd`가 별도로 제한한다.
+Sender가 새 data를 얼마나 outstanding 상태로 둘 수 있는지는 receiver가 광고한 receive window(`rwnd`)와 sender의 congestion-control state(`cwnd`) 같은 제한을 함께 받는다. 일반적으로 sender는 이 둘 중 더 작은 범위를 넘겨 새 data를 보내지 않는다.
 
-대용량 Backend 응답이 느릴 때 application chunking만 보지 말고 socket send/receive buffer, receiver read rate, advertised `rwnd`, congestion-control state를 계층별로 본다. slow client 때문에 producer가 응답을 무한히 메모리에 쌓지 않도록 application에도 bounded buffer와 cancellation/backpressure를 연결한다.
+Sliding Window의 핵심은 **ACK를 기다리는 동안에도 여러 byte를 pipeline 형태로 전송하고, ACK progress에 맞춰 사용할 수 있는 sequence 범위를 앞으로 이동시키는 것**이다.

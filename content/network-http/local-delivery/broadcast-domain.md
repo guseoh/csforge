@@ -19,16 +19,24 @@ references:
 ---
 # Broadcast Domain
 
-broadcast domain은 하나의 link-layer broadcast frame이 flood되어 도달할 수 있는 범위다. Ethernet broadcast는 해당 L2 domain의 switch/bridge port와 host가 처리하지만 일반적인 router는 그것을 다른 IP network로 그대로 전달하지 않는다. VLAN과 bridge 구성은 물리적으로 연결된 port를 여러 forwarding/broadcast domain으로 나눌 수 있다.
+Broadcast domain은 하나의 link-layer broadcast frame이 **flood되어 도달할 수 있는 범위**다. Ethernet switch는 같은 forwarding domain 안에서 broadcast frame을 여러 port로 전달하지만, 일반적인 router는 그 frame을 다른 IP network로 그대로 넘기지 않는다.
 
-broadcast domain과 IP subnet은 자주 함께 설계되지만 같은 개념은 아니다. 하나의 subnet이 여러 L2 segment에 걸칠 수도 있고, 하나의 L2 domain에 여러 subnet이 있을 수도 있으며, IPv6는 ARP broadcast 대신 multicast 기반 NDP를 사용한다. 어떤 control message가 broadcast인지 multicast인지와 router가 relay하는지 여부는 protocol 계약을 확인해야 한다.
+### VLAN과 broadcast 범위
 
-broadcast가 많아지면 모든 참여 interface와 host가 frame을 수신·폐기하거나 control processing을 수행해 CPU와 link capacity를 소비한다. 따라서 필요한 범위를 VLAN/L3 boundary로 나누고 discovery scope를 제한한다. container bridge에서 service discovery와 DNS가 host 또는 다른 network namespace의 broadcast를 자동으로 보는 것도 아니므로 실제 bridge, route와 resolver 구성을 검증한다.
+하나의 물리 switch에 연결되어 있어도 VLAN이 다르면 서로 다른 broadcast domain이 될 수 있다. 반대로 같은 broadcast domain 안의 host들은 ARP 같은 local-link broadcast를 받을 수 있다.
 
-### Broadcast 범위
-    Host A ── broadcast ──> Host B, Host C
-                    │
-             VLAN / router boundary
-                    └────────── X
-domain은 link-layer flood 범위다.
+```text
+VLAN 10: Host A, Host B
+broadcast from A → A/B domain 안에서 전달
 
+VLAN 20: Host C
+→ VLAN 10 broadcast를 직접 받지 않음
+```
+
+Broadcast domain과 IP subnet은 자주 함께 설계되지만 같은 개념은 아니다. Broadcast domain은 link-layer 전달 범위를, subnet은 IP prefix와 addressing 범위를 설명한다.
+
+### IPv6에서는 같은 방식의 broadcast를 쓰지 않는다
+
+IPv6는 ARP broadcast 대신 multicast 기반 Neighbor Discovery를 사용한다. 따라서 `local discovery = 항상 broadcast`라고 일반화하면 안 된다.
+
+핵심은 **broadcast domain이 local link에서 broadcast traffic이 도달하는 범위이며, router나 VLAN 같은 경계가 그 범위를 나눈다는 것**이다.

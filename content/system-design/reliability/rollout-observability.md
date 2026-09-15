@@ -3,8 +3,8 @@ kind: concept
 contentKey: system-design.core.reliability.rollout-observability
 topicContentKey: system-design.core.reliability
 slug: rollout-observability
-title: "rollout과 observability feedback"
-summary: "canary·rollback·telemetry·SLO gate로 architecture 변경을 점진적으로 검증한다"
+title: "점진적 배포와 관측 피드백"
+summary: "architecture 변경을 작은 traffic과 명시적 관측 지표로 검증하고 canary 결과에 따라 확장·중단·rollback하는 feedback loop를 설계한다."
 level: 2
 status: PUBLISHED
 displayOrder: 30
@@ -22,35 +22,24 @@ references:
     displayOrder: 2
     relationNote: "operational excellence와 reliability lifecycle의 architecture 평가 확인"
 ---
-# rollout과 observability feedback
+# 점진적 배포와 관측 피드백
 
-Architecture 변경은 코드 version, schema, routing, cache key, event contract, infrastructure를 함께 바꿀 수 있습니다. 한 번에 전체 traffic을 옮기는 대신 canary·progressive rollout으로 작은 blast radius에서 telemetry를 확인하고, SLO·error budget과 명시적 rollback 조건으로 확장 여부를 결정합니다.
-
-### 관측 가능한 rollout
+설계 변경이 논리적으로 맞아 보여도 production workload에서 같은 결과가 나온다는 보장은 없습니다. 새 version, schema, routing 또는 infrastructure 변경은 작은 범위에서 먼저 노출하고 실제 telemetry를 확인한 뒤 점진적으로 확대하는 편이 안전합니다.
 
 ```text
-deploy ─▶ canary ─▶ compare SLO/error/latency ─▶ expand or stop/rollback
-                         └─ version·cohort·dependency별 telemetry
+새 변경 배포
+   ↓
+작은 canary traffic
+   ↓
+error / latency / SLO / business correctness 비교
+   ├─ 정상 → traffic 확대
+   └─ 악화 → 중단·rollback·forward fix
 ```
 
-단순 성공 health check만으로는 schema incompatibility, 꼬리 지연 시간(tail latency), 특정 tenant 실패와 background lag를 놓칠 수 있습니다. canary와 control의 traffic·dataset을 비교하고 요청 error, p95/p99, saturation, business correctness와 cost를 함께 봅니다.
+Canary는 “새 process가 살아 있다”만 확인하는 단계가 아닙니다. Control과 비교했을 때 error rate, p95·p99, saturation, backlog 같은 운영 지표와 실제 business correctness가 유지되는지 봐야 합니다. 특정 tenant나 data shape에서만 문제가 난다면 전체 평균은 정상처럼 보일 수도 있습니다.
 
-### rollback의 실제 범위를 적는다
+Rollback 가능 범위도 변경 전에 알아야 합니다. Application binary는 이전 version으로 되돌릴 수 있어도 이미 실행된 database migration, 발행된 message, 외부 side effect는 자동으로 사라지지 않습니다. 그래서 old/new version이 일정 기간 공존할 수 있는 schema·event 계약과 feature flag 같은 migration seam이 필요할 수 있습니다.
 
-binary version을 되돌려도 database migration, emitted event, cache fill, 외부 side effect는 남을 수 있습니다. expand/contract schema, backward-compatible event, feature flag, dual read/write와 reconciliation으로 이전·신규 version이 공존할 수 있게 하고, irreversible step은 별도의 복구 runbook으로 둡니다.
+점진적 배포의 핵심은 특정 deployment 기술이 아니라 **변경을 작은 blast radius에서 검증하고, 실제 관측 결과가 기대와 다르면 다음 단계를 멈출 수 있는 구조**입니다.
 
-### feedback loop를 닫는다
-
-rollout gate가 어떤 metric window와 sample을 사용하는지, SLO burn 시 누가 중단·완화하는지, 복구 후 projection과 data correctness를 어떻게 검증하는지 기록합니다. rollout telemetry와 incident postmortem을 다음 설계·test·runbook에 반영해야 자동화가 반복 가능한 개선이 됩니다.
-
-### 문제를 풀 때 확인할 것
-
-1. 변경 대상과 blast radius를 분해합니다.
-2. canary cohort·control과 비교 지표를 정합니다.
-3. SLO/error·tail·saturation·business correctness gate를 둡니다.
-4. code·schema·event·cache·external side effect의 rollback 범위를 적습니다.
-5. stop·rollback·reconcile·postmortem feedback을 검증합니다.
-
-### 면접에서 설명한다면
-
-Progressive rollout은 작은 traffic에서 version·schema·routing 변경의 실제 영향을 telemetry와 SLO로 검증하는 feedback loop입니다. canary 비교에는 p99·error·saturation뿐 아니라 business correctness를 포함하고, binary rollback으로 취소되지 않는 migration·event·외부 side effect는 expand/contract·feature flag·reconciliation으로 별도 복구합니다.
+이 feedback은 한 번의 배포에서 끝나지 않습니다. Incident와 rollout에서 얻은 telemetry를 다음 capacity 가정, test, alert와 architecture decision에 반영해야 설계가 실제 운영 환경을 따라 계속 개선됩니다.

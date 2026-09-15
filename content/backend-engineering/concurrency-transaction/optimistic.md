@@ -3,24 +3,32 @@ kind: concept
 contentKey: backend.core.concurrency-transaction.optimistic
 topicContentKey: backend.core.concurrency-transaction
 slug: optimistic
-title: optimistic version
-summary: expected version 조건으로 stale write를 감지하되 0-row 결과의 해석과 충돌 해결은 persistence/application contract가 결정한다.
+title: "Optimistic Version과 충돌 처리"
+summary: "읽을 때 본 version을 write 조건에 포함해 stale write를 감지하고, 충돌 감지 이후 재시도·거절·merge 같은 해결 정책은 use case가 별도로 결정한다."
 level: 2
 status: PUBLISHED
 displayOrder: 20
-references: []
+references:
+- url: https://jakarta.ee/specifications/persistence/3.2/apidocs/jakarta.persistence/jakarta/persistence/version
+  title: "Jakarta Persistence 3.2 API: Version"
+  referenceType: OFFICIAL
+  language: en
+  displayOrder: 1
+  relationNote: entity version field를 사용해 optimistic lock failure를 감지하는 표준 계약 확인
 ---
-# optimistic version
+# Optimistic Version과 충돌 처리
 
-Optimistic locking은 요청을 미리 막지 않고 **write 시점에 내가 읽은 version이 아직 최신인지 비교하여 충돌을 감지**합니다. 충돌이 드물다는 가정에서 lock wait 없이 동시 작업을 허용할 수 있습니다.
+Optimistic concurrency control은 다른 요청을 미리 기다리게 하지 않습니다. 대신 **내가 읽은 상태가 write 시점에도 여전히 최신인지 확인하고, 달라졌다면 stale write를 실패시키는 방식**입니다.
 
-### compare-and-update
+주문을 읽었을 때 version이 7이었다고 해 보겠습니다.
 
 ```text
-읽을 때
 Order(id=42, status=PAID, version=7)
+```
 
-수정할 때
+저장할 때 현재 DB row가 여전히 version 7인지 조건에 포함할 수 있습니다.
+
+```sql
 UPDATE orders
 SET status = 'CANCELLED',
     version = 8
@@ -28,29 +36,50 @@ WHERE id = 42
   AND version = 7;
 ```
 
-영향받은 row가 0이면 이 `UPDATE`의 predicate를 만족하는 row가 없었다는 뜻입니다. 다른 transaction이 version을 바꿔 stale해졌을 수도 있지만, row가 이미 삭제되었거나 존재하지 않거나 version 외의 predicate가 맞지 않은 경우도 포함될 수 있으므로 affected-row 하나만으로 원인을 항상 version conflict라고 단정하면 안 됩니다.
-
-따라서 persistence boundary에서 “조건부 update가 0건”을 어떤 결과로 해석할지 계약해야 합니다. 이 use case가 row 존재와 version 충돌을 구분해야 한다면 사전 조회, 삭제 상태 기록, 또는 더 구체적인 query/result contract가 필요하고, application이 그 의미를 API의 404·409·재시도 같은 정책으로 번역합니다.
-
-### 충돌 감지와 충돌 해결은 다르다
+두 사용자가 같은 version을 읽었다면 먼저 성공한 write가 version을 8로 바꾸고, 뒤의 write는 `version = 7` 조건을 만족하지 못합니다.
 
 ```text
 T1 reads v7
 T2 reads v7
-T1 updates → v8 success
-T2 updates WHERE v7 → 0 rows → stale conflict로 해석할 수 있음
+T1 update where v7 → success, v8
+T2 update where v7 → 0 rows
 ```
 
-Optimistic locking은 누가 이긴다를 자동 결정하지 않습니다. 실패한 요청을 retry할지, 사용자에게 최신 데이터를 보여줄지, merge할지를 use-case가 선택해야 합니다.
+### JPA의 `@Version`도 같은 문제를 해결한다
 
-### 무조건 자동 retry하면 위험하다
+Jakarta Persistence의 `@Version`은 엔티티의 revision을 나타내는 field/property를 선언하고, 읽은 뒤 DB의 version이 달라졌다면 optimistic lock failure를 감지하는 표준 계약을 제공합니다.
 
-사용자가 입력한 상태를 다시 읽어 덮어쓰는 것이 business 의미를 보존하지 않을 수 있습니다. “재고 1개 구매” 충돌을 자동 retry하면 사용자가 예상하지 않은 시점에 구매가 성공할 수 있습니다.
+```java
+@Entity
+class Order {
+    @Id
+    private Long id;
 
-### version field를 API에 노출할 수도 있다
+    @Version
+    private long version;
+}
+```
 
-HTTP에서는 ETag/If-Match처럼 representation version을 조건부 요청에 활용할 수 있습니다. 내부 JPA `@Version`과 API version token을 반드시 같은 값으로 해야 하는 것은 아니지만 둘 다 stale write를 막는 문제를 풉니다.
+직접 조건부 UPDATE를 작성하든 JPA의 version 기능을 사용하든 핵심은 같습니다. **읽은 상태를 아무 조건 없이 마지막 write로 덮어쓰지 않고, 예상했던 revision이 아직 유효한지 검증한다**는 것입니다.
 
-### 언제 잘 맞나
+### 충돌 감지와 충돌 해결은 다른 책임이다
 
-충돌은 드물고 read가 많으며, 기다리게 하기보다 conflict를 명시적으로 처리할 수 있는 편집/관리 기능에 잘 맞습니다. hot counter처럼 충돌이 항상 나는 데이터에는 atomic update나 다른 모델이 더 단순할 수 있습니다.
+Optimistic version은 stale write를 알아내지만 이후 무엇을 해야 하는지는 결정하지 않습니다.
+
+```text
+version conflict
+   ├─ 최신 데이터를 다시 보여 주고 사용자가 재편집
+   ├─ 안전한 operation이면 제한적으로 retry
+   ├─ 두 변경을 merge할 수 있다면 병합 정책 적용
+   └─ 현재 상태에서는 작업 불가라면 conflict 반환
+```
+
+사용자가 입력한 값을 자동으로 다시 적용한다고 business 의미가 항상 보존되는 것은 아닙니다. 예를 들어 재고 구매를 무조건 자동 retry하면 사용자가 보았던 가격·재고 상태와 다른 시점에 구매가 성공할 수 있습니다.
+
+### `0 rows updated`만으로 원인을 과장하지 않는다
+
+직접 조건부 UPDATE를 구현했다면 영향받은 row가 0이라는 것은 **전체 predicate를 만족한 row가 없었다**는 뜻입니다. version이 바뀌었을 수도 있지만 row가 삭제되었거나 다른 조건이 맞지 않았을 수도 있습니다.
+
+애플리케이션이 `404 Not Found`와 `409 Conflict`를 구분해야 한다면 persistence 계약도 그 차이를 설명할 수 있게 설계해야 합니다. 단순 affected-row count를 모든 실패 의미로 과도하게 사용하지 않는 것이 중요합니다.
+
+Optimistic 방식은 충돌이 드물고 기다림보다 명시적인 conflict 처리가 적합한 편집·관리 기능에 잘 맞습니다. 반대로 hot counter처럼 거의 모든 요청이 충돌한다면 atomic SQL이나 다른 상태 모델이 더 단순할 수 있습니다.

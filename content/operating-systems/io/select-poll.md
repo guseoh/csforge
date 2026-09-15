@@ -19,26 +19,18 @@ references:
 ---
 # select·poll
 
-blocking read 하나는 한 descriptor가 progress할 때까지 기다리는 데 적합하지만, connection 수가 많아지면 descriptor마다 thread 하나를 두는 대신 **여러 descriptor 중 어느 것이 준비됐는지 한 번에 기다리는 I/O multiplexing**이 필요해진다. `select()`와 `poll()`은 이런 readiness multiplexing의 고전적인 interface다.
+Blocking I/O는 descriptor 하나가 준비될 때까지 기다리는 데는 단순하지만, 많은 descriptor를 동시에 다뤄야 할 때 descriptor마다 별도 thread를 두면 실행 자원과 memory 비용이 커질 수 있다. `select()`와 `poll()`은 여러 descriptor 중 **현재 I/O를 시도할 준비가 된 대상이 있는지 한 번의 wait에서 확인하는 readiness multiplexing** interface다.
 
-### Caller가 관심 목록을 kernel에 전달한다
+`poll()`을 단순화하면 caller는 `(fd, 관심 event)` 목록을 kernel에 넘긴다. 준비된 descriptor가 없으면 호출 task는 기다릴 수 있고, 조건이 생기면 kernel이 각 entry의 결과 event를 표시해 반환한다. 이후 application이 실제 `read()`나 `write()`를 호출한다. 즉 `poll()`의 반환은 I/O completion이 아니라 **어떤 descriptor에서 지금 progress를 시도할 수 있는지 알려주는 readiness 결과**다.
 
-`poll()`을 단순화하면 caller가 `(fd, 관심 event)` 배열을 전달하고 kernel이 각 entry의 현재 상태를 확인한 뒤 준비된 event를 표시해 반환한다. 준비된 descriptor가 없다면 timeout 또는 signal/error가 발생할 때까지 호출 task가 기다릴 수 있다.
+### 큰 관심 집합에서는 반복 scan 비용이 생긴다
 
-반환되면 application은 어떤 fd가 readable/writable/error 상태인지 보고 실제 read/write를 수행한다. 즉 `poll returned`는 I/O completion이 아니라 readiness notification이다.
+전형적인 `select()`/`poll()` 사용에서는 wait를 호출할 때마다 감시할 집합을 전달하고, 반환 후 어떤 descriptor가 ready인지 결과를 확인해야 한다. 감시하는 descriptor가 매우 많고 실제 ready한 descriptor는 적다면 매 호출마다 큰 관심 집합을 다루는 비용이 커질 수 있다.
 
-### 왜 descriptor 수가 커지면 비용이 문제가 되는가
+`select()`는 fd 집합 표현과 최대 descriptor 번호에 제약이 있고, `poll()`은 배열 기반 interface로 이런 제약 일부를 완화한다. 그러나 둘 모두 **persistent interest set과 ready set을 분리하는 방식은 아니다.** 이 한계가 large mostly-idle connection set에서 `epoll` 같은 facility가 필요한 배경이 된다.
 
-전형적인 `select/poll` 사용은 매 wait call에서 감시 집합을 kernel에 전달하고, 반환 후 caller가 결과 목록을 다시 확인한다. 수천·수만 descriptor 중 실제 active한 것은 몇 개뿐인 workload에서는 **매번 큰 관심 집합을 다루는 비용**이 active connection 수보다 total registered descriptor 수에 영향을 받을 수 있다.
+### readiness 이후에도 실제 I/O 결과는 다시 확인한다
 
-`select()`에는 fd-set 표현과 최대 descriptor 번호 관련 제약도 있고 `poll()`은 배열 표현으로 이를 완화하지만, 둘 다 large mostly-idle connection set에서 scalable event facility가 필요한 이유를 보여준다.
+Ready event를 받았더라도 실제 `read()`가 application message 전체를 반환한다는 보장은 없다. 상태가 바뀌었거나 일부 data만 존재할 수 있으며, non-blocking descriptor에서는 `EAGAIN`도 정상적인 결과가 될 수 있다. 따라서 multiplexing은 "어디를 다시 시도할지"를 알려줄 뿐 partial read/write와 protocol state 관리까지 대신하지 않는다.
 
-### Readiness 뒤에도 non-blocking I/O가 안전하다
-
-readiness를 받은 뒤 다른 thread가 먼저 data를 소비하거나 상태가 변할 수 있고, edge conditions도 존재한다. 그래서 event-driven server는 descriptor를 non-blocking으로 설정하고 실제 read/write가 `EAGAIN`을 반환해도 정상적인 state transition으로 처리하는 편이 안전하다.
-
-### API 선택보다 workload가 먼저다
-
-connection이 수십 개뿐이고 코드 단순성이 중요한 tool이라면 poll의 scan 비용이 실제 문제가 아닐 수 있다. 반대로 수만 idle connection 중 소수만 active한 server에서는 epoll/kqueue 같은 persistent interest/ready-set model이 더 적합할 수 있다.
-
-Backend에서는 `connection count`, `active ready events`, event-loop CPU와 system-call cost를 같이 측정한다. 단지 `epoll이 더 최신이다`라는 이유만으로 architecture를 바꾸지 않는다.
+`select`와 `poll`의 핵심은 **여러 descriptor의 readiness를 하나의 wait point에서 감시할 수 있지만, 관심 집합이 커질수록 매 호출의 집합 전달·검사 비용이 커질 수 있다는 것**이다.

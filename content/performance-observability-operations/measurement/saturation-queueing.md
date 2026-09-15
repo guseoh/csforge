@@ -3,8 +3,8 @@ kind: concept
 contentKey: performance.core.measurement.saturation-queueing
 topicContentKey: performance.core.measurement
 slug: saturation-queueing
-title: "saturation과 queueing"
-summary: "bounded resource, queue depth, utilization과 Little's Law 직관으로 overload를 설명한다"
+title: "포화와 대기열"
+summary: "제한된 자원이 포화될 때 queue가 쌓이고 대기 시간이 늘어나는 흐름을 이해하고 utilization과 queue depth를 함께 해석한다."
 level: 2
 status: PUBLISHED
 displayOrder: 20
@@ -16,35 +16,28 @@ references:
     displayOrder: 1
     relationNote: "container resource boundary와 saturation 관측의 기반 확인"
 ---
-# saturation과 queueing
+# 포화와 대기열
 
-Saturation은 CPU, memory, DB connection pool, worker, queue처럼 제한된 자원이 수요에 가까워지는 상태입니다. utilization이 100%가 되기 전에도 queue가 쌓이면 대기 시간이 늘어나고, 결국 timeout·retry가 추가 부하를 만들 수 있습니다.
-
-### queue는 지연 시간의 숨은 구성요소다
+CPU, worker thread, DB connection, message consumer처럼 동시에 처리할 수 있는 양이 제한된 자원에는 반드시 용량의 경계가 있습니다. 요청이 그 처리 속도보다 빠르게 들어오기 시작하면 바로 실패하기보다 먼저 queue가 쌓이고, 사용자는 실제 작업 시간에 더해 대기 시간까지 지불하게 됩니다.
 
 ```text
-arrival ─▶ [waiting queue] ─▶ worker/service time ─▶ response
-             ▲ saturation이 높을수록 대기가 길어짐
+arrival
+  │
+  ▼
+[ waiting queue ] ─▶ worker ─▶ response
+       ▲
+       └─ 처리 속도보다 유입이 빠르면 증가
 ```
 
-Little's Law의 직관은 평균 시스템 내 작업 수가 도착률과 평균 체류 시간의 곱으로 연결된다는 것입니다. 따라서 같은 처리량을 처리하더라도 queue depth가 증가하면 요청이 시스템에 머무는 시간이 증가합니다. 이 관계는 정확한 capacity 계산의 출발점이지 모든 분산 시스템을 단순한 공식 하나로 설명하는 만능 법칙은 아닙니다.
+그래서 utilization만 보고 포화를 판단하면 늦을 수 있습니다. CPU가 아직 100%가 아니어도 thread pool 앞의 queue가 계속 늘거나 DB connection 대기가 길어지면 이미 사용자 latency는 악화되고 있을 수 있습니다. 자원마다 포화를 드러내는 신호도 다릅니다.
 
-### 자원별 saturation 신호가 다르다
+| 자원 | 함께 볼 신호 |
+| --- | --- |
+| CPU | utilization, throttling, run queue |
+| DB connection pool | active/waiting connection, wait time |
+| worker queue | queue depth, oldest item age |
+| memory | allocation pressure, GC, OOM |
 
-CPU는 run queue와 throttling, memory는 allocation pressure와 GC/OOM, database는 active connection과 lock wait, queue worker는 backlog와 processing age로 포화가 드러납니다. 단일 CPU percentage만 보면 downstream 병목이나 thread pool starvation을 놓칠 수 있습니다.
+Little's Law는 안정된 시스템에서 평균 시스템 내 작업 수, 도착률, 평균 체류 시간이 서로 연결된다는 직관을 줍니다. 이를 통해 처리량이 비슷한데 queue가 늘고 있다면 작업이 시스템 안에 더 오래 머물고 있다는 사실을 이해할 수 있습니다. 다만 실제 capacity 판단에서는 workload 변화와 여러 downstream 병목을 함께 측정해야 합니다.
 
-### overload를 전파하지 않는다
-
-queue 상한, admission control, timeout budget, bounded concurrency와 load shedding으로 유입량을 제한합니다. 무제한 buffer는 장애를 숨기다가 memory pressure와 긴 꼬리 지연 시간(tail latency)로 바꾸므로, 버려진 작업의 의미와 재처리 정책도 함께 기록해야 합니다.
-
-### 문제를 풀 때 확인할 것
-
-1. 병목이 될 bounded resource를 찾습니다.
-2. utilization뿐 아니라 queue depth·age와 wait time을 봅니다.
-3. queue 상한과 timeout·retry budget을 설정합니다.
-4. overload 시 shed할 요청과 보존할 요청을 정합니다.
-5. downstream capacity까지 포함해 admission을 조정합니다.
-
-### 면접에서 설명한다면
-
-Saturation은 자원 사용률 하나가 아니라 제한된 자원 앞의 대기와 처리 지연이 커지는 상태입니다. queue depth·age, active workers, wait time을 관측하고 bounded queue·concurrency·timeout·load shedding으로 overload가 다음 계층으로 전파되지 않게 합니다.
+포화 이후 무제한 queue로 버티면 장애가 사라지는 것이 아니라 긴 timeout과 memory pressure로 형태가 바뀝니다. 따라서 bounded queue, 동시성 제한, admission control이나 load shedding처럼 **받을 수 있는 양을 명시적으로 제한하는 정책**이 필요하며, 어떤 요청을 거절해도 되는지는 제품 중요도와 복구 가능성을 기준으로 정합니다.

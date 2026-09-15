@@ -62,4 +62,4 @@ GROUP BY member_id;
 
 “회원별 총액도 보고 각 주문 row도 유지”하고 싶다면 aggregate로 group을 축약한 뒤 다시 JOIN할 수도 있지만, window function이 더 직접적인 경우가 있습니다. 이 차이는 다음 Concept에서 다룹니다.
 
-Aggregate를 선택할 때 가장 먼저 물어야 할 질문은 **결과에서 원래 row가 남아 있어야 하는가, group 단위 결과만 필요하는가**입니다.
+Aggregate를 선택할 때 가장 먼저 물어야 할 질문은 **결과에서 원래 row가 남아 있어야 하는가, group 단위 결과만 필요한가**입니다.

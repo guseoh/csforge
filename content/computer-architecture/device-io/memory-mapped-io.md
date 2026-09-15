@@ -4,7 +4,7 @@ contentKey: computer-architecture.core.device-io.memory-mapped-io
 topicContentKey: computer-architecture.core.device-io
 slug: memory-mapped-io
 title: "Memory-Mapped I/O"
-summary: "device register를 address space에 매핑할 때 일반 memory와 달라지는 side effect·cacheability·ordering을 설명한다."
+summary: "device register를 CPU address space에 mapping해 load/store로 접근할 때 normal memory와 달라지는 side effect·cacheability·ordering을 설명한다."
 level: 1
 status: PUBLISHED
 displayOrder: 40
@@ -19,38 +19,32 @@ references:
 ---
 # Memory-Mapped I/O
 
-### 주소는 memory처럼 보여도 대상은 device register일 수 있다
+Memory-Mapped I/O(MMIO)는 device의 control/status/data register를 CPU address space의 특정 영역에 배치하고, CPU가 load/store 형태로 접근하도록 만드는 방식이다.
 
-Memory-Mapped I/O(MMIO)는 device의 control/status/data register를 CPU address space의 특정 range에 배치하고 load/store 형태의 access로 조작하는 방식이다. Processor 입장에서는 address를 만들어 read/write한다는 점이 RAM 접근과 닮았지만, 그 address 뒤에 있는 대상과 semantics는 완전히 다를 수 있다.
-
-RAM read는 보통 저장된 data를 읽는 동작이지만 MMIO read는 device status를 조회하거나 FIFO에서 값을 소비하는 side effect를 만들 수 있다. MMIO write는 단순히 byte를 저장하는 것이 아니라 device operation 시작, interrupt clear, queue doorbell 같은 command가 될 수 있다.
-
-### 일반 pointer dereference처럼 다루면 안 되는 이유
-
-Device register는 접근 폭, byte order와 sequence를 device specification이 요구할 수 있다. 32-bit register를 두 번의 16-bit access로 나눠도 동일하다고 보장할 수 없고, 특정 status register는 read-to-clear semantics를 가질 수도 있다.
-
-Linux에서는 portable driver가 MMIO mapping에 `__iomem` token과 `readl()/writel()` 같은 accessor를 사용하는 이유도 이 차이 때문이다. Architecture에 따라 실제 mapping이나 I/O instruction이 다를 수 있으므로 normal pointer access의 동작을 그대로 가정하지 않는다.
-
-### Cacheability와 ordering도 normal memory와 다를 수 있다
-
-Device status register를 일반 RAM처럼 CPU cache에 오래 보관하면 hardware가 바꾼 최신 state를 보지 못할 수 있다. 그래서 MMIO mapping에는 적절한 memory attribute가 필요하고, driver API가 제공하는 accessor와 barrier/ordering rule을 따라야 한다.
-
-또한 MMIO write가 CPU instruction retirement와 동시에 device까지 도착한다고 단정할 수 없다. 일부 bus에서는 posted write가 발생할 수 있고, 특정 순서를 반드시 지켜야 한다면 documented read-back이나 ordering primitive가 필요하다.
+주소를 사용한다는 점은 RAM 접근과 비슷하지만 **그 주소 뒤에 있는 것은 일반 memory가 아니라 device register**다.
 
 ```text
-CPU writel(command)
-      │
-      ▼
-interconnect / posted buffer
-      │
-      ▼
-device register
+CPU load/store
+      ↓
+address decode
+   ├─ RAM range    → memory
+   └─ MMIO range   → device register
 ```
 
-이 중간 경로 때문에 source code에서 write 순서가 보인다는 사실만으로 device가 같은 순간 같은 순서로 관찰한다고 가정하면 안 된다.
+### Read와 write가 device 동작을 만들 수 있다
 
-### Mapping permission과 user-space 접근은 별도 문제다
+RAM read는 저장된 값을 읽는 것이 주된 의미지만 MMIO read는 device status를 조회하거나 FIFO에서 data를 꺼내는 side effect를 만들 수 있다. MMIO write도 단순히 값을 보관하는 것이 아니라 device operation을 시작하거나 interrupt 상태를 clear하는 command가 될 수 있다.
 
-Physical device register가 존재한다고 user process가 그 address를 직접 읽을 수 있는 것도 아니다. Kernel이 mapping과 privilege를 관리하고 driver API를 통해 접근을 제한한다. User-space `mmap`으로 device memory를 노출하는 경우에도 lifetime, permission, cache attribute를 명확히 정해야 한다.
+따라서 MMIO register는 일반 pointer가 가리키는 변수처럼 자유롭게 읽고 쓰면 안 된다. Device specification이 요구하는 access width, 순서와 의미를 따라야 한다.
 
-Mapped file, anonymous memory와 MMIO를 모두 '주소로 접근한다'는 이유로 같은 것으로 취급하지 않는다. Storage-backed page에는 page cache와 persistence semantics가 있고, MMIO에는 device-specific side effect와 ordering contract가 있다.
+### Cache와 ordering도 normal memory와 다를 수 있다
+
+Device status를 일반 RAM처럼 CPU cache에 오래 보관하면 hardware가 변경한 최신 상태를 보지 못할 수 있다. 그래서 MMIO 영역은 architecture와 OS가 적절한 memory attribute로 mapping하고, driver는 정해진 accessor를 사용한다.
+
+또한 CPU가 MMIO write instruction을 실행했다고 device가 같은 순간 그 write를 관찰했다고 단정할 수 없다. Interconnect나 posted write 때문에 전달 시점이 다를 수 있으며, device가 요구하는 순서를 보장해야 할 때는 architecture와 driver API의 ordering 규칙을 따라야 한다.
+
+### MMIO는 주소 사용 방식이지 일반 memory semantics가 아니다
+
+MMIO를 이해할 때 핵심은 `device를 memory처럼 저장한다`가 아니다. **Device register를 CPU의 address 기반 load/store mechanism으로 접근할 수 있게 연결한다**는 것이다.
+
+다음 Concept에서는 bulk data를 CPU가 직접 옮기는 부담을 줄이는 DMA를 본다.

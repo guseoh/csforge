@@ -4,7 +4,7 @@ contentKey: operating-systems.core.ipc.ipc-tradeoff
 topicContentKey: operating-systems.core.ipc
 slug: ipc-tradeoff
 title: "IPC Trade-off"
-summary: "pipe·shared memory·queue·socket의 복사·격리·복잡도를 비교한다."
+summary: "copy·latency·isolation·backpressure 관점에서 IPC를 선택한다."
 level: 2
 status: PUBLISHED
 displayOrder: 70
@@ -26,30 +26,28 @@ references:
 ---
 # IPC Trade-off
 
-IPC를 선택할 때 `가장 빠른가` 하나만 비교하면 실제 장애와 운영 비용을 놓친다. 먼저 data가 어디에 존재하고 누가 ownership을 가지는지, kernel이 어떤 buffer·queue·endpoint를 관리하는지, sender와 receiver 사이에 copy가 몇 번 필요한지와 그 copy가 종단 간 지연 시간에 어떤 영향을 주는지를 확인한다. 이어서 message boundary와 synchronization, capacity/backpressure, process 또는 host 실패 때 복구할 상태를 비교해야 한다.
+IPC는 하나의 성능 순위로 고르는 기술이 아니다. Process 사이에서 **data를 어떤 형태로 전달할지, kernel이 어디까지 관리할지, copy·synchronization·failure boundary를 누가 책임질지**에 따라 선택이 달라진다.
 
 ![IPC 방식별 copy, isolation, synchronization 책임 비교](/learning/operating-systems/ipc-tradeoff.svg)
 
-| 방식 | data 경로와 경계 | 대표 장점 | 직접 부담하는 문제 |
+| 방식 | 기본 data 경계 | 장점 | 주요 책임 |
 | --- | --- | --- | --- |
-| pipe | kernel byte buffer, 보통 local process 사이 | 단순한 producer-consumer와 자연스러운 EOF | stream framing, bounded capacity, descriptor lifetime |
-| message queue | kernel queue가 discrete message를 보존 | message boundary와 queue ownership | message size/capacity, copy, queue lifetime·priority 계약 |
-| shared memory | 여러 address space가 같은 backing memory를 매핑 | 큰 data에서 kernel-mediated copy를 줄일 가능성 | mutex/atomic protocol, memory ordering, crash recovery와 layout compatibility |
-| Unix-domain socket | 같은 host의 socket endpoint | socket lifecycle과 local namespace/credential 활용 | stream framing 또는 datagram semantics, endpoint cleanup |
-| network socket | host·network를 잇는 socket과 transport | remote process로 확장, 표준 protocol 재사용 | serialization, timeout, partial transfer, network 실패와 retry |
+| Pipe | kernel byte stream | 단순한 producer-consumer | framing, capacity, descriptor lifetime |
+| Message queue | discrete message | message boundary 보존 | queue capacity, message-size limit |
+| Shared memory | shared backing memory | payload copy 감소 가능 | synchronization, layout, participant lifecycle |
+| Unix-domain socket | host-local socket | bidirectional socket interface | stream framing 또는 datagram semantics, endpoint lifecycle |
+| Network socket | host/network socket | remote process까지 확장 | serialization, framing, network failure |
 
-이 표에서 `copy가 적다`는 `동기화가 적다`는 뜻이 아니다. shared memory는 payload를 직접 보게 해 copy를 줄일 수 있지만 producer가 publish하기 전 consumer가 읽지 않도록 memory ordering과 ownership protocol을 추가해야 한다. 반대로 pipe·queue·socket은 kernel buffer가 process memory를 직접 공유하지 않게 해 boundary를 단순화하지만 capacity가 차면 backpressure가 sender에게 전달된다.
+### Copy가 적다는 것과 protocol이 단순하다는 것은 다르다
 
-### 실패 경계와 lifecycle을 함께 선택한다
+Shared memory는 sender와 receiver가 같은 backing data를 직접 볼 수 있어 copy를 줄일 수 있지만 synchronization을 직접 설계해야 한다. Pipe나 socket은 kernel buffer를 사이에 두어 process memory를 분리하지만 data copy와 bounded buffer 비용을 지불한다.
 
-같은 host의 helper process가 crash했을 때 pipe와 socket은 EOF/reset처럼 관찰 가능한 channel 실패를 제공할 수 있지만, 이미 처리된 command와 아직 buffer에 남은 command를 application이 구분해 복구해야 한다. shared memory는 channel 자체가 요청 완료나 peer liveness를 알려 주지 않으므로 heartbeat, generation, ownership recovery 같은 protocol이 더 필요하다. network socket은 여기에 host reachability와 중간 network 실패가 추가된다.
+### Message boundary도 선택 기준이다
 
-따라서 작은 control message와 명확한 종료 lifecycle에는 pipe·Unix socket·message queue가 읽기 쉬울 수 있고, 큰 local payload에는 shared memory가 후보가 될 수 있다. 다른 host로 확장하거나 이미 표준 요청/응답 protocol이 필요하면 network socket을 선택하되 framing·timeout·재시도 semantics를 명시한다. 성능 숫자를 미리 가정하지 말고 payload 크기, access pattern, contention, 실패 복구 비용을 측정한다.
+Pipe와 stream socket은 byte stream이므로 application이 message framing을 정의해야 한다. Message queue는 discrete message를 보존한다. Shared memory는 byte representation과 record layout 자체를 participants가 합의해야 한다.
 
-DB-backed job, application queue, external broker 같은 application-level messaging은 이 OS primitive와 별도의 durability·redelivery 계약을 가진다. 어떤 방식을 선택하든 canonical business state와 duplicate processing 복구를 어느 계층이 책임지는지 명시해야 하며, OS IPC 자체가 그 보장을 대신한다고 가정하면 안 된다.
+### Process와 host 경계가 넓어질수록 실패 모델도 커진다
 
-### 면접에서 이렇게 나옵니다
+Host-local IPC에서는 peer process 종료와 descriptor/endpoint lifecycle이 핵심 실패다. Network socket으로 host 경계를 넘으면 reachability와 transport failure가 추가된다. 따라서 IPC 선택은 latency 하나보다 **copy 비용, data boundary, synchronization 책임, isolation과 failure scope**를 함께 비교해야 한다.
 
-#### Q. Shared memory가 가장 빠르다면 왜 모든 IPC를 shared memory로 만들지 않나요?
-
-Copy를 줄이는 대신 synchronization, layout compatibility, participant crash recovery와 ownership protocol을 application이 더 직접 책임해야 하기 때문입니다. IPC 선택은 지연 시간만이 아니라 isolation, backpressure, 실패 복구까지 함께 비교해야 합니다.
+가장 빠른 primitive를 찾는 것이 아니라, 필요한 통신 범위와 correctness를 가장 단순하게 표현하는 primitive를 선택하는 것이 핵심이다.

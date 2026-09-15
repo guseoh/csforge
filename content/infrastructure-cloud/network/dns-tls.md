@@ -3,8 +3,8 @@ kind: concept
 contentKey: infrastructure.core.network.dns-tls
 topicContentKey: infrastructure.core.network
 slug: dns-tls
-title: "DNS와 TLS certificate lifecycle"
-summary: "name resolution과 certificate issuance·rotation·expiry를 connection 실패와 연결한다"
+title: "DNS 변경과 TLS 인증서 수명주기"
+summary: "DNS record 변경이 cache TTL을 거쳐 점진적으로 전파되고 TLS certificate가 발급·배포·rotation·expiry되는 운영 흐름을 이해한다."
 level: 2
 status: PUBLISHED
 displayOrder: 30
@@ -20,46 +20,39 @@ references:
     referenceType: OFFICIAL
     language: en
     displayOrder: 2
-    relationNote: "TLS 1.3 handshake와 server authentication 확인"
-  - url: "https://www.rfc-editor.org/rfc/rfc9114"
-    title: "RFC 9114: HTTP/3"
-    referenceType: OFFICIAL
-    language: en
-    displayOrder: 3
-    relationNote: "HTTP/3가 QUIC 위에서 동작해 TCP 기반 HTTP/1.1·HTTP/2와 transport 경계가 다른 점 확인"
+    relationNote: "TLS server authentication과 certificate 사용의 기반 확인"
 ---
-# DNS와 TLS certificate lifecycle
+# DNS 변경과 TLS 인증서 수명주기
 
-사용자가 `api.example`을 호출할 때 이름을 endpoint address로 해석하는 DNS 단계와, HTTPS 연결에서 server identity를 검증하는 TLS 단계는 서로 다른 실패 경계입니다. 다만 **DNS 다음에 항상 TCP가 오고 그다음 TLS가 온다고 일반화하면 안 됩니다.** HTTP version과 transport에 따라 연결 수립 경로가 달라집니다.
+인프라에서 도메인과 HTTPS를 운영할 때 중요한 문제는 protocol 세부를 다시 구현하는 것이 아니라 **주소와 인증서가 바뀌는 transition을 안전하게 관리하는 것**입니다.
+
+DNS record를 새 load balancer 주소로 바꿔도 모든 client가 즉시 새 주소를 사용하는 것은 아닙니다. Resolver와 client는 TTL 동안 이전 결과를 cache할 수 있습니다.
 
 ```text
-api.example
-  └─ DNS lookup -> endpoint address
-       ├─ HTTP/1.1·HTTP/2 over HTTPS: TCP -> TLS -> HTTP
-       └─ HTTP/3: QUIC(TLS handshake 포함) -> HTTP/3
+old endpoint ← 일부 resolver cache
+        │
+DNS record 변경
+        │
+        └────────▶ new endpoint ← 점진적으로 전환
 ```
 
-HTTP/1.1과 HTTP/2를 HTTPS로 사용할 때는 일반적으로 TCP 연결 위에서 TLS를 수립하지만, HTTP/3는 QUIC 위에서 동작하며 QUIC handshake가 TLS를 통합합니다. 따라서 장애를 분석할 때 “DNS → TCP → TLS → HTTP” 한 줄을 모든 HTTP 요청의 protocol guarantee로 사용하지 않고 실제 negotiated protocol과 client/network 경계를 확인합니다.
+따라서 endpoint migration 중에는 일정 시간 old/new 경로가 함께 사용될 수 있음을 고려해야 합니다. 기존 endpoint를 너무 빨리 제거하면 아직 old DNS 값을 가진 client만 실패할 수 있습니다.
 
-DNS record 변경은 TTL·resolver cache 때문에 즉시 모든 client에 반영되지 않을 수 있습니다. TLS certificate는 hostname·validity·trust chain을 만족해야 하며 expiry나 잘못된 SAN은 application-level HTTP 응답을 받기 전에 연결을 실패시킬 수 있습니다.
+### Certificate도 한 번 설치하고 끝나는 설정이 아니다
 
-### rotation은 만료 전 transition이다
+HTTPS endpoint의 certificate에는 유효 기간이 있고 hostname과 trust chain이 맞아야 합니다. 만료된 certificate나 잘못된 hostname은 application controller까지 도달하기 전에 연결 실패를 만들 수 있습니다.
 
-새 certificate를 발급하고 load balancer/secret store에 배포한 뒤 old certificate를 얼마 동안 함께 허용할지, 모든 instance가 새 material을 읽었는지 확인해야 합니다. 만료 직전에 수동 교체하면 rollout 일부만 성공하거나 stale process가 남는 장애가 생길 수 있습니다.
+안전한 rotation은 만료 직전에 파일 하나를 바꾸는 작업이 아니라 다음과 같은 transition입니다.
 
-### DNS와 TLS를 application retry로 덮지 않는다
+```text
+새 certificate 발급
+   │
+   ├─ load balancer / ingress에 배포
+   ├─ 실제 endpoint에서 새 certificate 확인
+   ├─ old/new instance 전환 완료 확인
+   └─ 이전 material 제거
+```
 
-DNS misconfiguration이나 certificate expiry를 무한 retry하면 traffic과 alert만 늘어납니다. resolver 결과·negotiated protocol·certificate chain·deployment version을 확인하고, 실패가 모든 region/instance에 공통인지 분리합니다.
+자동 갱신을 사용해도 배포 실패나 secret reload 문제를 관측해야 합니다. Certificate expiry 자체뿐 아니라 "새 certificate가 모든 serving endpoint에 실제로 적용되었는가"가 중요합니다.
 
-### 문제를 풀 때 확인할 것
-
-1. DNS resolution과 이후 transport/security establishment, HTTP processing을 분리합니다.
-2. HTTP/1.1·HTTP/2의 TCP+TLS 경로와 HTTP/3의 QUIC 경로를 구분합니다.
-3. DNS cache/TTL과 certificate expiry를 함께 봅니다.
-4. rotation 중 old/new instance의 certificate material을 확인합니다.
-5. hostname/SAN/trust chain과 secret reload, 만료 전 자동화·alert를 테스트합니다.
-
-### 면접에서 설명한다면
-
-DNS는 name을 address로 해석하고 TLS는 HTTPS endpoint의 identity와 encrypted connection을 만드는 데 참여합니다. 다만 transport는 HTTP version에 따라 달라져 HTTP/1.1·2는 보통 TCP+TLS, HTTP/3는 QUIC을 사용합니다. DNS cache와 certificate rotation의 transition을 고려하지 않으면 일부 client나 instance만 새 설정을 사용하거나 만료 시 HTTP 처리 전에 연결이 실패할 수 있으므로 protocol 경계별로 검증·관측합니다.
-
+DNS와 TLS의 protocol semantics는 Network & HTTP 영역에서 더 깊게 다룰 수 있습니다. Infrastructure 영역에서는 **DNS cache와 certificate lifetime 때문에 변경이 즉시 원자적으로 적용되지 않으며, old/new 상태가 공존하는 기간을 운영해야 한다는 점**이 핵심입니다.

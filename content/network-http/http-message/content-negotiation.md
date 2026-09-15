@@ -3,8 +3,8 @@ kind: concept
 contentKey: network-http.core.http-message.content-negotiation
 topicContentKey: network-http.core.http-message
 slug: content-negotiation
-title: "Content Negotiation"
-summary: "요청 선호와 server representation을 선택하는 trade-off를 설명한다."
+title: "Content Negotiation과 Variant 선택"
+summary: "client preference와 server가 제공 가능한 representation을 조합해 response variant를 선택하는 과정을 설명한다."
 level: 2
 status: PUBLISHED
 displayOrder: 80
@@ -15,15 +15,25 @@ references:
     language: en
     displayOrder: 1
 ---
-# Content Negotiation
+# Content Negotiation과 Variant 선택
 
-content negotiation은 client가 표현 가능한 형식·언어·encoding을 제시하고 server가 제공 가능한 representation 중 하나를 선택하는 과정이다. media type만이 아니라 `Accept-Language`, `Accept-Encoding` 등 여러 축이 개입하면 선택 순서·q-value·server preference와 대체 처리를 명시해야 같은 요청이 예측 가능한 variant를 얻는다. server-driven negotiation은 선택을 origin이 수행하고, 다른 negotiation 방식은 별도의 metadata와 round trip을 사용할 수 있다.
+하나의 resource가 여러 representation을 제공할 수 있다면 server는 이번 request에 어떤 variant를 반환할지 선택해야 한다. content negotiation은 client가 보낸 preference와 server가 제공 가능한 representation을 비교해 그 선택을 수행하는 과정이다.
 
-variant가 달라지면 cache가 서로 다른 응답을 섞지 않도록 `Vary`, representation metadata와 validator를 맞춘다. negotiation header를 cache key에 반영하지 않으면 한 client의 language·media type 응답이 다른 client에 노출될 수 있다. client 선호를 무시할 수 있는지, 지원 불가를 `406`으로 볼지 또는 default representation으로 대체 처리할지는 product contract에 둔다.
+가장 익숙한 입력은 media type을 표현하는 `Accept`지만, 언어의 `Accept-Language`, content coding의 `Accept-Encoding`처럼 다른 축도 협상에 참여할 수 있다. 여러 조건이 동시에 존재하면 server는 각 preference와 자신의 정책을 함께 고려해 하나의 representation을 선택한다.
 
-Markdown·JSON·HTML preview API는 PostgreSQL canonical content와 HTTP representation 선택을 분리한다. 선택된 variant의 schema·ETag·cache policy를 관리하되, content negotiation 결과를 import identity나 DB canonical value로 저장하지 않는다.
-### Representation 선택
-    Accept / Language / Encoding
-                ↓
-    server selects variant → Vary/cache key
-선택 조건을 cache key에 빠뜨리면 다른 variant를 반환할 수 있다.
+```text
+client preferences
+  Accept
+  Accept-Language
+  Accept-Encoding
+        ↓
+server representation variants
+        ↓
+selected representation
+```
+
+### Variant가 달라지면 cache도 그 선택 조건을 알아야 한다
+
+같은 URI라도 `Accept-Language`에 따라 한국어와 영어 response가 달라진다면 cache가 URI 하나만 key로 사용해서는 안 된다. `Vary`는 response representation을 선택할 때 어떤 request field가 영향을 주었는지 cache에 알려 줄 수 있다.
+
+negotiation은 canonical resource 자체를 바꾸는 과정이 아니다. **같은 resource를 이번 client에게 어떤 representation으로 보여 줄지 선택하는 HTTP-level 과정**이다. 이 경계를 유지하면 resource identity, representation format과 cache variant를 혼동하지 않을 수 있다.

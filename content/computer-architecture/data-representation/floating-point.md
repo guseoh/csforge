@@ -3,8 +3,8 @@ kind: concept
 contentKey: computer-architecture.core.data-representation.floating-point
 topicContentKey: computer-architecture.core.data-representation
 slug: floating-point
-title: "Floating-Point"
-summary: "sign·exponent·significand와 반올림으로 부동소수점 정밀도 한계를 설명한다."
+title: "부동소수점 표현과 반올림"
+summary: "IEEE 754 binary floating-point가 sign·exponent·significand로 넓은 범위의 값을 근사하고 연산마다 반올림 오차가 생길 수 있는 이유를 이해한다."
 level: 2
 status: PUBLISHED
 displayOrder: 50
@@ -17,23 +17,26 @@ references:
     recommendation: "부동소수점의 표현 폭과 반올림 경계를 확인한다."
     displayOrder: 1
 ---
-# Floating-Point
+# 부동소수점 표현과 반올림
 
-### 실수를 근사하는 세 field
+정수와 달리 실수는 제한된 bit 안에 모든 값을 정확히 담을 수 없습니다. IEEE 754의 binary floating-point는 값을 **sign, exponent, significand**로 나누어 매우 작은 수부터 매우 큰 수까지 넓은 범위를 표현하는 대신, 많은 값을 가장 가까운 표현 가능한 값으로 근사합니다.
 
-IEEE 754 binary floating-point는 sign, biased exponent, significand로 값을 근사한다. 0.1처럼 2진 분수로 유한하게 끝나지 않는 값은 저장 시 반올림되고, 큰 값으로 이동할수록 인접한 표현 사이 간격이 커져 작은 변화가 사라질 수 있다. `NaN`, infinity, subnormal은 일반 유한수와 다른 비교·전파 규칙을 가진다.
+개념적으로는 다음과 같은 형태로 볼 수 있습니다.
 
-연산마다 반올림되므로 `(a+b)+c`와 `a+(b+c)`가 다를 수 있다. 허용 오차 비교는 절대 오차만으로 충분하지 않고 값의 규모와 누적 연산 횟수를 함께 고려해야 한다. decimal 표현이 필요한 금액에 binary float을 그대로 쓰면 표현 오차가 business invariant를 깨뜨릴 수 있다.
+```text
+value ≈ sign × significand × 2^exponent
+```
 
-### Backend 연결
+문제는 10진수에서 간단한 값이 2진수에서는 유한하게 끝나지 않을 수 있다는 점입니다. 대표적으로 0.1은 binary fraction으로 정확히 끝나지 않으므로 finite floating-point에 저장할 때 반올림됩니다. 그래서 다음 연산들이 수학의 실수 계산과 완전히 같은 결과를 보장하지 않습니다.
 
-집계·rate·좌표·금액은 허용 오차와 직렬화 형식을 먼저 정한다. 성능 때문에 float을 선택하더라도 결과를 equality로 비교하지 말고 rounding policy, overflow/NaN 처리, database representation을 계약으로 고정한다.
+또한 표현 가능한 값의 간격은 일정하지 않습니다. 값의 크기가 커질수록 인접한 floating-point 값 사이의 간격도 커질 수 있어, 매우 큰 수에 아주 작은 값을 더했을 때 변화가 표현되지 않을 수도 있습니다.
 
-### 표현과 반올림
-    sign + exponent + significand
-                    │
-                    ▼
-             rounded binary value
-                    │
-                    └─ arithmetic → round again
-표현과 계산의 반올림이 누적되므로 금액 equality는 별도 contract가 필요하다.
+연산 결과도 다시 유한한 bit에 맞춰 반올림됩니다. 따라서 floating-point 덧셈은 일반적인 실수 덧셈과 달리 결합 법칙이 그대로 성립하지 않을 수 있습니다.
+
+```text
+(a + b) + c  !=  a + (b + c)  가능
+```
+
+IEEE 754에는 일반적인 유한수 외에도 `+∞`, `-∞`, `NaN`, subnormal처럼 특수한 표현이 있습니다. 특히 `NaN`은 잘못된 수치 연산의 결과를 표현하며 일반 숫자와 다른 비교 규칙을 가집니다.
+
+이 특성은 floating-point가 잘못된 표현이라는 뜻이 아닙니다. 범위와 성능을 얻는 대신 정밀도가 유한하다는 계약입니다. 따라서 계산에서는 **어느 정도의 오차를 허용할지, 반올림이 누적될 수 있는지, 정확한 decimal 값이 필요한 문제인지**를 구분해야 합니다. 금액처럼 decimal 정확성이 중요한 경우에는 binary floating-point와 다른 표현을 선택하는 이유가 여기에 있습니다.

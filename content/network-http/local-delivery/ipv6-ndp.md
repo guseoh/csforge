@@ -4,7 +4,7 @@ contentKey: network-http.core.local-delivery.ipv6-ndp
 topicContentKey: network-http.core.local-delivery
 slug: ipv6-ndp
 title: "IPv6 NDP"
-summary: "IPv6 neighbor discovery가 address resolution과 router discovery를 제공하는 방식을 설명한다."
+summary: "IPv6 neighbor discovery와 router advertisement의 역할을 설명한다."
 level: 2
 status: PUBLISHED
 displayOrder: 50
@@ -19,15 +19,28 @@ references:
 ---
 # IPv6 NDP
 
-IPv6 Neighbor Discovery Protocol(NDP)은 ARP에 해당하는 기능을 ICMPv6 message와 multicast로 수행하면서 더 넓은 local-link control을 제공한다. Neighbor Solicitation/Advertisement로 IPv6 address와 link-layer address를 resolve하고 reachability를 확인하며, Router Solicitation/Advertisement로 default router와 prefix 정보를 발견한다. Duplicate Address Detection(DAD)도 address를 실제로 사용하기 전에 중복 여부를 확인하는 흐름에 포함된다.
+IPv6 Neighbor Discovery Protocol(NDP)은 local link에서 **neighbor의 link-layer address를 찾고, default router와 prefix 정보를 발견하는 control protocol**이다. IPv4 ARP와 비슷한 address-resolution 역할을 포함하지만 그것보다 더 넓은 기능을 제공한다.
 
-NDP는 local link scope의 state를 neighbor cache와 router information에 반영한다. entry가 stale하거나 Router Advertisement가 잘못되거나 필요한 ICMPv6가 방화벽에서 차단되면 address가 할당되어 있어도 next-hop resolution·route·path MTU discovery가 실패할 수 있다. 따라서 `IPv6 address가 있다 = IPv6 연결이 된다`고 보지 않고 control message와 route state를 함께 본다.
+### Neighbor Solicitation과 Advertisement
 
-dual-stack backend에서 IPv4가 성공한다고 IPv6 path가 준비된 것은 아니다. resolver가 AAAA를 선택한 뒤 interface, NDP, route, listener, ACL/firewall이 모두 IPv6를 처리하는지 address family별로 테스트한다. NDP spoofing이나 rogue Router Advertisement는 별도의 local-link threat이므로 RA guard와 segment policy, TLS를 함께 검토한다.
+Host는 Neighbor Solicitation(NS)을 사용해 특정 IPv6 neighbor의 link-layer address를 묻거나 reachability를 확인할 수 있다. Neighbor Advertisement(NA)는 그 요청에 대한 정보나 neighbor 상태를 전달한다.
 
-### IPv6 Neighbor Discovery
-    host ── Neighbor Solicitation ──> local link
-    host <─ Neighbor Advertisement ── neighbor
-    router ── Router Advertisement ──> host
-                      prefix / default router
-NDP는 neighbor resolution과 router discovery를 함께 다룬다.
+IPv6 NDP는 Ethernet broadcast 대신 ICMPv6와 multicast를 사용한다.
+
+### Router Solicitation과 Advertisement
+
+Host는 Router Solicitation(RS)을 보낼 수 있고 router는 Router Advertisement(RA)를 통해 default-router 정보와 prefix 관련 정보를 제공할 수 있다. 이 과정은 host가 local IPv6 network의 addressing/routing context를 구성하는 데 사용된다.
+
+```text
+Host ── NS ──> Neighbor
+Host <─ NA ─── Neighbor
+
+Host ── RS ──> Router
+Host <─ RA ─── Router
+```
+
+### Duplicate Address Detection
+
+IPv6에서는 address를 실제로 사용하기 전에 같은 link에서 중복 사용 중인지 확인하는 Duplicate Address Detection(DAD)에도 Neighbor Discovery mechanism이 활용된다.
+
+NDP의 핵심은 **IPv6 local link에서 neighbor address resolution뿐 아니라 router/prefix discovery와 reachability 확인까지 함께 담당한다는 것**이다.

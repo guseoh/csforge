@@ -5,7 +5,7 @@ topicContentKey: backend.core.testing-recovery
 slug: testing-strategy
 title: "테스트 전략과 신뢰 경계"
 summary: "모든 것을 통합 테스트로 확인하거나 모든 것을 mock으로 격리하지 않고 실패 비용과 경계에 맞춰 테스트 층을 선택한다."
-level: 2
+level: 3
 status: PUBLISHED
 displayOrder: 10
 references:

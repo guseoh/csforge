@@ -3,8 +3,8 @@ kind: concept
 contentKey: performance.core.operations.alert-runbook
 topicContentKey: performance.core.operations
 slug: alert-runbook
-title: "alert와 runbook"
-summary: "actionable alert를 user impact·symptom·threshold·runbook으로 연결하고 alert fatigue를 줄인다"
+title: "Alert와 Runbook"
+summary: "사용자 영향과 즉시 행동을 연결하는 alert를 만들고, 같은 신호가 반복될 때 안전한 조사·완화 순서를 runbook으로 남긴다."
 level: 1
 status: PUBLISHED
 displayOrder: 10
@@ -16,35 +16,25 @@ references:
     displayOrder: 1
     relationNote: "monitoring signal과 alert 설계의 운영 관점 확인"
 ---
-# alert와 runbook
+# Alert와 Runbook
 
-Alert는 값이 이상하다는 통계 알림이 아니라 사람이 지금 조사하거나 조치해야 한다는 운영 신호입니다. user impact, symptom, severity, 시작 시각, 담당자와 다음 행동이 있어야 실제 incident 응답을 시작할 수 있습니다.
+모든 이상 징후를 사람에게 즉시 알리면 중요한 장애도 수많은 경고 속에 묻힙니다. Alert는 단순히 metric이 임계값을 넘었다는 사실보다 **지금 사람이 확인하거나 조치해야 할 사용자 영향이 있는가**를 기준으로 설계하는 편이 좋습니다.
 
-### symptom과 cause를 구분한다
-
-고객 error rate나 SLO burn은 symptom alert이고, CPU 90%나 queue depth는 원인 후보 또는 capacity alert일 수 있습니다. 모든 내부 지표를 paging으로 만들면 alert fatigue가 생깁니다. paging·ticket·dashboard annotation을 urgency와 actionability에 맞춰 분리합니다.
+예를 들어 SLO burn이나 급격한 error rate 증가는 사용자가 실제로 영향을 받고 있다는 symptom에 가깝습니다. 반면 CPU 사용률 상승이나 queue 증가 자체는 원인 후보일 수 있으므로 즉시 paging보다 dashboard, ticket, capacity 작업으로 연결하는 편이 더 적절할 수 있습니다.
 
 ```text
-SLO burn alert ─▶ page on-call ─▶ runbook: scope/rollback/mitigate
-resource trend ─▶ ticket/forecast ─▶ capacity investigation
+user impact / SLO burn
+        │
+        └─ page on-call
+             │
+             └─ runbook으로 scope 확인 → 안전한 mitigation
+
+장기 resource trend
+        └─ ticket / capacity investigation
 ```
 
-### alert는 안정적으로 만든다
+Alert rule에는 threshold뿐 아니라 평가 시간 창과 복구 조건이 필요합니다. 짧은 spike마다 page하면 피로도가 커지고, 반대로 너무 긴 window는 장애 감지를 늦춥니다. Duplicate alert를 묶고 dependency 장애가 상위 서비스 alert를 연쇄적으로 만들 때는 inhibition 같은 정책도 검토할 수 있습니다.
 
-짧은 spike에 즉시 page하지 않도록 evaluation window, absent data, deduplication, inhibition과 recovery condition을 정합니다. 다만 window가 너무 길면 detection 지연 시간이 늘어납니다. alert rule의 변경은 fixture traffic이나 과거 incident로 false positive와 false negative를 검토합니다.
+Runbook은 장애가 났을 때 처음 보는 사람이 실행할 수 있어야 합니다. 영향 범위 확인 query, 안전한 rollback·traffic reduction·feature disable 같은 완화 절차, destructive command의 대상 범위와 복구 확인 방법을 포함합니다. 서비스 구조가 바뀌었는데 runbook이 그대로라면 오히려 잘못된 조치를 유도할 수 있으므로 실제 incident와 drill을 통해 지속적으로 갱신해야 합니다.
 
-### runbook은 실행 가능한 문서다
-
-runbook에는 증상 확인 query, 영향 범위 확인, 안전한 mitigation, rollback 조건, 권한·연락처, 복구 확인과 후속 ticket을 적습니다. 복사해 실행하는 command는 destructive 여부와 대상 범위를 명확히 하고 정기적으로 실제 환경과 일치하는지 점검합니다.
-
-### 문제를 풀 때 확인할 것
-
-1. 누가 언제 어떤 행동을 해야 하는지 정합니다.
-2. user impact와 내부 원인 후보를 구분합니다.
-3. threshold·window·dedup·recovery를 설정합니다.
-4. 증거를 모으는 순서와 안전한 mitigation을 runbook에 둡니다.
-5. false alert·miss·runbook stale을 review합니다.
-
-### 면접에서 설명한다면
-
-Actionable alert는 이상 징후의 나열이 아니라 사용자의 영향과 즉시 행동을 연결합니다. SLO burn 같은 symptom은 paging 후보로, 장기 자원 추세는 ticket·capacity 작업으로 분리하고, threshold·window·dedup·복구 조건과 실행 가능한 runbook을 함께 운영합니다.
+좋은 alert는 “문제가 있다”에서 끝나지 않고 **무엇을 확인하고 어떤 행동을 할지**까지 이어집니다. 다음 incident response에서는 여러 사람이 동시에 움직이는 상황에서 이 signal과 runbook을 어떻게 조정할지 다룹니다.

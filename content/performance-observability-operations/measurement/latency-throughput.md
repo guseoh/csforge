@@ -3,8 +3,8 @@ kind: concept
 contentKey: performance.core.measurement.latency-throughput
 topicContentKey: performance.core.measurement
 slug: latency-throughput
-title: "지연 시간(latency) 분포와 처리량(throughput)"
-summary: "평균 대신 percentile 지연 시간과 처리량을 workload·concurrency·error rate와 함께 해석한다"
+title: "지연 시간 분포와 처리량"
+summary: "평균값 하나가 아니라 percentile 지연 시간, 처리량, 오류율과 동시성을 함께 보며 실제 workload의 성능을 판단한다."
 level: 1
 status: PUBLISHED
 displayOrder: 10
@@ -16,35 +16,25 @@ references:
     displayOrder: 1
     relationNote: "request trace와 runtime measurement의 관측 관점 확인"
 ---
-# 지연 시간(latency) 분포와 처리량(throughput)
+# 지연 시간 분포와 처리량
 
-지연 시간은 요청이 끝날 때까지 걸린 시간이고 처리량은 단위 시간에 처리한 작업량입니다. 둘은 서로 대체하는 지표가 아닙니다. 평균 지연 시간이 좋아 보여도 일부 사용자의 꼬리 지연 시간(tail latency)이 급격히 나빠질 수 있고, 처리량을 늘리려고 concurrency를 무제한으로 올리면 queueing으로 지연 시간이 악화될 수 있습니다.
+서비스가 빨라졌는지 판단할 때 평균 응답 시간 하나만 보면 중요한 변화를 놓칠 수 있습니다. 지연 시간(latency)은 요청 하나가 끝날 때까지 걸린 시간이고, 처리량(throughput)은 단위 시간에 완료한 작업 수이므로 서로 다른 질문에 답하는 지표입니다.
 
-### 평균보다 분포를 본다
-
-평균은 빠른 요청이 느린 요청을 가립니다. p50은 일반적인 경험, p95·p99는 tail 사용자의 경험과 capacity 경계에 가까운 현상을 보여 줍니다. percentile을 계산할 때는 시간 창, endpoint, status, workload와 sample 수를 함께 기록해야 합니다.
+평균 지연 시간이 비슷해도 일부 요청만 매우 느려질 수 있습니다. 그래서 p50은 보통 요청의 경험을, p95·p99는 느린 쪽 요청이 얼마나 오래 기다리는지를 보여 주는 데 사용합니다. Percentile 값은 endpoint, status, 시간 창, sample 수가 달라지면 의미도 달라지므로 측정 조건과 함께 읽어야 합니다.
 
 ```text
-request latency samples ──▶ histogram/distribution ──▶ p50, p95, p99
-                                  └─ endpoint·region·status별 비교
+request latency samples
+        │
+        ▼
+  distribution / histogram
+        │
+        ├─ p50
+        ├─ p95
+        └─ p99
 ```
 
-### 처리량만 높이면 안 된다
+처리량도 단독으로 높다고 좋은 것은 아닙니다. 동시 요청 수를 크게 늘려 초당 처리 수가 올라가더라도 queue가 길어지고 p99와 error rate가 함께 악화되면 사용자가 체감하는 품질은 나빠질 수 있습니다.
 
-한 instance의 처리율이 올라가도 error rate와 p99가 함께 나빠지면 사용자에게는 성능 개선이 아닐 수 있습니다. 요청 수뿐 아니라 message·batch·DB query처럼 실제 작업 단위를 정의하고, 성공 처리량과 실패·재시도량을 구분합니다.
+또한 무엇을 latency로 재는지도 고정해야 합니다. Client가 본 end-to-end 시간, load balancer 이후의 시간, application handler 실행 시간은 서로 다른 경계를 측정합니다. 같은 성능 실험에서는 시작·종료 지점과 성공/실패 기준을 유지해야 비교가 가능합니다.
 
-### 측정 경계를 고정한다
-
-client 지연 시간, load balancer 지연 시간, server handler 지연 시간, downstream wait time은 서로 다른 숫자입니다. 한 요청의 end-to-end 목표를 판단할 때는 어느 시계가 시작·종료되는지 명확히 하고, timeout·cancelled 요청을 별도로 분류합니다.
-
-### 문제를 풀 때 확인할 것
-
-1. 사용자 영향과 연결되는 지연 시간 경계를 정의합니다.
-2. p50과 p95/p99를 시간 창·endpoint·status별로 봅니다.
-3. 처리량의 작업 단위와 성공·실패 의미를 고정합니다.
-4. concurrency 증가가 queue와 꼬리 지연 시간(tail latency)에 미치는 영향을 확인합니다.
-5. error rate·saturation을 지연 시간과 함께 해석합니다.
-
-### 면접에서 설명한다면
-
-평균 지연 시간과 처리량만으로 서비스 품질을 판단하지 않고 p95/p99 같은 tail, 성공 처리량, error rate, concurrency와 측정 경계를 함께 봅니다. 높은 처리량이 queueing과 꼬리 지연 시간(tail latency)을 희생해 얻어진 것인지 확인해야 하며, 사용자-visible SLI로 연결할 때 endpoint와 timeout semantics를 고정합니다.
+성능을 판단할 때는 **처리량을 늘렸을 때 지연 시간 분포와 오류율이 어떻게 변하는지**를 함께 봅니다. 이후 saturation과 queueing을 보면 왜 어느 지점부터 처리량 증가가 지연 시간 증가로 바뀌는지 더 구체적으로 설명할 수 있습니다.

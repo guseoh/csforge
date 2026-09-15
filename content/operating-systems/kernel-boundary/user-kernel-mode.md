@@ -3,8 +3,8 @@ kind: concept
 contentKey: operating-systems.core.kernel-boundary.user-kernel-mode
 topicContentKey: operating-systems.core.kernel-boundary
 slug: user-kernel-mode
-title: "User·Kernel Mode"
-summary: "CPU privilege level과 OS kernel 경계가 application의 직접 hardware 접근을 제한하는 이유를 설명한다."
+title: "User Mode와 Kernel Mode"
+summary: "CPU privilege level을 나누어 application의 직접 hardware 접근을 제한하고 kernel service를 보호하는 이유를 설명한다."
 level: 1
 status: PUBLISHED
 displayOrder: 20
@@ -17,74 +17,43 @@ references:
     recommendation: "OS와 kernel service의 경계를 확인한다."
     displayOrder: 1
 ---
-# User·Kernel Mode
+# User Mode와 Kernel Mode
 
-Application process가 다른 process의 memory를 읽거나 interrupt 설정을 바꾸고 device controller를 직접 조작할 수 있다면 process isolation은 성립하기 어렵다. 그래서 현대 CPU는 모든 instruction을 같은 권한으로 실행하지 않고 **privilege level**을 구분한다. 일반 application은 낮은 권한의 user mode에서 실행되고, OS kernel은 더 높은 권한에서 privileged operation을 수행한다.
+운영체제가 process를 서로 격리하려면 `application은 다른 process의 memory를 읽지 말아야 한다`는 규칙만으로는 부족하다. 버그나 악성 code가 규칙을 무시해도 hardware가 금지된 동작을 막을 수 있어야 한다.
 
-여기서 중요한 점은 user/kernel mode가 단순한 소프트웨어 convention이 아니라 **CPU가 강제하는 실행 권한 경계**라는 것이다. Kernel이 정책을 잘 작성하는 것만으로는 충분하지 않고, application이 임의로 privilege level을 올리거나 privileged instruction을 실행하지 못하도록 processor가 제한해야 한다.
-
-### User mode에서 제한되는 이유
-
-User process는 자신의 virtual address space 안에서 일반 계산을 하고 instruction을 실행할 수 있지만, 모든 physical memory와 device register에 직접 접근할 권한은 없다. Page table을 바꾸거나 특정 privileged control register를 수정하는 작업처럼 시스템 전체에 영향을 주는 동작은 높은 privilege가 필요하다.
-
-이 구분 덕분에 application bug의 영향 범위를 줄일 수 있다.
+그래서 CPU는 실행 권한 수준을 나누고 일반 application은 낮은 privilege의 user mode에서, kernel은 더 높은 privilege의 kernel mode에서 실행되도록 한다.
 
 ```text
-User Process
-  일반 계산 / 자신의 virtual memory 사용
-            │
-            │ privileged service 필요
-            ▼
-     controlled entry
-            │
-            ▼
-Kernel
-  permission 검사 / resource 관리 / driver
+User mode
+  application code
+      │
+      │ controlled entry
+      ▼
+Kernel mode
+  resource management / driver / protection
 ```
 
-User mode가 “아무것도 못 하는 모드”라는 뜻은 아니다. 대부분의 application code는 user mode에서 실행된다. Kernel 권한이 필요한 특정 동작만 정해진 경계를 통과한다.
+### User mode는 제한된 권한으로 실행된다
 
-### Kernel mode로 들어가는 여러 경로
+User process는 일반 계산과 자신의 virtual address space 접근을 수행할 수 있지만 page table, privileged control state, device register처럼 시스템 전체에 영향을 줄 수 있는 자원을 임의로 변경할 수는 없다.
 
-Kernel mode 진입 원인은 하나가 아니다. Application이 의도적으로 OS service를 요청하는 **system call**, 현재 instruction 실행 중 발생한 **exception**, 외부 device나 timer 같은 비동기 사건에서 발생하는 **interrupt**가 대표적인 entry 원인이다.
+필요한 kernel service가 있다면 system call처럼 architecture와 OS가 정한 entry를 사용해야 한다. Application이 원하는 kernel address로 단순 jump한다고 privilege를 얻는 구조가 아니다.
 
-이 세 사건은 원인과 timing이 다르지만 공통점이 있다. Processor가 미리 정의된 handler entry로 control을 넘기고, kernel이 필요한 state를 저장한 뒤 적절한 handler를 실행한다. 즉 application이 원하는 kernel 주소로 jump해서 권한을 얻는 구조가 아니다.
+### Kernel mode 진입 원인은 하나가 아니다
 
-### Mode switch와 context switch는 같은 말이 아니다
+System call은 application이 의도적으로 kernel service를 요청하는 경로다. 현재 instruction 실행 중 exception이 발생하거나 device/timer interrupt가 도착했을 때도 handler 처리를 위해 높은 privilege로 control이 넘어갈 수 있다.
 
-System call로 user mode에서 kernel mode로 들어갔다가 같은 thread로 돌아오는 경우, privilege mode는 바뀌었지만 다른 process/thread로 CPU가 넘어간 것은 아닐 수 있다. 반대로 scheduler가 다른 task를 선택하면 register와 execution context를 바꾸는 context switch가 발생한다.
+이 원인들은 서로 다르지만 공통적으로 processor가 정의된 entry mechanism과 handler state를 사용한다.
 
-따라서 다음을 구분해야 한다.
+### Mode switch와 context switch를 구분한다
 
-- **mode switch**: privilege level / execution domain이 user ↔ kernel로 바뀐다.
-- **context switch**: 실행 중인 task의 CPU context가 다른 task로 바뀐다.
+같은 thread가 system call을 처리하기 위해 user mode에서 kernel mode로 들어갔다가 바로 돌아오면 privilege level은 바뀌었지만 다른 task로 실행 주체가 교체된 것은 아닐 수 있다.
 
-System call 하나가 항상 process context switch를 의미하는 것은 아니다.
-
-### 면접에서 이렇게 나옵니다
-
-#### Q. Mode switch와 context switch는 왜 구분해야 하나요?
-
-System call처럼 같은 task가 user mode에서 kernel mode로 들어갔다가 곧바로 돌아오는 경우에는 privilege level만 바뀌고 다른 task로 실행 주체가 교체되지 않을 수 있습니다.
-
-Context switch는 scheduler가 다른 task를 선택해 CPU execution context를 바꾸는 사건입니다. Blocking system call 때문에 context switch가 뒤따를 수는 있지만, **mode switch 자체가 곧 context switch인 것은 아닙니다.**
-
-### Java Backend 요청도 이 경계를 통과한다
-
-Java code가 `FileInputStream`, socket, database connection 같은 기능을 사용하면 Java method가 hardware를 직접 조작하는 것이 아니다. JVM과 native library를 거쳐 OS interface를 호출하고, 필요한 경우 system call을 통해 kernel service를 사용한다.
+반면 context switch는 scheduler가 다른 task를 선택해 register와 execution context를 바꾸는 사건이다.
 
 ```text
-Java code
-   ↓
-JVM / libc / native runtime
-   ↓
-System call boundary
-   ↓
-Linux kernel
-   ↓
-filesystem / network stack / driver
+mode switch    → privilege boundary 변화
+context switch → 실행 task 변화
 ```
 
-그래서 backend 지연 시간을 해석할 때 Java method 실행 시간과 kernel I/O wait를 구분할 필요가 있다. 또한 permission denied, descriptor limit, network error 같은 실패는 application business rule과 다른 OS/runtime layer의 실패다.
-
-User/kernel mode의 핵심은 “kernel이 더 강력하다”는 정의가 아니다. **CPU privilege mechanism을 이용해 application이 시스템 전체 자원을 직접 제어하지 못하도록 만들고, 필요한 작업만 검증된 kernel entry를 통해 수행하게 하는 보호 구조**다.
+System call이 block되면 그 결과로 context switch가 뒤따를 수 있지만 두 사건 자체는 같은 개념이 아니다.

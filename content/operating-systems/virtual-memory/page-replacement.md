@@ -19,24 +19,34 @@ references:
 ---
 # Page Replacement
 
-새 page를 resident로 만들어야 하는데 사용할 free frame이 부족하면 OS는 기존 resident page 중 하나를 victim으로 골라 frame을 재사용해야 한다. 이 결정을 page replacement라고 한다. 핵심 목표는 단순히 `가장 오래된 page를 지운다`가 아니라 **앞으로 다시 필요할 가능성이 낮고 내보내는 비용도 합리적인 page를 선택해 fault 비용을 줄이는 것**이다.
+새 page를 resident하게 만들어야 하는데 free frame이 부족하면 운영체제는 기존 resident page 중 하나를 **victim**으로 골라 frame을 재사용해야 한다. 이 결정을 page replacement라고 한다.
 
 ![Free frame이 없을 때 resident page 중 victim을 골라 내보내고 새 page를 frame에 배치하는 흐름](/learning/operating-systems/page-replacement.svg)
 
-### 왜 미래를 정확히 알 수 없는가
+```text
+새 page 필요
+    ↓
+free frame 없음
+    ↓
+victim 선택
+    ↓
+필요하면 victim 내용 저장
+    ↓
+frame 재사용 → 새 page 적재
+```
 
-이상적인 OPT 정책은 앞으로 가장 늦게 다시 사용할 page를 내보내면 되지만 실제 OS는 미래 access를 알 수 없다. 그래서 FIFO는 들어온 순서, LRU 계열은 최근 참조 정보, CLOCK 같은 정책은 reference bit를 이용해 locality를 근사한다. LRU도 정확한 최근 사용 순서를 모두 추적하려면 overhead가 크기 때문에 실제 구현에서는 approximation이 중요해진다.
+### 좋은 victim은 앞으로 덜 필요할 page다
 
-예를 들어 3개의 frame에서 reference string이 `1, 2, 3, 1, 4`라면 마지막 `4`를 넣을 때 victim을 골라야 한다. 최근 `1`이 다시 사용되었다는 정보를 활용하는 정책은 `1`을 남길 가능성이 높지만 FIFO는 최초 진입 순서만 보고 `1`을 내보낼 수도 있다. 이런 차이가 이후 fault 횟수로 이어진다.
+미래의 memory reference를 정확히 안다면 가장 늦게 다시 사용할 page를 내보내는 것이 유리하다. 하지만 실제 OS는 미래를 알 수 없으므로 과거 reference를 이용해 locality를 근사한다.
 
-### victim의 종류도 비용을 바꾼다
+FIFO는 들어온 순서를 이용하고, LRU 계열은 최근 사용 정보를 이용하며, CLOCK 같은 정책은 reference bit를 활용해 최근 사용 여부를 근사한다. 실제 구현에서는 정확한 LRU 순서를 유지하는 비용도 고려해야 한다.
 
-clean file-backed page는 필요하면 원본 file에서 다시 읽을 수 있어 mapping을 제거하는 비용이 상대적으로 작을 수 있다. 반대로 dirty anonymous/page-cache page는 backing store에 write-back이 필요할 수 있다. 따라서 replacement는 reuse 가능성뿐 아니라 dirty state와 write cost, page type을 함께 고려한다.
+### Eviction 비용도 page마다 다를 수 있다
 
-### Working set을 보존하지 못하면 정책 전체가 무너진다
+변경되지 않은 clean page는 backing source가 있다면 필요할 때 다시 읽어올 수 있다. 반대로 수정된 dirty page는 재사용 전에 내용을 backing store로 반영해야 할 수 있어 eviction 비용이 더 커질 수 있다.
 
-좋은 replacement policy라도 workload의 active working set이 available frames보다 훨씬 크면 fault를 근본적으로 줄일 수 없다. page 하나를 가져오면서 곧 다시 쓸 page를 내보내고, 다시 그 page를 가져오기 위해 다른 page를 내보내는 상황이 반복된다. 이때는 policy 미세 조정보다 memory budget이나 multiprogramming level 자체를 조정해야 한다.
+### Replacement policy에도 한계가 있다
 
-### Backend 연결
+현재 workload가 실제로 반복 사용하는 working set이 available frames보다 훨씬 크다면 어떤 replacement policy도 fault를 크게 줄이기 어렵다. Active page를 내보내고 곧 다시 가져오는 일이 반복되기 때문이다.
 
-OS page replacement와 application cache eviction은 서로 다른 계층이지만 physical memory를 두고 경쟁한다. JVM heap이나 in-memory cache를 크게 잡아 file-backed working set을 계속 밀어내면 application cache hit는 좋아져도 major fault와 I/O 지연 시간이 증가할 수 있다. heap·RSS·page cache·fault를 하나의 memory budget으로 관찰한다.
+Page Replacement의 핵심은 **free frame이 부족할 때 재사용 가능성이 낮고 eviction 비용이 합리적인 page를 선택해 fault 비용을 줄이는 OS 정책**이며, working set 자체가 memory capacity를 넘으면 policy 선택만으로 해결할 수 없다는 점이다.

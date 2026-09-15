@@ -4,7 +4,7 @@ contentKey: network-http.core.http-state-intermediary.proxy
 topicContentKey: network-http.core.http-state-intermediary
 slug: proxy
 title: "Forward Proxy"
-summary: "client 대신 outbound 요청을 전달하는 forward proxy를 설명한다."
+summary: "client를 대신해 outbound 요청을 origin 쪽으로 전달하는 forward proxy의 위치와 hop 경계를 설명한다."
 level: 1
 status: PUBLISHED
 displayOrder: 40
@@ -17,17 +17,14 @@ references:
 ---
 # Forward Proxy
 
-forward proxy는 client가 직접 origin에 연결하는 대신 client가 선택한 proxy에 요청을 보내고 proxy가 outbound 연결을 만드는 구조다. client 운영자나 조직의 network policy가 어떤 요청을 proxy로 보낼지 결정하며, origin 운영자가 자신의 앞에 둔 reverse proxy와 방향과 관찰 지점이 다르다. proxy는 egress filtering, audit, address hiding, cache를 제공할 수 있지만 proxy 장애·정책·관찰 가능성이 새로운 trust와 실패 경계가 된다.
+forward proxy는 client가 origin에 직접 연결하는 대신, client가 선택한 intermediary에 요청을 보내고 그 intermediary가 origin 쪽 connection을 만드는 구조다. 즉 client 쪽을 대신해 outbound request path에 참여한다는 점에서 origin 앞에 배치되는 reverse proxy와 위치가 다르다.
 
-일반 HTTP 요청은 proxy가 target을 알고 upstream 요청을 만들 수 있고, HTTPS처럼 end-to-end TLS를 유지할 때는 `CONNECT` tunnel을 사용해 proxy가 바이트를 전달할 수 있다. proxy가 TLS를 종료·검사하는 구성이라면 client가 proxy의 인증서를 신뢰해야 하며 proxy가 plaintext를 볼 수 있는 별도 trust model이 생긴다. origin이 보는 socket peer는 보통 proxy이므로 original client 정보는 표준 또는 관행 forwarded header, 별도 proxy protocol 같은 명시적인 전달 계약이 있어야 한다.
+```text
+client → forward proxy → origin
+```
 
-proxy가 요청을 재시도하거나 body를 buffer하면 streaming, timeout, side effect가 달라질 수 있다. DNS를 client가 수행하는지 proxy가 수행하는지, 인증 credential을 어떤 hop까지 전달하는지, direct bypass가 허용되는지를 함께 정해야 하며, forward proxy header를 origin identity의 증명으로 자동 신뢰해서는 안 된다.
+proxy는 egress policy, cache, audit 같은 기능을 제공할 수 있지만 그런 기능이 forward proxy의 필수 정의는 아니다. 핵심은 client와 origin 사이에 새로운 HTTP hop이 생기고, client→proxy와 proxy→origin이 서로 다른 connection일 수 있다는 점이다.
 
-### Backend 연결
+HTTPS destination으로 end-to-end TLS를 유지하려면 client가 HTTP `CONNECT`를 사용해 proxy에 tunnel 생성을 요청할 수 있다. 이 경우 proxy는 encrypted bytes를 중계할 수 있고, 반대로 proxy가 TLS를 직접 종료하는 환경이라면 client와 origin 사이의 trust boundary가 달라진다.
 
-개발환경의 `HTTP_PROXY`·`HTTPS_PROXY`와 bypass 목록은 외부 API와 private service의 실제 경로를 달리 만들 수 있다. proxy 사용 여부, CONNECT 여부, upstream timeout과 인증 범위를 시작 configuration과 outbound metrics에서 관찰 가능하게 하며, proxy 로그에 bearer credential이나 cookie가 남지 않도록 redaction한다.
-### Forward proxy
-    client → forward proxy → origin
-                ├─ policy/logging
-                └─ CONNECT or TLS inspection
-TLS termination 여부가 내용 가시성과 trust boundary를 바꾼다.
+forward proxy를 거치면 origin의 socket peer는 원래 client가 아니라 proxy일 수 있다. 원래 client 정보가 필요하다면 별도의 전달 규칙이 필요하며, proxy가 전달한 metadata도 신뢰 정책 없이 client identity의 증명으로 취급해서는 안 된다.

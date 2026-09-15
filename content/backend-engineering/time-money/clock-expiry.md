@@ -5,7 +5,7 @@ topicContentKey: backend.core.time-money
 slug: clock-expiry
 title: "Clock과 만료 정책"
 summary: "현재 시각을 숨은 전역 입력으로 두지 않고 Clock을 통해 정책 입력으로 드러내 테스트 가능한 만료 로직을 만든다."
-level: 2
+level: 3
 status: PUBLISHED
 displayOrder: 20
 references:

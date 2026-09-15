@@ -4,7 +4,7 @@ contentKey: operating-systems.core.isolation.host-kernel-sharing
 topicContentKey: operating-systems.core.isolation
 slug: host-kernel-sharing
 title: "Host Kernel Sharing"
-summary: "container가 host kernel을 공유할 때 남는 경계와 위험을 설명한다."
+summary: "container가 별도 kernel이 아니라 host kernel을 공유하는 경계를 설명한다."
 level: 2
 status: PUBLISHED
 displayOrder: 70
@@ -19,20 +19,28 @@ references:
 ---
 # Host Kernel Sharing
 
-일반적인 Linux container는 process view와 resource budget을 분리해도 host kernel 위에서 system call을 수행한다. 즉 container마다 독립 kernel이 있는 것이 아니라 kernel code, syscall surface, scheduler와 일부 device 경로를 공유한다. namespace와 cgroup이 정상적으로 동작해도 kernel bug나 과도한 capability가 host까지 영향을 줄 수 있으므로 process isolation의 보안 강도는 kernel boundary에 의존한다.
+일반적인 Linux container는 namespace와 cgroup으로 process 환경을 분리하지만 **system call은 host kernel이 처리한다.** Container마다 독립 kernel이 있는 것이 아니며 scheduler, memory management, filesystem/network subsystem과 kernel code 자체를 host의 다른 process들과 공유한다.
 
 ![container와 VM이 host kernel을 대하는 경계 차이](/learning/operating-systems/host-kernel-sharing.svg)
 
-VM은 guest kernel과 user process를 별도로 실행해 host와 guest 사이에 추가 virtual hardware/hypervisor 경계를 만든다. 그래서 guest kernel이 container process와 직접 공유되지 않는 더 강한 fault/security boundary를 제공할 수 있지만, memory·device virtualization과 별도 kernel 운영 비용이 생긴다. container와 VM 중 어느 것이 안전하다는 식의 일반화보다 threat model, kernel trust, performance와 운영 책임을 비교해야 한다.
+### Namespace 분리와 kernel 분리는 다르다
 
-### 격리 경계를 약하게 만드는 연결
+Container 안에서 PID, mount, network view가 다르게 보이더라도 그 view를 구현하는 kernel은 동일하다. 따라서 namespace는 resource visibility를 분리할 뿐 별도의 kernel boundary를 만드는 mechanism은 아니다.
 
-`privileged` 권한, 광범위한 Linux capability, host PID/network namespace, writable host bind mount, device 전달은 container가 접근할 수 있는 resource를 넓힌다. 이때 namespace가 일부 view를 가리고 있다는 사실이 host object에 대한 접근 통제를 대신하지 않는다. 필요한 capability와 device만 허용하고 mount는 최소 범위·read-only로 설계하며, kernel과 runtime patch를 host 운영 책임에 포함한다.
+### VM과의 차이
 
-로컬 Docker Compose에서도 host bind mount와 privileged 설정은 backend source나 credential에 직접 영향을 줄 수 있다. 개발 편의를 위해 연 설정을 production security boundary로 복사하지 말고, container 안 process가 실제로 어떤 kernel·mount·device 권한을 갖는지 검증한다.
+Virtual machine은 일반적으로 guest kernel을 별도로 실행하고 hypervisor 또는 virtual hardware 경계를 둔다. Container는 별도 guest kernel 없이 host kernel을 공유하므로 시작과 resource overhead가 작을 수 있지만 isolation boundary의 성격도 다르다.
 
-### 면접에서 이렇게 나옵니다
+```text
+Container
+processes → namespace/cgroup → host kernel
 
-#### Q. Container와 VM의 isolation boundary는 무엇이 다른가요?
+VM
+guest processes → guest kernel → hypervisor → host
+```
 
-일반적인 container는 host kernel을 공유해 namespace·cgroup·permission으로 process를 격리합니다. VM은 guest kernel과 hypervisor 경계가 추가됩니다. 그래서 container는 가볍지만 kernel attack surface를 host와 공유한다는 점까지 함께 설명하면 좋습니다.
+### 권한을 넓히면 공유 kernel에 대한 접근 범위도 커진다
+
+Container process에 많은 capability나 device access, host namespace를 허용하면 kernel과 host resource에 접근할 수 있는 범위가 넓어진다. 구체적인 hardening 정책은 Security 영역의 책임이지만, OS 관점에서 중요한 점은 **container isolation이 host kernel 공유라는 전제 위에 존재한다는 것**이다.
+
+Host Kernel Sharing의 핵심은 container가 별도 machine이 아니라 host kernel을 공유하는 process isolation 모델이며, 이것이 VM과 다른 중요한 경계라는 점이다.

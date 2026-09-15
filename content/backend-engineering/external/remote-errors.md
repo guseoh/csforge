@@ -3,8 +3,8 @@ kind: concept
 contentKey: backend.core.external.remote-errors
 topicContentKey: backend.core.external
 slug: remote-errors
-title: "원격 오류와 응답 검증"
-summary: "HTTP status만으로 성공을 단정하지 않고 payload schema와 business status를 검증해 외부 실패를 내부 계약으로 번역한다"
+title: "원격 응답 검증과 오류 번역"
+summary: "HTTP status·body parsing·schema·business status를 단계별로 검증하고 외부 공급자의 오류 표현을 내부에서 필요한 안정적인 결과와 실패 의미로 번역한다."
 level: 2
 status: PUBLISHED
 displayOrder: 20
@@ -22,90 +22,85 @@ references:
     displayOrder: 2
     relationNote: "HTTP response를 application object로 변환하는 client 경계 확인"
 ---
-# 원격 오류와 응답 검증
+# 원격 응답 검증과 오류 번역
 
-외부 API가 `200 OK`를 반환했다고 내부 use case가 성공한 것은 아닙니다. HTTP status는 transport-level 응답의 한 신호이고, body가 기대한 schema인지, 필수 field가 있는지, business status가 성공인지까지 확인해야 application이 안전하게 다음 상태로 넘어갈 수 있습니다.
+외부 API가 `200 OK`를 반환했다고 우리 유스케이스까지 성공한 것은 아닙니다. HTTP status는 응답의 한 층위일 뿐이고, body를 정상적으로 읽을 수 있는지, 필요한 필드와 허용된 값이 있는지, 공급자가 표현한 business 상태가 실제 성공인지까지 확인해야 합니다.
 
 ```text
 HTTP response
-  ├─ status: transport/protocol 신호
-  ├─ headers: content type, request id 등
-  └─ body: schema와 business 결과
-
-세 층을 모두 확인한 뒤 내부 결과로 번역
+   │
+   ├─ status / headers
+   │
+   ├─ body parsing
+   │
+   ├─ schema·필수 값 검증
+   │
+   └─ business status 해석
+           │
+           ▼
+     내부 result 또는 failure
 ```
 
-### status와 business success를 분리한다
+### Parsing 성공과 유효한 응답은 다르다
 
-어떤 remote system은 검증 실패를 `4xx`로 반환하지만, 어떤 시스템은 항상 `200` body 안에 `success=false`와 error code를 넣을 수 있습니다. 반대로 `2xx`라도 body가 잘렸거나 필수 주문 식별자가 없으면 내부에서는 실패로 다뤄야 합니다.
+다음 JSON은 문법적으로 정상입니다.
 
 ```json
 {
   "success": true,
-  "orderId": "ord-123",
+  "orderId": null,
   "status": "APPROVED"
 }
 ```
 
-이 응답을 신뢰하려면 HTTP status뿐 아니라 `success`, `orderId`, `status`의 타입과 허용 값, 서로 간의 조합을 검증해야 합니다. JSON parsing이 성공했다는 것과 business contract가 유효하다는 것도 다른 단계입니다.
+하지만 성공 응답에서 `orderId`가 반드시 있어야 한다는 공급자 계약이라면 내부에서는 정상 결과로 받아들이면 안 됩니다. JSON deserialize가 성공했다는 사실은 **데이터 구조를 읽을 수 있었다는 뜻이지, 응답 의미가 유효하다는 뜻은 아닙니다.**
 
-### 응답 검증은 boundary에서 끝낸다
+외부 adapter에서는 필요한 경우 다음을 단계적으로 확인합니다.
 
-외부 DTO를 application/domain 내부까지 그대로 전달하면 vendor field 이름, nullable 규칙, error code 체계가 내부 코드에 퍼집니다. client adapter가 외부 응답을 읽고 다음을 검증한 뒤 내부 결과 또는 내부 예외로 번역하는 편이 경계를 보호합니다.
+- 기대한 HTTP status와 media type인가?
+- body를 허용된 크기와 형식으로 읽을 수 있는가?
+- 필수 field와 enum 값이 계약에 맞는가?
+- 성공 상태와 식별자 같은 값 조합이 모순되지 않는가?
 
-1. HTTP status와 content type
-2. body size와 parsing 가능 여부
-3. 필수 field, type, enum 값과 schema version
-4. business status와 identifier의 조합
-5. remote 요청 id 같은 진단 metadata
-
-```text
-External response DTO
-        │ validate + map
-        ▼
-Internal result / typed failure
-        │
-        ├─ application policy
-        └─ API error contract
-```
-
-### 실패를 내부 error model로 번역한다
-
-외부 `404`, `429`, `500`, timeout, malformed body를 모두 “외부 API 오류” 하나로 뭉개면 retry·사용자 응답·운영 대응을 구분할 수 없습니다. 내부에서는 예를 들어 not found, rate limited, unavailable, invalid 응답처럼 의미가 드러나는 실패 종류로 정리하고 원인과 remote 요청 id를 보존합니다.
+### 공급자 DTO를 안쪽 모델로 그대로 퍼뜨리지 않는다
 
 ```text
-remote 429  ─▶ rate limited       ─▶ 제한된 retry 또는 사용자 안내
-remote 500  ─▶ unavailable        ─▶ bounded retry / fallback
-malformed   ─▶ invalid response   ─▶ retry 전 계약 변경·장애 조사
-timeout     ─▶ outcome unknown    ─▶ idempotency/result lookup 판단
+VendorPaymentResponse
+  status = "CAPTURED"
+  providerRequestId = "..."
+       │
+       │ adapter가 검증·번역
+       ▼
+PaymentResult.success(paymentId, amount)
 ```
 
-내부 error model은 vendor exception의 세부 구현을 무조건 숨기는 것이 아니라, application이 실제로 정책을 결정하는 데 필요한 정보만 안정적으로 노출하는 번역 경계입니다.
+애플리케이션과 도메인이 공급자의 필드 이름, nullable 규칙, error code 체계를 직접 알기 시작하면 공급자 변경이 안쪽 코드 전체의 변경으로 이어집니다. 외부 adapter는 **공급자 표현을 우리 시스템이 정책 판단에 필요한 의미로 변환하는 경계**입니다.
 
-### 응답 본문을 그대로 신뢰하거나 노출하지 않는다
+### 실패도 하나의 `RemoteException`으로 뭉개지 않는다
 
-remote error body는 HTML, 너무 큰 payload, 민감정보, 예상하지 못한 JSON일 수 있습니다. 파싱 실패 시 body 전체를 로그나 API 응답에 넣으면 log injection, secret 노출, 저장소·로그 용량 문제로 이어질 수 있습니다. 제한된 크기와 안전한 field를 선택해 기록하고 correlation id를 함께 남기는 편이 좋습니다.
+외부 호출 실패 종류에 따라 다음 행동이 달라질 수 있습니다.
 
-### 운영에서는 “success rate”를 여러 층으로 나눈다
+```text
+remote 429      → rate limited
+remote 5xx      → temporarily unavailable 후보
+malformed body  → invalid response / contract 문제 후보
+response timeout→ outcome unknown 가능
+```
 
-HTTP 2xx 비율만 보면 remote가 business 실패를 200으로 포장하는 문제를 놓칠 수 있습니다. 다음을 분리해 관측합니다.
+이 차이를 유지하면 application은 제한된 retry를 할지, 사용자에게 실패를 즉시 알릴지, 결과 조회를 시도할지 결정할 수 있습니다. 다만 외부의 모든 status와 exception class를 내부 enum으로 그대로 복제할 필요는 없습니다. **우리 정책이 실제로 구분해야 하는 실패만 안정적인 내부 의미로 남깁니다.**
 
-- 호출 시도와 timeout 비율
-- HTTP status별 응답 수
-- schema 검증 실패 수
-- business success/실패 수
-- retry 후 최종 성공 수와 unknown outcome 수
-- remote 요청 id와 내부 correlation id
+### 원격 오류 body를 그대로 노출하지 않는다
 
-### 문제를 풀 때 확인할 것
+공급자의 error response에는 HTML, stack trace, 내부 식별자, 예상보다 큰 body, 민감한 값이 들어 있을 수 있습니다. 이를 우리 API 응답이나 로그에 그대로 복사하면 정보 노출과 로그 용량 문제가 생길 수 있습니다.
 
-1. HTTP status와 body business status를 따로 확인합니다.
-2. parsing 성공과 schema/semantic 검증 성공을 구분합니다.
-3. 외부 DTO를 내부 domain 상태로 직접 사용하지 않습니다.
-4. 실패 종류별 retry, 대체 처리, 사용자 응답 정책을 나눕니다.
-5. error body와 correlation metadata의 보안·크기 경계를 확인합니다.
+대신 필요한 원인 분류와 공급자 request id 같은 진단 식별자는 보존하고, 외부 사용자에게는 우리 API의 오류 계약으로 번역합니다.
 
-### 면접에서 설명한다면
+```text
+remote error
+   │
+   ├─ 운영 로그: provider request id + 안전한 원인 정보
+   │
+   └─ API 응답: stable product error code + correlation id
+```
 
-외부 호출은 HTTP status만 확인하는 것으로 끝나지 않고 content type, schema, 필수 field와 business status를 검증해야 합니다. adapter 경계에서 vendor 응답을 내부 결과와 typed 실패로 번역하면 retry·대체 처리·API error mapping이 안정적으로 분리됩니다. timeout이나 malformed 응답처럼 결과가 불확실한 경우에는 idempotency와 결과 조회 가능성도 함께 판단해야 합니다.
-
+외부 연동의 핵심은 status code를 많이 분류하는 것이 아니라 **신뢰할 수 없는 원격 응답을 경계에서 검증하고, 안쪽 코드가 실제로 대응할 수 있는 안정적인 결과와 실패 의미로 바꾸는 것**입니다.

@@ -26,30 +26,34 @@ references:
 ---
 # Page Fault
 
-page fault는 CPU가 virtual address에 접근했지만 현재 translation과 permission만으로 그 접근을 완료할 수 없어 kernel의 fault handler로 제어가 넘어가는 사건이다. 중요한 점은 **page fault가 곧 disk I/O라는 뜻은 아니라는 것**이다. 아직 physical frame이 배정되지 않은 anonymous page라면 zero-filled frame을 연결하는 것만으로 복구될 수 있고, copy-on-write page라면 새 frame을 복사해 writable mapping으로 바꾸면 된다. file-backed page가 page cache에 없거나 swap-backed page를 다시 가져와야 하는 경우에야 storage I/O가 포함될 수 있다.
+Page fault는 process가 virtual address에 접근했지만 **현재 mapping 상태만으로 그 access를 완료할 수 없어 kernel의 판단이 필요한 사건**이다. Page fault가 발생했다고 항상 disk에서 page를 읽는 것은 아니다.
 
 ![Memory access가 page fault를 일으킨 뒤 mapping과 permission을 검사하고 복구 또는 실패로 이어지는 흐름](/learning/operating-systems/page-fault-flow.svg)
 
-### Fault가 발생한 뒤 OS가 판단하는 것
+### Kernel은 fault 원인을 먼저 구분한다
 
-fault handler는 먼저 해당 virtual address가 process에 허용된 mapping 안에 있는지, 요청한 read/write/execute 권한이 유효한지 판단한다. mapping 자체가 잘못되었거나 permission 위반이라면 정상적인 demand paging으로 복구할 문제가 아니므로 process에 오류를 전달한다. 반대로 유효한 mapping인데 현재 사용할 수 있는 resident page가 없다면 frame을 확보하고 backing source에서 내용을 준비한 뒤 page-table state를 갱신할 수 있다.
+Fault handler는 해당 address가 process에 허용된 mapping인지, 요청한 access permission이 맞는지, 필요한 page를 준비하면 정상적으로 재개할 수 있는지 판단한다.
 
-복구 가능한 fault의 전형적인 흐름은 다음처럼 볼 수 있다.
+```text
+memory access
+    ↓
+page fault
+    ↓
+valid mapping인가?
+  ├─ no  → process에 오류 전달
+  └─ yes
+       ↓
+permission이 맞는가?
+  ├─ no  → protection failure
+  └─ yes → page/frame 준비 → mapping 갱신 → instruction 재시도
+```
 
-`memory access → fault entry → mapping/permission 확인 → frame/content 준비 → mapping 갱신 → faulting instruction 재시도`
+Anonymous page의 첫 접근이라면 zero-filled frame을 준비하는 것만으로 복구될 수 있고, copy-on-write라면 새 frame을 만들어 mapping을 분리할 수 있다. File이나 swap에서 실제 내용을 읽어와야 하는 경우에는 storage I/O가 필요할 수 있다.
 
-instruction을 재시도한다는 점도 중요하다. fault handler가 application의 원래 load/store를 대신 완료하는 것이 아니라, 접근이 성공할 조건을 마련한 뒤 CPU가 해당 instruction을 다시 실행하게 만드는 모델이 일반적이다.
+### 복구 가능한 fault는 원래 instruction을 다시 실행한다
 
-### 비용은 fault 종류에 따라 크게 달라진다
+Kernel이 application의 load/store를 대신 끝내는 것이 핵심이 아니다. Access가 성공할 조건을 만든 뒤 fault를 일으킨 instruction이 다시 실행될 수 있도록 state를 정리한다.
 
-Linux의 `getrusage()` 같은 운영 지표에서는 I/O 없이 처리된 fault를 `ru_minflt`, I/O가 필요했던 fault를 `ru_majflt`로 구분한다. 흔히 minor/major fault라고 부르지만 이 이름과 계수 방식은 모든 OS의 보편적 page-fault 분류 계약으로 일반화하지 않는다. 따라서 `page fault 수가 1,000회`라는 숫자만으로 지연 시간을 판단하면 안 된다. 어떤 backing store였는지, 이미 page cache에 있었는지, dirty victim을 write-back해야 했는지까지 봐야 한다.
+따라서 page fault의 비용은 원인에 따라 크게 달라진다. Memory 안에서 mapping만 고치면 되는 fault와 storage I/O가 필요한 fault를 같은 비용으로 볼 수 없다.
 
-### 운영에서 보는 경계
-
-대형 file mapping이나 큰 working set의 첫 접근은 warm 상태와 완전히 다른 지연 시간을 만들 수 있다. benchmark에서는 cold start와 steady state를 분리하고, Linux의 minor/major fault 같은 OS별 지표를 사용할 때는 해당 지표의 정의를 확인하면서 resident memory·storage I/O를 함께 관찰한다. JVM의 `OutOfMemoryError`와 OS page fault도 같은 사건이 아니므로 application heap 문제와 virtual-memory pressure를 구분해 진단한다.
-
-### 면접에서 이렇게 나옵니다
-
-#### Q. Page fault가 발생하면 항상 디스크에서 page를 읽어오나요?
-
-아니다. Page fault는 **현재 translation으로 memory access를 완료할 수 없어서 kernel이 개입해야 한다는 사건**이다. Anonymous zero-fill이나 copy-on-write처럼 storage I/O 없이 복구되는 fault도 있고, file/swap에서 실제 I/O가 필요한 fault도 있다. Fault 원인과 backing state를 구분해 설명하는 것이 중요하다.
+Page Fault의 핵심은 **fault 자체가 오류를 뜻하는 것이 아니라, 현재 mapping으로는 access를 완료할 수 없어 OS가 복구 가능한 상황인지 보호 위반인지 판정하는 control path**라는 점이다.

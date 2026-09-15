@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.multicore-memory.coherence-protocol-model
 topicContentKey: computer-architecture.core.multicore-memory
 slug: coherence-protocol-model
-title: "Coherence Protocol Model"
+title: "Coherence Protocol의 기본 모델"
 summary: "cache line의 read/write permission과 최신 data 소유권을 state transition으로 추적하는 coherence protocol의 기본 모델을 설명한다."
 level: 3
 status: PUBLISHED
@@ -17,42 +17,33 @@ references:
     recommendation: "cache 복사본의 coherence 문제를 확인한다."
     displayOrder: 1
 ---
-# Coherence Protocol Model
+# Coherence Protocol의 기본 모델
 
-### Cache line마다 `누가 읽을 수 있고 누가 쓸 수 있는가`를 추적한다
+Coherence protocol은 cache line마다 **누가 읽을 수 있고, 누가 쓸 수 있으며, 최신 data가 어디에 있는지**를 추적한다. 특정 protocol 이름을 외우기보다 line의 permission과 ownership이 state transition으로 바뀐다고 이해하는 것이 핵심이다.
 
-coherence protocol을 이해할 때는 특정 protocol의 state 이름부터 외우기보다 cache line에 대한 permission과 최신 data의 위치를 추적한다고 생각하는 편이 좋다. 여러 core가 같은 line을 read-only로 보유할 수 있는 상태, 한 core가 write할 수 있는 ownership을 가진 상태, 현재 cache copy를 사용할 수 없는 invalid 상태 등이 필요하다.
+MESI 계열에서는 Modified, Exclusive, Shared, Invalid 같은 state 이름을 사용하지만 모든 CPU가 정확히 같은 state 집합을 사용하는 것은 아니다. Protocol마다 추가 state나 message가 있을 수 있다.
 
-MESI 계열 protocol에서는 Modified, Exclusive, Shared, Invalid 같은 이름을 사용하지만 모든 architecture가 정확히 같은 state 집합과 transition을 사용하는 것은 아니다. 다른 protocol은 Owned나 Forward 같은 state를 추가할 수 있고 directory/snoop 구조에 따라 message 흐름도 달라질 수 있다.
+### 여러 reader가 있는 line에 write하려면 ownership이 필요하다
 
-### Shared line에 write하려면 다른 reader와 조정해야 한다
+Core A와 B가 같은 line을 read-only 상태로 보유하고 있고 A가 write하려 한다고 하자. A가 자기 copy만 수정하면 B가 오래된 값을 계속 읽을 수 있으므로, A는 다른 copy와 조정해 write permission을 얻어야 한다.
 
-Core A와 B가 같은 line을 shared/readable 상태로 갖고 있고 A가 write하려 한다고 하자. A가 자기 cache copy만 수정하면 B가 old data를 계속 읽을 수 있으므로 A는 exclusive write permission을 얻는 coherence transaction을 수행해야 한다. invalidation-based protocol이라면 B의 copy를 invalid 상태로 만들고 필요한 acknowledgement를 받은 뒤 A가 write 가능한 ownership을 확보하는 흐름을 생각할 수 있다.
+```text
+A: Shared ── write request ──> write ownership
+B: Shared ── invalidate ─────> Invalid
+```
 
-이후 B가 같은 line을 다시 읽으면 자기 copy가 invalid이므로 miss/coherence 요청을 발생시키고 최신 data를 가진 cache나 lower level에서 값을 받아야 한다. 최신 line이 dirty한 cache에 있다면 반드시 main memory가 최신 copy를 가지고 있다는 가정도 성립하지 않을 수 있다.
+A가 ownership을 확보한 뒤 line을 수정하면 B의 이전 copy는 더 이상 사용할 수 없다. 이후 B가 다시 읽으려면 coherence 요청으로 최신 data를 받아야 한다.
 
-### Snoop과 directory는 `누가 copy를 가지고 있는가`를 찾는 방식이 다르다
+### Coherence는 최신 data 위치도 추적해야 한다
 
-작은 shared interconnect에서는 coherence 요청을 다른 cache가 관찰하는 snooping 방식으로 설명할 수 있다. core 수가 커지면 모든 요청을 전체에 broadcast하는 비용이 커질 수 있어 directory가 어느 cache가 line을 보유하는지 추적하고 필요한 participant에 message를 보내는 구조를 사용할 수 있다. 이는 대표적인 mental model이며 실제 topology는 CPU마다 다르다.
+Write-back cache에서는 최신 line이 dirty 상태로 어떤 private cache에 있고 main memory는 이전 값을 가지고 있을 수 있다. 그래서 read miss가 났을 때 항상 DRAM만 보면 되는 것이 아니다.
 
-### Coherence transaction은 serialization point와 traffic을 만든다
+Protocol은 최신 data를 가진 owner나 lower-level cache에서 값을 전달할 수 있도록 state와 message를 관리한다.
 
-여러 core가 같은 writable line을 반복해서 수정하면 write permission이 core 사이에서 계속 이동할 수 있다. 이때 invalidation, acknowledgement, data transfer가 interconnect를 사용하고 각 writer가 ownership을 기다리면서 처리량이 제한된다. atomic variable 하나의 correctness가 보장되어도 많은 core가 같은 line을 update하면 scalability가 낮아질 수 있는 이유다.
+### Snooping과 directory는 participant를 찾는 방식이 다르다
 
-### Coherence와 memory ordering은 구분한다
+작은 system에서는 coherence 요청을 여러 cache가 공통 interconnect에서 관찰하는 snooping 모델로 설명할 수 있다. Core 수가 커지면 directory가 어느 cache가 line을 보유하는지 추적하고 필요한 participant에만 message를 보내는 구조를 사용할 수 있다.
 
-coherence protocol이 같은 location의 copy를 일관되게 관리한다고 해서 서로 다른 location `x`, `y`의 load/store가 모든 core에 program order 그대로 관찰된다는 뜻은 아니다. 메모리 일관성 model이 어떤 ordering을 보존해야 하는지 별도로 정하고 fence/acquire/release 같은 primitive가 필요한 순서를 만든다.
+구체적인 topology는 CPU마다 다르지만 목표는 같다. **stale copy를 사용하지 않게 하고, write ownership을 한 시점에 올바르게 조정하는 것**이다.
 
-Java의 `volatile`, lock, happens-before는 다시 그 위의 language-level contract다. JVM은 target hardware의 coherence와 memory model을 사용해 Java semantics를 구현하지만 programmer가 MESI state를 직접 조작해 Java synchronization을 대신하는 것은 아니다.
-
-### Backend에서 무엇을 측정할까
-
-shared atomic counter나 concurrent queue가 core 수 증가에 비례해 scale하지 않는다면 lock wait뿐 아니라 cache-to-cache transfer, coherence miss, interconnect traffic과 line sharing을 확인한다. 단순히 `atomic이라 lock-free니까 빠르다`고 결론 내리지 않는다. correctness primitive와 cache-line ownership 비용은 별도 문제다.
-
-### Shared-to-exclusive transition
-
-    A/B read → both Shared
-       A write → invalidate B → A obtains exclusive write ownership
-       B read → coherence 요청 → latest data
-
-protocol의 state 이름은 다를 수 있지만 write ownership과 stale copy 제거가 핵심이다. MESI를 예로 들면 Shared line에 실제 write가 일어난 뒤 writer의 line은 Modified가 될 수 있으며, Exclusive와 Modified는 같은 상태를 뜻하지 않는다.
+Coherence protocol은 같은 location의 consistency를 다루지만 서로 다른 address의 전체 memory ordering까지 정의하지는 않는다. 그 문제는 뒤의 Hardware Memory Ordering Concept에서 다룬다.

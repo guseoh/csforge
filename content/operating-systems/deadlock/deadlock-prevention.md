@@ -26,53 +26,29 @@ references:
 ---
 # Deadlock Prevention
 
-### 발생한 deadlock을 찾는 것이 아니라 deadlock 가능한 protocol을 제한한다
+Deadlock prevention은 deadlock이 발생한 뒤 찾는 방식이 아니라, **resource 요청 규칙 자체를 제한해 Coffman 조건 중 적어도 하나가 성립하지 못하도록 만드는 전략**이다.
 
-Prevention은 요청이 들어올 때마다 현재 state가 안전한지 계산하는 방식이 아니다. Resource 요청 protocol 자체를 제한해 **Coffman condition 중 적어도 하나가 성립하지 못하도록** 만든다.
-
-가장 흔한 예가 global lock order다.
+대표적인 방법이 lock ordering이다. 모든 lock에 전역 순서를 두고 항상 같은 방향으로만 획득하도록 하면 circular wait를 구조적으로 막을 수 있다.
 
 ```text
 규칙: L1 < L2 < L3
 
-허용: acquire L1 → acquire L2 → acquire L3
-금지: acquire L2 → acquire L1
+허용: L1 → L2 → L3
+금지: L2 → L1
 ```
 
-모든 caller가 낮은 번호에서 높은 번호 방향으로만 lock을 얻으면 높은 lock을 보유한 execution이 다시 낮은 lock을 기다리는 역방향 edge를 만들 수 없다. 결과적으로 circular wait cycle을 구성할 수 없다.
+### 어떤 조건을 깨느냐에 따라 비용이 달라진다
 
-### 어떤 Coffman 조건을 깨느냐에 따라 비용이 달라진다
-
-| 깨려는 조건 | 가능한 설계 | 대표 비용 |
+| 깨는 조건 | 가능한 접근 | 대표적인 대가 |
 | --- | --- | --- |
-| Hold and wait | 필요한 resource를 시작 전에 한꺼번에 획득 | 나중에 쓸 resource까지 오래 점유 |
-| No preemption | 안전하게 되돌릴 수 있는 resource를 회수 | rollback/restart 가능한 resource에만 현실적 |
-| Circular wait | global resource ordering | 전체 call graph가 순서를 지켜야 함 |
+| Hold and wait | 필요한 resource를 미리 함께 획득 | 아직 쓰지 않는 resource까지 오래 점유할 수 있음 |
+| No preemption | 안전하게 회수 가능한 resource를 되돌림 | rollback 가능한 resource에만 현실적 |
+| Circular wait | 전역 acquisition order를 강제 | 모든 경로가 같은 순서를 지켜야 함 |
 
-Mutual exclusion은 writable shared state처럼 본질적으로 배타성이 필요한 resource에서는 제거하기 어렵다. 그래서 실무에서는 circular wait를 lock ordering으로 깨는 접근이 자주 사용된다.
+Mutual exclusion은 writable shared state처럼 본질적으로 배타성이 필요한 경우 제거하기 어렵다. 따라서 어떤 조건을 깨는 것이 가능한지는 resource 성질에 따라 달라진다.
 
-### timeout은 prevention이 아니라 실패/recovery 경로에 가깝다
+### Timeout은 prevention과 다르다
 
-Acquire timeout은 무한 대기를 끊고 operation을 실패시킬 수 있다. 하지만 timeout 값 하나로 `L1 → L2`, `L2 → L1` 같은 dependency 구조가 없어지는 것은 아니다.
+Acquisition timeout은 영원히 기다리는 실행 흐름을 실패 경로로 보낼 수 있지만, 잘못된 acquisition order 자체를 없애지는 않는다. `L1 → L2`와 `L2 → L1`이 모두 허용된다면 circular dependency 가능성은 여전히 남아 있다.
 
-```text
-cycle 형성
-   ↓
-timeout
-   ↓
-abort / held resource release
-   ↓
-retry 또는 terminal failure
-```
-
-이 흐름이 있으면 stuck 상태에서 빠져나올 수는 있지만, circular wait 자체를 금지한 prevention과는 구분해야 한다.
-
-### lock을 강제로 빼앗는 것도 일반 해법이 아니다
-
-CPU time처럼 scheduler가 중단했다 재개할 수 있는 resource와 mutex가 보호하는 mutable invariant는 성질이 다르다. Owner가 state를 절반만 변경한 순간 mutex를 강제 회수하면 다른 execution이 invalid intermediate state를 볼 수 있다.
-
-그래서 `no preemption을 깨면 된다`는 문장은 **안전하게 preempt하거나 rollback할 수 있는 resource인가**라는 전제가 붙어야 한다.
-
-### Prevention rule은 함수 하나가 아니라 전체 acquisition graph의 규칙이다
-
-Service A가 L1→L2 순서를 지켜도 L2를 가진 상태에서 호출한 callback이 L1을 acquire하면 전체 graph에는 L2→L1 edge가 생긴다. Linux lockdep가 개별 함수의 코드 모양보다 lock dependency relation을 추적하는 이유도 이런 cycle을 찾기 위해서다.
+Deadlock Prevention의 핵심은 **deadlock이 생겼을 때 빠져나오는 것이 아니라, resource protocol을 설계할 때 필요한 조건 하나를 구조적으로 불가능하게 만드는 것**이다.

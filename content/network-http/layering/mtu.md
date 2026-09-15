@@ -4,7 +4,7 @@ contentKey: network-http.core.layering.mtu
 topicContentKey: network-http.core.layering
 slug: mtu
 title: "MTU"
-summary: "link가 한 번에 운반할 수 있는 최대 frame payload와 fragmentation 비용을 설명한다."
+summary: "link MTU가 packet 크기·fragmentation·전송 실패에 미치는 영향을 설명한다."
 level: 2
 status: PUBLISHED
 displayOrder: 60
@@ -19,9 +19,20 @@ references:
 ---
 # MTU
 
-MTU(Maximum Transmission Unit)는 하나의 link가 fragmentation 없이 운반할 수 있는 IP packet 크기의 상한이다. end-to-end 경로에는 link가 여러 개이므로 각 link의 MTU 중 가장 작은 값이 path MTU가 된다. 이는 application message나 TCP stream의 최대 크기가 아니다. TCP는 큰 byte stream을 여러 segment로 나눌 수 있고, UDP application은 datagram 크기가 path MTU를 넘지 않도록 별도 판단해야 한다.
+MTU(Maximum Transmission Unit)는 하나의 link가 **fragmentation 없이 운반할 수 있는 network-layer packet 크기의 상한**이다. End-to-end path에는 여러 link가 있을 수 있으므로 실제 전송에서는 그 경로에서 사용할 수 있는 가장 작은 MTU가 중요하다.
 
-packet이 다음 link MTU보다 크면 IPv4에서는 조건에 따라 fragmentation될 수 있고, DF가 설정되었거나 IPv6 경로인 경우에는 router가 조각내지 않고 drop과 ICMP 오류를 통해 송신자가 더 작은 packet을 선택하도록 할 수 있다. PMTUD가 이 ICMP feedback을 받지 못하면 큰 packet만 통과하지 않는 black hole과 timeout이 생길 수 있다. tunnel·VPN·container overlay는 추가 header 때문에 effective path MTU를 낮출 수 있다.
+MTU는 application message의 최대 크기가 아니다. TCP는 큰 byte stream을 여러 segment로 나누어 전송할 수 있고, application message 하나도 여러 packet에 걸쳐 전달될 수 있다.
 
-MTU가 작다고 모든 HTTP 요청이 실패하는 것은 아니다. 작은 packet은 지나가고 특정 payload 크기에서만 문제가 생길 수 있으며, fragmentation은 loss 한 번이 전체 logical transfer에 미치는 영향과 처리 비용을 바꾼다. 따라서 큰 upload/응답이 특정 VPN 경로에서만 timeout되면 DF probe, PMTUD state, ICMP 차단, packet loss와 MSS/MTU 설정을 계층별로 확인한다. application chunk size나 retry 횟수를 먼저 키워 network black hole을 숨기지 않는다.
+### Packet이 다음 link의 MTU보다 크면 어떻게 되는가
 
+IPv4에서는 조건에 따라 router가 packet을 fragmentation할 수 있다. 반면 DF(Don't Fragment)가 설정되어 있거나 IPv6처럼 router fragmentation을 사용하지 않는 경우에는 packet을 그대로 전달하지 못하고 송신 측이 더 작은 packet을 사용하도록 오류 정보를 돌려줄 수 있다.
+
+Path MTU Discovery는 이런 feedback을 이용해 end-to-end path에서 사용할 수 있는 packet size를 찾는 방식이다.
+
+### Fragmentation에는 비용이 있다
+
+하나의 원래 packet이 여러 fragment로 나뉘면 receiver가 다시 조립해야 하고, fragment 일부가 유실되면 원래 packet 전체 전달에 영향을 줄 수 있다. 그래서 가능하면 path MTU에 맞는 크기로 보내 fragmentation을 피하는 것이 유리하다.
+
+Tunnel이나 VPN은 추가 header를 붙이기 때문에 실제 payload에 사용할 수 있는 effective MTU를 줄일 수 있다.
+
+MTU의 핵심은 **application message 크기와 별개의 link/network-layer 제한이며, path의 MTU보다 큰 packet은 fragmentation 또는 전달 실패와 PMTUD 같은 추가 처리를 만들 수 있다는 것**이다.

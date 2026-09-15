@@ -4,7 +4,7 @@ contentKey: network-http.core.http-versions.http3
 topicContentKey: network-http.core.http-versions
 slug: http3
 title: "HTTP/3"
-summary: "HTTP/3가 QUIC stream 위에서 HTTP semantics를 운반하는 방식을 설명한다."
+summary: "HTTP semantics를 QUIC streams와 QPACK 위에 매핑하는 HTTP/3의 transport 차이를 설명한다."
 level: 2
 status: PUBLISHED
 displayOrder: 90
@@ -17,15 +17,20 @@ references:
 ---
 # HTTP/3
 
-HTTP/3는 HTTP 요청/응답 semantics를 QUIC의 bidirectional 요청 stream과 unidirectional control/QPACK stream 위에 매핑한다. TCP connection과 HTTP/1.1의 text framing을 재사용하지 않고 QUIC의 encrypted transport, stream-level loss handling과 connection ID를 사용한다. HTTP/3 frame은 존재하지만 HTTP/2 frame을 그대로 UDP datagram에 보내는 protocol은 아니다.
+HTTP/3는 GET, POST, status code, field와 representation 같은 HTTP semantics를 유지하면서 transport mapping을 QUIC 위로 옮긴 HTTP version이다. HTTP/1.1의 text message framing이나 HTTP/2-over-TCP connection을 그대로 UDP datagram에 넣는 방식이 아니다.
 
-header compression은 QPACK state로 제공되고, stream reset·connection close·GOAWAY·0-RTT 같은 transport/connection state와 HTTP method·응답 lifecycle을 구분해야 한다. QUIC handshake와 TLS가 결합되어 있어 HTTP/3의 TLS endpoint와 application protocol negotiation도 HTTP/2 over TCP의 관찰 지점과 다를 수 있다.
+Request/response는 QUIC bidirectional stream을 사용하고, connection control과 QPACK header compression에는 별도의 unidirectional stream이 사용된다. QUIC 자체가 encryption과 stream-level reliability를 제공하므로 HTTP/3는 TCP 위에 별도 TLS layer를 쌓는 HTTP/2와 다른 connection 구조를 가진다.
 
-HTTP/3를 추가해도 origin application contract, method idempotency와 authorization은 바뀌지 않는다. proxy, CDN, load balancer가 실제로 어느 hop에서 HTTP/3를 종료하고 다음 hop을 HTTP/2/1.1로 변환하는지 trace하며, UDP 차단 시 대체 처리 지연 시간도 별도로 측정한다.
+```text
+HTTP semantics
+      ↓
+HTTP/3 framing + QPACK
+      ↓
+QUIC streams / encrypted transport
+      ↓
+UDP / IP
+```
 
-### HTTP/3 stream path
-    HTTP/3 → QUIC connection
-              ├─ stream A
-              ├─ stream B
-              └─ stream C
-stream 분리로 transport HOL은 줄지만 app dependency는 남는다.
+Stream별 loss recovery 덕분에 한 request stream의 missing data가 다른 stream의 ordered delivery를 TCP와 같은 방식으로 막지 않는다. 하지만 congestion, bandwidth와 application dependency가 사라지는 것은 아니다.
+
+HTTP version이 바뀌어도 method semantics나 authorization contract가 자동으로 달라지는 것은 아니다. **HTTP/3의 핵심 변화는 HTTP 의미 자체보다 QUIC 기반 transport와 framing 방식에 있다.**

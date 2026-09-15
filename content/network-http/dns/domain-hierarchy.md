@@ -17,17 +17,21 @@ references:
 ---
 # Domain Hierarchy
 
-DNS name은 여러 label을 점으로 연결한 계층적 이름이며, 완전한 이름의 오른쪽 끝에는 root를 나타내는 빈 label이 있다. 예를 들어 `www.example.com.`은 root 아래의 `com`, 그 아래의 `example`, 그 아래의 `www`를 순서대로 가리킨다. 이 namespace는 하나의 서버가 전체를 보유하는 방식이 아니라, zone과 delegation 경계마다 관리 책임을 나눈다.
+DNS namespace는 점(`.`)으로 구분한 label을 계층적으로 배치한다. 완전한 domain name은 오른쪽에서 왼쪽으로 root, TLD, 그 아래 domain과 host label로 이어진다.
 
-resolver는 name의 오른쪽 계층부터 delegation을 따라가며 어느 authoritative server에 다음 질문을 해야 하는지 알아낸다. 하나의 domain과 하나의 zone이 항상 같은 범위인 것은 아니다. zone cut 아래의 subdomain이 다른 zone으로 위임될 수 있고, parent zone의 NS delegation과 child zone의 authoritative record는 서로 다른 관리 경계를 가진다.
+예를 들어 `www.example.com.`은 다음처럼 볼 수 있다.
 
-DNS label 비교는 protocol 규칙에 따라 대소문자를 구분하지 않지만, application의 URL 문자열·검색 suffix·trailing dot 처리와는 별도 문제다. domain 소유권이나 DNS 응답을 받았다는 사실도 application tenant 권한, 해당 address의 route, service port의 reachability를 대신 보장하지 않는다.
+```text
+root
+ └─ com
+     └─ example
+         └─ www
+```
 
-Backend 설정에서는 DNS name, URL origin의 scheme/authority, 실제 listener와 trust boundary를 구분한다. split-horizon DNS처럼 client network에 따라 같은 name이 다른 address를 반환할 수 있는 환경에서는 resolver 위치와 view를 함께 기록해야 한다.
+### 하나의 서버가 전체 namespace를 관리하지 않는다
 
-### DNS namespace와 위임
-    root
-      └─ TLD
-           └─ delegated zone
-                └─ host label
-zone별 authoritative server가 책임 범위를 나눈다.
+DNS는 namespace를 zone 단위로 나누고 delegation으로 관리 책임을 분산한다. Parent zone은 child zone을 어느 name server가 책임지는지 알려 줄 수 있고, child zone의 authoritative server는 자기 zone의 record를 제공한다.
+
+Domain과 zone은 항상 같은 범위가 아니다. 어떤 subdomain이 별도 zone으로 위임되면 parent domain tree 안에 있어도 authoritative 관리 경계는 나뉜다.
+
+DNS hierarchy의 핵심은 **계층적인 이름 공간을 zone과 delegation으로 나누어 여러 authoritative server가 분산 관리한다는 것**이다.

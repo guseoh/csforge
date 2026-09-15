@@ -4,7 +4,7 @@ contentKey: network-http.core.ip-routing.routing-table
 topicContentKey: network-http.core.ip-routing
 slug: routing-table
 title: "Routing Table"
-summary: "destination prefix와 next hop을 이용해 packet 경로를 선택하는 table을 설명한다."
+summary: "destination prefix와 next hop/interface의 관계를 설명한다."
 level: 1
 status: PUBLISHED
 displayOrder: 40
@@ -19,17 +19,22 @@ references:
 ---
 # Routing Table
 
-routing table은 destination prefix와 next hop, egress interface, metric 또는 priority를 연결해 packet을 어느 경로로 내보낼지 결정하는 forwarding state다. host나 router는 destination마다 matching entry를 찾고, direct-connected route·더 구체적인 route·default route와 같은 후보의 선택 규칙을 적용한다. route lookup은 connection이 처음 만들어질 때만이 아니라 packet forwarding 경로에서 반복될 수 있다.
+Routing table은 destination prefix와 next hop, egress interface 같은 forwarding 정보를 연결한 table이다. Host나 router는 packet의 destination address를 기준으로 matching route를 찾아 **어느 interface와 next hop으로 보낼지** 결정한다.
 
-선택된 route는 전달의 필요조건이지 성공 결과가 아니다. next hop이 현재 link에 실제로 도달 가능한지 ARP/NDP로 resolve해야 하고, egress interface가 up인지, firewall/policy가 허용하는지, 응답이 돌아올 route가 있는지 확인해야 한다. route가 없을 때 ICMP unreachable을 보낼 수도 있지만 policy에 따라 silent drop될 수 있다.
+Route entry는 보통 다음과 같은 정보를 가질 수 있다.
 
-control plane이 routing protocol로 배운 정보, kernel/FIB가 실제 forwarding에 사용하는 entry, network namespace·VRF별 table은 같은 데이터가 아닐 수 있다. 같은 destination도 container·VPN·host에서 다른 source interface와 table을 사용할 수 있으므로 장애 명령의 실행 context를 기록한다.
+```text
+destination prefix → next hop → egress interface
+```
 
-Backend 연결 장애에서는 DNS가 반환한 address, selected prefix/next hop, neighbor resolution, egress policy와 return path를 순서대로 분리한다. route table만 보고 remote service health를 판단하지 않는다.
+Directly connected network라면 별도 gateway 없이 해당 interface로 직접 보낼 수 있고, remote network라면 router의 address가 next hop이 될 수 있다. 아무 구체적인 route가 없을 때 default route가 사용될 수 있다.
 
-### Route lookup
-    destination IP → matching prefixes
-                   → longest/policy choice
-                   → next hop + egress interface
-                   → ARP/NDP → link frame
-route가 있어도 next-hop resolution과 listener는 별도다.
+### Route가 있다는 것은 전달 성공을 보장하지 않는다
+
+Routing table은 packet을 어느 방향으로 보낼지 결정할 뿐이다. Next hop의 link-layer address를 찾지 못하거나 이후 path에서 packet이 drop되면 실제 destination에는 도달하지 못할 수 있다.
+
+### 여러 route가 동시에 match될 수 있다
+
+Destination 하나가 여러 prefix에 포함될 수 있기 때문에 routing lookup에는 우선순위 규칙이 필요하다. 기본적으로 더 구체적인 prefix를 선택하는 longest-prefix match가 중요한 기준이 된다.
+
+Routing table의 핵심은 **destination prefix를 기준으로 packet의 next hop과 egress interface를 선택하는 forwarding state**라는 것이다.

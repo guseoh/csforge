@@ -4,7 +4,7 @@ contentKey: network-http.core.ip-routing.ipv6-basics
 topicContentKey: network-http.core.ip-routing
 slug: ipv6-basics
 title: "IPv6 Basics"
-summary: "128-bit IPv6 address와 prefix·link-local·global address를 설명한다."
+summary: "IPv6 address 폭·표기와 neighbor discovery 경계를 설명한다."
 level: 1
 status: PUBLISHED
 displayOrder: 90
@@ -19,9 +19,25 @@ references:
 ---
 # IPv6 Basics
 
-IPv6는 128-bit address와 prefix를 사용하며 하나의 interface가 link-local, unique-local, global unicast와 같은 scope의 address를 여러 개 가질 수 있다. 따라서 서버나 client가 항상 하나의 source address만 선택한다고 가정하지 않고, destination scope·interface와 source-address selection을 함께 본다. `::` 같은 literal 표기와 bracket을 포함한 URL 표기는 application parser의 별도 문제다.
+IPv6는 128-bit address를 사용한다. IPv4보다 훨씬 큰 address space를 제공하며, address는 colon으로 구분한 16진수 형태로 표현한다. 연속된 0 group은 `::`로 한 번 압축할 수 있다.
 
-IPv6는 ARP 대신 ICMPv6 기반 NDP를 사용하고 broadcast 대신 multicast 중심의 local discovery를 사용한다. IPv4와 같은 HTTP/TLS 같은 application protocol을 운반할 수 있지만 route, neighbor state, firewall, Path MTU와 address-family 선택은 별도의 IPv6 계약이다. IPv6 router는 IPv4 router처럼 packet을 forwarding하지만 IPv6 packet을 중간에서 fragmentation하지 않는다는 차이도 있다.
+예를 들어 다음 두 표기는 같은 address를 나타낼 수 있다.
 
-dual-stack client가 A와 AAAA를 모두 받으면 resolver/library policy와 connection racing에 따라 어느 address family를 먼저 시도할지가 달라질 수 있다. Java server가 IPv6 wildcard에 bind했을 때 IPv4-mapped connection 허용 여부도 OS/JVM socket option에 따라 달라진다. DNS A/AAAA 결과, listener, NDP/route, ACL과 실제 client address family를 함께 테스트한다.
+```text
+2001:0db8:0000:0000:0000:0000:0000:0010
+2001:db8::10
+```
 
+### Interface는 여러 scope의 address를 가질 수 있다
+
+IPv6 interface는 link-local address와 global unicast address처럼 서로 다른 scope의 address를 동시에 가질 수 있다. 어떤 source address를 사용할지는 destination과 host의 source-address selection 규칙에 따라 달라질 수 있다.
+
+### IPv6 local delivery는 NDP를 사용한다
+
+IPv6는 IPv4 ARP 대신 ICMPv6 기반 Neighbor Discovery를 사용한다. Neighbor resolution, router discovery와 prefix information이 NDP를 통해 처리된다. Local broadcast 대신 multicast가 주요 control mechanism으로 사용된다는 점도 IPv4와 다르다.
+
+### Router fragmentation 방식도 다르다
+
+IPv6 router는 forwarding 중 packet을 fragmentation하지 않는다. Packet이 path에서 너무 크면 sender가 path MTU에 맞게 전송할 수 있도록 ICMPv6 Packet Too Big 같은 feedback이 사용된다.
+
+IPv6 Basics의 핵심은 **128-bit addressing, prefix 기반 routing, NDP 기반 local discovery와 router-side fragmentation을 하지 않는 forwarding model**을 IPv4와 구분하는 것이다.

@@ -4,7 +4,7 @@ contentKey: dsa.core.stack-queue-deque.circular-queue
 topicContentKey: dsa.core.stack-queue-deque
 slug: circular-queue
 title: "Circular Queue"
-summary: "고정 배열을 ring으로 재사용하며 front·rear·size가 logical order와 empty/full 상태를 표현하는 원리를 설명한다."
+summary: "front·rear를 modulo로 순환시켜 고정 배열의 빈 slot을 재사용하고 empty·full 상태를 구분하는 방식을 설명한다."
 level: 2
 status: PUBLISHED
 displayOrder: 30
@@ -19,60 +19,21 @@ references:
 ---
 # Circular Queue
 
-### array 끝에 도달해도 앞의 빈 공간을 다시 사용한다
-
-고정 배열 queue에서 rear가 끝까지 갔다고 해서 실제 queue가 full인 것은 아니다. 앞쪽 원소가 dequeue되었다면 그 공간은 비어 있다. circular queue는 index를 capacity로 modulo 연산해 끝 다음을 다시 0으로 연결한다.
+고정 배열로 queue를 구현할 때 dequeue된 앞쪽 slot을 다시 사용하지 않으면 rear가 배열 끝에 도달한 뒤 빈 공간이 있어도 더 넣지 못하는 문제가 생긴다. Circular queue는 index를 capacity로 나눈 나머지로 이동해 배열의 끝 다음을 다시 처음으로 연결한다.
 
 ```text
-capacity = 5
-index: 0 1 2 3 4
-
-rear = (rear + 1) % 5
+next = (index + 1) % capacity
 ```
 
-물리 배열은 직선이지만 logical queue는 ring처럼 동작한다.
-
-### physical order와 logical FIFO order가 다를 수 있다
-
-예를 들어 array 상태가 다음과 같다고 하자.
+물리 배열의 index 순서와 logical FIFO 순서는 달라질 수 있다. Front가 3이라면 배열 앞쪽 slot에 더 나중 원소가 저장되어 있어도 logical 순회는 front부터 modulo 순서로 진행해야 한다.
 
 ```text
 index : 0 1 2 3 4
 value : D E _ B C
-front = 3, size = 4
+front = 3
+logical order = B → C → D → E
 ```
 
-logical queue order는 `B → C → D → E`다. memory에 보이는 index 순서를 그대로 읽으면 FIFO 순서가 아니다. iteration이나 resize에서는 front부터 modulo로 따라가야 한다.
+`front == rear`만으로 empty와 full을 모두 표현하려 하면 상태가 모호해진다. 그래서 `size`를 별도로 유지하거나, 항상 한 slot을 비워 두고 `nextRear == front`를 full로 정의하는 식의 invariant가 필요하다.
 
-### front == rear만으로 empty와 full을 동시에 표현할 수 없다
-
-rear가 한 바퀴 돌아 front와 같아질 수 있으므로 추가 규칙이 필요하다. 대표적으로:
-
-- `size`를 별도로 유지한다.
-- 항상 한 slot을 비워 두어 `nextRear == front`를 full로 사용한다.
-
-두 방식은 usable capacity가 다르다. 구현 중 규칙을 섞으면 empty queue를 full로 보거나 아직 읽지 않은 값을 overwrite할 수 있다.
-
-### enqueue와 dequeue invariant
-
-size를 쓰는 모델이라면:
-
-```text
-0 <= size <= capacity
-front = 다음 dequeue 위치
-rear  = 다음 enqueue 위치
-```
-
-으로 정의할 수 있다. enqueue 성공 후 rear는 `(rear+1)%capacity`, size는 +1이고 dequeue 후 front는 `(front+1)%capacity`, size는 -1이다.
-
-이 네 state 중 하나만 잘못 갱신돼도 wraparound 시점에 bug가 드러난다.
-
-### overwrite ring과 bounded FIFO queue는 policy가 다르다
-
-logging ring buffer처럼 full일 때 가장 오래된 데이터를 덮어쓰는 구조도 circular indexing을 사용할 수 있다. 하지만 일반 work queue는 unread task를 임의로 overwrite하면 안 될 수 있다.
-
-따라서 ring이라는 storage shape와 full 상태에서 `reject/block/drop-oldest` 중 무엇을 할지는 별도 application policy다.
-
-### concurrency는 또 다른 층위다
-
-single-thread circular queue의 modulo invariant를 이해하는 것과 producer/consumer가 동시에 front/rear를 바꾸는 concurrent ring buffer는 다른 문제다. 후자에서는 atomicity와 memory ordering까지 별도로 보장해야 한다.
+Size를 유지한다면 `0 <= size <= capacity`, front는 다음 dequeue 위치, rear는 다음 enqueue 위치라는 상태를 함께 갱신해야 한다. **Circular queue의 핵심은 modulo index 자체가 아니라 wraparound 이후에도 logical FIFO order와 empty/full invariant를 유지하는 것**이다.

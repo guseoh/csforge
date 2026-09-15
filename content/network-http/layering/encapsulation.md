@@ -19,19 +19,26 @@ references:
 ---
 # Encapsulation
 
-송신 host에서 application message의 bytes는 transport가 정한 stream/datagram payload가 되고, transport unit은 IP packet의 payload가 되며, 다시 link frame 안에 실린다. 각 계층은 자신의 header에 address·sequence·delivery control 같은 정보를 추가하고 수신 계층은 자신이 이해하는 header를 소비한 뒤 상위 payload를 넘긴다.
+Encapsulation은 상위 계층이 만든 data가 하위 계층의 payload가 되고, 각 계층이 자신의 전달에 필요한 header를 덧붙이는 과정이다. Application message는 transport가 운반할 payload가 되고, transport unit은 IP packet의 payload가 되며, packet은 다시 link frame에 실린다.
 
-이 흐름에서 header가 매 hop 그대로 보존되는 것은 아니다. router는 incoming link frame을 벗겨 IP packet을 보고 다음 link를 위한 새 frame을 만들며, source/destination MAC은 link마다 달라질 수 있다. 반면 일반적인 forwarding에서는 IP destination이 다음 route 선택에 필요하므로 유지된다. TLS를 사용하면 application bytes의 일부가 transport가 운반하는 encrypted payload로 보이므로 중간 장비가 볼 수 있는 정보도 계층과 termination 위치에 따라 달라진다.
+```text
+application message
+      ↓
+transport header + payload
+      ↓
+IP header + transport data
+      ↓
+link header/trailer + packet
+```
 
-encapsulation은 하나의 HTTP message가 하나의 segment나 frame이 된다는 뜻이 아니다. MTU, transport segmentation, retransmission, encryption과 application framing 때문에 logical message와 실제 wire unit의 경계가 달라지고, 한 read에 여러 message 일부가 함께 도착할 수도 있다.
+각 header에는 그 계층이 필요한 정보가 들어간다. Link 계층은 local delivery 정보를, IP는 destination과 forwarding 정보를, transport는 endpoint와 delivery state를 표현한다.
 
-HTTP body 크기와 TCP segment 수, Ethernet frame 수를 직접 일대일로 매핑하지 않는다. 요청 size 제한은 application parser의 상한과 framing/transport overhead, path MTU를 함께 고려해야 한다.
+### 한 application message와 wire unit은 일대일이 아니다
 
-### 캡슐화 흐름
-    [HTTP message]
-          + transport header
-                + IP header
-                      + link header/trailer
-                            = transmitted frame
-수신자는 반대 순서로 자신의 header를 소비한다.
+큰 application message는 여러 transport unit과 packet/frame으로 나뉠 수 있고, 반대로 한 번의 application read에서 여러 logical message의 bytes가 함께 보일 수도 있다. 따라서 `HTTP 요청 하나 = TCP segment 하나 = Ethernet frame 하나`처럼 계층별 단위를 직접 일대일로 대응시키면 안 된다.
 
+### Link header는 hop마다 달라질 수 있다
+
+Router는 incoming frame에서 IP packet을 꺼내 다음 hop으로 보낼 새 link frame을 만든다. 그래서 source/destination link address는 hop마다 바뀔 수 있다. 반면 IP destination은 end-to-end forwarding 판단에 사용된다.
+
+Encapsulation의 핵심은 **각 계층이 상위 data를 payload로 받아 자신의 전달 정보를 추가하며, 계층마다 data unit의 경계가 다르다는 것**이다.

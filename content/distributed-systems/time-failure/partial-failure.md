@@ -3,8 +3,8 @@ kind: concept
 contentKey: distributed.core.time-failure.partial-failure
 topicContentKey: distributed.core.time-failure
 slug: partial-failure
-title: "부분 장애(partial failure)"
-summary: "network delay·loss·process crash가 전체 실패와 다른 이유 및 unknown outcome을 설명한다"
+title: "부분 장애와 알 수 없는 결과"
+summary: "요청, 처리, 응답이 서로 다른 지점에서 실패할 수 있어 timeout만으로 server side effect의 성공·실패를 확정할 수 없는 이유를 이해한다."
 level: 1
 status: PUBLISHED
 displayOrder: 20
@@ -22,36 +22,21 @@ references:
     displayOrder: 2
     relationNote: "leader failure·partition·majority failure의 차이 확인"
 ---
-# 부분 장애(partial failure)
+# 부분 장애와 알 수 없는 결과
 
-단일 process에서는 호출이 성공하거나 실패한 것처럼 보이지만, 분산 호출에서는 요청이 server에 도착해 처리됐고 응답만 유실될 수 있습니다. caller가 timeout을 받았다는 사실은 server side effect가 없었다는 뜻이 아니며, 각 node가 서로 다른 관찰을 하는 상태가 생깁니다.
+한 process 안의 함수 호출은 실패하면 호출자와 실행 주체가 같은 상태를 관찰하기 쉽습니다. 하지만 network를 사이에 둔 호출은 요청 전달, server 처리, 응답 전달이 각각 독립적으로 실패할 수 있어 **client와 server가 같은 결론을 보지 못하는 상황**이 생깁니다.
 
 ```text
-client ──request──▶ server ──commit──▶ DB
-client ◀─timeout── response 유실
-       └─ outcome unknown: retry가 duplicate를 만들 수 있음
+client ── request ──▶ server
+                     └─ DB commit 성공
+client ◀─ response 유실
+        └─ timeout
 ```
 
-### 실패를 분류한다
+이때 client가 본 timeout은 “server가 아무것도 하지 않았다”는 증거가 아닙니다. Server가 요청을 받지 못했을 수도 있고, 처리 중일 수도 있으며, 이미 commit했지만 응답만 잃었을 수도 있습니다. 이런 상태를 unknown outcome으로 다루지 않고 무조건 retry하면 주문·결제 같은 side effect가 중복될 수 있습니다.
 
-process crash, network partition, packet loss, overloaded server, slow dependency는 같은 “오류”가 아닙니다. transport error가 재시도 가능하다는 뜻도 아닙니다. side effect가 일어났을 가능성, caller의 deadline, server의 cancellation 확인과 reconciliation을 기준으로 상태를 나눕니다.
+그래서 분산 API는 실패를 단순 성공/실패 두 값으로만 생각하기 어렵습니다. Operation ID나 idempotency key를 사용해 같은 요청을 식별하고, 처리 상태를 조회하거나 reconciliation으로 최종 상태를 맞추는 방법이 필요할 수 있습니다.
 
-### 성공의 관찰자가 다르다
+또한 process crash, network partition, packet loss, 과부하로 인한 느린 응답은 겉으로는 모두 timeout처럼 보일 수 있지만 복구 방식은 다릅니다. Timeout은 일정 시간 동안 응답을 관찰하지 못했다는 사실일 뿐, 상대가 실제로 죽었다는 직접 증거가 아닙니다.
 
-server가 작업을 commit하고 응답을 보내기 전에 client deadline이 끝날 수 있습니다. 반대로 client가 응답을 받았어도 비동기 후속 작업이 실패할 수 있습니다. API는 pending/unknown을 표현하거나 operation status 조회·idempotency key·outbox와 reconciliation을 제공해야 합니다.
-
-### partition에서는 격리된 세계가 된다
-
-한쪽이 살아 있다고 다른 쪽이 죽었다고 단정할 수 없습니다. 연결 실패와 data absence를 구분하고, 외부 상태를 변경하는 leader·worker는 lease/fencing이나 quorum으로 ownership을 확인해야 합니다. 장애 복구 때 지연된 요청과 event가 재등장한다는 가정도 필요합니다.
-
-### 문제를 풀 때 확인할 것
-
-1. 요청이 server에 도착·실행·commit됐는지 구분합니다.
-2. timeout 뒤 side effect 가능성을 명시합니다.
-3. unknown outcome을 pending·조회·reconciliation으로 처리합니다.
-4. partition 중 각 node의 관찰과 허용 동작을 정의합니다.
-5. delayed 응답·duplicate 요청이 복구 후 영향을 주는지 검토합니다.
-
-### 면접에서 설명한다면
-
-분산 호출의 timeout은 “아무 일도 일어나지 않음”이 아니라 outcome unknown일 수 있습니다. 요청 도착·side effect·응답 전달을 별도로 보고, pending 조회·idempotency·reconciliation을 두며, partition 중 ownership과 stale 요청을 fencing 또는 명시적 일관성 policy로 제한합니다.
+분산 시스템의 핵심 난점은 모든 component가 동시에 실패하는 것이 아니라 **일부만 실패하고 서로 다른 사실을 관찰할 수 있다는 점**입니다. 다음 failure detector에서는 이 불확실한 관찰을 이용해 다른 node의 상태를 어떻게 추정하는지 살펴봅니다.

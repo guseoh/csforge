@@ -3,8 +3,8 @@ kind: concept
 contentKey: network-http.core.tls.symmetric-session-key
 topicContentKey: network-http.core.tls
 slug: symmetric-session-key
-title: "Symmetric Session Key"
-summary: "handshake 후 symmetric key로 payload를 암호화하는 이유를 설명한다."
+title: "Symmetric Traffic Key"
+summary: "handshake에서 파생한 symmetric traffic key로 application data를 효율적으로 보호하는 이유를 설명한다."
 level: 1
 status: PUBLISHED
 displayOrder: 70
@@ -15,10 +15,16 @@ references:
     language: en
     displayOrder: 1
 ---
-# Symmetric Session Key
+# Symmetric Traffic Key
 
-TLS는 공개키 signature와 key agreement를 handshake에 사용하고, 대량 application data는 파생된 symmetric traffic key와 AEAD로 보호한다. symmetric primitive가 payload 처리에 효율적이고 AEAD가 confidentiality와 tamper detection을 함께 제공하기 때문이다. TLS 1.3에서는 handshake secret에서 방향별 traffic secret과 key를 파생하므로 client-to-server와 server-to-client 상태를 하나의 임의 key로 뭉개지 않는다.
+TLS는 handshake에서 public-key signature와 key agreement를 사용하지만, 이후의 application data를 매번 public-key 연산으로 암호화하지 않는다. handshake에서 만든 secret으로부터 **symmetric traffic key**를 파생하고, 효율적인 symmetric cryptography로 대량의 data를 보호한다.
 
-session/traffic key는 특정 connection과 handshake transcript 문맥에 묶이며, nonce·key usage limit·key update와 connection 종료에 따라 수명이 관리된다. 같은 key를 여러 독립 connection이나 tenant에 무제한 재사용하면 compromise blast radius가 커진다. TLS가 network payload를 보호해도 endpoint memory, application log, trusted termination proxy에서 평문이 노출되는 문제까지 해결하지 않는다.
+TLS 1.3에서는 AEAD(Authenticated Encryption with Associated Data) 방식으로 confidentiality와 integrity를 함께 제공한다. 수신자는 올바른 key와 record state를 사용해야 data를 복호화할 수 있고, 인증 검증에 실패한 record를 정상 application data로 받아들이지 않는다.
 
-Backend에서는 HTTPS 로그에 Authorization header와 민감한 요청 본문을 무심코 남기지 않는다. TLS termination 이후 internal hop이 평문인지 다시 TLS로 보호되는지, mTLS가 필요한지와 각 hop의 key lifecycle을 trust boundary에 명시한다.
+### 하나의 고정된 `session key`만 있는 것으로 단순화하지 않는다
+
+실제 TLS 1.3 key schedule은 handshake 단계와 application-data 단계에서 여러 secret을 파생하며, client→server와 server→client 방향도 별도의 traffic secret을 사용한다. 그래서 모든 TLS encryption을 하나의 대칭키 하나로 처리한다고 이해하면 세부 구조를 놓치게 된다.
+
+traffic key는 TLS connection의 cryptographic context에 속한다. key update나 connection 종료에 따라 상태가 바뀔 수 있으며, 다른 독립 connection의 payload를 같은 record state로 처리하지 않는다.
+
+TLS가 network 위의 payload를 보호하더라도 두 endpoint 내부에서는 application이 평문 data를 사용한다. 따라서 TLS의 암호화 범위는 **wire 위의 endpoint-to-endpoint channel**이며, endpoint 내부 memory나 application log까지 자동으로 암호화하는 기능은 아니다.

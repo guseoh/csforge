@@ -26,50 +26,34 @@ references:
 ---
 # Detection·Recovery
 
-### 정상 실행에는 덜 제한을 걸고, 실제 deadlock이 생기면 찾아서 끊는다
+Detection 전략은 resource allocation을 미리 강하게 제한하지 않고, **실제로 deadlock dependency가 생겼는지 관찰한 뒤 cycle을 끊어 progress를 복구하는 방식**이다.
 
-Prevention과 avoidance는 deadlock 가능성을 줄이는 대신 정상 요청에도 ordering 제약이나 safe-state 계산 비용을 부과한다. Detection strategy는 resource allocation을 더 자유롭게 허용하고, 주기적으로 또는 suspicious wait가 생겼을 때 실제 dependency를 조사한다.
-
-Single-instance resource에서는 wait-for graph cycle을 찾는 방식이 대표적이다. Multi-instance resource에서는 `Available`, `Allocation`, 현재 `Request`를 이용해 어떤 execution도 더 완료할 수 없는 집합을 계산해야 한다.
+Single-instance resource에서는 wait-for graph의 cycle을 찾는 방법이 대표적이다. 여러 instance가 있는 resource에서는 현재 `Available`, `Allocation`, `Request`를 이용해 어떤 execution들이 더 이상 완료될 수 없는지 판단해야 한다.
 
 ```text
-resource allocation
-       ↓
 owner / waiter relation 수집
-       ↓
-deadlock dependency 존재?
-   ┌───┴────┐
-  no       yes
-  │         ↓
-continue  victim 선택
-            ↓
-      abort / rollback
-            ↓
-      resource release
-            ↓
-       retry or fail
+          ↓
+deadlock dependency 탐지
+          ↓
+       victim 선택
+          ↓
+abort / rollback / resource 회수
+          ↓
+남은 execution이 다시 progress
 ```
 
-### Detection 주기 자체도 비용과 장애 영향의 trade-off다
+### 탐지 시점에도 trade-off가 있다
 
-매 resource 요청마다 cycle을 검사하면 deadlock을 빠르게 발견할 수 있지만 graph 수집과 탐지 비용이 커진다. 반대로 너무 늦게 검사하면 deadlocked execution이 resource를 오래 보유하고 그 뒤에 새로운 waiter가 쌓여 영향 범위가 커질 수 있다.
+Resource 요청마다 검사하면 deadlock을 빠르게 발견할 수 있지만 detection 비용이 커진다. 반대로 늦게 검사하면 deadlocked execution이 resource를 오래 보유하고 그 뒤에 waiter가 더 쌓일 수 있다.
 
-따라서 detection frequency는 알고리즘만의 문제가 아니라 deadlock 발생 빈도, resource hold cost, recovery cost를 함께 고려하는 운영 정책이다.
+따라서 탐지 빈도는 deadlock 발생 가능성과 resource hold 비용, 검사 비용을 함께 고려해야 한다.
 
-### Cycle을 찾았다고 mutex만 빼앗아서는 안 된다
+### Recovery는 일관된 상태로 돌아갈 방법이 필요하다
 
-Owner가 protected state를 중간까지만 변경한 상태일 수 있다. 이때 lock object만 다른 thread에 넘기면 mutual exclusion은 회복된 것처럼 보여도 protected invariant는 이미 깨질 수 있다.
+Deadlock cycle을 찾았다고 owner의 mutex를 임의로 빼앗으면 protected state가 중간 상태로 남을 수 있다. Recovery는 victim execution을 중단하거나 되돌리고, 그 execution이 보유한 resource를 안전하게 회수할 수 있어야 한다.
 
-그래서 recovery는 보통 state를 되돌릴 수 있는 boundary와 함께 설계한다. Transaction이라면 victim transaction abort/rollback, process라면 restart, 재구성 가능한 resource라면 명시적 preemption처럼 **일관된 상태로 돌아갈 방법**이 필요하다.
+어떤 victim을 선택할지도 비용 문제다. 이미 수행한 작업량, 보유 resource 수, priority, 다시 실행할 비용 등을 고려할 수 있다. 같은 execution만 반복해서 victim으로 고르면 recovery 자체가 starvation을 만들 수도 있다.
 
-### Victim 선택이 새로운 starvation을 만들 수 있다
+또한 긴 wait나 timeout만으로 deadlock을 확정할 수는 없다. 단순 contention도 오래 기다릴 수 있으므로 **실제 owner-waiter dependency가 cycle을 이루는지** 확인해야 한다.
 
-항상 가장 오래 걸린 같은 transaction을 victim으로 고르면 그 transaction은 매번 rollback되어 영원히 완료하지 못할 수 있다. Victim 정책에는 이미 수행한 work, priority, age, rollback cost, retry count와 외부 side effect 여부 같은 요소를 고려할 수 있다.
-
-Recovery는 deadlock cycle 하나를 끊는 데서 끝나는 것이 아니라, 반복 recovery가 또 다른 liveness 문제를 만들지 않는지도 봐야 한다.
-
-### Timeout은 관측 신호이지 deadlock의 증명은 아니다
-
-오래 기다렸다는 timeout은 deadlock에서도 보이지만 단순 lock contention, 느린 I/O, overloaded resource에서도 나타난다. Deadlock이라고 판단하려면 owner와 waiter dependency가 cycle을 이루는지 확인해야 한다.
-
-Backend에서는 rollback 가능한 DB state와 이미 외부 API나 message에 반영된 side effect를 구분해야 한다. 자동 retry까지 연결하려면 idempotency와 partial-effect 처리도 별도의 application contract로 필요하다.
+Detection·Recovery의 핵심은 **deadlock 가능성을 허용하는 대신 실제 dependency를 탐지하고, 일관성을 깨지 않는 victim recovery로 cycle 하나를 제거하는 것**이다.
