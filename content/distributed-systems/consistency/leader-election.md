@@ -32,7 +32,7 @@ references:
 
 여러 node 중 하나만 writer나 controller 역할을 맡아야 할 때 leader election이 필요합니다. 하지만 leader를 하나 선택했다고 replicated state의 순서와 commit까지 자동으로 합의되는 것은 아닙니다. **Leader election은 authority를 선택하는 문제이고 consensus는 여러 node가 같은 결정 순서를 유지하는 더 큰 문제**입니다.
 
-Raft를 예로 들면 node는 term이라는 세대를 사용하고, candidate가 과반수 vote를 얻으면 해당 term의 leader가 됩니다. 이후 leader는 log entry를 replica에 복제하고 majority 조건을 만족한 entry를 commit합니다. Election, log replication, safety가 함께 동작해야 replicated state machine의 일관성을 만들 수 있습니다.
+Raft를 예로 들면 node는 term이라는 세대를 사용하고, candidate가 과반수 vote를 얻으면 해당 term의 leader가 됩니다. 이후 leader는 log entry를 replica에 복제하며, 현재 term의 entry가 majority에 저장되면 replica count로 commit을 판정하고 앞선 entry도 함께 commit합니다. Election, log replication, safety가 함께 동작해야 replicated state machine의 일관성을 만들 수 있습니다.
 
 ```text
 term 7

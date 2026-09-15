@@ -39,7 +39,7 @@ Animal animal = dog;
 
 여기서 `Dog` 객체가 `Animal` 객체로 변한 것이 아닙니다. 같은 `Dog` 객체를 `Animal` 타입 참조로 바라보는 것입니다.
 
-## 상위 타입으로의 변환
+### 상위 타입으로의 변환
 
 `Dog`가 `Animal`의 하위 타입이라면 모든 `Dog`는 `Animal`로 다룰 수 있습니다.
 
@@ -50,7 +50,7 @@ Animal animal = dog;
 
 이 방향을 흔히 **업캐스팅(upcasting)** 또는 widening reference conversion이라고 부르며 일반적으로 명시적인 cast가 필요하지 않습니다.
 
-## 하위 타입으로 좁힐 때는 실제 객체가 중요하다
+### 하위 타입으로 좁힐 때는 실제 객체가 중요하다
 
 ```java
 Animal animal = new Dog();
@@ -74,7 +74,7 @@ Animal 참조
 
 cast가 성공해도 객체가 새로 만들어지거나 다른 종류의 객체로 변하는 것은 아닙니다. **같은 객체를 더 구체적인 참조 타입으로 사용할 수 있는지 확인**하는 것입니다.
 
-## instanceof 패턴으로 검사와 사용을 함께 표현할 수 있다
+### instanceof 패턴으로 검사와 사용을 함께 표현할 수 있다
 
 ```java
 if (animal instanceof Dog dog) {
@@ -92,7 +92,7 @@ if (animal instanceof Dog) {
 
 `null instanceof Dog`의 결과는 `false`입니다. 따라서 패턴이 성공한 블록 안에서는 적합한 타입의 실제 객체를 얻었다고 볼 수 있습니다.
 
-## 반복적인 하위 타입 검사는 설계 신호가 될 수 있다
+### 반복적인 하위 타입 검사는 설계 신호가 될 수 있다
 
 ```java
 if (payment instanceof CardPayment card) {

@@ -27,7 +27,7 @@ Comparator<Order> byAmount =
 
 이 코드는 `Order` 자체의 자연 순서를 정하는 것이 아니라 “이번 정렬에서는 금액을 기준으로 본다”는 정책을 별도로 만듭니다.
 
-## 여러 기준은 우선순위대로 연결한다
+### 여러 기준은 우선순위대로 연결한다
 
 금액이 같을 때 ID를 두 번째 기준으로 사용하려면 `thenComparing`을 붙일 수 있습니다.
 
@@ -49,7 +49,7 @@ amount 비교
 
 앞 기준이 0일 때만 다음 기준을 사용하므로 코드 순서가 곧 비교 우선순위가 됩니다.
 
-## reversed()가 어느 범위를 뒤집는지 확인한다
+### reversed()가 어느 범위를 뒤집는지 확인한다
 
 “priority는 내림차순, 같은 priority에서는 id 오름차순”이라면 다음 두 코드는 의미가 다릅니다.
 
@@ -71,7 +71,7 @@ Comparator<Task> expected = Comparator
 
 이렇게 하면 첫 번째 기준만 내림차순이고 두 번째 기준은 오름차순으로 유지됩니다.
 
-## 비교 결과 0의 의미는 사용하는 API에 따라 중요하다
+### 비교 결과 0의 의미는 사용하는 API에 따라 중요하다
 
 ```java
 Comparator<Task> byPriority =
@@ -90,7 +90,7 @@ Comparator<Task> byPriorityThenId = Comparator
 
 따라서 Comparator를 설계할 때는 **어떤 순서로 보여 줄지**뿐 아니라 **`compare(a, b) == 0`을 사용하는 API가 어떻게 해석하는지**도 함께 봐야 합니다.
 
-## 뺄셈으로 비교하지 않는다
+### 뺄셈으로 비교하지 않는다
 
 ```java
 (a, b) -> a.score() - b.score()

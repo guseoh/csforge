@@ -31,6 +31,6 @@ QUIC streams / encrypted transport
 UDP / IP
 ```
 
-Stream별 loss recovery 덕분에 한 request stream의 missing data가 다른 stream의 ordered delivery를 TCP와 같은 방식으로 막지 않는다. 하지만 congestion, bandwidth와 application dependency가 사라지는 것은 아니다.
+Stream별 독립된 offset과 ordered delivery 덕분에 한 request stream의 missing data가 다른 stream의 ordered delivery를 TCP와 같은 방식으로 막지 않는다. 하지만 congestion, bandwidth와 application dependency가 사라지는 것은 아니다.
 
 HTTP version이 바뀌어도 method semantics나 authorization contract가 자동으로 달라지는 것은 아니다. **HTTP/3의 핵심 변화는 HTTP 의미 자체보다 QUIC 기반 transport와 framing 방식에 있다.**

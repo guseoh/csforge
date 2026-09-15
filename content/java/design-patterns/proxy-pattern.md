@@ -56,7 +56,7 @@ final class MeasuringRepositoryProxy implements OrderRepository {
 
 호출자는 `OrderRepository`만 사용하지만 실제 호출은 Proxy를 거쳐 target으로 전달됩니다.
 
-## 핵심은 실제 대상에 접근하는 과정을 중개하는 것이다
+### 핵심은 실제 대상에 접근하는 과정을 중개하는 것이다
 
 Proxy가 맡을 수 있는 대표적인 책임은 다음과 같습니다.
 
@@ -66,7 +66,7 @@ Proxy가 맡을 수 있는 대표적인 책임은 다음과 같습니다.
 
 공통점은 대상의 핵심 기능을 새로 정의하기보다 **그 기능에 도달하는 경로를 관리**한다는 점입니다.
 
-## 호출 순서가 Proxy의 의미를 결정한다
+### 호출 순서가 Proxy의 의미를 결정한다
 
 권한 검사를 통과한 경우에만 비싼 target을 만들고 싶다면 다음 순서가 중요합니다.
 
@@ -91,7 +91,7 @@ Result read(User user) {
 
 접근 제어가 목적이라면 민감한 대상에 도달하는 공개 경로가 모두 같은 정책을 통과하는지 확인해야 합니다.
 
-## Proxy 패턴과 구현 기법을 구분한다
+### Proxy 패턴과 구현 기법을 구분한다
 
 `java.lang.reflect.Proxy`는 런타임에 인터페이스 기반 프록시를 만들 수 있는 JDK API입니다. 하지만 Proxy 패턴이 곧 reflection 기반 동적 프록시를 뜻하는 것은 아닙니다. 앞의 `MeasuringRepositoryProxy`처럼 직접 클래스를 작성해도 같은 역할을 구현할 수 있습니다.
 

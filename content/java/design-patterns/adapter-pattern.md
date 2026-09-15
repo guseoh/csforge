@@ -73,7 +73,7 @@ Adapter
 Vendor SDK
 ```
 
-## Adapter는 메서드 이름만 바꾸는 wrapper가 아니다
+### Adapter는 메서드 이름만 바꾸는 wrapper가 아니다
 
 실제 경계에서는 타입뿐 아니라 단위, 식별자, 시간 표현, 실패 방식이 다를 수 있습니다.
 
@@ -92,7 +92,7 @@ long cents = Math.multiplyExact(euros, 100L);
 int vendorCents = Math.toIntExact(cents);
 ```
 
-## 외부 예외도 경계에서 내부 의미로 번역할 수 있다
+### 외부 예외도 경계에서 내부 의미로 번역할 수 있다
 
 `PaymentGateway`를 만들었는데 호출자가 모든 vendor 예외를 직접 catch해야 한다면 외부 세부가 여전히 새고 있습니다.
 
@@ -104,7 +104,7 @@ catch (VendorDeclinedException e) {
 
 다만 외부의 모든 오류를 하나의 일반 예외로 뭉개라는 뜻은 아닙니다. 애플리케이션이 실제로 구분해야 하는 실패는 내부 계약에도 의미 있게 드러나야 합니다.
 
-## 비즈니스 정책까지 Adapter에 넣지 않는다
+### 비즈니스 정책까지 Adapter에 넣지 않는다
 
 ```java
 if (customer.isVip()) {

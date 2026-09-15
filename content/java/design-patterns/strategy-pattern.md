@@ -85,7 +85,7 @@ PriceCalculator
 구체 Strategy
 ```
 
-## Strategy를 적용해도 선택 분기는 남을 수 있다
+### Strategy를 적용해도 선택 분기는 남을 수 있다
 
 ```java
 DiscountPolicy policy = switch (grade) {
@@ -99,7 +99,7 @@ DiscountPolicy policy = switch (grade) {
 
 Strategy가 반드시 setter로 런타임 교체되어야 하는 것도 아닙니다. 객체 수명 동안 정책 하나를 사용한다면 생성자에서 받아 `final` 필드로 보관할 수 있고, 호출마다 정책이 달라져야 한다면 메서드 인자로 전달할 수도 있습니다.
 
-## 작은 정책은 lambda로도 표현할 수 있다
+### 작은 정책은 lambda로도 표현할 수 있다
 
 계약이 함수 하나이고 별도 상태나 이름이 필요하지 않다면 functional interface와 lambda로 같은 경계를 만들 수 있습니다.
 
@@ -109,7 +109,7 @@ DiscountPolicy vip = price -> price * 10 / 100;
 
 반대로 정책이 자체 상태와 검증을 가지거나 의미 있는 이름이 중요하다면 명시적인 클래스가 더 읽기 좋을 수 있습니다. 핵심은 클래스 파일 수가 아니라 **변하는 행동의 책임이 분리되어 있는가**입니다.
 
-## Strategy가 필요한지 먼저 확인한다
+### Strategy가 필요한지 먼저 확인한다
 
 다음과 같은 경우에 가치가 커집니다.
 

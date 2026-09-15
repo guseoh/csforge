@@ -30,6 +30,7 @@ UPDATE account SET balance=0
                                  BEGIN
                                  SELECT balance → 0 ?
 ROLLBACK
+                                 COMMIT
 ```
 
 T2가 T1의 미commit 값을 읽었다면 dirty read입니다. T1이 rollback하면 T2는 결국 존재하지 않았던 상태를 기반으로 판단한 셈입니다. PostgreSQL에서는 `READ UNCOMMITTED`를 요청해도 실질적으로 READ COMMITTED처럼 동작하므로 dirty read를 허용하지 않습니다.
@@ -41,9 +42,11 @@ T1                               T2
 ──────────────────────────────   ─────────────────────
 BEGIN
 SELECT balance → 100
+                                 BEGIN
                                  UPDATE balance=200
                                  COMMIT
 SELECT balance → 200
+COMMIT
 ```
 
 READ COMMITTED에서는 T1의 두 SELECT가 서로 다른 statement snapshot을 사용할 수 있어 이런 변화가 보일 수 있습니다.
@@ -53,12 +56,15 @@ READ COMMITTED에서는 T1의 두 SELECT가 서로 다른 statement snapshot을 
 ```text
 T1                               T2
 ──────────────────────────────   ─────────────────────
+BEGIN
 SELECT count(*)
 WHERE status='PENDING' → 10
+                                 BEGIN
                                  INSERT PENDING row
                                  COMMIT
 SELECT count(*)
 WHERE status='PENDING' → 11
+COMMIT
 ```
 
 같은 특정 row 값이 바뀐 것이 아니라 **predicate를 만족하는 row 집합 자체가 달라진 것**이 핵심입니다.
@@ -68,10 +74,14 @@ WHERE status='PENDING' → 11
 ```text
 T1                               T2
 ──────────────────────────────   ─────────────────────
+BEGIN                            BEGIN
 SELECT quantity → 10             SELECT quantity → 10
 Java에서 9 계산                   Java에서 9 계산
-UPDATE quantity=9                UPDATE quantity=9
-COMMIT                           COMMIT
+UPDATE quantity=9
+                                 UPDATE quantity=9 → T1 COMMIT 대기
+COMMIT
+                                 wait 종료, UPDATE 수행
+                                 COMMIT
 ```
 
 두 요청 모두 감소시켰다고 생각하지만 최종 값은 9라서 한 번의 변경이 사라졌습니다. 이것은 `SELECT → 애플리케이션 계산 → 절대값 UPDATE` 같은 read-modify-write에서 특히 주의해야 합니다. 반대로 `UPDATE ... SET quantity = quantity - 1`처럼 DB가 현재 row version을 기준으로 직접 계산하는 statement는 PostgreSQL의 concurrent UPDATE 처리 방식이 다르므로 같은 예와 동일시하면 안 됩니다.

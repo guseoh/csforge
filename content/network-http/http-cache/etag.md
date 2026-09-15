@@ -19,7 +19,7 @@ references:
 
 `ETag`는 selected representation을 비교하기 위해 server가 제공하는 opaque validator다. Tag가 어떻게 생성되는지는 HTTP가 정하지 않는다. Hash, version number나 build identifier를 사용할 수 있지만 client는 내부 의미를 해석하지 않고 validator 값으로 비교한다.
 
-Representation이 바뀌면 validator도 그 변경을 구분할 수 있어야 한다. Strong ETag는 representation data가 동일하다는 강한 비교에 사용할 수 있고, `W/`가 붙은 weak ETag는 의미상 동등하지만 byte-for-byte 동일하다고 말하기 어려운 representation을 표현할 수 있다.
+Strong validator는 representation data의 관찰 가능한 변화마다 값을 바꿔 그 변경을 구분해야 한다. Weak validator는 이전 representation을 현재 representation의 대체물로 더 이상 허용하지 않을 때 값을 바꿔야 한다. Strong ETag는 representation data가 동일하다는 강한 비교에 사용할 수 있고, `W/`가 붙은 weak ETag는 의미상 동등하지만 byte-for-byte 동일하다고 말하기 어려운 representation을 표현할 수 있다.
 
 ```text
 ETag: "v7"

@@ -20,7 +20,7 @@ references:
 
 모든 enum 상수에는 `name()`과 `ordinal()`이 있습니다. 둘 다 쉽게 얻을 수 있지만 **DB나 API처럼 오래 살아남는 외부 식별자로 그대로 써도 된다는 뜻은 아닙니다.** Java enum 내부 표현과 외부 데이터 계약은 수명이 다를 수 있습니다.
 
-## ordinal은 비즈니스 ID가 아니라 선언 위치다
+### ordinal은 비즈니스 ID가 아니라 선언 위치다
 
 ```java
 enum Status {
@@ -43,7 +43,7 @@ enum Status {
 
 예전에 숫자 `1`을 `PAID` 의미로 저장했다면 새 코드에서는 같은 값이 `PENDING_PAYMENT`를 뜻하게 됩니다. 따라서 ordinal을 **변하지 않는 외부 식별자**처럼 사용하는 것은 위험합니다.
 
-## name은 순서 변경에는 강하지만 코드 이름과 결합된다
+### name은 순서 변경에는 강하지만 코드 이름과 결합된다
 
 ```java
 Status.PAID.name(); // "PAID"
@@ -62,7 +62,7 @@ externalCode : 저장·API에서 유지할 별도 계약이 될 수 있음
 
 이 네 가지는 서로 다른 의미입니다.
 
-## 외부 계약이 더 오래가야 한다면 별도 code를 둘 수 있다
+### 외부 계약이 더 오래가야 한다면 별도 code를 둘 수 있다
 
 ```java
 enum Status {
@@ -89,7 +89,7 @@ static Status fromCode(String code) {
 }
 ```
 
-## 저장 방식은 Java enum 계약과 분리해서 본다
+### 저장 방식은 Java enum 계약과 분리해서 본다
 
 Java 언어가 enum을 DB에 `ordinal`이나 `name` 중 어떤 방식으로 저장하라고 정하지는 않습니다. JPA 같은 영속성 기술은 별도의 매핑 계약을 제공합니다.
 
