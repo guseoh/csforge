@@ -3,8 +3,8 @@ kind: concept
 contentKey: network-http.core.request-journey.tls-before-http
 topicContentKey: network-http.core.request-journey
 slug: tls-before-http
-title: "TLS before HTTP"
-summary: "HTTPS에서 TLS handshake가 HTTP message보다 먼저 끝나는 이유를 설명한다."
+title: "HTTPS에서 TLS와 HTTP의 순서"
+summary: "HTTPS의 일반 경로에서 TLS channel이 준비된 뒤 HTTP message를 보호해 전달하는 이유와 예외를 설명한다."
 level: 2
 status: PUBLISHED
 displayOrder: 50
@@ -15,15 +15,26 @@ references:
     language: en
     displayOrder: 1
 ---
-# TLS before HTTP
+# HTTPS에서 TLS와 HTTP의 순서
 
-일반적인 HTTPS 1-RTT 흐름에서는 transport state 위에서 TLS handshake가 먼저 channel key와 server identity를 합의한 뒤 HTTP header/body를 encrypted application data로 보낸다. handshake가 완성되기 전에는 보통 HTTP message를 보호된 application channel로 처리할 수 없다. HTTP/2의 ALPN과 HTTP/3의 QUIC-TLS처럼 negotiated application protocol이 handshake 과정과 연결되는 경우도 있다.
+`https` URL은 HTTP message를 TLS로 보호해서 전달한다는 의미를 포함한다. 일반적인 새로운 HTTPS connection에서는 먼저 transport state를 만든 뒤 TLS handshake를 수행하고, server identity와 cryptographic key material을 확인한 다음 HTTP request를 encrypted application data로 보낸다.
 
-TLS 1.3 0-RTT early data는 handshake가 완전히 끝나기 전에 일부 application data를 보낼 수 있지만, server authentication이 완성되기 전의 replay 위험과 method별 idempotency를 고려해야 한다. 따라서 “TLS는 항상 HTTP bytes보다 먼저 완전히 끝난다”라고 단순화하지 않고, ordinary data와 early data를 구분한다. TLS 성공도 HTTP authorization이나 application 응답을 뜻하지 않는다.
+그래서 전형적인 cold path는 다음처럼 이해할 수 있다.
 
-certificate·hostname·trust 검증 실패와 HTTP 401·500, proxy-generated 응답을 서로 다른 계층의 결과로 기록한다. reverse proxy에서 TLS를 종료하면 proxy-to-backend가 새 TLS 또는 평문 hop이 되므로 external scheme, forwarded metadata와 internal trust boundary를 redirect·cookie 정책에 반영한다.
+```text
+DNS / route
+   ↓
+TCP connection 또는 QUIC connection 준비
+   ↓
+TLS handshake
+   ↓
+보호된 HTTP request / response
+```
 
-### HTTPS cold path
-    DNS → TCP/QUIC → TLS handshake → HTTP 요청
-                                             → application
-pool reuse나 resumption이면 일부 단계가 재사용된다.
+HTTP/1.1·2를 TCP 위에서 사용하는 경우 TCP와 TLS가 별도 계층으로 보이고, HTTP/3에서는 QUIC transport와 TLS 1.3 handshake가 더 긴밀하게 결합된다. 따라서 실제 packet sequence는 protocol stack에 따라 달라질 수 있다.
+
+### `TLS가 항상 완전히 끝난 뒤 첫 application byte를 보낸다`도 절대 규칙은 아니다
+
+TLS 1.3에는 session resumption과 0-RTT early data 같은 기능이 있어 특정 조건에서는 handshake가 최종 완료되기 전에 application data를 보낼 수 있다. 다만 early data에는 replay와 관련된 별도 제약이 있으므로 일반적인 HTTPS 요청 흐름과 동일하게 취급하면 안 된다.
+
+또한 기존 TLS connection을 재사용한다면 새 요청마다 handshake를 반복하지 않는다. 따라서 핵심은 단계 목록을 기계적으로 외우는 것이 아니라 **새로운 보호 channel이 필요한 경우 TLS가 HTTP message를 보호할 cryptographic context를 먼저 준비한다**는 관계를 이해하는 것이다.
