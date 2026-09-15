@@ -19,20 +19,33 @@ references:
 ---
 # Thread Count·Workload
 
-### CPU-bound workload에서는 core가 실제 parallelism 상한을 만든다
+적절한 thread 수는 하나의 공식으로 정할 수 없다. **CPU를 계속 사용하는 작업인지, 자주 blocking되는 작업인지**에 따라 runnable thread가 실제 CPU를 사용하는 방식이 달라지기 때문이다.
 
-4-core CPU에서 거의 계속 계산만 하는 task가 있다면 runnable platform thread를 4개에서 40개로 늘려도 동시에 계산할 수 있는 CPU core는 여전히 4개다. 추가 thread는 CPU를 더 만들지 않고 scheduler queue, context switch와 cache contention을 늘릴 수 있다.
+### CPU-bound workload에서는 core 수가 실제 parallelism을 제한한다
 
-따라서 CPU-bound workload에서는 core 수에 가까운 active parallelism에서 출발해 실제 처리량과 꼬리 지연 시간(tail latency)을 측정하는 편이 합리적이다. 물론 SMT, 다른 process, GC와 OS task가 CPU를 함께 사용하므로 `thread count = core count`도 절대 공식은 아니다.
+4-core CPU에서 대부분의 시간을 계산에 쓰는 workload라면 runnable thread를 4개에서 40개로 늘려도 같은 순간 계산할 수 있는 core는 여전히 제한적이다. 추가 thread는 CPU를 더 만들지 않고 ready queue와 context-switch 비용을 늘릴 수 있다.
 
-### blocking workload에서는 기다리는 동안 다른 일을 할 수 있다
+```text
+CPU-bound
+active runnable threads ↑
+       │
+       ├─ core가 남아 있음 → parallelism 활용 가능
+       └─ core가 이미 포화 → queue / switch 증가 가능
+```
 
-한 task가 10ms 중 CPU를 1ms 사용하고 나머지 9ms를 I/O에서 기다린다면 CPU 하나가 thread 하나만 처리할 경우 많은 시간이 idle할 수 있다. 여러 작업을 concurrent하게 두면 하나가 waiting인 동안 다른 task가 CPU를 사용할 수 있다.
+### Blocking workload에서는 더 많은 concurrency가 유리할 수 있다
 
-이 때문에 blocking I/O workload에서는 CPU core 수보다 많은 concurrent task가 유리할 수 있다. 하지만 그 숫자는 무한히 늘릴 수 없다. thread stack memory, file descriptor, DB connection, downstream rate limit과 queue 지연 시간이 다음 상한이 된다.
+한 thread가 CPU를 잠깐 사용한 뒤 I/O completion을 오래 기다린다면, 기다리는 동안 다른 runnable thread가 CPU를 사용할 수 있다. 그래서 blocking 비율이 높은 workload에서는 CPU core 수보다 많은 thread가 유용할 수 있다.
 
-### 가장 좁은 downstream을 함께 본다
+하지만 thread 수를 무한히 늘릴 수는 없다. 각 thread의 stack과 metadata가 memory를 사용하고, runnable thread가 많아지면 scheduling 비용도 커진다. 또한 실제 work가 file descriptor, connection, device queue 같은 다른 제한된 resource를 필요로 한다면 그 resource가 새로운 상한이 된다.
 
-요청 executor가 200 thread라고 DB connection pool이 20개라면 DB가 필요한 task 180개는 결국 connection을 기다릴 수 있다. 여기서 executor만 더 키우면 처리량은 그대로인데 waiting task와 memory 사용만 증가할 수 있다.
+### 핵심은 동시에 필요한 실행 자원과 대기 비율을 함께 보는 것이다
 
-JPA connection pool, HTTP client pool, executor, external API quota는 서로 다른 concurrency budget이다. 적정 thread 수는 CPU utilization뿐 아니라 active/runnable/blocked thread, queue wait, downstream pool wait, 처리량과 p99 지연 시간을 함께 보고 결정해야 한다.
+CPU-bound인지 I/O-bound인지 한 단어로만 분류하기보다 다음을 본다.
+
+- 실제 on-CPU 시간과 waiting 시간의 비율
+- 동시에 runnable한 thread 수
+- CPU core와 현재 utilization
+- thread가 기다리는 OS/resource 경계
+
+Thread Count and Workload의 핵심은 **CPU-bound에서는 과도한 runnable thread가 scheduling 비용을 키울 수 있고, blocking workload에서는 waiting 시간을 다른 work로 겹치기 위해 더 많은 concurrency가 필요할 수 있다는 trade-off**다.
