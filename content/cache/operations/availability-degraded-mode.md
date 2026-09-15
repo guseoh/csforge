@@ -3,8 +3,8 @@ kind: concept
 contentKey: cache.core.operations.availability-degraded-mode
 topicContentKey: cache.core.operations
 slug: availability-degraded-mode
-title: "cache 장애와 degraded mode"
-summary: "cache timeout·unavailable 시 origin 대체 처리와 fail-open/closed를 correctness·deadline·부하 관점에서 선택한다"
+title: "캐시 장애와 제한적 대체 처리"
+summary: "cache timeout·unavailable 상황에서 원본 조회, stale 결과, 명확한 실패 중 무엇을 선택할지 correctness·deadline·origin capacity 관점에서 판단한다."
 level: 2
 status: PUBLISHED
 displayOrder: 30
@@ -22,47 +22,50 @@ references:
     displayOrder: 2
     relationNote: "client connection과 cache access 운영 경계 확인"
 ---
-# cache 장애와 degraded mode
+# 캐시 장애와 제한적 대체 처리
 
-Cache는 optional derived infrastructure일 수 있지만, 장애 시 모든 요청이 무제한으로 origin으로 몰리면 optional이라는 말이 무색해집니다. cache timeout·connection 실패·malformed value를 짧은 시간 안에 판단하고, 해당 데이터가 stale해도 되는지에 따라 degraded mode를 선택해야 합니다.
-
-```text
-request
-  ├─ cache hit  ─▶ response
-  ├─ cache miss ─▶ origin read ─▶ response
-  └─ cache unavailable
-       ├─ origin fallback (허용 시)
-       ├─ stale/local fallback
-       └─ 명확한 failure
-```
-
-### fail-open과 fail-closed는 업무 정책이다
-
-추천 목록 같은 비핵심 read는 cache가 죽어도 origin에서 읽거나 stale 기본값을 반환하는 fail-open이 가능할 수 있습니다. 반면 cache에 권한 판단 결과가 있다면 cache 실패를 “허용”으로 처리하는 fail-open이 권한 우회가 될 수 있어 fail-closed가 더 안전할 수 있습니다. cache 사용 목적과 correctness를 먼저 확인해야 합니다.
-
-### origin 대체 처리도 overload를 만든다
-
-모든 요청이 cache timeout을 기다린 뒤 DB로 대체 처리하면 timeout budget을 소진하고 DB connection pool을 동시에 고갈시킬 수 있습니다. cache client timeout을 요청 deadline보다 짧게 두고, 대체 처리 concurrency·rate limit·stale serve를 제한합니다.
+조회 성능을 위해 추가한 캐시가 장애를 일으켰을 때 가장 단순한 생각은 “그냥 DB에서 읽으면 된다”입니다. 하지만 트래픽 대부분을 cache가 흡수하던 시스템이라면 모든 요청을 갑자기 origin으로 보내는 순간 **Redis 장애가 PostgreSQL 과부하로 전파될 수 있습니다.**
 
 ```text
-cache timeout 100ms
-  └─ 10,000 requests가 동시에 DB fallback
-      └─ cache 장애가 DB 장애로 전파될 수 있음
+정상
+requests ─▶ cache ── 일부 miss ─▶ DB
+
+cache outage
+requests ────────────────▶ DB
+                              ▲
+                       갑작스러운 부하 증가
 ```
 
-### cache outage와 data correctness를 구분한다
+### 어떤 대체 처리가 허용되는지는 데이터 의미가 결정한다
 
-cache에 분석 summary가 없어지는 것은 재계산 지연일 수 있지만, canonical attempt나 review state를 cache에서만 복구하려 하면 데이터 손실입니다. cache outage runbook은 origin health, 대체 처리 capacity, stale age, recovery 후 재가열 방법을 포함해야 합니다.
+비핵심 추천 목록은 캐시가 없을 때 DB를 직접 조회하거나 조금 오래된 값을 반환해도 괜찮을 수 있습니다. 반면 권한 판정이나 결제 상태처럼 잘못된 값을 성공으로 간주하면 안 되는 데이터는 cache 장애를 이유로 검증을 건너뛰어서는 안 됩니다.
 
-### 문제를 풀 때 확인할 것
+```text
+추천 목록 cache 실패
+→ bounded DB fallback / stale value 가능성 검토
 
-1. cache가 없어도 correctness가 유지되는지 확인합니다.
-2. cache timeout과 상위 deadline을 맞춥니다.
-3. origin 대체 처리 동시성과 connection pool 영향을 계산합니다.
-4. fail-open이 권한·금전·상태 변경을 우회하지 않는지 봅니다.
-5. outage 중 stale serve와 recovery/re-warm을 관측합니다.
+권한 정보 cache 실패
+→ "cache가 없으니 허용"은 위험
+```
 
-### 면접에서 설명한다면
+흔히 이를 fail-open/fail-closed라는 말로 설명하지만, 핵심은 용어가 아니라 **오래되거나 없는 값으로 계속 진행했을 때 correctness가 깨지는가**입니다.
 
-Cache 장애 대응은 단순히 DB 대체 처리를 켜는 문제가 아니라 timeout budget, origin capacity, stale 허용과 correctness를 함께 정하는 문제입니다. 비핵심 read는 대체 처리나 stale 결과를 허용할 수 있지만 권한·금전·canonical 상태는 fail-open으로 처리하면 안 됩니다. cache outage가 origin overload로 전파되지 않도록 대체 처리 concurrency와 관측을 둡니다.
+### 대체 처리에도 용량 한계가 필요하다
 
+Cache timeout을 오래 기다린 뒤 모든 요청이 DB fallback을 시작하면 요청 deadline과 connection pool을 동시에 소모합니다. Cache timeout은 상위 요청 budget보다 충분히 짧아야 하고, origin fallback도 concurrency나 rate를 제한할 수 있어야 합니다.
+
+```text
+request deadline
+   │
+   ├─ 짧은 cache attempt
+   │
+   └─ 남은 시간 안에서 bounded fallback
+```
+
+대체 처리 용량을 넘는 요청은 무한히 기다리게 하기보다 명확하게 실패시키는 편이 전체 시스템을 보호할 수 있습니다.
+
+### cache 복구 후에도 부하가 생길 수 있다
+
+Redis가 다시 살아났다고 바로 정상 상태로 돌아가는 것은 아닙니다. 비어 있는 cache를 수많은 요청이 동시에 채우면 cold-start stampede가 발생할 수 있습니다. 필요한 경우 점진적인 re-warm이나 요청 coalescing을 검토합니다.
+
+캐시 장애 대응의 목표는 “항상 성공 응답을 만든다”가 아니라 **cache가 없어도 원본 데이터의 정확성을 지키면서, 제한된 자원 안에서 어떤 기능까지 계속 제공할지 정하는 것**입니다.
