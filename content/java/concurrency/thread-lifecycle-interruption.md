@@ -28,7 +28,7 @@ references:
     referenceType: COMPANY_TECH_BLOG
     language: ko
     depth: article
-    recommendation: "thread 상태와 lock 대기를 실제 thread dump에서 읽는 방법을 확인한다."
+    recommendation: "JVM thread dump에서 lock owner와 waiter를 연결해 deadlock cycle을 해석하는 실제 사례를 확인한다."
     displayOrder: 3
     relationNote: thread 상태와 blocked/waiting 진단을 실제 장애 흐름으로 연결
 ---
