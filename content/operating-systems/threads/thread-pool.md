@@ -17,28 +17,34 @@ references:
 ---
 # Thread Pool
 
-### worker를 재사용하는 것보다 중요한 것은 동시 실행을 제한하는 것이다
+Thread pool은 작업마다 새 platform thread를 만들지 않고 **미리 준비한 worker를 재사용**하는 실행 구조다. 생성·종료 비용을 줄이는 효과도 있지만, 더 중요한 역할은 동시에 실행할 work의 수를 제한하는 데 있다.
 
-thread pool은 매 task마다 platform thread를 새로 만들지 않고 worker를 재사용해 creation cost를 나눈다. 동시에 pool size를 통해 한 시점에 실행되는 task 수를 제한하는 admission boundary 역할도 한다.
-
-```
+```text
 producer → task queue → worker 1
                     → worker 2
                     → worker 3
 ```
 
-worker가 모두 바쁘면 새 task는 즉시 실행되지 않고 queue 또는 rejection policy로 넘어간다. 따라서 pool의 성능은 worker 수만이 아니라 **queue capacity와 task arrival rate**에 크게 좌우된다.
+Worker가 모두 바쁘면 새 task는 즉시 실행되지 않고 queue에서 기다리거나 admission/rejection 정책의 영향을 받는다.
 
-### unbounded queue는 overload를 없애지 않고 숨긴다
+### Pool에는 worker와 queue라는 두 개의 경계가 있다
 
-초당 100개를 처리하는 pool에 초당 150개 task가 지속적으로 들어오면 worker 수가 그대로인 한 queue는 초당 50개씩 증가한다. unbounded queue를 쓰면 잠깐은 요청을 모두 받아들이는 것처럼 보이지만 waiting 지연 시간과 memory 사용량은 계속 커진다.
+Worker 수는 동시에 실행할 수 있는 task 수를 제한한다. Queue는 당장 실행하지 못하는 task를 저장한다.
 
-bounded queue와 rejection/backpressure는 overload를 외부에 드러내는 정책이다. 거부가 나쁘다고 queue를 무한히 키우는 것이 아니라 시스템이 감당할 수 없는 부하를 어디에서 제한할지 정해야 한다.
+처리 가능한 속도보다 task가 더 빠르게 들어오면 queue가 계속 길어진다. Queue를 무한히 키우면 overload가 사라지는 것이 아니라 waiting time과 memory 사용량으로 이동한다.
 
-### pool 내부 의존도 deadlock-like starvation을 만들 수 있다
+```text
+arrival rate > service rate
+        ↓
+queue 증가
+        ↓
+waiting time 증가
+```
 
-worker가 2개뿐인 pool에서 task A와 B가 각각 같은 pool에 child task를 제출한 뒤 그 결과를 동기적으로 기다린다고 하자. 두 worker가 부모 task에 점유된 상태라 child가 queue에서 실행되지 못할 수 있다. lock cycle은 없어도 executor capacity 고갈로 progress가 멈추는 **thread starvation deadlock** 형태가 가능하다.
+그래서 bounded queue와 rejection/backpressure는 실패가 아니라 **시스템이 감당할 수 있는 실행량의 경계를 드러내는 정책**으로 볼 수 있다.
 
-### shutdown도 execution contract다
+### Pool 내부에서 서로를 기다리면 progress가 막힐 수 있다
 
-graceful shutdown에서는 새 task를 더 받을지, queue에 남은 task를 처리할지, running task를 interrupt/cancel할지 정책이 필요하다. 요청 pool, background import pool처럼 workload 성격이 다르면 queue와 shutdown 정책도 분리하는 편이 안전하다.
+모든 worker가 parent task에 점유된 상태에서 각 parent가 같은 pool에 제출한 child task의 완료를 동기적으로 기다린다면 child가 실행될 worker가 없을 수 있다. Lock cycle이 없어도 bounded execution resource가 모두 점유되어 progress가 멈출 수 있다.
+
+Thread Pool의 핵심은 단순한 thread 재사용이 아니라 **worker 수와 queue를 통해 concurrency를 제한하고, overload와 waiting을 어디에서 받아들일지 결정하는 bounded execution system**이라는 점이다.
