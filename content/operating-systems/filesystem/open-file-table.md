@@ -26,30 +26,22 @@ references:
 ---
 # Open File State
 
-`file descriptor = file`이라고 단순화하면 duplicate descriptor와 concurrent offset 동작을 설명하기 어렵다. Linux를 예로 들면 process의 descriptor table entry는 **open file description**을 가리키고, 그 description이 current offset과 file status flags, underlying file object에 대한 reference를 가진다.
+File descriptor와 file object 사이에는 **현재 열린 I/O session의 상태**가 있을 수 있다. Linux를 예로 들면 descriptor entry가 open file description을 가리키고, 그 description이 current file offset과 일부 status flag, underlying file object에 대한 reference를 가진다.
 
 ![descriptor entry와 shared open-file description, underlying file object 관계](/learning/operating-systems/file-descriptor-open-state.svg)
 
-개념적으로 다음처럼 나눠 볼 수 있다.
+```text
+fd entry → open-file state(offset, flags) → filesystem object
+```
 
-`process fd entry → open-file description(offset/status) → filesystem file/inode`
+### 같은 file을 열어도 open state는 다를 수 있다
 
-### open을 두 번 한 경우와 dup한 경우
+같은 pathname을 두 번 `open()`하면 두 descriptor가 같은 underlying file을 가리키더라도 일반적으로 서로 다른 open-file state를 가지므로 offset을 독립적으로 이동할 수 있다.
 
-같은 pathname `/tmp/a`를 두 번 `open()`하면 두 fd가 같은 underlying file을 가리킬 수 있지만 일반적으로 별도의 open-file description이 만들어지므로 file offset은 독립적으로 움직일 수 있다.
+반대로 `dup()`으로 descriptor를 복제하면 두 fd가 같은 open-file state를 참조한다. 한 fd에서 read해 offset이 이동하면 다른 fd의 다음 read도 그 shared offset의 영향을 받는다. `fork()`로 inherited descriptor가 생기는 경우에도 같은 open-file description을 공유할 수 있다.
 
-반대로 `fd2 = dup(fd1)`이라면 두 descriptor는 같은 open-file description을 공유한다. `fd1`에서 100 byte를 읽어 offset이 100만큼 이동한 뒤 `fd2`에서 읽으면 shared offset의 영향을 받을 수 있다. `fork()`로 descriptor table이 상속되는 경우에도 parent와 child가 같은 open-file description을 참조하는 관계가 생길 수 있다.
+### File content와 open-session state를 분리한다
 
-### 왜 이 구분이 concurrency에서 중요한가
+두 descriptor가 독립적인 offset을 가진다고 file content까지 분리되는 것은 아니다. 같은 underlying file을 수정하면 content는 같은 filesystem object에 반영된다.
 
-두 worker가 같은 fd/open description을 공유하면서 seek와 read를 조합하면 서로 offset을 변경해 예상하지 못한 위치를 읽을 수 있다. 반대로 각 worker가 파일을 독립적으로 open하면 offset은 분리되지만 kernel/file-system 차원의 content 자체는 공유되므로 concurrent write correctness 문제는 여전히 남는다.
-
-`O_APPEND` 같은 status flag의 의미도 단순한 application boolean이 아니라 open-file state와 filesystem의 write semantics에 연결된다. 어떤 상태가 descriptor entry에 있고 어떤 상태가 open description이나 file object에 있는지는 실제 OS API 계약을 확인해야 한다.
-
-Backend file processor에서 병렬 range read가 필요하다면 shared mutable offset에 기대기보다 명시적인 positional I/O나 독립 handle을 선택하는 편이 reasoning하기 쉽다. resource pooling을 한다면 이전 사용자의 offset/status가 다음 작업에 그대로 남지 않는지도 확인한다.
-
-### 면접에서 이렇게 나옵니다
-
-#### Q. 같은 파일을 두 번 `open()`한 것과 `dup()`한 것은 무엇이 다른가요?
-
-두 번 `open()`하면 보통 서로 다른 open-file description을 만들어 offset이 독립적입니다. 반면 `dup()`은 같은 open-file description을 공유하므로 offset과 일부 status flag가 연결됩니다. underlying file content와 open stream state를 분리해서 설명하는 것이 핵심입니다.
+Open File State의 핵심은 **process의 fd entry, 열린 session의 offset/status, persistent file object가 서로 다른 층이며 `open()`과 `dup()`에 따라 어떤 상태가 공유되는지가 달라진다는 점**이다.
