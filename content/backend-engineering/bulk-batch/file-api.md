@@ -5,7 +5,7 @@ topicContentKey: backend.core.bulk-batch
 slug: file-api
 title: "파일 업로드와 처리 경계"
 summary: "파일 업로드를 단순 요청 필드가 아니라 크기·임시 저장·형식 검증·처리 시간이라는 별도 자원 경계로 보고 업로드 완료와 업무 처리 완료를 구분한다."
-level: 2
+level: 3
 status: PUBLISHED
 displayOrder: 10
 references:
