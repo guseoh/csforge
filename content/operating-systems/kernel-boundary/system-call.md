@@ -4,7 +4,7 @@ contentKey: operating-systems.core.kernel-boundary.system-call
 topicContentKey: operating-systems.core.kernel-boundary
 slug: system-call
 title: "System Call"
-summary: "user application이 kernel이 소유한 service를 요청하는 ABI 경계를 설명한다."
+summary: "user application이 kernel이 소유한 service를 요청하는 명시적인 OS interface를 설명한다."
 level: 1
 status: PUBLISHED
 displayOrder: 40
@@ -19,55 +19,38 @@ references:
 ---
 # System Call
 
-Application은 user mode에서 실행되기 때문에 kernel이 관리하는 자원을 마음대로 조작할 수 없다. 파일을 열고, socket으로 데이터를 보내고, 새로운 process를 만들고, virtual memory mapping을 바꾸려면 kernel에게 작업을 요청해야 한다. **System call은 이때 사용하는 user space와 kernel 사이의 명시적인 service boundary**다.
-
-Linux에서는 `openat`, `read`, `write`, `mmap`, `clone`, `socket`처럼 kernel 기능을 요청하는 system call interface를 제공한다. 하지만 Java나 C application이 항상 syscall instruction을 직접 작성하는 것은 아니다. 보통 language runtime이나 standard library가 더 편한 API를 제공하고 내부에서 필요할 때 system call ABI를 사용한다.
+User mode application은 file system, socket, process creation, virtual-memory mapping처럼 kernel이 관리하는 자원을 직접 조작할 수 없다. 이런 기능이 필요할 때 application은 운영체제가 제공하는 **system call interface**를 통해 kernel service를 요청한다.
 
 ```text
-Application API
-Files.read(...) / Socket.read(...) / libc read(...)
-                │
-                ▼
-Runtime / library wrapper
-argument 준비, buffering 등
-                │
-                ▼
-System-call ABI
-syscall number + arguments
-                │
-                ▼
+Application
+   ↓ request
+System-call interface
+   ↓
 Kernel service
-fd lookup / permission / filesystem / network stack ...
+   ↓
+file / socket / process / memory ...
 ```
 
-### Library call과 system call은 같은 말이 아니다
+### Library API와 system call은 같은 호출 단위가 아니다
 
-Library function을 호출했다고 해서 항상 kernel mode로 들어가는 것은 아니다. `strlen()`처럼 user space에서 끝나는 함수가 있고, buffered I/O처럼 여러 application-level 호출을 모아 실제 `write` system call 횟수를 줄이는 library도 있다.
+Application은 보통 system-call instruction을 직접 작성하지 않고 language runtime이나 library API를 사용한다. Library function은 user space에서만 끝날 수도 있고, 내부 buffering으로 여러 호출을 하나의 system call로 묶을 수도 있다.
 
-반대로 하나의 고수준 API가 여러 system call을 발생시킬 수도 있다. 그래서 “Java method를 한 번 호출했다 = system call 한 번”이라고 대응시키면 안 된다. System call은 **kernel interface의 단위**, library API는 **runtime/library abstraction의 단위**다.
+반대로 하나의 고수준 API가 여러 system call을 사용할 수도 있다.
 
-### System-call ABI는 architecture와 OS에 의존한다
+```text
+library/runtime API ≠ system call 1:1 mapping
+```
 
-System call을 실행하려면 kernel이 어떤 service를 요청했는지와 argument를 전달하는 규칙이 필요하다. Linux는 architecture별 syscall ABI를 정의하며 syscall number와 argument register 배치, entry instruction 같은 세부사항은 CPU architecture마다 다를 수 있다.
+System call은 **kernel service boundary의 단위**이고 library API는 application이 사용하는 abstraction의 단위다.
 
-예를 들어 RISC-V 환경에서는 `ECALL`이 execution environment에 service 요청을 일으키는 instruction으로 사용될 수 있고, x86-64 Linux에서는 다른 architecture-specific entry mechanism을 사용한다. 따라서 일반 OS 설명에서 모든 system call을 특정한 하나의 “trap instruction”으로 정의하지 않는다.
+### System-call ABI가 요청을 전달한다
 
-### 요청은 즉시 성공하지 않을 수 있다
+Kernel은 어떤 service를 요청했는지와 argument가 무엇인지 알아야 한다. 그래서 OS와 architecture는 syscall number, argument 전달 위치, controlled entry mechanism 같은 ABI 규칙을 정한다.
 
-Kernel service는 여러 결과를 낼 수 있다. 요청한 byte보다 적게 읽는 **partial result**, resource가 아직 준비되지 않아 기다리는 **blocking**, permission이나 argument 문제를 나타내는 **error**가 가능하다.
+구체적인 instruction과 register 배치는 architecture마다 다르므로 system call을 특정한 하나의 assembly instruction으로 일반화하지 않는다.
 
-예를 들어 `read(fd, buffer, 4096)`이 4096 byte를 요청했다고 해서 항상 4096 byte를 반환하는 것은 아니다. File/socket의 상태와 API contract에 따라 더 적은 수가 반환될 수 있고, EOF나 error도 구분해야 한다. Application은 이런 return contract를 이해해야 한다.
+### Return도 하나의 성공 상태만 있는 것은 아니다
 
-### 면접에서 이렇게 나옵니다
+Kernel service는 정상 결과뿐 아니라 error나 partial result를 반환할 수 있다. I/O 요청은 요청한 byte보다 적게 처리될 수도 있고, resource가 준비될 때까지 current task가 block될 수도 있다.
 
-#### Q. Library call과 system call은 어떻게 다른가요?
-
-Library call은 application이 사용하는 runtime/library abstraction이고, system call은 user space가 kernel service를 요청하는 OS interface입니다.
-
-Library function이 user space에서만 끝날 수도 있고, buffering으로 여러 library call이 하나의 system call로 합쳐질 수도 있습니다. 반대로 하나의 고수준 API가 여러 system call을 사용할 수도 있으므로 **두 호출 단위를 1:1로 대응시키면 안 됩니다.**
-
-### Backend에서 보는 system call의 의미
-
-Java Backend가 DB나 network I/O를 수행할 때 Java thread가 CPU에서 application code만 계속 실행하는 것은 아니다. Runtime을 거쳐 kernel에 I/O를 요청한 뒤 현재 thread가 block될 수도 있고, non-blocking descriptor에서는 readiness를 별도로 기다릴 수도 있다.
-
-따라서 system call을 이해하는 목적은 low-level assembly를 외우는 데 있지 않다. **고수준 API 아래에서 언제 kernel resource를 사용하고, 어떤 상태 변화와 error/partial result가 생길 수 있는지** 이해하는 것이 핵심이다. 이 경계를 알아야 application 지연 시간, thread blocking, file descriptor 고갈 같은 문제를 올바른 층에서 분석할 수 있다.
+System call을 이해할 때 핵심은 assembly 이름을 외우는 것이 아니라 **user application이 kernel resource를 요청하는 명시적 보호 경계이며, argument와 result가 OS contract를 따라 전달된다**는 점이다.
