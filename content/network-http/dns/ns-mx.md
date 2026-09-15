@@ -4,7 +4,7 @@ contentKey: network-http.core.dns.ns-mx
 topicContentKey: network-http.core.dns
 slug: ns-mx
 title: "NS·MX"
-summary: "NS와 MX record가 name service delegation과 mail delivery를 구분하는 방식을 설명한다."
+summary: "zone delegation과 mail delivery destination을 NS/MX로 구분한다."
 level: 1
 status: PUBLISHED
 displayOrder: 70
@@ -19,11 +19,25 @@ references:
 ---
 # NS·MX
 
-NS record는 특정 zone을 authoritative하게 서비스하는 name server를 가리키며, parent zone의 delegation과 child zone의 관리 경계를 연결한다. MX record는 domain으로 들어오는 mail을 받을 mail exchanger name과 preference를 표현한다. 따라서 NS/MX 조회는 web service의 A/AAAA 조회와 서로 다른 service contract다.
+NS와 MX는 모두 DNS record지만 **가리키는 역할이 다르다.** NS record는 어떤 name server가 zone을 authoritative하게 담당하는지 나타내고, MX record는 특정 domain으로 들어오는 mail을 어느 mail exchanger가 받을지 나타낸다.
 
-MX의 exchange 값은 IP literal이 아니라 domain name이며, mail sender는 그 name의 A/AAAA를 다시 조회해 SMTP connection destination을 얻는다. preference 값은 우선순위 숫자이고 일반적으로 더 낮은 값이 먼저 시도되며, 같은 preference의 여러 exchanger는 delivery policy에 따라 선택될 수 있다. MX가 가리키는 name이 다시 MX만 갖거나 address를 제공하지 않으면 mail delivery가 실패할 수 있다.
+### NS record
 
-NS와 MX가 모두 존재한다는 사실은 해당 name server가 reachable하거나 SMTP server가 listening한다는 뜻이 아니다. delegation, address resolution, TCP connection, TLS와 SMTP authentication은 각각 다른 단계이며, DNS cache 때문에 record 변경도 즉시 모든 sender에 반영되지 않을 수 있다.
+Parent zone의 delegation에서 NS record는 child zone을 담당하는 authoritative server name을 가리킨다. Resolver는 이 정보를 이용해 다음 authoritative server로 이동할 수 있다.
 
-Backend web endpoint와 mail endpoint를 같은 domain configuration으로 취급하지 않는다. notification 장애에서는 MX와 mail host address, SMTP connection·TLS·authentication을 HTTP health와 별도로 진단하고, mail exchanger의 우선순위와 failover 결과를 기록한다.
+```text
+example.com. NS ns1.example.net.
+```
 
+### MX record
+
+MX record는 mail exchanger의 domain name과 preference를 제공한다. 일반적으로 낮은 preference 값이 더 우선한다.
+
+```text
+example.com. MX 10 mail1.example.com.
+example.com. MX 20 mail2.example.com.
+```
+
+Mail sender는 선택한 exchanger name의 A/AAAA record를 다시 해석해 실제 network address를 얻는다.
+
+NS와 MX의 핵심은 **NS는 DNS zone의 authoritative delegation을, MX는 mail delivery destination을 표현하며 서로 다른 protocol 책임을 가진다는 것**이다.
