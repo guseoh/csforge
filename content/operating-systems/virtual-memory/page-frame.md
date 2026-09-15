@@ -19,20 +19,21 @@ references:
 ---
 # Page·Frame
 
-### 연속 virtual memory를 연속 physical memory에 둘 필요가 없게 한다
+Paging은 virtual address space를 고정 크기의 **page**로 나누고, physical memory를 같은 크기의 **frame**으로 나눈 뒤 둘을 mapping하는 방식이다. 이 구조 덕분에 process의 연속된 virtual page가 physical memory에서도 연속된 위치에 놓일 필요가 없다.
 
-paging은 virtual address space를 고정 크기 **page**로 나누고 physical memory를 같은 크기의 **frame**으로 나눈다. OS는 virtual page마다 현재 어느 physical frame에 연결되는지 mapping을 관리한다.
+```text
+Virtual pages           Physical frames
+P0 ───────────────────> F8
+P1 ───────────────────> F2
+P2 ───────────────────> F15
+```
 
-예를 들어 page size가 4KiB이고 process의 virtual page 7이 physical frame 42에 놓여 있다면, page 내부 offset은 그대로 유지하고 page number 부분만 frame number로 translation한다. 그래서 process의 virtual page 7과 8이 physical memory에서 서로 멀리 떨어진 frame에 있어도 process는 연속 주소처럼 사용할 수 있다.
+Process는 `P0 → P1 → P2`를 연속 주소처럼 사용하지만 실제 frame은 흩어져 있을 수 있다.
 
-### external fragmentation을 줄이지만 새로운 비용이 생긴다
+### Page와 frame은 같은 크기지만 역할이 다르다
 
-고정 크기 frame을 사용하면 process 전체를 하나의 연속 physical block에 넣을 필요가 없어 variable-size allocation에서 생기는 external fragmentation 문제를 크게 줄일 수 있다. 대신 마지막 page에서 사용하지 않는 byte처럼 internal fragmentation이 생길 수 있고, 각 page의 mapping을 기록할 page-table metadata가 필요하다.
+Page는 **virtual address-space의 단위**이고 frame은 **physical memory의 단위**다. Virtual page가 resident하다는 말은 그 page의 내용을 담을 physical frame이 현재 준비되어 있다는 뜻이다.
 
-page size도 trade-off다. 큰 page는 page-table entry 수와 TLB pressure를 줄일 수 있지만 작은 allocation에도 더 큰 단위가 사용되어 internal waste가 커질 수 있고 fault/replacement 단위도 커진다. 작은 page는 세밀한 mapping을 가능하게 하지만 metadata와 translation overhead가 커질 수 있다.
+고정 크기 단위를 사용하면 process 전체를 큰 연속 physical 영역에 배치할 필요가 없어 external fragmentation 문제를 줄일 수 있다. 반면 page 안의 일부 공간을 사용하지 않는 internal fragmentation과 mapping metadata 비용은 생긴다.
 
-### page와 frame은 존재 위치를 구분하는 용어다
-
-page는 virtual address-space 쪽 단위이고 frame은 physical memory 쪽 단위다. `page가 RAM에 들어 있다`고 말할 때 실제로는 그 virtual page의 content가 어떤 physical frame에 resident하다는 뜻이다. 이 distinction을 유지해야 page fault, replacement, copy-on-write를 이해할 때 상태가 헷갈리지 않는다.
-
-Backend에서 큰 heap이나 mmap file을 다룰 때도 application object 크기와 OS page 단위를 같은 것으로 보면 안 된다. 하나의 object가 여러 page에 걸칠 수 있고, page fault나 resident memory는 object boundary가 아니라 page mapping 단위로 발생한다.
+Page size 자체에도 trade-off가 있지만 hardware TLB reach와 page-table walk 세부는 Computer Architecture에서 다룬다. OS 관점에서 중요한 것은 **page/frame 단위가 allocation, fault, replacement와 sharing의 기본 단위가 된다는 점**이다.
