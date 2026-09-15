@@ -41,6 +41,6 @@ ACK 다시 전송
 
 Network에 지연되어 있던 이전 connection의 segment가 뒤늦게 도착할 수 있다. 동일한 endpoint tuple을 너무 빨리 새 connection에 재사용하면 이런 segment가 새 connection state와 혼동될 위험이 있다. TIME_WAIT는 충분한 시간이 지나 old segment가 사라질 기회를 준다.
 
-RFC 9293의 전통적인 모델에서는 TIME_WAIT가 2 MSL 동안 유지된다. 구체적인 구현 최적화는 있을 수 있지만, 핵심 목적은 **마지막 close ACK의 신뢰성과 이전 connection의 지연 segment 격리**다. citeturn500576search2
+RFC 9293의 전통적인 모델에서는 TIME_WAIT가 2 MSL 동안 유지된다. 구체적인 구현 최적화는 있을 수 있지만, 핵심 목적은 **마지막 close ACK의 신뢰성과 이전 connection의 지연 segment 격리**다.
 
 TIME_WAIT의 핵심은 **종료된 connection의 transport state를 잠시 보존해 close handshake와 delayed segment를 안전하게 처리하는 것**이다.
