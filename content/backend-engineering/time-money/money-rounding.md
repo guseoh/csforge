@@ -5,7 +5,7 @@ topicContentKey: backend.core.time-money
 slug: money-rounding
 title: "금액 표현과 반올림 정책"
 summary: "금액을 단순 숫자가 아니라 통화 단위와 scale·rounding 규칙을 가진 값으로 모델링하고 계산·저장·API 경계에서 같은 정책을 유지한다."
-level: 2
+level: 3
 status: PUBLISHED
 displayOrder: 30
 references:
