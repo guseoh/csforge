@@ -20,17 +20,15 @@ references:
     referenceType: OFFICIAL
     language: en
     displayOrder: 2
-    relationNote: inter-thread visibility와 synchronization 관계 확인
+    relationNote: 일반 shared state의 inter-thread visibility와 synchronization 관계 확인
 ---
 # 안전한 공개와 final 필드
 
-객체 생성자에서 필드를 올바르게 채웠다는 사실과 **그 객체 참조를 다른 thread에 어떻게 전달했는가**는 일반적으로 별도의 문제입니다. 특히 일반 field나 이후 변경되는 mutable state까지 다른 thread가 올바르게 관찰해야 한다면 volatile, monitor/Lock, static initialization, concurrent collection처럼 Java가 메모리 일관성을 정의한 publication 경계를 사용해야 합니다.
+한 thread에서 객체를 완성했다는 사실과 다른 thread가 그 객체의 초기 상태를 올바르게 관찰한다는 사실은 일반적으로 같은 보장이 아닙니다. 객체 참조를 thread 사이에 전달할 때는 **어떤 publication 경계를 통해 전달했는지**를 봐야 합니다.
 
-이 과정을 publication이라고 부르고, 필요한 visibility/order까지 보장되는 방식으로 전달하는 것을 safe publication이라고 설명할 수 있습니다.
+다만 Java의 `final` field에는 일반 field와 구분되는 특별한 초기화 semantics가 있습니다. 이 규칙을 일반 safe publication과 섞지 않는 것이 핵심입니다.
 
-다만 Java의 `final` field에는 이 일반 규칙과 구분해야 할 **특별한 생성자 semantics**가 있습니다. 객체가 올바르게 생성되고 생성 중인 `this`가 외부로 escape하지 않았다면, JLS는 그 객체 참조가 data race를 통해 전달되더라도 다른 thread가 올바르게 초기화된 final field 값을 볼 수 있는 보장을 둡니다. 따라서 "모든 field를 보기 위해 항상 별도의 synchronization publication이 반드시 필요하다"고 일반화하면 final-field 규칙을 놓치게 됩니다.
-
-### 일반 field의 잘못된 전달은 생성 완료와 다른 thread의 관찰을 연결하지 못할 수 있다
+### 일반 mutable state는 thread 사이의 전달 경계를 확인한다
 
 ```java
 class Holder {
@@ -42,23 +40,11 @@ void initialize() {
 }
 ```
 
-여러 thread가 아무 synchronization 없이 이 필드를 읽고 쓰고 `Config`에 일반 mutable field도 있다면 "생성자가 먼저 실행됐으니 다른 thread도 모든 초기화 값을 당연히 본다"고 추론하면 안 됩니다.
+여러 thread가 아무 synchronization 없이 `config`를 읽고 쓰고, `Config` 안에도 일반 non-final field가 있다면 "생성자가 먼저 끝났으니 reader도 초기화 값을 당연히 본다"고 추론할 수 없습니다.
 
-Thread 사이에 어떤 메모리 일관성 관계가 있는지 확인해야 합니다.
-
-### volatile reference를 publication 경계로 사용할 수 있다
+일반적인 safe publication에는 thread 사이의 memory consistency가 정의된 경계를 사용할 수 있습니다. 예를 들어 완성된 객체를 volatile reference에 저장하고 다른 thread가 그 reference를 volatile read로 얻으면 앞선 초기화 action을 reader의 후속 action과 happens-before로 연결할 수 있습니다.
 
 ```java
-final class Config {
-    private final int port;
-    private final List<String> hosts;
-
-    Config(int port, List<String> hosts) {
-        this.port = port;
-        this.hosts = List.copyOf(hosts);
-    }
-}
-
 private volatile Config current;
 
 void publish(Config next) {
@@ -70,26 +56,24 @@ Config read() {
 }
 ```
 
-Publisher가 객체를 완성한 뒤 volatile reference에 저장하고 reader가 그 volatile field를 읽으면, volatile write/read의 happens-before 관계를 통해 이전 초기화 action을 reader 쪽과 연결할 수 있습니다.
-
 ```text
 Thread A
-Config 생성 완료
-   │
-current = config   (volatile write)
-   │
-   └────────────────────────▶ volatile read current
-                                  │
-                                  ▼
-                              Config 사용
-                               Thread B
+Config 생성과 초기화
+      │
+volatile write current
+      │ happens-before
+      ▼
+volatile read current
+      │
+Config 사용
+Thread B
 ```
 
-Synchronized lock, static initialization, concurrent collection의 규정된 handoff 등도 상황에 따라 안전한 publication 경계가 될 수 있습니다.
+같은 monitor의 unlock/lock, 적절한 `java.util.concurrent` handoff, class initialization처럼 공식 계약이 memory relation을 제공하는 경계도 상황에 따라 같은 역할을 할 수 있습니다.
 
-### final field에는 특별한 생성자 규칙이 있다
+### final field에는 생성자 종료와 연결된 특별한 보장이 있다
 
-Java는 `final` field에 대해 일반 field보다 강한 초기화 관찰 규칙을 정의합니다. 생성자에서 final field가 정상적으로 설정되고 **생성 중인 `this`가 잘못 외부로 빠져나가지 않는다면**, 다른 thread가 나중에 객체 참조를 보게 되었을 때 해당 final field의 올바르게 초기화된 값을 보도록 보장합니다.
+JLS는 올바르게 생성된 객체의 `final` field에 일반 field보다 강한 관찰 규칙을 둡니다.
 
 ```java
 final class UserConfig {
@@ -101,68 +85,73 @@ final class UserConfig {
 }
 ```
 
-이 보장은 final field를 일반 field와 구분하는 핵심입니다. JLS는 올바르게 구성된 immutable object의 final field를 다른 thread가 data race를 통해 참조받더라도 correctly initialized value를 관찰할 수 있도록 특별한 freeze semantics를 둡니다.
+객체가 constructor 안에서 final field를 설정하고 **constructor가 끝나기 전에 그 객체 참조가 다른 thread가 볼 수 있는 곳으로 빠져나가지 않았다면**, 다른 thread가 이후 그 객체 참조를 보았을 때 final field의 correctly initialized value를 관찰하도록 특별한 final-field semantics가 적용됩니다.
 
-하지만 이 규칙을 "final만 붙이면 객체 전체가 thread-safe"라고 확대하면 안 됩니다. 일반 non-final field, final reference가 가리키는 객체의 **생성 이후 mutation**, 여러 field의 atomic invariant까지 자동으로 보호하는 규칙은 아닙니다.
+JLS의 예에서도 data race를 통해 객체 참조를 얻은 reader가 `final int x`의 생성자 값은 보도록 보장되지만, 같은 객체의 일반 `int y`는 기본값을 볼 수도 있습니다.
 
-### constructor에서 `this`가 빠져나가는 것을 조심한다
+```text
+constructor
+  ├─ final x = 3
+  └─ normal y = 4
+       │
+       ▼
+잘못 동기화된 reference handoff
+       │
+       ├─ x -> final-field rule로 3 보장
+       └─ y -> 같은 보장 없음
+```
+
+이것이 "final field도 safe publication이 필요 없다"는 단순한 규칙은 아닙니다. **Final field 자체의 초기화 관찰 보장**과 객체의 일반 mutable state를 안전하게 전달·수정하는 규칙을 나눠야 합니다.
+
+### final reference가 가리키는 객체에도 생성 시점 관련 보장이 있지만 이후 mutation은 별도다
+
+JLS는 final field가 객체나 배열을 참조할 때 그 생성 시점의 상태에 대해서도 특별한 관찰 보장을 정의합니다. 하지만 이것을 "final reference가 가리키는 객체가 영원히 thread-safe하다"고 확대하면 안 됩니다.
 
 ```java
-class Listener {
-    Listener(EventBus bus) {
-        bus.register(this); // 생성 완료 전에 다른 코드가 this를 볼 수 있음
+final class Tags {
+    private final List<String> values;
+
+    Tags(List<String> values) {
+        this.values = values;
     }
 }
 ```
 
-생성자가 끝나기 전에 `this`를 외부 registry, callback, 다른 thread 등에 넘기는 것을 constructor escape라고 부릅니다. 다른 실행 흐름이 아직 초기화 중인 객체를 사용할 수 있으므로 final field semantics의 올바른 생성 전제를 깨뜨릴 수 있습니다.
+생성 이후 다른 thread가 같은 mutable List를 계속 변경한다면 그 후속 mutation에는 별도의 synchronization이 필요합니다. `final`은 reference 재대입을 막고 특별한 construction semantics를 제공하지만, 참조 대상의 미래 변경을 자동으로 직렬화하지 않습니다.
 
-가능하면 객체를 완전히 만든 뒤 별도 단계에서 등록하거나 factory가 생성 후 publication을 담당하는 구조를 검토합니다.
-
-### final reference와 immutable object는 같은 말이 아니다
+### constructor escape는 final-field 보장의 전제를 깨뜨릴 수 있다
 
 ```java
-final List<String> tags = new ArrayList<>();
-tags.add("java"); // 가능
+class Listener {
+    Listener(EventBus bus) {
+        bus.register(this);
+    }
+}
 ```
 
-`final`은 reference 변수가 다른 객체를 가리키도록 재대입하는 것을 막습니다. 그 List 내부 상태를 불변으로 만들지는 않습니다.
-
-Safe publication으로 `tags`를 포함한 객체를 전달했더라도 이후 여러 thread가 같은 mutable List를 변경한다면 다시 동기화 문제가 생깁니다.
+Constructor가 끝나기 전에 `this`를 외부 registry, callback 또는 다른 thread가 접근할 수 있는 곳에 넘기면 아직 완전히 초기화되지 않은 객체가 관찰될 수 있습니다.
 
 ```text
-safe publication
-    -> 초기 상태를 안전하게 전달
-
-subsequent mutation
-    -> 이후 변경은 별도의 thread-safety 규칙 필요
+constructor 진행 중
+      │
+      ├─ this 외부 공개  ← 위험
+      │
+      └─ 나머지 초기화
 ```
 
-### immutable object와 safe publication은 서로 보완한다
+가능하면 객체를 완전히 만든 뒤 별도 단계에서 등록하거나, factory가 생성 완료 후 publication을 담당하도록 설계하는 편이 안전합니다.
 
-객체가 생성 후 바뀌지 않으면 publication 이후 공유 상태를 계속 lock으로 보호해야 하는 부담이 줄어듭니다. 특히 final field를 올바르게 사용한 immutable object는 JMM의 특별한 생성자 semantics까지 활용할 수 있습니다. 반대로 일반 mutable object를 다른 thread와 공유한다면 publication 이후 mutation에 대한 별도 synchronization이 필요합니다.
+### 세 개념을 분리하면 혼동이 줄어든다
 
-- immutability: 생성 후 상태 변경이 없는가?
-- publication: 객체 참조와 일반 state가 thread 사이에 어떤 memory relation으로 전달되는가?
-- final-field semantics: 올바르게 생성된 final field에 JMM이 어떤 특별한 관찰 보장을 주는가?
+```text
+immutability
+→ 생성 후 상태가 변하는가?
 
-이 세 가지를 같은 말로 섞지 않는 것이 중요합니다.
+safe publication
+→ 객체 참조와 일반 state를 thread 사이에 어떤 memory relation으로 전달하는가?
 
-### 문제를 풀 때 확인할 것
+final-field semantics
+→ 올바르게 생성된 final field에 JMM이 주는 특별한 construction-time 보장은 무엇인가?
+```
 
-1. 객체가 어느 thread에서 생성되는지 봅니다.
-2. 생성 중 `this`가 외부로 빠져나가는지 확인합니다.
-3. 다른 thread가 참조를 어떤 필드/queue/lock을 통해 받는지 확인합니다.
-4. final field와 일반 mutable field를 구분합니다.
-5. publication 이후 객체가 다시 변경되는지 봅니다.
-
-### 자주 헷갈리는 부분
-
-- `final` reference가 가리키는 객체까지 깊게 불변이 되는 것은 아닙니다.
-- 올바르게 생성된 final field에는 일반 field와 다른 특별한 JMM 보장이 있습니다.
-- 생성자 안에서 객체를 외부에 등록하면 final-field 보장의 전제를 깨뜨릴 수 있습니다.
-- safe publication은 이후 모든 mutable operation을 atomic하게 만들지 않습니다.
-
-### 학습 후 스스로 설명해 보기
-
-Safe publication은 한 thread에서 만든 객체의 참조와 필요한 상태를 다른 thread가 올바르게 관찰할 수 있도록 메모리 일관성이 정의된 경계를 통해 전달하는 것을 말합니다. Volatile reference, monitor/Lock, static initialization, concurrent collection 등의 계약을 활용할 수 있습니다. 다만 Java의 final field는 예외적으로 강한 생성자 semantics를 가지며, 객체가 올바르게 생성되고 `this`가 construction 중 escape하지 않았다면 참조가 data race로 전달되더라도 final field의 correctly initialized value를 관찰하도록 보장합니다. 이 보장이 일반 mutable field나 생성 이후 변경까지 thread-safe하게 만드는 것은 아닙니다.
+불변 객체는 공유 후 동기화 부담을 크게 줄여 주지만, `final` 하나가 객체 전체의 모든 mutable behavior를 thread-safe하게 만드는 것은 아닙니다. Publication 문제를 풀 때는 constructor escape 여부, 참조 전달 경로, final과 non-final state, publication 이후 mutation을 차례로 확인해야 합니다.

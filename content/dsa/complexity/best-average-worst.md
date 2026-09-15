@@ -3,8 +3,8 @@ kind: concept
 contentKey: dsa.core.complexity.best-average-worst
 topicContentKey: dsa.core.complexity
 slug: best-average-worst
-title: "Best, Average·Worst Case"
-summary: "입력 분포와 보장 수준에 따른 세 비용 관점을 비교한다."
+title: "Best, Average and Worst Case"
+summary: "같은 입력 크기에서도 입력 상태·분포에 따라 달라지는 best·average·worst 비용을 구분한다."
 level: 1
 status: PUBLISHED
 displayOrder: 30
@@ -17,12 +17,18 @@ references:
     recommendation: "입력 크기와 basic operation count를 기준으로 linear scan 비용을 분석한다."
     displayOrder: 1
 ---
-# Best, Average·Worst Case
+# Best, Average and Worst Case
 
-best case는 가장 유리한 입력, worst case는 보장해야 하는 가장 불리한 입력, average case는 확률 분포를 가정한 기대 비용이다. 같은 binary search도 target이 첫 중간에 있는 경우와 없어서 끝까지 줄이는 경우가 다르며 average를 말하려면 input distribution을 밝혀야 한다.
+같은 크기 `n`의 입력이라도 입력 상태에 따라 알고리즘이 수행하는 연산 수가 달라질 수 있다. 이 차이를 best case, average case, worst case로 나누어 본다.
 
-평균이 빠르다는 사실이 특정 공격 입력에 대한 안전한 상한을 제공하지 않는다. 반대로 worst bound가 커도 실제 분포에서 거의 나타나지 않을 수 있으므로 timeout·capacity 계획과 사용자 체감에는 관점을 맞춰 사용한다.
+Best case는 가장 유리한 입력에서의 비용이고, worst case는 같은 크기의 입력 중 가장 큰 비용이다. Average case는 가능한 입력에 대한 **확률 분포를 가정한 기대 비용**이므로 어떤 입력이 얼마나 자주 나타나는지에 대한 가정 없이는 의미가 완성되지 않는다.
 
-### Backend 연결
+예를 들어 정렬되지 않은 배열에서 값을 순차 탐색할 때 첫 원소가 target이면 한 번의 비교로 끝날 수 있지만, target이 마지막에 있거나 존재하지 않으면 모든 원소를 확인해야 한다.
 
-endpoint의 p99와 평균을 알고리즘 average case와 혼동하지 않는다. adversarial key, 빈 결과, 최대 page 같은 경계 입력을 별도 부하 시나리오로 둔다.
+```text
+best   → 첫 위치에서 발견
+worst  → 끝까지 검사
+average → 입력 위치/존재 확률 분포를 가정한 기대 비용
+```
+
+Worst case는 특정 입력 분포를 몰라도 지켜지는 상한을 설명하는 데 유용하고, average case는 현실적인 입력 분포가 알려져 있을 때 예상 비용을 설명하는 데 유용하다. 어느 하나가 항상 더 중요한 것이 아니라 **어떤 보장을 알고 싶은지에 따라 분석 관점이 달라진다.**

@@ -26,17 +26,15 @@ references:
     referenceType: COMPANY_TECH_BLOG
     language: ko
     displayOrder: 3
-    relationNote: strong·soft·weak·phantom reference와 GC reachability를 함께 복습
+    relationNote: Java 객체와 GC reachability를 함께 복습
 ---
 # GC Reachability와 Root
 
-Java에서는 `free()`를 직접 호출하지 않습니다. 그래서 "변수가 scope를 벗어나면 객체가 삭제된다"고 단순하게 이해하기 쉽지만, 실제로 중요한 기준은 **그 객체에 아직 도달할 수 있는 참조 경로가 있는가**입니다.
+Java 객체의 수명은 "지역 변수가 scope를 벗어났는가"만으로 결정되지 않습니다. GC 관점에서 더 중요한 질문은 **살아 있는 runtime root에서 그 객체까지 참조 경로가 남아 있는가**입니다.
 
 ![GC root에서 reachable한 객체와 끊긴 객체](/learning/java/gc-reachability.svg)
 
-GC는 살아 있는 출발점에서 객체 graph를 따라가며 어떤 객체가 여전히 reachable한지 판단합니다.
-
-### 변수의 scope와 객체의 수명은 같은 것이 아니다
+### source scope와 runtime reachability는 다른 개념이다
 
 ```java
 User createUser() {
@@ -45,133 +43,94 @@ User createUser() {
 }
 ```
 
-`createUser()`가 끝나면 local variable `user`는 해당 method frame과 함께 더 이상 사용할 수 없지만, 반환된 참조를 caller가 들고 있다면 `User` 객체는 계속 사용할 수 있습니다.
+메서드가 끝나면 local variable `user`를 그 frame에서 더 이상 사용할 수 없지만, 반환된 reference를 caller가 가지고 있다면 `User` 객체는 계속 접근 가능합니다.
 
 ```text
-createUser local 종료
-         │
-         └─ caller reference ──▶ User object
-```
-
-반대로 source상 변수가 아직 lexical scope 안에 있다고 해서 JVM이 반드시 method 끝까지 그 reference를 GC root에서 live하게 유지해야 한다고 단순화할 수도 없습니다. JIT는 더 이상 사용되지 않는 값의 liveness를 분석할 수 있습니다.
-
-그래서 source scope와 runtime reachability를 분리해서 생각합니다.
-
-### GC root는 reachability 탐색의 시작점이다
-
-개념적으로 GC는 몇 가지 살아 있는 runtime root에서 참조를 따라갑니다.
-
-```text
-GC Roots
-  ├─ 실행 중 thread의 live references
-  ├─ class/static 쪽에서 유지되는 references
-  ├─ JVM/native runtime이 유지하는 일부 references
-  └─ ... implementation-defined runtime roots
-          │
-          ▼
-       object graph
-```
-
-정확한 root 종류와 collector 내부 표현은 JVM implementation의 영역입니다. 학습할 때는 **"애플리케이션이 아직 접근할 수 있는 살아 있는 경로의 출발점"**이라고 잡으면 충분합니다.
-
-### root에서 따라갈 수 있으면 객체는 reachable하다
-
-```text
-Root
- │
- ▼
-Cache
- │
- ├─▶ User A
- │      └─▶ Address A
- │
- └─▶ User B
-```
-
-`Address A`를 직접 가리키는 static field가 없어도 Root → Cache → User A → Address A라는 경로가 있기 때문에 reachable합니다.
-
-반대로:
-
-```text
-Root ──▶ User A
-
-         User C ──▶ Address C
-```
-
-`User C`로 이어지는 root 경로가 사라졌다면 `User C`와 `Address C`는 함께 회수 후보가 될 수 있습니다. 객체끼리 서로를 가리키는 cycle이 있더라도 root에서 도달할 수 없다면 reference counting처럼 단순히 "서로 참조하니 영원히 산다"고 볼 필요는 없습니다.
-
-### unreachable은 "즉시 삭제됨"이 아니다
-
-객체가 더 이상 reachable하지 않다는 것은 collector가 그 storage를 회수할 수 있는 상태가 되었다는 의미입니다.
-
-```text
-마지막 strong path 제거
+createUser frame 종료
         │
-        ▼
-unreachable
-        │
-        │ 다음 GC cycle/collector 정책
-        ▼
-reclaim 가능/수행
+caller reference ─────▶ User object
 ```
 
-정확히 언제 메모리가 재사용되는지 애플리케이션이 임의로 지정할 수는 없습니다.
+반대로 source상 local variable이 아직 lexical scope 안에 있다고 해서 JVM이 반드시 그 reference를 메서드 끝까지 live하게 유지해야 한다고 단정할 수도 없습니다. JIT는 observable behavior를 지키는 범위에서 값의 실제 liveness를 최적화할 수 있습니다.
 
-그래서 다음 코드는 잘못된 기대를 만들 수 있습니다.
+따라서 **source 변수의 scope와 객체 graph의 runtime reachability를 일대일로 대응시키지 않습니다.**
 
-```java
-object = null;
-System.gc();
-// 여기에서 객체가 반드시 즉시 물리적으로 사라졌다고 보장할 수 없음
-```
+### GC는 살아 있는 출발점에서 object graph를 본다
 
-`System.gc()`도 GC 수행을 요청하는 성격이지 특정 객체를 지금 즉시 회수하라는 강제 명령으로 이해하면 안 됩니다.
-
-### `null` 대입은 언제 의미가 있을까
-
-짧은 method의 local variable마다 습관적으로 `x = null`을 넣는 것은 보통 필요하지 않습니다. method가 곧 끝나면 reference도 자연스럽게 수명에서 벗어납니다.
-
-하지만 아주 긴 method나 장수 collection에서 더 이상 필요 없는 큰 객체 참조를 계속 보유하는 경우에는 **참조 경로를 끊는 것** 자체가 의미가 있습니다.
-
-```java
-largeBuffer = null; // 정말 이후 사용하지 않고 method가 매우 길게 계속된다면 의미가 있을 수 있음
-```
-
-더 중요한 실무 문제는 local variable보다 cache, listener, ThreadLocal, static collection처럼 장수 owner가 불필요한 객체를 계속 가리키는 경우입니다.
-
-### object graph를 그리면 memory leak도 이해하기 쉬워진다
+실제 collector는 JVM runtime이 유지하는 root 집합에서 reference를 따라 객체 graph를 탐색합니다.
 
 ```text
-static cache (root 경로)
+runtime roots
+   │
+   ├─▶ A ─▶ B
+   │
+   └─▶ C
+
+       D ─▶ E
+```
+
+A, B, C는 살아 있는 root 경로로 연결되어 있지만 D와 E로 가는 경로가 없다면 D와 E는 회수 가능한 상태가 될 수 있습니다.
+
+구체적인 root 종류와 내부 표현은 JVM 구현의 영역입니다. 학습의 핵심은 **객체가 다른 객체를 몇 개 참조하느냐가 아니라 살아 있는 root에서 도달 가능한가**입니다.
+
+### cycle만으로 객체가 영원히 사는 것은 아니다
+
+```text
+Root ──▶ A
+
+C ──▶ D
+▲     │
+└─────┘
+```
+
+C와 D가 서로를 참조하고 있어도 root에서 C나 D로 갈 수 있는 경로가 없다면 둘은 함께 회수 대상이 될 수 있습니다. Java GC를 단순 reference counting으로 생각하면 이 부분을 잘못 이해하기 쉽습니다.
+
+### unreachable과 즉시 reclaim은 같은 사건이 아니다
+
+마지막으로 필요한 strong path가 사라졌다고 객체 storage가 바로 그 순간 재사용되는 것은 아닙니다.
+
+```text
+마지막 live path 제거
+       │
+       ▼
+unreachable / 회수 가능
+       │
+       ▼
+collector의 다음 판단·cycle
+       │
+       ▼
+storage reclaim 가능
+```
+
+`System.gc()` 역시 특정 객체를 즉시 제거하라는 명령으로 이해하면 안 됩니다. JVM에 GC 수행을 요청하는 API이지 애플리케이션이 정확한 reclaim 시점을 지정하는 계약은 아닙니다.
+
+### 메모리 누수는 "필요 없음"과 "reachable"의 불일치다
+
+```text
+static cache
     │
-    └─ key -> Session
-              └─ huge payload
+    └─ Session
+         └─ large payload
 ```
 
-사용자는 session이 이미 만료됐다고 생각해도 cache에서 entry를 삭제하지 않았다면 GC 관점에서는 여전히 정상적으로 reachable합니다. GC가 고장 난 것이 아닙니다.
+업무적으로 Session이 이미 만료됐더라도 static cache에서 entry를 제거하지 않았다면 객체 graph는 계속 reachable합니다. GC가 잘못 동작하는 것이 아니라 애플리케이션이 살아 있는 reference path를 유지하고 있는 것입니다.
 
-이렇게 "필요 없음"과 "unreachable"은 같은 말이 아닙니다.
+이 차이를 구분해야 합니다.
 
-- 업무적으로 필요 없음: 애플리케이션 정책의 판단
-- GC 관점에서 unreachable: root에서 참조 경로가 없음
+```text
+업무적으로 필요 없음
+    ≠
+GC 관점에서 unreachable
+```
 
-Memory leak은 이 둘이 어긋나는 대표적인 상황입니다.
+그래서 leak을 진단할 때는 "큰 객체가 왜 안 지워졌나"보다 **어떤 owner와 retained path가 이 객체를 아직 root에 연결하고 있는가**를 찾습니다.
 
-### reference strength에 따라 reachability 분류가 더 세분화된다
+### reference strength는 이 reachability를 더 세분화한다
 
-일반적인 strong reference 외에 `SoftReference`, `WeakReference`, `PhantomReference` 같은 reference object를 사용하면 GC의 reachability 분류가 더 세밀해집니다.
+일반적인 strong reference 외에도 `SoftReference`, `WeakReference`, `PhantomReference`는 객체의 reachability를 다른 방식으로 표현합니다. 하지만 이 API도 "몇 초 뒤 지워 달라"는 수명 타이머가 아닙니다.
 
-하지만 먼저 strong reachability와 root graph를 이해하는 것이 우선입니다. reference strength를 "GC에게 몇 초 뒤 삭제하라고 말하는 API"처럼 생각하면 안 됩니다.
+먼저 strong reachability와 root graph를 이해한 뒤, cache나 cleanup처럼 객체 수명을 강하게 소유하지 않아야 하는 특별한 관계에서 reference strength를 검토하는 것이 좋습니다.
 
-### 문제를 풀 때 확인할 것
+### 정리
 
-1. source variable의 scope와 객체의 runtime reachability를 구분합니다.
-2. 살아 있는 root에서 객체까지 어떤 path가 남아 있는지 그립니다.
-3. 객체끼리 cycle이 있어도 root path가 있는지 먼저 봅니다.
-4. unreachable과 즉시 reclaim을 같은 사건으로 보지 않습니다.
-5. `System.gc()`가 특정 객체의 즉시 회수를 보장한다고 가정하지 않습니다.
-6. memory leak에서는 "왜 아직 reachable한가"를 찾습니다.
-
-### 학습 후 스스로 설명해 보기
-
-Java GC에서 객체 수명은 단순히 local variable의 scope가 끝났는지보다 GC root에서 해당 객체까지 도달 가능한지로 이해해야 합니다. Root에서 strong reference 경로가 남아 있으면 객체는 계속 reachable하고, 그 경로가 사라지면 GC가 회수할 수 있는 후보가 됩니다. Unreachable이 됐다고 즉시 메모리가 해제되는 것은 아니며, GC가 있어도 불필요한 객체가 cache나 static reference 때문에 계속 reachable하면 memory leak이 생길 수 있습니다.
+Java GC에서 객체의 수명은 source variable의 scope보다 runtime reachability를 기준으로 이해해야 합니다. 살아 있는 root에서 strong reference 경로가 남아 있으면 객체는 reachable하고, 그 경로가 끊기면 회수 가능한 상태가 될 수 있습니다. Unreachable이 됐다고 즉시 메모리가 재사용되는 것은 아니며, GC가 있어도 static cache나 listener 같은 장수 owner가 불필요한 객체를 계속 붙잡으면 memory leak이 생길 수 있습니다.

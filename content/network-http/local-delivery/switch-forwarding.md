@@ -19,17 +19,24 @@ references:
 ---
 # Switch Forwarding
 
-일반적인 Ethernet switch는 ingress port로 들어온 frame의 source MAC과 port 관계를 MAC table에 학습하고, destination MAC에 맞는 egress port를 찾아 frame을 전달한다. 같은 broadcast domain 안에서 destination을 알고 있으면 필요한 port로 보낼 수 있고, unknown unicast나 broadcast는 정책에 따라 여러 port로 flood될 수 있다. entry가 aging되거나 topology가 바뀌면 다시 학습하므로 table은 영구적인 routing database가 아니다.
+Ethernet switch는 들어온 frame의 **source MAC과 ingress port 관계를 학습**하고, destination MAC에 맞는 egress port를 찾아 frame을 전달한다. 같은 local forwarding domain에서 목적지 MAC을 알고 있으면 필요한 port로만 보낼 수 있고, 모르는 unicast나 broadcast는 여러 port로 flood될 수 있다.
 
-switch가 frame을 전달할 때는 link header의 MAC을 기준으로 하며 IP prefix의 최적 route를 계산하지 않는다. router는 IP destination을 보고 다음 network로 forwarding하면서 다음 link를 위한 새 frame을 만들고, switch는 보통 같은 L2 domain 안에서 frame을 전달한다. VLAN은 하나의 물리 장비 안에서도 forwarding domain을 분리할 수 있어 “같은 switch에 연결됨”만으로 같은 broadcast domain이라고 결론내릴 수 없다.
+### MAC table은 traffic을 보며 학습한다
 
-잘못된 학습, loop 또는 table miss가 있으면 flooding과 duplicate frame이 늘고 host의 interrupt/CPU와 link utilization이 함께 올라갈 수 있다. 반면 proxy, service mesh와 같은 application intermediary는 frame forwarding과 다른 계층의 hop이다. backend 연결 장애에서는 switch/VLAN counters와 ARP/NDP, route, proxy path를 각각 확인한다.
+Switch는 source MAC을 관찰해 `이 MAC은 이 port 뒤에 있다`는 entry를 만든다. Entry는 영구하지 않고 aging되거나 topology 변화에 따라 다시 학습될 수 있다.
 
-### Switch forwarding
-    destination MAC
-          │
-          ▼
-    MAC table ── known ──> one egress port
-          └──── unknown/broadcast ──> flood
-switch는 source MAC을 학습하며 IP route를 계산하지 않는다.
+```text
+frame ingress: port 1
+source MAC = A
+→ table: A → port 1
 
+destination MAC = B
+→ B가 table에 있으면 해당 port로 forwarding
+→ 없으면 flood
+```
+
+### Switch와 router의 책임은 다르다
+
+Switch는 같은 link-layer forwarding domain 안에서 MAC을 기준으로 frame을 전달한다. Router는 IP destination과 routing table을 보고 다른 network로 packet을 forwarding한다. VLAN을 사용하면 하나의 물리 switch에서도 여러 forwarding/broadcast domain을 만들 수 있다.
+
+핵심은 **switch가 source MAC을 학습하고 destination MAC으로 local frame의 egress port를 선택한다는 것**이며, IP routing과는 다른 계층의 동작이다.

@@ -13,7 +13,8 @@
       {"key": "C", "content": "clock edge 사이에도 값을 영구적으로 보존하는 architectural register 역할을 한다", "displayOrder": 2},
       {"key": "D", "content": "항상 다음 instruction의 주소를 결정해 PC를 갱신한다", "displayOrder": 3}
     ],
-    "correctChoiceKey": "A"
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "ALU는 선택된 operand에 덧셈·뺄셈, bitwise logic, shift, comparison 같은 연산을 수행한다. Datapath의 register와 mux가 operand와 결과의 이동을 담당하고 control signal이 수행할 연산과 write 여부를 고른다."
   },
   {
     "kind": "question",
@@ -23,7 +24,8 @@
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.datapath-control.alu-datapath"],
-    "modelAnswer": "datapath는 register, ALU, mux와 같은 구성 요소를 통해 실제 data를 이동·계산한다. control logic은 현재 instruction에 맞춰 어떤 operand를 선택할지, 어떤 ALU 연산을 할지, memory/register write를 허용할지 같은 signal을 만들어 datapath의 동작을 선택한다."
+    "modelAnswer": "datapath는 register, ALU, mux와 같은 구성 요소를 통해 실제 data를 이동·계산한다. control logic은 현재 instruction에 맞춰 어떤 operand를 선택할지, 어떤 ALU 연산을 할지, memory/register write를 허용할지 같은 signal을 만들어 datapath의 동작을 선택한다.",
+    "explanationMarkdown": "datapath는 register, ALU, mux와 같은 구성 요소를 통해 실제 data를 이동·계산한다. control logic은 현재 instruction에 맞춰 어떤 operand를 선택할지, 어떤 ALU 연산을 할지, memory/register write를 허용할지 같은 signal을 만들어 datapath의 동작을 선택한다."
   },
   {
     "kind": "question",
@@ -33,7 +35,8 @@
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.datapath-control.alu-datapath"],
-    "modelAnswer": "ALU 내부에는 12라는 계산 결과가 만들어지지만 destination register에 write가 허용되지 않으므로 x3의 architectural value는 바뀌지 않는다. 이 사례는 datapath에서 값을 계산하는 것과 control signal이 그 결과를 architectural state로 commit하도록 허용하는 것이 별도 책임임을 보여 준다."
+    "modelAnswer": "ALU 내부에는 12라는 계산 결과가 만들어지지만 destination register에 write가 허용되지 않으므로 x3의 architectural value는 바뀌지 않는다. 이 사례는 datapath에서 값을 계산하는 것과 control signal이 그 결과를 architectural state로 commit하도록 허용하는 것이 별도 책임임을 보여 준다.",
+    "explanationMarkdown": "ALU 내부에는 12라는 계산 결과가 만들어지지만 destination register에 write가 허용되지 않으므로 x3의 architectural value는 바뀌지 않는다. 이 사례는 datapath에서 값을 계산하는 것과 control signal이 그 결과를 architectural state로 commit하도록 허용하는 것이 별도 책임임을 보여 준다."
   },
   {
     "kind": "question",
@@ -49,7 +52,8 @@
       {"key": "C", "content": "cache miss가 발생할 때마다 DRAM의 물리 cell을 직접 읽는다", "displayOrder": 2},
       {"key": "D", "content": "instruction 종류와 무관하게 모든 datapath signal을 항상 같은 값으로 유지한다", "displayOrder": 3}
     ],
-    "correctChoiceKey": "A"
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "Control unit은 instruction encoding과 현재 상태를 해석해 ALU operation, operand mux, register write, memory access, next PC 같은 control signal을 만든다. 실제 data 계산과 이동은 그 signal을 받은 datapath가 수행한다."
   },
   {
     "kind": "question",
@@ -59,7 +63,8 @@
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.datapath-control.control-unit"],
-    "modelAnswer": "hardwired control은 조합·순차 논리 회로로 instruction과 상태를 직접 해석해 signal을 만들어 빠른 대신 복잡한 ISA 변경이나 수정이 어렵다. microprogrammed control은 control store의 microinstruction sequence로 signal을 정의해 복잡한 동작을 구조화하고 수정하기 쉽지만 control store 조회와 sequencing 비용이 추가될 수 있다."
+    "modelAnswer": "hardwired control은 조합·순차 논리 회로로 instruction과 상태를 직접 해석해 signal을 만들어 빠른 대신 복잡한 ISA 변경이나 수정이 어렵다. microprogrammed control은 control store의 microinstruction sequence로 signal을 정의해 복잡한 동작을 구조화하고 수정하기 쉽지만 control store 조회와 sequencing 비용이 추가될 수 있다.",
+    "explanationMarkdown": "hardwired control은 조합·순차 논리 회로로 instruction과 상태를 직접 해석해 signal을 만들어 빠른 대신 복잡한 ISA 변경이나 수정이 어렵다. microprogrammed control은 control store의 microinstruction sequence로 signal을 정의해 복잡한 동작을 구조화하고 수정하기 쉽지만 control store 조회와 sequencing 비용이 추가될 수 있다."
   },
   {
     "kind": "question",
@@ -69,7 +74,8 @@
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.datapath-control.control-unit"],
-    "modelAnswer": "정상 effective address는 0x1020이어야 하지만 잘못된 operand select 때문에 ALU가 0x1080을 계산한다. memory unit은 자신에게 전달된 주소를 정상적으로 읽을 수 있으므로 엉뚱한 위치의 값을 load하거나 protection/page fault가 발생할 수 있다. ALU 자체가 맞게 계산했어도 control signal이 틀리면 instruction semantics가 깨진다."
+    "modelAnswer": "정상 effective address는 0x1020이어야 하지만 잘못된 operand select 때문에 ALU가 0x1080을 계산한다. memory unit은 자신에게 전달된 주소를 정상적으로 읽을 수 있으므로 엉뚱한 위치의 값을 load하거나 protection/page fault가 발생할 수 있다. ALU 자체가 맞게 계산했어도 control signal이 틀리면 instruction semantics가 깨진다.",
+    "explanationMarkdown": "정상 effective address는 0x1020이어야 하지만 잘못된 operand select 때문에 ALU가 0x1080을 계산한다. memory unit은 자신에게 전달된 주소를 정상적으로 읽을 수 있으므로 엉뚱한 위치의 값을 load하거나 protection/page fault가 발생할 수 있다. ALU 자체가 맞게 계산했어도 control signal이 틀리면 instruction semantics가 깨진다."
   },
   {
     "kind": "question",
@@ -85,7 +91,8 @@
       {"key": "C", "content": "frequency가 높아지면 workload의 CPI도 반드시 같은 비율로 감소한다", "displayOrder": 2},
       {"key": "D", "content": "cycle time은 clock frequency와 비례하므로 frequency가 높을수록 길어진다", "displayOrder": 3}
     ],
-    "correctChoiceKey": "A"
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "동기식 datapath에서는 clock edge 사이에 조합 논리가 계산하고 다음 edge에서 register 같은 순차 상태가 갱신된다. Cycle time은 결과가 안정되고 setup 조건을 만족할 시간을 포함해야 한다."
   },
   {
     "kind": "question",
@@ -95,7 +102,8 @@
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.datapath-control.clock-cycle"],
-    "acceptedAnswers": ["1/f", "frequency의 역수", "clock frequency의 역수"]
+    "acceptedAnswers": ["1/f", "frequency의 역수", "clock frequency의 역수"],
+    "explanationMarkdown": "Frequency는 초당 cycle 수이므로 한 cycle의 시간은 그 역수다. 따라서 cycle time은 `T=1/f`로 계산한다."
   },
   {
     "kind": "question",
@@ -105,7 +113,8 @@
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.datapath-control.clock-cycle"],
-    "modelAnswer": "instruction 하나당 평균 시간은 CPI/clock rate로 비교할 수 있다. A는 1.5/3 GHz = 0.5 ns, B는 2.4/4 GHz = 0.6 ns이므로 같은 instruction 수라면 A가 더 짧다. clock rate만 높다고 반드시 빠른 것이 아니라 CPI를 함께 봐야 한다."
+    "modelAnswer": "instruction 하나당 평균 시간은 CPI/clock rate로 비교할 수 있다. A는 1.5/3 GHz = 0.5 ns, B는 2.4/4 GHz = 0.6 ns이므로 같은 instruction 수라면 A가 더 짧다. clock rate만 높다고 반드시 빠른 것이 아니라 CPI를 함께 봐야 한다.",
+    "explanationMarkdown": "instruction 하나당 평균 시간은 CPI/clock rate로 비교할 수 있다. A는 1.5/3 GHz = 0.5 ns, B는 2.4/4 GHz = 0.6 ns이므로 같은 instruction 수라면 A가 더 짧다. clock rate만 높다고 반드시 빠른 것이 아니라 CPI를 함께 봐야 한다."
   },
   {
     "kind": "question",
@@ -121,7 +130,8 @@
       {"key": "C", "content": "critical path는 instruction count만 결정하고 clock rate에는 영향을 주지 않는다", "displayOrder": 2},
       {"key": "D", "content": "critical path가 길어질수록 같은 회로에서 안전한 최대 frequency도 자동으로 높아진다", "displayOrder": 3}
     ],
-    "correctChoiceKey": "A"
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "Register에서 출발해 조합 논리를 지나 다음 register에 도달하는 경로 중 가장 긴 지연이 critical path다. Clock period를 그보다 짧게 잡으면 다음 edge에서 안정된 값을 저장하지 못할 수 있다."
   },
   {
     "kind": "question",
@@ -131,7 +141,8 @@
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.datapath-control.critical-path"],
-    "acceptedAnswers": ["800 MHz", "0.8 GHz", "800MHz", "0.8GHz"]
+    "acceptedAnswers": ["800 MHz", "0.8 GHz", "800MHz", "0.8GHz"],
+    "explanationMarkdown": "최소 cycle time이 1.25 ns라면 최대 frequency는 그 역수다. `1 / 1.25 ns = 0.8 GHz`, 즉 약 800 MHz다."
   },
   {
     "kind": "question",
@@ -141,7 +152,8 @@
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.datapath-control.critical-path"],
-    "modelAnswer": "각 stage는 조합 논리와 register overhead를 합쳐야 하므로 0.95 ns와 1.05 ns가 필요하고 최소 cycle time은 더 긴 1.05 ns다. clock rate는 높일 수 있어 pipeline이 채워진 뒤 처리량은 좋아질 수 있지만 한 작업이 두 stage를 지나므로 cycle 수 기준 지연 시간과 pipeline register 비용, hazard 처리 복잡도는 증가할 수 있다."
+    "modelAnswer": "각 stage는 조합 논리와 register overhead를 합쳐야 하므로 0.95 ns와 1.05 ns가 필요하고 최소 cycle time은 더 긴 1.05 ns다. clock rate는 높일 수 있어 pipeline이 채워진 뒤 처리량은 좋아질 수 있지만 한 작업이 두 stage를 지나므로 cycle 수 기준 지연 시간과 pipeline register 비용, hazard 처리 복잡도는 증가할 수 있다.",
+    "explanationMarkdown": "각 stage는 조합 논리와 register overhead를 합쳐야 하므로 0.95 ns와 1.05 ns가 필요하고 최소 cycle time은 더 긴 1.05 ns다. clock rate는 높일 수 있어 pipeline이 채워진 뒤 처리량은 좋아질 수 있지만 한 작업이 두 stage를 지나므로 cycle 수 기준 지연 시간과 pipeline register 비용, hazard 처리 복잡도는 증가할 수 있다."
   },
   {
     "kind": "question",
@@ -154,10 +166,11 @@
     "choices": [
       {"key": "A", "content": "branch condition과 target이 확정되기 전에는 다음에 fetch할 PC가 불확실할 수 있다", "displayOrder": 0},
       {"key": "B", "content": "branch instruction은 register나 PC를 전혀 읽지 않으므로 pipeline에 dependency가 생길 수 없다", "displayOrder": 1},
-      {"key": "C", "content": "branch를 만나면 CPU는 항상 pipeline 전체를 종료하고 operating system으로 전환한다", "displayOrder": 2},
+      {"key": "C", "content": "branch opcode만 decode하면 condition 평가 없이 target 여부가 항상 확정된다", "displayOrder": 2},
       {"key": "D", "content": "branch prediction이 맞더라도 이미 fetch한 모든 instruction을 반드시 폐기해야 한다", "displayOrder": 3}
     ],
-    "correctChoiceKey": "A"
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "Branch condition과 target이 확정되기 전에는 sequential PC와 target PC 중 어느 주소를 fetch할지 알 수 없다. Prediction이 틀리면 잘못 가져온 instruction을 squash하고 올바른 PC에서 다시 시작해 penalty가 생긴다."
   },
   {
     "kind": "question",
@@ -167,7 +180,8 @@
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.datapath-control.branch-control-flow"],
-    "modelAnswer": "예측한 PC를 따라 branch 뒤의 instruction들을 미리 fetch/decode했지만 실제 branch 결과가 반대라면 그 instruction들은 architectural state에 반영되면 안 된다. CPU는 잘못된 경로의 work를 squash/flush하고 실제 target PC에서 fetch를 다시 시작하며 그동안의 빈 cycle이 misprediction penalty가 된다."
+    "modelAnswer": "예측한 PC를 따라 branch 뒤의 instruction들을 미리 fetch/decode했지만 실제 branch 결과가 반대라면 그 instruction들은 architectural state에 반영되면 안 된다. CPU는 잘못된 경로의 work를 squash/flush하고 실제 target PC에서 fetch를 다시 시작하며 그동안의 빈 cycle이 misprediction penalty가 된다.",
+    "explanationMarkdown": "예측한 PC를 따라 branch 뒤의 instruction들을 미리 fetch/decode했지만 실제 branch 결과가 반대라면 그 instruction들은 architectural state에 반영되면 안 된다. CPU는 잘못된 경로의 work를 squash/flush하고 실제 target PC에서 fetch를 다시 시작하며 그동안의 빈 cycle이 misprediction penalty가 된다."
   },
   {
     "kind": "question",
@@ -177,6 +191,7 @@
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.datapath-control.branch-control-flow"],
-    "modelAnswer": "instruction당 추가 stall은 0.20 × 0.10 × 12 = 0.24 cycle이므로 평균 CPI는 약 1.24다. branch 비율이나 penalty가 큰 pipeline일수록 같은 정확도 개선이 줄이는 wasted work가 커진다. 다만 실제 성능은 predictor 비용, pipeline depth와 다른 stall도 함께 측정해야 한다."
+    "modelAnswer": "instruction당 추가 stall은 0.20 × 0.10 × 12 = 0.24 cycle이므로 평균 CPI는 약 1.24다. branch 비율이나 penalty가 큰 pipeline일수록 같은 정확도 개선이 줄이는 wasted work가 커진다. 다만 실제 성능은 predictor 비용, pipeline depth와 다른 stall도 함께 측정해야 한다.",
+    "explanationMarkdown": "instruction당 추가 stall은 0.20 × 0.10 × 12 = 0.24 cycle이므로 평균 CPI는 약 1.24다. branch 비율이나 penalty가 큰 pipeline일수록 같은 정확도 개선이 줄이는 wasted work가 커진다. 다만 실제 성능은 predictor 비용, pipeline depth와 다른 stall도 함께 측정해야 한다."
   }
 ]

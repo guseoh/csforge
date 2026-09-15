@@ -3,8 +3,8 @@ kind: concept
 contentKey: infrastructure.core.reliability.iac-rollout
 topicContentKey: infrastructure.core.reliability
 slug: iac-rollout
-title: "IaC와 immutable rollout"
-summary: "선언적 infrastructure state, drift·review·rollback과 rolling/blue-green rollout을 판단한다"
+title: "IaC와 단계적 배포"
+summary: "infrastructure desired state를 코드로 관리해 drift를 줄이고 rolling·blue/green rollout에서 old/new version과 traffic 전환의 실패 경계를 판단한다."
 level: 3
 status: PUBLISHED
 displayOrder: 30
@@ -22,40 +22,55 @@ references:
     displayOrder: 2
     relationNote: "rolling update와 rollout state 확인"
 ---
-# IaC와 immutable rollout
+# IaC와 단계적 배포
 
-Infrastructure를 console에서 수동으로 바꾸면 현재 실제 상태와 문서·review된 의도가 어긋날 수 있습니다. IaC(Infrastructure as Code)는 원하는 resource state를 코드로 선언하고 plan·apply·review를 통해 변경을 재현하려는 방식입니다.
+운영 환경을 console에서 직접 수정하다 보면 실제 resource 상태와 문서·코드가 쉽게 어긋납니다. IaC(Infrastructure as Code)는 **원하는 infrastructure 상태를 versioned code로 표현하고 변경을 review·재현할 수 있게 하는 방식**입니다.
 
 ```text
-versioned desired state
-        │ plan/review/apply
-        ▼
-actual infrastructure
-        ▲
-        └─ drift detection
+desired state in code
+        │
+        ├─ review
+        ├─ plan
+        └─ apply
+             │
+             ▼
+      actual infrastructure
 ```
 
-### state와 실제 resource를 구분한다
+실제 resource가 code와 다르게 수동 변경되면 drift가 생깁니다. 그래서 apply 전에 현재 상태와 원하는 상태의 차이를 확인하고, state를 사용하는 도구라면 state 자체의 동시 수정·backup·secret 노출도 관리해야 합니다.
 
-IaC state가 오래되거나 여러 operator가 console에서 수정하면 drift가 생깁니다. apply 전에 실제 resource와 state 차이를 확인하고, state file의 lock·backup·secret 보호를 설계해야 합니다.
+### 배포는 old/new version의 공존 구간을 가진다
 
-### rollout은 traffic과 version의 transition이다
+Rolling update에서는 기존 instance를 조금씩 새 version으로 교체하므로 잠시 old/new application이 함께 요청을 처리할 수 있습니다.
 
-Rolling update는 old/new instance가 잠시 공존하고 readiness에 따라 traffic이 이동합니다. Blue/green은 별도 fleet을 준비한 뒤 switch하지만 resource 비용과 전환·rollback time이 큽니다. schema가 old/new code와 호환되지 않으면 application image만 교체해도 rollout이 안전하지 않습니다.
+```text
+old old old
+   ↓
+old old new
+   ↓
+old new new
+   ↓
+new new new
+```
 
-### rollback은 code만 되돌리는 일이 아니다
+이 기간 동안 API나 DB schema가 두 version 모두와 호환되어야 합니다. 새 instance가 readiness를 통과한 뒤 traffic을 받고, old instance는 새로운 traffic에서 제외된 뒤 남은 요청을 마치는 흐름이 필요합니다.
 
-이미 실행한 DB migration, queue message schema, external side effect와 data transformation은 image rollback으로 되돌아가지 않습니다. backward-compatible expand/contract와 observation window, forward fix·compensation을 함께 설계합니다.
+Blue/green deployment는 old와 new fleet을 별도로 준비한 뒤 traffic을 전환할 수 있어 rollback 경계가 명확할 수 있지만, 두 환경을 동시에 유지하는 비용과 data/schema 호환성 문제는 여전히 남습니다.
 
-### 문제를 풀 때 확인할 것
+### Rollback은 image만 되돌리는 것이 아니다
 
-1. desired state·actual state·drift owner를 확인합니다.
-2. plan review와 apply lock/state backup을 둡니다.
-3. readiness와 traffic shift 순서를 봅니다.
-4. old/new schema·message compatibility를 확인합니다.
-5. rollback 불가능한 side effect와 migration을 별도 runbook으로 둡니다.
+Application image를 이전 version으로 되돌려도 이미 실행된 DB migration, message schema 변경, 외부 API side effect가 자동으로 원래 상태로 돌아가지는 않습니다.
 
-### 면접에서 설명한다면
+```text
+new app 배포
+  ├─ DB migration 적용
+  ├─ new message 발행
+  └─ external side effect
 
-IaC는 infrastructure 변경을 versioned desired state로 review·재현하고 drift를 찾는 방법입니다. Rolling/blue-green rollout은 old/new instance와 traffic의 transition이므로 readiness와 compatibility가 필요합니다. Rollback도 image만 되돌리는 것이 아니라 이미 적용한 schema·message·외부 side effect의 복구 전략까지 포함해야 합니다.
+image rollback
+→ 위 변화까지 자동 rollback되지 않음
+```
 
+그래서 database schema는 old/new code가 일정 기간 함께 사용할 수 있게 expand/contract 방식으로 진화시키고, 되돌릴 수 없는 data transformation이나 외부 효과는 forward fix·compensation 전략까지 고려해야 합니다.
+
+IaC와 rollout의 핵심은 자동화 도구 자체가 아니라 **변경 의도를 versioned state로 남기고, old/new 상태가 공존하는 전환 구간을 관측하면서 실패했을 때 어디까지 되돌릴 수 있는지 명확히 하는 것**입니다.

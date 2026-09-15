@@ -66,6 +66,6 @@ seq scan 비용
 
 ### index는 write 때 유지 비용을 낸다
 
-INSERT/UPDATE/DELETE가 발생하면 table뿐 아니라 관련 index도 갱신해야 합니다. index가 많을수록 저장 공간, cache 사용, write I/O, vacuum/maintenance 부담이 늘 수 있습니다. 그래서 “나중에 쓸지도 모르니 모든 column에 index”는 좋은 기본값이 아닙니다.
+INSERT/UPDATE/DELETE는 관련 index의 유지 비용을 만들 수 있지만, 실제 갱신 시점과 새 index entry 생성 여부는 operation과 HOT 가능 여부에 따라 달라집니다. index가 많을수록 저장 공간, cache 사용, write I/O, vacuum/maintenance 부담이 늘 수 있습니다. 그래서 “나중에 쓸지도 모르니 모든 column에 index”는 좋은 기본값이 아닙니다.
 
 Index 설계는 query 형태와 실제 실행 계획을 기반으로 해야 합니다. **어떤 predicate와 ordering이 반복되고, 얼마나 많은 row를 줄이며, 그 이득이 write 비용보다 큰지**를 보는 것이 핵심입니다.

@@ -4,7 +4,7 @@ contentKey: network-http.core.http-cache.if-none-match
 topicContentKey: network-http.core.http-cache
 slug: if-none-match
 title: "If-None-Match"
-summary: "ETag 조건부 요청이 304 또는 새 representation으로 이어지는 흐름을 설명한다."
+summary: "client가 ETag를 보내 현재 representation과 일치하지 않을 때만 full response를 받는 조건부 요청을 설명한다."
 level: 2
 status: PUBLISHED
 displayOrder: 60
@@ -17,17 +17,18 @@ references:
 ---
 # If-None-Match
 
-client는 저장한 representation의 ETag를 `If-None-Match`에 넣어 현재 선택된 representation과 일치하는지 묻는다. 값은 하나의 tag가 아니라 여러 tag 목록일 수 있고 `*`는 어떤 current representation이 존재하는지를 조건으로 삼는다. server는 요청 대상과 현재 representation을 선택한 뒤 validator를 비교해야 하며, 단순히 header 문자열을 애플리케이션 cache key와 비교하는 것으로 대체할 수 없다.
+`If-None-Match`는 client가 알고 있는 ETag를 request에 보내고, 현재 selected representation이 그 validator와 **일치하지 않을 때만** 일반적인 response를 수행하도록 만드는 conditional request field다.
 
-GET 또는 HEAD에서 조건이 일치하면 server는 보통 304를 반환해 client가 보관한 body를 재사용하게 한다. 그 조건이 일치하지 않으면 일반 응답을 생성한다. GET/HEAD가 아닌 method에서 일치하면 304가 아니라 412 Precondition Failed 흐름이 될 수 있으므로, `If-None-Match`를 모든 method에 “cache hit면 304”로 구현해서는 안 된다. 이 header의 cache 비교에는 weak comparison이 쓰일 수 있지만, tag의 따옴표·`W/` 표기·목록 parsing을 보존해야 한다.
+GET 또는 HEAD에서 ETag가 일치하면 server는 representation content를 다시 보내지 않고 `304 Not Modified`를 반환할 수 있다. 일치하지 않으면 현재 representation을 일반적인 `200 OK` response로 반환한다.
 
-`If-None-Match`와 `If-Modified-Since`가 함께 오면 ETag 조건이 우선되고 뒤의 날짜 조건을 독립적으로 적용하지 않는 규칙을 따른다. 또한 validator가 일치하더라도 resource 존재 여부와 authorization, tenant scope를 먼저 올바르게 확인해야 한다. 304 또는 412를 반환하는 것은 body를 생략하는 최적화나 동시성 전제조건의 결과이지 권한 검사를 우회하는 방법이 아니다.
+```text
+If-None-Match: "v7"
+        ↓
+current ETag == "v7" ?
+   yes → 304
+   no  → 200 + current representation
+```
 
-### Backend 연결
+`If-None-Match`는 여러 ETag를 포함할 수도 있고 `*`를 사용해 current representation의 존재 여부를 조건으로 삼을 수도 있다. GET/HEAD가 아닌 state-changing method에서 조건이 만족되지 않는 경우에는 304가 아니라 precondition failure semantics가 적용될 수 있다.
 
-목록 query parameter, locale, authorization·tenant context가 응답 선택에 영향을 주면 ETag와 cache variation이 그 경계를 함께 반영해야 한다. 304 응답에 필요한 cache metadata가 누락되지 않는지, ETag가 일치하지만 권한이 바뀐 사용자의 resource를 재사용하지 않는지 endpoint와 proxy를 함께 테스트한다.
-### If-None-Match 분기
-    validator compare
-      ├─ match → 304 → reuse stored body
-      └─ mismatch → 200 + new representation
-validator 대상과 cache key의 user/locale variation을 함께 확인한다.
+`If-Modified-Since`와 함께 들어오면 ETag 기반 조건이 우선한다. 핵심은 **ETag validator를 사용해 불필요한 representation 전송을 피하거나 request precondition을 표현하는 것**이며, header match가 authorization이나 resource selection을 대신하는 것은 아니다.

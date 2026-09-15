@@ -3,8 +3,8 @@ kind: concept
 contentKey: cache.core.operations.eviction-memory
 topicContentKey: cache.core.operations
 slug: eviction-memory
-title: "eviction과 memory budget"
-summary: "cache memory limit과 eviction policy가 hit ratio·write 실패·재생성 비용에 미치는 영향을 판단한다"
+title: "퇴출 정책과 메모리 예산"
+summary: "캐시 메모리 한계를 넘을 때 어떤 key를 제거할지 결정하는 eviction 정책을 working set·hit ratio·재생성 비용과 연결한다."
 level: 2
 status: PUBLISHED
 displayOrder: 10
@@ -16,40 +16,43 @@ references:
     displayOrder: 1
     relationNote: "maxmemory와 LRU/LFU/noeviction 계열 정책 확인"
 ---
-# eviction과 memory budget
+# 퇴출 정책과 메모리 예산
 
-Cache는 memory를 사용하므로 working set이 한계를 넘으면 무엇을 버릴지 결정해야 합니다. Redis의 eviction은 canonical DB row를 삭제하는 것이 아니라 다시 만들 수 있는 cache key를 제거하는 정책이어야 합니다.
+캐시는 메모리를 무한히 사용할 수 없습니다. Redis가 `maxmemory` 한계에 도달하면 설정된 정책에 따라 일부 key를 제거하거나 새 write를 거부할 수 있습니다. 중요한 점은 **어떤 key가 사라져도 원본에서 다시 만들 수 있어야 한다**는 것입니다.
 
 ```text
-cache memory
-  ├─ maxmemory 이하 ─▶ SET 허용
-  └─ 한계 초과 ─▶ policy에 따라 key eviction 또는 cache write error
+working set 증가
+      │
+      ▼
+maxmemory 도달
+  ├─ eviction policy → 일부 cache key 제거
+  └─ noeviction      → 새 cache write 실패 가능
 ```
 
-### policy는 workload 가정을 표현한다
+### 정책은 access pattern에 대한 가정이다
 
-Redis의 `allkeys-lru`·`volatile-lru`는 최근 사용 정도를, `allkeys-lfu`·`volatile-lfu`는 사용 빈도를 eviction 후보 선택에 반영합니다. `volatile-*` 정책은 expiration이 있는 key만 대상으로 하고, 후보 key가 없으면 `noeviction`처럼 새 write가 실패할 수 있습니다. 어떤 policy가 “가장 좋은가”는 key 분포·TTL·cache miss 재생성 비용에 달려 있습니다.
+최근 사용한 값을 오래 남기고 싶다면 LRU 계열, 자주 사용되는 값을 남기고 싶다면 LFU 계열을 검토할 수 있습니다. TTL이 있는 key만 eviction 대상으로 삼는 정책도 있습니다.
 
-여기서 **Redis의 LRU/LFU를 textbook의 정확한 LRU/LFU 구현과 동일시하면 안 됩니다.** Redis Open Source의 LRU는 전체 key를 정확한 recency 순서로 정렬하지 않고 일부 key를 sampling해 오래된 후보를 고르는 approximated LRU입니다. LFU도 모든 access count를 정확히 저장하는 방식이 아니라 probabilistic counter와 decay를 사용하는 근사 정책입니다. 따라서 `allkeys-lru`를 설정했다고 “전체 key 중 정확히 가장 오래 사용되지 않은 key가 반드시 다음에 제거된다”고 예측할 수는 없습니다.
+다만 Redis의 LRU/LFU는 textbook의 완전한 정렬을 그대로 구현하는 것이 아닙니다. LRU는 sampling 기반의 근사 정책이고 LFU도 probabilistic counter와 decay를 사용합니다. 따라서 특정 key가 정확히 다음 eviction 대상이라고 단정하기보다 **workload 전체의 hit ratio와 eviction rate**를 봐야 합니다.
 
-### eviction은 hit ratio를 바꾼다
+### entry 수보다 실제 메모리와 재생성 비용을 본다
 
-큰 value 하나가 작은 hot value 여러 개를 밀어내면 memory 사용량은 정상이어도 hit ratio와 origin load가 급격히 나빠질 수 있습니다. entry count만 보지 말고 serialized size, key별 hit, eviction 수와 origin 대체 처리 지연 시간을 같이 봐야 합니다.
+큰 value 몇 개가 작은 hot value를 밀어내면 key 개수는 많지 않아도 hit ratio가 크게 떨어질 수 있습니다. 반대로 자주 쓰이지 않는 작은 값이 많아도 working set과 eviction 특성이 달라집니다.
 
-Redis의 근사 LRU/LFU 특성까지 고려하면 eviction 결과를 개별 key 단위로 예언하기보다 workload에서 실제 hit/miss와 eviction rate가 어떻게 변하는지 측정하는 편이 중요합니다. Sample count나 LFU decay parameter를 바꾸는 것도 CPU 비용과 적응 속도의 trade-off가 있으므로 측정 근거 없이 tuning하지 않습니다.
+```text
+memory pressure
+   │
+   ├─ eviction 증가
+   ├─ cache miss 증가
+   └─ origin read 증가
+          │
+          └─ DB 부하까지 상승 가능
+```
 
-### cache와 durable data의 policy를 섞지 않는다
+그래서 memory usage, serialized value size, eviction rate, hit ratio, miss 이후 원본 조회 비용을 함께 관측합니다.
 
-`noeviction`이나 memory pressure 때문에 **Redis의 cache SET/UPDATE가 실패하는 것**과 **PostgreSQL의 canonical write가 실패하는 것**은 서로 다른 사건입니다. DB commit이 이미 성공했다면 cache write 실패는 stale/miss·degraded mode·retry 여부를 별도로 결정해야 하고, cache 실패가 canonical commit을 자동으로 되돌린다고 가정하면 안 됩니다. 반대로 Redis를 유일한 주문 source로 사용하면서 eviction을 허용한다면 key 제거가 곧 business data loss가 될 수 있으므로 V1의 derived cache 원칙과 맞지 않습니다. CSForge에서는 origin에서 재생성 가능한 값에만 eviction을 허용합니다.
+### cache write 실패와 canonical write 실패는 다르다
 
-### 문제를 풀 때 확인할 것
+PostgreSQL commit이 성공한 뒤 Redis가 `noeviction`이나 장애로 `SET`에 실패했다고 해서 원본 데이터까지 실패한 것은 아닙니다. Cache-Aside 구조라면 다음 조회에서 다시 채우거나 일정 기간 cache 없이 동작할 수 있습니다.
 
-1. 어떤 key가 eviction되어도 안전한지 정합니다.
-2. memory limit, value size와 fragmentation을 측정합니다.
-3. Redis LRU/LFU가 근사 정책이라는 구현 경계를 알고 실제 access skew·hit/miss를 측정합니다.
-4. eviction 뒤 origin 부하와 재생성 폭주를 확인합니다.
-5. `noeviction`으로 cache write가 실패할 때 canonical DB 결과와 application degraded behavior를 어떻게 처리할지 정합니다.
-
-### 면접에서 설명한다면
-
-Eviction은 memory limit을 넘을 때 어떤 cache key를 제거할지 정하는 정책입니다. Redis의 LRU/LFU는 정확한 textbook 알고리즘이 아니라 sampling과 probabilistic counter를 사용하는 근사 구현이므로 특정 key의 eviction을 결정적으로 예측하지 않습니다. Eviction 가능한 값은 origin에서 재생성할 수 있어야 하고, 메모리 사용량뿐 아니라 eviction rate·hit ratio·serialized size·origin 부하를 함께 관측해야 합니다.
+퇴출 정책을 고르는 핵심은 LRU와 LFU 이름을 외우는 것이 아니라 **제한된 메모리 안에서 어떤 working set을 유지할 때 실제 원본 부하와 사용자 지연이 가장 안정적인지**를 측정하는 것입니다.

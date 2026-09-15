@@ -4,7 +4,7 @@ contentKey: dsa.core.search-sort.linear-search
 topicContentKey: dsa.core.search-sort
 slug: linear-search
 title: "Linear Search"
-summary: "정렬 전제 없이 순차적으로 후보를 제거하는 탐색의 correctness와 비용을 설명한다."
+summary: "순차 검사와 조기 종료의 correctness·최악 비용을 설명한다."
 level: 1
 status: PUBLISHED
 displayOrder: 10
@@ -19,39 +19,17 @@ references:
 ---
 # Linear Search
 
-### 가장 단순한 탐색은 후보를 하나씩 확인한다
-
-linear search는 첫 원소부터 차례로 target equality를 검사한다. 정렬이나 별도 index가 없어도 사용할 수 있다는 것이 가장 큰 장점이다.
+Linear search는 첫 원소부터 차례대로 target과 비교하며 후보를 하나씩 제거한다. 별도의 정렬이나 index가 없어도 사용할 수 있다는 점이 장점이다.
 
 ```text
-[7, 2, 9, 4, 5]
- target = 4
-
+[7, 2, 9, 4, 5], target = 4
 7 ✗ → 2 ✗ → 9 ✗ → 4 ✓
 ```
 
-찾으면 즉시 종료할 수 있고, 끝까지 갔는데도 없으면 miss다. 따라서 target이 첫 위치에 있으면 비교 1번으로 끝나지만 마지막에 있거나 존재하지 않으면 n개를 모두 확인해야 한다.
+First match를 찾는 문제라면 현재 index 이전의 모든 원소를 이미 검사했고 target이 아니었다는 invariant를 유지할 수 있다. Equality가 성립하면 즉시 반환하고, 끝까지 도달하면 target이 존재하지 않는다는 결론을 낸다.
 
-### correctness는 '무엇을 찾는다'는 계약부터 정한다
+Target이 첫 위치에 있으면 한 번의 비교로 끝나지만, 마지막에 있거나 존재하지 않으면 n개를 모두 확인해야 하므로 worst-case는 O(n)이다. Average cost를 말하려면 target 위치나 존재 확률에 대한 분포 가정이 필요하다.
 
-중복 key가 있을 때 요구사항이 first match인지 any match인지 all matches인지에 따라 알고리즘 결과가 달라진다. first match라면 왼쪽부터 scan하면서 처음 equality가 true인 순간 반환하면 된다. all matches라면 조기 종료하면 안 된다.
+중복 값에서 첫 일치, 아무 일치, 모든 일치 중 무엇을 원하는지도 먼저 정해야 한다. 모든 일치를 찾아야 한다면 첫 equality에서 종료할 수 없다.
 
-따라서 linear search의 loop invariant는 예를 들어 다음처럼 쓸 수 있다.
-
-```text
-index i 이전의 모든 원소는 이미 검사했고 target이 아니었다.
-```
-
-반복이 끝났을 때 전체 range가 검사됐으므로 target이 없다는 결론을 낼 수 있다.
-
-### worst-case O(n)은 단순하지만 때로 충분히 좋은 선택이다
-
-n이 작고 상한이 명확하면 별도 index를 만들거나 정렬하는 비용보다 linear scan이 단순하고 빠를 수 있다. 한 번만 검색할 데이터에 O(n log n) sort를 먼저 하는 것이 오히려 낭비일 수도 있다.
-
-반대로 같은 collection에서 search가 반복되고 n이 커지면 O(n) scan이 누적된다. 이때는 정렬 후 binary search, hash table, tree 같은 구조로 preprocessing/update 비용을 지불하고 lookup을 줄이는 선택을 비교한다.
-
-### Big-O만으로 실제 scan 비용이 완전히 같지는 않다
-
-array의 연속 memory를 순차 scan하는 것과 linked structure를 pointer로 따라가는 것은 둘 다 O(n)이어도 locality와 branch/memory access 비용이 다를 수 있다. 하지만 이런 implementation cost는 linear search의 correctness와 점근 비용을 바꾸는 별도 층위다.
-
-따라서 작은 bounded list에 대한 단순 filter인지, 수십만 item에서 반복되는 lookup인지 workload를 먼저 확인하고 선택한다.
+Linear search는 n이 작거나 검색이 한 번뿐일 때 충분히 좋은 선택일 수 있다. 반복 lookup을 위해 정렬이나 별도 index를 만드는 비용이 더 큰지까지 함께 비교해야 한다.

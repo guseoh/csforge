@@ -4,7 +4,7 @@ contentKey: network-http.core.http-message.content-type
 topicContentKey: network-http.core.http-message
 slug: content-type
 title: "Content-Type"
-summary: "현재 body의 media type을 Content-Type으로 선언하는 이유를 설명한다."
+summary: "Content-Type이 현재 message content에 적용된 representation media type을 선언하는 역할을 설명한다."
 level: 1
 status: PUBLISHED
 displayOrder: 60
@@ -17,8 +17,18 @@ references:
 ---
 # Content-Type
 
-Content-Type은 message content가 어떤 media type과 parameter를 사용한 representation인지 선언한다. receiver는 이 값과 framing이 확정한 content bytes를 기준으로 parser와 검증을 선택하므로, 선언이 없거나 실제 bytes와 틀리면 같은 bytes가 다른 의미로 처리될 수 있다. Content-Type은 현재 보내는 content의 설명이지 transport port나 요청 method의 선언이 아니다.
+`Content-Type`은 현재 HTTP message에 포함된 content가 어떤 media type의 representation인지 설명한다. 예를 들어 request body가 JSON representation이라면 `Content-Type: application/json`으로 선언할 수 있고, receiver는 이 metadata를 바탕으로 적절한 parser를 선택한다.
 
-Content-Type은 client가 원하는 응답 representation을 표현하는 `Accept`와 방향이 다르다. server가 browser/client sniffing에 의존하면 polyglot payload가 예상하지 않은 parser나 execution path로 들어갈 수 있으므로, 허용 type을 명시하고 필요하면 nosniff 같은 정책과 실제 content 검사를 함께 적용한다. 선언된 type이 맞아도 schema와 business 검증은 별도다.
+이 field는 `client가 어떤 응답을 받고 싶은가`를 말하지 않는다. 그 역할은 `Accept`가 담당한다. 요청에서 `Content-Type`은 **지금 보내는 content의 형식**, `Accept`는 **응답에서 선호하는 형식**이라는 방향 차이를 기억하면 구분하기 쉽다.
 
-Spring `HttpMessageConverter`가 선택할 media type과 검증 schema를 명시한다. file upload에서는 Content-Type을 untrusted client metadata로 기록하되 magic bytes·parser safety·size 검사를 별도로 수행하고, unsupported type과 malformed content를 구분해 응답한다.
+```text
+Content-Type: application/json
+             ↑
+       현재 content의 형식
+```
+
+### 선언과 실제 content는 일치해야 한다
+
+header에 `application/json`이라고 적었다고 bytes가 자동으로 valid JSON이 되는 것은 아니다. receiver는 media type을 확인한 뒤 실제 content를 parse해야 하며, syntax나 schema가 잘못되면 별도의 validation failure가 발생할 수 있다.
+
+또한 `Content-Type`은 representation format을 설명하는 metadata이지 HTTP message의 길이나 transport framing을 정하는 field가 아니다. content의 byte 경계는 해당 HTTP version의 framing 규칙으로 결정한다.

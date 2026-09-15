@@ -24,7 +24,7 @@ references:
 ---
 # Pattern Matching으로 타입 분기하기
 
-객체가 특정 타입인지 확인한 뒤 바로 그 타입으로 사용하려면 예전에는 검사와 형변환을 따로 작성하는 코드가 흔했습니다.
+객체가 특정 타입인지 검사한 뒤 다시 cast하는 코드는 같은 사실을 두 번 표현합니다.
 
 ```java
 if (value instanceof String) {
@@ -33,9 +33,7 @@ if (value instanceof String) {
 }
 ```
 
-두 줄은 사실 같은 사실을 확인합니다. "`value`가 `String`이라면 그 값을 `String`으로 사용하겠다"는 뜻입니다. Pattern matching은 **검사와 안전한 값 추출을 하나의 구조로 표현**해 이 중복을 줄입니다.
-
-### `instanceof`가 성공한 경로에서 바로 사용할 수 있다
+Pattern matching은 **타입 검사와 안전한 값 추출을 한 구조로 표현**합니다.
 
 ```java
 if (value instanceof String text) {
@@ -43,9 +41,9 @@ if (value instanceof String text) {
 }
 ```
 
-`text`는 단순히 바깥에 새 변수를 선언한 것이 아닙니다. `value instanceof String` 검사가 성공했다는 사실이 보장되는 흐름에서만 사용할 수 있는 **pattern variable**입니다.
+`text`는 검사 성공이 보장되는 흐름에서만 사용할 수 있는 pattern variable입니다.
 
-그래서 다음 코드도 자연스럽습니다.
+### pattern variable의 scope는 제어 흐름과 연결된다
 
 ```java
 if (value instanceof String text && !text.isBlank()) {
@@ -53,21 +51,17 @@ if (value instanceof String text && !text.isBlank()) {
 }
 ```
 
-`&&`의 오른쪽은 왼쪽 조건이 true일 때만 평가됩니다. 따라서 오른쪽에 도달했다면 `value`가 `String`이라는 검사가 이미 성공했고 `text`를 안전하게 사용할 수 있습니다.
+`&&`의 오른쪽은 왼쪽이 `true`일 때만 평가되므로 그 지점에서는 `value`가 `String`이라는 검사가 성공했다는 사실이 보장됩니다.
 
-반대로 다음과 같은 구조에서는 같은 논리를 적용할 수 없습니다.
+반대로 다음 구조에서는 오른쪽이 왼쪽 실패 경로에서도 실행될 수 있습니다.
 
 ```java
 // if (value instanceof String text || text.isBlank()) { ... }
 ```
 
-`||`의 오른쪽은 왼쪽 조건이 false일 때 실행될 수 있습니다. 그 경로에서는 `text`가 만들어졌다고 보장할 수 없습니다.
+따라서 `text`를 사용할 수 없습니다. 이런 규칙을 **flow scoping**으로 이해하면 단순한 블록 범위보다 정확합니다.
 
-이처럼 compiler가 실제 제어 흐름을 보고 pattern variable을 사용할 수 있는 범위를 정하는 것을 **flow scoping** 관점으로 이해하면 외우기 쉽습니다.
-
-### switch에서는 타입별 처리를 더 직접 표현할 수 있다
-
-pattern matching은 `switch`와 결합하면 타입별 분기를 읽기 쉽게 만들 수 있습니다.
+### pattern switch는 타입별 처리를 한곳에 모은다
 
 ```java
 String describe(Object value) {
@@ -79,25 +73,23 @@ String describe(Object value) {
 }
 ```
 
-각 case는 타입을 검사하고, 성공하면 해당 타입의 변수를 제공합니다. 여러 `if/else instanceof`를 이어 쓰는 코드보다 타입별 처리가 한곳에 모입니다.
+각 case가 타입 검사와 값 추출을 함께 수행하므로 여러 `if/else instanceof`보다 분기 구조가 선명해질 수 있습니다.
 
-### 넓은 pattern을 먼저 쓰면 뒤의 좁은 pattern이 의미 없어질 수 있다
-
-case 순서도 아무렇게나 둘 수 있는 것은 아닙니다.
+### 넓은 pattern이 좁은 pattern을 가리면 안 된다
 
 ```java
-// 컴파일되지 않는 순서의 예
+// 허용되지 않는 순서
 switch (value) {
     case Object object -> ...;
-    case String text -> ...; // 앞의 Object가 이미 String까지 처리한다
+    case String text -> ...;
 }
 ```
 
-`String`은 `Object`이므로 첫 번째 case가 String 값까지 처리합니다. 뒤의 `String` case는 도달할 수 없으므로 compiler가 이런 지배 관계를 허용하지 않습니다. 이런 관계를 **dominance**라고 이해할 수 있습니다. 더 넓은 pattern이 더 구체적인 pattern을 앞에서 가리지 않는지 봐야 합니다.
+`Object` pattern이 이미 `String`까지 처리하므로 뒤의 `String` case는 도달할 수 없습니다. Java는 이런 **dominance** 관계를 검사합니다.
 
-### record pattern은 데이터 구조를 분해할 때 사용할 수 있다
+따라서 pattern switch에서는 단순히 case 목록만 보는 것이 아니라, 앞선 pattern이 뒤의 더 구체적인 pattern을 이미 포함하지 않는지 확인해야 합니다.
 
-record를 사용한다면 component 값을 pattern 안에서 꺼내는 표현도 가능합니다.
+### record pattern은 구조를 한 단계 분해할 수 있다
 
 ```java
 record Point(int x, int y) { }
@@ -107,46 +99,12 @@ if (value instanceof Point(int x, int y)) {
 }
 ```
 
-이 코드는 타입 검사 후 다시 `point.x()`, `point.y()`를 호출하는 반복을 줄여 줍니다. 다만 pattern이 너무 깊게 중첩되면 오히려 읽기 어려워질 수 있으므로, "한 번에 많이 분해할 수 있다"와 "그렇게 해야 한다"는 구분해야 합니다.
+record component를 바로 binding할 수 있어 타입 검사 후 `point.x()`, `point.y()`를 다시 꺼내는 코드를 줄일 수 있습니다. 다만 중첩 pattern이 깊어질수록 오히려 읽기 어려워질 수 있으므로 분해 깊이는 가독성을 기준으로 선택합니다.
 
-### pattern matching이 다형성을 대체하는 것은 아니다
+### pattern matching은 다형성을 대체하지 않는다
 
-타입별 행동이 객체 자체의 핵심 책임이라면 다음처럼 계속 타입을 검사하는 코드보다 polymorphism이 더 자연스러울 수 있습니다.
+구체 타입마다 객체 자신의 핵심 행동이 다르다면 계속 `instanceof`로 분기하기보다 공통 계약의 메서드를 각 subtype이 구현하는 편이 자연스러울 수 있습니다.
 
-```java
-if (shape instanceof Circle circle) { ... }
-else if (shape instanceof Rectangle rectangle) { ... }
-```
+반대로 serialization이나 외부 표현 변환처럼 **타입 계층 밖에서 여러 variant를 한 번에 해석하는 작업**에서는 pattern switch가 유용합니다. sealed hierarchy와 결합하면 가능한 subtype 집합을 알고 exhaustive 처리 여부를 검사하는 데도 도움이 됩니다.
 
-`Shape`가 자신의 면적을 계산할 책임을 갖는다면 `shape.area()`가 더 좋은 설계일 수 있습니다. 반면 serialization, 화면 표현 변환처럼 **타입 계층 밖에서 여러 subtype을 한 번에 해석해야 하는 작업**에서는 pattern switch가 유용합니다.
-
-sealed hierarchy와 결합하면 가능한 subtype 집합이 닫혀 있다는 정보를 exhaustive switch가 활용할 수 있습니다. 이때도 “모든 행동은 switch로 모아야 한다”는 뜻은 아닙니다. 객체 내부 책임인지, 타입 계층 밖의 해석 책임인지 먼저 구분합니다.
-
-### 문제를 풀 때 확인할 것
-
-1. pattern이 성공해야만 사용할 수 있는 변수가 무엇인지 확인한다.
-2. `&&`, `||`, 부정 조건에 따라 성공이 보장되는 경로가 어디인지 추적한다.
-3. switch에서는 넓은 타입이 좁은 타입보다 앞에 있는지 본다.
-4. sealed hierarchy라면 모든 subtype이 처리되는지도 확인한다.
-5. record pattern에서는 어떤 component가 어떤 변수로 분해되는지 따라간다.
-
-### 자주 헷갈리는 부분
-
-- `instanceof` pattern은 객체 자체를 다른 타입으로 변환하는 기능이 아닙니다.
-- pattern variable은 검사 성공이 보장되는 흐름에서만 사용할 수 있습니다.
-- switch case는 순서를 바꿔도 항상 같은 의미가 되는 것이 아닙니다.
-- pattern matching이 모든 타입 분기 코드를 좋은 객체지향 설계로 바꿔 주는 것은 아닙니다.
-
-### 학습 후 스스로 설명해 보기
-
-Pattern matching은 타입 검사와 안전한 값 추출을 함께 표현해 반복적인 cast 코드를 줄이는 기능이라고 설명할 수 있습니다. 중요한 부분은 pattern variable의 scope가 단순한 블록 범위가 아니라 조건의 성공이 보장되는 제어 흐름과 연결된다는 점입니다. switch에서는 dominance와 exhaustiveness도 함께 고려해야 합니다.
-
-### 면접에서 이렇게 나옵니다
-
-#### Q. `instanceof String text && !text.isBlank()`에서는 `text`를 쓸 수 있는데 `instanceof String text || text.isBlank()`에서는 왜 안 되나요?
-
-`&&`의 오른쪽은 왼쪽 pattern이 성공한 경로에서만 평가되므로 `text`가 String으로 binding되었다는 사실이 보장됩니다. 반대로 `||`의 오른쪽은 왼쪽 검사가 실패한 경로에서 실행될 수 있어 `text`가 존재한다고 보장할 수 없습니다. 이를 pattern variable의 flow scoping으로 이해할 수 있습니다.
-
-#### Q. pattern switch에서 `case Object`를 `case String`보다 먼저 둘 수 없는 이유는 무엇인가요?
-
-`Object` pattern은 String 값도 이미 처리할 수 있으므로 뒤의 String case가 도달 불가능해집니다. Java는 이런 dominance를 검사해 더 넓은 pattern이 뒤의 구체적인 pattern을 가리는 분기를 막습니다.
+Pattern matching의 핵심은 cast를 짧게 만드는 것이 아닙니다. **검사 성공 사실과 그 사실이 유효한 제어 흐름을 컴파일러가 타입 정보로 활용한다**는 점, 그리고 switch에서는 dominance와 exhaustive 처리까지 함께 고려한다는 점입니다.

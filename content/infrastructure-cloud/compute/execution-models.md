@@ -3,8 +3,8 @@ kind: concept
 contentKey: infrastructure.core.compute.execution-models
 topicContentKey: infrastructure.core.compute
 slug: execution-models
-title: "VM·container·serverless execution models"
-summary: "VM·container·serverless가 isolation과 운영 책임을 어떻게 나누는지 이해한다"
+title: "VM·Container·Serverless의 실행 책임"
+summary: "VM·container·serverless가 애플리케이션 실행 환경과 host 관리 책임을 어떻게 나누는지 이해하고 실행 단위와 durable state의 lifecycle을 구분한다."
 level: 1
 status: PUBLISHED
 displayOrder: 10
@@ -28,35 +28,39 @@ references:
     displayOrder: 3
     relationNote: "container writable layer와 persistent storage의 lifecycle 차이 확인"
 ---
-# VM·container·serverless execution models
+# VM·Container·Serverless의 실행 책임
 
-애플리케이션을 실행한다는 말 뒤에는 서로 다른 isolation과 운영 책임이 있습니다. VM은 guest OS까지 묶어 비교적 강한 경계를 제공하고, container는 host kernel을 공유하며 image와 process 실행을 묶습니다. Serverless는 실행 단위와 host 관리가 provider 뒤로 이동합니다.
+같은 Spring Boot 애플리케이션도 어디에서 실행하느냐에 따라 우리가 직접 관리해야 하는 범위가 달라집니다. VM은 guest OS까지 하나의 실행 환경으로 다루고, container는 host kernel을 공유하면서 image와 process 실행 단위를 격리합니다. Serverless는 host와 runtime 관리의 더 많은 부분을 provider가 맡습니다.
 
 ```text
-VM:          app -> guest OS -> hypervisor -> host
-Container:   app -> container image/process -> host kernel
-Serverless:  function -> platform runtime -> provider resource
+VM
+app → guest OS → hypervisor → host
+
+Container
+app → image/container process → host kernel
+
+Serverless
+function/app unit → managed runtime → provider infrastructure
 ```
 
-### abstraction이 올라갈수록 책임이 이동한다
+### 추상화가 높아져도 운영 책임이 사라지지는 않는다
 
-VM을 직접 운영하면 patch·image·network·capacity를 더 많이 관리합니다. container orchestrator를 사용하면 scheduler가 restart와 placement를 도울 수 있지만 image, resource declaration, probe와 rollout 계약은 application team의 책임으로 남습니다. serverless도 business code만 쓰면 되는 것이 아니라 timeout, concurrency, cold start, permission과 cost를 관리해야 합니다.
+VM을 직접 운영하면 OS patch, runtime 설치, capacity와 process lifecycle까지 더 많이 관리합니다. Container platform은 placement와 restart를 자동화할 수 있지만 image, resource request/limit, health signal과 rollout 설정은 여전히 애플리케이션 운영 계약입니다.
 
-### image, container와 durable state를 구분한다
+Serverless도 host를 직접 관리하지 않을 뿐 timeout, concurrency, permission, cold start와 비용 같은 새로운 제약을 갖습니다. 따라서 "serverless는 운영이 없다"고 이해하면 안 됩니다.
 
-Image는 재현 가능한 artifact이고 running container는 그 image를 기반으로 실행되는 process와 writable layer를 가집니다. **같은 container instance의 process가 단순히 재시작되는 경우와 container 자체가 삭제·재생성되는 경우를 구분해야 합니다.** Docker의 container writable layer는 container lifecycle에 묶이므로 container가 제거되면 그 layer의 데이터도 함께 사라집니다. Kubernetes 같은 orchestrator에서 Pod/container가 재생성되거나 다른 node로 reschedule되는 상황에도 local writable state가 그대로 보존된다고 가정하면 안 됩니다.
+### 실행 단위와 데이터 수명은 따로 본다
 
-따라서 process restart 자체를 곧 data loss라고 설명하지 않고, 어떤 execution unit이 재사용되고 어떤 storage가 별도 lifecycle을 가지는지 확인합니다. 재생성 이후에도 보존되어야 하는 business data는 volume, object storage, database처럼 명시적인 durable storage boundary에 둡니다.
+Container image는 재현 가능한 artifact이고 running container는 그 image를 기반으로 실행되는 instance입니다. Container가 제거되어 새 instance가 만들어질 때 writable layer의 데이터가 그대로 유지된다고 가정할 수 없습니다.
 
-### 문제를 풀 때 확인할 것
+```text
+image ─▶ container A ─X
+   └──▶ container B
 
-1. 어느 계층이 patch와 host resource를 소유하는지 봅니다.
-2. image, running process/container, writable layer와 durable data를 분리합니다.
-3. process restart와 container/Pod recreation·reschedule을 구분합니다.
-4. 재생성 뒤에도 보존되어야 할 state가 어느 storage lifecycle에 있는지 확인합니다.
-5. runtime이 제공하는 health·scaling·permission 계약과 운영 비용을 함께 판단합니다.
+A의 local writable state
+→ B에 자동 승계된다고 가정하지 않음
+```
 
-### 면접에서 설명한다면
+재생성 이후에도 남아야 하는 주문 데이터나 업로드 파일은 database, volume, object storage처럼 실행 instance와 분리된 durable storage에 둬야 합니다.
 
-VM·container·serverless는 실행 isolation과 관리 책임을 서로 다르게 분배합니다. Container image는 artifact이고 writable layer는 container lifecycle에 묶이므로 container/Pod 재생성 뒤에도 필요한 state를 local layer에 의존하면 안 됩니다. 단순 process restart와 execution unit recreation을 구분하고, durable data는 별도 storage lifecycle로 분리합니다. abstraction이 높아져도 timeout·resource·permission·cost의 운영 책임이 사라지는 것은 아닙니다.
-
+VM·Container·Serverless를 비교할 때 핵심은 기술 이름보다 **누가 host와 runtime lifecycle을 관리하는지, 실행 instance가 사라질 때 어떤 state까지 함께 사라지는지**를 구분하는 것입니다.

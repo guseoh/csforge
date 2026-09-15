@@ -5,7 +5,7 @@ topicContentKey: database.core.sql
 slug: window-function
 title: "Window function으로 row를 유지한 채 집계하기"
 summary: "GROUP BY처럼 row를 축약하지 않고 각 row에 partition·ordering 기준의 계산 결과를 붙이는 window function의 실행 모델과 ranking·running total 사용법을 이해한다."
-level: 1
+level: 2
 status: PUBLISHED
 displayOrder: 40
 references:

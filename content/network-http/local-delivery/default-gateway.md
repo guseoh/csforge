@@ -4,7 +4,7 @@ contentKey: network-http.core.local-delivery.default-gateway
 topicContentKey: network-http.core.local-delivery
 slug: default-gateway
 title: "Default Gateway"
-summary: "local subnet 밖 목적지의 next hop을 선택하는 default gateway를 설명한다."
+summary: "외부 prefix packet을 next-hop gateway로 보내는 판단을 설명한다."
 level: 1
 status: PUBLISHED
 displayOrder: 60
@@ -19,13 +19,24 @@ references:
 ---
 # Default Gateway
 
-host가 destination IP를 routing table과 비교했을 때 on-link로 판단하면 해당 destination의 link-layer address를 찾아 직접 frame을 만들 수 있다. 일치하는 더 구체적인 route가 없고 destination이 local prefix 밖에 있으면 default route가 가리키는 gateway를 next hop으로 선택한다. 이때 frame destination MAC은 gateway interface의 MAC이고, IP destination은 최종 host address를 유지한 채 gateway가 다음 route를 결정한다.
+Host가 IP packet을 보낼 때 먼저 routing table을 보고 destination이 **직접 연결된 local prefix인지, 다른 network로 가야 하는지** 판단한다. Destination이 on-link라면 target host 자체가 next hop이 되고, local link에서 그 host의 MAC을 ARP/NDP로 찾는다.
 
-default gateway는 모든 traffic을 무조건 보내는 별도 protocol이 아니라 routing table의 catch-all 경로다. specific prefix route가 default보다 우선하며, gateway가 실제로 on-link가 아니거나 ARP/NDP·egress interface·return route가 잘못되면 route entry가 있어도 packet은 전달되지 않는다. gateway 설정이 없으면 local service는 되지만 외부 API·DNS·database 연결이 실패할 수 있다.
+Destination이 local prefix 밖에 있고 더 구체적인 route가 없다면 default route가 가리키는 gateway를 next hop으로 선택한다.
 
-Docker container의 default route와 host의 route는 network namespace에 따라 다르다. outbound timeout을 조사할 때 application DNS success, selected route, gateway neighbor resolution, egress firewall과 이후 remote path를 단계별로 분리한다.
-### Local route와 default gateway
-    destination
-      ├─ local prefix ──> ARP/NDP peer ──> same link
-      └─ outside prefix ──> gateway MAC ──> router
-default gateway가 최종 목적지라는 뜻은 아니다.
+### 최종 destination과 next hop은 다르다
+
+Remote server로 보내는 packet에서도 IP destination은 최종 server 주소를 유지한다. 하지만 현재 Ethernet frame의 destination MAC은 local gateway interface의 MAC이다.
+
+```text
+IP destination = remote server
+routing decision = default gateway
+frame destination = gateway MAC
+```
+
+Gateway는 packet을 받은 뒤 자신의 routing table을 이용해 다음 hop을 다시 결정한다.
+
+### Default route는 catch-all route다
+
+Default gateway가 모든 traffic을 무조건 받는 특별한 protocol인 것은 아니다. Routing table에 더 구체적인 prefix route가 있으면 그 route가 우선하고, 일치하는 구체적 route가 없을 때 default route가 사용된다.
+
+핵심은 **host가 local subnet 밖의 destination으로 packet을 보낼 때 default route가 next-hop router를 제공하며, 최종 IP destination과 현재 link의 gateway MAC은 서로 다른 경계라는 것**이다.

@@ -4,8 +4,8 @@ contentKey: network-http.core.tcp.acknowledgement
 topicContentKey: network-http.core.tcp
 slug: acknowledgement
 title: "TCP Acknowledgement"
-summary: "receiver가 다음 기대 byte를 알려 delivery progress를 확인하는 ACK를 설명한다."
-level: 1
+summary: "누적 ACK가 다음 기대 byte를 나타내는 이유를 설명한다."
+level: 2
 status: PUBLISHED
 displayOrder: 40
 references:
@@ -19,13 +19,23 @@ references:
 ---
 # TCP Acknowledgement
 
-TCP ACK의 acknowledgment number는 receiver가 다음에 기대하는 sequence position을 나타낸다. 일반적인 cumulative ACK는 그 위치보다 앞선 연속 byte를 받았다는 뜻이므로, 중간 byte가 빠지면 뒤 segment가 도착해도 같은 expected position을 반복해서 알릴 수 있다. SACK option이 협상된 경우에는 receiver가 추가로 받은 비연속 범위를 선택적으로 알려 sender의 loss 판단을 돕는다.
+TCP ACK의 acknowledgment number는 receiver가 **다음에 받기를 기대하는 sequence number**를 나타낸다. 일반적인 cumulative ACK에서는 그보다 앞선 연속된 byte 범위를 이미 받았다는 뜻이다.
 
-delayed ACK는 매 segment마다 즉시 답하지 않을 수 있고, duplicate ACK는 out-of-order나 missing range의 단서가 될 수 있지만 ACK 도착만으로 remote application의 처리나 business commit을 증명하지는 못한다. ACK 지연, TCP retransmission과 application 응답 지연을 서로 다른 시간으로 관찰한다.
+예를 들어 receiver가 sequence 1000부터 1499까지 연속된 500 byte를 받았다면 다음 기대 위치는 1500이다.
 
-Backend에서 socket `write()` 반환은 local kernel이 bytes를 받아들였다는 경계에 가깝고, peer TCP가 ACK했다는 사실도 controller가 command를 처리했다는 뜻은 아니다. 중요한 명령은 protocol 응답이나 commit acknowledgement 같은 application-level confirmation을 별도로 요구한다.
-### 누적 ACK
-    sender:   bytes 0 ───── 999 | 1000 ───>
-    receiver: received through 999
-    ACK = 1000 ──────────────────────────>
-transport ACK는 application commit acknowledgement가 아니다.
+```text
+received: 1000 ... 1499
+ACK = 1500
+```
+
+### 중간에 gap이 있으면 ACK가 앞으로 나아가지 않는다
+
+1000~1499를 받은 뒤 2000~2499가 먼저 도착하고 1500~1999가 빠져 있다면 cumulative ACK는 여전히 1500을 가리킬 수 있다. 뒤쪽 data가 도착했더라도 연속된 stream의 다음 기대 byte는 바뀌지 않았기 때문이다.
+
+SACK(Selective Acknowledgment)이 협상된 경우에는 cumulative ACK 외에 이미 받은 비연속 범위를 추가로 알려 sender가 loss 위치를 더 정확히 판단하도록 도울 수 있다.
+
+### ACK와 application 처리 성공은 다르다
+
+TCP ACK는 transport receiver가 byte sequence를 받은 상태를 표현한다. Peer application이 해당 bytes를 parsing하거나 business state에 반영했다는 보장은 아니다.
+
+Acknowledgement의 핵심은 **누적 ACK가 receiver가 연속해서 받은 byte 범위의 바로 다음 sequence를 알려 TCP delivery progress를 추적하게 한다는 것**이다.

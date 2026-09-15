@@ -30,93 +30,70 @@ references:
 ---
 # Path와 Files API
 
-파일 경로를 단순 문자열로 이어 붙이면 운영체제별 구분자, 상대 경로, `..`, symbolic link 같은 문제를 직접 처리하게 됩니다. `Path`는 **파일 시스템 경로라는 값을 표현하는 타입**이고 `Files`는 그 경로를 대상으로 실제 파일 시스템 작업을 수행하는 API입니다.
+파일 경로를 단순 문자열로 다루면 경로 조합과 상대 경로 의미를 코드가 직접 떠안게 됩니다. `Path`는 **파일 시스템 경로라는 값**을 표현하고, `Files`는 그 경로를 대상으로 실제 파일 시스템 작업을 수행합니다.
 
-둘을 구분하는 것이 첫 번째 핵심입니다. `Path` 객체를 만들었다고 파일을 열거나 생성한 것이 아닙니다.
+이 둘을 구분하는 것이 핵심입니다. `Path`를 만들었다고 파일이 생성되거나 열리는 것은 아닙니다.
 
-### Path는 경로를 표현하는 값이다
+### Path는 "어디인가"를 표현한다
 
 ```java
 Path path = Path.of("content", "java", "note.txt");
 ```
 
-이 코드는 경로 값을 만들 뿐 실제 `note.txt`가 존재하는지 확인하지 않습니다.
+이 코드는 경로 값을 만들 뿐 `note.txt`의 존재 여부를 확인하지 않습니다.
+
+경로를 조합할 때도 문자열 연결보다 경로 연산을 사용할 수 있습니다.
 
 ```java
 Path backup = Path.of("backup").resolve(path.getFileName());
 ```
 
-문자열을 `"backup/" + fileName`처럼 직접 합치는 대신 `resolve`를 사용하면 경로 연산의 의도가 더 분명합니다.
-
-### 상대 경로는 기준 위치가 필요하다
+### 상대 경로는 기준 위치에 따라 실제 대상이 달라진다
 
 ```java
 Path relative = Path.of("data", "input.txt");
 Path absolute = relative.toAbsolutePath();
 ```
 
-상대 경로가 실제 어디를 가리키는지는 process의 working directory 같은 실행 환경과 연결됩니다. IntelliJ에서 실행할 때와 Docker container에서 실행할 때 working directory가 다르면 같은 상대 경로가 다른 파일을 가리킬 수 있습니다.
+상대 경로는 working directory 같은 실행 환경을 기준으로 해석됩니다. 같은 코드라도 IDE, container, 다른 실행 스크립트에서 기준 directory가 다르면 다른 파일을 가리킬 수 있습니다.
 
-따라서 운영에 필요한 파일 위치라면 "현재 디렉터리겠지"라는 숨은 가정보다 설정이나 명시적인 base path를 사용하는 편이 안전합니다.
+따라서 파일 위치가 애플리케이션 설정이라면 숨은 현재 directory에 기대기보다 명시적인 base path와 연결하는 편이 의미가 분명합니다.
 
-### 실제 파일 작업은 Files가 수행한다
+### 실제 I/O와 실패는 Files 호출에서 발생한다
 
 ```java
 String text = Files.readString(path, StandardCharsets.UTF_8);
 Files.writeString(backup, text, StandardCharsets.UTF_8);
 ```
 
-이 시점에는 실제 I/O가 발생할 수 있고 파일이 없거나 권한이 부족하거나 storage 오류가 나면 실패합니다.
+이 단계에서는 실제 파일 시스템 작업이 시도되므로 파일 없음, 권한 부족, I/O 오류 등이 발생할 수 있습니다.
 
 ```text
 Path
- └─ "어디인가"를 표현
+ └─ 위치를 표현
 
 Files.readString(path)
- └─ 그 위치에서 실제 작업 시도
+ └─ 실제 작업 시도
       ├─ 성공
-      └─ 파일 없음 / 권한 / I/O 오류
+      └─ I/O 실패
 ```
 
-### `exists`를 먼저 확인해도 경쟁 조건은 사라지지 않는다
+`Files.exists(path)`를 먼저 확인해도 이후 작업 성공이 보장되는 것은 아닙니다. 확인 직후 다른 process가 파일을 삭제하거나 권한 상태가 바뀔 수 있기 때문입니다. 실제 작업 자체가 실패할 수 있다는 계약을 처리해야 합니다.
+
+### 편의 API와 streaming API는 데이터 크기에 따라 선택한다
+
+`Files.readString()`과 `readAllBytes()`는 결과 전체를 메모리에 올리기 때문에 작은 파일에는 간단하고 유용합니다. 반대로 큰 파일을 순차 처리해야 한다면 stream이나 channel 기반 API가 더 적합할 수 있습니다.
+
+"최신 API"를 고르는 것이 아니라 **데이터 전체를 한 번에 가져와도 되는가**를 기준으로 선택합니다.
+
+### 경로 정규화와 접근 허용은 같은 문제가 아니다
 
 ```java
-if (Files.exists(path)) {
-    return Files.readString(path);
-}
+Path normalized = path.normalize();
 ```
 
-`exists()`가 true를 반환한 직후 다른 process가 파일을 삭제할 수도 있습니다. 두 호출 사이의 세상은 바뀔 수 있습니다. 이를 흔히 check-then-act 형태의 경쟁 조건으로 볼 수 있습니다.
+`normalize()`는 `.`이나 `..` 같은 경로 구성 요소를 정리하는 연산이지, 사용자가 그 파일에 접근해도 되는지를 판단하는 authorization 기능은 아닙니다.
 
-그래서 실제 작업 자체가 실패할 수 있다는 사실을 받아들이고 `IOException` 등 실패 경계를 처리해야 합니다.
+사용자 입력으로 파일 경로를 구성하는 기능에서는 허용된 root 밖으로 벗어나는지, symbolic link를 어떻게 다룰지 같은 보안 정책이 별도로 필요할 수 있습니다. Java I/O 관점에서 기억할 경계는 **경로를 계산하는 기능과 접근 권한 정책을 동일시하지 않는 것**입니다.
 
-### 작은 파일용 편의 API와 stream API를 구분한다
-
-`Files.readString`, `Files.readAllBytes`는 편리하지만 결과 전체를 메모리에 올립니다. 작은 설정 파일에는 적합할 수 있지만 수 GB 파일을 그대로 읽는 데 기계적으로 사용하면 메모리 문제가 생길 수 있습니다.
-
-큰 데이터를 순차 처리해야 한다면 stream/channel 기반 API를 검토합니다. 중요한 것은 "최신 API"가 아니라 **데이터 크기와 처리 방식에 맞는 API를 선택하는 것**입니다.
-
-### 사용자 입력 경로는 보안 경계다
-
-웹 요청으로 받은 파일 이름을 그대로 `resolve`한다고 안전한 것은 아닙니다.
-
-```text
-허용 root: /app/uploads
-사용자 입력: ../../secret.txt
-```
-
-`normalize()`는 경로 모양을 정리하는 기능이지 사용자가 접근해도 되는 파일인지 판단하는 authorization 기능이 아닙니다. 파일 다운로드나 업로드를 구현할 때는 허용된 root 경계, symbolic link, 실제 대상 경로, 접근 권한 등을 함께 검토해야 합니다.
-
-Security 영역에서는 path traversal 공격을 더 깊게 다루지만 Java I/O 관점에서도 **Path 조작과 접근 허용 정책을 같은 것으로 보지 않는 것**이 중요합니다.
-
-### 문제를 풀 때 확인할 것
-
-1. 현재 코드는 Path 값만 만드는지 실제 Files 작업을 하는지 구분합니다.
-2. 상대 경로라면 기준 directory가 무엇인지 확인합니다.
-3. `Files.exists` 결과를 이후 작업의 보장으로 생각하지 않습니다.
-4. 전체 파일을 메모리에 올리는 API인지 확인합니다.
-5. 사용자 입력 경로라면 normalization 외에 허용 root 정책이 있는지 봅니다.
-
-### 학습 후 스스로 설명해 보기
-
-`Path`는 파일 시스템 경로를 값으로 표현하고 `Files`는 실제 읽기·쓰기·복사 같은 작업을 수행합니다. Path 생성 자체는 파일 존재 여부나 open을 의미하지 않습니다. 상대 경로의 기준, 실제 I/O 실패, 대용량 파일의 메모리 사용, 사용자 입력 경로의 traversal 위험을 함께 고려해야 합니다.
+Path와 Files 코드를 읽을 때는 먼저 현재 코드가 경로 값만 만드는지 실제 I/O를 수행하는지 구분하세요. 그다음 상대 경로의 기준, 전체 메모리 로딩 여부, 실제 Files 작업의 실패 가능성을 확인하면 파일 처리 흐름을 안정적으로 추적할 수 있습니다.

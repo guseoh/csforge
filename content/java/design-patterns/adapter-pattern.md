@@ -24,7 +24,7 @@ references:
 ---
 # Adapter로 외부 인터페이스와 경계 분리하기
 
-외부 SDK나 오래된 module이 제공하는 API 모양이 우리 application이 원하는 계약과 다를 수 있습니다. 문제는 이름이 다르다는 사실보다, 호출 코드마다 외부 타입과 변환 규칙을 직접 알게 될 때 생깁니다.
+외부 SDK나 오래된 모듈이 제공하는 API가 애플리케이션이 원하는 계약과 다를 수 있습니다. 호출 코드마다 외부 타입과 변환 규칙을 직접 알게 되면 외부 기술의 세부가 애플리케이션 전체로 퍼집니다.
 
 ```java
 interface PaymentGateway {
@@ -32,13 +32,13 @@ interface PaymentGateway {
 }
 ```
 
-내부에서는 `Money`를 사용하지만 외부 SDK는 다음처럼 센트 단위 정수와 vendor 요청을 요구한다고 해 보겠습니다.
+내부에서는 `Money`와 `PaymentResult`를 사용하지만 외부 SDK는 다음처럼 다른 형태를 요구한다고 해 보겠습니다.
 
 ```java
 VendorResponse charge(int cents);
 ```
 
-호출자마다 `money -> cents -> VendorResponse -> PaymentResult` 변환을 반복하면 vendor의 단위·DTO·예외가 application 전체로 퍼집니다. Adapter는 이 차이를 한 경계에 모읍니다.
+Adapter는 두 계약 사이의 차이를 한 경계에서 번역합니다.
 
 ```java
 final class VendorPaymentAdapter implements PaymentGateway {
@@ -63,62 +63,38 @@ final class VendorPaymentAdapter implements PaymentGateway {
 
 ```text
 Application
-  │ PaymentGateway / Money / PaymentResult
-  ▼
+Money / PaymentResult / PaymentGateway
+        │
+        ▼
 Adapter
-  │ type / unit / exception translation
-  ▼
+타입 · 단위 · 예외 번역
+        │
+        ▼
 Vendor SDK
 ```
 
-호출자는 내부 계약만 사용하고 Adapter만 양쪽 세계를 동시에 압니다.
+### Adapter는 메서드 이름만 바꾸는 wrapper가 아니다
 
-### Adapter는 단순 method 이름 변경보다 더 넓은 번역 경계다
-
-실제 외부 연동에서는 interface 모양 외에도 다음 차이가 생길 수 있습니다.
+실제 경계에서는 타입뿐 아니라 단위, 식별자, 시간 표현, 실패 방식이 다를 수 있습니다.
 
 ```text
-내부 의미              외부 표현
-Money                  long/int cents
-PaymentId              vendor transaction string
-PaymentDeclined        VendorError(code=4021)
-Instant                vendor epoch milliseconds
+내부 의미          외부 표현
+Money              cents 정수
+PaymentId          vendor 문자열 ID
+PaymentDeclined    vendor error code
+Instant            epoch milliseconds
 ```
 
-Adapter가 이런 표현 차이를 변환하면 application은 vendor의 representation을 직접 다루지 않아도 됩니다. 중요한 것은 변환 결과가 내부 계약의 의미를 보존하는 것입니다.
-
-### 단위 변환은 값 손상까지 검토해야 한다
-
-내부 `pay(long euros)`를 외부 `charge(int cents)`에 연결한다고 가정합니다. 다음 cast는 위험합니다.
-
-```java
-int cents = (int) (euros * 100);
-```
-
-`euros * 100`이 `int` 범위를 넘으면 cast 과정에서 값이 잘릴 수 있습니다. Adapter는 단순히 타입이 맞는 값만 만들면 되는 것이 아니라 **의미가 보존된 값**을 넘겨야 합니다.
+Adapter의 역할은 이런 차이를 변환하면서 **내부 계약의 의미를 보존하는 것**입니다. 예를 들어 금액을 작은 정수 타입으로 바꾸다가 오버플로가 발생할 수 있다면 값을 조용히 잘라 내기보다 안전하게 거부해야 합니다.
 
 ```java
 long cents = Math.multiplyExact(euros, 100L);
 int vendorCents = Math.toIntExact(cents);
 ```
 
-외부 API가 표현할 수 없는 금액이라면 SDK 호출 전에 실패시키는 것이 손상된 값으로 결제를 시도하는 것보다 안전합니다. 이런 범위 검사는 business 할인 정책이 아니라 **representation translation의 정확성**에 해당하므로 Adapter 경계에 자연스럽게 놓일 수 있습니다.
+### 외부 예외도 경계에서 내부 의미로 번역할 수 있다
 
-### 외부 예외를 그대로 흘리면 경계가 새기 시작한다
-
-```java
-try {
-    gateway.pay(money);
-} catch (VendorNetworkException e) {
-    ...
-} catch (VendorBadRequestException e) {
-    ...
-}
-```
-
-`PaymentGateway`라는 내부 계약을 만들었는데 모든 호출자가 vendor exception을 catch한다면 외부 세부가 이미 application 안으로 들어왔습니다.
-
-Adapter는 필요하면 외부 실패를 내부에서 이해할 수 있는 의미로 바꿉니다.
+`PaymentGateway`를 만들었는데 호출자가 모든 vendor 예외를 직접 catch해야 한다면 외부 세부가 여전히 새고 있습니다.
 
 ```java
 catch (VendorDeclinedException e) {
@@ -126,79 +102,18 @@ catch (VendorDeclinedException e) {
 }
 ```
 
-원인 exception을 cause로 보존하면 진단 정보도 잃지 않을 수 있습니다. 다만 vendor의 모든 error code를 하나의 일반 예외로 뭉개서 중요한 차이까지 지우면 안 됩니다. 내부 business가 실제로 구분해야 하는 실패는 내부 계약에 드러나야 합니다.
+다만 외부의 모든 오류를 하나의 일반 예외로 뭉개라는 뜻은 아닙니다. 애플리케이션이 실제로 구분해야 하는 실패는 내부 계약에도 의미 있게 드러나야 합니다.
 
-### Adapter가 business policy를 소유하기 시작하면 책임이 섞인다
-
-다음 코드는 Adapter가 해야 할 일이 아닐 가능성이 큽니다.
+### 비즈니스 정책까지 Adapter에 넣지 않는다
 
 ```java
 if (customer.isVip()) {
     money = money.discount(20);
 }
-client.charge(...);
 ```
 
-VIP 할인은 외부 API와 내부 API의 호환 문제라기보다 business rule입니다. Vendor를 다른 PG로 바꿔도 같은 할인 정책을 유지해야 한다면 domain/application 쪽 책임입니다.
+회원 할인처럼 외부 SDK가 바뀌어도 유지되어야 하는 규칙은 인터페이스 번역 문제가 아닙니다. Adapter는 주로 **외부 API의 표현과 호출 방식을 내부 계약으로 변환**하고, 비즈니스 정책은 그 정책을 소유한 계층에 남기는 편이 응집됩니다.
 
-```text
-Adapter가 주로 아는 것
-- 외부 API 모양
-- 외부 DTO / 단위
-- 외부 error representation
+Adapter는 외부 시스템의 차이를 없애 주는 마법도 아닙니다. 공급자마다 기능과 실패 의미가 실제로 다르다면 그 차이를 내부 모델에 어떻게 드러낼지 결정해야 합니다. Adapter의 가치는 차이를 감추는 데만 있지 않고 **외부 기술 변화가 애플리케이션 전체로 퍼지지 않도록 번역 위치를 명확히 만드는 것**에 있습니다.
 
-Adapter가 불필요하게 알면 안 되는 것
-- 주문 할인 정책
-- 회원 등급 규칙
-- 결제 가능 business 상태
-```
-
-경계를 만들었다가 모든 연동 관련 코드를 Adapter 하나에 넣으면 새로운 god object가 될 수 있습니다.
-
-### 외부 DTO를 내부까지 반환하면 Adapter를 둔 효과가 약해진다
-
-```java
-interface PaymentGateway {
-    VendorResponse pay(Money money);
-}
-```
-
-이 signature에서는 호출자가 `VendorResponse`를 알아야 합니다. SDK 교체 시 반환 타입도 함께 바뀔 가능성이 큽니다.
-
-```java
-interface PaymentGateway {
-    PaymentResult pay(Money money);
-}
-```
-
-내부가 필요한 결과만 표현하면 provider별 세부를 경계 뒤에 둘 수 있습니다. 단, vendor가 제공하는 고유 정보가 실제 product requirement라면 필요한 만큼은 내부 모델에 명시적으로 포함해야 합니다.
-
-### DTO mapper와 Adapter는 겹칠 수 있지만 초점이 다르다
-
-DTO mapper는 형태가 다른 두 데이터 구조 사이를 변환할 수 있습니다. Adapter도 내부에서 mapper를 사용할 수 있습니다. 그러나 모든 mapper를 디자인 패턴 Adapter라고 부를 필요는 없습니다.
-
-Adapter의 핵심 질문은 **호환되지 않는 협력 계약 사이에서 한쪽을 다른 쪽처럼 사용할 수 있게 만드는가**입니다. 단순 응답 필드 rename만 하는 transformation과 외부 시스템 경계를 보호하는 Adapter는 책임 범위가 다를 수 있습니다.
-
-### Decorator와 Proxy와는 변경하는 대상이 다르다
-
-Adapter는 보통 호출자가 보는 계약을 바꿉니다.
-
-```text
-VendorClient API -> PaymentGateway API
-```
-
-Decorator는 같은 계약을 유지한 채 책임을 겹쳐 붙이는 데 초점이 있습니다.
-
-```text
-DataReader -> LoggingDataReader -> DataReader
-```
-
-Proxy도 같은 역할을 앞에 두지만 대상 접근 시점·권한·지연 생성 같은 **접근 중개**가 중심입니다. 구현 class 모양이 비슷해도 “무엇을 변환하거나 제어하려는가”를 보면 구분하기 쉽습니다.
-
-### Adapter를 두었다고 외부 시스템 교체가 공짜가 되는 것은 아니다
-
-두 PG가 기능과 의미까지 완전히 같다는 보장은 없습니다. 한 provider만 partial cancel을 지원하거나 timeout 의미가 다를 수 있습니다. Adapter는 **차이를 한곳에서 다룰 수 있는 경계**를 만들 뿐, 실제 차이를 없애지는 않습니다.
-
-새 provider를 붙일 때 Adapter 안의 복잡한 `if vendor == ...`가 계속 늘어난다면 내부 계약 자체가 provider 차이를 너무 억지로 숨기고 있는 것은 아닌지 다시 봐야 합니다.
-
-백엔드에서 Adapter를 적용할 때는 마지막으로 흐름을 직접 추적하면 좋습니다. 내부 값이 외부 representation으로 어떻게 바뀌는지, overflow나 precision 손실은 없는지, 외부 실패가 어떤 내부 의미로 돌아오는지, 그리고 그 과정에 business policy가 섞이지 않았는지 확인합니다. 좋은 Adapter는 vendor 코드를 단순히 감추는 wrapper가 아니라 **외부 기술의 변화가 application의 책임 모델까지 번지지 않게 하는 번역 경계**입니다.
+Decorator나 Proxy와 구조가 비슷해 보여도 의도는 다릅니다. Adapter는 **서로 다른 계약을 맞추는 것**, Decorator는 같은 계약에 기능을 덧붙이는 것, Proxy는 같은 역할의 실제 대상에 접근하는 과정을 중개하는 것이 중심입니다.

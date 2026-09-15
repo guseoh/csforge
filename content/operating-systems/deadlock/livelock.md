@@ -26,35 +26,30 @@ references:
 ---
 # Livelock
 
-### Thread가 멈추지 않았다는 사실만으로 progress하는 것은 아니다
+Livelock에서는 실행 흐름이 blocked 상태로 멈춰 있지 않다. 계속 retry하거나 양보하고 state도 바뀌지만, **서로의 반응이 반복되면서 실제 목표 작업은 완료되지 않는다.**
 
-Livelock에서는 execution이 blocked state로 고정되지 않는다. Thread나 process가 계속 retry, rollback, 양보 같은 action을 수행하지만 서로의 action에 반응하면서 실제 목표 work는 완료하지 못한다.
-
-두 worker가 충돌할 때마다 둘 다 즉시 rollback하고 같은 delay로 다시 시도한다고 하자.
+두 worker가 충돌할 때마다 둘 다 즉시 물러났다가 같은 timing으로 다시 시도한다고 하자.
 
 ```text
 time →
-W1: conflict → rollback → retry → conflict → rollback → retry → ...
-W2: conflict → rollback → retry → conflict → rollback → retry → ...
-                     성공한 work: 0
+W1: conflict → retry → conflict → retry → ...
+W2: conflict → retry → conflict → retry → ...
+
+useful completion = 0
 ```
 
-상태와 CPU activity는 계속 변하지만 useful progress가 없다는 것이 핵심이다.
+CPU activity와 상태 변화는 계속 보이지만 유효한 progress가 없다.
 
-### Retry policy가 symmetry를 유지하면 같은 충돌을 재생할 수 있다
+### 같은 반응을 반복하면 충돌도 반복될 수 있다
 
-`실패하면 즉시 retry`는 한 번의 실패를 복구하는 간단한 전략처럼 보인다. 하지만 여러 execution이 같은 조건과 timing으로 똑같이 반응하면 서로를 계속 방해해 같은 conflict가 반복될 수 있다.
+여러 실행 흐름이 실패할 때마다 같은 시점과 같은 방식으로 다시 시도하면 처음의 충돌 패턴이 그대로 재생될 수 있다. Backoff나 jitter처럼 retry 시점을 다르게 만드는 방법은 이런 symmetry를 깨 한쪽이 먼저 progress할 가능성을 높일 수 있다.
 
-Randomized/exponential backoff와 jitter는 retry timing의 symmetry를 깨 한쪽이 먼저 progress할 기회를 만들 수 있다. Priority 변화나 retry budget도 사용할 수 있다. 다만 backoff는 liveness를 개선하는 도구이지 operation correctness나 idempotency를 자동으로 보장하지 않는다.
+### Deadlock과는 activity가 다르다
 
-### Deadlock과는 관측되는 activity가 다르다
-
-Deadlock에서는 참여 execution이 서로 resource를 기다려 activity가 줄 수 있다. Livelock에서는 lock attempt, rollback, network 요청, CPU 사용량은 높은데 성공 처리량이 낮게 나타날 수 있다.
-
-| 상태 | 내부 activity | useful progress |
+| 상태 | 실행 activity | useful progress |
 | --- | --- | --- |
-| Deadlock | 대기 중심, 줄어들 수 있음 | 없음 |
+| Deadlock | 서로 기다리며 멈춤 | 없음 |
 | Livelock | retry·상태 변경이 계속됨 | 없음 또는 매우 낮음 |
-| 정상 retry | 일시적으로 retry | 결국 성공/실패로 종료 |
+| 정상 retry | 일시적 retry | 결국 완료 또는 실패 |
 
-Backend에서 retry rate만 올라가고 성공 처리량이 회복되지 않는다면 단순히 retry 횟수를 늘리기보다 **같은 충돌을 재생하고 있는지** 확인해야 한다.
+Livelock의 핵심은 **실행이 계속 움직인다는 사실과 시스템이 실제 목표를 향해 progress한다는 사실은 다르다는 점**이다.

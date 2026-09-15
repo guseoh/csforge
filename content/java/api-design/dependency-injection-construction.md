@@ -24,16 +24,13 @@ references:
 ---
 # 의존성을 밖에서 전달하는 설계
 
-객체가 일을 하기 위해 다른 객체가 필요하다면 그 협력자를 의존성(dependency)이라고 부릅니다. 의존성이 있다는 사실 자체는 문제가 아닙니다. 실제 프로그램은 수많은 객체가 서로 협력해서 동작합니다. 설계에서 중요한 것은 **누가 협력자를 만들고, 누가 어떤 구현을 쓸지 선택하며, 누가 그 협력자를 사용하는가**입니다.
+객체가 일을 하기 위해 다른 객체가 필요하다면 그 협력자를 의존성(dependency)이라고 부를 수 있습니다. 의존성이 있다는 사실 자체는 문제가 아닙니다. 중요한 것은 **협력자를 누가 만들고 어떤 구현을 선택하며, 실제 업무 객체는 어디까지 알아야 하는가**입니다.
 
-다음 코드는 세 책임을 `OrderService` 안에 섞어 둡니다.
+다음 `OrderService`는 메일을 보내는 일뿐 아니라 SMTP 구현을 만들고 설정하는 책임까지 가지고 있습니다.
 
 ```java
 class OrderService {
-    private final EmailSender sender = new SmtpEmailSender(
-            "smtp.example.com",
-            587
-    );
+    private final EmailSender sender = new SmtpEmailSender(config);
 
     void complete(Order order) {
         sender.send(order);
@@ -41,13 +38,9 @@ class OrderService {
 }
 ```
 
-`OrderService`는 주문 완료 유스케이스를 처리하면서 `SmtpEmailSender`를 생성하고, SMTP 구현을 선택하고, 서버 설정까지 알고 있습니다. 나중에 메일 SDK 생성 방식이 바뀌거나 테스트에서 네트워크를 사용하지 않는 sender가 필요하면 주문 서비스도 함께 수정됩니다.
+메일 구현의 생성 방식이 바뀌면 주문 서비스도 함께 바뀝니다. 문제는 `new`라는 문법 자체가 아니라 **협력자 사용과 협력자 선택·생성 책임이 같은 객체에 섞여 있다는 점**입니다.
 
-문제는 `new`라는 문법이 아니라 **협력 사용 책임과 협력자 선택·생성 책임이 한 객체에 들어간 것**입니다.
-
-### 생성자 주입은 의존성을 객체의 생성 계약으로 만든다
-
-필요한 협력자를 생성자에서 받으면 `OrderService`는 자신이 어떤 역할을 필요로 하는지 드러내고, 실제 구현을 만드는 책임은 바깥으로 이동합니다.
+### 생성자에서 협력자를 받으면 필요한 의존성이 드러난다
 
 ```java
 class OrderService {
@@ -63,98 +56,44 @@ class OrderService {
 }
 ```
 
-조립하는 코드는 다음과 같습니다.
+객체를 조립하는 코드는 실제 구현을 선택해 전달합니다.
 
 ```java
 EmailSender sender = new SmtpEmailSender(config);
 OrderService service = new OrderService(sender);
 ```
 
-책임을 흐름으로 보면 더 명확합니다.
-
 ```text
-구성하는 코드(composition root)
-  1. 어떤 구현을 쓸지 결정
-  2. 구현 객체 생성
-  3. OrderService에 전달
-                 │
-                 ▼
+조립하는 코드
+ ├─ 구현 선택
+ ├─ 객체 생성
+ └─ 협력자 전달
+        │
+        ▼
 OrderService
-  4. EmailSender 계약을 사용해 주문 완료 처리
+ └─ EmailSender 계약을 사용
 ```
 
-이처럼 객체가 필요한 협력자를 외부에서 제공받는 구성을 의존성 주입(Dependency Injection, DI)이라고 합니다. DI는 Spring이 없어도 가능한 객체 설계입니다. Spring은 이 조립 과정을 컨테이너가 대신 관리해 줄 수 있는 도구일 뿐입니다.
+이처럼 객체가 필요한 협력자를 외부에서 제공받는 구성을 **의존성 주입(Dependency Injection, DI)** 이라고 합니다. Spring 같은 컨테이너가 없어도 순수 Java로 구현할 수 있습니다. 프레임워크는 객체 조립을 자동화할 수 있지만 DI라는 설계 관계 자체를 만드는 것은 아닙니다.
 
-### 생성자 주입의 장점은 “mock을 쓸 수 있다”보다 앞에 있다
+### 대체 가능성은 생성 책임을 분리한 결과다
 
-테스트에서 fake나 mock을 넣기 쉬운 것은 분명한 장점입니다.
+테스트에서는 다음처럼 다른 구현을 전달할 수 있습니다.
 
 ```java
 class FakeEmailSender implements EmailSender {
-    int callCount;
-
     @Override
     public void send(Order order) {
-        callCount++;
+        // 외부 네트워크 없이 기록
     }
 }
 
 OrderService service = new OrderService(new FakeEmailSender());
 ```
 
-하지만 이것은 더 근본적인 설계 변화의 결과입니다. `OrderService`가 `SmtpEmailSender`의 **생성 정책에서 분리**되었기 때문에 다른 구현을 넣을 수 있게 된 것입니다. production에서는 SMTP 구현을, 테스트에서는 fake를, 다른 실행 환경에서는 다른 구현을 선택할 수 있습니다.
+이것은 단순히 “mock을 쓰기 위해 DI한다”는 의미가 아닙니다. `OrderService`가 `SmtpEmailSender`의 생성 정책에서 분리되었기 때문에 실행 환경에 따라 다른 구현을 선택할 수 있게 된 것입니다.
 
-그래서 “테스트를 위해 interface를 만든다”보다 먼저 **이 협력의 구현 선택이 현재 객체의 책임인가**를 물어야 합니다.
-
-### `final` dependency는 협력자의 내부 상태까지 불변으로 만들지 않는다
-
-생성자 주입과 `final` 필드를 함께 쓰면 `OrderService`가 생성된 뒤 다른 sender 참조로 재대입되는 것을 막을 수 있습니다. 하지만 전달받은 객체 자체가 mutable하다면 그 내부 상태는 여전히 바뀔 수 있습니다.
-
-```java
-class Rate {
-    int value = 2;
-}
-
-class Price {
-    private final Rate rate;
-
-    Price(Rate rate) {
-        this.rate = rate;
-    }
-
-    int quote(int n) {
-        return rate.value * n;
-    }
-}
-```
-
-```java
-Rate shared = new Rate();
-Price a = new Price(shared);
-Price b = new Price(shared);
-
-shared.value = 3;
-```
-
-`a`와 `b`는 둘 다 같은 `Rate`를 가리키므로 이후 계산에서 변경된 값 3을 봅니다. `final`은 `a.rate = anotherRate` 같은 **참조 재대입**을 막을 뿐, 공유된 `Rate`의 내부 mutation이나 thread-safety를 보장하지 않습니다.
-
-따라서 DI 설계에서는 타입뿐 아니라 **협력자의 수명과 가변성**도 같이 봐야 합니다.
-
-### 객체 수명도 조립 책임의 일부다
-
-어떤 협력자는 여러 서비스가 안전하게 공유할 수 있습니다. 예를 들어 상태가 없는 formatter나 immutable policy는 한 객체를 공유해도 의미가 자연스러울 수 있습니다. 반대로 요청마다 상태를 누적하는 객체를 singleton처럼 공유하면 서로 다른 작업의 상태가 섞일 수 있습니다.
-
-```text
-같은 구현을 주입한다
-        ≠
-반드시 같은 instance를 공유해야 한다
-```
-
-DI는 “객체를 외부에서 넘긴다”는 구조를 제공하지만 singleton, request scope, prototype 같은 수명을 자동으로 정답으로 만들어 주지 않습니다. 어떤 state를 누가 소유하는지에 따라 조립자가 적절한 수명을 선택해야 합니다.
-
-### interface는 DI의 필수 조건이 아니다
-
-다음 코드도 의존성 주입입니다.
+인터페이스가 DI의 필수 조건도 아닙니다.
 
 ```java
 class ReportService {
@@ -166,21 +105,19 @@ class ReportService {
 }
 ```
 
-구체 클래스 자체가 안정된 협력자이고 대체 구현을 공통 역할로 다룰 이유가 없다면 굳이 `Formatter` interface를 새로 만들 필요가 없습니다. 생성 책임은 여전히 외부로 분리되어 있고 의존성도 명시되어 있습니다.
+구체 클래스 자체가 안정적인 협력자라면 그대로 전달받아도 생성 책임은 외부에 있습니다. 인터페이스는 실제로 여러 구현을 같은 역할로 다루거나 외부 경계를 별도 계약으로 보호할 이유가 있을 때 선택하면 됩니다.
 
-interface의 가치가 커지는 것은 다음처럼 **실제 변동 경계**가 있을 때입니다.
+### `final` 참조와 객체의 수명은 별개다
 
 ```java
-interface PaymentGateway {
-    PaymentResult authorize(Payment payment);
-}
+private final EmailSender sender;
 ```
 
-외부 PG 구현이 바뀔 수 있거나 fake 구현을 같은 역할로 사용해야 한다면 호출자는 `PaymentGateway`라는 계약에 의존하는 편이 좋습니다. 반대로 구현 하나뿐인 내부 계산 class마다 interface를 만들면 타입 수만 늘 수 있습니다.
+`final`은 서비스가 생성된 뒤 `sender` 필드에 다른 참조를 다시 넣지 못하게 합니다. 전달받은 `EmailSender` 객체 자체를 불변으로 만들거나 thread-safe하게 만드는 것은 아닙니다.
 
-### DI와 Service Locator는 의존성 가시성이 다르다
+또한 외부에서 주입한다는 사실만으로 같은 인스턴스를 항상 공유해야 하는 것도 아닙니다. 상태가 없는 협력자는 하나를 공유해도 자연스러울 수 있지만 요청별 상태를 보관하는 가변 객체라면 수명을 다르게 설계해야 할 수 있습니다. **어떤 상태를 누가 소유하는가**에 따라 객체 수명을 결정해야 합니다.
 
-다음처럼 메서드 안에서 전역 registry나 container를 직접 조회할 수도 있습니다.
+### 숨겨진 조회보다 필요한 의존성을 생성 계약에 드러내기
 
 ```java
 void complete(Order order) {
@@ -189,69 +126,8 @@ void complete(Order order) {
 }
 ```
 
-이 방식도 외부 어딘가에서 객체를 등록할 수는 있지만, `OrderService`의 생성자만 봐서는 `EmailSender`가 필요하다는 사실을 알기 어렵습니다. 테스트도 호출 전에 전역 registry 상태를 맞춰야 할 수 있습니다.
+이런 전역 조회 방식은 메서드 내부를 읽기 전까지 `OrderService`가 무엇을 필요로 하는지 알기 어렵습니다. 생성자에서 필수 협력자를 받으면 객체를 만드는 시점에 필요한 의존성이 드러나고, 완성된 객체가 필요한 협력자를 갖고 있다는 전제를 세우기 쉽습니다.
 
-생성자 주입은 **필수 협력자를 타입의 생성 계약에 드러낸다**는 점이 중요합니다. 객체가 만들어졌다면 필요한 협력자가 이미 연결되어 있다는 전제를 세우기 쉽습니다.
+생성자 인자가 지나치게 많아졌다면 주입 방식 자체를 숨기기보다 **한 객체가 서로 다른 책임을 너무 많이 맡고 있지 않은지**도 살펴볼 수 있습니다.
 
-### 선택적 의존성이 많아지면 책임 자체를 다시 봐야 한다
-
-생성자에 협력자가 계속 늘어난다고 해서 DI가 실패한 것은 아닙니다. 한 use case가 실제로 여러 시스템을 조정한다면 여러 의존성이 필요할 수 있습니다. 하지만 서로 관련 없는 협력자가 계속 추가된다면 class가 여러 책임을 한곳에 모으고 있다는 신호일 수도 있습니다.
-
-```java
-OrderService(
-    OrderRepository repository,
-    PaymentGateway paymentGateway,
-    EmailSender sender,
-    MetricsRecorder metrics,
-    CsvExporter exporter,
-    ImageResizer imageResizer,
-    ...
-)
-```
-
-이때 “생성자가 길어서 field injection으로 숨기자”가 해결책은 아닙니다. 먼저 이 객체가 정말 하나의 응집된 책임을 갖는지 검토해야 합니다. 생성자 주입은 오히려 과도한 의존성을 **눈에 보이게 하는 진단 도구**가 되기도 합니다.
-
-### 순환 의존성은 객체 책임이 꼬였다는 신호가 될 수 있다
-
-`A`가 `B`를 필요로 하고 `B`도 `A`를 필수 생성자 인자로 요구하면 두 객체 중 어느 것을 먼저 완성해야 할지 문제가 됩니다.
-
-```text
-A ──needs──> B
-^            │
-└──needs─────┘
-```
-
-프레임워크의 지연 주입이나 provider로 기술적으로 우회할 수 있는 경우도 있지만, 먼저 두 객체의 책임 분리가 잘못된 것은 아닌지 확인해야 합니다. 공통 정책을 제3의 객체로 분리하거나 collaboration 방향을 한쪽으로 정리하면 순환 자체가 사라질 수 있습니다.
-
-### 백엔드 코드에서는 “누가 조립하는가”를 분리해서 본다
-
-Spring 애플리케이션에서는 container가 Bean을 생성하고 생성자 의존성을 연결합니다. 그래도 설계 판단은 순수 Java와 같습니다.
-
-```java
-@Service
-class OrderService {
-    private final PaymentGateway paymentGateway;
-
-    OrderService(PaymentGateway paymentGateway) {
-        this.paymentGateway = paymentGateway;
-    }
-}
-```
-
-여기서 핵심은 `@Service`나 자동 주입 문법이 아닙니다. `OrderService`는 결제 구현의 생성 방법을 모르고 **PaymentGateway가 제공해야 할 책임만 사용**합니다. 반대로 서비스 내부에서 SDK client를 직접 `new`하거나 static singleton을 찾아가면 Spring을 쓰더라도 DI의 설계 경계를 약하게 만들 수 있습니다.
-
-의존성 주입을 검토할 때는 결국 세 가지를 추적하면 됩니다. **어떤 객체가 협력자를 사용하고, 어떤 바깥 경계가 구현과 수명을 선택하며, 그 선택이 바뀌어도 사용 객체의 핵심 책임이 유지되는가.** 이 구분이 명확할 때 DI는 단순한 프레임워크 기능이 아니라 결합도를 관리하는 객체 설계가 됩니다.
-
-### 면접에서 이렇게 나옵니다
-
-#### Q. DI는 Spring이 제공하는 기능인가요?
-
-DI 자체는 Spring 전용 기능이 아닙니다. **객체가 필요한 협력자를 내부에서 직접 만들거나 찾는 대신 외부에서 전달받는 객체 구성 방식**이고, 순수 Java에서도 constructor에 협력자를 넘기면 구현할 수 있습니다.
-
-Spring container는 Bean 생성·선택·수명 관리와 연결 작업을 자동화해 주지만, 어떤 객체가 어떤 책임에 의존해야 하는지는 객체 설계의 문제입니다.
-
-#### Q. 생성자 주입을 선호하는 이유는 무엇인가요?
-
-필수 의존성이 constructor signature에 드러나기 때문에 **객체가 만들어질 때 필요한 협력자가 무엇인지 명확하고, 완성된 객체가 필수 의존성을 가진 상태로 시작하기 쉽습니다.** 또한 조립하는 곳에서 production 구현과 test double을 바꿔 전달할 수 있습니다.
-
-다만 dependency field를 `final`로 둔다고 협력 객체 자체가 immutable해지거나 올바른 수명으로 공유되는 것은 아닙니다. 같은 mutable collaborator를 여러 객체에 주입하면 상태가 공유될 수 있으므로 타입뿐 아니라 ownership과 lifecycle도 함께 판단해야 합니다.
+DI를 이해할 때는 세 가지를 분리하면 됩니다. **협력자를 사용하는 객체, 구현과 수명을 선택하는 조립 지점, 두 객체 사이의 계약**입니다. 이 경계가 분명하면 DI는 프레임워크 문법이 아니라 객체 간 결합을 관리하는 설계가 됩니다.

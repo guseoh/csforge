@@ -3,8 +3,8 @@ kind: concept
 contentKey: network-http.core.request-journey.proxy-gateway-path
 topicContentKey: network-http.core.request-journey
 slug: proxy-gateway-path
-title: "Proxy·Gateway Path"
-summary: "forward proxy·reverse proxy·gateway가 요청 경로를 바꾸는 지점을 구분한다."
+title: "Proxy·Gateway가 만드는 HTTP Hop"
+summary: "forward proxy·reverse proxy·gateway가 client와 origin 사이에 별도 HTTP hop을 만드는 방식을 설명한다."
 level: 2
 status: PUBLISHED
 displayOrder: 80
@@ -15,15 +15,20 @@ references:
     language: en
     displayOrder: 1
 ---
-# Proxy·Gateway Path
+# Proxy·Gateway가 만드는 HTTP Hop
 
-forward proxy는 client가 요청한 outbound destination으로 가는 중간 endpoint이고, reverse proxy는 origin server 앞에서 inbound 요청을 받아 하나 이상의 backend로 전달하는 중간 endpoint다. gateway라는 말은 이 중계 경로에 protocol translation, authentication, routing, rate limit, aggregation 같은 경계 policy까지 함께 수행하는 역할을 포함해 사용할 수 있다. 이름보다 실제 connection과 trust boundary를 확인해야 한다.
+HTTP intermediary는 client가 보낸 request를 받아 다음 endpoint로 다시 전달한다. 이때 client→intermediary와 intermediary→upstream은 별도의 connection일 수 있으므로 timeout, TLS, transport state와 peer address도 각각 다르다.
 
-intermediary마다 client-facing과 upstream-facing connection, timeout, retry, header rewrite, body buffering과 cache 정책이 다르다. 이 때문에 client가 본 504가 backend의 500인지 upstream connect timeout인지 달라지고, proxy retry가 POST side effect를 중복하거나 요청 본문을 다시 읽지 못할 수 있다. original client identity도 forwarded metadata와 trusted proxy 범위를 통해 별도로 전달·검증한다.
+forward proxy는 주로 client 쪽을 대신해 외부 destination으로 요청을 전달한다. reverse proxy는 origin server 앞에서 client request를 받아 적절한 backend로 전달한다. `gateway`라는 용어는 이 중계 역할에 protocol translation이나 routing 같은 경계 기능을 더한 구성에 사용될 수 있다. 이름보다 **실제로 어느 connection을 종료하고 어느 request를 새로 전달하는지**가 중요하다.
 
-API gateway와 Spring app의 timeout·max body·streaming·status mapping을 정렬하고, proxy가 반환한 502/504, gateway policy가 만든 4xx와 backend가 반환한 500을 관측에서 구분한다. gateway health가 origin application readiness나 DB transaction 상태를 자동으로 보장하지 않는다는 점도 유지한다.
-### Intermediary 응답
-    client → edge gateway
-                 ├─ cache hit → 응답
-                 └─ miss → origin → 응답
-edge cache 상태와 origin health 및 hop별 timeout을 분리 관측한다.
+### Intermediary는 단순한 투명한 선이 아니다
+
+proxy는 header를 추가하거나 제거하고, target authority를 바꾸거나, request/response body를 buffering할 수 있다. cache가 있다면 origin에 요청을 보내지 않고 응답할 수도 있고, upstream failure를 자신이 만든 status로 바꿔 client에 반환할 수도 있다.
+
+```text
+client ── request A ──> reverse proxy
+                         │
+                         └── request B ──> backend
+```
+
+`request A`와 `request B`는 같은 사용자 동작에서 시작됐지만 동일한 network connection이나 완전히 동일한 wire message일 필요는 없다. 이런 hop 구조를 이해하면 client가 본 response가 어디에서 생성됐는지, TLS가 어디에서 종료됐는지, 어떤 authority가 다음 backend를 선택했는지를 계층별로 추적할 수 있다.

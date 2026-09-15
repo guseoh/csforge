@@ -3,8 +3,8 @@ kind: concept
 contentKey: network-http.core.http-message.header-body
 topicContentKey: network-http.core.http-message
 slug: header-body
-title: "Header·Body"
-summary: "metadata header와 content body의 parsing·framing 경계를 설명한다."
+title: "Header Fields와 Content"
+summary: "HTTP header fields가 metadata·control 정보를 전달하고 content가 representation data를 운반하는 경계를 설명한다."
 level: 1
 status: PUBLISHED
 displayOrder: 30
@@ -15,14 +15,16 @@ references:
     language: en
     displayOrder: 1
 ---
-# Header·Body
+# Header Fields와 Content
 
-header fields는 content length·media type·조건·cache·authorization 같은 metadata와 processing control을 표현하고 content/body는 실제 message bytes를 운반한다. receiver는 header syntax와 field semantics를 먼저 해석한 뒤 HTTP version과 framing 규칙으로 content의 시작·끝을 정해야 application serializer가 올바른 bytes를 읽을 수 있다.
+HTTP message에는 message를 해석하고 처리하기 위한 header fields와, 필요한 경우 실제 representation data를 운반하는 content가 있다. header fields에는 content의 media type과 길이, cache 조건, 인증 정보, preferred representation처럼 message 처리에 필요한 metadata와 control information이 들어갈 수 있다.
 
-HTTP/1.1의 Content-Length와 transfer coding은 message framing에 관여하지만, HTTP/2·HTTP/3의 binary frame은 transport/protocol framing일 뿐 application content의 JSON object boundary와 같은 의미가 아니다. 서로 다른 intermediary가 length와 transfer rule을 다르게 해석하면 요청 smuggling이 생길 수 있고, body를 JSON으로 parse할 수 있다는 사실도 authentication·size·semantic 검증을 통과했다는 뜻은 아니다.
+content는 header 뒤에 붙는 임의의 `객체`가 아니라 octet sequence다. `Content-Type: application/json`이라면 application은 content bytes를 JSON 표현으로 해석할 수 있지만, HTTP 자체가 그 JSON을 domain object로 변환하는 것은 아니다.
 
-Backend는 multipart boundary, JSON content size·media type과 header line limits를 서버에서 제한한다. body를 모두 memory에 모으지 않고 streaming할 때도 framing이 확정되는 지점, schema 검증, cancellation과 downstream transaction 경계를 유지한다.
-### HTTP message 구조
-    start-line → header fields → optional content
-                  metadata/control     representation bytes
-header parsing 완료가 schema 검증 완료를 뜻하지 않는다.
+### Content의 의미와 wire framing을 구분한다
+
+HTTP semantics는 content가 무엇을 의미하는지를 다루고, 각 HTTP version의 framing은 message에서 그 bytes의 경계를 어떻게 알아내는지를 다룬다. HTTP/1.1에서는 `Content-Length`, `Transfer-Encoding`과 request/status 조건이 message body 경계에 영향을 주고, HTTP/2·3은 binary frame과 stream 단위로 data를 운반한다.
+
+이 때문에 `header가 끝난 뒤 socket에서 읽히는 모든 bytes가 하나의 JSON body다`라고 단순화하면 안 된다. 먼저 HTTP protocol이 message 또는 stream의 content 경계를 복원하고, 그다음 media type에 맞는 application parser가 content를 해석한다.
+
+HTTP를 계층적으로 보면 **framing → content bytes → representation format → application validation**이 서로 다른 책임이라는 점이 선명해진다.

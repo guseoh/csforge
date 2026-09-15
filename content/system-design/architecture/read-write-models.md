@@ -3,8 +3,8 @@ kind: concept
 contentKey: system-design.core.architecture.read-write-models
 topicContentKey: system-design.core.architecture
 slug: read-write-models
-title: "read model과 write model"
-summary: "transactional write와 query/read projection의 shape·freshness·rebuildability trade-off를 설계한다"
+title: "쓰기 모델과 읽기 모델"
+summary: "canonical write가 지켜야 할 invariant와 사용자 query에 필요한 read shape를 분리하고 별도 projection의 freshness·rebuild 비용을 판단한다."
 level: 2
 status: PUBLISHED
 displayOrder: 20
@@ -22,36 +22,24 @@ references:
     displayOrder: 2
     relationNote: "data management와 workload별 architecture 선택 확인"
 ---
-# read model과 write model
+# 쓰기 모델과 읽기 모델
 
-Write model은 invariant와 transaction을 지키며 canonical state를 변경하는 구조이고, read model은 query shape와 사용자 read 지연 시간에 맞춘 projection입니다. 하나의 schema로 모든 read와 write를 해결하려는 대신 access pattern, freshness, rebuildability와 운영 비용을 비교합니다.
+데이터를 변경할 때 필요한 구조와 화면에서 빠르게 조회할 때 필요한 구조가 항상 같지는 않습니다. 쓰기 모델은 business invariant와 transaction을 안전하게 지키는 것이 우선이고, 읽기 모델은 사용자가 자주 수행하는 filter·sort·aggregation 같은 query에 맞는 형태가 중요합니다.
 
-### projection은 source of truth가 아니다
+처음부터 두 저장소를 분리할 필요는 없습니다. 하나의 relational schema가 현재 workload를 충분히 처리한다면 그 구조가 가장 단순합니다. 하지만 특정 read가 반복적인 join·aggregation 때문에 실제 병목이 되고 요구 latency를 만족하지 못한다면 별도 projection이나 denormalized read model을 검토할 수 있습니다.
 
 ```text
-command ─▶ canonical DB transaction ─▶ outbox/event
-                                      └─ projection ─▶ query model
-                                                └─ lag/rebuild 가능
+command
+   ↓
+canonical write model
+   │
+   └─ change propagation
+          ↓
+     read projection
 ```
 
-Projection update가 늦거나 실패해도 canonical write의 의미를 바꾸지 않아야 합니다. projection에는 source revision·updatedAt을 넣어 lag를 측정하고, event replay나 canonical scan으로 rebuild할 수 있어야 합니다.
+별도 read model을 두는 순간 새로운 계약이 생깁니다. Projection은 canonical source보다 늦을 수 있고, update가 실패할 수도 있으며, schema가 바뀌면 backfill이나 rebuild가 필요합니다. 따라서 “조회가 빠르다”만 볼 것이 아니라 허용 stale 시간과 재생성 방법도 함께 정해야 합니다.
 
-### query shape에 맞춰 denormalize한다
+Write 직후 사용자가 자신의 변경을 바로 확인해야 한다면 응답에 canonical 결과를 포함하거나 필요한 read path를 별도로 제공할 수 있습니다. 반대로 검색·통계처럼 몇 초의 지연을 허용할 수 있다면 eventual projection이 더 자연스러울 수 있습니다.
 
-목록 화면의 join·aggregation·sorting이 매번 비싸면 materialized view, search index, read replica 또는 precompute를 검토할 수 있습니다. 그 대신 write amplification, stale window, schema evolution, backfill과 일관성 boundary가 생깁니다. “read가 많으니 무조건 별도 DB”가 아니라 병목과 요구사항으로 판단합니다.
-
-### write path는 좁게 유지한다
-
-모든 derived view를 같은 transaction에 묶으면 read 성능을 위해 canonical write가 실패할 수 있습니다. 반대로 projection을 비동기로 두면 사용자가 방금 바꾼 상태를 못 볼 수 있으므로 write 응답에 canonical result를 주거나 session pinning·version watermark를 사용합니다.
-
-### 문제를 풀 때 확인할 것
-
-1. invariant와 canonical write path를 정의합니다.
-2. query pattern·sort·filter·read 지연 시간을 측정합니다.
-3. projection freshness·revision·rebuild contract를 둡니다.
-4. denormalization의 write amplification과 backfill 비용을 계산합니다.
-5. write 직후 read와 projection outage의 사용자 상태를 정합니다.
-
-### 면접에서 설명한다면
-
-Write model은 canonical invariant와 transaction을, read model은 query shape와 지연 시간을 최적화합니다. read projection은 source of truth가 아니므로 revision·lag·rebuild를 설계하고, denormalization의 write amplification과 stale window를 감수할 가치가 있는지 workload로 판단합니다.
+System Design에서 중요한 것은 CQRS나 특정 검색 엔진을 먼저 선택하는 것이 아닙니다. **현재 write invariant와 query 요구가 하나의 모델로 충분한지 측정하고, 분리했을 때 생기는 freshness·write amplification·rebuild 비용을 감당할 가치가 있는지 판단하는 것**입니다.

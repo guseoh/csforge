@@ -4,7 +4,7 @@ contentKey: network-http.core.http-cache.last-modified
 topicContentKey: network-http.core.http-cache
 slug: last-modified
 title: "Last-Modified"
-summary: "수정 시각 validator의 정밀도와 clock 경계를 설명한다."
+summary: "selected representation의 수정 시각을 HTTP-date로 제공하는 시간 기반 validator의 의미와 한계를 설명한다."
 level: 1
 status: PUBLISHED
 displayOrder: 50
@@ -17,12 +17,16 @@ references:
 ---
 # Last-Modified
 
-`Last-Modified`는 selected representation이 마지막으로 변경된 시각을 HTTP-date로 나타낸다. client는 이 값을 `If-Modified-Since`에 복사해 conditional GET/HEAD를 보내고, server가 그 시각 이후 representation을 바꾸지 않았다고 판단하면 body 없이 304를 반환할 수 있다. 파일의 mtime, DB의 `updatedAt`, 배포 시각은 서로 다른 값일 수 있으므로 무엇을 representation의 변경으로 볼지 먼저 정해야 한다.
+`Last-Modified`는 selected representation이 마지막으로 변경되었다고 server가 판단한 시각을 HTTP-date로 제공하는 validator다. Client는 이 값을 다음 request의 `If-Modified-Since`에 넣어 representation이 그 이후 변경되었는지 조건부로 확인할 수 있다.
 
-HTTP-date가 표현하는 정밀도는 보통 초 단위이고, origin clock이 조정되거나 여러 origin의 시계가 다르면 실제 변경 순서를 정확히 반영하지 못할 수 있다. 같은 초 안에 두 번 변경된 representation이 같은 timestamp를 가질 수 있으므로 `Last-Modified`는 ETag보다 약한 validator가 될 수 있다. server가 더 정확한 ETag를 제공하고 요청에 두 validator가 함께 있으면 ETag 조건이 우선되는 규칙도 지켜야 한다.
+시간 기반 validator는 이해하기 쉽지만 정밀도와 clock에 한계가 있다. HTTP-date는 초 단위 정밀도를 사용하므로 같은 초 안에서 여러 번 바뀐 representation을 구분하지 못할 수 있고, server clock이 부정확하면 실제 변경 순서를 완전히 표현하지 못할 수도 있다.
 
-`Last-Modified`는 응답이 언제나 실제 파일의 저장 완료 시각을 증명한다는 header가 아니다. copy·restore·timezone 변환으로 mtime 의미가 달라질 수 있고, clock이 미래의 날짜를 만들 수도 있다. 따라서 cache가 이 값을 이용해 body를 생략하는 것과 애플리케이션이 데이터의 업무상 최신성을 판단하는 것은 분리한다.
+그래서 representation version을 더 정확하게 구분할 수 있다면 ETag가 더 적합한 validator가 될 수 있다. `Last-Modified`와 ETag가 함께 제공될 수도 있으며 conditional request에서는 각 header의 우선순위 규칙을 따라야 한다.
 
-### Backend 연결
+```text
+Last-Modified: Tue, 15 Sep 2026 09:30:00 GMT
+        ↓
+If-Modified-Since: Tue, 15 Sep 2026 09:30:00 GMT
+```
 
-DB content의 `updatedAt`과 export file mtime을 혼동하지 않고, 둘 중 어떤 값이 HTTP representation의 변경을 나타내는지 endpoint contract에 명시한다. 초 단위 반올림으로 두 update가 같은 시각이 될 수 있는 API에는 ETag를 함께 제공하고, 조건부 304가 permission check나 tenant 선택보다 먼저 실행되지 않도록 resource 조회·권한 검사를 분리하지 않는다.
+중요한 점은 Last-Modified가 database row의 `updatedAt`이나 file mtime과 반드시 동일해야 하는 field가 아니라는 것이다. **HTTP representation의 변경 시각을 나타내는 validator**로서 server가 일관된 의미를 제공해야 한다.

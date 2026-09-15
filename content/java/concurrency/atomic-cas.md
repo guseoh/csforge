@@ -24,58 +24,43 @@ references:
 ---
 # Atomic 변수와 CAS
 
-여러 thread가 하나의 숫자를 증가시킬 때 `volatile int`만으로는 lost update를 막지 못했습니다. 그렇다고 모든 경우에 큰 `synchronized` block이 필요한 것도 아닙니다. **하나의 값에 대한 읽기-확인-갱신을 원자적으로 수행하는 API**가 필요할 때 Java의 atomic classes를 사용할 수 있습니다.
+`volatile int count`는 writer와 reader 사이의 visibility/order를 다룰 수 있지만 `count++` 전체를 atomic increment로 만들지는 않습니다. 하나의 값에 대해 **현재 상태를 확인하고 조건이 맞을 때만 원자적으로 갱신**해야 한다면 `AtomicInteger` 같은 atomic API를 사용할 수 있습니다.
 
-그 중심에 compare-and-set(CAS)라는 개념이 있습니다.
+그 배경에 있는 대표적인 연산이 compare-and-set(CAS)입니다.
 
 ![CAS 성공과 retry 흐름](/learning/java/cas-retry.svg)
 
-### CAS는 "내가 읽었던 값이 아직 그대로인가"를 확인하고 바꾼다
-
-개념적으로 CAS는 세 값을 생각하면 됩니다.
-
-```text
-current  = 지금 실제 값
-expected = 내가 이전에 읽고 예상한 값
-update   = 바꾸려는 새 값
-```
-
-조건은 단순합니다.
-
-```text
-current == expected
-    ├─ yes -> update로 변경, 성공
-    └─ no  -> 변경하지 않음, 실패
-```
-
-`AtomicInteger`에서는 다음처럼 사용할 수 있습니다.
+### CAS는 expected와 현재 값이 같을 때만 갱신한다
 
 ```java
 AtomicInteger count = new AtomicInteger(0);
-
 boolean changed = count.compareAndSet(0, 1);
 ```
 
-현재 값이 정말 0이었던 순간에만 1로 바뀝니다.
+`compareAndSet(expectedValue, newValue)`는 현재 값이 `expectedValue`와 같을 때만 값을 `newValue`로 원자적으로 바꾸고 성공 여부를 반환합니다.
 
-### 다른 thread가 먼저 바꾸면 CAS는 실패한다
+```text
+current == expected ?
+    ├─ yes -> update 적용, true
+    └─ no  -> 변경 없음, false
+```
 
-두 thread가 동시에 0을 읽었다고 해 보겠습니다.
+Java SE 25 `AtomicInteger`의 `compareAndSet`은 이 조건부 변경 자체가 atomic하다고 계약하고, memory effects는 `VarHandle.compareAndSet`에 정의된 semantics를 따릅니다.
+
+### 경쟁에서 졌다면 실패 결과를 보고 다시 계산할 수 있다
+
+두 thread가 모두 0을 읽었다고 해 보겠습니다.
 
 ```text
 초기값 = 0
 
 Thread A                    Thread B
 read 0                      read 0
-CAS expected=0, update=1
- -> 성공, 실제 값 1
-                            CAS expected=0, update=1
-                             -> 현재값 1이므로 실패
+CAS(0, 1) -> 성공           CAS(0, 1) -> 실패
+실제값 1                    실제값이 이미 1
 ```
 
-B는 실패했다는 사실을 알 수 있으므로 현재 값을 다시 읽고 새 결과를 계산해 다시 시도할 수 있습니다.
-
-### retry loop는 이렇게 동작한다
+B의 실패는 예외 상황이라기보다 **내가 읽은 이후 다른 thread가 값을 먼저 바꿨다**는 경쟁 결과입니다. 현재 값을 다시 읽고 새 결과를 계산해 재시도할 수 있습니다.
 
 ```java
 int increment() {
@@ -90,80 +75,49 @@ int increment() {
 }
 ```
 
-CAS에 실패했다고 예외 상황은 아닙니다. "내가 계산하는 동안 다른 thread가 값을 먼저 바꿨다"는 정상적인 경쟁 결과입니다.
+실제 단순 증가는 이미 `incrementAndGet()` 같은 API가 제공하므로 직접 CAS loop를 구현할 필요가 없습니다. 이 코드는 retry 구조를 이해하기 위한 예입니다.
 
-물론 실제 증가에는 `incrementAndGet()` 같은 이미 제공되는 atomic API를 쓰는 편이 낫습니다. 직접 loop를 만드는 예제는 CAS의 상태 변화를 이해하기 위한 것입니다.
+### update 함수는 재실행될 수 있다
 
-### CAS primitive와 lock-free progress guarantee는 같은 말이 아니다
-
-Lock 기반 코드에서는 다른 thread가 critical section을 소유하면 대기합니다. CAS 기반 알고리즘에서는 값이 바뀌었으면 다시 계산하고 재시도하도록 구성할 수 있습니다.
-
-경쟁이 적다면 retry가 거의 없을 수 있지만, 많은 thread가 같은 값에 몰리면 여러 thread가 계속 실패하고 재시도하면서 CPU를 사용할 수 있습니다.
-
-```text
-낮은 contention: 대부분 한두 번에 성공
-높은 contention: CAS 실패 -> retry -> 실패 -> retry ...
-```
-
-여기서 **CAS라는 atomic primitive를 사용했다는 사실만으로 알고리즘 전체가 자동으로 lock-free라고 결론내리면 안 됩니다.** lock-free, wait-free 같은 용어는 전체 알고리즘이 어떤 progress guarantee를 만족하는지를 설명하는 별도의 성질입니다. CAS는 그런 알고리즘을 구현하는 데 사용할 수 있는 도구이지, 사용 사실 자체가 progress guarantee를 증명하지는 않습니다.
-
-따라서 "CAS 기반 코드는 항상 lock-free이고 lock보다 빠르다"는 결론도 틀립니다. workload, contention, retry 정책과 실제 알고리즘의 progress 특성을 함께 봐야 합니다.
-
-### AtomicInteger 하나는 하나의 상태를 잘 다룬다
+`updateAndGet`, `getAndUpdate` 같은 atomic API도 내부 경쟁 때문에 update function을 여러 번 적용할 수 있습니다. 공식 API가 update function을 side-effect-free하게 작성하라고 설명하는 이유가 여기에 있습니다.
 
 ```java
-AtomicInteger count = new AtomicInteger();
-count.incrementAndGet();
+count.updateAndGet(current -> current + 1);
 ```
 
-이런 단일 counter는 atomic API와 잘 맞습니다.
+함수 안에서 이메일 발송이나 외부 상태 변경 같은 side effect를 수행하면 CAS 재시도 때문에 그 작업이 여러 번 실행될 수 있습니다.
 
-하지만 주문 상태처럼 여러 값이 함께 바뀌어야 한다면 문제가 달라집니다.
+### CAS primitive와 lock-free algorithm은 같은 말이 아니다
+
+CAS를 사용하면 lock을 직접 획득하지 않는 갱신 알고리즘을 만들 수 있지만, **CAS를 한 번 썼다는 사실만으로 전체 알고리즘이 lock-free 또는 wait-free라고 증명되는 것은 아닙니다.** 이 용어들은 전체 알고리즘의 progress guarantee를 설명합니다.
+
+경쟁이 낮을 때는 CAS 실패가 드물 수 있지만, 많은 thread가 같은 값에 몰리면 다음처럼 반복 재시도가 생길 수 있습니다.
 
 ```text
-available = 10
-reserved  = 3
-
-invariant: reserved <= available
+read -> CAS fail -> read -> CAS fail -> ...
 ```
 
-`available`과 `reserved`를 각각 AtomicInteger로 만들었다고 두 값의 관계가 하나의 atomic transaction이 되지는 않습니다.
+따라서 "CAS는 lock보다 항상 빠르다"는 규칙도 없습니다. Contention과 작업 크기, 전체 알고리즘을 실제로 봐야 합니다.
 
-한 가지 방법은 관련 값을 immutable state 하나로 묶고 `AtomicReference<State>` 전체를 CAS로 교체하는 것입니다. 또는 lock으로 여러 field를 같은 critical section에 둘 수도 있습니다.
+### Atomic 변수 하나의 atomicity를 여러 상태의 transaction으로 확대하지 않는다
 
-### ABA 같은 더 깊은 문제도 존재한다
+```java
+AtomicInteger available;
+AtomicInteger reserved;
+```
 
-CAS는 "현재 값이 expected와 같은가"를 봅니다. 값이 A에서 B로 바뀌었다가 다시 A가 되었다면 단순 값 비교만으로 중간 변경이 있었다는 사실을 알 수 없는 경우가 있습니다. 이를 ABA 문제라고 부릅니다.
+각 변수의 개별 atomic operation이 안전하다고 해서 다음 invariant가 하나의 원자적 상태 전이로 보호되는 것은 아닙니다.
 
-모든 backend code가 ABA를 직접 해결해야 하는 것은 아니지만, CAS가 "중간 history까지 알아서 검증하는 마법"은 아니라는 점을 보여 줍니다. 필요한 경우 version/stamp를 함께 관리하는 방법을 검토할 수 있습니다.
+```text
+reserved <= available
+```
 
-### 문제를 풀 때 확인할 것
+관련 값을 immutable state 하나에 묶고 `AtomicReference<State>` 전체를 조건부 교체하거나, 같은 lock 안에서 여러 값을 변경하는 방식처럼 **invariant 전체를 하나의 동기화 경계**에 넣어야 할 수 있습니다.
 
-1. CAS의 expected/current/update를 각각 적습니다.
-2. 다른 thread가 먼저 값을 바꿨을 때 성공/실패를 추적합니다.
-3. 실패 후 새 값을 다시 읽고 계산하는지 봅니다.
-4. 경쟁이 높을 때 retry 비용을 생각합니다.
-5. 보호할 invariant가 단일 변수인지 여러 상태의 관계인지 확인합니다.
-6. CAS 사용 여부와 알고리즘의 lock-free/wait-free progress guarantee를 구분합니다.
+### ABA는 CAS가 상태의 history를 기억하지 않는다는 한계를 보여 준다
 
-### 자주 헷갈리는 부분
+CAS는 비교 시점의 현재 값과 expected가 같은지를 봅니다. 값이 `A → B → A`로 바뀌었다면 마지막 값만 비교하는 CAS는 중간 변경이 있었다는 사실을 알지 못할 수 있습니다. 이를 ABA 문제라고 부릅니다.
 
-- CAS 실패는 예외가 아니라 expected가 더 이상 현재값이 아니라는 결과입니다.
-- AtomicInteger 하나가 여러 field의 업무 invariant를 자동 보호하지 않습니다.
-- CAS primitive를 사용했다는 사실만으로 전체 알고리즘이 lock-free라고 증명되지는 않습니다.
-- CAS retry 방식이 모든 workload에서 lock보다 빠른 것은 아닙니다.
-- CAS는 값이 과거에 어떻게 변했는지 history를 자동으로 기록하지 않습니다.
+모든 코드가 ABA 대응을 직접 구현해야 하는 것은 아닙니다. 다만 CAS가 "내가 본 뒤 아무 변화도 없었다"를 항상 의미하는 것은 아니라는 점을 보여 줍니다. 알고리즘에서 중간 변경 여부가 중요하다면 version이나 stamp 같은 추가 상태가 필요할 수 있습니다.
 
-### 학습 후 스스로 설명해 보기
-
-CAS는 현재 값이 내가 예상한 값과 같을 때만 새 값으로 바꾸는 원자적인 조건부 갱신입니다. 다른 thread가 먼저 값을 바꾸면 실패하고 caller는 새 값을 읽어 retry할 수 있습니다. `AtomicInteger` 같은 클래스가 이를 이용한 단일 값 atomic update를 제공하지만 contention이 높으면 retry 비용이 커질 수 있고, 여러 field 사이의 invariant는 별도의 상태 모델이나 lock이 필요할 수 있습니다. 또한 CAS는 lock-free 알고리즘을 구현하는 데 사용할 수 있는 primitive이지, CAS를 썼다는 사실만으로 전체 알고리즘의 lock-free progress가 자동 보장되는 것은 아닙니다.
-
-### 면접에서 이렇게 나옵니다
-
-#### Q. CAS를 사용하면 코드는 자동으로 lock-free가 되나요?
-
-아닙니다. CAS는 하나의 원자적인 조건부 갱신 primitive입니다. Lock-free나 wait-free는 전체 알고리즘의 progress guarantee를 설명하는 성질이므로 retry 구조, 다른 blocking 지점, 여러 상태의 협력까지 포함해 알고리즘 전체를 봐야 합니다.
-
-#### Q. `AtomicInteger`를 여러 개 쓰면 여러 값 사이의 invariant도 원자적으로 보호되나요?
-
-각 `AtomicInteger`의 개별 연산은 원자적이지만 서로 다른 atomic 변수 사이의 관계까지 하나의 transaction으로 묶이지는 않습니다. 여러 값이 함께 변해야 한다면 immutable composite state를 `AtomicReference` 하나로 교체하거나 같은 lock으로 보호하는 등 invariant 자체를 한 동기화 경계에 넣어야 합니다.
+Atomic API를 선택할 때는 **보호하려는 것이 하나의 독립 값인지, update가 재시도되어도 안전한지, contention이 어느 정도인지, 여러 값 사이의 invariant가 따로 존재하는지**를 확인하세요. CAS는 강력한 조건부 atomic update primitive지만 동시성 설계 전체를 대신하는 것은 아닙니다.

@@ -3,8 +3,8 @@ kind: concept
 contentKey: cache.core.models.key-serialization
 topicContentKey: cache.core.models
 slug: key-serialization
-title: "cache key와 serialization contract"
-summary: "key namespace·tenant·version과 value serialization을 명시해 collision과 schema 변경을 제어한다"
+title: "캐시 키와 직렬화 계약"
+summary: "namespace·tenant·version을 포함한 key 규칙과 value serialization을 명시해 key 충돌과 배포 간 schema 호환성 문제를 줄인다."
 level: 2
 status: PUBLISHED
 displayOrder: 30
@@ -28,46 +28,45 @@ references:
     displayOrder: 3
     relationNote: "serializer 설정과 Java record type 정보가 기존 cache value 호환성에 영향을 주는 실제 사례 확인"
 ---
-# cache key와 serialization contract
+# 캐시 키와 직렬화 계약
 
-Cache key는 단순한 문자열이 아니라 어떤 representation을 어떤 tenant와 version에 대해 저장했는지 나타내는 주소입니다. key 설계가 모호하면 서로 다른 use case가 같은 값을 덮어쓰거나, schema를 바꾼 뒤 이전 serializer가 만든 값을 새 code가 잘못 읽을 수 있습니다.
-
-```text
-cache:v2:concept:tenant-7:42
-cache:v2:concept-list:tenant-7:topic-java:page-1
-```
-
-### namespace는 collision을 막는다
-
-`user:42`와 `order:42`가 같은 prefix 규칙을 공유하면 값 type을 잘못 읽을 수 있습니다. entity·use case·tenant·schema version을 구분하고 delimiter 규칙을 고정해야 합니다. tenant가 있는 서비스에서는 tenant 경계를 key에 포함하거나 별도 database/ACL로 명시해야 cross-tenant read가 생기지 않습니다.
-
-### value serialization도 계약이다
-
-JSON, hash field, binary codec 등 어떤 형식이든 producer와 consumer가 field 이름·type·nullable·version을 합의해야 합니다.
+캐시 key는 값을 찾기 위한 문자열이면서 동시에 **어떤 데이터의 어떤 표현을 저장했는지 구분하는 주소**입니다. 규칙이 모호하면 서로 다른 기능이 같은 key를 사용하거나, 새 버전 애플리케이션이 이전 형식의 값을 읽지 못하는 문제가 생깁니다.
 
 ```text
-old value: {"name":"CSForge","level":1}
-new code:  {"name":"CSForge","level":"BEGINNER"}
+cache:v2:concept:42
+cache:v2:concept-list:topic-java:page-1
 ```
 
-새 code가 old value를 읽을 수 없다면 배포 중 cache hit가 parsing error가 될 수 있습니다. schema version을 key에 넣어 miss로 처리한 뒤 새 형식으로 재생성하거나, backward-compatible reader와 단계적 전환을 둡니다.
+### key는 충돌하지 않게 의미를 구분한다
 
-### key에 민감정보를 넣지 않는다
+`42` 하나만 key로 사용하면 회원 42와 주문 42를 구분할 수 없습니다. 기능이나 자원 종류를 namespace로 분리하고, 다중 tenant 환경이라면 tenant identity도 필요한 위치에 포함해야 합니다.
 
-key는 metric, debug log, eviction 도구와 함께 노출될 수 있습니다. password·token·개인정보를 raw key로 사용하지 말고 stable identifier와 필요한 scope만 사용합니다. key 길이가 지나치게 길면 memory와 network 비용도 커집니다.
+schema를 호환되지 않게 바꾸는 경우에는 version을 key에 포함해 이전 값과 새 값을 자연스럽게 분리할 수도 있습니다.
 
-### deterministic key와 invalidation은 함께 설계한다
+```text
+concept:v1:42  → old representation
+concept:v2:42  → new representation
+```
 
-write 뒤 어떤 key를 삭제해야 하는지 모르면 cache hit가 남습니다. list key가 filter·sort·page 조건을 표현한다면 entity update 시 모든 관련 list key를 찾을 수 있는지, 짧은 TTL이나 version namespace로 정리할지 판단해야 합니다.
+이렇게 하면 새 애플리케이션이 이전 값을 잘못 deserialize하는 대신 miss를 만나 새 형식으로 다시 채울 수 있습니다.
 
-### 문제를 풀 때 확인할 것
+### value 형식도 배포 간 계약이다
 
-1. key가 tenant·entity·use case·schema version을 구분하는지 봅니다.
-2. value schema가 old/new deployment 동안 읽히는지 확인합니다.
-3. invalidation 시 삭제할 key 집합을 알 수 있는지 검토합니다.
-4. key와 value에 secret·PII가 들어가지 않는지 확인합니다.
-5. key cardinality와 serialized size를 metric으로 봅니다.
+JSON이나 binary codec으로 저장한 값은 writer와 reader가 field 이름, type, nullability를 합의해야 합니다.
 
-### 면접에서 설명한다면
+```text
+old: {"level": 1}
+new: {"level": "BEGINNER"}
+```
 
-Cache key는 namespace와 identity뿐 아니라 tenant와 representation version을 포함하는 계약입니다. value serialization도 배포 간 호환성이 필요하며, 호환되지 않으면 versioned key로 안전하게 miss를 유도할 수 있습니다. deterministic key는 invalidation과 관측을 쉽게 하고, key·value 모두 민감정보와 과도한 크기를 피해야 합니다.
+새 코드가 `level`을 문자열 enum으로만 읽는다면 기존 cache entry가 남아 있는 rolling deployment 중 parsing error가 발생할 수 있습니다. backward-compatible reader를 두거나 key version을 올려 이전 값을 자연스럽게 만료시키는 방식 중 하나를 선택할 수 있습니다.
+
+### invalidation할 수 있는 key 구조여야 한다
+
+key 설계는 조회뿐 아니라 삭제에도 영향을 줍니다. 하나의 concept가 바뀌었을 때 entity key 하나만 삭제하면 되는지, topic 목록이나 검색 결과처럼 여러 파생 key도 함께 오래될 수 있는지 봐야 합니다.
+
+파생 조합이 너무 많아 정확한 삭제 집합을 찾기 어렵다면 짧은 TTL이나 namespace generation처럼 다른 freshness 전략이 더 단순할 수 있습니다.
+
+또한 cache key는 운영 도구나 metric·log에 노출될 수 있으므로 password, token, 개인정보 같은 민감정보를 그대로 포함하지 않는 것이 좋습니다.
+
+좋은 캐시 key는 보기 좋은 문자열이 아니라 **충돌 없이 데이터를 식별하고, 새 버전과 공존하며, 필요한 파생 값을 무효화할 수 있게 하는 운영 계약**입니다.

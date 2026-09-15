@@ -3,8 +3,8 @@ kind: concept
 contentKey: computer-architecture.core.device-io.device-cpu-memory-path
 topicContentKey: computer-architecture.core.device-io
 slug: device-cpu-memory-path
-title: "Device, CPU·Memory Path"
-summary: "descriptor 준비부터 DMA·completion·interrupt·software consumption까지 device I/O의 end-to-end data path를 설명한다."
+title: "Device·CPU·Memory I/O 경로"
+summary: "descriptor 준비부터 DMA·completion·interrupt 또는 polling·software consumption까지 device I/O의 end-to-end data path를 설명한다."
 level: 2
 status: PUBLISHED
 displayOrder: 60
@@ -17,48 +17,54 @@ references:
     recommendation: "coherent·streaming mapping, DMA ownership과 sync 시점을 확인한다."
     displayOrder: 1
 ---
-# Device, CPU·Memory Path
+# Device·CPU·Memory I/O 경로
 
-### I/O는 device와 application 사이의 한 번짜리 복사가 아니다
+지금까지 본 programmed I/O, MMIO, DMA와 interrupt는 실제 I/O 경로에서 서로 연결되어 사용될 수 있다. Device에서 application-visible data까지 도달하는 과정을 하나의 흐름으로 보면 각 mechanism의 역할을 구분하기 쉽다.
 
-네트워크 packet이나 storage block이 application에 도착하기까지 여러 hardware/software state를 거친다. 단순화한 receive path에서는 CPU/driver가 descriptor와 buffer를 준비하고 device가 data를 수신한 뒤 DMA로 memory에 기록한다. Device가 completion state를 남기면 interrupt 또는 polling이 software에 진행 가능함을 알리고, kernel/driver가 해당 buffer를 protocol stack이나 application 쪽으로 넘긴다.
+Receive 또는 read path를 단순화하면 CPU/driver가 먼저 descriptor와 buffer를 준비하고 device가 data를 받은 뒤 DMA로 memory에 기록할 수 있다. Transfer가 끝나면 completion state를 남기고 interrupt 또는 polling으로 software가 이를 확인한다.
 
 ```text
-CPU/driver: descriptor + buffer 준비
-               │
-               ▼
-            device
-               │
-               │ DMA
-               ▼
-             memory
-               │
-        completion status
-               │
-      interrupt / polling
-               ▼
-        kernel/driver 처리
-               │
-               ▼
-       application-visible data
+CPU/driver
+  descriptor + buffer 준비
+            ↓
+          device
+            ↓ DMA
+          memory
+            ↓
+     completion state
+            ↓
+ interrupt / polling
+            ↓
+   software가 data 소비
 ```
 
-그래서 `device가 data를 받음`, `DMA가 끝남`, `interrupt 발생`, `read()가 반환`, `application 처리가 끝남`은 서로 같은 시점이 아니다.
+### 각 단계의 완료 시점은 서로 다르다
 
-### Descriptor와 buffer에는 ownership 상태가 있다
+다음 사건은 같은 시점이 아니다.
 
-CPU가 device에 descriptor를 제출했다면 그 buffer를 device가 사용하는 동안 software가 마음대로 재사용하면 안 된다. DMA completion 이전에 buffer를 덮어쓰거나 free하면 device가 잘못된 memory를 읽거나 쓰게 된다.
+- device가 외부 data를 받았다.
+- DMA가 memory write를 끝냈다.
+- completion entry가 준비됐다.
+- interrupt가 CPU에 전달됐다.
+- handler 또는 polling code가 completion을 확인했다.
+- 상위 software가 data를 사용하기 시작했다.
 
-반대로 DMA가 완료된 뒤에도 CPU가 buffer를 사용하기 전에 platform/API가 요구하는 sync나 memory ordering을 지켜야 할 수 있다. DMA Concept에서 다룬 것처럼 device가 사용하는 DMA address와 CPU virtual address도 같은 숫자라고 가정할 수 없다.
+이 구분이 중요한 이유는 어느 단계에서 기다리고 있는지에 따라 지연 시간의 원인과 다음 동작이 달라지기 때문이다.
 
-### Completion notification과 실제 work completion을 구분한다
+### Buffer ownership도 단계에 따라 이동한다
 
-Interrupt는 일반적으로 '확인할 일이 생겼다'는 notification이다. Handler가 들어왔다고 application I/O가 끝난 것은 아니다. Driver가 completion queue를 읽고 descriptor 상태와 byte count/error를 확인해야 하고, 이후 protocol parsing, copy 또는 page mapping, scheduler wakeup 같은 software 단계가 더 남을 수 있다.
+CPU가 descriptor를 제출해 device에 buffer를 넘긴 동안에는 software가 그 buffer를 임의로 재사용하면 안 된다. DMA completion 이후 필요한 synchronization을 마친 뒤 다시 CPU가 buffer를 소유하고 처리할 수 있다.
 
-같은 이유로 queue에 요청을 넣었다는 사실과 device가 transfer를 끝냈다는 사실도 다르다. Queue depth를 키우면 device utilization과 처리량이 좋아질 수 있지만 queuing 지연 시간과 in-flight memory 사용량도 증가한다.
+```text
+CPU prepares
+   ↓ hand-off
+Device transfers
+   ↓ completion
+CPU reclaims
+```
 
-### Error와 cancellation도 각 단계마다 다르게 나타난다
+### Notification과 data movement를 분리한다
 
-Device error, DMA mapping 실패, partial transfer, timeout, interrupt loss/overload, software queue overflow는 서로 다른 실패다. End-to-end I/O를 단순히 성공/실패 한 bit로 보면 어느 층에서 복구해야 하는지 알기 어렵다.
+DMA는 data transfer를 담당하고, interrupt나 polling은 completion을 알아차리는 방법이다. Interrupt handler에 들어왔다는 사실만으로 application-level I/O가 모두 끝난 것도 아니다. Software는 completion 상태와 byte count/error를 확인하고 다음 처리 단계로 넘겨야 한다.
 
-Backend 성능 분석에서는 application 지연 시간만 보지 않고 NIC/storage queue depth, DMA/completion 지연 시간, interrupt/softirq CPU time, kernel socket/file buffer와 user-space copy 경계를 함께 본다. `send()` 또는 `write()`가 반환한 시점이 physical device 전송 또는 durable storage 완료 시점과 같다는 가정도 API contract 없이 하지 않는다.
+이 Topic의 핵심은 I/O를 `CPU가 device에서 값을 한 번 읽는다`는 단일 동작으로 보지 않는 것이다. **제어 register 접근, data transfer, completion notification과 software consumption이 서로 다른 단계로 이어진다.**

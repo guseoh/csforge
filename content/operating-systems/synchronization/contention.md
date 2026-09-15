@@ -26,48 +26,30 @@ references:
 ---
 # Contention
 
-Lock이 코드에 존재한다는 사실과 lock 때문에 성능이 나쁘다는 말은 다릅니다. **Contention은 여러 execution이 같은 제한된 synchronization resource를 같은 시점에 원하면서 wait, spin, retry가 실제로 발생하는 상태**입니다.
+Synchronization primitive가 존재한다고 해서 항상 성능 문제가 생기는 것은 아니다. **Contention은 여러 실행 흐름이 같은 제한된 synchronization resource를 동시에 원해 실제 wait, spin 또는 retry가 발생하는 상태**다.
 
 ![동일 lock을 두고 waiter가 쌓이는 contention 흐름](/learning/operating-systems/contention-queue.svg)
 
-### hold time과 arrival rate가 함께 queue를 만든다
+### Hold time과 경쟁자가 늘면 기다림도 커진다
 
-한 번에 하나만 통과할 수 있는 lock을 생각해 봅시다. Owner가 lock을 오래 보유할수록 다음 waiter가 서비스를 받기까지의 시간이 길어지고, 그 사이 새 요청이 계속 도착하면 queue가 누적됩니다.
-
-```text
-요청 도착  ──▶ [W4] [W3] [W2] [W1] ──▶ [LOCK OWNER] ──▶ 완료
-                    waiting              hold time
-```
-
-예를 들어 critical section이 평균 1ms라면 다른 비용을 무시한 이상적인 경우에도 하나의 직렬 구간이 처리할 수 있는 횟수에는 한계가 있습니다. 같은 lock을 필요로 하는 작업의 arrival rate가 그 처리 속도에 가까워지거나 넘어가면 작은 hold-time 증가도 queueing과 꼬리 지연 시간(tail latency)을 크게 만들 수 있습니다.
-
-특히 lock을 잡은 채 DB나 network I/O를 기다리면 외부 시스템의 변동성이 그대로 lock service time으로 들어옵니다. 그래서 `lock 횟수` 하나보다 **hold time, acquisition/wait 지연 시간, waiter 수와 요청 지연 시간**를 함께 봅니다.
-
-### 기다리는 방식에 따라 CPU 비용도 달라진다
-
-Spin 방식이면 waiter가 useful work 없이 CPU cycle을 소비할 수 있습니다. Blocking 방식이면 CPU를 다른 task에 넘길 수 있지만 sleep/wakeup과 scheduling 비용이 생깁니다. 어떤 방식이 더 싼지는 예상 wait 길이와 runnable task 수 등에 따라 달라집니다.
-
-또한 explicit lock이 없어도 contention은 생길 수 있습니다. 여러 CPU가 같은 atomic counter를 계속 갱신하면 같은 cache line의 ownership이 core 사이를 이동하고 atomic retry가 반복되어 scalability가 떨어질 수 있습니다.
+한 번에 하나만 통과할 수 있는 lock에서 owner가 오래 머물수록 다음 waiter의 대기 시간이 길어진다. 그 사이 경쟁자가 계속 도착하면 queue가 쌓인다.
 
 ```text
-CPU 0 ─┐
-CPU 1 ─┼──▶ same atomic / cache line ──▶ coherence + retry
-CPU 2 ─┼
-CPU 3 ─┘
+waiters ──▶ [W3] [W2] [W1] ──▶ [LOCK OWNER]
+                                      │
+                                  hold time
 ```
 
-따라서 **lock-free는 contention-free와 같은 말이 아닙니다.** Shared serialization point가 어디에 남아 있는지를 봐야 합니다.
+Critical section이 짧고 경쟁이 드물다면 lock overhead는 작을 수 있다. 반대로 같은 lock을 원하는 thread가 많거나 hold time이 길면 직렬 구간이 전체 throughput을 제한하는 병목이 될 수 있다.
 
-### 측정한 병목에 맞춰 줄인다
+### 기다리는 방식도 비용에 영향을 준다
 
-Contention을 줄이는 후보는 critical section 축소, 독립 state 분할, immutable snapshot, batching, 더 적합한 concurrent data structure 등 다양합니다. 하지만 실제 병목이 global lock인지 atomic hot spot인지, 아니면 그 안의 느린 I/O인지에 따라 올바른 해법이 달라집니다.
+Spinner는 lock이 풀릴 때까지 CPU를 사용하고, blocking waiter는 CPU를 양보하는 대신 sleep/wakeup과 scheduling 비용을 지불한다. 따라서 contention cost는 단순히 waiter 수 하나로 결정되지 않고 대기 시간과 실행 방식에 따라 달라진다.
 
-Backend에서는 thread dump와 profiler, lock wait/acquisition 시간, blocked 또는 spinning CPU time, 처리량, p95/p99 지연 시간 등을 함께 확인합니다. 변경 후에는 처리량만 좋아졌는지 보지 말고 꼬리 지연 시간(tail latency)과 correctness까지 다시 확인해야 합니다.
+Explicit mutex가 없어도 같은 atomic state를 여러 CPU가 계속 갱신하면 retry와 cache-line ownership 경쟁이 생길 수 있다. 즉 lock-free와 contention-free는 같은 말이 아니다.
 
-### 면접에서 이렇게 나옵니다
+### 줄여야 하는 것은 실제 serialization point다
 
-#### Q. Lock-free 구조로 바꾸면 contention도 없어지나요?
+Contention을 줄이려면 critical section을 줄이거나, 독립 가능한 state를 여러 lock domain으로 나누거나, shared update 자체를 줄이는 방법을 생각할 수 있다. 하지만 lock을 무작정 더 잘게 나누면 correctness와 deadlock 복잡도가 증가할 수 있다.
 
-아닙니다. Lock-free는 특정 progress property와 synchronization 방식에 관한 말이지, 여러 CPU가 동일한 shared state를 경쟁하지 않는다는 뜻이 아닙니다.
-
-같은 atomic 변수나 cache line이 hot spot이면 coherence traffic과 retry가 여전히 serialization cost가 될 수 있습니다.
+Contention의 핵심은 **여러 execution이 같은 synchronization point를 경쟁하면서 대기와 직렬화 비용이 생기는 과정**을 이해하고, 실제 hot serialization point를 기준으로 granularity와 protocol을 조정하는 것이다.

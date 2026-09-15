@@ -3,8 +3,8 @@ kind: concept
 contentKey: backend.core.bulk-batch.bulk-processing
 topicContentKey: backend.core.bulk-batch
 slug: bulk-processing
-title: "Bulk 처리와 메모리·트랜잭션 경계"
-summary: "대량 데이터를 한 번에 처리할 때 생기는 메모리, SQL 횟수, 트랜잭션 크기, 부분 실패 문제를 함께 본다."
+title: "대량 처리의 Read·Write·Transaction 단위"
+summary: "대량 처리에서 읽기 단위, DB batch write 단위, transaction commit 단위를 분리해 메모리·DB 왕복·lock·실패 재처리 범위를 함께 조절한다."
 level: 3
 status: PUBLISHED
 displayOrder: 20
@@ -16,39 +16,41 @@ references:
     displayOrder: 1
     relationNote: "chunk 지향 처리와 재시작 가능한 batch 설계를 참고한다."
 ---
-# Bulk 처리와 메모리·트랜잭션 경계
+# 대량 처리의 Read·Write·Transaction 단위
 
-10건을 처리하던 코드를 그대로 100만 건에 적용하면 같은 정답이 나오지 않는다. 모든 데이터를 메모리에 올리는 순간 heap이 문제되고, 행마다 `INSERT`를 보내면 round trip이 문제되고, 전체를 하나의 transaction으로 묶으면 lock·WAL·rollback 비용이 커진다.
+10건을 처리하던 코드를 그대로 100만 건에 적용하면 메모리, SQL 횟수, transaction 시간의 성격이 달라집니다. 모든 row를 한 번에 읽으면 heap 사용량이 커지고, row마다 INSERT를 보내면 network round trip이 많아지며, 전체를 한 transaction으로 묶으면 lock과 rollback 범위가 커집니다.
 
-### 한 번에 많이 처리한다는 말의 세 가지 의미
+대량 처리에서는 "몇 개씩 처리한다"는 말을 하나의 숫자로 보지 않고 **읽기 단위, DB write 단위, commit 단위**를 분리해서 봅니다.
 
 ```text
 Input 1,000,000 rows
         │
-        ├─ read batch size
-        ├─ write batch size
-        └─ transaction chunk size
+        ├─ read chunk       : memory에 한 번에 들고 있을 양
+        ├─ DB batch size    : 한 번에 전송할 write 수
+        └─ transaction size : 한 commit이 책임질 작업 범위
 ```
 
-이 세 값은 같을 필요가 없다. 예를 들어 1,000개씩 읽고 100개씩 JDBC batch를 보내되 1,000개 단위로 commit할 수도 있다. 핵심은 **메모리 사용량, DB 왕복 횟수, 실패 시 재처리 범위**를 함께 조절하는 것이다.
+세 값은 같을 필요가 없습니다. 예를 들어 1,000개를 읽고, 100개씩 JDBC batch를 전송하면서, 1,000개 단위로 commit할 수 있습니다.
 
-### transaction을 크게 잡으면 왜 위험한가
+### 큰 transaction은 all-or-nothing 대신 긴 자원 점유를 지불한다
 
-하나의 transaction이 너무 길면 변경한 row lock을 오래 잡고, 실패 시 rollback할 작업량이 커지며, 다른 요청이 영향을 받을 수 있다. 반대로 너무 잘게 commit하면 중간 실패 시 일부만 반영된 상태를 어떻게 복구할지 정책이 필요하다.
+100만 건 전체를 하나의 transaction으로 묶으면 마지막 한 건 실패 시 전체 rollback이라는 명확한 semantics를 얻습니다. 대신 transaction이 오래 살아 있는 동안 connection, lock, MVCC version, WAL, rollback 작업량이 커질 수 있습니다.
 
-| 선택                  | 장점                  | 비용                         |
-| --------------------- | --------------------- | ---------------------------- |
-| 하나의 큰 transaction | all-or-nothing이 단순 | lock/rollback/메모리 비용 큼 |
-| chunk transaction     | 재시작 범위가 작음    | 부분 성공 상태를 설계해야 함 |
-| row 단위 commit       | 실패 격리 쉬움        | DB 왕복과 처리량 저하 가능   |
+반대로 chunk별 commit은 한 번의 실패가 되돌리는 범위를 줄이지만 중간까지 성공한 상태가 실제 제품에서 허용되는지 정의해야 합니다.
 
-### JPA에서는 영속성 컨텍스트도 커진다
+| commit 단위 | 장점 | 비용 |
+| --- | --- | --- |
+| 전체 작업 | 원자성 설명이 단순 | 긴 transaction, 큰 rollback 범위 |
+| chunk | 재처리 범위 제한 | 부분 성공·재시작 정책 필요 |
+| row | 실패 격리 쉬움 | DB 왕복과 commit 비용 증가 가능 |
 
-JPA로 대량 entity를 저장하면 DB row뿐 아니라 managed entity가 persistence context에 쌓일 수 있다. 일정 단위로 `flush()`와 `clear()`가 필요한 이유는 SQL 전송뿐 아니라 **1차 캐시와 dirty checking 대상의 크기**도 제어하기 위해서다.
+### JPA에서는 DB row뿐 아니라 managed entity 수를 본다
+
+JPA로 대량 entity를 저장하면 persistence context가 managed entity를 계속 추적할 수 있습니다. 반복이 길어질수록 1차 캐시와 dirty checking 대상도 커질 수 있습니다.
 
 ```java
 for (int i = 0; i < rows.size(); i++) {
-    repository.save(toEntity(rows.get(i)));
+    entityManager.persist(toEntity(rows.get(i)));
 
     if ((i + 1) % 500 == 0) {
         entityManager.flush();
@@ -57,4 +59,21 @@ for (int i = 0; i < rows.size(); i++) {
 }
 ```
 
-이 코드도 만능 답은 아니다. ID 생성 전략, JDBC batching, cascade, 검증 비용에 따라 실제 SQL을 측정해야 한다. Bulk 처리는 먼저 처리량과 실패 모델을 정한 뒤 framework 기능을 선택하는 문제다.
+`flush/clear`는 흔한 선택지지만 숫자 500이 정답인 것은 아닙니다. ID 생성 전략, JDBC batching 설정, cascade, entity 크기와 실제 SQL을 측정해야 합니다.
+
+### 처리량 최적화보다 먼저 실패 모델을 정한다
+
+Batch size를 크게 잡아 throughput을 높여도 한 row 오류 때문에 어느 범위가 실패하고 어디서 다시 시작해야 하는지가 불명확하면 운영하기 어렵습니다.
+
+```text
+성공 1~1000
+실패 1001
+
+질문:
+- 1~1000은 이미 commit됐는가?
+- 1001만 다시 할 수 있는가?
+- 1002 이후는 처리됐는가?
+- 외부 side effect가 있었다면 중복 없이 재시작 가능한가?
+```
+
+대량 처리 설계는 "bulk API를 쓰자"보다 **메모리에 머무는 양, DB로 보내는 횟수, 한 transaction의 성공 단위, 실패 후 재처리 범위를 함께 결정하는 것**에서 시작합니다.
