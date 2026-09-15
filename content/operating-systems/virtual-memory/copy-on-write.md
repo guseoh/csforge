@@ -19,20 +19,29 @@ references:
 ---
 # Copy-on-Write
 
-POSIX `fork()`의 핵심 계약은 parent와 child가 분리된 memory space를 가지며 fork 시점의 내용이 같다는 것이다. **그 분리를 어떤 방식으로 구현하는지는 별도 층의 문제다.** Linux의 `fork()`는 이 비용을 줄이기 위해 copy-on-write(COW) page를 사용한다. fork 직후 모든 physical page를 즉시 복사하는 대신 두 process가 같은 physical page를 임시 공유하고, 둘 중 하나가 수정하려는 순간에만 별도 page를 만드는 방식으로 복사 비용을 지연한다.
+Copy-on-write(COW)는 **처음부터 data를 복제하지 않고 여러 mapping이 같은 physical page를 읽기 전용으로 공유하다가, 실제 write가 발생하는 순간 필요한 쪽만 복사하는 방식**이다.
 
-### 첫 write가 분리의 경계가 된다
+`fork()`를 예로 들면 parent와 child는 논리적으로 서로 분리된 address space를 가져야 한다. 하지만 fork 순간 모든 physical page를 즉시 복사할 필요는 없다.
 
-가령 parent와 child의 virtual page `P`가 처음에는 같은 physical frame `F`를 가리킨다고 하자. 둘 다 read만 하는 동안에는 `F`를 공유해도 서로의 논리적 상태가 달라지지 않는다. child가 `P`에 write하려 하면 현재 mapping이 COW-protected 상태이므로 fault가 발생한다. kernel은 새 frame `F2`를 확보해 필요한 내용을 복사하고 child의 mapping을 `F2`로 바꾼 뒤 writable하게 만든다. parent는 기존 `F`를 계속 가리킨다.
+```text
+fork 직후
+Parent P ─┐
+          ├─> Frame F (shared COW)
+Child P ──┘
 
-`fork → shared COW mapping → child write fault → frame copy → child mapping 교체 → write 재시도`
+Child write
+→ protection fault
+→ 새 Frame F2 할당·복사
+→ Child P → F2 writable
+→ Parent P → 기존 F
+```
 
-이후 두 process가 같은 virtual address에 서로 다른 값을 써도 physical frame이 분리되어 있으므로 process isolation은 유지된다.
+### 첫 write가 실제 복제 비용을 발생시킨다
 
-### COW는 복사를 제거하지 않는다
+둘 다 read만 하는 동안에는 같은 frame을 공유해도 논리적 내용이 달라지지 않는다. 한쪽이 write하려 하면 OS가 새 frame을 확보하고 기존 내용을 복사한 뒤 그 process의 mapping만 새 frame으로 바꾼다. 이후 두 process는 같은 virtual address에서 서로 다른 값을 가질 수 있다.
 
-많은 page를 공유한 뒤 parent와 child가 결국 거의 모든 page를 수정하면 복사 비용은 뒤늦게 대부분 발생한다. 오히려 write fault 처리까지 추가되므로 workload에 따라 이점이 줄 수 있다. 반대로 child가 곧 `exec()`로 다른 program image를 실행한다면 실제로 거의 수정하지 않은 page를 복제하지 않아 큰 이점을 얻는다.
+### COW는 복제를 없애는 것이 아니라 지연한다
 
-### OS COW와 application-level 불변 객체는 다른 층이다
+Parent와 child가 결국 대부분의 shared page를 수정한다면 page 복사 비용도 결국 대부분 발생한다. 반대로 child가 곧 `exec()`로 다른 program image를 실행한다면 수정하지 않을 page를 미리 복제하지 않아 큰 이점을 얻을 수 있다.
 
-Java에서 immutable object를 공유하고 수정 시 새 객체를 만드는 패턴도 넓은 의미의 copy-on-write라고 부를 수 있지만, 이것이 OS의 page-table protection과 page fault로 구현된다는 뜻은 아니다. OS COW는 virtual-memory mapping의 동작이고 application COW는 language/runtime data-structure 정책이다. 두 층의 thread-safety와 비용을 별도로 판단한다.
+Copy-on-Write의 핵심은 **논리적 address-space 분리를 유지하면서 실제 physical page 복제를 write가 필요한 시점까지 미루는 것**이다. Application-level immutable data structure에서 쓰는 copy-on-write라는 표현과 원리는 비슷할 수 있지만, OS COW는 page mapping과 fault를 이용하는 virtual-memory mechanism이다.
