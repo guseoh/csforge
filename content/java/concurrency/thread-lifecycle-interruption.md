@@ -20,7 +20,7 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "Thread.start와 thread termination/join이 만드는 happens-before 관계를 확인한다."
+    recommendation: "Java에서 conflicting access와 happens-before를 기준으로 data race를 정의하는 정확한 경계를 확인한다."
     displayOrder: 2
     relationNote: Thread.start와 thread termination/join의 happens-before 관계 확인
   - url: "https://d2.naver.com/helloworld/10963"
