@@ -3,8 +3,8 @@ kind: concept
 contentKey: system-design.core.requirements.capacity-data
 topicContentKey: system-design.core.requirements
 slug: capacity-data
-title: "capacity estimate와 data shape"
-summary: "QPS·payload·storage·read/write ratio·growth와 peak를 rough estimate로 연결하고 검증한다"
+title: "용량 추정과 데이터 규모"
+summary: "QPS·payload·read/write 비율·보존 기간·성장률을 대략적인 수치로 연결해 어떤 규모가 architecture 선택을 바꾸는지 판단한다."
 level: 1
 status: PUBLISHED
 displayOrder: 20
@@ -22,35 +22,24 @@ references:
     displayOrder: 2
     relationNote: "architecture·compute·data·network 선택을 workload에 연결하는 관점 확인"
 ---
-# capacity estimate와 data shape
+# 용량 추정과 데이터 규모
 
-Capacity estimate는 정밀한 미래 예언이 아니라 어떤 숫자가 architecture를 바꾸는지 찾는 rough model입니다. peak QPS, read/write ratio, payload size, concurrency, storage growth, retention, fan-out, batch size를 놓고 order of magnitude를 계산한 뒤 load test와 production telemetry로 보정합니다.
+용량 추정은 미래의 정확한 숫자를 맞히는 일이 아닙니다. 현재 알고 있는 사용자 수, 요청 빈도, payload 크기와 데이터 보존 기간을 이용해 **어느 정도 규모를 준비해야 하고 어떤 가정이 설계를 바꾸는지** 찾는 작업입니다.
 
-### 먼저 단위를 고정한다
+먼저 같은 단위로 바꿔 봅니다. 하루 8,640만 건이면 하루 평균은 약 1,000 QPS지만 실제 traffic은 특정 시간에 몰릴 수 있으므로 peak 배수를 따로 잡아야 합니다. 한 요청이 DB query 여러 개나 downstream fan-out을 만든다면 외부 요청 수와 내부 작업량도 같지 않습니다.
 
 ```text
-daily requests ─▶ peak requests/sec ─▶ bytes/sec
-                              └─ replication·index·backup 배수
+user requests
+   ↓
+peak QPS
+   ↓
+queries / messages / bytes
+   ↓
+storage growth + downstream load
 ```
 
-평균 QPS만 보면 burst와 autoscaling delay를 놓칩니다. 요청 수와 실제 query·message·row·byte 작업량을 구분하고, 응답 fan-out과 retry가 origin load를 얼마나 증폭시키는지 포함합니다.
+데이터 규모도 record 수만으로 결정되지 않습니다. Record 평균 크기, index, history·audit 보존, replica와 backup까지 포함하면 실제 storage는 원본 데이터보다 커집니다. 반대로 모든 숫자를 처음부터 매우 정밀하게 계산할 필요는 없습니다. 초기 설계에서는 10GB인지 10TB인지처럼 order of magnitude가 선택을 바꾸는 경우가 더 중요합니다.
 
-### data shape가 storage를 결정한다
+추정값에는 가정을 남깁니다. 예를 들어 `평균 1KB`, `peak는 평균의 5배`, `1년 보존`처럼 적어 두면 나중에 실제 telemetry와 비교해 틀린 가정을 수정할 수 있습니다.
 
-현재 record 수뿐 아니라 row/document 크기, index 배수, history·audit 보존, compression, replica, backup과 rebuild 시간을 계산합니다. hot key, access locality, large blob, append-only history는 서로 다른 storage·partition·read model을 요구할 수 있습니다.
-
-### 추정에는 범위를 둔다
-
-낮음·기대·높음 시나리오와 성장률, peak duration, 장애 시 N-1 capacity를 나눕니다. 숫자마다 source와 불확실성을 적고, 어떤 threshold를 넘으면 sharding·async processing·precompute가 필요한지 decision trigger로 남깁니다.
-
-### 문제를 풀 때 확인할 것
-
-1. 평균·peak·burst와 지속 시간을 구분합니다.
-2. 요청·query·message·byte의 작업 단위를 정합니다.
-3. read/write·fan-out·retry·replication 배수를 포함합니다.
-4. record·index·history·backup·retention storage를 계산합니다.
-5. range별 load test와 telemetry로 추정을 보정합니다.
-
-### 면접에서 설명한다면
-
-Capacity는 QPS 하나가 아니라 peak workload를 bytes·queries·connections·storage로 번역한 rough model입니다. read/write와 fan-out·retry·replica·backup 배수를 넣고, data shape와 retention을 계산하며, 불확실한 가정은 low/base/high 시나리오와 load test의 검증 항목으로 명시합니다.
+용량 추정의 목적은 미리 sharding이나 특정 기술을 정답으로 고르는 것이 아닙니다. 현재 규모에서는 단순한 구조가 충분한지, load test가 필요한 경계가 어디인지, 어떤 수치가 커지면 architecture를 다시 검토해야 하는지를 찾는 데 있습니다.

@@ -3,8 +3,8 @@ kind: concept
 contentKey: system-design.core.reliability.failure-budget
 topicContentKey: system-design.core.reliability
 slug: failure-budget
-title: "실패 예산(failure budget)과 점진적 성능 저하(graceful degradation)"
-summary: "SLO·error budget에 맞춰 optional feature를 줄이고 핵심 workflow를 보호한다"
+title: "Error Budget과 Graceful Degradation"
+summary: "SLO와 error budget을 기준으로 핵심 workflow와 선택 기능을 구분하고 장애·과부하 때 어떤 품질을 낮춰 전체 서비스를 보호할지 판단한다."
 level: 1
 status: PUBLISHED
 displayOrder: 10
@@ -22,36 +22,20 @@ references:
     displayOrder: 2
     relationNote: "reliability와 operational excellence를 architecture lifecycle에 포함하는 관점 확인"
 ---
-# 실패 예산(failure budget)과 점진적 성능 저하(graceful degradation)
+# Error Budget과 Graceful Degradation
 
-모든 component를 항상 완벽하게 제공하려는 설계는 비용과 복잡성을 무한히 키울 수 있습니다. SLO가 허용하는 실패 예산을 기준으로 핵심 workflow와 optional feature를 구분하고, dependency 장애나 overload 시 서비스가 유용한 축소 상태로 남도록 설계합니다.
+서비스의 모든 기능을 어떤 장애에서도 같은 품질로 유지하려 하면 비용과 복잡성이 크게 늘어납니다. System Design에서는 먼저 어떤 user journey가 핵심이고 어떤 기능은 일시적으로 품질을 낮추거나 생략할 수 있는지 구분합니다.
 
-### 핵심과 선택 기능을 분리한다
+예를 들어 학습 결과 저장은 canonical state이므로 실패를 숨기면 안 되지만, 추천 콘텐츠나 통계 enrichment는 장애 중 잠시 생략해도 핵심 학습 흐름을 유지할 수 있습니다.
 
 ```text
 dependency failure
-  ├─ core: canonical write/read 보호, 명시적 timeout·pending
-  └─ optional: recommendation/search enrichment 생략·stale fallback
+  ├─ core workflow     → correctness 우선, 명확한 성공/실패
+  └─ optional feature → omit / stale / delayed 같은 제한적 대체
 ```
 
-Graceful degradation은 모든 error를 200으로 바꾸는 것이 아닙니다. 사용자가 무엇을 받았는지 알 수 있게 partial 응답·stale data·retry later를 구분하고, data invariant와 security check를 우회하지 않습니다.
+Graceful degradation은 오류를 성공처럼 감추는 것이 아닙니다. 일부 데이터를 생략했다면 사용자가 어떤 결과를 받았는지 알 수 있어야 하고, 권한·금전·canonical write 같은 invariant는 대체 처리 때문에 우회되어서는 안 됩니다.
 
-### budget을 architecture decision으로 쓴다
+SLO와 error budget은 이런 선택을 운영 정책과 연결하는 데 사용할 수 있습니다. Budget이 빠르게 소진되면 새 기능 rollout을 늦추거나 reliability 개선을 우선할 수 있고, 반복적으로 optional dependency 때문에 핵심 흐름이 깨진다면 architecture 경계를 다시 검토할 근거가 됩니다.
 
-budget burn이 빠르면 위험한 rollout을 멈추고 dependency·capacity·runbook 개선을 우선합니다. budget이 남는다고 arbitrary 실패를 허용하지 않고, SLO의 사용자 영향과 cost를 함께 봅니다. dependency별 timeout budget, queue limit과 대체 처리의 합이 end-to-end 목표를 넘지 않는지 계산합니다.
-
-### 복구 가능한 degradation
-
-cache bypass가 origin을 무너뜨리거나 stale 대체 처리가 민감한 권한 데이터를 노출하지 않도록 guard를 둡니다. feature flag, admission control, read-only mode, queueing과 reconciliation으로 degradation 진입·해제 조건을 관측 가능하게 합니다.
-
-### 문제를 풀 때 확인할 것
-
-1. user journey와 절대 지켜야 할 invariant를 정합니다.
-2. core와 optional dependency를 분류합니다.
-3. 대체 처리·partial 응답·read-only·pending 상태를 명시합니다.
-4. error budget burn과 feature/release policy를 연결합니다.
-5. degradation이 origin overload·security bypass·data loss를 만들지 테스트합니다.
-
-### 면접에서 설명한다면
-
-Graceful degradation은 SLO와 invariant를 지키면서 optional feature의 품질을 낮추는 의도적 상태입니다. cache·search·recommendation은 stale/omitted가 가능할 수 있지만 canonical write·권한·금전 invariant는 보호해야 하며, budget burn·feature flag·대체 처리 복구와 reconciliation을 함께 운영합니다.
+중요한 것은 모든 component를 완벽하게 만드는 것이 아니라 **장애가 발생했을 때 어떤 기능을 먼저 포기해서 핵심 사용자 가치와 invariant를 지킬 것인지 미리 정하는 것**입니다.

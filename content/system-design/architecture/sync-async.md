@@ -3,8 +3,8 @@ kind: concept
 contentKey: system-design.core.architecture.sync-async
 topicContentKey: system-design.core.architecture
 slug: sync-async
-title: "synchronous와 asynchronous boundary"
-summary: "user 응답과 background workflow를 지연 시간·실패·delivery·state contract에 따라 나눈다"
+title: "동기와 비동기 처리 경계"
+summary: "사용자가 응답 시점에 반드시 알아야 하는 결과와 나중에 완료해도 되는 작업을 분리해 latency·failure·state contract에 맞는 처리 방식을 선택한다."
 level: 1
 status: PUBLISHED
 displayOrder: 10
@@ -14,7 +14,7 @@ references:
     referenceType: OTHER
     language: en
     displayOrder: 1
-    relationNote: "synchronous request가 asynchronous saga outcome을 확인하는 방식 확인"
+    relationNote: "synchronous request와 asynchronous workflow를 분리하는 설계 맥락 확인"
   - url: "https://grpc.io/docs/guides/deadlines/"
     title: "gRPC Documentation: Deadlines"
     referenceType: OFFICIAL
@@ -22,36 +22,24 @@ references:
     displayOrder: 2
     relationNote: "synchronous call의 deadline·cancellation boundary 확인"
 ---
-# synchronous와 asynchronous boundary
+# 동기와 비동기 처리 경계
 
-Synchronous flow는 caller가 응답을 기다리며 결과를 같은 요청에서 받는 모델이고, asynchronous flow는 작업을 durable하게 접수한 뒤 나중에 처리·조회·알림하는 모델입니다. 비동기라고 해서 실패가 사라지지 않으며, “접수됨”과 “완료됨”을 구분하는 state contract가 필요합니다.
+모든 작업을 HTTP 응답 안에서 끝내야 하는 것도 아니고, 오래 걸린다고 무조건 queue로 보내야 하는 것도 아닙니다. 먼저 **사용자가 응답을 받을 때 반드시 확정되어 있어야 하는 상태가 무엇인지**를 정하는 것이 중요합니다.
 
-### user 지연 시간과 workflow를 분리한다
+주문 요청에서 기본 검증과 주문 생성이 성공해야 사용자에게 주문 번호를 줄 수 있다면 이 부분은 동기 경계에 둘 수 있습니다. 반면 검색 색인 갱신이나 통계 집계처럼 조금 늦어도 되는 작업은 응답 이후에 처리할 수 있습니다.
 
 ```text
-POST ─▶ validate + persist PENDING ─▶ 202 operationId
-                                      └─ worker/event ─▶ COMPLETE/FAILED
-GET status ─▶ durable outcome
+request
+  │
+  ├─ 반드시 즉시 끝나야 함 → synchronous result
+  │
+  └─ 나중에 완료 가능      → durable accept → asynchronous work
 ```
 
-사용자가 즉시 결과를 필요로 하고 작업이 짧으며 local transaction으로 묶을 수 있으면 synchronous가 단순합니다. 외부 API, 긴 batch, fan-out, retry 또는 사용자 요청보다 긴 처리라면 접수·진행·완료를 비동기 경계로 나누는 편이 timeout과 thread 점유를 줄일 수 있습니다.
+비동기 처리로 옮기면 사용자 latency를 줄이고 긴 작업을 분리할 수 있지만 완료 시점의 의미가 달라집니다. `202 Accepted`나 operation ID를 반환했다면 그것은 처리가 끝났다는 뜻이 아니라 **작업을 접수했다는 상태**입니다. 이후 `PENDING → COMPLETED` 또는 `FAILED`처럼 사용자가 최종 결과를 확인할 방법이 필요합니다.
 
-### delivery와 사용자 상태를 설계한다
+동기 처리도 단순하지는 않습니다. Downstream timeout이 발생했을 때 상대 시스템이 이미 side effect를 수행했을 수 있으므로, 요청 하나에서 기다린다는 사실이 결과의 불확실성을 없애 주지는 않습니다.
 
-async command에는 operation identity, retry/DLQ, idempotency, timeout, cancel과 progress가 필요합니다. sync API도 downstream timeout 뒤 side effect가 남을 수 있으므로 성공/실패만으로 충분하지 않을 수 있습니다. polling, webhook, WebSocket 중 사용자에게 outcome을 전달하는 방식을 선택합니다.
+따라서 sync/async 선택은 기술 선호가 아니라 세 가지 질문으로 판단할 수 있습니다. 사용자 응답 전에 어떤 상태가 확정되어야 하는가, 작업이 요청 deadline 안에 안정적으로 끝나는가, 실패와 재처리 상태를 어디에서 보관할 것인가입니다.
 
-### transaction 경계를 숨기지 않는다
-
-DB commit과 message publish가 서로 다른 시스템이면 outbox·recovery를 두고, message가 중복·지연되어도 handler가 안전하게 처리되게 합니다. async로 바꾸면 read-after-write freshness와 ordering이 달라질 수 있으므로 API 문서에 명시합니다.
-
-### 문제를 풀 때 확인할 것
-
-1. caller가 응답 시점에 반드시 알아야 하는 결과를 정합니다.
-2. 작업 수명·fan-out·외부 side effect·retry 가능성을 계산합니다.
-3. accepted/pending/complete/failed/cancelled 상태를 정의합니다.
-4. deadline·delivery·idempotency·replay와 notification을 설계합니다.
-5. sync/async 전환이 freshness·ordering·ownership을 바꾸는지 검증합니다.
-
-### 면접에서 설명한다면
-
-짧고 즉시 결과가 필요하며 local transaction으로 끝나는 흐름은 synchronous가 단순하고, 긴·fan-out·외부 의존 workflow는 durable accept와 asynchronous processing으로 분리할 수 있습니다. 이때 202가 완료를 뜻하지 않도록 operation state, idempotency, retry/DLQ, outcome 조회와 freshness 계약을 함께 설계합니다.
+Messaging의 retry·DLQ·delivery 세부는 별도 영역의 책임입니다. System Design에서는 **사용자에게 보이는 완료 시점과 architecture의 처리 경계를 어디에 둘 것인가**에 집중합니다.

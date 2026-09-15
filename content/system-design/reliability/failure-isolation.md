@@ -3,8 +3,8 @@ kind: concept
 contentKey: system-design.core.reliability.failure-isolation
 topicContentKey: system-design.core.reliability
 slug: failure-isolation
-title: "장애 격리와 부하 보호(load protection)"
-summary: "bulkhead·timeout·rate limit·backpressure를 dependency 실패와 overload 전파 방지에 배치한다"
+title: "장애 격리와 부하 보호"
+summary: "한 dependency의 지연이나 과부하가 shared resource를 고갈시켜 전체 시스템으로 전파되지 않도록 경계와 보호 장치를 배치한다."
 level: 2
 status: PUBLISHED
 displayOrder: 20
@@ -22,36 +22,21 @@ references:
     displayOrder: 2
     relationNote: "overload 시 admission·load shedding과 service protection 확인"
 ---
-# 장애 격리와 부하 보호(load protection)
+# 장애 격리와 부하 보호
 
-한 dependency의 느림이 모든 요청 thread와 connection을 점유하면 작은 장애가 전체 서비스 outage로 번집니다. Timeout, bounded concurrency, bulkhead, rate limit, circuit breaker, queue backpressure와 load shedding은 서로 다른 지점에서 이 전파를 제한합니다.
-
-### 자원 pool을 분리한다
+작은 dependency 장애가 전체 outage로 커지는 이유는 여러 기능이 같은 thread, connection, queue 같은 제한된 자원을 공유하기 때문입니다. 느린 dependency를 기다리는 요청이 모든 worker를 점유하면 그 dependency와 무관한 정상 요청도 처리할 자원을 잃습니다.
 
 ```text
-critical requests ─▶ pool A ─▶ DB
-optional reports  ─▶ pool B ─▶ slow dependency
-                     └─ B 고갈이 A를 막지 않음
+critical flow ─▶ shared pool ─▶ healthy DB
+optional flow ─▶ shared pool ─▶ slow dependency
+                       ▲
+                       └─ optional flow가 pool을 모두 점유하면 critical flow도 멈춤
 ```
 
-같은 thread pool·connection pool·queue를 critical과 best-effort 작업이 공유하면 priority inversion과 starvation이 생깁니다. pool별 capacity, queue 상한, 요청 deadline과 rejection 응답을 정하고, 분리된 pool이 downstream을 더 빠르게 고갈시키지 않는지 계산합니다.
+장애 격리는 이런 전파 경로를 끊는 설계입니다. Critical workload와 best-effort workload의 concurrency를 분리하거나, dependency별 timeout과 queue 상한을 두고, capacity를 넘는 요청은 무한히 기다리게 하지 않고 명확하게 거절할 수 있습니다.
 
-### timeout은 끝이 아니라 예산이다
+Bulkhead, timeout, rate limit, backpressure, circuit breaker, load shedding은 각각 다른 위치에서 사용하는 수단입니다. System Design에서는 이 패턴의 내부 구현보다 **어느 shared resource가 고갈되고 어떤 사용자 흐름까지 같이 무너지는지**를 먼저 찾습니다.
 
-각 hop의 timeout 합이 client deadline을 넘지 않게 하고, cancellation이 실제 작업에 전달되게 합니다. timeout 뒤 retry는 남은 deadline과 idempotency를 확인하지 않으면 부하를 증폭시킵니다. rate limit과 circuit state는 tenant·endpoint·dependency별 user impact에 맞게 둡니다.
+보호 장치를 추가한다고 capacity가 새로 생기는 것은 아닙니다. Application worker를 여러 pool로 나눠도 모두 같은 DB connection이나 외부 quota를 소비한다면 downstream 병목은 그대로일 수 있습니다. 그래서 격리 경계는 end-to-end resource path를 보고 설계해야 합니다.
 
-### load shedding도 계약이다
-
-과부하 때 어떤 요청을 거부하고 어떤 요청을 보존할지 우선순위를 정합니다. 503/429, retry-after, queue pending, stale 대체 처리의 의미를 client가 이해할 수 있게 하고, shed된 workload와 recovery 시점을 관측합니다.
-
-### 문제를 풀 때 확인할 것
-
-1. dependency별 지연 시간·capacity·실패 mode를 적습니다.
-2. critical/optional workload와 자원 pool을 분리합니다.
-3. end-to-end deadline·concurrency·connection budget을 계산합니다.
-4. rate limit·backpressure·shed policy와 client 응답을 정의합니다.
-5. dependency recovery와 circuit close 시 thundering herd를 테스트합니다.
-
-### 면접에서 설명한다면
-
-장애 격리는 느린 dependency가 shared thread·connection·queue를 고갈시켜 전체로 전파되는 것을 막습니다. bulkhead와 bounded concurrency를 두고, end-to-end deadline·cancellation·rate limit·backpressure·load shedding을 workload 우선순위와 함께 정의하며, 보호 장치 자체가 downstream을 overload하지 않는지 검증합니다.
+과부하 상황에서는 모든 요청을 어떻게든 처리하려 하기보다 우선순위를 정하는 것이 중요합니다. 핵심 write는 보호하고 비핵심 보고서나 enrichment는 제한하는 식으로, **어떤 failure domain이 어느 범위까지만 영향을 미치게 할지**를 architecture 수준에서 정합니다.
