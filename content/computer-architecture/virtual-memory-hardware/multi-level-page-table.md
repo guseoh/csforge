@@ -26,35 +26,30 @@ references:
 ---
 # Multi-Level Page Table
 
-### Flat page table은 큰 virtual address space에서 대부분 비어 있을 수 있다
+Virtual address space가 매우 크면 모든 virtual page에 대해 page-table entry를 미리 만드는 flat table은 대부분 비어 있을 수 있다. Process가 실제로 사용하는 주소 영역은 전체 virtual address space의 일부인 경우가 많기 때문이다.
 
-virtual address space의 모든 virtual page마다 page-table entry를 하나씩 미리 갖는 flat table을 생각해 보자. address space가 매우 크지만 process가 실제로 사용하는 영역이 code, heap, stack과 몇 개의 mapping뿐이라면 대부분의 entry가 unmapped 상태로 남는다. virtual address 폭이 커질수록 이 table 자체의 memory 비용이 커진다.
+Multi-level page table은 virtual page number를 여러 index로 나누고 **필요한 하위 table만 생성할 수 있도록 hierarchy로 구성**한다.
 
-multi-level page table은 virtual page number를 여러 조각의 index로 나누고 hierarchy 형태로 table을 구성한다. 상위 entry는 더 작은 virtual range를 담당하는 하위 page-table page를 가리킨다. 어떤 큰 virtual range를 전혀 사용하지 않는다면 그 range에 해당하는 하위 table을 만들지 않아도 되므로 sparse address space를 더 효율적으로 표현할 수 있다.
+```text
+VPN part A → root entry
+               ↓
+VPN part B → next-level table
+               ↓
+VPN part C → leaf entry → physical frame
+```
 
-### Virtual page number의 각 부분이 다음 table을 선택한다
+### Sparse address space에서 table memory를 아낄 수 있다
 
-단순한 예로 virtual page number를 세 index `L2 | L1 | L0`로 나눈다고 하자. root table에서 L2 entry를 읽어 다음 table 위치를 얻고, 그 table에서 L1 entry를 읽고, 마지막 table에서 L0 entry를 읽어 leaf mapping을 찾는다. leaf는 physical frame과 permission 같은 translation 정보를 제공한다. 실제 architecture의 level 수와 각 bit 폭은 서로 다르다.
+어떤 큰 virtual range를 전혀 사용하지 않는다면 그 range에 해당하는 lower-level page table을 만들지 않아도 된다. 그래서 address space가 넓어져도 실제 mapping이 존재하는 부분에 비례해 page-table memory를 사용할 수 있다.
 
-상위 entry가 존재하지 않으면 그 entry가 담당하는 큰 virtual range 전체가 unmapped임을 빠르게 표현할 수 있다. 반대로 실제 사용하는 범위에 대해서만 필요한 lower-level page-table page를 점진적으로 구성할 수 있다.
+### Memory 절약의 대가는 더 긴 walk다
 
-### Memory 절약의 대가는 TLB miss 시 더 긴 walk다
+TLB miss가 나면 여러 level의 entry를 차례로 읽어야 하므로 flat table보다 translation path가 길어진다. 각 entry도 memory에 있으므로 추가 lookup이 필요하다.
 
-flat table이라면 conceptual하게 한 entry lookup으로 translation을 찾을 수 있지만 multi-level table은 TLB miss 때 여러 level을 따라가야 한다. 각 level의 entry 자체도 memory에 있으므로 추가 access와 dependency가 생긴다. modern CPU는 page-walk cache나 일반 cache hierarchy를 이용할 수 있어 모든 level access가 항상 DRAM까지 가는 것은 아니지만 hierarchy가 translation path를 더 복잡하게 만드는 trade-off는 남는다.
+Modern CPU는 cache와 page-walk cache를 이용해 이 비용을 줄일 수 있고, TLB hit이면 hierarchy 자체를 다시 걷지 않아도 된다. 따라서 multi-level 구조의 memory 절약과 walk 비용 사이의 trade-off를 TLB가 완화한다.
 
-TLB가 중요한 이유도 여기에 있다. 반복 access의 translation을 TLB가 보관하면 매 load/store마다 page-table hierarchy를 다시 걷지 않아도 된다. 따라서 page-table memory 절약과 walk 지연 시간 사이의 절충을 TLB가 완화한다.
+### 큰 page에서는 더 일찍 walk를 끝낼 수도 있다
 
-### Large page는 hierarchy를 더 일찍 끝낼 수 있다
+Architecture가 large page를 지원하면 leaf mapping이 항상 가장 마지막 level에 있을 필요는 없다. 상위 level entry가 더 큰 physical range를 직접 mapping하면 lower-level table을 만들지 않고 walk를 일찍 끝낼 수 있다.
 
-architecture가 large/huge page를 지원하면 leaf mapping이 항상 가장 낮은 level에 있을 필요가 없다. 상위 level entry가 더 큰 physical range를 직접 mapping하면 더 낮은 table을 내려가지 않고 walk를 끝낼 수 있다. 이 방식은 page-table entry 수와 TLB pressure를 줄일 수 있지만 더 큰 contiguous mapping과 memory management trade-off가 생긴다.
-
-Linux도 architecture별 hardware 제약을 공통 hierarchy로 추상화하고, 큰 page mapping에서는 중간 level에서 walk가 끝날 수 있다고 설명한다. 따라서 `multi-level page table은 반드시 마지막 PTE level까지 모두 내려간다`고 일반화하면 안 된다.
-
-### Backend에서 확인할 것
-
-많은 작은 `mmap`과 sparse mapping을 만드는 process는 user data뿐 아니라 page-table structure 자체에도 memory를 사용한다. 반대로 huge contiguous region은 page-table footprint와 TLB pressure를 줄일 수 있다. 하지만 application이 page table을 직접 cache처럼 튜닝한다고 생각하기보다 먼저 virtual memory map, RSS/page-table memory, TLB miss와 page fault를 측정하고 OS/JVM의 지원 경계를 따라야 한다.
-### Multi-level walk
-    VPN part 1 → table 1 → VPN part 2 → table 2 → leaf entry
-                                                │
-                                                └─ physical frame
-large-page leaf는 더 낮은 table을 만들지 않고 walk를 일찍 끝낼 수 있다.
+즉 multi-level page table은 `항상 모든 level을 끝까지 내려간다`는 고정 구조가 아니다. 실제 level 수와 large-page mapping 방식은 architecture에 따라 다르다.

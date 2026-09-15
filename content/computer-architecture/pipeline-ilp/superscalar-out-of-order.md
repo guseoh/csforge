@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.pipeline-ilp.superscalar-out-of-order
 topicContentKey: computer-architecture.core.pipeline-ilp
 slug: superscalar-out-of-order
-title: "Superscalar·Out-of-Order"
+title: "Superscalar와 Out-of-Order 실행"
 summary: "여러 instruction을 동시에 issue하고 준비된 instruction을 먼저 실행하면서도 dependency와 precise architectural state를 보존하는 원리를 설명한다."
 level: 3
 status: PUBLISHED
@@ -17,34 +17,48 @@ references:
     recommendation: "branch prediction과 flush 비용을 확인한다."
     displayOrder: 1
 ---
-# Superscalar·Out-of-Order
+# Superscalar와 Out-of-Order 실행
 
-### Pipeline 하나만으로는 독립적인 instruction을 충분히 활용하지 못할 수 있다
+기본적인 single-issue pipeline은 여러 instruction의 단계를 겹치더라도 한 cycle에 새 instruction 하나만 issue한다. Superscalar CPU는 여러 execution unit과 더 넓은 front-end를 사용해 **한 cycle에 둘 이상의 instruction을 진행시킬 수 있도록** 설계한다.
 
-기본 pipeline은 여러 instruction의 stage를 겹치지만 단순한 single-issue 구조라면 한 cycle에 새 instruction 하나만 issue한다. superscalar CPU는 여러 execution unit과 더 넓은 front-end를 이용해 한 cycle에 둘 이상의 instruction을 issue·execute할 수 있도록 설계한다. 다만 instruction 사이에 true dependency가 있다면 execution unit 수가 많아도 dependent instruction을 동시에 실행할 수 없다. 성능의 핵심은 hardware가 instruction-level parallelism, 즉 서로 독립적으로 진행할 수 있는 work를 얼마나 찾아 활용하느냐에 있다.
+하지만 execution unit 수가 많다고 모든 instruction을 동시에 실행할 수 있는 것은 아니다. 앞 instruction의 결과가 뒤 instruction에 필요한 true dependency가 있으면 그 값이 준비될 때까지 기다려야 한다. 실제 성능은 hardware가 독립적인 instruction-level parallelism을 얼마나 찾아 활용할 수 있는지에 달려 있다.
 
-### Out-of-order execution은 program order를 버리는 것이 아니다
+### Out-of-order는 준비된 instruction을 먼저 실행한다
 
-program에 `A → B → C` 순서로 instruction이 있고 B가 cache miss 때문에 오래 기다리지만 C가 B와 독립적이라고 하자. in-order execution은 B가 막혀 있으면 뒤의 C도 진행하지 못할 수 있다. out-of-order engine은 operand와 execution resource가 준비된 C를 먼저 실행해 B의 대기 시간을 일부 숨긴다. 이때 `먼저 실행한다`와 `program이 관찰하는 결과 순서를 마음대로 바꾼다`는 전혀 다른 말이다.
+다음 sequence를 생각해 보자.
 
-CPU는 dependency tracking을 통해 RAW true dependency를 지켜야 한다. WAR와 WAW처럼 register 이름을 재사용해서 생기는 false dependency는 physical register를 새로 할당하는 register renaming으로 제거할 수 있다. 덕분에 서로 실제 data dependency가 없는 instruction을 이름 충돌 때문에 불필요하게 기다리지 않아도 된다.
+```text
+A: 오래 걸리는 load
+B: A 결과가 필요함
+C: A와 독립적인 계산
+```
 
-### 실행 순서와 retirement 순서를 분리한다
+In-order 실행에서는 A가 막히면 뒤의 B와 C도 함께 기다릴 수 있다. Out-of-order CPU는 C의 operand와 execution unit이 준비되어 있다면 C를 먼저 실행해 A의 대기 시간을 일부 숨길 수 있다.
 
-modern out-of-order CPU는 instruction을 speculative하게 서로 다른 순서로 실행할 수 있지만, architectural register와 exception 같은 program-visible state는 정의된 순서와 semantics를 보존해야 한다. reorder buffer 같은 구조는 완료된 instruction의 결과를 추적하고, 앞선 instruction이 정상적으로 완료되었는지 확인하면서 program order에 맞춰 retire/commit하게 한다. 앞선 instruction에서 exception이 발생하면 뒤에서 speculative하게 계산된 결과가 architectural state에 먼저 남지 않도록 해야 precise exception을 제공할 수 있다.
+여기서 중요한 점은 **실행 순서를 바꾸는 것과 program이 관찰하는 결과를 마음대로 바꾸는 것은 다르다**는 것이다.
 
-memory access는 register dependency보다 더 복잡하다. 서로 다른 load/store가 같은 address를 가리키는지 일찍 알기 어렵고, cache miss도 긴 지연을 만든다. 실제 CPU는 load/store queue와 memory dependency prediction 같은 mechanism을 사용하지만, alias가 확인되거나 ordering 제약이 있으면 기다려야 한다. out-of-order execution이 모든 memory 지연 시간을 없애 주는 것은 아니다.
+### True dependency와 이름 dependency를 구분한다
 
-### 넓고 큰 CPU에는 비용도 따른다
+RAW(Read After Write)는 실제 값의 생산과 소비 관계이므로 보존해야 한다. 반면 WAR와 WAW는 architectural register 이름을 재사용하면서 생기는 name dependency다.
 
-동시에 추적하는 instruction이 많아질수록 rename table, scheduler, issue queue, reorder buffer와 wakeup/select logic이 커진다. 더 많은 execution unit도 area와 전력을 사용한다. branch misprediction이 발생하면 넓은 speculative window에서 이미 수행한 work를 버릴 수 있다. 따라서 superscalar width나 out-of-order window를 키우면 항상 비례해서 빨라지는 것이 아니라 workload의 ILP, memory behavior, branch predictability와 hardware 비용 사이의 trade-off가 있다.
+Register renaming은 새 physical register를 할당해 WAR/WAW 같은 false dependency를 제거한다. 그러면 실제 data dependency가 없는 instruction은 같은 register 이름 때문에 불필요하게 기다리지 않아도 된다.
 
-### Backend 성능과 Java의 ordering을 혼동하지 않는다
+### 실행과 retirement를 분리한다
 
-backend hot loop에 독립적인 계산이 많다면 compiler/JIT와 CPU가 ILP를 활용할 여지가 있다. 반대로 pointer chasing처럼 다음 load address가 앞 load 결과에 의존하거나 cache miss chain이 길면 execution unit이 남아도 병렬로 진행할 work가 부족할 수 있다. 이런 경우에는 source code 줄 수보다 dependency chain과 memory behavior가 중요하다.
+Out-of-order CPU는 instruction을 서로 다른 순서로 실행할 수 있지만, architectural state와 exception은 ISA가 요구하는 의미를 유지해야 한다. 그래서 완료된 결과를 추적하다가 앞선 instruction의 상태가 안전하게 확정되면 program order에 맞춰 retire/commit하는 구조를 사용한다.
 
-또한 CPU가 instruction을 out-of-order로 실행한다는 사실은 Java thread가 아무 synchronization 없이 값을 공유해도 된다는 뜻이 아니다. Java Memory Model은 programmer가 관찰할 수 있는 inter-thread ordering과 visibility contract를 별도로 정의한다. hardware의 speculative/OoO mechanism은 그 contract를 깨지 않는 범위 안에서 사용된다.
-### Out-of-order 실행과 retirement
-    issue:   A(miss) ── B/C(ready) ──> execute
-    visible: A ──> B ──> C ──> retirement order
-독립 work는 먼저 실행할 수 있지만 architectural state는 precise order로 확정한다.
+```text
+issue/execute:   A(wait)   C(done)   B(wait)
+                         ↓
+architectural state: A → B → C 순서의 의미를 보존
+```
+
+앞선 instruction에서 exception이나 branch misprediction이 발견되면 뒤에서 speculative하게 실행한 결과는 architectural state에 남지 않아야 한다. 이것이 precise state를 유지하는 핵심이다.
+
+### Out-of-order도 dependency와 memory latency를 없애지는 못한다
+
+Pointer chasing처럼 다음 memory address가 앞 load 결과에 달려 있으면 독립적으로 실행할 instruction이 부족할 수 있다. Cache miss가 오래 걸리더라도 뒤에 준비된 독립 작업이 없다면 넓은 execution window도 지연을 숨길 수 없다.
+
+따라서 superscalar width와 out-of-order window를 크게 만드는 것만으로 성능이 비례해서 증가하지는 않는다. 더 많은 instruction을 추적하는 hardware 비용과 전력도 커지고, workload가 실제로 제공하는 ILP가 충분해야 이 구조의 이점을 얻을 수 있다.
+
+CPU가 instruction을 out-of-order로 실행한다는 사실은 Java 같은 언어의 thread synchronization 규칙을 대체하지 않는다. Hardware는 ISA와 language/runtime가 요구하는 program-visible contract를 보존하는 범위에서 내부 실행 순서를 조정한다.

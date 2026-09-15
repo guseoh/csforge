@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.virtual-memory-hardware.mmu
 topicContentKey: computer-architecture.core.virtual-memory-hardware
 slug: mmu
-title: "MMU"
+title: "MMU와 주소 변환"
 summary: "CPU memory access마다 virtual-to-physical translation과 protection을 집행하는 MMU의 역할을 OS policy와 구분한다."
 level: 2
 status: PUBLISHED
@@ -17,35 +17,49 @@ references:
     recommendation: "MMU의 translation·protection 경계를 확인한다."
     displayOrder: 1
 ---
-# MMU
+# MMU와 주소 변환
 
-### CPU가 낸 virtual address를 그대로 DRAM에 보내지 않는다
+MMU(Memory Management Unit)는 CPU가 사용하는 virtual address를 physical address로 변환하고, 해당 access가 허용되는지 확인하는 hardware다. Load, store, instruction fetch가 모두 이 translation과 protection의 영향을 받는다.
 
-MMU(Memory Management Unit)는 CPU의 load, store, instruction fetch가 사용하는 virtual address를 현재 address-space의 translation state에 따라 physical address로 변환하고 접근 권한을 확인하는 hardware다. page table과 TLB가 제공하는 mapping을 사용해 virtual page를 physical frame으로 바꾸고, read/write/execute와 privilege 관련 permission을 검사한 뒤 memory hierarchy가 실제 physical location에 접근하도록 한다.
+MMU는 page table과 TLB에 저장된 mapping을 이용한다.
 
-이 과정은 process isolation의 중요한 hardware 기반이다. user process가 임의의 virtual address 값을 만들었다고 해서 kernel이나 다른 process의 physical frame을 읽을 수 있는 것은 아니다. 현재 page-table mapping에 해당 frame이 없거나 user access가 허용되지 않았다면 MMU는 정상 memory access를 진행시키지 않고 architecture가 정의한 fault/exception을 발생시킨다.
+```text
+virtual address
+      ↓
+     MMU
+      ├─ translation
+      └─ permission check
+      ↓
+physical address
+```
 
-### TLB hit와 page-table walk는 같은 translation의 빠른 경로와 느린 경로다
+### Translation과 protection을 함께 수행한다
 
-MMU가 매 memory access마다 multi-level page table을 처음부터 읽는다면 translation 자체가 여러 memory access를 추가하게 된다. 그래서 최근 translation은 TLB에 cache한다. TLB hit이면 저장된 physical frame과 permission 정보를 이용해 page-table walk를 대부분 피할 수 있다. TLB miss이면 hardware page-table walker 또는 architecture가 정한 software-managed path가 page table을 확인해 translation을 찾고, 성공하면 TLB를 채운 뒤 원래 access를 계속할 수 있다.
+Page mapping에는 physical frame 정보뿐 아니라 read/write/execute와 privilege 관련 permission이 포함될 수 있다. 따라서 user process가 임의의 virtual address 값을 만든다고 해서 kernel이나 다른 process의 physical memory를 읽을 수 있는 것은 아니다.
 
-따라서 `TLB miss = page fault`가 아니다. TLB에 entry가 없어도 page table에 유효하고 허용된 translation이 있으면 walk 비용만 추가되고 access는 정상 완료된다. 반대로 page-table state가 mapping 부재, not-present 상태, permission violation 등을 나타내면 fault가 발생할 수 있다.
+현재 mapping에 허용된 permission이 없다면 MMU는 정상 memory access를 완료하지 않고 architecture가 정한 fault 또는 exception을 발생시킨다.
 
-### MMU는 mapping policy를 스스로 결정하지 않는다
+### TLB는 빠른 translation 경로다
 
-MMU는 OS가 준비한 page-table state와 architecture-defined bits를 집행하는 쪽에 가깝다. 어떤 virtual range를 어느 process에 할당할지, demand paging에서 어떤 physical page를 준비할지, memory pressure에서 어떤 page를 reclaim/swap할지 같은 정책은 OS가 결정한다. hardware page walker가 table을 읽는다는 사실과 OS가 virtual memory policy를 소유한다는 사실을 구분해야 한다.
+매 memory access마다 page table을 여러 단계 읽는 것은 비용이 크다. 그래서 최근 translation은 TLB에 cache한다.
 
-page-table entry의 구체적인 valid/present/accessed/dirty bit 의미와 fault 분류는 architecture마다 다를 수 있다. 따라서 특정 x86 또는 RISC-V의 bit 이름을 모든 CPU의 공통 MMU contract처럼 일반화하지 않는다.
+```text
+virtual page → TLB
+   ├─ hit  → physical frame 사용
+   └─ miss → page-table walk → translation 확보
+```
 
-### Permission은 mapping의 일부다
+TLB miss는 page fault와 같은 뜻이 아니다. TLB에 entry가 없어도 page table에 유효한 mapping이 있으면 walk 후 정상적으로 access를 계속할 수 있다.
 
-page mapping에는 physical frame 번호뿐 아니라 읽기·쓰기·실행 가능 여부와 privilege 정보가 포함될 수 있다. 그래서 같은 physical page라도 서로 다른 virtual mapping에 서로 다른 permission을 적용할 수 있다. executable code page를 writable하지 않게 두는 식의 보호도 이 translation/protection mechanism과 연결된다.
+### MMU는 memory policy를 결정하는 주체가 아니다
 
-### Backend에서 문제를 분석할 때
+MMU는 OS가 만든 mapping과 architecture-defined permission을 **집행**한다. 어느 process에 어떤 virtual range를 줄지, demand paging에서 어떤 page를 준비할지, memory pressure에서 어떤 page를 reclaim할지는 OS의 정책이다.
 
-segmentation fault나 native access violation을 일반 application exception처럼 retry해서 해결하려고 하면 안 된다. use-after-free, 잘못된 mmap lifetime, protection violation, invalid native pointer처럼 mapping/lifetime correctness를 먼저 확인해야 한다. JVM heap 성능 문제에서도 MMU 자체를 먼저 의심하기보다 TLB miss, page fault, RSS, page-table footprint가 실제로 병목인지 측정한 뒤 판단한다.
-### MMU translation path
-    virtual address → TLB
-          ├─ hit  → physical frame + permission check
-          └─ miss → page-table walk → TLB fill → retry
-permission은 현재 virtual mapping의 조건이며 physical frame만의 전역 속성이 아니다.
+즉 hardware와 OS의 역할을 다음처럼 나눌 수 있다.
+
+```text
+OS      → mapping과 policy를 구성
+MMU     → translation과 protection을 집행
+```
+
+다음 Concept에서는 TLB miss 뒤 page table을 실제로 따라가는 page-table walk를 본다.
