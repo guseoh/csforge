@@ -3,8 +3,8 @@ kind: concept
 contentKey: computer-architecture.core.data-representation.binary-hex
 topicContentKey: computer-architecture.core.data-representation
 slug: binary-hex
-title: "Binary·Hexadecimal"
-summary: "binary bit pattern을 hexadecimal로 읽고 변환하는 방법을 설명한다."
+title: "2진수와 16진수"
+summary: "같은 bit pattern을 binary와 hexadecimal로 읽는 방법과 고정된 폭을 함께 보는 이유를 이해한다."
 level: 1
 status: PUBLISHED
 displayOrder: 20
@@ -17,15 +17,27 @@ references:
     recommendation: "고정 폭 정수와 수 표현의 기초를 확인한다."
     displayOrder: 1
 ---
-# Binary·Hexadecimal
+# 2진수와 16진수
 
-### 네 bit를 한 자리로 읽기
+Hardware의 register와 memory에 저장되는 값은 결국 bit pattern입니다. 2진수는 각 bit를 그대로 보여 주기 때문에 구조를 이해하기에는 좋지만, bit 수가 많아지면 사람이 읽고 비교하기 어렵습니다. 그래서 낮은 수준의 주소, machine code, mask를 볼 때는 같은 값을 16진수로 표현하는 경우가 많습니다.
 
-binary는 각 자리가 한 bit의 상태를 그대로 보여 주지만 긴 bit pattern을 비교하기 어렵다. hexadecimal 한 자리는 정확히 네 bit를 표현하므로 `1010 0111`을 `0xA7`로 묶어 읽을 수 있다. 이 변환은 값을 바꾸는 연산이 아니라 같은 bit pattern의 표기만 바꾸는 과정이다.
+16진수 한 자리는 정확히 4개의 bit와 대응합니다.
 
-높은 자리부터 네 bit씩 묶을 때 leading zero를 버리면 폭 정보가 사라질 수 있다. 예를 들어 8-bit `0000 0011`은 값 3이면서 wire field 폭 1 byte라는 사실도 가진다. 디버거의 `0xFF`는 signed byte에서 -1로 해석될 수 있으므로 표기와 타입 해석을 분리해야 한다.
+```text
+binary       1010 0111
+hex             A    7
+             → 0xA7
+```
 
-### Backend 연결
+이 변환은 값 자체를 바꾸는 연산이 아닙니다. 같은 bit pattern을 사람이 읽기 쉬운 표기로 바꾸는 것입니다. 그래서 `0xFF`와 `1111 1111`은 8-bit pattern을 서로 다른 방식으로 적은 것입니다.
 
-hex dump, mask, permission bit, packet header를 읽을 때 먼저 field 폭과 signedness를 고정한다. 로그에 값만 남기지 말고 offset·width·endianness를 함께 기록해야 장애 분석에서 다른 해석을 피할 수 있다.
+다만 **표기와 해석은 구분**해야 합니다. `1111 1111`이라는 8개의 bit를 unsigned 정수로 해석하면 255이고, two's complement signed 정수로 해석하면 -1입니다. 16진수 표기만 보고 signed인지 unsigned인지 알 수는 없습니다.
 
+폭도 중요합니다. 값만 보면 `0x03`과 `0x0003`은 같은 정수 3을 나타낼 수 있지만, 8-bit field와 16-bit field는 memory나 wire format에서 차지하는 크기가 다릅니다.
+
+```text
+8-bit   : 0000 0011        → 0x03
+16-bit  : 0000 0000 0000 0011 → 0x0003
+```
+
+따라서 낮은 수준의 데이터를 읽을 때는 **bit pattern의 값뿐 아니라 몇 bit 폭인지, 어떤 signedness로 해석하는지**를 함께 확인해야 합니다. 16진수는 이 bit pattern을 짧고 명확하게 읽기 위한 표현 도구입니다.
