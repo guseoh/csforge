@@ -3,8 +3,8 @@ kind: concept
 contentKey: network-http.core.http-message.media-type
 topicContentKey: network-http.core.http-message
 slug: media-type
-title: "Media Type"
-summary: "representation 형식과 media type label의 관계를 설명한다."
+title: "Media Type과 Representation 형식"
+summary: "media type이 representation data의 format과 processing model을 type/subtype으로 표현하는 방식을 설명한다."
 level: 1
 status: PUBLISHED
 displayOrder: 50
@@ -15,10 +15,20 @@ references:
     language: en
     displayOrder: 1
 ---
-# Media Type
+# Media Type과 Representation 형식
 
-media type은 representation의 format과 처리 의미를 `type/subtype` 및 parameter로 표시한다. `application/json`과 `text/html`이 모두 UTF-8 text bytes일 수 있어도 client가 parser·rendering·security policy를 선택하는 contract는 다르다. media type은 파일 확장자나 단순 문자열 인코딩과 같은 값이 아니다.
+media type은 representation data가 어떤 형식이며 어떻게 처리되어야 하는지를 `type/subtype` 형태로 표현한다. 대표적으로 `application/json`, `text/html`, `image/png` 같은 값이 있다. 필요하면 `charset` 같은 parameter가 media type에 추가될 수 있다.
 
-parameter와 charset, vendor subtype의 허용 범위를 parser가 명확히 정의하고 unknown 또는 잘못된 type은 안전하게 거부하거나 다운로드 같은 제한된 처리로 보낸다. `Content-Encoding`은 representation의 content coding을 나타내므로 media type 자체를 `application/json`에서 다른 type으로 바꾸는 값이 아니다. client sniffing에 의존하면 declared type과 실제 실행·표시 방식이 달라질 수 있다.
+두 payload가 모두 사람이 보면 text처럼 보여도 media type이 다르면 처리 방식은 달라질 수 있다. `application/json`은 JSON parser가 해석할 data를 나타내고, `text/html`은 HTML processing model을 가진 representation을 나타낸다. 따라서 media type은 단순한 파일 확장자나 character encoding 이름이 아니다.
 
-import endpoint는 허용 media type, parameter와 schemaVersion을 검증하고 파일 확장자만 믿지 않는다. 응답 `Content-Type`이 실제 serializer 결과와 일치하는지 contract test로 확인하며, upload content의 보안 검사는 선언된 type과 별도로 수행한다.
+### Media Type과 Content Coding은 다른 축이다
+
+`Content-Encoding: gzip`처럼 content coding이 적용되어도 원래 representation의 media type이 `application/json`이었다면 그 의미가 다른 resource format으로 바뀌는 것은 아니다. receiver는 coding을 해제한 뒤 media type에 따라 representation data를 해석한다.
+
+```text
+representation format: application/json
+        ↓ gzip content coding
+wire content: compressed bytes
+```
+
+media type을 이해할 때 핵심은 **data가 무엇을 표현하고 어떤 parser/processing model로 해석되어야 하는지 알려 주는 metadata**라는 점이다. 실제 HTTP message에서 그 media type을 선언하는 역할은 `Content-Type` field가 담당한다.
