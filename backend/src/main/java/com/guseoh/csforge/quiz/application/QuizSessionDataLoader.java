@@ -65,7 +65,7 @@ public class QuizSessionDataLoader {
                 core.session(),
                 core.quizQuestions(),
                 core.attempts(),
-                Map.of(),
+                groupByQuestion(choiceRepository.findForQuestionIds(core.questionIds())),
                 groupByQuestion(answerRepository.findForQuestionIds(core.questionIds())),
                 groupByQuestion(conceptRepository.findForQuestionIds(core.questionIds())));
     }
