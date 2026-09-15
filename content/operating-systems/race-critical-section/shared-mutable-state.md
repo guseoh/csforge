@@ -19,18 +19,19 @@ references:
 ---
 # Shared Mutable State
 
-### 공유되고 변경 가능할 때 순서가 correctness에 들어온다
+동시성 문제가 생기는 핵심 조건은 여러 실행 흐름이 **같은 변경 가능한 state를 함께 사용한다는 것**이다. 읽기만 하는 immutable data는 update 경쟁이 없지만, 둘 이상의 thread가 같은 state를 읽고 수정하면 상대적인 실행 순서가 결과에 영향을 줄 수 있다.
 
-immutable value를 여러 thread가 읽는 것만으로는 보통 같은 종류의 update race가 생기지 않는다. 문제가 되는 핵심은 여러 실행 흐름이 **같은 state를 공유하고, 그 state가 변경되며, 둘 이상의 operation이 서로의 중간 상태에 영향을 줄 수 있다는 것**이다.
+예를 들어 두 값이 항상 함께 바뀌어야 한다고 하자.
 
-예를 들어 `balance`와 `version` 두 필드가 항상 함께 갱신되어야 한다는 invariant가 있다고 하자. T1이 balance만 바꾼 순간 T2가 두 필드를 읽으면 서로 다른 version의 조합을 관찰할 수 있다. 보호 대상은 변수 하나가 아니라 application이 유지하려는 invariant일 수 있다.
+```text
+balance = 100
+version = 7
+```
 
-### 공유를 줄이는 것도 synchronization 설계다
+Thread A가 `balance`를 먼저 바꾸고 `version`을 나중에 갱신하는 중간 순간에 Thread B가 두 값을 읽으면 서로 다른 시점의 조합을 볼 수 있다. 따라서 보호해야 하는 대상은 변수 하나가 아니라 **여러 값이 함께 만족해야 하는 invariant**일 수 있다.
 
-state를 한 owner에게만 맡기고 message로 command를 전달하거나 immutable snapshot을 교환하면 동시에 같은 mutable object를 수정하는 범위를 줄일 수 있다. 반대로 shared memory를 유지한다면 어떤 operation이 atomic해야 하는지, 어떤 lock/primitive가 어떤 invariant를 보호하는지 명시해야 한다.
+### 공유 범위를 줄이면 경쟁 범위도 줄어든다
 
-중요한 것은 `공유 state가 있으니 lock 하나`가 아니다. lock을 두 군데서 서로 다르게 사용하거나 일부 code path가 lock 없이 접근하면 protection protocol이 성립하지 않는다.
+State를 한 execution flow가 소유하게 하거나 immutable snapshot을 전달하면 같은 mutable state를 동시에 수정하는 상황을 줄일 수 있다. 반대로 shared memory를 사용한다면 어떤 operation이 하나의 일관된 transition으로 보여야 하는지 정해야 한다.
 
-### DB transaction과 JVM shared memory는 다른 층이다
-
-여러 요청 thread가 singleton cache나 in-memory counter를 갱신하는 문제는 JVM/OS thread concurrency 문제다. DB transaction이 성공적으로 commit된다고 Java heap의 read-modify-write가 자동으로 atomic해지는 것은 아니다. 저장소 invariant와 process-local shared-state invariant는 각각의 경계에서 보호해야 한다.
+중요한 것은 `공유 state가 있으니 lock 하나를 붙인다`가 아니다. 먼저 **어떤 state가 공유되고, 어떤 invariant가 깨질 수 있으며, 어느 operation들이 함께 보호되어야 하는지**를 찾는 것이 출발점이다.
