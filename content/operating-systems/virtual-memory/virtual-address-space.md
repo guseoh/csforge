@@ -26,38 +26,23 @@ references:
 ---
 # Virtual Address Space
 
-### process가 보는 주소와 실제 physical memory는 다르다
+Virtual address space는 process가 memory를 바라보는 **자신만의 논리적 주소 공간**이다. Process는 code, data, heap, stack과 여러 mapping을 virtual address로 사용하고, 운영체제는 각 virtual page가 어떤 physical memory나 backing object와 연결되는지 관리한다.
 
-virtual address space는 running process가 memory를 바라보는 논리적 view다. process는 code, data, heap, stack과 mapping이 자신의 주소 공간에 놓여 있다고 보고 virtual address로 load/store를 수행한다. 실제 physical memory의 어느 위치에 있는지는 OS와 hardware translation mechanism이 결정한다.
+서로 다른 process가 같은 virtual address 값을 사용해도 같은 physical memory를 가리킬 필요는 없다.
 
-그래서 process A와 B가 둘 다 virtual address `0x400000`을 사용하더라도 같은 physical frame을 가리킬 필요가 없다. 각 process의 translation state가 다르면 같은 숫자의 virtual address가 서로 다른 physical memory를 가리킨다.
+```text
+Process A: VA 0x4000 ──> Frame 10
+Process B: VA 0x4000 ──> Frame 52
+```
 
 ![서로 다른 process의 같은 virtual address가 서로 다른 physical frame으로 mapping될 수 있는 구조](/learning/operating-systems/virtual-address-space.svg)
 
-### 주소 공간 abstraction이 필요한 이유
+이 abstraction 덕분에 application은 자신의 data가 RAM의 어느 위치에 놓였는지 직접 관리하지 않고도 실행할 수 있고, OS는 process마다 다른 mapping과 permission을 적용해 isolation을 만들 수 있다.
 
-여러 process가 physical memory에 동시에 올라가도 application이 매번 `내 data가 RAM의 몇 번째 byte에 있는가`를 계산하지 않게 한다. OS는 process별 mapping과 protection을 관리해 private address-space illusion을 제공하고, application은 virtual address 기준으로 실행한다.
+### Mapping 크기와 실제 resident memory는 다를 수 있다
 
-이 abstraction에는 세 가지 중요한 목표가 있다.
+Process에 큰 virtual range가 매핑되어 있다고 그 전체가 즉시 physical memory를 사용하는 것은 아니다. Demand paging을 사용하면 실제로 접근한 page만 frame을 얻거나 storage에서 준비될 수 있다.
 
-- **Transparency**: process가 physical placement를 직접 관리하지 않아도 된다.
-- **Efficiency**: translation과 metadata 비용을 감당 가능한 수준으로 유지한다.
-- **Protection/Isolation**: 한 process의 일반적인 memory access가 다른 process나 kernel memory를 임의로 침범하지 못하게 한다.
+따라서 virtual address-space 크기와 현재 resident physical memory는 서로 다른 값이다. 이 차이는 뒤에서 page fault와 demand paging을 이해할 때 중요하다.
 
-### virtual size와 resident memory는 같은 숫자가 아니다
-
-address range를 예약하거나 file을 map했다고 모든 page가 즉시 physical frame을 소비하는 것은 아니다. demand allocation이나 demand paging 때문에 실제 접근 시점에 frame이 배정되거나 file page가 resident가 될 수 있다.
-
-따라서 `virtual address space가 8GB다`라는 사실만으로 현재 RAM 8GB를 사용한다고 말할 수 없다. virtual mapping, committed memory, resident set과 swap/file-backed 상태를 구분해야 한다.
-
-### JVM memory도 process address space 위에 있다
-
-Java heap은 JVM이 관리하는 중요한 memory 영역이지만 process의 전체 virtual address space와 동일하지 않다. native library, thread stack, direct buffer, memory-mapped file, JVM 자체 metadata도 process address space를 사용한다.
-
-그래서 memory 장애를 볼 때 `-Xmx` 하나만 보는 것으로 충분하지 않다. virtual mapping과 RSS, cgroup/container memory limit, native allocation을 함께 구분해서 관측해야 한다.
-
-### 면접에서 이렇게 나옵니다
-
-#### Q. Virtual address space와 실제 RAM 사용량은 왜 같은 숫자가 아닌가요?
-
-Virtual address space는 process가 사용할 수 있도록 **주소와 mapping을 정의한 논리적 공간**이고, resident memory는 그중 현재 physical memory에 실제로 올라와 있는 부분이다. Demand paging, file mapping, 아직 접근하지 않은 page 때문에 큰 virtual range를 갖고도 resident memory는 훨씬 작을 수 있다고 설명하면 좋다.
+Virtual Address Space의 핵심은 **process마다 독립적인 memory view를 제공하고, 실제 physical placement와 process-visible address를 분리하는 OS abstraction**이라는 점이다.
