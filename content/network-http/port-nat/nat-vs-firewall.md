@@ -4,8 +4,8 @@ contentKey: network-http.core.port-nat.nat-vs-firewall
 topicContentKey: network-http.core.port-nat
 slug: nat-vs-firewall
 title: "NAT / Firewall"
-summary: "address translation과 stateful packet filtering의 역할을 구분한다."
-level: 1
+summary: "주소 변환과 명시적 traffic policy의 책임을 구분한다."
+level: 2
 status: PUBLISHED
 displayOrder: 80
 references:
@@ -19,15 +19,19 @@ references:
 ---
 # NAT / Firewall
 
-NAT는 packet의 source/destination address나 port를 바꾸고 mapping state에 따라 reply를 반대 방향으로 변환하는 기능이다. firewall은 source·destination·port·protocol·connection state·identity 같은 조건과 정책을 평가해 traffic을 허용하거나 차단한다. 두 기능이 같은 gateway에 구현될 수 있지만, 주소를 바꿨다는 사실이 특정 traffic을 허용해야 한다는 규칙으로 바뀌지는 않는다.
+NAT와 firewall은 같은 gateway 장비에 함께 구현되는 경우가 많지만 **서로 다른 문제를 해결한다.** NAT는 packet의 source/destination address나 port를 변환하고 그 translation 관계를 관리한다. Firewall은 traffic의 source, destination, protocol, port, connection state 같은 조건을 정책과 비교해 허용하거나 차단한다.
 
-NAT가 mapping 없는 inbound를 전달하지 않는 환경에서는 firewall처럼 보일 수 있지만, 그것은 implicit reachability 동작일 뿐 명시적인 보안 정책의 대체가 아니다. port forwarding을 추가하면 NAT 경로와 firewall allow rule을 모두 바꿔야 할 수 있고, 반대로 firewall이 허용해도 route·listener·NAT mapping이 없으면 application connection은 실패한다.
+```text
+NAT      : 이 packet의 address/port를 무엇으로 바꿀까?
+Firewall : 이 packet을 통과시킬 것인가?
+```
 
-public listener를 열 때는 destination port allow rule, authentication, rate limit, logging과 admin/health endpoint의 노출 범위를 각각 설계한다. 특히 proxy나 NAT 뒤에서 관찰되는 source address는 identity와 다를 수 있으므로 access policy와 audit의 신뢰 경계를 명시한다.
+### Mapping이 있다는 것과 허용된다는 것은 다르다
 
-Backend에서 “포트가 외부에 안 보인다”는 사실만으로 보안을 판단하지 않는다. 외부·내부 interface, security group/firewall state, port forwarding, application bind와 authorization을 순서대로 확인해야 하며, NAT table의 우연한 비노출을 least-privilege 정책으로 간주하지 않는다.
+NAT mapping이 존재해 reply를 어느 내부 endpoint로 되돌릴 수 있어도 firewall policy가 해당 traffic을 거부할 수 있다. 반대로 firewall이 packet을 허용해도 필요한 route나 translation mapping, destination listener가 없으면 connection은 성립하지 않는다.
 
-### Translation과 policy
-    packet → address/port translation → allow/deny policy → next hop
-              NAT responsibility       firewall responsibility
-mapping 존재와 listener 준비는 각각 확인해야 한다.
+### NAT가 보안 장치처럼 보일 수 있는 이유
+
+Stateful outbound NAT에서는 mapping 없는 unsolicited inbound packet의 내부 destination을 정할 수 없어 전달되지 않는 경우가 많다. 결과만 보면 inbound traffic이 차단된 것처럼 보이지만 이것을 명시적인 security policy와 동일시하면 안 된다. Port forwarding 같은 mapping을 추가하면 reachability가 바뀔 수 있기 때문이다.
+
+NAT / Firewall의 핵심은 **NAT는 endpoint translation을, firewall은 명시적인 traffic allow/deny policy를 담당하며 두 책임을 분리해야 한다는 것**이다.
