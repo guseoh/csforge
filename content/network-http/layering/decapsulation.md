@@ -19,17 +19,24 @@ references:
 ---
 # Decapsulation
 
-수신 interface는 먼저 link frame이 자신에게 전달된 것인지와 link-level 무결성·type을 확인하고, host의 network layer는 IP destination과 next-protocol 정보를 검사한다. 이어 transport layer가 TCP sequence/connection 또는 UDP port/datagram을 처리해 상위 payload를 전달한다. checksum, address, protocol state가 맞지 않거나 local policy가 거부하면 bytes가 다음 계층으로 올라가지 않고 그 지점에서 drop될 수 있다.
+Decapsulation은 수신 측에서 각 계층이 자신이 이해하는 header를 검사하고 제거한 뒤 payload를 상위 계층에 넘기는 과정이다. 송신 측 encapsulation을 반대 방향으로 따라간다고 볼 수 있다.
 
-router가 packet을 forwarding하는 경우에는 최종 application까지 decapsulation하지 않고 IP header를 보고 다음 link를 위한 새 frame을 만든다. 반면 destination host에서는 transport가 packet 단위의 도착과 application message의 완성을 분리한다. TCP stream은 여러 packet이 합쳐지거나 나뉘어 전달되므로 sequence로 ordered bytes를 만든 뒤 HTTP Content-Length, transfer coding 또는 다른 framing 규칙이 message 끝을 결정한다.
+```text
+link frame
+  ↓ link header/trailer 검사
+IP packet
+  ↓ IP header 검사
+transport data
+  ↓ port/connection·transport state 처리
+application payload
+```
 
-HTTP parser는 socket read 한 번을 요청 하나로 가정하지 않는다. partial read와 pipelined 또는 다음 message의 bytes를 buffer에 보존하고, protocol parser가 소비한 위치와 connection state를 관리한다. link/network 단계에서 drop된 frame은 application log에 남지 않을 수 있으므로 계층별 capture와 counter가 필요하다.
+각 단계에서 address, protocol type, checksum이나 state가 해당 계층의 계약을 만족하지 않으면 data가 상위 계층으로 전달되지 않을 수 있다.
 
-### 역캡슐화 흐름
-    frame
-      └─ link header 확인
-           └─ IP packet
-                └─ transport segment
-                     └─ application payload
-어느 단계에서 폐기되면 위 계층에는 payload가 도착하지 않는다.
+### Router와 destination host의 처리는 다르다
 
+Router는 최종 application까지 decapsulation하지 않는다. Incoming link frame에서 IP packet을 얻고 IP forwarding 정보를 확인한 뒤, 다음 link에 맞는 새 frame으로 다시 encapsulate한다.
+
+Destination host에서는 transport 계층까지 처리한 뒤 application이 해석할 bytes를 전달한다. TCP라면 packet arrival 자체가 application message 완료를 의미하지 않고, ordered byte stream을 복원한 뒤 application protocol의 framing 규칙이 message boundary를 결정한다.
+
+Decapsulation의 핵심은 **수신 경로에서 각 계층이 자신의 header와 state만 책임지고, 성공한 payload만 다음 계층으로 넘긴다는 것**이다.
