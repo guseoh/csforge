@@ -3,8 +3,8 @@ kind: concept
 contentKey: backend.core.list.pagination
 topicContentKey: backend.core.list
 slug: pagination
-title: pagination
-summary: 목록 API의 pagination은 한 요청이 읽고 정렬하고 직렬화할 데이터량에 상한을 두는 자원 보호 계약이다.
+title: "페이지네이션과 목록 자원 상한"
+summary: "목록 API의 페이지네이션을 UI 편의가 아니라 한 요청이 조회·정렬·직렬화하는 데이터량을 제한하는 자원 보호 계약으로 이해한다."
 level: 2
 status: PUBLISHED
 displayOrder: 10
@@ -22,11 +22,13 @@ references:
   displayOrder: 2
   relationNote: LIMIT/OFFSET에서 unique ordering 필요성과 large OFFSET 비용 확인
 ---
-# pagination
+# 페이지네이션과 목록 자원 상한
 
-목록 API에 pagination을 넣는 이유는 UI가 페이지 번호를 좋아해서만이 아닙니다. **한 요청이 읽고 정렬하고 직렬화할 데이터량에 상한을 두기 위해서**입니다. 데이터가 늘어날수록 `findAll()` 같은 무제한 조회는 DB, JVM heap, network를 동시에 압박합니다.
+목록 API에 페이지네이션을 넣는 이유는 화면에 페이지 번호를 보여 주기 위해서만이 아닙니다. 데이터가 계속 늘어나는 서비스에서 `findAll()`처럼 제한 없는 조회를 허용하면 한 요청이 DB 조회량, JVM 메모리, JSON 직렬화, 네트워크 전송량을 동시에 크게 만들 수 있습니다.
 
-### stable ordering이 먼저다
+따라서 페이지네이션의 첫 번째 역할은 **한 요청이 처리할 데이터량에 상한을 두는 것**입니다.
+
+### 페이지를 나누기 전에 안정적인 정렬 기준이 필요하다
 
 ```sql
 SELECT id, created_at, title
@@ -35,25 +37,27 @@ ORDER BY created_at DESC, id DESC
 LIMIT 20 OFFSET 20;
 ```
 
-`created_at`이 같은 행이 여러 개라면 상대 순서가 흔들릴 수 있으므로 unique tie-breaker를 추가합니다. PostgreSQL도 `LIMIT`으로 결과 일부를 읽을 때 예측 가능한 subset을 얻으려면 `ORDER BY`가 unique order를 만들도록 해야 한다고 명시합니다.
+`created_at` 값이 같은 row가 여러 개라면 그것만으로는 상대 순서가 완전히 결정되지 않습니다. `id` 같은 unique tie-breaker를 함께 사용하면 동일한 데이터 상태에서 정렬 순서를 안정적으로 만들 수 있습니다.
 
 ```text
-Page 1: [105, 104, 103, ...]
-          ▲
-          └─ deterministic ordering이 다음 요청의 경계를 안정시킴
+ORDER BY created_at DESC, id DESC
+                          ▲
+                          └─ 같은 created_at 안의 순서를 결정
 ```
 
-다만 deterministic ordering이 여러 요청을 하나의 snapshot으로 묶어 주는 것은 아닙니다. 페이지 사이에 insert/delete가 일어나면 offset 기반 pagination에서는 중복이나 누락이 생길 수 있으므로, 목록의 일관성 요구와 pagination 방식을 별도로 판단합니다.
+다만 deterministic ordering이 여러 HTTP 요청을 하나의 DB snapshot으로 묶어 주는 것은 아닙니다. 첫 페이지와 두 번째 페이지 사이에 row가 삽입·삭제되면 offset 기반 페이지네이션에서는 중복이나 누락이 생길 수 있습니다. 정렬 안정성과 요청 간 snapshot 일관성은 다른 문제입니다.
 
-### offset pagination의 비용
+### 큰 OFFSET은 앞부분을 공짜로 건너뛰는 것이 아니다
 
-`OFFSET 100000`은 앞의 100,000행을 client로 보내지 않을 뿐 DB가 그 위치를 찾는 비용까지 없애는 것은 아닙니다. PostgreSQL처럼 skipped row도 server 내부에서 계산해야 하는 구현에서는 deep page의 비용이 커질 수 있습니다. 실제 비용은 DB engine과 query plan으로 확인해야 합니다.
+```sql
+LIMIT 20 OFFSET 100000
+```
 
-### 페이지 번호가 가치 있을 때
+클라이언트에는 20개만 반환하지만 PostgreSQL은 그 위치까지 도달하기 위해 앞선 row를 처리해야 할 수 있습니다. 그래서 데이터가 커질수록 deep page의 비용이 증가할 수 있고, 실제 비용은 query plan으로 확인해야 합니다.
 
-관리자 목록이나 데이터 규모가 중간이고 사용자가 “37페이지로 이동”해야 한다면 offset이 실용적입니다. 모든 목록을 cursor로 바꾸는 것이 목표가 아닙니다.
+그렇다고 offset pagination이 나쁜 방식이라는 뜻은 아닙니다. 관리자 화면처럼 임의의 페이지 번호로 이동해야 하고 데이터 규모와 조회 비용이 충분히 작다면 단순하고 실용적인 선택입니다.
 
-### 응답 계약도 bounded해야 한다
+### page size 자체도 서버 계약으로 제한한다
 
 ```json
 {
@@ -64,8 +68,16 @@ Page 1: [105, 104, 103, ...]
 }
 ```
 
-`size=1000000`을 그대로 허용하면 pagination의 자원 보호 의미가 사라집니다. 서버가 최대 page size를 제한해야 합니다. AIP-158 같은 API 설계 가이드도 client가 page size를 요청하더라도 service가 허용 가능한 maximum을 두는 계약을 사용합니다.
+클라이언트가 `size=1000000`을 보내는 것을 그대로 허용하면 페이지네이션의 자원 보호 의미가 사라집니다. 서버는 기본 크기와 최대 크기를 정하고 허용 범위를 벗어난 요청을 보정하거나 거절하는 정책을 가져야 합니다.
 
-### count도 비용이다
+### 전체 건수가 정말 필요한지도 확인한다
 
-`Page<T>`를 만들기 위해 매 요청마다 `COUNT(*)`가 필요한지 봅니다. 단순 다음 페이지 여부만 필요하다면 `size + 1` 조회로 `hasNext`를 계산하는 Slice 형태가 더 저렴할 수 있습니다. 이 선택은 framework 보장이 아니라 사용하는 query와 데이터 규모를 측정해 결정합니다.
+페이지 번호와 총 페이지 수를 제공하려면 별도의 `COUNT(*)`가 필요할 수 있습니다. 하지만 UI가 "다음 항목이 더 있는가"만 필요하다면 `size + 1`개를 조회해 `hasNext`만 계산하는 방식이 더 적합할 수 있습니다.
+
+```text
+총 페이지 수가 제품 기능인가?
+  ├─ yes → count 비용까지 포함해 설계
+  └─ no  → 다음 페이지 존재 여부만 계산 가능
+```
+
+페이지네이션을 선택할 때는 framework의 `Page<T>`를 기본값처럼 쓰기보다 **목록이 요구하는 이동 방식, 데이터 규모, 정렬 안정성, count 비용, 한 요청의 최대 자원 사용량**을 함께 봐야 합니다.
