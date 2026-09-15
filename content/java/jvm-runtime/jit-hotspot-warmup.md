@@ -30,39 +30,34 @@ references:
 ---
 # JIT·HotSpot과 Warm-up
 
-Java 프로그램을 아주 짧게 한 번 실행해 시간을 재면 첫 실행과 반복 실행의 성능이 다르게 나올 수 있습니다. 이유 중 하나는 HotSpot JVM이 프로그램을 실행하면서 어떤 code가 자주 쓰이는지 관찰하고, 그 정보를 바탕으로 **더 최적화된 native code를 JIT(Just-In-Time) compile**할 수 있기 때문입니다.
+Java 프로그램은 실행 직후와 충분히 반복 실행된 뒤의 성능이 다를 수 있습니다. HotSpot JVM이 실행 중 정보를 수집하고 자주 실행되는 code를 **JIT(Just-In-Time) compile**해 native code로 최적화할 수 있기 때문입니다.
 
-이 동작은 Java language가 보장하는 문법 규칙이 아니라 JVM implementation, 특히 HotSpot의 실행 전략으로 이해해야 합니다.
+이 동작은 Java language가 정한 문법 규칙이 아니라 **HotSpot이라는 JVM 구현의 실행 전략**입니다.
 
 ### `javac` compile과 JIT compile은 다른 단계다
 
-먼저 전체 흐름을 나눕니다.
-
 ```text
-개발/빌드 시점
+Build time
 Java source
    │ javac
    ▼
 class file / bytecode
 
-실행 시점
+Runtime
 class bytecode
    │
    ├─ interpreter로 실행 가능
-   │
-   └─ HotSpot JIT가 native code로 compile 가능
-          │
-          ▼
-        CPU 실행
+   └─ HotSpot JIT compilation 가능
+              │
+              ▼
+          native code
 ```
 
-`javac`가 `.class`를 만드는 compile과 실행 중 JIT가 native machine code를 만드는 compile을 같은 단계로 부르면 안 됩니다.
+`javac`는 source를 class file로 만드는 compiler이고, JIT compiler는 runtime에 실제 실행 정보를 이용해 native code를 만들 수 있습니다. 둘을 같은 compile 단계로 설명하면 source/classfile/runtime 경계가 흐려집니다.
 
-### 처음에는 profiling 정보가 충분하지 않다
+### Runtime profile은 최적화의 근거가 될 수 있다
 
-프로그램을 실행하기 전에는 runtime이 어떤 method와 branch가 실제로 자주 실행되는지 완전히 알 수 없습니다.
-
-예를 들어:
+실행 전에는 어떤 method와 branch가 실제 workload에서 자주 사용되는지 알 수 없습니다.
 
 ```java
 if (user.isPremium()) {
@@ -72,87 +67,74 @@ if (user.isPremium()) {
 }
 ```
 
-실제 운영에서는 99%가 `normalPath()`일 수도 있습니다. HotSpot은 실행 중 얻은 profiling information을 바탕으로 자주 실행되는 path와 call site를 최적화할 수 있습니다.
+운영 workload에서 `normalPath()`가 대부분이라면 HotSpot은 실행 중 수집한 profile을 바탕으로 자주 실행되는 path와 call site를 최적화할 수 있습니다.
+
+```text
+실행
+  │
+  ├─ 호출/branch/type profile 수집
+  │
+  └─ hot code 발견
+          │
+          ▼
+     JIT optimization
+```
+
+어떤 threshold와 heuristic을 쓰는지는 HotSpot version과 option에 따라 달라질 수 있으므로 Java specification 보장처럼 외우지 않습니다.
+
+### Tiered compilation은 구현 전략이다
+
+HotSpot은 빠른 startup과 높은 steady-state 성능을 함께 노리기 위해 여러 compilation level을 조합하는 tiered compilation을 사용할 수 있습니다.
+
+학습할 때 중요한 것은 compiler 이름과 threshold 숫자가 아니라 다음 흐름입니다.
 
 ```text
 초기 실행
- └─ runtime profile 수집
-      ├─ method 호출 빈도
-      ├─ branch 경향
-      └─ 실제 type 관찰 등
-              │
-              ▼
-        optimization 판단
+   │
+profile 축적
+   │
+hot code 발견
+   │
+더 최적화된 code 생성 가능
 ```
 
-정확히 어떤 profile을 어떻게 사용하고 어느 threshold에서 compile하는지는 HotSpot version과 설정의 구현 영역입니다.
+이 때문에 짧게 한 번 실행한 결과와 충분히 warm-up된 결과를 같은 상태라고 가정하면 benchmark를 잘못 해석할 수 있습니다.
 
-### tiered compilation은 빠른 시작과 높은 최적화를 함께 노린다
+### JIT는 runtime type을 이용해 가정을 만들 수 있다
 
-HotSpot은 여러 compilation level을 조합하는 tiered compilation 전략을 사용할 수 있습니다. 처음부터 가장 비싼 최적화를 모든 method에 수행하면 시작 비용이 커질 수 있기 때문에, 실행 정보가 쌓이는 동안 더 빠른 compilation 단계와 더 공격적인 최적화 단계를 조합합니다.
-
-학습할 때 중요한 것은 compiler 이름과 threshold 숫자를 외우는 것이 아닙니다.
+Polymorphic method call도 runtime에서 항상 같은 비용으로 lookup되는 것은 아닙니다. 특정 call site에 사실상 한 type만 반복해서 등장한다면 HotSpot은 그 profile을 바탕으로 inline 같은 speculative optimization을 적용할 수 있습니다.
 
 ```text
-처음
- interpreter / 낮은 비용 실행
-       │
-       │ profiling / hot code 발견
-       ▼
-더 최적화된 compiled code
-```
-
-이것이 "warm-up 후 빨라질 수 있다"는 현상의 한 배경입니다.
-
-### JIT는 실제 type을 보고 virtual call을 최적화할 수 있다
-
-Java source에서 polymorphic method call이라고 해서 runtime이 매번 같은 비용으로 복잡한 lookup을 해야 하는 것은 아닙니다.
-
-특정 call site에서 실제로 한 type만 반복 관찰된다면 HotSpot은 그 가정 아래 inline 같은 최적화를 할 수 있습니다.
-
-```text
-source
 service.execute()
-
-runtime profile
-99.9% -> FastService
-
-JIT
-가정을 이용해 call 최적화 가능
+      │
+runtime에서 FastService만 반복 관찰
+      │
+      ▼
+JIT가 이 가정을 이용해 최적화 가능
 ```
 
-하지만 이 최적화는 Java semantics를 바꾸는 것이 아닙니다. 다른 subtype이 등장해 기존 가정이 더 이상 맞지 않으면 JVM은 최적화를 취소하거나 다시 compile할 수 있습니다.
+하지만 Java의 동적 의미 자체가 사라지는 것은 아닙니다. 새로운 subtype이 등장해 기존 가정이 깨지면 JVM은 optimized code를 버리거나 다시 compile할 수 있습니다.
 
-### deoptimization은 "JIT가 틀렸다"가 아니라 가정이 바뀐 상황을 처리한다
-
-JIT compiler는 runtime profile을 이용해 speculative optimization을 할 수 있습니다. 기존 관찰에 기반한 가정이 깨지면 JVM이 최적화된 code에서 더 일반적인 실행 형태로 되돌아갈 수 있습니다. 이를 deoptimization 관점으로 이해할 수 있습니다.
+### Deoptimization은 speculative optimization의 반대편이다
 
 ```text
-가정: call site에는 Type A만 온다
-          │
-       optimized
-          │
-Type B 등장
-          │
-          ▼
-deoptimization / 새 최적화 가능
+가정: Type A만 온다
+      │
+ optimized code
+      │
+ Type B 등장
+      │
+      ▼
+deoptimization / 재최적화 가능
 ```
 
-이 기능 덕분에 Java의 dynamic behavior를 유지하면서 runtime 정보 기반 최적화를 적용할 수 있습니다.
+Deoptimization은 "JIT가 잘못된 결과를 냈다"는 뜻이 아니라, runtime observation에 기반한 가정이 더 이상 유효하지 않을 때 Java semantics를 유지하도록 실행 전략을 되돌리는 과정입니다.
 
-### warm-up은 단순히 "N번 돌리면 끝"이 아니다
+### Warm-up은 고정 횟수가 아니다
 
-Benchmark에서 warm-up은 class loading, JIT compilation, cache state 등 초기 실행 효과를 어느 정도 안정화하기 위한 과정입니다.
+"몇 번 실행하면 warm-up 완료" 같은 보편적인 숫자는 없습니다. Compilation timing은 JVM version, code shape, workload, 실행 빈도에 따라 달라지고 GC나 OS scheduling도 측정값에 영향을 줍니다.
 
-하지만:
-
-> Java는 10,000번 실행하면 무조건 warm-up이 끝난다.
-
-같은 고정 규칙은 없습니다.
-
-Method의 실행 빈도, JVM version, code shape, workload에 따라 compilation timing이 달라질 수 있습니다. GC와 OS scheduling도 측정값에 영향을 줍니다.
-
-그래서 직접 만든 다음 코드는 신뢰하기 어렵습니다.
+따라서 다음처럼 직접 만든 작은 측정만으로 결론을 내리기 어렵습니다.
 
 ```java
 long start = System.nanoTime();
@@ -162,59 +144,22 @@ for (int i = 0; i < 1000; i++) {
 System.out.println(System.nanoTime() - start);
 ```
 
-Loop 자체가 최적화 대상이 될 수 있고, 결과를 사용하지 않으면 dead-code elimination 같은 영향을 받을 수도 있습니다.
+Loop 자체가 최적화될 수 있고 결과를 사용하지 않으면 dead-code elimination 같은 영향도 받을 수 있습니다.
 
-### Microbenchmark에서는 JMH 같은 도구가 필요한 이유가 있다
+### Microbenchmark와 production measurement는 질문이 다르다
 
-JMH(Java Microbenchmark Harness)는 JVM warm-up, fork, measurement iteration과 compiler optimization 문제를 고려해 microbenchmark를 작성하도록 돕습니다.
-
-그렇다고 JMH 결과가 곧 production API 지연 시간이라는 뜻은 아닙니다.
+JMH는 warm-up, fork, measurement iteration과 compiler optimization 영향을 고려한 microbenchmark 작성을 돕습니다. 하지만 JMH가 보여 주는 작은 Java operation의 상대 비용이 곧 production API latency는 아닙니다.
 
 ```text
 JMH
-- 작은 Java operation의 상대 비용 측정에 유용
+  -> 작은 code path의 비용 비교
 
-Production load test
-- network, DB, thread pool, GC, real traffic까지 포함
+Load test / production evidence
+  -> network, DB, thread, GC, real traffic 포함
 ```
 
-측정하려는 질문에 맞는 도구를 선택합니다.
+장시간 실행되는 서버라면 steady-state 성능이 중요할 수 있고, CLI나 짧은 process에서는 startup과 warm-up 비용이 더 중요할 수 있습니다.
 
-### 시작과 steady-state 성능은 다른 질문이다
+### 정리
 
-서버가 수일 동안 실행되는 경우 steady-state 처리량이 중요할 수 있습니다. 반면 serverless/CLI처럼 프로세스가 짧게 실행된다면 시작과 warm-up 비용이 더 중요할 수 있습니다.
-
-```text
-Long-running server
-startup ─ warm-up ───────── steady state ─────▶
-
-Short-lived process
-startup ─ run ─ exit
-```
-
-Warm-up을 제거한 benchmark만 보고 모든 환경에서 같은 결론을 내리면 안 됩니다.
-
-### HotSpot 구현 설명을 Java specification과 구분한다
-
-다음 내용은 서로 다른 층입니다.
-
-- Java Language Specification: Java 프로그램의 의미
-- JVM Specification: class file과 JVM 실행 모델
-- HotSpot: interpreter/JIT/compiler/tiered compilation 같은 구체적인 JVM 구현
-- CPU: 실제 native instruction 실행
-
-"Java는 호출 10,000회 후 반드시 C2 compile한다" 같은 문장은 specification guarantee가 아닙니다. JVM version, flag, implementation에 따라 바뀔 수 있습니다.
-
-### 문제를 풀 때 확인할 것
-
-1. `javac` compile과 runtime JIT compile을 구분합니다.
-2. 처음 실행과 반복 실행을 같은 상태로 가정하지 않습니다.
-3. JIT가 runtime profile을 사용할 수 있다는 점을 확인합니다.
-4. speculative optimization과 deoptimization을 함께 봅니다.
-5. 특정 threshold/최적화 방식을 Java language guarantee로 말하지 않습니다.
-6. microbenchmark와 실제 server workload를 구분합니다.
-7. 무엇을 측정하는지에 따라 warm-up 포함 여부를 결정합니다.
-
-### 학습 후 스스로 설명해 보기
-
-HotSpot JVM은 class bytecode를 실행하면서 profiling 정보를 수집하고 자주 실행되는 code를 JIT compile해 최적화된 native code로 실행할 수 있습니다. 실제 type이나 branch 경향을 이용해 speculative optimization을 할 수 있고 가정이 깨지면 deoptimization이 일어날 수도 있습니다. 그래서 Java benchmark에서는 warm-up과 JIT 상태가 결과에 영향을 주며, 구체적인 compilation threshold나 optimization 정책은 Java language가 아니라 JVM implementation의 영역입니다.
+HotSpot은 실행 중 profiling 정보를 수집하고 hot code를 JIT compile해 최적화된 native code로 실행할 수 있습니다. Runtime type과 branch 경향을 이용한 speculative optimization은 가정이 깨지면 deoptimization으로 되돌아갈 수 있습니다. 그래서 benchmark에서는 초기 실행과 steady state를 구분해야 하며, 구체적인 compilation threshold나 tiered compilation 정책은 Java language가 아니라 JVM implementation의 영역입니다.
