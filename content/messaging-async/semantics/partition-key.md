@@ -3,8 +3,8 @@ kind: concept
 contentKey: messaging.core.semantics.partition-key
 topicContentKey: messaging.core.semantics
 slug: partition-key
-title: "topic·partition·message key"
-summary: "partition이 parallelism과 ordering의 단위가 되는 이유와 key 선택이 traffic·sequence를 바꾸는 흐름을 이해한다"
+title: "토픽·파티션·메시지 키"
+summary: "partition이 순서와 병렬 처리의 기본 단위가 되는 이유를 이해하고 message key가 같은 업무 단위를 한 partition으로 모으는 조건과 편향 위험을 판단한다."
 level: 2
 status: PUBLISHED
 displayOrder: 20
@@ -16,49 +16,48 @@ references:
     displayOrder: 1
     relationNote: "topic partition, producer key와 log ordering 개념 확인"
 ---
-# topic·partition·message key
+# 토픽·파티션·메시지 키
 
-Kafka-style log에서 Topic은 message stream의 논리 이름이고 Partition은 append-only log와 parallelism의 단위입니다. 한 partition 안에는 append된 record의 offset 순서가 있지만 topic 전체에 하나의 전역 순서가 자동으로 생기는 것은 아닙니다.
-
-```text
-Topic: order-events
-  Partition 0: o-1 -> o-3 -> o-5
-  Partition 1: o-2 -> o-4
-```
-
-### key는 routing과 ordering 범위를 함께 바꾼다
-
-Kafka producer의 partitioning strategy가 key를 기준으로 deterministic하게 partition을 선택하는 구성이라면 **같은 serialized key는 같은 partition으로 보내는 방식**을 사용할 수 있습니다. 주문 상태처럼 하나의 aggregate에 대해 `Placed -> Paid -> Shipped` 순서가 필요하다면 `orderId`를 key로 두어 같은 aggregate event가 하나의 partition log에 모이게 하는 선택이 자연스럽습니다.
-
-하지만 “key가 같으면 어떤 Kafka 구성에서도 영원히 같은 partition이고 application event 순서가 자동 보장된다”고 일반화하면 안 됩니다. custom partitioner를 사용하거나 partition 수를 변경하면 key-to-partition mapping이 달라질 수 있고, producer retry/idempotence·concurrency 설정도 producer가 관찰하는 ordering에 영향을 줄 수 있습니다. **기본 보장은 partition log 안에 append된 record의 순서**이고, application은 producer와 partitioning 계약까지 함께 확인해야 합니다.
-
-반대로 key가 없거나 ordering을 고려하지 않은 routing을 사용하면 한 주문의 event가 서로 다른 partition으로 나뉠 수 있어 consumer가 aggregate-level 순서를 가정하기 어려워집니다.
-
-### partition 수가 concurrency 상한에 영향을 준다
-
-consumer group 안에서 하나의 partition은 한 시점에 한 consumer group member에 할당되어 처리됩니다. partition 수보다 consumer가 많으면 일부 consumer는 할 일이 없고, partition 수를 늘리면 parallelism은 늘 수 있지만 ordering 범위·rebalance·storage 관리 비용과 key remapping 영향을 함께 봐야 합니다.
+Kafka topic은 하나의 거대한 순차 파일이 아니라 여러 partition으로 나뉠 수 있습니다. 각 partition은 append되는 record의 순서를 가지며, consumer group은 여러 partition을 나눠 읽어 병렬 처리합니다.
 
 ```text
-3 partitions + 5 consumers
-  ├─ C1 -> P0
-  ├─ C2 -> P1
-  ├─ C3 -> P2
-  └─ C4/C5 -> 대기
+order-events
+  ├─ Partition 0: e1 → e4 → e7
+  ├─ Partition 1: e2 → e5
+  └─ Partition 2: e3 → e6
 ```
 
-### hot partition과 business key skew
+Kafka가 보장하는 순서는 **topic 전체가 아니라 각 partition 안의 record 순서**입니다.
 
-모든 message가 같은 tenant나 aggregate key에 몰리면 key routing이 특정 partition을 hot하게 만들 수 있습니다. 단순히 partition 수를 늘려도 같은 key를 하나의 partition에 유지하는 동안 해당 key의 traffic이 여러 partition으로 자동 분산되지는 않습니다. key 설계, aggregate ordering 요구, hot key 완화 비용을 함께 봅니다.
+### Key는 관련 message를 같은 partition으로 모으는 재료다
 
-### 문제를 풀 때 확인할 것
+한 주문의 상태 변화가 순서대로 처리되어야 한다면 `orderId` 같은 business key를 partitioning에 사용할 수 있습니다.
 
-1. ordering이 필요한 business 단위를 찾습니다.
-2. producer partitioning strategy가 key를 어떻게 partition에 mapping하는지 확인합니다.
-3. partition 수 변경과 producer retry/idempotence 설정이 ordering expectation에 미치는 영향을 봅니다.
-4. partition 수와 consumer 수의 parallelism을 계산합니다.
-5. key skew로 hot partition이 생기는지, topic 전체 순서를 가정하고 있지 않은지 확인합니다.
+```text
+key=order-42
+Placed → Paid → Shipped
+       │
+       └─ 같은 partition으로 routing
+```
 
-### 면접에서 설명한다면
+같은 key가 같은 partition으로 가는 producer configuration을 사용하면 aggregate별 순서를 partition log에 보존하기 쉬워집니다. 다만 custom partitioner나 partition 수 변경처럼 routing 규칙이 바뀌면 key와 partition의 대응도 달라질 수 있으므로 “같은 key는 영원히 같은 물리 partition”이라는 식으로 일반화하면 안 됩니다.
 
-Partition은 log ordering과 consumer parallelism의 단위이고, message key는 producer의 partitioning strategy에 따라 partition routing에 사용됩니다. 같은 aggregate key를 같은 partition에 모으면 그 partition의 log order를 활용할 수 있지만 topic 전체 순서나 key의 영구적인 partition 고정까지 자동 보장되는 것은 아닙니다. partition count·producer 설정·key distribution과 business ordering을 함께 설계해야 합니다.
+### Partition 수는 병렬 처리 폭과 연결된다
 
+일반 consumer group에서는 한 partition이 한 시점에 한 group member에게 할당됩니다.
+
+```text
+3 partitions
+P0 → Consumer A
+P1 → Consumer B
+P2 → Consumer C
+Consumer D → 할당받을 partition 없음
+```
+
+Partition을 늘리면 동시에 처리할 수 있는 범위를 키울 수 있지만, 순서가 필요한 단위도 더 세분화됩니다. Consumer 수만 늘린다고 partition 수를 넘어 무한히 처리량이 증가하지도 않습니다.
+
+### Key 편향은 hot partition을 만든다
+
+특정 tenant나 aggregate에 traffic이 몰리면 그 key가 배치된 partition만 바빠질 수 있습니다. 이 경우 전체 broker 사용량은 여유가 있어도 한 partition의 lag가 빠르게 증가합니다.
+
+따라서 key를 고를 때는 **어떤 업무 단위의 순서를 묶을 것인지**와 **traffic이 얼마나 균등하게 퍼지는지**를 함께 봐야 합니다. Ordering을 위해 모든 message를 하나의 key로 묶으면 순서는 단순해지지만 parallelism을 거의 잃게 됩니다.
