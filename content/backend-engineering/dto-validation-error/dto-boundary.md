@@ -3,8 +3,8 @@ kind: concept
 contentKey: backend.core.dto-validation-error.dto-boundary
 topicContentKey: backend.core.dto-validation-error
 slug: dto-boundary
-title: 요청/응답 DTO
-summary: API DTO는 외부 표현의 변화와 내부 모델의 변화를 서로 독립적으로 관리하는 번역 경계다.
+title: "요청·응답 DTO 경계"
+summary: "API DTO를 외부 representation과 내부 application/domain/persistence 모델 사이의 번역 경계로 사용해 과도한 입력 허용과 우발적인 계약 결합을 줄인다."
 level: 2
 status: PUBLISHED
 displayOrder: 10
@@ -14,13 +14,13 @@ references:
   referenceType: OFFICIAL
   language: en
   displayOrder: 1
-  relationNote: HTTP API contract를 schema로 표현하는 표준적 형식 확인
+  relationNote: HTTP API의 요청·응답 schema와 외부 계약을 표현하는 표준 형식 확인
 ---
-# 요청/응답 DTO
+# 요청·응답 DTO 경계
 
-API DTO를 두는 목적은 `Entity를 숨기기 위해서`만이 아닙니다. **외부 표현의 변화와 내부 모델의 변화를 서로 독립적으로 관리하는 번역 경계**를 만드는 것이 핵심입니다.
+API DTO를 두는 목적은 단순히 "Entity를 숨기기 위해서"가 아닙니다. 핵심은 **외부에서 약속한 representation과 내부 모델이 서로 다른 이유로 바뀔 수 있게 번역 경계를 만드는 것**입니다.
 
-### 요청과 domain creation은 책임이 다르다
+예를 들어 주문 생성 요청에는 클라이언트가 입력해야 할 값만 있어야 합니다.
 
 ```java
 public record CreateOrderRequest(
@@ -29,14 +29,14 @@ public record CreateOrderRequest(
 ) {}
 ```
 
-HTTP 요청은 nullable, optional field, 문자열 형식 같은 transport concern을 포함합니다. Application에서 이를 검증된 command/value object로 변환한 뒤 Domain을 생성합니다.
+여기에는 JSON 필드 이름, nullable 여부, 문자열 형식 같은 API 계약이 들어갑니다. 애플리케이션 계층으로 넘어갈 때는 현재 유스케이스에 필요한 의미로 변환할 수 있습니다.
 
 ```text
 JSON
  │
  ▼
 CreateOrderRequest
- │  shape validation
+ │ 요청 형식 검증 + 변환
  ▼
 CreateOrderCommand
  │
@@ -44,18 +44,39 @@ CreateOrderCommand
 Order.place(...)
 ```
 
-### Entity를 응답으로 반환할 때 생기는 누수
+API Request 타입을 애플리케이션 서비스가 그대로 받지 않으면 HTTP 표현이 바뀌었을 때 유스케이스 내부까지 수정되는 범위를 줄일 수 있습니다.
 
-JPA Entity에는 LAZY association, 내부 ID, audit field, persistence를 위한 constructor가 있을 수 있습니다. serializer가 Entity graph를 따라가면 의도하지 않은 query나 순환 참조도 생깁니다. 응답 DTO는 “이번 endpoint가 약속하는 representation”만 명시합니다.
+### 영속성 Entity를 요청 모델로 그대로 사용하면 쓰기 권한까지 섞인다
 
-### DTO를 모든 계층에 끌고 가지 않는다
+```java
+@PostMapping("/members")
+MemberEntity create(@RequestBody MemberEntity request) { ... }
+```
 
-API 요청 타입을 Application Service가 직접 받기 시작하면 Application이 HTTP layer에 의존합니다. 반대로 내부 command가 단지 필드 복사만 하는 얇은 객체라면 작은 시스템에서는 변환 비용을 고려할 수 있습니다. 중요한 것은 **변경 이유가 다른 모델이 실제로 섞이고 있는지**입니다.
+이 구조에서는 `role`, `status`, `createdAt`처럼 서버가 결정해야 할 필드까지 외부 입력 모델에 노출되기 쉽습니다. serializer 설정만으로 우연히 막기보다 요청 DTO 자체가 **클라이언트가 설정할 수 있는 값의 범위**를 표현하는 편이 안전합니다.
 
-### read model은 domain object와 달라도 된다
+### 응답 DTO는 이번 API가 약속하는 정보만 드러낸다
 
-목록 화면은 `id, title, authorName, commentCount`만 필요할 수 있습니다. 이 경우 여러 Entity를 로딩해 Domain graph를 만든 뒤 응답으로 바꾸는 것보다 query projection이 더 적절할 수 있습니다.
+JPA Entity에는 lazy association, 내부 식별자, 감사 필드, persistence를 위한 상태가 있을 수 있습니다. 이를 그대로 직렬화하면 의도하지 않은 연관 조회가 실행되거나 순환 참조, 내부 정보 노출이 생길 수 있습니다.
 
-### DTO가 해결하지 못하는 것
+응답 DTO는 "현재 endpoint가 외부에 어떤 representation을 제공하는가"를 명시합니다.
 
-DTO를 만들었다고 over-posting이 자동으로 사라지는 것은 아닙니다. 요청에 `role`, `status` 같은 client가 바꾸면 안 되는 field를 애초에 넣지 않고, Application/Domain에서도 authorization과 invariant를 다시 확인해야 합니다.
+```java
+public record OrderSummaryResponse(
+        long id,
+        String status,
+        BigDecimal totalAmount
+) {}
+```
+
+목록 API라면 필요한 필드만 query projection으로 조회해 바로 응답 모델을 만드는 것도 가능합니다. 항상 전체 도메인 객체 그래프를 먼저 복원해야 하는 것은 아닙니다.
+
+### DTO를 모든 계층에 하나씩 기계적으로 만들 필요는 없다
+
+작은 유스케이스에서 API 요청과 application command가 실제로 같은 변경 이유와 같은 필드를 가진다면 별도 객체 하나가 단순 복사만 늘릴 수도 있습니다. 중요한 것은 "계층마다 DTO가 있어야 한다"는 형식이 아니라 **서로 다른 계약이 같은 타입에 섞여 변경이 전파되고 있는가**입니다.
+
+### DTO가 도메인 규칙과 권한 검사를 대신하지는 않는다
+
+요청 DTO에서 `status` 필드를 제거했다고 모든 잘못된 상태 변경이 자동으로 차단되는 것은 아닙니다. 애플리케이션은 사용자의 권한을 확인해야 하고, 도메인은 허용된 상태 전이를 보호해야 하며, DB는 저장 무결성을 지켜야 합니다.
+
+DTO의 역할은 이 모든 검증을 대신하는 것이 아니라 **외부 표현이 내부 모델의 구조와 쓰기 권한을 직접 결정하지 않게 하는 첫 번째 번역 경계**입니다.
