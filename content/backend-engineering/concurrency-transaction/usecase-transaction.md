@@ -5,7 +5,7 @@ topicContentKey: backend.core.concurrency-transaction
 slug: usecase-transaction
 title: "Use Case와 Transaction 경계"
 summary: "사용자 관점에서 함께 성공하거나 실패해야 하는 local DB 변경을 하나의 transaction 경계로 묶고, 외부 HTTP·메일·메시지 같은 side effect는 같은 원자성으로 가정하지 않는다."
-level: 3
+level: 2
 status: PUBLISHED
 displayOrder: 30
 references:
