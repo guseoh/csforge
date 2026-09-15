@@ -4,7 +4,7 @@ contentKey: network-http.core.http-versions.quic
 topicContentKey: network-http.core.http-versions
 slug: quic
 title: "QUIC"
-summary: "UDP 위에서 encrypted multiplexed transport를 제공하는 QUIC의 역할을 설명한다."
+summary: "UDP 위에서 encrypted connection, reliable streams와 congestion control을 제공하는 QUIC transport를 설명한다."
 level: 2
 status: PUBLISHED
 displayOrder: 80
@@ -19,14 +19,19 @@ references:
 ---
 # QUIC
 
-QUIC은 UDP datagram 위에 connection ID, TLS 1.3과 결합된 encrypted handshake, reliable stream, congestion/flow control과 stream multiplexing을 제공하는 transport protocol이다. UDP 자체가 제공하지 않는 ordered reliability와 connection security를 QUIC protocol이 구현하며, 세부 구현이 user space인지 kernel인지와 관계없이 application에는 TCP와 다른 transport API/state가 보인다.
+QUIC은 UDP datagram 위에서 동작하지만 raw UDP와 같은 얇은 datagram API에 머물지 않는다. QUIC protocol 자체가 connection state, reliable streams, loss recovery, flow/congestion control과 cryptographic handshake를 제공한다.
 
-stream별 delivery와 connection migration은 한 stream의 loss가 다른 stream의 byte delivery를 직접 막는 범위를 줄인다. 그러나 packet loss recovery, congestion, flow control, CPU와 bandwidth 경쟁 비용이 사라지는 것은 아니다. QUIC packet을 raw UDP message처럼 application에서 해석하거나, 중간 장비가 TCP sequence/state를 볼 수 있다고 가정하지 않는다.
+HTTP/3가 사용하는 QUIC connection에는 여러 stream이 존재하며, 각 stream은 자신의 ordered byte delivery state를 가진다. 그래서 한 stream의 packet loss가 다른 stream의 missing byte처럼 직접 전달을 막지 않는다.
 
-HTTP/3 client를 도입할 때는 UDP reachability, firewall/NAT timeout, version negotiation, TCP-based 대체 처리와 observability를 함께 준비한다. connection ID로 network address가 바뀌어도 logical connection을 유지할 수 있으므로 요청 trace와 server state를 5-tuple 하나에만 묶지 않는다.
+```text
+UDP datagrams
+    ↓
+QUIC connection
+  ├─ reliable stream A
+  ├─ reliable stream B
+  └─ reliable stream C
+```
 
-### QUIC 위 HTTP/3
-    HTTP/3 → QUIC (UDP)
-                  → encryption + reliability + congestion
-                  → IP network
-UDP path가 막히면 HTTP/2 대체 처리를 별도 고려한다.
+QUIC은 TLS 1.3과 결합해 transport handshake에서 encryption을 기본적으로 사용한다. 또한 connection ID를 사용하므로 endpoint의 network address가 바뀌는 상황에서도 connection을 같은 5-tuple 하나에만 묶지 않는 기능을 제공할 수 있다.
+
+그렇다고 각 stream이 완전히 독립적인 network를 사용하는 것은 아니다. 같은 QUIC connection의 congestion state와 bandwidth는 공유될 수 있다. **QUIC의 핵심은 UDP 위에 secure, reliable, multiplexed transport를 구성해 TCP와 다른 stream/loss boundary를 제공하는 것**이다.
