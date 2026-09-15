@@ -4,8 +4,8 @@ contentKey: operating-systems.core.isolation.namespace
 topicContentKey: operating-systems.core.isolation
 slug: namespace
 title: "Namespace"
-summary: "process가 보게 되는 PID·network·mount 등의 이름 공간을 분리하는 방식을 설명한다."
-level: 1
+summary: "process가 보는 PID·mount·network view를 분리하는 방식을 설명한다."
+level: 2
 status: PUBLISHED
 displayOrder: 30
 references:
@@ -19,22 +19,18 @@ references:
 ---
 # Namespace
 
-Linux namespace는 process가 특정 kernel resource의 이름과 목록을 **어떻게 보느냐**를 분리하는 mechanism이다. process를 namespace에 넣으면 같은 host kernel 위에서도 PID 목록, mount table, network interface, IPC object, user ID view 등이 다른 process와 달라질 수 있다. 이는 resource를 복제하는 것보다 process가 관찰하고 이름 붙이는 context를 virtualize하는 데 가깝다.
+Linux namespace는 process가 특정 kernel resource를 **어떤 이름과 목록으로 보게 될지** 분리하는 mechanism이다. 같은 host kernel을 사용하면서도 PID, mount, network, IPC, hostname, user ID 같은 view를 서로 다르게 만들 수 있다.
 
 ![같은 host kernel 위에서 namespace별로 다른 resource view를 보는 구조](/learning/operating-systems/linux-namespace-view.svg)
 
-### View가 만들어지는 흐름
+### Resource를 복제하기보다 view를 분리한다
 
-새 namespace를 만들거나 process를 다른 namespace에 배치하면 해당 process가 system call로 조회하는 view와 이름 lookup의 대상이 바뀐다. PID namespace의 process는 내부에서 별도 PID 1과 process tree를 볼 수 있지만 host 쪽 ancestor는 그 process를 다른 PID로 볼 수 있다. mount namespace는 mount table과 root view를 분리하고, network namespace는 interface·route·socket namespace를 분리한다. namespace 종류마다 분리되는 resource와 상속/생성 semantics가 다르므로 `container = 하나의 namespace`라고 일반화하면 안 된다.
+PID namespace에서는 내부 process가 별도 PID tree를 보고, mount namespace에서는 다른 mount table과 root view를 볼 수 있다. Network namespace는 interface, route와 socket namespace를 분리한다. Namespace 종류마다 대상 resource와 생성·상속 semantics가 다르므로 `namespace 하나가 container 전체를 만든다`고 설명하면 안 된다.
 
-namespace는 visibility와 naming을 바꾸지만 CPU·memory 사용량을 자동으로 제한하지 않는다. 또한 process가 접근할 수 있는 실제 file이 writable bind mount로 연결되거나 과도한 capability가 주어지면 view 분리만으로 host resource 보호가 완성되지 않는다. cgroup은 capacity/accounting, permission은 object access, capability는 privileged operation의 별도 경계이므로 함께 확인해야 한다.
+### Namespace는 resource 사용량을 제한하지 않는다
 
-### Backend에서 생기는 관찰 차이
+Process가 별도 PID나 network view를 본다고 CPU와 memory 사용량에 자동 상한이 생기는 것은 아니다. 사용할 수 있는 양은 cgroup이나 다른 resource-control mechanism의 책임이다.
 
-Docker 안에서 `localhost`, filesystem path, hostname과 PID는 host에서 관찰하는 값과 다를 수 있다. 예를 들어 container의 `localhost`는 host가 아니라 그 network namespace의 loopback이고, container process가 보는 `/`도 mount namespace가 구성한 root view일 수 있다. 설정이나 장애 로그를 해석할 때 process가 속한 namespace와 실제 host endpoint/mount를 함께 확인한다.
+또한 namespace 안에서 object가 보인다고 그 object에 모든 operation을 할 수 있는 것도 아니다. 실제 access는 permission, capability와 mount 설정 같은 별도 정책의 영향을 받는다.
 
-### 면접에서 이렇게 나옵니다
-
-#### Q. Namespace와 cgroup의 차이를 설명해보세요.
-
-Namespace는 process가 PID·mount·network 같은 resource를 어떻게 보고 이름 붙이는지 분리하고, cgroup은 process 집합의 CPU·memory·I/O 사용량을 accounting하거나 제한합니다. 보이는 세계와 사용할 수 있는 양을 분리해서 설명하면 좋습니다.
+Namespace의 핵심은 **같은 kernel 위에서 process마다 resource namespace와 관찰 가능한 view를 분리한다는 것**이다.
