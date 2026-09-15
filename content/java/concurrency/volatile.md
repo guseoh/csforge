@@ -20,7 +20,7 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "volatile write와 이후 같은 field read의 happens-before 관계를 확인한다."
+    recommendation: "Java에서 conflicting access와 happens-before를 기준으로 data race를 정의하는 정확한 경계를 확인한다."
     displayOrder: 2
     relationNote: volatile write/read의 happens-before 관계 확인
 ---
