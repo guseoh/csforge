@@ -3,8 +3,8 @@ kind: concept
 contentKey: network-http.core.tls.certificate
 topicContentKey: network-http.core.tls
 slug: certificate
-title: "Certificate"
-summary: "public key와 identity binding을 증명하는 certificate를 설명한다."
+title: "Certificate와 공개키·Identity Binding"
+summary: "certificate가 public key와 service identity를 issuer signature로 연결하는 방식을 설명한다."
 level: 1
 status: PUBLISHED
 displayOrder: 20
@@ -15,10 +15,14 @@ references:
     language: en
     displayOrder: 1
 ---
-# Certificate
+# Certificate와 공개키·Identity Binding
 
-certificate는 공개할 수 있는 public key와 service identity, validity information, issuer의 digital signature를 묶어 “이 key를 이 identity와 연결한다”는 assertion을 표현한다. client는 trust anchor에서 시작해 certificate path의 서명과 validity를 확인하고, 요청한 reference identity가 certificate의 SAN 등 허용된 identity 표현과 일치하는지 별도로 검증한다. certificate 자체에 private key가 들어가는 것은 아니다.
+TLS certificate는 endpoint의 public key와 그 key가 어떤 identity에 속한다고 주장하는지에 대한 정보를 함께 담는 서명된 data다. HTTPS server certificate라면 service identity는 보통 `subjectAltName`의 DNS name이나 IP address 형태로 표현되고, issuer의 digital signature가 certificate 내용이 발급 뒤 임의로 바뀌지 않았음을 검증하는 데 사용된다.
 
-certificate chain이 유효해도 private key를 실제로 소유한 endpoint인지, 그 endpoint가 기대한 application인지와 HTTP 요청 권한이 있는지는 각각 다른 질문이다. 만료·not-yet-valid, wrong SAN, unknown issuer, 잘못 보낸 intermediate, key usage 불일치와 revocation/status policy를 구분해 진단한다. TLS implementation과 client policy에 따라 revocation 확인 방식도 다를 수 있으므로 “CA 서명이 있다”만으로 모든 검증이 끝났다고 하지 않는다.
+certificate에는 public key가 들어가지만 대응하는 private key가 들어가는 것은 아니다. 실제 endpoint는 handshake에서 certificate에 대응하는 private key를 보유하고 있음을 증명해야 한다. 따라서 certificate 파일만 복사했다고 원래 server와 같은 인증을 수행할 수 있는 것은 아니다.
 
-local development에서 TLS verification을 끄는 설정이나 trust-all context를 production에 복사하지 않는다. certificate rotation은 old/new chain overlap, SAN 호환성, private key 보호와 connection pool의 기존 session 재연결을 포함해 계획한다.
+### Certificate 하나만 보고 신뢰 여부가 끝나지 않는다
+
+client는 leaf certificate 자체뿐 아니라 issuer가 누구인지, certificate가 유효 기간 안에 있는지, 용도 제약이 맞는지와 같은 검증을 수행한다. 그리고 별도로 자신이 접속하려던 hostname과 certificate가 제시한 service identity가 일치하는지도 확인해야 한다.
+
+이 역할을 구분하면 certificate를 `암호화를 위한 파일`로만 이해하는 오해를 피할 수 있다. 실제 application data 암호화에는 handshake에서 파생한 symmetric traffic key가 사용되고, certificate의 핵심 역할은 **public key와 identity를 인증 가능한 형태로 연결하는 것**이다.

@@ -4,7 +4,7 @@ contentKey: network-http.core.dns.a-aaaa
 topicContentKey: network-http.core.dns
 slug: a-aaaa
 title: "A·AAAA"
-summary: "A와 AAAA record가 IPv4·IPv6 address를 제공하는 방식을 설명한다."
+summary: "IPv4 A와 IPv6 AAAA answer의 의미를 구분한다."
 level: 1
 status: PUBLISHED
 displayOrder: 50
@@ -19,9 +19,21 @@ references:
 ---
 # A·AAAA
 
-A record는 owner name에 IPv4 address를, AAAA record는 IPv6 address를 연결한다. 하나의 name에 여러 A/AAAA RR이 있으면 resolver는 결과 집합과 TTL을 전달할 뿐 최종 connection 순서를 애플리케이션 대신 항상 결정하지는 않는다. client library의 address-family policy, racing과 실패 처리에 따라 실제 시도 순서가 달라질 수 있다.
+DNS의 A record는 owner name을 **IPv4 address**에 연결하고, AAAA record는 **IPv6 address**에 연결한다. 하나의 name에는 여러 A 또는 AAAA record가 있을 수 있으므로 lookup 결과가 항상 address 하나인 것은 아니다.
 
-AAAA가 존재한다는 것은 그 IPv6 address가 DNS에 게시됐다는 뜻이지, interface의 NDP·route·firewall·listener·Path MTU가 준비됐다는 뜻이 아니다. 반대로 A가 있다고 IPv4 path가 정상이라는 보장도 없다. Happy Eyeballs와 같은 client 정책은 두 family의 connection 지연 시간과 실패를 비교해 하나를 선택할 수 있으므로 DNS answer order와 실제 connect order를 혼동하지 않는다.
+```text
+example.com.  A     192.0.2.10
+example.com.  AAAA  2001:db8::10
+```
 
-Backend에서 dual-stack을 활성화할 때는 A/AAAA answer, service bind, connection pool의 address-family별 state를 함께 테스트한다. IPv4 loopback에만 bind된 service에 AAAA를 추가하면 일부 client가 IPv6를 먼저 시도하는 부분 장애가 생길 수 있고, DNS health가 application health를 대신하지 않는다.
+### DNS answer와 실제 connection 선택은 다르다
 
+Resolver는 name에 연결된 address record를 제공한다. 여러 IPv4/IPv6 address 중 실제로 어느 address를 먼저 연결할지는 client의 address-selection과 connection policy에 따라 달라질 수 있다.
+
+따라서 DNS response에 AAAA가 먼저 보였다고 반드시 IPv6 connection이 먼저 성공하는 것은 아니며, A와 AAAA가 모두 존재할 수도 있다.
+
+### Address record는 reachability 보장이 아니다
+
+A 또는 AAAA record가 존재한다는 것은 DNS에서 그 address를 게시했다는 뜻이다. 해당 address까지 route가 존재하거나 transport endpoint가 listening 중이라는 의미는 아니다.
+
+A·AAAA record의 핵심은 **domain name을 각각 IPv4 또는 IPv6 network address에 연결하는 DNS record**라는 것이다.

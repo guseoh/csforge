@@ -4,7 +4,7 @@ contentKey: network-http.core.local-delivery.arp
 topicContentKey: network-http.core.local-delivery
 slug: arp
 title: "ARP"
-summary: "IPv4 address를 local MAC address로 해석하는 ARP 흐름을 설명한다."
+summary: "IPv4 next-hop address를 MAC으로 찾는 request/reply 흐름을 설명한다."
 level: 1
 status: PUBLISHED
 displayOrder: 40
@@ -19,9 +19,24 @@ references:
 ---
 # ARP
 
-IPv4 host가 packet을 현재 local link로 내보내려면 다음 hop의 IPv4 address와 link-layer MAC을 연결해야 한다. destination이 on-link이면 target host의 MAC을, 다른 subnet이면 routing table이 선택한 gateway interface의 MAC을 ARP로 찾는다. 보통 sender가 local broadcast ARP 요청을 보내고 해당 address를 가진 node가 reply하며, sender는 결과를 neighbor cache에 일정 기간 보관한다.
+IPv4 host가 packet을 local link로 내보내려면 **next hop의 IPv4 address를 link-layer MAC address로 해석**해야 한다. ARP(Address Resolution Protocol)는 이 local address resolution을 담당한다.
 
-ARP는 IP route를 계산하거나 end-to-end connection을 만드는 protocol이 아니다. `IP destination → next hop 결정 → next hop IP의 MAC resolution → Ethernet frame 전송` 중 local link resolution 단계만 담당한다. cache hit면 매 packet마다 요청하지 않을 수 있고, entry가 stale/불완전하거나 reply가 오지 않으면 IP address가 올바르더라도 다음 frame을 만들지 못한다. proxy ARP나 virtual gateway처럼 다른 node가 대신 reply하는 환경에서는 관찰되는 owner도 달라질 수 있다.
+Destination이 같은 subnet에 있다면 target host의 IPv4 address에 해당하는 MAC을 찾는다. Destination이 다른 network에 있다면 routing table이 선택한 gateway의 IPv4 address를 next hop으로 삼고, 그 gateway MAC을 ARP로 찾는다.
 
-ARP mapping을 속이는 poisoning은 sender가 attacker MAC으로 frame을 보내도록 만들 수 있어 confidentiality/integrity 문제가 된다. 서비스 연결 장애에서는 DNS가 올바른 IP를 반환했다는 사실과 ARP cache·interface·VLAN reachability를 분리해 확인하고, 보호된 network에서는 inspection/segmentation과 TLS를 함께 고려한다.
+### Request와 reply
 
+Sender가 필요한 mapping을 모르면 local broadcast로 ARP Request를 보낼 수 있다. 해당 IPv4 address를 가진 node가 ARP Reply로 자신의 MAC을 알려 주고, sender는 결과를 neighbor/ARP cache에 일정 시간 저장해 이후 frame 생성에 재사용한다.
+
+```text
+Who has 192.0.2.10?
+        ↓ broadcast
+192.0.2.10 is at aa:bb:cc:dd:ee:ff
+        ↓ reply
+ARP cache에 mapping 저장
+```
+
+### ARP는 routing protocol이 아니다
+
+ARP는 어느 route를 선택할지 결정하지 않는다. 먼저 routing table이 destination을 기준으로 next hop을 정하고, **그 next hop을 현재 Ethernet link에서 어떻게 보낼지** ARP가 해결한다.
+
+따라서 ARP의 핵심은 `IPv4 destination → route 선택` 이후의 **local next-hop IP-to-MAC resolution**이다.

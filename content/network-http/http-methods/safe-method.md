@@ -3,8 +3,8 @@ kind: concept
 contentKey: network-http.core.http-methods.safe-method
 topicContentKey: network-http.core.http-methods
 slug: safe-method
-title: "Safe Method"
-summary: "safe가 의도된 state change가 없다는 의미를 설명한다."
+title: "Safe Method와 Read-Only Semantics"
+summary: "HTTP safe method가 client가 resource state change를 의도하지 않는 read-only semantics라는 의미를 설명한다."
 level: 1
 status: PUBLISHED
 displayOrder: 10
@@ -15,10 +15,22 @@ references:
     language: en
     displayOrder: 1
 ---
-# Safe Method
+# Safe Method와 Read-Only Semantics
 
-safe method는 client가 요청을 수행할 때 origin resource의 state change를 의도하지 않는 method다. 이것은 server process가 access log, metrics, cache metadata나 rate-limit counter를 전혀 바꾸지 않는다는 뜻이 아니라, resource에 대한 본질적인 변경을 client가 요청하지 않는다는 protocol semantics다.
+HTTP method가 **safe**하다는 것은 client가 그 request를 통해 origin server의 resource state를 변경하도록 요청하거나 기대하지 않는다는 뜻이다. RFC 9110이 정의하는 GET, HEAD, OPTIONS, TRACE가 safe method에 해당한다.
 
-GET과 HEAD 같은 safe method는 crawler·prefetch·link checker·자동 retry가 실행할 수 있는 전제에서 설계되므로 읽기 경로가 destructive action을 일으키면 안 된다. query parameter에 `delete=true` 같은 flag를 숨겨도 method가 GET인 사실이 실제 effect를 safe하게 만들지 않는다. safe는 authentication이나 authorization을 생략하라는 뜻도 아니다.
+여기서 `safe = server에서 아무 상태도 바뀌지 않는다`고 해석하면 지나치다. server는 GET을 처리하면서 access log를 기록하거나 metric counter를 증가시킬 수 있다. 이런 부수 효과는 client가 요청한 resource 변경의 의미가 아니므로 safe semantics와 모순되지 않는다.
 
-Backend 조회 endpoint에서 삭제·상태변경을 query string으로 숨기지 않고 명시적인 non-safe method와 CSRF·authorization 정책을 사용한다. read path에 부수적인 업무 변경이 있다면 cache와 retry가 resource invariant를 깨뜨리지 않는지 별도로 검토한다.
+### Safe method에 destructive action을 숨기면 안 된다
+
+예를 들어 다음 URI를 GET으로 호출했을 때 실제 삭제가 실행되도록 설계했다고 하자.
+
+```text
+GET /posts/42?do=delete
+```
+
+method 이름이 GET이라고 실제 effect가 safe해지는 것은 아니다. crawler, prefetcher나 link checker는 safe method를 자동 실행할 수 있다는 전제에서 동작하기 때문에, GET에 resource state 변경을 숨기면 의도하지 않은 작업이 실행될 수 있다.
+
+safe semantics는 authorization이 필요 없다는 뜻도 아니다. private resource 조회처럼 state를 변경하지 않아도 접근 권한 검사는 필요할 수 있다.
+
+핵심은 **safe가 server implementation의 모든 side effect를 금지하는 속성이 아니라, client가 target resource의 state change를 요청하지 않는다는 HTTP-level contract**라는 점이다.

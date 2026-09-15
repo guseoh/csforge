@@ -4,7 +4,7 @@ contentKey: network-http.core.tcp.rto
 topicContentKey: network-http.core.tcp
 slug: rto
 title: "Retransmission Timeout"
-summary: "RTT 관측으로 retransmission timeout을 정해 premature·late retry를 줄이는 방식을 설명한다."
+summary: "RTT 추정과 timeout이 늦은 ACK·loss를 구분하는 방식을 설명한다."
 level: 2
 status: PUBLISHED
 displayOrder: 60
@@ -19,9 +19,26 @@ references:
 ---
 # Retransmission Timeout
 
-RTO(retransmission timeout)는 TCP가 보낸 data에 대한 ACK를 얼마 동안 기다린 뒤 loss를 의심하고 재전송할지를 정하는 transport timer다. 구현은 관측한 RTT와 변동성에 안전 여유를 두어 추정하며, RTT가 달라지는 path에 고정된 짧은 값을 적용하면 아직 도착 중인 segment를 중복 전송할 수 있고 너무 긴 값은 recovery를 늦춘다. 재전송으로 오염된 RTT sample을 그대로 새 RTT로 사용하지 않는 규칙도 필요하다.
+RTO(Retransmission Timeout)는 TCP sender가 보낸 data에 대한 ACK를 얼마 동안 기다린 뒤 **retransmission이 필요하다고 판단할지 정하는 timer**다. 너무 짧으면 단순히 늦게 도착 중인 data를 loss로 오인해 불필요한 retransmission을 만들고, 너무 길면 실제 loss 복구가 늦어진다.
 
-RTO는 HTTP client timeout이나 user-visible deadline과 같은 값이 아니다. TCP가 RTO에 따라 재전송하는 동안 application deadline이 먼저 만료되어 socket을 취소할 수 있고, 그 뒤 늦은 응답이 도착하거나 이미 server side effect가 발생했을 가능성도 있다. RTO가 길다고 connection이 healthy하다는 뜻도 아니다.
+### RTO는 관측한 RTT와 변동성을 반영한다
 
-Backend는 DNS, connect, TLS, write, read와 전체 요청 deadline을 분리해 측정하고, 각 단계에 남은 시간을 전달한다. application retry budget과 transport RTO를 하나의 숫자로 합치지 않아야 retry storm과 user-visible 지연 시간을 함께 제어할 수 있다.
+TCP는 round-trip time sample을 바탕으로 smoothed RTT(SRTT)와 RTT variation(RTTVAR)을 유지하고, 이를 사용해 RTO를 계산한다. 경로의 RTT가 항상 같은 값이 아니므로 평균만 보는 대신 변동성에 대한 여유도 함께 둔다.
 
+```text
+RTT samples
+   ↓
+SRTT + RTTVAR 추정
+   ↓
+RTO 계산
+   ↓
+ACK가 RTO 안에 없으면 retransmission
+```
+
+Repeated RTO expiration에서는 timeout을 backoff해 같은 혼잡·손실 상태에 지나치게 공격적으로 retransmission하지 않도록 한다.
+
+### RTO와 application timeout은 다르다
+
+RTO는 TCP transport가 data retransmission 시점을 결정하는 timer다. HTTP client의 request timeout이나 사용자 deadline은 application이 기다릴 수 있는 시간을 정하는 별도 계약이다. Application timeout이 TCP RTO보다 먼저 끝날 수도 있다.
+
+RTO의 핵심은 **실제 RTT와 그 변동성을 바탕으로 premature retransmission과 지나치게 느린 loss recovery 사이의 균형을 잡는 transport timer**라는 것이다.

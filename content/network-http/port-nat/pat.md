@@ -4,8 +4,8 @@ contentKey: network-http.core.port-nat.pat
 topicContentKey: network-http.core.port-nat
 slug: pat
 title: "PAT"
-summary: "여러 내부 host가 source port 변환으로 하나의 public IP를 공유하는 PAT를 설명한다."
-level: 1
+summary: "port까지 변환해 여러 내부 endpoint가 하나의 public IP를 공유하는 원리를 설명한다."
+level: 2
 status: PUBLISHED
 displayOrder: 50
 references:
@@ -19,16 +19,22 @@ references:
 ---
 # PAT
 
-PAT(Port Address Translation)는 source port까지 변환해 여러 내부 endpoint가 하나의 public IP를 동시에 공유하게 한다. 예를 들어 서로 다른 private source tuple을 같은 public address의 서로 다른 translated source port로 매핑하고, 응답의 destination port를 통해 각 내부 flow를 구분한다. 이 구분은 TCP와 UDP별로 유지되며 같은 숫자의 port라도 protocol이 다르면 별도 namespace다.
+PAT(Port Address Translation)는 IP address뿐 아니라 **transport port도 함께 변환**해 여러 내부 endpoint가 하나의 public IP를 공유할 수 있게 하는 방식이다. 서로 다른 내부 flow를 public address의 서로 다른 translated port에 매핑하고, 응답이 돌아오면 그 port를 이용해 원래 내부 flow를 찾는다.
 
-동시에 사용할 수 있는 public address·port 조합과 gateway의 state table에는 한계가 있다. 내부 client가 ephemeral port를 많이 만들거나 connection이 짧게 반복되면 translated port allocation과 TIME_WAIT·idle state가 병목이 될 수 있다. mapping이 idle timeout으로 사라지면 다음 packet이 기존 application session을 되살린다는 보장도 없다.
+```text
+10.0.0.5:40000 ──┐
+10.0.0.6:40000 ──┼─> 203.0.113.9:62001, :62002, ...
+10.0.0.7:51000 ──┘
+```
 
-PAT는 외부에서 시작한 connection의 목적지를 자동으로 정하지 않는다. 기존 outbound mapping, static port forwarding, reverse proxy 또는 tunnel처럼 inbound flow를 특정 내부 endpoint에 연결하는 별도 규칙이 필요하다. 따라서 public IP 하나가 있다는 사실만으로 내부 service가 외부에서 도달 가능해지지 않는다.
+내부 host들이 같은 source port를 사용해도 public side에서는 서로 다른 translated port를 할당해 구분할 수 있다.
 
-Backend의 대량 outbound HTTP client에서는 NAT port exhaustion이 connect timeout이나 간헐적 새 connection 실패로 나타날 수 있다. connection reuse와 pool lifetime을 조정하면서 NAT gateway의 public address 수, translated-port 사용량, idle timeout을 함께 측정한다.
+### Port도 유한한 resource다
 
-### PAT multiplexing
-    10.0.0.5:40000 ─┐
-    10.0.0.6:40000 ─┼─> public IP + distinct source ports
-    10.0.0.7:40000 ─┘
-translated port와 mapping state가 각 flow를 구분한다.
+Public address 하나에서 사용할 수 있는 transport port 공간은 유한하다. 동시에 매우 많은 mapping이 필요하면 사용할 수 있는 address·port 조합이 부족해질 수 있다. 따라서 PAT는 하나의 public IP를 여러 flow가 공유하게 해 주지만 무한한 connection capacity를 제공하지는 않는다.
+
+### Protocol별 mapping은 구분된다
+
+TCP와 UDP는 서로 다른 transport protocol이므로 같은 translated port number라도 protocol이 다르면 별도 mapping으로 취급될 수 있다. 실제 mapping policy와 port allocation 방식은 NAT 구현에 따라 달라질 수 있다.
+
+PAT의 핵심은 **public IP 하나를 여러 내부 flow가 공유하도록 transport port까지 translation key로 사용한다는 것**이다.

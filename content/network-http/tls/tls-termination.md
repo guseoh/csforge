@@ -3,8 +3,8 @@ kind: concept
 contentKey: network-http.core.tls.tls-termination
 topicContentKey: network-http.core.tls
 slug: tls-termination
-title: "TLS Termination"
-summary: "proxy에서 TLS를 종료할 때 client-backend trust boundary가 바뀌는 점을 설명한다."
+title: "TLS Termination과 Trust Boundary"
+summary: "proxy에서 TLS를 종료할 때 client-proxy와 proxy-backend가 별도 connection과 trust boundary가 되는 이유를 설명한다."
 level: 2
 status: PUBLISHED
 displayOrder: 80
@@ -15,15 +15,16 @@ references:
     language: en
     displayOrder: 1
 ---
-# TLS Termination
+# TLS Termination과 Trust Boundary
 
-TLS termination은 load balancer나 reverse proxy가 client와의 TLS handshake를 끝내고, 그 결과 얻은 HTTP를 내부 backend에 새 connection으로 전달하는 구조다. client-to-proxy channel이 암호화됐어도 proxy가 HTTP를 읽을 수 있고, proxy-to-backend hop의 confidentiality, server identity와 client identity 전달은 별도 계약이다. backend까지 TLS를 다시 맺으면 두 TLS connection의 인증과 certificate 검증은 독립적이다.
+reverse proxy나 load balancer가 client와 직접 TLS handshake를 수행하면 그 장비가 TLS endpoint가 된다. client가 보낸 encrypted application data는 proxy에서 복호화되고, proxy는 내용을 읽은 뒤 backend로 별도의 connection을 만들어 전달한다. 이것이 TLS termination이다.
 
-termination proxy가 original scheme, host, client identity를 forwarded header로 전달할 때 backend는 어느 proxy와 어느 network path를 신뢰할지 검증해야 한다. 신뢰되지 않은 client가 header를 직접 넣을 수 있으면 secure redirect, audit source와 authorization이 오염된다. 내부 network가 안전하다고 가정해 평문과 민감 data를 무제한 허용하지 말고, 필요하면 backend TLS나 mTLS로 다음 boundary를 보호한다.
+이 구조에서는 `client → proxy`와 `proxy → backend`가 같은 end-to-end TLS connection이 아니다. 첫 구간의 certificate와 key는 proxy에서 끝나고, backend 구간은 평문 HTTP일 수도 있고 새로운 TLS connection일 수도 있다.
 
-Spring의 secure cookie, redirect URL, HSTS와 absolute URL 판단은 실제 external scheme과 trusted proxy header 설정에 의존할 수 있다. trusted proxy 목록, header overwrite 규칙, internal TLS policy와 certificate rotation을 함께 테스트하고, proxy에서 TLS가 종료된 connection과 backend connection을 metrics에서 구분한다.
-### TLS termination
-    client ── TLS ──> proxy ── terminate
-                         │
-                         └─ HTTP or new TLS ──> backend
-두 hop은 별도 connection과 trust boundary다.
+### Termination 지점이 trust boundary를 바꾼다
+
+client는 외부 service identity를 proxy certificate로 검증한다. proxy가 backend와 다시 TLS를 맺는다면 이번에는 proxy가 backend certificate와 identity를 별도로 검증해야 한다. 첫 번째 TLS가 성공했다는 사실이 두 번째 hop을 자동으로 보호하지 않는다.
+
+proxy가 HTTP를 볼 수 있으므로 forwarding 과정에서 original scheme, host나 client 관련 metadata를 header로 전달하기도 한다. 이 정보는 TLS 자체가 end-to-end로 보존한 값이 아니라 **새 HTTP hop에서 intermediary가 다시 전달한 metadata**다. backend가 그 값을 신뢰하려면 요청이 실제로 신뢰한 proxy를 거쳐 왔다는 경계가 별도로 필요하다.
+
+따라서 `HTTPS니까 browser에서 backend까지 모두 암호화된다`고 일반화하면 안 된다. TLS termination 구조에서는 **어디에서 복호화되는지, 이후 hop을 어떤 channel로 보호하는지, 각 hop에서 어떤 identity를 검증하는지**를 따로 확인해야 한다.
