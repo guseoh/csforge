@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.performance.cache-impact
 topicContentKey: computer-architecture.core.performance
 slug: cache-impact
-title: "Cache Impact"
+title: "Cache가 CPU 성능에 미치는 영향"
 summary: "cache miss가 memory stall과 CPI를 통해 CPU execution time을 바꾸는 과정을 locality·AMAT와 연결해 설명한다."
 level: 2
 status: PUBLISHED
@@ -17,38 +17,35 @@ references:
     recommendation: "CPU execution time, latency/throughput와 speedup을 구분해 성능을 계산하는 방법을 확인한다."
     displayOrder: 1
 ---
-# Cache Impact
+# Cache가 CPU 성능에 미치는 영향
 
-### Instruction 수가 같아도 memory access 때문에 cycle 수가 달라진다
+같은 instruction sequence를 실행해도 cache behavior가 다르면 필요한 cycle 수가 달라질 수 있다. Load/store가 가까운 cache에서 hit하면 빠르게 진행할 수 있지만, miss가 나서 lower-level cache나 DRAM을 기다리면 pipeline에 stall이 생길 수 있기 때문이다.
 
-CPU가 load/store instruction을 실행할 때 필요한 data가 가까운 cache에 있으면 짧은 지연 시간으로 진행할 수 있다. 반대로 cache miss가 나서 lower-level cache나 DRAM까지 내려가면 instruction이 data를 기다리거나 out-of-order window가 다른 work로 지연 시간을 숨겨야 한다.
+```text
+same instruction count
+       │
+       ├─ cache hit 많음  → memory stall 적음 → CPI 낮아질 수 있음
+       └─ cache miss 많음 → memory stall 증가 → CPI 높아질 수 있음
+```
 
-이 때문에 같은 instruction count와 같은 clock rate를 가진 실행도 cache behavior가 다르면 total cycles와 CPI가 달라질 수 있다.
+### 작은 miss rate도 penalty가 크면 중요하다
 
-### 평균 접근 비용은 hit와 miss 경로를 함께 본다
-
-단일 cache level을 단순화하면 평균 memory access time(AMAT)을 다음처럼 생각할 수 있다.
+단순한 cache 모델에서는 평균 memory access 비용을 다음처럼 생각할 수 있다.
 
 ```text
 AMAT ≈ hit time + miss rate × miss penalty
 ```
 
-예를 들어 hit time이 1 ns, miss rate가 5%, miss penalty가 60 ns라면 단순 AMAT은 약 4 ns다.
+Miss rate가 작더라도 miss penalty가 hit time보다 매우 크면 전체 평균 비용에 큰 영향을 준다. 그래서 hit rate 하나만 보는 것보다 hit path와 miss path의 비용을 함께 봐야 한다.
 
-```text
-1 + 0.05 × 60 = 4 ns
-```
+### Cache miss가 항상 같은 stall을 만드는 것은 아니다
 
-Miss rate는 작아 보여도 penalty가 매우 크면 평균 비용에 큰 영향을 준다. 실제 multicore/out-of-order CPU에서는 overlapping miss, multiple cache level, prefetch와 queueing이 있어 더 복잡하지만 이 식은 miss가 왜 중요한지 이해하는 출발점이다.
+Out-of-order CPU는 miss 결과와 무관한 다른 instruction을 먼저 실행하거나 여러 memory request를 동시에 진행해 일부 지연 시간을 숨길 수 있다. 반대로 pointer chasing처럼 다음 address가 앞 load 결과에 의존하면 miss latency를 겹치기 어렵다.
 
-### Locality 개선은 hit rate만 바꾸는 것이 아니다
+따라서 같은 miss count라도 dependency와 memory-level parallelism에 따라 CPU time에 미치는 영향이 달라질 수 있다.
 
-Data layout을 연속적으로 만들거나 working set을 줄이면 cache hit와 line utilization이 좋아질 수 있다. 하지만 구조를 압축하기 위해 추가 decode/computation을 넣거나 pointer 대신 index 변환을 반복하면 instruction count가 늘 수 있다.
+### Locality 개선도 다른 비용과 함께 본다
 
-Prefetch도 future miss를 줄일 수 있지만 사용하지 않을 line을 가져오면 memory bandwidth를 낭비하고 useful cache line을 eviction할 수 있다. 따라서 cache optimization은 hit rate 하나만 최대화하는 문제가 아니다.
+Data layout을 바꾸거나 working set을 줄이면 cache miss를 줄일 수 있다. 하지만 이를 위해 instruction 수가 늘거나 추가 계산이 필요하면 다른 비용이 생긴다. Prefetch 역시 future miss를 줄일 수 있지만 사용하지 않을 line을 가져오면 bandwidth와 cache capacity를 소비한다.
 
-### Cache miss와 p99 service 지연 시간의 관계도 직접적이지 않다
-
-CPU cache miss가 늘면 CPU-bound section의 지연 시간이 커질 수 있지만 요청 p99가 항상 같은 비율로 변하는 것은 아니다. DB/network wait가 더 크면 hardware cache 개선의 end-to-end 효과가 작고, 반대로 tight serialization loop가 CPU-bound라면 작은 miss-rate 변화도 크게 보일 수 있다.
-
-성능 측정에서는 retired instructions, cycles, cache miss와 CPU time을 함께 보고 그 section이 전체 요청에서 차지하는 비율을 확인한다. OS page cache, database buffer cache와 application cache는 이름에 cache가 들어가더라도 hardware CPU cache와 다른 계층이므로 지표를 섞지 않는다.
+결국 cache 최적화의 목표는 hit rate 자체를 최대화하는 것이 아니라 **전체 cycle 수와 CPU execution time을 실제로 줄이는 것**이다.
