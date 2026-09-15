@@ -4,7 +4,7 @@ contentKey: network-http.core.http-versions.http11-pipelining
 topicContentKey: network-http.core.http-versions
 slug: http11-pipelining
 title: "HTTP/1.1 Pipelining"
-summary: "응답 순서 제약이 pipelining head-of-line 문제를 만드는 이유를 설명한다."
+summary: "여러 request를 먼저 보내도 response 순서를 유지해야 하는 HTTP/1.1 pipelining과 HOL 한계를 설명한다."
 level: 2
 status: PUBLISHED
 displayOrder: 40
@@ -19,13 +19,15 @@ references:
 ---
 # HTTP/1.1 Pipelining
 
-HTTP/1.1 pipelining은 이전 응답을 기다리지 않고 같은 persistent connection에 여러 요청을 순서대로 보내는 방식이다. 하지만 응답은 요청 순서를 유지해야 하므로 첫 요청의 느린 처리나 loss가 뒤 응답의 관찰을 막는 application-level HOL이 남는다. pipelining은 HTTP/2처럼 각 요청에 독립 stream을 부여하는 multiplexing이 아니다.
+HTTP/1.1 pipelining은 같은 persistent connection에서 이전 response를 기다리지 않고 여러 request를 연속으로 보내는 방식이다. Request 전송 자체는 겹칠 수 있지만 server는 pipelined request에 대한 response를 request 순서와 같은 순서로 보낸다.
 
-모든 proxy와 origin이 pipelining을 안정적으로 지원하지 않고, connection이 중간에 끊기면 이미 전송된 여러 요청 중 어디까지 server가 처리했는지 모호해진다. 특히 non-idempotent 요청은 재전송 시 duplicate side effect 위험이 있어 client가 보수적으로 사용하며, 이 복잡성이 HTTP/2 stream model을 선택하는 이유 중 하나다.
+```text
+request:  R1 → R2 → R3
+response: S1 → S2 → S3
+```
 
-Backend에서 client library가 pipelining이나 connection reuse를 내부 수행해도 요청 queue와 응답 order를 trace로 연결한다. 실패 후 retry할 요청의 idempotency와 server side effect 불확실성을 별도로 기록한다.
-### HTTP/1.1 pipelining
-    send:     R1 → R2 → R3
-    응답: R1 → R2 → R3 (ordered)
-                         R1 slow → later delivery waits
-겹쳐 보내도 connection 실패 뒤 처리 여부는 unknown이다.
+이 구조에서는 R1의 처리가 오래 걸리면 R2와 R3에 대한 response가 준비되어 있어도 앞 response를 건너 client에 전달할 수 없다. 이런 ordered response 제약이 HTTP/1.1 pipelining의 head-of-line 문제를 만든다.
+
+또한 connection이 중간에 끊기면 이미 전송된 여러 request 중 어떤 요청까지 server가 처리했는지 모호할 수 있다. 특히 non-idempotent request는 단순 재전송이 안전하지 않을 수 있다.
+
+HTTP/2는 request마다 독립적인 stream을 두고 여러 stream의 frame을 interleave함으로써 이 HTTP-level ordered-response 한계를 줄인다. **Pipelining은 여러 request를 미리 보내는 방식이지, HTTP/2의 independent stream multiplexing과 같은 모델은 아니다.**
