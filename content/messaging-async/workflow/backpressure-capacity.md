@@ -3,8 +3,8 @@ kind: concept
 contentKey: messaging.core.workflow.backpressure-capacity
 topicContentKey: messaging.core.workflow
 slug: backpressure-capacity
-title: "backpressure와 consumer capacity"
-summary: "producer rate와 consumer 처리 capacity 차이가 lag·memory·지연 시간을 만드는 이유와 flow control을 이해한다"
+title: "생산 속도와 Consumer 처리 용량"
+summary: "producer가 consumer보다 빠를 때 lag와 지연 시간이 누적되는 이유를 이해하고 producer 제한·consumer 확장·retry 분리로 end-to-end capacity를 조정한다."
 level: 2
 status: PUBLISHED
 displayOrder: 20
@@ -16,42 +16,50 @@ references:
     displayOrder: 1
     relationNote: "producer·consumer throughput과 partition 기반 확장 확인"
 ---
-# backpressure와 consumer capacity
+# 생산 속도와 Consumer 처리 용량
 
-Producer가 초당 10,000개를 만들고 consumer가 초당 6,000개만 처리하면 남은 4,000개는 lag로 쌓입니다. backlog가 늘어나는 동안 broker storage, consumer memory, 처리 지연 시간과 retry 비용도 함께 증가합니다.
+Producer가 초당 10,000개의 message를 만들지만 consumer가 초당 6,000개만 처리한다면 남은 4,000개는 매초 backlog로 쌓입니다. Broker가 이를 보관해 주더라도 **사용자가 결과를 보게 되는 시간은 계속 늦어집니다.**
 
 ```text
 producer 10k/s ─▶ broker ─▶ consumer 6k/s
-                         lag +4k/s
+                         +4k/s lag
 ```
 
-### queue가 무한 buffer는 아니다
+이 상태가 10분 지속되면 lag는 240만 건까지 늘어날 수 있습니다. 따라서 broker storage가 충분한지만 보는 것으로는 부족합니다.
 
-broker retention이 충분해도 늦은 message는 사용자에게 오래된 결과를 만들 수 있고, consumer가 poll한 뒤 memory에 무제한으로 쌓으면 process OOM이 될 수 있습니다. batch size, in-flight 작업 수, fetch·poll 간격과 retention을 capacity 계약으로 정합니다.
+### Queue는 처리 용량을 만들어 주지 않는다
 
-### backpressure 선택지
+Message broker는 producer와 consumer의 속도 차이를 잠시 흡수할 수 있지만, consumer의 실제 처리 능력을 늘려 주지는 않습니다. Backlog가 계속 증가한다면 언젠가는 retention, disk, freshness SLA 중 하나가 한계에 도달합니다.
 
-- producer rate limit 또는 admission control
-- consumer worker·partition 확장
-- 무거운 작업을 별도 topic으로 분리
-- 낮은 우선순위 event drop/compaction
-- lag threshold 초과 시 처리 속도 조정·알림
+Consumer가 poll한 record를 memory에 무한히 쌓는 것도 해결책이 아닙니다. In-flight 작업 수를 제한하지 않으면 process heap과 downstream connection pool이 먼저 고갈될 수 있습니다.
 
-확장은 partition 수와 downstream DB connection capacity를 함께 봐야 합니다. consumer 수만 늘리면 DB pool과 외부 API가 먼저 포화될 수 있습니다.
+### 어디를 조절할지 병목을 보고 결정한다
 
-### retry가 backlog를 키울 수 있다
+```text
+producer rate
+   │
+   ▼
+broker backlog
+   │
+   ▼
+consumer workers
+   │
+   ▼
+DB / external API capacity
+```
 
-실패 message를 즉시 같은 partition에서 retry하면 신규 message가 처리되지 못하고 lag가 더 커집니다. retry topic과 delay, DLQ를 분리하면 원래 traffic의 head-of-line blocking을 줄일 수 있지만 ordering 요구와 duplicate 정책을 다시 확인해야 합니다.
+Consumer 수와 partition 수를 늘리면 처리량이 올라갈 수 있지만 DB connection pool이나 외부 API가 이미 병목이라면 downstream 장애만 키울 수 있습니다. 반대로 중요하지 않은 작업이라면 producer admission control이나 낮은 우선순위 event drop/compaction 같은 정책을 검토할 수도 있습니다.
 
-### 문제를 풀 때 확인할 것
+### Retry도 전체 처리량을 소비한다
 
-1. producer/consumer 처리율과 backlog 증가율을 측정합니다.
-2. in-flight memory와 broker retention을 계산합니다.
-3. partition 확장이 downstream capacity를 넘지 않는지 봅니다.
-4. retry가 정상 traffic을 막는지 확인합니다.
-5. lag threshold, freshness SLA와 recovery 시간을 정합니다.
+실패 message를 즉시 여러 번 retry하면 신규 message를 처리할 capacity가 줄어듭니다. Poison message 하나가 partition을 계속 막는다면 delayed retry나 별도 retry path로 정상 traffic과 분리할 수 있습니다.
 
-### 면접에서 설명한다면
+```text
+consumer capacity 6k/s
+  ├─ normal work 5k/s
+  └─ retry work  1k/s
+```
 
-Backpressure는 producer가 consumer capacity보다 빠를 때 backlog·lag·memory·지연 시간이 증가하는 문제입니다. producer rate limit, consumer/partition 확장, retry 분리와 DLQ를 선택하되 broker만 확장하면 downstream DB·외부 API가 포화될 수 있으므로 end-to-end capacity를 계산해야 합니다.
+Retry가 늘어나면 정상 처리에 사용할 수 있는 capacity가 줄어드는 구조입니다.
 
+Backpressure를 다룬다는 것은 queue를 크게 만드는 것이 아니라 **생산률, 소비률, backlog 증가 속도와 downstream 한계를 함께 측정하고 시스템이 감당할 수 있는 속도로 흐름을 제한하는 것**입니다.

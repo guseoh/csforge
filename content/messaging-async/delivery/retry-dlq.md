@@ -3,8 +3,8 @@ kind: concept
 contentKey: messaging.core.delivery.retry-dlq
 topicContentKey: messaging.core.delivery
 slug: retry-dlq
-title: "retry와 dead-letter queue"
-summary: "transient/permanent 실패를 분류하고 retry budget·backoff·DLQ와 재처리 운영을 설계한다"
+title: "재시도와 실패 메시지 격리"
+summary: "일시적 실패와 같은 입력으로 반복되는 영구 실패를 구분하고, 제한된 retry와 failed/DLQ workflow로 정상 처리 흐름을 보호한다."
 level: 2
 status: PUBLISHED
 displayOrder: 20
@@ -22,40 +22,48 @@ references:
     displayOrder: 2
     relationNote: "message relay와 재처리·duplicate 운영 맥락 확인"
 ---
-# retry와 dead-letter queue
+# 재시도와 실패 메시지 격리
 
-Consumer 실패를 무조건 retry하면 poison message 하나가 partition을 계속 막거나 downstream 장애를 증폭시킬 수 있습니다. 먼저 일시적 네트워크 오류인지, schema/검증처럼 같은 입력으로 계속 실패하는 영구 오류인지 분류합니다.
+Consumer가 실패했다고 같은 message를 무한히 다시 처리하면 복구가 아니라 장애를 증폭시킬 수 있습니다. 먼저 **시간이 지나면 성공할 가능성이 있는 실패인지, 같은 입력으로 계속 실패할 오류인지**를 구분합니다.
 
 ```text
-message M
-  ├─ transient timeout ─▶ bounded retry + backoff
-  └─ invalid schema    ─▶ failed/DLQ workflow + operator action
+consumer failure
+   ├─ temporary timeout ─▶ 제한된 retry + backoff
+   └─ invalid payload   ─▶ 정상 흐름에서 분리
 ```
 
-### retry budget을 제한한다
+일시적인 network 오류나 downstream unavailable은 재시도 후보가 될 수 있습니다. 반면 schema가 깨졌거나 필수 business data가 없는 message는 반복해도 같은 이유로 실패할 가능성이 큽니다.
 
-attempt 수, 최대 delay, 전체 deadline을 정하지 않은 retry는 무한 처리와 같은 의미가 됩니다. exponential backoff와 jitter로 여러 consumer가 같은 시각에 retry하는 storm을 줄이고, ordering과 freshness 요구를 깨지 않는 재처리 방식을 선택합니다.
+### Retry에는 끝이 있어야 한다
 
-### retry topic과 DLQ는 broker guarantee와 구분한다
+재시도 횟수와 backoff를 제한하지 않으면 poison message 하나가 같은 partition을 오래 막을 수 있습니다. Retry하는 동안 신규 message까지 기다려야 하는 구조라면 lag도 계속 커집니다.
 
-Kafka의 consumer delivery semantics 자체가 모든 애플리케이션에 “retry topic”, “delay queue”, “DLQ”라는 동일한 workflow를 자동 제공하는 것은 아닙니다. 별도 topic, consumer pause/seek, framework retry 기능, failed-record store 등으로 구현할 수 있으며 각 방식은 ordering·retention·consumer group state를 다르게 바꿉니다. 따라서 이런 이름을 Kafka protocol 보장처럼 외우지 말고 **실패 record를 언제 정상 흐름에서 분리하고 어디에 durable하게 남길지**를 설계합니다.
+```text
+M1 success
+M2 failure → retry → retry → retry ...
+M3, M4, M5 ───────────── waiting
+```
 
-### DLQ는 버리는 쓰레기통이 아니다
+Retry topic이나 delayed processing을 사용해 실패 message를 잠시 분리할 수 있지만, 그 순간 원래 partition의 ordering을 그대로 유지할 수 있는지도 다시 판단해야 합니다.
 
-Dead-letter workflow에는 원본 message id, key, payload version, 실패 원인, attempt 수, 최초·최근 시각을 남겨야 운영자가 원인을 조사하고 안전하게 replay할 수 있습니다. DLQ로 옮겼다고 business 실패가 해결된 것은 아니며, 사용자에게 pending/failed 상태를 보여 주거나 수동 보상할 수 있습니다.
+### DLQ는 폐기함이 아니라 복구 대기 상태다
 
-### retry와 idempotency는 함께 본다
+실패 message를 별도 topic이나 store로 옮긴다면 운영자가 **왜 실패했고 어떻게 다시 처리할지** 알 수 있어야 합니다.
 
-retry는 같은 operation을 다시 실행하므로 consumer가 idempotent하지 않으면 duplicate side effect를 만듭니다. transient 실패가 “처리되지 않았다”는 증거가 아닐 수 있는 remote call에서는 결과 unknown 상태와 idempotency key를 함께 처리합니다.
+```text
+failed record
+- messageId
+- business key
+- payload/schema version
+- failure reason
+- attempt count
+- first/last failure time
+```
 
-### 문제를 풀 때 확인할 것
+DLQ에 넣었다고 업무 실패가 해결되는 것은 아닙니다. 사용자 상태가 `PROCESSING`으로 영원히 남지 않도록 failed 상태를 노출하거나 수동 보상·재처리 절차가 필요할 수 있습니다.
 
-1. 실패가 transient인지 permanent인지 분류합니다.
-2. retry 횟수·backoff·jitter·deadline을 정합니다.
-3. retry 구현이 partition ordering·lag·committed position을 어떻게 바꾸는지 확인합니다.
-4. failed/DLQ record와 replay 절차를 durable하게 보존합니다.
-5. duplicate side effect와 사용자 상태를 함께 설계합니다.
+### 재시도도 중복 실행이다
 
-### 면접에서 설명한다면
+Remote call이 timeout된 경우 consumer가 실패를 봤더라도 상대 시스템은 이미 처리를 끝냈을 수 있습니다. 같은 message를 재시도하면 side effect가 중복될 수 있으므로 idempotency와 결과 조회가 함께 필요합니다.
 
-Retry는 일시적 실패에 제한적으로 사용하고 검증·schema 오류 같은 permanent 실패는 정상 processing path에서 격리합니다. Retry topic이나 DLQ는 Kafka가 모든 경우에 자동 제공하는 delivery guarantee가 아니라 application/framework 패턴일 수 있으므로 ordering·retention·replay 계약을 명시해야 합니다. 재시도 자체가 duplicate side effect를 만들 수 있어 idempotency도 함께 필요합니다.
+Retry/DLQ 설계의 목표는 실패 message를 어디론가 보내는 것이 아니라 **복구 가능한 오류는 제한적으로 다시 시도하고, 반복 실패는 정상 traffic에서 격리한 뒤 사람이 추적 가능한 상태로 남기는 것**입니다.
