@@ -27,7 +27,7 @@ HTTP/1.1은 하나의 connection에서 여러 message를 주고받을 수 있으
 
 body 크기를 미리 알 수 없는 경우 HTTP/1.1에서는 `Transfer-Encoding: chunked`를 사용해 content를 여러 chunk로 나누고 마지막 chunk로 끝을 표시할 수 있다. transfer coding은 representation 자체의 형식인 `Content-Encoding`과 다르며, HTTP message를 connection 위에 전달하는 과정의 속성이다.
 
-`Content-Length`와 `Transfer-Encoding`이 충돌하는 message는 매우 조심해서 처리해야 한다. RFC 9112에서 Transfer-Encoding이 framing precedence를 가지지만, 둘을 동시에 받은 상황 자체가 request smuggling 같은 parser disagreement 위험과 연결될 수 있으므로 정상적인 sender는 함께 보내지 않아야 한다. citeturn741558search0
+`Content-Length`와 `Transfer-Encoding`이 충돌하는 message는 매우 조심해서 처리해야 한다. RFC 9112에서 Transfer-Encoding이 framing precedence를 가지지만, 둘을 동시에 받은 상황 자체가 request smuggling 같은 parser disagreement 위험과 연결될 수 있으므로 정상적인 sender는 함께 보내지 않아야 한다.
 
 HTTP/2와 HTTP/3은 HTTP/1.1의 chunked transfer coding을 그대로 사용하지 않고 stream/frame 구조로 content를 운반한다. 따라서 `Content-Length`와 chunked를 HTTP 전체의 유일한 framing 방식으로 일반화하면 안 된다.
 
