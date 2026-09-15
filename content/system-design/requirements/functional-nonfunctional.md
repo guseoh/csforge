@@ -3,8 +3,8 @@ kind: concept
 contentKey: system-design.core.requirements.functional-nonfunctional
 topicContentKey: system-design.core.requirements
 slug: functional-nonfunctional
-title: "functional과 non-functional requirements"
-summary: "user journey를 기능으로, 지연 시간·가용성·durability·cost·security를 measurable constraint로 번역한다"
+title: "기능 요구와 품질 요구"
+summary: "사용자가 해야 하는 일을 기능 요구로, latency·availability·durability·security·cost 같은 기대 수준을 측정 가능한 제약으로 바꾸는 방법을 이해한다."
 level: 1
 status: PUBLISHED
 displayOrder: 10
@@ -22,35 +22,25 @@ references:
     displayOrder: 2
     relationNote: "reliability·performance·cost·security trade-off의 architecture 평가 관점 확인"
 ---
-# functional과 non-functional requirements
+# 기능 요구와 품질 요구
 
-System design은 component를 그리는 일보다 “누가 어떤 상황에서 무엇을 기대하는가”를 명확히 하는 데서 시작합니다. Functional requirement는 사용자가 할 수 있어야 하는 동작이고, non-functional requirement는 그 동작의 지연 시간, 가용성, durability, security, cost, operability 같은 품질과 제약입니다.
+System Design은 먼저 “무엇을 만들 것인가”를 구체화하는 작업에서 시작합니다. 기능 요구는 사용자가 어떤 행동을 할 수 있어야 하는지 설명하고, 품질 요구는 그 기능이 어느 수준의 지연 시간·가용성·내구성·보안·비용 제약 안에서 동작해야 하는지를 설명합니다.
 
-### 요구사항을 measurable하게 만든다
+예를 들어 “사용자는 게시물을 검색할 수 있다”는 기능 요구입니다. 하지만 이것만으로는 검색 결과를 5초 안에 주어도 되는지, 장애 중 일부 결과를 생략해도 되는지, 초당 요청이 10건인지 10만 건인지 알 수 없습니다.
 
 ```text
-“빠른 검색” ─▶ 99% of valid queries < 300ms, peak QPS 500
-“안전한 저장” ─▶ 권한 없는 read 차단, RPO/RTO와 보존 기간 정의
+기능 요구
+사용자는 키워드로 게시물을 검색한다.
+
+품질 요구
+- peak 500 QPS
+- 유효한 검색의 p99 < 300 ms
+- 검색 색인은 수 초의 stale 허용
+- 검색 장애가 게시물 작성 기능을 막아서는 안 됨
 ```
 
-“실시간”, “대규모”, “고가용성”은 설계 입력으로 부족합니다. 대상 사용자와 workload, 정상·peak·장애 시 behavior, 데이터 보존·정합성, 법적·보안 제약, 예산을 질문해 수치와 우선순위로 바꿉니다.
+`빠르게`, `대규모로`, `고가용성으로` 같은 표현은 아직 설계 입력으로 부족합니다. 대상 사용자 수, peak workload, 허용 가능한 stale 정도, 장애 시 반드시 남아야 할 기능, 데이터 손실 허용 범위처럼 architecture 선택을 바꾸는 조건을 수치나 명확한 상태로 바꿔야 합니다.
 
-### 충돌하는 목표를 표시한다
+모든 목표를 동시에 최대로 만들 수도 없습니다. 더 높은 가용성, 더 낮은 지연 시간, 더 강한 durability는 보통 비용과 복잡성을 증가시킵니다. 따라서 절대 깨면 안 되는 invariant와 품질을 조금 낮춰도 되는 preference를 먼저 구분합니다.
 
-더 낮은 지연 시간은 비용·freshness·일관성을 요구할 수 있고, 강한 durability는 write 지연 시간과 운영 비용을 높일 수 있습니다. 모든 품질을 최대로 선택할 수 있다고 가정하지 말고, 반드시 지켜야 하는 invariant와 완화 가능한 preference를 분리합니다.
-
-### acceptance criteria를 설계한다
-
-각 requirement에는 측정 방법과 검증 시나리오를 붙입니다. 예를 들어 outage 중 핵심 read는 유지하고 recommendation은 생략하는지, deploy 중 기존 요청이 drain되는지, data restore 후 어떤 record가 보이는지를 미리 정해야 architecture trade-off가 테스트로 연결됩니다.
-
-### 문제를 풀 때 확인할 것
-
-1. actor·user journey·functional outcome을 적습니다.
-2. 지연 시간 percentile·QPS·가용성·RPO/RTO·cost를 수치화합니다.
-3. 반드시 지킬 invariant와 허용할 degradation을 구분합니다.
-4. 보안·운영·규제 제약을 early boundary로 둡니다.
-5. 각 요구사항의 측정과 acceptance scenario를 정의합니다.
-
-### 면접에서 설명한다면
-
-기능 요구는 user journey와 state transition으로, 비기능 요구는 workload·지연 시간·가용성·durability·security·cost의 측정 가능한 목표로 번역합니다. 설계 전에 hard invariant와 trade-off 가능한 preference를 구분하고, 정상·peak·장애·배포 시 acceptance scenario를 정해야 component 선택을 검증할 수 있습니다.
+좋은 요구사항은 마지막에 검증할 수 있어야 합니다. “장애 중에도 핵심 주문 조회는 가능해야 한다”, “배포 중 p99가 SLO를 넘으면 rollout을 중단한다”처럼 측정 방법과 acceptance condition을 연결하면 이후 architecture 선택이 취향이 아니라 요구사항에 대한 답이 됩니다.
