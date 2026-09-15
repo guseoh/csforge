@@ -4,7 +4,7 @@ contentKey: network-http.core.http-state-intermediary.x-forwarded
 topicContentKey: network-http.core.http-state-intermediary
 slug: x-forwarded
 title: "X-Forwarded Headers"
-summary: "비표준 관행 header의 체인과 spoofing 위험을 설명한다."
+summary: "X-Forwarded-For·Proto·Host가 proxy 환경에서 원래 request 정보를 전달하는 관행과 해석 차이를 설명한다."
 level: 2
 status: PUBLISHED
 displayOrder: 80
@@ -19,13 +19,16 @@ references:
 ---
 # X-Forwarded Headers
 
-`X-Forwarded-For`, `X-Forwarded-Proto`, `X-Forwarded-Host`는 표준 `Forwarded`가 정착하기 전부터 널리 사용된 관행 field다. 보통 X-Forwarded-For는 proxy chain의 address 목록, 나머지는 관찰된 scheme과 host를 전달하지만, append·overwrite·공백·목록 순서 규칙이 제품마다 다를 수 있다. 따라서 이름만 보고 표준 형식이나 신뢰성을 가정하지 않는다.
+`X-Forwarded-For`, `X-Forwarded-Proto`, `X-Forwarded-Host`는 proxy가 원래 request의 client address, scheme, host 정보를 다음 hop에 전달할 때 널리 쓰이는 관행적 field다. 표준화된 `Forwarded` field보다 오래 사용되어 왔기 때문에 실제 배포 환경에서 흔히 볼 수 있다.
 
-외부 client가 `X-Forwarded-For`를 직접 넣고 ingress가 제거하지 않으면 rate limit, audit, IP allowlist와 scheme 기반 redirect가 조작될 수 있다. 흔한 구성에서는 proxy가 client address를 목록에 추가하고 오른쪽에 가까운 값이 신뢰된 proxy의 관찰에 가깝지만, 이 convention도 실제 topology와 정규화 규칙을 확인해야 한다. backend는 실제 socket peer와 trusted hop 정보를 함께 사용해 신뢰 가능한 값을 선택한다.
+`X-Forwarded-For`는 여러 proxy를 거치면서 address 목록으로 확장될 수 있다. 다만 값을 append하는지 overwrite하는지, 목록의 어느 쪽이 어느 hop인지에 대한 세부 규칙은 제품과 설정에 따라 달라질 수 있다. 따라서 field 이름만 보고 chain 해석 규칙을 고정해서는 안 된다.
 
-X-Forwarded header는 upstream이 client identity를 이해하기 위한 전달 힌트이지, client가 누구인지 증명하는 credential이 아니다. 한 hop을 더 추가하거나 direct backend access를 열면 기존 “신뢰하는 오른쪽 hop 수”가 틀릴 수 있으므로, proxy chain 변경과 parser 설정 변경을 함께 검토한다.
+```text
+client → proxy A → proxy B → backend
+          │          │
+          └── X-Forwarded-* chain ──>
+```
 
-### Backend 연결
+`X-Forwarded-Proto`나 `X-Forwarded-Host`도 backend가 external URL이나 original authority를 복원하는 데 사용할 수 있지만, client가 직접 같은 field를 주입할 수도 있다. 그래서 **X-Forwarded 값의 형식과 그 값을 신뢰할 수 있는가는 별도의 문제**다.
 
-client IP 기반 security와 observability에서는 검증된 parser, trusted proxy address/hop 수, direct access 차단을 함께 고정한다. local direct access는 실제 socket peer가 client일 수 있지만 production ingress에서는 마지막 trusted proxy가 peer일 수 있으므로 두 환경의 값을 같은 의미로 가정하지 않는다.
-
+결국 backend가 사용할 값은 실제 proxy topology와 trusted hop 정책에 따라 결정해야 한다. X-Forwarded field는 original request metadata를 전달하는 관행이지, 그 자체로 authenticated client identity를 증명하는 mechanism은 아니다.
