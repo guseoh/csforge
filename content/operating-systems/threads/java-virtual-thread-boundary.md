@@ -29,9 +29,7 @@ references:
 ---
 # Java Virtual Thread Boundary
 
-### virtual thread는 OS thread를 더 많이 만드는 기능이 아니다
-
-Java virtual thread는 JDK가 user-mode에서 scheduling하는 lightweight `Thread` 구현이다. virtual thread가 CPU에서 실제로 실행될 때는 platform thread인 **carrier** 위에 mount되어 실행된다. JEP 444가 정의한 현재 JDK 모델에서는 많은 virtual thread를 더 적은 수의 platform/OS thread 위에 M:N으로 scheduling한다.
+Java virtual thread는 OS thread를 대량으로 새로 만드는 기능이 아니다. Virtual thread는 JDK가 scheduling하는 lightweight `Thread`이며, CPU에서 실제로 실행될 때는 **carrier platform thread** 위에 mount된다. Platform thread는 OS thread와 대응하고, OS scheduler가 최종적으로 CPU 시간을 배분한다.
 
 ```text
 virtual A ─┐
@@ -39,26 +37,34 @@ virtual B ─┼─ JDK scheduler → carrier platform threads → OS scheduler 
 virtual C ─┘
 ```
 
-이 구조 때문에 virtual thread의 핵심 이점은 CPU-bound 계산을 자동 병렬화하는 것이 아니라, **thread-per-task 스타일을 유지하면서 blocking이 많은 workload의 concurrency 비용을 낮추는 것**에 있다. Virtual thread를 많이 만든다고 CPU core나 downstream capacity가 늘어나는 것은 아니다.
+따라서 virtual thread가 매우 많아도 같은 순간 CPU에서 실행되는 계산량은 carrier와 CPU core 수의 제약을 받는다. Virtual thread의 주된 이점은 CPU-bound 계산을 자동으로 더 빠르게 만드는 것이 아니라 **blocking이 많은 task를 thread-per-task 스타일로 많이 다룰 때 platform thread 점유 비용을 줄이는 것**이다.
 
-### blocking 시 carrier를 양보할 수 있다
+### Blocking할 때 carrier를 다른 virtual thread에 돌려줄 수 있다
 
-JDK가 지원하는 blocking operation에서 virtual thread가 기다려야 하면 virtual thread는 carrier에서 unmount되고, carrier는 다른 runnable virtual thread를 실행하는 데 사용될 수 있다. Platform thread 하나가 OS-level blocking 동안 execution resource를 계속 점유하는 전통적인 thread-per-task 모델과 다른 점이다.
+Virtual thread가 JDK가 지원하는 blocking operation에서 기다리면 runtime은 virtual thread를 carrier에서 unmount하고 carrier를 다른 runnable virtual thread 실행에 사용할 수 있다. 완료 조건이 충족되면 virtual thread는 다시 scheduler에 제출되고 carrier에 mount되어 실행을 이어간다.
 
-다만 모든 native 또는 blocking 구간이 같은 방식으로 unmount되는 것은 아니다. Native/foreign call처럼 virtual thread가 carrier에 고정되는 구간에서는 blocking이 길어질수록 carrier도 함께 점유될 수 있다. 따라서 문제가 생겼을 때는 `virtual thread인데 왜 carrier가 부족하지?`라고 보기보다 실제 blocking과 pinning 지점을 확인해야 한다.
+```text
+virtual A running on carrier 1
+        │ blocking
+        ▼
+virtual A unmount
+carrier 1 → virtual B 실행
+        │
+A의 event 완료
+        ▼
+virtual A 다시 runnable → 어떤 carrier에서든 resume
+```
 
-### `synchronized` pinning 설명은 Java 24 이후 달라졌다
+Virtual thread와 특정 carrier 사이에 고정 affinity가 있는 것은 아니다.
 
-초기 virtual thread 구현에서는 `synchronized` monitor를 보유한 채 blocking하면 carrier pinning이 중요한 제약이었다. **JEP 491이 JDK 24에 반영되면서 일반적인 `synchronized` method/block 때문에 virtual thread가 carrier에 pinning되는 제약은 제거되었다.** Monitor를 보유하거나 monitor 진입·`Object.wait()`에서 대기하는 virtual thread도 unmount할 수 있도록 구현이 바뀌었다.
+### Pinning은 virtual thread와 carrier를 함께 묶는 경우다
 
-따라서 Java 25 기준 콘텐츠에서 `synchronized 안에서 blocking하면 virtual thread가 항상 carrier를 pin한다`고 일반화하면 잘못된 설명이다. Native/foreign call 등 남아 있는 pinning 또는 carrier 점유 경계는 따로 확인해야 한다.
+Virtual thread가 unmount할 수 없는 상태에서 blocking하면 carrier도 함께 점유될 수 있다. Java 25 기준으로는 예전 설명을 그대로 사용하면 안 된다. JEP 491이 JDK 24에서 **일반적인 `synchronized` method/block 때문에 발생하던 monitor pinning을 제거**했기 때문이다.
 
-### virtual thread 수와 외부 resource 수를 분리한다
+따라서 `synchronized 안에서 blocking하면 virtual thread가 항상 carrier를 pin한다`는 설명은 Java 25 기준으로 부정확하다. Native method나 foreign function처럼 여전히 carrier와의 결합이 필요한 구간은 별도로 확인해야 한다.
 
-virtual thread를 100,000개 만들 수 있다고 DB connection을 100,000개 열 수 있는 것은 아니다. DB pool이 20이면 동시에 DB work를 수행하는 task는 결국 그 capacity를 두고 경쟁한다. Downstream이 병목인데 virtual thread 수만 늘리면 queueing 위치만 connection wait 같은 다른 resource 경계로 이동할 수 있다.
+### Virtual thread는 resource limit 자체를 없애지 않는다
 
-Spring MVC에서 virtual thread를 도입할 때도 CPU utilization, carrier saturation, DB connection wait, external API limit, task 지연 시간을 함께 봐야 한다. virtual thread는 resource limit을 제거하는 기술이 아니라 blocking concurrency의 execution cost를 바꾸는 기술이다.
+Virtual thread를 많이 만들 수 있어도 CPU core, file descriptor, DB connection, remote service capacity 같은 자원이 늘어나는 것은 아니다. 실행 thread가 싸졌다고 해서 downstream work까지 무제한으로 병렬화할 수 있는 것은 아니다.
 
-### ThreadLocal 비용도 달라진다
-
-virtual thread마다 독립적인 thread-local value를 둘 수 있지만 thread 수가 매우 많다면 per-thread state의 memory 비용도 커질 수 있다. platform-thread pool에서의 ThreadLocal 재사용 문제와 virtual thread의 대량 생성 비용은 같은 문제는 아니므로 lifecycle을 구분해서 판단한다.
+Java Virtual Thread Boundary의 핵심은 **virtual thread가 JDK scheduling 단위이고 carrier platform thread가 OS scheduling 단위라는 층을 구분하는 것**, 그리고 blocking 시 unmount할 수 있는 경우와 carrier를 함께 점유하는 경우를 구분하는 것이다.

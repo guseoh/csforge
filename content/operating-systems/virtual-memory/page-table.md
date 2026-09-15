@@ -26,39 +26,26 @@ references:
 ---
 # Page Table
 
-### virtual page마다 현재 translation에 필요한 상태를 기록한다
-
-page table은 process의 virtual page가 어떤 physical frame 또는 다른 backing state와 연결되는지, 그리고 해당 mapping에 어떤 접근 권한이 있는지를 표현하는 자료구조다. CPU가 virtual address를 translation할 때 hardware와 OS는 page-table state를 이용해 접근을 허용할지, fault를 발생시킬지 결정한다.
+Page table은 **process의 virtual page가 현재 어떤 physical frame과 연결되어 있고 어떤 접근이 허용되는지 표현하는 mapping state**다. 운영체제는 process별 page-table state를 만들고 변경하며, hardware는 그 state를 이용해 memory access를 translation하고 protection을 검사한다.
 
 ![Virtual page number와 page offset을 이용해 page table의 mapping을 따라 physical frame으로 접근하는 구조](/learning/operating-systems/page-table-translation.svg)
 
-개념적으로 page-table entry에는 frame number와 protection information이 있을 수 있지만 실제 bit layout과 의미는 ISA·OS마다 다르다. 특히 `valid`, `present`, `resident`를 모든 시스템에서 같은 뜻이라고 가정하면 안 된다. 어떤 architecture의 present bit는 hardware translation에 바로 사용할 수 있는 mapping을 뜻할 수 있고, OS는 별도의 software metadata로 swap/file backing이나 resident state를 추적할 수 있다.
+### Mapping과 permission을 함께 표현한다
 
-### mapping 존재와 접근 가능은 다른 질문이다
+개념적으로 page-table entry에는 physical frame 정보와 read/write/execute 같은 protection 상태가 포함될 수 있다. 따라서 virtual address가 존재하는 것과 현재 access가 허용되는 것은 다른 질문이다.
 
-virtual page가 어떤 frame에 연결되어 있어도 read-only mapping에 write를 시도하면 protection fault가 날 수 있다. 반대로 virtual range 자체는 process에 유효하지만 현재 physical frame이 준비되지 않아 recoverable page fault가 발생할 수도 있다.
+```text
+virtual page
+   │
+   ├─ mapping 없음 → fault 처리 필요
+   ├─ mapping 있음 + permission 위반 → protection fault
+   └─ mapping 있음 + permission 허용 → access 진행
+```
 
-따라서 fault를 볼 때는 최소한 다음을 분리한다.
+실제 entry bit 이름과 의미는 architecture마다 다르므로 `valid`, `present`, `accessed` 같은 특정 bit를 모든 시스템의 공통 규칙으로 일반화하지 않는다.
 
-1. address가 process의 valid mapping 범위인가?
-2. 요청한 read/write/execute permission이 허용되는가?
-3. 현재 translation에 사용할 physical page가 resident/ready한가?
-4. OS가 fault를 처리해 mapping을 준비할 수 있는가?
+### OS는 mapping lifecycle을 관리한다
 
-### page table 자체도 memory와 execution cost를 가진다
+Memory mapping 생성·해제, heap/stack 변화, file mapping, fork와 copy-on-write 같은 사건은 process의 mapping state를 바꾼다. Address space에 mapping이 있다고 모든 page가 지금 RAM에 resident한 것은 아니며, OS는 별도의 memory-management state와 함께 resident/backing 상태를 관리한다.
 
-큰 virtual address space의 모든 possible page에 flat entry를 미리 두면 page-table memory가 매우 커진다. 그래서 multi-level page table 같은 sparse structure를 사용해 실제 필요한 영역 위주로 하위 table을 할당한다.
-
-이 구조는 memory를 절약하지만 TLB miss 뒤 page-table walk가 여러 memory access를 요구할 수 있다. 이 hardware walk 자체는 Computer Architecture 영역에서 다루고, 여기서는 OS가 **process별 mapping state와 lifecycle을 관리한다**는 책임에 집중한다.
-
-### process lifecycle과 mapping lifecycle이 연결된다
-
-`mmap`, heap growth, stack growth, shared library load, file mapping, `fork`/copy-on-write 등은 page-table state를 바꿀 수 있다. context switch에서도 process마다 translation context가 다르므로 address-space switching과 TLB management가 필요할 수 있다.
-
-운영 지표에서는 virtual address reservation, committed memory, resident set을 구분한다. page table에 address range가 표현되어 있다는 사실만으로 모든 backing page가 RAM에 resident하다고 판단하면 안 된다.
-
-### 면접에서 이렇게 나옵니다
-
-#### Q. Page table은 단순히 virtual address를 physical address로 바꾸는 표인가요?
-
-Mapping이 핵심 역할이지만 그것만으로 끝나지 않는다. Page-table state는 **어떤 frame과 연결되는지와 함께 read/write/execute 같은 protection 판단에도 참여**할 수 있다. 다만 구체적인 entry bit와 walk 구조는 ISA와 OS에 따라 달라지므로 특정 구현을 보편 규칙처럼 설명하지 않는 것이 중요하다.
+Multi-level page table과 TLB, hardware page-table walk의 세부 동작은 Computer Architecture 영역의 책임이다. 이 Concept의 핵심은 **page table이 process별 virtual-memory mapping과 protection을 표현하고, OS가 그 lifecycle을 관리한다는 점**이다.

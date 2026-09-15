@@ -26,28 +26,34 @@ references:
 ---
 # epoll
 
-`epoll`은 Linux가 제공하는 readiness notification facility다. `select/poll`처럼 매 wait마다 전체 관심 descriptor 배열을 다시 전달하는 대신, **epoll instance에 관심 descriptor를 등록해 둔 interest list와 현재 I/O-ready 상태의 ready list를 분리**한다. application은 등록/수정/삭제와 event wait를 별도 operation으로 수행한다.
+`epoll`은 Linux의 readiness notification facility다. `select()`나 `poll()`처럼 wait를 호출할 때마다 전체 descriptor 집합을 다시 넘기는 대신, epoll instance에 **관심 descriptor 집합을 등록해 두고 현재 ready한 descriptor 목록을 별도로 관리**한다.
 
 ![epoll interest list와 ready list의 역할 분리](/learning/operating-systems/epoll-interest-ready.svg)
 
-### 등록된 수와 실제 ready 수를 분리한다
+Application은 `epoll_ctl()` 계열 operation으로 관심 대상을 등록·수정·삭제하고, `epoll_wait()`로 현재 ready event를 받는다. 감시 중인 connection이 많지만 실제 activity는 일부에 집중되는 workload에서 이 구조는 매번 전체 집합을 선형으로 확인하는 부담을 줄이는 데 유리하다.
 
-server가 50,000 connection을 유지하지만 한 순간에 실제 data가 도착한 connection은 100개뿐이라고 하자. epoll 모델에서는 kernel이 readiness 변화에 따라 ready list를 관리하고 application은 `epoll_wait()`로 현재 ready event를 받아 처리한다. 이 구조는 mostly-idle large connection set에서 매번 전체 목록을 선형 scan하는 부담을 줄이는 데 유리하다.
+### Interest list와 ready list는 역할이 다르다
 
-그렇다고 epoll의 모든 operation이 connection 수와 완전히 무관하거나 `O(1)`이라고 단순화하면 안 된다. registration, ready-list 관리, wakeup, application handler 비용은 여전히 존재하고 workload와 kernel 구현에 따라 성능이 달라진다.
+Interest list는 "어떤 descriptor의 어떤 event를 감시할 것인가"를 나타낸다. Ready list는 그중 현재 처리할 event가 생긴 descriptor를 나타낸다. 따라서 등록된 descriptor 수와 한 번에 application이 처리해야 할 ready event 수를 분리해서 생각할 수 있다.
+
+그렇다고 `epoll은 무조건 O(1)`처럼 단순화하면 안 된다. 등록·삭제, ready-list 관리, wakeup, 실제 handler 실행에는 여전히 비용이 있고 workload와 kernel 구현에 따라 성능 특성이 달라진다.
 
 ### Level-triggered와 edge-triggered
 
-level-triggered에서는 descriptor가 계속 readable한 상태라면 처리하지 않은 data가 남아 있는 동안 다시 event를 받을 수 있다. edge-triggered에서는 readiness 상태 변화에 기반해 notification을 받으므로 보통 descriptor를 non-blocking으로 사용하고 **현재 가능한 I/O를 `EAGAIN`까지 drain**해야 한다.
+Level-triggered에서는 readable 같은 조건이 계속 참이면 처리하지 않은 상태가 남아 있는 동안 다시 event를 받을 수 있다. Edge-triggered에서는 readiness 상태 변화에 맞춰 notification을 받으므로 보통 descriptor를 non-blocking으로 사용하고 현재 가능한 I/O를 `EAGAIN`이 나올 때까지 처리해야 한다.
 
-예를 들어 socket에 16KiB가 들어왔는데 edge-triggered event에서 4KiB만 읽고 중단하면 나머지 12KiB가 이미 readable 상태로 남아 있어 새로운 edge가 생기지 않을 수 있다. 이 경우 event loop가 다음 notification만 기다리면 connection이 멈춘 것처럼 보일 수 있다.
+```text
+edge event 발생
+   ↓
+read 가능한 만큼 반복
+   ↓
+EAGAIN
+   ↓
+다음 readiness 변화 대기
+```
 
-### Event는 connection lifecycle과도 연결된다
+일부 data를 남겨 둔 채 다음 edge만 기다리면 이미 readable 상태인 descriptor에 새로운 변화가 생기지 않아 progress가 멈출 수 있다.
 
-readable뿐 아니라 hangup/error 같은 상태도 처리해야 하고, descriptor를 close/reuse하는 lifecycle에서는 stale application state와 새 fd를 혼동하지 않아야 한다. connection object의 generation/lifecycle을 별도로 관리하는 이유다.
+### epoll은 completion interface가 아니다
 
-### epoll은 completion API가 아니다
-
-`epoll_wait()`가 fd를 반환했다는 것은 특정 `read()` operation이 이미 완료되었다는 뜻이 아니다. application은 event를 받은 뒤 실제 read/write를 호출하고 partial result와 `EAGAIN`을 처리한다. 이는 submission/completion queue로 operation result를 받는 `io_uring` 같은 completion-oriented model과 다르다.
-
-Netty 같은 framework를 사용할 때 application이 epoll을 직접 호출하지 않아도 event loop의 핵심 제약은 남는다. handler에서 blocking DB/file call을 오래 수행하면 해당 event-loop thread가 맡은 다른 ready channel의 progress가 지연된다.
+`epoll_wait()`가 fd를 반환했다는 것은 특정 `read()`가 완료되었다는 뜻이 아니다. Application은 event를 받은 뒤 실제 I/O를 호출하고 partial result나 `EAGAIN`을 처리한다. 즉 epoll의 핵심은 **많은 descriptor의 readiness를 persistent interest set과 ready list로 관리하는 것**이며, operation submission과 completion result를 연결하는 asynchronous completion model과는 다르다.

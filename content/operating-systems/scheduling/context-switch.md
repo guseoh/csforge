@@ -19,54 +19,32 @@ references:
 ---
 # Context Switch
 
-CPU core는 한 순간에 제한된 execution context만 실제로 실행한다. Scheduler가 현재 task A 대신 runnable task B를 실행하기로 결정하면, 나중에 A를 이어서 실행할 수 있도록 필요한 CPU state를 저장하고 B의 state를 복원해야 한다. 이 전환을 **context switch**라고 한다.
+CPU core 하나는 한 순간에 하나의 실행 흐름만 실제로 수행한다. 여러 task가 CPU를 나눠 쓰려면 운영체제는 현재 실행 중인 task를 잠시 멈추고, 나중에 같은 지점에서 다시 이어서 실행할 수 있어야 한다. 이때 현재 task의 실행 상태를 저장하고 다른 runnable task의 상태를 복원하는 전환이 **context switch**다.
 
-개념적으로 program counter, stack pointer, general-purpose register 등 execution을 재개하는 데 필요한 architecture state가 보존 대상이다. 구체적으로 어떤 register가 어디에 저장되는지는 ISA와 OS implementation에 따라 달라진다.
+개념적으로는 program counter, stack pointer, 일반 목적 register처럼 실행을 재개하는 데 필요한 CPU 상태가 보존된다. 정확히 어떤 상태를 어디에 저장하는지는 CPU 구조와 운영체제 구현에 따라 달라진다.
 
 ```text
 Task A running
-     │
-     ├─ A execution context 저장
-     │
-     ├─ scheduler/task bookkeeping
-     │
-     └─ B execution context 복원
-              ↓
-         Task B running
+      │
+      ├─ A의 실행 context 저장
+      ├─ scheduler가 다음 task 선택
+      └─ B의 실행 context 복원
+               ↓
+          Task B running
 ```
 
 ![Context switch에서 현재 task의 실행 상태를 저장하고 다음 task의 상태를 복원하는 흐름](/learning/operating-systems/context-switch-flow.svg)
 
-### Mode switch와 context switch를 구분한다
+### Mode switch와는 다른 사건이다
 
-System call을 처리하기 위해 같은 task가 user mode에서 kernel mode로 들어갔다가 돌아올 수 있다. 이때 privilege mode는 바뀌지만 scheduler가 다른 task를 선택하지 않았다면 task context switch는 일어나지 않았을 수 있다.
+System call이나 interrupt 때문에 같은 task가 user mode에서 kernel mode로 들어갔다가 다시 돌아올 수 있다. 이때 privilege mode는 바뀌었지만 scheduler가 다른 task를 선택하지 않았다면 context switch는 일어나지 않은 것이다.
 
-반대로 context switch는 CPU가 다른 task의 execution state를 사용하기 시작하는 사건이다. 따라서 `system call 수 = context switch 수`로 계산할 수 없다.
+반대로 context switch는 **CPU가 다른 task의 실행 상태를 사용하기 시작하는 것**이 핵심이다. System call이나 interrupt가 scheduling의 계기가 될 수는 있지만, kernel entry 자체가 곧 context switch를 뜻하지는 않는다.
 
-### 직접 비용과 간접 비용이 있다
+### Context switch에는 비용이 든다
 
-Context switch 자체에는 state 저장·복원과 scheduler bookkeeping 같은 직접 비용이 든다. 하지만 실제 성능에서는 **cache와 translation locality가 흐트러지는 간접 비용**도 중요할 수 있다.
+직접적으로는 register 상태를 저장·복원하고 scheduler bookkeeping을 수행해야 한다. 간접적으로는 새 task의 working set 때문에 cache locality가 달라질 수 있고, 다른 address space로 전환하면 주소 변환 상태에도 영향을 줄 수 있다.
 
-Task B가 실행되면 A가 사용하던 cache working set 일부가 밀려날 수 있고, address space가 바뀌는 process switch에서는 memory-translation state에도 영향이 있을 수 있다. 다만 TLB가 매 context switch마다 무조건 완전히 flush된다고 일반화하면 안 된다. Architecture와 address-space tagging/OS mechanism에 따라 다를 수 있다.
+그렇다고 모든 context switch가 같은 비용을 갖는 것은 아니다. 같은 process의 thread끼리는 address space를 공유할 수 있고, CPU와 OS가 주소 공간 식별자를 지원하면 translation state를 더 효율적으로 유지할 수도 있다.
 
-같은 process의 threads 사이 switch라면 address space를 공유할 수 있어 process 사이 switch와 비용 특성이 완전히 같지 않다. 그렇다고 thread switch가 무료인 것도 아니다.
-
-### 너무 적어도, 너무 많아도 문제다
-
-Context switch를 줄이겠다고 한 task를 매우 오래 실행시키면 다른 runnable task의 응답 시간과 fairness가 나빠질 수 있다. 반대로 아주 짧은 quantum으로 계속 task를 바꾸면 useful work보다 scheduling/context-switch overhead가 커질 수 있다.
-
-따라서 context-switch 수 자체를 낮추는 것이 목표가 아니라 **workload의 지연 시간·처리량·fairness 요구를 만족하는 scheduling 결과를 만드는 것**이 목표다.
-
-### Backend worker 수와 연결해서 본다
-
-CPU-bound 작업을 처리하는 worker를 CPU capacity보다 지나치게 많이 만들면 동시에 실제 CPU에서 실행할 수 없는 runnable threads가 늘어 scheduling 경쟁과 context switching이 증가할 수 있다.
-
-하지만 blocking I/O workload에서는 worker가 block되는 동안 다른 task가 CPU를 사용할 수 있으므로 단순히 `threads = cores`가 정답도 아니다. Worker 수를 조정할 때 CPU utilization, runnable queue, context-switch rate, 지연 시간과 blocking 비율을 함께 봐야 한다.
-
-### 면접에서 이렇게 나옵니다
-
-#### Q. Mode switch와 context switch는 어떻게 다른가요?
-
-Mode switch는 같은 execution이 user/kernel privilege level을 오갈 수 있는 반면, context switch는 CPU가 **다른 execution context를 실행하도록 저장·복원하는 전환**이다. System call이나 interrupt가 kernel entry를 만들었다고 해서 항상 다른 task로 바뀌는 것은 아니라는 점까지 설명하면 좋다.
-
-Context Switch의 핵심은 “register를 바꾼다” 한 문장이 아니라 **OS가 제한된 CPU를 여러 execution context에 나누어 주기 위해 실행 상태를 안전하게 중단·복원하며, 그 과정에서 직접 overhead와 locality cost를 함께 지불한다는 것**이다.
+Context switch의 목표는 횟수를 무조건 최소화하는 것이 아니다. 너무 자주 전환하면 overhead가 커지고, 반대로 한 task를 지나치게 오래 실행하면 다른 runnable task의 응답 시간과 공정성이 나빠진다. Scheduler는 이런 비용을 감수하면서 제한된 CPU 시간을 여러 task에 배분한다.

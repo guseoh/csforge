@@ -19,19 +19,21 @@ references:
 ---
 # Scheduler Goals
 
-Scheduler가 어떤 runnable task를 먼저 실행할지 판단하려면 먼저 **무엇을 좋은 결과라고 볼지** 정해야 한다. 모든 workload에서 하나의 policy가 동시에 최소 응답 시간, 최대 처리량, 완벽한 fairness를 보장하는 것은 아니다.
+Scheduler는 runnable task 가운데 누구에게 CPU를 줄지 결정한다. 그런데 좋은 scheduling을 판단하는 기준은 하나가 아니다. 어떤 workload에서는 빠른 첫 응답이 중요하고, 어떤 workload에서는 전체 작업을 가능한 빨리 끝내거나 특정 task가 계속 밀리지 않게 하는 것이 더 중요할 수 있다.
 
-대표적인 metric은 서로 다른 질문을 한다.
+대표적인 기준은 다음처럼 서로 다른 질문에 답한다.
 
-- **Turnaround time**: job이 도착한 뒤 완료될 때까지 얼마나 걸렸는가.
-- **응답 시간**: job이 도착한 뒤 처음 CPU service를 받을 때까지 얼마나 기다렸는가.
-- **처리량**: 단위 시간 동안 얼마나 많은 job을 완료했는가.
-- **Fairness / starvation avoidance**: 특정 task가 계속 밀리지 않고 service를 받을 수 있는가.
-- **Utilization**: CPU resource가 얼마나 활용되는가.
+| 기준 | 묻는 질문 |
+| --- | --- |
+| turnaround time | 도착한 작업이 완료될 때까지 얼마나 걸렸는가 |
+| response time | 도착한 작업이 처음 CPU service를 받을 때까지 얼마나 걸렸는가 |
+| throughput | 단위 시간에 얼마나 많은 작업을 완료했는가 |
+| fairness | 특정 task가 계속 service에서 배제되지 않는가 |
+| utilization | CPU가 얼마나 활용되고 있는가 |
 
-### 같은 workload도 목표에 따라 좋은 policy가 달라진다
+### 하나의 정책이 모든 기준을 동시에 최적화할 수는 없다
 
-세 job이 동시에 도착했고 CPU burst가 다음과 같다고 하자.
+세 작업이 동시에 도착했다고 하자.
 
 ```text
 A = 100 ms
@@ -39,22 +41,12 @@ B = 10 ms
 C = 10 ms
 ```
 
-A를 먼저 끝내는 FCFS는 도착 순서라는 단순성은 있지만 B와 C의 응답/turnaround를 길게 만들 수 있다. 짧은 job을 먼저 실행하면 평균 turnaround가 줄 수 있지만, 긴 job이 계속 뒤로 밀리는 workload에서는 fairness가 나빠질 수 있다.
+A를 먼저 실행하면 도착 순서는 지키기 쉽지만 B와 C의 waiting/turnaround가 길어진다. 반대로 짧은 작업을 먼저 실행하면 평균 completion metric은 좋아질 수 있지만 긴 작업이 계속 뒤로 밀리는 workload에서는 공정성이 나빠질 수 있다.
 
-Interactive system에서는 사용자가 빠르게 첫 반응을 받는 응답 시간이 중요할 수 있고, offline batch system에서는 전체 completion/처리량이 더 중요할 수 있다. Scheduling policy는 workload 목표를 먼저 정한 뒤 비교해야 한다.
+이 때문에 뒤에서 다룰 FCFS, SJF, Round Robin, Priority Scheduling은 어느 하나가 항상 우월한 정책이 아니다. **각 정책이 어떤 목표를 우선하고 어떤 대가를 치르는지** 비교해야 한다.
 
-### 평균만 보면 starvation과 tail을 숨길 수 있다
+### 평균값만으로는 충분하지 않다
 
-평균 waiting time이 좋아도 특정 task 하나가 매우 오래 기다릴 수 있다. 특히 priority나 short-job 우선 정책에서는 low-priority/long job의 최대 wait를 함께 봐야 한다.
+평균 waiting time이 낮아도 일부 task가 지나치게 오래 기다린다면 scheduler의 liveness나 fairness 문제가 남아 있을 수 있다. 반대로 CPU utilization이 높다는 사실만으로 좋은 scheduling 결과라고 말할 수도 없다. Runnable queue가 길어져 응답 시간이 나빠진 상태에서도 CPU는 계속 바쁠 수 있기 때문이다.
 
-Backend에서도 평균 지연 시간만 낮아졌다고 좋은 queue/scheduler 정책이라고 결론 내리면 안 된다. p95/p99, timeout, queue wait, 성공률과 처리량을 같이 봐야 한다.
-
-### Utilization이 높다는 것만으로 좋은 상태는 아니다
-
-CPU 100% utilization은 CPU-bound batch에서 바람직할 수 있지만 interactive API에서는 runnable queue가 길어져 지연 시간이 폭증한 상태일 수도 있다. 반대로 I/O-heavy workload에서는 CPU가 낮아도 전체 처리량이 다른 resource에 의해 제한될 수 있다.
-
-따라서 utilization은 resource 사용 상태이지 사용자 경험이나 공정성 자체가 아니다.
-
-### Scheduling은 trade-off 선택이다
-
-Scheduler Goals를 이해하면 뒤의 FCFS, SJF, Round Robin, Priority를 “좋은 순서/나쁜 순서”로 외우지 않게 된다. 각 policy가 **어떤 metric을 어떤 workload 가정 아래 개선하고, 그 대가로 어떤 metric을 악화시킬 수 있는지** 비교하는 것이 핵심이다.
+Scheduler를 평가할 때는 workload 특성과 목표를 먼저 정하고, 그 목표에 맞는 waiting/response/turnaround와 starvation 가능성을 함께 본다. Scheduling은 단순한 실행 순서가 아니라 **제한된 CPU 시간을 서로 다른 목표 사이에서 배분하는 정책 선택**이다.

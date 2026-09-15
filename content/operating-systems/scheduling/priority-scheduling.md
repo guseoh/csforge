@@ -19,46 +19,29 @@ references:
 ---
 # Priority Scheduling
 
-Priority scheduling은 여러 runnable task 중 **더 높은 scheduling priority를 가진 task에 CPU service를 먼저 제공**하는 정책 계열이다. 긴급한 작업, 지연 시간에 민감한 task, background work를 서로 다른 중요도로 다루고 싶을 때 priority라는 추가 정보를 사용한다.
+Priority scheduling은 여러 runnable task 중 **더 높은 scheduling priority를 가진 task에 CPU service를 먼저 제공**하는 정책이다. 모든 작업을 같은 중요도로 다루지 않고 긴급도나 workload 성격을 scheduling decision에 반영할 수 있다.
 
-단순 모델에서는 높은 priority task가 낮은 priority task보다 먼저 선택된다. 같은 priority 안에서는 FIFO나 Round Robin 같은 다른 rule을 사용할 수 있다. 실제 OS에서는 scheduling class와 priority semantics가 더 복잡할 수 있으므로 특정 숫자가 항상 동일한 의미를 가진다고 일반화하지 않는다.
-
-### Static priority와 dynamic priority
-
-Priority가 항상 고정될 수도 있고, waiting time·최근 CPU 사용·interactive behavior 같은 state를 반영해 동적으로 바뀔 수도 있다.
+같은 priority 안에서는 FIFO나 Round Robin 같은 다른 규칙을 함께 사용할 수 있다. 또한 priority가 항상 고정될 필요도 없다. Scheduler가 waiting time이나 최근 CPU 사용 같은 정보를 반영해 effective priority를 바꾸는 설계도 가능하다.
 
 ```text
 Runnable tasks
-A: priority high
-B: priority medium
-C: priority low
+A: high
+B: medium
+C: low
 
-→ A 우선 service
-→ A가 block/finish하면 B/C 기회
+→ A가 먼저 선택될 가능성이 높음
 ```
 
-문제는 high-priority work가 계속 도착하는 경우다. C가 runnable 상태로 오래 존재해도 매번 A/B가 먼저 선택되면 C는 실제 CPU service를 거의 받지 못할 수 있다. 이것이 starvation 문제다.
+### 높은 priority를 우선하면 낮은 priority의 대기가 늘 수 있다
 
-### Priority는 공짜가 아니다
+High-priority task가 계속 들어오면 low-priority task는 runnable 상태인데도 CPU service를 거의 받지 못할 수 있다. 즉 priority는 중요도를 표현하는 대신 **fairness와 최대 waiting time 문제**를 만든다.
 
-High priority task의 응답 시간을 줄이면 lower priority task의 wait가 늘 수 있다. 따라서 priority 정책은 “중요한 것부터”라는 직관만으로 설계하지 않고 **최대 waiting time, minimum service rate, workload arrival rate**를 함께 봐야 한다.
+그래서 priority 정책은 단순히 "중요한 것을 먼저 실행한다"에서 끝나지 않는다. Priority를 누가 부여하는지, 낮은 priority task에도 최소한의 service 기회를 어떻게 보장할지 함께 설계해야 한다.
 
-특히 외부 사용자가 arbitrary priority 값을 직접 지정할 수 있다면 모두 자신을 high priority로 만들어 policy 의미가 무너질 수 있다. Priority assignment 자체가 별도 policy다.
+### Starvation과 priority inversion은 다른 문제다
 
-### Starvation과 Priority Inversion을 구분한다
+Priority scheduling 자체에서 낮은 priority task가 계속 밀리는 현상은 starvation이다. 다음 Concept에서 aging과 priority boost 같은 완화 방법을 다룬다.
 
-두 문제는 이름이 비슷하게 들리지만 원인이 다르다.
+반면 priority inversion은 높은 priority task가 필요한 lock이나 resource를 낮은 priority task가 보유해 간접적으로 기다리는 문제다. 이는 synchronization과 resource dependency가 핵심이므로 일반적인 scheduling starvation과 같은 해결책으로 다루지 않는다.
 
-**Starvation**은 낮은 priority task가 계속 다른 runnable task에 밀려 CPU service를 받지 못하는 현상이다. Aging이나 periodic priority boost, 최소 service guarantee 같은 scheduling policy로 완화할 수 있다.
-
-**Priority inversion**은 높은 priority task가 필요한 lock/resource를 낮은 priority task가 보유하고 있고, 중간 priority task들이 낮은 task의 실행을 방해해 높은 task가 간접적으로 오래 기다리는 현상이다. Priority inheritance는 이런 lock/resource dependency 문제를 완화하는 대표 protocol이다.
-
-따라서 priority inheritance를 일반적인 starvation 해결책으로 설명하면 안 된다. Priority inversion은 뒤의 synchronization/deadlock/liveness 학습과 연결된다.
-
-### Backend priority queue와 OS priority scheduler는 다른 층이다
-
-Application에서 요청을 `HIGH / NORMAL / LOW` queue로 나누는 것은 application scheduling policy다. 그 요청을 실행하는 Java thread가 실제 CPU를 언제 받는지는 OS scheduler가 결정한다.
-
-High-priority application queue를 만들었다고 OS thread priority까지 자동으로 올라가는 것도 아니고, OS priority를 조절했다고 DB connection이나 remote API capacity가 늘어나는 것도 아니다.
-
-Priority Scheduling의 핵심은 **중요도에 따라 CPU service order를 바꿀 수 있지만 그 결과 low-priority waiting과 fairness 문제가 생기며, starvation과 lock-based priority inversion을 서로 다른 문제로 구분해야 한다는 것**이다.
+Priority Scheduling의 핵심은 **priority가 CPU service 순서를 바꾸는 유용한 정책 정보인 동시에, 낮은 priority task의 liveness와 fairness를 별도로 보완해야 하는 기준**이라는 점이다.

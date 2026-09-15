@@ -26,30 +26,24 @@ references:
 ---
 # Atomic Operation
 
-### 다른 실행 흐름이 중간 상태를 관찰하지 못하게 한다
+Atomic operation은 concurrent execution에서 **중간 상태가 다른 실행 흐름에 노출되지 않는 하나의 indivisible state transition처럼 보이는 연산**이다.
 
-atomic operation은 concurrency 관점에서 하나의 indivisible state transition처럼 보이는 연산이다. 예를 들어 atomic increment가 `10 → 11`로 바뀌는 동안 다른 thread가 update의 중간 상태에 끼어들어 같은 이전 값을 바탕으로 별도의 read-modify-write를 완료하지 못하도록 primitive가 보장할 수 있다.
+예를 들어 atomic increment가 `10 → 11`을 보장한다면 다른 thread가 같은 이전 값 10을 기준으로 중간 단계에 끼어들어 update를 잃게 만들지 않도록 primitive가 동작한다.
 
-이 의미는 source code 한 줄이나 machine instruction 개수와 동일하지 않다. CPU가 제공하는 atomic read-modify-write primitive, OS lock, language runtime atomic type 등 서로 다른 층에서 더 큰 operation을 atomic하게 보이도록 구현할 수 있다.
+### Source code 한 줄과 atomicity는 같은 개념이 아니다
 
-### atomicity와 visibility·ordering은 같은 단어가 아니다
+`counter++`가 한 줄이라고 atomic한 것은 아니다. 반대로 내부적으로 여러 machine step을 사용하더라도 CPU atomic primitive나 lock을 이용해 더 큰 operation을 하나의 atomic transition처럼 보이게 만들 수 있다.
 
-값 하나의 update가 atomic하더라도 다른 memory access와 어떤 순서로 보이는지, update된 값을 다른 thread가 언제 관찰하는지는 memory model 계약을 따로 봐야 한다. 어떤 atomic API는 ordering semantics까지 제공하지만 `atomic = 모든 memory operation이 자동으로 순서화된다`고 일반화하면 안 된다.
+따라서 atomicity를 판단할 때는 코드 줄 수가 아니라 **어떤 observable state transition을 한 번에 보이도록 보장하는가**를 본다.
 
-이 경계는 Java에서 특히 중요하다. JMM의 happens-before나 `volatile`, atomic class의 memory-effect semantics는 Java 층의 계약이고, OS Concept에서는 원자성 자체가 무엇을 해결하고 무엇을 해결하지 않는지를 구분한다.
+### Atomicity와 ordering·visibility는 분리해서 생각한다
 
-### low-level primitive에서도 atomic 범위는 명확하다
+하나의 update가 atomic하다는 사실만으로 주변의 모든 memory access가 원하는 순서로 관찰된다는 뜻은 아니다. Language/runtime의 atomic API가 ordering이나 visibility semantics까지 제공할 수 있지만 이는 해당 memory model의 별도 계약이다.
 
-Linux의 `futex` wait 계열 동작은 user-space의 futex word 값을 확인하고 필요하면 sleep하는 과정에서, 값 비교와 blocking 진입 사이에 상대 thread의 상태 변경을 놓치는 race가 생기지 않도록 atomic compare-and-block 의미를 제공한다. 반대로 uncontended lock에서는 user-space atomic operation만으로 빠르게 성공하고 실제 contention이 있을 때 kernel의 wait/wakeup 경로를 사용할 수 있다.
+이 OS Concept에서는 원자성 자체에 집중한다. Java의 `volatile`, happens-before 같은 구체적인 보장은 Java/JMM 영역에서 따로 판단해야 한다.
 
-이 사례는 atomicity의 범위를 잘 보여 준다. primitive는 **자신이 계약한 특정 state transition**을 경쟁 없이 수행하도록 돕지만, 그 사실만으로 application의 다른 여러 field나 DB 상태까지 하나의 atomic operation으로 묶이는 것은 아니다.
+### Atomic primitive 하나가 모든 invariant를 보호하는 것은 아니다
 
-### 변수 하나와 business invariant는 크기가 다를 수 있다
+Counter 하나의 증가라면 하나의 atomic read-modify-write로 충분할 수 있다. 하지만 여러 field가 함께 바뀌어야 하나의 invariant가 유지된다면 각 field를 개별적으로 atomic하게 만드는 것만으로 전체 transition이 atomic해지지는 않는다.
 
-`attemptCount++` 하나는 atomic primitive로 충분할 수 있다. 하지만 `balance 감소 + ledger entry 생성 + status 변경`처럼 여러 state가 하나의 application invariant를 이루면 단일 atomic integer로 전체 operation을 원자적으로 만들 수 없다. 이 경우 lock, database transaction, CAS loop 또는 더 높은 수준의 protocol이 필요할 수 있다.
-
-그래서 atomic primitive를 고를 때는 `어떤 instruction을 한 번에 실행할까`보다 **어떤 observable state transition을 경쟁 없이 보장해야 하는가**를 먼저 정의해야 한다.
-
-### 핵심을 다시 연결하면
-
-`atomic`이라는 이름만 보고 thread-safe라고 결론 내리면 안 된다. 하나의 operation이 indivisible하다는 보장과 여러 operation 사이의 ordering·visibility, 그리고 여러 state가 이루는 business invariant는 서로 다른 범위의 계약이다.
+Atomic Operation의 핵심은 **primitive가 계약한 범위의 state transition을 indivisible하게 만들 뿐이며, 보호해야 할 invariant가 더 크다면 그 범위를 덮는 별도의 synchronization protocol이 필요하다는 점**이다.

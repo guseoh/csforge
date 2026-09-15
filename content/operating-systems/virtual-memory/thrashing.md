@@ -19,30 +19,31 @@ references:
 ---
 # Thrashing
 
-thrashing은 process들의 active working set을 physical memory에 안정적으로 유지할 수 없어 **page를 가져오고 내보내는 작업이 실제 application 실행보다 더 큰 비중을 차지하는 상태**다. 단순히 page fault가 존재한다고 thrashing인 것은 아니다. fault가 매우 자주 발생하고 그 처리 때문에 CPU가 useful work를 하지 못하며 storage I/O와 reclaim이 반복되는 상황을 함께 봐야 한다.
+Thrashing은 active working set을 physical memory에 안정적으로 유지하지 못해 **page를 가져오고 내보내는 작업이 실제 application 실행보다 더 큰 비중을 차지하는 상태**다. Page fault가 존재한다는 사실만으로 thrashing이라고 부르지는 않는다.
 
 ![Working set을 담지 못해 eviction과 page fault가 반복되고 useful work가 줄어드는 thrashing loop](/learning/operating-systems/thrashing-loop.svg)
 
-### 왜 메모리가 부족하면 CPU 사용률까지 떨어질 수 있는가
+```text
+working set > available frames
+        ↓
+active page eviction
+        ↓
+곧 다시 같은 page 필요
+        ↓
+page fault / page-in
+        ↓
+다른 active page eviction
+        └──────── 반복
+```
 
-process A가 page를 요청하면서 B가 곧 사용할 page를 eviction하고, B가 다시 그 page를 요청하면서 A의 active page를 밀어낸다고 하자. 둘 다 fault 처리와 I/O를 기다리는 시간이 길어지면 runnable work가 줄어 CPU utilization이 낮아질 수 있다. 이때 `CPU가 한가하니 process를 더 늘리자`고 판단하면 working-set 총합을 더 키워 상황을 악화시킬 수 있다.
+### Memory pressure가 심하면 useful work가 줄어든다
 
-전형적인 신호는 다음처럼 함께 나타난다.
+여러 process가 서로의 active page를 계속 밀어내면 fault 처리와 storage I/O를 기다리는 시간이 늘어난다. CPU가 실제 application instruction을 실행하는 시간은 줄고 memory-management work가 실행의 대부분을 차지할 수 있다.
 
-`resident pressure 증가 → eviction 증가 → page fault 증가 → page-in/write-back 증가 → useful CPU work 감소`
+이때 CPU utilization이 낮다는 사실만 보고 process 수를 더 늘리면 working-set 총합이 더 커져 오히려 상황을 악화시킬 수 있다.
 
-### replacement policy만 바꿔서는 해결되지 않는 경우
+### Replacement policy만으로 해결할 수 없는 이유
 
-working set 자체가 available memory보다 훨씬 크면 LRU 근사나 CLOCK을 더 정교하게 만들어도 모든 active page를 유지할 수 없다. 이 경우 동시 process 수나 in-flight batch를 줄이는 admission control, application working set 축소, memory 증설처럼 **수요와 capacity의 관계**를 바꿔야 한다.
+Working set 총합이 available physical memory보다 크게 부족하다면 victim을 조금 더 잘 고르는 것만으로는 active page를 모두 유지할 수 없다. 이 경우에는 동시에 resident해야 하는 working set을 줄이거나, 동시에 실행하는 workload 수를 줄이거나, memory capacity 자체를 늘리는 식으로 수요와 capacity 관계를 바꿔야 한다.
 
-### JVM/container 환경에서의 해석
-
-container memory limit 안에서는 JVM heap, native allocation, thread stack, direct buffer, file-backed page가 같은 physical-memory pressure에 영향을 줄 수 있다. heap을 크게 잡아 GC 여유를 얻은 대신 OS page cache가 계속 reclaim되면 file I/O 지연 시간이 악화될 수 있다. 반대로 page cache만 의심하면서 실제 heap leak을 놓쳐서도 안 된다.
-
-따라서 thrashing을 진단할 때 CPU, RSS 한 지표만 보지 않고 major/minor fault, reclaim, swap/page-in, storage 지연 시간, working-set 크기와 concurrency 변화를 시간축으로 함께 본다.
-
-### 면접에서 이렇게 나옵니다
-
-#### Q. Page fault가 많으면 바로 thrashing이라고 볼 수 있나요?
-
-아니다. Thrashing은 단순 fault count가 아니라 **working set을 resident로 유지하지 못해 fault·reclaim·I/O가 반복되고 useful execution이 크게 줄어드는 상태**다. Fault 종류, storage I/O, reclaim, CPU useful work와 concurrency를 함께 봐야 한다.
+Thrashing의 핵심은 **fault 수가 많다는 현상 자체가 아니라, working set을 유지하지 못해 eviction과 fault가 서로를 반복시키면서 useful execution이 크게 줄어드는 상태**라는 점이다.

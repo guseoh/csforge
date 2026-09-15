@@ -19,28 +19,23 @@ references:
 ---
 # Inode
 
-inode는 Unix 계열 filesystem을 설명할 때 file의 **이름과 분리된 내부 object metadata**를 이해하기 위한 핵심 구조다. directory entry가 `name → inode number` 관계를 저장하고, inode는 file type, owner, permission, size, timestamps, link count와 data block 위치를 찾는 정보를 가진다. 실제 inode field와 block-addressing 방식은 filesystem마다 다르지만 이름과 object metadata를 분리한다는 모델이 중요하다.
+Inode는 Unix 계열 filesystem에서 **file 이름과 분리된 filesystem object의 metadata**를 이해하기 위한 대표 구조다. Directory entry가 `name → inode number` 관계를 저장하고, inode는 file type, owner, permission, size, timestamp와 data 위치를 찾는 정보를 가진다.
 
 ![directory entry, inode metadata, data block의 관계](/learning/operating-systems/inode-file-layout.svg)
 
-### 이름은 directory에 있고 inode는 object를 설명한다
+```text
+directory entry
+"a.txt" ──> inode 42 ──> metadata + data block mapping
+```
 
-`a.txt`와 `b.txt`라는 두 hard link가 같은 inode number를 가리킬 수 있다. 이때 이름은 두 개지만 underlying file object와 content는 하나다. 한 이름을 `unlink()`해도 다른 directory entry가 남아 있다면 inode와 data는 계속 접근 가능하다. 마지막 directory link가 사라져도 process가 해당 file을 open하고 있다면 filesystem은 open reference가 끝날 때까지 object/resource를 유지할 수 있다.
+### 여러 이름이 같은 inode를 가리킬 수 있다
 
-이 구조 때문에 `pathname 삭제 = 즉시 data block 삭제`라는 등식이 성립하지 않는다.
+Hard link를 사용하면 `a.txt`와 `b.txt`가 같은 inode를 가리킬 수 있다. 한 이름을 `unlink()`해도 다른 link가 남아 있으면 file object는 계속 존재한다. 마지막 pathname link가 사라져도 열린 descriptor가 남아 있다면 object lifetime이 즉시 끝나지 않을 수 있다.
 
-### inode는 content 자체가 아니다
+따라서 pathname 삭제와 file object 삭제는 같은 사건이 아니다.
 
-inode에는 작은 metadata와 data 위치 정보가 있고 실제 file bytes는 별도 data block에 저장된다. file이 커지면 여러 block을 주소화해야 하므로 direct/indirect pointer나 extent 같은 구현 방식이 필요할 수 있다. 구체적인 방식은 filesystem마다 다르므로 `모든 inode는 동일한 direct pointer 개수를 가진다`고 일반화하면 안 된다.
+### Inode와 file content도 분리된다
 
-### metadata와 data의 persistent update는 여러 write가 될 수 있다
+Inode는 metadata와 data 위치 정보를 담고, 실제 file bytes는 별도의 data block에 저장된다. 큰 file의 block을 어떻게 가리키는지는 direct/indirect pointer, extent 등 filesystem마다 다를 수 있다.
 
-file을 늘리려면 free block 할당 상태, inode size/block mapping, 실제 data block 등 여러 persistent structure가 바뀔 수 있다. crash가 중간에 발생하면 일부만 기록될 위험이 있기 때문에 journaling이나 copy-on-write filesystem 같은 crash-일관성 설계가 필요해진다.
-
-Backend에서 temp file을 쓰고 rename으로 교체할 때도 pathname만 보면 안 된다. 새 file data, inode metadata, directory entry가 각각 어떤 시점에 durable한지는 별도의 filesystem 계약이다. 중요한 artifact를 저장한다면 application-level 상태와 checksum뿐 아니라 필요한 durability boundary까지 명확히 한다.
-
-### 면접에서 이렇게 나옵니다
-
-#### Q. inode와 filename은 어떤 관계인가요?
-
-Unix-like filesystem에서는 directory entry가 이름을 inode/object identifier에 연결하고, inode는 metadata와 data 위치 정보를 가집니다. 이 구분 덕분에 hard link, rename, unlink 후 열린 descriptor의 lifetime을 설명할 수 있습니다.
+Inode의 핵심은 **이름을 directory namespace에 두고, persistent file object의 metadata와 data 위치 정보를 별도 구조로 관리한다는 점**이다. 이 분리가 hard link, rename, unlink와 open-file lifetime을 설명하는 기반이 된다.
