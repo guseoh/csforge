@@ -5,7 +5,7 @@ topicContentKey: security.core.password
 slug: work-factor
 title: "Work factor와 로그인 검증 비용"
 summary: "password hashing을 공격자에게 비싸게 만들면서 정상 로그인 지연 시간과 서버 자원 고갈을 감당할 수 있도록 cost parameter를 측정·조정하고 알고리즘 upgrade를 계획한다."
-level: 1
+level: 2
 status: PUBLISHED
 displayOrder: 30
 references:
@@ -24,47 +24,23 @@ references:
 ---
 # Work factor와 로그인 검증 비용
 
-Password hash는 느릴수록 공격자의 brute-force 비용을 높일 수 있지만 서버도 같은 비용을 지불합니다. 로그인 한 번이 3초 걸리거나 공격자가 로그인 endpoint를 대량 호출해 CPU를 고갈시킬 수 있다면 설정이 현실적인 서비스 요구와 맞지 않습니다.
+Password hashing은 공격자가 많은 후보를 빠르게 시험하기 어렵도록 의도적으로 계산 비용을 높입니다. 하지만 정상 로그인도 같은 verifier 계산을 수행하므로 cost를 무조건 크게 잡을 수는 없습니다.
 
-### 공격자와 서버가 같은 계산을 한다
-
-```text
-정상 로그인 1회
-raw password → expensive hash → verify
-
-공격자 offline cracking
-candidate 1 → expensive hash
-candidate 2 → expensive hash
-candidate 3 → expensive hash
-...
-```
-
-우리는 정상 사용자는 가끔 로그인하지만 공격자는 수십억 후보를 시험해야 한다는 차이를 이용합니다.
-
-### work factor는 측정해서 정한다
-
-bcrypt의 cost, PBKDF2 iteration, Argon2의 memory/time parameter는 hardware와 traffic에 맞춰 조정합니다. OWASP 권고를 출발점으로 삼되 실제 production instance에서 로그인 지연 시간과 CPU/memory 사용을 측정해야 합니다.
-
-| 너무 낮음                 | 너무 높음                |
-| ------------------------- | ------------------------ |
-| offline cracking이 쉬워짐 | 정상 로그인 지연 시간 증가 |
-| 오래된 hardware 기준 설정 | DoS 자원 고갈 위험 증가  |
-
-### 알고리즘과 cost는 시간이 지나면 낡는다
-
-몇 년 뒤 hardware가 빨라지면 기존 cost가 부족할 수 있습니다. 로그인 성공 시 기존 hash format/cost를 확인해 더 강한 scheme으로 rehash하는 migration 전략을 사용할 수 있습니다.
+OWASP는 새 시스템에서 Argon2id를 우선 권고하고, 환경에 따라 scrypt나 PBKDF2를 사용하며 bcrypt는 주로 legacy 환경에서 다룹니다. 어떤 scheme을 사용하든 memory·iteration·cost 같은 parameter는 현재 hardware에서 측정해 정해야 합니다.
 
 ```text
-login success
-   │
-   ├─ encoded format 최신 → 그대로 사용
-   └─ 오래된 format/cost → 새 hash로 교체 저장
+work factor가 너무 낮음
+→ offline cracking 비용이 낮음
+
+work factor가 지나치게 높음
+→ 정상 로그인 latency·CPU/memory 비용 증가
+→ 대량 인증 요청에 대한 자원 고갈 위험 증가
 ```
 
-Spring Security의 `DelegatingPasswordEncoder`는 여러 `{id}` format을 구분해 legacy verifier와 새 encoder를 함께 운영하는 데 도움을 줄 수 있습니다.
+중요한 것은 공격자가 DB dump를 얻은 뒤 수행하는 **offline guessing**과 서비스 login endpoint를 반복 호출하는 **online attack**을 구분하는 것입니다. Work factor는 offline guessing을 비싸게 만들고, rate limiting이나 MFA는 online 공격을 제한하는 별도 방어입니다.
 
-### rate limiting과 MFA는 다른 층이다
+Hardware 성능과 권고 수준은 시간이 지나며 변하므로 저장된 hash format과 cost도 upgrade할 수 있어야 합니다. 로그인 성공 시 기존 verifier가 현재 정책보다 약한지 확인하고, raw password를 이미 검증한 그 시점에 새 parameter로 다시 hash해 저장하는 방식이 대표적입니다.
 
-느린 hash는 DB dump 이후 offline cracking 비용을 높이고, rate limit은 online login 반복 시도를 제한합니다. 서로 대체 관계가 아닙니다.
+Spring Security의 `DelegatingPasswordEncoder`처럼 여러 encoded format을 식별할 수 있는 구조는 legacy verifier와 새 scheme을 점진적으로 전환하는 데 도움을 줍니다.
 
-Work factor는 한 번 정하고 잊는 숫자가 아니라 **현재 hardware에서 정상 사용자 비용과 공격 비용 사이 간격을 유지하는 운영 parameter**입니다.
+Work factor는 고정된 마법의 숫자가 아니라 **정상 인증 비용을 감당할 수 있으면서 공격자의 password guessing 비용을 충분히 높이는 현재 환경의 security parameter**입니다.
