@@ -30,179 +30,101 @@ references:
 ---
 # GC 기본 원리와 Collector
 
-Java에서는 객체를 만들 때마다 개발자가 직접 `free()`하지 않습니다. 더 이상 사용할 수 없는 객체의 storage는 JVM의 garbage collector가 회수할 수 있습니다. 덕분에 수동 메모리 해제 실수는 크게 줄지만, GC가 "메모리 문제를 신경 쓰지 않아도 된다"는 뜻은 아닙니다.
+Java에서는 객체 storage를 개발자가 직접 `free()`하지 않습니다. JVMS는 heap에 automatic storage management system이 존재할 수 있음을 정의하고, 실제 HotSpot은 garbage collector가 더 이상 사용할 수 없는 객체의 storage를 회수합니다.
 
-서버에서는 **얼마나 자주 객체를 만들고, 얼마만큼의 객체가 오래 살아 있으며, GC가 애플리케이션 실행을 얼마나 방해하는가**가 지연 시간과 처리량에 영향을 줄 수 있습니다.
+GC가 있다는 사실은 메모리 문제를 신경 쓰지 않아도 된다는 뜻이 아닙니다. 서버에서는 **객체가 얼마나 빠르게 만들어지고, 얼마나 오래 살아 있으며, collector가 애플리케이션 실행을 얼마나 방해하는가**가 처리량과 지연 시간에 영향을 줍니다.
 
-### GC의 출발점은 unreachable 객체를 찾는 것이다
+### GC는 live object와 회수 가능한 객체를 구분해야 한다
 
-앞 Concept에서 본 것처럼 GC는 root에서 객체 graph를 따라 reachability를 판단합니다.
+앞 Concept에서 본 것처럼 collector는 살아 있는 root에서 object graph를 따라 reachability를 판단합니다.
 
 ```text
-GC Roots
-   │
-   ├─▶ A ─▶ B
-   │
-   └─▶ C
+Roots
+ ├─▶ A ─▶ B
+ └─▶ C
 
-D ─▶ E     // root에서 도달 불가
+D ─▶ E   // root에서 도달 불가
 ```
 
-D와 E처럼 root에서 도달할 수 없는 객체는 회수 대상이 될 수 있습니다.
+D와 E처럼 더 이상 reachable하지 않은 객체는 storage 회수 후보가 될 수 있습니다. 실제 collector는 살아 있는 객체를 추적하고 빈 공간을 재사용할 수 있도록 관리하며, 구현에 따라 객체를 이동하거나 heap을 압축할 수도 있습니다.
 
-여기서 collector가 해야 할 일은 단순히 "죽은 객체 찾기" 하나만은 아닙니다. 구현에 따라 살아 있는 객체를 추적하고, 비어 있는 공간을 다시 사용할 수 있게 만들고, 필요하면 객체를 이동하거나 heap을 정리해야 합니다.
+어떤 알고리즘으로 이 작업을 수행해야 하는지는 Java language나 JVMS가 하나로 정하지 않습니다.
 
-### GC가 일하는 동안 애플리케이션도 같이 실행될 수 있다
+### GC 작업과 애플리케이션 실행은 일부 구간에서 겹칠 수 있다
 
-Collector에 따라 어떤 작업은 애플리케이션 thread를 멈춘 상태에서 수행되고, 어떤 작업은 애플리케이션과 동시에(concurrently) 진행될 수 있습니다.
+Collector에 따라 어떤 작업은 애플리케이션 thread를 멈춘 상태에서 수행되고, 어떤 작업은 애플리케이션과 concurrently 진행될 수 있습니다.
 
 ```text
-시간 ─────────────────────────────▶
-Application  ██████░░████████░█████
+시간 ─────────────────────────▶
+Application  ██████░░██████░████
 GC work         ███      █████
-                ↑
-             pause 구간이 있을 수 있음
+               ↑        ↑
+             pause 가능 구간
 ```
 
-`Stop-The-World`라는 표현은 JVM이 특정 GC 작업을 위해 애플리케이션 thread들의 실행을 멈추는 구간을 설명할 때 사용합니다. 하지만 모든 collector가 모든 GC 작업을 같은 방식과 같은 길이로 멈춘다고 생각하면 안 됩니다.
+`Stop-The-World`는 JVM이 특정 GC 작업을 위해 애플리케이션 thread의 진행을 멈추는 구간을 설명합니다. 하지만 모든 collector가 모든 GC phase를 같은 방식으로 멈추는 것은 아닙니다.
 
-### 처리량과 지연 시간은 다른 목표다
+### 처리량과 pause latency는 같은 목표가 아니다
 
-GC 튜닝에서 중요한 두 축은 다음처럼 생각할 수 있습니다.
+GC 선택과 튜닝에서는 무엇을 최적화하려는지 먼저 정해야 합니다.
 
-**처리량**은 전체 시간 중 실제 애플리케이션 작업에 얼마나 많은 시간을 썼는지에 가깝습니다.
+- 처리량: 전체 시간 중 애플리케이션이 실제 일을 수행한 비율
+- pause latency: GC 때문에 애플리케이션 진행이 멈추는 시간
+- footprint: heap과 collector가 사용하는 메모리 규모
 
-**지연 시간**은 개별 요청이나 작업이 얼마나 오래 지연되는지를 봅니다. GC pause가 짧아야 하는 서비스에서는 꼬리 지연 시간(tail latency)에 민감할 수 있습니다.
+Batch 작업에서는 높은 총 처리량이 더 중요할 수 있고, 사용자 요청을 처리하는 API 서버에서는 긴 tail latency를 피하는 것이 더 중요할 수 있습니다. 한 collector가 모든 workload에서 항상 우월하다고 볼 수 없는 이유입니다.
 
-예를 들어:
+### G1과 ZGC는 HotSpot 구현 선택이다
 
-```text
-Collector A
-- 총 처리량은 높음
-- 가끔 비교적 긴 pause
-
-Collector B
-- concurrent GC 일을 더 많이 수행
-- pause 목표를 더 낮추려 함
-- CPU/메모리 overhead가 달라질 수 있음
-```
-
-무조건 하나가 더 좋다고 할 수 없습니다. Batch workload와 지연 시간에 민감한 API 서버의 목표가 다를 수 있기 때문입니다.
-
-### G1, ZGC는 Java language가 아니라 HotSpot collector다
-
-Java 언어는 "반드시 G1을 사용한다"거나 "객체는 generation 0/1/2에 있어야 한다"고 규정하지 않습니다.
-
-G1, ZGC 같은 이름은 HotSpot JVM에서 제공되는 collector 구현과 정책입니다.
+G1, ZGC 같은 이름은 Java language의 메모리 모델이 아니라 HotSpot JVM이 제공하는 collector입니다.
 
 ```text
 Java/JVMS
-- 자동 storage reclamation이 가능한 heap 모델
+  └─ heap + automatic storage management라는 추상 계약
 
 HotSpot
-- G1
-- ZGC
-- 기타 지원 collector/구현 정책
+  ├─ G1
+  ├─ ZGC
+  └─ 기타 지원 collector
 ```
 
-따라서 collector의 region 구조, barrier, concurrent phase, generation 정책을 설명할 때는 **HotSpot implementation**이라는 범위를 표시해야 합니다.
+G1은 heap을 region 단위로 관리하며 pause 목표와 처리량 사이에서 균형을 잡도록 설계된 collector입니다. ZGC는 많은 GC work를 concurrent하게 수행해 낮은 pause를 중요한 목표로 둡니다.
 
-### G1은 heap을 region 단위로 다루는 HotSpot collector다
+그렇다고 "ZGC는 pause가 0" 또는 "G1은 항상 느리다"처럼 단정하면 안 됩니다. 실제 결과는 heap 규모, live set, allocation rate, CPU 여유와 JDK version에 영향을 받습니다.
 
-G1(Garbage-First)은 큰 heap에서 예측 가능한 pause 목표를 지원하기 위해 설계된 collector입니다. Heap을 동일한 크기의 region들로 나누고, 회수 효율 등을 고려해 collection work를 계획합니다.
+### heap 크기만으로 GC 부담을 판단하지 않는다
+
+같은 8GB heap이라도 상황은 크게 다를 수 있습니다.
 
 ```text
-Heap
-[region][region][region][region][region]...
+A: live set 1GB, allocation rate 낮음
+B: live set 7GB, allocation rate 높음
 ```
 
-Young/old object가 존재하는 논리는 있지만 과거 collector의 물리적으로 고정된 연속 영역 그림을 그대로 G1에 적용하면 부정확할 수 있습니다.
-
-G1의 세부 phase와 tuning option은 HotSpot GC Tuning Guide를 기준으로 확인합니다. 여기서 중요한 학습 포인트는 **collector마다 heap 관리 방식과 pause/concurrent 작업 배치가 다르다**는 것입니다.
-
-### ZGC는 낮은 pause를 중요한 목표로 둔 collector다
-
-ZGC는 많은 GC 작업을 애플리케이션과 동시에 수행해 pause 시간을 매우 낮게 유지하는 것을 중요한 목표로 하는 HotSpot collector입니다.
-
-그렇다고:
-
-> ZGC는 pause가 0이다.
-
-라고 말하면 안 됩니다. 필요한 짧은 stop-the-world phase가 존재할 수 있고 실제 지연 시간은 heap size, allocation rate, CPU 자원과 실행 환경의 영향을 받습니다.
-
-또 낮은 pause 목표가 모든 workload에서 가장 높은 처리량이나 가장 작은 memory overhead를 의미하지 않습니다.
-
-### GC 성능은 live set과 allocation rate를 함께 봐야 한다
-
-Heap이 8GB라는 숫자만으로 GC 부담을 판단할 수 없습니다.
-
-두 프로그램을 비교해 보겠습니다.
-
-```text
-Program A
-heap 8GB
-live objects 1GB
-allocation rate 낮음
-
-Program B
-heap 8GB
-live objects 7GB
-allocation rate 매우 높음
-```
-
-같은 heap size라도 GC가 확보할 수 있는 여유와 처리해야 할 작업량이 크게 다릅니다.
-
-중요한 관찰 대상은 다음과 같습니다.
+B는 collector가 회수할 여유가 작고 계속 많은 객체를 처리해야 할 수 있습니다. 그래서 GC 문제를 볼 때는 다음을 함께 관찰합니다.
 
 - allocation rate
 - live set 크기
 - heap occupancy
-- GC pause 시간
-- GC 빈도
+- GC frequency와 pause
 - concurrent cycle 시간
 - CPU 사용량
-- allocation 실패 / memory pressure
 
-### "GC가 자주 돈다"는 증상만으로 원인을 정하지 않는다
+GC가 자주 돈다는 사실만으로 `-Xmx`를 늘리거나 collector부터 바꾸면 원인을 놓칠 수 있습니다. 실제로는 allocation 증가, cache/queue 성장, memory leak, heap sizing 문제가 원인일 수 있습니다.
 
-GC 빈도가 늘었다면:
+### collector 변경은 측정 이후의 선택이다
 
-- 실제 allocation rate가 증가했는지
-- heap이 workload에 비해 너무 작은지
-- live set이 커졌는지
-- memory leak으로 old/live objects가 쌓이는지
-- collector 설정이 workload와 맞는지
+Collector를 바꾸기 전에는 현재 문제를 구체적으로 정의합니다.
 
-를 나눠 봐야 합니다.
+```text
+p99 latency가 GC pause와 함께 상승하는가?
+throughput이 GC CPU cost 때문에 제한되는가?
+live set이 지나치게 큰가?
+allocation rate가 비정상적으로 증가했는가?
+```
 
-무조건 `-Xmx`를 늘리거나 collector부터 바꾸는 것은 측정 없는 해결책입니다.
+이 evidence가 있어야 collector 변경이나 heap sizing이 해결책인지 판단할 수 있습니다. `System.gc()`를 반복 호출해 memory pressure를 해결하려는 접근도 같은 이유로 피합니다.
 
-### `System.gc()`로 성능 문제를 해결하려 하지 않는다
+### 정리
 
-`System.gc()`는 JVM에 GC 수행을 요청하는 API이지 "지금 사용하지 않는 모든 메모리를 즉시 완벽하게 정리해라"라는 보장이 아닙니다.
-
-반복적으로 호출하면 오히려 불필요한 collection work와 pause를 만들 수 있습니다. Memory 문제는 객체가 왜 많이 만들어지고 왜 오래 살아 있는지부터 확인해야 합니다.
-
-### collector를 선택할 때 질문해야 할 것
-
-1. 지연 시간 목표가 중요한가, 총 처리량이 중요한가?
-2. heap과 live set이 얼마나 큰가?
-3. allocation rate는 어떤가?
-4. CPU 여유가 있는가?
-5. 현재 collector에서 실제 pause 문제가 관찰됐는가?
-6. 어떤 JDK/HotSpot version을 사용하고 있는가?
-
-Collector 변경은 이름 비교가 아니라 실제 목표와 measurement를 바탕으로 해야 합니다.
-
-### 문제를 풀 때 확인할 것
-
-1. unreachable과 reclaim timing을 구분합니다.
-2. pause와 concurrent GC work를 분리해서 봅니다.
-3. 처리량과 지연 시간 중 어떤 목표를 묻는지 확인합니다.
-4. G1/ZGC 특징을 Java language guarantee로 말하지 않습니다.
-5. heap size만 보지 말고 live set과 allocation rate를 봅니다.
-6. GC 문제라고 해서 무조건 heap 증설/collector 변경부터 선택하지 않습니다.
-
-### 학습 후 스스로 설명해 보기
-
-GC는 root에서 더 이상 도달할 수 없는 객체의 storage를 JVM이 자동으로 회수할 수 있게 합니다. Collector마다 객체를 추적하고 회수하는 방식, stop-the-world pause와 concurrent 작업의 비율이 달라 처리량과 지연 시간 trade-off가 생깁니다. G1과 ZGC는 HotSpot의 collector 구현이지 Java language 보장이 아니며, collector 선택은 heap 크기 하나가 아니라 live set, allocation rate, pause 목표와 실제 측정 결과를 보고 결정해야 합니다.
+GC는 더 이상 reachable하지 않은 객체의 storage를 자동으로 회수할 수 있게 합니다. 실제 collector는 pause와 concurrent work를 서로 다르게 배치하므로 처리량, 지연 시간, footprint 사이에 trade-off가 생깁니다. G1과 ZGC는 HotSpot 구현 선택이며 Java language 보장이 아닙니다. GC 문제는 heap 크기 하나보다 live set, allocation rate, pause, CPU와 workload를 함께 측정한 뒤 판단해야 합니다.

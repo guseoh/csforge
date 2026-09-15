@@ -32,77 +32,64 @@ references:
 ---
 # JMM의 happens-before와 가시성
 
-한 thread가 `data = 42`를 실행한 다음 `ready = true`를 실행했다고 해 보겠습니다. 다른 thread가 `ready == true`를 봤다면 `data == 42`도 반드시 볼 수 있을까요?
+한 thread가 `data = 42`를 실행하고 이어서 `ready = true`를 실행했다고 해 보겠습니다. 다른 thread가 나중에 `ready == true`를 읽었다는 사실만으로 `data == 42`도 반드시 본다고 결론내리려면 **두 thread 사이를 연결하는 Java Memory Model의 관계**가 필요합니다.
 
-직관적으로는 "먼저 42를 썼으니 당연하다"고 생각하기 쉽지만 여러 thread가 공유 메모리를 읽고 쓰는 Java 프로그램에서는 **어떤 동기화 관계가 있는지**를 확인해야 합니다. 이 규칙을 정의하는 것이 Java Memory Model(JMM)이고, 핵심 추론 도구 가운데 하나가 **happens-before**입니다.
+JMM은 특정 CPU cache 구조를 설명하는 문서가 아니라, 여러 thread가 공유 변수에 접근할 때 어떤 실행 결과를 Java 프로그램이 허용하는지를 정의합니다. 그 핵심 추론 도구가 **happens-before**입니다.
 
 ![happens-before와 synchronization 경계](/learning/java/happens-before.svg)
 
-### JMM은 CPU cache 이야기가 아니라 Java 프로그램의 관찰 규칙이다
+### happens-before는 관찰 가능성과 ordering을 추론하는 관계다
 
-동시성을 설명할 때 "각 CPU cache에 값이 남아 있어서 안 보인다"는 식의 그림을 자주 사용합니다. 하드웨어 이해에 도움은 될 수 있지만 그것만으로 Java의 보장을 설명할 수는 없습니다.
+JLS는 action `x`가 `y`보다 happens-before한다면 `x`가 `y`에 대해 visible하고 ordered before라고 설명합니다. 하지만 이것을 "벽시계상 x가 반드시 먼저 실행된다"로 읽으면 안 됩니다. 구현은 결과가 JMM이 허용하는 실행과 일치한다면 내부적으로 action을 재배치할 수 있습니다.
 
-Java compiler, JIT, CPU는 언어가 허용하는 범위에서 여러 최적화를 할 수 있습니다. Java 개발자가 의존할 수 있는 것은 특정 CPU cache 구현이 아니라 **JLS가 정의한 memory model**입니다.
+```text
+질문해야 할 것
+"실제로 어느 CPU 명령이 먼저 실행됐나?" X
 
-따라서 질문은 다음처럼 바꾸는 것이 좋습니다.
-
-> Thread A의 write와 Thread B의 read 사이에 Java가 보장하는 happens-before 관계가 있는가?
+"이 write와 저 read를 연결하는 happens-before 경로가 있나?" O
+```
 
 ### 같은 thread 안에서는 program order가 기본 관계를 만든다
 
 ```java
-int data = 0;
-boolean ready = false;
-
 void publish() {
     data = 42;
     ready = true;
 }
 ```
 
-한 thread 안에서 program order상 앞선 action은 뒤의 action과 happens-before 관계를 형성합니다.
+같은 thread에서 program order상 앞선 action은 뒤 action보다 happens-before합니다.
 
 ```text
 Thread A
 
 data = 42
-   │
+   │ program order
    ▼
 ready = true
 ```
 
-하지만 이것만으로 다른 thread까지 연결된 것은 아닙니다. Thread B로 넘어가는 **synchronization edge**가 필요합니다.
+하지만 이 관계만으로 다른 thread의 read까지 연결되지는 않습니다. Thread 사이에는 synchronization action이 만드는 edge가 필요합니다.
 
-### monitor unlock과 이후 같은 monitor lock이 thread 사이를 연결한다
+### monitor와 volatile은 대표적인 cross-thread edge를 만든다
 
-```java
-synchronized (lock) {
-    data = 42;
-}
-```
-
-다른 thread가 이후 같은 `lock` monitor를 획득하면 이전 unlock과 이후 lock 사이에 happens-before 관계가 있습니다.
+한 monitor의 unlock은 synchronization order상 그 뒤에 오는 같은 monitor의 lock과 synchronizes-with 관계를 만들고, 따라서 happens-before edge가 됩니다.
 
 ```text
-Thread A                       Thread B
-
-data = 42
+Thread A                     Thread B
+write data
    │
-unlock(lock) ─────────────▶ lock(lock)
-                               │
-                               ▼
-                           data 읽기
+unlock M ────────────────▶ lock M
+                              │
+                              ▼
+                           read data
 ```
 
-Transitivity까지 적용하면 `data = 42`도 Thread B의 이후 read와 연결할 수 있습니다.
-
-### volatile write와 같은 field의 이후 read도 edge를 만든다
+Volatile도 같은 방식으로 추론할 수 있습니다. 같은 volatile field에 대한 write는 synchronization order상 그 뒤의 read와 synchronizes-with 관계를 만듭니다.
 
 ```java
-class State {
-    int data;
-    volatile boolean ready;
-}
+int data;
+volatile boolean ready;
 
 void publish() {
     data = 42;
@@ -116,107 +103,68 @@ void consume() {
 }
 ```
 
-`ready = true`라는 volatile write는 같은 field의 이후 volatile read와 happens-before 관계를 만듭니다.
-
 ```text
 Thread A                         Thread B
-
-data = 42
-   │
-ready = true (volatile write)
-   │
-   └────────────────────────▶ read ready == true
-                                │
+write data
+   │ program order
+write ready=true (volatile)
+   │ synchronizes-with
+   └────────────────────────▶ read ready
+                                │ program order
                                 ▼
                               read data
 ```
 
-Program order + volatile edge + transitivity를 연결하면 publish 전에 쓴 `data`를 consume 쪽에서 안전하게 관찰하는 근거를 만들 수 있습니다.
+Happens-before는 transitive하므로 이 경로를 통해 `data = 42`에서 reader의 `data` 접근까지 관계를 연결할 수 있습니다.
 
-### Thread.start와 join도 중요한 happens-before 관계다
+### start와 join도 thread 사이의 경계를 만든다
 
-```java
-int value = 42;
-Thread worker = new Thread(() -> use(value));
-worker.start();
-```
-
-`start()`를 호출하기 전에 수행한 작업은 시작된 thread의 action과 메모리 일관성 관계를 가집니다.
-
-반대 방향에서는 worker가 수행한 action들이 다른 thread가 성공적으로 `join()`한 이후 작업과 연결됩니다.
+`Thread.start()` 호출은 시작된 thread의 action보다 happens-before하고, 한 thread의 모든 action은 다른 thread가 그 thread에 대한 `join()`에서 성공적으로 반환한 이후 action보다 happens-before합니다.
 
 ```text
-caller writes
-     │
-Thread.start()
-     │
-     ▼
+caller의 준비 작업
+      │
+   start()
+      │
+      ▼
 worker actions
-     │
+      │
 worker terminates
-     │
-Thread.join() returns
-     │
-     ▼
-caller reads
+      │
+ join() returns
+      │
+      ▼
+caller의 후속 작업
 ```
 
-### java.util.concurrent API도 더 높은 수준의 edge를 제공한다
+`java.util.concurrent`의 여러 API도 이보다 높은 수준의 memory consistency 효과를 계약으로 제공합니다. 예를 들어 Executor에 task를 제출하기 전의 action과 task 실행, 비동기 계산과 `Future.get()`, `CountDownLatch.countDown()`과 성공적인 `await()` 사이의 관계를 공식 API 문서에서 정의합니다.
 
-공식 `java.util.concurrent` 문서는 다음과 같은 메모리 일관성 효과를 정의합니다.
+### data race는 happens-before로 정확히 정의된다
 
-- task를 Executor에 제출하기 전의 action → task 실행 시작 이후
-- concurrent collection에 원소를 넣기 전의 action → 다른 thread가 그 원소에 접근/제거한 이후
-- Future의 비동기 computation action → 다른 thread의 성공적인 `Future.get()` 이후
-- `CountDownLatch.countDown()` 전 action → 해당 latch의 성공적인 `await()` 이후
-
-그래서 모든 코드를 직접 volatile/monitor로 조립하지 않고 고수준 concurrency API의 계약을 이용할 수 있습니다.
-
-### happens-before는 "벽시계상 무조건 먼저 실행됐다"는 뜻이 아니다
-
-이 용어 때문에 가장 많이 생기는 오해입니다. Happens-before는 단순한 실제 시각 비교 이름이 아니라 **Java Memory Model이 허용되는 관찰과 ordering을 설명하기 위한 관계**입니다.
-
-두 action 중 하나가 현실 시각상 먼저 실행됐더라도 필요한 happens-before 관계가 없으면 다른 thread가 그 write를 반드시 관찰한다고 결론내릴 수 없습니다.
-
-반대로 JMM은 프로그램의 결과에 영향을 주지 않는 범위에서 compiler/JIT/CPU가 내부적으로 instruction을 재배치할 수도 있게 합니다. 개발자는 최종적으로 JMM 계약에 의존해야 합니다.
-
-### happens-before가 있다고 복합 연산이 atomic한 것은 아니다
-
-`volatile int count`가 있어도:
-
-```java
-count++;
-```
-
-은 여러 thread가 동시에 안전하게 증가시키는 atomic operation이 아닙니다. Happens-before/visibility와 read-modify-write의 atomicity는 별개 문제입니다.
+JMM에서 같은 shared variable에 대한 두 접근이 conflicting하고, 서로 다른 thread에서 수행되며, 두 접근이 happens-before로 정렬되지 않았다면 프로그램에 data race가 있습니다.
 
 ```text
-happens-before -> 어떤 write를 어떤 read가 안전하게 관찰하는가
-atomicity      -> 여러 단계 사이에 다른 thread가 끼어들 수 있는가
+같은 변수에 대한 read/write 또는 write/write
+        +
+서로 다른 thread
+        +
+happens-before ordering 없음
+        =
+data race
 ```
 
-### 문제를 풀 때 edge를 직접 그린다
+Data race가 없는 올바르게 동기화된 프로그램은 sequentially consistent하게 보이는 실행을 기대할 수 있습니다. 다만 JLS가 명시하듯 data race가 없다고 해서 여러 operation을 하나의 atomic transaction처럼 묶어야 하는 논리 오류까지 자동으로 사라지는 것은 아닙니다.
 
-동시성 문제에서는 다음 순서가 효과적입니다.
+### happens-before와 atomicity를 분리한다
 
-1. Thread A의 중요한 write를 표시합니다.
-2. Thread B의 중요한 read를 표시합니다.
-3. 같은 thread 안의 program order를 그립니다.
-4. monitor/volatile/start/join/concurrent API가 만드는 cross-thread edge를 찾습니다.
-5. transitivity로 write에서 read까지 경로가 이어지는지 확인합니다.
+`volatile int count`가 있어도 `count++`는 read-modify-write 전체가 하나의 atomic operation이 아닙니다.
 
-경로가 없다면 "어차피 먼저 실행될 것 같다"는 추측으로 visibility를 보장하면 안 됩니다.
+```text
+happens-before / visibility
+→ write와 read 사이의 관찰·순서 관계
 
-### 학습 후 스스로 설명해 보기
+atomicity
+→ 여러 단계를 하나의 분할 불가능한 상태 전이로 보호할지
+```
 
-Happens-before는 Java Memory Model에서 한 thread의 action 결과를 다른 thread가 안전하게 관찰할 수 있는 ordering 관계를 추론하는 핵심 규칙이라고 설명할 수 있습니다. 같은 thread의 program order, monitor unlock→이후 lock, volatile write→이후 같은 volatile read, Thread.start/join 등이 대표적인 관계를 만들며 transitivity로 연결됩니다. 이는 특정 CPU cache를 flush한다는 구현 설명과 구분해야 하고, happens-before가 복합 연산의 atomicity까지 자동으로 보장하는 것도 아닙니다.
-
-### 면접에서 이렇게 나옵니다
-
-#### Q. happens-before를 "먼저 실행된 코드"라고 설명하면 왜 부족한가요?
-
-Happens-before는 단순한 벽시계 실행 순서가 아니라 JMM이 thread 사이의 memory visibility와 ordering을 추론하기 위해 정의한 관계입니다. 실제 시간상 write가 먼저 일어났더라도 reader까지 이어지는 synchronization edge가 없다면 그 write를 반드시 관찰한다고 말할 수 없습니다.
-
-#### Q. `volatile boolean ready`가 true가 된 뒤 일반 field `data`를 읽어도 되는 이유는 무엇인가요?
-
-Writer가 먼저 `data`를 쓰고 이어서 `ready`에 volatile write를 한 뒤, reader가 그 volatile write를 관찰하는 read를 수행한다면 program order와 volatile happens-before edge를 transitivity로 연결할 수 있습니다. 다만 이것은 `count++` 같은 복합 연산 전체를 atomic하게 만든다는 뜻은 아닙니다.
+JMM 문제를 풀 때는 중요한 write와 read를 표시하고, 같은 thread의 program order를 그린 뒤, monitor·volatile·start/join·concurrent API가 만드는 cross-thread edge를 연결해 보세요. 최종적으로 write에서 read까지 transitive happens-before 경로가 있는지를 확인하는 것이 가장 정확한 추론 방법입니다.
