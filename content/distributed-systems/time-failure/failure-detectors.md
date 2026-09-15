@@ -3,8 +3,8 @@ kind: concept
 contentKey: distributed.core.time-failure.failure-detectors
 topicContentKey: distributed.core.time-failure
 slug: failure-detectors
-title: "장애 감지기(failure detector)와 의심 판단"
-summary: "timeout 기반 liveness 판단의 false positive·false negative와 recovery state를 다룬다"
+title: "장애 감지와 의심 판단"
+summary: "heartbeat와 timeout이 node의 실제 죽음을 증명하는 것이 아니라 일정 시간 응답하지 않는다는 suspicion을 만든다는 점을 이해한다."
 level: 2
 status: PUBLISHED
 displayOrder: 30
@@ -22,36 +22,27 @@ references:
     displayOrder: 2
     relationNote: "heartbeat와 liveness 판단을 위한 Lease 확인"
 ---
-# 장애 감지기(failure detector)와 의심 판단
+# 장애 감지와 의심 판단
 
-장애 감지기(failure detector)는 node가 실제로 죽었는지 직접 보는 마법이 아니라 heartbeat, 응답 타임아웃, lease expiry 같은 관찰로 “현재 응답하지 않는다고 의심”하는 메커니즘입니다. 네트워크가 느리거나 process가 stop-the-world 중이면 살아 있는 node도 의심할 수 있고, 너무 관대하면 죽은 node를 오래 기다립니다.
-
-### false positive와 false negative
+분산 시스템에서는 다른 node가 실제로 죽었는지 즉시 확인할 방법이 없습니다. Heartbeat가 오지 않거나 요청이 timeout되면 알 수 있는 것은 **일정 시간 동안 상대의 응답을 관찰하지 못했다는 사실**뿐입니다. 그래서 failure detector는 죽음을 증명하기보다 현재 node를 의심(suspect)하는 메커니즘으로 이해하는 편이 정확합니다.
 
 ```text
-slow network / GC pause ─▶ healthy node를 dead로 의심
-partition / crash       ─▶ 실제 node를 unavailable로 판단
-long timeout            ─▶ stale owner가 오래 남음
+heartbeat 정상 수신  → reachable하다고 관찰
+heartbeat 지연       → slow인지 failed인지 아직 모름
+timeout 초과          → failed로 의심
 ```
 
-이 판단은 safety와 liveness의 trade-off입니다. 새 leader를 빨리 뽑으면 이전 leader가 아직 write할 위험이 커지고, 보수적으로 기다리면 recovery 지연 시간이 커집니다. suspicion을 곧바로 destructive action으로 바꾸지 말고 lease, quorum, epoch와 결합합니다.
+Timeout을 짧게 잡으면 실제 장애를 빨리 감지할 수 있지만 순간적인 network delay나 긴 GC pause도 장애로 오인할 수 있습니다. 반대로 timeout을 길게 잡으면 false positive는 줄어들 수 있지만 실제로 죽은 node를 오래 기다려 recovery가 늦어집니다.
 
-### heartbeat는 health check와 다르다
+Heartbeat 역시 “서비스가 정상적으로 요청을 처리할 수 있다”는 보장은 아닙니다. Process가 heartbeat는 보내지만 DB connection이 고갈돼 실제 요청은 처리하지 못할 수도 있습니다. 따라서 liveness 신호와 readiness·dependency health·사용자 latency 같은 serving 상태를 구분해야 합니다.
 
-heartbeat는 process가 coordinator와 통신할 수 있다는 신호일 뿐 DB query나 실제 요청 처리 가능성을 증명하지 않을 수 있습니다. readiness·dependency health·workload 지연 시간은 별도 signal로 관측하고, 어떤 signal이 ownership을 회수할 권한을 가지는지 명시합니다.
+```text
+process heartbeat OK
+        │
+        ├─ DB 정상 → serving 가능
+        └─ DB 장애 → heartbeat는 살아 있어도 요청 처리 실패
+```
 
-### recovery state를 설계한다
+Failure detector의 판단을 곧바로 위험한 side effect의 권한으로 사용해서도 안 됩니다. 살아 있는 node를 잘못 의심하더라도 데이터가 깨지지 않도록 leader term, quorum, lease·fencing 같은 별도 safety mechanism이 필요할 수 있습니다.
 
-partition이 끝난 뒤 old node가 재접속하면 stale cache, 미전달 write, 이전 leader의 command가 남아 있을 수 있습니다. epoch/version을 비교해 오래된 actor의 write를 거부하고, 상태를 resync한 뒤 serving을 재개합니다. “재연결 성공”과 “정합한 상태로 복귀”를 같은 상태로 표현하지 않습니다.
-
-### 문제를 풀 때 확인할 것
-
-1. detector가 실제로 관측하는 signal과 blind spot을 적습니다.
-2. timeout·heartbeat·lease duration과 recovery 지연 시간을 계산합니다.
-3. false positive가 safety를 깨뜨리지 않는지 검토합니다.
-4. heartbeat와 serving/readiness health를 구분합니다.
-5. 재접속 node의 epoch·resync·stale command 처리를 정의합니다.
-
-### 면접에서 설명한다면
-
-장애 감지기(failure detector)는 죽음을 증명하지 않고 일정 시간 응답이 없다는 suspicion을 만듭니다. timeout을 짧게 하면 빠른 복구와 false positive 비용이, 길게 하면 stale owner와 장애 감지 지연이 커집니다. lease·quorum·epoch/fencing으로 의심만으로 잘못된 side effect가 실행되지 않게 합니다.
+즉 failure detection은 **다른 node의 상태를 불완전한 관찰로 추정하는 문제**이고, 그 추정이 틀렸을 때도 correctness를 지키는 것은 coordination protocol의 별도 책임입니다.

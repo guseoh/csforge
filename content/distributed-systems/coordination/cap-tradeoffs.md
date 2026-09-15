@@ -3,8 +3,8 @@ kind: concept
 contentKey: distributed.core.coordination.cap-tradeoffs
 topicContentKey: distributed.core.coordination
 slug: cap-tradeoffs
-title: "CAP의 일관성과 가용성"
-summary: "partition 중 일관성·가용성 선택을 product invariant와 recovery policy에 연결한다"
+title: "CAP와 Partition 중 선택"
+summary: "network partition이 발생했을 때 linearizable consistency와 모든 non-failing node의 availability를 동시에 항상 보장할 수 없다는 의미를 product invariant에 연결한다."
 level: 2
 status: PUBLISHED
 displayOrder: 30
@@ -22,40 +22,29 @@ references:
     displayOrder: 2
     relationNote: "partition 중 majority availability와 write 정지 동작 확인"
 ---
-# CAP의 일관성과 가용성
+# CAP와 Partition 중 선택
 
-CAP를 정확히 이해하려면 먼저 theorem의 좁은 formal model과 실제 제품 설계를 구분해야 합니다. Gilbert와 Lynch의 정식화에서 일관성(consistency)은 atomic read/write object, 즉 linearizability에 해당하는 single-copy 일관성이고, 가용성(availability)은 partition 속에서도 **non-failing node가 받은 모든 요청이 결국 응답을 반환하는 것**입니다. Network가 message loss·partition을 허용하는 상황에서는 같은 operation 집합에 대해 이 일관성과 가용성을 동시에 항상 보장할 수 없습니다.
+CAP를 “데이터베이스는 C·A·P 중 두 개만 고른다”는 제품 분류표처럼 외우면 실제 의미를 놓치기 쉽습니다. CAP가 다루는 핵심 상황은 **network partition 때문에 서로 통신할 수 없는 node들이 생겼을 때도 어떤 보장을 유지할 것인가**입니다.
 
-이 정의는 “데이터베이스가 평소에 C/A/P 중 두 개만 가진다”는 제품 라벨이 아닙니다. Partition이 없는 정상 상태의 지연 시간·처리량·cost trade-off나, 최종 일관성·read-your-writes 같은 다양한 약한 일관성 model 전체를 CAP 하나로 설명할 수도 없습니다.
-
-### partition에서 어떤 operation을 중단할지 결정한다
+Formal CAP 모델에서 consistency는 하나의 복사본처럼 보이는 linearizable read/write 의미에 가깝고, availability는 실패하지 않은 node가 받은 모든 요청이 결국 응답을 반환하는 성질입니다. Partition이 지속되는 동안에는 이 두 성질을 동시에 항상 유지할 수 없습니다.
 
 ```text
-partition 발생
-  ├─ formal C 보존: 일부 side의 read/write를 wait/reject해서 single-copy order 보호
-  └─ A 보존: 서로 통신 못 하는 side도 계속 응답하도록 허용하고 formal C를 완화
+network partition
+
+side A  X  side B
+
+C를 지키려면
+→ authority/quorum을 확인할 수 없는 일부 요청을 wait/reject
+
+A를 지키려면
+→ 양쪽이 계속 응답하도록 허용
+→ stale/conflict 가능성을 받아들여 더 약한 consistency 사용
 ```
 
-잔액 차감·권한 변경처럼 stale/conflicting operation이 허용되지 않는 state에서 linearizable 일관성을 지키려면 quorum/authority를 얻지 못한 side의 일부 operation을 reject·wait·pending 처리할 수 있습니다. 반대로 partition된 각 side가 stale 또는 conflict 가능성을 감수하면서 계속 read/write에 성공 응답하도록 하면 가용성을 높일 수 있지만 formal CAP 일관성은 포기한 것입니다.
+잔액이나 권한처럼 충돌이 잘못된 business state를 만드는 데이터는 partition 동안 일부 write를 거절하거나 pending으로 두더라도 강한 ordering을 유지하는 선택이 자연스러울 수 있습니다. 반면 좋아요 수나 일부 derived view처럼 merge 가능한 데이터는 양쪽에서 진행한 뒤 reconnect 후 합치는 선택을 할 수 있습니다.
 
-### formal theorem을 product contract로 번역한다
+여기서 “강한 일관성을 포기한다”는 말도 구체화해야 합니다. Read-your-writes, bounded staleness, eventual convergence처럼 제품이 실제로 제공할 더 약한 consistency contract를 별도로 명시하는 편이 좋습니다.
 
-실제 제품은 CAP의 C보다 다양한 일관성 contract를 사용합니다. 예를 들어 read-after-write, bounded staleness, conflict-free merge처럼 더 약한 보장을 선택할 수 있습니다. 이들을 설계하는 것은 중요하지만 “CAP 일관성”라는 이름으로 뭉뚱그리지 않습니다. 어떤 operation이 partition 중 reject·pending·stale 응답을 허용하는지, 어떤 invariant는 절대 깨면 안 되는지 API 수준에서 적어야 합니다.
+Partition이 끝난 뒤의 recovery도 설계의 일부입니다. Availability를 우선해 양쪽에서 progress했다면 conflict merge와 invariant 복구가 필요하고, consistency를 우선해 요청을 중단했다면 quorum 회복 뒤 pending request와 backlog를 처리해야 합니다.
 
-좋아요 수나 추천 cache처럼 merge 가능한 state는 local progress와 eventual convergence를 선택할 수 있고, 잔액·권한·unique allocation처럼 conflict 비용이 큰 state는 single authority·consensus/quorum 기반 commit을 사용해 가용성을 일부 포기할 수 있습니다. 핵심은 저장소 제품의 CP/AP 라벨보다 **operation과 invariant 단위 선택**입니다.
-
-### recovery가 선택의 일부다
-
-가용성을 우선해 partition 양쪽에서 progress를 허용했다면 reconnect 후 conflict resolution·replay·invariant restoration이 필요합니다. 일관성을 우선해 일부 operation을 중단했다면 quorum 회복 전 unavailable/pending 요청과 backlog를 처리해야 합니다. 두 경우 모두 partition detection, operator visibility, repair와 사용자에게 보일 상태까지 테스트합니다.
-
-### 문제를 풀 때 확인할 것
-
-1. formal CAP의 일관성과 가용성 정의를 먼저 고정합니다.
-2. partition 중 어떤 operation이 응답을 계속해야 하는지와 어떤 operation을 wait/reject할지 정합니다.
-3. 더 약한 product 일관성을 선택한다면 그 보장을 별도 이름으로 명시합니다.
-4. violated invariant·conflict merge 또는 quorum recovery 절차를 둡니다.
-5. 정상 상태의 지연 시간·cost trade-off와 partition 상태의 CAP impossibility를 혼동하지 않습니다.
-
-### 면접에서 설명한다면
-
-CAP의 formal 일관성은 linearizable single-copy semantics이고 가용성은 non-failing node가 받은 모든 요청이 결국 응답을 반환하는 성질입니다. Partition이 실제로 communication을 끊는 동안 두 성질을 모두 항상 보장할 수 없으므로 operation별로 wait/reject해서 일관성을 지킬지, 계속 응답하면서 더 약한 일관성을 허용할지 선택합니다. 이후 conflict repair·backlog·사용자 상태까지 포함해야 실제 제품 계약이 됩니다.
+CAP가 주는 실무적 질문은 제품에 `CP`나 `AP`라는 라벨을 붙이는 것이 아니라 **partition 중 어떤 operation을 계속 허용하고 어떤 invariant 때문에 중단할 것인지 명시하는 것**입니다. 정상 상태의 latency·cost trade-off는 이 문제와 별도로 판단해야 합니다.
