@@ -3,8 +3,8 @@ kind: concept
 contentKey: computer-architecture.core.datapath-control.alu-datapath
 topicContentKey: computer-architecture.core.datapath-control
 slug: alu-datapath
-title: "ALU·Datapath"
-summary: "register·ALU·memory·writeback 사이에서 instruction data가 이동하는 datapath를 설명한다."
+title: "ALU와 Datapath"
+summary: "register에서 읽은 값이 ALU·memory interface·multiplexer를 지나 결과 state로 기록되는 datapath를 instruction별로 추적한다."
 level: 1
 status: PUBLISHED
 displayOrder: 10
@@ -17,49 +17,30 @@ references:
     recommendation: "register와 combinational datapath 사이의 timing 관계를 확인한다."
     displayOrder: 1
 ---
-# ALU·Datapath
+# ALU와 Datapath
 
-### Instruction의 의미는 값이 흐르는 경로로 구현된다
+ISA가 `ADD`, `LOAD`, `STORE` 같은 instruction의 의미를 정의했다면 CPU 내부에는 그 의미를 실제 값의 이동으로 구현하는 경로가 필요합니다. **Datapath**는 register, ALU, multiplexer, memory interface처럼 data가 이동하고 변환되는 hardware 경로입니다.
 
-Datapath는 instruction을 실행하는 동안 data가 이동하고 변환되는 hardware 경로다. Register file에서 operand를 읽고, multiplexer가 필요한 입력을 선택하고, ALU가 계산을 수행하며, 필요하면 data memory를 접근한 뒤 결과를 다시 register에 기록한다. ISA에서 `ADD`, `LOAD`, `STORE`처럼 서로 다른 의미를 가진 instruction은 같은 hardware component 일부를 공유하면서도 서로 다른 경로를 사용한다.
+ALU(Arithmetic Logic Unit)는 덧셈·뺄셈·논리 연산·비교 같은 계산을 수행합니다. 하지만 CPU 전체가 ALU 하나로 이루어진 것은 아닙니다. ALU는 datapath의 한 구성요소이고, operand를 고르는 mux와 값을 저장하는 register 같은 요소가 함께 동작해야 instruction 하나의 결과가 만들어집니다.
 
-ALU(Arithmetic Logic Unit)는 덧셈·뺄셈·AND·OR·비교 같은 연산을 수행하는 combinational logic이다. 하지만 CPU datapath 전체가 ALU 하나라는 뜻은 아니다. PC, register file, immediate generator, mux, memory interface, pipeline register 같은 component도 함께 있어야 instruction의 architectural effect를 만들 수 있다.
-
-### R-type 계산과 load는 같은 ALU를 다르게 사용한다
-
-단순한 R-type arithmetic을 생각해 보자.
+Register-register 덧셈은 다음처럼 단순화할 수 있습니다.
 
 ```text
 register rs1 ─┐
-              ├─> ALU ──> result ──> register rd
+              ├─▶ ALU(add) ─▶ result ─▶ register rd
 register rs2 ─┘
 ```
 
-두 source register 값을 ALU에 넣고 연산 결과를 destination register에 기록한다.
-
-Load instruction에서는 같은 ALU가 memory address 계산에 쓰일 수 있다.
+Load instruction에서는 같은 ALU가 최종 데이터가 아니라 memory address를 계산하는 데 사용될 수 있습니다.
 
 ```text
-register rs1 ─┐
-              ├─> ALU(add) ──> effective address ──> data memory
- immediate  ──┘                                  │
-                                                ▼
-                                          loaded value
-                                                │
-                                                ▼
-                                           register rd
+base register ─┐
+               ├─▶ ALU(add) ─▶ address ─▶ memory ─▶ register rd
+immediate ─────┘
 ```
 
-즉 ALU의 역할은 instruction마다 달라질 수 있다. `ADD`에서는 최종 data result를 만들고, `LOAD`에서는 address를 계산한다. Control logic은 mux와 write-enable을 설정해 어느 값이 어느 경로를 지나갈지 선택한다.
+즉 같은 hardware component를 여러 instruction이 공유하되 **어떤 값을 입력으로 선택하고 결과를 어디에 기록할지**가 달라집니다. 이 선택을 다음 Concept의 control unit이 담당합니다.
 
-### Combinational logic과 state를 구분한다
+Datapath 안에서도 계산하는 부분과 값을 기억하는 부분을 구분해야 합니다. ALU와 mux 같은 combinational logic은 현재 입력에 따라 출력을 만들고, register와 PC 같은 state element는 clock을 기준으로 값을 보존합니다.
 
-ALU와 mux는 입력이 바뀌면 전파 지연 뒤 출력이 바뀌는 combinational logic이다. 반면 register와 PC는 clock edge를 기준으로 state를 보존하는 sequential element다. 이 구분이 있어야 Clock Cycle과 Critical Path를 이해할 수 있다.
-
-한 cycle 안에서 `register output → combinational datapath → next register input`이 안정되어야 다음 clock edge에서 올바른 state를 저장할 수 있다. 따라서 datapath가 길어지면 clock period의 하한에도 영향을 준다.
-
-### Datapath 문제와 pipeline hazard는 같은 문제가 아니다
-
-Operand가 아직 준비되지 않았거나 execution resource가 충돌하는 문제는 pipeline scheduling/hazard와 연결된다. Datapath라는 물리적 경로가 존재하는 것만으로 dependency가 해결되는 것은 아니다. Forwarding network, stall control, multiple execution unit 같은 microarchitecture mechanism이 추가로 필요할 수 있다.
-
-Backend 성능 분석에서도 source expression 수만 세지 않는다. JIT가 만든 실제 instruction dependency, load/store, vector instruction과 cache miss를 함께 봐야 한다. 다만 이런 microarchitecture 성능 특성을 Java language guarantee나 application correctness 규칙으로 일반화해서는 안 된다.
+Datapath를 이해하는 핵심은 instruction 이름을 외우는 것이 아니라 **어떤 state에서 값이 출발해 어떤 계산을 거쳐 어느 state를 바꾸는지 경로를 그릴 수 있는 것**입니다.
