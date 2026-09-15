@@ -19,8 +19,28 @@ references:
 ---
 # TIME_WAIT
 
-보통 TCP의 active closer는 close handshake 뒤 TIME_WAIT에 머문다. 이 상태는 지연된 segment가 같은 local/remote tuple을 재사용한 새 connection state와 섞이지 않게 하고, peer가 마지막 ACK를 받지 못해 FIN을 재전송했을 때 다시 ACK할 수 있는 시간을 남긴다. 표준 설명의 2MSL 개념처럼 일정 기간 유지되는 correctness state이지 단순한 memory leak가 아니다.
+TCP close sequence가 끝난 직후 일부 endpoint는 바로 connection state를 완전히 버리지 않고 **TIME_WAIT 상태로 일정 시간 유지**한다. 이 상태는 단순한 낭비가 아니라 이전 connection의 지연 segment와 close handshake를 안전하게 처리하기 위한 correctness mechanism이다.
 
-짧은 connection을 대량으로 만들면 active closer 쪽에 TIME_WAIT socket과 ephemeral port 사용이 누적되어 새 connect가 실패할 수 있다. server가 항상 TIME_WAIT를 만드는 것도 아니고, socket option으로 무리하게 tuple을 재사용하면 늦은 segment 오인이나 protocol violation 위험이 있으므로 원인과 안전한 reuse 조건을 확인해야 한다.
+### 마지막 ACK를 다시 보낼 수 있어야 한다
 
-keep-alive와 connection reuse는 handshake뿐 아니라 TIME_WAIT pressure도 줄인다. load test에서 TIME_WAIT 수가 많다고 kernel timeout을 무조건 줄이지 말고, 어느 쪽이 active close를 수행했는지, 실제 ephemeral port/NAT port exhaustion인지, connection pool과 peer idle timeout이 어떤지 먼저 확인한다.
+Active closer가 peer의 FIN에 대한 마지막 ACK를 보냈는데 그 ACK가 유실되면 peer는 FIN을 다시 보낼 수 있다. TIME_WAIT 상태가 남아 있으면 endpoint는 같은 FIN을 다시 인식하고 ACK를 재전송할 수 있다.
+
+```text
+peer FIN
+  ↓
+last ACK 전송 ──X 유실
+  ↓
+TIME_WAIT 유지
+  ↓
+peer FIN 재전송
+  ↓
+ACK 다시 전송
+```
+
+### 오래된 segment와 새 connection을 구분한다
+
+Network에 지연되어 있던 이전 connection의 segment가 뒤늦게 도착할 수 있다. 동일한 endpoint tuple을 너무 빨리 새 connection에 재사용하면 이런 segment가 새 connection state와 혼동될 위험이 있다. TIME_WAIT는 충분한 시간이 지나 old segment가 사라질 기회를 준다.
+
+RFC 9293의 전통적인 모델에서는 TIME_WAIT가 2 MSL 동안 유지된다. 구체적인 구현 최적화는 있을 수 있지만, 핵심 목적은 **마지막 close ACK의 신뢰성과 이전 connection의 지연 segment 격리**다. citeturn500576search2
+
+TIME_WAIT의 핵심은 **종료된 connection의 transport state를 잠시 보존해 close handshake와 delayed segment를 안전하게 처리하는 것**이다.
