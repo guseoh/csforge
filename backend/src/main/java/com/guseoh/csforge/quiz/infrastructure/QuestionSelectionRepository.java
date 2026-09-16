@@ -1,7 +1,10 @@
 package com.guseoh.csforge.quiz.infrastructure;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -27,7 +30,7 @@ import com.guseoh.csforge.wrongnote.domain.WrongNote;
 import com.guseoh.csforge.wrongnote.domain.WrongNoteStatus;
 
 /**
- * 퀴즈 생성 조건에 맞는 문제 수와 안정적인 문제 ID 목록을 JPA Criteria로 조회하는 저장소이다.
+ * 퀴즈 생성 조건에 맞는 문제 수와 문제 ID 목록을 JPA Criteria로 조회하는 저장소이다.
  */
 @Repository
 @RequiredArgsConstructor
@@ -48,10 +51,19 @@ public class QuestionSelectionRepository {
                 .distinct(true)
                 .orderBy(builder.asc(question.get("id")));
 
-        List<Long> ids = entityManager.createQuery(query)
-                .setMaxResults(limit)
-                .getResultList();
-        return new QuestionSelectionResult(count(criteria), ids);
+        List<Long> ids = entityManager.createQuery(query).getResultList();
+        List<Long> selectedIds = criteria.state() == QuizQuestionState.ALL && criteria.conceptIds().isEmpty()
+                ? randomSubset(ids, limit, ThreadLocalRandom.current())
+                : List.copyOf(ids.subList(0, Math.min(limit, ids.size())));
+        return new QuestionSelectionResult(ids.size(), selectedIds);
+    }
+
+    static List<Long> randomSubset(List<Long> ids, int limit, Random random) {
+        List<Long> shuffled = new ArrayList<>(ids);
+        if (shuffled.size() > limit) {
+            Collections.shuffle(shuffled, random);
+        }
+        return List.copyOf(shuffled.subList(0, Math.min(limit, shuffled.size())));
     }
 
     public long count(QuizQuestionSelectionCriteria criteria) {
