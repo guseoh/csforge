@@ -30,7 +30,7 @@ import com.guseoh.csforge.wrongnote.domain.WrongNote;
 import com.guseoh.csforge.wrongnote.domain.WrongNoteStatus;
 
 /**
- * 퀴즈 생성 조건에 맞는 문제 수와 무작위 문제 ID 목록을 JPA Criteria로 조회하는 저장소이다.
+ * 퀴즈 생성 조건에 맞는 문제 수와 문제 ID 목록을 JPA Criteria로 조회하는 저장소이다.
  */
 @Repository
 @RequiredArgsConstructor
@@ -52,9 +52,10 @@ public class QuestionSelectionRepository {
                 .orderBy(builder.asc(question.get("id")));
 
         List<Long> ids = entityManager.createQuery(query).getResultList();
-        return new QuestionSelectionResult(
-                ids.size(),
-                randomSubset(ids, limit, ThreadLocalRandom.current()));
+        List<Long> selectedIds = criteria.state() == QuizQuestionState.ALL && criteria.conceptIds().isEmpty()
+                ? randomSubset(ids, limit, ThreadLocalRandom.current())
+                : List.copyOf(ids.subList(0, Math.min(limit, ids.size())));
+        return new QuestionSelectionResult(ids.size(), selectedIds);
     }
 
     static List<Long> randomSubset(List<Long> ids, int limit, Random random) {
