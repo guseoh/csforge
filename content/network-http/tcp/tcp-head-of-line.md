@@ -4,7 +4,7 @@ contentKey: network-http.core.tcp.tcp-head-of-line
 topicContentKey: network-http.core.tcp
 slug: tcp-head-of-line
 title: "TCP Head-of-Line Blocking"
-summary: "앞선 loss가 뒤 byte의 ordered delivery를 막는 stream-level HOL을 설명한다."
+summary: "앞선 loss가 뒤 byte 전달을 막는 stream-level HOL을 설명한다."
 level: 2
 status: PUBLISHED
 displayOrder: 120
@@ -19,15 +19,23 @@ references:
 ---
 # TCP Head-of-Line Blocking
 
-TCP는 하나의 connection 안에서 byte를 순서대로 application에 전달해야 하므로, 앞선 sequence 범위가 loss되면 그 뒤 sequence의 segment가 network에서 먼저 도착해도 **gap 뒤 bytes를 application stream에 먼저 노출할 수 없다.** missing range가 복구될 때까지 뒤의 ordered delivery가 지연되는 것이 TCP stream-level head-of-line blocking이다.
+TCP는 하나의 connection에서 bytes를 **sequence 순서대로 application에 전달**한다. 따라서 앞선 sequence 범위가 유실되면 그보다 뒤의 data가 먼저 도착해도 missing range가 복구되기 전에는 뒤 bytes를 application stream에 먼저 넘길 수 없다. 이것이 TCP stream-level head-of-line(HOL) blocking이다.
 
-많은 TCP 구현은 out-of-order segment를 receive queue에 보관했다가 missing bytes가 도착하면 연속 범위를 빠르게 전달한다. 하지만 이 buffering 자체를 모든 구현의 절대 보장으로 만들지는 않는다. RFC 9293은 가능한 경우 out-of-order segment queueing을 `SHOULD`로 규정한다. resource 제약 등으로 뒤 segment를 보관하지 않더라도 sender retransmission을 통해 gap을 다시 받아야 하고, 어느 경우든 application에는 순서를 건너뛴 stream을 제공해서는 안 된다.
+```text
+sequence:
+[A][B][lost][D][E]
+        ↑
+        gap
 
-HTTP/2는 여러 요청/응답 stream을 하나의 TCP connection에 frame으로 multiplex하지만, TCP 아래에서는 모든 frame bytes가 같은 ordered byte stream에 놓인다. 따라서 transport의 missing byte 범위가 복구될 때까지 그 뒤에 놓인 여러 HTTP/2 stream frame 전달이 함께 지연될 수 있다. QUIC 기반 HTTP/3은 여러 stream의 reliability를 transport에서 분리해 **한 QUIC stream의 missing data가 다른 stream의 ordered delivery를 TCP와 같은 방식으로 막지 않도록** 설계한다. 다만 QUIC connection 자체의 congestion control과 shared network loss가 사라지는 것은 아니다.
+D/E가 먼저 도착해도 application delivery는 gap 복구를 기다림
+```
 
-Backend에서 HTTP/2와 HTTP/3 지연 시간을 비교할 때 multiplexing 여부만 보지 말고 packet loss·RTT·congestion·server capacity를 같은 조건에서 측정한다. connection 수를 무작정 늘리면 TCP HOL의 영향을 분산할 수 있어도 handshake·socket·memory와 congestion 경쟁 비용이 커질 수 있다.
-### TCP stream HOL
-    stream: [A][A][lost][A][B][B]
-                       ▲ missing byte
-    application delivery: A와 B 모두 대기
-ordered stream은 missing position 뒤 bytes를 먼저 전달하지 않는다.
+Receiver는 out-of-order data를 보관할 수 있지만, 보관 여부와 관계없이 application에는 gap을 건너뛴 ordered stream을 제공할 수 없다. Missing bytes가 retransmission으로 도착하면 연속된 범위를 다시 전달할 수 있다.
+
+### HTTP/2와 연결되는 이유
+
+HTTP/2는 여러 logical stream을 하나의 TCP connection 위에 multiplex할 수 있다. 하지만 그 frame bytes는 결국 하나의 TCP byte stream에 놓인다. TCP의 앞선 byte 범위가 loss되면 그 뒤에 있는 여러 HTTP/2 stream의 bytes도 transport delivery를 기다릴 수 있다.
+
+QUIC은 stream별 ordered delivery를 transport에서 분리해 한 stream의 missing data가 다른 stream의 delivery까지 같은 방식으로 막는 문제를 줄인다. 다만 shared network congestion 자체가 없어지는 것은 아니다.
+
+TCP HOL의 핵심은 **ordered byte stream이라는 보장 때문에 앞선 missing byte가 뒤의 이미 도착한 bytes까지 application delivery에서 기다리게 만든다는 것**이다.

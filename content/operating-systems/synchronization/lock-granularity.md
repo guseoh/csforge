@@ -19,43 +19,28 @@ references:
 ---
 # Lock Granularity
 
-Lock을 어디까지 하나로 묶을지는 correctness와 parallelism을 동시에 바꿉니다. 큰 범위를 하나의 lock으로 보호하면 규칙은 단순해지지만 독립적인 작업까지 서로 기다리고, 작은 단위로 쪼개면 동시에 진행할 수 있는 범위는 커지지만 여러 lock을 조합하는 protocol이 복잡해집니다.
+Lock granularity는 **하나의 lock이 어느 범위의 state를 함께 보호할지**에 대한 선택이다. 큰 범위를 하나의 lock으로 보호하면 규칙은 단순해지지만 서로 독립적인 작업까지 직렬화될 수 있고, 작은 범위로 나누면 병렬성은 늘 수 있지만 여러 lock의 관계를 관리해야 한다.
 
-### coarse와 fine은 속도 순위가 아니라 보호 범위의 선택이다
-
-| 기준 | Coarse-grained lock | Fine-grained lock |
+| 구분 | Coarse-grained | Fine-grained |
 | --- | --- | --- |
-| 보호 범위 | 큰 state를 하나의 lock domain으로 묶음 | bucket·shard·node 등 작은 단위로 분리 |
-| reasoning | 비교적 단순 | 여러 lock의 관계를 함께 추론해야 함 |
-| parallelism | 독립 작업도 직렬화될 수 있음 | 서로 다른 영역은 병렬 진행 가능 |
-| 주요 위험 | hot global lock, queueing | lock ordering, deadlock, composite invariant 복잡도 |
+| 보호 범위 | 큰 state를 하나로 묶음 | 작은 독립 영역으로 나눔 |
+| reasoning | 비교적 단순 | 여러 lock 관계가 복잡 |
+| parallelism | 독립 작업도 기다릴 수 있음 | 다른 영역은 병렬 가능 |
+| 위험 | hot global lock | ordering·deadlock·복합 invariant |
 
-Fine-grained locking에서 중요한 것은 lock 수 자체가 아닙니다. **실제로 독립적인 invariant를 서로 다른 lock domain으로 분리할 수 있는가**가 먼저입니다.
+### Fine-grained lock은 state도 실제로 분리 가능해야 한다
 
-### hash table을 쪼개면 resize가 어려워지는 이유
-
-Hash table 전체를 global lock 하나로 보호하면 lookup과 update가 같은 lock을 두고 경쟁하지만, resize를 포함한 전체 구조의 invariant는 비교적 단순하게 유지할 수 있습니다.
+예를 들어 hash table을 bucket별 lock으로 나누면 서로 다른 bucket의 update는 동시에 진행할 수 있다. 하지만 resize처럼 여러 bucket mapping을 한꺼번에 변경하는 operation은 하나의 bucket lock만으로 보호할 수 없다.
 
 ```text
-Global lock
-  └─ bucket 0 / bucket 1 / bucket 2 / bucket 3 모두 보호
+L0 → bucket 0
+L1 → bucket 1
+L2 → bucket 2
 
-Bucket locks
-  ├─ L0 → bucket 0
-  ├─ L1 → bucket 1
-  ├─ L2 → bucket 2
-  └─ L3 → bucket 3
-
-resize → 여러 bucket의 mapping을 함께 변경
-       → 하나의 bucket lock만으로는 부족
+resize → 여러 bucket을 함께 변경
+       → 추가 coordination 필요
 ```
 
-Bucket별 lock을 사용하면 서로 다른 bucket의 lookup/update는 동시에 진행할 수 있습니다. 하지만 resize처럼 table 크기와 여러 bucket mapping을 한꺼번에 바꾸는 operation은 여러 lock을 일정한 순서로 획득하거나 별도의 global coordination을 두는 등 추가 protocol이 필요합니다.
+Fine-grained locking에서 어려운 점은 lock 수 자체가 아니라 **여러 lock을 동시에 필요로 하는 operation의 invariant와 획득 순서**다. 획득 순서가 일관되지 않으면 deadlock 가능성도 커진다.
 
-여러 lock을 동시에 잡아야 한다면 획득 순서도 correctness의 일부가 됩니다. T1은 A→B, T2는 B→A 순서로 잡는다면 fine-grained locking으로 얻은 parallelism보다 deadlock 위험이 더 큰 문제가 될 수 있습니다.
-
-### granularity는 측정한 contention과 invariant에서 출발한다
-
-Global lock이 있다는 사실만으로 바로 64개의 shard lock으로 바꾸면 안 됩니다. 실제 wait가 거의 없었다면 acquire/release 관리와 lock routing 비용만 늘고, 여러 shard를 함께 바꾸는 business invariant까지 복잡해질 수 있습니다.
-
-개선할 때는 보통 `contention 측정 → hot critical section 확인 → 독립 가능한 state/invariant 확인 → granularity 변경 → deadlock·throughput·tail latency 재측정` 순서로 접근합니다. Lock을 많이 만드는 것이 목적이 아니라 **필요한 correctness를 유지하면서 불필요한 serialization을 줄이는 것**이 목적입니다.
+Lock Granularity의 핵심은 **correctness를 유지할 만큼 충분한 범위를 보호하면서, 서로 독립적인 작업까지 불필요하게 직렬화하지 않도록 lock domain을 정하는 것**이다.

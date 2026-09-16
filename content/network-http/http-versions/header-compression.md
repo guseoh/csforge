@@ -4,7 +4,7 @@ contentKey: network-http.core.http-versions.header-compression
 topicContentKey: network-http.core.http-versions
 slug: header-compression
 title: "Header Compression"
-summary: "반복 header 전송을 줄이는 compression state와 위험 경계를 설명한다."
+summary: "HTTP/2 HPACK과 HTTP/3 QPACK이 반복 header field를 connection-level state로 압축하는 이유를 설명한다."
 level: 2
 status: PUBLISHED
 displayOrder: 70
@@ -19,9 +19,18 @@ references:
 ---
 # Header Compression
 
-HPACK(HTTP/2)과 QPACK(HTTP/3)은 자주 반복되는 header field를 static/dynamic table의 index와 literal encoding으로 표현해 header overhead를 줄인다. dynamic table은 connection과 encoder/decoder state에 묶이므로 각 header를 독립적으로 압축하는 방식이 아니며, table context가 맞지 않으면 decoder가 같은 값을 복원할 수 없다. QPACK은 HTTP/3의 별도 encoder/decoder stream과 blocking 제약을 사용한다.
+HTTP request와 response에는 같은 header field name과 value가 반복해서 나타날 수 있다. HTTP/2의 HPACK과 HTTP/3의 QPACK은 이런 반복을 그대로 매번 전송하지 않고 static table, dynamic table과 compact encoding을 사용해 header overhead를 줄인다.
 
-header compression은 TLS encryption이나 authorization이 아니다. 민감한 header와 attacker-controlled 입력이 같은 compression context에 섞이면 응답/요청 length 관측으로 secret을 추론하는 side-channel 위험이 생길 수 있어 dynamic table size, indexing policy와 민감 field 취급을 protocol·deployment별로 정한다.
+Dynamic table은 connection의 encoder와 decoder가 공유하는 compression state다. Sender가 table entry를 index로 참조하면 receiver도 같은 state를 알고 있어야 원래 header를 복원할 수 있다.
 
-Backend에서 Authorization·Cookie의 compression, forwarding과 logging 정책을 분리한다. proxy가 HTTP/2를 종료하고 HTTP/1.1로 연결하면 HPACK/QPACK state가 사라지고 header syntax, framing과 connection semantics가 다음 hop에서 다시 달라진다.
+```text
+repeated header field
+   ↓ dynamic/static table
+small index / encoded form
+   ↓
+receiver reconstructs header
+```
 
+HTTP/3의 QPACK은 QUIC의 independent streams 환경에서 header decoding이 불필요하게 전체 request stream을 막지 않도록 HPACK과 다른 synchronization 구조를 사용한다.
+
+Header compression은 encryption이나 authorization mechanism이 아니다. 민감한 값의 indexing은 compression side channel 같은 별도 위험과 연결될 수 있다. **Header compression의 목적은 HTTP semantics를 바꾸는 것이 아니라 반복되는 metadata의 wire overhead를 줄이는 것**이다.

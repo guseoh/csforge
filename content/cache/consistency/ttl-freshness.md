@@ -3,8 +3,8 @@ kind: concept
 contentKey: cache.core.consistency.ttl-freshness
 topicContentKey: cache.core.consistency
 slug: ttl-freshness
-title: "TTL과 freshness window"
-summary: "TTL을 stale 허용 시간과 변경 빈도에 연결하고 만료·재생성 비용을 함께 판단한다"
+title: "TTL과 최신성 허용 범위"
+summary: "TTL을 단순 만료 시간으로 보지 않고 업무가 허용하는 stale window, 변경 빈도, 재생성 비용과 연결해 정한다."
 level: 1
 status: PUBLISHED
 displayOrder: 10
@@ -16,51 +16,48 @@ references:
     displayOrder: 1
     relationNote: "per-key TTL과 bounded staleness 설명 확인"
 ---
-# TTL과 freshness window
+# TTL과 최신성 허용 범위
 
-TTL(Time To Live)은 cache entry의 보존 시간을 제한하는 기술 수단이지, origin update 시점부터의 freshness나 stale window를 정확히 보장하는 업무 약속은 아닙니다. 값이 언제 바뀌고 얼마나 stale해도 되는지, invalidation 실패를 얼마 동안 허용할지를 먼저 정해야 TTL을 고를 수 있습니다.
-
-```text
-origin update at t=0
-cache entry expires at t=60s
-        └─ invalidation이 실패하면 최대 stale window가 생김
-```
-
-### TTL과 invalidation은 다른 시계다
-
-write 시 cache를 즉시 삭제하면 보통 stale window를 줄일 수 있지만 delete 실패, race, 다른 list key 누락이 남습니다. TTL은 그 실패를 완전히 해결하지 않고 최악의 보존 시간을 제한하는 안전망에 가깝습니다.
+TTL(Time To Live)은 cache entry가 **얼마 동안 존재할 수 있는지** 제한하는 기술 수단입니다. 하지만 “TTL이 60초이므로 데이터는 항상 60초 이내로 최신이다”라고 단순화하면 안 됩니다. 원본이 언제 바뀌었는지와 캐시가 언제 만들어졌는지에 따라 실제 오래된 정도는 달라집니다.
 
 ```text
-DB update ── cache DEL 성공 ── fresh miss
-DB update ── cache DEL 실패 ── TTL 동안 old value 가능
+cache fill at t=0
+origin update at t=20
+cache expires at t=60
+
+→ invalidation이 없다면 t=20~60 동안 이전 값을 반환할 수 있음
 ```
 
-### 업무별 freshness가 다르다
+따라서 TTL을 정하기 전에 **이 데이터가 얼마 동안 오래되어도 괜찮은가**를 제품 의미로 정해야 합니다.
 
-학습 영역 설명처럼 변경이 드문 데이터는 수 분의 stale을 허용할 수 있습니다. 반면 review due 상태나 attempt 결과는 사용자가 방금 만든 상태와 어긋나면 학습 흐름을 깨므로 짧은 TTL 또는 cache bypass가 필요할 수 있습니다. 같은 Redis instance라도 key별 정책이 달라질 수 있습니다.
+### 데이터마다 허용 가능한 최신성이 다르다
 
-### 만료가 origin 부하를 만든다
+변경이 드문 카테고리 설명은 몇 분 정도 이전 값이어도 문제가 작을 수 있습니다. 반면 사용자가 방금 제출한 학습 결과나 권한 상태처럼 즉시 반영되어야 하는 값은 같은 TTL을 적용하기 어렵습니다.
 
-모든 key가 같은 시각에 TTL 만료되면 한꺼번에 miss가 발생합니다. TTL에 작은 jitter를 넣거나 refresh-ahead, 요청 coalescing을 사용하면 expiry traffic을 분산할 수 있지만 stale window와 구현 복잡성이 달라집니다.
+```text
+변경이 드문 조회 데이터
+→ 긴 TTL을 검토할 수 있음
 
-### 운영에서 TTL을 숫자 하나로 보지 않는다
+방금 바뀐 개인 상태
+→ 짧은 TTL / 즉시 invalidation / cache bypass 검토
+```
 
-- entry age와 remaining TTL
-- hit/miss와 expiry 직후 origin query 수
-- stale read 비율과 invalidation 실패
-- origin 지연 시간과 cache fill 지연 시간
-- key별 변경 빈도와 허용 stale window
+TTL은 cache server 설정 하나가 아니라 key 종류별 freshness contract가 될 수 있습니다.
 
-TTL을 늘려 hit ratio만 높이면 오래된 상태를 조용히 반환할 수 있고, 너무 짧으면 cache miss와 origin 부하가 커집니다.
+### invalidation 실패의 안전망으로 사용할 수 있다
 
-### 문제를 풀 때 확인할 것
+원본 변경 뒤 cache key를 즉시 삭제하더라도 network 오류나 process 장애로 삭제가 실패할 수 있습니다. TTL이 있으면 오래된 값이 무기한 남는 것은 막을 수 있습니다.
 
-1. 이 값이 얼마나 stale해도 되는지 업무 계약을 정합니다.
-2. TTL이 invalidation 실패를 얼마나 오래 제한하는지 계산합니다.
-3. 만료 시 origin 부하와 동시 miss를 봅니다.
-4. key별 TTL과 jitter가 필요한지 판단합니다.
-5. freshness 오류를 hit ratio와 별도로 관측합니다.
+```text
+DB commit
+  ├─ DEL 성공 → 다음 read는 miss 후 최신 값 재생성
+  └─ DEL 실패 → TTL 종료 전까지 old value 가능
+```
 
-### 면접에서 설명한다면
+따라서 TTL은 invalidation을 대신하는 것이 아니라 **실패했을 때 stale 상태가 지속되는 시간을 제한하는 보조 장치**로 볼 수 있습니다.
 
-TTL은 cache entry가 stale할 수 있는 시간을 제한하는 도구이고, origin update와 invalidation을 원자적으로 만들어 주지는 않습니다. TTL은 업무의 stale tolerance, 변경 빈도, 재생성 비용에 맞춰 정하며 동시 만료로 origin이 폭주하지 않도록 jitter나 coalescing을 함께 검토합니다.
+### 너무 짧은 TTL도 비용이 있다
+
+TTL을 무조건 짧게 잡으면 cache miss가 많아지고 원본 저장소 조회가 늘어납니다. 인기 key가 비슷한 시각에 함께 만료되면 순간적으로 DB 요청이 폭증할 수도 있습니다. 이런 workload에서는 만료 시각에 작은 jitter를 섞거나 미리 갱신하는 전략을 검토할 수 있습니다.
+
+좋은 TTL은 hit ratio 하나를 최대화하는 숫자가 아니라 **오래된 값을 허용할 시간과 원본 조회 비용 사이의 균형점**입니다.

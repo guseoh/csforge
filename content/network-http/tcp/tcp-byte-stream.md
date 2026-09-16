@@ -4,7 +4,7 @@ contentKey: network-http.core.tcp.tcp-byte-stream
 topicContentKey: network-http.core.tcp
 slug: tcp-byte-stream
 title: "TCP Byte Stream"
-summary: "TCP가 ordered reliable byte stream을 제공하고 message boundary는 보존하지 않는 이유를 설명한다."
+summary: "message 경계 없는 ordered byte stream의 의미를 설명한다."
 level: 1
 status: PUBLISHED
 displayOrder: 10
@@ -19,8 +19,22 @@ references:
 ---
 # TCP Byte Stream
 
-TCP는 연결된 양 endpoint 사이에 순서가 있는 byte stream을 제공한다. sender의 `write()` 한 번이 하나의 segment가 되거나 receiver의 `read()` 한 번이 그 write와 대응한다는 계약은 없다. sender가 여러 번 쓴 bytes가 한 번에 합쳐질 수도 있고, 하나의 write가 여러 read로 나뉠 수도 있으므로 application이 length prefix·delimiter·고정 길이·protocol close 같은 framing을 정의해야 message를 복원한다.
+TCP는 연결된 두 endpoint 사이에 **순서가 있는 reliable byte stream**을 제공한다. Application이 여러 번 `write()`한 경계가 receiver의 `read()` 경계로 그대로 보존된다는 계약은 없다.
 
-TCP는 sequence number와 ACK, retransmission으로 loss·reordering·duplicate를 상위 stream에서 숨긴다. 하지만 이는 established connection이 계속 살아 있거나 peer application이 bytes를 처리했다는 보장은 아니다. FIN은 한 방향의 정상적인 end-of-stream, RST는 즉시적인 abort 신호, timeout은 liveness 판단이므로 서로 다른 상태로 다룬다.
+예를 들어 sender가 `ABC`와 `DEF`를 따로 썼더라도 receiver는 `ABCDEF`를 한 번에 읽을 수도 있고, `AB`, `CD`, `EF`처럼 여러 번에 나누어 읽을 수도 있다.
 
-HTTP/1.1 parser는 socket `read()`가 반환한 chunk를 요청 boundary로 사용하지 않는다. partial header/body를 buffer하고 `Content-Length`, chunked framing 또는 다른 HTTP 규칙이 message 끝을 확정할 때 다음 요청 bytes와 분리한다. TCP가 stream을 전달했다는 사실과 HTTP server가 요청을 성공 처리했다는 사실도 별도다.
+```text
+sender writes:   [ABC] [DEF]
+TCP stream:       A B C D E F
+receiver reads:  [AB] [CDEF]   ← 가능
+```
+
+### Message boundary는 application protocol이 정한다
+
+TCP는 bytes의 순서와 전달을 관리하지만 HTTP request, JSON document 같은 논리적 message boundary를 알지 못한다. Application protocol은 length field, delimiter, fixed length 또는 별도 framing rule로 message 끝을 정의해야 한다.
+
+### Reliable은 application 처리 성공을 뜻하지 않는다
+
+TCP가 retransmission과 sequence/ACK를 통해 byte stream을 전달하더라도 peer application이 그 bytes를 실제 업무 처리까지 완료했다는 뜻은 아니다. TCP의 보장은 transport stream 범위에 한정된다.
+
+TCP Byte Stream의 핵심은 **순서를 보존하는 reliable byte stream을 제공하지만 application message 경계는 보존하지 않는다는 것**이다.

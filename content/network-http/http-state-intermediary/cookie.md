@@ -4,7 +4,7 @@ contentKey: network-http.core.http-state-intermediary.cookie
 topicContentKey: network-http.core.http-state-intermediary
 slug: cookie
 title: "Cookie"
-summary: "client가 origin 요청에 state token을 다시 보내는 cookie 흐름을 설명한다."
+summary: "user agent가 저장한 cookie를 조건에 맞는 HTTP 요청에 다시 보내는 state 흐름을 설명한다."
 level: 1
 status: PUBLISHED
 displayOrder: 10
@@ -19,13 +19,20 @@ references:
 ---
 # Cookie
 
-cookie는 user agent가 보관하는 작은 name/value 상태다. server가 응답의 `Set-Cookie`로 저장을 지시하면 user agent는 Domain·Path·Secure·expiry·SameSite 같은 조건을 기록하고, 다음 요청이 그 조건에 맞을 때만 `Cookie` header에 값을 포함한다. server가 매 요청마다 session 전체를 다시 보내는 대신, 이 값으로 session record나 서명된 state를 찾는 흐름을 만들 수 있다.
+HTTP 자체의 request와 response는 이전 요청의 application state를 자동으로 기억하지 않는다. Cookie는 user agent가 server의 지시에 따라 작은 name/value 상태를 저장하고, 이후 요청이 정해진 조건에 맞을 때 그 값을 `Cookie` header로 다시 보내게 하는 state management mechanism이다.
 
-`Cookie` header에는 보통 name/value만 실리고 `Set-Cookie`의 attribute가 그대로 되돌아오지 않는다. 따라서 cookie가 전송되었다는 사실만으로 HTTPS confidentiality, authentication, integrity가 생기지 않는다. user agent와 network 경로를 통과하는 값은 탈취·변조될 수 있고, session ID처럼 bearer credential로 쓰는 값은 client가 임의로 바꿀 수 있다는 전제에서 server-side session 검증, 서명, 만료와 rotation을 설계해야 한다.
+보통 server는 session identifier 같은 값을 cookie로 전달하고, 이후 요청에서 돌아온 identifier를 이용해 server-side state를 찾을 수 있다. 하지만 cookie가 반드시 session ID일 필요는 없다. 어떤 의미를 부여하고 값을 어떻게 검증할지는 application contract가 정한다.
 
-cookie의 scope는 URL의 host/path, secure channel, site context, 저장 lifetime과 browser policy가 함께 결정한다. 같은 cookie가 전송되었다고 server의 DB session이 아직 유효하다는 뜻도 아니며, cookie 삭제·만료와 server-side session revoke는 별개의 상태 변화다. 또한 cookie는 HTTP state를 운반할 뿐 CSRF 방어, access control, TLS를 대신하지 않는다.
+```text
+response: Set-Cookie
+        ↓
+user agent가 저장
+        ↓
+조건에 맞는 다음 request
+        ↓
+request: Cookie
+```
 
-### Backend 연결
+cookie의 전송 여부는 host/domain, path, secure channel, site context와 저장 lifetime 같은 scope 규칙에 영향을 받는다. 또한 `Cookie` request field에는 저장 시 사용한 모든 attribute가 다시 실리는 것이 아니라 전송 대상이 된 cookie의 name/value가 포함된다.
 
-session cookie에는 production HTTPS에서 `Secure`, script 접근 제한이 필요한 값에 `HttpOnly`, 요청 흐름에 맞는 `SameSite`와 최소한의 scope를 설정한다. URL·query parameter에 session token을 복제하지 않아 access log·history·referer로 퍼지지 않게 하고, CSRF 방어와 authentication state 검증은 cookie 저장 정책과 별도의 server 검증으로 둔다.
-
+Cookie가 요청에 포함됐다는 사실만으로 그 값이 신뢰할 수 있는 사용자 identity이거나 아직 유효한 session이라는 보장은 없다. **Cookie는 HTTP 요청 사이에 state token을 운반하는 mechanism이고, 그 token의 의미·유효성·권한은 별도의 application 검증 대상**이다.

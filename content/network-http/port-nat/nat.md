@@ -4,7 +4,7 @@ contentKey: network-http.core.port-nat.nat
 topicContentKey: network-http.core.port-nat
 slug: nat
 title: "NAT"
-summary: "private address와 public address 사이 packet address를 변환하는 NAT를 설명한다."
+summary: "private address와 public address를 packet 경계에서 변환하는 흐름을 설명한다."
 level: 1
 status: PUBLISHED
 displayOrder: 40
@@ -19,16 +19,24 @@ references:
 ---
 # NAT
 
-NAT는 경계 장치가 packet의 source 또는 destination address, 필요하면 port를 다른 address space에 맞게 바꾸는 기능이다. 예를 들어 내부 client가 외부로 packet을 보내면 장치는 내부 tuple과 translated tuple을 기록하고, 외부 응답이 돌아올 때 그 state를 이용해 destination을 원래 내부 endpoint로 reverse translation한다. 목적지 NAT나 static mapping에서는 반대 방향의 destination 변환이 먼저 일어날 수 있다.
+NAT(Network Address Translation)는 network 경계에서 packet의 **source 또는 destination IP address를 다른 address로 변환하는 기능**이다. Private IPv4 network와 public Internet처럼 서로 다른 address 영역을 연결할 때 자주 사용된다.
 
-변환은 주소 숫자만 바꾸는 작업으로 끝나지 않는다. IP와 transport checksum을 다시 계산해야 하고, application payload 안에 address를 직접 넣는 protocol은 별도 ALG나 proxy 없이는 동작이 깨질 수 있다. NAT를 통과한 뒤 peer가 보는 source address는 원래 client interface와 다르므로 end-to-end address visibility와 callback·logging semantics도 달라진다.
+예를 들어 내부 host가 외부 server로 packet을 보낼 때 NAT 장치는 private source address를 public address로 바꿀 수 있다. 응답이 돌아오면 기존 translation state를 이용해 destination을 원래 내부 address로 되돌린다.
 
-NAT는 routing이나 security firewall과 동일하지 않다. mapping이 존재한다는 것은 reply를 어느 내부 endpoint로 보낼 수 있는지에 관한 state이지, 모든 traffic이 허용됐거나 application이 요청을 처리했다는 증명이 아니다. NAT 장비의 종류와 mapping policy에 따라 inbound, hairpin, peer-to-peer 동작이 달라질 수 있다.
+```text
+outbound
+10.0.0.5 → NAT → 203.0.113.9
 
-Backend가 client IP를 감사 정보나 rate limit에 사용할 때는 proxy·NAT가 보이는 address와 원래 client identity를 구분한다. `X-Forwarded-For` 같은 header를 신뢰할 intermediary 범위를 먼저 정하고, 외부 client가 임의로 주입한 값을 원본 주소로 사용하지 않는다.
+reply
+203.0.113.9 → NAT → 10.0.0.5
+```
 
-### NAT 변환
-    10.0.0.5:40000 ──> NAT ──> 203.0.113.9:62000
-          ▲                         │
-          └──── reply reverse mapping ─┘
-NAT는 address/port를 바꾸지만 reliability를 추가하지 않는다.
+### NAT는 address를 바꾸는 기능이다
+
+NAT의 중심 책임은 address translation이다. Packet을 어느 route로 보낼지 결정하는 routing과, traffic을 허용하거나 거부하는 firewall policy는 별도의 책임이다. 한 장비가 세 기능을 모두 수행할 수 있어도 개념적으로는 구분해야 한다.
+
+### End-to-end에서 보이는 address가 달라진다
+
+외부 peer는 NAT 이전의 private source address가 아니라 translated public address를 보게 된다. 따라서 NAT 경계를 지나면 양쪽이 관찰하는 network tuple이 달라질 수 있다.
+
+NAT의 핵심은 **network 경계에서 address를 변환하고, 필요한 경우 reply를 원래 endpoint로 되돌릴 translation state를 유지한다는 것**이다.

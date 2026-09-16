@@ -3,8 +3,8 @@ kind: concept
 contentKey: cache.core.consistency.invalidation
 topicContentKey: cache.core.consistency
 slug: invalidation
-title: "invalidation과 update ordering"
-summary: "origin update와 cache delete/update 사이의 race를 그려 stale value가 되살아나는 실패를 설계한다"
+title: "무효화 순서와 오래된 값의 재등장"
+summary: "원본 변경과 cache delete/update가 겹칠 때 늦게 끝난 read가 이전 값을 다시 채우는 race를 이해하고 최신 generation을 판별할 기준을 설계한다."
 level: 2
 status: PUBLISHED
 displayOrder: 20
@@ -28,59 +28,48 @@ references:
     displayOrder: 3
     relationNote: "Spring Cache의 cache eviction이 Redis 명령과 운영 latency에 연결되는 실제 사례 확인"
 ---
-# invalidation과 update ordering
+# 무효화 순서와 오래된 값의 재등장
 
-Cache invalidation은 “key를 지운다”로 끝나지 않습니다. 같은 key를 읽고 채우는 요청과 origin update가 동시에 실행될 때 **어느 값이 마지막에 cache에 들어가는지**를 확인해야 합니다.
-
-### 오래된 값이 되살아나는 timeline
+원본 데이터를 수정한 뒤 cache key를 삭제하면 다음 조회가 최신 값을 채울 수 있습니다. 하지만 **이미 진행 중인 오래된 read**가 있다면 삭제가 성공한 뒤에도 이전 값이 다시 cache에 들어갈 수 있습니다.
 
 ```text
-T1 reader: cache miss → origin에서 v1 read 시작
-T2 writer: origin = v2 commit
-T3 writer: cache DEL
-T4 reader: T1에서 시작한 old read가 늦게 v1을 반환
-T5 reader: cache SET v1
+T1 reader : cache miss → origin에서 v1 조회 시작
+T2 writer : origin에 v2 commit
+T3 writer : cache DEL
+T4 reader : T1의 오래된 조회가 v1 반환
+T5 reader : cache SET v1
 ```
 
-핵심은 reader가 **writer의 v2 commit보다 먼저 시작한 read 결과 v1을 늦게 받아서**, writer의 invalidation이 끝난 뒤 다시 cache에 써 버리는 데 있습니다. 이제 origin은 v2인데 cache에는 v1이 남습니다. delete를 성공시켰다는 사실만으로 이미 진행 중이던 old read의 늦은 fill까지 막았다고 볼 수 없습니다.
+결과적으로 PostgreSQL에는 v2가 있지만 cache에는 다시 v1이 남습니다. 이 문제는 `DEL` 명령 자체의 실패가 아니라 **read와 write의 완료 순서가 뒤집힌 race**입니다.
 
-### version은 비교 기준이 남아 있을 때만 stale fill을 막는다
+### value에 version을 넣는 것만으로는 충분하지 않을 수 있다
 
-Cache value에 `version: 41`을 붙이는 것만으로는 stale resurrection이 자동으로 해결되지 않습니다. Writer가 cache key를 `DEL`한 뒤에는 비교할 “현재 version 42”가 cache에서 함께 사라졌을 수 있기 때문입니다. 늦은 fill을 거부하려면 **old reader가 접근할 수 있는 주소나 write 조건보다 더 최신이라는 사실을 독립적으로 판단할 수 있는 기준**이 남아 있어야 합니다.
+`{ value: ..., version: 41 }`처럼 version을 함께 저장하면 새 값과 오래된 값을 비교할 수 있습니다. 하지만 writer가 cache entry 자체를 삭제해 버리면 늦게 도착한 reader가 비교할 최신 version도 함께 사라질 수 있습니다.
 
-가능한 설계는 use case에 따라 다릅니다.
+오래된 fill을 막으려면 삭제 이후에도 “현재 세대가 무엇인지” 판단할 기준이 필요합니다. 예를 들어 별도 generation metadata를 유지하거나, versioned namespace를 사용하거나, fill 직전에 원본의 최신 version과 비교할 수 있습니다.
 
 ```text
-1) generation을 별도 key/metadata로 유지
-   current-generation = 42
-   late fill version 41 -> compare 후 reject
-
-2) versioned namespace/key
-   active namespace = v42
-   late reader가 old namespace v41에 써도 새 read는 v42만 사용
-
-3) origin/version store를 기준으로 conditional fill
-   old read가 가져온 version이 현재 origin generation보다 오래되면 SET하지 않음
+active generation = 42
+late reader version = 41
+        │
+        └─ 오래된 fill이므로 cache SET 거부
 ```
 
-Redis Lua/CAS류의 원자 동작을 사용하더라도 **무엇과 무엇을 비교하는지**가 먼저 정의되어야 합니다. 이미 삭제된 old cache value의 version 하나만 믿고 “CAS로 stale fill을 막는다”고 설명하면 비교 기준이 사라진 race를 놓칩니다.
+어떤 구현을 쓰든 핵심은 CAS나 Lua라는 도구 이름이 아니라 **무엇을 최신 값의 기준으로 비교하는가**입니다.
 
-### delete와 event는 delivery 특성이 다르다
+### 파생 cache가 많아지면 무효화 범위도 커진다
 
-DB transaction 뒤 invalidation event를 발행할 때 DB commit과 broker publish를 별도 write로 두면 event가 사라질 수 있습니다. outbox를 사용한다면 delivery 중복과 순서도 consumer가 견뎌야 합니다. Redis keyspace notification은 관측이나 보조 automation에 사용할 수 있지만 Pub/Sub 특성상 연결이 끊긴 동안 event가 보존된다고 가정하면 안 됩니다.
+Concept 하나를 수정했을 때 다음 값들이 모두 영향을 받을 수 있습니다.
 
-### list cache는 invalidation 집합이 커진다
+```text
+concept:42
+topic:java:list
+search:keyword:...
+dashboard:summary
+```
 
-하나의 concept 변경이 `concept:42`뿐 아니라 topic list, search result, dashboard summary에도 반영되어야 할 수 있습니다. 모든 파생 key를 동기 삭제할지, namespace generation을 올릴지, 짧은 TTL과 eventual freshness를 허용할지 use case별로 결정합니다.
+관련 key를 모두 정확히 찾는 비용이 커지면 모든 것을 즉시 삭제하는 전략보다 짧은 TTL이나 namespace generation이 더 단순할 수도 있습니다.
 
-### 문제를 풀 때 확인할 것
+이벤트로 invalidation을 전달하는 경우에는 또 다른 실패 경계가 생깁니다. DB commit과 event publish가 서로 다른 write라면 publish가 빠질 수 있고, Pub/Sub 계열은 연결이 끊긴 동안 전달을 보존하지 않을 수도 있습니다. 그런 문제의 delivery semantics는 Messaging 영역의 책임과 연결됩니다.
 
-1. reader의 origin read 시작 시점과 writer commit/invalidation을 시간순으로 그립니다.
-2. writer commit 전에 시작한 old read가 invalidation 뒤 cache를 다시 덮을 수 있는지 봅니다.
-3. stale fill을 거절하려면 **최신 generation/version을 어디에서 유지하고 비교하는지** 확인합니다.
-4. multi-key derived view의 invalidation 범위를 찾습니다.
-5. event 기반 invalidation의 loss·duplicate·ordering을 확인합니다.
-
-### 면접에서 설명한다면
-
-Invalidation은 origin 변경 뒤 cache를 지우는 것뿐 아니라 동시에 진행 중인 read/fill과의 ordering을 포함합니다. writer commit 전에 시작한 old read가 invalidation 뒤 늦게 cache를 채우면 stale value가 되살아날 수 있습니다. 이 race를 version으로 막으려면 단순히 value에 version을 넣는 것이 아니라 삭제 뒤에도 최신 generation을 판단할 독립적인 기준이나 versioned namespace가 필요합니다.
+캐시 무효화의 핵심은 key 삭제 명령이 아니라 **원본 변경과 동시에 진행되는 read/fill 사이에서 오래된 값이 다시 살아날 수 있는 순서를 발견하고, 그 값을 최신이라고 받아들이지 않을 기준을 갖는 것**입니다.

@@ -4,8 +4,8 @@ contentKey: network-http.core.dns.dns-ttl-cache
 topicContentKey: network-http.core.dns
 slug: dns-ttl-cache
 title: "DNS TTL·Cache"
-summary: "record TTL이 recursive·client cache의 보존 시간에 미치는 영향을 설명한다."
-level: 1
+summary: "TTL이 resolver cache freshness와 변경 전파 지연을 결정하는 방식을 설명한다."
+level: 2
 status: PUBLISHED
 displayOrder: 80
 references:
@@ -19,11 +19,16 @@ references:
 ---
 # DNS TTL·Cache
 
-DNS RRset의 TTL은 caching resolver가 fresh하다고 간주해 authoritative server에 다시 묻지 않고 보관할 수 있는 protocol-level 수명이다. cache hit 동안에는 query 지연 시간과 authoritative load를 줄이지만, TTL을 바꾼 순간 이미 저장된 answer의 expiry가 다시 계산되는 것은 아니므로 변경 후 모든 client가 즉시 새 address를 보는 것을 보장하지 않는다.
+DNS record의 TTL(Time To Live)은 caching resolver가 해당 answer를 **fresh한 상태로 재사용할 수 있는 시간**을 나타낸다. TTL이 남아 있는 동안에는 authoritative server에 다시 묻지 않고 cached answer를 반환할 수 있어 query latency와 authoritative load를 줄인다.
 
-stub·OS·JVM·browser·local DNS와 recursive resolver가 각자 cache를 가질 수 있고, library는 TTL을 상한으로 사용하거나 자체 minimum/maximum 정책을 둘 수 있다. TTL 만료는 DNS answer의 freshness에 관한 것이지, 이미 열려 있는 TCP connection을 닫거나 HTTP connection pool을 새 address로 옮기는 명령이 아니다. refresh가 실패하면 resolver의 stale-serving 정책이나 negative cache가 관찰되는 결과를 더 늦출 수 있다.
+### TTL이 길면 cache 효율과 변경 전파가 trade-off가 된다
 
-TTL이 짧아지면 전환 반영 지연을 줄일 수 있지만 query 수와 authoritative 부하가 증가하고, TTL이 길면 안정적인 cache 효율 대신 변경 전파 지연이 커진다. 어느 값도 service readiness, health check나 in-flight 요청의 완료를 보장하지 않는다.
+TTL이 길면 같은 name에 대한 반복 query를 cache에서 처리하기 쉽지만 authoritative record가 바뀌었을 때 기존 cache가 오래 남을 수 있다. TTL이 짧으면 변경을 더 빨리 다시 조회할 가능성이 높아지는 대신 upstream query 수가 늘어난다.
 
-blue-green 전환에서 DNS TTL만 보고 old backend를 즉시 내리지 않는다. authoritative 변경, recursive/client cache expiry, connection pool의 기존 연결과 application retry window를 포함해 overlap을 정하고 old address가 그 기간 안전하게 응답하도록 한다.
+이미 cache된 record의 TTL은 그 answer를 받을 당시부터 감소한다. Authoritative server에서 TTL 값을 지금 낮췄다고 기존 resolver가 보유한 cached entry의 남은 lifetime이 자동으로 다시 짧아지는 것은 아니다.
 
+### DNS cache와 connection state는 다르다
+
+Cached address의 TTL이 만료되어 새 DNS lookup이 이루어져도 이미 열려 있는 TCP connection이 자동으로 종료되는 것은 아니다. DNS answer freshness와 transport connection lifetime은 서로 다른 state다.
+
+DNS TTL의 핵심은 **resolver가 cached DNS data를 얼마 동안 fresh하게 재사용할 수 있는지 정하고, cache 효율과 record 변경 전파 속도 사이의 trade-off를 만든다는 것**이다.

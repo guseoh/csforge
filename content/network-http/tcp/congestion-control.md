@@ -19,15 +19,25 @@ references:
 ---
 # Congestion Control
 
-congestion control은 receiver buffer가 아니라 sender와 network path 사이의 혼잡 상태를 추정해 sending rate를 조절한다. TCP sender는 ACK clock, loss, delay 같은 관측을 바탕으로 congestion window를 늘리거나 줄이며, 이 값은 아직 확인되지 않은 data의 양을 제한한다. 세부 알고리즘과 신호 해석은 TCP 구현·버전에 따라 달라도 목적은 shared queue의 overflow와 congestion collapse를 완화하는 데 있다.
+TCP congestion control은 sender가 network path의 혼잡 상태를 고려해 **한 번에 network에 outstanding으로 둘 수 있는 data 양을 조절하는 mechanism**이다. Receiver buffer를 보호하는 flow control과 달리, congestion control은 shared network queue와 link capacity를 과도하게 사용해 congestion collapse가 발생하는 것을 줄이는 데 목적이 있다.
 
-flow control이 충분해도 여러 flow가 같은 bottleneck을 사용하면 congestion window 때문에 전송이 느려질 수 있다. loss가 application 실패인지 transport가 복구할 transient event인지 구분하지 않고 무제한 retry·connection을 만들면, recovery traffic이 같은 path를 더 혼잡하게 만드는 feedback loop가 된다. congestion control은 application-level fairness나 downstream DB capacity까지 자동으로 보장하지 않는다.
+Sender는 congestion window(`cwnd`)라는 state를 유지한다. ACK progress, loss와 congestion signal을 관찰하면서 `cwnd`를 늘리거나 줄이고, 새 data 전송량을 제한한다.
 
-Backend는 timeout 직후 모든 요청을 동시에 재시도하지 않고 exponential backoff와 jitter, bounded concurrency를 사용한다. autoscaling이나 connection pool 확대도 downstream network와 DB capacity를 넘을 수 있으므로 admission control과 transport metrics를 함께 본다.
+```text
+network 상태 양호 → cwnd 증가 가능
+loss/congestion 신호 → cwnd 감소
+```
 
-### Congestion feedback
-    sender ── in-flight bytes (cwnd) ──> shared path
-                                      │ queue/loss/RTT
-                                      ▼
-                              sender rate adjustment
-rwnd는 receiver buffer, cwnd는 network path 상태의 제한이다.
+### rwnd와 cwnd는 서로 다른 제한이다
+
+`rwnd`는 receiver가 광고하는 receive-buffer capacity이고 `cwnd`는 sender가 network congestion 상태에 따라 관리하는 값이다. 실제 sender가 새 data를 보내는 범위는 두 제한을 모두 만족해야 한다.
+
+```text
+usable sending limit ≈ min(rwnd, cwnd)
+```
+
+### 세부 algorithm은 구현에 따라 달라질 수 있다
+
+Slow start, congestion avoidance 같은 기본 원리는 표준에 정의되어 있지만 실제 OS는 여러 congestion-control algorithm을 사용할 수 있다. 구체적인 rate 증가/감소 방식은 algorithm마다 다를 수 있으므로 `TCP congestion control = 하나의 고정 공식`으로 외우기보다 목적과 state 경계를 이해해야 한다.
+
+Congestion Control의 핵심은 **receiver가 아니라 network path의 혼잡을 고려해 sender의 in-flight data를 제한하고 조정한다는 것**이다.

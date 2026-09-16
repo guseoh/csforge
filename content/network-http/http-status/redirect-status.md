@@ -3,8 +3,8 @@ kind: concept
 contentKey: network-http.core.http-status.redirect-status
 topicContentKey: network-http.core.http-status
 slug: redirect-status
-title: "Redirect Status"
-summary: "redirect code가 다음 요청 location과 method 처리에 미치는 영향을 설명한다."
+title: "Redirect Status와 Follow-up Request"
+summary: "301·302·303·307·308이 Location과 후속 request method 처리에 미치는 차이를 설명한다."
 level: 2
 status: PUBLISHED
 displayOrder: 30
@@ -15,15 +15,22 @@ references:
     language: en
     displayOrder: 1
 ---
-# Redirect Status
+# Redirect Status와 Follow-up Request
 
-3xx 응답은 client가 `Location`의 다른 URI로 요청을 이어가거나 cached representation을 사용할 수 있음을 알린다. `301`과 `308`은 permanent 이동 의미가 있고, `302`와 `303`은 다음 요청 method를 user agent가 처리하는 관행/규칙이 다르며, `307`과 `308`은 original method와 content를 보존하는 redirect다. redirect 자체가 최종 resource의 성공 응답은 아니다.
+3xx response 중 여러 status는 `Location` field로 다른 URI를 알려 주고 user agent가 그 URI로 후속 request를 만들 수 있게 한다. 하지만 redirect code에 따라 새 URI가 일시적인지 영구적인지, 기존 method를 유지해야 하는지가 다르다.
 
-특히 POST 뒤의 302는 오래된 user-agent 관행으로 GET으로 바뀔 수 있지만, method 보존이 필요하면 307/308을 사용하고 body replay를 감당할 수 있는지 확인한다. PRG처럼 결과 조회로 전환하려면 303을 검토한다. client는 redirect 횟수, scheme downgrade, host/origin 변경과 Authorization·cookie 전달을 검증하고, redirect target을 무조건 신뢰하지 않는다.
+`301 Moved Permanently`와 `308 Permanent Redirect`는 target resource가 새로운 permanent URI로 이동했다는 의미다. `302 Found`와 `307 Temporary Redirect`는 현재는 다른 URI를 사용하지만 원래 target을 앞으로도 계속 사용할 수 있는 temporary redirect다.
 
-reverse proxy 뒤 HTTPS redirect를 만들 때 external scheme과 trusted forwarded header를 정확히 판정한다. POST·payment·import command의 redirect에서는 method 변경과 retry effect를 함께 검증하고, permanent redirect cache가 오래 남을 수 있음을 rollout에 반영한다.
-### Redirect와 method
-    3xx + Location → follow-up 요청
-    301/302/303: method may change
-    307/308: method and content preserved
-unsafe effect는 redirect 뒤 재실행 위험까지 계약한다.
+### 301·302와 307·308의 중요한 차이는 method 처리다
+
+역사적 호환성 때문에 user agent는 `301` 또는 `302`에 대해 **POST request를 GET으로 바꾸어** redirect를 수행할 수 있다. 반면 `307`과 `308`은 자동 redirect를 수행할 때 original method와 content를 변경하면 안 된다.
+
+`303 See Other`는 원래 operation의 결과를 다른 resource에서 조회하도록 유도하는 redirect다. HTTP user agent는 Location URI에 GET 또는 HEAD 같은 retrieval request를 수행해 간접적인 결과를 가져올 수 있다. POST 처리 뒤 결과 페이지로 이동시키는 패턴에서 자주 의미가 잘 맞는다.
+
+```text
+301 / 302 → POST가 GET으로 바뀔 수 있음
+303       → 다른 URI를 retrieval request로 조회
+307 / 308 → original method와 content 유지
+```
+
+redirect는 `기존 request가 새 URI에서 그대로 한 번 더 실행된다`는 단순한 기능이 아니다. **status별 method semantics를 확인해야 후속 request가 같은 effect를 반복하는지, 단순 조회로 전환되는지** 정확히 판단할 수 있다.

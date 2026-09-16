@@ -3,8 +3,8 @@ kind: concept
 contentKey: distributed.core.time-failure.clocks-deadlines
 topicContentKey: distributed.core.time-failure
 slug: clocks-deadlines
-title: "clocks와 deadlines"
-summary: "wall clock·monotonic time·clock skew를 구분하고 end-to-end deadline을 전파한다"
+title: "분산 환경의 시계와 Deadline"
+summary: "wall clock과 monotonic time의 역할을 구분하고 여러 hop을 지나는 요청에 end-to-end deadline을 전파하는 이유를 이해한다."
 level: 1
 status: PUBLISHED
 displayOrder: 10
@@ -22,35 +22,27 @@ references:
     displayOrder: 2
     relationNote: "deadline propagation과 clock skew 보호 확인"
 ---
-# clocks와 deadlines
+# 분산 환경의 시계와 Deadline
 
-분산 시스템에는 서로 완전히 같은 시계를 가진 node가 없습니다. Wall clock은 실제 시각과의 관계를 표현하는 데 유용하지만 조정될 수 있고, monotonic clock은 한 process 안에서 경과 시간을 재는 데 적합합니다. clock sync가 잘 되어도 network delay와 skew의 상한을 무시할 수는 없습니다.
+한 process 안에서는 `현재 시각`을 하나의 값처럼 사용하기 쉽지만, 여러 node가 통신하는 분산 환경에서는 서로의 wall clock이 완전히 같다고 가정할 수 없습니다. NTP 같은 동기화가 있어도 작은 clock skew와 조정은 남을 수 있으므로, 시간의 용도부터 나누는 것이 중요합니다.
 
-### timestamp와 elapsed time을 분리한다
+Wall clock은 사용자에게 보여 줄 시각이나 만료 날짜처럼 달력상의 시간을 표현하는 데 적합합니다. 반면 한 process 안에서 timeout이나 작업 소요 시간을 재려면 clock 조정의 영향을 받지 않는 monotonic time이 더 적합합니다.
 
 ```text
-wall clock ─▶ event ordering·사용자 시각·expiry 후보
-monotonic ─▶ local timeout·duration·retry backoff
+wall clock      → 실제 시각, 기록 시각, 달력 기반 만료
+monotonic time  → elapsed time, local timeout, backoff
 ```
 
-두 host의 wall-clock timestamp만 비교해 event의 causal order를 단정하면 skew와 delay 때문에 잘못된 결론을 낼 수 있습니다. ordering이 중요하면 sequence·revision·logical clock 같은 명시적 metadata를 함께 사용합니다.
+서로 다른 host가 남긴 wall-clock timestamp만 비교해 두 event의 인과 순서를 단정하면 안 됩니다. 순서가 중요한 protocol에서는 revision, sequence, term처럼 해당 시스템이 제공하는 논리적 순서 정보를 사용합니다.
 
-### timeout보다 deadline을 전파한다
+분산 호출에서는 hop마다 독립적인 timeout을 새로 부여하는 것보다 상위 요청의 전체 deadline을 전달하는 편이 안전합니다. 이미 앞 단계에서 800ms를 소비했다면 downstream은 원래 2초를 다시 얻는 것이 아니라 남은 budget 안에서 끝나야 합니다.
 
-상위 요청이 가진 전체 deadline을 downstream call에 전달하면 이미 소비한 시간을 빼고 남은 budget만 사용할 수 있습니다. 각 hop에서 새 timeout을 더하면 serial call 수만큼 전체 대기가 늘어나 caller가 포기한 뒤에도 작업이 계속될 수 있습니다. deadline 도달 시 server가 expensive work를 취소할 수 있는지도 확인합니다.
+```text
+client deadline: 2s
+  ├─ service A에서 0.8s 사용
+  └─ service B에는 약 1.2s의 남은 budget 전달
+```
 
-### expiry는 안전 여유가 필요하다
+gRPC도 deadline propagation 과정에서 이미 지난 시간을 제외한 timeout을 downstream으로 전달해 서로 다른 host의 clock skew 영향을 줄입니다. 다만 deadline이 지났다고 application이 시작한 모든 background 작업이 자동으로 멈추는 것은 아니므로, server code도 cancellation을 확인하고 불필요한 작업을 종료해야 합니다.
 
-lease나 token 만료 판단을 wall clock 하나에 의존하면 clock jump·skew가 safety를 깨뜨릴 수 있습니다. 만료를 사용하는 protocol은 authoritative clock, monotonic elapsed time, renew margin과 fencing 또는 version check를 함께 정의합니다.
-
-### 문제를 풀 때 확인할 것
-
-1. 시각 표시인지 경과 시간인지 구분합니다.
-2. 서로 다른 host timestamp를 직접 비교해도 되는지 확인합니다.
-3. end-to-end deadline과 hop별 remaining budget을 계산합니다.
-4. cancellation이 실제 작업·connection·lock까지 전파되는지 봅니다.
-5. clock skew·jump와 expiry safety margin을 검토합니다.
-
-### 면접에서 설명한다면
-
-Wall clock은 시각, monotonic clock은 한 process의 elapsed time에 쓰며 서로 다른 host의 timestamp로 순서를 보장하지 않습니다. 분산 호출은 상위 deadline에서 이미 쓴 시간을 뺀 remaining budget을 전파하고, lease·expiry는 clock skew와 stale actor를 견디는 별도 fencing/version 계약이 필요합니다.
+핵심은 **실제 시각, 경과 시간, 요청의 남은 시간 예산을 같은 개념으로 사용하지 않는 것**입니다. 이 구분이 있어야 다음 부분 장애 상황에서 timeout을 곧바로 실패 확정으로 오해하지 않을 수 있습니다.

@@ -19,22 +19,28 @@ references:
 ---
 # Blocking I/O
 
-blocking I/O는 호출이 원하는 progress를 할 수 없을 때 **호출 task가 그 조건이 만족될 때까지 기다릴 수 있는 semantics**를 말한다. 예를 들어 blocking socket `read()`에 아직 받을 data가 없다면 kernel은 현재 thread를 sleep 가능한 waiting state로 보내고 data arrival 같은 사건 뒤 다시 runnable하게 만들 수 있다.
+Blocking I/O는 호출한 task가 지금 원하는 I/O를 진행할 수 없을 때 **조건이 충족될 때까지 기다릴 수 있는 semantics**다. 예를 들어 blocking socket `read()`에서 받을 data가 없다면 kernel은 현재 task를 waiting 상태로 보내고, data가 도착한 뒤 다시 runnable하게 만들 수 있다.
 
-여기서 `blocking = CPU를 계속 소비한다`는 뜻은 아니다. 일반적인 sleep 기반 wait에서는 기다리는 동안 다른 runnable task가 CPU를 사용할 수 있다. 대신 thread의 stack과 scheduling state, 요청 context, connection 같은 resource는 계속 살아 있으므로 많은 blocking operation이 동시에 쌓이면 thread pool과 memory budget이 먼저 고갈될 수 있다.
+```text
+read()
+  ↓
+data 있음? ── yes → bytes 반환
+  │
+  no
+  ↓
+task waiting
+  ↓ data arrival
+runnable → 다시 실행 → read 완료
+```
 
-### 호출이 돌아오는 조건도 여러 가지다
+### Blocking은 busy waiting과 다르다
 
-blocking `read(fd, buf, 4096)`이 항상 정확히 4096 byte를 채운 뒤 돌아오는 것은 아니다. object 종류와 상황에 따라 일부 bytes만 읽고 성공 반환할 수 있고, EOF나 signal interruption, timeout/error로 종료될 수도 있다. 따라서 blocking 여부와 `요청한 양 전체가 완료되었다`는 보장은 별개다.
+Task가 sleep 상태로 기다리는 동안 CPU를 계속 소비하는 것은 아니다. Scheduler는 다른 runnable task를 실행할 수 있다. 다만 해당 thread의 stack과 execution state, file/socket resource 같은 context는 계속 존재한다.
 
-stream protocol에서는 application이 필요한 message 길이를 알고 있다면 partial read를 누적하는 loop가 필요할 수 있다.
+### Blocking과 전체 요청 완료도 구분한다
 
-### 즉시 반환되는 blocking call도 있다
+`read(fd, buf, 4096)`이 blocking call이라고 해서 반드시 4096 byte를 모두 채운 뒤 반환하는 것은 아니다. Object 종류와 상황에 따라 일부 byte만 정상 반환할 수 있고, EOF나 error로 끝날 수도 있다.
 
-page cache에 data가 있거나 socket receive buffer에 이미 bytes가 있다면 blocking descriptor의 read도 즉시 끝날 수 있다. 따라서 blocking API를 사용한다는 사실만으로 해당 호출이 항상 느리다고 판단하지 않는다. 반대로 평소 빠르던 call도 storage/cache/network 상태가 달라지면 오래 기다릴 수 있다.
+따라서 blocking은 **호출이 기다릴 수 있는가**에 대한 계약이지, 요청한 byte 수 전체를 한 번에 완료한다는 계약이 아니다.
 
-### Thread-per-요청 모델과 연결하면
-
-Spring MVC의 platform-thread 요청이 blocking DB/socket 호출을 수행하면 해당 요청 thread는 결과가 올 때까지 다른 요청 코드를 실행하지 못한다. 그래서 executor worker 수, DB connection pool, HTTP client pool과 timeout이 하나의 concurrency budget을 만든다.
-
-해결책이 항상 non-blocking 전환인 것은 아니다. blocking code가 단순하고 concurrency가 bounded하면 충분히 좋은 선택일 수 있다. 먼저 `active workers`, `blocked/waiting threads`, queue wait, downstream saturation을 측정해 실제 병목을 확인한다.
+이미 data가 준비되어 있다면 blocking descriptor의 read도 즉시 반환할 수 있다. Blocking I/O의 핵심은 **I/O 조건이 충족되지 않았을 때 호출 task 자체를 기다리게 할 수 있다는 점**이다.

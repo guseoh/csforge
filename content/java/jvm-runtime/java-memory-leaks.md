@@ -24,13 +24,13 @@ references:
 ---
 # Java 메모리 누수의 원인
 
-Java에는 GC가 있으니 memory leak이 없을 것처럼 느껴질 수 있습니다. 하지만 GC가 하는 일은 **더 이상 reachable하지 않은 객체를 회수하는 것**입니다. 애플리케이션이 이미 필요 없다고 생각하는 객체라도 살아 있는 참조 경로가 남아 있으면 GC는 정상적으로 그 객체를 보존합니다.
+Java에는 GC가 있지만 memory leak은 여전히 생길 수 있습니다. GC는 "애플리케이션이 더 이상 필요로 하지 않는 객체"를 의미적으로 판단하지 않습니다. **살아 있는 root에서 더 이상 도달할 수 없는 객체**를 회수할 수 있을 뿐입니다.
 
-그래서 Java memory leak은 보통 "GC가 객체를 못 지운다"보다 **필요 없는 객체를 코드가 계속 reachable하게 붙잡고 있다**는 문제입니다.
+따라서 업무적으로는 이미 버려야 하는 객체라도 cache, listener, ThreadLocal 같은 장수 owner가 계속 참조하면 GC는 그 객체를 정상적으로 보존합니다.
 
 ![GC root부터 불필요한 객체까지 남아 있는 retained path](/learning/java/java-memory-retained-path.svg)
 
-### 가장 단순한 leak은 끝없이 커지는 장수 collection이다
+### Leak의 핵심은 불필요한 객체가 아직 reachable하다는 것이다
 
 ```java
 private static final Map<String, byte[]> CACHE = new HashMap<>();
@@ -40,90 +40,49 @@ void remember(String id, byte[] payload) {
 }
 ```
 
-entry를 삭제하는 정책이 없다면:
+삭제 정책이 없다면 static map이 모든 payload를 계속 붙잡습니다.
 
 ```text
+GC Root
+   │
 static CACHE
    │
-   ├─ id1 -> payload 1
-   ├─ id2 -> payload 2
-   ├─ id3 -> payload 3
-   └─ ... 계속 증가
+   ├─ payload A
+   ├─ payload B
+   └─ payload C ...
 ```
 
-모든 payload는 static cache를 통해 reachable합니다. GC 입장에서는 회수하면 안 되는 정상적인 객체입니다.
+GC 입장에서는 이 객체들이 여전히 reachable하므로 회수하면 안 됩니다. 문제는 collector가 아니라 **owner와 lifecycle 정책**입니다.
 
-문제는 애플리케이션 정책에 TTL, 최대 크기, eviction이 없다는 것입니다.
+### 큰 객체보다 retained path를 찾는다
 
-### memory leak의 핵심 질문은 "왜 아직 reachable한가"다
+Heap dump에서 500MB짜리 object를 발견했다고 바로 root cause를 찾은 것은 아닙니다. 중요한 질문은 다음입니다.
 
-Heap dump에서 큰 객체 하나를 발견했다고 바로 원인이 밝혀진 것은 아닙니다.
-
-예를 들어 500MB짜리 byte array가 있다고 해도 중요한 질문은:
-
-> 누가 이 객체를 계속 붙잡고 있는가?
-
-입니다.
+> 어떤 살아 있는 owner가 이 객체를 계속 붙잡고 있는가?
 
 ```text
 GC Root
   │
-  ▼
-static Registry
+Registry
   │
-  ▼
 Listener
   │
-  ▼
 Session
   │
-  ▼
 large byte[]
 ```
 
-이 retained path를 따라가야 ownership 문제를 찾을 수 있습니다.
+작은 `Map`이나 listener 하나가 거대한 object graph 전체의 수명을 연장할 수도 있습니다. 그래서 shallow size보다 retained relation이 더 중요한 경우가 많습니다.
 
-### listener를 등록하고 해제하지 않는 것도 흔한 패턴이다
+### 흔한 원인은 장수 owner와 짧은 객체 수명의 불일치다
 
-```java
-publisher.addListener(component);
-```
+대표적인 패턴은 다음과 같습니다.
 
-Publisher가 애플리케이션 전체 수명 동안 살아 있고 component는 화면/작업 종료 후 더 이상 필요하지 않다고 해 보겠습니다.
+**Cache**는 최대 크기, TTL, eviction이 없으면 workload가 늘수록 계속 커질 수 있습니다.
 
-등록 해제를 하지 않으면:
+**Listener/Subscriber**는 등록만 하고 해제하지 않으면 publisher가 listener와 그 뒤의 object graph를 계속 보유할 수 있습니다.
 
-```text
-long-lived Publisher
-        │
-        └─ listener list
-              └─ component
-                    └─ object graph
-```
-
-가 남습니다.
-
-따라서 listener/subscriber lifecycle은 등록 시점뿐 아니라 **언제 끊을 것인가**까지 설계해야 합니다.
-
-### ThreadLocal은 thread pool과 함께 leak 원인이 될 수 있다
-
-```java
-private static final ThreadLocal<RequestContext> CTX = new ThreadLocal<>();
-```
-
-요청 시작 시 `set`하고 끝날 때 `remove`하지 않았다고 해 보겠습니다.
-
-```text
-long-lived worker thread
-        │
-        └─ ThreadLocal value
-              └─ RequestContext
-                    └─ request graph
-```
-
-Fixed thread pool worker는 다음 요청에도 재사용될 수 있으므로 이전 요청의 객체가 오래 살아 있을 수 있습니다.
-
-그래서 요청 범위 ThreadLocal은 보통:
+**ThreadLocal**은 long-lived platform thread pool에서 요청이 끝난 뒤 `remove()`하지 않으면 이전 요청 context가 worker thread와 함께 오래 남을 수 있습니다.
 
 ```java
 CTX.set(context);
@@ -134,101 +93,46 @@ try {
 }
 ```
 
-처럼 정리합니다.
+**ClassLoader**는 reload/plugin 환경에서 이전 loader를 thread, ThreadLocal, registry가 계속 참조하면 그 loader가 정의한 class와 metadata까지 함께 오래 유지할 수 있습니다.
 
-### unbounded queue도 memory growth의 원인이 될 수 있다
-
-Executor나 producer-consumer 구조에서 처리 속도보다 유입 속도가 계속 빠르고 queue가 무제한이라면 task 객체가 계속 쌓일 수 있습니다.
+### Queue 증가와 leak을 구분한다
 
 ```text
 producer 1000/s
 consumer  100/s
-
-queue +900/s
 ```
 
-이것은 전통적인 "참조를 잘못 해제하지 않은 leak"과 조금 다른 overload 문제일 수 있지만, 운영에서는 heap이 계속 증가하는 비슷한 증상으로 나타납니다.
+Unbounded queue라면 task가 초당 900개씩 증가할 수 있습니다. Heap이 계속 커진다는 증상은 memory leak과 비슷하지만 원인은 "참조를 잘못 해제함"보다 **처리 capacity보다 유입이 큰 overload/backlog**일 수 있습니다.
 
-그래서 leak 진단에서는 객체 종류와 retained path뿐 아니라 **queue 길이, workload, 처리 속도**도 함께 봅니다.
+그래서 메모리 증가를 볼 때는 object graph뿐 아니라 queue length, request rate, 처리량도 함께 봅니다.
 
-### ClassLoader leak은 redeploy/plugin 환경에서 중요하다
+### GC가 자주 돈다고 leak이 확정되는 것은 아니다
 
-애플리케이션을 reload하면서 새 ClassLoader를 만들었는데 이전 loader를 thread, static registry, ThreadLocal 등이 계속 참조하면 그 loader가 정의한 많은 class와 관련 metadata까지 오래 남을 수 있습니다.
+Heap 증가와 GC 빈도 증가는 다음 원인에서도 나타날 수 있습니다.
 
-```text
-old worker/thread
-      │
-      ▼
-old ClassLoader
-      │
-      ├─ class metadata
-      └─ static object graph
-```
-
-"class 하나가 memory leak"이라기보다 loader 전체의 생명주기가 끊기지 않는 문제입니다.
-
-### GC 로그만 보고 leak을 확정하지 않는다
-
-Heap 사용량이 증가하고 GC가 자주 발생한다고 해도 원인은 여러 가지입니다.
-
-- 정상 workload 증가
-- 순간적인 대량 allocation
+- 정상적인 workload 증가
+- 순간적인 allocation burst
 - cache warm-up
 - queue backlog
-- live set 증가
-- 실제 leak
+- 실제 live set 증가
+- memory leak
 
-Leak을 의심할 때는 여러 시점의 heap 사용과 object histogram/dump를 비교하고, 어떤 class의 instance/retained size가 계속 증가하는지 봅니다.
+Leak을 의심한다면 여러 시점의 heap usage, class histogram, heap dump를 비교해 특정 object 종류와 retained path가 지속적으로 증가하는지 봅니다. Full GC 이후에도 live set이 계속 상승하는 것은 중요한 단서지만 그 자체가 root cause를 증명하지는 않습니다.
 
-특히 full GC 이후에도 live set이 지속적으로 증가하는 패턴은 중요한 단서가 될 수 있지만 그 자체만으로 root cause를 확정하지 않습니다.
+### 해결은 WeakReference보다 ownership 수정이 먼저다
 
-### heap dump에서는 shallow size보다 retained 관계가 중요할 때가 많다
+Leak을 발견했다고 모든 reference를 weak하게 바꾸면 원래 필요한 객체까지 예측할 수 없는 시점에 사라질 수 있습니다.
 
-작은 `HashMap` 객체 하나가 수백 MB를 직접 차지하지 않더라도 그 map이 큰 object graph를 붙잡고 있을 수 있습니다.
+먼저 다음을 정합니다.
 
-```text
-Map object: 작음
-  └─ entries
-      └─ payloads: 매우 큼
-```
+- 누가 이 객체의 owner인가?
+- 객체 수명은 언제 끝나는가?
+- 누가 remove/unregister/close하는가?
+- cache는 어떤 크기와 TTL을 가져야 하는가?
+- queue는 어떤 capacity와 overload 정책을 가져야 하는가?
 
-그래서 단순 object 자체 크기(shallow size)뿐 아니라 **그 객체 때문에 함께 살아 있는 retained graph**를 봐야 합니다.
+Reference type 변경은 실제 관계가 "이 참조 때문에 객체 수명을 연장하면 안 된다"는 의미일 때만 검토합니다.
 
-### 해결은 reference type보다 ownership 정책부터다
+### 정리
 
-Leak을 발견했다고 바로 `WeakReference`로 바꾸는 것은 좋은 기본 해결책이 아닙니다.
-
-먼저:
-
-- 이 객체의 owner는 누구인가?
-- 언제 수명이 끝나는가?
-- 종료 시 누가 remove/unregister/close하는가?
-- cache라면 최대 크기/TTL은 무엇인가?
-- queue라면 capacity와 overload 정책은 무엇인가?
-
-를 정합니다.
-
-Weak reference는 "이 관계가 객체 수명을 연장해서는 안 된다"는 의미가 실제로 맞는 특수한 경우에 사용합니다.
-
-### 문제를 풀 때 확인할 것
-
-1. memory가 증가한다고 바로 GC 버그라고 생각하지 않습니다.
-2. 증가하는 object 종류와 live set을 확인합니다.
-3. GC root에서 큰 graph까지 retained path를 찾습니다.
-4. static cache, listener, ThreadLocal, queue, ClassLoader를 확인합니다.
-5. 애플리케이션이 생각하는 수명과 실제 reference 수명이 같은지 봅니다.
-6. `System.gc()`나 WeakReference를 해결책으로 먼저 선택하지 않습니다.
-
-### 학습 후 스스로 설명해 보기
-
-Java에서도 memory leak은 생길 수 있습니다. GC는 unreachable 객체만 회수하므로, 업무적으로 더 이상 필요하지 않은 객체가 static cache, listener, ThreadLocal 같은 장수 참조 때문에 reachable하게 남아 있으면 메모리가 계속 유지됩니다. 진단할 때는 heap에서 큰 객체만 찾기보다 GC root까지의 retained path를 따라가 "누가 왜 이 객체를 붙잡고 있는가"를 찾고, owner와 수명 정책을 수정해야 합니다.
-
-### 면접에서 이렇게 나옵니다
-
-#### Q. Java에는 GC가 있는데도 memory leak이 생길 수 있는 이유는 무엇인가요?
-
-GC는 애플리케이션이 더 이상 필요로 하지 않는지를 판단하지 않고 reachability를 기준으로 회수 대상을 결정합니다. 그래서 static cache, listener registry, ThreadLocal처럼 장수 owner가 불필요한 객체를 계속 가리키면 GC는 그 객체를 정상적으로 보존하고 결과적으로 live set이 계속 커질 수 있습니다.
-
-#### Q. Heap dump에서 가장 큰 객체만 찾으면 memory leak 원인을 알 수 있나요?
-
-항상 그렇지는 않습니다. 객체 자체의 shallow size가 작아도 큰 graph를 붙잡는 owner일 수 있으므로 GC root까지의 retained path를 확인해야 합니다. 누가 그 객체를 계속 보유하고 있고 원래 lifecycle이 언제 끝나야 했는지를 함께 봐야 실제 수정 지점을 찾을 수 있습니다.
+Java memory leak은 GC가 동작하지 않아서가 아니라, 업무적으로 불필요해진 객체가 여전히 root에서 reachable하게 남아 있는 문제인 경우가 많습니다. Static cache, listener, ThreadLocal, queue, ClassLoader처럼 장수 owner를 확인하고, heap dump에서는 큰 객체 하나보다 GC root까지의 retained path를 추적해야 합니다. 해결도 `System.gc()`나 WeakReference부터 적용하기보다 owner와 lifecycle 정책을 바로잡는 것이 먼저입니다.

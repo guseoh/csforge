@@ -3,8 +3,8 @@ kind: concept
 contentKey: computer-architecture.core.multicore-memory.hardware-memory-reordering
 topicContentKey: computer-architecture.core.multicore-memory
 slug: hardware-memory-reordering
-title: "Hardware Memory Reordering"
-summary: "메모리 일관성 model이 다른 core에 관찰될 load/store 순서를 제한하는 방식과 Java happens-before가 그 위에서 제공하는 language contract를 구분한다."
+title: "Hardware Memory Ordering"
+summary: "메모리 일관성 model이 다른 core에 관찰될 load/store 순서를 어떻게 제한하는지 설명하고 language memory model과의 경계를 구분한다."
 level: 3
 status: PUBLISHED
 displayOrder: 60
@@ -24,34 +24,47 @@ references:
     recommendation: "weak memory ordering에서 preserved program order와 explicit synchronization이 어떤 순서를 보존하는지 확인한다."
     displayOrder: 2
 ---
-# Hardware Memory Reordering
+# Hardware Memory Ordering
 
-### Source-code 순서와 다른 core가 관찰하는 memory 순서는 항상 같지 않다
+한 core의 program이 load와 store를 특정 순서로 작성했다고 해서 다른 core가 모든 memory operation을 반드시 그 순서 그대로 관찰하는 것은 아니다. CPU는 store buffer, out-of-order execution과 cache hierarchy를 이용해 성능을 높일 수 있고, architecture는 어떤 순서를 반드시 보존해야 하는지를 **memory consistency model**로 정의한다.
 
-single thread의 program semantics가 올바르게 유지되어도 CPU 내부에서는 load/store queue, store buffer, speculative/out-of-order execution과 cache hierarchy를 이용해 memory operation을 효율적으로 처리할 수 있다. 중요한 것은 `instruction이 pipeline에서 어떤 순서로 실행되었는가` 자체보다 architecture 메모리 일관성 model이 다른 observer에게 어떤 memory ordering을 반드시 보장하는가다.
+중요한 것은 pipeline 내부의 실제 실행 순서를 그대로 외부에 노출하는 것이 아니라, architecture가 허용한 범위 안에서 다른 observer가 어떤 결과를 볼 수 있는가다.
 
-weak memory model에서는 서로 의존하지 않는 일부 memory operation이 다른 core에서 program order와 다른 순서로 관찰되는 execution을 허용할 수 있다. RISC-V의 RVWMO도 global memory order가 program order 전체를 그대로 보존하는 대신 architecture가 정한 preserved program order, dependency, fence, acquire/release 등의 제약을 만족하도록 정의한다.
+### Weak memory model은 program order 일부만 강제한다
 
-### Coherence가 있어도 서로 다른 address의 순서는 자동으로 정해지지 않는다
+RISC-V RVWMO 같은 weak memory model에서는 모든 memory operation의 program order를 global order에 그대로 강제하지 않는다. 대신 같은 주소에 대한 dependency, explicit synchronization, fence, acquire/release 같은 규칙으로 **반드시 보존해야 하는 순서**를 정의한다.
 
-cache coherence는 같은 location의 write/read가 coherent하게 보이도록 하는 문제다. 하지만 producer가 `data = 42`를 쓴 뒤 `ready = 1`을 썼다고 해서 synchronization이 전혀 없는 모든 architecture에서 consumer가 `ready == 1`을 본 순간 반드시 최신 `data`도 관찰한다고 coherence 하나만으로 결론 내릴 수는 없다. `data`와 `ready`는 서로 다른 location이고, 둘 사이의 publish order는 memory model의 ordering rule이 필요하다.
+```text
+program order:   store A → store B
+observed order:  항상 동일하다고 가정할 수 없음
+                 └─ 필요한 ordering rule/fence가 있어야 함
+```
 
-fence는 특정 predecessor memory operations와 successor operations 사이의 관찰 순서를 제한한다. architecture에 따라 acquire/release annotation이나 atomic instruction도 ordering을 제공할 수 있다. fence는 `CPU를 무조건 완전히 멈추는 instruction`이라고만 이해하기보다 memory model에서 필요한 order를 만드는 mechanism으로 본다.
+이 자유 덕분에 hardware는 memory operation을 더 유연하게 겹쳐 처리할 수 있지만, 여러 core가 공유 state를 주고받을 때 필요한 ordering은 명시적으로 만들어야 한다.
 
-### Hardware memory order와 compiler reordering도 구분한다
+### Coherence와 ordering은 다른 문제다
 
-compiler/JIT 역시 single-thread semantics를 바꾸지 않는 범위에서 memory operation을 최적화할 수 있다. concurrent program에서 어떤 optimization이 허용되는지는 language memory model이 정의한다. programmer가 hardware fence만 생각하고 compiler가 보는 synchronization semantics를 무시하면 portable한 concurrent code를 만들기 어렵다.
+Coherence는 같은 memory location의 여러 cached copy가 서로 모순되지 않도록 관리한다. 그러나 `data`와 `ready`처럼 서로 다른 location 사이의 순서를 coherence 하나만으로 보장할 수는 없다.
 
-native code에서는 compiler barrier와 hardware ordering primitive의 역할이 다를 수 있고, C/C++ atomics나 architecture instruction의 contract를 직접 따라야 한다. Java application에서는 이런 low-level detail을 직접 조립하기보다 Java Memory Model의 synchronization action을 사용한다.
+```text
+producer:
+  data  = 42
+  ready = 1
 
-### Java happens-before는 hardware ordering의 별칭이 아니다
+consumer:
+  if (ready == 1) read data
+```
 
-Java Memory Model의 happens-before는 program action 사이의 language-level ordering/visibility contract다. `volatile` write와 subsequent read, monitor unlock/lock, thread start/join 등 JLS가 정의하는 synchronization relation을 통해 programmer가 기대할 수 있는 visibility를 규정한다. JVM은 target CPU가 x86인지 ARM인지 RISC-V인지에 따라 필요한 instruction/fence를 다르게 사용할 수 있지만 Java source의 contract는 hardware마다 임의로 바뀌면 안 된다.
+Consumer가 `ready`를 본 뒤 반드시 최신 `data`를 보아야 한다면 해당 architecture나 language에서 요구하는 synchronization ordering이 필요하다.
 
-따라서 `x86은 ordering이 강하니 volatile이 필요 없다`, `cache coherence가 있으니 data race도 최신 값을 본다`, `volatile은 CPU cache를 끈다` 같은 설명은 피해야 한다. Java correctness를 판단할 때는 happens-before와 atomicity를 먼저 보고 hardware memory model은 그 구현과 비용을 이해하기 위해 내려간다.
+### Fence는 필요한 순서를 제한한다
 
-### Backend에서 publish pattern을 볼 때
+Fence는 특정 memory operation들이 서로 어떤 순서로 관찰되어야 하는지 제약을 추가한다. 이를 단순히 `CPU 전체를 멈추는 instruction`이라고 이해하는 것보다 **memory model 안에서 predecessor와 successor operation의 order를 강제하는 mechanism**으로 보는 편이 정확하다.
 
-한 thread가 object를 채운 뒤 ready flag로 공개하고 다른 thread가 flag를 본 뒤 object를 읽는 구조에서는 object writes가 publication보다 먼저, consumer reads가 publication 확인 이후에 보이도록 language-level synchronization을 설계해야 한다. Java라면 volatile/atomic/lock 또는 안전한 concurrent abstraction을 사용한다.
+Acquire/release semantics도 비슷하게 특정 synchronization boundary 앞뒤의 memory ordering을 구성한다.
 
-성능 때문에 synchronization을 제거하기 전에 profiler와 contention을 확인하고, 정말 low-level native/FFI path를 다룰 때만 해당 언어와 ISA의 memory model, fence responsibility를 명시적으로 검토한다.
+### Language memory model은 그 위의 계약이다
+
+Java에서는 programmer가 hardware instruction 순서를 직접 조립하는 것이 아니라 Java Memory Model의 happens-before, `volatile`, monitor lock, thread start/join 같은 language-level synchronization contract를 따라야 한다. JVM은 target CPU의 memory model에 맞춰 필요한 instruction과 fence를 사용해 그 contract를 구현한다.
+
+따라서 `cache coherence가 있으니 synchronization이 필요 없다`거나 `특정 CPU의 ordering이 강하니 Java volatile을 생략해도 된다`고 결론내리면 층위를 혼동한 것이다. Hardware memory ordering은 language memory model을 이해하는 아래 계층이지 그 계약을 대체하지 않는다.

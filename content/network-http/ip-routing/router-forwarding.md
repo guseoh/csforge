@@ -4,8 +4,8 @@ contentKey: network-http.core.ip-routing.router-forwarding
 topicContentKey: network-http.core.ip-routing
 slug: router-forwarding
 title: "Router Forwarding"
-summary: "router가 packet을 next hop으로 전달하며 header state를 갱신하는 흐름을 설명한다."
-level: 1
+summary: "router가 header를 검사·감소·재전송하는 forwarding path를 설명한다."
+level: 2
 status: PUBLISHED
 displayOrder: 60
 references:
@@ -19,14 +19,28 @@ references:
 ---
 # Router Forwarding
 
-router는 ingress interface에서 IP packet을 받아 destination address로 route lookup을 수행하고, 선택한 egress interface와 next hop으로 packet을 보낸다. 이 과정에서 incoming link frame은 소비되고 다음 link를 위한 새 frame이 만들어지므로 MAC source/destination은 hop마다 달라질 수 있다. 일반적인 forwarding에서는 IP source/destination이 end host를 나타내지만 NAT, tunnel과 proxy가 있으면 그 경계에서 address와 protocol state가 바뀔 수 있다.
+Router는 incoming link frame에서 IP packet을 얻고 destination address로 routing lookup을 수행한 뒤, 선택한 next hop과 egress interface로 packet을 보낸다. 이 과정에서 incoming frame은 끝나고 다음 link에 맞는 새 frame이 만들어진다.
 
-IPv4 router는 forwarding 중 TTL을 줄이고 header checksum을 다시 계산해야 하며, IPv6 router는 Hop Limit을 줄이지만 IPv6 base header 자체의 checksum은 사용하지 않는다. packet이 너무 크거나 route가 없거나 policy가 거부되면 fragmentation/ICMP error 또는 silent drop이 생길 수 있다. 따라서 capture 위치에 따라 보이는 MAC, TTL/Hop Limit과 packet header가 다르다.
+```text
+incoming frame
+   ↓
+IP packet 확인
+   ↓
+route lookup
+   ↓
+TTL/Hop Limit 처리
+   ↓
+next hop 결정
+   ↓
+새 link frame 생성
+```
 
-router는 application message를 생성하거나 HTTP status를 해석하지 않는다. reverse proxy가 client와 backend 사이에 별도 HTTP connection을 만드는 것처럼 application gateway는 다른 계층의 intermediary다. trace와 장애 보고에서 network hop, NAT와 HTTP intermediary를 따로 표시한다.
+### Link header와 IP header의 경계
 
-### Router forwarding
-    incoming frame → decap → IP header / TTL
-        → decrement + route lookup
-        → new outgoing frame → next link
-router는 link header를 새로 만들며 application을 처리하지 않는다.
+Router를 지날 때 link-layer source/destination address는 다음 hop에 맞게 바뀐다. 반면 일반적인 IP forwarding에서는 packet의 source/destination IP는 end host를 가리킨 채 유지된다. NAT나 tunnel처럼 별도 mechanism이 개입하면 address 또는 header가 바뀔 수 있지만, 그것은 일반 forwarding과 별도의 기능이다.
+
+### Router는 application message를 처리하지 않는다
+
+Router의 기본 책임은 network-layer packet forwarding이다. HTTP method나 response status 같은 application semantics를 이해해야 할 필요가 없다. Reverse proxy나 application gateway는 router와 다른 계층의 intermediary다.
+
+Router forwarding의 핵심은 **IP destination으로 route를 선택하고, packet lifetime 정보를 갱신한 뒤, 다음 link를 위한 새 frame으로 packet을 전달하는 것**이다.

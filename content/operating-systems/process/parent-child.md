@@ -3,8 +3,8 @@ kind: concept
 contentKey: operating-systems.core.process.parent-child
 topicContentKey: operating-systems.core.process
 slug: parent-child
-title: "Parent·Child Process"
-summary: "process creation으로 생긴 parent-child 관계와 상속·공유·lifecycle 경계를 설명한다."
+title: "Parent와 Child Process"
+summary: "process creation으로 생긴 parent-child 관계와 memory·descriptor·lifecycle state의 상속 경계를 설명한다."
 level: 1
 status: PUBLISHED
 displayOrder: 70
@@ -24,51 +24,30 @@ references:
     recommendation: "Linux에서 orphan descendant가 가장 가까운 살아 있는 child subreaper로 reparent되는 동작을 확인한다."
     displayOrder: 2
 ---
-# Parent·Child Process
+# Parent와 Child Process
 
-Process creation에는 종종 **누가 누구를 만들었는가**라는 관계가 남는다. Unix-like 모델에서 `fork()`를 호출한 process가 parent이고 새로 생성된 process가 child다. 이 관계는 단순한 이름표가 아니라 exit status 수집, signal 전달, inherited resource 이해 같은 lifecycle 관리에 사용된다.
+Unix-like system에서 `fork()`를 호출한 process가 parent이고 새로 생성된 process가 child다. 이 관계는 단순한 tree 표시가 아니라 child의 종료 상태를 누가 회수하는지와 inherited resource를 어떻게 이해할지에 영향을 준다.
 
-하지만 parent-child라고 해서 두 process가 application memory를 하나의 shared object처럼 계속 공유한다는 뜻은 아니다. Fork 직후 두 address space는 논리적으로 같은 내용을 가진 상태에서 시작할 수 있지만 일반적인 process-private writable memory는 이후 독립적으로 변화한다. Copy-on-write가 physical page를 일시적으로 공유할 수 있어도 process abstraction의 memory state를 하나로 합치는 것은 아니다.
+### Parent와 child의 memory는 독립적으로 변한다
 
-### 무엇이 복제되고 무엇이 연결되는가
+Fork 직후 두 process가 비슷한 address-space 내용을 갖더라도 이후 일반 private writable memory는 각각 독립적으로 변화한다. Copy-on-write가 physical page를 일시적으로 공유할 수 있지만 process abstraction의 memory state가 하나로 합쳐지는 것은 아니다.
 
-Fork semantics에서는 여러 종류의 state가 서로 다른 방식으로 이어진다.
+### Resource마다 상속 semantics가 다르다
+
+File descriptor는 parent와 child에 각각 entry가 생기면서도 같은 underlying open file description을 참조할 수 있다.
 
 ```text
-Parent
-├─ private address-space state ── fork ──▶ Child의 논리적 복사본
-├─ fd table entry ────────────────▶ Child fd entry
-│                                      │
-└──────────────────────────────────────┴──▶ 같은 open file description을 참조할 수 있음
+Parent fd ──┐
+            ├──> open file description ──> file
+Child fd ───┘
 ```
 
-그래서 “fork는 모든 resource를 완전 독립 복사한다”는 설명도, “parent와 child는 모든 state를 공유한다”는 설명도 둘 다 부정확하다. Resource별 semantics를 확인해야 한다.
+그래서 parent-child 관계를 `모든 상태를 복사한다`거나 `모든 상태를 공유한다`는 한 문장으로 설명할 수 없다. Resource별 contract를 봐야 한다.
 
-예를 들어 inherited pipe descriptor가 parent/child 여러 곳에 열려 있으면 한쪽 reader는 자신이 예상한 writer가 종료됐더라도 다른 process가 write end를 계속 열고 있는 동안 EOF를 받지 못할 수 있다. 이 문제는 process 관계와 descriptor lifecycle을 함께 봐야 이해된다.
+### 실행 순서도 관계만으로 정해지지 않는다
 
-### 실행 순서는 parent-child 관계로 결정되지 않는다
+Fork 이후 parent와 child는 scheduler가 다루는 별도의 runnable execution이다. 별도 synchronization이 없다면 누가 먼저 실행될지 가정할 수 없다.
 
-Fork 이후 parent와 child는 scheduler가 다루는 별도의 runnable execution이 된다. 특별한 synchronization이 없다면 누가 먼저 다음 instruction을 실행할지 application이 가정해서는 안 된다.
+Parent가 먼저 종료해도 child가 반드시 동시에 종료되는 것은 아니다. 남은 child는 OS의 reparenting 규칙에 따라 다른 process가 lifecycle 관리 책임을 이어받을 수 있다. Linux에서는 subreaper와 PID namespace 같은 구체적인 규칙이 영향을 줄 수 있다.
 
-따라서 parent가 child가 준비한 결과를 읽으려면 pipe, shared-memory synchronization, wait 등 명시적인 coordination mechanism이 필요하다. “부모이므로 child보다 항상 먼저 실행된다”거나 그 반대로 생각하면 race가 생긴다.
-
-### Parent가 먼저 종료할 수도 있다
-
-Parent가 child보다 먼저 종료되더라도 child가 반드시 함께 종료되는 것은 아니다. Parent와 child는 서로 다른 process lifecycle을 가지므로, 남은 child를 누가 관리하는지는 운영체제의 reparenting 규칙과 별도의 process-group·signal 정책을 함께 봐야 한다.
-
-**Linux에서는** immediate parent가 종료되어 orphan이 된 process가 있으면 가장 가까운 살아 있는 ancestor 중 `PR_SET_CHILD_SUBREAPER`로 지정된 process가 새 parent 역할을 맡는다. 그런 subreaper가 없다면 해당 관계는 init 역할을 하는 process로 이어진다. PID namespace를 사용하는 환경에서는 단순히 “항상 host의 PID 1로 붙는다”고 설명하면 부정확하다. 어떤 init이 reaper 역할을 하는지는 PID namespace 관계까지 영향을 받을 수 있다.
-
-반대로 child가 먼저 종료하면 parent는 `wait` 계열 interface로 termination status를 수집할 책임이 생길 수 있다. 이때 child가 아직 reap되지 않은 상태가 zombie와 연결된다.
-
-### Backend subprocess에서 보는 parent-child 관계
-
-Server process가 external command를 실행했다면 “child를 시작했다”로 lifecycle 관리가 끝나지 않는다.
-
-- Parent shutdown 시 child를 어떻게 처리할 것인가
-- stdout/stderr pipe의 어떤 endpoint를 누가 닫는가
-- timeout이면 signal/termination 후 wait까지 수행하는가
-- child exit status를 application job status와 어떻게 연결하는가
-
-를 명시해야 한다.
-
-Parent and Child Process의 핵심은 tree 그림을 외우는 것이 아니다. **Process creation 뒤 memory, descriptor, scheduling, termination state가 각각 어떤 방식으로 독립되거나 관계를 유지하는지 resource별로 구분하는 것**이다.
+반대로 child가 먼저 종료하면 parent가 `wait` 계열 interface로 종료 상태를 회수할 수 있다. 이 관계가 다음 Wait·Reap Concept으로 이어진다.

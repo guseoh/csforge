@@ -24,21 +24,19 @@ references:
 ---
 # NIO Channel과 Buffer
 
-NIO 코드를 처음 보면 `flip()`, `clear()`가 왜 필요한지 가장 헷갈립니다. 이유는 하나의 `Buffer`가 **데이터를 채울 때와 이미 채운 데이터를 읽을 때 서로 다른 범위를 사용하기 때문**입니다.
+NIO 코드에서 `flip()`, `clear()`, `compact()`가 헷갈리는 이유는 같은 Buffer가 **데이터를 채우는 상태와 이미 채운 데이터를 읽는 상태를 position과 limit으로 구분**하기 때문입니다.
 
-Channel은 데이터가 오가는 통로이고 Buffer는 그 데이터를 애플리케이션이 읽고 쓰는 임시 저장 영역입니다.
+Channel은 데이터가 오가는 통로이고 Buffer는 그 데이터를 애플리케이션이 읽고 쓰는 영역입니다.
 
 ![NIO Buffer의 write mode와 read mode 전환](/learning/java/nio-buffer-flip.svg)
 
-### Buffer에는 세 가지 핵심 위치 값이 있다
+### Buffer의 상태는 position·limit·capacity로 읽는다
 
-`capacity`, `limit`, `position`을 먼저 잡으면 대부분의 동작을 설명할 수 있습니다.
-
-- `capacity`: Buffer가 담을 수 있는 전체 공간의 크기
-- `limit`: 현재 읽거나 쓸 수 있는 범위의 끝
+- `capacity`: Buffer가 가질 수 있는 전체 요소 수
+- `limit`: 현재 접근할 수 있는 범위의 끝
 - `position`: 다음에 읽거나 쓸 위치
 
-8칸짜리 ByteBuffer를 새로 만들면 개념적으로 다음 상태에서 시작합니다.
+8칸짜리 `ByteBuffer`를 만들면 개념적으로 다음과 같습니다.
 
 ```text
 capacity = 8
@@ -47,17 +45,17 @@ position = 0
 
 [ _ _ _ _ _ _ _ _ ]
   ^               ^
- position       limit
+position         limit
 ```
 
-### Channel에서 읽어 Buffer에 채우면 position이 이동한다
+### Channel에서 데이터를 읽어 Buffer에 쓰면 position이 이동한다
 
 ```java
 ByteBuffer buffer = ByteBuffer.allocate(8);
 int count = channel.read(buffer);
 ```
 
-예를 들어 5 byte를 읽었다면 Buffer의 앞 5칸에 값이 들어가고 `position`은 5로 이동합니다.
+5 byte가 들어왔다면 앞 5칸이 채워지고 다음 쓰기 위치인 `position`은 5가 됩니다.
 
 ```text
 [ A B C D E _ _ _ ]
@@ -65,69 +63,53 @@ int count = channel.read(buffer);
          position limit=8
 ```
 
-이 상태에서 바로 `buffer.get()`을 호출하면 position 5부터 읽으려 하기 때문에 우리가 방금 채운 A부터 읽는 흐름이 아닙니다.
+이 상태는 아직 "A부터 읽기" 위한 상태가 아닙니다. 다음 접근 위치가 5이기 때문입니다.
 
-### `flip()`은 방금 쓴 범위를 읽을 준비로 바꾼다
+### `flip()`은 채운 범위를 읽을 범위로 바꾼다
 
 ```java
 buffer.flip();
 ```
 
-`flip()`의 핵심 효과는 기존 position을 새로운 limit으로 삼고 position을 0으로 돌리는 것입니다.
+`flip()`은 기존 position을 새 limit으로 두고 position을 0으로 옮깁니다.
 
 ```text
-flip 전
-position=5, limit=8
-
-flip 후
-position=0, limit=5
+flip 전: position=5, limit=8
+flip 후: position=0, limit=5
 
 [ A B C D E _ _ _ ]
   ^         ^
 position   limit
 ```
 
-이제 `get()`을 호출하면 A부터 E까지 읽을 수 있습니다.
+데이터를 뒤집거나 복사하는 메서드가 아니라 **방금 쓴 범위를 읽을 수 있도록 상태 값을 바꾸는 연산**입니다.
 
-### 다 읽은 뒤 `clear()`는 다시 쓰기 가능한 범위를 만든다
+### 모두 소비했다면 `clear()`, 일부가 남았다면 `compact()`
+
+다 읽고 Buffer 전체를 다시 입력용으로 쓰려면 `clear()`를 사용할 수 있습니다.
 
 ```java
-while (buffer.hasRemaining()) {
-    consume(buffer.get());
-}
-
 buffer.clear();
 ```
 
-`clear()`는 이름 때문에 데이터 byte를 0으로 지우는 동작처럼 보이지만 핵심은 **position과 limit을 다시 쓰기 준비 상태로 바꾸는 것**입니다.
+핵심 효과는 `position = 0`, `limit = capacity`로 되돌려 전체 범위를 다시 쓸 수 있게 하는 것입니다. 기존 byte를 0으로 지우는 동작은 아닙니다.
+
+반면 아직 읽지 않은 데이터가 있고 다음 입력과 이어서 처리해야 한다면 `compact()`가 필요할 수 있습니다.
 
 ```text
-position = 0
-limit    = capacity
-```
+읽고 남은 값: [ D E ]
 
-기존 byte가 메모리에 남아 있을 수 있어도 다음 write/read-from-channel가 그 영역을 덮어쓸 수 있는 상태가 됩니다.
-
-### 일부를 아직 소비하지 못했다면 compact가 필요할 수 있다
-
-네트워크 protocol처럼 한 번에 완전한 메시지가 들어오지 않을 수 있습니다. Buffer의 일부를 읽었지만 마지막 몇 byte는 다음 입력과 함께 처리해야 할 수도 있습니다.
-
-`compact()`는 아직 읽지 않은 데이터를 앞쪽으로 옮기고 그 뒤에 새 데이터를 받을 수 있는 상태로 만듭니다.
-
-```text
-읽고 남은 데이터: [ D E ]
-
-compact
+compact 후
 [ D E _ _ _ _ _ _ ]
       ^
    position
 ```
 
-`clear()`를 해 버리면 남은 데이터 보존 의미가 사라질 수 있으므로 둘의 목적을 구분해야 합니다.
+남은 값을 앞쪽으로 옮기고 그 뒤에 새 데이터를 쓸 공간을 만듭니다.
 
-### 한 번의 read/write가 전체를 처리한다는 보장은 없다
+### 한 번의 Channel read/write가 전체를 처리한다고 가정하지 않는다
 
-Channel I/O도 partial read/write가 가능합니다. `channel.write(buffer)`를 한 번 호출했다고 `buffer.remaining()`이 무조건 0이 된다고 가정하면 안 됩니다.
+Channel I/O는 partial read/write가 가능합니다. `channel.write(buffer)` 한 번으로 모든 remaining byte가 반드시 기록되는 것은 아닙니다.
 
 ```java
 while (buffer.hasRemaining()) {
@@ -135,37 +117,6 @@ while (buffer.hasRemaining()) {
 }
 ```
 
-실제 코드는 blocking/non-blocking mode와 protocol 요구에 따라 다르지만 문제 풀이에서는 **반환값과 Buffer 상태를 따라가는 습관**이 중요합니다.
+실제 반복 방식은 blocking/non-blocking mode와 protocol에 따라 달라질 수 있지만, 코드 추론에서는 **I/O 반환값과 Buffer의 현재 position/limit을 함께 추적**해야 합니다.
 
-### 문제를 풀 때 Buffer 상태를 직접 적는다
-
-복잡하게 머릿속으로만 계산하기보다 각 단계마다 세 값을 적으면 실수가 줄어듭니다.
-
-| 동작        | position | limit | 의미               |
-| ----------- | -------: | ----: | ------------------ |
-| allocate(8) | 0        | 8     | 쓰기 준비          |
-| 5 byte 입력 | 5        | 8     | 앞 5칸 채움        |
-| flip()      | 0        | 5     | 채운 5칸 읽기 준비 |
-| 5칸 소비    | 5        | 5     | 읽을 값 없음       |
-| clear()     | 0        | 8     | 다시 쓰기 준비     |
-
-### 자주 헷갈리는 부분
-
-- `clear()`는 실제 byte를 0으로 지우는 메서드가 아닙니다.
-- `flip()`은 데이터를 복사하는 작업이 아니라 Buffer의 범위를 바꿉니다.
-- `position`은 OS file offset과 같은 개념이 아닙니다.
-- 한 번의 Channel read/write가 항상 요청한 전체 데이터를 처리하지는 않습니다.
-
-### 학습 후 스스로 설명해 보기
-
-NIO에서 Channel은 I/O 통로이고 Buffer는 데이터가 담기는 영역입니다. Buffer는 `position`, `limit`, `capacity`로 현재 읽기·쓰기 범위를 관리합니다. Channel에서 데이터를 채운 뒤 `flip()`으로 읽기 범위를 만들고, 모두 소비한 뒤 `clear()`로 다시 쓰기 준비를 합니다. 일부 데이터가 남아 다음 입력과 이어야 한다면 `compact()`를 사용할 수 있습니다.
-
-### 면접에서 이렇게 나옵니다
-
-#### Q. `ByteBuffer.flip()`은 내부 데이터를 뒤집거나 복사하는 메서드인가요?
-
-아닙니다. `flip()`은 방금 쓰던 위치를 새로운 `limit`으로 삼고 `position`을 0으로 바꿔 **이미 채운 범위를 읽는 상태**로 전환합니다. 데이터 자체를 역순으로 만들거나 다른 메모리로 복사하는 동작이 아닙니다.
-
-#### Q. `clear()`와 `compact()`는 언제 다르게 써야 하나요?
-
-읽을 데이터를 모두 소비했다면 `clear()`로 전체 Buffer를 다시 쓰기 가능한 범위로 만들 수 있습니다. 반면 아직 읽지 않은 byte를 다음 입력과 이어서 처리해야 한다면 `compact()`로 남은 데이터를 앞쪽에 보존한 뒤 그 뒤에 새 데이터를 받습니다. 네트워크 framing처럼 메시지가 여러 read로 나뉠 수 있는 경우 이 차이가 중요합니다.
+NIO Buffer 문제를 풀 때는 메서드 이름보다 각 단계의 `position`, `limit`, `capacity`를 직접 적어 보세요. `flip`은 쓰기 범위를 읽기 범위로 전환하고, `clear`는 전체를 다시 쓰기 준비 상태로 만들며, `compact`는 읽지 않은 데이터를 보존한다는 차이가 상태 값으로 자연스럽게 보입니다.

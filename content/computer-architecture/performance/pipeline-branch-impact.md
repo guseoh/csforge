@@ -3,8 +3,8 @@ kind: concept
 contentKey: computer-architecture.core.performance.pipeline-branch-impact
 topicContentKey: computer-architecture.core.performance
 slug: pipeline-branch-impact
-title: "Pipeline·Branch Impact"
-summary: "branch frequency·misprediction rate·recovery penalty가 CPI와 execution time에 추가하는 비용을 설명한다."
+title: "Pipeline과 Branch가 CPI에 미치는 영향"
+summary: "branch frequency·misprediction rate·recovery penalty가 CPI와 CPU execution time에 추가하는 비용을 설명한다."
 level: 2
 status: PUBLISHED
 displayOrder: 60
@@ -17,41 +17,39 @@ references:
     recommendation: "CPU execution time, latency/throughput와 speedup을 구분해 성능을 계산하는 방법을 확인한다."
     displayOrder: 1
 ---
-# Pipeline·Branch Impact
+# Pipeline과 Branch가 CPI에 미치는 영향
 
-### Branch는 다음 instruction을 미리 가져오는 일을 어렵게 한다
+Pipeline은 여러 instruction을 겹쳐 처리하지만 branch prediction이 틀리면 잘못된 경로에서 진행한 instruction을 버리고 올바른 PC에서 다시 시작해야 한다. 이 recovery cycle은 useful work를 완료하지 못한 채 소비되므로 평균 CPI를 높일 수 있다.
 
-Pipeline은 여러 instruction의 stage를 겹쳐 처리량을 높인다. 하지만 conditional branch의 결과가 아직 확정되지 않았다면 fetch stage는 다음 PC를 알기 어렵다. Modern CPU는 predictor를 이용해 방향과 target을 추정하고 speculative path를 계속 진행한다.
+Branch의 전체 비용은 branch 하나의 존재만으로 정해지지 않는다. **branch가 얼마나 자주 등장하는지, predictor가 얼마나 자주 틀리는지, 한 번 틀렸을 때 몇 cycle을 잃는지**를 함께 봐야 한다.
 
-Prediction이 맞으면 기다림을 줄일 수 있지만 틀리면 wrong-path work를 버리고 올바른 PC에서 pipeline을 다시 채워야 한다. 이 recovery에 사용한 cycle이 branch misprediction penalty다.
+### 평균 추가 CPI를 단순 모델로 추정할 수 있다
 
-### Branch cost는 'branch 하나당 몇 cycle'만으로 계산하지 않는다
-
-Workload 전체에서 branch가 만드는 평균 비용은 branch의 빈도, misprediction rate와 한 번 틀렸을 때의 penalty가 함께 결정한다. 단순화하면 추가 CPI contribution을 다음처럼 생각할 수 있다.
+다음 식은 branch miss가 workload에 어느 정도 영향을 줄지 추정하는 간단한 모델이다.
 
 ```text
 branch penalty contribution
-≈ branches per instruction × misprediction rate × penalty cycles
+≈ branches per instruction
+  × misprediction rate
+  × penalty cycles
 ```
 
-예를 들어 instruction의 20%가 branch이고 그중 5%를 틀리며 penalty가 12 cycle이라면 평균 추가 비용은 다음과 같다.
+Instruction의 20%가 branch이고, 그중 5%가 misprediction이며, 한 번 틀릴 때 12 cycle이 필요하다고 하자.
 
 ```text
 0.20 × 0.05 × 12 = 0.12 cycles/instruction
 ```
 
-Base CPI가 1.0이라면 branch miss만으로 약 1.12 CPI 수준이 될 수 있다는 뜻이다. 실제 CPU에서는 overlap과 predictor 구조 때문에 더 복잡하지만 병목 규모를 추론하는 데 유용하다.
+Base CPI가 1.0인 단순 모델이라면 branch miss가 평균 CPI를 약 1.12까지 올리는 요인이 될 수 있다.
 
-### Pipeline depth와 clock frequency 사이에는 절충이 있다
+### Pipeline을 깊게 나누는 것도 trade-off다
 
-Pipeline을 더 깊게 나누면 stage마다 combinational logic을 줄여 높은 clock을 달성할 가능성이 있다. 하지만 branch resolution까지 더 많은 stage를 지나야 한다면 misprediction 때 버릴 speculative work와 recovery cycle이 증가할 수 있다.
+Pipeline stage를 더 잘게 나누면 clock period를 줄일 가능성이 있지만, branch가 확정되기 전에 더 많은 speculative instruction이 진행될 수 있다. Prediction이 틀렸을 때 버려야 할 작업과 recovery cost가 커질 수 있다는 뜻이다.
 
-따라서 deeper pipeline이 무조건 빠르다는 결론은 성립하지 않는다. 높은 frequency의 이득과 CPI 증가를 모두 CPU time 식에 넣어 비교해야 한다.
+따라서 높은 clock frequency의 이득과 증가한 CPI를 함께 CPU time 식에 넣어 판단해야 한다.
 
-### Branchless transformation도 비용 구조를 바꿀 뿐이다
+### Branch를 없애는 것 자체가 목표는 아니다
 
-Data-dependent branch를 conditional move, mask, table lookup 등으로 바꾸면 branch miss를 줄일 수 있다. 그러나 branch가 쉽게 예측되는 workload라면 기존 코드가 이미 싸고, branchless version이 불필요한 계산이나 memory access를 항상 수행해 더 느려질 수 있다.
+Branchless transformation은 misprediction을 피할 수 있는 경우가 있지만 추가 instruction이나 memory access를 만들 수 있다. Predictor가 이미 잘 맞히는 branch라면 오히려 더 비쌀 수도 있다.
 
-또한 bounds check, permission check 같은 correctness/security condition을 단순한 branch-cost 문제로 취급해서는 안 된다. Transformation은 원래 semantics를 유지하는 범위에서만 성능 후보가 된다.
-
-Backend hot loop를 최적화할 때 source의 `if` 개수만 세지 않는다. 실제 generated code, branch frequency, branch miss, cycles와 input distribution을 측정한다. 평균 input에서 predictor가 잘 맞더라도 특정 데이터 분포에서 miss가 늘어 꼬리 지연 시간(tail latency)이 바뀔 수 있다.
+Hardware 성능 분석에서는 source code의 `if` 개수보다 실제 branch frequency, misprediction과 total cycles가 어떻게 변했는지를 본다.

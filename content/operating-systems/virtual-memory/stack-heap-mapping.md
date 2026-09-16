@@ -19,24 +19,18 @@ references:
 ---
 # Stack·Heap Mapping
 
-process의 virtual address space에는 executable mapping, shared library, file mapping, heap, thread stack처럼 목적과 lifetime이 다른 영역이 함께 존재한다. 흔한 그림에서는 stack과 heap을 서로 반대 방향으로 그리지만, **구체적인 배치 주소와 성장 방향은 ABI·OS·runtime 구현에 따라 달라질 수 있다.** 학습에서 중요한 것은 그림의 방향이 아니라 어떤 실행 상태를 누가 관리하는가다.
+Process의 virtual address space에는 code와 data뿐 아니라 heap, thread stack, shared library, file mapping처럼 목적과 lifetime이 다른 영역이 함께 존재한다. 흔한 그림에서 stack과 heap이 서로 반대 방향으로 자라는 모습은 이해를 위한 모델이며, 실제 주소 배치와 성장 방향은 OS·ABI·runtime에 따라 달라질 수 있다.
 
 ![Process virtual address space 안에서 code, mapping, heap, thread stack이 서로 다른 영역과 lifetime을 가지는 예시](/learning/operating-systems/stack-heap-address-space.svg)
 
-### Stack은 실행 흐름의 call state를 담는다
+### Stack은 실행 흐름의 호출 상태와 연결된다
 
-각 thread는 자신의 call frame을 저장할 stack을 가진다. 함수 호출이 깊어지면 return address, saved register, local state 등이 stack frame에 쌓이고 반환하면서 해당 frame의 lifetime이 끝난다. stack의 virtual range 주변에는 잘못된 접근이나 과도한 성장을 감지하기 위한 guard 영역이 사용될 수 있다.
+각 thread는 자신의 function call state를 보관할 stack을 가진다. Function을 호출하면 frame이 만들어지고 반환하면 그 frame의 lifetime이 끝난다. Call depth가 너무 깊거나 stack limit을 넘으면 해당 thread의 stack growth가 실패할 수 있다.
 
-재귀가 끝없이 깊어지거나 한 frame이 지나치게 크면 thread stack limit을 넘을 수 있다. Java의 `StackOverflowError`는 이런 thread execution stack 문제와 연결되며 Java heap 부족과 같은 실패가 아니다.
+### Heap은 호출 하나보다 긴 dynamic lifetime을 다룬다
 
-### Heap은 동적 lifetime을 표현한다
+Heap은 동적으로 할당한 memory를 함수 호출 lifetime과 분리해 관리하는 영역이다. Native program에서는 allocator가 allocation/free를 관리하고, managed runtime에서는 runtime이나 GC가 더 높은 수준의 object lifetime을 관리할 수 있다.
 
-heap 영역은 함수 호출 하나보다 오래 살아야 하는 dynamic allocation을 담는 데 사용된다. native program에서는 allocator와 `malloc/free` 같은 API가 process heap 또는 별도 mapping 위에서 allocation을 관리할 수 있다. JVM에서는 Java object lifetime을 GC가 관리하지만 JVM heap 역시 OS가 보는 process virtual-memory mapping 위에 존재한다.
+OS 관점에서는 stack과 heap 모두 process virtual address space의 mapping이다. Mapping을 예약했다고 해당 범위 전체가 즉시 physical memory에 resident하는 것도 아니다. 실제 접근과 memory-management policy에 따라 page가 준비될 수 있다.
 
-`new`로 객체를 만들었다고 그 순간 physical page가 모두 확보되는 것도 아니다. JVM reservation/commit 정책과 OS demand paging 때문에 virtual size, committed heap, resident memory가 서로 다를 수 있다.
-
-### 같은 process memory라도 실패를 분리해야 한다
-
-Java heap OOM, native allocation 실패, direct-buffer pressure, thread stack exhaustion, memory-mapped file pressure는 모두 process memory와 관련되지만 원인과 회수 주체가 다르다. `RSS가 크다`거나 `OutOfMemoryError가 났다`는 사실만으로 heap 하나만 늘리면 오히려 다른 영역의 physical-memory 여유를 줄일 수 있다.
-
-Backend 운영에서는 JVM heap 사용량뿐 아니라 thread 수와 stack, native/direct memory, mapped pages, container memory limit을 함께 본다. virtual address reservation과 실제 resident working set도 같은 숫자로 취급하지 않는다.
+Stack·Heap Mapping의 핵심은 **같은 process address space 안에서도 stack은 실행 흐름의 호출 lifetime, heap은 동적 allocation lifetime을 표현하며 서로 다른 관리 단위와 failure boundary를 가진다는 점**이다.

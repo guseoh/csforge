@@ -4,7 +4,7 @@ contentKey: network-http.core.port-nat.socket-endpoint
 topicContentKey: network-http.core.port-nat
 slug: socket-endpoint
 title: "Socket Endpoint"
-summary: "address·port·transport protocol 조합으로 socket endpoint를 정의한다."
+summary: "IP·port·protocol 조합으로 통신 endpoint를 표현한다."
 level: 1
 status: PUBLISHED
 displayOrder: 20
@@ -19,16 +19,26 @@ references:
 ---
 # Socket Endpoint
 
-socket endpoint는 transport protocol의 관점에서 local address, local port, protocol을 조합해 통신의 한쪽 위치를 표현한다. hostname은 endpoint 그 자체가 아니라 DNS나 다른 name service를 통해 하나 이상의 address로 해석되는 이름이므로, 같은 hostname도 address family·resolver view·시간에 따라 다른 시도를 만들 수 있다.
+Socket endpoint는 transport communication의 한쪽 끝을 나타낸다. Internet socket을 단순화하면 **IP address, port, transport protocol**의 조합으로 local endpoint를 표현할 수 있다.
 
-서버의 listening TCP socket은 보통 local endpoint만 바인딩한 채 새 connection을 기다린다. handshake가 완료되면 accepted socket은 local endpoint와 remote endpoint를 함께 가지며, 이 연결 상태가 listening socket과 분리된다. UDP는 datagram을 받을 local endpoint만 바인딩할 수도 있고, 특정 peer를 논리적으로 제한하는 connected UDP API를 사용할 수도 있지만 TCP처럼 kernel이 reliable connection을 제공한다는 뜻은 아니다.
+```text
+TCP endpoint
+= IP address + TCP port
 
-wildcard bind는 하나의 특정 address가 아니라 여러 local interface에서 traffic을 받을 수 있는 선택이다. 실제 범위는 address family, IPv4-mapped 설정, namespace와 firewall에 따라 달라지므로 `0.0.0.0`이나 `::`를 모든 환경에서 동일한 의미로 해석하지 않는다. endpoint가 같아 보여도 network namespace가 다르면 서로 다른 socket table에 존재할 수 있다.
+UDP endpoint
+= IP address + UDP port
+```
 
-Backend health check에서는 URL의 scheme·hostname·port를 서버의 bind address와 분리해 확인한다. IPv4/IPv6, localhost, container DNS와 published port를 각각 실제 packet path에 대입해야 하며, 이름이 해석됐다는 사실만으로 listener나 service readiness가 보장되지는 않는다.
+Hostname은 endpoint 자체가 아니다. DNS를 통해 hostname을 하나 이상의 IP address로 해석한 뒤 선택된 address와 port가 실제 network endpoint를 구성한다.
 
-### Socket endpoint
-    application → bind/listen
-                  → (IP address, port, protocol)
-                  → kernel demultiplexing → socket
-wildcard bind는 여러 interface의 노출 범위를 넓힐 수 있다.
+### Listening endpoint와 established connection
+
+TCP server는 local address와 port에 listening socket을 두고 connection 요청을 기다린다. Connection이 만들어지면 accepted socket은 local endpoint뿐 아니라 remote endpoint도 함께 가진다.
+
+UDP도 local address/port에 bind할 수 있지만 TCP와 같은 connection reliability/state machine을 자동으로 제공하는 것은 아니다. 같은 `socket` interface를 사용하더라도 transport protocol의 계약은 다르다.
+
+### Wildcard bind
+
+Server가 특정 local address가 아니라 wildcard address에 bind하면 여러 local interface로 들어오는 traffic을 받을 수 있다. 예를 들어 IPv4의 `0.0.0.0`은 일반적으로 모든 local IPv4 address에 대한 bind를 표현하는 데 사용된다.
+
+Socket endpoint의 핵심은 **transport protocol이 traffic을 어느 local communication endpoint에 전달할지 나타내는 address·port 조합**이라는 것이다.

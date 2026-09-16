@@ -4,8 +4,8 @@ contentKey: network-http.core.port-nat.connection-tuple
 topicContentKey: network-http.core.port-nat
 slug: connection-tuple
 title: "Connection Tuple"
-summary: "TCP connection을 local·remote address와 port의 4-tuple로 식별하는 방식을 설명한다."
-level: 1
+summary: "양 끝 address·port·protocol tuple로 flow를 식별하는 방식을 설명한다."
+level: 2
 status: PUBLISHED
 displayOrder: 30
 references:
@@ -19,17 +19,26 @@ references:
 ---
 # Connection Tuple
 
-TCP connection은 protocol이라는 전제 아래 local IP·local port·remote IP·remote port의 4-tuple로 식별된다. 따라서 같은 server port라도 client의 ephemeral port나 source address가 다르면 kernel은 서로 다른 established socket으로 demultiplex할 수 있다. “5-tuple”이라는 표현은 이 4-tuple에 protocol을 명시적으로 더해 일반적인 flow key로 부르는 경우다.
+TCP connection은 양쪽 endpoint의 address와 port 조합으로 구분된다. TCP라는 protocol이 이미 정해져 있다고 보면 **local IP, local port, remote IP, remote port의 4-tuple**이 하나의 connection을 식별한다. 일반적인 flow를 protocol까지 포함해 표현할 때는 5-tuple이라고 부르기도 한다.
 
-listener는 local endpoint로 connection을 기다리고, accept된 socket은 remote endpoint까지 가진다. NAT가 source address나 port를 바꾸면 외부 server가 관찰하는 tuple과 내부 host의 socket tuple이 달라진다. translation state가 사라지면 같은 주소·port가 다시 사용되어도 예전 connection의 identity가 복원되는 것은 아니다.
+```text
+protocol = TCP
+local  = 192.0.2.10:53124
+remote = 198.51.100.20:443
+```
 
-load balancer나 reverse proxy가 있으면 client-to-proxy와 proxy-to-backend는 서로 다른 TCP tuple과 서로 다른 connection lifecycle을 가진다. 한 client 요청이 connection pool의 기존 connection을 재사용하거나 HTTP/2 stream으로 multiplex될 수 있으므로 HTTP 요청 수와 TCP connection 수를 1:1로 세지 않는다.
+### 같은 server port로 여러 connection을 구분할 수 있다
 
-Backend 장애를 분석할 때는 listener의 local tuple, proxy가 본 source tuple, backend가 본 source tuple을 구분하고 connection pool·TIME_WAIT·NAT mapping의 수명도 함께 본다. 한 구간의 tuple이 정상이라는 사실만으로 전체 end-to-end path나 application 처리 완료를 증명할 수 없다.
+Server가 TCP port 443 하나에서 listen해도 서로 다른 client address나 ephemeral port에서 들어온 connection은 tuple이 다르다. 그래서 kernel은 각각을 별도의 connection state로 관리할 수 있다.
 
-### Connection tuple
-    protocol + local IP:port + remote IP:port
-                         │
-                         ▼
-                    one flow state
-HTTP resource identity와 transport flow 식별은 다르다.
+```text
+client A:53124 → server:443
+client B:60431 → server:443
+client C:49100 → server:443
+```
+
+### NAT가 있으면 관찰되는 tuple이 바뀔 수 있다
+
+NAT가 source address나 port를 변환하면 내부 host가 보는 tuple과 외부 peer가 보는 tuple은 달라질 수 있다. NAT 장치는 그 관계를 mapping state로 관리한다.
+
+Connection tuple의 핵심은 **한 connection/flow의 양 끝 endpoint를 address·port·protocol 조합으로 식별하며, 같은 listening port 아래에서도 많은 connection을 구분할 수 있다는 것**이다.

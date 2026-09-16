@@ -4,7 +4,7 @@ contentKey: operating-systems.core.ipc.unix-domain-socket
 topicContentKey: operating-systems.core.ipc
 slug: unix-domain-socket
 title: "Unix-Domain Socket"
-summary: "같은 host의 process를 socket semantics로 연결하면서 local namespace·credential·stream/datagram 경계를 설명한다."
+summary: "host 내부 endpoint 통신과 network socket 차이를 설명한다."
 level: 1
 status: PUBLISHED
 displayOrder: 50
@@ -19,28 +19,22 @@ references:
 ---
 # Unix-Domain Socket
 
-Unix-domain socket(AF_UNIX/AF_LOCAL)은 **같은 host 안의 process**가 socket interface로 통신하게 하는 IPC다. application은 `socket`, `bind`, `listen`, `accept`, `connect`, `read/write` 같은 familiar한 socket lifecycle을 사용할 수 있지만 IP routing을 통해 remote host로 전달하는 network socket과는 endpoint 범위가 다르다.
+Unix-domain socket(AF_UNIX/AF_LOCAL)은 **같은 host의 process 사이를 socket interface로 연결하는 IPC**다. Application은 `socket`, `bind`, `listen`, `accept`, `connect`, `read/write` 같은 socket lifecycle을 사용할 수 있지만 IP routing을 통해 remote host와 통신하는 network socket과는 endpoint 범위가 다르다.
 
 ![같은 host의 client/server process를 연결하는 Unix-domain socket](/learning/operating-systems/unix-domain-socket.svg)
 
-### Stream과 datagram을 구분한다
+### Socket type에 따라 data boundary가 달라진다
 
-Unix-domain stream socket은 TCP와 비슷하게 connected byte stream interface를 제공하므로 application message boundary를 직접 framing해야 한다. datagram/seqpacket 계열은 API가 제공하는 message boundary semantics가 다를 수 있으므로 socket type을 명시해야 한다.
+`SOCK_STREAM`을 사용하면 connected byte stream을 제공하므로 application message boundary를 직접 framing해야 한다. Datagram이나 seqpacket 계열은 다른 boundary semantics를 제공할 수 있다. 따라서 `Unix-domain socket은 message 단위를 자동 보존한다`고 일반화하면 안 된다.
 
-`Unix socket이므로 message 하나가 write 하나와 동일하게 보존된다`고 일반화하면 안 된다. `SOCK_STREAM`이면 partial read/write를 그대로 고려해야 한다.
+### Endpoint namespace도 lifecycle의 일부다
 
-### Endpoint namespace가 local lifecycle을 만든다
+Pathname 기반 Unix-domain socket은 filesystem namespace의 path를 endpoint로 사용할 수 있다. Server가 종료된 뒤 pathname이 남아 있으면 다음 bind에 영향을 줄 수 있고, path permission도 접근 가능성에 영향을 준다. Linux의 abstract namespace처럼 별도 방식도 있지만 portable pathname semantics와는 다르다.
 
-pathname 기반 Unix socket은 filesystem namespace의 path를 endpoint로 사용할 수 있다. server crash 뒤 socket pathname이 남아 새 bind가 실패하거나, permission 때문에 client가 connect하지 못할 수 있다. Linux에는 abstract namespace 같은 별도 방식도 있지만 이는 portable POSIX pathname semantics와 동일하지 않다.
+즉 local socket에서도 endpoint 생성·사용·close·cleanup이 명확한 lifecycle을 가져야 한다.
 
-따라서 server 시작/shutdown에서 `endpoint 생성 → listen → client connect → close → stale pathname cleanup` lifecycle을 명시한다.
+### Network socket과의 경계
 
-### Local peer 정보를 활용할 수 있다
+Unix-domain socket은 host 내부 communication이므로 IP routing과 remote host failure를 다루지 않는다. 대신 local namespace와 peer credential 같은 host-local 기능을 활용할 수 있다. 다른 host로 통신 범위를 넓혀야 한다면 network socket 같은 다른 transport가 필요하다.
 
-일부 OS API에서는 Unix-domain peer의 process credential 같은 local identity 정보를 확인할 수 있다. 이는 network socket의 remote address와 다른 특성이다. 다만 credential을 이용한 구체적인 authorization 정책은 Security 영역에서 다루고, 여기서는 kernel이 local IPC endpoint/peer 정보를 제공할 수 있다는 mechanics만 이해한다.
-
-### Network socket과 비교하면
-
-Unix-domain socket은 host 경계를 넘을 필요가 없는 communication에서 network routing/transport header 처리 일부를 피할 수 있고 local namespace를 활용한다. 반대로 다른 host로 확장할 수 없으므로 deployment boundary가 바뀌면 transport choice도 바뀐다.
-
-Backend에서 같은 machine의 helper daemon, local proxy, database client가 Unix socket을 지원한다면 TCP loopback과 지연 시간/permission/operations trade-off를 비교할 수 있다. 단순히 local이라는 이유로 항상 더 빠르다고 가정하지 않고 실제 workload를 측정한다.
+Unix-domain socket의 핵심은 **같은 host의 process를 socket semantics로 연결하며, stream/datagram boundary와 local endpoint lifecycle을 함께 관리한다는 것**이다.

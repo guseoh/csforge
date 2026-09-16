@@ -13,7 +13,8 @@
       {"key": "C", "content": "둘은 Big-O가 다르지만 입력 크기와 무관하게 항상 같은 시간이다.", "displayOrder": 2},
       {"key": "D", "content": "O(n²)도 상수항이 작으면 입력 상한과 관계없이 항상 안전한 후보다.", "displayOrder": 3}
     ],
-    "correctChoiceKey": "A"
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "입력 100,000에서 n²은 대략 10¹⁰ 규모로 증가하지만 n log n은 그보다 훨씬 작다. Big-O가 정확한 실행 시간을 주지는 않아도 이 정도 성장 차이는 후보를 구조적으로 거르는 근거가 된다."
   },
   {
     "kind": "question",
@@ -23,7 +24,8 @@
     "difficulty": "EASY",
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.algorithm-selection.constraint-to-complexity"],
-    "acceptedAnswers": ["1000000", "1,000,000", "백만", "약 100만"]
+    "acceptedAnswers": ["1000000", "1,000,000", "백만", "약 100만"],
+    "explanationMarkdown": "`1,000² = 1,000 × 1,000`이므로 기본 연산 규모는 약 1,000,000이다. Big-O는 정확한 실행 시간이 아니라 입력 증가에 따른 연산량의 성장 차수를 나타낸다는 점은 별도로 구분한다."
   },
   {
     "kind": "question",
@@ -33,7 +35,8 @@
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.algorithm-selection.constraint-to-complexity"],
-    "modelAnswer": "sample이 아니라 production 상한을 입력 크기로 잡아 O(n²)의 증가량을 먼저 계산한다. 200,000²은 구조적으로 매우 큰 작업량이므로 O(n log n), hashing, sorting/indexing 등 다른 후보를 검토한다. 그 뒤 메모리와 data shape를 확인하고 대표·최악 입력으로 실제 측정한다. Big-O만으로 절대 시간을 단정하지 않지만 명백히 감당하기 어려운 후보를 제거하는 데 사용한다."
+    "modelAnswer": "sample이 아니라 production 상한을 입력 크기로 잡아 O(n²)의 증가량을 먼저 계산한다. 200,000²은 구조적으로 매우 큰 작업량이므로 O(n log n), hashing, sorting/indexing 등 다른 후보를 검토한다. 그 뒤 메모리와 data shape를 확인하고 대표·최악 입력으로 실제 측정한다. Big-O만으로 절대 시간을 단정하지 않지만 명백히 감당하기 어려운 후보를 제거하는 데 사용한다.",
+    "explanationMarkdown": "sample이 아니라 production 상한을 입력 크기로 잡아 O(n²)의 증가량을 먼저 계산한다. 200,000²은 구조적으로 매우 큰 작업량이므로 O(n log n), hashing, sorting/indexing 등 다른 후보를 검토한다. 그 뒤 메모리와 data shape를 확인하고 대표·최악 입력으로 실제 측정한다. Big-O만으로 절대 시간을 단정하지 않지만 명백히 감당하기 어려운 후보를 제거하는 데 사용한다."
   },
   {
     "kind": "question",
@@ -43,7 +46,8 @@
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.algorithm-selection.constraint-to-complexity"],
-    "modelAnswer": "Big-O는 증가 차수를 표현하므로 allocation, cache locality, branch, I/O, 구현 상수 같은 실제 비용을 숨긴다. 또한 평균·worst-case 전제나 입력 분포가 다를 수 있다. 복잡도로 후보를 줄인 뒤 실제 workload에서 측정해야 한다."
+    "modelAnswer": "Big-O는 증가 차수를 표현하므로 allocation, cache locality, branch, I/O, 구현 상수 같은 실제 비용을 숨긴다. 또한 평균·worst-case 전제나 입력 분포가 다를 수 있다. 복잡도로 후보를 줄인 뒤 실제 workload에서 측정해야 한다.",
+    "explanationMarkdown": "Big-O는 증가 차수를 표현하므로 allocation, cache locality, branch, I/O, 구현 상수 같은 실제 비용을 숨긴다. 또한 평균·worst-case 전제나 입력 분포가 다를 수 있다. 복잡도로 후보를 줄인 뒤 실제 workload에서 측정해야 한다."
   },
 
   {
@@ -54,7 +58,8 @@
     "difficulty": "EASY",
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.algorithm-selection.memory-limit"],
-    "acceptedAnswers": ["4000000 bytes", "4,000,000 bytes", "약 4 MB", "4 MB"]
+    "acceptedAnswers": ["4000000 bytes", "4,000,000 bytes", "약 4 MB", "4 MB"],
+    "explanationMarkdown": "원시 데이터만 계산하면 `1,000,000 × 4 byte = 4,000,000 byte`로 약 4 MB다. 실제 프로그램에서는 배열 header·alignment와 runtime overhead가 추가될 수 있다."
   },
   {
     "kind": "question",
@@ -64,7 +69,8 @@
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.algorithm-selection.memory-limit"],
-    "acceptedAnswers": ["600 MB", "600MB", "약 600 MB"]
+    "acceptedAnswers": ["600 MB", "600MB", "약 600 MB"],
+    "explanationMarkdown": "동시에 살아 있는 배열의 최대 메모리는 `20 MB × 30 = 600 MB`다. 여기에 객체와 thread stack 같은 다른 메모리가 더해지므로 이 값은 전체 사용량의 하한에 가깝다."
   },
   {
     "kind": "question",
@@ -74,7 +80,8 @@
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.algorithm-selection.memory-limit"],
-    "modelAnswer": "resize 시점에는 기존 storage와 새 storage가 동시에 존재해 순간 peak가 steady-state보다 커진다. 여기에 concurrent 요청과 object/bucket overhead까지 더해지면 OOM이 발생할 수 있다. 알고리즘 선택에서는 평균이 아니라 temporary buffer, rebuild 중복 storage, 동시 실행 수를 포함한 peak memory를 계산해야 한다."
+    "modelAnswer": "resize 시점에는 기존 storage와 새 storage가 동시에 존재해 순간 peak가 steady-state보다 커진다. 여기에 concurrent 요청과 object/bucket overhead까지 더해지면 OOM이 발생할 수 있다. 알고리즘 선택에서는 평균이 아니라 temporary buffer, rebuild 중복 storage, 동시 실행 수를 포함한 peak memory를 계산해야 한다.",
+    "explanationMarkdown": "resize 시점에는 기존 storage와 새 storage가 동시에 존재해 순간 peak가 steady-state보다 커진다. 여기에 concurrent 요청과 object/bucket overhead까지 더해지면 OOM이 발생할 수 있다. 알고리즘 선택에서는 평균이 아니라 temporary buffer, rebuild 중복 storage, 동시 실행 수를 포함한 peak memory를 계산해야 한다."
   },
   {
     "kind": "question",
@@ -84,7 +91,8 @@
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.algorithm-selection.memory-limit"],
-    "modelAnswer": "미래 전이가 실제로 이전 몇 개 row/state만 참조하는지 확인해야 하고, 갱신 중 필요한 이전 값을 덮어쓰지 않도록 iteration order를 맞춰야 한다. 선택 경로나 predecessor 복원이 필요하다면 값만 남기는 최적화가 필요한 정보를 없애지 않는지도 확인한다."
+    "modelAnswer": "미래 전이가 실제로 이전 몇 개 row/state만 참조하는지 확인해야 하고, 갱신 중 필요한 이전 값을 덮어쓰지 않도록 iteration order를 맞춰야 한다. 선택 경로나 predecessor 복원이 필요하다면 값만 남기는 최적화가 필요한 정보를 없애지 않는지도 확인한다.",
+    "explanationMarkdown": "미래 전이가 실제로 이전 몇 개 row/state만 참조하는지 확인해야 하고, 갱신 중 필요한 이전 값을 덮어쓰지 않도록 iteration order를 맞춰야 한다. 선택 경로나 predecessor 복원이 필요하다면 값만 남기는 최적화가 필요한 정보를 없애지 않는지도 확인한다."
   },
 
   {
@@ -101,7 +109,8 @@
       {"key": "C", "content": "값의 범위가 작아도 항상 comparison sort가 더 적합하다.", "displayOrder": 2},
       {"key": "D", "content": "key range만큼의 count array를 만들면 memory는 항상 입력보다 작다.", "displayOrder": 3}
     ],
-    "correctChoiceKey": "A"
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "Key 종류가 1,000개로 제한되어 있어 값별 빈도를 세고 순서대로 복원하는 counting sort를 검토할 수 있다. 비용은 O(n+k)이므로 이 입력에서는 일반 비교 정렬의 O(n log n)과 비교할 가치가 있다."
   },
   {
     "kind": "question",
@@ -111,7 +120,8 @@
     "difficulty": "EASY",
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.algorithm-selection.data-shape"],
-    "acceptedAnswers": ["binary search", "이진 탐색", "binary-search"]
+    "acceptedAnswers": ["binary search", "이진 탐색", "binary-search"],
+    "explanationMarkdown": "정렬 배열에서는 중간값과 target을 비교할 때마다 후보 구간을 절반으로 줄일 수 있다. 따라서 반복 exact lookup에는 O(log n) binary search가 정렬 상태를 직접 활용한다."
   },
   {
     "kind": "question",
@@ -121,7 +131,8 @@
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.algorithm-selection.data-shape"],
-    "modelAnswer": "E가 V²에 비해 매우 작은 sparse graph이므로 adjacency list를 우선 검토한다. list는 O(V+E) 공간을 쓰지만 matrix는 V², 즉 1억 개의 cell을 준비해야 한다. 다만 edge membership 조회 빈도 등 operation 요구도 함께 비교한다."
+    "modelAnswer": "E가 V²에 비해 매우 작은 sparse graph이므로 adjacency list를 우선 검토한다. list는 O(V+E) 공간을 쓰지만 matrix는 V², 즉 1억 개의 cell을 준비해야 한다. 다만 edge membership 조회 빈도 등 operation 요구도 함께 비교한다.",
+    "explanationMarkdown": "E가 V²에 비해 매우 작은 sparse graph이므로 adjacency list를 우선 검토한다. list는 O(V+E) 공간을 쓰지만 matrix는 V², 즉 1억 개의 cell을 준비해야 한다. 다만 edge membership 조회 빈도 등 operation 요구도 함께 비교한다."
   },
   {
     "kind": "question",
@@ -131,7 +142,8 @@
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.algorithm-selection.data-shape"],
-    "modelAnswer": "Key 분포와 hash 결과가 균등하다는 평균 가정이 실제 입력에서 성립하는지 확인한다. 특정 bucket/probe cluster로 collision이 집중되면 expected O(1)과 실제 비용이 달라질 수 있다. duplicate-heavy, skew, adversarial key를 별도 fixture로 측정하고 hash quality, load factor, ordered structure 대안을 비교한다."
+    "modelAnswer": "Key 분포와 hash 결과가 균등하다는 평균 가정이 실제 입력에서 성립하는지 확인한다. 특정 bucket/probe cluster로 collision이 집중되면 expected O(1)과 실제 비용이 달라질 수 있다. duplicate-heavy, skew, adversarial key를 별도 fixture로 측정하고 hash quality, load factor, ordered structure 대안을 비교한다.",
+    "explanationMarkdown": "Key 분포와 hash 결과가 균등하다는 평균 가정이 실제 입력에서 성립하는지 확인한다. 특정 bucket/probe cluster로 collision이 집중되면 expected O(1)과 실제 비용이 달라질 수 있다. duplicate-heavy, skew, adversarial key를 별도 fixture로 측정하고 hash quality, load factor, ordered structure 대안을 비교한다."
   },
 
   {
@@ -148,7 +160,8 @@
       {"key": "C", "content": "preprocessing 비용은 query 횟수와 무관하게 매 query마다 다시 발생한다.", "displayOrder": 2},
       {"key": "D", "content": "전처리 결과는 query가 몇 번이어도 원본 변경 비용을 고려할 필요가 없다.", "displayOrder": 3}
     ],
-    "correctChoiceKey": "A"
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "Query 한 번이면 선형 scan은 100 ms지만 전처리 방식은 `800+5=805 ms`가 든다. 반복 횟수가 전처리 비용을 상쇄하기 전에는 단순 scan이 더 저렴하다."
   },
   {
     "kind": "question",
@@ -169,7 +182,8 @@
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.algorithm-selection.preprocessing-query-cost"],
-    "modelAnswer": "기존 prefix sum은 query는 빠르지만 한 값 변경 시 뒤쪽 prefix를 광범위하게 갱신해야 할 수 있다. Query 절감만이 아니라 update/rebuild 비용을 총비용에 포함해야 한다. Update와 range query가 모두 중요하면 Fenwick tree나 segment tree처럼 양쪽 operation을 균형 있게 지원하는 구조를 검토한다."
+    "modelAnswer": "기존 prefix sum은 query는 빠르지만 한 값 변경 시 뒤쪽 prefix를 광범위하게 갱신해야 할 수 있다. Query 절감만이 아니라 update/rebuild 비용을 총비용에 포함해야 한다. Update와 range query가 모두 중요하면 Fenwick tree나 segment tree처럼 양쪽 operation을 균형 있게 지원하는 구조를 검토한다.",
+    "explanationMarkdown": "기존 prefix sum은 query는 빠르지만 한 값 변경 시 뒤쪽 prefix를 광범위하게 갱신해야 할 수 있다. Query 절감만이 아니라 update/rebuild 비용을 총비용에 포함해야 한다. Update와 range query가 모두 중요하면 Fenwick tree나 segment tree처럼 양쪽 operation을 균형 있게 지원하는 구조를 검토한다."
   },
   {
     "kind": "question",
@@ -179,7 +193,8 @@
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.algorithm-selection.preprocessing-query-cost"],
-    "modelAnswer": "원본 변경이 index에 반영되는 시점, 허용 가능한 stale 범위, rebuild/recovery 방법을 정의해야 한다. 전처리 구조는 query 비용만 줄이는 것이 아니라 update와 freshness 유지 비용도 가진다."
+    "modelAnswer": "원본 변경이 index에 반영되는 시점, 허용 가능한 stale 범위, rebuild/recovery 방법을 정의해야 한다. 전처리 구조는 query 비용만 줄이는 것이 아니라 update와 freshness 유지 비용도 가진다.",
+    "explanationMarkdown": "원본 변경이 index에 반영되는 시점, 허용 가능한 stale 범위, rebuild/recovery 방법을 정의해야 한다. 전처리 구조는 query 비용만 줄이는 것이 아니라 update와 freshness 유지 비용도 가진다."
   },
 
   {
@@ -196,7 +211,8 @@
       {"key": "C", "content": "offline 전략을 쓰면 결과를 한 번 계산한 뒤에는 갱신할 수 없다.", "displayOrder": 2},
       {"key": "D", "content": "online 알고리즘은 과거 입력을 모두 보존해야만 다음 결정을 내릴 수 있다.", "displayOrder": 3}
     ],
-    "correctChoiceKey": "A"
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "미래 입력까지 볼 수 있고 즉시 답할 필요가 없다면 전체 데이터를 정렬하거나 전처리한 뒤 결정할 수 있다. 이는 도착 시점마다 결정을 내려야 하는 online 제약이 없는 경우의 장점이다."
   },
   {
     "kind": "question",
@@ -206,7 +222,8 @@
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.algorithm-selection.online-offline"],
-    "modelAnswer": "현재 답과 미래 window에 영향을 줄 수 있는 bounded state만 유지하면 된다. Window 밖으로 만료된 값은 다시 답에 포함될 수 없으므로 제거할 수 있고, monotonic deque 같은 구조는 현재 maximum 후보만 보존한다."
+    "modelAnswer": "현재 답과 미래 window에 영향을 줄 수 있는 bounded state만 유지하면 된다. Window 밖으로 만료된 값은 다시 답에 포함될 수 없으므로 제거할 수 있고, monotonic deque 같은 구조는 현재 maximum 후보만 보존한다.",
+    "explanationMarkdown": "현재 답과 미래 window에 영향을 줄 수 있는 bounded state만 유지하면 된다. Window 밖으로 만료된 값은 다시 답에 포함될 수 없으므로 제거할 수 있고, monotonic deque 같은 구조는 현재 maximum 후보만 보존한다."
   },
   {
     "kind": "question",
@@ -216,7 +233,8 @@
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.algorithm-selection.online-offline"],
-    "modelAnswer": "실시간 경로는 현재까지의 bounded/incremental state로 빠른 결과를 만들고, 별도 batch는 하루 snapshot 전체를 사용해 offline으로 더 정확한 결과를 계산할 수 있다. 두 결과의 freshness와 교체 시점을 명시하고, online 경로가 미래 입력을 알고 있다는 가정을 두지 않는다."
+    "modelAnswer": "실시간 경로는 현재까지의 bounded/incremental state로 빠른 결과를 만들고, 별도 batch는 하루 snapshot 전체를 사용해 offline으로 더 정확한 결과를 계산할 수 있다. 두 결과의 freshness와 교체 시점을 명시하고, online 경로가 미래 입력을 알고 있다는 가정을 두지 않는다.",
+    "explanationMarkdown": "실시간 경로는 현재까지의 bounded/incremental state로 빠른 결과를 만들고, 별도 batch는 하루 snapshot 전체를 사용해 offline으로 더 정확한 결과를 계산할 수 있다. 두 결과의 freshness와 교체 시점을 명시하고, online 경로가 미래 입력을 알고 있다는 가정을 두지 않는다."
   },
 
   {
@@ -233,7 +251,8 @@
       {"key": "C", "content": "Balanced search tree", "displayOrder": 2},
       {"key": "D", "content": "정렬을 유지하는 ordered map", "displayOrder": 3}
     ],
-    "correctChoiceKey": "A"
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "Hash table은 ordering을 유지하는 비용 없이 hash로 후보 bucket을 좁혀 평균적인 exact-key lookup을 빠르게 만든다. Range query나 정렬 순회가 중요해지면 ordered structure가 더 적합할 수 있다."
   },
   {
     "kind": "question",
@@ -243,7 +262,8 @@
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.algorithm-selection.operation-driven-structure-choice"],
-    "modelAnswer": "Hash table은 exact lookup에는 강하지만 ordering이 없어 range query가 전체 scan에 가까워질 수 있다. Range query 15%가 실제 지연 시간에서 충분히 중요하다면 balanced tree, sorted structure 또는 별도 ordered index를 비교해야 한다."
+    "modelAnswer": "Hash table은 exact lookup에는 강하지만 ordering이 없어 range query가 전체 scan에 가까워질 수 있다. Range query 15%가 실제 지연 시간에서 충분히 중요하다면 balanced tree, sorted structure 또는 별도 ordered index를 비교해야 한다.",
+    "explanationMarkdown": "Hash table은 exact lookup에는 강하지만 ordering이 없어 range query가 전체 scan에 가까워질 수 있다. Range query 15%가 실제 지연 시간에서 충분히 중요하다면 balanced tree, sorted structure 또는 별도 ordered index를 비교해야 한다."
   },
   {
     "kind": "question",
@@ -253,7 +273,8 @@
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.algorithm-selection.operation-driven-structure-choice"],
-    "modelAnswer": "Heap은 우선순위 invariant를 유지해 min/max peek과 removal을 효율적으로 수행하므로 repeated priority extraction에 맞는다. 반면 임의 key의 빠른 lookup, ordered range query, prefix search 같은 요구에는 직접 적합하지 않다. 그런 operation이 중요하면 별도 index나 다른 구조를 함께 검토해야 한다."
+    "modelAnswer": "Heap은 우선순위 invariant를 유지해 min/max peek과 removal을 효율적으로 수행하므로 repeated priority extraction에 맞는다. 반면 임의 key의 빠른 lookup, ordered range query, prefix search 같은 요구에는 직접 적합하지 않다. 그런 operation이 중요하면 별도 index나 다른 구조를 함께 검토해야 한다.",
+    "explanationMarkdown": "Heap은 우선순위 invariant를 유지해 min/max peek과 removal을 효율적으로 수행하므로 repeated priority extraction에 맞는다. 반면 임의 key의 빠른 lookup, ordered range query, prefix search 같은 요구에는 직접 적합하지 않다. 그런 operation이 중요하면 별도 index나 다른 구조를 함께 검토해야 한다."
   },
   {
     "kind": "question",
@@ -263,6 +284,7 @@
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.algorithm-selection.operation-driven-structure-choice"],
-    "modelAnswer": "Lookup/insert/delete/min-max/range/prefix 같은 주요 operation의 종류와 빈도, 입력 크기와 data shape, 필요한 ordering·duplicate·priority invariant, memory budget, worst-case 요구, update/iteration semantics 등을 기록한다. 그 뒤 후보 구조의 operation 비용을 실제 workload와 비교한다."
+    "modelAnswer": "Lookup/insert/delete/min-max/range/prefix 같은 주요 operation의 종류와 빈도, 입력 크기와 data shape, 필요한 ordering·duplicate·priority invariant, memory budget, worst-case 요구, update/iteration semantics 등을 기록한다. 그 뒤 후보 구조의 operation 비용을 실제 workload와 비교한다.",
+    "explanationMarkdown": "Lookup/insert/delete/min-max/range/prefix 같은 주요 operation의 종류와 빈도, 입력 크기와 data shape, 필요한 ordering·duplicate·priority invariant, memory budget, worst-case 요구, update/iteration semantics 등을 기록한다. 그 뒤 후보 구조의 operation 비용을 실제 workload와 비교한다."
   }
 ]

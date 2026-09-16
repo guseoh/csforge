@@ -3,8 +3,8 @@ kind: concept
 contentKey: network-http.core.http-methods.get-head
 topicContentKey: network-http.core.http-methods
 slug: get-head
-title: "GET·HEAD"
-summary: "representation 조회와 header-only 조회의 차이를 설명한다."
+title: "GET과 HEAD"
+summary: "GET의 representation retrieval과 HEAD의 response-content 생략 semantics를 비교한다."
 level: 1
 status: PUBLISHED
 displayOrder: 30
@@ -15,10 +15,21 @@ references:
     language: en
     displayOrder: 1
 ---
-# GET·HEAD
+# GET과 HEAD
 
-GET은 target resource의 selected representation을 요청하고, HEAD는 GET과 동일한 semantics로 요청을 처리하되 **응답 content를 보내지 않고 metadata만 얻는 method**다. server는 HEAD 응답에 대응하는 GET과 같은 header fields를 보내는 것이 권장되지만, content를 실제로 생성해야만 계산할 수 있는 `Content-Length`, `Vary` 같은 field는 생략할 수 있다. 따라서 HEAD가 모든 GET header를 반드시 byte-for-byte 동일하게 반환한다고 일반화하지 않는다.
+GET은 target resource의 현재 selected representation을 전송해 달라고 요청하는 method다. 웹 페이지, JSON resource나 image를 조회할 때 가장 일반적으로 사용된다. GET은 safe하고 idempotent한 method로 정의되어 있으므로 resource state를 변경하는 command 의미를 숨겨서는 안 된다.
 
-GET과 HEAD 요청의 content는 message framing 차원에서 존재할 수 있지만 HTTP가 일반적인 의미를 정의하지 않는다. 요청 content는 method의 의미나 target을 바꿀 수 없고 일부 implementation은 요청 smuggling 위험 때문에 이를 거부할 수도 있다. client는 origin server가 해당 사용 목적과 지원을 명시적으로 알려 준 경우가 아니라면 GET/HEAD content에 command semantics를 의존하지 않는다.
+HEAD는 GET과 같은 request semantics를 사용하지만 server가 **response content를 전송하지 않는다**는 차이가 있다. client는 representation data 자체를 내려받지 않고 status와 representation metadata를 확인할 수 있다.
 
-Backend에서 large export의 validator나 metadata 확인에 HEAD가 유용할 수 있지만 `Content-Length` 같은 field가 항상 존재한다고 가정하지 않는다. HEAD를 별도 구현할 때 GET의 authorization, conditional 요청, cache와 status semantics를 유지하면서 실제 representation data를 불필요하게 생성·전송하지 않도록 metadata 계산과 content writing을 분리한다.
+```text
+GET  → status + headers + representation content
+HEAD → status + headers, no response content
+```
+
+### HEAD response가 GET response header와 항상 완전히 같지는 않다
+
+server는 일반적으로 GET에 보낼 header fields와 같은 정보를 HEAD에도 제공해야 하지만, content를 실제로 생성해야만 알 수 있는 일부 field는 생략할 수 있다. 따라서 HEAD를 `GET response에서 body bytes만 기계적으로 제거한 것`으로만 이해하면 세부 규칙을 놓칠 수 있다.
+
+GET과 HEAD request에 content가 wire-level로 존재할 가능성과 method semantics도 구분해야 한다. HTTP는 일반적인 GET/HEAD request content에 별도의 의미를 정의하지 않으므로, target resource나 command를 body에 의존해 표현하는 방식은 일반적인 HTTP contract가 아니다.
+
+두 method의 핵심 차이는 **GET은 selected representation을 전송하고, HEAD는 같은 조회 의미에서 response content 전송만 생략한다**는 점이다.

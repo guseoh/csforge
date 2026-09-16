@@ -4,7 +4,7 @@ contentKey: network-http.core.http-state-intermediary.trusted-proxy-boundary
 topicContentKey: network-http.core.http-state-intermediary
 slug: trusted-proxy-boundary
 title: "Trusted Proxy Boundary"
-summary: "어느 proxy의 forwarded value를 신뢰할지 결정하는 경계를 설명한다."
+summary: "backend가 어떤 proxy가 추가한 forwarded metadata를 신뢰할 수 있는지 결정하는 boundary를 설명한다."
 level: 3
 status: PUBLISHED
 displayOrder: 90
@@ -19,17 +19,21 @@ references:
 ---
 # Trusted Proxy Boundary
 
-trusted proxy boundary는 backend가 forwarded scheme·host·client address를 어느 intermediary가 관찰·정규화해 추가했다고 믿을지 정하는 security policy다. backend가 외부 client에 직접 노출되거나 임의 source의 header를 읽으면 attacker가 가짜 IP, HTTPS scheme, host를 주입해 rate limit·audit·redirect·CSRF 판단을 바꿀 수 있다. forwarded field의 존재 자체는 이 boundary를 만들어 주지 않는다.
+Forwarded 또는 X-Forwarded field는 proxy가 관찰한 request metadata를 전달할 수 있지만, HTTP field 자체에는 누가 그 값을 썼는지를 증명하는 기능이 없다. External client가 임의의 `X-Forwarded-For`나 `Forwarded`를 보낼 수도 있기 때문에 backend가 모든 값을 그대로 신뢰하면 client address, scheme이나 host를 위조할 수 있다.
 
-경계는 backend ingress를 trusted proxy network로 제한하고, 필요하면 mTLS·authenticated proxy protocol·known hop count·고정된 proxy address 같은 증거로 구성한다. trusted edge에서 client가 보낸 기존 forwarded field를 제거·재작성하고, backend는 실제 socket peer가 허용된 proxy인지 확인한 뒤 chain을 해석한다. 단순히 “첫 번째 IP를 사용”하거나 모든 source의 header를 신뢰하는 방식은 chain 주입에 취약하다.
+Trusted proxy boundary는 **어느 intermediary가 값을 정규화해 추가했다고 믿을 것인지**를 정하는 정책이다. 일반적인 구성에서는 외부 request가 trusted edge에 도달하면 기존 forwarded field를 제거하거나 규칙에 맞게 재작성하고, backend는 실제 connection peer가 허용된 proxy인지 확인한 뒤 해당 metadata를 사용한다.
 
-proxy를 하나 더 추가하거나 CDN과 ingress 순서를 바꾸면 어느 hop의 값이 신뢰되는지와 목록 방향이 달라질 수 있다. topology별로 direct 요청, 단일 proxy, 여러 proxy, header injection, malformed IPv6/quoted value를 테스트하고, 신뢰하지 못한 값은 authorization 판단 대신 관찰용 hint로만 취급한다. trusted proxy가 전달한 값도 원래 사용자 credential을 대신하지 않으며, backend domain authorization은 별도로 수행해야 한다.
+```text
+untrusted client
+      ↓
+trusted edge / proxy
+  - incoming forwarded metadata 정리
+  - 자신이 관찰한 metadata 추가
+      ↓
+backend
+  - trusted source에서 온 값만 해석
+```
 
-### Backend 연결
+Proxy가 하나 더 추가되거나 topology 순서가 바뀌면 어느 hop의 값이 원래 client를 나타내는지도 달라질 수 있다. 그래서 단순히 `첫 번째 IP` 또는 `마지막 IP`를 항상 신뢰하는 규칙은 안전하지 않다.
 
-CSRF origin, redirect, audit actor, rate limit이 forwarded 값에 의존하면 ingress topology와 trusted proxy address/hop 설정을 configuration 및 test fixture에 명시한다. 신뢰할 수 없는 값은 display hint로만 사용하고 authorization이나 tenant identity에 쓰지 않으며, production에서 backend direct access가 가능한지 네트워크 레벨에서도 확인한다.
-
-### Trusted metadata
-    external client → ingress → trusted proxy → backend
-         untrusted header       canonical header
-backend은 허용된 source에서 정규화된 값만 신뢰한다.
+또한 trusted proxy가 전달한 client address는 network observation에 관한 신뢰일 뿐 application user identity나 authorization을 대신하지 않는다. **Forwarded metadata의 신뢰는 proxy topology에 대한 trust contract이고, 사용자 인증은 별도의 application security contract**다.

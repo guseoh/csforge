@@ -4,7 +4,7 @@ contentKey: operating-systems.core.isolation.user-group-permission
 topicContentKey: operating-systems.core.isolation
 slug: user-group-permission
 title: "User, Group·Permission"
-summary: "파일과 process 접근을 user·group permission으로 제한하는 모델을 설명한다."
+summary: "owner·group·mode permission이 resource 접근을 제한하는 과정을 설명한다."
 level: 1
 status: PUBLISHED
 displayOrder: 20
@@ -26,15 +26,20 @@ references:
 ---
 # User, Group·Permission
 
-OS는 process가 가진 credential과 pathname을 따라가며 만나는 각 object의 permission을 비교해 접근을 허용하거나 거부한다. Unix-like 모델에서는 effective user ID와 supplementary group을 기준으로 owner·group·other의 read/write/execute bit를 선택한다. 여기서 `execute`는 regular file을 실행하는 의미일 뿐 아니라 directory에서는 그 안의 이름을 traverse/search할 수 있는 권한이라는 점이 중요하다.
+Unix-like OS는 process가 가진 credential과 filesystem object의 permission을 비교해 access를 허용하거나 거부한다. 기본 mode bit는 owner, group, other에 대해 read·write·execute 권한을 표현하며, 실제 판정에는 process의 effective user/group 정보가 사용된다.
 
-예를 들어 `/srv/app/config.yaml`을 읽으려면 `/srv`와 `/srv/app`을 통과할 search 권한이 먼저 필요하고, 마지막 file의 read 권한이 있어야 한다. directory의 read는 entry 목록을 볼 수 있는지, write는 entry 생성·삭제·이름 변경이 가능한지를 제한하므로 file content permission과 같은 의미로 읽으면 안 된다. 실패는 path 중간 component의 부재, non-directory component, permission denial 등 서로 다른 원인으로 나타날 수 있다.
+### File과 directory의 permission 의미는 다르다
 
-### Credential과 기본 mode는 더 넓은 정책의 일부다
+Regular file에서 read는 content 읽기, write는 content 변경, execute는 실행 가능 여부와 연결된다. Directory에서는 read가 entry 목록 조회, write가 entry 생성·삭제 같은 namespace 변경, execute가 path component를 통과해 lookup할 수 있는 search 권한과 연결된다.
 
-process가 `root`인지 하나만으로 모든 접근을 설명할 수 없다. supplementary group, capability, ACL, filesystem mount option과 user namespace가 최종 판단에 영향을 줄 수 있고, privilege가 있는 process도 capability나 다른 kernel policy에 의해 제한될 수 있다. file을 새로 만들 때는 process의 umask가 요청한 기본 mode에서 일부 권한을 제거하므로 생성 시점과 이후 `chmod` 상태를 분리해 본다.
+따라서 `/srv/app/config.yaml`을 읽으려면 마지막 file의 read 권한만이 아니라 중간 directory들을 traverse할 권한도 필요하다.
 
-permission은 path를 아는지와도 다르다. path를 추측할 수 있어도 search/read 권한이 없으면 접근할 수 없고, 반대로 넓은 directory 권한과 writable file이 결합하면 의도하지 않은 이름 교체나 content 변조가 가능하다. 이 Topic에서는 OS permission 판정 mechanics를 다루며 구체적인 authentication/authorization 정책은 Security 영역에 둔다.
+### Credential은 단순히 사용자 이름 하나가 아니다
 
-컨테이너에서 application user와 volume owner가 다르면 같은 path가 읽기·쓰기 실패를 낼 수 있다. 권한을 넓히기 전에 실제 UID/GID, supplementary group, mount와 필요한 operation을 확인하고 least privilege 범위 안에서 원인을 수정한다.
+Process는 user ID와 group 정보를 가진다. Supplementary group, capability, ACL 같은 추가 mechanism도 access decision에 영향을 줄 수 있으므로 `owner/group/other bit만 보면 모든 permission을 설명할 수 있다`고 일반화하면 안 된다.
 
+### Permission은 namespace visibility와 다른 문제다
+
+Path를 알고 있거나 namespace 안에서 object를 볼 수 있다고 실제 access가 허용되는 것은 아니다. Namespace는 무엇을 보느냐를, permission은 그 resource에 어떤 operation을 할 수 있느냐를 다룬다.
+
+이 Concept의 핵심은 **process credential과 object permission을 비교해 resource access를 제한하며, directory traversal과 file content permission의 의미가 서로 다르다는 것**이다.
