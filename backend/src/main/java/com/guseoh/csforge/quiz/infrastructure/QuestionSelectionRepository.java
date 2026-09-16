@@ -3,6 +3,8 @@ package com.guseoh.csforge.quiz.infrastructure;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -49,13 +51,18 @@ public class QuestionSelectionRepository {
                 .distinct(true)
                 .orderBy(builder.asc(question.get("id")));
 
-        List<Long> ids = new ArrayList<>(entityManager.createQuery(query).getResultList());
-        long availableCount = ids.size();
-        if (ids.size() > limit) {
-            Collections.shuffle(ids);
+        List<Long> ids = entityManager.createQuery(query).getResultList();
+        return new QuestionSelectionResult(
+                ids.size(),
+                randomSubset(ids, limit, ThreadLocalRandom.current()));
+    }
+
+    static List<Long> randomSubset(List<Long> ids, int limit, Random random) {
+        List<Long> shuffled = new ArrayList<>(ids);
+        if (shuffled.size() > limit) {
+            Collections.shuffle(shuffled, random);
         }
-        List<Long> selectedIds = ids.subList(0, Math.min(limit, ids.size()));
-        return new QuestionSelectionResult(availableCount, selectedIds);
+        return List.copyOf(shuffled.subList(0, Math.min(limit, shuffled.size())));
     }
 
     public long count(QuizQuestionSelectionCriteria criteria) {
