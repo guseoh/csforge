@@ -1,6 +1,7 @@
 package com.guseoh.csforge.quiz.infrastructure;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import jakarta.persistence.EntityManager;
@@ -27,7 +28,7 @@ import com.guseoh.csforge.wrongnote.domain.WrongNote;
 import com.guseoh.csforge.wrongnote.domain.WrongNoteStatus;
 
 /**
- * 퀴즈 생성 조건에 맞는 문제 수와 안정적인 문제 ID 목록을 JPA Criteria로 조회하는 저장소이다.
+ * 퀴즈 생성 조건에 맞는 문제 수와 무작위 문제 ID 목록을 JPA Criteria로 조회하는 저장소이다.
  */
 @Repository
 @RequiredArgsConstructor
@@ -48,10 +49,13 @@ public class QuestionSelectionRepository {
                 .distinct(true)
                 .orderBy(builder.asc(question.get("id")));
 
-        List<Long> ids = entityManager.createQuery(query)
-                .setMaxResults(limit)
-                .getResultList();
-        return new QuestionSelectionResult(count(criteria), ids);
+        List<Long> ids = new ArrayList<>(entityManager.createQuery(query).getResultList());
+        long availableCount = ids.size();
+        if (ids.size() > limit) {
+            Collections.shuffle(ids);
+        }
+        List<Long> selectedIds = ids.subList(0, Math.min(limit, ids.size()));
+        return new QuestionSelectionResult(availableCount, selectedIds);
     }
 
     public long count(QuizQuestionSelectionCriteria criteria) {
