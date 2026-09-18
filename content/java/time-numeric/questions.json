@@ -37,5 +37,44 @@
 {"kind":"question","contentKey":"java.core.time-numeric.bigdecimal-money-rounding.q3","promptMarkdown":"BigDecimal로 1을 3으로 나누는 것처럼 정확히 끝나지 않는 decimal 나눗셈에서 보통 필요한 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.time-numeric.bigdecimal-money-rounding"],"choices":[{"key":"A","content":"허용 정밀도 또는 scale과 RoundingMode 같은 반올림 정책","displayOrder":0},{"key":"B","content":"항상 equals를 한 번 호출하는 것","displayOrder":1},{"key":"C","content":"먼저 double로 변환하는 것","displayOrder":2},{"key":"D","content":"scale을 무조건 0으로 만드는 것","displayOrder":3}],"correctChoiceKey":"A","explanationMarkdown":"BigDecimal도 무한히 이어지는 decimal expansion을 무한 정밀도로 완료할 수는 없다. 금액 계산에서는 어느 자리에서 어떤 방식으로 반올림할지가 기술 옵션이 아니라 업무 규칙일 수 있다."},
 {"kind":"question","contentKey":"java.core.time-numeric.bigdecimal-money-rounding.q4","promptMarkdown":"scale 2인 `1.10`과 scale 1인 `1.1`을 BigDecimal로 비교한 결과로 옳은 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.time-numeric.bigdecimal-money-rounding"],"choices":[{"key":"A","content":"항상 서로 다른 수치다","displayOrder":0},{"key":"B","content":"compareTo는 0일 수 있지만 equals는 scale 차이 때문에 false다","displayOrder":1},{"key":"C","content":"둘 다 자동으로 scale 0이 된다","displayOrder":2},{"key":"D","content":"BigDecimal은 scale 정보를 가지지 않는다","displayOrder":3}],"correctChoiceKey":"B","explanationMarkdown":"두 값은 수치상 같지만 scale이 2와 1로 다르다. 수치 동등성과 객체 equality가 같은 요구인지 구분해 API와 도메인 모델을 선택해야 한다."},
 {"kind":"question","contentKey":"java.core.time-numeric.bigdecimal-money-rounding.q5","promptMarkdown":"금액 value object가 `BigDecimal`을 사용한다고 할 때 함께 소유해야 할 계약으로 가장 적절한 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.time-numeric.bigdecimal-money-rounding"],"choices":[{"key":"A","content":"BigDecimal.toString 결과 하나만 고정한다","displayOrder":0},{"key":"B","content":"모든 통화를 scale 0으로 강제한다","displayOrder":1},{"key":"C","content":"currency 또는 minor unit, 허용 scale, rounding 방식·시점, 금액 equality 의미","displayOrder":2},{"key":"D","content":"항상 double과 같은 계산 순서를 사용한다","displayOrder":3}],"correctChoiceKey":"C","explanationMarkdown":"BigDecimal은 decimal 산술 도구이지 Money 전체의 도메인 계약이 아니다. 통화별 소수 단위, 서로 다른 currency 연산 가능 여부, 반올림 시점까지 value object가 보호해야 실제 금액 의미가 안정된다."},
-{"kind":"question","contentKey":"java.core.time-numeric.bigdecimal-money-rounding.q6","promptMarkdown":"`HashSet<BigDecimal>`에서 수치상 같은 `1.1`과 `1.10`을 하나의 값으로 취급하고 싶다. 왜 별도 설계가 필요한가?","questionType":"MULTIPLE_CHOICE","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["java.core.time-numeric.bigdecimal-money-rounding"],"choices":[{"key":"A","content":"HashSet은 BigDecimal을 항상 compareTo로만 비교하기 때문이다","displayOrder":0},{"key":"B","content":"scale은 출력에만 존재하므로 아무 차이가 없기 때문이다","displayOrder":1},{"key":"C","content":"BigDecimal은 hash-based collection의 key로 사용할 수 없기 때문이다","displayOrder":2},{"key":"D","content":"HashSet은 equals와 hashCode를 사용하고 BigDecimal equality는 scale을 고려하므로 canonicalization이나 별도 value equality가 필요할 수 있기 때문이다","displayOrder":3}],"correctChoiceKey":"D","explanationMarkdown":"`compareTo`가 0이어도 `equals`가 false면 HashSet은 별도 원소로 취급할 수 있다. 입력 scale을 표준화하거나 Money 같은 wrapper에서 원하는 equality를 정의하는 방식 중 무엇이 도메인에 맞는지 결정해야 한다."}
+{"kind":"question","contentKey":"java.core.time-numeric.bigdecimal-money-rounding.q6","promptMarkdown":"`HashSet<BigDecimal>`에서 수치상 같은 `1.1`과 `1.10`을 하나의 값으로 취급하고 싶다. 왜 별도 설계가 필요한가?","questionType":"MULTIPLE_CHOICE","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["java.core.time-numeric.bigdecimal-money-rounding"],"choices":[{"key":"A","content":"HashSet은 BigDecimal을 항상 compareTo로만 비교하기 때문이다","displayOrder":0},{"key":"B","content":"scale은 출력에만 존재하므로 아무 차이가 없기 때문이다","displayOrder":1},{"key":"C","content":"BigDecimal은 hash-based collection의 key로 사용할 수 없기 때문이다","displayOrder":2},{"key":"D","content":"HashSet은 equals와 hashCode를 사용하고 BigDecimal equality는 scale을 고려하므로 canonicalization이나 별도 value equality가 필요할 수 있기 때문이다","displayOrder":3}],"correctChoiceKey":"D","explanationMarkdown":"`compareTo`가 0이어도 `equals`가 false면 HashSet은 별도 원소로 취급할 수 있다. 입력 scale을 표준화하거나 Money 같은 wrapper에서 원하는 equality를 정의하는 방식 중 무엇이 도메인에 맞는지 결정해야 한다."},
+{
+  "kind": "question",
+  "contentKey": "java.core.time-numeric.clock-testable-time.q7",
+  "promptMarkdown": "한 요청에서 먼저 `isExpired()`를 계산하고, 몇 밀리초 뒤 다시 `canRenew()`를 계산하면서 각각 `Instant.now(clock)`을 새로 읽는다. 마감 시각 바로 근처에서는 두 정책이 서로 다른 현재 시각을 볼 수 있다. 같은 유스케이스 안에서 기준 시각을 한 번 캡처해 전달하는 설계가 어떤 장점을 가지는지 설명하라.",
+  "questionType": "DESCRIPTIVE",
+  "difficulty": "MEDIUM",
+  "status": "PUBLISHED",
+  "conceptKeys": [
+    "java.core.time-numeric.clock-testable-time"
+  ],
+  "modelAnswer": "유스케이스 시작 시 `Instant now = Instant.now(clock)`처럼 기준 시각을 한 번 정하고 두 정책에 같은 값을 전달하면 하나의 요청 안에서 시간 판단이 동일한 snapshot을 공유한다. 반대로 각 정책이 system/Clock을 다시 읽으면 경계 시각을 사이에 두고 expired와 renewable 판단이 서로 모순될 수 있다. Clock 주입은 테스트 가능성을 제공하고, 같은 operation 안의 consistency는 기준 시각을 어디서 캡처해 전달하는지까지 설계해야 얻어진다.",
+  "explanationMarkdown": "시간 source를 주입했다는 것과 한 business operation이 같은 ‘현재’를 본다는 것은 별개다. 경계 조건이 중요한 정책은 호출 흐름에서 기준 시각을 한 번 정하고 값으로 전달하면 테스트와 결과 일관성이 좋아진다."
+},
+{
+  "kind": "question",
+  "contentKey": "java.core.time-numeric.zoneid-dst.q7",
+  "promptMarkdown": "뉴욕 사용자에게 ‘매일 오전 9시’ 알림을 보내야 한다. 오늘의 9시를 `Instant` 하나로 계산해 두고 이후 매일 정확히 24시간을 더하는 방식이 장기적으로 틀릴 수 있는 이유와, 반복 일정에 어떤 정보를 보존해야 하는지 설명하라.",
+  "questionType": "SCENARIO",
+  "difficulty": "HARD",
+  "status": "PUBLISHED",
+  "conceptKeys": [
+    "java.core.time-numeric.zoneid-dst"
+  ],
+  "modelAnswer": "DST 전환이 있으면 지역의 오전 9시 사이 실제 경과 시간은 항상 24시간이 아닐 수 있다. 처음 계산한 Instant에 Duration.ofHours(24)를 반복해서 더하면 지역 clock 시간이 8시나 10시로 밀릴 수 있다. 반복 일정의 의미가 ‘뉴욕 현지 오전 9시’라면 LocalTime/날짜 규칙과 `ZoneId`를 보존하고 매 실행마다 해당 날짜의 ZoneRules를 적용해 다음 ZonedDateTime/Instant를 계산해야 한다.",
+  "explanationMarkdown": "이미 발생한 사건은 Instant로 저장하기 좋지만, **미래의 반복 지역 일정**은 local-time 규칙과 zone 규칙 자체가 계약이다. Duration 기반 반복과 달력/지역 시간 기반 반복은 DST에서 서로 다른 결과를 만든다."
+},
+{
+  "kind": "question",
+  "contentKey": "java.core.time-numeric.bigdecimal-money-rounding.q7",
+  "promptMarkdown": "주문에 3개의 line item이 있고 각 항목에 1/3 비율의 할인을 적용한다. 각 line에서 먼저 소수 둘째 자리로 반올림한 뒤 합산하는 방식과, 정확한 중간 값을 모두 합한 뒤 마지막에 한 번 반올림하는 방식의 총액이 달라질 수 있다. 왜 이런 차이가 생기며 금액 계산에서 무엇을 계약으로 고정해야 하는지 설명하라.",
+  "questionType": "DESCRIPTIVE",
+  "difficulty": "HARD",
+  "status": "PUBLISHED",
+  "conceptKeys": [
+    "java.core.time-numeric.bigdecimal-money-rounding"
+  ],
+  "modelAnswer": "반올림은 정보 손실을 동반하므로 중간 단계마다 반올림하면 각 line의 오차가 누적되고, 합계 후 한 번 반올림한 결과와 달라질 수 있다. 어느 방식이 맞는지는 세법·결제사·제품 정책처럼 도메인 규칙에 달려 있다. Money 계산은 currency/minor unit, 허용 scale, `RoundingMode`, 그리고 **어느 단계에서 반올림할지**까지 하나의 계약으로 정해야 한다.",
+  "explanationMarkdown": "BigDecimal을 쓴다고 금액 계산이 자동으로 하나의 정답이 되는 것은 아니다. Decimal representation은 정확하게 할 수 있어도 나눗셈과 tax/discount 계산에서는 rounding policy가 필요하다. 특히 rounding **시점**은 최종 금액에 영향을 주는 business rule이다."
+}
 ]

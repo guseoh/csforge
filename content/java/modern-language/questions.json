@@ -46,5 +46,31 @@
   {"kind":"question","contentKey":"java.core.modern-language.default-static-interface-methods.q1","promptMarkdown":"interface default method의 대표적인 목적은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["java.core.modern-language.default-static-interface-methods"],"choices":[{"key":"A","content":"모든 구현체를 final로 만든다","displayOrder":0},{"key":"B","content":"instance field를 구현체끼리 자동 공유한다","displayOrder":1},{"key":"C","content":"합리적인 기본 구현을 제공해 기존 implementor를 고려하면서 interface를 진화시킨다","displayOrder":2},{"key":"D","content":"static method를 동적 dispatch한다","displayOrder":3}],"correctChoiceKey":"C","explanationMarkdown":"default method는 interface에 instance 기본 구현을 둘 수 있게 해 기존 구현체가 새 추상 메서드를 모두 즉시 구현해야 하는 부담을 줄인다. 어떤 동작이든 default에 넣는 것이 좋은 설계라는 뜻은 아니다."},
   {"kind":"question","contentKey":"java.core.modern-language.default-static-interface-methods.q2","promptMarkdown":"interface static method를 호출하는 자연스러운 방식은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["java.core.modern-language.default-static-interface-methods"],"choices":[{"key":"A","content":"구현 객체의 runtime method처럼 호출한다","displayOrder":0},{"key":"B","content":"항상 super로 호출한다","displayOrder":1},{"key":"C","content":"interface static method는 호출할 수 없다","displayOrder":2},{"key":"D","content":"선언한 interface 이름으로 호출한다","displayOrder":3}],"correctChoiceKey":"D","explanationMarkdown":"interface static method는 구현 instance에 상속되어 동적 dispatch되는 default method가 아니다. `InterfaceName.method()` 형태로 사용한다."},
   {"kind":"question","contentKey":"java.core.modern-language.default-static-interface-methods.q3","promptMarkdown":"서로 우열이 없는 두 interface가 같은 signature의 default method를 제공하고 한 class가 둘 다 구현하면 일반적으로 필요한 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.modern-language.default-static-interface-methods"],"choices":[{"key":"A","content":"구현 class가 해당 method를 override해 충돌을 해결한다","displayOrder":0},{"key":"B","content":"JVM이 실행할 때 임의의 default를 고른다","displayOrder":1},{"key":"C","content":"두 superclass를 추가한다","displayOrder":2},{"key":"D","content":"모든 interface를 static으로 바꾼다","displayOrder":3}],"correctChoiceKey":"A","explanationMarkdown":"더 구체적인 interface 등으로 하나가 결정되지 않는 동일 signature default 충돌은 구현 class가 명시적으로 해결해야 한다. Java가 임의의 구현을 runtime에 선택하지 않는다."},
-  {"kind":"question","contentKey":"java.core.modern-language.default-static-interface-methods.q4","promptMarkdown":"`A`와 `B`가 충돌하는 default `label()`을 제공하고 class `C`가 둘 다 구현한다. `C.label()` 안에서 A의 기본 구현을 선택하는 표현은?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.modern-language.default-static-interface-methods"],"choices":[{"key":"A","content":"super.super.label()","displayOrder":0},{"key":"B","content":"A.super.label()","displayOrder":1},{"key":"C","content":"C.static.label()","displayOrder":2},{"key":"D","content":"method를 선언하지 않고 runtime 선택을 기다린다","displayOrder":3}],"correctChoiceKey":"B","explanationMarkdown":"충돌을 해결하는 class의 override 안에서 `InterfaceName.super.method()`로 특정 superinterface의 default 구현을 호출할 수 있다. 한 문법 규칙을 확인하는 문제이므로 HARD로 분류할 필요는 없다."}
+  {"kind":"question","contentKey":"java.core.modern-language.default-static-interface-methods.q4","promptMarkdown":"`A`와 `B`가 충돌하는 default `label()`을 제공하고 class `C`가 둘 다 구현한다. `C.label()` 안에서 A의 기본 구현을 선택하는 표현은?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.modern-language.default-static-interface-methods"],"choices":[{"key":"A","content":"super.super.label()","displayOrder":0},{"key":"B","content":"A.super.label()","displayOrder":1},{"key":"C","content":"C.static.label()","displayOrder":2},{"key":"D","content":"method를 선언하지 않고 runtime 선택을 기다린다","displayOrder":3}],"correctChoiceKey":"B","explanationMarkdown":"충돌을 해결하는 class의 override 안에서 `InterfaceName.super.method()`로 특정 superinterface의 default 구현을 호출할 수 있다. 한 문법 규칙을 확인하는 문제이므로 HARD로 분류할 필요는 없다."},
+{
+  "kind": "question",
+  "contentKey": "java.core.modern-language.sealed-types-closed-hierarchy.q5",
+  "promptMarkdown": "`PaymentResult`가 `Success`, `Failure`만 허용하는 sealed hierarchy이고 여러 모듈에서 exhaustive switch로 처리하고 있다. 새 `Pending` subtype을 추가하려 한다. Sealed hierarchy가 변경 영향을 줄여 주는 도구이면서 동시에 기존 처리 코드를 다시 검토하게 만드는 이유를 설명하라.",
+  "questionType": "DESCRIPTIVE",
+  "difficulty": "MEDIUM",
+  "status": "PUBLISHED",
+  "conceptKeys": [
+    "java.core.modern-language.sealed-types-closed-hierarchy"
+  ],
+  "modelAnswer": "Sealed hierarchy는 가능한 subtype 집합을 명시하므로 compiler가 exhaustive switch의 누락을 발견하는 데 도움을 준다. 따라서 새 Pending을 추가하면 기존에 Success/Failure만 완전한 경우의 수라고 가정한 switch가 재컴파일 시 누락 case로 드러날 수 있다. 이것은 변경 비용이 없다는 뜻이 아니라 **변경 영향이 타입 계약을 통해 가시화되는 장점**이다. 새 상태의 의미와 모든 consumer의 fallback/처리 정책을 함께 검토해야 한다.",
+  "explanationMarkdown": "Closed hierarchy의 장점은 subtype 추가를 자유롭게 만드는 것이 아니라, ‘가능한 경우의 수가 바뀌었다’는 사실을 compiler와 코드 구조에 드러내는 데 있다. Exhaustiveness는 API 진화 시 영향 범위를 찾는 도구로도 작동한다."
+},
+{
+  "kind": "question",
+  "contentKey": "java.core.modern-language.optional-return-boundary.q7",
+  "promptMarkdown": "Repository가 DB timeout과 ‘조회 결과 없음’을 모두 `Optional.empty()`로 반환한다. Service는 empty를 보고 404를 반환한다. 이 설계가 장애와 정상 부재를 어떻게 혼동하는지 설명하고, Optional과 예외를 각각 어떤 의미에 사용하는 것이 좋은지 설명하라.",
+  "questionType": "SCENARIO",
+  "difficulty": "MEDIUM",
+  "status": "PUBLISHED",
+  "conceptKeys": [
+    "java.core.modern-language.optional-return-boundary"
+  ],
+  "modelAnswer": "`Optional.empty()`가 정상적인 미존재와 인프라 장애를 동시에 뜻하면 service는 retry 가능한 DB 장애를 404로 잘못 번역할 수 있고 관측성도 잃는다. 값이 없을 수 있다는 정상 결과만 Optional로 표현하고 timeout·connection failure 같은 operation 실패는 예외나 별도 failure result로 전파·번역해야 한다. Optional은 실패 전체를 숨기는 container가 아니라 ‘값의 존재 여부’ 계약에 적합하다.",
+  "explanationMarkdown": "값이 없다는 것과 값을 **조회하지 못했다**는 것은 서로 다른 상태다. 둘을 같은 empty로 합치면 호출자가 올바른 HTTP 응답·retry·alert 정책을 선택할 수 없게 된다."
+}
 ]
