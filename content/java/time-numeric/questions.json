@@ -67,14 +67,14 @@
 {
   "kind": "question",
   "contentKey": "java.core.time-numeric.bigdecimal-money-rounding.q7",
-  "promptMarkdown": "주문에 3개의 line item이 있고 각 항목에 1/3 비율의 할인을 적용한다. 각 line에서 먼저 소수 둘째 자리로 반올림한 뒤 합산하는 방식과, 정확한 중간 값을 모두 합한 뒤 마지막에 한 번 반올림하는 방식의 총액이 달라질 수 있다. 왜 이런 차이가 생기며 금액 계산에서 무엇을 계약으로 고정해야 하는지 설명하라.",
+  "promptMarkdown": "주문에 여러 line item이 있고 각 항목에 10% 할인을 적용한다. 각 line의 할인액을 소수 둘째 자리로 먼저 반올림한 뒤 합산하는 방식과, 반올림하지 않은 할인액들을 모두 합한 뒤 마지막에 한 번 반올림하는 방식의 총 할인액이 달라질 수 있다. 왜 이런 차이가 생기며 금액 계산에서 무엇을 계약으로 고정해야 하는지 설명하라.",
   "questionType": "DESCRIPTIVE",
   "difficulty": "HARD",
   "status": "PUBLISHED",
   "conceptKeys": [
     "java.core.time-numeric.bigdecimal-money-rounding"
   ],
-  "modelAnswer": "반올림은 정보 손실을 동반하므로 중간 단계마다 반올림하면 각 line의 오차가 누적되고, 합계 후 한 번 반올림한 결과와 달라질 수 있다. 어느 방식이 맞는지는 세법·결제사·제품 정책처럼 도메인 규칙에 달려 있다. Money 계산은 currency/minor unit, 허용 scale, `RoundingMode`, 그리고 **어느 단계에서 반올림할지**까지 하나의 계약으로 정해야 한다.",
-  "explanationMarkdown": "BigDecimal을 쓴다고 금액 계산이 자동으로 하나의 정답이 되는 것은 아니다. Decimal representation은 정확하게 할 수 있어도 나눗셈과 tax/discount 계산에서는 rounding policy가 필요하다. 특히 rounding **시점**은 최종 금액에 영향을 주는 business rule이다."
+  "modelAnswer": "반올림은 정보 손실을 동반하므로 각 line 단계에서 먼저 반올림하면 작은 오차가 항목 수만큼 누적될 수 있고, 중간 할인액을 그대로 합한 뒤 마지막에 한 번 반올림한 결과와 달라질 수 있다. 어느 방식이 맞는지는 세법·결제사·제품 정책처럼 도메인 규칙에 달려 있다. Money 계산은 currency/minor unit, 허용 scale, `RoundingMode`, 그리고 **어느 단계에서 반올림할지**까지 하나의 계약으로 정해야 한다.",
+  "explanationMarkdown": "BigDecimal을 쓴다고 금액 계산이 자동으로 하나의 정답이 되는 것은 아니다. Decimal 계산 자체를 정확하게 표현할 수 있어도 최종 통화 단위에 맞추는 과정에서는 rounding policy가 필요하고, 각 항목에서 반올림할지 합계에서 한 번 반올림할지에 따라 결과가 달라질 수 있다. 특히 rounding **시점**은 최종 금액에 영향을 주는 business rule이다."
 }
 ]
