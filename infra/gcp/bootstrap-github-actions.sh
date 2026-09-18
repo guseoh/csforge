@@ -36,8 +36,10 @@ if ! gcloud iam workload-identity-pools describe "${WORKLOAD_IDENTITY_POOL}"   -
 fi
 
 if ! gcloud iam workload-identity-pools providers describe "${WORKLOAD_IDENTITY_PROVIDER}"   --project="${PROJECT_ID}"   --location=global   --workload-identity-pool="${WORKLOAD_IDENTITY_POOL}" >/dev/null 2>&1; then
-  gcloud iam workload-identity-pools providers create-oidc "${WORKLOAD_IDENTITY_PROVIDER}"     --project="${PROJECT_ID}"     --location=global     --workload-identity-pool="${WORKLOAD_IDENTITY_POOL}"     --display-name="CSForge GitHub repository"     --issuer-uri="https://token.actions.githubusercontent.com"     --attribute-mapping="google.subject=assertion.sub,attribute.repository=assertion.repository,attribute.repository_owner=assertion.repository_owner,attribute.ref=assertion.ref"     --attribute-condition="assertion.repository == '${GITHUB_REPOSITORY}'"
+  gcloud iam workload-identity-pools providers create-oidc "${WORKLOAD_IDENTITY_PROVIDER}"     --project="${PROJECT_ID}"     --location=global     --workload-identity-pool="${WORKLOAD_IDENTITY_POOL}"     --display-name="CSForge GitHub repository"     --issuer-uri="https://token.actions.githubusercontent.com"     --attribute-mapping="google.subject=assertion.sub,attribute.repository=assertion.repository,attribute.repository_owner=assertion.repository_owner,attribute.ref=assertion.ref"     --attribute-condition="assertion.repository == '${GITHUB_REPOSITORY}' && assertion.ref == 'refs/heads/main'"
 fi
+
+gcloud iam workload-identity-pools providers update-oidc "${WORKLOAD_IDENTITY_PROVIDER}"   --project="${PROJECT_ID}"   --location=global   --workload-identity-pool="${WORKLOAD_IDENTITY_POOL}"   --attribute-condition="assertion.repository == '${GITHUB_REPOSITORY}' && assertion.ref == 'refs/heads/main'" >/dev/null
 
 pool_name="$(gcloud iam workload-identity-pools describe "${WORKLOAD_IDENTITY_POOL}"   --project="${PROJECT_ID}"   --location=global   --format='value(name)')"
 
