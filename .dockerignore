@@ -10,3 +10,4 @@ frontend/dist
 .env
 .env.*
 infra/data/
+gha-creds-*.json
