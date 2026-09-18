@@ -21,7 +21,7 @@
   "contentKey": "java.core.enum-modeling.enum-ordinal-name-persistence.q5",
   "promptMarkdown": "외부 시스템이 문자열 상태 code를 보내고 애플리케이션은 이를 enum으로 변환한다. 새 버전의 외부 시스템이 아직 우리 코드에는 없는 `\"paused\"` 값을 보내기 시작했다. 단순 `Enum.valueOf()`에만 의존하면 어떤 호환성 문제가 생기며, 외부 code와 내부 enum을 매핑할 때 어떤 fallback/error 정책을 명시해야 하는지 설명하라.",
   "questionType": "SCENARIO",
-  "difficulty": "HARD",
+  "difficulty": "MEDIUM",
   "status": "PUBLISHED",
   "conceptKeys": [
     "java.core.enum-modeling.enum-ordinal-name-persistence"
