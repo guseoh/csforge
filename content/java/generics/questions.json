@@ -44,5 +44,57 @@
   ],
   "modelAnswer": "extends wildcard는 알 수 없는 특정 하위 타입의 producer이므로 안전하게 읽을 수 있지만 어떤 하위 타입인지 몰라 Number를 추가할 수 없다. 추가가 목적이면 List<? super Integer>처럼 consumer 경계를 사용하거나 구체 타입을 받는다.",
   "explanationMarkdown": "PECS는 wildcard의 방향을 기억하는 표어가 아니라 읽기·쓰기에서 타입 안전성을 지키는 이유를 설명하는 모델이다."
+},
+{
+  "kind": "question",
+  "contentKey": "java.core.generics.wildcards-pecs.q8",
+  "promptMarkdown": "다음 메서드는 Integer 목록을 Number 목록으로 복사할 수 있어야 한다.\n\n```java\nstatic <T> void copy(List<? extends T> src, List<? super T> dst) {\n    for (T value : src) {\n        dst.add(value);\n    }\n}\n```\n\n왜 source에는 `extends`, destination에는 `super`가 필요한지 각각 읽기·쓰기 관점에서 설명하라. `List<T>` 두 개로만 받는 것보다 어떤 호출 범위를 넓히는지도 설명하라.",
+  "questionType": "DESCRIPTIVE",
+  "difficulty": "MEDIUM",
+  "status": "PUBLISHED",
+  "conceptKeys": [
+    "java.core.generics.wildcards-pecs"
+  ],
+  "modelAnswer": "`src`는 값을 생산하므로 실제 element type이 T의 하위 타입이어도 T로 안전하게 읽을 수 있어 `? extends T`가 적합하다. `dst`는 T 값을 소비하므로 T 또는 그 상위 타입의 목록이면 T를 안전하게 추가할 수 있어 `? super T`가 적합하다. 두 매개변수를 모두 `List<T>`로 고정하면 `List<Integer>`에서 `List<Number>`로 복사하는 호출처럼 서로 다른 하지만 호환 가능한 element type 조합을 받지 못한다.",
+  "explanationMarkdown": "PECS는 암기 문구보다 API가 실제로 어느 방향으로 값을 이동시키는지를 설명한다. 읽는 쪽은 더 구체적인 생산자를 받아들이고, 쓰는 쪽은 더 넓은 소비자를 받아들이면 타입 안전성을 유지하면서 호출 범위를 넓힐 수 있다."
+},
+{
+  "kind": "question",
+  "contentKey": "java.core.generics.type-erasure-reifiable-types.q7",
+  "promptMarkdown": "다음 두 overload를 같은 클래스에 선언하려 한다.\n\n```java\nvoid process(List<String> values) {}\nvoid process(List<Integer> values) {}\n```\n\n왜 Java에서는 이 두 메서드를 함께 선언할 수 없는지 type erasure와 메서드 signature 관점에서 설명하고, API를 구분하려면 어떤 대안을 사용할 수 있는지 설명하라.",
+  "questionType": "DESCRIPTIVE",
+  "difficulty": "HARD",
+  "status": "PUBLISHED",
+  "conceptKeys": [
+    "java.core.generics.type-erasure-reifiable-types"
+  ],
+  "modelAnswer": "컴파일 후 두 매개변수의 parameterized type 정보가 erasure되어 둘 다 사실상 `process(List)` 형태의 같은 JVM signature로 충돌한다. 그래서 type argument만 다른 overload는 선언할 수 없다. 메서드 이름을 다르게 하거나, 별도의 wrapper/type token을 매개변수에 추가하거나, 하나의 generic method로 계약을 재설계하는 방식으로 호출을 구분할 수 있다.",
+  "explanationMarkdown": "Generics의 타입 인자는 compile-time 타입 안전성을 제공하지만 모든 정보가 별도 runtime signature로 남는 것은 아니다. Erasure 때문에 source 수준에서는 달라 보이는 두 선언이 JVM 수준에서 같은 형태가 될 수 있다."
+},
+{
+  "kind": "question",
+  "contentKey": "java.core.generics.generic-types-methods.q6",
+  "promptMarkdown": "JSON decoder registry가 runtime에 `Class<T>`를 받아 그 타입에 맞는 decoder를 찾고 `T`를 반환한다. Generic type parameter만으로는 runtime에 `T.class`를 사용할 수 없는 이유와 `Class<T>` 같은 type token이 어떤 정보를 보완하는지 설명하라.",
+  "questionType": "DESCRIPTIVE",
+  "difficulty": "MEDIUM",
+  "status": "PUBLISHED",
+  "conceptKeys": [
+    "java.core.generics.generic-types-methods"
+  ],
+  "modelAnswer": "일반적인 type parameter T는 erasure 때문에 runtime에 독립적인 Class 객체 형태로 자동 보존되지 않으므로 메서드 내부에서 임의의 `T.class`를 만들 수 없다. 호출자가 `Class<T>`를 함께 전달하면 runtime class identity를 명시적으로 제공할 수 있고 registry lookup이나 reflection 결과를 T와 연결할 근거가 생긴다. 다만 `List<String>`처럼 중첩 generic 정보까지 Class 하나로 완전히 표현되는 것은 아니다.",
+  "explanationMarkdown": "Generic parameter는 compile-time 관계를 표현하고 type token은 필요한 runtime type 정보를 별도로 전달한다. 둘을 같이 쓰면 컴파일 시점의 T와 runtime Class를 연결할 수 있지만 parameterized type 전체 정보까지 자동 복원되는 것은 아니다."
+},
+{
+  "kind": "question",
+  "contentKey": "java.core.generics.generic-varargs-heap-pollution.q6",
+  "promptMarkdown": "`@SafeVarargs`가 붙은 generic varargs 메서드가 전달받은 `T... values` 배열 reference를 static field에 저장해 다른 코드에 노출한다. 메서드 내부에서 배열에 잘못된 값을 직접 쓰지 않더라도 왜 `@SafeVarargs` 보증을 의심해야 하는지 설명하라.",
+  "questionType": "SCENARIO",
+  "difficulty": "HARD",
+  "status": "PUBLISHED",
+  "conceptKeys": [
+    "java.core.generics.generic-varargs-heap-pollution"
+  ],
+  "modelAnswer": "Generic varargs는 runtime에 reifiable하지 않은 element type의 배열을 다루므로 배열 reference가 외부로 escape하면 다른 코드가 Object[] alias 등을 통해 배열 내용을 오염시킬 가능성이 생긴다. `@SafeVarargs`는 호출 경고를 숨기는 장식이 아니라 구현이 varargs 배열을 타입 안전하게 다룬다는 작성자의 보증이다. 배열 reference를 저장·반환해 외부 mutation 가능성을 열면 그 보증이 성립하기 어렵다. 필요하면 defensive copy나 collection 형태의 입력을 사용한다.",
+  "explanationMarkdown": "Generic varargs 위험은 메서드 한 줄의 대입만이 아니라 배열 alias가 어디까지 퍼지는지와도 관련된다. `@SafeVarargs`를 붙이려면 varargs 배열이 오염될 수 있는 write나 unsafe escape가 없는지 구현 전체를 검토해야 한다."
 }
 ]
