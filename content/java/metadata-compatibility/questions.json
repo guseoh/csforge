@@ -590,5 +590,57 @@
   ],
   "modelAnswer": "기존 class file이 기대하는 메서드 descriptor를 찾지 못해 linkage 계열 오류가 날 수 있다. 기존 signature를 유지하고 overload/deprecation으로 단계적으로 이동하거나 major version과 재컴파일 경계를 명확히 하며 binary/source compatibility를 각각 검증한다.",
   "explanationMarkdown": "소스 코드가 다시 컴파일되는지와 이미 컴파일된 client가 실행되는지는 다른 API 계약이다."
+},
+{
+  "kind": "question",
+  "contentKey": "java.core.metadata-compatibility.dynamic-proxy-invocationhandler.q7",
+  "promptMarkdown": "JDK dynamic proxy가 `Service` interface 호출에 logging을 적용한다. 외부에서 `proxy.outer()`를 호출하면 handler가 실행되지만, target의 `outer()` 내부에서 `this.inner()`를 호출할 때는 `inner()` logging이 적용되지 않는다. 왜 이런 self-invocation이 proxy를 우회하는지 설명하라.",
+  "questionType": "DESCRIPTIVE",
+  "difficulty": "HARD",
+  "status": "PUBLISHED",
+  "conceptKeys": [
+    "java.core.metadata-compatibility.dynamic-proxy-invocationhandler"
+  ],
+  "modelAnswer": "Handler가 가로채는 것은 proxy object에 들어온 interface method 호출이다. Proxy가 target.outer를 호출한 뒤 target 내부의 `this.inner()`는 proxy를 다시 거치지 않고 실제 target 객체의 메서드를 직접 호출하므로 InvocationHandler에 도달하지 않는다. 내부 호출까지 interception이 필요하다면 책임을 다른 collaborator로 분리해 proxy 경계를 다시 지나게 하거나 다른 weaving/proxy 전략을 명시적으로 선택해야 한다.",
+  "explanationMarkdown": "Proxy는 '메서드에 기능이 붙는다'기보다 호출 경로 앞에 wrapper 객체가 존재하는 구조다. 실제 객체 내부의 self-call은 그 wrapper 경계를 통과하지 않으므로 interception 여부는 annotation 존재보다 실제 call path에 달려 있다."
+},
+{
+  "kind": "question",
+  "contentKey": "java.core.metadata-compatibility.serialization-contract-risk.q5",
+  "promptMarkdown": "외부 사용자가 보낸 Java native serialization byte stream을 그대로 `ObjectInputStream.readObject()`로 역직렬화하려 한다. `serialVersionUID`를 맞추면 안전하다고 볼 수 없는 이유와 신뢰할 수 없는 입력 경계에서 더 안전한 접근을 설명하라.",
+  "questionType": "SCENARIO",
+  "difficulty": "HARD",
+  "status": "PUBLISHED",
+  "conceptKeys": [
+    "java.core.metadata-compatibility.serialization-contract-risk"
+  ],
+  "modelAnswer": "serialVersionUID는 serialized class version compatibility 판단에 관여할 뿐 입력의 신뢰성이나 실행 안전성을 검증하지 않는다. Native deserialization은 object graph와 class-specific deserialization behavior를 실행할 수 있어 untrusted data에 공격 표면이 생긴다. 외부 입력에는 JSON 같은 명시적 data format과 제한된 DTO/schema validation을 선호하고, native serialization이 꼭 필요하면 허용 타입 필터와 신뢰 경계를 엄격하게 제한해야 한다.",
+  "explanationMarkdown": "호환성과 보안은 다른 계약이다. Stream이 현재 class와 호환된다는 사실은 그 데이터가 안전하거나 허용된 객체 graph라는 뜻이 아니다. Serialization 기술을 선택할 때 데이터 경계의 신뢰 수준과 허용 타입을 별도로 설계해야 한다."
+},
+{
+  "kind": "question",
+  "contentKey": "java.core.metadata-compatibility.jpms-classpath-modulepath.q5",
+  "promptMarkdown": "Module A가 `com.example.model` package를 `exports`해서 다른 module의 일반 코드 호출은 가능하다. 그런데 runtime framework가 private field를 deep reflection으로 읽으려 하자 실패했다. `exports`와 `opens`가 해결하는 접근 경계의 차이를 설명하라.",
+  "questionType": "DESCRIPTIVE",
+  "difficulty": "HARD",
+  "status": "PUBLISHED",
+  "conceptKeys": [
+    "java.core.metadata-compatibility.jpms-classpath-modulepath"
+  ],
+  "modelAnswer": "`exports`는 다른 module이 해당 package의 public API에 일반 Java 접근을 할 수 있게 하는 경계다. Deep reflection으로 non-public member에 접근하려는 경우에는 reflective access를 허용하는 `opens` 또는 특정 module에 대한 qualified opens가 별도로 필요할 수 있다. Public API 노출과 framework reflection 권한을 같은 것으로 보면 JPMS encapsulation을 잘못 설계하게 된다.",
+  "explanationMarkdown": "JPMS는 읽을 수 있는 module인지, package의 public API가 export됐는지, deep reflection을 위해 package가 open됐는지를 서로 다른 경계로 다룬다. Framework 때문에 모든 package를 무조건 open하기보다 필요한 package와 대상 module을 최소화하는 편이 캡슐화를 유지하기 좋다."
+},
+{
+  "kind": "question",
+  "contentKey": "java.core.metadata-compatibility.binary-compatibility-api-evolution.q6",
+  "promptMarkdown": "Library에 `public static final int DEFAULT_TIMEOUT = 30;`이라는 compile-time constant가 있다. 이를 v2에서 60으로 바꾼 뒤 library JAR만 교체했는데, 재컴파일하지 않은 기존 client가 여전히 30을 사용할 수 있다. 왜 이런 일이 가능한지와 public constant 값을 변경할 때의 compatibility 주의를 설명하라.",
+  "questionType": "SCENARIO",
+  "difficulty": "HARD",
+  "status": "PUBLISHED",
+  "conceptKeys": [
+    "java.core.metadata-compatibility.binary-compatibility-api-evolution"
+  ],
+  "modelAnswer": "Primitive/String compile-time constant는 client를 컴파일할 때 constant value가 client class file에 inline될 수 있다. 그래서 library field가 v2에서 60으로 바뀌어도 기존 binary가 field를 runtime에 다시 읽지 않고 이미 포함된 30을 사용할 수 있다. Public constant 값 변경은 단순 JAR 교체만으로 모든 client 동작이 바뀐다고 가정하면 안 되며, 재컴파일 경계와 semantic compatibility를 함께 관리해야 한다.",
+  "explanationMarkdown": "Binary가 새 library와 링크된다는 사실과 client가 새 constant 값을 관찰한다는 사실은 다르다. Compile-time constant inlining은 API 진화에서 source 재컴파일 여부가 실제 동작에 영향을 줄 수 있는 대표 사례다."
 }
 ]

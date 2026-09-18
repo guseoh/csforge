@@ -31,5 +31,57 @@
   {"kind":"question","contentKey":"java.core.functional.method-reference-functional-composition.q1","promptMarkdown":"`String::trim`을 lambda로 풀어 쓴 것과 가장 가까운 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["java.core.functional.method-reference-functional-composition"],"choices":[{"key":"A","content":"`() -> String.trim()`","displayOrder":0},{"key":"B","content":"`x -> trim`","displayOrder":1},{"key":"C","content":"`x -> x.trim()`","displayOrder":2},{"key":"D","content":"`String -> trim(String)`","displayOrder":3}],"correctChoiceKey":"C","explanationMarkdown":"`String::trim` 같은 unbound instance method reference는 target이 String을 입력으로 받을 때 그 입력 인스턴스의 `trim()`을 호출하는 형태와 대응한다."},
   {"kind":"question","contentKey":"java.core.functional.method-reference-functional-composition.q2","promptMarkdown":"`f.andThen(g)`의 적용 순서는?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["java.core.functional.method-reference-functional-composition"],"choices":[{"key":"A","content":"g 후 f","displayOrder":0},{"key":"B","content":"둘 중 하나만 무작위 실행","displayOrder":1},{"key":"C","content":"f와 g를 동시에 실행","displayOrder":2},{"key":"D","content":"f 후 g","displayOrder":3}],"correctChoiceKey":"D","explanationMarkdown":"`andThen`은 현재 Function f를 먼저 적용하고 그 결과를 다음 Function g에 전달한다. `compose`는 반대 방향으로 앞선 변환을 받는다."},
   {"kind":"question","contentKey":"java.core.functional.method-reference-functional-composition.q3","promptMarkdown":"method reference가 lambda보다 오히려 덜 명확해질 수 있는 경우는?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.functional.method-reference-functional-composition"],"choices":[{"key":"A","content":"overloaded method와 여러 함수형 overload로 target이 모호할 때","displayOrder":0},{"key":"B","content":"대상 method가 하나뿐일 때","displayOrder":1},{"key":"C","content":"target interface가 명확할 때","displayOrder":2},{"key":"D","content":"method 이름이 길 때","displayOrder":3}],"correctChoiceKey":"A","explanationMarkdown":"method reference도 target typing이 필요하다. overload 후보가 여럿이면 lambda의 매개변수 타입이나 명시적 변수·cast가 의도를 더 명확하게 보여 줄 수 있다."},
-  {"kind":"question","contentKey":"java.core.functional.method-reference-functional-composition.q4","promptMarkdown":"다음 코드의 출력은?\n\n```java\nFunction<String, String> trim = String::trim;\nFunction<String, String> upper = String::toUpperCase;\nFunction<String, String> normalize = trim.andThen(upper);\nSystem.out.println(normalize.apply(\"  java  \"));\n```","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.functional.method-reference-functional-composition"],"choices":[{"key":"A","content":"양끝 공백이 남은 대문자 문자열","displayOrder":0},{"key":"B","content":"JAVA","displayOrder":1},{"key":"C","content":"java","displayOrder":2},{"key":"D","content":"컴파일 오류","displayOrder":3}],"correctChoiceKey":"B","explanationMarkdown":"`trim.andThen(upper)`는 먼저 trim을 적용해 양끝 공백을 제거한 결과를 upper에 넘긴다. 따라서 최종 결과는 `JAVA`다."}
+  {"kind":"question","contentKey":"java.core.functional.method-reference-functional-composition.q4","promptMarkdown":"다음 코드의 출력은?\n\n```java\nFunction<String, String> trim = String::trim;\nFunction<String, String> upper = String::toUpperCase;\nFunction<String, String> normalize = trim.andThen(upper);\nSystem.out.println(normalize.apply(\"  java  \"));\n```","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.functional.method-reference-functional-composition"],"choices":[{"key":"A","content":"양끝 공백이 남은 대문자 문자열","displayOrder":0},{"key":"B","content":"JAVA","displayOrder":1},{"key":"C","content":"java","displayOrder":2},{"key":"D","content":"컴파일 오류","displayOrder":3}],"correctChoiceKey":"B","explanationMarkdown":"`trim.andThen(upper)`는 먼저 trim을 적용해 양끝 공백을 제거한 결과를 upper에 넘긴다. 따라서 최종 결과는 `JAVA`다."},
+{
+  "kind": "question",
+  "contentKey": "java.core.functional.functional-interface.q6",
+  "promptMarkdown": "다음 API는 `Function<Path, String>`을 받는다. 구현 lambda 안에서는 `Files.readString(path)`처럼 checked `IOException`이 발생할 수 있다. 표준 `Function`의 계약과 checked exception이 맞지 않을 때 왜 그대로 던질 수 없는지 설명하고, 예외를 감싸는 방법과 checked exception을 선언하는 별도 함수형 인터페이스를 만드는 방법의 trade-off를 설명하라.",
+  "questionType": "DESCRIPTIVE",
+  "difficulty": "MEDIUM",
+  "status": "PUBLISHED",
+  "conceptKeys": [
+    "java.core.functional.functional-interface"
+  ],
+  "modelAnswer": "`Function.apply`는 checked exception을 throws로 선언하지 않으므로 lambda body도 그 target method 계약 밖의 checked IOException을 그대로 전파할 수 없다. Lambda 안에서 예외를 처리하거나 unchecked exception으로 translation할 수 있지만 원래 실패 의미를 보존해야 한다. 또는 `ThrowingFunction<T,R>`처럼 throws를 포함한 별도 계약을 만들 수 있다. 표준 Function을 유지하면 기존 API 조합성이 좋고, 별도 interface는 checked failure를 타입에 드러내지만 adapter와 조합 코드가 늘어난다.",
+  "explanationMarkdown": "Lambda가 어떤 예외를 던질 수 있는지는 lambda 문법 자체가 아니라 target functional method의 throws 계약에 의해 결정된다. 예외를 억지로 숨기기보다 호출 경계가 실패를 어떤 형태로 다룰지 먼저 정하고 그 계약에 맞는 함수형 타입을 선택해야 한다."
+},
+{
+  "kind": "question",
+  "contentKey": "java.core.functional.behavior-parameterization.q8",
+  "promptMarkdown": "`select(users, rule)`은 모든 User를 순회하며 `rule.test(user)`를 호출한다. 새 rule이 각 User마다 원격 권한 API를 호출하기 시작하자 1,000명의 목록 처리에서 원격 호출도 1,000번 발생했다. Behavior parameterization 자체는 유지하면서 이 설계에서 무엇을 다시 분리해야 하는지 설명하라.",
+  "questionType": "SCENARIO",
+  "difficulty": "HARD",
+  "status": "PUBLISHED",
+  "conceptKeys": [
+    "java.core.functional.behavior-parameterization"
+  ],
+  "modelAnswer": "순회 알고리즘과 선택 정책을 분리했다는 구조는 유지할 수 있지만, rule 한 번의 평가 비용이 더 이상 단순 계산이 아니다. 반복문 내부에서 원격 I/O를 숨기면 호출 수와 지연이 입력 크기에 비례해 커진다. 필요한 권한 정보를 batch로 미리 조회하거나 local lookup 가능한 context를 준비한 뒤 rule은 그 context를 사용해 판단하도록 경계를 나누는 것이 좋다. 실패·timeout·cache 정책도 순수 predicate처럼 취급하지 말고 I/O 경계에서 명시해야 한다.",
+  "explanationMarkdown": "동작을 parameter로 넘겼다고 해서 그 동작의 비용과 side effect가 사라지는 것은 아니다. 고정 control flow가 callback을 N번 호출한다면 callback의 네트워크·DB 비용도 N번 증폭될 수 있다. Behavior abstraction과 resource access boundary를 별도로 설계해야 한다."
+},
+{
+  "kind": "question",
+  "contentKey": "java.core.functional.lambda-capture-effectively-final.q7",
+  "promptMarkdown": "`final List<Integer> results = new ArrayList<>();`를 여러 비동기 task의 lambda가 capture하고 각 task가 `results.add(value)`를 호출한다. Reference가 final이므로 이 코드는 컴파일될 수 있다. 그렇다고 thread-safe한 것은 아닌 이유와 안전한 대안을 설명하라.",
+  "questionType": "SCENARIO",
+  "difficulty": "HARD",
+  "status": "PUBLISHED",
+  "conceptKeys": [
+    "java.core.functional.lambda-capture-effectively-final"
+  ],
+  "modelAnswer": "final/effectively final 규칙은 local variable binding을 재대입하지 않는다는 조건일 뿐, 그 binding이 가리키는 object의 내부 mutation을 동기화하지 않는다. 여러 thread가 ArrayList를 동시에 변경하면 data race와 내부 구조 손상이 가능하다. Task별 결과를 Future로 반환해 한 thread에서 합치거나, concurrent collection을 사용하거나, 명시적 synchronization 등 실제 공유 mutable state에 맞는 동시성 경계를 사용해야 한다.",
+  "explanationMarkdown": "Lambda capture 규칙과 thread-safety는 서로 다른 층위다. 캡처된 reference가 고정되어 있어도 가리키는 mutable object는 여러 실행 흐름이 동시에 수정할 수 있다. `final`을 공유 상태 안전성 보장으로 해석하면 안 된다."
+},
+{
+  "kind": "question",
+  "contentKey": "java.core.functional.method-reference-functional-composition.q5",
+  "promptMarkdown": "`normalize = trim.andThen(parse).andThen(validate)`처럼 Function을 조합했다. `parse`가 runtime exception을 던지면 뒤의 `validate`가 실행되지 않는다. 함수 합성이 성공 경로의 순서를 표현하는 것과 실패 처리 정책을 표현하는 것은 왜 별개인지 설명하고, 실패를 도메인 계약으로 다뤄야 한다면 어떤 선택지가 있는지 설명하라.",
+  "questionType": "DESCRIPTIVE",
+  "difficulty": "MEDIUM",
+  "status": "PUBLISHED",
+  "conceptKeys": [
+    "java.core.functional.method-reference-functional-composition"
+  ],
+  "modelAnswer": "`andThen`은 앞 함수가 정상 반환한 결과를 다음 함수에 전달하는 실행 순서를 구성할 뿐 예외 복구나 실패 값의 의미를 자동으로 정의하지 않는다. 중간 단계가 예외를 던지면 일반 호출처럼 이후 단계는 실행되지 않는다. 실패가 정상적인 도메인 결과라면 Result/Either와 유사한 명시적 결과 타입을 사용하거나 경계에서 예외를 도메인 예외로 변환하고, 어느 단계가 어떤 실패를 소유하는지 계약으로 정해야 한다.",
+  "explanationMarkdown": "Functional composition은 control flow를 간결하게 만들지만 error model까지 사라지게 하지는 않는다. 성공 값의 변환과 실패의 표현·복구를 각각 설계해야 pipeline 전체의 의미가 명확해진다."
+}
 ]
