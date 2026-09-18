@@ -3746,8 +3746,8 @@
   "conceptKeys": [
     "java.core.concurrency.platform-virtual-thread"
   ],
-  "modelAnswer": "Virtual thread는 blocking 작업을 표현하는 thread 비용을 줄이지만 DB connection 수나 DB 처리 capacity를 늘리지는 않는다. 10,000개의 요청이 동시에 connection을 요구하면 대부분은 pool 앞에서 기다리게 되고 DB가 실제 병목이 된다. DB 동시 사용량을 Semaphore, bounded executor 또는 application-level admission control로 제한하고 pool wait, query latency, timeout과 downstream capacity를 기준으로 concurrency budget을 정해야 한다.",
-  "explanationMarkdown": "Virtual thread는 많은 blocking 작업을 적은 thread 관리 비용으로 표현하게 해 주지만 외부 resource의 물리적 capacity를 확장하지는 않는다. 따라서 thread 수와 DB connection·외부 API quota 같은 동시 사용 한도를 분리해서 봐야 한다. Virtual thread가 많다는 이유로 모든 요청을 동시에 downstream에 밀어 넣으면 대기열과 tail latency만 커질 수 있으므로 resource별 concurrency budget이 필요하다."
+  "modelAnswer": "Virtual thread는 blocking 작업을 표현하는 thread 비용을 줄이지만 DB connection 수나 DB 처리 capacity를 늘리지는 않는다. 10,000개의 요청이 동시에 connection을 요구하면 30개 connection을 제외한 나머지는 pool 앞에서 기다릴 수 있고 DB가 실제 병목이 된다. Connection pool 자체가 이미 동시 사용량을 제한하는 경계이므로 pool wait·query latency·timeout을 관측해야 한다. DB에 도달하기 전 별도 admission control이 필요하다면 virtual thread를 고정 thread pool로 다시 제한하기보다 Semaphore처럼 동시성 제한 자체를 위한 수단을 사용하고 downstream capacity에 맞는 budget을 정한다.",
+  "explanationMarkdown": "Virtual thread는 많은 blocking 작업을 적은 thread 관리 비용으로 표현하게 해 주지만 외부 resource의 물리적 capacity를 확장하지는 않는다. 따라서 thread 수와 DB connection·외부 API quota 같은 동시 사용 한도를 분리해서 봐야 한다. Java 25의 virtual-thread 가이드처럼 제한된 외부 서비스를 보호할 목적이라면 virtual thread 자체를 pool에 묶기보다 Semaphore 같은 별도 concurrency control을 사용한다. 이미 bounded connection pool이 있다면 그 pool이 만드는 대기와 timeout도 함께 관측해야 한다."
 },
 {
   "kind": "question",
