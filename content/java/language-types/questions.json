@@ -899,5 +899,31 @@
     ],
     "correctChoiceKey": "B",
     "explanationMarkdown": "`StringBuilder`는 여러 thread가 같은 mutable buffer를 동시에 변경해도 안전하다는 계약을 제공하지 않습니다. 한 thread에 가두는 것이 가장 단순하며, 실제로 공유해야 한다면 외부 동기화나 요구사항에 맞는 다른 설계를 선택해야 합니다."
-  }
+  },
+{
+  "kind": "question",
+  "contentKey": "java.core.language-types.numeric-conversion-overflow.q5",
+  "promptMarkdown": "외부 API의 `long` ID를 내부 legacy 코드의 `int` ID로 넘겨야 한다. 단순 `(int) externalId` cast를 사용하면 어떤 문제가 생길 수 있으며, 범위를 벗어난 값을 조용히 잘라내지 않도록 경계에서 어떤 방식으로 검증하는 것이 좋은지 설명하라.",
+  "questionType": "SCENARIO",
+  "difficulty": "HARD",
+  "status": "PUBLISHED",
+  "conceptKeys": [
+    "java.core.language-types.numeric-conversion-overflow"
+  ],
+  "modelAnswer": "long 값을 int로 narrowing cast하면 상위 비트가 잘려 전혀 다른 int 값으로 바뀔 수 있고 예외가 자동으로 발생하지 않는다. 외부 ID가 int 범위라는 계약을 경계에서 명시적으로 검사하거나 `Math.toIntExact`처럼 범위를 벗어나면 실패하는 변환을 사용해 잘못된 식별자가 내부로 들어오지 않게 해야 한다. 타입 축소가 필요한 이유 자체도 장기적으로 제거 가능한지 검토하는 것이 좋다.",
+  "explanationMarkdown": "Widening과 달리 narrowing primitive conversion은 값 손실 가능성이 있다. 특히 ID·금액처럼 의미가 강한 값은 overflow가 단순 숫자 오차가 아니라 다른 entity를 가리키는 오류로 이어질 수 있으므로, cast보다 **검증 가능한 변환 경계**를 두는 편이 안전하다."
+},
+{
+  "kind": "question",
+  "contentKey": "java.core.language-types.boxing-unboxing-wrapper.q7",
+  "promptMarkdown": "`Map<String, Integer> counts`에서 다음 코드를 사용한다.\n\n```java\nint count = counts.get(key);\n```\n\nkey가 없거나 Map에 `null` 값이 저장될 수 있다면 어떤 실패가 발생할 수 있는가? `null`을 '0'과 구분해야 하는 경우와 0으로 취급해도 되는 경우 각각 어떤 API를 선택할지 설명하라.",
+  "questionType": "DESCRIPTIVE",
+  "difficulty": "MEDIUM",
+  "status": "PUBLISHED",
+  "conceptKeys": [
+    "java.core.language-types.boxing-unboxing-wrapper"
+  ],
+  "modelAnswer": "`Map.get`은 key가 없거나 저장된 값이 null이면 null을 반환할 수 있고, 이를 primitive int에 대입하면 unboxing 과정에서 NullPointerException이 발생한다. '없음/미정'과 0이 다른 의미라면 Integer 또는 OptionalInt/별도 결과로 부재를 유지해야 한다. 부재를 실제로 0과 동일하게 취급하는 도메인이라면 `getOrDefault(key, 0)`처럼 그 정책을 코드에 명시할 수 있다.",
+  "explanationMarkdown": "Wrapper와 primitive 사이의 자동 변환은 편하지만 null 가능성이 있는 API 경계를 숨길 수 있다. Unboxing은 null을 숫자로 바꾸는 규칙이 없으므로 예외가 발생한다. 먼저 **부재가 비즈니스적으로 0과 같은지**를 결정한 뒤 반환 타입과 기본값 정책을 선택해야 한다."
+}
 ]
