@@ -63,7 +63,7 @@
   "contentKey": "java.core.generics.type-erasure-reifiable-types.q7",
   "promptMarkdown": "다음 두 overload를 같은 클래스에 선언하려 한다.\n\n```java\nvoid process(List<String> values) {}\nvoid process(List<Integer> values) {}\n```\n\n왜 Java에서는 이 두 메서드를 함께 선언할 수 없는지 type erasure와 메서드 signature 관점에서 설명하고, API를 구분하려면 어떤 대안을 사용할 수 있는지 설명하라.",
   "questionType": "DESCRIPTIVE",
-  "difficulty": "HARD",
+  "difficulty": "MEDIUM",
   "status": "PUBLISHED",
   "conceptKeys": [
     "java.core.generics.type-erasure-reifiable-types"
