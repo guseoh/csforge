@@ -46,5 +46,57 @@
   {"kind":"question","contentKey":"java.core.exceptions-resources.autocloseable-resource-ownership.q4","promptMarkdown":"`Closeable`과 `AutoCloseable`의 관계를 가장 정확하게 설명한 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.exceptions-resources.autocloseable-resource-ownership"],"choices":[{"key":"A","content":"Closeable은 AutoCloseable과 전혀 관련이 없다","displayOrder":0},{"key":"B","content":"Closeable은 I/O에 특화된 close 계약이며 AutoCloseable을 확장한다","displayOrder":1},{"key":"C","content":"AutoCloseable만 I/O resource에 사용할 수 있다","displayOrder":2},{"key":"D","content":"Closeable은 close를 두 번 호출해야 한다","displayOrder":3}],"correctChoiceKey":"B","explanationMarkdown":"`java.io.Closeable`은 `AutoCloseable`을 확장하는 I/O 중심 계약이다. 다만 구체 resource의 반복 close 동작이나 underlying resource 전파 규칙은 해당 API 문서를 확인해야 한다."},
   {"kind":"question","contentKey":"java.core.exceptions-resources.autocloseable-resource-ownership.q5","promptMarkdown":"reader를 생성한 메서드가 문자열 결과를 반환한다. ownership을 가장 명확하게 표현한 구현은?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.exceptions-resources.autocloseable-resource-ownership"],"choices":[{"key":"A","content":"reader를 field에 저장하고 호출자에게 close를 암묵적으로 요구한다","displayOrder":0},{"key":"B","content":"reader를 닫지 않고 GC에 맡긴다","displayOrder":1},{"key":"C","content":"try-with-resources로 reader를 scope 안에서 사용하고 문자열만 반환한다","displayOrder":2},{"key":"D","content":"호출자가 전달하지 않았어도 반환한 문자열이 reader를 닫는다","displayOrder":3}],"correctChoiceKey":"C","explanationMarkdown":"메서드가 resource를 직접 획득하고 resource 자체를 밖으로 넘기지 않는다면 같은 scope에서 사용 후 close하는 ownership이 가장 명확하다."},
   {"kind":"question","contentKey":"java.core.exceptions-resources.autocloseable-resource-ownership.q6","promptMarkdown":"wrapper stream의 close 정책을 결정하기 전에 확인할 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.exceptions-resources.autocloseable-resource-ownership"],"choices":[{"key":"A","content":"wrapper의 generic type만 확인한다","displayOrder":0},{"key":"B","content":"모든 wrapper는 underlying을 절대 닫지 않는다","displayOrder":1},{"key":"C","content":"close가 없으면 파일을 삭제한다","displayOrder":2},{"key":"D","content":"wrapper가 underlying resource까지 닫는지와 누가 각 resource를 소유하는지 API 계약을 확인한다","displayOrder":3}],"correctChoiceKey":"D","explanationMarkdown":"close propagation은 wrapper 구현과 API 문서에 따라 달라진다. ownership을 모른 채 닫거나 닫지 않으면 premature-close 또는 leak이 생길 수 있다."},
-  {"kind":"question","contentKey":"java.core.exceptions-resources.failure-atomicity.q5","promptMarkdown":"`Order.addLineItem()`의 실행 흐름은 다음과 같다.\n\n1. 주문 금액을 먼저 변경한다.\n2. 재고 검증에서 예외를 던진다.\n3. 호출자는 예외를 catch하고 같은 주문 객체를 재사용한다.\n\n어떤 문제가 생기며 실패 atomicity를 지키는 구현 경계를 어떻게 설계해야 하는가?","questionType":"SCENARIO","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["java.core.exceptions-resources.failure-atomicity"],"modelAnswer":"예외가 난 뒤에도 금액이 일부 변경된 객체가 남아 다음 호출이 잘못된 상태에서 시작할 수 있다. 검증과 계산을 side effect 전에 끝내거나 임시 상태에서 모두 성공한 뒤 한 번에 반영하고, 실패 시 객체가 호출 전 상태로 남는 계약을 둔다.","explanationMarkdown":"예외를 던지는 것만으로 객체가 원상 복구되지는 않는다. mutation 순서와 실패 후 재사용 가능성을 함께 설계해야 하며, 메모리 객체의 실패 원자성과 DB transaction rollback은 같은 메커니즘이 아니다."}
+  {"kind":"question","contentKey":"java.core.exceptions-resources.failure-atomicity.q5","promptMarkdown":"`Order.addLineItem()`의 실행 흐름은 다음과 같다.\n\n1. 주문 금액을 먼저 변경한다.\n2. 재고 검증에서 예외를 던진다.\n3. 호출자는 예외를 catch하고 같은 주문 객체를 재사용한다.\n\n어떤 문제가 생기며 실패 atomicity를 지키는 구현 경계를 어떻게 설계해야 하는가?","questionType":"SCENARIO","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["java.core.exceptions-resources.failure-atomicity"],"modelAnswer":"예외가 난 뒤에도 금액이 일부 변경된 객체가 남아 다음 호출이 잘못된 상태에서 시작할 수 있다. 검증과 계산을 side effect 전에 끝내거나 임시 상태에서 모두 성공한 뒤 한 번에 반영하고, 실패 시 객체가 호출 전 상태로 남는 계약을 둔다.","explanationMarkdown":"예외를 던지는 것만으로 객체가 원상 복구되지는 않는다. mutation 순서와 실패 후 재사용 가능성을 함께 설계해야 하며, 메모리 객체의 실패 원자성과 DB transaction rollback은 같은 메커니즘이 아니다."},
+{
+  "kind": "question",
+  "contentKey": "java.core.exceptions-resources.exception-propagation-catch-boundary.q7",
+  "promptMarkdown": "Repository가 IOException을 catch한 뒤 stack trace를 로그로 남기고 `StorageFailure`로 감싸 다시 던진다. Service도 같은 예외를 다시 로그로 남기고 HTTP 경계도 503 응답 직전에 또 로그를 남긴다. 장애 한 번에 로그가 세 번 찍히는 이 구조의 문제와, 예외 번역·로그 책임을 어디에 둘지 설명하라.",
+  "questionType": "SCENARIO",
+  "difficulty": "MEDIUM",
+  "status": "PUBLISHED",
+  "conceptKeys": [
+    "java.core.exceptions-resources.exception-propagation-catch-boundary"
+  ],
+  "modelAnswer": "중간 계층마다 동일 실패를 로그한 뒤 다시 던지면 한 장애가 여러 stack trace로 중복되어 signal-to-noise가 나빠지고 incident count도 부풀 수 있다. Repository나 application 계층은 필요하면 현재 계층의 의미 있는 예외로 cause를 보존해 번역하되, 실제 요청 context와 correlation 정보를 가진 최종 처리 경계에서 한 번 로그하는 편이 명확하다. 중간 계층이 복구하거나 추가 정보를 제공할 수 있을 때만 별도 로그가 정당화된다.",
+  "explanationMarkdown": "예외를 catch했다는 이유만으로 반드시 그 자리에서 로그해야 하는 것은 아니다. 복구하지 않고 다시 전파할 예외를 여러 계층이 반복해서 기록하면 같은 실패가 여러 사건처럼 보일 수 있다. Catch boundary는 복구·번역·관측 중 실제 책임이 있는 곳에 두는 것이 좋다."
+},
+{
+  "kind": "question",
+  "contentKey": "java.core.exceptions-resources.exception-translation-cause.q6",
+  "promptMarkdown": "파일 기반 설정을 읽는 infrastructure code가 `IOException`을 그대로 domain service까지 던지고 있다. Domain service는 파일이라는 구현 세부를 알 필요가 없다. 예외를 번역한다면 어떤 정보는 숨기고 어떤 정보는 cause로 보존해야 하며, 번역한 예외가 호출자에게 어떤 의미를 제공해야 하는지 설명하라.",
+  "questionType": "DESCRIPTIVE",
+  "difficulty": "MEDIUM",
+  "status": "PUBLISHED",
+  "conceptKeys": [
+    "java.core.exceptions-resources.exception-translation-cause"
+  ],
+  "modelAnswer": "상위 계층에는 `ConfigurationLoadFailure`처럼 현재 계층에서 이해할 수 있는 실패 의미를 제공하고, 파일 경로·I/O 구현 타입 같은 세부는 public contract로 퍼뜨리지 않을 수 있다. 다만 진단 가능성을 위해 원래 IOException은 cause로 보존해 stack trace와 근본 원인을 추적할 수 있게 한다. 번역은 단순 이름 변경이 아니라 상위 계층의 retry·응답·복구 판단에 필요한 의미를 제공해야 한다.",
+  "explanationMarkdown": "예외 번역의 목적은 낮은 계층의 구현 타입을 숨기는 동시에 실패 정보를 버리지 않는 것이다. Cause를 보존하면 abstraction 경계를 유지하면서도 운영 시 실제 원인을 추적할 수 있다."
+},
+{
+  "kind": "question",
+  "contentKey": "java.core.exceptions-resources.try-with-resources-suppressed.q8",
+  "promptMarkdown": "Try-with-resources 본문은 정상적으로 결과 객체를 만들었지만 scope를 빠져나오며 `close()`가 IOException을 던졌다. 메서드가 결과를 이미 계산했다는 이유로 정상 반환된다고 볼 수 있는가? Resource 정리가 메서드 완료 시점과 예외 결과에 어떤 영향을 주는지 설명하라.",
+  "questionType": "DESCRIPTIVE",
+  "difficulty": "MEDIUM",
+  "status": "PUBLISHED",
+  "conceptKeys": [
+    "java.core.exceptions-resources.try-with-resources-suppressed"
+  ],
+  "modelAnswer": "정상 반환으로 볼 수 없다. Try-with-resources는 본문이 끝난 뒤 resource close까지 수행한 다음 scope를 빠져나오므로, 본문에서 반환 값을 계산했더라도 close가 예외를 던지면 메서드 호출 자체가 예외로 완료될 수 있다. 본문 예외가 따로 없으면 close 예외가 주 예외가 된다. 따라서 resource 정리도 operation completion의 일부로 보고 실패 의미를 설계해야 한다.",
+  "explanationMarkdown": "Try-with-resources의 중요한 점은 close가 부가적인 사후 작업이 아니라 scope 종료 규칙에 포함된다는 것이다. 본문 계산이 성공했다고 전체 operation이 성공한 것은 아니며, 정리 실패가 최종 호출 결과를 바꿀 수 있다."
+},
+{
+  "kind": "question",
+  "contentKey": "java.core.exceptions-resources.autocloseable-resource-ownership.q7",
+  "promptMarkdown": "메서드가 `Files.lines(path)`로 만든 `Stream<String>`을 그대로 반환한다. 호출자는 그 Stream이 파일 handle을 소유한다는 사실을 모른 채 terminal operation만 호출한다. 이 API의 resource ownership이 왜 불명확한지 설명하고, 더 안전한 두 가지 설계 대안을 제시하라.",
+  "questionType": "SCENARIO",
+  "difficulty": "HARD",
+  "status": "PUBLISHED",
+  "conceptKeys": [
+    "java.core.exceptions-resources.autocloseable-resource-ownership"
+  ],
+  "modelAnswer": "Files.lines가 반환하는 Stream은 사용 후 close해야 할 I/O resource를 소유할 수 있는데, 단순 Stream 반환만으로는 호출자가 close 책임을 쉽게 놓칠 수 있다. 한 방법은 메서드 내부 try-with-resources에서 모두 소비해 `List<String>` 같은 비-resource 결과만 반환하는 것이다. Streaming이 꼭 필요하면 API 문서와 타입 계약에서 호출자에게 close ownership을 명시하고 호출부가 try-with-resources로 Stream을 다루게 해야 한다. 누가 열었는지보다 ownership transfer가 명확한지가 핵심이다.",
+  "explanationMarkdown": "Resource를 반환하는 API는 데이터뿐 아니라 종료 책임도 함께 넘길 수 있다. 특히 Stream처럼 평소에는 close를 의식하지 않는 타입이 I/O resource를 감싸면 누수가 생기기 쉽다. 가능하면 scope 안에서 소비를 끝내거나 ownership transfer를 명시적으로 드러내야 한다."
+}
 ]

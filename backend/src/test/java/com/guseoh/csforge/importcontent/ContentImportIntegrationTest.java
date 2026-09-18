@@ -275,22 +275,22 @@ class ContentImportIntegrationTest {
 
         JsonNode first = json(bootstrap()).get("body");
         assertTrue(first.get("success").asBoolean());
-        assertEquals(3_357, first.get("totals").get("created").asInt());
+        assertEquals(3_367, first.get("totals").get("created").asInt());
         assertEquals(15, jdbc.queryForObject("select count(*) from learning_area", Integer.class));
         assertEquals(134, jdbc.queryForObject("select count(*) from topic", Integer.class));
         assertEquals(721, jdbc.queryForObject("select count(*) from concept", Integer.class));
-        assertEquals(2_502, jdbc.queryForObject("select count(*) from question", Integer.class));
+        assertEquals(2_512, jdbc.queryForObject("select count(*) from question", Integer.class));
 
         JsonNode ready = json(get("/api/canonical-bootstrap/status")).get("body");
         assertEquals("READY", ready.get("state").asText());
         assertEquals(ready.get("totalBatches").asInt(), ready.get("readyBatches").asInt());
         assertEquals(134, ready.get("currentCounts").get("topics").asInt());
         assertEquals(721, ready.get("currentCounts").get("concepts").asInt());
-        assertEquals(2_502, ready.get("currentCounts").get("questions").asInt());
+        assertEquals(2_512, ready.get("currentCounts").get("questions").asInt());
 
         JsonNode second = json(bootstrap()).get("body");
         assertTrue(second.get("success").asBoolean());
-        assertEquals(3_357, second.get("totals").get("unchanged").asInt());
+        assertEquals(3_367, second.get("totals").get("unchanged").asInt());
         assertEquals(0, second.get("totals").get("created").asInt());
         assertEquals(0, second.get("totals").get("updated").asInt());
     }
@@ -317,7 +317,7 @@ class ContentImportIntegrationTest {
         assertEquals("READY", recovered.get("state").asText());
         assertEquals(134, jdbc.queryForObject("select count(*) from topic", Integer.class));
         assertEquals(721, jdbc.queryForObject("select count(*) from concept", Integer.class));
-        assertEquals(2_502, jdbc.queryForObject("select count(*) from question", Integer.class));
+        assertEquals(2_512, jdbc.queryForObject("select count(*) from question", Integer.class));
     }
 
     private long insertAttempt(long questionId) {
