@@ -91,7 +91,7 @@
   "contentKey": "java.core.exceptions-resources.autocloseable-resource-ownership.q7",
   "promptMarkdown": "메서드가 `Files.lines(path)`로 만든 `Stream<String>`을 그대로 반환한다. 호출자는 그 Stream이 파일 handle을 소유한다는 사실을 모른 채 terminal operation만 호출한다. 이 API의 resource ownership이 왜 불명확한지 설명하고, 더 안전한 두 가지 설계 대안을 제시하라.",
   "questionType": "SCENARIO",
-  "difficulty": "HARD",
+  "difficulty": "MEDIUM",
   "status": "PUBLISHED",
   "conceptKeys": [
     "java.core.exceptions-resources.autocloseable-resource-ownership"

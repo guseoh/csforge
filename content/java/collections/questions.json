@@ -63,7 +63,7 @@
   "contentKey": "java.core.collections.list-set-map-contracts.q7",
   "promptMarkdown": "`List<Order>`의 `subList(0, 10)`을 별도 목록 snapshot처럼 저장해 두었다. 이후 원본 List에 구조적 변경이 발생하자 subList 사용에서 예상치 못한 동작이나 `ConcurrentModificationException`이 발생했다. `subList`를 독립 collection이 아니라 backing list의 view로 이해해야 하는 이유와 snapshot이 필요할 때의 설계를 설명하라.",
   "questionType": "SCENARIO",
-  "difficulty": "HARD",
+  "difficulty": "MEDIUM",
   "status": "PUBLISHED",
   "conceptKeys": [
     "java.core.collections.list-set-map-contracts"

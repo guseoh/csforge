@@ -905,7 +905,7 @@
   "contentKey": "java.core.language-types.numeric-conversion-overflow.q5",
   "promptMarkdown": "외부 API의 `long` ID를 내부 legacy 코드의 `int` ID로 넘겨야 한다. 단순 `(int) externalId` cast를 사용하면 어떤 문제가 생길 수 있으며, 범위를 벗어난 값을 조용히 잘라내지 않도록 경계에서 어떤 방식으로 검증하는 것이 좋은지 설명하라.",
   "questionType": "SCENARIO",
-  "difficulty": "HARD",
+  "difficulty": "MEDIUM",
   "status": "PUBLISHED",
   "conceptKeys": [
     "java.core.language-types.numeric-conversion-overflow"
