@@ -47,3 +47,80 @@ jobs:
             echo 'Expected missing-secret failure did not occur' >&2
             exit 1
           fi
+
+  deploy-backend:
+    name: Deploy backend to Cloud Run
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: validate
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      GCP_PROJECT_ID: csforge-508510
+      GCP_REGION: asia-southeast1
+      CLOUD_RUN_SERVICE: csforge
+      ARTIFACT_REGISTRY_REPOSITORY: csforge
+      IMAGE_URI: asia-southeast1-docker.pkg.dev/csforge-508510/csforge/csforge
+      WORKLOAD_IDENTITY_PROVIDER: projects/1003183509924/locations/global/workloadIdentityPools/github/providers/csforge
+      DEPLOY_SERVICE_ACCOUNT: github-cloud-run-deployer@csforge-508510.iam.gserviceaccount.com
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect backend deployment changes
+        id: changes
+        shell: bash
+        run: |
+          before="${{ github.event.before }}"
+          after="${{ github.sha }}"
+
+          if [[ "$before" =~ ^0+$ ]]; then
+            echo "deploy=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if git diff --quiet "$before" "$after" --             backend             content             .github/workflows/repository-validation.yml; then
+            echo "deploy=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "deploy=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Authenticate to Google Cloud
+        if: steps.changes.outputs.deploy == 'true'
+        uses: google-github-actions/auth@v3
+        with:
+          project_id: ${{ env.GCP_PROJECT_ID }}
+          workload_identity_provider: ${{ env.WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ env.DEPLOY_SERVICE_ACCOUNT }}
+
+      - name: Set up Google Cloud CLI
+        if: steps.changes.outputs.deploy == 'true'
+        uses: google-github-actions/setup-gcloud@v3
+
+      - name: Configure Artifact Registry authentication
+        if: steps.changes.outputs.deploy == 'true'
+        run: gcloud auth configure-docker "${GCP_REGION}-docker.pkg.dev" --quiet
+
+      - name: Build backend image
+        if: steps.changes.outputs.deploy == 'true'
+        run: docker build -f backend/Dockerfile -t "${IMAGE_URI}:${GITHUB_SHA}" .
+
+      - name: Push backend image
+        if: steps.changes.outputs.deploy == 'true'
+        run: docker push "${IMAGE_URI}:${GITHUB_SHA}"
+
+      - name: Deploy backend image
+        id: deploy
+        if: steps.changes.outputs.deploy == 'true'
+        uses: google-github-actions/deploy-cloudrun@v3
+        with:
+          project_id: ${{ env.GCP_PROJECT_ID }}
+          region: ${{ env.GCP_REGION }}
+          service: ${{ env.CLOUD_RUN_SERVICE }}
+          image: ${{ env.IMAGE_URI }}:${{ github.sha }}
+
+      - name: Verify readiness
+        if: steps.changes.outputs.deploy == 'true'
+        run: curl --fail --silent --show-error --retry 6 --retry-delay 5 "${{ steps.deploy.outputs.url }}/actuator/health/readiness"
