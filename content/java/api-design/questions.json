@@ -27,14 +27,14 @@
 {
   "kind": "question",
   "contentKey": "java.core.api-design.static-factory-method.q7",
-  "promptMarkdown": "`Money` 생성 API가 통화별 scale 검증을 수행하고, 자주 쓰는 `ZERO` 값은 재사용하며, 호출자에게는 구체 구현 타입을 숨기고 싶다. 생성자보다 static factory가 이 요구를 표현하기 좋은 이유를 설명하라. Static factory를 쓴다고 자동으로 보장되지 않는 것도 함께 설명하라.",
+  "promptMarkdown": "`Money` 생성 API가 통화별 scale 검증을 수행하고, 자주 쓰는 통화별 zero 값을 재사용하며, 호출자에게는 구체 구현 타입을 숨기고 싶다. 생성자보다 static factory가 이 요구를 표현하기 좋은 이유를 설명하라. Static factory를 쓴다고 자동으로 보장되지 않는 것도 함께 설명하라.",
   "questionType": "DESCRIPTIVE",
   "difficulty": "MEDIUM",
   "status": "PUBLISHED",
   "conceptKeys": [
     "java.core.api-design.static-factory-method"
   ],
-  "modelAnswer": "Static factory는 `Money.of(...)`, `Money.zero(...)`처럼 생성 의도를 이름에 담고, 입력에 따라 기존 인스턴스를 재사용하거나 선언한 반환 타입의 하위 구현을 선택할 수 있다. 생성 경로를 한곳에 모아 scale 검증도 수행할 수 있다. 하지만 factory라는 형태만으로 객체가 불변이 되거나 항상 캐시되거나 thread-safe해지는 것은 아니며, 그런 성질은 실제 구현과 문서 계약으로 정해야 한다.",
+  "modelAnswer": "Static factory는 `Money.of(...)`, `Money.zero(currency)`처럼 생성 의도를 이름에 담고, 입력에 따라 기존 인스턴스를 재사용하거나 선언한 반환 타입의 하위 구현을 선택할 수 있다. 생성 경로를 한곳에 모아 통화별 scale 검증도 수행할 수 있다. 하지만 factory라는 형태만으로 객체가 불변이 되거나 항상 캐시되거나 thread-safe해지는 것은 아니며, 그런 성질은 실제 구현과 문서 계약으로 정해야 한다.",
   "explanationMarkdown": "Constructor는 새 인스턴스 초기화라는 언어적 경로이고 static factory는 그 위에 이름, 반환 구현 선택, 인스턴스 재사용 같은 생성 정책을 표현할 수 있다. 장점은 유연한 생성 계약이지 특정 품질 속성을 자동 부여하는 마법이 아니다."
 },
 {
