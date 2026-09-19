@@ -92,7 +92,7 @@
       {"key": "D", "content": "read-modify-write sequence를 무조건 atomic하게 만드는 문제", "displayOrder": 3}
     ],
     "correctChoiceKey": "A",
-    "explanationMarkdown": "A가 자기 copy만 수정하면 B가 이전 line을 계속 valid한 값으로 읽을 수 있다. 모든 core가 같은 counter가 있는 cache line을 write하면 atomic operation의 correctness와 별개로 write ownership이 core 사이를 반복 이동할 수 있다."
+    "explanationMarkdown": "같은 memory line이 여러 core cache에 복제된 상태에서 한 core가 값을 수정해도 다른 core가 오래된 copy를 계속 valid하게 사용하면 서로 다른 값을 관찰할 수 있다. Cache coherence는 이런 동일 line의 cached copy 사이에서 write가 반영되는 규칙을 제공하며, atomicity나 false sharing 같은 별도 문제까지 자동으로 해결하는 것은 아니다."
   },
   {
     "kind": "question",
