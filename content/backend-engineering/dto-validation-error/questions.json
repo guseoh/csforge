@@ -92,7 +92,7 @@
       {"key":"D","content":"SQL exception text","displayOrder":3}
     ],
     "correctChoiceKey": "A",
-    "explanationMarkdown": "B 같은 stable code/type은 사용자 문구나 stack trace가 바뀌어도 client 분기를 유지하게 한다. server 원인과 SQL text는 operator 관측 영역에 두고, API에는 필요한 field violation·correlation 정보만 안전한 형태로 포함해야 한다."
+    "explanationMarkdown": "Stable error code/type은 사용자 문구나 stack trace가 바뀌어도 client 분기를 유지하게 한다. server 원인과 SQL text는 operator 관측 영역에 두고, API에는 필요한 field violation·correlation 정보만 안전한 형태로 포함해야 한다."
   },
   {
     "kind": "question",
