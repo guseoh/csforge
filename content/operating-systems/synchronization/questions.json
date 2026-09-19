@@ -8,12 +8,12 @@
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.synchronization.mutex"],
     "choices": [
-      {"key": "A", "content": "같은 invariant에 접근하는 모든 competing path가 같은 protection protocol을 따른다", "displayOrder": 0},
+      {"key": "A", "content": "각 thread가 자기만의 mutex를 사용하면 같은 state가 보호된다", "displayOrder": 0},
       {"key": "B", "content": "읽기 경로는 어떤 lock도 사용하지 않아도 항상 안전하다", "displayOrder": 1},
-      {"key": "C", "content": "각 thread가 자기만의 mutex를 사용하면 같은 state가 보호된다", "displayOrder": 2},
+      {"key": "C", "content": "같은 invariant에 접근하는 모든 competing path가 같은 protection protocol을 따른다", "displayOrder": 2},
       {"key": "D", "content": "critical section을 가능한 길게 유지하면 race가 줄어든다", "displayOrder": 3}
     ],
-    "correctChoiceKey": "A",
+    "correctChoiceKey": "C",
     "explanationMarkdown": "Mutex는 객체가 shared state를 자동으로 보호하는 장치가 아니다. **같은 invariant에 영향을 주는 모든 경쟁 경로가 동일한 보호 규칙을 따라야** 실제 mutual exclusion이 성립한다. 서로 다른 mutex를 사용하거나 일부 access가 보호 밖에 남으면 lock이 존재해도 race가 가능하다."
   },
   {
@@ -48,12 +48,12 @@
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.synchronization.semaphore"],
     "choices": [
-      {"key": "A", "content": "permit가 반환될 때까지 기다린다", "displayOrder": 0},
-      {"key": "B", "content": "semaphore가 실제 resource capacity를 자동으로 하나 늘린다", "displayOrder": 1},
+      {"key": "A", "content": "semaphore가 실제 resource capacity를 자동으로 하나 늘린다", "displayOrder": 0},
+      {"key": "B", "content": "permit가 반환될 때까지 기다린다", "displayOrder": 1},
       {"key": "C", "content": "기존 acquire 하나를 취소하고 그 permit를 강제로 가져온다", "displayOrder": 2},
       {"key": "D", "content": "permit가 0이어도 read-only task라면 자동 통과한다", "displayOrder": 3}
     ],
-    "correctChoiceKey": "A",
+    "correctChoiceKey": "B",
     "explanationMarkdown": "세 task가 permit를 모두 소비하면 available count는 0이다. 일반적인 blocking acquire/wait는 **release/post로 permit가 다시 생길 때까지 진행하지 않는다.** Semaphore가 underlying connection이나 thread 같은 실제 resource를 자동으로 늘려 주는 것은 아니다."
   },
   {
@@ -150,12 +150,12 @@
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.synchronization.monitor"],
     "choices": [
-      {"key": "A", "content": "shared state와 그 state를 다루는 operation, mutual exclusion과 condition waiting protocol을 한 경계에 둔다", "displayOrder": 0},
+      {"key": "A", "content": "condition signaling만 제공하고 mutual exclusion은 사용하지 않는다", "displayOrder": 0},
       {"key": "B", "content": "shared state는 밖에 노출하고 lock 객체만 한 class 안에 둔다", "displayOrder": 1},
-      {"key": "C", "content": "condition signaling만 제공하고 mutual exclusion은 사용하지 않는다", "displayOrder": 2},
+      {"key": "C", "content": "shared state와 그 state를 다루는 operation, mutual exclusion과 condition waiting protocol을 한 경계에 둔다", "displayOrder": 2},
       {"key": "D", "content": "caller가 매 호출마다 어떤 lock과 condition을 쓸지 임의로 선택하게 한다", "displayOrder": 3}
     ],
-    "correctChoiceKey": "A",
+    "correctChoiceKey": "C",
     "explanationMarkdown": "Monitor의 가치는 primitive를 한 class에 모아 두는 데 그치지 않는다. **Protected state와 invariant를 조작하는 operation, mutual exclusion, condition protocol의 소유권을 같은 abstraction에 둬** caller가 synchronization 규칙을 우회하거나 제각각 조합할 가능성을 줄인다."
   },
   {
@@ -190,12 +190,12 @@
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.synchronization.read-write-lock"],
     "choices": [
-      {"key": "A", "content": "보호된 state를 변경하지 않는 read operation이고 현재 lock의 writer-exclusion/admission 조건을 만족한다", "displayOrder": 0},
+      {"key": "A", "content": "read lock을 얻은 reader는 다른 reader를 배제해야 한다", "displayOrder": 0},
       {"key": "B", "content": "메서드 이름이 `get`이면 내부 state를 변경해도 항상 read lock을 쓸 수 있다", "displayOrder": 1},
       {"key": "C", "content": "writer가 protected state를 변경하는 동안에도 reader는 항상 동시에 들어간다", "displayOrder": 2},
-      {"key": "D", "content": "read lock을 얻은 reader는 다른 reader를 배제해야 한다", "displayOrder": 3}
+      {"key": "D", "content": "보호된 state를 변경하지 않는 read operation이고 현재 lock의 writer-exclusion/admission 조건을 만족한다", "displayOrder": 3}
     ],
-    "correctChoiceKey": "A",
+    "correctChoiceKey": "D",
     "explanationMarkdown": "Read-write lock은 **read-only access의 공유와 write access의 배타성**을 분리한다. 메서드 이름이 아니라 실제 protected state를 변경하는지가 중요하며, writer가 lock을 소유한 동안 reader를 동시에 허용하는 것이 기본 목적은 아니다. Waiting writer가 있을 때 새 reader를 허용하는 정책은 구현 계약을 확인해야 한다."
   },
   {
@@ -270,12 +270,12 @@
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.synchronization.contention"],
     "choices": [
-      {"key": "A", "content": "여러 execution이 같은 제한된 synchronization resource를 동시에 원해 wait·spin·retry가 실제로 발생한다", "displayOrder": 0},
-      {"key": "B", "content": "코드에 mutex 객체가 하나라도 선언되어 있다", "displayOrder": 1},
+      {"key": "A", "content": "코드에 mutex 객체가 하나라도 선언되어 있다", "displayOrder": 0},
+      {"key": "B", "content": "여러 execution이 같은 제한된 synchronization resource를 동시에 원해 wait·spin·retry가 실제로 발생한다", "displayOrder": 1},
       {"key": "C", "content": "critical section이 짧으므로 동시 요청 수와 관계없이 대기가 절대 생기지 않는다", "displayOrder": 2},
       {"key": "D", "content": "lock acquisition이 모두 즉시 성공하고 waiter가 존재하지 않는다", "displayOrder": 3}
     ],
-    "correctChoiceKey": "A",
+    "correctChoiceKey": "B",
     "explanationMarkdown": "Contention은 lock의 존재 여부가 아니라 **같은 serialization point를 여러 실행 흐름이 동시에 요구해 실제 대기나 retry가 생기는 정도**를 말한다. 짧은 critical section도 요청이 충분히 몰리면 hot point가 될 수 있고, 반대로 mutex가 있어도 경쟁이 드물면 contention은 낮을 수 있다."
   },
   {

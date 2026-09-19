@@ -2,11 +2,11 @@
   {
     "kind":"question","contentKey":"spring.core.why.object-graph.q1","promptMarkdown":"다음 중 애플리케이션 객체 그래프를 가장 정확히 설명한 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["spring.core.why.object-graph"],
     "choices":[
-      {"key":"A","content":"class 파일의 상속 관계만을 모아 놓은 구조다.","displayOrder":0},
-      {"key":"B","content":"실행 중인 객체 instance들이 실제 참조를 통해 협력하도록 연결된 구조이며 구현 선택·수명도 조립 문제에 포함된다.","displayOrder":1},
+      {"key":"A","content":"실행 중인 객체 instance들이 실제 참조를 통해 협력하도록 연결된 구조이며 구현 선택·수명도 조립 문제에 포함된다.","displayOrder":0},
+      {"key":"B","content":"class 파일의 상속 관계만을 모아 놓은 구조다.","displayOrder":1},
       {"key":"C","content":"DB table의 foreign key 관계를 Java 객체로 옮긴 것이다.","displayOrder":2},
       {"key":"D","content":"interface 개수가 많을수록 자동으로 좋은 객체 그래프가 된다.","displayOrder":3}],
-    "correctChoiceKey":"B","explanationMarkdown":"객체 그래프는 실행 중인 instance들이 실제 reference로 어떤 collaborator와 연결되어 협력하는지를 뜻한다. class 상속 관계나 DB foreign key와 같은 구조가 아니며, 구현 선택·수명·configuration까지 조립 결과에 영향을 준다."
+    "correctChoiceKey":"A","explanationMarkdown":"객체 그래프는 실행 중인 instance들이 실제 reference로 어떤 collaborator와 연결되어 협력하는지를 뜻한다. class 상속 관계나 DB foreign key와 같은 구조가 아니며, 구현 선택·수명·configuration까지 조립 결과에 영향을 준다."
   },
   {
     "kind":"question","contentKey":"spring.core.why.object-graph.q2","promptMarkdown":"`OrderService`가 `OrderRepository`와 `PaymentGateway`를 생성자로 받는다. 이 구조에서 객체 그래프를 완성하기 위해 서비스 밖에서 추가로 결정해야 할 내용을 두 가지 이상 설명하라.","questionType":"DESCRIPTIVE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["spring.core.why.object-graph"],
@@ -16,10 +16,10 @@
     "kind":"question","contentKey":"spring.core.why.coupling.q1","promptMarkdown":"`OrderService` 내부에서 `new StripePaymentGateway(apiKey)`를 직접 호출한다. 테스트에서 fake gateway를 쓰고 production에서는 다른 PG로 교체하려 한다. 가장 먼저 드러나는 설계 문제는?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["spring.core.why.coupling"],
     "choices":[
       {"key":"A","content":"`new` 키워드는 항상 객체지향 원칙 위반이다.","displayOrder":0},
-      {"key":"B","content":"업무 use case가 payment 구현 선택·구성 책임까지 소유해 독립 변경 이유가 결합되어 있다.","displayOrder":1},
+      {"key":"B","content":"생성자 parameter가 적어서 compile time이 느려진다.","displayOrder":1},
       {"key":"C","content":"interface를 사용하지 않았으므로 JVM이 dynamic dispatch를 못 한다.","displayOrder":2},
-      {"key":"D","content":"생성자 parameter가 적어서 compile time이 느려진다.","displayOrder":3}],
-    "correctChoiceKey":"B","explanationMarkdown":"문제는 `new` 키워드 자체가 아니라 OrderService가 payment 구현의 선택·apiKey 구성·수명과 주문 use case를 동시에 소유한다는 점이다. fake나 다른 PG로 바꾸면 업무 class도 함께 수정해야 하므로 독립 변경 이유를 composition boundary로 분리할 여지가 있다."
+      {"key":"D","content":"업무 use case가 payment 구현 선택·구성 책임까지 소유해 독립 변경 이유가 결합되어 있다.","displayOrder":3}],
+    "correctChoiceKey":"D","explanationMarkdown":"문제는 `new` 키워드 자체가 아니라 OrderService가 payment 구현의 선택·apiKey 구성·수명과 주문 use case를 동시에 소유한다는 점이다. fake나 다른 PG로 바꾸면 업무 class도 함께 수정해야 하므로 독립 변경 이유를 composition boundary로 분리할 여지가 있다."
   },
   {
     "kind":"question","contentKey":"spring.core.why.coupling.q2","promptMarkdown":"`OrderService`가 `new Money(...)`를 만드는 것과 `new JpaOrderRepository(...)`를 만드는 것을 결합도 관점에서 왜 다르게 판단할 수 있는지 설명하라.","questionType":"DESCRIPTIVE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["spring.core.why.coupling"],

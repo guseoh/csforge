@@ -14,7 +14,7 @@
       {"key": "D", "content": "Controller와 Repository만 분리하면 Domain 계층은 필요 없다.", "displayOrder": 3}
     ],
     "correctChoiceKey": "B",
-    "explanationMarkdown": "Layering은 폴더 이름이 아니라 API·application·domain·infrastructure 사이에 어떤 변경 이유와 구현 세부가 의존하는지를 제한하는 방향성이다. B는 호출 순서상 API가 application을 거쳐 domain을 사용하더라도 안쪽 정책이 `ResponseEntity`나 `JpaRepository` 변경을 알 필요 없게 하는 방향을 말한다. interface 개수나 controller/repository 폴더만 늘리는 것은 이 dependency rule과 같은 보장이 아니다."
+    "explanationMarkdown": "Layering은 폴더 이름이 아니라 API·application·domain·infrastructure 사이에 어떤 변경 이유와 구현 세부가 의존하는지를 제한하는 방향성이다. 호출 순서상 API가 application을 거쳐 domain을 사용하더라도 안쪽 정책은 `ResponseEntity`나 `JpaRepository` 같은 바깥 구현 세부의 변경을 알 필요 없어야 한다. interface 개수나 controller/repository 폴더만 늘리는 것은 이 dependency rule과 같은 보장이 아니다."
   },
   {
     "kind": "question",
@@ -47,12 +47,12 @@
     "status": "PUBLISHED",
     "conceptKeys": ["backend.core.layering.orchestration-rule"],
     "choices": [
-      {"key": "A", "content": "여러 repository 호출 순서는 Domain Entity가 결정해야 한다.", "displayOrder": 0},
-      {"key": "B", "content": "상태 전이의 허용 여부는 Domain이, 여러 협력자 호출·transaction·복구 순서는 Application이 주로 소유한다.", "displayOrder": 1},
+      {"key": "A", "content": "상태 전이의 허용 여부는 Domain이, 여러 협력자 호출·transaction·복구 순서는 Application이 주로 소유한다.", "displayOrder": 0},
+      {"key": "B", "content": "여러 repository 호출 순서는 Domain Entity가 결정해야 한다.", "displayOrder": 1},
       {"key": "C", "content": "모든 business 조건은 Controller에 있어야 중복이 없다.", "displayOrder": 2},
       {"key": "D", "content": "Domain object는 상태만 저장하고 rule은 Service에 두는 것이 항상 좋다.", "displayOrder": 3}
     ],
-    "correctChoiceKey": "B",
+    "correctChoiceKey": "A",
     "explanationMarkdown": "Application은 collaborator 호출 순서와 local transaction을 조정하고 Domain은 entity/value object가 항상 지켜야 하는 상태 invariant를 소유하는 식으로 책임을 나눈다. 상태 전이 가능성은 entity가 현재 state를 보고 보호해야 여러 진입 경로에서 일관되지만, repository 조회·외부 호출·commit 순서는 use case가 조정해야 한다. 모든 조건을 controller에 두거나 모든 rule을 빈 service로 옮기는 것은 경계를 흐린다."
   },
   {
@@ -87,12 +87,12 @@
     "conceptKeys": ["backend.core.layering.infrastructure-boundary"],
     "choices": [
       {"key": "A", "content": "vendor class 이름을 더 짧게 만들기 위해서", "displayOrder": 0},
-      {"key": "B", "content": "외부 타입·오류·protocol 변화가 내부 model로 퍼지는 것을 막고 내부 의미로 번역하기 위해서", "displayOrder": 1},
+      {"key": "B", "content": "외부 오류를 모두 같은 RuntimeException으로 바꾸기 위해서", "displayOrder": 1},
       {"key": "C", "content": "모든 외부 호출을 비동기로 만들기 위해서", "displayOrder": 2},
-      {"key": "D", "content": "외부 오류를 모두 같은 RuntimeException으로 바꾸기 위해서", "displayOrder": 3}
+      {"key": "D", "content": "외부 타입·오류·protocol 변화가 내부 model로 퍼지는 것을 막고 내부 의미로 번역하기 위해서", "displayOrder": 3}
     ],
-    "correctChoiceKey": "B",
-    "explanationMarkdown": "Infrastructure boundary는 vendor protocol·error·type을 내부 use-case 계약으로 번역해 domain 정책이 특정 외부 기술의 변경에 끌려가지 않게 한다. B처럼 adapter가 vendor type·error·protocol을 내부 의미로 변환하면 provider 교체가 domain method와 use case 전체로 퍼지지 않는다. 모든 외부 오류를 같은 RuntimeException으로 뭉개면 필요한 retryability·unknown outcome 정보까지 잃는다."
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "Infrastructure boundary는 vendor protocol·error·type을 내부 use-case 계약으로 번역해 domain 정책이 특정 외부 기술의 변경에 끌려가지 않게 한다. adapter가 vendor type·error·protocol을 내부 의미로 변환하면 provider 교체가 domain method와 use case 전체로 퍼지지 않는다. 모든 외부 오류를 같은 RuntimeException으로 뭉개면 필요한 retryability·unknown outcome 정보까지 잃는다."
   },
   {
     "kind": "question",

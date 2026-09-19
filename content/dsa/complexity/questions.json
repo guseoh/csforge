@@ -10,10 +10,10 @@
     "choices": [
       {"key": "A", "content": "Θ(1)", "displayOrder": 0},
       {"key": "B", "content": "Θ(log n)", "displayOrder": 1},
-      {"key": "C", "content": "Θ(n)", "displayOrder": 2},
-      {"key": "D", "content": "Θ(n²)", "displayOrder": 3}
+      {"key": "C", "content": "Θ(n²)", "displayOrder": 2},
+      {"key": "D", "content": "Θ(n)", "displayOrder": 3}
     ],
-    "correctChoiceKey": "C",
+    "correctChoiceKey": "D",
     "explanationMarkdown": "배열의 n개 원소를 각각 한 번 처리하므로 기본 연산 수는 n에 비례한다. 각 원소 작업이 상수 시간이라는 전제에서 증가 차수는 Θ(n)이다."
   },
   {
@@ -125,12 +125,12 @@
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.complexity.time-space-tradeoff"],
     "choices": [
-      {"key": "A", "content": "추가 memory를 사용해 이후 계산 시간을 줄인다.", "displayOrder": 0},
-      {"key": "B", "content": "추가 memory를 쓰지만 이후 계산 시간과 memory를 모두 줄인다.", "displayOrder": 1},
+      {"key": "A", "content": "추가 memory를 쓰지만 이후 계산 시간과 memory를 모두 줄인다.", "displayOrder": 0},
+      {"key": "B", "content": "추가 memory를 사용해 이후 계산 시간을 줄인다.", "displayOrder": 1},
       {"key": "C", "content": "시간 복잡도와 공간 복잡도는 서로 영향을 줄 수 없다는 예다.", "displayOrder": 2},
       {"key": "D", "content": "source가 바뀌어도 cached value는 invalidation 없이 계속 정답이다.", "displayOrder": 3}
     ],
-    "correctChoiceKey": "A",
+    "correctChoiceKey": "B",
     "explanationMarkdown": "계산 결과를 map에 저장하면 추가 memory를 쓰는 대신 이후 999번의 재계산을 lookup으로 바꿀 수 있다. 전형적인 시간–공간 trade-off이며 cache 유지 비용도 함께 고려해야 한다."
   },
   {
@@ -164,12 +164,12 @@
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.complexity.amortized-analysis"],
     "choices": [
-      {"key": "A", "content": "모든 개별 operation이 worst case O(1)이다.", "displayOrder": 0},
-      {"key": "B", "content": "적절한 operation sequence의 총비용을 operation 수로 나누면 상수 bound를 얻을 수 있다.", "displayOrder": 1},
+      {"key": "A", "content": "적절한 operation sequence의 총비용을 operation 수로 나누면 상수 bound를 얻을 수 있다.", "displayOrder": 0},
+      {"key": "B", "content": "모든 개별 operation이 worst case O(1)이다.", "displayOrder": 1},
       {"key": "C", "content": "입력 distribution이 uniform하다고 확률적으로 가정한 평균값이다.", "displayOrder": 2},
       {"key": "D", "content": "가장 비싼 operation 하나를 분석에서 제외한다.", "displayOrder": 3}
     ],
-    "correctChoiceKey": "B",
+    "correctChoiceKey": "A",
     "explanationMarkdown": "Amortized O(1)은 긴 operation sequence의 총비용을 operation 수로 나눈 bound다. 개별 append는 resize 때문에 O(n)이 될 수 있으므로 모든 호출의 worst-case가 상수라는 뜻은 아니다."
   },
   {
@@ -214,12 +214,12 @@
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.complexity.invariant-correctness"],
     "choices": [
-      {"key": "A", "content": "초기 상태에서 invariant가 참이고, 반복이 이를 보존하며, 종료 조건과 합쳐 원하는 postcondition을 얻는지 확인한다.", "displayOrder": 0},
+      {"key": "A", "content": "invariant가 유지되면 loop가 종료하는지 여부는 항상 자동으로 증명된다.", "displayOrder": 0},
       {"key": "B", "content": "예제 하나가 성공하면 다른 입력은 검사할 필요가 없다.", "displayOrder": 1},
-      {"key": "C", "content": "invariant가 유지되면 loop가 종료하는지 여부는 항상 자동으로 증명된다.", "displayOrder": 2},
+      {"key": "C", "content": "초기 상태에서 invariant가 참이고, 반복이 이를 보존하며, 종료 조건과 합쳐 원하는 postcondition을 얻는지 확인한다.", "displayOrder": 2},
       {"key": "D", "content": "invariant는 성능만 설명하고 결과 correctness에는 사용하지 않는다.", "displayOrder": 3}
     ],
-    "correctChoiceKey": "A",
+    "correctChoiceKey": "C",
     "explanationMarkdown": "Loop invariant 증명은 시작 전에 참인지, 한 iteration이 참을 보존하는지, 종료 시 invariant와 종료 조건이 목표 결과를 만드는지 확인한다. 세 단계 중 하나라도 빠지면 correctness 결론이 성립하지 않는다."
   },
   {
