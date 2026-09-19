@@ -25,7 +25,7 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.datapath-control.alu-datapath"],
     "modelAnswer": "datapath는 register, ALU, mux와 같은 구성 요소를 통해 실제 data를 이동·계산한다. control logic은 현재 instruction에 맞춰 어떤 operand를 선택할지, 어떤 ALU 연산을 할지, memory/register write를 허용할지 같은 signal을 만들어 datapath의 동작을 선택한다.",
-    "explanationMarkdown": "datapath는 register, ALU, mux와 같은 구성 요소를 통해 실제 data를 이동·계산한다. control logic은 현재 instruction에 맞춰 어떤 operand를 선택할지, 어떤 ALU 연산을 할지, memory/register write를 허용할지 같은 signal을 만들어 datapath의 동작을 선택한다."
+    "explanationMarkdown": "Datapath는 값을 실제로 저장·이동·계산하는 하드웨어 경로이고 control은 그 경로 중 어떤 동작을 이번 instruction에서 활성화할지 선택한다. 즉 계산 장치와 동작 선택 신호를 분리해 보면 instruction 실행 흐름이 명확해진다."
   },
   {
     "kind": "question",
@@ -36,7 +36,7 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.datapath-control.alu-datapath"],
     "modelAnswer": "ALU 내부에는 12라는 계산 결과가 만들어지지만 destination register에 write가 허용되지 않으므로 x3의 architectural value는 바뀌지 않는다. 이 사례는 datapath에서 값을 계산하는 것과 control signal이 그 결과를 architectural state로 commit하도록 허용하는 것이 별도 책임임을 보여 준다.",
-    "explanationMarkdown": "ALU 내부에는 12라는 계산 결과가 만들어지지만 destination register에 write가 허용되지 않으므로 x3의 architectural value는 바뀌지 않는다. 이 사례는 datapath에서 값을 계산하는 것과 control signal이 그 결과를 architectural state로 commit하도록 허용하는 것이 별도 책임임을 보여 준다."
+    "explanationMarkdown": "ALU가 올바른 값을 계산했어도 register write가 허용되지 않으면 architectural state에는 반영되지 않는다. 계산 결과 생성과 그 결과의 commit은 control signal에 의해 분리된 단계다."
   },
   {
     "kind": "question",
@@ -64,7 +64,7 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.datapath-control.control-unit"],
     "modelAnswer": "hardwired control은 조합·순차 논리 회로로 instruction과 상태를 직접 해석해 signal을 만들어 빠른 대신 복잡한 ISA 변경이나 수정이 어렵다. microprogrammed control은 control store의 microinstruction sequence로 signal을 정의해 복잡한 동작을 구조화하고 수정하기 쉽지만 control store 조회와 sequencing 비용이 추가될 수 있다.",
-    "explanationMarkdown": "hardwired control은 조합·순차 논리 회로로 instruction과 상태를 직접 해석해 signal을 만들어 빠른 대신 복잡한 ISA 변경이나 수정이 어렵다. microprogrammed control은 control store의 microinstruction sequence로 signal을 정의해 복잡한 동작을 구조화하고 수정하기 쉽지만 control store 조회와 sequencing 비용이 추가될 수 있다."
+    "explanationMarkdown": "Hardwired control은 회로가 직접 signal을 만들어 빠른 대신 변경 유연성이 낮고, microprogrammed control은 microinstruction으로 복잡한 control sequence를 표현하기 쉬운 대신 추가 lookup/sequencing 비용이 있다."
   },
   {
     "kind": "question",
@@ -75,7 +75,7 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.datapath-control.control-unit"],
     "modelAnswer": "정상 effective address는 0x1020이어야 하지만 잘못된 operand select 때문에 ALU가 0x1080을 계산한다. memory unit은 자신에게 전달된 주소를 정상적으로 읽을 수 있으므로 엉뚱한 위치의 값을 load하거나 protection/page fault가 발생할 수 있다. ALU 자체가 맞게 계산했어도 control signal이 틀리면 instruction semantics가 깨진다.",
-    "explanationMarkdown": "정상 effective address는 0x1020이어야 하지만 잘못된 operand select 때문에 ALU가 0x1080을 계산한다. memory unit은 자신에게 전달된 주소를 정상적으로 읽을 수 있으므로 엉뚱한 위치의 값을 load하거나 protection/page fault가 발생할 수 있다. ALU 자체가 맞게 계산했어도 control signal이 틀리면 instruction semantics가 깨진다."
+    "explanationMarkdown": "이 오류의 핵심은 ALU가 틀린 것이 아니라 잘못된 operand-select signal로 올바르지 않은 주소를 계산하게 된 점이다. Datapath component가 정상이어도 control이 잘못되면 instruction semantics 전체가 깨질 수 있다."
   },
   {
     "kind": "question",
@@ -114,7 +114,7 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.datapath-control.clock-cycle"],
     "modelAnswer": "instruction 하나당 평균 시간은 CPI/clock rate로 비교할 수 있다. A는 1.5/3 GHz = 0.5 ns, B는 2.4/4 GHz = 0.6 ns이므로 같은 instruction 수라면 A가 더 짧다. clock rate만 높다고 반드시 빠른 것이 아니라 CPI를 함께 봐야 한다.",
-    "explanationMarkdown": "instruction 하나당 평균 시간은 CPI/clock rate로 비교할 수 있다. A는 1.5/3 GHz = 0.5 ns, B는 2.4/4 GHz = 0.6 ns이므로 같은 instruction 수라면 A가 더 짧다. clock rate만 높다고 반드시 빠른 것이 아니라 CPI를 함께 봐야 한다."
+    "explanationMarkdown": "성능 비교에서는 clock rate만 보지 말고 `CPI / clock rate`로 instruction당 평균 시간을 봐야 한다. 이 조건에서는 A가 0.5ns, B가 0.6ns이므로 같은 instruction 수라면 A가 더 빠르다."
   },
   {
     "kind": "question",
@@ -153,7 +153,7 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.datapath-control.critical-path"],
     "modelAnswer": "각 stage는 조합 논리와 register overhead를 합쳐야 하므로 0.95 ns와 1.05 ns가 필요하고 최소 cycle time은 더 긴 1.05 ns다. clock rate는 높일 수 있어 pipeline이 채워진 뒤 처리량은 좋아질 수 있지만 한 작업이 두 stage를 지나므로 cycle 수 기준 지연 시간과 pipeline register 비용, hazard 처리 복잡도는 증가할 수 있다.",
-    "explanationMarkdown": "각 stage는 조합 논리와 register overhead를 합쳐야 하므로 0.95 ns와 1.05 ns가 필요하고 최소 cycle time은 더 긴 1.05 ns다. clock rate는 높일 수 있어 pipeline이 채워진 뒤 처리량은 좋아질 수 있지만 한 작업이 두 stage를 지나므로 cycle 수 기준 지연 시간과 pipeline register 비용, hazard 처리 복잡도는 증가할 수 있다."
+    "explanationMarkdown": "새 cycle time은 가장 느린 stage의 조합 논리와 register overhead가 결정하므로 1.05ns가 기준이 된다. Stage를 나누면 throughput은 좋아질 수 있지만 추가 register와 더 깊어진 pipeline 때문에 latency·hazard 비용까지 함께 생긴다."
   },
   {
     "kind": "question",
@@ -181,7 +181,7 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.datapath-control.branch-control-flow"],
     "modelAnswer": "예측한 PC를 따라 branch 뒤의 instruction들을 미리 fetch/decode했지만 실제 branch 결과가 반대라면 그 instruction들은 architectural state에 반영되면 안 된다. CPU는 잘못된 경로의 work를 squash/flush하고 실제 target PC에서 fetch를 다시 시작하며 그동안의 빈 cycle이 misprediction penalty가 된다.",
-    "explanationMarkdown": "예측한 PC를 따라 branch 뒤의 instruction들을 미리 fetch/decode했지만 실제 branch 결과가 반대라면 그 instruction들은 architectural state에 반영되면 안 된다. CPU는 잘못된 경로의 work를 squash/flush하고 실제 target PC에서 fetch를 다시 시작하며 그동안의 빈 cycle이 misprediction penalty가 된다."
+    "explanationMarkdown": "Misprediction에서는 예측 경로로 이미 들어온 instruction들이 잘못된 speculative work가 된다. CPU는 이들을 architectural state에 반영하지 않고 폐기한 뒤 실제 branch target에서 다시 fetch해야 하므로 그 공백이 penalty가 된다."
   },
   {
     "kind": "question",
@@ -192,6 +192,6 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.datapath-control.branch-control-flow"],
     "modelAnswer": "instruction당 추가 stall은 0.20 × 0.10 × 12 = 0.24 cycle이므로 평균 CPI는 약 1.24다. branch 비율이나 penalty가 큰 pipeline일수록 같은 정확도 개선이 줄이는 wasted work가 커진다. 다만 실제 성능은 predictor 비용, pipeline depth와 다른 stall도 함께 측정해야 한다.",
-    "explanationMarkdown": "instruction당 추가 stall은 0.20 × 0.10 × 12 = 0.24 cycle이므로 평균 CPI는 약 1.24다. branch 비율이나 penalty가 큰 pipeline일수록 같은 정확도 개선이 줄이는 wasted work가 커진다. 다만 실제 성능은 predictor 비용, pipeline depth와 다른 stall도 함께 측정해야 한다."
+    "explanationMarkdown": "추가 CPI는 `branch 비율 × mispredict 비율 × penalty`로 근사할 수 있어 여기서는 0.24다. Branch가 많고 pipeline recovery 비용이 큰 CPU일수록 predictor 정확도 개선의 성능 효과도 커진다."
   }
 ]
