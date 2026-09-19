@@ -36,7 +36,7 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.data-representation.bit-byte-word"],
     "modelAnswer": "CPU word 폭은 register/ISA의 자연스러운 연산 폭과 관련된 개념이고 protocol field 크기는 wire schema가 정한다. 3-byte field 뒤의 다음 field offset은 protocol layout에 따라 계산해야 하며 CPU가 64-bit라는 이유로 8 byte를 건너뛰면 payload를 잘못 해석한다. alignment padding이 있다면 그것도 protocol/ABI가 별도로 명시해야 한다.",
-    "explanationMarkdown": "CPU word 폭은 register/ISA의 자연스러운 연산 폭과 관련된 개념이고 protocol field 크기는 wire schema가 정한다. 3-byte field 뒤의 다음 field offset은 protocol layout에 따라 계산해야 하며 CPU가 64-bit라는 이유로 8 byte를 건너뛰면 payload를 잘못 해석한다. alignment padding이 있다면 그것도 protocol/ABI가 별도로 명시해야 한다."
+    "explanationMarkdown": "핵심은 CPU의 word 크기와 protocol layout이 서로 다른 계약이라는 점이다. Parser offset은 wire schema의 field width와 명시된 padding을 따라야 하며, 64-bit CPU라는 이유만으로 8-byte 간격을 적용하면 안 된다."
   },
   {
     "kind": "question",
@@ -75,7 +75,7 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.data-representation.binary-hex"],
     "modelAnswer": "hex는 bit pattern을 간결하게 표시할 뿐 signedness와 width를 결정하지 않는다. `0xFF`가 8-bit unsigned면 255이고 8-bit two's-complement signed면 -1일 수 있다. 정확한 해석에는 field width, signed/unsigned type, 필요하면 byte order와 protocol schema가 필요하다.",
-    "explanationMarkdown": "hex는 bit pattern을 간결하게 표시할 뿐 signedness와 width를 결정하지 않는다. `0xFF`가 8-bit unsigned면 255이고 8-bit two's-complement signed면 -1일 수 있다. 정확한 해석에는 field width, signed/unsigned type, 필요하면 byte order와 protocol schema가 필요하다."
+    "explanationMarkdown": "`0xFF`는 bit pattern 표기일 뿐 그 자체로 signed 값의 의미를 정하지 않는다. 장애 분석에서는 width와 signedness를 먼저 확인하고, multi-byte 값이라면 byte order와 protocol schema까지 함께 봐야 한다."
   },
   {
     "kind": "question",
@@ -103,7 +103,7 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.data-representation.signed-twos-complement"],
     "modelAnswer": "8-bit two's-complement의 범위는 -128부터 127이므로 `1000 0000`은 -128이다. +128은 같은 signed 8-bit 범위를 벗어나기 때문에 -128의 절댓값을 8-bit signed 값으로 표현할 수 없다. 이것이 최솟값 negation에서 overflow가 생길 수 있는 이유다.",
-    "explanationMarkdown": "8-bit two's-complement의 범위는 -128부터 127이므로 `1000 0000`은 -128이다. +128은 같은 signed 8-bit 범위를 벗어나기 때문에 -128의 절댓값을 8-bit signed 값으로 표현할 수 없다. 이것이 최솟값 negation에서 overflow가 생길 수 있는 이유다."
+    "explanationMarkdown": "8-bit signed 범위가 비대칭인 `-128..127`이라는 점이 핵심이다. 최솟값 `-128`에 대응하는 `+128`은 같은 폭에서 표현할 수 없으므로 negation에서도 overflow가 생길 수 있다."
   },
   {
     "kind": "question",
@@ -114,7 +114,7 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.data-representation.signed-twos-complement"],
     "modelAnswer": "Java byte는 signed 8-bit이므로 0xFF는 -1이고 int로 widening하면 sign extension되어 -1이 된다. protocol field가 unsigned 8-bit라면 같은 bit pattern을 255로 해석해야 하므로 `Byte.toUnsignedInt(b)` 또는 `b & 0xFF`처럼 unsigned conversion을 명시해야 한다.",
-    "explanationMarkdown": "Java byte는 signed 8-bit이므로 0xFF는 -1이고 int로 widening하면 sign extension되어 -1이 된다. protocol field가 unsigned 8-bit라면 같은 bit pattern을 255로 해석해야 하므로 `Byte.toUnsignedInt(b)` 또는 `b & 0xFF`처럼 unsigned conversion을 명시해야 한다."
+    "explanationMarkdown": "Java `byte`의 `0xFF`는 signed 해석에서는 `-1`이고 widening할 때도 그 부호가 유지된다. Wire field가 unsigned라면 같은 8-bit pattern을 `0..255` 범위로 다시 해석하는 변환이 필요하다."
   },
   {
     "kind": "question",
@@ -153,7 +153,7 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.data-representation.fixed-width-overflow"],
     "modelAnswer": "두 양수의 곱이 32-bit 범위를 넘으면 wrap되어 음수나 작은 양수가 될 수 있고, 그 결과 실제 필요한 크기보다 작은 buffer allocation이나 잘못된 bounds check가 발생할 수 있다. 계산 전에 곱셈 가능 범위를 확인하거나 더 넓은 type/checked arithmetic으로 계산한 뒤 최종 범위를 검증해야 한다. 저장된 overflow 결과를 만든 뒤 검사하면 이미 정보가 손실될 수 있다.",
-    "explanationMarkdown": "두 양수의 곱이 32-bit 범위를 넘으면 wrap되어 음수나 작은 양수가 될 수 있고, 그 결과 실제 필요한 크기보다 작은 buffer allocation이나 잘못된 bounds check가 발생할 수 있다. 계산 전에 곱셈 가능 범위를 확인하거나 더 넓은 type/checked arithmetic으로 계산한 뒤 최종 범위를 검증해야 한다. 저장된 overflow 결과를 만든 뒤 검사하면 이미 정보가 손실될 수 있다."
+    "explanationMarkdown": "곱셈 결과가 type 범위를 넘은 뒤에는 이미 원래 크기 정보가 사라졌을 수 있다. Buffer 크기나 bounds 계산은 연산 전에 overflow 가능성을 검사하거나 checked/wider arithmetic으로 계산한 뒤 최종 범위를 검증해야 한다."
   },
   {
     "kind": "question",
@@ -181,7 +181,7 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.data-representation.floating-point"],
     "modelAnswer": "각 intermediate operation의 정확한 수학적 결과가 표현 가능한 floating-point 값으로 반올림된다. 연산 순서를 바꾸면 먼저 더해지는 값의 magnitude와 반올림 시점이 달라져 작은 값이 유효 정밀도 밖으로 사라지거나 다른 representable value로 반올림될 수 있으므로 최종 bit pattern이 달라질 수 있다.",
-    "explanationMarkdown": "각 intermediate operation의 정확한 수학적 결과가 표현 가능한 floating-point 값으로 반올림된다. 연산 순서를 바꾸면 먼저 더해지는 값의 magnitude와 반올림 시점이 달라져 작은 값이 유효 정밀도 밖으로 사라지거나 다른 representable value로 반올림될 수 있으므로 최종 bit pattern이 달라질 수 있다."
+    "explanationMarkdown": "Floating-point 연산은 각 중간 결과를 제한된 정밀도의 representable value로 반올림한다. 그래서 덧셈 순서가 바뀌면 어느 값이 먼저 반올림되거나 사라지는지가 달라져 결합법칙이 깨질 수 있다."
   },
   {
     "kind": "question",
@@ -192,7 +192,7 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.data-representation.floating-point"],
     "modelAnswer": "decimal 금액이 binary floating-point로 정확히 표현되지 않아 반복 연산의 rounding error가 누적될 수 있고 exact equality가 예상과 다르게 실패할 수 있다. 금액은 정수 minor unit 또는 정확한 decimal type을 사용하고 scale·rounding mode·DB/wire representation을 domain contract로 명시하는 편이 일반적으로 안전하다.",
-    "explanationMarkdown": "decimal 금액이 binary floating-point로 정확히 표현되지 않아 반복 연산의 rounding error가 누적될 수 있고 exact equality가 예상과 다르게 실패할 수 있다. 금액은 정수 minor unit 또는 정확한 decimal type을 사용하고 scale·rounding mode·DB/wire representation을 domain contract로 명시하는 편이 일반적으로 안전하다."
+    "explanationMarkdown": "금액 문제에서는 binary floating-point의 근사 오차와 exact equality 비교가 함께 위험하다. Decimal 또는 minor-unit 표현과 명시적인 scale·rounding 규칙을 사용해 저장·계산·전송 경계를 일관되게 만드는 것이 중요하다."
   },
   {
     "kind": "question",
@@ -231,6 +231,6 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.data-representation.endianness"],
     "modelAnswer": "host의 native memory layout이 little-endian이어도 protocol field는 big-endian/network order로 정의될 수 있다. native bytes를 그대로 보내면 peer가 가장 중요한 byte 순서를 반대로 해석한다. 송신 시 numeric value를 protocol-defined byte order로 serialize하고 수신 시 같은 order로 decode해야 하며 golden byte fixture로 실제 wire sequence를 검증한다.",
-    "explanationMarkdown": "host의 native memory layout이 little-endian이어도 protocol field는 big-endian/network order로 정의될 수 있다. native bytes를 그대로 보내면 peer가 가장 중요한 byte 순서를 반대로 해석한다. 송신 시 numeric value를 protocol-defined byte order로 serialize하고 수신 시 같은 order로 decode해야 하며 golden byte fixture로 실제 wire sequence를 검증한다."
+    "explanationMarkdown": "Host memory의 byte order와 protocol이 정한 wire order는 별개다. 숫자를 전송할 때는 native memory bytes를 복사하지 말고 protocol byte order로 serialize하고, 수신 측도 같은 규칙으로 decode해야 한다."
   }
 ]
