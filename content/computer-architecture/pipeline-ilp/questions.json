@@ -170,7 +170,7 @@
       {"key": "D", "content": "cache miss가 발생하면 뒤의 독립 instruction도 반드시 전부 멈춘다.", "displayOrder": 3}
     ],
     "correctChoiceKey": "B",
-    "explanationMarkdown": "WAR와 WAW는 여러 instruction이 같은 architectural register 이름을 재사용해서 생기는 name dependency이므로 서로 다른 physical register를 할당하면 충돌을 제거할 수 있다. B와 C는 A와 true dependency가 없으므로 operand와 execution resource가 준비되면 A보다 먼저 실행해 cache-miss 지연 시간을 일부 숨길 수 있다."
+    "explanationMarkdown": "Superscalar processor는 여러 execution resource를 이용해 독립 instruction을 같은 cycle에 처리할 수 있고, out-of-order execution은 operand와 resource가 준비된 instruction을 program order와 다른 시점에 실행해 stall을 숨길 수 있다. 다만 RAW 같은 true dependency는 보존해야 하며 architectural state는 precise retirement 규칙에 따라 일관되게 공개되어야 한다."
   },
   {
     "kind": "question",
