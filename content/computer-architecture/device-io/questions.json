@@ -14,7 +14,7 @@
       {"key": "D", "content": "interrupt는 비동기 외부 event, exception은 현재 instruction과 연관된 동기 event이고, trap은 이들 때문에 handler로 control이 이전되는 사건이다.", "displayOrder": 3}
     ],
     "correctChoiceKey": "D",
-    "explanationMarkdown": "ECALL은 현재 실행 중인 instruction 자체가 environment call exception을 발생시키므로 asynchronous device interrupt가 아니다. Timer는 현재 instruction의 의미와 독립적으로 발생하는 asynchronous interrupt이고, illegal instruction은 B의 decode/execute와 직접 연관된 synchronous exception이다."
+    "explanationMarkdown": "ECALL은 현재 실행 중인 instruction 자체가 environment call exception을 발생시키므로 asynchronous device interrupt가 아니다. Timer는 현재 instruction의 의미와 독립적으로 발생하는 asynchronous interrupt이고, illegal instruction은 해당 instruction의 decode/execute와 직접 연관된 synchronous exception이다."
   },
   {
     "kind": "question",

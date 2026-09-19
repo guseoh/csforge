@@ -14,7 +14,7 @@
       {"key": "D", "content": "속성이 변해도 lifecycle 동안 같은 대상을 추적하는 안정적 identity가 중요하다.", "displayOrder": 3}
     ],
     "correctChoiceKey": "D",
-    "explanationMarkdown": "B는 이름·상태 같은 attribute가 바뀌어도 같은 주문을 계속 추적하게 하는 identity를 말한다. JPA annotation, 모든 field의 final 여부, DB PK와 public business identity의 일치는 구현 선택일 수 있어 Entity의 필요조건으로 일반화할 수 없다."
+    "explanationMarkdown": "Domain Entity는 이름·상태 같은 attribute가 바뀌어도 lifecycle 동안 같은 대상을 계속 추적할 수 있는 안정적 identity가 핵심이다. JPA annotation, 모든 field의 final 여부, DB PK와 public business identity의 일치는 구현 선택일 수 있어 Entity의 필요조건으로 일반화할 수 없다."
   },
   {
     "kind": "question",
@@ -53,7 +53,7 @@
       {"key": "D", "content": "mutable collection을 공유해야 할 때 적합하다.", "displayOrder": 3}
     ],
     "correctChoiceKey": "A",
-    "explanationMarkdown": "B처럼 검증·동등성·계산이 함께 반복되고 identity가 필요 없는 값은 `Money`나 `Email` 같은 타입으로 묶을 이점이 있다. 반대로 모든 String을 wrapper로 만들면 의미와 invariant가 없는 ceremony만 늘어나므로 실제 규칙과 ownership을 기준으로 선택한다."
+    "explanationMarkdown": "검증·동등성·계산이 함께 반복되고 identity가 필요 없는 값은 `Money`나 `Email` 같은 타입으로 묶을 이점이 있다. 반대로 모든 String을 wrapper로 만들면 의미와 invariant가 없는 ceremony만 늘어나므로 실제 규칙과 ownership을 기준으로 선택한다."
   },
   {
     "kind": "question",
@@ -92,7 +92,7 @@
       {"key": "D", "content": "외부 API 실패까지 Domain transaction이 자동 rollback한다.", "displayOrder": 3}
     ],
     "correctChoiceKey": "C",
-    "explanationMarkdown": "B처럼 invariant는 constructor 한 번의 검사가 아니라 factory·setter·command·import 등 모든 변경 경로에서 보존되어야 한다. DB CHECK/UNIQUE는 우회 write를 막는 최종 방어선이고 외부 API rollback까지 domain invariant가 자동 보장한다는 뜻은 아니다."
+    "explanationMarkdown": "Invariant는 constructor 한 번의 검사가 아니라 factory·setter·command·import 등 모든 변경 경로에서 보존되어야 한다. DB CHECK/UNIQUE는 우회 write를 막는 최종 방어선이고 외부 API rollback까지 domain invariant가 자동 보장한다는 뜻은 아니다."
   },
   {
     "kind": "question",

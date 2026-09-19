@@ -14,7 +14,7 @@
       {"key": "D", "content": "nested resource는 깊을수록 ownership이 명확해 항상 좋다.", "displayOrder": 3}
     ],
     "correctChoiceKey": "A",
-    "explanationMarkdown": "B는 resource 의미와 method/status라는 외부 계약을 함께 보며, DB table 이름이나 동사 URL을 그대로 노출하는 것보다 consumer가 다루는 대상을 안정적으로 표현한다. nested depth나 URI 미학만으로 좋은 API가 결정되지는 않는다."
+    "explanationMarkdown": "Resource-oriented endpoint는 DB table이나 action 이름을 그대로 노출하기보다 외부 소비자가 이해하는 resource 의미를 URI에 담고 method/status와 함께 계약을 이룬다. nested depth나 URI 미학만으로 좋은 API가 결정되지는 않는다."
   },
   {
     "kind": "question",
