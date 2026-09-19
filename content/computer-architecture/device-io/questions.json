@@ -8,12 +8,12 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.device-io.interrupt-exception-trap"],
     "choices": [
-      {"key": "A", "content": "interrupt는 비동기 외부 event, exception은 현재 instruction과 연관된 동기 event이고, trap은 이들 때문에 handler로 control이 이전되는 사건이다.", "displayOrder": 0},
+      {"key": "A", "content": "ECALL은 외부 interrupt이며 실행 중인 instruction과 관계가 없다.", "displayOrder": 0},
       {"key": "B", "content": "trap은 exception·interrupt와 무관한 세 번째 외부 device event다.", "displayOrder": 1},
       {"key": "C", "content": "exception은 항상 timer가 만들고 interrupt는 항상 illegal instruction이 만든다.", "displayOrder": 2},
-      {"key": "D", "content": "ECALL은 외부 interrupt이며 실행 중인 instruction과 관계가 없다.", "displayOrder": 3}
+      {"key": "D", "content": "interrupt는 비동기 외부 event, exception은 현재 instruction과 연관된 동기 event이고, trap은 이들 때문에 handler로 control이 이전되는 사건이다.", "displayOrder": 3}
     ],
-    "correctChoiceKey": "A",
+    "correctChoiceKey": "D",
     "explanationMarkdown": "ECALL은 현재 실행 중인 instruction 자체가 environment call exception을 발생시키므로 asynchronous device interrupt가 아니다. Timer는 현재 instruction의 의미와 독립적으로 발생하는 asynchronous interrupt이고, illegal instruction은 B의 decode/execute와 직접 연관된 synchronous exception이다."
   },
   {
@@ -47,12 +47,12 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.device-io.interrupt-handler-entry"],
     "choices": [
-      {"key": "A", "content": "mepc는 중단/exception instruction 위치, mcause는 원인, mtvec는 handler entry configuration에 사용된다.", "displayOrder": 0},
+      {"key": "A", "content": "trap entry가 모든 general-purpose register를 반드시 hardware stack에 자동 저장한다.", "displayOrder": 0},
       {"key": "B", "content": "mepc는 trap 원인을 저장하고 mcause는 복귀할 instruction address를 저장한다.", "displayOrder": 1},
-      {"key": "C", "content": "trap entry가 모든 general-purpose register를 반드시 hardware stack에 자동 저장한다.", "displayOrder": 2},
+      {"key": "C", "content": "mepc는 중단/exception instruction 위치, mcause는 원인, mtvec는 handler entry configuration에 사용된다.", "displayOrder": 2},
       {"key": "D", "content": "mtvec가 설정되면 interrupt enable과 pending state는 더 이상 필요 없다.", "displayOrder": 3}
     ],
-    "correctChoiceKey": "A",
+    "correctChoiceKey": "C",
     "explanationMarkdown": "RISC-V machine-mode trap entry에서 `mepc`는 복귀하거나 문제를 일으킨 instruction 위치, `mcause`는 interrupt 또는 exception 원인, `mtvec`는 handler entry를 정한다. 이 역할을 구분해야 원인 판별과 복귀 흐름을 정확히 이해할 수 있다."
   },
   {
@@ -86,12 +86,12 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.device-io.programmed-io"],
     "choices": [
-      {"key": "A", "content": "Polling은 completion을 빠르게 감지할 수 있지만 CPU/MMIO access를 계속 소비할 수 있고, interrupt는 기다리는 CPU를 놓아주지만 entry/handler 비용이 있다.", "displayOrder": 0},
-      {"key": "B", "content": "Interrupt를 쓰면 device transfer의 모든 byte가 CPU register를 거치지 않는 것이 항상 보장된다.", "displayOrder": 1},
+      {"key": "A", "content": "Interrupt를 쓰면 device transfer의 모든 byte가 CPU register를 거치지 않는 것이 항상 보장된다.", "displayOrder": 0},
+      {"key": "B", "content": "Polling은 completion을 빠르게 감지할 수 있지만 CPU/MMIO access를 계속 소비할 수 있고, interrupt는 기다리는 CPU를 놓아주지만 entry/handler 비용이 있다.", "displayOrder": 1},
       {"key": "C", "content": "Polling interval은 CPU 사용률과 completion 지연 시간에 아무 영향이 없다.", "displayOrder": 2},
       {"key": "D", "content": "Programmed I/O와 DMA는 동일한 mechanism 이름만 다르다.", "displayOrder": 3}
     ],
-    "correctChoiceKey": "A",
+    "correctChoiceKey": "B",
     "explanationMarkdown": "Event가 매우 짧고 빈번하면 매번 interrupt/trap/context handling을 하는 비용과 wakeup 지연 시간이 실제 device wait보다 커질 수 있다."
   },
   {
@@ -164,12 +164,12 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.device-io.dma"],
     "choices": [
-      {"key": "A", "content": "Device가 사용하는 DMA address는 IOMMU/bus mapping 때문에 CPU virtual address와 같다고 가정할 수 없고 ownership/sync 규칙도 지켜야 한다.", "displayOrder": 0},
+      {"key": "A", "content": "DMA는 interrupt와 같은 말이므로 data transfer는 여전히 CPU가 byte마다 수행한다.", "displayOrder": 0},
       {"key": "B", "content": "DMA를 사용하면 CPU와 device가 같은 buffer를 아무 synchronization 없이 동시에 수정해도 된다.", "displayOrder": 1},
       {"key": "C", "content": "DMA completion 전에 software가 buffer를 free해도 controller가 자동으로 새 address를 찾는다.", "displayOrder": 2},
-      {"key": "D", "content": "DMA는 interrupt와 같은 말이므로 data transfer는 여전히 CPU가 byte마다 수행한다.", "displayOrder": 3}
+      {"key": "D", "content": "Device가 사용하는 DMA address는 IOMMU/bus mapping 때문에 CPU virtual address와 같다고 가정할 수 없고 ownership/sync 규칙도 지켜야 한다.", "displayOrder": 3}
     ],
-    "correctChoiceKey": "A",
+    "correctChoiceKey": "D",
     "explanationMarkdown": "Device가 비동기적으로 같은 memory를 읽거나 쓰는 동안 CPU가 내용을 바꾸면 transfer data race와 corruption이 생길 수 있다. NIC/DMA controller는 descriptor가 가리키는 buffer를 completion 전까지 비동기적으로 읽을 수 있다."
   },
   {
@@ -203,12 +203,12 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.device-io.device-cpu-memory-path"],
     "choices": [
-      {"key": "A", "content": "CPU/driver가 descriptor와 buffer를 준비 → device/DMA가 memory에 기록 → completion을 알림 → software가 buffer를 소비", "displayOrder": 0},
+      {"key": "A", "content": "interrupt가 모든 bytes를 memory에 복사 → DMA가 application method를 호출", "displayOrder": 0},
       {"key": "B", "content": "application이 완료 callback 실행 → 그 뒤 device가 처음 data를 수신 → 마지막에 buffer를 할당", "displayOrder": 1},
-      {"key": "C", "content": "interrupt가 모든 bytes를 memory에 복사 → DMA가 application method를 호출", "displayOrder": 2},
+      {"key": "C", "content": "CPU/driver가 descriptor와 buffer를 준비 → device/DMA가 memory에 기록 → completion을 알림 → software가 buffer를 소비", "displayOrder": 2},
       {"key": "D", "content": "queue에 descriptor를 넣는 순간 physical device transfer도 항상 끝난다", "displayOrder": 3}
     ],
-    "correctChoiceKey": "A",
+    "correctChoiceKey": "C",
     "explanationMarkdown": "Driver가 descriptor와 receive buffer를 준비해 device에 알리면 device가 DMA로 memory에 기록하고 completion을 알린다. 그 뒤 software가 ownership과 동기화 조건을 확인한 후 buffer를 소비한다."
   },
   {

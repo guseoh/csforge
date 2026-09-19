@@ -40,14 +40,14 @@ WHERE email = '' OR '1'='1';
 ### parameter binding은 data와 SQL structure를 분리한다
 
 ```java
-jdbcTemplate.query(
-    "SELECT * FROM member WHERE email = ?",
-    rowMapper,
-    email
+TypedQuery<Member> query = entityManager.createQuery(
+    "select m from Member m where m.email = :email",
+    Member.class
 );
+query.setParameter("email", email);
 ```
 
-DB driver는 query structure와 parameter value를 분리해 처리하므로 입력 문자열 안의 `' OR ...`가 SQL operator로 승격되지 않습니다.
+JPA/JPQL에서도 query structure와 parameter value를 분리해 전달하면 입력 문자열 안의 `' OR ...`가 JPQL/SQL operator로 승격되지 않습니다. 핵심은 특정 API 이름이 아니라 **untrusted value를 query 문자열에 이어 붙이지 않고 parameter로 전달하는 것**입니다.
 
 ### parameter는 column/table 이름을 대체하지 못한다
 

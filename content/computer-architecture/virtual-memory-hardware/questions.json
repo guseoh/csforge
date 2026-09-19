@@ -47,12 +47,12 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.virtual-memory-hardware.mmu"],
     "choices": [
-      {"key": "A", "content": "현재 address-space의 mapping을 이용해 virtual address를 translate하고 memory access permission을 검사한다.", "displayOrder": 0},
-      {"key": "B", "content": "어떤 page를 swap할지 application 대신 직접 정책적으로 선택한다.", "displayOrder": 1},
+      {"key": "A", "content": "어떤 page를 swap할지 application 대신 직접 정책적으로 선택한다.", "displayOrder": 0},
+      {"key": "B", "content": "현재 address-space의 mapping을 이용해 virtual address를 translate하고 memory access permission을 검사한다.", "displayOrder": 1},
       {"key": "C", "content": "모든 TLB miss를 자동으로 disk I/O로 바꾼다.", "displayOrder": 2},
       {"key": "D", "content": "CPU cache에서 어느 data line을 교체할지 replacement policy를 결정한다.", "displayOrder": 3}
     ],
-    "correctChoiceKey": "A",
+    "correctChoiceKey": "B",
     "explanationMarkdown": "MMU는 page-table/TLB의 permission과 요청 access를 비교해 허용되지 않은 접근이면 정상 memory operation을 완료하지 않고 architecture가 정의한 fault/exception을 발생시킨다. permission은 각 virtual mapping의 page-table state에 포함될 수 있으므로 같은 physical frame을 가리키더라도 A의 mapping은 write를 금지하고 B의 mapping은 허용할 수 있다."
   },
   {
@@ -86,12 +86,12 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.virtual-memory-hardware.page-table-walk"],
     "choices": [
-      {"key": "A", "content": "page-table walk로 translation을 찾아 TLB를 채우고 원래 memory access를 계속할 수 있다.", "displayOrder": 0},
+      {"key": "A", "content": "physical address translation 없이 virtual address를 그대로 DRAM bus에 보낸다.", "displayOrder": 0},
       {"key": "B", "content": "TLB miss 자체가 항상 fatal page fault이므로 process를 종료한다.", "displayOrder": 1},
-      {"key": "C", "content": "physical address translation 없이 virtual address를 그대로 DRAM bus에 보낸다.", "displayOrder": 2},
+      {"key": "C", "content": "page-table walk로 translation을 찾아 TLB를 채우고 원래 memory access를 계속할 수 있다.", "displayOrder": 2},
       {"key": "D", "content": "page replacement algorithm이 반드시 disk에서 page를 읽어 온다.", "displayOrder": 3}
     ],
-    "correctChoiceKey": "A",
+    "correctChoiceKey": "C",
     "explanationMarkdown": "TLB miss에서는 virtual page number의 각 index를 따라 여러 page-table entry를 읽어 translation을 찾아야 하므로 실제 data access 외의 memory lookup이 추가된다. TLB miss는 virtual-to-physical translation을 찾기 위해 page-table walk를 추가할 수 있고, data-cache miss는 translation이 끝난 physical data를 lower cache/DRAM에서 가져오는 경로를 추가한다."
   },
   {
@@ -125,12 +125,12 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.virtual-memory-hardware.tlb"],
     "choices": [
-      {"key": "A", "content": "virtual page에서 physical frame으로의 최근 translation과 관련 permission 정보", "displayOrder": 0},
+      {"key": "A", "content": "virtual page가 담고 있는 application data byte 전체", "displayOrder": 0},
       {"key": "B", "content": "physical memory의 application data cache line 전체", "displayOrder": 1},
-      {"key": "C", "content": "virtual page가 담고 있는 application data byte 전체", "displayOrder": 2},
+      {"key": "C", "content": "virtual page에서 physical frame으로의 최근 translation과 관련 permission 정보", "displayOrder": 2},
       {"key": "D", "content": "현재 process의 multi-level page table 전체를 tag 없이 복제한 값", "displayOrder": 3}
     ],
-    "correctChoiceKey": "A",
+    "correctChoiceKey": "C",
     "explanationMarkdown": "TLB hit이면 cached translation과 permission을 사용해 반복적인 page-table walk를 피하고 physical memory hierarchy access를 진행할 수 있다. 4KiB page에서는 512 × 4KiB = 2MiB, 2MiB page에서는 512 × 2MiB = 1GiB의 virtual range를 같은 entry 수로 cover할 수 있다."
   },
   {
@@ -164,12 +164,12 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.virtual-memory-hardware.multi-level-page-table"],
     "choices": [
-      {"key": "A", "content": "사용하지 않는 큰 virtual range에 대한 lower-level page-table page를 만들지 않을 수 있다.", "displayOrder": 0},
+      {"key": "A", "content": "page fault와 permission 검사를 제거한다.", "displayOrder": 0},
       {"key": "B", "content": "모든 virtual address를 하나의 physical frame으로 mapping한다.", "displayOrder": 1},
       {"key": "C", "content": "TLB가 없어도 translation 지연 시간이 항상 0이 된다.", "displayOrder": 2},
-      {"key": "D", "content": "page fault와 permission 검사를 제거한다.", "displayOrder": 3}
+      {"key": "D", "content": "사용하지 않는 큰 virtual range에 대한 lower-level page-table page를 만들지 않을 수 있다.", "displayOrder": 3}
     ],
-    "correctChoiceKey": "A",
+    "correctChoiceKey": "D",
     "explanationMarkdown": "flat table은 conceptual하게 virtual page마다 entry 공간을 필요로 해 큰 sparse address space에서 대부분 unused entry가 될 수 있다. architecture가 상위 page-table entry가 큰 physical range를 직접 mapping하는 leaf 역할을 허용하면 해당 range에 대해 더 낮은-level table이 필요하지 않다."
   },
   {
@@ -203,12 +203,12 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.virtual-memory-hardware.page-size-huge-page"],
     "choices": [
-      {"key": "A", "content": "TLB entry 하나가 더 큰 virtual range를 cover해 TLB miss와 page-table pressure를 줄일 수 있다.", "displayOrder": 0},
-      {"key": "B", "content": "CPU cache line도 자동으로 page와 같은 크기로 커진다.", "displayOrder": 1},
+      {"key": "A", "content": "CPU cache line도 자동으로 page와 같은 크기로 커진다.", "displayOrder": 0},
+      {"key": "B", "content": "TLB entry 하나가 더 큰 virtual range를 cover해 TLB miss와 page-table pressure를 줄일 수 있다.", "displayOrder": 1},
       {"key": "C", "content": "모든 data-cache miss와 NUMA remote access가 사라진다.", "displayOrder": 2},
       {"key": "D", "content": "어떤 OS에서도 huge page는 fragmentation 없이 언제든 확보된다.", "displayOrder": 3}
     ],
-    "correctChoiceKey": "A",
+    "correctChoiceKey": "B",
     "explanationMarkdown": "큰 page는 entry 하나가 더 넓은 range를 mapping해 TLB reach를 늘리고 필요한 page-table entry 수와 walk pressure를 줄일 수 있다. heap이 크더라도 실제 병목이 TLB/page-walk가 아닐 수 있고 huge-page mechanism마다 reservation, allocation, reclaim/split 동작과 memory 낭비 특성이 다르다."
   },
   {

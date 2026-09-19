@@ -47,12 +47,12 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.performance.cpu-time"],
     "choices": [
-      {"key": "A", "content": "약 480 ms", "displayOrder": 0},
+      {"key": "A", "content": "40 ms", "displayOrder": 0},
       {"key": "B", "content": "250 ms", "displayOrder": 1},
-      {"key": "C", "content": "40 ms", "displayOrder": 2},
+      {"key": "C", "content": "약 480 ms", "displayOrder": 2},
       {"key": "D", "content": "20 ms", "displayOrder": 3}
     ],
-    "correctChoiceKey": "A",
+    "correctChoiceKey": "C",
     "explanationMarkdown": "원래 500 ms 중 CPU 40 ms를 제외한 460 ms는 그대로다. CPU가 20 ms로 줄면 새 elapsed time은 `460+20=480 ms`다."
   },
   {
@@ -86,12 +86,12 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.performance.instruction-count-cpi-clock"],
     "choices": [
-      {"key": "A", "content": "1,500 cycles", "displayOrder": 0},
-      {"key": "B", "content": "667 cycles", "displayOrder": 1},
+      {"key": "A", "content": "667 cycles", "displayOrder": 0},
+      {"key": "B", "content": "1,500 cycles", "displayOrder": 1},
       {"key": "C", "content": "1.5 cycles", "displayOrder": 2},
       {"key": "D", "content": "1,000 / clock rate와 무관하게 항상 1,000 cycles", "displayOrder": 3}
     ],
-    "correctChoiceKey": "A",
+    "correctChoiceKey": "B",
     "explanationMarkdown": "총 cycle은 instruction count와 평균 CPI의 곱이다. `1,000×1.5=1,500 cycles`다."
   },
   {
@@ -125,12 +125,12 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.performance.amdahl-law"],
     "choices": [
-      {"key": "A", "content": "약 1.33배", "displayOrder": 0},
+      {"key": "A", "content": "변화 없음", "displayOrder": 0},
       {"key": "B", "content": "2배", "displayOrder": 1},
       {"key": "C", "content": "4배", "displayOrder": 2},
-      {"key": "D", "content": "변화 없음", "displayOrder": 3}
+      {"key": "D", "content": "약 1.33배", "displayOrder": 3}
     ],
-    "correctChoiceKey": "A",
+    "correctChoiceKey": "D",
     "explanationMarkdown": "개선 전 시간을 1로 두면 절반은 0.5로 유지되고 개선 부분은 `0.5/2=0.25`가 된다. 새 시간 0.75의 역수이므로 전체 speedup은 약 1.33배다."
   },
   {
@@ -164,12 +164,12 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.performance.cache-impact"],
     "choices": [
-      {"key": "A", "content": "4 ns", "displayOrder": 0},
-      {"key": "B", "content": "1.05 ns", "displayOrder": 1},
+      {"key": "A", "content": "1.05 ns", "displayOrder": 0},
+      {"key": "B", "content": "4 ns", "displayOrder": 1},
       {"key": "C", "content": "60 ns", "displayOrder": 2},
       {"key": "D", "content": "61 ns", "displayOrder": 3}
     ],
-    "correctChoiceKey": "A",
+    "correctChoiceKey": "B",
     "explanationMarkdown": "AMAT는 `hit time + miss rate×miss penalty`다. `1 + 0.05×60 = 4 ns`이므로 miss가 평균 3 ns를 추가한다."
   },
   {
@@ -203,12 +203,12 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.performance.pipeline-branch-impact"],
     "choices": [
-      {"key": "A", "content": "0.12", "displayOrder": 0},
+      {"key": "A", "content": "0.01", "displayOrder": 0},
       {"key": "B", "content": "1.2", "displayOrder": 1},
       {"key": "C", "content": "12", "displayOrder": 2},
-      {"key": "D", "content": "0.01", "displayOrder": 3}
+      {"key": "D", "content": "0.12", "displayOrder": 3}
     ],
-    "correctChoiceKey": "A",
+    "correctChoiceKey": "D",
     "explanationMarkdown": "Instruction당 misprediction 비율은 `0.20×0.05=0.01`이다. 여기에 12-cycle penalty를 곱하면 평균 CPI 증가는 `0.01×12=0.12`다."
   },
   {

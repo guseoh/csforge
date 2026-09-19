@@ -8,12 +8,12 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.pipeline-ilp.pipeline-stages"],
     "choices": [
-      {"key": "A", "content": "여러 instruction의 서로 다른 stage를 겹쳐 실행해 steady state의 instruction 처리량을 높인다.", "displayOrder": 0},
+      {"key": "A", "content": "모든 stage가 동시에 같은 instruction을 처리하도록 만든다.", "displayOrder": 0},
       {"key": "B", "content": "instruction 하나가 거쳐야 하는 모든 stage를 제거해 지연 시간을 1 cycle로 만든다.", "displayOrder": 1},
-      {"key": "C", "content": "모든 stage가 동시에 같은 instruction을 처리하도록 만든다.", "displayOrder": 2},
+      {"key": "C", "content": "여러 instruction의 서로 다른 stage를 겹쳐 실행해 steady state의 instruction 처리량을 높인다.", "displayOrder": 2},
       {"key": "D", "content": "branch와 data dependency가 있어도 별도 제어 없이 항상 CPI 1을 보장한다.", "displayOrder": 3}
     ],
-    "correctChoiceKey": "A",
+    "correctChoiceKey": "C",
     "explanationMarkdown": "pipeline은 서로 다른 instruction의 stage를 겹쳐 완료 간격을 줄이는 구조다. 현재 clock period는 가장 긴 170ps stage와 register overhead의 영향을 가장 크게 받으므로 단순 모델에서는 약 190ps보다 짧게 잡기 어렵다."
   },
   {
@@ -86,12 +86,12 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.pipeline-ilp.forwarding-and-stall"],
     "choices": [
-      {"key": "A", "content": "준비된 결과를 다음 execution input으로 forwarding한다.", "displayOrder": 0},
+      {"key": "A", "content": "consumer를 먼저 실행하고 값이 다르면 producer를 다시 실행한다.", "displayOrder": 0},
       {"key": "B", "content": "forwarding path가 있어도 register write-back까지 반드시 stall한다.", "displayOrder": 1},
       {"key": "C", "content": "register renaming으로 RAW true dependency 자체를 제거한다.", "displayOrder": 2},
-      {"key": "D", "content": "consumer를 먼저 실행하고 값이 다르면 producer를 다시 실행한다.", "displayOrder": 3}
+      {"key": "D", "content": "준비된 결과를 다음 execution input으로 forwarding한다.", "displayOrder": 3}
     ],
-    "correctChoiceKey": "A",
+    "correctChoiceKey": "D",
     "explanationMarkdown": "ALU instruction의 결과는 execute stage가 끝날 때 이미 준비될 수 있지만 load 값은 memory access가 끝난 뒤에야 얻어진다. forwarding은 값이 계산된 뒤 register write-back을 기다리지 않고 consumer로 전달할 수 있지만 cache miss 중 아직 도착하지 않은 load 값을 만들어 낼 수는 없다."
   },
   {
@@ -125,12 +125,12 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.pipeline-ilp.branch-prediction"],
     "choices": [
-      {"key": "A", "content": "direction predictor는 taken 여부를 추정하고, target 정보는 taken일 때 다음 fetch 주소를 제공한다.", "displayOrder": 0},
+      {"key": "A", "content": "둘 중 하나만 있으면 모든 indirect branch와 conditional branch를 항상 정확히 예측한다.", "displayOrder": 0},
       {"key": "B", "content": "direction predictor가 target 주소를 만들고, target 정보가 taken 여부를 결정한다.", "displayOrder": 1},
       {"key": "C", "content": "둘 다 branch가 retire된 뒤에만 사용되므로 fetch와는 관계가 없다.", "displayOrder": 2},
-      {"key": "D", "content": "둘 중 하나만 있으면 모든 indirect branch와 conditional branch를 항상 정확히 예측한다.", "displayOrder": 3}
+      {"key": "D", "content": "direction predictor는 taken 여부를 추정하고, target 정보는 taken일 때 다음 fetch 주소를 제공한다.", "displayOrder": 3}
     ],
-    "correctChoiceKey": "A",
+    "correctChoiceKey": "D",
     "explanationMarkdown": "CPU는 branch 결과가 확정되기 전에 예측한 방향과 target에서 instruction을 fetch하고 speculative하게 진행한다. instruction당 branch는 0.20개이고 그중 5%가 miss이므로 instruction당 misprediction은 0.20 × 0.05 = 0.01회다."
   },
   {
@@ -164,12 +164,12 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.pipeline-ilp.superscalar-out-of-order"],
     "choices": [
-      {"key": "A", "content": "여러 execution resource로 독립 instruction을 병렬 처리하고, 준비된 instruction을 program order와 다른 시점에 실행할 수 있다.", "displayOrder": 0},
-      {"key": "B", "content": "모든 dependency를 제거해 어떤 두 instruction도 동시에 실행할 수 있게 한다.", "displayOrder": 1},
+      {"key": "A", "content": "모든 dependency를 제거해 어떤 두 instruction도 동시에 실행할 수 있게 한다.", "displayOrder": 0},
+      {"key": "B", "content": "여러 execution resource로 독립 instruction을 병렬 처리하고, 준비된 instruction을 program order와 다른 시점에 실행할 수 있다.", "displayOrder": 1},
       {"key": "C", "content": "architectural state도 항상 실행 완료 순서대로 즉시 공개한다.", "displayOrder": 2},
       {"key": "D", "content": "cache miss가 발생하면 뒤의 독립 instruction도 반드시 전부 멈춘다.", "displayOrder": 3}
     ],
-    "correctChoiceKey": "A",
+    "correctChoiceKey": "B",
     "explanationMarkdown": "WAR와 WAW는 여러 instruction이 같은 architectural register 이름을 재사용해서 생기는 name dependency이므로 서로 다른 physical register를 할당하면 충돌을 제거할 수 있다. B와 C는 A와 true dependency가 없으므로 operand와 execution resource가 준비되면 A보다 먼저 실행해 cache-miss 지연 시간을 일부 숨길 수 있다."
   },
   {

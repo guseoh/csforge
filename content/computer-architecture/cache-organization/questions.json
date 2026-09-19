@@ -47,12 +47,12 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.cache-organization.set-associative-cache"],
     "choices": [
-      {"key": "A", "content": "하나의 index가 선택한 set 안에 네 개의 candidate line이 있다.", "displayOrder": 0},
+      {"key": "A", "content": "cache 전체에 line이 네 개뿐이다.", "displayOrder": 0},
       {"key": "B", "content": "memory address 하나가 반드시 네 cache set에 동시에 저장된다.", "displayOrder": 1},
-      {"key": "C", "content": "cache 전체에 line이 네 개뿐이다.", "displayOrder": 2},
+      {"key": "C", "content": "하나의 index가 선택한 set 안에 네 개의 candidate line이 있다.", "displayOrder": 2},
       {"key": "D", "content": "tag 비교 없이 index만 같으면 항상 hit다.", "displayOrder": 3}
     ],
-    "correctChoiceKey": "A",
+    "correctChoiceKey": "C",
     "explanationMarkdown": "전체 line은 32KiB / 64B = 512개이고 4-way이므로 set은 512 / 4 = 128개다. 해당 set에는 두 way만 있으므로 같은 set을 사용하는 active block 세 개를 동시에 보관할 수 없다."
   },
   {
@@ -86,12 +86,12 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.cache-organization.fully-associative-cache"],
     "choices": [
-      {"key": "A", "content": "memory block은 cache의 어느 line에도 배치될 수 있다.", "displayOrder": 0},
+      {"key": "A", "content": "tag가 필요 없고 offset만 비교한다.", "displayOrder": 0},
       {"key": "B", "content": "memory block은 address index가 정한 단 하나의 line에만 배치된다.", "displayOrder": 1},
-      {"key": "C", "content": "tag가 필요 없고 offset만 비교한다.", "displayOrder": 2},
+      {"key": "C", "content": "memory block은 cache의 어느 line에도 배치될 수 있다.", "displayOrder": 2},
       {"key": "D", "content": "capacity miss도 구조적으로 발생할 수 없다.", "displayOrder": 3}
     ],
-    "correctChoiceKey": "A",
+    "correctChoiceKey": "C",
     "explanationMarkdown": "block을 어느 line에도 둘 수 있어 특정 index 충돌은 피할 수 있지만 hit 여부를 찾으려면 많은 line의 tag를 비교하고 결과를 선택해야 한다. fully-associative라 placement conflict는 최소화되지만 cache가 동시에 보관할 수 있는 line은 32개뿐이다."
   },
   {
@@ -125,12 +125,12 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.cache-organization.index-tag-offset"],
     "choices": [
-      {"key": "A", "content": "선택된 cache line 내부의 byte/word 위치를 고른다.", "displayOrder": 0},
-      {"key": "B", "content": "후보 set을 고르고 tag가 그 안의 byte 위치를 고른다.", "displayOrder": 1},
+      {"key": "A", "content": "후보 set을 고르고 tag가 그 안의 byte 위치를 고른다.", "displayOrder": 0},
+      {"key": "B", "content": "선택된 cache line 내부의 byte/word 위치를 고른다.", "displayOrder": 1},
       {"key": "C", "content": "memory block의 identity 전체를 나타내므로 tag 비교를 대신한다.", "displayOrder": 2},
       {"key": "D", "content": "virtual-to-physical translation이 끝난 뒤에는 더 이상 사용되지 않는다.", "displayOrder": 3}
     ],
-    "correctChoiceKey": "A",
+    "correctChoiceKey": "B",
     "explanationMarkdown": "64 byte는 2^6이므로 line 내부 64개 byte 위치를 구분하는 데 6 bit가 필요하다. 전체 line 수는 capacity와 line size가 같으므로 변하지 않는다."
   },
   {
@@ -164,12 +164,12 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.cache-organization.replacement-policy"],
     "choices": [
-      {"key": "A", "content": "선택된 set의 모든 way가 사용 중인데 새 block을 넣어야 할 때", "displayOrder": 0},
-      {"key": "B", "content": "선택된 set에 빈 way가 있어도 기존 line을 먼저 내보낼 때", "displayOrder": 1},
+      {"key": "A", "content": "선택된 set에 빈 way가 있어도 기존 line을 먼저 내보낼 때", "displayOrder": 0},
+      {"key": "B", "content": "선택된 set의 모든 way가 사용 중인데 새 block을 넣어야 할 때", "displayOrder": 1},
       {"key": "C", "content": "write-through cache가 lower level에 write를 전달할 때마다", "displayOrder": 2},
       {"key": "D", "content": "miss가 발생하면 선택된 set과 무관하게 cache 전체에서 victim을 고를 때", "displayOrder": 3}
     ],
-    "correctChoiceKey": "A",
+    "correctChoiceKey": "B",
     "explanationMarkdown": "LRU는 최근 사용한 line이 가까운 미래에 다시 사용될 가능성이 높다는 temporal locality에 기대어 가장 오래 사용하지 않은 line을 victim으로 고르려 한다. 한 번 읽고 재사용하지 않는 stream은 최근에 사용했다는 사실이 미래 재사용을 잘 예측하지 못한다."
   },
   {
@@ -203,12 +203,12 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.cache-organization.write-through-write-back"],
     "choices": [
-      {"key": "A", "content": "write hit에서 cache line을 수정하고 dirty로 표시한 뒤 lower level 반영을 나중으로 미룰 수 있다.", "displayOrder": 0},
+      {"key": "A", "content": "다른 core와의 coherence를 자동으로 불필요하게 만든다.", "displayOrder": 0},
       {"key": "B", "content": "write hit마다 lower cache level에도 즉시 같은 write를 전달한다.", "displayOrder": 1},
       {"key": "C", "content": "dirty state가 필요 없고 eviction 비용도 항상 clean line과 같다.", "displayOrder": 2},
-      {"key": "D", "content": "다른 core와의 coherence를 자동으로 불필요하게 만든다.", "displayOrder": 3}
+      {"key": "D", "content": "write hit에서 cache line을 수정하고 dirty로 표시한 뒤 lower level 반영을 나중으로 미룰 수 있다.", "displayOrder": 3}
     ],
-    "correctChoiceKey": "A",
+    "correctChoiceKey": "D",
     "explanationMarkdown": "write-through는 cache write를 lower level에도 전달하므로 같은 line을 반복 수정할 때 write traffic이 많아질 수 있지만 cache line 자체는 dirty write-back을 미룰 필요가 적다. CPU cache write policy는 CPU cache와 lower memory hierarchy 사이의 data movement를 다룬다."
   },
   {
@@ -242,12 +242,12 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.cache-organization.write-allocate"],
     "choices": [
-      {"key": "A", "content": "해당 block을 cache에 확보한 뒤 target 위치를 수정한다.", "displayOrder": 0},
+      {"key": "A", "content": "같은 address에 두 번째 write miss가 날 때까지 allocation을 미룬다.", "displayOrder": 0},
       {"key": "B", "content": "cache에 block을 들이지 않고 lower level에만 write한다.", "displayOrder": 1},
       {"key": "C", "content": "block을 cache에 가져오지만 target byte는 lower level에만 수정한다.", "displayOrder": 2},
-      {"key": "D", "content": "같은 address에 두 번째 write miss가 날 때까지 allocation을 미룬다.", "displayOrder": 3}
+      {"key": "D", "content": "해당 block을 cache에 확보한 뒤 target 위치를 수정한다.", "displayOrder": 3}
     ],
-    "correctChoiceKey": "A",
+    "correctChoiceKey": "D",
     "explanationMarkdown": "write-allocate는 miss 난 block을 cache에 가져와 수정하므로 같은 line을 곧 다시 읽거나 쓰는 locality가 있으면 이후 access를 cache에서 처리할 수 있다. 큰 one-pass streaming write는 line을 cache에 가져와도 재사용하지 않아 fill traffic과 cache pollution만 만들 수 있으므로 no-write-allocate/non-temporal 계열 접근이 유리할 여지가 있다."
   },
   {

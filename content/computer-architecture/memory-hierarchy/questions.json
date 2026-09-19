@@ -47,12 +47,12 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.memory-hierarchy.temporal-spatial-locality"],
     "choices": [
-      {"key": "A", "content": "연속된 int 배열을 index 0부터 차례로 읽는다.", "displayOrder": 0},
+      {"key": "A", "content": "한 값을 register에 올린 뒤 memory를 전혀 읽지 않는다.", "displayOrder": 0},
       {"key": "B", "content": "매번 전혀 다른 큰 address 범위에서 한 byte만 무작위로 읽는다.", "displayOrder": 1},
-      {"key": "C", "content": "한 값을 register에 올린 뒤 memory를 전혀 읽지 않는다.", "displayOrder": 2},
+      {"key": "C", "content": "연속된 int 배열을 index 0부터 차례로 읽는다.", "displayOrder": 2},
       {"key": "D", "content": "working set보다 작은 cache를 매 access마다 강제로 비운다.", "displayOrder": 3}
     ],
-    "correctChoiceKey": "A",
+    "correctChoiceKey": "C",
     "explanationMarkdown": "같은 data를 나중에 다시 사용하더라도 그 사이에 접근한 active data가 cache capacity를 넘으면 이전 line이 재사용되기 전에 eviction될 수 있다. row-major 배열에서 row 순회는 인접 원소가 같은 cache line에 포함되기 쉬워 한 번의 line fill 뒤 여러 원소를 재사용할 수 있다."
   },
   {
@@ -86,12 +86,12 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.memory-hierarchy.cache-line"],
     "choices": [
-      {"key": "A", "content": "offset은 line 내부 위치, index는 후보 set, tag는 그 set의 어느 memory block인지 구분한다.", "displayOrder": 0},
-      {"key": "B", "content": "offset은 후보 set, index는 line 내부 byte, tag는 replacement victim을 고른다.", "displayOrder": 1},
+      {"key": "A", "content": "offset은 후보 set, index는 line 내부 byte, tag는 replacement victim을 고른다.", "displayOrder": 0},
+      {"key": "B", "content": "offset은 line 내부 위치, index는 후보 set, tag는 그 set의 어느 memory block인지 구분한다.", "displayOrder": 1},
       {"key": "C", "content": "tag만 사용하며 offset과 index는 cache lookup에 필요하지 않다.", "displayOrder": 2},
       {"key": "D", "content": "index는 line 내부 byte 위치만 결정하고 tag 비교는 하지 않는다.", "displayOrder": 3}
     ],
-    "correctChoiceKey": "A",
+    "correctChoiceKey": "B",
     "explanationMarkdown": "큰 line은 한 miss에서 더 많은 인접 byte를 가져와 spatial locality가 높은 workload의 이후 access를 hit로 만들 수 있다. coherence가 field가 아니라 cache line 단위로 ownership/state를 관리하므로 서로 다른 counter라도 같은 line에 있으면 각 core의 write가 line ownership을 반복해서 이동시킬 수 있다."
   },
   {
@@ -125,12 +125,12 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.memory-hierarchy.cache-hit-miss"],
     "choices": [
-      {"key": "A", "content": "Conflict miss", "displayOrder": 0},
+      {"key": "A", "content": "Coherence miss", "displayOrder": 0},
       {"key": "B", "content": "Compulsory miss만", "displayOrder": 1},
       {"key": "C", "content": "Capacity miss만", "displayOrder": 2},
-      {"key": "D", "content": "Coherence miss", "displayOrder": 3}
+      {"key": "D", "content": "Conflict miss", "displayOrder": 3}
     ],
-    "correctChoiceKey": "A",
+    "correctChoiceKey": "D",
     "explanationMarkdown": "서로 다른 block이 같은 set을 경쟁하고 way 수가 부족해 번갈아 밀려나는 것은 conflict miss다. Cache 전체에 빈 line이 있어도 placement 제약 때문에 다른 set의 공간을 사용할 수 없다."
   },
   {
@@ -164,12 +164,12 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.memory-hierarchy.latency-vs-bandwidth"],
     "choices": [
-      {"key": "A", "content": "지연 시간은 한 요청의 결과를 기다리는 시간이고 bandwidth는 단위 시간에 이동 가능한 data 양이다.", "displayOrder": 0},
-      {"key": "B", "content": "bandwidth가 높으면 모든 random load의 지연 시간도 반드시 같은 비율로 줄어든다.", "displayOrder": 1},
+      {"key": "A", "content": "bandwidth가 높으면 모든 random load의 지연 시간도 반드시 같은 비율로 줄어든다.", "displayOrder": 0},
+      {"key": "B", "content": "지연 시간은 한 요청의 결과를 기다리는 시간이고 bandwidth는 단위 시간에 이동 가능한 data 양이다.", "displayOrder": 1},
       {"key": "C", "content": "지연 시간은 항상 byte/s로 측정하고 bandwidth는 ns로 측정한다.", "displayOrder": 2},
       {"key": "D", "content": "둘은 이름만 다르고 같은 물리량이다.", "displayOrder": 3}
     ],
-    "correctChoiceKey": "A",
+    "correctChoiceKey": "B",
     "explanationMarkdown": "각 요청이 결과를 받기까지 걸리는 지연 시간은 그대로여도 서로 독립적이면 대기 구간을 겹칠 수 있다. 64byte 전송 자체는 20GB/s에서 수 ns 수준이라 100ns 고정 지연 시간이 전체 시간의 대부분을 차지하므로 지연 시간-bound에 가깝다."
   },
   {

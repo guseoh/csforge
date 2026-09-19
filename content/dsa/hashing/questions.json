@@ -80,12 +80,12 @@
     "status":"PUBLISHED",
     "conceptKeys":["dsa.core.hashing.collision"],
     "choices":[
-      {"key":"A","content":"collision strategy를 따라 후보를 보존하고 실제 key equality를 확인한다","displayOrder":0},
-      {"key":"B","content":"같은 hash이면 기존 entry를 새 value로 덮어쓰고 key 비교는 생략한다","displayOrder":1},
+      {"key":"A","content":"같은 hash이면 기존 entry를 새 value로 덮어쓰고 key 비교는 생략한다","displayOrder":0},
+      {"key":"B","content":"collision strategy를 따라 후보를 보존하고 실제 key equality를 확인한다","displayOrder":1},
       {"key":"C","content":"collision이 발생할 때마다 capacity를 늘리면 key equality 확인은 필요 없다","displayOrder":2},
       {"key":"D","content":"hash가 같은 entry 중 insertion order가 빠른 것을 항상 요청 key로 반환한다","displayOrder":3}
     ],
-    "correctChoiceKey":"A",
+    "correctChoiceKey":"B",
     "explanationMarkdown": "서로 다른 key가 같은 후보 위치를 공유해도 둘 다 보존하고 lookup에서 실제 key equality로 구분해야 한다. 하나를 덮어쓰거나 hash 값만으로 동일 key라 판단하면 correctness가 깨진다."
   },
   {
@@ -152,12 +152,12 @@
     "status":"PUBLISHED",
     "conceptKeys":["dsa.core.hashing.open-addressing"],
     "choices":[
-      {"key":"A","content":"정해진 probe sequence로 같은 table의 다른 slot을 찾는다","displayOrder":0},
+      {"key":"A","content":"첫 slot이 차 있으면 key 존재 여부와 무관하게 lookup을 종료한다","displayOrder":0},
       {"key":"B","content":"항상 별도 linked list를 만들어 table 밖에 저장한다","displayOrder":1},
-      {"key":"C","content":"첫 slot이 차 있으면 key 존재 여부와 무관하게 lookup을 종료한다","displayOrder":2},
+      {"key":"C","content":"정해진 probe sequence로 같은 table의 다른 slot을 찾는다","displayOrder":2},
       {"key":"D","content":"collision한 모든 key를 같은 value로 병합한다","displayOrder":3}
     ],
-    "correctChoiceKey":"A",
+    "correctChoiceKey":"C",
     "explanationMarkdown": "Open addressing은 entry를 별도 chain에 두지 않고 정해진 probe sequence를 따라 table 안의 다른 slot을 찾는다. Lookup도 같은 sequence를 재현해야 저장 위치에 도달할 수 있다."
   },
   {
@@ -235,12 +235,12 @@
     "status":"PUBLISHED",
     "conceptKeys":["dsa.core.hashing.resize"],
     "choices":[
-      {"key":"A","content":"bucket mapping이 capacity에 의존해 새 capacity에서는 index가 달라질 수 있다","displayOrder":0},
+      {"key":"A","content":"기존 key는 resize와 동시에 모두 삭제해야 한다","displayOrder":0},
       {"key":"B","content":"resize하면 모든 key의 equality 의미가 반드시 바뀐다","displayOrder":1},
       {"key":"C","content":"새 table에서는 hash function을 사용할 수 없다","displayOrder":2},
-      {"key":"D","content":"기존 key는 resize와 동시에 모두 삭제해야 한다","displayOrder":3}
+      {"key":"D","content":"bucket mapping이 capacity에 의존해 새 capacity에서는 index가 달라질 수 있다","displayOrder":3}
     ],
-    "correctChoiceKey":"A",
+    "correctChoiceKey":"D",
     "explanationMarkdown": "Bucket index가 보통 capacity에 의존하므로 capacity가 바뀌면 같은 hash도 새 index를 가리킬 수 있다. 기존 번호로 복사하지 말고 새 table 규칙으로 entry를 다시 배치해야 한다."
   },
   {

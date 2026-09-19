@@ -47,12 +47,12 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.data-representation.binary-hex"],
     "choices": [
-      {"key": "A", "content": "0xA7", "displayOrder": 0},
+      {"key": "A", "content": "0x107", "displayOrder": 0},
       {"key": "B", "content": "0x7A", "displayOrder": 1},
       {"key": "C", "content": "0xA07", "displayOrder": 2},
-      {"key": "D", "content": "0x107", "displayOrder": 3}
+      {"key": "D", "content": "0xA7", "displayOrder": 3}
     ],
-    "correctChoiceKey": "A",
+    "correctChoiceKey": "D",
     "explanationMarkdown": "4-bit nibble마다 hexadecimal 한 자리로 바꾸면 `1010`은 A, `0111`은 7이다. 따라서 전체 pattern은 `0xA7`이다."
   },
   {
@@ -86,12 +86,12 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.data-representation.signed-twos-complement"],
     "choices": [
-      {"key": "A", "content": "-1", "displayOrder": 0},
+      {"key": "A", "content": "-127", "displayOrder": 0},
       {"key": "B", "content": "255", "displayOrder": 1},
-      {"key": "C", "content": "-127", "displayOrder": 2},
+      {"key": "C", "content": "-1", "displayOrder": 2},
       {"key": "D", "content": "0", "displayOrder": 3}
     ],
-    "correctChoiceKey": "A",
+    "correctChoiceKey": "C",
     "explanationMarkdown": "Two's-complement에서 모든 bit가 1인 pattern은 0에서 1을 뺀 표현이다. 따라서 8-bit `1111 1111`의 signed 값은 -1이다."
   },
   {
@@ -125,12 +125,12 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.data-representation.fixed-width-overflow"],
     "choices": [
-      {"key": "A", "content": "0000 0000", "displayOrder": 0},
+      {"key": "A", "content": "1000 0000", "displayOrder": 0},
       {"key": "B", "content": "1111 1111", "displayOrder": 1},
       {"key": "C", "content": "1 0000 0000을 9 bit 그대로 저장한다.", "displayOrder": 2},
-      {"key": "D", "content": "1000 0000", "displayOrder": 3}
+      {"key": "D", "content": "0000 0000", "displayOrder": 3}
     ],
-    "correctChoiceKey": "A",
+    "correctChoiceKey": "D",
     "explanationMarkdown": "Unsigned 8-bit는 결과의 하위 8 bit만 저장하므로 256은 modulo 256으로 0이 된다. 저장 pattern은 `0000 0000`이며 수학적 합 256 자체가 보존되는 것은 아니다."
   },
   {
@@ -164,12 +164,12 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.data-representation.floating-point"],
     "choices": [
-      {"key": "A", "content": "0.1의 binary fraction이 유한한 자리에서 끝나지 않아 제한된 significand로 반올림해야 하기 때문이다.", "displayOrder": 0},
-      {"key": "B", "content": "IEEE 754가 모든 소수를 정수로만 저장하기 때문이다.", "displayOrder": 1},
+      {"key": "A", "content": "IEEE 754가 모든 소수를 정수로만 저장하기 때문이다.", "displayOrder": 0},
+      {"key": "B", "content": "0.1의 binary fraction이 유한한 자리에서 끝나지 않아 제한된 significand로 반올림해야 하기 때문이다.", "displayOrder": 1},
       {"key": "C", "content": "CPU가 decimal 입력을 항상 버리기 때문이다.", "displayOrder": 2},
       {"key": "D", "content": "floating-point에는 exponent가 없기 때문이다.", "displayOrder": 3}
     ],
-    "correctChoiceKey": "A",
+    "correctChoiceKey": "B",
     "explanationMarkdown": "각 intermediate operation의 정확한 수학적 결과가 표현 가능한 floating-point 값으로 반올림된다. decimal 금액이 binary floating-point로 정확히 표현되지 않아 반복 연산의 rounding error가 누적될 수 있고 exact equality가 예상과 다르게 실패할 수 있다."
   },
   {

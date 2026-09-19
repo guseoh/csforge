@@ -9,11 +9,11 @@
     "conceptKeys": ["backend.core.dto-validation-error.dto-boundary"],
     "choices": [
       {"key":"A","content":"Entity를 복사하는 boilerplate를 늘리기 위해서","displayOrder":0},
-      {"key":"B","content":"transport representation과 domain/persistence model의 변경 이유와 노출 범위를 분리하기 위해서","displayOrder":1},
-      {"key":"C","content":"JPA LAZY loading을 항상 제거하기 위해서","displayOrder":2},
+      {"key":"B","content":"JPA LAZY loading을 항상 제거하기 위해서","displayOrder":1},
+      {"key":"C","content":"transport representation과 domain/persistence model의 변경 이유와 노출 범위를 분리하기 위해서","displayOrder":2},
       {"key":"D","content":"모든 검증을 DTO에만 두기 위해서","displayOrder":3}
     ],
-    "correctChoiceKey": "B",
+    "correctChoiceKey": "C",
     "explanationMarkdown": "B의 DTO는 HTTP field와 내부 model의 변경·노출 범위를 분리해 client가 persistence field를 우연히 설정하지 않게 한다. DTO가 JPA lazy loading이나 모든 검증을 자동 해결하는 것은 아니며, 변환과 각 invariant의 책임은 별도 boundary에 남는다."
   },
   {
@@ -48,11 +48,11 @@
     "conceptKeys": ["backend.core.dto-validation-error.validation-layers"],
     "choices": [
       {"key":"A","content":"그렇다. Service 검사가 더 빠르다.","displayOrder":0},
-      {"key":"B","content":"아니다. 동시 요청의 check-then-insert race를 막기 위해 DB constraint가 최종 무결성을 보호해야 한다.","displayOrder":1},
+      {"key":"B","content":"Controller @Valid가 있으면 DB 검증은 중복이다.","displayOrder":1},
       {"key":"C","content":"JPA를 쓰면 unique race는 자동 해결된다.","displayOrder":2},
-      {"key":"D","content":"Controller @Valid가 있으면 DB 검증은 중복이다.","displayOrder":3}
+      {"key":"D","content":"아니다. 동시 요청의 check-then-insert race를 막기 위해 DB constraint가 최종 무결성을 보호해야 한다.","displayOrder":3}
     ],
-    "correctChoiceKey": "B",
+    "correctChoiceKey": "D",
     "explanationMarkdown": "`existsByEmail()`은 사용자에게 빠른 피드백을 주지만 T1과 T2가 모두 없음으로 본 뒤 동시에 insert하는 race를 막지 못한다. 최종 unique invariant는 DB constraint가 보호하고 application은 그 violation을 안전한 conflict 의미로 번역해야 한다."
   },
   {
@@ -86,12 +86,12 @@
     "status": "PUBLISHED",
     "conceptKeys": ["backend.core.dto-validation-error.error-contract"],
     "choices": [
-      {"key":"A","content":"사용자 한글 message 전체","displayOrder":0},
-      {"key":"B","content":"client가 분기하는 stable error code/type","displayOrder":1},
+      {"key":"A","content":"client가 분기하는 stable error code/type","displayOrder":0},
+      {"key":"B","content":"사용자 한글 message 전체","displayOrder":1},
       {"key":"C","content":"server stack trace","displayOrder":2},
       {"key":"D","content":"SQL exception text","displayOrder":3}
     ],
-    "correctChoiceKey": "B",
+    "correctChoiceKey": "A",
     "explanationMarkdown": "B 같은 stable code/type은 사용자 문구나 stack trace가 바뀌어도 client 분기를 유지하게 한다. server 원인과 SQL text는 operator 관측 영역에 두고, API에는 필요한 field violation·correlation 정보만 안전한 형태로 포함해야 한다."
   },
   {

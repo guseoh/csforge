@@ -8,12 +8,12 @@
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.process.program-vs-process"],
     "choices": [
-      {"key": "A", "content": "Program file은 같아도 서로 다른 PID·address space·runtime state를 가진 process가 만들어질 수 있다.", "displayOrder": 0},
-      {"key": "B", "content": "Executable의 code page를 공유할 수 있으므로 두 실행의 process state도 하나로 공유된다.", "displayOrder": 1},
+      {"key": "A", "content": "Executable의 code page를 공유할 수 있으므로 두 실행의 process state도 하나로 공유된다.", "displayOrder": 0},
+      {"key": "B", "content": "Program file은 같아도 서로 다른 PID·address space·runtime state를 가진 process가 만들어질 수 있다.", "displayOrder": 1},
       {"key": "C", "content": "같은 executable을 실행하면 두 process의 virtual address가 항상 같은 physical frame을 가리킨다.", "displayOrder": 2},
       {"key": "D", "content": "Executable이 같으면 OS는 두 실행을 같은 PID로 식별한다.", "displayOrder": 3}
     ],
-    "correctChoiceKey": "A",
+    "correctChoiceKey": "B",
     "explanationMarkdown": "Program은 저장된 executable이라는 **정적인 코드·데이터 묶음**이고, process는 그 program을 실행하면서 생긴 **동적인 실행 인스턴스**다. 같은 executable의 일부 read-only page가 공유될 수 있어도 PID, address-space mapping, 열린 resource와 실행 상태까지 하나가 되는 것은 아니다."
   },
   {
@@ -47,12 +47,12 @@
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.process.process-address-space"],
     "choices": [
-      {"key": "A", "content": "아니다. Process별 address-space mapping이 달라 서로 다른 physical frame을 가리킬 수 있다.", "displayOrder": 0},
+      {"key": "A", "content": "ASLR을 사용하지 않는 경우에는 같은 virtual address가 항상 같은 physical frame을 뜻한다.", "displayOrder": 0},
       {"key": "B", "content": "그렇다. Virtual address 값 자체가 system-wide physical location을 식별한다.", "displayOrder": 1},
       {"key": "C", "content": "같은 virtual address가 보이면 두 process가 같은 page table을 반드시 공유한다는 뜻이다.", "displayOrder": 2},
-      {"key": "D", "content": "ASLR을 사용하지 않는 경우에는 같은 virtual address가 항상 같은 physical frame을 뜻한다.", "displayOrder": 3}
+      {"key": "D", "content": "아니다. Process별 address-space mapping이 달라 서로 다른 physical frame을 가리킬 수 있다.", "displayOrder": 3}
     ],
-    "correctChoiceKey": "A",
+    "correctChoiceKey": "D",
     "explanationMarkdown": "Virtual address는 process의 address-space mapping을 통해 해석된다. 따라서 숫자가 같아도 서로 다른 page table mapping을 거쳐 다른 physical frame에 연결될 수 있다. ASLR은 virtual layout을 바꾸는 기술이지, virtual address를 system-wide physical address로 만드는 규칙이 아니다."
   },
   {
@@ -180,12 +180,12 @@
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.process.process-create"],
     "choices": [
-      {"key": "A", "content": "fork는 child process를 만들고, exec는 성공 시 현재 process의 program image를 교체할 수 있다.", "displayOrder": 0},
+      {"key": "A", "content": "fork와 exec 모두 항상 새 PID를 하나씩 추가하지만 address space에는 영향을 주지 않는다.", "displayOrder": 0},
       {"key": "B", "content": "fork는 기존 process의 program image만 바꾸고 exec가 별도 child를 생성한다.", "displayOrder": 1},
-      {"key": "C", "content": "fork와 exec 모두 항상 새 PID를 하나씩 추가하지만 address space에는 영향을 주지 않는다.", "displayOrder": 2},
+      {"key": "C", "content": "fork는 child process를 만들고, exec는 성공 시 현재 process의 program image를 교체할 수 있다.", "displayOrder": 2},
       {"key": "D", "content": "exec는 현재 PID를 유지할 수 있지만 기존 program image도 그대로 동시에 실행한다.", "displayOrder": 3}
     ],
-    "correctChoiceKey": "A",
+    "correctChoiceKey": "C",
     "explanationMarkdown": "Unix-like process creation 흐름에서는 `fork()`가 새 child를 만들고, `exec` 계열은 성공하면 **호출한 현재 process의 program image를 교체**한다. 둘을 구분해야 '새 process 생성'과 '현재 process가 다른 program을 실행하기'를 같은 동작으로 오해하지 않는다."
   },
   {
@@ -230,12 +230,12 @@
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.process.process-terminate"],
     "choices": [
-      {"key": "A", "content": "Application 실행은 끝났고 주요 resource는 정리됐지만 parent가 status를 수집하기 위한 최소 metadata가 남아 있을 수 있다.", "displayOrder": 0},
+      {"key": "A", "content": "Zombie는 parent가 이미 wait로 status를 수집한 뒤에도 같은 metadata가 계속 남는 상태다.", "displayOrder": 0},
       {"key": "B", "content": "Zombie는 종료 요청을 받았지만 아직 user code를 계속 실행 중인 process다.", "displayOrder": 1},
       {"key": "C", "content": "Zombie가 남아 있으면 종료 전의 전체 address space와 모든 open file도 반드시 유지된다.", "displayOrder": 2},
-      {"key": "D", "content": "Zombie는 parent가 이미 wait로 status를 수집한 뒤에도 같은 metadata가 계속 남는 상태다.", "displayOrder": 3}
+      {"key": "D", "content": "Application 실행은 끝났고 주요 resource는 정리됐지만 parent가 status를 수집하기 위한 최소 metadata가 남아 있을 수 있다.", "displayOrder": 3}
     ],
-    "correctChoiceKey": "A",
+    "correctChoiceKey": "D",
     "explanationMarkdown": "Zombie는 child의 **실행이 이미 끝난 상태**다. Address space와 descriptor 같은 주요 실행 resource는 정리됐지만 parent가 종료 status를 수집할 수 있도록 최소한의 process entry가 남을 수 있으며, `wait` 계열로 reap하면 그 metadata도 회수된다."
   },
   {

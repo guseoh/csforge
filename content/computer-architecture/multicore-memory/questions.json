@@ -8,12 +8,12 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.multicore-memory.multicore-shared-memory"],
     "choices": [
-      {"key": "A", "content": "여러 core가 같은 physical memory를 접근할 수 있지만 각 core의 register/cache는 private할 수 있어 coherence와 ordering 규칙이 필요하다.", "displayOrder": 0},
-      {"key": "B", "content": "shared memory에서는 모든 load/store가 하나의 중앙 register에서 program order대로만 실행된다.", "displayOrder": 1},
+      {"key": "A", "content": "shared memory에서는 모든 load/store가 하나의 중앙 register에서 program order대로만 실행된다.", "displayOrder": 0},
+      {"key": "B", "content": "여러 core가 같은 physical memory를 접근할 수 있지만 각 core의 register/cache는 private할 수 있어 coherence와 ordering 규칙이 필요하다.", "displayOrder": 1},
       {"key": "C", "content": "cache coherence가 있으면 모든 read-modify-write operation이 자동으로 atomic해진다.", "displayOrder": 2},
       {"key": "D", "content": "여러 core가 같은 memory를 사용하면 software synchronization은 필요하지 않다.", "displayOrder": 3}
     ],
-    "correctChoiceKey": "A",
+    "correctChoiceKey": "B",
     "explanationMarkdown": "Shared-memory multicore는 여러 core가 같은 physical memory를 접근할 수 있지만 register와 private cache state는 core별로 다를 수 있다. 따라서 cached copy의 coherence와 서로 다른 location의 ordering 및 synchronization에는 별도 규칙이 필요하다."
   },
   {
@@ -47,12 +47,12 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.multicore-memory.private-shared-cache"],
     "choices": [
-      {"key": "A", "content": "private cache로 낮은 per-core 지연 시간을 얻고 shared lower level로 capacity와 core 간 data sharing을 보완할 수 있다.", "displayOrder": 0},
+      {"key": "A", "content": "모든 CPU가 반드시 동일한 private/shared cache topology를 사용하기 때문이다.", "displayOrder": 0},
       {"key": "B", "content": "private cache를 사용하면 coherence가 완전히 필요 없어지기 때문이다.", "displayOrder": 1},
       {"key": "C", "content": "shared cache는 한 core만 접근할 수 있어 contention이 없기 때문이다.", "displayOrder": 2},
-      {"key": "D", "content": "모든 CPU가 반드시 동일한 private/shared cache topology를 사용하기 때문이다.", "displayOrder": 3}
+      {"key": "D", "content": "private cache로 낮은 per-core 지연 시간을 얻고 shared lower level로 capacity와 core 간 data sharing을 보완할 수 있다.", "displayOrder": 3}
     ],
-    "correctChoiceKey": "A",
+    "correctChoiceKey": "D",
     "explanationMarkdown": "이전 core의 private cache에는 thread가 반복 사용하던 working set이 warm하게 남아 있을 수 있다. affinity는 private-cache locality와 migration 비용을 줄일 수 있지만 scheduler의 load balancing을 제한하고 특정 core/cache/NUMA node에 workload를 몰아 contention을 높일 수 있다."
   },
   {
@@ -125,12 +125,12 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.multicore-memory.coherence-protocol-model"],
     "choices": [
-      {"key": "A", "content": "해당 cache line의 최신 data와 read/write permission을 어느 cache가 가지고 있는지 추적하는 것", "displayOrder": 0},
+      {"key": "A", "content": "cache line state가 Java volatile의 language semantics를 직접 정의한다고 보는 것", "displayOrder": 0},
       {"key": "B", "content": "모든 CPU가 MESI 네 상태만 정확히 동일하게 사용한다고 외우는 것", "displayOrder": 1},
-      {"key": "C", "content": "cache line state가 Java volatile의 language semantics를 직접 정의한다고 보는 것", "displayOrder": 2},
+      {"key": "C", "content": "해당 cache line의 최신 data와 read/write permission을 어느 cache가 가지고 있는지 추적하는 것", "displayOrder": 2},
       {"key": "D", "content": "coherence state가 disk persistence까지 나타낸다고 보는 것", "displayOrder": 3}
     ],
-    "correctChoiceKey": "A",
+    "correctChoiceKey": "C",
     "explanationMarkdown": "MESI 같은 상태는 cache line의 valid/latest copy와 read·write permission 또는 ownership 관계를 추적한다. 이는 같은 line의 coherence를 위한 모델이며 서로 다른 address의 전체 ordering이나 language synchronization을 대신하지 않는다."
   },
   {
@@ -164,12 +164,12 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.multicore-memory.false-sharing"],
     "choices": [
-      {"key": "A", "content": "서로 다른 writable 변수라도 같은 cache line에 있으면 독립 thread의 write가 coherence ownership을 경쟁할 수 있다.", "displayOrder": 0},
+      {"key": "A", "content": "false sharing이 발생하면 coherence correctness가 깨져 반드시 잘못된 값이 반환된다.", "displayOrder": 0},
       {"key": "B", "content": "같은 변수에 대한 data race가 있을 때만 발생한다.", "displayOrder": 1},
-      {"key": "C", "content": "false sharing이 발생하면 coherence correctness가 깨져 반드시 잘못된 값이 반환된다.", "displayOrder": 2},
+      {"key": "C", "content": "서로 다른 writable 변수라도 같은 cache line에 있으면 독립 thread의 write가 coherence ownership을 경쟁할 수 있다.", "displayOrder": 2},
       {"key": "D", "content": "read-only data만 여러 core가 읽을 때 line ownership이 계속 ping-pong하는 현상이다.", "displayOrder": 3}
     ],
-    "correctChoiceKey": "A",
+    "correctChoiceKey": "C",
     "explanationMarkdown": "true sharing은 여러 thread가 실제 같은 logical value를 공유하는 것이고 data race는 language synchronization 없이 conflicting access가 발생하는 correctness 문제다. cache-to-cache transfer, invalidation/false-sharing profiler, core scaling 결과와 실제 object/array layout을 확인해 같은 line의 write contention이 줄었는지 검증해야 한다."
   },
   {
@@ -203,12 +203,12 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.multicore-memory.hardware-memory-reordering"],
     "choices": [
-      {"key": "A", "content": "architecture가 반드시 보존한다고 정한 순서 외에는 다른 core가 일부 memory operation을 program order와 다르게 관찰할 수 있다.", "displayOrder": 0},
-      {"key": "B", "content": "CPU가 모든 instruction을 무조건 source code의 역순으로 실행한다는 뜻이다.", "displayOrder": 1},
+      {"key": "A", "content": "CPU가 모든 instruction을 무조건 source code의 역순으로 실행한다는 뜻이다.", "displayOrder": 0},
+      {"key": "B", "content": "architecture가 반드시 보존한다고 정한 순서 외에는 다른 core가 일부 memory operation을 program order와 다르게 관찰할 수 있다.", "displayOrder": 1},
       {"key": "C", "content": "cache coherence가 존재하지 않는 CPU에서만 가능한 현상이다.", "displayOrder": 2},
       {"key": "D", "content": "Java happens-before relation과 ISA memory model이 완전히 같은 규칙이라는 뜻이다.", "displayOrder": 3}
     ],
-    "correctChoiceKey": "A",
+    "correctChoiceKey": "B",
     "explanationMarkdown": "Weak ordering에서는 architecture가 보존한다고 약속한 관계 밖의 서로 다른 memory operation을 다른 core가 program order와 다르게 관찰할 수 있다. ISA fence나 release/acquire와 language-level happens-before는 각 계층의 contract에 맞게 구분해야 한다."
   },
   {
