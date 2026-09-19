@@ -53,7 +53,7 @@
       {"key": "D", "content": "CPU cache에서 어느 data line을 교체할지 replacement policy를 결정한다.", "displayOrder": 3}
     ],
     "correctChoiceKey": "B",
-    "explanationMarkdown": "MMU는 page-table/TLB의 permission과 요청 access를 비교해 허용되지 않은 접근이면 정상 memory operation을 완료하지 않고 architecture가 정의한 fault/exception을 발생시킨다. permission은 각 virtual mapping의 page-table state에 포함될 수 있으므로 같은 physical frame을 가리키더라도 A의 mapping은 write를 금지하고 B의 mapping은 허용할 수 있다."
+    "explanationMarkdown": "MMU는 현재 address space의 page-table/TLB 정보를 이용해 virtual address를 physical address로 translate하고, mapping에 설정된 read/write/execute permission도 함께 검사한다. 허용되지 않은 접근은 architecture가 정의한 fault/exception으로 처리되며, page replacement나 cache-line replacement 정책 자체를 MMU가 결정하는 것은 아니다."
   },
   {
     "kind": "question",
