@@ -19,7 +19,7 @@
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.sequential.array"],
     "modelAnswer": "index 2부터 뒤에 있던 C,D,E,F를 각각 한 칸 뒤로 이동시켜 빈 index 2를 만든 뒤 X를 저장해야 한다. 이동량은 삽입 위치 뒤 원소 수에 비례하므로 중간 삽입이 O(n)이 될 수 있다.",
-    "explanationMarkdown": "index 2부터 뒤에 있던 C,D,E,F를 각각 한 칸 뒤로 이동시켜 빈 index 2를 만든 뒤 X를 저장해야 한다. 이동량은 삽입 위치 뒤 원소 수에 비례하므로 중간 삽입이 O(n)이 될 수 있다."
+    "explanationMarkdown": "index 2부터 뒤에 있던 C,D,E,F를 각각 한 칸 뒤로 이동시켜 빈 index 2를 만든 뒤 X를 저장해야 한다. 이동량은 삽입 위치 뒤 원소 수에 비례하므로 중간 삽입이 O(n)이 될 수 있다. 설명에서는 정의뿐 아니라 invariant·복잡도·입력 조건이 결론으로 이어지는 이유까지 연결해야 한다."
   },
   {
     "kind": "question",
@@ -30,7 +30,7 @@
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.sequential.array"],
     "modelAnswer": "순차 scan은 연속 배치 덕분에 cache line을 효율적으로 사용하고 주소 계산도 단순해 array에 유리하다. 반면 중간 삽입·삭제는 뒤 원소 이동이 반복되어 비용이 커진다. 따라서 random index 접근·순차 scan 비중과 mutation 위치를 함께 보고 선택해야 한다.",
-    "explanationMarkdown": "순차 scan은 연속 배치 덕분에 cache line을 효율적으로 사용하고 주소 계산도 단순해 array에 유리하다. 반면 중간 삽입·삭제는 뒤 원소 이동이 반복되어 비용이 커진다. 따라서 random index 접근·순차 scan 비중과 mutation 위치를 함께 보고 선택해야 한다."
+    "explanationMarkdown": "순차 scan은 연속 배치 덕분에 cache line을 효율적으로 사용하고 주소 계산도 단순해 array에 유리하다. 반면 중간 삽입·삭제는 뒤 원소 이동이 반복되어 비용이 커진다. 따라서 random index 접근·순차 scan 비중과 mutation 위치를 함께 보고 선택해야 한다. 이 시나리오에서는 입력과 operation 조건에 invariant와 복잡도를 적용해 선택 근거와 trade-off를 확인해야 한다."
   },
   {
     "kind": "question",
@@ -69,7 +69,7 @@
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.sequential.dynamic-array"],
     "modelAnswer": "amortized O(1)은 긴 append sequence의 총 비용을 평균 낸 보장이지 각 append의 worst-case가 O(1)이라는 뜻이 아니다. capacity를 넘는 순간 더 큰 storage를 할당하고 기존 원소를 O(n)만큼 복사할 수 있어 단일 요청에는 spike가 생길 수 있다.",
-    "explanationMarkdown": "amortized O(1)은 긴 append sequence의 총 비용을 평균 낸 보장이지 각 append의 worst-case가 O(1)이라는 뜻이 아니다. capacity를 넘는 순간 더 큰 storage를 할당하고 기존 원소를 O(n)만큼 복사할 수 있어 단일 요청에는 spike가 생길 수 있다."
+    "explanationMarkdown": "amortized O(1)은 긴 append sequence의 총 비용을 평균 낸 보장이지 각 append의 worst-case가 O(1)이라는 뜻이 아니다. capacity를 넘는 순간 더 큰 storage를 할당하고 기존 원소를 O(n)만큼 복사할 수 있어 단일 요청에는 spike가 생길 수 있다. 이 시나리오에서는 입력과 operation 조건에 invariant와 복잡도를 적용해 선택 근거와 trade-off를 확인해야 한다."
   },
   {
     "kind": "question",
@@ -80,7 +80,7 @@
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.sequential.dynamic-array"],
     "modelAnswer": "1.1은 여유 capacity가 작아 메모리 낭비는 줄 수 있지만 capacity 부족이 자주 발생해 allocation·copy 횟수가 증가한다. 2.0은 resize 횟수를 크게 줄이지만 resize 직후 unused capacity가 더 크고 한 번에 더 큰 storage를 확보한다. workload의 peak memory와 꼬리 지연 시간(tail latency)을 함께 고려해야 한다.",
-    "explanationMarkdown": "1.1은 여유 capacity가 작아 메모리 낭비는 줄 수 있지만 capacity 부족이 자주 발생해 allocation·copy 횟수가 증가한다. 2.0은 resize 횟수를 크게 줄이지만 resize 직후 unused capacity가 더 크고 한 번에 더 큰 storage를 확보한다. workload의 peak memory와 꼬리 지연 시간(tail latency)을 함께 고려해야 한다."
+    "explanationMarkdown": "1.1은 여유 capacity가 작아 메모리 낭비는 줄 수 있지만 capacity 부족이 자주 발생해 allocation·copy 횟수가 증가한다. 2.0은 resize 횟수를 크게 줄이지만 resize 직후 unused capacity가 더 크고 한 번에 더 큰 storage를 확보한다. workload의 peak memory와 꼬리 지연 시간(tail latency)을 함께 고려해야 한다. 설명에서는 정의뿐 아니라 invariant·복잡도·입력 조건이 결론으로 이어지는 이유까지 연결해야 한다."
   },
   {
     "kind": "question",
@@ -91,7 +91,7 @@
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.sequential.singly-linked-list"],
     "modelAnswer": "새 node의 next를 기존 successor로 연결한 뒤 predecessor의 next를 새 node로 바꾸면 된다. 위치 탐색 비용을 제외하면 link 변경 자체는 상수 개다.",
-    "explanationMarkdown": "새 node의 next를 기존 successor로 연결한 뒤 predecessor의 next를 새 node로 바꾸면 된다. 위치 탐색 비용을 제외하면 link 변경 자체는 상수 개다."
+    "explanationMarkdown": "새 node의 next를 기존 successor로 연결한 뒤 predecessor의 next를 새 node로 바꾸면 된다. 위치 탐색 비용을 제외하면 link 변경 자체는 상수 개다. 설명에서는 정의뿐 아니라 invariant·복잡도·입력 조건이 결론으로 이어지는 이유까지 연결해야 한다."
   },
   {
     "kind": "question",
@@ -102,7 +102,7 @@
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.sequential.singly-linked-list"],
     "modelAnswer": "tail을 제거하려면 새 tail이 될 predecessor의 next를 null로 바꿔야 한다. singly list에는 prev link가 없으므로 head에서 next를 따라 tail의 predecessor를 찾아야 해서 일반적으로 O(n) 순회가 필요하다.",
-    "explanationMarkdown": "tail을 제거하려면 새 tail이 될 predecessor의 next를 null로 바꿔야 한다. singly list에는 prev link가 없으므로 head에서 next를 따라 tail의 predecessor를 찾아야 해서 일반적으로 O(n) 순회가 필요하다."
+    "explanationMarkdown": "tail을 제거하려면 새 tail이 될 predecessor의 next를 null로 바꿔야 한다. singly list에는 prev link가 없으므로 head에서 next를 따라 tail의 predecessor를 찾아야 해서 일반적으로 O(n) 순회가 필요하다. 설명에서는 정의뿐 아니라 invariant·복잡도·입력 조건이 결론으로 이어지는 이유까지 연결해야 한다."
   },
   {
     "kind": "question",
@@ -113,7 +113,7 @@
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.sequential.singly-linked-list"],
     "modelAnswer": "A가 여전히 B를 가리키는데 B.next가 null이 되어 C가 기존 list에서 도달 불가능해졌다. 일반적으로 successor C를 먼저 보존하고 A.next를 C로 연결해 list의 reachability를 유지한 뒤 필요하면 제거된 B의 link를 정리한다.",
-    "explanationMarkdown": "A가 여전히 B를 가리키는데 B.next가 null이 되어 C가 기존 list에서 도달 불가능해졌다. 일반적으로 successor C를 먼저 보존하고 A.next를 C로 연결해 list의 reachability를 유지한 뒤 필요하면 제거된 B의 link를 정리한다."
+    "explanationMarkdown": "A가 여전히 B를 가리키는데 B.next가 null이 되어 C가 기존 list에서 도달 불가능해졌다. 일반적으로 successor C를 먼저 보존하고 A.next를 C로 연결해 list의 reachability를 유지한 뒤 필요하면 제거된 B의 link를 정리한다. 이 시나리오에서는 입력과 operation 조건에 invariant와 복잡도를 적용해 선택 근거와 trade-off를 확인해야 한다."
   },
   {
     "kind": "question",
@@ -135,7 +135,7 @@
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.sequential.doubly-linked-list"],
     "modelAnswer": "실제 첫·마지막 node에도 항상 predecessor와 successor 역할을 하는 sentinel이 존재하게 만들어 null 여부에 따른 특수 분기를 줄일 수 있다. 그 대신 sentinel 자체는 data node가 아니라는 invariant를 유지해야 한다.",
-    "explanationMarkdown": "실제 첫·마지막 node에도 항상 predecessor와 successor 역할을 하는 sentinel이 존재하게 만들어 null 여부에 따른 특수 분기를 줄일 수 있다. 그 대신 sentinel 자체는 data node가 아니라는 invariant를 유지해야 한다."
+    "explanationMarkdown": "실제 첫·마지막 node에도 항상 predecessor와 successor 역할을 하는 sentinel이 존재하게 만들어 null 여부에 따른 특수 분기를 줄일 수 있다. 그 대신 sentinel 자체는 data node가 아니라는 invariant를 유지해야 한다. 설명에서는 정의뿐 아니라 invariant·복잡도·입력 조건이 결론으로 이어지는 이유까지 연결해야 한다."
   },
   {
     "kind": "question",
@@ -146,7 +146,7 @@
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.sequential.doubly-linked-list"],
     "modelAnswer": "map이 stale node를 반환해 이미 list에 없는 B를 이동·삭제하려 하면서 link corruption이나 잘못된 eviction 순서를 만들 수 있다. map의 모든 live entry는 정확히 하나의 live list node를 가리키고, list의 data node도 대응하는 map entry와 일치해야 한다.",
-    "explanationMarkdown": "map이 stale node를 반환해 이미 list에 없는 B를 이동·삭제하려 하면서 link corruption이나 잘못된 eviction 순서를 만들 수 있다. map의 모든 live entry는 정확히 하나의 live list node를 가리키고, list의 data node도 대응하는 map entry와 일치해야 한다."
+    "explanationMarkdown": "map이 stale node를 반환해 이미 list에 없는 B를 이동·삭제하려 하면서 link corruption이나 잘못된 eviction 순서를 만들 수 있다. map의 모든 live entry는 정확히 하나의 live list node를 가리키고, list의 data node도 대응하는 map entry와 일치해야 한다. 이 시나리오에서는 입력과 operation 조건에 invariant와 복잡도를 적용해 선택 근거와 trade-off를 확인해야 한다."
   },
   {
     "kind": "question",
@@ -174,7 +174,7 @@
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.sequential.array-vs-linked"],
     "modelAnswer": "삽입할 위치의 node 또는 predecessor를 이미 알고 있다는 전제에서 link 변경만 O(1)이다. index나 key로 위치를 먼저 찾아야 하고 별도 index가 없다면 탐색이 O(n)이어서 전체 operation도 O(n)이 될 수 있다.",
-    "explanationMarkdown": "삽입할 위치의 node 또는 predecessor를 이미 알고 있다는 전제에서 link 변경만 O(1)이다. index나 key로 위치를 먼저 찾아야 하고 별도 index가 없다면 탐색이 O(n)이어서 전체 operation도 O(n)이 될 수 있다."
+    "explanationMarkdown": "삽입할 위치의 node 또는 predecessor를 이미 알고 있다는 전제에서 link 변경만 O(1)이다. index나 key로 위치를 먼저 찾아야 하고 별도 index가 없다면 탐색이 O(n)이어서 전체 operation도 O(n)이 될 수 있다. 설명에서는 정의뿐 아니라 invariant·복잡도·입력 조건이 결론으로 이어지는 이유까지 연결해야 한다."
   },
   {
     "kind": "question",
@@ -185,7 +185,7 @@
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.sequential.array-vs-linked"],
     "modelAnswer": "점근 복잡도는 원소 수에 따른 성장 차수만 같다고 말한다. array는 연속 memory라 spatial locality와 prefetch에 유리할 수 있지만 linked list는 node allocation이 흩어져 pointer chasing과 cache miss가 늘 수 있다. 실제 workload에서는 memory layout과 allocation overhead도 측정해야 한다.",
-    "explanationMarkdown": "점근 복잡도는 원소 수에 따른 성장 차수만 같다고 말한다. array는 연속 memory라 spatial locality와 prefetch에 유리할 수 있지만 linked list는 node allocation이 흩어져 pointer chasing과 cache miss가 늘 수 있다. 실제 workload에서는 memory layout과 allocation overhead도 측정해야 한다."
+    "explanationMarkdown": "점근 복잡도는 원소 수에 따른 성장 차수만 같다고 말한다. array는 연속 memory라 spatial locality와 prefetch에 유리할 수 있지만 linked list는 node allocation이 흩어져 pointer chasing과 cache miss가 늘 수 있다. 실제 workload에서는 memory layout과 allocation overhead도 측정해야 한다. 이 시나리오에서는 입력과 operation 조건에 invariant와 복잡도를 적용해 선택 근거와 trade-off를 확인해야 한다."
   },
   {
     "kind": "question",
@@ -196,6 +196,6 @@
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.sequential.array-vs-linked"],
     "modelAnswer": "삭제 대상 위치를 찾는 비용이 O(n)이면 link 변경 O(1)의 이점이 줄어든다. linked node의 pointer/allocator overhead와 낮은 locality도 비용이 될 수 있다. 반대로 array는 이동 비용이 있지만 연속 배치와 별도 index의 조합이 유리할 수 있으므로 실제 operation sequence를 봐야 한다.",
-    "explanationMarkdown": "삭제 대상 위치를 찾는 비용이 O(n)이면 link 변경 O(1)의 이점이 줄어든다. linked node의 pointer/allocator overhead와 낮은 locality도 비용이 될 수 있다. 반대로 array는 이동 비용이 있지만 연속 배치와 별도 index의 조합이 유리할 수 있으므로 실제 operation sequence를 봐야 한다."
+    "explanationMarkdown": "삭제 대상 위치를 찾는 비용이 O(n)이면 link 변경 O(1)의 이점이 줄어든다. linked node의 pointer/allocator overhead와 낮은 locality도 비용이 될 수 있다. 반대로 array는 이동 비용이 있지만 연속 배치와 별도 index의 조합이 유리할 수 있으므로 실제 operation sequence를 봐야 한다. 설명에서는 정의뿐 아니라 invariant·복잡도·입력 조건이 결론으로 이어지는 이유까지 연결해야 한다."
   }
 ]

@@ -25,7 +25,7 @@
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.complexity.input-size-operation-count"],
     "modelAnswer": "전체 횟수는 1+2+...+n = n(n+1)/2이고 가장 큰 항의 차수가 n²이므로 Θ(n²)이다. 중첩 loop라는 모양만 보고 무조건 n²이라고 하는 것이 아니라 실제 반복 범위를 합산한 결과다.",
-    "explanationMarkdown": "전체 횟수는 1+2+...+n = n(n+1)/2이고 가장 큰 항의 차수가 n²이므로 Θ(n²)이다. 중첩 loop라는 모양만 보고 무조건 n²이라고 하는 것이 아니라 실제 반복 범위를 합산한 결과다."
+    "explanationMarkdown": "전체 횟수는 1+2+...+n = n(n+1)/2이고 가장 큰 항의 차수가 n²이므로 Θ(n²)이다. 중첩 loop라는 모양만 보고 무조건 n²이라고 하는 것이 아니라 실제 반복 범위를 합산한 결과다. 설명에서는 정의뿐 아니라 invariant·복잡도·입력 조건이 결론으로 이어지는 이유까지 연결해야 한다."
   },
   {
     "kind": "question",
@@ -36,7 +36,7 @@
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.complexity.input-size-operation-count"],
     "modelAnswer": "Row마다 tag 수가 달라 내부 작업량이 달라지므로 n만으로는 실제 input size를 설명하지 못한다. 각 row의 tag 수를 mi라고 하면 pair 비교 비용은 대략 Σ mi²이고, 균일 상한 m을 쓰면 O(nm²)로 모델링할 수 있다. 실제 제한도 row count와 nested payload 크기를 함께 둬야 한다.",
-    "explanationMarkdown": "Row마다 tag 수가 달라 내부 작업량이 달라지므로 n만으로는 실제 input size를 설명하지 못한다. 각 row의 tag 수를 mi라고 하면 pair 비교 비용은 대략 Σ mi²이고, 균일 상한 m을 쓰면 O(nm²)로 모델링할 수 있다. 실제 제한도 row count와 nested payload 크기를 함께 둬야 한다."
+    "explanationMarkdown": "Row마다 tag 수가 달라 내부 작업량이 달라지므로 n만으로는 실제 input size를 설명하지 못한다. 각 row의 tag 수를 mi라고 하면 pair 비교 비용은 대략 Σ mi²이고, 균일 상한 m을 쓰면 O(nm²)로 모델링할 수 있다. 실제 제한도 row count와 nested payload 크기를 함께 둬야 한다. 이 시나리오에서는 입력과 operation 조건에 invariant와 복잡도를 적용해 선택 근거와 trade-off를 확인해야 한다."
   },
   {
     "kind": "question",
@@ -64,7 +64,7 @@
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.complexity.big-o-theta-omega"],
     "modelAnswer": "n log n은 충분히 큰 n에서 n²보다 느리게 성장하므로 n²은 유효한 점근 상한이 될 수 있다. 하지만 Θ(n log n)은 상한과 하한이 같은 차수임을 알려 실제 성장률을 더 좁게 표현하고, O(n²)은 그보다 느슨한 상한 정보만 준다.",
-    "explanationMarkdown": "n log n은 충분히 큰 n에서 n²보다 느리게 성장하므로 n²은 유효한 점근 상한이 될 수 있다. 하지만 Θ(n log n)은 상한과 하한이 같은 차수임을 알려 실제 성장률을 더 좁게 표현하고, O(n²)은 그보다 느슨한 상한 정보만 준다."
+    "explanationMarkdown": "n log n은 충분히 큰 n에서 n²보다 느리게 성장하므로 n²은 유효한 점근 상한이 될 수 있다. 하지만 Θ(n log n)은 상한과 하한이 같은 차수임을 알려 실제 성장률을 더 좁게 표현하고, O(n²)은 그보다 느슨한 상한 정보만 준다. 설명에서는 정의뿐 아니라 invariant·복잡도·입력 조건이 결론으로 이어지는 이유까지 연결해야 한다."
   },
   {
     "kind": "question",
@@ -75,7 +75,7 @@
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.complexity.big-o-theta-omega"],
     "modelAnswer": "점근 표기는 충분히 큰 입력에서의 성장 차수를 비교하며 상수항, cache/I/O, 구현 overhead와 현재 작은 입력 범위를 숨긴다. 장기적인 scalability에는 A가 유리할 가능성이 있지만 현재 n≤20의 실제 지연 시간은 representative benchmark로 확인해야 한다.",
-    "explanationMarkdown": "점근 표기는 충분히 큰 입력에서의 성장 차수를 비교하며 상수항, cache/I/O, 구현 overhead와 현재 작은 입력 범위를 숨긴다. 장기적인 scalability에는 A가 유리할 가능성이 있지만 현재 n≤20의 실제 지연 시간은 representative benchmark로 확인해야 한다."
+    "explanationMarkdown": "점근 표기는 충분히 큰 입력에서의 성장 차수를 비교하며 상수항, cache/I/O, 구현 overhead와 현재 작은 입력 범위를 숨긴다. 장기적인 scalability에는 A가 유리할 가능성이 있지만 현재 n≤20의 실제 지연 시간은 representative benchmark로 확인해야 한다. 이 시나리오에서는 입력과 operation 조건에 invariant와 복잡도를 적용해 선택 근거와 trade-off를 확인해야 한다."
   },
   {
     "kind": "question",
@@ -103,7 +103,7 @@
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.complexity.best-average-worst"],
     "modelAnswer": "Average case는 가능한 입력에 어떤 확률 분포를 가정하는지에 따라 기대 비용을 계산해야 한다. Best와 worst 두 값의 산술평균은 실제 입력 분포나 중간 경우의 비용을 반영하지 않으므로 일반적인 average-case 분석이 아니다.",
-    "explanationMarkdown": "Average case는 가능한 입력에 어떤 확률 분포를 가정하는지에 따라 기대 비용을 계산해야 한다. Best와 worst 두 값의 산술평균은 실제 입력 분포나 중간 경우의 비용을 반영하지 않으므로 일반적인 average-case 분석이 아니다."
+    "explanationMarkdown": "Average case는 가능한 입력에 어떤 확률 분포를 가정하는지에 따라 기대 비용을 계산해야 한다. Best와 worst 두 값의 산술평균은 실제 입력 분포나 중간 경우의 비용을 반영하지 않으므로 일반적인 average-case 분석이 아니다. 설명에서는 정의뿐 아니라 invariant·복잡도·입력 조건이 결론으로 이어지는 이유까지 연결해야 한다."
   },
   {
     "kind": "question",
@@ -114,7 +114,7 @@
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.complexity.best-average-worst"],
     "modelAnswer": "입력 분포를 사용자가 통제하면 우연 또는 의도적으로 collision 같은 worst-case 상태가 집중될 수 있어 평균 가정이 깨질 수 있다. Worst-case 비용, 입력 제한, hash 방어, timeout/memory budget과 실제 분포별 측정을 함께 검토해야 한다.",
-    "explanationMarkdown": "입력 분포를 사용자가 통제하면 우연 또는 의도적으로 collision 같은 worst-case 상태가 집중될 수 있어 평균 가정이 깨질 수 있다. Worst-case 비용, 입력 제한, hash 방어, timeout/memory budget과 실제 분포별 측정을 함께 검토해야 한다."
+    "explanationMarkdown": "입력 분포를 사용자가 통제하면 우연 또는 의도적으로 collision 같은 worst-case 상태가 집중될 수 있어 평균 가정이 깨질 수 있다. Worst-case 비용, 입력 제한, hash 방어, timeout/memory budget과 실제 분포별 측정을 함께 검토해야 한다. 이 시나리오에서는 입력과 operation 조건에 invariant와 복잡도를 적용해 선택 근거와 trade-off를 확인해야 한다."
   },
   {
     "kind": "question",
@@ -142,7 +142,7 @@
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.complexity.time-space-tradeoff"],
     "modelAnswer": "동일한 subproblem/state가 반복될 때 이미 계산한 결과를 key→result 형태로 저장하면 재계산을 줄일 수 있다. 대신 서로 다른 state 수에 비례한 memo table memory와 lookup 관리 비용이 필요하며 state space가 지나치게 크면 space가 병목이 될 수 있다.",
-    "explanationMarkdown": "동일한 subproblem/state가 반복될 때 이미 계산한 결과를 key→result 형태로 저장하면 재계산을 줄일 수 있다. 대신 서로 다른 state 수에 비례한 memo table memory와 lookup 관리 비용이 필요하며 state space가 지나치게 크면 space가 병목이 될 수 있다."
+    "explanationMarkdown": "동일한 subproblem/state가 반복될 때 이미 계산한 결과를 key→result 형태로 저장하면 재계산을 줄일 수 있다. 대신 서로 다른 state 수에 비례한 memo table memory와 lookup 관리 비용이 필요하며 state space가 지나치게 크면 space가 병목이 될 수 있다. 설명에서는 정의뿐 아니라 invariant·복잡도·입력 조건이 결론으로 이어지는 이유까지 연결해야 한다."
   },
   {
     "kind": "question",
@@ -153,7 +153,7 @@
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.complexity.time-space-tradeoff"],
     "modelAnswer": "ID 개수, key 크기, object/table overhead와 동시 요청 수를 기준으로 실제 peak space를 계산해야 한다. Batch/chunk 단위 dedup, sort 후 adjacent comparison, DB constraint 등 더 적은 memory를 쓰는 후보와 추가 I/O/CPU 비용을 함께 비교한다.",
-    "explanationMarkdown": "ID 개수, key 크기, object/table overhead와 동시 요청 수를 기준으로 실제 peak space를 계산해야 한다. Batch/chunk 단위 dedup, sort 후 adjacent comparison, DB constraint 등 더 적은 memory를 쓰는 후보와 추가 I/O/CPU 비용을 함께 비교한다."
+    "explanationMarkdown": "ID 개수, key 크기, object/table overhead와 동시 요청 수를 기준으로 실제 peak space를 계산해야 한다. Batch/chunk 단위 dedup, sort 후 adjacent comparison, DB constraint 등 더 적은 memory를 쓰는 후보와 추가 I/O/CPU 비용을 함께 비교한다. 이 시나리오에서는 입력과 operation 조건에 invariant와 복잡도를 적용해 선택 근거와 trade-off를 확인해야 한다."
   },
   {
     "kind": "question",
@@ -192,7 +192,7 @@
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.complexity.amortized-analysis"],
     "modelAnswer": "거의 매 append마다 기존 1,2,3,...,n-1개 원소를 복사하므로 총 copy 수는 1+2+...+(n-1)=n(n-1)/2=Θ(n²)이다. 따라서 n번 operation의 총비용이 Θ(n²)이고 append 한 번의 amortized cost도 Θ(n)이 된다.",
-    "explanationMarkdown": "거의 매 append마다 기존 1,2,3,...,n-1개 원소를 복사하므로 총 copy 수는 1+2+...+(n-1)=n(n-1)/2=Θ(n²)이다. 따라서 n번 operation의 총비용이 Θ(n²)이고 append 한 번의 amortized cost도 Θ(n)이 된다."
+    "explanationMarkdown": "거의 매 append마다 기존 1,2,3,...,n-1개 원소를 복사하므로 총 copy 수는 1+2+...+(n-1)=n(n-1)/2=Θ(n²)이다. 따라서 n번 operation의 총비용이 Θ(n²)이고 append 한 번의 amortized cost도 Θ(n)이 된다. 설명에서는 정의뿐 아니라 invariant·복잡도·입력 조건이 결론으로 이어지는 이유까지 연결해야 한다."
   },
   {
     "kind": "question",
@@ -203,7 +203,7 @@
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.complexity.amortized-analysis"],
     "modelAnswer": "Amortized O(1)은 긴 sequence의 총비용/operation 평균 bound이지 각 operation의 worst-case 지연 시간이 상수라는 뜻이 아니다. Resize 한 번은 O(n) copy를 만들 수 있다. 예상 크기 기반 reserve, chunked structure, growth factor 조정 등을 memory peak와 함께 비교하고 p99를 실제로 측정해야 한다.",
-    "explanationMarkdown": "Amortized O(1)은 긴 sequence의 총비용/operation 평균 bound이지 각 operation의 worst-case 지연 시간이 상수라는 뜻이 아니다. Resize 한 번은 O(n) copy를 만들 수 있다. 예상 크기 기반 reserve, chunked structure, growth factor 조정 등을 memory peak와 함께 비교하고 p99를 실제로 측정해야 한다."
+    "explanationMarkdown": "Amortized O(1)은 긴 sequence의 총비용/operation 평균 bound이지 각 operation의 worst-case 지연 시간이 상수라는 뜻이 아니다. Resize 한 번은 O(n) copy를 만들 수 있다. 예상 크기 기반 reserve, chunked structure, growth factor 조정 등을 memory peak와 함께 비교하고 p99를 실제로 측정해야 한다. 이 시나리오에서는 입력과 operation 조건에 invariant와 복잡도를 적용해 선택 근거와 trade-off를 확인해야 한다."
   },
   {
     "kind": "question",
@@ -231,7 +231,7 @@
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.complexity.invariant-correctness"],
     "modelAnswer": "a[mid]가 target 이상이면 mid 자체가 lower bound 후보일 수 있으므로 버리면 안 된다. right를 mid로 두면 [mid,n)의 첫 부분이 target 이상이라는 오른쪽 invariant를 유지하면서 후보 구간 [left,mid)를 포함해 계속 탐색할 수 있다.",
-    "explanationMarkdown": "a[mid]가 target 이상이면 mid 자체가 lower bound 후보일 수 있으므로 버리면 안 된다. right를 mid로 두면 [mid,n)의 첫 부분이 target 이상이라는 오른쪽 invariant를 유지하면서 후보 구간 [left,mid)를 포함해 계속 탐색할 수 있다."
+    "explanationMarkdown": "a[mid]가 target 이상이면 mid 자체가 lower bound 후보일 수 있으므로 버리면 안 된다. right를 mid로 두면 [mid,n)의 첫 부분이 target 이상이라는 오른쪽 invariant를 유지하면서 후보 구간 [left,mid)를 포함해 계속 탐색할 수 있다. 설명에서는 정의뿐 아니라 invariant·복잡도·입력 조건이 결론으로 이어지는 이유까지 연결해야 한다."
   },
   {
     "kind": "question",
@@ -242,7 +242,7 @@
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.complexity.invariant-correctness"],
     "modelAnswer": "후보 구간 길이가 2이고 mid가 left와 같은 경우 `left=mid`는 경계를 전혀 이동시키지 않는다. 예를 들어 left=0,right=1 형태에서 mid=0이고 a[0]<target이면 다음 반복도 동일한 상태가 되어 무한 loop가 될 수 있다. `left=mid+1`처럼 progress가 보장되어야 한다.",
-    "explanationMarkdown": "후보 구간 길이가 2이고 mid가 left와 같은 경우 `left=mid`는 경계를 전혀 이동시키지 않는다. 예를 들어 left=0,right=1 형태에서 mid=0이고 a[0]<target이면 다음 반복도 동일한 상태가 되어 무한 loop가 될 수 있다. `left=mid+1`처럼 progress가 보장되어야 한다."
+    "explanationMarkdown": "후보 구간 길이가 2이고 mid가 left와 같은 경우 `left=mid`는 경계를 전혀 이동시키지 않는다. 예를 들어 left=0,right=1 형태에서 mid=0이고 a[0]<target이면 다음 반복도 동일한 상태가 되어 무한 loop가 될 수 있다. `left=mid+1`처럼 progress가 보장되어야 한다. 이 시나리오에서는 입력과 operation 조건에 invariant와 복잡도를 적용해 선택 근거와 trade-off를 확인해야 한다."
   },
   {
     "kind": "question",
@@ -253,6 +253,6 @@
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.complexity.invariant-correctness"],
     "modelAnswer": "Doubly linked list는 인접 node에 대해 next/prev 관계가 서로 일치해야 한다. 한 방향만 수정하면 `next.prev`가 삭제된 X를 계속 가리켜 invariant가 깨진다. Forward traversal 하나는 우연히 성공해도 reverse traversal이나 다음 delete가 stale link를 따라가 실패할 수 있으므로 operation 종료 시 전체 link invariant를 복원해야 한다.",
-    "explanationMarkdown": "Doubly linked list는 인접 node에 대해 next/prev 관계가 서로 일치해야 한다. 한 방향만 수정하면 `next.prev`가 삭제된 X를 계속 가리켜 invariant가 깨진다. Forward traversal 하나는 우연히 성공해도 reverse traversal이나 다음 delete가 stale link를 따라가 실패할 수 있으므로 operation 종료 시 전체 link invariant를 복원해야 한다."
+    "explanationMarkdown": "Doubly linked list는 인접 node에 대해 next/prev 관계가 서로 일치해야 한다. 한 방향만 수정하면 `next.prev`가 삭제된 X를 계속 가리켜 invariant가 깨진다. Forward traversal 하나는 우연히 성공해도 reverse traversal이나 다음 delete가 stale link를 따라가 실패할 수 있으므로 operation 종료 시 전체 link invariant를 복원해야 한다. 이 시나리오에서는 입력과 operation 조건에 invariant와 복잡도를 적용해 선택 근거와 trade-off를 확인해야 한다."
   }
 ]

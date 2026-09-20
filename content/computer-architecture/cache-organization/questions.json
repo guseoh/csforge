@@ -53,7 +53,7 @@
       {"key": "D", "content": "tag 비교 없이 index만 같으면 항상 hit다.", "displayOrder": 3}
     ],
     "correctChoiceKey": "C",
-    "explanationMarkdown": "전체 line은 32KiB / 64B = 512개이고 4-way이므로 set은 512 / 4 = 128개다. 해당 set에는 두 way만 있으므로 같은 set을 사용하는 active block 세 개를 동시에 보관할 수 없다."
+    "explanationMarkdown": "4-way는 하나의 index가 고른 set 안에 네 개의 candidate line을 둔다는 뜻이다. 전체 line 수가 512개라면 set은 128개가 되며, 같은 set에 다섯 block 이상이 몰릴 때부터 replacement에 따른 conflict miss가 생길 수 있다."
   },
   {
     "kind": "question",
