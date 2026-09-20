@@ -335,6 +335,9 @@ class QuizIntegrationTest {
         assertEquals(1, wrongList.get("items").get(0).get("wrongCount").asInt());
         JsonNode detail = json(request("GET", "/api/wrong-notes/" + multipleChoiceId, null));
         assertEquals("B", detail.get("latestWrongAttempt").get("selectedChoiceKey").asText());
+        assertEquals("B", detail.get("latestWrongAttempt").get("selectedChoiceContentMarkdown").asText());
+        assertEquals("A", detail.get("answer").get("correctChoiceKey").asText());
+        assertEquals("A", detail.get("answer").get("correctChoiceContentMarkdown").asText());
         assertEquals(1, json(request("GET", "/api/wrong-notes/" + multipleChoiceId + "/attempts", null)).get("items").size());
 
         completeReviewCorrectly(1);

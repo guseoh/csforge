@@ -89,7 +89,7 @@ export function WrongNoteDetailPage() {
   const history = attemptsQuery.data?.pages.flatMap((page) => page.items) ?? []
   const hasAttemptHistoryData = attemptsQuery.data !== undefined
   const latestAttempt = item.latestWrongAttempt
-  const latestAnswer = latestAttempt?.answerText ?? latestAttempt?.selectedChoiceKey ?? '답변하지 않음'
+  const latestAnswer = latestAttempt?.answerText ?? '답변하지 않음'
   const isMultipleChoice = item.question.questionType === 'MULTIPLE_CHOICE'
   const isShortAnswer = item.question.questionType === 'SHORT_ANSWER'
   const hasAcceptedAnswers = item.answer.acceptedAnswers.length > 0
@@ -134,13 +134,29 @@ export function WrongNoteDetailPage() {
         <div className="wrong-note-answer-comparison">
           <article className="wrong-note-answer-panel wrong-note-answer-user">
             <span className="wrong-note-answer-label">내 답</span>
-            <p className="wrong-note-answer-value">{latestAnswer}</p>
+            {isMultipleChoice && latestAttempt?.selectedChoiceKey && (
+              <>
+                <strong className="wrong-note-answer-choice-key">선택지 {latestAttempt.selectedChoiceKey}</strong>
+                {latestAttempt.selectedChoiceContentMarkdown
+                  ? <MarkdownContent className="wrong-note-answer-value">{latestAttempt.selectedChoiceContentMarkdown}</MarkdownContent>
+                  : <p className="wrong-note-answer-value">선택지 내용을 불러오지 못했습니다.</p>}
+              </>
+            )}
+            {isMultipleChoice && !latestAttempt?.selectedChoiceKey && <p className="wrong-note-answer-value">답변하지 않음</p>}
+            {!isMultipleChoice && <p className="wrong-note-answer-value">{latestAnswer}</p>}
             <small>{latestAttempt ? `${sourceLabel(latestAttempt.source)} · ${latestAttempt.answeredAt ? new Date(latestAttempt.answeredAt).toLocaleString('ko-KR') : '답변 시간 없음'}` : '최근 오답 기록이 없습니다.'}</small>
           </article>
 
           <article className="wrong-note-answer-panel wrong-note-answer-correct">
             <span className="wrong-note-answer-label">{isMultipleChoice || isShortAnswer ? '정답' : '모범 답안'}</span>
-            {isMultipleChoice && item.answer.correctChoiceKey && <p className="wrong-note-answer-value">정답 선택지 {item.answer.correctChoiceKey}</p>}
+            {isMultipleChoice && item.answer.correctChoiceKey && (
+              <>
+                <strong className="wrong-note-answer-choice-key">선택지 {item.answer.correctChoiceKey}</strong>
+                {item.answer.correctChoiceContentMarkdown
+                  ? <MarkdownContent className="wrong-note-answer-value">{item.answer.correctChoiceContentMarkdown}</MarkdownContent>
+                  : <p className="wrong-note-answer-value">선택지 내용을 불러오지 못했습니다.</p>}
+              </>
+            )}
             {isShortAnswer && hasAcceptedAnswers && <p className="wrong-note-answer-value">{item.answer.acceptedAnswers.join(', ')}</p>}
             {!isMultipleChoice && !isShortAnswer && hasModelAnswer && <MarkdownContent className="wrong-note-model-answer">{item.answer.modelAnswer!}</MarkdownContent>}
             {(isMultipleChoice || isShortAnswer) && hasModelAnswer && <MarkdownContent className="wrong-note-model-answer wrong-note-model-answer-secondary">{item.answer.modelAnswer!}</MarkdownContent>}

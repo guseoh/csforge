@@ -38,6 +38,7 @@ export interface WrongNoteDetail {
     quizId: number
     source: string
     selectedChoiceKey: string | null
+    selectedChoiceContentMarkdown: string | null
     answerText: string | null
     gradingStatus: AttemptGradingStatus
     correct: boolean | null
@@ -45,7 +46,12 @@ export interface WrongNoteDetail {
     answeredAt: string | null
     gradedAt: string | null
   } | null
-  answer: { correctChoiceKey: string | null; acceptedAnswers: string[]; modelAnswer: string | null }
+  answer: {
+    correctChoiceKey: string | null
+    correctChoiceContentMarkdown: string | null
+    acceptedAnswers: string[]
+    modelAnswer: string | null
+  }
   state: {
     status: WrongNoteStatus
     wrongCount: number

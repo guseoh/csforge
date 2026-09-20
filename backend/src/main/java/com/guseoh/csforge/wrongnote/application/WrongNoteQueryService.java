@@ -110,9 +110,18 @@ public class WrongNoteQueryService {
 
     private WrongNoteLatestAttemptView toLatestAttempt(Attempt attempt) {
         if (attempt == null) return null;
-        return new WrongNoteLatestAttemptView(attempt.getId(), attempt.getQuizSession().getId(), attempt.getQuizSession().getSource().name(),
-                attempt.getSelectedChoice() == null ? null : attempt.getSelectedChoice().getChoiceKey(), attempt.getAnswerText(), attempt.getGradingStatus(), attempt.getCorrect(),
-                attempt.isReviewNeeded(), attempt.getAnsweredAt(), attempt.getGradedAt());
+        return new WrongNoteLatestAttemptView(
+                attempt.getId(),
+                attempt.getQuizSession().getId(),
+                attempt.getQuizSession().getSource().name(),
+                attempt.getSelectedChoice() == null ? null : attempt.getSelectedChoice().getChoiceKey(),
+                attempt.getSelectedChoice() == null ? null : attempt.getSelectedChoice().getContentMarkdown(),
+                attempt.getAnswerText(),
+                attempt.getGradingStatus(),
+                attempt.getCorrect(),
+                attempt.isReviewNeeded(),
+                attempt.getAnsweredAt(),
+                attempt.getGradedAt());
     }
 
     private WrongNoteAttemptView toAttempt(Attempt attempt) {
@@ -122,11 +131,26 @@ public class WrongNoteQueryService {
     }
 
     private WrongNoteAnswerView toAnswer(List<QuestionAnswer> answers) {
-        String choice = answers.stream().filter(item -> item.getAnswerKind() == QuestionAnswerKind.CORRECT_CHOICE)
-                .map(QuestionAnswer::getChoice).filter(java.util.Objects::nonNull).map(item -> item.getChoiceKey()).findFirst().orElse(null);
-        List<String> accepted = answers.stream().filter(item -> item.getAnswerKind() == QuestionAnswerKind.ACCEPTED_TEXT).map(QuestionAnswer::getAnswerText).toList();
-        String model = answers.stream().filter(item -> item.getAnswerKind() == QuestionAnswerKind.MODEL_ANSWER).map(QuestionAnswer::getAnswerText).findFirst().orElse(null);
-        return new WrongNoteAnswerView(choice, accepted, model);
+        var correctChoice = answers.stream()
+                .filter(item -> item.getAnswerKind() == QuestionAnswerKind.CORRECT_CHOICE)
+                .map(QuestionAnswer::getChoice)
+                .filter(java.util.Objects::nonNull)
+                .findFirst()
+                .orElse(null);
+        List<String> accepted = answers.stream()
+                .filter(item -> item.getAnswerKind() == QuestionAnswerKind.ACCEPTED_TEXT)
+                .map(QuestionAnswer::getAnswerText)
+                .toList();
+        String model = answers.stream()
+                .filter(item -> item.getAnswerKind() == QuestionAnswerKind.MODEL_ANSWER)
+                .map(QuestionAnswer::getAnswerText)
+                .findFirst()
+                .orElse(null);
+        return new WrongNoteAnswerView(
+                correctChoice == null ? null : correctChoice.getChoiceKey(),
+                correctChoice == null ? null : correctChoice.getContentMarkdown(),
+                accepted,
+                model);
     }
 
     private Map<Long, List<QuestionConcept>> groupedConcepts(List<Long> ids) {

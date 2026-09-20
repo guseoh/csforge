@@ -12,6 +12,7 @@ public record WrongNoteLatestAttemptView(
         Long quizId,
         String source,
         String selectedChoiceKey,
+        String selectedChoiceContentMarkdown,
         String answerText,
         AttemptGradingStatus gradingStatus,
         Boolean correct,

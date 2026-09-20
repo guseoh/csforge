@@ -28,8 +28,23 @@ public class WrongNoteApiMapper {
         return new WrongNoteDetailResponse(
                 new WrongNoteQuestionResponse(view.question().id(), view.question().promptMarkdown(), view.question().questionType(), view.question().difficulty(), view.question().explanationMarkdown()),
                 view.concepts().stream().map(item -> new WrongNoteConceptResponse(item.id(), item.slug(), item.title(), item.areaSlug(), item.areaName(), item.level())).toList(),
-                view.latestWrongAttempt() == null ? null : new WrongNoteLatestAttemptResponse(view.latestWrongAttempt().attemptId(), view.latestWrongAttempt().quizId(), view.latestWrongAttempt().source(), view.latestWrongAttempt().selectedChoiceKey(), view.latestWrongAttempt().answerText(), view.latestWrongAttempt().gradingStatus(), view.latestWrongAttempt().correct(), view.latestWrongAttempt().reviewNeeded(), view.latestWrongAttempt().answeredAt(), view.latestWrongAttempt().gradedAt()),
-                new WrongNoteAnswerResponse(view.answer().correctChoiceKey(), view.answer().acceptedAnswers(), view.answer().modelAnswer()),
+                view.latestWrongAttempt() == null ? null : new WrongNoteLatestAttemptResponse(
+                        view.latestWrongAttempt().attemptId(),
+                        view.latestWrongAttempt().quizId(),
+                        view.latestWrongAttempt().source(),
+                        view.latestWrongAttempt().selectedChoiceKey(),
+                        view.latestWrongAttempt().selectedChoiceContentMarkdown(),
+                        view.latestWrongAttempt().answerText(),
+                        view.latestWrongAttempt().gradingStatus(),
+                        view.latestWrongAttempt().correct(),
+                        view.latestWrongAttempt().reviewNeeded(),
+                        view.latestWrongAttempt().answeredAt(),
+                        view.latestWrongAttempt().gradedAt()),
+                new WrongNoteAnswerResponse(
+                        view.answer().correctChoiceKey(),
+                        view.answer().correctChoiceContentMarkdown(),
+                        view.answer().acceptedAnswers(),
+                        view.answer().modelAnswer()),
                 new WrongNoteStateResponse(view.state().status(), view.state().wrongCount(), view.state().firstWrongAt(), view.state().lastWrongAt(), view.state().causeNote(), view.state().reviewStatus(), view.state().reviewStage(), view.state().dueAt()));
     }
 
