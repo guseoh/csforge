@@ -5,5 +5,9 @@ import java.util.List;
 /**
  * 오답 상세에서 공개할 정답 정보 모델이다.
  */
-public record WrongNoteAnswerView(String correctChoiceKey, List<String> acceptedAnswers, String modelAnswer) {
+public record WrongNoteAnswerView(
+        String correctChoiceKey,
+        String correctChoiceContentMarkdown,
+        List<String> acceptedAnswers,
+        String modelAnswer) {
 }
