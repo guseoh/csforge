@@ -2,19 +2,19 @@
   {
     "kind": "question",
     "contentKey": "backend.core.bulk-batch.file-api.q1",
-    "promptMarkdown": "사용자가 보낸 multipart 파일의 원래 filename을 서버 저장 경로에 그대로 사용하는 설계가 위험한 가장 직접적인 이유는?",
+    "promptMarkdown": "사용자가 보낸 multipart의 원래 filename을 검증 없이 서버 저장 경로에 결합하는 설계의 가장 직접적인 보안 위험은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
     "conceptKeys": ["backend.core.bulk-batch.file-api"],
     "choices": [
-      {"key":"A","content":"브라우저가 multipart를 지원하지 않기 때문이다.","displayOrder":0},
-      {"key":"B","content":"사용자 입력이 서버 파일시스템 경계를 결정해 path traversal이나 충돌을 만들 수 있기 때문이다.","displayOrder":1},
-      {"key":"C","content":"파일 이름은 HTTP에서 항상 암호화되기 때문이다.","displayOrder":2},
-      {"key":"D","content":"filename을 사용하면 파일 크기를 알 수 없기 때문이다.","displayOrder":3}
+      {"key":"A","content":"Content-Type header만 신뢰하면 실제 파일 형식과 다른 payload를 허용할 수 있기 때문이다.","displayOrder":0},
+      {"key":"B","content":"업로드 크기 제한이 없으면 큰 파일로 storage나 memory를 압박할 수 있기 때문이다.","displayOrder":1},
+      {"key":"C","content":"`../`나 path separator가 포함된 이름으로 의도한 upload root 밖의 경로를 선택할 수 있기 때문이다.","displayOrder":2},
+      {"key":"D","content":"동일한 filename 정책이 없으면 기존 파일과 이름 충돌이 생길 수 있기 때문이다.","displayOrder":3}
     ],
-    "correctChoiceKey":"B",
-    "explanationMarkdown":"filename은 untrusted metadata이므로 `../`나 절대 경로가 server storage 위치를 결정하게 두면 path traversal·충돌·덮어쓰기가 생길 수 있다. 서버가 생성한 opaque ID와 별도 metadata를 사용하고 content type·크기·접근 권한도 독립적으로 검증해야 한다."
+    "correctChoiceKey":"C",
+    "explanationMarkdown":"원래 filename은 client가 제공하는 입력이므로 저장 경로를 직접 결정하게 해서는 안 된다. 특히 `../`나 separator를 그대로 결합하면 upload root 밖으로 벗어나는 path traversal이 가능해진다. 서버가 안전한 storage key를 생성하고 원래 이름은 metadata로 분리하는 편이 안전하다."
   },
   {
     "kind":"question",
@@ -25,12 +25,12 @@
     "status":"PUBLISHED",
     "conceptKeys":["backend.core.bulk-batch.bulk-processing"],
     "choices":[
-      {"key":"A","content":"managed entity가 persistence context에 계속 쌓이는지와 flush/clear 경계를 확인한다.","displayOrder":0},
-      {"key":"B","content":"모든 entity를 EAGER로 바꾼다.","displayOrder":1},
-      {"key":"C","content":"transaction을 무조건 50만 건 전체로 늘린다.","displayOrder":2},
-      {"key":"D","content":"DB index를 모두 제거한다.","displayOrder":3}
+      {"key":"A","content":"JDBC batch가 비활성화되어 INSERT round trip 수가 많아지는지 먼저 확인한다.","displayOrder":0},
+      {"key":"B","content":"managed entity가 persistence context에 계속 쌓이는지와 flush/clear 경계를 확인한다.","displayOrder":1},
+      {"key":"C","content":"DB index 유지 비용 때문에 각 flush 시간이 길어지는지 먼저 확인한다.","displayOrder":2},
+      {"key":"D","content":"connection pool acquisition 대기로 writer thread가 쌓이는지 먼저 확인한다.","displayOrder":3}
     ],
-    "correctChoiceKey":"A",
+    "correctChoiceKey":"B",
     "explanationMarkdown":"반복 `save()`가 만든 managed entity가 한 transaction의 persistence context에 쌓이면 DB flush 전 메모리와 dirty-check 비용이 증가한다. batch 크기별 flush/clear와 JDBC batching을 측정해야 하며 EAGER 전환이나 index 제거는 원인과 무관한 처방이다."
   },
   {

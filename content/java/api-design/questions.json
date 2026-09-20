@@ -23,5 +23,44 @@
   {"kind":"question","contentKey":"java.core.api-design.method-contract-parameter-validation.q3","promptMarkdown":"기간 객체에서 start > end가 허용되지 않는다. 여러 호출자가 생성자와 factory를 모두 사용한다면 이 규칙을 어디에서 보호하는 것이 적절한가?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.api-design.method-contract-parameter-validation"],"choices":[{"key":"A","content":"현재 사용하는 호출자 한 곳에서만 검사한다","displayOrder":0},{"key":"B","content":"모든 정상 생성 경로가 거치는 객체 생성 경계에서 검사한다","displayOrder":1},{"key":"C","content":"start와 end가 각각 양수인지만 검사한다","displayOrder":2},{"key":"D","content":"첫 getter 호출 때만 검사해 생성 자체는 허용한다","displayOrder":3}],"correctChoiceKey":"B","explanationMarkdown":"인자 하나의 범위가 맞아도 둘의 조합은 잘못될 수 있다. 생성 경로마다 유효하지 않은 기간이 생기지 않도록 객체의 생성 경계가 불변식을 보호해야 한다."},
   {"kind":"question","contentKey":"java.core.api-design.method-contract-parameter-validation.q4","promptMarkdown":"닫힌 파일 모델의 read(int length)에서 length >= 0 검사만으로 충분하지 않은 이유는?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.api-design.method-contract-parameter-validation"],"choices":[{"key":"A","content":"인자 조건과 현재 객체가 읽기 가능한 상태인지는 별도 계약이기 때문이다","displayOrder":0},{"key":"B","content":"length가 int이면 음수는 전달될 수 없기 때문이다","displayOrder":1},{"key":"C","content":"null 검사를 추가하면 닫힌 상태도 자동으로 검증되기 때문이다","displayOrder":2},{"key":"D","content":"닫힌 상태를 검사하면 length 범위 검사는 필요 없기 때문이다","displayOrder":3}],"correctChoiceKey":"A","explanationMarkdown":"인자의 사전조건과 수신 객체의 상태 조건을 모두 만족해야 동작이 유효하다. 형식적으로 올바른 인자도 허용되지 않는 상태에서 전달될 수 있다."},
   {"kind":"question","contentKey":"java.core.api-design.method-contract-parameter-validation.q5","promptMarkdown":"불변 객체 생성 시 검증 실패가 가장 바람직한 시점은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["java.core.api-design.method-contract-parameter-validation"],"choices":[{"key":"A","content":"객체를 반환한 뒤 첫 비즈니스 메서드에서만","displayOrder":0},{"key":"B","content":"생성 경계에서 유효한 객체가 만들어지기 전","displayOrder":1},{"key":"C","content":"getter가 각자 같은 검사를 반복할 때","displayOrder":2},{"key":"D","content":"toString이 최초로 호출될 때","displayOrder":3}],"correctChoiceKey":"B","explanationMarkdown":"생성 시점에 실패하면 invalid instance가 시스템에 퍼지지 않는다. 이후 모든 메서드가 방어적으로 같은 검사를 반복할 필요도 줄어든다."},
-  {"kind":"question","contentKey":"java.core.api-design.method-contract-parameter-validation.q6","promptMarkdown":"`reserve`의 계약과 호출 상태는 다음과 같다.\n\n- 양수 수량만 받는다.\n- 재고 부족이면 예외를 던지고 기존 재고를 보존해야 한다.\n- 현재 `available=5`에서 `reserve(7)`을 호출한다.\n\n```java\nvoid reserve(int n) {\n  if (n <= 0) throw new IllegalArgumentException();\n  available -= n;\n  if (available < 0) throw new IllegalStateException();\n}\n```\n\n현재 구현의 문제와 올바른 수정은?","questionType":"MULTIPLE_CHOICE","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["java.core.api-design.method-contract-parameter-validation"],"choices":[{"key":"A","content":"예외가 나면 Java가 대입을 자동 취소하므로 5가 유지된다","displayOrder":0},{"key":"B","content":"available을 0으로 보정하면 실패 시 원래 상태 보존 계약을 만족한다","displayOrder":1},{"key":"C","content":"예외 뒤 available은 -2다. n > available을 변경 전에 검사하고 성공할 때만 차감한다","displayOrder":2},{"key":"D","content":"n의 양수 검사만 제거하면 재고 부족 실패도 안전해진다","displayOrder":3}],"correctChoiceKey":"C","explanationMarkdown":"예외는 앞선 필드 대입을 되돌리지 않는다. 양수 조건과 재고 조건을 모두 검증한 뒤 차감해야 실패 시 원래 상태를 보존한다. 이 문제는 순수 Java 메서드의 사전조건과 실패 계약을 묻는다."}
+  {"kind":"question","contentKey":"java.core.api-design.method-contract-parameter-validation.q6","promptMarkdown":"`reserve`의 계약과 호출 상태는 다음과 같다.\n\n- 양수 수량만 받는다.\n- 재고 부족이면 예외를 던지고 기존 재고를 보존해야 한다.\n- 현재 `available=5`에서 `reserve(7)`을 호출한다.\n\n```java\nvoid reserve(int n) {\n  if (n <= 0) throw new IllegalArgumentException();\n  available -= n;\n  if (available < 0) throw new IllegalStateException();\n}\n```\n\n현재 구현의 문제와 올바른 수정은?","questionType":"MULTIPLE_CHOICE","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["java.core.api-design.method-contract-parameter-validation"],"choices":[{"key":"A","content":"예외가 나면 Java가 대입을 자동 취소하므로 5가 유지된다","displayOrder":0},{"key":"B","content":"available을 0으로 보정하면 실패 시 원래 상태 보존 계약을 만족한다","displayOrder":1},{"key":"C","content":"예외 뒤 available은 -2다. n > available을 변경 전에 검사하고 성공할 때만 차감한다","displayOrder":2},{"key":"D","content":"n의 양수 검사만 제거하면 재고 부족 실패도 안전해진다","displayOrder":3}],"correctChoiceKey":"C","explanationMarkdown":"예외는 앞선 필드 대입을 되돌리지 않는다. 양수 조건과 재고 조건을 모두 검증한 뒤 차감해야 실패 시 원래 상태를 보존한다. 이 문제는 순수 Java 메서드의 사전조건과 실패 계약을 묻는다."},
+{
+  "kind": "question",
+  "contentKey": "java.core.api-design.static-factory-method.q7",
+  "promptMarkdown": "`Money` 생성 API가 통화별 scale 검증을 수행하고, 자주 쓰는 통화별 zero 값을 재사용하며, 호출자에게는 구체 구현 타입을 숨기고 싶다. 생성자보다 static factory가 이 요구를 표현하기 좋은 이유를 설명하라. Static factory를 쓴다고 자동으로 보장되지 않는 것도 함께 설명하라.",
+  "questionType": "DESCRIPTIVE",
+  "difficulty": "MEDIUM",
+  "status": "PUBLISHED",
+  "conceptKeys": [
+    "java.core.api-design.static-factory-method"
+  ],
+  "modelAnswer": "Static factory는 `Money.of(...)`, `Money.zero(currency)`처럼 생성 의도를 이름에 담고, 입력에 따라 기존 인스턴스를 재사용하거나 선언한 반환 타입의 하위 구현을 선택할 수 있다. 생성 경로를 한곳에 모아 통화별 scale 검증도 수행할 수 있다. 하지만 factory라는 형태만으로 객체가 불변이 되거나 항상 캐시되거나 thread-safe해지는 것은 아니며, 그런 성질은 실제 구현과 문서 계약으로 정해야 한다.",
+  "explanationMarkdown": "Constructor는 새 인스턴스 초기화라는 언어적 경로이고 static factory는 그 위에 이름, 반환 구현 선택, 인스턴스 재사용 같은 생성 정책을 표현할 수 있다. 장점은 유연한 생성 계약이지 특정 품질 속성을 자동 부여하는 마법이 아니다."
+},
+{
+  "kind": "question",
+  "contentKey": "java.core.api-design.dependency-injection-construction.q6",
+  "promptMarkdown": "`ReportService`는 constructor로 `ReportRepository`를 주입받지만, 메서드 안에서 매번 `new ExternalMailer()`를 만들어 메일을 전송한다. 이 설계에서 dependency가 여전히 숨겨져 있다고 볼 수 있는 이유와 생성자 주입으로 바꿨을 때 테스트·설정·lifecycle 측면에서 달라지는 점을 설명하라.",
+  "questionType": "SCENARIO",
+  "difficulty": "MEDIUM",
+  "status": "PUBLISHED",
+  "conceptKeys": [
+    "java.core.api-design.dependency-injection-construction"
+  ],
+  "modelAnswer": "ReportService의 동작이 ExternalMailer에 의존하지만 생성자 계약에는 드러나지 않아 호출자는 객체가 어떤 협력자를 필요로 하는지 알기 어렵고 테스트에서 대체 구현을 넣기도 어렵다. `Mailer` 같은 필요한 역할을 생성 시 주입하면 필수 collaborator가 명시되고 fake를 넣어 외부 네트워크 없이 서비스 로직을 검증할 수 있다. 또한 mailer의 connection/client 재사용, 설정, 종료 책임 같은 lifecycle을 서비스가 임의로 생성하는 것과 분리할 수 있다.",
+  "explanationMarkdown": "Dependency injection의 핵심은 framework 사용이 아니라 객체가 필요한 협력자를 외부에서 받아 의존성을 명시하는 데 있다. 메서드 내부의 `new`가 모두 나쁜 것은 아니지만 외부 시스템·시간·저장소처럼 정책과 lifecycle을 가진 collaborator를 숨기면 테스트와 구성의 경계가 흐려진다."
+},
+{
+  "kind": "question",
+  "contentKey": "java.core.api-design.method-contract-parameter-validation.q7",
+  "promptMarkdown": "`transfer(Account from, Account to, Money amount)`에서 `from`, `to`, `amount` 각각은 null이 아니고 amount도 양수다. 하지만 `from == to`인 이체는 허용하지 않는다. 이런 cross-parameter 규칙을 호출자마다 따로 검사하는 것보다 transfer 경계에서 검증해야 하는 이유와 실패 시점의 장점을 설명하라.",
+  "questionType": "DESCRIPTIVE",
+  "difficulty": "MEDIUM",
+  "status": "PUBLISHED",
+  "conceptKeys": [
+    "java.core.api-design.method-contract-parameter-validation"
+  ],
+  "modelAnswer": "각 인자 자체가 유효해도 인자 사이의 조합이 메서드 계약을 위반할 수 있다. Transfer operation을 소유한 경계에서 `from != to`를 검증하면 모든 호출 경로가 같은 invariant를 적용하고, 잘못된 입력이 내부 처리나 외부 side effect까지 진행되기 전에 즉시 실패한다. 호출자마다 검사하면 한 경로에서 누락될 수 있고 규칙 변경도 여러 곳에 퍼진다.",
+  "explanationMarkdown": "Parameter validation은 null이나 범위 검사만 뜻하지 않는다. 여러 인자의 관계, 현재 상태와의 조합처럼 operation 전체가 만족해야 하는 precondition도 호출을 책임지는 경계가 소유해야 한다. 이렇게 해야 실패 원인이 사용 지점 가까이 드러나고 잘못된 상태 전파를 줄일 수 있다."
+}
 ]

@@ -36,7 +36,7 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.performance.latency-throughput"],
     "modelAnswer": "큰 batch는 fixed overhead를 더 많은 item에 나눠 aggregate 처리량을 높일 수 있지만 batch가 채워질 때까지 기다리는 시간과 queue wait를 늘릴 수 있다. 따라서 interactive workload라면 items/sec만 보지 말고 p95/p99 지연 시간, arrival rate, queue depth와 SLA를 함께 보고 적절한 batch size를 선택해야 한다.",
-    "explanationMarkdown": "큰 batch는 fixed overhead를 더 많은 item에 나눠 aggregate 처리량을 높일 수 있지만 batch가 채워질 때까지 기다리는 시간과 queue wait를 늘릴 수 있다. 따라서 interactive workload라면 items/sec만 보지 말고 p95/p99 지연 시간, arrival rate, queue depth와 SLA를 함께 보고 적절한 batch size를 선택해야 한다."
+    "explanationMarkdown": "Batch를 키우면 fixed overhead를 더 많은 item에 나눠 throughput은 높일 수 있지만 요청이 batch를 기다리는 queueing delay는 커질 수 있다. Interactive workload에서는 items/sec와 함께 p95/p99·queue depth·SLA를 봐야 한다."
   },
   {
     "kind": "question",
@@ -47,12 +47,12 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.performance.cpu-time"],
     "choices": [
-      {"key": "A", "content": "약 480 ms", "displayOrder": 0},
+      {"key": "A", "content": "40 ms", "displayOrder": 0},
       {"key": "B", "content": "250 ms", "displayOrder": 1},
-      {"key": "C", "content": "40 ms", "displayOrder": 2},
+      {"key": "C", "content": "약 480 ms", "displayOrder": 2},
       {"key": "D", "content": "20 ms", "displayOrder": 3}
     ],
-    "correctChoiceKey": "A",
+    "correctChoiceKey": "C",
     "explanationMarkdown": "원래 500 ms 중 CPU 40 ms를 제외한 460 ms는 그대로다. CPU가 20 ms로 줄면 새 elapsed time은 `460+20=480 ms`다."
   },
   {
@@ -64,7 +64,7 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.performance.cpu-time"],
     "modelAnswer": "Wall-clock은 대기까지 포함한 실제 경과시간이고 process CPU time은 해당 process/thread가 CPU에서 실행된 시간을 누적한다. Machine CPU utilization은 일정 시간 동안 여러 core의 전체 busy 비율을 나타내므로 한 요청이나 process가 CPU에서 보낸 시간과 동일하지 않다.",
-    "explanationMarkdown": "Wall-clock은 대기까지 포함한 실제 경과시간이고 process CPU time은 해당 process/thread가 CPU에서 실행된 시간을 누적한다. Machine CPU utilization은 일정 시간 동안 여러 core의 전체 busy 비율을 나타내므로 한 요청이나 process가 CPU에서 보낸 시간과 동일하지 않다."
+    "explanationMarkdown": "Wall-clock은 사용자가 기다린 실제 시간, process CPU time은 CPU에서 실행된 누적 시간, machine utilization은 여러 core 전체의 busy 비율이다. 같은 '시간/CPU' 지표라도 측정 대상과 분모가 달라 서로 대체할 수 없다."
   },
   {
     "kind": "question",
@@ -75,7 +75,7 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.performance.cpu-time"],
     "modelAnswer": "Aggregate CPU utilization 25%는 특정 core/hot thread가 포화되었는지나 요청이 scheduler에서 기다렸는지를 보여 주지 않는다. Per-요청 on-CPU time, runnable/scheduler wait, blocked I/O, DB/network downstream span과 core-level utilization을 함께 확인해 elapsed time의 소유자를 분해해야 한다.",
-    "explanationMarkdown": "Aggregate CPU utilization 25%는 특정 core/hot thread가 포화되었는지나 요청이 scheduler에서 기다렸는지를 보여 주지 않는다. Per-요청 on-CPU time, runnable/scheduler wait, blocked I/O, DB/network downstream span과 core-level utilization을 함께 확인해 elapsed time의 소유자를 분해해야 한다."
+    "explanationMarkdown": "전체 CPU 25%만으로는 특정 core나 hot thread 포화를 배제할 수 없고, 요청이 대부분 I/O나 scheduler에서 기다릴 수도 있다. 요청별 on-CPU·runnable wait·blocked time과 downstream span을 분해해야 p99의 소유자를 찾을 수 있다."
   },
   {
     "kind": "question",
@@ -86,12 +86,12 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.performance.instruction-count-cpi-clock"],
     "choices": [
-      {"key": "A", "content": "1,500 cycles", "displayOrder": 0},
-      {"key": "B", "content": "667 cycles", "displayOrder": 1},
+      {"key": "A", "content": "667 cycles", "displayOrder": 0},
+      {"key": "B", "content": "1,500 cycles", "displayOrder": 1},
       {"key": "C", "content": "1.5 cycles", "displayOrder": 2},
       {"key": "D", "content": "1,000 / clock rate와 무관하게 항상 1,000 cycles", "displayOrder": 3}
     ],
-    "correctChoiceKey": "A",
+    "correctChoiceKey": "B",
     "explanationMarkdown": "총 cycle은 instruction count와 평균 CPI의 곱이다. `1,000×1.5=1,500 cycles`다."
   },
   {
@@ -114,7 +114,7 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.performance.instruction-count-cpi-clock"],
     "modelAnswer": "전에는 10억 cycles, 후에는 7억×1.6=11.2억 cycles가 필요하다. Clock rate가 같으므로 최적화 후가 약 12% 더 많은 CPU time을 쓴다. Instruction 수가 줄어도 cache miss, dependency, branch 등으로 평균 CPI가 커지면 전체 cycles와 CPU time은 악화될 수 있으므로 세 항을 함께 비교해야 한다.",
-    "explanationMarkdown": "전에는 10억 cycles, 후에는 7억×1.6=11.2억 cycles가 필요하다. Clock rate가 같으므로 최적화 후가 약 12% 더 많은 CPU time을 쓴다. Instruction 수가 줄어도 cache miss, dependency, branch 등으로 평균 CPI가 커지면 전체 cycles와 CPU time은 악화될 수 있으므로 세 항을 함께 비교해야 한다."
+    "explanationMarkdown": "Instruction 수가 30% 줄어도 CPI가 1.0에서 1.6으로 늘면 total cycles는 오히려 10억에서 11.2억으로 증가한다. CPU time은 instruction count 하나가 아니라 instruction count·CPI·clock을 함께 봐야 한다."
   },
   {
     "kind": "question",
@@ -125,12 +125,12 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.performance.amdahl-law"],
     "choices": [
-      {"key": "A", "content": "약 1.33배", "displayOrder": 0},
+      {"key": "A", "content": "변화 없음", "displayOrder": 0},
       {"key": "B", "content": "2배", "displayOrder": 1},
       {"key": "C", "content": "4배", "displayOrder": 2},
-      {"key": "D", "content": "변화 없음", "displayOrder": 3}
+      {"key": "D", "content": "약 1.33배", "displayOrder": 3}
     ],
-    "correctChoiceKey": "A",
+    "correctChoiceKey": "D",
     "explanationMarkdown": "개선 전 시간을 1로 두면 절반은 0.5로 유지되고 개선 부분은 `0.5/2=0.25`가 된다. 새 시간 0.75의 역수이므로 전체 speedup은 약 1.33배다."
   },
   {
@@ -153,7 +153,7 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.performance.amdahl-law"],
     "modelAnswer": "새 normalized time은 0.9 + 0.1/5 = 0.92이므로 전체 speedup은 약 1/0.92 = 1.087배, 즉 약 8.7% 수준이다. Serialization 자체의 큰 speedup이 전체를 크게 바꾸지 못하는 이유는 90%가 그대로이기 때문이다. 개선 후 다시 end-to-end trace를 측정하고 여전히 가장 큰 시간을 차지하는 DB wait의 실제 원인을 우선 검토한다.",
-    "explanationMarkdown": "새 normalized time은 0.9 + 0.1/5 = 0.92이므로 전체 speedup은 약 1/0.92 = 1.087배, 즉 약 8.7% 수준이다. Serialization 자체의 큰 speedup이 전체를 크게 바꾸지 못하는 이유는 90%가 그대로이기 때문이다. 개선 후 다시 end-to-end trace를 측정하고 여전히 가장 큰 시간을 차지하는 DB wait의 실제 원인을 우선 검토한다."
+    "explanationMarkdown": "전체의 10%인 부분을 5배 개선해도 나머지 90%는 그대로라 normalized time은 0.92가 된다. Amdahl 관점에서는 약 8.7% 개선에 그치므로 다음 최적화는 다시 측정한 end-to-end 비중이 큰 영역을 찾아야 한다."
   },
   {
     "kind": "question",
@@ -164,12 +164,12 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.performance.cache-impact"],
     "choices": [
-      {"key": "A", "content": "4 ns", "displayOrder": 0},
-      {"key": "B", "content": "1.05 ns", "displayOrder": 1},
+      {"key": "A", "content": "1.05 ns", "displayOrder": 0},
+      {"key": "B", "content": "4 ns", "displayOrder": 1},
       {"key": "C", "content": "60 ns", "displayOrder": 2},
       {"key": "D", "content": "61 ns", "displayOrder": 3}
     ],
-    "correctChoiceKey": "A",
+    "correctChoiceKey": "B",
     "explanationMarkdown": "AMAT는 `hit time + miss rate×miss penalty`다. `1 + 0.05×60 = 4 ns`이므로 miss가 평균 3 ns를 추가한다."
   },
   {
@@ -181,7 +181,7 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.performance.cache-impact"],
     "modelAnswer": "동일한 load/store instruction이라도 cache miss가 나면 lower-level cache나 DRAM에서 data를 기다리는 stall 또는 지연 시간-hiding work가 필요해 더 많은 cycles가 소비될 수 있다. Architectural instruction 수는 같아도 total cycles와 average CPI가 커져 CPU time이 증가할 수 있다.",
-    "explanationMarkdown": "동일한 load/store instruction이라도 cache miss가 나면 lower-level cache나 DRAM에서 data를 기다리는 stall 또는 지연 시간-hiding work가 필요해 더 많은 cycles가 소비될 수 있다. Architectural instruction 수는 같아도 total cycles와 average CPI가 커져 CPU time이 증가할 수 있다."
+    "explanationMarkdown": "Cache miss는 architectural instruction 수를 늘리지 않아도 memory stall cycle을 늘릴 수 있다. 그래서 같은 instruction stream이라도 miss behavior가 달라지면 CPI와 total CPU time이 변한다."
   },
   {
     "kind": "question",
@@ -192,7 +192,7 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.performance.cache-impact"],
     "modelAnswer": "압축으로 working set/locality가 좋아져 miss는 줄었지만 encode/decode, index 계산 등 추가 instruction이 생겼을 수 있다. 성능은 instruction count×CPI×cycle time의 결과이므로 miss counter만이 아니라 instructions, cycles, CPI와 end-to-end CPU time을 함께 비교해야 한다.",
-    "explanationMarkdown": "압축으로 working set/locality가 좋아져 miss는 줄었지만 encode/decode, index 계산 등 추가 instruction이 생겼을 수 있다. 성능은 instruction count×CPI×cycle time의 결과이므로 miss counter만이 아니라 instructions, cycles, CPI와 end-to-end CPU time을 함께 비교해야 한다."
+    "explanationMarkdown": "Miss 감소는 한 성능 요소만 좋아졌다는 뜻이다. 압축·decode 때문에 instruction이 크게 늘었다면 `instruction count × CPI`의 총 cycle 비용이 더 커질 수 있으므로 miss counter와 전체 CPU time을 함께 평가해야 한다."
   },
   {
     "kind": "question",
@@ -203,12 +203,12 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.performance.pipeline-branch-impact"],
     "choices": [
-      {"key": "A", "content": "0.12", "displayOrder": 0},
+      {"key": "A", "content": "0.01", "displayOrder": 0},
       {"key": "B", "content": "1.2", "displayOrder": 1},
       {"key": "C", "content": "12", "displayOrder": 2},
-      {"key": "D", "content": "0.01", "displayOrder": 3}
+      {"key": "D", "content": "0.12", "displayOrder": 3}
     ],
-    "correctChoiceKey": "A",
+    "correctChoiceKey": "D",
     "explanationMarkdown": "Instruction당 misprediction 비율은 `0.20×0.05=0.01`이다. 여기에 12-cycle penalty를 곱하면 평균 CPI 증가는 `0.01×12=0.12`다."
   },
   {
@@ -220,7 +220,7 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.performance.pipeline-branch-impact"],
     "modelAnswer": "깊은 pipeline은 stage당 logic을 줄여 cycle time을 줄일 수 있지만 branch가 resolve될 때까지 더 많은 speculative work가 진행되어 misprediction recovery penalty와 CPI가 커질 수 있다. Frequency 이득보다 CPI 증가가 크면 total CPU time은 악화될 수 있다.",
-    "explanationMarkdown": "깊은 pipeline은 stage당 logic을 줄여 cycle time을 줄일 수 있지만 branch가 resolve될 때까지 더 많은 speculative work가 진행되어 misprediction recovery penalty와 CPI가 커질 수 있다. Frequency 이득보다 CPI 증가가 크면 total CPU time은 악화될 수 있다."
+    "explanationMarkdown": "더 깊은 pipeline은 clock을 빠르게 할 수 있지만 misprediction 때 폐기해야 하는 speculative work도 늘릴 수 있다. Frequency 이득보다 branch penalty로 인한 CPI 증가가 크면 오히려 느려질 수 있다."
   },
   {
     "kind": "question",
@@ -231,7 +231,7 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.performance.pipeline-branch-impact"],
     "modelAnswer": "기존 branch가 이미 거의 완벽히 예측되면 misprediction 비용이 매우 작을 수 있고, branchless version의 추가 load/cache miss와 instruction이 더 비쌀 수 있다. 실제 input distribution에서 branch instructions/misses, retired instructions, cache miss, cycles와 total CPU time을 측정하고 semantics도 동일한지 확인해야 한다.",
-    "explanationMarkdown": "기존 branch가 이미 거의 완벽히 예측되면 misprediction 비용이 매우 작을 수 있고, branchless version의 추가 load/cache miss와 instruction이 더 비쌀 수 있다. 실제 input distribution에서 branch instructions/misses, retired instructions, cache miss, cycles와 total CPU time을 측정하고 semantics도 동일한지 확인해야 한다."
+    "explanationMarkdown": "거의 항상 맞게 예측되는 branch는 이미 penalty가 작을 수 있다. Branchless 변환이 추가 load와 cache miss를 만들 수 있으므로 실제 input에서 branch miss, instructions, cache miss, cycles를 측정해 비교해야 한다."
   },
   {
     "kind": "question",
@@ -259,7 +259,7 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.performance.microbenchmark-boundary"],
     "modelAnswer": "JIT compilation 정도, branch/cache history, working set과 frequency/thermal state가 달라지면 같은 code라도 측정 시간이 달라진다. 환경과 workload 조건을 고정·기록해야 observed difference가 code change 때문인지 다른 상태 때문인지 구분할 수 있다.",
-    "explanationMarkdown": "JIT compilation 정도, branch/cache history, working set과 frequency/thermal state가 달라지면 같은 code라도 측정 시간이 달라진다. 환경과 workload 조건을 고정·기록해야 observed difference가 code change 때문인지 다른 상태 때문인지 구분할 수 있다."
+    "explanationMarkdown": "JIT warm-up, cache/branch history, CPU frequency와 input 분포가 다르면 code가 같아도 benchmark 결과가 달라진다. Before/after 비교에서는 이런 조건을 고정·기록해야 차이를 코드 변경에 귀속할 수 있다."
   },
   {
     "kind": "question",
@@ -270,6 +270,6 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.performance.microbenchmark-boundary"],
     "modelAnswer": "JMH는 parser operation 자체의 local cost를 측정하지만 production endpoint에는 DB, network, queue, allocation/GC 등 다른 시간이 포함된다. Parsing이 전체 지연 시간에서 작은 비율이면 Amdahl's Law에 따라 30% local speedup의 전체 효과는 작다. Production trace에서 parsing 비율과 allocation/GC 변화를 확인하고 representative end-to-end load test로 지연 시간과 처리량을 다시 검증해야 한다.",
-    "explanationMarkdown": "JMH는 parser operation 자체의 local cost를 측정하지만 production endpoint에는 DB, network, queue, allocation/GC 등 다른 시간이 포함된다. Parsing이 전체 지연 시간에서 작은 비율이면 Amdahl's Law에 따라 30% local speedup의 전체 효과는 작다. Production trace에서 parsing 비율과 allocation/GC 변화를 확인하고 representative end-to-end load test로 지연 시간과 처리량을 다시 검증해야 한다."
+    "explanationMarkdown": "Microbenchmark의 30% 개선이 endpoint 전체 30% 개선을 뜻하지 않는다. Parser가 전체 시간의 작은 일부라면 Amdahl 때문에 효과가 희석되므로 production trace에서 비중을 확인하고 end-to-end load test로 다시 검증해야 한다."
   }
 ]
