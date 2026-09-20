@@ -25,5 +25,57 @@
   {"kind":"question","contentKey":"java.core.object-contracts.comparator-custom-order.q3","promptMarkdown":"다음 숫자 comparator를 수정해야 하는 이유는?\n\n```java\n(a, b) -> a - b\n```","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.object-contracts.comparator-custom-order"],"choices":[{"key":"A","content":"두 수가 다르면 음수가 나올 수 없어 정렬 기준이 모호해지기 때문에","displayOrder":0},{"key":"B","content":"overflow가 비교 결과를 잘못된 부호로 만들 수 있어서","displayOrder":1},{"key":"C","content":"비교 결과는 반드시 -1 또는 1만 허용되기 때문에","displayOrder":2},{"key":"D","content":"Integer.compare도 내부 overflow를 그대로 반환하므로 해결할 수 없기 때문에","displayOrder":3}],"correctChoiceKey":"B","explanationMarkdown":"정수 뺄셈은 overflow할 수 있으므로 `Integer.compare(a, b)` 같은 비교 메서드를 사용해야 한다."},
   {"kind":"question","contentKey":"java.core.object-contracts.comparator-custom-order.q4","promptMarkdown":"null인 title을 마지막으로 보내는 Comparator 조합으로 적절한 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.object-contracts.comparator-custom-order"],"choices":[{"key":"A","content":"Comparator.reverseOrder(null)","displayOrder":0},{"key":"B","content":"Comparator.nullsLast(Comparator.naturalOrder())","displayOrder":1},{"key":"C","content":"Objects.requireNonNull만 호출한다","displayOrder":2},{"key":"D","content":"null을 빈 문자열로 무조건 바꾼다","displayOrder":3}],"correctChoiceKey":"B","explanationMarkdown":"nullsLast는 내부 comparator 기준으로 non-null을 정렬한 뒤 null을 마지막에 둔다. null을 어떤 의미로 볼지는 별도 계약이다."},
   {"kind":"question","contentKey":"java.core.object-contracts.comparator-custom-order.q5","promptMarkdown":"`Task` 정렬 요구는 다음과 같다.\n\n1. `priority` 내림차순\n2. 동률이면 `id` 오름차순\n3. 서로 다른 `id`는 `TreeSet`에 모두 보존\n\n현재 comparator는 `comparingInt(Task::priority).thenComparingInt(Task::id).reversed()`다. `priority=5`, `id=1,2`인 두 Task를 넣었을 때 원하는 계약과 수정은?","questionType":"MULTIPLE_CHOICE","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["java.core.object-contracts.comparator-custom-order"],"choices":[{"key":"A","content":"현재 동률 id는 오름차순이므로 수정할 필요가 없다","displayOrder":0},{"key":"B","content":"id tie-breaker를 제거하면 두 Task가 모두 남고 동률 순서도 보장된다","displayOrder":1},{"key":"C","content":"현재 동률 id도 내림차순이다. comparingInt(Task::priority).reversed().thenComparingInt(Task::id)로 바꾼다","displayOrder":2},{"key":"D","content":"TreeSet은 equals만으로 순서를 정하므로 Comparator를 바꿔도 차이가 없다","displayOrder":3}],"correctChoiceKey":"C","explanationMarkdown":"마지막 reversed는 조합 전체를 뒤집어 동률 id 순서까지 뒤집는다. priority 단계만 뒤집은 뒤 id를 추가해야 한다. id 비교를 제거하면 priority가 같은 서로 다른 Task도 비교 결과 0이어서 합쳐진다."},
-  {"kind":"question","contentKey":"java.core.object-contracts.comparator-custom-order.q6","promptMarkdown":"Comparator와 Comparable을 함께 사용할 때 옳은 설명은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["java.core.object-contracts.comparator-custom-order"],"choices":[{"key":"A","content":"명시한 Comparator가 있으면 해당 정렬 작업에서 natural order 대신 사용된다","displayOrder":0},{"key":"B","content":"Comparator는 natural order가 0일 때만 보조 기준으로 쓰인다","displayOrder":1},{"key":"C","content":"natural order가 있으면 명시한 Comparator도 반드시 같은 결과여야 한다","displayOrder":2},{"key":"D","content":"Comparator와 natural order가 다르면 정렬 API가 자동으로 예외를 던진다","displayOrder":3}],"correctChoiceKey":"A","explanationMarkdown":"정렬 API에 Comparator를 전달하면 그 작업의 비교 정책을 명시할 수 있다. 타입의 기본 순서와 특정 화면/업무 순서를 분리하는 방법이다."}
+  {"kind":"question","contentKey":"java.core.object-contracts.comparator-custom-order.q6","promptMarkdown":"Comparator와 Comparable을 함께 사용할 때 옳은 설명은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["java.core.object-contracts.comparator-custom-order"],"choices":[{"key":"A","content":"명시한 Comparator가 있으면 해당 정렬 작업에서 natural order 대신 사용된다","displayOrder":0},{"key":"B","content":"Comparator는 natural order가 0일 때만 보조 기준으로 쓰인다","displayOrder":1},{"key":"C","content":"natural order가 있으면 명시한 Comparator도 반드시 같은 결과여야 한다","displayOrder":2},{"key":"D","content":"Comparator와 natural order가 다르면 정렬 API가 자동으로 예외를 던진다","displayOrder":3}],"correctChoiceKey":"A","explanationMarkdown":"정렬 API에 Comparator를 전달하면 그 작업의 비교 정책을 명시할 수 있다. 타입의 기본 순서와 특정 화면/업무 순서를 분리하는 방법이다."},
+{
+  "kind": "question",
+  "contentKey": "java.core.object-contracts.equals-contract.q7",
+  "promptMarkdown": "DB 저장 전에는 `id == null`이고 저장 후 generated id가 채워지는 Entity가 있다. `equals`를 id만으로 구현하려 할 때 transient Entity 두 개를 어떻게 비교할지, 저장 전후 동일 객체의 equality 의미가 바뀌는 문제를 포함해 왜 신중해야 하는지 설명하라.",
+  "questionType": "DESCRIPTIVE",
+  "difficulty": "HARD",
+  "status": "PUBLISHED",
+  "conceptKeys": [
+    "java.core.object-contracts.equals-contract"
+  ],
+  "modelAnswer": "Generated id만으로 equals를 구현하면 저장 전 id가 null인 서로 다른 transient Entity를 같다고 볼 위험이 있고, null은 모두 다르다고 처리해도 저장 후 id가 생기면서 논리적 equality 기준이 바뀐다. Entity equality는 persistence lifecycle과 proxy까지 고려해 동일 참조, 안정적인 business key 사용 가능 여부, generated id가 정해진 뒤의 비교 규칙을 명확히 정해야 한다. 값 객체의 equals와 같은 방식으로 기계적으로 처리하면 안 된다.",
+  "explanationMarkdown": "equals는 객체 lifecycle 전체에서 호출될 수 있는 계약이다. 비교에 사용하는 상태가 생성 이후 바뀐다면 collection membership이나 ORM proxy와 결합해 예상하지 못한 결과가 생길 수 있다. 특히 generated identity를 가진 Entity는 값 객체와 equality 설계 기준이 다를 수 있다."
+},
+{
+  "kind": "question",
+  "contentKey": "java.core.object-contracts.hashcode-contract.q7",
+  "promptMarkdown": "`UserKey`의 `equals/hashCode`가 mutable `email`을 사용한다. 이 객체를 `HashSet`에 넣은 뒤 email을 변경하면 `set.contains(key)`가 false가 될 수 있는 이유를 hash bucket 관점에서 설명하고, hash 기반 collection의 key에 적합한 상태 조건을 설명하라.",
+  "questionType": "SCENARIO",
+  "difficulty": "HARD",
+  "status": "PUBLISHED",
+  "conceptKeys": [
+    "java.core.object-contracts.hashcode-contract"
+  ],
+  "modelAnswer": "삽입 시 HashSet은 당시 hashCode를 기준으로 bucket을 선택한다. 이후 email이 바뀌어 hashCode가 달라지면 contains는 새로운 hash가 가리키는 다른 bucket에서 검색할 수 있어 실제 객체가 들어 있어도 찾지 못할 수 있다. Hash key의 equals/hashCode에 참여하는 상태는 collection에 들어 있는 동안 안정적이어야 하며, immutable value를 key로 사용하거나 변경 시 제거 후 다시 삽입하는 명시적 lifecycle이 필요하다.",
+  "explanationMarkdown": "Hash contract는 equals와 같은 hash를 반환하는 규칙뿐 아니라 실제 collection 사용 중 비교 기준이 안정적이어야 한다는 설계 문제와 연결된다. Mutable key는 bucket 위치를 결정한 뒤 그 기준을 바꿔 lookup invariants를 깨뜨릴 수 있다."
+},
+{
+  "kind": "question",
+  "contentKey": "java.core.object-contracts.tostring-diagnostics.q5",
+  "promptMarkdown": "JPA Entity의 `toString()`이 모든 연관관계 collection을 순회해 출력한다. 단순 로그 한 줄을 남겼는데 lazy loading SQL이 여러 번 실행되고 양방향 연관관계에서는 재귀 위험도 생겼다. `toString`을 진단용 계약으로 설계할 때 어떤 정보를 포함하고 무엇을 피해야 하는지 설명하라.",
+  "questionType": "SCENARIO",
+  "difficulty": "MEDIUM",
+  "status": "PUBLISHED",
+  "conceptKeys": [
+    "java.core.object-contracts.tostring-diagnostics"
+  ],
+  "modelAnswer": "toString은 identity와 핵심 scalar 상태처럼 빠르고 안전하게 읽을 수 있는 진단 정보 위주로 구성하고, lazy association 전체 탐색, 대용량 collection, 순환 object graph와 secret은 피하는 것이 좋다. 로그 호출이 DB I/O나 큰 계산을 암묵적으로 유발하면 관찰 행위 자체가 성능과 상태에 영향을 줄 수 있다. 구조화 로그나 별도 DTO가 필요하면 toString과 분리한다.",
+  "explanationMarkdown": "toString은 business serialization 포맷이나 object graph dump가 아니다. 사람이 문제를 진단할 만큼의 정보를 제공하되, 호출 비용과 side effect가 예상 가능하고 민감정보·순환 참조에 안전해야 한다."
+},
+{
+  "kind": "question",
+  "contentKey": "java.core.object-contracts.comparator-custom-order.q7",
+  "promptMarkdown": "`TreeSet<Task>`가 `priority`를 기준으로 Comparator를 사용한다. Task를 Set에 넣은 뒤 그 Task의 priority를 변경했더니 iteration 순서와 contains/remove 결과가 이상해질 수 있다. 정렬 collection이 요구하는 비교 기준의 안정성과 해결 방법을 설명하라.",
+  "questionType": "SCENARIO",
+  "difficulty": "HARD",
+  "status": "PUBLISHED",
+  "conceptKeys": [
+    "java.core.object-contracts.comparator-custom-order"
+  ],
+  "modelAnswer": "TreeSet은 삽입 시 comparator 결과를 이용해 tree 위치를 결정하지만 element의 field 변경을 감지해 자동 재배치하지 않는다. 비교에 참여하는 priority가 바뀌면 현재 tree 구조와 새 비교 결과가 불일치해 검색·삭제·순회 의미가 깨질 수 있다. 정렬 key를 불변으로 두거나 변경이 필요하면 element를 Set에서 제거한 뒤 값을 바꾸고 다시 삽입하는 lifecycle을 사용해야 한다.",
+  "explanationMarkdown": "Hash collection의 mutable key 문제처럼 sorted collection도 비교 기준이 collection membership 동안 안정적이어야 한다. Comparator 자체가 올바르더라도 비교에 쓰는 state가 변하면 자료구조가 가정한 ordering invariant가 깨진다."
+}
 ]

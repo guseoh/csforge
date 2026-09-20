@@ -57,5 +57,31 @@
     "conceptKeys": ["java.core.collections.arraylist-linkedlist-tradeoff"],
     "modelAnswer": "대부분 순회와 index 조회라면 ArrayList를 우선 검토한다. LinkedList의 노드 연결 변경이 위치를 이미 알고 있을 때만 유리하며, index로 위치를 찾는 비용과 노드 allocation·cache locality까지 실제 workload로 측정한다.",
     "explanationMarkdown": "삽입 자체의 복잡도만 고르면 LinkedList를 과대평가하게 된다. 전체 연산 경로와 데이터 접근 패턴이 선택 기준이다."
-  }
+  },
+{
+  "kind": "question",
+  "contentKey": "java.core.collections.list-set-map-contracts.q7",
+  "promptMarkdown": "`List<Order>`의 `subList(0, 10)`을 별도 목록 snapshot처럼 저장해 두었다. 이후 원본 List에 구조적 변경이 발생하자 subList 사용에서 예상치 못한 동작이나 `ConcurrentModificationException`이 발생했다. `subList`를 독립 collection이 아니라 backing list의 view로 이해해야 하는 이유와 snapshot이 필요할 때의 설계를 설명하라.",
+  "questionType": "SCENARIO",
+  "difficulty": "MEDIUM",
+  "status": "PUBLISHED",
+  "conceptKeys": [
+    "java.core.collections.list-set-map-contracts"
+  ],
+  "modelAnswer": "`subList`는 원본 List의 지정 범위를 바라보는 view이므로 원본과 구조를 공유한다. View와 backing list를 계약에 맞지 않게 따로 구조 변경하면 view의 상태가 유효하지 않거나 fail-fast 예외가 발생할 수 있다. 원본과 독립된 시점 snapshot이 필요하다면 `new ArrayList<>(list.subList(...))`처럼 별도 collection으로 복사해 ownership을 분리해야 한다.",
+  "explanationMarkdown": "Collection API의 반환값이 copy인지 view인지에 따라 이후 mutation 의미가 크게 달라진다. View는 변경이 서로 연결될 수 있으므로 장기 보관용 snapshot처럼 취급하면 안 된다."
+},
+{
+  "kind": "question",
+  "contentKey": "java.core.collections.immutable-unmodifiable-collections.q7",
+  "promptMarkdown": "서비스가 `Collections.unmodifiableList(source)`를 캐시해 다른 컴포넌트에 전달했다. 전달받은 쪽에서는 수정할 수 없지만 source 소유자가 나중에 `clear()`를 호출하자 캐시 내용도 사라졌다. Unmodifiable view와 immutable snapshot의 차이를 설명하고, 외부 변경과 분리된 결과가 필요할 때 무엇을 사용해야 하는지 설명하라.",
+  "questionType": "DESCRIPTIVE",
+  "difficulty": "MEDIUM",
+  "status": "PUBLISHED",
+  "conceptKeys": [
+    "java.core.collections.immutable-unmodifiable-collections"
+  ],
+  "modelAnswer": "Unmodifiable view는 그 reference를 통한 add/remove를 막을 뿐 backing collection과 데이터를 공유하므로 source 변경을 그대로 관찰할 수 있다. 반면 snapshot은 특정 시점의 collection 구조를 별도 소유해 이후 source 구조 변경과 분리된다. 외부 변경과 독립된 읽기 전용 결과가 필요하면 `List.copyOf(source)`나 별도 복사본을 만들어 반환해야 한다. 다만 element 자체가 mutable하면 element 내부 상태까지 깊은 불변성을 자동 보장하지는 않는다.",
+  "explanationMarkdown": "수정 API가 막혀 있다는 사실과 데이터가 다른 소유자의 변경에서 독립적이라는 사실은 다르다. View는 접근 경로만 제한하고 snapshot은 collection 구조의 소유권을 분리한다."
+}
 ]

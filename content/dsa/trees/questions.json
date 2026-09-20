@@ -19,7 +19,7 @@
     "status":"PUBLISHED",
     "conceptKeys":["dsa.core.trees.tree-terminology"],
     "modelAnswer":"많은 tree operation은 전체 node 수보다 root에서 따라가는 path 길이 h에 비례한다. 균형 tree는 h가 log n 근처일 수 있지만 chain은 h가 n에 가까워 같은 node 수에서도 search 비용이 크게 달라질 수 있다.",
-    "explanationMarkdown": "많은 tree operation은 전체 node 수보다 root에서 따라가는 path 길이 h에 비례한다. 균형 tree는 h가 log n 근처일 수 있지만 chain은 h가 n에 가까워 같은 node 수에서도 search 비용이 크게 달라질 수 있다."
+    "explanationMarkdown": "균형 tree는 h가 log n 근처일 수 있지만 chain은 h가 n에 가까워 같은 node 수에서도 search 비용이 크게 달라질 수 있다."
   },
   {
     "kind":"question",
@@ -30,7 +30,7 @@
     "status":"PUBLISHED",
     "conceptKeys":["dsa.core.trees.tree-terminology"],
     "modelAnswer":"rooted tree는 각 non-root node가 하나의 parent를 갖고 cycle이 없다는 전제를 사용한다. multiple parent는 하나의 path라는 가정을 깨고 cycle은 naive recursion을 무한 반복시킬 수 있다. 실제 model이 graph라면 visited/cycle 정책을 별도로 가져야 한다.",
-    "explanationMarkdown": "rooted tree는 각 non-root node가 하나의 parent를 갖고 cycle이 없다는 전제를 사용한다. multiple parent는 하나의 path라는 가정을 깨고 cycle은 naive recursion을 무한 반복시킬 수 있다. 실제 model이 graph라면 visited/cycle 정책을 별도로 가져야 한다."
+    "explanationMarkdown": "multiple parent는 하나의 path라는 가정을 깨고 cycle은 naive recursion을 무한 반복시킬 수 있다. 실제 model이 graph라면 visited/cycle 정책을 별도로 가져야 한다."
   },
   {
     "kind":"question",
@@ -63,7 +63,7 @@
     "status":"PUBLISHED",
     "conceptKeys":["dsa.core.trees.binary-tree-traversal"],
     "modelAnswer":"postorder가 적합하다. left/right child subtree를 먼저 처리한 뒤 parent를 visit하므로 child cleanup 완료 후 parent cleanup이라는 dependency를 traversal order 자체가 표현한다.",
-    "explanationMarkdown": "postorder가 적합하다. left/right child subtree를 먼저 처리한 뒤 parent를 visit하므로 child cleanup 완료 후 parent cleanup이라는 dependency를 traversal order 자체가 표현한다."
+    "explanationMarkdown": "Postorder는 child subtree를 모두 처리한 뒤 parent를 방문하므로 `child cleanup 완료 → parent cleanup` 의존성을 traversal 순서 자체로 보장한다. Preorder는 parent를 먼저 방문하기 때문에 같은 요구를 만족하려면 별도의 지연 처리나 bookkeeping이 필요하다."
   },
   {
     "kind":"question",
@@ -85,7 +85,7 @@
     "status":"PUBLISHED",
     "conceptKeys":["dsa.core.trees.binary-search-tree"],
     "modelAnswer":"h는 tree height다. 균형이 좋으면 h가 O(log n)에 가깝지만 정렬 입력 등으로 한쪽으로 치우치면 O(n)까지 커질 수 있어 BST 자체만으로 logarithmic search가 보장되지는 않는다.",
-    "explanationMarkdown": "h는 tree height다. 균형이 좋으면 h가 O(log n)에 가깝지만 정렬 입력 등으로 한쪽으로 치우치면 O(n)까지 커질 수 있어 BST 자체만으로 logarithmic search가 보장되지는 않는다."
+    "explanationMarkdown": "BST search는 한 level마다 비교 결과에 따라 한 child로 내려가므로 비용은 node 수 자체보다 height `h`에 비례한다. 균형 제약이 없는 plain BST는 입력 순서에 따라 `h ≈ n`까지 커질 수 있어 logarithmic search를 구조적으로 보장하지 않는다."
   },
   {
     "kind":"question",
@@ -96,7 +96,7 @@
     "status":"PUBLISHED",
     "conceptKeys":["dsa.core.trees.binary-search-tree"],
     "modelAnswer":"40은 root 비교 결과에 따라 right subtree에서 찾아야 할 값이지만 실제 node는 예전 key 4의 위치인 left subtree에 남아 있다. key mutation이 BST ordering을 깨뜨려 search path가 실제 node가 있는 방향을 버릴 수 있다.",
-    "explanationMarkdown": "40은 root 비교 결과에 따라 right subtree에서 찾아야 할 값이지만 실제 node는 예전 key 4의 위치인 left subtree에 남아 있다. key mutation이 BST ordering을 깨뜨려 search path가 실제 node가 있는 방향을 버릴 수 있다."
+    "explanationMarkdown": "key mutation이 BST ordering을 깨뜨려 search path가 실제 node가 있는 방향을 버릴 수 있다."
   },
   {
     "kind":"question",
@@ -107,7 +107,7 @@
     "status":"PUBLISHED",
     "conceptKeys":["dsa.core.trees.balanced-tree-motivation"],
     "modelAnswer":"각 key가 이전 key의 right child가 되는 한쪽 chain에 가까워진다. height가 n에 가까워져 search worst-case가 O(n)이 된다.",
-    "explanationMarkdown": "각 key가 이전 key의 right child가 되는 한쪽 chain에 가까워진다. height가 n에 가까워져 search worst-case가 O(n)이 된다."
+    "explanationMarkdown": "오름차순 key를 plain BST에 넣으면 매번 기존 최대 key의 right 쪽으로 내려가며 node가 이어질 수 있다. 이렇게 tree가 chain에 가까워지면 height가 node 수에 비례하고, search와 update가 거의 전체 path를 따라가 O(n)까지 악화된다."
   },
   {
     "kind":"question",
@@ -118,7 +118,7 @@
     "status":"PUBLISHED",
     "conceptKeys":["dsa.core.trees.balanced-tree-motivation"],
     "modelAnswer":"height가 한쪽으로 O(n)까지 무너지는 것을 추가 balance invariant와 rotation으로 제한해 search/update path를 O(log n) 수준으로 유지할 수 있다. 그 대가로 metadata와 rebalancing work가 추가된다.",
-    "explanationMarkdown": "height가 한쪽으로 O(n)까지 무너지는 것을 추가 balance invariant와 rotation으로 제한해 search/update path를 O(log n) 수준으로 유지할 수 있다. 그 대가로 metadata와 rebalancing work가 추가된다."
+    "explanationMarkdown": "Balanced tree는 height가 한쪽으로 무너지는 것을 추가 invariant와 rotation으로 제한해 root-to-leaf path를 O(log n) 수준으로 유지한다. 그 대신 각 update에서 balance metadata를 관리하고 필요하면 rotation을 수행하는 추가 비용을 지불한다."
   },
   {
     "kind":"question",
@@ -129,7 +129,7 @@
     "status":"PUBLISHED",
     "conceptKeys":["dsa.core.trees.balanced-tree-motivation"],
     "modelAnswer":"ordered traversal을 유지하면서 입력 순서와 무관하게 height upper bound를 제한해야 하므로 balanced search tree를 우선 검토한다. plain BST는 정렬 입력에서 skew되어 O(n) path가 될 수 있다. update rebalancing 비용과 memory도 함께 비교해야 한다.",
-    "explanationMarkdown": "ordered traversal을 유지하면서 입력 순서와 무관하게 height upper bound를 제한해야 하므로 balanced search tree를 우선 검토한다. plain BST는 정렬 입력에서 skew되어 O(n) path가 될 수 있다. update rebalancing 비용과 memory도 함께 비교해야 한다."
+    "explanationMarkdown": "plain BST는 정렬 입력에서 skew되어 O(n) path가 될 수 있다. update rebalancing 비용과 memory도 함께 비교해야 한다."
   },
   {
     "kind":"question",
@@ -140,13 +140,13 @@
     "status":"PUBLISHED",
     "conceptKeys":["dsa.core.trees.tree-rotation"],
     "choices":[
-      {"key":"A","content":"바뀌지 않는다. A,x,B,y,C 순서를 보존한다","displayOrder":0},
+      {"key":"A","content":"inorder가 보존되므로 subtree link와 balance metadata는 확인할 필요가 없다","displayOrder":0},
       {"key":"B","content":"항상 역순 C,y,B,x,A가 된다","displayOrder":1},
       {"key":"C","content":"rotation은 key 값을 다시 정렬해 새 값으로 바꾼다","displayOrder":2},
-      {"key":"D","content":"inorder가 보존되므로 subtree link와 balance metadata는 확인할 필요가 없다","displayOrder":3}
+      {"key":"D","content":"바뀌지 않는다. A,x,B,y,C 순서를 보존한다","displayOrder":3}
     ],
-    "correctChoiceKey":"A",
-    "explanationMarkdown": "Right rotation은 A,x,B,y,C의 inorder 관계를 보존하면서 parent-child link만 바꾼다. 따라서 BST key ordering은 유지되고 height나 balance만 달라질 수 있다."
+    "correctChoiceKey":"D",
+    "explanationMarkdown": "Right rotation은 회전 전 subtree의 inorder key sequence를 보존하면서 parent-child link만 바꾼다. 따라서 BST key ordering은 유지되고 height나 balance만 달라질 수 있다."
   },
   {
     "kind":"question",
@@ -168,7 +168,7 @@
     "status":"PUBLISHED",
     "conceptKeys":["dsa.core.trees.tree-rotation"],
     "modelAnswer":"B subtree가 새 tree에서 도달 불가능해져 node가 유실되거나, 이전 link를 잘못 유지하면 중복 parent/cycle이 생길 수 있다. rotation은 subtree root, middle subtree, parent 연결을 모두 원자적인 구조 변화로 다뤄야 한다.",
-    "explanationMarkdown": "B subtree가 새 tree에서 도달 불가능해져 node가 유실되거나, 이전 link를 잘못 유지하면 중복 parent/cycle이 생길 수 있다. rotation은 subtree root, middle subtree, parent 연결을 모두 원자적인 구조 변화로 다뤄야 한다."
+    "explanationMarkdown": "rotation은 subtree root, middle subtree, parent 연결을 모두 원자적인 구조 변화로 다뤄야 한다."
   },
   {
     "kind":"question",
@@ -179,7 +179,7 @@
     "status":"PUBLISHED",
     "conceptKeys":["dsa.core.trees.tree-rotation"],
     "modelAnswer":"ordering correctness와 balance invariant는 별개다. stale metadata를 다음 insert/delete가 신뢰하면 필요한 rotation을 빼먹거나 잘못된 rotation을 수행해 height bound나 red-black/AVL 규칙을 깨뜨릴 수 있다.",
-    "explanationMarkdown": "ordering correctness와 balance invariant는 별개다. stale metadata를 다음 insert/delete가 신뢰하면 필요한 rotation을 빼먹거나 잘못된 rotation을 수행해 height bound나 red-black/AVL 규칙을 깨뜨릴 수 있다."
+    "explanationMarkdown": "stale metadata를 다음 insert/delete가 신뢰하면 필요한 rotation을 빼먹거나 잘못된 rotation을 수행해 height bound나 red-black/AVL 규칙을 깨뜨릴 수 있다."
   },
   {
     "kind":"question",
@@ -201,7 +201,7 @@
     "status":"PUBLISHED",
     "conceptKeys":["dsa.core.trees.heap"],
     "modelAnswer":"새 값 1은 마지막 leaf에 들어간 뒤 parent보다 작으므로 parent와 swap하며 위로 sift-up/swim해야 한다. parent-child invariant가 만족될 때까지 root 방향으로 이동한다.",
-    "explanationMarkdown": "새 값 1은 마지막 leaf에 들어간 뒤 parent보다 작으므로 parent와 swap하며 위로 sift-up/swim해야 한다. parent-child invariant가 만족될 때까지 root 방향으로 이동한다."
+    "explanationMarkdown": "parent-child invariant가 만족될 때까지 root 방향으로 이동한다."
   },
   {
     "kind":"question",
@@ -212,7 +212,7 @@
     "status":"PUBLISHED",
     "conceptKeys":["dsa.core.trees.heap"],
     "modelAnswer":"10을 더 작은 child 3과 swap해 아래로 sink한다. min-heap에서는 새 parent가 두 child 모두보다 작거나 같아야 하므로 우선순위가 더 높은 작은 child와 바꿔야 invariant를 회복할 수 있다.",
-    "explanationMarkdown": "10을 더 작은 child 3과 swap해 아래로 sink한다. min-heap에서는 새 parent가 두 child 모두보다 작거나 같아야 하므로 우선순위가 더 높은 작은 child와 바꿔야 invariant를 회복할 수 있다."
+    "explanationMarkdown": "min-heap에서는 새 parent가 두 child 모두보다 작거나 같아야 하므로 우선순위가 더 높은 작은 child와 바꿔야 invariant를 회복할 수 있다."
   },
   {
     "kind": "question",
@@ -234,7 +234,7 @@
     "status":"PUBLISHED",
     "conceptKeys":["dsa.core.trees.priority-queue"],
     "modelAnswer":"FIFO queue는 먼저 들어온 원소를 먼저 꺼내고, priority queue는 삽입 시점과 무관하게 현재 가장 높은/낮은 priority 원소를 선택한다. 동일 priority의 tie 순서는 별도 계약이다.",
-    "explanationMarkdown": "FIFO queue는 먼저 들어온 원소를 먼저 꺼내고, priority queue는 삽입 시점과 무관하게 현재 가장 높은/낮은 priority 원소를 선택한다. 동일 priority의 tie 순서는 별도 계약이다."
+    "explanationMarkdown": "Priority queue의 제거 순서는 삽입 시점이 아니라 priority ordering으로 결정된다. 같은 priority 사이에서도 FIFO가 필요하다면 `(priority, sequence)` 같은 secondary ordering을 별도로 정의해야 하며 heap invariant만으로 안정 순서를 보장할 수는 없다."
   },
   {
     "kind": "question",
@@ -256,7 +256,7 @@
     "status":"PUBLISHED",
     "conceptKeys":["dsa.core.trees.priority-queue"],
     "modelAnswer":"heap invariant는 priority equality 사이의 stable insertion order를 보장하지 않는다. `(priority, sequenceNumber)` 같은 secondary key를 포함해 동일 priority에서는 더 이른 sequence가 우선되도록 total ordering을 정의해야 한다.",
-    "explanationMarkdown": "heap invariant는 priority equality 사이의 stable insertion order를 보장하지 않는다. `(priority, sequenceNumber)` 같은 secondary key를 포함해 동일 priority에서는 더 이른 sequence가 우선되도록 total ordering을 정의해야 한다."
+    "explanationMarkdown": "`(priority, sequenceNumber)` 같은 secondary key를 포함해 동일 priority에서는 더 이른 sequence가 우선되도록 total ordering을 정의해야 한다."
   },
   {
     "kind":"question",
@@ -267,7 +267,7 @@
     "status":"PUBLISHED",
     "conceptKeys":["dsa.core.trees.trie"],
     "modelAnswer":"`app` path는 `apple`의 prefix이기도 하므로 path 존재만으로 app 자체가 저장된 key인지 알 수 없다. app 마지막 node에 terminal marker를 둬 exact key 종료와 단순 prefix를 구분한다.",
-    "explanationMarkdown": "`app` path는 `apple`의 prefix이기도 하므로 path 존재만으로 app 자체가 저장된 key인지 알 수 없다. app 마지막 node에 terminal marker를 둬 exact key 종료와 단순 prefix를 구분한다."
+    "explanationMarkdown": "app 마지막 node에 terminal marker를 둬 exact key 종료와 단순 prefix를 구분한다."
   },
   {
     "kind":"question",
@@ -278,7 +278,7 @@
     "status":"PUBLISHED",
     "conceptKeys":["dsa.core.trees.trie"],
     "modelAnswer":"app의 terminal marker를 해제하되 `a-p-p` path는 apple이 계속 사용하므로 보존해야 한다. 다른 key가 사용하지 않고 terminal도 아닌 node만 bottom-up으로 제거할 수 있다.",
-    "explanationMarkdown": "app의 terminal marker를 해제하되 `a-p-p` path는 apple이 계속 사용하므로 보존해야 한다. 다른 key가 사용하지 않고 terminal도 아닌 node만 bottom-up으로 제거할 수 있다."
+    "explanationMarkdown": "다른 key가 사용하지 않고 terminal도 아닌 node만 bottom-up으로 제거할 수 있다."
   },
   {
     "kind":"question",
@@ -289,7 +289,7 @@
     "status":"PUBLISHED",
     "conceptKeys":["dsa.core.trees.trie"],
     "modelAnswer":"대부분 child slot이 비어 큰 memory 낭비가 생긴다. sparse map이나 compressed representation으로 memory를 줄일 수 있지만 child lookup에 hash/tree/pointer overhead가 추가될 수 있다.",
-    "explanationMarkdown": "대부분 child slot이 비어 큰 memory 낭비가 생긴다. sparse map이나 compressed representation으로 memory를 줄일 수 있지만 child lookup에 hash/tree/pointer overhead가 추가될 수 있다."
+    "explanationMarkdown": "sparse map이나 compressed representation으로 memory를 줄일 수 있지만 child lookup에 hash/tree/pointer overhead가 추가될 수 있다."
   },
   {
     "kind":"question",
@@ -300,6 +300,6 @@
     "status":"PUBLISHED",
     "conceptKeys":["dsa.core.trees.trie"],
     "modelAnswer":"겉으로 같은 문자도 서로 다른 code-point sequence로 표현될 수 있어 raw character sequence를 edge로 쓰면 다른 경로가 생성될 수 있다. trie 이전에 canonical normalization/case 정책을 정해 equality 기준을 고정해야 한다.",
-    "explanationMarkdown": "겉으로 같은 문자도 서로 다른 code-point sequence로 표현될 수 있어 raw character sequence를 edge로 쓰면 다른 경로가 생성될 수 있다. trie 이전에 canonical normalization/case 정책을 정해 equality 기준을 고정해야 한다."
+    "explanationMarkdown": "trie 이전에 canonical normalization/case 정책을 정해 equality 기준을 고정해야 한다."
   }
 ]

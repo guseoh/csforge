@@ -408,6 +408,17 @@
   line-height: 1.65;
 }
 
+.wrong-note-answer-choice-key {
+  display: block;
+  margin-bottom: 7px;
+  color: var(--accent-strong);
+  font-size: 0.78rem;
+}
+
+.wrong-note-answer-value.markdown-content p {
+  margin: 0;
+}
+
 .wrong-note-answer-panel small {
   display: block;
   margin-top: 10px;
