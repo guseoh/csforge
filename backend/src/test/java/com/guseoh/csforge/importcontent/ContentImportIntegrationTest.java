@@ -115,6 +115,72 @@ class ContentImportIntegrationTest {
     }
 
     @Test
+    void attemptedMultipleChoiceAllowsCorrectAnswerCorrectionWhenChoicesStayStable() throws Exception {
+        List<Part> base = sampleParts();
+        JsonNode initial = json(post("/api/imports/preview", base, null)).get("body");
+        post("/api/imports/apply", base, initial.get("previewDigest").asText());
+
+        long questionId = jdbc.queryForObject("select id from question where content_key = 'test.q1'", Long.class);
+        long selectedChoiceId = jdbc.queryForObject(
+                "select id from question_choice where question_id = ? and choice_key = 'A'",
+                Long.class,
+                questionId);
+        long otherChoiceId = jdbc.queryForObject(
+                "select id from question_choice where question_id = ? and choice_key = 'B'",
+                Long.class,
+                questionId);
+        long sessionId = jdbc.queryForObject(
+                "insert into quiz_session (started_at, source) values (current_timestamp, 'STANDARD') returning id",
+                Long.class);
+        long attemptId = jdbc.queryForObject(
+                "insert into attempt (quiz_session_id, question_id, selected_choice_id, grading_status, correct, answered_at, graded_at) "
+                        + "values (?, ?, ?, 'GRADED', true, current_timestamp, current_timestamp) returning id",
+                Long.class,
+                sessionId,
+                questionId,
+                selectedChoiceId);
+
+        String correctedQuestion = "{\"kind\":\"question\",\"contentKey\":\"test.q1\",\"promptMarkdown\":\"Choose\","
+                + "\"questionType\":\"MULTIPLE_CHOICE\",\"difficulty\":\"EASY\",\"status\":\"PUBLISHED\","
+                + "\"conceptKeys\":[\"test.concept\"],"
+                + "\"choices\":[{\"key\":\"A\",\"content\":\"yes\",\"displayOrder\":0},"
+                + "{\"key\":\"B\",\"content\":\"no\",\"displayOrder\":1}],\"correctChoiceKey\":\"B\"}";
+        List<Part> corrected = List.of(
+                base.get(0),
+                base.get(1),
+                new Part("question.json", "application/json", correctedQuestion));
+
+        JsonNode preview = json(post("/api/imports/preview", corrected, null)).get("body");
+        assertTrue(preview.get("canApply").asBoolean());
+        assertEquals(1, preview.get("totals").get("updated").asInt());
+
+        JsonNode applied = json(post("/api/imports/apply", corrected, preview.get("previewDigest").asText()));
+        assertEquals(200, applied.get("status").asInt());
+
+        assertEquals(selectedChoiceId, jdbc.queryForObject(
+                "select id from question_choice where question_id = ? and choice_key = 'A'",
+                Long.class,
+                questionId));
+        assertEquals(otherChoiceId, jdbc.queryForObject(
+                "select id from question_choice where question_id = ? and choice_key = 'B'",
+                Long.class,
+                questionId));
+        assertEquals(selectedChoiceId, jdbc.queryForObject(
+                "select selected_choice_id from attempt where id = ?",
+                Long.class,
+                attemptId));
+        assertEquals("B", jdbc.queryForObject(
+                "select qc.choice_key from question_answer qa join question_choice qc on qc.id = qa.choice_id "
+                        + "where qa.question_id = ? and qa.answer_kind = 'CORRECT_CHOICE'",
+                String.class,
+                questionId));
+        assertEquals(1, jdbc.queryForObject(
+                "select count(*) from attempt where question_id = ?",
+                Integer.class,
+                questionId));
+    }
+
+    @Test
     void anyPreviewErrorBlocksApplyWithoutMutation() throws Exception {
         List<Part> invalid = List.of(
                 new Part("new-topic.json", "application/json", "{\"kind\":\"topic\",\"contentKey\":\"new.topic\",\"areaSlug\":\"unknown\",\"slug\":\"new\",\"title\":\"New\"}"),
