@@ -21,10 +21,20 @@ class QuestionStructureComparatorTest {
     }
 
     @Test
-    void detectsStructuralDifferences() {
+    void answerCorrectionDoesNotMatchButPreservesAttemptReferences() {
         Question question = question();
 
         assertFalse(QuestionStructureComparator.matches(item("A"), question));
+        assertTrue(QuestionStructureComparator.preservesAttemptReferences(item("A"), question));
+    }
+
+    @Test
+    void choiceContentChangeDoesNotPreserveAttemptReferences() {
+        Question question = question();
+        NormalizedImportItem changedChoice = item("B", "Changed");
+
+        assertFalse(QuestionStructureComparator.matches(changedChoice, question));
+        assertFalse(QuestionStructureComparator.preservesAttemptReferences(changedChoice, question));
     }
 
     private static Question question() {
@@ -47,6 +57,10 @@ class QuestionStructureComparatorTest {
     }
 
     private static NormalizedImportItem item(String correctChoiceKey) {
+        return item(correctChoiceKey, "First");
+    }
+
+    private static NormalizedImportItem item(String correctChoiceKey, String firstChoiceContent) {
         return new NormalizedImportItem(
                 "question.json",
                 0,
@@ -71,7 +85,7 @@ class QuestionStructureComparatorTest {
                 "Explanation",
                 List.of(),
                 List.of(
-                        new NormalizedChoice("A", "First", 0),
+                        new NormalizedChoice("A", firstChoiceContent, 0),
                         new NormalizedChoice("B", "Second", 1)),
                 correctChoiceKey,
                 List.of(),
