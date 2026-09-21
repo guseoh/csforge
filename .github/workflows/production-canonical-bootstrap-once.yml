@@ -12,14 +12,13 @@ permissions:
   id-token: write
 
 jobs:
-  # Re-run after the attempted-question choice-reference safety fix.
   bootstrap-production-content:
     runs-on: ubuntu-latest
     env:
       GCP_PROJECT_ID: csforge-508510
       GCP_REGION: asia-southeast1
       CLOUD_RUN_SERVICE: csforge
-      BOOTSTRAP_JOB: csforge-canonical-bootstrap-once
+      BOOTSTRAP_SERVICE: csforge-canonical-bootstrap-once
       BOOTSTRAP_IMAGE: asia-southeast1-docker.pkg.dev/csforge-508510/csforge/csforge:bootstrap-${{ github.sha }}
     steps:
       - uses: actions/checkout@v7
@@ -56,7 +55,6 @@ jobs:
             --format=json > "${service_json}"
 
           service_account="$(jq -r '.spec.template.spec.serviceAccountName // empty' "${service_json}")"
-
           if [[ -z "${service_account}" || "${service_account}" == "null" ]]; then
             echo "Could not resolve the production runtime service account." >&2
             exit 1
@@ -118,109 +116,24 @@ jobs:
 
           echo "service_account=${service_account}" >> "${GITHUB_OUTPUT}"
 
-      - name: Deploy bootstrap job
+      - name: Deploy private bootstrap service
         shell: bash
         run: |
           set -euo pipefail
 
-          bootstrap_script=$(cat <<'SCRIPT'
-          set -eu
-
-          java -jar /app/app.jar --spring.profiles.active=local --server.port=8080 &
-          app_pid=$!
-
-          cleanup() {
-            kill "$app_pid" 2>/dev/null || true
-            wait "$app_pid" 2>/dev/null || true
-          }
-          trap cleanup EXIT
-
-          ready=0
-          for _ in $(seq 1 90); do
-            if curl --fail --silent --show-error http://127.0.0.1:8080/actuator/health/readiness >/tmp/readiness.json; then
-              ready=1
-              break
-            fi
-            if ! kill -0 "$app_pid" 2>/dev/null; then
-              exit 1
-            fi
-            sleep 2
-          done
-
-          if [ "$ready" -ne 1 ]; then
-            echo "Bootstrap application did not become ready." >&2
-            exit 1
-          fi
-
-          echo "Reading canonical bootstrap status..."
-          before=$(curl --fail --silent --show-error http://127.0.0.1:8080/api/canonical-bootstrap/status)
-          echo "Before bootstrap: $before"
-
-          echo "Running first canonical bootstrap..."
-          first=$(curl --fail --silent --show-error -X POST http://127.0.0.1:8080/api/canonical-bootstrap)
-          echo "First bootstrap: $first"
-
-          if ! echo "$first" | grep -q '"success":true'; then
-            echo "First bootstrap did not report success." >&2
-            exit 21
-          fi
-          if ! echo "$first" | grep -q '"questions":2524'; then
-            echo "First bootstrap did not reach 2,524 questions." >&2
-            exit 22
-          fi
-
-          echo "Running idempotency bootstrap..."
-          second=$(curl --fail --silent --show-error -X POST http://127.0.0.1:8080/api/canonical-bootstrap)
-          echo "Idempotency bootstrap: $second"
-
-          if ! echo "$second" | grep -q '"success":true'; then
-            echo "Second bootstrap did not report success." >&2
-            exit 31
-          fi
-          if ! echo "$second" | grep -q '"state":"READY"'; then
-            echo "Second bootstrap did not report READY." >&2
-            exit 32
-          fi
-          if ! echo "$second" | grep -q '"questions":2524'; then
-            echo "Second bootstrap did not retain 2,524 questions." >&2
-            exit 33
-          fi
-          if ! echo "$second" | grep -q '"created":0'; then
-            echo "Second bootstrap still created canonical items." >&2
-            exit 34
-          fi
-          if ! echo "$second" | grep -q '"updated":0'; then
-            echo "Second bootstrap still updated canonical items." >&2
-            exit 35
-          fi
-          if ! echo "$second" | grep -q '"errors":0'; then
-            echo "Second bootstrap reported validation errors." >&2
-            exit 36
-          fi
-          if ! echo "$second" | grep -q '"failed":0'; then
-            echo "Second bootstrap reported failed items." >&2
-            exit 37
-          fi
-
-          echo "Canonical bootstrap completed and reimport is idempotent."
-          SCRIPT
-          )
-
           args=(
-            run jobs deploy "${BOOTSTRAP_JOB}"
+            run deploy "${BOOTSTRAP_SERVICE}"
             --project="${GCP_PROJECT_ID}"
             --region="${GCP_REGION}"
             --image="${BOOTSTRAP_IMAGE}"
             --service-account="${{ steps.runtime.outputs.service_account }}"
-            --command=/bin/sh
-            --args=-c,"${bootstrap_script}"
             --env-vars-file=/tmp/bootstrap-env.json
             --cpu=1
             --memory=1Gi
-            --tasks=1
-            --parallelism=1
-            --task-timeout=30m
-            --max-retries=0
+            --min=0
+            --max=1
+            --timeout=900
+            --no-allow-unauthenticated
             --quiet
           )
 
@@ -230,47 +143,74 @@ jobs:
 
           gcloud "${args[@]}"
 
-      - name: Execute canonical bootstrap
-        run: |
-          gcloud run jobs execute "${BOOTSTRAP_JOB}" \
-            --project="${GCP_PROJECT_ID}" \
-            --region="${GCP_REGION}" \
-            --wait \
-            --quiet
-
-      - name: Describe failed bootstrap execution
-        if: failure()
+      - name: Run canonical bootstrap through authenticated proxy
         shell: bash
         run: |
-          set +e
-          execution="$(gcloud run jobs executions list \
-            --job="${BOOTSTRAP_JOB}" \
+          set -euo pipefail
+
+          gcloud run services proxy "${BOOTSTRAP_SERVICE}" \
             --project="${GCP_PROJECT_ID}" \
             --region="${GCP_REGION}" \
-            --limit=1 \
-            --sort-by="~metadata.creationTimestamp" \
-            --format="value(metadata.name)")"
+            --port=8081 \
+            >/tmp/bootstrap-proxy.log 2>&1 &
+          proxy_pid=$!
 
-          if [[ -n "${execution}" ]]; then
-            echo "Failed execution: ${execution}"
-            gcloud run jobs executions describe "${execution}" \
-              --project="${GCP_PROJECT_ID}" \
-              --region="${GCP_REGION}" \
-              --format="yaml(metadata.name,status.conditions,status.failedCount,status.succeededCount,status.logUri)"
+          cleanup_proxy() {
+            kill "${proxy_pid}" 2>/dev/null || true
+            wait "${proxy_pid}" 2>/dev/null || true
+          }
+          trap cleanup_proxy EXIT
+
+          ready=0
+          for _ in $(seq 1 60); do
+            if curl --fail --silent --show-error http://127.0.0.1:8081/actuator/health/readiness >/tmp/readiness.json; then
+              ready=1
+              break
+            fi
+            sleep 2
+          done
+
+          if [[ "${ready}" -ne 1 ]]; then
+            echo "Authenticated proxy did not become ready." >&2
+            cat /tmp/bootstrap-proxy.log || true
+            exit 1
           fi
 
-          gcloud logging read \
-            "resource.type=cloud_run_job AND resource.labels.job_name=${BOOTSTRAP_JOB}" \
-            --project="${GCP_PROJECT_ID}" \
-            --freshness=30m \
-            --limit=100 \
-            --order=asc \
-            --format="value(textPayload)" || true
+          before="$(curl --fail --silent --show-error http://127.0.0.1:8081/api/canonical-bootstrap/status)"
+          echo "Before bootstrap:"
+          echo "${before}" | jq .
 
-      - name: Remove one-time bootstrap job
+          first="$(curl --fail --silent --show-error -X POST http://127.0.0.1:8081/api/canonical-bootstrap)"
+          echo "First bootstrap:"
+          echo "${first}" | jq .
+
+          if [[ "$(echo "${first}" | jq -r '.success')" != "true" ]]; then
+            echo "First bootstrap failed: batch=$(echo "${first}" | jq -r '.failedBatch') kind=$(echo "${first}" | jq -r '.failedKind') message=$(echo "${first}" | jq -r '.failureMessage')" >&2
+            exit 21
+          fi
+          if [[ "$(echo "${first}" | jq -r '.currentCounts.questions')" != "2524" ]]; then
+            echo "First bootstrap did not reach 2,524 questions." >&2
+            exit 22
+          fi
+
+          second="$(curl --fail --silent --show-error -X POST http://127.0.0.1:8081/api/canonical-bootstrap)"
+          echo "Idempotency bootstrap:"
+          echo "${second}" | jq .
+
+          test "$(echo "${second}" | jq -r '.success')" = "true"
+          test "$(echo "${second}" | jq -r '.state')" = "READY"
+          test "$(echo "${second}" | jq -r '.currentCounts.questions')" = "2524"
+          test "$(echo "${second}" | jq -r '.totals.created')" = "0"
+          test "$(echo "${second}" | jq -r '.totals.updated')" = "0"
+          test "$(echo "${second}" | jq -r '.totals.errors')" = "0"
+          test "$(echo "${second}" | jq -r '.totals.failed')" = "0"
+
+          echo "Canonical bootstrap completed and reimport is idempotent."
+
+      - name: Remove temporary bootstrap service
         if: always()
         run: |
-          gcloud run jobs delete "${BOOTSTRAP_JOB}" \
+          gcloud run services delete "${BOOTSTRAP_SERVICE}" \
             --project="${GCP_PROJECT_ID}" \
             --region="${GCP_REGION}" \
             --quiet || true
