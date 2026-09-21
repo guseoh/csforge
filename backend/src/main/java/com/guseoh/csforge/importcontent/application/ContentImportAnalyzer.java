@@ -99,8 +99,10 @@ public class ContentImportAnalyzer {
             return preview(item, ImportClassification.CREATED, null, List.of(), List.of());
         }
         List<ImportFieldDiff> diffs = diffs(item, existing, state);
-        if (item.kind() == ImportItemKind.QUESTION && !QuestionStructureComparator.matches(item, (Question) existing)
-                && state.questionIdsWithAttempts().contains(((Question) existing).getId())) {
+        if (item.kind() == ImportItemKind.QUESTION
+                && !QuestionStructureComparator.matches(item, (Question) existing)
+                && state.questionIdsWithAttempts().contains(((Question) existing).getId())
+                && !QuestionStructureComparator.preservesAttemptReferences(item, (Question) existing)) {
             diffs = new ArrayList<>(diffs);
             diffs.add(new ImportFieldDiff("history", "Attempts exist", "structural question update is prohibited"));
             return preview(
