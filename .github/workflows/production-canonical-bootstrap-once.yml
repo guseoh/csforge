@@ -123,7 +123,7 @@ jobs:
           bootstrap_script=$(cat <<'SCRIPT'
           set -eu
 
-          java -jar /app/app.jar --spring.profiles.active=local --server.port=8080 >/tmp/csforge-bootstrap.log 2>&1 &
+          java -jar /app/app.jar --spring.profiles.active=local --server.port=8080 &
           app_pid=$!
 
           cleanup() {
@@ -139,35 +139,67 @@ jobs:
               break
             fi
             if ! kill -0 "$app_pid" 2>/dev/null; then
-              cat /tmp/csforge-bootstrap.log >&2
               exit 1
             fi
             sleep 2
           done
 
           if [ "$ready" -ne 1 ]; then
-            cat /tmp/csforge-bootstrap.log >&2
             echo "Bootstrap application did not become ready." >&2
             exit 1
           fi
 
+          echo "Reading canonical bootstrap status..."
           before=$(curl --fail --silent --show-error http://127.0.0.1:8080/api/canonical-bootstrap/status)
-          first=$(curl --fail --silent --show-error -X POST http://127.0.0.1:8080/api/canonical-bootstrap)
-          second=$(curl --fail --silent --show-error -X POST http://127.0.0.1:8080/api/canonical-bootstrap)
-
           echo "Before bootstrap: $before"
+
+          echo "Running first canonical bootstrap..."
+          first=$(curl --fail --silent --show-error -X POST http://127.0.0.1:8080/api/canonical-bootstrap)
           echo "First bootstrap: $first"
+
+          if ! echo "$first" | grep -q '"success":true'; then
+            echo "First bootstrap did not report success." >&2
+            exit 21
+          fi
+          if ! echo "$first" | grep -q '"questions":2524'; then
+            echo "First bootstrap did not reach 2,524 questions." >&2
+            exit 22
+          fi
+
+          echo "Running idempotency bootstrap..."
+          second=$(curl --fail --silent --show-error -X POST http://127.0.0.1:8080/api/canonical-bootstrap)
           echo "Idempotency bootstrap: $second"
 
-          echo "$first" | grep -q '"success":true'
-          echo "$first" | grep -q '"questions":2524'
-          echo "$second" | grep -q '"success":true'
-          echo "$second" | grep -q '"state":"READY"'
-          echo "$second" | grep -q '"questions":2524'
-          echo "$second" | grep -q '"created":0'
-          echo "$second" | grep -q '"updated":0'
-          echo "$second" | grep -q '"errors":0'
-          echo "$second" | grep -q '"failed":0'
+          if ! echo "$second" | grep -q '"success":true'; then
+            echo "Second bootstrap did not report success." >&2
+            exit 31
+          fi
+          if ! echo "$second" | grep -q '"state":"READY"'; then
+            echo "Second bootstrap did not report READY." >&2
+            exit 32
+          fi
+          if ! echo "$second" | grep -q '"questions":2524'; then
+            echo "Second bootstrap did not retain 2,524 questions." >&2
+            exit 33
+          fi
+          if ! echo "$second" | grep -q '"created":0'; then
+            echo "Second bootstrap still created canonical items." >&2
+            exit 34
+          fi
+          if ! echo "$second" | grep -q '"updated":0'; then
+            echo "Second bootstrap still updated canonical items." >&2
+            exit 35
+          fi
+          if ! echo "$second" | grep -q '"errors":0'; then
+            echo "Second bootstrap reported validation errors." >&2
+            exit 36
+          fi
+          if ! echo "$second" | grep -q '"failed":0'; then
+            echo "Second bootstrap reported failed items." >&2
+            exit 37
+          fi
+
+          echo "Canonical bootstrap completed and reimport is idempotent."
           SCRIPT
           )
 
@@ -209,24 +241,24 @@ jobs:
         run: |
           set +e
           execution="$(gcloud run jobs executions list \
-            --job="\${BOOTSTRAP_JOB}" \
-            --project="\${GCP_PROJECT_ID}" \
-            --region="\${GCP_REGION}" \
+            --job="${BOOTSTRAP_JOB}" \
+            --project="${GCP_PROJECT_ID}" \
+            --region="${GCP_REGION}" \
             --limit=1 \
             --sort-by="~metadata.creationTimestamp" \
             --format="value(metadata.name)")"
 
-          if [[ -n "\${execution}" ]]; then
-            echo "Failed execution: \${execution}"
-            gcloud run jobs executions describe "\${execution}" \
-              --project="\${GCP_PROJECT_ID}" \
-              --region="\${GCP_REGION}" \
+          if [[ -n "${execution}" ]]; then
+            echo "Failed execution: ${execution}"
+            gcloud run jobs executions describe "${execution}" \
+              --project="${GCP_PROJECT_ID}" \
+              --region="${GCP_REGION}" \
               --format="yaml(metadata.name,status.conditions,status.failedCount,status.succeededCount,status.logUri)"
           fi
 
           gcloud logging read \
-            "resource.type=cloud_run_job AND resource.labels.job_name=\${BOOTSTRAP_JOB}" \
-            --project="\${GCP_PROJECT_ID}" \
+            "resource.type=cloud_run_job AND resource.labels.job_name=${BOOTSTRAP_JOB}" \
+            --project="${GCP_PROJECT_ID}" \
             --freshness=30m \
             --limit=100 \
             --order=asc \
