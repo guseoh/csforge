@@ -15,10 +15,14 @@ final class QuestionStructureComparator {
     }
 
     static boolean matches(NormalizedImportItem item, Question question) {
-        return Objects.equals(question.getQuestionType().name(), item.questionType())
-                && choiceStructure(question).equals(choiceStructure(item))
+        return preservesAttemptReferences(item, question)
                 && answerStructure(question).equals(answerStructure(item))
                 && conceptKeys(question).equals(item.conceptKeys().stream().sorted().toList());
+    }
+
+    static boolean preservesAttemptReferences(NormalizedImportItem item, Question question) {
+        return Objects.equals(question.getQuestionType().name(), item.questionType())
+                && choiceStructure(question).equals(choiceStructure(item));
     }
 
     private static List<String> choiceStructure(Question question) {
