@@ -83,6 +83,7 @@ jobs:
           plain = {
               "SPRING_PROFILES_ACTIVE": "local",
               "CSFORGE_AI_ENABLED": "false",
+              "MANAGEMENT_ENDPOINT_HEALTH_SHOW_DETAILS": "always",
           }
           secrets = []
           found = set()
@@ -162,8 +163,10 @@ jobs:
           trap cleanup_proxy EXIT
 
           ready=0
+          last_status=""
           for _ in $(seq 1 60); do
-            if curl --fail --silent --show-error http://127.0.0.1:8081/actuator/health/readiness >/tmp/readiness.json; then
+            last_status="$(curl --silent --show-error --output /tmp/readiness.json --write-out '%{http_code}' http://127.0.0.1:8081/actuator/health/readiness || true)"
+            if [[ "${last_status}" == "200" ]]; then
               ready=1
               break
             fi
@@ -171,8 +174,12 @@ jobs:
           done
 
           if [[ "${ready}" -ne 1 ]]; then
-            echo "Authenticated proxy did not become ready." >&2
-            cat /tmp/bootstrap-proxy.log || true
+            echo "Authenticated proxy did not become ready. Last HTTP status: ${last_status}" >&2
+            echo "Readiness response:" >&2
+            cat /tmp/readiness.json >&2 || true
+            echo >&2
+            echo "Proxy output:" >&2
+            cat /tmp/bootstrap-proxy.log >&2 || true
             exit 1
           fi
 
