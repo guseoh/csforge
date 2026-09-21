@@ -29,12 +29,21 @@ class QuestionStructureComparatorTest {
     }
 
     @Test
-    void choiceContentChangeDoesNotPreserveAttemptReferences() {
+    void choiceContentChangePreservesAttemptReferencesWhenKeysStayStable() {
         Question question = question();
         NormalizedImportItem changedChoice = item("B", "Changed");
 
         assertFalse(QuestionStructureComparator.matches(changedChoice, question));
-        assertFalse(QuestionStructureComparator.preservesAttemptReferences(changedChoice, question));
+        assertTrue(QuestionStructureComparator.preservesAttemptReferences(changedChoice, question));
+    }
+
+    @Test
+    void choiceKeyChangeDoesNotPreserveAttemptReferences() {
+        Question question = question();
+        NormalizedImportItem changedKeys = itemWithSecondChoiceKey("C");
+
+        assertFalse(QuestionStructureComparator.matches(changedKeys, question));
+        assertFalse(QuestionStructureComparator.preservesAttemptReferences(changedKeys, question));
     }
 
     private static Question question() {
@@ -61,6 +70,14 @@ class QuestionStructureComparatorTest {
     }
 
     private static NormalizedImportItem item(String correctChoiceKey, String firstChoiceContent) {
+        return item(correctChoiceKey, firstChoiceContent, "B");
+    }
+
+    private static NormalizedImportItem itemWithSecondChoiceKey(String secondChoiceKey) {
+        return item(secondChoiceKey, "First", secondChoiceKey);
+    }
+
+    private static NormalizedImportItem item(String correctChoiceKey, String firstChoiceContent, String secondChoiceKey) {
         return new NormalizedImportItem(
                 "question.json",
                 0,
@@ -86,7 +103,7 @@ class QuestionStructureComparatorTest {
                 List.of(),
                 List.of(
                         new NormalizedChoice("A", firstChoiceContent, 0),
-                        new NormalizedChoice("B", "Second", 1)),
+                        new NormalizedChoice(secondChoiceKey, "Second", 1)),
                 correctChoiceKey,
                 List.of(),
                 null,
