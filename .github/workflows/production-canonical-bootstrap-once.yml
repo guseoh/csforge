@@ -115,6 +115,12 @@ jobs:
               handle.write("secrets=" + ",".join(secrets) + "\n")
           PY
 
+          context_path="/bootstrap-$(openssl rand -hex 32)"
+          jq --arg context_path "${context_path}"             '. + {"SERVER_SERVLET_CONTEXT_PATH": $context_path}'             /tmp/bootstrap-env.json > /tmp/bootstrap-env-with-context.json
+          mv /tmp/bootstrap-env-with-context.json /tmp/bootstrap-env.json
+          printf '%s' "${context_path}" > /tmp/bootstrap-context-path
+          chmod 600 /tmp/bootstrap-context-path
+
           echo "service_account=${service_account}" >> "${GITHUB_OUTPUT}"
 
       - name: Deploy private bootstrap service
@@ -134,7 +140,7 @@ jobs:
             --min=0
             --max=1
             --timeout=900
-            --no-allow-unauthenticated
+            --allow-unauthenticated
             --quiet
           )
 
@@ -144,28 +150,19 @@ jobs:
 
           gcloud "${args[@]}"
 
-      - name: Run canonical bootstrap through authenticated proxy
+      - name: Run canonical bootstrap through ephemeral secret path
         shell: bash
         run: |
           set -euo pipefail
 
-          gcloud run services proxy "${BOOTSTRAP_SERVICE}" \
-            --project="${GCP_PROJECT_ID}" \
-            --region="${GCP_REGION}" \
-            --port=8081 \
-            >/tmp/bootstrap-proxy.log 2>&1 &
-          proxy_pid=$!
-
-          cleanup_proxy() {
-            kill "${proxy_pid}" 2>/dev/null || true
-            wait "${proxy_pid}" 2>/dev/null || true
-          }
-          trap cleanup_proxy EXIT
+          service_url="$(gcloud run services describe "${BOOTSTRAP_SERVICE}"             --project="${GCP_PROJECT_ID}"             --region="${GCP_REGION}"             --format='value(status.url)')"
+          context_path="$(cat /tmp/bootstrap-context-path)"
+          base_url="${service_url}${context_path}"
 
           ready=0
           last_status=""
           for _ in $(seq 1 60); do
-            last_status="$(curl --silent --show-error --output /tmp/readiness.json --write-out '%{http_code}' http://127.0.0.1:8081/actuator/health/readiness || true)"
+            last_status="$(curl --silent --show-error --output /tmp/readiness.json --write-out '%{http_code}'               "${base_url}/actuator/health/readiness" || true)"
             if [[ "${last_status}" == "200" ]]; then
               ready=1
               break
@@ -174,20 +171,18 @@ jobs:
           done
 
           if [[ "${ready}" -ne 1 ]]; then
-            echo "Authenticated proxy did not become ready. Last HTTP status: ${last_status}" >&2
+            echo "Temporary bootstrap service did not become ready. Last HTTP status: ${last_status}" >&2
             echo "Readiness response:" >&2
             cat /tmp/readiness.json >&2 || true
             echo >&2
-            echo "Proxy output:" >&2
-            cat /tmp/bootstrap-proxy.log >&2 || true
             exit 1
           fi
 
-          before="$(curl --fail --silent --show-error http://127.0.0.1:8081/api/canonical-bootstrap/status)"
+          before="$(curl --fail --silent --show-error "${base_url}/api/canonical-bootstrap/status")"
           echo "Before bootstrap:"
           echo "${before}" | jq .
 
-          first="$(curl --fail --silent --show-error -X POST http://127.0.0.1:8081/api/canonical-bootstrap)"
+          first="$(curl --fail --silent --show-error -X POST "${base_url}/api/canonical-bootstrap")"
           echo "First bootstrap:"
           echo "${first}" | jq .
 
@@ -195,17 +190,27 @@ jobs:
             echo "First bootstrap failed: batch=$(echo "${first}" | jq -r '.failedBatch') kind=$(echo "${first}" | jq -r '.failedKind') message=$(echo "${first}" | jq -r '.failureMessage')" >&2
             exit 21
           fi
-          if [[ "$(echo "${first}" | jq -r '.currentCounts.questions')" != "2524" ]]; then
-            echo "First bootstrap did not reach 2,524 questions." >&2
+          if [[ "$(echo "${first}" | jq -r '.currentCounts.learningAreas')" != "15" ]]; then
+            echo "First bootstrap did not retain 15 learning areas." >&2
             exit 22
           fi
+          if [[ "$(echo "${first}" | jq -r '.currentCounts.concepts')" != "721" ]]; then
+            echo "First bootstrap did not reach 721 concepts." >&2
+            exit 23
+          fi
+          if [[ "$(echo "${first}" | jq -r '.currentCounts.questions')" != "2524" ]]; then
+            echo "First bootstrap did not reach 2,524 questions." >&2
+            exit 24
+          fi
 
-          second="$(curl --fail --silent --show-error -X POST http://127.0.0.1:8081/api/canonical-bootstrap)"
+          second="$(curl --fail --silent --show-error -X POST "${base_url}/api/canonical-bootstrap")"
           echo "Idempotency bootstrap:"
           echo "${second}" | jq .
 
           test "$(echo "${second}" | jq -r '.success')" = "true"
           test "$(echo "${second}" | jq -r '.state')" = "READY"
+          test "$(echo "${second}" | jq -r '.currentCounts.learningAreas')" = "15"
+          test "$(echo "${second}" | jq -r '.currentCounts.concepts')" = "721"
           test "$(echo "${second}" | jq -r '.currentCounts.questions')" = "2524"
           test "$(echo "${second}" | jq -r '.totals.created')" = "0"
           test "$(echo "${second}" | jq -r '.totals.updated')" = "0"
