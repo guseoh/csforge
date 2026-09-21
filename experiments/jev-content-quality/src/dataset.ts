@@ -7,6 +7,12 @@ export const DATA_DIR = fileURLToPath(new URL("../data", import.meta.url));
 export const DEFAULT_DATASET_PATH = path.join(DATA_DIR, "phase-a-candidates.jsonl");
 export const DEFAULT_MANIFEST_PATH = path.join(DATA_DIR, "manifest.json");
 
+export interface CriterionSupport {
+  positiveSupport: number;
+  recallEvaluable: boolean;
+  note?: string;
+}
+
 export interface DatasetManifest {
   datasetVersion: string;
   rubricVersion: string;
@@ -16,6 +22,11 @@ export interface DatasetManifest {
   caseGroupCount: number;
   languageExperimentCaseGroups: string[];
   estimatedInputCostUsdPerMillionTokens: number;
+  criterionSupport: {
+    question: Record<string, CriterionSupport>;
+    concept: Record<string, CriterionSupport>;
+  };
+  difficultyFitDistribution: Record<string, number>;
 }
 
 export async function loadDataset(filePath = DEFAULT_DATASET_PATH): Promise<CandidateRecord[]> {

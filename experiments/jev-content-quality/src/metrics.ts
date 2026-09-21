@@ -1,4 +1,4 @@
-import type { CandidateRecord, EvaluationResult } from "./types.js";
+import type { CandidateRecord, EvaluationResult, QuestionGold } from "./types.js";
 
 export interface ConfusionMetric {
   truePositive: number;
@@ -8,6 +8,11 @@ export interface ConfusionMetric {
   precision: number | null;
   recall: number | null;
 }
+export interface DifficultyFitMetrics {
+  count: number;
+  accuracy: number | null;
+  confusionMatrix: Record<"TOO_EASY" | "APPROPRIATE" | "TOO_HARD", Record<"TOO_EASY" | "APPROPRIATE" | "TOO_HARD", number>>;
+}
 
 export interface EvaluationMetrics {
   criterion: Record<string, ConfusionMetric>;
@@ -15,6 +20,8 @@ export interface EvaluationMetrics {
   falseNegativeRate: number | null;
   falsePositiveRate: number | null;
   humanReviewReductionRate: number | null;
+  successfulPolicyEvaluationCount: number;
+  difficultyFit: DifficultyFitMetrics;
   areaBreakdown: Record<string, { count: number; reviewCount: number }>;
   kindBreakdown: Record<string, { count: number; reviewCount: number }>;
   questionTypeBreakdown: Record<string, { count: number; reviewCount: number }>;
@@ -24,7 +31,9 @@ export interface EvaluationMetrics {
   estimatedCostUsd: number;
   actualCostUsd: number | null;
   apiFailureCount: number;
+  invalidResponseCount: number;
   timeoutCount: number;
+  uncalibratedCount: number;
   repeatedRunDisagreement: number | null;
 }
 
@@ -46,6 +55,10 @@ function incrementBreakdown(target: Record<string, { count: number; reviewCount:
   target[key] = current;
 }
 
+function isSuccessfulPolicyEvaluation(result: EvaluationResult): boolean {
+  return result.error === undefined && (result.derivedPolicyResult.decision === "PASS" || result.derivedPolicyResult.decision === "REVIEW");
+}
+
 const GOLD_KEY_BY_RUBRIC_ID: Record<string, string> = {
   material_technical_error: "materialTechnicalError",
   multiple_defensible_answers: "multipleDefensibleAnswers",
@@ -57,6 +70,16 @@ const GOLD_KEY_BY_RUBRIC_ID: Record<string, string> = {
   learning_objective_gap: "learningObjectiveGap",
   causal_or_state_flow_gap: "causalOrStateFlowGap",
 };
+
+const DIFFICULTY_VALUES = ["TOO_EASY", "APPROPRIATE", "TOO_HARD"] as const;
+type DifficultyValue = (typeof DIFFICULTY_VALUES)[number];
+
+function emptyDifficultyMatrix(): DifficultyFitMetrics["confusionMatrix"] {
+  return Object.fromEntries(DIFFICULTY_VALUES.map((expected) => [
+    expected,
+    Object.fromEntries(DIFFICULTY_VALUES.map((predicted) => [predicted, 0])),
+  ])) as DifficultyFitMetrics["confusionMatrix"];
+}
 
 export function calculateMetrics(
   dataset: CandidateRecord[],
@@ -72,12 +95,18 @@ export function calculateMetrics(
   const kindBreakdown: EvaluationMetrics["kindBreakdown"] = {};
   const questionTypeBreakdown: EvaluationMetrics["questionTypeBreakdown"] = {};
   const instructionLanguageBreakdown: EvaluationMetrics["instructionLanguageBreakdown"] = {};
+  const difficultyConfusion = emptyDifficultyMatrix();
+  let difficultyCount = 0;
+  let difficultyCorrect = 0;
+  let successfulPolicyEvaluationCount = 0;
   let criticalTotal = 0;
   let criticalReviewed = 0;
-  let noneTotal = 0;
-  let noneReviewed = 0;
+  let nonCriticalTotal = 0;
+  let nonCriticalReviewed = 0;
   let apiFailureCount = 0;
+  let invalidResponseCount = 0;
   let timeoutCount = 0;
+  let uncalibratedCount = 0;
   let actualCostUsd = 0;
   let hasActualCost = false;
 
@@ -91,13 +120,18 @@ export function calculateMetrics(
     incrementBreakdown(instructionLanguageBreakdown, result.instructionLanguage, reviewed);
     if (result.latencyMs !== undefined) latencies.push(result.latencyMs);
     if (result.inputTokens !== undefined) inputTokens.push(result.inputTokens);
-    if (result.error?.kind === "API_FAILURE" || result.error?.kind === "INVALID_RESPONSE") apiFailureCount += 1;
+    if (result.error?.kind === "API_FAILURE") apiFailureCount += 1;
+    if (result.error?.kind === "INVALID_RESPONSE") invalidResponseCount += 1;
     if (result.error?.kind === "TIMEOUT") timeoutCount += 1;
+    if (result.derivedPolicyResult.decision === "UNCALIBRATED") uncalibratedCount += 1;
     const actual = (result as EvaluationResult & { actualCostUsd?: number }).actualCostUsd;
     if (typeof actual === "number") {
       hasActualCost = true;
       actualCostUsd += actual;
     }
+
+    if (!isSuccessfulPolicyEvaluation(result)) continue;
+    successfulPolicyEvaluationCount += 1;
 
     const gold = candidate.candidateGold as unknown as Record<string, unknown>;
     for (const [id, prediction] of Object.entries(result.criterionPredictions ?? {})) {
@@ -114,10 +148,19 @@ export function calculateMetrics(
     if (candidate.candidateGoldSeverity === "P0" || candidate.candidateGoldSeverity === "P1") {
       criticalTotal += 1;
       if (reviewed) criticalReviewed += 1;
+    } else if (candidate.candidateGoldSeverity === "P2" || candidate.candidateGoldSeverity === "NONE") {
+      nonCriticalTotal += 1;
+      if (reviewed) nonCriticalReviewed += 1;
     }
-    if (candidate.candidateGoldSeverity === "NONE") {
-      noneTotal += 1;
-      if (reviewed) noneReviewed += 1;
+
+    if (candidate.kind === "QUESTION") {
+      const expected = (candidate.candidateGold as QuestionGold).difficultyFit;
+      const predicted = result.rawAnswers?.difficulty_fit?.choice;
+      if (DIFFICULTY_VALUES.includes(expected) && typeof predicted === "string" && DIFFICULTY_VALUES.includes(predicted as DifficultyValue)) {
+        difficultyCount += 1;
+        if (expected === predicted) difficultyCorrect += 1;
+        difficultyConfusion[expected][predicted as DifficultyValue] += 1;
+      }
     }
   }
 
@@ -135,6 +178,7 @@ export function calculateMetrics(
 
   const repeated = new Map<string, { count: number; decisions: Set<string> }>();
   for (const result of results) {
+    if (!isSuccessfulPolicyEvaluation(result)) continue;
     const key = `${result.caseId}:${result.instructionLanguage}`;
     const entry = repeated.get(key) ?? { count: 0, decisions: new Set<string>() };
     entry.count += 1;
@@ -147,8 +191,14 @@ export function calculateMetrics(
     criterion: criterionMetrics,
     criticalIssueRecall: rate(criticalReviewed, criticalTotal),
     falseNegativeRate: rate([...criterion.values()].reduce((sum, value) => sum + value.fn, 0), [...criterion.values()].reduce((sum, value) => sum + value.fn + value.tp, 0)),
-    falsePositiveRate: rate(noneReviewed, noneTotal),
-    humanReviewReductionRate: options.balancedHistoricalSet ? null : rate(noneTotal - noneReviewed, noneTotal),
+    falsePositiveRate: rate(nonCriticalReviewed, nonCriticalTotal),
+    humanReviewReductionRate: options.balancedHistoricalSet ? null : rate(successfulPolicyEvaluationCount - results.filter((result) => isSuccessfulPolicyEvaluation(result) && result.derivedPolicyResult.decision === "REVIEW").length, successfulPolicyEvaluationCount),
+    successfulPolicyEvaluationCount,
+    difficultyFit: {
+      count: difficultyCount,
+      accuracy: rate(difficultyCorrect, difficultyCount),
+      confusionMatrix: difficultyConfusion,
+    },
     areaBreakdown,
     kindBreakdown,
     questionTypeBreakdown,
@@ -158,7 +208,9 @@ export function calculateMetrics(
     estimatedCostUsd: inputTokens.reduce((sum, value) => sum + value, 0) * options.inputCostUsdPerMillionTokens / 1_000_000,
     actualCostUsd: hasActualCost ? actualCostUsd : null,
     apiFailureCount,
+    invalidResponseCount,
     timeoutCount,
+    uncalibratedCount,
     repeatedRunDisagreement: repeatedGroups.length === 0 ? null : repeatedGroups.filter((entry) => entry.decisions.size > 1).length / repeatedGroups.length,
   };
 }

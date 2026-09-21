@@ -3,6 +3,7 @@ export type CandidateSeverity = "P0" | "P1" | "P2" | "NONE";
 export type DifficultyFit = "TOO_EASY" | "APPROPRIATE" | "TOO_HARD";
 export type InstructionLanguage = "ko" | "en";
 export type PolicyDecision = "PASS" | "REVIEW" | "UNCALIBRATED";
+export type EvaluationErrorKind = "API_FAILURE" | "TIMEOUT" | "INVALID_RESPONSE";
 
 export interface QuestionGold {
   materialTechnicalError: boolean;
@@ -108,7 +109,7 @@ export interface EvaluationResult {
   criterionPredictions?: Record<string, boolean>;
   derivedPolicyResult: PolicyResult;
   error?: {
-    kind: "API_FAILURE" | "TIMEOUT" | "INVALID_RESPONSE";
+    kind: EvaluationErrorKind;
     message: string;
     status?: number;
   };

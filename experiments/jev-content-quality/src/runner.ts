@@ -1,8 +1,8 @@
 import { randomUUID } from "node:crypto";
 import type { CandidateRecord, EvaluationResult, InstructionLanguage, JevAnswer } from "./types.js";
-import { buildRubric, CONCEPT_ATOMIC_IDS, QUESTION_ATOMIC_IDS, RUBRIC_VERSION } from "./rubric.js";
-import { CONCEPT_NOUL_IDS, criterionPredictions, derivePolicy, QUESTION_NOUL_IDS, type PolicyThresholds } from "./policy.js";
-import { TypeSafeDirectClient } from "./client.js";
+import { buildRubric, RUBRIC_VERSION } from "./rubric.js";
+import { criterionPredictions, derivePolicy, type PolicyThresholds } from "./policy.js";
+import { TypeSafeApiError, TypeSafeDirectClient } from "./client.js";
 
 export interface RunOptions {
   dataset: CandidateRecord[];
@@ -30,8 +30,11 @@ export async function runBenchmark(options: RunOptions): Promise<EvaluationResul
   for (const candidate of options.dataset) {
     const selectedLanguages: readonly InstructionLanguage[] = options.languageExperimentCaseGroups?.has(candidate.caseGroupId) ? languages : ["ko"];
     for (const language of selectedLanguages) {
-      const rubric = buildRubric(candidate.kind, language);
-      const criterionIds = candidate.kind === "QUESTION" ? QUESTION_NOUL_IDS : CONCEPT_NOUL_IDS;
+      const questionType = typeof candidate.content.questionType === "string" ? candidate.content.questionType : undefined;
+      const rubric = buildRubric(candidate.kind, language, questionType);
+      const criterionIds = Object.entries(rubric.questions)
+        .filter(([, question]) => question.type === "noul")
+        .map(([id]) => id);
       const started = Date.now();
       try {
         const { response, latencyMs } = await options.client.evaluate(candidate.state, rubric.questions);
@@ -45,7 +48,7 @@ export async function runBenchmark(options: RunOptions): Promise<EvaluationResul
           kind: candidate.kind,
           area: candidate.area,
           contentKey: candidate.contentKey,
-          questionType: typeof candidate.content.questionType === "string" ? candidate.content.questionType : undefined,
+          questionType,
           instructionLanguage: language,
           requestedModel: options.requestedModel,
           resolvedModel: response.model,
@@ -60,7 +63,9 @@ export async function runBenchmark(options: RunOptions): Promise<EvaluationResul
           derivedPolicyResult: policy,
         });
       } catch (error) {
-        const apiError = error as { timeout?: boolean; status?: number; message?: string };
+        const apiError = error instanceof TypeSafeApiError
+          ? error
+          : new TypeSafeApiError(String(error));
         results.push({
           runId: randomUUID(),
           repeatIndex: options.repeatIndex ?? 0,
@@ -69,14 +74,14 @@ export async function runBenchmark(options: RunOptions): Promise<EvaluationResul
           kind: candidate.kind,
           area: candidate.area,
           contentKey: candidate.contentKey,
-          questionType: typeof candidate.content.questionType === "string" ? candidate.content.questionType : undefined,
+          questionType,
           instructionLanguage: language,
           requestedModel: options.requestedModel,
           rubricVersion: RUBRIC_VERSION,
           datasetVersion: options.datasetVersion,
           latencyMs: Date.now() - started,
           derivedPolicyResult: { decision: "UNCALIBRATED", triggeredCriteria: [], missingThresholds: [], note: "No policy decision is derived after an API error." },
-          error: { kind: apiError.timeout ? "TIMEOUT" : "API_FAILURE", message: apiError.message ?? String(error), status: apiError.status },
+          error: { kind: apiError.kind, message: apiError.message, status: apiError.status },
         });
       }
     }

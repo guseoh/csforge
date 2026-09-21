@@ -4,21 +4,23 @@
 
 ## Dataset
 
-`data/phase-a-candidates.jsonl`은 PR #58, #59, #100, #107에서 실제로 사람이 수정한 before/after pair를 바탕으로 만든 60개 candidate이다. 6개 LearningArea마다 5개 caseGroup을 두었고, 각 group은 historical `BEFORE`와 reviewed `AFTER` 한 행으로 구성한다. synthetic negative는 만들지 않았다.
+`data/phase-a-candidates.jsonl`은 PR #58, #59, #100, #107, #109에서 실제로 사람이 수정한 before/after pair를 바탕으로 만든 60개 Gold candidate이다. 6개 LearningArea마다 5개 caseGroup을 두었고, 각 group은 historical `BEFORE`와 individually reviewed `AFTER` 한 행으로 구성한다. synthetic negative는 만들지 않았다.
 
-Candidate label은 최종 Gold가 아니다. `content/AGENTS.md`의 P0/P1/P2 기준을 적용한 Codex의 evidence-based proposal이며, 이후 ChatGPT human review에서 확정해야 한다.
+Human Gold delta를 반영한 BEFORE severity는 P0=8, P1=5, P2=14, NONE=3이며, 60개 전체 row에서는 AFTER 30개가 추가되어 P0=8, P1=5, P2=14, NONE=33이다. P2는 blocking defect가 아닌 difficulty-direction example이다. OS deadlock/condition-variable/semaphore BEFORE는 semantic hard-negative로 NONE이다.
 
 `data/phase-a-case-spec.json`은 pair 선택과 rationale의 provenance manifest이고, `data/manifest.json`은 dataset/rubric/model version을 고정한다. 각 row의 `source`에는 PR, path, before ref, after ref, commit, version이 있다.
 
-PR #58, #59, #60, #100, #107, #110과 관련 Content V2 diff를 확인했다. 이 Phase A slice에는 #58, #59, #100, #107의 substantive pair만 선별했고, #60의 diagram/reference 보강과 #110의 migration-role 재작성은 현재 6개 area × 5 pair 균형을 깨거나 동일 rubric defect로 해석하기 어려워 provenance 검토 대상에서 제외했다.
+PR #58, #59, #60, #100, #107, #109, #110과 관련 Content V2 diff를 확인했다. 이 Phase A slice에는 #58, #59, #100, #107, #109의 substantive pair만 선별했고, #60의 diagram/reference 보강, #110의 migration-role 재작성, 그리고 database keyset-pagination diagram finding은 이 harness에 섞지 않았다.
+
+`manifest.json`의 `criterionSupport`는 positive support가 없는 `answerExplanationConflict`, `linkedConceptMisalignment`, Concept의 `layerBoundaryConfusion`, `learningObjectiveGap`, `causalOrStateFlowGap`를 `positiveSupport: 0`과 `recallEvaluable: false`로 명시한다. 이런 criterion의 recall은 성공한 것처럼 계산되지 않고 `null`/not-applicable로 남는다. `difficultyFitDistribution`은 `TOO_EASY=1`, `APPROPRIATE=38`, `TOO_HARD=13`이다.
 
 ## Harness
 
 - `src/rubric.ts`: Question/Concept를 atomic `Noul`·`Choice` 질문으로 분리한다. `needsHumanReview` 같은 composite 질문은 만들지 않는다.
 - `src/policy.ts`: calibrated threshold를 외부 입력으로 받아 `PASS` 또는 `REVIEW`를 계산한다. threshold가 없거나 일부만 있으면 `UNCALIBRATED`로 남긴다.
-- `src/client.ts`: 공식 TypeSafe direct HTTP API와 pinned `jev-1.13.0`을 사용한다. API key는 `TYPESAFE_API_KEY` 환경변수에서만 읽는다.
+- `src/client.ts`: 공식 TypeSafe direct HTTP API와 pinned `jev-1.13.0`을 사용한다. API key는 `TYPESAFE_API_KEY` 환경변수에서만 읽는다. 성공 응답도 requested answer ID/type, Noul range, Choice option/probability/confidence, usage를 검증하고 malformed body는 `INVALID_RESPONSE`로 기록한다.
 - `src/runner.ts`: requested/resolved model, rubric/dataset version, latency, token usage, raw typed answers, probabilities, policy result, error/timeout을 JSONL result에 기록한다.
-- `src/metrics.ts`: criterion precision/recall, P0/P1 recall, FNR/FPR, area/kind/question-type/language breakdown, latency p50/p95, tokens/cost, failure/timeout, repeated-run disagreement을 계산한다. Balanced Phase A에서는 Human Review Reduction을 `null`로 둔다.
+- `src/metrics.ts`: criterion precision/recall, P0/P1 recall, P2+NONE FPR, 3-class `difficulty_fit` accuracy/confusion, area/kind/question-type/language breakdown, latency p50/p95, tokens/cost, API failure/invalid response/timeout/uncalibrated availability, repeated-run disagreement을 계산한다. Balanced Phase A에서는 Human Review Reduction을 `null`로 두며, 비균형 실행에서는 정상 정책 평가 전체의 PASS 비율로 계산한다.
 
 ## Validation and run
 
@@ -43,7 +45,7 @@ Threshold calibration은 아직 확정하지 않았다. 실행 시 `JEV_POLICY_T
 
 ## Review risks
 
-- BEFORE→AFTER diff가 존재한다는 사실만으로 label을 확정하지 않았다. 특히 scenario 보강과 난도 조정은 candidate rationale이며 Human Gold 확인이 필요하다.
+- BEFORE→AFTER diff만으로 모든 row를 defect로 만들지 않았다. 특히 difficulty-only P2, OS semantic hard-negative, network under-specified scenario의 criterion 범위를 Human Gold rationale에 맞춰 분리했다.
 - Phase A가 balanced historical set이므로 review reduction을 production estimate로 해석할 수 없다.
-- Korean state에서 `linkedConcepts` title/summary가 충분히 보이는지, language variant 차이가 criterion별로 안정적인지 검토해야 한다.
+- `linkedConcepts`에는 실제 state에 제공되는 title/summary만 넣었고 rubric도 이를 learning focus로 표현한다. 실제 curriculum objective가 state에 없으므로 보이지 않는 objective까지 판정하지 않는다.
 - threshold가 아직 없으므로 실제 benchmark 결과의 PASS/REVIEW를 성공 기준으로 읽을 수 없다.

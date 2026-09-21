@@ -1,3 +1,4 @@
+import type { DatasetManifest } from "./dataset.js";
 import type { CandidateRecord, ConceptGold, QuestionGold, RubricDefinition } from "./types.js";
 
 const QUESTION_GOLD_KEYS = [
@@ -38,6 +39,13 @@ function validateGold(row: CandidateRecord, errors: string[]): void {
     if (questionGold.weakDistractor !== null && typeof questionGold.weakDistractor !== "boolean") {
       errors.push(`${row.caseId}: question weakDistractor must be boolean or null`);
     }
+    const isMultipleChoice = row.content.questionType === "MULTIPLE_CHOICE";
+    if (isMultipleChoice && typeof questionGold.weakDistractor !== "boolean") {
+      errors.push(`${row.caseId}: MULTIPLE_CHOICE weakDistractor must be boolean`);
+    }
+    if (!isMultipleChoice && questionGold.weakDistractor !== null) {
+      errors.push(`${row.caseId}: non-MULTIPLE_CHOICE weakDistractor must be null`);
+    }
   } else {
     const conceptGold = gold as unknown as ConceptGold;
     for (const key of CONCEPT_GOLD_KEYS) {
@@ -46,6 +54,63 @@ function validateGold(row: CandidateRecord, errors: string[]): void {
       }
     }
   }
+}
+
+const SUPPORT_KEYS = {
+  QUESTION: [
+    "materialTechnicalError",
+    "multipleDefensibleAnswers",
+    "answerExplanationConflict",
+    "linkedConceptMisalignment",
+    "responseShapeMismatch",
+    "weakDistractor",
+  ],
+  CONCEPT: [
+    "materialTechnicalError",
+    "layerBoundaryConfusion",
+    "learningObjectiveGap",
+    "causalOrStateFlowGap",
+  ],
+} as const;
+
+export function validateManifest(manifest: DatasetManifest, rows: CandidateRecord[]): string[] {
+  const errors: string[] = [];
+  const groups = new Map(rows.map((row) => [row.caseGroupId, row]));
+  const languageGroups = manifest.languageExperimentCaseGroups ?? [];
+  if (new Set(languageGroups).size !== languageGroups.length) errors.push("manifest languageExperimentCaseGroups must be unique");
+  for (const groupId of languageGroups) {
+    if (!groups.has(groupId)) errors.push(`manifest language experiment case group does not exist: ${groupId}`);
+  }
+
+  for (const kind of ["QUESTION", "CONCEPT"] as const) {
+    const support = manifest.criterionSupport?.[kind === "QUESTION" ? "question" : "concept"];
+    for (const key of SUPPORT_KEYS[kind]) {
+      const entry = support?.[key];
+      if (!entry) {
+        errors.push(`manifest criterionSupport missing ${kind}.${key}`);
+        continue;
+      }
+      const positiveSupport = rows.filter((row) => row.kind === kind && (row.candidateGold as unknown as Record<string, unknown>)[key] === true).length;
+      if (entry.positiveSupport !== positiveSupport) {
+        errors.push(`manifest criterionSupport ${kind}.${key}=${entry.positiveSupport}, actual=${positiveSupport}`);
+      }
+      if (positiveSupport === 0 && entry.recallEvaluable !== false) {
+        errors.push(`manifest criterionSupport ${kind}.${key} must set recallEvaluable=false without positive support`);
+      }
+      if (positiveSupport > 0 && entry.recallEvaluable !== true) {
+        errors.push(`manifest criterionSupport ${kind}.${key} must set recallEvaluable=true with positive support`);
+      }
+    }
+  }
+
+  const expectedDifficulty = ["TOO_EASY", "APPROPRIATE", "TOO_HARD"] as const;
+  for (const difficulty of expectedDifficulty) {
+    const actual = rows.filter((row) => row.kind === "QUESTION" && (row.candidateGold as QuestionGold).difficultyFit === difficulty).length;
+    if (manifest.difficultyFitDistribution?.[difficulty] !== actual) {
+      errors.push(`manifest difficultyFitDistribution ${difficulty}=${manifest.difficultyFitDistribution?.[difficulty]}, actual=${actual}`);
+    }
+  }
+  return errors;
 }
 
 export function validateDataset(rows: CandidateRecord[]): string[] {

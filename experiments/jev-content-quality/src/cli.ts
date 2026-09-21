@@ -3,7 +3,7 @@ import { fileURLToPath } from "node:url";
 import path from "node:path";
 import { loadDataset, loadManifest, DEFAULT_DATASET_PATH, DEFAULT_MANIFEST_PATH } from "./dataset.js";
 import { allRubricDefinitions } from "./rubric.js";
-import { validateDataset, validateRubric } from "./schema.js";
+import { validateDataset, validateManifest, validateRubric } from "./schema.js";
 import { TypeSafeDirectClient, DEFAULT_MODEL } from "./client.js";
 import { runBenchmark } from "./runner.js";
 import { calculateMetrics } from "./metrics.js";
@@ -11,7 +11,7 @@ import type { EvaluationResult } from "./types.js";
 
 async function validate(): Promise<number> {
   const [dataset, manifest] = await Promise.all([loadDataset(DEFAULT_DATASET_PATH), loadManifest(DEFAULT_MANIFEST_PATH)]);
-  const errors = [...validateDataset(dataset), ...validateRubric(allRubricDefinitions())];
+  const errors = [...validateDataset(dataset), ...validateRubric(allRubricDefinitions()), ...validateManifest(manifest, dataset)];
   if (dataset.length !== manifest.rowCount) errors.push(`manifest rowCount=${manifest.rowCount}, actual=${dataset.length}`);
   const groupCount = new Set(dataset.map((row) => row.caseGroupId)).size;
   if (groupCount !== manifest.caseGroupCount) errors.push(`manifest caseGroupCount=${manifest.caseGroupCount}, actual=${groupCount}`);
