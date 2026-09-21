@@ -26,6 +26,9 @@ RUN apt-get update \
 COPY --from=builder --chown=10001:10001 \
     /workspace/backend/build/libs/csforge-backend-0.0.1-SNAPSHOT.jar \
     /app/app.jar
+COPY --chown=10001:10001 backend/scripts/production-canonical-bootstrap.sh /app/production-canonical-bootstrap.sh
+
+RUN chmod +x /app/production-canonical-bootstrap.sh
 
 USER 10001:10001
 
