@@ -12,6 +12,7 @@ permissions:
   id-token: write
 
 jobs:
+  # Re-run after the attempted-question choice-reference safety fix.
   bootstrap-production-content:
     runs-on: ubuntu-latest
     env:
