@@ -19,6 +19,7 @@ jobs:
       GCP_REGION: asia-southeast1
       CLOUD_RUN_SERVICE: csforge
       BOOTSTRAP_JOB: csforge-canonical-bootstrap-once
+      BOOTSTRAP_IMAGE: asia-southeast1-docker.pkg.dev/csforge-508510/csforge/csforge:bootstrap-${{ github.sha }}
     steps:
       - uses: actions/checkout@v7
 
@@ -32,6 +33,15 @@ jobs:
       - name: Set up Google Cloud CLI
         uses: google-github-actions/setup-gcloud@v3
 
+      - name: Configure Artifact Registry authentication
+        run: |
+          gcloud auth configure-docker "${GCP_REGION}-docker.pkg.dev" --quiet
+
+      - name: Build bootstrap image from current main
+        run: |
+          docker build --file backend/Dockerfile --tag "${BOOTSTRAP_IMAGE}" .
+          docker push "${BOOTSTRAP_IMAGE}"
+
       - name: Prepare production database environment
         id: runtime
         shell: bash
@@ -44,13 +54,8 @@ jobs:
             --region="${GCP_REGION}" \
             --format=json > "${service_json}"
 
-          image="$(jq -r '.spec.template.spec.containers[0].image' "${service_json}")"
           service_account="$(jq -r '.spec.template.spec.serviceAccountName // empty' "${service_json}")"
 
-          if [[ -z "${image}" || "${image}" == "null" ]]; then
-            echo "Could not resolve the production Cloud Run image." >&2
-            exit 1
-          fi
           if [[ -z "${service_account}" || "${service_account}" == "null" ]]; then
             echo "Could not resolve the production runtime service account." >&2
             exit 1
@@ -110,10 +115,7 @@ jobs:
               handle.write("secrets=" + ",".join(secrets) + "\n")
           PY
 
-          {
-            echo "image=${image}"
-            echo "service_account=${service_account}"
-          } >> "${GITHUB_OUTPUT}"
+          echo "service_account=${service_account}" >> "${GITHUB_OUTPUT}"
 
       - name: Deploy bootstrap job
         shell: bash
@@ -207,7 +209,7 @@ jobs:
             run jobs deploy "${BOOTSTRAP_JOB}"
             --project="${GCP_PROJECT_ID}"
             --region="${GCP_REGION}"
-            --image="${{ steps.runtime.outputs.image }}"
+            --image="${BOOTSTRAP_IMAGE}"
             --service-account="${{ steps.runtime.outputs.service_account }}"
             --command=/bin/sh
             --args=-c,"${bootstrap_script}"
