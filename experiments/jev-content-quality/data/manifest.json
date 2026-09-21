@@ -1,0 +1,28 @@
+{
+  "datasetVersion": "phase-a-2026-09-21",
+  "rubricVersion": "csforge-content-quality-v1",
+  "model": "jev-1.13.0",
+  "datasetKind": "BALANCED_HISTORICAL_DIAGNOSTIC",
+  "sourcePrsConsidered": [58, 59, 60, 100, 107, 110],
+  "sourcePrsSelected": [58, 59, 100, 107],
+  "rowCount": 60,
+  "caseGroupCount": 30,
+  "languageExperimentCaseGroups": [
+    "phase-a-java-01",
+    "phase-a-java-02",
+    "phase-a-spring-01",
+    "phase-a-spring-02",
+    "phase-a-database-01",
+    "phase-a-database-02",
+    "phase-a-backend-engineering-01",
+    "phase-a-backend-engineering-02",
+    "phase-a-operating-systems-01",
+    "phase-a-operating-systems-02"
+  ],
+  "estimatedInputCostUsdPerMillionTokens": 0.042,
+  "notes": [
+    "Candidate labels are Codex evidence-based proposals, not final Human Gold Labels.",
+    "Balanced historical data must not be used to interpret Human Review Reduction as a production estimate.",
+    "The model is pinned to jev-1.13.0; jev-latest is intentionally not used."
+  ]
+}
