@@ -98,7 +98,7 @@ class ContentImportIntegrationTest {
         JsonNode initial = json(post("/api/imports/preview", base, null)).get("body");
         post("/api/imports/apply", base, initial.get("previewDigest").asText());
         List<Part> changed = List.of(base.get(0), base.get(1),
-                new Part("question.json", "application/json", "{\"kind\":\"question\",\"contentKey\":\"test.q1\",\"promptMarkdown\":\"Choose\",\"questionType\":\"MULTIPLE_CHOICE\",\"difficulty\":\"EASY\",\"status\":\"PUBLISHED\",\"conceptKeys\":[\"test.concept\"],\"choices\":[{\"key\":\"A\",\"content\":\"changed\",\"displayOrder\":0},{\"key\":\"B\",\"content\":\"no\",\"displayOrder\":1}],\"correctChoiceKey\":\"A\"}"));
+                new Part("question.json", "application/json", "{\"kind\":\"question\",\"contentKey\":\"test.q1\",\"promptMarkdown\":\"Choose\",\"questionType\":\"MULTIPLE_CHOICE\",\"difficulty\":\"EASY\",\"status\":\"PUBLISHED\",\"conceptKeys\":[\"test.concept\"],\"choices\":[{\"key\":\"A\",\"content\":\"changed\",\"displayOrder\":0},{\"key\":\"C\",\"content\":\"new\",\"displayOrder\":1}],\"correctChoiceKey\":\"A\"}"));
         JsonNode preview = json(post("/api/imports/preview", changed, null)).get("body");
         assertTrue(preview.get("canApply").asBoolean());
         long questionId = jdbc.queryForObject("select id from question where content_key = 'test.q1'", Long.class);
@@ -143,8 +143,8 @@ class ContentImportIntegrationTest {
         String correctedQuestion = "{\"kind\":\"question\",\"contentKey\":\"test.q1\",\"promptMarkdown\":\"Choose\","
                 + "\"questionType\":\"MULTIPLE_CHOICE\",\"difficulty\":\"EASY\",\"status\":\"PUBLISHED\","
                 + "\"conceptKeys\":[\"test.concept\"],"
-                + "\"choices\":[{\"key\":\"A\",\"content\":\"yes\",\"displayOrder\":0},"
-                + "{\"key\":\"B\",\"content\":\"no\",\"displayOrder\":1}],\"correctChoiceKey\":\"B\"}";
+                + "\"choices\":[{\"key\":\"A\",\"content\":\"updated yes\",\"displayOrder\":1},"
+                + "{\"key\":\"B\",\"content\":\"updated no\",\"displayOrder\":0}],\"correctChoiceKey\":\"B\"}";
         List<Part> corrected = List.of(
                 base.get(0),
                 base.get(1),
@@ -164,6 +164,14 @@ class ContentImportIntegrationTest {
         assertEquals(otherChoiceId, jdbc.queryForObject(
                 "select id from question_choice where question_id = ? and choice_key = 'B'",
                 Long.class,
+                questionId));
+        assertEquals("updated yes", jdbc.queryForObject(
+                "select content_markdown from question_choice where question_id = ? and choice_key = 'A'",
+                String.class,
+                questionId));
+        assertEquals(1, jdbc.queryForObject(
+                "select display_order from question_choice where question_id = ? and choice_key = 'A'",
+                Integer.class,
                 questionId));
         assertEquals(selectedChoiceId, jdbc.queryForObject(
                 "select selected_choice_id from attempt where id = ?",
