@@ -1,4 +1,5 @@
-import type { CandidateRecord, EvaluationResult, QuestionGold } from "./types.js";
+import { criterionGold } from "./gold.js";
+import type { CandidateRecord, EvaluationResult, InstructionLanguage, QuestionGold } from "./types.js";
 
 export interface ConfusionMetric {
   truePositive: number;
@@ -8,16 +9,18 @@ export interface ConfusionMetric {
   precision: number | null;
   recall: number | null;
 }
+
 export interface DifficultyFitMetrics {
   count: number;
   accuracy: number | null;
   confusionMatrix: Record<"TOO_EASY" | "APPROPRIATE" | "TOO_HARD", Record<"TOO_EASY" | "APPROPRIATE" | "TOO_HARD", number>>;
 }
 
-export interface EvaluationMetrics {
+export interface QualityMetrics {
   criterion: Record<string, ConfusionMetric>;
   criticalIssueRecall: number | null;
-  falseNegativeRate: number | null;
+  criticalIssueFalseNegativeRate: number | null;
+  criterionFalseNegativeRate: number | null;
   falsePositiveRate: number | null;
   humanReviewReductionRate: number | null;
   successfulPolicyEvaluationCount: number;
@@ -25,6 +28,34 @@ export interface EvaluationMetrics {
   areaBreakdown: Record<string, { count: number; reviewCount: number }>;
   kindBreakdown: Record<string, { count: number; reviewCount: number }>;
   questionTypeBreakdown: Record<string, { count: number; reviewCount: number }>;
+  repeatedRunDisagreement: number | null;
+}
+
+export interface LanguageQualityMetrics {
+  criterion: Record<string, ConfusionMetric>;
+  criticalIssueRecall: number | null;
+  falsePositiveRate: number | null;
+  difficultyAccuracy: number | null;
+  successfulPolicyEvaluationCount: number;
+}
+
+export interface LanguageComparisonMetrics {
+  caseGroupIds: string[];
+  pairedCaseCount: number;
+  ko: LanguageQualityMetrics;
+  en: LanguageQualityMetrics;
+  pairedDecisions: {
+    comparableCount: number;
+    sameDecision: number;
+    koReviewEnPass: number;
+    koPassEnReview: number;
+    unavailablePairs: number;
+  };
+}
+
+export interface EvaluationMetrics extends QualityMetrics {
+  primaryInstructionLanguage: InstructionLanguage;
+  languageComparison: LanguageComparisonMetrics;
   instructionLanguageBreakdown: Record<string, { count: number; reviewCount: number }>;
   latencyMs: { count: number; p50: number | null; p95: number | null };
   inputTokens: { count: number; total: number; average: number | null };
@@ -34,7 +65,13 @@ export interface EvaluationMetrics {
   invalidResponseCount: number;
   timeoutCount: number;
   uncalibratedCount: number;
-  repeatedRunDisagreement: number | null;
+}
+
+export interface MetricsOptions {
+  inputCostUsdPerMillionTokens: number;
+  balancedHistoricalSet?: boolean;
+  primaryInstructionLanguage?: InstructionLanguage;
+  languageExperimentCaseGroups?: ReadonlySet<string>;
 }
 
 function rate(numerator: number, denominator: number): number | null {
@@ -59,18 +96,6 @@ function isSuccessfulPolicyEvaluation(result: EvaluationResult): boolean {
   return result.error === undefined && (result.derivedPolicyResult.decision === "PASS" || result.derivedPolicyResult.decision === "REVIEW");
 }
 
-const GOLD_KEY_BY_RUBRIC_ID: Record<string, string> = {
-  material_technical_error: "materialTechnicalError",
-  multiple_defensible_answers: "multipleDefensibleAnswers",
-  answer_explanation_conflict: "answerExplanationConflict",
-  linked_concept_misalignment: "linkedConceptMisalignment",
-  response_shape_mismatch: "responseShapeMismatch",
-  weak_distractor: "weakDistractor",
-  layer_boundary_confusion: "layerBoundaryConfusion",
-  learning_objective_gap: "learningObjectiveGap",
-  causal_or_state_flow_gap: "causalOrStateFlowGap",
-};
-
 const DIFFICULTY_VALUES = ["TOO_EASY", "APPROPRIATE", "TOO_HARD"] as const;
 type DifficultyValue = (typeof DIFFICULTY_VALUES)[number];
 
@@ -81,20 +106,17 @@ function emptyDifficultyMatrix(): DifficultyFitMetrics["confusionMatrix"] {
   ])) as DifficultyFitMetrics["confusionMatrix"];
 }
 
-export function calculateMetrics(
+function calculateQualityMetrics(
   dataset: CandidateRecord[],
   results: EvaluationResult[],
-  options: { inputCostUsdPerMillionTokens: number; balancedHistoricalSet?: boolean } = { inputCostUsdPerMillionTokens: 0.042 },
-): EvaluationMetrics {
+  balancedHistoricalSet: boolean,
+): QualityMetrics {
   const byCaseId = new Map(dataset.map((candidate) => [candidate.caseId, candidate]));
   const criterionIds = new Set<string>();
   const criterion = new Map<string, { tp: number; fp: number; fn: number; tn: number }>();
-  const latencies: number[] = [];
-  const inputTokens: number[] = [];
-  const areaBreakdown: EvaluationMetrics["areaBreakdown"] = {};
-  const kindBreakdown: EvaluationMetrics["kindBreakdown"] = {};
-  const questionTypeBreakdown: EvaluationMetrics["questionTypeBreakdown"] = {};
-  const instructionLanguageBreakdown: EvaluationMetrics["instructionLanguageBreakdown"] = {};
+  const areaBreakdown: QualityMetrics["areaBreakdown"] = {};
+  const kindBreakdown: QualityMetrics["kindBreakdown"] = {};
+  const questionTypeBreakdown: QualityMetrics["questionTypeBreakdown"] = {};
   const difficultyConfusion = emptyDifficultyMatrix();
   let difficultyCount = 0;
   let difficultyCorrect = 0;
@@ -103,41 +125,23 @@ export function calculateMetrics(
   let criticalReviewed = 0;
   let nonCriticalTotal = 0;
   let nonCriticalReviewed = 0;
-  let apiFailureCount = 0;
-  let invalidResponseCount = 0;
-  let timeoutCount = 0;
-  let uncalibratedCount = 0;
-  let actualCostUsd = 0;
-  let hasActualCost = false;
+  let passCount = 0;
 
   for (const result of results) {
     const candidate = byCaseId.get(result.caseId);
-    if (!candidate) continue;
+    if (!candidate || !isSuccessfulPolicyEvaluation(result)) continue;
+    successfulPolicyEvaluationCount += 1;
     const reviewed = result.derivedPolicyResult.decision === "REVIEW";
+    if (!reviewed) passCount += 1;
     incrementBreakdown(areaBreakdown, candidate.area, reviewed);
     incrementBreakdown(kindBreakdown, candidate.kind, reviewed);
     if (candidate.kind === "QUESTION") incrementBreakdown(questionTypeBreakdown, String(candidate.content.questionType ?? "UNKNOWN"), reviewed);
-    incrementBreakdown(instructionLanguageBreakdown, result.instructionLanguage, reviewed);
-    if (result.latencyMs !== undefined) latencies.push(result.latencyMs);
-    if (result.inputTokens !== undefined) inputTokens.push(result.inputTokens);
-    if (result.error?.kind === "API_FAILURE") apiFailureCount += 1;
-    if (result.error?.kind === "INVALID_RESPONSE") invalidResponseCount += 1;
-    if (result.error?.kind === "TIMEOUT") timeoutCount += 1;
-    if (result.derivedPolicyResult.decision === "UNCALIBRATED") uncalibratedCount += 1;
-    const actual = (result as EvaluationResult & { actualCostUsd?: number }).actualCostUsd;
-    if (typeof actual === "number") {
-      hasActualCost = true;
-      actualCostUsd += actual;
-    }
 
-    if (!isSuccessfulPolicyEvaluation(result)) continue;
-    successfulPolicyEvaluationCount += 1;
-
-    const gold = candidate.candidateGold as unknown as Record<string, unknown>;
     for (const [id, prediction] of Object.entries(result.criterionPredictions ?? {})) {
+      const expected = criterionGold(candidate, id);
+      if (expected === undefined) continue;
       criterionIds.add(id);
       const current = criterion.get(id) ?? { tp: 0, fp: 0, fn: 0, tn: 0 };
-      const expected = gold[GOLD_KEY_BY_RUBRIC_ID[id] ?? id] === true;
       if (prediction && expected) current.tp += 1;
       else if (prediction && !expected) current.fp += 1;
       else if (!prediction && expected) current.fn += 1;
@@ -148,7 +152,7 @@ export function calculateMetrics(
     if (candidate.candidateGoldSeverity === "P0" || candidate.candidateGoldSeverity === "P1") {
       criticalTotal += 1;
       if (reviewed) criticalReviewed += 1;
-    } else if (candidate.candidateGoldSeverity === "P2" || candidate.candidateGoldSeverity === "NONE") {
+    } else {
       nonCriticalTotal += 1;
       if (reviewed) nonCriticalReviewed += 1;
     }
@@ -156,7 +160,7 @@ export function calculateMetrics(
     if (candidate.kind === "QUESTION") {
       const expected = (candidate.candidateGold as QuestionGold).difficultyFit;
       const predicted = result.rawAnswers?.difficulty_fit?.choice;
-      if (DIFFICULTY_VALUES.includes(expected) && typeof predicted === "string" && DIFFICULTY_VALUES.includes(predicted as DifficultyValue)) {
+      if (typeof predicted === "string" && DIFFICULTY_VALUES.includes(predicted as DifficultyValue)) {
         difficultyCount += 1;
         if (expected === predicted) difficultyCorrect += 1;
         difficultyConfusion[expected][predicted as DifficultyValue] += 1;
@@ -175,6 +179,9 @@ export function calculateMetrics(
       recall: rate(value.tp, value.tp + value.fn),
     }];
   }));
+  const criticalIssueRecall = rate(criticalReviewed, criticalTotal);
+  const criterionFalseNegatives = [...criterion.values()].reduce((sum, value) => sum + value.fn, 0);
+  const criterionPositives = [...criterion.values()].reduce((sum, value) => sum + value.fn + value.tp, 0);
 
   const repeated = new Map<string, { count: number; decisions: Set<string> }>();
   for (const result of results) {
@@ -189,10 +196,11 @@ export function calculateMetrics(
 
   return {
     criterion: criterionMetrics,
-    criticalIssueRecall: rate(criticalReviewed, criticalTotal),
-    falseNegativeRate: rate([...criterion.values()].reduce((sum, value) => sum + value.fn, 0), [...criterion.values()].reduce((sum, value) => sum + value.fn + value.tp, 0)),
+    criticalIssueRecall,
+    criticalIssueFalseNegativeRate: criticalIssueRecall === null ? null : 1 - criticalIssueRecall,
+    criterionFalseNegativeRate: rate(criterionFalseNegatives, criterionPositives),
     falsePositiveRate: rate(nonCriticalReviewed, nonCriticalTotal),
-    humanReviewReductionRate: options.balancedHistoricalSet ? null : rate(successfulPolicyEvaluationCount - results.filter((result) => isSuccessfulPolicyEvaluation(result) && result.derivedPolicyResult.decision === "REVIEW").length, successfulPolicyEvaluationCount),
+    humanReviewReductionRate: balancedHistoricalSet ? null : rate(passCount, successfulPolicyEvaluationCount),
     successfulPolicyEvaluationCount,
     difficultyFit: {
       count: difficultyCount,
@@ -202,15 +210,121 @@ export function calculateMetrics(
     areaBreakdown,
     kindBreakdown,
     questionTypeBreakdown,
+    repeatedRunDisagreement: repeatedGroups.length === 0 ? null : repeatedGroups.filter((entry) => entry.decisions.size > 1).length / repeatedGroups.length,
+  };
+}
+
+function languageQuality(quality: QualityMetrics): LanguageQualityMetrics {
+  return {
+    criterion: quality.criterion,
+    criticalIssueRecall: quality.criticalIssueRecall,
+    falsePositiveRate: quality.falsePositiveRate,
+    difficultyAccuracy: quality.difficultyFit.accuracy,
+    successfulPolicyEvaluationCount: quality.successfulPolicyEvaluationCount,
+  };
+}
+
+function calculateLanguageComparison(
+  dataset: CandidateRecord[],
+  results: EvaluationResult[],
+  caseGroupIds: ReadonlySet<string>,
+  balancedHistoricalSet: boolean,
+): LanguageComparisonMetrics {
+  const buckets = new Map<string, Partial<Record<InstructionLanguage, EvaluationResult>>>();
+  for (const result of results) {
+    if (!caseGroupIds.has(result.caseGroupId)) continue;
+    const key = `${result.caseId}:${result.repeatIndex}`;
+    const bucket = buckets.get(key) ?? {};
+    bucket[result.instructionLanguage] = result;
+    buckets.set(key, bucket);
+  }
+
+  const pairs = [...buckets.values()].filter((bucket) => bucket.ko && bucket.en) as Array<{ ko: EvaluationResult; en: EvaluationResult }>;
+  const koResults = pairs.map((pair) => pair.ko);
+  const enResults = pairs.map((pair) => pair.en);
+  const koQuality = calculateQualityMetrics(dataset, koResults, balancedHistoricalSet);
+  const enQuality = calculateQualityMetrics(dataset, enResults, balancedHistoricalSet);
+  let comparableCount = 0;
+  let sameDecision = 0;
+  let koReviewEnPass = 0;
+  let koPassEnReview = 0;
+  let unavailablePairs = 0;
+  for (const pair of pairs) {
+    if (!isSuccessfulPolicyEvaluation(pair.ko) || !isSuccessfulPolicyEvaluation(pair.en)) {
+      unavailablePairs += 1;
+      continue;
+    }
+    comparableCount += 1;
+    const koDecision = pair.ko.derivedPolicyResult.decision;
+    const enDecision = pair.en.derivedPolicyResult.decision;
+    if (koDecision === enDecision) sameDecision += 1;
+    else if (koDecision === "REVIEW" && enDecision === "PASS") koReviewEnPass += 1;
+    else if (koDecision === "PASS" && enDecision === "REVIEW") koPassEnReview += 1;
+  }
+
+  return {
+    caseGroupIds: [...caseGroupIds].sort(),
+    pairedCaseCount: pairs.length,
+    ko: languageQuality(koQuality),
+    en: languageQuality(enQuality),
+    pairedDecisions: { comparableCount, sameDecision, koReviewEnPass, koPassEnReview, unavailablePairs },
+  };
+}
+
+export function calculateMetrics(
+  dataset: CandidateRecord[],
+  results: EvaluationResult[],
+  options: MetricsOptions = { inputCostUsdPerMillionTokens: 0.042 },
+): EvaluationMetrics {
+  const primaryInstructionLanguage = options.primaryInstructionLanguage ?? "ko";
+  const balancedHistoricalSet = options.balancedHistoricalSet ?? false;
+  const primaryResults = results.filter((result) => result.instructionLanguage === primaryInstructionLanguage);
+  const quality = calculateQualityMetrics(dataset, primaryResults, balancedHistoricalSet);
+  const languageComparison = calculateLanguageComparison(
+    dataset,
+    results,
+    options.languageExperimentCaseGroups ?? new Set<string>(),
+    balancedHistoricalSet,
+  );
+
+  const latencies: number[] = [];
+  const inputTokens: number[] = [];
+  const instructionLanguageBreakdown: EvaluationMetrics["instructionLanguageBreakdown"] = {};
+  let apiFailureCount = 0;
+  let invalidResponseCount = 0;
+  let timeoutCount = 0;
+  let uncalibratedCount = 0;
+  let actualCostUsd = 0;
+  let hasActualCost = false;
+
+  for (const result of results) {
+    incrementBreakdown(instructionLanguageBreakdown, result.instructionLanguage, result.derivedPolicyResult.decision === "REVIEW");
+    if (result.latencyMs !== undefined) latencies.push(result.latencyMs);
+    if (result.inputTokens !== undefined) inputTokens.push(result.inputTokens);
+    if (result.error?.kind === "API_FAILURE") apiFailureCount += 1;
+    if (result.error?.kind === "INVALID_RESPONSE") invalidResponseCount += 1;
+    if (result.error?.kind === "TIMEOUT") timeoutCount += 1;
+    if (result.derivedPolicyResult.decision === "UNCALIBRATED") uncalibratedCount += 1;
+    const actual = (result as EvaluationResult & { actualCostUsd?: number }).actualCostUsd;
+    if (typeof actual === "number") {
+      hasActualCost = true;
+      actualCostUsd += actual;
+    }
+  }
+
+  const totalInputTokens = inputTokens.reduce((sum, value) => sum + value, 0);
+  return {
+    ...quality,
+    primaryInstructionLanguage,
+    languageComparison,
     instructionLanguageBreakdown,
     latencyMs: { count: latencies.length, p50: percentile(latencies, 0.5), p95: percentile(latencies, 0.95) },
-    inputTokens: { count: inputTokens.length, total: inputTokens.reduce((sum, value) => sum + value, 0), average: rate(inputTokens.reduce((sum, value) => sum + value, 0), inputTokens.length) },
-    estimatedCostUsd: inputTokens.reduce((sum, value) => sum + value, 0) * options.inputCostUsdPerMillionTokens / 1_000_000,
+    inputTokens: { count: inputTokens.length, total: totalInputTokens, average: rate(totalInputTokens, inputTokens.length) },
+    estimatedCostUsd: totalInputTokens * options.inputCostUsdPerMillionTokens / 1_000_000,
     actualCostUsd: hasActualCost ? actualCostUsd : null,
     apiFailureCount,
     invalidResponseCount,
     timeoutCount,
     uncalibratedCount,
-    repeatedRunDisagreement: repeatedGroups.length === 0 ? null : repeatedGroups.filter((entry) => entry.decisions.size > 1).length / repeatedGroups.length,
   };
 }

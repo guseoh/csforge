@@ -17,10 +17,11 @@ PR #58, #59, #60, #100, #107, #109, #110과 관련 Content V2 diff를 확인했�
 ## Harness
 
 - `src/rubric.ts`: Question/Concept를 atomic `Noul`·`Choice` 질문으로 분리한다. `needsHumanReview` 같은 composite 질문은 만들지 않는다.
-- `src/policy.ts`: calibrated threshold를 외부 입력으로 받아 `PASS` 또는 `REVIEW`를 계산한다. threshold가 없거나 일부만 있으면 `UNCALIBRATED`로 남긴다.
+- `src/policy.ts`: raw result에 candidate threshold를 offline으로 적용해 `PASS` 또는 `REVIEW`를 계산한다. `null` threshold는 Phase A calibrated evaluation에서 해당 criterion을 명시적으로 disable하며, 누락된 threshold는 `UNCALIBRATED`로 남긴다.
 - `src/client.ts`: 공식 TypeSafe direct HTTP API와 pinned `jev-1.13.0`을 사용한다. API key는 `TYPESAFE_API_KEY` 환경변수에서만 읽는다. 성공 응답도 requested answer ID/type, Noul range, Choice option/probability/confidence, usage를 검증하고 malformed body는 `INVALID_RESPONSE`로 기록한다.
-- `src/runner.ts`: requested/resolved model, rubric/dataset version, latency, token usage, raw typed answers, probabilities, policy result, error/timeout을 JSONL result에 기록한다.
-- `src/metrics.ts`: criterion precision/recall, P0/P1 recall, P2+NONE FPR, 3-class `difficulty_fit` accuracy/confusion, area/kind/question-type/language breakdown, latency p50/p95, tokens/cost, API failure/invalid response/timeout/uncalibrated availability, repeated-run disagreement을 계산한다. Balanced Phase A에서는 Human Review Reduction을 `null`로 두며, 비균형 실행에서는 정상 정책 평가 전체의 PASS 비율로 계산한다.
+- `src/runner.ts`: threshold와 독립적으로 Jev를 호출하고 requested/resolved model, rubric/dataset version, instruction language, latency, token usage, raw typed answers와 probabilities를 JSONL에 보존한다. Raw run의 policy는 항상 `UNCALIBRATED`이다.
+- `src/calibration.ts`: primary language `ko`의 raw Noul probability로 observed-threshold sweep을 만들고 criterion별 TP/FP/FN/TN, precision/recall과 Phase A `candidateThreshold`를 산출한다. Positive support가 없는 criterion은 `UNSUPPORTED_IN_PHASE_A`와 `null` threshold로 남긴다.
+- `src/metrics.ts`: overall quality는 primary language `ko`만 사용해 criterion precision/recall, P0/P1 recall/FNR, P2+NONE FPR, 3-class `difficulty_fit`, area/kind/question-type breakdown을 계산한다. Manifest의 language experiment case만 ko/en paired comparison으로 분리한다. Latency, tokens/cost와 API failure/invalid response/timeout은 실제 ko/en request 전체를 집계한다.
 
 ## Validation and run
 
@@ -30,6 +31,8 @@ npm run typecheck
 npm test
 npm run validate
 npm run benchmark
+npm run calibrate -- results/phase-a-run-....jsonl
+npm run metrics -- results/phase-a-run-....jsonl --thresholds results/calibration-....json
 ```
 
 `npm run benchmark`는 `TYPESAFE_API_KEY`가 없으면 API를 호출하지 않고 다음을 출력한다.
@@ -39,13 +42,13 @@ HARNESS READY
 BENCHMARK NOT RUN — TYPESAFE_API_KEY unavailable
 ```
 
-Threshold calibration은 아직 확정하지 않았다. 실행 시 `JEV_POLICY_THRESHOLDS_JSON`으로 calibrated 값을 주입할 수 있다. 결과 파일은 `results/`에 생성되며 `.gitignore`로 raw run이 commit되지 않도록 했다.
+권장 흐름은 `raw benchmark → offline calibration → candidate threshold config → offline policy application → metrics`이다. Threshold를 바꿀 때 Jev API를 다시 호출하지 않는다. `calibrate`가 만드는 `results/calibration-*.json`은 `candidateThresholds`와 같은 데이터에 다시 적용한 diagnostic gate metrics를 포함하며, production threshold나 일반화 성능을 뜻하지 않는다. `metrics --thresholds`는 calibration report 전체 또는 `number | null` threshold map을 받을 수 있다. 결과 파일은 `.gitignore` 상태다.
 
-언어 실험은 manifest의 일부 caseGroup에 대해 `Korean rubric + Korean state`와 `English rubric + Korean state`를 모두 실행하도록 runner가 준비되어 있다. canonical state 자체는 번역하지 않는다.
+언어 실험은 manifest의 일부 caseGroup에 대해 `Korean rubric + Korean state`와 `English rubric + Korean state`를 모두 실행한다. Overall model-quality denominator는 `ko`만 사용하고, `en`은 같은 case의 paired language comparison에서만 평가한다. Canonical state 자체는 번역하지 않는다.
 
 ## Review risks
 
 - BEFORE→AFTER diff만으로 모든 row를 defect로 만들지 않았다. 특히 difficulty-only P2, OS semantic hard-negative, network under-specified scenario의 criterion 범위를 Human Gold rationale에 맞춰 분리했다.
 - Phase A가 balanced historical set이므로 review reduction을 production estimate로 해석할 수 없다.
 - `linkedConcepts`에는 실제 state에 제공되는 title/summary만 넣었고 rubric도 이를 learning focus로 표현한다. 실제 curriculum objective가 state에 없으므로 보이지 않는 objective까지 판정하지 않는다.
-- threshold가 아직 없으므로 실제 benchmark 결과의 PASS/REVIEW를 성공 기준으로 읽을 수 없다.
+- Phase A candidate threshold는 동일한 작은 historical set에서 고르고 진단하므로 production threshold나 holdout 성능으로 해석할 수 없다. Phase B에서는 natural slice와 calibration/holdout 분리가 필요하다.

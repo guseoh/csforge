@@ -1,7 +1,6 @@
 import { randomUUID } from "node:crypto";
 import type { CandidateRecord, EvaluationResult, InstructionLanguage, JevAnswer } from "./types.js";
 import { buildRubric, RUBRIC_VERSION } from "./rubric.js";
-import { criterionPredictions, derivePolicy, type PolicyThresholds } from "./policy.js";
 import { TypeSafeApiError, TypeSafeDirectClient } from "./client.js";
 
 export interface RunOptions {
@@ -11,7 +10,6 @@ export interface RunOptions {
   datasetVersion: string;
   languageExperimentCaseGroups?: ReadonlySet<string>;
   languages?: readonly InstructionLanguage[];
-  thresholds?: PolicyThresholds;
   repeatIndex?: number;
 }
 
@@ -39,7 +37,6 @@ export async function runBenchmark(options: RunOptions): Promise<EvaluationResul
       try {
         const { response, latencyMs } = await options.client.evaluate(candidate.state, rubric.questions);
         const answers = response.answers ?? {};
-        const policy = derivePolicy(answers, options.thresholds, criterionIds);
         results.push({
           runId: randomUUID(),
           repeatIndex: options.repeatIndex ?? 0,
@@ -59,8 +56,12 @@ export async function runBenchmark(options: RunOptions): Promise<EvaluationResul
           outputTokens: response.usage?.output_tokens,
           rawAnswers: answers,
           probabilities: answerProbabilities(answers),
-          criterionPredictions: criterionPredictions(answers, options.thresholds, criterionIds),
-          derivedPolicyResult: policy,
+          derivedPolicyResult: {
+            decision: "UNCALIBRATED",
+            triggeredCriteria: [],
+            missingThresholds: criterionIds,
+            note: "Raw Jev evaluation only. Apply candidate thresholds offline before interpreting PASS/REVIEW.",
+          },
         });
       } catch (error) {
         const apiError = error instanceof TypeSafeApiError

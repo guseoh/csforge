@@ -3,6 +3,7 @@
   "rubricVersion": "csforge-content-quality-v1",
   "model": "jev-1.13.0",
   "datasetKind": "BALANCED_HISTORICAL_DIAGNOSTIC",
+  "primaryInstructionLanguage": "ko",
   "sourcePrsConsidered": [58, 59, 60, 100, 107, 109, 110],
   "sourcePrsSelected": [58, 59, 100, 107, 109],
   "rowCount": 60,

@@ -18,6 +18,7 @@ export interface DatasetManifest {
   rubricVersion: string;
   model: string;
   datasetKind: string;
+  primaryInstructionLanguage: "ko" | "en";
   rowCount: number;
   caseGroupCount: number;
   languageExperimentCaseGroups: string[];

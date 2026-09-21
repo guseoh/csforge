@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { calculateMetrics } from "../src/metrics.js";
-import type { CandidateRecord, DifficultyFit, EvaluationResult } from "../src/types.js";
+import type { CandidateRecord, DifficultyFit, EvaluationResult, InstructionLanguage } from "../src/types.js";
 
 const source = { sourcePr: 1, repositoryRef: "test", path: "test", beforeRef: "a", afterRef: "b", commit: "b", version: "BEFORE" as const };
 const candidate = (caseId: string, severity: "P1" | "P2" | "NONE", flag: boolean, difficultyFit: DifficultyFit = "APPROPRIATE"): CandidateRecord => ({
@@ -19,7 +19,7 @@ const candidate = (caseId: string, severity: "P1" | "P2" | "NONE", flag: boolean
   labelRationale: "test",
 });
 
-const result = (caseId: string, review: "PASS" | "REVIEW", prediction: boolean, latencyMs: number, inputTokens: number, difficultyChoice?: DifficultyFit): EvaluationResult => ({
+const result = (caseId: string, review: "PASS" | "REVIEW", prediction: boolean, latencyMs: number, inputTokens: number, difficultyChoice?: DifficultyFit, instructionLanguage: InstructionLanguage = "ko"): EvaluationResult => ({
   runId: caseId,
   repeatIndex: 0,
   caseId,
@@ -28,7 +28,7 @@ const result = (caseId: string, review: "PASS" | "REVIEW", prediction: boolean, 
   area: "java",
   contentKey: caseId,
   questionType: "DESCRIPTIVE",
-  instructionLanguage: "ko",
+  instructionLanguage,
   requestedModel: "jev-1.13.0",
   resolvedModel: "jev-1.13.0",
   rubricVersion: "test",
@@ -86,4 +86,48 @@ test("metrics exclude invalid and uncalibrated results from quality denominators
   assert.equal(metrics.falsePositiveRate, null);
   assert.equal(metrics.invalidResponseCount, 1);
   assert.equal(metrics.uncalibratedCount, 1);
+});
+
+test("overall quality uses ko once while language comparison uses only paired experiment cases", () => {
+  const dataset = [
+    candidate("critical", "P1", true),
+    candidate("clean", "NONE", false),
+    candidate("outside", "NONE", false),
+  ];
+  const results = [
+    result("critical", "REVIEW", true, 10, 100, "APPROPRIATE", "ko"),
+    result("critical", "PASS", false, 11, 100, "APPROPRIATE", "en"),
+    result("clean", "PASS", false, 12, 100, "APPROPRIATE", "ko"),
+    result("clean", "REVIEW", true, 13, 100, "APPROPRIATE", "en"),
+    result("outside", "PASS", false, 14, 100, "APPROPRIATE", "ko"),
+    result("outside", "REVIEW", true, 15, 100, "APPROPRIATE", "en"),
+  ];
+  const metrics = calculateMetrics(dataset, results, {
+    inputCostUsdPerMillionTokens: 0.042,
+    primaryInstructionLanguage: "ko",
+    languageExperimentCaseGroups: new Set(["critical-group", "clean-group"]),
+  });
+
+  assert.equal(metrics.successfulPolicyEvaluationCount, 3);
+  assert.equal(metrics.criticalIssueRecall, 1);
+  assert.equal(metrics.falsePositiveRate, 0);
+  assert.equal(metrics.inputTokens.total, 600);
+  assert.equal(metrics.languageComparison.pairedCaseCount, 2);
+  assert.equal(metrics.languageComparison.ko.criticalIssueRecall, 1);
+  assert.equal(metrics.languageComparison.ko.falsePositiveRate, 0);
+  assert.equal(metrics.languageComparison.en.criticalIssueRecall, 0);
+  assert.equal(metrics.languageComparison.en.falsePositiveRate, 1);
+  assert.equal(metrics.languageComparison.pairedDecisions.koReviewEnPass, 1);
+  assert.equal(metrics.languageComparison.pairedDecisions.koPassEnReview, 1);
+});
+
+test("critical issue false-negative rate is distinct from atomic criterion FNR", () => {
+  const dataset = [candidate("critical", "P1", true), candidate("clean", "NONE", false)];
+  const metrics = calculateMetrics(dataset, [
+    result("critical", "PASS", false, 10, 100),
+    result("clean", "PASS", false, 20, 100),
+  ]);
+  assert.equal(metrics.criticalIssueRecall, 0);
+  assert.equal(metrics.criticalIssueFalseNegativeRate, 1);
+  assert.equal(metrics.criterionFalseNegativeRate, 1);
 });

@@ -8,6 +8,7 @@
   "scripts": {
     "validate": "tsx src/cli.ts validate",
     "benchmark": "tsx src/cli.ts benchmark",
+    "calibrate": "tsx src/cli.ts calibrate",
     "metrics": "tsx src/cli.ts metrics",
     "typecheck": "tsc --noEmit",
     "test": "tsx --test test/*.test.ts"

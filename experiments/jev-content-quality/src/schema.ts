@@ -75,6 +75,7 @@ const SUPPORT_KEYS = {
 
 export function validateManifest(manifest: DatasetManifest, rows: CandidateRecord[]): string[] {
   const errors: string[] = [];
+  if (manifest.primaryInstructionLanguage !== "ko") errors.push("manifest primaryInstructionLanguage must be ko for Phase A");
   const groups = new Map(rows.map((row) => [row.caseGroupId, row]));
   const languageGroups = manifest.languageExperimentCaseGroups ?? [];
   if (new Set(languageGroups).size !== languageGroups.length) errors.push("manifest languageExperimentCaseGroups must be unique");
