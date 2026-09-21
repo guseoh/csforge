@@ -180,6 +180,10 @@ jobs:
             --command=/bin/sh
             --args=-c,"${bootstrap_script}"
             --env-vars-file=/tmp/bootstrap-env.json
+            --cpu=1
+            --memory=1Gi
+            --tasks=1
+            --parallelism=1
             --task-timeout=30m
             --max-retries=0
             --quiet
@@ -198,6 +202,35 @@ jobs:
             --region="${GCP_REGION}" \
             --wait \
             --quiet
+
+      - name: Describe failed bootstrap execution
+        if: failure()
+        shell: bash
+        run: |
+          set +e
+          execution="$(gcloud run jobs executions list \
+            --job="\${BOOTSTRAP_JOB}" \
+            --project="\${GCP_PROJECT_ID}" \
+            --region="\${GCP_REGION}" \
+            --limit=1 \
+            --sort-by="~metadata.creationTimestamp" \
+            --format="value(metadata.name)")"
+
+          if [[ -n "\${execution}" ]]; then
+            echo "Failed execution: \${execution}"
+            gcloud run jobs executions describe "\${execution}" \
+              --project="\${GCP_PROJECT_ID}" \
+              --region="\${GCP_REGION}" \
+              --format="yaml(metadata.name,status.conditions,status.failedCount,status.succeededCount,status.logUri)"
+          fi
+
+          gcloud logging read \
+            "resource.type=cloud_run_job AND resource.labels.job_name=\${BOOTSTRAP_JOB}" \
+            --project="\${GCP_PROJECT_ID}" \
+            --freshness=30m \
+            --limit=100 \
+            --order=asc \
+            --format="value(textPayload)" || true
 
       - name: Remove one-time bootstrap job
         if: always()
