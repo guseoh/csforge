@@ -15,7 +15,8 @@ final class QuestionStructureComparator {
     }
 
     static boolean matches(NormalizedImportItem item, Question question) {
-        return preservesAttemptReferences(item, question)
+        return Objects.equals(question.getQuestionType().name(), item.questionType())
+                && choiceStructure(question).equals(choiceStructure(item))
                 && answerStructure(question).equals(answerStructure(item))
                 && conceptKeys(question).equals(item.conceptKeys().stream().sorted().toList());
     }
