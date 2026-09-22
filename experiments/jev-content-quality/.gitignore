@@ -1,4 +1,5 @@
 results/*.jsonl
 results/*.json
+results/review-priority/
 .env
 node_modules/
