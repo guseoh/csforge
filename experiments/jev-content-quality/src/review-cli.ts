@@ -10,6 +10,7 @@ import {
 import {
   DEFAULT_MAX_CANDIDATES,
   assertCandidateLimit,
+  assertSuccessfulEvaluation,
   evaluateReviewCandidates,
   requireApiKey,
   validateReviewViewOptions,
@@ -63,6 +64,7 @@ async function run(): Promise<number> {
   console.log(`RESULT JSONL — ${artifacts.jsonlPath}`);
   console.log(`REVIEW REPORT — ${artifacts.reportPath}`);
   console.log(`REVIEW SUMMARY — ${JSON.stringify(artifacts.summary)}`);
+  assertSuccessfulEvaluation(artifacts.summary);
   return 0;
 }
 
