@@ -23,6 +23,14 @@ Pruning은 backtracking search에서 현재 partial state만 보고도 **이 bra
 
 예를 들어 모든 후보가 양수인 조합 합 문제에서 현재 합이 이미 target을 넘었다면 값을 더 추가해 target으로 돌아올 수 없다. 이 조건이 문제 정의에서 항상 참이라면 해당 branch를 안전하게 제거할 수 있다.
 
+```text
+현재 partial state
+├─ 제약을 만족함 ───────────→ child branch를 계속 탐색
+└─ target 초과(모두 양수) ─→ prune: descendant 전체를 방문하지 않음
+```
+
+Pruning은 현재 node 하나를 건너뛰는 것이 아니라, 그 상태에서 이어지는 search subtree 전체를 탐색 대상에서 제거한다.
+
 중요한 것은 pruning 조건이 빠른가보다 **정답을 제거하지 않는가**다. 최적화 문제에서 현재 점수가 best보다 낮다는 이유만으로 branch를 자르면 안 된다. 남은 선택으로 best를 넘을 가능성이 있다면 탐색을 계속해야 한다.
 
 반대로 현재 값과 남은 선택으로 만들 수 있는 최선의 upper bound까지 계산해도 기존 best보다 나쁘다면 그 branch는 제거할 수 있다. Constraint violation이나 이런 bound가 pruning의 근거가 된다.

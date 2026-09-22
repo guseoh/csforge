@@ -21,6 +21,14 @@ reverse proxy나 load balancer가 client와 직접 TLS handshake를 수행하면
 
 이 구조에서는 `client → proxy`와 `proxy → backend`가 같은 end-to-end TLS connection이 아니다. 첫 구간의 certificate와 key는 proxy에서 끝나고, backend 구간은 평문 HTTP일 수도 있고 새로운 TLS connection일 수도 있다.
 
+```text
+Client ── TLS connection A ──> [Proxy: 복호화·HTTP 처리]
+                                  │
+                                  └── HTTP 또는 TLS connection B ──> Backend
+```
+
+암호화와 peer identity 검증은 connection A와 B에서 각각 결정된다. Proxy가 평문으로 전달하면 보호 경계는 proxy에서 끝나고, TLS를 다시 사용하면 별도의 certificate 검증과 key가 필요하다.
+
 ### Termination 지점이 trust boundary를 바꾼다
 
 client는 외부 service identity를 proxy certificate로 검증한다. proxy가 backend와 다시 TLS를 맺는다면 이번에는 proxy가 backend certificate와 identity를 별도로 검증해야 한다. 첫 번째 TLS가 성공했다는 사실이 두 번째 hop을 자동으로 보호하지 않는다.

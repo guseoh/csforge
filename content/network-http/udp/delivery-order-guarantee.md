@@ -23,6 +23,13 @@ UDP는 datagram을 IP 위에 실어 전달하지만, 송신 이후 각 datagram�
 
 도착 순서도 보장하지 않는다. `D1 → D2 → D3` 순서로 보냈더라도 서로 다른 queueing 지연이나 path 변화 때문에 `D1 → D3 → D2`처럼 관찰될 수 있다. 또한 network나 중간 장비의 동작으로 duplicate가 생겨도 UDP 계층은 message ID를 기준으로 중복을 제거하지 않는다.
 
+```text
+송신 순서   : D1 → D2 → D3 → D4
+수신 가능성 : D1 → D3 → D2 → D2    (D4 유실, D2 재정렬·중복)
+```
+
+두 번째 줄은 가능한 관찰의 한 예일 뿐이다. UDP contract에는 어떤 datagram이 빠지고, 늦거나 중복될지를 예측하는 규칙도 없다.
+
 ### 어떤 보장이 필요한지는 상위 protocol이 결정한다
 
 모든 UDP 사용자가 TCP와 같은 신뢰성을 다시 만들어야 하는 것은 아니다. 음성·영상이나 최신 상태 전송처럼 오래된 datagram을 뒤늦게 복구하는 것보다 현재 데이터를 계속 보내는 편이 나은 workload도 있다. 이런 경우 일부 loss와 reorder를 허용하는 것이 protocol 목표에 더 맞을 수 있다.
