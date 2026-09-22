@@ -1,0 +1,252 @@
+{
+  "schemaVersion": 1,
+  "experiment": "jev-content-quality",
+  "phase": "B",
+  "generatedFromRaw": "results/phase-b-natural-current-run-2026-09-22T05-39-34-307Z.jsonl",
+  "sourceMain": "0f254ccdac91d480cdcde65d22ca9e6bc30b23c0",
+  "datasetVersion": "phase-b-natural-current-weak-distractor-2026-09-22",
+  "rubricVersion": "csforge-content-quality-v2",
+  "criterion": "weak_distractor",
+  "model": {
+    "requested": "jev-1.13.0",
+    "resolved": "jev-1.13.0"
+  },
+  "runIntegrity": {
+    "rows": 120,
+    "success": 120,
+    "errors": 0,
+    "uncalibrated": 120,
+    "inputTokens": 109509,
+    "outputTokens": 2760,
+    "latencyMs": {
+      "p50": 272,
+      "p95": 353
+    },
+    "estimatedInputCostUsd": 0.004599378
+  },
+  "gold": {
+    "positive": 28,
+    "negative": 92,
+    "prevalence": 0.23333333333333334,
+    "scope": "frozen six-area Phase B slice",
+    "historicalContentKeyOverlap": 0,
+    "syntheticCases": false,
+    "classBalancing": false
+  },
+  "scoreDistribution": {
+    "positive": {
+      "n": 28,
+      "min": 0.5,
+      "p25": 0.65,
+      "median": 0.7,
+      "p75": 0.7625,
+      "max": 0.85,
+      "mean": 0.6993
+    },
+    "negative": {
+      "n": 92,
+      "min": 0.1,
+      "p25": 0.22,
+      "median": 0.28,
+      "p75": 0.4125,
+      "max": 0.72,
+      "mean": 0.3271
+    },
+    "overlap": [
+      0.5,
+      0.72
+    ],
+    "rocAuc": 0.9742,
+    "strongestNegative": {
+      "contentKey": "database.core.schema.foreign-key.q2",
+      "score": 0.72
+    },
+    "weakestPositive": {
+      "contentKey": "network-http.core.request-journey.host-authority.q1",
+      "score": 0.5
+    }
+  },
+  "reviewBudgets": [
+    {
+      "budget": 0.1,
+      "rows": 12,
+      "positivesCaptured": 12,
+      "totalPositives": 28,
+      "recall": 0.42857142857142855,
+      "precision": 1,
+      "falsePositivesReviewed": 0,
+      "positivesMissed": 16,
+      "humanReviewReduction": 0.9,
+      "lift": 4.286
+    },
+    {
+      "budget": 0.2,
+      "rows": 24,
+      "positivesCaptured": 20,
+      "totalPositives": 28,
+      "recall": 0.7142857142857143,
+      "precision": 0.8333333333333334,
+      "falsePositivesReviewed": 4,
+      "positivesMissed": 8,
+      "humanReviewReduction": 0.8,
+      "lift": 3.571
+    },
+    {
+      "budget": 0.3,
+      "rows": 36,
+      "positivesCaptured": 26,
+      "totalPositives": 28,
+      "recall": 0.9285714285714286,
+      "precision": 0.7222222222222222,
+      "falsePositivesReviewed": 10,
+      "positivesMissed": 2,
+      "humanReviewReduction": 0.7,
+      "lift": 3.095
+    },
+    {
+      "budget": 0.4,
+      "rows": 48,
+      "positivesCaptured": 28,
+      "totalPositives": 28,
+      "recall": 1,
+      "precision": 0.5833333333333334,
+      "falsePositivesReviewed": 20,
+      "positivesMissed": 0,
+      "humanReviewReduction": 0.6,
+      "lift": 2.5
+    },
+    {
+      "budget": 0.5,
+      "rows": 60,
+      "positivesCaptured": 28,
+      "totalPositives": 28,
+      "recall": 1,
+      "precision": 0.4666666666666667,
+      "falsePositivesReviewed": 32,
+      "positivesMissed": 0,
+      "humanReviewReduction": 0.5,
+      "lift": 2
+    }
+  ],
+  "areas": {
+    "java": {
+      "rows": 21,
+      "positive": 10,
+      "prevalence": 0.47619047619047616,
+      "positiveMean": 0.698,
+      "positiveMedian": 0.675,
+      "negativeMean": 0.3073,
+      "negativeMedian": 0.27,
+      "auc": 1
+    },
+    "spring": {
+      "rows": 23,
+      "positive": 4,
+      "prevalence": 0.17391304347826086,
+      "positiveMean": 0.6975,
+      "positiveMedian": 0.71,
+      "negativeMean": 0.33,
+      "negativeMedian": 0.27,
+      "auc": 0.9803
+    },
+    "database": {
+      "rows": 10,
+      "positive": 1,
+      "prevalence": 0.1,
+      "positiveMean": 0.73,
+      "positiveMedian": 0.73,
+      "negativeMean": 0.4367,
+      "negativeMedian": 0.34,
+      "auc": null,
+      "aucNote": "positive n=1"
+    },
+    "backend-engineering": {
+      "rows": 22,
+      "positive": 0,
+      "prevalence": 0,
+      "positiveMean": null,
+      "positiveMedian": null,
+      "negativeMean": 0.3086,
+      "negativeMedian": 0.275,
+      "auc": null,
+      "aucNote": "no positive"
+    },
+    "operating-systems": {
+      "rows": 22,
+      "positive": 4,
+      "prevalence": 0.18181818181818182,
+      "positiveMean": 0.73,
+      "positiveMedian": 0.765,
+      "negativeMean": 0.2744,
+      "negativeMedian": 0.225,
+      "auc": 1
+    },
+    "network-http": {
+      "rows": 22,
+      "positive": 9,
+      "prevalence": 0.4090909090909091,
+      "positiveMean": 0.6844,
+      "positiveMedian": 0.7,
+      "negativeMean": 0.3677,
+      "negativeMedian": 0.35,
+      "auc": 0.9744
+    }
+  },
+  "historical": [
+    {
+      "phase": "A",
+      "auc": 1,
+      "positiveSupport": 4,
+      "pairDownward": "4/4"
+    },
+    {
+      "phase": "A.1",
+      "auc": 0.979,
+      "positiveSupport": 8,
+      "pairDownward": "8/8"
+    },
+    {
+      "phase": "A.2",
+      "auc": 0.852,
+      "positiveSupport": 10,
+      "pairDownward": "9/10"
+    },
+    {
+      "phase": "B",
+      "auc": 0.9742,
+      "positiveSupport": 28,
+      "pairDownward": null
+    }
+  ],
+  "classification": "STRONG_CURRENT_GENERALIZATION_WITHIN_FROZEN_SIX_AREA_SLICE",
+  "disposition": "ADOPT_AS_REVIEW_PRIORITY_SIGNAL",
+  "allowedScope": [
+    "MULTIPLE_CHOICE weak-distractor human review ordering",
+    "optional offline diagnostic signal"
+  ],
+  "forbiddenScope": [
+    "automatic PASS/REJECT",
+    "canonical acceptance or mutation",
+    "merge approval",
+    "technical correctness",
+    "multiple defensible answers",
+    "difficulty",
+    "Concept quality"
+  ],
+  "currentCleanupFindings": {
+    "total": 28,
+    "byArea": {
+      "java": 10,
+      "spring": 4,
+      "database": 1,
+      "backend-engineering": 0,
+      "operating-systems": 4,
+      "network-http": 9
+    }
+  },
+  "reproducibility": {
+    "aggregateEvidenceTracked": true,
+    "sanitizedRowLevelResultTracked": false,
+    "rawResultIntentionallyGitIgnored": true
+  }
+}
