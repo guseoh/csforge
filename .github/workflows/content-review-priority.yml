@@ -102,12 +102,12 @@ jobs:
           node --import tsx src/review-cli.ts changed "${args[@]}"
 
       - name: Add review summary
-        if: success() && hashFiles('experiments/jev-content-quality/results/review-priority/jev-review-priority-report.md') != ''
+        if: always() && hashFiles('experiments/jev-content-quality/results/review-priority/jev-review-priority-report.md') != ''
         working-directory: experiments/jev-content-quality
         run: cat results/review-priority/jev-review-priority-report.md >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload review artifacts
-        if: success() && hashFiles('experiments/jev-content-quality/results/review-priority/jev-review-priority-report.md') != ''
+        if: always() && hashFiles('experiments/jev-content-quality/results/review-priority/jev-review-priority-report.md') != ''
         uses: actions/upload-artifact@v6
         with:
           name: jev-content-review-priority
