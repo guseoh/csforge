@@ -36,6 +36,7 @@ export interface CandidateSelection {
 
 export interface GitContentSource {
   assertRef(ref: string): Promise<void>;
+  mergeBase(base: string, head: string): Promise<string>;
   listChangedPaths(base: string, head: string): Promise<string[]>;
   listQuestionPaths(ref: string): Promise<string[]>;
   readFileAtRef(ref: string, filePath: string): Promise<string | undefined>;
@@ -46,6 +47,10 @@ export class GitRepositoryContentSource implements GitContentSource {
 
   async assertRef(ref: string): Promise<void> {
     await this.git(["rev-parse", "--verify", `${ref}^{commit}`]);
+  }
+
+  async mergeBase(base: string, head: string): Promise<string> {
+    return (await this.git(["merge-base", base, head])).trim();
   }
 
   async listChangedPaths(base: string, head: string): Promise<string[]> {
@@ -85,13 +90,14 @@ export async function selectChangedQuestions(
   head: string,
 ): Promise<CandidateSelection> {
   await Promise.all([source.assertRef(base), source.assertRef(head)]);
-  const changedPaths = (await source.listChangedPaths(base, head)).filter(isQuestionPath).sort();
+  const comparisonBase = await source.mergeBase(base, head);
+  const changedPaths = (await source.listChangedPaths(comparisonBase, head)).filter(isQuestionPath).sort();
   const candidates: ReviewCandidate[] = [];
   let skippedCount = 0;
 
   for (const sourcePath of changedPaths) {
     const [baseQuestions, headQuestions] = await Promise.all([
-      readQuestions(source, base, sourcePath),
+      readQuestions(source, comparisonBase, sourcePath),
       readQuestions(source, head, sourcePath),
     ]);
     const beforeByKey = new Map(baseQuestions.map((question) => [question.contentKey, question]));
