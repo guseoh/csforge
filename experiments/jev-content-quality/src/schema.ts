@@ -1,5 +1,5 @@
 import type { DatasetManifest } from "./dataset.js";
-import { FROZEN_HISTORICAL_HOLDOUT } from "./dataset.js";
+import { FROZEN_HISTORICAL_HOLDOUT, FROZEN_WEAK_DISTRACTOR_HOLDOUT } from "./dataset.js";
 import type { CandidateRecord, QuestionGold, RubricDefinition } from "./types.js";
 
 const QUESTION_GOLD_KEYS = [
@@ -26,12 +26,19 @@ function hasOwn(object: object, key: string): boolean {
 const QUESTION_V2_GOLD_KEYS = ["materialTechnicalError", "multipleDefensibleAnswers", "weakDistractor"] as const;
 const CONCEPT_V2_GOLD_KEYS = ["materialTechnicalError"] as const;
 
-function validateGold(row: CandidateRecord, rubricVersion: string | undefined, errors: string[]): void {
+const CRITERION_GOLD_KEYS: Record<string, string> = {
+  material_technical_error: "materialTechnicalError",
+  multiple_defensible_answers: "multipleDefensibleAnswers",
+  weak_distractor: "weakDistractor",
+};
+
+function validateGold(row: CandidateRecord, manifest: DatasetManifest | undefined, errors: string[]): void {
   const gold = row.candidateGold as unknown as Record<string, unknown>;
-  const isV2 = rubricVersion === "csforge-content-quality-v2";
-  const expectedKeys = row.kind === "QUESTION"
+  const isV2 = manifest?.rubricVersion === "csforge-content-quality-v2";
+  const requestedGoldKeys = manifest?.requestedCriteria?.map((criterionId) => CRITERION_GOLD_KEYS[criterionId]).filter(Boolean);
+  const expectedKeys: readonly string[] = requestedGoldKeys ?? (row.kind === "QUESTION"
     ? (isV2 ? QUESTION_V2_GOLD_KEYS : QUESTION_GOLD_KEYS)
-    : (isV2 ? CONCEPT_V2_GOLD_KEYS : CONCEPT_GOLD_KEYS);
+    : (isV2 ? CONCEPT_V2_GOLD_KEYS : CONCEPT_GOLD_KEYS));
   for (const key of expectedKeys) {
     if (!hasOwn(gold, key)) {
       errors.push(`${row.caseId}: candidateGold.${key} is required`);
@@ -39,7 +46,7 @@ function validateGold(row: CandidateRecord, rubricVersion: string | undefined, e
   }
   for (const key of Object.keys(gold)) {
     if (!(expectedKeys as readonly string[]).includes(key)) {
-      errors.push(`${row.caseId}: candidateGold.${key} is not allowed by ${rubricVersion ?? "the dataset rubric"}`);
+      errors.push(`${row.caseId}: candidateGold.${key} is not allowed by ${manifest?.rubricVersion ?? "the dataset rubric"}`);
     }
   }
 
@@ -85,7 +92,12 @@ const SUPPORT_KEYS = {
   ],
 } as const;
 
-export function validateManifest(manifest: DatasetManifest, rows: CandidateRecord[], phaseARows: CandidateRecord[] = []): string[] {
+export function validateManifest(
+  manifest: DatasetManifest,
+  rows: CandidateRecord[],
+  phaseARows: CandidateRecord[] = [],
+  phaseA1Rows: CandidateRecord[] = [],
+): string[] {
   const errors: string[] = [];
   if (manifest.primaryInstructionLanguage !== "ko") errors.push("manifest primaryInstructionLanguage must be ko");
   const groups = new Map(rows.map((row) => [row.caseGroupId, row]));
@@ -95,8 +107,11 @@ export function validateManifest(manifest: DatasetManifest, rows: CandidateRecor
     if (!groups.has(groupId)) errors.push(`manifest language experiment case group does not exist: ${groupId}`);
   }
 
-  const supportKeys = manifest.rubricVersion === "csforge-content-quality-v2"
-    ? { QUESTION: QUESTION_V2_GOLD_KEYS, CONCEPT: CONCEPT_V2_GOLD_KEYS }
+  const requestedGoldKeys = manifest.requestedCriteria?.map((criterionId) => CRITERION_GOLD_KEYS[criterionId]).filter(Boolean);
+  const supportKeys = requestedGoldKeys
+    ? { QUESTION: requestedGoldKeys, CONCEPT: [] }
+    : manifest.rubricVersion === "csforge-content-quality-v2"
+      ? { QUESTION: QUESTION_V2_GOLD_KEYS, CONCEPT: CONCEPT_V2_GOLD_KEYS }
     : SUPPORT_KEYS;
   for (const kind of ["QUESTION", "CONCEPT"] as const) {
     const support = manifest.criterionSupport?.[kind === "QUESTION" ? "question" : "concept"];
@@ -152,6 +167,48 @@ export function validateManifest(manifest: DatasetManifest, rows: CandidateRecor
       }
     }
   }
+  if (manifest.datasetKind === FROZEN_WEAK_DISTRACTOR_HOLDOUT) {
+    const groupCount = new Set(rows.map((row) => row.caseGroupId)).size;
+    if (manifest.holdoutPairCount !== 20 || groupCount !== 20 || rows.length !== 40) {
+      errors.push(`frozen weak-distractor holdout must contain exactly 20 BEFORE/AFTER pairs; manifest=${manifest.holdoutPairCount}, groups=${groupCount}, rows=${rows.length}`);
+    }
+    if (manifest.rowCount !== 40 || manifest.caseGroupCount !== 20) {
+      errors.push("frozen weak-distractor holdout manifest must declare rowCount=40 and caseGroupCount=20");
+    }
+    if (JSON.stringify(manifest.requestedCriteria) !== JSON.stringify(["weak_distractor"])) {
+      errors.push("frozen weak-distractor holdout requestedCriteria must contain only weak_distractor");
+    }
+    if (rows.some((row) => row.kind !== "QUESTION" || row.content.questionType !== "MULTIPLE_CHOICE")) {
+      errors.push("frozen weak-distractor holdout rows must all be MULTIPLE_CHOICE Questions");
+    }
+    const beforeRows = rows.filter((row) => row.source.version === "BEFORE");
+    const afterRows = rows.filter((row) => row.source.version === "AFTER");
+    const positiveBefore = beforeRows.filter((row) => (row.candidateGold as unknown as Record<string, unknown>).weakDistractor === true);
+    if (positiveBefore.length !== 10) errors.push(`frozen weak-distractor holdout must have exactly 10 positive BEFORE rows; actual=${positiveBefore.length}`);
+    for (const row of positiveBefore) {
+      if (row.candidateGoldSeverity !== "P1") errors.push(`${row.caseId}: positive BEFORE severity must be P1`);
+    }
+    for (const row of beforeRows.filter((candidate) => !positiveBefore.includes(candidate))) {
+      if ((row.candidateGold as unknown as Record<string, unknown>).weakDistractor !== false || row.candidateGoldSeverity !== "NONE") {
+        errors.push(`${row.caseId}: negative BEFORE must be weakDistractor=false with NONE severity`);
+      }
+    }
+    for (const row of afterRows) {
+      if ((row.candidateGold as unknown as Record<string, unknown>).weakDistractor !== false || row.candidateGoldSeverity !== "NONE") {
+        errors.push(`${row.caseId}: every AFTER must be weakDistractor=false with NONE severity`);
+      }
+    }
+    const phaseAKeys = new Set(phaseARows.map((row) => row.contentKey));
+    const phaseA1Keys = new Set(phaseA1Rows.map((row) => row.contentKey));
+    for (const contentKey of new Set(rows.map((row) => row.contentKey))) {
+      if (phaseAKeys.has(contentKey)) errors.push(`frozen weak-distractor holdout overlaps Phase A contentKey: ${contentKey}`);
+      if (phaseA1Keys.has(contentKey)) errors.push(`frozen weak-distractor holdout overlaps Phase A.1 contentKey: ${contentKey}`);
+    }
+    const sourcePrs = [...new Set(rows.map((row) => row.source.sourcePr))].sort((a, b) => a - b);
+    if (JSON.stringify(sourcePrs) !== JSON.stringify([20, 22, 25])) errors.push(`frozen weak-distractor holdout source PRs must be 20,22,25; actual=${sourcePrs.join(",")}`);
+    const areaCount = new Set(rows.map((row) => row.area)).size;
+    if (manifest.learningAreaCount !== 8 || areaCount !== 8) errors.push(`frozen weak-distractor holdout LearningArea count must be 8; manifest=${manifest.learningAreaCount}, actual=${areaCount}`);
+  }
   return errors;
 }
 
@@ -183,7 +240,7 @@ export function validateDataset(rows: CandidateRecord[], manifest?: DatasetManif
     if (manifest && row.datasetVersion !== manifest.datasetVersion) {
       errors.push(`${row.caseId}: datasetVersion does not match manifest`);
     }
-    validateGold(row, manifest?.rubricVersion, errors);
+    validateGold(row, manifest, errors);
     const group = groups.get(row.caseGroupId) ?? [];
     group.push(row);
     groups.set(row.caseGroupId, group);

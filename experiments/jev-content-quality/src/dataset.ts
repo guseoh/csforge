@@ -8,7 +8,20 @@ export const DEFAULT_DATASET_PATH = path.join(DATA_DIR, "phase-a-candidates.json
 export const DEFAULT_MANIFEST_PATH = path.join(DATA_DIR, "manifest.json");
 export const HOLDOUT_DATASET_PATH = path.join(DATA_DIR, "phase-a1-holdout.jsonl");
 export const HOLDOUT_MANIFEST_PATH = path.join(DATA_DIR, "phase-a1-manifest.json");
+export const WEAK_HOLDOUT_DATASET_PATH = path.join(DATA_DIR, "phase-a2-weak-distractor-holdout.jsonl");
+export const WEAK_HOLDOUT_MANIFEST_PATH = path.join(DATA_DIR, "phase-a2-manifest.json");
 export const FROZEN_HISTORICAL_HOLDOUT = "FROZEN_HISTORICAL_HOLDOUT";
+export const FROZEN_WEAK_DISTRACTOR_HOLDOUT = "FROZEN_WEAK_DISTRACTOR_HOLDOUT";
+
+export function isFrozenHoldoutDatasetKind(datasetKind: string | undefined): boolean {
+  return datasetKind === FROZEN_HISTORICAL_HOLDOUT || datasetKind === FROZEN_WEAK_DISTRACTOR_HOLDOUT;
+}
+
+export function assertThresholdedMetricsAllowed(datasetKind: string | undefined, hasThresholds: boolean): void {
+  if (hasThresholds && isFrozenHoldoutDatasetKind(datasetKind)) {
+    throw new Error("Frozen holdout metrics must remain raw and UNCALIBRATED; thresholds are not allowed");
+  }
+}
 
 export interface CriterionSupport {
   positiveSupport: number;
@@ -27,6 +40,7 @@ export interface DatasetManifest {
   rowCount: number;
   caseGroupCount: number;
   languageExperimentCaseGroups: string[];
+  requestedCriteria?: string[];
   estimatedInputCostUsdPerMillionTokens: number;
   criterionSupport: {
     question: Record<string, CriterionSupport>;
@@ -36,7 +50,10 @@ export interface DatasetManifest {
   holdoutPairCount?: number;
   phaseADatasetVersion?: string;
   phaseAContentKeys?: string[];
+  phaseA1DatasetVersion?: string;
+  phaseA1ContentKeys?: string[];
   sourcePrsSelected?: number[];
+  learningAreaCount?: number;
   droppedCandidates?: Array<{ contentKey: string; rationale: string }>;
   independenceStatement?: string;
   notes?: string[];

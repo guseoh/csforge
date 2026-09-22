@@ -32,7 +32,11 @@ export interface ConceptGoldV2 {
   materialTechnicalError: boolean;
 }
 
-export type CandidateGold = QuestionGold | ConceptGold | QuestionGoldV2 | ConceptGoldV2;
+export interface WeakDistractorGold {
+  weakDistractor: boolean;
+}
+
+export type CandidateGold = QuestionGold | ConceptGold | QuestionGoldV2 | ConceptGoldV2 | WeakDistractorGold;
 
 export interface SourceRef {
   sourcePr: number;

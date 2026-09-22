@@ -10,6 +10,7 @@ export interface RunOptions {
   datasetVersion: string;
   datasetKind?: string;
   rubricVersion?: string;
+  requestedCriteria?: readonly string[];
   languageExperimentCaseGroups?: ReadonlySet<string>;
   languages?: readonly InstructionLanguage[];
   repeatIndex?: number;
@@ -32,7 +33,7 @@ export async function runBenchmark(options: RunOptions): Promise<EvaluationResul
     for (const language of selectedLanguages) {
       const questionType = typeof candidate.content.questionType === "string" ? candidate.content.questionType : undefined;
       const rubricVersion = options.rubricVersion ?? RUBRIC_VERSION;
-      const rubric = buildRubricForVersion(rubricVersion, candidate.kind, language, questionType);
+      const rubric = buildRubricForVersion(rubricVersion, candidate.kind, language, questionType, options.requestedCriteria);
       const criterionIds = Object.entries(rubric.questions)
         .filter(([, question]) => question.type === "noul")
         .map(([id]) => id);

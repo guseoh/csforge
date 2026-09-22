@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { calculateMetrics } from "../src/metrics.js";
+import { assertThresholdedMetricsAllowed } from "../src/dataset.js";
 import type { CandidateRecord, DifficultyFit, EvaluationResult, InstructionLanguage } from "../src/types.js";
 
 const source = { sourcePr: 1, repositoryRef: "test", path: "test", beforeRef: "a", afterRef: "b", commit: "b", version: "BEFORE" as const };
@@ -130,4 +131,12 @@ test("critical issue false-negative rate is distinct from atomic criterion FNR",
   assert.equal(metrics.criticalIssueRecall, 0);
   assert.equal(metrics.criticalIssueFalseNegativeRate, 1);
   assert.equal(metrics.criterionFalseNegativeRate, 1);
+});
+
+test("frozen weak-distractor holdout rejects thresholded metrics", () => {
+  assert.throws(
+    () => assertThresholdedMetricsAllowed("FROZEN_WEAK_DISTRACTOR_HOLDOUT", true),
+    /thresholds are not allowed/,
+  );
+  assert.doesNotThrow(() => assertThresholdedMetricsAllowed("FROZEN_WEAK_DISTRACTOR_HOLDOUT", false));
 });

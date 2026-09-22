@@ -9,6 +9,7 @@
     "validate": "tsx src/cli.ts validate",
     "benchmark": "tsx src/cli.ts benchmark",
     "benchmark:holdout": "tsx src/cli.ts benchmark-holdout",
+    "benchmark:weak-holdout": "tsx src/cli.ts benchmark-weak-holdout",
     "calibrate": "tsx src/cli.ts calibrate",
     "metrics": "tsx src/cli.ts metrics",
     "typecheck": "tsc --noEmit",

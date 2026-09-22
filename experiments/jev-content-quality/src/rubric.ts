@@ -106,10 +106,27 @@ export function buildRubric(kind: CandidateKind, language: InstructionLanguage, 
   return { version: RUBRIC_VERSION, kind, language, questions: kind === "QUESTION" ? buildQuestionV2(language, questionType) : buildConceptV2(language) };
 }
 
-export function buildRubricForVersion(version: string, kind: CandidateKind, language: InstructionLanguage, questionType?: string): RubricDefinition {
-  if (version === RUBRIC_V1_VERSION) return buildRubricV1(kind, language, questionType);
-  if (version === RUBRIC_VERSION) return buildRubric(kind, language, questionType);
-  throw new Error(`Unsupported rubric version: ${version}`);
+export function buildRubricForVersion(
+  version: string,
+  kind: CandidateKind,
+  language: InstructionLanguage,
+  questionType?: string,
+  requestedCriteria?: readonly string[],
+): RubricDefinition {
+  const definition = version === RUBRIC_V1_VERSION
+    ? buildRubricV1(kind, language, questionType)
+    : version === RUBRIC_VERSION
+      ? buildRubric(kind, language, questionType)
+      : undefined;
+  if (!definition) throw new Error(`Unsupported rubric version: ${version}`);
+  if (!requestedCriteria) return definition;
+
+  const questions = Object.fromEntries(requestedCriteria.map((criterionId) => {
+    const question = definition.questions[criterionId];
+    if (!question) throw new Error(`${criterionId} is not applicable to ${kind}${questionType ? `/${questionType}` : ""}`);
+    return [criterionId, question];
+  }));
+  return { ...definition, questions };
 }
 
 export function allRubricDefinitions(version = RUBRIC_VERSION): RubricDefinition[] {

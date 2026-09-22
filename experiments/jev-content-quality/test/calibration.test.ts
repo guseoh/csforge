@@ -120,3 +120,11 @@ test("frozen historical holdout cannot be calibrated", () => {
     /cannot be used for threshold calibration/,
   );
 });
+
+test("frozen weak-distractor holdout cannot be calibrated", () => {
+  const holdoutManifest = { ...manifest, datasetKind: "FROZEN_WEAK_DISTRACTOR_HOLDOUT" };
+  assert.throws(
+    () => calibratePhaseA([candidate("weak-holdout", true)], [rawResult("weak-holdout", 0.8)], holdoutManifest),
+    /cannot be used for threshold calibration/,
+  );
+});

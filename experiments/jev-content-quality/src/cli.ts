@@ -5,9 +5,12 @@ import { calibratePhaseA } from "./calibration.js";
 import {
   DEFAULT_DATASET_PATH,
   DEFAULT_MANIFEST_PATH,
-  FROZEN_HISTORICAL_HOLDOUT,
   HOLDOUT_DATASET_PATH,
   HOLDOUT_MANIFEST_PATH,
+  WEAK_HOLDOUT_DATASET_PATH,
+  WEAK_HOLDOUT_MANIFEST_PATH,
+  assertThresholdedMetricsAllowed,
+  isFrozenHoldoutDatasetKind,
   loadDataset,
   loadManifest,
   type DatasetManifest,
@@ -36,18 +39,27 @@ const PHASE_A1: DatasetProfile = {
   manifestPath: HOLDOUT_MANIFEST_PATH,
   outputPrefix: "phase-a1-holdout",
 };
+const PHASE_A2: DatasetProfile = {
+  datasetPath: WEAK_HOLDOUT_DATASET_PATH,
+  manifestPath: WEAK_HOLDOUT_MANIFEST_PATH,
+  outputPrefix: "phase-a2-weak-holdout",
+};
 
 async function loadProfile(profile: DatasetProfile): Promise<{ dataset: CandidateRecord[]; manifest: DatasetManifest }> {
   const [dataset, manifest] = await Promise.all([loadDataset(profile.datasetPath), loadManifest(profile.manifestPath)]);
   return { dataset, manifest };
 }
 
-async function validateProfile(profile: DatasetProfile, phaseARows: CandidateRecord[]): Promise<string[]> {
+async function validateProfile(
+  profile: DatasetProfile,
+  phaseARows: CandidateRecord[],
+  phaseA1Rows: CandidateRecord[] = [],
+): Promise<string[]> {
   const { dataset, manifest } = await loadProfile(profile);
   const errors = [
     ...validateDataset(dataset, manifest),
     ...validateRubric(allRubricDefinitions(manifest.rubricVersion)),
-    ...validateManifest(manifest, dataset, phaseARows),
+    ...validateManifest(manifest, dataset, phaseARows, phaseA1Rows),
   ];
   if (dataset.length !== manifest.rowCount) errors.push(`${manifest.datasetVersion}: manifest rowCount=${manifest.rowCount}, actual=${dataset.length}`);
   const groupCount = new Set(dataset.map((row) => row.caseGroupId)).size;
@@ -60,10 +72,14 @@ async function validateProfile(profile: DatasetProfile, phaseARows: CandidateRec
 }
 
 async function validate(): Promise<number> {
-  const phaseARows = await loadDataset(DEFAULT_DATASET_PATH);
+  const [phaseARows, phaseA1Rows] = await Promise.all([
+    loadDataset(DEFAULT_DATASET_PATH),
+    loadDataset(HOLDOUT_DATASET_PATH),
+  ]);
   const errors = [
     ...await validateProfile(PHASE_A, phaseARows),
     ...await validateProfile(PHASE_A1, phaseARows),
+    ...await validateProfile(PHASE_A2, phaseARows, phaseA1Rows),
   ];
   if (errors.length > 0) {
     console.error(errors.join("\n"));
@@ -88,6 +104,7 @@ async function benchmark(profile: DatasetProfile): Promise<number> {
     datasetVersion: manifest.datasetVersion,
     datasetKind: manifest.datasetKind,
     rubricVersion: manifest.rubricVersion,
+    requestedCriteria: manifest.requestedCriteria,
     languageExperimentCaseGroups: new Set(manifest.languageExperimentCaseGroups),
     languages: [manifest.primaryInstructionLanguage, "en"],
   });
@@ -126,8 +143,15 @@ async function loadThresholds(filePath: string): Promise<PolicyThresholds> {
 }
 
 function isFrozenHoldout(results: EvaluationResult[]): boolean {
-  return results.some((result) => result.datasetKind === FROZEN_HISTORICAL_HOLDOUT
-    || result.datasetVersion === "phase-a1-historical-holdout-2026-09-22");
+  return results.some((result) => isFrozenHoldoutDatasetKind(result.datasetKind)
+    || result.datasetVersion === "phase-a1-historical-holdout-2026-09-22"
+    || result.datasetVersion === "phase-a2-weak-distractor-holdout-2026-09-22");
+}
+
+function profileForResults(results: EvaluationResult[]): DatasetProfile {
+  if (results.some((result) => result.datasetVersion === "phase-a2-weak-distractor-holdout-2026-09-22")) return PHASE_A2;
+  if (isFrozenHoldout(results)) return PHASE_A1;
+  return PHASE_A;
 }
 
 async function calibrate(resultPath: string): Promise<number> {
@@ -147,9 +171,9 @@ async function calibrate(resultPath: string): Promise<number> {
 async function metrics(resultPath: string): Promise<number> {
   const rawResults = await readResults(resultPath);
   const frozen = isFrozenHoldout(rawResults);
-  const { dataset, manifest } = await loadProfile(frozen ? PHASE_A1 : PHASE_A);
+  const { dataset, manifest } = await loadProfile(profileForResults(rawResults));
   const thresholdPath = optionValue("--thresholds");
-  if (frozen && thresholdPath) throw new Error("Frozen holdout metrics must remain raw and UNCALIBRATED; thresholds are not allowed");
+  assertThresholdedMetricsAllowed(frozen ? manifest.datasetKind : undefined, Boolean(thresholdPath));
   const results = thresholdPath ? applyThresholdsToResults(rawResults, await loadThresholds(thresholdPath)) : rawResults;
   console.log(JSON.stringify(calculateMetrics(dataset, results, {
     inputCostUsdPerMillionTokens: manifest.estimatedInputCostUsdPerMillionTokens,
@@ -168,9 +192,11 @@ const exitCode = command === "validate"
     ? await benchmark(PHASE_A)
     : command === "benchmark-holdout"
       ? await benchmark(PHASE_A1)
+      : command === "benchmark-weak-holdout"
+        ? await benchmark(PHASE_A2)
       : command === "calibrate" && inputPath
         ? await calibrate(inputPath)
         : command === "metrics" && inputPath
           ? await metrics(inputPath)
-          : (console.error("Usage: npm run validate | npm run benchmark | npm run benchmark:holdout | npm run calibrate -- <phase-a-raw-result.jsonl> | npm run metrics -- <raw-result.jsonl> [--thresholds <phase-a-thresholds.json>]"), 1);
+          : (console.error("Usage: npm run validate | npm run benchmark | npm run benchmark:holdout | npm run benchmark:weak-holdout | npm run calibrate -- <phase-a-raw-result.jsonl> | npm run metrics -- <raw-result.jsonl> [--thresholds <phase-a-thresholds.json>]"), 1);
 process.exitCode = exitCode;

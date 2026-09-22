@@ -1,0 +1,59 @@
+{
+  "datasetVersion": "phase-a2-weak-distractor-holdout-2026-09-22",
+  "rubricVersion": "csforge-content-quality-v2",
+  "model": "jev-1.13.0",
+  "datasetKind": "FROZEN_WEAK_DISTRACTOR_HOLDOUT",
+  "primaryInstructionLanguage": "ko",
+  "requestedCriteria": ["weak_distractor"],
+  "phaseADatasetVersion": "phase-a-2026-09-21",
+  "phaseA1DatasetVersion": "phase-a1-historical-holdout-2026-09-22",
+  "sourcePrsSelected": [20, 22, 25],
+  "sourceRefProvenanceFile": "phase-a2-case-spec.json",
+  "sourceProvenance": [
+    {"sourcePr": 20, "caseGroups": ["phase-a2-p06", "phase-a2-p07", "phase-a2-p08", "phase-a2-p09", "phase-a2-n07"]},
+    {"sourcePr": 22, "caseGroups": ["phase-a2-p01", "phase-a2-p02", "phase-a2-p03", "phase-a2-p04", "phase-a2-p05", "phase-a2-n08", "phase-a2-n09", "phase-a2-n10"]},
+    {"sourcePr": 25, "caseGroups": ["phase-a2-p10", "phase-a2-n01", "phase-a2-n02", "phase-a2-n03", "phase-a2-n04", "phase-a2-n05", "phase-a2-n06"]}
+  ],
+  "rowCount": 40,
+  "caseGroupCount": 20,
+  "holdoutPairCount": 20,
+  "learningAreaCount": 8,
+  "languageExperimentCaseGroups": [],
+  "criterionSupport": {
+    "question": {
+      "weakDistractor": {
+        "positiveSupport": 10,
+        "negativeSupport": 30,
+        "applicableSupport": 40,
+        "recallEvaluable": true,
+        "note": "All 40 rows are MULTIPLE_CHOICE. Positive support consists of the 10 finalized positive BEFORE rows."
+      }
+    },
+    "concept": {}
+  },
+  "independenceStatement": "All 20 case groups are historical BEFORE/AFTER pairs from merged PRs #20, #22, and #25. They have zero contentKey overlap with Phase A and Phase A.1, exclude PR #81 lineage, and were not used to change the frozen Rubric V2 wording or select thresholds.",
+  "overlapAudit": {
+    "phaseAContentKeyOverlap": 0,
+    "phaseA1ContentKeyOverlap": 0,
+    "pr81LineageExcluded": true
+  },
+  "firstRunContract": {
+    "output": "RAW_PROBABILITIES_ONLY",
+    "calibrationStatus": "UNCALIBRATED",
+    "allowPassReviewAdoptionConclusion": false,
+    "allowThresholdApplication": false
+  },
+  "experimentDisposition": {
+    "materialTechnicalError": "SUSPENDED_AFTER_A1_POOR_SIGNAL",
+    "multipleDefensibleAnswers": "INSUFFICIENT_SUPPORT"
+  },
+  "estimatedInputCostUsdPerMillionTokens": 0.042,
+  "notes": [
+    "No synthetic defects are present.",
+    "Only weak_distractor is requested; materialTechnicalError and multipleDefensibleAnswers are experiment notes only.",
+    "Only three source PRs are represented, and several positives share review commits.",
+    "PR #81 and its weak-distractor review campaign lineage are excluded.",
+    "This frozen holdout cannot be calibrated or evaluated with thresholds.",
+    "If rubric wording or thresholds change after observing Phase A.2, this dataset becomes consumed development data and cannot be reused as final holdout evidence."
+  ]
+}

@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { buildRubric, RUBRIC_VERSION } from "../src/rubric.js";
+import { buildRubric, buildRubricForVersion, RUBRIC_VERSION } from "../src/rubric.js";
 
 const excluded = [
   "response_shape_mismatch",
@@ -45,4 +45,13 @@ test("multiple_defensible_answers is about incompatible conclusions, not wording
   const instruction = String(buildRubric("QUESTION", "en", "DESCRIPTIVE").questions.multiple_defensible_answers.instructions);
   assert.match(instruction, /decisive condition/i);
   assert.match(instruction, /Different wording/i);
+});
+
+test("weak-only profile reuses the frozen V2 weak_distractor definition", () => {
+  const full = buildRubricForVersion(RUBRIC_VERSION, "QUESTION", "ko", "MULTIPLE_CHOICE");
+  const weakOnly = buildRubricForVersion(RUBRIC_VERSION, "QUESTION", "ko", "MULTIPLE_CHOICE", ["weak_distractor"]);
+  assert.deepEqual(Object.keys(weakOnly.questions), ["weak_distractor"]);
+  assert.deepEqual(weakOnly.questions.weak_distractor, full.questions.weak_distractor);
+  assert.equal(weakOnly.questions.material_technical_error, undefined);
+  assert.equal(weakOnly.questions.multiple_defensible_answers, undefined);
 });

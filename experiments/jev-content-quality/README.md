@@ -1,4 +1,4 @@
-# CSForge Jev Content Quality — Phase A / Phase A.1
+# CSForge Jev Content Quality — Phase A / Phase A.1 / Phase A.2
 
 이 디렉터리는 CSForge runtime과 분리된 offline benchmark harness이다. canonical Concept/Question, Spring backend, frontend, import pipeline에는 의존하지 않는다.
 
@@ -34,6 +34,7 @@ npm test
 npm run validate
 npm run benchmark
 npm run benchmark:holdout
+npm run benchmark:weak-holdout
 npm run calibrate -- results/phase-a-run-....jsonl
 npm run metrics -- results/phase-a-run-....jsonl --thresholds results/calibration-....json
 ```
@@ -66,6 +67,20 @@ Rubric V2는 다음 criterion만 요청한다.
 Phase A.1은 threshold calibration dataset이 아니다. 첫 실행 목적은 raw probability separation 확인이며 결과는 `UNCALIBRATED`로만 기록한다. V1 threshold는 rubric 의미가 달라진 V2의 성능 threshold로 재사용하지 않는다. `calibrate`에 frozen holdout 결과가 들어오면 fail-fast하고, holdout metrics에도 threshold 적용을 허용하지 않는다.
 
 Phase A.1 결과를 본 뒤 threshold나 rubric을 바꾸고 같은 holdout에서 다시 측정한 값을 최종 성능이라고 주장하면 안 된다. 변경이 필요하면 이 holdout은 개발 데이터로 소진된 것으로 취급하고 새로운 untouched holdout을 확보해야 한다.
+
+Phase A.1 결과에서 `weak_distractor`는 반복 신호를 보였지만, `material_technical_error`는 분리 성능이 악화되었고 `multiple_defensible_answers`는 positive support가 부족했다. 따라서 `materialTechnicalError`는 `SUSPENDED_AFTER_A1_POOR_SIGNAL`, `multipleDefensibleAnswers`는 `INSUFFICIENT_SUPPORT`로 기록하고 Phase A.2 request에는 포함하지 않는다.
+
+### Phase A.2 — independent weak-distractor-only frozen holdout
+
+`data/phase-a2-weak-distractor-holdout.jsonl`은 Human Gold를 확정한 **20 BEFORE/AFTER pair(40 rows)**의 독립 historical holdout이다. `datasetKind`는 `FROZEN_WEAK_DISTRACTOR_HOLDOUT`, dataset version은 `phase-a2-weak-distractor-holdout-2026-09-22`이다. PR #20, #22, #25의 실제 수정만 사용했고 synthetic defect는 없다. Phase A와 Phase A.1 모두와 `contentKey` overlap이 없으며 PR #81 lineage를 제외했다.
+
+Phase A.2 profile은 frozen Rubric V2에서 `weak_distractor`만 요청한다. 기존 ko/en `weak_distractor` definition을 그대로 필터링해 사용하며 `material_technical_error`, `multiple_defensible_answers`, `response_shape_mismatch`, `difficulty_fit` 또는 Concept criterion을 요청하지 않는다. 모든 row는 `MULTIPLE_CHOICE`다.
+
+Gold support는 positive BEFORE 10 rows와 negative applicable 30 rows다. Positive pair의 BEFORE는 `weakDistractor=true`, P1이고 AFTER는 false/NONE이다. Negative pair는 BEFORE와 AFTER 모두 false/NONE이다. 출처는 3개 PR, 8개 LearningArea에 분포하지만 여러 positive가 같은 review commit을 공유하므로 source correlation이 남아 있다.
+
+`npm run benchmark:weak-holdout`은 Phase A.2 dataset만 읽고 raw probability를 `UNCALIBRATED`로 기록한다. Calibration이나 policy를 호출하지 않으며 PASS/REVIEW 결론과 threshold를 만들지 않는다. `calibrate`는 이 dataset을 fail-fast하고, `metrics --thresholds`도 거부한다.
+
+Phase A.2의 목적은 PR #81 editorial campaign 밖에서도 `weakDistractor` 신호가 일반화되는지 확인하는 것이다. A.2 결과를 본 뒤 rubric wording이나 threshold를 바꾸면 A.2는 consumed development data가 되며 final holdout evidence로 다시 사용할 수 없다.
 
 ## Review risks
 
