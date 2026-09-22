@@ -11,16 +11,25 @@ const PATH_A = "content/java/topic-a/questions.json";
 const PATH_B = "content/spring/topic-b/questions.json";
 
 class FakeGitContentSource implements GitContentSource {
+  lastChangedRange?: [string, string];
+
   constructor(
     private readonly files: Record<string, Record<string, string>>,
     private readonly changedPaths: string[],
+    private readonly mergeBaseRef = "base",
   ) {}
 
   async assertRef(ref: string): Promise<void> {
     if (!this.files[ref]) throw new Error(`Unknown ref ${ref}`);
   }
 
-  async listChangedPaths(): Promise<string[]> {
+  async mergeBase(): Promise<string> {
+    if (!this.files[this.mergeBaseRef]) throw new Error(`Unknown merge base ${this.mergeBaseRef}`);
+    return this.mergeBaseRef;
+  }
+
+  async listChangedPaths(base: string, head: string): Promise<string[]> {
+    this.lastChangedRange = [base, head];
     return this.changedPaths;
   }
 
@@ -69,6 +78,23 @@ test("changed mode excludes formatting-only and unrelated Question field changes
 
   assert.deepEqual(selected.candidates, []);
   assert.equal(selected.skippedCount, 1);
+});
+
+test("changed mode compares merge-base to head so main-only drift is not reviewed", async () => {
+  const mainOnlyBefore = question("java.core.topic.main-only", "shared prompt", "MULTIPLE_CHOICE");
+  const branchBefore = question("java.core.topic.branch", "old branch prompt", "MULTIPLE_CHOICE");
+  const mainOnlyAfter = question("java.core.topic.main-only", "main-only new prompt", "MULTIPLE_CHOICE");
+  const branchAfter = question("java.core.topic.branch", "new branch prompt", "MULTIPLE_CHOICE");
+  const source = new FakeGitContentSource({
+    "merge-base": { [PATH_A]: JSON.stringify([mainOnlyBefore, branchBefore]) },
+    base: { [PATH_A]: JSON.stringify([mainOnlyAfter, branchBefore]) },
+    head: { [PATH_A]: JSON.stringify([mainOnlyBefore, branchAfter]) },
+  }, [PATH_A], "merge-base");
+
+  const selected = await selectChangedQuestions(source, "base", "head");
+
+  assert.deepEqual(source.lastChangedRange, ["merge-base", "head"]);
+  assert.deepEqual(selected.candidates.map((candidate) => candidate.contentKey), ["java.core.topic.branch"]);
 });
 
 test("changed candidates are deterministically ordered before provider use", async () => {
