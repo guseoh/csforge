@@ -10,7 +10,7 @@ policies:
     authoringLanguage: ko-KR
     explanationRule: 공격자가 조작할 수 있는 입력, 신뢰 경계, 브라우저/서버/프레임워크에서 실제 검증이 실행되는 위치와 실패 결과를 연결해 설명한다.
   question:
-    minimumPerConcept: 2
+    reviewRule: topicDifficultyCoverage와 areaTypeCoverage는 Topic과 LearningArea 전체를 검토하는 기준이며 Concept별 quota가 아니다.
     topicDifficultyCoverage: [EASY, MEDIUM, HARD]
     areaTypeCoverage: [MULTIPLE_CHOICE, SHORT_ANSWER, DESCRIPTIVE, SCENARIO]
     hardRule: 구체적인 HTTP request/response, cookie 속성, filter chain, authentication 상태, vulnerable code, attacker capability 중 하나 이상을 제시한다.
