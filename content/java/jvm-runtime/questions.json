@@ -747,7 +747,7 @@
     "choices": [
       {
         "key": "A",
-        "content": "class file 크기만 본다",
+        "content": "binary class name이 같으면 defining loader와 무관하게 JVM에서 같은 runtime type이다",
         "displayOrder": 0
       },
       {
@@ -757,17 +757,17 @@
       },
       {
         "key": "C",
-        "content": "JDK 버전만 보고 cast를 확정한다",
+        "content": "두 loader가 동일한 class bytecode를 define했다면 서로 assignment-compatible한 같은 type으로 취급된다",
         "displayOrder": 2
       },
       {
         "key": "D",
-        "content": "package 문자열만 비교한다",
+        "content": "parent-first와 child-first 차이는 resource 검색 순서만 바꾸고 어떤 loader가 class를 define하는지는 바꾸지 않는다",
         "displayOrder": 3
       }
     ],
     "correctChoiceKey": "B",
-    "explanationMarkdown": "delegation 정책 변화는 defining loader와 type identity를 바꿀 수 있다."
+    "explanationMarkdown": "JVM의 runtime type identity는 **binary name과 defining class loader**를 함께 봐야 한다. delegation 정책이 달라지면 같은 이름·같은 bytecode라도 어느 loader가 실제 define했는지가 달라질 수 있으므로 namespace와 loader 경계를 추적해야 한다."
   },
   {
     "kind": "question",

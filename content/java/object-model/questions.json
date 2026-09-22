@@ -1132,17 +1132,17 @@
     "choices": [
       {
         "key": "A",
-        "content": "composition은 모든 버그를 자동으로 제거한다",
+        "content": "collaborator를 interface로 분리하면 `Order`는 `PricingPolicy` contract에도 전혀 의존하지 않게 된다",
         "displayOrder": 0
       },
       {
         "key": "B",
-        "content": "상속만이 runtime dispatch를 지원한다",
+        "content": "할인 규칙이 달라질 때마다 `Order` subclass로 표현해야 주문 lifecycle과 pricing policy를 안전하게 함께 바꿀 수 있다",
         "displayOrder": 1
       },
       {
         "key": "C",
-        "content": "policy가 없어도 Order가 항상 같은 규칙을 사용한다",
+        "content": "composition은 collaborator를 runtime에 바꾸거나 조합할 수 없으므로 정책 교체가 잦으면 inheritance가 더 적합하다",
         "displayOrder": 2
       },
       {

@@ -1937,17 +1937,17 @@
     "choices": [
       {
         "key": "A",
-        "content": "Condition을 새 thread로 바꾸면 된다",
+        "content": "`await()`를 `if (queue.isEmpty())` 한 번으로만 감싸면 signal을 받은 뒤에는 predicate가 참이라고 볼 수 있다",
         "displayOrder": 0
       },
       {
         "key": "B",
-        "content": "signal이 오면 predicate와 무관하게 진행한다",
+        "content": "consumer를 깨울 때 항상 `signalAll()`을 사용하면 깨어난 thread는 predicate 재검사 없이 진행해도 된다",
         "displayOrder": 1
       },
       {
         "key": "C",
-        "content": "unlock을 await 전에 영구 생략한다",
+        "content": "queue가 비었는지는 lock을 얻기 전에 검사하고, 비어 있으면 lock 안에서 `await()`를 한 번만 호출한다",
         "displayOrder": 2
       },
       {
@@ -1957,7 +1957,7 @@
       }
     ],
     "correctChoiceKey": "D",
-    "explanationMarkdown": "Condition은 깨어난 뒤 predicate가 여전히 거짓일 수 있으므로 lock 경계에서 while로 재검사해야 한다."
+    "explanationMarkdown": "`Condition.await()`에서 깨어났다는 사실은 **predicate가 지금도 참이라는 보장**이 아니다. 다른 consumer가 먼저 상태를 바꿀 수도 있고 wakeup 자체만으로 조건 충족을 뜻하지 않으므로, lock을 다시 보유한 상태에서 `while`로 predicate를 재검사해야 한다."
   },
   {
     "kind": "question",
@@ -2677,22 +2677,22 @@
       },
       {
         "key": "B",
-        "content": "key를 항상 정렬한다",
+        "content": "여러 번의 `get`과 `put`을 묶은 임의의 read-modify-write 절차까지 자동으로 하나의 atomic transaction으로 만든다",
         "displayOrder": 1
       },
       {
         "key": "C",
-        "content": "null key/value를 모두 허용한다",
+        "content": "iteration을 시작하면 이후 concurrent update와 완전히 격리된 immutable snapshot을 제공한다",
         "displayOrder": 2
       },
       {
         "key": "D",
-        "content": "모든 business transaction을 보장한다",
+        "content": "일반 `HashMap`처럼 `null` key와 `null` value를 concurrent 상태 표시용으로 허용한다",
         "displayOrder": 3
       }
     ],
     "correctChoiceKey": "A",
-    "explanationMarkdown": "ConcurrentHashMap은 concurrent access contract를 제공하지만 정렬이나 임의 transaction은 아니다."
+    "explanationMarkdown": "`ConcurrentHashMap`은 여러 thread가 map operation을 안전하게 수행할 수 있는 concurrent collection contract와 일부 atomic operation을 제공한다. 그렇다고 여러 호출을 묶은 임의의 business transaction이 자동으로 atomic해지거나 iterator가 고정 snapshot이 되는 것은 아니며, `null` key/value도 허용하지 않는다."
   },
   {
     "kind": "question",
