@@ -213,9 +213,9 @@ The visualization value set, Korean authoring direction, layer-boundary guidance
 - Structural parity: PASS.
 - Policy drift: affected by P1 `CAA-PA-003` (`minimumPerConcept: 2`).
 - Objective alignment: no P0/P1 gap across threat/trust, authentication/authorization, password/session/browser/injection/access, filter/auth/context, token/OAuth, and abuse boundaries.
-- Question coverage: linked questions cover attacker capability, HTTP/cookie/filter flows, vulnerable code, authorization ownership, and credential/context lifecycle. The current two-question sets are adequate without treating two as a permanent quota.
-- Boundary/ownership: owns authentication, session/token, browser, and application security; Network & HTTP owns TLS transport and Spring owns framework wiring.
-- Findings: P0 0, P1 1, P2 0.
+- Question coverage: P1 `CAA-PA-007` — `security.core.authn-authz.authentication` has two useful Questions for authentication-vs-authorization separation and user-enumeration-safe failure responses, but neither directly tests the Curriculum objective's central credential-verification → authenticated identity/`SecurityContext` formation flow. Other reviewed Security objectives have adequate linked coverage without treating two Questions as a permanent quota.
+- Boundary/ownership: owns authentication, session/token, browser/application security, and Spring Security filter/`SecurityContext` integration; Network & HTTP owns TLS/HTTP transport, while Spring owns the DispatcherServlet/controller MVC dispatch boundary.
+- Findings: P0 0, P1 2, P2 0.
 
 ## Cross-LearningArea ownership
 
@@ -232,7 +232,7 @@ No P0/P1 cross-Area ownership finding was identified. The machine evidence recor
 | delivery/retry: Messaging ↔ Distributed Systems | Messaging owns broker delivery/offset/retry; Distributed Systems owns generic partial-failure theory. |
 | consistency/composition: Distributed Systems ↔ System Design | Distributed Systems owns theory; System Design combines it against product constraints. |
 | runtime diagnosis: Java/OS ↔ Performance/Operations | Java/OS explain runtime evidence; Performance/Operations owns measurement and response. |
-| TLS/authentication/session: Network ↔ Security ↔ Spring | Network owns TLS/HTTP transport, Security owns identity/session controls, Spring owns integration behavior. |
+| TLS/authentication/session: Network ↔ Security ↔ Spring MVC | Network owns TLS/HTTP transport; Security owns authentication/session/browser controls and Spring Security filter/`SecurityContext` integration; Spring owns DispatcherServlet/controller MVC dispatch. |
 
 ## P0 findings
 
@@ -244,6 +244,7 @@ None.
 2. `CAA-PA-002` — Java per-Concept difficulty/count quota and MC-first policy drift.
 3. `CAA-PA-003` — `minimumPerConcept: 2` remains in Backend Engineering, Database, Security, and Spring.
 4. `CAA-PA-004` — the curriculum directory README is still Java-only and repeats legacy policy.
+5. `CAA-PA-007` — Security authentication Question coverage does not directly test the credential-verification → authenticated identity/`SecurityContext` formation path required by the Learning Objective.
 
 ## P2 observations
 
@@ -264,4 +265,9 @@ Keep Phase B narrow and contract-focused:
 
 ## Recommended Phase C scope
 
-Review the nine P2 visualization candidates only after Phase B contract cleanup. Add a compact diagram or text-first visualization only where it materially improves search-tree, repeated-subproblem, packet/order, trust-chain, handshake, termination, HTTP layering, or state-replacement understanding. No other canonical Concept or Question rewrite is recommended from this Phase A evidence.
+After Phase B contract cleanup:
+
+1. Address P1 `CAA-PA-007` with the minimum necessary Security Question change so the authentication Learning Objective directly tests credential verification → authenticated identity/`SecurityContext` formation. Do not introduce a new per-Concept quota.
+2. Review the nine P2 visualization candidates. Add a compact diagram or text-first visualization only where it materially improves search-tree, repeated-subproblem, packet/order, trust-chain, handshake, termination, HTTP layering, or state-replacement understanding.
+
+No broad canonical Concept or Question rewrite is recommended from this Phase A evidence.
