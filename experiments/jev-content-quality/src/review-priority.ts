@@ -70,6 +70,12 @@ export function validateReviewViewOptions(options: ReviewViewOptions): void {
   reportRowCount(0, options);
 }
 
+export function assertSuccessfulEvaluation(summary: Pick<ReviewSummary, "candidateCount" | "evaluatedCount">): void {
+  if (summary.candidateCount > 0 && summary.evaluatedCount === 0) {
+    throw new Error("Jev evaluation produced zero successful results; diagnostic artifacts were written");
+  }
+}
+
 export async function evaluateReviewCandidates(
   candidates: readonly ReviewCandidate[],
   client: ReviewPriorityClient,
