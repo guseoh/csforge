@@ -28,13 +28,17 @@ fi
 
 first="$(curl --fail --silent --show-error -X POST http://127.0.0.1:8080/api/canonical-bootstrap)"
 
+printf 'First bootstrap result:\n%s\n' "$first"
 printf '%s' "$first" | grep -q '"success":true' || exit 21
 printf '%s' "$first" | grep -q '"learningAreas":15' || exit 22
 printf '%s' "$first" | grep -q '"concepts":721' || exit 23
 printf '%s' "$first" | grep -q '"questions":2525' || exit 24
+printf '%s' "$first" | grep -q '"errors":0' || exit 25
+printf '%s' "$first" | grep -q '"failed":0' || exit 26
 
 second="$(curl --fail --silent --show-error -X POST http://127.0.0.1:8080/api/canonical-bootstrap)"
 
+printf 'Second bootstrap result:\n%s\n' "$second"
 printf '%s' "$second" | grep -q '"success":true' || exit 31
 printf '%s' "$second" | grep -q '"state":"READY"' || exit 32
 printf '%s' "$second" | grep -q '"learningAreas":15' || exit 33
