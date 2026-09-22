@@ -30,7 +30,7 @@
   },
   "severityCounts": {
     "P0": 0,
-    "P1": 4,
+    "P1": 5,
     "P2": 2
   },
   "repositoryGlobalChecks": {
@@ -13205,11 +13205,12 @@
       ],
       "manualAudit": {
         "objectiveAlignment": "NO_P0_P1_FINDING",
-        "questionCoverage": "NO_P0_P1_FINDING",
+        "questionCoverage": "P1_FINDING",
         "ownershipBoundary": "NO_P0_P1_FINDING",
         "visualizationGapConceptKeys": [],
         "findingIds": [
-          "CAA-PA-003"
+          "CAA-PA-003",
+          "CAA-PA-007"
         ]
       }
     }
@@ -13285,6 +13286,22 @@
       "currentState": "A directory-wide README reads as a Java-only contract and repeats legacy Java policies.",
       "expectedContract": "Directory documentation should describe the 15-area foundation role and defer shared authoring rules to content/AGENTS.md and content/README.md.",
       "recommendedNextAction": "In Phase B, rewrite the directory README as a 15-area index and move Java-specific notes to Java-scoped documentation if still needed."
+    },
+    {
+      "id": "CAA-PA-007",
+      "severity": "P1",
+      "type": "QUESTION_COVERAGE",
+      "area": "security",
+      "topicKey": "security.core.authn-authz",
+      "conceptKey": "security.core.authn-authz.authentication",
+      "evidence": [
+        "content/curriculum/security.yaml requires the authentication Concept to explain the process of validating credentials, establishing trust in the request principal, and the failure state.",
+        "content/security/authn-authz/authentication.md explicitly traces Authentication filter → AuthenticationManager → user lookup → PasswordEncoder.matches → authenticated Authentication → SecurityContext.",
+        "The two linked Questions test authentication-versus-authorization separation and user-enumeration-safe failure responses, but neither directly tests the credential-verification → authenticated identity/SecurityContext formation path."
+      ],
+      "currentState": "The Concept body covers the core authentication flow, but the linked Questions do not directly assess that central part of the Learning Objective.",
+      "expectedContract": "Important clauses of a Curriculum Learning Objective should be exercised by the linked Question set without imposing a per-Concept numeric quota.",
+      "recommendedNextAction": "In Phase C, add or revise the minimum necessary Question coverage for the credential-verification → authenticated identity/SecurityContext flow; do not change Questions in Phase A."
     },
     {
       "id": "CAA-PA-005",
@@ -13426,13 +13443,15 @@
       ]
     },
     {
-      "boundary": "Network & HTTP ↔ Security ↔ Spring",
+      "boundary": "Network & HTTP ↔ Security ↔ Spring MVC",
       "status": "ALIGNED",
-      "deepTheoryOwner": "network-http for TLS/HTTP transport, security for authentication/session/browser controls, spring for framework integration",
+      "deepTheoryOwner": "network-http for TLS/HTTP transport; security for authentication/session/browser controls and Spring Security filter/context integration; spring for DispatcherServlet/controller MVC dispatch",
       "evidence": [
         "network-http.core.tls.tls-handshake",
         "security.core.authn-authz.authentication",
         "security.core.session-cookie.session-id",
+        "security.core.filter-chain.security-filter-chain",
+        "security.core.context-authz.context-holder",
         "spring.core.mvc.dispatcher-servlet"
       ]
     }
