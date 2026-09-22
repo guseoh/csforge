@@ -135,17 +135,14 @@ Recurring cleanup patterns:
 
 Those 28 findings are candidates for a separate canonical-content cleanup review. Jev must not rewrite them automatically.
 
-## Remaining completion item
+## Completion evidence
 
-This tracked report and the aggregate machine-readable metrics preserve the final decision and reported aggregate evidence.
+The final experiment evidence is now preserved in tracked repository artifacts:
 
-Before Issue #130 / PR #131 completion, add a **sanitized row-level Phase B result** derived from the already-generated raw JSONL, containing only reproducibility-safe fields such as:
+- `evidence/phase-b-final-report.md`
+- `evidence/phase-b-final-metrics.json`
+- `evidence/phase-b-sanitized-results.jsonl`
 
-- caseId
-- contentKey
-- area
-- Human Gold weakDistractor label
-- weak_distractor probability
-- model/rubric/dataset version
+The sanitized row-level result contains exactly 120 rows and only reproducibility-safe fields: caseId, contentKey, area, frozen Human Gold label, weak_distractor probability, dataset/rubric version, and requested/resolved model. It contains no prompt/choice/state payload, headers, credentials, or API secrets.
 
-Do not call Jev again and do not include secrets, request headers, or API credentials.
+The raw provider result remains intentionally gitignored. No Jev rerun or threshold calibration is required for Issue #130 completion.
