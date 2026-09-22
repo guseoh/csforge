@@ -246,7 +246,7 @@
   },
   "reproducibility": {
     "aggregateEvidenceTracked": true,
-    "sanitizedRowLevelResultTracked": false,
+    "sanitizedRowLevelResultTracked": true,
     "rawResultIntentionallyGitIgnored": true
   }
 }
