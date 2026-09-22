@@ -21,6 +21,18 @@ TLS application data를 암호화하려면 client와 server가 먼저 어떤 pro
 
 TLS 1.3의 일반적인 certificate 기반 handshake에서는 client가 `ClientHello`로 지원하는 version, cipher suite와 key share 등을 제시한다. server는 `ServerHello`에서 사용할 조합과 자신의 key share를 선택하고, 이후 handshake traffic이 보호되는 상태에서 certificate와 인증 관련 message를 전달한다.
 
+```text
+Client                                              Server
+  | -- ClientHello(version, cipher, key share) ----> |
+  | <- ServerHello(selected values, key share) ----- |
+  | <- EncryptedExtensions + Certificate             |
+  | <- CertificateVerify + Finished ---------------- |
+  | ---------------- Finished ---------------------> |
+  | ===== encrypted application data =============> |
+```
+
+이 흐름은 capability 선택, server identity 증명, shared key material 확인이 끝난 뒤에야 application data 단계로 넘어간다는 순서를 보여 준다.
+
 ### Certificate와 Finished는 서로 다른 것을 확인한다
 
 server가 certificate로 인증되는 흐름에서는 `Certificate`가 certificate chain을 전달하고, `CertificateVerify`가 해당 certificate의 private key를 실제로 보유한다는 사실과 현재 handshake transcript를 signature로 연결한다. 마지막 `Finished`는 지금까지의 handshake transcript와 파생한 key material이 양쪽에서 일치하는지 확인하는 역할을 한다.

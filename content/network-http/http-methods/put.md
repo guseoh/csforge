@@ -19,6 +19,16 @@ references:
 
 PUT은 request content에 담긴 representation이 나타내는 상태로 **target resource의 현재 상태를 생성하거나 대체해 달라**고 요청하는 method다. POST가 target에게 processing 방법을 맡기는 것과 달리, PUT에서는 client가 어느 target URI에 어떤 상태를 적용하려는지 알고 있다는 점이 중요하다.
 
+```text
+before: /profiles/42의 표현 상태 = {"nickname":"old"}
+                  │
+                  └─ PUT /profiles/42 {"nickname":"new"}
+after : /profiles/42의 표현 상태 = {"nickname":"new"}
+repeat: 같은 PUT ───────────────→ 원하는 target state는 그대로
+```
+
+이 전후 관계는 target의 원하는 표현 상태를 대체한다는 semantics를 보여 준다. Server가 관리하는 내부 field나 저장 방식까지 request JSON 그대로 덮어쓴다는 뜻은 아니다.
+
 resource가 아직 존재하지 않고 server가 PUT으로 생성을 허용한다면 성공 후 `201 Created`를 반환할 수 있다. 기존 resource의 상태를 성공적으로 대체했다면 `200 OK`나 `204 No Content` 같은 response가 사용될 수 있다.
 
 ### PUT은 idempotent하다

@@ -21,6 +21,15 @@ Public Key Infrastructure(PKI)는 certificate를 누가 발급하고, client가 
 
 client는 자신의 trust store에 있는 **trust anchor**를 출발점으로 certificate chain의 서명과 제약을 확인한다. server는 보통 leaf와 필요한 intermediate certificate를 전달하고, root certificate 자체는 client trust store에 이미 존재하는 신뢰 기준으로 사용된다.
 
+```text
+server가 전달                         client가 보유
+[leaf certificate] → [intermediate CA] → [trusted root / trust anchor]
+        │
+        └─ SAN의 service name ─────────→ 요청 hostname과 별도 비교
+```
+
+Chain 검증은 leaf에서 intermediate를 거쳐 client가 이미 신뢰한 anchor에 도달하는지 확인한다. Service identity 확인은 같은 흐름에서 leaf의 이름과 요청 hostname을 별도로 대조한다.
+
 ### Chain이 이어진다는 것과 hostname이 맞는다는 것은 다르다
 
 certificate path가 신뢰할 수 있는 CA까지 정상적으로 이어져도 그것만으로 현재 접속한 hostname의 certificate라고 결론낼 수는 없다. PKI path validation은 `이 certificate가 신뢰한 발급 체계 안에서 유효한가`를 확인하고, hostname verification은 `이 certificate가 내가 접속하려던 service identity를 나타내는가`를 별도로 확인한다.

@@ -30,8 +30,8 @@ class CanonicalBootstrapBatchPlannerTest {
         assertEquals(870, plan.sourceFileCount());
         assertEquals(134, plan.topicCount());
         assertEquals(721, plan.conceptCount());
-        assertEquals(2_524, plan.questionCount());
-        assertEquals(3_379, plan.totalItemCount());
+        assertEquals(2_525, plan.questionCount());
+        assertEquals(3_380, plan.totalItemCount());
         assertFalse(plan.batches().isEmpty());
         assertEquals(List.of(ImportItemKind.TOPIC, ImportItemKind.CONCEPT, ImportItemKind.QUESTION),
                 plan.batches().stream().map(CanonicalBootstrapBatch::kind).distinct().toList());

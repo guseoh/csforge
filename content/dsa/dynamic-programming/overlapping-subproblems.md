@@ -23,6 +23,16 @@ Dynamic Programming이 효과적인 대표 조건은 서로 다른 재귀 경로
 
 Naive Fibonacci에서는 `fib(3)`, `fib(2)` 같은 호출이 여러 branch에서 반복된다. 호출 경로는 많아도 실제 distinct state는 `0..n` 정도뿐이므로, 같은 state의 결과를 저장하면 반복 계산을 제거할 수 있다.
 
+```text
+fib(5)
+├─ fib(4)
+│  ├─ fib(3)
+│  └─ fib(2)
+└─ fib(3)  ← 다른 경로에서 같은 state가 다시 등장
+```
+
+두 `fib(3)` 호출은 도달 경로는 다르지만 앞으로 계산할 답을 결정하는 state가 같으므로 하나의 저장 결과를 재사용할 수 있다.
+
 중요한 것은 함수 이름이 같다는 사실이 아니라 **앞으로의 답을 결정하는 state가 같은가**다. 예를 들어 `solve(index=4, capacity=10)`과 `solve(index=4, capacity=3)`은 index가 같아도 남은 capacity가 달라 서로 다른 subproblem이다.
 
 따라서 memoization을 적용하기 전에 어떤 변수들이 같아야 동일 state인지 정의해야 한다. State key가 부족하면 서로 다른 문제의 답을 잘못 재사용해 correctness가 깨진다.

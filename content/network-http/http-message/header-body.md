@@ -19,6 +19,16 @@ references:
 
 HTTP message에는 message를 해석하고 처리하기 위한 header fields와, 필요한 경우 실제 representation data를 운반하는 content가 있다. header fields에는 content의 media type과 길이, cache 조건, 인증 정보, preferred representation처럼 message 처리에 필요한 metadata와 control information이 들어갈 수 있다.
 
+```text
+HTTP message
+├─ header fields: metadata·control (예: Content-Type)
+└─ content: octet sequence
+
+version별 wire framing → content bytes 경계 → media type parser → application validation
+```
+
+Header와 content를 나누는 것은 곧바로 content를 domain object로 만드는 단계가 아니다. 먼저 HTTP framing으로 bytes의 경계를 정하고, 그다음 representation 형식과 application 규칙으로 해석한다.
+
 content는 header 뒤에 붙는 임의의 `객체`가 아니라 octet sequence다. `Content-Type: application/json`이라면 application은 content bytes를 JSON 표현으로 해석할 수 있지만, HTTP 자체가 그 JSON을 domain object로 변환하는 것은 아니다.
 
 ### Content의 의미와 wire framing을 구분한다
