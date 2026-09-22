@@ -128,3 +128,12 @@ test("frozen weak-distractor holdout cannot be calibrated", () => {
     /cannot be used for threshold calibration/,
   );
 });
+
+
+test("Phase B natural current evaluation cannot be calibrated", () => {
+  const phaseBManifest = { ...manifest, datasetKind: "NATURAL_CURRENT_WEAK_DISTRACTOR_EVALUATION" };
+  assert.throws(
+    () => calibratePhaseA([candidate("phase-b", true)], [rawResult("phase-b", 0.8)], phaseBManifest),
+    /cannot be used for threshold calibration/,
+  );
+});

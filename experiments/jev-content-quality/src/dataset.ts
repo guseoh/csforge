@@ -10,16 +10,30 @@ export const HOLDOUT_DATASET_PATH = path.join(DATA_DIR, "phase-a1-holdout.jsonl"
 export const HOLDOUT_MANIFEST_PATH = path.join(DATA_DIR, "phase-a1-manifest.json");
 export const WEAK_HOLDOUT_DATASET_PATH = path.join(DATA_DIR, "phase-a2-weak-distractor-holdout.jsonl");
 export const WEAK_HOLDOUT_MANIFEST_PATH = path.join(DATA_DIR, "phase-a2-manifest.json");
+export const PHASE_B_DATASET_PATHS = [
+  "phase-b-java.jsonl",
+  "phase-b-spring.jsonl",
+  "phase-b-database.jsonl",
+  "phase-b-backend-engineering.jsonl",
+  "phase-b-operating-systems.jsonl",
+  "phase-b-network-http.jsonl",
+].map((fileName) => path.join(DATA_DIR, fileName));
+export const PHASE_B_MANIFEST_PATH = path.join(DATA_DIR, "phase-b-manifest.json");
 export const FROZEN_HISTORICAL_HOLDOUT = "FROZEN_HISTORICAL_HOLDOUT";
 export const FROZEN_WEAK_DISTRACTOR_HOLDOUT = "FROZEN_WEAK_DISTRACTOR_HOLDOUT";
+export const NATURAL_CURRENT_WEAK_DISTRACTOR_EVALUATION = "NATURAL_CURRENT_WEAK_DISTRACTOR_EVALUATION";
 
 export function isFrozenHoldoutDatasetKind(datasetKind: string | undefined): boolean {
   return datasetKind === FROZEN_HISTORICAL_HOLDOUT || datasetKind === FROZEN_WEAK_DISTRACTOR_HOLDOUT;
 }
 
+export function isEvaluationOnlyDatasetKind(datasetKind: string | undefined): boolean {
+  return isFrozenHoldoutDatasetKind(datasetKind) || datasetKind === NATURAL_CURRENT_WEAK_DISTRACTOR_EVALUATION;
+}
+
 export function assertThresholdedMetricsAllowed(datasetKind: string | undefined, hasThresholds: boolean): void {
-  if (hasThresholds && isFrozenHoldoutDatasetKind(datasetKind)) {
-    throw new Error("Frozen holdout metrics must remain raw and UNCALIBRATED; thresholds are not allowed");
+  if (hasThresholds && isEvaluationOnlyDatasetKind(datasetKind)) {
+    throw new Error("Evaluation-only dataset metrics must remain raw and UNCALIBRATED; thresholds are not allowed");
   }
 }
 
@@ -54,6 +68,9 @@ export interface DatasetManifest {
   phaseA1ContentKeys?: string[];
   sourcePrsSelected?: number[];
   learningAreaCount?: number;
+  sourceRef?: string;
+  datasetFiles?: string[];
+  areaDistribution?: Record<string, number>;
   droppedCandidates?: Array<{ contentKey: string; rationale: string }>;
   independenceStatement?: string;
   notes?: string[];

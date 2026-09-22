@@ -1,5 +1,5 @@
 import type { DatasetManifest } from "./dataset.js";
-import { FROZEN_HISTORICAL_HOLDOUT, FROZEN_WEAK_DISTRACTOR_HOLDOUT } from "./dataset.js";
+import { FROZEN_HISTORICAL_HOLDOUT, FROZEN_WEAK_DISTRACTOR_HOLDOUT, NATURAL_CURRENT_WEAK_DISTRACTOR_EVALUATION } from "./dataset.js";
 import type { CandidateRecord, QuestionGold, RubricDefinition } from "./types.js";
 
 const QUESTION_GOLD_KEYS = [
@@ -97,6 +97,7 @@ export function validateManifest(
   rows: CandidateRecord[],
   phaseARows: CandidateRecord[] = [],
   phaseA1Rows: CandidateRecord[] = [],
+  phaseA2Rows: CandidateRecord[] = [],
 ): string[] {
   const errors: string[] = [];
   if (manifest.primaryInstructionLanguage !== "ko") errors.push("manifest primaryInstructionLanguage must be ko");
@@ -209,6 +210,48 @@ export function validateManifest(
     const areaCount = new Set(rows.map((row) => row.area)).size;
     if (manifest.learningAreaCount !== 8 || areaCount !== 8) errors.push(`frozen weak-distractor holdout LearningArea count must be 8; manifest=${manifest.learningAreaCount}, actual=${areaCount}`);
   }
+  if (manifest.datasetKind === NATURAL_CURRENT_WEAK_DISTRACTOR_EVALUATION) {
+    if (rows.length !== 120 || manifest.rowCount !== 120 || manifest.caseGroupCount !== 120) {
+      errors.push(`Phase B natural evaluation must contain exactly 120 current rows; manifest=${manifest.rowCount}/${manifest.caseGroupCount}, actual=${rows.length}`);
+    }
+    if (JSON.stringify(manifest.requestedCriteria) !== JSON.stringify(["weak_distractor"])) {
+      errors.push("Phase B requestedCriteria must contain only weak_distractor");
+    }
+    if (!manifest.sourceRef || !/^[0-9a-f]{40}$/i.test(manifest.sourceRef)) {
+      errors.push("Phase B manifest sourceRef must be a full commit SHA");
+    }
+    if (rows.some((row) => row.kind !== "QUESTION" || row.content.questionType !== "MULTIPLE_CHOICE" || row.source.version !== "CURRENT")) {
+      errors.push("Phase B rows must all be CURRENT MULTIPLE_CHOICE Questions");
+    }
+    if (rows.some((row) => row.source.commit !== manifest.sourceRef || row.source.beforeRef !== manifest.sourceRef || row.source.afterRef !== manifest.sourceRef)) {
+      errors.push("Phase B row source refs must match the pinned manifest sourceRef");
+    }
+    const positiveRows = rows.filter((row) => (row.candidateGold as unknown as Record<string, unknown>).weakDistractor === true);
+    if (positiveRows.length !== 28) errors.push(`Phase B must have 28 Human-Gold weakDistractor positives; actual=${positiveRows.length}`);
+    for (const row of rows) {
+      const weak = (row.candidateGold as unknown as Record<string, unknown>).weakDistractor;
+      const expectedSeverity = weak === true ? "P1" : "NONE";
+      if (row.candidateGoldSeverity !== expectedSeverity) errors.push(`${row.caseId}: Phase B severity must be ${expectedSeverity}`);
+    }
+    const expectedAreas: Record<string, number> = {
+      java: 21,
+      spring: 23,
+      database: 10,
+      "backend-engineering": 22,
+      "operating-systems": 22,
+      "network-http": 22,
+    };
+    for (const [area, count] of Object.entries(expectedAreas)) {
+      const actual = rows.filter((row) => row.area === area).length;
+      if (actual !== count || manifest.areaDistribution?.[area] !== count) {
+        errors.push(`Phase B area distribution ${area} must be ${count}; manifest=${manifest.areaDistribution?.[area]}, actual=${actual}`);
+      }
+    }
+    const historicalKeys = new Set([...phaseARows, ...phaseA1Rows, ...phaseA2Rows].map((row) => row.contentKey));
+    for (const row of rows) {
+      if (historicalKeys.has(row.contentKey)) errors.push(`Phase B overlaps historical experiment contentKey: ${row.contentKey}`);
+    }
+  }
   return errors;
 }
 
@@ -225,16 +268,24 @@ export function validateDataset(rows: CandidateRecord[], manifest?: DatasetManif
     if (!row.caseGroupId || !row.contentKey || !row.area) {
       errors.push(`${row.caseId}: caseGroupId, area, and contentKey are required`);
     }
-    if (!row.source?.sourcePr || !row.source.beforeRef || !row.source.afterRef || !row.source.path) {
-      errors.push(`${row.caseId}: source PR and before/after refs are required`);
+    const isCurrent = row.source?.version === "CURRENT";
+    if (!row.source?.path || !row.source?.repositoryRef) {
+      errors.push(`${row.caseId}: source repository and path are required`);
+    }
+    if (!isCurrent && !row.source?.sourcePr) {
+      errors.push(`${row.caseId}: historical source PR is required`);
     }
     for (const [name, ref] of Object.entries({ beforeRef: row.source?.beforeRef, afterRef: row.source?.afterRef, commit: row.source?.commit })) {
       if (!ref || !/^[0-9a-f]{40}$/i.test(ref)) errors.push(`${row.caseId}: source.${name} must be a full commit ref`);
     }
-    if (row.source?.commit !== row.source?.afterRef) {
+    if (!isCurrent && row.source?.commit !== row.source?.afterRef) {
       errors.push(`${row.caseId}: source.commit must identify the reviewed after ref`);
     }
-    if (row.source?.version !== (row.caseId.endsWith("-before") ? "BEFORE" : "AFTER")) {
+    if (isCurrent) {
+      if (row.source.sourcePr !== 0 || row.source.commit !== row.source.beforeRef || row.source.commit !== row.source.afterRef) {
+        errors.push(`${row.caseId}: CURRENT source must use sourcePr=0 and one pinned commit ref`);
+      }
+    } else if (row.source?.version !== (row.caseId.endsWith("-before") ? "BEFORE" : "AFTER")) {
       errors.push(`${row.caseId}: source.version does not match caseId`);
     }
     if (manifest && row.datasetVersion !== manifest.datasetVersion) {
@@ -246,7 +297,14 @@ export function validateDataset(rows: CandidateRecord[], manifest?: DatasetManif
     groups.set(row.caseGroupId, group);
   }
 
+  const currentEvaluation = manifest?.datasetKind === NATURAL_CURRENT_WEAK_DISTRACTOR_EVALUATION;
   for (const [groupId, group] of groups) {
+    if (currentEvaluation) {
+      if (group.length !== 1 || group[0].source.version !== "CURRENT") {
+        errors.push(`${groupId}: current evaluation groups must contain exactly one CURRENT row`);
+      }
+      continue;
+    }
     if (group.length !== 2) {
       errors.push(`${groupId}: expected exactly one BEFORE and one AFTER row`);
       continue;

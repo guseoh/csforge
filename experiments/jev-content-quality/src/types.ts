@@ -45,7 +45,7 @@ export interface SourceRef {
   beforeRef: string;
   afterRef: string;
   commit: string;
-  version: "BEFORE" | "AFTER";
+  version: "BEFORE" | "AFTER" | "CURRENT";
 }
 
 export interface CandidateRecord {

@@ -1,4 +1,4 @@
-# CSForge Jev Content Quality — Phase A / Phase A.1 / Phase A.2
+# CSForge Jev Content Quality — Phase A / Phase A.1 / Phase A.2 / Phase B
 
 이 디렉터리는 CSForge runtime과 분리된 offline benchmark harness이다. canonical Concept/Question, Spring backend, frontend, import pipeline에는 의존하지 않는다.
 
@@ -35,6 +35,7 @@ npm run validate
 npm run benchmark
 npm run benchmark:holdout
 npm run benchmark:weak-holdout
+npm run benchmark:phase-b
 npm run calibrate -- results/phase-a-run-....jsonl
 npm run metrics -- results/phase-a-run-....jsonl --thresholds results/calibration-....json
 ```
@@ -81,6 +82,19 @@ Gold support는 positive BEFORE 10 rows와 negative applicable 30 rows다. Posit
 `npm run benchmark:weak-holdout`은 Phase A.2 dataset만 읽고 raw probability를 `UNCALIBRATED`로 기록한다. Calibration이나 policy를 호출하지 않으며 PASS/REVIEW 결론과 threshold를 만들지 않는다. `calibrate`는 이 dataset을 fail-fast하고, `metrics --thresholds`도 거부한다.
 
 Phase A.2의 목적은 PR #81 editorial campaign 밖에서도 `weakDistractor` 신호가 일반화되는지 확인하는 것이다. A.2 결과를 본 뒤 rubric wording이나 threshold를 바꾸면 A.2는 consumed development data가 되며 final holdout evidence로 다시 사용할 수 없다.
+
+
+### Phase B — natural current-content weak-distractor evaluation
+
+Phase B는 historical BEFORE/AFTER benchmark를 반복하지 않는다. `main`의 고정 SHA `0f254ccdac91d480cdcde65d22ca9e6bc30b23c0`에서 현재 `MULTIPLE_CHOICE` Question을 가져와, Phase A/A.1/A.2에서 사용한 모든 `contentKey`를 먼저 제외한 뒤 자연 분포를 유지한 120개 slice를 고정했다.
+
+이번 round는 historical holdout에서 반복 신호가 확인된 `weak_distractor`만 평가한다. `material_technical_error`는 Phase A.1에서 signal이 악화되어 중단 상태이고, `multiple_defensible_answers`는 positive support가 부족하므로 Phase B request에 포함하지 않는다.
+
+Area distribution은 Java 21, Spring 23, Database 10, Backend Engineering 22, Operating Systems 22, Network & HTTP 22이다. Spring과 Database는 historical-overlap 제외 후 남은 eligible MC를 모두 포함하고, 나머지 영역은 `contentKey` 정렬 후 deterministic evenly-spaced selection을 사용했다. Jev score는 selection에 사용하지 않았고 synthetic defect나 class balancing도 하지 않았다.
+
+Human Gold는 Jev Phase B 실행 전에 전수 검토하여 `weakDistractor=true` 28개, false 92개로 고정했다. true는 오답 중 하나 이상이 같은 주제의 plausible misconception/realistic mistake라고 보기 어려울 만큼 무관하거나 명백히 우스워 제거법을 과도하게 쉽게 만드는 경우다. 단순히 틀린 선택지라는 이유만으로 true로 표시하지 않았다.
+
+Phase B 결과는 threshold calibration에 사용하지 않는다. 첫 실행은 raw `UNCALIBRATED` probability만 기록하며 threshold 적용도 거부한다. 평가는 ROC-AUC와 score distribution 외에 **상위 10/20/30/40/50% review budget에서의 recall·precision**을 본다. 목적은 현재 CSForge 문제에서 weak distractor의 자연 prevalence와 사람이 검토해야 할 양을 실제로 얼마나 줄일 수 있는지 측정하는 것이다.
 
 ## Review risks
 

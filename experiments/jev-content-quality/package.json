@@ -13,7 +13,8 @@
     "calibrate": "tsx src/cli.ts calibrate",
     "metrics": "tsx src/cli.ts metrics",
     "typecheck": "tsc --noEmit",
-    "test": "tsx --test test/*.test.ts"
+    "test": "tsx --test test/*.test.ts",
+    "benchmark:phase-b": "tsx src/cli.ts benchmark-phase-b"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",

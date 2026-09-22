@@ -5,6 +5,8 @@ import {
   HOLDOUT_MANIFEST_PATH,
   WEAK_HOLDOUT_DATASET_PATH,
   WEAK_HOLDOUT_MANIFEST_PATH,
+  PHASE_B_DATASET_PATHS,
+  PHASE_B_MANIFEST_PATH,
   loadDataset,
   loadManifest,
 } from "../src/dataset.js";
@@ -81,4 +83,26 @@ test("Phase A.2 overlap audit rejects Phase A and Phase A.1 content keys", async
   assert.match(validateManifest(manifest, phaseAOverlap, phaseA, phaseA1).join("\n"), /overlaps Phase A contentKey/);
   const phaseA1Overlap = phaseA2.map((row, index) => index < 2 ? { ...row, contentKey: phaseA1[0].contentKey } : row);
   assert.match(validateManifest(manifest, phaseA1Overlap, phaseA, phaseA1).join("\n"), /overlaps Phase A\.1 contentKey/);
+});
+
+
+test("Phase B natural current slice satisfies the frozen 120-row contract", async () => {
+  const [phaseA, phaseA1, phaseA2, phaseBParts, manifest] = await Promise.all([
+    loadDataset(),
+    loadDataset(HOLDOUT_DATASET_PATH),
+    loadDataset(WEAK_HOLDOUT_DATASET_PATH),
+    Promise.all(PHASE_B_DATASET_PATHS.map((datasetPath) => loadDataset(datasetPath))),
+    loadManifest(PHASE_B_MANIFEST_PATH),
+  ]);
+  const phaseB = phaseBParts.flat();
+  assert.equal(phaseB.length, 120);
+  assert.equal(new Set(phaseB.map((row) => row.caseGroupId)).size, 120);
+  assert.ok(phaseB.every((row) => row.source.version === "CURRENT"));
+  assert.ok(phaseB.every((row) => row.kind === "QUESTION" && row.content.questionType === "MULTIPLE_CHOICE"));
+  assert.deepEqual(manifest.requestedCriteria, ["weak_distractor"]);
+  assert.equal(phaseB.filter((row) => (row.candidateGold as { weakDistractor: boolean }).weakDistractor).length, 28);
+  assert.deepEqual(validateDataset(phaseB, manifest), []);
+  assert.deepEqual(validateManifest(manifest, phaseB, phaseA, phaseA1, phaseA2), []);
+  const historicalKeys = new Set([...phaseA, ...phaseA1, ...phaseA2].map((row) => row.contentKey));
+  assert.ok(phaseB.every((row) => !historicalKeys.has(row.contentKey)));
 });

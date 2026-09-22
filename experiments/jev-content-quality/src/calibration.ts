@@ -1,4 +1,4 @@
-import { isFrozenHoldoutDatasetKind, type DatasetManifest } from "./dataset.js";
+import { isEvaluationOnlyDatasetKind, type DatasetManifest } from "./dataset.js";
 import { criterionGold } from "./gold.js";
 import { calculateMetrics, type EvaluationMetrics } from "./metrics.js";
 import { applyThresholdsToResults, CONCEPT_NOUL_IDS, QUESTION_NOUL_IDS, type PolicyThresholds } from "./policy.js";
@@ -106,8 +106,8 @@ export function calibratePhaseA(
   rawResults: EvaluationResult[],
   manifest: DatasetManifest,
 ): CalibrationResult {
-  if (isFrozenHoldoutDatasetKind(manifest.datasetKind)
-    || rawResults.some((result) => isFrozenHoldoutDatasetKind(result.datasetKind))) {
+  if (isEvaluationOnlyDatasetKind(manifest.datasetKind)
+    || rawResults.some((result) => isEvaluationOnlyDatasetKind(result.datasetKind))) {
     throw new Error(`${manifest.datasetKind} cannot be used for threshold calibration`);
   }
   if (rawResults.some((result) => result.datasetVersion !== manifest.datasetVersion)) {

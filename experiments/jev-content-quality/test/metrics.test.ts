@@ -140,3 +140,12 @@ test("frozen weak-distractor holdout rejects thresholded metrics", () => {
   );
   assert.doesNotThrow(() => assertThresholdedMetricsAllowed("FROZEN_WEAK_DISTRACTOR_HOLDOUT", false));
 });
+
+
+test("Phase B natural current evaluation rejects thresholded metrics", () => {
+  assert.throws(
+    () => assertThresholdedMetricsAllowed("NATURAL_CURRENT_WEAK_DISTRACTOR_EVALUATION", true),
+    /thresholds are not allowed/,
+  );
+  assert.doesNotThrow(() => assertThresholdedMetricsAllowed("NATURAL_CURRENT_WEAK_DISTRACTOR_EVALUATION", false));
+});
