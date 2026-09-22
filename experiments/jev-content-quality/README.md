@@ -119,7 +119,7 @@ Probability와 rank는 자동 품질 판정이 아니다. 이 workflow는 canoni
 
 ### Changed mode
 
-기본 경로는 두 Git ref 사이에서 바뀐 `content/**/questions.json`만 읽는다.
+기본 경로는 두 Git ref의 **merge base → head** 사이에서 바뀐 `content/**/questions.json`만 읽는다. 따라서 base branch가 앞서 나간 경우에도 base-only 변경은 review 후보에 섞이지 않는다.
 
 ```text
 npm run review:changed -- -- --base=origin/main --head=HEAD
@@ -166,8 +166,8 @@ npm run review:changed -- -- --base=origin/main --head=HEAD --top-percent=30
 - `jev-review-priority-results.jsonl`: contentKey, area, sourcePath, probability, requested/resolved model, rubric version, input tokens, latency, evaluation status와 안전한 error kind
 - `jev-review-priority-report.md`: probability 내림차순 rank, Question prompt, choices, source file을 보여 주는 사람 검토 문서
 
-두 artifact에는 API key, authorization header, provider request/response 원문, 전체 state payload를 저장하지 않는다. API 오류에는 fake probability를 만들지 않는다.
+두 artifact에는 API key, authorization header, provider request/response 원문, 전체 state payload를 저장하지 않는다. API 오류에는 fake probability를 만들지 않는다. Candidate가 있는데 provider evaluation이 전부 실패하면 diagnostic artifact를 먼저 기록한 뒤 CLI는 non-zero로 종료한다.
 
 ### Manual GitHub Actions
 
-`Content Review Priority` workflow는 `workflow_dispatch`로만 실행한다. base/head ref 또는 PR number를 입력받고, `TYPESAFE_API_KEY` GitHub Secret을 사용하며 JSONL/Markdown을 14일 artifact로 보존한다. candidate count와 max guard는 provider 호출 전에 적용된다. 이 workflow는 `pull_request` 자동 trigger가 없고 기존 Repository Validation의 required/blocking check에 연결되지 않는다.
+`Content Review Priority` workflow는 `workflow_dispatch`로만 실행한다. base/head ref 또는 PR number를 입력받고, `TYPESAFE_API_KEY` GitHub Secret을 사용하며 JSONL/Markdown을 14일 artifact로 보존한다. candidate count와 max guard는 provider 호출 전에 적용된다. Evaluation step이 실패해도 이미 생성된 diagnostic report/result는 summary와 artifact로 보존된다. 이 workflow는 `pull_request` 자동 trigger가 없고 기존 Repository Validation의 required/blocking check에 연결되지 않는다.
