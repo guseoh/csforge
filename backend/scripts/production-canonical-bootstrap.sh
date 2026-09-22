@@ -31,7 +31,7 @@ first="$(curl --fail --silent --show-error -X POST http://127.0.0.1:8080/api/can
 printf '%s' "$first" | grep -q '"success":true' || exit 21
 printf '%s' "$first" | grep -q '"learningAreas":15' || exit 22
 printf '%s' "$first" | grep -q '"concepts":721' || exit 23
-printf '%s' "$first" | grep -q '"questions":2524' || exit 24
+printf '%s' "$first" | grep -q '"questions":2525' || exit 24
 
 second="$(curl --fail --silent --show-error -X POST http://127.0.0.1:8080/api/canonical-bootstrap)"
 
@@ -39,7 +39,7 @@ printf '%s' "$second" | grep -q '"success":true' || exit 31
 printf '%s' "$second" | grep -q '"state":"READY"' || exit 32
 printf '%s' "$second" | grep -q '"learningAreas":15' || exit 33
 printf '%s' "$second" | grep -q '"concepts":721' || exit 34
-printf '%s' "$second" | grep -q '"questions":2524' || exit 35
+printf '%s' "$second" | grep -q '"questions":2525' || exit 35
 printf '%s' "$second" | grep -q '"created":0' || exit 36
 printf '%s' "$second" | grep -q '"updated":0' || exit 37
 printf '%s' "$second" | grep -q '"errors":0' || exit 38
