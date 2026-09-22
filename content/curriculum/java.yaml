@@ -31,20 +31,13 @@ policies:
     versionRule: runtime/implementation 주장은 Java SE 25 공식 자료와 대조하고 language, JVM specification, JDK/HotSpot implementation, OS behavior를 구분한다.
     urlRule: 실제로 확인한 reference만 기록하며 URL을 추측하거나 만들지 않는다.
   question:
-    everyConcept:
-      minimumByDifficulty:
-        EASY: 1
-        MEDIUM: 1
-        HARD: 1
-      minimumTotal: 3
-    density:
-      CORE: 대략 5-8문제
-      STANDARD: 대략 3-5문제
+    designRule: Question 수, 유형, 난이도는 각 Learning Objective를 가장 잘 검증하도록 결정한다.
+    reviewRule: Concept별 고정 quota를 두지 않고 Topic과 LearningArea 전체에서 유형과 난이도 coverage를 검토한다.
     difficulty:
       EASY: 학습 직후 핵심 원칙을 직접 확인한다.
       MEDIUM: 코드 결과, 비교, 흔한 오해처럼 한 단계 더 추론한다.
       HARD: 복합 코드, debugging, API 설계, concurrency/JVM reasoning, backend 상황을 결합하며 obscure trivia로 난이도를 만들지 않는다.
-    form: 빠른 학습 loop에 맞춰 MULTIPLE_CHOICE를 우선하고 SHORT_ANSWER, DESCRIPTIVE, SCENARIO는 실제 학습 가치가 있을 때 보조적으로 사용한다.
+    typeRule: 특정 Question type을 기본으로 우선하지 않고 Learning Objective와 채점 가능성에 맞는 유형을 선택한다.
     distractorRule: 객관식 오답은 실제로 헷갈릴 수 있는 misconception을 사용하고 명백히 무관한 선택지로 정답을 노출하지 않는다.
   visualization:
     values:

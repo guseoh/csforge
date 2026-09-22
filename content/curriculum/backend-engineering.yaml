@@ -10,7 +10,7 @@ policies:
     authoringLanguage: ko-KR
     explanationRule: API 요청에서 시작해 application/domain/persistence/external boundary와 상태 변화, 실패·복구, 운영 판단까지 이어지는 설명형 문단으로 작성한다.
   question:
-    minimumPerConcept: 2
+    reviewRule: topicDifficultyCoverage와 areaTypeCoverage는 Topic과 LearningArea 전체를 검토하는 기준이며 Concept별 quota가 아니다.
     topicDifficultyCoverage: [EASY, MEDIUM, HARD]
     areaTypeCoverage: [MULTIPLE_CHOICE, SHORT_ANSWER, DESCRIPTIVE, SCENARIO]
     hardRule: 구체적인 request, DB state, concurrent timeline, timeout/retry, batch checkpoint, migration 단계, 운영 metric 중 하나 이상을 제시한다.

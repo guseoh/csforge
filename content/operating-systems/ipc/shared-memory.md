@@ -5,7 +5,7 @@ topicContentKey: operating-systems.core.ipc
 slug: shared-memory
 title: "Shared Memory"
 summary: "여러 process address space가 같은 backing memory를 매핑할 때 copy 비용과 synchronization 책임이 어떻게 바뀌는지 설명한다."
-level: 1
+level: 2
 status: PUBLISHED
 displayOrder: 30
 references:

@@ -10,7 +10,7 @@ policies:
     authoringLanguage: ko-KR
     explanationRule: SQL 결과와 transaction 상태를 실제 행·snapshot·lock·page 흐름으로 설명하고 engine 구현과 SQL 표준 보장을 구분한다.
   question:
-    minimumPerConcept: 2
+    reviewRule: topicDifficultyCoverage와 areaTypeCoverage는 Topic과 LearningArea 전체를 검토하는 기준이며 Concept별 quota가 아니다.
     topicDifficultyCoverage: [EASY, MEDIUM, HARD]
     areaTypeCoverage: [MULTIPLE_CHOICE, SHORT_ANSWER, DESCRIPTIVE, SCENARIO]
     hardRule: 구체적인 SQL, EXPLAIN, 두 transaction timeline, lock 대기, pagination cursor, recovery 상황 중 하나 이상을 주고 결과를 추론하게 한다.
