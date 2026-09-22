@@ -6,6 +6,7 @@ import test from "node:test";
 import type { ReviewCandidate } from "../src/review-selection.js";
 import {
   assertCandidateLimit,
+  assertSuccessfulEvaluation,
   evaluateReviewCandidates,
   requireApiKey,
   writeReviewArtifacts,
@@ -84,6 +85,31 @@ test("generated artifacts expose only the safe row contract and no provider raw 
     ]);
     assert.doesNotMatch(jsonl + report, /test-secret|authorization|providerRaw|request body/i);
     assert.doesNotMatch(jsonl + report, /\b(PASS|FAIL|APPROVED|SAFE|REJECT)\b/i);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("zero successful evaluations fail the run after diagnostic artifacts are available", async () => {
+  const client: ReviewPriorityClient = {
+    async evaluate() {
+      throw new Error("provider unavailable");
+    },
+  };
+  const candidates = [candidate("java.core.topic.q1")];
+  const results = await evaluateReviewCandidates(candidates, client);
+  const directory = await mkdtemp(path.join(tmpdir(), "csforge-jev-review-"));
+  try {
+    const artifacts = await writeReviewArtifacts(directory, candidates, results);
+    const jsonl = await readFile(artifacts.jsonlPath, "utf8");
+    const report = await readFile(artifacts.reportPath, "utf8");
+
+    assert.equal(artifacts.summary.candidateCount, 1);
+    assert.equal(artifacts.summary.evaluatedCount, 0);
+    assert.equal(artifacts.summary.apiErrorCount, 1);
+    assert.match(jsonl, /"evaluationStatus":"API_ERROR"/);
+    assert.match(report, /## API errors/);
+    assert.throws(() => assertSuccessfulEvaluation(artifacts.summary), /zero successful results/);
   } finally {
     await rm(directory, { recursive: true, force: true });
   }
