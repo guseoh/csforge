@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import type { CandidateRecord, EvaluationResult, InstructionLanguage, JevAnswer } from "./types.js";
-import { buildRubric, RUBRIC_VERSION } from "./rubric.js";
+import { buildRubricForVersion, RUBRIC_VERSION } from "./rubric.js";
 import { TypeSafeApiError, TypeSafeDirectClient } from "./client.js";
 
 export interface RunOptions {
@@ -8,6 +8,8 @@ export interface RunOptions {
   client: TypeSafeDirectClient;
   requestedModel: string;
   datasetVersion: string;
+  datasetKind?: string;
+  rubricVersion?: string;
   languageExperimentCaseGroups?: ReadonlySet<string>;
   languages?: readonly InstructionLanguage[];
   repeatIndex?: number;
@@ -29,7 +31,8 @@ export async function runBenchmark(options: RunOptions): Promise<EvaluationResul
     const selectedLanguages: readonly InstructionLanguage[] = options.languageExperimentCaseGroups?.has(candidate.caseGroupId) ? languages : ["ko"];
     for (const language of selectedLanguages) {
       const questionType = typeof candidate.content.questionType === "string" ? candidate.content.questionType : undefined;
-      const rubric = buildRubric(candidate.kind, language, questionType);
+      const rubricVersion = options.rubricVersion ?? RUBRIC_VERSION;
+      const rubric = buildRubricForVersion(rubricVersion, candidate.kind, language, questionType);
       const criterionIds = Object.entries(rubric.questions)
         .filter(([, question]) => question.type === "noul")
         .map(([id]) => id);
@@ -49,8 +52,9 @@ export async function runBenchmark(options: RunOptions): Promise<EvaluationResul
           instructionLanguage: language,
           requestedModel: options.requestedModel,
           resolvedModel: response.model,
-          rubricVersion: RUBRIC_VERSION,
+          rubricVersion,
           datasetVersion: options.datasetVersion,
+          datasetKind: options.datasetKind,
           latencyMs,
           inputTokens: response.usage?.input_tokens,
           outputTokens: response.usage?.output_tokens,
@@ -78,8 +82,9 @@ export async function runBenchmark(options: RunOptions): Promise<EvaluationResul
           questionType,
           instructionLanguage: language,
           requestedModel: options.requestedModel,
-          rubricVersion: RUBRIC_VERSION,
+          rubricVersion,
           datasetVersion: options.datasetVersion,
+          datasetKind: options.datasetKind,
           latencyMs: Date.now() - started,
           derivedPolicyResult: { decision: "UNCALIBRATED", triggeredCriteria: [], missingThresholds: [], note: "No policy decision is derived after an API error." },
           error: { kind: apiError.kind, message: apiError.message, status: apiError.status },

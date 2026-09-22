@@ -112,3 +112,11 @@ test("Phase A calibration leaves unsupported criteria disabled with null thresho
   assert.equal(calibration.candidateThresholds.answer_explanation_conflict, null);
   assert.equal(calibration.gateMetricsUsingCandidateThresholds.criticalIssueRecall, 1);
 });
+
+test("frozen historical holdout cannot be calibrated", () => {
+  const holdoutManifest = { ...manifest, datasetKind: "FROZEN_HISTORICAL_HOLDOUT" };
+  assert.throws(
+    () => calibratePhaseA([candidate("holdout", true)], [rawResult("holdout", 0.8)], holdoutManifest),
+    /cannot be used for threshold calibration/,
+  );
+});

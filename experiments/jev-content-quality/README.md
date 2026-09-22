@@ -1,8 +1,10 @@
-# CSForge Jev Content Quality — Phase A
+# CSForge Jev Content Quality — Phase A / Phase A.1
 
 이 디렉터리는 CSForge runtime과 분리된 offline benchmark harness이다. canonical Concept/Question, Spring backend, frontend, import pipeline에는 의존하지 않는다.
 
 ## Dataset
+
+### Phase A — development/calibration diagnostic
 
 `data/phase-a-candidates.jsonl`은 PR #58, #59, #100, #107, #109에서 실제로 사람이 수정한 before/after pair를 바탕으로 만든 60개 Gold candidate이다. 6개 LearningArea마다 5개 caseGroup을 두었고, 각 group은 historical `BEFORE`와 individually reviewed `AFTER` 한 행으로 구성한다. synthetic negative는 만들지 않았다.
 
@@ -31,6 +33,7 @@ npm run typecheck
 npm test
 npm run validate
 npm run benchmark
+npm run benchmark:holdout
 npm run calibrate -- results/phase-a-run-....jsonl
 npm run metrics -- results/phase-a-run-....jsonl --thresholds results/calibration-....json
 ```
@@ -44,7 +47,25 @@ BENCHMARK NOT RUN — TYPESAFE_API_KEY unavailable
 
 권장 흐름은 `raw benchmark → offline calibration → candidate threshold config → offline policy application → metrics`이다. Threshold를 바꿀 때 Jev API를 다시 호출하지 않는다. `calibrate`가 만드는 `results/calibration-*.json`은 `candidateThresholds`와 같은 데이터에 다시 적용한 diagnostic gate metrics를 포함하며, production threshold나 일반화 성능을 뜻하지 않는다. `metrics --thresholds`는 calibration report 전체 또는 `number | null` threshold map을 받을 수 있다. 결과 파일은 `.gitignore` 상태다.
 
+이 calibration 흐름은 Phase A에만 적용된다.
+
 언어 실험은 manifest의 일부 caseGroup에 대해 `Korean rubric + Korean state`와 `English rubric + Korean state`를 모두 실행한다. Overall model-quality denominator는 `ko`만 사용하고, `en`은 같은 case의 paired language comparison에서만 평가한다. Canonical state 자체는 번역하지 않는다.
+
+### Phase A.1 — frozen Rubric V2 historical holdout
+
+`data/phase-a1-holdout.jsonl`은 Human Gold review를 마친 **21 BEFORE/AFTER pair(42 rows)**의 독립 historical holdout이다. `datasetKind`는 `FROZEN_HISTORICAL_HOLDOUT`, rubric은 `csforge-content-quality-v2`, model pin은 `jev-1.13.0`이다. PR #23, #25, #81의 실제 수정만 사용했고 synthetic defect는 없다. 기존 Phase A 60 rows와 `contentKey`가 겹치지 않는다.
+
+Rubric V2는 다음 criterion만 요청한다.
+
+- Question: `material_technical_error`, `multiple_defensible_answers`
+- MULTIPLE_CHOICE Question에만 추가: `weak_distractor`
+- Concept: `material_technical_error`
+
+`response_shape_mismatch`, `difficulty_fit`, `answer_explanation_conflict`, `linked_concept_misalignment`, `layer_boundary_confusion`, `learning_objective_gap`, `causal_or_state_flow_gap`은 V2 request에 포함하지 않는다. Failure scenario 자체와 authored educational falsehood를 구분하는 ko/en 문구는 holdout mining 전에 고정한 proposal wording을 그대로 사용한다.
+
+Phase A.1은 threshold calibration dataset이 아니다. 첫 실행 목적은 raw probability separation 확인이며 결과는 `UNCALIBRATED`로만 기록한다. V1 threshold는 rubric 의미가 달라진 V2의 성능 threshold로 재사용하지 않는다. `calibrate`에 frozen holdout 결과가 들어오면 fail-fast하고, holdout metrics에도 threshold 적용을 허용하지 않는다.
+
+Phase A.1 결과를 본 뒤 threshold나 rubric을 바꾸고 같은 holdout에서 다시 측정한 값을 최종 성능이라고 주장하면 안 된다. 변경이 필요하면 이 holdout은 개발 데이터로 소진된 것으로 취급하고 새로운 untouched holdout을 확보해야 한다.
 
 ## Review risks
 

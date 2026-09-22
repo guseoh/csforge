@@ -1,4 +1,4 @@
-import type { DatasetManifest } from "./dataset.js";
+import { FROZEN_HISTORICAL_HOLDOUT, type DatasetManifest } from "./dataset.js";
 import { criterionGold } from "./gold.js";
 import { calculateMetrics, type EvaluationMetrics } from "./metrics.js";
 import { applyThresholdsToResults, CONCEPT_NOUL_IDS, QUESTION_NOUL_IDS, type PolicyThresholds } from "./policy.js";
@@ -106,6 +106,13 @@ export function calibratePhaseA(
   rawResults: EvaluationResult[],
   manifest: DatasetManifest,
 ): CalibrationResult {
+  if (manifest.datasetKind === FROZEN_HISTORICAL_HOLDOUT
+    || rawResults.some((result) => result.datasetKind === FROZEN_HISTORICAL_HOLDOUT)) {
+    throw new Error("FROZEN_HISTORICAL_HOLDOUT cannot be used for threshold calibration");
+  }
+  if (rawResults.some((result) => result.datasetVersion !== manifest.datasetVersion)) {
+    throw new Error("Calibration results must match the Phase A calibration dataset version");
+  }
   const primaryInstructionLanguage = manifest.primaryInstructionLanguage ?? "ko";
   const criterionCalibration: Record<string, CriterionCalibration> = {};
   const candidateThresholds: PolicyThresholds = {};

@@ -6,9 +6,14 @@ import type { CandidateRecord } from "./types.js";
 export const DATA_DIR = fileURLToPath(new URL("../data", import.meta.url));
 export const DEFAULT_DATASET_PATH = path.join(DATA_DIR, "phase-a-candidates.jsonl");
 export const DEFAULT_MANIFEST_PATH = path.join(DATA_DIR, "manifest.json");
+export const HOLDOUT_DATASET_PATH = path.join(DATA_DIR, "phase-a1-holdout.jsonl");
+export const HOLDOUT_MANIFEST_PATH = path.join(DATA_DIR, "phase-a1-manifest.json");
+export const FROZEN_HISTORICAL_HOLDOUT = "FROZEN_HISTORICAL_HOLDOUT";
 
 export interface CriterionSupport {
   positiveSupport: number;
+  negativeSupport?: number;
+  applicableSupport?: number;
   recallEvaluable: boolean;
   note?: string;
 }
@@ -27,7 +32,14 @@ export interface DatasetManifest {
     question: Record<string, CriterionSupport>;
     concept: Record<string, CriterionSupport>;
   };
-  difficultyFitDistribution: Record<string, number>;
+  difficultyFitDistribution?: Record<string, number>;
+  holdoutPairCount?: number;
+  phaseADatasetVersion?: string;
+  phaseAContentKeys?: string[];
+  sourcePrsSelected?: number[];
+  droppedCandidates?: Array<{ contentKey: string; rationale: string }>;
+  independenceStatement?: string;
+  notes?: string[];
 }
 
 export async function loadDataset(filePath = DEFAULT_DATASET_PATH): Promise<CandidateRecord[]> {

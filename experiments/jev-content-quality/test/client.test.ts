@@ -1,10 +1,10 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { buildRubric } from "../src/rubric.js";
+import { buildRubric, buildRubricForVersion, RUBRIC_V1_VERSION } from "../src/rubric.js";
 import { TypeSafeApiError, validateJevResponse } from "../src/client.js";
 
 const descriptiveQuestions = buildRubric("QUESTION", "en", "DESCRIPTIVE").questions;
-const choiceQuestions = buildRubric("QUESTION", "en", "MULTIPLE_CHOICE").questions;
+const choiceQuestions = buildRubricForVersion(RUBRIC_V1_VERSION, "QUESTION", "en", "MULTIPLE_CHOICE").questions;
 
 function validResponse(questions: typeof descriptiveQuestions): Record<string, unknown> {
   const answers: Record<string, unknown> = {};

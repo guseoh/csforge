@@ -22,7 +22,17 @@ export interface ConceptGold {
   causalOrStateFlowGap: boolean;
 }
 
-export type CandidateGold = QuestionGold | ConceptGold;
+export interface QuestionGoldV2 {
+  materialTechnicalError: boolean;
+  multipleDefensibleAnswers: boolean;
+  weakDistractor: boolean | null;
+}
+
+export interface ConceptGoldV2 {
+  materialTechnicalError: boolean;
+}
+
+export type CandidateGold = QuestionGold | ConceptGold | QuestionGoldV2 | ConceptGoldV2;
 
 export interface SourceRef {
   sourcePr: number;
@@ -101,6 +111,7 @@ export interface EvaluationResult {
   resolvedModel?: string;
   rubricVersion: string;
   datasetVersion: string;
+  datasetKind?: string;
   latencyMs?: number;
   inputTokens?: number;
   outputTokens?: number;
