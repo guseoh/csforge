@@ -102,3 +102,72 @@ Phase B 결과는 threshold calibration에 사용하지 않는다. 첫 실행은
 - Phase A가 balanced historical set이므로 review reduction을 production estimate로 해석할 수 없다.
 - `linkedConcepts`에는 실제 state에 제공되는 title/summary만 넣었고 rubric도 이를 learning focus로 표현한다. 실제 curriculum objective가 state에 없으므로 보이지 않는 objective까지 판정하지 않는다.
 - Phase A candidate threshold는 동일한 작은 historical set에서 고르고 진단하므로 production threshold나 holdout 성능으로 해석할 수 없다. Phase B에서는 natural slice와 calibration/holdout 분리가 필요하다.
+
+## Operational Human Review Priority workflow
+
+Phase A/A.1/A.2/B와 `evidence/`는 완료된 benchmark/research artifact다. 아래 운영 명령은 그 dataset, Human Gold, metric, calibration을 변경하거나 다시 사용하지 않는다. 검증된 `jev-1.13.0`과 Rubric V2의 `weak_distractor` 질문 하나만 재사용해 canonical `MULTIPLE_CHOICE` Question의 **사람 검토 순서**를 만든다.
+
+```text
+deterministic Question validation
+→ changed/explicit MULTIPLE_CHOICE extraction
+→ weak_distractor probability
+→ descending review-priority queue
+→ Human Review
+```
+
+Probability와 rank는 자동 품질 판정이 아니다. 이 workflow는 canonical content를 수정하지 않으며 technical correctness, multiple defensible answers, difficulty, Concept quality를 평가하지 않는다.
+
+### Changed mode
+
+기본 경로는 두 Git ref 사이에서 바뀐 `content/**/questions.json`만 읽는다.
+
+```text
+npm run review:changed -- -- --base=origin/main --head=HEAD
+```
+
+후보는 다음 조건을 모두 만족해야 한다.
+
+- head에 존재하는 `DRAFT` 또는 `PUBLISHED` `MULTIPLE_CHOICE` Question
+- choices와 유효한 `correctChoiceKey`가 존재
+- `questionType`, `promptMarkdown`, `choices`, `correctChoiceKey` 중 하나가 의미 있게 변경
+
+JSON whitespace/key formatting, explanation/difficulty 같은 weak-distractor 비관련 필드만의 변경, non-MC Question, 삭제된 Question, Concept-only 변경은 provider 후보에서 제외된다. 후보는 호출 전에 `contentKey`로 정렬된다.
+
+### Explicit mode
+
+특정 Question을 다시 검토할 때 comma-separated contentKey list를 사용한다.
+
+```text
+npm run review:questions -- -- --head=HEAD --content-keys=java.core.example.q1,spring.core.example.q2
+```
+
+존재하지 않거나 MC review 범위 밖인 key가 있으면 provider 호출 전에 중단한다.
+
+### Guard와 review view
+
+기본 최대 후보 수는 50이다. `--max-candidates <n>`으로 명시적으로 바꿀 수 있지만, limit을 넘으면 provider 호출 전에 중단한다. 모든 실행은 호출 전 candidate count와 제외된 changed Question count를 출력한다.
+
+`--extract-only`는 Git extraction과 Question 구조 검증만 수행한다. `TYPESAFE_API_KEY`가 없으면 실제 evaluation은 실행되지 않으며 score나 fake result를 만들지 않는다.
+
+```text
+npm run review:changed -- -- --base=origin/main --head=HEAD --extract-only
+npm run review:changed -- -- --base=origin/main --head=HEAD --top=20
+npm run review:changed -- -- --base=origin/main --head=HEAD --top-percent=30
+```
+
+위 예시는 PowerShell에서 npm option 전달을 보존하는 형태다. Bash에서는 중간 구분자 하나를 생략해 `npm run review:changed -- --base=...`처럼 실행할 수 있다.
+
+`--top`과 `--top-percent`는 Markdown에 표시할 review queue 범위만 제한한다. JSONL은 평가 시도 전체를 보존하며, 표시되지 않은 Question에 어떤 acceptance 의미도 부여하지 않는다.
+
+### Generated artifacts
+
+기본 출력 디렉터리는 ignored `results/review-priority/`다.
+
+- `jev-review-priority-results.jsonl`: contentKey, area, sourcePath, probability, requested/resolved model, rubric version, input tokens, latency, evaluation status와 안전한 error kind
+- `jev-review-priority-report.md`: probability 내림차순 rank, Question prompt, choices, source file을 보여 주는 사람 검토 문서
+
+두 artifact에는 API key, authorization header, provider request/response 원문, 전체 state payload를 저장하지 않는다. API 오류에는 fake probability를 만들지 않는다.
+
+### Manual GitHub Actions
+
+`Content Review Priority` workflow는 `workflow_dispatch`로만 실행한다. base/head ref 또는 PR number를 입력받고, `TYPESAFE_API_KEY` GitHub Secret을 사용하며 JSONL/Markdown을 14일 artifact로 보존한다. candidate count와 max guard는 provider 호출 전에 적용된다. 이 workflow는 `pull_request` 자동 trigger가 없고 기존 Repository Validation의 required/blocking check에 연결되지 않는다.

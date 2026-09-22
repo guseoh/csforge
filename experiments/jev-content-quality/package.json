@@ -14,7 +14,9 @@
     "metrics": "tsx src/cli.ts metrics",
     "typecheck": "tsc --noEmit",
     "test": "tsx --test test/*.test.ts",
-    "benchmark:phase-b": "tsx src/cli.ts benchmark-phase-b"
+    "benchmark:phase-b": "tsx src/cli.ts benchmark-phase-b",
+    "review:changed": "tsx src/review-cli.ts changed",
+    "review:questions": "tsx src/review-cli.ts explicit"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
