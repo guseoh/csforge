@@ -1,0 +1,92 @@
+{
+  "datasetVersion": "phase-b-natural-current-weak-distractor-2026-09-22",
+  "rubricVersion": "csforge-content-quality-v2",
+  "model": "jev-1.13.0",
+  "datasetKind": "NATURAL_CURRENT_WEAK_DISTRACTOR_EVALUATION",
+  "primaryInstructionLanguage": "ko",
+  "requestedCriteria": [
+    "weak_distractor"
+  ],
+  "sourceRef": "0f254ccdac91d480cdcde65d22ca9e6bc30b23c0",
+  "rowCount": 120,
+  "caseGroupCount": 120,
+  "learningAreaCount": 6,
+  "languageExperimentCaseGroups": [],
+  "datasetFiles": [
+    "phase-b-java.jsonl",
+    "phase-b-spring.jsonl",
+    "phase-b-database.jsonl",
+    "phase-b-backend-engineering.jsonl",
+    "phase-b-operating-systems.jsonl",
+    "phase-b-network-http.jsonl"
+  ],
+  "areaDistribution": {
+    "java": 21,
+    "spring": 23,
+    "database": 10,
+    "backend-engineering": 22,
+    "operating-systems": 22,
+    "network-http": 22
+  },
+  "criterionSupport": {
+    "question": {
+      "weakDistractor": {
+        "positiveSupport": 28,
+        "negativeSupport": 92,
+        "applicableSupport": 120,
+        "recallEvaluable": true,
+        "note": "Human Gold was frozen before any Phase B Jev call. No class balancing was performed."
+      }
+    },
+    "concept": {}
+  },
+  "selectionContract": {
+    "population": "CURRENT MULTIPLE_CHOICE Questions from the six Issue #130 Phase B LearningAreas",
+    "historicalExperimentContentKeysExcluded": true,
+    "selection": "Exclude every Phase A/A.1/A.2 contentKey. Within each area sort eligible rows by contentKey. Include all eligible Spring and Database rows; use deterministic evenly-spaced selection for Java, Backend Engineering, Operating Systems, and Network & HTTP.",
+    "targetAreaCounts": {
+      "java": 21,
+      "spring": 23,
+      "database": 10,
+      "backend-engineering": 22,
+      "operating-systems": 22,
+      "network-http": 22
+    },
+    "noSyntheticCases": true,
+    "noClassBalancing": true
+  },
+  "evaluationContract": {
+    "output": "RAW_PROBABILITIES_ONLY",
+    "calibrationStatus": "UNCALIBRATED",
+    "allowThresholdSelection": false,
+    "allowThresholdApplication": false,
+    "reviewBudgets": [
+      0.1,
+      0.2,
+      0.3,
+      0.4,
+      0.5
+    ],
+    "primaryMeasures": [
+      "ROC_AUC",
+      "score_distribution",
+      "recall_at_review_budget",
+      "precision_at_review_budget",
+      "area_breakdown"
+    ]
+  },
+  "estimatedInputCostUsdPerMillionTokens": 0.042,
+  "experimentDisposition": {
+    "materialTechnicalError": "SUSPENDED_AFTER_A1_POOR_SIGNAL",
+    "multipleDefensibleAnswers": "INSUFFICIENT_SUPPORT",
+    "weakDistractor": "PHASE_B_NATURAL_EVALUATION"
+  },
+  "notes": [
+    "Phase B is a natural current-content evaluation, not historical calibration data.",
+    "Rubric V2 weak_distractor wording is frozen and reused unchanged.",
+    "All rows are current MULTIPLE_CHOICE Questions at the pinned sourceRef.",
+    "Historical Phase A/A.1/A.2 contentKeys are excluded from this slice.",
+    "No threshold may be tuned or applied using Phase B results.",
+    "The zero-positive Backend Engineering stratum is preserved rather than rebalanced."
+  ]
+}

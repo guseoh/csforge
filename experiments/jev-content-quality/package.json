@@ -1,0 +1,24 @@
+{
+  "name": "csforge-jev-content-quality",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "validate": "tsx src/cli.ts validate",
+    "benchmark": "tsx src/cli.ts benchmark",
+    "benchmark:holdout": "tsx src/cli.ts benchmark-holdout",
+    "benchmark:weak-holdout": "tsx src/cli.ts benchmark-weak-holdout",
+    "calibrate": "tsx src/cli.ts calibrate",
+    "metrics": "tsx src/cli.ts metrics",
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test test/*.test.ts",
+    "benchmark:phase-b": "tsx src/cli.ts benchmark-phase-b"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  }
+}

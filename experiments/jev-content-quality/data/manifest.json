@@ -1,0 +1,56 @@
+{
+  "datasetVersion": "phase-a-2026-09-21",
+  "rubricVersion": "csforge-content-quality-v1",
+  "model": "jev-1.13.0",
+  "datasetKind": "BALANCED_HISTORICAL_DIAGNOSTIC",
+  "primaryInstructionLanguage": "ko",
+  "sourcePrsConsidered": [58, 59, 60, 100, 107, 109, 110],
+  "sourcePrsSelected": [58, 59, 100, 107, 109],
+  "rowCount": 60,
+  "caseGroupCount": 30,
+  "languageExperimentCaseGroups": [
+    "phase-a-java-01",
+    "phase-a-java-02",
+    "phase-a-spring-01",
+    "phase-a-spring-02",
+    "phase-a-database-01",
+    "phase-a-database-02",
+    "phase-a-backend-01",
+    "phase-a-backend-02",
+    "phase-a-os-01",
+    "phase-a-os-02",
+    "phase-a-network-01",
+    "phase-a-network-02"
+  ],
+  "criterionSupport": {
+    "question": {
+      "materialTechnicalError": {"positiveSupport": 5, "recallEvaluable": true},
+      "multipleDefensibleAnswers": {"positiveSupport": 1, "recallEvaluable": true},
+      "answerExplanationConflict": {"positiveSupport": 0, "recallEvaluable": false, "note": "No real Phase A historical positive example was selected; recall is not evaluable."},
+      "linkedConceptMisalignment": {"positiveSupport": 0, "recallEvaluable": false, "note": "No real Phase A historical positive example was selected; recall is not evaluable."},
+      "responseShapeMismatch": {"positiveSupport": 2, "recallEvaluable": true},
+      "weakDistractor": {"positiveSupport": 4, "recallEvaluable": true}
+    },
+    "concept": {
+      "materialTechnicalError": {"positiveSupport": 1, "recallEvaluable": true},
+      "layerBoundaryConfusion": {"positiveSupport": 0, "recallEvaluable": false},
+      "learningObjectiveGap": {"positiveSupport": 0, "recallEvaluable": false},
+      "causalOrStateFlowGap": {"positiveSupport": 0, "recallEvaluable": false}
+    }
+  },
+  "difficultyFitDistribution": {
+    "TOO_EASY": 1,
+    "APPROPRIATE": 38,
+    "TOO_HARD": 13
+  },
+  "estimatedInputCostUsdPerMillionTokens": 0.042,
+  "notes": [
+    "Phase A Human Gold candidate labels are evidence-based labels for the reviewed historical pairs; they are not production labels.",
+    "BEFORE severity distribution is P0=8, P1=5, P2=14, NONE=3. Across all 60 rows, AFTER counterparts add 30 NONE rows.",
+    "answerExplanationConflict, linkedConceptMisalignment, concept layerBoundaryConfusion, learningObjectiveGap, and causalOrStateFlowGap have no positive support where marked not evaluable; metrics must report null recall rather than imply successful recall.",
+    "difficulty_fit is a separate 3-class diagnostic and does not trigger the v1 PASS/REVIEW blocking policy.",
+    "Balanced historical data must not be used to interpret Human Review Reduction as a production estimate.",
+    "The canonical database keyset-pagination diagram finding is intentionally excluded from this benchmark.",
+    "The model is pinned to jev-1.13.0; jev-latest is intentionally not used."
+  ]
+}

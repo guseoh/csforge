@@ -1,0 +1,4 @@
+results/*.jsonl
+results/*.json
+.env
+node_modules/
