@@ -30,6 +30,7 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 /** 애플리케이션 예외를 일관된 HTTP 오류 응답으로 변환하는 전역 예외 처리기이다. */
 @Slf4j
@@ -121,6 +122,14 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ImportBoundsException.class)
     public ResponseEntity<ApiError> handleImportBounds(ImportBoundsException exception, HttpServletRequest request) {
         return error(HttpStatus.BAD_REQUEST, "IMPORT_BOUNDS_EXCEEDED", exception.getMessage(), request, List.of());
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<ApiError> handleMultipartUploadSizeExceeded(
+            MaxUploadSizeExceededException exception,
+            HttpServletRequest request) {
+        return error(HttpStatus.BAD_REQUEST, "IMPORT_BOUNDS_EXCEEDED",
+                "Uploaded file exceeds the configured size limit", request, List.of());
     }
 
     @ExceptionHandler(QuizInvalidStateException.class)
