@@ -127,9 +127,12 @@ public class Question extends AuditedEntity {
         if (newChoices != null) {
             for (ChoiceDraft choice : newChoices) {
                 QuestionChoice existingChoice = existingChoicesByKey.remove(choice.choiceKey());
-                if (existingChoice == null) addChoice(choice.choiceKey(), choice.contentMarkdown(), choice.displayOrder());
+                if (existingChoice == null) {
+                    addChoice(choice.choiceKey(), choice.contentMarkdown(), choice.rationaleMarkdown(), choice.displayOrder());
+                }
                 else {
-                    existingChoice.reviseCanonicalContent(choice.contentMarkdown(), choice.displayOrder());
+                    existingChoice.reviseCanonicalContent(
+                            choice.contentMarkdown(), choice.rationaleMarkdown(), choice.displayOrder());
                     choices.add(existingChoice);
                 }
             }
@@ -173,7 +176,7 @@ public class Question extends AuditedEntity {
         else changeToDraft();
     }
 
-    public record ChoiceDraft(String choiceKey, String contentMarkdown, int displayOrder) { }
+    public record ChoiceDraft(String choiceKey, String contentMarkdown, String rationaleMarkdown, int displayOrder) { }
 
     /** Import preview와 실제 구조 변경이 같은 질문 구조 규칙을 사용하도록 검증한다. */
     public static void validateImportedStructure(QuestionType type, List<ChoiceDraft> choices,
@@ -224,7 +227,7 @@ public class Question extends AuditedEntity {
         }
     }
 
-    public QuestionChoice addChoice(String choiceKey, String contentMarkdown, int displayOrder) {
+    public QuestionChoice addChoice(String choiceKey, String contentMarkdown, String rationaleMarkdown, int displayOrder) {
         requireText(choiceKey, "choiceKey");
         if (choices.stream().anyMatch(choice -> choice.getChoiceKey().equals(choiceKey))) {
             throw new IllegalArgumentException("choiceKey must be unique within a question");
@@ -239,6 +242,7 @@ public class Question extends AuditedEntity {
                 this,
                 choiceKey,
                 requireText(contentMarkdown, "contentMarkdown"),
+                rationaleMarkdown,
                 displayOrder);
         choices.add(choice);
         return choice;

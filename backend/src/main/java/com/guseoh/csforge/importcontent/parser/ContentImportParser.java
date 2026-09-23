@@ -158,7 +158,12 @@ public class ContentImportParser {
             Map<String, Object> v = castMap(map); String key = text(v, "key"); String content = text(v, "content");
             if (key == null) errors.add(new ImportValidationError("choices[" + index + "].key", "필수입니다"));
             if (content == null) errors.add(new ImportValidationError("choices[" + index + "].content", "필수입니다"));
-            result.add(new NormalizedChoice(key, normalizeMarkdown(content), number(v.get("displayOrder"), index))); index++;
+            result.add(new NormalizedChoice(
+                    key,
+                    normalizeMarkdown(content),
+                    normalizeMarkdown(text(v, "rationaleMarkdown")),
+                    number(v.get("displayOrder"), index)));
+            index++;
         }
         return result.stream().sorted(Comparator.comparingInt(NormalizedChoice::displayOrder)).toList();
     }

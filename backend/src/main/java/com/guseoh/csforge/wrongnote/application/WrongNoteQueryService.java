@@ -16,8 +16,11 @@ import org.springframework.transaction.annotation.Transactional;
 import com.guseoh.csforge.question.domain.QuestionAnswer;
 import com.guseoh.csforge.question.domain.QuestionAnswerKind;
 import com.guseoh.csforge.question.domain.QuestionAnswerRepository;
+import com.guseoh.csforge.question.domain.QuestionChoice;
+import com.guseoh.csforge.question.domain.QuestionChoiceRepository;
 import com.guseoh.csforge.question.domain.QuestionConcept;
 import com.guseoh.csforge.question.domain.QuestionConceptRepository;
+import com.guseoh.csforge.question.domain.QuestionType;
 import com.guseoh.csforge.ai.domain.WrongAnswerAnalysisRepository;
 import com.guseoh.csforge.ai.domain.WrongAnswerAnalysisStatus;
 import com.guseoh.csforge.ai.domain.WrongAnswerAnalysisStatusProjection;
@@ -41,6 +44,7 @@ public class WrongNoteQueryService {
     private final ReviewScheduleRepository scheduleRepository;
     private final QuestionConceptRepository conceptRepository;
     private final QuestionAnswerRepository answerRepository;
+    private final QuestionChoiceRepository choiceRepository;
     private final AttemptRepository attemptRepository;
     private final WrongAnswerAnalysisRepository analysisRepository;
     private final Clock clock;
@@ -72,9 +76,13 @@ public class WrongNoteQueryService {
                 .orElseThrow(WrongNoteNotFoundException::new);
         List<QuestionConcept> concepts = conceptRepository.findForQuestionIds(List.of(questionId));
         List<QuestionAnswer> answers = answerRepository.findForQuestionIds(List.of(questionId));
+        List<WrongNoteChoiceView> choices = note.getQuestion().getQuestionType() == QuestionType.MULTIPLE_CHOICE
+                ? choiceRepository.findForQuestionIds(List.of(questionId)).stream().map(this::toChoice).toList()
+                : List.of();
         ReviewSchedule schedule = scheduleRepository.findByQuestionId(questionId).orElse(null);
         return new WrongNoteDetailView(
-                new WrongNoteQuestionView(questionId, note.getQuestion().getPromptMarkdown(), note.getQuestion().getQuestionType(), note.getQuestion().getDifficulty(), note.getQuestion().getExplanationMarkdown()),
+                new WrongNoteQuestionView(questionId, note.getQuestion().getPromptMarkdown(), note.getQuestion().getQuestionType(),
+                        note.getQuestion().getDifficulty(), note.getQuestion().getExplanationMarkdown(), choices),
                 concepts.stream().map(this::toConcept).toList(),
                 toLatestAttempt(note.getLastWrongAttempt()),
                 toAnswer(answers),
@@ -151,6 +159,10 @@ public class WrongNoteQueryService {
                 correctChoice == null ? null : correctChoice.getContentMarkdown(),
                 accepted,
                 model);
+    }
+
+    private WrongNoteChoiceView toChoice(QuestionChoice choice) {
+        return new WrongNoteChoiceView(choice.getChoiceKey(), choice.getContentMarkdown(), choice.getRationaleMarkdown());
     }
 
     private Map<Long, List<QuestionConcept>> groupedConcepts(List<Long> ids) {

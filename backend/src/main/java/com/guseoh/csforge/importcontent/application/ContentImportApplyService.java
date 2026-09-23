@@ -143,7 +143,8 @@ public class ContentImportApplyService {
     private void upsertQuestion(NormalizedImportItem item, Map<String, Concept> concepts, Map<String, Question> questions) {
         Question question = questions.get(item.contentKey());
         List<Concept> linkedConcepts = item.conceptKeys().stream().map(concepts::get).toList();
-        List<Question.ChoiceDraft> choices = item.choices().stream().map(choice -> new Question.ChoiceDraft(choice.key(), choice.content(), choice.displayOrder())).toList();
+        List<Question.ChoiceDraft> choices = item.choices().stream().map(choice -> new Question.ChoiceDraft(
+                choice.key(), choice.content(), choice.rationaleMarkdown(), choice.displayOrder())).toList();
         boolean newQuestion = question == null;
         if (newQuestion) {
             question = Question.createDraft(item.contentKey(), item.promptMarkdown(), QuestionType.valueOf(item.questionType()), QuestionDifficulty.valueOf(item.difficulty()), item.explanationMarkdown());

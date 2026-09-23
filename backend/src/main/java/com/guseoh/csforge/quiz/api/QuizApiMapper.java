@@ -169,7 +169,8 @@ public class QuizApiMapper {
                 item.getQuestion().getDifficulty(),
                 concepts(data.conceptsByQuestionId().getOrDefault(questionId, List.of())),
                 data.choicesByQuestionId().getOrDefault(questionId, List.of()).stream()
-                        .map(choice -> new QuestionChoiceResponse(choice.getChoiceKey(), choice.getContentMarkdown()))
+                        .map(choice -> new QuestionChoiceReviewResponse(
+                                choice.getChoiceKey(), choice.getContentMarkdown(), choice.getRationaleMarkdown()))
                         .toList(),
                 choiceKey(attempt),
                 attempt.getAnswerText(),

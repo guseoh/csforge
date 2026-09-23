@@ -26,7 +26,16 @@ public class WrongNoteApiMapper {
 
     public WrongNoteDetailResponse toResponse(WrongNoteDetailView view) {
         return new WrongNoteDetailResponse(
-                new WrongNoteQuestionResponse(view.question().id(), view.question().promptMarkdown(), view.question().questionType(), view.question().difficulty(), view.question().explanationMarkdown()),
+                new WrongNoteQuestionResponse(
+                        view.question().id(),
+                        view.question().promptMarkdown(),
+                        view.question().questionType(),
+                        view.question().difficulty(),
+                        view.question().explanationMarkdown(),
+                        view.question().choices().stream()
+                                .map(item -> new WrongNoteChoiceResponse(
+                                        item.choiceKey(), item.contentMarkdown(), item.rationaleMarkdown()))
+                                .toList()),
                 view.concepts().stream().map(item -> new WrongNoteConceptResponse(item.id(), item.slug(), item.title(), item.areaSlug(), item.areaName(), item.level())).toList(),
                 view.latestWrongAttempt() == null ? null : new WrongNoteLatestAttemptResponse(
                         view.latestWrongAttempt().attemptId(),

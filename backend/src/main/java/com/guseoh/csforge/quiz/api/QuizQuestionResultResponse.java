@@ -14,7 +14,7 @@ public record QuizQuestionResultResponse(
         QuestionType questionType,
         QuestionDifficulty difficulty,
         List<QuizConceptResponse> concepts,
-        List<QuestionChoiceResponse> choices,
+        List<QuestionChoiceReviewResponse> choices,
         String selectedChoiceKey,
         String answerText,
         boolean reviewNeeded,

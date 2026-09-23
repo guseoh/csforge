@@ -1,6 +1,6 @@
 package com.guseoh.csforge.wrongnote.application;
 
-import java.time.Instant;
+import java.util.List;
 
 import com.guseoh.csforge.question.domain.QuestionDifficulty;
 import com.guseoh.csforge.question.domain.QuestionType;
@@ -13,5 +13,6 @@ public record WrongNoteQuestionView(
         String promptMarkdown,
         QuestionType questionType,
         QuestionDifficulty difficulty,
-        String explanationMarkdown) {
+        String explanationMarkdown,
+        List<WrongNoteChoiceView> choices) {
 }

@@ -31,7 +31,14 @@ export interface WrongNotePage {
 }
 
 export interface WrongNoteDetail {
-  question: { id: number; promptMarkdown: string; questionType: QuestionType; difficulty: QuestionDifficulty; explanationMarkdown: string | null }
+  question: {
+    id: number
+    promptMarkdown: string
+    questionType: QuestionType
+    difficulty: QuestionDifficulty
+    explanationMarkdown: string | null
+    choices: WrongNoteChoice[]
+  }
   concepts: QuizConcept[]
   latestWrongAttempt: {
     attemptId: number
@@ -164,6 +171,12 @@ export function saveWrongNote(questionId: number, content: string, options?: { k
     body: JSON.stringify({ content }),
     keepalive: options?.keepalive,
   })
+}
+
+export interface WrongNoteChoice {
+  choiceKey: string
+  contentMarkdown: string
+  rationaleMarkdown: string | null
 }
 
 export function retryWrongNote(questionId: number): Promise<QuizCreated> {
