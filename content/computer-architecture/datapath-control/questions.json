@@ -8,10 +8,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.datapath-control.alu-datapath"],
     "choices": [
-      {"key": "A", "content": "clock edge 사이에도 값을 영구적으로 보존하는 architectural register 역할을 한다", "displayOrder": 0},
-      {"key": "B", "content": "opcode를 해석해 CPU 전체의 control signal을 생성한다", "displayOrder": 1},
-      {"key": "C", "content": "operand에 산술·논리 연산을 수행하고 비교 결과 등을 계산한다", "displayOrder": 2},
-      {"key": "D", "content": "항상 다음 instruction의 주소를 결정해 PC를 갱신한다", "displayOrder": 3}
+      {"key": "A", "content": "clock edge 사이에도 값을 영구적으로 보존하는 architectural register 역할을 한다", "displayOrder": 0, "rationaleMarkdown": "Architectural register는 clock edge를 기준으로 값을 보존하는 순차 상태 요소다. ALU는 입력 operand에 연산을 수행하는 조합 논리 경로로, 값을 계속 저장하는 역할과 다르다."},
+      {"key": "B", "content": "opcode를 해석해 CPU 전체의 control signal을 생성한다", "displayOrder": 1, "rationaleMarkdown": "Instruction 해석과 datapath 동작 신호 생성을 담당하는 부분은 control unit이다. ALU는 control이 고른 산술·논리 연산을 실제 operand에 적용한다."},
+      {"key": "C", "content": "operand에 산술·논리 연산을 수행하고 비교 결과 등을 계산한다", "displayOrder": 2, "rationaleMarkdown": "ALU는 입력 operand에 산술·bitwise 논리·shift 연산을 적용하고 비교 결과도 계산할 수 있다. Operand를 가져오고 결과를 저장할 위치는 주변 datapath와 control이 정한다."},
+      {"key": "D", "content": "항상 다음 instruction의 주소를 결정해 PC를 갱신한다", "displayOrder": 3, "rationaleMarkdown": "다음 PC는 순차 증가, branch 조건, target 선택 등 control-flow 경로가 결정한다. ALU가 branch 비교에 참여할 수는 있지만 매 instruction의 PC 갱신을 단독으로 담당하지 않는다."}
     ],
     "correctChoiceKey": "C",
     "explanationMarkdown": "ALU는 선택된 operand에 덧셈·뺄셈, bitwise logic, shift, comparison 같은 연산을 수행한다. Datapath의 register와 mux가 operand와 결과의 이동을 담당하고 control signal이 수행할 연산과 write 여부를 고른다."
@@ -47,10 +47,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.datapath-control.control-unit"],
     "choices": [
-      {"key": "A", "content": "instruction 종류와 무관하게 모든 datapath signal을 항상 같은 값으로 유지한다", "displayOrder": 0},
-      {"key": "B", "content": "모든 산술 결과를 장기간 저장하는 register file 자체가 된다", "displayOrder": 1},
-      {"key": "C", "content": "cache miss가 발생할 때마다 DRAM의 물리 cell을 직접 읽는다", "displayOrder": 2},
-      {"key": "D", "content": "instruction을 해석해 ALU operation, operand selection, register/memory write 같은 control signal을 결정한다", "displayOrder": 3}
+      {"key": "A", "content": "instruction 종류와 무관하게 모든 datapath signal을 항상 같은 값으로 유지한다", "displayOrder": 0, "rationaleMarkdown": "Control signal은 instruction 종류와 현재 상태에 맞춰 달라져야 register, ALU, memory 경로가 올바르게 동작한다. 모든 signal을 고정하면 서로 다른 instruction을 구분해 실행할 수 없다."},
+      {"key": "B", "content": "모든 산술 결과를 장기간 저장하는 register file 자체가 된다", "displayOrder": 1, "rationaleMarkdown": "Register file은 operand와 결과 같은 architectural state를 보관하는 저장 요소다. Control unit은 어떤 register를 읽고 쓸지 선택하는 신호를 만들지만 저장소 자체가 되지는 않는다."},
+      {"key": "C", "content": "cache miss가 발생할 때마다 DRAM의 물리 cell을 직접 읽는다", "displayOrder": 2, "rationaleMarkdown": "Cache miss가 나면 memory hierarchy의 cache controller와 memory controller가 lower level 접근을 처리한다. Instruction control unit은 DRAM의 물리 cell을 직접 구동하지 않는다."},
+      {"key": "D", "content": "instruction을 해석해 ALU operation, operand selection, register/memory write 같은 control signal을 결정한다", "displayOrder": 3, "rationaleMarkdown": "Control unit은 instruction encoding과 processor 상태를 해석해 연산 종류, operand 경로, register·memory write 같은 신호를 정한다. 실제 값의 계산과 이동은 신호를 받은 datapath가 수행한다."}
     ],
     "correctChoiceKey": "D",
     "explanationMarkdown": "Control unit은 instruction encoding과 현재 상태를 해석해 ALU operation, operand mux, register write, memory access, next PC 같은 control signal을 만든다. 실제 data 계산과 이동은 그 signal을 받은 datapath가 수행한다."
@@ -86,10 +86,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.datapath-control.clock-cycle"],
     "choices": [
-      {"key": "A", "content": "한 cycle은 microarchitecture와 무관하게 항상 instruction 하나의 전체 실행 시간이다", "displayOrder": 0},
-      {"key": "B", "content": "조합 논리가 계산할 시간을 둔 뒤 clock edge를 기준으로 순차 상태를 갱신하는 시간 단위다", "displayOrder": 1},
-      {"key": "C", "content": "frequency가 높아지면 workload의 CPI도 반드시 같은 비율로 감소한다", "displayOrder": 2},
-      {"key": "D", "content": "cycle time은 clock frequency와 비례하므로 frequency가 높을수록 길어진다", "displayOrder": 3}
+      {"key": "A", "content": "한 cycle은 microarchitecture와 무관하게 항상 instruction 하나의 전체 실행 시간이다", "displayOrder": 0, "rationaleMarkdown": "Instruction은 microarchitecture에 따라 여러 cycle을 쓸 수도 있고 pipeline에서는 여러 instruction이 cycle마다 겹쳐 진행될 수 있다. 따라서 cycle 하나를 instruction 전체 실행 시간과 동일시할 수 없다."},
+      {"key": "B", "content": "조합 논리가 계산할 시간을 둔 뒤 clock edge를 기준으로 순차 상태를 갱신하는 시간 단위다", "displayOrder": 1, "rationaleMarkdown": "동기식 회로에서는 한 edge 뒤 조합 논리가 다음 값을 계산하고, 이어지는 edge에서 register 같은 순차 상태를 갱신한다. Cycle은 이 경로가 timing 조건을 만족하도록 허용하는 기준 구간이다."},
+      {"key": "C", "content": "frequency가 높아지면 workload의 CPI도 반드시 같은 비율로 감소한다", "displayOrder": 2, "rationaleMarkdown": "Frequency는 cycle당 시간과 관계하고 CPI는 workload와 microarchitecture의 명령 처리량을 나타낸다. Clock을 빠르게 한다고 명령당 cycle 수가 같은 비율로 줄어들지는 않는다."},
+      {"key": "D", "content": "cycle time은 clock frequency와 비례하므로 frequency가 높을수록 길어진다", "displayOrder": 3, "rationaleMarkdown": "Clock frequency와 cycle time은 서로 역수 관계다. 같은 설계에서 frequency를 높이려면 cycle time을 줄여야 하므로 안정적인 계산을 위한 timing 제약도 더 엄격해진다."}
     ],
     "correctChoiceKey": "B",
     "explanationMarkdown": "동기식 datapath에서는 clock edge 사이에 조합 논리가 계산하고 다음 edge에서 register 같은 순차 상태가 갱신된다. Cycle time은 결과가 안정되고 setup 조건을 만족할 시간을 포함해야 한다."
@@ -125,10 +125,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.datapath-control.critical-path"],
     "choices": [
-      {"key": "A", "content": "critical path는 instruction count만 결정하고 clock rate에는 영향을 주지 않는다", "displayOrder": 0},
-      {"key": "B", "content": "가장 짧은 논리 경로만 끝나면 다른 경로가 계산 중이어도 다음 clock edge를 안전하게 줄 수 있다", "displayOrder": 1},
-      {"key": "C", "content": "register 사이의 가장 긴 조합 논리 지연이 최소 cycle time의 하한을 제한한다", "displayOrder": 2},
-      {"key": "D", "content": "critical path가 길어질수록 같은 회로에서 안전한 최대 frequency도 자동으로 높아진다", "displayOrder": 3}
+      {"key": "A", "content": "critical path는 instruction count만 결정하고 clock rate에는 영향을 주지 않는다", "displayOrder": 0, "rationaleMarkdown": "Instruction count는 프로그램과 ISA가 수행하는 작업량에 관한 값이고 critical path는 한 cycle 안에 신호가 통과하는 조합 논리 지연이다. 이 지연은 가능한 clock period를 제한한다."},
+      {"key": "B", "content": "가장 짧은 논리 경로만 끝나면 다른 경로가 계산 중이어도 다음 clock edge를 안전하게 줄 수 있다", "displayOrder": 1, "rationaleMarkdown": "다른 register 경로가 아직 값을 계산 중이면 다음 edge에서 그 값을 안전하게 capture하지 못할 수 있다. 가장 짧은 경로가 아니라 timing 제약을 만족해야 하는 가장 긴 경로가 period를 제한한다."},
+      {"key": "C", "content": "register 사이의 가장 긴 조합 논리 지연이 최소 cycle time의 하한을 제한한다", "displayOrder": 2, "rationaleMarkdown": "가장 긴 register-to-register 조합 경로가 다음 edge 전에 안정되어야 한다. 따라서 그 지연에 setup time 등 timing 여유를 더한 값이 최소 cycle time의 하한이 된다."},
+      {"key": "D", "content": "critical path가 길어질수록 같은 회로에서 안전한 최대 frequency도 자동으로 높아진다", "displayOrder": 3, "rationaleMarkdown": "조합 지연이 길어지면 결과가 안정되기까지 더 긴 cycle을 기다려야 한다. 같은 회로에서 안전한 최대 frequency는 보통 낮아지며, 논리 최적화나 pipeline 분할이 필요할 수 있다."}
     ],
     "correctChoiceKey": "C",
     "explanationMarkdown": "Register에서 출발해 조합 논리를 지나 다음 register에 도달하는 경로 중 가장 긴 지연이 critical path다. Clock period를 그보다 짧게 잡으면 다음 edge에서 안정된 값을 저장하지 못할 수 있다."
@@ -164,10 +164,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.datapath-control.branch-control-flow"],
     "choices": [
-      {"key": "A", "content": "branch condition과 target이 확정되기 전에는 다음에 fetch할 PC가 불확실할 수 있다", "displayOrder": 0},
-      {"key": "B", "content": "branch instruction은 register나 PC를 전혀 읽지 않으므로 pipeline에 dependency가 생길 수 없다", "displayOrder": 1},
-      {"key": "C", "content": "branch opcode만 decode하면 condition 평가 없이 target 여부가 항상 확정된다", "displayOrder": 2},
-      {"key": "D", "content": "branch prediction이 맞더라도 이미 fetch한 모든 instruction을 반드시 폐기해야 한다", "displayOrder": 3}
+      {"key": "A", "content": "branch condition과 target이 확정되기 전에는 다음에 fetch할 PC가 불확실할 수 있다", "displayOrder": 0, "rationaleMarkdown": "분기 결과와 target이 확정되기 전에는 다음 PC가 순차 주소일지 branch 주소일지 결정되지 않을 수 있다. 잘못된 경로를 fetch하면 조건이 확인된 뒤 이를 폐기하고 올바른 주소에서 재시작한다."},
+      {"key": "B", "content": "branch instruction은 register나 PC를 전혀 읽지 않으므로 pipeline에 dependency가 생길 수 없다", "displayOrder": 1, "rationaleMarkdown": "Conditional branch는 보통 condition에 필요한 register 값을 읽고 비교 결과에 의존한다. 이런 데이터 의존성과 target 계산 때문에 다음 fetch 주소가 즉시 확정되지 않을 수 있다."},
+      {"key": "C", "content": "branch opcode만 decode하면 condition 평가 없이 target 여부가 항상 확정된다", "displayOrder": 2, "rationaleMarkdown": "Opcode decode로 branch 종류와 target 계산에 필요한 정보 일부를 얻을 수 있어도 조건이 참인지 평가해야 실제 다음 PC가 정해진다. Decode만으로 모든 분기의 방향이 확정되지는 않는다."},
+      {"key": "D", "content": "branch prediction이 맞더라도 이미 fetch한 모든 instruction을 반드시 폐기해야 한다", "displayOrder": 3, "rationaleMarkdown": "Prediction이 맞으면 미리 가져온 instruction은 올바른 경로에 있으므로 계속 실행할 수 있다. Flush와 재시작 비용은 주로 예측이 틀려 speculative 경로를 폐기할 때 발생한다."}
     ],
     "correctChoiceKey": "A",
     "explanationMarkdown": "Branch condition과 target이 확정되기 전에는 sequential PC와 target PC 중 어느 주소를 fetch할지 알 수 없다. Prediction이 틀리면 잘못 가져온 instruction을 squash하고 올바른 PC에서 다시 시작해 penalty가 생긴다."

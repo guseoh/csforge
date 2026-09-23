@@ -8,10 +8,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.synchronization.mutex"],
     "choices": [
-      {"key": "A", "content": "각 thread가 자기만의 mutex를 사용하면 같은 state가 보호된다", "displayOrder": 0},
-      {"key": "B", "content": "읽기 경로는 어떤 lock도 사용하지 않아도 항상 안전하다", "displayOrder": 1},
-      {"key": "C", "content": "같은 invariant에 접근하는 모든 competing path가 같은 protection protocol을 따른다", "displayOrder": 2},
-      {"key": "D", "content": "critical section을 가능한 길게 유지하면 race가 줄어든다", "displayOrder": 3}
+      {"key":"A","content":"각 thread가 자기만의 mutex를 사용하면 같은 state가 보호된다","displayOrder":0,"rationaleMarkdown":"각 thread가 서로 다른 mutex instance를 사용하면 같은 상태를 보호하도록 조정할 수 없다. 상호 배제를 지키려면 하나의 공유 보호 protocol을 따라야 한다."},
+      {"key":"B","content":"읽기 경로는 어떤 lock도 사용하지 않아도 항상 안전하다","displayOrder":1,"rationaleMarkdown":"보호하지 않은 read는 동시 write와 경합하거나 여러 필드로 된 불변 조건이 깨진 상태를 볼 수 있다. read도 공유 상태와 memory model에 따라 보호가 필요하며 읽기라는 이유만으로 안전하지 않다."},
+      {"key":"C","content":"같은 invariant에 접근하는 모든 competing path가 같은 protection protocol을 따른다","displayOrder":2,"rationaleMarkdown":"mutex는 그 불변 조건에 영향을 줄 수 있는 모든 경합 경로가 같은 lock protocol을 따를 때만 상태를 보호한다. 보호되지 않은 접근이나 다른 lock을 쓰는 경로가 있으면 race가 남는다."},
+      {"key":"D","content":"critical section을 가능한 길게 유지하면 race가 줄어든다","displayOrder":3,"rationaleMarkdown":"mutex를 필요 이상 오래 잡으면 더 많은 작업이 직렬화되고 경합이 커진다. 무관한 지연은 빼고 불변 조건을 유지하는 상태 전이만 보호해야 한다."}
     ],
     "correctChoiceKey": "C",
     "explanationMarkdown": "Mutex는 객체가 shared state를 자동으로 보호하는 장치가 아니다. **같은 invariant에 영향을 주는 모든 경쟁 경로가 동일한 보호 규칙을 따라야** 실제 mutual exclusion이 성립한다. 서로 다른 mutex를 사용하거나 일부 access가 보호 밖에 남으면 lock이 존재해도 race가 가능하다."
@@ -48,10 +48,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.synchronization.semaphore"],
     "choices": [
-      {"key": "A", "content": "semaphore가 실제 resource capacity를 자동으로 하나 늘린다", "displayOrder": 0},
-      {"key": "B", "content": "permit가 반환될 때까지 기다린다", "displayOrder": 1},
-      {"key": "C", "content": "기존 acquire 하나를 취소하고 그 permit를 강제로 가져온다", "displayOrder": 2},
-      {"key": "D", "content": "permit가 0이어도 read-only task라면 자동 통과한다", "displayOrder": 3}
+      {"key":"A","content":"semaphore가 실제 resource capacity를 자동으로 하나 늘린다","displayOrder":0,"rationaleMarkdown":"semaphore는 permit 개수를 관리할 뿐 실제 underlying resource의 용량을 만들거나 늘리지 않는다. 자원은 애플리케이션이나 시스템이 별도로 준비해야 한다."},
+      {"key":"B","content":"permit가 반환될 때까지 기다린다","displayOrder":1,"rationaleMarkdown":"초기 count가 3일 때 세 번 acquire가 성공하면 남은 permit이 없다. blocking acquire는 다른 task가 permit을 release할 때까지 기다린다."},
+      {"key":"C","content":"기존 acquire 하나를 취소하고 그 permit를 강제로 가져온다","displayOrder":2,"rationaleMarkdown":"acquire는 사용 가능한 permit을 소비하지만 보통 다른 task에 이미 허용한 permit을 회수하지 않는다. 현재 보유자가 protocol에 따라 release해야 한다."},
+      {"key":"D","content":"permit가 0이어도 read-only task라면 자동 통과한다","displayOrder":3,"rationaleMarkdown":"counting semaphore는 task에 read-only 이름표가 있든 없든 permit 가용성을 적용한다. 자원 종류를 추론해 count가 0이어도 암묵적으로 통과시키지 않는다."}
     ],
     "correctChoiceKey": "B",
     "explanationMarkdown": "세 task가 permit를 모두 소비하면 available count는 0이다. 일반적인 blocking acquire/wait는 **release/post로 permit가 다시 생길 때까지 진행하지 않는다.** Semaphore가 underlying connection이나 thread 같은 실제 resource를 자동으로 늘려 주는 것은 아니다."
@@ -99,10 +99,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.synchronization.condition-variable"],
     "choices": [
-      {"key": "A", "content": "shared predicate가 참이 될 때까지 효율적으로 기다리고 state 변경 뒤 다시 검사할 기회를 주는 것", "displayOrder": 0},
-      {"key": "B", "content": "mutex 없이 shared predicate 값을 condition variable 자체에 저장하는 것", "displayOrder": 1},
-      {"key": "C", "content": "signal한 thread가 protected resource의 소유권을 waiter에게 직접 예약해 주는 것", "displayOrder": 2},
-      {"key": "D", "content": "critical section에 동시에 들어갈 수 있는 thread 수를 N개로 제한하는 것", "displayOrder": 3}
+      {"key":"A","content":"shared predicate가 참이 될 때까지 효율적으로 기다리고 state 변경 뒤 다시 검사할 기회를 주는 것","displayOrder":0,"rationaleMarkdown":"condition variable은 공유 predicate가 false일 때 waiter를 재우고 상태 변경 뒤 깨워 다시 확인하게 한다. predicate는 보통 mutex 같은 synchronization protocol로 보호되는 공유 상태에 있다."},
+      {"key":"B","content":"mutex 없이 shared predicate 값을 condition variable 자체에 저장하는 것","displayOrder":1,"rationaleMarkdown":"condition variable은 predicate가 바뀌었을 수 있음을 알릴 뿐 그 값 자체를 저장하지 않는다. 실제 충족 여부는 공유 상태와 mutex를 확인해야 한다."},
+      {"key":"C","content":"signal한 thread가 protected resource의 소유권을 waiter에게 직접 예약해 주는 것","displayOrder":2,"rationaleMarkdown":"waiter에게 signal을 보내도 보호 자원의 소유권을 넘기거나 예약하지 않는다. 깨어난 thread는 mutex를 다시 얻고 predicate가 아직 참인지 확인해야 한다."},
+      {"key":"D","content":"critical section에 동시에 들어갈 수 있는 thread 수를 N개로 제한하는 것","displayOrder":3,"rationaleMarkdown":"condition variable은 predicate를 기다리는 수단이지 동시에 사용할 permit의 고정 개수를 나타내지 않는다. 용량이 N으로 정해진 접근에는 counting semaphore가 더 적합하다."}
     ],
     "correctChoiceKey": "A",
     "explanationMarkdown": "Condition variable은 predicate 값 자체를 저장하거나 resource를 예약하는 primitive가 아니다. Shared state는 mutex 같은 protection protocol 아래에 있고, condition variable은 **predicate가 바뀔 때까지 waiter를 재우고 다시 검사할 기회**를 제공한다. N개의 동시 접근 제한은 counting semaphore 쪽에 더 가깝다."
@@ -150,10 +150,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.synchronization.monitor"],
     "choices": [
-      {"key": "A", "content": "condition signaling만 제공하고 mutual exclusion은 사용하지 않는다", "displayOrder": 0},
-      {"key": "B", "content": "shared state는 밖에 노출하고 lock 객체만 한 class 안에 둔다", "displayOrder": 1},
-      {"key": "C", "content": "shared state와 그 state를 다루는 operation, mutual exclusion과 condition waiting protocol을 한 경계에 둔다", "displayOrder": 2},
-      {"key": "D", "content": "caller가 매 호출마다 어떤 lock과 condition을 쓸지 임의로 선택하게 한다", "displayOrder": 3}
+      {"key":"A","content":"condition signaling만 제공하고 mutual exclusion은 사용하지 않는다","displayOrder":0,"rationaleMarkdown":"monitor는 상태를 보호하는 상호 배제와 predicate 대기를 위한 condition mechanism을 결합한다. 보호 없이 condition signal만 쓰면 동시 상태 갱신이 안전하지 않다."},
+      {"key":"B","content":"shared state는 밖에 노출하고 lock 객체만 한 class 안에 둔다","displayOrder":1,"rationaleMarkdown":"공유 상태를 abstraction 바깥에 노출하면 호출자가 lock과 불변 조건 규칙을 우회할 수 있다. monitor는 상태와 이를 지키는 연산을 하나의 경계 안에 둔다."},
+      {"key":"C","content":"shared state와 그 state를 다루는 operation, mutual exclusion과 condition waiting protocol을 한 경계에 둔다","displayOrder":2,"rationaleMarkdown":"monitor는 공유 상태와 연산, 상호 배제, 불변 조건을 지키는 condition protocol을 캡슐화한다. 호출자는 동기화 요소를 제각각 조합하지 않고 abstraction을 사용한다."},
+      {"key":"D","content":"caller가 매 호출마다 어떤 lock과 condition을 쓸지 임의로 선택하게 한다","displayOrder":3,"rationaleMarkdown":"각 호출자가 임의로 lock과 condition을 고르게 두면 protocol이 흩어져 일관되지 않은 조합이 생길 수 있다. monitor가 보호 상태의 동기화를 소유한다."}
     ],
     "correctChoiceKey": "C",
     "explanationMarkdown": "Monitor의 가치는 primitive를 한 class에 모아 두는 데 그치지 않는다. **Protected state와 invariant를 조작하는 operation, mutual exclusion, condition protocol의 소유권을 같은 abstraction에 둬** caller가 synchronization 규칙을 우회하거나 제각각 조합할 가능성을 줄인다."
@@ -190,10 +190,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.synchronization.read-write-lock"],
     "choices": [
-      {"key": "A", "content": "read lock을 얻은 reader는 다른 reader를 배제해야 한다", "displayOrder": 0},
-      {"key": "B", "content": "메서드 이름이 `get`이면 내부 state를 변경해도 항상 read lock을 쓸 수 있다", "displayOrder": 1},
-      {"key": "C", "content": "writer가 protected state를 변경하는 동안에도 reader는 항상 동시에 들어간다", "displayOrder": 2},
-      {"key": "D", "content": "보호된 state를 변경하지 않는 read operation이고 현재 lock의 writer-exclusion/admission 조건을 만족한다", "displayOrder": 3}
+      {"key":"A","content":"read lock을 얻은 reader는 다른 reader를 배제해야 한다","displayOrder":0,"rationaleMarkdown":"read-write lock은 writer가 lock을 소유하지 않을 때 호환 가능한 reader의 동시 접근을 허용한다. reader끼리도 배타적으로 만들면 읽기 공유라는 장점을 없앤다."},
+      {"key":"B","content":"메서드 이름이 `get`이면 내부 state를 변경해도 항상 read lock을 쓸 수 있다","displayOrder":1,"rationaleMarkdown":"메서드 이름만으로 연산이 읽기 전용임을 알 수 없다. 보호 상태를 변경한다면 `get`이라는 이름이어도 write-side 배타성이 필요하다."},
+      {"key":"C","content":"writer가 protected state를 변경하는 동안에도 reader는 항상 동시에 들어간다","displayOrder":2,"rationaleMarkdown":"writer는 보호 상태를 바꾸므로 보통 lock을 잡는 동안 reader가 들어오지 못하게 한다. 그렇지 않으면 reader가 일관되지 않은 중간 상태를 관찰할 수 있다."},
+      {"key":"D","content":"보호된 state를 변경하지 않는 read operation이고 현재 lock의 writer-exclusion/admission 조건을 만족한다","displayOrder":3,"rationaleMarkdown":"호환되는 읽기 전용 연산은 writer가 없고 구현의 admission 정책이 허용할 때 shared access를 가질 수 있다. 공정성과 대기 중 writer 처리 방식은 별도로 확인해야 한다."}
     ],
     "correctChoiceKey": "D",
     "explanationMarkdown": "Read-write lock은 **read-only access의 공유와 write access의 배타성**을 분리한다. 메서드 이름이 아니라 실제 protected state를 변경하는지가 중요하며, writer가 lock을 소유한 동안 reader를 동시에 허용하는 것이 기본 목적은 아니다. Waiting writer가 있을 때 새 reader를 허용하는 정책은 구현 계약을 확인해야 한다."
@@ -230,10 +230,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.synchronization.lock-granularity"],
     "choices": [
-      {"key": "A", "content": "invariant reasoning은 단순해질 수 있지만 서로 독립적인 작업까지 같은 lock에서 직렬화할 수 있다", "displayOrder": 0},
-      {"key": "B", "content": "lock 수가 적으므로 어떤 workload에서도 contention이 생기지 않는다", "displayOrder": 1},
-      {"key": "C", "content": "여러 lock의 획득 순서를 관리해야 하므로 fine-grained locking보다 항상 deadlock 위험이 크다", "displayOrder": 2},
-      {"key": "D", "content": "protected state를 작게 나누므로 여러 영역의 병렬 접근이 자동으로 늘어난다", "displayOrder": 3}
+      {"key":"A","content":"invariant reasoning은 단순해질 수 있지만 서로 독립적인 작업까지 같은 lock에서 직렬화할 수 있다","displayOrder":0,"rationaleMarkdown":"큰 범위를 하나의 lock으로 보호하면 복합 불변 조건을 이해하기 쉬워질 수 있지만 서로 독립된 상태에 대한 연산도 직렬화할 수 있다. 단순한 정확성 추론과 동시성·경합 사이의 trade-off다."},
+      {"key":"B","content":"lock 수가 적으므로 어떤 workload에서도 contention이 생기지 않는다","displayOrder":1,"rationaleMarkdown":"lock 개수가 적으면 순서 규칙을 단순화할 수 있지만 여러 thread가 같은 lock을 필요로 하면 여전히 경합한다. lock 수만으로 workload에 경합이 없다고 보장할 수 없다."},
+      {"key":"C","content":"여러 lock의 획득 순서를 관리해야 하므로 fine-grained locking보다 항상 deadlock 위험이 크다","displayOrder":2,"rationaleMarkdown":"fine-grained locking은 순서 조합을 늘리지만 coarse locking도 다른 lock과 상호작용하면 deadlock이 생길 수 있다. deadlock 위험은 획득 protocol에 달렸으며 한 방식이 항상 안전한 것은 아니다."},
+      {"key":"D","content":"protected state를 작게 나누므로 여러 영역의 병렬 접근이 자동으로 늘어난다","displayOrder":3,"rationaleMarkdown":"coarse lock은 상태를 독립 구역으로 나누기보다 넓은 범위를 보호한다. 동시성을 자동으로 높이기보다 낮출 수 있다."}
     ],
     "correctChoiceKey": "A",
     "explanationMarkdown": "Coarse-grained lock은 큰 state 범위를 한 protocol로 보호하므로 composite invariant와 lock ordering을 추론하기 쉬워질 수 있다. 대신 서로 독립적인 작업도 같은 global lock을 기다려 **불필요한 serialization과 contention**이 생길 수 있다."
@@ -270,10 +270,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.synchronization.contention"],
     "choices": [
-      {"key": "A", "content": "코드에 mutex 객체가 하나라도 선언되어 있다", "displayOrder": 0},
-      {"key": "B", "content": "여러 execution이 같은 제한된 synchronization resource를 동시에 원해 wait·spin·retry가 실제로 발생한다", "displayOrder": 1},
-      {"key": "C", "content": "critical section이 짧으므로 동시 요청 수와 관계없이 대기가 절대 생기지 않는다", "displayOrder": 2},
-      {"key": "D", "content": "lock acquisition이 모두 즉시 성공하고 waiter가 존재하지 않는다", "displayOrder": 3}
+      {"key":"A","content":"코드에 mutex 객체가 하나라도 선언되어 있다","displayOrder":0,"rationaleMarkdown":"mutex를 선언했다는 사실만으로 thread가 그 mutex를 두고 경쟁한다고 볼 수 없다. 겹치는 요청 때문에 대기·spin·재시도가 생겨야 contention이다."},
+      {"key":"B","content":"여러 execution이 같은 제한된 synchronization resource를 동시에 원해 wait·spin·retry가 실제로 발생한다","displayOrder":1,"rationaleMarkdown":"높은 contention은 여러 실행이 같은 제한된 synchronization 지점을 동시에 요청해 실제로 대기·spin·재시도하는 상태다. 임계 구역이 짧아도 동시 요청이 충분히 많으면 hot spot이 될 수 있다."},
+      {"key":"C","content":"critical section이 짧으므로 동시 요청 수와 관계없이 대기가 절대 생기지 않는다","displayOrder":2,"rationaleMarkdown":"보유 시간이 짧으면 대기를 줄일 수 있지만 도착이 자주 겹치면 경합을 배제할 수 없다. contention은 도착률·보유 시간·가용 병렬 처리량에 좌우된다."},
+      {"key":"D","content":"lock acquisition이 모두 즉시 성공하고 waiter가 존재하지 않는다","displayOrder":3,"rationaleMarkdown":"모든 획득이 대기자 없이 즉시 끝난다면 lock을 사용하더라도 contention은 낮을 수 있다. lock이 있다는 것과 contention이 있다는 것은 같은 속성이 아니다."}
     ],
     "correctChoiceKey": "B",
     "explanationMarkdown": "Contention은 lock의 존재 여부가 아니라 **같은 serialization point를 여러 실행 흐름이 동시에 요구해 실제 대기나 retry가 생기는 정도**를 말한다. 짧은 critical section도 요청이 충분히 몰리면 hot point가 될 수 있고, 반대로 mutex가 있어도 경쟁이 드물면 contention은 낮을 수 있다."

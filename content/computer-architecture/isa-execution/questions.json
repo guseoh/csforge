@@ -8,10 +8,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.isa-execution.isa-vs-microarchitecture"],
     "choices": [
-      {"key": "A", "content": "L1 cache 크기는 ISA가 정의하므로 같은 ISA의 모든 CPU에서 동일하다.", "displayOrder": 0},
-      {"key": "B", "content": "ADD instruction의 architectural 결과는 ISA가 정의하고, pipeline 깊이는 microarchitecture가 선택할 수 있다.", "displayOrder": 1},
-      {"key": "C", "content": "branch predictor의 종류는 compiler가 의존할 수 있는 ISA contract다.", "displayOrder": 2},
-      {"key": "D", "content": "같은 ISA를 구현하면 모든 instruction의 cycle 수까지 동일해야 한다.", "displayOrder": 3}
+      {"key":"A","content":"L1 cache 크기는 ISA가 정의하므로 같은 ISA의 모든 CPU에서 동일하다.","displayOrder":0,"rationaleMarkdown":"ISA는 L1 cache 용량·associativity·latency처럼 구현 세부사항을 보통 고정하지 않는다. 같은 architecture 명령 계약을 서로 다른 cache hierarchy로 구현할 수 있다."},
+      {"key":"B","content":"ADD instruction의 architectural 결과는 ISA가 정의하고, pipeline 깊이는 microarchitecture가 선택할 수 있다.","displayOrder":1,"rationaleMarkdown":"ISA는 `ADD` 명령의 architecture상 결과와 외부에 보이는 exception을 정의한다. pipeline 단계 수는 그 동작을 유지하면서 달라질 수 있는 구현 선택이다."},
+      {"key":"C","content":"branch predictor의 종류는 compiler가 의존할 수 있는 ISA contract다.","displayOrder":2,"rationaleMarkdown":"branch predictor는 control flow를 추측하는 microarchitecture 메커니즘이다. software는 predictor 구조나 예측 결과와 관계없이 정확해야 한다."},
+      {"key":"D","content":"같은 ISA를 구현하면 모든 instruction의 cycle 수까지 동일해야 한다.","displayOrder":3,"rationaleMarkdown":"같은 ISA를 구현해도 microarchitecture에 따라 명령 latency와 throughput은 달라질 수 있다. ISA는 명령의 architecture상 동작을 정하지 보편적인 cycle 수를 정하지 않는다."}
     ],
     "correctChoiceKey": "B",
     "explanationMarkdown": "ISA는 instruction semantics 같은 architectural contract를 정의하지만 pipeline, cache, branch predictor, execution unit 등 microarchitecture는 달라질 수 있다. 같은 ISA가 보장하는 것은 instruction의 architectural semantics와 지원 feature이지 특정 지연 시간이 아니다."
@@ -47,10 +47,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.isa-execution.instruction-format"],
     "choices": [
-      {"key": "A", "content": "32개", "displayOrder": 0},
-      {"key": "B", "content": "16개", "displayOrder": 1},
-      {"key": "C", "content": "5개", "displayOrder": 2},
-      {"key": "D", "content": "64개", "displayOrder": 3}
+      {"key":"A","content":"32개","displayOrder":0,"rationaleMarkdown":"독립적인 5개 bit는 `2^5`가지 패턴을 만들므로 register index 32개를 표현할 수 있다. 번호를 0부터 매기면 index 0부터 31에 해당한다."},
+      {"key":"B","content":"16개","displayOrder":1,"rationaleMarkdown":"16개 값은 `2^4 = 16`이므로 4 bit만으로 표현된다. 5-bit field는 binary 자리가 하나 더 있어 패턴 수가 두 배다."},
+      {"key":"C","content":"5개","displayOrder":2,"rationaleMarkdown":"field의 bit 폭은 가능한 값의 개수가 아니다. 5개 bit가 각각 독립적으로 달라질 수 있어 5개가 아니라 32개 조합이 나온다."},
+      {"key":"D","content":"64개","displayOrder":3,"rationaleMarkdown":"서로 다른 index 64개를 표현하려면 6 bit가 필요하다. 5-bit field는 조합이 32개뿐이라 0부터 63까지 모두 표현할 수 없다."}
     ],
     "correctChoiceKey": "A",
     "explanationMarkdown": "5 bit field는 `2⁵=32`개의 서로 다른 bit pattern을 표현한다. 따라서 register index 0부터 31까지 구분할 수 있다."
@@ -86,10 +86,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.isa-execution.registers"],
     "choices": [
-      {"key": "A", "content": "cache는 항상 software-visible하지만 register는 software가 볼 수 없다.", "displayOrder": 0},
-      {"key": "B", "content": "register와 cache는 모두 ISA에서 동일한 index로 접근하는 같은 저장소다.", "displayOrder": 1},
-      {"key": "C", "content": "register는 instruction이 직접 이름으로 읽고 쓰는 architectural state이고, cache는 memory block의 복사본을 hardware가 관리한다.", "displayOrder": 2},
-      {"key": "D", "content": "register pressure가 증가하면 L1 cache line 수가 자동으로 늘어난다.", "displayOrder": 3}
+      {"key":"A","content":"cache는 항상 software-visible하지만 register는 software가 볼 수 없다.","displayOrder":0,"rationaleMarkdown":"architectural register는 ISA가 보이는 상태의 일부로 명령이 이름을 지정해 접근한다. cache 내용은 보통 hardware가 투명하게 관리하며 software가 cache line register를 선택해 쓰지 않는다."},
+      {"key":"B","content":"register와 cache는 모두 ISA에서 동일한 index로 접근하는 같은 저장소다.","displayOrder":1,"rationaleMarkdown":"register와 cache line은 역할과 주소 지정 방식이 다르다. 명령은 architectural register를 지정하고, hardware는 주소와 tag로 cache에서 memory block을 찾는다."},
+      {"key":"C","content":"register는 instruction이 직접 이름으로 읽고 쓰는 architectural state이고, cache는 memory block의 복사본을 hardware가 관리한다.","displayOrder":2,"rationaleMarkdown":"명령은 ISA가 이름 붙인 architectural register를 직접 읽고 쓴다. cache는 memory block의 hardware-managed 사본을 보관하므로 software가 cache line 번호를 일반 operand로 쓰지 않는다."},
+      {"key":"D","content":"register pressure가 증가하면 L1 cache line 수가 자동으로 늘어난다.","displayOrder":3,"rationaleMarkdown":"register가 부족하면 compiler가 stack이나 다른 메모리로 spill할 수 있지만 물리 cache line 개수가 바뀌는 것은 아니다. cache 용량은 hardware 속성이다."}
     ],
     "correctChoiceKey": "C",
     "explanationMarkdown": "Architectural register는 ISA가 이름과 읽기·쓰기 효과를 정의한 CPU state다. Cache는 memory block의 복사본을 hardware가 투명하게 관리하므로 instruction operand로 cache line 번호를 직접 지정하지 않는다."
@@ -125,10 +125,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.isa-execution.fetch-decode-execute"],
     "choices": [
-      {"key": "A", "content": "항상 DRAM 전체", "displayOrder": 0},
-      {"key": "B", "content": "항상 모든 general-purpose register", "displayOrder": 1},
-      {"key": "C", "content": "다음 PC", "displayOrder": 2},
-      {"key": "D", "content": "ISA 이름", "displayOrder": 3}
+      {"key":"A","content":"항상 DRAM 전체","displayOrder":0,"rationaleMarkdown":"taken branch는 control flow와 보통 다음 PC를 바꾸지만 모든 DRAM을 자동으로 다시 쓰지는 않는다. memory 변경은 명령 의미나 주변 연산이 store를 실행할 때 생긴다."},
+      {"key":"B","content":"항상 모든 general-purpose register","displayOrder":1,"rationaleMarkdown":"conditional branch는 실행 여부를 정하기 위해 operand나 condition 상태를 보통 읽는다. 모든 범용 register를 수정할 필요는 없으며 선택된 다음 주소를 반영하는 control-flow 상태가 달라진다."},
+      {"key":"C","content":"다음 PC","displayOrder":2,"rationaleMarkdown":"조건이 참이면 architecture상 다음 PC는 fall-through 주소 대신 branch target이 된다. 추측 pipeline 상태는 버려질 수 있지만 외부에 보이는 control-flow 결과는 변경된 PC다."},
+      {"key":"D","content":"ISA 이름","displayOrder":3,"rationaleMarkdown":"branch를 실행해도 processor 명령 의미를 정의하는 ISA가 바뀌지 않는다. branch는 architecture 이름이 아니라 다음 PC 같은 실행 상태를 갱신한다."}
     ],
     "correctChoiceKey": "C",
     "explanationMarkdown": "Taken branch는 architectural next PC를 fall-through가 아니라 target으로 바꾼다. Pipeline이 미리 fetch한 fall-through instruction은 prediction이 틀렸다면 architectural state에 반영되지 않도록 폐기해야 한다."
@@ -164,10 +164,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.isa-execution.addressing-modes"],
     "choices": [
-      {"key": "A", "content": "0x1024", "displayOrder": 0},
-      {"key": "B", "content": "0x1018", "displayOrder": 1},
-      {"key": "C", "content": "0x0FE8", "displayOrder": 2},
-      {"key": "D", "content": "24", "displayOrder": 3}
+      {"key":"A","content":"0x1024","displayOrder":0,"rationaleMarkdown":"offset은 십진수 24이며 16진수로 `0x18`이다. 이를 `0x1000`에 더하면 `0x1018`이 된다. `0x1024`는 십진수 숫자 24를 16진수 값으로 잘못 다뤘을 때 나온다."},
+      {"key":"B","content":"0x1018","displayOrder":1,"rationaleMarkdown":"이 RV32I load/store 형식에서 effective address는 base register 값과 sign-extended immediate의 합이다. 십진수 24는 `0x18`이므로 `0x1000 + 0x18 = 0x1018`이다."},
+      {"key":"C","content":"0x0FE8","displayOrder":2,"rationaleMarkdown":"양수 signed offset은 base에 더하며 빼지 않는다. `0x18`을 빼면 -24인 음수 offset에 해당한다."},
+      {"key":"D","content":"24","displayOrder":3,"rationaleMarkdown":"immediate는 주소 계산에 참여하지만 effective address 전체는 아니다. base register가 시작 주소이므로 두 값을 모두 더해야 한다."}
     ],
     "correctChoiceKey": "B",
     "explanationMarkdown": "Effective address는 base와 signed offset의 합이다. `0x1000 + 24(0x18) = 0x1018`이다."
@@ -203,10 +203,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.isa-execution.procedure-call-machine-level"],
     "choices": [
-      {"key": "A", "content": "callee가 모든 register를 보존하므로 caller-saved register 구분은 필요 없다.", "displayOrder": 0},
-      {"key": "B", "content": "모든 call은 ISA가 자동으로 모든 register를 stack에 저장한다.", "displayOrder": 1},
-      {"key": "C", "content": "return address는 어떤 경우에도 register에 있을 수 없다.", "displayOrder": 2},
-      {"key": "D", "content": "JAL/JALR 같은 control-transfer instruction과 ABI의 ra·argument·saved-register 규칙을 조합한다.", "displayOrder": 3}
+      {"key": "A", "content": "callee가 모든 register를 보존하므로 caller-saved register 구분은 필요 없다.", "displayOrder": 0, "rationaleMarkdown": "RISC-V 표준 ABI는 caller-saved와 callee-saved register를 구분한다. Callee-saved 값은 함수가 바꾸면 복원해야 하지만 caller-saved 값은 호출 뒤 보존된다고 가정할 수 없다."},
+      {"key": "B", "content": "모든 call은 ISA가 자동으로 모든 register를 stack에 저장한다.", "displayOrder": 1, "rationaleMarkdown": "JAL/JALR 같은 instruction은 control transfer와 return address 기록을 정의하지만 전체 register 저장을 자동으로 하지 않는다. 필요한 register를 stack에 보존하는 일은 compiler와 ABI 규칙에 따라 수행된다."},
+      {"key": "C", "content": "return address는 어떤 경우에도 register에 있을 수 없다.", "displayOrder": 2, "rationaleMarkdown": "RISC-V의 `ra` register는 return address를 담는 link register로 사용된다. 함수가 다른 함수를 호출하며 기존 return address를 보존해야 하는 경우에만 stack에 저장할 수 있다."},
+      {"key": "D", "content": "JAL/JALR 같은 control-transfer instruction과 ABI의 ra·argument·saved-register 규칙을 조합한다.", "displayOrder": 3, "rationaleMarkdown": "Call instruction은 return address를 register에 기록하고 control을 이동시키며, ABI는 argument·return·saved-register 사용 약속을 정한다. ISA 동작과 소프트웨어 calling convention이 함께 procedure call을 구성한다."}
     ],
     "correctChoiceKey": "D",
     "explanationMarkdown": "함수 경계를 넘어 어떤 register 값이 유지되는지 공통 ABI 약속이 필요하다. RISC-V 표준 ABI에서 s 계열은 callee-saved이므로 caller는 call 뒤에도 원래 값이 유지된다고 가정할 수 있다."
