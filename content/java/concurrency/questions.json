@@ -13,22 +13,26 @@
       {
         "key": "A",
         "content": "concurrency는 작업이 겹쳐 진행되는 구성이고 parallelism은 실제 동시 실행이다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "Concurrency는 여러 작업이 시간상 겹쳐 진척되는 것이고 parallelism은 여러 실행 자원이 동시에 작업하는 것이다. Concurrency에는 여러 CPU core가 필요하지 않다."
       },
       {
         "key": "B",
         "content": "둘은 Java에서 항상 같은 뜻이다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "두 개념은 관련 있지만 다르다. 한 thread가 작업을 번갈아 처리하면 parallelism 없이도 concurrency가 성립한다."
       },
       {
         "key": "C",
         "content": "parallelism은 항상 한 thread에서 번갈아 실행된다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "한 thread가 여러 작업을 interleave할 수 있지만 parallelism은 별도 실행 자원의 동시 수행을 뜻한다."
       },
       {
         "key": "D",
         "content": "concurrency는 오직 여러 CPU가 있을 때만 가능하다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "단일 core도 한 작업을 멈추고 다른 작업을 실행할 수 있어 여러 작업이 겹쳐 진척될 수 있다."
       }
     ],
     "correctChoiceKey": "A",
@@ -48,22 +52,26 @@
       {
         "key": "A",
         "content": "두 task가 반드시 취소된다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "time-slicing은 runnable 작업을 번갈아 실행할 뿐 취소하지 않는다. scheduler가 이후 각 작업을 다시 수행할 수 있다."
       },
       {
         "key": "B",
         "content": "두 task가 시간상 겹쳐 진행되는 concurrency는 가능하지만 같은 순간의 CPU 병렬 실행은 아니다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "한 core에서는 한 시점에 하나를 실행하지만 작업을 번갈아 진행해 시간 구간이 겹칠 수 있다. 이는 병렬 실행 없는 concurrency다."
       },
       {
         "key": "C",
         "content": "두 task는 언제나 같은 call stack을 공유한다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "같은 CPU core를 번갈아 쓴다고 별도 작업이 하나의 call stack을 공유하는 것은 아니다."
       },
       {
         "key": "D",
         "content": "두 task가 동시에 서로 다른 CPU core에서 실행된다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "문제에서 core가 하나이므로 여러 core에서 동시에 실행되는 parallelism은 일어나지 않는다."
       }
     ],
     "correctChoiceKey": "B",
@@ -83,22 +91,26 @@
       {
         "key": "A",
         "content": "OS가 모든 task를 같은 시각에 실행한다는 사실",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "scheduler는 runnable 상태, core 가용성, 대기 조건을 고려하므로 모든 작업을 같은 순간 실행할 수는 없다."
       },
       {
         "key": "B",
         "content": "CPU 수만 보고 무조건 무한히 증가",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "thread를 늘리면 stack, scheduling 비용, downstream 부담이 늘 수 있다. I/O 대기가 있어도 무제한 증가는 위험하다."
       },
       {
         "key": "C",
         "content": "대기 중 다른 task가 진행할 기회와 외부 resource 한도",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "한 작업이 I/O를 기다리는 동안 다른 작업이 실행될 수 있지만 DB/API 용량이 병목이 될 수 있다. 대기 특성과 외부 처리 한도를 함께 본다."
       },
       {
         "key": "D",
         "content": "thread를 늘리면 shared state가 immutable해진다는 사실",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "thread를 추가해도 공유 mutable 상태가 immutable해지지 않는다. 소유권을 분리하거나 동기화해야 한다."
       }
     ],
     "correctChoiceKey": "C",
@@ -118,22 +130,26 @@
       {
         "key": "A",
         "content": "thread 하나이므로 두 작업은 concurrency가 아니다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "단일 event loop도 A의 완료를 기다리는 동안 준비된 B를 실행할 수 있어 여러 작업의 진행을 관리하는 concurrency다."
       },
       {
         "key": "B",
         "content": "A가 응답을 기다리면 event loop도 반드시 blocking된다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "상황상 A의 대기는 event loop를 막지 않도록 보류되므로 응답 대기가 그 thread의 blocking을 뜻하지 않는다."
       },
       {
         "key": "C",
         "content": "두 작업이 서로 다른 CPU core에서 동시에 실행됐음이 증명된다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "한 thread가 A와 B를 처리해도 여러 CPU core의 동시 실행이 증명되지는 않는다."
       },
       {
         "key": "D",
         "content": "하나의 thread에서도 여러 작업이 겹쳐 진행되는 concurrency를 구성할 수 있지만 CPU parallelism을 뜻하지는 않는다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "event loop가 A의 대기 상태를 보유하고 준비된 B를 처리한다. 이는 concurrency이지 CPU parallelism의 증거는 아니다."
       }
     ],
     "correctChoiceKey": "D",
@@ -153,22 +169,26 @@
       {
         "key": "A",
         "content": "Runnable로 만든 platform Thread에서는 caller thread에서 task가 실행될 수 있지만 virtual Thread의 run()을 직접 호출하면 아무 동작도 하지 않는다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "Java 25에서 platform Thread의 run 직접 호출은 Runnable을 호출자 thread에서 실행하지만 virtual Thread의 직접 run은 아무 일도 하지 않는다. start가 thread 실행을 시작한다."
       },
       {
         "key": "B",
         "content": "platform과 virtual 모두 새 thread를 start한 것과 동일하다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "start는 별도 thread 실행을 예약한다. platform 작업의 run을 직접 불러도 새 thread를 만들지 않는다."
       },
       {
         "key": "C",
         "content": "virtual Thread에서만 새 OS thread가 만들어진다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "virtual Thread에서 run을 직접 부르면 OS thread가 생성되지 않는다. thread 실행 시작은 start의 역할이다."
       },
       {
         "key": "D",
         "content": "모든 Thread에서 IllegalThreadStateException이 반드시 발생한다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "run을 직접 불러도 항상 예외가 나지는 않는다. IllegalThreadStateException은 이미 시작한 Thread를 다시 start할 때 문제다."
       }
     ],
     "correctChoiceKey": "A",
@@ -188,22 +208,26 @@
       {
         "key": "A",
         "content": "RUNNABLE",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "RUNNABLE은 Thread.State에 정의된 상태다. OS scheduler가 더 세밀한 상태를 관리해도 Java enum에는 포함된다."
       },
       {
         "key": "B",
         "content": "SUSPENDED_BY_OS_CACHE",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "SUSPENDED_BY_OS_CACHE는 Thread.State 상수가 아니다. OS나 구현체 진단 정보와 Java의 공개 상태 enum을 구분한다."
       },
       {
         "key": "C",
         "content": "BLOCKED",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "BLOCKED는 monitor 획득 대기 상태다. 운영체제의 모든 종류의 대기를 부르는 이름은 아니다."
       },
       {
         "key": "D",
         "content": "NEW",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "NEW는 Thread 객체가 생성됐지만 아직 start되지 않은 상태를 나타낸다."
       }
     ],
     "correctChoiceKey": "B",
@@ -223,22 +247,26 @@
       {
         "key": "A",
         "content": "항상 InterruptedException을 caller에게 던진다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "interrupt를 호출한 쪽에서 InterruptedException이 발생하는 것은 아니다. 대상 thread가 관찰하도록 interrupt 요청을 전달한다."
       },
       {
         "key": "B",
         "content": "대상 thread를 강제로 즉시 종료한다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "interrupt는 협력적 취소 신호이지 thread를 강제 종료하는 명령이 아니다. 대상 코드나 interruptible API가 반응해야 한다."
       },
       {
         "key": "C",
         "content": "대상에게 취소를 협력적으로 처리할 신호를 보낸다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "대상은 요청 상태를 확인하거나 interruptible operation에서 InterruptedException을 받을 수 있고 그에 맞춰 정리할 수 있다."
       },
       {
         "key": "D",
         "content": "대상 thread의 모든 lock을 회수한다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "interrupt가 이미 보유한 lock을 강제로 회수하지 않는다. lock 해제는 정상적인 제어 흐름과 lock 계약을 따른다."
       }
     ],
     "correctChoiceKey": "C",
@@ -258,22 +286,26 @@
       {
         "key": "A",
         "content": "예외를 무조건 무시한다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "InterruptedException을 무시하고 계속하면 호출자가 전달한 취소 신호를 잃을 수 있다. 계속 실행할지 명시적 정책이 필요하다."
       },
       {
         "key": "B",
         "content": "start()를 다시 호출한다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "같은 Thread를 다시 start하는 것은 interrupt 보존 방법이 아니고 Thread는 한 번만 시작할 수 있다."
       },
       {
         "key": "C",
         "content": "interrupt flag를 false로 만든다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "예외가 난 뒤 상태를 지웠다면 요청이 자동 복구되지 않는다. 상위 계층에 알리려면 다시 interrupt할 수 있다."
       },
       {
         "key": "D",
         "content": "Thread.currentThread().interrupt()를 다시 호출한다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "일부 interruptible call은 InterruptedException을 던질 때 상태를 지운다. 예외를 전파하지 않고 복귀한다면 다시 interrupt해 신호를 보존한다."
       }
     ],
     "correctChoiceKey": "D",
@@ -293,22 +325,26 @@
       {
         "key": "A",
         "content": "작업 thread가 cleanup 후 return할 수 있다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "반복문이 취소 신호를 확인하고 sleep 예외 경로에서 return하므로 worker가 협력적으로 종료되어 정리 코드를 실행할 수 있다."
       },
       {
         "key": "B",
         "content": "작업이 즉시 JVM 전체를 종료한다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "worker 하나에 interrupt를 보내도 JVM이나 다른 thread가 종료되지는 않는다."
       },
       {
         "key": "C",
         "content": "interrupt가 영구적으로 무시된다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "코드가 interrupt를 확인하고 예외 경로에서 빠져나오므로 취소 요청을 영구 무시하지 않는다."
       },
       {
         "key": "D",
         "content": "join이 자동으로 호출된다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "interrupt는 join을 자동 호출하지 않는다. 호출자는 worker 종료를 기다릴지 별도로 정해야 한다."
       }
     ],
     "correctChoiceKey": "A",
@@ -328,22 +364,26 @@
       {
         "key": "A",
         "content": "join은 data를 자동 volatile로 바꾼다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "start/join은 memory consistency 순서를 제공하지만 field의 선언 타입을 바꾸거나 volatile로 만들지는 않는다."
       },
       {
         "key": "B",
         "content": "join은 worker의 모든 action을 B의 이후 action보다 앞서게 하는 edge를 제공한다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "start 전 action은 worker action보다 happens-before이고 worker action은 다른 thread의 성공적인 join 반환보다 happens-before다. 이를 통해 write와 후속 read가 연결된다."
       },
       {
         "key": "C",
         "content": "B는 반드시 data의 초기값만 읽는다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "start 전 쓰기는 worker 실행보다 앞서고 join 뒤 read는 worker 종료보다 뒤서므로 초기화 값이 동기화 부재로 가려지지 않는다."
       },
       {
         "key": "D",
         "content": "start와 join은 memory ordering과 무관하다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "Thread.start와 성공적인 join은 생명주기 처리 외에 명세된 memory consistency 효과도 제공한다."
       }
     ],
     "correctChoiceKey": "B",
@@ -363,22 +403,26 @@
       {
         "key": "A",
         "content": "CPU 작업에는 사용할 수 없다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "platform thread도 CPU 계산을 수행한다. thread 종류와 실행할 workload가 CPU인지 I/O인지 여부는 별개다."
       },
       {
         "key": "B",
         "content": "항상 user-mode에서만 실행된다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "platform thread는 보통 OS kernel thread와 일대일로 대응한다. user mode 전용이라고 보장되지 않는다."
       },
       {
         "key": "C",
         "content": "보통 OS kernel thread와 1:1로 매핑되는 실행 자원이다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "platform thread 수는 OS thread 자원과 stack 등으로 제한되므로 thread-per-request를 무제한 늘리기 어렵다."
       },
       {
         "key": "D",
         "content": "Thread.currentThread가 반환하지 않는다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "Thread.currentThread()는 현재 Java 실행 thread를 반환해 platform과 virtual 모두에서 쓸 수 있다."
       }
     ],
     "correctChoiceKey": "C",
@@ -398,22 +442,26 @@
       {
         "key": "A",
         "content": "긴 CPU 계산을 무제한으로 병렬화하는 task",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "virtual thread가 processor나 core 수를 늘리지는 않는다. 긴 CPU 작업은 가용 core와 scheduling 처리량에 제한된다."
       },
       {
         "key": "B",
         "content": "오직 class loading만 하는 task",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "virtual thread는 class loading 전용 기능이 아니라 일반 Java thread 실행 모델이다."
       },
       {
         "key": "C",
         "content": "OS process를 대체하는 task",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "virtual thread는 JVM이 관리하는 Java Thread이지 OS process를 대체하는 process abstraction이 아니다."
       },
       {
         "key": "D",
         "content": "대부분 blocking I/O를 기다리는 많은 동시 task",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "I/O에서 자주 block되는 많은 작업은 virtual thread로 표현해 대기 중에도 귀한 platform thread를 점유하지 않을 수 있다."
       }
     ],
     "correctChoiceKey": "D",
@@ -433,22 +481,26 @@
       {
         "key": "A",
         "content": "현재 실행 중인 virtual Thread 객체",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "Thread.currentThread()는 현재 실행을 나타내는 Java Thread를 돌려준다. virtual thread 안에서는 carrier가 아니라 virtual Thread다."
       },
       {
         "key": "B",
         "content": "항상 carrier platform Thread",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "carrier는 virtual thread를 실행하는 platform worker 자원이며 virtual thread 코드의 currentThread identity로 반환되지 않는다."
       },
       {
         "key": "C",
         "content": "OS process ID",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "Thread.currentThread() 반환은 Java Thread 객체이지 OS process ID가 아니다."
       },
       {
         "key": "D",
         "content": "null",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "Java 코드를 실행하는 virtual thread도 current Thread 객체가 있으므로 null이 반환되지 않는다."
       }
     ],
     "correctChoiceKey": "A",
@@ -468,22 +520,26 @@
       {
         "key": "A",
         "content": "모든 virtual thread가 하나의 carrier에 영구 고정된다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "virtual thread는 carrier에서 unmount된 뒤 다른 carrier에서 다시 실행될 수 있다. 하나에 영구 고정되는 것이 일반 계약은 아니다."
       },
       {
         "key": "B",
         "content": "virtual thread는 platform carrier 위에서 실행될 수 있지만 carrier 구성은 implementation 영역이다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "runtime은 platform carrier에서 virtual thread를 mount하고 block될 때 carrier를 재사용할 수 있다. 구체적 carrier 수와 scheduling은 구현 세부다."
       },
       {
         "key": "C",
         "content": "carrier가 virtual thread의 user-visible identity다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "carrier는 runtime 구현 자원이다. user code는 Thread.currentThread()로 virtual Thread identity를 본다."
       },
       {
         "key": "D",
         "content": "carrier 수와 scheduler 설정은 OS와 무관한 Java language guarantee다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "carrier 선택은 Java 언어 보장이 아니므로 이식 가능한 코드가 scheduler 내부에 의존하면 안 된다."
       }
     ],
     "correctChoiceKey": "B",
@@ -503,22 +559,26 @@
       {
         "key": "A",
         "content": "I/O 대기가 있으므로 제한이 필요 없다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "blocking I/O 동안 carrier를 돌려줘도 원격 server 처리 용량이 늘지는 않는다. downstream concurrency 제한은 별도다."
       },
       {
         "key": "B",
         "content": "virtual thread 수만큼 외부 요청을 허용한다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "virtual thread를 많이 만들어도 외부 service가 허용하는 동시 요청 수를 넘을 수 있다. local thread 수와 원격 처리 한도는 다른 자원이다."
       },
       {
         "key": "C",
         "content": "virtual thread와 별도로 Semaphore 등으로 외부 resource concurrency를 제한한다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "Semaphore나 제한된 connection pool로 동시 외부 요청을 100개로 제한하면서 각 업무를 virtual thread로 처리할 수 있다."
       },
       {
         "key": "D",
         "content": "virtual thread를 platform thread로 모두 바꾼다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "platform thread로 바꿔도 server limit은 늘지 않는다. 바뀌는 것은 주로 local 실행 자원의 비용과 관리다."
       }
     ],
     "correctChoiceKey": "C",
@@ -538,22 +598,26 @@
       {
         "key": "A",
         "content": "synchronized block에서 잠들면 Java 25에서도 반드시 carrier에 pin된다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "synchronized monitor 때문에 발생하던 pinning 설명은 이전 JDK 상황이다. JEP 491이 Java 24에서 그 제한을 제거해 Java 25 설명으로는 부정확하다."
       },
       {
         "key": "B",
         "content": "JDK 24 이후 synchronized 자체의 pinning 제약은 제거됐지만 native method나 foreign function 실행에서는 pinning이 생길 수 있다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "Java 25에서는 synchronized 사용 자체가 carrier pinning을 일으키지 않는다. 다만 native method나 foreign function 안에서 block하면 unmount되지 않아 pinning이 남을 수 있다."
       },
       {
         "key": "C",
         "content": "pinning이 발생하면 virtual thread의 Java semantics가 깨진다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "pinning은 block된 virtual thread가 carrier를 붙잡아 확장성을 낮출 수 있는 실행 현상이지 Java thread 의미론 위반은 아니다."
       },
       {
         "key": "D",
         "content": "virtual thread는 carrier를 사용하지 않으므로 pinning 개념 자체가 없다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "virtual thread는 platform carrier에서 실행된다. pinning은 그 thread가 block하면서 carrier에서 unmount할 수 없는 상황을 가리킨다."
       }
     ],
     "correctChoiceKey": "B",
@@ -573,22 +637,26 @@
       {
         "key": "A",
         "content": "read, add, write",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "increment는 현재 값을 읽고 1을 더한 뒤 저장하는 복합 과정이다. 중간에 다른 thread가 실행될 수 있다."
       },
       {
         "key": "B",
         "content": "lock, sleep, join",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "value++는 monitor를 획득하거나 sleep하지 않는다. 동기화 효과를 별도로 제공하지 않는다."
       },
       {
         "key": "C",
         "content": "parse, sort, poll",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "공유 숫자 하나를 갱신하는 작업이며 parsing, sort, queue removal은 increment를 구성하는 단계가 아니다."
       },
       {
         "key": "D",
         "content": "load, verify, initialize",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "class loading과 초기화는 object/type lifecycle이고 increment의 read-compute-write 과정과 무관하다."
       }
     ],
     "correctChoiceKey": "A",
@@ -608,22 +676,26 @@
       {
         "key": "A",
         "content": "항상 예외",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "동시 갱신 자체가 예외를 던지는 것은 아니다. 한 갱신이 다른 값을 덮는 lost update가 문제다."
       },
       {
         "key": "B",
         "content": "1이 되어 한 번의 update가 사라질 수 있다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "두 thread가 모두 0을 읽어 각자 1을 저장하면 한 write가 다른 write를 덮어 최종 값이 1일 수 있다."
       },
       {
         "key": "C",
         "content": "0만 가능",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "각 쓰기가 1을 저장하므로 0이 되지는 않지만 기대한 두 증가 중 하나가 사라질 수 있다."
       },
       {
         "key": "D",
         "content": "반드시 2",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "두 증가가 직렬로 연속 값에 적용되어야 2가 된다. 동시에 0을 읽으면 그 전제가 깨진다."
       }
     ],
     "correctChoiceKey": "B",
@@ -643,22 +715,26 @@
       {
         "key": "A",
         "content": "thread 생성문만",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "thread를 시작한다고 재고 확인과 차감이 하나의 atomic domain operation이 되지 않는다. 그 사이 다른 요청이 마지막 재고를 소비할 수 있다."
       },
       {
         "key": "B",
         "content": "확인만 또는 차감만",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "확인이나 차감 한 쪽만 보호하면 사이에 경쟁이 남는다. invariant는 확인부터 변경까지 전체 전이를 포함한다."
       },
       {
         "key": "C",
         "content": "재고 확인과 차감을 하나의 원자적 critical section으로 묶는 경계",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "가용성 확인과 차감을 하나의 critical section이나 동등한 atomic 전이로 처리해야 두 소비자가 같은 재고를 동시에 쓰지 않는다."
       },
       {
         "key": "D",
         "content": "출력문만",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "출력 순서가 아니라 stock을 확인하고 바꾸는 상태 전이 경계가 불변식을 보호한다."
       }
     ],
     "correctChoiceKey": "C",
@@ -678,22 +754,26 @@
       {
         "key": "A",
         "content": "최신 값을 보이면 read-modify-write도 자동 원자적이다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "최신 값을 볼 수 있어도 read-compute-write가 indivisible해지지는 않는다. 두 thread가 같은 값을 읽고 서로 덮을 수 있다."
       },
       {
         "key": "B",
         "content": "atomicity가 있으면 visibility는 항상 없다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "atomicity를 지원하더라도 visibility/order 여부는 별도다. 두 보장은 구분해서 검토해야 한다."
       },
       {
         "key": "C",
         "content": "둘 다 OS cache flush의 다른 이름이다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "visibility와 atomicity는 Java memory model상의 서로 다른 개념이지 OS cache flush를 뜻하는 말이 아니다."
       },
       {
         "key": "D",
         "content": "둘은 별개라 visibility 도구만으로 lost update를 막지 못할 수 있다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "visibility는 다른 thread가 값을 관찰하는 순서에 관한 것이고 atomicity는 복합 변경이 끼어들 수 있는지에 관한 것이다. visibility만 가진 flag는 lost update를 막지 못한다."
       }
     ],
     "correctChoiceKey": "D",
@@ -713,22 +793,26 @@
       {
         "key": "A",
         "content": "두 원자 변수의 갱신 사이에 invariant가 관찰될 수 있다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "각 AtomicInteger 연산은 개별로 원자적이어도 balance 변경과 ledger 기록 사이에 다른 thread가 끼어 중간 상태를 볼 수 있다."
       },
       {
         "key": "B",
         "content": "두 변수는 자동으로 하나의 transaction이 된다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "각 값 변경이 원자적이라는 사실만으로 두 값을 묶은 도메인 불변식 전체가 하나의 transaction이 되지는 않는다."
       },
       {
         "key": "C",
         "content": "AtomicInteger는 모든 field를 잠근다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "AtomicInteger는 자기 내부 값만 원자적으로 다룬다. 포함하는 객체의 다른 field까지 보호하지 않는다."
       },
       {
         "key": "D",
         "content": "두 값은 반드시 동시에 갱신된다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "별도 atomic 변수 변경은 둘이 동시에 관찰된다는 보장이 없어 중간 상태가 노출될 수 있다."
       }
     ],
     "correctChoiceKey": "A",
@@ -748,22 +832,26 @@
       {
         "key": "A",
         "content": "counter가 immutable해진다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "worker 수를 줄여도 mutable counter에 대한 공유 write는 그대로다. thread 수가 불변식을 바꾸지 않는다."
       },
       {
         "key": "B",
         "content": "interleaving 가능성이 줄 수 있어도 invariant 보호가 보장되지는 않는다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "경쟁이 줄어도 모든 실행 순서에서 정확하다는 보장은 없다. atomic operation이나 공통 동기화 경계로 보호한다."
       },
       {
         "key": "C",
         "content": "JMM edge가 자동 추가된다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "pool 크기 변경 자체는 happens-before를 만들지 않는다. 동기화 action이 메모리 순서를 보장한다."
       },
       {
         "key": "D",
         "content": "race가 언어 차원에서 해결된다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "race 여부는 충돌 가능한 공유 접근을 어떻게 보호하는지에 달려 있고 thread 수를 낮추는 것으로 정확성이 증명되지 않는다."
       }
     ],
     "correctChoiceKey": "B",
@@ -783,22 +871,26 @@
       {
         "key": "A",
         "content": "method의 return value",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "반환값은 메서드 결과이지 monitor가 아니다. synchronized instance method가 잠그는 대상은 receiver다."
       },
       {
         "key": "B",
         "content": "모든 객체의 공통 monitor",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "서로 다른 객체는 자동으로 하나의 전역 monitor를 공유하지 않는다. 같은 object를 잠그는 코드끼리 상호 배제된다."
       },
       {
         "key": "C",
         "content": "해당 객체 this",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "instance synchronized method는 실행 receiver인 this의 monitor를 획득해 해당 객체에서 동기화된 호출을 직렬화한다."
       },
       {
         "key": "D",
         "content": "현재 OS process",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "Java intrinsic monitor는 object에 연결되며 process 전체의 하나뿐인 lock이 아니다."
       }
     ],
     "correctChoiceKey": "C",
@@ -818,22 +910,26 @@
       {
         "key": "A",
         "content": "starvation",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "starvation은 자원이나 scheduling 경쟁으로 진행하지 못하는 상태다. 같은 owner의 monitor 재획득은 정상적인 reentrancy다."
       },
       {
         "key": "B",
         "content": "serialization",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "serialization은 순서 부여와 관련된 일반 용어다. 같은 thread가 monitor를 다시 획득하는 성질의 이름은 reentrant다."
       },
       {
         "key": "C",
         "content": "erasure",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "type erasure는 generics의 compile 과정이고 monitor 소유권과 관련없다."
       },
       {
         "key": "D",
         "content": "reentrancy",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "monitor를 소유한 thread는 같은 object에 대한 synchronized method/block을 다시 진입할 수 있다. monitor는 reentrant다."
       }
     ],
     "correctChoiceKey": "D",
@@ -853,22 +949,26 @@
       {
         "key": "A",
         "content": "서로 다른 객체 monitor를 사용할 수 있기 때문",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "instance synchronized method는 각 receiver의 monitor를 잠근다. 서로 다른 Counter 객체면 동시에 들어갈 수 있다."
       },
       {
         "key": "B",
         "content": "synchronized가 무시되기 때문",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "synchronized는 보호를 제공하지만 그 보호 단위는 객체별이다. 두 호출이 별도 receiver를 써서 병렬 실행될 수 있다."
       },
       {
         "key": "C",
         "content": "method가 static이기 때문",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "이들은 static method가 아니므로 class monitor가 아니라 호출별 instance monitor를 잠근다."
       },
       {
         "key": "D",
         "content": "두 객체가 자동으로 하나로 합쳐지기 때문",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "각 참조는 서로 다른 Counter 객체를 가리키므로 monitor identity도 다르다."
       }
     ],
     "correctChoiceKey": "A",
@@ -888,22 +988,26 @@
       {
         "key": "A",
         "content": "임의의 새 객체 monitor",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "static synchronized method는 임의 객체를 만들거나 호출자가 가진 local 변수의 monitor를 잠그지 않는다."
       },
       {
         "key": "B",
         "content": "해당 class의 Class 객체 monitor",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "static synchronized method는 선언 class의 Class 객체와 연결된 monitor를 획득한다."
       },
       {
         "key": "C",
         "content": "OS의 모든 thread lock",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "Class monitor는 같은 Class 객체 monitor를 사용하는 code와 상호 배제할 뿐 process의 모든 thread를 정지시키지 않는다."
       },
       {
         "key": "D",
         "content": "호출자의 local variable",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "local 변수는 호출별 값이지 static method가 공유하는 monitor identity가 아니다."
       }
     ],
     "correctChoiceKey": "B",
@@ -923,22 +1027,26 @@
       {
         "key": "A",
         "content": "다른 lock은 this와 항상 같은 객체다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "this와 별도 lock object는 서로 다른 instance다. 같은 이름의 임계 영역이어도 monitor가 같지 않으면 상호 배제가 성립하지 않는다."
       },
       {
         "key": "B",
         "content": "reentrant가 자동 보정한다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "reentrancy는 한 monitor를 같은 소유자가 다시 획득하게 한다. 서로 다른 lock 두 개를 하나의 보호 경계로 합치지 않는다."
       },
       {
         "key": "C",
         "content": "같은 state에 대해 하나의 공통 monitor를 사용하지 않아 보호가 깨진다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "writer와 reader가 각자 다른 monitor를 잠가도 unlock/lock happens-before edge가 없다. 공유 상태에 대한 보호와 visibility가 연결되지 않는다."
       },
       {
         "key": "D",
         "content": "read가 항상 최신 값을 반환한다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "다른 lock으로 읽으면 writer의 unlock과 순서 관계가 없으므로 최신 값 관찰을 보장하지 않는다."
       }
     ],
     "correctChoiceKey": "C",
@@ -958,22 +1066,26 @@
       {
         "key": "A",
         "content": "항상 deadlock이 난다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "현재 owner가 동일 monitor를 다시 획득하는 것은 Java monitor의 reentrancy라 그 자체로 deadlock이 아니다."
       },
       {
         "key": "B",
         "content": "monitor가 해제되어 모두 진입한다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "재진입은 다른 thread에 monitor를 넘기지 않는다. 가장 바깥 synchronized 구간이 끝날 때까지 소유가 유지된다."
       },
       {
         "key": "C",
         "content": "호출이 compile되지 않는다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "이미 같은 object의 synchronized block 안에서 그 객체의 synchronized method를 호출하는 코드는 합법적이다."
       },
       {
         "key": "D",
         "content": "같은 thread의 재진입이 가능하지만 다른 thread는 여전히 monitor를 기다린다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "같은 thread는 monitor를 재획득할 수 있지만 다른 thread는 해제될 때까지 대기한다. 재진입과 상호 배제는 함께 성립한다."
       }
     ],
     "correctChoiceKey": "D",
@@ -993,22 +1105,26 @@
       {
         "key": "A",
         "content": "앞선 action이 뒤 action보다 happens-before한다는 관계",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "한 thread 안의 program order는 앞선 action에서 뒤 action으로 happens-before 관계를 만든다. 이것만으로 다른 thread와의 순서까지 만들지는 않는다."
       },
       {
         "key": "B",
         "content": "모든 thread의 동시에 같은 순서",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "각 thread의 program order만으로 모든 thread를 하나의 전체 순서로 정할 수 없다. cross-thread ordering에는 synchronization edge가 필요하다."
       },
       {
         "key": "C",
         "content": "OS cache flush 명령",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "happens-before는 Java Memory Model의 추상 순서 규칙이지 특정 CPU cache 명령 자체가 아니다."
       },
       {
         "key": "D",
         "content": "자동 lock ownership",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "program order는 monitor를 획득하거나 소유자를 정하지 않는다. lock ownership은 synchronization operation의 결과다."
       }
     ],
     "correctChoiceKey": "A",
@@ -1028,22 +1144,26 @@
       {
         "key": "A",
         "content": "둘은 항상 독립이다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "같은 monitor의 unlock과 이후 lock은 synchronization 관계가 있다. 이를 무시하면 visibility 보장을 놓친다."
       },
       {
         "key": "B",
         "content": "unlock이 이후 lock보다 happens-before한다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "monitor unlock은 이후 같은 monitor를 lock하는 action보다 happens-before다. program order와 함께 앞선 write가 후속 read에 보일 수 있다."
       },
       {
         "key": "C",
         "content": "unlock은 volatile로 변한다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "monitor edge는 field 선언을 volatile로 바꾸지 않는다. 별도 synchronization relation으로 순서를 만든다."
       },
       {
         "key": "D",
         "content": "lock이 과거 unlock을 취소한다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "이후 lock이 앞선 write를 지우는 게 아니라 두 보호 구역 사이의 메모리 순서를 설정한다."
       }
     ],
     "correctChoiceKey": "B",
@@ -1063,22 +1183,26 @@
       {
         "key": "A",
         "content": "thread termination",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "volatile 접근의 memory ordering은 thread를 종료시키지 않는다. thread lifecycle 완료는 별도 사건이다."
       },
       {
         "key": "B",
         "content": "mutual exclusion lock",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "volatile은 monitor를 획득하거나 다른 thread와 상호 배제하는 lock이 아니다."
       },
       {
         "key": "C",
         "content": "happens-before 관계를 통한 visibility/order 효과",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "volatile field write는 그 뒤 같은 field를 읽는 접근보다 happens-before가 되어 monitor 없이 명세된 visibility와 ordering을 제공한다."
       },
       {
         "key": "D",
         "content": "객체 deep copy",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "volatile은 object graph를 복사하지 않고 field나 reference 접근의 순서 관계를 정한다."
       }
     ],
     "correctChoiceKey": "C",
@@ -1098,22 +1222,26 @@
       {
         "key": "A",
         "content": "둘 다 단순 naming API다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "start와 join은 이름만 붙은 호출이 아니라 thread 실행과 대기를 제어하고 memory consistency 효과도 있다."
       },
       {
         "key": "B",
         "content": "join만 새 thread를 시작한다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "start는 대상 thread의 실행을 시작시키고 join은 그 thread가 끝날 때까지 기다린다. 역할이 다르다."
       },
       {
         "key": "C",
         "content": "start는 이전 write를 지운다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "start가 이전 write를 지우지 않는다. start 전 action은 새 thread action보다 먼저 보장된다."
       },
       {
         "key": "D",
         "content": "start는 새 thread action 전에, successful join은 종료 전 action을 join 이후에 연결한다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "Thread API는 start 전 action이 시작된 thread action보다 happens-before이고 종료한 thread action은 다른 thread의 성공적인 join 반환보다 happens-before라고 규정한다."
       }
     ],
     "correctChoiceKey": "D",
@@ -1133,22 +1261,26 @@
       {
         "key": "A",
         "content": "program order와 unlock-lock edge의 transitivity",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "A가 write한 뒤 unlock하고, 같은 Lock의 뒤이은 successful lock이 그 unlock보다 happens-after다. B의 program order가 그 다음 read까지 연결한다."
       },
       {
         "key": "B",
         "content": "B의 CPU cache가 항상 먼저 flush되기 때문",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "보장은 특정 CPU가 먼저 cache를 flush한다는 가정이 아니라 Lock과 Java memory model 계약에서 나온다."
       },
       {
         "key": "C",
         "content": "lock이 data를 복사했기 때문",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "lock이 data를 복사하는 게 아니다. 같은 lock의 release/acquire ordering이 접근을 연결한다."
       },
       {
         "key": "D",
         "content": "data가 final이기 때문",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "여기서 data는 final일 필요가 없다. synchronization edge가 write와 read 사이의 순서를 만든다."
       }
     ],
     "correctChoiceKey": "A",
@@ -1168,22 +1300,26 @@
       {
         "key": "A",
         "content": "data가 volatile이 아니므로 어떤 edge도 불가능하다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "data는 일반 field여도 volatile ready write/read가 happens-before 경계를 만들 수 있다."
       },
       {
         "key": "B",
         "content": "volatile edge가 A의 앞선 write를 B의 이후 action에 연결할 수 있다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "data write 뒤에 volatile write가 있고 reader가 그 write를 volatile read로 관찰하면 이후 data read까지 transitive order가 연결된다."
       },
       {
         "key": "C",
         "content": "B가 반드시 0을 읽는다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "volatile ordering edge를 통해 일반 field를 safe publication할 수 있어 이 visibility 경로에 모든 field를 volatile로 만들 필요는 없다."
       },
       {
         "key": "D",
         "content": "ready volatile은 data write를 항상 무관하게 만든다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "matching volatile write/read가 publication 경계 역할을 한다. 순서를 끊지 않는다."
       }
     ],
     "correctChoiceKey": "B",
@@ -1203,22 +1339,26 @@
       {
         "key": "A",
         "content": "constructor가 실행되지 않기 때문",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "객체 constructor는 실행되지만 reference를 전달받은 다른 thread가 초기화 상태를 관찰하도록 ordering이 있는지가 쟁점이다."
       },
       {
         "key": "B",
         "content": "모든 객체가 stack에 있기 때문",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "객체가 stack에 놓이는지는 publication 계약이 아니다. JVM의 물리 저장 위치를 전제로 하지 않는다."
       },
       {
         "key": "C",
         "content": "다른 thread가 객체 초기화 결과를 보게 될 관계를 보장해야 하기 때문",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "reference만 공유하면 초기화 write의 visibility가 보장되지 않는다. volatile, 같은 lock 등 happens-before publication을 사용한다."
       },
       {
         "key": "D",
         "content": "final field가 항상 mutable하기 때문",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "final field는 해당 final 초기화 의미를 가진다. 기본적으로 언제나 mutable한 field가 아니다."
       }
     ],
     "correctChoiceKey": "C",
@@ -1238,22 +1378,26 @@
       {
         "key": "A",
         "content": "생성자에서 private field를 대입한다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "constructor 안에서 객체의 private field를 대입하는 것은 정상 초기화이며 그 자체로 reference를 외부에 노출하지 않는다."
       },
       {
         "key": "B",
         "content": "factory가 new를 호출한다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "factory에서 new를 호출했다고 constructor 완료 전에 다른 코드가 객체를 자동으로 관찰하는 것은 아니다."
       },
       {
         "key": "C",
         "content": "지역 변수를 return한다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "construction이 끝난 뒤 local reference를 반환하는 것과 constructor 도중 this를 외부에 전달하는 것은 다르다."
       },
       {
         "key": "D",
         "content": "생성자 안에서 this를 전역 registry나 callback에 전달한다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "constructor가 this를 registry나 callback에 넘기면 construction 완료 전에 외부 코드가 미완성 객체를 관찰할 수 있다."
       }
     ],
     "correctChoiceKey": "D",
@@ -1273,22 +1417,26 @@
       {
         "key": "A",
         "content": "reference 재대입은 제한하지만 list 내부 변경까지 deep immutable하게 만들지는 않는다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "final은 List reference의 재대입을 막고 final field 초기화 의미를 제공하지만 mutable List의 내용까지 immutable로 만들지 않는다."
       },
       {
         "key": "B",
         "content": "list의 모든 원소가 자동 복사된다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "final reference가 List나 그 요소들을 복사하지 않는다. 다른 alias가 같은 객체를 수정할 수 있다."
       },
       {
         "key": "C",
         "content": "final은 publication과 무관하다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "JLS는 올바르게 생성되고 constructor 중 this가 escape하지 않은 경우 final field에 특별한 initialization visibility semantics를 보장한다."
       },
       {
         "key": "D",
         "content": "final reference는 null만 저장한다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "final reference field에는 constructor에서 non-null List를 대입할 수 있다. null만 허용되는 것은 아니다."
       }
     ],
     "correctChoiceKey": "A",
@@ -1308,22 +1456,26 @@
       {
         "key": "A",
         "content": "동기화 없는 전역 대입만",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "일반 공유 reference에 동기화 없이 대입하는 것만으로는 cross-thread happens-before publication이 생기지 않는다."
       },
       {
         "key": "B",
         "content": "volatile 참조 교체",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "완성된 object reference를 volatile field에 쓰고 reader가 그 volatile field를 읽으면 publication 전 초기화 action과 reader 사이 ordering이 생긴다."
       },
       {
         "key": "C",
         "content": "객체의 toString 호출",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "toString은 값을 formatting하지만 writer와 reader 사이 synchronization을 만들지 않는다."
       },
       {
         "key": "D",
         "content": "무관한 local variable 읽기",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "관계없는 local variable을 읽어도 shared object 초기화와 cross-thread 순서가 만들어지지 않는다."
       }
     ],
     "correctChoiceKey": "B",
@@ -1343,22 +1495,26 @@
       {
         "key": "A",
         "content": "volatile은 참조를 publish할 수 없다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "volatile reference의 write/read는 생성된 객체를 publish할 수 있어 이를 읽은 thread가 앞선 초기화 write를 관찰한다."
       },
       {
         "key": "B",
         "content": "current volatile이 hosts를 deep freeze한다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "reference를 publish해도 List가 deep immutable해지지 않는다. 이후 mutation에는 소유권이나 synchronization 정책이 필요하다."
       },
       {
         "key": "C",
         "content": "참조와 초기 final 상태의 publication은 돕지만 hosts를 이후 mutate하면 별도 보호가 필요하다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "volatile write/read는 Config의 초기 상태를 publish하고 final port에는 final-field semantics도 적용된다. 이후 hosts List 변경은 별도 보호가 필요하다."
       },
       {
         "key": "D",
         "content": "final port가 hosts 변경도 lock한다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "port가 final이어도 다른 object의 List를 잠그거나 이후 변경을 제한하지 않는다."
       }
     ],
     "correctChoiceKey": "C",
@@ -1378,22 +1534,26 @@
       {
         "key": "A",
         "content": "final field는 compile되지 않기 때문이다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "final field는 유효한 Java field다. 위험은 compile이 아니라 constructor와 safe publication 전에 reference를 노출하는 것이다."
       },
       {
         "key": "B",
         "content": "callback은 항상 같은 thread에서만 실행되기 때문이다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "callback이 다른 thread에서 실행될 수도 있어 동일 thread라고 가정해도 publication 안전성을 얻지 못한다."
       },
       {
         "key": "C",
         "content": "this는 객체 참조가 아니기 때문이다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "this는 생성 중인 현재 객체의 reference이며 callback 등 외부와 공유될 수 있다."
       },
       {
         "key": "D",
         "content": "constructor escape가 초기화 완료와 publication 경계를 앞질러 갈 수 있기 때문이다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "조기 escape는 construction 도중 외부가 객체를 관찰하게 한다. final-field semantics도 일반 reference의 전체 publication protocol을 대체하지 않는다."
       }
     ],
     "correctChoiceKey": "D",
@@ -1413,22 +1573,26 @@
       {
         "key": "A",
         "content": "visibility와 ordering 효과",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "volatile field의 read/write는 명세된 visibility와 ordering 효과를 제공해 독립적인 상태 표시나 안전한 publication에 쓸 수 있다."
       },
       {
         "key": "B",
         "content": "복합 연산 전체의 mutual exclusion",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "volatile은 monitor lock이 아니므로 여러 접근을 묶어 상호 배제하거나 복합 연산을 원자적으로 만들지 않는다."
       },
       {
         "key": "C",
         "content": "deep copy",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "volatile 선언은 객체나 참조 그래프를 복제하지 않는다. 가리키는 데이터 보호는 별도다."
       },
       {
         "key": "D",
         "content": "thread 강제 종료",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "volatile flag 변경은 thread를 종료하지 않는다. 다른 thread가 값을 관찰하고 종료 절차를 수행해야 한다."
       }
     ],
     "correctChoiceKey": "A",
@@ -1448,22 +1612,26 @@
       {
         "key": "A",
         "content": "volatile이 sleep을 대체해서",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "volatile은 sleep/wakeup API가 아니다. 해당 field 접근의 메모리 일관성 규칙을 제공한다."
       },
       {
         "key": "B",
         "content": "한 thread의 stop write를 다른 thread가 관찰해야 해서",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "writer가 volatile flag를 쓰고 reader가 같은 field를 polling하면 stop 신호가 보일 수 있다. 실제 종료 동작은 reader가 수행한다."
       },
       {
         "key": "C",
         "content": "volatile이 OS scheduler를 고정해서",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "volatile은 scheduler 우선순위나 다음에 실행될 thread를 정하지 않는다."
       },
       {
         "key": "D",
         "content": "stop=true가 모든 state를 atomic하게 갱신해서",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "volatile flag 한 개의 update가 다른 모든 application field까지 하나의 transaction으로 바꾸지 않는다."
       }
     ],
     "correctChoiceKey": "B",
@@ -1483,22 +1651,26 @@
       {
         "key": "A",
         "content": "count++는 항상 compile 오류이기 때문",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "volatile int를 증가시키는 코드는 문법상 가능하다. 문제는 복합 갱신에서 동시 update를 잃을 수 있다는 점이다."
       },
       {
         "key": "B",
         "content": "volatile은 read를 금지하기 때문",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "volatile도 field read를 허용한다. 읽기·쓰기의 ordering과 visibility 효과를 정한다."
       },
       {
         "key": "C",
         "content": "read-add-write 여러 action이 하나로 원자화되지 않기 때문",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "증가는 기존 값을 읽고 계산한 뒤 쓰는 여러 단계다. volatile 접근이 있어도 이 전체 단계를 원자적으로 묶지는 않는다."
       },
       {
         "key": "D",
         "content": "int는 volatile이 될 수 없기 때문",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "Java primitive field에도 volatile을 선언할 수 있다. int라서 제한되는 것이 아니다."
       }
     ],
     "correctChoiceKey": "C",
@@ -1518,22 +1690,26 @@
       {
         "key": "A",
         "content": "CPU는 cache를 전혀 사용하지 않기 때문",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "CPU cache가 관여할 수 있어도 portable Java 의미는 특정 하드웨어 cache 동작을 가정하지 않고 memory model로 설명한다."
       },
       {
         "key": "B",
         "content": "volatile은 Java keyword가 아니기 때문",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "volatile은 JVM 실행 모델에 정의된 Java field modifier다."
       },
       {
         "key": "C",
         "content": "OS가 항상 같은 cache를 쓰기 때문",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "processor마다 memory ordering 구현이 다를 수 있어 특정 cache 구조를 Java 보장으로 일반화하면 이식성이 없다."
       },
       {
         "key": "D",
         "content": "정확한 Java guarantee는 JMM happens-before와 메모리 일관성이며 하드웨어 구현은 별도이기 때문",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "Java가 약속하는 것은 volatile 접근의 happens-before/memory consistency 효과이며, fence 같은 구체 기법은 구현 수단이다."
       }
     ],
     "correctChoiceKey": "D",
@@ -1553,22 +1729,26 @@
       {
         "key": "A",
         "content": "최종 count가 1이 될 수 있다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "두 thread가 모두 0을 읽고 각각 1을 쓰면 write는 보이더라도 한 번이 덮인다. 그래서 결과 1이 가능하다."
       },
       {
         "key": "B",
         "content": "반드시 2다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "volatile은 read-add-write를 직렬화하지 않아 두 번의 increment가 반드시 2를 만드는 것은 아니다."
       },
       {
         "key": "C",
         "content": "항상 -1이다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "0에서 양수 증가만 하는 코드가 음수 -1을 만드는 race는 아니다. 핵심은 update 유실이다."
       },
       {
         "key": "D",
         "content": "volatile이 예외를 던진다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "volatile 접근은 동시 실행 중 exception을 자동 발생시키지 않는다. 여기서 문제는 복합 갱신의 비원자성이다."
       }
     ],
     "correctChoiceKey": "A",
@@ -1588,22 +1768,26 @@
       {
         "key": "A",
         "content": "consumer가 반드시 data의 기본값을 읽는다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "reader가 ready=true volatile write를 관찰하면 앞선 data write와 뒤의 data read 사이에 happens-before 경로가 생겨 값을 볼 수 있다."
       },
       {
         "key": "B",
         "content": "ready write/read edge와 program order로 앞선 data write가 연결된다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "producer의 일반 data write가 volatile write보다 앞서고 reader의 volatile read 다음 data read가 실행된다. 순서 관계의 transitivity로 publication이 성립한다."
       },
       {
         "key": "C",
         "content": "data를 volatile로 선언해야만 어떠한 visibility도 가능하다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "적절한 volatile publication edge가 있으면 data field 자체까지 volatile일 필요는 없다. 단, 동일 synchronization protocol을 따라야 한다."
       },
       {
         "key": "D",
         "content": "ready가 volatile이어도 모든 관계가 단절된다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "이 예제에서 volatile flag는 일반 data를 reader에게 공개하는 순서 경계 역할을 한다."
       }
     ],
     "correctChoiceKey": "B",
@@ -1623,22 +1807,26 @@
       {
         "key": "A",
         "content": "lock을 영구 점유한다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "CAS는 값을 조건에 따라 atomically 갱신하며 monitor ownership처럼 계속 잡고 있는 lock을 획득하지 않는다."
       },
       {
         "key": "B",
         "content": "현재 값과 무관하게 update한다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "현재 값이 expected와 다르면 compareAndSet은 update 값을 무조건 저장하지 않고 실패를 보고한다."
       },
       {
         "key": "C",
         "content": "현재 값이 expected와 일치할 때 update로 바꾼다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "compareAndSet은 현재 값이 expected와 같을 때에만 새 값으로 원자적으로 바꾸고 성공 여부를 boolean으로 돌려준다."
       },
       {
         "key": "D",
         "content": "expected를 항상 반환한다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "compareAndSet의 반환값은 비교한 값이 아니라 conditional update의 성공 여부다."
       }
     ],
     "correctChoiceKey": "C",
@@ -1658,22 +1846,26 @@
       {
         "key": "A",
         "content": "항상 예외가 발생했다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "강한 compareAndSet은 expected가 현재 값과 맞지 않으면 보통 false를 돌려준다. 비교 실패 자체가 예외는 아니다."
       },
       {
         "key": "B",
         "content": "변수가 삭제되었다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "CAS 실패는 공유 변수나 메모리 저장소를 삭제하지 않는다. 요청한 갱신이 적용되지 않았다는 뜻이다."
       },
       {
         "key": "C",
         "content": "다른 모든 thread가 종료되었다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "한 thread의 비교 실패가 다른 thread를 종료시키지 않는다. 각 호출자는 실패에 맞게 재시도 여부를 판단한다."
       },
       {
         "key": "D",
         "content": "조건이 맞지 않아 해당 update가 적용되지 않았다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "실패한 시도는 새 값이 적용되지 않았음을 뜻한다. 필요하면 현재 상태를 다시 읽고 도메인 정책에 따라 재시도한다."
       }
     ],
     "correctChoiceKey": "D",
@@ -1693,22 +1885,26 @@
       {
         "key": "A",
         "content": "새 current를 읽고 next를 다시 계산한다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "비교 실패면 계산에 사용한 관찰값이 낡았을 수 있다. 최신 값을 다시 읽고 그 상태에서 다음 값을 계산한다."
       },
       {
         "key": "B",
         "content": "오래된 expected를 계속 무한히 사용한다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "오래된 expected를 반복 사용하면 새로 바뀐 current와 계속 일치하지 않을 수 있다. 재시도 경로에서 관찰값을 갱신한다."
       },
       {
         "key": "C",
         "content": "변수를 null로 만든다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "CAS failure만으로 변수를 null로 재설정할 근거가 없다. 원래 상태 전이 규칙을 따른다."
       },
       {
         "key": "D",
         "content": "무조건 lock을 해제한다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "CAS는 Lock.lock 호출이 아니다. 실패해도 lock을 해제할 상태는 없다."
       }
     ],
     "correctChoiceKey": "A",
@@ -1728,22 +1924,26 @@
       {
         "key": "A",
         "content": "모든 multi-field invariant가 자동 보호된다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "한 변수의 CAS는 다른 field를 함께 갱신하지 않으므로 여러 field에 걸친 불변식이 자동 보호되지 않는다."
       },
       {
         "key": "B",
         "content": "retry와 CPU 사용이 늘 수 있다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "경쟁 중 다른 thread가 값을 먼저 바꾸면 CAS가 실패하고 재계산이 반복되어 CPU work가 늘 수 있다."
       },
       {
         "key": "C",
         "content": "CAS가 항상 blocking된다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "CAS가 mutex처럼 block하지는 않는다. 호출자가 retry loop를 쓰면 스스로 계속 시도할 수 있다."
       },
       {
         "key": "D",
         "content": "실패가 항상 sleep으로 바뀐다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "CAS API가 failure 뒤 자동 sleep이나 yield를 보장하지 않는다. 필요한 backoff는 별도 정책이다."
       }
     ],
     "correctChoiceKey": "B",
@@ -1763,22 +1963,26 @@
       {
         "key": "A",
         "content": "CAS가 두 update를 합쳐 11이 된다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "CAS는 값을 더하는 연산이 아니다. 현재 값이 여전히 5일 때만 7로 바꾼다."
       },
       {
         "key": "B",
         "content": "true이고 count는 7이 된다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "현재 값은 6이고 expected는 5라 비교가 실패해 요청한 갱신은 적용되지 않는다."
       },
       {
         "key": "C",
         "content": "false이고 count는 6으로 남는다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "6과 expected 5가 다르므로 compareAndSet은 false를 반환하고 다른 thread가 기록한 6을 유지한다."
       },
       {
         "key": "D",
         "content": "예외와 함께 count는 5로 복구된다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "CAS 실패는 예외를 던지거나 다른 thread의 완료된 write를 rollback하지 않는다."
       }
     ],
     "correctChoiceKey": "C",
@@ -1798,22 +2002,26 @@
       {
         "key": "A",
         "content": "CAS는 한 field도 보호하지 않기 때문",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "CAS는 하나의 값을 원자적으로 보호할 수 있다. 별도 변수 둘에 걸친 invariant를 묶지는 않는다."
       },
       {
         "key": "B",
         "content": "두 Atomic 변수가 항상 같은 memory location이기 때문",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "서로 다른 Atomic 변수는 각기 독립된 저장 위치이지 자동으로 하나의 값을 공유하지 않는다."
       },
       {
         "key": "C",
         "content": "version은 Java에서 갱신할 수 없기 때문",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "정수 version 자체는 갱신할 수 있다. 문제는 그 변수를 balance와 함께 조정하는 것이다."
       },
       {
         "key": "D",
         "content": "두 성공 사이에 다른 thread가 관찰하거나 개입할 수 있어 하나의 invariant 단위가 아니기 때문",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "balance와 version을 따로 CAS하면 두 호출 사이에 다른 thread가 관찰하거나 끼어들 수 있다. 여러 field의 한 전이에는 더 넓은 동기화나 단일 immutable state를 쓴다."
       }
     ],
     "correctChoiceKey": "D",
@@ -1833,22 +2041,26 @@
       {
         "key": "A",
         "content": "finally block",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "lock 획득 뒤 작업은 try 안에 두고 finally에서 해제하면 정상 완료와 예외 경로 모두 lock을 놓는다."
       },
       {
         "key": "B",
         "content": "catch를 생략한 곳",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "catch가 없어도 예외가 ReentrantLock을 자동 해제하지 않는다. 예외가 전파되며 lock 소유가 남을 수 있다."
       },
       {
         "key": "C",
         "content": "constructor 밖 임의 위치",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "임의 위치에서 unlock하면 획득 전이거나 일부 종료 경로에서 빠질 수 있어 임계 구역을 안전하게 감싸지 못한다."
       },
       {
         "key": "D",
         "content": "절대 호출하지 않는다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "ReentrantLock은 명시적으로 해제해야 한다. 생략하면 대기자가 계속 막힐 수 있다."
       }
     ],
     "correctChoiceKey": "A",
@@ -1868,22 +2080,26 @@
       {
         "key": "A",
         "content": "if 한 번만 검사하고 항상 조건이 참이라고 믿는다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "signal이나 wakeup을 받았다고 predicate가 계속 true라는 보장은 없다. lock을 다시 얻는 동안 상태가 바뀔 수 있어 재확인한다."
       },
       {
         "key": "B",
         "content": "lock을 보유한 채 predicate를 while로 검사한다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "await는 기다리는 동안 관련 lock을 놓고 반환 전 다시 획득한다. while에서 predicate를 확인하면 다른 consumer의 상태 변경과 spurious wakeup을 처리한다."
       },
       {
         "key": "C",
         "content": "await가 thread를 강제 종료한다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "await는 caller thread를 종료하지 않고 기다리게 한 뒤 조건이 신호되면 다시 진행하게 한다."
       },
       {
         "key": "D",
         "content": "lock 없이 아무 때나 호출한다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "Condition.await는 연관 lock을 소유한 상태에서 호출해야 lock을 원자적으로 놓고 기다렸다가 재획득할 수 있다."
       }
     ],
     "correctChoiceKey": "B",
@@ -1903,22 +2119,26 @@
       {
         "key": "A",
         "content": "OS scheduler 직접 제어",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "Lock은 JVM 내 lock policy를 제공하지만 OS scheduler를 직접 통제하지 않는다."
       },
       {
         "key": "B",
         "content": "항상 더 빠른 실행 보장",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "모든 workload와 runtime에서 ReentrantLock이 synchronized보다 항상 빠르다는 보장은 없다."
       },
       {
         "key": "C",
         "content": "timed 또는 interruptible acquisition",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "Lock API는 timed tryLock, interruptible acquisition 같은 선택지를 제공해 기본 synchronized entry보다 세밀한 취득 정책을 구성할 수 있다."
       },
       {
         "key": "D",
         "content": "자동 deep immutability",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "Lock 선택은 object graph를 immutable하게 만들지 않는다. 불변성과 동기화는 별도 설계다."
       }
     ],
     "correctChoiceKey": "C",
@@ -1938,22 +2158,26 @@
       {
         "key": "A",
         "content": "`await()`를 `if (queue.isEmpty())` 한 번으로만 감싸면 signal을 받은 뒤에는 predicate가 참이라고 볼 수 있다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "signal은 waiter를 깨우지만 queue item을 예약하지 않는다. lock 재획득 전에 다른 consumer가 상태를 바꿀 수 있다."
       },
       {
         "key": "B",
         "content": "consumer를 깨울 때 항상 `signalAll()`을 사용하면 깨어난 thread는 predicate 재검사 없이 진행해도 된다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "signalAll은 여러 waiter를 깨울 수 있지만 각자 lock을 얻은 뒤 predicate를 다시 확인해야 한다."
       },
       {
         "key": "C",
         "content": "queue가 비었는지는 lock을 얻기 전에 검사하고, 비어 있으면 lock 안에서 `await()`를 한 번만 호출한다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "lock 밖에서 확인하면 상태 확인과 await 사이에 queue가 바뀌어 race나 notification 유실이 생길 수 있다."
       },
       {
         "key": "D",
         "content": "await를 while predicate 안에 두고 lock을 다시 보유한 뒤 조건을 재검사한다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "관련 lock을 보유한 채 while에서 조건을 확인하고 await한 뒤, lock을 재획득하면 queue 상태를 다시 확인한다."
       }
     ],
     "correctChoiceKey": "D",
@@ -1973,22 +2197,26 @@
       {
         "key": "A",
         "content": "task 제출과 task 실행 정책",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "호출자는 task를 제출하고 Executor가 실행 방식을 관리하므로 작업 정의와 worker 생명주기를 분리할 수 있다."
       },
       {
         "key": "B",
         "content": "class loading과 GC만",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "class loading과 garbage collection은 JVM 기능이지 Executor가 task scheduling에서 맡는 책임이 아니다."
       },
       {
         "key": "C",
         "content": "equals와 hashCode",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "Executor는 task 객체의 equals나 hash 계약을 정하지 않는다."
       },
       {
         "key": "D",
         "content": "source와 annotation retention",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "annotation retention이나 source metadata는 제출된 task 실행과 무관하다."
       }
     ],
     "correctChoiceKey": "A",
@@ -2008,22 +2236,26 @@
       {
         "key": "A",
         "content": "모든 task를 취소한다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "work queue에는 worker가 처리할 때까지 task가 대기할 수 있다. 제출 task를 모두 취소하지 않는다."
       },
       {
         "key": "B",
         "content": "즉시 처리하지 못한 task를 보관할 수 있다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "ThreadPoolExecutor queue는 worker가 비기 전 작업을 유지할 수 있으며 용량과 정책이 overload 동작에 영향을 준다."
       },
       {
         "key": "C",
         "content": "thread local을 삭제한다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "queue는 재사용 worker의 ThreadLocal 값을 청소하지 않는다. task 경계 cleanup은 별도다."
       },
       {
         "key": "D",
         "content": "실행 중 task의 결과를 항상 정렬한다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "work queue의 역할은 실행 대기 작업을 보관하는 것이지 완료 결과를 정렬하는 것이 아니다."
       }
     ],
     "correctChoiceKey": "B",
@@ -2043,22 +2275,26 @@
       {
         "key": "A",
         "content": "오류를 조용히 버리는 것만",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "rejected task를 조용히 버리면 application 계약을 위반할 수 있다. overload 대응을 명시해야 한다."
       },
       {
         "key": "B",
         "content": "무조건 queue 크기 무한 증가",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "bounded queue를 무제한으로 늘리면 자원 상한이 없어져 overload가 memory exhaustion으로 번질 수 있다."
       },
       {
         "key": "C",
         "content": "rejection, caller 실행, timeout/backpressure 등 saturation 정책",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "queue와 worker가 포화될 때 reject, caller-runs, producer throttling처럼 문서화된 backpressure 정책을 선택한다."
       },
       {
         "key": "D",
         "content": "worker가 자동으로 네 배가 된다는 가정",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "maximum pool size는 유한하고 task를 무제한 수락한다고 보장하지 않는다. 포화된 executor는 reject할 수 있다."
       }
     ],
     "correctChoiceKey": "C",
@@ -2078,22 +2314,26 @@
       {
         "key": "A",
         "content": "task가 제출되면 worker가 반드시 종료된다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "pool worker는 생애 동안 여러 task를 처리할 수 있어 한 task 완료가 worker 종료를 뜻하지 않는다."
       },
       {
         "key": "B",
         "content": "worker 하나는 task 하나만 실행한다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "worker가 여러 task에서 순차 재사용될 수 있으므로 task와 thread가 일대일 대응하지 않는다."
       },
       {
         "key": "C",
         "content": "shutdown은 모든 task 결과를 자동 반환한다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "shutdown은 executor의 제출·종료 lifecycle을 제어한다. 모든 task 결과를 반환하는 값은 아니다."
       },
       {
         "key": "D",
         "content": "task 완료가 worker thread의 종료와 항상 같은 사건은 아니다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "task 완료, worker 종료, executor shutdown은 다른 사건이다. worker는 다음 작업을 위해 계속 살아 있을 수 있다."
       }
     ],
     "correctChoiceKey": "D",
@@ -2113,22 +2353,26 @@
       {
         "key": "A",
         "content": "먼저 core worker가 실행하고 이후 queue/추가 worker/rejection policy가 영향을 준다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "ThreadPoolExecutor는 core thread를 우선 사용하고 작업 큐가 찬 뒤 설정에 따라 max까지 늘릴 수 있다. 한도를 넘으면 rejection handler가 적용된다."
       },
       {
         "key": "B",
         "content": "모든 task가 즉시 새 thread로만 실행된다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "일반 pool은 worker thread를 재사용하므로 task마다 새 thread를 만드는 방식이 아니다."
       },
       {
         "key": "C",
         "content": "queue가 항상 무시된다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "work queue는 task 수용·포화 동작에 참여하며 무시되지 않는다."
       },
       {
         "key": "D",
         "content": "max=4라서 task가 무한히 수용된다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "worker 4개와 queue 한 칸은 유한 용량이다. 그 이상 제출하면 rejection 정책에 도달할 수 있다."
       }
     ],
     "correctChoiceKey": "A",
@@ -2148,22 +2392,26 @@
       {
         "key": "A",
         "content": "queue가 사라진다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "executor 동시성만 높여도 database pool의 연결 10개가 늘지 않아 초과 작업은 기다리거나 timeout/경쟁할 수 있다."
       },
       {
         "key": "B",
         "content": "DB connection 한도를 넘어 대기·실패·경쟁이 커질 수 있다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "연결 수보다 많은 worker가 DB 앞에 쌓이면 thread와 queueing이 늘지만 실제 DB 처리 용량은 늘지 않는다."
       },
       {
         "key": "C",
         "content": "task가 virtual thread가 된다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "pool 크기 설정이 worker를 virtual thread로 바꾸지 않는다. executor 종류나 thread factory가 결정한다."
       },
       {
         "key": "D",
         "content": "CPU와 DB capacity가 자동으로 같아진다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "CPU core 수와 connection pool 용량은 서로 다른 자원이며 같은 크기로 맞춰야 한다는 규칙은 없다."
       }
     ],
     "correctChoiceKey": "B",
@@ -2183,22 +2431,26 @@
       {
         "key": "A",
         "content": "예외만 던진다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "take는 비어 있을 때 즉시 실패하는 remove와 달리 element가 올 때까지 기다릴 수 있다."
       },
       {
         "key": "B",
         "content": "항상 null을 반환한다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "take는 빈 queue를 null로 보고하지 않는다. element가 생기거나 thread가 interrupt될 때까지 대기한다."
       },
       {
         "key": "C",
         "content": "원소가 올 때까지 기다릴 수 있다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "BlockingQueue.take는 queue가 비어 있으면 대기하다 element가 들어오면 head를 제거해 반환한다."
       },
       {
         "key": "D",
         "content": "queue를 삭제한다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "element를 하나 꺼내도 queue 객체 자체가 없어지거나 lifecycle이 종료되지는 않는다."
       }
     ],
     "correctChoiceKey": "C",
@@ -2218,22 +2470,26 @@
       {
         "key": "A",
         "content": "항상 원소를 버린다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "bounded queue가 가득 차도 put이 항목을 조용히 버리지 않는다. 공간이 생길 때까지 producer를 block할 수 있다."
       },
       {
         "key": "B",
         "content": "자동으로 capacity를 무한히 늘린다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "bounded queue는 정해진 용량을 가진다. 무제한으로 자동 확장되지 않는다."
       },
       {
         "key": "C",
         "content": "consumer를 종료한다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "producer 대기가 consumer를 종료하지 않는다. consumer가 element를 꺼내면 공간이 생길 수 있다."
       },
       {
         "key": "D",
         "content": "공간이 생길 때까지 기다릴 수 있다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "put은 빈 자리가 날 때까지 기다려 producer에 backpressure를 전달한다."
       }
     ],
     "correctChoiceKey": "D",
@@ -2253,22 +2509,26 @@
       {
         "key": "A",
         "content": "offer/poll은 즉시 결과를 주고 put/take는 blocking할 수 있다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "offer/poll은 기다리지 않고 현재 삽입·제거 가능 여부를 돌려주며 put/take는 용량이나 element를 기다릴 수 있다."
       },
       {
         "key": "B",
         "content": "offer/poll만 thread-safe하다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "이 method들은 모두 BlockingQueue 동시성 contract를 따른다. blocking 여부가 thread-safety 여부를 나누지 않는다."
       },
       {
         "key": "C",
         "content": "put/take는 queue를 정렬한다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "이 API는 정렬하지 않고 queue 구현의 순서를 따른다."
       },
       {
         "key": "D",
         "content": "네 메서드는 항상 동일하다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "즉시 결과와 대기 가능 contract가 달라서 API 사용 의도에 맞게 구분한다."
       }
     ],
     "correctChoiceKey": "A",
@@ -2288,22 +2548,26 @@
       {
         "key": "A",
         "content": "모든 task 성공을 보장한다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "bounded queue는 backlog를 제한하지만 수락된 모든 task의 성공을 보장하지 않는다. 실패와 재시도는 별도 정책이다."
       },
       {
         "key": "B",
         "content": "생산 속도가 처리 속도를 앞설 때 메모리와 자원 압력을 제한한다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "생산이 소비보다 빠를 때 무제한으로 메모리와 작업이 쌓이지 않도록 제한하고 포화 시 동작을 드러낸다."
       },
       {
         "key": "C",
         "content": "shutdown을 자동 처리한다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "용량 설정은 queue나 executor를 shutdown하지 않는다. lifecycle 제어는 별도다."
       },
       {
         "key": "D",
         "content": "producer와 consumer 속도를 같게 만든다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "bounded queue는 producer와 consumer 처리율을 같게 만들지 않는다. buffer 한도를 두고 block 또는 reject할 수 있다."
       }
     ],
     "correctChoiceKey": "B",
@@ -2323,22 +2587,26 @@
       {
         "key": "A",
         "content": "queue capacity 규칙",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "queue는 용량과 순서대로 항목을 전달할 뿐 꺼낸 task의 업무 성공이나 실패를 보장하지 않는다."
       },
       {
         "key": "B",
         "content": "다른 task의 handoff",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "queue는 work transport 기능이며 consumer 예외 뒤 business operation을 자동 rollback하거나 재시도하지 않는다."
       },
       {
         "key": "C",
         "content": "task의 외부 side effect와 성공적인 처리가 자동 보장된다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "consumer가 항목을 꺼낸 뒤에는 queue가 외부 side effect나 처리 완료를 알지 못한다. 이를 보장하려면 별도 acknowledgment/복구 설계가 필요하다."
       },
       {
         "key": "D",
         "content": "take의 blocking semantics",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "take는 작업을 제거해 전달하고 block할 수 있다. 그 이후 consumer method의 동작은 별도다."
       }
     ],
     "correctChoiceKey": "C",
@@ -2358,22 +2626,26 @@
       {
         "key": "A",
         "content": "bounded queue가 자동으로 thread를 kill하기 때문이다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "bounded queue는 producer backpressure를 만들 뿐 worker thread를 강제 종료하지 않는다. shutdown은 협력 절차로 설계한다."
       },
       {
         "key": "B",
         "content": "put이 항상 non-blocking이기 때문이다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "queue가 가득 차면 put 중인 producer도 대기할 수 있으므로 interrupt나 shutdown 신호를 전달할 방법이 필요하다."
       },
       {
         "key": "C",
         "content": "take가 task를 모두 삭제했기 때문이다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "항목을 꺼내 빈칸이 생겨도 consumer가 종료되지 않는다. complete shutdown protocol을 대신하지 않는다."
       },
       {
         "key": "D",
         "content": "blocking protocol과 interrupt 협력이 끊겨 consumer가 종료 경계에 도달하지 못하기 때문이다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "대기 중인 consumer가 interrupt나 shutdown 신호를 무시하면 종료 경로에 도달하지 못할 수 있다. sentinel 또는 cooperative cancellation을 정의한다."
       }
     ],
     "correctChoiceKey": "D",
@@ -2393,22 +2665,26 @@
       {
         "key": "A",
         "content": "await 중인 thread가 진행할 수 있다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "count가 0에 도달하면 await 중인 thread가 진행할 수 있다. 한 번 열리는 완료 gate로 쓴다."
       },
       {
         "key": "B",
         "content": "count가 자동으로 초기값으로 돌아간다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "CountDownLatch는 0이 된 뒤 초기 count로 되돌아가지 않는다. 다음 주기에는 새 latch를 사용한다."
       },
       {
         "key": "C",
         "content": "모든 worker가 강제 종료된다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "gate가 열려도 worker가 자동 종료되지 않는다. 각 task의 생명주기는 별개다."
       },
       {
         "key": "D",
         "content": "새 task가 자동 제출된다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "latch는 완료 시점을 조정할 뿐 executor에 task를 제출하거나 실행하지 않는다."
       }
     ],
     "correctChoiceKey": "A",
@@ -2428,22 +2704,26 @@
       {
         "key": "A",
         "content": "한 thread만 countDown할 수 있다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "여러 worker가 같은 latch에 countDown을 호출해 남은 count를 줄일 수 있다."
       },
       {
         "key": "B",
         "content": "one-shot이며 count가 reset되지 않는다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "CountDownLatch는 한 번 0에 도달하면 reset할 수 없는 일회성 동기화 도구다."
       },
       {
         "key": "C",
         "content": "await가 count를 증가시킨다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "await는 count를 줄이지 않고 대기한다. countDown 호출이 값을 감소시킨다."
       },
       {
         "key": "D",
         "content": "항상 cyclic하다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "재사용 가능한 barrier와 달리 CountDownLatch에는 다시 초기화하는 cycle이 없다."
       }
     ],
     "correctChoiceKey": "B",
@@ -2463,22 +2743,26 @@
       {
         "key": "A",
         "content": "count를 음수로 만든다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "count가 음수로 내려가는 것이 latch 계약은 아니다. 기대하는 worker 수와 완료 보고 호출을 맞춘다."
       },
       {
         "key": "B",
         "content": "예외를 무시하고 countDown을 생략한다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "예외가 난 worker가 countDown을 빠뜨리면 count가 0이 되지 않아 await thread가 계속 대기할 수 있다."
       },
       {
         "key": "C",
         "content": "필요한 countDown을 finally에서 수행하고 실패를 별도 기록한다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "finally에서 완료 자체를 countDown으로 보고하고 실패 결과는 별도로 저장해 대기자가 성공 여부를 확인하게 한다."
       },
       {
         "key": "D",
         "content": "await를 제거한다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "await를 제거하면 완료 조정 요구를 충족하는 게 아니라 결과를 기다리는 지점을 없앨 뿐이다."
       }
     ],
     "correctChoiceKey": "C",
@@ -2498,22 +2782,26 @@
       {
         "key": "A",
         "content": "예외 worker는 countDown하지 않아야 항상 성공을 보장한다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "worker가 실패했어도 시도는 종료됐다. countDown을 생략하면 완료 gate가 영원히 닫힐 수 있다."
       },
       {
         "key": "B",
         "content": "await가 worker 예외를 자동으로 재던진다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "CountDownLatch.await는 worker 예외를 자동으로 다시 던지지 않는다. 결과를 별도 전달·수집한다."
       },
       {
         "key": "C",
         "content": "countDown이 예외를 정상 결과로 변환한다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "countDown은 synchronization count만 줄인다. 실패한 업무를 성공으로 바꾸지 않는다."
       },
       {
         "key": "D",
         "content": "finally의 countDown으로 gate를 열고 실패 상태를 별도 전달해 주 thread가 성공 여부를 확인한다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "finally에서 어느 경로든 completion gate를 열고 실패 기록은 별도로 전달해 대기자가 결과를 판단하게 한다."
       }
     ],
     "correctChoiceKey": "D",
@@ -2533,22 +2821,26 @@
       {
         "key": "A",
         "content": "동시에 resource를 사용하는 작업 수를 제한한다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "permit 수가 동시에 자원을 사용하는 작업 수를 제한한다. permit보다 많은 caller는 허가를 얻을 때 기다린다."
       },
       {
         "key": "B",
         "content": "특정 thread의 monitor ownership을 기록한다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "Semaphore permit은 특정 thread가 monitor를 소유하는 규칙과 같은 개념이 아니다."
       },
       {
         "key": "C",
         "content": "객체를 serialize한다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "permit 획득은 object를 직렬화하거나 byte stream을 만드는 동작이 아니다."
       },
       {
         "key": "D",
         "content": "모든 task를 순차 실행한다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "permit을 여러 개 두면 제한된 여러 작업이 동시에 진행될 수 있어 모든 작업을 항상 하나씩 직렬화하지 않는다."
       }
     ],
     "correctChoiceKey": "A",
@@ -2568,22 +2860,26 @@
       {
         "key": "A",
         "content": "모든 thread interrupt",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "다른 thread를 interrupt하는 것은 현재 작업이 획득한 permit을 반환하는 정리 방법이 아니다."
       },
       {
         "key": "B",
         "content": "finally에서 release하는 정책",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "permit을 얻은 뒤 자원 사용을 try에 두고 finally에서 release해야 정상 return과 예외 모두 용량을 복원한다."
       },
       {
         "key": "C",
         "content": "queue를 정렬",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "queue 정렬은 permit을 반환하지 않는다. 대기 순서는 별도 fairness 정책이다."
       },
       {
         "key": "D",
         "content": "permit을 영구 보유",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "permit을 계속 보유하면 사용 가능 용량이 줄어 뒤의 caller가 모두 기다릴 수 있다."
       }
     ],
     "correctChoiceKey": "B",
@@ -2603,22 +2899,26 @@
       {
         "key": "A",
         "content": "Semaphore는 blocking하지 않는다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "permit이 없을 때 Semaphore.acquire는 block될 수 있다. monitor 소유와 다르다는 이유로 항상 non-blocking인 것은 아니다."
       },
       {
         "key": "B",
         "content": "Semaphore는 항상 한 permit만 가진다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "Semaphore는 초기 permit 수를 여러 개로 설정할 수 있으며 단일 permit에 제한되지 않는다."
       },
       {
         "key": "C",
         "content": "permit은 획득 thread ownership을 monitor처럼 강제하지 않는다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "permit은 monitor와 달리 획득 thread가 소유해야만 반환하는 규칙이 없다. 다른 thread도 release할 수 있어 application protocol로 추적한다."
       },
       {
         "key": "D",
         "content": "monitor는 permit을 사용한다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "monitor는 object 소유권이고 Semaphore는 permit count다. Semaphore가 monitor 내부 permit 장치인 것은 아니다."
       }
     ],
     "correctChoiceKey": "C",
@@ -2638,22 +2938,26 @@
       {
         "key": "A",
         "content": "Semaphore가 thread ownership을 강제하므로 release가 불필요하다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "Semaphore는 monitor처럼 owner thread를 추적하지 않고 acquire thread에서 예외가 나도 자동으로 permit을 반환하지 않는다."
       },
       {
         "key": "B",
         "content": "acquire를 더 호출하면 permit이 생긴다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "다시 acquire하면 남은 permit을 더 소비한다. 예외로 잃은 permit을 복구하는 호출이 아니다."
       },
       {
         "key": "C",
         "content": "tryAcquire는 자동 release한다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "tryAcquire는 permit 획득을 시도할 뿐 성공 후 release를 자동 관리하는 scope가 아니다."
       },
       {
         "key": "D",
         "content": "예외 경로에서 release가 누락되었으므로 finally에서 release하도록 한다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "예외 경로에서 release하지 않아 count가 줄어든 채 남았다. 자원 사용을 try/finally로 감싸 반환을 보장한다."
       }
     ],
     "correctChoiceKey": "D",
@@ -2673,22 +2977,26 @@
       {
         "key": "A",
         "content": "여러 thread의 concurrent map operation을 지원한다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "ConcurrentHashMap은 명세된 atomic map method를 제공하지만 임의의 여러 호출로 구성한 업무 처리를 transaction으로 만들지 않는다."
       },
       {
         "key": "B",
         "content": "여러 번의 `get`과 `put`을 묶은 임의의 read-modify-write 절차까지 자동으로 하나의 atomic transaction으로 만든다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "get·계산·put을 나눈 호출은 자동으로 원자적인 한 전이가 아니다. 규칙에 맞는 복합 map method를 사용한다."
       },
       {
         "key": "C",
         "content": "iteration을 시작하면 이후 concurrent update와 완전히 격리된 immutable snapshot을 제공한다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "iterator는 고정된 immutable snapshot을 약속하지 않는다. 동시 변경을 허용하는 weakly consistent 순회일 수 있다."
       },
       {
         "key": "D",
         "content": "일반 `HashMap`처럼 `null` key와 `null` value를 concurrent 상태 표시용으로 허용한다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "ConcurrentHashMap은 null key와 value를 거부한다. null을 동시 부재 marker로 쓰지 않는다."
       }
     ],
     "correctChoiceKey": "A",
@@ -2708,22 +3016,26 @@
       {
         "key": "A",
         "content": "blocking take와 같다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "poll은 현재 가능한 값을 즉시 확인하는 queue 연산이고 BlockingQueue.take처럼 기다리지 않는다."
       },
       {
         "key": "B",
         "content": "현재 원소를 제거해 반환하거나 없으면 결과가 없을 수 있다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "poll은 현재 head를 제거해 돌려주며 항목이 없으면 null을 반환한다."
       },
       {
         "key": "C",
         "content": "queue 전체를 정렬한다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "ConcurrentLinkedQueue는 comparator로 정렬하는 collection이 아니라 FIFO queue다."
       },
       {
         "key": "D",
         "content": "항상 최소값을 반환한다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "queue는 자신의 순서 정책을 따른다. 항상 globally smallest 값을 먼저 꺼내지는 않는다."
       }
     ],
     "correctChoiceKey": "B",
@@ -2743,22 +3055,26 @@
       {
         "key": "A",
         "content": "put이 항상 실패한다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "put은 mapping을 추가하거나 대체할 수 있다. 앞선 containsKey가 false였다는 이유로 write를 거부하지 않는다."
       },
       {
         "key": "B",
         "content": "ConcurrentHashMap이 두 호출을 합친다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "ConcurrentHashMap의 개별 연산이 safe해도 서로 다른 호출을 하나로 묶지는 않는다."
       },
       {
         "key": "C",
         "content": "두 연산 사이에 경쟁이 있어 원자적이지 않다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "containsKey와 put 사이 다른 thread가 key를 넣을 수 있어 check-then-act sequence 전체는 atomic하지 않다."
       },
       {
         "key": "D",
         "content": "containsKey가 lock을 영구 보유한다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "containsKey는 boolean 결과만 돌려준다. key를 예약하거나 반환 뒤 lock을 유지하지 않는다."
       }
     ],
     "correctChoiceKey": "C",
@@ -2778,22 +3094,26 @@
       {
         "key": "A",
         "content": "순회 순서를 정렬해서",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "이 method들은 mapping 상태를 바꾸고 iteration ordering을 정하지 않는다."
       },
       {
         "key": "B",
         "content": "원소를 immutable하게 만들어서",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "원자적 map update여도 key, value, map 전체를 immutable하게 만들지는 않는다."
       },
       {
         "key": "C",
         "content": "모든 lock을 제거해서",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "동시 collection이 내부 lock을 전혀 쓰지 않는다고 보장하거나 내부 구현을 의존해선 안 된다."
       },
       {
         "key": "D",
         "content": "의도한 일부 check-and-update를 collection API의 atomic operation으로 표현할 수 있어서",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "putIfAbsent, computeIfAbsent, merge는 조건 검사와 update를 map의 한 documented operation으로 표현해 별도 check/write 사이의 race를 피한다."
       }
     ],
     "correctChoiceKey": "D",
@@ -2813,22 +3133,26 @@
       {
         "key": "A",
         "content": "동시 update가 서로 덮어써질 수 있다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "ConcurrentHashMap의 개별 연산이 thread-safe여도 두 thread가 같은 Integer 값을 읽고 같은 증가 결과를 써서 update를 덮을 수 있다."
       },
       {
         "key": "B",
         "content": "Concurrent prefix가 모든 Integer 갱신을 자동 합친다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "ConcurrentHashMap은 value 계산 전체를 자동 합치지 않는다. 한 번의 증가 의미가 필요하면 merge나 atomic value를 쓴다."
       },
       {
         "key": "C",
         "content": "Integer가 mutable counter가 된다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "Integer는 immutable이라 counter 내부 값을 바꾸지 않는다. map entry의 값을 새 Integer로 교체한다."
       },
       {
         "key": "D",
         "content": "map이 자동으로 queue가 된다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "ConcurrentHashMap은 동시 접근을 지원하는 Map이지 queue가 아니다. 이름의 Concurrent는 collection 종류를 바꾸지 않는다."
       }
     ],
     "correctChoiceKey": "A",
@@ -2848,22 +3172,26 @@
       {
         "key": "A",
         "content": "iterator가 모든 변경을 롤백한다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "iterator는 원소를 관찰할 뿐 동시 변경을 rollback하거나 수정하지 않는다."
       },
       {
         "key": "B",
         "content": "weakly consistent 관찰일 수 있어 생성 시점 이후 변경과 전체 정렬을 보장하지 않는다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "concurrent iterator가 특정 순간의 정렬된 고정 snapshot을 제공한다고 보장하지 않는다. weak consistency를 포함한 명세를 확인한다."
       },
       {
         "key": "C",
         "content": "concurrent collection은 순회할 수 없다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "동시 collection도 iteration을 제공한다. 다만 fail-fast collection과 동작 의미가 다를 수 있다."
       },
       {
         "key": "D",
         "content": "iterator가 항상 ConcurrentModificationException을 던진다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "ConcurrentHashMap의 iterator는 동시 update 중에도 사용할 수 있고 ConcurrentModificationException을 반드시 던지지 않는다."
       }
     ],
     "correctChoiceKey": "B",
@@ -2883,22 +3211,26 @@
       {
         "key": "A",
         "content": "외부 DB row",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "ThreadLocal 값은 database row에 묶이지 않는다. DB identity와 lifetime은 별도 context 계약이 필요하다."
       },
       {
         "key": "B",
         "content": "모든 thread가 공유하는 하나의 값",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "ThreadLocal key 하나를 여러 thread가 써도 저장값은 thread별이다. 모든 thread가 하나의 공통 값을 공유하는 구조가 아니다."
       },
       {
         "key": "C",
         "content": "현재 thread별 별도 값",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "동일 ThreadLocal instance를 읽는 thread마다 별도 association slot이 제공된다."
       },
       {
         "key": "D",
         "content": "현재 process의 static field만",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "static은 key 참조가 어디서 접근되는지 정할 뿐 실제 associated value의 소유 단위는 각 thread다."
       }
     ],
     "correctChoiceKey": "C",
@@ -2918,22 +3250,26 @@
       {
         "key": "A",
         "content": "thread를 새로 생성하기 위해",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "remove는 현재 thread의 ThreadLocal entry를 정리한다. 새 worker thread를 만드는 연산은 아니다."
       },
       {
         "key": "B",
         "content": "값을 전역 공유하기 위해",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "값을 지워도 ThreadLocal이 global shared variable로 바뀌지 않는다. 다른 thread의 값은 별도다."
       },
       {
         "key": "C",
         "content": "executor를 종료하기 위해",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "ThreadLocal.remove는 executor를 종료하지 않는다. worker는 다음 task에 재사용될 수 있다."
       },
       {
         "key": "D",
         "content": "재사용 worker에 이전 task context가 남는 것을 줄이기 위해",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "pool worker는 request task 뒤에도 살아 있으므로 finally에서 정리하면 다음 task가 이전 context를 보지 않게 할 수 있다."
       }
     ],
     "correctChoiceKey": "D",
@@ -2953,22 +3289,26 @@
       {
         "key": "A",
         "content": "stage가 다른 thread에서 실행될 수 있기 때문이다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "ThreadLocal은 thread별 값을 둔다. async stage가 다른 worker에서 실행되면 원래 thread의 저장값을 자동으로 받지 않는다."
       },
       {
         "key": "B",
         "content": "ThreadLocal은 class를 저장할 수 없기 때문이다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "ThreadLocal은 Class 객체를 포함한 reference를 저장할 수 있다. propagation 여부는 객체 class 종류가 결정하지 않는다."
       },
       {
         "key": "C",
         "content": "future는 항상 같은 thread에서만 실행되기 때문이다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "CompletableFuture async stage는 실행 executor의 다른 worker를 사용할 수 있어 chain 작성 thread에 고정되지 않는다."
       },
       {
         "key": "D",
         "content": "remove가 호출되면 모든 stage가 취소되기 때문이다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "한 thread의 값을 지워도 앞으로 완료될 stage가 취소되지는 않는다. stage cancellation은 별도 동작이다."
       }
     ],
     "correctChoiceKey": "A",
@@ -2988,22 +3328,26 @@
       {
         "key": "A",
         "content": "OS scheduler 설정",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "OS scheduling은 context 객체 소유자나 정리 시점을 정하지 않는다. application이 lifecycle을 관리한다."
       },
       {
         "key": "B",
         "content": "context object의 ownership·수명·변경 정책",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "ThreadLocal은 reference를 thread에 연결할 뿐 가변성, ownership, task 범위 종료 시 정리를 강제하지 않는다."
       },
       {
         "key": "C",
         "content": "class file 재컴파일",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "요청 context는 class file 재컴파일 없이 runtime에서 관리할 수 있다. 핵심은 thread 연결과 청소 정책이다."
       },
       {
         "key": "D",
         "content": "모든 값을 static final로 deep freeze",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "static final reference가 mutable 객체를 가리킬 수 있어 final만으로 context graph가 깊은 불변이 되지 않는다."
       }
     ],
     "correctChoiceKey": "B",
@@ -3023,22 +3367,26 @@
       {
         "key": "A",
         "content": "ThreadLocal이 모든 값을 병합한다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "ThreadLocal은 task 사이 값을 자동 병합하지 않는다. 같은 worker가 재사용되면 지우지 않은 이전 context가 남을 수 있다."
       },
       {
         "key": "B",
         "content": "W가 자동으로 새 thread가 된다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "pool은 worker를 여러 task에서 재사용한다. task 경계가 새 thread 생성을 보장하지 않는다."
       },
       {
         "key": "C",
         "content": "B가 A의 stale context를 관찰할 수 있다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "두 task가 worker W에서 실행되어 같은 thread-local slot을 쓴다. 정리·덮어쓰기를 하지 않으면 B가 A의 이전 값을 관찰할 수 있다."
       },
       {
         "key": "D",
         "content": "A context가 JVM에서 즉시 GC된다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "worker thread가 살아 있고 entry가 연결된 동안 값이 즉시 GC된다고 보장되지 않는다. task 뒤 cleanup이 중요하다."
       }
     ],
     "correctChoiceKey": "C",
@@ -3058,22 +3406,26 @@
       {
         "key": "A",
         "content": "task가 끝난 virtual thread를 다음 task가 재사용하므로 fixed platform pool과 동일한 stale-context 위험이 항상 남는다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "task별 virtual thread는 고정 worker 재사용 패턴과 다르지만 context 수명은 해당 thread 수명에 묶이고, 다른 문제까지 자동 해결하지 않는다."
       },
       {
         "key": "B",
         "content": "virtual thread는 ThreadLocal을 지원하지 않는다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "virtual thread도 ThreadLocal을 지원한다. 매우 많은 thread마다 큰 값을 저장하면 메모리 사용이 커질 수 있다."
       },
       {
         "key": "C",
         "content": "per-task thread 종료로 fixed-worker 재사용 위험의 형태는 줄지만, 많은 virtual thread마다 큰 reusable object를 ThreadLocal에 두면 메모리 비용이 커질 수 있다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "각 task에 새 virtual thread를 만들면 동일 worker가 다음 task에 stale 값을 남기는 위험은 줄지만, 많은 thread에 큰 객체를 복제하면 경량성 이점이 감소한다."
       },
       {
         "key": "D",
         "content": "ThreadLocal value는 virtual thread가 종료되어도 JVM 종료까지 반드시 유지된다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "ThreadLocal 값은 thread reachability와 수명에 관계된다. JVM 종료 때까지 항상 보유되는 것은 아니다."
       }
     ],
     "correctChoiceKey": "C",
@@ -3093,22 +3445,26 @@
       {
         "key": "A",
         "content": "where(...).run/call 같은 bounded dynamic scope 동안",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "where(...).run/call이 만든 ScopedValue binding은 실행의 동적 범위에서만 보이고 정상·예외 종료 때 이전 binding으로 되돌아간다."
       },
       {
         "key": "B",
         "content": "JVM 전체 lifetime 동안",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "binding은 process나 JVM 전체에 영구 저장되지 않는다. 범위가 코드 구조로 정해진다."
       },
       {
         "key": "C",
         "content": "다음 process까지",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "ScopedValue는 한 JVM 안의 실행 context를 전달하지 process 사이에 저장되는 persistent state가 아니다."
       },
       {
         "key": "D",
         "content": "ThreadLocal.remove 전까지 무조건",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "ThreadLocal cleanup과 달리 ScopedValue binding은 scope를 벗어날 때 자동으로 이전 상태를 복원하므로 remove 절차가 필요 없다."
       }
     ],
     "correctChoiceKey": "A",
@@ -3128,22 +3484,26 @@
       {
         "key": "A",
         "content": "ClassLoader에서 찾는다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "ScopedValue는 ClassLoader metadata를 검색하지 않는다. 현재 실행 범위에 설정된 binding을 읽는다."
       },
       {
         "key": "B",
         "content": "현재 dynamic scope에서 get()한다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "binding 범위 안에서는 접근 가능한 ScopedValue key의 get()으로 값에 접근한다."
       },
       {
         "key": "C",
         "content": "queue에서 take한다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "이 API는 element를 기다리는 queue가 아니다. get은 해당 key의 scope binding을 읽는다."
       },
       {
         "key": "D",
         "content": "항상 set()으로 아무 곳에서 덮어쓴다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "ScopedValue는 임의 시점에 값을 바꾸는 persistent set API를 제공하지 않는다. where로 binding을 정하고 그 scope 안에서 실행한다."
       }
     ],
     "correctChoiceKey": "B",
@@ -3163,22 +3523,26 @@
       {
         "key": "A",
         "content": "ScopedValue는 전역 mutable map이다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "ScopedValue는 global mutable map이 아니라 실행 범위에 묶인 binding을 제공하며 값은 그 scope 안에서 설정된다."
       },
       {
         "key": "B",
         "content": "둘은 동일하며 lifetime 차이가 없다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "ThreadLocal entry는 재사용 worker에서 변경·제거 전까지 남을 수 있지만 ScopedValue는 scope 종료 때 이전 binding으로 돌아간다."
       },
       {
         "key": "C",
         "content": "ScopedValue는 bounded 읽기 중심 context이고 ThreadLocal은 thread별 변경 가능한 값을 표현한다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "ScopedValue는 동적 범위에서 한 방향 context 전달에 적합하다. ThreadLocal은 별도 lifecycle을 가진 mutable thread별 저장소다."
       },
       {
         "key": "D",
         "content": "ThreadLocal만 값을 읽을 수 있다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "둘 다 연관 값을 읽는 get을 제공한다. 같은 method 이름이지만 binding과 수명 의미는 다르다."
       }
     ],
     "correctChoiceKey": "C",
@@ -3198,22 +3562,26 @@
       {
         "key": "A",
         "content": "list가 자동 deep copied된다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "reference를 binding해도 List나 원소 객체를 deep copy하지 않는다."
       },
       {
         "key": "B",
         "content": "list가 자동 immutable이 된다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "scope가 reference 접근 기간을 제한해도 참조된 mutable List의 수정을 금지하지 않는다."
       },
       {
         "key": "C",
         "content": "binding이 모든 thread의 동일 static field가 된다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "ScopedValue는 process-global static slot이 아니다. visibility는 실행 범위와 thread 전달 규칙에 따른다."
       },
       {
         "key": "D",
         "content": "binding 범위는 제한되지만 list 내부 변경은 자동 차단되지 않는다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "binding lifetime과 referent의 mutable 여부·ownership은 서로 다른 관심사다."
       }
     ],
     "correctChoiceKey": "D",
@@ -3233,22 +3601,26 @@
       {
         "key": "A",
         "content": "바깥 scope의 outer binding을 다시 관찰할 수 있다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "중첩 scope에서는 안쪽 binding이 실행되는 동안 바깥 값을 가리고, 끝나면 이전 outer binding이 다시 보인다."
       },
       {
         "key": "B",
         "content": "KEY가 영구히 unbound가 된다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "inner scope를 벗어나도 key를 영구 unbind하지 않고 주변 scope의 값을 복원한다."
       },
       {
         "key": "C",
         "content": "inner가 process 전역으로 남는다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "안쪽 binding은 process 전체로 퍼지지 않는다. 해당 dynamic scope에만 적용된다."
       },
       {
         "key": "D",
         "content": "항상 null이 반환된다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "inner binding 종료 후에도 outer scope가 값을 설정했으므로 get이 null이라고 단정할 수 없다."
       }
     ],
     "correctChoiceKey": "A",
@@ -3268,22 +3640,26 @@
       {
         "key": "A",
         "content": "binding은 process-global이므로 어떤 executor thread에서도 자동으로 보인다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "ScopedValue는 process 전역 값이 아니며 일반 executor thread에 binding이 자동 전파된다고 보장하지 않는다."
       },
       {
         "key": "B",
         "content": "binding은 기본적으로 per-thread이며 arbitrary executor에는 자동 전파되지 않지만 StructuredTaskScope가 fork한 subtask에는 API 계약에 따라 상속될 수 있다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "임의 executor는 자동 전파를 보장하지 않지만 Java 25 StructuredTaskScope는 fork한 subtasks에 binding 상속을 명시한다."
       },
       {
         "key": "C",
         "content": "StructuredTaskScope를 사용하면 binding object 자체가 immutable로 변환된다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "상속되는 것은 binding된 reference다. 참조 객체가 mutable이면 deep immutable로 바뀌지 않는다."
       },
       {
         "key": "D",
         "content": "ScopedValue는 다른 thread와 값을 공유할 방법을 전혀 제공하지 않는다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "StructuredTaskScope 같은 구조화된 경우 다른 thread task에 전달될 수 있어 단일 thread 전용 API는 아니다."
       }
     ],
     "correctChoiceKey": "B",
@@ -3303,22 +3679,26 @@
       {
         "key": "A",
         "content": "queue capacity 설정",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "Future는 작업 queue 용량을 설정하지 않는다. queue는 executor나 scheduling mechanism의 정책이다."
       },
       {
         "key": "B",
         "content": "항상 결과를 즉시 계산하는 값",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "Future는 아직 끝나지 않은 계산을 나타낼 수 있어 get으로 값을 얻을 때 대기할 수 있다."
       },
       {
         "key": "C",
         "content": "비동기 계산 결과를 나중에 확인하고 cancel 등을 요청하는 handle",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "Future는 계산 완료를 관찰하고 API의 cancellation 요청을 표현하는 handle이다. 실제 작업 중단이 보장되는지는 실행 구현이 협조해야 한다."
       },
       {
         "key": "D",
         "content": "thread를 강제 종료하는 API",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "cancel은 무조건 실행 중 작업을 강제 종료하지 않는다. task나 underlying API가 취소를 확인하고 반응해야 한다."
       }
     ],
     "correctChoiceKey": "C",
@@ -3338,22 +3718,26 @@
       {
         "key": "A",
         "content": "thenApply만 예외를 처리한다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "thenApply의 mapping function도 실패해 dependent stage를 exceptional로 완료할 수 있다. 예외 처리가 thenCompose에만 필요한 것은 아니다."
       },
       {
         "key": "B",
         "content": "thenCompose는 항상 동기다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "thenCompose는 다른 CompletionStage를 이어 하나로 평탄화하지만 function을 동기 실행한다고 약속하지 않는다."
       },
       {
         "key": "C",
         "content": "둘은 이름만 다르고 결과가 항상 같다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "thenApply는 결과 값을 변환하고 thenCompose는 function이 반환한 CompletionStage를 연결해 중첩 stage를 평탄화한다."
       },
       {
         "key": "D",
         "content": "thenApply는 값 변환, thenCompose는 stage를 평탄화하는 조합이다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "function 결과가 이미 stage라면 thenCompose가 그 completion을 이어간다. 이중 CompletionStage 타입을 반환하지 않는다."
       }
     ],
     "correctChoiceKey": "D",
@@ -3373,22 +3757,26 @@
       {
         "key": "A",
         "content": "후속 stage는 completion method 계약에 따라 실패 경로를 따를 수 있다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "앞 stage가 exceptional로 끝나면 후속 stage에도 실패가 전달될 수 있다. handle/exceptionally로 복구를 명시한다."
       },
       {
         "key": "B",
         "content": "값이 자동으로 0이 된다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "실패한 계산의 결과가 primitive 기본값 0으로 자동 생성되지 않는다."
       },
       {
         "key": "C",
         "content": "모든 thread가 강제 종료된다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "stage 예외 완료가 JVM의 모든 worker나 thread를 종료하지 않는다. 예외는 해당 stage graph의 결과다."
       },
       {
         "key": "D",
         "content": "예외가 반드시 무시된다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "실패는 dependent stage의 completion을 통해 관찰된다. 자동으로 버려지는 것이 아니다."
       }
     ],
     "correctChoiceKey": "A",
@@ -3408,22 +3796,26 @@
       {
         "key": "A",
         "content": "항상 새 platform thread 하나를 만든다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "Async suffix는 각 stage마다 새 platform thread를 만든다는 뜻이 아니다."
       },
       {
         "key": "B",
         "content": "CompletableFuture API가 정한 default async execution facility를 사용한다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "executor를 지정하지 않은 CompletableFuture async method는 명세된 default async facility를 사용한다. 실행 정책이 중요하면 executor를 명시한다."
       },
       {
         "key": "C",
         "content": "OS가 Java contract 없이 임의로 결과를 바꾼다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "결과는 CompletionStage completion 계약을 따른다. OS scheduling이 값을 임의 변경하지 않는다."
       },
       {
         "key": "D",
         "content": "항상 caller thread를 사용한다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "Async method는 caller thread에서 실행된다고 보장하지 않는다."
       }
     ],
     "correctChoiceKey": "B",
@@ -3443,22 +3835,26 @@
       {
         "key": "A",
         "content": "항상 별도 virtual thread다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "non-async dependent action이 항상 virtual thread에서 실행된다는 보장은 없다."
       },
       {
         "key": "B",
         "content": "항상 main thread다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "main thread에서 chain을 만들었다고 후속 completion action이 main에 고정되지 않는다."
       },
       {
         "key": "C",
         "content": "stage 실행은 completion을 수행하는 thread나 caller 등 API가 허용한 실행 맥락을 따르며 특정 thread를 단정하면 안 된다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "non-async action의 thread identity는 한 가지로 보장되지 않는다. API가 허용하는 완료 또는 호출 문맥에서 실행될 수 있다."
       },
       {
         "key": "D",
         "content": "항상 A를 만든 thread다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "stage를 만든 thread와 앞 stage를 완료한 thread는 다를 수 있고 action은 최초 생성 thread에 묶이지 않는다."
       }
     ],
     "correctChoiceKey": "C",
@@ -3478,22 +3874,26 @@
       {
         "key": "A",
         "content": "HTTP call은 항상 즉시 kill된다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "CompletableFuture.cancel의 mayInterruptIfRunning은 underlying HTTP 요청을 강제로 취소한다고 보장하지 않는다. HTTP client의 cancellation API가 필요하다."
       },
       {
         "key": "B",
         "content": "cancel은 future 상태를 바꾸지 않는다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "cancel은 future 자체를 cancelled 상태로 완료시킬 수 있어 future 결과에는 영향을 준다."
       },
       {
         "key": "C",
         "content": "cancel은 모든 dependent stage를 정상 완료한다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "cancel 뒤 dependent stage가 정상 성공으로 바뀌는 것은 아니다. 취소 전파와 복구는 completion 규칙에 따른다."
       },
       {
         "key": "D",
         "content": "future의 cancellation completion과 외부 작업 강제 중단은 별도라 underlying 작업이 반드시 멈춘다고 할 수 없다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "future graph의 cancelled state와 이미 시작한 외부 HTTP side effect는 다르다. 요청 중단 여부는 client protocol에 달려 있다."
       }
     ],
     "correctChoiceKey": "D",
@@ -3513,22 +3913,26 @@
       {
         "key": "A",
         "content": "deadlock",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "각 thread가 상대가 가진 lock을 기다리면 순환 대기가 생겨 둘 다 진행하지 못할 수 있다. 전형적인 deadlock이다."
       },
       {
         "key": "B",
         "content": "starvation",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "starvation은 한 task가 기회나 자원을 반복해서 얻지 못하는 현상이다. 여기서는 서로 기다리는 cycle이 핵심이다."
       },
       {
         "key": "C",
         "content": "livelock",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "livelock은 계속 반응하거나 양보하지만 유용한 진척이 없는 상태다. held lock에서 서로 block되는 deadlock과 다르다."
       },
       {
         "key": "D",
         "content": "warm-up",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "warm-up은 시작 직후 성능 최적화와 관련되고 lock 대기 cycle과 무관하다."
       }
     ],
     "correctChoiceKey": "A",
@@ -3548,22 +3952,26 @@
       {
         "key": "A",
         "content": "serialization",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "serialization은 한 thread가 계속 진행 기회를 얻지 못하는 문제를 뜻하지 않는다. 이는 starvation 같은 liveness 문제다."
       },
       {
         "key": "B",
         "content": "starvation",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "scheduling이나 자원 정책 때문에 다른 작업은 진행하는데 특정 task만 반복해서 자원을 얻지 못하면 starvation이다."
       },
       {
         "key": "C",
         "content": "class loading",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "class loading은 타입을 준비하는 과정이며 실행 기회를 얻지 못하는 thread 상태의 이름이 아니다."
       },
       {
         "key": "D",
         "content": "deadlock만",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "문항은 전체가 서로 기다리는 cycle을 반드시 요구하지 않고 한 task의 진행이 막히는 상황을 묻는다."
       }
     ],
     "correctChoiceKey": "B",
@@ -3583,22 +3991,26 @@
       {
         "key": "A",
         "content": "EOF",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "EOF는 입력 끝을 나타내는 결과이지 thread 간 진행 조정 상태가 아니다."
       },
       {
         "key": "B",
         "content": "heap leak",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "heap leak은 객체가 필요 이상 메모리에 남는 문제다. 움직이면서 유용한 진행을 하지 못하는 상태와 다르다."
       },
       {
         "key": "C",
         "content": "livelock",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "계속 반응하거나 backoff하지만 완료로 나아가지 못하면 livelock에 가깝다. 두 thread가 단순 대기하는 deadlock과 구분한다."
       },
       {
         "key": "D",
         "content": "binary incompatibility",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "binary incompatibility는 API linkage 실패이고 task coordination의 progress와 관계없다."
       }
     ],
     "correctChoiceKey": "C",
@@ -3618,22 +4030,26 @@
       {
         "key": "A",
         "content": "각 경로가 임의 순서로 lock을 잡는다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "lock 획득 순서가 제각각이면 한 경로는 L1 다음 L2, 다른 경로는 L2 다음 L1이 되어 순환 대기가 만들어질 수 있다."
       },
       {
         "key": "B",
         "content": "lock을 finally에서만 획득한다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "finally에서 release는 중요하지만 lock을 획득하는 순서를 통일하지 않는다."
       },
       {
         "key": "C",
         "content": "thread 수를 0으로 둔다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "thread 수를 0으로 만드는 것은 작업을 실행하지 않는 것이지 lock ordering 정책이 아니다."
       },
       {
         "key": "D",
         "content": "모든 경로가 전역 lock ordering을 따르게 한다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "모든 경로가 같은 순서로 lock을 획득하면 서로 반대 순서로 기다리는 cycle을 막을 수 있다."
       }
     ],
     "correctChoiceKey": "D",
@@ -3653,22 +4069,26 @@
       {
         "key": "A",
         "content": "두 ownership과 대기 edge가 cycle을 만들어 deadlock 가능성을 보인다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "한 thread는 L1을 보유한 채 L2를 기다리고 다른 thread는 L2를 보유한 채 L1을 기다려 소유·대기 그래프에 cycle을 만든다."
       },
       {
         "key": "B",
         "content": "단순 starvation만 확정된다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "starvation이 별도로 있을 수 있어도 표에 나온 상호 lock 대기는 deadlock 패턴을 직접 보인다."
       },
       {
         "key": "C",
         "content": "livelock이므로 lock은 없다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "표는 lock 보유와 대기를 보여준다. lock 없이 계속 회피하는 livelock 상황이 아니다."
       },
       {
         "key": "D",
         "content": "JMM이 cycle을 자동 해소한다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "Java memory model은 memory ordering을 정하지만 application 수준 lock cycle을 자동 해소하지 않는다."
       }
     ],
     "correctChoiceKey": "A",
@@ -3688,22 +4108,26 @@
       {
         "key": "A",
         "content": "외부 I/O가 interrupt 없이 항상 끝난다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "외부 I/O가 무기한 대기하면 lock 순서를 지켜도 완료된다고 보장되지 않고 자동 interrupt도 아니다."
       },
       {
         "key": "B",
         "content": "deadlock은 줄어도 pool starvation이나 전체 progress 지연은 남을 수 있다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "일관된 lock 순서는 circular-wait risk를 낮추지만 worker가 I/O에 영구 block되면 제한된 pool의 queued task가 starvation될 수 있다."
       },
       {
         "key": "C",
         "content": "모든 liveness 문제가 해결된다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "느린 dependency나 worker 고갈 등 다른 liveness 원인이 있다. lock ordering만으로 모두 해결되지 않는다."
       },
       {
         "key": "D",
         "content": "lock ordering이 executor queue도 자동 확장한다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "lock 순서는 executor queue 용량과 별개다. pool 한도, timeout과 cancellation은 따로 설계한다."
       }
     ],
     "correctChoiceKey": "B",

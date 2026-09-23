@@ -8,10 +8,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["backend.core.api.resource-endpoint"],
     "choices": [
-      {"key": "A", "content": "URI는 외부 소비자가 이해하는 resource 의미를 중심으로 하고 method/status와 함께 계약을 이룬다.", "displayOrder": 0},
-      {"key": "B", "content": "DB table 이름을 그대로 URI에 노출한다.", "displayOrder": 1},
-      {"key": "C", "content": "모든 action은 반드시 `/doSomething` POST로 표현한다.", "displayOrder": 2},
-      {"key": "D", "content": "nested resource는 깊을수록 ownership이 명확해 항상 좋다.", "displayOrder": 3}
+      {"key": "A", "content": "URI는 외부 소비자가 이해하는 resource 의미를 중심으로 하고 method/status와 함께 계약을 이룬다.", "displayOrder": 0, "rationaleMarkdown": "URI에서 resource identity를 읽을 수 있고 HTTP method는 그 자원에 대한 행위를, status는 결과를 표현한다. 이 조합이 client와 server가 공유하는 외부 계약이 된다."},
+      {"key": "B", "content": "DB table 이름을 그대로 URI에 노출한다.", "displayOrder": 1, "rationaleMarkdown": "table 이름은 내부 저장 구조라 schema 변경을 외부 client에 전파할 수 있다. API 주소는 DB 구현보다 consumer가 이해할 domain resource를 표현하는 편이 안전하다."},
+      {"key": "C", "content": "모든 action은 반드시 `/doSomething` POST로 표현한다.", "displayOrder": 2, "rationaleMarkdown": "모든 요청을 동작 이름의 POST로 보내면 조회·삭제 등 HTTP method가 전달하는 의미와 caching·retry 처리 기준이 흐려진다. POST가 필요한 command도 있지만 모든 operation의 유일한 형태는 아니다."},
+      {"key": "D", "content": "nested resource는 깊을수록 ownership이 명확해 항상 좋다.", "displayOrder": 3, "rationaleMarkdown": "깊은 경로는 parent-child 관계를 드러낼 수 있지만 이동·공유 관계가 복잡해지면 긴 URI와 강한 coupling을 만든다. depth 자체가 ownership이나 좋은 계약을 보장하지 않는다."}
     ],
     "correctChoiceKey": "A",
     "explanationMarkdown": "Resource-oriented endpoint는 DB table이나 action 이름을 그대로 노출하기보다 외부 소비자가 이해하는 resource 의미를 URI에 담고 method/status와 함께 계약을 이룬다. nested depth나 URI 미학만으로 좋은 API가 결정되지는 않는다."
@@ -47,10 +47,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["backend.core.api.methods-status"],
     "choices": [
-      {"key": "A", "content": "DELETE 두 번째 응답이 404면 idempotent가 아니다.", "displayOrder": 0},
-      {"key": "B", "content": "200 OK만 사용하면 client가 가장 단순해진다.", "displayOrder": 1},
-      {"key": "C", "content": "POST는 절대로 idempotent하게 설계할 수 없다.", "displayOrder": 2},
-      {"key": "D", "content": "같은 의도를 여러 번 적용해도 서버의 의도된 추가 효과가 누적되지 않는 의미이며 응답 body가 항상 같다는 뜻은 아니다.", "displayOrder": 3}
+      {"key": "A", "content": "DELETE 두 번째 응답이 404면 idempotent가 아니다.", "displayOrder": 0, "rationaleMarkdown": "DELETE를 반복 적용했을 때 최종 resource 상태에 추가 변화가 누적되지 않는다면 두 번째 응답이 404여도 의도된 의미는 idempotent일 수 있다. response code와 body까지 같아야 한다는 계약은 아니다."},
+      {"key": "B", "content": "200 OK만 사용하면 client가 가장 단순해진다.", "displayOrder": 1, "rationaleMarkdown": "200 하나로 모든 결과를 표현하면 client가 생성·삭제·검증 실패를 구별하기 위한 의미가 사라진다. status는 operation outcome을 전달해야 하며 항상 성공 코드 하나만 쓰는 것이 간단한 계약은 아니다."},
+      {"key": "C", "content": "POST는 절대로 idempotent하게 설계할 수 없다.", "displayOrder": 2, "rationaleMarkdown": "HTTP method POST 자체는 안전한 중복 실행을 약속하지 않지만 server가 idempotency key와 deduplication 상태를 적용해 중복 effect를 막을 수 있다. method 이름만으로 application의 구현 가능성을 금지하지 않는다."},
+      {"key": "D", "content": "같은 의도를 여러 번 적용해도 서버의 의도된 추가 효과가 누적되지 않는 의미이며 응답 body가 항상 같다는 뜻은 아니다.", "displayOrder": 3, "rationaleMarkdown": "Idempotence는 같은 요청의 반복이 의도된 server effect를 추가로 쌓지 않는 성질이다. 재요청 결과 표현은 달라져도 된다."}
     ],
     "correctChoiceKey": "D",
     "explanationMarkdown": "DELETE의 두 번째 요청이 404를 반환해도 이미 삭제된 의도된 상태가 다시 누적되지 않는다면 idempotent일 수 있다. 반대로 POST도 application key 등으로 중복 효과를 제거하도록 설계할 수 있으므로 응답 body 동일성이나 method 이름만으로 판단하지 않는다."
@@ -86,10 +86,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["backend.core.api.compatibility"],
     "choices": [
-      {"key": "A", "content": "선택 응답 필드를 추가한다.", "displayOrder": 0},
-      {"key": "B", "content": "field 타입은 유지하지만 의미를 '할인 전 금액'에서 '최종 결제 금액'으로 조용히 바꾼다.", "displayOrder": 1},
-      {"key": "C", "content": "새 endpoint를 추가한다.", "displayOrder": 2},
-      {"key": "D", "content": "문서 오타를 고친다.", "displayOrder": 3}
+      {"key": "A", "content": "선택 응답 필드를 추가한다.", "displayOrder": 0, "rationaleMarkdown": "client가 알지 못하는 optional response field를 무시할 수 있다면 additive change는 기존 동작을 보존하기 쉽다. 그래도 strict schema client 등 실제 consumer 계약은 확인해야 한다."},
+      {"key": "B", "content": "field 타입은 유지하지만 의미를 '할인 전 금액'에서 '최종 결제 금액'으로 조용히 바꾼다.", "displayOrder": 1, "rationaleMarkdown": "type이 같아도 값의 business meaning이 바뀌면 기존 client는 새 payload를 유효한 형식으로 받아 잘못된 계산을 할 수 있다. 조용한 semantic change는 문법적 변경보다 발견이 어렵고 version 또는 migration 전략이 필요하다."},
+      {"key": "C", "content": "새 endpoint를 추가한다.", "displayOrder": 2, "rationaleMarkdown": "새 endpoint는 기존 경로와 계약을 유지한 채 새 기능을 추가할 수 있다. 기존 client가 새 경로를 자동 사용하지는 않지만 보통 기존 기능을 깨는 변경은 아니다."},
+      {"key": "D", "content": "문서 오타를 고친다.", "displayOrder": 3, "rationaleMarkdown": "오타 수정이 문서 표현만 바꾸고 machine-readable contract나 실제 의미를 바꾸지 않는다면 protocol compatibility에 직접 영향을 주지 않는다. 계약 의미를 바꾸는 문서 수정은 별도 문제다."}
     ],
     "correctChoiceKey": "B",
     "explanationMarkdown": "field type이 같아도 할인 전 금액을 최종 결제 금액으로 바꾸면 기존 client의 계산과 화면 의미가 조용히 달라진다. optional field 추가처럼 consumer가 무시할 수 있는 변화와 달리 semantic change는 문서·version·공존 기간을 검토해야 하는 breaking change다."

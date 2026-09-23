@@ -2,10 +2,10 @@
   {
     "kind":"question","contentKey":"spring.core.why.object-graph.q1","promptMarkdown":"다음 중 애플리케이션 객체 그래프를 가장 정확히 설명한 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["spring.core.why.object-graph"],
     "choices":[
-      {"key":"A","content":"실행 중인 객체 instance들이 실제 참조를 통해 협력하도록 연결된 구조이며 구현 선택·수명도 조립 문제에 포함된다.","displayOrder":0},
-      {"key":"B","content":"class 파일의 상속 관계만을 모아 놓은 구조다.","displayOrder":1},
-      {"key":"C","content":"DB table의 foreign key 관계를 Java 객체로 옮긴 것이다.","displayOrder":2},
-      {"key":"D","content":"interface 개수가 많을수록 자동으로 좋은 객체 그래프가 된다.","displayOrder":3}],
+      {"key":"A","content":"실행 중인 객체 instance들이 실제 참조를 통해 협력하도록 연결된 구조이며 구현 선택·수명도 조립 문제에 포함된다.","displayOrder":0, "rationaleMarkdown": "실행 중의 객체 그래프는 instance 사이 reference가 어떻게 연결되어 협력하는지 나타낸다. 생성, 구현 선택, lifecycle 조립도 이 runtime 관계를 형성한다."},
+      {"key":"B","content":"class 파일의 상속 관계만을 모아 놓은 구조다.","displayOrder":1, "rationaleMarkdown": "상속은 class 사이의 정적 관계를 나타내지만 실제로 어떤 collaborator instance와 연결됐는지까지 설명하지 않는다. 객체 그래프는 실행 시 reference를 본다."},
+      {"key":"C","content":"DB table의 foreign key 관계를 Java 객체로 옮긴 것이다.","displayOrder":2, "rationaleMarkdown": "foreign key는 relational data model의 association이고 객체 reference와는 표현 및 lifecycle 규칙이 다르다. ORM으로 연결할 수는 있어도 동일한 그래프 계약은 아니다."},
+      {"key":"D","content":"interface 개수가 많을수록 자동으로 좋은 객체 그래프가 된다.","displayOrder":3, "rationaleMarkdown": "interface 수는 객체 그래프의 품질 지표가 아니다. 실제 대체 가능성이나 경계 없이 추상화를 늘리면 연결과 구성만 더 복잡해질 수 있다."}],
     "correctChoiceKey":"A","explanationMarkdown":"객체 그래프는 실행 중인 instance들이 실제 reference로 어떤 collaborator와 연결되어 협력하는지를 뜻한다. class 상속 관계나 DB foreign key와 같은 구조가 아니며, 구현 선택·수명·configuration까지 조립 결과에 영향을 준다."
   },
   {
@@ -15,10 +15,10 @@
   {
     "kind":"question","contentKey":"spring.core.why.coupling.q1","promptMarkdown":"`OrderService` 내부에서 `new StripePaymentGateway(apiKey)`를 직접 호출한다. 테스트에서 fake gateway를 쓰고 production에서는 다른 PG로 교체하려 한다. 가장 먼저 드러나는 설계 문제는?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["spring.core.why.coupling"],
     "choices":[
-      {"key":"A","content":"field type만 `PaymentGateway` interface로 바꾸면 `OrderService`가 내부에서 `new StripePaymentGateway(apiKey)`를 계속 호출해도 구현 결합은 사라진다.","displayOrder":0},
-      {"key":"B","content":"gateway를 static singleton으로 만들면 구현 선택과 주문 use case의 변경 이유가 자동으로 분리된다.","displayOrder":1},
-      {"key":"C","content":"`OrderService` 안에 private factory method를 만들어 Stripe 구현을 생성하면 composition 책임이 service 밖으로 이동한 것과 같다.","displayOrder":2},
-      {"key":"D","content":"업무 use case가 payment 구현 선택·구성 책임까지 소유해 독립 변경 이유가 결합되어 있다.","displayOrder":3}],
+      {"key":"A","content":"field type만 `PaymentGateway` interface로 바꾸면 `OrderService`가 내부에서 `new StripePaymentGateway(apiKey)`를 계속 호출해도 구현 결합은 사라진다.","displayOrder":0, "rationaleMarkdown": "field type을 interface로 바꿔도 생성 코드가 구체 Stripe class를 직접 호출하면 implementation 선택과 construction dependency가 남는다. type abstraction만으로 composition 책임이 이동하지 않는다."},
+      {"key":"B","content":"gateway를 static singleton으로 만들면 구현 선택과 주문 use case의 변경 이유가 자동으로 분리된다.","displayOrder":1, "rationaleMarkdown": "static singleton은 구현과 credential 선택을 계속 전역 위치에 고정한다. 공유 수명은 테스트 대체와 다른 PG로의 교체 결합을 제거하지 않는다."},
+      {"key":"C","content":"`OrderService` 안에 private factory method를 만들어 Stripe 구현을 생성하면 composition 책임이 service 밖으로 이동한 것과 같다.","displayOrder":2, "rationaleMarkdown": "private factory method는 생성 코드를 같은 OrderService 안에 감쌀 뿐이다. 구현 선택과 구성 책임을 별도 composition boundary에 옮기지 못한다."},
+      {"key":"D","content":"업무 use case가 payment 구현 선택·구성 책임까지 소유해 독립 변경 이유가 결합되어 있다.","displayOrder":3, "rationaleMarkdown": "OrderService가 주문 정책과 PG 구현 선택·설정까지 맡으면 서로 다른 이유로 바뀌는 책임이 한 class에 묶인다. 외부 composition에서 gateway를 주입하면 업무 use case와 구현 선택을 따로 바꿀 수 있다."}],
     "correctChoiceKey":"D","explanationMarkdown":"문제는 `new` 자체보다 `OrderService`가 주문 use case와 함께 **payment 구현 선택·구성·수명 책임까지 소유**한다는 점이다. interface type, singleton, 내부 factory만으로는 그 composition 책임이 service 밖으로 이동하지 않는다. 생성자 주입 같은 외부 composition boundary로 분리하면 fake나 다른 PG로 바꿀 때 업무 class의 변경 이유를 줄일 수 있다."
   },
   {

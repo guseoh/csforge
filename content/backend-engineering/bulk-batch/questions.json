@@ -8,10 +8,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["backend.core.bulk-batch.file-api"],
     "choices": [
-      {"key":"A","content":"Content-Type header만 신뢰하면 실제 파일 형식과 다른 payload를 허용할 수 있기 때문이다.","displayOrder":0},
-      {"key":"B","content":"업로드 크기 제한이 없으면 큰 파일로 storage나 memory를 압박할 수 있기 때문이다.","displayOrder":1},
-      {"key":"C","content":"`../`나 path separator가 포함된 이름으로 의도한 upload root 밖의 경로를 선택할 수 있기 때문이다.","displayOrder":2},
-      {"key":"D","content":"동일한 filename 정책이 없으면 기존 파일과 이름 충돌이 생길 수 있기 때문이다.","displayOrder":3}
+      {"key":"A","content":"Content-Type header만 신뢰하면 실제 파일 형식과 다른 payload를 허용할 수 있기 때문이다.","displayOrder":0, "rationaleMarkdown": "Content-Type만 검사하는 것도 위험하지만 question의 직접적인 경로 이탈 문제는 아니다. MIME type은 client가 선언할 수 있어 실제 payload와의 일치도 별도로 다뤄야 한다."},
+      {"key":"B","content":"업로드 크기 제한이 없으면 큰 파일로 storage나 memory를 압박할 수 있기 때문이다.","displayOrder":1, "rationaleMarkdown": "크기 제한이 없으면 memory나 storage exhaustion 위험이 있다. 그러나 이 선택지는 업로드량 문제가 아니라 attacker가 filename으로 경로를 조작하는 위험을 설명하지 않는다."},
+      {"key":"C","content":"`../`나 path separator가 포함된 이름으로 의도한 upload root 밖의 경로를 선택할 수 있기 때문이다.","displayOrder":2, "rationaleMarkdown": "client filename을 경로에 그대로 이어 붙이면 traversal segment나 separator로 지정 root 밖을 선택할 수 있다. server 생성 storage key를 쓰고 원래 이름은 표시용 metadata로만 보관해야 한다."},
+      {"key":"D","content":"동일한 filename 정책이 없으면 기존 파일과 이름 충돌이 생길 수 있기 때문이다.","displayOrder":3, "rationaleMarkdown": "이름 충돌은 덮어쓰기나 거부 정책을 필요로 하지만 임의 경로 접근과는 별개의 문제다. 안전한 저장 경로를 고른 뒤에도 고유 key와 충돌 처리를 설계해야 한다."}
     ],
     "correctChoiceKey":"C",
     "explanationMarkdown":"원래 filename은 client가 제공하는 입력이므로 저장 경로를 직접 결정하게 해서는 안 된다. 특히 `../`나 separator를 그대로 결합하면 upload root 밖으로 벗어나는 path traversal이 가능해진다. 서버가 안전한 storage key를 생성하고 원래 이름은 metadata로 분리하는 편이 안전하다."
@@ -25,10 +25,10 @@
     "status":"PUBLISHED",
     "conceptKeys":["backend.core.bulk-batch.bulk-processing"],
     "choices":[
-      {"key":"A","content":"JDBC batch가 비활성화되어 INSERT round trip 수가 많아지는지 먼저 확인한다.","displayOrder":0},
-      {"key":"B","content":"managed entity가 persistence context에 계속 쌓이는지와 flush/clear 경계를 확인한다.","displayOrder":1},
-      {"key":"C","content":"DB index 유지 비용 때문에 각 flush 시간이 길어지는지 먼저 확인한다.","displayOrder":2},
-      {"key":"D","content":"connection pool acquisition 대기로 writer thread가 쌓이는지 먼저 확인한다.","displayOrder":3}
+      {"key":"A","content":"JDBC batch가 비활성화되어 INSERT round trip 수가 많아지는지 먼저 확인한다.","displayOrder":0, "rationaleMarkdown": "JDBC batch가 꺼져 있으면 statement round trip 때문에 처리 시간이 나빠질 수 있다. 하지만 JDBC batching만 켜도 transaction 동안 persistence context에 쌓이는 managed entity의 메모리 사용이 자동으로 사라지지는 않는다."},
+      {"key":"B","content":"managed entity가 persistence context에 계속 쌓이는지와 flush/clear 경계를 확인한다.","displayOrder":1, "rationaleMarkdown": "한 persistence context가 처리한 entity를 계속 managed 상태로 들고 있으면 heap과 dirty-check 부담이 커질 수 있다. 제한된 chunk마다 flush하고 clear하는 패턴과 batch 설정을 함께 측정할 지점이다."},
+      {"key":"C","content":"DB index 유지 비용 때문에 각 flush 시간이 길어지는지 먼저 확인한다.","displayOrder":2, "rationaleMarkdown": "index 유지 비용은 write throughput을 낮출 수 있지만 heap이 증가하는 현상을 직접 설명하지 않는다. index를 제거하기 전에 메모리 사용과 실제 flush 비용을 분리해 측정해야 한다."},
+      {"key":"D","content":"connection pool acquisition 대기로 writer thread가 쌓이는지 먼저 확인한다.","displayOrder":3, "rationaleMarkdown": "pool 대기는 작업 시간을 늘려도 writer thread가 무조건 많은 entity를 heap에 쌓는 원인은 아니다. 대기 시간과 persistence context 보유량은 별도 지표로 확인한다."}
     ],
     "correctChoiceKey":"B",
     "explanationMarkdown":"반복 `save()`가 만든 managed entity가 한 transaction의 persistence context에 쌓이면 DB flush 전 메모리와 dirty-check 비용이 증가한다. batch 크기별 flush/clear와 JDBC batching을 측정해야 하며 EAGER 전환이나 index 제거는 원인과 무관한 처방이다."

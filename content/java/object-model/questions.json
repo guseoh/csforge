@@ -13,22 +13,26 @@
       {
         "key": "A",
         "content": "클래스는 항상 object 하나만 표현한다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "하나의 class는 여러 instance를 만들 수 있다. class가 인스턴스 수를 하나로 제한하지 않는다."
       },
       {
         "key": "B",
         "content": "object는 컴파일 시에만 존재하고 실행 시 사라진다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "object는 실행 중 heap 등 runtime 환경에서 존재하는 instance다. 컴파일 때만 존재하는 값이 아니다."
       },
       {
         "key": "C",
         "content": "클래스와 object는 Java에서 같은 개념이다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "class는 선언된 타입과 동작의 정의이고 object는 그 정의를 바탕으로 만든 구체 인스턴스라 서로 구별된다."
       },
       {
         "key": "D",
         "content": "클래스는 설계와 동작의 틀이고 object는 그 클래스에서 만들어진 실행 시 인스턴스다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "class가 field와 method 구조를 정의하고 new 등을 통해 만들어진 object가 그 구조를 가진 실행 시 instance다."
       }
     ],
     "correctChoiceKey": "D",
@@ -48,22 +52,26 @@
       {
         "key": "A",
         "content": "항상 `void` 반환 타입을 명시해야 한다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "constructor 선언에는 반환 타입을 적지 않는다. void를 붙이면 constructor가 아니라 이름이 같은 일반 method가 된다."
       },
       {
         "key": "B",
         "content": "반환 타입이 없고 새 인스턴스의 초기 상태를 설정하는 특별한 선언이다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "constructor는 선언된 타입과 인자로 인스턴스 생성 시 호출되며 새 객체의 초기 상태를 정한다. 반환 타입은 선언하지 않는다."
       },
       {
         "key": "C",
         "content": "이미 존재하는 object의 모든 메서드를 복사한다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "constructor는 method를 복사하지 않는다. 타입의 동작은 class 선언에 정의되고 생성자는 상태를 초기화한다."
       },
       {
         "key": "D",
         "content": "클래스당 하나만 선언할 수 있다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "class는 인자와 접근성이 다른 여러 constructor overload를 선언할 수 있다."
       }
     ],
     "correctChoiceKey": "B",
@@ -83,22 +91,26 @@
       {
         "key": "A",
         "content": "constructor는 인자를 받을 수 없다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "constructor는 매개변수를 받을 수 있고 이를 이용해 초기 상태를 전달할 수 있다. 이 예시는 User()만 선언했다."
       },
       {
         "key": "B",
         "content": "String은 object 생성에 사용할 수 없다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "String은 객체 생성 인자로 사용할 수 있는 참조 타입이다. 실패 원인은 인자 타입이 아니라 일치하는 constructor가 없다는 점이다."
       },
       {
         "key": "C",
         "content": "User(String) constructor가 선언되어 있지 않다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "명시적으로 User()를 선언했으므로 이 class에 자동 User(String) constructor가 생기지 않는다. 해당 인자 목록과 맞는 선언이 필요하다."
       },
       {
         "key": "D",
         "content": "기본 constructor는 private으로만 선언된다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "constructor 접근성은 선언에 따라 달라지며 기본 constructor가 무조건 private인 규칙은 없다. 여기에 선언된 것은 package 접근 User()다."
       }
     ],
     "correctChoiceKey": "C",
@@ -118,22 +130,26 @@
       {
         "key": "A",
         "content": "생성 직후에도 Account가 허용된 상태라는 invariant를 보장하기 위해서다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "유효하지 않은 잔액을 초기에 거부하면 모든 외부 호출자가 객체를 만든 뒤 일일이 복구하지 않아도 되고 생성 이후 invariant를 유지할 수 있다."
       },
       {
         "key": "B",
         "content": "GC를 더 빨리 실행하기 위해서다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "검증 예외는 GC 스케줄링을 촉진하는 장치가 아니다. 도메인상 잘못된 입력을 거부하는 이유가 있다."
       },
       {
         "key": "C",
         "content": "모든 constructor는 외부 입력을 거부해야 하기 때문이다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "constructor는 모든 입력을 거부하지 않는다. 유효 범위를 벗어난 입력만 거부해 의미 있는 상태를 만든다."
       },
       {
         "key": "D",
         "content": "예외가 있으면 field가 static이 되기 때문이다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "예외 발생 여부가 field를 static으로 바꾸지 않는다. 정적/인스턴스 구분은 선언으로 결정된다."
       }
     ],
     "correctChoiceKey": "A",
@@ -153,22 +169,26 @@
       {
         "key": "A",
         "content": "size는 final이어도 constructor에서 대입할 수 없다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "final instance field는 생성 경로에서 constructor가 한 번 초기화할 수 있다. 이후 변경을 막는 성질이다."
       },
       {
         "key": "B",
         "content": "예외가 발생해도 size가 0인 Box가 반환된다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "constructor가 예외로 정상 완료되지 않으면 호출자는 해당 constructor 결과로 Box 객체를 받지 않는다."
       },
       {
         "key": "C",
         "content": "constructor 안의 this.size는 지역 변수만 가리킨다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "this.size는 현재 생성 중인 객체의 field이고 매개변수 size와 구분된다. this를 쓰지 않은 size는 parameter다."
       },
       {
         "key": "D",
         "content": "양수 인자로 생성한 Box만 관찰 가능하고, 0 이하 인자는 생성 단계에서 실패한다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "양수 검증을 통과한 경우에만 final field가 초기화된 Box가 반환된다. 0 이하에서는 exception으로 생성이 완료되지 않는다."
       }
     ],
     "correctChoiceKey": "D",
@@ -188,22 +208,26 @@
       {
         "key": "A",
         "content": "static field로 선언한다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "static field는 class에 하나로 속해 인스턴스들이 공유하므로 객체별 독립 count 요구와 맞지 않는다."
       },
       {
         "key": "B",
         "content": "항상 final field로 선언한다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "final은 재대입을 제한하지만 field가 인스턴스별인지 공유인지 정하지 않는다. 그 구분은 static 여부다."
       },
       {
         "key": "C",
         "content": "instance field로 선언한다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "instance field는 각 객체 상태의 일부라 두 Counter가 별도 count 값을 가질 수 있다."
       },
       {
         "key": "D",
         "content": "constructor 밖의 지역 변수로 선언한다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "지역 변수는 선언된 method 호출 범위에 속한다. 각 객체에 저장할 지속 상태는 instance field로 모델링한다."
       }
     ],
     "correctChoiceKey": "C",
@@ -223,22 +247,26 @@
       {
         "key": "A",
         "content": "각 인스턴스마다 반드시 별도의 복사본이 생긴다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "static field는 instance마다 복제되지 않는다. 클래스에 속한 하나의 상태로 인스턴스 호출 사이에서 공유된다."
       },
       {
         "key": "B",
         "content": "메서드 호출이 끝나면 항상 사라진다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "static field의 수명은 개별 method 호출 범위와 같지 않다. class의 runtime 상태로 유지된다."
       },
       {
         "key": "C",
         "content": "static field는 읽기 전용이라 변경할 수 없다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "static만으로 읽기 전용이 되지 않는다. final이 붙지 않은 필드는 코드에서 변경될 수 있고 동시성은 별도 고려한다."
       },
       {
         "key": "D",
         "content": "클래스에 속해 인스턴스들이 공유하는 field다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "static field는 class에 귀속되어 인스턴스 없이 접근할 수 있고 모든 해당 class 인스턴스가 같은 저장 상태를 공유한다."
       }
     ],
     "correctChoiceKey": "D",
@@ -258,22 +286,26 @@
       {
         "key": "A",
         "content": "static method는 field를 전혀 읽을 수 없기 때문이다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "static method에서도 class 이름으로 static field에 접근할 수 있다. 제한되는 것은 특정 객체 없이 instance 상태를 참조하는 것이다."
       },
       {
         "key": "B",
         "content": "static method 호출에는 특정 instance를 가리키는 `this`가 없기 때문이다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "static 호출에는 receiver 객체가 없어 this가 존재하지 않는다. 인스턴스 field는 구체 객체를 통해 접근해야 한다."
       },
       {
         "key": "C",
         "content": "this는 constructor 안에서만 예약어이기 때문이다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "this는 constructor뿐 아니라 instance method 등 객체 문맥에 존재한다. static method만 객체 문맥이 없다."
       },
       {
         "key": "D",
         "content": "static method는 항상 private이기 때문이다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "static method의 접근 수준은 public, protected, package, private로 선언할 수 있다. static이 private을 강제하지 않는다."
       }
     ],
     "correctChoiceKey": "B",
@@ -293,22 +325,26 @@
       {
         "key": "A",
         "content": "0",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "각 constructor에서 total을 1씩 증가시킨다. 두 객체를 생성했으므로 최종 공유 카운트는 0이 아니다."
       },
       {
         "key": "B",
         "content": "1",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "static 값은 개별 생성마다 독립 복사되지 않고 누적된다. 두 번 증가하면 1을 넘는다."
       },
       {
         "key": "C",
         "content": "2",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "공유 static total이 constructor 호출마다 증가해 2가 된다. class 이름으로 읽어 동일한 값을 확인한다."
       },
       {
         "key": "D",
         "content": "컴파일 오류",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "static field는 class 이름으로 참조 가능하고 constructor에서 수정도 가능하므로 코드가 컴파일된다."
       }
     ],
     "correctChoiceKey": "C",
@@ -328,22 +364,26 @@
       {
         "key": "A",
         "content": "1:2:3",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "a 생성 때 s가 1에서 2가 되어 i는 1을 받고, b는 2에서 3으로 올리며 i=2다. 이후 a.inc가 a.i와 s를 증가시켜 2:2:4가 된다."
       },
       {
         "key": "B",
         "content": "2:2:4",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "static s는 두 생성에서 1씩 증가해 3이 된 뒤 inc에서 4가 된다. b.i는 생성 때 저장한 2를 유지하고 a.i만 2여서 결과가 이 값이다."
       },
       {
         "key": "C",
         "content": "2:3:4",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "b.i는 s의 이후 변경을 자동 추적하지 않는다. 초기화 시점의 반환된 이전 값 2를 instance field에 보관한다."
       },
       {
         "key": "D",
         "content": "2:2:3",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "inc에서 static s도 증가하므로 마지막 값은 3이 아니라 4다."
       }
     ],
     "correctChoiceKey": "B",
@@ -363,22 +403,26 @@
       {
         "key": "A",
         "content": "인스턴스가 생성될 때마다 무조건 다시 실행된다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "static initializer는 instance 생성마다 다시 도는 코드가 아니다. class별 초기화 완료 뒤 정적 상태가 유지된다."
       },
       {
         "key": "B",
         "content": "프로그램 종료 후에 실행된다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "static initializer는 종료 후 hook이 아니며 class initialization 단계에서 실행된다."
       },
       {
         "key": "C",
         "content": "해당 클래스가 초기화될 때, 보통 첫 active use 전에 한 번 실행된다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "JVM은 class를 초기화할 때 static field 초기화와 static initializer를 수행하며 active use 전에 초기화가 일어나는 경우가 일반적이다."
       },
       {
         "key": "D",
         "content": "항상 컴파일 시에만 실행된다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "컴파일러가 값을 미리 실행해 넣는 동작이 아니다. class 초기화는 runtime에서 정해진 순서로 진행된다."
       }
     ],
     "correctChoiceKey": "C",
@@ -398,22 +442,26 @@
       {
         "key": "A",
         "content": "child의 모든 instance method가 먼저 실행된다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "생성 전에 인스턴스 method가 자동 실행되는 절차는 없다. constructor와 initializer의 순서를 따라 객체를 만든다."
       },
       {
         "key": "B",
         "content": "superclass constructor 호출과 superclass 쪽 초기화가 먼저 진행된다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "하위 생성자는 상위 생성자 호출로 시작하며 상위 쪽 상태 초기화가 먼저 완료된 뒤 하위 초기화와 constructor body로 진행한다."
       },
       {
         "key": "C",
         "content": "child field가 항상 마지막에만 초기화된다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "child field는 무조건 끝에 몰아 처리되는 게 아니라 superclass 완료 뒤 해당 class의 instance initializer와 constructor 순서로 초기화된다."
       },
       {
         "key": "D",
         "content": "GC가 superclass object를 제거한다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "GC는 superclass 초기화와 무관하다. 수거는 도달 불가능 객체 관리이지 생성 순서를 대체하지 않는다."
       }
     ],
     "correctChoiceKey": "B",
@@ -433,22 +481,26 @@
       {
         "key": "A",
         "content": "PCI",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "Parent constructor의 P는 child initializer I보다 먼저 실행된다. superclass 생성이 완료된 뒤 child 초기화가 진행된다."
       },
       {
         "key": "B",
         "content": "CIP",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "child constructor body C는 superclass constructor와 child instance initializer 뒤에 실행된다."
       },
       {
         "key": "C",
         "content": "PIC",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "superclass constructor가 P를 먼저 출력하고, child initializer block이 I, Child constructor body가 C를 출력한다."
       },
       {
         "key": "D",
         "content": "IPC",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "initializer block은 constructor body보다 앞에 오지만 superclass 초기화가 먼저라 I가 P보다 앞서지는 않는다."
       }
     ],
     "correctChoiceKey": "C",
@@ -468,22 +520,26 @@
       {
         "key": "A",
         "content": "현재 instance의 field를 읽고 instance method를 호출하는 것도 모두 허용된다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "early construction 문맥에는 생성자 인자 검증과 허용된 현재 타입 field 초기화가 가능하지만 field 값을 읽거나 instance method로 우회하는 것은 제한된다."
       },
       {
         "key": "B",
         "content": "어떤 statement도 explicit constructor invocation 앞에 둘 수 없다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "Java 25 flexible constructor body는 constructor invocation 앞에 제한된 statement를 허용한다. 어떤 statement도 허용되지 않는 것은 아니다."
       },
       {
         "key": "C",
         "content": "인자 검증 같은 statement를 둘 수 있고, 현재 instance field를 assignment로 초기화하는 것도 허용되지만 그 field를 읽거나 instance method를 호출하는 데에는 제한이 있다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "early context는 superclass construction 전 잘못된 this escape와 미초기화 상태 사용을 막으면서 인자 검사나 직접 field 대입을 허용한다."
       },
       {
         "key": "D",
         "content": "`this(...)`와 `super(...)`를 한 constructor에서 연속으로 둘 다 호출할 수 있다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "한 constructor는 this(...)로 다른 동일 class constructor에 위임하거나 super(...)를 호출하는 경로 중 하나를 택한다. 둘을 연이어 호출할 수 없다."
       }
     ],
     "correctChoiceKey": "C",
@@ -503,22 +559,26 @@
       {
         "key": "A",
         "content": "BXA",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "B()는 this(1)로 다른 B constructor에 위임한다. B body의 B는 그 호출이 끝난 뒤라 첫 출력이 아니다."
       },
       {
         "key": "B",
         "content": "ABX",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "A의 superclass constructor는 실행되지만 B(int)의 X가 그 뒤에 출력되고, 이어 원래 B()의 body가 B를 출력한다."
       },
       {
         "key": "C",
         "content": "AXB",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "B(int)가 암묵적으로 super()를 호출해 A를 출력한 뒤 X를 출력한다. 위임한 B()가 돌아오면 마지막으로 B가 출력된다."
       },
       {
         "key": "D",
         "content": "컴파일 오류",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "this(...) constructor chaining은 허용된다. B(int)에 super 호출이 명시되지 않았으므로 기본 superclass constructor가 적용된다."
       }
     ],
     "correctChoiceKey": "C",
@@ -538,22 +598,26 @@
       {
         "key": "A",
         "content": "STIPJC",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "처음 Child를 사용하면 Parent static 초기화 후 Child static 초기화가 수행되고, 생성에서는 Parent initializer/constructor 뒤 Child initializer/constructor로 진행해 STIPJC가 된다."
       },
       {
         "key": "B",
         "content": "SITPJC",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "static initialization은 I나 P 같은 instance 단계보다 앞선다. Parent static S 다음 Child static T가 실행된다."
       },
       {
         "key": "C",
         "content": "TSIPJC",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "하위 class의 static initializer가 superclass보다 먼저 실행되지 않는다. class 초기화 순서는 부모 선행 조건을 따른다."
       },
       {
         "key": "D",
         "content": "STJPIC",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "Parent의 instance initializer I와 constructor P가 Child의 J, C보다 앞선다. Child instance initializer가 Parent constructor보다 먼저 나오지 않는다."
       }
     ],
     "correctChoiceKey": "A",
@@ -573,22 +637,26 @@
       {
         "key": "A",
         "content": "private이면 값이 자동으로 암호화된다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "private은 Java 언어의 접근 제어다. 값을 자동 암호화하지 않으며 민감 데이터 보호에는 별도 암호화와 비밀 관리가 필요하다."
       },
       {
         "key": "B",
         "content": "private이면 다른 모든 JVM에서 접근이 불가능하다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "private 접근은 무조건 모든 JVM이나 reflection 환경에 절대 보이지 않는다는 보안 경계가 아니다. 언어 접근과 런타임 접근 정책을 구분한다."
       },
       {
         "key": "C",
         "content": "상태 변경 경로를 통제해 object invariant를 보호한다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "field 직접 변경을 제한하고 검증된 연산을 통해서만 상태를 바꾸게 하면 class가 자기 invariant를 지킬 수 있다."
       },
       {
         "key": "D",
         "content": "private field는 절대 변경할 수 없다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "private field도 class의 method나 constructor가 바꿀 수 있다. private은 불변 선언이 아니며 final 여부와 다르다."
       }
     ],
     "correctChoiceKey": "C",
@@ -608,22 +676,26 @@
       {
         "key": "A",
         "content": "setter를 제공하면 호출 순서와 관계없이 객체의 불변 조건이 자동으로 보장되기 때문이다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "setter 호출도 검증을 빼면 유효하지 않은 상태를 만들 수 있다. 호출 순서와 무관한 보장은 메서드 이름만으로 생기지 않는다."
       },
       {
         "key": "B",
         "content": "boolean setter가 결제 수단과 현재 주문 상태까지 타입으로 표현하기 때문이다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "boolean setter는 payment 수단이나 주문 상태 전이를 타입으로 표현하지 않는다. payment 객체를 받는 행위 API가 문맥을 드러낼 수 있다."
       },
       {
         "key": "C",
         "content": "결제 조건과 상태 전이를 Order 내부에서 함께 검증할 수 있기 때문이다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "pay(payment)는 결제 요건, 이미 결제된 상태, 금액 일치 등을 Order의 현재 상태와 함께 검증하고 유효한 전이를 수행할 수 있다."
       },
       {
         "key": "D",
         "content": "행위 메서드는 결제 가능 여부를 호출자만 검사하도록 책임을 옮기기 때문이다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "도메인 행위는 호출자가 아닌 객체가 intrinsic transition을 보호할 수 있게 한다. 외부에서 검사만 하면 경쟁 조건이나 다른 호출 경로에서 규칙이 빠질 수 있다."
       }
     ],
     "correctChoiceKey": "C",
@@ -643,22 +715,26 @@
       {
         "key": "A",
         "content": "호출자가 검증되지 않은 값을 넣어 invariant를 우회할 수 있다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "검증 없는 공개 setter는 음수 잔액을 직접 넣게 해 Wallet이 지켜야 할 도메인 불변식을 우회할 수 있다."
       },
       {
         "key": "B",
         "content": "setter는 private field를 읽을 수 없다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "class method인 setter는 같은 class의 private field에 접근할 수 있다. 접근 제어는 외부 호출 경로를 제한한다."
       },
       {
         "key": "C",
         "content": "int field는 setter로만 초기화할 수 있다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "int field는 선언 초기값이나 constructor에서 정할 수 있고 일반 method로도 갱신 가능하다. setter가 언어의 필수 규칙은 아니다."
       },
       {
         "key": "D",
         "content": "setter가 있으면 Wallet이 interface가 된다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "setter는 method일 뿐 class를 interface로 바꾸지 않는다. interface와 class는 선언 종류가 다르다."
       }
     ],
     "correctChoiceKey": "A",
@@ -678,22 +754,26 @@
       {
         "key": "A",
         "content": "모든 email이 같은 문자열로 정규화된다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "필수 email을 검증한다고 모든 주소를 동일한 문자열로 바꾸는 것은 아니다. 유효성 확인과 정규화 정책은 별개다."
       },
       {
         "key": "B",
         "content": "검증되지 않은 상태의 User가 애플리케이션에 퍼지는 것을 막는다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "생성 경계에서 필수 값을 검증하면 유효하지 않은 User가 서비스와 저장소에 퍼지기 전에 거부할 수 있다."
       },
       {
         "key": "C",
         "content": "검증은 controller에서만 가능해진다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "검증은 controller에 한정되지 않는다. domain constructor나 factory가 객체 invariant를 보호할 수 있다."
       },
       {
         "key": "D",
         "content": "constructor 호출이 항상 성공하도록 만든다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "입력이 잘못되면 constructor가 실패할 수 있다. 검증은 생성 성공을 강제하는 게 아니라 잘못된 상태 생성을 막는다."
       }
     ],
     "correctChoiceKey": "B",
@@ -713,22 +793,26 @@
       {
         "key": "A",
         "content": "addItem이 품목을 추가한 뒤 내부 규칙에 따라 total을 갱신한다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "Order가 품목 추가와 금액 갱신을 하나의 operation에서 통제하면 total 계산 규칙이 객체 내부에 모여 불변식을 유지할 수 있다."
       },
       {
         "key": "B",
         "content": "항상 공개된 items List를 반환하고 호출자가 total을 직접 바꾸게 한다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "mutable 내부 List를 노출하면 호출자가 검증을 거치지 않고 품목만 바꿔 total과 불일치 상태를 만들 수 있다."
       },
       {
         "key": "C",
         "content": "total field를 public으로 만들고 문서에 주의사항을 적는다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "public total은 누구나 직접 변경 가능하다. 주의 문서만으로 상태 보호를 강제할 수 없다."
       },
       {
         "key": "D",
         "content": "모든 상태를 Map<String,Object>에 넣는다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "문자열 key와 Object value를 담은 Map은 타입 계약과 invariant가 퍼지기 쉬우며 order 행위를 보호해 주지 않는다."
       }
     ],
     "correctChoiceKey": "A",
@@ -748,22 +832,26 @@
       {
         "key": "A",
         "content": "private이면 객체의 모든 상태 변경 가능성이 사라져 자동으로 immutable이 된다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "private은 외부의 직접 접근을 제한하지만 class 내부 method는 여전히 상태를 바꿀 수 있다. immutable 여부는 field final, 내부 참조, 변경 API 등을 함께 본다."
       },
       {
         "key": "B",
         "content": "private field는 reflection이나 serialization 같은 런타임 메커니즘과 무관하게 절대 관찰될 수 없다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "private은 언어 접근 제어이지 모든 런타임 메커니즘에서 상태가 절대로 관찰되지 않는다는 보안 보장이 아니다."
       },
       {
         "key": "C",
         "content": "private을 쓰면 별도의 입력 검증이나 상태 전이 메서드는 필요 없다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "접근 제한만으로 입력이 유효한지나 허용된 전이인지 검증되지 않는다. 적절한 행위와 검증 경계가 필요하다."
       },
       {
         "key": "D",
         "content": "private은 Java의 member 접근 경계를 제공하지만, 객체가 좋은 invariant를 갖는지는 공개된 생성·행동 API 설계까지 함께 봐야 한다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "private은 외부 코드의 직접 member 접근을 제한하지만 유효한 생성과 상태 변경은 공개 constructor/factory/method 계약으로 설계해야 한다."
       }
     ],
     "correctChoiceKey": "D",
@@ -783,22 +871,26 @@
       {
         "key": "A",
         "content": "가능한 모든 내부 field를 공개한다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "내부 field를 전부 공개하면 호출자가 구현 세부와 결합되어 abstraction 경계가 사라진다."
       },
       {
         "key": "B",
         "content": "사용 목적에 필요한 계약과 결과를 제공하고 내부 구현 세부는 숨긴다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "호출자가 필요한 동작과 결과를 작은 계약으로 표현하고 변경 가능한 구현 세부는 숨겨야 한다."
       },
       {
         "key": "C",
         "content": "항상 가장 많은 메서드를 가진다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "메서드 수가 많다고 abstraction 품질이 좋아지지 않는다. 과한 API는 학습과 변경 비용을 키운다."
       },
       {
         "key": "D",
         "content": "구현 class의 이름을 API 사용자가 직접 조립하게 한다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "API 사용자가 구현 조립을 알아야 하면 구체화 선택이 계약 밖으로 새어 나온다. 적절한 abstraction은 의존 대상을 줄인다."
       }
     ],
     "correctChoiceKey": "B",
@@ -818,22 +910,26 @@
       {
         "key": "A",
         "content": "모든 provider가 같은 내부 algorithm을 자동으로 사용한다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "같은 interface 구현은 각 provider가 내부적으로 같은 algorithm을 쓴다는 보장이 아니다. 공유되는 것은 호출 계약이다."
       },
       {
         "key": "B",
         "content": "interface가 네트워크 장애를 자동으로 재시도한다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "interface 선언만으로 네트워크 retry, timeout, 장애 복구가 생기지 않는다. 이는 별도 운영 정책이다."
       },
       {
         "key": "C",
         "content": "구현 class를 더 많이 만들수록 결합도가 높아진다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "구현 추가 자체가 반드시 결합을 높이지 않는다. 서비스가 안정된 계약에 의존하면 implementation 교체를 분리할 수 있다."
       },
       {
         "key": "D",
         "content": "결제 계약과 실제 provider 구현을 분리해 교체와 테스트가 쉬워진다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "PaymentGateway 계약에 서비스가 의존하면 vendor 타입을 use case에서 몰라도 되고 테스트 double이나 다른 provider로 대체할 수 있다."
       }
     ],
     "correctChoiceKey": "D",
@@ -853,22 +949,26 @@
       {
         "key": "A",
         "content": "구현체와 호출자가 불필요한 책임에 결합되고 변경 영향 범위가 커진다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "호출자가 쓰지 않는 기능까지 한 계약에 묶으면 불필요한 구현 의무와 변경 전파가 늘어 interface 분리 원칙에 어긋난다."
       },
       {
         "key": "B",
         "content": "interface는 상속할 수 없게 된다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "interface는 class처럼 여러 type이 구현할 수 있다. 메서드 수가 많아도 상속 가능성이 사라지지 않는다."
       },
       {
         "key": "C",
         "content": "private method만 포함할 수 있게 된다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "Java interface는 public abstract 외에도 적절한 접근의 private helper method를 가질 수 있다. 여기서 문제는 큰 계약의 결합도다."
       },
       {
         "key": "D",
         "content": "모든 구현체가 자동으로 immutable해진다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "interface 구현체의 가변성은 각 class의 설계에 달려 있다. 큰 interface 선언만으로 immutable해지지 않는다."
       }
     ],
     "correctChoiceKey": "A",
@@ -888,22 +988,26 @@
       {
         "key": "A",
         "content": "도메인과 서비스 전반이 VendorSdk 타입을 직접 사용하게 해 변경을 한 번에 반영한다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "application 전반에서 vendor SDK를 직접 쓰면 교체나 API 변경이 도메인과 use case 여러 곳으로 번진다."
       },
       {
         "key": "B",
         "content": "Vendor SDK의 모든 메서드를 동일하게 복사한 거대한 interface를 만들어 추상화라고 부른다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "vendor SDK 모든 메서드를 복사한 interface는 필요한 application 계약만 추상화하지 않고 외부 API의 결합을 그대로 노출한다."
       },
       {
         "key": "C",
         "content": "타입 결합을 없애기 위해 모든 요청·응답을 Object와 Map으로 바꾼다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "Object와 Map으로 형식 정보를 지우면 안정된 계약과 compile-time 검사 이점이 사라진다."
       },
       {
         "key": "D",
         "content": "애플리케이션이 필요한 `PaymentGateway.authorize/cancel` 계약을 두고 Vendor SDK는 adapter 구현 안에 둔다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "application 관점의 승인·취소 계약으로 외부 결제를 표현하고 adapter가 vendor SDK 차이를 번역하면 교체 지점과 테스트 seam이 선명해진다."
       }
     ],
     "correctChoiceKey": "D",
@@ -923,22 +1027,26 @@
       {
         "key": "A",
         "content": "`Car`는 `Engine`이다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "Car는 Engine을 포함하거나 사용한다는 has-a 관계다. Car 자체가 Engine의 하위 타입은 아니다."
       },
       {
         "key": "B",
         "content": "`SavingsAccount`는 `Account`로도 다뤄질 수 있다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "SavingsAccount가 일반 Account 계약을 만족하면 상위 타입이 기대하는 자리에서 사용할 수 있는 자연스러운 is-a 상속이다."
       },
       {
         "key": "C",
         "content": "`OrderService`는 `Order`이다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "OrderService는 Order를 운영하는 책임을 가진 service이지 Order의 특수 종류가 아니다."
       },
       {
         "key": "D",
         "content": "`List`는 `String`이다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "List는 collection 계약이고 String은 문자열 타입이라 List가 String의 하위 타입이라는 관계가 아니다."
       }
     ],
     "correctChoiceKey": "B",
@@ -958,22 +1066,26 @@
       {
         "key": "A",
         "content": "superclass invariant와 변경 이유가 여러 subclass에 분산된다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "여러 subclass가 protected 상태를 직접 변경하면 상위 invariant가 지켜지는 규칙이 흩어지고 각 변경 이유가 자식 구현에 전파된다."
       },
       {
         "key": "B",
         "content": "protected field는 runtime에 존재하지 않는다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "protected field는 instance에 저장되고 필요할 때 runtime에 존재한다. 접근 수준이 필드를 제거하지 않는다."
       },
       {
         "key": "C",
         "content": "subclass가 superclass method를 override할 수 없게 된다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "protected 접근이 superclass method override를 금지하지 않는다. 실제 위험은 상태 소유권이 약해지는 것이다."
       },
       {
         "key": "D",
         "content": "protected는 항상 public보다 강한 캡슐화다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "protected는 같은 package와 subclass 경로에 노출해 private보다 접근 범위가 넓다. 항상 더 강한 캡슐화가 아니다."
       }
     ],
     "correctChoiceKey": "A",
@@ -993,22 +1105,26 @@
       {
         "key": "A",
         "content": "Java는 class 상속을 지원하지 않기 때문이다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "Java는 class inheritance를 지원한다. 문제는 문법적 가능성이 아니라 semantic relation의 타당성이다."
       },
       {
         "key": "B",
         "content": "상속은 method를 재사용할 수 없기 때문이다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "상속으로 method를 물려받아 재사용할 수 있지만 그 reuse만으로 is-a 관계가 정당화되지는 않는다."
       },
       {
         "key": "C",
         "content": "FileUtil은 object가 될 수 없기 때문이다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "FileUtil class는 객체가 될 수 있다. 상속을 쓰려는 설계 관계가 부자연스러운 이유와는 별개다."
       },
       {
         "key": "D",
         "content": "Report가 FileUtil이라는 대체 가능성을 의미하지 않아 잘못된 is-a 관계가 되기 때문이다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "상속은 하위 인스턴스를 상위 API의 대체물로 쓸 수 있다는 뜻이다. Report가 FileUtil의 종류가 아니라 기능을 이용할 뿐이면 composition이 낫다."
       }
     ],
     "correctChoiceKey": "D",
@@ -1028,22 +1144,26 @@
       {
         "key": "A",
         "content": "Penguin은 항상 Bird를 상속할 수 없다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "Penguin이 Bird의 한 종류라는 분류만으로 구체 상속이 언제나 틀린 것은 아니지만, 실제 상위 API 계약에 문제가 드러나면 hierarchy를 재검토한다."
       },
       {
         "key": "B",
         "content": "superclass의 계약이 모든 subclass의 실제 행동과 맞지 않는 잘못된 abstraction일 수 있다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "일부 subclass가 기본 동작을 만족시키기 위해 예외를 던져야 한다면 superclass가 보장한 행위가 subtype을 포괄하지 못해 Liskov 대체 가능성 문제가 있을 수 있다."
       },
       {
         "key": "C",
         "content": "override method는 checked exception을 던질 수 없다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "override가 던질 수 있는 checked exception 제한은 Java 규칙이지만 모든 호출자가 fly를 처리해야 하는 설계 문제의 원인을 설명하지 않는다."
       },
       {
         "key": "D",
         "content": "상속 관계에서는 interface를 사용할 수 없다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "class 상속 계층에서도 interface를 구현할 수 있다. 계층 설계와 interface 사용은 배타적이지 않다."
       }
     ],
     "correctChoiceKey": "B",
@@ -1063,22 +1183,26 @@
       {
         "key": "A",
         "content": "`SavingsAccount`가 `Account`의 subtype이다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "SavingsAccount가 Account를 대체하는 subtype 관계는 inheritance의 is-a다. collaborator 보유 관계와는 다르다."
       },
       {
         "key": "B",
         "content": "`String`이 `Object`로 대입된다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "String을 Object 변수에 대입하는 것은 reference widening과 subtype 변환 사례이며 has-a 관계가 아니다."
       },
       {
         "key": "C",
         "content": "`int`가 `long`으로 widening된다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "int를 long으로 변환하는 것은 primitive widening conversion이고 객체 간 구성 관계가 아니다."
       },
       {
         "key": "D",
         "content": "`Order`가 `PricingPolicy` 협력자를 가진다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "Order가 계산 책임을 PricingPolicy에 맡기고 참조를 보유하면 그 협력자를 포함하는 composition의 has-a 관계다."
       }
     ],
     "correctChoiceKey": "D",
@@ -1098,22 +1222,26 @@
       {
         "key": "A",
         "content": "PricingPolicy의 모든 field가 Order로 복사된다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "constructor에 collaborator 참조를 전달하면 그 객체의 field를 Order로 복사하지 않는다. 참조로 협력 관계를 맺는다."
       },
       {
         "key": "B",
         "content": "constructor injection은 항상 static 상태를 만든다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "constructor injection은 instance 생성 방식이며 static field를 자동 생성하지 않는다."
       },
       {
         "key": "C",
         "content": "composition을 쓰면 policy 구현을 절대 바꿀 수 없다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "composition은 생성 시 collaborator를 받도록 할 수 있고 interface에 의존하면 구현을 바꿀 수 있다. 고정된 교체 불가능 정책만 뜻하지 않는다."
       },
       {
         "key": "D",
         "content": "Order가 필요한 협력자를 명확히 받고, 테스트에서 대체 policy를 넣을 수 있다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "생성자에서 필요한 협력자를 명시하면 유효한 Order 생성에 필요한 의존이 드러나고 fake나 다른 policy를 주입해 독립 테스트할 수 있다."
       }
     ],
     "correctChoiceKey": "D",
@@ -1133,22 +1261,26 @@
       {
         "key": "A",
         "content": "collaborator를 interface로 분리하면 `Order`는 `PricingPolicy` contract에도 전혀 의존하지 않게 된다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "Order는 구체 class 대신 interface contract에 의존할 수 있지만, 그 계약 자체까지 전혀 의존하지 않는 것은 아니다. 경계가 추상화되는 것이다."
       },
       {
         "key": "B",
         "content": "할인 규칙이 달라질 때마다 `Order` subclass로 표현해야 주문 lifecycle과 pricing policy를 안전하게 함께 바꿀 수 있다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "할인 정책마다 subclass를 늘리면 pricing 변경을 주문 subtype identity와 섞어 lifecycle 상속 계층을 불필요하게 분화시킨다."
       },
       {
         "key": "C",
         "content": "composition은 collaborator를 runtime에 바꾸거나 조합할 수 없으므로 정책 교체가 잦으면 inheritance가 더 적합하다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "composition은 collaborator를 교체하거나 조합할 수 있다. 구성에 의한 정책 선택이 inheritance의 고정 subtype보다 유연하다."
       },
       {
         "key": "D",
         "content": "Order의 identity를 바꾸지 않고 PricingPolicy collaborator를 교체하거나 조합할 수 있다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "주문이라는 핵심 identity와 lifecycle을 유지한 채 policy collaborator만 교체하면 정책 변화가 order subtype 구조로 번지지 않는다."
       }
     ],
     "correctChoiceKey": "D",
@@ -1168,22 +1300,26 @@
       {
         "key": "A",
         "content": "fake를 주입하면 production gateway가 자동으로 삭제된다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "fake 주입은 테스트 문맥에서 실제 gateway를 호출하지 않게 할 뿐 production bean이나 구현을 삭제하지 않는다."
       },
       {
         "key": "B",
         "content": "composition은 실제 HTTP 호출을 강제한다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "composition은 반드시 실제 네트워크를 호출하지 않는다. 의존 구현을 선택할 수 있어 테스트 대역을 사용할 수 있다."
       },
       {
         "key": "C",
         "content": "외부 결제 시스템의 네트워크 상태와 무관하게 서비스 협력 계약을 검증할 수 있다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "fake gateway로 요청·응답과 서비스 협력 규칙을 검증하면 결제 provider 가용성, 비용, 네트워크 상태에 테스트가 매이지 않는다."
       },
       {
         "key": "D",
         "content": "fake는 interface를 구현할 수 없다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "fake는 필요한 계약을 구현하거나 테스트 seam에 맞춰 제공할 수 있다. interface는 교체 테스트를 막지 않는다."
       }
     ],
     "correctChoiceKey": "C",
@@ -1203,22 +1339,26 @@
       {
         "key": "A",
         "content": "NotificationService가 공통 Sender 계약의 collaborator를 가진다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "공통 Sender 계약을 구현하는 collaborator를 선택해 보유하면 설정에 따라 EmailSender나 SmsSender를 사용할 수 있다."
       },
       {
         "key": "B",
         "content": "NotificationService가 EmailSender를 상속한다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "NotificationService가 EmailSender subtype이 되는 관계는 아니다. 알림 전송을 위임하는 has-a 협력 관계다."
       },
       {
         "key": "C",
         "content": "SMS 기능을 NotificationService의 static field로만 둔다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "static 상태는 설정별 구현 선택이나 여러 service 인스턴스의 독립 정책에 적합하지 않으며 sender 동작을 캡슐화하지 않는다."
       },
       {
         "key": "D",
         "content": "모든 sender의 field를 NotificationService에 복사한다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "sender 구현 상태를 복제하면 동작 재사용과 계약 분리가 되지 않는다. collaborator에게 전송 책임을 위임한다."
       }
     ],
     "correctChoiceKey": "A",
@@ -1238,22 +1378,26 @@
       {
         "key": "A",
         "content": "실제로 바뀌는 정책이 여러 개이고 런타임 교체가 필요한 경우",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "정책 종류가 여러 개이고 실행 중 선택해야 한다면 명시적인 collaborator/interface가 변경을 격리할 수 있다."
       },
       {
         "key": "B",
         "content": "외부 시스템을 테스트 대역으로 교체해야 하는 경우",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "외부 시스템을 fake로 대체하는 실제 요구가 있으면 abstraction은 테스트 경계라는 구체적 이점을 제공한다."
       },
       {
         "key": "C",
         "content": "변경 축도 대체 구현도 없는 짧고 안정적인 내부 계산 하나를 위해 interface·wrapper 계층을 여러 개 추가하려는 경우",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "변화와 대체 이유가 없는데 작은 계산에 interface와 wrapper를 쌓으면 구현 추적만 복잡해진다. 실제 variation이나 test boundary가 있는 만큼만 구조화한다."
       },
       {
         "key": "D",
         "content": "하나의 객체가 명확한 collaborator 계약을 통해 다른 책임을 위임하는 경우",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "책임이 분리된 명확한 collaborator에게 위임하는 것은 composition이 잘 맞는 상황이다. 다만 필요 이상 계층을 만들지 않는다."
       }
     ],
     "correctChoiceKey": "C",
@@ -1273,22 +1417,26 @@
       {
         "key": "A",
         "content": "실제 object의 override인 Dog.sound()가 선택된다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "instance method override 호출은 reference 타입보다 실제 객체의 runtime class 구현을 선택한다. 따라서 new Dog()의 override가 실행된다."
       },
       {
         "key": "B",
         "content": "항상 참조 변수 타입 Animal의 private method가 선택된다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "private method는 override되지 않으며 이 코드의 sound 호출을 Animal의 private method가 가로채지 않는다."
       },
       {
         "key": "C",
         "content": "compile time에 임의의 구현이 선택된다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "컴파일러는 호출 가능 signature를 검사하지만 실제 overriding 구현은 runtime dispatch로 선택된다. 임의 선택이 아니다."
       },
       {
         "key": "D",
         "content": "Dog object가 Animal object로 복사된 뒤 Animal method가 실행된다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "상위 타입 reference가 Dog 객체를 다른 Animal 객체로 복사하지 않는다. 같은 Dog 인스턴스를 가리키는 reference conversion이다."
       }
     ],
     "correctChoiceKey": "A",
@@ -1308,22 +1456,26 @@
       {
         "key": "A",
         "content": "B",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "x의 선언 타입 A는 호출 가능성을 정하지만 객체는 B다. f가 override된 instance method라 runtime dispatch가 B.f를 선택한다."
       },
       {
         "key": "B",
         "content": "A",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "상위 reference를 사용해도 객체의 class는 B로 유지되므로 override method 호출이 A.f로 고정되지 않는다."
       },
       {
         "key": "C",
         "content": "AB",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "호출 하나가 B 구현을 실행한다. override chain을 A 다음 B 순서로 연속 실행하지 않는다."
       },
       {
         "key": "D",
         "content": "컴파일 오류",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "A 타입은 f를 호출할 수 있고 B는 이를 override한다. 코드가 정상적으로 compile되고 runtime dispatch가 적용된다."
       }
     ],
     "correctChoiceKey": "A",
@@ -1343,22 +1495,26 @@
       {
         "key": "A",
         "content": "instance method override",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "instance method가 override되면 runtime 객체 class의 구현으로 dispatch할 수 있다."
       },
       {
         "key": "B",
         "content": "interface 구현 method 호출",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "interface variable로 호출한 instance method도 실제 구현 객체의 implementation으로 dispatch된다."
       },
       {
         "key": "C",
         "content": "superclass reference를 통한 overridden method 호출",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "상위 타입 reference로 overridden instance method를 부르는 경우도 receiver의 runtime class에 따라 dispatch된다. super.f()처럼 명시적으로 상위 구현을 선택하는 경우와 구분한다."
       },
       {
         "key": "D",
         "content": "instance field 접근과 static method 호출",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "field access와 static method는 instance virtual dispatch 대상이 아니다. field는 참조의 선언 타입에 좌우되고 static은 class에 귀속된다."
       }
     ],
     "correctChoiceKey": "D",
@@ -1378,22 +1534,26 @@
       {
         "key": "A",
         "content": "String이 primitive로 변환된다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "String은 reference type이다. List variable assignment는 primitive 변환이 아니다."
       },
       {
         "key": "B",
         "content": "List 계약 타입의 변수로 ArrayList object를 다룬다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "변수의 contract는 List지만 실제 객체는 ArrayList라 List method로 구현 객체를 다루는 subtype polymorphism이다."
       },
       {
         "key": "C",
         "content": "ArrayList가 List의 field를 복사한다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "ArrayList 객체가 List의 field를 복사하는 동작이 아니다. List는 구현 class가 따르는 interface contract다."
       },
       {
         "key": "D",
         "content": "List가 ArrayList의 superclass가 된다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "List는 interface이며 ArrayList가 이를 구현한다. interface가 구현 class의 superclass가 되는 것은 아니다."
       }
     ],
     "correctChoiceKey": "B",
@@ -1413,22 +1573,26 @@
       {
         "key": "A",
         "content": "호출 code가 구체 subtype마다 분기하지 않고 각 object의 구현을 사용한다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "Shape 타입 계약으로 loop나 client가 공통 method를 호출하고 runtime dispatch가 각 subtype의 area 계산을 실행한다. 호출부에 타입 분기와 cast를 반복할 필요가 없다."
       },
       {
         "key": "B",
         "content": "모든 shape가 같은 area 값을 반환하게 된다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "공통 signature가 각 구현의 계산값을 같게 강제하지 않는다. Circle과 다른 shape는 각자 면적 공식을 구현한다."
       },
       {
         "key": "C",
         "content": "runtime type이 사라져 cast가 항상 필요하다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "다형성은 runtime subtype을 없애지 않고 공통 상위 타입으로 다루는 방법이다. 안전한 override 호출에 cast가 항상 필요한 것은 아니다."
       },
       {
         "key": "D",
         "content": "Circle의 모든 내부 field가 Shape API로 공개된다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "Shape reference는 공통 API만 노출한다. Circle의 내부 상태가 자동으로 Shape API에 공개되지 않는다."
       }
     ],
     "correctChoiceKey": "A",
@@ -1448,22 +1612,26 @@
       {
         "key": "A",
         "content": "AA",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "필드 조회는 method override처럼 dynamic dispatch되지 않아 A reference 타입의 A.value를 읽고 A가 출력된다."
       },
       {
         "key": "B",
         "content": "AB",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "x.value는 선언 타입 A의 field hiding 규칙으로 A를 읽지만 x.label()은 실제 B override를 실행해 B를 읽는다. 따라서 출력은 AB다."
       },
       {
         "key": "C",
         "content": "BA",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "runtime class가 B라고 field 접근까지 B.value로 바뀌지 않는다. field hiding과 instance method dispatch를 구분한다."
       },
       {
         "key": "D",
         "content": "BB",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "두 표현식이 모두 실제 class로 동적 해석되는 것은 아니다. field는 reference 타입에 고정되고 method만 override dispatch된다."
       }
     ],
     "correctChoiceKey": "B",
@@ -1483,22 +1651,26 @@
       {
         "key": "A",
         "content": "반환 타입만 다르면 overload된다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "같은 parameter type과 이름에서 return type만 다른 method는 signature가 충돌해 overload가 아니다."
       },
       {
         "key": "B",
         "content": "같은 이름의 메서드가 서로 다른 parameter 목록을 가진다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "overloading은 method name이 같고 parameter 목록이 달라 compile-time에 호출 후보와 적합성이 결정되는 경우다."
       },
       {
         "key": "C",
         "content": "runtime object만 바뀌면 overload된다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "runtime object가 달라져 override implementation이 선택되는 것은 overriding/dispatch이지 overload 선언 조건이 아니다."
       },
       {
         "key": "D",
         "content": "항상 superclass와 subclass 사이에서만 가능하다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "한 class 안에서도 overload할 수 있고 상속 관계를 요구하지 않는다."
       }
     ],
     "correctChoiceKey": "B",
@@ -1518,22 +1690,26 @@
       {
         "key": "A",
         "content": "같은 class 안에서 parameter만 추가하는 것이다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "한 class에서 parameter를 바꿔 선언하면 overload다. override는 상속 가능한 부모 method의 계약을 하위 class에서 구현한다."
       },
       {
         "key": "B",
         "content": "subclass가 상속 가능한 superclass instance method의 계약을 재정의한다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "subclass는 signature가 맞는 상속 가능한 instance method를 재정의해 하위 구현을 제공한다. 접근 제한과 반환 타입 호환 규칙을 지켜야 한다."
       },
       {
         "key": "C",
         "content": "field의 값을 다시 선언하는 것이다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "field 재선언은 field hiding 관련이며 instance method override가 아니다."
       },
       {
         "key": "D",
         "content": "반환 타입만 바꿔 새 method를 만드는 것이다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "반환 타입만 바꿔 새 선언을 만드는 것은 overload로 허용되지 않는다. override에서는 제한된 covariant return이 가능하지만 method 계약도 맞아야 한다."
       }
     ],
     "correctChoiceKey": "B",
@@ -1553,22 +1729,26 @@
       {
         "key": "A",
         "content": "P",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "호출 가능한 시그니처 f(Object)는 부모 P에 선언되어 있으므로 compiler가 선택한다. 실행 시 C의 override가 적용되어 P 출력은 아니다."
       },
       {
         "key": "B",
         "content": "S",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "f(String)은 C에 있지만 참조의 정적 타입 P에는 그 overload가 없으므로 compile-time 후보로 선택되지 않는다."
       },
       {
         "key": "C",
         "content": "C",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "compiler가 P.f(Object) signature를 정하고 runtime의 실제 C object가 같은 signature를 override한 구현을 실행해 C를 출력한다."
       },
       {
         "key": "D",
         "content": "컴파일 오류",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "P의 f(Object)는 접근 가능하고 C에서 올바르게 override한다. overload와 override 선택의 두 단계가 정상이다."
       }
     ],
     "correctChoiceKey": "C",
@@ -1588,22 +1768,26 @@
       {
         "key": "A",
         "content": "long은 return할 수 없는 타입이기 때문이다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "long은 유효한 return type이며 method signature 구분 문제와 관계없다."
       },
       {
         "key": "B",
         "content": "String parameter는 overload에 사용할 수 없기 때문이다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "String 매개변수는 overload에서 사용할 수 있다. 문제는 두 선언의 parameter 목록이 완전히 같다는 점이다."
       },
       {
         "key": "C",
         "content": "parse라는 이름은 하나만 허용되기 때문이다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "같은 class에 같은 method 이름의 overload 여러 개를 둘 수 있다. 이 두 method는 반환형 외 구분이 없다."
       },
       {
         "key": "D",
         "content": "method signature 구분에 return type만 사용할 수 없기 때문이다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "Java method signature는 이름과 parameter types 중심으로 구별되며 return type 단독으로 overload할 수 없다. 호출식으로 어느 반환형을 원하는지 정할 수 없기 때문이다."
       }
     ],
     "correctChoiceKey": "D",
@@ -1623,22 +1807,26 @@
       {
         "key": "A",
         "content": "null은 두 참조 타입에 전달될 수 있지만 String이 더 구체적이라 f(String)이 선택된다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "null은 reference parameter에 전달될 수 있고 String은 Object보다 구체적인 하위 타입이다. 가장 구체적이며 적용 가능한 overload인 f(String)이 선택된다."
       },
       {
         "key": "B",
         "content": "null은 primitive 값이므로 두 method 모두 선택되지 않는다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "null literal은 primitive 값이 아니다. 참조 타입 parameter 후보에 적용할 수 있다."
       },
       {
         "key": "C",
         "content": "Object와 String 사이에는 overload 선택 규칙이 없어 항상 컴파일 오류다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "상속 관계에서 더 구체적인 참조 타입을 선택하는 overload 규칙이 있다. 이 두 선언은 String 쪽이 더 구체적이다."
       },
       {
         "key": "D",
         "content": "String method는 runtime에만 선택되므로 overload 후보가 아니다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "overload 선택은 compile-time에 이뤄진다. null argument의 후보도 그 시점에 정적으로 결정된다."
       }
     ],
     "correctChoiceKey": "A",
@@ -1658,22 +1846,26 @@
       {
         "key": "A",
         "content": "Dog가 Animal의 subtype이면 upcast는 안전하게 허용된다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "Dog가 Animal을 상속·구현해 subtype이면 Dog reference를 Animal로 넓히는 변환이 안전하고 객체의 실제 타입은 Dog로 유지된다."
       },
       {
         "key": "B",
         "content": "모든 class는 서로 자동으로 상속된다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "서로 무관한 class가 자동으로 상속되는 규칙은 없다. 선언된 상속 관계가 필요하다."
       },
       {
         "key": "C",
         "content": "dog object가 복사되어 Animal object가 된다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "upcast는 기존 객체를 가리키는 reference 타입을 넓힌다. 별도의 Animal 객체를 복사 생성하지 않는다."
       },
       {
         "key": "D",
         "content": "Animal이 primitive 타입이기 때문이다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "Animal은 reference 타입의 class/interface이지 primitive가 아니다. subtype 관계가 대입 허용의 이유다."
       }
     ],
     "correctChoiceKey": "A",
@@ -1693,22 +1885,26 @@
       {
         "key": "A",
         "content": "true",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "null은 어떤 runtime object 타입에도 속하지 않아 instanceof 검사는 true가 될 수 없다."
       },
       {
         "key": "B",
         "content": "NullPointerException",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "instanceof는 null에 대해 예외를 던지지 않고 false를 반환하도록 정의된다."
       },
       {
         "key": "C",
         "content": "컴파일 오류",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "Object reference와 String reference 사이의 runtime type 검사는 합법적이다. 값이 null이면 결과는 false다."
       },
       {
         "key": "D",
         "content": "false",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "null에는 확인할 runtime object가 없으므로 instanceof String 결과는 false다."
       }
     ],
     "correctChoiceKey": "D",
@@ -1728,22 +1924,26 @@
       {
         "key": "A",
         "content": "컴파일되고 실행 시 ClassCastException이 발생한다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "Object에서 String으로 cast할 수 있어 compile은 되지만 실제 참조는 Integer라 runtime type check가 실패해 ClassCastException이 난다."
       },
       {
         "key": "B",
         "content": "Integer가 String으로 변환된다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "cast는 Integer 객체의 타입이나 표현을 문자열로 변환하지 않는다. 변환 목적이면 String.valueOf 등 명시 API를 쓴다."
       },
       {
         "key": "C",
         "content": "항상 null이 대입된다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "대상이 null이 아니므로 null 대입 결과가 아니다. 실제 객체 타입 불일치가 예외를 만든다."
       },
       {
         "key": "D",
         "content": "컴파일 시 자동으로 String.valueOf가 호출된다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "compiler가 String.valueOf를 자동 삽입하지 않는다. 명시 cast는 subtype 검사를 수행한다."
       }
     ],
     "correctChoiceKey": "A",
@@ -1763,22 +1963,26 @@
       {
         "key": "A",
         "content": "4",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "value의 실제 참조는 길이 4의 String이다. pattern match가 성공하면 text가 그 String으로 바인딩되어 length가 4를 반환한다."
       },
       {
         "key": "B",
         "content": "0",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "String이 null이나 빈 문자열이 아니다. length는 문자열의 문자 수를 계산한다."
       },
       {
         "key": "C",
         "content": "ClassCastException",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "String 타입 검사가 성공했으므로 cast 예외가 발생하지 않는다. pattern binding은 먼저 호환성을 검사한다."
       },
       {
         "key": "D",
         "content": "컴파일 오류",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "Object와 String 사이의 instanceof pattern은 유효한 Java 문법이다. 성공 경로에서 text를 사용할 수 있다."
       }
     ],
     "correctChoiceKey": "A",
@@ -1798,22 +2002,26 @@
       {
         "key": "A",
         "content": "4",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "pattern 성공 시 text에는 원래 String 참조가 별도 binding으로 저장된다. value에 Integer를 다시 대입해도 text는 바뀌지 않아 길이 4를 출력한다."
       },
       {
         "key": "B",
         "content": "1",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "value는 Integer 객체를 참조하지만 text가 그 값으로 바뀌지 않는다. 지역 binding의 값을 다른 reference에 대입하지 않았다."
       },
       {
         "key": "C",
         "content": "ClassCastException",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "value에 다른 타입의 객체를 넣어도 Object 변수에는 합법적이다. text는 원래 검증된 String을 계속 가리킨다."
       },
       {
         "key": "D",
         "content": "컴파일 오류",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "pattern variable은 다른 변수에 재대입할 수 있다. 여기서는 value 변경이 text를 수정하지 않으므로 컴파일된다."
       }
     ],
     "correctChoiceKey": "A",
@@ -1833,22 +2041,26 @@
       {
         "key": "A",
         "content": "서로 다른 class 계층이 제공할 수 있는 공통 계약을 정의한다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "interface는 공통 행위나 capability contract를 선언해 상속 계층이 다른 class들도 해당 약속을 구현하게 할 수 있다."
       },
       {
         "key": "B",
         "content": "모든 구현 field를 private으로 자동 변환한다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "interface 구현이 class field의 접근 제어를 자동 변경하지 않는다. 각 구현 class가 자기 상태를 정의한다."
       },
       {
         "key": "C",
         "content": "구현 class를 하나로 제한한다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "여러 class가 같은 interface를 구현할 수 있다. 단일 구현으로 제한하는 장치가 아니다."
       },
       {
         "key": "D",
         "content": "모든 method body를 반드시 제공한다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "interface는 abstract method 외에도 default, static, private method 등 method body를 가질 수 있다."
       }
     ],
     "correctChoiceKey": "A",
@@ -1868,22 +2080,26 @@
       {
         "key": "A",
         "content": "class가 두 개의 superclass를 상속해야 할 때다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "Java class는 둘 이상의 class superclass를 상속할 수 없다. 복수 interface 구현이 제공하는 이점은 별도 capability 조합이다."
       },
       {
         "key": "B",
         "content": "constructor가 두 번 실행되어야 할 때다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "interface가 둘이라고 같은 constructor를 자동 두 번 실행하지 않는다. constructor는 class 생성 경로에 속한다."
       },
       {
         "key": "C",
         "content": "서로 다른 capability 계약을 하나의 object가 제공해야 할 때다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "서로 다른 capability contract를 한 object가 구현해 다양한 역할로 참조될 수 있다. class 상속과 달리 여러 interface를 구현할 수 있다."
       },
       {
         "key": "D",
         "content": "모든 interface의 내부 field를 공유할 때다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "interface field는 일반 instance state를 구현들 사이에 공유하는 저장소가 아니다. 구현 객체 state는 각 class나 collaborator에 둔다."
       }
     ],
     "correctChoiceKey": "C",
@@ -1903,22 +2119,26 @@
       {
         "key": "A",
         "content": "전혀 관계없는 class에 같은 capability만 부여할 때다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "서로 무관한 class에 같은 capability만 약속시키는 것은 interface가 자연스럽다. 공통 구현 상속을 강제할 필요가 없다."
       },
       {
         "key": "B",
         "content": "같은 계층의 subtype이 공유 state와 일부 구현, constructor 규칙을 가져야 할 때다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "공통 계층에서 상태와 생성 invariant, 일부 template method를 공유해야 하면 abstract class가 구현 reuse와 subclass 계약을 함께 제공할 수 있다."
       },
       {
         "key": "C",
         "content": "여러 superclass를 동시에 상속할 때다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "Java class는 한 superclass만 가질 수 있다. abstract class도 다중 class 상속을 가능하게 하지는 않는다."
       },
       {
         "key": "D",
         "content": "구현을 전혀 공유하지 않아야 할 때만 가능하다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "abstract class는 일부 구현, state, constructor를 가질 수 있다. 구현을 공유하지 않을 때만 가능한 제한 타입이 아니다."
       }
     ],
     "correctChoiceKey": "B",
@@ -1938,22 +2158,26 @@
       {
         "key": "A",
         "content": "Job과 HttpClient가 모두 하나의 거대한 abstract superclass를 상속한다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "Job과 HttpClient의 역할과 생명주기는 다르다. 공통 abstract base를 둘로 억지로 묶으면 is-a 계약이 부자연스럽다."
       },
       {
         "key": "B",
         "content": "공통 상태가 필요해도 모든 것을 interface static field에 저장한다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "interface static field는 공유 mutable instance state나 constructor invariant를 대체하지 않는다. Job 공통 상태는 class hierarchy의 책임으로 둔다."
       },
       {
         "key": "C",
         "content": "다중 class 상속으로 JobBase와 RetryBase를 동시에 상속한다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "Java는 두 class base를 동시에 상속하지 못한다. 공통 Job 구현과 capability interface를 조합한다."
       },
       {
         "key": "D",
         "content": "Job 공통 상태·template은 abstract Job에 두고, 독립 capability는 Retryable interface로 분리한다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "공통 lifecycle, 검증, template 구현은 abstract Job에 모으고 서로 다른 타입이 제공할 수 있는 재시도 capability는 Retryable 계약으로 분리한다."
       }
     ],
     "correctChoiceKey": "D",
@@ -1973,22 +2197,26 @@
       {
         "key": "A",
         "content": "List 내용도 절대로 변경되지 않는다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "final은 List reference의 재대입을 막지 list contents의 변경을 막지 않는다. mutable List 구현이면 add/remove가 가능하다."
       },
       {
         "key": "B",
         "content": "List가 thread-safe해진다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "final은 동시 접근을 동기화하거나 collection thread-safety를 부여하지 않는다."
       },
       {
         "key": "C",
         "content": "names reference를 다른 List로 재대입할 수 없다는 것뿐이다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "field가 final이면 초기화 이후 names 변수가 다른 List를 가리키도록 바꿀 수 없다. 참조 대상의 가변성과는 구별한다."
       },
       {
         "key": "D",
         "content": "List의 모든 원소가 immutable해진다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "List의 원소가 모두 immutable해지는 것도 아니다. List와 원소 객체의 불변성을 별도로 확인한다."
       }
     ],
     "correctChoiceKey": "C",
@@ -2008,22 +2236,26 @@
       {
         "key": "A",
         "content": "List가 자동으로 unmodifiable해진다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "mutable input을 그대로 저장하면 원본에 대한 외부 alias가 남는다. 저장만으로 unmodifiable wrapper가 생기지 않는다."
       },
       {
         "key": "B",
         "content": "constructor가 두 번 호출된다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "일반적인 생성자 호출은 자동으로 두 번 실행되지 않는다. 문제는 같은 List object를 외부와 내부가 공유하는 점이다."
       },
       {
         "key": "C",
         "content": "모든 String이 null이 된다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "List reference를 보존하므로 기존 원소는 자동 null로 바뀌지 않는다. 입력 원소 변화와 reference alias를 검토한다."
       },
       {
         "key": "D",
         "content": "호출자가 원본 List를 바꿔 내부 상태까지 바꿀 수 있다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "호출자가 계속 들고 있는 원본 list를 수정하면 내부 field가 같은 object를 참조하므로 객체 밖에서 내부 상태를 바꿀 수 있다."
       }
     ],
     "correctChoiceKey": "D",
@@ -2043,22 +2275,26 @@
       {
         "key": "A",
         "content": "둘 다 원소 object까지 재귀적으로 복사하는 deep immutable copy다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "둘 다 element 객체까지 복제하지 않는다. collection 구조에 대한 보호이며 원소의 deep immutability는 별도 문제다."
       },
       {
         "key": "B",
         "content": "List.copyOf로 만든 list는 add/remove가 가능하지만 unmodifiableList는 불가능하다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "List.copyOf 결과도 수정 불가능하다. 입력 collection이 변해도 결과의 구조는 독립적이다."
       },
       {
         "key": "C",
         "content": "둘의 차이는 오직 generic type inference뿐이며 mutation 계약은 같다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "generic inference만의 차이가 아니다. unmodifiable view와 독립된 구조 snapshot의 backing 동작이 다르다."
       },
       {
         "key": "D",
         "content": "전자는 backing list의 변경을 볼 수 있는 unmodifiable view이고, 후자는 입력 collection의 이후 구조 변경을 반영하지 않는 unmodifiable snapshot을 제공한다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "unmodifiableList는 원본을 감싼 view라 원본 경로에서 수정하면 보일 수 있다. List.copyOf는 입력 collection의 현재 원소 구조를 독립된 unmodifiable 결과로 제공한다."
       }
     ],
     "correctChoiceKey": "D",
@@ -2078,22 +2314,26 @@
       {
         "key": "A",
         "content": "getter 호출 때마다 object가 자동으로 immutable해진다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "getter는 참조를 반환할 뿐 object를 불변으로 바꾸지 않는다. 반환된 mutable alias에 대한 변경을 막지 못한다."
       },
       {
         "key": "B",
         "content": "Date는 primitive라 변경할 수 없다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "java.util.Date는 primitive가 아니라 변경 가능한 class 인스턴스다. setter류 method로 상태를 바꿀 수 있다."
       },
       {
         "key": "C",
         "content": "final field가 getter를 금지한다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "final field가 참조를 고정해도 getter 호출 자체를 금지하지 않고 참조 대상의 변경을 막지도 않는다."
       },
       {
         "key": "D",
         "content": "호출자가 반환된 Date를 변경해 불변 object의 내부 상태를 바꿀 수 있다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "내부 Date를 그대로 노출하면 호출자는 그 reference로 날짜를 변경해 소유 객체의 관찰 상태를 바꿀 수 있다. getter에서 복사본을 반환한다."
       }
     ],
     "correctChoiceKey": "D",
@@ -2113,22 +2353,26 @@
       {
         "key": "A",
         "content": "바깥 List length가 항상 0이 된다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "shallow copy는 현재 원소들을 가진 새로운 바깥 구조를 만든다. 원소가 있다는 이유로 길이가 0이 되지 않는다."
       },
       {
         "key": "B",
         "content": "String이 모두 mutable로 변한다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "String의 불변성은 복사 방식 때문에 변하지 않는다. shallow copy가 원소 객체 타입을 바꾸지 않는다."
       },
       {
         "key": "C",
         "content": "안쪽 List reference를 공유하므로 내부 중첩 List 변경이 새 object에도 보일 수 있다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "바깥 list만 새로 만들고 안쪽 list reference는 공유한다. 공유 안쪽 list를 수정하면 양쪽에서 달라진 내용을 관찰한다."
       },
       {
         "key": "D",
         "content": "shallow copy는 어떤 reference도 복사하지 않는다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "shallow copy는 외부 구조 reference를 새 container로 복사하지만 내부 원소 reference는 보존한다. 따라서 어떤 reference도 복사하지 않는 것과 다르다."
       }
     ],
     "correctChoiceKey": "C",
@@ -2148,22 +2392,26 @@
       {
         "key": "A",
         "content": "final field만 붙이고 입력 List를 그대로 저장한다",
-        "displayOrder": 0
+        "displayOrder": 0,
+        "rationaleMarkdown": "final은 내부 field reference의 재대입만 막는다. 외부가 보유한 입력 List를 수정하면 저장된 snapshot 구조도 바뀔 수 있다."
       },
       {
         "key": "B",
         "content": "getter에서 원본 List를 반환해 호출자가 확인하게 한다",
-        "displayOrder": 1
+        "displayOrder": 1,
+        "rationaleMarkdown": "원본 List를 그대로 getter로 내보내면 caller가 snapshot 상태를 변경할 수 있다. 방어적 copy 및 적절한 getter 정책을 쓴다."
       },
       {
         "key": "C",
         "content": "collection은 copy하고 Money도 immutable value라면 그 요소 reference를 안전하게 공유한다",
-        "displayOrder": 2
+        "displayOrder": 2,
+        "rationaleMarkdown": "collection의 구조를 복사해 외부 alias 변경을 분리한다. Money가 immutable이면 요소 객체 자체는 안전하게 공유할 수 있어 불필요한 deep copy를 피한다."
       },
       {
         "key": "D",
         "content": "모든 요소를 문자열로 바꿔 type 정보를 버린다",
-        "displayOrder": 3
+        "displayOrder": 3,
+        "rationaleMarkdown": "문자열 변환은 Money의 타입과 금액 의미를 잃게 한다. 값이 immutable이면 원래 타입의 참조를 보존한다."
       }
     ],
     "correctChoiceKey": "C",
