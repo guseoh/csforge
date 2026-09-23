@@ -2927,7 +2927,7 @@
   {
     "kind": "question",
     "contentKey": "java.core.concurrency.semaphore-permits.q4",
-    "promptMarkdown": "Permit 2개인 `Semaphore`에서 다음 순서로 장애가 발생했다.\n\n1. 두 작업이 permit을 하나씩 얻는다.\n2. 한 작업이 예외로 빠지며 permit을 반환하지 않는다.\n3. 이후 작업들이 결국 모두 대기한다.\n\n원인과 수정은?",
+    "promptMarkdown": "Permit 2개인 `Semaphore`에서 다음 순서로 장애가 발생했다.\n\n1. 두 작업이 permit을 하나씩 얻는다.\n2. 한 작업이 예외로 빠지며 permit을 반환하지 않는다.\n3. 다른 작업은 정상적으로 permit을 반환하지만, 이후 동시에 진행할 수 있는 작업은 한 개뿐이다.\n\n원인과 수정은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "HARD",
     "status": "PUBLISHED",
