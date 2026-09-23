@@ -195,10 +195,11 @@ export function updateConceptProgress(
   })
 }
 
-export function savePersonalNote(conceptId: number, content: string): Promise<NoteResponse> {
+export function savePersonalNote(conceptId: number, content: string, options?: { keepalive?: boolean }): Promise<NoteResponse> {
   return request<NoteResponse>(`/api/concepts/${conceptId}/note`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ content }),
+    keepalive: options?.keepalive,
   })
 }

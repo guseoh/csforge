@@ -1,5 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
+import {
+  beginNoteSaveRevision,
+  enqueueLatestNoteSave,
+  hasPendingNoteSave,
+  isLatestNoteSaveRevision,
+  selectRecoverableNote,
+} from './note-save-coordinator'
 import { saveWrongNote, type WrongNoteDetail } from './wrong-note-api'
 
 interface WrongNotePersistenceOptions {
@@ -11,48 +18,71 @@ export function useWrongNotePersistence({ id, detail }: WrongNotePersistenceOpti
   const [note, setNote] = useState('')
   const [dirty, setDirty] = useState(false)
   const noteRef = useRef('')
+  const savedRef = useRef('')
   const dirtyRef = useRef(false)
   const savingRef = useRef(false)
   const pageHidingRef = useRef(false)
+  const revisionRef = useRef(0)
   const saveRef = useRef<() => void>(() => {})
   const draftKey = `csforge:wrong-note:${id}:draft`
+  const saveKey = `wrong-note:${id}`
 
   const noteMutation = useMutation({
-    mutationFn: (content: string) => saveWrongNote(id, content),
-    onSuccess: (_saved, content) => {
+    mutationFn: ({ content, revision }: { content: string; revision: number }) =>
+      enqueueLatestNoteSave(saveKey, revision, () => saveWrongNote(id, content)),
+    onSuccess: (result) => {
       savingRef.current = false
-      if (noteRef.current === content) {
-        dirtyRef.current = false
-        setDirty(false)
-        window.localStorage.removeItem(draftKey)
+      if (result.status === 'superseded') {
+        if (dirtyRef.current && isLatestNoteSaveRevision(saveKey, revisionRef.current)) {
+          queueMicrotask(() => saveRef.current())
+        }
         return
       }
-      queueMicrotask(() => saveRef.current())
+
+      savedRef.current = result.value.content
+      if (noteRef.current === result.value.content) {
+        dirtyRef.current = false
+        setDirty(false)
+        if (window.localStorage.getItem(draftKey) === result.value.content) window.localStorage.removeItem(draftKey)
+        return
+      }
+      if (isLatestNoteSaveRevision(saveKey, revisionRef.current)) queueMicrotask(() => saveRef.current())
     },
-    onError: (_error, content) => {
+    onError: (_error, variables) => {
       savingRef.current = false
-      if (noteRef.current !== content) queueMicrotask(() => saveRef.current())
+      if (revisionRef.current !== variables.revision && isLatestNoteSaveRevision(saveKey, revisionRef.current)) {
+        queueMicrotask(() => saveRef.current())
+      }
     },
   })
 
   saveRef.current = () => {
-    if (!dirtyRef.current || savingRef.current) return
+    const content = noteRef.current
+    const revision = revisionRef.current
+    if (!dirtyRef.current || savingRef.current || revision === 0) return
+    if (content === savedRef.current && !hasPendingNoteSave(saveKey)) {
+      dirtyRef.current = false
+      setDirty(false)
+      if (window.localStorage.getItem(draftKey) === content) window.localStorage.removeItem(draftKey)
+      return
+    }
     savingRef.current = true
-    noteMutation.mutate(noteRef.current)
+    noteMutation.mutate({ content, revision })
   }
 
   useEffect(() => {
     if (!detail || dirtyRef.current) return
     const serverNote = detail.state.causeNote ?? ''
     const draft = window.localStorage.getItem(draftKey)
-    const initialNote = draft ?? serverNote
-    noteRef.current = initialNote
-    setNote(initialNote)
-    const hasUnsavedDraft = draft !== null && draft !== serverNote
-    dirtyRef.current = hasUnsavedDraft
-    setDirty(hasUnsavedDraft)
-    if (draft !== null && !hasUnsavedDraft) window.localStorage.removeItem(draftKey)
-  }, [detail, draftKey])
+    const initial = selectRecoverableNote(serverNote, draft, hasPendingNoteSave(saveKey))
+    savedRef.current = serverNote
+    noteRef.current = initial.content
+    setNote(initial.content)
+    dirtyRef.current = initial.dirty
+    setDirty(initial.dirty)
+    revisionRef.current = beginNoteSaveRevision(saveKey)
+    if (draft !== null && !initial.dirty) window.localStorage.removeItem(draftKey)
+  }, [detail, draftKey, saveKey])
 
   useEffect(() => {
     pageHidingRef.current = false
@@ -66,16 +96,19 @@ export function useWrongNotePersistence({ id, detail }: WrongNotePersistenceOpti
       pageHidingRef.current = true
       if (!dirtyRef.current || !Number.isSafeInteger(id)) return
       const content = noteRef.current
+      const revision = revisionRef.current
       window.localStorage.setItem(draftKey, content)
-      void fetch(`/api/wrong-notes/${id}/note`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({ content }),
-        keepalive: true,
-      })
+      if (revision !== 0 && !hasPendingNoteSave(saveKey)) {
+        void enqueueLatestNoteSave(
+          saveKey,
+          revision,
+          () => saveWrongNote(id, content, { keepalive: true }),
+        ).catch(() => {})
+      }
     }
     const pageshow = () => {
       pageHidingRef.current = false
+      if (dirtyRef.current) saveRef.current()
     }
     window.addEventListener('keydown', shortcut)
     window.addEventListener('pagehide', pagehide)
@@ -86,7 +119,7 @@ export function useWrongNotePersistence({ id, detail }: WrongNotePersistenceOpti
       window.removeEventListener('pagehide', pagehide)
       window.removeEventListener('pageshow', pageshow)
     }
-  }, [draftKey, id])
+  }, [draftKey, id, saveKey])
 
   useEffect(() => {
     if (!dirty) return
@@ -95,6 +128,7 @@ export function useWrongNotePersistence({ id, detail }: WrongNotePersistenceOpti
   }, [note, dirty])
 
   const updateNote = (value: string) => {
+    revisionRef.current = beginNoteSaveRevision(saveKey)
     noteRef.current = value
     dirtyRef.current = true
     window.localStorage.setItem(draftKey, value)
