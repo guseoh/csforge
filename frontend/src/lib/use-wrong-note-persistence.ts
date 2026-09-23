@@ -67,12 +67,7 @@ export function useWrongNotePersistence({ id, detail }: WrongNotePersistenceOpti
       if (!dirtyRef.current || !Number.isSafeInteger(id)) return
       const content = noteRef.current
       window.localStorage.setItem(draftKey, content)
-      void fetch(`/api/wrong-notes/${id}/note`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({ content }),
-        keepalive: true,
-      })
+      void saveWrongNote(id, content, { keepalive: true }).catch(() => {})
     }
     const pageshow = () => {
       pageHidingRef.current = false

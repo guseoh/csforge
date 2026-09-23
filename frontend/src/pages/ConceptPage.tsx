@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useParams } from '@tanstack/react-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { EmptyState, ErrorState, PageSkeleton } from '../components/AsyncStates'
@@ -10,7 +10,6 @@ import { extractInterviewSection } from '../lib/interview-section'
 import {
   getConcept,
   recordConceptView,
-  savePersonalNote,
   updateConceptProgress,
   type ConceptDetail as ConceptDetailModel,
   type LearningStatus,
@@ -18,8 +17,7 @@ import {
 } from '../lib/learning-api'
 import { defaultLearningSearch } from '../lib/learning-search'
 import { defaultQuizSearch } from '../lib/quiz-search'
-
-type NoteState = 'saved' | 'saving' | 'error'
+import { useConceptNotePersistence } from '../lib/use-concept-note-persistence'
 
 type TocHeading = {
   id: string
@@ -109,86 +107,9 @@ function ConceptArticleToc({ conceptId }: { conceptId: number }) {
 }
 
 function ConceptContent({ data, conceptId }: { data: ConceptDetailModel; conceptId: number }) {
-  const queryClient = useQueryClient()
-  const [noteContent, setNoteContent] = useState('')
-  const noteContentRef = useRef('')
-  const lastSavedContentRef = useRef('')
-  const hydratedConceptRef = useRef<number | null>(null)
-  const noteTimerRef = useRef<number | undefined>(undefined)
-  const [noteState, setNoteState] = useState<NoteState>('saved')
+  const { noteContent, noteState, updateNote, flushNote } = useConceptNotePersistence(conceptId, data.personalNote?.content ?? '')
   const { bodyMarkdown, interview } = extractInterviewSection(data.contentMarkdown)
   const isCompleted = data.progress.learningStatus === 'COMPLETED'
-
-  const noteMutation = useMutation({
-    mutationFn: ({ content }: { content: string }) => savePersonalNote(conceptId, content),
-    onMutate: ({ content }) => {
-      if (noteContentRef.current === content) setNoteState('saving')
-    },
-    onSuccess: (saved, variables) => {
-      lastSavedContentRef.current = saved.content
-      if (noteContentRef.current === variables.content) setNoteState('saved')
-      queryClient.setQueryData<ConceptDetailModel>(['concept', conceptId], (current) =>
-        current ? { ...current, personalNote: saved } : current,
-      )
-    },
-    onError: (_error, variables) => {
-      if (noteContentRef.current === variables.content) setNoteState('error')
-    },
-  })
-
-  useEffect(() => {
-    if (hydratedConceptRef.current === conceptId) return
-    const initialContent = data.personalNote?.content ?? ''
-    hydratedConceptRef.current = conceptId
-    noteContentRef.current = initialContent
-    lastSavedContentRef.current = initialContent
-    setNoteContent(initialContent)
-    setNoteState('saved')
-  }, [conceptId, data.personalNote?.content])
-
-  const flushNote = useCallback(() => {
-    if (noteTimerRef.current !== undefined) {
-      window.clearTimeout(noteTimerRef.current)
-      noteTimerRef.current = undefined
-    }
-    const content = noteContentRef.current
-    if (content === lastSavedContentRef.current) {
-      setNoteState('saved')
-      return
-    }
-    noteMutation.mutate({ content })
-  }, [noteMutation])
-
-  const queueNoteSave = useCallback((content: string) => {
-    noteContentRef.current = content
-    setNoteContent(content)
-    if (noteTimerRef.current !== undefined) window.clearTimeout(noteTimerRef.current)
-    if (content === lastSavedContentRef.current) {
-      setNoteState('saved')
-      noteTimerRef.current = undefined
-      return
-    }
-    setNoteState('saving')
-    noteTimerRef.current = window.setTimeout(() => {
-      noteTimerRef.current = undefined
-      if (noteContentRef.current !== lastSavedContentRef.current) noteMutation.mutate({ content: noteContentRef.current })
-    }, 800)
-  }, [noteMutation])
-
-  useEffect(() => {
-    const handleShortcut = (event: KeyboardEvent) => {
-      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 's') {
-        event.preventDefault()
-        flushNote()
-      }
-    }
-    window.addEventListener('keydown', handleShortcut)
-    return () => window.removeEventListener('keydown', handleShortcut)
-  }, [flushNote])
-
-  useEffect(() => () => {
-    if (noteTimerRef.current !== undefined) window.clearTimeout(noteTimerRef.current)
-  }, [])
 
   const completionTitle = isCompleted ? '문제로 이해를 확인해보세요.' : '읽은 내용을 학습 기록에 남기세요.'
   const completionDescription = isCompleted
@@ -267,7 +188,7 @@ function ConceptContent({ data, conceptId }: { data: ConceptDetailModel; concept
           value={noteContent}
           aria-label="개인 노트"
           placeholder="헷갈린 점, 다시 볼 이유, 내 말로 정리한 내용을 남겨보세요."
-          onChange={(event) => queueNoteSave(event.target.value)}
+          onChange={(event) => updateNote(event.target.value)}
         />
         {noteState === 'error' && <button className="text-button" type="button" onClick={flushNote}>다시 저장</button>}
         <p className="helper-text">입력 후 0.8초 뒤 자동 저장 · Ctrl/Cmd+S 즉시 저장</p>
@@ -435,7 +356,7 @@ export function ConceptPage() {
           <span>/</span>
           <strong>{data.topic.title}</strong>
         </nav>
-        <ConceptContent data={data} conceptId={conceptId} />
+        <ConceptContent key={conceptId} data={data} conceptId={conceptId} />
       </section>
       <ConceptArticleToc conceptId={conceptId} />
     </div>

@@ -157,11 +157,12 @@ export function getWrongNoteAttempts(questionId: number, cursor?: string): Promi
   return request(`/api/wrong-notes/${questionId}/attempts?${params.toString()}`)
 }
 
-export function saveWrongNote(questionId: number, content: string): Promise<{ content: string; updatedAt: string }> {
+export function saveWrongNote(questionId: number, content: string, options?: { keepalive?: boolean }): Promise<{ content: string; updatedAt: string }> {
   return request(`/api/wrong-notes/${questionId}/note`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ content }),
+    keepalive: options?.keepalive,
   })
 }
 
