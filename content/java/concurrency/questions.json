@@ -2186,7 +2186,7 @@
   {
     "kind": "question",
     "contentKey": "java.core.concurrency.executor-task-thread-pools.q1",
-    "promptMarkdown": "Executor가 분리하는 관심사는?",
+    "promptMarkdown": "호출부마다 `new Thread(task).start()`를 직접 만들던 코드를 `Executor`에 task를 제출하는 구조로 바꿨다. 가장 직접적으로 분리되는 관심사는?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
@@ -2196,31 +2196,31 @@
     "choices": [
       {
         "key": "A",
-        "content": "task 제출과 task 실행 정책",
+        "content": "task 제출과 worker 생성·재사용·scheduling 같은 task 실행 정책",
         "displayOrder": 0,
-        "rationaleMarkdown": "호출자는 task를 제출하고 Executor가 실행 방식을 관리하므로 작업 정의와 worker 생명주기를 분리할 수 있다."
+        "rationaleMarkdown": "호출자는 Runnable/Callable 같은 작업을 제출하고 Executor가 어떤 worker에서 언제 실행할지 관리한다. 작업의 정의와 thread lifecycle·scheduling 정책을 분리하는 것이 핵심 효과다."
       },
       {
         "key": "B",
-        "content": "class loading과 GC만",
+        "content": "task 제출과 task 내부 mutable state의 thread-safety",
         "displayOrder": 1,
-        "rationaleMarkdown": "class loading과 garbage collection은 JVM 기능이지 Executor가 task scheduling에서 맡는 책임이 아니다."
+        "rationaleMarkdown": "Executor가 task를 실행해도 task가 공유 mutable state를 안전하게 다루는지는 별도 문제다. 동시 접근 보호나 상태 소유권은 task 자체의 설계가 책임진다."
       },
       {
         "key": "C",
-        "content": "equals와 hashCode",
+        "content": "task 제출과 실패한 task의 자동 재시도 정책",
         "displayOrder": 2,
-        "rationaleMarkdown": "Executor는 task 객체의 equals나 hash 계약을 정하지 않는다."
+        "rationaleMarkdown": "기본 Executor가 실패한 task를 업무 의미에 맞게 자동 재시도해 주지는 않는다. retry 여부·횟수·idempotency는 별도의 실행 또는 application 정책이 필요하다."
       },
       {
         "key": "D",
-        "content": "source와 annotation retention",
+        "content": "task 제출과 caller의 DB transaction을 worker thread에 자동 전파하는 정책",
         "displayOrder": 3,
-        "rationaleMarkdown": "annotation retention이나 source metadata는 제출된 task 실행과 무관하다."
+        "rationaleMarkdown": "Executor에 task를 넘긴다고 caller thread의 transaction context가 임의의 worker thread로 자동 전파되는 것은 아니다. transaction 경계와 async 실행 경계는 별도로 설계해야 한다."
       }
     ],
     "correctChoiceKey": "A",
-    "explanationMarkdown": "caller가 worker lifecycle을 직접 조작하는 대신 Executor가 실행 policy를 맡는다."
+    "explanationMarkdown": "Executor를 사용하면 호출자는 실행할 task를 제출하고, worker 생성·재사용·queueing·scheduling 같은 실행 정책은 Executor 구현이 맡게 할 수 있다. 이 분리는 task를 자동 thread-safe하게 만들거나 실패를 자동 재시도하거나 DB transaction을 다른 thread에 전파하는 보장은 아니다."
   },
   {
     "kind": "question",
@@ -3930,9 +3930,9 @@
       },
       {
         "key": "D",
-        "content": "warm-up",
+        "content": "lock contention",
         "displayOrder": 3,
-        "rationaleMarkdown": "warm-up은 시작 직후 성능 최적화와 관련되고 lock 대기 cycle과 무관하다."
+        "rationaleMarkdown": "lock contention은 여러 thread가 같은 lock을 두고 경쟁해 일부가 기다리는 넓은 상황이다. 서로가 가진 서로 다른 lock을 교차해서 기다리는 순환 대기까지 생긴 현재 상태는 deadlock으로 더 구체적으로 설명된다."
       }
     ],
     "correctChoiceKey": "A",
@@ -3990,27 +3990,27 @@
     "choices": [
       {
         "key": "A",
-        "content": "EOF",
+        "content": "deadlock",
         "displayOrder": 0,
-        "rationaleMarkdown": "EOF는 입력 끝을 나타내는 결과이지 thread 간 진행 조정 상태가 아니다."
+        "rationaleMarkdown": "deadlock은 보통 서로 필요한 lock이나 resource를 기다리며 진행이 멈춘 상태다. 여기서는 두 thread가 멈춰 기다리는 대신 계속 상태를 바꾸며 양보하지만 완료하지 못한다."
       },
       {
         "key": "B",
-        "content": "heap leak",
+        "content": "starvation",
         "displayOrder": 1,
-        "rationaleMarkdown": "heap leak은 객체가 필요 이상 메모리에 남는 문제다. 움직이면서 유용한 진행을 하지 못하는 상태와 다르다."
+        "rationaleMarkdown": "starvation은 다른 작업들은 진행하는 동안 특정 thread가 실행 기회나 resource를 계속 얻지 못하는 현상이다. 두 thread가 서로 반응하며 계속 재시도하는 현재 상황과는 다르다."
       },
       {
         "key": "C",
         "content": "livelock",
         "displayOrder": 2,
-        "rationaleMarkdown": "계속 반응하거나 backoff하지만 완료로 나아가지 못하면 livelock에 가깝다. 두 thread가 단순 대기하는 deadlock과 구분한다."
+        "rationaleMarkdown": "두 thread가 충돌을 피하려고 계속 양보·되돌리기를 반복해 실행 자체는 움직이지만 유용한 완료에 도달하지 못한다. 이런 progress 실패가 livelock의 핵심이다."
       },
       {
         "key": "D",
-        "content": "binary incompatibility",
+        "content": "priority inversion",
         "displayOrder": 3,
-        "rationaleMarkdown": "binary incompatibility는 API linkage 실패이고 task coordination의 progress와 관계없다."
+        "rationaleMarkdown": "priority inversion은 높은 우선순위 작업이 낮은 우선순위 작업이 가진 resource 때문에 지연되는 문제다. 서로 양보 동작을 반복해 아무도 완료하지 못하는 상황 자체를 뜻하지 않는다."
       }
     ],
     "correctChoiceKey": "C",
