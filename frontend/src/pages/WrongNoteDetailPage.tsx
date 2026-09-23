@@ -143,7 +143,7 @@ export function WrongNoteDetailPage() {
                 {latestAttempt.selectedChoiceContentMarkdown
                   ? <MarkdownContent className="wrong-note-answer-value">{latestAttempt.selectedChoiceContentMarkdown}</MarkdownContent>
                   : <p className="wrong-note-answer-value">선택지 내용을 불러오지 못했습니다.</p>}
-                {selectedChoice && <ChoiceRationale rationaleMarkdown={selectedChoice.rationaleMarkdown} label="내가 고른 이유" />}
+                {selectedChoice && <ChoiceRationale rationaleMarkdown={selectedChoice.rationaleMarkdown} label="이 선택지가 틀린 이유" />}
               </>
             )}
             {isMultipleChoice && !latestAttempt?.selectedChoiceKey && <p className="wrong-note-answer-value">답변하지 않음</p>}
@@ -159,7 +159,7 @@ export function WrongNoteDetailPage() {
                 {item.answer.correctChoiceContentMarkdown
                   ? <MarkdownContent className="wrong-note-answer-value">{item.answer.correctChoiceContentMarkdown}</MarkdownContent>
                   : <p className="wrong-note-answer-value">선택지 내용을 불러오지 못했습니다.</p>}
-                {correctChoice && <ChoiceRationale rationaleMarkdown={correctChoice.rationaleMarkdown} label="정답인 이유" />}
+                {correctChoice && <ChoiceRationale rationaleMarkdown={correctChoice.rationaleMarkdown} label="이 선택지가 맞는 이유" />}
               </>
             )}
             {isShortAnswer && hasAcceptedAnswers && <p className="wrong-note-answer-value">{item.answer.acceptedAnswers.join(', ')}</p>}

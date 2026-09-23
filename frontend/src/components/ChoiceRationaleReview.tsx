@@ -43,7 +43,7 @@ export function OtherChoiceRationales({
           <article className="other-choice-rationale" key={choice.choiceKey}>
             <strong>선택지 {choice.choiceKey}</strong>
             <MarkdownContent>{choice.contentMarkdown}</MarkdownContent>
-            <ChoiceRationale rationaleMarkdown={choice.rationaleMarkdown} label="이 선택지의 이유" />
+            <ChoiceRationale rationaleMarkdown={choice.rationaleMarkdown} label="이 선택지가 틀린 이유" />
           </article>
         ))}
       </div>

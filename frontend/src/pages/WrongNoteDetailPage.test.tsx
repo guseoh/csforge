@@ -111,9 +111,9 @@ describe('WrongNoteDetailPage', () => {
   it('shows selected and correct rationale while disclosing the remaining choice rationale', () => {
     const markup = renderToStaticMarkup(<WrongNoteDetailPage />)
 
-    expect(markup).toContain('내가 고른 이유')
+    expect(markup).toContain('이 선택지가 틀린 이유')
     expect(markup).toContain('선택한 오답의 근거')
-    expect(markup).toContain('정답인 이유')
+    expect(markup).toContain('이 선택지가 맞는 이유')
     expect(markup).toContain('정답 선택지의 근거')
     expect(markup).toContain('<details class="choice-rationale-disclosure">')
     expect(markup).toContain('나머지 선택지의 근거')
@@ -131,6 +131,6 @@ describe('WrongNoteDetailPage', () => {
     expect(markup).toContain('기존 전체 해설')
     expect(markup).toContain('내가 고른 오답 내용')
     expect(markup).not.toContain('choice-rationale')
-    expect(markup).not.toContain('정답인 이유')
+    expect(markup).not.toContain('이 선택지가 맞는 이유')
   })
 })
