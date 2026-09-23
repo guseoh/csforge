@@ -1,6 +1,7 @@
 import { Link, useNavigate, useParams } from '@tanstack/react-router'
 import { useInfiniteQuery, useMutation, useQuery } from '@tanstack/react-query'
 import { ErrorState, PageSkeleton } from '../components/AsyncStates'
+import { ChoiceRationale, OtherChoiceRationales } from '../components/ChoiceRationaleReview'
 import { MarkdownContent } from '../components/MarkdownContent'
 import { WrongAnswerAnalysisCard } from '../components/WrongAnswerAnalysisCard'
 import { useToast } from '../components/toast/ToastProvider'
@@ -91,6 +92,8 @@ export function WrongNoteDetailPage() {
   const latestAttempt = item.latestWrongAttempt
   const latestAnswer = latestAttempt?.answerText ?? '답변하지 않음'
   const isMultipleChoice = item.question.questionType === 'MULTIPLE_CHOICE'
+  const selectedChoice = item.question.choices.find((choice) => choice.choiceKey === latestAttempt?.selectedChoiceKey)
+  const correctChoice = item.question.choices.find((choice) => choice.choiceKey === item.answer.correctChoiceKey)
   const isShortAnswer = item.question.questionType === 'SHORT_ANSWER'
   const hasAcceptedAnswers = item.answer.acceptedAnswers.length > 0
   const hasModelAnswer = Boolean(item.answer.modelAnswer)
@@ -140,6 +143,7 @@ export function WrongNoteDetailPage() {
                 {latestAttempt.selectedChoiceContentMarkdown
                   ? <MarkdownContent className="wrong-note-answer-value">{latestAttempt.selectedChoiceContentMarkdown}</MarkdownContent>
                   : <p className="wrong-note-answer-value">선택지 내용을 불러오지 못했습니다.</p>}
+                {selectedChoice && <ChoiceRationale rationaleMarkdown={selectedChoice.rationaleMarkdown} label="내가 고른 이유" />}
               </>
             )}
             {isMultipleChoice && !latestAttempt?.selectedChoiceKey && <p className="wrong-note-answer-value">답변하지 않음</p>}
@@ -155,6 +159,7 @@ export function WrongNoteDetailPage() {
                 {item.answer.correctChoiceContentMarkdown
                   ? <MarkdownContent className="wrong-note-answer-value">{item.answer.correctChoiceContentMarkdown}</MarkdownContent>
                   : <p className="wrong-note-answer-value">선택지 내용을 불러오지 못했습니다.</p>}
+                {correctChoice && <ChoiceRationale rationaleMarkdown={correctChoice.rationaleMarkdown} label="정답인 이유" />}
               </>
             )}
             {isShortAnswer && hasAcceptedAnswers && <p className="wrong-note-answer-value">{item.answer.acceptedAnswers.join(', ')}</p>}
@@ -163,6 +168,12 @@ export function WrongNoteDetailPage() {
             {!item.answer.correctChoiceKey && !hasAcceptedAnswers && !hasModelAnswer && <p className="helper-text">등록된 정답 정보가 없습니다.</p>}
           </article>
         </div>
+
+        <OtherChoiceRationales
+          choices={item.question.choices}
+          excludedChoiceKeys={[latestAttempt?.selectedChoiceKey ?? null, item.answer.correctChoiceKey]
+            .filter((key): key is string => key !== null)}
+        />
 
         {item.question.explanationMarkdown && (
           <div className="wrong-note-explanation">

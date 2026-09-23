@@ -51,6 +51,10 @@ export interface QuizChoice {
   contentMarkdown: string
 }
 
+export interface QuizChoiceReview extends QuizChoice {
+  rationaleMarkdown: string | null
+}
+
 export interface QuizSavedAnswer {
   selectedChoiceKey: string | null
   answerText: string | null
@@ -98,7 +102,7 @@ export interface QuizQuestionResult {
   questionType: QuestionType
   difficulty: QuestionDifficulty
   concepts: QuizConcept[]
-  choices: QuizChoice[]
+  choices: QuizChoiceReview[]
   selectedChoiceKey: string | null
   answerText: string | null
   reviewNeeded: boolean

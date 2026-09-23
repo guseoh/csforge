@@ -116,7 +116,8 @@ public class ContentImportValidator {
         }
         try {
             Question.validateImportedStructure(type,
-                    item.choices().stream().map(choice -> new Question.ChoiceDraft(choice.key(), choice.content(), choice.displayOrder())).toList(),
+                    item.choices().stream().map(choice -> new Question.ChoiceDraft(
+                            choice.key(), choice.content(), choice.rationaleMarkdown(), choice.displayOrder())).toList(),
                     item.correctChoiceKey(), item.acceptedAnswers(), item.modelAnswer());
         } catch (IllegalArgumentException exception) {
             errors.add(new ImportValidationError("questionStructure", exception.getMessage()));

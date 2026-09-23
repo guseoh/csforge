@@ -2,6 +2,7 @@ package com.guseoh.csforge.importcontent;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.charset.StandardCharsets;
@@ -62,6 +63,22 @@ class ContentImportParserTest {
         assertTrue(invalid.stream().allMatch(NormalizedImportItem::isError));
         assertTrue(valid.stream().noneMatch(NormalizedImportItem::isError));
         assertTrue(conflicts.get(1).isError());
+    }
+
+    @Test
+    void parsesOptionalChoiceRationaleAndAcceptsLegacyChoiceWithoutIt() {
+        String question = "{\"kind\":\"question\",\"contentKey\":\"mc\",\"promptMarkdown\":\"P\","
+                + "\"questionType\":\"MULTIPLE_CHOICE\",\"difficulty\":\"EASY\",\"status\":\"PUBLISHED\","
+                + "\"conceptKeys\":[\"c\"],\"choices\":["
+                + "{\"key\":\"A\",\"content\":\"A\",\"rationaleMarkdown\":\" **because** \",\"displayOrder\":0},"
+                + "{\"key\":\"B\",\"content\":\"B\",\"displayOrder\":1}],\"correctChoiceKey\":\"A\"}";
+
+        NormalizedImportItem parsed = parser.parse(command("question.json", question)).getFirst();
+        NormalizedImportItem validated = validator.validate(List.of(parsed)).getFirst();
+
+        assertEquals("**because**", parsed.choices().getFirst().rationaleMarkdown());
+        assertNull(parsed.choices().get(1).rationaleMarkdown());
+        assertFalse(validated.isError());
     }
 
     private static ImportFilesCommand command(String name, String content) {

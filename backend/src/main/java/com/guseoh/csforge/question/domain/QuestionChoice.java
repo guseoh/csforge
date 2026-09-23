@@ -34,20 +34,24 @@ public class QuestionChoice {
     @Column(name = "content_markdown", nullable = false, columnDefinition = "TEXT")
     private String contentMarkdown;
 
+    @Column(name = "rationale_markdown", columnDefinition = "TEXT")
+    private String rationaleMarkdown;
+
     @Column(name = "display_order", nullable = false)
     private int displayOrder;
 
     protected QuestionChoice() {
     }
 
-    QuestionChoice(Question question, String choiceKey, String contentMarkdown, int displayOrder) {
+    QuestionChoice(Question question, String choiceKey, String contentMarkdown, String rationaleMarkdown, int displayOrder) {
         this.question = question;
         this.choiceKey = choiceKey;
         this.contentMarkdown = contentMarkdown;
+        this.rationaleMarkdown = rationaleMarkdown;
         this.displayOrder = displayOrder;
     }
 
-    void reviseCanonicalContent(String contentMarkdown, int displayOrder) {
+    void reviseCanonicalContent(String contentMarkdown, String rationaleMarkdown, int displayOrder) {
         if (contentMarkdown == null || contentMarkdown.isBlank()) {
             throw new IllegalArgumentException("contentMarkdown is required");
         }
@@ -55,6 +59,7 @@ public class QuestionChoice {
             throw new IllegalArgumentException("displayOrder must be non-negative");
         }
         this.contentMarkdown = contentMarkdown;
+        this.rationaleMarkdown = rationaleMarkdown;
         this.displayOrder = displayOrder;
     }
 }

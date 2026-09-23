@@ -38,6 +38,15 @@ class QuestionStructureComparatorTest {
     }
 
     @Test
+    void rationaleOnlyChangeIsCanonicalUpdateAndPreservesAttemptReferences() {
+        Question question = question();
+        NormalizedImportItem changedRationale = itemWithRationales("B", null, "Why B");
+
+        assertFalse(QuestionStructureComparator.matches(changedRationale, question));
+        assertTrue(QuestionStructureComparator.preservesAttemptReferences(changedRationale, question));
+    }
+
+    @Test
     void choiceKeyChangeDoesNotPreserveAttemptReferences() {
         Question question = question();
         NormalizedImportItem changedKeys = itemWithSecondChoiceKey("C");
@@ -56,8 +65,8 @@ class QuestionStructureComparatorTest {
         question.replaceStructure(
                 QuestionType.MULTIPLE_CHOICE,
                 List.of(
-                        new Question.ChoiceDraft("A", "First", 0),
-                        new Question.ChoiceDraft("B", "Second", 1)),
+                        new Question.ChoiceDraft("A", "First", null, 0),
+                        new Question.ChoiceDraft("B", "Second", null, 1)),
                 "B",
                 List.of(),
                 null,
@@ -78,6 +87,20 @@ class QuestionStructureComparatorTest {
     }
 
     private static NormalizedImportItem item(String correctChoiceKey, String firstChoiceContent, String secondChoiceKey) {
+        return itemWithRationales(correctChoiceKey, null, null, firstChoiceContent, secondChoiceKey);
+    }
+
+    private static NormalizedImportItem itemWithRationales(
+            String correctChoiceKey, String firstRationale, String secondRationale) {
+        return itemWithRationales(correctChoiceKey, firstRationale, secondRationale, "First", "B");
+    }
+
+    private static NormalizedImportItem itemWithRationales(
+            String correctChoiceKey,
+            String firstRationale,
+            String secondRationale,
+            String firstChoiceContent,
+            String secondChoiceKey) {
         return new NormalizedImportItem(
                 "question.json",
                 0,
@@ -102,8 +125,8 @@ class QuestionStructureComparatorTest {
                 "Explanation",
                 List.of(),
                 List.of(
-                        new NormalizedChoice("A", firstChoiceContent, 0),
-                        new NormalizedChoice(secondChoiceKey, "Second", 1)),
+                        new NormalizedChoice("A", firstChoiceContent, firstRationale, 0),
+                        new NormalizedChoice(secondChoiceKey, "Second", secondRationale, 1)),
                 correctChoiceKey,
                 List.of(),
                 null,

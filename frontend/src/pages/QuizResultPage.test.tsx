@@ -73,8 +73,9 @@ describe('QuizResultPage', () => {
         difficulty: 'MEDIUM',
         concepts: [{ id: 3, slug: 'pass-by-value', title: 'Pass-by-value', areaSlug: 'java', areaName: 'Java', level: 1 }],
         choices: [
-          { choiceKey: 'A', contentMarkdown: '`caller`의 변수도 새 객체를 가리킨다.' },
-          { choiceKey: 'B', contentMarkdown: '매개변수의 **복사된 참조 값만** 재대입된다.' },
+          { choiceKey: 'A', contentMarkdown: '`caller`의 변수도 새 객체를 가리킨다.', rationaleMarkdown: '선택지 A의 근거' },
+          { choiceKey: 'B', contentMarkdown: '매개변수의 **복사된 참조 값만** 재대입된다.', rationaleMarkdown: '정답 선택지의 근거' },
+          { choiceKey: 'C', contentMarkdown: '다른 결과를 낸다.', rationaleMarkdown: '세 번째 선택지의 근거' },
         ],
         selectedChoiceKey: 'A',
         answerText: null,
@@ -96,6 +97,13 @@ describe('QuizResultPage', () => {
     expect(markup).toContain('caller')
     expect(markup).toContain('선택지 B')
     expect(markup).toContain('복사된 참조 값만')
+    expect(markup).toContain('선택한 이유')
+    expect(markup).toContain('선택지 A의 근거')
+    expect(markup).toContain('정답인 이유')
+    expect(markup).toContain('정답 선택지의 근거')
+    expect(markup).toContain('나머지 선택지 이유 보기')
+    expect(markup).toContain('세 번째 선택지의 근거')
+    expect(markup).toContain('<details class="choice-rationale-disclosure">')
     expect(markup).toContain('왜 이렇게 판단하나')
     expect(markup).toContain('관련 개념 다시 보기')
   })
@@ -141,5 +149,49 @@ describe('QuizResultPage', () => {
     expect(markup).toContain('내 답과 모범 답안을 비교한 뒤 직접 판정하세요.')
     expect(markup).toContain('맞았어요')
     expect(markup).toContain('틀렸어요')
+  })
+
+  it('keeps legacy result content readable when every choice rationale is null', () => {
+    mocks.result.data = {
+      quizId: 41,
+      status: 'COMPLETED',
+      source: 'STANDARD',
+      total: 1,
+      correct: 0,
+      wrong: 1,
+      unanswered: 0,
+      selfCheckPending: 0,
+      accuracy: 0,
+      breakdown: [],
+      questions: [{
+        questionId: 13,
+        position: 0,
+        promptMarkdown: '기존 문제',
+        questionType: 'MULTIPLE_CHOICE',
+        difficulty: 'EASY',
+        concepts: [],
+        choices: [
+          { choiceKey: 'A', contentMarkdown: '내 답', rationaleMarkdown: null },
+          { choiceKey: 'B', contentMarkdown: '정답', rationaleMarkdown: null },
+        ],
+        selectedChoiceKey: 'A',
+        answerText: null,
+        reviewNeeded: false,
+        gradingStatus: 'GRADED',
+        correct: false,
+        correctChoiceKey: 'B',
+        acceptedAnswers: [],
+        modelAnswer: null,
+        explanationMarkdown: '기존 핵심 해설',
+        answeredAt: null,
+        gradedAt: null,
+      }],
+    }
+
+    const markup = renderToStaticMarkup(<QuizResultPage />)
+
+    expect(markup).toContain('기존 핵심 해설')
+    expect(markup).not.toContain('choice-rationale')
+    expect(markup).not.toContain('선택한 이유')
   })
 })

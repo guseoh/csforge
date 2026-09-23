@@ -189,6 +189,83 @@ class ContentImportIntegrationTest {
     }
 
     @Test
+    void rationaleOnlyUpdatePreservesChoiceAttemptIdentityAndReimportsUnchanged() throws Exception {
+        List<Part> base = sampleParts();
+        JsonNode initialPreview = json(post("/api/imports/preview", base, null)).get("body");
+        post("/api/imports/apply", base, initialPreview.get("previewDigest").asText());
+
+        long questionId = jdbc.queryForObject("select id from question where content_key = 'test.q1'", Long.class);
+        long choiceId = jdbc.queryForObject(
+                "select id from question_choice where question_id = ? and choice_key = 'A'",
+                Long.class,
+                questionId);
+        long attemptId = insertAttempt(questionId);
+        jdbc.update("update attempt set selected_choice_id = ? where id = ?", choiceId, attemptId);
+        long wrongNoteId = jdbc.queryForObject(
+                "insert into wrong_note (question_id, status, wrong_count, first_wrong_at, last_wrong_at, last_wrong_attempt_id) "
+                        + "values (?, 'ACTIVE', 1, current_timestamp, current_timestamp, ?) returning id",
+                Long.class,
+                questionId,
+                attemptId);
+        jdbc.update(
+                "insert into review_schedule (question_id, status, stage, due_at, last_processed_attempt_id) "
+                        + "values (?, 'SCHEDULED', 1, current_timestamp + interval '1 day', ?)",
+                questionId,
+                attemptId);
+        long reviewHistoryId = jdbc.queryForObject(
+                "insert into review_history (question_id, quiz_session_id, attempt_id, result, stage_before, stage_after, reviewed_at, next_due_at) "
+                        + "select ?, quiz_session_id, id, 'WRONG', 1, 1, current_timestamp, current_timestamp + interval '1 day' "
+                        + "from attempt where id = ? returning id",
+                Long.class,
+                questionId,
+                attemptId);
+
+        List<Part> withRationales = List.of(
+                base.get(0),
+                base.get(1),
+                new Part("question.json", "application/json", "{\"kind\":\"question\",\"contentKey\":\"test.q1\","
+                        + "\"promptMarkdown\":\"Choose\",\"questionType\":\"MULTIPLE_CHOICE\",\"difficulty\":\"EASY\","
+                        + "\"status\":\"PUBLISHED\",\"conceptKeys\":[\"test.concept\"],\"choices\":["
+                        + "{\"key\":\"A\",\"content\":\"yes\",\"rationaleMarkdown\":\"A reason\",\"displayOrder\":0},"
+                        + "{\"key\":\"B\",\"content\":\"no\",\"rationaleMarkdown\":\"B reason\",\"displayOrder\":1}],"
+                        + "\"correctChoiceKey\":\"A\"}"));
+        JsonNode rationalePreview = json(post("/api/imports/preview", withRationales, null)).get("body");
+
+        assertEquals(1, rationalePreview.get("totals").get("updated").asInt());
+        JsonNode questionPreview = rationalePreview.get("items").get(2);
+        assertEquals("UPDATED", questionPreview.get("classification").asText());
+        assertTrue(questionPreview.get("diffs").toString().contains("structure"));
+        assertTrue(rationalePreview.get("canApply").asBoolean());
+        assertEquals(200, json(post("/api/imports/apply", withRationales, rationalePreview.get("previewDigest").asText())).get("status").asInt());
+
+        assertEquals(choiceId, jdbc.queryForObject(
+                "select id from question_choice where question_id = ? and choice_key = 'A'",
+                Long.class,
+                questionId));
+        assertEquals("A reason", jdbc.queryForObject(
+                "select rationale_markdown from question_choice where question_id = ? and choice_key = 'A'",
+                String.class,
+                questionId));
+        assertEquals(choiceId, jdbc.queryForObject("select selected_choice_id from attempt where id = ?", Long.class, attemptId));
+        assertEquals(1, jdbc.queryForObject("select count(*) from attempt where id = ?", Integer.class, attemptId));
+        assertEquals(wrongNoteId, jdbc.queryForObject("select id from wrong_note where question_id = ?", Long.class, questionId));
+        assertEquals(1, jdbc.queryForObject("select count(*) from review_schedule where question_id = ?", Integer.class, questionId));
+        assertEquals(attemptId, jdbc.queryForObject(
+                "select last_processed_attempt_id from review_schedule where question_id = ?",
+                Long.class,
+                questionId));
+        assertEquals(reviewHistoryId, jdbc.queryForObject(
+                "select id from review_history where question_id = ? and attempt_id = ?",
+                Long.class,
+                questionId,
+                attemptId));
+
+        JsonNode reimportPreview = json(post("/api/imports/preview", withRationales, null)).get("body");
+        assertEquals(3, reimportPreview.get("totals").get("unchanged").asInt());
+        assertEquals(200, json(post("/api/imports/apply", withRationales, reimportPreview.get("previewDigest").asText())).get("status").asInt());
+    }
+
+    @Test
     void anyPreviewErrorBlocksApplyWithoutMutation() throws Exception {
         List<Part> invalid = List.of(
                 new Part("new-topic.json", "application/json", "{\"kind\":\"topic\",\"contentKey\":\"new.topic\",\"areaSlug\":\"unknown\",\"slug\":\"new\",\"title\":\"New\"}"),

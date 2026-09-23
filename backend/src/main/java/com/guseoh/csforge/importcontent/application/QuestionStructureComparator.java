@@ -42,13 +42,15 @@ final class QuestionStructureComparator {
 
     private static List<String> choiceStructure(Question question) {
         return question.getChoices().stream()
-                .map(choice -> choice.getChoiceKey() + "|" + choice.getContentMarkdown() + "|" + choice.getDisplayOrder())
+                .map(choice -> choice.getChoiceKey() + "|" + choice.getContentMarkdown() + "|"
+                        + choice.getRationaleMarkdown() + "|" + choice.getDisplayOrder())
                 .toList();
     }
 
     private static List<String> choiceStructure(NormalizedImportItem item) {
         return item.choices().stream()
-                .map(choice -> choice.key() + "|" + choice.content() + "|" + choice.displayOrder())
+                .map(choice -> choice.key() + "|" + choice.content() + "|"
+                        + choice.rationaleMarkdown() + "|" + choice.displayOrder())
                 .toList();
     }
 

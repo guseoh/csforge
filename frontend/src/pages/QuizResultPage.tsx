@@ -2,6 +2,7 @@ import { useEffect, type ReactNode } from 'react'
 import { Link, useNavigate, useParams } from '@tanstack/react-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ErrorState, PageSkeleton } from '../components/AsyncStates'
+import { ChoiceRationale, OtherChoiceRationales } from '../components/ChoiceRationaleReview'
 import { MarkdownContent } from '../components/MarkdownContent'
 import { ApiRequestError } from '../lib/http'
 import { getQuizResult, retryWrongQuiz, selfCheckQuizQuestion, type QuizQuestionResult } from '../lib/quiz-api'
@@ -45,7 +46,12 @@ function MultipleChoiceAnswerReview({ question }: { question: QuizQuestionResult
         tone={question.correct === false ? 'user-wrong' : undefined}
       >
         {selectedChoice
-          ? <MarkdownContent>{selectedChoice.contentMarkdown}</MarkdownContent>
+          ? (
+              <>
+                <MarkdownContent>{selectedChoice.contentMarkdown}</MarkdownContent>
+                <ChoiceRationale rationaleMarkdown={selectedChoice.rationaleMarkdown} label="선택한 이유" />
+              </>
+            )
           : <p className="result-plain-answer">선택한 답이 없습니다.</p>}
       </ResultAnswerPanel>
       <ResultAnswerPanel
@@ -54,9 +60,20 @@ function MultipleChoiceAnswerReview({ question }: { question: QuizQuestionResult
         tone="correct-answer"
       >
         {correctChoice
-          ? <MarkdownContent>{correctChoice.contentMarkdown}</MarkdownContent>
+          ? (
+              <>
+                <MarkdownContent>{correctChoice.contentMarkdown}</MarkdownContent>
+                {correctChoice.choiceKey !== question.selectedChoiceKey && (
+                  <ChoiceRationale rationaleMarkdown={correctChoice.rationaleMarkdown} label="정답인 이유" />
+                )}
+              </>
+            )
           : <p className="result-plain-answer">등록된 정답 선택지가 없습니다.</p>}
       </ResultAnswerPanel>
+      <OtherChoiceRationales
+        choices={question.choices}
+        excludedChoiceKeys={[question.selectedChoiceKey, question.correctChoiceKey].filter((key): key is string => key !== null)}
+      />
     </div>
   )
 }

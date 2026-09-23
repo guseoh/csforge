@@ -148,6 +148,8 @@ class QuizIntegrationTest {
         assertEquals(multipleChoiceId, session.get("questions").get(0).get("questionId").asLong());
         assertEquals(shortAnswerId, session.get("questions").get(1).get("questionId").asLong());
         assertTrue(session.get("questions").get(0).get("choices").size() >= 2);
+        assertFalse(session.get("questions").get(0).get("choices").get(0).has("rationaleMarkdown"));
+        assertFalse(session.toString().contains("rationaleMarkdown"));
         assertFalse(session.toString().contains("correctChoiceKey"));
         assertFalse(session.toString().contains("acceptedAnswers"));
         assertFalse(session.toString().contains("modelAnswer"));
@@ -176,6 +178,7 @@ class QuizIntegrationTest {
         assertEquals("A", resumed.get("questions").get(0).get("answer").get("selectedChoiceKey").asText());
         assertTrue(resumed.get("questions").get(0).get("answer").get("reviewNeeded").asBoolean());
         assertFalse(resumed.toString().contains("correctChoiceKey"));
+        assertFalse(resumed.toString().contains("rationaleMarkdown"));
 
         assertEquals(400, request(
                 "PUT",
@@ -223,6 +226,10 @@ class QuizIntegrationTest {
         assertEquals(1, result.get("unanswered").asInt());
         assertEquals(1, result.get("selfCheckPending").asInt());
         assertEquals("A", result.get("questions").get(0).get("correctChoiceKey").asText());
+        assertEquals("Correct because A is the invariant.",
+                result.get("questions").get(0).get("choices").get(0).get("rationaleMarkdown").asText());
+        assertEquals("Incorrect because B reverses the rule.",
+                result.get("questions").get(0).get("choices").get(1).get("rationaleMarkdown").asText());
         assertFalse(result.get("questions").get(2).get("modelAnswer").isNull());
         assertEquals(409, request("POST", "/api/quizzes/" + quizId + "/retry-wrong", null).statusCode());
 
@@ -338,6 +345,10 @@ class QuizIntegrationTest {
         assertEquals("B", detail.get("latestWrongAttempt").get("selectedChoiceContentMarkdown").asText());
         assertEquals("A", detail.get("answer").get("correctChoiceKey").asText());
         assertEquals("A", detail.get("answer").get("correctChoiceContentMarkdown").asText());
+        assertEquals("Incorrect because B reverses the rule.",
+                detail.get("question").get("choices").get(1).get("rationaleMarkdown").asText());
+        assertEquals("Correct because A is the invariant.",
+                detail.get("question").get("choices").get(0).get("rationaleMarkdown").asText());
         assertEquals(1, json(request("GET", "/api/wrong-notes/" + multipleChoiceId + "/attempts", null)).get("items").size());
 
         completeReviewCorrectly(1);
@@ -438,8 +449,8 @@ class QuizIntegrationTest {
                 QuestionType.MULTIPLE_CHOICE,
                 QuestionDifficulty.EASY,
                 "Choose A.");
-        var first = question.addChoice("A", "A", 0);
-        question.addChoice("B", "B", 1);
+        var first = question.addChoice("A", "A", "Correct because A is the invariant.", 0);
+        question.addChoice("B", "B", "Incorrect because B reverses the rule.", 1);
         question.defineCorrectChoice(first);
         question.linkConcept(concept);
         question.publish();
