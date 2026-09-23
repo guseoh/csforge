@@ -217,6 +217,32 @@ class ContentImportIntegrationTest {
     }
 
     @Test
+    void multipartEnvelopeAllowsTheFullFileByteLimitWithoutRaisingTheImportLimit() throws Exception {
+        List<Part> parts = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            String content = "{\"kind\":\"topic\",\"contentKey\":\"batch.limit." + i
+                    + "\",\"areaSlug\":\"java\",\"slug\":\"limit-" + i
+                    + "\",\"title\":\"Limit topic " + i + "\"}";
+            parts.add(new Part("topic-" + i + ".json", "application/json",
+                    content + " ".repeat(2 * 1024 * 1024 - content.length())));
+        }
+
+        JsonNode valid = json(post("/api/imports/preview", parts, null));
+        assertEquals(200, valid.get("status").asInt());
+        assertTrue(valid.get("body").get("canApply").asBoolean());
+
+        List<Part> tooLargeBatch = new ArrayList<>(parts);
+        tooLargeBatch.add(new Part("extra.json", "application/json", " "));
+        JsonNode overAggregateLimit = json(post("/api/imports/preview", tooLargeBatch, null));
+        assertEquals(400, overAggregateLimit.get("status").asInt());
+        assertEquals("IMPORT_BOUNDS_EXCEEDED", overAggregateLimit.get("body").get("code").asText());
+
+        String oversizedFile = " ".repeat(2 * 1024 * 1024 + 1);
+        assertNotEquals(200, post("/api/imports/preview",
+                List.of(new Part("oversized.json", "application/json", oversizedFile)), null).statusCode());
+    }
+
+    @Test
     void declaredMaximumFileBatchCanBeAppliedWithPreviewDigest() throws Exception {
         List<Part> parts = new ArrayList<>();
         for (int i = 0; i < 100; i++) {

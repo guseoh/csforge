@@ -27,6 +27,26 @@ if ! gcloud artifacts repositories describe "${ARTIFACT_REGISTRY_REPOSITORY}"   
   gcloud artifacts repositories create "${ARTIFACT_REGISTRY_REPOSITORY}"     --project="${PROJECT_ID}"     --location="${REGION}"     --repository-format=docker     --description="CSForge backend images"
 fi
 
+cleanup_policy_file="$(mktemp)"
+trap 'rm -f "${cleanup_policy_file}"' EXIT
+cat >"${cleanup_policy_file}" <<'JSON'
+[
+  {
+    "name": "delete-older-than-90-days",
+    "action": {"type": "Delete"},
+    "condition": {"tagState": "any", "olderThan": "90d"}
+  },
+  {
+    "name": "keep-20-recent-versions",
+    "action": {"type": "Keep"},
+    "mostRecentVersions": {"keepCount": 20}
+  }
+]
+JSON
+gcloud artifacts repositories set-cleanup-policies "${ARTIFACT_REGISTRY_REPOSITORY}" \
+  --project="${PROJECT_ID}" --location="${REGION}" \
+  --policy="${cleanup_policy_file}" --no-dry-run
+
 if ! gcloud iam service-accounts describe "${DEPLOY_SERVICE_ACCOUNT}"   --project="${PROJECT_ID}" >/dev/null 2>&1; then
   gcloud iam service-accounts create "${DEPLOY_SERVICE_ACCOUNT_ID}"     --project="${PROJECT_ID}"     --display-name="GitHub Cloud Run deployer"
 fi
