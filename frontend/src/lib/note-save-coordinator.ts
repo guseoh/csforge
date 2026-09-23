@@ -2,6 +2,11 @@ let nextRevision = 0
 const latestRevisionByKey = new Map<string, number>()
 const pendingSaves = new Map<string, Promise<unknown>>()
 
+export function selectRecoverableNote(serverContent: string, draft: string | null, hasPendingSave: boolean) {
+  if (draft !== null && (draft !== serverContent || hasPendingSave)) return { content: draft, dirty: true }
+  return { content: serverContent, dirty: false }
+}
+
 export function beginNoteSaveRevision(key: string) {
   const revision = ++nextRevision
   latestRevisionByKey.set(key, revision)

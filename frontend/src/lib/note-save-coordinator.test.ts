@@ -3,9 +3,17 @@ import {
   beginNoteSaveRevision,
   enqueueLatestNoteSave,
   hasPendingNoteSave,
+  selectRecoverableNote,
 } from './note-save-coordinator'
 
 describe('note save coordinator', () => {
+  it('restores a matching local draft while an older save can still overwrite the server', () => {
+    expect(selectRecoverableNote('server', 'server', true)).toEqual({ content: 'server', dirty: true })
+    expect(selectRecoverableNote('server', 'server', false)).toEqual({ content: 'server', dirty: false })
+    expect(selectRecoverableNote('server', 'draft', false)).toEqual({ content: 'draft', dirty: true })
+    expect(selectRecoverableNote('server', null, true)).toEqual({ content: 'server', dirty: false })
+  })
+
   it('serializes saves for the same note revision', async () => {
     const key = 'concept:11'
     const revision = beginNoteSaveRevision(key)

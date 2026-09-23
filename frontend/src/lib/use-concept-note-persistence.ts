@@ -4,13 +4,13 @@ import { savePersonalNote, type ConceptDetail } from './learning-api'
 import {
   conceptNoteDraftKey,
   reconcileConceptNoteSave,
-  selectConceptNote,
 } from './concept-note-persistence'
 import {
   beginNoteSaveRevision,
   enqueueLatestNoteSave,
   hasPendingNoteSave,
   isLatestNoteSaveRevision,
+  selectRecoverableNote,
 } from './note-save-coordinator'
 
 type NoteState = 'saved' | 'saving' | 'error'
@@ -19,7 +19,11 @@ export function useConceptNotePersistence(conceptId: number, serverContent: stri
   const queryClient = useQueryClient()
   const draftKey = conceptNoteDraftKey(conceptId)
   const saveKey = `concept:${conceptId}`
-  const [initial] = useState(() => selectConceptNote(serverContent, typeof window === 'undefined' ? null : window.localStorage.getItem(draftKey)))
+  const [initial] = useState(() => selectRecoverableNote(
+    serverContent,
+    typeof window === 'undefined' ? null : window.localStorage.getItem(draftKey),
+    hasPendingNoteSave(saveKey),
+  ))
   const [noteContent, setNoteContent] = useState(initial.content)
   const [noteState, setNoteState] = useState<NoteState>(initial.dirty ? 'saving' : 'saved')
   const noteRef = useRef(initial.content)

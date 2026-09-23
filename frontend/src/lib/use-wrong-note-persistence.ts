@@ -5,6 +5,7 @@ import {
   enqueueLatestNoteSave,
   hasPendingNoteSave,
   isLatestNoteSaveRevision,
+  selectRecoverableNote,
 } from './note-save-coordinator'
 import { saveWrongNote, type WrongNoteDetail } from './wrong-note-api'
 
@@ -73,15 +74,14 @@ export function useWrongNotePersistence({ id, detail }: WrongNotePersistenceOpti
     if (!detail || dirtyRef.current) return
     const serverNote = detail.state.causeNote ?? ''
     const draft = window.localStorage.getItem(draftKey)
-    const initialNote = draft ?? serverNote
+    const initial = selectRecoverableNote(serverNote, draft, hasPendingNoteSave(saveKey))
     savedRef.current = serverNote
-    noteRef.current = initialNote
-    setNote(initialNote)
-    const hasUnsavedDraft = draft !== null && draft !== serverNote
-    dirtyRef.current = hasUnsavedDraft
-    setDirty(hasUnsavedDraft)
+    noteRef.current = initial.content
+    setNote(initial.content)
+    dirtyRef.current = initial.dirty
+    setDirty(initial.dirty)
     revisionRef.current = beginNoteSaveRevision(saveKey)
-    if (draft !== null && !hasUnsavedDraft) window.localStorage.removeItem(draftKey)
+    if (draft !== null && !initial.dirty) window.localStorage.removeItem(draftKey)
   }, [detail, draftKey, saveKey])
 
   useEffect(() => {
