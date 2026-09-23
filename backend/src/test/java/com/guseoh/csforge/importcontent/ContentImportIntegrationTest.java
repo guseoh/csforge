@@ -238,8 +238,12 @@ class ContentImportIntegrationTest {
         assertEquals("IMPORT_BOUNDS_EXCEEDED", overAggregateLimit.get("body").get("code").asText());
 
         String oversizedFile = " ".repeat(2 * 1024 * 1024 + 1);
-        assertNotEquals(200, post("/api/imports/preview",
-                List.of(new Part("oversized.json", "application/json", oversizedFile)), null).statusCode());
+        JsonNode overPerFileLimit = json(post("/api/imports/preview",
+                List.of(new Part("oversized.json", "application/json", oversizedFile)), null));
+        assertEquals(400, overPerFileLimit.get("status").asInt());
+        assertEquals("IMPORT_BOUNDS_EXCEEDED", overPerFileLimit.get("body").get("code").asText());
+        assertEquals("Uploaded file exceeds the configured size limit",
+                overPerFileLimit.get("body").get("message").asText());
     }
 
     @Test
