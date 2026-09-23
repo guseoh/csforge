@@ -192,6 +192,7 @@ describe('QuizResultPage', () => {
 
     expect(markup).toContain('기존 핵심 해설')
     expect(markup).not.toContain('choice-rationale')
-    expect(markup).not.toContain('선택한 이유')
+    expect(markup).not.toContain('이 선택지가 틀린 이유')
+    expect(markup).not.toContain('이 선택지가 맞는 이유')
   })
 })

@@ -49,7 +49,7 @@ function MultipleChoiceAnswerReview({ question }: { question: QuizQuestionResult
           ? (
               <>
                 <MarkdownContent>{selectedChoice.contentMarkdown}</MarkdownContent>
-                <ChoiceRationale rationaleMarkdown={selectedChoice.rationaleMarkdown} label={question.correct === false ? "이 선택지가 틀린 이유" : "이 선택지가 맞는 이유"} />
+                <ChoiceRationale rationaleMarkdown={selectedChoice.rationaleMarkdown} label={question.correct === false ? '이 선택지가 틀린 이유' : '이 선택지가 맞는 이유'} />
               </>
             )
           : <p className="result-plain-answer">선택한 답이 없습니다.</p>}
