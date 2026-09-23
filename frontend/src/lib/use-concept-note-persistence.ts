@@ -1,7 +1,15 @@
 import { useEffect, useRef, useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { savePersonalNote, type ConceptDetail } from './learning-api'
-import { conceptNoteDraftKey, enqueueConceptNoteSave, hasPendingConceptNoteSave, reconcileConceptNoteSave, selectConceptNote } from './concept-note-persistence'
+import {
+  beginConceptNoteRevision,
+  conceptNoteDraftKey,
+  enqueueConceptNoteSave,
+  hasPendingConceptNoteSave,
+  isLatestConceptNoteRevision,
+  reconcileConceptNoteSave,
+  selectConceptNote,
+} from './concept-note-persistence'
 
 type NoteState = 'saved' | 'saving' | 'error'
 
@@ -18,14 +26,16 @@ export function useConceptNotePersistence(conceptId: number, serverContent: stri
   const mountedRef = useRef(true)
   const pageHidingRef = useRef(false)
   const timerRef = useRef<number | undefined>(undefined)
+  const revisionRef = useRef(0)
   const saveRef = useRef<() => void>(() => {})
   const scheduleRef = useRef<() => void>(() => {})
   const initializedRef = useRef(false)
 
   saveRef.current = () => {
     const content = noteRef.current
-    if (!dirtyRef.current || savingRef.current) return
-    if (content === savedRef.current) {
+    const revision = revisionRef.current
+    if (!dirtyRef.current || savingRef.current || revision === 0) return
+    if (content === savedRef.current && !hasPendingConceptNoteSave(conceptId)) {
       dirtyRef.current = false
       if (window.localStorage.getItem(draftKey) === content) window.localStorage.removeItem(draftKey)
       if (mountedRef.current) setNoteState('saved')
@@ -35,7 +45,13 @@ export function useConceptNotePersistence(conceptId: number, serverContent: stri
     savingRef.current = true
     if (mountedRef.current) setNoteState('saving')
     let retry = false
-    void enqueueConceptNoteSave(conceptId, () => savePersonalNote(conceptId, content)).then((saved) => {
+    void enqueueConceptNoteSave(conceptId, revision, () => savePersonalNote(conceptId, content)).then((result) => {
+      if (result.status === 'superseded') {
+        retry = dirtyRef.current && isLatestConceptNoteRevision(conceptId, revisionRef.current)
+        return
+      }
+
+      const saved = result.value
       savedRef.current = saved.content
       queryClient.setQueryData<ConceptDetail>(['concept', conceptId], (current) =>
         current ? { ...current, personalNote: saved } : current,
@@ -46,13 +62,16 @@ export function useConceptNotePersistence(conceptId: number, serverContent: stri
         if (window.localStorage.getItem(draftKey) === saved.content) window.localStorage.removeItem(draftKey)
         if (mountedRef.current) setNoteState('saved')
       } else if (outcome === 'retry') {
-        retry = true
+        retry = isLatestConceptNoteRevision(conceptId, revisionRef.current)
       } else if (mountedRef.current) {
         setNoteState('error')
       }
     }, () => {
-      if (noteRef.current !== content) retry = true
-      else if (mountedRef.current) setNoteState('error')
+      if (revisionRef.current !== revision && isLatestConceptNoteRevision(conceptId, revisionRef.current)) {
+        retry = true
+      } else if (isLatestConceptNoteRevision(conceptId, revision) && mountedRef.current) {
+        setNoteState('error')
+      }
     }).finally(() => {
       savingRef.current = false
       if (retry) queueMicrotask(() => saveRef.current())
@@ -70,9 +89,10 @@ export function useConceptNotePersistence(conceptId: number, serverContent: stri
   useEffect(() => {
     if (initializedRef.current) return
     initializedRef.current = true
+    revisionRef.current = beginConceptNoteRevision(conceptId)
     if (initial.dirty) scheduleRef.current()
     else if (window.localStorage.getItem(draftKey) === serverContent) window.localStorage.removeItem(draftKey)
-  }, [draftKey, initial.dirty, serverContent])
+  }, [conceptId, draftKey, initial.dirty, serverContent])
 
   useEffect(() => {
     if (dirtyRef.current || savingRef.current) return
@@ -98,9 +118,14 @@ export function useConceptNotePersistence(conceptId: number, serverContent: stri
       timerRef.current = undefined
       if (!dirtyRef.current) return
       const content = noteRef.current
+      const revision = revisionRef.current
       window.localStorage.setItem(draftKey, content)
-      if (!hasPendingConceptNoteSave(conceptId)) {
-        void enqueueConceptNoteSave(conceptId, () => savePersonalNote(conceptId, content, { keepalive: true })).catch(() => {})
+      if (revision !== 0 && !hasPendingConceptNoteSave(conceptId)) {
+        void enqueueConceptNoteSave(
+          conceptId,
+          revision,
+          () => savePersonalNote(conceptId, content, { keepalive: true }),
+        ).catch(() => {})
       }
     }
     const pageshow = () => {
@@ -127,10 +152,11 @@ export function useConceptNotePersistence(conceptId: number, serverContent: stri
   }
 
   const updateNote = (content: string) => {
+    revisionRef.current = beginConceptNoteRevision(conceptId)
     noteRef.current = content
     window.localStorage.setItem(draftKey, content)
     setNoteContent(content)
-    if (content === savedRef.current && !savingRef.current) {
+    if (content === savedRef.current && !savingRef.current && !hasPendingConceptNoteSave(conceptId)) {
       dirtyRef.current = false
       window.localStorage.removeItem(draftKey)
       if (timerRef.current !== undefined) window.clearTimeout(timerRef.current)
