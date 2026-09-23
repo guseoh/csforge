@@ -2588,13 +2588,13 @@
         "key": "A",
         "content": "queue capacity 규칙",
         "displayOrder": 0,
-        "rationaleMarkdown": "queue는 용량과 순서대로 항목을 전달할 뿐 꺼낸 task의 업무 성공이나 실패를 보장하지 않는다."
+        "rationaleMarkdown": "bounded BlockingQueue는 설정된 capacity와 그에 따른 삽입 대기·거부 조건을 queue 연산의 계약으로 유지한다. consumer가 꺼낸 task 처리에 실패했다고 이 capacity 규칙 자체가 보장되지 않는 것은 아니다."
       },
       {
         "key": "B",
-        "content": "다른 task의 handoff",
+        "content": "producer와 consumer 사이의 thread-safe enqueue/dequeue 조정",
         "displayOrder": 1,
-        "rationaleMarkdown": "queue는 work transport 기능이며 consumer 예외 뒤 business operation을 자동 rollback하거나 재시도하지 않는다."
+        "rationaleMarkdown": "BlockingQueue는 여러 thread가 동시에 put/take 같은 queue 연산을 수행하도록 동시성 계약을 제공한다. 이 handoff 안전성과 task를 꺼낸 뒤 business 처리가 성공하는지는 서로 다른 책임이다."
       },
       {
         "key": "C",
@@ -4132,97 +4132,96 @@
     ],
     "correctChoiceKey": "B",
     "explanationMarkdown": "lock deadlock과 제한된 worker/resource로 인한 starvation은 별도 liveness 문제다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.atomic-cas.q7",
+    "promptMarkdown": "재고와 주문 상태를 다음처럼 별도 atomic variable로 갱신한다.\n\n- 재고 수량: `AtomicInteger`\n- 주문 상태: `AtomicReference`\n- 요구 계약: 두 갱신이 항상 함께 성공해야 함\n\n단일 atomic variable만으로 충분한가? 실패 시 재고를 되돌리는 retry 설계의 한계까지 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.atomic-cas"
+    ],
+    "modelAnswer": "단일 atomic 변수들은 서로 다른 상태의 복합 invariant를 자동으로 묶지 못한다. 하나만 성공한 중간 상태가 노출될 수 있으므로 한 lock으로 invariant를 보호하거나 하나의 immutable state를 CAS하고, 외부 side effect는 별도 보상·transaction 경계를 설계한다.",
+    "explanationMarkdown": "CAS는 한 번의 비교·갱신을 원자화하지만 여러 변수와 외부 효과까지 transaction으로 만들지는 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.concurrency-vs-parallelism.q5",
+    "promptMarkdown": "CPU core가 하나인 서버에서 두 요청 작업이 번갈아 실행되고, 각 작업은 중간에 외부 I/O를 기다린다. 이 환경에서도 concurrency가 유용할 수 있는 이유를 parallelism과 구분해 설명하고, thread 수를 계속 늘렸을 때 어느 지점부터 이득이 줄어들 수 있는지도 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.concurrency-vs-parallelism"
+    ],
+    "modelAnswer": "하나의 CPU core에서는 같은 순간 두 Java 작업이 CPU에서 병렬 실행되지는 않지만, 한 작업이 I/O를 기다리는 동안 다른 runnable 작업을 실행해 여러 작업이 시간상 겹쳐 진행될 수 있다. 이것이 concurrency이며 CPU parallelism과는 다르다. Thread를 늘리는 이득은 CPU 사용률, scheduler overhead, memory, connection pool과 외부 서비스 동시 요청 한도에 의해 제한되므로 workload와 downstream capacity를 함께 측정해야 한다.",
+    "explanationMarkdown": "Concurrency는 여러 작업의 진행 시간을 겹치게 만드는 실행 구성이고 parallelism은 같은 순간 여러 실행 자원에서 실제로 동시에 실행되는 상태다. I/O-bound 작업에서는 한 작업이 기다리는 동안 다른 작업이 CPU를 사용할 수 있어 single-core에서도 concurrency가 유용할 수 있다. 하지만 runnable 작업이 너무 많아지거나 DB·외부 API 같은 공유 자원이 먼저 포화되면 thread 수 증가는 처리량보다 context switching·대기 시간을 키울 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.platform-virtual-thread.q7",
+    "promptMarkdown": "요청마다 virtual thread를 사용하는 API가 있다. 동시에 10,000개의 요청을 받아도 virtual thread 생성 자체는 큰 문제가 없지만 DB connection pool은 30개이고, 부하가 커지자 connection wait와 API p99 지연 시간이 급증했다. Virtual thread를 도입했는데도 병목이 사라지지 않은 이유와 필요한 동시성 제어를 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.platform-virtual-thread"
+    ],
+    "modelAnswer": "Virtual thread는 blocking 작업을 표현하는 thread 비용을 줄이지만 DB connection 수나 DB 처리 capacity를 늘리지는 않는다. 10,000개의 요청이 동시에 connection을 요구하면 30개 connection을 제외한 나머지는 pool 앞에서 기다릴 수 있고 DB가 실제 병목이 된다. Connection pool 자체가 이미 동시 사용량을 제한하는 경계이므로 pool wait·query latency·timeout을 관측해야 한다. DB에 도달하기 전 별도 admission control이 필요하다면 virtual thread를 고정 thread pool로 다시 제한하기보다 Semaphore처럼 동시성 제한 자체를 위한 수단을 사용하고 downstream capacity에 맞는 budget을 정한다.",
+    "explanationMarkdown": "Virtual thread는 많은 blocking 작업을 적은 thread 관리 비용으로 표현하게 해 주지만 외부 resource의 물리적 capacity를 확장하지는 않는다. 따라서 thread 수와 DB connection·외부 API quota 같은 동시 사용 한도를 분리해서 봐야 한다. 제한된 외부 서비스를 보호할 목적이라면 virtual thread 자체를 고정된 platform-thread pool로 다시 제한하기보다 Semaphore 같은 별도 concurrency control을 사용할 수 있다. 이미 bounded connection pool이 있다면 그 pool이 만드는 대기와 timeout도 함께 관측해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.shared-mutable-state-race.q7",
+    "promptMarkdown": "다음 재고 코드에서 `stock`을 `volatile int`로 바꾸면 두 thread의 동시 차감을 안전하게 만들 수 있는가? 이유와 보호해야 할 원자적 경계를 설명하라.\n\n```java\nif (stock > 0) {\n    stock--;\n}\n```",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.shared-mutable-state-race"
+    ],
+    "modelAnswer": "안전하지 않다. volatile은 최신 값 관찰과 happens-before 관계에는 도움을 주지만 `stock > 0` 확인과 `stock--`의 read-modify-write 전체를 하나의 원자 연산으로 만들지 않는다. 두 thread가 같은 양수 값을 확인한 뒤 모두 차감할 수 있으므로 check와 update를 하나의 lock critical section, 적절한 atomic/CAS loop 또는 더 높은 수준의 재고 transaction 경계로 보호해야 한다.",
+    "explanationMarkdown": "Visibility와 atomicity는 다른 보장이다. `volatile`을 사용하면 write를 다른 thread가 관찰할 수 있는 관계는 강화되지만, 조건 확인과 감소처럼 여러 단계로 이루어진 compound action 사이에 다른 thread가 끼어드는 것은 막지 못한다. 재고처럼 `stock >= 0` 같은 invariant가 있다면 그 invariant를 판단하는 check와 실제 update를 같은 원자적 경계 안에 둬야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.jmm-happens-before-visibility.q7",
+    "promptMarkdown": "Thread A와 B가 다음 규칙으로 동작한다.\n\n```java\nint data = 0;\nvolatile boolean ready = false;\n\n// Thread A\ndata = 42;\nready = true;\n\n// Thread B\nif (ready) {\n    System.out.println(data);\n}\n```\n\nB가 `ready == true`를 관찰했다면 `data == 42`를 관찰할 수 있는 이유를 happens-before 관계로 설명하라. `ready`가 일반 boolean이면 무엇이 달라지는지도 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.jmm-happens-before-visibility"
+    ],
+    "modelAnswer": "A의 `data = 42`는 program order상 `ready = true`보다 앞선다. Volatile write인 `ready = true`는 같은 volatile field의 이후 read가 true 값을 관찰할 때 그 read보다 happens-before하고, happens-before의 transitivity로 `data = 42`도 B의 이후 read에 연결된다. ready가 일반 boolean이면 이 volatile synchronization edge가 없어지므로 별도의 synchronization이 없는 한 두 thread 사이의 visibility를 같은 방식으로 보장할 수 없다.",
+    "explanationMarkdown": "JMM에서 중요한 것은 단순히 ‘volatile은 최신 값을 보인다’는 암기가 아니라 어떤 action들이 happens-before chain으로 연결되는지다. A의 일반 write → volatile write, 그리고 B의 volatile read → 이후 일반 read가 program order와 volatile rule로 이어지면서 이전 상태가 전달된다. 일반 boolean으로 바꾸면 이 cross-thread synchronization edge가 사라져 코드의 직관적인 실행 순서만으로 visibility를 보장할 수 없다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.threadlocal-context.q7",
+    "promptMarkdown": "고정 thread pool에서 요청 A가 `ThreadLocal`에 `userId=10`을 저장한 뒤 `remove()`를 호출하지 않았다. 이후 같은 worker thread가 요청 B를 처리하면서 초기화 전에 ThreadLocal 값을 읽었다. 어떤 문제가 생길 수 있으며 요청 단위 context를 안전하게 다루려면 무엇을 보장해야 하는가?",
+    "questionType": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.threadlocal-context"
+    ],
+    "modelAnswer": "Worker thread가 재사용되므로 요청 B가 A의 userId를 읽는 context leakage가 발생할 수 있다. 요청 시작 시 값을 명시적으로 설정하고 반드시 finally에서 remove/restore하는 lifecycle을 보장하거나 context propagation을 관리하는 framework 경계를 사용해야 한다. ThreadLocal은 값의 요청 수명을 자동으로 관리하지 않으며 장수 thread가 큰 object graph를 계속 보유하는 memory retention도 함께 검토해야 한다.",
+    "explanationMarkdown": "ThreadLocal은 ‘요청별 저장소’가 아니라 **thread별 저장소**다. Fixed worker는 여러 요청을 순차 처리하므로 cleanup이 빠지면 이전 요청의 identity나 tracing context가 다음 요청으로 새어 나갈 수 있다. 안전성은 ThreadLocal 자체보다 값을 설정하는 시점, 작업 종료의 cleanup, thread 재사용 정책을 함께 맞추는 데서 나온다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.concurrency.future-completablefuture.q7",
+    "promptMarkdown": "결제 HTTP 호출을 `CompletableFuture`로 감쌌다. Client timeout 뒤 애플리케이션에서 future를 cancel했지만 결제 서버에서는 이미 승인 side effect가 발생할 수 있다. `CompletableFuture`의 취소와 실제 외부 작업 취소를 구분하고, 재시도 시 중복 결제를 막기 위해 필요한 계약을 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.concurrency.future-completablefuture"
+    ],
+    "modelAnswer": "CompletableFuture의 cancellation은 result graph의 완료 상태를 바꾸는 것이며 이미 실행 중인 외부 HTTP 요청과 원격 side effect가 반드시 중단된다는 보장은 없다. Client가 timeout을 봤을 때 결과는 unknown일 수 있으므로 외부 호출에 deadline/cancellation을 전달할 수 있는지 확인하고, 결제 요청에는 idempotency key와 결과 조회/reconciliation을 두어 동일 business operation의 재시도가 중복 승인을 만들지 않게 해야 한다.",
+    "explanationMarkdown": "비동기 결과 객체의 상태와 실제 side effect의 lifecycle은 별개다. Future가 cancelled 상태가 되어도 네트워크 요청이 이미 전송됐거나 원격 서버가 commit했다면 작업은 끝까지 진행될 수 있다. 따라서 timeout·cancel을 ‘아무 일도 일어나지 않았다’로 해석하지 말고, 외부 작업의 취소 protocol과 idempotency·reconciliation을 함께 설계해야 한다."
   }
-,
-{
-  "kind": "question",
-  "contentKey": "java.core.concurrency.atomic-cas.q7",
-  "promptMarkdown": "재고와 주문 상태를 다음처럼 별도 atomic variable로 갱신한다.\n\n- 재고 수량: `AtomicInteger`\n- 주문 상태: `AtomicReference`\n- 요구 계약: 두 갱신이 항상 함께 성공해야 함\n\n단일 atomic variable만으로 충분한가? 실패 시 재고를 되돌리는 retry 설계의 한계까지 설명하라.",
-  "questionType": "SCENARIO",
-  "difficulty": "HARD",
-  "status": "PUBLISHED",
-  "conceptKeys": [
-    "java.core.concurrency.atomic-cas"
-  ],
-  "modelAnswer": "단일 atomic 변수들은 서로 다른 상태의 복합 invariant를 자동으로 묶지 못한다. 하나만 성공한 중간 상태가 노출될 수 있으므로 한 lock으로 invariant를 보호하거나 하나의 immutable state를 CAS하고, 외부 side effect는 별도 보상·transaction 경계를 설계한다.",
-  "explanationMarkdown": "CAS는 한 번의 비교·갱신을 원자화하지만 여러 변수와 외부 효과까지 transaction으로 만들지는 않는다."
-},
-{
-  "kind": "question",
-  "contentKey": "java.core.concurrency.concurrency-vs-parallelism.q5",
-  "promptMarkdown": "CPU core가 하나인 서버에서 두 요청 작업이 번갈아 실행되고, 각 작업은 중간에 외부 I/O를 기다린다. 이 환경에서도 concurrency가 유용할 수 있는 이유를 parallelism과 구분해 설명하고, thread 수를 계속 늘렸을 때 어느 지점부터 이득이 줄어들 수 있는지도 설명하라.",
-  "questionType": "DESCRIPTIVE",
-  "difficulty": "MEDIUM",
-  "status": "PUBLISHED",
-  "conceptKeys": [
-    "java.core.concurrency.concurrency-vs-parallelism"
-  ],
-  "modelAnswer": "하나의 CPU core에서는 같은 순간 두 Java 작업이 CPU에서 병렬 실행되지는 않지만, 한 작업이 I/O를 기다리는 동안 다른 runnable 작업을 실행해 여러 작업이 시간상 겹쳐 진행될 수 있다. 이것이 concurrency이며 CPU parallelism과는 다르다. Thread를 늘리는 이득은 CPU 사용률, scheduler overhead, memory, connection pool과 외부 서비스 동시 요청 한도에 의해 제한되므로 workload와 downstream capacity를 함께 측정해야 한다.",
-  "explanationMarkdown": "Concurrency는 여러 작업의 진행 시간을 겹치게 만드는 실행 구성이고 parallelism은 같은 순간 여러 실행 자원에서 실제로 동시에 실행되는 상태다. I/O-bound 작업에서는 한 작업이 기다리는 동안 다른 작업이 CPU를 사용할 수 있어 single-core에서도 concurrency가 유용할 수 있다. 하지만 runnable 작업이 너무 많아지거나 DB·외부 API 같은 공유 자원이 먼저 포화되면 thread 수 증가는 처리량보다 context switching·대기 시간을 키울 수 있다."
-},
-{
-  "kind": "question",
-  "contentKey": "java.core.concurrency.platform-virtual-thread.q7",
-  "promptMarkdown": "요청마다 virtual thread를 사용하는 API가 있다. 동시에 10,000개의 요청을 받아도 virtual thread 생성 자체는 큰 문제가 없지만 DB connection pool은 30개이고, 부하가 커지자 connection wait와 API p99 지연 시간이 급증했다. Virtual thread를 도입했는데도 병목이 사라지지 않은 이유와 필요한 동시성 제어를 설명하라.",
-  "questionType": "SCENARIO",
-  "difficulty": "HARD",
-  "status": "PUBLISHED",
-  "conceptKeys": [
-    "java.core.concurrency.platform-virtual-thread"
-  ],
-  "modelAnswer": "Virtual thread는 blocking 작업을 표현하는 thread 비용을 줄이지만 DB connection 수나 DB 처리 capacity를 늘리지는 않는다. 10,000개의 요청이 동시에 connection을 요구하면 30개 connection을 제외한 나머지는 pool 앞에서 기다릴 수 있고 DB가 실제 병목이 된다. Connection pool 자체가 이미 동시 사용량을 제한하는 경계이므로 pool wait·query latency·timeout을 관측해야 한다. DB에 도달하기 전 별도 admission control이 필요하다면 virtual thread를 고정 thread pool로 다시 제한하기보다 Semaphore처럼 동시성 제한 자체를 위한 수단을 사용하고 downstream capacity에 맞는 budget을 정한다.",
-  "explanationMarkdown": "Virtual thread는 많은 blocking 작업을 적은 thread 관리 비용으로 표현하게 해 주지만 외부 resource의 물리적 capacity를 확장하지는 않는다. 따라서 thread 수와 DB connection·외부 API quota 같은 동시 사용 한도를 분리해서 봐야 한다. 제한된 외부 서비스를 보호할 목적이라면 virtual thread 자체를 고정된 platform-thread pool로 다시 제한하기보다 Semaphore 같은 별도 concurrency control을 사용할 수 있다. 이미 bounded connection pool이 있다면 그 pool이 만드는 대기와 timeout도 함께 관측해야 한다."
-},
-{
-  "kind": "question",
-  "contentKey": "java.core.concurrency.shared-mutable-state-race.q7",
-  "promptMarkdown": "다음 재고 코드에서 `stock`을 `volatile int`로 바꾸면 두 thread의 동시 차감을 안전하게 만들 수 있는가? 이유와 보호해야 할 원자적 경계를 설명하라.\n\n```java\nif (stock > 0) {\n    stock--;\n}\n```",
-  "questionType": "DESCRIPTIVE",
-  "difficulty": "HARD",
-  "status": "PUBLISHED",
-  "conceptKeys": [
-    "java.core.concurrency.shared-mutable-state-race"
-  ],
-  "modelAnswer": "안전하지 않다. volatile은 최신 값 관찰과 happens-before 관계에는 도움을 주지만 `stock > 0` 확인과 `stock--`의 read-modify-write 전체를 하나의 원자 연산으로 만들지 않는다. 두 thread가 같은 양수 값을 확인한 뒤 모두 차감할 수 있으므로 check와 update를 하나의 lock critical section, 적절한 atomic/CAS loop 또는 더 높은 수준의 재고 transaction 경계로 보호해야 한다.",
-  "explanationMarkdown": "Visibility와 atomicity는 다른 보장이다. `volatile`을 사용하면 write를 다른 thread가 관찰할 수 있는 관계는 강화되지만, 조건 확인과 감소처럼 여러 단계로 이루어진 compound action 사이에 다른 thread가 끼어드는 것은 막지 못한다. 재고처럼 `stock >= 0` 같은 invariant가 있다면 그 invariant를 판단하는 check와 실제 update를 같은 원자적 경계 안에 둬야 한다."
-},
-{
-  "kind": "question",
-  "contentKey": "java.core.concurrency.jmm-happens-before-visibility.q7",
-  "promptMarkdown": "Thread A와 B가 다음 규칙으로 동작한다.\n\n```java\nint data = 0;\nvolatile boolean ready = false;\n\n// Thread A\ndata = 42;\nready = true;\n\n// Thread B\nif (ready) {\n    System.out.println(data);\n}\n```\n\nB가 `ready == true`를 관찰했다면 `data == 42`를 관찰할 수 있는 이유를 happens-before 관계로 설명하라. `ready`가 일반 boolean이면 무엇이 달라지는지도 설명하라.",
-  "questionType": "DESCRIPTIVE",
-  "difficulty": "HARD",
-  "status": "PUBLISHED",
-  "conceptKeys": [
-    "java.core.concurrency.jmm-happens-before-visibility"
-  ],
-  "modelAnswer": "A의 `data = 42`는 program order상 `ready = true`보다 앞선다. Volatile write인 `ready = true`는 같은 volatile field의 이후 read가 true 값을 관찰할 때 그 read보다 happens-before하고, happens-before의 transitivity로 `data = 42`도 B의 이후 read에 연결된다. ready가 일반 boolean이면 이 volatile synchronization edge가 없어지므로 별도의 synchronization이 없는 한 두 thread 사이의 visibility를 같은 방식으로 보장할 수 없다.",
-  "explanationMarkdown": "JMM에서 중요한 것은 단순히 ‘volatile은 최신 값을 보인다’는 암기가 아니라 어떤 action들이 happens-before chain으로 연결되는지다. A의 일반 write → volatile write, 그리고 B의 volatile read → 이후 일반 read가 program order와 volatile rule로 이어지면서 이전 상태가 전달된다. 일반 boolean으로 바꾸면 이 cross-thread synchronization edge가 사라져 코드의 직관적인 실행 순서만으로 visibility를 보장할 수 없다."
-},
-{
-  "kind": "question",
-  "contentKey": "java.core.concurrency.threadlocal-context.q7",
-  "promptMarkdown": "고정 thread pool에서 요청 A가 `ThreadLocal`에 `userId=10`을 저장한 뒤 `remove()`를 호출하지 않았다. 이후 같은 worker thread가 요청 B를 처리하면서 초기화 전에 ThreadLocal 값을 읽었다. 어떤 문제가 생길 수 있으며 요청 단위 context를 안전하게 다루려면 무엇을 보장해야 하는가?",
-  "questionType": "SCENARIO",
-  "difficulty": "MEDIUM",
-  "status": "PUBLISHED",
-  "conceptKeys": [
-    "java.core.concurrency.threadlocal-context"
-  ],
-  "modelAnswer": "Worker thread가 재사용되므로 요청 B가 A의 userId를 읽는 context leakage가 발생할 수 있다. 요청 시작 시 값을 명시적으로 설정하고 반드시 finally에서 remove/restore하는 lifecycle을 보장하거나 context propagation을 관리하는 framework 경계를 사용해야 한다. ThreadLocal은 값의 요청 수명을 자동으로 관리하지 않으며 장수 thread가 큰 object graph를 계속 보유하는 memory retention도 함께 검토해야 한다.",
-  "explanationMarkdown": "ThreadLocal은 ‘요청별 저장소’가 아니라 **thread별 저장소**다. Fixed worker는 여러 요청을 순차 처리하므로 cleanup이 빠지면 이전 요청의 identity나 tracing context가 다음 요청으로 새어 나갈 수 있다. 안전성은 ThreadLocal 자체보다 값을 설정하는 시점, 작업 종료의 cleanup, thread 재사용 정책을 함께 맞추는 데서 나온다."
-},
-{
-  "kind": "question",
-  "contentKey": "java.core.concurrency.future-completablefuture.q7",
-  "promptMarkdown": "결제 HTTP 호출을 `CompletableFuture`로 감쌌다. Client timeout 뒤 애플리케이션에서 future를 cancel했지만 결제 서버에서는 이미 승인 side effect가 발생할 수 있다. `CompletableFuture`의 취소와 실제 외부 작업 취소를 구분하고, 재시도 시 중복 결제를 막기 위해 필요한 계약을 설명하라.",
-  "questionType": "SCENARIO",
-  "difficulty": "HARD",
-  "status": "PUBLISHED",
-  "conceptKeys": [
-    "java.core.concurrency.future-completablefuture"
-  ],
-  "modelAnswer": "CompletableFuture의 cancellation은 result graph의 완료 상태를 바꾸는 것이며 이미 실행 중인 외부 HTTP 요청과 원격 side effect가 반드시 중단된다는 보장은 없다. Client가 timeout을 봤을 때 결과는 unknown일 수 있으므로 외부 호출에 deadline/cancellation을 전달할 수 있는지 확인하고, 결제 요청에는 idempotency key와 결과 조회/reconciliation을 두어 동일 business operation의 재시도가 중복 승인을 만들지 않게 해야 한다.",
-  "explanationMarkdown": "비동기 결과 객체의 상태와 실제 side effect의 lifecycle은 별개다. Future가 cancelled 상태가 되어도 네트워크 요청이 이미 전송됐거나 원격 서버가 commit했다면 작업은 끝까지 진행될 수 있다. 따라서 timeout·cancel을 ‘아무 일도 일어나지 않았다’로 해석하지 말고, 외부 작업의 취소 protocol과 idempotency·reconciliation을 함께 설계해야 한다."
-}
 ]
