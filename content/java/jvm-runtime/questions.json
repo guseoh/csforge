@@ -285,27 +285,27 @@
     "choices": [
       {
         "key": "A",
-        "content": "OS의 모든 native process",
+        "content": "JIT가 만든 native assembly와 실제 inlining 결과",
         "displayOrder": 0,
-        "rationaleMarkdown": "javap -v는 실행 중인 OS process를 조사하는 명령이 아니라 class file을 verbose하게 보여 준다."
+        "rationaleMarkdown": "`javap -v`는 class file의 verbose metadata를 읽는 도구다. 실행 중 JIT가 어떤 native code를 만들고 무엇을 inline했는지는 runtime compiler 진단 영역이라 javap 출력만으로 확인할 수 없다."
       },
       {
         "key": "B",
-        "content": "실제 DB row",
+        "content": "실행 중 heap object의 retained path와 GC root graph",
         "displayOrder": 1,
-        "rationaleMarkdown": "class file disassembly는 DB에 연결하거나 row를 읽지 않는다."
+        "rationaleMarkdown": "retained path와 live object graph는 heap dump나 runtime heap 진단이 필요한 정보다. 정적 class file을 verbose하게 보는 javap의 범위가 아니다."
       },
       {
         "key": "C",
-        "content": "GC root의 실시간 전체 graph",
+        "content": "현재 process의 thread stack과 monitor 대기 관계",
         "displayOrder": 2,
-        "rationaleMarkdown": "javap는 GC를 실행하거나 live heap의 root graph를 덤프하지 않는다."
+        "rationaleMarkdown": "thread stack과 monitor wait는 jstack/jcmd 같은 live JVM 진단 정보다. `javap -v`는 실행 process 상태가 아니라 class-file 구조를 출력한다."
       },
       {
         "key": "D",
         "content": "constant pool과 flags 같은 class file 정보",
         "displayOrder": 3,
-        "rationaleMarkdown": "-v는 constant pool, flags, descriptors와 attributes 같은 class file 정보를 자세히 출력한다."
+        "rationaleMarkdown": "`-v`는 constant pool, access flags, descriptors, attributes 등 class-file 구조를 더 자세히 보여 준다. runtime heap·thread·JIT 상태와는 구분해야 한다."
       }
     ],
     "correctChoiceKey": "D",
@@ -1299,27 +1299,27 @@
     "choices": [
       {
         "key": "A",
-        "content": "heap 객체는 GC 대상이 될 수 없기 때문이다",
+        "content": "`System.gc()`가 반환하면 호출 시점의 모든 unreachable 객체가 이미 회수됐다고 보장된다",
         "displayOrder": 0,
-        "rationaleMarkdown": "heap에 할당된 객체도 strong reachable reference가 더는 없으면 garbage collection 대상이 될 수 있다."
+        "rationaleMarkdown": "`System.gc()` 호출의 반환을 특정 객체 회수 완료 barrier로 사용할 수 없다. collector 실행 여부·범위·시점과 개별 객체 reclaim은 runtime 정책에 달려 있어 즉시 회수를 검증하는 계약이 아니다."
       },
       {
         "key": "B",
         "content": "GC 요청과 실제 collector 선택·실행·회수 시점이 deterministic contract가 아니기 때문이다",
         "displayOrder": 1,
-        "rationaleMarkdown": "System.gc는 요청 또는 hint이지 collection이나 특정 객체의 즉시 회수를 결정적으로 보장하는 계약이 아니다."
+        "rationaleMarkdown": "`System.gc()`는 collection을 요청할 수 있지만 특정 collector 선택, full collection 수행, 특정 객체의 즉시 reclaim까지 결정적으로 보장하지 않는다. 이런 timing을 assertion으로 삼으면 테스트가 runtime 정책에 의존한다."
       },
       {
         "key": "C",
-        "content": "source scope가 GC root를 제거하지 않기 때문이다",
+        "content": "지역 변수가 source scope를 벗어나면 그 순간 해당 객체를 살리는 모든 GC root가 반드시 제거된다",
         "displayOrder": 2,
-        "rationaleMarkdown": "source scope와 GC root는 같은 개념이 아니다. static reference, live thread state 등도 root로 남을 수 있다."
+        "rationaleMarkdown": "source scope 종료만으로 모든 reachability가 사라진다고 단정할 수 없다. 다른 field·collection·thread state 등이 객체를 계속 가리킬 수 있고 JIT의 liveness 판단도 source lexical scope와 일대일이 아니다."
       },
       {
         "key": "D",
-        "content": "System.gc는 항상 syntax error다",
+        "content": "`System.gc()` 호출자가 사용할 collector와 collection 범위를 정확히 지정하므로 실행 결과는 JVM마다 동일하다",
         "displayOrder": 3,
-        "rationaleMarkdown": "System.gc 호출은 가능하지만 이후 특정 객체 메모리가 즉시 회수된다고 test가 단정하면 안 된다."
+        "rationaleMarkdown": "일반 `System.gc()` 호출은 애플리케이션이 정확한 collector algorithm이나 collection 범위를 지정하는 API가 아니다. JVM 구현·설정에 따라 처리 방식이 달라질 수 있다."
       }
     ],
     "correctChoiceKey": "B",
