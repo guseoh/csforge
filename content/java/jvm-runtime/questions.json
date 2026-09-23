@@ -548,7 +548,7 @@
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.class-loading-linking-initialization.q5",
-    "promptMarkdown": "static int x=42가 constant variable 조건을 만족해 compile-time constant로 사용되고, 다른 static block이 있는 class를 참조한다. 가장 주의할 결론은?",
+    "promptMarkdown": "`static final int x = 42`가 constant variable 조건을 만족해 compile-time constant로 사용되고, 다른 static block이 있는 class를 참조한다. 가장 주의할 결론은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "HARD",
     "status": "PUBLISHED",
@@ -578,11 +578,11 @@
         "key": "D",
         "content": "preparation이 42를 계산하는 source code를 실행한다",
         "displayOrder": 3,
-        "rationaleMarkdown": "preparation은 기본값을 설정할 공간을 마련하고, source initializer 계산은 initialization code 실행에 속한다."
+        "rationaleMarkdown": "preparation은 static field를 위한 storage를 만들고 기본값으로 준비하는 linking 단계다. constant variable의 `ConstantValue` 적용은 class initialization 절차에서 `<clinit>` 실행보다 먼저 처리되며, preparation이 source initializer code를 실행해 42를 계산하는 것은 아니다."
       }
     ],
     "correctChoiceKey": "C",
-    "explanationMarkdown": "constant variable은 일반적인 active-use initialization 규칙과 다른 사례가 될 수 있다."
+    "explanationMarkdown": "`static final int x = 42`처럼 constant variable인 static field의 사용은 일반적인 class initialization trigger와 구분해야 한다. preparation은 static field를 위한 storage를 만들고 기본값으로 준비하는 linking 단계이며, constant variable의 `ConstantValue`는 class initialization 절차에서 `<clinit>` 실행보다 먼저 적용된다. 따라서 constant variable 참조만 보고 다른 static block까지 실행됐다고 단정하면 안 된다."
   },
   {
     "kind": "question",
@@ -2650,97 +2650,96 @@
     ],
     "correctChoiceKey": "D",
     "explanationMarkdown": "heap evidence와 thread evidence는 서로 다른 도구가 주로 제공하므로 증상별로 조합한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.runtime-diagnostics-jcmd-jstack-jfr.q7",
+    "promptMarkdown": "API 지연 시간이 상승했지만 CPU는 낮다. `jstack`에서는 다수의 요청 thread가 같은 외부 호출을 기다린다.\n\n어떤 가설을 세울 수 있으며, 한 번의 thread dump만으로 결론 내리지 않기 위해 무엇을 추가로 관찰해야 하는가?",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.runtime-diagnostics-jcmd-jstack-jfr"
+    ],
+    "modelAnswer": "외부 호출 지연 시간이나 connection pool 대기가 병목일 가능성을 세운다. 시간 간격을 둔 여러 thread dump와 요청/remote 지연 시간, pool 사용량, timeout·error metric을 함께 비교해 thread 상태가 지속되는지와 원인을 분리한다.",
+    "explanationMarkdown": "jstack은 특정 시점의 stack evidence다. 원인과 상관관계를 만들려면 반복 snapshot과 애플리케이션·외부 시스템 지표를 함께 봐야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.jdk-jvm-classfile.q7",
+    "promptMarkdown": "같은 `.class` 파일을 서로 다른 OS의 JVM에서 실행했는데 관찰되는 Java 동작은 같지만 실제 생성된 machine code와 최적화 결과는 다를 수 있다. Java source, class file bytecode, JVM 구현, native code의 경계를 나눠 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.jdk-jvm-classfile"
+    ],
+    "modelAnswer": "javac는 Java source를 JVM specification이 정의한 class file과 bytecode 형태로 만든다. JVM 구현은 그 class file을 해석하거나 JIT compile해 현재 CPU/OS에 맞는 native code로 실행할 수 있다. Class file과 Java/JVMS가 보장하는 관찰 가능한 의미는 플랫폼 간 계약이고, 구체적인 machine code, JIT threshold와 최적화 방식은 JVM/OS implementation detail이다.",
+    "explanationMarkdown": "Java의 portability를 ‘같은 machine code가 어디서나 실행된다’로 이해하면 안 된다. 공유되는 것은 class file 형식과 JVM이 따라야 할 실행 의미이고, 실제 CPU 명령으로 바꾸는 과정은 각 JVM 구현이 담당한다. 그래서 동일 bytecode가 다른 플랫폼에서 다른 native code로 실행되어도 Java 수준의 계약은 유지될 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.class-loading-linking-initialization.q7",
+    "promptMarkdown": "어떤 class의 static field가 `static int value = loadValue();`로 선언되어 있다. 이 class가 처음 active use될 때 loading, linking의 preparation, initialization에서 `value`가 각각 어떤 의미를 가지는지 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.class-loading-linking-initialization"
+    ],
+    "modelAnswer": "Loading에서는 class의 binary representation을 읽어 runtime class를 만든다. Linking의 preparation에서는 static field를 위한 storage가 준비되고 `int value`에는 기본값 0이 먼저 설정된다. Initialization 단계에서 class initialization method가 실행되면서 `loadValue()`가 호출되고 그 결과가 value에 대입된다. Preparation의 기본값 설정과 source에 적힌 initializer 실행은 서로 다른 단계다.",
+    "explanationMarkdown": "Class lifecycle을 이해할 때 가장 자주 섞이는 부분이 preparation과 initialization이다. Preparation은 static storage와 JVM 기본값을 준비하는 단계이고, source의 static field initializer나 static block을 실제로 실행하는 것은 initialization이다. 이 구분은 class initialization 순서나 초기화 실패를 분석할 때 중요하다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.classloader-delegation-type-identity.q7",
+    "promptMarkdown": "플러그인 class loader가 parent delegation을 우회해 애플리케이션과 같은 binary name의 `com.example.Plugin` interface까지 별도로 define했다. 플러그인 구현 객체를 애플리케이션 쪽 `com.example.Plugin`으로 cast할 때 실패할 수 있는 이유와 loader 경계 설계 방법을 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.classloader-delegation-type-identity"
+    ],
+    "modelAnswer": "JVM의 runtime type identity에는 binary name뿐 아니라 defining ClassLoader도 포함된다. 이름이 같아도 애플리케이션 loader가 define한 Plugin과 plugin loader가 별도로 define한 Plugin은 서로 다른 타입이므로 cast가 실패할 수 있다. 공유 API/interface는 parent loader가 한 번만 define하도록 delegation 경계를 잡고 plugin loader는 구현 class만 별도로 load하는 방식으로 namespace를 설계해야 한다.",
+    "explanationMarkdown": "Class 이름 문자열이 같다는 사실만으로 JVM에서 같은 타입이 되는 것은 아니다. `binary name + defining loader`가 함께 type identity를 만든다. Plugin architecture에서는 공통 API를 parent 쪽에서 공유하고 구현만 child loader가 담당하게 해야 같은 interface 계약을 양쪽이 실제로 공유할 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.jvm-runtime-data-areas-frames.q7",
+    "promptMarkdown": "재귀 메서드가 호출될 때마다 작은 객체 하나를 heap에 만들고 다시 자신을 호출한다. Heap 여유가 충분한데도 깊은 재귀에서 `StackOverflowError`가 발생할 수 있는 이유를 stack frame과 heap object의 수명 관점에서 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.jvm-runtime-data-areas-frames"
+    ],
+    "modelAnswer": "각 메서드 호출은 현재 thread의 Java stack에 별도 frame을 만들고 이전 호출이 끝나기 전 재귀 호출을 하면 frame이 계속 누적된다. Frame 수가 thread stack 한계를 넘으면 heap 여유와 무관하게 StackOverflowError가 발생할 수 있다. 메서드 안에서 생성한 객체는 heap에 있고 참조가 살아 있는 동안 reachability의 영향을 받으므로 frame storage와 object storage는 다른 runtime 영역과 lifetime 규칙을 가진다.",
+    "explanationMarkdown": "Java stack은 method invocation별 frame을 보관하는 thread별 영역이고 heap은 객체가 저장되는 공유 영역이다. 재귀는 이전 frame을 제거하기 전에 새 frame을 계속 쌓기 때문에 stack만 먼저 고갈될 수 있다. ‘객체를 많이 만들었으니 heap 문제’처럼 한 메모리 영역으로만 해석하지 않고 어떤 데이터가 어느 runtime area에 놓이는지 분리해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.heap-metaspace-native-thread-memory.q7",
+    "promptMarkdown": "JVM 옵션은 `-Xmx512m`인데 OS에서 본 Java process RSS가 약 900MB까지 올라갔다. 많은 thread와 direct buffer를 사용하는 서비스라면 이 현상을 어떻게 설명하고 어떤 메모리 영역을 추가로 확인해야 하는가?",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.heap-metaspace-native-thread-memory"
+    ],
+    "modelAnswer": "Xmx는 Java heap의 최대 크기를 제한할 뿐 process 전체 RSS 상한이 아니다. Metaspace/class metadata, thread stack, direct/native buffer, code cache, JVM native structure와 library allocation 등이 heap 밖에서 추가로 메모리를 사용할 수 있다. Heap 사용량뿐 아니라 thread 수/stack 크기, direct buffer, metaspace와 native memory를 함께 측정하고 필요하면 NMT·jcmd 같은 구현 진단 도구를 사용해 영역별 사용량을 확인해야 한다.",
+    "explanationMarkdown": "Process memory와 Java heap은 같은 숫자가 아니다. `-Xmx`는 heap budget 하나만 정하고 JVM process에는 metaspace, thread stack, direct buffer, JIT code cache 등 여러 native/non-heap consumer가 존재한다. Container memory limit이나 RSS 문제를 분석할 때 heap graph만 보면 원인을 놓칠 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.jvm-runtime.jit-hotspot-warmup.q7",
+    "promptMarkdown": "새 JVM을 띄운 직후 첫 수백 요청은 느리지만 이후 동일 요청의 지연 시간이 낮아졌다. 이 현상을 무조건 ‘JIT 덕분’이라고 단정하지 말아야 하는 이유와 성능 측정에서 warm-up을 어떻게 다뤄야 하는지 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.jvm-runtime.jit-hotspot-warmup"
+    ],
+    "modelAnswer": "초기 지연 변화에는 class loading, JIT compilation과 profiling뿐 아니라 cache warm-up, connection 생성, GC 상태, OS page cache 같은 여러 요인이 섞일 수 있다. JIT threshold와 tiered compilation 정책도 JVM implementation detail이다. 성능 측정에서는 warm-up 구간과 steady-state 구간을 분리하고 동일한 workload/환경에서 반복 측정하며 JFR, compilation log 또는 필요한 진단 증거로 원인 후보를 확인해야 한다.",
+    "explanationMarkdown": "Warm-up은 단일 원인 이름이 아니라 runtime과 주변 시스템의 초기 상태가 안정화되는 구간이다. HotSpot JIT가 중요한 요인일 수 있지만 class loading, application cache, DB connection, OS cache도 같은 시간대에 변한다. Benchmark는 초기 구간을 무시하기보다 목적에 따라 cold-start와 steady-state를 분리해 측정하고 원인을 별도 evidence로 검증해야 한다."
   }
-,
-{
-  "kind": "question",
-  "contentKey": "java.core.jvm-runtime.runtime-diagnostics-jcmd-jstack-jfr.q7",
-  "promptMarkdown": "API 지연 시간이 상승했지만 CPU는 낮다. `jstack`에서는 다수의 요청 thread가 같은 외부 호출을 기다린다.\n\n어떤 가설을 세울 수 있으며, 한 번의 thread dump만으로 결론 내리지 않기 위해 무엇을 추가로 관찰해야 하는가?",
-  "questionType": "SCENARIO",
-  "difficulty": "HARD",
-  "status": "PUBLISHED",
-  "conceptKeys": [
-    "java.core.jvm-runtime.runtime-diagnostics-jcmd-jstack-jfr"
-  ],
-  "modelAnswer": "외부 호출 지연 시간이나 connection pool 대기가 병목일 가능성을 세운다. 시간 간격을 둔 여러 thread dump와 요청/remote 지연 시간, pool 사용량, timeout·error metric을 함께 비교해 thread 상태가 지속되는지와 원인을 분리한다.",
-  "explanationMarkdown": "jstack은 특정 시점의 stack evidence다. 원인과 상관관계를 만들려면 반복 snapshot과 애플리케이션·외부 시스템 지표를 함께 봐야 한다."
-},
-{
-  "kind": "question",
-  "contentKey": "java.core.jvm-runtime.jdk-jvm-classfile.q7",
-  "promptMarkdown": "같은 `.class` 파일을 서로 다른 OS의 JVM에서 실행했는데 관찰되는 Java 동작은 같지만 실제 생성된 machine code와 최적화 결과는 다를 수 있다. Java source, class file bytecode, JVM 구현, native code의 경계를 나눠 설명하라.",
-  "questionType": "DESCRIPTIVE",
-  "difficulty": "MEDIUM",
-  "status": "PUBLISHED",
-  "conceptKeys": [
-    "java.core.jvm-runtime.jdk-jvm-classfile"
-  ],
-  "modelAnswer": "javac는 Java source를 JVM specification이 정의한 class file과 bytecode 형태로 만든다. JVM 구현은 그 class file을 해석하거나 JIT compile해 현재 CPU/OS에 맞는 native code로 실행할 수 있다. Class file과 Java/JVMS가 보장하는 관찰 가능한 의미는 플랫폼 간 계약이고, 구체적인 machine code, JIT threshold와 최적화 방식은 JVM/OS implementation detail이다.",
-  "explanationMarkdown": "Java의 portability를 ‘같은 machine code가 어디서나 실행된다’로 이해하면 안 된다. 공유되는 것은 class file 형식과 JVM이 따라야 할 실행 의미이고, 실제 CPU 명령으로 바꾸는 과정은 각 JVM 구현이 담당한다. 그래서 동일 bytecode가 다른 플랫폼에서 다른 native code로 실행되어도 Java 수준의 계약은 유지될 수 있다."
-},
-{
-  "kind": "question",
-  "contentKey": "java.core.jvm-runtime.class-loading-linking-initialization.q7",
-  "promptMarkdown": "어떤 class의 static field가 `static int value = loadValue();`로 선언되어 있다. 이 class가 처음 active use될 때 loading, linking의 preparation, initialization에서 `value`가 각각 어떤 의미를 가지는지 설명하라.",
-  "questionType": "DESCRIPTIVE",
-  "difficulty": "MEDIUM",
-  "status": "PUBLISHED",
-  "conceptKeys": [
-    "java.core.jvm-runtime.class-loading-linking-initialization"
-  ],
-  "modelAnswer": "Loading에서는 class의 binary representation을 읽어 runtime class를 만든다. Linking의 preparation에서는 static field를 위한 storage가 준비되고 `int value`에는 기본값 0이 먼저 설정된다. Initialization 단계에서 class initialization method가 실행되면서 `loadValue()`가 호출되고 그 결과가 value에 대입된다. Preparation의 기본값 설정과 source에 적힌 initializer 실행은 서로 다른 단계다.",
-  "explanationMarkdown": "Class lifecycle을 이해할 때 가장 자주 섞이는 부분이 preparation과 initialization이다. Preparation은 static storage와 JVM 기본값을 준비하는 단계이고, source의 static field initializer나 static block을 실제로 실행하는 것은 initialization이다. 이 구분은 class initialization 순서나 초기화 실패를 분석할 때 중요하다."
-},
-{
-  "kind": "question",
-  "contentKey": "java.core.jvm-runtime.classloader-delegation-type-identity.q7",
-  "promptMarkdown": "플러그인 class loader가 parent delegation을 우회해 애플리케이션과 같은 binary name의 `com.example.Plugin` interface까지 별도로 define했다. 플러그인 구현 객체를 애플리케이션 쪽 `com.example.Plugin`으로 cast할 때 실패할 수 있는 이유와 loader 경계 설계 방법을 설명하라.",
-  "questionType": "SCENARIO",
-  "difficulty": "HARD",
-  "status": "PUBLISHED",
-  "conceptKeys": [
-    "java.core.jvm-runtime.classloader-delegation-type-identity"
-  ],
-  "modelAnswer": "JVM의 runtime type identity에는 binary name뿐 아니라 defining ClassLoader도 포함된다. 이름이 같아도 애플리케이션 loader가 define한 Plugin과 plugin loader가 별도로 define한 Plugin은 서로 다른 타입이므로 cast가 실패할 수 있다. 공유 API/interface는 parent loader가 한 번만 define하도록 delegation 경계를 잡고 plugin loader는 구현 class만 별도로 load하는 방식으로 namespace를 설계해야 한다.",
-  "explanationMarkdown": "Class 이름 문자열이 같다는 사실만으로 JVM에서 같은 타입이 되는 것은 아니다. `binary name + defining loader`가 함께 type identity를 만든다. Plugin architecture에서는 공통 API를 parent 쪽에서 공유하고 구현만 child loader가 담당하게 해야 같은 interface 계약을 양쪽이 실제로 공유할 수 있다."
-},
-{
-  "kind": "question",
-  "contentKey": "java.core.jvm-runtime.jvm-runtime-data-areas-frames.q7",
-  "promptMarkdown": "재귀 메서드가 호출될 때마다 작은 객체 하나를 heap에 만들고 다시 자신을 호출한다. Heap 여유가 충분한데도 깊은 재귀에서 `StackOverflowError`가 발생할 수 있는 이유를 stack frame과 heap object의 수명 관점에서 설명하라.",
-  "questionType": "DESCRIPTIVE",
-  "difficulty": "MEDIUM",
-  "status": "PUBLISHED",
-  "conceptKeys": [
-    "java.core.jvm-runtime.jvm-runtime-data-areas-frames"
-  ],
-  "modelAnswer": "각 메서드 호출은 현재 thread의 Java stack에 별도 frame을 만들고 이전 호출이 끝나기 전 재귀 호출을 하면 frame이 계속 누적된다. Frame 수가 thread stack 한계를 넘으면 heap 여유와 무관하게 StackOverflowError가 발생할 수 있다. 메서드 안에서 생성한 객체는 heap에 있고 참조가 살아 있는 동안 reachability의 영향을 받으므로 frame storage와 object storage는 다른 runtime 영역과 lifetime 규칙을 가진다.",
-  "explanationMarkdown": "Java stack은 method invocation별 frame을 보관하는 thread별 영역이고 heap은 객체가 저장되는 공유 영역이다. 재귀는 이전 frame을 제거하기 전에 새 frame을 계속 쌓기 때문에 stack만 먼저 고갈될 수 있다. ‘객체를 많이 만들었으니 heap 문제’처럼 한 메모리 영역으로만 해석하지 않고 어떤 데이터가 어느 runtime area에 놓이는지 분리해야 한다."
-},
-{
-  "kind": "question",
-  "contentKey": "java.core.jvm-runtime.heap-metaspace-native-thread-memory.q7",
-  "promptMarkdown": "JVM 옵션은 `-Xmx512m`인데 OS에서 본 Java process RSS가 약 900MB까지 올라갔다. 많은 thread와 direct buffer를 사용하는 서비스라면 이 현상을 어떻게 설명하고 어떤 메모리 영역을 추가로 확인해야 하는가?",
-  "questionType": "SCENARIO",
-  "difficulty": "HARD",
-  "status": "PUBLISHED",
-  "conceptKeys": [
-    "java.core.jvm-runtime.heap-metaspace-native-thread-memory"
-  ],
-  "modelAnswer": "Xmx는 Java heap의 최대 크기를 제한할 뿐 process 전체 RSS 상한이 아니다. Metaspace/class metadata, thread stack, direct/native buffer, code cache, JVM native structure와 library allocation 등이 heap 밖에서 추가로 메모리를 사용할 수 있다. Heap 사용량뿐 아니라 thread 수/stack 크기, direct buffer, metaspace와 native memory를 함께 측정하고 필요하면 NMT·jcmd 같은 구현 진단 도구를 사용해 영역별 사용량을 확인해야 한다.",
-  "explanationMarkdown": "Process memory와 Java heap은 같은 숫자가 아니다. `-Xmx`는 heap budget 하나만 정하고 JVM process에는 metaspace, thread stack, direct buffer, JIT code cache 등 여러 native/non-heap consumer가 존재한다. Container memory limit이나 RSS 문제를 분석할 때 heap graph만 보면 원인을 놓칠 수 있다."
-},
-{
-  "kind": "question",
-  "contentKey": "java.core.jvm-runtime.jit-hotspot-warmup.q7",
-  "promptMarkdown": "새 JVM을 띄운 직후 첫 수백 요청은 느리지만 이후 동일 요청의 지연 시간이 낮아졌다. 이 현상을 무조건 ‘JIT 덕분’이라고 단정하지 말아야 하는 이유와 성능 측정에서 warm-up을 어떻게 다뤄야 하는지 설명하라.",
-  "questionType": "DESCRIPTIVE",
-  "difficulty": "HARD",
-  "status": "PUBLISHED",
-  "conceptKeys": [
-    "java.core.jvm-runtime.jit-hotspot-warmup"
-  ],
-  "modelAnswer": "초기 지연 변화에는 class loading, JIT compilation과 profiling뿐 아니라 cache warm-up, connection 생성, GC 상태, OS page cache 같은 여러 요인이 섞일 수 있다. JIT threshold와 tiered compilation 정책도 JVM implementation detail이다. 성능 측정에서는 warm-up 구간과 steady-state 구간을 분리하고 동일한 workload/환경에서 반복 측정하며 JFR, compilation log 또는 필요한 진단 증거로 원인 후보를 확인해야 한다.",
-  "explanationMarkdown": "Warm-up은 단일 원인 이름이 아니라 runtime과 주변 시스템의 초기 상태가 안정화되는 구간이다. HotSpot JIT가 중요한 요인일 수 있지만 class loading, application cache, DB connection, OS cache도 같은 시간대에 변한다. Benchmark는 초기 구간을 무시하기보다 목적에 따라 cold-start와 steady-state를 분리해 측정하고 원인을 별도 evidence로 검증해야 한다."
-}
 ]
