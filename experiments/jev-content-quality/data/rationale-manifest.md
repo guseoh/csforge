@@ -22,6 +22,8 @@ The development evaluation can reveal rubric or implementation faults. Any corre
 
 Development iteration 1 (`rationale-quality-v1`, GitHub run 35960104208) showed a broad misalignment false alarm: 13/15 natural negatives exceeded diagnostic probability 0.5, and the known historical positives ranked below their fixed negatives. Before any holdout call, version 2 now states the target choice content explicitly and excludes valid comparisons used to rebut a target misconception. Dataset, Gold, score formula and budget metrics are unchanged. The v1 results are retained as evidence; version 2 requires a fresh development run before freeze.
 
+The first freeze workflow attempt (run 35960434568) stopped at validation, before a provider call: Git had normalized the Windows-generated JSONL line endings on Linux. The SHA-256 calculation now normalizes CRLF to LF, and the freeze records the committed dataset bytes. No case, Gold label or rubric changed.
+
 ## Interpretation boundary
 
 One natural holdout positive cannot establish reliable recall for all three criteria. A good synthetic result may show response to engineered defects while still leaving real-world usefulness inconclusive. Recommend one of `ADOPT_CANDIDATE`, `INCONCLUSIVE`, or `REJECT` in the final evidence report; any product connection requires separate approval.

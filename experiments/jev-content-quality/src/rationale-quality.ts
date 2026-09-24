@@ -114,7 +114,7 @@ function readFreeze(): { datasetSha256: string; rubricSha256: string } {
 
 export function freezeHashes(): { datasetSha256: string; rubricSha256: string } {
   return {
-    datasetSha256: sha256(readFileSync(DATA_PATH, "utf8")),
+    datasetSha256: sha256(readFileSync(DATA_PATH, "utf8").replace(/\r\n/g, "\n")),
     rubricSha256: sha256(JSON.stringify(RATIONALE_QUESTIONS) + RATIONALE_RUBRIC_VERSION),
   };
 }

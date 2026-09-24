@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { auc, isExplanationCopy, loadCases, metrics, stateFor, type Case, type Result } from "../src/rationale-quality.js";
+import { auc, freezeHashes, isExplanationCopy, loadCases, metrics, stateFor, type Case, type Result } from "../src/rationale-quality.js";
 
 test("frozen dataset has distinct cases and no source group crosses the holdout boundary", () => {
   const cases = loadCases();
@@ -14,6 +14,7 @@ test("frozen dataset has distinct cases and no source group crosses the holdout 
   const sample = cases.find((row) => row.caseId === "history-3-before")!;
   assert.equal((stateFor(sample).targetChoiceKey), "B");
   assert.match(sample.rationaleMarkdown, /distance/);
+  assert.equal(freezeHashes().datasetSha256, "3b2fddcc6f496ac6b17456422f554c3428ade4657a07eb35e13b96055c85aea0");
 });
 
 test("copy check catches explanation duplication without excluding a short causal rationale", () => {
