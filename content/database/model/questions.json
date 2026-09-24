@@ -1,9 +1,38 @@
 [
   {
-    "kind":"question","contentKey":"database.core.model.relation-tuple.q1","promptMarkdown":"`SELECT * FROM member` 결과를 `ORDER BY` 없이 항상 같은 순서로 사용할 수 있다고 가정하면 안 되는 이유는?","questionType":"SHORT_ANSWER","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["database.core.model.relation-tuple"],"acceptedAnswers":["relation과 SQL 결과의 물리 행 순서는 보장된 계약이 아니므로 안정적인 순서가 필요하면 ORDER BY를 명시해야 한다","ORDER BY가 없으면 DB가 결과 순서를 보장하지 않는다"],"explanationMarkdown":"ORDER BY가 없으면 planner나 물리 저장 상태에 따라 반환 순서가 달라질 수 있다. paging이나 UI 정렬처럼 순서가 계약이면 의미 있는 정렬 column과 동률을 가르는 unique tie-breaker까지 명시해야 한다."
+    "kind": "question",
+    "contentKey": "database.core.model.relation-tuple.q1",
+    "promptMarkdown": "SQL 결과에 안정적인 row 순서가 필요할 때 반드시 명시해야 하는 절은?",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.model.relation-tuple"
+    ],
+    "acceptedAnswers": [
+      "relation과 SQL 결과의 물리 행 순서는 보장된 계약이 아니므로 안정적인 순서가 필요하면 ORDER BY를 명시해야 한다",
+      "ORDER BY가 없으면 DB가 결과 순서를 보장하지 않는다",
+      "ORDER BY"
+    ],
+    "explanationMarkdown": "ORDER BY가 없으면 planner나 물리 저장 상태에 따라 반환 순서가 달라질 수 있다. paging이나 UI 정렬처럼 순서가 계약이면 의미 있는 정렬 column과 동률을 가르는 unique tie-breaker까지 명시해야 한다."
   },
   {
-    "kind":"question","contentKey":"database.core.model.null-three-valued.q1","promptMarkdown":"`WHERE deleted_at = NULL`이 삭제되지 않은 row를 찾지 못한다. 올바른 조건과 이유를 설명하라.","questionType":"SHORT_ANSWER","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["database.core.model.null-three-valued"],"acceptedAnswers":["deleted_at IS NULL을 사용해야 하며 NULL과의 일반 equality 비교는 UNKNOWN이 될 수 있다","IS NULL을 사용한다. = NULL은 TRUE가 아니다"],"explanationMarkdown":"NULL과의 일반 equality 비교는 TRUE/FALSE가 아니라 UNKNOWN이 될 수 있다. WHERE는 TRUE인 row만 남기므로 `deleted_at IS NULL`처럼 NULL 전용 predicate를 사용해야 한다."
+    "kind": "question",
+    "contentKey": "database.core.model.null-three-valued.q1",
+    "promptMarkdown": "`deleted_at`이 NULL인 row를 찾는 올바른 predicate를 쓰라.",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.model.null-three-valued"
+    ],
+    "acceptedAnswers": [
+      "deleted_at IS NULL을 사용해야 하며 NULL과의 일반 equality 비교는 UNKNOWN이 될 수 있다",
+      "IS NULL을 사용한다. = NULL은 TRUE가 아니다",
+      "IS NULL",
+      "deleted_at IS NULL"
+    ],
+    "explanationMarkdown": "NULL과의 일반 equality 비교는 TRUE/FALSE가 아니라 UNKNOWN이 될 수 있다. WHERE는 TRUE인 row만 남기므로 `deleted_at IS NULL`처럼 NULL 전용 predicate를 사용해야 한다."
   },
   {
     "kind":"question","contentKey":"database.core.model.null-three-valued.q2","promptMarkdown":"nullable column을 반환하는 subquery를 `NOT IN`에 사용했더니 예상보다 row가 적다. 어떤 SQL 의미를 먼저 확인해야 하는가?","questionType":"SCENARIO","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["database.core.model.null-three-valued"],"modelAnswer":"subquery 결과의 NULL이 NOT IN 비교에 참여하면서 UNKNOWN을 만들 수 있는지 확인해야 한다. 의미가 '매칭되는 행이 존재하지 않음'이라면 NULL 처리와 함께 NOT EXISTS 형태가 더 적합한지 검토한다.","explanationMarkdown":"`NOT IN`은 subquery의 각 값과 모두 다르다는 비교를 만들기 때문에 그 안에 NULL이 있으면 결과가 UNKNOWN이 될 수 있다. WHERE는 UNKNOWN을 통과시키지 않으므로, 단순히 매칭 row가 없다는 의미라면 NULL 처리와 `NOT EXISTS`의 상관 조건을 함께 검토한다."

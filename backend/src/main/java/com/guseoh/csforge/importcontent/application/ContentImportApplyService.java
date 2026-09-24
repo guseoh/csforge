@@ -146,9 +146,13 @@ public class ContentImportApplyService {
         List<Question.ChoiceDraft> choices = item.choices().stream().map(choice -> new Question.ChoiceDraft(
                 choice.key(), choice.content(), choice.rationaleMarkdown(), choice.displayOrder())).toList();
         boolean newQuestion = question == null;
+        QuestionStatus targetStatus = QuestionStatus.valueOf(item.status());
         if (newQuestion) {
             question = Question.createDraft(item.contentKey(), item.promptMarkdown(), QuestionType.valueOf(item.questionType()), QuestionDifficulty.valueOf(item.difficulty()), item.explanationMarkdown());
         } else {
+            if (targetStatus != QuestionStatus.PUBLISHED) {
+                question.changeToDraft();
+            }
             question.reviseMetadata(item.promptMarkdown(), QuestionDifficulty.valueOf(item.difficulty()), item.explanationMarkdown());
         }
         if (newQuestion || !QuestionStructureComparator.matches(item, question)) {
@@ -158,7 +162,7 @@ public class ContentImportApplyService {
             prepareChoiceOrderUpdate(question, choices);
             question.replaceStructure(QuestionType.valueOf(item.questionType()), choices, item.correctChoiceKey(), item.acceptedAnswers(), item.modelAnswer(), linkedConcepts);
         }
-        question.setCanonicalStatus(QuestionStatus.valueOf(item.status()));
+        question.setCanonicalStatus(targetStatus);
         Question saved = questionRepository.save(question);
         questions.put(item.contentKey(), saved);
     }
