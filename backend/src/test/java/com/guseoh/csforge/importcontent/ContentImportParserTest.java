@@ -47,7 +47,7 @@ class ContentImportParserTest {
     @Test
     void rejectsConflictingDuplicateAndAllInvalidQuestionStructuresBeforeApply() {
         String base = "{\"kind\":\"question\",\"contentKey\":\"q\",\"promptMarkdown\":\"P\",\"questionType\":\"%s\",\"difficulty\":\"EASY\",\"status\":\"%s\",\"conceptKeys\":[\"c\"]";
-        String validMc = base.formatted("MULTIPLE_CHOICE", "PUBLISHED").replace("\"contentKey\":\"q\"", "\"contentKey\":\"mc\"") + ",\"choices\":[{\"key\":\"A\",\"content\":\"A\",\"displayOrder\":0},{\"key\":\"B\",\"content\":\"B\",\"displayOrder\":1}],\"correctChoiceKey\":\"B\"}";
+        String validMc = base.formatted("MULTIPLE_CHOICE", "PUBLISHED").replace("\"contentKey\":\"q\"", "\"contentKey\":\"mc\"") + ",\"choices\":[{\"key\":\"A\",\"content\":\"A\",\"rationaleMarkdown\":\"Reason A\",\"displayOrder\":0},{\"key\":\"B\",\"content\":\"B\",\"rationaleMarkdown\":\"Reason B\",\"displayOrder\":1}],\"correctChoiceKey\":\"B\"}";
         String validShort = base.formatted("SHORT_ANSWER", "PUBLISHED").replace("\"contentKey\":\"q\"", "\"contentKey\":\"short\"") + ",\"acceptedAnswers\":[\"answer\"]}";
         String validDescriptive = base.formatted("DESCRIPTIVE", "PUBLISHED").replace("\"contentKey\":\"q\"", "\"contentKey\":\"descriptive\"") + ",\"modelAnswer\":\"Explain\"}";
         String validScenario = base.formatted("SCENARIO", "ARCHIVED").replace("\"contentKey\":\"q\"", "\"contentKey\":\"scenario\"") + ",\"modelAnswer\":\"Explain\"}";
@@ -66,7 +66,7 @@ class ContentImportParserTest {
     }
 
     @Test
-    void parsesOptionalChoiceRationaleAndAcceptsLegacyChoiceWithoutIt() {
+    void parsesOptionalChoiceRationaleAndRejectsPublishedChoiceWithoutIt() {
         String question = "{\"kind\":\"question\",\"contentKey\":\"mc\",\"promptMarkdown\":\"P\","
                 + "\"questionType\":\"MULTIPLE_CHOICE\",\"difficulty\":\"EASY\",\"status\":\"PUBLISHED\","
                 + "\"conceptKeys\":[\"c\"],\"choices\":["
@@ -78,7 +78,11 @@ class ContentImportParserTest {
 
         assertEquals("**because**", parsed.choices().getFirst().rationaleMarkdown());
         assertNull(parsed.choices().get(1).rationaleMarkdown());
-        assertFalse(validated.isError());
+        assertTrue(validated.isError());
+
+        String draft = question.replace("\"status\":\"PUBLISHED\"", "\"status\":\"DRAFT\"");
+        NormalizedImportItem validatedDraft = validator.validate(parser.parse(command("question.json", draft))).getFirst();
+        assertFalse(validatedDraft.isError());
     }
 
     private static ImportFilesCommand command(String name, String content) {
