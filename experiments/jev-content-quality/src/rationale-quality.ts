@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { readFileSync, mkdirSync, writeFileSync } from "node:fs";
+import { readFileSync, mkdirSync, writeFileSync, existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 import { DEFAULT_MODEL, TypeSafeApiError, TypeSafeDirectClient } from "./client.js";
@@ -259,6 +259,7 @@ async function run(split: Split): Promise<void> {
 const command = process.argv[2];
 if (command === "validate") {
   const cases = loadCases();
+  if (existsSync(FREEZE_PATH)) verifyFreeze();
   console.log(`Validated ${cases.length} rationale cases; freeze hashes: ${JSON.stringify(freezeHashes())}`);
 } else if (command === "run") {
   const split = process.argv[3];
