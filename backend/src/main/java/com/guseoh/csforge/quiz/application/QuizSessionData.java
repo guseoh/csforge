@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 import com.guseoh.csforge.question.domain.QuestionAnswer;
 import com.guseoh.csforge.question.domain.QuestionChoice;
-import com.guseoh.csforge.question.domain.QuestionConcept;
+import com.guseoh.csforge.question.domain.QuestionConceptSummary;
 import com.guseoh.csforge.quiz.domain.Attempt;
 import com.guseoh.csforge.quiz.domain.QuizQuestion;
 import com.guseoh.csforge.quiz.domain.QuizSession;
@@ -20,7 +20,7 @@ public record QuizSessionData(
         Map<Long, Attempt> attemptsByQuestionId,
         Map<Long, List<QuestionChoice>> choicesByQuestionId,
         Map<Long, List<QuestionAnswer>> answersByQuestionId,
-        Map<Long, List<QuestionConcept>> conceptsByQuestionId) {
+        Map<Long, List<QuestionConceptSummary>> conceptsByQuestionId) {
 
     public QuizSessionData {
         quizQuestions = List.copyOf(quizQuestions);

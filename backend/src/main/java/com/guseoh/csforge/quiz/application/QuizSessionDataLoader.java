@@ -14,7 +14,7 @@ import com.guseoh.csforge.question.domain.QuestionAnswer;
 import com.guseoh.csforge.question.domain.QuestionAnswerRepository;
 import com.guseoh.csforge.question.domain.QuestionChoice;
 import com.guseoh.csforge.question.domain.QuestionChoiceRepository;
-import com.guseoh.csforge.question.domain.QuestionConcept;
+import com.guseoh.csforge.question.domain.QuestionConceptSummary;
 import com.guseoh.csforge.question.domain.QuestionConceptRepository;
 import com.guseoh.csforge.quiz.domain.Attempt;
 import com.guseoh.csforge.quiz.domain.AttemptRepository;
@@ -45,7 +45,7 @@ public class QuizSessionDataLoader {
                 core.attempts(),
                 groupByQuestion(choiceRepository.findForQuestionIds(core.questionIds())),
                 Map.of(),
-                groupByQuestion(conceptRepository.findForQuestionIds(core.questionIds())));
+                groupByQuestion(conceptRepository.findSummariesForQuestionIds(core.questionIds())));
     }
 
     public QuizSessionData loadForGrading(long quizId) {
@@ -67,7 +67,7 @@ public class QuizSessionDataLoader {
                 core.attempts(),
                 groupByQuestion(choiceRepository.findForQuestionIds(core.questionIds())),
                 groupByQuestion(answerRepository.findForQuestionIds(core.questionIds())),
-                groupByQuestion(conceptRepository.findForQuestionIds(core.questionIds())));
+                groupByQuestion(conceptRepository.findSummariesForQuestionIds(core.questionIds())));
     }
 
     public QuizSessionData loadForRetry(long quizId) {
@@ -105,7 +105,7 @@ public class QuizSessionDataLoader {
             long questionId = switch (value) {
                 case QuestionChoice choice -> choice.getQuestion().getId();
                 case QuestionAnswer answer -> answer.getQuestion().getId();
-                case QuestionConcept concept -> concept.getQuestion().getId();
+                case QuestionConceptSummary concept -> concept.questionId();
                 default -> throw new IllegalArgumentException("Unsupported question data");
             };
             grouped.computeIfAbsent(questionId, ignored -> new ArrayList<>()).add(value);

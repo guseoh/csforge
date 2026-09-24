@@ -5,12 +5,9 @@ import java.util.Objects;
 
 import org.springframework.stereotype.Component;
 
-import com.guseoh.csforge.learning.domain.Concept;
-import com.guseoh.csforge.learning.domain.LearningArea;
-import com.guseoh.csforge.learning.domain.Topic;
 import com.guseoh.csforge.question.domain.QuestionAnswer;
 import com.guseoh.csforge.question.domain.QuestionAnswerKind;
-import com.guseoh.csforge.question.domain.QuestionConcept;
+import com.guseoh.csforge.question.domain.QuestionConceptSummary;
 import com.guseoh.csforge.quiz.application.QuizActiveView;
 import com.guseoh.csforge.quiz.application.QuizAnswerSavedResult;
 import com.guseoh.csforge.quiz.application.QuizBreakdownView;
@@ -198,19 +195,11 @@ public class QuizApiMapper {
                 view.selfCheckPending());
     }
 
-    private List<QuizConceptResponse> concepts(List<QuestionConcept> links) {
-        return links.stream().map(link -> {
-            Concept concept = link.getConcept();
-            Topic topic = concept.getTopic();
-            LearningArea area = topic.getLearningArea();
-            return new QuizConceptResponse(
-                    concept.getId(),
-                    concept.getSlug(),
-                    concept.getTitle(),
-                    area.getSlug(),
-                    area.getName(),
-                    concept.getLevel());
-        }).toList();
+    private List<QuizConceptResponse> concepts(List<QuestionConceptSummary> links) {
+        return links.stream()
+                .map(link -> new QuizConceptResponse(link.conceptId(), link.conceptSlug(), link.conceptTitle(),
+                        link.areaSlug(), link.areaName(), link.conceptLevel()))
+                .toList();
     }
 
     private static String choiceKey(Attempt attempt) {

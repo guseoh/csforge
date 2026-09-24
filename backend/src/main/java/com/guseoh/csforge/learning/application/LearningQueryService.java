@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.guseoh.csforge.learning.domain.Concept;
+import com.guseoh.csforge.learning.domain.ConceptNavigationSummary;
 import com.guseoh.csforge.learning.domain.ConceptProgress;
 import com.guseoh.csforge.learning.domain.ConceptProgressRepository;
 import com.guseoh.csforge.learning.domain.ConceptReference;
@@ -193,7 +194,7 @@ public class LearningQueryService {
                 conceptReference.getRelationNote());
     }
 
-    private ConceptNavigationView toNavigationView(Concept concept) {
-        return new ConceptNavigationView(concept.getId(), concept.getTitle(), concept.getLevel());
+    private ConceptNavigationView toNavigationView(ConceptNavigationSummary concept) {
+        return new ConceptNavigationView(concept.id(), concept.title(), concept.level());
     }
 }

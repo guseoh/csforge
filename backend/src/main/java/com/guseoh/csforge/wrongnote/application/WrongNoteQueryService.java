@@ -18,7 +18,7 @@ import com.guseoh.csforge.question.domain.QuestionAnswerKind;
 import com.guseoh.csforge.question.domain.QuestionAnswerRepository;
 import com.guseoh.csforge.question.domain.QuestionChoice;
 import com.guseoh.csforge.question.domain.QuestionChoiceRepository;
-import com.guseoh.csforge.question.domain.QuestionConcept;
+import com.guseoh.csforge.question.domain.QuestionConceptSummary;
 import com.guseoh.csforge.question.domain.QuestionConceptRepository;
 import com.guseoh.csforge.question.domain.QuestionType;
 import com.guseoh.csforge.ai.domain.WrongAnswerAnalysisRepository;
@@ -54,7 +54,7 @@ public class WrongNoteQueryService {
         WrongNoteListCriteria timedCriteria = criteria.at(Instant.now(clock));
         Page<WrongNote> result = searchRepository.search(timedCriteria, PageRequest.of(page, size));
         List<Long> questionIds = result.getContent().stream().map(note -> note.getQuestion().getId()).toList();
-        Map<Long, List<QuestionConcept>> concepts = groupedConcepts(questionIds);
+        Map<Long, List<QuestionConceptSummary>> concepts = groupedConcepts(questionIds);
         Map<Long, ReviewSchedule> schedules = scheduleRepository.findByQuestionIdIn(questionIds).stream()
                 .collect(Collectors.toMap(ReviewSchedule::getQuestionId, item -> item));
         List<Long> attemptIds = result.getContent().stream()
@@ -74,7 +74,7 @@ public class WrongNoteQueryService {
     public WrongNoteDetailView detail(long questionId) {
         WrongNote note = wrongNoteRepository.findByQuestionId(questionId)
                 .orElseThrow(WrongNoteNotFoundException::new);
-        List<QuestionConcept> concepts = conceptRepository.findForQuestionIds(List.of(questionId));
+        List<QuestionConceptSummary> concepts = conceptRepository.findSummariesForQuestionIds(List.of(questionId));
         List<QuestionAnswer> answers = answerRepository.findForQuestionIds(List.of(questionId));
         List<WrongNoteChoiceView> choices = note.getQuestion().getQuestionType() == QuestionType.MULTIPLE_CHOICE
                 ? choiceRepository.findForQuestionIds(List.of(questionId)).stream().map(this::toChoice).toList()
@@ -102,7 +102,7 @@ public class WrongNoteQueryService {
         return new WrongNoteAttemptPageView(page.stream().map(this::toAttempt).toList(), next);
     }
 
-    private WrongNoteListItemView toListItem(WrongNote note, List<QuestionConcept> links, ReviewSchedule schedule, Map<Long, WrongAnswerAnalysisStatus> analysisStatuses) {
+    private WrongNoteListItemView toListItem(WrongNote note, List<QuestionConceptSummary> links, ReviewSchedule schedule, Map<Long, WrongAnswerAnalysisStatus> analysisStatuses) {
         Attempt lastWrongAttempt = note.getLastWrongAttempt();
         return new WrongNoteListItemView(
                 note.getQuestion().getId(), note.getQuestion().getPromptMarkdown(), note.getQuestion().getQuestionType(), note.getQuestion().getDifficulty(),
@@ -165,15 +165,14 @@ public class WrongNoteQueryService {
         return new WrongNoteChoiceView(choice.getChoiceKey(), choice.getContentMarkdown(), choice.getRationaleMarkdown());
     }
 
-    private Map<Long, List<QuestionConcept>> groupedConcepts(List<Long> ids) {
-        return conceptRepository.findForQuestionIds(ids).stream().collect(Collectors.groupingBy(item -> item.getQuestion().getId(), LinkedHashMap::new, Collectors.toList()));
+    private Map<Long, List<QuestionConceptSummary>> groupedConcepts(List<Long> ids) {
+        return conceptRepository.findSummariesForQuestionIds(ids).stream()
+                .collect(Collectors.groupingBy(QuestionConceptSummary::questionId, LinkedHashMap::new, Collectors.toList()));
     }
 
-    private WrongNoteListItemView.ConceptView toConcept(QuestionConcept link) {
-        var concept = link.getConcept();
-        var topic = concept.getTopic();
-        var area = topic.getLearningArea();
-        return new WrongNoteListItemView.ConceptView(concept.getId(), concept.getSlug(), concept.getTitle(), area.getSlug(), area.getName(), concept.getLevel());
+    private WrongNoteListItemView.ConceptView toConcept(QuestionConceptSummary link) {
+        return new WrongNoteListItemView.ConceptView(link.conceptId(), link.conceptSlug(), link.conceptTitle(),
+                link.areaSlug(), link.areaName(), link.conceptLevel());
     }
 
 }
