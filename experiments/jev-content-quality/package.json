@@ -16,7 +16,9 @@
     "test": "tsx --test test/*.test.ts",
     "benchmark:phase-b": "tsx src/cli.ts benchmark-phase-b",
     "review:changed": "tsx src/review-cli.ts changed",
-    "review:questions": "tsx src/review-cli.ts explicit"
+    "review:questions": "tsx src/review-cli.ts explicit",
+    "rationale:validate": "tsx src/rationale-quality.ts validate",
+    "rationale:run": "tsx src/rationale-quality.ts run"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
