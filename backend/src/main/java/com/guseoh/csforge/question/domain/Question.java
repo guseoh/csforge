@@ -309,6 +309,10 @@ public class Question extends AuditedEntity {
                     throw new IllegalStateException(
                             "A published multiple-choice question needs at least two choices and one correct choice");
                 }
+                if (choices.stream().anyMatch(choice -> choice.getRationaleMarkdown() == null
+                        || choice.getRationaleMarkdown().isBlank())) {
+                    throw new IllegalStateException("A published multiple-choice question needs a rationale for every choice");
+                }
             }
             case SHORT_ANSWER -> {
                 if (answers.stream().noneMatch(answer -> answer.getAnswerKind() == QuestionAnswerKind.ACCEPTED_TEXT)) {

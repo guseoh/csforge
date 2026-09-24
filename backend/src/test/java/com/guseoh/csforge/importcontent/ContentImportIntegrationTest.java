@@ -80,6 +80,35 @@ class ContentImportIntegrationTest {
     }
 
     @Test
+    void publishedMultipleChoiceRequiresEveryRationaleButDraftAllowsIncompleteAuthoring() throws Exception {
+        List<Part> base = sampleParts();
+        String published = base.get(2).content();
+        String missing = published.replace(",\"rationaleMarkdown\":\"Why no\"", "");
+        String blank = published.replace("\"rationaleMarkdown\":\"Why no\"",
+                "\"rationaleMarkdown\":\"  \"");
+        assertNotEquals(published, missing);
+        assertNotEquals(published, blank);
+
+        for (String invalid : List.of(missing, blank)) {
+            List<Part> parts = List.of(base.get(0), base.get(1), new Part("question.json", "application/json", invalid));
+            JsonNode preview = json(post("/api/imports/preview", parts, null)).get("body");
+
+            assertFalse(preview.get("canApply").asBoolean());
+            assertEquals("ERROR", preview.get("items").get(2).get("classification").asText());
+            assertTrue(preview.get("items").get(2).get("errors").toString().contains("choices[1].rationaleMarkdown"));
+        }
+
+        String draft = missing.replace("\"status\":\"PUBLISHED\"", "\"status\":\"DRAFT\"");
+        List<Part> draftParts = List.of(base.get(0), base.get(1), new Part("question.json", "application/json", draft));
+        JsonNode preview = json(post("/api/imports/preview", draftParts, null)).get("body");
+
+        assertTrue(preview.get("canApply").asBoolean());
+        assertEquals(200, post("/api/imports/apply", draftParts, preview.get("previewDigest").asText()).statusCode());
+        assertEquals("DRAFT", jdbc.queryForObject(
+                "select status from question where content_key = 'test.q1'", String.class));
+    }
+
+    @Test
     void stalePreviewIsRejectedBeforeAnyMutation() throws Exception {
         List<Part> parts = sampleParts();
         JsonNode initial = json(post("/api/imports/preview", parts, null)).get("body");
@@ -98,7 +127,7 @@ class ContentImportIntegrationTest {
         JsonNode initial = json(post("/api/imports/preview", base, null)).get("body");
         post("/api/imports/apply", base, initial.get("previewDigest").asText());
         List<Part> changed = List.of(base.get(0), base.get(1),
-                new Part("question.json", "application/json", "{\"kind\":\"question\",\"contentKey\":\"test.q1\",\"promptMarkdown\":\"Choose\",\"questionType\":\"MULTIPLE_CHOICE\",\"difficulty\":\"EASY\",\"status\":\"PUBLISHED\",\"conceptKeys\":[\"test.concept\"],\"choices\":[{\"key\":\"A\",\"content\":\"changed\",\"displayOrder\":0},{\"key\":\"C\",\"content\":\"new\",\"displayOrder\":1}],\"correctChoiceKey\":\"A\"}"));
+                new Part("question.json", "application/json", "{\"kind\":\"question\",\"contentKey\":\"test.q1\",\"promptMarkdown\":\"Choose\",\"questionType\":\"MULTIPLE_CHOICE\",\"difficulty\":\"EASY\",\"status\":\"PUBLISHED\",\"conceptKeys\":[\"test.concept\"],\"choices\":[{\"key\":\"A\",\"content\":\"changed\",\"rationaleMarkdown\":\"Why changed\",\"displayOrder\":0},{\"key\":\"C\",\"content\":\"new\",\"rationaleMarkdown\":\"Why new\",\"displayOrder\":1}],\"correctChoiceKey\":\"A\"}"));
         JsonNode preview = json(post("/api/imports/preview", changed, null)).get("body");
         assertTrue(preview.get("canApply").asBoolean());
         long questionId = jdbc.queryForObject("select id from question where content_key = 'test.q1'", Long.class);
@@ -143,8 +172,8 @@ class ContentImportIntegrationTest {
         String correctedQuestion = "{\"kind\":\"question\",\"contentKey\":\"test.q1\",\"promptMarkdown\":\"Choose\","
                 + "\"questionType\":\"MULTIPLE_CHOICE\",\"difficulty\":\"EASY\",\"status\":\"PUBLISHED\","
                 + "\"conceptKeys\":[\"test.concept\"],"
-                + "\"choices\":[{\"key\":\"A\",\"content\":\"updated yes\",\"displayOrder\":1},"
-                + "{\"key\":\"B\",\"content\":\"updated no\",\"displayOrder\":0}],\"correctChoiceKey\":\"B\"}";
+                + "\"choices\":[{\"key\":\"A\",\"content\":\"updated yes\",\"rationaleMarkdown\":\"Why updated yes\",\"displayOrder\":1},"
+                + "{\"key\":\"B\",\"content\":\"updated no\",\"rationaleMarkdown\":\"Why updated no\",\"displayOrder\":0}],\"correctChoiceKey\":\"B\"}";
         List<Part> corrected = List.of(
                 base.get(0),
                 base.get(1),
@@ -359,7 +388,7 @@ class ContentImportIntegrationTest {
         jdbc.update("insert into review_schedule (question_id, status, stage, due_at, last_reviewed_at, last_processed_attempt_id) values (?, 'SCHEDULED', 1, current_timestamp + interval '1 day', current_timestamp, ?)", questionId, attemptId);
         jdbc.update("insert into review_history (question_id, quiz_session_id, attempt_id, result, stage_before, stage_after, reviewed_at, next_due_at) select question_id, quiz_session_id, id, 'WRONG', 1, 1, current_timestamp, current_timestamp + interval '1 day' from attempt where id = ?", attemptId);
         String changedConcept = "{\"kind\":\"concept\",\"contentKey\":\"test.concept\",\"topicContentKey\":\"test.topic\",\"slug\":\"test\",\"title\":\"Changed concept\",\"contentMarkdown\":\"# Changed\",\"level\":1,\"status\":\"PUBLISHED\"}";
-        String changedQuestion = "{\"kind\":\"question\",\"contentKey\":\"test.q1\",\"promptMarkdown\":\"Changed prompt\",\"questionType\":\"MULTIPLE_CHOICE\",\"difficulty\":\"MEDIUM\",\"status\":\"PUBLISHED\",\"conceptKeys\":[\"test.concept\"],\"choices\":[{\"key\":\"A\",\"content\":\"yes\",\"displayOrder\":0},{\"key\":\"B\",\"content\":\"no\",\"displayOrder\":1}],\"correctChoiceKey\":\"A\"}";
+        String changedQuestion = "{\"kind\":\"question\",\"contentKey\":\"test.q1\",\"promptMarkdown\":\"Changed prompt\",\"questionType\":\"MULTIPLE_CHOICE\",\"difficulty\":\"MEDIUM\",\"status\":\"PUBLISHED\",\"conceptKeys\":[\"test.concept\"],\"choices\":[{\"key\":\"A\",\"content\":\"yes\",\"rationaleMarkdown\":\"Why yes\",\"displayOrder\":0},{\"key\":\"B\",\"content\":\"no\",\"rationaleMarkdown\":\"Why no\",\"displayOrder\":1}],\"correctChoiceKey\":\"A\"}";
         List<Part> changed = List.of(base.get(0), new Part("concept.json", "application/json", changedConcept), new Part("question.json", "application/json", changedQuestion));
         JsonNode preview = json(post("/api/imports/preview", changed, null)).get("body");
 
@@ -379,7 +408,7 @@ class ContentImportIntegrationTest {
         List<Part> base = sampleParts();
         JsonNode initial = json(post("/api/imports/preview", base, null)).get("body");
         post("/api/imports/apply", base, initial.get("previewDigest").asText());
-        String swappedQuestion = "{\"kind\":\"question\",\"contentKey\":\"test.q1\",\"promptMarkdown\":\"Choose\",\"questionType\":\"MULTIPLE_CHOICE\",\"difficulty\":\"EASY\",\"status\":\"PUBLISHED\",\"conceptKeys\":[\"test.concept\"],\"choices\":[{\"key\":\"A\",\"content\":\"yes\",\"displayOrder\":1},{\"key\":\"B\",\"content\":\"no\",\"displayOrder\":0}],\"correctChoiceKey\":\"A\"}";
+        String swappedQuestion = "{\"kind\":\"question\",\"contentKey\":\"test.q1\",\"promptMarkdown\":\"Choose\",\"questionType\":\"MULTIPLE_CHOICE\",\"difficulty\":\"EASY\",\"status\":\"PUBLISHED\",\"conceptKeys\":[\"test.concept\"],\"choices\":[{\"key\":\"A\",\"content\":\"yes\",\"rationaleMarkdown\":\"Why yes\",\"displayOrder\":1},{\"key\":\"B\",\"content\":\"no\",\"rationaleMarkdown\":\"Why no\",\"displayOrder\":0}],\"correctChoiceKey\":\"A\"}";
         List<Part> swapped = List.of(base.get(0), base.get(1), new Part("question.json", "application/json", swappedQuestion));
 
         JsonNode preview = json(post("/api/imports/preview", swapped, null)).get("body");
@@ -534,7 +563,7 @@ class ContentImportIntegrationTest {
         return List.of(
                 new Part("topic.json", "application/json", "{\"kind\":\"topic\",\"contentKey\":\"test.topic\",\"areaSlug\":\"java\",\"slug\":\"test\",\"title\":\"Test topic\"}"),
                 new Part("concept.md", "text/markdown", "---\nkind: concept\ncontentKey: test.concept\ntopicContentKey: test.topic\nslug: test\ntitle: Test concept\nlevel: 1\nstatus: PUBLISHED\n---\n# Test\n"),
-                new Part("question.json", "application/json", "{\"kind\":\"question\",\"contentKey\":\"test.q1\",\"promptMarkdown\":\"Choose\",\"questionType\":\"MULTIPLE_CHOICE\",\"difficulty\":\"EASY\",\"status\":\"PUBLISHED\",\"conceptKeys\":[\"test.concept\"],\"choices\":[{\"key\":\"A\",\"content\":\"yes\",\"displayOrder\":0},{\"key\":\"B\",\"content\":\"no\",\"displayOrder\":1}],\"correctChoiceKey\":\"A\"}"));
+                new Part("question.json", "application/json", "{\"kind\":\"question\",\"contentKey\":\"test.q1\",\"promptMarkdown\":\"Choose\",\"questionType\":\"MULTIPLE_CHOICE\",\"difficulty\":\"EASY\",\"status\":\"PUBLISHED\",\"conceptKeys\":[\"test.concept\"],\"choices\":[{\"key\":\"A\",\"content\":\"yes\",\"rationaleMarkdown\":\"Why yes\",\"displayOrder\":0},{\"key\":\"B\",\"content\":\"no\",\"rationaleMarkdown\":\"Why no\",\"displayOrder\":1}],\"correctChoiceKey\":\"A\"}"));
     }
 
     private record Part(String name, String type, String content) {
