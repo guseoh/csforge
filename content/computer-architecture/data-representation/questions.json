@@ -141,7 +141,7 @@
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.data-representation.fixed-width-overflow"],
-    "acceptedAnswers": ["10000000, -128", "1000 0000, -128", "-128"],
+    "acceptedAnswers": ["10000000, -128", "1000 0000, -128"],
     "explanationMarkdown": "`127`은 `0111 1111`이고 1을 더하면 `1000 0000`이 된다. 같은 pattern을 signed two's-complement로 해석하면 최솟값 -128이다."
   },
   {

@@ -45,15 +45,23 @@
     "explanationMarkdown":"`hikaricp.connections.pending` 증가는 pool에서 connection을 기다리는 요청이 많다는 신호이고 낮은 CPU는 I/O 대기 가설과 양립한다. 다만 이것만으로 DB 장애를 확정하지 말고 active/maximum connection, query 지연 시간, timeout과 DB 상태를 이어서 확인해야 한다."
   },
   {
-    "kind":"question",
-    "contentKey":"spring.core.production.metrics-actuator.q2",
-    "promptMarkdown":"metric tag에 requestId나 memberId 같은 고유값을 직접 넣는 것이 위험한 이유를 설명하라.",
-    "questionType":"SHORT_ANSWER",
-    "difficulty":"MEDIUM",
-    "status":"PUBLISHED",
-    "conceptKeys":["spring.core.production.metrics-actuator"],
-    "acceptedAnswers":["cardinality가 급증해 metric series 수와 저장·조회 비용이 폭증할 수 있다","고유값 tag는 high cardinality를 만들어 metric 시스템 비용을 크게 늘릴 수 있다"],
-    "explanationMarkdown":"requestId나 memberId처럼 값 종류가 거의 무한한 tag는 요청마다 새로운 metric series를 만들어 저장·집계 비용과 조회 cardinality를 키운다. 이런 식별자는 metric label보다 log/trace context에 두고, metric에는 bounded한 endpoint·status 같은 차원을 사용해야 한다."
+    "kind": "question",
+    "contentKey": "spring.core.production.metrics-actuator.q2",
+    "promptMarkdown": "requestId나 memberId를 metric tag로 넣을 때 생기는 대표 metric 문제를 한 용어로 쓰라.",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.production.metrics-actuator"
+    ],
+    "acceptedAnswers": [
+      "cardinality가 급증해 metric series 수와 저장·조회 비용이 폭증할 수 있다",
+      "고유값 tag는 high cardinality를 만들어 metric 시스템 비용을 크게 늘릴 수 있다",
+      "high cardinality",
+      "고카디널리티",
+      "high-cardinality"
+    ],
+    "explanationMarkdown": "requestId나 memberId처럼 값 종류가 거의 무한한 tag는 요청마다 새로운 metric series를 만들어 저장·집계 비용과 조회 cardinality를 키운다. 이런 식별자는 metric label보다 log/trace context에 두고, metric에는 bounded한 endpoint·status 같은 차원을 사용해야 한다."
   },
   {
     "kind":"question",
@@ -67,14 +75,22 @@
     "explanationMarkdown":"graceful shutdown은 새 트래픽을 줄이고 진행 중 작업에 완료 기회를 주지만, DB commit 뒤 응답 전송 전에 종료되는 결과 불명확 창을 없애지 못한다. 그래서 재시도된 요청이 같은 주문을 만들지 않도록 idempotency key·unique 요청 identity 같은 별도 application contract가 필요하다."
   },
   {
-    "kind":"question",
-    "contentKey":"spring.core.production.graceful-shutdown.q2",
-    "promptMarkdown":"graceful shutdown에서 readiness를 먼저 내리는 이유를 한 문장으로 설명하라.",
-    "questionType":"SHORT_ANSWER",
-    "difficulty":"EASY",
-    "status":"PUBLISHED",
-    "conceptKeys":["spring.core.production.graceful-shutdown"],
-    "acceptedAnswers":["새 요청 유입을 멈추거나 줄인 뒤 기존 요청을 완료시키기 위해서다","load balancer가 새 트래픽을 보내지 않게 한 뒤 진행 중 요청을 drain하기 위해서다"],
-    "explanationMarkdown":"readiness를 먼저 내려 load balancer가 새 요청을 보내지 않게 한 뒤 이미 처리 중인 요청을 drain할 시간을 확보한다. 이는 process 종료 순서에 관한 운영 정책이며, 이미 commit된 작업을 rollback하거나 client retry의 중복을 자동 제거하는 보장은 아니다."
+    "kind": "question",
+    "contentKey": "spring.core.production.graceful-shutdown.q2",
+    "promptMarkdown": "graceful shutdown에서 readiness를 먼저 내리는 직접 목적을 짧게 쓰라.",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.production.graceful-shutdown"
+    ],
+    "acceptedAnswers": [
+      "새 요청 유입을 멈추거나 줄인 뒤 기존 요청을 완료시키기 위해서다",
+      "load balancer가 새 트래픽을 보내지 않게 한 뒤 진행 중 요청을 drain하기 위해서다",
+      "새 요청 차단 후 기존 요청 drain",
+      "새 트래픽 차단 후 drain",
+      "drain 전에 새 요청 유입을 막는다"
+    ],
+    "explanationMarkdown": "readiness를 먼저 내려 load balancer가 새 요청을 보내지 않게 한 뒤 이미 처리 중인 요청을 drain할 시간을 확보한다. 이는 process 종료 순서에 관한 운영 정책이며, 이미 commit된 작업을 rollback하거나 client retry의 중복을 자동 제거하는 보장은 아니다."
   }
 ]

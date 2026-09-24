@@ -100,8 +100,15 @@ public class Question extends AuditedEntity {
     }
 
     public void reviseMetadata(String promptMarkdown, QuestionDifficulty difficulty, String explanationMarkdown) {
-        this.promptMarkdown = requireText(promptMarkdown, "promptMarkdown");
-        this.difficulty = requireRequired(difficulty, "difficulty");
+        String revisedPrompt = requireText(promptMarkdown, "promptMarkdown");
+        QuestionDifficulty revisedDifficulty = requireRequired(difficulty, "difficulty");
+        if (status == QuestionStatus.PUBLISHED
+                && questionType == QuestionType.SHORT_ANSWER
+                && (explanationMarkdown == null || explanationMarkdown.isBlank())) {
+            throw new IllegalStateException("A published short-answer question needs an explanation");
+        }
+        this.promptMarkdown = revisedPrompt;
+        this.difficulty = revisedDifficulty;
         this.explanationMarkdown = explanationMarkdown;
     }
 
@@ -319,6 +326,9 @@ public class Question extends AuditedEntity {
             case SHORT_ANSWER -> {
                 if (answers.stream().noneMatch(answer -> answer.getAnswerKind() == QuestionAnswerKind.ACCEPTED_TEXT)) {
                     throw new IllegalStateException("A published short-answer question needs an accepted answer");
+                }
+                if (explanationMarkdown == null || explanationMarkdown.isBlank()) {
+                    throw new IllegalStateException("A published short-answer question needs an explanation");
                 }
             }
             case DESCRIPTIVE, SCENARIO -> {

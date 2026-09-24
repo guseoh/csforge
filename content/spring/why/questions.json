@@ -26,9 +26,23 @@
     "modelAnswer":"Money는 주문 use case가 소유하는 내부 값 생성일 수 있어 service 책임과 자연스럽게 결합될 수 있다. 반면 JpaOrderRepository 생성은 persistence 기술 선택·수명·configuration이라는 별도 변경 이유를 끌어온다. 무엇이 독립적으로 바뀌는지로 판단해야 한다.","explanationMarkdown":"`Money`가 주문 invariant를 표현하는 값이라 service가 직접 만드는 것은 use case의 내부 domain construction일 수 있다. 반면 `JpaOrderRepository` 생성은 persistence 기술·수명·configuration의 선택을 끌어오므로 별도 변경 이유가 생긴다. 무엇이 독립적으로 바뀌는지를 기준으로 외부 조립 여부를 판단해야 한다."
   },
   {
-    "kind":"question","contentKey":"spring.core.why.ioc-di.q1","promptMarkdown":"Constructor DI를 적용했을 때 제어가 역전되었다고 말할 수 있는 핵심 변화는 무엇인가?","questionType":"SHORT_ANSWER","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["spring.core.why.ioc-di"],
-    "acceptedAnswers":["협력 객체의 구현 선택과 생성·연결 책임이 사용하는 객체에서 외부 조립자나 container로 이동한다","dependency를 사용하는 객체가 직접 찾거나 만들지 않고 외부에서 전달받는다"],
-    "explanationMarkdown":"Constructor DI에서는 service가 collaborator를 직접 찾거나 생성하지 않고 외부 조립자/container가 선택해 전달한다. 따라서 dependency contract와 생성 책임의 위치가 바뀌며, annotation이나 `new` 제거 자체가 목적이 아니라 변경 가능성과 테스트 경계를 분리하는 것이 핵심이다."
+    "kind": "question",
+    "contentKey": "spring.core.why.ioc-di.q1",
+    "promptMarkdown": "Constructor DI에서 제어가 역전되는 핵심 책임 이동을 한 구절로 쓰라.",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.why.ioc-di"
+    ],
+    "acceptedAnswers": [
+      "협력 객체의 구현 선택과 생성·연결 책임이 사용하는 객체에서 외부 조립자나 container로 이동한다",
+      "dependency를 사용하는 객체가 직접 찾거나 만들지 않고 외부에서 전달받는다",
+      "생성·연결 책임이 외부로 이동한다",
+      "dependency 생성과 연결을 외부가 담당한다",
+      "dependency를 외부에서 주입한다"
+    ],
+    "explanationMarkdown": "Constructor DI에서는 service가 collaborator를 직접 찾거나 생성하지 않고 외부 조립자/container가 선택해 전달한다. 따라서 dependency contract와 생성 책임의 위치가 바뀌며, annotation이나 `new` 제거 자체가 목적이 아니라 변경 가능성과 테스트 경계를 분리하는 것이 핵심이다."
   },
   {
     "kind":"question","contentKey":"spring.core.why.ioc-di.q2","promptMarkdown":"다음 두 코드 중 constructor DI에 더 가까운 것은 무엇이며 이유는 무엇인가?\n\nA. `repository = context.getBean(OrderRepository.class);`\nB. `OrderService(OrderRepository repository)`","questionType":"SCENARIO","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["spring.core.why.ioc-di"],

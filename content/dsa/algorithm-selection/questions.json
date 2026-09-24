@@ -53,12 +53,12 @@
   {
     "kind": "question",
     "contentKey": "dsa.core.algorithm-selection.memory-limit.q1",
-    "promptMarkdown": "primitive `int` 1,000,000개를 연속 배열로 저장할 때 원시 데이터 크기는 대략 얼마인가? (`int = 4 byte`로 계산)",
+    "promptMarkdown": "primitive `int` 1,000,000개를 연속 배열로 저장할 때 원시 데이터 크기는 대략 몇 MB인가? (`int = 4 byte`, `1 MB = 1,000,000 byte`로 계산)",
     "questionType": "SHORT_ANSWER",
     "difficulty": "EASY",
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.algorithm-selection.memory-limit"],
-    "acceptedAnswers": ["4000000 bytes", "4,000,000 bytes", "약 4 MB", "4 MB"],
+    "acceptedAnswers": ["약 4 MB", "4 MB", "4MB"],
     "explanationMarkdown": "원시 데이터만 계산하면 `1,000,000 × 4 byte = 4,000,000 byte`로 약 4 MB다. 실제 프로그램에서는 배열 header·alignment와 runtime overhead가 추가될 수 있다."
   },
   {
