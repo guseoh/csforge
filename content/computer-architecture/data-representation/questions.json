@@ -88,7 +88,7 @@
     "choices": [
       {"key": "A", "content": "-127", "displayOrder": 0, "rationaleMarkdown": "`1111 1111`을 sign-magnitude로 읽으면 부호와 크기를 나눠야 하지만 two's-complement는 비트 전체를 보수 표현으로 해석한다. 8-bit 범위에서 이 pattern은 -1이다."},
       {"key": "B", "content": "255", "displayOrder": 1, "rationaleMarkdown": "255는 같은 bit pattern을 unsigned 8-bit로 읽었을 때의 값이다. Signed two's-complement는 최상위 bit가 음수 영역을 나타내므로 해석 범위가 다르다."},
-      {"key": "C", "content": "-1", "displayOrder": 2, "rationaleMarkdown": "Two's-complement에서 0에 1의 보수를 더한 `1111 1111`은 -1을 나타낸다. 8-bit에서 음수는 최상위 bit가 1인 보수 표현으로 부호화된다."},
+      {"key": "C", "content": "-1", "displayOrder": 2, "rationaleMarkdown": "8-bit two's-complement에서 `1111 1111`은 -1을 나타낸다. +1인 `0000 0001`의 비트를 반전해 `1111 1110`을 만들고 1을 더하면 `1111 1111`이 된다."},
       {"key": "D", "content": "0", "displayOrder": 3, "rationaleMarkdown": "Signed two's-complement에서 0은 모든 bit가 0인 pattern이다. 모든 bit가 1인 pattern을 0으로 보는 것은 bit pattern과 수치 해석을 혼동한 것이다."}
     ],
     "correctChoiceKey": "C",
