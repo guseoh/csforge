@@ -217,12 +217,17 @@
   {
     "kind": "question",
     "contentKey": "dsa.core.trees.heap.q4",
-    "promptMarkdown": "n개 값을 이미 array로 가지고 있을 때 n번 insert하는 방식과 bottom-up heapify의 일반 시간 복잡도를 비교하라.",
+    "promptMarkdown": "n개 값을 이미 array로 가지고 있을 때 `n번 insert`와 `bottom-up heapify`의 일반 시간 복잡도를 순서대로 쓰라.",
     "questionType": "SHORT_ANSWER",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
-    "conceptKeys": ["dsa.core.trees.heap"],
-    "acceptedAnswers": ["n번 insert는 O(n log n), bottom-up heapify는 O(n)", "O(n log n) vs O(n)"],
+    "conceptKeys": [
+      "dsa.core.trees.heap"
+    ],
+    "acceptedAnswers": [
+      "n번 insert는 O(n log n), bottom-up heapify는 O(n)",
+      "O(n log n) vs O(n)"
+    ],
     "explanationMarkdown": "각 값을 순서대로 insert하면 매 insert가 최대 O(log n)이어서 전체가 O(n log n)이다. 이미 배열에 있는 값을 bottom-up으로 sift-down하면 subtree 높이별 작업을 합쳐 O(n)에 heapify할 수 있다."
   },
   {
