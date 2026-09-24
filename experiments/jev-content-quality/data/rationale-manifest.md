@@ -1,0 +1,25 @@
+# #155 rationale quality benchmark manifest
+
+This manifest was fixed before the first #155 provider call. The canonical source is main commit `e4b8cc5ee236c2cb916d6b03be3a135156f7e997`. The JSONL stores the exact evaluated question state, choice rationale, independent Gold booleans, case-specific human review reason, source path/ref, and split. `scripts/build-rationale-cases.py` reproduces it; canonical content is unchanged.
+
+## Human Gold and sampling
+
+The unit is one target MC choice rationale with its question, four choices, answer key and common explanation. The three labels are `choice_rationale_misalignment`, `choice_rationale_conflict`, and `choice_rationale_shallow`. A concise reason is sufficient when it names the relevant condition or mechanism. Misalignment means a substantive explanation of another claim; a missing reason alone is shallow. Conflict means an incompatible factual or correctness claim. Each JSONL case records a reviewer reason. The 45 canonical rationales and the five historical before/after pairs were read against the surrounding question and answer before labels were fixed.
+
+- **Natural:** 15 LearningAreas × 3 distinct questions. Per area, choose the shortest rationale, one seeded random correct choice, and one seeded random incorrect choice. Sort source files before seeded selection (`Random(155)`); exclude the five historical question keys. This covers length and correct/incorrect choice strata across areas. Development has 15 cases; holdout has 30. There is one observed positive, a shallow Adapter rationale, in holdout. This is low support for estimating natural recall, especially for the other two criteria; do not treat the 29 canonical negatives as proof of sensitivity.
+- **Historical:** Five actual PR #158 rationale corrections: BlockingQueue capacity vs task outcome, State transition, pagination DB cost, comparator score/name vs distance/name, and two's-complement derivation. Each has a before positive and after negative from the same fix commit. Three pairs are development and two pairs holdout; no pair crosses the split. This set tests known real defects but is not a prevalence estimate for current content.
+- **Synthetic challenge:** Nine untouched canonical source questions that do not overlap natural or historical sources. Each has the original negative and one edited positive. Three misalignment cases swap another distractor's rationale, three conflict cases assert a concrete false technical mechanism, and three shallow cases reduce the rationale to a bare verdict. One pair of each type is development; two pairs of each type are holdout. The edited cases exist only in the experiment JSONL. This tests response to controlled defects, not natural-world prevalence.
+
+Totals: 73 cases; development 27 (15 natural, 6 historical, 6 synthetic); holdout 46 (30 natural, 4 historical, 12 synthetic). Natural, historical, and synthetic ranking metrics are reported separately. Never pool them into an aggregate usefulness score.
+
+## Predeclared evaluation
+
+One Korean Jev rubric asks the three independent probabilities. Review priority is the maximum of those probabilities; ties sort by `caseId`. No automatic PASS threshold is selected. Before Jev, normalized exact/contained or ≥0.90 character trigram similarity to `explanationMarkdown` excludes an explanation copy deterministically and assigns it zero semantic-priority score. Exclusion counts are reported. This keeps copying out of the Jev rubric.
+
+For each source and split, review the top `ceil(n × budget)` at budgets 10%, 20%, and 30%. Report positive recall, precision, and lift (`precision / prevalence`, the expectation of random review). Report pairwise ROC-AUC, counting ties as half a win. If a stratum has no Gold positives, recall/lift is `N/A`. Criterion-level FP/FN use probability ≥0.5 only as a diagnostic cutoff, never a deployment policy. Report source-separated criterion AUC, individual scored cases, Korean technical-content misses/false alarms, token counts, latency p50/p95 and estimated input-token cost. The cost estimate follows the existing harness assumption of $0.042 per million input tokens; actual billed cost is unknown.
+
+The development evaluation can reveal rubric or implementation faults. Any correction requires a new development run. The holdout runs only after `rationale-freeze.json` records dataset/rubric SHA-256 values. Holdout labels and scores are excluded from calibration. The experiment-only GitHub workflow uses `TYPESAFE_API_KEY` as a secret and stores artifacts without API keys or raw provider payloads. It does not connect to the operational weak-distractor workflow.
+
+## Interpretation boundary
+
+One natural holdout positive cannot establish reliable recall for all three criteria. A good synthetic result may show response to engineered defects while still leaving real-world usefulness inconclusive. Recommend one of `ADOPT_CANDIDATE`, `INCONCLUSIVE`, or `REJECT` in the final evidence report; any product connection requires separate approval.

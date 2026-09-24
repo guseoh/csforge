@@ -168,6 +168,17 @@ npm run review:changed -- -- --base=origin/main --head=HEAD --top-percent=30
 
 두 artifact에는 API key, authorization header, provider request/response 원문, 전체 state payload를 저장하지 않는다. API 오류에는 fake probability를 만들지 않는다. Candidate가 있는데 provider evaluation이 전부 실패하면 diagnostic artifact를 먼저 기록한 뒤 CLI는 non-zero로 종료한다.
 
+### #155 rationale quality experiment
+
+`data/rationale-manifest.md` fixes the sampling, Human Gold, development/holdout split, and ranking metrics before provider calls. The independent source kinds are natural canonical rationales, actual PR #158 before/after fixes, and controlled synthetic edits. Their usefulness metrics are never pooled. Rebuild and validate the snapshot with:
+
+```text
+python scripts/build-rationale-cases.py
+npm run rationale:validate
+```
+
+The branch-only `Rationale Quality Benchmark (#155)` workflow runs development first. Once its results are reviewed, `data/rationale-freeze.json` locks the dataset and rubric hashes; the next matching branch push runs the holdout. Results, metrics, and a case diagnostic report are uploaded as a workflow artifact. The existing operational `Content Review Priority` workflow is unchanged. No rationale score is an automatic acceptance or merge decision.
+
 ### Manual GitHub Actions
 
 `Content Review Priority` workflow는 `workflow_dispatch`로만 실행한다. base/head ref 또는 PR number를 입력받고, `TYPESAFE_API_KEY` GitHub Secret을 사용하며 JSONL/Markdown을 14일 artifact로 보존한다. candidate count와 max guard는 provider 호출 전에 적용된다. Evaluation step이 실패해도 이미 생성된 diagnostic report/result는 summary와 artifact로 보존된다. 이 workflow는 `pull_request` 자동 trigger가 없고 기존 Repository Validation의 required/blocking check에 연결되지 않는다.
