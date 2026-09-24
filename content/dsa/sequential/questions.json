@@ -2,7 +2,7 @@
   {
     "kind": "question",
     "contentKey": "dsa.core.sequential.array.q1",
-    "promptMarkdown": "원소 크기가 8 byte인 array의 base address가 `0x1000`일 때 index 5의 원소 시작 주소는?",
+    "promptMarkdown": "0-based array에서 원소 크기가 8 byte이고 base address가 `0x1000`일 때 index 5의 원소 시작 주소는?",
     "questionType": "SHORT_ANSWER",
     "difficulty": "EASY",
     "status": "PUBLISHED",

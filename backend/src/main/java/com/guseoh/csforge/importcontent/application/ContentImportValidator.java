@@ -129,6 +129,9 @@ public class ContentImportValidator {
                     if (item.acceptedAnswers().isEmpty()) {
                         errors.add(new ImportValidationError("acceptedAnswers", "공개 단답형은 허용 답안이 필요합니다"));
                     }
+                    if (item.explanationMarkdown() == null || item.explanationMarkdown().isBlank()) {
+                        errors.add(new ImportValidationError("explanationMarkdown", "공개 단답형은 해설이 필요합니다"));
+                    }
                 }
                 case DESCRIPTIVE, SCENARIO -> {
                     if (item.modelAnswer() == null) {

@@ -320,6 +320,9 @@ public class Question extends AuditedEntity {
                 if (answers.stream().noneMatch(answer -> answer.getAnswerKind() == QuestionAnswerKind.ACCEPTED_TEXT)) {
                     throw new IllegalStateException("A published short-answer question needs an accepted answer");
                 }
+                if (explanationMarkdown == null || explanationMarkdown.isBlank()) {
+                    throw new IllegalStateException("A published short-answer question needs an explanation");
+                }
             }
             case DESCRIPTIVE, SCENARIO -> {
                 if (answers.stream().filter(answer -> answer.getAnswerKind() == QuestionAnswerKind.MODEL_ANSWER).count() != 1) {

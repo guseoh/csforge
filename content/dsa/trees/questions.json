@@ -151,7 +151,7 @@
   {
     "kind":"question",
     "contentKey":"dsa.core.trees.tree-rotation.q2",
-    "promptMarkdown":"위 right rotation에서 subtree B는 rotation 후 어느 위치로 이동하는가?",
+    "promptMarkdown":"`y.left = x`이고 `x.right = B`인 subtree에 right rotation을 수행한다. rotation 후 subtree B는 어디에 연결되는가?",
     "questionType":"SHORT_ANSWER",
     "difficulty":"MEDIUM",
     "status":"PUBLISHED",

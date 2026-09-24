@@ -48,7 +48,7 @@ class ContentImportParserTest {
     void rejectsConflictingDuplicateAndAllInvalidQuestionStructuresBeforeApply() {
         String base = "{\"kind\":\"question\",\"contentKey\":\"q\",\"promptMarkdown\":\"P\",\"questionType\":\"%s\",\"difficulty\":\"EASY\",\"status\":\"%s\",\"conceptKeys\":[\"c\"]";
         String validMc = base.formatted("MULTIPLE_CHOICE", "PUBLISHED").replace("\"contentKey\":\"q\"", "\"contentKey\":\"mc\"") + ",\"choices\":[{\"key\":\"A\",\"content\":\"A\",\"rationaleMarkdown\":\"Reason A\",\"displayOrder\":0},{\"key\":\"B\",\"content\":\"B\",\"rationaleMarkdown\":\"Reason B\",\"displayOrder\":1}],\"correctChoiceKey\":\"B\"}";
-        String validShort = base.formatted("SHORT_ANSWER", "PUBLISHED").replace("\"contentKey\":\"q\"", "\"contentKey\":\"short\"") + ",\"acceptedAnswers\":[\"answer\"]}";
+        String validShort = base.formatted("SHORT_ANSWER", "PUBLISHED").replace("\"contentKey\":\"q\"", "\"contentKey\":\"short\"") + ",\"acceptedAnswers\":[\"answer\"],\"explanationMarkdown\":\"Reason\"}";
         String validDescriptive = base.formatted("DESCRIPTIVE", "PUBLISHED").replace("\"contentKey\":\"q\"", "\"contentKey\":\"descriptive\"") + ",\"modelAnswer\":\"Explain\"}";
         String validScenario = base.formatted("SCENARIO", "ARCHIVED").replace("\"contentKey\":\"q\"", "\"contentKey\":\"scenario\"") + ",\"modelAnswer\":\"Explain\"}";
         String mc = base.formatted("MULTIPLE_CHOICE", "DRAFT") + ",\"choices\":[{\"key\":\"A\",\"content\":\"A\",\"displayOrder\":0}],\"correctChoiceKey\":\"B\"}";
@@ -63,6 +63,24 @@ class ContentImportParserTest {
         assertTrue(invalid.stream().allMatch(NormalizedImportItem::isError));
         assertTrue(valid.stream().noneMatch(NormalizedImportItem::isError));
         assertTrue(conflicts.get(1).isError());
+    }
+
+    @Test
+    void requiresExplanationForPublishedShortAnswerButAllowsIncompleteDraft() {
+        String published = "{\"kind\":\"question\",\"contentKey\":\"short\",\"promptMarkdown\":\"P\","
+                + "\"questionType\":\"SHORT_ANSWER\",\"difficulty\":\"EASY\",\"status\":\"PUBLISHED\","
+                + "\"conceptKeys\":[\"c\"],\"acceptedAnswers\":[\"answer\"]}";
+        String blankExplanation = published.substring(0, published.length() - 1)
+                + ",\"explanationMarkdown\":\"  \"}";
+
+        NormalizedImportItem missing = validator.validate(parser.parse(command("missing.json", published))).getFirst();
+        NormalizedImportItem blank = validator.validate(parser.parse(command("blank.json", blankExplanation))).getFirst();
+        NormalizedImportItem draft = validator.validate(parser.parse(command("draft.json",
+                published.replace("PUBLISHED", "DRAFT")))).getFirst();
+
+        assertTrue(missing.isError());
+        assertTrue(blank.isError());
+        assertFalse(draft.isError());
     }
 
     @Test

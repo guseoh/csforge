@@ -214,7 +214,7 @@
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.memory-hierarchy.miss-penalty.q2",
-    "promptMarkdown": "hit time이 1ns, miss rate가 5%, miss penalty가 80ns인 단순 one-level cache의 AMAT를 계산하라.",
+    "promptMarkdown": "hit time이 1ns, miss rate가 5%, hit 이후 추가되는 miss penalty가 80ns인 단순 one-level cache의 AMAT를 계산하라.",
     "questionType": "SHORT_ANSWER",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
