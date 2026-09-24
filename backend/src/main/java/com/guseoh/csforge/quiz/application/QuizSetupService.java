@@ -10,9 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.guseoh.csforge.quiz.domain.Attempt;
 import com.guseoh.csforge.quiz.domain.AttemptGradingStatus;
-import com.guseoh.csforge.quiz.domain.AttemptRepository;
 import com.guseoh.csforge.quiz.domain.QuizInvalidStateException;
-import com.guseoh.csforge.quiz.domain.QuizSessionStatus;
+import com.guseoh.csforge.quiz.domain.QuizQuestion;
 import com.guseoh.csforge.quiz.domain.QuizSessionSource;
 import com.guseoh.csforge.quiz.infrastructure.QuestionSelectionRepository;
 
@@ -22,6 +21,8 @@ import com.guseoh.csforge.quiz.infrastructure.QuestionSelectionRepository;
 @Service
 @RequiredArgsConstructor
 public class QuizSetupService {
+
+    private static final int MAX_RELATED_CONCEPT_QUESTIONS = 5;
 
     private final QuestionSelectionRepository selectionRepository;
     private final QuizSessionDataLoader dataLoader;
@@ -64,5 +65,44 @@ public class QuizSetupService {
             throw new NoWrongQuestionsException();
         }
         return sessionCreator.create(wrongQuestionIds, Instant.now(clock), null, QuizSessionSource.WRONG_RETRY);
+    }
+
+    @Transactional
+    public QuizCreatedResult retryWrongQuestion(long quizId, long questionId) {
+        QuizSessionData data = dataLoader.loadForRetry(quizId);
+        data.session().ensureResultAvailable();
+        if (data.attemptsByQuestionId().values().stream()
+                .anyMatch(attempt -> attempt.getGradingStatus() == AttemptGradingStatus.SELF_CHECK_REQUIRED)) {
+            throw new QuizInvalidStateException("Complete all self-checks before retrying wrong questions");
+        }
+
+        QuizQuestion quizQuestion = data.requireQuestion(questionId);
+        Attempt attempt = data.requireAttempt(questionId);
+        if (!attempt.isWrong()) {
+            throw new QuizInvalidStateException("Only finalized wrong questions can be retried individually");
+        }
+
+        return sessionCreator.create(
+                List.of(quizQuestion.getQuestion().getId()),
+                Instant.now(clock),
+                null,
+                QuizSessionSource.WRONG_RETRY);
+    }
+
+    @Transactional
+    public QuizCreatedResult practiceRelatedConcept(long questionId, long conceptId) {
+        if (!selectionRepository.hasAvailableConceptLink(questionId, conceptId)) {
+            throw new RelatedConceptUnavailableException();
+        }
+
+        List<Long> questionIds = selectionRepository.selectOtherPublishedQuestions(
+                questionId,
+                conceptId,
+                MAX_RELATED_CONCEPT_QUESTIONS);
+        if (questionIds.isEmpty()) {
+            throw new NoRelatedConceptQuestionsException();
+        }
+
+        return sessionCreator.create(questionIds, Instant.now(clock), null, QuizSessionSource.STANDARD);
     }
 }

@@ -120,6 +120,8 @@ describe('WrongNoteDetailPage', () => {
     expect(markup).toContain('기존 전체 해설')
     expect(markup).toContain('왜 틀렸을까요?')
     expect(markup).toContain('관련 개념')
+    expect(markup).toContain('개념 보기 · 관련 개념')
+    expect(markup).toContain('이 개념 다른 문제 풀기')
     expect(markup).toContain('이 문제 다시 풀기')
   })
 

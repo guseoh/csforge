@@ -112,4 +112,20 @@ public class QuizController {
     public QuizRetryResponse retryWrong(@PathVariable long quizId) {
         return apiMapper.toRetryResponse(setupService.retryWrong(quizId));
     }
+
+    @PostMapping("/{quizId}/questions/{questionId}/retry")
+    public ResponseEntity<QuizCreatedResponse> retryWrongQuestion(
+            @PathVariable long quizId,
+            @PathVariable long questionId) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(apiMapper.toCreatedResponse(setupService.retryWrongQuestion(quizId, questionId)));
+    }
+
+    @PostMapping("/questions/{questionId}/concepts/{conceptId}/practice")
+    public ResponseEntity<QuizCreatedResponse> practiceRelatedConcept(
+            @PathVariable long questionId,
+            @PathVariable long conceptId) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(apiMapper.toCreatedResponse(setupService.practiceRelatedConcept(questionId, conceptId)));
+    }
 }

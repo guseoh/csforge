@@ -75,6 +75,52 @@ public class QuestionSelectionRepository {
         return entityManager.createQuery(query).getSingleResult();
     }
 
+    public boolean hasAvailableConceptLink(long questionId, long conceptId) {
+        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Long> query = builder.createQuery(Long.class);
+        Root<Question> question = query.from(Question.class);
+        Join<?, ?> link = question.join("conceptLinks", JoinType.INNER);
+        Join<?, ?> concept = link.join("concept", JoinType.INNER);
+        Join<?, ?> topic = concept.join("topic", JoinType.INNER);
+        Join<?, ?> area = topic.join("learningArea", JoinType.INNER);
+
+        query.select(builder.countDistinct(question.get("id")))
+                .where(
+                        builder.equal(question.get("id"), questionId),
+                        builder.equal(concept.get("id"), conceptId),
+                        builder.equal(concept.get("status"), ContentStatus.PUBLISHED),
+                        builder.isTrue(topic.get("active")),
+                        builder.isTrue(area.get("active")));
+        return entityManager.createQuery(query).getSingleResult() > 0;
+    }
+
+    public List<Long> selectOtherPublishedQuestions(long sourceQuestionId, long conceptId, int limit) {
+        if (limit < 1) {
+            throw new IllegalArgumentException("limit must be positive");
+        }
+
+        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Long> query = builder.createQuery(Long.class);
+        Root<Question> question = query.from(Question.class);
+        Join<?, ?> link = question.join("conceptLinks", JoinType.INNER);
+        Join<?, ?> concept = link.join("concept", JoinType.INNER);
+        Join<?, ?> topic = concept.join("topic", JoinType.INNER);
+        Join<?, ?> area = topic.join("learningArea", JoinType.INNER);
+
+        query.select(question.get("id"))
+                .where(
+                        builder.notEqual(question.get("id"), sourceQuestionId),
+                        builder.equal(question.get("status"), QuestionStatus.PUBLISHED),
+                        builder.equal(concept.get("id"), conceptId),
+                        builder.equal(concept.get("status"), ContentStatus.PUBLISHED),
+                        builder.isTrue(topic.get("active")),
+                        builder.isTrue(area.get("active")))
+                .distinct(true)
+                .orderBy(builder.asc(question.get("id")));
+
+        return entityManager.createQuery(query).setMaxResults(limit).getResultList();
+    }
+
     private Predicate[] predicates(
             CriteriaBuilder builder,
             CriteriaQuery<?> query,

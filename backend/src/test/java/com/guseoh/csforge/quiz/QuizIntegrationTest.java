@@ -13,6 +13,8 @@ import java.net.http.HttpResponse;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.guseoh.csforge.learning.domain.Concept;
 import com.guseoh.csforge.learning.domain.ConceptRepository;
@@ -232,6 +234,10 @@ class QuizIntegrationTest {
                 result.get("questions").get(0).get("choices").get(1).get("rationaleMarkdown").asText());
         assertFalse(result.get("questions").get(2).get("modelAnswer").isNull());
         assertEquals(409, request("POST", "/api/quizzes/" + quizId + "/retry-wrong", null).statusCode());
+        assertEquals(409, request(
+                "POST",
+                "/api/quizzes/" + quizId + "/questions/" + multipleChoiceId + "/retry",
+                null).statusCode());
 
         JsonNode checked = json(request(
                 "PATCH",
@@ -269,6 +275,131 @@ class QuizIntegrationTest {
         JsonNode submission = json(request("POST", "/api/quizzes/" + quizId + "/submit", null));
         assertEquals("COMPLETED", submission.get("status").asText());
         assertEquals(422, request("POST", "/api/quizzes/" + quizId + "/retry-wrong", null).statusCode());
+    }
+
+    @Test
+    void individualWrongRetryRequiresMembershipAndFinalWrongAttemptAndCreatesOneWrongRetryQuestion() throws Exception {
+        long quizId = createQuizForQuestion(multipleChoiceId, "MULTIPLE_CHOICE");
+        request("PUT", "/api/quizzes/" + quizId + "/questions/" + multipleChoiceId + "/answer",
+                "{\"selectedChoiceKey\":\"B\",\"answerText\":null,\"reviewNeeded\":false}");
+        request("POST", "/api/quizzes/" + quizId + "/submit", null);
+
+        HttpResponse<String> retryResponse = request(
+                "POST",
+                "/api/quizzes/" + quizId + "/questions/" + multipleChoiceId + "/retry",
+                null);
+        assertEquals(201, retryResponse.statusCode(), retryResponse.body());
+        JsonNode retry = json(retryResponse);
+        assertEquals(1, retry.get("questionCount").asInt());
+        assertEquals("WRONG_RETRY", retry.get("source").asText());
+        JsonNode retrySession = json(request("GET", "/api/quizzes/" + retry.get("quizId").asLong(), null));
+        assertEquals(1, retrySession.get("questions").size());
+        assertEquals(multipleChoiceId, retrySession.get("questions").get(0).get("questionId").asLong());
+
+        assertEquals(404, request(
+                "POST",
+                "/api/quizzes/" + quizId + "/questions/" + shortAnswerId + "/retry",
+                null).statusCode());
+
+        long correctQuizId = createQuizForQuestion(multipleChoiceId, "MULTIPLE_CHOICE");
+        request("PUT", "/api/quizzes/" + correctQuizId + "/questions/" + multipleChoiceId + "/answer",
+                "{\"selectedChoiceKey\":\"A\",\"answerText\":null,\"reviewNeeded\":false}");
+        request("POST", "/api/quizzes/" + correctQuizId + "/submit", null);
+        assertEquals(409, request(
+                "POST",
+                "/api/quizzes/" + correctQuizId + "/questions/" + multipleChoiceId + "/retry",
+                null).statusCode());
+    }
+
+    @Test
+    void relatedConceptPracticeExcludesItsSourceCapsAtFiveAndUsesStableStandardSelection() throws Exception {
+        Concept concept = conceptRepository.getReferenceById(conceptId);
+        for (int index = 0; index < 4; index++) {
+            saveRelatedPracticeQuestion(concept, "extra-" + index);
+        }
+        Question draft = Question.createDraft(
+                "related-practice-draft",
+                "Unpublished related question",
+                QuestionType.SHORT_ANSWER,
+                QuestionDifficulty.EASY,
+                "Draft explanation.");
+        draft.addAcceptedAnswer("draft");
+        draft.linkConcept(concept);
+        questionRepository.saveAndFlush(draft);
+
+        long sourceQuizId = createQuizForQuestion(multipleChoiceId, "MULTIPLE_CHOICE");
+        request("PUT", "/api/quizzes/" + sourceQuizId + "/questions/" + multipleChoiceId + "/answer",
+                "{\"selectedChoiceKey\":\"B\",\"answerText\":null,\"reviewNeeded\":false}");
+        request("POST", "/api/quizzes/" + sourceQuizId + "/submit", null);
+
+        String path = "/api/quizzes/questions/" + multipleChoiceId + "/concepts/" + conceptId + "/practice";
+        HttpResponse<String> firstResponse = request("POST", path, null);
+        assertEquals(201, firstResponse.statusCode(), firstResponse.body());
+        JsonNode firstCreated = json(firstResponse);
+        assertEquals(5, firstCreated.get("questionCount").asInt());
+        assertEquals("STANDARD", firstCreated.get("source").asText());
+
+        JsonNode firstSession = json(request("GET", "/api/quizzes/" + firstCreated.get("quizId").asLong(), null));
+        List<Long> firstIds = questionIds(firstSession);
+        List<Long> expectedIds = jdbc.queryForList(
+                "SELECT q.id FROM question q JOIN question_concept qc ON qc.question_id = q.id "
+                        + "WHERE qc.concept_id = ? AND q.id <> ? AND q.status = 'PUBLISHED' ORDER BY q.id LIMIT 5",
+                Long.class,
+                conceptId,
+                multipleChoiceId);
+        assertEquals(5, firstIds.size());
+        assertFalse(firstIds.contains(multipleChoiceId));
+        assertEquals(expectedIds, firstIds);
+
+        JsonNode secondCreated = json(request("POST", path, null));
+        JsonNode secondSession = json(request("GET", "/api/quizzes/" + secondCreated.get("quizId").asLong(), null));
+        assertEquals(firstIds, questionIds(secondSession));
+    }
+
+    @Test
+    void relatedConceptPracticeAllowsSmallSetsAndRejectsInvalidOrEmptySelectionWithoutCreatingAQuiz() throws Exception {
+        String path = "/api/quizzes/questions/" + multipleChoiceId + "/concepts/" + conceptId + "/practice";
+        JsonNode smallSet = json(request("POST", path, null));
+        assertEquals(3, smallSet.get("questionCount").asInt());
+        assertEquals("STANDARD", smallSet.get("source").asText());
+
+        long topicId = jdbc.queryForObject("SELECT id FROM topic WHERE slug = 'quiz-topic'", Long.class);
+        long emptyConceptId = insertConcept(topicId, "only-source-concept", "only-source", "Only source", 1);
+        jdbc.update(
+                "INSERT INTO question_concept (question_id, concept_id) VALUES (?, ?)",
+                multipleChoiceId,
+                emptyConceptId);
+        String emptyPath = "/api/quizzes/questions/" + multipleChoiceId + "/concepts/" + emptyConceptId + "/practice";
+        int sessionsBeforeEmptySelection = jdbc.queryForObject("SELECT COUNT(*) FROM quiz_session", Integer.class);
+        HttpResponse<String> noOtherQuestions = request("POST", emptyPath, null);
+        assertEquals(422, noOtherQuestions.statusCode());
+        assertEquals("QUIZ_NO_RELATED_QUESTIONS", json(noOtherQuestions).get("code").asText());
+        assertEquals(sessionsBeforeEmptySelection, jdbc.queryForObject("SELECT COUNT(*) FROM quiz_session", Integer.class));
+
+        long unlinkedConceptId = insertConcept(topicId, "unlinked-concept", "unlinked", "Unlinked", 1);
+        HttpResponse<String> unlinked = request(
+                "POST",
+                "/api/quizzes/questions/" + multipleChoiceId + "/concepts/" + unlinkedConceptId + "/practice",
+                null);
+        assertEquals(422, unlinked.statusCode());
+        assertEquals("QUIZ_CONCEPT_NOT_RELATED", json(unlinked).get("code").asText());
+
+        jdbc.update("UPDATE concept SET status = 'DRAFT' WHERE id = ?", conceptId);
+        HttpResponse<String> unpublishedConcept = request("POST", path, null);
+        assertEquals(422, unpublishedConcept.statusCode());
+        assertEquals("QUIZ_CONCEPT_NOT_RELATED", json(unpublishedConcept).get("code").asText());
+
+        jdbc.update("UPDATE concept SET status = 'PUBLISHED' WHERE id = ?", conceptId);
+        jdbc.update("UPDATE topic SET active = false WHERE slug = 'quiz-topic'");
+        HttpResponse<String> inactiveTopic = request("POST", path, null);
+        assertEquals(422, inactiveTopic.statusCode());
+        assertEquals("QUIZ_CONCEPT_NOT_RELATED", json(inactiveTopic).get("code").asText());
+
+        jdbc.update("UPDATE topic SET active = true WHERE slug = 'quiz-topic'");
+        jdbc.update("UPDATE learning_area SET active = false WHERE slug = 'java'");
+        HttpResponse<String> inactiveArea = request("POST", path, null);
+        assertEquals(422, inactiveArea.statusCode());
+        assertEquals("QUIZ_CONCEPT_NOT_RELATED", json(inactiveArea).get("code").asText());
     }
 
     @Test
@@ -457,6 +588,19 @@ class QuizIntegrationTest {
         return questionRepository.saveAndFlush(question).getId();
     }
 
+    private long saveRelatedPracticeQuestion(Concept concept, String contentKeySuffix) {
+        Question question = Question.createDraft(
+                "related-practice-" + contentKeySuffix,
+                "Practice question " + contentKeySuffix,
+                QuestionType.SHORT_ANSWER,
+                QuestionDifficulty.EASY,
+                "A related practice question.");
+        question.addAcceptedAnswer("answer-" + contentKeySuffix);
+        question.linkConcept(concept);
+        question.publish();
+        return questionRepository.saveAndFlush(question).getId();
+    }
+
     private long saveShortAnswer(Concept concept) {
         Question question = Question.createDraft(
                 "short-question",
@@ -513,6 +657,12 @@ class QuizIntegrationTest {
 
     private JsonNode json(HttpResponse<String> response) throws IOException {
         return objectMapper.readTree(response.body());
+    }
+
+    private List<Long> questionIds(JsonNode quizSession) {
+        List<Long> questionIds = new ArrayList<>();
+        quizSession.get("questions").forEach(question -> questionIds.add(question.get("questionId").asLong()));
+        return List.copyOf(questionIds);
     }
 
     private void assertThrowsIntegrity(ThrowingRunnable action) {

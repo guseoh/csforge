@@ -106,6 +106,50 @@ describe('QuizResultPage', () => {
     expect(markup).toContain('<details class="choice-rationale-disclosure">')
     expect(markup).toContain('왜 이렇게 판단하나')
     expect(markup).toContain('관련 개념 다시 보기')
+    expect(markup).toContain('이 문제 다시 풀기')
+    expect(markup).toContain('이 개념 다른 문제 풀기')
+    expect(markup.indexOf('왜 이렇게 판단하나')).toBeLessThan(markup.indexOf('이 문제 다시 풀기'))
+  })
+
+  it('keeps concept navigation on correct results without adding retry actions', () => {
+    mocks.result.data = {
+      quizId: 41,
+      status: 'COMPLETED',
+      source: 'STANDARD',
+      total: 1,
+      correct: 1,
+      wrong: 0,
+      unanswered: 0,
+      selfCheckPending: 0,
+      accuracy: 1,
+      breakdown: [],
+      questions: [{
+        questionId: 12,
+        position: 0,
+        promptMarkdown: '정답 문제입니다.',
+        questionType: 'SHORT_ANSWER',
+        difficulty: 'EASY',
+        concepts: [{ id: 4, slug: 'concept', title: '관련 Concept', areaSlug: 'java', areaName: 'Java', level: 1 }],
+        choices: [],
+        selectedChoiceKey: null,
+        answerText: '정답',
+        reviewNeeded: false,
+        gradingStatus: 'GRADED',
+        correct: true,
+        correctChoiceKey: null,
+        acceptedAnswers: ['정답'],
+        modelAnswer: null,
+        explanationMarkdown: '정답 해설',
+        answeredAt: null,
+        gradedAt: null,
+      }],
+    }
+
+    const markup = renderToStaticMarkup(<QuizResultPage />)
+
+    expect(markup).toContain('관련 Concept')
+    expect(markup).not.toContain('이 문제 다시 풀기')
+    expect(markup).not.toContain('이 개념 다른 문제 풀기')
   })
 
   it('shows the model answer before self-check actions', () => {

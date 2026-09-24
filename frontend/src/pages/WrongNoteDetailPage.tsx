@@ -4,6 +4,7 @@ import { ErrorState, PageSkeleton } from '../components/AsyncStates'
 import { ChoiceRationale, OtherChoiceRationales } from '../components/ChoiceRationaleReview'
 import { MarkdownContent } from '../components/MarkdownContent'
 import { WrongAnswerAnalysisCard } from '../components/WrongAnswerAnalysisCard'
+import { RelatedConceptPracticeActions } from '../components/RelatedConceptPracticeActions'
 import { useToast } from '../components/toast/ToastProvider'
 import { getAuthSession } from '../lib/auth-api'
 import {
@@ -196,7 +197,11 @@ export function WrongNoteDetailPage() {
           <div><p className="eyebrow">이어 학습하기</p><h2>관련 개념</h2></div>
           <span className="helper-text">필요한 개념만 다시 확인해 보세요.</span>
         </div>
-        <ConceptContext concepts={item.concepts} />
+        <RelatedConceptPracticeActions
+          questionId={item.question.id}
+          concepts={item.concepts}
+          linkLabel={(concept) => `개념 보기 · ${concept.title}`}
+        />
       </section>
 
       {aiAvailable && <section className="detail-section ai-analysis-section wrong-note-secondary-section">
