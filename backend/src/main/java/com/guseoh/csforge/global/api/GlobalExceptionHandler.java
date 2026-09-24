@@ -12,7 +12,9 @@ import com.guseoh.csforge.learning.application.LearningBadRequestException;
 import com.guseoh.csforge.learning.application.LearningNotFoundException;
 import com.guseoh.csforge.quiz.application.InsufficientQuestionsException;
 import com.guseoh.csforge.quiz.application.NoWrongQuestionsException;
+import com.guseoh.csforge.quiz.application.NoRelatedConceptQuestionsException;
 import com.guseoh.csforge.quiz.application.QuizNotFoundException;
+import com.guseoh.csforge.quiz.application.RelatedConceptUnavailableException;
 import com.guseoh.csforge.quiz.domain.QuizAnswerException;
 import com.guseoh.csforge.quiz.domain.QuizExpiredException;
 import com.guseoh.csforge.quiz.domain.QuizInvalidStateException;
@@ -94,6 +96,20 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NoWrongQuestionsException.class)
     public ResponseEntity<ApiError> handleNoWrongQuestions(NoWrongQuestionsException exception, HttpServletRequest request) {
         return error(HttpStatus.UNPROCESSABLE_CONTENT, "QUIZ_NO_WRONG_QUESTIONS", exception.getMessage(), request, List.of());
+    }
+
+    @ExceptionHandler(NoRelatedConceptQuestionsException.class)
+    public ResponseEntity<ApiError> handleNoRelatedConceptQuestions(
+            NoRelatedConceptQuestionsException exception,
+            HttpServletRequest request) {
+        return error(HttpStatus.UNPROCESSABLE_CONTENT, "QUIZ_NO_RELATED_QUESTIONS", exception.getMessage(), request, List.of());
+    }
+
+    @ExceptionHandler(RelatedConceptUnavailableException.class)
+    public ResponseEntity<ApiError> handleRelatedConceptUnavailable(
+            RelatedConceptUnavailableException exception,
+            HttpServletRequest request) {
+        return error(HttpStatus.UNPROCESSABLE_CONTENT, "QUIZ_CONCEPT_NOT_RELATED", exception.getMessage(), request, List.of());
     }
 
     @ExceptionHandler({

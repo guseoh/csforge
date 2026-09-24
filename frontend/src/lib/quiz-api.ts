@@ -220,3 +220,11 @@ export function selfCheckQuizQuestion(quizId: number, questionId: number, correc
 export function retryWrongQuiz(quizId: number): Promise<QuizRetry> {
   return request<QuizRetry>(`/api/quizzes/${quizId}/retry-wrong`, { method: 'POST' })
 }
+
+export function retryWrongQuizQuestion(quizId: number, questionId: number): Promise<QuizCreated> {
+  return request<QuizCreated>(`/api/quizzes/${quizId}/questions/${questionId}/retry`, { method: 'POST' })
+}
+
+export function practiceRelatedConceptQuiz(questionId: number, conceptId: number): Promise<QuizCreated> {
+  return request<QuizCreated>(`/api/quizzes/questions/${questionId}/concepts/${conceptId}/practice`, { method: 'POST' })
+}

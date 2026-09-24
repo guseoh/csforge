@@ -4,8 +4,9 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ErrorState, PageSkeleton } from '../components/AsyncStates'
 import { ChoiceRationale, OtherChoiceRationales } from '../components/ChoiceRationaleReview'
 import { MarkdownContent } from '../components/MarkdownContent'
+import { RelatedConceptPracticeActions } from '../components/RelatedConceptPracticeActions'
 import { ApiRequestError } from '../lib/http'
-import { getQuizResult, retryWrongQuiz, selfCheckQuizQuestion, type QuizQuestionResult } from '../lib/quiz-api'
+import { getQuizResult, retryWrongQuiz, retryWrongQuizQuestion, selfCheckQuizQuestion, type QuizQuestionResult } from '../lib/quiz-api'
 import { defaultQuizSearch } from '../lib/quiz-search'
 import { hasUnresolvedSelfCheck } from '../lib/quiz-result'
 import { compactMarkdownPreview } from '../lib/markdown'
@@ -106,11 +107,21 @@ function TextAnswerReview({ question }: { question: QuizQuestionResult }) {
   )
 }
 
-function QuestionResultCard({ quizId, question, defaultOpen = false }: { quizId: number; question: QuizQuestionResult; defaultOpen?: boolean }) {
+function QuestionResultCard({ quizId, question, defaultOpen = false, hasPendingSelfCheck = false }: {
+  quizId: number
+  question: QuizQuestionResult
+  defaultOpen?: boolean
+  hasPendingSelfCheck?: boolean
+}) {
   const queryClient = useQueryClient()
+  const navigate = useNavigate({ from: '/quiz/$quizId/result' })
   const selfCheckMutation = useMutation({
     mutationFn: (correct: boolean) => selfCheckQuizQuestion(quizId, question.questionId, correct),
     onSuccess: () => void queryClient.invalidateQueries({ queryKey: ['quiz-result', quizId] }),
+  })
+  const retryQuestionMutation = useMutation({
+    mutationFn: () => retryWrongQuizQuestion(quizId, question.questionId),
+    onSuccess: (quiz) => void navigate({ to: '/quiz/$quizId', params: { quizId: String(quiz.quizId) } }),
   })
   const stateLabel = question.gradingStatus === 'SELF_CHECK_REQUIRED'
     ? '자기 채점 대기'
@@ -183,13 +194,32 @@ function QuestionResultCard({ quizId, question, defaultOpen = false }: { quizId:
         {question.concepts.length > 0 && (
           <div className="result-related-concepts">
             <span className="helper-text">관련 개념 다시 보기</span>
-            <div className="chip-row">
-              {question.concepts.map((concept) => (
-                <Link className="chip text-link" key={concept.id} to="/concepts/$conceptId" params={{ conceptId: String(concept.id) }}>
-                  {concept.title}
-                </Link>
-              ))}
-            </div>
+            {question.correct === false
+              ? <RelatedConceptPracticeActions questionId={question.questionId} concepts={question.concepts} linkClassName="chip text-link" />
+              : (
+                <div className="chip-row">
+                  {question.concepts.map((concept) => (
+                    <Link className="chip text-link" key={concept.id} to="/concepts/$conceptId" params={{ conceptId: String(concept.id) }}>
+                      {concept.title}
+                    </Link>
+                  ))}
+                </div>
+              )}
+          </div>
+        )}
+
+        {question.correct === false && (
+          <div className="result-question-retry-actions">
+            <button
+              className="secondary-button"
+              type="button"
+              disabled={hasPendingSelfCheck || retryQuestionMutation.isPending}
+              onClick={() => retryQuestionMutation.mutate()}
+            >
+              {retryQuestionMutation.isPending ? '준비 중…' : '이 문제 다시 풀기'}
+            </button>
+            {hasPendingSelfCheck && <span className="helper-text">자기채점을 모두 완료하면 이 문제를 다시 풀 수 있습니다.</span>}
+            {retryQuestionMutation.isError && <span className="helper-text error-text">이 문제를 다시 시작하지 못했습니다.</span>}
           </div>
         )}
       </div>
@@ -306,7 +336,7 @@ export function QuizResultPage() {
             <span className="result-count">{selfCheckQuestions.length}개</span>
           </div>
           <div className="quiz-result-list quiz-result-attention-list">
-            {selfCheckQuestions.map((question) => <QuestionResultCard key={question.questionId} quizId={quizId} question={question} defaultOpen />)}
+            {selfCheckQuestions.map((question) => <QuestionResultCard key={question.questionId} quizId={quizId} question={question} defaultOpen hasPendingSelfCheck={hasPendingSelfCheck} />)}
           </div>
         </section>
       )}
@@ -318,7 +348,7 @@ export function QuizResultPage() {
         </div>
         {reviewQuestions.length > 0 ? (
           <div className="quiz-result-list quiz-result-attention-list">
-            {reviewQuestions.map((question, index) => <QuestionResultCard key={question.questionId} quizId={quizId} question={question} defaultOpen={index === 0} />)}
+            {reviewQuestions.map((question, index) => <QuestionResultCard key={question.questionId} quizId={quizId} question={question} defaultOpen={index === 0} hasPendingSelfCheck={hasPendingSelfCheck} />)}
           </div>
         ) : (
           <div className="result-clear-state"><strong>다시 확인할 오답이나 미답변이 없습니다.</strong><span>정답 문항의 해설이 필요하면 아래에서 펼쳐볼 수 있습니다.</span></div>
@@ -354,7 +384,7 @@ export function QuizResultPage() {
         <details className="correct-result-disclosure">
           <summary><span><span className="eyebrow">필요할 때만</span><strong>정답 문항 {correctQuestions.length}개 보기</strong></span><span>해설과 답안 확인 ⌄</span></summary>
           <div className="quiz-result-list correct-result-list">
-            {correctQuestions.map((question, index) => <QuestionResultCard key={question.questionId} quizId={quizId} question={question} defaultOpen={index === 0} />)}
+            {correctQuestions.map((question, index) => <QuestionResultCard key={question.questionId} quizId={quizId} question={question} defaultOpen={index === 0} hasPendingSelfCheck={hasPendingSelfCheck} />)}
           </div>
         </details>
       )}
