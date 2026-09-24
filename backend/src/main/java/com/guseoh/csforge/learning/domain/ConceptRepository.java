@@ -33,7 +33,7 @@ public interface ConceptRepository extends JpaRepository<Concept, Long> {
     Optional<Concept> findPublishedById(@Param("id") Long id);
 
     @Query("""
-            select c
+            select new com.guseoh.csforge.learning.domain.ConceptNavigationSummary(c.id, c.title, c.level)
             from Concept c
             join c.topic t
             join t.learningArea a
@@ -48,7 +48,7 @@ public interface ConceptRepository extends JpaRepository<Concept, Long> {
               )
             order by t.displayOrder desc, c.displayOrder desc, c.id desc
             """)
-    List<Concept> findPreviousPublished(
+    List<ConceptNavigationSummary> findPreviousPublished(
             @Param("conceptId") long conceptId,
             @Param("areaId") long areaId,
             @Param("topicOrder") int topicOrder,
@@ -56,7 +56,7 @@ public interface ConceptRepository extends JpaRepository<Concept, Long> {
             Pageable pageable);
 
     @Query("""
-            select c
+            select new com.guseoh.csforge.learning.domain.ConceptNavigationSummary(c.id, c.title, c.level)
             from Concept c
             join c.topic t
             join t.learningArea a
@@ -71,7 +71,7 @@ public interface ConceptRepository extends JpaRepository<Concept, Long> {
               )
             order by t.displayOrder, c.displayOrder, c.id
             """)
-    List<Concept> findNextPublished(
+    List<ConceptNavigationSummary> findNextPublished(
             @Param("conceptId") long conceptId,
             @Param("areaId") long areaId,
             @Param("topicOrder") int topicOrder,
@@ -79,14 +79,14 @@ public interface ConceptRepository extends JpaRepository<Concept, Long> {
             Pageable pageable);
 
     @Query("""
-            select c
+            select new com.guseoh.csforge.learning.domain.ConceptNavigationSummary(c.id, c.title, c.level)
             from Concept c
             where c.topic.id = :topicId
               and c.status = com.guseoh.csforge.learning.domain.ContentStatus.PUBLISHED
               and c.id <> :conceptId
             order by abs(c.displayOrder - :displayOrder), c.displayOrder, c.id
             """)
-    List<Concept> findRelatedPublished(
+    List<ConceptNavigationSummary> findRelatedPublished(
             @Param("conceptId") long conceptId,
             @Param("topicId") long topicId,
             @Param("displayOrder") int displayOrder,

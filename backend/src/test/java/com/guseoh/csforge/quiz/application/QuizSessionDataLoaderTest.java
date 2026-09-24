@@ -75,7 +75,7 @@ class QuizSessionDataLoaderTest {
         when(choiceRepository.findForQuestionIds(questionIds)).thenReturn(List.of(choice));
         when(choice.getQuestion()).thenReturn(question);
         when(answerRepository.findForQuestionIds(questionIds)).thenReturn(List.of());
-        when(conceptRepository.findForQuestionIds(questionIds)).thenReturn(List.of());
+        when(conceptRepository.findSummariesForQuestionIds(questionIds)).thenReturn(List.of());
 
         QuizSessionData data = dataLoader.loadForResult(quizId);
 

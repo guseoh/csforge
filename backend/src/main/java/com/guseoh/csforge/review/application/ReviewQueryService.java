@@ -13,7 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.guseoh.csforge.question.domain.QuestionConcept;
+import com.guseoh.csforge.question.domain.QuestionConceptSummary;
 import com.guseoh.csforge.question.domain.QuestionConceptRepository;
 import com.guseoh.csforge.review.domain.ReviewSchedule;
 import com.guseoh.csforge.review.domain.ReviewScheduleRepository;
@@ -52,21 +52,19 @@ public class ReviewQueryService {
         ReviewListCriteria timedCriteria = criteria.at(ReviewTimeWindow.from(Instant.now(clock), studyZoneId));
         Page<ReviewSchedule> result = searchRepository.search(timedCriteria, PageRequest.of(page, size));
         List<Long> ids = result.getContent().stream().map(ReviewSchedule::getQuestionId).toList();
-        Map<Long, List<QuestionConcept>> concepts = conceptRepository.findForQuestionIds(ids).stream()
-                .collect(Collectors.groupingBy(item -> item.getQuestion().getId()));
+        Map<Long, List<QuestionConceptSummary>> concepts = conceptRepository.findSummariesForQuestionIds(ids).stream()
+                .collect(Collectors.groupingBy(QuestionConceptSummary::questionId));
         return new ReviewPageView(
                 result.getContent().stream().map(schedule -> toItem(schedule, concepts.getOrDefault(schedule.getQuestionId(), List.of()))).toList(),
                 result.getTotalElements(), page, size);
     }
 
-    private ReviewListItemView toItem(ReviewSchedule schedule, List<QuestionConcept> links) {
+    private ReviewListItemView toItem(ReviewSchedule schedule, List<QuestionConceptSummary> links) {
         var question = schedule.getQuestion();
         return new ReviewListItemView(question.getId(), question.getPromptMarkdown(), question.getQuestionType(), question.getDifficulty(),
                 links.stream().map(link -> {
-                    var concept = link.getConcept();
-                    var topic = concept.getTopic();
-                    var area = topic.getLearningArea();
-                    return new ReviewListItemView.ConceptView(concept.getId(), concept.getSlug(), concept.getTitle(), area.getSlug(), area.getName(), concept.getLevel());
+                    return new ReviewListItemView.ConceptView(link.conceptId(), link.conceptSlug(), link.conceptTitle(),
+                            link.areaSlug(), link.areaName(), link.conceptLevel());
                 }).toList(), schedule.getStatus(), schedule.getStage(), schedule.getDueAt(), schedule.getLastReviewedAt());
     }
 }

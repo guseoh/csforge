@@ -8,10 +8,7 @@ import java.util.Set;
 
 import org.springframework.stereotype.Component;
 
-import com.guseoh.csforge.learning.domain.Concept;
-import com.guseoh.csforge.learning.domain.LearningArea;
-import com.guseoh.csforge.learning.domain.Topic;
-import com.guseoh.csforge.question.domain.QuestionConcept;
+import com.guseoh.csforge.question.domain.QuestionConceptSummary;
 import com.guseoh.csforge.quiz.domain.Attempt;
 import com.guseoh.csforge.quiz.domain.AttemptGradingStatus;
 import com.guseoh.csforge.quiz.domain.QuizQuestion;
@@ -42,13 +39,10 @@ public class QuizResultCalculator {
         return new QuizResultView(data, total.toSummary(), breakdownViews);
     }
 
-    private Set<TopicKey> relatedTopics(List<QuestionConcept> links) {
+    private Set<TopicKey> relatedTopics(List<QuestionConceptSummary> links) {
         Set<TopicKey> topics = new LinkedHashSet<>();
-        for (QuestionConcept link : links) {
-            Concept concept = link.getConcept();
-            Topic topic = concept.getTopic();
-            LearningArea area = topic.getLearningArea();
-            topics.add(new TopicKey(area.getSlug(), area.getName(), topic.getSlug(), topic.getTitle()));
+        for (QuestionConceptSummary link : links) {
+            topics.add(new TopicKey(link.areaSlug(), link.areaName(), link.topicSlug(), link.topicTitle()));
         }
         return topics;
     }
