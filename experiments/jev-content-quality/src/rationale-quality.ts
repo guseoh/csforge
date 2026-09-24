@@ -5,7 +5,7 @@ import path from "node:path";
 import { DEFAULT_MODEL, TypeSafeApiError, TypeSafeDirectClient } from "./client.js";
 import type { RubricQuestion } from "./types.js";
 
-export const RATIONALE_RUBRIC_VERSION = "rationale-quality-v1";
+export const RATIONALE_RUBRIC_VERSION = "rationale-quality-v2";
 export const CRITERIA = ["choice_rationale_misalignment", "choice_rationale_conflict", "choice_rationale_shallow"] as const;
 type Criterion = typeof CRITERIA[number];
 type SourceKind = "natural" | "historical" | "synthetic";
@@ -32,7 +32,7 @@ const INPUT_COST_USD_PER_MILLION = 0.042;
 export const RATIONALE_QUESTIONS: Record<Criterion, RubricQuestion> = {
   choice_rationale_misalignment: {
     type: "noul",
-    instructions: "대상 선택지의 rationaleMarkdown이 다른 선택지나 다른 주장에 대한 실질적 근거를 설명할 확률은? 단순히 이유가 부족한 경우는 제외한다. 문항, 대상 선택지, 정답, 공통 해설과 비교하라. 한국어와 기술 용어를 의미로 판단하라.",
+    instructions: "targetChoiceContent와 targetRationaleMarkdown를 직접 대조하라. rationale가 대상 선택지 대신 다른 선택지의 주장만 설명하여 대상의 정오 근거를 제공하지 않을 확률은? 오답 선택지의 오개념을 반박하려고 다른 개념을 비교·언급하는 것은 정상적인 근거다. 표현이나 용어가 달라도 같은 주장을 설명하면 결함이 아니다. 이유가 부족할 뿐인 경우는 이 기준에서 제외한다.",
   },
   choice_rationale_conflict: {
     type: "noul",
@@ -102,6 +102,8 @@ export function stateFor(candidate: Case): Record<string, unknown> {
     correctChoiceKey: candidate.correctChoiceKey,
     explanationMarkdown: candidate.explanationMarkdown,
     targetChoiceKey: candidate.choiceKey,
+    targetChoiceContent: candidate.choices.find((choice) => choice.key === candidate.choiceKey)?.content,
+    targetChoiceIsCorrect: candidate.choiceKey === candidate.correctChoiceKey,
     targetRationaleMarkdown: candidate.rationaleMarkdown,
   };
 }

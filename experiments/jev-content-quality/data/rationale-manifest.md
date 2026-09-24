@@ -1,6 +1,6 @@
 # #155 rationale quality benchmark manifest
 
-This manifest was fixed before the first #155 provider call. The canonical source is main commit `e4b8cc5ee236c2cb916d6b03be3a135156f7e997`. The JSONL stores the exact evaluated question state, choice rationale, independent Gold booleans, case-specific human review reason, source path/ref, and split. `scripts/build-rationale-cases.py` reproduces it; canonical content is unchanged.
+The sampling, Gold, split and metrics below were fixed before the first #155 provider call. The canonical source is main commit `e4b8cc5ee236c2cb916d6b03be3a135156f7e997`. The JSONL stores the exact evaluated question state, choice rationale, independent Gold booleans, case-specific human review reason, source path/ref, and split. `scripts/build-rationale-cases.py` reproduces it; canonical content is unchanged.
 
 ## Human Gold and sampling
 
@@ -19,6 +19,8 @@ One Korean Jev rubric asks the three independent probabilities. Review priority 
 For each source and split, review the top `ceil(n × budget)` at budgets 10%, 20%, and 30%. Report positive recall, precision, and lift (`precision / prevalence`, the expectation of random review). Report pairwise ROC-AUC, counting ties as half a win. If a stratum has no Gold positives, recall/lift is `N/A`. Criterion-level FP/FN use probability ≥0.5 only as a diagnostic cutoff, never a deployment policy. Report source-separated criterion AUC, individual scored cases, Korean technical-content misses/false alarms, token counts, latency p50/p95 and estimated input-token cost. The cost estimate follows the existing harness assumption of $0.042 per million input tokens; actual billed cost is unknown.
 
 The development evaluation can reveal rubric or implementation faults. Any correction requires a new development run. The holdout runs only after `rationale-freeze.json` records dataset/rubric SHA-256 values. Holdout labels and scores are excluded from calibration. The experiment-only GitHub workflow uses `TYPESAFE_API_KEY` as a secret and stores artifacts without API keys or raw provider payloads. It does not connect to the operational weak-distractor workflow.
+
+Development iteration 1 (`rationale-quality-v1`, GitHub run 35960104208) showed a broad misalignment false alarm: 13/15 natural negatives exceeded diagnostic probability 0.5, and the known historical positives ranked below their fixed negatives. Before any holdout call, version 2 now states the target choice content explicitly and excludes valid comparisons used to rebut a target misconception. Dataset, Gold, score formula and budget metrics are unchanged. The v1 results are retained as evidence; version 2 requires a fresh development run before freeze.
 
 ## Interpretation boundary
 
