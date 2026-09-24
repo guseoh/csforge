@@ -147,7 +147,7 @@
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.data-representation.fixed-width-overflow.q3",
-    "promptMarkdown": "32-bit signed `count * elementSize`로 allocation byte 수를 계산하는 코드에서 두 입력은 각각 양수이고 개별 범위 검사도 통과했다. 곱셈 overflow가 보안·정합성 문제로 이어질 수 있는 경로를 설명하고 안전한 검증 순서를 제시하라.",
+    "promptMarkdown": "Java의 32-bit signed `int`인 `count * elementSize`로 allocation byte 수를 계산하는 코드에서 두 입력은 각각 양수이고 개별 범위 검사도 통과했다. 곱셈 overflow가 보안·정합성 문제로 이어질 수 있는 경로를 설명하고 안전한 검증 순서를 제시하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
