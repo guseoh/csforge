@@ -8,10 +8,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.algorithm-selection.constraint-to-complexity"],
     "choices": [
-      {"key": "A", "content": "둘은 Big-O가 다르지만 입력 크기와 무관하게 항상 같은 시간이다.", "displayOrder": 0},
-      {"key": "B", "content": "O(n log n). log가 있으므로 항상 n²보다 느리다.", "displayOrder": 1},
-      {"key": "C", "content": "O(n²). 약 10¹⁰ 규모의 작업이 되어 요청 경로에서 감당하기 어렵다.", "displayOrder": 2},
-      {"key": "D", "content": "O(n²)도 상수항이 작으면 입력 상한과 관계없이 항상 안전한 후보다.", "displayOrder": 3}
+      {"key":"A","content":"둘은 Big-O가 다르지만 입력 크기와 무관하게 항상 같은 시간이다.","displayOrder":0,"rationaleMarkdown":"Big-O는 입력 크기에 따라 비용이 어떻게 증가하는지를 나타내며 알고리즘 두 개가 같은 절대 시간을 쓴다는 뜻은 아니다. 실제 시간은 상수 계수·기계·구현에도 달려 있다."},
+      {"key":"B","content":"O(n log n). log가 있으므로 항상 n²보다 느리다.","displayOrder":1,"rationaleMarkdown":"충분히 큰 n에서는 `n log n`이 `n²`보다 느리게 증가한다. log가 있다는 이유만으로 더 느린 것은 아니다. 작은 입력이나 상수 계수에 따라 실제 구현 순서는 달라질 수 있다."},
+      {"key":"C","content":"O(n²). 약 10¹⁰ 규모의 작업이 되어 요청 경로에서 감당하기 어렵다.","displayOrder":2,"rationaleMarkdown":"상한에서 `n²`은 대략 100억 규모의 쌍별 연산이어서 일반적인 요청 경로의 첫 선택으로는 비현실적일 가능성이 크다. 이는 구조적 경고이지 정확한 실행 시간 예측은 아니다."},
+      {"key":"D","content":"O(n²)도 상수항이 작으면 입력 상한과 관계없이 항상 안전한 후보다.","displayOrder":3,"rationaleMarkdown":"작은 상수 계수가 모든 입력 한도에서 quadratic 증가를 안전하게 만들지는 않는다. 원소가 10만 개면 후보 쌍이 대략 100억 개까지 늘 수 있다."}
     ],
     "correctChoiceKey": "C",
     "explanationMarkdown": "입력 100,000에서 n²은 대략 10¹⁰ 규모로 증가하지만 n log n은 그보다 훨씬 작다. Big-O가 정확한 실행 시간을 주지는 않아도 이 정도 성장 차이는 후보를 구조적으로 거르는 근거가 된다."
@@ -104,10 +104,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.algorithm-selection.data-shape"],
     "choices": [
-      {"key": "A", "content": "Key 범위와 관계없이 무조건 O(n²) 비교 정렬", "displayOrder": 0},
-      {"key": "B", "content": "Counting sort처럼 제한된 key 범위를 사용하는 방법", "displayOrder": 1},
-      {"key": "C", "content": "값의 범위가 작아도 항상 comparison sort가 더 적합하다.", "displayOrder": 2},
-      {"key": "D", "content": "key range만큼의 count array를 만들면 memory는 항상 입력보다 작다.", "displayOrder": 3}
+      {"key":"A","content":"Key 범위와 관계없이 무조건 O(n²) 비교 정렬","displayOrder":0,"rationaleMarkdown":"비교 기반 quadratic 방법은 값 범위가 작아도 원소 100만 개에서 확장성이 나쁘다. 입력의 유용한 구조를 활용하지 못한다."},
+      {"key":"B","content":"Counting sort처럼 제한된 key 범위를 사용하는 방법","displayOrder":1,"rationaleMarkdown":"가능한 key가 1,000개뿐이면 빈도를 세고 key 순서로 출력하는 비용은 대략 `O(n+k)`다. 이런 입력 형태에서는 `O(n log n)` 비교 정렬과 비교할 후보가 된다."},
+      {"key":"C","content":"값의 범위가 작아도 항상 comparison sort가 더 적합하다.","displayOrder":2,"rationaleMarkdown":"key 범위가 제한되면 비비교 정렬을 고려할 수 있으므로 비교 정렬이 항상 더 낫지는 않다. 안정성·메모리 한도·실제 key 분포를 보고 선택해야 한다."},
+      {"key":"D","content":"key range만큼의 count array를 만들면 memory는 항상 입력보다 작다.","displayOrder":3,"rationaleMarkdown":"counting sort는 key 범위 `k`에 비례하는 공간이 필요하다. 입력보다 범위가 크거나 메모리 제약에 맞지 않을 수 있다. 여기서는 `k=1000`이 100만 원소보다 작지만 항상 그런 것은 아니다."}
     ],
     "correctChoiceKey": "B",
     "explanationMarkdown": "Key 종류가 1,000개로 제한되어 있어 값별 빈도를 세고 순서대로 복원하는 counting sort를 검토할 수 있다. 비용은 O(n+k)이므로 이 입력에서는 일반 비교 정렬의 O(n log n)과 비교할 가치가 있다."
@@ -155,10 +155,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.algorithm-selection.preprocessing-query-cost"],
     "choices": [
-      {"key": "A", "content": "preprocessing 비용은 query 횟수와 무관하게 매 query마다 다시 발생한다.", "displayOrder": 0},
-      {"key": "B", "content": "전처리 후 query: 805 ms", "displayOrder": 1},
-      {"key": "C", "content": "선형 scan: 100 ms", "displayOrder": 2},
-      {"key": "D", "content": "전처리 결과는 query가 몇 번이어도 원본 변경 비용을 고려할 필요가 없다.", "displayOrder": 3}
+      {"key":"A","content":"preprocessing 비용은 query 횟수와 무관하게 매 query마다 다시 발생한다.","displayOrder":0,"rationaleMarkdown":"전처리를 한 번 하고 재사용하면 query마다 반복해서 내는 것이 아니라 한 번만 비용을 낸다. query가 한 번뿐이어도 전체 전처리 800ms를 포함해야 한다."},
+      {"key":"B","content":"전처리 후 query: 805 ms","displayOrder":1,"rationaleMarkdown":"`805ms`는 query 한 번을 위한 전처리 방식의 전체 비용이지만 질문은 어느 방식이 더 싼지 묻는다. 이번에는 일회성 800ms 전처리가 없는 100ms scan이 더 싸다."},
+      {"key":"C","content":"선형 scan: 100 ms","displayOrder":2,"rationaleMarkdown":"한 번의 scan은 100ms이고 전처리 후 5ms query 한 번은 총 805ms다. query당 빠른 방식은 준비 결과를 충분히 재사용해야 초기 비용을 만회한다."},
+      {"key":"D","content":"전처리 결과는 query가 몇 번이어도 원본 변경 비용을 고려할 필요가 없다.","displayOrder":3,"rationaleMarkdown":"전처리 결과는 구축할 때 사용한 원본 데이터를 반영한다. 원본이 바뀌면 다시 계산하거나 무효화해야 하므로 update 비용을 빼면 비교가 잘못될 수 있다."}
     ],
     "correctChoiceKey": "C",
     "explanationMarkdown": "Query 한 번이면 선형 scan은 100 ms지만 전처리 방식은 `800+5=805 ms`가 든다. 반복 횟수가 전처리 비용을 상쇄하기 전에는 단순 scan이 더 저렴하다."
@@ -206,10 +206,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.algorithm-selection.online-offline"],
     "choices": [
-      {"key": "A", "content": "미래 입력을 알더라도 반드시 즉시 결정을 확정해야 한다.", "displayOrder": 0},
-      {"key": "B", "content": "전체 입력을 정렬하거나 전처리하는 offline 전략을 검토할 수 있다.", "displayOrder": 1},
-      {"key": "C", "content": "offline 전략을 쓰면 결과를 한 번 계산한 뒤에는 갱신할 수 없다.", "displayOrder": 2},
-      {"key": "D", "content": "online 알고리즘은 과거 입력을 모두 보존해야만 다음 결정을 내릴 수 있다.", "displayOrder": 3}
+      {"key":"A","content":"미래 입력을 알더라도 반드시 즉시 결정을 확정해야 한다.","displayOrder":0,"rationaleMarkdown":"offline 문제에서는 출력 결정을 하기 전에 입력 전체를 볼 수 있어 즉시 확정할 필요가 없다. 즉시 결정해야 하는 제약은 online 문제의 특성이다."},
+      {"key":"B","content":"전체 입력을 정렬하거나 전처리하는 offline 전략을 검토할 수 있다.","displayOrder":1,"rationaleMarkdown":"입력 전체를 볼 수 있고 결과를 바로 낼 필요가 없으면 sorting·preprocessing으로 먼저 전체 구조를 파악한 뒤 결정할 수 있다. 이후 처리 과정을 단순하게 만들 수 있다."},
+      {"key":"C","content":"offline 전략을 쓰면 결과를 한 번 계산한 뒤에는 갱신할 수 없다.","displayOrder":2,"rationaleMarkdown":"offline은 알고리즘이 언제 입력을 볼 수 있는지를 말하지 데이터가 영원히 바뀌지 않는다는 뜻은 아니다. 입력이 변하면 다시 계산해야 할 수 있고 dynamic 구조는 추가 비용으로 갱신을 지원할 수 있다."},
+      {"key":"D","content":"online 알고리즘은 과거 입력을 모두 보존해야만 다음 결정을 내릴 수 있다.","displayOrder":3,"rationaleMarkdown":"online 알고리즘은 미래 입력을 볼 수 없어도 과거 항목 전부가 아니라 요약된 상태만 유지할 수 있다. 필요한 상태 크기는 문제에 달렸다."}
     ],
     "correctChoiceKey": "B",
     "explanationMarkdown": "미래 입력까지 볼 수 있고 즉시 답할 필요가 없다면 전체 데이터를 정렬하거나 전처리한 뒤 결정할 수 있다. 이는 도착 시점마다 결정을 내려야 하는 online 제약이 없는 경우의 장점이다."
@@ -246,10 +246,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.algorithm-selection.operation-driven-structure-choice"],
     "choices": [
-      {"key": "A", "content": "정렬을 유지하는 ordered map", "displayOrder": 0},
-      {"key": "B", "content": "Sorted array와 binary search", "displayOrder": 1},
-      {"key": "C", "content": "Balanced search tree", "displayOrder": 2},
-      {"key": "D", "content": "Hash table", "displayOrder": 3}
+      {"key":"A","content":"정렬을 유지하는 ordered map","displayOrder":0,"rationaleMarkdown":"ordered map은 정렬 순회나 range query 때문에 순서 유지가 필요할 때 유용하다. 이 workload에는 그런 연산이 필요 없으므로 순서 유지 비용이 이득이 아닐 수 있다."},
+      {"key":"B","content":"Sorted array와 binary search","displayOrder":1,"rationaleMarkdown":"binary search는 정렬 배열에서 정확한 key를 찾지만 조회가 logarithmic이고 잦은 갱신 때 정렬 상태 유지가 비쌀 수 있다. 데이터가 정적이고 작다면 여전히 후보가 된다."},
+      {"key":"C","content":"Balanced search tree","displayOrder":2,"rationaleMarkdown":"balanced tree는 정렬 순서를 유지해 보통 logarithmic lookup과 range 연산을 지원한다. 정확한 key 조회만 필요하면 이 순서 유지 비용이 가치를 주지 않을 수 있다."},
+      {"key":"D","content":"Hash table","displayOrder":3,"rationaleMarkdown":"정확한 key 조회가 대부분이고 정렬이 필요 없으면 hash table을 먼저 고려할 수 있다. 적절한 hashing과 load에서는 기대 시간 상수 조회가 가능하다. worst case와 메모리 비용은 구현과 workload에 달렸다."}
     ],
     "correctChoiceKey": "D",
     "explanationMarkdown": "Hash table은 ordering을 유지하는 비용 없이 hash로 후보 bucket을 좁혀 평균적인 exact-key lookup을 빠르게 만든다. Range query나 정렬 순회가 중요해지면 ordered structure가 더 적합할 수 있다."

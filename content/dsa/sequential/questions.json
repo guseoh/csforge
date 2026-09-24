@@ -41,10 +41,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.sequential.dynamic-array"],
     "choices": [
-      {"key":"A","content":"size는 예약된 slot 수이고 capacity는 현재 live 원소 수다","displayOrder":0},
-      {"key":"B","content":"size는 현재 저장된 원소 수이고 capacity는 재할당 없이 담을 수 있는 backing storage 크기다","displayOrder":1},
-      {"key":"C","content":"size와 capacity는 모두 allocator가 예약한 byte 수를 뜻한다","displayOrder":2},
-      {"key":"D","content":"capacity가 남아 있어도 append마다 backing storage를 교체해야 한다","displayOrder":3}
+      {"key":"A","content":"size는 예약된 slot 수이고 capacity는 현재 live 원소 수다","displayOrder":0,"rationaleMarkdown":"용어를 뒤집었다. size는 현재 저장된 원소 수이고 capacity는 backing storage를 다시 할당하기 전에 담을 수 있는 원소 수다."},
+      {"key":"B","content":"size는 현재 저장된 원소 수이고 capacity는 재할당 없이 담을 수 있는 backing storage 크기다","displayOrder":1,"rationaleMarkdown":"size는 현재 원소 개수이고 capacity는 재할당 전까지 담을 수 있는 backing storage의 한도다. size가 그 한도에 도달하기 전까지는 남는 capacity에 append할 수 있다."},
+      {"key":"C","content":"size와 capacity는 모두 allocator가 예약한 byte 수를 뜻한다","displayOrder":2,"rationaleMarkdown":"size와 capacity는 byte 수가 아니라 원소 수다. 실제 byte 사용량은 원소 표현·정렬·allocator overhead에 달려 있다."},
+      {"key":"D","content":"capacity가 남아 있어도 append마다 backing storage를 교체해야 한다","displayOrder":3,"rationaleMarkdown":"남는 capacity가 있으면 backing array를 바꾸지 않고 다음 slot에 append할 수 있다. 현재 capacity가 소진될 때만 확장이 필요하다."}
     ],
     "correctChoiceKey": "B",
     "explanationMarkdown": "Size는 현재 저장된 원소 수이고 capacity는 backing storage가 재할당 없이 수용할 수 있는 수다. `size == capacity`일 때 다음 append가 growth를 요구한다."
@@ -157,10 +157,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.sequential.array-vs-linked"],
     "choices": [
-      {"key":"A","content":"doubly linked list: prev pointer가 CPU cache miss를 제거하기 때문이다","displayOrder":0},
-      {"key":"B","content":"singly linked list: index 접근이 항상 O(1)이기 때문이다","displayOrder":1},
-      {"key":"C","content":"array 계열: 직접 index 계산과 연속 배치 locality가 workload에 맞는다","displayOrder":2},
-      {"key":"D","content":"어떤 구조든 Big-O와 memory layout이 항상 같으므로 차이가 없다","displayOrder":3}
+      {"key":"A","content":"doubly linked list: prev pointer가 CPU cache miss를 제거하기 때문이다","displayOrder":0,"rationaleMarkdown":"linked list는 node 사이 pointer를 따라가며 node가 흩어져 있으면 cache miss가 날 수 있다. 이전 pointer가 역방향 순회에 도움은 되어도 memory latency를 없애지는 않는다."},
+      {"key":"B","content":"singly linked list: index 접근이 항상 O(1)이기 때문이다","displayOrder":1,"rationaleMarkdown":"singly linked list는 임의 index에 바로 가는 공식이 없어 알려진 node에서 link를 따라가야 한다. index 접근은 지나가는 거리만큼 선형 시간이 든다."},
+      {"key":"C","content":"array 계열: 직접 index 계산과 연속 배치 locality가 workload에 맞는다","displayOrder":2,"rationaleMarkdown":"array는 index를 바로 계산하고 이웃 원소를 가까이 배치하므로 잦은 random read와 순차 순회에 적합하다. 중간 삽입이 드물다면 지배적인 연산의 이점을 상쇄하지 않는다."},
+      {"key":"D","content":"어떤 구조든 Big-O와 memory layout이 항상 같으므로 차이가 없다","displayOrder":3,"rationaleMarkdown":"점근 lookup bound가 같아도 상수 비용·할당·pointer chasing·cache locality는 다를 수 있다. 이 workload에는 복잡도와 메모리 배치가 모두 중요하다."}
     ],
     "correctChoiceKey": "C",
     "explanationMarkdown": "Index random access와 순차 iteration이 지배적이면 주소 계산이 직접적이고 memory가 연속적인 array 계열이 유리하다. 드문 중간 삽입만 보고 linked structure를 선택하면 traversal과 locality 비용이 커질 수 있다."

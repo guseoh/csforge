@@ -140,10 +140,10 @@
     "status":"PUBLISHED",
     "conceptKeys":["dsa.core.trees.tree-rotation"],
     "choices":[
-      {"key":"A","content":"inorder가 보존되므로 subtree link와 balance metadata는 확인할 필요가 없다","displayOrder":0},
-      {"key":"B","content":"항상 역순 C,y,B,x,A가 된다","displayOrder":1},
-      {"key":"C","content":"rotation은 key 값을 다시 정렬해 새 값으로 바꾼다","displayOrder":2},
-      {"key":"D","content":"바뀌지 않는다. A,x,B,y,C 순서를 보존한다","displayOrder":3}
+      {"key":"A","content":"inorder가 보존되므로 subtree link와 balance metadata는 확인할 필요가 없다","displayOrder":0,"rationaleMarkdown":"inorder 순서는 유지되지만 parent-child link와 subtree 소유 관계는 바뀌므로 올바르게 갱신해야 한다. height나 balance metadata도 다시 계산해야 할 수 있다."},
+      {"key":"B","content":"항상 역순 C,y,B,x,A가 된다","displayOrder":1,"rationaleMarkdown":"right rotation은 BST inorder 순서를 뒤집지 않고 보존한다. 순서는 A, x, B, y, C로 유지된다."},
+      {"key":"C","content":"rotation은 key 값을 다시 정렬해 새 값으로 바꾼다","displayOrder":2,"rationaleMarkdown":"rotation은 기존 node 사이의 pointer를 바꾸지 key 값을 바꾸지 않는다. 목적은 검색 순서를 보존하면서 tree 모양을 바꾸는 것이다."},
+      {"key":"D","content":"바뀌지 않는다. A,x,B,y,C 순서를 보존한다","displayOrder":3,"rationaleMarkdown":"subtree 순서는 A 다음 x, x와 y 사이의 B, y 다음 C로 유지된다. right rotation은 link를 재배치하지만 inorder sequence A, x, B, y, C를 보존한다."}
     ],
     "correctChoiceKey":"D",
     "explanationMarkdown": "Right rotation은 회전 전 subtree의 inorder key sequence를 보존하면서 parent-child link만 바꾼다. 따라서 BST key ordering은 유지되고 height나 balance만 달라질 수 있다."

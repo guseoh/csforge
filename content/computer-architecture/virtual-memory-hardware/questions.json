@@ -8,10 +8,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.virtual-memory-hardware.virtual-physical-address"],
     "choices": [
-      {"key": "A", "content": "각 process의 page table에 따라 서로 다른 physical frame으로 변환될 수 있다.", "displayOrder": 0},
-      {"key": "B", "content": "virtual address 숫자가 같으므로 반드시 같은 physical byte를 가리킨다.", "displayOrder": 1},
-      {"key": "C", "content": "virtual address는 process마다 사용이 금지되고 kernel만 사용할 수 있다.", "displayOrder": 2},
-      {"key": "D", "content": "physical address가 먼저 정해져야만 process가 virtual address를 읽을 수 있다.", "displayOrder": 3}
+      {"key":"A","content":"각 process의 page table에 따라 서로 다른 physical frame으로 변환될 수 있다.","displayOrder":0,"rationaleMarkdown":"가상 주소는 해당 프로세스 주소 공간 안에서 해석된다. 서로 다른 page table은 같은 숫자 주소를 서로 다른 물리 frame에 mapping할 수 있고, 공유 mapping은 의도적으로 같은 frame에 연결할 수도 있다."},
+      {"key":"B","content":"virtual address 숫자가 같으므로 반드시 같은 physical byte를 가리킨다.","displayOrder":1,"rationaleMarkdown":"가상 주소 숫자만으로 프로세스 사이에서 물리 byte를 식별할 수 없다. 실제 변환은 현재 활성 주소 공간의 mapping과 권한에 달렸다."},
+      {"key":"C","content":"virtual address는 process마다 사용이 금지되고 kernel만 사용할 수 있다.","displayOrder":2,"rationaleMarkdown":"사용자 프로세스는 code·stack·heap에 가상 주소를 일상적으로 사용한다. OS와 hardware가 주소 공간을 격리하며 가상 주소가 kernel 전용인 것은 아니다."},
+      {"key":"D","content":"physical address가 먼저 정해져야만 process가 virtual address를 읽을 수 있다.","displayOrder":3,"rationaleMarkdown":"software는 가상 주소를 사용하고 MMU가 memory access 과정에서 이를 변환한다. 매핑된 메모리를 읽으려고 물리 주소를 미리 알아야 하는 것은 아니다."}
     ],
     "correctChoiceKey": "A",
     "explanationMarkdown": "Virtual address는 process별 address space 안에서 해석되므로 같은 `0x1000`도 각 page table에 따라 다른 physical frame으로 변환될 수 있다. Shared mapping을 의도한 경우에만 같은 frame을 가리킬 수도 있다."
@@ -47,10 +47,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.virtual-memory-hardware.mmu"],
     "choices": [
-      {"key": "A", "content": "어떤 page를 swap할지 application 대신 직접 정책적으로 선택한다.", "displayOrder": 0},
-      {"key": "B", "content": "현재 address-space의 mapping을 이용해 virtual address를 translate하고 memory access permission을 검사한다.", "displayOrder": 1},
-      {"key": "C", "content": "모든 TLB miss를 자동으로 disk I/O로 바꾼다.", "displayOrder": 2},
-      {"key": "D", "content": "CPU cache에서 어느 data line을 교체할지 replacement policy를 결정한다.", "displayOrder": 3}
+      {"key":"A","content":"어떤 page를 swap할지 application 대신 직접 정책적으로 선택한다.","displayOrder":0,"rationaleMarkdown":"page replacement는 어떤 상주 page를 회수할지 결정하는 OS memory-management 정책이다. MMU는 접근 시 주소 변환과 권한 검사를 수행한다."},
+      {"key":"B","content":"현재 address-space의 mapping을 이용해 virtual address를 translate하고 memory access permission을 검사한다.","displayOrder":1,"rationaleMarkdown":"MMU는 활성 주소 공간 mapping을 사용하며 흔히 TLB와 page table을 통해 가상 주소를 변환하고 권한을 검사한다. 허용되지 않은 접근은 조용히 통과시키지 않고 architecture가 정의한 fault를 낸다."},
+      {"key":"C","content":"모든 TLB miss를 자동으로 disk I/O로 바꾼다.","displayOrder":2,"rationaleMarkdown":"TLB miss는 변환이 TLB에 cache되어 있지 않다는 뜻이지 memory의 mapping이 없다는 뜻이 아니다. page-table walk로 disk I/O 없이 유효한 상주 mapping을 찾을 수 있으며 page fault는 별도 조건이다."},
+      {"key":"D","content":"CPU cache에서 어느 data line을 교체할지 replacement policy를 결정한다.","displayOrder":3,"rationaleMarkdown":"cache victim 선택은 cache hierarchy 기능으로 가상 주소 변환·접근 권한 검사와 구별된다. 일부 hardware 제어 논리를 공유하더라도 각 정책이 답하는 질문은 다르다."}
     ],
     "correctChoiceKey": "B",
     "explanationMarkdown": "MMU는 현재 address space의 page-table/TLB 정보를 이용해 virtual address를 physical address로 translate하고, mapping에 설정된 read/write/execute permission도 함께 검사한다. 허용되지 않은 접근은 architecture가 정의한 fault/exception으로 처리되며, page replacement나 cache-line replacement 정책 자체를 MMU가 결정하는 것은 아니다."
@@ -86,13 +86,13 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.virtual-memory-hardware.page-table-walk"],
     "choices": [
-      {"key": "A", "content": "physical address translation 없이 virtual address를 그대로 DRAM bus에 보낸다.", "displayOrder": 0},
-      {"key": "B", "content": "TLB miss 자체가 항상 fatal page fault이므로 process를 종료한다.", "displayOrder": 1},
-      {"key": "C", "content": "page-table walk로 translation을 찾아 TLB를 채우고 원래 memory access를 계속할 수 있다.", "displayOrder": 2},
-      {"key": "D", "content": "page replacement algorithm이 반드시 disk에서 page를 읽어 온다.", "displayOrder": 3}
+      {"key":"A","content":"physical address translation 없이 virtual address를 그대로 DRAM bus에 보낸다.","displayOrder":0,"rationaleMarkdown":"유효한 가상 mapping도 대응하는 물리 memory 요청을 내기 전에 변환해야 한다. 변환하지 않은 값을 물리 주소로 보내면 다른 위치에 접근하게 된다."},
+      {"key":"B","content":"TLB miss 자체가 항상 fatal page fault이므로 process를 종료한다.","displayOrder":1,"rationaleMarkdown":"TLB miss가 말하는 것은 translation이 TLB에서 발견되지 않았다는 점뿐이다. page table에 유효하고 허용된 mapping이 있으면 hardware나 software가 walk하고 TLB를 채운 뒤 프로세스를 종료하지 않고 이어갈 수 있다."},
+      {"key":"C","content":"page-table walk로 translation을 찾아 TLB를 채우고 원래 memory access를 계속할 수 있다.","displayOrder":2,"rationaleMarkdown":"page-table walk가 누락된 translation을 찾는다. mapping이 유효하고 허용되면 TLB에 cache하고 원래 접근을 재시도하거나 이어갈 수 있다. mapping이 없거나 금지된 경우에는 architecture의 fault 경로를 따른다."},
+      {"key":"D","content":"page replacement algorithm이 반드시 disk에서 page를 읽어 온다.","displayOrder":3,"rationaleMarkdown":"page replacement는 필요한 page가 상주하지 않아 OS가 page fault를 처리할 때 관련된다. 유효한 상주 mapping에 대한 TLB miss는 translation 조회가 필요하지 disk에서 page를 적재할 상황이 아니다."}
     ],
     "correctChoiceKey": "C",
-    "explanationMarkdown": "TLB miss에서는 virtual page number의 각 index를 따라 여러 page-table entry를 읽어 translation을 찾아야 하므로 실제 data access 외의 memory lookup이 추가된다. TLB miss는 virtual-to-physical translation을 찾기 위해 page-table walk를 추가할 수 있고, data-cache miss는 translation이 끝난 physical data를 lower cache/DRAM에서 가져오는 경로를 추가한다."
+    "explanationMarkdown": "TLB miss는 translation이 TLB에 없다는 뜻이다. Page-table walk가 유효하고 허용된 mapping을 찾으면 TLB에 채우고 원래 access를 재개할 수 있으며, mapping 부재나 권한 위반은 별도의 page-fault 경로로 처리된다."
   },
   {
     "kind": "question",
@@ -125,10 +125,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.virtual-memory-hardware.tlb"],
     "choices": [
-      {"key": "A", "content": "virtual page가 담고 있는 application data byte 전체", "displayOrder": 0},
-      {"key": "B", "content": "physical memory의 application data cache line 전체", "displayOrder": 1},
-      {"key": "C", "content": "virtual page에서 physical frame으로의 최근 translation과 관련 permission 정보", "displayOrder": 2},
-      {"key": "D", "content": "현재 process의 multi-level page table 전체를 tag 없이 복제한 값", "displayOrder": 3}
+      {"key":"A","content":"virtual page가 담고 있는 application data byte 전체","displayOrder":0,"rationaleMarkdown":"애플리케이션 데이터 byte는 data cache가 cache하며 TLB가 cache하지 않는다. TLB는 해당 byte 위치를 찾는 데 쓰는 주소 변환 정보를 담는다."},
+      {"key":"B","content":"physical memory의 application data cache line 전체","displayOrder":1,"rationaleMarkdown":"data cache는 memory line 내용을 보관하고 TLB는 virtual page를 physical frame으로 변환하는 정보를 저장한다. 둘 다 작은 hardware cache일 수 있지만 lookup 단계와 역할이 다르다."},
+      {"key":"C","content":"virtual page에서 physical frame으로의 최근 translation과 관련 permission 정보","displayOrder":2,"rationaleMarkdown":"TLB entry는 최근 virtual-page to physical-frame mapping과 접근 권한을 cache한다. hit면 translation을 재구성하는 page-table walk를 피할 수 있다."},
+      {"key":"D","content":"현재 process의 multi-level page table 전체를 tag 없이 복제한 값","displayOrder":3,"rationaleMarkdown":"TLB는 tag와 권한 metadata를 붙인 일부 변환을 cache할 뿐 모든 page-table 계층의 완전한 복사본을 저장하지 않는다. miss면 별도 변환 과정을 거친다."}
     ],
     "correctChoiceKey": "C",
     "explanationMarkdown": "TLB hit이면 cached translation과 permission을 사용해 반복적인 page-table walk를 피하고 physical memory hierarchy access를 진행할 수 있다. 4KiB page에서는 512 × 4KiB = 2MiB, 2MiB page에서는 512 × 2MiB = 1GiB의 virtual range를 같은 entry 수로 cover할 수 있다."
@@ -164,10 +164,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.virtual-memory-hardware.multi-level-page-table"],
     "choices": [
-      {"key": "A", "content": "page fault와 permission 검사를 제거한다.", "displayOrder": 0},
-      {"key": "B", "content": "모든 virtual address를 하나의 physical frame으로 mapping한다.", "displayOrder": 1},
-      {"key": "C", "content": "TLB가 없어도 translation 지연 시간이 항상 0이 된다.", "displayOrder": 2},
-      {"key": "D", "content": "사용하지 않는 큰 virtual range에 대한 lower-level page-table page를 만들지 않을 수 있다.", "displayOrder": 3}
+      {"key":"A","content":"page fault와 permission 검사를 제거한다.","displayOrder":0,"rationaleMarkdown":"multi-level table은 sparse mapping에 필요한 저장 공간을 줄이지만 page fault나 접근 권한 검사를 없애지는 않는다. 가상 메모리 보호와 상주 여부는 계속 적용된다."},
+      {"key":"B","content":"모든 virtual address를 하나의 physical frame으로 mapping한다.","displayOrder":1,"rationaleMarkdown":"서로 다른 가상 page는 서로 다른 물리 frame에 mapping될 수 있고 mapping되지 않은 범위도 많을 수 있다. 계층 구조는 주소를 합치는 대신 사용하지 않는 영역의 하위 table을 생략해 공간을 절약한다."},
+      {"key":"C","content":"TLB가 없어도 translation 지연 시간이 항상 0이 된다.","displayOrder":2,"rationaleMarkdown":"TLB hit는 page-table walk를 피할 수 있지만 miss면 translation lookup이 필요하고 지연이 추가된다. multi-level table이 변환 시간을 0으로 만들지 않는다."},
+      {"key":"D","content":"사용하지 않는 큰 virtual range에 대한 lower-level page-table page를 만들지 않을 수 있다.","displayOrder":3,"rationaleMarkdown":"sparse 주소 공간에서는 일부 범위만 mapping하면 된다. multi-level table은 미사용 범위의 하위 page-table page를 할당하지 않아 비어 있는 entry가 대부분인 큰 flat array를 피할 수 있다."}
     ],
     "correctChoiceKey": "D",
     "explanationMarkdown": "flat table은 conceptual하게 virtual page마다 entry 공간을 필요로 해 큰 sparse address space에서 대부분 unused entry가 될 수 있다. architecture가 상위 page-table entry가 큰 physical range를 직접 mapping하는 leaf 역할을 허용하면 해당 range에 대해 더 낮은-level table이 필요하지 않다."
@@ -203,10 +203,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.virtual-memory-hardware.page-size-huge-page"],
     "choices": [
-      {"key": "A", "content": "CPU cache line도 자동으로 page와 같은 크기로 커진다.", "displayOrder": 0},
-      {"key": "B", "content": "TLB entry 하나가 더 큰 virtual range를 cover해 TLB miss와 page-table pressure를 줄일 수 있다.", "displayOrder": 1},
-      {"key": "C", "content": "모든 data-cache miss와 NUMA remote access가 사라진다.", "displayOrder": 2},
-      {"key": "D", "content": "어떤 OS에서도 huge page는 fragmentation 없이 언제든 확보된다.", "displayOrder": 3}
+      {"key":"A","content":"CPU cache line도 자동으로 page와 같은 크기로 커진다.","displayOrder":0,"rationaleMarkdown":"huge page는 가상 메모리 변환 단위를 바꾸지만 CPU 데이터 전송의 cache-line 크기를 바꾸지 않는다. cache-line 설정은 별도 microarchitecture 속성이다."},
+      {"key":"B","content":"TLB entry 하나가 더 큰 virtual range를 cover해 TLB miss와 page-table pressure를 줄일 수 있다.","displayOrder":1,"rationaleMarkdown":"page가 크면 TLB entry 하나가 더 넓은 가상 주소 범위를 나타낸다. 넓은 working set에서 TLB miss와 필요한 page-table entry의 개수나 깊이를 줄일 수 있다."},
+      {"key":"C","content":"모든 data-cache miss와 NUMA remote access가 사라진다.","displayOrder":2,"rationaleMarkdown":"huge page는 변환 비용을 줄일 수 있지만 data-cache miss를 막거나 NUMA 지역성을 보장하지 않는다. 이는 memory 접근 패턴·cache 내용·물리 page 배치에 달렸다."},
+      {"key":"D","content":"어떤 OS에서도 huge page는 fragmentation 없이 언제든 확보된다.","displayOrder":3,"rationaleMarkdown":"크고 연속된 page는 할당하기 어려울 수 있고 page 일부만 쓰면 메모리를 낭비할 수 있다. 사용 가능성과 예약 방식은 OS와 huge-page 메커니즘에 따라 달라진다."}
     ],
     "correctChoiceKey": "B",
     "explanationMarkdown": "큰 page는 entry 하나가 더 넓은 range를 mapping해 TLB reach를 늘리고 필요한 page-table entry 수와 walk pressure를 줄일 수 있다. heap이 크더라도 실제 병목이 TLB/page-walk가 아닐 수 있고 huge-page mechanism마다 reservation, allocation, reclaim/split 동작과 memory 낭비 특성이 다르다."

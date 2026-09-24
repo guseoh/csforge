@@ -8,10 +8,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.data-representation.bit-byte-word"],
     "choices": [
-      {"key": "A", "content": "bit는 0/1 한 자리, byte는 보통 8 bit의 주소 지정 단위이며 word는 ISA가 자연스럽게 처리하는 폭과 관련된다.", "displayOrder": 0},
-      {"key": "B", "content": "64-bit CPU의 모든 memory access는 반드시 64 byte씩 수행된다.", "displayOrder": 1},
-      {"key": "C", "content": "word와 pointer 크기는 모든 ISA에서 항상 동일하다.", "displayOrder": 2},
-      {"key": "D", "content": "byte는 CPU architecture와 무관하게 항상 하나의 word와 같다.", "displayOrder": 3}
+      {"key": "A", "content": "bit는 0/1 한 자리, byte는 보통 8 bit의 주소 지정 단위이며 word는 ISA가 자연스럽게 처리하는 폭과 관련된다.", "displayOrder": 0, "rationaleMarkdown": "Bit는 0 또는 1 한 자리이고 보통의 byte는 8 bit를 묶은 주소 지정 단위다. Word 폭은 ISA의 연산·register 관례와 관련되며 byte와 동일하다고 고정되지 않는다."},
+      {"key": "B", "content": "64-bit CPU의 모든 memory access는 반드시 64 byte씩 수행된다.", "displayOrder": 1, "rationaleMarkdown": "64-bit는 CPU/ISA의 주소나 연산 폭에 관한 표현이지 각 memory access가 64 byte라는 뜻은 아니다. 실제 access 크기는 명령, bus, cache line 등 서로 다른 단위로 정해진다."},
+      {"key": "C", "content": "word와 pointer 크기는 모든 ISA에서 항상 동일하다.", "displayOrder": 2, "rationaleMarkdown": "Word 폭은 ISA에 따라 달라지고 pointer 표현 크기는 ISA와 ABI의 주소 공간·호출 규약에 따라 결정된다. 두 값이 흔히 같을 수는 있어도 모든 ISA에서 같다는 보장은 없다."},
+      {"key": "D", "content": "byte는 CPU architecture와 무관하게 항상 하나의 word와 같다.", "displayOrder": 3, "rationaleMarkdown": "Byte는 보통 8 bit 단위이고 word는 processor/ISA가 다루는 자연스러운 폭과 관련된 별도 개념이다. CPU architecture가 달라도 byte를 word 하나와 동일시할 수 없다."}
     ],
     "correctChoiceKey": "A",
     "explanationMarkdown": "Bit는 0 또는 1 한 자리이고 byte는 보통 8 bit를 묶은 주소 지정 단위다. Word는 ISA와 register가 자연스럽게 처리하는 폭과 관련되므로 모든 protocol field가 word 크기와 같다는 뜻은 아니다."
@@ -47,10 +47,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.data-representation.binary-hex"],
     "choices": [
-      {"key": "A", "content": "0x107", "displayOrder": 0},
-      {"key": "B", "content": "0x7A", "displayOrder": 1},
-      {"key": "C", "content": "0xA07", "displayOrder": 2},
-      {"key": "D", "content": "0xA7", "displayOrder": 3}
+      {"key": "A", "content": "0x107", "displayOrder": 0, "rationaleMarkdown": "4 bit씩 묶으면 왼쪽 `1010`은 A, 오른쪽 `0111`은 7이 된다. `0x107`은 세 자리를 표현해 원래 8 bit pattern에 없는 nibble을 추가한다."},
+      {"key": "B", "content": "0x7A", "displayOrder": 1, "rationaleMarkdown": "각 nibble의 값은 `1010`이 A이고 `0111`이 7이므로 원래 순서를 유지해야 한다. `0x7A`는 nibble 순서를 뒤집은 값이다."},
+      {"key": "C", "content": "0xA07", "displayOrder": 2, "rationaleMarkdown": "Nibble 두 개는 hexadecimal 두 자리로 바로 대응한다. `0xA07`은 가운데 0을 추가해 bit pattern의 길이와 수치 값을 바꾼다."},
+      {"key": "D", "content": "0xA7", "displayOrder": 3, "rationaleMarkdown": "Binary를 오른쪽부터 4 bit씩 나누면 `1010`은 A, `0111`은 7이다. 따라서 같은 8 bit 값은 `0xA7`로 적는다."}
     ],
     "correctChoiceKey": "D",
     "explanationMarkdown": "4-bit nibble마다 hexadecimal 한 자리로 바꾸면 `1010`은 A, `0111`은 7이다. 따라서 전체 pattern은 `0xA7`이다."
@@ -86,10 +86,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.data-representation.signed-twos-complement"],
     "choices": [
-      {"key": "A", "content": "-127", "displayOrder": 0},
-      {"key": "B", "content": "255", "displayOrder": 1},
-      {"key": "C", "content": "-1", "displayOrder": 2},
-      {"key": "D", "content": "0", "displayOrder": 3}
+      {"key": "A", "content": "-127", "displayOrder": 0, "rationaleMarkdown": "`1111 1111`을 sign-magnitude로 읽으면 부호와 크기를 나눠야 하지만 two's-complement는 비트 전체를 보수 표현으로 해석한다. 8-bit 범위에서 이 pattern은 -1이다."},
+      {"key": "B", "content": "255", "displayOrder": 1, "rationaleMarkdown": "255는 같은 bit pattern을 unsigned 8-bit로 읽었을 때의 값이다. Signed two's-complement는 최상위 bit가 음수 영역을 나타내므로 해석 범위가 다르다."},
+      {"key": "C", "content": "-1", "displayOrder": 2, "rationaleMarkdown": "8-bit two's-complement에서 `1111 1111`은 -1을 나타낸다. +1인 `0000 0001`의 비트를 반전해 `1111 1110`을 만들고 1을 더하면 `1111 1111`이 된다."},
+      {"key": "D", "content": "0", "displayOrder": 3, "rationaleMarkdown": "Signed two's-complement에서 0은 모든 bit가 0인 pattern이다. 모든 bit가 1인 pattern을 0으로 보는 것은 bit pattern과 수치 해석을 혼동한 것이다."}
     ],
     "correctChoiceKey": "C",
     "explanationMarkdown": "Two's-complement에서 모든 bit가 1인 pattern은 0에서 1을 뺀 표현이다. 따라서 8-bit `1111 1111`의 signed 값은 -1이다."
@@ -125,10 +125,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.data-representation.fixed-width-overflow"],
     "choices": [
-      {"key": "A", "content": "1000 0000", "displayOrder": 0},
-      {"key": "B", "content": "1111 1111", "displayOrder": 1},
-      {"key": "C", "content": "1 0000 0000을 9 bit 그대로 저장한다.", "displayOrder": 2},
-      {"key": "D", "content": "0000 0000", "displayOrder": 3}
+      {"key": "A", "content": "1000 0000", "displayOrder": 0, "rationaleMarkdown": "`1000 0000`은 8-bit signed two's-complement에서 -128을 나타내는 pattern이다. Unsigned 덧셈에서는 부호 비트로 재해석하지 않고 하위 8 bit를 저장한다."},
+      {"key": "B", "content": "1111 1111", "displayOrder": 1, "rationaleMarkdown": "255는 덧셈 전의 bit pattern이다. 여기에 1을 더하면 8-bit 폭을 넘어가는 carry가 생기고, 고정 폭 저장은 하위 bit 결과로 바뀐다."},
+      {"key": "C", "content": "1 0000 0000을 9 bit 그대로 저장한다.", "displayOrder": 2, "rationaleMarkdown": "수학적 합은 256이지만 8-bit 저장 공간에는 9번째 carry bit가 없다. 고정 폭 unsigned 연산 결과에는 하위 8 bit만 남는다."},
+      {"key": "D", "content": "0000 0000", "displayOrder": 3, "rationaleMarkdown": "8-bit unsigned 덧셈에서 저장 결과는 modulo 256으로 계산되어 256의 하위 8 bit인 `0000 0000`이 된다. Carry-out은 8-bit 값에 포함되지 않는다."}
     ],
     "correctChoiceKey": "D",
     "explanationMarkdown": "Unsigned 8-bit는 결과의 하위 8 bit만 저장하므로 256은 modulo 256으로 0이 된다. 저장 pattern은 `0000 0000`이며 수학적 합 256 자체가 보존되는 것은 아니다."
@@ -164,10 +164,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.data-representation.floating-point"],
     "choices": [
-      {"key": "A", "content": "IEEE 754가 모든 소수를 정수로만 저장하기 때문이다.", "displayOrder": 0},
-      {"key": "B", "content": "0.1의 binary fraction이 유한한 자리에서 끝나지 않아 제한된 significand로 반올림해야 하기 때문이다.", "displayOrder": 1},
-      {"key": "C", "content": "CPU가 decimal 입력을 항상 버리기 때문이다.", "displayOrder": 2},
-      {"key": "D", "content": "floating-point에는 exponent가 없기 때문이다.", "displayOrder": 3}
+      {"key": "A", "content": "IEEE 754가 모든 소수를 정수로만 저장하기 때문이다.", "displayOrder": 0, "rationaleMarkdown": "IEEE 754 binary floating-point는 정수만 저장하지 않고 sign, exponent, significand를 사용해 분수도 근사한다. 표현 가능한 유한한 binary 값의 수가 제한되어 일부 소수는 반올림된다."},
+      {"key": "B", "content": "0.1의 binary fraction이 유한한 자리에서 끝나지 않아 제한된 significand로 반올림해야 하기 때문이다.", "displayOrder": 1, "rationaleMarkdown": "Decimal `0.1`은 binary fraction으로 반복되는 값을 가지므로 유한한 significand에 정확히 담기지 않는다. 구현은 인접한 표현 가능 값 중 하나로 반올림해 저장한다."},
+      {"key": "C", "content": "CPU가 decimal 입력을 항상 버리기 때문이다.", "displayOrder": 2, "rationaleMarkdown": "Decimal 입력을 버리는 것이 아니라 binary floating-point로 변환해 가장 가까운 표현 가능 값으로 저장한다. 이후 계산의 정확한 수학적 결과도 표현 가능한 값으로 반올림될 수 있다."},
+      {"key": "D", "content": "floating-point에는 exponent가 없기 때문이다.", "displayOrder": 3, "rationaleMarkdown": "Exponent는 floating-point가 매우 크거나 작은 크기 범위를 표현하도록 significand의 scale을 정하는 핵심 구성 요소다. 오차의 원인은 exponent가 없어서가 아니라 유한한 binary 정밀도다."}
     ],
     "correctChoiceKey": "B",
     "explanationMarkdown": "각 intermediate operation의 정확한 수학적 결과가 표현 가능한 floating-point 값으로 반올림된다. decimal 금액이 binary floating-point로 정확히 표현되지 않아 반복 연산의 rounding error가 누적될 수 있고 exact equality가 예상과 다르게 실패할 수 있다."
@@ -203,10 +203,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.data-representation.endianness"],
     "choices": [
-      {"key": "A", "content": "78 56 34 12", "displayOrder": 0},
-      {"key": "B", "content": "12 34 56 78", "displayOrder": 1},
-      {"key": "C", "content": "87 65 43 21", "displayOrder": 2},
-      {"key": "D", "content": "12 43 65 87", "displayOrder": 3}
+      {"key": "A", "content": "78 56 34 12", "displayOrder": 0, "rationaleMarkdown": "Little-endian은 덜 중요한 byte를 낮은 memory address에 놓는다. `0x12345678`의 최하위 byte `78`부터 저장하므로 낮은 주소 순서는 `78 56 34 12`다."},
+      {"key": "B", "content": "12 34 56 78", "displayOrder": 1, "rationaleMarkdown": "가장 중요한 byte `12`를 낮은 주소에 놓는 순서는 big-endian에 해당한다. Little-endian은 byte 순서만 반대로 두며 각 byte 내부 bit 순서를 뒤집지 않는다."},
+      {"key": "C", "content": "87 65 43 21", "displayOrder": 2, "rationaleMarkdown": "Endianness는 multi-byte 값의 byte 배열 순서를 정하는 개념이지 각 byte 안의 bit를 역순으로 바꾸는 규칙이 아니다. `87 65 43 21`은 원래 byte 값까지 달라진다."},
+      {"key": "D", "content": "12 43 65 87", "displayOrder": 3, "rationaleMarkdown": "Little-endian은 byte 전체의 순서를 낮은 자리부터 배치한다. `12 43 65 87`은 원래 byte 순서에 없는 재배열이라 `0x12345678`의 표현이 아니다."}
     ],
     "correctChoiceKey": "A",
     "explanationMarkdown": "Little-endian은 least-significant byte를 가장 낮은 주소에 둔다. `0x12345678`의 byte를 낮은 주소부터 읽으면 `78 56 34 12`다."
