@@ -32,6 +32,23 @@ class QuestionRationaleContractTest {
         assertEquals(QuestionStatus.PUBLISHED, question.getStatus());
     }
 
+    @Test
+    void publishedQuestionMustReturnToDraftBeforeStructuralChange() {
+        Question question = questionWithSecondRationale("The other assumption does not hold.");
+        question.publish();
+
+        assertThrows(IllegalStateException.class,
+                () -> question.addChoice("C", "New choice", null, 2));
+        assertEquals(QuestionStatus.PUBLISHED, question.getStatus());
+        assertEquals(2, question.getChoices().size());
+
+        question.changeToDraft();
+
+        assertDoesNotThrow(() -> question.addChoice("C", "New choice", null, 2));
+        assertEquals(QuestionStatus.DRAFT, question.getStatus());
+        assertEquals(3, question.getChoices().size());
+    }
+
     private static Question questionWithSecondRationale(String secondRationale) {
         Question question = Question.createDraft("rationale-contract", "Choose", QuestionType.MULTIPLE_CHOICE,
                 QuestionDifficulty.EASY, "Explanation");

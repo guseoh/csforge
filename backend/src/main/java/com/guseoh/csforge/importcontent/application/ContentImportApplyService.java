@@ -152,6 +152,9 @@ public class ContentImportApplyService {
             question.reviseMetadata(item.promptMarkdown(), QuestionDifficulty.valueOf(item.difficulty()), item.explanationMarkdown());
         }
         if (newQuestion || !QuestionStructureComparator.matches(item, question)) {
+            if (!newQuestion) {
+                question.changeToDraft();
+            }
             prepareChoiceOrderUpdate(question, choices);
             question.replaceStructure(QuestionType.valueOf(item.questionType()), choices, item.correctChoiceKey(), item.acceptedAnswers(), item.modelAnswer(), linkedConcepts);
         }
