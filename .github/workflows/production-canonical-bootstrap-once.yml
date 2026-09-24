@@ -1,0 +1,158 @@
+name: One-time production canonical bootstrap
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/production-canonical-bootstrap-once.yml
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  bootstrap-production-content:
+    runs-on: ubuntu-latest
+    env:
+      GCP_PROJECT_ID: csforge-508510
+      GCP_REGION: asia-southeast1
+      CLOUD_RUN_SERVICE: csforge
+      BOOTSTRAP_JOB: csforge-canonical-bootstrap-once
+      BOOTSTRAP_IMAGE: asia-southeast1-docker.pkg.dev/csforge-508510/csforge/csforge:bootstrap-${{ github.sha }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v3
+        with:
+          project_id: ${{ env.GCP_PROJECT_ID }}
+          workload_identity_provider: projects/1003183509924/locations/global/workloadIdentityPools/github/providers/csforge
+          service_account: github-cloud-run-deployer@csforge-508510.iam.gserviceaccount.com
+
+      - name: Set up Google Cloud CLI
+        uses: google-github-actions/setup-gcloud@v3
+
+      - name: Configure Artifact Registry authentication
+        run: |
+          gcloud auth configure-docker "${GCP_REGION}-docker.pkg.dev" --quiet
+
+      - name: Build bootstrap image from current main
+        run: |
+          docker build --file backend/Dockerfile --tag "${BOOTSTRAP_IMAGE}" .
+          docker push "${BOOTSTRAP_IMAGE}"
+
+      - name: Prepare production database environment
+        id: runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          service_json="$(mktemp)"
+          gcloud run services describe "${CLOUD_RUN_SERVICE}"             --project="${GCP_PROJECT_ID}"             --region="${GCP_REGION}"             --format=json > "${service_json}"
+
+          service_account="$(jq -r '.spec.template.spec.serviceAccountName // empty' "${service_json}")"
+          if [[ -z "${service_account}" || "${service_account}" == "null" ]]; then
+            echo "Could not resolve the production runtime service account." >&2
+            exit 1
+          fi
+
+          python3 - "${service_json}" "${GITHUB_OUTPUT}" <<'PY'
+          import json
+          import sys
+
+          service_path, output_path = sys.argv[1], sys.argv[2]
+          with open(service_path, encoding="utf-8") as handle:
+              service = json.load(handle)
+
+          wanted = {
+              "DB_URL",
+              "DB_USERNAME",
+              "DB_PASSWORD",
+              "DB_MAX_POOL_SIZE",
+              "DB_MIN_IDLE",
+              "DB_CONNECTION_TIMEOUT",
+              "DB_VALIDATION_TIMEOUT",
+          }
+          required = {"DB_URL", "DB_USERNAME", "DB_PASSWORD"}
+          entries = service["spec"]["template"]["spec"]["containers"][0].get("env", [])
+
+          plain = {
+              "SPRING_PROFILES_ACTIVE": "local",
+              "CSFORGE_AI_ENABLED": "false",
+          }
+          secrets = []
+          found = set()
+
+          for item in entries:
+              name = item.get("name")
+              if name not in wanted:
+                  continue
+              found.add(name)
+              if "value" in item:
+                  plain[name] = item["value"]
+                  continue
+
+              secret_ref = item.get("valueFrom", {}).get("secretKeyRef", {})
+              secret_name = secret_ref.get("name")
+              secret_version = secret_ref.get("key")
+              if not secret_name or not secret_version:
+                  raise SystemExit(f"Unsupported environment source for {name}")
+              secrets.append(f"{name}={secret_name}:{secret_version}")
+
+          missing = required - found
+          if missing:
+              raise SystemExit("Missing required production DB variables: " + ", ".join(sorted(missing)))
+
+          with open("/tmp/bootstrap-env.json", "w", encoding="utf-8") as handle:
+              json.dump(plain, handle)
+
+          with open(output_path, "a", encoding="utf-8") as handle:
+              handle.write("secrets=" + ",".join(secrets) + "\n")
+          PY
+
+          echo "service_account=${service_account}" >> "${GITHUB_OUTPUT}"
+
+      - name: Deploy bootstrap job
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          args=(
+            run jobs deploy "${BOOTSTRAP_JOB}"
+            --project="${GCP_PROJECT_ID}"
+            --region="${GCP_REGION}"
+            --image="${BOOTSTRAP_IMAGE}"
+            --service-account="${{ steps.runtime.outputs.service_account }}"
+            --command=/app/production-canonical-bootstrap.sh
+            --env-vars-file=/tmp/bootstrap-env.json
+            --cpu=1
+            --memory=1Gi
+            --tasks=1
+            --parallelism=1
+            --task-timeout=30m
+            --max-retries=0
+            --quiet
+          )
+
+          if [[ -n "${{ steps.runtime.outputs.secrets }}" ]]; then
+            args+=(--set-secrets="${{ steps.runtime.outputs.secrets }}")
+          fi
+
+          gcloud "${args[@]}"
+
+      - name: Execute and verify canonical bootstrap
+        run: |
+          gcloud run jobs execute "${BOOTSTRAP_JOB}"             --project="${GCP_PROJECT_ID}"             --region="${GCP_REGION}"             --wait             --quiet
+
+          execution="$(gcloud run jobs executions list             --job="${BOOTSTRAP_JOB}"             --project="${GCP_PROJECT_ID}"             --region="${GCP_REGION}"             --limit=1             --sort-by="~metadata.creationTimestamp"             --format="value(metadata.name)")"
+
+          succeeded="$(gcloud run jobs executions describe "${execution}"             --project="${GCP_PROJECT_ID}"             --region="${GCP_REGION}"             --format="value(status.succeededCount)")"
+
+          test "${succeeded}" = "1"
+          echo "Production canonical bootstrap job succeeded."
+
+      - name: Remove one-time bootstrap job
+        if: always()
+        run: |
+          gcloud run jobs delete "${BOOTSTRAP_JOB}"             --project="${GCP_PROJECT_ID}"             --region="${GCP_REGION}"             --quiet || true
