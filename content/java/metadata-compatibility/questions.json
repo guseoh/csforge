@@ -8,10 +8,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["java.core.metadata-compatibility.reflection-class-api"],
     "choices": [
-      {"key": "A", "content": "loaded class의 method·field·constructor metadata", "displayOrder": 0},
-      {"key": "B", "content": "OS kernel의 scheduler queue", "displayOrder": 1},
-      {"key": "C", "content": "모든 heap 객체의 물리 주소", "displayOrder": 2},
-      {"key": "D", "content": "컴파일 전 source의 모든 주석", "displayOrder": 3}
+      {"key": "A", "content": "loaded class의 method·field·constructor metadata", "displayOrder": 0, "rationaleMarkdown": "Class와 그 reflection member API는 로드된 타입의 method, field, constructor 같은 선언 metadata를 조사한다. 이는 임의의 VM 내부 상태를 전부 공개한다는 뜻은 아니다."},
+      {"key": "B", "content": "OS kernel의 scheduler queue", "displayOrder": 1, "rationaleMarkdown": "OS scheduler queue는 운영체제의 실행 관리 상태다. Java reflection은 이를 표준 API로 열거하지 않는다."},
+      {"key": "C", "content": "모든 heap 객체의 물리 주소", "displayOrder": 2, "rationaleMarkdown": "일반 reflection은 객체의 모든 물리 heap 주소를 노출하지 않는다. 객체 배치나 주소는 VM 구현 세부에 속한다."},
+      {"key": "D", "content": "컴파일 전 source의 모든 주석", "displayOrder": 3, "rationaleMarkdown": "컴파일 전 주석은 소스 처리 단계에서 다룬다. class 파일을 대상으로 하는 reflection이 원본 주석 전체를 보존한다고 보장하지 않는다."}
     ],
     "correctChoiceKey": "A",
     "explanationMarkdown": "java.lang.reflect와 Class는 runtime type과 member 정보를 조사할 수 있다."
@@ -25,10 +25,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["java.core.metadata-compatibility.reflection-class-api"],
     "choices": [
-      {"key": "A", "content": "하나는 항상 native code를 반환해서", "displayOrder": 0},
-      {"key": "B", "content": "선언된 member와 상속·public member 범위가 다르기 때문이다", "displayOrder": 1},
-      {"key": "C", "content": "하나는 field만 읽어서", "displayOrder": 2},
-      {"key": "D", "content": "둘이 모두 같은 목록을 보장해서", "displayOrder": 3}
+      {"key": "A", "content": "하나는 항상 native code를 반환해서", "displayOrder": 0, "rationaleMarkdown": "두 메서드는 반환 범위로 구별된다. native 여부는 getDeclaredMethods와 getMethods를 나누는 기준이 아니다."},
+      {"key": "B", "content": "선언된 member와 상속·public member 범위가 다르기 때문이다", "displayOrder": 1, "rationaleMarkdown": "getDeclaredMethods는 해당 타입에 선언된 method들을 포함해 조회하고, getMethods는 public method 범위를 상속 계층까지 반영한다. 필요한 범위를 선택해야 한다."},
+      {"key": "C", "content": "하나는 field만 읽어서", "displayOrder": 2, "rationaleMarkdown": "method 열거 API를 field 전용 API와 혼동한 설명이다. field 조회에는 getDeclaredFields나 getFields가 있다."},
+      {"key": "D", "content": "둘이 모두 같은 목록을 보장해서", "displayOrder": 3, "rationaleMarkdown": "상속된 method 포함 여부와 접근 범위가 달라 목록은 같지 않을 수 있다. 코드가 요구하는 선언 범위를 기준으로 골라야 한다."}
     ],
     "correctChoiceKey": "B",
     "explanationMarkdown": "reflection 조회 method마다 선언 class와 상속/public 범위가 다르다."
@@ -42,10 +42,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["java.core.metadata-compatibility.reflection-class-api"],
     "choices": [
-      {"key": "A", "content": "항상 primitive int라고 가정한다", "displayOrder": 0},
-      {"key": "B", "content": "method 이름만 비교한다", "displayOrder": 1},
-      {"key": "C", "content": "Object 결과를 예상 타입으로 검증·변환하고 invocation 예외를 처리한다", "displayOrder": 2},
-      {"key": "D", "content": "compiler가 자동으로 모든 예외를 제거한다", "displayOrder": 3}
+      {"key": "A", "content": "항상 primitive int라고 가정한다", "displayOrder": 0, "rationaleMarkdown": "Method.invoke의 결과는 반환 타입에 따라 Object로 전달되며 void는 null이다. 항상 int로 단정하면 다른 반환 타입에서 잘못 처리한다."},
+      {"key": "B", "content": "method 이름만 비교한다", "displayOrder": 1, "rationaleMarkdown": "method 이름만 검사하면 overload 구별이나 반환값 해석이 해결되지 않는다. Method 객체의 선언과 invocation 결과를 함께 다뤄야 한다."},
+      {"key": "C", "content": "Object 결과를 예상 타입으로 검증·변환하고 invocation 예외를 처리한다", "displayOrder": 2, "rationaleMarkdown": "invoke 결과를 애플리케이션이 기대하는 타입으로 검증하고 primitive boxing도 고려해야 한다. target에서 발생한 예외는 InvocationTargetException 경로로 전달될 수 있다."},
+      {"key": "D", "content": "compiler가 자동으로 모든 예외를 제거한다", "displayOrder": 3, "rationaleMarkdown": "reflection 호출 예외를 compiler가 제거하지 않는다. 호출 가능성, 인수 타입, 접근성, target 예외를 런타임 경로에서 처리해야 한다."}
     ],
     "correctChoiceKey": "C",
     "explanationMarkdown": "reflection 호출은 compile-time 일반 호출보다 type safety가 약하고 예외가 wrapping될 수 있다."
@@ -59,10 +59,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["java.core.metadata-compatibility.reflection-class-api"],
     "choices": [
-      {"key": "A", "content": "모든 private member를 영구 public으로 바꾼다", "displayOrder": 0},
-      {"key": "B", "content": "호출 대상 객체를 복사한다", "displayOrder": 1},
-      {"key": "C", "content": "항상 성공이 보장된다", "displayOrder": 2},
-      {"key": "D", "content": "access check를 suppress하도록 요청하지만 모든 JPMS/runtime 경계를 무조건 무시하지는 않는다", "displayOrder": 3}
+      {"key": "A", "content": "모든 private member를 영구 public으로 바꾼다", "displayOrder": 0, "rationaleMarkdown": "접근 억제 요청은 선언을 영구적으로 public으로 바꾸지 않는다. 객체나 클래스의 공개 API 자체를 수정하는 연산이 아니다."},
+      {"key": "B", "content": "호출 대상 객체를 복사한다", "displayOrder": 1, "rationaleMarkdown": "setAccessible은 대상 객체 복사와 관계없이 reflective access 검사에 영향을 준다."},
+      {"key": "C", "content": "항상 성공이 보장된다", "displayOrder": 2, "rationaleMarkdown": "모듈 캡슐화 등으로 접근 억제가 허용되지 않으면 실패할 수 있다. 성공을 모든 member에 보장하는 만능 우회로가 아니다."},
+      {"key": "D", "content": "access check를 suppress하도록 요청하지만 모든 JPMS/runtime 경계를 무조건 무시하지는 않는다", "displayOrder": 3, "rationaleMarkdown": "setAccessible은 reflective access check를 억제하도록 요청한다. 강한 모듈 캡슐화 등으로 허용되지 않는 접근은 거부될 수 있으므로 API와 module 경계를 확인해야 한다."}
     ],
     "correctChoiceKey": "D",
     "explanationMarkdown": "reflection access는 Java access와 module boundary, runtime 조건의 영향을 받는다."
@@ -76,10 +76,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["java.core.metadata-compatibility.reflection-class-api"],
     "choices": [
-      {"key": "A", "content": "compile-time 호출보다 늦게 실패할 수 있으므로 시작 검증과 API contract가 필요하다", "displayOrder": 0},
-      {"key": "B", "content": "compiler가 자동으로 새 이름을 찾는다", "displayOrder": 1},
-      {"key": "C", "content": "reflection이 binary compatibility를 보장한다", "displayOrder": 2},
-      {"key": "D", "content": "method rename은 runtime에 영향을 주지 않는다", "displayOrder": 3}
+      {"key": "A", "content": "compile-time 호출보다 늦게 실패할 수 있으므로 시작 검증과 API contract가 필요하다", "displayOrder": 0, "rationaleMarkdown": "문자열 기반 member lookup은 호출 지점을 정적 참조로 묶지 않으므로 rename 뒤 시작 단계에서 NoSuchMethodException 등으로 드러날 수 있다. 시작 검증과 버전이 명시된 plugin 계약이 장애를 앞당긴다."},
+      {"key": "B", "content": "compiler가 자동으로 새 이름을 찾는다", "displayOrder": 1, "rationaleMarkdown": "compiler는 설정 문자열의 의미를 추론해 이름을 고치지 않는다. 동적 lookup 대상은 application이 명시적으로 관리해야 한다."},
+      {"key": "C", "content": "reflection이 binary compatibility를 보장한다", "displayOrder": 2, "rationaleMarkdown": "reflection은 API 진화 호환성을 자동 제공하지 않는다. 이름, signature, 접근성 변경은 기존 lookup을 깨뜨릴 수 있다."},
+      {"key": "D", "content": "method rename은 runtime에 영향을 주지 않는다", "displayOrder": 3, "rationaleMarkdown": "method rename은 문자열 lookup이나 binary linkage에 영향을 줄 수 있다. 런타임 영향이 없다고 간주하면 배포 뒤 실패를 놓친다."}
     ],
     "correctChoiceKey": "A",
     "explanationMarkdown": "문자열 기반 reflection은 source/compiler 검사를 우회해 evolution 취약성을 만든다."
@@ -93,10 +93,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["java.core.metadata-compatibility.reflection-class-api"],
     "choices": [
-      {"key": "A", "content": "method가 반드시 존재하지 않는다는 뜻이다", "displayOrder": 0},
-      {"key": "B", "content": "runtime access와 JPMS encapsulation 경계를 확인하고 무조건 reflection이 private을 뚫는다고 가정하지 않는다", "displayOrder": 1},
-      {"key": "C", "content": "JVM stack overflow가 확정된다", "displayOrder": 2},
-      {"key": "D", "content": "setAccessible이 객체를 serialize해야 한다", "displayOrder": 3}
+      {"key": "A", "content": "method가 반드시 존재하지 않는다는 뜻이다", "displayOrder": 0, "rationaleMarkdown": "InaccessibleObjectException은 member 부재를 뜻하지 않는다. member가 존재해도 module의 강한 캡슐화 정책 때문에 접근 억제가 거부될 수 있다."},
+      {"key": "B", "content": "runtime access와 JPMS encapsulation 경계를 확인하고 무조건 reflection이 private을 뚫는다고 가정하지 않는다", "displayOrder": 1, "rationaleMarkdown": "먼저 member 존재와 실제 module/package 접근 설정을 구분해 확인해야 한다. reflection은 private 접근을 언제나 허용하는 우회 경로가 아니다."},
+      {"key": "C", "content": "JVM stack overflow가 확정된다", "displayOrder": 2, "rationaleMarkdown": "접근 제한 예외만으로 stack overflow를 추론할 근거는 없다. 재귀나 stack 사용 문제는 별도로 진단한다."},
+      {"key": "D", "content": "setAccessible이 객체를 serialize해야 한다", "displayOrder": 3, "rationaleMarkdown": "setAccessible은 object serialization을 시작하거나 요구하지 않는다. 이 예외는 reflective access 제한 경로에서 발생한다."}
     ],
     "correctChoiceKey": "B",
     "explanationMarkdown": "reflection access 실패는 member 존재와 별개로 access/module policy에서 발생할 수 있다."
@@ -110,10 +110,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["java.core.metadata-compatibility.annotations-retention-target"],
     "choices": [
-      {"key": "A", "content": "source compile을 금지한다", "displayOrder": 0},
-      {"key": "B", "content": "모든 위치에 annotation을 허용한다", "displayOrder": 1},
-      {"key": "C", "content": "runtime reflection에서 annotation을 조회할 수 있도록 보존한다", "displayOrder": 2},
-      {"key": "D", "content": "annotation을 자동 실행한다", "displayOrder": 3}
+      {"key": "A", "content": "source compile을 금지한다", "displayOrder": 0, "rationaleMarkdown": "SOURCE와 CLASS는 보존 시점이 다르고, runtime reflection 조회가 필요하면 RUNTIME을 지정해야 한다."},
+      {"key": "B", "content": "모든 위치에 annotation을 허용한다", "displayOrder": 1, "rationaleMarkdown": "적용 위치는 @Target이 정하며, retention은 컴파일과 실행 과정에서 annotation 정보를 얼마나 남길지 정한다."},
+      {"key": "C", "content": "runtime reflection에서 annotation을 조회할 수 있도록 보존한다", "displayOrder": 2, "rationaleMarkdown": "RUNTIME annotation 정보는 런타임에 읽을 수 있도록 class 파일에 기록되어 reflection API로 조회할 수 있다."},
+      {"key": "D", "content": "annotation을 자동 실행한다", "displayOrder": 3, "rationaleMarkdown": "annotation은 metadata일 뿐 자동으로 동작을 실행하지 않는다. framework가 읽어 별도 동작을 연결할 수는 있다."}
     ],
     "correctChoiceKey": "C",
     "explanationMarkdown": "RUNTIME retention은 runtime-visible metadata를 표현한다."
@@ -127,10 +127,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["java.core.metadata-compatibility.annotations-retention-target"],
     "choices": [
-      {"key": "A", "content": "annotation 보존 기간을 정한다", "displayOrder": 0},
-      {"key": "B", "content": "annotation 값을 계산한다", "displayOrder": 1},
-      {"key": "C", "content": "method invocation을 중지한다", "displayOrder": 2},
-      {"key": "D", "content": "annotation을 적용할 수 있는 syntax location을 제한한다", "displayOrder": 3}
+      {"key": "A", "content": "annotation 보존 기간을 정한다", "displayOrder": 0, "rationaleMarkdown": "보존 기간은 @Retention이 담당한다. @Target은 그 annotation을 선언문이나 type-use 중 어디에 붙일 수 있는지 제한한다."},
+      {"key": "B", "content": "annotation 값을 계산한다", "displayOrder": 1, "rationaleMarkdown": "annotation 값은 선언할 때 정해진 상수 metadata다. @Target은 값을 계산하거나 변경하지 않는다."},
+      {"key": "C", "content": "method invocation을 중지한다", "displayOrder": 2, "rationaleMarkdown": "method 호출 제어는 annotation 자체의 역할이 아니다. 도구가 annotation을 읽고 별도 정책을 적용할 수 있다."},
+      {"key": "D", "content": "annotation을 적용할 수 있는 syntax location을 제한한다", "displayOrder": 3, "rationaleMarkdown": "@Target은 ElementType 집합으로 적용 가능한 문법 위치를 제한해 잘못된 사용을 컴파일 시점에 드러내도록 한다."}
     ],
     "correctChoiceKey": "D",
     "explanationMarkdown": "Target은 annotation 사용 위치를 ElementType으로 제한한다."
@@ -144,10 +144,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["java.core.metadata-compatibility.annotations-retention-target"],
     "choices": [
-      {"key": "A", "content": "compile-time 도구에는 의미가 있을 수 있지만 runtime reflection visibility는 보장되지 않는다", "displayOrder": 0},
-      {"key": "B", "content": "항상 class file에 남고 reflection으로 보인다", "displayOrder": 1},
-      {"key": "C", "content": "모든 runtime annotation보다 강하다", "displayOrder": 2},
-      {"key": "D", "content": "JVM이 반드시 실행한다", "displayOrder": 3}
+      {"key": "A", "content": "compile-time 도구에는 의미가 있을 수 있지만 runtime reflection visibility는 보장되지 않는다", "displayOrder": 0, "rationaleMarkdown": "SOURCE 정보는 컴파일러나 소스 분석 도구가 사용할 수 있지만, 컴파일 뒤 보존되지 않으므로 런타임 reflection용 계약으로 삼을 수 없다."},
+      {"key": "B", "content": "항상 class file에 남고 reflection으로 보인다", "displayOrder": 1, "rationaleMarkdown": "class 파일 보존은 CLASS retention에 해당하며, 그것만으로 일반 reflection에서 annotation이 보인다는 뜻은 아니다."},
+      {"key": "C", "content": "모든 runtime annotation보다 강하다", "displayOrder": 2, "rationaleMarkdown": "SOURCE는 가장 오래 보존되는 설정이 아니다. 런타임 접근까지 요구한다면 RUNTIME을 선택해야 한다."},
+      {"key": "D", "content": "JVM이 반드시 실행한다", "displayOrder": 3, "rationaleMarkdown": "JVM은 annotation을 실행하지 않는다. annotation을 해석해 동작을 수행하는 것은 framework나 application 코드다."}
     ],
     "correctChoiceKey": "A",
     "explanationMarkdown": "SOURCE는 compile 후 보존을 요구하지 않는 policy다."
@@ -161,10 +161,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["java.core.metadata-compatibility.annotations-retention-target"],
     "choices": [
-      {"key": "A", "content": "dynamic proxy", "displayOrder": 0},
-      {"key": "B", "content": "meta-annotation", "displayOrder": 1},
-      {"key": "C", "content": "serialization stream", "displayOrder": 2},
-      {"key": "D", "content": "module descriptor", "displayOrder": 3}
+      {"key": "A", "content": "dynamic proxy", "displayOrder": 0, "rationaleMarkdown": "dynamic proxy는 interface 호출을 InvocationHandler로 위임하는 별도 기능이며 annotation interface의 meta-annotation 분류가 아니다."},
+      {"key": "B", "content": "meta-annotation", "displayOrder": 1, "rationaleMarkdown": "다른 annotation 선언에 적용되는 @Target과 @Retention은 annotation의 적용 위치와 보존 정책을 정하는 meta-annotation이다."},
+      {"key": "C", "content": "serialization stream", "displayOrder": 2, "rationaleMarkdown": "serialization stream은 객체 상태를 기록하는 별도 메커니즘이라 annotation 선언의 metadata 분류와 관계없다."},
+      {"key": "D", "content": "module descriptor", "displayOrder": 3, "rationaleMarkdown": "module descriptor는 모듈 의존성과 package 경계를 선언한다. annotation 선언에 붙는 @Target과 @Retention은 그 문법이 아니다."}
     ],
     "correctChoiceKey": "B",
     "explanationMarkdown": "annotation의 선언 자체에 의미를 부여하는 annotation이다."
@@ -178,10 +178,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["java.core.metadata-compatibility.annotations-retention-target"],
     "choices": [
-      {"key": "A", "content": "framework가 자동으로 source를 재compile한다", "displayOrder": 0},
-      {"key": "B", "content": "annotation이 반드시 RUNTIME으로 승격된다", "displayOrder": 1},
-      {"key": "C", "content": "class file에 있을 수 있어도 일반 runtime reflection에서 보이지 않을 수 있다", "displayOrder": 2},
-      {"key": "D", "content": "Target이 retention을 바꾼다", "displayOrder": 3}
+      {"key": "A", "content": "framework가 자동으로 source를 재compile한다", "displayOrder": 0, "rationaleMarkdown": "runtime reflection은 이미 컴파일된 class metadata를 읽는다. 소스 재컴파일은 조회가 안 되는 annotation을 자동 복구하지 않는다."},
+      {"key": "B", "content": "annotation이 반드시 RUNTIME으로 승격된다", "displayOrder": 1, "rationaleMarkdown": "processor나 framework가 실행되어도 annotation retention이 자동 변경되지는 않는다. 선언된 보존 정책이 그대로 적용된다."},
+      {"key": "C", "content": "class file에 있을 수 있어도 일반 runtime reflection에서 보이지 않을 수 있다", "displayOrder": 2, "rationaleMarkdown": "CLASS retention은 class 파일에는 남길 수 있지만 런타임 조회를 보장하지 않는다. framework가 reflection으로 읽으려면 RUNTIME 계약이 필요하다."},
+      {"key": "D", "content": "Target이 retention을 바꾼다", "displayOrder": 3, "rationaleMarkdown": "적용 위치는 @Target, 보존 시점은 @Retention이 정한다. 전자를 바꿔도 후자의 정책은 달라지지 않는다."}
     ],
     "correctChoiceKey": "C",
     "explanationMarkdown": "runtime reflection 사용에는 RUNTIME retention이 필요하다."
@@ -195,10 +195,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["java.core.metadata-compatibility.annotations-retention-target"],
     "choices": [
-      {"key": "A", "content": "RUNTIME이면 Target 제한이 무시된다", "displayOrder": 0},
-      {"key": "B", "content": "Target이 runtime visibility를 결정한다", "displayOrder": 1},
-      {"key": "C", "content": "둘 다 모든 위치에서 항상 허용된다", "displayOrder": 2},
-      {"key": "D", "content": "첫 annotation은 retention과 무관하게 target 위치에서 compile-time 제한에 걸릴 수 있다", "displayOrder": 3}
+      {"key": "A", "content": "RUNTIME이면 Target 제한이 무시된다", "displayOrder": 0, "rationaleMarkdown": "RUNTIME은 보존 기간에 관한 설정이다. METHOD만 허용하는 @Target을 field에 붙이는 컴파일 오류를 해제하지 않는다."},
+      {"key": "B", "content": "Target이 runtime visibility를 결정한다", "displayOrder": 1, "rationaleMarkdown": "런타임 visibility는 @Retention이 제어한다. @Target은 소스에서 허용되는 위치를 제한한다."},
+      {"key": "C", "content": "둘 다 모든 위치에서 항상 허용된다", "displayOrder": 2, "rationaleMarkdown": "각 annotation의 @Target은 지정한 ElementType만 허용한다. 둘 다 모든 위치에서 쓸 수 있다는 공통 규칙은 없다."},
+      {"key": "D", "content": "첫 annotation은 retention과 무관하게 target 위치에서 compile-time 제한에 걸릴 수 있다", "displayOrder": 3, "rationaleMarkdown": "@Target은 컴파일 시점의 사용 위치를 검사하고, @Retention은 사용된 metadata의 보존 수준을 정한다. 두 계약은 독립적으로 확인해야 한다."}
     ],
     "correctChoiceKey": "D",
     "explanationMarkdown": "적용 위치와 보존 기간은 독립적인 meta-annotation 정책이다."
@@ -212,10 +212,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["java.core.metadata-compatibility.dynamic-proxy-invocationhandler"],
     "choices": [
-      {"key": "A", "content": "지정된 interface 목록", "displayOrder": 0},
-      {"key": "B", "content": "임의의 concrete superclass의 모든 private method", "displayOrder": 1},
-      {"key": "C", "content": "OS thread interface", "displayOrder": 2},
-      {"key": "D", "content": "annotation processor interface만", "displayOrder": 3}
+      {"key": "A", "content": "지정된 interface 목록", "displayOrder": 0, "rationaleMarkdown": "JDK Proxy API는 실행 시점에 지정한 interface들을 구현하는 proxy class를 만들며, interface 호출을 handler로 위임한다."},
+      {"key": "B", "content": "임의의 concrete superclass의 모든 private method", "displayOrder": 1, "rationaleMarkdown": "JDK dynamic proxy는 임의의 concrete class를 상속하는 도구가 아니다. 그 class의 private method를 전부 구현 대상으로 만들지 않는다."},
+      {"key": "C", "content": "OS thread interface", "displayOrder": 2, "rationaleMarkdown": "proxy interface는 운영체제 thread scheduling contract가 아니다. JDK proxy는 Java interface 기반 호출 위임을 제공한다."},
+      {"key": "D", "content": "annotation processor interface만", "displayOrder": 3, "rationaleMarkdown": "annotation processor는 compile-time 확장 지점이다. proxy class 생성을 위한 JDK Proxy API의 입력이 아니다."}
     ],
     "correctChoiceKey": "A",
     "explanationMarkdown": "Proxy.newProxyInstance는 interface-based proxy class를 만든다."
@@ -229,10 +229,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["java.core.metadata-compatibility.dynamic-proxy-invocationhandler"],
     "choices": [
-      {"key": "A", "content": "ClassLoader.define", "displayOrder": 0},
-      {"key": "B", "content": "InvocationHandler.invoke", "displayOrder": 1},
-      {"key": "C", "content": "Serializable.writeOnly", "displayOrder": 2},
-      {"key": "D", "content": "Thread.join", "displayOrder": 3}
+      {"key": "A", "content": "ClassLoader.define", "displayOrder": 0, "rationaleMarkdown": "ClassLoader는 proxy class를 정의하는 데 관여할 수 있지만 호출 interception callback은 InvocationHandler가 맡는다."},
+      {"key": "B", "content": "InvocationHandler.invoke", "displayOrder": 1, "rationaleMarkdown": "proxy로 전달되는 interface method 호출은 InvocationHandler.invoke에 넘겨져 target delegation, 결과 변환, 예외 처리 등을 구현할 수 있다."},
+      {"key": "C", "content": "Serializable.writeOnly", "displayOrder": 2, "rationaleMarkdown": "Serializable의 writeObject 계약은 직렬화 과정에 쓰인다. 일반 proxy method 호출 dispatch callback이 아니다."},
+      {"key": "D", "content": "Thread.join", "displayOrder": 3, "rationaleMarkdown": "Thread.join은 다른 thread의 종료를 기다린다. proxy method 호출을 가로채는 기능과 무관하다."}
     ],
     "correctChoiceKey": "B",
     "explanationMarkdown": "proxy instance의 호출은 연관된 InvocationHandler로 중계된다."
@@ -246,10 +246,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["java.core.metadata-compatibility.dynamic-proxy-invocationhandler"],
     "choices": [
-      {"key": "A", "content": "오직 source file path", "displayOrder": 0},
-      {"key": "B", "content": "GC root와 heap size", "displayOrder": 1},
-      {"key": "C", "content": "proxy object, Method, arguments", "displayOrder": 2},
-      {"key": "D", "content": "module descriptor와 JIT code", "displayOrder": 3}
+      {"key": "A", "content": "오직 source file path", "displayOrder": 0, "rationaleMarkdown": "호출 인수만으로 source 경로를 전달하지 않는다. handler가 받는 메타데이터는 실행 중 method dispatch에 관한 정보다."},
+      {"key": "B", "content": "GC root와 heap size", "displayOrder": 1, "rationaleMarkdown": "GC 정보는 handler의 method 호출 인자로 제공되지 않는다. JVM 메모리 진단과 invocation dispatch는 별도 관심사다."},
+      {"key": "C", "content": "proxy object, Method, arguments", "displayOrder": 2, "rationaleMarkdown": "handler에는 호출된 proxy 인스턴스, 이에 대응하는 Method, 인수 배열이 전달된다. 이 정보로 위임과 호출 정책을 구현한다."},
+      {"key": "D", "content": "module descriptor와 JIT code", "displayOrder": 3, "rationaleMarkdown": "module descriptor와 JIT code는 invoke callback의 인자 목록이 아니다. handler는 proxy와 method invocation 데이터를 받는다."}
     ],
     "correctChoiceKey": "C",
     "explanationMarkdown": "handler는 호출 대상 method와 argument를 바탕으로 delegation/interception을 수행한다."
@@ -263,10 +263,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["java.core.metadata-compatibility.dynamic-proxy-invocationhandler"],
     "choices": [
-      {"key": "A", "content": "JDK proxy는 오직 field만 가로챈다", "displayOrder": 0},
-      {"key": "B", "content": "concrete class는 항상 interface다", "displayOrder": 1},
-      {"key": "C", "content": "둘은 Java API에서 완전히 동일하다", "displayOrder": 2},
-      {"key": "D", "content": "JDK proxy는 interface 기반이며 임의 concrete class subclass proxy를 기본 제공하지 않는다", "displayOrder": 3}
+      {"key": "A", "content": "JDK proxy는 오직 field만 가로챈다", "displayOrder": 0, "rationaleMarkdown": "JDK proxy는 interface에 선언된 호출을 처리한다. field access를 자동으로 가로채는 기능은 제공하지 않는다."},
+      {"key": "B", "content": "concrete class는 항상 interface다", "displayOrder": 1, "rationaleMarkdown": "concrete class는 class이며 interface와 같은 타입 선언 범주가 아니다. 두 proxy 방식의 대상과 제약을 분리해야 한다."},
+      {"key": "C", "content": "둘은 Java API에서 완전히 동일하다", "displayOrder": 2, "rationaleMarkdown": "JDK interface proxy와 concrete subclass proxy는 생성 기반, 적용 가능한 타입, 제약이 다르다. 같은 API 동작을 보장한다고 볼 수 없다."},
+      {"key": "D", "content": "JDK proxy는 interface 기반이며 임의 concrete class subclass proxy를 기본 제공하지 않는다", "displayOrder": 3, "rationaleMarkdown": "JDK Proxy API의 proxy class는 지정된 interface를 구현한다. concrete superclass를 임의로 상속하는 proxy는 별도 bytecode/library 방식이 필요하다."}
     ],
     "correctChoiceKey": "D",
     "explanationMarkdown": "Proxy API의 기본 모델은 interface 구현 runtime class다."
@@ -280,10 +280,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["java.core.metadata-compatibility.dynamic-proxy-invocationhandler"],
     "choices": [
-      {"key": "A", "content": "InvocationTargetException과 interface의 declared exception contract를 호출자에게 올바르게 처리한다", "displayOrder": 0},
-      {"key": "B", "content": "handler는 모든 예외를 자동으로 정상값으로 바꾼다", "displayOrder": 1},
-      {"key": "C", "content": "proxy가 예외를 compile-time에 삭제한다", "displayOrder": 2},
-      {"key": "D", "content": "target method가 호출되지 않는다", "displayOrder": 3}
+      {"key": "A", "content": "InvocationTargetException과 interface의 declared exception contract를 호출자에게 올바르게 처리한다", "displayOrder": 0, "rationaleMarkdown": "Method.invoke는 target 예외를 InvocationTargetException으로 감쌀 수 있으며, proxy의 checked exception 전달은 interface 선언과 proxy 규칙에 맞춰 처리해야 한다."},
+      {"key": "B", "content": "handler는 모든 예외를 자동으로 정상값으로 바꾼다", "displayOrder": 1, "rationaleMarkdown": "handler는 예외를 자동으로 성공값으로 바꾸지 않는다. 예외 변환은 handler 설계의 명시적 책임이다."},
+      {"key": "C", "content": "proxy가 예외를 compile-time에 삭제한다", "displayOrder": 2, "rationaleMarkdown": "proxy 생성은 호출 예외를 compile-time에서 지우지 않는다. invocation handler와 interface의 예외 계약이 실행 결과에 영향을 준다."},
+      {"key": "D", "content": "target method가 호출되지 않는다", "displayOrder": 3, "rationaleMarkdown": "handler가 명시적으로 target method를 invoke한다면 target 호출은 발생한다. 예외는 그 호출 경로에서 전달·변환된다."}
     ],
     "correctChoiceKey": "A",
     "explanationMarkdown": "reflective invocation은 target 예외를 wrapping할 수 있고 proxy signature 계약도 지켜야 한다."
@@ -297,10 +297,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["java.core.metadata-compatibility.dynamic-proxy-invocationhandler"],
     "choices": [
-      {"key": "A", "content": "가능하다. Method.getDeclaringClass()는 항상 호출자가 사용한 interface를 반환한다", "displayOrder": 0},
-      {"key": "B", "content": "불가능할 수 있다. 중복 signature에서는 handler에 전달되는 Method의 declaring class가 호출자가 사용한 interface와 일치한다고 보장되지 않는다", "displayOrder": 1},
-      {"key": "C", "content": "가능하다. proxy가 호출할 때 자동으로 interface 이름을 args[0]에 넣는다", "displayOrder": 2},
-      {"key": "D", "content": "중복 signature가 있으면 Proxy.newProxyInstance 자체가 항상 실패한다", "displayOrder": 3}
+      {"key": "A", "content": "가능하다. Method.getDeclaringClass()는 항상 호출자가 사용한 interface를 반환한다", "displayOrder": 0, "rationaleMarkdown": "중복 signature의 proxy 호출은 어떤 interface 참조로 들어왔는지와 무관하게 같은 handler 경로에 도달할 수 있다. 전달된 Method의 declaring class가 호출자 참조 타입을 늘 알려준다고 가정하면 안 된다."},
+      {"key": "B", "content": "불가능할 수 있다. 중복 signature에서는 handler에 전달되는 Method의 declaring class가 호출자가 사용한 interface와 일치한다고 보장되지 않는다", "displayOrder": 1, "rationaleMarkdown": "여러 proxy interface가 동일한 signature를 선언하면 handler에 전달되는 Method의 declaring class가 호출자가 사용한 interface와 다를 수 있다. 호출 원본을 반드시 알아야 한다면 별도 설계를 고려한다."},
+      {"key": "C", "content": "가능하다. proxy가 호출할 때 자동으로 interface 이름을 args[0]에 넣는다", "displayOrder": 2, "rationaleMarkdown": "proxy API는 인자에 interface 이름을 자동 추가하지 않는다. 전달되는 args는 실제 method 인수에 대응한다."},
+      {"key": "D", "content": "중복 signature가 있으면 Proxy.newProxyInstance 자체가 항상 실패한다", "displayOrder": 3, "rationaleMarkdown": "동일 signature가 있다는 사실만으로 proxy 생성을 항상 거부하지 않는다. 반환형 호환 등 proxy interface 구성 규칙을 따로 만족해야 한다."}
     ],
     "correctChoiceKey": "B",
     "explanationMarkdown": "JDK Proxy API는 여러 proxy interface에 같은 signature가 있을 때 handler에 전달되는 Method의 declaring class가 호출자가 proxy method를 부른 interface와 반드시 같지 않을 수 있다고 명시한다. 따라서 handler가 caller-interface identity에 의존해 routing하는 설계는 피해야 한다."
@@ -314,10 +314,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["java.core.metadata-compatibility.annotation-processing-vs-reflection"],
     "choices": [
-      {"key": "A", "content": "객체가 GC된 뒤", "displayOrder": 0},
-      {"key": "B", "content": "thread join 이후만", "displayOrder": 1},
-      {"key": "C", "content": "compile time", "displayOrder": 2},
-      {"key": "D", "content": "JVM shutdown 이후", "displayOrder": 3}
+      {"key": "A", "content": "객체가 GC된 뒤", "displayOrder": 0, "rationaleMarkdown": "GC는 heap 객체 수명을 관리하는 실행 시점 기능이라 compile-time annotation processing의 실행 시점을 설명하지 않는다."},
+      {"key": "B", "content": "thread join 이후만", "displayOrder": 1, "rationaleMarkdown": "thread join은 실행 중 thread의 종료를 기다리는 동기화 연산이다. annotation processor는 빌드의 컴파일 단계에서 동작한다."},
+      {"key": "C", "content": "compile time", "displayOrder": 2, "rationaleMarkdown": "annotation processor는 컴파일러가 소스 요소와 annotation을 분석하는 동안 실행되며, 필요한 경우 생성 파일을 빌드 산출물에 추가한다."},
+      {"key": "D", "content": "JVM shutdown 이후", "displayOrder": 3, "rationaleMarkdown": "JVM shutdown hook은 프로세스 종료 시점의 기능이며 annotation processing 단계와 무관하다."}
     ],
     "correctChoiceKey": "C",
     "explanationMarkdown": "processor는 compiler round에서 source/model과 annotation을 처리한다."
@@ -331,10 +331,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["java.core.metadata-compatibility.annotation-processing-vs-reflection"],
     "choices": [
-      {"key": "A", "content": "compile 전 processor round만", "displayOrder": 0},
-      {"key": "B", "content": "OS syscall 목록", "displayOrder": 1},
-      {"key": "C", "content": "모든 source comment", "displayOrder": 2},
-      {"key": "D", "content": "runtime에 loaded된 Class와 member metadata", "displayOrder": 3}
+      {"key": "A", "content": "compile 전 processor round만", "displayOrder": 0, "rationaleMarkdown": "annotation processor는 소스와 컴파일 모델을 빌드 시 분석한다. loaded class를 실행 중 조사하는 reflection과 구분된다."},
+      {"key": "B", "content": "OS syscall 목록", "displayOrder": 1, "rationaleMarkdown": "OS syscall은 운영체제 경계 기능이며 Java reflection의 일반적인 대상이 아니다."},
+      {"key": "C", "content": "모든 source comment", "displayOrder": 2, "rationaleMarkdown": "소스 주석은 컴파일 후 제거되거나 보존 정책에 따라 달라질 수 있어 runtime reflection이 모든 원본 주석을 읽는다고 볼 수 없다."},
+      {"key": "D", "content": "runtime에 loaded된 Class와 member metadata", "displayOrder": 3, "rationaleMarkdown": "Class와 member metadata는 class loading 뒤 reflection API로 조사할 수 있다. 다만 접근성이나 JPMS 경계 등 별도 제약을 고려해야 한다."}
     ],
     "correctChoiceKey": "D",
     "explanationMarkdown": "reflection은 실행 중 Class, Method, Field 등을 조사한다."
@@ -348,10 +348,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["java.core.metadata-compatibility.annotation-processing-vs-reflection"],
     "choices": [
-      {"key": "A", "content": "generated source/class 같은 build artifact", "displayOrder": 0},
-      {"key": "B", "content": "새 OS process", "displayOrder": 1},
-      {"key": "C", "content": "자동 GC root", "displayOrder": 2},
-      {"key": "D", "content": "runtime thread dump", "displayOrder": 3}
+      {"key": "A", "content": "generated source/class 같은 build artifact", "displayOrder": 0, "rationaleMarkdown": "processor는 빌드 중 generated source나 resource를 만들 수 있으며, 이후 컴파일되어 class 산출물에 포함될 수 있다."},
+      {"key": "B", "content": "새 OS process", "displayOrder": 1, "rationaleMarkdown": "processor 실행 결과가 새 OS process 생성이라는 뜻은 아니다. 이는 컴파일 도구가 제공하는 확장 지점이다."},
+      {"key": "C", "content": "자동 GC root", "displayOrder": 2, "rationaleMarkdown": "GC root는 객체 수명 추적에 쓰이는 VM 개념이지 annotation processing의 대표 산출물이 아니다."},
+      {"key": "D", "content": "runtime thread dump", "displayOrder": 3, "rationaleMarkdown": "thread dump는 실행 중 thread 상태 진단 자료다. processor가 통상 생성하는 compile-time artifact와 다르다."}
     ],
     "correctChoiceKey": "A",
     "explanationMarkdown": "processor는 compile phase에서 source/model을 바탕으로 code generation을 할 수 있다."
@@ -365,10 +365,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["java.core.metadata-compatibility.annotation-processing-vs-reflection"],
     "choices": [
-      {"key": "A", "content": "processor가 실행되면 모든 annotation이 RUNTIME이 된다", "displayOrder": 0},
-      {"key": "B", "content": "compile-time 생성과 runtime reflection visibility는 별도이므로, 생성이 성공해도 runtime reflection에서는 annotation이 보이지 않을 수 있다", "displayOrder": 1},
-      {"key": "C", "content": "generated source는 runtime에 annotation을 자동 보존한다", "displayOrder": 2},
-      {"key": "D", "content": "reflection이 compiler round를 다시 실행한다", "displayOrder": 3}
+      {"key": "A", "content": "processor가 실행되면 모든 annotation이 RUNTIME이 된다", "displayOrder": 0, "rationaleMarkdown": "processor가 annotation을 읽을 수 있다는 사실은 보존 정책을 바꾸지 않는다. compile-time 처리와 runtime 조회는 별개의 계약이다."},
+      {"key": "B", "content": "compile-time 생성과 runtime reflection visibility는 별도이므로, 생성이 성공해도 runtime reflection에서는 annotation이 보이지 않을 수 있다", "displayOrder": 1, "rationaleMarkdown": "빌드 도구는 SOURCE나 CLASS 보존 annotation도 소스 모델에서 처리할 수 있다. 이후 runtime reflection에서 안 보이는 현상과 generated source 생성은 함께 성립할 수 있다."},
+      {"key": "C", "content": "generated source는 runtime에 annotation을 자동 보존한다", "displayOrder": 2, "rationaleMarkdown": "generated source는 원래 annotation의 retention을 승격하지 않는다. 생성된 코드가 별도 annotation을 선언하지 않는 한 runtime 보존도 보장하지 않는다."},
+      {"key": "D", "content": "reflection이 compiler round를 다시 실행한다", "displayOrder": 3, "rationaleMarkdown": "reflection은 컴파일이 끝난 class metadata를 읽는 실행 시점 기능이다. 이미 끝난 compiler round를 다시 수행하지 않는다."}
     ],
     "correctChoiceKey": "B",
     "explanationMarkdown": "annotation processor는 compile-time source/class model을 읽고 산출물을 만들 수 있다. 반면 runtime reflection visibility는 retention에 좌우되므로, compile-time 생성 성공과 runtime 조회 실패는 동시에 성립할 수 있다."
@@ -382,10 +382,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["java.core.metadata-compatibility.serialization-contract-risk"],
     "choices": [
-      {"key": "A", "content": "field가 항상 static이 된다", "displayOrder": 0},
-      {"key": "B", "content": "field가 암호화된다", "displayOrder": 1},
-      {"key": "C", "content": "기본 object serialization 대상에서 제외된다", "displayOrder": 2},
-      {"key": "D", "content": "field가 final로 바뀐다", "displayOrder": 3}
+      {"key": "A", "content": "field가 항상 static이 된다", "displayOrder": 0, "rationaleMarkdown": "transient는 static modifier를 바꾸지 않는다. static 상태는 class에 속하고 기본 object serialization은 per-instance state를 기록한다."},
+      {"key": "B", "content": "field가 암호화된다", "displayOrder": 1, "rationaleMarkdown": "transient는 암호화하지 않는다. secret 보호는 serialization flag 외에 별도 보안 정책이 필요하다."},
+      {"key": "C", "content": "기본 object serialization 대상에서 제외된다", "displayOrder": 2, "rationaleMarkdown": "기본 Java serialization은 transient instance field를 default serialized form에서 제외한다. custom writeObject 등은 별도 동작을 정의할 수 있다."},
+      {"key": "D", "content": "field가 final로 바뀐다", "displayOrder": 3, "rationaleMarkdown": "transient는 field를 final로 만들지 않는다. 변경 가능성과 serialization 참여는 다른 특성이다."}
     ],
     "correctChoiceKey": "C",
     "explanationMarkdown": "transient는 기본 stream에 field를 포함하지 않는 표시다."
@@ -399,10 +399,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["java.core.metadata-compatibility.serialization-contract-risk"],
     "choices": [
-      {"key": "A", "content": "thread scheduling 순서", "displayOrder": 0},
-      {"key": "B", "content": "GC collector 선택", "displayOrder": 1},
-      {"key": "C", "content": "annotation Target 위치", "displayOrder": 2},
-      {"key": "D", "content": "serialized form과 class evolution의 compatibility 판단", "displayOrder": 3}
+      {"key": "A", "content": "thread scheduling 순서", "displayOrder": 0, "rationaleMarkdown": "serialVersionUID는 thread scheduling을 제어하지 않고 serialized class descriptor의 호환성 확인에 참여한다."},
+      {"key": "B", "content": "GC collector 선택", "displayOrder": 1, "rationaleMarkdown": "GC collector 선택과 무관하다. Java serialization에서 class version compatibility에 쓰인다."},
+      {"key": "C", "content": "annotation Target 위치", "displayOrder": 2, "rationaleMarkdown": "annotation 적용 위치는 @Target이 정하고 serialization stream version matching과 별개다."},
+      {"key": "D", "content": "serialized form과 class evolution의 compatibility 판단", "displayOrder": 3, "rationaleMarkdown": "stream descriptor의 serialVersionUID와 local serializable class 값을 비교해 호환성을 판단한다. serialized form 진화는 별도 설계가 필요하다."}
     ],
     "correctChoiceKey": "D",
     "explanationMarkdown": "serialVersionUID는 stream과 class version compatibility에 영향을 준다."
@@ -416,10 +416,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["java.core.metadata-compatibility.serialization-contract-risk"],
     "choices": [
-      {"key": "A", "content": "기본 serialization이 graph를 처리하지 못할 수 있다", "displayOrder": 0},
-      {"key": "B", "content": "그 field가 자동 transient가 된다", "displayOrder": 1},
-      {"key": "C", "content": "JVM이 field를 deep copy한다", "displayOrder": 2},
-      {"key": "D", "content": "모든 class가 Serializable로 승격된다", "displayOrder": 3}
+      {"key": "A", "content": "기본 serialization이 graph를 처리하지 못할 수 있다", "displayOrder": 0, "rationaleMarkdown": "기본 serialization은 reachable serializable object graph를 순회한다. non-transient reference가 Serializable이 아니면 NotSerializableException이 날 수 있다."},
+      {"key": "B", "content": "그 field가 자동 transient가 된다", "displayOrder": 1, "rationaleMarkdown": "값이 serializable하지 않다고 field가 자동 transient가 되지 않는다. class가 생략하거나 encode하는 방법을 정의해야 한다."},
+      {"key": "C", "content": "JVM이 field를 deep copy한다", "displayOrder": 2, "rationaleMarkdown": "기본 serialization은 지원하지 않는 객체를 조용히 deep-copy하지 않는다. graph가 계약을 만족하거나 custom 처리가 필요하다."},
+      {"key": "D", "content": "모든 class가 Serializable로 승격된다", "displayOrder": 3, "rationaleMarkdown": "reference를 보유해도 모든 대상 class가 Serializable을 구현하는 것은 아니다. object graph를 점검한다."}
     ],
     "correctChoiceKey": "A",
     "explanationMarkdown": "graph의 포함된 객체도 serialization 계약을 만족해야 한다."
@@ -433,10 +433,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["java.core.metadata-compatibility.serialization-contract-risk"],
     "choices": [
-      {"key": "A", "content": "기존 stream은 항상 v2 source로 재생성된다", "displayOrder": 0},
-      {"key": "B", "content": "transient field가 stream에서 복원되지 않아 기본값일 수 있으므로 역직렬화 후 invariant 복구를 설계한다", "displayOrder": 1},
-      {"key": "C", "content": "serialVersionUID가 field 값을 자동 복원한다", "displayOrder": 2},
-      {"key": "D", "content": "transient는 이전 stream에서만 strong field가 된다", "displayOrder": 3}
+      {"key": "A", "content": "기존 stream은 항상 v2 source로 재생성된다", "displayOrder": 0, "rationaleMarkdown": "기존 stream은 기록 당시의 bytes다. 새 source를 바꿔도 stream을 자동 재생성하지 않는다."},
+      {"key": "B", "content": "transient field가 stream에서 복원되지 않아 기본값일 수 있으므로 역직렬화 후 invariant 복구를 설계한다", "displayOrder": 1, "rationaleMarkdown": "새 class에서 field를 transient로 바꾸면 default deserialization이 과거 stream의 값을 복원하지 않아 default value가 남을 수 있다. readObject 등으로 invariant를 복원한다."},
+      {"key": "C", "content": "serialVersionUID가 field 값을 자동 복원한다", "displayOrder": 2, "rationaleMarkdown": "serialVersionUID는 class compatibility를 판단할 뿐 stream에서 빠진 field 값을 재구성하지 않는다."},
+      {"key": "D", "content": "transient는 이전 stream에서만 strong field가 된다", "displayOrder": 3, "rationaleMarkdown": "transient는 현재 serialization에서 제외한다. 과거 stream의 데이터가 강한 field로 자동 부활하지 않으므로 부재를 처리해야 한다."}
     ],
     "correctChoiceKey": "B",
     "explanationMarkdown": "serialVersionUID는 compatibility 판단에 관여하지만 제외된 field의 값과 애플리케이션 invariant를 자동 복구하지 않는다."
@@ -450,10 +450,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["java.core.metadata-compatibility.jpms-classpath-modulepath"],
     "choices": [
-      {"key": "A", "content": "method overloading", "displayOrder": 0},
-      {"key": "B", "content": "package의 객체 생성", "displayOrder": 1},
-      {"key": "C", "content": "named module dependency/readability", "displayOrder": 2},
-      {"key": "D", "content": "GC root", "displayOrder": 3}
+      {"key": "A", "content": "method overloading", "displayOrder": 0, "rationaleMarkdown": "method overloading은 Java 언어의 선언과 선택 규칙이며 module-info requires 지시문의 기능이 아니다."},
+      {"key": "B", "content": "package의 객체 생성", "displayOrder": 1, "rationaleMarkdown": "requires는 객체를 생성하지 않는다. 모듈 descriptor에서 의존 대상 모듈을 선언한다."},
+      {"key": "C", "content": "named module dependency/readability", "displayOrder": 2, "rationaleMarkdown": "requires는 named module 간 의존성 및 readability 관계를 선언한다. 코드에서 다른 모듈 타입을 사용할 수 있는 조건의 하나다."},
+      {"key": "D", "content": "GC root", "displayOrder": 3, "rationaleMarkdown": "GC root는 객체 도달성 추적 개념이라 module descriptor의 의존 선언과 관계없다."}
     ],
     "correctChoiceKey": "C",
     "explanationMarkdown": "requires는 module dependency를 선언한다."
@@ -467,10 +467,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["java.core.metadata-compatibility.jpms-classpath-modulepath"],
     "choices": [
-      {"key": "A", "content": "annotation retention을 변경한다", "displayOrder": 0},
-      {"key": "B", "content": "모든 private field를 공개한다", "displayOrder": 1},
-      {"key": "C", "content": "module을 classpath로 복사한다", "displayOrder": 2},
-      {"key": "D", "content": "package를 다른 module이 접근할 수 있는 공개 경계로 선언한다", "displayOrder": 3}
+      {"key": "A", "content": "annotation retention을 변경한다", "displayOrder": 0, "rationaleMarkdown": "annotation 보존은 @Retention의 역할이다. exports는 module의 package 접근 경계를 선언한다."},
+      {"key": "B", "content": "모든 private field를 공개한다", "displayOrder": 1, "rationaleMarkdown": "exports는 package를 공개할 뿐 package 안의 private member를 공개 API로 바꾸지 않는다."},
+      {"key": "C", "content": "module을 classpath로 복사한다", "displayOrder": 2, "rationaleMarkdown": "module-path와 classpath의 배치 방식은 별도다. exports는 module을 복사하거나 배치하지 않는다."},
+      {"key": "D", "content": "package를 다른 module이 접근할 수 있는 공개 경계로 선언한다", "displayOrder": 3, "rationaleMarkdown": "exports는 지정된 package의 공개 접근을 다른 module에 허용하는 선언이다. 어떤 module이 의존하는지는 requires와 함께 살펴야 한다."}
     ],
     "correctChoiceKey": "D",
     "explanationMarkdown": "exports는 module 간 package accessibility 경계다."
@@ -484,10 +484,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["java.core.metadata-compatibility.jpms-classpath-modulepath"],
     "choices": [
-      {"key": "A", "content": "unnamed module", "displayOrder": 0},
-      {"key": "B", "content": "오직 automatic GC module", "displayOrder": 1},
-      {"key": "C", "content": "source module만", "displayOrder": 2},
-      {"key": "D", "content": "항상 java.base named module", "displayOrder": 3}
+      {"key": "A", "content": "unnamed module", "displayOrder": 0, "rationaleMarkdown": "일반 classpath 항목은 named module descriptor를 제공하지 않으므로 unnamed module의 일부로 취급된다."},
+      {"key": "B", "content": "오직 automatic GC module", "displayOrder": 1, "rationaleMarkdown": "자동 모듈은 module-path의 일부 jar에 적용되는 개념이다. GC와 무관한 module 분류다."},
+      {"key": "C", "content": "source module만", "displayOrder": 2, "rationaleMarkdown": "source module은 classpath class의 필수 소속이 아니다. descriptor 없는 classpath 코드도 실행된다."},
+      {"key": "D", "content": "항상 java.base named module", "displayOrder": 3, "rationaleMarkdown": "java.base는 플랫폼의 named module이다. 모든 classpath class가 그 module에 소속되는 것은 아니다."}
     ],
     "correctChoiceKey": "A",
     "explanationMarkdown": "module path의 named module과 달리 classpath class는 unnamed module 모델로 다뤄질 수 있다."
@@ -501,10 +501,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["java.core.metadata-compatibility.jpms-classpath-modulepath"],
     "choices": [
-      {"key": "A", "content": "classpath의 unnamed module이 named module을 삭제하기 때문이다", "displayOrder": 0},
-      {"key": "B", "content": "module readability와 package exports가 모두 접근 경계에 관여하기 때문이다", "displayOrder": 1},
-      {"key": "C", "content": "public class는 module 경계를 항상 무시하기 때문이다", "displayOrder": 2},
-      {"key": "D", "content": "requires가 모든 package를 자동 exports하기 때문이다", "displayOrder": 3}
+      {"key": "A", "content": "classpath의 unnamed module이 named module을 삭제하기 때문이다", "displayOrder": 0, "rationaleMarkdown": "unnamed module이 named module을 삭제한다는 동작은 없다. 문제는 named module 사이의 접근 선언을 확인하는 것이다."},
+      {"key": "B", "content": "module readability와 package exports가 모두 접근 경계에 관여하기 때문이다", "displayOrder": 1, "rationaleMarkdown": "requires는 module readability를 만들고 exports는 package의 다른 모듈 공개를 정한다. 의존 선언만으로 비공개 package 접근까지 열리지 않는다."},
+      {"key": "C", "content": "public class는 module 경계를 항상 무시하기 때문이다", "displayOrder": 2, "rationaleMarkdown": "public은 Java 접근 수준 중 하나지만 JPMS package 경계를 대체하지 않는다. 외부 module에서 쓰려면 package 공개 정책도 맞아야 한다."},
+      {"key": "D", "content": "requires가 모든 package를 자동 exports하기 때문이다", "displayOrder": 3, "rationaleMarkdown": "requires는 dependency를 선언할 뿐 모든 package를 exports하지 않는다. 모듈 작성자가 공개 package를 별도로 선택한다."}
     ],
     "correctChoiceKey": "B",
     "explanationMarkdown": "Java access modifier만으로 충분하지 않고 JPMS의 module dependency와 exported package 조건도 만족해야 한다."
@@ -518,10 +518,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["java.core.metadata-compatibility.binary-compatibility-api-evolution"],
     "choices": [
-      {"key": "A", "content": "heap이 같은가", "displayOrder": 0},
-      {"key": "B", "content": "기존 class가 새 library와 link되는가만", "displayOrder": 1},
-      {"key": "C", "content": "기존 source가 새 API로 다시 compile되는가", "displayOrder": 2},
-      {"key": "D", "content": "runtime behavior가 모든 client에서 같은가", "displayOrder": 3}
+      {"key": "A", "content": "heap이 같은가", "displayOrder": 0, "rationaleMarkdown": "heap 구조는 source compatibility를 묻는 기준이 아니다. 변경된 API로 기존 소스를 다시 컴파일할 수 있는지가 핵심이다."},
+      {"key": "B", "content": "기존 class가 새 library와 link되는가만", "displayOrder": 1, "rationaleMarkdown": "미리 컴파일한 client의 linkage 여부는 binary compatibility 질문이다. 기존 source의 재컴파일과 구분한다."},
+      {"key": "C", "content": "기존 source가 새 API로 다시 compile되는가", "displayOrder": 2, "rationaleMarkdown": "source compatibility는 기존 source가 새 API를 대상으로 다시 compile되는지 묻는다. compile 성공이 runtime 동작까지 같다는 보장은 아니다."},
+      {"key": "D", "content": "runtime behavior가 모든 client에서 같은가", "displayOrder": 3, "rationaleMarkdown": "runtime behavior가 같다는 것은 별도 behavioral compatibility 문제라 compile 성공만으로 입증되지 않는다."}
     ],
     "correctChoiceKey": "C",
     "explanationMarkdown": "source compatibility는 재컴파일 관점이다."
@@ -535,10 +535,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["java.core.metadata-compatibility.binary-compatibility-api-evolution"],
     "choices": [
-      {"key": "A", "content": "GC가 빠른가", "displayOrder": 0},
-      {"key": "B", "content": "source 문법이 예쁜가", "displayOrder": 1},
-      {"key": "C", "content": "annotation이 RUNTIME인가", "displayOrder": 2},
-      {"key": "D", "content": "기존 compiled class가 새 library와 계속 링크될 수 있는가", "displayOrder": 3}
+      {"key": "A", "content": "GC가 빠른가", "displayOrder": 0, "rationaleMarkdown": "GC 성능은 runtime 특성이고 이미 컴파일된 client의 linkage 여부라는 binary compatibility 정의와 무관하다."},
+      {"key": "B", "content": "source 문법이 예쁜가", "displayOrder": 1, "rationaleMarkdown": "source 문법의 가독성은 binary compatibility가 묻는 연결 가능성에 답하지 않는다."},
+      {"key": "C", "content": "annotation이 RUNTIME인가", "displayOrder": 2, "rationaleMarkdown": "annotation retention은 metadata visibility에 영향을 줄 수 있지만 binary linkage 핵심은 아니다."},
+      {"key": "D", "content": "기존 compiled class가 새 library와 계속 링크될 수 있는가", "displayOrder": 3, "rationaleMarkdown": "binary compatibility는 재컴파일 없이 예전 compiled class가 새 library와 계속 연결될 수 있는지 묻는다."}
     ],
     "correctChoiceKey": "D",
     "explanationMarkdown": "binary compatibility는 이미 컴파일된 artifact와 새 binary의 linkage 관점이다."
@@ -552,10 +552,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["java.core.metadata-compatibility.binary-compatibility-api-evolution"],
     "choices": [
-      {"key": "A", "content": "NoSuchMethodError 같은 linkage 실패", "displayOrder": 0},
-      {"key": "B", "content": "transient field 복구", "displayOrder": 1},
-      {"key": "C", "content": "자동 overload 선택", "displayOrder": 2},
-      {"key": "D", "content": "항상 source compile 성공", "displayOrder": 3}
+      {"key": "A", "content": "NoSuchMethodError 같은 linkage 실패", "displayOrder": 0, "rationaleMarkdown": "삭제된 method를 가리키는 예전 class file symbolic reference가 더는 resolve되지 않아 NoSuchMethodError 같은 linkage error가 날 수 있다."},
+      {"key": "B", "content": "transient field 복구", "displayOrder": 1, "rationaleMarkdown": "transient는 default serialization field를 제어하고 method linkage 실패를 해결하지 않는다."},
+      {"key": "C", "content": "자동 overload 선택", "displayOrder": 2, "rationaleMarkdown": "JVM은 이미 compiled된 reference가 사라졌을 때 새 overload를 대신 선택하지 않는다."},
+      {"key": "D", "content": "항상 source compile 성공", "displayOrder": 3, "rationaleMarkdown": "수정한 source는 다시 compile될 수 있어도 기존 binary는 linkage에 실패할 수 있다. 두 compatibility 검증은 별개다."}
     ],
     "correctChoiceKey": "A",
     "explanationMarkdown": "호출 descriptor가 없어지면 runtime linkage error가 발생할 수 있다."
@@ -569,10 +569,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["java.core.metadata-compatibility.binary-compatibility-api-evolution"],
     "choices": [
-      {"key": "A", "content": "재컴파일은 항상 기존 호출 descriptor를 보존한다", "displayOrder": 0},
-      {"key": "B", "content": "기존 binary linkage와 source overload resolution이 다른 compatibility 질문이므로 각각 검증해야 한다", "displayOrder": 1},
-      {"key": "C", "content": "binary와 source compatibility는 항상 같은 결과다", "displayOrder": 2},
-      {"key": "D", "content": "overload 추가는 runtime compatibility만 바꾼다", "displayOrder": 3}
+      {"key": "A", "content": "재컴파일은 항상 기존 호출 descriptor를 보존한다", "displayOrder": 0, "rationaleMarkdown": "재컴파일하면 새 API에 맞춰 overload를 다시 고른다. 예전 binary descriptor를 보존한다고 약속하지 않는다."},
+      {"key": "B", "content": "기존 binary linkage와 source overload resolution이 다른 compatibility 질문이므로 각각 검증해야 한다", "displayOrder": 1, "rationaleMarkdown": "기존 class file은 compile 당시 symbolic reference를 유지하지만 재컴파일은 새 overload를 선택할 수 있다. binary linkage와 source 선택 결과를 따로 검사한다."},
+      {"key": "C", "content": "binary와 source compatibility는 항상 같은 결과다", "displayOrder": 2, "rationaleMarkdown": "binary linkage는 저장된 참조를 연결하고 source overload resolution은 재컴파일 때 적용되어 API 진화에서 결과가 다를 수 있다."},
+      {"key": "D", "content": "overload 추가는 runtime compatibility만 바꾼다", "displayOrder": 3, "rationaleMarkdown": "overload 추가는 기존 binary의 descriptor를 유지하면서 재컴파일 source의 compile-time 선택을 바꿀 수 있다."}
     ],
     "correctChoiceKey": "B",
     "explanationMarkdown": "이미 컴파일된 호출과 재컴파일 시 source overload 선택은 서로 다른 단계와 계약을 따른다."
