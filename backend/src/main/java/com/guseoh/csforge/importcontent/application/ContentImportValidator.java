@@ -149,6 +149,13 @@ public class ContentImportValidator {
         if (item.correctChoiceKey() == null || !choiceKeys.contains(item.correctChoiceKey())) {
             errors.add(new ImportValidationError("correctChoiceKey", "공개 객관식은 유효한 정답 선택지가 필요합니다"));
         }
+        for (int index = 0; index < item.choices().size(); index++) {
+            String rationale = item.choices().get(index).rationaleMarkdown();
+            if (rationale == null || rationale.isBlank()) {
+                errors.add(new ImportValidationError("choices[" + index + "].rationaleMarkdown",
+                        "공개 객관식의 모든 선택지에는 해설이 필요합니다"));
+            }
+        }
     }
 
     private static void validateStatus(String status, List<ImportValidationError> errors) {

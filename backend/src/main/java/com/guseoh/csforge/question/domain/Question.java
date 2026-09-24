@@ -107,6 +107,7 @@ public class Question extends AuditedEntity {
 
     public void replaceStructure(QuestionType questionType, List<ChoiceDraft> newChoices,
             String correctChoiceKey, List<String> acceptedAnswers, String modelAnswer, List<Concept> concepts) {
+        requireDraftForStructuralChange();
         validateImportedStructure(questionType, newChoices, correctChoiceKey, acceptedAnswers, modelAnswer);
         this.questionType = requireRequired(questionType, "questionType");
         QuestionAnswer existingCorrectAnswer = answers.stream()
@@ -228,6 +229,7 @@ public class Question extends AuditedEntity {
     }
 
     public QuestionChoice addChoice(String choiceKey, String contentMarkdown, String rationaleMarkdown, int displayOrder) {
+        requireDraftForStructuralChange();
         requireText(choiceKey, "choiceKey");
         if (choices.stream().anyMatch(choice -> choice.getChoiceKey().equals(choiceKey))) {
             throw new IllegalArgumentException("choiceKey must be unique within a question");
@@ -309,6 +311,10 @@ public class Question extends AuditedEntity {
                     throw new IllegalStateException(
                             "A published multiple-choice question needs at least two choices and one correct choice");
                 }
+                if (choices.stream().anyMatch(choice -> choice.getRationaleMarkdown() == null
+                        || choice.getRationaleMarkdown().isBlank())) {
+                    throw new IllegalStateException("A published multiple-choice question needs a rationale for every choice");
+                }
             }
             case SHORT_ANSWER -> {
                 if (answers.stream().noneMatch(answer -> answer.getAnswerKind() == QuestionAnswerKind.ACCEPTED_TEXT)) {
@@ -330,6 +336,12 @@ public class Question extends AuditedEntity {
     private void requireOwnedChoice(QuestionChoice choice) {
         if (choice == null || choice.getQuestion() != this || !choices.contains(choice)) {
             throw new IllegalArgumentException("choice must belong to this question");
+        }
+    }
+
+    private void requireDraftForStructuralChange() {
+        if (status != QuestionStatus.DRAFT) {
+            throw new IllegalStateException("Question structure can only be changed while draft");
         }
     }
 
