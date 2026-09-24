@@ -8,10 +8,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.memory-hierarchy.memory-hierarchy"],
     "choices": [
-      {"key": "A", "content": "작고 빠른 memory와 크고 느린 memory의 trade-off를 locality를 이용해 완화하기 위해서다.", "displayOrder": 0},
-      {"key": "B", "content": "register, cache, DRAM, storage의 지연 시간을 모두 동일하게 만들기 위해서다.", "displayOrder": 1},
-      {"key": "C", "content": "CPU가 memory address를 사용하지 않도록 만들기 위해서다.", "displayOrder": 2},
-      {"key": "D", "content": "모든 data를 항상 가장 빠른 cache에 동시에 저장하기 위해서다.", "displayOrder": 3}
+      {"key": "A", "content": "작고 빠른 memory와 크고 느린 memory의 trade-off를 locality를 이용해 완화하기 위해서다.", "displayOrder": 0, "rationaleMarkdown": "작은 SRAM 계층은 빠르지만 비싸고 용량이 제한되며 DRAM·storage는 크지만 상대적으로 느리다. 프로그램의 temporal·spatial locality를 이용해 자주 쓰는 일부를 위에 두면 비용과 속도의 절충을 완화할 수 있다."},
+      {"key": "B", "content": "register, cache, DRAM, storage의 지연 시간을 모두 동일하게 만들기 위해서다.", "displayOrder": 1, "rationaleMarkdown": "Memory hierarchy는 계층별 지연과 용량을 같게 만들려는 구조가 아니다. 서로 다른 비용·속도 특성을 유지하면서 locality를 이용해 평균 접근 비용을 줄인다."},
+      {"key": "C", "content": "CPU가 memory address를 사용하지 않도록 만들기 위해서다.", "displayOrder": 2, "rationaleMarkdown": "CPU instruction은 여전히 주소를 만들어 memory operand에 접근한다. 계층 구조는 그 주소가 어느 수준에서 충족되는지를 바꾸며 주소 사용 자체를 없애지 않는다."},
+      {"key": "D", "content": "모든 data를 항상 가장 빠른 cache에 동시에 저장하기 위해서다.", "displayOrder": 3, "rationaleMarkdown": "Cache 용량은 제한되어 있어 모든 data를 가장 빠른 계층에 동시에 둘 수 없다. Hierarchy는 현재 locality가 높은 subset만 위에 보관하고 나머지는 더 큰 아래 계층에 둔다."}
     ],
     "correctChoiceKey": "A",
     "explanationMarkdown": "프로그램은 최근 사용한 data를 다시 사용하는 temporal locality와 인접 address를 곧 사용하는 spatial locality를 자주 보인다. 큰 L1은 capacity miss를 줄일 수 있지만 lookup 경로와 wiring이 길어져 hit 지연 시간이 증가할 수 있고, area와 전력 비용도 커진다."
@@ -47,10 +47,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.memory-hierarchy.temporal-spatial-locality"],
     "choices": [
-      {"key": "A", "content": "한 값을 register에 올린 뒤 memory를 전혀 읽지 않는다.", "displayOrder": 0},
-      {"key": "B", "content": "매번 전혀 다른 큰 address 범위에서 한 byte만 무작위로 읽는다.", "displayOrder": 1},
-      {"key": "C", "content": "연속된 int 배열을 index 0부터 차례로 읽는다.", "displayOrder": 2},
-      {"key": "D", "content": "working set보다 작은 cache를 매 access마다 강제로 비운다.", "displayOrder": 3}
+      {"key": "A", "content": "한 값을 register에 올린 뒤 memory를 전혀 읽지 않는다.", "displayOrder": 0, "rationaleMarkdown": "값을 register에 올려 memory를 더 읽지 않으면 memory line의 인접 byte를 연이어 사용하지 않는다. 이는 register reuse일 수 있지만 spatial locality를 보여 주는 memory access pattern은 아니다."},
+      {"key": "B", "content": "매번 전혀 다른 큰 address 범위에서 한 byte만 무작위로 읽는다.", "displayOrder": 1, "rationaleMarkdown": "넓은 주소 공간에서 매번 임의 byte만 읽으면 가져온 line의 다른 인접 byte를 곧 쓰지 않을 가능성이 높다. 따라서 cache line fill의 spatial locality 이점을 활용하기 어렵다."},
+      {"key": "C", "content": "연속된 int 배열을 index 0부터 차례로 읽는다.", "displayOrder": 2, "rationaleMarkdown": "연속된 int를 차례로 읽으면 이웃 원소가 같은 cache line에 들어 있을 수 있어 한 번의 fill로 여러 access를 처리할 수 있다. 이것이 인접 address를 곧 사용하는 spatial locality의 예다."},
+      {"key": "D", "content": "working set보다 작은 cache를 매 access마다 강제로 비운다.", "displayOrder": 3, "rationaleMarkdown": "Cache를 매번 비우면 직전에 가져온 line을 다음 access에 재사용하지 못하게 된다. Spatial locality는 인접 값을 같은 line에서 이어서 사용해 fill을 amortize하는 데 기대므로 강제 flush는 그 이점을 없앤다."}
     ],
     "correctChoiceKey": "C",
     "explanationMarkdown": "같은 data를 나중에 다시 사용하더라도 그 사이에 접근한 active data가 cache capacity를 넘으면 이전 line이 재사용되기 전에 eviction될 수 있다. row-major 배열에서 row 순회는 인접 원소가 같은 cache line에 포함되기 쉬워 한 번의 line fill 뒤 여러 원소를 재사용할 수 있다."
@@ -86,13 +86,13 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.memory-hierarchy.cache-line"],
     "choices": [
-      {"key": "A", "content": "offset은 후보 set, index는 line 내부 byte, tag는 replacement victim을 고른다.", "displayOrder": 0},
-      {"key": "B", "content": "offset은 line 내부 위치, index는 후보 set, tag는 그 set의 어느 memory block인지 구분한다.", "displayOrder": 1},
-      {"key": "C", "content": "tag만 사용하며 offset과 index는 cache lookup에 필요하지 않다.", "displayOrder": 2},
-      {"key": "D", "content": "index는 line 내부 byte 위치만 결정하고 tag 비교는 하지 않는다.", "displayOrder": 3}
+      {"key": "A", "content": "offset은 후보 set, index는 line 내부 byte, tag는 replacement victim을 고른다.", "displayOrder": 0, "rationaleMarkdown": "이 배치는 주소 field의 역할을 뒤섞었다. Index가 set을 선택하고 offset이 line 안의 byte를 고르며, replacement 정보는 tag가 아니라 set 안의 victim 선택 정책에서 온다."},
+      {"key": "B", "content": "offset은 line 내부 위치, index는 후보 set, tag는 그 set의 어느 memory block인지 구분한다.", "displayOrder": 1, "rationaleMarkdown": "Address의 offset은 선택된 line 내부 위치를 정하고 index는 후보 set을 고른다. Set 안에서는 tag 비교로 저장된 block identity를 확인한다."},
+      {"key": "C", "content": "tag만 사용하며 offset과 index는 cache lookup에 필요하지 않다.", "displayOrder": 2, "rationaleMarkdown": "Tag는 후보 line의 block identity를 확인할 뿐 line 안의 byte 위치나 set 선택을 제공하지 않는다. Cache lookup에는 line 구성에 따라 offset과 index 정보도 필요하다."},
+      {"key": "D", "content": "index는 line 내부 byte 위치만 결정하고 tag 비교는 하지 않는다.", "displayOrder": 3, "rationaleMarkdown": "Index가 line 내부 byte를 고른다고 보면 주소 비트를 잘못 나눈 것이다. Index는 set을 찾고 offset은 line 안의 위치를 정하며 tag 비교도 hit 확인에 필요하다."}
     ],
     "correctChoiceKey": "B",
-    "explanationMarkdown": "큰 line은 한 miss에서 더 많은 인접 byte를 가져와 spatial locality가 높은 workload의 이후 access를 hit로 만들 수 있다. coherence가 field가 아니라 cache line 단위로 ownership/state를 관리하므로 서로 다른 counter라도 같은 line에 있으면 각 core의 write가 line ownership을 반복해서 이동시킬 수 있다."
+    "explanationMarkdown": "`offset`는 line 안의 byte/word 위치를 고르고 `index`는 후보 set을 정한다. 선택된 set에서는 tag를 비교해 저장된 block이 요청한 block인지 확인한다."
   },
   {
     "kind": "question",
@@ -125,10 +125,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.memory-hierarchy.cache-hit-miss"],
     "choices": [
-      {"key": "A", "content": "Coherence miss", "displayOrder": 0},
-      {"key": "B", "content": "Compulsory miss만", "displayOrder": 1},
-      {"key": "C", "content": "Capacity miss만", "displayOrder": 2},
-      {"key": "D", "content": "Conflict miss", "displayOrder": 3}
+      {"key": "A", "content": "Coherence miss", "displayOrder": 0, "rationaleMarkdown": "Coherence miss는 다른 core의 write나 invalidation 때문에 필요한 line의 상태가 바뀌어 발생한다. 이 상황은 한 cache 안에서 같은 set의 block이 자리를 두고 경쟁하는 placement 문제다."},
+      {"key": "B", "content": "Compulsory miss만", "displayOrder": 1, "rationaleMarkdown": "Compulsory miss는 block을 처음 접근할 때 나타나는 cold-start miss다. 이미 접근한 두 block이 같은 set을 반복 교체하는 현상은 최초 접근만으로 설명되지 않는다."},
+      {"key": "C", "content": "Capacity miss만", "displayOrder": 2, "rationaleMarkdown": "Capacity miss는 전체 working set이 cache 용량보다 커서 재사용 전에 line이 밀려나는 경우다. 문제에서 cache 전체에는 여유가 있고 특정 set의 placement 충돌이 원인으로 주어졌다."},
+      {"key": "D", "content": "Conflict miss", "displayOrder": 3, "rationaleMarkdown": "두 block이 같은 set을 요구하고 해당 way 수가 부족하면 서로가 상대의 line을 교체한다. 다른 set에 빈 line이 남아 있어도 placement 제약 때문에 사용할 수 없는 conflict miss다."}
     ],
     "correctChoiceKey": "D",
     "explanationMarkdown": "서로 다른 block이 같은 set을 경쟁하고 way 수가 부족해 번갈아 밀려나는 것은 conflict miss다. Cache 전체에 빈 line이 있어도 placement 제약 때문에 다른 set의 공간을 사용할 수 없다."
@@ -164,10 +164,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.memory-hierarchy.latency-vs-bandwidth"],
     "choices": [
-      {"key": "A", "content": "bandwidth가 높으면 모든 random load의 지연 시간도 반드시 같은 비율로 줄어든다.", "displayOrder": 0},
-      {"key": "B", "content": "지연 시간은 한 요청의 결과를 기다리는 시간이고 bandwidth는 단위 시간에 이동 가능한 data 양이다.", "displayOrder": 1},
-      {"key": "C", "content": "지연 시간은 항상 byte/s로 측정하고 bandwidth는 ns로 측정한다.", "displayOrder": 2},
-      {"key": "D", "content": "둘은 이름만 다르고 같은 물리량이다.", "displayOrder": 3}
+      {"key": "A", "content": "bandwidth가 높으면 모든 random load의 지연 시간도 반드시 같은 비율로 줄어든다.", "displayOrder": 0, "rationaleMarkdown": "Bandwidth가 높으면 큰 연속 전송의 처리량은 늘 수 있지만 개별 random load의 첫 결과까지 기다리는 latency가 같은 비율로 줄어드는 것은 아니다. 대역폭 활용에는 독립 요청의 병렬성도 영향을 준다."},
+      {"key": "B", "content": "지연 시간은 한 요청의 결과를 기다리는 시간이고 bandwidth는 단위 시간에 이동 가능한 data 양이다.", "displayOrder": 1, "rationaleMarkdown": "Latency는 한 요청을 시작한 뒤 결과를 받기까지의 시간이고 bandwidth는 단위 시간에 옮길 수 있는 data 양이다. 높은 처리량과 긴 개별 대기 시간이 동시에 존재할 수 있다."},
+      {"key": "C", "content": "지연 시간은 항상 byte/s로 측정하고 bandwidth는 ns로 측정한다.", "displayOrder": 2, "rationaleMarkdown": "Latency는 보통 ns 같은 시간 단위로, bandwidth는 byte/s 같은 data-per-time 단위로 나타낸다. 단위를 바꾸어 붙여 둘 물리량은 서로 다르다."},
+      {"key": "D", "content": "둘은 이름만 다르고 같은 물리량이다.", "displayOrder": 3, "rationaleMarkdown": "Latency와 bandwidth는 각각 개별 요청의 응답 시간과 지속 가능한 data 전송률을 측정한다. 한쪽을 개선해도 다른 쪽이 자동으로 같은 방식으로 개선되지는 않는다."}
     ],
     "correctChoiceKey": "B",
     "explanationMarkdown": "각 요청이 결과를 받기까지 걸리는 지연 시간은 그대로여도 서로 독립적이면 대기 구간을 겹칠 수 있다. 64byte 전송 자체는 20GB/s에서 수 ns 수준이라 100ns 고정 지연 시간이 전체 시간의 대부분을 차지하므로 지연 시간-bound에 가깝다."
@@ -203,10 +203,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.memory-hierarchy.miss-penalty"],
     "choices": [
-      {"key": "A", "content": "AMAT = Hit Time + Miss Rate × Miss Penalty", "displayOrder": 0},
-      {"key": "B", "content": "AMAT = Hit Rate × 0", "displayOrder": 1},
-      {"key": "C", "content": "AMAT = Miss Penalty ÷ Hit Rate만", "displayOrder": 2},
-      {"key": "D", "content": "AMAT는 miss와 무관하고 clock frequency만으로 결정된다.", "displayOrder": 3}
+      {"key": "A", "content": "AMAT = Hit Time + Miss Rate × Miss Penalty", "displayOrder": 0, "rationaleMarkdown": "단순 one-level 모델에서는 모든 access가 hit time을 기본으로 지불하고, miss인 비율에만 miss penalty가 추가된다. 그래서 평균 접근 시간은 hit time에 `miss rate × miss penalty`를 더한다."},
+      {"key": "B", "content": "AMAT = Hit Rate × 0", "displayOrder": 1, "rationaleMarkdown": "Hit rate만 곱한 값은 miss일 때 발생하는 추가 지연을 반영하지 않는다. Miss penalty가 크면 miss가 적어도 평균 시간에 의미 있는 영향을 줄 수 있다."},
+      {"key": "C", "content": "AMAT = Miss Penalty ÷ Hit Rate만", "displayOrder": 2, "rationaleMarkdown": "Miss penalty를 hit rate로 나누는 것은 평균 access 비용을 올바르게 가중하지 않는다. 평균 모델은 miss가 발생하는 비율을 penalty에 곱하고 기본 hit time에 더한다."},
+      {"key": "D", "content": "AMAT는 miss와 무관하고 clock frequency만으로 결정된다.", "displayOrder": 3, "rationaleMarkdown": "Clock frequency는 processor cycle의 시간 척도에 영향을 주지만 AMAT에는 hit time과 miss의 추가 비용이 모두 들어간다. Miss rate나 miss penalty가 달라도 AMAT가 같다고 볼 수 없다."}
     ],
     "correctChoiceKey": "A",
     "explanationMarkdown": "각 access는 hit time을 기본으로 지불하고 miss인 비율만큼 추가 penalty를 평균에 더한다. 따라서 단순한 one-level 모델은 `AMAT = Hit Time + Miss Rate × Miss Penalty`다."

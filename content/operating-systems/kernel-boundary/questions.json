@@ -10,26 +10,10 @@
       "operating-systems.core.kernel-boundary.os-resource-manager"
     ],
     "choices": [
-      {
-        "key": "A",
-        "content": "여러 process가 hardware를 공유하더라도 공정성만 보장하면 protection은 필요하지 않다.",
-        "displayOrder": 0
-      },
-      {
-        "key": "B",
-        "content": "Resource를 process에 한 번 배정한 뒤 보호와 회수는 전적으로 application에 맡긴다.",
-        "displayOrder": 1
-      },
-      {
-        "key": "C",
-        "content": "Resource management는 CPU scheduling만 뜻하며 memory와 device 격리는 포함하지 않는다.",
-        "displayOrder": 2
-      },
-      {
-        "key": "D",
-        "content": "제한된 CPU·memory·device를 여러 실행 주체에 배분하고 보호·회수한다.",
-        "displayOrder": 3
-      }
+      {"key":"A","content":"여러 process가 hardware를 공유하더라도 공정성만 보장하면 protection은 필요하지 않다.","displayOrder":0,"rationaleMarkdown":"공정한 scheduling만으로 한 프로세스가 다른 프로세스의 메모리를 읽거나 장치를 제어하는 일을 막지는 못한다. 하드웨어 자원을 공유할 때 보호 경계도 별도로 필요하다."},
+      {"key":"B","content":"Resource를 process에 한 번 배정한 뒤 보호와 회수는 전적으로 application에 맡긴다.","displayOrder":1,"rationaleMarkdown":"OS는 자원을 할당한 뒤에도 보호 규칙을 적용하고 자원을 회수해야 한다. 이를 전부 애플리케이션에 맡기면 잘못된 프로세스가 공유 시스템 상태를 훼손할 수 있다."},
+      {"key":"C","content":"Resource management는 CPU scheduling만 뜻하며 memory와 device 격리는 포함하지 않는다.","displayOrder":2,"rationaleMarkdown":"CPU scheduling은 자원 관리의 한 부분이지만 memory mapping·장치·파일·접근 보호도 OS 책임이다. 용어를 CPU scheduling에만 한정하면 큰 자원 영역이 빠진다."},
+      {"key":"D","content":"제한된 CPU·memory·device를 여러 실행 주체에 배분하고 보호·회수한다.","displayOrder":3,"rationaleMarkdown":"OS는 실행 문맥 사이에서 제한된 CPU 시간·메모리·장치 접근을 조정하고 접근 경계를 강제하며 자원을 회수한다. scheduling은 그 업무 중 일부다."}
     ],
     "correctChoiceKey": "D",
     "explanationMarkdown": "운영체제는 제한된 hardware resource를 여러 실행 주체가 안전하게 공유하도록 **배분·보호·회수**한다. CPU scheduling만 보는 것은 범위를 지나치게 좁힌 것이고, protection이나 reclamation을 application에만 맡기면 한 process의 오류가 시스템 전체에 영향을 줄 수 있다."
@@ -84,26 +68,10 @@
       "operating-systems.core.kernel-boundary.user-kernel-mode"
     ],
     "choices": [
-      {
-        "key": "A",
-        "content": "Virtual memory가 있으면 privilege level 없이도 device와 control register 접근이 자동으로 안전해지기 때문이다.",
-        "displayOrder": 0
-      },
-      {
-        "key": "B",
-        "content": "Kernel API 호출 규칙만 정하면 CPU가 privileged instruction을 제한하지 않아도 같은 보호가 성립하기 때문이다.",
-        "displayOrder": 1
-      },
-      {
-        "key": "C",
-        "content": "CPU가 현재 privilege level에서 허용되지 않은 operation을 제한하기 때문이다.",
-        "displayOrder": 2
-      },
-      {
-        "key": "D",
-        "content": "User/kernel mode의 차이는 scheduling priority뿐이고 실행 가능한 instruction에는 영향을 주지 않기 때문이다.",
-        "displayOrder": 3
-      }
+      {"key":"A","content":"Virtual memory가 있으면 privilege level 없이도 device와 control register 접근이 자동으로 안전해지기 때문이다.","displayOrder":0,"rationaleMarkdown":"가상 메모리는 주소 변환과 page 권한을 제공하지만 모든 장치 register나 privileged 제어 연산에 대한 접근을 단독으로 차단하지는 않는다. 민감한 연산은 processor privilege 검사가 제한한다."},
+      {"key":"B","content":"Kernel API 호출 규칙만 정하면 CPU가 privileged instruction을 제한하지 않아도 같은 보호가 성립하기 때문이다.","displayOrder":1,"rationaleMarkdown":"software API 관례는 버그가 있거나 악의적인 코드가 무시할 수 있다. 반면 hardware privilege level과 검사는 비특권 모드에서 보호 명령과 자원을 사용할 수 없게 한다."},
+      {"key":"C","content":"CPU가 현재 privilege level에서 허용되지 않은 operation을 제한하기 때문이다.","displayOrder":2,"rationaleMarkdown":"CPU는 실행 중 privilege level을 강제하고 더 높은 권한이 필요한 연산을 거부한다. kernel API는 그 서비스를 요청할 수 있도록 통제된 경로를 제공한다."},
+      {"key":"D","content":"User/kernel mode의 차이는 scheduling priority뿐이고 실행 가능한 instruction에는 영향을 주지 않기 때문이다.","displayOrder":3,"rationaleMarkdown":"privilege mode는 scheduling 우선순위만이 아니라 접근 가능한 명령과 보호 자원을 결정한다. user/kernel 분리는 보호 경계다."}
     ],
     "correctChoiceKey": "C",
     "explanationMarkdown": "보호 경계가 application의 선의나 API 사용 규칙에만 의존하면 buggy/malicious code가 이를 우회할 수 있다. CPU가 privilege level에 따라 privileged instruction과 protected resource 접근을 제한해야 kernel이 강제 가능한 경계를 만들 수 있다."
@@ -119,26 +87,10 @@
       "operating-systems.core.kernel-boundary.user-kernel-mode"
     ],
     "choices": [
-      {
-        "key": "A",
-        "content": "그렇다. 모든 mode switch는 반드시 다른 process로의 context switch다.",
-        "displayOrder": 0
-      },
-      {
-        "key": "B",
-        "content": "아니다. privilege mode는 바뀌어도 다른 task로 CPU가 넘어가지 않을 수 있다.",
-        "displayOrder": 1
-      },
-      {
-        "key": "C",
-        "content": "그렇다. Kernel mode에서는 항상 새 process가 생성된다.",
-        "displayOrder": 2
-      },
-      {
-        "key": "D",
-        "content": "그렇다. System call 진입은 scheduler가 반드시 다른 task를 선택하는 시점이다.",
-        "displayOrder": 3
-      }
+      {"key":"A","content":"그렇다. 모든 mode switch는 반드시 다른 process로의 context switch다.","displayOrder":0,"rationaleMarkdown":"system call은 privilege mode를 바꾸지만 다른 task를 scheduling하지 않고 같은 thread로 돌아올 수 있다. mode transition과 task context switch는 별개 사건이다."},
+      {"key":"B","content":"아니다. privilege mode는 바뀌어도 다른 task로 CPU가 넘어가지 않을 수 있다.","displayOrder":1,"rationaleMarkdown":"CPU는 system call을 처리하려고 kernel mode에 진입한 뒤 같은 thread로 돌아올 수 있다. 다른 task로 실행이 바뀌고 그 문맥이 선택될 때 context switch가 발생한다."},
+      {"key":"C","content":"그렇다. Kernel mode에서는 항상 새 process가 생성된다.","displayOrder":2,"rationaleMarkdown":"kernel mode에서 실행한다고 새 process가 생기는 것은 아니다. OS가 별도 동작을 수행하지 않는 한 현재 task를 대신해 privileged code를 실행한다."},
+      {"key":"D","content":"그렇다. System call 진입은 scheduler가 반드시 다른 task를 선택하는 시점이다.","displayOrder":3,"rationaleMarkdown":"일부 경우 system-call 진입이 scheduling 지점이 될 수는 있지만 매번 scheduler가 다른 task를 선택해야 하는 것은 아니다. 같은 thread가 서비스를 마치고 복귀할 수 있다."}
     ],
     "correctChoiceKey": "B",
     "explanationMarkdown": "**Mode switch**는 privilege/execution domain의 변화이고, **context switch**는 scheduler가 실행 task를 바꾸며 CPU context를 교체하는 사건이다. 같은 thread가 kernel에서 system call을 처리한 뒤 바로 돌아오면 mode는 바뀌었어도 다른 task로의 context switch는 없을 수 있다."
@@ -180,26 +132,10 @@
       "operating-systems.core.kernel-boundary.privilege-protection"
     ],
     "choices": [
-      {
-        "key": "A",
-        "content": "그렇다. Memory 접근 permission은 system call 경계에서만 검사하고 CPU memory access에는 적용하지 않는다.",
-        "displayOrder": 0
-      },
-      {
-        "key": "B",
-        "content": "그렇다. Kernel이 mapping을 만들었다는 사실만으로 read/write/execute가 모두 허용된다.",
-        "displayOrder": 1
-      },
-      {
-        "key": "C",
-        "content": "아니다. read/write/execute 같은 접근 permission을 별도로 확인해야 한다.",
-        "displayOrder": 2
-      },
-      {
-        "key": "D",
-        "content": "그렇다. Application의 `ADMIN` 같은 role이 있으면 CPU의 page access permission도 자동으로 허용된다.",
-        "displayOrder": 3
-      }
+      {"key":"A","content":"그렇다. Memory 접근 permission은 system call 경계에서만 검사하고 CPU memory access에는 적용하지 않는다.","displayOrder":0,"rationaleMarkdown":"메모리 접근 권한은 system call 경계에서만이 아니라 load·store·instruction fetch 중 hardware/MMU가 검사한다. 주소가 mapping되어 있어도 금지된 접근이면 fault가 날 수 있다."},
+      {"key":"B","content":"그렇다. Kernel이 mapping을 만들었다는 사실만으로 read/write/execute가 모두 허용된다.","displayOrder":1,"rationaleMarkdown":"권한 설정에 따라 mapping은 읽기만 가능하고 쓰기나 실행은 금지될 수 있다. 주소 변환이 존재한다고 모든 동작이 허용되는 것은 아니다."},
+      {"key":"C","content":"아니다. read/write/execute 같은 접근 permission을 별도로 확인해야 한다.","displayOrder":2,"rationaleMarkdown":"가상 주소가 물리 주소에 mapping되었는지와 특정 접근 권한이 있는지는 별도로 검사한다. 같은 mapping에서 read·write·execute 권한이 다를 수 있다."},
+      {"key":"D","content":"그렇다. Application의 `ADMIN` 같은 role이 있으면 CPU의 page access permission도 자동으로 허용된다.","displayOrder":3,"rationaleMarkdown":"application role은 애플리케이션 층의 인가 개념이다. 메모리를 읽거나 쓰거나 실행할 수 있는지를 결정하는 CPU/MMU page 권한을 바꾸지 않는다."}
     ],
     "correctChoiceKey": "C",
     "explanationMarkdown": "Address translation이 가능하다는 사실과 어떤 접근이 허용되는지는 별개의 조건이다. Page mapping이 존재해도 read/write/execute permission에 따라 특정 접근은 거부될 수 있다. Application role은 또 다른 계층의 authorization이므로 CPU memory permission을 대신하지 않는다."
@@ -254,26 +190,10 @@
       "operating-systems.core.kernel-boundary.system-call"
     ],
     "choices": [
-      {
-        "key": "A",
-        "content": "User application이 kernel이 소유한 service를 요청하는 interface다.",
-        "displayOrder": 0
-      },
-      {
-        "key": "B",
-        "content": "Kernel 기능을 내부에서 사용할 수 있는 모든 library function 자체를 의미한다.",
-        "displayOrder": 1
-      },
-      {
-        "key": "C",
-        "content": "원인과 관계없이 user mode에서 kernel mode로 들어가는 모든 사건을 의미한다.",
-        "displayOrder": 2
-      },
-      {
-        "key": "D",
-        "content": "Scheduler가 현재 task 대신 다른 task를 선택하는 context switch를 의미한다.",
-        "displayOrder": 3
-      }
+      {"key":"A","content":"User application이 kernel이 소유한 service를 요청하는 interface다.","displayOrder":0,"rationaleMarkdown":"system call은 사용자 프로그램이 파일·프로세스 연산처럼 kernel 소유 서비스를 요청하는 통제된 인터페이스다. 요청과 권한이 필요한 구현을 분리한다."},
+      {"key":"B","content":"Kernel 기능을 내부에서 사용할 수 있는 모든 library function 자체를 의미한다.","displayOrder":1,"rationaleMarkdown":"library function은 user space 안에서 끝날 수도 있고 하나 이상의 system call을 감쌀 수도 있다. 모든 library helper가 아니라 kernel에 진입하는 요청 경로를 가리킨다."},
+      {"key":"C","content":"원인과 관계없이 user mode에서 kernel mode로 들어가는 모든 사건을 의미한다.","displayOrder":2,"rationaleMarkdown":"exception과 interrupt도 애플리케이션의 의도적인 서비스 요청이 아니더라도 kernel 처리를 시작할 수 있다. system call은 통제된 요청 경로 중 하나다."},
+      {"key":"D","content":"Scheduler가 현재 task 대신 다른 task를 선택하는 context switch를 의미한다.","displayOrder":3,"rationaleMarkdown":"context switch는 실행 중인 task를 바꾸지만 system call은 같은 task 안에서 끝날 수 있다. kernel 진입과 scheduler의 task 선택은 다른 사건이다."}
     ],
     "correctChoiceKey": "A",
     "explanationMarkdown": "System call은 application이 OS가 소유한 service를 **의도적으로 요청하는 interface**다. Library API는 user space에서 끝날 수도 있고, exception/interrupt도 kernel entry를 만들 수 있으므로 단순한 mode 전환 전체를 system call이라고 부를 수 없다. Context switch 역시 별개의 scheduling 사건이다."
@@ -328,26 +248,10 @@
       "operating-systems.core.kernel-boundary.system-call-flow"
     ],
     "choices": [
-      {
-        "key": "A",
-        "content": "user argument 준비 → controlled kernel entry → return state 구성 → service → dispatch/검증",
-        "displayOrder": 0
-      },
-      {
-        "key": "B",
-        "content": "user argument 준비 → dispatch/검증 → controlled kernel entry → service → return",
-        "displayOrder": 1
-      },
-      {
-        "key": "C",
-        "content": "controlled kernel entry → user argument 준비 → dispatch/검증 → service → return",
-        "displayOrder": 2
-      },
-      {
-        "key": "D",
-        "content": "user argument 준비 → controlled kernel entry → dispatch/검증 → service → return",
-        "displayOrder": 3
-      }
+      {"key":"A","content":"user argument 준비 → controlled kernel entry → return state 구성 → service → dispatch/검증","displayOrder":0,"rationaleMarkdown":"요청한 서비스를 실행하려면 먼저 kernel의 보호된 문맥으로 들어와 요청을 dispatch하고 검증해야 한다. 서비스 실행 전에 반환 상태부터 만드는 순서는 맞지 않는다."},
+      {"key":"B","content":"user argument 준비 → dispatch/검증 → controlled kernel entry → service → return","displayOrder":1,"rationaleMarkdown":"dispatch와 validation은 kernel에서 실행되므로 user mode에서 통제된 방식으로 진입한 뒤에 할 수 있다. 사용자 코드가 먼저 privileged 요청 dispatch를 할 수는 없다."},
+      {"key":"C","content":"controlled kernel entry → user argument 준비 → dispatch/검증 → service → return","displayOrder":2,"rationaleMarkdown":"호출자는 kernel에 진입하기 전에 system-call 번호와 인자를 준비한다. 진입 이후에 준비하면 mode 전환을 일으킨 요청을 전달할 수 없다."},
+      {"key":"D","content":"user argument 준비 → controlled kernel entry → dispatch/검증 → service → return","displayOrder":3,"rationaleMarkdown":"호출자가 syscall 번호와 인자를 준비하고 통제된 경로로 kernel에 진입한 뒤, kernel이 요청을 dispatch·검증하고 서비스를 수행해 반환한다. 각 단계가 privilege 경계를 따른다."}
     ],
     "correctChoiceKey": "D",
     "explanationMarkdown": "Caller가 먼저 syscall number와 arguments를 준비하고, controlled entry를 통해 kernel로 들어간 뒤 kernel이 요청을 dispatch하고 검증한다. 실제 service 실행과 return state 구성은 그 다음이다. User-space argument 준비나 kernel dispatch의 순서를 뒤집으면 경계의 의미가 사라진다."
@@ -402,26 +306,10 @@
       "operating-systems.core.kernel-boundary.interrupt-exception-system-call"
     ],
     "choices": [
-      {
-        "key": "A",
-        "content": "Trap은 exception 또는 interrupt 때문에 handler로 control이 전달되는 것을 가리킨다.",
-        "displayOrder": 0
-      },
-      {
-        "key": "B",
-        "content": "Trap은 asynchronous interrupt만 가리키며 synchronous exception은 trap에 포함되지 않는다.",
-        "displayOrder": 1
-      },
-      {
-        "key": "C",
-        "content": "Trap은 interrupt와 exception 옆에 놓이는 독립적인 세 번째 원인 category다.",
-        "displayOrder": 2
-      },
-      {
-        "key": "D",
-        "content": "System call은 exception과 무관한 별도의 hardware trap category로 반드시 구현된다.",
-        "displayOrder": 3
-      }
+      {"key":"A","content":"Trap은 exception 또는 interrupt 때문에 handler로 control이 전달되는 것을 가리킨다.","displayOrder":0,"rationaleMarkdown":"RISC-V에서 trap은 exception 또는 interrupt가 일으키는 handler로의 제어 이전을 뜻한다. exception은 명령 실행과 동기적이고 interrupt는 비동기적이다."},
+      {"key":"B","content":"Trap은 asynchronous interrupt만 가리키며 synchronous exception은 trap에 포함되지 않는다.","displayOrder":1,"rationaleMarkdown":"trap 처리는 비동기 interrupt뿐 아니라 동기 exception도 포함한다. 이를 interrupt로만 한정하면 명령 실행과 연관된 원인을 놓친다."},
+      {"key":"C","content":"Trap은 interrupt와 exception 옆에 놓이는 독립적인 세 번째 원인 category다.","displayOrder":2,"rationaleMarkdown":"이 용어에서 trap은 exception·interrupt와 나란한 세 번째 독립 원인이 아니다. 둘 중 하나 때문에 handler로 제어가 넘어가는 것을 가리킨다."},
+      {"key":"D","content":"System call은 exception과 무관한 별도의 hardware trap category로 반드시 구현된다.","displayOrder":3,"rationaleMarkdown":"RISC-V `ECALL` 같은 environment call은 동기 exception을 일으킬 수 있고, software는 이를 system-call 요청으로 처리한다. system call이 별도의 hardware event 범주일 필요는 없다."}
     ],
     "correctChoiceKey": "A",
     "explanationMarkdown": "RISC-V 문맥에서 exception은 현재 instruction과 연관된 synchronous event이고 interrupt는 asynchronous external event다. **Trap**은 이 exception 또는 interrupt 때문에 handler로 control이 전달되는 사건을 가리킨다. System call은 ECALL 같은 synchronous exception mechanism 위에 구현될 수 있다."

@@ -8,10 +8,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.performance.latency-throughput"],
     "choices": [
-      {"key": "A", "content": "지연 시간은 작업 하나의 완료까지 걸린 시간이고 처리량은 단위 시간에 완료한 작업 수다.", "displayOrder": 0},
-      {"key": "B", "content": "처리량이 증가하면 모든 개별 작업 지연 시간도 반드시 같은 비율로 감소한다.", "displayOrder": 1},
-      {"key": "C", "content": "batch size를 키우면 기다리는 시간이 없어져 지연 시간과 처리량이 모두 무조건 개선된다.", "displayOrder": 2},
-      {"key": "D", "content": "CPU instruction 처리량과 HTTP 요청 처리량은 측정 단위가 달라도 같은 숫자로 비교할 수 있다.", "displayOrder": 3}
+      {"key": "A", "content": "지연 시간은 작업 하나의 완료까지 걸린 시간이고 처리량은 단위 시간에 완료한 작업 수다.", "displayOrder": 0, "rationaleMarkdown": "Latency는 개별 작업의 시작부터 완료까지의 시간이고 throughput은 일정 시간에 끝낸 작업의 양이다. 여러 작업을 겹쳐 처리하면 throughput은 높아져도 각 작업이 기다리는 시간은 길 수 있다."},
+      {"key": "B", "content": "처리량이 증가하면 모든 개별 작업 지연 시간도 반드시 같은 비율로 감소한다.", "displayOrder": 1, "rationaleMarkdown": "Concurrency나 자원 활용을 높이면 단위 시간 완료 수가 늘 수 있지만 queueing과 contention 때문에 개별 작업 latency는 그대로이거나 더 길어질 수 있다."},
+      {"key": "C", "content": "batch size를 키우면 기다리는 시간이 없어져 지연 시간과 처리량이 모두 무조건 개선된다.", "displayOrder": 2, "rationaleMarkdown": "Batching은 호출당 overhead를 줄여 throughput을 높일 수 있지만 batch가 모일 때까지 기다리므로 latency가 증가할 수 있다. 부하와 batch 정책에 따라 두 지표의 trade-off를 측정해야 한다."},
+      {"key": "D", "content": "CPU instruction 처리량과 HTTP 요청 처리량은 측정 단위가 달라도 같은 숫자로 비교할 수 있다.", "displayOrder": 3, "rationaleMarkdown": "CPU instruction/s와 HTTP request/s는 서로 다른 작업 단위와 계층을 측정한다. 단위와 workload가 다르면 숫자 크기만으로 처리 성능을 직접 비교할 수 없다."}
     ],
     "correctChoiceKey": "A",
     "explanationMarkdown": "Latency는 작업 하나가 시작해 끝날 때까지 걸린 시간이고 throughput은 단위 시간에 완료한 작업 수다. Concurrency나 batching으로 처리량이 늘어도 개별 요청 latency가 반드시 줄어드는 것은 아니다."
@@ -47,10 +47,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.performance.cpu-time"],
     "choices": [
-      {"key": "A", "content": "40 ms", "displayOrder": 0},
-      {"key": "B", "content": "250 ms", "displayOrder": 1},
-      {"key": "C", "content": "약 480 ms", "displayOrder": 2},
-      {"key": "D", "content": "20 ms", "displayOrder": 3}
+      {"key": "A", "content": "40 ms", "displayOrder": 0, "rationaleMarkdown": "40 ms는 최적화 전 CPU 실행 시간이며, 요청의 전체 elapsed time은 DB/network/scheduler 대기까지 포함한다. 이 대기 구간이 460 ms로 그대로 남는다."},
+      {"key": "B", "content": "250 ms", "displayOrder": 1, "rationaleMarkdown": "CPU 시간을 절반으로 줄여도 전체 시간의 절반이 자동으로 사라지지는 않는다. 고정된 460 ms wait와 새 20 ms CPU 시간을 합산해야 한다."},
+      {"key": "C", "content": "약 480 ms", "displayOrder": 2, "rationaleMarkdown": "처음 500 ms 중 CPU 밖에서 기다린 460 ms가 유지되고 최적화한 CPU 구간이 20 ms가 된다. 따라서 새 elapsed time은 약 `460+20=480 ms`다."},
+      {"key": "D", "content": "20 ms", "displayOrder": 3, "rationaleMarkdown": "20 ms는 새 on-CPU 구간만 나타낸다. DB/network/scheduler wait가 줄지 않았으므로 요청 전체가 그 시간에 끝나지는 않는다."}
     ],
     "correctChoiceKey": "C",
     "explanationMarkdown": "원래 500 ms 중 CPU 40 ms를 제외한 460 ms는 그대로다. CPU가 20 ms로 줄면 새 elapsed time은 `460+20=480 ms`다."
@@ -86,10 +86,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.performance.instruction-count-cpi-clock"],
     "choices": [
-      {"key": "A", "content": "667 cycles", "displayOrder": 0},
-      {"key": "B", "content": "1,500 cycles", "displayOrder": 1},
-      {"key": "C", "content": "1.5 cycles", "displayOrder": 2},
-      {"key": "D", "content": "1,000 / clock rate와 무관하게 항상 1,000 cycles", "displayOrder": 3}
+      {"key": "A", "content": "667 cycles", "displayOrder": 0, "rationaleMarkdown": "CPI는 instruction 하나당 평균 cycle 수이므로 총 cycle은 instruction 수에 CPI를 곱한다. 1,000개를 1.5 CPI로 처리하면 1,500 cycle이다."},
+      {"key": "B", "content": "1,500 cycles", "displayOrder": 1, "rationaleMarkdown": "`1,000 × 1.5 = 1,500`이므로 실행에 필요한 평균 cycle 수다. Clock rate를 알면 이 cycle 수를 실행 시간으로 변환할 수 있다."},
+      {"key": "C", "content": "1.5 cycles", "displayOrder": 2, "rationaleMarkdown": "1.5는 각 instruction의 평균 cycle 비용이지 전체 program의 cycle 수가 아니다. 전체는 그 평균에 1,000개의 instruction을 곱해야 한다."},
+      {"key": "D", "content": "1,000 / clock rate와 무관하게 항상 1,000 cycles", "displayOrder": 3, "rationaleMarkdown": "CPI가 1보다 클 수 있으므로 instruction 하나가 평균 여러 cycle을 소비할 수 있다. Clock rate는 시간을 구할 때 쓰이며 cycle count 자체를 항상 instruction 수와 같게 만들지 않는다."}
     ],
     "correctChoiceKey": "B",
     "explanationMarkdown": "총 cycle은 instruction count와 평균 CPI의 곱이다. `1,000×1.5=1,500 cycles`다."
@@ -125,10 +125,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.performance.amdahl-law"],
     "choices": [
-      {"key": "A", "content": "변화 없음", "displayOrder": 0},
-      {"key": "B", "content": "2배", "displayOrder": 1},
-      {"key": "C", "content": "4배", "displayOrder": 2},
-      {"key": "D", "content": "약 1.33배", "displayOrder": 3}
+      {"key": "A", "content": "변화 없음", "displayOrder": 0, "rationaleMarkdown": "실행 시간의 절반을 2배 빠르게 만들면 그 구간은 짧아지지만 나머지 절반은 그대로 남는다. 따라서 전체 실행 시간은 감소한다."},
+      {"key": "B", "content": "2배", "displayOrder": 1, "rationaleMarkdown": "최적화한 절반만 2배 빨라지고 나머지 절반은 바뀌지 않는다. 전체 시간은 `0.5 + 0.25 = 0.75`가 되어 speedup은 2배에 못 미친다."},
+      {"key": "C", "content": "4배", "displayOrder": 2, "rationaleMarkdown": "4배 speedup은 작업 전체가 개선된 경우와 혼동한 결과다. 개선되지 않은 절반이 전체 시간의 하한을 만들어 전체 speedup을 제한한다."},
+      {"key": "D", "content": "약 1.33배", "displayOrder": 3, "rationaleMarkdown": "기존 시간을 1로 두면 개선되지 않은 절반은 0.5, 개선된 절반은 `0.5/2=0.25`가 된다. 새 시간 0.75의 역수인 전체 speedup은 약 1.33배다."}
     ],
     "correctChoiceKey": "D",
     "explanationMarkdown": "개선 전 시간을 1로 두면 절반은 0.5로 유지되고 개선 부분은 `0.5/2=0.25`가 된다. 새 시간 0.75의 역수이므로 전체 speedup은 약 1.33배다."
@@ -164,10 +164,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.performance.cache-impact"],
     "choices": [
-      {"key": "A", "content": "1.05 ns", "displayOrder": 0},
-      {"key": "B", "content": "4 ns", "displayOrder": 1},
-      {"key": "C", "content": "60 ns", "displayOrder": 2},
-      {"key": "D", "content": "61 ns", "displayOrder": 3}
+      {"key": "A", "content": "1.05 ns", "displayOrder": 0, "rationaleMarkdown": "이 값은 miss가 추가하는 `0.05×60=3 ns`만 계산하고 기본 hit time 1 ns를 빼먹었다. 평균 접근 시간에는 모든 access가 지불하는 hit time도 포함된다."},
+      {"key": "B", "content": "4 ns", "displayOrder": 1, "rationaleMarkdown": "단순 모델의 AMAT는 `1 + 0.05×60`이므로 `4 ns`다. Miss penalty는 5% access에 평균 3 ns를 더한다."},
+      {"key": "C", "content": "60 ns", "displayOrder": 2, "rationaleMarkdown": "60 ns는 miss가 났을 때의 penalty이지 모든 access의 평균 시간이 아니다. 대부분의 access는 1 ns hit time만 지불한다."},
+      {"key": "D", "content": "61 ns", "displayOrder": 3, "rationaleMarkdown": "`61 ns`는 miss가 날 때 hit time과 penalty를 단순 합한 값이다. AMAT는 penalty를 모든 access에 더하는 대신 miss rate만큼 가중한다."}
     ],
     "correctChoiceKey": "B",
     "explanationMarkdown": "AMAT는 `hit time + miss rate×miss penalty`다. `1 + 0.05×60 = 4 ns`이므로 miss가 평균 3 ns를 추가한다."
@@ -203,10 +203,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.performance.pipeline-branch-impact"],
     "choices": [
-      {"key": "A", "content": "0.01", "displayOrder": 0},
-      {"key": "B", "content": "1.2", "displayOrder": 1},
-      {"key": "C", "content": "12", "displayOrder": 2},
-      {"key": "D", "content": "0.12", "displayOrder": 3}
+      {"key": "A", "content": "0.01", "displayOrder": 0, "rationaleMarkdown": "Instruction당 misprediction 비율은 branch 비율과 branch 중 misprediction 비율의 곱인 `0.20×0.05=0.01`이다. 이 1%에 12-cycle penalty를 적용해야 한다."},
+      {"key": "B", "content": "1.2", "displayOrder": 1, "rationaleMarkdown": "`1.2`는 20%의 branch마다 모두 mispredict한다고 본 계산에 가깝다. 실제 penalty는 전체 instruction 중 mispredict한 1%에만 적용된다."},
+      {"key": "C", "content": "12", "displayOrder": 2, "rationaleMarkdown": "12 cycles는 단일 misprediction이 치르는 penalty다. 평균 CPI 증가는 misprediction이 얼마나 자주 발생하는지까지 반영해 더 작아진다."},
+      {"key": "D", "content": "0.12", "displayOrder": 3, "rationaleMarkdown": "전체 instruction 중 misprediction은 `20%×5%=1%`이고 각 사건이 12 cycles를 추가한다. 따라서 평균 추가 CPI는 `0.01×12=0.12`다."}
     ],
     "correctChoiceKey": "D",
     "explanationMarkdown": "Instruction당 misprediction 비율은 `0.20×0.05=0.01`이다. 여기에 12-cycle penalty를 곱하면 평균 CPI 증가는 `0.01×12=0.12`다."
@@ -242,10 +242,10 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.performance.microbenchmark-boundary"],
     "choices": [
-      {"key": "A", "content": "JIT가 결과가 관찰되지 않는 계산을 제거해 실제 work를 측정하지 않을 수 있다.", "displayOrder": 0},
-      {"key": "B", "content": "결과 사용 여부는 실행할 계산에 영향을 주지 않고 timer precision만 바꾼다.", "displayOrder": 1},
-      {"key": "C", "content": "dead-code elimination은 source compiler에만 존재하고 JIT에는 없다.", "displayOrder": 2},
-      {"key": "D", "content": "반복 횟수를 늘리면 어떤 benchmark 설계 오류도 자동으로 사라진다.", "displayOrder": 3}
+      {"key": "A", "content": "JIT가 결과가 관찰되지 않는 계산을 제거해 실제 work를 측정하지 않을 수 있다.", "displayOrder": 0, "rationaleMarkdown": "결과가 어디에도 관찰되지 않으면 JIT compiler가 계산이 program behavior에 영향을 주지 않는다고 판단해 제거할 수 있다. 측정하려던 work가 사라지지 않도록 결과를 소비하는 benchmark 구조가 필요하다."},
+      {"key": "B", "content": "결과 사용 여부는 실행할 계산에 영향을 주지 않고 timer precision만 바꾼다.", "displayOrder": 1, "rationaleMarkdown": "결과를 사용하지 않는 문제는 timer 정밀도만의 문제가 아니다. Compiler 최적화가 측정 대상 계산 자체를 없애면 timer가 정확해도 잘못된 작업을 측정한다."},
+      {"key": "C", "content": "dead-code elimination은 source compiler에만 존재하고 JIT에는 없다.", "displayOrder": 2, "rationaleMarkdown": "Dead-code elimination은 JIT를 포함한 optimizing compiler가 수행할 수 있다. Source에 반복문이 보인다고 runtime에서도 그 계산이 반드시 남는 것은 아니다."},
+      {"key": "D", "content": "반복 횟수를 늘리면 어떤 benchmark 설계 오류도 자동으로 사라진다.", "displayOrder": 3, "rationaleMarkdown": "반복 횟수를 늘려도 제거된 계산이 되살아나지 않으며 warmup, dead-code elimination, measurement isolation 같은 오류도 자동 해결되지 않는다. JMH는 결과 소비와 실행 환경 제어를 위한 도구를 제공한다."}
     ],
     "correctChoiceKey": "A",
     "explanationMarkdown": "계산 결과가 외부에서 관찰되지 않으면 JIT가 dead-code elimination으로 작업 자체를 없앨 수 있다. JMH의 result consumption이나 Blackhole 등을 사용해 측정 대상 계산이 실제로 실행되도록 해야 한다."
