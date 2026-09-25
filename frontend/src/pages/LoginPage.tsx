@@ -3,6 +3,7 @@ import { useNavigate } from '@tanstack/react-router'
 import { useEffect } from 'react'
 import { AuthRecoveryActions } from '../components/AuthRecoveryActions'
 import { startGoogleLogin, getAuthSession } from '../lib/auth-api'
+import { consumeAuthReturnLocation } from '../lib/auth-return'
 import { ApiRequestError } from '../lib/http'
 
 export function LoginPage() {
@@ -16,7 +17,12 @@ export function LoginPage() {
 
   useEffect(() => {
     if (session.data?.authenticated) {
-      void navigate({ to: '/', replace: true })
+      const returnTo = consumeAuthReturnLocation()
+      if (returnTo) {
+        window.location.replace(returnTo)
+      } else {
+        void navigate({ to: '/', replace: true })
+      }
     }
   }, [navigate, session.data])
 
@@ -38,7 +44,14 @@ export function LoginPage() {
   }
 
   if (session.isError && !(session.error instanceof ApiRequestError && session.error.status === 401)) {
-    return <p className="route-message error">로그인 상태를 확인하지 못했습니다. 잠시 후 다시 시도해 주세요.</p>
+    return (
+      <div className="route-message error" role="alert">
+        <span>로그인 상태를 확인하지 못했습니다. 잠시 후 다시 시도해 주세요.</span>
+        <button className="secondary-button" type="button" disabled={session.isFetching} onClick={() => void session.refetch()}>
+          {session.isFetching ? '확인 중…' : '다시 시도'}
+        </button>
+      </div>
+    )
   }
 
   return (

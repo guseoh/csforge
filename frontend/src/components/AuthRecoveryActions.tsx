@@ -1,15 +1,21 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { useNavigate } from '@tanstack/react-router'
+import { useLocation, useNavigate } from '@tanstack/react-router'
 import { logout } from '../lib/auth-api'
+import { clearAuthReturnLocation, storeAuthReturnLocation } from '../lib/auth-return'
 
 /** 허용되지 않은 cloud 계정의 세션을 정리하고 다시 로그인할 수 있게 한다. */
 export function AuthRecoveryActions() {
   const navigate = useNavigate()
+  const location = useLocation()
   const queryClient = useQueryClient()
   const logoutMutation = useMutation({
     mutationFn: logout,
     onSuccess: () => {
       queryClient.clear()
+      if (location.pathname !== '/login') {
+        clearAuthReturnLocation()
+        storeAuthReturnLocation({ path: location.pathname, search: location.searchStr, hash: location.hash })
+      }
       void navigate({ to: '/login', replace: true })
     },
   })

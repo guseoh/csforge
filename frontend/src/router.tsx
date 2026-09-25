@@ -5,6 +5,7 @@ import { SearchPalette } from './components/SearchPalette'
 import { UtilityMenu } from './components/UtilityMenu'
 import { AuthGate } from './components/AuthGate'
 import { getAuthSession, logout } from './lib/auth-api'
+import { clearAuthReturnLocation } from './lib/auth-return'
 import { defaultLearningSearch, parseLearningSearch } from './lib/learning-search'
 import { defaultQuizSearch, parseQuizSearch } from './lib/quiz-search'
 import { defaultWrongNoteSearch, parseWrongNoteSearch } from './lib/wrong-note-search'
@@ -112,7 +113,10 @@ function AuthActions() {
           className="text-button"
           type="button"
           disabled={logoutMutation.isPending}
-          onClick={() => logoutMutation.mutate()}
+          onClick={() => {
+            clearAuthReturnLocation()
+            logoutMutation.mutate()
+          }}
         >
           {logoutMutation.isPending ? '로그아웃 중…' : '로그아웃'}
         </button>

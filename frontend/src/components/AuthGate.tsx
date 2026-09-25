@@ -1,9 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
-import { useNavigate } from '@tanstack/react-router'
+import { useLocation, useNavigate } from '@tanstack/react-router'
 import { useEffect, type ReactNode } from 'react'
 import { AuthRecoveryActions } from './AuthRecoveryActions'
 import { ApiRequestError } from '../lib/http'
 import { getAuthSession } from '../lib/auth-api'
+import { consumeAuthReturnLocation, storeAuthReturnLocation } from '../lib/auth-return'
 
 type AuthGateProps = {
   children: ReactNode
@@ -11,6 +12,7 @@ type AuthGateProps = {
 
 export function AuthGate({ children }: AuthGateProps) {
   const navigate = useNavigate()
+  const location = useLocation()
   const session = useQuery({
     queryKey: ['auth-session'],
     queryFn: getAuthSession,
@@ -19,10 +21,24 @@ export function AuthGate({ children }: AuthGateProps) {
   })
 
   useEffect(() => {
+    if (session.error instanceof ApiRequestError && (session.error.status === 401 || session.error.status === 403)) {
+      storeAuthReturnLocation({ path: location.pathname, search: location.searchStr, hash: location.hash })
+    }
+
     if (session.error instanceof ApiRequestError && session.error.status === 401) {
       void navigate({ to: '/login', replace: true })
     }
-  }, [navigate, session.error])
+  }, [location.hash, location.pathname, location.searchStr, navigate, session.error])
+
+  useEffect(() => {
+    if (!session.data?.authenticated || location.pathname !== '/') return
+
+    const returnTo = consumeAuthReturnLocation()
+    const hash = location.hash && !location.hash.startsWith('#') ? `#${location.hash}` : location.hash
+    if (returnTo && returnTo !== `${location.pathname}${location.searchStr}${hash}`) {
+      window.location.replace(returnTo)
+    }
+  }, [location.hash, location.pathname, location.searchStr, session.data?.authenticated])
 
   if (session.isPending) {
     return <p className="route-message">접근 권한을 확인하는 중입니다…</p>
@@ -46,7 +62,14 @@ export function AuthGate({ children }: AuthGateProps) {
   }
 
   if (session.isError) {
-    return <p className="route-message error">인증 상태를 확인하지 못했습니다. 잠시 후 다시 시도해 주세요.</p>
+    return (
+      <div className="route-message error" role="alert">
+        <span>인증 상태를 확인하지 못했습니다. 잠시 후 다시 시도해 주세요.</span>
+        <button className="secondary-button" type="button" disabled={session.isFetching} onClick={() => void session.refetch()}>
+          {session.isFetching ? '확인 중…' : '다시 시도'}
+        </button>
+      </div>
+    )
   }
 
   return <>{children}</>
