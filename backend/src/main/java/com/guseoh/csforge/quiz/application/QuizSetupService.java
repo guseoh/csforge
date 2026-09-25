@@ -13,10 +13,12 @@ import com.guseoh.csforge.quiz.domain.AttemptGradingStatus;
 import com.guseoh.csforge.quiz.domain.QuizInvalidStateException;
 import com.guseoh.csforge.quiz.domain.QuizQuestion;
 import com.guseoh.csforge.quiz.domain.QuizSessionSource;
+import com.guseoh.csforge.question.domain.QuestionRepository;
+import com.guseoh.csforge.question.domain.QuestionStatus;
 import com.guseoh.csforge.quiz.infrastructure.QuestionSelectionRepository;
 
 /**
- * 퀴즈 생성과 최종 오답 재시작 유스케이스를 처리하는 애플리케이션 서비스이다.
+ * 퀴즈 생성과 재시작 유스케이스를 처리하는 애플리케이션 서비스이다.
  */
 @Service
 @RequiredArgsConstructor
@@ -25,6 +27,7 @@ public class QuizSetupService {
     private static final int MAX_RELATED_CONCEPT_QUESTIONS = 5;
 
     private final QuestionSelectionRepository selectionRepository;
+    private final QuestionRepository questionRepository;
     private final QuizSessionDataLoader dataLoader;
     private final QuizSessionCreator sessionCreator;
     private final Clock clock;
@@ -104,5 +107,14 @@ public class QuizSetupService {
         }
 
         return sessionCreator.create(questionIds, Instant.now(clock), null, QuizSessionSource.STANDARD);
+    }
+
+    @Transactional
+    public QuizCreatedResult practiceQuestion(long questionId) {
+        if (!questionRepository.existsByIdAndStatus(questionId, QuestionStatus.PUBLISHED)) {
+            throw new PublishedQuestionNotFoundException();
+        }
+
+        return sessionCreator.create(List.of(questionId), Instant.now(clock), null, QuizSessionSource.STANDARD);
     }
 }

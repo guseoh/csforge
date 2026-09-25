@@ -77,6 +77,8 @@ class QuizIntegrationTest {
 
     private long conceptId;
     private long multipleChoiceId;
+    private long archivedQuestionId;
+    private long draftQuestionId;
     private long shortAnswerId;
     private long descriptiveId;
     private long scenarioId;
@@ -127,6 +129,8 @@ class QuizIntegrationTest {
                 "SHORT_ANSWER",
                 "EASY",
                 "DRAFT");
+        draftQuestionId = jdbc.queryForObject("SELECT id FROM question WHERE content_key = 'draft-question'", Long.class);
+        archivedQuestionId = saveArchivedQuestion(concept);
     }
 
     @Test
@@ -164,6 +168,28 @@ class QuizIntegrationTest {
         assertEquals(422, request("POST", "/api/quizzes", """
                 {"areas":["java"],"concepts":[%d],"levels":[],"difficulties":[],"questionTypes":[],"state":"ALL","count":50,"timeLimitSeconds":null}
                 """.formatted(conceptId)).statusCode());
+    }
+
+    @Test
+    void directQuestionPracticeCreatesOneQuestionQuizOnlyForPublishedQuestions() throws Exception {
+        int sessionsBefore = jdbc.queryForObject("SELECT COUNT(*) FROM quiz_session", Integer.class);
+
+        HttpResponse<String> created = request("POST", "/api/quizzes/questions/" + multipleChoiceId + "/practice", null);
+        assertEquals(201, created.statusCode(), created.body());
+        JsonNode quiz = json(created);
+        assertEquals(1, quiz.get("questionCount").asInt());
+        assertEquals("STANDARD", quiz.get("source").asText());
+        assertEquals("IN_PROGRESS", quiz.get("status").asText());
+
+        JsonNode session = json(request("GET", "/api/quizzes/" + quiz.get("quizId").asLong(), null));
+        assertEquals(List.of(multipleChoiceId), questionIds(session));
+        assertEquals(sessionsBefore + 1, jdbc.queryForObject("SELECT COUNT(*) FROM quiz_session", Integer.class));
+
+        HttpResponse<String> draft = request("POST", "/api/quizzes/questions/" + draftQuestionId + "/practice", null);
+        assertEquals(404, draft.statusCode());
+        assertEquals("QUIZ_QUESTION_NOT_FOUND", json(draft).get("code").asText());
+        assertEquals(404, request("POST", "/api/quizzes/questions/" + archivedQuestionId + "/practice", null).statusCode());
+        assertEquals(sessionsBefore + 1, jdbc.queryForObject("SELECT COUNT(*) FROM quiz_session", Integer.class));
     }
 
     @Test
@@ -628,6 +654,20 @@ class QuizIntegrationTest {
         question.addAcceptedAnswer("answer-" + contentKeySuffix);
         question.linkConcept(concept);
         question.publish();
+        return questionRepository.saveAndFlush(question).getId();
+    }
+
+    private long saveArchivedQuestion(Concept concept) {
+        Question question = Question.createDraft(
+                "archived-question",
+                "Archived practice question",
+                QuestionType.SHORT_ANSWER,
+                QuestionDifficulty.EASY,
+                "An answer.");
+        question.addAcceptedAnswer("answer");
+        question.linkConcept(concept);
+        question.publish();
+        question.archive();
         return questionRepository.saveAndFlush(question).getId();
     }
 

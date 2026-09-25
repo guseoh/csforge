@@ -230,3 +230,7 @@ export function retryWrongQuizQuestion(quizId: number, questionId: number): Prom
 export function practiceRelatedConceptQuiz(questionId: number, conceptId: number): Promise<QuizCreated> {
   return request<QuizCreated>(`/api/quizzes/questions/${questionId}/concepts/${conceptId}/practice`, { method: 'POST' })
 }
+
+export function practiceQuestion(questionId: number): Promise<QuizCreated> {
+  return request<QuizCreated>(`/api/quizzes/questions/${questionId}/practice`, { method: 'POST' })
+}

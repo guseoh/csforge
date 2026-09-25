@@ -128,4 +128,10 @@ public class QuizController {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(apiMapper.toCreatedResponse(setupService.practiceRelatedConcept(questionId, conceptId)));
     }
+
+    @PostMapping("/questions/{questionId}/practice")
+    public ResponseEntity<QuizCreatedResponse> practiceQuestion(@PathVariable long questionId) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(apiMapper.toCreatedResponse(setupService.practiceQuestion(questionId)));
+    }
 }

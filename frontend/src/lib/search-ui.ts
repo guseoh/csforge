@@ -7,6 +7,7 @@ export interface HighlightSegment {
 
 export type SearchDestination =
   | { kind: 'concept'; conceptId: number }
+  | { kind: 'question'; questionId: number }
   | { kind: 'wrong-note'; questionId: number }
   | { kind: 'external'; url: string }
 
@@ -50,6 +51,7 @@ export function primarySearchDestination(item: SearchResultItem | SearchSuggesti
     case 'REFERENCE':
       return item.referenceUrl ? { kind: 'external', url: item.referenceUrl } : null
     case 'QUESTION':
+      return item.questionId == null ? null : { kind: 'question', questionId: item.questionId }
     case 'CONCEPT':
     case 'PERSONAL_NOTE':
       return item.conceptId == null ? null : { kind: 'concept', conceptId: item.conceptId }
