@@ -41,11 +41,11 @@ Every one of the 582 SCENARIO prompts was inspected. All provide situation facts
 | Initial normalized SequenceMatcher similarity candidates ≥ 0.85 | 33 | All explanation-as-answer-copy candidates were corrected; final count is 0 (including exact copies) |
 | Short modelAnswer candidates (≤ 80 chars) | 18 | All manually checked; each is a bounded distinction, recommendation, or calculation with sufficient explanation; none remained deficient |
 | Long-answer candidates (> 1,000 chars) | 0 | Longest PUBLISHED target answer is 455 characters |
-| Multi-part prompt candidates | 549 | Explicit lists/tables/numbering or multiple independent asks; reviewed against answer coverage |
+| Multi-part prompt candidates | 549 | Candidate screen only (explicit lists/tables/numbering or multiple asks); candidate status did not determine final classification |
 | Trade-off / condition-dependent keyword screen | 332 (147 SCENARIO) | Candidate screen across prompt + answer; every occurrence reviewed in context |
 | Under-specified / non-situational SCENARIO remaining | 0 | Full manual review after correction |
 
-The keyword and similarity values above are transparent candidate screens, not semantic quality scores. The full item-level inventory, prompt, classification, answer/explanation lengths, normalized similarity, and scenario review marker are in [issue-167-assessment.csv](issue-167-assessment.csv).
+The keyword and similarity values above are transparent candidate screens, not semantic quality scores. In particular, the multi-part screen is not a classification rule. The full item-level inventory, prompt, individualized classification basis, answer/explanation lengths, normalized similarity, and scenario review marker are in [issue-167-assessment.csv](issue-167-assessment.csv).
 
 ## Corrections
 
@@ -63,59 +63,86 @@ The final normalized screen has **0 exact answer/explanation copies and 0 candid
 
 Technical references used for the specific network claims: [RFC 9110](https://www.rfc-editor.org/rfc/rfc9110.html), [RFC 9112](https://www.rfc-editor.org/rfc/rfc9112.html), [RFC 6298](https://www.rfc-editor.org/rfc/rfc6298.html), [RFC 7239](https://www.rfc-editor.org/rfc/rfc7239.html), [RFC 9199](https://www.rfc-editor.org/rfc/rfc9199.html), and [IANA IPv4 Special-Purpose Address Registry](https://www.iana.org/assignments/iana-ipv4-special-registry).
 
-## Evaluation-criteria assessment after corrections
+## Evaluation-criteria classification re-review
 
-Classification was made per PUBLISHED target after the content fixes. A prompt with an explicit list/table/numbered sequence or multiple independent demands was classified `STRUCTURED_CRITERIA_USEFUL`; a single central mechanism, distinction, or bounded calculation was `MODEL_ANSWER_SUFFICIENT`. The CSV provides the same classification per contentKey and prompt so it can be challenged or revised at review.
+All 1,159 rows were reviewed again against Issue #167’s answer-content test. Prompt formatting (lists, tables, numbering, or multiple nouns) is only a candidate-screen signal. `STRUCTURED_CRITERIA_USEFUL` is reserved for answers with multiple independently checkable elements where partial completion is plausible and criterion-by-criterion comparison materially helps; a single central judgment/mechanism remains `MODEL_ANSWER_SUFFICIENT`, even when the scenario supplies several context facts or a timeline. `CONTENT_FIX_ONLY` is the pre-correction finding state and its final residual remains zero.
 
-| LearningArea | DESCRIPTIVE: model | DESCRIPTIVE: structured | SCENARIO: model | SCENARIO: structured | CONTENT_FIX_ONLY final |
+| Classification | Prior | Re-reviewed | Change |
+|---|---:|---:|---:|
+| `MODEL_ANSWER_SUFFICIENT` | 610 | 802 | +192 |
+| `STRUCTURED_CRITERIA_USEFUL` | 549 | 357 | -192 |
+| `CONTENT_FIX_ONLY` remaining | 0 | 0 | 0 |
+
+Against the prior matrix, 211 former structured rows were reclassified as model-answer-sufficient and 19 former model-answer rows were promoted after reverse review. The net structured count is lower by 192. The 549 multi-part/list/table prompt count remains a screening statistic, not the final criteria classification. Every retained structured row now has an individualized `assessmentBasis` naming that answer’s independent check dimensions; each model-sufficient row records the central answer span supporting direct comparison.
+
+| LearningArea | DESCRIPTIVE model | DESCRIPTIVE structured | SCENARIO model | SCENARIO structured | CONTENT_FIX_ONLY |
 |---|---:|---:|---:|---:|---:|
-| backend-engineering | 21 | 15 | 29 | 8 | 0 |
-| cache | 1 | 8 | 1 | 8 | 0 |
-| computer-architecture | 28 | 21 | 20 | 39 | 0 |
-| database | 11 | 8 | 15 | 6 | 0 |
-| distributed-systems | 1 | 10 | 1 | 8 | 0 |
-| dsa | 55 | 32 | 56 | 40 | 0 |
-| infrastructure-cloud | 1 | 8 | 1 | 8 | 0 |
-| java | 8 | 24 | 15 | 26 | 0 |
-| messaging-async | 1 | 9 | 1 | 8 | 0 |
-| network-http | 72 | 55 | 82 | 45 | 0 |
-| operating-systems | 85 | 41 | 63 | 37 | 0 |
-| performance-observability-operations | 0 | 9 | 0 | 9 | 0 |
-| security | 14 | 10 | 10 | 13 | 0 |
-| spring | 6 | 14 | 12 | 12 | 0 |
+| backend-engineering | 26 | 10 | 34 | 3 | 0 |
+| cache | 6 | 3 | 6 | 3 | 0 |
+| computer-architecture | 30 | 19 | 32 | 27 | 0 |
+| database | 16 | 3 | 19 | 2 | 0 |
+| distributed-systems | 1 | 10 | 3 | 6 | 0 |
+| dsa | 74 | 13 | 82 | 14 | 0 |
+| infrastructure-cloud | 0 | 9 | 4 | 5 | 0 |
+| java | 15 | 17 | 23 | 18 | 0 |
+| messaging-async | 2 | 8 | 5 | 4 | 0 |
+| network-http | 87 | 40 | 106 | 21 | 0 |
+| operating-systems | 97 | 29 | 74 | 26 | 0 |
+| performance-observability-operations | 1 | 8 | 0 | 9 | 0 |
+| security | 16 | 8 | 11 | 12 | 0 |
+| spring | 13 | 7 | 19 | 5 | 0 |
 | system-design | 0 | 9 | 0 | 9 | 0 |
-| **Total** | **610** | **549** | | | **0** |
+| **Total** | **384** | **193** | **418** | **164** | **0** |
 
-Of 1,159 final classifications, **610 are `MODEL_ANSWER_SUFFICIENT`, 549 are `STRUCTURED_CRITERIA_USEFUL`, and 0 remain `CONTENT_FIX_ONLY`**. Forty-two content-only findings were corrected (14 from initial content QA plus 28 repeated-explanation candidates from the overlap audit) and then reclassified using the post-fix content. The 549 structured candidates occur in all 15 areas (with a nonzero area count in each), so they represent a repeated cross-area opportunity, not a single-pack exception.
+### Representative `STRUCTURED_CRITERIA_USEFUL` rows
 
-### Representative structured-criteria candidates
+Each basis below is copied from its row-specific assessment entry. The criteria are evidence for self-check utility only; this PR adds no scoring or schema.
 
-These are examples of independent elements whose completion is harder to compare from a prose answer as a whole. The elements below describe possible future self-check points only; none was added to a schema or used for scoring.
-
-| contentKey | Type | Independent elements a learner would compare |
+| contentKey | Type | Independent elements in this answer |
 |---|---|---|
-| `backend.core.external.circuit-fallback.q3` | DESCRIPTIVE | breaker states and transition thresholds; HALF_OPEN probe policy; why breaker state does not isolate concurrency; separate bulkhead capacity |
-| `computer-architecture.core.pipeline-ilp.pipeline-hazards.q2` | DESCRIPTIVE | structural/data/control causes; one fitting response for each hazard |
-| `computer-architecture.core.performance.latency-throughput.q3` | SCENARIO | batch overhead vs. queue/fill latency; throughput vs. p99; SLA and queue metrics for choosing size |
-| `dsa.core.algorithm-selection.data-shape.q4` | SCENARIO | average-case distribution assumption; collision/probe failure mode; skew/adversarial fixtures; structure alternatives |
-| `dsa.core.hashing.average-worst-lookup.q3` | SCENARIO | bucket/probe distribution; worst chain/cluster; load/resize/tombstone state; triggering key pattern |
-| `infrastructure.core.network.load-balancing-ingress.q3` | DESCRIPTIVE | readiness before routing; draining existing connections; TLS termination boundary; health-check dependency scope |
-| `java.core.time-numeric.bigdecimal-money-rounding.q7` | DESCRIPTIVE | per-line vs. final rounding; currency/minor unit and scale; rounding mode; domain-defined rounding stage |
-| `messaging.core.workflow.transactional-outbox.q3` | DESCRIPTIVE | aggregate sequence; relay claim/publish order; consumer gap/reordering check; stable event ID deduplication |
-| `network-http.core.port-nat.connection-tuple.q3` | SCENARIO | source/destination tuple; translated port uniqueness; NAT mapping lookup; reverse translation to the correct client |
-| `backend.core.bulk-batch.bulk-processing.q2` | DESCRIPTIVE | per-transaction atomicity; memory/lock duration; partial progress and restart/recovery cost; chunk-level throughput and operational trade-off |
+| `backend.core.api.methods-status.q2` | DESCRIPTIVE | 생성 완료와 생성 결과 위치 \| 아직 완료되지 않은 접수 \| 현재 resource state와 충돌하는 요청 \|
+| `backend.core.external.circuit-fallback.q3` | DESCRIPTIVE | failure window threshold와 HALF_OPEN probe 전이 \| breaker와 분리된 bulkhead 동시 자원 한도 \|
+| `computer-architecture.core.pipeline-ilp.pipeline-hazards.q2` | DESCRIPTIVE | structural resource 원인과 대응 \| data operand readiness 원인과 대응 \| control next-PC 불확정 원인과 recovery \|
+| `computer-architecture.core.performance.latency-throughput.q3` | SCENARIO | batching으로 줄어드는 fixed overhead/aggregate 처리량 \| fill·queue 대기로 늘어나는 p99 \| SLA·arrival rate·queue depth 기준 선택 \|
+| `database.core.mvcc.visibility.q1` | DESCRIPTIVE | READ COMMITTED statement별 새 snapshot \| REPEATABLE READ transaction snapshot 유지 \| 중간 commit의 후속 SELECT 가시성 차이 \|
+| `dsa.core.algorithm-selection.data-shape.q4` | SCENARIO | 균등 key/hash 분포 가정 \| collision·probe clustering 위험 \| skew/adversarial fixture 및 load-factor/대안 구조 검증 \|
+| `network-http.core.port-nat.connection-tuple.q3` | SCENARIO | source/destination address and port plus protocol tuple \| translated public source-port uniqueness/mapping \| reverse tuple lookup to internal client \|
+| `operating-systems.core.scheduling.context-switch.q3` | SCENARIO | context-switch increase as a symptom \| scheduling/cache/TLB overhead as candidate cause \| runnable queue and miss/throughput/latency measures to confirm \|
+| `performance.core.measurement.latency-throughput.q3` | DESCRIPTIVE | successful throughput versus attempts/retries \| latency/error/capacity trade-off \| user SLO and same-workload success criterion \|
+| `security.core.abuse.ssrf.q2` | SCENARIO | initial host allowlist check \| redirect destination and DNS resolution revalidation \| bounded redirect/response policy \|
+| `spring.core.mvc.message-converter.q2` | DESCRIPTIVE | deserialization/type-conversion failure boundary \| post-conversion Bean Validation failure boundary \| controller invocation timing \|
+| `system-design.core.architecture.sync-async.q3` | DESCRIPTIVE | synchronous payment outcome boundary \| asynchronous indexing and freshness contract \| timeout/idempotency/replay recovery \|
+| `system-design.core.reliability.failure-isolation.q3` | DESCRIPTIVE | per-operation timeout/rate/backpressure/shedding roles \| queue, pool and end-to-end deadline budgets \| cancellation/retry amplification guard \|
+| `system-design.core.requirements.ownership-boundaries.q3` | DESCRIPTIVE | aggregate/invariant owner \| API/write and migration rights \| recovery/projection rebuild and cross-boundary workflow consistency \|
+
+### Representative `MODEL_ANSWER_SUFFICIENT` rows
+
+These prompts had been at risk of being treated as structured because of scenario timelines, multiple facts, or comparison wording. Their expected response converges on one central distinction/mechanism that the answer and explanation already expose.
+
+| contentKey | Type | Central answer check |
+|---|---|---|
+| `backend.core.concurrency-transaction.optimistic.q3` | SCENARIO | 하나의 중심 판단으로 수렴해 모델답변·설명으로 직접 대조 가능: “stale write conflict를 명시하고 최신 representation을 다시 보여주거나 use-case상 안전한 경우에만 재시도한다.” |
+| `backend.core.concurrency-transaction.usecase-transaction.q3` | SCENARIO | 하나의 중심 판단으로 수렴해 모델답변·설명으로 직접 대조 가능: “아니다. DB와 broker는 별도 resource이므로 outbox 같은 durable handoff나 reconciliation이 필요하다.” |
+| `database.core.transaction.acid.q1` | SCENARIO | 하나의 중심 판단으로 수렴해 모델답변·설명으로 직접 대조 가능: “아니다. DB transaction atomicity는 해당 DB 변경 경계를 보호하며 이미 외부 시스템에 발생한 side effect까지 rollback하지 않는다. 결제 취소/보상, idempotency, 상태 기록 같은 별도 분산 실패 설계가 필요하다.” |
+| `spring.core.transaction-aop.transaction-proxy.q2` | SCENARIO | 하나의 중심 판단으로 수렴해 모델답변·설명으로 직접 대조 가능: “target method 실행과 transaction completion은 분리되어 있다. JPA flush/DB constraint 확인이 method 종료 또는 commit 과정까지 지연될 수 있고 proxy/interceptor가 target 정상 반환 뒤 commit을 수행하므로 save line 통과만으로 commit 완료를…” |
+| `operating-systems.core.virtual-memory.page-frame.q3` | SCENARIO | 하나의 중심 판단으로 수렴해 모델답변·설명으로 직접 대조 가능: “ceil(100/16)=7 page가 필요해 112KiB가 page 단위로 확보된다. 마지막까지 합쳐 최대 12KiB가 이 단순 계산에서 사용되지 않는 공간이다.” |
+| `network-http.core.request-journey.origin.q2` | DESCRIPTIVE | 하나의 중심 판단으로 수렴해 모델답변·설명으로 직접 대조 가능: “origin tuple의 scheme이 `https`와 `http`로 다르기 때문이다. 같은 DNS address나 HTTP Host를 사용해도 scheme·host·port tuple이 다르면 browser의 same-origin/CORS 판단에서 별개 origin이다.” |
 
 ### Cases where separate criteria add little
 
-- `operating-systems.core.virtual-memory.page-frame.q3` (SCENARIO): given page and mapping sizes, one ceiling division and internal-fragmentation result.
-- `network-http.core.request-journey.origin.q2` (DESCRIPTIVE): a bounded origin comparison; the decisive scheme difference is explicit.
-- `security.core.authn-authz.authentication.q1` (DESCRIPTIVE): one boundary distinction—authentication establishes the subject; authorization checks access to the requested order.
+- `backend.core.concurrency-transaction.optimistic.q3` (SCENARIO): the read/update sequence is context for one optimistic-conflict outcome and its response; numbering does not create separate answer axes.
+- `backend.core.concurrency-transaction.usecase-transaction.q3` (SCENARIO): the DB-commit/message-publish ordering frames one local-transaction boundary and recovery judgment.
+- `database.core.transaction.acid.q1` (DESCRIPTIVE): the rollback timeline tests one boundary—database atomicity does not undo an external payment side effect.
+- `spring.core.transaction-aop.transaction-proxy.q2` (SCENARIO): the save/return/commit timeline supports one distinction between target method execution and proxy-managed completion.
+- `operating-systems.core.virtual-memory.page-frame.q3` (SCENARIO): one ceiling division yields the page count and internal-fragmentation result.
 
 ### Schema decision
 
-**Do not add `evaluationPoints[]` in this issue.** The static inventory shows a broad potential use for independent checklists (549 candidates across all 15 areas), but “useful” is not evidence that a new persistence/import/API contract is necessary to complete the current self-check flow. Published model answers already state the expected independent elements, explanations are present, and the current Result/Wrong Note path displays the prompt, submitted response, model answer, explanation, and related Concepts without automatic grading. The repository has no learner-response or partial-self-check outcome evidence showing that clearer answer/explanation content cannot serve this contract. A future product-value decision should validate whether learners need criterion-by-criterion state before designing a global schema; this audit does not introduce a rubric or partial score.
+The re-review retains 357 concrete structured-self-check candidates spanning all 15 LearningAreas, with row-specific evidence rather than a prompt-shape proxy. The retained examples cover distinct answer structures such as independent failure boundaries, multiple measurements and SLO decisions, security checks at separate request stages, and architecture ownership/recovery obligations. This establishes cross-area recurrence and plausible partial-answer value; it is a meaningful signal for a separate structured-self-check product/design decision.
 
-Published explanation completeness is already 1,159/1,159, so there is no data backfill to perform. Since current publication rules make explanation optional and the audit produced no compatibility need for a new invariant, no Import/Domain invariant or DB migration is recommended.
+It does not make an `evaluationPoints[]` schema necessary to complete Issue #167’s audit and correction deliverable: the issue requires inventory, content correction, classification, evidence, and import/history safety checks, not criterion persistence or criterion-level learner state. No learner outcome data in this repository can establish that persisted criteria outperform direct comparison with the current modelAnswer/explanation. Therefore this PR records the recommendation for a separate follow-up to validate criterion-level learner state and UI against actual learning use; it does not add `evaluationPoints[]`, scoring, rubric entities, migrations, API, or UI.
+
+`MODEL_ANSWER_SUFFICIENT` examples show why a global rubric is not useful for every prompt: a single transaction boundary, one protocol distinction, or one bounded calculation remains directly checkable from prose.
 
 ## Identity and history
 
@@ -128,11 +155,11 @@ Existing `QuizResultPage` and `WrongNoteDetailPage` render the user's response, 
 
 ## Validation
 
-- **Full canonical deterministic audit: PASS.** 1,159 published self-check questions; required fields, valid difficulty, Concept link, scalar answer, no choices/acceptedAnswers, duplicate keys, and stable identity/type/status checks all passed.
-- **Preview → Apply → exact reimport: PASS.** Full canonical Testcontainers import applied; all-batch exact preview reported zero errors and UNCHANGED; exact bootstrap repeat was unchanged. A corrected question with existing history also passed same-key update and canonical restoration.
-- **Backend tests: PASS.** ./gradlew.bat test --no-daemon --stacktrace
-- **Backend build: PASS.** ./gradlew.bat build --no-daemon --stacktrace
-- **Frontend: PASS.** npm ci; npm run lint; npm test (28 files / 84 tests); npm run build.
-- **Compose validation: PASS.** docker compose config --quiet; production config with POSTGRES_PASSWORD=validation-secret; expected production-config failure with the secret removed.
-- **Repository validation: PASS.** All validation steps from .github/workflows/repository-validation.yml were run; the deployment job was not run.
-- **git diff --check: PASS.**
+- **Full canonical deterministic audit: PASS.** 2,525 canonical Questions; 1,159 unique PUBLISHED DESCRIPTIVE/SCENARIO rows; modelAnswer/explanation completeness, target identity, required fields, scalar answer shape, Concept link, difficulty, duplicate keys and stable type/status all passed. The matrix has 802 `MODEL_ANSWER_SUFFICIENT`, 357 `STRUCTURED_CRITERIA_USEFUL` with 357 distinct row-specific bases, and 0 residual `CONTENT_FIX_ONLY`.
+- **Preview → Apply → exact reimport: PASS.** `CanonicalBootstrapIdempotencyIntegrationTest` ran against disposable PostgreSQL/Testcontainers. Canonical bootstrap applied with zero errors; batch previews had zero errors and exact items were `UNCHANGED`; exact bootstrap reimport was unchanged. Same-key temporary revision/restore preserved Question ID, Attempt, WrongNote, ReviewSchedule, ReviewHistory, Concept links, and explanation. No production DB was accessed.
+- **Backend tests: PASS.** `./gradlew.bat test --rerun-tasks --no-daemon --stacktrace` (33 test classes / 119 tests, 0 failures). Focused canonical import/history integration test also passed.
+- **Backend build: PASS.** `./gradlew.bat build --no-daemon --stacktrace`.
+- **Frontend: PASS.** `npm ci`, `npm run lint`, `npm test` (28 files / 84 tests), and `npm run build`.
+- **Compose validation: PASS.** `docker compose config --quiet`; production config with `POSTGRES_PASSWORD=validation-secret`; expected production-config failure without the secret.
+- **Repository validation: PASS.** All `validate` job steps in `.github/workflows/repository-validation.yml` passed; deployment job was not run.
+- **`git diff --check`: PASS.**
