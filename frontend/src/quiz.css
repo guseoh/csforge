@@ -447,6 +447,7 @@
 .result-status-correct { border-color: var(--border-accent); color: var(--state-success); }
 .result-status-wrong { border-color: #734451; color: var(--state-error); }
 .result-status-pending { border-color: #74533d; color: var(--state-warning); }
+.result-status-unanswered { border-color: var(--border-subtle); color: var(--text-muted); }
 
 .quiz-stat-grid div {
   display: grid;
@@ -491,6 +492,7 @@
 .quiz-result-question.correct { border-color: var(--border-accent); }
 .quiz-result-question.wrong { border-color: #734451; }
 .quiz-result-question.pending { border-color: #74533d; }
+.quiz-result-question.unanswered { border-color: var(--border-subtle); }
 
 .quiz-result-question > .section-heading strong {
   color: #c8d1e4;

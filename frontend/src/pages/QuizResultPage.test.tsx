@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { ApiRequestError } from '../lib/http'
+import type { QuizQuestionResult } from '../lib/quiz-api'
 
 const mocks = vi.hoisted(() => ({
   result: { data: null as unknown, error: null as unknown, isPending: false, isError: false, refetch: vi.fn() },
@@ -21,6 +22,53 @@ vi.mock('@tanstack/react-query', () => ({
 }))
 
 import { QuizResultPage } from './QuizResultPage'
+
+function resultQuestion(overrides: Partial<QuizQuestionResult> = {}): QuizQuestionResult {
+  return {
+    questionId: 1,
+    position: 0,
+    promptMarkdown: '테스트 문항',
+    questionType: 'MULTIPLE_CHOICE',
+    difficulty: 'EASY',
+    concepts: [],
+    choices: [],
+    selectedChoiceKey: 'A',
+    answerText: null,
+    reviewNeeded: false,
+    gradingStatus: 'GRADED',
+    correct: false,
+    correctChoiceKey: 'B',
+    acceptedAnswers: [],
+    modelAnswer: null,
+    explanationMarkdown: null,
+    answeredAt: '2026-09-12T00:00:00Z',
+    gradedAt: '2026-09-12T00:00:01Z',
+    ...overrides,
+  }
+}
+
+function renderSubmittedResult(
+  questions: QuizQuestionResult[],
+  counts: { correct: number; wrong: number; unanswered: number; selfCheckPending?: number },
+) {
+  const selfCheckPending = counts.selfCheckPending ?? 0
+  const finalizedCount = counts.correct + counts.wrong + counts.unanswered
+  mocks.result.data = {
+    quizId: 41,
+    status: selfCheckPending > 0 ? 'SUBMITTED' : 'COMPLETED',
+    source: 'STANDARD',
+    total: questions.length,
+    correct: counts.correct,
+    wrong: counts.wrong,
+    unanswered: counts.unanswered,
+    selfCheckPending,
+    accuracy: finalizedCount === 0 ? null : counts.correct / finalizedCount,
+    breakdown: [],
+    questions,
+  }
+
+  return renderToStaticMarkup(<QuizResultPage />)
+}
 
 describe('QuizResultPage', () => {
   beforeEach(() => {
@@ -98,6 +146,7 @@ describe('QuizResultPage', () => {
     expect(markup).toContain('선택지 B')
     expect(markup).toContain('복사된 참조 값만')
     expect(markup).toContain('이 선택지가 틀린 이유')
+    expect(markup).toContain('<span class="result-status result-status-wrong">오답</span>')
     expect(markup).toContain('선택지 A의 근거')
     expect(markup).toContain('이 선택지가 맞는 이유')
     expect(markup).toContain('정답 선택지의 근거')
@@ -192,6 +241,7 @@ describe('QuizResultPage', () => {
     expect(markup).toContain('내가 작성한 설명')
     expect(markup).toContain('모범 답안')
     expect(markup).toContain('내 답과 모범 답안을 비교한 뒤 직접 판정하세요.')
+    expect(markup).toContain('자기채점 대기')
     expect(markup).toContain('맞았어요')
     expect(markup).toContain('틀렸어요')
   })
@@ -261,5 +311,41 @@ describe('QuizResultPage', () => {
     expect(markup).not.toContain('choice-rationale')
     expect(markup).not.toContain('이 선택지가 틀린 이유')
     expect(markup).not.toContain('이 선택지가 맞는 이유')
+  })
+
+  it('labels a submitted unanswered multiple-choice question as unanswered, not wrong', () => {
+    const markup = renderSubmittedResult([
+      resultQuestion({ selectedChoiceKey: null, gradingStatus: 'GRADED', correct: false }),
+    ], { correct: 0, wrong: 0, unanswered: 1 })
+
+    expect(markup).toContain('<span class="result-status result-status-unanswered">미답변</span>')
+    expect(markup).not.toContain('<span class="result-status result-status-wrong">오답</span>')
+    expect(markup).toContain('<div><span>오답</span><strong>0</strong></div>')
+    expect(markup).toContain('<div><span>미답변</span><strong>1</strong></div>')
+    expect(markup).toContain('미답변 다시 풀기')
+  })
+
+  it('labels a submitted blank text answer as unanswered, not wrong', () => {
+    const markup = renderSubmittedResult([
+      resultQuestion({ questionType: 'SHORT_ANSWER', selectedChoiceKey: null, answerText: '  ', gradingStatus: 'GRADED', correct: false }),
+    ], { correct: 0, wrong: 0, unanswered: 1 })
+
+    expect(markup).toContain('<span class="result-status result-status-unanswered">미답변</span>')
+    expect(markup).not.toContain('<span class="result-status result-status-wrong">오답</span>')
+    expect(markup).toContain('미답변 다시 풀기')
+  })
+
+  it('keeps answered wrong and unanswered questions separate while retrying both', () => {
+    const markup = renderSubmittedResult([
+      resultQuestion({ questionId: 31, position: 0 }),
+      resultQuestion({ questionId: 32, position: 1, selectedChoiceKey: null }),
+    ], { correct: 0, wrong: 1, unanswered: 1 })
+
+    expect(markup).toContain('<span class="result-status result-status-wrong">오답</span>')
+    expect(markup).toContain('<span class="result-status result-status-unanswered">미답변</span>')
+    expect(markup.match(/class="quiz-result-question /g)).toHaveLength(2)
+    expect(markup).toContain('<div><span>오답</span><strong>1</strong></div>')
+    expect(markup).toContain('<div><span>미답변</span><strong>1</strong></div>')
+    expect(markup).toContain('오답·미답변 다시 풀기')
   })
 })
