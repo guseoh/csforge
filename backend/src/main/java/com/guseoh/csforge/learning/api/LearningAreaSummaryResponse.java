@@ -11,6 +11,7 @@ public record LearningAreaSummaryResponse(
         long topicCount,
         long publishedConceptCount,
         long completedConceptCount,
+        long startedConceptCount,
         long bookmarkedConceptCount,
         LevelProgressResponse level1,
         LevelProgressResponse level2,

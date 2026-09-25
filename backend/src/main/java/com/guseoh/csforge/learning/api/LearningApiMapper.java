@@ -27,6 +27,7 @@ public class LearningApiMapper {
                 area.topicCount(),
                 area.publishedConceptCount(),
                 area.completedConceptCount(),
+                area.startedConceptCount(),
                 area.bookmarkedConceptCount(),
                 new LevelProgressResponse(area.level1Total(), area.level1Completed()),
                 new LevelProgressResponse(area.level2Total(), area.level2Completed()),

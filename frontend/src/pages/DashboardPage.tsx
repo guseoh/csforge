@@ -63,8 +63,8 @@ export function DashboardPage() {
   const dashboard = dashboardQuery.data
   const recentConcepts = recentConceptsQuery.data ? selectRecentConcepts(recentConceptsQuery.data.items).slice(0, 3) : []
   const recentConcept = recentConcepts[0] ?? null
-  const progressedAreas = dashboard.areaProgress.filter((area) => area.completedConceptCount > 0)
-  const untouchedAreas = dashboard.areaProgress.filter((area) => area.completedConceptCount === 0)
+  const progressedAreas = dashboard.areaProgress.filter((area) => area.startedConceptCount > 0)
+  const untouchedAreas = dashboard.areaProgress.filter((area) => area.startedConceptCount === 0)
   const showingProgressedAreas = progressedAreas.length > 0
   const areaPool = showingProgressedAreas ? progressedAreas : untouchedAreas
   const recentAreaInPool = recentConcept ? areaPool.find((area) => area.areaSlug === recentConcept.areaSlug) : undefined
@@ -199,7 +199,7 @@ export function DashboardPage() {
           <p className="dashboard-section-copy">{areaSectionDescription}</p>
           <div className="dashboard-area-list">
             {featuredAreas.map((area, index) => {
-              const started = area.completedConceptCount > 0
+              const started = area.startedConceptCount > 0
               return (
                 <Link className="dashboard-area-row" key={area.areaSlug} to="/learning/$areaSlug" params={{ areaSlug: area.areaSlug }} search={defaultLearningSearch}>
                   <span className="dashboard-area-index" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>

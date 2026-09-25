@@ -128,6 +128,30 @@ class LearningIntegrationTest {
     }
 
     @Test
+    void areaStartedCountIncludesEveryNonUnseenProgressStatus() throws Exception {
+        JsonNode untouched = findBySlug(json(request("GET", "/api/learning-areas", null)), "java");
+        assertEquals(0, untouched.get("startedConceptCount").asInt());
+        assertEquals(0, untouched.get("completedConceptCount").asInt());
+
+        request("PATCH", "/api/concepts/" + firstConceptId + "/progress", "{\"status\":\"LEARNING\"}");
+        request("PATCH", "/api/concepts/" + secondConceptId + "/progress", "{\"status\":\"COMPLETED\"}");
+        request("PATCH", "/api/concepts/" + thirdConceptId + "/progress", "{\"status\":\"REVIEW_NEEDED\"}");
+
+        JsonNode javaArea = findBySlug(json(request("GET", "/api/learning-areas", null)), "java");
+        assertEquals(3, javaArea.get("startedConceptCount").asInt());
+        assertEquals(1, javaArea.get("completedConceptCount").asInt());
+    }
+
+    @Test
+    void reviewNeededAloneStartsAnAreaWithoutIncreasingCompletion() throws Exception {
+        request("PATCH", "/api/concepts/" + firstConceptId + "/progress", "{\"status\":\"REVIEW_NEEDED\"}");
+
+        JsonNode javaArea = findBySlug(json(request("GET", "/api/learning-areas", null)), "java");
+        assertEquals(1, javaArea.get("startedConceptCount").asInt());
+        assertEquals(0, javaArea.get("completedConceptCount").asInt());
+    }
+
+    @Test
     void areaOutlinePaginatesPastTwoHundredAndKeepsOnlyOutlineFields() throws Exception {
         for (int index = 0; index < 205; index++) {
             insertConcept(topicId, "java-outline-" + index, "outline-" + index,

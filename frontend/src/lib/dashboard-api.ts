@@ -27,6 +27,7 @@ export interface DashboardAreaProgress {
   areaSlug: string
   areaName: string
   completedConceptCount: number
+  startedConceptCount: number
   publishedConceptCount: number
   completionPercent: number
   levels: DashboardLevelProgress[]

@@ -29,6 +29,10 @@ public class LearningAreaQueryRepository {
                 count(distinct t.id),
                 count(c.id),
                 count(case when cp.status = com.guseoh.csforge.learning.domain.LearningStatus.COMPLETED then 1 end),
+                count(case when cp.status in (
+                    com.guseoh.csforge.learning.domain.LearningStatus.LEARNING,
+                    com.guseoh.csforge.learning.domain.LearningStatus.COMPLETED,
+                    com.guseoh.csforge.learning.domain.LearningStatus.REVIEW_NEEDED) then 1 end),
                 count(case when cp.bookmarked = true then 1 end),
                 count(case when c.level = 1 then 1 end),
                 count(case when c.level = 1 and cp.status = com.guseoh.csforge.learning.domain.LearningStatus.COMPLETED then 1 end),

@@ -24,6 +24,7 @@ export interface AreaSummary {
   topicCount: number
   publishedConceptCount: number
   completedConceptCount: number
+  startedConceptCount: number
   bookmarkedConceptCount: number
   level1: LevelProgress
   level2: LevelProgress

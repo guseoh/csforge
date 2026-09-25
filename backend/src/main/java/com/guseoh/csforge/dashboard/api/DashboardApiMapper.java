@@ -48,6 +48,7 @@ public class DashboardApiMapper {
                 area.areaSlug(),
                 area.areaName(),
                 area.completedConceptCount(),
+                area.startedConceptCount(),
                 area.publishedConceptCount(),
                 area.completionPercent(),
                 area.levels().stream().map(this::toLevelProgress).toList());

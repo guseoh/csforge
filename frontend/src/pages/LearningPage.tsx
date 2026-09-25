@@ -14,7 +14,7 @@ function completionPercent(area: AreaSummary) {
 
 function AreaRow({ area, index }: { area: AreaSummary; index: number }) {
   const completion = completionPercent(area)
-  const started = area.completedConceptCount > 0
+  const started = area.startedConceptCount > 0
 
   return (
     <article className="area-row">
