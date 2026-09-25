@@ -41,6 +41,8 @@
 
   --surface-code: #f0f3f6;
   --text-code: #263340;
+  --surface-code-inline: #e9edf1;
+  --text-code-inline: #263340;
   --syntax-keyword: #8041a8;
   --syntax-type: #145b8c;
   --syntax-string: #206c45;
@@ -113,6 +115,8 @@
   --state-error-border: #6f404a;
   --surface-code: #191b1e;
   --text-code: #dfe2e5;
+  --surface-code-inline: #2a2d31;
+  --text-code-inline: #e5e7e9;
   --syntax-keyword: #d0a7ff;
   --syntax-type: #8dccff;
   --syntax-string: #a8e0b9;
@@ -164,6 +168,8 @@
     --state-error-border: #6f404a;
     --surface-code: #191b1e;
     --text-code: #dfe2e5;
+    --surface-code-inline: #2a2d31;
+    --text-code-inline: #e5e7e9;
     --syntax-keyword: #d0a7ff;
     --syntax-type: #8dccff;
     --syntax-string: #a8e0b9;
@@ -393,6 +399,38 @@ textarea:focus {
 
 .markdown-content {
   color: var(--text-default);
+}
+
+.markdown-content :not(pre) > code,
+.result-answer :not(pre) > code,
+.quiz-prompt :not(pre) > code,
+.answer-block :not(pre) > code {
+  padding: 0.08em 0.34em;
+  border: 1px solid var(--border-code);
+  border-radius: 4px;
+  color: var(--text-code-inline);
+  background: var(--surface-code-inline);
+  font-size: 0.98em;
+  font-family: var(--font-mono);
+}
+
+.markdown-content pre {
+  max-width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--border-code);
+  color: var(--text-code);
+  background: var(--surface-code);
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  line-height: 1.62;
+}
+
+.markdown-content pre > code {
+  padding: 0;
+  border: 0;
+  color: inherit;
+  background: transparent;
+  font: inherit;
 }
 
 .markdown-content strong {

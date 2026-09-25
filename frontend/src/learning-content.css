@@ -140,9 +140,12 @@
   overflow-x: auto;
   margin: 14px 0;
   padding: 14px 16px;
-  border: 1px solid var(--border-default);
+  border: 1px solid var(--border-code);
   border-radius: 8px;
-  background: var(--color-page);
+  color: var(--text-code);
+  background: var(--surface-code);
+  font-size: 0.95rem;
+  line-height: 1.62;
 }
 
 .quiz-focus-choice-list code,
