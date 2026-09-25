@@ -6,7 +6,7 @@ import { ChoiceRationale, OtherChoiceRationales } from '../components/ChoiceRati
 import { MarkdownContent } from '../components/MarkdownContent'
 import { RelatedConceptPracticeActions } from '../components/RelatedConceptPracticeActions'
 import { ApiRequestError } from '../lib/http'
-import { getQuizResult, retryWrongQuiz, retryWrongQuizQuestion, selfCheckQuizQuestion, type QuizQuestionResult } from '../lib/quiz-api'
+import { getQuizResult, retryWrongQuiz, retryWrongQuizQuestion, selfCheckQuizQuestion, type QuizQuestionResult, type QuizResult } from '../lib/quiz-api'
 import { defaultQuizSearch } from '../lib/quiz-search'
 import { hasSubmittedAnswer, hasUnresolvedSelfCheck } from '../lib/quiz-result'
 import { compactMarkdownPreview } from '../lib/markdown'
@@ -107,9 +107,10 @@ function TextAnswerReview({ question }: { question: QuizQuestionResult }) {
   )
 }
 
-function QuestionResultCard({ quizId, question, defaultOpen = false, hasPendingSelfCheck = false }: {
+function QuestionResultCard({ quizId, question, source, defaultOpen = false, hasPendingSelfCheck = false }: {
   quizId: number
   question: QuizQuestionResult
+  source: QuizResult['source']
   defaultOpen?: boolean
   hasPendingSelfCheck?: boolean
 }) {
@@ -143,6 +144,14 @@ function QuestionResultCard({ quizId, question, defaultOpen = false, hasPendingS
     : question.correct === false || isUnanswered
       ? '답안·해설 보기'
       : '답안 확인'
+  const finalizedOutcome = question.gradingStatus !== 'SELF_CHECK_REQUIRED'
+  const reviewScheduleLabel = !finalizedOutcome || !question.reviewScheduleStatus
+    ? null
+    : question.reviewScheduleStatus === 'MASTERED'
+      ? '복습 일정 완료'
+      : source === 'WRONG_RETRY' && question.correct === true
+        ? '이번에는 정답입니다. 기존 복습 일정은 계속됩니다.'
+        : '복습 일정에 등록됨'
 
   return (
     <details
@@ -212,6 +221,24 @@ function QuestionResultCard({ quizId, question, defaultOpen = false, hasPendingS
                   ))}
                 </div>
               )}
+          </div>
+        )}
+
+        {finalizedOutcome && (question.wrongNoteAvailable || reviewScheduleLabel) && (
+          <div className="result-related-concepts result-question-outcomes">
+            <span className="helper-text">후속 학습 상태</span>
+            <div className="chip-row">
+              {question.wrongNoteAvailable && (
+                <Link
+                  className="chip text-link"
+                  to="/wrong-notes/$questionId"
+                  params={{ questionId: String(question.questionId) }}
+                >
+                  오답 노트 열기
+                </Link>
+              )}
+              {reviewScheduleLabel && <span className="helper-text">{reviewScheduleLabel}</span>}
+            </div>
           </div>
         )}
 
@@ -296,6 +323,9 @@ export function QuizResultPage() {
     ? `확정 ${result.total - result.selfCheckPending}문항 중 ${result.correct}개 정답 · 자기채점 ${result.selfCheckPending}개 대기`
     : `${result.correct}/${result.total}개 정답`
   const selfCheckQuestions = result.questions.filter((question) => question.gradingStatus === 'SELF_CHECK_REQUIRED')
+  const finalizedQuestions = result.questions.filter((question) => question.gradingStatus !== 'SELF_CHECK_REQUIRED')
+  const hasScheduledReview = finalizedQuestions.some((question) => question.reviewScheduleStatus === 'SCHEDULED')
+  const hasMasteredReview = finalizedQuestions.some((question) => question.reviewScheduleStatus === 'MASTERED')
   const wrongQuestions = result.questions.filter((question) => question.correct === false && hasSubmittedAnswer(question))
   const unansweredQuestions = result.questions.filter((question) => !hasSubmittedAnswer(question))
   const reviewQuestions = [...wrongQuestions, ...unansweredQuestions]
@@ -335,6 +365,15 @@ export function QuizResultPage() {
         </div>
       </div>
 
+      {(hasScheduledReview || hasMasteredReview) && (
+        <p className="helper-text" role="status">
+          {hasScheduledReview && '복습 일정에 등록된 문항이 있습니다.'}
+          {hasScheduledReview && hasMasteredReview && ' '}
+          {hasMasteredReview && '완료된 복습 일정도 있습니다.'}
+          {' '}<Link className="text-link" to="/review" search={{ page: 0, due: 'ALL' }}>복습 일정 보기 →</Link>
+        </p>
+      )}
+
       {hasPendingSelfCheck && (
         <section className="self-check-banner" aria-labelledby="self-check-banner-title">
           <div>
@@ -353,7 +392,7 @@ export function QuizResultPage() {
             <span className="result-count">{selfCheckQuestions.length}개</span>
           </div>
           <div className="quiz-result-list quiz-result-attention-list">
-            {selfCheckQuestions.map((question) => <QuestionResultCard key={question.questionId} quizId={quizId} question={question} defaultOpen hasPendingSelfCheck={hasPendingSelfCheck} />)}
+            {selfCheckQuestions.map((question) => <QuestionResultCard key={question.questionId} quizId={quizId} question={question} source={result.source} defaultOpen hasPendingSelfCheck={hasPendingSelfCheck} />)}
           </div>
         </section>
       )}
@@ -365,7 +404,7 @@ export function QuizResultPage() {
         </div>
         {reviewQuestions.length > 0 ? (
           <div className="quiz-result-list quiz-result-attention-list">
-            {reviewQuestions.map((question, index) => <QuestionResultCard key={question.questionId} quizId={quizId} question={question} defaultOpen={index === 0} hasPendingSelfCheck={hasPendingSelfCheck} />)}
+            {reviewQuestions.map((question, index) => <QuestionResultCard key={question.questionId} quizId={quizId} question={question} source={result.source} defaultOpen={index === 0} hasPendingSelfCheck={hasPendingSelfCheck} />)}
           </div>
         ) : (
           <div className="result-clear-state"><strong>다시 확인할 오답이나 미답변이 없습니다.</strong><span>정답 문항의 해설이 필요하면 아래에서 펼쳐볼 수 있습니다.</span></div>
@@ -401,7 +440,7 @@ export function QuizResultPage() {
         <details className="correct-result-disclosure">
           <summary><span><span className="eyebrow">필요할 때만</span><strong>정답 문항 {correctQuestions.length}개 보기</strong></span><span>해설과 답안 확인 ⌄</span></summary>
           <div className="quiz-result-list correct-result-list">
-            {correctQuestions.map((question, index) => <QuestionResultCard key={question.questionId} quizId={quizId} question={question} defaultOpen={index === 0} hasPendingSelfCheck={hasPendingSelfCheck} />)}
+            {correctQuestions.map((question, index) => <QuestionResultCard key={question.questionId} quizId={quizId} question={question} source={result.source} defaultOpen={index === 0} hasPendingSelfCheck={hasPendingSelfCheck} />)}
           </div>
         </details>
       )}

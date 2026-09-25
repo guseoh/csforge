@@ -1,5 +1,6 @@
 package com.guseoh.csforge.wrongnote.domain;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -14,6 +15,8 @@ import jakarta.persistence.LockModeType;
  * 문제별 오답 노트 aggregate의 저장소이다.
  */
 public interface WrongNoteRepository extends JpaRepository<WrongNote, Long> {
+
+    List<WrongNote> findByQuestionIdIn(List<Long> questionIds);
 
     @EntityGraph(attributePaths = {"question", "lastWrongAttempt", "lastWrongAttempt.selectedChoice"})
     Optional<WrongNote> findByQuestionId(long questionId);

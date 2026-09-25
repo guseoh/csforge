@@ -10,7 +10,9 @@ const mocks = vi.hoisted(() => ({
 }))
 
 vi.mock('@tanstack/react-router', () => ({
-  Link: ({ children }: { children: ReactNode }) => <a href="#">{children}</a>,
+  Link: ({ children, to, params }: { children: ReactNode; to?: string; params?: { questionId?: string } }) => (
+    <a href={to?.replace('$questionId', params?.questionId ?? '') ?? '#'}>{children}</a>
+  ),
   useNavigate: () => mocks.navigate,
   useParams: () => ({ quizId: '41' }),
 }))
@@ -35,6 +37,8 @@ function resultQuestion(overrides: Partial<QuizQuestionResult> = {}): QuizQuesti
     selectedChoiceKey: 'A',
     answerText: null,
     reviewNeeded: false,
+    wrongNoteAvailable: false,
+    reviewScheduleStatus: null,
     gradingStatus: 'GRADED',
     correct: false,
     correctChoiceKey: 'B',
@@ -50,13 +54,14 @@ function resultQuestion(overrides: Partial<QuizQuestionResult> = {}): QuizQuesti
 function renderSubmittedResult(
   questions: QuizQuestionResult[],
   counts: { correct: number; wrong: number; unanswered: number; selfCheckPending?: number },
+  source: 'STANDARD' | 'WRONG_RETRY' | 'REVIEW' = 'STANDARD',
 ) {
   const selfCheckPending = counts.selfCheckPending ?? 0
   const finalizedCount = counts.correct + counts.wrong + counts.unanswered
   mocks.result.data = {
     quizId: 41,
     status: selfCheckPending > 0 ? 'SUBMITTED' : 'COMPLETED',
-    source: 'STANDARD',
+    source,
     total: questions.length,
     correct: counts.correct,
     wrong: counts.wrong,
@@ -128,6 +133,8 @@ describe('QuizResultPage', () => {
         selectedChoiceKey: 'A',
         answerText: null,
         reviewNeeded: false,
+        wrongNoteAvailable: true,
+        reviewScheduleStatus: 'SCHEDULED',
         gradingStatus: 'GRADED',
         correct: false,
         correctChoiceKey: 'B',
@@ -156,6 +163,8 @@ describe('QuizResultPage', () => {
     expect(markup).toContain('왜 이렇게 판단하나')
     expect(markup).toContain('관련 개념 다시 보기')
     expect(markup).toContain('이 문제 다시 풀기')
+    expect(markup).toContain('<a href="/wrong-notes/9">오답 노트 열기</a>')
+    expect(markup).toContain('복습 일정에 등록됨')
     expect(markup).toContain('이 개념 다른 문제 풀기')
     expect(markup.indexOf('왜 이렇게 판단하나')).toBeLessThan(markup.indexOf('이 문제 다시 풀기'))
   })
@@ -183,6 +192,8 @@ describe('QuizResultPage', () => {
         selectedChoiceKey: null,
         answerText: '정답',
         reviewNeeded: false,
+        wrongNoteAvailable: false,
+        reviewScheduleStatus: null,
         gradingStatus: 'GRADED',
         correct: true,
         correctChoiceKey: null,
@@ -224,6 +235,8 @@ describe('QuizResultPage', () => {
         selectedChoiceKey: null,
         answerText: '내가 작성한 설명',
         reviewNeeded: false,
+        wrongNoteAvailable: true,
+        reviewScheduleStatus: 'SCHEDULED',
         gradingStatus: 'SELF_CHECK_REQUIRED',
         correct: null,
         correctChoiceKey: null,
@@ -244,6 +257,9 @@ describe('QuizResultPage', () => {
     expect(markup).toContain('자기채점 대기')
     expect(markup).toContain('맞았어요')
     expect(markup).toContain('틀렸어요')
+    expect(markup).not.toContain('/wrong-notes/11')
+    expect(markup).not.toContain('복습 일정에 등록됨')
+    expect(markup).not.toContain('복습 일정에 등록된 문항')
   })
 
   it('labels partial accuracy with the finalized denominator', () => {
@@ -294,6 +310,8 @@ describe('QuizResultPage', () => {
         selectedChoiceKey: 'A',
         answerText: null,
         reviewNeeded: false,
+        wrongNoteAvailable: false,
+        reviewScheduleStatus: null,
         gradingStatus: 'GRADED',
         correct: false,
         correctChoiceKey: 'B',
@@ -323,6 +341,8 @@ describe('QuizResultPage', () => {
     expect(markup).toContain('<div><span>오답</span><strong>0</strong></div>')
     expect(markup).toContain('<div><span>미답변</span><strong>1</strong></div>')
     expect(markup).toContain('미답변 다시 풀기')
+    expect(markup).not.toContain('/wrong-notes/1')
+    expect(markup).not.toContain('복습 일정에 등록됨')
   })
 
   it('labels a submitted blank text answer as unanswered, not wrong', () => {
@@ -347,5 +367,35 @@ describe('QuizResultPage', () => {
     expect(markup).toContain('<div><span>오답</span><strong>1</strong></div>')
     expect(markup).toContain('<div><span>미답변</span><strong>1</strong></div>')
     expect(markup).toContain('오답·미답변 다시 풀기')
+  })
+
+  it('schedules a correct answer when review was explicitly requested', () => {
+    const markup = renderSubmittedResult([
+      resultQuestion({ correct: true, reviewNeeded: true, wrongNoteAvailable: false, reviewScheduleStatus: 'SCHEDULED' }),
+    ], { correct: 1, wrong: 0, unanswered: 0 })
+
+    expect(markup).toContain('복습 일정에 등록됨')
+    expect(markup).toContain('복습 일정에 등록된 문항이 있습니다.')
+    expect(markup.indexOf('복습 일정에 등록된 문항이 있습니다.')).toBeLessThan(markup.indexOf('correct-result-disclosure'))
+    expect(markup).not.toContain('/wrong-notes/1')
+  })
+
+  it('keeps existing review and wrong-note state after a correct retry', () => {
+    const markup = renderSubmittedResult([
+      resultQuestion({ correct: true, wrongNoteAvailable: true, reviewScheduleStatus: 'SCHEDULED' }),
+    ], { correct: 1, wrong: 0, unanswered: 0 }, 'WRONG_RETRY')
+
+    expect(markup).toContain('이번에는 정답입니다. 기존 복습 일정은 계속됩니다.')
+    expect(markup).toContain('<a href="/wrong-notes/1">오답 노트 열기</a>')
+    expect(markup).not.toContain('복습 일정 완료')
+  })
+
+  it('shows a mastered schedule as completed', () => {
+    const markup = renderSubmittedResult([
+      resultQuestion({ correct: true, reviewScheduleStatus: 'MASTERED' }),
+    ], { correct: 1, wrong: 0, unanswered: 0 }, 'REVIEW')
+
+    expect(markup).toContain('복습 일정 완료')
+    expect(markup).toContain('완료된 복습 일정도 있습니다.')
   })
 })

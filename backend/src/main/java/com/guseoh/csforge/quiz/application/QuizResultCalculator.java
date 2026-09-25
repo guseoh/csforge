@@ -19,7 +19,9 @@ import com.guseoh.csforge.quiz.domain.QuizQuestion;
 @Component
 public class QuizResultCalculator {
 
-    public QuizResultView calculate(QuizSessionData data) {
+    public QuizResultView calculate(
+            QuizSessionData data,
+            Map<Long, QuizQuestionOutcomeView> questionOutcomes) {
         Counts total = new Counts();
         Map<TopicKey, Counts> breakdown = new LinkedHashMap<>();
 
@@ -36,7 +38,7 @@ public class QuizResultCalculator {
         List<QuizBreakdownView> breakdownViews = breakdown.entrySet().stream()
                 .map(entry -> entry.getValue().toView(entry.getKey()))
                 .toList();
-        return new QuizResultView(data, total.toPerformance(), breakdownViews);
+        return new QuizResultView(data, total.toPerformance(), breakdownViews, questionOutcomes);
     }
 
     private Set<TopicKey> relatedTopics(List<QuestionConceptSummary> links) {

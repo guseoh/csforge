@@ -106,6 +106,8 @@ export interface QuizQuestionResult {
   selectedChoiceKey: string | null
   answerText: string | null
   reviewNeeded: boolean
+  wrongNoteAvailable: boolean
+  reviewScheduleStatus: 'SCHEDULED' | 'MASTERED' | null
   gradingStatus: AttemptGradingStatus
   correct: boolean | null
   correctChoiceKey: string | null

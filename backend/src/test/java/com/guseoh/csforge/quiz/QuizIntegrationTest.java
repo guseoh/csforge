@@ -227,6 +227,12 @@ class QuizIntegrationTest {
         assertEquals(1, result.get("wrong").asInt());
         assertEquals(1, result.get("unanswered").asInt());
         assertEquals(1, result.get("selfCheckPending").asInt());
+        assertTrue(result.get("questions").get(0).get("wrongNoteAvailable").asBoolean());
+        assertEquals("SCHEDULED", result.get("questions").get(0).get("reviewScheduleStatus").asText());
+        assertFalse(result.get("questions").get(2).get("wrongNoteAvailable").asBoolean());
+        assertTrue(result.get("questions").get(2).get("reviewScheduleStatus").isNull());
+        assertFalse(result.get("questions").get(3).get("wrongNoteAvailable").asBoolean());
+        assertTrue(result.get("questions").get(3).get("reviewScheduleStatus").isNull());
         assertEquals("A", result.get("questions").get(0).get("correctChoiceKey").asText());
         assertEquals("Correct because A is the invariant.",
                 result.get("questions").get(0).get("choices").get(0).get("rationaleMarkdown").asText());
@@ -471,6 +477,9 @@ class QuizIntegrationTest {
         JsonNode wrongList = json(request("GET", "/api/wrong-notes?size=20", null));
         assertEquals(1, wrongList.get("items").size());
         assertEquals(1, wrongList.get("items").get(0).get("wrongCount").asInt());
+        JsonNode initialResult = json(request("GET", "/api/quizzes/" + quizId + "/result", null));
+        assertTrue(initialResult.get("questions").get(0).get("wrongNoteAvailable").asBoolean());
+        assertEquals("SCHEDULED", initialResult.get("questions").get(0).get("reviewScheduleStatus").asText());
         JsonNode detail = json(request("GET", "/api/wrong-notes/" + multipleChoiceId, null));
         assertEquals("B", detail.get("latestWrongAttempt").get("selectedChoiceKey").asText());
         assertEquals("B", detail.get("latestWrongAttempt").get("selectedChoiceContentMarkdown").asText());
@@ -481,6 +490,17 @@ class QuizIntegrationTest {
         assertEquals("Correct because A is the invariant.",
                 detail.get("question").get("choices").get(0).get("rationaleMarkdown").asText());
         assertEquals(1, json(request("GET", "/api/wrong-notes/" + multipleChoiceId + "/attempts", null)).get("items").size());
+
+        JsonNode retryCreated = json(request(
+                "POST", "/api/quizzes/" + quizId + "/questions/" + multipleChoiceId + "/retry", null));
+        long wrongRetryQuizId = retryCreated.get("quizId").asLong();
+        request("PUT", "/api/quizzes/" + wrongRetryQuizId + "/questions/" + multipleChoiceId + "/answer",
+                "{\"selectedChoiceKey\":\"A\",\"answerText\":null,\"reviewNeeded\":false}");
+        request("POST", "/api/quizzes/" + wrongRetryQuizId + "/submit", null);
+        JsonNode retryResult = json(request("GET", "/api/quizzes/" + wrongRetryQuizId + "/result", null));
+        assertTrue(retryResult.get("questions").get(0).get("correct").asBoolean());
+        assertTrue(retryResult.get("questions").get(0).get("wrongNoteAvailable").asBoolean());
+        assertEquals("SCHEDULED", retryResult.get("questions").get(0).get("reviewScheduleStatus").asText());
 
         completeReviewCorrectly(1);
         assertEquals(2, reviewStage());
@@ -518,8 +538,15 @@ class QuizIntegrationTest {
         request("POST", "/api/quizzes/" + quizId + "/submit", null);
         assertEquals(0, json(request("GET", "/api/wrong-notes?size=20", null)).get("items").size());
 
+        JsonNode pendingResult = json(request("GET", "/api/quizzes/" + quizId + "/result", null));
+        assertFalse(pendingResult.get("questions").get(0).get("wrongNoteAvailable").asBoolean());
+        assertTrue(pendingResult.get("questions").get(0).get("reviewScheduleStatus").isNull());
+
         request("PATCH", "/api/quizzes/" + quizId + "/questions/" + descriptiveId + "/self-check", "{\"correct\":false}");
         request("PATCH", "/api/quizzes/" + quizId + "/questions/" + descriptiveId + "/self-check", "{\"correct\":false}");
+        JsonNode finalizedResult = json(request("GET", "/api/quizzes/" + quizId + "/result", null));
+        assertTrue(finalizedResult.get("questions").get(0).get("wrongNoteAvailable").asBoolean());
+        assertEquals("SCHEDULED", finalizedResult.get("questions").get(0).get("reviewScheduleStatus").asText());
         JsonNode wrong = json(request("GET", "/api/wrong-notes?size=20", null));
         assertEquals(1, wrong.get("items").size());
         assertEquals(1, wrong.get("items").get(0).get("wrongCount").asInt());
@@ -537,6 +564,9 @@ class QuizIntegrationTest {
         request("PUT", "/api/quizzes/" + secondQuiz + "/questions/" + multipleChoiceId + "/answer",
                 "{\"selectedChoiceKey\":\"A\",\"answerText\":null,\"reviewNeeded\":true}");
         request("POST", "/api/quizzes/" + secondQuiz + "/submit", null);
+        JsonNode result = json(request("GET", "/api/quizzes/" + secondQuiz + "/result", null));
+        assertFalse(result.get("questions").get(0).get("wrongNoteAvailable").asBoolean());
+        assertEquals("SCHEDULED", result.get("questions").get(0).get("reviewScheduleStatus").asText());
         JsonNode scheduled = json(request("GET", "/api/reviews?size=20", null));
         assertEquals(1, scheduled.get("items").size());
         assertEquals(1, scheduled.get("items").get(0).get("stage").asInt());
