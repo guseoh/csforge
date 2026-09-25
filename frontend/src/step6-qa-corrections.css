@@ -12,42 +12,42 @@
   }
 
   .main-content {
-    min-height: calc(100vh - 52px);
+    min-height: calc(100vh - 66px);
     padding: 30px 24px 88px;
   }
 
   .topbar {
-    height: 52px;
-    padding: 0 18px;
+    height: 66px;
+    padding: 0 24px;
   }
 
   .topbar-inner {
-    gap: 18px;
+    gap: 24px;
   }
 
   .brand {
-    gap: 6px;
-    font-size: 0.96rem;
+    gap: 8px;
+    font-size: 1rem;
   }
 
   .brand-mark {
-    width: 26px;
-    height: 26px;
-    border-radius: 6px;
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
   }
 
   .topbar-nav-link {
-    min-height: 34px;
-    padding: 7px 8px 6px;
+    min-height: 40px;
+    padding: 8px 10px 7px;
   }
 
   .search-palette-trigger {
-    min-height: 38px;
+    min-height: 42px;
   }
 
   .account-menu > summary {
-    width: 32px;
-    height: 32px;
+    width: 38px;
+    height: 38px;
   }
 
   .page-heading {

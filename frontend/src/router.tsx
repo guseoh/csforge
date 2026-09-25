@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { SearchPalette } from './components/SearchPalette'
 import { UtilityMenu } from './components/UtilityMenu'
+import { ThemeControl } from './components/ThemeControl'
 import { AuthGate } from './components/AuthGate'
 import { getAuthSession, logout } from './lib/auth-api'
 import { clearAuthReturnLocation } from './lib/auth-return'
@@ -36,6 +37,7 @@ const headerNavigation = [
 function AppLayout() {
   const [mobileNavOpen, setMobileNavOpen] = useState(false)
   const location = useLocation()
+
   if (location.pathname === '/login') {
     return <main className="main-content"><Outlet /></main>
   }
@@ -61,6 +63,7 @@ function AppLayout() {
           </nav>
           <div className="topbar-actions">
             <SearchPalette />
+            <ThemeControl />
             <UtilityMenu />
             <AuthActions />
             <button
