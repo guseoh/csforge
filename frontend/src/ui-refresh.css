@@ -1,26 +1,4 @@
 /* Shared visual layer for the reading-first workspace and responsive shell. */
-:root {
-  --color-page: #0a0f14;
-  --surface-page: #10171f;
-  --surface-elevated: #151f29;
-  --surface-interactive: #1b2a38;
-  --surface-selected: #173b5e;
-  --surface-accent: #112c46;
-  --border-subtle: #2b3b49;
-  --border-default: #456075;
-  --border-strong: #607b90;
-  --border-accent: #4ea1ff;
-  --text-strong: #f4f7fa;
-  --text-default: #d5e0e8;
-  --text-muted: #a8b8c5;
-  --text-faint: #8799a8;
-  --accent: #55a7ff;
-  --accent-strong: #98ceff;
-  --state-success: #7dcaff;
-  --state-warning: #f2c675;
-  --state-error: #ff9eae;
-}
-
 html {
   overflow-x: clip;
 }
@@ -221,7 +199,7 @@ h1 {
   height: 9px;
   border-radius: 50%;
   background: var(--accent);
-  box-shadow: 0 0 0 5px rgb(85 167 255 / 14%);
+  box-shadow: 0 0 0 5px var(--focus-glow);
 }
 
 .error-state {
@@ -458,7 +436,7 @@ textarea::placeholder {
   max-width: 100%;
   border-color: var(--border-subtle);
   background: #18212a;
-  box-shadow: 0 16px 36px rgb(0 0 0 / 18%);
+  box-shadow: 0 16px 36px rgb(var(--shadow-rgb) / 18%);
 }
 
 .concept-reading-content pre {
@@ -787,7 +765,7 @@ textarea::placeholder {
     border-top: 0;
     border-radius: 0 0 12px 12px;
     background: var(--surface-elevated);
-    box-shadow: 0 18px 40px rgb(0 0 0 / 25%);
+    box-shadow: 0 18px 40px rgb(var(--shadow-rgb) / 25%);
   }
 
   .topbar-nav.mobile-open {

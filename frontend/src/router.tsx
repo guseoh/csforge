@@ -2,6 +2,7 @@ import { Link, Outlet, createRootRoute, createRoute, createRouter, lazyRouteComp
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { SearchPalette } from './components/SearchPalette'
+import { UtilityMenu } from './components/UtilityMenu'
 import { AuthGate } from './components/AuthGate'
 import { getAuthSession, logout } from './lib/auth-api'
 import { defaultLearningSearch, parseLearningSearch } from './lib/learning-search'
@@ -59,6 +60,7 @@ function AppLayout() {
           </nav>
           <div className="topbar-actions">
             <SearchPalette />
+            <UtilityMenu />
             <AuthActions />
             <button
               className="mobile-menu-toggle"

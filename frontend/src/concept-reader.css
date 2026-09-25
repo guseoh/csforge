@@ -150,7 +150,7 @@
   border: 1px solid var(--border-subtle);
   border-radius: 9px;
   color: var(--text-default);
-  background: #f2f4f7;
+  background: var(--surface-code);
   font-size: 0.9rem;
   line-height: 1.68;
 }

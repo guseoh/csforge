@@ -13,7 +13,7 @@
   border: 1px solid var(--border-subtle);
   border-radius: 1rem;
   background: var(--surface-elevated);
-  box-shadow: 0 1rem 3rem rgb(16 19 26 / 10%);
+  box-shadow: 0 1rem 3rem rgb(var(--shadow-rgb) / 10%);
 }
 
 .auth-card h1,

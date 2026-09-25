@@ -366,19 +366,19 @@
 }
 
 .home-stats-content .heatmap-cell {
-  background: #e8edf2;
+  background: var(--heatmap-level-0);
 }
 
 .home-stats-content .heatmap-cell.level-1 {
-  background: #cbdcf7;
+  background: var(--heatmap-level-1);
 }
 
 .home-stats-content .heatmap-cell.level-2 {
-  background: #7aa7ef;
+  background: var(--heatmap-level-2);
 }
 
 .home-stats-content .heatmap-cell.level-3 {
-  background: var(--accent);
+  background: var(--heatmap-level-3);
 }
 
 .home-stats-content .heatmap-months,

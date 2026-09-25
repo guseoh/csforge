@@ -158,7 +158,7 @@
 }
 
 .review-list-item:hover {
-  background: #fafbfd;
+  background: var(--surface-interactive);
 }
 
 .review-list-copy {
@@ -209,7 +209,7 @@
 }
 
 .review-timing-next24 {
-  color: #8a6427;
+  color: var(--state-warning);
 }
 
 .review-timing-mastered {

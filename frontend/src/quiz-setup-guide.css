@@ -181,7 +181,7 @@
   border: 1px solid var(--border-default);
   border-radius: 10px;
   background: var(--surface-elevated);
-  box-shadow: 0 12px 32px rgb(0 0 0 / 24%);
+  box-shadow: 0 12px 32px rgb(var(--shadow-rgb) / 24%);
 }
 
 .quiz-unified-start > div:first-child {
