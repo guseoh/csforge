@@ -5,6 +5,7 @@ import { ErrorState, PageSkeleton } from '../components/AsyncStates'
 import { MarkdownContent } from '../components/MarkdownContent'
 import {
   getQuizSession,
+  getQuizResult,
   submitQuiz,
 } from '../lib/quiz-api'
 import { defaultQuizSearch, formatRemaining } from '../lib/quiz-search'
@@ -62,9 +63,14 @@ export function QuizSessionPage() {
     draft,
     question,
     saveStates,
+    failedQuestionIds,
+    savingCount,
+    localDraftUnavailable,
     positionSaveError,
     updateDraft,
     flushAllDirtyAnswers,
+    retryQuestionSave,
+    clearLocalDrafts,
     moveTo,
   } = useQuizSessionPersistence({ quizId, session, expired })
 
@@ -73,11 +79,24 @@ export function QuizSessionPage() {
       await flushAllDirtyAnswers()
       return submitQuiz(quizId)
     },
-    onSuccess: () => void navigate({ to: '/quiz/$quizId/result', params: { quizId: String(quizId) } }),
+    onSuccess: () => {
+      clearLocalDrafts()
+      void navigate({ to: '/quiz/$quizId/result', params: { quizId: String(quizId) } })
+    },
+    onError: async () => {
+      try {
+        await getQuizResult(quizId)
+        clearLocalDrafts()
+        void navigate({ to: '/quiz/$quizId/result', params: { quizId: String(quizId) } })
+      } catch {
+        // The quiz is still in progress, or its result could not be confirmed.
+      }
+    },
   })
 
   useEffect(() => {
     const handleShortcut = (event: KeyboardEvent) => {
+      if (submitMutation.isPending) return
       const target = event.target as HTMLElement | null
       if (target?.closest('input, textarea, select, button, a, summary, [contenteditable="true"]')) return
       if (event.key === 'ArrowRight' || event.key === 'Enter') {
@@ -102,7 +121,7 @@ export function QuizSessionPage() {
     }
     window.addEventListener('keydown', handleShortcut)
     return () => window.removeEventListener('keydown', handleShortcut)
-  }, [draft.reviewNeeded, moveTo, position, question, updateDraft])
+  }, [draft.reviewNeeded, moveTo, position, question, submitMutation.isPending, updateDraft])
 
   const timerLabel = useMemo(() => formatRemaining(session?.expiresAt ?? null, now), [now, session?.expiresAt])
   if (!Number.isSafeInteger(quizId) || quizId <= 0) {
@@ -120,6 +139,7 @@ export function QuizSessionPage() {
     .filter((answer) => answer.selectedChoiceKey || answer.answerText?.trim())
     .length
   const saveState = saveStates[question.questionId] ?? 'saved'
+  const failedQuestionIndex = session.questions.findIndex((item) => failedQuestionIds.includes(item.questionId))
 
   return (
     <section className="quiz-focus-page">
@@ -153,6 +173,24 @@ export function QuizSessionPage() {
         <span style={{ width: `${(answeredCount / session.questions.length) * 100}%` }} />
       </div>
 
+      <div className={`quiz-session-save-summary${failedQuestionIds.length > 0 ? ' error-text' : ''}`} role="status" aria-live="polite">
+        {failedQuestionIds.length > 0
+          ? `저장 실패 ${failedQuestionIds.length}개 문항`
+          : savingCount > 0
+            ? `${savingCount}개 문항 저장 중`
+            : '모두 저장됨'}
+        {failedQuestionIndex >= 0 && (
+          <button className="text-button" type="button" onClick={() => moveTo(failedQuestionIndex)}>
+            실패 문항으로 이동
+          </button>
+        )}
+      </div>
+      {localDraftUnavailable && (
+        <p className="helper-text error-text" role="alert">
+          브라우저 임시 저장을 사용할 수 없습니다. 서버 저장 상태를 확인한 뒤 이동하세요.
+        </p>
+      )}
+
       <article className="quiz-question-card quiz-focus-card">
         <div className="quiz-focus-question-heading">
           <strong>Q{position + 1}</strong>
@@ -172,7 +210,7 @@ export function QuizSessionPage() {
                 key={choice.choiceKey}
                 type="button"
                 className={draft.selectedChoiceKey === choice.choiceKey ? 'choice-button selected' : 'choice-button'}
-                disabled={expired || session.status !== 'IN_PROGRESS'}
+                disabled={expired || session.status !== 'IN_PROGRESS' || submitMutation.isPending}
                 onClick={() => updateDraft({ selectedChoiceKey: choice.choiceKey, answerText: null })}
               >
                 <span>{choiceLabel(index)}</span>
@@ -184,7 +222,7 @@ export function QuizSessionPage() {
           <textarea
             className="quiz-answer-editor"
             value={draft.answerText ?? ''}
-            disabled={expired || session.status !== 'IN_PROGRESS'}
+            disabled={expired || session.status !== 'IN_PROGRESS' || submitMutation.isPending}
             placeholder="답안을 입력하면 자동 저장됩니다."
             onChange={(event) => updateDraft({ answerText: event.target.value, selectedChoiceKey: null })}
           />
@@ -194,7 +232,7 @@ export function QuizSessionPage() {
           <input
             type="checkbox"
             checked={draft.reviewNeeded}
-            disabled={expired || session.status !== 'IN_PROGRESS'}
+            disabled={expired || session.status !== 'IN_PROGRESS' || submitMutation.isPending}
             onChange={(event) => updateDraft({ reviewNeeded: event.target.checked })}
           />
           복습 필요
@@ -202,14 +240,20 @@ export function QuizSessionPage() {
         </label>
 
         <div className="quiz-question-actions quiz-focus-actions">
-          <button className="secondary-button" type="button" disabled={position === 0} onClick={() => moveTo(position - 1)}>
+          <button className="secondary-button" type="button" disabled={position === 0 || submitMutation.isPending} onClick={() => moveTo(position - 1)}>
             ← 이전
           </button>
-          <span className={`save-state ${saveState}`} role="status">
-            {saveState === 'saving' ? '저장 중' : saveState === 'error' ? '저장 실패' : '저장됨'}
-          </span>
+          {saveState === 'error' ? (
+            <button className="text-button error-text" type="button" onClick={() => retryQuestionSave(question.questionId)}>
+              저장 실패 · 다시 저장
+            </button>
+          ) : (
+            <span className={`save-state ${saveState}`} role="status">
+              {saveState === 'saving' ? '저장 중' : '저장됨'}
+            </span>
+          )}
           {position < session.questions.length - 1 ? (
-            <button className="primary-button" type="button" onClick={() => moveTo(position + 1)}>다음 →</button>
+            <button className="primary-button" type="button" disabled={submitMutation.isPending} onClick={() => moveTo(position + 1)}>다음 →</button>
           ) : (
             <button
               className="primary-button"
@@ -229,7 +273,11 @@ export function QuizSessionPage() {
           <p className="helper-text error-text">시간이 종료되었습니다. 답안 변경은 막혔지만 제출은 할 수 있습니다.</p>
         )}
         {submitMutation.isError && (
-          <p className="helper-text error-text">답안 저장 또는 제출에 실패했습니다. 다시 시도하세요.</p>
+          <p className="helper-text error-text" role="alert">
+            {failedQuestionIds.length > 0
+              ? `저장하지 못한 답안이 ${failedQuestionIds.length}개 있습니다. 실패한 문항을 다시 저장한 뒤 제출하세요.`
+              : '제출 결과를 확인하지 못했습니다. 다시 시도하면 서버의 제출 상태를 먼저 확인합니다.'}
+          </p>
         )}
       </article>
 
@@ -251,14 +299,15 @@ export function QuizSessionPage() {
             return (
               <button
                 key={item.questionId}
-                className={`quiz-jump-button ${index === position ? 'current ' : ''}nav-${stateClass}`}
+                className={`quiz-jump-button ${index === position ? 'current ' : ''}nav-${saveStates[item.questionId] === 'error' ? 'save-error' : stateClass}`}
                 type="button"
-                aria-label={`문항 ${index + 1}, ${stateLabel}`}
+                disabled={submitMutation.isPending}
+                aria-label={`문항 ${index + 1}, ${saveStates[item.questionId] === 'error' ? '저장 실패' : stateLabel}`}
                 aria-current={index === position ? 'step' : undefined}
                 onClick={() => moveTo(index)}
               >
                 <strong>{index + 1}</strong>
-                <small>{itemDraft.reviewNeeded ? '복습' : stateLabel}</small>
+                <small>{saveStates[item.questionId] === 'error' ? '저장 실패' : itemDraft.reviewNeeded ? '복습' : stateLabel}</small>
               </button>
             )
           })}

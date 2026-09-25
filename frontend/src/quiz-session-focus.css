@@ -422,6 +422,21 @@ body.quiz-focus-mode .main-content {
   border-color: var(--state-warning);
 }
 
+.quiz-jump-button.nav-save-error {
+  border-color: var(--state-error);
+  color: var(--state-error);
+}
+
+.quiz-session-save-summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  margin: 0 0 12px;
+  color: var(--text-muted);
+  font-size: 0.84rem;
+}
+
 .quiz-question-jump .quiz-question-nav-legend {
   display: flex;
   flex-wrap: wrap;
