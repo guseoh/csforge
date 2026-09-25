@@ -21,6 +21,29 @@
   margin: 0;
 }
 
+.auth-learning-flow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0;
+  padding: 0;
+  color: var(--text-muted);
+  font-size: 0.84rem;
+  list-style: none;
+}
+
+.auth-learning-flow li + li::before {
+  content: '→';
+  margin-right: 0.4rem;
+  color: var(--text-faint);
+}
+
+.auth-helper {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  line-height: 1.55;
+}
+
 .auth-actions {
   display: grid;
   justify-items: start;
