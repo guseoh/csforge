@@ -15,8 +15,11 @@ export function AuthRecoveryActions() {
       if (location.pathname !== '/login') {
         clearAuthReturnLocation()
         storeAuthReturnLocation({ path: location.pathname, search: location.searchStr, hash: location.hash })
+        void navigate({ to: '/login', replace: true })
+        return
       }
-      void navigate({ to: '/login', replace: true })
+
+      window.location.reload()
     },
   })
 
