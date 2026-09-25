@@ -5,7 +5,7 @@ import { AreaLearningRail } from '../components/AreaLearningRail'
 import { EmptyState, ErrorState, PageSkeleton } from '../components/AsyncStates'
 import { getConcepts, getLearningArea, getLearningAreaOutline, type LearningStatus } from '../lib/learning-api'
 import { defaultLearningSearch, type LearningSearch } from '../lib/learning-search'
-import { defaultQuizSearch } from '../lib/quiz-search'
+import { csvParam, defaultQuizSearch } from '../lib/quiz-search'
 
 const PAGE_SIZE = 12
 
@@ -150,6 +150,15 @@ export function AreaPage() {
                     <p className="eyebrow">현재 주제</p>
                     <h2 id="topic-index-heading">{selectedTopic.title}</h2>
                     <p>{selectedTopic.description ?? '이 주제의 개념을 커리큘럼 순서대로 학습하세요.'}</p>
+                    {selectedTopicConcepts.length > 0 ? (
+                      <Link
+                        className="secondary-button topic-quiz-link"
+                        to="/quiz"
+                        search={{ ...defaultQuizSearch, concepts: csvParam(selectedTopicConcepts.map((concept) => concept.id)) }}
+                      >
+                        이 주제 문제 풀기
+                      </Link>
+                    ) : <span className="helper-text">이 주제에는 공개된 개념이 아직 없습니다.</span>}
                   </div>
                   <div className="selected-topic-progress" aria-label={`${selectedTopic.completedConceptCount}/${selectedTopic.publishedConceptCount}개 완료`}>
                     <strong>{selectedTopic.completedConceptCount}/{selectedTopic.publishedConceptCount}</strong>

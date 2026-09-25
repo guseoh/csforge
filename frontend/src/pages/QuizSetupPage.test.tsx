@@ -19,7 +19,9 @@ const mocks = vi.hoisted(() => ({
   availability: { data: { availableCount: 3 }, isPending: false, isError: false, refetch: vi.fn() },
   navigate: vi.fn(),
   createQuiz: vi.fn(async () => ({ quizId: 95 })),
+  getQuizAvailability: vi.fn(async () => ({ availableCount: 5 })),
   createMutationFn: null as (() => unknown) | null,
+  availabilityQueryFn: null as (() => unknown) | null,
 }))
 
 vi.mock('@tanstack/react-router', () => ({
@@ -30,9 +32,10 @@ vi.mock('@tanstack/react-router', () => ({
 }))
 
 vi.mock('@tanstack/react-query', () => ({
-  useQuery: ({ queryKey }: { queryKey: readonly unknown[] }) => {
+  useQuery: ({ queryKey, queryFn }: { queryKey: readonly unknown[]; queryFn?: () => unknown }) => {
     if (queryKey[0] === 'learning-areas') return mocks.areas
     if (queryKey[0] === 'quiz-active') return mocks.active
+    mocks.availabilityQueryFn = queryFn ?? null
     return mocks.availability
   },
   useMutation: (options: { mutationFn: () => unknown }) => {
@@ -44,7 +47,7 @@ vi.mock('@tanstack/react-query', () => ({
 vi.mock('../lib/quiz-api', () => ({
   createQuiz: mocks.createQuiz,
   getActiveQuiz: vi.fn(),
-  getQuizAvailability: vi.fn(),
+  getQuizAvailability: mocks.getQuizAvailability,
 }))
 
 vi.mock('../lib/learning-api', () => ({ getLearningAreas: vi.fn() }))
@@ -97,7 +100,9 @@ describe('QuizSetupPage concept practice count', () => {
       refetch: vi.fn(),
     }
     mocks.createMutationFn = null
+    mocks.availabilityQueryFn = null
     mocks.createQuiz.mockClear()
+    mocks.getQuizAvailability.mockClear()
     mocks.navigate.mockReset()
   })
 
@@ -121,10 +126,24 @@ describe('QuizSetupPage concept practice count', () => {
   it('keeps a zero-availability concept quiz disabled', () => {
     const markup = renderSetup({ concepts: '506', count: 10, availableCount: 0 })
 
-    expect(markup).toContain('<strong>10문제</strong>')
-    expect(markup).toContain('요청한 10문항보다 가능한 문항이 적습니다.')
-    expect(markup).toContain('<button class="primary-button" type="button" disabled="">선택 조건으로 시작</button>')
+    expect(markup).toContain('<strong>0문제</strong>')
+    expect(markup).toContain('이 선택 범위에 등록된 문제가 아직 없습니다.')
+    expect(markup).toContain('<button class="primary-button" type="button" disabled="">등록된 문제 없음</button>')
+    expect(markup).not.toContain('요청한 10문항보다 가능한 문항이 적습니다.')
     expect(mocks.createQuiz).not.toHaveBeenCalled()
+  })
+
+  it('uses all topic concept IDs from the URL and preserves the requested count', async () => {
+    renderSetup({ concepts: '506,507', count: 10, availableCount: 5 })
+
+    await mocks.availabilityQueryFn?.()
+    await mocks.createMutationFn?.()
+
+    expect(mocks.getQuizAvailability).toHaveBeenCalledWith({
+      areas: [], concepts: [506, 507], levels: [], difficulties: [], questionTypes: [], state: 'ALL',
+    })
+    expect(mocks.createQuiz).toHaveBeenCalledWith(expect.objectContaining({ concepts: [506, 507], count: 5 }))
+    expect(mocks.location.searchStr).toBe('?concepts=506,507&count=10')
   })
 
   it('keeps the general quiz shortage policy unchanged', () => {

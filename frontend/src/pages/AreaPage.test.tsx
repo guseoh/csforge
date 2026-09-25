@@ -9,10 +9,14 @@ const mocks = vi.hoisted(() => ({
   conceptQuery: { data: undefined as unknown, isPending: false, isError: false },
   remainingOutlinePages: [] as unknown[],
   remainingOutlineQueries: [] as Array<{ queryKey: readonly unknown[]; queryFn: () => unknown }>,
+  links: [] as Array<{ to?: string; className?: string; search?: unknown }>,
 }))
 
 vi.mock('@tanstack/react-router', () => ({
-  Link: ({ children, className }: { children: ReactNode; className?: string }) => <a className={className} href="#">{children}</a>,
+  Link: ({ children, className, to, search }: { children: ReactNode; className?: string; to?: string; search?: unknown }) => {
+    mocks.links.push({ to, className, search })
+    return <a className={className} href="#">{children}</a>
+  },
   useParams: () => ({ areaSlug: 'java' }),
   useSearch: () => mocks.search,
   useNavigate: () => vi.fn(),
@@ -34,10 +38,10 @@ vi.mock('../components/AreaLearningRail', () => ({ AreaLearningRail: () => null 
 
 import { AreaPage } from './AreaPage'
 
-function concept(id: number) {
+function concept(id: number, topicId = 57) {
   return {
     id,
-    topicId: 57,
+    topicId,
     title: `Outline ${id}`,
     summary: null,
     level: 1,
@@ -81,6 +85,7 @@ describe('AreaPage outline loading', () => {
       refetch: vi.fn(),
     }]
     mocks.remainingOutlineQueries = []
+    mocks.links = []
   })
 
   it('loads later outline pages and renders all concepts beyond the old 200-item cap', () => {
@@ -90,5 +95,44 @@ describe('AreaPage outline loading', () => {
     expect(mocks.remainingOutlineQueries[0].queryKey).toEqual(['learning-outline', 'java', 1])
     expect(markup.match(/curriculum-concept-row/g)).toHaveLength(205)
     expect(markup).toContain('Outline 204')
+    expect(markup).toContain('이 영역 문제 풀기')
+    expect(mocks.links.find((link) => link.className === 'guide-quiz-link')).toMatchObject({
+      to: '/quiz',
+      search: { areas: 'java', concepts: '' },
+    })
+  })
+
+  it('starts a quiz with every concept in the currently selected topic', () => {
+    vi.stubGlobal('window', {
+      location: { hash: '#topic-58' },
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+    })
+    const area = mocks.areaQuery.data as { topics: Array<Record<string, unknown>> }
+    area.topics.push({
+      id: 58, slug: 'jvm', title: 'JVM', description: null,
+      publishedConceptCount: 2, completedConceptCount: 0, bookmarkedConceptCount: 0,
+      level1Count: 2, level2Count: 0, level3Count: 0, unseenCount: 2,
+      learningCount: 0, reviewNeededCount: 0,
+    })
+    mocks.firstOutlineQuery = {
+      data: {
+        items: [concept(501, 57), concept(601, 58), concept(602, 58)],
+        page: { page: 0, size: 200, totalElements: 3, totalPages: 1, hasNext: false, hasPrevious: false },
+      },
+      isPending: false,
+      isError: false,
+      refetch: vi.fn(),
+    }
+    mocks.remainingOutlinePages = []
+
+    const markup = renderToStaticMarkup(<AreaPage />)
+    const topicQuizLink = mocks.links.find((link) => link.className?.includes('topic-quiz-link'))
+
+    expect(markup).toContain('JVM')
+    expect(topicQuizLink).toMatchObject({
+      to: '/quiz',
+      search: { concepts: '601,602', areas: '', count: 10, state: 'ALL' },
+    })
   })
 })
