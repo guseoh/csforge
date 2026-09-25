@@ -2,6 +2,7 @@ import { Link, useNavigate } from '@tanstack/react-router'
 import { useMutation } from '@tanstack/react-query'
 import { ApiRequestError } from '../lib/http'
 import { practiceRelatedConceptQuiz, type QuizConcept } from '../lib/quiz-api'
+import { useIdempotencyKey } from '../lib/use-idempotency-key'
 
 /** 관련 Concept을 다시 열거나 다른 문제를 시작할 수 있는 액션을 제공한다. */
 export function RelatedConceptPracticeActions({
@@ -16,9 +17,17 @@ export function RelatedConceptPracticeActions({
   linkLabel?: (concept: QuizConcept) => string
 }) {
   const navigate = useNavigate()
+  const creationRequest = useIdempotencyKey()
   const practiceMutation = useMutation({
-    mutationFn: (concept: QuizConcept) => practiceRelatedConceptQuiz(questionId, concept.id),
-    onSuccess: (quiz) => void navigate({ to: '/quiz/$quizId', params: { quizId: String(quiz.quizId) } }),
+    mutationFn: (concept: QuizConcept) => practiceRelatedConceptQuiz(
+      questionId,
+      concept.id,
+      creationRequest.requestIdFor({ operation: 'related-concept-practice', questionId, conceptId: concept.id }),
+    ),
+    onSuccess: (quiz) => {
+      creationRequest.clear()
+      void navigate({ to: '/quiz/$quizId', params: { quizId: String(quiz.quizId) } })
+    },
   })
   const noRelatedQuestions = practiceMutation.error instanceof ApiRequestError
     && practiceMutation.error.code === 'QUIZ_NO_RELATED_QUESTIONS'

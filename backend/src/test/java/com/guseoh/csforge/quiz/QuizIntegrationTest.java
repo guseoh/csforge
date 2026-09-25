@@ -15,6 +15,7 @@ import java.time.Instant;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import com.guseoh.csforge.learning.domain.Concept;
 import com.guseoh.csforge.learning.domain.ConceptRepository;
@@ -171,6 +172,55 @@ class QuizIntegrationTest {
     }
 
     @Test
+    void repeatedQuizCreateWithOneKeyReturnsTheOriginalSessionDespiteAnotherActiveQuiz() throws Exception {
+        long alreadyActiveQuizId = createQuiz(1, null);
+        int sessionsBefore = jdbc.queryForObject("SELECT COUNT(*) FROM quiz_session", Integer.class);
+        String requestId = UUID.randomUUID().toString();
+        String body = """
+                {"areas":["java"],"concepts":[%d],"levels":[],"difficulties":[],"questionTypes":[],"state":"ALL","count":1,"timeLimitSeconds":null}
+                """.formatted(conceptId);
+
+        HttpResponse<String> firstResponse = request("POST", "/api/quizzes", body, requestId);
+        assertEquals(201, firstResponse.statusCode(), firstResponse.body());
+        JsonNode first = json(firstResponse);
+        long createdQuizId = first.get("quizId").asLong();
+        assertTrue(createdQuizId != alreadyActiveQuizId);
+        assertEquals(sessionsBefore + 1, jdbc.queryForObject("SELECT COUNT(*) FROM quiz_session", Integer.class));
+
+        HttpResponse<String> retryResponse = request("POST", "/api/quizzes", body, requestId);
+        assertEquals(201, retryResponse.statusCode(), retryResponse.body());
+        JsonNode retry = json(retryResponse);
+        assertEquals(createdQuizId, retry.get("quizId").asLong());
+        assertEquals(first.get("startedAt").asText(), retry.get("startedAt").asText());
+        assertEquals(sessionsBefore + 1, jdbc.queryForObject("SELECT COUNT(*) FROM quiz_session", Integer.class));
+
+        String changedBody = body.replace("\"count\":1", "\"count\":2");
+        HttpResponse<String> keyConflict = request("POST", "/api/quizzes", changedBody, requestId);
+        assertEquals(409, keyConflict.statusCode());
+        assertEquals("QUIZ_CREATION_KEY_CONFLICT", json(keyConflict).get("code").asText());
+        assertEquals(sessionsBefore + 1, jdbc.queryForObject("SELECT COUNT(*) FROM quiz_session", Integer.class));
+    }
+
+    @Test
+    void repeatedReviewQuizCreateWithOneKeyReturnsTheSameReviewSession() throws Exception {
+        jdbc.update(
+                "INSERT INTO review_schedule (question_id, status, stage, due_at) VALUES (?, 'SCHEDULED', 1, ?)",
+                multipleChoiceId,
+                BASE_TIME.minusSeconds(1));
+        int sessionsBefore = jdbc.queryForObject("SELECT COUNT(*) FROM quiz_session", Integer.class);
+        String requestId = UUID.randomUUID().toString();
+
+        HttpResponse<String> firstResponse = request("POST", "/api/reviews/quizzes", "{\"count\":1}", requestId);
+        assertEquals(201, firstResponse.statusCode(), firstResponse.body());
+        long createdQuizId = json(firstResponse).get("quizId").asLong();
+        HttpResponse<String> retryResponse = request("POST", "/api/reviews/quizzes", "{\"count\":1}", requestId);
+        assertEquals(201, retryResponse.statusCode(), retryResponse.body());
+        assertEquals(createdQuizId, json(retryResponse).get("quizId").asLong());
+        assertEquals(sessionsBefore + 1, jdbc.queryForObject("SELECT COUNT(*) FROM quiz_session", Integer.class));
+        assertEquals("REVIEW", json(request("GET", "/api/quizzes/" + createdQuizId, null)).get("source").asText());
+    }
+
+    @Test
     void directQuestionPracticeCreatesOneQuestionQuizOnlyForPublishedQuestions() throws Exception {
         int sessionsBefore = jdbc.queryForObject("SELECT COUNT(*) FROM quiz_session", Integer.class);
 
@@ -316,14 +366,24 @@ class QuizIntegrationTest {
                 "{\"selectedChoiceKey\":\"B\",\"answerText\":null,\"reviewNeeded\":false}");
         request("POST", "/api/quizzes/" + quizId + "/submit", null);
 
+        String requestId = UUID.randomUUID().toString();
+        int sessionsBeforeRetry = jdbc.queryForObject("SELECT COUNT(*) FROM quiz_session", Integer.class);
         HttpResponse<String> retryResponse = request(
                 "POST",
                 "/api/quizzes/" + quizId + "/questions/" + multipleChoiceId + "/retry",
-                null);
+                null,
+                requestId);
         assertEquals(201, retryResponse.statusCode(), retryResponse.body());
         JsonNode retry = json(retryResponse);
         assertEquals(1, retry.get("questionCount").asInt());
         assertEquals("WRONG_RETRY", retry.get("source").asText());
+        HttpResponse<String> repeatedRetry = request(
+                "POST",
+                "/api/quizzes/" + quizId + "/questions/" + multipleChoiceId + "/retry",
+                null,
+                requestId);
+        assertEquals(retry.get("quizId").asLong(), json(repeatedRetry).get("quizId").asLong());
+        assertEquals(sessionsBeforeRetry + 1, jdbc.queryForObject("SELECT COUNT(*) FROM quiz_session", Integer.class));
         JsonNode retrySession = json(request("GET", "/api/quizzes/" + retry.get("quizId").asLong(), null));
         assertEquals(1, retrySession.get("questions").size());
         assertEquals(multipleChoiceId, retrySession.get("questions").get(0).get("questionId").asLong());
@@ -341,6 +401,27 @@ class QuizIntegrationTest {
                 "POST",
                 "/api/quizzes/" + correctQuizId + "/questions/" + multipleChoiceId + "/retry",
                 null).statusCode());
+    }
+
+    @Test
+    void repeatedWrongNoteRetryReturnsOneWrongRetrySession() throws Exception {
+        long quizId = createQuizForQuestion(multipleChoiceId, "MULTIPLE_CHOICE");
+        request("PUT", "/api/quizzes/" + quizId + "/questions/" + multipleChoiceId + "/answer",
+                "{\"selectedChoiceKey\":\"B\",\"answerText\":null,\"reviewNeeded\":false}");
+        request("POST", "/api/quizzes/" + quizId + "/submit", null);
+        String path = "/api/wrong-notes/" + multipleChoiceId + "/retry";
+        String requestId = UUID.randomUUID().toString();
+        int sessionsBeforeRetry = jdbc.queryForObject("SELECT COUNT(*) FROM quiz_session", Integer.class);
+
+        HttpResponse<String> firstResponse = request("POST", path, null, requestId);
+        assertEquals(201, firstResponse.statusCode(), firstResponse.body());
+        long createdQuizId = json(firstResponse).get("quizId").asLong();
+        HttpResponse<String> retryResponse = request("POST", path, null, requestId);
+
+        assertEquals(201, retryResponse.statusCode(), retryResponse.body());
+        assertEquals(createdQuizId, json(retryResponse).get("quizId").asLong());
+        assertEquals(sessionsBeforeRetry + 1, jdbc.queryForObject("SELECT COUNT(*) FROM quiz_session", Integer.class));
+        assertEquals("WRONG_RETRY", json(request("GET", "/api/quizzes/" + createdQuizId, null)).get("source").asText());
     }
 
     @Test
@@ -365,7 +446,8 @@ class QuizIntegrationTest {
         request("POST", "/api/quizzes/" + sourceQuizId + "/submit", null);
 
         String path = "/api/quizzes/questions/" + multipleChoiceId + "/concepts/" + conceptId + "/practice";
-        HttpResponse<String> firstResponse = request("POST", path, null);
+        String requestId = UUID.randomUUID().toString();
+        HttpResponse<String> firstResponse = request("POST", path, null, requestId);
         assertEquals(201, firstResponse.statusCode(), firstResponse.body());
         JsonNode firstCreated = json(firstResponse);
         assertEquals(5, firstCreated.get("questionCount").asInt());
@@ -383,7 +465,8 @@ class QuizIntegrationTest {
         assertFalse(firstIds.contains(multipleChoiceId));
         assertEquals(expectedIds, firstIds);
 
-        JsonNode secondCreated = json(request("POST", path, null));
+        JsonNode secondCreated = json(request("POST", path, null, requestId));
+        assertEquals(firstCreated.get("quizId").asLong(), secondCreated.get("quizId").asLong());
         JsonNode secondSession = json(request("GET", "/api/quizzes/" + secondCreated.get("quizId").asLong(), null));
         assertEquals(firstIds, questionIds(secondSession));
     }
@@ -714,8 +797,16 @@ class QuizIntegrationTest {
 
     private HttpResponse<String> request(String method, String path, String body)
             throws IOException, InterruptedException {
+        return request(method, path, body, null);
+    }
+
+    private HttpResponse<String> request(String method, String path, String body, String requestId)
+            throws IOException, InterruptedException {
         HttpRequest.Builder builder = HttpRequest.newBuilder(URI.create("http://localhost:" + port + path))
                 .header("Accept", "application/json");
+        if (requestId != null) {
+            builder.header("Idempotency-Key", requestId);
+        }
         if (body == null) {
             builder.method(method, HttpRequest.BodyPublishers.noBody());
         } else {

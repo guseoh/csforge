@@ -1,6 +1,7 @@
 package com.guseoh.csforge.quiz.domain;
 
 import java.time.Instant;
+import java.util.UUID;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -52,15 +53,37 @@ public class QuizSession extends AuditedEntity {
     @Column(name = "last_position", nullable = false)
     private int lastPosition;
 
-    private QuizSession(Instant startedAt, Instant expiresAt, QuizSessionSource source) {
+    @Column(name = "creation_request_id")
+    private UUID creationRequestId;
+
+    @Column(name = "creation_fingerprint", length = 64)
+    private String creationFingerprint;
+
+    private QuizSession(
+            Instant startedAt,
+            Instant expiresAt,
+            QuizSessionSource source,
+            UUID creationRequestId,
+            String creationFingerprint) {
         this.status = QuizSessionStatus.IN_PROGRESS;
         this.source = source;
         this.startedAt = startedAt;
         this.expiresAt = expiresAt;
         this.lastPosition = 0;
+        this.creationRequestId = creationRequestId;
+        this.creationFingerprint = creationFingerprint;
     }
 
     public static QuizSession start(Instant startedAt, Instant expiresAt, QuizSessionSource source) {
+        return start(startedAt, expiresAt, source, null, null);
+    }
+
+    public static QuizSession start(
+            Instant startedAt,
+            Instant expiresAt,
+            QuizSessionSource source,
+            UUID creationRequestId,
+            String creationFingerprint) {
         if (startedAt == null) {
             throw new IllegalArgumentException("startedAt is required");
         }
@@ -70,7 +93,13 @@ public class QuizSession extends AuditedEntity {
         if (source == null) {
             throw new IllegalArgumentException("source is required");
         }
-        return new QuizSession(startedAt, expiresAt, source);
+        if ((creationRequestId == null) != (creationFingerprint == null)) {
+            throw new IllegalArgumentException("creation request id and fingerprint must be provided together");
+        }
+        if (creationFingerprint != null && creationFingerprint.length() != 64) {
+            throw new IllegalArgumentException("creation fingerprint must be a SHA-256 hex digest");
+        }
+        return new QuizSession(startedAt, expiresAt, source, creationRequestId, creationFingerprint);
     }
 
     public static QuizSession start(Instant startedAt, Instant expiresAt) {

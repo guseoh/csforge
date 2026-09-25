@@ -18,6 +18,7 @@ import {
 import { wrongAnswerAnalysisPollingInterval } from '../lib/wrong-answer-analysis'
 import { defaultWrongNoteSearch } from '../lib/wrong-note-search'
 import { useWrongNotePersistence } from '../lib/use-wrong-note-persistence'
+import { useIdempotencyKey } from '../lib/use-idempotency-key'
 
 const questionTypeLabels = { MULTIPLE_CHOICE: '객관식', SHORT_ANSWER: '단답형', DESCRIPTIVE: '서술형', SCENARIO: '시나리오' }
 const difficultyLabels = { EASY: '쉬움', MEDIUM: '보통', HARD: '어려움' }
@@ -69,9 +70,16 @@ export function WrongNoteDetailPage() {
     enabled: Number.isSafeInteger(id) && id > 0,
   })
   const { note, dirty, updateNote, noteMutation } = useWrongNotePersistence({ id, detail: detail.data })
+  const retryRequest = useIdempotencyKey()
   const retryMutation = useMutation({
-    mutationFn: () => retryWrongNote(id),
-    onSuccess: (quiz) => void navigate({ to: '/quiz/$quizId', params: { quizId: String(quiz.quizId) } }),
+    mutationFn: () => retryWrongNote(
+      id,
+      retryRequest.requestIdFor({ operation: 'wrong-note-retry', questionId: id }),
+    ),
+    onSuccess: (quiz) => {
+      retryRequest.clear()
+      void navigate({ to: '/quiz/$quizId', params: { quizId: String(quiz.quizId) } })
+    },
     onError: () => showToast('error', '이 문제를 다시 시작하지 못했습니다.'),
   })
   const aiRequestMutation = useMutation({

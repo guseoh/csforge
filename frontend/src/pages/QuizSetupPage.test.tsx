@@ -18,7 +18,7 @@ const mocks = vi.hoisted(() => ({
   active: { data: null, isPending: false, isError: false },
   availability: { data: { availableCount: 3 }, isPending: false, isError: false, refetch: vi.fn() },
   navigate: vi.fn(),
-  createQuiz: vi.fn(async () => ({ quizId: 95 })),
+  createQuiz: vi.fn(async (_payload: unknown, _requestId: string) => ({ quizId: 95 })),
   getQuizAvailability: vi.fn(async () => ({ availableCount: 5 })),
   createMutationFn: null as (() => unknown) | null,
   availabilityQueryFn: null as (() => unknown) | null,
@@ -118,7 +118,7 @@ describe('QuizSetupPage concept practice count', () => {
 
     await mocks.createMutationFn?.()
 
-    expect(mocks.createQuiz).toHaveBeenCalledWith(expect.objectContaining({ concepts: [506], count: 3 }))
+    expect(mocks.createQuiz).toHaveBeenCalledWith(expect.objectContaining({ concepts: [506], count: 3 }), expect.any(String))
     expect(mocks.search.count).toBe(10)
     expect(mocks.location.searchStr).toBe('?concepts=506&count=10')
   })
@@ -142,8 +142,33 @@ describe('QuizSetupPage concept practice count', () => {
     expect(mocks.getQuizAvailability).toHaveBeenCalledWith({
       areas: [], concepts: [506, 507], levels: [], difficulties: [], questionTypes: [], state: 'ALL',
     })
-    expect(mocks.createQuiz).toHaveBeenCalledWith(expect.objectContaining({ concepts: [506, 507], count: 5 }))
+    expect(mocks.createQuiz).toHaveBeenCalledWith(
+      expect.objectContaining({ concepts: [506, 507], count: 5 }),
+      expect.any(String),
+    )
     expect(mocks.location.searchStr).toBe('?concepts=506,507&count=10')
+  })
+
+  it('reuses the creation key when a successful server create loses its response', async () => {
+    let persistedQuizId: number | null = null
+    mocks.createQuiz
+      .mockImplementationOnce(async (_payload, _requestId) => {
+        persistedQuizId = 96
+        throw new Error('response lost')
+      })
+      .mockImplementationOnce(async () => ({ quizId: persistedQuizId ?? 95 }))
+
+    renderSetup({ concepts: '506', count: 1, availableCount: 3 })
+    const create = mocks.createMutationFn
+    if (!create) throw new Error('Quiz create mutation was not registered')
+
+    await expect(create()).rejects.toThrow('response lost')
+    await create()
+
+    const requestIds = mocks.createQuiz.mock.calls.map(([, requestId]) => requestId)
+    expect(requestIds[0]).toMatch(/^[0-9a-f-]{36}$/i)
+    expect(requestIds[1]).toBe(requestIds[0])
+    expect(mocks.createQuiz.mock.calls[1][0]).toEqual(mocks.createQuiz.mock.calls[0][0])
   })
 
   it('keeps the general quiz shortage policy unchanged', () => {

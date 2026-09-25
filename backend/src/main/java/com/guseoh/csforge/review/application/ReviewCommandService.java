@@ -3,6 +3,7 @@ package com.guseoh.csforge.review.application;
 import java.time.Clock;
 import java.time.Instant;
 import java.util.List;
+import java.util.UUID;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -12,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.guseoh.csforge.question.domain.Question;
 import com.guseoh.csforge.question.domain.QuestionRepository;
 import com.guseoh.csforge.quiz.application.QuizCreatedResult;
+import com.guseoh.csforge.quiz.application.QuizCreationIdentity;
 import com.guseoh.csforge.quiz.application.QuizSessionCreator;
 import com.guseoh.csforge.quiz.domain.QuizSessionSource;
 import com.guseoh.csforge.review.domain.ReviewSchedule;
@@ -44,12 +46,21 @@ public class ReviewCommandService {
 
     @Transactional
     public QuizCreatedResult createQuiz(ReviewQuizSetupCommand command) {
+        return createQuiz(command, null);
+    }
+
+    @Transactional
+    public QuizCreatedResult createQuiz(ReviewQuizSetupCommand command, UUID requestId) {
+        QuizCreationIdentity creationIdentity = QuizCreationIdentity.forRequest(requestId, "review", command.toString());
+        var existing = sessionCreator.findExisting(creationIdentity);
+        if (existing.isPresent()) return existing.orElseThrow();
+
         Instant now = Instant.now(clock);
         List<Long> questionIds = scheduleRepository.findEligibleQuestionIds(
                 com.guseoh.csforge.review.domain.ReviewScheduleStatus.SCHEDULED,
                 now,
                 PageRequest.of(0, command.count()));
         if (questionIds.isEmpty()) throw new NoDueReviewsException();
-        return sessionCreator.create(questionIds, now, null, QuizSessionSource.REVIEW);
+        return sessionCreator.create(questionIds, now, null, QuizSessionSource.REVIEW, creationIdentity);
     }
 }

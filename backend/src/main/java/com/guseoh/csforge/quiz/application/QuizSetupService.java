@@ -3,6 +3,7 @@ package com.guseoh.csforge.quiz.application;
 import java.time.Clock;
 import java.time.Instant;
 import java.util.List;
+import java.util.UUID;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -39,6 +40,15 @@ public class QuizSetupService {
 
     @Transactional
     public QuizCreatedResult create(QuizSetupRequest request) {
+        return create(request, null);
+    }
+
+    @Transactional
+    public QuizCreatedResult create(QuizSetupRequest request, UUID requestId) {
+        QuizCreationIdentity creationIdentity = QuizCreationIdentity.forRequest(requestId, "standard", request.toString());
+        var existing = sessionCreator.findExisting(creationIdentity);
+        if (existing.isPresent()) return existing.orElseThrow();
+
         QuestionSelectionResult selection = selectionRepository.select(request.criteria(), request.count());
         if (selection.availableCount() < request.count()) {
             throw new InsufficientQuestionsException(selection.availableCount(), request.count());
@@ -47,11 +57,20 @@ public class QuizSetupService {
         Instant expiresAt = request.timeLimitSeconds() == null
                 ? null
                 : startedAt.plusSeconds(request.timeLimitSeconds());
-        return sessionCreator.create(selection.questionIds(), startedAt, expiresAt, QuizSessionSource.STANDARD);
+        return sessionCreator.create(selection.questionIds(), startedAt, expiresAt, QuizSessionSource.STANDARD, creationIdentity);
     }
 
     @Transactional
     public QuizCreatedResult retryWrong(long quizId) {
+        return retryWrong(quizId, null);
+    }
+
+    @Transactional
+    public QuizCreatedResult retryWrong(long quizId, UUID requestId) {
+        QuizCreationIdentity creationIdentity = QuizCreationIdentity.forRequest(requestId, "retry-wrong", Long.toString(quizId));
+        var existing = sessionCreator.findExisting(creationIdentity);
+        if (existing.isPresent()) return existing.orElseThrow();
+
         QuizSessionData data = dataLoader.loadForRetry(quizId);
         data.session().ensureResultAvailable();
         if (data.attemptsByQuestionId().values().stream()
@@ -67,11 +86,24 @@ public class QuizSetupService {
         if (wrongQuestionIds.isEmpty()) {
             throw new NoWrongQuestionsException();
         }
-        return sessionCreator.create(wrongQuestionIds, Instant.now(clock), null, QuizSessionSource.WRONG_RETRY);
+        return sessionCreator.create(wrongQuestionIds, Instant.now(clock), null, QuizSessionSource.WRONG_RETRY, creationIdentity);
     }
 
     @Transactional
     public QuizCreatedResult retryWrongQuestion(long quizId, long questionId) {
+        return retryWrongQuestion(quizId, questionId, null);
+    }
+
+    @Transactional
+    public QuizCreatedResult retryWrongQuestion(long quizId, long questionId, UUID requestId) {
+        String requestDescription = quizId + ":" + questionId;
+        QuizCreationIdentity creationIdentity = QuizCreationIdentity.forRequest(
+                requestId,
+                "retry-wrong-question",
+                requestDescription);
+        var existing = sessionCreator.findExisting(creationIdentity);
+        if (existing.isPresent()) return existing.orElseThrow();
+
         QuizSessionData data = dataLoader.loadForRetry(quizId);
         data.session().ensureResultAvailable();
         if (data.attemptsByQuestionId().values().stream()
@@ -89,11 +121,25 @@ public class QuizSetupService {
                 List.of(quizQuestion.getQuestion().getId()),
                 Instant.now(clock),
                 null,
-                QuizSessionSource.WRONG_RETRY);
+                QuizSessionSource.WRONG_RETRY,
+                creationIdentity);
     }
 
     @Transactional
     public QuizCreatedResult practiceRelatedConcept(long questionId, long conceptId) {
+        return practiceRelatedConcept(questionId, conceptId, null);
+    }
+
+    @Transactional
+    public QuizCreatedResult practiceRelatedConcept(long questionId, long conceptId, UUID requestId) {
+        String requestDescription = questionId + ":" + conceptId;
+        QuizCreationIdentity creationIdentity = QuizCreationIdentity.forRequest(
+                requestId,
+                "related-concept-practice",
+                requestDescription);
+        var existing = sessionCreator.findExisting(creationIdentity);
+        if (existing.isPresent()) return existing.orElseThrow();
+
         if (!selectionRepository.hasAvailableConceptLink(questionId, conceptId)) {
             throw new RelatedConceptUnavailableException();
         }
@@ -106,15 +152,27 @@ public class QuizSetupService {
             throw new NoRelatedConceptQuestionsException();
         }
 
-        return sessionCreator.create(questionIds, Instant.now(clock), null, QuizSessionSource.STANDARD);
+        return sessionCreator.create(questionIds, Instant.now(clock), null, QuizSessionSource.STANDARD, creationIdentity);
     }
 
     @Transactional
     public QuizCreatedResult practiceQuestion(long questionId) {
+        return practiceQuestion(questionId, null);
+    }
+
+    @Transactional
+    public QuizCreatedResult practiceQuestion(long questionId, UUID requestId) {
+        QuizCreationIdentity creationIdentity = QuizCreationIdentity.forRequest(
+                requestId,
+                "question-practice",
+                Long.toString(questionId));
+        var existing = sessionCreator.findExisting(creationIdentity);
+        if (existing.isPresent()) return existing.orElseThrow();
+
         if (!questionRepository.existsByIdAndStatus(questionId, QuestionStatus.PUBLISHED)) {
             throw new PublishedQuestionNotFoundException();
         }
 
-        return sessionCreator.create(List.of(questionId), Instant.now(clock), null, QuizSessionSource.STANDARD);
+        return sessionCreator.create(List.of(questionId), Instant.now(clock), null, QuizSessionSource.STANDARD, creationIdentity);
     }
 }

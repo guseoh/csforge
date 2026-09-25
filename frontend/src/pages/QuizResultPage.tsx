@@ -10,6 +10,7 @@ import { getQuizResult, retryWrongQuiz, retryWrongQuizQuestion, selfCheckQuizQue
 import { defaultQuizSearch } from '../lib/quiz-search'
 import { hasSubmittedAnswer, hasUnresolvedSelfCheck } from '../lib/quiz-result'
 import { compactMarkdownPreview } from '../lib/markdown'
+import { useIdempotencyKey } from '../lib/use-idempotency-key'
 
 function sourceLabel(source: string) {
   return ({ STANDARD: '일반 문제', WRONG_RETRY: '오답 다시 풀기', REVIEW: '복습' } as Record<string, string>)[source] ?? source
@@ -116,13 +117,21 @@ function QuestionResultCard({ quizId, question, source, defaultOpen = false, has
 }) {
   const queryClient = useQueryClient()
   const navigate = useNavigate({ from: '/quiz/$quizId/result' })
+  const retryRequest = useIdempotencyKey()
   const selfCheckMutation = useMutation({
     mutationFn: (correct: boolean) => selfCheckQuizQuestion(quizId, question.questionId, correct),
     onSuccess: () => void queryClient.invalidateQueries({ queryKey: ['quiz-result', quizId] }),
   })
   const retryQuestionMutation = useMutation({
-    mutationFn: () => retryWrongQuizQuestion(quizId, question.questionId),
-    onSuccess: (quiz) => void navigate({ to: '/quiz/$quizId', params: { quizId: String(quiz.quizId) } }),
+    mutationFn: () => retryWrongQuizQuestion(
+      quizId,
+      question.questionId,
+      retryRequest.requestIdFor({ operation: 'retry-wrong-question', quizId, questionId: question.questionId }),
+    ),
+    onSuccess: (quiz) => {
+      retryRequest.clear()
+      void navigate({ to: '/quiz/$quizId', params: { quizId: String(quiz.quizId) } })
+    },
   })
   const isUnanswered = !hasSubmittedAnswer(question)
   const stateLabel = question.gradingStatus === 'SELF_CHECK_REQUIRED'
@@ -300,8 +309,18 @@ export function QuizResultPage() {
   const { quizId: quizIdParam } = useParams({ from: '/quiz/$quizId/result' })
   const quizId = Number(quizIdParam)
   const navigate = useNavigate({ from: '/quiz/$quizId/result' })
+  const retryRequest = useIdempotencyKey()
   const resultQuery = useQuery({ queryKey: ['quiz-result', quizId], queryFn: () => getQuizResult(quizId), enabled: Number.isSafeInteger(quizId) && quizId > 0 })
-  const retryMutation = useMutation({ mutationFn: () => retryWrongQuiz(quizId), onSuccess: (quiz) => void navigate({ to: '/quiz/$quizId', params: { quizId: String(quiz.quizId) } }) })
+  const retryMutation = useMutation({
+    mutationFn: () => retryWrongQuiz(
+      quizId,
+      retryRequest.requestIdFor({ operation: 'retry-wrong', quizId }),
+    ),
+    onSuccess: (quiz) => {
+      retryRequest.clear()
+      void navigate({ to: '/quiz/$quizId', params: { quizId: String(quiz.quizId) } })
+    },
+  })
 
   useEffect(() => {
     document.title = '문제 풀이 결과 · CSForge'

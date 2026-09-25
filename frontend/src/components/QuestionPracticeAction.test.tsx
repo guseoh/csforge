@@ -40,7 +40,7 @@ describe('QuestionPracticeAction', () => {
     await options.mutationFn(42)
     options.onSuccess({ quizId: 55 })
 
-    expect(mocks.practiceQuestion).toHaveBeenCalledWith(42)
+    expect(mocks.practiceQuestion).toHaveBeenCalledWith(42, expect.stringMatching(/^[0-9a-f-]{36}$/i))
     expect(mocks.navigate).toHaveBeenCalledWith({ to: '/quiz/$quizId', params: { quizId: '55' } })
   })
 

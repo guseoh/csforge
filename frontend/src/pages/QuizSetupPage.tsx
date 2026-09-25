@@ -21,6 +21,7 @@ import {
   type QuizSearch,
 } from '../lib/quiz-search'
 import { canStartQuiz, effectiveQuizCount, quizAvailabilityState } from '../lib/quiz-availability'
+import { useIdempotencyKey } from '../lib/use-idempotency-key'
 
 const rememberedSettingsKey = 'csforge.quiz.setup'
 const questionTypes: { value: QuestionType; label: string }[] = [
@@ -155,15 +156,32 @@ export function QuizSetupPage() {
     questionTypes: settings.questionTypes,
     state: settings.state,
   }), [settings])
+  const creationRequest = useIdempotencyKey()
   const availabilityQuery = useQuery({
     queryKey: ['quiz-availability', filterPayload],
     queryFn: () => getQuizAvailability(filterPayload),
   })
   const questionCountAvailable = availabilityQuery.data?.availableCount
   const effectiveCount = effectiveQuizCount(settings.count, questionCountAvailable, settings.concepts.length > 0)
+  const pendingCreateRequestRef = useRef<{ signature: string; payload: QuizSetupPayload } | null>(null)
   const createMutation = useMutation({
-    mutationFn: () => createQuiz({ ...settings, count: effectiveCount }),
-    onSuccess: (quiz) => void navigate({ to: '/quiz/$quizId', params: { quizId: String(quiz.quizId) } }),
+    mutationFn: () => {
+      const signature = JSON.stringify({ operation: 'standard-quiz', settings })
+      if (pendingCreateRequestRef.current?.signature !== signature) {
+        pendingCreateRequestRef.current = {
+          signature,
+          payload: { ...settings, count: effectiveCount },
+        }
+      }
+      const request = pendingCreateRequestRef.current
+      const requestId = creationRequest.requestIdFor(signature)
+      return createQuiz(request.payload, requestId)
+    },
+    onSuccess: (quiz) => {
+      pendingCreateRequestRef.current = null
+      creationRequest.clear()
+      void navigate({ to: '/quiz/$quizId', params: { quizId: String(quiz.quizId) } })
+    },
   })
 
   const navigateToSettings = (nextSearch: QuizSearch) => void navigate({

@@ -15,6 +15,7 @@ import com.guseoh.csforge.quiz.application.NoWrongQuestionsException;
 import com.guseoh.csforge.quiz.application.NoRelatedConceptQuestionsException;
 import com.guseoh.csforge.quiz.application.QuizNotFoundException;
 import com.guseoh.csforge.quiz.application.PublishedQuestionNotFoundException;
+import com.guseoh.csforge.quiz.application.QuizCreationRequestConflictException;
 import com.guseoh.csforge.quiz.application.RelatedConceptUnavailableException;
 import com.guseoh.csforge.quiz.domain.QuizAnswerException;
 import com.guseoh.csforge.quiz.domain.QuizExpiredException;
@@ -48,6 +49,13 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(QuizNotFoundException.class)
     public ResponseEntity<ApiError> handleQuizNotFound(QuizNotFoundException exception, HttpServletRequest request) {
         return error(HttpStatus.NOT_FOUND, "QUIZ_NOT_FOUND", exception.getMessage(), request, List.of());
+    }
+
+    @ExceptionHandler(QuizCreationRequestConflictException.class)
+    public ResponseEntity<ApiError> handleQuizCreationRequestConflict(
+            QuizCreationRequestConflictException exception,
+            HttpServletRequest request) {
+        return error(HttpStatus.CONFLICT, "QUIZ_CREATION_KEY_CONFLICT", exception.getMessage(), request, List.of());
     }
 
     @ExceptionHandler(PublishedQuestionNotFoundException.class)

@@ -9,6 +9,7 @@ import { createReviewQuiz } from '../lib/review-api'
 import { defaultLearningSearch } from '../lib/learning-search'
 import { defaultQuizSearch } from '../lib/quiz-search'
 import { defaultWrongNoteSearch } from '../lib/wrong-note-search'
+import { useIdempotencyKey } from '../lib/use-idempotency-key'
 
 function percent(value: number | null) {
   return value === null ? '—' : `${Math.round(value)}%`
@@ -42,14 +43,16 @@ function recentQuizPerformanceLabel(quiz: Dashboard['recentQuizzes'][number]) {
 export function DashboardPage() {
   const navigate = useNavigate({ from: '/' })
   const queryClient = useQueryClient()
+  const reviewCreationRequest = useIdempotencyKey()
   const dashboardQuery = useQuery({ queryKey: ['dashboard'], queryFn: getDashboard })
   const recentConceptsQuery = useQuery({
     queryKey: ['concepts', { page: 0, size: 4, sort: 'VIEWED' }],
     queryFn: () => getConcepts({ page: 0, size: 4, sort: 'VIEWED' }),
   })
   const reviewMutation = useMutation({
-    mutationFn: () => createReviewQuiz(10),
+    mutationFn: () => createReviewQuiz(10, reviewCreationRequest.requestIdFor({ operation: 'review-quiz', count: 10 })),
     onSuccess: (quiz) => {
+      reviewCreationRequest.clear()
       void queryClient.invalidateQueries({ queryKey: ['dashboard'] })
       void navigate({ to: '/quiz/$quizId', params: { quizId: String(quiz.quizId) } })
     },

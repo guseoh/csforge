@@ -6,6 +6,7 @@ import { createReviewQuiz, getReviews, getReviewSummary } from '../lib/review-ap
 import type { ReviewScheduleStatus } from '../lib/wrong-note-api'
 import { compactMarkdownPreview } from '../lib/markdown'
 import { classifyReviewTiming, hasActionableReviews, type ReviewTiming } from '../lib/review-timing'
+import { useIdempotencyKey } from '../lib/use-idempotency-key'
 
 const timingLabels: Record<ReviewTiming, string> = {
   OVERDUE: '기한 지남',
@@ -42,9 +43,17 @@ export function ReviewPage() {
   const { showToast } = useToast()
   const search = useSearch({ from: '/review' })
   const navigate = useNavigate({ from: '/review' })
+  const reviewCreationRequest = useIdempotencyKey()
   const summary = useQuery({ queryKey: ['review-summary'], queryFn: getReviewSummary })
   const reviews = useQuery({ queryKey: ['reviews', search], queryFn: () => getReviews({ due: search.due, page: search.page, size: 20 }) })
-  const create = useMutation({ mutationFn: () => createReviewQuiz(10), onSuccess: (quiz) => void navigate({ to: '/quiz/$quizId', params: { quizId: String(quiz.quizId) } }), onError: () => showToast('error', '복습 문제를 만들지 못했습니다.') })
+  const create = useMutation({
+    mutationFn: () => createReviewQuiz(10, reviewCreationRequest.requestIdFor({ operation: 'review-quiz', count: 10 })),
+    onSuccess: (quiz) => {
+      reviewCreationRequest.clear()
+      void navigate({ to: '/quiz/$quizId', params: { quizId: String(quiz.quizId) } })
+    },
+    onError: () => showToast('error', '복습 문제를 만들지 못했습니다. 다시 시도하면 같은 생성 요청을 확인합니다.'),
+  })
 
   if (summary.isPending || reviews.isPending) return <PageSkeleton rows={5} />
   if (summary.isError || reviews.isError) return <ErrorState message="복습 일정을 불러오지 못했습니다." onRetry={() => { void summary.refetch(); void reviews.refetch() }} />
