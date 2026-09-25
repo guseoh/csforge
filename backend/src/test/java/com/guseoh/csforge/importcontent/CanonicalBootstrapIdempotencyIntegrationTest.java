@@ -19,6 +19,11 @@ import com.guseoh.csforge.importcontent.application.ImportClassification;
 import com.guseoh.csforge.importcontent.application.ImportFilesCommand;
 import com.guseoh.csforge.importcontent.application.ImportPreviewResult;
 import com.guseoh.csforge.importcontent.application.ImportSourceFile;
+import com.guseoh.csforge.learning.application.ConceptDetailView;
+import com.guseoh.csforge.learning.application.LearningQueryService;
+import com.guseoh.csforge.quiz.application.QuizQuestionSelectionCriteria;
+import com.guseoh.csforge.quiz.application.QuizQuestionState;
+import com.guseoh.csforge.quiz.application.QuizSetupService;
 import com.guseoh.csforge.test.PostgresIntegrationTestSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -42,6 +47,8 @@ class CanonicalBootstrapIdempotencyIntegrationTest {
     @Autowired CanonicalBootstrapBatchPlanner batchPlanner;
     @Autowired ContentImportPreviewService previewService;
     @Autowired ContentImportApplyService applyService;
+    @Autowired LearningQueryService learningQueryService;
+    @Autowired QuizSetupService quizSetupService;
     @Autowired JdbcTemplate jdbc;
 
     @DynamicPropertySource
@@ -55,6 +62,8 @@ class CanonicalBootstrapIdempotencyIntegrationTest {
         assertTrue(first.success(), () -> "initial canonical bootstrap failed: " + first);
         assertEquals(0, first.totals().errors());
         assertEquals(0, first.totals().failed());
+
+        assertCanonicalConceptAvailabilityAndNavigation();
 
         long questionId = jdbc.queryForObject(
                 "select id from question where content_key = ?",
@@ -195,5 +204,66 @@ class CanonicalBootstrapIdempotencyIntegrationTest {
 
     private List<Map<String, Object>> questionIds() {
         return jdbc.queryForList("select content_key, id from question order by content_key");
+    }
+
+    private void assertCanonicalConceptAvailabilityAndNavigation() {
+        List<CanonicalConceptNavigationCase> concepts = jdbc.query("""
+                select c.id, c.content_key, a.id as area_id, a.slug as area_slug
+                from concept c
+                join topic t on t.id = c.topic_id
+                join learning_area a on a.id = t.learning_area_id
+                where c.status = 'PUBLISHED'
+                  and t.active = true
+                  and a.active = true
+                order by a.display_order, t.display_order, c.display_order, c.id
+                """, (result, rowNumber) -> new CanonicalConceptNavigationCase(
+                result.getLong("id"), result.getString("content_key"),
+                result.getLong("area_id"), result.getString("area_slug")));
+        assertEquals(15, jdbc.queryForObject(
+                "select count(*) from learning_area where active = true", Integer.class));
+        assertEquals(721, concepts.size(), "canonical PUBLISHED Concept inventory changed");
+
+        for (int index = 0; index < concepts.size(); index++) {
+            CanonicalConceptNavigationCase concept = concepts.get(index);
+            ConceptDetailView detail = learningQueryService.getConcept(concept.id());
+            CanonicalConceptNavigationCase previous = index > 0 ? concepts.get(index - 1) : null;
+            CanonicalConceptNavigationCase next = index + 1 < concepts.size() ? concepts.get(index + 1) : null;
+
+            assertNavigation(previous != null && previous.areaId() == concept.areaId()
+                            ? previous : null,
+                    detail.previous(), concept, "previous");
+            assertNavigation(next != null && next.areaId() == concept.areaId()
+                            ? next : null,
+                    detail.next(), concept, "next");
+
+            long linkedPublishedQuestions = jdbc.queryForObject("""
+                    select count(distinct q.id)
+                    from question q
+                    join question_concept qc on qc.question_id = q.id
+                    where qc.concept_id = ? and q.status = 'PUBLISHED'
+                    """, Long.class, concept.id());
+            long quizAvailability = quizSetupService.availability(new QuizQuestionSelectionCriteria(
+                    List.of(concept.areaSlug()), List.of(concept.id()), List.of(), List.of(), List.of(), QuizQuestionState.ALL));
+            assertEquals(linkedPublishedQuestions, quizAvailability,
+                    () -> "Concept CTA availability differs from published Question links: " + concept.contentKey());
+            assertTrue(quizAvailability > 0,
+                    () -> "Canonical Concept CTA has no available Questions: " + concept.contentKey());
+        }
+    }
+
+    private static void assertNavigation(
+            CanonicalConceptNavigationCase expected,
+            com.guseoh.csforge.learning.application.ConceptNavigationView actual,
+            CanonicalConceptNavigationCase current,
+            String direction) {
+        if (expected == null) {
+            assertEquals(null, actual, () -> current.contentKey() + " unexpectedly has " + direction + " Concept");
+            return;
+        }
+        assertTrue(actual != null && actual.id() == expected.id(),
+                () -> current.contentKey() + " " + direction + " ordering differs; expected " + expected.contentKey());
+    }
+
+    private record CanonicalConceptNavigationCase(long id, String contentKey, long areaId, String areaSlug) {
     }
 }
