@@ -234,7 +234,7 @@
   background: var(--surface-interactive);
 }
 
-.search-palette-backdrop {
+.search-palette-backdrop::backdrop {
   background: rgb(23 26 31 / 28%);
   backdrop-filter: blur(4px);
 }

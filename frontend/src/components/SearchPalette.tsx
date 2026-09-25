@@ -23,6 +23,8 @@ function persistRecent(recent: string[]) {
 
 export function SearchPalette() {
   const navigate = useNavigate()
+  const dialogRef = useRef<HTMLDialogElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
   const [debouncedQuery, setDebouncedQuery] = useState('')
@@ -39,6 +41,10 @@ export function SearchPalette() {
     enabled: open && debouncedQuery.length >= 2,
     staleTime: 15_000,
   })
+  const actionableSuggestions = useMemo(
+    () => (suggestions.data ?? []).filter((item) => primarySearchDestination(item) !== null),
+    [suggestions.data],
+  )
 
   const openPalette = () => {
     previousFocusRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null
@@ -58,9 +64,6 @@ export function SearchPalette() {
         event.preventDefault()
         if (open) closePalette()
         else openPalette()
-      } else if (event.key === 'Escape' && open) {
-        event.preventDefault()
-        closePalette()
       }
     }
     window.addEventListener('keydown', onKeyDown)
@@ -69,9 +72,13 @@ export function SearchPalette() {
 
   useEffect(() => {
     if (open) {
+      const dialog = dialogRef.current
+      if (dialog && !dialog.open) dialog.showModal()
+      inputRef.current?.focus()
       wasOpenRef.current = true
       return
     }
+    if (dialogRef.current?.open) dialogRef.current.close()
     if (wasOpenRef.current) {
       setQuery('')
       setDebouncedQuery('')
@@ -108,8 +115,7 @@ export function SearchPalette() {
     })
   }
 
-  const openSuggestion = (index: number) => {
-    const item = suggestions.data?.[index]
+  const openSuggestion = (item: (typeof actionableSuggestions)[number] | undefined) => {
     if (!item) return
     const destination = primarySearchDestination(item)
     if (!destination) return
@@ -125,7 +131,7 @@ export function SearchPalette() {
 
   const actionableCount = normalized.length === 0
     ? visibleRecent.length
-    : normalized.length >= 2 ? suggestions.data?.length ?? 0 : 0
+    : normalized.length >= 2 ? actionableSuggestions.length : 0
 
   const handleInputKeyDown = (event: ReactKeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'ArrowDown' && actionableCount > 0) {
@@ -137,7 +143,7 @@ export function SearchPalette() {
     } else if (event.key === 'Enter' && activeIndex >= 0) {
       event.preventDefault()
       if (normalized.length === 0) submitSearch(visibleRecent[activeIndex] ?? '')
-      else openSuggestion(activeIndex)
+      else openSuggestion(actionableSuggestions[activeIndex])
     }
   }
 
@@ -152,12 +158,17 @@ export function SearchPalette() {
         <span className="search-trigger-placeholder">개념, 문제, 오답을 검색하세요</span>
         <kbd>Ctrl K</kbd>
       </button>
-      {open && (
-        <div className="search-palette-backdrop" role="presentation" onMouseDown={closePalette}>
-          <section className="search-palette" role="dialog" aria-modal="true" aria-label="전체 검색" onMouseDown={(event) => event.stopPropagation()}>
+      <dialog
+        ref={dialogRef}
+        className="search-palette-backdrop"
+        aria-label="전체 검색"
+        onCancel={(event) => { event.preventDefault(); closePalette() }}
+        onClick={(event) => { if (event.target === event.currentTarget) closePalette() }}
+      >
+          <section className="search-palette">
             <form className="search-palette-form" onSubmit={(event) => { event.preventDefault(); submitSearch(query) }}>
               <input
-                autoFocus
+                ref={inputRef}
                 value={query}
                 maxLength={200}
                 onChange={(event) => setQuery(event.target.value)}
@@ -200,7 +211,7 @@ export function SearchPalette() {
                 <div>
                   <p className="palette-section-title">바로가기 제안</p>
                   <div className="palette-list" role="listbox">
-                    {suggestions.data.length === 0 ? <p className="palette-muted">일치하는 제목 제안이 없습니다.</p> : suggestions.data.map((item, index) => (
+                    {actionableSuggestions.length === 0 ? <p className="palette-muted">바로 이동할 수 있는 제목 제안이 없습니다. Enter로 전체 검색을 할 수 있습니다.</p> : actionableSuggestions.map((item, index) => (
                       <button
                         id={`search-palette-option-${index}`}
                         key={`${item.documentType}:${item.sourceId}`}
@@ -209,7 +220,7 @@ export function SearchPalette() {
                         aria-selected={activeIndex === index}
                         type="button"
                         onMouseEnter={() => setActiveIndex(index)}
-                        onClick={() => openSuggestion(index)}
+                        onClick={() => openSuggestion(item)}
                       ><span>{item.title}</span><small>{item.documentType.replace('_', ' ')}</small></button>
                     ))}
                   </div>
@@ -218,8 +229,7 @@ export function SearchPalette() {
             </div>
             <footer className="search-palette-footer"><span>↑↓ · 이동</span><span>Enter · 선택</span><span>Esc · 닫기</span></footer>
           </section>
-        </div>
-      )}
+      </dialog>
     </>
   )
 }
