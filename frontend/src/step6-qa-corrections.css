@@ -45,7 +45,7 @@
     min-height: 42px;
   }
 
-  .account-menu > summary {
+  .account-menu > button {
     width: 38px;
     height: 38px;
   }
