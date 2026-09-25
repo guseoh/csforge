@@ -142,6 +142,24 @@
   background: var(--surface-page);
 }
 
+.utility-menu-link {
+  display: flex;
+  min-height: 38px;
+  align-items: center;
+  padding: 0 8px;
+  border-top: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  color: var(--text-default);
+  font-size: 0.82rem;
+  font-weight: 650;
+  text-decoration: none;
+}
+
+.utility-menu-link:hover {
+  color: var(--text-strong);
+  background: var(--surface-interactive);
+}
+
 .search-palette-trigger {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
