@@ -1,27 +1,33 @@
 import { Link } from '@tanstack/react-router'
-import { useThemePreference } from './ThemeProvider'
 
-const themeOptions = [
-  { value: 'system', label: '시스템' },
-  { value: 'light', label: '라이트' },
-  { value: 'dark', label: '다크' },
-] as const
+type UtilityMenuProps = {
+  open: boolean
+  onToggle: () => void
+  onClose: () => void
+}
 
-export function UtilityMenu() {
-  const { preference, setPreference } = useThemePreference()
-
+export function UtilityMenu({ open, onToggle, onClose }: UtilityMenuProps) {
   return (
-    <details className="utility-menu">
-      <summary aria-label="환경 설정 메뉴 열기">환경 설정</summary>
-      <div className="utility-menu-panel">
-        <label className="theme-select-group">
-          <span>테마</span>
-          <select aria-label="테마" value={preference} onChange={(event) => setPreference(event.target.value as typeof preference)}>
-            {themeOptions.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
-          </select>
-        </label>
-        <Link className="utility-menu-link" to="/settings/import">콘텐츠 가져오기</Link>
+    <div className="utility-menu" data-header-popover="utility">
+      <button
+        className="utility-menu-trigger"
+        id="utility-menu-trigger"
+        type="button"
+        aria-label="도구 메뉴"
+        title="도구"
+        aria-expanded={open}
+        aria-controls="utility-menu-panel"
+        onClick={onToggle}
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="5" cy="12" r="1.6" />
+          <circle cx="12" cy="12" r="1.6" />
+          <circle cx="19" cy="12" r="1.6" />
+        </svg>
+      </button>
+      <div className="utility-menu-panel" id="utility-menu-panel" hidden={!open}>
+        <Link className="utility-menu-link" to="/settings/import" onClick={onClose}>콘텐츠 가져오기</Link>
       </div>
-    </details>
+    </div>
   )
 }

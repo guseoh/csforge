@@ -1,11 +1,13 @@
 import { Link, Outlet, createRootRoute, createRoute, createRouter, lazyRouteComponent, useLocation, useNavigate } from '@tanstack/react-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { SearchPalette } from './components/SearchPalette'
 import { UtilityMenu } from './components/UtilityMenu'
+import { ThemeControl } from './components/ThemeControl'
 import { AuthGate } from './components/AuthGate'
 import { getAuthSession, logout } from './lib/auth-api'
 import { clearAuthReturnLocation } from './lib/auth-return'
+import { dismissHeaderPopover, toggleHeaderPopover, type HeaderPopoverId } from './lib/header-popovers'
 import { defaultLearningSearch, parseLearningSearch } from './lib/learning-search'
 import { defaultQuizSearch, parseQuizSearch } from './lib/quiz-search'
 import { defaultWrongNoteSearch, parseWrongNoteSearch } from './lib/wrong-note-search'
@@ -35,7 +37,44 @@ const headerNavigation = [
 
 function AppLayout() {
   const [mobileNavOpen, setMobileNavOpen] = useState(false)
+  const [activePopover, setActivePopover] = useState<HeaderPopoverId | null>(null)
   const location = useLocation()
+
+  useEffect(() => {
+    setActivePopover(null)
+  }, [location.pathname, location.searchStr, location.hash])
+
+  useEffect(() => {
+    if (activePopover === null) return
+
+    const closeOnOutsidePointer = (event: PointerEvent) => {
+      const target = event.target
+      const targetPopover = target instanceof Element
+        ? target.closest<HTMLElement>('[data-header-popover]')?.dataset.headerPopover
+        : undefined
+      const selectedPopover = targetPopover === 'utility' || targetPopover === 'account' ? targetPopover : null
+      setActivePopover((current) => dismissHeaderPopover(current, { type: 'pointerdown', targetPopover: selectedPopover }))
+    }
+
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return
+      document.getElementById(`${activePopover}-menu-trigger`)?.focus()
+      setActivePopover(null)
+    }
+
+    document.addEventListener('pointerdown', closeOnOutsidePointer)
+    document.addEventListener('keydown', closeOnEscape)
+    return () => {
+      document.removeEventListener('pointerdown', closeOnOutsidePointer)
+      document.removeEventListener('keydown', closeOnEscape)
+    }
+  }, [activePopover])
+
+  const togglePopover = (popover: HeaderPopoverId) => {
+    setActivePopover((current) => toggleHeaderPopover(current, popover))
+  }
+  const closePopover = () => setActivePopover(null)
+
   if (location.pathname === '/login') {
     return <main className="main-content"><Outlet /></main>
   }
@@ -61,8 +100,9 @@ function AppLayout() {
           </nav>
           <div className="topbar-actions">
             <SearchPalette />
-            <UtilityMenu />
-            <AuthActions />
+            <ThemeControl />
+            <UtilityMenu open={activePopover === 'utility'} onToggle={() => togglePopover('utility')} onClose={closePopover} />
+            <AuthActions open={activePopover === 'account'} onToggle={() => togglePopover('account')} onClose={closePopover} />
             <button
               className="mobile-menu-toggle"
               type="button"
@@ -83,13 +123,14 @@ function AppLayout() {
   )
 }
 
-function AuthActions() {
+function AuthActions({ open, onToggle, onClose }: { open: boolean; onToggle: () => void; onClose: () => void }) {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const session = useQuery({ queryKey: ['auth-session'], queryFn: getAuthSession, retry: false })
   const logoutMutation = useMutation({
     mutationFn: logout,
     onSuccess: () => {
+      onClose()
       queryClient.clear()
       void navigate({ to: '/login', replace: true })
     },
@@ -102,9 +143,20 @@ function AuthActions() {
   const accountInitial = email.charAt(0).toUpperCase()
 
   return (
-    <details className="account-menu">
-      <summary aria-label="계정 메뉴 열기" title={email}>{accountInitial}</summary>
-      <div className="account-menu-panel">
+    <div className="account-menu" data-header-popover="account">
+      <button
+        className="account-menu-trigger"
+        id="account-menu-trigger"
+        type="button"
+        aria-label="계정 메뉴 열기"
+        title={email}
+        aria-expanded={open}
+        aria-controls="account-menu-panel"
+        onClick={onToggle}
+      >
+        {accountInitial}
+      </button>
+      <div className="account-menu-panel" id="account-menu-panel" hidden={!open}>
         <div className="account-menu-copy">
           <strong>{email}</strong>
           <span>Cloud 환경</span>
@@ -122,7 +174,7 @@ function AuthActions() {
         </button>
         {logoutMutation.isError && <span className="auth-error">로그아웃하지 못했습니다.</span>}
       </div>
-    </details>
+    </div>
   )
 }
 

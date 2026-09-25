@@ -2,7 +2,7 @@
  * Keep this layer focused on the global shell. Home and Concept hierarchy are handled later.
  */
 .topbar {
-  height: 60px;
+  height: 66px;
   padding: 0 24px;
   border-bottom: 1px solid var(--border-subtle);
   background: var(--surface-page);
@@ -13,7 +13,7 @@
   display: flex;
   align-items: center;
   gap: 24px;
-  width: min(1320px, 100%);
+  width: min(1440px, 100%);
 }
 
 .brand {
@@ -35,7 +35,7 @@
 }
 
 .topbar-nav {
-  gap: 2px;
+  gap: 4px;
   margin-left: 2px;
 }
 
@@ -73,36 +73,76 @@
   flex: 0 0 auto;
 }
 
-.utility-menu > summary {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
+.utility-menu > button {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
   min-height: 38px;
-  padding: 0 10px;
+  padding: 0;
   border: 1px solid var(--border-default);
   border-radius: 8px;
   color: var(--text-muted);
   background: var(--surface-page);
   cursor: pointer;
-  list-style: none;
-  font-size: 0.78rem;
-  font-weight: 650;
 }
 
-.utility-menu > summary::-webkit-details-marker {
-  display: none;
+.utility-menu > button svg {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
 }
 
-.utility-menu > summary::after {
-  content: '⌄';
-  color: var(--text-faint);
-}
-
-.utility-menu > summary:hover,
-.utility-menu[open] > summary {
+.utility-menu > button:hover,
+.utility-menu > button[aria-expanded='true'] {
   border-color: var(--border-strong);
   color: var(--text-strong);
   background: var(--surface-interactive);
+}
+
+.theme-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 9px;
+  background: var(--surface-elevated);
+  flex: 0 0 auto;
+}
+
+.theme-control button {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  color: var(--text-muted);
+  background: transparent;
+  cursor: pointer;
+}
+
+.theme-control button:hover {
+  color: var(--text-strong);
+  background: var(--surface-interactive);
+}
+
+.theme-control button[aria-pressed='true'] {
+  border-color: var(--border-accent);
+  color: var(--accent);
+  background: var(--surface-selected);
+}
+
+.theme-control svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.7;
 }
 
 .utility-menu-panel {
@@ -111,9 +151,9 @@
   top: calc(100% + 10px);
   right: 0;
   display: grid;
-  gap: 10px;
-  width: 248px;
-  padding: 14px;
+  gap: 4px;
+  width: 224px;
+  padding: 8px;
   border: 1px solid var(--border-default);
   border-radius: 12px;
   color: var(--text-default);
@@ -121,33 +161,16 @@
   box-shadow: 0 18px 42px rgb(var(--shadow-rgb) / 16%);
 }
 
-.theme-select-group {
-  display: grid;
-  gap: 6px;
-}
-
-.theme-select-group > span {
-  color: var(--text-strong);
-  font-size: 0.83rem;
-  font-weight: 700;
-}
-
-.theme-select-group select {
-  width: 100%;
-  min-height: 38px;
-  padding: 0 9px;
-  border: 1px solid var(--border-default);
-  border-radius: 7px;
-  color: var(--text-strong);
-  background: var(--surface-page);
+.utility-menu-panel[hidden],
+.account-menu-panel[hidden] {
+  display: none;
 }
 
 .utility-menu-link {
   display: flex;
   min-height: 38px;
   align-items: center;
-  padding: 0 8px;
-  border-top: 1px solid var(--border-subtle);
+  padding: 0 10px;
   border-radius: 6px;
   color: var(--text-default);
   font-size: 0.82rem;
@@ -165,7 +188,7 @@
   grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
   gap: 10px;
-  width: clamp(300px, 27vw, 360px);
+  width: clamp(300px, 27vw, 420px);
   min-height: 42px;
   padding: 0 10px 0 12px;
   border: 1px solid var(--border-default);
@@ -226,7 +249,7 @@
   flex: 0 0 auto;
 }
 
-.account-menu > summary {
+.account-menu > button {
   display: grid;
   width: 38px;
   height: 38px;
@@ -242,12 +265,8 @@
   text-transform: uppercase;
 }
 
-.account-menu > summary::-webkit-details-marker {
-  display: none;
-}
-
-.account-menu > summary:hover,
-.account-menu[open] > summary {
+.account-menu > button:hover,
+.account-menu > button[aria-expanded='true'] {
   border-color: var(--border-strong);
   color: var(--text-strong);
   background: var(--surface-interactive);
@@ -464,7 +483,7 @@
     content: none;
   }
 
-  .account-menu > summary {
+  .account-menu > button {
     width: 36px;
     height: 36px;
   }
