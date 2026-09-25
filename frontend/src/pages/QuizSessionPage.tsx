@@ -11,6 +11,7 @@ import {
 import { defaultQuizSearch, formatRemaining } from '../lib/quiz-search'
 import { classifyQuizNavigation, quizNavigationLabel } from '../lib/quiz-navigation'
 import { emptyQuizDraft, useQuizSessionPersistence } from '../lib/use-quiz-session-persistence'
+import { clearAppUpdateSafetySignal, setAppUpdateSafetySignal } from '../lib/app-update-safety'
 
 function questionTypeLabel(type: string) {
   return ({
@@ -93,6 +94,13 @@ export function QuizSessionPage() {
       }
     },
   })
+
+  useEffect(() => {
+    const signalKey = `quiz:${quizId}:submit`
+    if (submitMutation.isPending) setAppUpdateSafetySignal(signalKey, { quizSubmitting: 1 })
+    else clearAppUpdateSafetySignal(signalKey)
+    return () => clearAppUpdateSafetySignal(signalKey)
+  }, [quizId, submitMutation.isPending])
 
   useEffect(() => {
     const handleShortcut = (event: KeyboardEvent) => {

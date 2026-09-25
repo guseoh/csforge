@@ -15,8 +15,10 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
-      registerType: 'autoUpdate',
+      registerType: 'prompt',
       workbox: {
+        skipWaiting: false,
+        clientsClaim: false,
         navigateFallbackDenylist: [
           /^\/api(?:\/|$)/,
           /^\/oauth2(?:\/|$)/,

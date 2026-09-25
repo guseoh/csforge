@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { saveQuizAnswer, saveQuizPosition, type QuizSavedAnswer, type QuizSession } from './quiz-api'
+import { clearAppUpdateSafetySignal, setAppUpdateSafetySignal } from './app-update-safety'
 import {
   beginQuizSaveRevision,
   enqueueLatestQuizSave,
@@ -234,6 +235,16 @@ export function useQuizSessionPersistence({ quizId, session, expired }: QuizSess
     .filter(([, state]) => state === 'error')
     .map(([id]) => Number(id))
   const savingCount = Object.values(saveStates).filter((state) => state === 'saving').length
+
+  useEffect(() => {
+    const signalKey = `quiz:${quizId}:persistence`
+    setAppUpdateSafetySignal(signalKey, {
+      quizSavePending: savingCount,
+      quizSaveFailures: failedQuestionIds.length,
+      flushQuizSaves: flushAllDirtyAnswers,
+    })
+    return () => clearAppUpdateSafetySignal(signalKey)
+  }, [failedQuestionIds.length, flushAllDirtyAnswers, quizId, savingCount])
 
   return {
     position,
