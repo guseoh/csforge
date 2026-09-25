@@ -124,7 +124,7 @@ function QuestionResultCard({ quizId, question, defaultOpen = false, hasPendingS
     onSuccess: (quiz) => void navigate({ to: '/quiz/$quizId', params: { quizId: String(quiz.quizId) } }),
   })
   const stateLabel = question.gradingStatus === 'SELF_CHECK_REQUIRED'
-    ? '자기 채점 대기'
+    ? '자기채점 대기'
     : question.correct
       ? '정답'
       : question.gradingStatus === 'UNANSWERED'
