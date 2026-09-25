@@ -55,8 +55,9 @@ export interface DashboardRecentQuiz {
   finalizedCount: number
   correctCount: number
   wrongCount: number
+  unansweredCount: number
   pendingSelfCheckCount: number
-  accuracyPercent: number
+  accuracyPercent: number | null
 }
 
 export interface DashboardActiveQuiz {

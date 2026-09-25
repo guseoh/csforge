@@ -285,6 +285,9 @@ export function QuizResultPage() {
   const result = resultQuery.data
   const hasPendingSelfCheck = hasUnresolvedSelfCheck(result.selfCheckPending)
   const accuracyLabel = result.accuracy === null ? '—' : `${Math.round(result.accuracy * 100)}%`
+  const accuracyDescription = result.selfCheckPending > 0
+    ? `확정 ${result.total - result.selfCheckPending}문항 중 ${result.correct}개 정답 · 자기채점 ${result.selfCheckPending}개 대기`
+    : `${result.correct}/${result.total}개 정답`
   const selfCheckQuestions = result.questions.filter((question) => question.gradingStatus === 'SELF_CHECK_REQUIRED')
   const wrongQuestions = result.questions.filter((question) => question.correct === false)
   const unansweredQuestions = result.questions.filter((question) => question.gradingStatus === 'UNANSWERED')
@@ -309,7 +312,7 @@ export function QuizResultPage() {
       </header>
 
       <div className="quiz-result-summary quiz-result-summary-focused">
-        <div className="quiz-accuracy-card"><span>정확도</span><strong>{accuracyLabel}</strong><p>{result.correct}/{result.total}개 정답</p></div>
+        <div className="quiz-accuracy-card"><span>정확도</span><strong>{accuracyLabel}</strong><p>{accuracyDescription}</p></div>
         <div className="quiz-result-stat-grid">
           <div><span>정답</span><strong>{result.correct}</strong></div>
           <div><span>오답</span><strong>{result.wrong}</strong></div>

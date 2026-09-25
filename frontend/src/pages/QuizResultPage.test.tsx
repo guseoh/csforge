@@ -188,11 +188,34 @@ describe('QuizResultPage', () => {
 
     const markup = renderToStaticMarkup(<QuizResultPage />)
 
+    expect(markup).toContain('확정 0문항 중 0개 정답 · 자기채점 1개 대기')
     expect(markup).toContain('내가 작성한 설명')
     expect(markup).toContain('모범 답안')
     expect(markup).toContain('내 답과 모범 답안을 비교한 뒤 직접 판정하세요.')
     expect(markup).toContain('맞았어요')
     expect(markup).toContain('틀렸어요')
+  })
+
+  it('labels partial accuracy with the finalized denominator', () => {
+    mocks.result.data = {
+      quizId: 41,
+      status: 'SUBMITTED',
+      source: 'STANDARD',
+      total: 4,
+      correct: 1,
+      wrong: 1,
+      unanswered: 1,
+      selfCheckPending: 1,
+      accuracy: 1 / 3,
+      breakdown: [],
+      questions: [],
+    }
+
+    const markup = renderToStaticMarkup(<QuizResultPage />)
+
+    expect(markup).toContain('<strong>33%</strong>')
+    expect(markup).toContain('확정 3문항 중 1개 정답 · 자기채점 1개 대기')
+    expect(markup).not.toContain('1/4개 정답')
   })
 
   it('keeps legacy result content readable when every choice rationale is null', () => {

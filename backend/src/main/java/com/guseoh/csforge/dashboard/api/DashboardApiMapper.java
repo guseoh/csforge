@@ -83,6 +83,7 @@ public class DashboardApiMapper {
                 quiz.finalizedCount(),
                 quiz.correctCount(),
                 quiz.wrongCount(),
+                quiz.unansweredCount(),
                 quiz.pendingSelfCheckCount(),
                 quiz.accuracyPercent());
     }

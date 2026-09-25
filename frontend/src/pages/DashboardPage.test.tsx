@@ -131,15 +131,32 @@ describe('DashboardPage', () => {
     expect(markup).toContain('계속 읽기')
   })
 
-  it('renders weak-topic data and pending self-check count in recent quiz', () => {
+  it('explains the finalized denominator while a self-check is pending', () => {
     const markup = render(dashboard({
       weakTopics: [{ topicId: 7, topicContentKey: 'java-topic', topicTitle: 'JPA 기초', areaSlug: 'java', areaName: 'Java', attemptCount: 3, correctCount: 1, wrongCount: 2, accuracyPercent: 33.33 }],
-      recentQuizzes: [{ quizId: 41, source: 'STANDARD', status: 'SUBMITTED', startedAt: '2026-09-03T12:00:00Z', submittedAt: '2026-09-03T12:10:00Z', completedAt: null, totalCount: 4, finalizedCount: 3, correctCount: 2, wrongCount: 1, pendingSelfCheckCount: 1, accuracyPercent: 66.67 }],
+      recentQuizzes: [{ quizId: 41, source: 'STANDARD', status: 'SUBMITTED', startedAt: '2026-09-03T12:00:00Z', submittedAt: '2026-09-03T12:10:00Z', completedAt: null, totalCount: 4, finalizedCount: 3, correctCount: 2, wrongCount: 0, unansweredCount: 1, pendingSelfCheckCount: 1, accuracyPercent: 66.67 }],
     }))
 
     expect(markup).toContain('JPA 기초')
-    expect(markup).toContain('2/3개 정답')
-    expect(markup).toContain('자기 채점 1개 대기')
+    expect(markup).toContain('확정 3문항 중 2개 정답 · 자기채점 1개 대기')
+  })
+
+  it('uses total questions as the finalized denominator after self-check completes', () => {
+    const markup = render(dashboard({
+      recentQuizzes: [{ quizId: 42, source: 'STANDARD', status: 'COMPLETED', startedAt: '2026-09-03T12:00:00Z', submittedAt: '2026-09-03T12:10:00Z', completedAt: '2026-09-03T12:11:00Z', totalCount: 4, finalizedCount: 4, correctCount: 1, wrongCount: 1, unansweredCount: 2, pendingSelfCheckCount: 0, accuracyPercent: 25 }],
+    }))
+
+    expect(markup).toContain('25%')
+    expect(markup).toContain('1/4개 정답')
+  })
+
+  it('shows no accuracy when every recent quiz question is pending self-check', () => {
+    const markup = render(dashboard({
+      recentQuizzes: [{ quizId: 43, source: 'STANDARD', status: 'SUBMITTED', startedAt: '2026-09-03T12:00:00Z', submittedAt: '2026-09-03T12:10:00Z', completedAt: null, totalCount: 2, finalizedCount: 0, correctCount: 0, wrongCount: 0, unansweredCount: 0, pendingSelfCheckCount: 2, accuracyPercent: null }],
+    }))
+
+    expect(markup).toContain('—')
+    expect(markup).toContain('확정 0문항 중 0개 정답 · 자기채점 2개 대기')
   })
 
   it('keeps a curriculum start action when READY content has no activity', () => {

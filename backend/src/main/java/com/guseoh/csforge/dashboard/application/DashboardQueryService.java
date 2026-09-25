@@ -27,6 +27,7 @@ import com.guseoh.csforge.dashboard.infrastructure.DashboardQuizAttemptAggregate
 import com.guseoh.csforge.dashboard.infrastructure.DashboardQuizQuestionCountProjection;
 import com.guseoh.csforge.dashboard.infrastructure.DashboardWeakTopicProjection;
 import com.guseoh.csforge.quiz.application.QuizActiveView;
+import com.guseoh.csforge.quiz.application.QuizPerformance;
 import com.guseoh.csforge.quiz.application.QuizQueryService;
 import com.guseoh.csforge.quiz.domain.QuizSession;
 import com.guseoh.csforge.quiz.domain.QuizSessionRepository;
@@ -205,8 +206,13 @@ public class DashboardQueryService {
             QuizSession session,
             DashboardQuizAttemptAggregateProjection aggregate,
             DashboardQuizQuestionCountProjection questionCount) {
-        long finalizedCount = aggregate == null ? 0 : aggregate.finalizedCount();
+        long totalCount = questionCount == null ? 0 : questionCount.questionCount();
         long correctCount = aggregate == null ? 0 : aggregate.correctCount();
+        long wrongCount = aggregate == null ? 0 : aggregate.wrongCount();
+        long unansweredCount = aggregate == null ? 0 : aggregate.unansweredCount();
+        long pendingSelfCheckCount = aggregate == null ? 0 : aggregate.pendingSelfCheckCount();
+        QuizPerformance performance = new QuizPerformance(
+                totalCount, correctCount, wrongCount, unansweredCount, pendingSelfCheckCount);
         return new DashboardRecentQuizView(
                 session.getId(),
                 session.getSource(),
@@ -214,12 +220,13 @@ public class DashboardQueryService {
                 session.getStartedAt(),
                 session.getSubmittedAt(),
                 session.getCompletedAt(),
-                questionCount == null ? 0 : questionCount.questionCount(),
-                finalizedCount,
+                totalCount,
+                performance.finalizedCount(),
                 correctCount,
-                aggregate == null ? 0 : aggregate.wrongCount(),
-                aggregate == null ? 0 : aggregate.pendingSelfCheckCount(),
-                finalizedCount == 0 ? 0.0 : correctCount * 100.0 / finalizedCount);
+                wrongCount,
+                unansweredCount,
+                pendingSelfCheckCount,
+                performance.accuracyPercent());
     }
 
     private DashboardAreaProgressView toAreaProgress(DashboardAreaProgressProjection area) {

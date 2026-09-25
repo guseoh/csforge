@@ -7,6 +7,6 @@ import java.util.List;
  */
 public record QuizResultView(
         QuizSessionData data,
-        QuizResultSummary summary,
+        QuizPerformance performance,
         List<QuizBreakdownView> breakdown) {
 }

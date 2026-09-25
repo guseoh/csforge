@@ -12,6 +12,7 @@ import java.sql.Timestamp;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
+import java.util.List;
 
 import com.guseoh.csforge.test.PostgresIntegrationTestSupport;
 import org.junit.jupiter.api.BeforeEach;
@@ -168,6 +169,59 @@ class DashboardIntegrationTest {
         assertTrue(hasPendingSelfCheck(dashboard.get("recentQuizzes")));
     }
 
+    @Test
+    void resultAndDashboardUseTheSameAccuracyWithUnansweredAndPendingQuestions() throws Exception {
+        long wrongQuestionId = insertQuestion("dashboard-wrong-question");
+        long unansweredQuestionId = insertQuestion("dashboard-unanswered-question");
+        long pendingQuestionId = insertQuestion("dashboard-pending-question", "DESCRIPTIVE");
+        List<Long> questionIds = List.of(questionId, wrongQuestionId, unansweredQuestionId, pendingQuestionId);
+        questionIds.stream().skip(1).forEach(id -> jdbc.update(
+                "INSERT INTO question_concept (question_id, concept_id) VALUES (?, ?)", id, conceptId));
+
+        long quizId = insertSession("SUBMITTED", NOW.minusSeconds(300));
+        for (int index = 0; index < questionIds.size(); index++) {
+            long currentQuestionId = questionIds.get(index);
+            jdbc.update("INSERT INTO quiz_question (quiz_session_id, question_id, position) VALUES (?, ?, ?)",
+                    quizId, currentQuestionId, index);
+            switch (index) {
+                case 0 -> insertAttempt(quizId, currentQuestionId, "GRADED", true, "정답");
+                case 1 -> insertAttempt(quizId, currentQuestionId, "GRADED", false, "오답");
+                case 2 -> insertAttempt(quizId, currentQuestionId, "GRADED", false, null);
+                case 3 -> insertAttempt(quizId, currentQuestionId, "SELF_CHECK_REQUIRED", null, "자기채점 답안");
+                default -> throw new IllegalStateException("Unexpected fixture question position: " + index);
+            }
+        }
+
+        JsonNode result = objectMapper.readTree(request("GET", "/api/quizzes/" + quizId + "/result", null).body());
+        JsonNode dashboard = objectMapper.readTree(request("GET", "/api/dashboard", null).body());
+        JsonNode recentQuiz = findRecentQuiz(dashboard.get("recentQuizzes"), quizId);
+
+        assertEquals(4, result.get("total").asInt());
+        assertEquals(1, result.get("correct").asInt());
+        assertEquals(1, result.get("wrong").asInt());
+        assertEquals(1, result.get("unanswered").asInt());
+        assertEquals(1, result.get("selfCheckPending").asInt());
+        assertEquals(1.0 / 3.0, result.get("accuracy").asDouble(), 0.0001);
+        assertEquals(3, recentQuiz.get("finalizedCount").asInt());
+        assertEquals(1, recentQuiz.get("correctCount").asInt());
+        assertEquals(1, recentQuiz.get("wrongCount").asInt());
+        assertEquals(1, recentQuiz.get("unansweredCount").asInt());
+        assertEquals(1, recentQuiz.get("pendingSelfCheckCount").asInt());
+        assertEquals(100.0 / 3.0, recentQuiz.get("accuracyPercent").asDouble(), 0.001);
+
+        assertEquals(200, request("PATCH",
+                "/api/quizzes/" + quizId + "/questions/" + pendingQuestionId + "/self-check",
+                "{\"correct\":true}").statusCode());
+        JsonNode checkedResult = objectMapper.readTree(request("GET", "/api/quizzes/" + quizId + "/result", null).body());
+        JsonNode updatedDashboard = objectMapper.readTree(request("GET", "/api/dashboard", null).body());
+        JsonNode updatedRecentQuiz = findRecentQuiz(updatedDashboard.get("recentQuizzes"), quizId);
+
+        assertEquals(0.5, checkedResult.get("accuracy").asDouble(), 0.0001);
+        assertEquals(50.0, updatedRecentQuiz.get("accuracyPercent").asDouble(), 0.001);
+        assertEquals(4, updatedRecentQuiz.get("finalizedCount").asInt());
+        assertEquals(0, updatedRecentQuiz.get("pendingSelfCheckCount").asInt());
+    }
+
     private long insertTopic(long areaId) {
         return jdbc.queryForObject(
                 "INSERT INTO topic (learning_area_id, content_key, slug, title, display_order) VALUES (?, 'dashboard-topic', 'dashboard-topic', 'Dashboard topic', 1) RETURNING id",
@@ -181,9 +235,26 @@ class DashboardIntegrationTest {
     }
 
     private long insertQuestion() {
+        return insertQuestion("dashboard-question");
+    }
+
+    private long insertQuestion(String contentKey) {
+        return insertQuestion(contentKey, "SHORT_ANSWER");
+    }
+
+    private long insertQuestion(String contentKey, String questionType) {
         return jdbc.queryForObject(
-                "INSERT INTO question (content_key, prompt_markdown, question_type, difficulty, status) VALUES ('dashboard-question', 'Question', 'SHORT_ANSWER', 'EASY', 'PUBLISHED') RETURNING id",
-                Long.class);
+                "INSERT INTO question (content_key, prompt_markdown, question_type, difficulty, status) VALUES (?, 'Question', ?, 'EASY', 'PUBLISHED') RETURNING id",
+                Long.class, contentKey, questionType);
+    }
+
+    private void insertAttempt(long quizId, long currentQuestionId, String status, Boolean correct, String answerText) {
+        Instant gradedAt = NOW.minusSeconds(200);
+        jdbc.update("""
+                INSERT INTO attempt (quiz_session_id, question_id, grading_status, correct, answer_text, answered_at, graded_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+                """, quizId, currentQuestionId, status, correct, answerText,
+                answerText == null ? null : sqlTimestamp(gradedAt), sqlTimestamp(gradedAt));
     }
 
     private long insertSession(String status, Instant startedAt) {
@@ -217,6 +288,13 @@ class DashboardIntegrationTest {
             if (quiz.get("pendingSelfCheckCount").asInt() == 1) return true;
         }
         return false;
+    }
+
+    private JsonNode findRecentQuiz(JsonNode quizzes, long quizId) {
+        for (JsonNode quiz : quizzes) {
+            if (quiz.get("quizId").asLong() == quizId) return quiz;
+        }
+        throw new AssertionError("Recent Quiz not found: " + quizId);
     }
 
     private static Timestamp sqlTimestamp(Instant instant) {

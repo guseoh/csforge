@@ -101,16 +101,17 @@ public class QuizApiMapper {
 
     public QuizResultResponse toResponse(QuizResultView view) {
         QuizSessionData data = view.data();
+        var performance = view.performance();
         return new QuizResultResponse(
                 data.session().getId(),
                 data.session().getStatus(),
                 data.session().getSource(),
-                view.summary().total(),
-                view.summary().correct(),
-                view.summary().wrong(),
-                view.summary().unanswered(),
-                view.summary().selfCheckPending(),
-                view.summary().accuracy(),
+                Math.toIntExact(performance.totalCount()),
+                Math.toIntExact(performance.correctCount()),
+                Math.toIntExact(performance.wrongCount()),
+                Math.toIntExact(performance.unansweredCount()),
+                Math.toIntExact(performance.selfCheckPendingCount()),
+                performance.accuracy(),
                 view.breakdown().stream().map(this::toBreakdownResponse).toList(),
                 data.quizQuestions().stream().map(item -> toResultQuestion(item, data)).toList());
     }

@@ -17,6 +17,7 @@ public record DashboardRecentQuizView(
         long finalizedCount,
         long correctCount,
         long wrongCount,
+        long unansweredCount,
         long pendingSelfCheckCount,
-        double accuracyPercent) {
+        Double accuracyPercent) {
 }

@@ -36,7 +36,7 @@ public class QuizResultCalculator {
         List<QuizBreakdownView> breakdownViews = breakdown.entrySet().stream()
                 .map(entry -> entry.getValue().toView(entry.getKey()))
                 .toList();
-        return new QuizResultView(data, total.toSummary(), breakdownViews);
+        return new QuizResultView(data, total.toPerformance(), breakdownViews);
     }
 
     private Set<TopicKey> relatedTopics(List<QuestionConceptSummary> links) {
@@ -70,10 +70,8 @@ public class QuizResultCalculator {
             }
         }
 
-        QuizResultSummary toSummary() {
-            int gradedAnswered = correct + wrong;
-            Double accuracy = gradedAnswered == 0 ? null : (double) correct / gradedAnswered;
-            return new QuizResultSummary(total, correct, wrong, unanswered, selfCheckPending, accuracy);
+        QuizPerformance toPerformance() {
+            return new QuizPerformance(total, correct, wrong, unanswered, selfCheckPending);
         }
 
         QuizBreakdownView toView(TopicKey key) {
