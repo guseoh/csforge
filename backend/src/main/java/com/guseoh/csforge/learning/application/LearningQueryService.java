@@ -92,6 +92,28 @@ public class LearningQueryService {
         return new ConceptPageView(result.items(), page);
     }
 
+    public LearningAreaOutlinePageView getAreaOutline(LearningAreaOutlineCriteria criteria) {
+        long totalElements = learningAreaQueryRepository.countAreaOutline(criteria.areaSlug());
+        if (totalElements == 0 && !learningAreaQueryRepository.existsActiveArea(criteria.areaSlug())) {
+            throw new LearningNotFoundException("Learning area not found: " + criteria.areaSlug());
+        }
+
+        int totalPages = totalElements == 0
+                ? 0
+                : (int) ((totalElements + criteria.size() - 1) / criteria.size());
+        int offset = Math.multiplyExact(criteria.page(), criteria.size());
+        List<LearningAreaOutlineConceptView> items = learningAreaQueryRepository.findAreaOutline(
+                criteria.areaSlug(), offset, criteria.size());
+        PageMetadataView page = new PageMetadataView(
+                criteria.page(),
+                criteria.size(),
+                totalElements,
+                totalPages,
+                criteria.page() + 1 < totalPages,
+                criteria.page() > 0);
+        return new LearningAreaOutlinePageView(items, page);
+    }
+
     public ConceptDetailView getConcept(long conceptId) {
         Concept concept = findPublishedConcept(conceptId);
         Topic topic = concept.getTopic();

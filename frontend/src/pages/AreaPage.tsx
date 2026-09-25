@@ -3,7 +3,7 @@ import { Link, useNavigate, useParams, useSearch } from '@tanstack/react-router'
 import { useQueries, useQuery } from '@tanstack/react-query'
 import { AreaLearningRail } from '../components/AreaLearningRail'
 import { EmptyState, ErrorState, PageSkeleton } from '../components/AsyncStates'
-import { getConcepts, getLearningArea, type LearningStatus } from '../lib/learning-api'
+import { getConcepts, getLearningArea, getLearningAreaOutline, type LearningStatus } from '../lib/learning-api'
 import { defaultLearningSearch, type LearningSearch } from '../lib/learning-search'
 import { defaultQuizSearch } from '../lib/quiz-search'
 
@@ -42,11 +42,19 @@ export function AreaPage() {
     queryKey: ['learning-area', areaSlug],
     queryFn: () => getLearningArea(areaSlug),
   })
-  const outlineQueries = useQueries({
-    queries: [0, 1].map((page) => ({
-      queryKey: ['learning-outline', areaSlug, page],
-      queryFn: () => getConcepts({ area: areaSlug, page, size: 100, sort: 'curriculum' }),
-    })),
+  const firstOutlineQuery = useQuery({
+    queryKey: ['learning-outline', areaSlug, 0],
+    queryFn: () => getLearningAreaOutline(areaSlug, 0),
+  })
+  const outlinePageCount = firstOutlineQuery.data?.page.totalPages ?? 1
+  const laterOutlineQueries = useQueries({
+    queries: Array.from({ length: Math.max(0, outlinePageCount - 1) }, (_, index) => {
+      const page = index + 1
+      return {
+        queryKey: ['learning-outline', areaSlug, page],
+        queryFn: () => getLearningAreaOutline(areaSlug, page),
+      }
+    }),
   })
   const conceptsQuery = useQuery({
     queryKey: ['concepts', areaSlug, search],
@@ -75,6 +83,7 @@ export function AreaPage() {
 
   const area = areaQuery.data
   const page = conceptsQuery.data?.page
+  const outlineQueries = [firstOutlineQuery, ...laterOutlineQueries]
   const outlineConcepts = outlineQueries.flatMap((query) => query.data?.items ?? [])
   const outlineIsPending = outlineQueries.some((query) => query.isPending)
   const outlineIsError = outlineQueries.some((query) => query.isError)

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import com.guseoh.csforge.learning.application.LearningAreaDetailView;
 import com.guseoh.csforge.learning.application.LearningAreaAttemptMetricsView;
+import com.guseoh.csforge.learning.application.LearningAreaOutlineConceptView;
 import com.guseoh.csforge.learning.application.LearningAreaQuestionMetricsView;
 import com.guseoh.csforge.learning.application.LearningAreaSummaryView;
 import com.guseoh.csforge.learning.application.TopicSummaryView;
@@ -142,6 +143,59 @@ public class LearningAreaQueryRepository {
                 found.getName(),
                 found.getDescription(),
                 findTopicSummaries(areaSlug)));
+    }
+
+    public List<LearningAreaOutlineConceptView> findAreaOutline(String areaSlug, int offset, int size) {
+        return entityManager.createQuery("""
+                        select new com.guseoh.csforge.learning.application.LearningAreaOutlineConceptView(
+                            c.id,
+                            t.id,
+                            c.title,
+                            c.summary,
+                            c.level,
+                            coalesce(cp.status, com.guseoh.csforge.learning.domain.LearningStatus.UNSEEN)
+                        )
+                        from Concept c
+                        join c.topic t
+                        join t.learningArea la
+                        left join ConceptProgress cp on cp.concept = c
+                        where la.slug = :areaSlug
+                          and la.active = true
+                          and t.active = true
+                          and c.status = com.guseoh.csforge.learning.domain.ContentStatus.PUBLISHED
+                        order by t.displayOrder, t.id, c.displayOrder, c.id
+                        """, LearningAreaOutlineConceptView.class)
+                .setParameter("areaSlug", areaSlug)
+                .setFirstResult(offset)
+                .setMaxResults(size)
+                .getResultList();
+    }
+
+    public long countAreaOutline(String areaSlug) {
+        return entityManager.createQuery("""
+                        select count(c.id)
+                        from Concept c
+                        join c.topic t
+                        join t.learningArea la
+                        where la.slug = :areaSlug
+                          and la.active = true
+                          and t.active = true
+                          and c.status = com.guseoh.csforge.learning.domain.ContentStatus.PUBLISHED
+                        """, Long.class)
+                .setParameter("areaSlug", areaSlug)
+                .getSingleResult();
+    }
+
+    public boolean existsActiveArea(String areaSlug) {
+        return !entityManager.createQuery("""
+                        select la.id
+                        from LearningArea la
+                        where la.slug = :areaSlug and la.active = true
+                        """, Long.class)
+                .setParameter("areaSlug", areaSlug)
+                .setMaxResults(1)
+                .getResultList()
+                .isEmpty();
     }
 
     private List<TopicSummaryView> findTopicSummaries(String areaSlug) {
