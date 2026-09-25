@@ -25,7 +25,7 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.pipeline-ilp.pipeline-stages"],
     "modelAnswer": "pipeline은 서로 다른 instruction의 stage를 겹쳐 완료 간격을 줄이는 구조다. instruction 하나는 여전히 여러 stage를 지나야 하고 stage 사이 pipeline register 비용도 생기므로 개별 지연 시간이 반드시 줄지는 않는다. 이상적인 steady state 처리량과 한 instruction의 종단 간 지연 시간을 구분해야 한다.",
-    "explanationMarkdown": "instruction 하나는 여전히 여러 stage를 지나야 하고 stage 사이 pipeline register 비용도 생기므로 개별 지연 시간이 반드시 줄지는 않는다. 이상적인 steady state 처리량과 한 instruction의 종단 간 지연 시간을 구분해야 한다."
+    "explanationMarkdown": "Pipeline은 독립된 instruction의 진행을 겹쳐 다음 instruction을 시작하는 간격을 줄일 수 있지만, 한 instruction 자체는 필요한 모든 stage를 통과한다. 여기에 stage 경계의 pipeline register와 clock 조건도 있으므로 overlap으로 처리량이 좋아져도 단일 instruction의 종단 간 지연 시간이 줄었다고 결론낼 수는 없다."
   },
   {
     "kind": "question",
@@ -64,7 +64,7 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.pipeline-ilp.pipeline-hazards"],
     "modelAnswer": "structural hazard는 같은 cycle에 필요한 hardware resource가 부족할 때 생기며 resource 구성 변경이나 scheduling/stall로 처리한다. data hazard는 필요한 operand가 아직 준비되지 않았을 때 생기며 forwarding이나 stall, out-of-order scheduling 등을 사용한다. control hazard는 다음 PC가 확정되지 않았을 때 생기며 branch prediction으로 진행하고 예측 실패 시 flush와 redirect로 복구한다.",
-    "explanationMarkdown": "data hazard는 필요한 operand가 아직 준비되지 않았을 때 생기며 forwarding이나 stall, out-of-order scheduling 등을 사용한다. control hazard는 다음 PC가 확정되지 않았을 때 생기며 branch prediction으로 진행하고 예측 실패 시 flush와 redirect로 복구한다."
+    "explanationMarkdown": "세 hazard는 각기 다른 준비 조건을 가리킨다. Structural hazard는 같은 시점에 필요한 hardware resource 충돌을, data hazard는 operand availability를, control hazard는 다음 PC 결정을 막는 branch 결과를 뜻한다. Resource 복제·stall, forwarding·stall, prediction·flush/redirect처럼 원인에 맞춰 대응한다."
   },
   {
     "kind": "question",
@@ -75,7 +75,7 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.pipeline-ilp.pipeline-hazards"],
     "modelAnswer": "뒤 write가 앞 read를 추월하면 WAR(Write After Read) name dependency가 문제가 된다. 두 instruction이 실제로 같은 생산된 값을 공유해야 하는 RAW true dependency는 아니므로 architectural register 이름을 서로 다른 physical register로 rename하면 불필요한 충돌을 제거할 수 있다. renaming은 true dependency를 제거하는 것이 아니라 이름 재사용으로 생긴 false dependency를 제거한다.",
-    "explanationMarkdown": "두 instruction이 실제로 같은 생산된 값을 공유해야 하는 RAW true dependency는 아니므로 architectural register 이름을 서로 다른 physical register로 rename하면 불필요한 충돌을 제거할 수 있다. renaming은 true dependency를 제거하는 것이 아니라 이름 재사용으로 생긴 false dependency를 제거한다."
+    "explanationMarkdown": "WAR는 이름 재사용 때문에 생기는 false dependency라 physical register를 분리하면 독립적으로 실행할 수 있다. RAW는 앞 instruction이 만든 값을 뒤 instruction이 실제로 읽으므로 renaming 후에도 기다려야 한다. 이 구분이 out-of-order 실행에서 없앨 수 있는 제약과 유지할 의존성을 나눈다."
   },
   {
     "kind": "question",
@@ -103,7 +103,7 @@
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.pipeline-ilp.forwarding-and-stall"],
     "modelAnswer": "ALU instruction의 결과는 execute stage가 끝날 때 이미 준비될 수 있지만 load 값은 memory access가 끝난 뒤에야 얻어진다. 바로 다음 consumer가 execute stage에서 operand를 필요로 하는 시점보다 load 결과가 늦게 준비되면 forwarding도 아직 존재하지 않는 값을 전달할 수 없다. 그래서 consumer를 잠시 멈추고 bubble을 넣은 뒤 값이 준비되면 전달해야 한다. 정확한 stall cycle 수는 pipeline과 memory 지연 시간에 따라 달라질 수 있다.",
-    "explanationMarkdown": "바로 다음 consumer가 execute stage에서 operand를 필요로 하는 시점보다 load 결과가 늦게 준비되면 forwarding도 아직 존재하지 않는 값을 전달할 수 없다. 그래서 consumer를 잠시 멈추고 bubble을 넣은 뒤 값이 준비되면 전달해야 한다. 정확한 stall cycle 수는 pipeline과 memory 지연 시간에 따라 달라질 수 있다."
+    "explanationMarkdown": "Forwarding은 producer 결과가 준비된 뒤 consumer에게 전달하는 경로이지 값을 미리 계산하는 기능은 아니다. Load-use 상황에서는 consumer의 사용 시점이 load의 memory access 완료보다 빠를 수 있어 bubble로 두 시점을 맞춘다. 필요한 stall 수는 pipeline과 memory 지연 시간에 따라 달라진다."
   },
   {
     "kind": "question",

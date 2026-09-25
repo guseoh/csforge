@@ -196,6 +196,6 @@
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.sequential.array-vs-linked"],
     "modelAnswer": "삭제 대상 위치를 찾는 비용이 O(n)이면 link 변경 O(1)의 이점이 줄어든다. linked node의 pointer/allocator overhead와 낮은 locality도 비용이 될 수 있다. 반대로 array는 이동 비용이 있지만 연속 배치와 별도 index의 조합이 유리할 수 있으므로 실제 operation sequence를 봐야 한다.",
-    "explanationMarkdown": "linked node의 pointer/allocator overhead와 낮은 locality도 비용이 될 수 있다. 반대로 array는 이동 비용이 있지만 연속 배치와 별도 index의 조합이 유리할 수 있으므로 실제 operation sequence를 봐야 한다."
+    "explanationMarkdown": "Linked list의 O(1) 삭제는 node를 이미 찾은 뒤의 link 변경만 가리킨다. 위치 탐색이 선형이면 그 비용이 지배할 수 있고, pointer chasing은 cache locality도 낮추므로 실제 연산 순서와 node 탐색 방법을 함께 비교해야 한다."
   }
 ]

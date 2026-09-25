@@ -253,6 +253,6 @@
     "status": "PUBLISHED",
     "conceptKeys": ["dsa.core.complexity.invariant-correctness"],
     "modelAnswer": "Doubly linked list는 인접 node에 대해 next/prev 관계가 서로 일치해야 한다. 한 방향만 수정하면 `next.prev`가 삭제된 X를 계속 가리켜 invariant가 깨진다. Forward traversal 하나는 우연히 성공해도 reverse traversal이나 다음 delete가 stale link를 따라가 실패할 수 있으므로 operation 종료 시 전체 link invariant를 복원해야 한다.",
-    "explanationMarkdown": "한 방향만 수정하면 `next.prev`가 삭제된 X를 계속 가리켜 invariant가 깨진다. Forward traversal 하나는 우연히 성공해도 reverse traversal이나 다음 delete가 stale link를 따라가 실패할 수 있으므로 operation 종료 시 전체 link invariant를 복원해야 한다."
+    "explanationMarkdown": "양방향 연결은 forward traversal 하나로 검증되지 않는다. 끊긴 `prev`가 남으면 reverse traversal뿐 아니라 그 node를 기준으로 한 다음 삽입·삭제도 잘못된 연결을 전파하므로 각 수정 연산이 양쪽 관계를 함께 복원해야 한다."
   }
 ]

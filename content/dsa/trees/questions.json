@@ -294,7 +294,7 @@
     "status":"PUBLISHED",
     "conceptKeys":["dsa.core.trees.trie"],
     "modelAnswer":"대부분 child slot이 비어 큰 memory 낭비가 생긴다. sparse map이나 compressed representation으로 memory를 줄일 수 있지만 child lookup에 hash/tree/pointer overhead가 추가될 수 있다.",
-    "explanationMarkdown": "sparse map이나 compressed representation으로 memory를 줄일 수 있지만 child lookup에 hash/tree/pointer overhead가 추가될 수 있다."
+    "explanationMarkdown": "고정 child array는 실제 edge 수와 무관하게 alphabet 크기만큼 slot을 모든 node에 할당한다. Sparse map은 빈 slot을 줄이는 대신 pointer/lookup 비용을 추가하므로 memory 절약과 lookup 비용을 workload로 비교해야 한다."
   },
   {
     "kind":"question",
