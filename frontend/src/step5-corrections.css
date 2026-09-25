@@ -87,8 +87,8 @@
 
 .quiz-result-stat-grid .pending-stat,
 .self-check-banner {
-  border-color: #e4cf9d;
-  background: #fffaf0;
+  border-color: var(--state-warning-border);
+  background: var(--state-warning-surface);
 }
 
 .quiz-config-panel,
@@ -163,8 +163,8 @@
   padding: 0.06em 0.2em;
   border: 0;
   border-radius: 3px;
-  color: #34404c;
-  background: #eef1f4;
+  color: var(--text-code);
+  background: var(--surface-code);
   font-size: 0.92em;
   font-weight: 500;
 }
@@ -178,10 +178,10 @@
   max-width: 100%;
   margin: 1.35em 0 1.65em;
   padding: 13px 15px;
-  border: 1px solid #e2e6ea;
+  border: 1px solid var(--border-code);
   border-radius: 5px;
-  color: #303942;
-  background: #f7f8f9;
+  color: var(--text-code);
+  background: var(--surface-code);
   font-size: 0.92rem;
   line-height: 1.62;
   box-shadow: none;
@@ -201,14 +201,14 @@
 
 .concept-reading-content pre:has(code.language-java) {
   padding-top: 31px;
-  border-color: #e2e6ea;
-  background: #f7f8f9;
+  border-color: var(--border-code);
+  background: var(--surface-code);
 }
 
 .concept-reading-content pre:has(code.language-java)::before {
   top: 10px;
   left: 16px;
-  color: #7f8993;
+  color: var(--text-muted);
   font-family: var(--font-sans);
   font-size: 0.64rem;
   font-weight: 700;
@@ -217,12 +217,12 @@
   content: 'Java';
 }
 
-.concept-reading-content pre code.language-java .code-keyword,
-.concept-reading-content pre code.language-java .code-type,
-.concept-reading-content pre code.language-java .code-annotation { color: #465d73; }
-.concept-reading-content pre code.language-java .code-string,
-.concept-reading-content pre code.language-java .code-number { color: #4b5560; }
-.concept-reading-content pre code.language-java .code-comment { color: #626d78; }
+.concept-reading-content pre code.language-java .code-keyword { color: var(--syntax-keyword); }
+.concept-reading-content pre code.language-java .code-type { color: var(--syntax-type); }
+.concept-reading-content pre code.language-java .code-annotation { color: var(--syntax-annotation); }
+.concept-reading-content pre code.language-java .code-string { color: var(--syntax-string); }
+.concept-reading-content pre code.language-java .code-number { color: var(--syntax-number); }
+.concept-reading-content pre code.language-java .code-comment { color: var(--syntax-comment); }
 
 /* 5-D — Structured learning elements: calmer callouts and scan-friendly tables. */
 .markdown-content blockquote,
@@ -289,7 +289,7 @@
 .markdown-content th,
 .concept-reading-content th {
   color: var(--text-strong);
-  background: #f6f7f8;
+  background: var(--surface-interactive);
   font-weight: 700;
 }
 
@@ -306,7 +306,7 @@
 
 .markdown-content tbody tr:hover td,
 .concept-reading-content tbody tr:hover td {
-  background: #fafbfd;
+  background: var(--surface-interactive);
 }
 
 .answer-block,

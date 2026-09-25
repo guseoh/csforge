@@ -6,6 +6,14 @@
     <meta name="theme-color" content="#10131a" />
     <meta name="description" content="CSForge local-first computer science learning workspace" />
     <title>CSForge</title>
+    <script>
+      try {
+        const preference = localStorage.getItem('csforge.theme.v1')
+        if (preference === 'light' || preference === 'dark') document.documentElement.dataset.theme = preference
+      } catch {
+        // System preference remains available when storage is blocked.
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>

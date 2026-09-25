@@ -22,6 +22,22 @@ public class JpaSearchQueryGateway implements SearchQueryGateway {
 
     private static final String SEARCH_VIEW = "search_document_view";
     private static final String LIKE_ESCAPE = " ESCAPE '\\'";
+    private static final String QUESTION_NAVIGATION_JOIN = """
+            left join lateral (
+                select linked_concept.id as concept_id
+                from question_concept question_link
+                join concept linked_concept on linked_concept.id = question_link.concept_id
+                join topic linked_topic on linked_topic.id = linked_concept.topic_id
+                join learning_area linked_area on linked_area.id = linked_topic.learning_area_id
+                where question_link.question_id = d.question_id
+                  and linked_concept.status = 'PUBLISHED'
+                  and linked_topic.active = true
+                  and linked_area.active = true
+                order by linked_area.display_order, linked_topic.display_order,
+                         linked_concept.display_order, linked_concept.id
+                limit 1
+            ) question_navigation on d.document_type = 'QUESTION'
+            """;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -52,7 +68,12 @@ public class JpaSearchQueryGateway implements SearchQueryGateway {
         String prefix = likePattern(normalizedQuery) + "%";
         String contains = "%" + likePattern(normalizedQuery) + "%";
         Query suggestionQuery = entityManager.createNativeQuery("""
-                select document_type, source_id, title, concept_id, question_id, reference_url
+                select d.document_type,
+                       d.source_id,
+                       d.title,
+                       case when d.document_type = 'QUESTION' then question_navigation.concept_id else d.concept_id end,
+                       d.question_id,
+                       d.reference_url
                 from (
                     select d.document_type,
                            d.source_id,
@@ -71,9 +92,10 @@ public class JpaSearchQueryGateway implements SearchQueryGateway {
                     from search_document_view d
                     where lower(d.title) like :prefix escape '\\'
                        or lower(d.title) like :contains escape '\\'
-                ) ranked
-                where title_rank = 1
-                order by prefix_rank, length(title), lower(title), document_key
+                ) d
+                """ + QUESTION_NAVIGATION_JOIN + """
+                where d.title_rank = 1
+                order by d.prefix_rank, length(d.title), lower(d.title), d.document_key
                 """)
                 .setParameter("prefix", prefix)
                 .setParameter("contains", contains)
@@ -106,11 +128,11 @@ public class JpaSearchQueryGateway implements SearchQueryGateway {
                        d.topic_titles,
                        d.levels,
                        d.updated_at,
-                       d.concept_id,
+                       case when d.document_type = 'QUESTION' then question_navigation.concept_id else d.concept_id end,
                        d.question_id,
                        d.reference_url
                 from search_document_view d
-                """;
+                """ + QUESTION_NAVIGATION_JOIN;
         StringBuilder builder = new StringBuilder(sql);
         appendSearchFilters(builder, criteria, queryTerms);
         builder.append(" order by ");

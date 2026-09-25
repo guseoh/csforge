@@ -101,7 +101,7 @@
 
 .recent-concept-row:hover {
   color: var(--text-strong);
-  background: #fafbfc;
+  background: var(--surface-interactive);
   transform: none;
 }
 
@@ -150,7 +150,7 @@
 }
 
 .area-row:hover {
-  background: #fafbfc;
+  background: var(--surface-interactive);
   transform: none;
 }
 
@@ -378,7 +378,7 @@
 
 .rail-topic:hover {
   color: var(--text-strong);
-  background: #fafbfc;
+  background: var(--surface-interactive);
   transform: none;
 }
 
@@ -507,7 +507,7 @@
 .topic-concept-row:hover {
   padding-left: 4px;
   color: var(--text-strong);
-  background: #fafbfc;
+  background: var(--surface-interactive);
   transform: none;
 }
 
@@ -619,7 +619,7 @@
 
 .area-guide-page .concept-list-item:hover {
   color: var(--text-strong);
-  background: #fafbfc;
+  background: var(--surface-interactive);
   transform: none;
 }
 

@@ -284,7 +284,7 @@
 .topic-outline > summary { cursor: pointer; list-style: none; }
 .topic-outline > summary::-webkit-details-marker { display: none; }
 .topic-outline > summary:focus-visible { outline: 2px solid var(--accent); outline-offset: -3px; }
-.topic-outline[open] { border-color: var(--border-accent); box-shadow: 0 12px 28px rgb(0 0 0 / 13%); }
+.topic-outline[open] { border-color: var(--border-accent); box-shadow: 0 12px 28px rgb(var(--shadow-rgb) / 13%); }
 .topic-outline[open] > .topic-outline-heading { border-bottom-color: var(--border-accent); }
 
 .topic-outline:hover {

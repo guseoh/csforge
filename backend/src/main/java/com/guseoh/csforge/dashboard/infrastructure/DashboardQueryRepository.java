@@ -138,15 +138,16 @@ public class DashboardQueryRepository {
                                count(attempt.id) as attemptCount,
                                count(case when attempt.gradingStatus in (
                                    com.guseoh.csforge.quiz.domain.AttemptGradingStatus.GRADED,
-                                   com.guseoh.csforge.quiz.domain.AttemptGradingStatus.SELF_CHECKED) then 1 end) as finalizedCount,
-                               count(case when attempt.gradingStatus in (
-                                   com.guseoh.csforge.quiz.domain.AttemptGradingStatus.GRADED,
                                    com.guseoh.csforge.quiz.domain.AttemptGradingStatus.SELF_CHECKED)
                                    and attempt.correct = true then 1 end) as correctCount,
                                count(case when attempt.gradingStatus in (
                                    com.guseoh.csforge.quiz.domain.AttemptGradingStatus.GRADED,
                                    com.guseoh.csforge.quiz.domain.AttemptGradingStatus.SELF_CHECKED)
-                                   and attempt.correct = false then 1 end) as wrongCount,
+                                   and attempt.correct = false and attempt.answeredAt is not null then 1 end) as wrongCount,
+                               count(case when attempt.gradingStatus in (
+                                   com.guseoh.csforge.quiz.domain.AttemptGradingStatus.GRADED,
+                                   com.guseoh.csforge.quiz.domain.AttemptGradingStatus.SELF_CHECKED)
+                                   and attempt.correct = false and attempt.answeredAt is null then 1 end) as unansweredCount,
                                count(case when attempt.gradingStatus =
                                    com.guseoh.csforge.quiz.domain.AttemptGradingStatus.SELF_CHECK_REQUIRED then 1 end) as pendingSelfCheckCount
                         from Attempt attempt
@@ -158,9 +159,9 @@ public class DashboardQueryRepository {
                 .map(row -> new DashboardQuizAttemptAggregateProjection(
                         row.get("quizId", Long.class),
                         count(row, "attemptCount"),
-                        count(row, "finalizedCount"),
                         count(row, "correctCount"),
                         count(row, "wrongCount"),
+                        count(row, "unansweredCount"),
                         count(row, "pendingSelfCheckCount")))
                 .toList();
     }

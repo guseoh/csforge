@@ -78,6 +78,9 @@ class PostgresSearchIntegrationTest {
         assertEquals(Set.of(SearchDocumentType.CONCEPT, SearchDocumentType.QUESTION,
                 SearchDocumentType.PERSONAL_NOTE, SearchDocumentType.WRONG_NOTE, SearchDocumentType.REFERENCE),
                 allTypes.items().stream().map(SearchResultItem::documentType).collect(Collectors.toSet()));
+        SearchResultItem questionResult = search(criteria("SearchMarker", List.of(SearchDocumentType.QUESTION),
+                List.of(), List.of(), List.of(), SearchSort.RELEVANCE, 0, 20)).items().getFirst();
+        assertEquals(fixture.databaseConceptId(), questionResult.conceptId());
 
         SearchPageView conceptByArea = search(criteria("SharedFilterMarker", List.of(SearchDocumentType.CONCEPT),
                 List.of("database"), List.of(), List.of(), SearchSort.RELEVANCE, 0, 20));
@@ -107,6 +110,12 @@ class PostgresSearchIntegrationTest {
         List<SearchSuggestionView> suggestions = searchQueryService.suggest("Alpha", 8);
         assertFalse(suggestions.isEmpty());
         assertEquals("Alpha SharedFilterMarker", suggestions.getFirst().title());
+
+        SearchSuggestionView questionSuggestion = searchQueryService.suggest("SearchMarker question", 8).stream()
+                .filter(item -> item.documentType() == SearchDocumentType.QUESTION)
+                .findFirst()
+                .orElseThrow();
+        assertEquals(fixture.databaseConceptId(), questionSuggestion.conceptId());
     }
 
     @Test
@@ -187,8 +196,9 @@ class PostgresSearchIntegrationTest {
                 insert into question (content_key, prompt_markdown, question_type, difficulty, status, explanation_markdown)
                 values ('search.it.question', 'SearchMarker question prompt', 'SHORT_ANSWER', 'MEDIUM', 'PUBLISHED', 'SearchMarker explanation')
                 returning id
-                """, Long.class);
+        """, Long.class);
         jdbc.update("insert into question_concept (question_id, concept_id) values (?, ?)", questionId, zuluConceptId);
+        jdbc.update("insert into question_concept (question_id, concept_id) values (?, ?)", questionId, alphaConceptId);
         jdbc.update("insert into personal_note (concept_id, content) values (?, 'SearchMarker personal note')", zuluConceptId);
         jdbc.update("""
                 insert into wrong_note (question_id, status, wrong_count, first_wrong_at, last_wrong_at, cause_note)
@@ -201,7 +211,7 @@ class PostgresSearchIntegrationTest {
                 """, Long.class);
         jdbc.update("insert into concept_reference (concept_id, reference_id, display_order, relation_note) values (?, ?, 0, 'SearchMarker relation')", zuluConceptId, referenceId);
         jdbc.update("update concept set updated_at = current_timestamp - interval '1 minute' where id = ?", zuluConceptId);
-        return new Fixture(zuluConceptId, questionId, "search.it.database.topic");
+        return new Fixture(zuluConceptId, alphaConceptId, questionId, "search.it.database.topic");
     }
 
     private long insertTopic(long areaId, String contentKey, String title, boolean active) {
@@ -233,6 +243,6 @@ class PostgresSearchIntegrationTest {
         return new SearchCriteria(query, types, areas, topics, levels, sort, page, size);
     }
 
-    private record Fixture(long conceptId, long questionId, String databaseTopicKey) {
+    private record Fixture(long conceptId, long databaseConceptId, long questionId, String databaseTopicKey) {
     }
 }

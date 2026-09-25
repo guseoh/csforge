@@ -133,7 +133,7 @@
 
 .import-dropzone:focus-within {
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgb(78 161 255 / 12%);
+  box-shadow: 0 0 0 3px var(--focus-glow);
 }
 
 .import-file-input {

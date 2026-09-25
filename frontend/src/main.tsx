@@ -5,6 +5,7 @@ import { RouterProvider } from '@tanstack/react-router'
 import { router } from './router'
 import { ApiRequestError } from './lib/http'
 import { ToastProvider } from './components/toast/ToastProvider'
+import { ThemeProvider } from './components/ThemeProvider'
 import './styles.css'
 import './search.css'
 import './dashboard.css'
@@ -54,9 +55,11 @@ const queryClient = new QueryClient({
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
-      <ToastProvider>
-        <RouterProvider router={router} />
-      </ToastProvider>
+      <ThemeProvider>
+        <ToastProvider>
+          <RouterProvider router={router} />
+        </ToastProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   </StrictMode>,
 )

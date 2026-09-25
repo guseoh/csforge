@@ -12,7 +12,7 @@ const timingLabels: Record<ReviewTiming, string> = {
   DUE_NOW: '지금 복습',
   NEXT_24H: '24시간 내',
   NEXT_7D: '7일 내',
-  SCHEDULED: '예정됨',
+  SCHEDULED: '복습 예정',
   MASTERED: '정리 완료',
 }
 

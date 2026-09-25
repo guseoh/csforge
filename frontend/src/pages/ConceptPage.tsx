@@ -252,7 +252,7 @@ function BookmarkButton({ conceptId, bookmarked }: { conceptId: number; bookmark
   })
   return (
     <button className="text-button concept-bookmark-button" type="button" aria-pressed={bookmarked} disabled={mutation.isPending} onClick={() => mutation.mutate()}>
-      {mutation.isPending ? '저장 중…' : bookmarked ? '북마크 해제' : '북마크'}
+      {mutation.isPending ? '저장 중' : bookmarked ? '북마크 해제' : '북마크'}
     </button>
   )
 }
@@ -292,7 +292,7 @@ function ProgressActionButton({
       disabled={mutation.isPending || active}
       onClick={() => mutation.mutate()}
     >
-      {mutation.isPending ? '저장 중…' : label}
+      {mutation.isPending ? '저장 중' : label}
     </button>
   )
 }

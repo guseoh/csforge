@@ -21,9 +21,13 @@ describe('Search UI helpers', () => {
 
   it('resolves palette navigation by document type', () => {
     const concept: SearchSuggestion = { documentType: 'CONCEPT', sourceId: 1, title: 'JMM', conceptId: 7, questionId: null, referenceUrl: null }
+    const question: SearchSuggestion = { documentType: 'QUESTION', sourceId: 4, title: 'JMM question', conceptId: 8, questionId: 4, referenceUrl: null }
+    const unlinkedQuestion: SearchSuggestion = { ...question, conceptId: null }
     const wrongNote: SearchSuggestion = { documentType: 'WRONG_NOTE', sourceId: 2, title: 'Race', conceptId: 7, questionId: 11, referenceUrl: null }
     const reference: SearchSuggestion = { documentType: 'REFERENCE', sourceId: 3, title: 'JLS', conceptId: 7, questionId: null, referenceUrl: 'https://example.com' }
     expect(primarySearchDestination(concept)).toEqual({ kind: 'concept', conceptId: 7 })
+    expect(primarySearchDestination(question)).toEqual({ kind: 'concept', conceptId: 8 })
+    expect(primarySearchDestination(unlinkedQuestion)).toBeNull()
     expect(primarySearchDestination(wrongNote)).toEqual({ kind: 'wrong-note', questionId: 11 })
     expect(primarySearchDestination(reference)).toEqual({ kind: 'external', url: 'https://example.com' })
   })

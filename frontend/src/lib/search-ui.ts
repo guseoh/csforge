@@ -44,16 +44,16 @@ export function addRecentSearch(recent: string[], query: string, maxSize = 6): s
 }
 
 export function primarySearchDestination(item: SearchResultItem | SearchSuggestion): SearchDestination | null {
-  if (item.documentType === 'WRONG_NOTE' && item.questionId != null) {
-    return { kind: 'wrong-note', questionId: item.questionId }
+  switch (item.documentType) {
+    case 'WRONG_NOTE':
+      return item.questionId == null ? null : { kind: 'wrong-note', questionId: item.questionId }
+    case 'REFERENCE':
+      return item.referenceUrl ? { kind: 'external', url: item.referenceUrl } : null
+    case 'QUESTION':
+    case 'CONCEPT':
+    case 'PERSONAL_NOTE':
+      return item.conceptId == null ? null : { kind: 'concept', conceptId: item.conceptId }
   }
-  if (item.documentType === 'REFERENCE' && item.referenceUrl) {
-    return { kind: 'external', url: item.referenceUrl }
-  }
-  if (item.conceptId != null) {
-    return { kind: 'concept', conceptId: item.conceptId }
-  }
-  return null
 }
 
 export function relatedConceptDestination(item: SearchResultItem | SearchSuggestion): SearchDestination | null {

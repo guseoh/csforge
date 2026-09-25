@@ -4,8 +4,8 @@ package com.guseoh.csforge.dashboard.infrastructure;
 public record DashboardQuizAttemptAggregateProjection(
         long quizId,
         long attemptCount,
-        long finalizedCount,
         long correctCount,
         long wrongCount,
+        long unansweredCount,
         long pendingSelfCheckCount) {
 }

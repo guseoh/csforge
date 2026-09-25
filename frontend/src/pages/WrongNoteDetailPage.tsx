@@ -21,7 +21,7 @@ import { useWrongNotePersistence } from '../lib/use-wrong-note-persistence'
 
 const questionTypeLabels = { MULTIPLE_CHOICE: '객관식', SHORT_ANSWER: '단답형', DESCRIPTIVE: '서술형', SCENARIO: '시나리오' }
 const difficultyLabels = { EASY: '쉬움', MEDIUM: '보통', HARD: '어려움' }
-const gradingStatusLabels: Record<string, string> = { GRADED: '채점 완료', SELF_CHECKED: '자기 채점 완료', SELF_CHECK_REQUIRED: '자기 채점 대기', UNANSWERED: '미답변' }
+const gradingStatusLabels: Record<string, string> = { GRADED: '채점 완료', SELF_CHECKED: '자기채점 완료', SELF_CHECK_REQUIRED: '자기채점 대기', UNANSWERED: '미답변' }
 const sourceLabels: Record<string, string> = { STANDARD: '일반 문제', WRONG_RETRY: '오답 다시 풀기', REVIEW: '복습' }
 
 function sourceLabel(source: string) {
@@ -189,7 +189,7 @@ export function WrongNoteDetailPage() {
         <h2>왜 틀렸을까요?</h2>
         <p className="helper-text">실수 원인과 다음 풀이에서 확인할 기준을 짧게 남겨두세요.</p>
         <textarea rows={5} value={note} onChange={(event) => updateNote(event.target.value)} placeholder="실수 원인과 다음에 확인할 점을 적어보세요." />
-        <p className={`save-state ${noteMutation.isError ? 'error' : noteMutation.isPending ? 'saving' : dirty ? 'saving' : 'saved'}`}>{noteMutation.isError ? '저장 실패' : noteMutation.isPending ? '저장 중…' : dirty ? '변경 사항 저장 대기 중' : '저장됨'} · Ctrl/Cmd+S</p>
+        <p className={`save-state ${noteMutation.isError ? 'error' : noteMutation.isPending ? 'saving' : dirty ? 'saving' : 'saved'}`}>{noteMutation.isError ? '저장 실패' : noteMutation.isPending ? '저장 중' : dirty ? '변경 사항 저장 대기 중' : '저장됨'} · Ctrl/Cmd+S</p>
       </section>
 
       <section className="detail-section related-learning-section wrong-note-secondary-section">

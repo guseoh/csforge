@@ -358,12 +358,12 @@
   width: 12px;
   height: 12px;
   border-radius: 2px;
-  background: #293435;
+  background: var(--heatmap-level-0);
 }
 
-.heatmap-cell.level-1 { background: #294967; }
-.heatmap-cell.level-2 { background: #3971a1; }
-.heatmap-cell.level-3 { background: var(--accent); }
+.heatmap-cell.level-1 { background: var(--heatmap-level-1); }
+.heatmap-cell.level-2 { background: var(--heatmap-level-2); }
+.heatmap-cell.level-3 { background: var(--heatmap-level-3); }
 
 .heatmap-legend {
   display: flex;

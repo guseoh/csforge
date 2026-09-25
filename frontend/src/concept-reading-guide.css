@@ -297,7 +297,7 @@
   padding: 14px;
   border-color: var(--border-default);
   border-radius: 10px;
-  box-shadow: 0 14px 38px rgb(0 0 0 / 18%);
+  box-shadow: 0 14px 38px rgb(var(--shadow-rgb) / 18%);
 }
 
 .concept-reading-content table {

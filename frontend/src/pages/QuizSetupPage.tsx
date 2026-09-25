@@ -20,7 +20,7 @@ import {
   type QuizQuickPreset,
   type QuizSearch,
 } from '../lib/quiz-search'
-import { canStartQuiz, quizAvailabilityState } from '../lib/quiz-availability'
+import { canStartQuiz, effectiveQuizCount, quizAvailabilityState } from '../lib/quiz-availability'
 
 const rememberedSettingsKey = 'csforge.quiz.setup'
 const questionTypes: { value: QuestionType; label: string }[] = [
@@ -159,8 +159,10 @@ export function QuizSetupPage() {
     queryKey: ['quiz-availability', filterPayload],
     queryFn: () => getQuizAvailability(filterPayload),
   })
+  const questionCountAvailable = availabilityQuery.data?.availableCount
+  const effectiveCount = effectiveQuizCount(settings.count, questionCountAvailable, settings.concepts.length > 0)
   const createMutation = useMutation({
-    mutationFn: () => createQuiz(settings),
+    mutationFn: () => createQuiz({ ...settings, count: effectiveCount }),
     onSuccess: (quiz) => void navigate({ to: '/quiz/$quizId', params: { quizId: String(quiz.quizId) } }),
   })
 
@@ -209,8 +211,8 @@ export function QuizSetupPage() {
     const next = { ...settings, [key]: value }
     navigateToSettings(searchFromSettings(next))
   }
-  const questionCountAvailable = availabilityQuery.data?.availableCount
-  const availabilityState = quizAvailabilityState(questionCountAvailable, settings.count, availabilityQuery.isPending, availabilityQuery.isError)
+  const availabilityState = quizAvailabilityState(questionCountAvailable, effectiveCount, availabilityQuery.isPending, availabilityQuery.isError)
+  const conceptScopedShortage = effectiveCount < settings.count
   const selectedPreset = quickPreset(settings)
   const hasDetailedSettings = Boolean(
     settings.areas.length
@@ -226,7 +228,9 @@ export function QuizSetupPage() {
     ? '선택된 조건의 문항 수를 확인하는 중입니다…'
     : availabilityState === 'ERROR'
       ? '문항 수를 확인한 뒤 시작할 수 있습니다.'
-      : `현재 조건에서 ${questionCountAvailable}문항을 사용할 수 있습니다.`
+      : conceptScopedShortage
+        ? `이 개념에서 ${effectiveCount}문항을 사용할 수 있습니다.`
+        : `현재 조건에서 ${questionCountAvailable}문항을 사용할 수 있습니다.`
 
   return (
     <section className="page-section quiz-page quiz-setup-page">
@@ -362,7 +366,7 @@ export function QuizSetupPage() {
 
       <div className="quiz-unified-start" aria-label="문제 풀이 시작">
         <div>
-          <strong>{settings.count}문제</strong>
+          <strong>{effectiveCount}문제</strong>
           <span className={availabilityState === 'INSUFFICIENT' || availabilityState === 'ERROR' ? 'helper-text error-text' : 'helper-text'}>{availabilityMessage}</span>
         </div>
         <div className="quiz-unified-start-actions">
@@ -373,7 +377,7 @@ export function QuizSetupPage() {
             disabled={!canStartQuiz(availabilityState, createMutation.isPending)}
             onClick={() => createMutation.mutate()}
           >
-            {createMutation.isPending ? '문제 준비 중…' : '선택 조건으로 시작'}
+            {createMutation.isPending ? '문제 준비 중…' : conceptScopedShortage ? `가능한 ${effectiveCount}문항으로 시작` : '선택 조건으로 시작'}
           </button>
         </div>
       </div>

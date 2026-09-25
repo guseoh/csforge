@@ -8,7 +8,7 @@ import { RelatedConceptPracticeActions } from '../components/RelatedConceptPract
 import { ApiRequestError } from '../lib/http'
 import { getQuizResult, retryWrongQuiz, retryWrongQuizQuestion, selfCheckQuizQuestion, type QuizQuestionResult } from '../lib/quiz-api'
 import { defaultQuizSearch } from '../lib/quiz-search'
-import { hasUnresolvedSelfCheck } from '../lib/quiz-result'
+import { hasSubmittedAnswer, hasUnresolvedSelfCheck } from '../lib/quiz-result'
 import { compactMarkdownPreview } from '../lib/markdown'
 
 function sourceLabel(source: string) {
@@ -123,17 +123,24 @@ function QuestionResultCard({ quizId, question, defaultOpen = false, hasPendingS
     mutationFn: () => retryWrongQuizQuestion(quizId, question.questionId),
     onSuccess: (quiz) => void navigate({ to: '/quiz/$quizId', params: { quizId: String(quiz.quizId) } }),
   })
+  const isUnanswered = !hasSubmittedAnswer(question)
   const stateLabel = question.gradingStatus === 'SELF_CHECK_REQUIRED'
-    ? '자기 채점 대기'
-    : question.correct
-      ? '정답'
-      : question.gradingStatus === 'UNANSWERED'
-        ? '미답변'
+    ? '자기채점 대기'
+    : isUnanswered
+      ? '미답변'
+      : question.correct
+        ? '정답'
         : '오답'
-  const stateClass = question.correct === true ? 'correct' : question.correct === false ? 'wrong' : 'pending'
+  const stateClass = question.gradingStatus === 'SELF_CHECK_REQUIRED'
+    ? 'pending'
+    : isUnanswered
+      ? 'unanswered'
+      : question.correct === true
+        ? 'correct'
+        : 'wrong'
   const detailHint = question.gradingStatus === 'SELF_CHECK_REQUIRED'
     ? '판정 필요'
-    : question.correct === false || question.gradingStatus === 'UNANSWERED'
+    : question.correct === false || isUnanswered
       ? '답안·해설 보기'
       : '답안 확인'
 
@@ -285,11 +292,21 @@ export function QuizResultPage() {
   const result = resultQuery.data
   const hasPendingSelfCheck = hasUnresolvedSelfCheck(result.selfCheckPending)
   const accuracyLabel = result.accuracy === null ? '—' : `${Math.round(result.accuracy * 100)}%`
+  const accuracyDescription = result.selfCheckPending > 0
+    ? `확정 ${result.total - result.selfCheckPending}문항 중 ${result.correct}개 정답 · 자기채점 ${result.selfCheckPending}개 대기`
+    : `${result.correct}/${result.total}개 정답`
   const selfCheckQuestions = result.questions.filter((question) => question.gradingStatus === 'SELF_CHECK_REQUIRED')
-  const wrongQuestions = result.questions.filter((question) => question.correct === false)
-  const unansweredQuestions = result.questions.filter((question) => question.gradingStatus === 'UNANSWERED')
+  const wrongQuestions = result.questions.filter((question) => question.correct === false && hasSubmittedAnswer(question))
+  const unansweredQuestions = result.questions.filter((question) => !hasSubmittedAnswer(question))
   const reviewQuestions = [...wrongQuestions, ...unansweredQuestions]
   const correctQuestions = result.questions.filter((question) => question.correct === true)
+  const retryLabel = result.wrong > 0 && result.unanswered > 0
+    ? '오답·미답변 다시 풀기'
+    : result.wrong > 0
+      ? '오답 다시 풀기'
+      : result.unanswered > 0
+        ? '미답변 다시 풀기'
+        : '다시 풀 문항 시작'
   const focusFirstSelfCheck = () => {
     const target = document.querySelector<HTMLElement>('[data-self-check-target="true"]')
     if (!target) return
@@ -309,7 +326,7 @@ export function QuizResultPage() {
       </header>
 
       <div className="quiz-result-summary quiz-result-summary-focused">
-        <div className="quiz-accuracy-card"><span>정확도</span><strong>{accuracyLabel}</strong><p>{result.correct}/{result.total}개 정답</p></div>
+        <div className="quiz-accuracy-card"><span>정확도</span><strong>{accuracyLabel}</strong><p>{accuracyDescription}</p></div>
         <div className="quiz-result-stat-grid">
           <div><span>정답</span><strong>{result.correct}</strong></div>
           <div><span>오답</span><strong>{result.wrong}</strong></div>
@@ -357,7 +374,7 @@ export function QuizResultPage() {
 
       <div className="quiz-result-actions quiz-result-actions-focused">
         <div className="result-next-actions">
-          <button className="primary-button" type="button" disabled={hasPendingSelfCheck || result.wrong + result.unanswered === 0 || retryMutation.isPending} onClick={() => retryMutation.mutate()}>{retryMutation.isPending ? '준비 중…' : '틀린 문항 다시 풀기'}</button>
+          <button className="primary-button" type="button" disabled={hasPendingSelfCheck || result.wrong + result.unanswered === 0 || retryMutation.isPending} onClick={() => retryMutation.mutate()}>{retryMutation.isPending ? '준비 중…' : retryLabel}</button>
           <Link className="secondary-button" to="/wrong-notes" search={{ page: 0, area: '', topic: '', level: '', difficulty: '', status: '', review: 'ALL', analysis: 'ALL', sort: 'RECENT' }}>오답 노트</Link>
           <Link className="secondary-button" to="/review" search={{ page: 0, due: 'ALL' }}>복습 일정</Link>
         </div>

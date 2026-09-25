@@ -2,7 +2,7 @@ import { Link, useNavigate } from '@tanstack/react-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { EmptyState, ErrorState, PageSkeleton } from '../components/AsyncStates'
 import { CanonicalBootstrapCard } from '../components/CanonicalBootstrapCard'
-import { getDashboard, type DashboardHeatmapDay } from '../lib/dashboard-api'
+import { getDashboard, type Dashboard, type DashboardHeatmapDay } from '../lib/dashboard-api'
 import { getConcepts } from '../lib/learning-api'
 import { selectRecentConcepts } from '../lib/learning-recent'
 import { createReviewQuiz } from '../lib/review-api'
@@ -10,8 +10,8 @@ import { defaultLearningSearch } from '../lib/learning-search'
 import { defaultQuizSearch } from '../lib/quiz-search'
 import { defaultWrongNoteSearch } from '../lib/wrong-note-search'
 
-function percent(value: number) {
-  return `${Math.round(value)}%`
+function percent(value: number | null) {
+  return value === null ? '—' : `${Math.round(value)}%`
 }
 
 function heatmapLevel(day: DashboardHeatmapDay) {
@@ -30,6 +30,13 @@ function quizStatus(status: string) {
   if (status === 'COMPLETED') return '완료'
   if (status === 'SUBMITTED') return '제출됨'
   return status
+}
+
+function recentQuizPerformanceLabel(quiz: Dashboard['recentQuizzes'][number]) {
+  if (quiz.pendingSelfCheckCount > 0) {
+    return `확정 ${quiz.finalizedCount}문항 중 ${quiz.correctCount}개 정답 · 자기채점 ${quiz.pendingSelfCheckCount}개 대기`
+  }
+  return `${quiz.correctCount}/${quiz.totalCount}개 정답`
 }
 
 export function DashboardPage() {
@@ -219,7 +226,7 @@ export function DashboardPage() {
       <div className="dashboard-lower-grid home-history-grid">
         <section className="dashboard-section">
           <div className="dashboard-section-heading"><div><p className="eyebrow">학습 이력</p><h2>최근 문제 풀이</h2></div><Link className="text-link" to="/quiz" search={defaultQuizSearch}>새 문제 →</Link></div>
-          {dashboard.recentQuizzes.length === 0 ? <EmptyState message="제출된 문제가 아직 없습니다." /> : <div className="dashboard-list">{dashboard.recentQuizzes.map((quiz) => <Link className="dashboard-list-item" key={quiz.quizId} to="/quiz/$quizId/result" params={{ quizId: String(quiz.quizId) }}><div><strong>#{quiz.quizId} · {quiz.source.replace('_', ' ')}</strong><span>{quizStatus(quiz.status)} · {formatDate(quiz.startedAt)}</span></div><div className="dashboard-list-metric"><strong>{percent(quiz.accuracyPercent)}</strong><span>{quiz.correctCount}/{quiz.finalizedCount}개 정답{quiz.pendingSelfCheckCount > 0 ? ` · 자기 채점 ${quiz.pendingSelfCheckCount}개 대기` : ''}</span></div></Link>)}</div>}
+          {dashboard.recentQuizzes.length === 0 ? <EmptyState message="제출된 문제가 아직 없습니다." /> : <div className="dashboard-list">{dashboard.recentQuizzes.map((quiz) => <Link className="dashboard-list-item" key={quiz.quizId} to="/quiz/$quizId/result" params={{ quizId: String(quiz.quizId) }}><div><strong>#{quiz.quizId} · {quiz.source.replace('_', ' ')}</strong><span>{quizStatus(quiz.status)} · {formatDate(quiz.startedAt)}</span></div><div className="dashboard-list-metric"><strong>{percent(quiz.accuracyPercent)}</strong><span>{recentQuizPerformanceLabel(quiz)}</span></div></Link>)}</div>}
         </section>
 
         <section className="dashboard-section">
