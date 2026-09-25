@@ -132,7 +132,7 @@ These prompts had been at risk of being treated as structured because of scenari
 
 - `backend.core.concurrency-transaction.optimistic.q3` (SCENARIO): the read/update sequence is context for one optimistic-conflict outcome and its response; numbering does not create separate answer axes.
 - `backend.core.concurrency-transaction.usecase-transaction.q3` (SCENARIO): the DB-commit/message-publish ordering frames one local-transaction boundary and recovery judgment.
-- `database.core.transaction.acid.q1` (DESCRIPTIVE): the rollback timeline tests one boundary—database atomicity does not undo an external payment side effect.
+- `database.core.transaction.acid.q1` (SCENARIO): the rollback timeline tests one boundary—database atomicity does not undo an external payment side effect.
 - `spring.core.transaction-aop.transaction-proxy.q2` (SCENARIO): the save/return/commit timeline supports one distinction between target method execution and proxy-managed completion.
 - `operating-systems.core.virtual-memory.page-frame.q3` (SCENARIO): one ceiling division yields the page count and internal-fragmentation result.
 
