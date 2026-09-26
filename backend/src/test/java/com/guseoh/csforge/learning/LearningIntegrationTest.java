@@ -172,7 +172,8 @@ class LearningIntegrationTest {
         JsonNode secondPage = json(request("GET", "/api/learning-areas/java/outline?page=1&size=200", null));
         assertEquals(8, secondPage.get("items").size());
         assertFalse(secondPage.get("page").get("hasNext").asBoolean());
-        assertEquals("Outline 204", secondPage.get("items").get(7).get("title").asText());
+        assertEquals("Outline 204", secondPage.get("items").get(6).get("title").asText());
+        assertEquals("Alpha", secondPage.get("items").get(7).get("title").asText());
     }
 
     @Test

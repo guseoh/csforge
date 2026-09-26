@@ -206,7 +206,7 @@ class QuizIntegrationTest {
         jdbc.update(
                 "INSERT INTO review_schedule (question_id, status, stage, due_at) VALUES (?, 'SCHEDULED', 1, ?)",
                 multipleChoiceId,
-                BASE_TIME.minusSeconds(1));
+                BASE_TIME.minusSeconds(1).atOffset(ZoneOffset.UTC));
         int sessionsBefore = jdbc.queryForObject("SELECT COUNT(*) FROM quiz_session", Integer.class);
         String requestId = UUID.randomUUID().toString();
 

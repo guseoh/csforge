@@ -29,6 +29,10 @@ public class FinalizedAttemptOutcomeCoordinator {
         if (!attempt.isFinalized() || attempt.isOutcomeProcessed()) return;
 
         Instant processedAt = Instant.now(clock);
+        if (!attempt.hasAnswer()) {
+            attempt.markOutcomeProcessed(processedAt);
+            return;
+        }
         Instant outcomeAt = attempt.getGradedAt() == null ? processedAt : attempt.getGradedAt();
         boolean correct = Boolean.TRUE.equals(attempt.getCorrect());
         if (attempt.getQuizSession().getSource() == QuizSessionSource.REVIEW) processReview(attempt, correct, outcomeAt);
