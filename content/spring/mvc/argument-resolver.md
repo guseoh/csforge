@@ -4,7 +4,7 @@ contentKey: spring.core.mvc.argument-resolver
 topicContentKey: spring.core.mvc
 slug: argument-resolver
 title: "요청 인자 해석(HandlerMethodArgumentResolver)"
-summary: "Controller method parameter를 요청/context에서 어떤 방식으로 만들지 HandlerMethodArgumentResolver가 결정하며 custom current-user 같은 경계를 확장할 수 있음을 이해한다"
+summary: "Controller 메서드 매개변수를 요청·컨텍스트에서 어떤 방식으로 만들지 HandlerMethodArgumentResolver가 결정하며, 현재 사용자 정보처럼 반복되는 API 경계를 확장할 수 있음을 이해한다"
 level: 2
 status: PUBLISHED
 displayOrder: 30
@@ -14,7 +14,7 @@ references:
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
-    relationNote: "annotated controller가 지원하는 method argument 종류와 resolution 확인"
+    relationNote: "annotation 기반 Controller가 지원하는 메서드 인자 종류와 해석 과정 확인"
   - url: "https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/method/support/HandlerMethodArgumentResolver.html"
     title: "HandlerMethodArgumentResolver Javadoc"
     referenceType: OFFICIAL
@@ -24,7 +24,7 @@ references:
 ---
 # 요청 인자 해석(HandlerMethodArgumentResolver)
 
-Controller method를 보면 `HttpServletRequest`를 직접 뒤져 값을 꺼내지 않아도 다양한 parameter를 받을 수 있습니다.
+Controller 메서드를 보면 `HttpServletRequest`를 직접 뒤져 값을 꺼내지 않아도 다양한 매개변수를 받을 수 있습니다.
 
 ```java
 @GetMapping("/orders/{id}")
@@ -35,10 +35,10 @@ OrderResponse get(
 ) { ... }
 ```
 
-이 값들은 Java가 자동으로 채우는 것이 아닙니다. Spring MVC가 method parameter의 type/annotation을 보고 **어떤 resolver가 이 parameter를 만들 수 있는지 선택**한 뒤 요청/context에서 값을 꺼내 argument를 준비합니다.
+이 값들은 Java가 자동으로 채우는 것이 아닙니다. Spring MVC가 메서드 매개변수의 타입과 annotation을 보고 **어떤 resolver가 이 매개변수를 만들 수 있는지 선택**한 뒤 요청·컨텍스트에서 값을 꺼내 실제 호출 인자를 준비합니다.
 
 ```text
-Handler method parameter
+Controller 메서드 매개변수
         │
         ▼
 resolver 목록 순회
@@ -47,51 +47,51 @@ resolver 목록 순회
 선택된 HandlerMethodArgumentResolver
         │ resolveArgument
         ▼
-실제 Java argument
+실제 Java 인자
         │
         ▼
-controller method 호출
+Controller 메서드 호출
 ```
 
 ### `@PathVariable`과 `@RequestBody`는 같은 변환 경로가 아니다
 
-`@PathVariable`, `@RequestParam`, model/session/security principal 등은 argument resolution과 밀접합니다. 반면 JSON body를 Java object로 읽는 과정은 resolver가 `HttpMessageConverter`를 사용하거나 연결하는 별도 body conversion 경계를 거칩니다. 그래서 모든 controller parameter binding을 “Jackson이 해 준다”라고 설명하면 틀립니다.
+`@PathVariable`, `@RequestParam`, model, session, Security principal 등은 인자 해석 과정과 밀접합니다. 반면 JSON 본문을 Java 객체로 읽는 과정은 resolver가 `HttpMessageConverter`를 사용하는 별도 본문 변환 경계를 거칩니다. 그래서 모든 Controller 매개변수 바인딩을 “Jackson이 해 준다”라고 설명하면 틀립니다.
 
-### custom argument resolver는 반복적인 HTTP/context 변환을 숨길 수 있다
+### custom argument resolver는 반복적인 API·컨텍스트 변환을 한곳에 모을 수 있다
 
-예를 들어 여러 controller가 현재 로그인 member ID를 다음처럼 반복한다고 가정합니다.
+예를 들어 여러 Controller가 현재 로그인한 회원 ID를 다음처럼 반복한다고 가정합니다.
 
 ```java
 Long memberId = Long.parseLong(authentication.getName());
 ```
 
-API 경계에서만 필요한 변환이라면 custom annotation/resolver로 한곳에 모을 수 있습니다.
+API 경계에서만 필요한 변환이라면 custom annotation과 resolver로 한곳에 모을 수 있습니다.
 
 ```java
 @GetMapping("/me/orders")
 List<OrderResponse> myOrders(@CurrentMemberId long memberId) { ... }
 ```
 
-resolver는 SecurityContext/HTTP 표현을 application-friendly한 값으로 바꿉니다. 중요한 점은 **domain/application service가 `HttpServletRequest`나 `SecurityContextHolder`를 직접 읽지 않게 경계를 유지하는 것**입니다.
+resolver는 `SecurityContext`의 인증 표현을 애플리케이션에서 사용할 식별자로 바꿉니다. 중요한 점은 **도메인·애플리케이션 서비스가 `HttpServletRequest`나 `SecurityContextHolder`를 직접 읽지 않게 경계를 유지하는 것**입니다.
 
-### resolver에 business logic을 넣으면 새로운 controller가 된다
+### resolver에 업무 로직을 넣으면 새로운 Controller가 된다
 
-resolver는 argument 생성/변환 책임에 적합하지만 주문 가능 여부를 조회하거나 transaction을 열어 domain state를 바꾸는 곳은 아닙니다.
+resolver는 인자를 생성·변환하는 책임에 적합하지만 주문 가능 여부를 조회하거나 트랜잭션을 열어 도메인 상태를 바꾸는 곳은 아닙니다.
 
 ```text
 좋은 후보
-- header/path/query parsing
-- current principal -> application identifier
-- pagination request normalization
+- header/path/query 파싱
+- 현재 인증 사용자 -> 애플리케이션 식별자
+- 페이지 요청 정규화
 
 주의할 후보
 - 주문 생성
-- DB transaction orchestration
-- domain policy 결정
+- DB 트랜잭션 조정
+- 도메인 정책 결정
 ```
 
-### resolution 실패는 controller body 이전에 발생한다
+### 인자 해석 실패는 Controller 본문 이전에 발생한다
 
-필수 query parameter가 없거나 path variable type 변환이 실패하면 controller method 자체가 호출되지 않을 수 있습니다. debugger가 method 안에 멈추지 않는 이유를 이해하려면 MVC가 **method call 전에 argument를 완성해야 한다**는 사실을 알아야 합니다.
+필수 query parameter가 없거나 path variable 타입 변환이 실패하면 Controller 메서드 자체가 호출되지 않을 수 있습니다. debugger가 메서드 안에 멈추지 않는 이유를 이해하려면 MVC가 **메서드를 호출하기 전에 인자를 완성해야 한다**는 사실을 알아야 합니다.
 
-custom resolver를 만들 때도 “편하니까”보다 **여러 controller에 반복되는 API/context 변환인가, 그리고 application layer가 알 필요 없는 framework 세부인가**를 기준으로 판단하는 편이 좋습니다.
+custom resolver를 만들 때도 “편하니까”보다 **여러 Controller에 반복되는 API·컨텍스트 변환인가, 그리고 애플리케이션 계층이 알 필요 없는 프레임워크 세부인가**를 기준으로 판단하는 편이 좋습니다.

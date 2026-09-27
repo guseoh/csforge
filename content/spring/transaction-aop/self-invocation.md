@@ -4,7 +4,7 @@ contentKey: spring.core.transaction-aop.self-invocation
 topicContentKey: spring.core.transaction-aop
 slug: self-invocation
 title: "내부 호출(self-invocation) 함정"
-summary: "proxy 방식에서 같은 객체 내부의 this 호출은 proxy를 다시 통과하지 않으므로 내부 method의 @Transactional advice가 새롭게 적용되지 않는 이유와 해결 방향을 이해한다"
+summary: "proxy 방식에서 같은 객체 내부의 `this` 호출은 proxy를 다시 통과하지 않으므로 내부 메서드의 @Transactional 부가 동작이 새롭게 적용되지 않는 이유와 해결 방향을 이해한다"
 level: 3
 status: PUBLISHED
 displayOrder: 20
@@ -14,7 +14,7 @@ references:
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
-    relationNote: "proxy mode에서 external calls만 intercepted되고 self-invocation이 advice를 적용하지 않는 공식 설명 확인"
+    relationNote: "proxy 방식에서 외부 호출만 가로채며 내부 호출은 새 advice 적용 지점이 되지 않는 공식 설명 확인"
   - url: "https://techblog.woowahan.com/2617/"
     title: "AOP를 이용한 OAuth2 캐시 적용하기"
     referenceType: COMPANY_TECH_BLOG
@@ -43,25 +43,25 @@ class OrderService {
 }
 ```
 
-하지만 proxy mode의 핵심은 **외부 caller가 proxy를 통해 target으로 들어갈 때 advice가 실행된다**는 점입니다. `place()` target method 안에서 `this.saveOrder()`에 해당하는 내부 호출은 같은 target object의 method를 직접 호출합니다.
+하지만 proxy 방식의 핵심은 **외부 호출자가 proxy를 통해 실제 객체로 들어갈 때 advice가 실행된다**는 점입니다. `place()` 메서드 안에서 `this.saveOrder()`에 해당하는 내부 호출은 같은 실제 객체의 메서드를 직접 호출합니다.
 
 ```text
-External Caller
+외부 호출자
     │
     ▼
 OrderService Proxy
-    │ place()에 transaction advice 없음
+    │ place()에는 트랜잭션 advice 없음
     ▼
-Target.place()
+실제 객체의 place()
     │ this.saveOrder()
-    └──────────────► Target.saveOrder()
+    └──────────────► 실제 객체의 saveOrder()
                      ▲
                      └ proxy를 다시 통과하지 않음
 ```
 
-따라서 내부 `saveOrder()` annotation이 기대한 transaction boundary를 새로 만들지 않을 수 있습니다.
+따라서 내부 `saveOrder()`에 붙은 `@Transactional` 설정이 별도의 새로운 트랜잭션 경계로 적용되지 않을 수 있습니다.
 
-### 이미 외부 method에 transaction이 있다면 결과가 달라 보일 수 있다
+### 바깥 메서드에 이미 트랜잭션이 있다면 결과가 달라 보일 수 있다
 
 ```java
 @Transactional
@@ -70,9 +70,9 @@ public void place() {
 }
 ```
 
-이 경우 외부 caller가 `place()` proxy를 통과하면서 이미 transaction이 시작됩니다. 내부 `saveOrder()`가 self-invocation이라 별도 advice를 적용받지 않아도 같은 thread의 기존 transaction 안에서 repository 작업이 수행될 수 있습니다.
+이 경우 외부 호출자가 `place()`의 proxy를 통과하면서 이미 트랜잭션이 시작됩니다. 내부 `saveOrder()`가 self-invocation이라 별도 advice를 적용받지 않아도 같은 실행 흐름의 기존 트랜잭션 안에서 Repository 작업이 수행될 수 있습니다.
 
-그래서 self-invocation bug는 “항상 transaction이 없다”가 아니라 **내부 method에 선언한 propagation/rollback/readOnly 같은 transaction metadata가 독립 interception point로 적용되지 않는다**는 문제입니다.
+그래서 self-invocation 문제는 “항상 트랜잭션이 없다”가 아니라 **내부 메서드에 선언한 propagation·rollback·readOnly 같은 트랜잭션 설정이 별도의 가로채기 지점으로 적용되지 않는다**는 문제입니다.
 
 ### `REQUIRES_NEW`가 특히 오해를 잘 만든다
 
@@ -86,11 +86,11 @@ public void batch() {
 public void saveOne() { ... }
 ```
 
-개발자가 `saveOne()`마다 새로운 transaction이 열릴 것으로 기대해도 self-invocation이면 proxy가 `REQUIRES_NEW` metadata를 처리하지 않습니다. 결과적으로 outer transaction 하나에서 실행될 수 있습니다.
+개발자가 `saveOne()`마다 새로운 트랜잭션이 열릴 것으로 기대해도 self-invocation이면 proxy가 `REQUIRES_NEW` 설정을 처리하지 않습니다. 결과적으로 바깥 트랜잭션 하나에서 실행될 수 있습니다.
 
-### 해결은 “자기 proxy를 억지로 호출”보다 경계를 다시 보는 데서 시작한다
+### 해결은 “자기 proxy를 억지로 호출”하기보다 경계를 다시 보는 데서 시작한다
 
-가장 읽기 쉬운 해결은 transaction boundary가 실제 use-case/협력 경계와 맞도록 object 책임을 나누는 것입니다.
+가장 읽기 쉬운 해결은 트랜잭션 경계가 실제 기능·협력 경계와 맞도록 객체 책임을 나누는 것입니다.
 
 ```java
 @Service
@@ -98,7 +98,7 @@ class BatchService {
     private final ItemSaveService itemSaveService;
 
     void batch() {
-        itemSaveService.saveOne(); // 다른 Bean proxy 경계를 통과
+        itemSaveService.saveOne(); // 다른 Bean의 proxy 경계를 통과
     }
 }
 
@@ -109,10 +109,10 @@ class ItemSaveService {
 }
 ```
 
-`AopContext.currentProxy()`나 자기 자신을 주입받아 호출하는 workaround도 가능할 수 있지만 framework coupling과 recursion/가독성 문제가 커집니다. 먼저 **왜 내부 method가 별도의 transaction boundary여야 하는가**를 설계적으로 확인합니다.
+`AopContext.currentProxy()`나 자기 자신을 주입받아 호출하는 우회 방법도 가능할 수 있지만 프레임워크 결합과 재귀 호출 위험, 가독성 비용이 커집니다. 먼저 **왜 내부 메서드가 별도의 트랜잭션 경계여야 하는가**를 설계적으로 확인합니다.
 
-### private method annotation을 기대하는 문제와도 연결된다
+### private 메서드 annotation 문제와도 연결된다
 
-proxy가 어떤 method visibility를 intercept할 수 있는지는 proxy 방식과 Spring version/configuration에 따라 주의가 필요합니다. 중요한 원칙은 annotation이 source에 존재하는 것과 **실제 method invocation이 transaction interceptor를 통과하는 것**을 구분하는 것입니다.
+proxy가 어떤 메서드 가시성을 가로챌 수 있는지는 proxy 방식과 Spring 버전·설정에 따라 주의가 필요합니다. 중요한 원칙은 annotation이 소스에 존재하는 것과 **실제 메서드 호출이 transaction interceptor를 통과하는 것**을 구분하는 것입니다.
 
-self-invocation을 debug할 때는 annotation 개수보다 call graph를 그립니다. `caller -> proxy -> target` 경로가 어디에서 시작되고 내부 호출이 proxy로 되돌아가는지 확인하면 transaction이 기대와 다른 이유를 훨씬 빠르게 찾을 수 있습니다.
+self-invocation을 디버깅할 때는 annotation 개수보다 호출 그래프를 그립니다. `호출자 -> proxy -> 실제 객체` 경로가 어디에서 시작되고 내부 호출이 proxy를 다시 통과하는지를 확인하면 트랜잭션이 기대와 다른 이유를 훨씬 빠르게 찾을 수 있습니다.
