@@ -21,9 +21,9 @@ references:
 서비스가 느리다는 증상만으로는 어떤 실험을 해야 할지 결정할 수 없습니다. 프로파일링은 실행 중인 코드와 runtime이 CPU, allocation, lock, I/O에 시간을 어디에서 쓰는지를 찾는 데 적합하고, 부하 테스트는 특정 workload를 주었을 때 시스템의 latency·throughput·error·saturation이 어떻게 변하는지를 확인하는 데 적합합니다.
 
 ```text
-"어디서 시간이 쓰이나?"     ─▶ profiler / JFR
-"얼마나 많은 부하를 견디나?" ─▶ load test
-"변경 전후가 빨라졌나?"      ─▶ controlled benchmark
+"어디서 시간이 쓰이나?"     ─▶ 프로파일러 / JFR
+"얼마나 많은 부하를 견디나?" ─▶ 부하 테스트
+"변경 전후가 빨라졌나?"      ─▶ 통제된 벤치마크
 ```
 
 Profiler에서 hot method가 보였다고 해서 그것이 서비스 전체 capacity의 병목이라는 뜻은 아닙니다. 반대로 load test에서 p99가 나빠졌다고 해도 그 결과만으로 어느 코드가 원인인지 알 수 없습니다. 두 도구의 결과를 CPU, GC, DB, trace 같은 다른 증거와 연결해야 원인 가설을 세울 수 있습니다.

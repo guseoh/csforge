@@ -3,8 +3,8 @@ kind: concept
 contentKey: performance.core.operations.capacity-autoscaling
 topicContentKey: performance.core.operations
 slug: capacity-autoscaling
-title: "용량 계획과 Autoscaling"
-summary: "수요·peak·headroom·확장 지연을 계산하고 autoscaling을 capacity 계획을 보조하는 feedback loop로 이해한다."
+title: "용량 계획과 자동 확장"
+summary: "수요·최대 부하·여유 용량·확장 지연을 고려하고 자동 확장을 용량 계획을 보조하는 피드백 루프로 이해한다."
 level: 2
 status: PUBLISHED
 displayOrder: 30
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: "metric 기반 horizontal scaling과 stabilization 확인"
 ---
-# 용량 계획과 Autoscaling
+# 용량 계획과 자동 확장
 
 Capacity planning은 현재 평균 사용량만 보고 instance 수를 정하는 일이 아닙니다. 평상시 수요뿐 아니라 peak와 burst, 한 instance나 zone이 사라졌을 때 남는 여유, 새로운 capacity가 실제로 준비되기까지 걸리는 시간과 비용을 함께 봐야 합니다.
 

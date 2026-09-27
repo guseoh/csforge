@@ -3,7 +3,7 @@ kind: concept
 contentKey: performance.core.observability.metric-cardinality
 topicContentKey: performance.core.observability
 slug: metric-cardinality
-title: "Metric Cardinality와 관측 비용"
+title: "메트릭 카디널리티와 관측 비용"
 summary: "label·attribute 조합이 time series 수와 storage·query 비용을 어떻게 늘리는지 이해하고 필요한 차원만 남긴다."
 level: 2
 status: PUBLISHED
@@ -22,7 +22,7 @@ references:
     displayOrder: 2
     relationNote: "metric attribute 조합과 cardinality limit 확인"
 ---
-# Metric Cardinality와 관측 비용
+# 메트릭 카디널리티와 관측 비용
 
 Metric은 값을 하나 더 기록할 때마다 비용이 조금씩 늘어나는 단순 로그가 아닙니다. Label이나 attribute 조합이 달라지면 별도의 time series가 만들어지므로, 값의 종류가 많은 차원을 추가하면 memory·storage·ingestion·query 비용이 빠르게 커집니다.
 

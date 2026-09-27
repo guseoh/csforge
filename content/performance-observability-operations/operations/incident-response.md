@@ -3,8 +3,8 @@ kind: concept
 contentKey: performance.core.operations.incident-response
 topicContentKey: performance.core.operations
 slug: incident-response
-title: "사고 대응과 사후 분석"
-summary: "장애 중에는 영향 축소와 의사결정 조정을 우선하고, 복구 뒤에는 evidence 기반 postmortem으로 시스템의 guard를 개선한다."
+title: "장애 대응과 사후 분석"
+summary: "장애 중에는 영향 축소와 의사결정 조정을 우선하고, 복구 뒤에는 근거에 기반한 사후 분석으로 시스템의 보호 장치를 개선한다."
 level: 2
 status: PUBLISHED
 displayOrder: 20
@@ -15,8 +15,16 @@ references:
     language: en
     displayOrder: 1
     relationNote: "on-call과 incident 대응 책임 확인"
+  - url: "https://techblog.woowahan.com/25189/"
+    title: "장애 대응의 성패를 가르는 First Action — 우아한형제들의 장애 관리 라이프사이클"
+    referenceType: COMPANY_TECH_BLOG
+    language: ko
+    depth: section
+    recommendation: "장애 탐지·초동 조치·복구·재발 방지를 단계와 시간 지표로 연결하는 운영 사례를 확인한다."
+    displayOrder: 2
+    relationNote: "초동 완화 조치와 장애 후속 작업의 완료·검증 사례 확인"
 ---
-# 사고 대응과 사후 분석
+# 장애 대응과 사후 분석
 
 장애가 발생했을 때 가장 먼저 해야 할 일은 완벽한 root cause를 증명하는 것이 아닙니다. 사용자 영향을 줄이고, 누가 결정을 조정하는지 명확히 하며, 어떤 조치를 왜 했는지 기록할 수 있는 상태를 만드는 것이 우선입니다.
 

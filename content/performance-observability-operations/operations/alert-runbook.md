@@ -3,8 +3,8 @@ kind: concept
 contentKey: performance.core.operations.alert-runbook
 topicContentKey: performance.core.operations
 slug: alert-runbook
-title: "Alert와 Runbook"
-summary: "사용자 영향과 즉시 행동을 연결하는 alert를 만들고, 같은 신호가 반복될 때 안전한 조사·완화 순서를 runbook으로 남긴다."
+title: "알림과 대응 절차"
+summary: "사용자 영향과 즉시 조치를 연결하는 알림을 만들고, 같은 문제가 반복될 때 안전한 조사·완화 순서를 대응 절차로 남긴다."
 level: 1
 status: PUBLISHED
 displayOrder: 10
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: "monitoring signal과 alert 설계의 운영 관점 확인"
 ---
-# Alert와 Runbook
+# 알림과 대응 절차
 
 모든 이상 징후를 사람에게 즉시 알리면 중요한 장애도 수많은 경고 속에 묻힙니다. Alert는 단순히 metric이 임계값을 넘었다는 사실보다 **지금 사람이 확인하거나 조치해야 할 사용자 영향이 있는가**를 기준으로 설계하는 편이 좋습니다.
 
