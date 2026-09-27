@@ -1,11 +1,119 @@
 [
-  {"kind":"question","contentKey":"infrastructure.core.network.network-boundaries.q1","promptMarkdown":"네트워크에서 ingress와 egress를 구분하는 설명으로 옳은 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["infrastructure.core.network.network-boundaries"],"choices":[{"key":"A","content":"ingress는 public traffic만, egress는 private traffic만 의미한다.","displayOrder":0,"rationaleMarkdown":"ingress와 egress는 public/private 여부가 아니라 보호 대상 자원을 기준으로 한 흐름의 방향이다. 내부망의 요청도 ingress가 될 수 있고 외부 서비스 호출도 egress가 될 수 있다."},{"key":"B","content":"ingress는 들어오는 흐름이고 egress는 나가는 흐름이다.","displayOrder":1,"rationaleMarkdown":"보호 대상에 들어오는 트래픽이 ingress이고 그 대상에서 나가는 트래픽이 egress다. 방향을 나누면 유입 노출과 workload의 외부 호출을 각각 통제할 수 있다."},{"key":"C","content":"egress는 항상 public internet으로만 나간다.","displayOrder":2,"rationaleMarkdown":"egress는 해당 자원에서 나가는 모든 흐름을 가리킨다. 목적지가 같은 네트워크의 DB나 내부 서비스여도 egress일 수 있다."},{"key":"D","content":"ingress와 egress는 security policy에서 구분할 필요가 없다.","displayOrder":3,"rationaleMarkdown":"수신 허용과 발신 허용은 서로 다른 위험을 다룬다. 한 방향만 통제하면 침해된 workload의 외부 전송이나 원치 않는 유입을 놓칠 수 있다."}],"correctChoiceKey":"B","explanationMarkdown":"ingress는 resource로 들어오는 traffic, egress는 resource에서 나가는 traffic을 뜻한다. 두 방향을 따로 통제해야 public exposure뿐 아니라 compromised workload가 내부망이나 internet으로 임의 호출하는 범위도 제한할 수 있다."},
-  {"kind":"question","contentKey":"infrastructure.core.network.network-boundaries.q2","promptMarkdown":"public API가 사용자가 입력한 URL을 fetch하는 기능을 제공한다. application authentication은 통과했지만 private metadata endpoint에도 접근할 수 있다면 어떤 경계가 빠진 것인가?","questionType":"SCENARIO","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["infrastructure.core.network.network-boundaries"],"modelAnswer":"사용자 인증은 애플리케이션 identity를 확인할 뿐 server의 outbound destination을 제한하지 않는다. URL allowlist·scheme/port 검증과 private address 및 redirect 재검사, egress firewall·network policy를 함께 적용하고 DNS rebinding과 응답 size도 제한해야 한다.","explanationMarkdown":"사용자 인증이 성공했다고 server가 임의 destination으로 outbound request를 보내도 안전해지는 것은 아니다. SSRF를 막으려면 URL 검증뿐 아니라 private address·redirect 재검사와 egress network policy를 함께 적용해야 한다."},
-  {"kind":"question","contentKey":"infrastructure.core.network.network-boundaries.q3","promptMarkdown":"NetworkPolicy 같은 네트워크 경계 통제와 애플리케이션 인증·인가를 중복으로 두는 이유와 각 계층의 한계를 설명하라.","questionType":"DESCRIPTIVE","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["infrastructure.core.network.network-boundaries"],"modelAnswer":"네트워크 정책은 pod·namespace·port 단위로 불필요한 도달을 차단해 application bug가 곧바로 전체 내부망 접근으로 이어지지 않게 하지만 사용자·resource 수준의 권한은 알지 못한다. application auth는 business identity와 object 권한을 판단하지만 우회된 endpoint나 잘못된 service 설정을 막지 못한다. 두 계층을 독립적으로 최소화하고 로그로 실제 흐름을 검증한다.","explanationMarkdown":"NetworkPolicy는 pod·namespace·port 수준에서 불필요한 도달 자체를 막지만 사용자나 resource ownership은 알지 못한다. 반대로 application authorization은 business identity를 판단하지만 잘못 노출된 network path를 차단하지 못하므로 두 경계가 서로 다른 실패 mode를 막는다."},
-  {"kind":"question","contentKey":"infrastructure.core.network.load-balancing-ingress.q1","promptMarkdown":"readiness probe와 liveness probe의 주된 차이는?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["infrastructure.core.network.load-balancing-ingress"],"choices":[{"key":"A","content":"두 probe는 같은 endpoint와 같은 실패 동작을 가져야 한다.","displayOrder":0,"rationaleMarkdown":"같은 endpoint를 공유할 수는 있지만 두 probe의 실패 조치는 다르다. 준비가 잠시 안 된 상태를 곧바로 재시작 사유로 취급하면 회복 중인 instance가 반복 재시작될 수 있다."},{"key":"B","content":"readiness는 항상 process를 재시작하고 liveness는 traffic을 라우팅한다.","displayOrder":1,"rationaleMarkdown":"두 동작이 뒤바뀌었다. readiness 실패는 traffic 대상에서 제외하는 신호이고 liveness 실패는 container를 재시작할지 판단하는 신호다."},{"key":"C","content":"readiness는 traffic 수신 가능 여부, liveness는 재시작이 필요한 비정상 여부를 판단한다.","displayOrder":2,"rationaleMarkdown":"readiness는 현재 요청을 받을 준비가 됐는지, liveness는 프로세스를 재시작해야 하는지 판단한다. 일시적인 의존성 장애를 readiness에만 반영하면 불필요한 재시작을 줄일 수 있다."},{"key":"D","content":"liveness가 database query 성공 여부만 검사하면 충분하다.","displayOrder":3,"rationaleMarkdown":"DB query 실패가 잠깐 발생해도 프로세스 자체는 회복 가능할 수 있다. 이를 liveness의 유일한 조건으로 두면 DB 장애 동안 모든 instance가 재시작을 반복할 수 있다."}],"correctChoiceKey":"C","explanationMarkdown":"readiness는 instance가 지금 traffic을 받아도 되는지 판단하는 signal이고, liveness는 process를 재시작해야 할 정도로 비정상인지 판단한다. 둘을 같은 조건으로 묶으면 일시적인 dependency 문제 때문에 불필요한 restart가 반복될 수 있다."},
-  {"kind":"question","contentKey":"infrastructure.core.network.load-balancing-ingress.q2","promptMarkdown":"두 instance 뒤의 API가 로그인 session을 local memory에만 저장한다.\n\n1. 사용자가 한 instance에서 로그인한다.\n2. 다음 요청이 다른 instance로 routing된다.\n3. 사용자가 로그아웃된 상태가 된다.\n\n해결책을 선택할 때 함께 판단해야 할 조건은?","questionType":"SCENARIO","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["infrastructure.core.network.load-balancing-ingress"],"modelAnswer":"sticky session은 빠른 완화지만 instance 장애와 scale 변화에 취약하다. 가능하면 stateless token 또는 공유 session store로 상태 수명을 분리하고, store의 가용성·지연 시간·revocation과 cache invalidation을 함께 검토한다.","explanationMarkdown":"load balancer는 요청을 여러 instance로 분산할 뿐 각 instance의 local session memory를 자동 공유하지 않는다. sticky session은 임시 완화가 될 수 있지만 scale·failure에 취약하므로 stateless token이나 shared session store와 그 가용성 비용을 함께 비교해야 한다."},
-  {"kind":"question","contentKey":"infrastructure.core.network.load-balancing-ingress.q3","promptMarkdown":"Rolling deployment에서 새 instance로 traffic을 넘길 때 다음 요소를 함께 설계해야 하는 이유를 설명하라.\n\n- Connection drain\n- Readiness\n- TLS termination\n- Health check","questionType":"DESCRIPTIVE","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["infrastructure.core.network.load-balancing-ingress"],"modelAnswer":"새 instance는 readiness가 통과하기 전 traffic을 받으면 cold dependency로 실패할 수 있고, 이전 instance를 즉시 제거하면 keep-alive·long 요청이 끊긴다. readiness 후에만 등록하고 connection drain과 termination grace period를 두며, load balancer의 TLS termination 위치와 내부 암호화 요구를 명시한다. health check는 실제 critical dependency를 과도하게 결합하지 않으면서 routing 가능한 상태를 검증해야 한다.","explanationMarkdown":"rolling deployment에서는 새 instance가 readiness를 통과한 뒤 traffic에 들어오고, old instance는 기존 connection과 long request가 끝날 시간을 가져야 한다. TLS termination 위치와 health check 의미까지 맞춰야 traffic 전환 중 정상 요청이 끊기지 않는다."},
-  {"kind":"question","contentKey":"infrastructure.core.network.dns-tls.q1","promptMarkdown":"DNS와 TLS의 핵심 역할을 `DNS: ..., TLS: ...` 형태로 짧게 쓰라.","questionType":"SHORT_ANSWER","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["infrastructure.core.network.dns-tls"],"acceptedAnswers":["DNS는 이름을 주소로 해석하고 TLS는 통신 암호화와 인증을 제공한다","DNS는 이름 해석을 하고 TLS는 암호화와 서버 인증을 제공한다","DNS: 이름 해석, TLS: 암호화와 서버 인증","DNS: 이름을 주소로 해석, TLS: 암호화와 서버 인증"],"explanationMarkdown":"DNS는 service hostname을 접속할 network endpoint로 해석하는 역할을 하고, TLS는 그 endpoint와 암호화된 channel을 만들면서 인증서로 peer identity를 검증한다. 이름 해석과 secure channel establishment는 서로 다른 단계라 각각 실패 원인도 다르다."},
-  {"kind":"question","contentKey":"infrastructure.core.network.dns-tls.q2","promptMarkdown":"인증서 교체 중 instance 상태가 다음처럼 나뉘었다.\n\n- 일부 instance: 새 certificate 제공\n- 일부 instance: 만료 직전 certificate 제공\n\n가능한 원인과 안전한 운영 조치는?","questionType":"SCENARIO","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["infrastructure.core.network.dns-tls"],"modelAnswer":"certificate file 갱신과 process가 읽는 in-memory certificate lifecycle이 일치하지 않거나 rolling restart가 완료되지 않은 상태일 수 있다. 새 certificate를 검증한 뒤 instance별 reload·restart를 점진적으로 수행하고, handshake 실패와 certificate expiry를 모니터링하며 구 certificate 폐기 전 overlap window를 둔다.","explanationMarkdown":"certificate file이 갱신돼도 serving process가 기존 certificate를 memory에 계속 들고 있으면 instance마다 다른 인증서를 제공할 수 있다. rotation은 새 인증서 검증, reload/restart, overlap window와 expiry monitoring까지 포함해야 한다."},
-  {"kind":"question","contentKey":"infrastructure.core.network.dns-tls.q3","promptMarkdown":"새 endpoint로 DNS record를 바꾸는 배포 계획을 세우고 있다.\n\n다음 조건을 함께 고려한 전환·rollback 계획을 설명하라.\n\n- TTL과 resolver cache\n- TLS certificate SAN\n- 구·신 endpoint의 운영 기간","questionType":"DESCRIPTIVE","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["infrastructure.core.network.dns-tls"],"modelAnswer":"사전에 새 endpoint가 준비되고 certificate의 hostname SAN과 trust chain을 검증되게 한다. TTL을 낮추더라도 이미 resolver에 캐시된 응답은 즉시 사라지지 않으므로 overlap 동안 구·신 endpoint를 모두 안전하게 운영하고 health와 error를 비교한다. 문제가 생기면 DNS를 되돌리되 TTL과 negative caching 때문에 rollback이 점진적일 수 있음을 고려한다.","explanationMarkdown":"DNS TTL을 낮춰도 이미 resolver에 cache된 주소가 즉시 사라지는 것은 아니므로 구·신 endpoint가 일정 기간 공존해야 한다. 새 endpoint의 TLS certificate가 같은 hostname을 유효하게 포함하는지도 별도로 확인해야 안전한 rollback이 가능하다."}
+  {
+    "kind": "question",
+    "contentKey": "infrastructure.core.network.network-boundaries.q1",
+    "promptMarkdown": "네트워크에서 인바운드와 아웃바운드를 구분하는 설명으로 옳은 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["infrastructure.core.network.network-boundaries"],
+    "choices": [
+      {"key":"A","content":"인바운드는 외부 공개 트래픽만, 아웃바운드는 내부 전용 트래픽만 의미한다.","displayOrder":0,"rationaleMarkdown":"인바운드와 아웃바운드는 공개·비공개 여부가 아니라 보호 대상 자원을 기준으로 한 흐름의 방향이다. 내부망의 요청도 인바운드가 될 수 있고 외부 서비스 호출도 아웃바운드가 될 수 있다."},
+      {"key":"B","content":"인바운드는 자원으로 들어오는 흐름이고 아웃바운드는 자원에서 나가는 흐름이다.","displayOrder":1,"rationaleMarkdown":"보호 대상에 들어오는 트래픽이 인바운드이고 그 대상에서 나가는 트래픽이 아웃바운드다. 방향을 나누면 유입 노출과 워크로드의 외부 호출을 각각 통제할 수 있다."},
+      {"key":"C","content":"아웃바운드는 항상 공용 인터넷으로만 나간다.","displayOrder":2,"rationaleMarkdown":"아웃바운드는 해당 자원에서 나가는 모든 흐름을 가리킨다. 목적지가 같은 네트워크의 DB나 내부 서비스여도 아웃바운드일 수 있다."},
+      {"key":"D","content":"인바운드와 아웃바운드는 보안 정책에서 구분할 필요가 없다.","displayOrder":3,"rationaleMarkdown":"수신 허용과 발신 허용은 서로 다른 위험을 다룬다. 한 방향만 통제하면 침해된 워크로드의 외부 전송이나 원치 않는 유입을 놓칠 수 있다."}
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "인바운드는 자원으로 들어오는 트래픽, 아웃바운드는 자원에서 나가는 트래픽을 뜻한다. 두 방향을 따로 통제해야 외부 노출뿐 아니라 침해된 워크로드가 내부망이나 인터넷으로 임의 호출하는 범위도 제한할 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "infrastructure.core.network.network-boundaries.q2",
+    "promptMarkdown": "외부 공개 API가 사용자가 입력한 URL을 서버에서 대신 호출한다. 사용자 인증은 통과했지만 서버가 내부 메타데이터 주소에도 접근할 수 있다면, 왜 위험하고 인프라 계층에서 어떤 경계를 추가해야 하는가?",
+    "questionType": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["infrastructure.core.network.network-boundaries"],
+    "modelAnswer": "사용자 인증은 요청한 사용자의 신원을 확인할 뿐 서버가 어떤 목적지로 아웃바운드 요청을 보내도 되는지 결정하지 않는다. 내부 주소 대역이나 허용되지 않은 목적지로 나가는 트래픽을 차단하도록 방화벽·보안 그룹·NetworkPolicy 등 아웃바운드 경계를 두고, 애플리케이션에서도 허용할 목적지와 URL을 검증해야 한다.",
+    "explanationMarkdown": "인증이 성공했다고 서버의 모든 아웃바운드 호출이 안전해지는 것은 아니다. 네트워크 계층에서는 서버가 도달할 필요가 없는 내부·외부 목적지를 제한하고, 애플리케이션 계층에서는 호출할 URL과 목적지를 별도로 검증해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "infrastructure.core.network.network-boundaries.q3",
+    "promptMarkdown": "NetworkPolicy 같은 네트워크 경계 통제와 애플리케이션 인증·인가를 함께 두는 이유와 각 계층의 한계를 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["infrastructure.core.network.network-boundaries"],
+    "modelAnswer": "NetworkPolicy는 Pod·namespace·port 수준의 도달 가능성을 제한하지만 사용자나 업무 자원의 소유 권한은 알지 못한다. 또한 클러스터의 CNI·네트워크 플러그인이 해당 정책을 구현해야 실제 트래픽이 제한된다. 애플리케이션 인가는 사용자·업무 자원 권한을 판단하지만 잘못 노출된 네트워크 경로 자체를 차단하지 못한다. 따라서 두 계층을 독립적으로 최소화하고 실제 적용 상태를 검증해야 한다.",
+    "explanationMarkdown": "NetworkPolicy는 지원하는 CNI·네트워크 플러그인이 적용할 때 Pod·namespace·port 수준에서 불필요한 도달을 막지만 사용자나 업무 자원 소유권은 판단하지 못한다. 반대로 애플리케이션 인가는 업무 권한을 판단하지만 잘못 열린 네트워크 경로를 막지 못하므로 두 경계를 함께 둬야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "infrastructure.core.network.load-balancing-ingress.q1",
+    "promptMarkdown": "readiness probe와 liveness probe의 주된 차이는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["infrastructure.core.network.load-balancing-ingress"],
+    "choices": [
+      {"key":"A","content":"두 probe는 같은 검사 조건과 같은 실패 동작을 가져야 한다.","displayOrder":0,"rationaleMarkdown":"같은 엔드포인트를 공유할 수는 있지만 실패 조치는 다르다. 준비가 잠시 안 된 상태를 곧바로 재시작 사유로 취급하면 회복 중인 인스턴스가 반복 재시작될 수 있다."},
+      {"key":"B","content":"readiness는 항상 프로세스를 재시작하고 liveness는 트래픽을 라우팅한다.","displayOrder":1,"rationaleMarkdown":"두 동작이 뒤바뀌었다. readiness 실패는 트래픽 대상에서 제외하는 신호이고 liveness 실패는 컨테이너를 재시작할지 판단하는 신호다."},
+      {"key":"C","content":"readiness는 트래픽 수신 가능 여부, liveness는 재시작이 필요한 비정상 여부를 판단한다.","displayOrder":2,"rationaleMarkdown":"readiness는 현재 요청을 받을 준비가 됐는지, liveness는 프로세스를 재시작해야 하는지 판단한다. 일시적인 의존성 장애를 readiness에만 반영하면 불필요한 재시작을 줄일 수 있다."},
+      {"key":"D","content":"liveness가 데이터베이스 질의 성공 여부만 검사하면 충분하다.","displayOrder":3,"rationaleMarkdown":"DB 질의 실패가 잠깐 발생해도 프로세스 자체는 회복 가능할 수 있다. 이를 liveness의 유일한 조건으로 두면 DB 장애 동안 모든 인스턴스가 재시작을 반복할 수 있다."}
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "readiness는 인스턴스가 지금 트래픽을 받아도 되는지 판단하는 신호이고, liveness는 프로세스를 재시작해야 할 정도로 비정상인지 판단한다. 둘을 같은 조건으로 묶으면 일시적인 의존성 문제 때문에 불필요한 재시작이 반복될 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "infrastructure.core.network.load-balancing-ingress.q2",
+    "promptMarkdown": "두 인스턴스 뒤의 API가 로그인 세션을 각 인스턴스의 로컬 메모리에만 저장한다.\n\n1. 사용자가 한 인스턴스에서 로그인한다.\n2. 다음 요청이 다른 인스턴스로 전달된다.\n3. 사용자가 로그아웃된 것처럼 보인다.\n\n해결책을 선택할 때 함께 판단해야 할 조건은?",
+    "questionType": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["infrastructure.core.network.load-balancing-ingress"],
+    "modelAnswer": "고정 세션(sticky session)은 빠른 완화책이지만 인스턴스 장애와 확장 변화에 취약하다. 가능하면 무상태 토큰 또는 공유 세션 저장소로 상태 수명을 인스턴스와 분리하고, 공유 저장소의 가용성·지연 시간·폐기와 캐시 무효화 비용을 함께 검토한다.",
+    "explanationMarkdown": "부하 분산 장치는 요청을 여러 인스턴스로 분산할 뿐 각 인스턴스의 로컬 세션 메모리를 자동으로 공유하지 않는다. 고정 세션은 임시 완화가 될 수 있지만 장애·확장 변화에 취약하므로 무상태 토큰이나 공유 세션 저장소와 그 운영 비용을 함께 비교해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "infrastructure.core.network.load-balancing-ingress.q3",
+    "promptMarkdown": "Rolling 배포에서 새 인스턴스로 트래픽을 넘길 때 다음 요소를 함께 설계해야 하는 이유를 설명하라.\n\n- 연결 종료 유예(connection drain)\n- Readiness\n- TLS 종료 위치\n- 상태 확인(health check)",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["infrastructure.core.network.load-balancing-ingress"],
+    "modelAnswer": "새 인스턴스는 readiness가 통과하기 전 트래픽을 받으면 준비되지 않은 의존성 때문에 실패할 수 있고, 이전 인스턴스를 즉시 제거하면 keep-alive나 긴 요청이 끊길 수 있다. readiness 후에만 트래픽 대상에 넣고 연결 종료 유예와 종료 대기 시간을 두며, 부하 분산 장치의 TLS 종료 위치와 내부 암호화 요구를 명시한다. 상태 확인은 경로에 필요한 핵심 상태를 검증하되 일시적인 외부 의존성 장애를 과도하게 재시작 조건과 묶지 않아야 한다.",
+    "explanationMarkdown": "Rolling 배포에서는 새 인스턴스가 readiness를 통과한 뒤 트래픽에 들어오고, 이전 인스턴스는 기존 연결과 긴 요청이 끝날 시간을 가져야 한다. TLS 종료 위치와 상태 확인 의미까지 맞춰야 전환 중 정상 요청이 끊기지 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "infrastructure.core.network.dns-tls.q1",
+    "promptMarkdown": "DNS와 TLS의 역할을 가장 잘 구분한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["infrastructure.core.network.dns-tls"],
+    "choices": [
+      {"key":"A","content":"DNS는 서버 인증을, TLS는 도메인을 IP 주소로 해석한다.","displayOrder":0,"rationaleMarkdown":"역할이 뒤바뀌었다. DNS는 이름을 접속할 주소로 해석하고 TLS는 암호화된 채널과 상대 신원 검증에 관여한다."},
+      {"key":"B","content":"DNS는 이름을 접속 주소로 해석하고 TLS는 암호화된 채널과 인증서 기반 신원 검증을 제공한다.","displayOrder":1,"rationaleMarkdown":"DNS와 TLS는 서로 다른 단계의 역할을 담당한다. 이름 해석과 보안 채널 설정을 구분해야 장애 원인도 나눠 볼 수 있다."},
+      {"key":"C","content":"DNS 레코드를 바꾸면 기존 resolver 캐시는 즉시 모두 사라진다.","displayOrder":2,"rationaleMarkdown":"이미 캐시된 정상·실패 응답은 각 TTL 동안 남을 수 있다. DNS 전환이 즉시 원자적으로 적용된다고 가정하면 안 된다."},
+      {"key":"D","content":"SNI로 인증서를 선택하면 클라이언트의 호스트 이름 검증도 자동으로 끝난다.","displayOrder":3,"rationaleMarkdown":"SNI는 서버가 어떤 인증서를 제시할지 선택하는 데 쓰일 수 있지만 클라이언트는 접속하려던 이름과 인증서의 서비스 식별자가 맞는지 별도로 검증한다."}
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "DNS는 서비스 이름을 접속할 네트워크 주소로 해석하고, TLS는 그 엔드포인트와 암호화된 채널을 만들면서 인증서로 상대의 서비스 식별자를 검증한다. 이름 해석과 보안 채널 설정은 서로 다른 단계이므로 실패 원인도 구분해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "infrastructure.core.network.dns-tls.q2",
+    "promptMarkdown": "인증서 교체 중 인스턴스 상태가 다음처럼 나뉘었다.\n\n- 일부 인스턴스: 새 인증서 제공\n- 일부 인스턴스: 만료 직전 인증서 제공\n\n가능한 원인과 안전한 운영 조치는?",
+    "questionType": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["infrastructure.core.network.dns-tls"],
+    "modelAnswer": "인증서 파일 갱신 시점과 실행 중인 프로세스가 메모리에 읽어 둔 인증서의 수명 주기가 일치하지 않거나 순차 재시작이 끝나지 않은 상태일 수 있다. 새 인증서를 검증한 뒤 인스턴스별 다시 읽기·재시작을 점진적으로 수행하고, TLS 연결 실패와 인증서 만료를 관측하며 이전 인증서 폐기 전에는 겹쳐 운영하는 기간을 둔다.",
+    "explanationMarkdown": "인증서 파일이 갱신돼도 서비스 프로세스가 기존 인증서를 메모리에 계속 들고 있으면 인스턴스마다 다른 인증서를 제공할 수 있다. 교체는 새 인증서 검증, 다시 읽기·재시작, 겹쳐 운영하는 기간과 만료 관측까지 포함해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "infrastructure.core.network.dns-tls.q3",
+    "promptMarkdown": "새 엔드포인트로 DNS 레코드를 바꾸는 배포 계획을 세우고 있다.\n\n다음 조건을 함께 고려한 전환·되돌리기 계획을 설명하라.\n\n- TTL과 resolver 캐시\n- TLS 인증서 SAN\n- 이전·새 엔드포인트의 운영 기간",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["infrastructure.core.network.dns-tls"],
+    "modelAnswer": "새 엔드포인트를 먼저 준비하고 TLS 인증서의 SAN에 접속할 호스트 이름이 DNS-ID로 포함되며 신뢰 체인이 유효한지 확인한다. IP 주소로 직접 접속한다면 IP 식별자가 필요하다. TTL을 낮춰도 이미 resolver에 캐시된 정상 응답의 남은 시간은 즉시 짧아지지 않고 NXDOMAIN/NODATA 같은 부정 응답도 일정 시간 캐시될 수 있으므로, 이전·새 엔드포인트를 겹쳐 운영하면서 상태와 오류를 비교한다. 문제가 생겨 DNS를 되돌려도 캐시가 만료될 때까지 점진적으로 반영될 수 있다.",
+    "explanationMarkdown": "TLS 클라이언트는 신뢰할 수 있는 인증서 체인뿐 아니라 접속하려던 호스트 이름과 인증서 SAN의 서비스 식별자가 일치하는지 확인해야 한다. DNS TTL을 낮춰도 이미 캐시된 정상 응답이 즉시 무효화되지는 않으며 실패 응답도 일정 시간 캐시될 수 있으므로 이전·새 엔드포인트를 함께 유지하고 점진 전환과 되돌리기를 계획해야 한다."
+  }
 ]

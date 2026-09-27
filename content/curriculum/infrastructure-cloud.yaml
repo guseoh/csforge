@@ -1,114 +1,114 @@
 schemaVersion: 2
 area:
   key: infrastructure-cloud
-  title: Infrastructure & Cloud
-  baseline: provider-neutral compute, networking, storage and automation
+  title: 인프라와 클라우드
+  baseline: 사업자에 종속되지 않는 컴퓨팅·네트워킹·저장소·자동화 원칙
   contentKeyPrefix: infrastructure.core
   status: CANONICAL_FOUNDATION
 policies:
   language:
     authoringLanguage: ko-KR
-    explanationRule: 애플리케이션이 실행되는 infrastructure boundary에서 compute·network·storage 자원과 lifecycle·failure·cost를 연결한다.
+    explanationRule: 애플리케이션이 실행되는 인프라 경계에서 컴퓨팅·네트워크·저장소 자원과 수명 주기·실패·비용을 연결한다.
   question:
     topicDifficultyCoverage: [EASY, MEDIUM, HARD]
     areaTypeCoverage: [MULTIPLE_CHOICE, SHORT_ANSWER, DESCRIPTIVE, SCENARIO]
-    hardRule: resource limit, traffic routing, certificate rotation, backup/restore, rollout·health state 또는 IaC drift를 실제 운영 상황으로 판단하게 한다.
-    shortAnswerRule: cloud 서비스명이나 container 용어 이름만으로 정답을 인정하지 않는다.
+    hardRule: 자원 제한, 트래픽 경로, 인증서 교체, 백업·복구, 배포·상태 점검 또는 IaC drift를 실제 운영 상황에서 판단하게 한다.
+    shortAnswerRule: SHORT_ANSWER는 짧고 안정적으로 채점 가능한 용어·값·상태에만 사용하고, 원인·비교·결과 설명이 필요한 문제는 DESCRIPTIVE 또는 SCENARIO로 묻는다.
   source:
-    primary: [NIST Cloud Computing Definition, Kubernetes Documentation, Docker Documentation, AWS VPC Documentation]
-    rule: provider feature와 portable infrastructure principle, application·platform responsibility를 구분하고 provider-specific 용어는 해당 provider 문서로 확인한다.
+    primary: [NIST Cloud Computing Definition, Kubernetes Documentation, Gateway API Documentation, Docker Documentation, AWS VPC Documentation, IETF RFCs]
+    rule: 클라우드 사업자 기능과 이식 가능한 인프라 원칙, 애플리케이션과 플랫폼의 책임을 구분하고 사업자별 용어는 해당 사업자의 문서로 확인한다.
   visualization:
     values: [NONE, TEXT, DIAGRAM]
-    rule: request ingress, container lifecycle, health probe, storage recovery와 deployment transition처럼 경계·상태가 핵심인 곳에 사용한다.
+    rule: 요청 진입, 컨테이너 수명 주기, readiness·liveness 확인, 비밀 정보 교체, 저장소 복구와 배포 전환처럼 경계·상태가 핵심인 곳에 사용한다.
 topics:
 - key: infrastructure.core.compute
-  title: Compute and runtime
+  title: 컴퓨팅과 실행 환경
   order: 10
-  scope: VM/container/serverless 실행 모델, resource requests/limits와 configuration/secrets를 다룬다.
-  boundary: application code와 runtime scheduler/host resource의 책임을 분리한다.
+  scope: VM·컨테이너·서버리스 실행 모델, 자원 요청·제한, 실행 설정과 비밀 정보를 다룬다.
+  boundary: 애플리케이션 코드와 실행 환경의 스케줄러·호스트 자원 책임을 분리한다.
   concepts:
   - key: infrastructure.core.compute.execution-models
-    title: VM·container·serverless execution models
+    title: VM·컨테이너·서버리스의 실행 책임
     order: 10
     level: 1
-    objective: process restart와 container/Pod recreation을 구분하고 image/runtime·durable state lifecycle과 managed execution의 운영 책임 이동을 설명한다.
+    objective: 프로세스 재시작과 컨테이너·Pod 재생성을 구분하고, 이미지·실행 환경·영구 데이터의 수명 주기와 관리형 실행에서 운영 책임이 이동하는 범위를 설명한다.
     density: CORE
     visualization: TEXT
   - key: infrastructure.core.compute.resource-boundaries
-    title: resource requests와 limits
+    title: 리소스 요청과 제한
     order: 20
     level: 2
-    objective: CPU/memory request·limit의 scheduling/runtime 역할과 throttling·OOM/eviction을 capacity 관점에서 판단한다.
+    objective: CPU·메모리 요청(request)과 제한(limit)이 스케줄링·실행에 미치는 역할을 구분하고, throttling·OOM·축출을 용량 관점에서 판단한다.
     density: CORE
     visualization: DIAGRAM
   - key: infrastructure.core.compute.configuration-secrets
-    title: configuration과 secrets
+    title: 실행 설정과 Secret 관리
     order: 30
     level: 2
-    objective: image와 runtime configuration을 분리하고 secret 노출·rotation·least privilege 경계를 설계한다.
+    objective: 컨테이너 이미지와 실행 환경별 설정을 분리하고, 비밀 정보의 노출·교체·최소 권한 경계를 설계한다.
     density: CORE
-    visualization: NONE
+    visualization: TEXT
 - key: infrastructure.core.network
-  title: Infrastructure networking
+  title: 인프라 네트워킹
   order: 20
-  scope: VPC/subnet/security boundary, load balancing/ingress와 DNS/TLS lifecycle을 다룬다.
-  boundary: Network & HTTP가 protocol semantics를 소유하고 Infrastructure는 provider routing·isolation·certificate operation을 소유한다.
+  scope: VPC·서브넷·보안 경계, 부하 분산·진입 경로, DNS·TLS 인증서 수명 주기를 다룬다.
+  boundary: Network & HTTP 영역은 프로토콜 의미를 다루고, 이 영역은 사업자별 경로 설정·격리·인증서 운영을 다룬다.
   concepts:
   - key: infrastructure.core.network.network-boundaries
-    title: VPC·subnet·security boundary
+    title: 네트워크 경계와 접근 제어
     order: 10
     level: 1
-    objective: AWS VPC/subnet route와 security group, Kubernetes NetworkPolicy처럼 서로 다른 infrastructure allow boundary를 구분하고 public/private ingress·egress를 설명한다.
+    objective: AWS VPC·서브넷 경로와 보안 그룹, Kubernetes NetworkPolicy처럼 인프라별 허용 경계를 구분하고, 외부 공개·내부 전용 환경의 인바운드와 아웃바운드를 설명한다.
     density: CORE
     visualization: DIAGRAM
   - key: infrastructure.core.network.load-balancing-ingress
-    title: load balancing과 ingress
+    title: 외부 요청의 진입과 부하 분산
     order: 20
     level: 2
-    objective: client·load balancer·service·instance routing과 health-aware traffic distribution을 판단한다.
+    objective: 클라이언트·부하 분산 장치·서비스·인스턴스를 거치는 요청 경로와 상태 확인에 따른 트래픽 분배를 판단한다.
     density: CORE
     visualization: DIAGRAM
   - key: infrastructure.core.network.dns-tls
-    title: DNS와 TLS certificate lifecycle
+    title: DNS 변경과 TLS 인증서 수명주기
     order: 30
     level: 2
-    objective: name resolution과 HTTP version별 transport/security establishment 차이, certificate issuance·rotation·expiry를 운영 흐름으로 설명한다.
+    objective: DNS 캐시 TTL을 고려한 엔드포인트 전환과 TLS 인증서의 발급·검증·교체·만료를 운영 흐름으로 설명한다.
     density: CORE
     visualization: TEXT
 - key: infrastructure.core.reliability
-  title: Storage and delivery reliability
+  title: 저장소와 배포 신뢰성
   order: 30
-  scope: object/block storage, backup/restore와 IaC·immutable rollout을 다룬다.
-  boundary: Database canonical state와 infrastructure backup/restore, application migration을 혼동하지 않는다.
+  scope: 객체·블록·파일 저장소, 백업·복구, IaC와 불변 인프라 배포를 다룬다.
+  boundary: Database 영역의 기준 데이터와 인프라 백업·복구, 애플리케이션 데이터 마이그레이션을 혼동하지 않는다.
   concepts:
   - key: infrastructure.core.reliability.storage-models
-    title: object·block·file storage
+    title: 객체·블록·파일 저장소 선택
     order: 10
     level: 1
-    objective: access pattern·latency·durability·sharing 요구에 따라 storage model을 선택한다.
+    objective: 접근 방식·지연 시간·내구성·공유 요구에 따라 저장소 모델을 선택한다.
     density: CORE
-    visualization: NONE
+    visualization: TEXT
   - key: infrastructure.core.reliability.backup-restore
-    title: backup·restore와 RPO/RTO
+    title: 백업·복구와 RPO/RTO
     order: 20
     level: 2
-    objective: backup 존재와 실제 복구 가능성을 구분하고 RPO/RTO·복구 순서·정기 restore test를 설계한다.
+    objective: 백업의 존재와 실제 복구 가능성을 구분하고 RPO·RTO, 복구 순서와 정기 복구 시험을 설계한다.
     density: CORE
     visualization: DIAGRAM
   - key: infrastructure.core.reliability.iac-rollout
-    title: IaC와 immutable rollout
+    title: IaC와 단계적 배포
     order: 30
     level: 3
-    objective: 선언적 infrastructure state, drift·review·rollback과 blue/green·rolling rollout의 failure boundary를 판단한다.
+    objective: 선언형 인프라 상태, drift·검토·rollback과 blue/green·rolling 배포의 실패 경계를 판단한다.
     density: CORE
     visualization: DIAGRAM
 boundaries:
 - area: Operating Systems
-  owns: process, virtual memory와 host OS semantics
-  infrastructureBoundary: cloud/cluster가 제공하는 VM·container resource boundary와 scheduling을 application 운영 관점에서 다룬다.
+  owns: 프로세스, 가상 메모리와 호스트 OS 동작
+  infrastructureBoundary: 클라우드·클러스터가 제공하는 VM·컨테이너 자원 경계와 스케줄링을 애플리케이션 운영 관점에서 다룬다.
 - area: Network & HTTP
-  owns: protocol, TCP/IP, HTTP semantics
-  infrastructureBoundary: ingress, routing, DNS·TLS operation과 network isolation을 다룬다.
+  owns: 프로토콜, TCP/IP, HTTP 의미
+  infrastructureBoundary: 인바운드 진입, 경로 설정, DNS·TLS 운영과 네트워크 격리를 다룬다.
 - area: Database
-  owns: database data model, transaction과 canonical durability
-  infrastructureBoundary: volume·backup·restore resource와 DB recovery operation을 연결한다.
+  owns: 데이터베이스 모델, 트랜잭션과 기준 데이터의 내구성
+  infrastructureBoundary: 볼륨·백업·복구 자원과 DB 복구 작업을 연결한다.
