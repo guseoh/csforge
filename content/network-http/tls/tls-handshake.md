@@ -4,7 +4,7 @@ contentKey: network-http.core.tls.tls-handshake
 topicContentKey: network-http.core.tls
 slug: tls-handshake
 title: "TLS 핸드셰이크"
-summary: "TLS handshake가 version·cipher capability·key material·peer authentication을 합의해 application-data key를 만드는 흐름을 설명한다."
+summary: "TLS 핸드셰이크가 버전·암호 조합·키 재료·상대 인증을 합의해 애플리케이션 데이터 보호 키를 만드는 흐름을 설명한다."
 level: 2
 status: PUBLISHED
 displayOrder: 50
@@ -17,9 +17,9 @@ references:
 ---
 # TLS 핸드셰이크
 
-TLS application data를 암호화하려면 client와 server가 먼저 어떤 protocol version과 cryptographic capability를 사용할지 합의하고, 공통 key material을 만들며, 필요한 경우 상대 identity를 인증해야 한다. 이 준비 과정이 TLS handshake다.
+HTTPS에서 HTTP 데이터를 암호화하려면 클라이언트와 서버가 먼저 사용할 TLS 버전과 암호 조합을 정하고, 공통 키 재료를 만들며, 필요한 경우 상대가 의도한 서버인지 인증해야 한다. 이 준비 과정이 TLS 핸드셰이크다.
 
-TLS 1.3의 일반적인 certificate 기반 handshake에서는 client가 `ClientHello`로 지원하는 version, cipher suite와 key share 등을 제시한다. server는 `ServerHello`에서 사용할 조합과 자신의 key share를 선택하고, 이후 handshake traffic이 보호되는 상태에서 certificate와 인증 관련 message를 전달한다.
+TLS 1.3의 일반적인 인증서 기반 흐름에서는 클라이언트가 `ClientHello`에 지원하는 버전, cipher suite와 key share 등을 담아 보낸다. 서버는 `ServerHello`에서 사용할 조합과 자신의 key share를 선택한다. 이후에는 핸드셰이크 트래픽도 보호되는 상태로 전환되고 서버 인증에 필요한 인증서와 검증 메시지가 이어진다.
 
 ```text
 Client                                              Server
@@ -31,12 +31,16 @@ Client                                              Server
   | ===== encrypted application data =============> |
 ```
 
-이 흐름은 capability 선택, server identity 증명, shared key material 확인이 끝난 뒤에야 application data 단계로 넘어간다는 순서를 보여 준다.
+핵심 순서는 **통신 조건 합의 → 키 재료 합의 → 상대 인증 → 핸드셰이크 무결성 확인 → 애플리케이션 데이터 전송**이다.
 
-### Certificate와 Finished는 서로 다른 것을 확인한다
+### CertificateVerify와 Finished는 확인하는 대상이 다르다
 
-server가 certificate로 인증되는 흐름에서는 `Certificate`가 certificate chain을 전달하고, `CertificateVerify`가 해당 certificate의 private key를 실제로 보유한다는 사실과 현재 handshake transcript를 signature로 연결한다. 마지막 `Finished`는 지금까지의 handshake transcript와 파생한 key material이 양쪽에서 일치하는지 확인하는 역할을 한다.
+인증서 기반 서버 인증에서는 `Certificate`가 인증서 체인을 전달하고, `CertificateVerify`가 서버가 해당 인증서의 개인 키를 실제로 보유하고 있다는 사실을 현재 핸드셰이크 transcript와 연결해 증명한다.
 
-이 과정을 통과하면 양쪽은 application data를 보호할 traffic secret을 사용할 수 있다. 하지만 모든 TLS 1.3 handshake가 certificate message를 동일하게 주고받는 것은 아니다. PSK나 session resumption 같은 mode에서는 일부 단계가 달라질 수 있다.
+`Finished`는 지금까지의 핸드셰이크 transcript와 파생된 키 재료를 이용해 양쪽이 같은 핸드셰이크 상태를 공유하는지 확인한다. 따라서 인증서가 유효하다는 것과 핸드셰이크 전체가 변조 없이 같은 상태로 끝났다는 것은 서로 다른 검증 단계다.
 
-TLS handshake가 성공했다는 것은 **보호된 TLS channel을 사용할 준비가 됐다**는 뜻이다. 그 위에서 HTTP request가 유효한지, 인증된 사용자가 어떤 작업을 할 수 있는지는 application protocol이 별도로 판단한다.
+### 모든 TLS 1.3 연결이 같은 메시지 순서를 쓰는 것은 아니다
+
+PSK나 세션 재개(resumption)를 사용하면 인증서 메시지가 생략되는 등 흐름이 달라질 수 있다. 위 도식은 인증서 기반 서버 인증의 대표 흐름이지 모든 TLS 1.3 핸드셰이크의 유일한 형태가 아니다.
+
+TLS 핸드셰이크가 성공했다는 것은 **검증된 TLS 상대와 보호된 채널을 사용할 준비가 됐다는 뜻**이다. 그 위의 HTTP 요청이 올바른지, 로그인 사용자가 특정 기능을 실행할 권한이 있는지, 데이터베이스 작업이 성공했는지는 애플리케이션이 별도로 판단한다.
