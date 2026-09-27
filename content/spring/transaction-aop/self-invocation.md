@@ -3,8 +3,8 @@ kind: concept
 contentKey: spring.core.transaction-aop.self-invocation
 topicContentKey: spring.core.transaction-aop
 slug: self-invocation
-title: "self-invocation 함정"
-summary: "proxy mode에서 같은 객체 내부의 this 호출은 proxy를 다시 통과하지 않으므로 내부 method의 @Transactional advice가 새롭게 적용되지 않는 이유와 해결 방향을 이해한다"
+title: "내부 호출(self-invocation) 함정"
+summary: "proxy 방식에서 같은 객체 내부의 this 호출은 proxy를 다시 통과하지 않으므로 내부 method의 @Transactional advice가 새롭게 적용되지 않는 이유와 해결 방향을 이해한다"
 level: 3
 status: PUBLISHED
 displayOrder: 20
@@ -24,7 +24,7 @@ references:
     displayOrder: 2
     relationNote: "AOP proxy 내부 호출이 advice 적용을 우회하는 운영 코드 사례 확인"
 ---
-# self-invocation 함정
+# 내부 호출(self-invocation) 함정
 
 다음 코드는 겉으로 보면 `place()`가 `saveOrder()`를 호출하므로 `saveOrder()`의 `@Transactional`이 적용될 것처럼 보입니다.
 

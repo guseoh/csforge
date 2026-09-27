@@ -3,8 +3,8 @@ kind: concept
 contentKey: spring.core.scope-lifecycle.lifecycle-callback
 topicContentKey: spring.core.scope-lifecycle
 slug: lifecycle-callback
-title: "초기화·소멸 callback"
-summary: "Bean 생성 이후 dependency injection과 post-processing을 거쳐 사용할 준비가 되고 context 종료 시 resource를 정리하는 lifecycle을 이해한다"
+title: "초기화·소멸 콜백"
+summary: "Bean 생성 이후 의존성 주입과 후처리를 거쳐 사용할 준비가 되고 context 종료 시 자원을 정리하는 생명주기를 이해한다"
 level: 2
 status: PUBLISHED
 displayOrder: 30
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: "lifecycle callbacks, initialization/destruction hooks와 BeanPostProcessor 관계 확인"
 ---
-# 초기화·소멸 callback
+# 초기화·소멸 콜백
 
 어떤 객체는 constructor가 끝났다고 바로 외부 요청을 받을 준비가 끝나는 것이 아닙니다. connection pool, scheduler, client처럼 configuration과 dependency가 모두 들어온 뒤 초기화해야 하는 자원이 있고 application 종료 전에 정리해야 하는 자원도 있습니다.
 

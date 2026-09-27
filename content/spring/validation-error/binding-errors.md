@@ -3,8 +3,8 @@ kind: concept
 contentKey: spring.core.validation-error.binding-errors
 topicContentKey: spring.core.validation-error
 slug: binding-errors
-title: "binding error 처리"
-summary: "HTTP 문자열·JSON 값이 Java parameter/DTO로 변환되고 검증되는 과정에서 생기는 type mismatch와 field/global error를 일관된 API 오류 계약으로 바꾸는 흐름을 이해한다"
+title: "바인딩 오류 처리"
+summary: "HTTP 문자열·JSON 값이 Java parameter/DTO로 변환되고 검증되는 과정에서 생기는 타입 불일치와 field/global error를 일관된 API 오류 계약으로 바꾸는 흐름을 이해한다"
 level: 2
 status: PUBLISHED
 displayOrder: 20
@@ -22,7 +22,7 @@ references:
     displayOrder: 2
     relationNote: "validation error가 MVC exception/BindingResult로 전달되는 조건 확인"
 ---
-# binding error 처리
+# 바인딩 오류 처리
 
 HTTP 요청에서 들어오는 값은 처음부터 Java `long`, `LocalDate`, enum이 아닙니다. path/query/form 값은 문자열 representation이고 JSON body도 converter가 Java type으로 바꿔야 합니다.
 

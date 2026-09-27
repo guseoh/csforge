@@ -3,7 +3,7 @@ kind: concept
 contentKey: spring.core.production.graceful-shutdown
 topicContentKey: spring.core.production
 slug: graceful-shutdown
-title: "Graceful shutdown과 종료 순서"
+title: "정상 종료(graceful shutdown)와 종료 순서"
 summary: "배포·종료 시 새 요청 유입을 줄이고 진행 중 작업에 제한된 완료 시간을 주며 connection·executor·외부 자원을 순서 있게 정리하는 이유를 이해한다."
 level: 3
 status: PUBLISHED
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: embedded web server graceful shutdown 동작과 timeout 설정 확인
 ---
-# Graceful shutdown과 종료 순서
+# 정상 종료(graceful shutdown)와 종료 순서
 
 배포할 때 이전 프로세스를 즉시 죽여도 다음 프로세스가 바로 올라오면 괜찮다고 생각하기 쉽습니다. 하지만 기존 프로세스가 결제 요청을 처리 중이거나 큰 파일을 저장 중이었다면 종료 시점에 connection이 끊기면서 사용자는 실패를 보게 됩니다. Graceful shutdown은 “절대로 요청을 잃지 않는다”는 기능이 아니라 **종료 과정에서 새 작업은 줄이고 이미 시작한 작업에는 제한된 완료 기회를 주는 정책**입니다.
 

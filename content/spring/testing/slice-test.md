@@ -3,7 +3,7 @@ kind: concept
 contentKey: spring.core.testing.slice-test
 topicContentKey: spring.core.testing
 slug: slice-test
-title: "slice test와 context test"
+title: "슬라이스 테스트와 컨텍스트 테스트"
 summary: "테스트가 실제로 어떤 Spring context와 infrastructure를 로드하는지 기준으로 web/JPA slice와 full context test의 검증 범위·속도·신뢰도를 비교한다"
 level: 3
 status: PUBLISHED
@@ -28,7 +28,7 @@ references:
     displayOrder: 3
     relationNote: "현재 Spring Framework에서 slice context의 collaborator Bean을 Mockito mock으로 교체하는 방식 확인"
 ---
-# slice test와 context test
+# 슬라이스 테스트와 컨텍스트 테스트
 
 Spring test를 나눌 때 “unit test는 빠르고 integration test는 느리다”만으로는 실제 선택이 어렵습니다. 먼저 **이번 test가 어떤 Spring 구성요소와 외부 경계를 진짜로 검증해야 하는가**를 봐야 합니다.
 
@@ -79,7 +79,7 @@ full application context를 띄우면 configuration wiring과 여러 component i
 | 검증하려는 위험                        | 적합한 시작점                        |
 | -------------------------------------- | ------------------------------------ |
 | pure domain invariant                  | plain unit test                      |
-| MVC mapping/검증/error contract  | web slice                            |
+| MVC mapping/검증/error contract        | web slice                            |
 | JPA mapping/query/constraint           | JPA integration/slice + real DB 고려 |
 | configuration/proxy/transaction wiring | Spring context integration           |
 | 핵심 use case 전체                     | targeted end-to-end/integration      |

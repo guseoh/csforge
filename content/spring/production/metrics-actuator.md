@@ -3,8 +3,8 @@ kind: concept
 contentKey: spring.core.production.metrics-actuator
 topicContentKey: spring.core.production
 slug: metrics-actuator
-title: "Actuator와 metrics로 애플리케이션 상태 관측하기"
-summary: "health와 metrics가 서로 다른 질문에 답한다는 점을 이해하고, 요청 지연 시간·error·JVM·connection pool 지표를 실제 원인 추적에 연결하며 endpoint 노출 위험을 함께 판단한다."
+title: "Actuator와 메트릭으로 애플리케이션 상태 관측하기"
+summary: "health와 메트릭이 서로 다른 질문에 답한다는 점을 이해하고, 요청 지연 시간·오류·JVM·connection pool 지표를 실제 원인 추적에 연결하며 endpoint 노출 위험을 함께 판단한다."
 level: 3
 status: PUBLISHED
 displayOrder: 20
@@ -28,7 +28,7 @@ references:
     displayOrder: 3
     relationNote: meter identity, name, tag를 포함한 instrumentation 기본 개념 확인
 ---
-# Actuator와 metrics로 애플리케이션 상태 관측하기
+# Actuator와 메트릭으로 애플리케이션 상태 관측하기
 
 애플리케이션이 “살아 있다”는 것과 “정상적으로 일하고 있다”는 것은 다릅니다. 프로세스가 실행 중이어도 DB connection pool이 고갈되어 모든 요청이 5초씩 기다릴 수 있고, 평균 응답 시간은 괜찮아도 상위 1% 요청만 심하게 느릴 수 있습니다. Actuator와 Micrometer는 이런 상태를 **추측이 아니라 관측 가능한 값**으로 바꾸는 도구입니다.
 
@@ -39,8 +39,8 @@ references:
 | 관측                  | 주로 답하는 질문                 |
 | --------------------- | -------------------------------- |
 | health                | 지금 요청을 받아도 되는가?       |
-| 요청 수         | 트래픽이 얼마나 들어오는가?      |
-| 지연 시간               | 요청이 얼마나 오래 걸리는가?     |
+| 요청 수               | 트래픽이 얼마나 들어오는가?      |
+| 지연 시간             | 요청이 얼마나 오래 걸리는가?     |
 | error count/rate      | 실패가 증가했는가?               |
 | Hikari active/pending | DB connection이 고갈되고 있는가? |
 | JVM heap/GC           | 메모리 압박이나 긴 GC가 있는가?  |

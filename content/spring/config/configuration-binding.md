@@ -3,8 +3,8 @@ kind: concept
 contentKey: spring.core.config.configuration-binding
 topicContentKey: spring.core.config
 slug: configuration-binding
-title: "타입 안전 configuration binding"
-summary: "관련 property를 @ConfigurationProperties 객체로 묶고 duration/URL/range 같은 type과 검증을 시작 contract로 만들어 잘못된 환경을 조기에 실패시킨다"
+title: "타입 안전 설정 바인딩"
+summary: "관련 property를 @ConfigurationProperties 객체로 묶고 Duration/URI/range 같은 타입과 검증을 시작 계약으로 만들어 잘못된 환경을 조기에 실패시키며, 바인딩 타입이 Spring Bean으로 등록되어야 실제 설정 값이 연결된다는 점을 이해한다"
 level: 2
 status: PUBLISHED
 displayOrder: 30
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: "@ConfigurationProperties binding과 type-safe external configuration 확인"
 ---
-# 타입 안전 configuration binding
+# 타입 안전 설정 바인딩
 
 property를 필요할 때마다 문자열 key로 읽으면 설정 구조가 code 곳곳에 퍼집니다.
 
@@ -28,7 +28,7 @@ private long timeout;
 private String baseUrl;
 ```
 
-`timeout` 단위가 무엇인지, URL 형식이 유효한지, 두 값이 같은 configuration 그룹인지 field만 보고 알기 어렵습니다. `@ConfigurationProperties`는 관련 값을 하나의 configuration object로 묶어 **application이 기대하는 환경 contract**를 type으로 표현할 수 있습니다.
+`timeout` 단위가 무엇인지, URL 형식이 유효한지, 두 값이 같은 설정 그룹인지 field만 보고 알기 어렵습니다. `@ConfigurationProperties`는 관련 값을 하나의 설정 객체로 묶어 **애플리케이션이 기대하는 실행 환경 계약**을 타입으로 표현할 수 있습니다.
 
 ```java
 @ConfigurationProperties(prefix = "payment")
@@ -46,6 +46,33 @@ payment:
   max-retries: 3
 ```
 
+### `@ConfigurationProperties` 타입도 Spring Bean으로 등록되어야 한다
+
+`@ConfigurationProperties`를 타입에 붙이는 것은 어떤 prefix를 어떤 객체에 바인딩할지 정의하는 단계입니다. 그 타입이 실제로 Spring container의 관리 대상이 되어야 애플리케이션 시작 과정에서 설정 값이 바인딩됩니다.
+
+Spring Boot에서는 대표적으로 `@ConfigurationPropertiesScan`으로 설정 타입을 스캔할 수 있습니다.
+
+```java
+@SpringBootApplication
+@ConfigurationPropertiesScan
+public class Application {
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
+}
+```
+
+특정 타입만 명시적으로 등록하고 싶다면 `@EnableConfigurationProperties`를 사용할 수도 있습니다.
+
+```java
+@Configuration
+@EnableConfigurationProperties(PaymentProperties.class)
+class PaymentConfig {
+}
+```
+
+즉, `@ConfigurationProperties` 선언만 보고 "이 객체가 자동으로 Bean이 된다"고 일반화하면 안 됩니다. **설정 바인딩 정보와 Bean 등록 경로를 함께 확인해야 실제 실행 흐름이 완성됩니다.**
+
 ### 문자열이 아니라 의미 있는 type으로 변환한다
 
 `URI`, `Duration`, enum 같은 type을 사용하면 잘못된 값이 binding 시점에 드러날 수 있습니다.
@@ -56,7 +83,7 @@ payment:
 "STRICT" -> enum
 ```
 
-이것은 단순 편의가 아니라 downstream code가 매번 parsing/단위 확인을 반복하지 않게 만듭니다.
+이것은 단순 편의가 아니라 이후 코드가 매번 parsing/단위 확인을 반복하지 않게 만듭니다.
 
 ### 시작 검증으로 환경 자체를 거부할 수 있다
 
@@ -69,7 +96,7 @@ public record WorkerProperties(
 ) { }
 ```
 
-production에서 `concurrency=0`이 들어왔다면 요청이 들어온 뒤 이상하게 실패하기보다 application 시작에서 configuration error로 멈추는 편이 보통 더 안전합니다.
+production에서 `concurrency=0`이 들어왔다면 요청이 들어온 뒤 이상하게 실패하기보다 애플리케이션 시작에서 설정 오류로 멈추는 편이 보통 더 안전합니다.
 
 ```text
 잘못된 환경 값
@@ -83,7 +110,7 @@ startup 실패 -> deploy 단계에서 발견
 
 ### 검증이 business rule을 대신하지 않는다
 
-`max-retries` 범위 같은 configuration invariant는 properties object에 적합하지만, 주문 가능한 상태나 할인 정책은 요청/domain state에 따라 달라집니다. `@ConfigurationProperties` 검증이 강력하다고 모든 domain 검증을 이곳으로 옮기는 것은 책임 혼합입니다.
+`max-retries` 범위 같은 설정 불변식은 properties 객체에 적합하지만, 주문 가능한 상태나 할인 정책은 요청/domain state에 따라 달라집니다. `@ConfigurationProperties` 검증이 강력하다고 모든 domain 검증을 이곳으로 옮기는 것은 책임 혼합입니다.
 
 ### secret을 type-safe하게 묶어도 노출 위험은 남는다
 
@@ -101,4 +128,4 @@ application 전체에 `PaymentProperties`를 주입해 모든 class가 설정 �
 Environment -> PaymentProperties -> PaymentClient -> application service
 ```
 
-configuration binding은 file을 record로 바꾸는 기능을 넘어 **실행 환경의 입력을 명시적인 type과 시작 invariant로 변환하는 경계**입니다.
+설정 바인딩은 file을 record로 바꾸는 기능을 넘어 **실행 환경의 입력을 명시적인 타입과 시작 불변식으로 변환하는 경계**입니다.

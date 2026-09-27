@@ -3,8 +3,8 @@ kind: concept
 contentKey: spring.core.data-jpa.entity-lifecycle
 topicContentKey: spring.core.data-jpa
 slug: entity-lifecycle
-title: "Entity lifecycle과 persistence context"
-summary: "JPA entity의 new/managed/detached/removed 상태와 persistence context identity/dirty checking을 구분하고 Java field 변경이 언제 SQL과 연결되는지 이해한다"
+title: "Entity 생명주기와 영속성 컨텍스트"
+summary: "JPA Entity의 new/managed/detached/removed 상태와 영속성 컨텍스트의 객체 정체성·변경 감지를 구분하고 Java field 변경이 언제 SQL과 연결되는지 이해한다"
 level: 2
 status: PUBLISHED
 displayOrder: 20
@@ -22,7 +22,7 @@ references:
     displayOrder: 2
     relationNote: "Spring Data save가 persist/merge를 선택하는 기본 동작 확인"
 ---
-# Entity lifecycle과 persistence context
+# Entity 생명주기와 영속성 컨텍스트
 
 JPA entity는 단순 POJO이지만 `EntityManager`/persistence context와 관계를 맺는 순간 **provider가 identity와 변경 추적을 관리하는 상태**가 생깁니다. 같은 Java class라도 현재 persistence context에 의해 관리되는지에 따라 field 변경이 DB와 연결되는 방식이 달라집니다.
 
@@ -92,7 +92,7 @@ detached.rename("new"); // 현재 context에서 managed가 아니라면 자동 �
 Member managed = em.merge(detached);
 ```
 
-### Entity lifecycle과 domain lifecycle은 다른 개념이다
+### Entity 생명주기와 domain lifecycle은 다른 개념이다
 
 JPA의 `managed/detached`는 persistence 상태입니다. 주문의 `CREATED/PAID/CANCELLED`는 business lifecycle입니다.
 

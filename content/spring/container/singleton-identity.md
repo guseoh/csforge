@@ -3,8 +3,8 @@ kind: concept
 contentKey: spring.core.container.singleton-identity
 topicContentKey: spring.core.container
 slug: singleton-identity
-title: "singleton scope와 identity"
-summary: "Spring singleton은 Bean definition 하나에 대해 container가 공유 instance 하나를 관리하는 scope이며, 같은 참조를 여러 요청이 공유할 때 mutable state가 왜 위험해지는지 이해한다"
+title: "singleton Bean의 공유 범위와 객체 정체성"
+summary: "Spring singleton은 Bean 정의 하나마다 container가 공유 객체 하나를 관리하는 범위이며, 같은 객체를 여러 요청이 공유할 때 변경 가능한 상태가 왜 위험해지는지 이해한다"
 level: 1
 status: PUBLISHED
 displayOrder: 30
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: "Spring singleton scope의 per-container/per-bean 정의 확인"
 ---
-# singleton scope와 identity
+# singleton Bean의 공유 범위와 객체 정체성
 
 Spring Bean의 기본 scope는 `singleton`입니다. 여기서 singleton은 “JVM 전체에서 이 class의 instance는 무조건 하나”라는 뜻이 아닙니다. **한 Spring container 안에서 특정 Bean definition에 대해 하나의 공유 instance를 관리하고 같은 Bean을 요청할 때 그 instance를 반환한다**는 scope 규칙입니다.
 

@@ -3,8 +3,8 @@ kind: concept
 contentKey: spring.core.testing.test-transaction
 topicContentKey: spring.core.testing
 slug: test-transaction
-title: "테스트 transaction 격리"
-summary: "Spring test transaction의 자동 rollback이 data cleanup에는 편리하지만 production commit/flush/lazy-loading/async 경계를 가릴 수 있다는 점을 이해한다"
+title: "테스트 트랜잭션 격리"
+summary: "Spring 테스트 트랜잭션의 자동 rollback이 데이터 정리에는 편리하지만 production commit/flush/lazy-loading/async 경계를 가릴 수 있다는 점을 이해한다"
 level: 3
 status: PUBLISHED
 displayOrder: 30
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: "TestContext transaction 시작/rollback과 production-managed transaction 차이 확인"
 ---
-# 테스트 transaction 격리
+# 테스트 트랜잭션 격리
 
 Spring integration test에 `@Transactional`을 붙이면 test method를 transaction 안에서 실행하고 끝날 때 rollback해 DB를 깨끗하게 유지할 수 있습니다.
 

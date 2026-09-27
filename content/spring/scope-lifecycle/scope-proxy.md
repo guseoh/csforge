@@ -3,8 +3,8 @@ kind: concept
 contentKey: spring.core.scope-lifecycle.scope-proxy
 topicContentKey: spring.core.scope-lifecycle
 slug: scope-proxy
-title: "scope mismatch와 scoped proxy"
-summary: "singleton처럼 긴 수명의 객체가 요청처럼 짧은 수명의 객체를 직접 주입받을 때 생기는 lifetime mismatch와 proxy가 현재 scope instance를 늦게 찾아주는 원리를 이해한다"
+title: "Bean 범위 불일치와 scoped proxy"
+summary: "singleton처럼 긴 수명의 객체가 request처럼 짧은 수명의 객체를 직접 주입받을 때 생기는 수명 불일치와 proxy가 현재 범위의 실제 객체를 늦게 찾아주는 원리를 이해한다"
 level: 2
 status: PUBLISHED
 displayOrder: 20
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: "짧은 scope Bean을 긴 scope Bean에 주입할 때 scoped proxy/ObjectFactory가 필요한 이유 확인"
 ---
-# scope mismatch와 scoped proxy
+# Bean 범위 불일치와 scoped proxy
 
 singleton `AuditService`가 요청마다 다른 `RequestContext`를 사용한다고 해 보겠습니다.
 
