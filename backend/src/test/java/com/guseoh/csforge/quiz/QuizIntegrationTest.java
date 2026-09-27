@@ -7,6 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.net.URI;
+import java.sql.Connection;
+import java.sql.Statement;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -16,6 +18,13 @@ import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+
+import javax.sql.DataSource;
 
 import com.guseoh.csforge.learning.domain.Concept;
 import com.guseoh.csforge.learning.domain.ConceptRepository;
@@ -63,6 +72,9 @@ class QuizIntegrationTest {
 
     @Autowired
     JdbcTemplate jdbc;
+
+    @Autowired
+    DataSource dataSource;
 
     @Autowired
     ObjectMapper objectMapper;
@@ -199,6 +211,129 @@ class QuizIntegrationTest {
         assertEquals(409, keyConflict.statusCode());
         assertEquals("QUIZ_CREATION_KEY_CONFLICT", json(keyConflict).get("code").asText());
         assertEquals(sessionsBefore + 1, jdbc.queryForObject("SELECT COUNT(*) FROM quiz_session", Integer.class));
+    }
+
+    @Test
+    void concurrentQuizCreateWithSameKeyAndRequestReturnsOneSession() throws Exception {
+        int sessionsBefore = jdbc.queryForObject("SELECT COUNT(*) FROM quiz_session", Integer.class);
+        String requestId = UUID.randomUUID().toString();
+        String body = quizSetupBody(2);
+
+        List<HttpResponse<String>> responses = concurrentQuizCreates(requestId, body, body);
+
+        assertEquals(201, responses.get(0).statusCode(), responses.get(0).body());
+        assertEquals(201, responses.get(1).statusCode(), responses.get(1).body());
+        long quizId = json(responses.get(0)).get("quizId").asLong();
+        assertEquals(quizId, json(responses.get(1)).get("quizId").asLong());
+        assertEquals(sessionsBefore + 1, jdbc.queryForObject("SELECT COUNT(*) FROM quiz_session", Integer.class));
+        assertEquals(1, jdbc.queryForObject(
+                "SELECT COUNT(*) FROM quiz_session WHERE creation_request_id = ?::uuid",
+                Integer.class,
+                requestId));
+        assertEquals(2, jdbc.queryForObject(
+                "SELECT COUNT(*) FROM quiz_question WHERE quiz_session_id = ?",
+                Integer.class,
+                quizId));
+        assertEquals(2, jdbc.queryForObject(
+                "SELECT COUNT(*) FROM attempt WHERE quiz_session_id = ?",
+                Integer.class,
+                quizId));
+    }
+
+    @Test
+    void concurrentQuizCreateWithSameKeyAndDifferentRequestReturnsConflictForLoser() throws Exception {
+        int sessionsBefore = jdbc.queryForObject("SELECT COUNT(*) FROM quiz_session", Integer.class);
+        String requestId = UUID.randomUUID().toString();
+
+        List<HttpResponse<String>> responses = concurrentQuizCreates(
+                requestId,
+                quizSetupBody(1),
+                quizSetupBody(2));
+
+        assertEquals(1, responses.stream().filter(response -> response.statusCode() == 201).count());
+        assertEquals(1, responses.stream().filter(response -> response.statusCode() == 409).count());
+        HttpResponse<String> created = responses.stream()
+                .filter(response -> response.statusCode() == 201)
+                .findFirst()
+                .orElseThrow();
+        HttpResponse<String> conflict = responses.stream()
+                .filter(response -> response.statusCode() == 409)
+                .findFirst()
+                .orElseThrow();
+        assertEquals("QUIZ_CREATION_KEY_CONFLICT", json(conflict).get("code").asText());
+        assertEquals(sessionsBefore + 1, jdbc.queryForObject("SELECT COUNT(*) FROM quiz_session", Integer.class));
+        assertEquals(1, jdbc.queryForObject(
+                "SELECT COUNT(*) FROM quiz_session WHERE creation_request_id = ?::uuid",
+                Integer.class,
+                requestId));
+        assertEquals(json(created).get("questionCount").asInt(), jdbc.queryForObject(
+                "SELECT COUNT(*) FROM quiz_question WHERE quiz_session_id = ?",
+                Integer.class,
+                json(created).get("quizId").asLong()));
+        assertEquals(json(created).get("questionCount").asInt(), jdbc.queryForObject(
+                "SELECT COUNT(*) FROM attempt WHERE quiz_session_id = ?",
+                Integer.class,
+                json(created).get("quizId").asLong()));
+    }
+
+    private List<HttpResponse<String>> concurrentQuizCreates(String requestId, String firstBody, String secondBody)
+            throws Exception {
+        try (ExecutorService executor = Executors.newFixedThreadPool(2);
+                Connection lockConnection = dataSource.getConnection()) {
+            lockConnection.setAutoCommit(false);
+            try (Statement statement = lockConnection.createStatement()) {
+                statement.execute("LOCK TABLE quiz_session IN SHARE MODE");
+            }
+
+            CountDownLatch ready = new CountDownLatch(2);
+            CountDownLatch start = new CountDownLatch(1);
+            Future<HttpResponse<String>> first = submitQuizCreate(executor, ready, start, requestId, firstBody);
+            Future<HttpResponse<String>> second = submitQuizCreate(executor, ready, start, requestId, secondBody);
+            assertTrue(ready.await(5, TimeUnit.SECONDS), "Both HTTP requests should be ready to start");
+            start.countDown();
+            assertTrue(awaitBlockedQuizSessionInserts(2), "Both requests should reach the quiz session insert");
+
+            lockConnection.commit();
+            return List.of(first.get(10, TimeUnit.SECONDS), second.get(10, TimeUnit.SECONDS));
+        }
+    }
+
+    private Future<HttpResponse<String>> submitQuizCreate(
+            ExecutorService executor,
+            CountDownLatch ready,
+            CountDownLatch start,
+            String requestId,
+            String body) {
+        return executor.submit(() -> {
+            ready.countDown();
+            if (!start.await(5, TimeUnit.SECONDS)) {
+                throw new IllegalStateException("Concurrent request start timed out");
+            }
+            return request("POST", "/api/quizzes", body, requestId);
+        });
+    }
+
+    private boolean awaitBlockedQuizSessionInserts(int expectedCount) throws InterruptedException {
+        long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(10);
+        while (System.nanoTime() < deadline) {
+            Integer blocked = jdbc.queryForObject("""
+                    SELECT COUNT(*)
+                    FROM pg_stat_activity
+                    WHERE datname = current_database()
+                      AND wait_event_type = 'Lock'
+                      AND state = 'active'
+                      AND query ILIKE '%insert into quiz_session%'
+                    """, Integer.class);
+            if (blocked != null && blocked == expectedCount) return true;
+            Thread.sleep(10);
+        }
+        return false;
+    }
+
+    private String quizSetupBody(int count) {
+        return """
+                {"areas":["java"],"concepts":[%d],"levels":[],"difficulties":[],"questionTypes":[],"state":"ALL","count":%d,"timeLimitSeconds":null}
+                """.formatted(conceptId, count);
     }
 
     @Test
