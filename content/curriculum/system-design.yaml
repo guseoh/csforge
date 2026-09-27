@@ -96,7 +96,7 @@ topics:
     density: CORE
     visualization: DIAGRAM
   - key: system-design.core.reliability.rollout-observability
-    title: rollout과 observability feedback
+    title: 점진적 배포와 관측 피드백
     order: 30
     level: 2
     objective: 카나리 배포·롤백·관측 지표·SLO 기준으로 아키텍처 변경을 점진적으로 검증한다.

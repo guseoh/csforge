@@ -15,6 +15,12 @@ references:
     language: en
     displayOrder: 1
     relationNote: "서비스 수준 목표(SLO)와 오류 예산을 배포 속도·신뢰성 조치에 연결하는 방법 확인"
+  - url: "https://sre.google/sre-book/addressing-cascading-failures/"
+    title: "Google SRE Book: Addressing Cascading Failures"
+    referenceType: OTHER
+    language: en
+    displayOrder: 2
+    relationNote: "과부하 때 기능 축소를 시작할 조건과 제공 범위·복구 방법 확인"
 ---
 # 오류 예산과 기능 축소 (Graceful Degradation)
 
