@@ -9,12 +9,12 @@ level: 3
 status: PUBLISHED
 displayOrder: 10
 references:
-  - url: "https://documentation.red-gate.com/fd"
-    title: "Flyway Documentation"
+  - url: "https://documentation.red-gate.com/fd/versioned-migrations-273973333.html"
+    title: "Flyway: Versioned Migrations"
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
-    relationNote: "versioned migration과 schema 변경 운영 방식을 참고한다."
+    relationNote: "적용된 versioned migration의 checksum 이력과 forward-only correction 원칙을 참고한다."
 ---
 # DB migration과 호환 가능한 변경
 

@@ -9,12 +9,12 @@ level: 3
 status: PUBLISHED
 displayOrder: 30
 references:
-  - url: "https://docs.spring.io/spring-batch/reference/domain.html"
-    title: "Spring Batch Domain Language"
+  - url: "https://docs.spring.io/spring-batch/reference/step/chunk-oriented-processing/restart.html"
+    title: "Spring Batch: Configuring a Step for Restart"
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
-    relationNote: "Job, Step, JobExecution과 재시작 상태 모델을 참고한다."
+    relationNote: "완료된 Step의 skip과 실패 후 재시작 동작을 참고한다."
 ---
 # Batch 실패 후 재시작과 복구
 

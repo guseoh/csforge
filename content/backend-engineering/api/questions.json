@@ -58,13 +58,19 @@
   {
     "kind": "question",
     "contentKey": "backend.core.api.methods-status.q2",
-    "promptMarkdown": "`201 Created`, `202 Accepted`, `409 Conflict`가 각각 어떤 계약을 표현하는지 설명하라.",
-    "questionType": "DESCRIPTIVE",
+    "promptMarkdown": "새 resource 생성 완료, 요청 접수 후 처리 미완료, 현재 resource 상태와의 충돌을 각각 나타내는 HTTP status code와 의미를 순서대로 짧게 쓰라.",
+    "questionType": "SHORT_ANSWER",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
-    "conceptKeys": ["backend.core.api.methods-status"],
-    "modelAnswer": "201은 새 resource 생성 완료, 202는 처리가 접수됐지만 완료되지 않을 수 있음, 409는 현재 resource state와 요청이 충돌함을 표현한다.",
-    "explanationMarkdown": "201은 새 resource가 생성되어 그 결과를 표현할 수 있다는 뜻이고, 202는 접수만 완료되어 최종 결과가 아직 없을 수 있음을 나타낸다. 409는 현재 resource state와 요청이 충돌해 같은 입력을 단순 재전송할 문제가 아니라는 의미이므로 client의 다음 행동도 달라진다."
+    "conceptKeys": [
+      "backend.core.api.methods-status"
+    ],
+    "explanationMarkdown": "201은 새 resource가 생성되어 그 결과를 표현할 수 있다는 뜻이고, 202는 접수만 완료되어 최종 결과가 아직 없을 수 있음을 나타낸다. 409는 현재 resource state와 요청이 충돌해 같은 입력을 단순 재전송할 문제가 아니라는 의미이므로 client의 다음 행동도 달라진다.",
+    "acceptedAnswers": [
+      "201 Created는 resource가 생성된 결과이고 202 Accepted는 처리를 수락했지만 아직 완료하지 않았으며 409 Conflict는 현재 resource 상태와 요청이 충돌함을 뜻한다",
+      "201: resource 생성 완료, 202: 접수했으나 처리 미완료, 409: 현재 상태와 요청의 충돌",
+      "201은 생성 완료, 202는 처리 접수 후 미완료, 409는 현재 resource 상태와의 충돌"
+    ]
   },
   {
     "kind": "question",

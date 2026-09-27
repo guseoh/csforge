@@ -108,12 +108,14 @@
   {
     "kind": "question",
     "contentKey": "backend.core.domain.invariant-lifecycle.q3",
-    "promptMarkdown": "`Order.place()`는 items empty를 막지만 public `setItems()`가 남아 있다. 무엇을 수정해야 하는가?",
+    "promptMarkdown": "Order는 `DRAFT`에서 `items`가 비어 있지 않을 때 `place()`되어 `PLACED`가 되고, 결제 요청은 그 시점의 total을 읽는다. 이후에도 public `setItems()`가 열려 있어 두 요청이 동시에 실행되었다.\n\n1. 결제 요청은 total 10,000원을 읽었다.\n2. 다른 요청이 line을 바꿔 total을 8,000원으로 저장했다.\n3. 첫 요청은 10,000원을 결제해 `PAID`로 저장하려 한다.\n\n합계와 생명주기 불변식을 어떻게 보호할지 Domain API와 DB 동시성 경계를 포함해 설명하라.",
     "questionType": "SCENARIO",
-    "difficulty": "MEDIUM",
+    "difficulty": "HARD",
     "status": "PUBLISHED",
-    "conceptKeys": ["backend.core.domain.invariant-lifecycle"],
-    "modelAnswer": "다른 생성/변경 경로가 invariant를 우회한다. mutable setter를 제거하거나 invariant를 지키는 intention-revealing method로 제한한다.",
-    "explanationMarkdown": "`Order.place()`에서 empty items를 검사해도 public `setItems()`가 남으면 나중에 invalid state를 다시 만들 수 있다. setter를 제거하거나 non-empty와 상태 조건을 지키는 명령형 method만 공개해 생성 규칙과 변경 규칙을 같은 aggregate 경계에서 보호해야 한다."
+    "conceptKeys": [
+      "backend.core.domain.invariant-lifecycle"
+    ],
+    "modelAnswer": "Aggregate가 `place()`에서 non-empty items와 total을 검증·계산하고 `PLACED`로 전이해야 한다. 이후 raw `setItems()`를 막고 수정을 허용한다면 명시적인 amend 규칙으로 제한한다. 결제와 수정 요청은 expected version/status를 포함한 atomic transition을 경쟁시켜 한 요청만 이기게 하고, 결제가 먼저 예약되면 그때 확정한 amount를 고정한다. 결제는 DB transaction 밖에서 idempotency key로 호출한 뒤 결과를 저장하고, 결과가 불명확하면 provider 상태와 reconcile한다.",
+    "explanationMarkdown": "생성 시 한 번 검증해도 공개 setter가 있으면 주문이 놓인 뒤 item과 total의 invariant를 우회할 수 있다. Domain method가 유효한 생성·전이만 허용하고, optimistic version이나 조건부 update가 동시 변경을 감지해야 한다. 외부 결제 결과가 불명확해질 수 있으므로 DB transaction 안에서 원격 호출을 길게 기다리는 대신 안전한 재처리 경계를 둔다."
   }
 ]

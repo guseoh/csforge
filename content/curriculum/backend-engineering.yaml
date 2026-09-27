@@ -23,7 +23,7 @@ policies:
     rule: request flow, transaction boundary, retry/idempotency race, batch restart, migration rollout처럼 상태/시간 순서가 중요한 곳에 사용한다.
 topics:
 - key: backend.core.layering
-  title: Layering과 responsibility
+  title: 계층과 책임
   order: 10
   scope: dependency direction, orchestration/business rule, infrastructure boundary를 다룬다.
   boundary: layer 이름 자체보다 변경 책임과 dependency direction을 기준으로 설명한다.
@@ -50,7 +50,7 @@ topics:
     density: CORE
     visualization: TEXT
 - key: backend.core.domain
-  title: Domain modeling
+  title: 도메인 모델링
   order: 20
   scope: entity identity, value object, invariant/lifecycle을 다룬다.
   boundary: JPA annotation 편의가 domain 모델의 생성·상태 전이 규칙을 결정하지 않도록 한다.
@@ -77,7 +77,7 @@ topics:
     density: CORE
     visualization: DIAGRAM
 - key: backend.core.api
-  title: API contract design
+  title: API 계약 설계
   order: 30
   scope: resource/endpoint, method/status, compatibility를 다룬다.
   boundary: URI 미학보다 resource semantics와 observable contract를 우선한다.
@@ -104,7 +104,7 @@ topics:
     density: CORE
     visualization: TEXT
 - key: backend.core.dto-validation-error
-  title: DTO·validation·error
+  title: DTO·검증·오류 처리
   order: 40
   scope: request/response DTO, validation layers, error contract를 다룬다.
   boundary: API DTO를 persistence entity의 serialization view로 사용하지 않는다.
@@ -131,7 +131,7 @@ topics:
     density: CORE
     visualization: NONE
 - key: backend.core.list
-  title: List API
+  title: 목록 API
   order: 50
   scope: pagination, filter/sort, cursor/keyset을 API 관점에서 다룬다.
   boundary: DB index 선택은 Database 영역과 연결하되 API가 stable ordering과 bounds를 소유한다.
@@ -158,7 +158,7 @@ topics:
     density: CORE
     visualization: TEXT
 - key: backend.core.idempotency
-  title: Idempotency
+  title: 멱등성
   order: 60
   scope: retry duplicate, idempotency key, race/expiry를 다룬다.
   boundary: HTTP method의 idempotent semantics와 application idempotency-key protocol을 구분한다.
@@ -185,7 +185,7 @@ topics:
     density: CORE
     visualization: DIAGRAM
 - key: backend.core.concurrency-transaction
-  title: Concurrency와 transaction
+  title: 동시성과 트랜잭션
   order: 70
   scope: lost update, optimistic version, use-case transaction을 다룬다.
   boundary: DB isolation/lock 내부 구현은 Database 영역과 연결한다.
@@ -212,7 +212,7 @@ topics:
     density: CORE
     visualization: DIAGRAM
 - key: backend.core.external
-  title: External API integration
+  title: 외부 API 연동
   order: 80
   scope: timeout, remote response validation, circuit breaker/fallback을 다룬다.
   boundary: resiliency pattern을 장애를 숨기는 만능 장치로 표현하지 않는다.
@@ -239,7 +239,7 @@ topics:
     density: CORE
     visualization: DIAGRAM
 - key: backend.core.retry
-  title: Retry와 backoff
+  title: 재시도와 백오프
   order: 90
   scope: transient/permanent failure, exponential backoff/jitter, deadline/idempotency를 다룬다.
   boundary: retry를 모든 exception의 기본 처리로 만들지 않는다.
@@ -266,7 +266,7 @@ topics:
     density: CORE
     visualization: DIAGRAM
 - key: backend.core.bulk-batch
-  title: File·bulk·batch
+  title: 파일·대량·배치 처리
   order: 100
   scope: File API, bulk semantics, checkpoint/restart를 다룬다.
   boundary: 특정 batch framework API보다 입력 규모·atomicity·recovery 계약에 집중한다.
@@ -293,7 +293,7 @@ topics:
     density: CORE
     visualization: DIAGRAM
 - key: backend.core.time-money
-  title: Time과 money
+  title: 시간과 금액
   order: 110
   scope: Instant/timezone, Clock/expiry, BigDecimal/rounding을 다룬다.
   boundary: locale display formatting과 canonical storage/business policy를 구분한다.
@@ -320,7 +320,7 @@ topics:
     density: CORE
     visualization: NONE
 - key: backend.core.evolution
-  title: Evolution·cache·async
+  title: 변경·캐시·비동기 처리
   order: 120
   scope: DB migration, API evolution, cache adoption, async adoption을 별도 decision으로 다룬다.
   boundary: cache/async technology를 측정 없이 기본 정답으로 도입하지 않는다.
@@ -354,7 +354,7 @@ topics:
     density: CORE
     visualization: DIAGRAM
 - key: backend.core.testing-recovery
-  title: Testing·failure·maintainability
+  title: 테스트·장애 복구·유지보수
   order: 130
   scope: testing strategy, failure/recovery, maintainability trade-off를 다룬다.
   boundary: 테스트 도구 이름보다 실제 실패 위험과 경계를 기준으로 선택한다.

@@ -9,12 +9,12 @@ level: 3
 status: PUBLISHED
 displayOrder: 20
 references:
-  - url: "https://docs.spring.io/spring-batch/reference/"
-    title: "Spring Batch Reference Documentation"
+  - url: "https://docs.spring.io/spring-batch/reference/step/chunk-oriented-processing.html"
+    title: "Spring Batch: Chunk-oriented Processing"
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
-    relationNote: "chunk 지향 처리와 재시작 가능한 batch 설계를 참고한다."
+    relationNote: "item을 읽어 chunk 단위로 쓰고 transaction commit하는 처리 모델을 참고한다."
 ---
 # 대량 처리의 Read·Write·Transaction 단위
 
