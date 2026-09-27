@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: "Redis value type과 byte/string 기반 저장 모델 확인"
   - url: "https://redis.io/docs/latest/develop/use-cases/cache-aside/"
-    title: "Redis Documentation: Cache Aside"
+    title: "Redis Documentation: Redis cache-aside"
     referenceType: OFFICIAL
     language: en
     displayOrder: 2

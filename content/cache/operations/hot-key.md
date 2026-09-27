@@ -9,14 +9,14 @@ level: 3
 status: PUBLISHED
 displayOrder: 20
 references:
-  - url: "https://redis.io/docs/latest/operate/oss_and_stack/management/scaling/"
-    title: "Redis Documentation: Scaling Redis"
+  - url: "https://redis.io/docs/latest/operate/oss_and_stack/reference/cluster-spec/"
+    title: "Redis Documentation: Redis cluster specification"
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
-    relationNote: "sharding과 cluster access 분배의 기본 경계 확인"
+    relationNote: key hash slot 배치와 동일 key의 읽기 분산 경계 확인
   - url: "https://redis.io/docs/latest/develop/use-cases/cache-aside/"
-    title: "Redis Documentation: Cache Aside"
+    title: "Redis Documentation: Redis cache-aside"
     referenceType: OFFICIAL
     language: en
     displayOrder: 2

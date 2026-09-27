@@ -10,13 +10,13 @@ status: PUBLISHED
 displayOrder: 20
 references:
   - url: "https://redis.io/docs/latest/develop/use-cases/cache-aside/"
-    title: "Redis Documentation: Cache Aside"
+    title: "Redis Documentation: Redis cache-aside"
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
     relationNote: "origin write 후 cache invalidation 권장 흐름 확인"
   - url: "https://redis.io/docs/latest/develop/pubsub/keyspace-notifications/"
-    title: "Redis Documentation: Keyspace Notifications"
+    title: "Redis Documentation: Redis keyspace notifications"
     referenceType: OFFICIAL
     language: en
     displayOrder: 2

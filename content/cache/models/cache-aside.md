@@ -3,20 +3,20 @@ kind: concept
 contentKey: cache.core.models.cache-aside
 topicContentKey: cache.core.models
 slug: cache-aside
-title: "Cache-Aside의 읽기와 쓰기 흐름"
+title: "캐시 우선(Cache-Aside)의 읽기와 쓰기 흐름"
 summary: "애플리케이션이 캐시를 먼저 확인하고 miss이면 원본 저장소에서 값을 읽어 채우는 흐름과, 원본 변경 뒤 캐시를 무효화할 때 생기는 최신성 경계를 이해한다."
 level: 1
 status: PUBLISHED
 displayOrder: 10
 references:
   - url: "https://redis.io/docs/latest/develop/use-cases/cache-aside/"
-    title: "Redis Documentation: Cache Aside"
+    title: "Redis Documentation: Redis cache-aside"
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
     relationNote: "cache-aside read miss, TTL, origin write와 invalidation 흐름 확인"
 ---
-# Cache-Aside의 읽기와 쓰기 흐름
+# 캐시 우선(Cache-Aside)의 읽기와 쓰기 흐름
 
 캐시는 원본 데이터를 대신하는 저장소가 아니라 **자주 읽는 값을 더 가까운 곳에 복사해 두는 파생 저장소**로 사용할 수 있습니다. Cache-Aside에서는 애플리케이션이 캐시 사용 순서를 직접 제어합니다. 먼저 캐시를 확인하고, 값이 없으면 PostgreSQL 같은 원본 저장소를 조회한 뒤 결과를 캐시에 채웁니다.
 

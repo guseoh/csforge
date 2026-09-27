@@ -10,7 +10,7 @@ status: PUBLISHED
 displayOrder: 20
 references:
   - url: "https://redis.io/docs/latest/develop/use-cases/cache-aside/"
-    title: "Redis Documentation: Cache Aside"
+    title: "Redis Documentation: Redis cache-aside"
     referenceType: OFFICIAL
     language: en
     displayOrder: 1

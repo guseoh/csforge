@@ -3,20 +3,20 @@ kind: concept
 contentKey: cache.core.consistency.ttl-freshness
 topicContentKey: cache.core.consistency
 slug: ttl-freshness
-title: "TTL과 최신성 허용 범위"
+title: "만료 시간(TTL)과 최신성 허용 범위"
 summary: "TTL을 단순 만료 시간으로 보지 않고 업무가 허용하는 stale window, 변경 빈도, 재생성 비용과 연결해 정한다."
 level: 1
 status: PUBLISHED
 displayOrder: 10
 references:
   - url: "https://redis.io/docs/latest/develop/use-cases/cache-aside/"
-    title: "Redis Documentation: Cache Aside"
+    title: "Redis Documentation: Redis cache-aside"
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
     relationNote: "per-key TTL과 bounded staleness 설명 확인"
 ---
-# TTL과 최신성 허용 범위
+# 만료 시간(TTL)과 최신성 허용 범위
 
 TTL(Time To Live)은 cache entry가 **얼마 동안 존재할 수 있는지** 제한하는 기술 수단입니다. 하지만 “TTL이 60초이므로 데이터는 항상 60초 이내로 최신이다”라고 단순화하면 안 됩니다. 원본이 언제 바뀌었는지와 캐시가 언제 만들어졌는지에 따라 실제 오래된 정도는 달라집니다.
 
