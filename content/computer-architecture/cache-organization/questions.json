@@ -2,313 +2,313 @@
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.cache-organization.direct-mapped-cache.q1",
-    "promptMarkdown": "direct-mapped cache에서 memory block의 placement에 대한 설명으로 맞는 것은?",
+    "promptMarkdown": "직접 사상 캐시(direct-mapped cache)에서 메모리 블록의 배치에 대한 설명으로 맞는 것은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.cache-organization.direct-mapped-cache"],
     "choices": [
-      {"key": "A", "content": "각 memory block은 address index가 정한 하나의 cache line에만 들어갈 수 있다.", "displayOrder": 0, "rationaleMarkdown": "Direct-mapped 구조에서는 address의 index가 가리키는 line 하나만 placement 후보가 된다. Tag는 그 고정된 위치에 현재 들어 있는 block이 요청한 block과 같은지 확인한다."},
-      {"key": "B", "content": "각 memory block은 index가 고른 set의 여러 way 중 아무 곳에나 들어갈 수 있다.", "displayOrder": 1, "rationaleMarkdown": "한 set 안에서 여러 way를 고르는 방식은 set-associative cache의 placement 규칙이다. Direct-mapped cache는 각 index에 line이 하나뿐이라 다른 way를 선택할 수 없다."},
-      {"key": "C", "content": "빈 line이 있으면 index와 무관하게 그 line을 선택한다.", "displayOrder": 2, "rationaleMarkdown": "빈 line이 있더라도 block이 갈 수 있는 위치는 address index로 정해진다. 다른 index의 빈 공간을 자유롭게 쓸 수 있다는 주장은 fully-associative 배치에 가깝다."},
-      {"key": "D", "content": "tag가 일치하면 index가 다른 line에도 배치할 수 있다.", "displayOrder": 3, "rationaleMarkdown": "Tag는 이미 선택된 line의 block identity를 검증하며 placement 위치를 바꾸지 않는다. Index가 다른 block은 tag가 우연히 같더라도 서로 다른 line에 매핑된다."}
+      {"key": "A", "content": "각 메모리 블록은 주소 인덱스가 정한 하나의 캐시 라인에만 들어갈 수 있다.", "displayOrder": 0, "rationaleMarkdown": "직접 사상 구조에서는 주소의 인덱스가 가리키는 라인 하나만 배치 후보가 된다. 태그는 그 고정된 위치에 현재 들어 있는 블록이 요청한 블록과 같은지 확인한다."},
+      {"key": "B", "content": "각 메모리 블록은 인덱스가 고른 집합의 여러 way 중 아무 곳에나 들어갈 수 있다.", "displayOrder": 1, "rationaleMarkdown": "한 집합 안에서 여러 way를 고르는 방식은 집합 연관 캐시의 배치 규칙이다. 직접 사상 캐시는 각 인덱스에 라인이 하나뿐이라 다른 way를 선택할 수 없다."},
+      {"key": "C", "content": "빈 라인이 있으면 인덱스와 무관하게 그 라인을 선택한다.", "displayOrder": 2, "rationaleMarkdown": "빈 라인이 있더라도 블록이 갈 수 있는 위치는 주소 인덱스로 정해진다. 다른 인덱스의 빈 공간을 자유롭게 쓸 수 있다는 주장은 완전 연관 배치에 가깝다."},
+      {"key": "D", "content": "태그가 일치하면 인덱스가 다른 라인에도 배치할 수 있다.", "displayOrder": 3, "rationaleMarkdown": "태그는 이미 선택된 라인의 블록이 요청한 블록인지 검증하며 배치 위치를 바꾸지 않는다. 인덱스가 다른 블록은 태그가 우연히 같더라도 서로 다른 라인에 매핑된다."}
     ],
     "correctChoiceKey": "A",
-    "explanationMarkdown": "각 memory block은 주소의 index로 정해지는 단 하나의 cache line에만 배치될 수 있다. 그 line의 tag를 비교해 현재 저장된 block이 요청한 block인지 판별한다."
+    "explanationMarkdown": "각 메모리 블록은 주소의 인덱스로 정해지는 단 하나의 캐시 라인에만 배치될 수 있다. 그 라인의 태그를 비교해 현재 저장된 블록이 요청한 블록인지 판별한다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.cache-organization.direct-mapped-cache.q2",
-    "promptMarkdown": "cache 전체 capacity에는 여유가 있어도 direct-mapped cache에서 conflict miss가 반복될 수 있는 이유를 설명하라.",
+    "promptMarkdown": "캐시 전체 용량에는 여유가 있어도 직접 사상 캐시에서 충돌 미스가 반복될 수 있는 이유를 설명하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.cache-organization.direct-mapped-cache"],
-    "modelAnswer": "direct-mapped cache에서 각 memory block은 하나의 index에만 들어갈 수 있다. 서로 다른 두 block이 같은 index로 mapping되면 다른 line이 비어 있어도 그 공간을 사용할 수 없고 같은 line을 번갈아 eviction한다. 그래서 working set 전체가 cache capacity보다 작아도 특정 access pattern에서는 conflict miss가 반복될 수 있다.",
-    "explanationMarkdown": "Direct-mapped cache는 각 block의 placement가 한 index로 고정된다. 따라서 전체 여유 공간과 무관하게 같은 index를 공유하는 block끼리는 서로를 계속 밀어내 conflict miss를 만들 수 있다."
+    "modelAnswer": "직접 사상 캐시에서 각 메모리 블록은 하나의 인덱스에만 들어갈 수 있다. 서로 다른 두 블록이 같은 인덱스로 매핑되면 다른 라인이 비어 있어도 그 공간을 사용할 수 없고 같은 라인을 번갈아 교체한다. 그래서 전체 작업 집합이 캐시 용량보다 작아도 특정 접근 패턴에서는 충돌 미스가 반복될 수 있다.",
+    "explanationMarkdown": "직접 사상 캐시는 각 블록의 배치가 한 인덱스로 고정된다. 따라서 전체 여유 공간과 무관하게 같은 인덱스를 공유하는 블록끼리는 서로를 계속 밀어내 충돌 미스를 만들 수 있다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.cache-organization.direct-mapped-cache.q3",
-    "promptMarkdown": "32KiB direct-mapped cache가 64-byte line을 사용한다. 두 address가 정확히 32KiB 간격이고 같은 offset을 가진다고 할 때 두 block이 같은 cache index를 사용할 수 있는 이유를 계산해서 설명하라.",
+    "promptMarkdown": "32KiB 직접 사상 캐시가 64바이트 라인을 사용한다. 두 주소가 정확히 32KiB 간격이고 같은 오프셋을 가진다고 할 때 두 블록이 같은 캐시 인덱스를 사용할 수 있는 이유를 계산해서 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.cache-organization.direct-mapped-cache"],
-    "modelAnswer": "전체 line 수는 32KiB / 64B = 512개다. 32KiB 차이는 64-byte block 기준으로 512 block 차이이므로 block number를 512로 나눈 index가 동일해진다. 따라서 두 address는 tag는 다르지만 같은 direct-mapped line을 경쟁할 수 있고 반복 교차 접근하면 conflict thrashing이 발생할 수 있다.",
-    "explanationMarkdown": "32KiB/64B는 512 line이므로 512 block 간격의 address는 index 계산 결과가 다시 반복될 수 있다. 이 경우 tag만 다른 두 block이 같은 line을 번갈아 차지해 thrashing이 생길 수 있다."
+    "modelAnswer": "전체 라인 수는 32KiB / 64B = 512개다. 32KiB 차이는 64바이트 블록 기준으로 512블록 차이이므로 블록 번호를 512로 나눈 인덱스가 동일해진다. 따라서 두 주소는 태그는 다르지만 같은 직접 사상 라인을 경쟁할 수 있고 반복 교차 접근하면 충돌로 인한 스래싱(thrashing)이 발생할 수 있다.",
+    "explanationMarkdown": "32KiB/64B는 512라인이므로 512블록 간격의 주소는 인덱스 계산 결과가 다시 반복될 수 있다. 이 경우 태그만 다른 두 블록이 같은 라인을 번갈아 차지해 스래싱이 생길 수 있다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.cache-organization.set-associative-cache.q1",
-    "promptMarkdown": "4-way set-associative cache의 의미로 맞는 것은?",
+    "promptMarkdown": "4-way 집합 연관 캐시(set-associative cache)의 의미로 맞는 것은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.cache-organization.set-associative-cache"],
     "choices": [
-      {"key": "A", "content": "cache 전체에 line이 네 개뿐이다.", "displayOrder": 0, "rationaleMarkdown": "Way 수는 각 set 안에서 선택 가능한 line 수를 뜻하므로 cache 전체 line 수와 같지 않다. 전체 line 수는 capacity와 line 크기로 정해지고 set 수는 이를 way 수로 나눈 값이다."},
-      {"key": "B", "content": "memory address 하나가 반드시 네 cache set에 동시에 저장된다.", "displayOrder": 1, "rationaleMarkdown": "Address index는 block을 하나의 set으로 보낸다. Set associativity는 그 set 안의 여러 way 중 한 곳을 택하게 하며, 같은 block을 네 set에 복제한다는 뜻은 아니다."},
-      {"key": "C", "content": "하나의 index가 선택한 set 안에 네 개의 candidate line이 있다.", "displayOrder": 2, "rationaleMarkdown": "4-way는 index가 정한 각 set에 네 개의 candidate line이 있다는 뜻이다. 요청 block은 그중 한 way에 들어가고 tag 비교로 실제 hit 여부를 판별한다."},
-      {"key": "D", "content": "tag 비교 없이 index만 같으면 항상 hit다.", "displayOrder": 3, "rationaleMarkdown": "Index는 후보 set만 정하므로 그 안에 다른 block이 있을 수 있다. Tag를 비교하지 않으면 해당 line이 요청한 memory block인지 확인할 수 없다."}
+      {"key": "A", "content": "캐시 전체에 라인이 네 개뿐이다.", "displayOrder": 0, "rationaleMarkdown": "Way 수는 각 집합 안에서 선택 가능한 라인 수를 뜻하므로 캐시 전체 라인 수와 같지 않다. 전체 라인 수는 용량과 라인 크기로 정해지고 집합 수는 이를 way 수로 나눈 값이다."},
+      {"key": "B", "content": "메모리 주소 하나가 반드시 네 캐시 집합에 동시에 저장된다.", "displayOrder": 1, "rationaleMarkdown": "주소 인덱스는 블록을 하나의 집합으로 보낸다. 집합 연관도는 그 집합 안의 여러 way 중 한 곳을 택하게 하며, 같은 블록을 네 집합에 복제한다는 뜻은 아니다."},
+      {"key": "C", "content": "하나의 인덱스가 선택한 집합 안에 네 개의 후보 라인이 있다.", "displayOrder": 2, "rationaleMarkdown": "4-way는 인덱스가 정한 각 집합에 네 개의 후보 라인이 있다는 뜻이다. 요청 블록은 그중 한 way에 들어가고 태그 비교로 실제 적중 여부를 판별한다."},
+      {"key": "D", "content": "태그 비교 없이 인덱스만 같으면 항상 적중한다.", "displayOrder": 3, "rationaleMarkdown": "인덱스는 후보 집합만 정하므로 그 안에 다른 블록이 있을 수 있다. 태그를 비교하지 않으면 해당 라인이 요청한 메모리 블록인지 확인할 수 없다."}
     ],
     "correctChoiceKey": "C",
-    "explanationMarkdown": "4-way는 하나의 index가 고른 set 안에 네 개의 candidate line을 둔다는 뜻이다. 전체 line 수가 512개라면 set은 128개가 되며, 같은 set에 다섯 block 이상이 몰릴 때부터 replacement에 따른 conflict miss가 생길 수 있다."
+    "explanationMarkdown": "4-way는 하나의 인덱스가 고른 집합 안에 네 개의 후보 라인을 둔다는 뜻이다. 전체 라인 수가 512개라면 집합은 128개가 되며, 같은 집합에 다섯 블록 이상이 몰리면 교체에 따른 충돌 미스가 생길 수 있다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.cache-organization.set-associative-cache.q2",
-    "promptMarkdown": "32KiB cache, 64-byte line, 4-way associativity라면 전체 line 수와 set 수는 각각 몇 개인지 계산하고, 32-bit byte address에서 offset/index가 몇 bit인지 설명하라.",
+    "promptMarkdown": "32KiB 캐시, 64바이트 라인, 4-way 연관도라면 전체 라인 수와 집합 수는 각각 몇 개인지 계산하고, 32비트 바이트 주소에서 오프셋/인덱스가 몇 비트인지 설명하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.cache-organization.set-associative-cache"],
-    "modelAnswer": "전체 line은 32KiB / 64B = 512개이고 4-way이므로 set은 512 / 4 = 128개다. 64-byte line을 고르는 offset은 log2(64)=6 bit, 128 set을 고르는 index는 log2(128)=7 bit다. 나머지 19 bit가 tag가 된다.",
-    "explanationMarkdown": "계산은 `전체 line 수 → set 수 → offset/index bit` 순서로 보면 된다. 512 line을 4 way로 묶으면 128 set이고, 64-byte line과 128 set은 각각 6-bit offset과 7-bit index를 요구한다."
+    "modelAnswer": "전체 라인은 32KiB / 64B = 512개이고 4-way이므로 집합은 512 / 4 = 128개다. 64바이트 라인을 고르는 오프셋은 log2(64)=6비트, 128개 집합을 고르는 인덱스는 log2(128)=7비트다. 나머지 19비트가 태그가 된다.",
+    "explanationMarkdown": "계산은 `전체 라인 수 → 집합 수 → 오프셋/인덱스 비트` 순서로 보면 된다. 512라인을 4 way로 묶으면 128집합이고, 64바이트 라인과 128집합은 각각 6비트 오프셋과 7비트 인덱스를 요구한다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.cache-organization.set-associative-cache.q3",
-    "promptMarkdown": "2-way set-associative cache에서 세 block A, B, C가 모두 같은 set으로 mapping되고 `A → B → C → A → B → C` 패턴이 반복된다. direct-mapped보다는 associativity가 높아졌는데도 miss가 계속될 수 있는 이유를 설명하라.",
+    "promptMarkdown": "2-way 집합 연관 캐시에서 세 블록 A, B, C가 모두 같은 집합으로 매핑되고 `A → B → C → A → B → C` 패턴이 반복된다. 직접 사상보다 연관도가 높아졌는데도 미스가 계속될 수 있는 이유를 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.cache-organization.set-associative-cache"],
-    "modelAnswer": "해당 set에는 두 way만 있으므로 같은 set을 사용하는 active block 세 개를 동시에 보관할 수 없다. 세 번째 block을 넣을 때 기존 두 block 중 하나를 eviction해야 하고 access pattern과 replacement policy에 따라 다음에 필요한 block이 계속 밀려날 수 있다. associativity는 conflict miss를 줄이지만 set의 working set이 way 수를 넘으면 conflict를 완전히 없애지 못한다.",
-    "explanationMarkdown": "Associativity는 한 set에 여러 block을 둘 수 있게 해 conflict를 줄일 뿐 무한히 없애지는 않는다. 같은 set의 active working set이 way 수보다 크면 결국 victim을 골라야 하므로 반복 miss가 계속될 수 있다."
+    "modelAnswer": "해당 집합에는 두 way만 있으므로 같은 집합을 사용하는 활성 블록 세 개를 동시에 보관할 수 없다. 세 번째 블록을 넣을 때 기존 두 블록 중 하나를 교체해야 하고 접근 패턴과 교체 정책에 따라 다음에 필요한 블록이 계속 밀려날 수 있다. 연관도는 충돌 미스를 줄이지만 집합의 작업 집합이 way 수를 넘으면 충돌을 완전히 없애지 못한다.",
+    "explanationMarkdown": "연관도는 한 집합에 여러 블록을 둘 수 있게 해 충돌을 줄일 뿐 무한히 없애지는 않는다. 같은 집합의 활성 작업 집합이 way 수보다 크면 결국 교체 대상을 골라야 하므로 반복 미스가 계속될 수 있다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.cache-organization.fully-associative-cache.q1",
-    "promptMarkdown": "fully-associative cache의 placement 특성으로 맞는 것은?",
+    "promptMarkdown": "완전 연관 캐시(fully-associative cache)의 배치 특성으로 맞는 것은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.cache-organization.fully-associative-cache"],
     "choices": [
-      {"key": "A", "content": "tag가 필요 없고 offset만 비교한다.", "displayOrder": 0, "rationaleMarkdown": "Fully-associative 구조에는 set index가 없지만 각 line의 tag는 어떤 memory block이 저장됐는지 찾는 데 여전히 필요하다. Offset은 line 안에서 요청한 byte나 word를 고른다."},
-      {"key": "B", "content": "memory block은 address index가 정한 단 하나의 line에만 배치된다.", "displayOrder": 1, "rationaleMarkdown": "Index가 한 line만 placement 후보로 정하는 것은 direct-mapped 배치다. Fully-associative 구조는 특정 index가 block의 위치를 제한하지 않는다."},
-      {"key": "C", "content": "memory block은 cache의 어느 line에도 배치될 수 있다.", "displayOrder": 2, "rationaleMarkdown": "Set 선택 단계가 없으므로 cache 안의 어떤 line도 placement 후보가 될 수 있다. 그만큼 index 충돌은 피할 수 있지만 hit를 찾기 위해 tag들을 비교하는 비용이 커질 수 있다."},
-      {"key": "D", "content": "capacity miss도 구조적으로 발생할 수 없다.", "displayOrder": 3, "rationaleMarkdown": "Fully-associative 배치는 mapping 충돌을 줄일 뿐 저장 가능한 전체 용량을 늘리지 않는다. 동시에 다시 쓸 working set이 cache보다 크면 필요한 block이 밀려나 capacity miss가 생긴다."}
+      {"key": "A", "content": "태그가 필요 없고 오프셋만 비교한다.", "displayOrder": 0, "rationaleMarkdown": "완전 연관 구조에는 집합 인덱스가 없지만 각 라인의 태그는 어떤 메모리 블록이 저장됐는지 찾는 데 여전히 필요하다. 오프셋은 라인 안에서 요청한 바이트나 워드를 고른다."},
+      {"key": "B", "content": "메모리 블록은 주소 인덱스가 정한 단 하나의 라인에만 배치된다.", "displayOrder": 1, "rationaleMarkdown": "인덱스가 한 라인만 배치 후보로 정하는 것은 직접 사상 배치다. 완전 연관 구조는 특정 인덱스가 블록 위치를 제한하지 않는다."},
+      {"key": "C", "content": "메모리 블록은 캐시의 어느 라인에도 배치될 수 있다.", "displayOrder": 2, "rationaleMarkdown": "집합 선택 단계가 없으므로 캐시 안의 어떤 라인도 배치 후보가 될 수 있다. 그만큼 인덱스 충돌은 피할 수 있지만 적중을 찾기 위해 태그들을 비교하는 비용이 커질 수 있다."},
+      {"key": "D", "content": "용량 미스도 구조적으로 발생할 수 없다.", "displayOrder": 3, "rationaleMarkdown": "완전 연관 배치는 매핑 충돌을 줄일 뿐 저장 가능한 전체 용량을 늘리지 않는다. 동시에 다시 쓸 작업 집합이 캐시보다 크면 필요한 블록이 밀려나 용량 미스가 생긴다."}
     ],
     "correctChoiceKey": "C",
-    "explanationMarkdown": "Memory block은 cache의 어느 line에나 배치될 수 있어 index에 따른 placement conflict가 없다. 대신 hit를 찾으려면 여러 line의 tag를 비교해야 하므로 비교와 선택 회로가 커진다."
+    "explanationMarkdown": "메모리 블록은 캐시의 어느 라인에나 배치될 수 있어 인덱스에 따른 배치 충돌이 없다. 대신 적중을 찾으려면 여러 라인의 태그를 비교해야 하므로 비교와 선택 회로가 커진다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.cache-organization.fully-associative-cache.q2",
-    "promptMarkdown": "fully-associative cache가 conflict miss를 줄이는 대신 큰 일반 data cache에서 비용이 커질 수 있는 이유를 설명하라.",
+    "promptMarkdown": "완전 연관 캐시가 충돌 미스를 줄이는 대신 큰 일반 데이터 캐시에서 비용이 커질 수 있는 이유를 설명하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.cache-organization.fully-associative-cache"],
-    "modelAnswer": "block을 어느 line에도 둘 수 있어 특정 index 충돌은 피할 수 있지만 hit 여부를 찾으려면 많은 line의 tag를 비교하고 결과를 선택해야 한다. line 수가 커질수록 comparator, wiring, selection, replacement state의 area·전력·timing 비용이 커져 큰 cache 전체에 적용하기 어렵다.",
-    "explanationMarkdown": "Placement 자유도를 높이면 index conflict는 줄지만 lookup 비용이 커진다. 많은 tag를 병렬 비교하고 replacement state까지 관리해야 하므로 line 수가 큰 cache에서는 area·전력·timing 비용이 중요한 제약이 된다."
+    "modelAnswer": "블록을 어느 라인에도 둘 수 있어 특정 인덱스 충돌은 피할 수 있지만 적중 여부를 찾으려면 많은 라인의 태그를 비교하고 결과를 선택해야 한다. 라인 수가 커질수록 비교기, 배선, 선택 회로, 교체 상태의 면적·전력·타이밍 비용이 커져 큰 캐시 전체에 적용하기 어렵다.",
+    "explanationMarkdown": "배치 자유도를 높이면 인덱스 충돌은 줄지만 조회 비용이 커진다. 많은 태그를 병렬 비교하고 교체 상태까지 관리해야 하므로 라인 수가 큰 캐시에서는 면적·전력·타이밍 비용이 중요한 제약이 된다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.cache-organization.fully-associative-cache.q3",
-    "promptMarkdown": "fully-associative cache의 line이 32개인데 active working set이 서로 다른 40개 block으로 유지된다. conflict miss를 피할 수 있어도 miss가 계속될 수 있는 이유와 miss 종류를 설명하라.",
+    "promptMarkdown": "완전 연관 캐시의 라인이 32개인데 활성 작업 집합이 서로 다른 40개 블록으로 유지된다. 충돌 미스를 피할 수 있어도 미스가 계속될 수 있는 이유와 미스 종류를 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.cache-organization.fully-associative-cache"],
-    "modelAnswer": "fully-associative라 placement conflict는 최소화되지만 cache가 동시에 보관할 수 있는 line은 32개뿐이다. active block 40개가 반복적으로 필요하면 모든 working set을 유지할 capacity가 부족해 eviction과 capacity miss가 발생할 수 있다. associativity는 compulsory/capacity miss까지 제거하지 않는다.",
-    "explanationMarkdown": "Fully-associative는 placement conflict를 줄여도 저장 용량 자체를 늘리지는 않는다. Active block 수가 line 수를 넘으면 어떤 placement를 쓰더라도 eviction이 필요해 capacity miss가 남는다."
+    "modelAnswer": "완전 연관이라 배치 충돌은 최소화되지만 캐시가 동시에 보관할 수 있는 라인은 32개뿐이다. 활성 블록 40개가 반복적으로 필요하면 전체 작업 집합을 유지할 용량이 부족해 교체와 용량 미스가 발생할 수 있다. 연관도는 최초 미스나 용량 미스까지 제거하지 않는다.",
+    "explanationMarkdown": "완전 연관은 배치 충돌을 줄여도 저장 용량 자체를 늘리지는 않는다. 활성 블록 수가 라인 수를 넘으면 어떤 배치를 쓰더라도 교체가 필요해 용량 미스가 남는다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.cache-organization.index-tag-offset.q1",
-    "promptMarkdown": "cache address에서 offset의 역할은?",
+    "promptMarkdown": "캐시 주소에서 오프셋(offset)의 역할은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.cache-organization.index-tag-offset"],
     "choices": [
-      {"key": "A", "content": "후보 set을 고르고 tag가 그 안의 byte 위치를 고른다.", "displayOrder": 0, "rationaleMarkdown": "이 설명은 offset과 index의 역할을 서로 바꿔 놓았다. Index가 후보 set을 고르고 offset은 선택된 line 안의 byte 위치를 정하며, tag는 block identity를 확인한다."},
-      {"key": "B", "content": "선택된 cache line 내부의 byte/word 위치를 고른다.", "displayOrder": 1, "rationaleMarkdown": "Line 크기가 64 byte라면 offset은 그 line 안의 64개 위치 중 요청한 byte나 word를 고른다. Set 선택과 block identity 판정은 각각 index와 tag가 담당한다."},
-      {"key": "C", "content": "memory block의 identity 전체를 나타내므로 tag 비교를 대신한다.", "displayOrder": 2, "rationaleMarkdown": "Tag는 memory block을 식별하지만 line 내부 위치를 나타내지는 않는다. 같은 block의 여러 byte를 구분하려면 offset이 필요하고, tag 비교를 생략할 수도 없다."},
-      {"key": "D", "content": "virtual-to-physical translation이 끝난 뒤에는 더 이상 사용되지 않는다.", "displayOrder": 3, "rationaleMarkdown": "Address translation의 사용 여부나 cache 설계가 달라져도 line 내부 위치를 고르는 offset의 역할은 남는다. 예를 들어 page offset은 translation 전후에 보존되므로 byte 선택에 계속 쓰인다."}
+      {"key": "A", "content": "후보 집합을 고르고 태그가 그 안의 바이트 위치를 고른다.", "displayOrder": 0, "rationaleMarkdown": "이 설명은 오프셋과 인덱스의 역할을 서로 바꿔 놓았다. 인덱스가 후보 집합을 고르고 오프셋은 선택된 라인 안의 바이트 위치를 정하며, 태그는 블록을 식별한다."},
+      {"key": "B", "content": "선택된 캐시 라인 내부의 바이트/워드 위치를 고른다.", "displayOrder": 1, "rationaleMarkdown": "라인 크기가 64바이트라면 오프셋은 그 라인 안의 64개 위치 중 요청한 바이트나 워드를 고른다. 집합 선택과 블록 식별은 각각 인덱스와 태그가 담당한다."},
+      {"key": "C", "content": "메모리 블록의 식별 정보 전체를 나타내므로 태그 비교를 대신한다.", "displayOrder": 2, "rationaleMarkdown": "태그는 메모리 블록을 식별하지만 라인 내부 위치를 나타내지는 않는다. 같은 블록의 여러 바이트를 구분하려면 오프셋이 필요하고, 태그 비교를 생략할 수도 없다."},
+      {"key": "D", "content": "가상 주소에서 물리 주소로 변환이 끝난 뒤에는 더 이상 사용되지 않는다.", "displayOrder": 3, "rationaleMarkdown": "주소 변환 사용 여부나 캐시 설계가 달라져도 라인 내부 위치를 고르는 오프셋의 역할은 남는다. 예를 들어 페이지 오프셋은 변환 전후에 보존되므로 바이트 선택에 계속 쓰인다."}
     ],
     "correctChoiceKey": "B",
-    "explanationMarkdown": "Offset은 cache line 안의 byte 위치를 고르고, index는 확인할 cache set을 선택한다. Tag는 그 set에 든 line이 요청한 memory block인지 확인한다."
+    "explanationMarkdown": "오프셋은 캐시 라인 안의 바이트 위치를 고르고, 인덱스는 확인할 캐시 집합을 선택한다. 태그는 그 집합에 든 라인이 요청한 메모리 블록인지 확인한다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.cache-organization.index-tag-offset.q2",
-    "promptMarkdown": "64-byte line을 사용하는 cache에서 offset이 6 bit가 되는 이유와, set 수가 256개라면 index가 8 bit가 되는 이유를 설명하라.",
+    "promptMarkdown": "64바이트 라인을 사용하는 캐시에서 오프셋이 6비트가 되는 이유와, 집합 수가 256개라면 인덱스가 8비트가 되는 이유를 설명하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.cache-organization.index-tag-offset"],
-    "modelAnswer": "64 byte는 2^6이므로 line 내부 64개 byte 위치를 구분하는 데 6 bit가 필요하다. set이 256=2^8개라면 그중 하나를 선택하는 데 8 bit가 필요하다. byte-addressable power-of-two cache 모델에서 낮은 bit부터 offset, 그 다음이 index가 되고 나머지 상위 bit가 tag가 된다.",
-    "explanationMarkdown": "Offset은 line 내부 byte 위치를, index는 set 위치를 고르는 bit다. Power-of-two 구조에서는 64-byte line 때문에 6 bit, 256 set 때문에 8 bit가 필요하고 나머지가 tag가 된다."
+    "modelAnswer": "64바이트는 2^6이므로 라인 내부 64개 바이트 위치를 구분하는 데 6비트가 필요하다. 집합이 256=2^8개라면 그중 하나를 선택하는 데 8비트가 필요하다. 바이트 단위 주소 지정과 2의 거듭제곱 크기를 가정한 캐시 모델에서는 낮은 비트부터 오프셋, 그다음이 인덱스가 되고 나머지 상위 비트가 태그가 된다.",
+    "explanationMarkdown": "오프셋은 라인 내부 바이트 위치를, 인덱스는 집합 위치를 고르는 비트다. 64바이트 라인 때문에 6비트, 256집합 때문에 8비트가 필요하고 나머지가 태그가 된다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.cache-organization.index-tag-offset.q3",
-    "promptMarkdown": "cache capacity와 line size를 고정한 채 associativity를 2-way에서 4-way로 높였다. set 수, index bit 수, tag bit가 어떤 방향으로 변하는지 설명하라.",
+    "promptMarkdown": "캐시 용량과 라인 크기를 고정한 채 연관도를 2-way에서 4-way로 높였다. 집합 수, 인덱스 비트 수, 태그 비트가 어떤 방향으로 변하는지 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.cache-organization.index-tag-offset"],
-    "modelAnswer": "전체 line 수는 capacity와 line size가 같으므로 변하지 않는다. associativity가 두 배가 되면 한 set의 way 수가 두 배가 되어 set 수는 절반으로 줄고, power-of-two 모델에서는 index bit가 1 bit 감소한다. address 폭과 offset bit가 고정이므로 줄어든 index 1 bit만큼 tag 영역은 1 bit 늘어난다.",
-    "explanationMarkdown": "Capacity와 line size가 같으면 전체 line 수는 유지된다. Way 수를 두 배로 늘리면 set 수가 절반이 되어 index bit가 하나 줄고, address 폭과 offset이 같으므로 그만큼 tag bit가 늘어난다."
+    "modelAnswer": "전체 라인 수는 용량과 라인 크기가 같으므로 변하지 않는다. 연관도가 두 배가 되면 한 집합의 way 수가 두 배가 되어 집합 수는 절반으로 줄고, 2의 거듭제곱 모델에서는 인덱스 비트가 1비트 감소한다. 주소 폭과 오프셋 비트가 고정이므로 줄어든 인덱스 1비트만큼 태그 영역은 1비트 늘어난다.",
+    "explanationMarkdown": "용량과 라인 크기가 같으면 전체 라인 수는 유지된다. Way 수를 두 배로 늘리면 집합 수가 절반이 되어 인덱스 비트가 하나 줄고, 주소 폭과 오프셋이 같으므로 그만큼 태그 비트가 늘어난다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.cache-organization.replacement-policy.q1",
-    "promptMarkdown": "set-associative cache에서 replacement policy가 필요한 경우는?",
+    "promptMarkdown": "집합 연관 캐시에서 교체 정책이 필요한 경우는?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.cache-organization.replacement-policy"],
     "choices": [
-      {"key": "A", "content": "선택된 set에 빈 way가 있어도 기존 line을 먼저 내보낼 때", "displayOrder": 0, "rationaleMarkdown": "선택된 set에 빈 way가 있으면 새 block을 그곳에 둘 수 있어 기존 line을 내보낼 victim 선택이 필요하지 않다. Replacement policy는 여유 공간이 없을 때 의미가 있다."},
-      {"key": "B", "content": "선택된 set의 모든 way가 사용 중인데 새 block을 넣어야 할 때", "displayOrder": 1, "rationaleMarkdown": "새 block은 index가 정한 set에 들어가야 한다. 그 set의 모든 way가 차 있다면 어느 line을 밀어낼지 골라야 하므로 replacement policy가 필요하다."},
-      {"key": "C", "content": "write-through cache가 lower level에 write를 전달할 때마다", "displayOrder": 2, "rationaleMarkdown": "Write-through는 write를 lower level에 언제 전달할지 정하는 정책이다. Replacement는 공간이 찬 set에 새 block을 넣을 때 victim을 고르는 별도의 문제다."},
-      {"key": "D", "content": "miss가 발생하면 선택된 set과 무관하게 cache 전체에서 victim을 고를 때", "displayOrder": 3, "rationaleMarkdown": "Set-associative cache에서 해당 block이 들어갈 수 있는 후보는 선택된 set의 way들이다. 다른 set까지 검색해 victim으로 삼으면 index 기반 placement 계약을 어기게 된다."}
+      {"key": "A", "content": "선택된 집합에 빈 way가 있어도 기존 라인을 먼저 내보낼 때", "displayOrder": 0, "rationaleMarkdown": "선택된 집합에 빈 way가 있으면 새 블록을 그곳에 둘 수 있어 기존 라인을 내보낼 교체 대상 선택이 필요하지 않다. 교체 정책은 여유 공간이 없을 때 의미가 있다."},
+      {"key": "B", "content": "선택된 집합의 모든 way가 사용 중인데 새 블록을 넣어야 할 때", "displayOrder": 1, "rationaleMarkdown": "새 블록은 인덱스가 정한 집합에 들어가야 한다. 그 집합의 모든 way가 차 있다면 어느 라인을 밀어낼지 골라야 하므로 교체 정책이 필요하다."},
+      {"key": "C", "content": "write-through 캐시가 하위 계층에 쓰기를 전달할 때마다", "displayOrder": 2, "rationaleMarkdown": "Write-through는 쓰기를 하위 계층에 언제 전달할지 정하는 정책이다. 교체는 공간이 찬 집합에 새 블록을 넣을 때 대상을 고르는 별도의 문제다."},
+      {"key": "D", "content": "미스가 발생하면 선택된 집합과 무관하게 캐시 전체에서 교체 대상을 고를 때", "displayOrder": 3, "rationaleMarkdown": "집합 연관 캐시에서 해당 블록이 들어갈 수 있는 후보는 선택된 집합의 way들이다. 다른 집합까지 검색해 교체 대상으로 삼으면 인덱스 기반 배치 계약을 어기게 된다."}
     ],
     "correctChoiceKey": "B",
-    "explanationMarkdown": "Miss가 선택한 set에 도착했을 때 사용 가능한 빈 way가 없으면 기존 line 하나를 내보내야 하므로 replacement policy가 victim을 고른다. 빈 way가 있으면 먼저 그 자리를 사용한다."
+    "explanationMarkdown": "미스가 선택한 집합에 도착했을 때 사용할 수 있는 빈 way가 없으면 기존 라인 하나를 내보내야 하므로 교체 정책이 대상을 고른다. 빈 way가 있으면 먼저 그 자리를 사용한다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.cache-organization.replacement-policy.q2",
-    "promptMarkdown": "LRU 계열 replacement가 temporal locality를 이용하려는 방식과, 완전한 LRU가 associativity가 높을수록 구현 비용이 커질 수 있는 이유를 설명하라.",
+    "promptMarkdown": "LRU 계열 교체 정책이 시간적 지역성을 이용하려는 방식과, 완전한 LRU가 연관도가 높을수록 구현 비용이 커질 수 있는 이유를 설명하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.cache-organization.replacement-policy"],
-    "modelAnswer": "LRU는 최근 사용한 line이 가까운 미래에 다시 사용될 가능성이 높다는 temporal locality에 기대어 가장 오래 사용하지 않은 line을 victim으로 고르려 한다. way 수가 많아지면 모든 way의 정확한 최근 사용 순서를 추적·갱신하는 state와 logic이 커지므로 실제 hardware는 pseudo-LRU 같은 근사 정책을 사용할 수 있다.",
-    "explanationMarkdown": "LRU의 아이디어는 최근 사용 이력이 미래 재사용 가능성을 어느 정도 나타낸다는 temporal locality에 있다. 하지만 way 수가 커질수록 정확한 순서를 계속 추적하는 hardware cost가 커져 실제 구현은 근사 정책을 사용할 수 있다."
+    "modelAnswer": "LRU는 최근 사용한 라인이 가까운 미래에 다시 사용될 가능성이 높다는 시간적 지역성에 기대어 가장 오래 사용하지 않은 라인을 교체 대상으로 고르려 한다. way 수가 많아지면 모든 way의 정확한 최근 사용 순서를 추적·갱신하는 상태와 논리가 커지므로 실제 하드웨어는 pseudo-LRU 같은 근사 정책을 사용할 수 있다.",
+    "explanationMarkdown": "LRU의 아이디어는 최근 사용 이력이 미래 재사용 가능성을 어느 정도 나타낸다는 시간적 지역성에 있다. 하지만 way 수가 커질수록 정확한 순서를 계속 추적하는 하드웨어 비용이 커져 실제 구현은 근사 정책을 사용할 수 있다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.cache-organization.replacement-policy.q3",
-    "promptMarkdown": "순차로 한 번만 읽는 큰 streaming workload에서 LRU가 항상 이상적인 victim 선택이라고 말하기 어려운 이유를 설명하라.",
+    "promptMarkdown": "순차로 한 번만 읽는 큰 스트리밍 작업 부하에서 LRU가 항상 이상적인 교체 대상 선택이라고 말하기 어려운 이유를 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.cache-organization.replacement-policy"],
-    "modelAnswer": "한 번 읽고 재사용하지 않는 stream은 최근에 사용했다는 사실이 미래 재사용을 잘 예측하지 못한다. streaming line이 반복 사용되는 hot line을 밀어내면 cache pollution이 생길 수 있다. replacement policy의 효과는 workload locality에 의존하며 hit rate와 miss cost를 실제 access pattern에서 확인해야 한다.",
-    "explanationMarkdown": "최근 사용 여부가 항상 미래 재사용을 잘 예측하는 것은 아니다. One-pass stream처럼 재사용이 거의 없는 workload에서는 최근 line이 hot data를 밀어내 cache pollution을 만들 수 있어 policy 효과를 access pattern으로 검증해야 한다."
+    "modelAnswer": "한 번 읽고 재사용하지 않는 스트림은 최근에 사용했다는 사실이 미래 재사용을 잘 예측하지 못한다. 스트리밍 라인이 반복 사용되는 자주 쓰는 라인을 밀어내면 캐시 오염이 생길 수 있다. 교체 정책의 효과는 작업 부하의 지역성에 의존하며 적중률과 미스 비용을 실제 접근 패턴에서 확인해야 한다.",
+    "explanationMarkdown": "최근 사용 여부가 항상 미래 재사용을 잘 예측하는 것은 아니다. 한 번만 훑는 스트림처럼 재사용이 거의 없는 작업 부하에서는 최근 라인이 자주 쓰는 데이터를 밀어내 캐시 오염을 만들 수 있어 정책 효과를 실제 접근 패턴으로 검증해야 한다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.cache-organization.write-through-write-back.q1",
-    "promptMarkdown": "write-back cache의 특징으로 가장 정확한 것은?",
+    "promptMarkdown": "write-back 캐시의 특징으로 가장 정확한 것은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.cache-organization.write-through-write-back"],
     "choices": [
-      {"key": "A", "content": "다른 core와의 coherence를 자동으로 불필요하게 만든다.", "displayOrder": 0, "rationaleMarkdown": "Write-back은 lower level 반영을 늦출 뿐 여러 core 사이의 cache coherence를 해결하지 않는다. 공유 line의 최신 값을 일관되게 보이게 하는 coherence protocol은 별도로 필요하다."},
-      {"key": "B", "content": "write hit마다 lower cache level에도 즉시 같은 write를 전달한다.", "displayOrder": 1, "rationaleMarkdown": "Write hit마다 lower level에도 바로 반영하는 동작은 write-through의 특징이다. Write-back은 cache line을 먼저 바꾸고 dirty 상태로 기록한 뒤 반영을 미룰 수 있다."},
-      {"key": "C", "content": "dirty state가 필요 없고 eviction 비용도 항상 clean line과 같다.", "displayOrder": 2, "rationaleMarkdown": "Cache에서만 바뀌고 lower level은 아직 이전 값을 가진 line을 추적하려면 dirty 상태가 필요하다. Dirty line이 eviction될 때는 최신 내용을 아래 계층에 써야 한다."},
-      {"key": "D", "content": "write hit에서 cache line을 수정하고 dirty로 표시한 뒤 lower level 반영을 나중으로 미룰 수 있다.", "displayOrder": 3, "rationaleMarkdown": "Write-back은 hit한 line을 cache에서 수정하고 dirty로 표시해 lower level 쓰기를 뒤로 미룰 수 있다. Eviction이나 coherence 동작에서 최신 값을 전달해야 하므로 그 반영 자체가 사라지는 것은 아니다."}
+      {"key": "A", "content": "다른 코어와의 캐시 일관성 처리를 자동으로 불필요하게 만든다.", "displayOrder": 0, "rationaleMarkdown": "Write-back은 하위 계층 반영을 늦출 뿐 여러 코어 사이의 캐시 일관성을 해결하지 않는다. 공유 라인의 최신 값을 일관되게 보이게 하는 일관성 프로토콜은 별도로 필요하다."},
+      {"key": "B", "content": "쓰기 적중마다 하위 캐시 계층에도 즉시 같은 쓰기를 전달한다.", "displayOrder": 1, "rationaleMarkdown": "쓰기 적중마다 하위 계층에도 바로 반영하는 동작은 write-through의 특징이다. Write-back은 캐시 라인을 먼저 바꾸고 dirty 상태로 기록한 뒤 반영을 미룰 수 있다."},
+      {"key": "C", "content": "dirty 상태가 필요 없고 교체 비용도 항상 수정되지 않은 라인과 같다.", "displayOrder": 2, "rationaleMarkdown": "캐시에서만 바뀌고 하위 계층은 아직 이전 값을 가진 라인을 추적하려면 dirty 상태가 필요하다. Dirty 라인이 교체될 때는 최신 내용을 아래 계층에 써야 한다."},
+      {"key": "D", "content": "쓰기 적중에서 캐시 라인을 수정하고 dirty로 표시한 뒤 하위 계층 반영을 나중으로 미룰 수 있다.", "displayOrder": 3, "rationaleMarkdown": "Write-back은 적중한 라인을 캐시에서 수정하고 dirty로 표시해 하위 계층 쓰기를 뒤로 미룰 수 있다. 교체나 일관성 동작에서 최신 값을 전달해야 하므로 그 반영 자체가 사라지는 것은 아니다."}
     ],
     "correctChoiceKey": "D",
-    "explanationMarkdown": "Write-back은 cache에서 값을 갱신하고 line을 dirty로 표시한 뒤, 그 line이 교체되거나 다른 coherence 동작이 요구될 때 lower level에 변경 내용을 반영한다. Write-through는 각 cache write를 lower level에도 전달한다."
+    "explanationMarkdown": "Write-back은 캐시에서 값을 갱신하고 라인을 dirty로 표시한 뒤, 그 라인이 교체되거나 다른 일관성 동작이 요구될 때 하위 계층에 변경 내용을 반영한다. Write-through는 각 캐시 쓰기를 하위 계층에도 전달한다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.cache-organization.write-through-write-back.q2",
-    "promptMarkdown": "write-through와 write-back을 lower-level traffic과 dirty eviction 관점에서 비교하라.",
+    "promptMarkdown": "write-through와 write-back을 하위 계층 쓰기 트래픽과 dirty 라인 교체 관점에서 비교하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.cache-organization.write-through-write-back"],
-    "modelAnswer": "write-through는 cache write를 lower level에도 전달하므로 같은 line을 반복 수정할 때 write traffic이 많아질 수 있지만 cache line 자체는 dirty write-back을 미룰 필요가 적다. write-back은 여러 수정 내용을 cache에 모아 eviction 시 한 번에 내릴 수 있어 traffic을 줄일 수 있지만 dirty victim을 내보내는 추가 비용과 state 관리가 필요하다.",
-    "explanationMarkdown": "Write-through는 매 write를 lower level로 전달해 traffic을 늘릴 수 있고, write-back은 여러 변경을 dirty line에 모아 나중에 내릴 수 있다. 대신 write-back은 dirty state와 eviction 시 추가 write 비용을 관리해야 한다."
+    "modelAnswer": "Write-through는 캐시 쓰기를 하위 계층에도 전달하므로 같은 라인을 반복 수정할 때 쓰기 트래픽이 많아질 수 있지만 캐시 라인의 dirty write-back을 미룰 필요는 적다. Write-back은 여러 수정 내용을 캐시에 모아 교체할 때 한 번에 내릴 수 있어 트래픽을 줄일 수 있지만 dirty 교체 대상을 내보내는 추가 비용과 상태 관리가 필요하다.",
+    "explanationMarkdown": "Write-through는 매 쓰기를 하위 계층으로 전달해 트래픽을 늘릴 수 있고, write-back은 여러 변경을 dirty 라인에 모아 나중에 내릴 수 있다. 대신 write-back은 dirty 상태와 교체 시 추가 쓰기 비용을 관리해야 한다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.cache-organization.write-through-write-back.q3",
-    "promptMarkdown": "CPU의 write-back cache에 값이 수정되어 있다는 사실만으로 DB transaction이 crash 후 durable하다고 결론 내릴 수 없는 이유를 설명하라.",
+    "promptMarkdown": "CPU의 write-back 캐시에 값이 수정되어 있다는 사실만으로 DB 트랜잭션이 장애 후에도 영속적이라고 결론 내릴 수 없는 이유를 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.cache-organization.write-through-write-back"],
-    "modelAnswer": "CPU cache write policy는 CPU cache와 lower memory hierarchy 사이의 data movement를 다룬다. DB durability는 transaction log, OS/filesystem writeback, fsync 또는 storage flush, device의 persistence contract 등 별도 경계를 통과해야 한다. DRAM이나 CPU cache에 최신 값이 있다는 사실은 non-volatile storage에 durable하게 기록되었다는 보장이 아니다.",
-    "explanationMarkdown": "CPU cache의 dirty/clean 상태와 DB durability는 서로 다른 계층의 계약이다. Transaction durability는 log와 filesystem/storage flush 같은 non-volatile persistence 경계를 통과해야 하므로 최신 값이 cache나 DRAM에 있다는 사실만으로는 충분하지 않다."
+    "modelAnswer": "CPU 캐시 쓰기 정책은 CPU 캐시와 하위 메모리 계층 사이의 데이터 이동을 다룬다. DB 영속성은 트랜잭션 로그, OS/파일 시스템 writeback, fsync 또는 저장장치 flush, 장치의 영속성 계약 같은 별도 경계를 통과해야 한다. DRAM이나 CPU 캐시에 최신 값이 있다는 사실은 비휘발성 저장장치에 영속적으로 기록되었다는 보장이 아니다.",
+    "explanationMarkdown": "CPU 캐시의 dirty/clean 상태와 DB 영속성은 서로 다른 계층의 계약이다. 트랜잭션 영속성은 로그와 파일 시스템/저장장치 flush 같은 비휘발성 저장 경계를 통과해야 하므로 최신 값이 캐시나 DRAM에 있다는 사실만으로는 충분하지 않다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.cache-organization.write-allocate.q1",
-    "promptMarkdown": "write-allocate policy에서 write miss가 발생하면 일반적으로 어떻게 처리하는가?",
+    "promptMarkdown": "write-allocate 정책에서 쓰기 미스가 발생하면 일반적으로 어떻게 처리하는가?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.cache-organization.write-allocate"],
     "choices": [
-      {"key": "A", "content": "같은 address에 두 번째 write miss가 날 때까지 allocation을 미룬다.", "displayOrder": 0, "rationaleMarkdown": "Write-allocate는 첫 write miss 때 해당 block을 cache에 들이는 정책이다. 두 번째 miss를 기다리는 규칙은 write-allocate의 정의가 아니다."},
-      {"key": "B", "content": "cache에 block을 들이지 않고 lower level에만 write한다.", "displayOrder": 1, "rationaleMarkdown": "Miss 난 block을 cache에 채우지 않고 lower level에만 쓰는 동작은 no-write-allocate에 해당한다. Write-allocate는 이후 locality를 활용하도록 cache line을 확보한다."},
-      {"key": "C", "content": "block을 cache에 가져오지만 target byte는 lower level에만 수정한다.", "displayOrder": 2, "rationaleMarkdown": "Block을 cache에 가져온다고 하면서 target byte만 lower level에 반영하면 cache와 아래 계층의 값이 달라질 수 있다. Write-allocate에서는 line을 확보한 뒤 그 안의 write를 반영한다."},
-      {"key": "D", "content": "해당 block을 cache에 확보한 뒤 target 위치를 수정한다.", "displayOrder": 3, "rationaleMarkdown": "Write-allocate는 miss가 난 block을 cache에 채워 line을 확보한 다음 해당 위치를 수정한다. 이후 같은 line에 대한 access는 cache에서 처리할 기회를 얻는다."}
+      {"key": "A", "content": "같은 주소에 두 번째 쓰기 미스가 날 때까지 할당을 미룬다.", "displayOrder": 0, "rationaleMarkdown": "Write-allocate는 첫 쓰기 미스 때 해당 블록을 캐시에 들이는 정책이다. 두 번째 미스를 기다리는 규칙은 write-allocate의 정의가 아니다."},
+      {"key": "B", "content": "캐시에 블록을 들이지 않고 하위 계층에만 쓴다.", "displayOrder": 1, "rationaleMarkdown": "미스 난 블록을 캐시에 채우지 않고 하위 계층에만 쓰는 동작은 no-write-allocate에 해당한다. Write-allocate는 이후 지역성을 활용하도록 캐시 라인을 확보한다."},
+      {"key": "C", "content": "블록을 캐시에 가져오지만 대상 바이트는 하위 계층에만 수정한다.", "displayOrder": 2, "rationaleMarkdown": "블록을 캐시에 가져온다고 하면서 대상 바이트만 하위 계층에 반영하면 캐시와 아래 계층의 값이 달라질 수 있다. Write-allocate에서는 라인을 확보한 뒤 그 안의 쓰기를 반영한다."},
+      {"key": "D", "content": "해당 블록을 캐시에 확보한 뒤 대상 위치를 수정한다.", "displayOrder": 3, "rationaleMarkdown": "Write-allocate는 미스가 난 블록을 캐시에 채워 라인을 확보한 다음 해당 위치를 수정한다. 이후 같은 라인에 대한 접근은 캐시에서 처리할 기회를 얻는다."}
     ],
     "correctChoiceKey": "D",
-    "explanationMarkdown": "write-allocate는 miss 난 block을 cache에 가져와 수정하므로 같은 line을 곧 다시 읽거나 쓰는 locality가 있으면 이후 access를 cache에서 처리할 수 있다. 큰 one-pass streaming write는 line을 cache에 가져와도 재사용하지 않아 fill traffic과 cache pollution만 만들 수 있으므로 no-write-allocate/non-temporal 계열 접근이 유리할 여지가 있다."
+    "explanationMarkdown": "Write-allocate는 미스 난 블록을 캐시에 가져와 수정하므로 같은 라인을 곧 다시 읽거나 쓰는 지역성이 있으면 이후 접근을 캐시에서 처리할 수 있다. 큰 단발성 스트리밍 쓰기는 라인을 캐시에 가져와도 재사용하지 않아 채우기 트래픽과 캐시 오염만 만들 수 있으므로 no-write-allocate나 non-temporal 계열 접근이 유리할 여지가 있다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.cache-organization.write-allocate.q2",
-    "promptMarkdown": "write-allocate와 no-write-allocate가 write miss를 처리하는 흐름을 비교하고, 각각 어떤 locality에서 유리할 수 있는지 설명하라.",
+    "promptMarkdown": "write-allocate와 no-write-allocate가 쓰기 미스를 처리하는 흐름을 비교하고, 각각 어떤 지역성에서 유리할 수 있는지 설명하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.cache-organization.write-allocate"],
-    "modelAnswer": "write-allocate는 miss 난 block을 cache에 가져와 수정하므로 같은 line을 곧 다시 읽거나 쓰는 locality가 있으면 이후 access를 cache에서 처리할 수 있다. no-write-allocate는 miss 난 block을 cache에 채우지 않고 lower write path로 보내므로 한 번 쓰고 지나가는 streaming write에서 line fill과 cache pollution을 줄일 수 있다.",
-    "explanationMarkdown": "Write miss 때 line을 가져올지는 이후 locality가 있는지에 달려 있다. 곧 다시 접근할 line은 write-allocate가 유리할 수 있고, 한 번 쓰고 지나가는 stream은 불필요한 fill과 pollution을 피하는 전략이 더 나을 수 있다."
+    "modelAnswer": "Write-allocate는 미스 난 블록을 캐시에 가져와 수정하므로 같은 라인을 곧 다시 읽거나 쓰는 지역성이 있으면 이후 접근을 캐시에서 처리할 수 있다. No-write-allocate는 미스 난 블록을 캐시에 채우지 않고 하위 쓰기 경로로 보내므로 한 번 쓰고 지나가는 스트리밍 쓰기에서 라인 채우기와 캐시 오염을 줄일 수 있다.",
+    "explanationMarkdown": "쓰기 미스 때 라인을 가져올지는 이후 지역성이 있는지에 달려 있다. 곧 다시 접근할 라인은 write-allocate가 유리할 수 있고, 한 번 쓰고 지나가는 스트림은 불필요한 채우기와 오염을 피하는 전략이 더 나을 수 있다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.cache-organization.write-allocate.q3",
-    "promptMarkdown": "아주 큰 buffer를 한 번 순차적으로 채운 뒤 다시 읽지 않는 workload와, 작은 buffer의 같은 line을 여러 번 수정하고 곧 읽는 workload가 있다. write-allocate 선택이 두 workload에서 왜 다를 수 있는지 설명하라.",
+    "promptMarkdown": "아주 큰 버퍼를 한 번 순차적으로 채운 뒤 다시 읽지 않는 작업 부하와, 작은 버퍼의 같은 라인을 여러 번 수정하고 곧 읽는 작업 부하가 있다. write-allocate 선택이 두 작업 부하에서 왜 다를 수 있는지 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.cache-organization.write-allocate"],
-    "modelAnswer": "큰 one-pass streaming write는 line을 cache에 가져와도 재사용하지 않아 fill traffic과 cache pollution만 만들 수 있으므로 no-write-allocate/non-temporal 계열 접근이 유리할 여지가 있다. 작은 반복 수정 workload는 한 번 line을 cache에 확보하면 여러 write와 후속 read가 hit할 수 있어 write-allocate가 locality를 활용하기 쉽다. 실제 선택은 target architecture와 measured bandwidth/cache behavior로 검증해야 한다.",
-    "explanationMarkdown": "두 workload의 차이는 write 뒤 재사용 여부다. One-pass large buffer는 cache fill 이득이 작지만 작은 hot buffer는 같은 line의 후속 read/write가 반복되어 write-allocate의 locality 이득을 얻기 쉽다."
+    "modelAnswer": "큰 단발성 스트리밍 쓰기는 라인을 캐시에 가져와도 재사용하지 않아 채우기 트래픽과 캐시 오염만 만들 수 있으므로 no-write-allocate나 non-temporal 계열 접근이 유리할 여지가 있다. 작은 반복 수정 작업 부하는 한 번 라인을 캐시에 확보하면 여러 쓰기와 후속 읽기가 적중할 수 있어 write-allocate가 지역성을 활용하기 쉽다. 실제 선택은 대상 아키텍처와 측정한 대역폭·캐시 동작으로 검증해야 한다.",
+    "explanationMarkdown": "두 작업 부하의 차이는 쓰기 뒤 재사용 여부다. 한 번만 쓰는 큰 버퍼는 캐시 채우기 이득이 작지만 작은 자주 쓰는 버퍼는 같은 라인의 후속 읽기·쓰기가 반복되어 write-allocate의 지역성 이득을 얻기 쉽다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.cache-organization.cache-friendly-access.q1",
-    "promptMarkdown": "cache-friendly access pattern으로 가장 적절한 것은?",
+    "promptMarkdown": "캐시 친화적 접근 패턴으로 가장 적절한 것은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.cache-organization.cache-friendly-access"],
     "choices": [
-      {"key": "A", "content": "연속 memory를 작은 stride로 순회해 한 cache line의 여러 값을 사용한다.", "displayOrder": 0, "rationaleMarkdown": "연속 주소를 작은 stride로 읽으면 한 번 가져온 line의 인접 값들도 곧 사용될 가능성이 높다. 이는 spatial locality를 활용해 line당 유효한 access를 늘리는 방식이다."},
-      {"key": "B", "content": "매 access마다 큰 address 공간의 무작위 line 하나만 사용한다.", "displayOrder": 1, "rationaleMarkdown": "큰 주소 공간에서 매번 무작위 line을 하나씩 읽으면 이미 가져온 line의 인접 값이나 최근 값이 재사용될 가능성이 낮다. 따라서 공간·시간 지역성이 모두 약해질 수 있다."},
-      {"key": "C", "content": "working set을 일부러 cache capacity보다 계속 크게 만든다.", "displayOrder": 2, "rationaleMarkdown": "Working set을 cache보다 크게 유지하면 필요한 line이 다시 사용되기 전에 밀려날 수 있다. 이는 지역성을 활용하는 접근이 아니라 capacity miss를 늘릴 수 있는 조건이다."},
-      {"key": "D", "content": "같은 set을 충돌시키도록 address를 의도적으로 배치한다.", "displayOrder": 3, "rationaleMarkdown": "같은 set으로 계속 매핑되는 block을 의도적으로 충돌시키면 cache 전체에 여유가 있어도 line이 반복 교체될 수 있다. 이런 conflict는 재사용을 돕기보다 locality 효과를 약화한다."}
+      {"key": "A", "content": "연속 메모리를 작은 간격으로 순회해 한 캐시 라인의 여러 값을 사용한다.", "displayOrder": 0, "rationaleMarkdown": "연속 주소를 작은 간격으로 읽으면 한 번 가져온 라인의 인접 값들도 곧 사용될 가능성이 높다. 이는 공간적 지역성을 활용해 라인당 유효한 접근을 늘리는 방식이다."},
+      {"key": "B", "content": "매 접근마다 큰 주소 공간의 무작위 라인 하나만 사용한다.", "displayOrder": 1, "rationaleMarkdown": "큰 주소 공간에서 매번 무작위 라인을 하나씩 읽으면 이미 가져온 라인의 인접 값이나 최근 값이 재사용될 가능성이 낮다. 따라서 공간·시간 지역성이 모두 약해질 수 있다."},
+      {"key": "C", "content": "작업 집합을 일부러 캐시 용량보다 계속 크게 만든다.", "displayOrder": 2, "rationaleMarkdown": "작업 집합을 캐시보다 크게 유지하면 필요한 라인이 다시 사용되기 전에 밀려날 수 있다. 이는 지역성을 활용하는 접근이 아니라 용량 미스를 늘릴 수 있는 조건이다."},
+      {"key": "D", "content": "같은 집합을 충돌시키도록 주소를 의도적으로 배치한다.", "displayOrder": 3, "rationaleMarkdown": "같은 집합으로 계속 매핑되는 블록을 의도적으로 충돌시키면 캐시 전체에 여유가 있어도 라인이 반복 교체될 수 있다. 이런 충돌은 재사용을 돕기보다 지역성 효과를 약화한다."}
     ],
     "correctChoiceKey": "A",
-    "explanationMarkdown": "연속된 배열 원소를 차례로 읽거나 쓰면 한 번 가져온 cache line의 이웃 원소를 곧 사용해 spatial locality를 활용한다. 큰 배열은 cache에 맞는 block 단위로 처리하면 그 block의 data도 eviction 전 재사용할 수 있다."
+    "explanationMarkdown": "연속된 배열 원소를 차례로 읽거나 쓰면 한 번 가져온 캐시 라인의 이웃 원소를 곧 사용해 공간적 지역성을 활용한다. 큰 배열은 캐시에 맞는 블록 단위로 처리하면 그 블록의 데이터도 교체되기 전에 재사용할 수 있다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.cache-organization.cache-friendly-access.q2",
-    "promptMarkdown": "loop tiling/blocking이 큰 배열·행렬 처리에서 cache locality를 개선할 수 있는 이유를 설명하라.",
+    "promptMarkdown": "반복문 타일링/블로킹(loop tiling/blocking)이 큰 배열·행렬 처리에서 캐시 지역성을 개선할 수 있는 이유를 설명하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.cache-organization.cache-friendly-access"],
-    "modelAnswer": "전체 data를 한 번에 넓게 순회하는 대신 cache에 들어갈 정도의 작은 block을 반복 처리하면 해당 block의 line을 eviction 전에 여러 번 재사용할 수 있다. working set을 가까운 cache에 맞춰 temporal/spatial locality를 높이는 것이 핵심이며 tile 크기가 지나치게 크거나 추가 loop overhead가 크면 이득이 줄 수 있다.",
-    "explanationMarkdown": "Tiling은 한 번 가져온 cache line을 eviction되기 전에 여러 연산에서 재사용하도록 working set을 작게 만든다. 핵심은 tile 크기를 가까운 cache 수준에 맞춰 temporal/spatial locality를 높이는 것이다."
+    "modelAnswer": "전체 데이터를 한 번에 넓게 순회하는 대신 캐시에 들어갈 정도의 작은 블록을 반복 처리하면 해당 블록의 라인을 교체되기 전에 여러 번 재사용할 수 있다. 작업 집합을 가까운 캐시에 맞춰 시간적·공간적 지역성을 높이는 것이 핵심이며 타일 크기가 지나치게 크거나 추가 반복문 오버헤드가 크면 이득이 줄 수 있다.",
+    "explanationMarkdown": "타일링은 한 번 가져온 캐시 라인을 교체되기 전에 여러 연산에서 재사용하도록 작업 집합을 작게 만든다. 핵심은 타일 크기를 가까운 캐시 수준에 맞춰 시간적·공간적 지역성을 높이는 것이다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.cache-organization.cache-friendly-access.q3",
-    "promptMarkdown": "자료구조를 linked object graph에서 compact array로 바꾼 뒤 microbenchmark는 빨라졌지만 production 요청 지연 시간은 거의 변하지 않았다. 가능한 이유와 다음 측정 항목을 설명하라.",
+    "promptMarkdown": "자료구조를 연결된 객체 그래프에서 밀집 배열로 바꾼 뒤 마이크로벤치마크는 빨라졌지만 운영 요청 지연 시간은 거의 변하지 않았다. 가능한 이유와 다음 측정 항목을 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.cache-organization.cache-friendly-access"],
-    "modelAnswer": "array layout이 CPU cache locality와 allocation을 개선했더라도 production 요청이 DB/network I/O, lock, queueing 같은 다른 비용에 지배되면 종단 간 지연 시간 영향은 작을 수 있다. CPU utilization, cache miss/IPC, allocation·GC와 함께 DB/network wait와 p95/p99를 비교해 실제 bottleneck이 어디인지 확인해야 한다.",
-    "explanationMarkdown": "Microbenchmark에서 locality가 좋아져도 production 병목이 DB·network·lock·queue에 있으면 end-to-end latency 변화는 작을 수 있다. CPU/cache 지표와 함께 실제 요청의 wait time과 tail latency를 다시 측정해야 한다."
+    "modelAnswer": "배열 배치가 CPU 캐시 지역성과 할당 비용을 개선했더라도 운영 요청이 DB/네트워크 I/O, 잠금, 큐 대기 같은 다른 비용에 지배되면 종단 간 지연 시간 영향은 작을 수 있다. CPU 사용률, 캐시 미스/IPC, 할당·GC와 함께 DB/네트워크 대기와 p95/p99를 비교해 실제 병목이 어디인지 확인해야 한다.",
+    "explanationMarkdown": "마이크로벤치마크에서 지역성이 좋아져도 운영 병목이 DB·네트워크·잠금·큐에 있으면 종단 간 지연 시간 변화는 작을 수 있다. CPU/캐시 지표와 함께 실제 요청의 대기 시간과 꼬리 지연 시간을 다시 측정해야 한다."
   }
 ]

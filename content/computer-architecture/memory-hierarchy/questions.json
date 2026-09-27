@@ -2,235 +2,235 @@
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.memory-hierarchy.memory-hierarchy.q1",
-    "promptMarkdown": "memory hierarchy를 여러 계층으로 구성하는 가장 중요한 이유는?",
+    "promptMarkdown": "메모리 계층(memory hierarchy)을 여러 단계로 구성하는 가장 중요한 이유는?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.memory-hierarchy.memory-hierarchy"],
     "choices": [
-      {"key": "A", "content": "작고 빠른 memory와 크고 느린 memory의 trade-off를 locality를 이용해 완화하기 위해서다.", "displayOrder": 0, "rationaleMarkdown": "작은 SRAM 계층은 빠르지만 비싸고 용량이 제한되며 DRAM·storage는 크지만 상대적으로 느리다. 프로그램의 temporal·spatial locality를 이용해 자주 쓰는 일부를 위에 두면 비용과 속도의 절충을 완화할 수 있다."},
-      {"key": "B", "content": "register, cache, DRAM, storage의 지연 시간을 모두 동일하게 만들기 위해서다.", "displayOrder": 1, "rationaleMarkdown": "Memory hierarchy는 계층별 지연과 용량을 같게 만들려는 구조가 아니다. 서로 다른 비용·속도 특성을 유지하면서 locality를 이용해 평균 접근 비용을 줄인다."},
-      {"key": "C", "content": "CPU가 memory address를 사용하지 않도록 만들기 위해서다.", "displayOrder": 2, "rationaleMarkdown": "CPU instruction은 여전히 주소를 만들어 memory operand에 접근한다. 계층 구조는 그 주소가 어느 수준에서 충족되는지를 바꾸며 주소 사용 자체를 없애지 않는다."},
-      {"key": "D", "content": "모든 data를 항상 가장 빠른 cache에 동시에 저장하기 위해서다.", "displayOrder": 3, "rationaleMarkdown": "Cache 용량은 제한되어 있어 모든 data를 가장 빠른 계층에 동시에 둘 수 없다. Hierarchy는 현재 locality가 높은 subset만 위에 보관하고 나머지는 더 큰 아래 계층에 둔다."}
+      {"key": "A", "content": "작고 빠른 메모리와 크고 느린 메모리 사이의 트레이드오프를 지역성(locality)을 이용해 완화하기 위해서다.", "displayOrder": 0, "rationaleMarkdown": "작은 SRAM 계층은 빠르지만 비싸고 용량이 제한되며 DRAM·저장장치는 크지만 상대적으로 느리다. 프로그램의 시간적·공간적 지역성을 이용해 자주 쓰는 일부를 위에 두면 비용과 속도의 절충을 완화할 수 있다."},
+      {"key": "B", "content": "레지스터, 캐시, DRAM, 저장장치의 지연 시간을 모두 동일하게 만들기 위해서다.", "displayOrder": 1, "rationaleMarkdown": "메모리 계층은 단계별 지연 시간과 용량을 같게 만들려는 구조가 아니다. 서로 다른 비용·속도 특성을 유지하면서 지역성을 이용해 평균 접근 비용을 줄인다."},
+      {"key": "C", "content": "CPU가 메모리 주소를 사용하지 않도록 만들기 위해서다.", "displayOrder": 2, "rationaleMarkdown": "CPU 명령어는 여전히 주소를 만들어 메모리 피연산자에 접근한다. 계층 구조는 그 주소 요청이 어느 단계에서 충족되는지를 바꾸며 주소 사용 자체를 없애지 않는다."},
+      {"key": "D", "content": "모든 데이터를 항상 가장 빠른 캐시에 동시에 저장하기 위해서다.", "displayOrder": 3, "rationaleMarkdown": "캐시 용량은 제한되어 있어 모든 데이터를 가장 빠른 계층에 동시에 둘 수 없다. 메모리 계층은 현재 지역성이 높은 일부만 위에 보관하고 나머지는 더 큰 아래 계층에 둔다."}
     ],
     "correctChoiceKey": "A",
-    "explanationMarkdown": "하나의 memory technology로 큰 용량, 낮은 지연 시간, 낮은 비용을 동시에 얻기 어렵다. Hierarchy는 크고 저렴하지만 느린 하위 계층과 작고 빠른 상위 계층을 결합하고, temporal·spatial locality가 높은 access를 상위에서 처리해 평균 접근 시간을 줄인다."
+    "explanationMarkdown": "하나의 메모리 기술로 큰 용량, 낮은 지연 시간, 낮은 비용을 동시에 얻기 어렵다. 메모리 계층은 크고 저렴하지만 느린 하위 계층과 작고 빠른 상위 계층을 결합하고, 시간적·공간적 지역성이 높은 접근을 상위에서 처리해 평균 접근 시간을 줄인다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.memory-hierarchy.memory-hierarchy.q2",
-    "promptMarkdown": "작고 빠른 상위 계층이 전체 memory보다 훨씬 작은데도 많은 access를 처리할 수 있는 이유를 temporal/spatial locality와 연결해 설명하라.",
+    "promptMarkdown": "작고 빠른 상위 계층이 전체 메모리보다 훨씬 작은데도 많은 접근을 처리할 수 있는 이유를 시간적·공간적 지역성과 연결해 설명하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.memory-hierarchy.memory-hierarchy"],
-    "modelAnswer": "프로그램은 최근 사용한 data를 다시 사용하는 temporal locality와 인접 address를 곧 사용하는 spatial locality를 자주 보인다. 그래서 전체 memory를 상위 cache에 둘 필요 없이 현재 working set과 주변 line만 가까운 계층에 두어도 많은 access가 hit할 수 있다. miss가 나면 lower level에서 필요한 block을 가져오므로 큰 용량은 아래 계층이 담당한다.",
-    "explanationMarkdown": "상위 계층이 작아도 잘 동작하는 이유는 프로그램 access가 전체 address space에 균등하지 않고 최근 값과 인접 값을 반복하는 경향이 있기 때문이다. Cache는 이 locality가 있는 working set만 가까이 두고 나머지는 더 큰 하위 계층에 맡긴다."
+    "modelAnswer": "프로그램은 최근 사용한 데이터를 다시 사용하는 시간적 지역성과 인접 주소를 곧 사용하는 공간적 지역성을 자주 보인다. 그래서 전체 메모리를 상위 캐시에 둘 필요 없이 현재 작업 집합과 주변 캐시 라인만 가까운 계층에 두어도 많은 접근이 적중할 수 있다. 미스가 나면 하위 계층에서 필요한 블록을 가져오므로 큰 용량은 아래 계층이 담당한다.",
+    "explanationMarkdown": "상위 계층이 작아도 잘 동작하는 이유는 프로그램의 접근이 전체 주소 공간에 균등하지 않고 최근 값과 인접 값을 반복하는 경향이 있기 때문이다. 캐시는 이런 지역성이 있는 작업 집합만 가까이 두고 나머지는 더 큰 하위 계층에 맡긴다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.memory-hierarchy.memory-hierarchy.q3",
-    "promptMarkdown": "L1 cache를 더 크게 만들면 hit rate가 높아질 가능성이 있다. 그럼에도 `L1은 클수록 무조건 좋다`고 결론 내릴 수 없는 이유를 최소 세 가지 trade-off로 설명하라.",
+    "promptMarkdown": "L1 캐시를 더 크게 만들면 적중률이 높아질 가능성이 있다. 그럼에도 `L1은 클수록 무조건 좋다`고 결론 내릴 수 없는 이유를 최소 세 가지 트레이드오프로 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.memory-hierarchy.memory-hierarchy"],
-    "modelAnswer": "큰 L1은 capacity miss를 줄일 수 있지만 lookup 경로와 wiring이 길어져 hit 지연 시간이 증가할 수 있고, area와 전력 비용도 커진다. associativity나 line size와의 조합에 따라 conflict behavior도 달라진다. 따라서 hit rate만이 아니라 hit time, miss penalty, area·전력, workload의 working set을 함께 봐야 한다.",
-    "explanationMarkdown": "L1 크기를 키우면 miss는 줄 수 있지만 hit path가 느려지고 area·전력도 증가할 수 있다. Cache 설계는 hit rate 하나가 아니라 hit time, miss penalty, associativity와 workload working set을 함께 최적화하는 문제다."
+    "modelAnswer": "큰 L1은 용량 미스를 줄일 수 있지만 조회 경로와 배선이 길어져 적중 지연 시간이 증가할 수 있고, 면적과 전력 비용도 커진다. 연관도나 캐시 라인 크기와의 조합에 따라 충돌 특성도 달라진다. 따라서 적중률만이 아니라 적중 시간, 미스 패널티, 면적·전력, 작업 부하의 작업 집합을 함께 봐야 한다.",
+    "explanationMarkdown": "L1 크기를 키우면 미스는 줄 수 있지만 적중 경로가 느려지고 면적·전력도 증가할 수 있다. 캐시 설계는 적중률 하나가 아니라 적중 시간, 미스 패널티, 연관도와 작업 부하의 작업 집합을 함께 최적화하는 문제다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.memory-hierarchy.temporal-spatial-locality.q1",
-    "promptMarkdown": "다음 중 spatial locality를 가장 직접적으로 활용하는 access pattern은?",
+    "promptMarkdown": "다음 중 공간적 지역성을 가장 직접적으로 활용하는 접근 패턴은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.memory-hierarchy.temporal-spatial-locality"],
     "choices": [
-      {"key": "A", "content": "한 값을 register에 올린 뒤 memory를 전혀 읽지 않는다.", "displayOrder": 0, "rationaleMarkdown": "값을 register에 올려 memory를 더 읽지 않으면 memory line의 인접 byte를 연이어 사용하지 않는다. 이는 register reuse일 수 있지만 spatial locality를 보여 주는 memory access pattern은 아니다."},
-      {"key": "B", "content": "매번 전혀 다른 큰 address 범위에서 한 byte만 무작위로 읽는다.", "displayOrder": 1, "rationaleMarkdown": "넓은 주소 공간에서 매번 임의 byte만 읽으면 가져온 line의 다른 인접 byte를 곧 쓰지 않을 가능성이 높다. 따라서 cache line fill의 spatial locality 이점을 활용하기 어렵다."},
-      {"key": "C", "content": "연속된 int 배열을 index 0부터 차례로 읽는다.", "displayOrder": 2, "rationaleMarkdown": "연속된 int를 차례로 읽으면 이웃 원소가 같은 cache line에 들어 있을 수 있어 한 번의 fill로 여러 access를 처리할 수 있다. 이것이 인접 address를 곧 사용하는 spatial locality의 예다."},
-      {"key": "D", "content": "working set보다 작은 cache를 매 access마다 강제로 비운다.", "displayOrder": 3, "rationaleMarkdown": "Cache를 매번 비우면 직전에 가져온 line을 다음 access에 재사용하지 못하게 된다. Spatial locality는 인접 값을 같은 line에서 이어서 사용해 fill을 amortize하는 데 기대므로 강제 flush는 그 이점을 없앤다."}
+      {"key": "A", "content": "한 값을 레지스터에 올린 뒤 메모리를 전혀 읽지 않는다.", "displayOrder": 0, "rationaleMarkdown": "값을 레지스터에 올려 메모리를 더 읽지 않으면 메모리 라인의 인접 바이트를 연이어 사용하지 않는다. 이는 레지스터 재사용일 수 있지만 공간적 지역성을 보여 주는 메모리 접근 패턴은 아니다."},
+      {"key": "B", "content": "매번 전혀 다른 큰 주소 범위에서 한 바이트만 무작위로 읽는다.", "displayOrder": 1, "rationaleMarkdown": "넓은 주소 공간에서 매번 임의의 바이트만 읽으면 가져온 라인의 다른 인접 바이트를 곧 쓰지 않을 가능성이 높다. 따라서 캐시 라인을 채우며 얻는 공간적 지역성 이점을 활용하기 어렵다."},
+      {"key": "C", "content": "연속된 int 배열을 인덱스 0부터 차례로 읽는다.", "displayOrder": 2, "rationaleMarkdown": "연속된 int를 차례로 읽으면 이웃 원소가 같은 캐시 라인에 들어 있을 수 있어 한 번의 라인 채우기로 여러 접근을 처리할 수 있다. 이것이 인접 주소를 곧 사용하는 공간적 지역성의 예다."},
+      {"key": "D", "content": "작업 집합보다 작은 캐시를 매 접근마다 강제로 비운다.", "displayOrder": 3, "rationaleMarkdown": "캐시를 매번 비우면 직전에 가져온 라인을 다음 접근에 재사용하지 못하게 된다. 공간적 지역성은 인접 값을 같은 라인에서 이어서 사용해 채우기 비용을 나누는 데 기대므로 강제 비우기는 그 이점을 없앤다."}
     ],
     "correctChoiceKey": "C",
-    "explanationMarkdown": "Cache line은 요청한 주소 주변의 인접 byte도 함께 가져온다. 연속된 배열 원소를 차례로 읽으면 같은 line의 여러 원소를 이어서 사용하므로 공간적 지역성을 활용한다."
+    "explanationMarkdown": "캐시 라인은 요청한 주소 주변의 인접 바이트도 함께 가져온다. 연속된 배열 원소를 차례로 읽으면 같은 라인의 여러 원소를 이어서 사용하므로 공간적 지역성을 활용한다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.memory-hierarchy.temporal-spatial-locality.q2",
-    "promptMarkdown": "working set이 cache capacity보다 커질 때 temporal locality가 있어도 cache miss가 늘 수 있는 이유를 설명하라.",
+    "promptMarkdown": "작업 집합이 캐시 용량보다 커질 때 시간적 지역성이 있어도 캐시 미스가 늘 수 있는 이유를 설명하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.memory-hierarchy.temporal-spatial-locality"],
-    "modelAnswer": "같은 data를 나중에 다시 사용하더라도 그 사이에 접근한 active data가 cache capacity를 넘으면 이전 line이 재사용되기 전에 eviction될 수 있다. 이 경우 temporal reuse 가능성은 존재하지만 cache가 working set을 유지하지 못해 capacity miss가 증가한다.",
-    "explanationMarkdown": "재사용 가능성이 있어도 그 사이 active working set이 cache보다 크면 필요한 line이 다시 쓰이기 전에 밀려날 수 있다. Locality는 재사용 패턴을 뜻할 뿐 cache가 그 재사용 간격 전체를 보관할 수 있다는 보장은 아니다."
+    "modelAnswer": "같은 데이터를 나중에 다시 사용하더라도 그 사이에 접근한 활성 데이터가 캐시 용량을 넘으면 이전 라인이 재사용되기 전에 교체될 수 있다. 이 경우 시간적 재사용 가능성은 존재하지만 캐시가 작업 집합을 유지하지 못해 용량 미스가 증가한다.",
+    "explanationMarkdown": "재사용 가능성이 있어도 그 사이의 활성 작업 집합이 캐시보다 크면 필요한 라인이 다시 쓰이기 전에 밀려날 수 있다. 지역성은 재사용 패턴을 뜻할 뿐 캐시가 그 재사용 간격 전체를 보관할 수 있다는 보장은 아니다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.memory-hierarchy.temporal-spatial-locality.q3",
-    "promptMarkdown": "row-major로 저장된 큰 2차원 배열을 같은 계산량으로 순회한다. 한 구현은 row를 따라 연속 접근하고 다른 구현은 column을 따라 큰 stride로 접근한다. 두 구현의 cache behavior가 달라질 수 있는 이유를 설명하라.",
+    "promptMarkdown": "행 우선(row-major)으로 저장된 큰 2차원 배열을 같은 계산량으로 순회한다. 한 구현은 행을 따라 연속 접근하고 다른 구현은 열을 따라 큰 간격(stride)으로 접근한다. 두 구현의 캐시 동작이 달라질 수 있는 이유를 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.memory-hierarchy.temporal-spatial-locality"],
-    "modelAnswer": "row-major 배열에서 row 순회는 인접 원소가 같은 cache line에 포함되기 쉬워 한 번의 line fill 뒤 여러 원소를 재사용할 수 있다. column 순회는 row 길이만큼 큰 stride로 이동해 각 access가 다른 line을 요구할 가능성이 커지고 line 안의 가져온 byte를 적게 사용할 수 있다. working set과 prefetcher에 따라 정도는 달라지지만 일반적으로 spatial locality 차이가 miss와 bandwidth 사용량에 영향을 준다.",
-    "explanationMarkdown": "Row-major 배열에서는 row 방향 연속 접근이 한 cache line의 여러 원소를 활용하기 쉽다. Column 방향 큰 stride는 가져온 line의 일부만 쓰고 다음 line으로 이동할 가능성이 커 spatial locality와 bandwidth 효율이 나빠질 수 있다."
+    "modelAnswer": "행 우선 배열에서 행 순회는 인접 원소가 같은 캐시 라인에 포함되기 쉬워 한 번의 라인 채우기 뒤 여러 원소를 재사용할 수 있다. 열 순회는 행 길이만큼 큰 간격으로 이동해 각 접근이 다른 라인을 요구할 가능성이 커지고 라인 안에서 가져온 바이트를 적게 사용할 수 있다. 작업 집합과 프리페처에 따라 정도는 달라지지만 일반적으로 공간적 지역성 차이가 미스와 대역폭 사용량에 영향을 준다.",
+    "explanationMarkdown": "행 우선 배열에서는 행 방향 연속 접근이 한 캐시 라인의 여러 원소를 활용하기 쉽다. 열 방향의 큰 간격 접근은 가져온 라인의 일부만 쓰고 다음 라인으로 이동할 가능성이 커 공간적 지역성과 대역폭 효율이 나빠질 수 있다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.memory-hierarchy.cache-line.q1",
-    "promptMarkdown": "set-associative cache의 address 해석에서 offset, index, tag의 역할로 맞는 것은?",
+    "promptMarkdown": "집합 연관 캐시(set-associative cache)의 주소 해석에서 오프셋(offset), 인덱스(index), 태그(tag)의 역할로 맞는 것은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.memory-hierarchy.cache-line"],
     "choices": [
-      {"key": "A", "content": "offset은 후보 set, index는 line 내부 byte, tag는 replacement victim을 고른다.", "displayOrder": 0, "rationaleMarkdown": "이 배치는 주소 field의 역할을 뒤섞었다. Index가 set을 선택하고 offset이 line 안의 byte를 고르며, replacement 정보는 tag가 아니라 set 안의 victim 선택 정책에서 온다."},
-      {"key": "B", "content": "offset은 line 내부 위치, index는 후보 set, tag는 그 set의 어느 memory block인지 구분한다.", "displayOrder": 1, "rationaleMarkdown": "Address의 offset은 선택된 line 내부 위치를 정하고 index는 후보 set을 고른다. Set 안에서는 tag 비교로 저장된 block identity를 확인한다."},
-      {"key": "C", "content": "tag만 사용하며 offset과 index는 cache lookup에 필요하지 않다.", "displayOrder": 2, "rationaleMarkdown": "Tag는 후보 line의 block identity를 확인할 뿐 line 안의 byte 위치나 set 선택을 제공하지 않는다. Cache lookup에는 line 구성에 따라 offset과 index 정보도 필요하다."},
-      {"key": "D", "content": "index는 line 내부 byte 위치만 결정하고 tag 비교는 하지 않는다.", "displayOrder": 3, "rationaleMarkdown": "Index가 line 내부 byte를 고른다고 보면 주소 비트를 잘못 나눈 것이다. Index는 set을 찾고 offset은 line 안의 위치를 정하며 tag 비교도 hit 확인에 필요하다."}
+      {"key": "A", "content": "오프셋은 후보 집합, 인덱스는 라인 내부 바이트, 태그는 교체 대상을 고른다.", "displayOrder": 0, "rationaleMarkdown": "이 설명은 주소 필드의 역할을 뒤섞었다. 인덱스가 집합을 선택하고 오프셋이 라인 안의 바이트를 고르며, 교체 대상 정보는 태그가 아니라 집합 안의 교체 정책에서 온다."},
+      {"key": "B", "content": "오프셋은 라인 내부 위치, 인덱스는 후보 집합, 태그는 그 집합의 어느 메모리 블록인지 구분한다.", "displayOrder": 1, "rationaleMarkdown": "주소의 오프셋은 선택된 라인 내부 위치를 정하고 인덱스는 후보 집합을 고른다. 집합 안에서는 태그 비교로 저장된 블록이 요청한 블록인지 확인한다."},
+      {"key": "C", "content": "태그만 사용하며 오프셋과 인덱스는 캐시 조회에 필요하지 않다.", "displayOrder": 2, "rationaleMarkdown": "태그는 후보 라인이 어느 메모리 블록인지 확인할 뿐 라인 안의 바이트 위치나 집합 선택을 제공하지 않는다. 캐시 조회에는 구성에 따라 오프셋과 인덱스 정보도 필요하다."},
+      {"key": "D", "content": "인덱스는 라인 내부 바이트 위치만 결정하고 태그 비교는 하지 않는다.", "displayOrder": 3, "rationaleMarkdown": "인덱스가 라인 내부 바이트를 고른다고 보면 주소 비트를 잘못 나눈 것이다. 인덱스는 집합을 찾고 오프셋은 라인 안의 위치를 정하며 태그 비교도 적중 확인에 필요하다."}
     ],
     "correctChoiceKey": "B",
-    "explanationMarkdown": "`offset`는 line 안의 byte/word 위치를 고르고 `index`는 후보 set을 정한다. 선택된 set에서는 tag를 비교해 저장된 block이 요청한 block인지 확인한다."
+    "explanationMarkdown": "오프셋은 라인 안의 바이트나 워드 위치를 고르고 인덱스는 후보 집합을 정한다. 선택된 집합에서는 태그를 비교해 저장된 블록이 요청한 블록인지 확인한다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.memory-hierarchy.cache-line.q2",
-    "promptMarkdown": "cache line size를 크게 만들 때 얻을 수 있는 이점과 동시에 생길 수 있는 비용을 spatial locality와 bandwidth 관점에서 설명하라.",
+    "promptMarkdown": "캐시 라인 크기를 크게 만들 때 얻을 수 있는 이점과 동시에 생길 수 있는 비용을 공간적 지역성과 대역폭 관점에서 설명하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.memory-hierarchy.cache-line"],
-    "modelAnswer": "큰 line은 한 miss에서 더 많은 인접 byte를 가져와 spatial locality가 높은 workload의 이후 access를 hit로 만들 수 있다. 하지만 사용하지 않을 byte까지 전송하면 bandwidth를 낭비하고 같은 cache capacity에서 보관 가능한 line 수가 줄어 pollution/eviction이 늘 수 있으며 line fill 지연 시간도 커질 수 있다.",
-    "explanationMarkdown": "큰 line은 인접 data까지 한 번에 가져와 spatial locality를 활용할 수 있지만 실제로 쓰지 않을 byte도 전송한다. 같은 capacity에서는 line 수가 줄고 fill 비용도 커질 수 있으므로 locality와 bandwidth 낭비를 같이 봐야 한다."
+    "modelAnswer": "큰 라인은 한 번의 미스에서 더 많은 인접 바이트를 가져와 공간적 지역성이 높은 작업 부하의 이후 접근을 적중으로 만들 수 있다. 하지만 사용하지 않을 바이트까지 전송하면 대역폭을 낭비하고 같은 캐시 용량에서 보관 가능한 라인 수가 줄어 캐시 오염과 교체가 늘 수 있으며 라인 채우기 지연 시간도 커질 수 있다.",
+    "explanationMarkdown": "큰 라인은 인접 데이터까지 한 번에 가져와 공간적 지역성을 활용할 수 있지만 실제로 쓰지 않을 바이트도 전송한다. 같은 용량에서는 라인 수가 줄고 채우기 비용도 커질 수 있으므로 지역성 이점과 대역폭 낭비를 같이 봐야 한다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.memory-hierarchy.cache-line.q3",
-    "promptMarkdown": "두 thread가 서로 다른 counter를 각각 갱신하므로 논리적으로 data를 공유하지 않는다. 그런데 두 counter가 같은 cache line에 놓인 뒤 multicore 성능이 크게 떨어졌다. 가능한 원인과 개선 방향을 설명하라.",
+    "promptMarkdown": "두 스레드가 서로 다른 카운터를 각각 갱신하므로 논리적으로 데이터를 공유하지 않는다. 그런데 두 카운터가 같은 캐시 라인에 놓인 뒤 멀티코어 성능이 크게 떨어졌다. 가능한 원인과 개선 방향을 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.memory-hierarchy.cache-line"],
-    "modelAnswer": "coherence가 field가 아니라 cache line 단위로 ownership/state를 관리하므로 서로 다른 counter라도 같은 line에 있으면 각 core의 write가 line ownership을 반복해서 이동시킬 수 있다. 이것이 false sharing이다. data layout을 바꿔 자주 쓰는 독립 write 변수들이 서로 다른 line에 놓이도록 padding/partitioning하는 방법을 검토하되 실제 counter와 hardware metric으로 효과를 확인해야 한다.",
-    "explanationMarkdown": "False sharing은 변수의 논리적 공유 여부가 아니라 같은 cache line을 write하는지에서 생긴다. 서로 다른 counter도 같은 line에 있으면 ownership 이동이 반복될 수 있어 layout을 분리하는 것이 개선책이 될 수 있다."
+    "modelAnswer": "캐시 일관성이 필드가 아니라 캐시 라인 단위로 소유권과 상태를 관리하므로 서로 다른 카운터라도 같은 라인에 있으면 각 코어의 쓰기가 라인 소유권을 반복해서 이동시킬 수 있다. 이것이 거짓 공유(false sharing)다. 데이터 배치를 바꿔 자주 쓰는 독립 쓰기 변수가 서로 다른 라인에 놓이도록 패딩하거나 분할하는 방법을 검토하되 실제 카운터와 하드웨어 지표로 효과를 확인해야 한다.",
+    "explanationMarkdown": "거짓 공유는 변수의 논리적 공유 여부가 아니라 같은 캐시 라인을 쓰는지에서 생긴다. 서로 다른 카운터도 같은 라인에 있으면 소유권 이동이 반복될 수 있어 배치를 분리하는 것이 개선책이 될 수 있다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.memory-hierarchy.cache-hit-miss.q1",
-    "promptMarkdown": "cache 전체에는 여유가 있지만 두 memory block이 같은 set에 반복해서 mapping되어 서로를 계속 eviction한다. 이 miss를 가장 잘 설명하는 것은?",
+    "promptMarkdown": "캐시 전체에는 여유가 있지만 두 메모리 블록이 같은 집합에 반복해서 배치되어 서로를 계속 교체한다. 이 미스를 가장 잘 설명하는 것은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.memory-hierarchy.cache-hit-miss"],
     "choices": [
-      {"key": "A", "content": "Coherence miss", "displayOrder": 0, "rationaleMarkdown": "Coherence miss는 다른 core의 write나 invalidation 때문에 필요한 line의 상태가 바뀌어 발생한다. 이 상황은 한 cache 안에서 같은 set의 block이 자리를 두고 경쟁하는 placement 문제다."},
-      {"key": "B", "content": "Compulsory miss만", "displayOrder": 1, "rationaleMarkdown": "Compulsory miss는 block을 처음 접근할 때 나타나는 cold-start miss다. 이미 접근한 두 block이 같은 set을 반복 교체하는 현상은 최초 접근만으로 설명되지 않는다."},
-      {"key": "C", "content": "Capacity miss만", "displayOrder": 2, "rationaleMarkdown": "Capacity miss는 전체 working set이 cache 용량보다 커서 재사용 전에 line이 밀려나는 경우다. 문제에서 cache 전체에는 여유가 있고 특정 set의 placement 충돌이 원인으로 주어졌다."},
-      {"key": "D", "content": "Conflict miss", "displayOrder": 3, "rationaleMarkdown": "두 block이 같은 set을 요구하고 해당 way 수가 부족하면 서로가 상대의 line을 교체한다. 다른 set에 빈 line이 남아 있어도 placement 제약 때문에 사용할 수 없는 conflict miss다."}
+      {"key": "A", "content": "일관성 미스(Coherence miss)", "displayOrder": 0, "rationaleMarkdown": "일관성 미스는 다른 코어의 쓰기나 무효화 때문에 필요한 라인의 상태가 바뀌어 발생한다. 이 상황은 한 캐시 안에서 같은 집합의 블록이 자리를 두고 경쟁하는 배치 문제다."},
+      {"key": "B", "content": "최초 미스(Compulsory miss)만", "displayOrder": 1, "rationaleMarkdown": "최초 미스는 블록을 처음 접근할 때 나타나는 초기 미스다. 이미 접근한 두 블록이 같은 집합을 반복 교체하는 현상은 최초 접근만으로 설명되지 않는다."},
+      {"key": "C", "content": "용량 미스(Capacity miss)만", "displayOrder": 2, "rationaleMarkdown": "용량 미스는 전체 작업 집합이 캐시 용량보다 커서 재사용 전에 라인이 밀려나는 경우다. 문제에서는 캐시 전체에는 여유가 있고 특정 집합의 배치 충돌이 원인으로 주어졌다."},
+      {"key": "D", "content": "충돌 미스(Conflict miss)", "displayOrder": 3, "rationaleMarkdown": "두 블록이 같은 집합을 요구하고 해당 way 수가 부족하면 서로가 상대의 라인을 교체한다. 다른 집합에 빈 라인이 남아 있어도 배치 제약 때문에 사용할 수 없는 충돌 미스다."}
     ],
     "correctChoiceKey": "D",
-    "explanationMarkdown": "서로 다른 block이 같은 set을 경쟁하고 way 수가 부족해 번갈아 밀려나는 것은 conflict miss다. Cache 전체에 빈 line이 있어도 placement 제약 때문에 다른 set의 공간을 사용할 수 없다."
+    "explanationMarkdown": "서로 다른 블록이 같은 집합을 경쟁하고 way 수가 부족해 번갈아 밀려나는 것은 충돌 미스다. 캐시 전체에 빈 라인이 있어도 배치 제약 때문에 다른 집합의 공간을 사용할 수 없다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.memory-hierarchy.cache-hit-miss.q2",
-    "promptMarkdown": "read miss가 발생한 뒤 요청한 data를 사용할 수 있게 될 때까지 cache에서 일어날 수 있는 상태 흐름을 설명하라.",
+    "promptMarkdown": "읽기 미스가 발생한 뒤 요청한 데이터를 사용할 수 있게 될 때까지 캐시에서 일어날 수 있는 상태 흐름을 설명하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.memory-hierarchy.cache-hit-miss"],
-    "modelAnswer": "tag lookup에서 일치하는 valid line이 없으면 miss가 된다. 빈 line이 없으면 replacement policy로 victim을 고르고 write-back cache의 dirty victim이면 lower level에 기록해야 할 수 있다. 이후 lower level에 필요한 block을 요청해 line을 채우고 tag/state를 갱신한 뒤 중단된 memory access를 재개한다. 실제 CPU는 일부 단계를 overlap할 수 있다.",
-    "explanationMarkdown": "Read miss는 단순히 lower level을 읽는 한 단계가 아니다. Victim 선택과 dirty write-back이 필요할 수 있고 새 block fill과 metadata 갱신이 끝나야 원래 memory access를 계속할 수 있다."
+    "modelAnswer": "태그 조회에서 일치하는 유효 라인이 없으면 미스가 된다. 빈 라인이 없으면 교체 정책으로 교체 대상을 고르고 write-back 캐시의 수정된 라인이라면 하위 계층에 기록해야 할 수 있다. 이후 하위 계층에 필요한 블록을 요청해 라인을 채우고 태그·상태를 갱신한 뒤 중단된 메모리 접근을 재개한다. 실제 CPU는 일부 단계를 겹쳐 수행할 수 있다.",
+    "explanationMarkdown": "읽기 미스는 단순히 하위 계층을 읽는 한 단계가 아니다. 교체 대상 선택과 수정된 라인의 write-back이 필요할 수 있고 새 블록 채우기와 메타데이터 갱신이 끝나야 원래 메모리 접근을 계속할 수 있다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.memory-hierarchy.cache-hit-miss.q3",
-    "promptMarkdown": "cache A는 hit rate 99%이고 miss penalty가 200ns, cache B는 hit rate 96%이고 miss penalty가 20ns라고 하자. hit time이 같다고 가정할 때 hit rate만 보고 A가 더 빠르다고 결론 내릴 수 없는 이유를 정량적으로 설명하라.",
+    "promptMarkdown": "캐시 A는 적중률 99%이고 미스 패널티가 200ns, 캐시 B는 적중률 96%이고 미스 패널티가 20ns라고 하자. 적중 시간이 같다고 가정할 때 적중률만 보고 A가 더 빠르다고 결론 내릴 수 없는 이유를 정량적으로 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.memory-hierarchy.cache-hit-miss"],
-    "modelAnswer": "A의 miss에 따른 평균 추가 비용은 0.01 × 200ns = 2ns이고 B는 0.04 × 20ns = 0.8ns다. hit time이 같다는 단순 모델에서는 오히려 B의 평균 miss 비용이 더 작다. 실제 판단에는 hit time, multi-level behavior, miss overlap과 bandwidth도 필요하지만 hit rate 하나만 비교하면 miss cost를 놓친다는 점이 핵심이다.",
-    "explanationMarkdown": "Hit rate가 높아도 miss 하나의 비용이 매우 크면 평균 access time이 더 나쁠 수 있다. 단순 모델에서 A의 평균 miss 비용은 2ns, B는 0.8ns이므로 miss rate와 penalty를 함께 계산해야 한다."
+    "modelAnswer": "A의 미스에 따른 평균 추가 비용은 0.01 × 200ns = 2ns이고 B는 0.04 × 20ns = 0.8ns다. 적중 시간이 같다는 단순 모델에서는 오히려 B의 평균 미스 비용이 더 작다. 실제 판단에는 적중 시간, 다단계 캐시 동작, 미스 겹침과 대역폭도 필요하지만 적중률 하나만 비교하면 미스 비용을 놓친다는 점이 핵심이다.",
+    "explanationMarkdown": "적중률이 높아도 미스 하나의 비용이 매우 크면 평균 접근 시간이 더 나쁠 수 있다. 단순 모델에서 A의 평균 미스 비용은 2ns, B는 0.8ns이므로 미스율과 패널티를 함께 계산해야 한다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.memory-hierarchy.latency-vs-bandwidth.q1",
-    "promptMarkdown": "지연 시간과 bandwidth를 구분한 설명으로 가장 정확한 것은?",
+    "promptMarkdown": "지연 시간과 대역폭을 구분한 설명으로 가장 정확한 것은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.memory-hierarchy.latency-vs-bandwidth"],
     "choices": [
-      {"key": "A", "content": "bandwidth가 높으면 모든 random load의 지연 시간도 반드시 같은 비율로 줄어든다.", "displayOrder": 0, "rationaleMarkdown": "Bandwidth가 높으면 큰 연속 전송의 처리량은 늘 수 있지만 개별 random load의 첫 결과까지 기다리는 latency가 같은 비율로 줄어드는 것은 아니다. 대역폭 활용에는 독립 요청의 병렬성도 영향을 준다."},
-      {"key": "B", "content": "지연 시간은 한 요청의 결과를 기다리는 시간이고 bandwidth는 단위 시간에 이동 가능한 data 양이다.", "displayOrder": 1, "rationaleMarkdown": "Latency는 한 요청을 시작한 뒤 결과를 받기까지의 시간이고 bandwidth는 단위 시간에 옮길 수 있는 data 양이다. 높은 처리량과 긴 개별 대기 시간이 동시에 존재할 수 있다."},
-      {"key": "C", "content": "지연 시간은 항상 byte/s로 측정하고 bandwidth는 ns로 측정한다.", "displayOrder": 2, "rationaleMarkdown": "Latency는 보통 ns 같은 시간 단위로, bandwidth는 byte/s 같은 data-per-time 단위로 나타낸다. 단위를 바꾸어 붙여 둘 물리량은 서로 다르다."},
-      {"key": "D", "content": "둘은 이름만 다르고 같은 물리량이다.", "displayOrder": 3, "rationaleMarkdown": "Latency와 bandwidth는 각각 개별 요청의 응답 시간과 지속 가능한 data 전송률을 측정한다. 한쪽을 개선해도 다른 쪽이 자동으로 같은 방식으로 개선되지는 않는다."}
+      {"key": "A", "content": "대역폭이 높으면 모든 무작위 load의 지연 시간도 반드시 같은 비율로 줄어든다.", "displayOrder": 0, "rationaleMarkdown": "대역폭이 높으면 큰 연속 전송의 처리량은 늘 수 있지만 개별 무작위 load의 첫 결과까지 기다리는 지연 시간이 같은 비율로 줄어드는 것은 아니다. 대역폭 활용에는 독립 요청의 병렬성도 영향을 준다."},
+      {"key": "B", "content": "지연 시간은 한 요청의 결과를 기다리는 시간이고 대역폭은 단위 시간에 이동 가능한 데이터 양이다.", "displayOrder": 1, "rationaleMarkdown": "지연 시간은 한 요청을 시작한 뒤 결과를 받기까지의 시간이고 대역폭은 단위 시간에 옮길 수 있는 데이터 양이다. 높은 처리량과 긴 개별 대기 시간이 동시에 존재할 수 있다."},
+      {"key": "C", "content": "지연 시간은 항상 byte/s로 측정하고 대역폭은 ns로 측정한다.", "displayOrder": 2, "rationaleMarkdown": "지연 시간은 보통 ns 같은 시간 단위로, 대역폭은 byte/s 같은 데이터/시간 단위로 나타낸다. 단위를 바꾸어 붙여 둘 물리량은 서로 다르다."},
+      {"key": "D", "content": "둘은 이름만 다르고 같은 물리량이다.", "displayOrder": 3, "rationaleMarkdown": "지연 시간과 대역폭은 각각 개별 요청의 응답 시간과 지속 가능한 데이터 전송률을 측정한다. 한쪽을 개선해도 다른 쪽이 자동으로 같은 방식으로 개선되지는 않는다."}
     ],
     "correctChoiceKey": "B",
-    "explanationMarkdown": "Latency는 한 요청이 완료될 때까지의 시간이고 bandwidth는 단위 시간에 전송할 수 있는 data 양이다. 높은 bandwidth가 개별 요청의 latency가 낮다는 뜻은 아니며, 큰 전송이나 여러 독립 요청을 겹칠 때 bandwidth가 더 중요해질 수 있다."
+    "explanationMarkdown": "지연 시간은 한 요청이 완료될 때까지의 시간이고 대역폭은 단위 시간에 전송할 수 있는 데이터 양이다. 높은 대역폭이 개별 요청의 지연 시간이 낮다는 뜻은 아니며, 큰 전송이나 여러 독립 요청을 겹칠 때 대역폭이 더 중요해질 수 있다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.memory-hierarchy.latency-vs-bandwidth.q2",
-    "promptMarkdown": "여러 independent memory 요청을 동시에 outstanding 상태로 두면 개별 memory 지연 시간 자체가 줄지 않아도 처리량이 높아질 수 있는 이유를 설명하라.",
+    "promptMarkdown": "여러 독립적인 메모리 요청을 동시에 처리 중인 상태로 두면 개별 메모리 지연 시간 자체가 줄지 않아도 처리량이 높아질 수 있는 이유를 설명하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.memory-hierarchy.latency-vs-bandwidth"],
-    "modelAnswer": "각 요청이 결과를 받기까지 걸리는 지연 시간은 그대로여도 서로 독립적이면 대기 구간을 겹칠 수 있다. memory system이 여러 요청을 병렬로 처리하면 단위 시간에 완료되는 전체 data/요청 수가 증가해 aggregate bandwidth/처리량을 높일 수 있다. dependent load chain은 다음 요청을 먼저 낼 수 없어 이런 overlap이 어렵다.",
-    "explanationMarkdown": "독립 요청을 여러 개 outstanding으로 만들면 각 요청의 1회 지연은 그대로여도 기다리는 시간을 서로 겹칠 수 있다. 이 overlap이 단위 시간의 완료 요청 수를 늘려 bandwidth/throughput을 높이며, dependent chain은 이런 병렬성이 제한된다."
+    "modelAnswer": "각 요청이 결과를 받기까지 걸리는 지연 시간은 그대로여도 서로 독립적이면 대기 구간을 겹칠 수 있다. 메모리 시스템이 여러 요청을 병렬로 처리하면 단위 시간에 완료되는 전체 데이터량이나 요청 수가 증가해 전체 대역폭과 처리량을 높일 수 있다. 의존적인 load 연쇄는 다음 요청을 먼저 낼 수 없어 이런 겹침이 어렵다.",
+    "explanationMarkdown": "독립 요청을 여러 개 동시에 처리 중인 상태로 만들면 각 요청의 1회 지연은 그대로여도 기다리는 시간을 서로 겹칠 수 있다. 이 겹침이 단위 시간의 완료 요청 수를 늘려 대역폭과 처리량을 높이며, 의존적인 연쇄는 이런 병렬성이 제한된다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.memory-hierarchy.latency-vs-bandwidth.q3",
-    "promptMarkdown": "memory path가 요청마다 100ns의 고정 지연 시간을 가진 뒤 20GB/s로 data를 전송한다고 단순화하자. 64byte 한 번을 읽는 경우와 64MB를 순차 전송하는 경우에 어떤 요소가 상대적으로 더 중요해지는지 설명하라.",
+    "promptMarkdown": "메모리 경로가 요청마다 100ns의 고정 지연 시간을 가진 뒤 20GB/s로 데이터를 전송한다고 단순화하자. 64바이트 한 번을 읽는 경우와 64MB를 순차 전송하는 경우에 어떤 요소가 상대적으로 더 중요해지는지 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.memory-hierarchy.latency-vs-bandwidth"],
-    "modelAnswer": "64byte 전송 자체는 20GB/s에서 수 ns 수준이라 100ns 고정 지연 시간이 전체 시간의 대부분을 차지하므로 지연 시간-bound에 가깝다. 64MB 전송은 전송 시간만 수 ms 수준이어서 100ns 시작 지연 시간은 상대적으로 미미하고 sustained bandwidth가 전체 시간을 좌우한다. 실제 system에서는 queueing, protocol, cache behavior가 추가되지만 작은 random access와 큰 sequential transfer의 병목이 다른 이유를 보여 준다.",
-    "explanationMarkdown": "작은 random access에서는 고정된 시작 지연이 전체 시간의 큰 비중을 차지하지만 큰 sequential transfer에서는 전송해야 할 byte 수 때문에 sustained bandwidth가 지배적이 된다. 같은 memory path라도 workload 크기에 따라 병목 축이 달라진다."
+    "modelAnswer": "64바이트 전송 자체는 20GB/s에서 수 ns 수준이라 100ns 고정 지연 시간이 전체 시간의 대부분을 차지하므로 지연 시간의 영향이 크다. 64MB 전송은 전송 시간만 수 ms 수준이어서 100ns 시작 지연은 상대적으로 미미하고 지속 대역폭이 전체 시간을 좌우한다. 실제 시스템에서는 큐 대기, 프로토콜, 캐시 동작이 추가되지만 작은 무작위 접근과 큰 순차 전송의 병목이 다른 이유를 보여 준다.",
+    "explanationMarkdown": "작은 무작위 접근에서는 고정된 시작 지연이 전체 시간의 큰 비중을 차지하지만 큰 순차 전송에서는 전송해야 할 바이트 수 때문에 지속 대역폭이 지배적이 된다. 같은 메모리 경로라도 작업 부하 크기에 따라 병목 축이 달라진다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.memory-hierarchy.miss-penalty.q1",
-    "promptMarkdown": "한-level cache의 단순 AMAT 모델로 맞는 식은?",
+    "promptMarkdown": "단일 계층 캐시의 단순 AMAT 모델로 맞는 식은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.memory-hierarchy.miss-penalty"],
     "choices": [
-      {"key": "A", "content": "AMAT = Hit Time + Miss Rate × Miss Penalty", "displayOrder": 0, "rationaleMarkdown": "단순 one-level 모델에서는 모든 access가 hit time을 기본으로 지불하고, miss인 비율에만 miss penalty가 추가된다. 그래서 평균 접근 시간은 hit time에 `miss rate × miss penalty`를 더한다."},
-      {"key": "B", "content": "AMAT = Hit Rate × 0", "displayOrder": 1, "rationaleMarkdown": "Hit rate만 곱한 값은 miss일 때 발생하는 추가 지연을 반영하지 않는다. Miss penalty가 크면 miss가 적어도 평균 시간에 의미 있는 영향을 줄 수 있다."},
-      {"key": "C", "content": "AMAT = Miss Penalty ÷ Hit Rate만", "displayOrder": 2, "rationaleMarkdown": "Miss penalty를 hit rate로 나누는 것은 평균 access 비용을 올바르게 가중하지 않는다. 평균 모델은 miss가 발생하는 비율을 penalty에 곱하고 기본 hit time에 더한다."},
-      {"key": "D", "content": "AMAT는 miss와 무관하고 clock frequency만으로 결정된다.", "displayOrder": 3, "rationaleMarkdown": "Clock frequency는 processor cycle의 시간 척도에 영향을 주지만 AMAT에는 hit time과 miss의 추가 비용이 모두 들어간다. Miss rate나 miss penalty가 달라도 AMAT가 같다고 볼 수 없다."}
+      {"key": "A", "content": "AMAT = Hit Time + Miss Rate × Miss Penalty", "displayOrder": 0, "rationaleMarkdown": "단순한 단일 계층 모델에서는 모든 접근이 적중 시간을 기본으로 지불하고, 미스인 비율에만 미스 패널티가 추가된다. 그래서 평균 접근 시간은 적중 시간에 `미스율 × 미스 패널티`를 더한다."},
+      {"key": "B", "content": "AMAT = Hit Rate × 0", "displayOrder": 1, "rationaleMarkdown": "적중률만 곱한 값은 미스일 때 발생하는 추가 지연을 반영하지 않는다. 미스 패널티가 크면 미스가 적어도 평균 시간에 의미 있는 영향을 줄 수 있다."},
+      {"key": "C", "content": "AMAT = Miss Penalty ÷ Hit Rate만", "displayOrder": 2, "rationaleMarkdown": "미스 패널티를 적중률로 나누는 것은 평균 접근 비용을 올바르게 가중하지 않는다. 평균 모델은 미스가 발생하는 비율을 패널티에 곱하고 기본 적중 시간에 더한다."},
+      {"key": "D", "content": "AMAT는 미스와 무관하고 클록 주파수만으로 결정된다.", "displayOrder": 3, "rationaleMarkdown": "클록 주파수는 프로세서 사이클의 시간 척도에 영향을 주지만 AMAT에는 적중 시간과 미스의 추가 비용이 모두 들어간다. 미스율이나 미스 패널티가 달라도 AMAT가 같다고 볼 수 없다."}
     ],
     "correctChoiceKey": "A",
-    "explanationMarkdown": "각 access는 hit time을 기본으로 지불하고 miss인 비율만큼 추가 penalty를 평균에 더한다. 따라서 단순한 one-level 모델은 `AMAT = Hit Time + Miss Rate × Miss Penalty`다."
+    "explanationMarkdown": "각 접근은 적중 시간을 기본으로 지불하고 미스인 비율만큼 추가 패널티를 평균에 더한다. 따라서 단순한 단일 계층 모델은 `AMAT = Hit Time + Miss Rate × Miss Penalty`다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.memory-hierarchy.miss-penalty.q2",
-    "promptMarkdown": "hit time이 1ns, miss rate가 5%, hit 이후 추가되는 miss penalty가 80ns인 단순 one-level cache의 AMAT를 계산하라.",
+    "promptMarkdown": "적중 시간이 1ns, 미스율이 5%, 적중 시간 이후 추가되는 미스 패널티가 80ns인 단순 단일 계층 캐시의 AMAT를 계산하라.",
     "questionType": "SHORT_ANSWER",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.memory-hierarchy.miss-penalty"],
     "acceptedAnswers": ["5ns", "5 ns", "5"],
-    "explanationMarkdown": "단순 AMAT 식에 대입하면 `1 ns + 0.05×80 ns = 5 ns`다. Miss penalty는 miss가 발생한 비율만큼 평균에 기여한다."
+    "explanationMarkdown": "단순 AMAT 식에 대입하면 `1 ns + 0.05×80 ns = 5 ns`다. 미스 패널티는 미스가 발생한 비율만큼 평균에 기여한다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.memory-hierarchy.miss-penalty.q3",
-    "promptMarkdown": "L1 hit time은 1ns, L1 miss rate는 5%다. L1 miss 시 L2 access는 5ns가 걸리고, L2 local miss rate는 10%이며 L2 miss 뒤 DRAM 추가 penalty는 80ns라고 단순화하자. `1ns + 0.05 × (5ns + 0.10 × 80ns)` 모델로 AMAT를 계산하고 각 항의 의미를 설명하라.",
+    "promptMarkdown": "L1 적중 시간은 1ns, L1 미스율은 5%다. L1 미스 시 L2 접근은 5ns가 걸리고, L2의 해당 계층 미스율은 10%이며 L2 미스 뒤 DRAM 추가 패널티는 80ns라고 단순화하자. `1ns + 0.05 × (5ns + 0.10 × 80ns)` 모델로 AMAT를 계산하고 각 항의 의미를 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.memory-hierarchy.miss-penalty"],
-    "modelAnswer": "L2 miss의 평균 추가 비용은 0.10 × 80ns = 8ns이므로 L1 miss 한 번의 평균 하위 계층 비용은 5ns + 8ns = 13ns다. 이를 L1 miss rate 5%에 곱하면 0.65ns이고 L1 hit time 1ns를 더해 AMAT는 1.65ns다. 1ns는 모든 access가 지불하는 L1 lookup, 5%는 L1을 통과해 아래로 내려가는 비율, 5ns는 L2 access, 10% × 80ns는 L2도 miss할 때의 평균 DRAM 추가 비용을 나타낸다.",
-    "explanationMarkdown": "AMAT에서는 각 하위 계층 비용에 그 계층까지 도달할 확률을 곱한다. 여기서는 L2의 평균 추가 비용 13ns에 L1 miss 5%를 적용해 0.65ns가 되고, 항상 지불하는 L1 hit time 1ns를 더해 1.65ns가 된다."
+    "modelAnswer": "L2 미스의 평균 추가 비용은 0.10 × 80ns = 8ns이므로 L1 미스 한 번의 평균 하위 계층 비용은 5ns + 8ns = 13ns다. 이를 L1 미스율 5%에 곱하면 0.65ns이고 L1 적중 시간 1ns를 더해 AMAT는 1.65ns다. 1ns는 모든 접근이 지불하는 L1 조회, 5%는 L1을 통과해 아래로 내려가는 비율, 5ns는 L2 접근, 10% × 80ns는 L2도 미스할 때의 평균 DRAM 추가 비용을 나타낸다.",
+    "explanationMarkdown": "AMAT에서는 각 하위 계층 비용에 그 계층까지 도달할 확률을 곱한다. 여기서는 L2의 평균 추가 비용 13ns에 L1 미스 5%를 적용해 0.65ns가 되고, 항상 지불하는 L1 적중 시간 1ns를 더해 1.65ns가 된다."
   }
 ]

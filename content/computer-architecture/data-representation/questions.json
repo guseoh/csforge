@@ -2,69 +2,69 @@
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.data-representation.bit-byte-word.q1",
-    "promptMarkdown": "bit, byte, word에 대한 설명으로 가장 정확한 것은?",
+    "promptMarkdown": "비트(bit), 바이트(byte), 워드(word)에 대한 설명으로 가장 정확한 것은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.data-representation.bit-byte-word"],
     "choices": [
-      {"key": "A", "content": "bit는 0/1 한 자리, byte는 보통 8 bit의 주소 지정 단위이며 word는 ISA가 자연스럽게 처리하는 폭과 관련된다.", "displayOrder": 0, "rationaleMarkdown": "Bit는 0 또는 1 한 자리이고 보통의 byte는 8 bit를 묶은 주소 지정 단위다. Word 폭은 ISA의 연산·register 관례와 관련되며 byte와 동일하다고 고정되지 않는다."},
-      {"key": "B", "content": "64-bit CPU의 모든 memory access는 반드시 64 byte씩 수행된다.", "displayOrder": 1, "rationaleMarkdown": "64-bit는 CPU/ISA의 주소나 연산 폭에 관한 표현이지 각 memory access가 64 byte라는 뜻은 아니다. 실제 access 크기는 명령, bus, cache line 등 서로 다른 단위로 정해진다."},
-      {"key": "C", "content": "word와 pointer 크기는 모든 ISA에서 항상 동일하다.", "displayOrder": 2, "rationaleMarkdown": "Word 폭은 ISA에 따라 달라지고 pointer 표현 크기는 ISA와 ABI의 주소 공간·호출 규약에 따라 결정된다. 두 값이 흔히 같을 수는 있어도 모든 ISA에서 같다는 보장은 없다."},
-      {"key": "D", "content": "byte는 CPU architecture와 무관하게 항상 하나의 word와 같다.", "displayOrder": 3, "rationaleMarkdown": "Byte는 보통 8 bit 단위이고 word는 processor/ISA가 다루는 자연스러운 폭과 관련된 별도 개념이다. CPU architecture가 달라도 byte를 word 하나와 동일시할 수 없다."}
+      {"key": "A", "content": "비트는 0/1 한 자리, 바이트는 보통 8비트의 주소 지정 단위이며 워드는 ISA가 자연스럽게 처리하는 폭과 관련된다.", "displayOrder": 0, "rationaleMarkdown": "비트는 0 또는 1 한 자리이고 보통의 바이트는 8비트를 묶은 주소 지정 단위다. 워드 폭은 ISA의 연산·레지스터 관례와 관련되며 바이트와 동일한 크기로 고정되지 않는다."},
+      {"key": "B", "content": "64비트 CPU의 모든 메모리 접근은 반드시 64바이트씩 수행된다.", "displayOrder": 1, "rationaleMarkdown": "64비트는 CPU/ISA의 주소나 연산 폭에 관한 표현이지 각 메모리 접근이 64바이트라는 뜻은 아니다. 실제 접근 크기는 명령어, 버스, 캐시 라인 등 서로 다른 단위로 정해진다."},
+      {"key": "C", "content": "워드와 포인터 크기는 모든 ISA에서 항상 동일하다.", "displayOrder": 2, "rationaleMarkdown": "워드 폭은 ISA에 따라 달라지고 포인터 표현 크기는 ISA와 ABI의 주소 공간·호출 규약에 따라 결정된다. 두 값이 흔히 같을 수는 있어도 모든 ISA에서 같다는 보장은 없다."},
+      {"key": "D", "content": "바이트는 CPU 구조와 무관하게 항상 하나의 워드와 같다.", "displayOrder": 3, "rationaleMarkdown": "바이트는 보통 8비트 단위이고 워드는 프로세서/ISA가 다루는 자연스러운 폭과 관련된 별도 개념이다. CPU 구조가 달라도 바이트를 워드 하나와 동일시할 수 없다."}
     ],
     "correctChoiceKey": "A",
-    "explanationMarkdown": "Bit는 0 또는 1 한 자리이고 byte는 보통 8 bit를 묶은 주소 지정 단위다. Word는 ISA와 register가 자연스럽게 처리하는 폭과 관련되므로 모든 protocol field가 word 크기와 같다는 뜻은 아니다."
+    "explanationMarkdown": "비트는 0 또는 1 한 자리이고 바이트는 보통 8비트를 묶은 주소 지정 단위다. 워드는 ISA와 레지스터가 자연스럽게 처리하는 폭과 관련되므로 모든 프로토콜 필드가 워드 크기와 같다는 뜻은 아니다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.data-representation.bit-byte-word.q2",
-    "promptMarkdown": "byte-addressable memory에서 주소 `0x1000`부터 4-byte 값을 저장했다. 이 값이 차지하는 byte address 범위를 쓰라.",
+    "promptMarkdown": "바이트 단위로 주소를 지정하는 메모리에서 주소 `0x1000`부터 4바이트 값을 저장했다. 이 값이 차지하는 바이트 주소 범위를 쓰라.",
     "questionType": "SHORT_ANSWER",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.data-representation.bit-byte-word"],
     "acceptedAnswers": ["0x1000~0x1003", "0x1000-0x1003", "0x1000부터 0x1003"],
-    "explanationMarkdown": "시작 주소를 포함해 4개 byte를 연속으로 사용하므로 offset 0,1,2,3에 해당한다. 따라서 마지막 주소는 `0x1000+3=0x1003`이다."
+    "explanationMarkdown": "시작 주소를 포함해 4개 바이트를 연속으로 사용하므로 오프셋 0, 1, 2, 3에 해당한다. 따라서 마지막 주소는 `0x1000+3=0x1003`이다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.data-representation.bit-byte-word.q3",
-    "promptMarkdown": "64-bit CPU에서 3-byte protocol field를 읽는 parser가 `word가 8 byte이므로 offset도 항상 8씩 증가시킨다`고 구현되었다. 왜 잘못된지 machine word와 wire field width를 구분해 설명하라.",
+    "promptMarkdown": "64비트 CPU에서 3바이트 프로토콜 필드를 읽는 파서가 `워드가 8바이트이므로 오프셋도 항상 8씩 증가시킨다`고 구현되었다. 왜 잘못된지 머신 워드와 전송 필드의 폭을 구분해 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.data-representation.bit-byte-word"],
-    "modelAnswer": "CPU word 폭은 register/ISA의 자연스러운 연산 폭과 관련된 개념이고 protocol field 크기는 wire schema가 정한다. 3-byte field 뒤의 다음 field offset은 protocol layout에 따라 계산해야 하며 CPU가 64-bit라는 이유로 8 byte를 건너뛰면 payload를 잘못 해석한다. alignment padding이 있다면 그것도 protocol/ABI가 별도로 명시해야 한다.",
-    "explanationMarkdown": "핵심은 CPU의 word 크기와 protocol layout이 서로 다른 계약이라는 점이다. Parser offset은 wire schema의 field width와 명시된 padding을 따라야 하며, 64-bit CPU라는 이유만으로 8-byte 간격을 적용하면 안 된다."
+    "modelAnswer": "CPU의 워드 폭은 레지스터/ISA의 자연스러운 연산 폭과 관련된 개념이고 프로토콜 필드 크기는 전송 형식의 스키마가 정한다. 3바이트 필드 뒤의 다음 필드 오프셋은 프로토콜 배치에 따라 계산해야 하며 CPU가 64비트라는 이유로 8바이트를 건너뛰면 페이로드를 잘못 해석한다. 정렬을 위한 패딩이 있다면 그것도 프로토콜/ABI가 별도로 명시해야 한다.",
+    "explanationMarkdown": "핵심은 CPU의 워드 크기와 프로토콜 배치가 서로 다른 계약이라는 점이다. 파서의 오프셋은 전송 스키마의 필드 폭과 명시된 패딩을 따라야 하며, 64비트 CPU라는 이유만으로 8바이트 간격을 적용하면 안 된다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.data-representation.binary-hex.q1",
-    "promptMarkdown": "binary `1010 0111`과 같은 bit pattern을 hexadecimal로 표현한 것은?",
+    "promptMarkdown": "2진수 `1010 0111`과 같은 비트 패턴을 16진수로 표현한 것은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.data-representation.binary-hex"],
     "choices": [
-      {"key": "A", "content": "0x107", "displayOrder": 0, "rationaleMarkdown": "4 bit씩 묶으면 왼쪽 `1010`은 A, 오른쪽 `0111`은 7이 된다. `0x107`은 세 자리를 표현해 원래 8 bit pattern에 없는 nibble을 추가한다."},
-      {"key": "B", "content": "0x7A", "displayOrder": 1, "rationaleMarkdown": "각 nibble의 값은 `1010`이 A이고 `0111`이 7이므로 원래 순서를 유지해야 한다. `0x7A`는 nibble 순서를 뒤집은 값이다."},
-      {"key": "C", "content": "0xA07", "displayOrder": 2, "rationaleMarkdown": "Nibble 두 개는 hexadecimal 두 자리로 바로 대응한다. `0xA07`은 가운데 0을 추가해 bit pattern의 길이와 수치 값을 바꾼다."},
-      {"key": "D", "content": "0xA7", "displayOrder": 3, "rationaleMarkdown": "Binary를 오른쪽부터 4 bit씩 나누면 `1010`은 A, `0111`은 7이다. 따라서 같은 8 bit 값은 `0xA7`로 적는다."}
+      {"key": "A", "content": "0x107", "displayOrder": 0, "rationaleMarkdown": "4비트씩 묶으면 왼쪽 `1010`은 A, 오른쪽 `0111`은 7이 된다. `0x107`은 세 자리를 표현해 원래 8비트 패턴에 없는 4비트 묶음을 추가한다."},
+      {"key": "B", "content": "0x7A", "displayOrder": 1, "rationaleMarkdown": "각 4비트 묶음의 값은 `1010`이 A이고 `0111`이 7이므로 원래 순서를 유지해야 한다. `0x7A`는 두 묶음의 순서를 뒤집은 값이다."},
+      {"key": "C", "content": "0xA07", "displayOrder": 2, "rationaleMarkdown": "4비트 묶음 두 개는 16진수 두 자리로 바로 대응한다. `0xA07`은 가운데 0을 추가해 비트 패턴의 길이와 수치 값을 바꾼다."},
+      {"key": "D", "content": "0xA7", "displayOrder": 3, "rationaleMarkdown": "2진수를 오른쪽부터 4비트씩 나누면 `1010`은 A, `0111`은 7이다. 따라서 같은 8비트 값은 `0xA7`로 적는다."}
     ],
     "correctChoiceKey": "D",
-    "explanationMarkdown": "4-bit nibble마다 hexadecimal 한 자리로 바꾸면 `1010`은 A, `0111`은 7이다. 따라서 전체 pattern은 `0xA7`이다."
+    "explanationMarkdown": "4비트 묶음마다 16진수 한 자리로 바꾸면 `1010`은 A, `0111`은 7이다. 따라서 전체 비트 패턴은 `0xA7`이다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.data-representation.binary-hex.q2",
-    "promptMarkdown": "16-bit bit pattern `1111 0000 1010 0101`을 hexadecimal로 쓰라.",
+    "promptMarkdown": "16비트 비트 패턴 `1111 0000 1010 0101`을 16진수로 쓰라.",
     "questionType": "SHORT_ANSWER",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.data-representation.binary-hex"],
     "acceptedAnswers": ["0xF0A5", "F0A5"],
-    "explanationMarkdown": "Bit를 오른쪽부터 4개씩 묶으면 `1111=F`, `0000=0`, `1010=A`, `0101=5`다. 같은 bit pattern의 hexadecimal 표기는 `0xF0A5`다."
+    "explanationMarkdown": "비트를 오른쪽부터 4개씩 묶으면 `1111=F`, `0000=0`, `1010=A`, `0101=5`다. 같은 비트 패턴의 16진수 표기는 `0xF0A5`다."
   },
   {
     "kind": "question",
@@ -74,163 +74,163 @@
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.data-representation.binary-hex"],
-    "modelAnswer": "hex는 bit pattern을 간결하게 표시할 뿐 signedness와 width를 결정하지 않는다. `0xFF`가 8-bit unsigned면 255이고 8-bit two's-complement signed면 -1일 수 있다. 정확한 해석에는 field width, signed/unsigned type, 필요하면 byte order와 protocol schema가 필요하다.",
-    "explanationMarkdown": "`0xFF`는 bit pattern 표기일 뿐 그 자체로 signed 값의 의미를 정하지 않는다. 장애 분석에서는 width와 signedness를 먼저 확인하고, multi-byte 값이라면 byte order와 protocol schema까지 함께 봐야 한다."
+    "modelAnswer": "16진수 표기는 비트 패턴을 간결하게 보여 줄 뿐 부호 해석과 폭을 결정하지 않는다. `0xFF`가 부호 없는 8비트 값이면 255이고, 8비트 2의 보수 부호 있는 값이면 -1일 수 있다. 정확한 해석에는 필드 폭, 부호 유무, 필요하면 바이트 순서와 프로토콜 스키마가 필요하다.",
+    "explanationMarkdown": "`0xFF`는 비트 패턴 표기일 뿐 그 자체로 부호 있는 값의 의미를 정하지 않는다. 장애 분석에서는 폭과 부호 해석을 먼저 확인하고, 여러 바이트로 이루어진 값이라면 바이트 순서와 프로토콜 스키마까지 함께 봐야 한다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.data-representation.signed-twos-complement.q1",
-    "promptMarkdown": "8-bit two's-complement bit pattern `1111 1111`을 signed integer로 해석한 값은?",
+    "promptMarkdown": "8비트 2의 보수(two's complement) 비트 패턴 `1111 1111`을 부호 있는 정수로 해석한 값은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.data-representation.signed-twos-complement"],
     "choices": [
-      {"key": "A", "content": "-127", "displayOrder": 0, "rationaleMarkdown": "`1111 1111`을 sign-magnitude로 읽으면 부호와 크기를 나눠야 하지만 two's-complement는 비트 전체를 보수 표현으로 해석한다. 8-bit 범위에서 이 pattern은 -1이다."},
-      {"key": "B", "content": "255", "displayOrder": 1, "rationaleMarkdown": "255는 같은 bit pattern을 unsigned 8-bit로 읽었을 때의 값이다. Signed two's-complement는 최상위 bit가 음수 영역을 나타내므로 해석 범위가 다르다."},
-      {"key": "C", "content": "-1", "displayOrder": 2, "rationaleMarkdown": "8-bit two's-complement에서 `1111 1111`은 -1을 나타낸다. +1인 `0000 0001`의 비트를 반전해 `1111 1110`을 만들고 1을 더하면 `1111 1111`이 된다."},
-      {"key": "D", "content": "0", "displayOrder": 3, "rationaleMarkdown": "Signed two's-complement에서 0은 모든 bit가 0인 pattern이다. 모든 bit가 1인 pattern을 0으로 보는 것은 bit pattern과 수치 해석을 혼동한 것이다."}
+      {"key": "A", "content": "-127", "displayOrder": 0, "rationaleMarkdown": "`1111 1111`을 부호-크기(sign-magnitude) 방식으로 읽으면 부호와 크기를 나눠야 하지만 2의 보수는 비트 전체를 하나의 보수 표현으로 해석한다. 8비트 범위에서 이 패턴은 -1이다."},
+      {"key": "B", "content": "255", "displayOrder": 1, "rationaleMarkdown": "255는 같은 비트 패턴을 부호 없는 8비트 값으로 읽었을 때의 값이다. 부호 있는 2의 보수에서는 최상위 비트가 1인 패턴이 음수 영역을 나타내므로 해석 범위가 다르다."},
+      {"key": "C", "content": "-1", "displayOrder": 2, "rationaleMarkdown": "8비트 2의 보수에서 `1111 1111`은 -1을 나타낸다. +1인 `0000 0001`의 비트를 반전해 `1111 1110`을 만들고 1을 더하면 `1111 1111`이 된다."},
+      {"key": "D", "content": "0", "displayOrder": 3, "rationaleMarkdown": "부호 있는 2의 보수에서 0은 모든 비트가 0인 패턴이다. 모든 비트가 1인 패턴을 0으로 보는 것은 비트 패턴과 수치 해석을 혼동한 것이다."}
     ],
     "correctChoiceKey": "C",
-    "explanationMarkdown": "Two's-complement에서 모든 bit가 1인 pattern은 0에서 1을 뺀 표현이다. 따라서 8-bit `1111 1111`의 signed 값은 -1이다."
+    "explanationMarkdown": "2의 보수에서 모든 비트가 1인 패턴은 0에서 1을 뺀 표현이다. 따라서 8비트 `1111 1111`의 부호 있는 값은 -1이다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.data-representation.signed-twos-complement.q2",
-    "promptMarkdown": "8-bit two's-complement에서 `1000 0000`의 signed 값과, 그 값을 같은 8-bit signed 범위 안에서 양수로 표현할 수 없는 이유를 설명하라.",
+    "promptMarkdown": "8비트 2의 보수에서 `1000 0000`의 부호 있는 값과, 그 값을 같은 8비트 부호 있는 범위 안에서 양수로 표현할 수 없는 이유를 설명하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.data-representation.signed-twos-complement"],
-    "modelAnswer": "8-bit two's-complement의 범위는 -128부터 127이므로 `1000 0000`은 -128이다. +128은 같은 signed 8-bit 범위를 벗어나기 때문에 -128의 절댓값을 8-bit signed 값으로 표현할 수 없다. 이것이 최솟값 negation에서 overflow가 생길 수 있는 이유다.",
-    "explanationMarkdown": "8-bit signed 범위가 비대칭인 `-128..127`이라는 점이 핵심이다. 최솟값 `-128`에 대응하는 `+128`은 같은 폭에서 표현할 수 없으므로 negation에서도 overflow가 생길 수 있다."
+    "modelAnswer": "8비트 2의 보수 범위는 -128부터 127이므로 `1000 0000`은 -128이다. +128은 같은 부호 있는 8비트 범위를 벗어나기 때문에 -128의 절댓값을 같은 폭의 부호 있는 값으로 표현할 수 없다. 이것이 최솟값의 부호를 반전할 때 오버플로가 생길 수 있는 이유다.",
+    "explanationMarkdown": "8비트 부호 있는 정수 범위가 `-128..127`처럼 비대칭이라는 점이 핵심이다. 최솟값 `-128`에 대응하는 `+128`은 같은 폭에서 표현할 수 없으므로 부호 반전에서도 오버플로가 생길 수 있다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.data-representation.signed-twos-complement.q3",
-    "promptMarkdown": "Java `byte b = (byte)0xFF`를 protocol의 unsigned 8-bit length로 사용해야 한다. `int len = b;`만 수행하면 어떤 값이 되고, 0~255 의미를 얻으려면 왜 unsigned 해석 단계가 필요한지 설명하라.",
+    "promptMarkdown": "Java `byte b = (byte)0xFF`를 프로토콜의 부호 없는 8비트 길이 값으로 사용해야 한다. `int len = b;`만 수행하면 어떤 값이 되고, 0~255 의미를 얻으려면 왜 부호 없는 해석 단계가 필요한지 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.data-representation.signed-twos-complement"],
-    "modelAnswer": "Java byte는 signed 8-bit이므로 0xFF는 -1이고 int로 widening하면 sign extension되어 -1이 된다. protocol field가 unsigned 8-bit라면 같은 bit pattern을 255로 해석해야 하므로 `Byte.toUnsignedInt(b)` 또는 `b & 0xFF`처럼 unsigned conversion을 명시해야 한다.",
-    "explanationMarkdown": "Java `byte`의 `0xFF`는 signed 해석에서는 `-1`이고 widening할 때도 그 부호가 유지된다. Wire field가 unsigned라면 같은 8-bit pattern을 `0..255` 범위로 다시 해석하는 변환이 필요하다."
+    "modelAnswer": "Java `byte`는 부호 있는 8비트이므로 `0xFF`는 -1이고 `int`로 넓히면 부호 확장되어 -1이 된다. 프로토콜 필드가 부호 없는 8비트라면 같은 비트 패턴을 255로 해석해야 하므로 `Byte.toUnsignedInt(b)` 또는 `b & 0xFF`처럼 부호 없는 값으로 변환하는 단계를 명시해야 한다.",
+    "explanationMarkdown": "Java `byte`의 `0xFF`는 부호 있는 해석에서는 `-1`이고 더 넓은 정수형으로 변환할 때도 그 부호가 유지된다. 전송 필드가 부호 없는 값이라면 같은 8비트 패턴을 `0..255` 범위로 다시 해석하는 변환이 필요하다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.data-representation.fixed-width-overflow.q1",
-    "promptMarkdown": "unsigned 8-bit arithmetic에서 `255 + 1`의 저장 결과 bit pattern은?",
+    "promptMarkdown": "부호 없는 8비트 산술에서 `255 + 1`의 저장 결과 비트 패턴은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.data-representation.fixed-width-overflow"],
     "choices": [
-      {"key": "A", "content": "1000 0000", "displayOrder": 0, "rationaleMarkdown": "`1000 0000`은 8-bit signed two's-complement에서 -128을 나타내는 pattern이다. Unsigned 덧셈에서는 부호 비트로 재해석하지 않고 하위 8 bit를 저장한다."},
-      {"key": "B", "content": "1111 1111", "displayOrder": 1, "rationaleMarkdown": "255는 덧셈 전의 bit pattern이다. 여기에 1을 더하면 8-bit 폭을 넘어가는 carry가 생기고, 고정 폭 저장은 하위 bit 결과로 바뀐다."},
-      {"key": "C", "content": "1 0000 0000을 9 bit 그대로 저장한다.", "displayOrder": 2, "rationaleMarkdown": "수학적 합은 256이지만 8-bit 저장 공간에는 9번째 carry bit가 없다. 고정 폭 unsigned 연산 결과에는 하위 8 bit만 남는다."},
-      {"key": "D", "content": "0000 0000", "displayOrder": 3, "rationaleMarkdown": "8-bit unsigned 덧셈에서 저장 결과는 modulo 256으로 계산되어 256의 하위 8 bit인 `0000 0000`이 된다. Carry-out은 8-bit 값에 포함되지 않는다."}
+      {"key": "A", "content": "1000 0000", "displayOrder": 0, "rationaleMarkdown": "`1000 0000`은 부호 있는 8비트 2의 보수에서 -128을 나타내는 패턴이다. 부호 없는 덧셈에서는 이를 부호 비트로 재해석하지 않고 하위 8비트를 저장한다."},
+      {"key": "B", "content": "1111 1111", "displayOrder": 1, "rationaleMarkdown": "255는 덧셈 전의 비트 패턴이다. 여기에 1을 더하면 8비트 폭을 넘어가는 올림이 생기고, 고정 폭 저장 결과는 하위 비트만 남는다."},
+      {"key": "C", "content": "1 0000 0000을 9비트 그대로 저장한다.", "displayOrder": 2, "rationaleMarkdown": "수학적 합은 256이지만 8비트 저장 공간에는 9번째 올림 비트를 저장할 자리가 없다. 고정 폭 부호 없는 연산 결과에는 하위 8비트만 남는다."},
+      {"key": "D", "content": "0000 0000", "displayOrder": 3, "rationaleMarkdown": "부호 없는 8비트 덧셈의 저장 결과는 256을 법으로 하는 나머지 연산처럼 동작하므로 256의 하위 8비트인 `0000 0000`이 된다. 9번째 올림은 8비트 값에 포함되지 않는다."}
     ],
     "correctChoiceKey": "D",
-    "explanationMarkdown": "Unsigned 8-bit는 결과의 하위 8 bit만 저장하므로 256은 modulo 256으로 0이 된다. 저장 pattern은 `0000 0000`이며 수학적 합 256 자체가 보존되는 것은 아니다."
+    "explanationMarkdown": "부호 없는 8비트 값은 결과의 하위 8비트만 저장하므로 256은 256을 법으로 보면 0이 된다. 저장 비트 패턴은 `0000 0000`이며 수학적 합 256 자체가 보존되는 것은 아니다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.data-representation.fixed-width-overflow.q2",
-    "promptMarkdown": "signed 8-bit two's-complement에서 `127 + 1`의 8-bit 결과 pattern과 signed 해석 값을 쓰라.",
+    "promptMarkdown": "부호 있는 8비트 2의 보수에서 `127 + 1`의 8비트 결과 패턴과 부호 있는 해석 값을 쓰라.",
     "questionType": "SHORT_ANSWER",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.data-representation.fixed-width-overflow"],
     "acceptedAnswers": ["10000000, -128", "1000 0000, -128"],
-    "explanationMarkdown": "`127`은 `0111 1111`이고 1을 더하면 `1000 0000`이 된다. 같은 pattern을 signed two's-complement로 해석하면 최솟값 -128이다."
+    "explanationMarkdown": "`127`은 `0111 1111`이고 1을 더하면 `1000 0000`이 된다. 같은 패턴을 부호 있는 2의 보수로 해석하면 최솟값 -128이다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.data-representation.fixed-width-overflow.q3",
-    "promptMarkdown": "Java의 32-bit signed `int`인 `count * elementSize`로 allocation byte 수를 계산하는 코드에서 두 입력은 각각 양수이고 개별 범위 검사도 통과했다. 곱셈 overflow가 보안·정합성 문제로 이어질 수 있는 경로를 설명하고 안전한 검증 순서를 제시하라.",
+    "promptMarkdown": "Java의 부호 있는 32비트 `int`인 `count * elementSize`로 할당 바이트 수를 계산하는 코드에서 두 입력은 각각 양수이고 개별 범위 검사도 통과했다. 곱셈 오버플로가 보안·정합성 문제로 이어질 수 있는 경로를 설명하고 안전한 검증 순서를 제시하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.data-representation.fixed-width-overflow"],
-    "modelAnswer": "두 양수의 곱이 32-bit 범위를 넘으면 wrap되어 음수나 작은 양수가 될 수 있고, 그 결과 실제 필요한 크기보다 작은 buffer allocation이나 잘못된 bounds check가 발생할 수 있다. 계산 전에 곱셈 가능 범위를 확인하거나 더 넓은 type/checked arithmetic으로 계산한 뒤 최종 범위를 검증해야 한다. 저장된 overflow 결과를 만든 뒤 검사하면 이미 정보가 손실될 수 있다.",
-    "explanationMarkdown": "곱셈 결과가 type 범위를 넘은 뒤에는 이미 원래 크기 정보가 사라졌을 수 있다. Buffer 크기나 bounds 계산은 연산 전에 overflow 가능성을 검사하거나 checked/wider arithmetic으로 계산한 뒤 최종 범위를 검증해야 한다."
+    "modelAnswer": "두 양수의 곱이 32비트 범위를 넘으면 값이 돌아 음수나 작은 양수가 될 수 있고, 그 결과 실제 필요한 크기보다 작은 버퍼를 할당하거나 잘못된 범위 검사를 통과할 수 있다. 계산 전에 곱셈 가능한 범위를 확인하거나 더 넓은 타입 또는 오버플로를 검사하는 연산으로 계산한 뒤 최종 범위를 검증해야 한다. 오버플로된 저장 결과를 만든 뒤 검사하면 이미 정보가 손실될 수 있다.",
+    "explanationMarkdown": "곱셈 결과가 타입 범위를 넘은 뒤에는 이미 원래 크기 정보가 사라졌을 수 있다. 버퍼 크기나 범위 계산은 연산 전에 오버플로 가능성을 검사하거나 더 넓은 타입·검사 가능한 산술로 계산한 뒤 최종 범위를 검증해야 한다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.data-representation.floating-point.q1",
-    "promptMarkdown": "binary floating-point에서 decimal 0.1이 정확히 표현되지 않을 수 있는 주된 이유는?",
+    "promptMarkdown": "2진 부동소수점에서 10진수 0.1이 정확히 표현되지 않을 수 있는 주된 이유는?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.data-representation.floating-point"],
     "choices": [
-      {"key": "A", "content": "IEEE 754가 모든 소수를 정수로만 저장하기 때문이다.", "displayOrder": 0, "rationaleMarkdown": "IEEE 754 binary floating-point는 정수만 저장하지 않고 sign, exponent, significand를 사용해 분수도 근사한다. 표현 가능한 유한한 binary 값의 수가 제한되어 일부 소수는 반올림된다."},
-      {"key": "B", "content": "0.1의 binary fraction이 유한한 자리에서 끝나지 않아 제한된 significand로 반올림해야 하기 때문이다.", "displayOrder": 1, "rationaleMarkdown": "Decimal `0.1`은 binary fraction으로 반복되는 값을 가지므로 유한한 significand에 정확히 담기지 않는다. 구현은 인접한 표현 가능 값 중 하나로 반올림해 저장한다."},
-      {"key": "C", "content": "CPU가 decimal 입력을 항상 버리기 때문이다.", "displayOrder": 2, "rationaleMarkdown": "Decimal 입력을 버리는 것이 아니라 binary floating-point로 변환해 가장 가까운 표현 가능 값으로 저장한다. 이후 계산의 정확한 수학적 결과도 표현 가능한 값으로 반올림될 수 있다."},
-      {"key": "D", "content": "floating-point에는 exponent가 없기 때문이다.", "displayOrder": 3, "rationaleMarkdown": "Exponent는 floating-point가 매우 크거나 작은 크기 범위를 표현하도록 significand의 scale을 정하는 핵심 구성 요소다. 오차의 원인은 exponent가 없어서가 아니라 유한한 binary 정밀도다."}
+      {"key": "A", "content": "IEEE 754가 모든 소수를 정수로만 저장하기 때문이다.", "displayOrder": 0, "rationaleMarkdown": "IEEE 754 2진 부동소수점은 정수만 저장하지 않고 부호·지수·유효숫자를 사용해 분수도 근사한다. 표현 가능한 유한한 2진 값의 수가 제한되어 일부 소수는 반올림된다."},
+      {"key": "B", "content": "0.1의 2진 소수 표현이 유한한 자리에서 끝나지 않아 제한된 유효숫자에 맞춰 반올림해야 하기 때문이다.", "displayOrder": 1, "rationaleMarkdown": "10진수 `0.1`은 2진 소수로 반복되는 값을 가지므로 유한한 유효숫자에 정확히 담기지 않는다. 가장 가까운 표현 가능 값 중 하나로 반올림해 저장한다."},
+      {"key": "C", "content": "CPU가 10진수 입력을 항상 버리기 때문이다.", "displayOrder": 2, "rationaleMarkdown": "10진수 입력을 버리는 것이 아니라 2진 부동소수점으로 변환해 가장 가까운 표현 가능 값으로 저장한다. 이후 계산의 정확한 수학적 결과도 표현 가능한 값으로 반올림될 수 있다."},
+      {"key": "D", "content": "부동소수점에는 지수(exponent)가 없기 때문이다.", "displayOrder": 3, "rationaleMarkdown": "지수는 부동소수점이 매우 크거나 작은 값의 범위를 표현하도록 유효숫자의 크기를 조정하는 핵심 구성 요소다. 오차의 원인은 지수가 없어서가 아니라 유한한 2진 정밀도다."}
     ],
     "correctChoiceKey": "B",
-    "explanationMarkdown": "각 intermediate operation의 정확한 수학적 결과가 표현 가능한 floating-point 값으로 반올림된다. decimal 금액이 binary floating-point로 정확히 표현되지 않아 반복 연산의 rounding error가 누적될 수 있고 exact equality가 예상과 다르게 실패할 수 있다."
+    "explanationMarkdown": "정확한 수학적 결과를 유한한 비트에 저장할 때마다 표현 가능한 부동소수점 값으로 반올림해야 한다. 10진 금액처럼 2진 부동소수점으로 정확히 표현되지 않는 값을 반복 계산하면 반올림 오차가 누적될 수 있고 정확한 동등 비교도 예상과 다르게 실패할 수 있다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.data-representation.floating-point.q2",
-    "promptMarkdown": "floating-point 덧셈이 일반적으로 결합법칙 `(a+b)+c = a+(b+c)`을 항상 만족하지 않는 이유를 반올림과 유효 정밀도로 설명하라.",
+    "promptMarkdown": "부동소수점 덧셈이 일반적으로 결합법칙 `(a+b)+c = a+(b+c)`을 항상 만족하지 않는 이유를 반올림과 유효 정밀도로 설명하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.data-representation.floating-point"],
-    "modelAnswer": "각 intermediate operation의 정확한 수학적 결과가 표현 가능한 floating-point 값으로 반올림된다. 연산 순서를 바꾸면 먼저 더해지는 값의 magnitude와 반올림 시점이 달라져 작은 값이 유효 정밀도 밖으로 사라지거나 다른 representable value로 반올림될 수 있으므로 최종 bit pattern이 달라질 수 있다.",
-    "explanationMarkdown": "Floating-point 연산은 각 중간 결과를 제한된 정밀도의 representable value로 반올림한다. 그래서 덧셈 순서가 바뀌면 어느 값이 먼저 반올림되거나 사라지는지가 달라져 결합법칙이 깨질 수 있다."
+    "modelAnswer": "각 중간 연산의 정확한 수학적 결과는 표현 가능한 부동소수점 값으로 반올림된다. 연산 순서를 바꾸면 먼저 더해지는 값의 크기와 반올림 시점이 달라져 작은 값이 유효 정밀도 밖으로 사라지거나 다른 표현 가능 값으로 반올림될 수 있으므로 최종 비트 패턴이 달라질 수 있다.",
+    "explanationMarkdown": "부동소수점 연산은 각 중간 결과를 제한된 정밀도의 표현 가능한 값으로 반올림한다. 그래서 덧셈 순서가 바뀌면 어느 값이 먼저 반올림되거나 사라지는지가 달라져 결합법칙이 깨질 수 있다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.data-representation.floating-point.q3",
-    "promptMarkdown": "결제 서비스가 `double`로 가격을 누적한 뒤 `total == expected`로 정합성을 검사한다. 어떤 두 문제가 생길 수 있고, 금액 domain에서는 어떤 representation/rounding contract를 두는 편이 나은지 설명하라.",
+    "promptMarkdown": "결제 서비스가 `double`로 가격을 누적한 뒤 `total == expected`로 정합성을 검사한다. 어떤 두 문제가 생길 수 있고, 금액 도메인에서는 어떤 표현 방식과 반올림 규칙을 두는 편이 나은지 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.data-representation.floating-point"],
-    "modelAnswer": "decimal 금액이 binary floating-point로 정확히 표현되지 않아 반복 연산의 rounding error가 누적될 수 있고 exact equality가 예상과 다르게 실패할 수 있다. 금액은 정수 minor unit 또는 정확한 decimal type을 사용하고 scale·rounding mode·DB/wire representation을 domain contract로 명시하는 편이 일반적으로 안전하다.",
-    "explanationMarkdown": "금액 문제에서는 binary floating-point의 근사 오차와 exact equality 비교가 함께 위험하다. Decimal 또는 minor-unit 표현과 명시적인 scale·rounding 규칙을 사용해 저장·계산·전송 경계를 일관되게 만드는 것이 중요하다."
+    "modelAnswer": "10진 금액이 2진 부동소수점으로 정확히 표현되지 않아 반복 연산의 반올림 오차가 누적될 수 있고 정확한 동등 비교가 예상과 다르게 실패할 수 있다. 금액은 최소 화폐 단위를 정수로 저장하거나 정확한 10진 타입을 사용하고, 스케일·반올림 방식·DB/전송 표현을 도메인 계약으로 명시하는 편이 일반적으로 안전하다.",
+    "explanationMarkdown": "금액 문제에서는 2진 부동소수점의 근사 오차와 정확한 동등 비교가 함께 위험하다. 10진 타입 또는 최소 화폐 단위 정수 표현과 명시적인 스케일·반올림 규칙을 사용해 저장·계산·전송 경계를 일관되게 만드는 것이 중요하다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.data-representation.endianness.q1",
-    "promptMarkdown": "32-bit value `0x12345678`을 little-endian memory에 낮은 주소부터 저장한 byte 순서는?",
+    "promptMarkdown": "32비트 값 `0x12345678`을 리틀 엔디언(little-endian) 메모리에 낮은 주소부터 저장한 바이트 순서는?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.data-representation.endianness"],
     "choices": [
-      {"key": "A", "content": "78 56 34 12", "displayOrder": 0, "rationaleMarkdown": "Little-endian은 덜 중요한 byte를 낮은 memory address에 놓는다. `0x12345678`의 최하위 byte `78`부터 저장하므로 낮은 주소 순서는 `78 56 34 12`다."},
-      {"key": "B", "content": "12 34 56 78", "displayOrder": 1, "rationaleMarkdown": "가장 중요한 byte `12`를 낮은 주소에 놓는 순서는 big-endian에 해당한다. Little-endian은 byte 순서만 반대로 두며 각 byte 내부 bit 순서를 뒤집지 않는다."},
-      {"key": "C", "content": "87 65 43 21", "displayOrder": 2, "rationaleMarkdown": "Endianness는 multi-byte 값의 byte 배열 순서를 정하는 개념이지 각 byte 안의 bit를 역순으로 바꾸는 규칙이 아니다. `87 65 43 21`은 원래 byte 값까지 달라진다."},
-      {"key": "D", "content": "12 43 65 87", "displayOrder": 3, "rationaleMarkdown": "Little-endian은 byte 전체의 순서를 낮은 자리부터 배치한다. `12 43 65 87`은 원래 byte 순서에 없는 재배열이라 `0x12345678`의 표현이 아니다."}
+      {"key": "A", "content": "78 56 34 12", "displayOrder": 0, "rationaleMarkdown": "리틀 엔디언은 덜 중요한 바이트를 낮은 메모리 주소에 놓는다. `0x12345678`의 최하위 바이트 `78`부터 저장하므로 낮은 주소 순서는 `78 56 34 12`다."},
+      {"key": "B", "content": "12 34 56 78", "displayOrder": 1, "rationaleMarkdown": "가장 중요한 바이트 `12`를 낮은 주소에 놓는 순서는 빅 엔디언(big-endian)에 해당한다. 리틀 엔디언은 바이트 순서만 반대로 두며 각 바이트 내부의 비트 순서를 뒤집지 않는다."},
+      {"key": "C", "content": "87 65 43 21", "displayOrder": 2, "rationaleMarkdown": "엔디언은 여러 바이트로 이루어진 값의 바이트 배열 순서를 정하는 개념이지 각 바이트 안의 비트를 역순으로 바꾸는 규칙이 아니다. `87 65 43 21`은 원래 바이트 값까지 달라진다."},
+      {"key": "D", "content": "12 43 65 87", "displayOrder": 3, "rationaleMarkdown": "리틀 엔디언은 바이트 전체를 낮은 자리부터 배치한다. `12 43 65 87`은 원래 바이트 순서에 없는 재배열이라 `0x12345678`의 표현이 아니다."}
     ],
     "correctChoiceKey": "A",
-    "explanationMarkdown": "Little-endian은 least-significant byte를 가장 낮은 주소에 둔다. `0x12345678`의 byte를 낮은 주소부터 읽으면 `78 56 34 12`다."
+    "explanationMarkdown": "리틀 엔디언은 최하위 바이트를 가장 낮은 주소에 둔다. `0x12345678`의 바이트를 낮은 주소부터 읽으면 `78 56 34 12`다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.data-representation.endianness.q2",
-    "promptMarkdown": "wire에 `01 02 03 04` 네 byte가 있고 protocol이 big-endian 32-bit unsigned integer라고 정했다. numeric value를 hexadecimal로 쓰라.",
+    "promptMarkdown": "전송 데이터에 `01 02 03 04` 네 바이트가 있고 프로토콜이 빅 엔디언 32비트 부호 없는 정수라고 정했다. 수치 값을 16진수로 쓰라.",
     "questionType": "SHORT_ANSWER",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.data-representation.endianness"],
     "acceptedAnswers": ["0x01020304", "01020304", "0x1020304"],
-    "explanationMarkdown": "Big-endian wire order에서는 앞 byte가 most-significant byte다. `01 02 03 04`를 그대로 결합하면 numeric value는 `0x01020304`다."
+    "explanationMarkdown": "빅 엔디언 전송 순서에서는 앞 바이트가 최상위 바이트다. `01 02 03 04`를 그대로 결합하면 수치 값은 `0x01020304`다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.data-representation.endianness.q3",
-    "promptMarkdown": "little-endian host의 native 32-bit integer memory bytes를 그대로 TCP payload field로 복사했더니 big-endian protocol peer가 다른 값을 읽었다. host endianness와 wire byte order를 구분해 원인과 수정 방법을 설명하라.",
+    "promptMarkdown": "리틀 엔디언 호스트의 32비트 정수 메모리 바이트를 그대로 TCP 페이로드 필드로 복사했더니 빅 엔디언 프로토콜 상대가 다른 값을 읽었다. 호스트의 바이트 순서와 전송 바이트 순서를 구분해 원인과 수정 방법을 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.data-representation.endianness"],
-    "modelAnswer": "host의 native memory layout이 little-endian이어도 protocol field는 big-endian/network order로 정의될 수 있다. native bytes를 그대로 보내면 peer가 가장 중요한 byte 순서를 반대로 해석한다. 송신 시 numeric value를 protocol-defined byte order로 serialize하고 수신 시 같은 order로 decode해야 하며 golden byte fixture로 실제 wire sequence를 검증한다.",
-    "explanationMarkdown": "Host memory의 byte order와 protocol이 정한 wire order는 별개다. 숫자를 전송할 때는 native memory bytes를 복사하지 말고 protocol byte order로 serialize하고, 수신 측도 같은 규칙으로 decode해야 한다."
+    "modelAnswer": "호스트의 메모리 배치가 리틀 엔디언이어도 프로토콜 필드는 빅 엔디언(네트워크 바이트 순서)으로 정의될 수 있다. 메모리 바이트를 그대로 보내면 상대는 최상위 바이트의 위치를 반대로 해석한다. 송신할 때 수치 값을 프로토콜이 정한 바이트 순서로 직렬화하고 수신할 때 같은 순서로 역직렬화해야 하며, 기준 바이트 시퀀스로 실제 전송 결과를 검증한다.",
+    "explanationMarkdown": "호스트 메모리의 바이트 순서와 프로토콜이 정한 전송 순서는 별개다. 숫자를 전송할 때는 메모리 바이트를 그대로 복사하지 말고 프로토콜 바이트 순서로 직렬화하고, 수신 측도 같은 규칙으로 해석해야 한다."
   }
 ]
