@@ -4,7 +4,7 @@ contentKey: messaging.core.delivery.ordering
 topicContentKey: messaging.core.delivery
 slug: ordering
 title: "메시지 순서와 병렬 처리"
-summary: "partition 안의 record 순서와 실제 consumer 작업 완료 순서를 구분하고, business key별 순서를 지키면서 처리량을 확보하는 방법을 판단한다."
+summary: "파티션 안의 레코드 순서와 실제 컨슈머 작업 완료 순서를 구분하고, 업무 키별 순서를 지키면서 처리량을 확보하는 방법을 판단한다."
 level: 3
 status: PUBLISHED
 displayOrder: 30
@@ -28,20 +28,20 @@ references:
 ---
 # 메시지 순서와 병렬 처리
 
-주문 하나에 `Placed → Paid → Shipped` 순서가 필요하더라도 topic 전체의 모든 message를 직렬화할 필요는 없습니다. 먼저 **어떤 업무 단위 안에서만 순서가 필요한지**를 찾습니다.
+주문 하나에 `Placed → Paid → Shipped` 순서가 필요하더라도 토픽 전체의 모든 메시지를 직렬 처리할 필요는 없습니다. 먼저 **어떤 업무 단위 안에서만 순서가 필요한지**를 찾습니다.
 
 ```text
 order-7: Placed → Paid → Shipped
 order-8: Placed → Cancelled
 ```
 
-`orderId`처럼 같은 aggregate를 한 partition에 모으면 그 partition에 append된 record의 순서를 이용할 수 있습니다. 다른 주문끼리는 서로 다른 partition에서 병렬로 처리할 수 있습니다.
+`orderId`처럼 같은 업무 단위를 한 파티션에 모으면 그 파티션에 추가된 레코드 순서를 이용할 수 있습니다. 다른 주문끼리는 서로 다른 파티션에서 병렬로 처리할 수 있습니다.
 
-같은 키는 같은 파티션을 선택하는 데 쓰일 뿐, 서로 다른 producer instance가 보낸 이벤트를 업무상 발생 순서대로 재정렬하지 않습니다. 여러 producer가 같은 aggregate를 갱신한다면 aggregate version이나 sequence로 순서를 판단하고, producer·relay가 그 순서를 지키거나 consumer가 역순 적용을 거부하는 경계가 필요합니다.
+같은 키는 같은 파티션을 선택하는 데 쓰일 뿐, 서로 다른 프로듀서 인스턴스가 보낸 이벤트를 업무상 발생 순서대로 재정렬하지 않습니다. 여러 프로듀서가 같은 업무 단위를 갱신한다면 버전이나 순번(sequence)으로 순서를 판단하고, 프로듀서·릴레이가 그 순서를 지키거나 컨슈머가 역순 적용을 거부하는 경계가 필요합니다.
 
-### Partition 순서와 완료 순서는 다르다
+### 파티션 순서와 완료 순서는 다르다
 
-Consumer가 partition에서 `Placed`, `Paid`를 순서대로 읽어도 각각을 별도 worker에 넘기면 실제 완료 순서는 뒤집힐 수 있습니다.
+컨슈머가 파티션에서 `Placed`, `Paid`를 순서대로 읽어도 각각을 별도 작업자에게 넘기면 실제 완료 순서는 뒤집힐 수 있습니다.
 
 ```text
 poll order
@@ -52,11 +52,11 @@ DB apply order
 Paid → Placed  // 역전 가능
 ```
 
-따라서 순서가 중요한 key는 consumer 내부에서도 처리 순서를 보존해야 합니다. Partition 단위로 직렬 처리하거나, key별 queue를 두거나, event version/sequence를 확인해 예상하지 않은 역순 적용을 거부할 수 있습니다.
+따라서 순서가 중요한 키는 컨슈머 내부에서도 처리 순서를 보존해야 합니다. 파티션 단위로 직렬 처리하거나, 키별 대기열을 두거나, 이벤트 버전·순번을 확인해 예상하지 않은 역순 적용을 거부할 수 있습니다.
 
 ### 강한 순서는 처리량 비용을 가진다
 
-모든 message를 한 partition에 넣으면 순서를 설명하기는 쉽지만 동시에 처리할 수 있는 범위가 크게 줄어듭니다. 반대로 partition과 worker를 많이 늘리면 처리량은 높아질 수 있지만 순서 경계와 hot partition을 더 신중하게 관리해야 합니다.
+모든 메시지를 한 파티션에 넣으면 순서를 설명하기는 쉽지만 동시에 처리할 수 있는 범위가 크게 줄어듭니다. 반대로 파티션과 작업자를 많이 늘리면 처리량은 높아질 수 있지만 순서 경계와 핫 파티션을 더 신중하게 관리해야 합니다.
 
 ```text
 강한 전역 순서
@@ -68,6 +68,6 @@ key별 순서
 → aggregate 사이 parallelism 가능
 ```
 
-업무에서 필요한 것은 대부분 “모든 event의 전역 순서”가 아니라 특정 aggregate의 상태 전이가 역전되지 않는 것입니다.
+업무에서 필요한 것은 대부분 “모든 이벤트의 전역 순서”가 아니라 특정 업무 단위의 상태 전이가 역전되지 않는 것입니다.
 
-메시지 ordering을 설계할 때는 broker의 partition 순서만 확인하지 말고 **producer routing, consumer 내부 병렬 처리, 실제 side effect 완료 순서까지 하나의 timeline으로 연결**해야 합니다.
+메시지 순서를 설계할 때는 브로커의 파티션 순서만 확인하지 말고 **프로듀서 라우팅, 컨슈머 내부 병렬 처리, 실제 외부 효과 완료 순서까지 하나의 시간 흐름으로 연결**해야 합니다.
