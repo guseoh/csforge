@@ -8,28 +8,28 @@ area:
 policies:
   language:
     authoringLanguage: ko-KR
-    explanationRule: SQL 결과와 transaction 상태를 실제 행·snapshot·lock·page 흐름으로 설명하고 engine 구현과 SQL 표준 보장을 구분한다.
+    explanationRule: SQL 결과와 트랜잭션 상태를 실제 행·스냅샷·잠금·페이지 흐름으로 설명하고 DB 엔진 구현과 SQL 표준 보장을 구분한다.
   question:
-    reviewRule: topicDifficultyCoverage와 areaTypeCoverage는 Topic과 LearningArea 전체를 검토하는 기준이며 Concept별 quota가 아니다.
+    reviewRule: topicDifficultyCoverage와 areaTypeCoverage는 Topic과 LearningArea 전체를 검토하는 기준이며 Concept별 할당량이 아니다.
     topicDifficultyCoverage: [EASY, MEDIUM, HARD]
     areaTypeCoverage: [MULTIPLE_CHOICE, SHORT_ANSWER, DESCRIPTIVE, SCENARIO]
-    hardRule: 구체적인 SQL, EXPLAIN, 두 transaction timeline, lock 대기, pagination cursor, recovery 상황 중 하나 이상을 주고 결과를 추론하게 한다.
+    hardRule: 구체적인 SQL, EXPLAIN, 두 트랜잭션의 시간 흐름, 잠금 대기, 페이지네이션 커서, 복구 상황 중 하나 이상을 주고 결과를 추론하게 한다.
     shortAnswerRule: Concept 제목만으로 정답 처리하지 않는다.
   visualization:
     values: [NONE, TEXT, DIAGRAM]
-    rule: join 결과, B-tree, lock cycle, MVCC snapshot, WAL/recovery처럼 관계와 시간 순서가 핵심일 때 사용한다.
+    rule: JOIN 결과, B-tree, 잠금 순환, MVCC 스냅샷, WAL/복구처럼 관계와 시간 순서가 핵심일 때 사용한다.
 topics:
 - key: database.core.model
   title: 관계형 데이터 모델
   order: 10
-  scope: relation, NULL, normalization을 관계형 모델 관점에서 다룬다.
-  boundary: Java/JPA entity model과 동일시하지 않는다.
+  scope: 관계(relation), NULL, 정규화를 관계형 모델 관점에서 다룬다.
+  boundary: Java/JPA 엔티티 모델과 동일시하지 않는다.
   concepts:
   - key: database.core.model.relation-tuple
-    title: Relation과 tuple
+    title: 관계(relation)와 튜플(tuple)
     order: 10
     level: 1
-    objective: table/row/column을 relation schema와 tuple/value 관점으로 설명하고 물리 저장 구조와 구분한다.
+    objective: 테이블·행·컬럼을 관계 스키마와 튜플·값 관점으로 설명하고 순수 관계 모델의 집합 의미와 SQL의 중복 허용 특성, 물리 저장 구조를 구분한다.
     density: CORE
     visualization: TEXT
   - key: database.core.model.null-three-valued
@@ -43,317 +43,317 @@ topics:
     title: 정규화와 중복
     order: 30
     level: 1
-    objective: 갱신/삽입/삭제 이상을 줄이는 정규화와 읽기 편의를 위한 의도적 비정규화의 trade-off를 판단한다.
+    objective: 갱신·삽입·삭제 이상을 줄이는 정규화와 읽기 편의를 위한 의도적 비정규화의 trade-off를 판단한다.
     density: CORE
     visualization: TEXT
 - key: database.core.sql
   title: SQL 질의 의미
   order: 20
-  scope: SELECT 논리 순서, JOIN, aggregate, window function을 다룬다.
-  boundary: optimizer가 실제로 실행하는 물리 순서를 논리 처리 순서와 동일시하지 않는다.
+  scope: SELECT 논리 순서, JOIN, 집계, 윈도 함수를 다룬다.
+  boundary: 옵티마이저가 실제로 실행하는 물리 순서를 논리 처리 순서와 동일시하지 않는다.
   concepts:
   - key: database.core.sql.select-order
     title: SELECT 논리 처리 순서
     order: 10
     level: 1
-    objective: FROM/JOIN, WHERE, GROUP BY, HAVING, SELECT, ORDER BY의 논리 관계로 alias와 filtering 결과를 설명한다.
+    objective: FROM/JOIN, WHERE, GROUP BY, HAVING, SELECT, ORDER BY의 논리 관계로 별칭과 필터링 결과를 설명한다.
     density: CORE
     visualization: TEXT
   - key: database.core.sql.join-semantics
-    title: JOIN과 outer join
+    title: JOIN과 외부 조인(outer join)
     order: 20
     level: 1
-    objective: INNER/LEFT JOIN에서 ON과 WHERE 조건 위치가 unmatched row 보존 여부를 어떻게 바꾸는지 추론한다.
+    objective: INNER/LEFT JOIN에서 ON과 WHERE 조건 위치가 일치하지 않은 행의 보존 여부를 어떻게 바꾸는지 추론한다.
     density: CORE
     visualization: TEXT
   - key: database.core.sql.aggregate
-    title: Aggregate와 GROUP BY
+    title: 집계와 GROUP BY
     order: 30
     level: 1
-    objective: 여러 행을 group 단위 결과로 축약하는 aggregate와 NULL 처리, HAVING을 설명한다.
+    objective: 여러 행을 그룹 단위 결과로 축약하는 집계 함수와 NULL 처리, HAVING의 역할을 설명한다.
     density: CORE
     visualization: NONE
   - key: database.core.sql.window-function
-    title: Window function
+    title: 윈도 함수(Window function)
     order: 40
     level: 2
-    objective: 원래 행을 유지한 채 partition/order frame 위에서 rank, running total 같은 값을 계산하는 이유를 aggregate와 비교한다.
+    objective: 원래 행을 유지한 채 PARTITION BY·ORDER BY·frame 위에서 순위나 누적 합계를 계산하는 이유를 일반 집계와 비교한다.
     density: CORE
     visualization: TEXT
 - key: database.core.schema
-  title: Schema와 constraints
+  title: 스키마와 제약 조건
   order: 30
-  scope: primary key, foreign key, UNIQUE/CHECK constraint를 다룬다.
-  boundary: application validation을 DB constraint의 완전한 대체물로 보지 않는다.
+  scope: 기본 키, 외래 키, UNIQUE/CHECK 제약 조건을 다룬다.
+  boundary: 애플리케이션 검증을 DB 제약 조건의 완전한 대체물로 보지 않는다.
   concepts:
   - key: database.core.schema.primary-key
-    title: Primary key와 identity
+    title: 기본 키(Primary key)와 식별자
     order: 10
     level: 1
-    objective: row를 안정적으로 식별하는 key와 business natural key/surrogate key 선택의 차이를 설명한다.
+    objective: 행을 안정적으로 식별하는 키와 업무 자연 키·대체 키(surrogate key) 선택의 차이를 설명한다.
     density: CORE
     visualization: NONE
   - key: database.core.schema.foreign-key
-    title: Foreign key와 참조 무결성
+    title: 외래 키(Foreign key)와 참조 무결성
     order: 20
     level: 1
-    objective: child row가 존재하지 않는 parent를 참조하지 못하게 하는 DB 보장과 delete action을 판단한다.
+    objective: 자식 행이 존재하지 않는 부모 행을 참조하지 못하게 하는 DB 보장과 삭제 동작을 판단한다.
     density: CORE
     visualization: TEXT
   - key: database.core.schema.unique-check
-    title: UNIQUE·CHECK constraint
+    title: UNIQUE·CHECK 제약 조건
     order: 30
     level: 1
-    objective: 동시 요청에서도 지켜야 할 단일-table invariant를 UNIQUE/CHECK로 보호하는 이유와 NULL semantics를 판단한다.
+    objective: 동시 요청에서도 지켜야 할 단일 테이블 불변 조건을 UNIQUE/CHECK로 보호하는 이유와 NULL 의미를 판단한다.
     density: CORE
     visualization: NONE
 - key: database.core.index
   title: 인덱스 구조
   order: 40
-  scope: B-tree, composite, covering, partial index를 다룬다.
-  boundary: 인덱스를 모든 query의 정답으로 제시하지 않고 workload와 planner 선택을 함께 본다.
+  scope: B-tree, 복합·커버링·부분 인덱스를 다룬다.
+  boundary: 인덱스를 모든 쿼리의 정답으로 제시하지 않고 실제 작업 부하와 플래너 선택을 함께 본다.
   concepts:
   - key: database.core.index.btree
-    title: B-tree index
+    title: B-tree 인덱스
     order: 10
     level: 2
-    objective: 정렬된 tree 구조가 equality/range/order 탐색 비용을 줄이는 이유와 random access/write 비용을 설명한다.
+    objective: 정렬된 트리 구조가 동등 비교·범위·정렬 탐색 비용을 줄이는 이유와 임의 접근·쓰기 비용을 설명한다.
     density: CORE
     visualization: DIAGRAM
   - key: database.core.index.composite-index
     title: 복합 인덱스 순서
     order: 20
     level: 2
-    objective: leading column, equality/range 조건과 정렬 요구를 실제 query workload로 비교한다.
+    objective: 선두 컬럼, 동등 비교·범위 조건과 정렬 요구를 실제 쿼리 작업 부하로 비교한다.
     density: CORE
     visualization: TEXT
   - key: database.core.index.covering-index
-    title: Covering/index-only scan
+    title: 커버링 인덱스와 Index-only scan
     order: 30
     level: 2
-    objective: query가 필요한 column을 index에서 충족할 수 있어도 visibility/heap access 조건에 따라 비용이 달라지는 점을 설명한다.
+    objective: 쿼리에 필요한 컬럼을 인덱스에서 충족할 수 있어도 가시성·힙 접근 조건에 따라 실제 비용이 달라지는 이유를 설명한다.
     density: CORE
     visualization: TEXT
   - key: database.core.index.partial-index
-    title: Partial index
+    title: 부분 인덱스(Partial index)
     order: 40
     level: 2
-    objective: 특정 predicate를 만족하는 row만 index화해 크기/쓰기 비용을 줄이고 query predicate와의 정합성을 판단한다.
+    objective: 특정 조건을 만족하는 행만 인덱스에 포함해 크기·쓰기 비용을 줄이고 쿼리 조건과의 정합성을 판단한다.
     density: STANDARD
     visualization: NONE
 - key: database.core.optimizer
-  title: Optimizer와 execution plan
+  title: 옵티마이저와 실행 계획
   order: 50
-  scope: cost estimate, EXPLAIN, statistics를 다룬다.
+  scope: 비용 추정, EXPLAIN, 통계를 다룬다.
   boundary: cost 숫자를 실제 밀리초와 동일시하지 않는다.
   concepts:
   - key: database.core.optimizer.cost-estimate
-    title: cost estimate
+    title: 비용 추정과 접근 경로
     order: 10
     level: 2
-    objective: planner가 row estimate, I/O/CPU cost와 후보 plan을 비교해 실행 계획을 선택하는 이유를 설명한다.
+    objective: 플래너가 예상 행 수와 I/O·CPU 비용, 후보 실행 계획을 비교해 접근 경로를 선택하는 이유를 설명한다.
     density: CORE
     visualization: NONE
   - key: database.core.optimizer.explain
     title: EXPLAIN 읽기
     order: 20
     level: 2
-    objective: node tree, estimated/actual rows, loops, time, buffers를 연결해 첫 병목 후보를 찾는다.
+    objective: 실행 계획 노드 트리, 예상·실제 행 수, loops, time, buffers를 연결해 첫 병목 후보를 찾는다.
     density: CORE
     visualization: TEXT
   - key: database.core.optimizer.statistics
-    title: 통계와 잘못된 row estimate
+    title: 통계와 잘못된 행 수 추정
     order: 30
     level: 2
-    objective: data distribution/statistics가 planner 추정에 미치는 영향을 설명하고 stale statistics와 parameter/data skew를 구분한다.
+    objective: 데이터 분포와 통계가 플래너의 행 수 추정에 미치는 영향을 설명하고 오래된 통계와 파라미터·데이터 쏠림을 구분한다.
     density: CORE
     visualization: NONE
 - key: database.core.transaction
   title: 트랜잭션 기초
   order: 60
-  scope: ACID, autocommit, multi-statement atomicity를 다룬다.
-  boundary: Spring @Transactional proxy 동작은 Spring 영역에 둔다.
+  scope: ACID, 자동 커밋, 읽기-수정-쓰기와 원자적 SQL을 다룬다.
+  boundary: Spring @Transactional 프록시 동작은 Spring 영역에 둔다.
   concepts:
   - key: database.core.transaction.acid
-    title: ACID와 commit
+    title: ACID와 커밋
     order: 10
     level: 2
-    objective: Atomicity/Consistency/Isolation/Durability를 주문·재고 같은 상태 변화에 연결하고 서로 다른 책임임을 설명한다.
+    objective: Atomicity·Consistency·Isolation·Durability를 주문·재고 같은 상태 변화에 연결하고 서로 다른 책임임을 설명한다.
     density: CORE
     visualization: TEXT
   - key: database.core.transaction.autocommit
-    title: autocommit과 transaction 경계
+    title: 자동 커밋과 트랜잭션 경계
     order: 20
     level: 2
-    objective: statement별 자동 commit과 명시적 multi-statement transaction이 실패 시 남기는 상태 차이를 추론한다.
+    objective: SQL 문별 자동 커밋과 명시적 다중 SQL 문 트랜잭션이 실패했을 때 남기는 상태 차이를 추론한다.
     density: CORE
     visualization: TEXT
   - key: database.core.transaction.atomic-write
-    title: 여러 변경의 원자적 쓰기
+    title: 읽기-수정-쓰기와 원자적 SQL
     order: 30
     level: 2
-    objective: 함께 성공/실패해야 하는 DB 변경을 하나의 transaction에 묶고 외부 side effect와는 다른 문제임을 판단한다.
+    objective: 읽기-수정-쓰기(read-modify-write)가 동시성에서 경쟁 조건을 만드는 이유를 설명하고, 조건부 UPDATE 같은 원자적 SQL로 불변 조건을 DB 안에서 검사·갱신하는 방법과 영향받은 행 수 확인의 의미를 설명한다.
     density: CORE
     visualization: NONE
 - key: database.core.isolation
   title: 트랜잭션 격리 수준
   order: 70
-  scope: read anomalies, PostgreSQL READ COMMITTED, SERIALIZABLE을 다룬다.
-  boundary: ANSI anomaly 이름과 PostgreSQL MVCC 구현 설명을 구분한다.
+  scope: 읽기 이상 현상, PostgreSQL READ COMMITTED, SERIALIZABLE을 다룬다.
+  boundary: ANSI 이상 현상 이름과 PostgreSQL MVCC 구현 설명을 구분한다.
   concepts:
   - key: database.core.isolation.anomalies
-    title: read anomaly
+    title: 읽기 이상 현상(Read anomaly)
     order: 10
     level: 2
-    objective: dirty read, non-repeatable read, phantom/read skew/lost update 같은 현상을 두 transaction timeline으로 구분한다.
+    objective: dirty read, non-repeatable read, phantom read, read skew, lost update 같은 현상을 두 트랜잭션의 시간 흐름으로 구분한다.
     density: CORE
     visualization: DIAGRAM
   - key: database.core.isolation.read-committed
     title: READ COMMITTED
     order: 20
     level: 2
-    objective: PostgreSQL에서 각 command가 command 시작 시점의 snapshot을 얻어 같은 transaction 안에서도 연속 SELECT 결과가 달라질 수 있음을 설명한다.
+    objective: PostgreSQL에서 각 명령이 시작될 때 스냅샷을 얻어 같은 트랜잭션 안에서도 연속 SELECT 결과가 달라질 수 있음을 설명한다.
     density: CORE
     visualization: DIAGRAM
   - key: database.core.isolation.serializable
     title: SERIALIZABLE과 재시도
     order: 30
     level: 3
-    objective: 직렬 실행과 동등한 결과를 만들기 위해 일부 transaction이 serialization failure로 abort될 수 있고 application retry가 필요한 이유를 설명한다.
+    objective: 직렬 실행과 동등한 결과를 만들기 위해 일부 트랜잭션이 serialization failure로 중단될 수 있고 애플리케이션이 트랜잭션 전체를 재시도해야 하는 이유를 설명한다.
     density: CORE
     visualization: TEXT
 - key: database.core.locking
-  title: Locks와 concurrency
+  title: 잠금과 동시성
   order: 80
-  scope: row lock, deadlock, pessimistic locking을 다룬다.
-  boundary: JPA lock API 문법보다 DB에서 실제로 생기는 대기와 cycle에 집중한다.
+  scope: 행 잠금, 교착 상태, 비관적 잠금을 다룬다.
+  boundary: JPA 잠금 API 문법보다 DB에서 실제로 생기는 대기와 순환에 집중한다.
   concepts:
   - key: database.core.locking.row-lock
-    title: row lock
+    title: 행 잠금(Row lock)
     order: 10
     level: 2
-    objective: concurrent UPDATE/SELECT FOR UPDATE가 같은 row에서 대기하거나 충돌하는 흐름과 lock 유지 기간을 설명한다.
+    objective: 동시에 실행되는 UPDATE와 SELECT FOR UPDATE가 같은 행에서 대기하거나 충돌하는 흐름과 잠금 유지 기간을 설명한다.
     density: CORE
     visualization: TEXT
   - key: database.core.locking.deadlock
-    title: deadlock
+    title: 교착 상태(Deadlock)
     order: 20
     level: 2
-    objective: 서로 다른 lock 획득 순서가 wait-for cycle을 만들고 DB가 한 transaction을 중단해 cycle을 깨는 과정을 설명한다.
+    objective: 서로 다른 잠금 획득 순서가 대기 순환을 만들고 DB가 한 트랜잭션을 중단해 순환을 깨는 과정을 설명한다.
     density: CORE
     visualization: DIAGRAM
   - key: database.core.locking.pessimistic
-    title: pessimistic locking
+    title: 비관적 잠금(Pessimistic locking)
     order: 30
     level: 2
-    objective: 충돌 가능성이 높고 실패 후 재작업 비용이 큰 경우 선점 lock을 선택하는 trade-off를 판단한다.
+    objective: 충돌 가능성이 높고 실패 후 재작업 비용이 큰 경우 선점 잠금을 선택하는 trade-off를 판단한다.
     density: CORE
     visualization: NONE
 - key: database.core.mvcc
   title: MVCC와 스냅샷
   order: 90
-  scope: row versions, snapshot visibility, old version cleanup을 PostgreSQL 관점에서 다룬다.
-  boundary: 모든 DBMS가 동일한 MVCC storage/cleanup 구조를 쓴다고 일반화하지 않는다.
+  scope: 행 버전, 스냅샷 가시성, 오래된 버전 정리를 PostgreSQL 관점에서 다룬다.
+  boundary: 모든 DBMS가 동일한 MVCC 저장·정리 구조를 쓴다고 일반화하지 않는다.
   concepts:
   - key: database.core.mvcc.versions
-    title: row versions
+    title: 행 버전(Row versions)
     order: 10
     level: 2
-    objective: update가 기존 row를 제자리에서 모든 reader에게 즉시 덮어쓰는 대신 여러 tuple version을 통해 concurrent visibility를 제공하는 이유를 설명한다.
+    objective: UPDATE가 기존 행을 모든 읽기 트랜잭션에게 즉시 덮어쓰는 대신 여러 튜플 버전을 통해 동시 가시성을 제공하는 이유를 설명한다.
     density: CORE
     visualization: DIAGRAM
   - key: database.core.mvcc.visibility
-    title: snapshot visibility
+    title: 스냅샷 가시성
     order: 20
     level: 2
-    objective: transaction/statement snapshot이 어느 version을 볼 수 있는지 xmin/xmax와 commit 상태 개념을 과도한 구현 암기 없이 timeline으로 추론한다.
+    objective: 트랜잭션·SQL 문 스냅샷이 어느 버전을 볼 수 있는지 xmin/xmax와 커밋 상태 개념을 과도한 구현 암기 없이 시간 흐름으로 추론한다.
     density: CORE
     visualization: DIAGRAM
   - key: database.core.mvcc.cleanup
-    title: old version cleanup
+    title: 오래된 버전 정리와 장기 트랜잭션
     order: 30
     level: 2
-    objective: 더 이상 어떤 snapshot에서도 필요하지 않은 dead tuple을 VACUUM이 회수하고 오래 열린 transaction이 cleanup을 방해하는 이유를 설명한다.
+    objective: 더 이상 어떤 스냅샷에서도 필요하지 않은 dead tuple을 VACUUM이 회수하고 오래 열린 트랜잭션이 정리를 방해할 수 있는 이유를 설명한다.
     density: CORE
     visualization: TEXT
 - key: database.core.storage
-  title: Storage와 recovery
+  title: 저장 구조와 복구
   order: 100
-  scope: page/buffer, WAL, checkpoint/crash recovery를 다룬다.
-  boundary: 파일시스템/디스크 하드웨어 세부는 OS/Infrastructure와 구분한다.
+  scope: 페이지·버퍼, WAL, 체크포인트·장애 복구를 다룬다.
+  boundary: 파일시스템·디스크 하드웨어 세부는 OS/Infrastructure와 구분한다.
   concepts:
   - key: database.core.storage.pages-buffer
-    title: page와 buffer cache
+    title: 페이지와 버퍼 캐시
     order: 10
     level: 3
-    objective: table/index page가 disk와 shared buffer 사이를 오가고 dirty page가 생기는 이유를 설명한다.
+    objective: 테이블·인덱스 페이지가 디스크와 공유 버퍼 사이를 오가고 dirty 페이지가 생기는 이유를 설명한다.
     density: CORE
     visualization: DIAGRAM
   - key: database.core.storage.wal
-    title: WAL과 redo
+    title: WAL과 재실행(REDO)
     order: 20
     level: 3
-    objective: data page보다 복구 정보를 먼저 durable log에 기록하는 write-ahead 원칙이 crash recovery를 가능하게 하는 이유를 설명한다.
+    objective: 데이터 페이지보다 복구 정보를 먼저 내구성 있는 로그에 기록하는 write-ahead 원칙이 장애 복구를 가능하게 하는 이유를 설명한다.
     density: CORE
     visualization: DIAGRAM
   - key: database.core.storage.checkpoint-recovery
-    title: checkpoint와 crash recovery
+    title: 체크포인트와 장애 복구
     order: 30
     level: 3
-    objective: checkpoint가 recovery 시작 범위를 제한하면서 정상 운영 I/O 비용과 trade-off를 만드는 이유를 설명한다.
+    objective: 체크포인트가 복구 시작 범위를 제한하면서 정상 운영 I/O 비용과 trade-off를 만드는 이유를 설명한다.
     density: CORE
     visualization: TEXT
 - key: database.core.replication
   title: 복제
   order: 110
-  scope: primary/standby, replication lag, failover consistency를 다룬다.
-  boundary: consensus protocol 상세는 Distributed Systems 영역에 둔다.
+  scope: 프라이머리·스탠바이, 복제 지연, 장애 조치와 일관성을 다룬다.
+  boundary: 합의 프로토콜 상세는 Distributed Systems 영역에 둔다.
   concepts:
   - key: database.core.replication.primary-replica
-    title: primary와 replica
+    title: 프라이머리와 리플리카
     order: 10
     level: 3
-    objective: primary의 WAL/change stream을 replica가 적용해 복제본을 유지하는 기본 흐름과 read scaling 목적을 설명한다.
+    objective: 프라이머리의 WAL·변경 스트림을 리플리카가 적용해 복제본을 유지하는 기본 흐름과 읽기 확장 목적을 설명한다.
     density: CORE
     visualization: DIAGRAM
   - key: database.core.replication.lag
-    title: replication lag
+    title: 복제 지연(Replication lag)
     order: 20
     level: 3
-    objective: primary commit 이후 replica apply까지의 시간 차가 read-after-write와 stale read를 만드는 이유를 설명한다.
+    objective: 프라이머리 커밋 이후 리플리카 적용까지의 시간 차가 read-after-write와 오래된 읽기(stale read)를 만드는 이유를 설명한다.
     density: CORE
     visualization: TEXT
   - key: database.core.replication.failover
-    title: failover와 consistency
+    title: 장애 조치(Failover)와 일관성
     order: 30
     level: 3
-    objective: 장애 시 어떤 replica를 승격할지, 미전송/미적용 변경과 RPO/RTO trade-off를 판단한다.
+    objective: 장애 시 어떤 리플리카를 승격할지, 미전송·미적용 변경과 RPO/RTO trade-off를 판단한다.
     density: CORE
     visualization: TEXT
 - key: database.core.query-patterns
   title: 백엔드 조회 패턴
   order: 120
-  scope: offset/keyset pagination, batch/N+1을 DB query 관점에서 다룬다.
+  scope: Offset/Keyset 페이지네이션, 배치 로딩과 N+1을 DB 쿼리 관점에서 다룬다.
   boundary: JPA fetch API 자체는 Spring 영역과 연결한다.
   concepts:
   - key: database.core.query-patterns.offset-pagination
-    title: offset pagination
+    title: Offset 페이지네이션
     order: 10
     level: 3
-    objective: ORDER BY 안정성, OFFSET skip 비용, concurrent 변경 시 page drift를 설명한다.
+    objective: ORDER BY 안정성, OFFSET 건너뛰기 비용, 동시 변경 시 페이지 밀림(page drift)을 설명한다.
     density: CORE
     visualization: TEXT
   - key: database.core.query-patterns.keyset-pagination
-    title: keyset pagination
+    title: Keyset 페이지네이션과 안정적인 커서
     order: 20
     level: 3
-    objective: 마지막 sort key를 다음 predicate에 사용해 deep paging 비용과 page drift를 줄이는 조건을 설명한다.
+    objective: 마지막 정렬 키를 다음 조회 조건에 사용해 깊은 페이지 조회 비용과 페이지 밀림을 줄이는 조건을 설명한다.
     density: CORE
     visualization: TEXT
   - key: database.core.query-patterns.batch-n-plus-one
-    title: batch와 N+1
+    title: 관계 배치 로딩과 N+1
     order: 30
     level: 3
-    objective: parent list 뒤 child query를 반복하는 N+1을 query count로 측정하고 join/batch/bulk query의 trade-off를 판단한다.
+    objective: 부모 목록 조회 뒤 자식 쿼리를 반복하는 N+1을 쿼리 수로 측정하고 JOIN·배치·벌크 조회의 trade-off를 판단한다.
     density: CORE
     visualization: TEXT
