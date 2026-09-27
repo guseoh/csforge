@@ -14,7 +14,8 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "instruction decode가 ALU, memory, register write와 mux control signal로 연결되는 흐름을 확인한다."
+    recommendation: "register와 combinational datapath 사이의 timing 관계를 확인한다."
+    relationNote: "명령어 해독이 ALU 연산, 메모리 접근, 레지스터 쓰기와 멀티플렉서 제어 신호로 이어지는 부분을 확인한다."
     displayOrder: 1
 ---
 # 제어 장치(Control Unit)
