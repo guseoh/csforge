@@ -3,43 +3,42 @@ kind: concept
 contentKey: computer-architecture.core.datapath-control.control-unit
 topicContentKey: computer-architecture.core.datapath-control
 slug: control-unit
-title: "Control Unit"
-summary: "instruction decode 결과가 ALU 연산·operand 선택·memory 접근·register write·next-PC 선택 신호로 이어지는 흐름을 이해한다."
+title: "제어 장치(Control Unit)"
+summary: "명령어 해독 결과가 ALU 연산·피연산자 선택·메모리 접근·레지스터 쓰기·다음 PC 선택 신호로 이어지는 흐름을 이해한다."
 level: 2
 status: PUBLISHED
 displayOrder: 20
 references:
-  - url: "https://www.cs.umd.edu/~meesh/cmsc311/clin-cmsc311/Lectures/lecture32/single_control.pdf"
-    title: "Computer Organization: Single-Cycle Control"
+  - url: "https://www.cs.umd.edu/~meesh/cmsc311/clin-cmsc311/Lectures/lecture30/datapath.pdf"
+    title: "Computer Organization: Datapath"
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "instruction decode가 ALU, memory, register write와 mux control signal로 연결되는 흐름을 확인한다."
+    recommendation: "register와 combinational datapath 사이의 timing 관계를 확인한다."
+    relationNote: "명령어 해독이 ALU 연산, 메모리 접근, 레지스터 쓰기와 멀티플렉서 제어 신호로 이어지는 부분을 확인한다."
     displayOrder: 1
 ---
-# Control Unit
+# 제어 장치(Control Unit)
 
-Datapath에는 ALU, register file, memory interface, multiplexer처럼 여러 component가 있지만 이들이 항상 같은 방식으로 연결되지는 않습니다. **Control unit은 현재 instruction을 decode해 어떤 경로와 state 변경을 사용할지 결정하는 신호를 만듭니다.**
+데이터패스에는 ALU, 레지스터 파일, 메모리 인터페이스, 멀티플렉서처럼 여러 구성 요소가 있지만 이들이 항상 같은 방식으로 연결되지는 않는다. **제어 장치는 현재 명령어를 해독해 어떤 경로와 상태 변경을 사용할지 결정하는 신호를 만든다.**
 
-예를 들어 arithmetic instruction과 load instruction은 둘 다 ALU를 사용할 수 있습니다. 하지만 arithmetic은 두 register를 계산해 결과를 register에 기록하고, load는 base와 offset으로 주소를 계산한 뒤 memory에서 읽은 값을 register에 기록합니다.
+예를 들어 산술 명령과 load 명령은 같은 ALU를 사용할 수 있지만 목적이 다르다.
 
 ```text
-instruction bits
-      │
-      ▼
-    decode
-      │
-      ├─ ALU operation
-      ├─ operand source select
-      ├─ memory read / write
-      ├─ register write enable
-      └─ next-PC select
+ADD  → register operand 선택 → ALU add → register write
+LOAD → base + immediate       → ALU add → memory read → register write
 ```
 
-이때 `write enable` 같은 신호가 특히 중요합니다. 계산 결과가 만들어졌더라도 register write가 허용되지 않으면 architectural state는 바뀌지 않습니다. 반대로 잘못된 destination에 write-enable이 켜지면 엉뚱한 state가 변경됩니다.
+제어 신호는 이 차이를 데이터패스에 전달한다. 어떤 피연산자를 ALU 입력으로 보낼지, 메모리를 읽거나 쓸지, 레지스터 쓰기를 허용할지, 다음 PC를 어디에서 가져올지를 선택한다.
 
-Branch에서도 control unit은 비교 결과와 instruction 종류를 이용해 순차적인 다음 PC를 사용할지 branch target을 사용할지 선택하도록 datapath를 제어합니다.
+### 계산 결과가 있어도 상태 반영은 별도다
 
-Control을 만드는 내부 방식은 processor마다 다를 수 있습니다. 단순한 CPU는 combinational decode logic을 사용할 수 있고 더 복잡한 구현은 내부 micro-operation이나 microcode를 사용할 수 있습니다. 이것은 **ISA가 보장하는 instruction 결과를 구현하는 microarchitecture 선택**이지 software가 의존해야 하는 ISA semantics 자체는 아닙니다.
+ALU가 올바른 값을 계산했더라도 레지스터 쓰기 신호가 꺼져 있으면 그 결과는 아키텍처 상태에 기록되지 않는다. 반대로 잘못된 피연산자 선택 신호가 들어가면 ALU 자체가 정상이어도 엉뚱한 값을 계산하게 된다.
 
-핵심은 control unit이 별도의 계산 결과를 만드는 장치라기보다 **instruction의 의미에 맞게 datapath의 선택과 state 변경 시점을 지휘하는 역할**이라는 점입니다.
+따라서 명령어 실행은 `계산 장치가 값을 만든다`와 `제어 신호가 그 결과를 어느 상태에 반영할지 고른다`를 함께 봐야 한다.
+
+### 제어 방식은 구현에 따라 달라질 수 있다
+
+제어 신호를 조합·순차 논리로 직접 만드는 hardwired control과, 제어 저장소의 microinstruction 순서로 구성하는 microprogrammed control을 대표적으로 비교할 수 있다. 전자는 빠르고 직접적일 수 있지만 복잡한 변경이 어렵고, 후자는 복잡한 동작을 구조화하기 쉬운 대신 추가 조회·순서 제어 비용이 생길 수 있다.
+
+이 선택은 ISA의 명령어 의미를 바꾸는 것이 아니라 그 의미를 구현하는 마이크로아키텍처 선택이다.
