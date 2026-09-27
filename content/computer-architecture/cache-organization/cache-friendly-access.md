@@ -9,21 +9,14 @@ level: 2
 status: PUBLISHED
 displayOrder: 80
 references:
-  - url: "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/cache-organization/index.html"
-    title: "Cache Organization"
-    referenceType: OFFICIAL
-    language: en
-    depth: section
-    recommendation: "direct-mapped·set-associative·fully-associative mapping, tag/index/offset, replacement과 write policy를 확인한다."
-    displayOrder: 1
   - url: "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/memory-hierarchy-design/index.html"
     title: "Memory Hierarchy Design"
     referenceType: OFFICIAL
     language: en
     depth: section
     recommendation: "memory hierarchy, temporal/spatial locality, cache line, hit/miss와 AMAT 관계를 확인한다."
-    relationNote: "순차 접근, stride, 작업 집합과 캐시 라인 재사용의 지역성 근거를 보완한다."
-    displayOrder: 2
+    relationNote: "순차 접근, stride, 작업 집합과 캐시 라인 재사용의 지역성 근거를 확인한다."
+    displayOrder: 1
 ---
 # 캐시 친화적 접근(Cache-Friendly Access)
 
