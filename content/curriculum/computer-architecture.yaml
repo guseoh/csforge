@@ -2,203 +2,203 @@ schemaVersion: 2
 area:
   key: computer-architecture
   title: "컴퓨터 구조"
-  baseline: "hardware execution, memory hierarchy, address translation, multicore and device I/O"
+  baseline: "하드웨어 실행, 메모리 계층, 주소 변환, 멀티코어와 장치 입출력"
   contentKeyPrefix: computer-architecture.core
   status: CANONICAL_FOUNDATION
 policies:
   language:
     authoringLanguage: ko-KR
-    explanationRule: "문제·메커니즘·상태 변화·실패 경계·backend 판단을 연결된 설명으로 작성한다."
+    explanationRule: "문제·메커니즘·상태 변화·실패 경계·백엔드 판단을 연결된 설명으로 작성한다."
   question:
     hardRule: "상태 변화와 제약, 비용 또는 실패 경로를 함께 추론한다."
   visualization:
     values: [NONE, TEXT, DIAGRAM]
   prerequisites:
-    rule: "실제 선행 지식이 필요한 경우에만 같은 Topic의 concept key를 기록한다."
+    rule: "실제 선행 지식이 필요한 경우에만 같은 Topic의 Concept key를 기록한다."
 topics:
   - key: computer-architecture.core.data-representation
     title: "데이터 표현과 기계 모델(Data Representation and Machine Model)"
     order: 10
-    scope: "bit, byte, word, 정수·부동소수점 표현과 byte order를 다룬다."
+    scope: "비트·바이트·워드, 정수·부동소수점 표현과 바이트 순서를 다룬다."
     boundary: "표현과 해석은 다루되 언어 타입의 별도 계약은 다루지 않는다."
     concepts:
       - key: computer-architecture.core.data-representation.bit-byte-word
         title: "비트·바이트·워드(Bit, Byte and Word)"
         order: 10
         level: 1
-        objective: "bit·byte·word의 폭과 주소·레지스터 관계를 설명한다."
+        objective: "비트·바이트·워드의 폭과 주소·레지스터 관계를 설명한다."
         density: CORE
         visualization: TEXT
       - key: computer-architecture.core.data-representation.binary-hex
         title: "2진수와 16진수(Binary and Hexadecimal)"
         order: 20
         level: 1
-        objective: "binary bit pattern을 hexadecimal로 읽는 이유와 변환을 설명한다."
+        objective: "이진 비트 패턴을 16진수로 읽는 이유와 변환을 설명한다."
         density: STANDARD
         visualization: TEXT
       - key: computer-architecture.core.data-representation.signed-twos-complement
         title: "부호 있는 정수와 2의 보수(Signed and Two's Complement)"
         order: 30
         level: 1
-        objective: "같은 bit pattern의 signed 해석과 two's complement 규칙을 설명한다."
+        objective: "같은 비트 패턴의 부호 있는·없는 해석과 2의 보수 규칙을 설명한다."
         density: CORE
         visualization: TEXT
       - key: computer-architecture.core.data-representation.fixed-width-overflow
         title: "고정 폭 산술과 오버플로(Fixed-Width Arithmetic and Overflow)"
         order: 40
         level: 1
-        objective: "고정 폭 연산의 overflow와 wraparound를 추론한다."
+        objective: "고정 폭 연산의 오버플로와 wraparound를 추론한다."
         density: CORE
         visualization: TEXT
       - key: computer-architecture.core.data-representation.floating-point
         title: "부동소수점 표현과 반올림(Floating-Point)"
         order: 50
         level: 2
-        objective: "sign·exponent·significand와 반올림으로 정밀도 한계를 설명한다."
+        objective: "sign·exponent·significand 필드와 반올림으로 정밀도 한계를 설명한다."
         density: CORE
         visualization: DIAGRAM
       - key: computer-architecture.core.data-representation.endianness
         title: "바이트 순서(Endianness)"
         order: 60
         level: 1
-        objective: "다중 byte 값의 메모리 순서와 직렬화 경계를 설명한다."
+        objective: "여러 바이트 값의 메모리 순서와 직렬화 경계를 설명한다."
         density: STANDARD
         visualization: TEXT
   - key: computer-architecture.core.isa-execution
     title: "ISA와 명령어 실행(ISA and Instruction Execution)"
     order: 20
-    scope: "software-visible ISA, instruction encoding, register와 call/return을 다룬다."
+    scope: "소프트웨어가 관찰하는 ISA, 명령어 인코딩, 레지스터와 호출·복귀를 다룬다."
     boundary: "ISA 계약과 실행 흐름은 다루되 특정 OS ABI의 전체 규칙은 다루지 않는다."
     concepts:
       - key: computer-architecture.core.isa-execution.isa-vs-microarchitecture
         title: "ISA와 마이크로아키텍처(ISA and Microarchitecture)"
         order: 10
         level: 1
-        objective: "ISA 계약과 구현 내부를 구분한다."
+        objective: "ISA 계약과 마이크로아키텍처 구현을 구분한다."
         density: CORE
         visualization: TEXT
       - key: computer-architecture.core.isa-execution.instruction-format
         title: "명령어 형식(Instruction Format)"
         order: 20
         level: 1
-        objective: "opcode·operand·immediate의 encoding 역할을 설명한다."
+        objective: "opcode·피연산자·immediate 필드의 인코딩 역할을 설명한다."
         density: STANDARD
         visualization: TEXT
       - key: computer-architecture.core.isa-execution.registers
         title: "레지스터(Registers)"
         order: 30
         level: 1
-        objective: "register file과 memory 접근의 역할 차이를 설명한다."
+        objective: "레지스터 파일과 메모리 접근의 역할 차이를 설명한다."
         density: CORE
         visualization: TEXT
       - key: computer-architecture.core.isa-execution.fetch-decode-execute
         title: "명령어 인출·해독·실행(Fetch-Decode-Execute)"
         order: 40
         level: 1
-        objective: "PC를 따라 instruction이 fetch·decode·execute되는 순서를 설명한다."
+        objective: "PC를 따라 명령어가 인출·해독·실행되는 순서를 설명한다."
         density: CORE
         visualization: DIAGRAM
       - key: computer-architecture.core.isa-execution.addressing-modes
         title: "주소 지정 방식(Addressing Modes)"
         order: 50
         level: 2
-        objective: "immediate·register·base plus offset·indirect 주소 계산을 비교한다."
+        objective: "immediate·레지스터·base plus offset·indirect 주소 계산을 비교한다."
         density: STANDARD
         visualization: TEXT
       - key: computer-architecture.core.isa-execution.procedure-call-machine-level
         title: "기계 수준 함수 호출(Machine-Level Procedure Call)"
         order: 60
         level: 2
-        objective: "stack pointer·return address·argument의 call/return 상태 변화를 설명한다."
+        objective: "스택 포인터·반환 주소·인자의 호출·복귀 상태 변화를 설명한다."
         density: CORE
         visualization: DIAGRAM
   - key: computer-architecture.core.datapath-control
     title: "CPU 데이터패스와 제어(CPU Datapath and Control)"
     order: 30
-    scope: "ALU, control signal, clock cycle, critical path와 branch를 다룬다."
-    boundary: "한 instruction의 하드웨어 경로를 다루며 OS scheduling은 다루지 않는다."
+    scope: "ALU, 제어 신호, 클록 주기, 임계 경로와 분기를 다룬다."
+    boundary: "한 명령어의 하드웨어 경로를 다루며 OS 스케줄링은 다루지 않는다."
     concepts:
       - key: computer-architecture.core.datapath-control.alu-datapath
         title: "ALU와 데이터패스(ALU and Datapath)"
         order: 10
         level: 1
-        objective: "register·ALU·result 사이의 datapath를 설명한다."
+        objective: "레지스터·ALU·결과 사이의 데이터패스를 설명한다."
         density: CORE
         visualization: DIAGRAM
       - key: computer-architecture.core.datapath-control.control-unit
         title: "제어 장치(Control Unit)"
         order: 20
         level: 2
-        objective: "decode 결과가 datapath control signal이 되는 과정을 설명한다."
+        objective: "명령어 해독 결과가 데이터패스 제어 신호가 되는 과정을 설명한다."
         density: CORE
         visualization: TEXT
       - key: computer-architecture.core.datapath-control.clock-cycle
         title: "클록 주기(Clock Cycle)"
         order: 30
         level: 1
-        objective: "clock·cycle·frequency와 작업 완료 시점을 구분한다."
+        objective: "클록·주기·주파수와 작업 완료 시점을 구분한다."
         density: STANDARD
         visualization: TEXT
       - key: computer-architecture.core.datapath-control.critical-path
         title: "임계 경로(Critical Path)"
         order: 40
         level: 2
-        objective: "한 cycle의 최소 길이를 제한하는 조합 경로를 설명한다."
+        objective: "한 주기의 최소 길이를 제한하는 조합 논리 경로를 설명한다."
         density: CORE
         visualization: DIAGRAM
       - key: computer-architecture.core.datapath-control.branch-control-flow
         title: "분기와 제어 흐름(Branch and Control Flow)"
         order: 50
         level: 2
-        objective: "branch가 PC와 instruction flow를 바꾸는 시점을 설명한다."
+        objective: "분기가 PC와 명령어 흐름을 바꾸는 시점을 설명한다."
         density: CORE
         visualization: TEXT
   - key: computer-architecture.core.pipeline-ilp
     title: "파이프라이닝과 명령어 수준 병렬성(Pipelining and Instruction-Level Parallelism)"
     order: 40
-    scope: "pipeline stage, hazard, forwarding, prediction과 out-of-order를 다룬다."
-    boundary: "instruction overlap과 hardware ILP를 다루며 thread scheduling은 다루지 않는다."
+    scope: "파이프라인 단계, 해저드, 포워딩, 분기 예측과 비순차 실행을 다룬다."
+    boundary: "명령어 중첩 실행과 하드웨어 ILP를 다루며 스레드 스케줄링은 다루지 않는다."
     concepts:
       - key: computer-architecture.core.pipeline-ilp.pipeline-stages
         title: "파이프라인 단계(Pipeline Stages)"
         order: 10
         level: 1
-        objective: "여러 instruction의 stage가 겹치는 이유를 설명한다."
+        objective: "여러 명령어의 단계가 겹쳐 실행되는 이유를 설명한다."
         density: CORE
         visualization: DIAGRAM
       - key: computer-architecture.core.pipeline-ilp.pipeline-hazards
         title: "파이프라인 해저드(Pipeline Hazards)"
         order: 20
         level: 2
-        objective: "structural·data·control hazard를 구분한다."
+        objective: "구조·데이터·제어 해저드를 구분한다."
         density: CORE
         visualization: DIAGRAM
       - key: computer-architecture.core.pipeline-ilp.forwarding-and-stall
         title: "포워딩과 스톨(Forwarding and Stall)"
         order: 30
         level: 2
-        objective: "dependency를 forwarding과 bubble로 처리하는 흐름을 설명한다."
+        objective: "데이터 의존성을 포워딩과 bubble로 처리하는 흐름을 설명한다."
         density: CORE
         visualization: DIAGRAM
       - key: computer-architecture.core.pipeline-ilp.branch-prediction
         title: "분기 예측(Branch Prediction)"
         order: 40
         level: 2
-        objective: "prediction과 misprediction penalty를 추론한다."
+        objective: "분기 예측과 예측 실패 비용을 추론한다."
         density: CORE
         visualization: TEXT
       - key: computer-architecture.core.pipeline-ilp.superscalar-out-of-order
         title: "슈퍼스칼라와 비순차 실행(Superscalar and Out-of-Order Execution)"
         order: 50
         level: 3
-        objective: "dependency를 보존하며 issue 순서를 바꾸는 hardware mechanism을 설명한다."
+        objective: "의존성을 보존하면서 발행·실행 순서를 바꾸는 하드웨어 메커니즘을 설명한다."
         density: STANDARD
         visualization: DIAGRAM
   - key: computer-architecture.core.memory-hierarchy
     title: "메모리 계층과 지역성(Memory Hierarchy and Locality)"
     order: 50
-    scope: "register, cache, DRAM, storage의 locality·latency·bandwidth를 다룬다."
-    boundary: "하드웨어 hierarchy를 다루며 OS page replacement는 다루지 않는다."
+    scope: "레지스터, 캐시, DRAM, 저장장치의 지역성·지연 시간·대역폭을 다룬다."
+    boundary: "하드웨어 메모리 계층을 다루며 OS 페이지 교체는 다루지 않는다."
     concepts:
       - key: computer-architecture.core.memory-hierarchy.memory-hierarchy
         title: "메모리 계층 구조(Memory Hierarchy)"
@@ -211,248 +211,248 @@ topics:
         title: "시간적·공간적 지역성(Temporal and Spatial Locality)"
         order: 20
         level: 1
-        objective: "재접근과 인접 접근이 cache hit로 이어지는 이유를 설명한다."
+        objective: "재접근과 인접 접근이 캐시 적중으로 이어지는 이유를 설명한다."
         density: CORE
         visualization: TEXT
       - key: computer-architecture.core.memory-hierarchy.cache-line
         title: "캐시 라인(Cache Line)"
         order: 30
         level: 1
-        objective: "cache가 byte가 아닌 line 단위로 이동하는 이유를 설명한다."
+        objective: "캐시가 바이트가 아닌 라인 단위로 데이터를 이동하는 이유를 설명한다."
         density: CORE
         visualization: DIAGRAM
       - key: computer-architecture.core.memory-hierarchy.cache-hit-miss
         title: "캐시 적중과 미스(Cache Hit and Miss)"
         order: 40
         level: 2
-        objective: "hit·miss와 다음 계층 요청의 상태 흐름을 설명한다."
+        objective: "적중·미스와 다음 계층 요청의 상태 흐름을 설명한다."
         density: CORE
         visualization: DIAGRAM
       - key: computer-architecture.core.memory-hierarchy.latency-vs-bandwidth
         title: "지연 시간과 대역폭(Latency versus Bandwidth)"
         order: 50
         level: 2
-        objective: "첫 byte 지연과 지속 전송량을 구분한다."
+        objective: "첫 바이트 지연과 지속 전송량을 구분한다."
         density: CORE
         visualization: TEXT
       - key: computer-architecture.core.memory-hierarchy.miss-penalty
         title: "미스 패널티(Miss Penalty)"
         order: 60
         level: 2
-        objective: "miss가 평균 접근 시간에 더하는 계층별 비용을 계산한다."
+        objective: "미스가 평균 접근 시간에 더하는 계층별 비용을 계산한다."
         density: STANDARD
         visualization: TEXT
   - key: computer-architecture.core.cache-organization
     title: "캐시 구성(Cache Organization)"
     order: 60
-    scope: "mapping, tag/index/offset, replacement와 write policy를 다룬다."
-    boundary: "cache 조직과 정책을 다루며 distributed cache architecture는 다루지 않는다."
+    scope: "매핑, tag/index/offset, 교체와 쓰기 정책을 다룬다."
+    boundary: "CPU 캐시 구성과 정책을 다루며 분산 캐시 아키텍처는 다루지 않는다."
     concepts:
       - key: computer-architecture.core.cache-organization.direct-mapped-cache
         title: "직접 사상 캐시(Direct-Mapped Cache)"
         order: 10
         level: 2
-        objective: "주소가 하나의 line으로 mapping되는 비용과 conflict를 설명한다."
+        objective: "주소가 하나의 라인으로 매핑될 때의 비용과 충돌을 설명한다."
         density: CORE
         visualization: DIAGRAM
       - key: computer-architecture.core.cache-organization.set-associative-cache
         title: "집합 연관 캐시(Set-Associative Cache)"
         order: 20
         level: 2
-        objective: "set 안의 여러 way가 conflict miss를 줄이는 방식을 설명한다."
+        objective: "세트 안의 여러 way가 충돌 미스를 줄이는 방식을 설명한다."
         density: CORE
         visualization: DIAGRAM
       - key: computer-architecture.core.cache-organization.fully-associative-cache
         title: "완전 연관 캐시(Fully-Associative Cache)"
         order: 30
         level: 2
-        objective: "어느 line에도 배치하는 대신 비교 비용을 지불하는 구조를 설명한다."
+        objective: "어느 라인에도 배치할 수 있는 대신 비교 비용이 커지는 구조를 설명한다."
         density: STANDARD
         visualization: TEXT
       - key: computer-architecture.core.cache-organization.index-tag-offset
         title: "인덱스·태그·오프셋(Index, Tag and Offset)"
         order: 40
         level: 2
-        objective: "주소 bit를 offset·index·tag로 나눠 cache 위치를 계산한다."
+        objective: "주소 비트를 offset·index·tag로 나눠 캐시 위치를 계산한다."
         density: CORE
         visualization: DIAGRAM
       - key: computer-architecture.core.cache-organization.replacement-policy
         title: "캐시 교체 정책(Cache Replacement Policy)"
         order: 50
         level: 2
-        objective: "eviction 대상 선택이 hit rate와 구현 비용에 미치는 영향을 비교한다."
+        objective: "교체 대상 선택이 적중률과 구현 비용에 미치는 영향을 비교한다."
         density: STANDARD
         visualization: TEXT
       - key: computer-architecture.core.cache-organization.write-through-write-back
         title: "쓰기 반영 시점: Write-Through와 Write-Back"
         order: 60
         level: 2
-        objective: "write 시점의 memory 반영과 dirty line 비용을 비교한다."
+        objective: "쓰기 시점의 하위 메모리 반영과 dirty 라인 비용을 비교한다."
         density: CORE
         visualization: TEXT
       - key: computer-architecture.core.cache-organization.write-allocate
         title: "쓰기 할당(Write Allocate)"
         order: 70
         level: 2
-        objective: "write miss에서 line을 채울지 바로 memory에 쓸지 설명한다."
+        objective: "쓰기 미스에서 라인을 채울지 바로 하위 계층에 쓸지 설명한다."
         density: STANDARD
         visualization: TEXT
       - key: computer-architecture.core.cache-organization.cache-friendly-access
         title: "캐시 친화적 접근(Cache-Friendly Access)"
         order: 80
         level: 2
-        objective: "배열 접근 순서와 line 재사용의 관계를 판단한다."
+        objective: "배열 접근 순서와 캐시 라인 재사용의 관계를 판단한다."
         density: STANDARD
         visualization: DIAGRAM
   - key: computer-architecture.core.virtual-memory-hardware
     title: "가상 메모리 하드웨어 지원(Virtual-Memory Hardware Support)"
     order: 70
-    scope: "virtual/physical address, MMU, page-table walk와 TLB를 다룬다."
-    boundary: "주소 변환 hardware만 다루며 demand paging과 replacement policy는 OS에 둔다."
+    scope: "가상·물리 주소, MMU, 페이지 테이블 순회와 TLB를 다룬다."
+    boundary: "주소 변환 하드웨어만 다루며 demand paging과 페이지 교체 정책은 OS에 둔다."
     concepts:
       - key: computer-architecture.core.virtual-memory-hardware.virtual-physical-address
         title: "가상 주소와 물리 주소(Virtual and Physical Address)"
         order: 10
         level: 1
-        objective: "process 주소와 hardware memory 주소를 구분한다."
+        objective: "프로세스의 가상 주소와 하드웨어 물리 메모리 주소를 구분한다."
         density: CORE
         visualization: TEXT
       - key: computer-architecture.core.virtual-memory-hardware.mmu
         title: "메모리 관리 장치(MMU)"
         order: 20
         level: 2
-        objective: "MMU가 변환·권한 검사를 수행하는 위치를 설명한다."
+        objective: "MMU가 주소 변환과 권한 검사를 수행하는 위치를 설명한다."
         density: CORE
         visualization: DIAGRAM
       - key: computer-architecture.core.virtual-memory-hardware.page-table-walk
         title: "페이지 테이블 순회(Page-Table Walk)"
         order: 30
         level: 2
-        objective: "page table entry를 따라 physical frame을 찾는 흐름을 설명한다."
+        objective: "페이지 테이블 엔트리를 따라 물리 프레임을 찾는 흐름을 설명한다."
         density: CORE
         visualization: DIAGRAM
       - key: computer-architecture.core.virtual-memory-hardware.tlb
         title: "주소 변환 버퍼(TLB, Translation Lookaside Buffer)"
         order: 40
         level: 2
-        objective: "TLB hit·miss, page-table walk와 fault의 관계, 주소 변환 cache의 한계를 설명한다."
+        objective: "TLB 적중·미스, 페이지 테이블 순회와 fault의 관계, 주소 변환 캐시의 한계를 설명한다."
         density: CORE
         visualization: DIAGRAM
       - key: computer-architecture.core.virtual-memory-hardware.multi-level-page-table
         title: "다단계 페이지 테이블(Multi-Level Page Table)"
         order: 50
         level: 2
-        objective: "다단계 page table이 희소 주소 공간의 메모리를 절약하는 이유를 설명한다."
+        objective: "다단계 페이지 테이블이 희소 주소 공간의 메모리를 절약하는 이유를 설명한다."
         density: CORE
         visualization: DIAGRAM
       - key: computer-architecture.core.virtual-memory-hardware.page-size-huge-page
         title: "페이지 크기와 대형 페이지(Page Size and Huge Page)"
         order: 70
         level: 3
-        objective: "page size가 TLB reach와 단편화에 미치는 trade-off를 추론한다."
+        objective: "페이지 크기가 TLB reach와 단편화에 미치는 절충을 추론한다."
         density: STANDARD
         visualization: DIAGRAM
   - key: computer-architecture.core.multicore-memory
     title: "멀티코어와 메모리 상호작용(Multicore and Memory Interaction)"
     order: 80
-    scope: "shared memory, private/shared cache, coherence, false sharing과 hardware ordering을 다룬다."
-    boundary: "hardware coherence와 ordering을 다루며 Java Memory Model happens-before는 별도 계약으로 구분한다."
+    scope: "공유 메모리, 코어별·공유 캐시, 캐시 일관성, 거짓 공유와 하드웨어 메모리 순서를 다룬다."
+    boundary: "하드웨어 캐시 일관성과 메모리 순서를 다루며 Java Memory Model의 happens-before는 별도 계약으로 구분한다."
     concepts:
       - key: computer-architecture.core.multicore-memory.multicore-shared-memory
         title: "멀티코어 공유 메모리(Multicore Shared Memory)"
         order: 10
         level: 1
-        objective: "여러 core가 같은 memory를 읽고 쓰는 구조를 설명한다."
+        objective: "여러 코어가 같은 메모리를 읽고 쓰는 구조를 설명한다."
         density: CORE
         visualization: DIAGRAM
       - key: computer-architecture.core.multicore-memory.private-shared-cache
         title: "코어별 캐시와 공유 캐시(Private and Shared Cache)"
         order: 20
         level: 2
-        objective: "cache level의 private/shared 배치와 통신 비용을 비교한다."
+        objective: "캐시 계층의 코어별·공유 배치와 통신 비용을 비교한다."
         density: CORE
         visualization: DIAGRAM
       - key: computer-architecture.core.multicore-memory.cache-coherence-problem
         title: "캐시 일관성 문제(Cache Coherence Problem)"
         order: 30
         level: 2
-        objective: "한 core의 write가 다른 cache copy와 충돌하는 이유를 설명한다."
+        objective: "한 코어의 쓰기가 다른 캐시 복사본과 충돌하는 이유를 설명한다."
         density: CORE
         visualization: DIAGRAM
       - key: computer-architecture.core.multicore-memory.coherence-protocol-model
         title: "캐시 일관성 프로토콜(Coherence Protocol Model)"
         order: 40
         level: 3
-        objective: "line state와 invalidation/update 흐름으로 coherence를 추론한다."
+        objective: "라인 상태와 무효화·갱신 흐름으로 캐시 일관성을 추론한다."
         density: CORE
         visualization: DIAGRAM
       - key: computer-architecture.core.multicore-memory.false-sharing
         title: "거짓 공유(False Sharing)"
         order: 50
         level: 3
-        objective: "독립 변수도 같은 line이면 coherence traffic을 만드는 이유를 설명한다."
+        objective: "독립 변수도 같은 캐시 라인에 있으면 캐시 일관성 트래픽을 만드는 이유를 설명한다."
         density: CORE
         visualization: DIAGRAM
       - key: computer-architecture.core.multicore-memory.hardware-memory-reordering
         title: "하드웨어 메모리 순서(Hardware Memory Ordering)"
         order: 60
         level: 3
-        objective: "hardware ordering과 Java Memory Model happens-before를 분리해 설명한다."
+        objective: "하드웨어 메모리 순서와 Java Memory Model의 happens-before를 분리해 설명한다."
         density: CORE
         visualization: TEXT
   - key: computer-architecture.core.device-io
     title: "인터럽트와 장치 입출력(Interrupts and Device I/O)"
     order: 90
-    scope: "interrupt·exception·trap, MMIO, programmed I/O와 DMA를 다룬다."
-    boundary: "device와 CPU 사이 hardware 경로를 다루며 OS driver 정책은 다루지 않는다."
+    scope: "인터럽트·예외·트랩, MMIO, Programmed I/O와 DMA를 다룬다."
+    boundary: "장치와 CPU 사이의 하드웨어 경로를 다루며 OS 드라이버 정책은 다루지 않는다."
     concepts:
       - key: computer-architecture.core.device-io.interrupt-exception-trap
         title: "인터럽트·예외와 트랩(Interrupt, Exception and Trap)"
         order: 10
         level: 1
-        objective: "비동기 interrupt와 동기 exception/trap의 진입 원인을 구분한다."
+        objective: "비동기 인터럽트와 동기 예외·트랩의 진입 원인을 구분한다."
         density: CORE
         visualization: DIAGRAM
       - key: computer-architecture.core.device-io.interrupt-handler-entry
         title: "인터럽트 핸들러 진입(Interrupt Handler Entry)"
         order: 20
         level: 2
-        objective: "vector와 저장된 context를 통해 handler로 진입하는 경로를 설명한다."
+        objective: "벡터와 저장된 문맥을 통해 핸들러로 진입하는 경로를 설명한다."
         density: STANDARD
         visualization: TEXT
       - key: computer-architecture.core.device-io.programmed-io
         title: "프로그램 제어 입출력(Programmed I/O)"
         order: 30
         level: 2
-        objective: "CPU가 device register를 polling하며 직접 전송하는 비용을 설명한다."
+        objective: "CPU가 장치 레지스터를 폴링하며 직접 전송하는 비용을 설명한다."
         density: CORE
         visualization: TEXT
       - key: computer-architecture.core.device-io.memory-mapped-io
         title: "메모리 사상 입출력(Memory-Mapped I/O)"
         order: 40
         level: 1
-        objective: "device register를 주소 공간에 매핑하는 접근 경계를 설명한다."
+        objective: "장치 레지스터를 주소 공간에 매핑하는 접근 경계를 설명한다."
         density: CORE
         visualization: TEXT
       - key: computer-architecture.core.device-io.dma
         title: "직접 메모리 접근(DMA)"
         order: 50
         level: 2
-        objective: "DMA controller가 CPU 대신 memory 전송을 수행하는 흐름을 설명한다."
+        objective: "DMA 컨트롤러가 CPU 대신 메모리 전송을 수행하는 흐름을 설명한다."
         density: CORE
         visualization: DIAGRAM
       - key: computer-architecture.core.device-io.device-cpu-memory-path
         title: "장치·CPU·메모리 입출력 경로(Device, CPU and Memory Path)"
         order: 60
         level: 2
-        objective: "device·memory·CPU의 data path와 완료 interrupt를 비교한다."
+        objective: "장치·메모리·CPU의 데이터 경로와 완료 인터럽트를 비교한다."
         density: CORE
         visualization: DIAGRAM
   - key: computer-architecture.core.performance
     title: "하드웨어 성능 분석(Hardware Performance Reasoning)"
     order: 100
-    scope: "latency·throughput·CPU time·CPI·Amdahl과 benchmark 경계를 다룬다."
-    boundary: "하드웨어 성능 모델을 다루며 production observability 도구 자체는 다루지 않는다."
+    scope: "지연 시간·처리량·CPU 실행 시간·CPI·암달의 법칙과 벤치마크 경계를 다룬다."
+    boundary: "하드웨어 성능 모델을 다루며 운영 환경의 관측 도구 자체는 다루지 않는다."
     concepts:
       - key: computer-architecture.core.performance.latency-throughput
         title: "지연 시간과 처리량(Latency and Throughput)"
@@ -465,41 +465,41 @@ topics:
         title: "CPU 실행 시간(CPU Time)"
         order: 20
         level: 1
-        objective: "CPU time과 elapsed time, clock rate의 차이를 설명한다."
+        objective: "CPU 실행 시간과 경과 시간, 클록 주파수의 차이를 설명한다."
         density: CORE
         visualization: TEXT
       - key: computer-architecture.core.performance.instruction-count-cpi-clock
         title: "명령어 수·CPI·클록(Instruction Count, CPI and Clock)"
         order: 30
         level: 2
-        objective: "CPU time을 instruction count·CPI·clock cycle로 분해한다."
+        objective: "CPU 실행 시간을 명령어 수·CPI·클록 주기로 분해한다."
         density: CORE
         visualization: TEXT
       - key: computer-architecture.core.performance.amdahl-law
         title: "암달의 법칙(Amdahl's Law)"
         order: 40
         level: 2
-        objective: "가속 가능한 부분의 비율이 전체 speedup을 제한하는 이유를 계산한다."
+        objective: "가속 가능한 부분의 비율이 전체 속도 향상을 제한하는 이유를 계산한다."
         density: CORE
         visualization: DIAGRAM
       - key: computer-architecture.core.performance.cache-impact
         title: "캐시가 CPU 성능에 미치는 영향(Cache Impact)"
         order: 50
         level: 2
-        objective: "cache miss와 access pattern이 평균 성능에 미치는 영향을 추론한다."
+        objective: "캐시 미스와 접근 패턴이 평균 성능에 미치는 영향을 추론한다."
         density: CORE
         visualization: DIAGRAM
       - key: computer-architecture.core.performance.pipeline-branch-impact
         title: "파이프라인과 분기가 CPI에 미치는 영향(Pipeline and Branch Impact)"
         order: 60
         level: 2
-        objective: "branch penalty와 pipeline depth가 실행 시간에 미치는 영향을 설명한다."
+        objective: "분기 비용과 파이프라인 깊이가 실행 시간에 미치는 영향을 설명한다."
         density: STANDARD
         visualization: DIAGRAM
       - key: computer-architecture.core.performance.microbenchmark-boundary
         title: "마이크로벤치마크의 측정 경계(Microbenchmark Boundary)"
         order: 70
         level: 3
-        objective: "단일 benchmark 수치로 bottleneck을 단정할 수 없는 이유를 분석한다."
+        objective: "단일 벤치마크 수치로 병목을 단정할 수 없는 이유를 분석한다."
         density: CORE
         visualization: TEXT
