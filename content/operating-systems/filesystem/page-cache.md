@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.filesystem.page-cache
 topicContentKey: operating-systems.core.filesystem
 slug: page-cache
-title: "Page Cache"
+title: "페이지 캐시(Page Cache)"
 summary: "file-backed data를 memory에 유지해 storage I/O를 줄이는 대신 dirty write-back과 memory pressure를 만드는 흐름을 설명한다."
 level: 2
 status: PUBLISHED
@@ -24,7 +24,7 @@ references:
     recommendation: "Direct I/O로 OS page cache를 우회했을 때 cache miss와 memory-control trade-off가 어떻게 바뀌는지 실제 운영 사례로 확인한다."
     displayOrder: 2
 ---
-# Page Cache
+# 페이지 캐시(Page Cache)
 
 Page cache는 **file data를 physical memory에 보관해 반복되는 storage I/O를 줄이는 OS cache**다. File을 읽을 때 필요한 page가 이미 cache에 있으면 storage에서 다시 가져오지 않고 memory의 data를 사용할 수 있다.
 

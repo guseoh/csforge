@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.race-critical-section.spin-vs-block
 topicContentKey: operating-systems.core.race-critical-section
 slug: spin-vs-block
-title: "Spin / Block"
+title: "바쁜 대기와 블로킹(Spin and Blocking)"
 summary: "waiting 동안 CPU를 소비하는 spin과 scheduler에 CPU를 양보하는 blocking의 비용 모델을 비교한다."
 level: 2
 status: PUBLISHED
@@ -24,7 +24,7 @@ references:
     recommendation: "contended spin lock이 lock 상태를 반복 확인하며 CPU를 소비하는 동작을 확인한다."
     displayOrder: 2
 ---
-# Spin / Block
+# 바쁜 대기와 블로킹(Spin and Blocking)
 
 경쟁 중인 resource를 바로 얻지 못했을 때 실행 흐름은 기다려야 한다. 이때 대표적인 선택이 **spin**과 **block**이다.
 

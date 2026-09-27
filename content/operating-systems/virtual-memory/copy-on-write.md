@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.virtual-memory.copy-on-write
 topicContentKey: operating-systems.core.virtual-memory
 slug: copy-on-write
-title: "Copy-on-Write"
+title: "쓰기 시 복사(Copy-on-Write)"
 summary: "공유 physical page를 읽기에는 공유하고 첫 write에서 분리해 복제 비용을 지연하는 흐름을 설명한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "Linux fork가 분리된 address space를 copy-on-write page로 구현하는 경계를 확인한다."
     displayOrder: 1
 ---
-# Copy-on-Write
+# 쓰기 시 복사(Copy-on-Write)
 
 Copy-on-write(COW)는 **처음부터 data를 복제하지 않고 여러 mapping이 같은 physical page를 읽기 전용으로 공유하다가, 실제 write가 발생하는 순간 필요한 쪽만 복사하는 방식**이다.
 

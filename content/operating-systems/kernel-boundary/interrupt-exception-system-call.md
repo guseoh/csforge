@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.kernel-boundary.interrupt-exception-system-call
 topicContentKey: operating-systems.core.kernel-boundary
 slug: interrupt-exception-system-call
-title: "Interrupt·Exception·System Call 비교"
+title: "인터럽트·예외·시스템 콜(Interrupt, Exception, and System Call)"
 summary: "비동기 interrupt, 현재 instruction과 연관된 exception, application이 의도적으로 만든 system-call 요청을 발생 원인과 복귀 의미로 구분한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "ECALL, exception, interrupt, trap의 ISA 정의와 privilege 경계를 확인한다."
     displayOrder: 1
 ---
-# Interrupt·Exception·System Call 비교
+# 인터럽트·예외·시스템 콜(Interrupt, Exception, and System Call)
 
 Kernel handler로 control이 넘어간다는 공통점 때문에 interrupt, exception, system call을 같은 사건으로 부르기 쉽다. 하지만 세 가지는 **누가 발생시켰는지와 현재 instruction과 어떤 관계가 있는지**가 다르다.
 

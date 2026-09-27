@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.synchronization.semaphore
 topicContentKey: operating-systems.core.synchronization
 slug: semaphore
-title: "Semaphore"
+title: "세마포어(Semaphore)"
 summary: "counting permit로 동시 접근 수와 event handoff를 표현하는 semaphore semantics를 설명한다."
 level: 1
 status: PUBLISHED
@@ -24,7 +24,7 @@ references:
     recommendation: "POSIX semaphore의 count와 wait/post 기본 semantics를 확인한다."
     displayOrder: 2
 ---
-# Semaphore
+# 세마포어(Semaphore)
 
 Semaphore는 **사용 가능한 permit 수를 counter로 관리하는 synchronization primitive**다. Permit이 남아 있으면 실행 흐름이 하나를 획득해 진행하고, 모두 사용 중이면 새로운 요청은 permit이 반환될 때까지 기다린다.
 

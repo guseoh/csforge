@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.race-critical-section.race-condition
 topicContentKey: operating-systems.core.race-critical-section
 slug: race-condition
-title: "Race Condition"
+title: "경쟁 상태(Race Condition)"
 summary: "실행 순서에 따라 invariant와 결과가 달라지는 race condition을 data race와 구분한다."
 level: 1
 status: PUBLISHED
@@ -24,7 +24,7 @@ references:
     recommendation: "Java에서 conflicting access와 happens-before를 기준으로 data race를 정의하는 정확한 경계를 확인한다."
     displayOrder: 2
 ---
-# Race Condition
+# 경쟁 상태(Race Condition)
 
 Race condition은 둘 이상의 concurrent action의 **상대적인 실행 순서가 결과의 correctness를 바꾸는 상황**이다. 대부분의 실행에서는 정상 결과가 나오더라도 특정 interleaving에서 invariant가 깨진다면 race condition이 존재한다.
 

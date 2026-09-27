@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.threads.user-level-thread
 topicContentKey: operating-systems.core.threads
 slug: user-level-thread
-title: "User-Level Thread"
+title: "사용자 수준 스레드(User-Level Thread)"
 summary: "runtime이 logical thread를 scheduling하고 kernel thread에 multiplex하는 실행 모델을 설명한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "process 안에서 thread가 공유하는 주소 공간과 thread별 실행 context를 확인한다."
     displayOrder: 1
 ---
-# User-Level Thread
+# 사용자 수준 스레드(User-Level Thread)
 
 User-level thread는 **application runtime이나 library가 logical execution context와 scheduling을 관리하는 모델**이다. Logical thread 사이의 전환을 매번 kernel scheduler에 맡기지 않아도 되므로 생성·전환 비용을 줄이고 많은 logical task를 더 적은 수의 kernel-visible thread 위에 올릴 수 있다.
 

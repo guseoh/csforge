@@ -3,21 +3,21 @@ kind: concept
 contentKey: operating-systems.core.process.pcb
 topicContentKey: operating-systems.core.process
 slug: pcb
-title: "Process Control Block"
+title: "프로세스 제어 블록(PCB)"
 summary: "kernel이 process identity·execution state·scheduling·resource relation을 추적하는 metadata 역할을 설명한다."
 level: 2
 status: PUBLISHED
 displayOrder: 30
 references:
   - url: "https://docs.kernel.org/scheduler/sched-arch.html"
-    title: "Linux Scheduler Architecture"
+    title: "CPU Scheduler implementation hints for architecture specific code"
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "scheduler와 task state/context 전환이 kernel execution metadata와 연결되는 관점을 확인한다."
+    recommendation: "Linux의 architecture-specific switch_to()와 runqueue lock 처리를 context-switch 구현 사례로 확인한다."
     displayOrder: 1
 ---
-# Process Control Block
+# 프로세스 제어 블록(PCB)
 
 운영체제가 process를 CPU에서 잠시 멈췄다가 나중에 다시 실행하려면 실행 위치뿐 아니라 process의 identity, scheduling state와 resource relation을 기억해야 한다. 교과서에서는 이런 kernel-side metadata의 개념적 묶음을 **PCB(Process Control Block)**라고 부른다.
 

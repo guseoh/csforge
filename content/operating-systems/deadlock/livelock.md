@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.deadlock.livelock
 topicContentKey: operating-systems.core.deadlock
 slug: livelock
-title: "Livelock"
+title: "라이브락(Livelock)"
 summary: "execution은 계속 움직이지만 서로의 반응 때문에 유효한 work가 완료되지 않는 livelock을 설명한다."
 level: 2
 status: PUBLISHED
@@ -24,7 +24,7 @@ references:
     recommendation: "Java concurrency 예시를 통해 starvation과 livelock의 liveness 차이를 확인한다."
     displayOrder: 2
 ---
-# Livelock
+# 라이브락(Livelock)
 
 Livelock에서는 실행 흐름이 blocked 상태로 멈춰 있지 않다. 계속 retry하거나 양보하고 state도 바뀌지만, **서로의 반응이 반복되면서 실제 목표 작업은 완료되지 않는다.**
 

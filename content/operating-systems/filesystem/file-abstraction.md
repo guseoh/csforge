@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.filesystem.file-abstraction
 topicContentKey: operating-systems.core.filesystem
 slug: file-abstraction
-title: "File Abstraction"
+title: "파일 추상화(File Abstraction)"
 summary: "persistent byte sequence와 metadata를 file로 추상화하고 pathname·open state와 구분하는 이유를 설명한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "file, pathname, descriptor, shared open-file state를 Unix file-system API 흐름으로 확인한다."
     displayOrder: 1
 ---
-# File Abstraction
+# 파일 추상화(File Abstraction)
 
 Filesystem에서 regular file은 application이 persistent data를 **연속된 byte sequence와 metadata를 가진 object**로 다룰 수 있게 하는 abstraction이다. File의 이름(pathname), process가 연 뒤 사용하는 descriptor, kernel의 open state는 이 file object와 서로 다른 역할을 가진다.
 

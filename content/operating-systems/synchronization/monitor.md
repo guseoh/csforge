@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.synchronization.monitor
 topicContentKey: operating-systems.core.synchronization
 slug: monitor
-title: "Monitor"
+title: "모니터(Monitor)"
 summary: "shared state와 mutual exclusion, condition wait를 하나의 synchronization abstraction으로 묶는 monitor를 설명한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "condition variable이 mutex와 함께 predicate wait/signal protocol을 구성하는 방식을 확인한다."
     displayOrder: 1
 ---
-# Monitor
+# 모니터(Monitor)
 
 Lock과 condition variable을 여러 caller가 제각각 조합하면 어떤 state를 어느 lock 아래에서 바꿔야 하는지, 어떤 condition을 언제 signal해야 하는지가 쉽게 흩어진다. **Monitor는 shared state, 그 state를 조작하는 operation, mutual exclusion과 condition waiting protocol을 하나의 abstraction 안에 묶는 방식**이다.
 

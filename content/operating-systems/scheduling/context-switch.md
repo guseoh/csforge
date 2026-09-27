@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.scheduling.context-switch
 topicContentKey: operating-systems.core.scheduling
 slug: context-switch
-title: "Context Switch"
+title: "문맥 전환(Context Switch)"
 summary: "CPU가 한 execution context에서 다른 runnable task의 context로 전환될 때 저장·복원되는 상태와 비용을 설명한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "timer interrupt를 이용해 OS가 running process로부터 CPU control을 다시 얻는 mechanism을 확인한다."
     displayOrder: 1
 ---
-# Context Switch
+# 문맥 전환(Context Switch)
 
 CPU core 하나는 한 순간에 하나의 실행 흐름만 실제로 수행한다. 여러 task가 CPU를 나눠 쓰려면 운영체제는 현재 실행 중인 task를 잠시 멈추고, 나중에 같은 지점에서 다시 이어서 실행할 수 있어야 한다. 이때 현재 task의 실행 상태를 저장하고 다른 runnable task의 상태를 복원하는 전환이 **context switch**다.
 

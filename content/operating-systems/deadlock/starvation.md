@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.deadlock.starvation
 topicContentKey: operating-systems.core.deadlock
 slug: starvation
-title: "Starvation"
+title: "기아(Starvation)"
 summary: "system은 progress하지만 특정 execution만 자원·CPU 기회를 계속 얻지 못하는 starvation을 설명한다."
 level: 2
 status: PUBLISHED
@@ -24,7 +24,7 @@ references:
     recommendation: "Java concurrency 예시를 통해 starvation과 livelock의 liveness 차이를 확인한다."
     displayOrder: 2
 ---
-# Starvation
+# 기아(Starvation)
 
 Starvation은 **시스템 전체는 계속 progress하지만 특정 execution만 필요한 CPU나 resource 기회를 계속 얻지 못하는 liveness 문제**다.
 

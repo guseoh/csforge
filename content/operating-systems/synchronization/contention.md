@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.synchronization.contention
 topicContentKey: operating-systems.core.synchronization
 slug: contention
-title: "Contention"
+title: "잠금 경합(Lock Contention)"
 summary: "여러 execution이 같은 synchronization resource를 경쟁할 때 queueing과 처리량이 악화되는 과정을 설명한다."
 level: 2
 status: PUBLISHED
@@ -24,7 +24,7 @@ references:
     recommendation: "실제 서버에서 lock contention을 추적하고 임계 구간을 줄여 성능을 개선한 사례를 확인한다."
     displayOrder: 2
 ---
-# Contention
+# 잠금 경합(Lock Contention)
 
 Synchronization primitive가 존재한다고 해서 항상 성능 문제가 생기는 것은 아니다. **Contention은 여러 실행 흐름이 같은 제한된 synchronization resource를 동시에 원해 실제 wait, spin 또는 retry가 발생하는 상태**다.
 

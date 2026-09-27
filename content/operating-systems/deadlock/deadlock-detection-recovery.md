@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.deadlock.deadlock-detection-recovery
 topicContentKey: operating-systems.core.deadlock
 slug: deadlock-detection-recovery
-title: "Detection·Recovery"
+title: "교착 탐지와 복구(Deadlock Detection and Recovery)"
 summary: "deadlock을 허용한 뒤 dependency를 탐지하고 victim abort·rollback·resource 회수로 progress를 복구하는 전략을 설명한다."
 level: 2
 status: PUBLISHED
@@ -24,7 +24,7 @@ references:
     recommendation: "JVM thread dump에서 lock owner와 waiter를 연결해 deadlock cycle을 해석하는 실제 사례를 확인한다."
     displayOrder: 2
 ---
-# Detection·Recovery
+# 교착 탐지와 복구(Deadlock Detection and Recovery)
 
 Detection 전략은 resource allocation을 미리 강하게 제한하지 않고, **실제로 deadlock dependency가 생겼는지 관찰한 뒤 cycle을 끊어 progress를 복구하는 방식**이다.
 

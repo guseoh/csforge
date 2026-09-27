@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.virtual-memory.demand-paging
 topicContentKey: operating-systems.core.virtual-memory
 slug: demand-paging
-title: "Demand Paging"
+title: "요구 페이징(Demand Paging)"
 summary: "실제 접근할 때까지 page의 resident 준비를 미루는 이유와 첫 접근 비용을 설명한다."
 level: 2
 status: PUBLISHED
@@ -24,7 +24,7 @@ references:
     recommendation: "Linux mmap의 lazy population과 MAP_POPULATE 같은 explicit prefault 선택지를 구분한다."
     displayOrder: 2
 ---
-# Demand Paging
+# 요구 페이징(Demand Paging)
 
 Demand paging은 process의 모든 page를 시작할 때부터 physical memory에 준비하지 않고, **실제로 접근한 page를 필요 시점에 resident하게 만드는 정책**이다. 사용하지 않는 code나 data에 미리 frame과 I/O를 쓰지 않으므로 physical-memory 사용과 초기 준비 비용을 줄일 수 있다.
 

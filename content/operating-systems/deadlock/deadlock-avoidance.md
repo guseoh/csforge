@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.deadlock.deadlock-avoidance
 topicContentKey: operating-systems.core.deadlock
 slug: deadlock-avoidance
-title: "Deadlock Avoidance"
+title: "교착 회피(Deadlock Avoidance)"
 summary: "미래 최대 요구량을 이용해 요청 승인 후에도 safe state를 유지하는 avoidance를 설명한다."
 level: 3
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "resource-allocation graph, safe state, Banker avoidance와 deadlock detection/recovery를 확인한다."
     displayOrder: 1
 ---
-# Deadlock Avoidance
+# 교착 회피(Deadlock Avoidance)
 
 Deadlock avoidance는 Coffman 조건을 없애지 않는다. 대신 새로운 resource 요청을 승인했을 때도 **모든 process가 어떤 순서로든 끝날 수 있는 safe state가 유지되는지** 확인한 뒤 요청을 허용한다.
 

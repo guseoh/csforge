@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.ipc.signal
 topicContentKey: operating-systems.core.ipc
 slug: signal
-title: "Signal"
+title: "시그널(Signal)"
 summary: "작은 비동기 notification과 handler 실행의 제한을 설명한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "signal disposition, mask, pending state와 handler delivery semantics를 확인한다."
     displayOrder: 1
 ---
-# Signal
+# 시그널(Signal)
 
 Signal은 process나 thread에 **작은 비동기 사건을 알리는 제어 메커니즘**이다. 종료 요청, child 상태 변화, terminal event, timer 같은 사건을 전달할 수 있지만 일반적인 byte stream이나 대용량 message channel을 대신하는 IPC는 아니다.
 
@@ -34,3 +34,17 @@ Signal handler는 정상 instruction flow 중 비동기적으로 실행될 수 �
 ### Standard signal은 message queue가 아니다
 
 같은 standard signal이 여러 번 발생했다고 각 occurrence가 모두 독립 message처럼 queueing된다고 가정할 수 없다. Signal의 핵심은 **작은 비동기 제어 사건을 전달하는 것**이며, ordered message stream이나 durable queue semantics를 제공하는 것이 아니다.
+
+### 흐름으로 보기
+
+```text
+signal 발생
+    │
+    ├─ signal이 blocked ─→ pending 상태로 대기 ─┐
+    │                                           │ mask 해제
+    └─ signal이 unblocked ──────────────────────┤
+                                                ▼
+                                  handler 또는 default action
+```
+
+Pending 상태는 signal delivery가 미뤄졌다는 뜻이며, 일반적인 message queue처럼 occurrence별 payload를 보존하지 않는다.

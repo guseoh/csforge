@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.process.process-create
 topicContentKey: operating-systems.core.process
 slug: process-create
-title: "Process Creation"
+title: "프로세스 생성(Process Creation)"
 summary: "새 process를 만들 때 execution identity·address space·resource relation이 어떻게 초기화되는지 설명한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "Linux fork가 분리된 address space를 copy-on-write page로 구현하는 경계를 확인한다."
     displayOrder: 1
 ---
-# Process Creation
+# 프로세스 생성(Process Creation)
 
 새 process를 만든다는 것은 code file을 한 번 더 복사하는 일이 아니다. 운영체제는 새로운 process identity와 scheduling 대상, address-space relation, resource reference를 만들고 parent와 child 사이에 무엇을 복제하거나 연결할지 정한다.
 

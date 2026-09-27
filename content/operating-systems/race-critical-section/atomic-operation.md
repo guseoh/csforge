@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.race-critical-section.atomic-operation
 topicContentKey: operating-systems.core.race-critical-section
 slug: atomic-operation
-title: "Atomic Operation"
+title: "원자적 연산(Atomic Operation)"
 summary: "중간 상태가 관찰되지 않는 atomic transition과 visibility·ordering·복합 invariant의 경계를 설명한다."
 level: 2
 status: PUBLISHED
@@ -24,7 +24,7 @@ references:
     recommendation: "Linux futex가 atomic user-space state와 kernel blocking/wakeup을 연결하는 방식을 확인한다."
     displayOrder: 2
 ---
-# Atomic Operation
+# 원자적 연산(Atomic Operation)
 
 Atomic operation은 concurrent execution에서 **중간 상태가 다른 실행 흐름에 노출되지 않는 하나의 indivisible state transition처럼 보이는 연산**이다.
 
@@ -47,3 +47,15 @@ Atomic operation은 concurrent execution에서 **중간 상태가 다른 실행 
 Counter 하나의 증가라면 하나의 atomic read-modify-write로 충분할 수 있다. 하지만 여러 field가 함께 바뀌어야 하나의 invariant가 유지된다면 각 field를 개별적으로 atomic하게 만드는 것만으로 전체 transition이 atomic해지지는 않는다.
 
 Atomic Operation의 핵심은 **primitive가 계약한 범위의 state transition을 indivisible하게 만들 뿐이며, 보호해야 할 invariant가 더 크다면 그 범위를 덮는 별도의 synchronization protocol이 필요하다는 점**이다.
+
+### 흐름으로 보기
+
+```text
+비원자적 증가의 한 실행 순서
+Thread A: read 10 ───────── write 11
+Thread B:      read 10 ───────── write 11
+결과: 11  (두 번 증가했지만 한 번의 갱신이 사라짐)
+
+원자적 증가
+10 → 11 → 12
+```

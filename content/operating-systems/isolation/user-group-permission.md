@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.isolation.user-group-permission
 topicContentKey: operating-systems.core.isolation
 slug: user-group-permission
-title: "User, Group·Permission"
+title: "사용자·그룹·권한(User, Group, and Permission)"
 summary: "owner·group·mode permission이 resource 접근을 제한하는 과정을 설명한다."
 level: 1
 status: PUBLISHED
@@ -24,7 +24,7 @@ references:
     recommendation: "directory traversal와 각 pathname component의 search permission 경계를 확인한다."
     displayOrder: 2
 ---
-# User, Group·Permission
+# 사용자·그룹·권한(User, Group, and Permission)
 
 Unix-like OS는 process가 가진 credential과 filesystem object의 permission을 비교해 access를 허용하거나 거부한다. 기본 mode bit는 owner, group, other에 대해 read·write·execute 권한을 표현하며, 실제 판정에는 process의 effective user/group 정보가 사용된다.
 
@@ -43,3 +43,10 @@ Process는 user ID와 group 정보를 가진다. Supplementary group, capability
 Path를 알고 있거나 namespace 안에서 object를 볼 수 있다고 실제 access가 허용되는 것은 아니다. Namespace는 무엇을 보느냐를, permission은 그 resource에 어떤 operation을 할 수 있느냐를 다룬다.
 
 이 Concept의 핵심은 **process credential과 object permission을 비교해 resource access를 제한하며, directory traversal과 file content permission의 의미가 서로 다르다는 것**이다.
+
+### 권한 bit의 의미
+
+| 대상 | read | write | execute |
+| --- | --- | --- | --- |
+| 일반 파일 | 내용 읽기 | 내용 변경 | 실행 가능 여부 |
+| 디렉터리 | entry 목록 조회 | entry 생성·삭제 | 경로 탐색(search, traversal) |

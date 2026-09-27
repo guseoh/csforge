@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.kernel-boundary.system-call-flow
 topicContentKey: operating-systems.core.kernel-boundary
 slug: system-call-flow
-title: "System Call Flow"
+title: "시스템 콜 흐름(System Call Flow)"
 summary: "user 요청이 controlled kernel entry를 지나 argument validation·service 실행·return으로 이어지는 상태 변화를 설명한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "Linux system-call ABI가 architecture별로 다른 instruction과 register convention을 사용하는 점을 확인한다."
     displayOrder: 1
 ---
-# System Call Flow
+# 시스템 콜 흐름(System Call Flow)
 
 System call은 단순히 `user mode에서 kernel mode로 바뀐다`는 한 단계가 아니다. User space에서 요청을 준비하고, controlled entry를 지나 kernel이 argument를 검증하고 service를 실행한 뒤 결과를 다시 user space에 반환하는 흐름으로 볼 수 있다.
 

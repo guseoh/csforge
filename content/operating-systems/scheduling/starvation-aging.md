@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.scheduling.starvation-aging
 topicContentKey: operating-systems.core.scheduling
 slug: starvation-aging
-title: "Starvation·Aging"
+title: "기아와 에이징(Starvation and Aging)"
 summary: "runnable task가 service를 받지 못하는 starvation과 waiting time 기반 priority 보정의 원리를 설명한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "priority boost가 long-running job starvation을 방지하는 scheduler 설계 이유를 확인한다."
     displayOrder: 1
 ---
-# Starvation·Aging
+# 기아와 에이징(Starvation and Aging)
 
 Starvation은 task가 **실행 가능한 runnable 상태인데도 scheduling policy 때문에 오랫동안 CPU service를 받지 못하는 현상**이다. System 전체는 계속 다른 task를 실행하며 진행할 수 있기 때문에 deadlock과는 다르다.
 

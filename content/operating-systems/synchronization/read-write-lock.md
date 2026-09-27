@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.synchronization.read-write-lock
 topicContentKey: operating-systems.core.synchronization
 slug: read-write-lock
-title: "Read-Write Lock"
+title: "읽기-쓰기 잠금(Read-Write Lock)"
 summary: "여러 reader를 허용하고 writer를 배타화하는 read-write lock의 이득과 starvation 비용을 설명한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "reader/writer lock에서 여러 reader와 writer exclusion의 기본 semantics를 확인한다."
     displayOrder: 1
 ---
-# Read-Write Lock
+# 읽기-쓰기 잠금(Read-Write Lock)
 
 모든 접근을 하나의 mutex로 직렬화하면 단순하지만, state를 바꾸지 않는 read끼리도 서로 기다리게 된다. Read-write lock은 **여러 reader의 동시 접근은 허용하고, writer는 reader와 다른 writer 모두에 대해 배타적으로 실행되도록 하는 primitive**다.
 

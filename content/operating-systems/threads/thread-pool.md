@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.threads.thread-pool
 topicContentKey: operating-systems.core.threads
 slug: thread-pool
-title: "Thread Pool"
+title: "스레드 풀(Thread Pool)"
 summary: "worker 재사용·queue·rejection·shutdown을 하나의 bounded execution system으로 설명한다."
 level: 1
 status: PUBLISHED
@@ -15,7 +15,7 @@ references:
     language: en
     displayOrder: 1
 ---
-# Thread Pool
+# 스레드 풀(Thread Pool)
 
 Thread pool은 작업마다 새 platform thread를 만들지 않고 **미리 준비한 worker를 재사용**하는 실행 구조다. 생성·종료 비용을 줄이는 효과도 있지만, 더 중요한 역할은 동시에 실행할 work의 수를 제한하는 데 있다.
 

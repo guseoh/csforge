@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.io.device-io-kernel-path
 topicContentKey: operating-systems.core.io
 slug: device-io-kernel-path
-title: "Device I/O Kernel Path"
+title: "장치 입출력의 커널 경로(Device I/O Kernel Path)"
 summary: "application I/O 요청이 kernel object·driver·device를 거쳐 completion으로 돌아오는 책임 경계를 설명한다."
 level: 1
 status: PUBLISHED
@@ -24,7 +24,7 @@ references:
     recommendation: "Linux network I/O에서 NIC interrupt, NAPI polling, softirq와 driver가 연결되는 실제 사례를 확인한다."
     displayOrder: 2
 ---
-# Device I/O Kernel Path
+# 장치 입출력의 커널 경로(Device I/O Kernel Path)
 
 Application은 보통 storage controller나 NIC register를 직접 조작하지 않는다. File descriptor와 system call 같은 OS interface를 통해 요청을 kernel에 전달하고, kernel object·filesystem/network layer와 device driver가 hardware-specific 동작을 처리한다.
 

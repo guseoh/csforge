@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.filesystem.filesystem-block
 topicContentKey: operating-systems.core.filesystem
 slug: filesystem-block
-title: "File-System Block"
+title: "파일 시스템 블록(File-System Block)"
 summary: "logical file offset을 filesystem allocation unit에 배치하고 VM page·device sector와 구분하는 이유를 설명한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "inode, directory entry, data block, allocation 구조가 file-system access path를 만드는 방식을 확인한다."
     displayOrder: 1
 ---
-# File-System Block
+# 파일 시스템 블록(File-System Block)
 
 Application은 file을 연속된 byte sequence로 보지만 filesystem은 persistent data를 관리하기 위해 일정한 크기의 **block 단위**로 나누어 배치한다. File의 logical offset은 어느 logical block과 그 block 내부 위치인지로 나눌 수 있고, filesystem metadata가 logical block을 실제 storage 위치에 연결한다.
 

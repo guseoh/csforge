@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.scheduling.priority-scheduling
 topicContentKey: operating-systems.core.scheduling
 slug: priority-scheduling
-title: "Priority Scheduling"
+title: "우선순위 스케줄링(Priority Scheduling)"
 summary: "priority가 runnable task 선택에 미치는 영향과 starvation·priority inversion 경계를 구분한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "priority boost가 long-running job starvation을 방지하는 scheduler 설계 이유를 확인한다."
     displayOrder: 1
 ---
-# Priority Scheduling
+# 우선순위 스케줄링(Priority Scheduling)
 
 Priority scheduling은 여러 runnable task 중 **더 높은 scheduling priority를 가진 task에 CPU service를 먼저 제공**하는 정책이다. 모든 작업을 같은 중요도로 다루지 않고 긴급도나 workload 성격을 scheduling decision에 반영할 수 있다.
 

@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.threads.thread-count-workload
 topicContentKey: operating-systems.core.threads
 slug: thread-count-workload
-title: "Thread Count·Workload"
+title: "작업 부하별 스레드 수(Thread Count by Workload)"
 summary: "CPU-bound·blocking workload과 downstream capacity로 적정 thread 수를 추론한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "process 안에서 thread가 공유하는 주소 공간과 thread별 실행 context를 확인한다."
     displayOrder: 1
 ---
-# Thread Count·Workload
+# 작업 부하별 스레드 수(Thread Count by Workload)
 
 적절한 thread 수는 하나의 공식으로 정할 수 없다. **CPU를 계속 사용하는 작업인지, 자주 blocking되는 작업인지**에 따라 runnable thread가 실제 CPU를 사용하는 방식이 달라지기 때문이다.
 

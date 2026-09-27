@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.deadlock.deadlock
 topicContentKey: operating-systems.core.deadlock
 slug: deadlock
-title: "Deadlock"
+title: "교착 상태(Deadlock)"
 summary: "여러 execution이 서로 보유한 resource를 기다려 누구도 progress하지 못하는 dependency cycle을 설명한다."
 level: 1
 status: PUBLISHED
@@ -31,7 +31,7 @@ references:
     recommendation: "JVM thread dump에서 lock owner와 waiter를 연결해 deadlock cycle을 해석하는 실제 사례를 확인한다."
     displayOrder: 3
 ---
-# Deadlock
+# 교착 상태(Deadlock)
 
 Deadlock은 둘 이상의 실행 흐름이 **서로가 보유한 resource를 기다리면서 참여자 누구도 스스로 다음 단계로 진행할 수 없는 상태**다.
 

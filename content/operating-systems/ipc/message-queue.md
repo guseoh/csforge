@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.ipc.message-queue
 topicContentKey: operating-systems.core.ipc
 slug: message-queue
-title: "Message Queue"
+title: "메시지 큐(Message Queue)"
 summary: "kernel이 message 경계를 보존하는 queue와 copy 비용을 설명한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "POSIX message queue의 message boundary, priority, blocking/non-blocking와 lifetime을 확인한다."
     displayOrder: 1
 ---
-# Message Queue
+# 메시지 큐(Message Queue)
 
 OS-level message queue는 process가 kernel이 관리하는 queue에 **message 단위로 data를 넣고 꺼내는 IPC**다. Pipe가 byte stream이라 application이 framing을 직접 정의해야 하는 것과 달리, message queue는 queue abstraction 자체가 message boundary를 보존한다.
 
@@ -36,3 +36,13 @@ POSIX message queue처럼 message priority를 지원하는 interface가 있을 �
 Message queue는 message boundary와 queue ownership을 kernel이 관리해 communication protocol을 단순하게 만들 수 있지만 payload copy와 queue capacity 비용이 있다. Shared memory는 큰 data copy를 줄일 수 있지만 synchronization과 layout을 process들이 직접 설계해야 한다.
 
 OS message queue의 핵심은 **kernel이 discrete message와 bounded queue를 관리한다는 것**이며, 외부 broker의 durability·redelivery·consumer-group semantics와는 다른 층의 개념이다.
+
+### 흐름으로 보기
+
+```text
+Producer ── message A, message B ──→ bounded kernel queue ──→ Consumer
+                                      경계 보존
+                                      capacity 제한
+```
+
+Queue가 가득 찼을 때 기다릴지 즉시 실패할지는 사용 중인 queue API와 blocking 설정에 달려 있다.

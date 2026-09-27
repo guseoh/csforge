@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.deadlock.coffman-conditions
 topicContentKey: operating-systems.core.deadlock
 slug: coffman-conditions
-title: "Coffman Conditions"
+title: "코프먼 조건(Coffman Conditions)"
 summary: "deadlock이 가능하려면 동시에 성립해야 하는 네 필요 조건을 resource protocol과 연결한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "deadlock의 dependency cycle, Coffman conditions와 prevention 전략을 확인한다."
     displayOrder: 1
 ---
-# Coffman Conditions
+# 코프먼 조건(Coffman Conditions)
 
 Classical resource deadlock이 발생하려면 네 가지 조건이 함께 성립해야 한다. 이 조건들은 deadlock을 외우기 위한 목록이라기보다 **현재 resource protocol의 어느 성질이 cycle을 가능하게 만드는지** 찾는 도구다.
 

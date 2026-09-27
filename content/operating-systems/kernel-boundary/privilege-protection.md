@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.kernel-boundary.privilege-protection
 topicContentKey: operating-systems.core.kernel-boundary
 slug: privilege-protection
-title: "Privilege와 Protection"
+title: "특권과 보호(Privilege and Protection)"
 summary: "CPU privilege와 memory permission이 낮은 권한의 실행 주체가 kernel과 다른 process 자원을 침범하지 못하게 하는 방식을 설명한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "privilege level이 software stack 사이의 protection을 제공하고 허용되지 않은 동작이 exception을 일으키는 구조를 확인한다."
     displayOrder: 1
 ---
-# Privilege와 Protection
+# 특권과 보호(Privilege and Protection)
 
 User/kernel mode가 실제 보호 경계가 되려면 낮은 권한의 code가 금지된 operation을 시도했을 때 CPU와 MMU가 이를 막을 수 있어야 한다.
 

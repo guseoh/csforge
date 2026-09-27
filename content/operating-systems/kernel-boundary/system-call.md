@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.kernel-boundary.system-call
 topicContentKey: operating-systems.core.kernel-boundary
 slug: system-call
-title: "System Call"
+title: "시스템 콜(System Call)"
 summary: "user application이 kernel이 소유한 service를 요청하는 명시적인 OS interface를 설명한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "OS와 kernel service의 경계를 확인한다."
     displayOrder: 1
 ---
-# System Call
+# 시스템 콜(System Call)
 
 User mode application은 file system, socket, process creation, virtual-memory mapping처럼 kernel이 관리하는 자원을 직접 조작할 수 없다. 이런 기능이 필요할 때 application은 운영체제가 제공하는 **system call interface**를 통해 kernel service를 요청한다.
 

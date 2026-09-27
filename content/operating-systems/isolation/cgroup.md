@@ -41,3 +41,15 @@ CPU quota는 runnable task가 있어도 일정 기간 throttling을 만들 수 �
 ### Namespace와 역할이 다르다
 
 Namespace는 PID, mount, network처럼 process가 보는 resource의 이름 공간을 분리하고, cgroup은 CPU·memory·I/O 사용량을 측정하고 제한한다. Container 환경에서는 두 mechanism이 함께 사용될 수 있지만 **visibility isolation과 resource control은 서로 다른 책임**이다.
+
+### 흐름으로 보기
+
+```text
+Process A ─┐
+Process B ─┴──→ cgroup
+                  ├─ CPU controller: quota / weight
+                  ├─ memory controller: accounting / limit
+                  └─ I/O controller: resource policy
+```
+
+Namespace는 process가 보는 이름과 resource view를 나누고, cgroup은 묶인 process들의 resource 사용을 측정·제어한다.

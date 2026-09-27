@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.virtual-memory.virtual-address-space
 topicContentKey: operating-systems.core.virtual-memory
 slug: virtual-address-space
-title: "Virtual Address Space"
+title: "가상 주소 공간(Virtual Address Space)"
 summary: "process마다 독립적인 memory view를 제공하는 virtual address space의 illusion·isolation·mapping 경계를 설명한다."
 level: 1
 status: PUBLISHED
@@ -24,7 +24,7 @@ references:
     recommendation: "하나의 physical memory를 여러 virtual address view에 매핑하는 JVM 사례를 통해 virtual/physical mapping을 구체적으로 확인한다. OS 일반 계약이 아니라 JVM/Linux 활용 사례로 본다."
     displayOrder: 2
 ---
-# Virtual Address Space
+# 가상 주소 공간(Virtual Address Space)
 
 Virtual address space는 process가 memory를 바라보는 **자신만의 논리적 주소 공간**이다. Process는 code, data, heap, stack과 여러 mapping을 virtual address로 사용하고, 운영체제는 각 virtual page가 어떤 physical memory나 backing object와 연결되는지 관리한다.
 

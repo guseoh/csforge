@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.ipc.shared-memory
 topicContentKey: operating-systems.core.ipc
 slug: shared-memory
-title: "Shared Memory"
+title: "공유 메모리(Shared Memory)"
 summary: "여러 process address space가 같은 backing memory를 매핑할 때 copy 비용과 synchronization 책임이 어떻게 바뀌는지 설명한다."
 level: 2
 status: PUBLISHED
@@ -24,7 +24,7 @@ references:
     recommendation: "Android Binder가 프로세스 경계에서 copy 비용과 kernel-mediated IPC를 어떻게 다루는지 비교 사례로 확인한다."
     displayOrder: 2
 ---
-# Shared Memory
+# 공유 메모리(Shared Memory)
 
 Shared memory IPC는 서로 다른 process의 virtual address space에 **같은 backing memory를 매핑**해 data를 직접 공유하게 한다. Pipe나 socket처럼 sender가 kernel buffer에 bytes를 쓰고 receiver가 다시 읽는 stream path를 줄일 수 있어 큰 payload를 자주 교환하는 경우 copy 비용 측면에서 유리할 수 있다.
 

@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.synchronization.condition-variable
 topicContentKey: operating-systems.core.synchronization
 slug: condition-variable
-title: "Condition Variable"
+title: "조건 변수(Condition Variable)"
 summary: "shared predicate가 참이 될 때까지 lock을 놓고 기다린 뒤 다시 검사하는 condition-variable protocol을 설명한다."
 level: 2
 status: PUBLISHED
@@ -24,7 +24,7 @@ references:
     recommendation: "condition wait가 mutex release·대기·재획득을 연결하는 POSIX semantics를 확인한다."
     displayOrder: 2
 ---
-# Condition Variable
+# 조건 변수(Condition Variable)
 
 Mutex는 critical section의 동시 진입을 막지만, `queue가 비어 있지 않다`처럼 **shared state가 특정 조건을 만족할 때까지 기다리는 문제**를 직접 표현하지는 않는다. Condition variable은 이런 predicate가 바뀔 때까지 실행 흐름을 재우고, state가 변했을 때 다시 검사할 기회를 주는 primitive다.
 

@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.scheduling.multicore-affinity
 topicContentKey: operating-systems.core.scheduling
 slug: multicore-affinity
-title: "Multicore Affinity"
+title: "멀티코어 친화도(Multicore Affinity)"
 summary: "task migration을 줄이는 cache locality와 CPU load balance 사이의 affinity trade-off를 설명한다."
 level: 3
 status: PUBLISHED
@@ -24,7 +24,7 @@ references:
     recommendation: "Linux에서 thread affinity mask가 실행 가능한 CPU 집합을 제한하고 migration에 어떤 영향을 주는지 확인한다."
     displayOrder: 2
 ---
-# Multicore Affinity
+# 멀티코어 친화도(Multicore Affinity)
 
 여러 CPU core가 있는 시스템에서는 scheduler가 **어떤 task를 실행할지**뿐 아니라 **어느 CPU에서 실행할지**도 결정해야 한다. 최근 실행하던 CPU에서 같은 task를 다시 실행하면 가까운 cache에 남은 working set을 재사용할 가능성이 있지만, locality만 지키다 보면 특정 CPU에 runnable task가 몰리고 다른 CPU는 놀 수 있다.
 

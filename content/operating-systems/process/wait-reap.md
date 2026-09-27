@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.process.wait-reap
 topicContentKey: operating-systems.core.process
 slug: wait-reap
-title: "Wait와 Reap"
+title: "자식 프로세스 대기와 회수(Wait and Reap)"
 summary: "parent가 child의 state change를 기다리고 종료 status를 수집해 남은 process metadata를 회수하는 이유를 설명한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "wait 계열 호출이 child state change를 기다리고 terminated child를 reap하는 semantics를 확인한다."
     displayOrder: 1
 ---
-# Wait와 Reap
+# 자식 프로세스 대기와 회수(Wait and Reap)
 
 Child process가 종료되면 parent가 그 결과를 확인할 수 있도록 termination status와 최소한의 metadata가 남을 수 있다. Parent는 `wait` 계열 interface를 사용해 child의 state change를 확인하고 종료 정보를 수집한다. 이 metadata 회수를 보통 **reap**이라고 한다.
 

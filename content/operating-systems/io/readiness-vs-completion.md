@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.io.readiness-vs-completion
 topicContentKey: operating-systems.core.io
 slug: readiness-vs-completion
-title: "Readiness / Completion"
+title: "준비 알림과 완료 통지(Readiness and Completion)"
 summary: "I/O를 지금 시도할 수 있다는 readiness와 이미 제출한 operation의 결과가 나온 completion을 구분한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "Linux readiness model에서 interest list와 ready list, level/edge-triggered semantics를 확인한다."
     displayOrder: 1
 ---
-# Readiness / Completion
+# 준비 알림과 완료 통지(Readiness and Completion)
 
 Readiness와 completion은 모두 I/O event를 알려주지만 **event가 의미하는 상태가 다르다.**
 

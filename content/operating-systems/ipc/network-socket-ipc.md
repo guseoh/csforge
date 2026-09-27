@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.ipc.network-socket-ipc
 topicContentKey: operating-systems.core.ipc
 slug: network-socket-ipc
-title: "Network Socket IPC"
+title: "네트워크 소켓 IPC(Network Socket IPC)"
 summary: "process 경계를 넘는 socket과 serialization·failure 책임을 설명한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "process IPC와 socket lifecycle을 확인한다."
     displayOrder: 1
 ---
-# Network Socket IPC
+# 네트워크 소켓 IPC(Network Socket IPC)
 
 Network socket은 process가 kernel socket object를 통해 같은 host의 다른 process나 remote host의 endpoint와 data를 주고받는 IPC다. Application은 socket API를 사용하지만 실제 bytes는 local socket buffer와 transport/network stack을 거쳐 peer에 전달된다.
 
@@ -36,3 +36,17 @@ Remote host와 통신하면 connection reset, timeout, packet loss, route failur
 Process가 서로 다른 address space를 사용하므로 memory object 자체를 pointer로 전달할 수 없다. Data를 byte representation으로 serialize하고 peer가 같은 protocol로 해석해야 한다. Stream이라면 framing까지 함께 정의해야 한다.
 
 Network socket IPC의 핵심은 **host 경계를 넘어 확장할 수 있는 대신 serialization, framing과 network failure를 명시적으로 다뤄야 한다는 것**이다.
+
+### 흐름으로 보기
+
+```text
+sender application
+        │ send()가 bytes를 local kernel에 전달
+        ▼
+sender socket buffer → transport/network → peer socket buffer
+                                              │
+                                              ▼
+                                  receiver가 read() 후 framing·처리
+```
+
+`send()` 성공은 peer application이 bytes를 읽거나 처리했다는 확인이 아니다.

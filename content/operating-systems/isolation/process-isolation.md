@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.isolation.process-isolation
 topicContentKey: operating-systems.core.isolation
 slug: process-isolation
-title: "Process Isolation"
+title: "프로세스 격리(Process Isolation)"
 summary: "process별 주소·권한 경계가 충돌을 막는 이유를 설명한다."
 level: 1
 status: PUBLISHED
@@ -24,7 +24,7 @@ references:
     recommendation: "브라우저가 process를 분리해 fault와 권한 경계를 만들고 IPC로 협력하는 사례를 확인한다."
     displayOrder: 2
 ---
-# Process Isolation
+# 프로세스 격리(Process Isolation)
 
 Process는 자신의 virtual address space와 execution/resource context를 가지는 OS의 기본 격리 단위다. 일반적인 user process는 다른 process의 memory를 임의의 pointer로 직접 읽거나 덮어쓸 수 없고, 필요한 data exchange는 IPC나 명시적으로 공유된 resource를 통해 이루어진다.
 

@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.io.non-blocking-io
 topicContentKey: operating-systems.core.io
 slug: non-blocking-io
-title: "Non-Blocking I/O"
+title: "논블로킹 입출력(Non-Blocking I/O)"
 summary: "지금 가능한 progress만 수행하고 즉시 반환할 때 caller가 partial state와 retry 시점을 관리하는 이유를 설명한다."
 level: 2
 status: PUBLISHED
@@ -24,7 +24,7 @@ references:
     recommendation: "실제 WebFlux 기반 서비스에서 non-blocking/event-driven I/O를 선택한 배경과 thread resource trade-off를 사례로 확인한다."
     displayOrder: 2
 ---
-# Non-Blocking I/O
+# 논블로킹 입출력(Non-Blocking I/O)
 
 Non-blocking I/O는 operation이 지금 progress할 수 없을 때 호출 task를 재우지 않고 **즉시 control을 돌려주는 semantics**다. Linux의 non-blocking descriptor에서 read가 지금 진행될 수 없다면 `EAGAIN`/`EWOULDBLOCK` 같은 결과를 받을 수 있다.
 

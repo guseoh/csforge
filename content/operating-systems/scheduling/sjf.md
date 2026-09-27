@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.scheduling.sjf
 topicContentKey: operating-systems.core.scheduling
 slug: sjf
-title: "SJF"
+title: "최단 작업 우선(SJF)"
 summary: "가장 짧은 예상 job을 먼저 실행할 때 평균 waiting이 줄어드는 조건과 현실적 한계를 설명한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "SJF가 이상적 workload 가정에서 turnaround를 개선하는 이유와 실행시간 사전 지식의 한계를 확인한다."
     displayOrder: 1
 ---
-# SJF
+# 최단 작업 우선(SJF)
 
 SJF(Shortest Job First)는 실행할 작업의 길이를 알고 있다고 가정하고 **가장 짧은 작업부터 선택**한다. 모든 작업이 동시에 도착하고 non-preemptive하게 끝까지 실행되며 각 작업의 CPU burst를 정확히 알고 있다는 조건에서는 평균 waiting/turnaround를 줄이는 기준점이 된다.
 

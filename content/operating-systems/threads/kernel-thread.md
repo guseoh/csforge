@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.threads.kernel-thread
 topicContentKey: operating-systems.core.threads
 slug: kernel-thread
-title: "Kernel Thread"
+title: "커널 스레드(Kernel Thread)"
 summary: "kernel scheduler가 직접 인식하는 실행 단위와 blocking·parallelism의 관계를 설명한다."
 level: 2
 status: PUBLISHED
@@ -24,7 +24,7 @@ references:
     recommendation: "현재 JDK의 platform thread가 OS thread의 thin wrapper로 구현되고 virtual thread와 어떻게 구분되는지 확인한다."
     displayOrder: 2
 ---
-# Kernel Thread
+# 커널 스레드(Kernel Thread)
 
 이 Concept에서 kernel thread 또는 kernel-level thread는 **운영체제 scheduler가 직접 인식하고 scheduling하는 실행 단위**를 뜻한다. Linux 내부 전용 `kthread`만을 의미하는 표현으로 한정하지 않는다. User application의 thread도 kernel이 별도 task로 관리할 수 있다.
 

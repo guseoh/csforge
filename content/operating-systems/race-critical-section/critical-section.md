@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.race-critical-section.critical-section
 topicContentKey: operating-systems.core.race-critical-section
 slug: critical-section
-title: "Critical Section"
+title: "임계 구역(Critical Section)"
 summary: "shared invariant를 보호하는 critical section과 mutual exclusion·progress·bounded waiting 요구를 설명한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "process 안에서 thread가 공유하는 주소 공간과 thread별 실행 context를 확인한다."
     displayOrder: 1
 ---
-# Critical Section
+# 임계 구역(Critical Section)
 
 Critical section은 shared state의 invariant를 지키기 위해 **서로 경쟁하는 실행 흐름이 동시에 들어가면 안 되는 코드 구간**이다. 특정 lock API 안쪽을 기계적으로 critical section이라고 부르는 것이 아니라, 먼저 어떤 read/check/update가 하나의 일관된 state transition을 이루는지 찾아야 한다.
 

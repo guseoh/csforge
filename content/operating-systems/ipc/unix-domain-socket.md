@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.ipc.unix-domain-socket
 topicContentKey: operating-systems.core.ipc
 slug: unix-domain-socket
-title: "Unix-Domain Socket"
+title: "유닉스 도메인 소켓(Unix-Domain Socket)"
 summary: "host 내부 endpoint 통신과 network socket 차이를 설명한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "AF_UNIX endpoint namespace, stream/datagram semantics와 local peer information을 확인한다."
     displayOrder: 1
 ---
-# Unix-Domain Socket
+# 유닉스 도메인 소켓(Unix-Domain Socket)
 
 Unix-domain socket(AF_UNIX/AF_LOCAL)은 **같은 host의 process 사이를 socket interface로 연결하는 IPC**다. Application은 `socket`, `bind`, `listen`, `accept`, `connect`, `read/write` 같은 socket lifecycle을 사용할 수 있지만 IP routing을 통해 remote host와 통신하는 network socket과는 endpoint 범위가 다르다.
 

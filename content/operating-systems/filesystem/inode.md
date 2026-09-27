@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.filesystem.inode
 topicContentKey: operating-systems.core.filesystem
 slug: inode
-title: "Inode"
+title: "아이노드(Inode)"
 summary: "pathname과 분리된 filesystem object metadata가 data block과 link/lifetime을 연결하는 방식을 설명한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "inode, directory entry, data block, allocation 구조가 file-system access path를 만드는 방식을 확인한다."
     displayOrder: 1
 ---
-# Inode
+# 아이노드(Inode)
 
 Inode는 Unix 계열 filesystem에서 **file 이름과 분리된 filesystem object의 metadata**를 이해하기 위한 대표 구조다. Directory entry가 `name → inode number` 관계를 저장하고, inode는 file type, owner, permission, size, timestamp와 data 위치를 찾는 정보를 가진다.
 

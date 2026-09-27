@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.threads.concurrency-vs-parallelism
 topicContentKey: operating-systems.core.threads
 slug: concurrency-vs-parallelism
-title: "Concurrency / Parallelism"
+title: "동시성과 병렬성(Concurrency and Parallelism)"
 summary: "여러 작업의 겹친 진행과 여러 CPU의 실제 동시 실행을 구분한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "process 안에서 thread가 공유하는 주소 공간과 thread별 실행 context를 확인한다."
     displayOrder: 1
 ---
-# Concurrency / Parallelism
+# 동시성과 병렬성(Concurrency and Parallelism)
 
 Concurrency와 parallelism은 비슷하게 들리지만 같은 의미가 아니다.
 

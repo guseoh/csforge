@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.threads.thread-private-state
 topicContentKey: operating-systems.core.threads
 slug: thread-private-state
-title: "Thread-Private State"
+title: "스레드별 상태(Thread-Private State)"
 summary: "thread별 register·program counter·stack이 독립 실행 흐름을 만드는 이유를 설명한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "process 안에서 thread가 공유하는 주소 공간과 thread별 실행 context를 확인한다."
     displayOrder: 1
 ---
-# Thread-Private State
+# 스레드별 상태(Thread-Private State)
 
 같은 process의 thread가 memory와 resource를 공유하더라도 **현재 어디까지 실행했는지 나타내는 context는 thread마다 따로 있어야 한다.** 대표적으로 program counter, CPU register 상태와 stack이 thread별 실행 상태다.
 

@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.virtual-memory.thrashing
 topicContentKey: operating-systems.core.virtual-memory
 slug: thrashing
-title: "Thrashing"
+title: "스래싱(Thrashing)"
 summary: "working set을 resident로 유지하지 못해 page fault와 I/O가 실행 자체를 압도하는 상태를 설명한다."
 level: 3
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "replacement policy와 locality가 hit/miss 및 working-set 유지에 미치는 영향을 확인한다."
     displayOrder: 1
 ---
-# Thrashing
+# 스래싱(Thrashing)
 
 Thrashing은 active working set을 physical memory에 안정적으로 유지하지 못해 **page를 가져오고 내보내는 작업이 실제 application 실행보다 더 큰 비중을 차지하는 상태**다. Page fault가 존재한다는 사실만으로 thrashing이라고 부르지는 않는다.
 

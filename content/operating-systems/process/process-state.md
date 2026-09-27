@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.process.process-state
 topicContentKey: operating-systems.core.process
 slug: process-state
-title: "Process State"
+title: "프로세스 상태(Process State)"
 summary: "ready·running·waiting·terminated 같은 상태를 CPU 배정과 event 대기라는 전이 원인으로 설명한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "Linux가 observable process state를 어떻게 구분하는지 실제 state code를 확인한다."
     displayOrder: 1
 ---
-# Process State
+# 프로세스 상태(Process State)
 
 Process state는 현재 process가 **CPU를 실행 중인지, 실행 가능한데 차례를 기다리는지, 특정 event를 기다리는지**를 나타낸다. 교과서에서는 다음과 같은 단순한 상태 모델을 자주 사용한다.
 

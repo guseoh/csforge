@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.threads.thread-shared-state
 topicContentKey: operating-systems.core.threads
 slug: thread-shared-state
-title: "Thread-Shared State"
+title: "스레드 간 공유 상태(Thread-Shared State)"
 summary: "같은 process의 thread가 공유하는 memory·resource와 race 경계를 설명한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "process 안에서 thread가 공유하는 주소 공간과 thread별 실행 context를 확인한다."
     displayOrder: 1
 ---
-# Thread-Shared State
+# 스레드 간 공유 상태(Thread-Shared State)
 
 같은 process의 thread는 같은 virtual address space를 사용하므로 code, heap, 전역·static data에 함께 접근할 수 있다. File descriptor처럼 process가 보유한 OS resource도 여러 thread가 함께 사용할 수 있다.
 

@@ -3,21 +3,21 @@ kind: concept
 contentKey: operating-systems.core.kernel-boundary.user-kernel-mode
 topicContentKey: operating-systems.core.kernel-boundary
 slug: user-kernel-mode
-title: "User Mode와 Kernel Mode"
+title: "사용자 모드와 커널 모드(User and Kernel Modes)"
 summary: "CPU privilege level을 나누어 application의 직접 hardware 접근을 제한하고 kernel service를 보호하는 이유를 설명한다."
 level: 1
 status: PUBLISHED
 displayOrder: 20
 references:
-  - url: "https://man7.org/linux/man-pages/man2/syscalls.2.html"
-    title: "Linux System Calls"
+  - url: "https://docs.riscv.org/reference/isa/priv/priv-intro.html"
+    title: "RISC-V Privileged Architecture: Introduction"
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "OS와 kernel service의 경계를 확인한다."
+    recommendation: "privilege level이 software stack 사이의 protection을 제공하고 허용되지 않은 동작이 exception을 일으키는 구조를 확인한다."
     displayOrder: 1
 ---
-# User Mode와 Kernel Mode
+# 사용자 모드와 커널 모드(User and Kernel Modes)
 
 운영체제가 process를 서로 격리하려면 `application은 다른 process의 memory를 읽지 말아야 한다`는 규칙만으로는 부족하다. 버그나 악성 code가 규칙을 무시해도 hardware가 금지된 동작을 막을 수 있어야 한다.
 

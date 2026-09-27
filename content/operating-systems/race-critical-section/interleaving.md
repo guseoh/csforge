@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.race-critical-section.interleaving
 topicContentKey: operating-systems.core.race-critical-section
 slug: interleaving
-title: "Interleaving"
+title: "실행 교차(Interleaving)"
 summary: "여러 execution step이 교차할 때 동일한 source code가 다른 결과를 만드는 과정을 추적한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "process 안에서 thread가 공유하는 주소 공간과 thread별 실행 context를 확인한다."
     displayOrder: 1
 ---
-# Interleaving
+# 실행 교차(Interleaving)
 
 Source code 한 줄도 실행 관점에서는 여러 단계로 나뉠 수 있다. `counter++`를 단순화하면 read → add → write의 순서가 필요하다. 여러 thread가 concurrent하게 실행되면 scheduler와 CPU 실행 순서에 따라 이 단계들이 서로 교차할 수 있다.
 

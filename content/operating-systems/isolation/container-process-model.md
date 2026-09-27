@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.isolation.container-process-model
 topicContentKey: operating-systems.core.isolation
 slug: container-process-model
-title: "Container Process Model"
+title: "컨테이너 프로세스 모델(Container Process Model)"
 summary: "container가 isolated process environment라는 모델을 설명한다."
 level: 1
 status: PUBLISHED
@@ -24,7 +24,7 @@ references:
     recommendation: "Docker를 실제 process workload 배포 경계로 사용하면서 host OS 의존성과 resource 배치를 고려한 사례를 확인한다."
     displayOrder: 2
 ---
-# Container Process Model
+# 컨테이너 프로세스 모델(Container Process Model)
 
 일반적인 Linux container는 별도의 guest kernel을 부팅한 virtual machine이 아니다. Host kernel 위에서 실행되는 process와 process tree에 namespace, cgroup, permission, filesystem view 같은 OS mechanism을 조합해 **독립된 실행 환경처럼 보이게 만든 것**이다.
 

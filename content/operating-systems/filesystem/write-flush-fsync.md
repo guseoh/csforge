@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.filesystem.write-flush-fsync
 topicContentKey: operating-systems.core.filesystem
 slug: write-flush-fsync
-title: "write, flush·fsync"
+title: "파일 쓰기와 동기화(write, flush, fsync)"
 summary: "application write 완료와 user buffer flush, kernel write-back, filesystem durability가 서로 다른 경계인 이유를 설명한다."
 level: 2
 status: PUBLISHED
@@ -38,7 +38,7 @@ references:
     recommendation: "Linux fsync의 file data/metadata persistence와 directory entry durability의 별도 경계를 확인한다."
     displayOrder: 4
 ---
-# write, flush·fsync
+# 파일 쓰기와 동기화(write, flush, fsync)
 
 Application이 file에 data를 썼다는 사건과 **crash 이후에도 그 data가 남는다는 durability 사건은 같은 완료 지점이 아니다.** I/O path에 여러 buffer와 persistent metadata 단계가 있기 때문에 각 API가 어느 경계까지 완료하는지 구분해야 한다.
 

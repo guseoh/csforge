@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.threads.java-virtual-thread-boundary
 topicContentKey: operating-systems.core.threads
 slug: java-virtual-thread-boundary
-title: "Java Virtual Thread Boundary"
+title: "Java 가상 스레드 경계(Java Virtual Thread Boundary)"
 summary: "Java 25 virtual thread와 carrier platform thread, blocking·pinning·downstream 경계를 설명한다."
 level: 3
 status: PUBLISHED
@@ -26,8 +26,15 @@ references:
     referenceType: OFFICIAL
     language: en
     displayOrder: 3
+  - url: "https://docs.oracle.com/en/java/javase/25/core/virtual-threads.html"
+    title: "Virtual Threads — Java SE 25"
+    referenceType: OFFICIAL
+    language: en
+    depth: section
+    recommendation: "Java SE 25의 blocking·unmount 동작과 synchronized·native·foreign 구간의 pinning 경계를 확인한다."
+    displayOrder: 4
 ---
-# Java Virtual Thread Boundary
+# Java 가상 스레드 경계(Java Virtual Thread Boundary)
 
 Java virtual thread는 OS thread를 대량으로 새로 만드는 기능이 아니다. Virtual thread는 JDK가 scheduling하는 lightweight `Thread`이며, CPU에서 실제로 실행될 때는 **carrier platform thread** 위에 mount된다. Platform thread는 OS thread와 대응하고, OS scheduler가 최종적으로 CPU 시간을 배분한다.
 

@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.filesystem.open-file-table
 topicContentKey: operating-systems.core.filesystem
 slug: open-file-table
-title: "Open File State"
+title: "열린 파일 상태(Open File State)"
 summary: "descriptor entry와 kernel open-file description, underlying file object를 분리해 offset·flags 공유를 설명한다."
 level: 2
 status: PUBLISHED
@@ -24,7 +24,7 @@ references:
     recommendation: "duplicated descriptor가 같은 open file description과 offset/status flags를 공유하는 Linux 동작을 확인한다."
     displayOrder: 2
 ---
-# Open File State
+# 열린 파일 상태(Open File State)
 
 File descriptor와 file object 사이에는 **현재 열린 I/O session의 상태**가 있을 수 있다. Linux를 예로 들면 descriptor entry가 open file description을 가리키고, 그 description이 current file offset과 일부 status flag, underlying file object에 대한 reference를 가진다.
 

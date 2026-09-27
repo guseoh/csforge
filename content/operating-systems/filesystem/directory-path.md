@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.filesystem.directory-path
 topicContentKey: operating-systems.core.filesystem
 slug: directory-path
-title: "Directory·Path"
+title: "디렉터리와 경로(Directory and Path)"
 summary: "directory entry를 단계적으로 해석해 pathname을 file object로 resolve하는 과정과 이름·identity 경계를 설명한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "file, pathname, descriptor, shared open-file state를 Unix file-system API 흐름으로 확인한다."
     displayOrder: 1
 ---
-# Directory·Path
+# 디렉터리와 경로(Directory and Path)
 
 Pathname은 file object 자체가 아니라 **filesystem namespace에서 object를 찾아가기 위한 이름의 경로**다. Directory는 entry name을 다음 directory나 file object의 identifier에 연결하고, path resolution은 시작 directory에서 component를 하나씩 해석한다.
 

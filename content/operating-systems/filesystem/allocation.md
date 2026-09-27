@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.filesystem.allocation
 topicContentKey: operating-systems.core.filesystem
 slug: allocation
-title: "Block Allocation"
+title: "블록 할당(Block Allocation)"
 summary: "file 성장과 access pattern에 맞춰 free block을 배치하고 metadata·fragmentation·locality trade-off를 설명한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "inode, directory entry, data block, allocation 구조가 file-system access path를 만드는 방식을 확인한다."
     displayOrder: 1
 ---
-# Block Allocation
+# 블록 할당(Block Allocation)
 
 File이 커질 때 filesystem은 free space에서 block을 골라 file의 logical block과 연결해야 한다. Block allocation은 **빈 공간을 찾는 것뿐 아니라 file 성장, random/sequential access, fragmentation과 mapping metadata 비용을 함께 결정하는 정책**이다.
 

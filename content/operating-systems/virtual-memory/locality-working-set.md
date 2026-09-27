@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.virtual-memory.locality-working-set
 topicContentKey: operating-systems.core.virtual-memory
 slug: locality-working-set
-title: "Locality·Working Set"
+title: "지역성과 작업 집합(Locality and Working Set)"
 summary: "최근 실제로 반복 사용하는 page 집합이 resident frame 요구량과 fault rate를 결정하는 이유를 설명한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "replacement policy와 locality가 hit/miss 및 working-set 유지에 미치는 영향을 확인한다."
     displayOrder: 1
 ---
-# Locality·Working Set
+# 지역성과 작업 집합(Locality and Working Set)
 
 Program은 전체 address space를 항상 균등하게 사용하지 않는다. 반복문에서 같은 code/data를 다시 사용하거나 인접한 memory를 연속으로 접근하는 것처럼, 일정 시간 동안 특정 page 집합에 접근이 집중되는 경우가 많다.
 

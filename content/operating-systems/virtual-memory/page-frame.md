@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.virtual-memory.page-frame
 topicContentKey: operating-systems.core.virtual-memory
 slug: page-frame
-title: "Page·Frame"
+title: "페이지와 프레임(Page and Frame)"
 summary: "virtual memory의 page와 physical memory의 frame을 같은 크기 단위로 나누어 mapping하는 이유를 설명한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "virtual page와 physical frame, page-table mapping 및 paging의 공간·비용 trade-off를 확인한다."
     displayOrder: 1
 ---
-# Page·Frame
+# 페이지와 프레임(Page and Frame)
 
 Paging은 virtual address space를 고정 크기의 **page**로 나누고, physical memory를 같은 크기의 **frame**으로 나눈 뒤 둘을 mapping하는 방식이다. 이 구조 덕분에 process의 연속된 virtual page가 physical memory에서도 연속된 위치에 놓일 필요가 없다.
 

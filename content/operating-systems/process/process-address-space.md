@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.process.process-address-space
 topicContentKey: operating-systems.core.process
 slug: process-address-space
-title: "Process Address Space"
+title: "프로세스 주소 공간(Process Address Space)"
 summary: "process가 보는 virtual address space와 code·data·heap·stack mapping의 의미를 설명한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "Linux mmap의 lazy population과 MAP_POPULATE 같은 explicit prefault 선택지를 구분한다."
     displayOrder: 1
 ---
-# Process Address Space
+# 프로세스 주소 공간(Process Address Space)
 
 Process가 사용하는 address는 일반적으로 physical RAM의 위치 그 자체가 아니다. 운영체제는 process마다 **virtual address space**를 구성하고, page table을 통해 virtual page를 physical memory나 file-backed object 등에 연결한다.
 

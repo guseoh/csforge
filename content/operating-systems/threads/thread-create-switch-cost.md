@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.threads.thread-create-switch-cost
 topicContentKey: operating-systems.core.threads
 slug: thread-create-switch-cost
-title: "Thread Creation·Switch Cost"
+title: "스레드 생성과 문맥 전환 비용(Thread Creation and Context-Switch Cost)"
 summary: "thread의 stack·metadata·creation·scheduling 비용이 workload 선택에 미치는 영향을 설명한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "process 안에서 thread가 공유하는 주소 공간과 thread별 실행 context를 확인한다."
     displayOrder: 1
 ---
-# Thread Creation·Switch Cost
+# 스레드 생성과 문맥 전환 비용(Thread Creation and Context-Switch Cost)
 
 Thread는 process보다 공유하는 resource가 많아 상대적으로 가볍게 만들 수 있지만 비용이 없는 실행 단위는 아니다. Thread를 만들려면 실행 context와 stack, runtime 또는 kernel이 추적할 metadata가 필요하다. Kernel-visible thread라면 scheduler가 관리할 task state도 추가된다.
 

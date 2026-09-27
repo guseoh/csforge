@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.virtual-memory.page-table
 topicContentKey: operating-systems.core.virtual-memory
 slug: page-table
-title: "Page Table"
+title: "페이지 테이블(Page Table)"
 summary: "OS가 virtual page의 mapping·permission·backing 상태를 추적하는 page-table 역할과 architecture 경계를 설명한다."
 level: 1
 status: PUBLISHED
@@ -24,7 +24,7 @@ references:
     recommendation: "virtual page와 physical frame, page-table mapping 및 paging의 공간·비용 trade-off를 확인한다."
     displayOrder: 2
 ---
-# Page Table
+# 페이지 테이블(Page Table)
 
 Page table은 **process의 virtual page가 현재 어떤 physical frame과 연결되어 있고 어떤 접근이 허용되는지 표현하는 mapping state**다. 운영체제는 process별 page-table state를 만들고 변경하며, hardware는 그 state를 이용해 memory access를 translation하고 protection을 검사한다.
 

@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.virtual-memory.stack-heap-mapping
 topicContentKey: operating-systems.core.virtual-memory
 slug: stack-heap-mapping
-title: "Stack·Heap Mapping"
+title: "스택·힙 매핑(Stack and Heap Mapping)"
 summary: "thread stack과 dynamic heap이 process virtual address space에서 서로 다른 lifetime과 실패 mode를 갖는 이유를 설명한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "stack/heap lifetime과 dynamic-memory API가 서로 다른 책임을 갖는 이유를 확인한다."
     displayOrder: 1
 ---
-# Stack·Heap Mapping
+# 스택·힙 매핑(Stack and Heap Mapping)
 
 Process의 virtual address space에는 code와 data뿐 아니라 heap, thread stack, shared library, file mapping처럼 목적과 lifetime이 다른 영역이 함께 존재한다. 흔한 그림에서 stack과 heap이 서로 반대 방향으로 자라는 모습은 이해를 위한 모델이며, 실제 주소 배치와 성장 방향은 OS·ABI·runtime에 따라 달라질 수 있다.
 

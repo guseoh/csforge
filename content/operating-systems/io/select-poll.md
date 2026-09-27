@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.io.select-poll
 topicContentKey: operating-systems.core.io
 slug: select-poll
-title: "select·poll"
+title: "select와 poll"
 summary: "여러 descriptor의 readiness를 한 wait point에서 감시하는 방식과 per-call scan 비용을 설명한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "descriptor 배열의 requested/reported event와 timeout·interruption semantics를 확인한다."
     displayOrder: 1
 ---
-# select·poll
+# select와 poll
 
 Blocking I/O는 descriptor 하나가 준비될 때까지 기다리는 데는 단순하지만, 많은 descriptor를 동시에 다뤄야 할 때 descriptor마다 별도 thread를 두면 실행 자원과 memory 비용이 커질 수 있다. `select()`와 `poll()`은 여러 descriptor 중 **현재 I/O를 시도할 준비가 된 대상이 있는지 한 번의 wait에서 확인하는 readiness multiplexing** interface다.
 
@@ -34,3 +34,17 @@ Blocking I/O는 descriptor 하나가 준비될 때까지 기다리는 데는 단
 Ready event를 받았더라도 실제 `read()`가 application message 전체를 반환한다는 보장은 없다. 상태가 바뀌었거나 일부 data만 존재할 수 있으며, non-blocking descriptor에서는 `EAGAIN`도 정상적인 결과가 될 수 있다. 따라서 multiplexing은 "어디를 다시 시도할지"를 알려줄 뿐 partial read/write와 protocol state 관리까지 대신하지 않는다.
 
 `select`와 `poll`의 핵심은 **여러 descriptor의 readiness를 하나의 wait point에서 감시할 수 있지만, 관심 집합이 커질수록 매 호출의 집합 전달·검사 비용이 커질 수 있다는 것**이다.
+
+### 흐름으로 보기
+
+```text
+관심 descriptor와 event
+          │ select()/poll() 대기
+          ▼
+ready 결과를 반환 ── readiness 알림이지 I/O 완료가 아님
+          │
+          ▼
+application이 read()/write() 시도
+          │
+          └── partial result 또는 EAGAIN일 수 있음
+```

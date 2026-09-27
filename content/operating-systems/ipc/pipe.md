@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.ipc.pipe
 topicContentKey: operating-systems.core.ipc
 slug: pipe
-title: "Pipe"
+title: "파이프(Pipe)"
 summary: "kernel buffer를 통한 단방향 byte stream과 EOF 경계를 설명한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "Pipe capacity가 제한되어 있고 full pipe에 대한 blocking write가 reader가 공간을 만들 때까지 멈출 수 있음을 확인한다."
     displayOrder: 1
 ---
-# Pipe
+# 파이프(Pipe)
 
 Pipe는 kernel이 관리하는 buffer를 사이에 두고 한 process가 쓴 bytes를 다른 process가 읽게 하는 IPC다. Anonymous pipe는 보통 read end와 write end라는 두 descriptor를 만들고, `fork()` 이후 필요한 descriptor를 parent와 child가 나누어 사용하는 형태로 이해할 수 있다.
 

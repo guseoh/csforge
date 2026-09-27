@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.synchronization.lock-granularity
 topicContentKey: operating-systems.core.synchronization
 slug: lock-granularity
-title: "Lock Granularity"
+title: "잠금 세분성(Lock Granularity)"
 summary: "하나의 큰 lock과 여러 작은 lock 사이의 correctness·parallelism·복잡도 trade-off를 설명한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "mutex/lock이 atomic primitive를 이용해 critical section의 mutual exclusion을 구현하는 방식을 확인한다."
     displayOrder: 1
 ---
-# Lock Granularity
+# 잠금 세분성(Lock Granularity)
 
 Lock granularity는 **하나의 lock이 어느 범위의 state를 함께 보호할지**에 대한 선택이다. 큰 범위를 하나의 lock으로 보호하면 규칙은 단순해지지만 서로 독립적인 작업까지 직렬화될 수 있고, 작은 범위로 나누면 병렬성은 늘 수 있지만 여러 lock의 관계를 관리해야 한다.
 

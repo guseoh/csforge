@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.synchronization.mutex
 topicContentKey: operating-systems.core.synchronization
 slug: mutex
-title: "Mutex"
+title: "뮤텍스(Mutex)"
 summary: "하나의 owner가 critical section을 배타적으로 소유하는 mutex semantics를 설명한다."
 level: 1
 status: PUBLISHED
@@ -24,7 +24,7 @@ references:
     recommendation: "POSIX mutex의 획득·소유·대기와 mutex type별 동작 경계를 확인한다."
     displayOrder: 2
 ---
-# Mutex
+# 뮤텍스(Mutex)
 
 Mutex는 **한 시점에 하나의 실행 흐름만 critical section을 소유하도록 만드는 mutual-exclusion primitive**다. Thread T1이 mutex를 획득한 상태라면 같은 mutex를 필요로 하는 T2는 T1이 해제할 때까지 보호 구간에 들어갈 수 없다.
 

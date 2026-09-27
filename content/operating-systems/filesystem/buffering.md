@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.filesystem.buffering
 topicContentKey: operating-systems.core.filesystem
 slug: buffering
-title: "Buffering"
+title: "버퍼링(Buffering)"
 summary: "user-space·kernel·device 계층이 서로 다른 이유로 I/O를 모으고 지연하며 flush 의미가 달라지는 이유를 설명한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "inode, directory entry, data block, allocation 구조가 file-system access path를 만드는 방식을 확인한다."
     displayOrder: 1
 ---
-# Buffering
+# 버퍼링(Buffering)
 
 Buffering은 producer와 consumer의 속도나 처리 단위가 다를 때 **data를 잠시 모아 두어 I/O 호출과 실제 전송 시점을 분리하는 방식**이다. 하나의 I/O path에는 user-space library buffer, kernel page cache, device queue처럼 여러 buffer가 존재할 수 있다.
 

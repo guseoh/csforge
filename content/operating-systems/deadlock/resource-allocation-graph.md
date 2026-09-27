@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.deadlock.resource-allocation-graph
 topicContentKey: operating-systems.core.deadlock
 slug: resource-allocation-graph
-title: "Resource-Allocation Graph"
+title: "자원 할당 그래프(Resource Allocation Graph)"
 summary: "process-resource 요청·allocation edge를 이용해 dependency cycle과 deadlock 가능성을 추적한다."
 level: 2
 status: PUBLISHED
@@ -24,7 +24,7 @@ references:
     recommendation: "JVM thread dump에서 lock owner와 waiter를 연결해 deadlock cycle을 해석하는 실제 사례를 확인한다."
     displayOrder: 2
 ---
-# Resource-Allocation Graph
+# 자원 할당 그래프(Resource Allocation Graph)
 
 Resource-allocation graph는 **누가 어떤 resource를 요청하고, 어떤 resource가 누구에게 할당되어 있는지**를 방향 있는 edge로 표현해 deadlock dependency를 추적하는 모델이다.
 

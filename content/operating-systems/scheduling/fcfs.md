@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.scheduling.fcfs
 topicContentKey: operating-systems.core.scheduling
 slug: fcfs
-title: "FCFS"
+title: "선착순 스케줄링(FCFS)"
 summary: "도착 순서대로 실행하는 정책의 단순성과 convoy effect를 실제 waiting time으로 설명한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "SJF가 이상적 workload 가정에서 turnaround를 개선하는 이유와 실행시간 사전 지식의 한계를 확인한다."
     displayOrder: 1
 ---
-# FCFS
+# 선착순 스케줄링(FCFS)
 
 FCFS(First Come, First Served)는 ready queue에 먼저 들어온 작업을 먼저 실행하는 가장 단순한 scheduling 모델 중 하나다. 구현과 실행 순서가 이해하기 쉽지만, 작업 길이를 고려하지 않기 때문에 앞의 긴 작업이 뒤의 짧은 작업을 오래 기다리게 할 수 있다.
 

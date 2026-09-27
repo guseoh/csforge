@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.filesystem.file-descriptor
 topicContentKey: operating-systems.core.filesystem
 slug: file-descriptor
-title: "File Descriptor"
+title: "파일 디스크립터(File Descriptor)"
 summary: "process-local integer handle이 kernel의 open object를 가리키고 lifetime·limit·inheritance를 만드는 구조를 설명한다."
 level: 1
 status: PUBLISHED
@@ -24,7 +24,7 @@ references:
     recommendation: "Linux에서 file descriptor가 process-local handle이며 open file description을 참조하는 구조를 확인한다."
     displayOrder: 2
 ---
-# File Descriptor
+# 파일 디스크립터(File Descriptor)
 
 Unix 계열에서 file descriptor(fd)는 process가 이미 열린 I/O object를 참조할 때 사용하는 **작은 정수 handle**이다. `open()`이 성공하면 kernel은 open state를 만들고 process의 descriptor table에 entry를 추가한 뒤 fd를 반환한다.
 

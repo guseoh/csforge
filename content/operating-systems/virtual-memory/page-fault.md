@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.virtual-memory.page-fault
 topicContentKey: operating-systems.core.virtual-memory
 slug: page-fault
-title: "Page Fault"
+title: "페이지 폴트(Page Fault)"
 summary: "주소 접근이 현재 translation으로 처리되지 못했을 때 kernel이 원인을 판정하고 복구 또는 실패시키는 흐름을 설명한다."
 level: 2
 status: PUBLISHED
@@ -24,7 +24,7 @@ references:
     recommendation: "Linux가 ru_minflt와 ru_majflt에서 I/O 없이 처리된 fault와 I/O가 필요했던 fault를 구분해 노출하는 방식을 확인한다."
     displayOrder: 2
 ---
-# Page Fault
+# 페이지 폴트(Page Fault)
 
 Page fault는 process가 virtual address에 접근했지만 **현재 mapping 상태만으로 그 access를 완료할 수 없어 kernel의 판단이 필요한 사건**이다. Page fault가 발생했다고 항상 disk에서 page를 읽는 것은 아니다.
 

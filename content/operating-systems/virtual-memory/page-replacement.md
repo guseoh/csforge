@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.virtual-memory.page-replacement
 topicContentKey: operating-systems.core.virtual-memory
 slug: page-replacement
-title: "Page Replacement"
+title: "페이지 교체(Page Replacement)"
 summary: "free frame이 부족할 때 어떤 resident page를 victim으로 고를지 locality와 eviction cost를 기준으로 설명한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "replacement policy와 locality가 hit/miss 및 working-set 유지에 미치는 영향을 확인한다."
     displayOrder: 1
 ---
-# Page Replacement
+# 페이지 교체(Page Replacement)
 
 새 page를 resident하게 만들어야 하는데 free frame이 부족하면 운영체제는 기존 resident page 중 하나를 **victim**으로 골라 frame을 재사용해야 한다. 이 결정을 page replacement라고 한다.
 

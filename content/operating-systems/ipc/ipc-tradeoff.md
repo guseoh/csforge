@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.ipc.ipc-tradeoff
 topicContentKey: operating-systems.core.ipc
 slug: ipc-tradeoff
-title: "IPC Trade-off"
+title: "IPC 방식 선택(IPC Trade-offs)"
 summary: "copy·latency·isolation·backpressure 관점에서 IPC를 선택한다."
 level: 2
 status: PUBLISHED
@@ -24,7 +24,7 @@ references:
     recommendation: "브라우저가 process를 분리해 fault와 권한 경계를 만들고 IPC로 협력하는 사례를 확인한다."
     displayOrder: 2
 ---
-# IPC Trade-off
+# IPC 방식 선택(IPC Trade-offs)
 
 IPC는 하나의 성능 순위로 고르는 기술이 아니다. Process 사이에서 **data를 어떤 형태로 전달할지, kernel이 어디까지 관리할지, copy·synchronization·failure boundary를 누가 책임질지**에 따라 선택이 달라진다.
 

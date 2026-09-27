@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.process.process-terminate
 topicContentKey: operating-systems.core.process
 slug: process-terminate
-title: "Process Termination"
+title: "프로세스 종료(Process Termination)"
 summary: "process execution 종료, resource 회수와 parent에게 남기는 termination status를 구분해 설명한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "process termination 시 descriptor close와 parent에 전달되는 termination status를 확인한다."
     displayOrder: 1
 ---
-# Process Termination
+# 프로세스 종료(Process Termination)
 
 Process는 정상 exit 경로로 종료할 수도 있고 signal이나 치명적인 fault 때문에 끝날 수도 있다. 어느 경우든 더 이상 application instruction을 실행하지 않게 되면 운영체제는 그 process가 사용하던 address space와 대부분의 open resource를 회수할 수 있다.
 

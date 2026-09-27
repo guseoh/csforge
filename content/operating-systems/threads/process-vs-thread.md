@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.threads.process-vs-thread
 topicContentKey: operating-systems.core.threads
 slug: process-vs-thread
-title: "Process / Thread"
+title: "프로세스와 스레드(Process and Thread)"
 summary: "process의 자원·보호 경계와 thread의 실행 흐름 경계를 구분한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "process 안에서 thread가 공유하는 주소 공간과 thread별 실행 context를 확인한다."
     displayOrder: 1
 ---
-# Process / Thread
+# 프로세스와 스레드(Process and Thread)
 
 Process와 thread는 모두 실행과 관련된 개념이지만 경계가 다르다. **Process는 주소 공간과 OS resource를 묶는 자원·보호 경계**이고, **thread는 그 process 안에서 instruction을 진행하는 실행 흐름**이다.
 

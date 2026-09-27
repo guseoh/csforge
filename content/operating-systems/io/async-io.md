@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.io.async-io
 topicContentKey: operating-systems.core.io
 slug: async-io
-title: "Asynchronous I/O"
+title: "비동기 입출력(Asynchronous I/O)"
 summary: "operation을 먼저 제출하고 나중에 completion result를 수집하는 모델과 buffer·cancellation·backpressure 책임을 설명한다."
 level: 3
 status: PUBLISHED
@@ -24,7 +24,7 @@ references:
     recommendation: "실시간 messaging server에서 io_uring 도입을 검토하며 syscall/context-switch 비용과 실제 성능을 평가한 사례를 확인한다."
     displayOrder: 2
 ---
-# Asynchronous I/O
+# 비동기 입출력(Asynchronous I/O)
 
 Asynchronous I/O는 caller가 I/O operation을 먼저 제출하고 그 자리에서 완료를 기다리지 않은 뒤, **나중에 그 submission의 결과를 completion 형태로 받는 모델**이다. Readiness가 "지금 I/O를 시도할 수 있다"는 상태를 알려주는 것이라면 completion은 "앞서 제출한 이 operation이 이런 결과로 끝났다"는 사건이다.
 

@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.isolation.namespace
 topicContentKey: operating-systems.core.isolation
 slug: namespace
-title: "Namespace"
+title: "네임스페이스(Namespace)"
 summary: "process가 보는 PID·mount·network view를 분리하는 방식을 설명한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "process가 resource view를 분리하는 Linux namespace와 일반 process 경계를 구분한다."
     displayOrder: 1
 ---
-# Namespace
+# 네임스페이스(Namespace)
 
 Linux namespace는 process가 특정 kernel resource를 **어떤 이름과 목록으로 보게 될지** 분리하는 mechanism이다. 같은 host kernel을 사용하면서도 PID, mount, network, IPC, hostname, user ID 같은 view를 서로 다르게 만들 수 있다.
 

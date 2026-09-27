@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.process.program-vs-process
 topicContentKey: operating-systems.core.process
 slug: program-vs-process
-title: "Program과 Process"
+title: "프로그램과 프로세스(Program and Process)"
 summary: "저장된 executable program과 OS가 실행 상태·resource를 관리하는 process를 구분한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "새 program image가 현재 process image를 대체하는 Linux execve semantics를 확인한다."
     displayOrder: 1
 ---
-# Program과 Process
+# 프로그램과 프로세스(Program and Process)
 
 Program은 disk 등에 저장된 instruction과 static data의 집합이고, process는 그 program을 실제로 실행하기 위해 운영체제가 관리하는 **동적인 실행 상태**다.
 

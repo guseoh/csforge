@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.isolation.host-kernel-sharing
 topicContentKey: operating-systems.core.isolation
 slug: host-kernel-sharing
-title: "Host Kernel Sharing"
+title: "호스트 커널 공유(Host Kernel Sharing)"
 summary: "container가 별도 kernel이 아니라 host kernel을 공유하는 경계를 설명한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "process가 resource view를 분리하는 Linux namespace와 일반 process 경계를 구분한다."
     displayOrder: 1
 ---
-# Host Kernel Sharing
+# 호스트 커널 공유(Host Kernel Sharing)
 
 일반적인 Linux container는 namespace와 cgroup으로 process 환경을 분리하지만 **system call은 host kernel이 처리한다.** Container마다 독립 kernel이 있는 것이 아니며 scheduler, memory management, filesystem/network subsystem과 kernel code 자체를 host의 다른 process들과 공유한다.
 

@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.io.blocking-io
 topicContentKey: operating-systems.core.io
 slug: blocking-io
-title: "Blocking I/O"
+title: "블로킹 입출력(Blocking I/O)"
 summary: "I/O가 progress할 조건이 생길 때까지 호출 task가 기다리는 semantics와 resource 비용을 설명한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "read()의 partial result와 O_NONBLOCK/EAGAIN 계약을 확인한다."
     displayOrder: 1
 ---
-# Blocking I/O
+# 블로킹 입출력(Blocking I/O)
 
 Blocking I/O는 호출한 task가 지금 원하는 I/O를 진행할 수 없을 때 **조건이 충족될 때까지 기다릴 수 있는 semantics**다. 예를 들어 blocking socket `read()`에서 받을 data가 없다면 kernel은 현재 task를 waiting 상태로 보내고, data가 도착한 뒤 다시 runnable하게 만들 수 있다.
 

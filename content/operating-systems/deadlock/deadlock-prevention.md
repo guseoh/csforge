@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.deadlock.deadlock-prevention
 topicContentKey: operating-systems.core.deadlock
 slug: deadlock-prevention
-title: "Deadlock Prevention"
+title: "교착 예방(Deadlock Prevention)"
 summary: "Coffman 조건 하나를 구조적으로 깨 deadlock state 자체를 불가능하게 만드는 전략을 설명한다."
 level: 2
 status: PUBLISHED
@@ -24,7 +24,7 @@ references:
     recommendation: "Linux lockdep가 lock dependency와 acquisition-order cycle을 검증하는 방식을 확인한다."
     displayOrder: 2
 ---
-# Deadlock Prevention
+# 교착 예방(Deadlock Prevention)
 
 Deadlock prevention은 deadlock이 발생한 뒤 찾는 방식이 아니라, **resource 요청 규칙 자체를 제한해 Coffman 조건 중 적어도 하나가 성립하지 못하도록 만드는 전략**이다.
 

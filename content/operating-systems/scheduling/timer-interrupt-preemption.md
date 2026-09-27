@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.scheduling.timer-interrupt-preemption
 topicContentKey: operating-systems.core.scheduling
 slug: timer-interrupt-preemption
-title: "Timer Interrupt·Preemption"
+title: "타이머 인터럽트와 선점(Timer Interrupt and Preemption)"
 summary: "timer event가 OS에 CPU control을 되돌려 preemption과 scheduling decision을 가능하게 하는 원리를 설명한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "timer interrupt를 이용해 OS가 running process로부터 CPU control을 다시 얻는 mechanism을 확인한다."
     displayOrder: 1
 ---
-# Timer Interrupt·Preemption
+# 타이머 인터럽트와 선점(Timer Interrupt and Preemption)
 
 실행 중인 프로그램이 스스로 CPU를 반납할 때만 운영체제가 다시 scheduling할 수 있다면, CPU를 계속 사용하는 task가 다른 task의 실행 기회를 막을 수 있다. 선점형 운영체제는 **hardware timer가 만든 interrupt를 이용해 실행 중인 task와 무관하게 kernel이 다시 control을 얻을 수 있는 기회**를 만든다.
 

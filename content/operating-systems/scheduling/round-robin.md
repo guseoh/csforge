@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.scheduling.round-robin
 topicContentKey: operating-systems.core.scheduling
 slug: round-robin
-title: "Round Robin"
+title: "라운드 로빈(Round Robin)"
 summary: "runnable job에 time quantum을 순환 배분할 때 응답과 context-switch overhead가 어떻게 바뀌는지 설명한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "SJF가 이상적 workload 가정에서 turnaround를 개선하는 이유와 실행시간 사전 지식의 한계를 확인한다."
     displayOrder: 1
 ---
-# Round Robin
+# 라운드 로빈(Round Robin)
 
 Round Robin(RR)은 runnable task를 순서대로 배치하고 각 task에 **time quantum**만큼 CPU를 준다. Quantum 안에 작업이 끝나지 않으면 선점한 뒤 queue 뒤로 보내므로 하나의 긴 task가 CPU를 계속 독점하기 어렵다.
 

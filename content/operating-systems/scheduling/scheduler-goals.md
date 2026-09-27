@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.scheduling.scheduler-goals
 topicContentKey: operating-systems.core.scheduling
 slug: scheduler-goals
-title: "Scheduler Goals"
+title: "스케줄러의 목표(Scheduler Goals)"
 summary: "turnaround·응답·처리량·fairness·utilization 목표가 왜 서로 충돌할 수 있는지 설명한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "SJF가 이상적 workload 가정에서 turnaround를 개선하는 이유와 실행시간 사전 지식의 한계를 확인한다."
     displayOrder: 1
 ---
-# Scheduler Goals
+# 스케줄러의 목표(Scheduler Goals)
 
 Scheduler는 runnable task 가운데 누구에게 CPU를 줄지 결정한다. 그런데 좋은 scheduling을 판단하는 기준은 하나가 아니다. 어떤 workload에서는 빠른 첫 응답이 중요하고, 어떤 workload에서는 전체 작업을 가능한 빨리 끝내거나 특정 task가 계속 밀리지 않게 하는 것이 더 중요할 수 있다.
 
