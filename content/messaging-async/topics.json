@@ -1,5 +1,5 @@
 [
-  {"kind":"topic","contentKey":"messaging.core.semantics","areaSlug":"messaging-async","slug":"semantics","title":"Message and broker semantics","description":"command/event/message · topic/partition/key · consumer group/offset","displayOrder":10,"active":true},
-  {"kind":"topic","contentKey":"messaging.core.delivery","areaSlug":"messaging-async","slug":"delivery","title":"Delivery, retry, and ordering","description":"at-least-once/idempotency · retry/DLQ · ordering/concurrency","displayOrder":20,"active":true},
-  {"kind":"topic","contentKey":"messaging.core.workflow","areaSlug":"messaging-async","slug":"workflow","title":"Reliable async workflows","description":"transactional outbox · backpressure/capacity · schema evolution","displayOrder":30,"active":true}
+  {"kind":"topic","contentKey":"messaging.core.semantics","areaSlug":"messaging-async","slug":"semantics","title":"메시지와 브로커의 의미","description":"명령·이벤트·메시지 · 토픽·파티션·키 · 컨슈머 그룹·오프셋","displayOrder":10,"active":true},
+  {"kind":"topic","contentKey":"messaging.core.delivery","areaSlug":"messaging-async","slug":"delivery","title":"전달 보장·재시도·순서","description":"최소 1회 전달·멱등 처리 · 재시도/DLQ · 순서·병렬 처리","displayOrder":20,"active":true},
+  {"kind":"topic","contentKey":"messaging.core.workflow","areaSlug":"messaging-async","slug":"workflow","title":"신뢰성 있는 비동기 워크플로","description":"트랜잭셔널 아웃박스 · 역압·처리 용량 · 메시지 스키마 진화","displayOrder":30,"active":true}
 ]
