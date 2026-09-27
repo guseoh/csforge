@@ -14,7 +14,8 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "clock cycle time, clock rate, CPI와 CPU execution time의 관계를 함께 확인한다."
+    recommendation: "CPU execution time, latency/throughput와 speedup을 구분해 성능을 계산하는 방법을 확인한다."
+    relationNote: "클록 주기·주파수·CPI가 CPU 실행 시간과 연결되는 부분을 확인한다."
     displayOrder: 1
 ---
 # 클록 주기(Clock Cycle)
