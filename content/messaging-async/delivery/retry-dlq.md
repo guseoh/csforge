@@ -9,18 +9,22 @@ level: 2
 status: PUBLISHED
 displayOrder: 20
 references:
-  - url: "https://kafka.apache.org/documentation/"
-    title: "Apache Kafka Documentation"
+  - url: "https://docs.spring.io/spring-kafka/reference/retrytopic.html"
+    title: "Spring for Apache Kafka: Non-Blocking Retries"
     referenceType: OFFICIAL
     language: en
+    depth: section
+    recommendation: "Spring Kafka의 비차단 재시도·DLT 구성과 순서 보장 경계를 확인한다."
     displayOrder: 1
-    relationNote: "consumer processing과 topic 기반 workflow 확인"
-  - url: "https://microservices.io/patterns/data/transactional-outbox.html"
-    title: "Microservices.io: Transactional Outbox Pattern"
-    referenceType: OTHER
-    language: en
+    relationNote: "제한된 재시도·재시도 토픽·DLT 구성과 비차단 재시도에서 순서 보장이 바뀌는 경계 확인"
+  - url: "https://engineering.linecorp.com/ko/blog/decaton-case-studies"
+    title: "LINE Engineering: Kafka를 이용한 작업 큐 라이브러리 'Decaton' 활용 사례"
+    referenceType: COMPANY_TECH_BLOG
+    language: ko
+    depth: section
+    recommendation: "Kafka 작업 큐에서 재시도·지연 처리·파티션 병렬 작업을 구성한 적용 사례를 확인한다."
     displayOrder: 2
-    relationNote: "message relay와 재처리·duplicate 운영 맥락 확인"
+    relationNote: "실패한 Kafka 작업을 별도 retry queue에서 지연 후 재처리하는 실무 사례 확인"
 ---
 # 재시도와 실패 메시지 격리
 

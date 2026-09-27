@@ -9,12 +9,22 @@ level: 2
 status: PUBLISHED
 displayOrder: 20
 references:
-  - url: "https://kafka.apache.org/documentation/"
-    title: "Apache Kafka Documentation"
+  - url: "https://kafka.apache.org/intro/"
+    title: "Apache Kafka Documentation: Introduction"
     referenceType: OFFICIAL
     language: en
+    depth: section
+    recommendation: "이벤트·메시지 용어와 키 기반 파티셔닝, 토픽 보존·소비자 분리의 기본 동작을 확인한다."
     displayOrder: 1
-    relationNote: "topic partition, producer key와 log ordering 개념 확인"
+    relationNote: "같은 키의 이벤트를 한 파티션에 배치하고 파티션별 기록 순서를 유지하는 기본 계약 확인"
+  - url: "https://engineering.linecorp.com/ko/blog/how-line-openchat-server-handles-extreme-traffic-spikes"
+    title: "LINE Engineering: LINE 오픈챗 서버가 100배 급증하는 트래픽을 다루는 방법"
+    referenceType: COMPANY_TECH_BLOG
+    language: ko
+    depth: section
+    recommendation: "핫 챗의 파티션 집중, offset lag와 소비자 자원 부하를 관찰한 운영 사례를 확인한다."
+    displayOrder: 2
+    relationNote: "특정 채팅 키로 한 Kafka 파티션에 트래픽이 집중되는 핫 파티션 사례 확인"
 ---
 # 토픽·파티션·메시지 키
 

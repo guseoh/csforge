@@ -3,22 +3,26 @@ kind: concept
 contentKey: messaging.core.delivery.at-least-once-idempotency
 topicContentKey: messaging.core.delivery
 slug: at-least-once-idempotency
-title: "전달 보장과 멱등 Consumer"
+title: "전달 보장과 멱등 컨슈머"
 summary: "처리 결과와 committed offset의 순서에 따라 loss 또는 duplicate가 생기는 이유를 이해하고, at-least-once 환경에서 중복 업무 효과를 막는 멱등 처리를 설계한다."
 level: 2
 status: PUBLISHED
 displayOrder: 10
 references:
   - url: "https://kafka.apache.org/42/javadoc/org/apache/kafka/clients/consumer/KafkaConsumer.html"
-    title: "Apache Kafka API: KafkaConsumer"
+    title: "Apache Kafka 4.2 API: KafkaConsumer"
     referenceType: OFFICIAL
     language: en
+    depth: section
+    recommendation: "현재 소비 위치와 확정 오프셋, 컨슈머 그룹별 파티션 할당·재조정 계약을 확인한다."
     displayOrder: 1
     relationNote: "consumer position·committed position과 record reprocessing 경계 확인"
   - url: "https://kafka.apache.org/42/design/design/#message-delivery-semantics"
     title: "Apache Kafka 4.2 Design: Message Delivery Semantics"
     referenceType: OFFICIAL
     language: en
+    depth: section
+    recommendation: "파티션 순서와 at-most-once·at-least-once, Kafka 내부 transaction의 보장 범위를 확인한다."
     displayOrder: 2
     relationNote: "at-most-once·at-least-once와 Kafka exactly-once processing의 적용 범위 확인"
   - url: "https://microservices.io/patterns/data/transactional-outbox.html"
@@ -28,7 +32,7 @@ references:
     displayOrder: 3
     relationNote: "relay duplicate와 idempotent consumer 필요성 확인"
 ---
-# 전달 보장과 멱등 Consumer
+# 전달 보장과 멱등 컨슈머
 
 Consumer가 message를 읽고 DB를 변경할 때 **업무 처리 완료와 offset commit은 별개의 상태**입니다. 어느 쪽을 먼저 확정하느냐에 따라 장애 시 loss 또는 duplicate가 생길 수 있습니다.
 

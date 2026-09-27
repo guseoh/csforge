@@ -9,12 +9,22 @@ level: 1
 status: PUBLISHED
 displayOrder: 10
 references:
-  - url: "https://kafka.apache.org/documentation/"
-    title: "Apache Kafka Documentation"
+  - url: "https://kafka.apache.org/intro/"
+    title: "Apache Kafka Documentation: Introduction"
     referenceType: OFFICIAL
     language: en
+    depth: section
+    recommendation: "이벤트·메시지 용어와 키 기반 파티셔닝, 토픽 보존·소비자 분리의 기본 동작을 확인한다."
     displayOrder: 1
-    relationNote: "producer·consumer·topic 기반 event streaming 개념 확인"
+    relationNote: "Kafka의 이벤트·레코드·메시지 용어, 프로듀서·컨슈머 분리와 토픽 기반 이벤트 스트리밍 확인"
+  - url: "https://engineering.linecorp.com/ko/blog/how-to-use-kafka-in-line-1/"
+    title: "LINE Engineering: LINE에서 Kafka를 사용하는 방법 - 1편"
+    referenceType: COMPANY_TECH_BLOG
+    language: ko
+    depth: section
+    recommendation: "분산 작업 큐와 여러 서비스가 이벤트 허브를 활용하는 사례를 확인한다."
+    displayOrder: 2
+    relationNote: "분산 작업 큐와 여러 서비스로 사실을 전달하는 이벤트 허브의 실무 사례 확인"
 ---
 # 명령·이벤트·메시지의 역할
 

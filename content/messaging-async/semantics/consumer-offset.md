@@ -3,34 +3,32 @@ kind: concept
 contentKey: messaging.core.semantics.consumer-offset
 topicContentKey: messaging.core.semantics
 slug: consumer-offset
-title: "Consumer Group과 처리 위치"
+title: "컨슈머 그룹과 처리 위치"
 summary: "record offset, 현재 consumer position과 committed position을 구분하고 crash·rebalance·replay에서 어느 위치부터 다시 처리하는지 이해한다."
 level: 2
 status: PUBLISHED
 displayOrder: 30
 references:
   - url: "https://kafka.apache.org/42/javadoc/org/apache/kafka/clients/consumer/KafkaConsumer.html"
-    title: "Apache Kafka API: KafkaConsumer"
+    title: "Apache Kafka 4.2 API: KafkaConsumer"
     referenceType: OFFICIAL
     language: en
+    depth: section
+    recommendation: "현재 소비 위치와 확정 오프셋, 컨슈머 그룹별 파티션 할당·재조정 계약을 확인한다."
     displayOrder: 1
-    relationNote: "consumer position과 committed position, group consumption 계약 확인"
-  - url: "https://kafka.apache.org/documentation/"
-    title: "Apache Kafka Documentation"
-    referenceType: OFFICIAL
-    language: en
-    displayOrder: 2
-    relationNote: "consumer group과 partition assignment 기본 개념 확인"
-  - url: "https://engineering.linecorp.com/ko/blog/applying-kafka-streams-for-internal-message-delivery-pipeline"
-    title: "LINE Engineering: 내부 데이터 파이프라인에 Kafka Streams 적용하기"
+    relationNote: "컨슈머 위치와 확정 위치, 그룹별 파티션 할당·재조정 계약 확인"
+  - url: "https://engineering.linecorp.com/ko/blog/how-line-openchat-server-handles-extreme-traffic-spikes"
+    title: "LINE Engineering: LINE 오픈챗 서버가 100배 급증하는 트래픽을 다루는 방법"
     referenceType: COMPANY_TECH_BLOG
     language: ko
-    displayOrder: 3
-    relationNote: "Kafka consumer가 topic의 처리 위치를 offset으로 관리하고 여러 consumer가 stream을 처리하는 실제 적용 맥락 확인"
+    depth: section
+    recommendation: "핫 챗의 파티션 집중, offset lag와 소비자 자원 부하를 관찰한 운영 사례를 확인한다."
+    displayOrder: 2
+    relationNote: "특정 파티션의 오프셋 랙과 소비자 부하를 관측한 운영 사례 확인"
 ---
-# Consumer Group과 처리 위치
+# 컨슈머 그룹과 처리 위치
 
-같은 topic을 여러 목적에서 독립적으로 읽고 싶다면 consumer group을 분리할 수 있습니다. 반대로 같은 목적의 consumer 여러 개는 하나의 group 안에서 partition을 나눠 처리합니다.
+같은 토픽을 여러 목적에서 독립적으로 읽고 싶다면 컨슈머 그룹(Consumer Group)을 분리할 수 있습니다. 반대로 같은 목적의 컨슈머 여러 개는 하나의 그룹 안에서 파티션을 나눠 처리합니다.
 
 ```text
 order-events
@@ -56,6 +54,8 @@ consumer position
 committed position
 → restart나 rebalance 뒤 다시 시작할 기준으로 저장한 위치
 ```
+
+Offset은 partition log 안의 위치 식별자이지 처리한 record 수와 같다는 뜻은 아닙니다. Compaction이나 transaction record 때문에 번호 사이에 빈 구간이 생길 수 있습니다.
 
 Record를 가져왔다고 committed position까지 즉시 같은 위치로 이동하는 것은 아닙니다. 그래서 “offset 100까지 읽었다”와 “offset 100까지 처리를 완료했다고 기록했다”는 다른 상태일 수 있습니다.
 

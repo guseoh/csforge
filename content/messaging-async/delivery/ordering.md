@@ -9,12 +9,22 @@ level: 3
 status: PUBLISHED
 displayOrder: 30
 references:
-  - url: "https://kafka.apache.org/documentation/"
-    title: "Apache Kafka Documentation"
+  - url: "https://kafka.apache.org/intro/"
+    title: "Apache Kafka Documentation: Introduction"
     referenceType: OFFICIAL
     language: en
+    depth: section
+    recommendation: "이벤트·메시지 용어와 키 기반 파티셔닝, 토픽 보존·소비자 분리의 기본 동작을 확인한다."
     displayOrder: 1
-    relationNote: "partition이 ordering과 parallelism의 단위인 이유 확인"
+    relationNote: "같은 키의 이벤트를 같은 파티션에 쓰고 파티션 안에 기록된 순서로 읽는 보장 확인"
+  - url: "https://engineering.linecorp.com/ko/blog/decaton-case-studies"
+    title: "LINE Engineering: Kafka를 이용한 작업 큐 라이브러리 'Decaton' 활용 사례"
+    referenceType: COMPANY_TECH_BLOG
+    language: ko
+    depth: section
+    recommendation: "Kafka 작업 큐에서 재시도·지연 처리·파티션 병렬 작업을 구성한 적용 사례를 확인한다."
+    displayOrder: 2
+    relationNote: "메시지 키로 순서를 유지하면서 작업 큐를 분할하는 실제 처리 모델 확인"
 ---
 # 메시지 순서와 병렬 처리
 
@@ -26,6 +36,8 @@ order-8: Placed → Cancelled
 ```
 
 `orderId`처럼 같은 aggregate를 한 partition에 모으면 그 partition에 append된 record의 순서를 이용할 수 있습니다. 다른 주문끼리는 서로 다른 partition에서 병렬로 처리할 수 있습니다.
+
+같은 키는 같은 파티션을 선택하는 데 쓰일 뿐, 서로 다른 producer instance가 보낸 이벤트를 업무상 발생 순서대로 재정렬하지 않습니다. 여러 producer가 같은 aggregate를 갱신한다면 aggregate version이나 sequence로 순서를 판단하고, producer·relay가 그 순서를 지키거나 consumer가 역순 적용을 거부하는 경계가 필요합니다.
 
 ### Partition 순서와 완료 순서는 다르다
 

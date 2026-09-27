@@ -3,20 +3,30 @@ kind: concept
 contentKey: messaging.core.workflow.backpressure-capacity
 topicContentKey: messaging.core.workflow
 slug: backpressure-capacity
-title: "생산 속도와 Consumer 처리 용량"
+title: "생산 속도와 컨슈머 처리 용량"
 summary: "producer가 consumer보다 빠를 때 lag와 지연 시간이 누적되는 이유를 이해하고 producer 제한·consumer 확장·retry 분리로 end-to-end capacity를 조정한다."
 level: 2
 status: PUBLISHED
 displayOrder: 20
 references:
-  - url: "https://kafka.apache.org/documentation/"
-    title: "Apache Kafka Documentation"
+  - url: "https://kafka.apache.org/42/operations/basic-kafka-operations/"
+    title: "Apache Kafka 4.2 Operations: Basic Kafka Operations"
     referenceType: OFFICIAL
     language: en
+    depth: section
+    recommendation: "컨슈머 그룹의 할당 파티션과 lag를 운영 명령으로 확인하는 절차를 참고한다."
     displayOrder: 1
-    relationNote: "producer·consumer throughput과 partition 기반 확장 확인"
+    relationNote: "컨슈머 그룹의 파티션 할당과 consumer lag를 운영에서 확인하는 방법 참고"
+  - url: "https://engineering.linecorp.com/ko/blog/how-line-openchat-server-handles-extreme-traffic-spikes"
+    title: "LINE Engineering: LINE 오픈챗 서버가 100배 급증하는 트래픽을 다루는 방법"
+    referenceType: COMPANY_TECH_BLOG
+    language: ko
+    depth: section
+    recommendation: "핫 챗의 파티션 집중, offset lag와 소비자 자원 부하를 관찰한 운영 사례를 확인한다."
+    displayOrder: 2
+    relationNote: "핫 챗의 파티션 랙·CPU 부하를 통해 key skew와 소비 용량 병목을 관찰한 사례 확인"
 ---
-# 생산 속도와 Consumer 처리 용량
+# 생산 속도와 컨슈머 처리 용량
 
 Producer가 초당 10,000개의 message를 만들지만 consumer가 초당 6,000개만 처리한다면 남은 4,000개는 매초 backlog로 쌓입니다. Broker가 이를 보관해 주더라도 **사용자가 결과를 보게 되는 시간은 계속 늦어집니다.**
 

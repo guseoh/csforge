@@ -9,23 +9,21 @@ level: 2
 status: PUBLISHED
 displayOrder: 30
 references:
-  - url: "https://kafka.apache.org/documentation/"
-    title: "Apache Kafka Documentation"
+  - url: "https://kafka.apache.org/intro/"
+    title: "Apache Kafka Documentation: Introduction"
     referenceType: OFFICIAL
     language: en
+    depth: section
+    recommendation: "이벤트·메시지 용어와 키 기반 파티셔닝, 토픽 보존·소비자 분리의 기본 동작을 확인한다."
     displayOrder: 1
-    relationNote: "topic·consumer·message retention과 version 공존 경계 확인"
-  - url: "https://microservices.io/patterns/data/transactional-outbox.html"
-    title: "Microservices.io: Transactional Outbox Pattern"
-    referenceType: OTHER
-    language: en
-    displayOrder: 2
-    relationNote: "message payload를 durable event로 relay하는 운영 맥락 확인"
+    relationNote: "토픽의 이벤트 보존과 여러 consumer의 독립적인 재생 경계 확인"
   - url: "https://docs.confluent.io/platform/current/schema-registry/fundamentals/schema-evolution.html"
-    title: "Confluent Documentation: Schema Evolution and Compatibility"
+    title: "Confluent Documentation: Schema Evolution and Compatibility for Schema Registry on Confluent Platform"
     referenceType: OFFICIAL
     language: en
-    displayOrder: 3
+    depth: section
+    recommendation: "Confluent Schema Registry의 backward·forward·full·transitive 호환성 방향과 format별 제약을 확인한다."
+    displayOrder: 2
     relationNote: "Schema Registry의 backward·forward·full·transitive compatibility 정의와 format별 제약 확인"
 ---
 # 메시지 스키마의 호환 가능한 진화
@@ -48,14 +46,14 @@ Optional field를 하나 추가해도 old consumer가 unknown field를 거부하
 
 ### Backward와 forward는 읽는 방향을 기준으로 본다
 
-Schema Registry에서 사용하는 일반적인 용어는 다음처럼 이해할 수 있습니다.
+Confluent Schema Registry 용어에서 호환성 방향은 다음처럼 정의됩니다.
 
 ```text
 BACKWARD
-새 consumer/schema가 이전 data를 읽을 수 있음
+새 스키마를 사용하는 consumer가 이전 스키마로 기록된 데이터를 읽을 수 있음
 
 FORWARD
-이전 consumer/schema가 새 data를 읽을 수 있음
+이전 스키마를 사용하는 consumer가 새 스키마로 기록된 데이터를 읽을 수 있음
 
 FULL
 양방향 모두 호환
@@ -63,16 +61,17 @@ FULL
 
 또한 non-transitive 정책은 직전 version만 비교할 수 있고, transitive 정책은 더 오래된 version까지 compatibility를 검사합니다. Retention 기간 전체를 replay해야 한다면 어느 범위까지 보장하는지 확인해야 합니다.
 
-### Rollout 순서도 호환성 설계의 일부다
+### 배포 순서도 호환성 설계의 일부다
 
-새 consumer가 이전 message를 읽을 수 있는 backward compatibility가 확보됐다면 consumer를 먼저 배포하고 producer를 나중에 바꾸는 식의 단계적 rollout이 가능합니다.
+새 consumer가 이전 payload를 읽을 수 있는 backward 호환성만 확보된 경우, 새 producer를 먼저 배포하면 아직 남아 있는 이전 consumer가 새 payload를 처리하지 못할 수 있습니다. 새 consumer를 먼저 모두 배포하고 이전 consumer를 종료한 뒤 producer를 바꾸는 순서가 안전합니다. 이전 consumer도 새 payload를 읽을 수 있는 forward 호환성이 확보됐다면 다른 순서를 선택할 수 있으므로, 실제 reader·writer 조합과 배포 중 공존 기간을 확인합니다.
 
 ```text
 1. 새 consumer 배포
-   └─ old payload 처리 가능
-2. 새 producer 배포
-   └─ new payload 생산
-3. old consumer 제거
+   └─ 이전 payload를 처리할 수 있는지 확인
+2. 이전 consumer 종료
+   └─ 새 payload를 읽지 못하는 reader 제거
+3. 새 producer 배포
+   └─ 새 payload 생산 시작
 ```
 
 실제 순서는 compatibility 방향과 제품 배포 구조에 따라 달라집니다.

@@ -3,7 +3,7 @@ kind: concept
 contentKey: messaging.core.workflow.transactional-outbox
 topicContentKey: messaging.core.workflow
 slug: transactional-outbox
-title: "Transactional Outbox와 이중 쓰기 문제"
+title: "트랜잭셔널 아웃박스(Transactional Outbox)와 이중 쓰기 문제"
 summary: "business DB commit과 broker publish를 따로 수행할 때 생기는 dual-write gap을 outbox row와 relay로 줄이고, relay duplicate를 consumer idempotency로 흡수한다."
 level: 3
 status: PUBLISHED
@@ -15,20 +15,24 @@ references:
     language: en
     displayOrder: 1
     relationNote: "business update와 outbox 저장, relay duplicate와 consumer idempotency 확인"
-  - url: "https://kafka.apache.org/documentation/"
-    title: "Apache Kafka Documentation"
+  - url: "https://kafka.apache.org/42/design/design/#message-delivery-semantics"
+    title: "Apache Kafka 4.2 Design: Message Delivery Semantics"
     referenceType: OFFICIAL
     language: en
+    depth: section
+    recommendation: "파티션 순서와 at-most-once·at-least-once, Kafka 내부 transaction의 보장 범위를 확인한다."
     displayOrder: 2
-    relationNote: "broker publish와 consumer delivery 경계 확인"
+    relationNote: "Kafka 내부 소비 위치·출력·거래 경계와 외부 시스템 효과의 차이 확인"
   - url: "https://debezium.io/documentation/reference/stable/transformations/outbox-event-router.html"
     title: "Debezium Documentation: Outbox Event Router"
     referenceType: OFFICIAL
     language: en
+    depth: section
+    recommendation: "Debezium이 outbox row의 이벤트 ID와 aggregate ID를 메시지 헤더·키로 전달하는 방식을 확인한다."
     displayOrder: 3
     relationNote: "outbox event id·aggregate id를 message id/key로 전달하는 CDC relay 구현 사례 확인"
 ---
-# Transactional Outbox와 이중 쓰기 문제
+# 트랜잭셔널 아웃박스(Transactional Outbox)와 이중 쓰기 문제
 
 한 요청에서 PostgreSQL을 commit하고 Kafka에도 event를 publish해야 한다고 해 봅시다. 두 작업을 순서대로 실행하면 어느 쪽이 먼저든 **하나만 성공하는 틈**이 생깁니다.
 
