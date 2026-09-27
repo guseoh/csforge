@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.tls.tls-termination
 topicContentKey: network-http.core.tls
 slug: tls-termination
-title: "TLS Termination과 Trust Boundary"
+title: "TLS 종료(Termination) 경계"
 summary: "proxy에서 TLS를 종료할 때 client-proxy와 proxy-backend가 별도 connection과 trust boundary가 되는 이유를 설명한다."
 level: 2
 status: PUBLISHED
@@ -15,7 +15,7 @@ references:
     language: en
     displayOrder: 1
 ---
-# TLS Termination과 Trust Boundary
+# TLS 종료(Termination) 경계
 
 reverse proxy나 load balancer가 client와 직접 TLS handshake를 수행하면 그 장비가 TLS endpoint가 된다. client가 보낸 encrypted application data는 proxy에서 복호화되고, proxy는 내용을 읽은 뒤 backend로 별도의 connection을 만들어 전달한다. 이것이 TLS termination이다.
 

@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.http-message.content-negotiation
 topicContentKey: network-http.core.http-message
 slug: content-negotiation
-title: "Content Negotiation과 Variant 선택"
+title: "콘텐츠 협상"
 summary: "client preference와 server가 제공 가능한 representation을 조합해 response variant를 선택하는 과정을 설명한다."
 level: 2
 status: PUBLISHED
@@ -15,7 +15,7 @@ references:
     language: en
     displayOrder: 1
 ---
-# Content Negotiation과 Variant 선택
+# 콘텐츠 협상
 
 하나의 resource가 여러 representation을 제공할 수 있다면 server는 이번 request에 어떤 variant를 반환할지 선택해야 한다. content negotiation은 client가 보낸 preference와 server가 제공 가능한 representation을 비교해 그 선택을 수행하는 과정이다.
 

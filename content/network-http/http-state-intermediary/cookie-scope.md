@@ -3,21 +3,21 @@ kind: concept
 contentKey: network-http.core.http-state-intermediary.cookie-scope
 topicContentKey: network-http.core.http-state-intermediary
 slug: cookie-scope
-title: "Cookie Scope"
+title: "쿠키의 전송 범위와 SameSite"
 summary: "Domain·Path·Secure·SameSite가 cookie가 어느 요청에 포함될 수 있는지 제한하는 방식을 설명한다."
 level: 2
 status: PUBLISHED
 displayOrder: 30
 references:
-  - url: "https://www.rfc-editor.org/rfc/rfc6265"
-    title: "HTTP State Management Mechanism"
+  - url: "https://www.rfc-editor.org/rfc/rfc10025.html"
+    title: "Cookies: HTTP State Management Mechanism"
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "HTTP cookie state와 전송 scope를 확인한다."
+    recommendation: "Cookie·Set-Cookie 필드의 문법과 user agent의 저장·전송 규칙을 확인한다."
     displayOrder: 1
 ---
-# Cookie Scope
+# 쿠키의 전송 범위와 SameSite
 
 user agent는 저장된 cookie를 모든 요청에 붙이지 않는다. request의 host와 path, secure channel 여부와 site context를 cookie attribute와 비교해 해당 cookie가 이번 요청에 포함될 수 있는지 결정한다.
 

@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.local-delivery.default-gateway
 topicContentKey: network-http.core.local-delivery
 slug: default-gateway
-title: "Default Gateway"
+title: "기본 게이트웨이"
 summary: "외부 prefix packet을 next-hop gateway로 보내는 판단을 설명한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "Internet protocol layering의 책임 경계를 확인한다."
     displayOrder: 1
 ---
-# Default Gateway
+# 기본 게이트웨이
 
 Host가 IP packet을 보낼 때 먼저 routing table을 보고 destination이 **직접 연결된 local prefix인지, 다른 network로 가야 하는지** 판단한다. Destination이 on-link라면 target host 자체가 next hop이 되고, local link에서 그 host의 MAC을 ARP/NDP로 찾는다.
 

@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.http-cache.freshness
 topicContentKey: network-http.core.http-cache
 slug: freshness
-title: "Freshness"
+title: "응답 신선도(Freshness)"
 summary: "HTTP cache가 stored response의 age와 freshness lifetime을 비교해 fresh·stale을 판단하는 방식을 설명한다."
 level: 1
 status: PUBLISHED
@@ -15,7 +15,7 @@ references:
     language: en
     displayOrder: 1
 ---
-# Freshness
+# 응답 신선도(Freshness)
 
 HTTP cache가 response를 저장했다고 해서 언제까지 origin에 묻지 않고 사용할 수 있는지는 자동으로 정해지지 않는다. Cache는 stored response의 **current age**와 **freshness lifetime**을 비교해 response가 fresh한지 stale한지 판단한다.
 

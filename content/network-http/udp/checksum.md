@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.udp.checksum
 topicContentKey: network-http.core.udp
 slug: checksum
-title: "UDP Checksum과 오류 검출"
+title: "UDP 체크섬"
 summary: "UDP checksum이 전송 중 오류를 검출하지만 delivery reliability나 security를 제공하지 않는 경계를 설명한다."
 level: 1
 status: PUBLISHED
@@ -17,11 +17,17 @@ references:
     recommendation: "UDP datagram과 application reliability 경계를 확인한다."
     displayOrder: 1
 ---
-# UDP Checksum과 오류 검출
+# UDP 체크섬
 
 UDP checksum은 UDP header와 payload, 그리고 IP source·destination 등의 일부 정보를 포함한 pseudo-header를 바탕으로 계산한다. 수신자는 같은 계산을 수행해 값이 맞지 않으면 전송 중 data가 손상되었을 가능성을 발견할 수 있다.
 
 이 기능의 목적은 **bit corruption 검출**이다. checksum이 맞는다고 datagram이 반드시 제때 도착했다거나, 중복이 아니거나, 올바른 순서라는 뜻은 아니다. 손실된 datagram을 다시 보내는 기능도 없으므로 checksum은 reliability와 별개의 메커니즘이다.
+
+| 질문 | UDP checksum이 답할 수 있는가? | 별도 메커니즘 |
+| --- | --- | --- |
+| 전송 중 일부 bit가 손상됐는가? | 감지에 도움을 줌 | 상위 protocol이 오류를 처리할 방법은 따로 필요 |
+| 빠진 datagram을 다시 받아야 하는가? | 아니오 | ACK·timeout·재전송 정책 |
+| 보낸 상대가 누구이고 악의적으로 바뀌지 않았는가? | 아니오 | 인증된 암호화나 message authentication |
 
 ### Checksum과 보안 무결성은 다르다
 

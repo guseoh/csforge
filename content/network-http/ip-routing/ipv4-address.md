@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.ip-routing.ipv4-address
 topicContentKey: network-http.core.ip-routing
 slug: ipv4-address
-title: "IPv4 Address"
+title: "IPv4 주소"
 summary: "IPv4 address와 network/host portion을 설명한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "IP address와 packet forwarding의 기본을 확인한다."
     displayOrder: 1
 ---
-# IPv4 Address
+# IPv4 주소
 
 IPv4 address는 32-bit 값으로 IP packet의 source와 destination을 식별한다. 다만 address 하나만으로 어느 부분이 network이고 어느 부분이 host인지 결정할 수는 없다. 실제 network 범위는 prefix length 또는 subnet mask와 함께 해석해야 한다.
 

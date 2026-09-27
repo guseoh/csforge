@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.dns.domain-hierarchy
 topicContentKey: network-http.core.dns
 slug: domain-hierarchy
-title: "Domain Hierarchy"
+title: "도메인 계층 구조"
 summary: "root·TLD·authoritative zone으로 domain name을 계층 해석하는 구조를 설명한다."
 level: 1
 status: PUBLISHED
@@ -15,7 +15,7 @@ references:
     language: en
     displayOrder: 1
 ---
-# Domain Hierarchy
+# 도메인 계층 구조
 
 DNS namespace는 점(`.`)으로 구분한 label을 계층적으로 배치한다. 완전한 domain name은 오른쪽에서 왼쪽으로 root, TLD, 그 아래 domain과 host label로 이어진다.
 

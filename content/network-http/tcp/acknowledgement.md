@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.tcp.acknowledgement
 topicContentKey: network-http.core.tcp
 slug: acknowledgement
-title: "TCP Acknowledgement"
+title: "확인 응답(ACK)"
 summary: "누적 ACK가 다음 기대 byte를 나타내는 이유를 설명한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "transport connection과 application request의 경계를 확인한다."
     displayOrder: 1
 ---
-# TCP Acknowledgement
+# 확인 응답(ACK)
 
 TCP ACK의 acknowledgment number는 receiver가 **다음에 받기를 기대하는 sequence number**를 나타낸다. 일반적인 cumulative ACK에서는 그보다 앞선 연속된 byte 범위를 이미 받았다는 뜻이다.
 

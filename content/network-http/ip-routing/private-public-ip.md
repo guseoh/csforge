@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.ip-routing.private-public-ip
 topicContentKey: network-http.core.ip-routing
 slug: private-public-ip
-title: "Private·Public IP"
+title: "사설 IP와 공인 IP"
 summary: "routable address와 private address의 reachability 경계를 설명한다."
 level: 1
 status: PUBLISHED
@@ -17,11 +17,16 @@ references:
     recommendation: "private·public address와 NAT 경계를 확인한다."
     displayOrder: 1
 ---
-# Private·Public IP
+# 사설 IP와 공인 IP
 
 Private IPv4 address는 조직 내부에서 반복해서 사용할 수 있도록 예약된 address range다. 대표적으로 RFC 1918이 정의한 범위는 public Internet의 global routing 대상으로 사용하지 않는다. 그래서 서로 다른 private network에서 같은 address를 동시에 사용할 수 있다.
 
 Public address는 global Internet routing에 사용할 수 있는 address space에 속한다. 하지만 public address를 가진다는 사실만으로 특정 service가 실제로 reachable하다는 뜻은 아니다. Reachability에는 route, endpoint와 정책 같은 다른 조건도 필요하다.
+
+| 주소 범위 | Global Internet에서의 route | 내부 network에서의 사용 | 접근 허용 여부 |
+| --- | --- | --- | --- |
+| Private IPv4 | RFC 1918 범위 자체는 global route 대상으로 사용하지 않음 | 여러 독립된 조직 network에서 재사용 가능 | 주소 종류만으로 허용·차단을 결정하지 않음 |
+| Public | global routing에 사용할 수 있는 주소 공간 | 조직 내부에서도 사용할 수 있음 | 방화벽·route·service 상태에 따라 여전히 차단될 수 있음 |
 
 ### Private address도 network 안에서는 직접 route될 수 있다
 

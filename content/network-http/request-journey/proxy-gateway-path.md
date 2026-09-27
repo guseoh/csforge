@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.request-journey.proxy-gateway-path
 topicContentKey: network-http.core.request-journey
 slug: proxy-gateway-path
-title: "Proxy·Gateway가 만드는 HTTP Hop"
+title: "Proxy와 Gateway 경유"
 summary: "forward proxy·reverse proxy·gateway가 client와 origin 사이에 별도 HTTP hop을 만드는 방식을 설명한다."
 level: 2
 status: PUBLISHED
@@ -15,7 +15,7 @@ references:
     language: en
     displayOrder: 1
 ---
-# Proxy·Gateway가 만드는 HTTP Hop
+# Proxy와 Gateway 경유
 
 HTTP intermediary는 client가 보낸 request를 받아 다음 endpoint로 다시 전달한다. 이때 client→intermediary와 intermediary→upstream은 별도의 connection일 수 있으므로 timeout, TLS, transport state와 peer address도 각각 다르다.
 

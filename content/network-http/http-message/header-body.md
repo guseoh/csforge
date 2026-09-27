@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.http-message.header-body
 topicContentKey: network-http.core.http-message
 slug: header-body
-title: "Header Fields와 Content"
+title: "헤더와 메시지 본문"
 summary: "HTTP header fields가 metadata·control 정보를 전달하고 content가 representation data를 운반하는 경계를 설명한다."
 level: 1
 status: PUBLISHED
@@ -15,7 +15,7 @@ references:
     language: en
     displayOrder: 1
 ---
-# Header Fields와 Content
+# 헤더와 메시지 본문
 
 HTTP message에는 message를 해석하고 처리하기 위한 header fields와, 필요한 경우 실제 representation data를 운반하는 content가 있다. header fields에는 content의 media type과 길이, cache 조건, 인증 정보, preferred representation처럼 message 처리에 필요한 metadata와 control information이 들어갈 수 있다.
 

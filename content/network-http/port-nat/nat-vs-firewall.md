@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.port-nat.nat-vs-firewall
 topicContentKey: network-http.core.port-nat
 slug: nat-vs-firewall
-title: "NAT / Firewall"
+title: "NAT와 방화벽의 차이"
 summary: "주소 변환과 명시적 traffic policy의 책임을 구분한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "NAT mapping과 inbound reachability를 확인한다."
     displayOrder: 1
 ---
-# NAT / Firewall
+# NAT와 방화벽의 차이
 
 NAT와 firewall은 같은 gateway 장비에 함께 구현되는 경우가 많지만 **서로 다른 문제를 해결한다.** NAT는 packet의 source/destination address나 port를 변환하고 그 translation 관계를 관리한다. Firewall은 traffic의 source, destination, protocol, port, connection state 같은 조건을 정책과 비교해 허용하거나 차단한다.
 

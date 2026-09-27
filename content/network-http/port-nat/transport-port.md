@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.port-nat.transport-port
 topicContentKey: network-http.core.port-nat
 slug: transport-port
-title: "Transport Port"
+title: "전송 계층 포트"
 summary: "한 host의 여러 transport endpoint를 port가 구분하는 이유를 설명한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "transport port와 endpoint 식별 규칙을 확인한다."
     displayOrder: 1
 ---
-# Transport Port
+# 전송 계층 포트
 
 Port는 transport layer에서 한 host 안의 여러 communication endpoint를 구분하기 위한 숫자다. IP address가 destination host/interface를 찾는 데 쓰인다면 port는 그 host 안에서 **어느 transport endpoint로 data를 전달할지** 구분하는 데 사용된다.
 

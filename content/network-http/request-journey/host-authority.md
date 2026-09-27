@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.request-journey.host-authority
 topicContentKey: network-http.core.request-journey
 slug: host-authority
-title: "Host·Authority와 Virtual Hosting"
+title: "Host와 :authority"
 summary: "HTTP authority가 같은 IP·port에서 여러 logical host 중 request 대상을 선택하게 하는 이유를 설명한다."
 level: 2
 status: PUBLISHED
@@ -15,11 +15,17 @@ references:
     language: en
     displayOrder: 1
 ---
-# Host·Authority와 Virtual Hosting
+# Host와 :authority
 
 하나의 IP address와 port에서 여러 hostname의 HTTP service를 함께 제공할 수 있다. network layer에서는 같은 destination endpoint로 연결되더라도 HTTP server는 request가 어느 logical host를 대상으로 하는지 알아야 한다. 이 역할을 HTTP/1.1의 `Host`와 HTTP/2·3의 `:authority`가 담당한다.
 
 예를 들어 `api.example.com`과 `admin.example.com`이 같은 reverse proxy IP를 사용해도 authority가 다르면 proxy나 origin server는 서로 다른 virtual host 설정이나 route로 request를 전달할 수 있다. 따라서 TCP destination address만으로 HTTP resource의 logical destination을 완전히 결정할 수 없다.
+
+| 단계 | 주로 사용하는 값 | 결정하는 것 |
+| --- | --- | --- |
+| DNS lookup | Hostname | 연결할 address 후보 |
+| TLS handshake | SNI server name | TLS virtual host와 certificate 선택에 참고할 이름 |
+| HTTP request | Host 또는 :authority | 요청이 대상으로 하는 HTTP authority |
 
 ### DNS name, TLS SNI, HTTP authority는 연결되지만 같은 정보는 아니다
 

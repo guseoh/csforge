@@ -3,23 +3,29 @@ kind: concept
 contentKey: network-http.core.http-state-intermediary.set-cookie
 topicContentKey: network-http.core.http-state-intermediary
 slug: set-cookie
-title: "Set-Cookie"
+title: "Set-Cookie로 쿠키 저장하기"
 summary: "server가 user agent에게 cookie의 값·scope·lifetime을 저장하도록 지시하는 Set-Cookie를 설명한다."
 level: 1
 status: PUBLISHED
 displayOrder: 20
 references:
-  - url: "https://www.rfc-editor.org/rfc/rfc6265"
-    title: "HTTP State Management Mechanism"
+  - url: "https://www.rfc-editor.org/rfc/rfc10025.html"
+    title: "Cookies: HTTP State Management Mechanism"
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "HTTP cookie state와 전송 scope를 확인한다."
+    recommendation: "Cookie·Set-Cookie 필드의 문법과 user agent의 저장·전송 규칙을 확인한다."
     displayOrder: 1
 ---
-# Set-Cookie
+# Set-Cookie로 쿠키 저장하기
 
 `Set-Cookie`는 HTTP response에서 user agent에게 cookie를 생성하거나 갱신하도록 지시하는 field다. 기본 name/value와 함께 `Domain`, `Path`, `Max-Age` 또는 `Expires`, `Secure`, `HttpOnly`, `SameSite` 같은 attribute를 사용해 저장 수명과 이후 전송 조건을 정할 수 있다.
+
+| 단계 | HTTP 교환 | User agent의 동작 |
+| --- | --- | --- |
+| 1 | Response에 Set-Cookie와 attribute 포함 | 값과 저장·전송 조건을 저장할 수 있음 |
+| 2 | 다음 요청이 host·path·secure·site 조건에 부합 | 해당 cookie를 Cookie header에 포함할 수 있음 |
+| 3 | 요청 조건이 맞지 않거나 cookie가 만료됨 | 그 요청에는 cookie를 보내지 않음 |
 
 이 attribute들은 cookie 저장 규칙을 설명하는 정보이므로 이후 request의 `Cookie` header에 그대로 복사되지 않는다. 한 response에서 여러 cookie를 설정하려면 여러 `Set-Cookie` field를 사용하며, 일반적인 comma-separated list field처럼 단순 결합해서는 안 된다.
 

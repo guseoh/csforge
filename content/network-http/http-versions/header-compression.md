@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.http-versions.header-compression
 topicContentKey: network-http.core.http-versions
 slug: header-compression
-title: "Header Compression"
+title: "HTTP 헤더 압축과 HPACK"
 summary: "HTTP/2 HPACK과 HTTP/3 QPACK이 반복 header field를 connection-level state로 압축하는 이유를 설명한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "HTTP header compression state와 privacy 경계를 확인한다."
     displayOrder: 1
 ---
-# Header Compression
+# HTTP 헤더 압축과 HPACK
 
 HTTP request와 response에는 같은 header field name과 value가 반복해서 나타날 수 있다. HTTP/2의 HPACK과 HTTP/3의 QPACK은 이런 반복을 그대로 매번 전송하지 않고 static table, dynamic table과 compact encoding을 사용해 header overhead를 줄인다.
 

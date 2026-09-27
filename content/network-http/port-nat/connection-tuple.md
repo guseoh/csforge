@@ -3,21 +3,21 @@ kind: concept
 contentKey: network-http.core.port-nat.connection-tuple
 topicContentKey: network-http.core.port-nat
 slug: connection-tuple
-title: "Connection Tuple"
+title: "연결 식별 튜플"
 summary: "양 끝 address·port·protocol tuple로 flow를 식별하는 방식을 설명한다."
 level: 2
 status: PUBLISHED
 displayOrder: 30
 references:
-  - url: "https://www.rfc-editor.org/rfc/rfc793"
+  - url: "https://www.rfc-editor.org/rfc/rfc9293"
     title: "Transmission Control Protocol"
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "TCP endpoint와 connection state를 확인한다."
+    recommendation: "transport connection과 application request의 경계를 확인한다."
     displayOrder: 1
 ---
-# Connection Tuple
+# 연결 식별 튜플
 
 TCP connection은 양쪽 endpoint의 address와 port 조합으로 구분된다. TCP라는 protocol이 이미 정해져 있다고 보면 **local IP, local port, remote IP, remote port의 4-tuple**이 하나의 connection을 식별한다. 일반적인 flow를 protocol까지 포함해 표현할 때는 5-tuple이라고 부르기도 한다.
 

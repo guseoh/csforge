@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.dns.stub-recursive-resolver
 topicContentKey: network-http.core.dns
 slug: stub-recursive-resolver
-title: "Stub·Recursive Resolver"
+title: "스텁 리졸버와 재귀 리졸버"
 summary: "application stub과 recursive resolver의 역할을 구분한다."
 level: 1
 status: PUBLISHED
@@ -15,7 +15,7 @@ references:
     language: en
     displayOrder: 1
 ---
-# Stub·Recursive Resolver
+# 스텁 리졸버와 재귀 리졸버
 
 Application이 domain name을 해석할 때 root부터 authoritative server까지 직접 모두 질의하는 경우는 일반적이지 않다. 보통 local **stub resolver**가 configured recursive resolver에 질문을 보내고, **recursive resolver**가 cache와 DNS hierarchy를 이용해 최종 answer를 대신 찾는다.
 

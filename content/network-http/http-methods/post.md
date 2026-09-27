@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.http-methods.post
 topicContentKey: network-http.core.http-methods
 slug: post
-title: "POST와 Target-Specific Processing"
+title: "POST와 서버 측 처리"
 summary: "POST가 request content를 target resource의 고유 semantics에 따라 처리하도록 요청하는 method임을 설명한다."
 level: 1
 status: PUBLISHED
@@ -15,11 +15,17 @@ references:
     language: en
     displayOrder: 1
 ---
-# POST와 Target-Specific Processing
+# POST와 서버 측 처리
 
 POST는 request content를 **target resource가 정의한 고유한 방식으로 처리해 달라**고 요청하는 method다. 그래서 POST는 단순히 `resource 생성 method` 하나로만 정의되지 않는다. form 제출, command 실행, collection에 새 item 생성, data 처리 작업 시작처럼 target resource가 여러 종류의 processing을 정의할 수 있다.
 
 새 resource가 만들어졌다면 server는 `201 Created`와 `Location`을 사용해 생성된 resource를 알려 줄 수 있다. 하지만 POST가 항상 새 URI를 만든다는 뜻은 아니며, 처리 결과를 representation으로 반환하거나 다른 workflow를 시작하는 용도로도 사용할 수 있다.
+
+| Target resource가 정의한 처리 | POST의 가능한 결과 | 가능한 response |
+| --- | --- | --- |
+| Collection에 새 order 추가 | 새로운 resource 생성 | 201 Created와 Location |
+| Search endpoint에 query 전달 | 검색 결과 representation 반환 | 200 OK |
+| Job endpoint에 작업 요청 | 비동기 작업 접수 | 202 Accepted |
 
 ### POST는 method 자체가 idempotent하지 않다
 

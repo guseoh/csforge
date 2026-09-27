@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.local-delivery.broadcast-domain
 topicContentKey: network-http.core.local-delivery
 slug: broadcast-domain
-title: "Broadcast Domain"
+title: "브로드캐스트 도메인"
 summary: "broadcast frame이 도달하는 local network 범위를 설명한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "local link delivery와 address resolution을 확인한다."
     displayOrder: 1
 ---
-# Broadcast Domain
+# 브로드캐스트 도메인
 
 Broadcast domain은 하나의 link-layer broadcast frame이 **flood되어 도달할 수 있는 범위**다. Ethernet switch는 같은 forwarding domain 안에서 broadcast frame을 여러 port로 전달하지만, 일반적인 router는 그 frame을 다른 IP network로 그대로 넘기지 않는다.
 

@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.layering.encapsulation
 topicContentKey: network-http.core.layering
 slug: encapsulation
-title: "Encapsulation"
+title: "캡슐화(Encapsulation)"
 summary: "상위 message가 하위 header와 payload 안에 실리는 구조를 설명한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "Internet protocol layering의 책임 경계를 확인한다."
     displayOrder: 1
 ---
-# Encapsulation
+# 캡슐화(Encapsulation)
 
 Encapsulation은 상위 계층이 만든 data가 하위 계층의 payload가 되고, 각 계층이 자신의 전달에 필요한 header를 덧붙이는 과정이다. Application message는 transport가 운반할 payload가 되고, transport unit은 IP packet의 payload가 되며, packet은 다시 link frame에 실린다.
 

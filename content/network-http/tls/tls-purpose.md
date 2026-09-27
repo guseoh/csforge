@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.tls.tls-purpose
 topicContentKey: network-http.core.tls
 slug: tls-purpose
-title: "TLS가 보호하는 것"
+title: "TLS가 제공하는 보안"
 summary: "TLS가 endpoint 사이에서 confidentiality·integrity·peer authentication을 제공하는 목적과 경계를 설명한다."
 level: 1
 status: PUBLISHED
@@ -15,11 +15,17 @@ references:
     language: en
     displayOrder: 1
 ---
-# TLS가 보호하는 것
+# TLS가 제공하는 보안
 
 network path에는 client와 server 사이의 packet을 관찰하거나 변조할 수 있는 여러 중간 지점이 존재한다. HTTP를 평문으로 주고받으면 중간에서 요청과 응답 내용을 읽거나 수정할 수 있고, client는 자신이 의도한 server와 통신하고 있는지도 별도로 확인하기 어렵다.
 
 TLS는 두 TLS endpoint가 handshake를 거쳐 암호화된 channel을 만들도록 한다. 일반적인 certificate 기반 HTTPS에서는 이 channel이 세 가지 중요한 목표를 가진다. 전송 내용을 제3자가 읽기 어렵게 하는 **confidentiality**, 전송 중 data가 바뀌었는지 검출하는 **integrity**, 그리고 client가 certificate와 service identity를 검증해 의도한 server와 연결되었는지 확인하는 **authentication**이다.
+
+| 보안 목표 | TLS가 제공하는 보호 | 그 자체로 보장하지 않는 것 |
+| --- | --- | --- |
+| Confidentiality | 두 TLS endpoint 사이 record 내용을 암호화 | TLS termination 이후의 구간과 모든 traffic metadata의 비밀성 |
+| Integrity | 전송 중 TLS record의 변경을 검출 | endpoint에서 처리된 뒤 data가 올바른 업무 상태인지 |
+| Server authentication | client가 certificate chain과 service identity를 검증하도록 지원 | 사용자 로그인·권한 부여; client 인증도 별도 설정이 필요 |
 
 ### TLS의 보호 범위는 endpoint 사이의 channel이다
 

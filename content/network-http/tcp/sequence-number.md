@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.tcp.sequence-number
 topicContentKey: network-http.core.tcp
 slug: sequence-number
-title: "TCP Sequence Number"
+title: "TCP 시퀀스 번호"
 summary: "byte sequence로 순서·중복·재조립을 추적하는 방식을 설명한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "transport connection과 application request의 경계를 확인한다."
     displayOrder: 1
 ---
-# TCP Sequence Number
+# TCP 시퀀스 번호
 
 TCP sequence number는 packet의 일련번호가 아니라 **TCP byte stream에서 data가 놓이는 위치**를 나타낸다. Receiver는 sequence 정보를 이용해 어떤 byte 범위가 도착했는지, 중간에 빠진 범위가 있는지, 이미 받은 data와 겹치는지를 판단한다.
 

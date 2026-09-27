@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.dns.negative-cache
 topicContentKey: network-http.core.dns
 slug: negative-cache
-title: "DNS Negative Cache"
+title: "부정 응답 캐시"
 summary: "없는 이름이나 type의 실패도 일정 시간 cache되는 이유와 위험을 설명한다."
 level: 2
 status: PUBLISHED
@@ -24,7 +24,7 @@ references:
     recommendation: "SERVFAIL·timeout 등 resolution failure cache를 NXDOMAIN/NODATA와 구분한다."
     displayOrder: 2
 ---
-# DNS Negative Cache
+# 부정 응답 캐시
 
 DNS resolver는 성공한 record뿐 아니라 **일부 부정적인 결과도 일정 시간 cache**할 수 있다. 같은 실패 query가 authoritative server나 upstream resolver로 계속 반복되는 것을 줄이기 위해서다.
 

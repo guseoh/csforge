@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.http-message.response-message
 topicContentKey: network-http.core.http-message
 slug: response-message
-title: "HTTP Response Message"
+title: "HTTP 응답 메시지"
 summary: "status code·header fields·optional content가 request 처리 결과를 표현하는 방식을 설명한다."
 level: 1
 status: PUBLISHED
@@ -15,7 +15,7 @@ references:
     language: en
     displayOrder: 1
 ---
-# HTTP Response Message
+# HTTP 응답 메시지
 
 HTTP response는 server나 intermediary가 request에 대한 결과를 client에 전달하는 message다. status code는 요청 처리 결과의 HTTP-level 의미를 나타내고, header fields는 representation metadata, cache policy, location이나 조건 같은 추가 정보를 전달한다. 필요한 경우 content에 선택된 representation이나 error detail을 담는다.
 

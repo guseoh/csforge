@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.tls.certificate
 topicContentKey: network-http.core.tls
 slug: certificate
-title: "Certificate와 공개키·Identity Binding"
+title: "서버 인증서"
 summary: "certificate가 public key와 service identity를 issuer signature로 연결하는 방식을 설명한다."
 level: 1
 status: PUBLISHED
@@ -15,11 +15,17 @@ references:
     language: en
     displayOrder: 1
 ---
-# Certificate와 공개키·Identity Binding
+# 서버 인증서
 
 TLS certificate는 endpoint의 public key와 그 key가 어떤 identity에 속한다고 주장하는지에 대한 정보를 함께 담는 서명된 data다. HTTPS server certificate라면 service identity는 보통 `subjectAltName`의 DNS name이나 IP address 형태로 표현되고, issuer의 digital signature가 certificate 내용이 발급 뒤 임의로 바뀌지 않았음을 검증하는 데 사용된다.
 
 certificate에는 public key가 들어가지만 대응하는 private key가 들어가는 것은 아니다. 실제 endpoint는 handshake에서 certificate에 대응하는 private key를 보유하고 있음을 증명해야 한다. 따라서 certificate 파일만 복사했다고 원래 server와 같은 인증을 수행할 수 있는 것은 아니다.
+
+| 확인 대상 | 무엇을 확인하는가 | 무엇과 구별해야 하는가 |
+| --- | --- | --- |
+| Certificate chain과 유효 기간 | 발급 경로와 certificate 사용 조건 | 접속하려던 hostname과 일치하는지 |
+| Subject Alternative Name | certificate가 주장하는 DNS name 또는 IP identity | 상대 endpoint가 private key를 실제 보유하는지 |
+| Handshake의 private-key 증명 | 상대가 certificate의 public key와 짝인 private key를 제어함 | application 사용자의 권한 |
 
 ### Certificate 하나만 보고 신뢰 여부가 끝나지 않는다
 

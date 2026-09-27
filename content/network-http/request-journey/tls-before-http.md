@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.request-journey.tls-before-http
 topicContentKey: network-http.core.request-journey
 slug: tls-before-http
-title: "HTTPS에서 TLS와 HTTP의 순서"
+title: "HTTP 전 TLS 연결"
 summary: "HTTPS의 일반 경로에서 TLS channel이 준비된 뒤 HTTP message를 보호해 전달하는 이유와 예외를 설명한다."
 level: 2
 status: PUBLISHED
@@ -15,7 +15,7 @@ references:
     language: en
     displayOrder: 1
 ---
-# HTTPS에서 TLS와 HTTP의 순서
+# HTTP 전 TLS 연결
 
 `https` URL은 HTTP message를 TLS로 보호해서 전달한다는 의미를 포함한다. 일반적인 새로운 HTTPS connection에서는 먼저 transport state를 만든 뒤 TLS handshake를 수행하고, server identity와 cryptographic key material을 확인한 다음 HTTP request를 encrypted application data로 보낸다.
 

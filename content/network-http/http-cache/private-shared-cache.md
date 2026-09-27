@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.http-cache.private-shared-cache
 topicContentKey: network-http.core.http-cache
 slug: private-shared-cache
-title: "Private·Shared Cache"
+title: "개인 캐시와 공유 캐시"
 summary: "하나의 user agent가 쓰는 private cache와 여러 사용자의 요청을 재사용하는 shared cache의 범위를 구분한다."
 level: 2
 status: PUBLISHED
@@ -15,7 +15,7 @@ references:
     language: en
     displayOrder: 1
 ---
-# Private·Shared Cache
+# 개인 캐시와 공유 캐시
 
 HTTP cache는 누가 stored response를 재사용할 수 있는지에 따라 private cache와 shared cache로 나눌 수 있다. Private cache는 보통 하나의 user agent를 위해 동작하고, shared cache는 proxy나 CDN처럼 여러 user agent의 request를 만족시키기 위해 response를 저장한다.
 

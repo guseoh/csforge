@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.tcp.time-wait
 topicContentKey: network-http.core.tcp
 slug: time-wait
-title: "TIME_WAIT"
+title: "TIME_WAIT 상태"
 summary: "지연 segment와 마지막 ACK 재전송을 처리하기 위해 기다리는 이유를 설명한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "transport connection과 application request의 경계를 확인한다."
     displayOrder: 1
 ---
-# TIME_WAIT
+# TIME_WAIT 상태
 
 TCP close sequence가 끝난 직후 일부 endpoint는 바로 connection state를 완전히 버리지 않고 **TIME_WAIT 상태로 일정 시간 유지**한다. 이 상태는 단순한 낭비가 아니라 이전 connection의 지연 segment와 close handshake를 안전하게 처리하기 위한 correctness mechanism이다.
 

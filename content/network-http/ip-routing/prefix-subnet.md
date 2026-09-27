@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.ip-routing.prefix-subnet
 topicContentKey: network-http.core.ip-routing
 slug: prefix-subnet
-title: "Prefix·Subnet"
+title: "CIDR prefix와 서브넷"
 summary: "CIDR prefix가 local 여부와 address block을 결정하는 방식을 설명한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "IP address와 packet forwarding의 기본을 확인한다."
     displayOrder: 1
 ---
-# Prefix·Subnet
+# CIDR prefix와 서브넷
 
 CIDR prefix는 IP address에서 **앞의 몇 bit를 하나의 network 범위로 해석할지** 나타낸다. Prefix가 길수록 더 작은 address block을 뜻하고, 더 구체적인 network를 표현한다.
 

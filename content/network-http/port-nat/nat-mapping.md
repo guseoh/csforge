@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.port-nat.nat-mapping
 topicContentKey: network-http.core.port-nat
 slug: nat-mapping
-title: "NAT Mapping"
+title: "NAT 매핑과 만료"
 summary: "outbound flow mapping의 생성·유지·timeout 상태를 설명한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "NAT mapping과 inbound reachability를 확인한다."
     displayOrder: 1
 ---
-# NAT Mapping
+# NAT 매핑과 만료
 
 Stateful NAT는 내부 endpoint와 translated 외부 endpoint의 관계를 **mapping state**로 유지한다. Outbound packet이 처음 경계를 통과할 때 mapping이 만들어질 수 있고, 이후 reply packet은 translated destination을 기준으로 원래 내부 endpoint에 되돌려진다.
 

@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.http-methods.put
 topicContentKey: network-http.core.http-methods
 slug: put
-title: "PUT과 Target State Replacement"
+title: "PUT과 전체 표현 교체"
 summary: "PUT이 request representation으로 target resource state를 생성하거나 대체하도록 요청하는 idempotent semantics를 설명한다."
 level: 1
 status: PUBLISHED
@@ -15,7 +15,7 @@ references:
     language: en
     displayOrder: 1
 ---
-# PUT과 Target State Replacement
+# PUT과 전체 표현 교체
 
 PUT은 request content에 담긴 representation이 나타내는 상태로 **target resource의 현재 상태를 생성하거나 대체해 달라**고 요청하는 method다. POST가 target에게 processing 방법을 맡기는 것과 달리, PUT에서는 client가 어느 target URI에 어떤 상태를 적용하려는지 알고 있다는 점이 중요하다.
 

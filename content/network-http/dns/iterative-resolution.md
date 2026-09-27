@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.dns.iterative-resolution
 topicContentKey: network-http.core.dns
 slug: iterative-resolution
-title: "Iterative Resolution"
+title: "반복 조회 과정"
 summary: "resolver가 root·TLD·authoritative referral을 따라가는 흐름을 설명한다."
 level: 2
 status: PUBLISHED
@@ -15,7 +15,7 @@ references:
     language: en
     displayOrder: 1
 ---
-# Iterative Resolution
+# 반복 조회 과정
 
 Recursive resolver가 cache에 필요한 answer를 가지고 있지 않으면 DNS hierarchy를 따라 authoritative server를 찾아갈 수 있다. 이때 server가 최종 answer 대신 **다음에 물어볼 authoritative server 정보를 referral로 돌려주는 방식**을 iterative resolution이라고 볼 수 있다.
 

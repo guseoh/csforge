@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.layering.decapsulation
 topicContentKey: network-http.core.layering
 slug: decapsulation
-title: "Decapsulation"
+title: "역캡슐화(Decapsulation)"
 summary: "수신 host가 각 계층 header를 제거하고 상위 payload를 전달하는 흐름을 설명한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "Internet protocol layering의 책임 경계를 확인한다."
     displayOrder: 1
 ---
-# Decapsulation
+# 역캡슐화(Decapsulation)
 
 Decapsulation은 수신 측에서 각 계층이 자신이 이해하는 header를 검사하고 제거한 뒤 payload를 상위 계층에 넘기는 과정이다. 송신 측 encapsulation을 반대 방향으로 따라간다고 볼 수 있다.
 

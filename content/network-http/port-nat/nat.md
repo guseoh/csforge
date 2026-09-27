@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.port-nat.nat
 topicContentKey: network-http.core.port-nat
 slug: nat
-title: "NAT"
+title: "네트워크 주소 변환(NAT)"
 summary: "private address와 public address를 packet 경계에서 변환하는 흐름을 설명한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "NAT mapping과 inbound reachability를 확인한다."
     displayOrder: 1
 ---
-# NAT
+# 네트워크 주소 변환(NAT)
 
 NAT(Network Address Translation)는 network 경계에서 packet의 **source 또는 destination IP address를 다른 address로 변환하는 기능**이다. Private IPv4 network와 public Internet처럼 서로 다른 address 영역을 연결할 때 자주 사용된다.
 

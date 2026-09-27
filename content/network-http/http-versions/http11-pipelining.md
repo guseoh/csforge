@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.http-versions.http11-pipelining
 topicContentKey: network-http.core.http-versions
 slug: http11-pipelining
-title: "HTTP/1.1 Pipelining"
+title: "HTTP/1.1 파이프라이닝"
 summary: "여러 request를 먼저 보내도 response 순서를 유지해야 하는 HTTP/1.1 pipelining과 HOL 한계를 설명한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "HTTP/1.1 message framing과 body 경계를 확인한다."
     displayOrder: 1
 ---
-# HTTP/1.1 Pipelining
+# HTTP/1.1 파이프라이닝
 
 HTTP/1.1 pipelining은 같은 persistent connection에서 이전 response를 기다리지 않고 여러 request를 연속으로 보내는 방식이다. Request 전송 자체는 겹칠 수 있지만 server는 pipelined request에 대한 response를 request 순서와 같은 순서로 보낸다.
 

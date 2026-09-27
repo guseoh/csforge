@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.http-message.content-type
 topicContentKey: network-http.core.http-message
 slug: content-type
-title: "Content-Type"
+title: "Content-Type 헤더"
 summary: "Content-Type이 현재 message content에 적용된 representation media type을 선언하는 역할을 설명한다."
 level: 1
 status: PUBLISHED
@@ -15,7 +15,7 @@ references:
     language: en
     displayOrder: 1
 ---
-# Content-Type
+# Content-Type 헤더
 
 `Content-Type`은 현재 HTTP message에 포함된 content가 어떤 media type의 representation인지 설명한다. 예를 들어 request body가 JSON representation이라면 `Content-Type: application/json`으로 선언할 수 있고, receiver는 이 metadata를 바탕으로 적절한 parser를 선택한다.
 

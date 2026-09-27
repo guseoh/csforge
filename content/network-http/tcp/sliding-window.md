@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.tcp.sliding-window
 topicContentKey: network-http.core.tcp
 slug: sliding-window
-title: "TCP Sliding Window"
+title: "슬라이딩 윈도"
 summary: "ACK 전 여러 byte를 전송하는 sequence window를 설명한다."
 level: 2
 status: PUBLISHED
@@ -24,7 +24,7 @@ references:
     recommendation: "TCP congestion과 sending rate 조절을 확인한다."
     displayOrder: 2
 ---
-# TCP Sliding Window
+# 슬라이딩 윈도
 
 TCP는 byte 하나나 segment 하나를 보낼 때마다 ACK를 기다리는 stop-and-wait 방식이 아니라, 일정한 sequence 범위의 data를 **ACK 전에 여러 개 outstanding 상태로 유지**할 수 있다. ACK가 진행되면 확인된 왼쪽 범위가 빠지고 새로운 sequence 범위를 보낼 수 있게 되는데, 이를 sliding window 관점으로 이해할 수 있다.
 

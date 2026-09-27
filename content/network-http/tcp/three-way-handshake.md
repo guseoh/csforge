@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.tcp.three-way-handshake
 topicContentKey: network-http.core.tcp
 slug: three-way-handshake
-title: "TCP Three-Way Handshake"
+title: "TCP 3방향 핸드셰이크"
 summary: "SYN·SYN-ACK·ACK로 양 끝 상태와 initial sequence를 합의하는 흐름을 설명한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "transport connection과 application request의 경계를 확인한다."
     displayOrder: 1
 ---
-# TCP Three-Way Handshake
+# TCP 3방향 핸드셰이크
 
 TCP connection을 시작할 때 양 endpoint는 서로의 initial sequence number와 connection state를 확인해야 한다. 이를 위해 일반적으로 **SYN → SYN-ACK → ACK**의 three-way handshake를 수행한다.
 

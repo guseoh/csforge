@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.http-message.request-message
 topicContentKey: network-http.core.http-message
 slug: request-message
-title: "HTTP Request Message"
+title: "HTTP 요청 메시지"
 summary: "method·target·header fields·optional content가 HTTP request에서 각각 어떤 의미를 가지는지 설명한다."
 level: 1
 status: PUBLISHED
@@ -15,7 +15,7 @@ references:
     language: en
     displayOrder: 1
 ---
-# HTTP Request Message
+# HTTP 요청 메시지
 
 HTTP request는 client가 server에 **어떤 target에 대해 어떤 동작을 원하는지** 표현하는 message다. 핵심 정보는 method, request target, header fields와 필요한 경우의 content로 나눠 볼 수 있다.
 

@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.ip-routing.ipv6-basics
 topicContentKey: network-http.core.ip-routing
 slug: ipv6-basics
-title: "IPv6 Basics"
+title: "IPv6 주소와 전달 기초"
 summary: "IPv6 address 폭·표기와 neighbor discovery 경계를 설명한다."
 level: 1
 status: PUBLISHED
@@ -16,8 +16,16 @@ references:
     depth: section
     recommendation: "IPv6 address와 forwarding의 기본을 확인한다."
     displayOrder: 1
+  - url: "https://www.rfc-editor.org/rfc/rfc8201"
+    title: "Path MTU Discovery for IP version 6"
+    referenceType: OFFICIAL
+    language: en
+    depth: section
+    recommendation: "IPv6 경로 MTU 탐색과 ICMPv6 Packet Too Big 처리를 설명한다."
+    displayOrder: 2
+    relationNote: "IPv6에서 router가 fragment하지 않을 때 Packet Too Big feedback으로 MTU를 다루는 규칙이다."
 ---
-# IPv6 Basics
+# IPv6 주소와 전달 기초
 
 IPv6는 128-bit address를 사용한다. IPv4보다 훨씬 큰 address space를 제공하며, address는 colon으로 구분한 16진수 형태로 표현한다. 연속된 0 group은 `::`로 한 번 압축할 수 있다.
 

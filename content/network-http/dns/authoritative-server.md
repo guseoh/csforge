@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.dns.authoritative-server
 topicContentKey: network-http.core.dns
 slug: authoritative-server
-title: "Authoritative Server"
+title: "권한 있는 DNS 서버"
 summary: "zone의 canonical DNS record를 책임지는 authoritative server를 설명한다."
 level: 1
 status: PUBLISHED
@@ -15,7 +15,7 @@ references:
     language: en
     displayOrder: 1
 ---
-# Authoritative Server
+# 권한 있는 DNS 서버
 
 Authoritative server는 자신이 맡은 DNS zone의 **source data에 근거해 authoritative answer를 제공하는 server**다. Recursive resolver가 다른 server의 answer를 cache해 대신 돌려주는 것과 달리, authoritative server는 해당 zone의 record 관리 책임을 가진다.
 

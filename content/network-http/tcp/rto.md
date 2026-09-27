@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.tcp.rto
 topicContentKey: network-http.core.tcp
 slug: rto
-title: "Retransmission Timeout"
+title: "재전송 타임아웃(RTO)"
 summary: "RTT 추정과 timeout이 늦은 ACK·loss를 구분하는 방식을 설명한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "TCP timeout과 retransmission 판단을 확인한다."
     displayOrder: 1
 ---
-# Retransmission Timeout
+# 재전송 타임아웃(RTO)
 
 RTO(Retransmission Timeout)는 TCP sender가 보낸 data에 대한 ACK를 얼마 동안 기다린 뒤 **retransmission이 필요하다고 판단할지 정하는 timer**다. 너무 짧으면 단순히 늦게 도착 중인 data를 loss로 오인해 불필요한 retransmission을 만들고, 너무 길면 실제 loss 복구가 늦어진다.
 

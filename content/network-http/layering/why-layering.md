@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.layering.why-layering
 topicContentKey: network-http.core.layering
 slug: why-layering
-title: "Why Layering"
+title: "계층화가 필요한 이유"
 summary: "network 기능을 계층으로 나누는 이유를 설명한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "Internet protocol layering의 책임 경계를 확인한다."
     displayOrder: 1
 ---
-# Why Layering
+# 계층화가 필요한 이유
 
 Network layering은 local link 전달, IP forwarding, transport delivery, application protocol처럼 서로 다른 문제를 **각각의 책임과 interface로 분리하기 위한 설계 방식**이다. 모든 기능을 하나의 protocol 안에 넣지 않고 계층별 계약으로 나누면 한 계층의 구현이 바뀌어도 다른 계층이 기대하는 interface를 유지할 수 있다.
 
@@ -25,10 +25,12 @@ Network layering은 local link 전달, IP forwarding, transport delivery, applic
 
 ### 계층마다 질문이 다르다
 
-- Link: 같은 local link에서 다음 장비까지 어떻게 전달할까?
-- Network: 여러 network를 지나 destination host까지 어떻게 forwarding할까?
-- Transport: host 안의 어떤 endpoint와 어떤 delivery contract로 통신할까?
-- Application: 전달된 bytes를 어떤 message와 의미로 해석할까?
+| 계층 | 맡는 책임 | 답하는 질문 |
+| --- | --- | --- |
+| Link | 같은 local link의 다음 장비로 frame 전달 | 다음 hop까지 어떻게 전달할까? |
+| Network | 여러 network를 지나 destination host로 packet forwarding | 목적지 host까지 어떤 경로로 갈까? |
+| Transport | host 안의 endpoint에 delivery contract 제공 | 어떤 process에 어떤 전달 보장으로 보낼까? |
+| Application | 전달된 bytes를 protocol message와 의미로 해석 | 받은 data를 어떤 요청이나 응답으로 볼까? |
 
 이렇게 질문을 분리하면 장애를 분석할 때도 `어느 계층의 state와 guarantee가 깨졌는가`를 구분할 수 있다.
 

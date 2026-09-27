@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.local-delivery.switch-forwarding
 topicContentKey: network-http.core.local-delivery
 slug: switch-forwarding
-title: "Switch Forwarding"
+title: "스위치의 프레임 전달"
 summary: "switch가 MAC learning table로 local frame을 전달하는 방식을 설명한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "local link delivery와 address resolution을 확인한다."
     displayOrder: 1
 ---
-# Switch Forwarding
+# 스위치의 프레임 전달
 
 Ethernet switch는 들어온 frame의 **source MAC과 ingress port 관계를 학습**하고, destination MAC에 맞는 egress port를 찾아 frame을 전달한다. 같은 local forwarding domain에서 목적지 MAC을 알고 있으면 필요한 port로만 보낼 수 있고, 모르는 unicast나 broadcast는 여러 port로 flood될 수 있다.
 

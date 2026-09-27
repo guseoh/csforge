@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.tls.hostname-verification
 topicContentKey: network-http.core.tls
 slug: hostname-verification
-title: "Hostname Verification"
+title: "호스트 이름 검증"
 summary: "client가 접속하려던 reference identity와 certificate의 subjectAltName identity를 비교하는 이유를 설명한다."
 level: 2
 status: PUBLISHED
@@ -17,11 +17,17 @@ references:
     recommendation: "reference identity와 certificate의 subjectAltName에 제시된 service identity를 비교하는 현행 검증 규칙을 확인한다."
     displayOrder: 1
 ---
-# Hostname Verification
+# 호스트 이름 검증
 
 certificate chain이 신뢰할 수 있다는 사실과 그 certificate가 **내가 접속하려던 service의 것인지**는 별개의 문제다. TLS client는 연결 전에 알고 있던 hostname 같은 reference identity와 server certificate가 제시한 identity를 비교해 둘이 일치하는지 확인해야 한다.
 
 예를 들어 client가 `api.example.com`에 접속했는데 server가 신뢰받는 CA가 발급한 `other.example.net` certificate를 제시했다고 하자. certificate chain 자체는 정상일 수 있지만, client가 기대한 service identity와 다르므로 이 연결은 인증에 성공하면 안 된다.
+
+| 값 | 보낸 쪽 / 위치 | 쓰임 | 검증 결과인가? |
+| --- | --- | --- | --- |
+| SNI | TLS ClientHello의 client 입력 | server가 virtual host와 certificate를 선택하도록 도움 | 아니오 |
+| Reference identity | client가 접속하려던 URL hostname 등 | certificate identity와 비교할 기대값 | 기대값일 뿐 |
+| Subject Alternative Name | server certificate | certificate가 주장하는 hostname·IP identity | 일치 여부를 client가 확인해야 함 |
 
 ### 현재 규칙은 subjectAltName을 기준으로 한다
 

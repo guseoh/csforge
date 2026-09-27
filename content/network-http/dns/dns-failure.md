@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.dns.dns-failure
 topicContentKey: network-http.core.dns
 slug: dns-failure
-title: "DNS 실패"
+title: "DNS 조회 실패"
 summary: "NXDOMAIN·SERVFAIL·timeout을 원인별로 구분하고 retry 경계를 설명한다."
 level: 2
 status: PUBLISHED
@@ -31,7 +31,7 @@ references:
     recommendation: "SERVFAIL·timeout 등 resolution failure cache를 NXDOMAIN/NODATA와 구분한다."
     displayOrder: 3
 ---
-# DNS 실패
+# DNS 조회 실패
 
 Application이 DNS lookup에서 address를 얻지 못했다고 해서 모두 같은 실패는 아니다. **이름이나 record가 실제로 없다는 negative answer와, resolver가 useful answer를 만들지 못한 resolution failure를 구분**해야 한다.
 

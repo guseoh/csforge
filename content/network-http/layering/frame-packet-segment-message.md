@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.layering.frame-packet-segment-message
 topicContentKey: network-http.core.layering
 slug: frame-packet-segment-message
-title: "Frame, Packet, Segment·Message"
+title: "프레임·패킷·세그먼트·메시지"
 summary: "계층별 data unit 이름과 경계를 비교한다."
 level: 1
 status: PUBLISHED
@@ -17,14 +17,16 @@ references:
     recommendation: "Internet protocol layering의 책임 경계를 확인한다."
     displayOrder: 1
 ---
-# Frame, Packet, Segment·Message
+# 프레임·패킷·세그먼트·메시지
 
 Network에서 사용하는 `frame`, `packet`, `segment`, `message`는 모두 data를 뜻하지만 **각기 다른 계층의 경계를 가리키는 이름**이다.
 
-- Frame은 하나의 local link에서 전달되는 link-layer data unit이다.
-- Packet은 일반적으로 IP forwarding의 data unit을 가리킨다.
-- TCP segment와 UDP datagram은 transport header와 payload를 가진 transport unit이다.
-- Message는 HTTP request/response나 DNS query처럼 application protocol이 정의한 논리 단위다.
+| 데이터 단위 | 계층 | 경계가 의미하는 것 | 예 |
+| --- | --- | --- | --- |
+| Frame | Link | 하나의 local link에서 전달되는 단위 | Ethernet frame |
+| Packet | Network | IP forwarding이 처리하는 단위 | IPv4·IPv6 packet |
+| Segment / Datagram | Transport | transport header와 payload를 가진 단위 | TCP segment, UDP datagram |
+| Message | Application | protocol이 정의한 논리적 요청·응답 단위 | HTTP message, DNS query |
 
 도구와 문서에서는 `packet`이라는 말을 더 넓게 사용하기도 있으므로 용어만 보고 단정하지 말고 어떤 header와 protocol unit을 뜻하는지 확인해야 한다.
 

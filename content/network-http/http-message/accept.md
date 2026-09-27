@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.http-message.accept
 topicContentKey: network-http.core.http-message
 slug: accept
-title: "Accept와 선호 Representation"
+title: "Accept 헤더와 응답 유형"
 summary: "Accept가 client가 처리할 수 있거나 선호하는 response media type을 표현하는 방식을 설명한다."
 level: 1
 status: PUBLISHED
@@ -15,7 +15,7 @@ references:
     language: en
     displayOrder: 1
 ---
-# Accept와 선호 Representation
+# Accept 헤더와 응답 유형
 
 `Accept` request header는 client가 response로 받을 수 있거나 선호하는 media type을 server에 알려 준다. 예를 들어 client가 JSON을 원한다면 `Accept: application/json`을 보낼 수 있고, 여러 형식을 허용하면서 quality value로 선호도를 표현할 수도 있다.
 

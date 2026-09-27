@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.http-cache.if-none-match
 topicContentKey: network-http.core.http-cache
 slug: if-none-match
-title: "If-None-Match"
+title: "If-None-Match 조건부 요청"
 summary: "client가 ETag를 보내 현재 representation과 일치하지 않을 때만 full response를 받는 조건부 요청을 설명한다."
 level: 2
 status: PUBLISHED
@@ -15,7 +15,7 @@ references:
     language: en
     displayOrder: 1
 ---
-# If-None-Match
+# If-None-Match 조건부 요청
 
 `If-None-Match`는 client가 알고 있는 ETag를 request에 보내고, 현재 selected representation이 그 validator와 **일치하지 않을 때만** 일반적인 response를 수행하도록 만드는 conditional request field다.
 

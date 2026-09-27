@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.http-cache.last-modified
 topicContentKey: network-http.core.http-cache
 slug: last-modified
-title: "Last-Modified"
+title: "Last-Modified 검증자"
 summary: "selected representation의 수정 시각을 HTTP-date로 제공하는 시간 기반 validator의 의미와 한계를 설명한다."
 level: 1
 status: PUBLISHED
@@ -15,7 +15,7 @@ references:
     language: en
     displayOrder: 1
 ---
-# Last-Modified
+# Last-Modified 검증자
 
 `Last-Modified`는 selected representation이 마지막으로 변경되었다고 server가 판단한 시각을 HTTP-date로 제공하는 validator다. Client는 이 값을 다음 request의 `If-Modified-Since`에 넣어 representation이 그 이후 변경되었는지 조건부로 확인할 수 있다.
 

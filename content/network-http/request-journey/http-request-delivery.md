@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.request-journey.http-request-delivery
 topicContentKey: network-http.core.request-journey
 slug: http-request-delivery
-title: "HTTP Request가 Origin에 도달하는 과정"
+title: "HTTP 요청의 전달 경로"
 summary: "완성된 HTTP request가 intermediary를 거쳐 origin server까지 전달되거나 중간에서 처리될 수 있는 흐름을 설명한다."
 level: 2
 status: PUBLISHED
@@ -15,7 +15,7 @@ references:
     language: en
     displayOrder: 1
 ---
-# HTTP Request가 Origin에 도달하는 과정
+# HTTP 요청의 전달 경로
 
 transport와 TLS channel이 준비되면 client는 HTTP method, target, header와 필요한 body로 request를 만든다. 이 request가 항상 client에서 origin server로 한 번에 직접 전달되는 것은 아니다. forward proxy, CDN, reverse proxy, gateway나 load balancer 같은 intermediary가 중간 hop으로 참여할 수 있다.
 

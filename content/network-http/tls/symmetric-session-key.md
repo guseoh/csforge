@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.tls.symmetric-session-key
 topicContentKey: network-http.core.tls
 slug: symmetric-session-key
-title: "Symmetric Traffic Key"
+title: "대칭 세션 키"
 summary: "handshake에서 파생한 symmetric traffic key로 application data를 효율적으로 보호하는 이유를 설명한다."
 level: 1
 status: PUBLISHED
@@ -15,7 +15,7 @@ references:
     language: en
     displayOrder: 1
 ---
-# Symmetric Traffic Key
+# 대칭 세션 키
 
 TLS는 handshake에서 public-key signature와 key agreement를 사용하지만, 이후의 application data를 매번 public-key 연산으로 암호화하지 않는다. handshake에서 만든 secret으로부터 **symmetric traffic key**를 파생하고, 효율적인 symmetric cryptography로 대량의 data를 보호한다.
 

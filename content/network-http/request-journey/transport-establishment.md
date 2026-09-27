@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.request-journey.transport-establishment
 topicContentKey: network-http.core.request-journey
 slug: transport-establishment
-title: "Transport 연결 수립"
+title: "전송 연결 수립"
 summary: "HTTP를 운반할 TCP 또는 QUIC transport state가 만들어지는 시점과 connection reuse를 설명한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "transport connection과 application request의 경계를 확인한다."
     displayOrder: 1
 ---
-# Transport 연결 수립
+# 전송 연결 수립
 
 DNS와 routing을 통해 destination이 정해져도 HTTP message를 바로 보낼 수 있는 것은 아니다. 먼저 HTTP를 운반할 transport state가 필요하다. HTTP/1.1과 HTTP/2를 TCP 위에서 사용할 경우에는 client와 server가 TCP handshake를 거쳐 ordered byte stream을 사용할 connection을 만든다.
 

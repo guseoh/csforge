@@ -3,21 +3,21 @@ kind: concept
 contentKey: network-http.core.http-state-intermediary.cookie
 topicContentKey: network-http.core.http-state-intermediary
 slug: cookie
-title: "Cookie"
+title: "Cookie로 상태 이어가기"
 summary: "user agent가 저장한 cookie를 조건에 맞는 HTTP 요청에 다시 보내는 state 흐름을 설명한다."
 level: 1
 status: PUBLISHED
 displayOrder: 10
 references:
-  - url: "https://www.rfc-editor.org/rfc/rfc6265"
-    title: "HTTP State Management Mechanism"
+  - url: "https://www.rfc-editor.org/rfc/rfc10025.html"
+    title: "Cookies: HTTP State Management Mechanism"
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "HTTP cookie state와 전송 scope를 확인한다."
+    recommendation: "Cookie·Set-Cookie 필드의 문법과 user agent의 저장·전송 규칙을 확인한다."
     displayOrder: 1
 ---
-# Cookie
+# Cookie로 상태 이어가기
 
 HTTP 자체의 request와 response는 이전 요청의 application state를 자동으로 기억하지 않는다. Cookie는 user agent가 server의 지시에 따라 작은 name/value 상태를 저장하고, 이후 요청이 정해진 조건에 맞을 때 그 값을 `Cookie` header로 다시 보내게 하는 state management mechanism이다.
 

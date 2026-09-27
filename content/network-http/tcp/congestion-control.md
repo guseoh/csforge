@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.tcp.congestion-control
 topicContentKey: network-http.core.tcp
 slug: congestion-control
-title: "Congestion Control"
+title: "TCP 혼잡 제어"
 summary: "network capacity 추정에 따라 TCP sending rate를 조절하는 목적을 설명한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "TCP congestion과 sending rate 조절을 확인한다."
     displayOrder: 1
 ---
-# Congestion Control
+# TCP 혼잡 제어
 
 TCP congestion control은 sender가 network path의 혼잡 상태를 고려해 **한 번에 network에 outstanding으로 둘 수 있는 data 양을 조절하는 mechanism**이다. Receiver buffer를 보호하는 flow control과 달리, congestion control은 shared network queue와 link capacity를 과도하게 사용해 congestion collapse가 발생하는 것을 줄이는 데 목적이 있다.
 

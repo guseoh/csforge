@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.http-cache.if-modified-since
 topicContentKey: network-http.core.http-cache
 slug: if-modified-since
-title: "If-Modified-Since"
+title: "If-Modified-Since 조건부 요청"
 summary: "Last-Modified 시각 이후 representation이 변경되었는지를 확인하는 시간 기반 조건부 GET/HEAD를 설명한다."
 level: 2
 status: PUBLISHED
@@ -15,7 +15,7 @@ references:
     language: en
     displayOrder: 1
 ---
-# If-Modified-Since
+# If-Modified-Since 조건부 요청
 
 `If-Modified-Since`는 client가 이전 response에서 받은 `Last-Modified` 값을 request에 보내고, selected representation이 그 시각 이후 변경되었는지 묻는 conditional field다.
 

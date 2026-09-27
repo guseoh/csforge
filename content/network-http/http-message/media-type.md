@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.http-message.media-type
 topicContentKey: network-http.core.http-message
 slug: media-type
-title: "Media Type과 Representation 형식"
+title: "미디어 유형(Media Type)"
 summary: "media type이 representation data의 format과 processing model을 type/subtype으로 표현하는 방식을 설명한다."
 level: 1
 status: PUBLISHED
@@ -15,7 +15,7 @@ references:
     language: en
     displayOrder: 1
 ---
-# Media Type과 Representation 형식
+# 미디어 유형(Media Type)
 
 media type은 representation data가 어떤 형식이며 어떻게 처리되어야 하는지를 `type/subtype` 형태로 표현한다. 대표적으로 `application/json`, `text/html`, `image/png` 같은 값이 있다. 필요하면 `charset` 같은 parameter가 media type에 추가될 수 있다.
 

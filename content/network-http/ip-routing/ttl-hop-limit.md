@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.ip-routing.ttl-hop-limit
 topicContentKey: network-http.core.ip-routing
 slug: ttl-hop-limit
-title: "TTL·Hop Limit"
+title: "TTL과 Hop Limit"
 summary: "hop count 수명이 loop를 제한하고 만료 오류를 만드는 과정을 설명한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "IP address와 packet forwarding의 기본을 확인한다."
     displayOrder: 1
 ---
-# TTL·Hop Limit
+# TTL과 Hop Limit
 
 IPv4 TTL(Time To Live)과 IPv6 Hop Limit은 packet이 router를 지날 때 감소하는 **network-layer lifetime counter**다. 값이 0이 되면 packet은 더 이상 forwarding되지 않고 폐기된다. 이 mechanism은 잘못된 route loop에서 packet이 network를 무한히 순환하는 것을 막는다.
 

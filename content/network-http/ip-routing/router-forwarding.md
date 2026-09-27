@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.ip-routing.router-forwarding
 topicContentKey: network-http.core.ip-routing
 slug: router-forwarding
-title: "Router Forwarding"
+title: "라우터의 패킷 전달"
 summary: "router가 header를 검사·감소·재전송하는 forwarding path를 설명한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "IP routing table과 next hop 선택을 확인한다."
     displayOrder: 1
 ---
-# Router Forwarding
+# 라우터의 패킷 전달
 
 Router는 incoming link frame에서 IP packet을 얻고 destination address로 routing lookup을 수행한 뒤, 선택한 next hop과 egress interface로 packet을 보낸다. 이 과정에서 incoming frame은 끝나고 다음 link에 맞는 새 frame이 만들어진다.
 

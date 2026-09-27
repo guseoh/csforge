@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.udp.delivery-order-guarantee
 topicContentKey: network-http.core.udp
 slug: delivery-order-guarantee
-title: "UDP의 전달·순서 보장 경계"
+title: "UDP 전달과 순서 보장"
 summary: "UDP가 delivery·ordering·duplicate 제거를 보장하지 않는 이유와 그 의미를 설명한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "UDP datagram과 application reliability 경계를 확인한다."
     displayOrder: 1
 ---
-# UDP의 전달·순서 보장 경계
+# UDP 전달과 순서 보장
 
 UDP는 datagram을 IP 위에 실어 전달하지만, 송신 이후 각 datagram이 목적지에 도착했는지를 확인하는 ACK나 재전송 상태를 유지하지 않는다. 그래서 network congestion, route 변화, buffer 부족 같은 이유로 datagram이 유실되어도 UDP 자체가 다시 보내지 않는다.
 

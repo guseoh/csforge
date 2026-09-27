@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.http-status.status-class
 topicContentKey: network-http.core.http-status
 slug: status-class
-title: "HTTP Status Code Classes"
+title: "HTTP 상태 코드 계열"
 summary: "1xx~5xx class가 response의 큰 의미 범위를 분류하고 구체적인 code가 실제 상태를 설명하는 방식을 설명한다."
 level: 1
 status: PUBLISHED
@@ -15,15 +15,17 @@ references:
     language: en
     displayOrder: 1
 ---
-# HTTP Status Code Classes
+# HTTP 상태 코드 계열
 
 HTTP status code의 첫 번째 숫자는 response가 속한 큰 의미 범위를 나타낸다. client는 이 class를 통해 결과의 성격을 빠르게 분류할 수 있지만, 실제 다음 행동은 구체적인 status code와 response fields를 함께 봐야 판단할 수 있다.
 
-- `1xx Informational`: 요청 처리 중 전달하는 중간 정보다. 최종 response가 별도로 이어질 수 있다.
-- `2xx Successful`: 요청을 성공적으로 수신·이해·처리했다는 범위다.
-- `3xx Redirection`: 요청을 완료하기 위해 다른 resource를 조회하거나 cached result를 사용하는 등 추가 동작이 필요할 수 있다.
-- `4xx Client Error`: request에 문제가 있거나 현재 요청을 수행할 수 없는 이유가 client 요청 측 조건과 연결된다.
-- `5xx Server Error`: server가 유효해 보이는 request를 처리하는 과정에서 실패했거나 처리할 수 없는 상태다.
+| Class | 범위의 의미 | 해석할 때 주의할 점 |
+| --- | --- | --- |
+| 1xx Informational | 요청 처리 중 보내는 중간 정보 | 최종 response가 뒤따를 수 있음 |
+| 2xx Successful | 요청이 성공 범주에 해당함; 202 Accepted처럼 처리가 완료되지 않은 응답도 포함 | 업무 상태의 모든 세부를 status 하나가 표현하지는 않음 |
+| 3xx Redirection | 추가 동작으로 요청을 완료할 수 있음 | 구체적인 redirect code와 Location을 확인 |
+| 4xx Client Error | 현재 요청의 조건과 연결된 실패 | authentication, authorization, validation은 서로 다른 상태 |
+| 5xx Server Error | 처리 과정의 서버 측 실패 또는 불가 상태 | retry 가능성은 code와 operation semantics에 따라 결정 |
 
 ### Class만으로 retry나 업무 결과를 정할 수는 없다
 

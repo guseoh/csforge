@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.http-cache.etag
 topicContentKey: network-http.core.http-cache
 slug: etag
-title: "ETag"
+title: "ETag 검증자"
 summary: "selected representation을 비교하기 위한 opaque entity tag와 strong·weak validator의 차이를 설명한다."
 level: 2
 status: PUBLISHED
@@ -15,7 +15,7 @@ references:
     language: en
     displayOrder: 1
 ---
-# ETag
+# ETag 검증자
 
 `ETag`는 selected representation을 비교하기 위해 server가 제공하는 opaque validator다. Tag가 어떻게 생성되는지는 HTTP가 정하지 않는다. Hash, version number나 build identifier를 사용할 수 있지만 client는 내부 의미를 해석하지 않고 validator 값으로 비교한다.
 

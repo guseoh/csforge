@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.tls.tls-handshake
 topicContentKey: network-http.core.tls
 slug: tls-handshake
-title: "TLS 1.3 Handshake 흐름"
+title: "TLS 핸드셰이크"
 summary: "TLS handshake가 version·cipher capability·key material·peer authentication을 합의해 application-data key를 만드는 흐름을 설명한다."
 level: 2
 status: PUBLISHED
@@ -15,7 +15,7 @@ references:
     language: en
     displayOrder: 1
 ---
-# TLS 1.3 Handshake 흐름
+# TLS 핸드셰이크
 
 TLS application data를 암호화하려면 client와 server가 먼저 어떤 protocol version과 cryptographic capability를 사용할지 합의하고, 공통 key material을 만들며, 필요한 경우 상대 identity를 인증해야 한다. 이 준비 과정이 TLS handshake다.
 

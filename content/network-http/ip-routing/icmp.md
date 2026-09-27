@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.ip-routing.icmp
 topicContentKey: network-http.core.ip-routing
 slug: icmp
-title: "ICMP"
+title: "ICMP 오류·진단 메시지"
 summary: "IP delivery 오류와 진단 정보를 전달하는 ICMP의 역할을 설명한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "IP control message와 reachability 진단을 확인한다."
     displayOrder: 1
 ---
-# ICMP
+# ICMP 오류·진단 메시지
 
 ICMP(Internet Control Message Protocol)는 IP forwarding과 관련된 **error와 control information을 전달하는 network-layer protocol**이다. Destination unreachable, time exceeded, parameter problem 같은 message를 통해 sender가 packet delivery 문제를 알 수 있게 하고, Echo Request/Reply는 reachability 진단에 사용된다.
 
@@ -28,6 +28,12 @@ ICMP는 TCP처럼 ordered byte stream을 제공하지 않고 application data를
 예를 들어 TTL이 0이 된 router는 packet을 폐기하고 ICMP Time Exceeded를 보낼 수 있다. Route가 없거나 destination에 도달할 수 없는 경우에는 Destination Unreachable 계열 message가 사용될 수 있다.
 
 ### Ping 성공과 service 성공은 다르다
+
+| 관찰 결과 | 확인에 도움이 되는 것 | 이것만으로 알 수 없는 것 |
+| --- | --- | --- |
+| ICMP Echo Reply 수신 | 왕복 경로에서 ICMP Echo가 허용되고 응답함 | TCP port가 열렸는지, HTTP service가 정상인지 |
+| TCP 연결 수립 | 해당 endpoint의 transport 연결이 성립함 | HTTP 요청 처리나 업무 작업의 성공 여부 |
+| HTTP response 수신 | HTTP 계층이 요청에 응답함 | 상태 코드가 나타내는 것 이상의 업무 결과 |
 
 Echo Reply가 온다는 것은 network-layer reachability의 한 단서를 제공하지만 특정 TCP port가 열려 있거나 HTTP application이 정상이라는 뜻은 아니다. 반대로 ICMP Echo가 차단되어 ping이 실패해도 다른 traffic은 전달될 수 있다.
 

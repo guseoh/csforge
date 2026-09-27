@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.http-state-intermediary.proxy
 topicContentKey: network-http.core.http-state-intermediary
 slug: proxy
-title: "Forward Proxy"
+title: "정방향 프록시"
 summary: "client를 대신해 outbound 요청을 origin 쪽으로 전달하는 forward proxy의 위치와 hop 경계를 설명한다."
 level: 1
 status: PUBLISHED
@@ -15,7 +15,7 @@ references:
     language: en
     displayOrder: 1
 ---
-# Forward Proxy
+# 정방향 프록시
 
 forward proxy는 client가 origin에 직접 연결하는 대신, client가 선택한 intermediary에 요청을 보내고 그 intermediary가 origin 쪽 connection을 만드는 구조다. 즉 client 쪽을 대신해 outbound request path에 참여한다는 점에서 origin 앞에 배치되는 reverse proxy와 위치가 다르다.
 

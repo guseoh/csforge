@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.http-cache.cache-control
 topicContentKey: network-http.core.http-cache
 slug: cache-control
-title: "Cache-Control"
+title: "Cache-Control 지시어"
 summary: "max-age·no-cache·no-store·must-revalidate 같은 directive가 저장·freshness·재사용 조건을 제어하는 방식을 설명한다."
 level: 1
 status: PUBLISHED
@@ -14,8 +14,16 @@ references:
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
+  - url: "https://toss.tech/article/smart-web-service-cache"
+    title: "웹 서비스 캐시 똑똑하게 다루기"
+    referenceType: COMPANY_TECH_BLOG
+    language: ko
+    depth: article
+    recommendation: "브라우저 HTTP cache와 재검증을 적용한 사례다. 지시어의 규범적 의미와 예외는 RFC 9111을 기준으로 읽는다."
+    displayOrder: 2
+    relationNote: "Cache-Control·validator를 활용한 브라우저 cache 운영 사례로 보완한다. 일부 browser 동작을 표준 보장으로 일반화하지 않는다."
 ---
-# Cache-Control
+# Cache-Control 지시어
 
 `Cache-Control`은 HTTP cache가 response를 저장하고 재사용할 때 적용할 policy를 directive로 전달한다. Directive마다 담당하는 질문이 다르기 때문에 `cache한다 / 안 한다` 하나로 단순화하면 의미를 잃는다.
 

@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.http-state-intermediary.gateway
 topicContentKey: network-http.core.http-state-intermediary
 slug: gateway
-title: "Gateway"
+title: "게이트웨이의 중계 역할"
 summary: "client와 upstream 사이에서 protocol·routing·policy boundary를 형성하는 gateway의 역할을 설명한다."
 level: 2
 status: PUBLISHED
@@ -15,7 +15,7 @@ references:
     language: en
     displayOrder: 1
 ---
-# Gateway
+# 게이트웨이의 중계 역할
 
 Gateway는 client와 upstream 사이의 경계에서 request를 받아 다른 protocol endpoint나 backend로 전달하는 intermediary 역할을 가리킨다. Reverse proxy와 같은 제품 위에 구현될 수도 있지만, gateway라는 이름은 특히 routing, protocol translation이나 edge policy 같은 경계 기능을 강조할 때 자주 사용된다.
 

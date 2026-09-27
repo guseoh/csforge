@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.tcp.connection-teardown
 topicContentKey: network-http.core.tcp
 slug: connection-teardown
-title: "Connection Teardown"
+title: "TCP 연결 종료"
 summary: "FIN·ACK 교환과 half-close 상태를 설명한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "transport connection과 application request의 경계를 확인한다."
     displayOrder: 1
 ---
-# Connection Teardown
+# TCP 연결 종료
 
 TCP connection은 양방향 byte stream이므로 한쪽 방향의 전송 종료와 connection 전체 종료를 구분한다. Endpoint가 자신의 송신 stream에 더 보낼 data가 없으면 **FIN**을 보내고, peer는 그 FIN을 ACK한다. 반대 방향 stream은 별도로 계속 열려 있을 수 있다.
 

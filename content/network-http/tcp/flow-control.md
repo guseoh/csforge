@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.tcp.flow-control
 topicContentKey: network-http.core.tcp
 slug: flow-control
-title: "Flow Control"
+title: "TCP 흐름 제어"
 summary: "receiver advertised window가 수신 buffer overflow를 막는 방식을 설명한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "transport connection과 application request의 경계를 확인한다."
     displayOrder: 1
 ---
-# Flow Control
+# TCP 흐름 제어
 
 TCP flow control은 sender가 receiver의 처리 능력보다 지나치게 빠르게 data를 보내 **receive buffer를 넘치게 하지 않도록** 조절하는 mechanism이다. Receiver는 ACK와 함께 자신이 추가로 받을 수 있는 byte 범위를 advertised receive window(`rwnd`)로 알린다.
 

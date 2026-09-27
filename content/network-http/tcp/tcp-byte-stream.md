@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.tcp.tcp-byte-stream
 topicContentKey: network-http.core.tcp
 slug: tcp-byte-stream
-title: "TCP Byte Stream"
+title: "TCP 바이트 스트림"
 summary: "message 경계 없는 ordered byte stream의 의미를 설명한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "transport connection과 application request의 경계를 확인한다."
     displayOrder: 1
 ---
-# TCP Byte Stream
+# TCP 바이트 스트림
 
 TCP는 연결된 두 endpoint 사이에 **순서가 있는 reliable byte stream**을 제공한다. Application이 여러 번 `write()`한 경계가 receiver의 `read()` 경계로 그대로 보존된다는 계약은 없다.
 

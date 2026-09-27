@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.request-journey.dns-to-route
 topicContentKey: network-http.core.request-journey
 slug: dns-to-route
-title: "Hostname에서 Route 선택까지"
+title: "DNS 조회에서 라우팅까지"
 summary: "hostname이 address 후보로 해석되고 선택된 destination이 routing table의 next hop으로 이어지는 흐름을 설명한다."
 level: 1
 status: PUBLISHED
@@ -15,7 +15,7 @@ references:
     language: en
     displayOrder: 1
 ---
-# Hostname에서 Route 선택까지
+# DNS 조회에서 라우팅까지
 
 URL의 authority에 hostname이 들어 있다면 client는 실제 packet을 보낼 destination address를 먼저 알아야 한다. DNS resolution은 hostname을 A/AAAA 같은 address 후보로 바꾸는 역할을 한다. 여러 address가 반환될 수 있으므로 client는 address family와 connection policy에 따라 실제로 시도할 destination을 선택한다.
 

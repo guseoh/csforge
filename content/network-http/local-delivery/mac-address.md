@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.local-delivery.mac-address
 topicContentKey: network-http.core.local-delivery
 slug: mac-address
-title: "MAC Address"
+title: "MAC 주소"
 summary: "local link에서 interface를 식별하는 MAC address의 역할을 설명한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "local link delivery와 address resolution을 확인한다."
     displayOrder: 1
 ---
-# MAC Address
+# MAC 주소
 
 MAC address는 Ethernet 같은 link에서 interface를 식별하는 **link-layer address**다. 같은 local link에서 frame을 전달할 때 NIC는 destination MAC을 보고 자신에게 온 frame인지 판단하고, switch는 MAC table을 이용해 어느 port로 전달할지 결정한다.
 

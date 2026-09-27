@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.ip-routing.longest-prefix-match
 topicContentKey: network-http.core.ip-routing
 slug: longest-prefix-match
-title: "Longest Prefix Match"
+title: "최장 접두사 일치(Longest-Prefix Match)"
 summary: "여러 route 중 가장 구체적인 destination prefix를 선택하는 이유를 설명한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "IP routing table과 next hop 선택을 확인한다."
     displayOrder: 1
 ---
-# Longest Prefix Match
+# 최장 접두사 일치(Longest-Prefix Match)
 
 Destination address 하나는 여러 routing prefix에 동시에 포함될 수 있다. 이때 routing lookup은 일반적으로 **가장 긴 prefix, 즉 가장 구체적인 route를 우선**한다. 이것을 longest-prefix match라고 한다.
 

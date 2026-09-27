@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.http-versions.http10-connection
 topicContentKey: network-http.core.http-versions
 slug: http10-connection
-title: "HTTP/1.0 Connection"
+title: "HTTP/1.0 연결"
 summary: "HTTP/1.0의 기본적인 connection-per-exchange 모델과 connection close framing의 관계를 설명한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "HTTP connection reuse와 version framing을 확인한다."
     displayOrder: 1
 ---
-# HTTP/1.0 Connection
+# HTTP/1.0 연결
 
 HTTP/1.0의 기본적인 사용 모델에서는 한 HTTP request/response exchange가 끝난 뒤 TCP connection을 닫는 방식이 일반적이었다. 여러 resource를 요청하면 connection setup과 teardown을 반복하게 되어 TCP handshake 비용도 반복될 수 있다.
 

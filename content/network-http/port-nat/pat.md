@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.port-nat.pat
 topicContentKey: network-http.core.port-nat
 slug: pat
-title: "PAT"
+title: "주소·포트 변환(PAT)"
 summary: "port까지 변환해 여러 내부 endpoint가 하나의 public IP를 공유하는 원리를 설명한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "NAT mapping과 inbound reachability를 확인한다."
     displayOrder: 1
 ---
-# PAT
+# 주소·포트 변환(PAT)
 
 PAT(Port Address Translation)는 IP address뿐 아니라 **transport port도 함께 변환**해 여러 내부 endpoint가 하나의 public IP를 공유할 수 있게 하는 방식이다. 서로 다른 내부 flow를 public address의 서로 다른 translated port에 매핑하고, 응답이 돌아오면 그 port를 이용해 원래 내부 flow를 찾는다.
 

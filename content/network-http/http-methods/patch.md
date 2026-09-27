@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.http-methods.patch
 topicContentKey: network-http.core.http-methods
 slug: patch
-title: "PATCH와 Partial Modification"
+title: "PATCH와 부분 변경"
 summary: "PATCH가 patch document의 지시에 따라 target resource를 부분 변경하고, method 자체는 idempotent하지 않다는 경계를 설명한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "PATCH partial update와 반복 안전성 조건을 확인한다."
     displayOrder: 1
 ---
-# PATCH와 Partial Modification
+# PATCH와 부분 변경
 
 PATCH는 target resource 전체를 새로운 representation으로 대체하는 대신, request에 담긴 **patch document의 지시를 현재 resource에 적용해 수정해 달라**고 요청하는 method다. 어떤 field를 replace·add·remove할지와 null, array 같은 값의 의미는 사용하는 patch document format이 정의한다.
 
@@ -30,6 +30,12 @@ RFC 5789는 server가 patch document에 포함된 변경 집합 전체를 원자
 이 atomicity는 해당 PATCH operation의 resource 변경에 관한 HTTP extension contract다. 외부 service나 여러 독립 storage를 자동으로 하나의 distributed transaction으로 묶는다는 뜻은 아니다.
 
 ### PATCH 자체는 idempotent method가 아니다
+
+| Patch document의 의도 | 같은 document를 반복 적용했을 때 | 멱등성이 달라지는 이유 |
+| --- | --- | --- |
+| name을 Mina로 교체 | 이미 Mina이면 같은 값을 유지 | 원하는 상태를 지정하므로 멱등적으로 설계 가능 |
+| counter를 1 증가 | 요청마다 값이 더 커짐 | 현재 값에 누적 연산을 적용 |
+| 목록 끝에 item 추가 | 같은 item이 중복될 수 있음 | 적용 횟수만큼 상태가 바뀔 수 있음 |
 
 `name을 X로 replace`처럼 반복해도 같은 결과가 되는 patch document를 만들 수 있지만, `counter를 1 증가`나 `배열에 항목 추가` 같은 operation은 반복할수록 effect가 누적될 수 있다. 그래서 PATCH method 자체는 safe하거나 idempotent하다고 정의되지 않는다.
 

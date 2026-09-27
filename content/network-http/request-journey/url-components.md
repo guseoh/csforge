@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.request-journey.url-components
 topicContentKey: network-http.core.request-journey
 slug: url-components
-title: "URL 구성 요소와 처리 주체"
+title: "URL 구성 요소"
 summary: "scheme·authority·path·query·fragment가 request journey에서 각각 어떤 역할을 하는지 설명한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "URL 구성 요소와 HTTP request target을 확인한다."
     displayOrder: 1
 ---
-# URL 구성 요소와 처리 주체
+# URL 구성 요소
 
 URL을 하나의 문자열로만 보면 DNS, connection과 HTTP request가 어떻게 연결되는지 이해하기 어렵다. 일반적인 URL은 `scheme`, `authority`, `path`, `query`, `fragment`처럼 서로 다른 의미의 구성 요소로 나뉜다.
 

@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.http-cache.intermediary-cache
 topicContentKey: network-http.core.http-cache
 slug: intermediary-cache
-title: "Intermediary Cache"
+title: "중간 캐시의 재사용 판단"
 summary: "proxy·CDN shared cache가 client와 origin 사이에서 hit·miss·revalidation을 처리하는 흐름을 설명한다."
 level: 2
 status: PUBLISHED
@@ -14,8 +14,16 @@ references:
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
+  - url: "https://tech.kakao.com/posts/345"
+    title: "분산 웹 캐시 (Wcache)의 개선과정 - Part 1"
+    referenceType: COMPANY_TECH_BLOG
+    language: ko
+    depth: article
+    recommendation: "HTTP 중간 캐시의 저장·분산 구조와 운영 trade-off를 보여 주는 사례로 읽는다. protocol 보장은 RFC 9111을 기준으로 한다."
+    displayOrder: 2
+    relationNote: "shared cache의 hit ratio, hot item, tier 분리를 운영 설계 trade-off와 함께 보여 주는 Kakao의 사례다."
 ---
-# Intermediary Cache
+# 중간 캐시의 재사용 판단
 
 Intermediary cache는 client와 origin 사이의 proxy나 CDN이 HTTP response를 저장하고 여러 request에 재사용하는 shared cache다. Request가 들어오면 cache는 사용할 수 있는 stored response가 있는지 확인하고 freshness와 request 조건을 평가한다.
 

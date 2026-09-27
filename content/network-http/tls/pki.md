@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.tls.pki
 topicContentKey: network-http.core.tls
 slug: pki
-title: "PKI와 Certificate Trust Chain"
+title: "공개 키 기반 구조(PKI)"
 summary: "trust anchor에서 leaf certificate까지 이어지는 CA chain으로 certificate를 검증하는 구조를 설명한다."
 level: 2
 status: PUBLISHED
@@ -15,7 +15,7 @@ references:
     language: en
     displayOrder: 1
 ---
-# PKI와 Certificate Trust Chain
+# 공개 키 기반 구조(PKI)
 
 Public Key Infrastructure(PKI)는 certificate를 누가 발급하고, client가 그 발급자를 어떻게 신뢰할지 연결하는 체계다. server가 제시한 leaf certificate가 intermediate CA의 서명을 받고, 그 intermediate가 다시 상위 CA의 서명을 받는 식으로 certificate path가 구성될 수 있다.
 

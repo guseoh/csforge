@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.port-nat.socket-endpoint
 topicContentKey: network-http.core.port-nat
 slug: socket-endpoint
-title: "Socket Endpoint"
+title: "소켓 종단점"
 summary: "IP·port·protocol 조합으로 통신 endpoint를 표현한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "transport port와 endpoint 식별 규칙을 확인한다."
     displayOrder: 1
 ---
-# Socket Endpoint
+# 소켓 종단점
 
 Socket endpoint는 transport communication의 한쪽 끝을 나타낸다. Internet socket을 단순화하면 **IP address, port, transport protocol**의 조합으로 local endpoint를 표현할 수 있다.
 

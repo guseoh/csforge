@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.port-nat.inbound-reachability
 topicContentKey: network-http.core.port-nat
 slug: inbound-reachability
-title: "Inbound Reachability"
+title: "외부에서 내부로 연결하기"
 summary: "unsolicited inbound packet이 mapping 없이 도달하기 어려운 이유를 설명한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "NAT mapping과 inbound reachability를 확인한다."
     displayOrder: 1
 ---
-# Inbound Reachability
+# 외부에서 내부로 연결하기
 
 일반적인 stateful outbound NAT에서는 내부 host가 먼저 외부로 flow를 만들 때 translation mapping이 생성된다. 이후 외부에서 돌아오는 reply는 그 mapping을 이용해 어느 내부 endpoint로 보낼지 결정할 수 있다.
 

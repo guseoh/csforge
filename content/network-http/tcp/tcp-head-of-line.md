@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.tcp.tcp-head-of-line
 topicContentKey: network-http.core.tcp
 slug: tcp-head-of-line
-title: "TCP Head-of-Line Blocking"
+title: "TCP 전송 계층 HOL 차단"
 summary: "앞선 loss가 뒤 byte 전달을 막는 stream-level HOL을 설명한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "transport connection과 application request의 경계를 확인한다."
     displayOrder: 1
 ---
-# TCP Head-of-Line Blocking
+# TCP 전송 계층 HOL 차단
 
 TCP는 하나의 connection에서 bytes를 **sequence 순서대로 application에 전달**한다. 따라서 앞선 sequence 범위가 유실되면 그보다 뒤의 data가 먼저 도착해도 missing range가 복구되기 전에는 뒤 bytes를 application stream에 먼저 넘길 수 없다. 이것이 TCP stream-level head-of-line(HOL) blocking이다.
 

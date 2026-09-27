@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.http-cache.expires
 topicContentKey: network-http.core.http-cache
 slug: expires
-title: "Expires"
+title: "Expires와 만료 시각"
 summary: "Expires가 response freshness의 absolute expiry time을 표현하고 Cache-Control과 어떤 우선순위를 갖는지 설명한다."
 level: 1
 status: PUBLISHED
@@ -15,7 +15,7 @@ references:
     language: en
     displayOrder: 1
 ---
-# Expires
+# Expires와 만료 시각
 
 `Expires`는 stored response를 언제부터 stale로 판단할지 absolute HTTP-date로 표현한다. Cache는 response의 `Date`와 age 계산을 함께 사용해 freshness lifetime을 결정한다.
 

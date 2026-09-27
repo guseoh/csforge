@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.tls.key-agreement
 topicContentKey: network-http.core.tls
 slug: key-agreement
-title: "TLS Key Agreement와 Authentication"
+title: "키 합의(Key Agreement)"
 summary: "ephemeral key share로 shared secret을 만들고 certificate authentication이 그 handshake를 service identity에 연결하는 역할 차이를 설명한다."
 level: 2
 status: PUBLISHED
@@ -15,11 +15,17 @@ references:
     language: en
     displayOrder: 1
 ---
-# TLS Key Agreement와 Authentication
+# 키 합의(Key Agreement)
 
 key agreement의 목적은 client와 server가 **shared secret 자체를 network로 전송하지 않고도 같은 secret을 계산하는 것**이다. TLS 1.3의 일반적인 (EC)DHE 흐름에서는 양쪽이 ephemeral key share를 교환하고, 각자의 private contribution을 이용해 같은 shared secret과 이후 handshake key material을 파생한다.
 
 여기서 key agreement와 certificate authentication을 같은 기능으로 보면 안 된다. ECDHE key share는 shared secret을 만드는 데 사용되고, certificate와 `CertificateVerify`는 현재 handshake가 어떤 authenticated endpoint와 이루어지고 있는지를 검증하는 데 사용된다.
+
+| 단계 | 교환·계산 | 목적 |
+| --- | --- | --- |
+| Client와 server가 각자 ephemeral key pair 생성 | public key share를 상대에게 전달 | secret 자체를 보내지 않고 같은 shared secret을 계산할 재료 교환 |
+| 각 endpoint가 자기 private share와 상대 public share 사용 | 양쪽에서 같은 ECDHE shared secret 계산 | handshake traffic key 파생의 입력 마련 |
+| Server가 certificate와 CertificateVerify 제시 | client가 chain·identity와 handshake 서명을 검증 | 공유한 secret의 상대가 의도한 server인지 인증 |
 
 ### Certificate public key가 곧 ECDHE key share는 아니다
 

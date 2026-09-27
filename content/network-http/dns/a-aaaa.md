@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.dns.a-aaaa
 topicContentKey: network-http.core.dns
 slug: a-aaaa
-title: "A·AAAA"
+title: "A·AAAA 레코드"
 summary: "IPv4 A와 IPv6 AAAA answer의 의미를 구분한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "A/AAAA와 address family 선택을 확인한다."
     displayOrder: 1
 ---
-# A·AAAA
+# A·AAAA 레코드
 
 DNS의 A record는 owner name을 **IPv4 address**에 연결하고, AAAA record는 **IPv6 address**에 연결한다. 하나의 name에는 여러 A 또는 AAAA record가 있을 수 있으므로 lookup 결과가 항상 address 하나인 것은 아니다.
 

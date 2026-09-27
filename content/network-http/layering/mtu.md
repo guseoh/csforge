@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.layering.mtu
 topicContentKey: network-http.core.layering
 slug: mtu
-title: "MTU"
+title: "MTU와 패킷 크기"
 summary: "link MTU가 packet 크기·fragmentation·전송 실패에 미치는 영향을 설명한다."
 level: 2
 status: PUBLISHED
@@ -16,12 +16,26 @@ references:
     depth: section
     recommendation: "MTU와 packet fragmentation의 경계를 확인한다."
     displayOrder: 1
+  - url: "https://www.rfc-editor.org/rfc/rfc8201"
+    title: "Path MTU Discovery for IP version 6"
+    referenceType: OFFICIAL
+    language: en
+    depth: section
+    recommendation: "IPv6 경로 MTU 탐색과 ICMPv6 Packet Too Big 처리를 설명한다."
+    displayOrder: 2
+    relationNote: "IPv6에서는 router fragmentation 대신 sender가 path MTU를 반영하는 구체적인 규칙을 보충한다."
 ---
-# MTU
+# MTU와 패킷 크기
 
 MTU(Maximum Transmission Unit)는 하나의 link가 **fragmentation 없이 운반할 수 있는 network-layer packet 크기의 상한**이다. End-to-end path에는 여러 link가 있을 수 있으므로 실제 전송에서는 그 경로에서 사용할 수 있는 가장 작은 MTU가 중요하다.
 
 MTU는 application message의 최대 크기가 아니다. TCP는 큰 byte stream을 여러 segment로 나누어 전송할 수 있고, application message 하나도 여러 packet에 걸쳐 전달될 수 있다.
+
+| 상황 | 전달 경로에서 일어날 수 있는 일 | 송신 측의 대응 |
+| --- | --- | --- |
+| IPv4에서 fragmentation이 허용됨 | router가 packet을 fragment로 나눌 수 있음 | 가능하면 처음부터 path MTU에 맞춰 전송 |
+| IPv4에서 DF가 설정됨 | router가 packet을 버리고 fragmentation-needed 오류를 보낼 수 있음 | 오류를 바탕으로 packet 크기를 낮춤 |
+| IPv6 forwarding 중 packet이 너무 큼 | router가 fragment하지 않고 Packet Too Big을 보낼 수 있음 | path MTU를 반영해 이후 packet을 더 작게 구성 |
 
 ### Packet이 다음 link의 MTU보다 크면 어떻게 되는가
 

@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.http-versions.transport-head-of-line
 topicContentKey: network-http.core.http-versions
 slug: transport-head-of-line
-title: "Transport Head-of-Line"
+title: "전송 계층의 HOL 차단"
 summary: "HTTP/2 stream multiplexing 아래에서도 TCP ordered byte stream의 loss가 여러 stream delivery를 함께 지연시키는 이유를 설명한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "QUIC connection·stream·loss recovery를 확인한다."
     displayOrder: 1
 ---
-# Transport Head-of-Line
+# 전송 계층의 HOL 차단
 
 HTTP/2는 여러 HTTP stream을 하나의 connection에서 multiplex하지만 그 connection이 TCP 위에 있다면 모든 HTTP/2 frame bytes는 하나의 ordered TCP byte stream을 공유한다.
 

@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.http-message.content-length-transfer
 topicContentKey: network-http.core.http-message
 slug: content-length-transfer
-title: "Content-Length와 HTTP/1.1 Message Framing"
+title: "Content-Length와 전송 프레이밍"
 summary: "HTTP/1.1에서 Content-Length와 Transfer-Encoding이 message body 경계를 결정하는 방식을 설명한다."
 level: 2
 status: PUBLISHED
@@ -17,11 +17,17 @@ references:
     recommendation: "HTTP/1.1 message framing과 body 경계를 확인한다."
     displayOrder: 1
 ---
-# Content-Length와 HTTP/1.1 Message Framing
+# Content-Length와 전송 프레이밍
 
 HTTP/1.1은 하나의 connection에서 여러 message를 주고받을 수 있으므로 receiver가 **현재 message body가 어디에서 끝나는지** 정확히 알아야 한다. `Content-Length`는 content가 포함된 일반적인 message에서 body의 예상 octet 수를 알려 주어 그 경계를 결정하는 데 사용할 수 있다.
 
 예를 들어 `Content-Length: 120`이면 framing 규칙상 receiver는 해당 body에서 120 octet을 읽어야 한다. 이 숫자는 JSON object의 field 수나 TCP segment 수를 뜻하지 않는다. HTTP message를 구성하는 body의 byte 길이에 관한 정보다.
+
+| Framing 방식 | 적용 범위 | Receiver가 message 끝을 판단하는 방법 |
+| --- | --- | --- |
+| Content-Length: 120 | HTTP/1.1에서 길이를 알고 있는 body 등 | 지정한 120 octet을 읽음 |
+| Transfer-Encoding: chunked | HTTP/1.1에서 body 길이를 미리 모르는 경우 | chunk를 읽고 마지막 zero-size chunk에서 끝냄 |
+| DATA frame과 stream 종료 | HTTP/2·HTTP/3 | version별 frame과 stream 종료로 경계를 판단; chunked는 사용하지 않음 |
 
 ### Transfer-Encoding은 HTTP/1.1 message 전송 방식이다
 

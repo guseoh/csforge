@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.local-delivery.ipv6-ndp
 topicContentKey: network-http.core.local-delivery
 slug: ipv6-ndp
-title: "IPv6 NDP"
+title: "IPv6 이웃 탐색(NDP)"
 summary: "IPv6 neighbor discovery와 router advertisement의 역할을 설명한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "IPv6 neighbor discovery와 local delivery를 확인한다."
     displayOrder: 1
 ---
-# IPv6 NDP
+# IPv6 이웃 탐색(NDP)
 
 IPv6 Neighbor Discovery Protocol(NDP)은 local link에서 **neighbor의 link-layer address를 찾고, default router와 prefix 정보를 발견하는 control protocol**이다. IPv4 ARP와 비슷한 address-resolution 역할을 포함하지만 그것보다 더 넓은 기능을 제공한다.
 

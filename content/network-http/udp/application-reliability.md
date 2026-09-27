@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.udp.application-reliability
 topicContentKey: network-http.core.udp
 slug: application-reliability
-title: "UDP 위에서 신뢰성을 만드는 비용"
+title: "UDP 위에 신뢰성 구현하기"
 summary: "sequence·ACK·timeout·retry를 상위 protocol이 추가할 때 필요한 상태와 trade-off를 설명한다."
 level: 2
 status: PUBLISHED
@@ -16,8 +16,16 @@ references:
     depth: section
     recommendation: "UDP datagram과 application reliability 경계를 확인한다."
     displayOrder: 1
+  - url: "https://www.rfc-editor.org/rfc/rfc8085"
+    title: "UDP Usage Guidelines"
+    referenceType: OFFICIAL
+    language: en
+    depth: section
+    recommendation: "UDP를 사용하는 application의 혼잡 제어·메시지 크기·신뢰성 설계 지침을 확인한다."
+    displayOrder: 2
+    relationNote: "UDP 위에서 신뢰성·재전송을 직접 설계할 때의 추가 protocol 책임을 확인한다."
 ---
-# UDP 위에서 신뢰성을 만드는 비용
+# UDP 위에 신뢰성 구현하기
 
 UDP는 loss recovery와 ordering을 제공하지 않지만, 필요하다면 상위 protocol이 그 기능을 직접 만들 수 있다. 가장 단순한 형태에서도 sender는 message나 sequence를 식별하고, receiver는 무엇을 받았는지 ACK로 알려 주며, sender는 일정 시간 응답이 없으면 다시 보내는 상태를 관리해야 한다.
 

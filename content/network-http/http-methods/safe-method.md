@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.http-methods.safe-method
 topicContentKey: network-http.core.http-methods
 slug: safe-method
-title: "Safe Method와 Read-Only Semantics"
+title: "안전한 메서드(Safe Method)"
 summary: "HTTP safe method가 client가 resource state change를 의도하지 않는 read-only semantics라는 의미를 설명한다."
 level: 1
 status: PUBLISHED
@@ -15,7 +15,7 @@ references:
     language: en
     displayOrder: 1
 ---
-# Safe Method와 Read-Only Semantics
+# 안전한 메서드(Safe Method)
 
 HTTP method가 **safe**하다는 것은 client가 그 request를 통해 origin server의 resource state를 변경하도록 요청하거나 기대하지 않는다는 뜻이다. RFC 9110이 정의하는 GET, HEAD, OPTIONS, TRACE가 safe method에 해당한다.
 

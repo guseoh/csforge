@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.request-journey.origin
 topicContentKey: network-http.core.request-journey
 slug: origin
-title: "Origin과 Scheme·Host·Port"
+title: "출처(Origin)"
 summary: "scheme·host·port tuple로 web origin을 정의하고 URL·DNS·connection과 구분한다."
 level: 1
 status: PUBLISHED
@@ -17,11 +17,18 @@ references:
     recommendation: "origin과 URL authority의 경계를 확인한다."
     displayOrder: 1
 ---
-# Origin과 Scheme·Host·Port
+# 출처(Origin)
 
 web origin은 일반적으로 **scheme, host, port**의 조합으로 구분한다. host 문자열만 같다고 같은 origin이 되는 것은 아니다. 예를 들어 `http://example.com`과 `https://example.com`은 scheme이 다르고, `https://example.com`과 `https://example.com:8443`은 port가 다르므로 서로 다른 origin이다.
 
 URL에 port가 생략되면 scheme에 대응하는 기본 port를 적용해 비교한다. 그래서 `https://example.com`과 `https://example.com:443`은 origin을 판단할 때 같은 조합으로 취급될 수 있다.
+
+| URL | Scheme | Host | Effective port | Origin 비교 |
+| --- | --- | --- | --- | --- |
+| https://api.example.com/v1 | https | api.example.com | 443 | 기준 origin |
+| https://api.example.com:443/v2 | https | api.example.com | 443 | 기준과 같은 origin |
+| https://api.example.com:8443 | https | api.example.com | 8443 | port가 달라 다른 origin |
+| http://api.example.com | http | api.example.com | 80 | scheme이 달라 다른 origin |
 
 ### Origin과 실제 network connection은 같은 값이 아니다
 

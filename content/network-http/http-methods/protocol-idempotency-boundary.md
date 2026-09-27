@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.http-methods.protocol-idempotency-boundary
 topicContentKey: network-http.core.http-methods
 slug: protocol-idempotency-boundary
-title: "HTTP Idempotency와 Application Idempotency"
+title: "프로토콜 멱등성과 애플리케이션 중복 방지"
 summary: "HTTP method의 intended-effect semantics와 logical operation 중복 방지를 위한 application idempotency를 구분한다."
 level: 2
 status: PUBLISHED
@@ -15,7 +15,7 @@ references:
     language: en
     displayOrder: 1
 ---
-# HTTP Idempotency와 Application Idempotency
+# 프로토콜 멱등성과 애플리케이션 중복 방지
 
 HTTP method idempotency는 동일한 request를 반복했을 때 **client가 요청한 intended effect**가 한 번 수행했을 때와 같도록 method가 정의되어 있다는 protocol semantics다. PUT과 DELETE, 그리고 safe methods가 여기에 해당한다.
 

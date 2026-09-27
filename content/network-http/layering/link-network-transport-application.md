@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.layering.link-network-transport-application
 topicContentKey: network-http.core.layering
 slug: link-network-transport-application
-title: "Link, Network, Transport·Application"
+title: "링크·네트워크·전송·애플리케이션 계층"
 summary: "link·network·transport·application 계층의 역할을 비교한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "Internet protocol layering의 책임 경계를 확인한다."
     displayOrder: 1
 ---
-# Link, Network, Transport·Application
+# 링크·네트워크·전송·애플리케이션 계층
 
 Internet communication을 단순화하면 link, network, transport, application 계층이 서로 다른 전달 범위를 맡는다. 중요한 것은 계층 이름을 암기하는 것이 아니라 **각 계층이 어떤 주소와 상태를 보고 어디까지 전달을 책임지는지** 구분하는 것이다.
 

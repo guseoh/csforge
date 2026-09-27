@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.http-methods.delete
 topicContentKey: network-http.core.http-methods
 slug: delete
-title: "DELETE와 Resource Association 제거"
+title: "DELETE와 삭제 의미"
 summary: "DELETE가 target URI와 current functionality의 association 제거를 요청하는 idempotent semantics를 설명한다."
 level: 1
 status: PUBLISHED
@@ -15,11 +15,16 @@ references:
     language: en
     displayOrder: 1
 ---
-# DELETE와 Resource Association 제거
+# DELETE와 삭제 의미
 
 DELETE는 origin server에 **target resource와 그 URI가 현재 제공하는 functionality 사이의 association을 제거해 달라**고 요청하는 method다. 흔히 `resource 삭제`라고 표현하지만, HTTP는 backing database row나 file을 물리적으로 지우라고 강제하지 않는다.
 
 server는 resource 특성에 따라 data를 실제 삭제할 수도 있고, archive나 tombstone을 남기거나 storage를 계속 보존할 수도 있다. 중요한 것은 성공한 DELETE 이후 target URI가 이전과 같은 current functionality를 계속 제공하도록 두는 것이 아니라, server가 정의한 deletion semantics를 적용하는 것이다.
+
+| 시점 | Target의 current functionality | 같은 DELETE의 intended effect | Possible response |
+| --- | --- | --- | --- |
+| 첫 요청 전 | 제공 중 | association 제거 | 200·202·204 등 resource 의미에 맞는 응답 |
+| 첫 요청 성공 후 | 제거되었거나 더 이상 제공하지 않음 | 이미 반영된 삭제 의도 유지 | 반복 요청은 404·204 등으로 다르게 표현될 수 있음 |
 
 ### DELETE는 idempotent하다
 

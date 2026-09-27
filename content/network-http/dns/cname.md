@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.dns.cname
 topicContentKey: network-http.core.dns
 slug: cname
-title: "CNAME"
+title: "CNAME 레코드"
 summary: "별칭이 canonical name으로 이어지는 record chain을 설명한다."
 level: 1
 status: PUBLISHED
@@ -15,7 +15,7 @@ references:
     language: en
     displayOrder: 1
 ---
-# CNAME
+# CNAME 레코드
 
 CNAME record는 하나의 domain name을 **다른 canonical name의 alias로 연결**한다. Resolver가 alias name을 조회하면 CNAME target을 따라가 최종적으로 A, AAAA 같은 필요한 record를 다시 찾아야 할 수 있다.
 

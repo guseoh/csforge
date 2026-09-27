@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.http-versions.quic
 topicContentKey: network-http.core.http-versions
 slug: quic
-title: "QUIC"
+title: "QUIC 전송 계층"
 summary: "UDP 위에서 encrypted connection, reliable streams와 congestion control을 제공하는 QUIC transport를 설명한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "QUIC connection·stream·loss recovery를 확인한다."
     displayOrder: 1
 ---
-# QUIC
+# QUIC 전송 계층
 
 QUIC은 UDP datagram 위에서 동작하지만 raw UDP와 같은 얇은 datagram API에 머물지 않는다. QUIC protocol 자체가 connection state, reliable streams, loss recovery, flow/congestion control과 cryptographic handshake를 제공한다.
 

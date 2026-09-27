@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.tcp.retransmission
 topicContentKey: network-http.core.tcp
 slug: retransmission
-title: "TCP Retransmission"
+title: "재전송"
 summary: "loss 판단 후 unacknowledged data를 다시 보내는 조건을 설명한다."
 level: 2
 status: PUBLISHED
@@ -24,7 +24,7 @@ references:
     recommendation: "TCP timeout과 retransmission 판단을 확인한다."
     displayOrder: 2
 ---
-# TCP Retransmission
+# 재전송
 
 TCP는 보낸 data가 확인되지 않았을 때 필요한 byte 범위를 다시 보내 **loss가 application byte stream에 그대로 드러나지 않도록** 복구한다. 대표적인 trigger는 retransmission timer 만료이고, duplicate ACK 같은 loss signal을 이용해 timeout보다 먼저 retransmit하는 방식도 있다.
 

@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.ip-routing.routing-table
 topicContentKey: network-http.core.ip-routing
 slug: routing-table
-title: "Routing Table"
+title: "라우팅 테이블"
 summary: "destination prefix와 next hop/interface의 관계를 설명한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "IP routing table과 next hop 선택을 확인한다."
     displayOrder: 1
 ---
-# Routing Table
+# 라우팅 테이블
 
 Routing table은 destination prefix와 next hop, egress interface 같은 forwarding 정보를 연결한 table이다. Host나 router는 packet의 destination address를 기준으로 matching route를 찾아 **어느 interface와 next hop으로 보낼지** 결정한다.
 
