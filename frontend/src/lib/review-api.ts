@@ -38,10 +38,10 @@ export function getReviews(filters: { due: string; status?: ReviewScheduleStatus
   return request(`/api/reviews?${params.toString()}`)
 }
 
-export function createReviewQuiz(count = 10): Promise<QuizCreated> {
+export function createReviewQuiz(count: number, requestId: string): Promise<QuizCreated> {
   return request('/api/reviews/quizzes', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', 'Idempotency-Key': requestId },
     body: JSON.stringify({ count }),
   })
 }

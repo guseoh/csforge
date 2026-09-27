@@ -12,6 +12,7 @@ import com.guseoh.csforge.quiz.application.QuizActiveView;
 import com.guseoh.csforge.quiz.application.QuizAnswerSavedResult;
 import com.guseoh.csforge.quiz.application.QuizBreakdownView;
 import com.guseoh.csforge.quiz.application.QuizCreatedResult;
+import com.guseoh.csforge.quiz.application.QuizQuestionOutcomeView;
 import com.guseoh.csforge.quiz.application.QuizResultView;
 import com.guseoh.csforge.quiz.application.QuizSelfCheckResult;
 import com.guseoh.csforge.quiz.application.QuizSessionData;
@@ -113,7 +114,8 @@ public class QuizApiMapper {
                 Math.toIntExact(performance.selfCheckPendingCount()),
                 performance.accuracy(),
                 view.breakdown().stream().map(this::toBreakdownResponse).toList(),
-                data.quizQuestions().stream().map(item -> toResultQuestion(item, data)).toList());
+                data.quizQuestions().stream().map(item -> toResultQuestion(
+                        item, data, view.questionOutcomes().get(item.getQuestion().getId()))).toList());
     }
 
     private QuizQuestionResponse toSessionQuestion(QuizQuestion item, QuizSessionData data) {
@@ -139,7 +141,10 @@ public class QuizApiMapper {
                 savedAnswer);
     }
 
-    private QuizQuestionResultResponse toResultQuestion(QuizQuestion item, QuizSessionData data) {
+    private QuizQuestionResultResponse toResultQuestion(
+            QuizQuestion item,
+            QuizSessionData data,
+            QuizQuestionOutcomeView outcome) {
         long questionId = item.getQuestion().getId();
         Attempt attempt = data.requireAttempt(questionId);
         List<QuestionAnswer> answers = data.answersByQuestionId().getOrDefault(questionId, List.of());
@@ -173,6 +178,8 @@ public class QuizApiMapper {
                 choiceKey(attempt),
                 attempt.getAnswerText(),
                 attempt.isReviewNeeded(),
+                outcome.wrongNoteAvailable(),
+                outcome.reviewScheduleStatus(),
                 attempt.getGradingStatus(),
                 attempt.getCorrect(),
                 correctChoiceKey,

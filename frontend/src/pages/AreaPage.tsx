@@ -3,9 +3,9 @@ import { Link, useNavigate, useParams, useSearch } from '@tanstack/react-router'
 import { useQueries, useQuery } from '@tanstack/react-query'
 import { AreaLearningRail } from '../components/AreaLearningRail'
 import { EmptyState, ErrorState, PageSkeleton } from '../components/AsyncStates'
-import { getConcepts, getLearningArea, type LearningStatus } from '../lib/learning-api'
+import { getConcepts, getLearningArea, getLearningAreaOutline, type LearningStatus } from '../lib/learning-api'
 import { defaultLearningSearch, type LearningSearch } from '../lib/learning-search'
-import { defaultQuizSearch } from '../lib/quiz-search'
+import { csvParam, defaultQuizSearch } from '../lib/quiz-search'
 
 const PAGE_SIZE = 12
 
@@ -42,11 +42,19 @@ export function AreaPage() {
     queryKey: ['learning-area', areaSlug],
     queryFn: () => getLearningArea(areaSlug),
   })
-  const outlineQueries = useQueries({
-    queries: [0, 1].map((page) => ({
-      queryKey: ['learning-outline', areaSlug, page],
-      queryFn: () => getConcepts({ area: areaSlug, page, size: 100, sort: 'curriculum' }),
-    })),
+  const firstOutlineQuery = useQuery({
+    queryKey: ['learning-outline', areaSlug, 0],
+    queryFn: () => getLearningAreaOutline(areaSlug, 0),
+  })
+  const outlinePageCount = firstOutlineQuery.data?.page.totalPages ?? 1
+  const laterOutlineQueries = useQueries({
+    queries: Array.from({ length: Math.max(0, outlinePageCount - 1) }, (_, index) => {
+      const page = index + 1
+      return {
+        queryKey: ['learning-outline', areaSlug, page],
+        queryFn: () => getLearningAreaOutline(areaSlug, page),
+      }
+    }),
   })
   const conceptsQuery = useQuery({
     queryKey: ['concepts', areaSlug, search],
@@ -75,6 +83,7 @@ export function AreaPage() {
 
   const area = areaQuery.data
   const page = conceptsQuery.data?.page
+  const outlineQueries = [firstOutlineQuery, ...laterOutlineQueries]
   const outlineConcepts = outlineQueries.flatMap((query) => query.data?.items ?? [])
   const outlineIsPending = outlineQueries.some((query) => query.isPending)
   const outlineIsError = outlineQueries.some((query) => query.isError)
@@ -141,6 +150,15 @@ export function AreaPage() {
                     <p className="eyebrow">현재 주제</p>
                     <h2 id="topic-index-heading">{selectedTopic.title}</h2>
                     <p>{selectedTopic.description ?? '이 주제의 개념을 커리큘럼 순서대로 학습하세요.'}</p>
+                    {selectedTopicConcepts.length > 0 ? (
+                      <Link
+                        className="secondary-button topic-quiz-link"
+                        to="/quiz"
+                        search={{ ...defaultQuizSearch, concepts: csvParam(selectedTopicConcepts.map((concept) => concept.id)) }}
+                      >
+                        이 주제 문제 풀기
+                      </Link>
+                    ) : <span className="helper-text">이 주제에는 공개된 개념이 아직 없습니다.</span>}
                   </div>
                   <div className="selected-topic-progress" aria-label={`${selectedTopic.completedConceptCount}/${selectedTopic.publishedConceptCount}개 완료`}>
                     <strong>{selectedTopic.completedConceptCount}/{selectedTopic.publishedConceptCount}</strong>

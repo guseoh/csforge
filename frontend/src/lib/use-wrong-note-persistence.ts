@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
+import { clearAppUpdateSafetySignal, setAppUpdateSafetySignal } from './app-update-safety'
 import {
   beginNoteSaveRevision,
   enqueueLatestNoteSave,
@@ -55,6 +56,15 @@ export function useWrongNotePersistence({ id, detail }: WrongNotePersistenceOpti
       }
     },
   })
+
+  useEffect(() => {
+    const signalKey = `wrong-note:${id}`
+    setAppUpdateSafetySignal(signalKey, {
+      noteDirty: dirty ? 1 : 0,
+      notePending: noteMutation.isPending ? 1 : 0,
+    })
+    return () => clearAppUpdateSafetySignal(signalKey)
+  }, [dirty, id, noteMutation.isPending])
 
   saveRef.current = () => {
     const content = noteRef.current

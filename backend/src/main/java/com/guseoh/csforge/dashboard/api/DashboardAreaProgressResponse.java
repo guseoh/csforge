@@ -7,6 +7,7 @@ public record DashboardAreaProgressResponse(
         String areaSlug,
         String areaName,
         long completedConceptCount,
+        long startedConceptCount,
         long publishedConceptCount,
         double completionPercent,
         List<DashboardLevelProgressResponse> levels) {

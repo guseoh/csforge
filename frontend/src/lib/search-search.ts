@@ -22,6 +22,10 @@ export const defaultSearchSearch: SearchSearch = {
   page: 0,
 }
 
+export function questionSuggestionSearch(title: string): SearchSearch {
+  return { ...defaultSearchSearch, q: title.trim().slice(0, 200), types: 'QUESTION' }
+}
+
 export function parseSearchSearch(search: Record<string, unknown>): SearchSearch {
   return searchSearchSchema.parse(search)
 }

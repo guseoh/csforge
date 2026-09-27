@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
+import { clearAppUpdateSafetySignal, setAppUpdateSafetySignal } from './app-update-safety'
 import { savePersonalNote, type ConceptDetail } from './learning-api'
 import {
   conceptNoteDraftKey,
@@ -37,6 +38,15 @@ export function useConceptNotePersistence(conceptId: number, serverContent: stri
   const saveRef = useRef<() => void>(() => {})
   const scheduleRef = useRef<() => void>(() => {})
   const initializedRef = useRef(false)
+
+  useEffect(() => {
+    const signalKey = `concept-note:${conceptId}`
+    setAppUpdateSafetySignal(signalKey, {
+      noteDirty: noteState === 'saved' ? 0 : 1,
+      notePending: noteState === 'saving' ? 1 : 0,
+    })
+    return () => clearAppUpdateSafetySignal(signalKey)
+  }, [conceptId, noteState])
 
   saveRef.current = () => {
     const content = noteRef.current

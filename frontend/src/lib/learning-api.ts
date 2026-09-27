@@ -24,6 +24,7 @@ export interface AreaSummary {
   topicCount: number
   publishedConceptCount: number
   completedConceptCount: number
+  startedConceptCount: number
   bookmarkedConceptCount: number
   level1: LevelProgress
   level2: LevelProgress
@@ -85,6 +86,22 @@ export interface ConceptPage {
     hasPrevious: boolean
   }
 }
+
+export interface LearningAreaOutlineConcept {
+  id: number
+  topicId: number
+  title: string
+  summary: string | null
+  level: number
+  learningStatus: LearningStatus
+}
+
+export interface LearningAreaOutlinePage {
+  items: LearningAreaOutlineConcept[]
+  page: ConceptPage['page']
+}
+
+const LEARNING_AREA_OUTLINE_PAGE_SIZE = 200
 
 export interface ProgressState {
   learningStatus: LearningStatus
@@ -150,6 +167,13 @@ export function getLearningAreas(): Promise<AreaSummary[]> {
 
 export function getLearningArea(areaSlug: string): Promise<AreaDetail> {
   return request<AreaDetail>(`/api/learning-areas/${encodeURIComponent(areaSlug)}`)
+}
+
+export function getLearningAreaOutline(areaSlug: string, page: number): Promise<LearningAreaOutlinePage> {
+  const params = new URLSearchParams({ page: String(page), size: String(LEARNING_AREA_OUTLINE_PAGE_SIZE) })
+  return request<LearningAreaOutlinePage>(
+    `/api/learning-areas/${encodeURIComponent(areaSlug)}/outline?${params.toString()}`,
+  )
 }
 
 export function getConcepts(filters: {

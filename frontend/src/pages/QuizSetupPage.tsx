@@ -21,6 +21,7 @@ import {
   type QuizSearch,
 } from '../lib/quiz-search'
 import { canStartQuiz, effectiveQuizCount, quizAvailabilityState } from '../lib/quiz-availability'
+import { useIdempotencyKey } from '../lib/use-idempotency-key'
 
 const rememberedSettingsKey = 'csforge.quiz.setup'
 const questionTypes: { value: QuestionType; label: string }[] = [
@@ -155,15 +156,32 @@ export function QuizSetupPage() {
     questionTypes: settings.questionTypes,
     state: settings.state,
   }), [settings])
+  const creationRequest = useIdempotencyKey()
   const availabilityQuery = useQuery({
     queryKey: ['quiz-availability', filterPayload],
     queryFn: () => getQuizAvailability(filterPayload),
   })
   const questionCountAvailable = availabilityQuery.data?.availableCount
   const effectiveCount = effectiveQuizCount(settings.count, questionCountAvailable, settings.concepts.length > 0)
+  const pendingCreateRequestRef = useRef<{ signature: string; payload: QuizSetupPayload } | null>(null)
   const createMutation = useMutation({
-    mutationFn: () => createQuiz({ ...settings, count: effectiveCount }),
-    onSuccess: (quiz) => void navigate({ to: '/quiz/$quizId', params: { quizId: String(quiz.quizId) } }),
+    mutationFn: () => {
+      const signature = JSON.stringify({ operation: 'standard-quiz', settings })
+      if (pendingCreateRequestRef.current?.signature !== signature) {
+        pendingCreateRequestRef.current = {
+          signature,
+          payload: { ...settings, count: effectiveCount },
+        }
+      }
+      const request = pendingCreateRequestRef.current
+      const requestId = creationRequest.requestIdFor(signature)
+      return createQuiz(request.payload, requestId)
+    },
+    onSuccess: (quiz) => {
+      pendingCreateRequestRef.current = null
+      creationRequest.clear()
+      void navigate({ to: '/quiz/$quizId', params: { quizId: String(quiz.quizId) } })
+    },
   })
 
   const navigateToSettings = (nextSearch: QuizSearch) => void navigate({
@@ -213,6 +231,7 @@ export function QuizSetupPage() {
   }
   const availabilityState = quizAvailabilityState(questionCountAvailable, effectiveCount, availabilityQuery.isPending, availabilityQuery.isError)
   const conceptScopedShortage = effectiveCount < settings.count
+  const conceptScopedNoQuestions = settings.concepts.length > 0 && questionCountAvailable === 0
   const selectedPreset = quickPreset(settings)
   const hasDetailedSettings = Boolean(
     settings.areas.length
@@ -228,9 +247,11 @@ export function QuizSetupPage() {
     ? '선택된 조건의 문항 수를 확인하는 중입니다…'
     : availabilityState === 'ERROR'
       ? '문항 수를 확인한 뒤 시작할 수 있습니다.'
-      : conceptScopedShortage
-        ? `이 개념에서 ${effectiveCount}문항을 사용할 수 있습니다.`
-        : `현재 조건에서 ${questionCountAvailable}문항을 사용할 수 있습니다.`
+      : conceptScopedNoQuestions
+        ? '이 선택 범위에 등록된 문제가 아직 없습니다.'
+        : conceptScopedShortage
+          ? `이 개념에서 ${effectiveCount}문항을 사용할 수 있습니다.`
+          : `현재 조건에서 ${questionCountAvailable}문항을 사용할 수 있습니다.`
 
   return (
     <section className="page-section quiz-page quiz-setup-page">
@@ -366,8 +387,8 @@ export function QuizSetupPage() {
 
       <div className="quiz-unified-start" aria-label="문제 풀이 시작">
         <div>
-          <strong>{effectiveCount}문제</strong>
-          <span className={availabilityState === 'INSUFFICIENT' || availabilityState === 'ERROR' ? 'helper-text error-text' : 'helper-text'}>{availabilityMessage}</span>
+          <strong>{conceptScopedNoQuestions ? 0 : effectiveCount}문제</strong>
+          <span className={availabilityState === 'ERROR' || (availabilityState === 'INSUFFICIENT' && !conceptScopedNoQuestions) ? 'helper-text error-text' : 'helper-text'}>{availabilityMessage}</span>
         </div>
         <div className="quiz-unified-start-actions">
           {hasDetailedSettings && <button className="text-button" type="button" onClick={() => navigateToSettings(quizSearchForPreset('DEFAULT'))}>기본값으로 초기화</button>}
@@ -377,13 +398,13 @@ export function QuizSetupPage() {
             disabled={!canStartQuiz(availabilityState, createMutation.isPending)}
             onClick={() => createMutation.mutate()}
           >
-            {createMutation.isPending ? '문제 준비 중…' : conceptScopedShortage ? `가능한 ${effectiveCount}문항으로 시작` : '선택 조건으로 시작'}
+            {createMutation.isPending ? '문제 준비 중…' : conceptScopedNoQuestions ? '등록된 문제 없음' : conceptScopedShortage ? `가능한 ${effectiveCount}문항으로 시작` : '선택 조건으로 시작'}
           </button>
         </div>
       </div>
 
       {availabilityQuery.isError && <div className="state-card error-state" role="alert"><strong>문항 가능 수를 확인하지 못했습니다.</strong><span>서버 상태를 확인한 뒤 다시 시도하세요.</span><button className="secondary-button" type="button" onClick={() => void availabilityQuery.refetch()}>다시 시도</button></div>}
-      {availabilityState === 'INSUFFICIENT' && <p className="helper-text error-text">요청한 {settings.count}문항보다 가능한 문항이 적습니다.</p>}
+      {availabilityState === 'INSUFFICIENT' && !conceptScopedNoQuestions && <p className="helper-text error-text">요청한 {settings.count}문항보다 가능한 문항이 적습니다.</p>}
       {createMutation.isError && <p className="route-message error">문제 풀이를 시작하지 못했습니다. 잠시 후 다시 시도하세요.</p>}
     </section>
   )

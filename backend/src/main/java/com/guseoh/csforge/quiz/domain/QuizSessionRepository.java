@@ -3,10 +3,13 @@ package com.guseoh.csforge.quiz.domain;
 import java.util.Optional;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface QuizSessionRepository extends JpaRepository<QuizSession, Long> {
+
+    Optional<QuizSession> findByCreationRequestId(UUID creationRequestId);
 
     Optional<QuizSession> findFirstByStatusOrderByStartedAtDescIdDesc(QuizSessionStatus status);
 

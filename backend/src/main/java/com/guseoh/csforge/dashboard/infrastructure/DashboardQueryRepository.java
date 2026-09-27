@@ -22,6 +22,10 @@ public class DashboardQueryRepository {
                                la.name as areaName,
                                count(c.id) as publishedConceptCount,
                                count(case when cp.status = com.guseoh.csforge.learning.domain.LearningStatus.COMPLETED then 1 end) as completedConceptCount,
+                               count(case when cp.status in (
+                                   com.guseoh.csforge.learning.domain.LearningStatus.LEARNING,
+                                   com.guseoh.csforge.learning.domain.LearningStatus.COMPLETED,
+                                   com.guseoh.csforge.learning.domain.LearningStatus.REVIEW_NEEDED) then 1 end) as startedConceptCount,
                                count(case when c.level = 1 then 1 end) as level1Total,
                                count(case when c.level = 1 and cp.status = com.guseoh.csforge.learning.domain.LearningStatus.COMPLETED then 1 end) as level1Completed,
                                count(case when c.level = 2 then 1 end) as level2Total,
@@ -42,6 +46,7 @@ public class DashboardQueryRepository {
                         row.get("areaSlug", String.class),
                         row.get("areaName", String.class),
                         count(row, "completedConceptCount"),
+                        count(row, "startedConceptCount"),
                         count(row, "publishedConceptCount"),
                         count(row, "level1Total"),
                         count(row, "level1Completed"),

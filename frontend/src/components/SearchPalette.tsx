@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import { getSearchSuggestions } from '../lib/search-api'
 import { addRecentSearch, primarySearchDestination } from '../lib/search-ui'
-import { defaultSearchSearch } from '../lib/search-search'
+import { defaultSearchSearch, questionSuggestionSearch } from '../lib/search-search'
 
 const RECENT_KEY = 'csforge.search.recent.v1'
 const SUGGESTION_DEBOUNCE_MS = 180
@@ -124,6 +124,8 @@ export function SearchPalette() {
       window.open(destination.url, '_blank', 'noopener,noreferrer')
     } else if (destination.kind === 'concept') {
       void navigate({ to: '/concepts/$conceptId', params: { conceptId: String(destination.conceptId) } })
+    } else if (destination.kind === 'question') {
+      void navigate({ to: '/search', search: questionSuggestionSearch(item.title) })
     } else {
       void navigate({ to: '/wrong-notes/$questionId', params: { questionId: String(destination.questionId) } })
     }

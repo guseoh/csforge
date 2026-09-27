@@ -234,6 +234,7 @@ public class DashboardQueryService {
                 area.areaSlug(),
                 area.areaName(),
                 area.completedConceptCount(),
+                area.startedConceptCount(),
                 area.publishedConceptCount(),
                 percentage(area.completedConceptCount(), area.publishedConceptCount()),
                 List.of(

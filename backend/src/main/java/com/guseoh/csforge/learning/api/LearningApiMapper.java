@@ -7,6 +7,7 @@ import com.guseoh.csforge.learning.application.ConceptNavigationView;
 import com.guseoh.csforge.learning.application.ConceptPageView;
 import com.guseoh.csforge.learning.application.ConceptProgressView;
 import com.guseoh.csforge.learning.application.LearningAreaDetailView;
+import com.guseoh.csforge.learning.application.LearningAreaOutlinePageView;
 import com.guseoh.csforge.learning.application.LearningAreaSummaryView;
 import com.guseoh.csforge.learning.application.PageMetadataView;
 import com.guseoh.csforge.learning.application.PersonalNoteView;
@@ -26,6 +27,7 @@ public class LearningApiMapper {
                 area.topicCount(),
                 area.publishedConceptCount(),
                 area.completedConceptCount(),
+                area.startedConceptCount(),
                 area.bookmarkedConceptCount(),
                 new LevelProgressResponse(area.level1Total(), area.level1Completed()),
                 new LevelProgressResponse(area.level2Total(), area.level2Completed()),
@@ -43,6 +45,18 @@ public class LearningApiMapper {
                 area.name(),
                 area.description(),
                 area.topics().stream().map(this::toTopicSummaryResponse).toList());
+    }
+
+    public LearningAreaOutlinePageResponse toResponse(LearningAreaOutlinePageView page) {
+        return new LearningAreaOutlinePageResponse(
+                page.items().stream().map(item -> new LearningAreaOutlineConceptResponse(
+                        item.id(),
+                        item.topicId(),
+                        item.title(),
+                        item.summary(),
+                        item.level(),
+                        item.learningStatus())).toList(),
+                toResponse(page.page()));
     }
 
     public ConceptPageResponse toResponse(ConceptPageView page) {

@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.guseoh.csforge.learning.application.ConceptSearchCriteria;
 import com.guseoh.csforge.learning.application.ConceptSort;
+import com.guseoh.csforge.learning.application.LearningAreaOutlineCriteria;
 import com.guseoh.csforge.learning.application.LearningCommandService;
 import com.guseoh.csforge.learning.application.LearningQueryService;
 import com.guseoh.csforge.learning.application.PersonalNoteView;
@@ -45,6 +46,15 @@ public class LearningController {
     @GetMapping("/learning-areas/{areaSlug}")
     public LearningAreaDetailResponse getArea(@PathVariable String areaSlug) {
         return apiMapper.toResponse(queryService.getArea(areaSlug));
+    }
+
+    @GetMapping("/learning-areas/{areaSlug}/outline")
+    public LearningAreaOutlinePageResponse getAreaOutline(
+            @PathVariable String areaSlug,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "200") int size) {
+        return apiMapper.toResponse(queryService.getAreaOutline(
+                new LearningAreaOutlineCriteria(areaSlug, page, size)));
     }
 
     @GetMapping("/concepts")

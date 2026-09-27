@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { ApiRequestError } from '../lib/http'
+import { clearAppUpdateSafetySignal, setAppUpdateSafetySignal } from '../lib/app-update-safety'
 import { applyImports, previewImports, type ImportApply, type ImportItem, type ImportPreview } from '../lib/import-api'
 
 function mergeFiles(current: File[], incoming: File[]) {
@@ -81,6 +82,8 @@ export function ImportPage() {
 
   const runApply = async () => {
     if (!preview?.canApply) return
+    const updateSignalKey = 'import:apply'
+    setAppUpdateSafetySignal(updateSignalKey, { importApplying: 1 })
     setPending(true)
     setMessage(null)
     try {
@@ -94,6 +97,7 @@ export function ImportPage() {
         setMessage('콘텐츠 가져오기에 실패했습니다. 다시 시도하세요.')
       }
     } finally {
+      clearAppUpdateSafetySignal(updateSignalKey)
       setPending(false)
     }
   }

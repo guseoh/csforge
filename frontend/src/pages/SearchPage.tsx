@@ -2,6 +2,7 @@ import { useState, type FormEvent, type ReactNode } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useNavigate, useSearch } from '@tanstack/react-router'
 import { ErrorState, PageSkeleton } from '../components/AsyncStates'
+import { QuestionPracticeAction } from '../components/QuestionPracticeAction'
 import {
   getSearchFilterOptions,
   getSearchStatus,
@@ -111,7 +112,7 @@ export function SearchPage() {
       window.open(destination.url, '_blank', 'noopener,noreferrer')
     } else if (destination.kind === 'concept') {
       void navigate({ to: '/concepts/$conceptId', params: { conceptId: String(destination.conceptId) } })
-    } else {
+    } else if (destination.kind === 'wrong-note') {
       void navigate({ to: '/wrong-notes/$questionId', params: { questionId: String(destination.questionId) } })
     }
   }
@@ -263,8 +264,9 @@ export function SearchPage() {
                     <h2><HighlightText value={item.highlightedTitle || item.title} /></h2>
                     <p className="search-snippet"><HighlightText value={preview} /></p>
                     <div className="search-result-actions">
-                      {primary && <button className="secondary-button" type="button" onClick={() => openResult(item)}>{primary.kind === 'external' ? '자료 열기' : item.documentType === 'WRONG_NOTE' ? '오답 노트 열기' : '개념 열기'}</button>}
-                      {item.documentType === 'REFERENCE' && related?.kind === 'concept' && <button className="text-button" type="button" onClick={() => void navigate({ to: '/concepts/$conceptId', params: { conceptId: String(related.conceptId) } })}>관련 개념 보기</button>}
+                      {primary?.kind === 'question' && <QuestionPracticeAction questionId={primary.questionId} />}
+                      {primary && primary.kind !== 'question' && <button className="secondary-button" type="button" onClick={() => openResult(item)}>{primary.kind === 'external' ? '자료 열기' : item.documentType === 'WRONG_NOTE' ? '오답 노트 열기' : '개념 열기'}</button>}
+                      {(item.documentType === 'REFERENCE' || item.documentType === 'QUESTION') && related?.kind === 'concept' && <button className="text-button" type="button" onClick={() => void navigate({ to: '/concepts/$conceptId', params: { conceptId: String(related.conceptId) } })}>관련 개념 보기</button>}
                     </div>
                   </article>
                 )

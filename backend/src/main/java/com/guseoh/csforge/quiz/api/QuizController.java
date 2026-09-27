@@ -1,6 +1,7 @@
 package com.guseoh.csforge.quiz.api;
 
 import java.util.List;
+import java.util.UUID;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -52,9 +54,11 @@ public class QuizController {
     }
 
     @PostMapping
-    public ResponseEntity<QuizCreatedResponse> create(@Valid @RequestBody QuizCreateRequest request) {
+    public ResponseEntity<QuizCreatedResponse> create(
+            @Valid @RequestBody QuizCreateRequest request,
+            @RequestHeader(name = "Idempotency-Key", required = false) UUID requestId) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(apiMapper.toCreatedResponse(setupService.create(request.toSetupRequest())));
+                .body(apiMapper.toCreatedResponse(setupService.create(request.toSetupRequest(), requestId)));
     }
 
     @GetMapping("/active")
@@ -109,23 +113,35 @@ public class QuizController {
     }
 
     @PostMapping("/{quizId}/retry-wrong")
-    public QuizRetryResponse retryWrong(@PathVariable long quizId) {
-        return apiMapper.toRetryResponse(setupService.retryWrong(quizId));
+    public QuizRetryResponse retryWrong(
+            @PathVariable long quizId,
+            @RequestHeader(name = "Idempotency-Key", required = false) UUID requestId) {
+        return apiMapper.toRetryResponse(setupService.retryWrong(quizId, requestId));
     }
 
     @PostMapping("/{quizId}/questions/{questionId}/retry")
     public ResponseEntity<QuizCreatedResponse> retryWrongQuestion(
             @PathVariable long quizId,
-            @PathVariable long questionId) {
+            @PathVariable long questionId,
+            @RequestHeader(name = "Idempotency-Key", required = false) UUID requestId) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(apiMapper.toCreatedResponse(setupService.retryWrongQuestion(quizId, questionId)));
+                .body(apiMapper.toCreatedResponse(setupService.retryWrongQuestion(quizId, questionId, requestId)));
     }
 
     @PostMapping("/questions/{questionId}/concepts/{conceptId}/practice")
     public ResponseEntity<QuizCreatedResponse> practiceRelatedConcept(
             @PathVariable long questionId,
-            @PathVariable long conceptId) {
+            @PathVariable long conceptId,
+            @RequestHeader(name = "Idempotency-Key", required = false) UUID requestId) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(apiMapper.toCreatedResponse(setupService.practiceRelatedConcept(questionId, conceptId)));
+                .body(apiMapper.toCreatedResponse(setupService.practiceRelatedConcept(questionId, conceptId, requestId)));
+    }
+
+    @PostMapping("/questions/{questionId}/practice")
+    public ResponseEntity<QuizCreatedResponse> practiceQuestion(
+            @PathVariable long questionId,
+            @RequestHeader(name = "Idempotency-Key", required = false) UUID requestId) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(apiMapper.toCreatedResponse(setupService.practiceQuestion(questionId, requestId)));
     }
 }

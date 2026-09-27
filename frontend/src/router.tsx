@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { SearchPalette } from './components/SearchPalette'
 import { UtilityMenu } from './components/UtilityMenu'
 import { ThemeControl } from './components/ThemeControl'
+import { AppUpdatePrompt } from './components/AppUpdatePrompt'
 import { AuthGate } from './components/AuthGate'
 import { getAuthSession, logout } from './lib/auth-api'
 import { clearAuthReturnLocation } from './lib/auth-return'
@@ -13,6 +14,7 @@ import { defaultQuizSearch, parseQuizSearch } from './lib/quiz-search'
 import { defaultWrongNoteSearch, parseWrongNoteSearch } from './lib/wrong-note-search'
 import { parseReviewSearch } from './lib/review-search'
 import { parseSearchSearch } from './lib/search-search'
+import { isStaleLazyChunkError } from './lib/route-errors'
 
 const AreaPage = lazyRouteComponent(() => import('./pages/AreaPage'), 'AreaPage')
 const ConceptPage = lazyRouteComponent(() => import('./pages/ConceptPage'), 'ConceptPage')
@@ -116,6 +118,7 @@ function AppLayout() {
           </div>
         </div>
       </header>
+      <AppUpdatePrompt />
       <div className="content-layout">
         <main className="main-content"><AuthGate><Outlet /></AuthGate></main>
       </div>
@@ -182,8 +185,16 @@ function LoadingPage() {
   return <div className="route-state" role="status"><span className="route-state-mark" aria-hidden="true" />페이지를 불러오는 중입니다…</div>
 }
 
-function RouteErrorPage() {
-  return <div className="route-state route-state-error" role="alert"><strong>페이지를 불러오지 못했습니다.</strong><button className="secondary-button" type="button" onClick={() => window.location.reload()}>다시 시도</button></div>
+function RouteErrorPage({ error }: { error: unknown }) {
+  const staleChunk = isStaleLazyChunkError(error)
+  return (
+    <div className="route-state route-state-error" role="alert">
+      <strong>{staleChunk ? '새 버전이 배포되었습니다. 앱을 새로고침하세요.' : '페이지를 불러오지 못했습니다.'}</strong>
+      <button className="secondary-button" type="button" onClick={() => window.location.reload()}>
+        {staleChunk ? '앱 새로고침' : '다시 시도'}
+      </button>
+    </div>
+  )
 }
 
 function NotFoundPage() {

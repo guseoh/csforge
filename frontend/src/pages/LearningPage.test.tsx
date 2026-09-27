@@ -36,6 +36,7 @@ function area(overrides: Partial<AreaSummary> = {}): AreaSummary {
     topicCount: 0,
     publishedConceptCount: 0,
     completedConceptCount: 0,
+    startedConceptCount: 0,
     bookmarkedConceptCount: 0,
     level1: { total: 0, completed: 0 },
     level2: { total: 0, completed: 0 },
@@ -113,5 +114,15 @@ describe('LearningPage canonical bootstrap recovery', () => {
     mocks.bootstrap.data = bootstrapStatus('READY')
 
     expect(renderToStaticMarkup(<LearningPage />)).not.toContain('기본 학습 콘텐츠 준비')
+  })
+
+  it('shows an area with started but incomplete learning as 0% instead of not started', () => {
+    mocks.areas.data = [area({ publishedConceptCount: 1, startedConceptCount: 1 })]
+
+    const markup = renderToStaticMarkup(<LearningPage />)
+
+    expect(markup).toContain('0/1개 완료')
+    expect(markup).toContain('0%')
+    expect(markup).not.toContain('미시작')
   })
 })

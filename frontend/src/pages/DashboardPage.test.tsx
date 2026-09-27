@@ -171,4 +171,23 @@ describe('DashboardPage', () => {
     expect(markup).toContain('학습 영역에서 시작하기')
     expect(markup).toContain('학습 영역 보기')
   })
+
+  it('classifies an incomplete started area as progressed while keeping completion at zero', () => {
+    const markup = render(dashboard({
+      today: { solvedCount: 0, correctCount: 0, wrongCount: 0, accuracyPercent: 0, reviewDueCount: 0 },
+      areaProgress: [{
+        areaSlug: 'java',
+        areaName: 'Java',
+        completedConceptCount: 0,
+        startedConceptCount: 1,
+        publishedConceptCount: 1,
+        completionPercent: 0,
+        levels: [],
+      }],
+    }))
+
+    expect(markup).toContain('0/1개 개념 완료')
+    expect(markup).toContain('0%')
+    expect(markup).not.toContain('미시작')
+  })
 })

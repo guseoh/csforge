@@ -128,6 +128,55 @@ class LearningIntegrationTest {
     }
 
     @Test
+    void areaStartedCountIncludesEveryNonUnseenProgressStatus() throws Exception {
+        JsonNode untouched = findBySlug(json(request("GET", "/api/learning-areas", null)), "java");
+        assertEquals(0, untouched.get("startedConceptCount").asInt());
+        assertEquals(0, untouched.get("completedConceptCount").asInt());
+
+        request("PATCH", "/api/concepts/" + firstConceptId + "/progress", "{\"status\":\"LEARNING\"}");
+        request("PATCH", "/api/concepts/" + secondConceptId + "/progress", "{\"status\":\"COMPLETED\"}");
+        request("PATCH", "/api/concepts/" + thirdConceptId + "/progress", "{\"status\":\"REVIEW_NEEDED\"}");
+
+        JsonNode javaArea = findBySlug(json(request("GET", "/api/learning-areas", null)), "java");
+        assertEquals(3, javaArea.get("startedConceptCount").asInt());
+        assertEquals(1, javaArea.get("completedConceptCount").asInt());
+    }
+
+    @Test
+    void reviewNeededAloneStartsAnAreaWithoutIncreasingCompletion() throws Exception {
+        request("PATCH", "/api/concepts/" + firstConceptId + "/progress", "{\"status\":\"REVIEW_NEEDED\"}");
+
+        JsonNode javaArea = findBySlug(json(request("GET", "/api/learning-areas", null)), "java");
+        assertEquals(1, javaArea.get("startedConceptCount").asInt());
+        assertEquals(0, javaArea.get("completedConceptCount").asInt());
+    }
+
+    @Test
+    void areaOutlinePaginatesPastTwoHundredAndKeepsOnlyOutlineFields() throws Exception {
+        for (int index = 0; index < 205; index++) {
+            insertConcept(topicId, "java-outline-" + index, "outline-" + index,
+                    "Outline " + index, 1, index + 3, "Outline summary", "# Outline");
+        }
+
+        JsonNode firstPage = json(request("GET", "/api/learning-areas/java/outline?page=0&size=200", null));
+        assertEquals(208, firstPage.get("page").get("totalElements").asInt());
+        assertEquals(200, firstPage.get("items").size());
+        assertEquals(2, firstPage.get("page").get("totalPages").asInt());
+        assertTrue(firstPage.get("page").get("hasNext").asBoolean());
+        assertEquals("Alpha", firstPage.get("items").get(0).get("title").asText());
+        assertEquals("Beta", firstPage.get("items").get(1).get("title").asText());
+        assertEquals("Outline 197", firstPage.get("items").get(199).get("title").asText());
+        assertFalse(firstPage.get("items").get(0).has("contentStatus"));
+        assertFalse(firstPage.get("items").get(0).has("bookmarked"));
+
+        JsonNode secondPage = json(request("GET", "/api/learning-areas/java/outline?page=1&size=200", null));
+        assertEquals(8, secondPage.get("items").size());
+        assertFalse(secondPage.get("page").get("hasNext").asBoolean());
+        assertEquals("Outline 204", secondPage.get("items").get(6).get("title").asText());
+        assertEquals("Alpha", secondPage.get("items").get(7).get("title").asText());
+    }
+
+    @Test
     void areaSummaryCountsPublishedQuestionsAndFinalizedAttemptsWithoutConceptFanout() throws Exception {
         long springAreaId = jdbc.queryForObject("SELECT id FROM learning_area WHERE slug = 'spring'", Long.class);
         long springTopicId = insertTopic(springAreaId, "metrics-spring", "metrics-spring", "Metrics Spring", 1);

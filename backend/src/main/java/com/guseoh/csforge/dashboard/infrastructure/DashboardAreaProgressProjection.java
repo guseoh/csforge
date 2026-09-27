@@ -5,6 +5,7 @@ public record DashboardAreaProgressProjection(
         String areaSlug,
         String areaName,
         long completedConceptCount,
+        long startedConceptCount,
         long publishedConceptCount,
         long level1Total,
         long level1Completed,

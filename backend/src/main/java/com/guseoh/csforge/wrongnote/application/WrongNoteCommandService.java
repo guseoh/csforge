@@ -2,8 +2,11 @@ package com.guseoh.csforge.wrongnote.application;
 
 import java.time.Clock;
 import java.time.Instant;
+import java.util.List;
+import java.util.UUID;
 
 import com.guseoh.csforge.quiz.application.QuizCreatedResult;
+import com.guseoh.csforge.quiz.application.QuizCreationIdentity;
 import com.guseoh.csforge.quiz.application.QuizSessionCreator;
 import com.guseoh.csforge.quiz.domain.QuizSessionSource;
 import com.guseoh.csforge.wrongnote.domain.WrongNote;
@@ -31,7 +34,24 @@ public class WrongNoteCommandService {
 
     @Transactional
     public QuizCreatedResult retry(long questionId) {
+        return retry(questionId, null);
+    }
+
+    @Transactional
+    public QuizCreatedResult retry(long questionId, UUID requestId) {
+        QuizCreationIdentity creationIdentity = QuizCreationIdentity.forRequest(
+                requestId,
+                "wrong-note-retry",
+                Long.toString(questionId));
+        var existing = sessionCreator.findExisting(creationIdentity);
+        if (existing.isPresent()) return existing.orElseThrow();
+
         WrongNote note = wrongNoteRepository.findByQuestionId(questionId).orElseThrow(WrongNoteNotFoundException::new);
-        return sessionCreator.create(java.util.List.of(note.getQuestion().getId()), Instant.now(clock), null, QuizSessionSource.WRONG_RETRY);
+        return sessionCreator.create(
+                List.of(note.getQuestion().getId()),
+                Instant.now(clock),
+                null,
+                QuizSessionSource.WRONG_RETRY,
+                creationIdentity);
     }
 }

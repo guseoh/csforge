@@ -106,6 +106,8 @@ export interface QuizQuestionResult {
   selectedChoiceKey: string | null
   answerText: string | null
   reviewNeeded: boolean
+  wrongNoteAvailable: boolean
+  reviewScheduleStatus: 'SCHEDULED' | 'MASTERED' | null
   gradingStatus: AttemptGradingStatus
   correct: boolean | null
   correctChoiceKey: string | null
@@ -165,10 +167,10 @@ export function getQuizAvailability(filters: Omit<QuizSetupPayload, 'count' | 't
   return request<QuizAvailability>(`/api/quizzes/availability?${params.toString()}`)
 }
 
-export function createQuiz(payload: QuizSetupPayload): Promise<QuizCreated> {
+export function createQuiz(payload: QuizSetupPayload, requestId: string): Promise<QuizCreated> {
   return request<QuizCreated>('/api/quizzes', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', 'Idempotency-Key': requestId },
     body: JSON.stringify(payload),
   })
 }
@@ -217,14 +219,30 @@ export function selfCheckQuizQuestion(quizId: number, questionId: number, correc
   })
 }
 
-export function retryWrongQuiz(quizId: number): Promise<QuizRetry> {
-  return request<QuizRetry>(`/api/quizzes/${quizId}/retry-wrong`, { method: 'POST' })
+export function retryWrongQuiz(quizId: number, requestId: string): Promise<QuizRetry> {
+  return request<QuizRetry>(`/api/quizzes/${quizId}/retry-wrong`, {
+    method: 'POST',
+    headers: { 'Idempotency-Key': requestId },
+  })
 }
 
-export function retryWrongQuizQuestion(quizId: number, questionId: number): Promise<QuizCreated> {
-  return request<QuizCreated>(`/api/quizzes/${quizId}/questions/${questionId}/retry`, { method: 'POST' })
+export function retryWrongQuizQuestion(quizId: number, questionId: number, requestId: string): Promise<QuizCreated> {
+  return request<QuizCreated>(`/api/quizzes/${quizId}/questions/${questionId}/retry`, {
+    method: 'POST',
+    headers: { 'Idempotency-Key': requestId },
+  })
 }
 
-export function practiceRelatedConceptQuiz(questionId: number, conceptId: number): Promise<QuizCreated> {
-  return request<QuizCreated>(`/api/quizzes/questions/${questionId}/concepts/${conceptId}/practice`, { method: 'POST' })
+export function practiceRelatedConceptQuiz(questionId: number, conceptId: number, requestId: string): Promise<QuizCreated> {
+  return request<QuizCreated>(`/api/quizzes/questions/${questionId}/concepts/${conceptId}/practice`, {
+    method: 'POST',
+    headers: { 'Idempotency-Key': requestId },
+  })
+}
+
+export function practiceQuestion(questionId: number, requestId: string): Promise<QuizCreated> {
+  return request<QuizCreated>(`/api/quizzes/questions/${questionId}/practice`, {
+    method: 'POST',
+    headers: { 'Idempotency-Key': requestId },
+  })
 }

@@ -179,8 +179,11 @@ export interface WrongNoteChoice {
   rationaleMarkdown: string | null
 }
 
-export function retryWrongNote(questionId: number): Promise<QuizCreated> {
-  return request(`/api/wrong-notes/${questionId}/retry`, { method: 'POST' })
+export function retryWrongNote(questionId: number, requestId: string): Promise<QuizCreated> {
+  return request(`/api/wrong-notes/${questionId}/retry`, {
+    method: 'POST',
+    headers: { 'Idempotency-Key': requestId },
+  })
 }
 
 export function getWrongNoteAiAnalysis(questionId: number): Promise<WrongAnswerAnalysis> {

@@ -162,11 +162,24 @@ class DashboardIntegrationTest {
         assertEquals(15, dashboard.get("areaProgress").size());
         JsonNode javaArea = findBySlug(dashboard.get("areaProgress"), "java");
         assertEquals(1, javaArea.get("completedConceptCount").asInt());
+        assertEquals(1, javaArea.get("startedConceptCount").asInt());
         assertEquals(2, javaArea.get("publishedConceptCount").asInt());
         assertEquals(2, dashboard.get("today").get("solvedCount").asInt());
         assertEquals(50.0, dashboard.get("today").get("accuracyPercent").asDouble());
         assertEquals(3, dashboard.get("weakTopics").get(0).get("attemptCount").asInt());
         assertTrue(hasPendingSelfCheck(dashboard.get("recentQuizzes")));
+    }
+
+    @Test
+    void dashboardCountsLearningAsStartedWithoutIncreasingCompletion() throws Exception {
+        assertEquals(200, request("POST", "/api/concepts/" + conceptId + "/view", null).statusCode());
+
+        JsonNode dashboard = objectMapper.readTree(request("GET", "/api/dashboard", null).body());
+        JsonNode javaArea = findBySlug(dashboard.get("areaProgress"), "java");
+
+        assertEquals(1, javaArea.get("startedConceptCount").asInt());
+        assertEquals(0, javaArea.get("completedConceptCount").asInt());
+        assertEquals(0.0, javaArea.get("completionPercent").asDouble());
     }
 
     @Test

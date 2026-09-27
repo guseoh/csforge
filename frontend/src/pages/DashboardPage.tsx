@@ -9,6 +9,7 @@ import { createReviewQuiz } from '../lib/review-api'
 import { defaultLearningSearch } from '../lib/learning-search'
 import { defaultQuizSearch } from '../lib/quiz-search'
 import { defaultWrongNoteSearch } from '../lib/wrong-note-search'
+import { useIdempotencyKey } from '../lib/use-idempotency-key'
 
 function percent(value: number | null) {
   return value === null ? '—' : `${Math.round(value)}%`
@@ -42,14 +43,16 @@ function recentQuizPerformanceLabel(quiz: Dashboard['recentQuizzes'][number]) {
 export function DashboardPage() {
   const navigate = useNavigate({ from: '/' })
   const queryClient = useQueryClient()
+  const reviewCreationRequest = useIdempotencyKey()
   const dashboardQuery = useQuery({ queryKey: ['dashboard'], queryFn: getDashboard })
   const recentConceptsQuery = useQuery({
     queryKey: ['concepts', { page: 0, size: 4, sort: 'VIEWED' }],
     queryFn: () => getConcepts({ page: 0, size: 4, sort: 'VIEWED' }),
   })
   const reviewMutation = useMutation({
-    mutationFn: () => createReviewQuiz(10),
+    mutationFn: () => createReviewQuiz(10, reviewCreationRequest.requestIdFor({ operation: 'review-quiz', count: 10 })),
     onSuccess: (quiz) => {
+      reviewCreationRequest.clear()
       void queryClient.invalidateQueries({ queryKey: ['dashboard'] })
       void navigate({ to: '/quiz/$quizId', params: { quizId: String(quiz.quizId) } })
     },
@@ -63,8 +66,8 @@ export function DashboardPage() {
   const dashboard = dashboardQuery.data
   const recentConcepts = recentConceptsQuery.data ? selectRecentConcepts(recentConceptsQuery.data.items).slice(0, 3) : []
   const recentConcept = recentConcepts[0] ?? null
-  const progressedAreas = dashboard.areaProgress.filter((area) => area.completedConceptCount > 0)
-  const untouchedAreas = dashboard.areaProgress.filter((area) => area.completedConceptCount === 0)
+  const progressedAreas = dashboard.areaProgress.filter((area) => area.startedConceptCount > 0)
+  const untouchedAreas = dashboard.areaProgress.filter((area) => area.startedConceptCount === 0)
   const showingProgressedAreas = progressedAreas.length > 0
   const areaPool = showingProgressedAreas ? progressedAreas : untouchedAreas
   const recentAreaInPool = recentConcept ? areaPool.find((area) => area.areaSlug === recentConcept.areaSlug) : undefined
@@ -199,7 +202,7 @@ export function DashboardPage() {
           <p className="dashboard-section-copy">{areaSectionDescription}</p>
           <div className="dashboard-area-list">
             {featuredAreas.map((area, index) => {
-              const started = area.completedConceptCount > 0
+              const started = area.startedConceptCount > 0
               return (
                 <Link className="dashboard-area-row" key={area.areaSlug} to="/learning/$areaSlug" params={{ areaSlug: area.areaSlug }} search={defaultLearningSearch}>
                   <span className="dashboard-area-index" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>

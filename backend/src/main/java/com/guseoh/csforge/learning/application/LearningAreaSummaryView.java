@@ -11,6 +11,7 @@ public record LearningAreaSummaryView(
         long topicCount,
         long publishedConceptCount,
         long completedConceptCount,
+        long startedConceptCount,
         long bookmarkedConceptCount,
         long level1Total,
         long level1Completed,
@@ -31,6 +32,7 @@ public record LearningAreaSummaryView(
             long topicCount,
             long publishedConceptCount,
             long completedConceptCount,
+            long startedConceptCount,
             long bookmarkedConceptCount,
             long level1Total,
             long level1Completed,
@@ -39,7 +41,7 @@ public record LearningAreaSummaryView(
             long level3Total,
             long level3Completed) {
         this(id, slug, name, description, topicCount, publishedConceptCount, completedConceptCount,
-                bookmarkedConceptCount, level1Total, level1Completed, level2Total, level2Completed,
+                startedConceptCount, bookmarkedConceptCount, level1Total, level1Completed, level2Total, level2Completed,
                 level3Total, level3Completed, 0, 0, 0, 0.0);
     }
 
@@ -52,7 +54,7 @@ public record LearningAreaSummaryView(
                 : (double) correctAttemptCount * 100 / finalizedAttemptCount;
         return new LearningAreaSummaryView(
                 id, slug, name, description, topicCount, publishedConceptCount, completedConceptCount,
-                bookmarkedConceptCount, level1Total, level1Completed, level2Total, level2Completed,
+                startedConceptCount, bookmarkedConceptCount, level1Total, level1Completed, level2Total, level2Completed,
                 level3Total, level3Completed, publishedQuestionCount, finalizedAttemptCount,
                 correctAttemptCount, accuracyPercent);
     }
