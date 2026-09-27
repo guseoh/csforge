@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.isa-execution.registers
 topicContentKey: computer-architecture.core.isa-execution
 slug: registers
-title: "Registers"
+title: "레지스터(Registers)"
 summary: "instruction이 직접 읽고 쓰는 architectural register와 memory의 역할을 구분하고 load/store가 둘을 연결하는 흐름을 이해한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "RISC-V integer register 역할과 caller/callee 보존 규칙을 확인한다."
     displayOrder: 1
 ---
-# Registers
+# 레지스터(Registers)
 
 Register는 instruction이 직접 이름을 지정해 읽고 쓸 수 있는 CPU의 작은 architectural state입니다. 산술 operand와 중간 결과를 담는 general-purpose register가 있고, PC처럼 control flow를 나타내는 특별한 register도 있습니다.
 

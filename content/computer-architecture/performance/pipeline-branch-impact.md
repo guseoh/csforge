@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.performance.pipeline-branch-impact
 topicContentKey: computer-architecture.core.performance
 slug: pipeline-branch-impact
-title: "Pipeline과 Branch가 CPI에 미치는 영향"
+title: "파이프라인과 분기가 CPI에 미치는 영향(Pipeline and Branch Impact)"
 summary: "branch frequency·misprediction rate·recovery penalty가 CPI와 CPU execution time에 추가하는 비용을 설명한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "CPU execution time, latency/throughput와 speedup을 구분해 성능을 계산하는 방법을 확인한다."
     displayOrder: 1
 ---
-# Pipeline과 Branch가 CPI에 미치는 영향
+# 파이프라인과 분기가 CPI에 미치는 영향(Pipeline and Branch Impact)
 
 Pipeline은 여러 instruction을 겹쳐 처리하지만 branch prediction이 틀리면 잘못된 경로에서 진행한 instruction을 버리고 올바른 PC에서 다시 시작해야 한다. 이 recovery cycle은 useful work를 완료하지 못한 채 소비되므로 평균 CPI를 높일 수 있다.
 

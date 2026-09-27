@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.performance.instruction-count-cpi-clock
 topicContentKey: computer-architecture.core.performance
 slug: instruction-count-cpi-clock
-title: "Instruction Count·CPI·Clock"
+title: "명령어 수·CPI·클록(Instruction Count, CPI and Clock)"
 summary: "CPU time을 instruction count·average CPI·clock cycle time으로 분해하고 각 항이 성능에 미치는 영향을 설명한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "CPU execution time, latency/throughput와 speedup을 구분해 성능을 계산하는 방법을 확인한다."
     displayOrder: 1
 ---
-# Instruction Count·CPI·Clock
+# 명령어 수·CPI·클록(Instruction Count, CPI and Clock)
 
 CPU execution time은 대표적으로 다음 세 요소로 나누어 생각할 수 있다.
 

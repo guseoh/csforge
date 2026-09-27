@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.cache-organization.fully-associative-cache
 topicContentKey: computer-architecture.core.cache-organization
 slug: fully-associative-cache
-title: "Fully-Associative Cache"
+title: "완전 연관 캐시(Fully-Associative Cache)"
 summary: "memory block을 어느 line에도 배치할 수 있게 해 conflict를 줄이는 대신 전체 tag 검색과 replacement 비용이 커지는 구조를 설명한다."
 level: 2
 status: PUBLISHED
@@ -14,10 +14,10 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "access pattern과 cache line 재사용을 확인한다."
+    recommendation: "direct-mapped·set-associative·fully-associative mapping, tag/index/offset, replacement과 write policy를 확인한다."
     displayOrder: 1
 ---
-# Fully-Associative Cache
+# 완전 연관 캐시(Fully-Associative Cache)
 
 Fully-associative cache에서는 memory block이 cache의 어느 line에도 들어갈 수 있다. 특정 index가 placement를 제한하지 않으므로 전체 cache를 하나의 set으로 보고 모든 line을 후보로 생각할 수 있다.
 

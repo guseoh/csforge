@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.isa-execution.procedure-call-machine-level
 topicContentKey: computer-architecture.core.isa-execution
 slug: procedure-call-machine-level
-title: "Machine Level의 함수 호출"
+title: "기계 수준 함수 호출(Machine-Level Procedure Call)"
 summary: "함수 호출이 control transfer, argument 전달, return address, saved register와 stack frame 규칙을 어떻게 조합하는지 ISA와 ABI를 구분해 이해한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "RISC-V argument/return register, caller/callee-saved register와 procedure call 규칙을 확인한다."
     displayOrder: 1
 ---
-# Machine Level의 함수 호출
+# 기계 수준 함수 호출(Machine-Level Procedure Call)
 
 고수준 언어에서 함수 호출 한 줄로 보이는 동작은 machine level에서 여러 상태 변화로 나뉩니다. Caller는 argument를 정해진 위치에 준비하고 callee로 control을 넘겨야 하며, callee가 끝난 뒤 다시 돌아올 위치도 보존해야 합니다.
 

@@ -119,7 +119,7 @@
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.isa-execution.fetch-decode-execute.q1",
-    "promptMarkdown": "conditional branch instruction을 실행한 결과 조건이 참이었다. fetch-decode-execute 관점에서 반드시 달라질 수 있는 architectural state는?",
+    "promptMarkdown": "conditional branch의 조건이 참이고 branch target이 순차 실행의 fall-through address와 다르다. branch가 반영된 뒤 다음 architectural instruction을 정하기 위해 어떤 architectural state가 target을 가리키도록 갱신되는가?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",

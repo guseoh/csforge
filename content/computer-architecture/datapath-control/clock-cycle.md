@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.datapath-control.clock-cycle
 topicContentKey: computer-architecture.core.datapath-control
 slug: clock-cycle
-title: "Clock Cycle"
+title: "클록 주기(Clock Cycle)"
 summary: "동기식 CPU에서 clock edge가 state 갱신 시점을 맞추고 cycle time과 frequency가 서로 어떤 관계인지 이해한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "clock cycle time, clock rate, CPI와 CPU execution time의 관계를 함께 확인한다."
     displayOrder: 1
 ---
-# Clock Cycle
+# 클록 주기(Clock Cycle)
 
 CPU의 ALU와 multiplexer 같은 combinational logic은 입력이 바뀌자마자 최종 출력이 완성되는 것이 아니라 작은 propagation delay를 거쳐 안정됩니다. 반면 register와 PC 같은 state element는 값을 계속 기억해야 합니다. 동기식 CPU는 **clock edge를 기준으로 언제 새로운 state를 받아들일지** 맞춥니다.
 

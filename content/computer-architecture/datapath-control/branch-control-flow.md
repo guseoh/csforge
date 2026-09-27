@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.datapath-control.branch-control-flow
 topicContentKey: computer-architecture.core.datapath-control
 slug: branch-control-flow
-title: "Branch·Control Flow"
+title: "분기와 제어 흐름(Branch and Control Flow)"
 summary: "branch condition과 target 계산이 next PC 선택으로 이어지는 흐름을 설명한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "RV32I instruction formats, registers, load/store와 control-transfer encoding을 확인한다."
     displayOrder: 1
 ---
-# Branch·Control Flow
+# 분기와 제어 흐름(Branch and Control Flow)
 
 CPU가 instruction을 순서대로 실행할 때는 다음 PC가 다음 instruction address를 가리키면 된다. 하지만 branch, jump, call, return은 이 흐름을 바꾸므로 datapath에는 **다음 PC를 선택하는 경로**가 필요하다.
 

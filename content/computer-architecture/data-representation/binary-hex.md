@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.data-representation.binary-hex
 topicContentKey: computer-architecture.core.data-representation
 slug: binary-hex
-title: "2진수와 16진수"
+title: "2진수와 16진수(Binary and Hexadecimal)"
 summary: "같은 bit pattern을 binary와 hexadecimal로 읽는 방법과 고정된 폭을 함께 보는 이유를 이해한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "고정 폭 정수와 수 표현의 기초를 확인한다."
     displayOrder: 1
 ---
-# 2진수와 16진수
+# 2진수와 16진수(Binary and Hexadecimal)
 
 Hardware의 register와 memory에 저장되는 값은 결국 bit pattern입니다. 2진수는 각 bit를 그대로 보여 주기 때문에 구조를 이해하기에는 좋지만, bit 수가 많아지면 사람이 읽고 비교하기 어렵습니다. 그래서 낮은 수준의 주소, machine code, mask를 볼 때는 같은 값을 16진수로 표현하는 경우가 많습니다.
 

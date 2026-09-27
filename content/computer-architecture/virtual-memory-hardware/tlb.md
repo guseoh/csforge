@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.virtual-memory-hardware.tlb
 topicContentKey: computer-architecture.core.virtual-memory-hardware
 slug: tlb
-title: "TLB"
+title: "주소 변환 버퍼(TLB, Translation Lookaside Buffer)"
 summary: "최근 주소 변환을 cache하는 TLB가 page-table walk를 줄이는 원리와 한계를 설명한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "MMU의 translation·protection 경계를 확인한다."
     displayOrder: 1
 ---
-# TLB
+# 주소 변환 버퍼(TLB, Translation Lookaside Buffer)
 
 TLB(Translation Lookaside Buffer)는 최근 virtual page와 physical frame의 mapping을 보관하는 작은 translation cache다. Memory access마다 multi-level page table을 다시 걷는 비용을 줄이기 위해 사용한다.
 

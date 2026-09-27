@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.performance.latency-throughput
 topicContentKey: computer-architecture.core.performance
 slug: latency-throughput
-title: "지연 시간과 처리량"
+title: "지연 시간과 처리량(Latency and Throughput)"
 summary: "단일 작업의 completion 지연 시간과 단위 시간 처리량을 분리하고 pipeline·concurrency가 둘을 다르게 바꾸는 이유를 설명한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "CPU execution time, latency/throughput와 speedup을 구분해 성능을 계산하는 방법을 확인한다."
     displayOrder: 1
 ---
-# 지연 시간과 처리량
+# 지연 시간과 처리량(Latency and Throughput)
 
 성능이 `빠르다`는 말은 무엇이 빨라졌는지에 따라 의미가 달라진다. **지연 시간(latency)** 은 작업 하나가 시작해서 끝날 때까지 걸리는 시간이고, **처리량(throughput)** 은 일정 시간 동안 완료할 수 있는 작업 수다.
 

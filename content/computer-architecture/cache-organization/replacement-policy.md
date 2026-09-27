@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.cache-organization.replacement-policy
 topicContentKey: computer-architecture.core.cache-organization
 slug: replacement-policy
-title: "Cache 교체 정책"
+title: "캐시 교체 정책(Cache Replacement Policy)"
 summary: "set이 가득 찼을 때 어느 line을 내보낼지 결정하는 정책과 hit rate·구현 비용의 trade-off를 설명한다."
 level: 2
 status: PUBLISHED
@@ -14,10 +14,10 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "access pattern과 cache line 재사용을 확인한다."
+    recommendation: "direct-mapped·set-associative·fully-associative mapping, tag/index/offset, replacement과 write policy를 확인한다."
     displayOrder: 1
 ---
-# Cache 교체 정책
+# 캐시 교체 정책(Cache Replacement Policy)
 
 Set-associative 또는 fully-associative cache에서 새로운 line을 넣어야 하는데 후보 위치가 모두 사용 중이라면 기존 line 하나를 내보내야 한다. 이 victim line을 고르는 규칙이 replacement policy다.
 

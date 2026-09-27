@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.pipeline-ilp.branch-prediction
 topicContentKey: computer-architecture.core.pipeline-ilp
 slug: branch-prediction
-title: "Branch Prediction"
+title: "분기 예측(Branch Prediction)"
 summary: "branch 결과가 확정되기 전에 다음 PC를 예측해 fetch를 이어가고, 틀렸을 때 speculative work를 버리는 흐름을 설명한다."
 level: 2
 status: PUBLISHED
@@ -14,10 +14,10 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "branch prediction과 flush 비용을 확인한다."
+    recommendation: "pipeline stages, structural/data/control hazards, forwarding/stall, branch prediction과 recovery를 확인한다."
     displayOrder: 1
 ---
-# Branch Prediction
+# 분기 예측(Branch Prediction)
 
 Pipeline에서는 branch 조건이 확정되기 전에 다음 instruction을 가져와야 할 수 있다. 결과를 기다릴 때마다 fetch를 멈추면 pipeline 앞부분이 비기 때문이다. Branch prediction은 **다음 PC가 어디일지 미리 추측해 실행을 계속하는 방법**이다.
 

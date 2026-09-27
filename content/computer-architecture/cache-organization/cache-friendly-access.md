@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.cache-organization.cache-friendly-access
 topicContentKey: computer-architecture.core.cache-organization
 slug: cache-friendly-access
-title: "Cache-Friendly Access"
+title: "캐시 친화적 접근(Cache-Friendly Access)"
 summary: "배열 접근 순서와 working set이 cache line 재사용에 어떤 영향을 주는지 판단한다."
 level: 2
 status: PUBLISHED
@@ -14,10 +14,10 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "access pattern과 cache line 재사용을 확인한다."
+    recommendation: "direct-mapped·set-associative·fully-associative mapping, tag/index/offset, replacement과 write policy를 확인한다."
     displayOrder: 1
 ---
-# Cache-Friendly Access
+# 캐시 친화적 접근(Cache-Friendly Access)
 
 자료구조의 이름만으로 cache 효율이 결정되지는 않는다. 중요한 것은 실제 memory address를 **어떤 순서와 간격으로 접근하는가**다.
 

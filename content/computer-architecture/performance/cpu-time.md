@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.performance.cpu-time
 topicContentKey: computer-architecture.core.performance
 slug: cpu-time
-title: "CPU Time"
+title: "CPU 실행 시간(CPU Time)"
 summary: "CPU execution time과 elapsed time을 구분하고 CPU가 실제 instruction을 실행한 시간을 해석한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "CPU execution time, latency/throughput와 speedup을 구분해 성능을 계산하는 방법을 확인한다."
     displayOrder: 1
 ---
-# CPU Time
+# CPU 실행 시간(CPU Time)
 
 Elapsed time은 작업을 시작한 순간부터 끝날 때까지 실제로 흐른 전체 시간이다. 반면 CPU time은 그중 CPU가 해당 program의 instruction을 실행하는 데 사용한 시간에 초점을 둔다.
 

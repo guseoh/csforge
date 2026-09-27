@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.device-io.programmed-io
 topicContentKey: computer-architecture.core.device-io
 slug: programmed-io
-title: "Programmed I/O와 Polling"
+title: "프로그램 제어 입출력(Programmed I/O)"
 summary: "CPU가 device status와 data register를 직접 확인하며 전송을 진행하는 programmed I/O의 흐름과 polling 비용을 설명한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "device register I/O accessors와 MMIO 접근 경계를 확인한다."
     displayOrder: 1
 ---
-# Programmed I/O와 Polling
+# 프로그램 제어 입출력(Programmed I/O)
 
 Programmed I/O에서는 CPU가 device의 control/status/data register를 직접 읽고 쓰며 I/O 진행을 제어한다. 가장 단순한 형태는 polling이다. CPU가 device의 ready 상태를 반복해서 확인하고, 준비되면 data register를 읽거나 쓴다.
 

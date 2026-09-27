@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.multicore-memory.multicore-shared-memory
 topicContentKey: computer-architecture.core.multicore-memory
 slug: multicore-shared-memory
-title: "Multicore Shared Memory"
+title: "멀티코어 공유 메모리(Multicore Shared Memory)"
 summary: "여러 core가 같은 physical memory를 공유할 때 private cache·coherence·memory ordering이 각각 맡는 역할을 구분한다."
 level: 1
 status: PUBLISHED
@@ -14,10 +14,10 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "cache 복사본의 coherence 문제를 확인한다."
+    recommendation: "multicore cache sharing, coherence protocol, false sharing과 shared-memory ordering 경계를 확인한다."
     displayOrder: 1
 ---
-# Multicore Shared Memory
+# 멀티코어 공유 메모리(Multicore Shared Memory)
 
 Multicore processor에서는 여러 core가 같은 physical memory를 공유할 수 있다. 하지만 각 core에는 자기 register, pipeline, store buffer와 private cache가 있을 수 있으므로 모든 load/store가 하나의 중앙 memory에서 순서대로 처리되는 것은 아니다.
 

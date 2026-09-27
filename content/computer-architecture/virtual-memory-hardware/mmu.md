@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.virtual-memory-hardware.mmu
 topicContentKey: computer-architecture.core.virtual-memory-hardware
 slug: mmu
-title: "MMU와 주소 변환"
+title: "메모리 관리 장치(MMU)"
 summary: "CPU memory access마다 virtual-to-physical translation과 protection을 집행하는 MMU의 역할을 OS policy와 구분한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "MMU의 translation·protection 경계를 확인한다."
     displayOrder: 1
 ---
-# MMU와 주소 변환
+# 메모리 관리 장치(MMU)
 
 MMU(Memory Management Unit)는 CPU가 사용하는 virtual address를 physical address로 변환하고, 해당 access가 허용되는지 확인하는 hardware다. Load, store, instruction fetch가 모두 이 translation과 protection의 영향을 받는다.
 

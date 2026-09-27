@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.multicore-memory.coherence-protocol-model
 topicContentKey: computer-architecture.core.multicore-memory
 slug: coherence-protocol-model
-title: "Coherence Protocol의 기본 모델"
+title: "캐시 일관성 프로토콜(Coherence Protocol Model)"
 summary: "cache line의 read/write permission과 최신 data 소유권을 state transition으로 추적하는 coherence protocol의 기본 모델을 설명한다."
 level: 3
 status: PUBLISHED
@@ -14,10 +14,10 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "cache 복사본의 coherence 문제를 확인한다."
+    recommendation: "multicore cache sharing, coherence protocol, false sharing과 shared-memory ordering 경계를 확인한다."
     displayOrder: 1
 ---
-# Coherence Protocol의 기본 모델
+# 캐시 일관성 프로토콜(Coherence Protocol Model)
 
 Coherence protocol은 cache line마다 **누가 읽을 수 있고, 누가 쓸 수 있으며, 최신 data가 어디에 있는지**를 추적한다. 특정 protocol 이름을 외우기보다 line의 permission과 ownership이 state transition으로 바뀐다고 이해하는 것이 핵심이다.
 

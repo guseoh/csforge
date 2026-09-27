@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.datapath-control.alu-datapath
 topicContentKey: computer-architecture.core.datapath-control
 slug: alu-datapath
-title: "ALU와 Datapath"
+title: "ALU와 데이터패스(ALU and Datapath)"
 summary: "register에서 읽은 값이 ALU·memory interface·multiplexer를 지나 결과 state로 기록되는 datapath를 instruction별로 추적한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "register와 combinational datapath 사이의 timing 관계를 확인한다."
     displayOrder: 1
 ---
-# ALU와 Datapath
+# ALU와 데이터패스(ALU and Datapath)
 
 ISA가 `ADD`, `LOAD`, `STORE` 같은 instruction의 의미를 정의했다면 CPU 내부에는 그 의미를 실제 값의 이동으로 구현하는 경로가 필요합니다. **Datapath**는 register, ALU, multiplexer, memory interface처럼 data가 이동하고 변환되는 hardware 경로입니다.
 

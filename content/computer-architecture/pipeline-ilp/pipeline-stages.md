@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.pipeline-ilp.pipeline-stages
 topicContentKey: computer-architecture.core.pipeline-ilp
 slug: pipeline-stages
-title: "파이프라인 단계"
+title: "파이프라인 단계(Pipeline Stages)"
 summary: "instruction 실행을 여러 단계로 나누어 겹쳐 처리할 때 처리량과 지연 시간이 어떻게 달라지는지 설명한다."
 level: 1
 status: PUBLISHED
@@ -14,10 +14,10 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "branch prediction과 flush 비용을 확인한다."
+    recommendation: "pipeline stages, structural/data/control hazards, forwarding/stall, branch prediction과 recovery를 확인한다."
     displayOrder: 1
 ---
-# 파이프라인 단계
+# 파이프라인 단계(Pipeline Stages)
 
 CPU가 instruction 하나를 완전히 끝낸 뒤 다음 instruction을 시작한다면, 한 instruction이 ALU를 사용하는 동안 fetch 회로처럼 다른 부분은 놀 수 있다. 파이프라인은 instruction 실행 경로를 여러 단계(stage)로 나누고 **서로 다른 instruction이 서로 다른 단계를 동시에 사용하도록 겹쳐 실행**한다.
 

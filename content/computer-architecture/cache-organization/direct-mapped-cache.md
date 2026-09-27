@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.cache-organization.direct-mapped-cache
 topicContentKey: computer-architecture.core.cache-organization
 slug: direct-mapped-cache
-title: "직접 사상(Direct-Mapped) Cache"
+title: "직접 사상 캐시(Direct-Mapped Cache)"
 summary: "각 memory block이 하나의 cache 위치로만 mapping될 때 lookup이 단순해지는 대신 conflict miss가 생기는 이유를 설명한다."
 level: 2
 status: PUBLISHED
@@ -14,10 +14,10 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "access pattern과 cache line 재사용을 확인한다."
+    recommendation: "direct-mapped·set-associative·fully-associative mapping, tag/index/offset, replacement과 write policy를 확인한다."
     displayOrder: 1
 ---
-# 직접 사상(Direct-Mapped) Cache
+# 직접 사상 캐시(Direct-Mapped Cache)
 
 Direct-mapped cache에서는 각 memory block이 cache의 **정해진 line 하나에만** 들어갈 수 있다. Address의 index가 확인할 line을 바로 선택하고, 그 line에 저장된 tag가 요청한 memory block과 같은지 비교한다.
 

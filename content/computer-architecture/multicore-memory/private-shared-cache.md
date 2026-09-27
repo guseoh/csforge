@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.multicore-memory.private-shared-cache
 topicContentKey: computer-architecture.core.multicore-memory
 slug: private-shared-cache
-title: "Private Cache와 Shared Cache"
+title: "코어별 캐시와 공유 캐시(Private and Shared Cache)"
 summary: "core-private cache와 shared lower-level cache를 조합할 때 지연 시간·capacity·contention·coherence traffic이 어떻게 달라지는지 설명한다."
 level: 2
 status: PUBLISHED
@@ -14,10 +14,10 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "cache 복사본의 coherence 문제를 확인한다."
+    recommendation: "multicore cache sharing, coherence protocol, false sharing과 shared-memory ordering 경계를 확인한다."
     displayOrder: 1
 ---
-# Private Cache와 Shared Cache
+# 코어별 캐시와 공유 캐시(Private and Shared Cache)
 
 Multicore CPU는 cache level마다 다른 sharing 구조를 사용할 수 있다. 작은 상위 cache는 각 core에 private하게 두고, 더 큰 lower-level cache는 여러 core가 공유하는 식의 구성이 대표적이다.
 

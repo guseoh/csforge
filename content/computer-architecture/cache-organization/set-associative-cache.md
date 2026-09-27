@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.cache-organization.set-associative-cache
 topicContentKey: computer-architecture.core.cache-organization
 slug: set-associative-cache
-title: "Set-Associative Cache"
+title: "집합 연관 캐시(Set-Associative Cache)"
 summary: "하나의 set 안에 여러 way를 두어 conflict miss를 줄이는 대신 tag 비교와 replacement 비용이 커지는 구조를 설명한다."
 level: 2
 status: PUBLISHED
@@ -14,10 +14,10 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "access pattern과 cache line 재사용을 확인한다."
+    recommendation: "direct-mapped·set-associative·fully-associative mapping, tag/index/offset, replacement과 write policy를 확인한다."
     displayOrder: 1
 ---
-# Set-Associative Cache
+# 집합 연관 캐시(Set-Associative Cache)
 
 Set-associative cache는 cache line을 여러 set으로 나누고, 각 set 안에 여러 개의 way를 둔다. Address의 index는 set 하나를 선택하지만 요청한 memory block은 그 set 안의 어느 way에도 들어갈 수 있다.
 

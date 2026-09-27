@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.cache-organization.index-tag-offset
 topicContentKey: computer-architecture.core.cache-organization
 slug: index-tag-offset
-title: "Tag·Index·Offset"
+title: "인덱스·태그·오프셋(Index, Tag and Offset)"
 summary: "cache capacity·line size·associativity에서 set 수를 구하고 address bit를 offset·index·tag로 나누는 방법을 설명한다."
 level: 2
 status: PUBLISHED
@@ -14,10 +14,10 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "access pattern과 cache line 재사용을 확인한다."
+    recommendation: "direct-mapped·set-associative·fully-associative mapping, tag/index/offset, replacement과 write policy를 확인한다."
     displayOrder: 1
 ---
-# Tag·Index·Offset
+# 인덱스·태그·오프셋(Index, Tag and Offset)
 
 Byte-addressable memory와 power-of-two cache 구성을 가정하면 address를 `tag`, `index`, `offset`으로 나누어 cache lookup을 이해할 수 있다.
 

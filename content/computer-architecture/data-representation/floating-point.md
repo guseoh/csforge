@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.data-representation.floating-point
 topicContentKey: computer-architecture.core.data-representation
 slug: floating-point
-title: "부동소수점 표현과 반올림"
+title: "부동소수점 표현과 반올림(Floating-Point)"
 summary: "IEEE 754 binary floating-point가 sign·exponent·significand로 넓은 범위의 값을 근사하고 연산마다 반올림 오차가 생길 수 있는 이유를 이해한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "부동소수점의 표현 폭과 반올림 경계를 확인한다."
     displayOrder: 1
 ---
-# 부동소수점 표현과 반올림
+# 부동소수점 표현과 반올림(Floating-Point)
 
 정수와 달리 실수는 제한된 bit 안에 모든 값을 정확히 담을 수 없습니다. IEEE 754의 binary floating-point는 값을 **sign, exponent, significand**로 나누어 매우 작은 수부터 매우 큰 수까지 넓은 범위를 표현하는 대신, 많은 값을 가장 가까운 표현 가능한 값으로 근사합니다.
 
@@ -26,6 +26,18 @@ references:
 ```text
 value ≈ sign × significand × 2^exponent
 ```
+
+### IEEE 754 binary32의 field layout
+
+```text
+bit index     31      30             23 22                         0
+              +--------+---------------+----------------------------+
+field         | sign   | exponent      | fraction                   |
+width         | 1 bit  | 8 bits        | 23 bits                    |
+              +--------+---------------+----------------------------+
+```
+
+정규화된 유한수는 `(-1)^sign × 1.fraction × 2^(exponent - 127)`로 해석한다. `exponent`가 0이면 subnormal 또는 0으로 해석하며 숨은 선행 1을 쓰지 않고, 255이면 infinity 또는 NaN을 나타낸다.
 
 문제는 10진수에서 간단한 값이 2진수에서는 유한하게 끝나지 않을 수 있다는 점입니다. 대표적으로 0.1은 binary fraction으로 정확히 끝나지 않으므로 finite floating-point에 저장할 때 반올림됩니다. 그래서 다음 연산들이 수학의 실수 계산과 완전히 같은 결과를 보장하지 않습니다.
 

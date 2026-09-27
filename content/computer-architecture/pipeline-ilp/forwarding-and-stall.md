@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.pipeline-ilp.forwarding-and-stall
 topicContentKey: computer-architecture.core.pipeline-ilp
 slug: forwarding-and-stall
-title: "Forwarding과 Stall"
+title: "포워딩과 스톨(Forwarding and Stall)"
 summary: "RAW dependency에서 값이 준비되는 시점에 따라 forwarding으로 우회할지 pipeline을 stall할지 설명한다."
 level: 2
 status: PUBLISHED
@@ -14,10 +14,10 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "branch prediction과 flush 비용을 확인한다."
+    recommendation: "pipeline stages, structural/data/control hazards, forwarding/stall, branch prediction과 recovery를 확인한다."
     displayOrder: 1
 ---
-# Forwarding과 Stall
+# 포워딩과 스톨(Forwarding and Stall)
 
 RAW dependency가 있다고 해서 항상 write-back이 끝날 때까지 기다려야 하는 것은 아니다. 앞 instruction의 결과가 register file에는 아직 기록되지 않았더라도 ALU 출력처럼 pipeline 내부의 다른 위치에는 이미 계산되어 있을 수 있다.
 

@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.memory-hierarchy.miss-penalty
 topicContentKey: computer-architecture.core.memory-hierarchy
 slug: miss-penalty
-title: "Miss Penalty"
+title: "미스 패널티(Miss Penalty)"
 summary: "cache miss가 lower-level access·eviction·line fill을 거치며 평균 memory access time에 더하는 비용을 설명한다."
 level: 2
 status: PUBLISHED
@@ -14,10 +14,10 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "cache hit·miss와 lower-level access를 확인한다."
+    recommendation: "memory hierarchy, temporal/spatial locality, cache line, hit/miss와 AMAT 관계를 확인한다."
     displayOrder: 1
 ---
-# Miss Penalty
+# 미스 패널티(Miss Penalty)
 
 Cache miss가 발생하면 CPU는 더 느린 memory level에서 필요한 line을 가져와야 한다. 이때 추가로 드는 비용을 miss penalty라고 한다.
 

@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.performance.amdahl-law
 topicContentKey: computer-architecture.core.performance
 slug: amdahl-law
-title: "Amdahl's Law"
+title: "암달의 법칙(Amdahl's Law)"
 summary: "개선 가능한 실행 비율과 부분 speedup이 전체 성능 개선의 상한을 만드는 이유를 계산한다."
 level: 2
 status: PUBLISHED
@@ -17,13 +17,20 @@ references:
     recommendation: "CPU execution time, latency/throughput와 speedup을 구분해 성능을 계산하는 방법을 확인한다."
     displayOrder: 1
 ---
-# Amdahl's Law
+# 암달의 법칙(Amdahl's Law)
 
 성능 개선은 빨라진 부분이 전체 실행 시간에서 얼마나 큰 비율을 차지하는지에 제한된다. 전체 실행 중 비율 `p`인 부분을 `s`배 빠르게 만들었다면 개선 후 normalized execution time은 다음처럼 생각할 수 있다.
 
 ```text
 new time = (1 - p) + p / s
 speedup  = 1 / ((1 - p) + p / s)
+```
+
+개선 전후의 실행 시간은 다음처럼 나뉜다.
+
+```text
+baseline: | unchanged (1-p) | improvable (p)   | total 1
+improved: | unchanged (1-p) | improvable (p/s) | total (1-p) + p/s
 ```
 
 개선하지 않은 `(1-p)` 부분은 그대로 남는다는 점이 핵심이다.

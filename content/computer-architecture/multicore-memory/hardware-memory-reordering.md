@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.multicore-memory.hardware-memory-reordering
 topicContentKey: computer-architecture.core.multicore-memory
 slug: hardware-memory-reordering
-title: "Hardware Memory Ordering"
+title: "하드웨어 메모리 순서(Hardware Memory Ordering)"
 summary: "메모리 일관성 model이 다른 core에 관찰될 load/store 순서를 어떻게 제한하는지 설명하고 language memory model과의 경계를 구분한다."
 level: 3
 status: PUBLISHED
@@ -14,7 +14,7 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "cache 복사본의 coherence 문제를 확인한다."
+    recommendation: "multicore cache sharing, coherence protocol, false sharing과 shared-memory ordering 경계를 확인한다."
     displayOrder: 1
   - url: "https://docs.riscv.org/reference/isa/unpriv/rvwmo.html"
     title: "RVWMO Memory Consistency Model"
@@ -24,7 +24,7 @@ references:
     recommendation: "weak memory ordering에서 preserved program order와 explicit synchronization이 어떤 순서를 보존하는지 확인한다."
     displayOrder: 2
 ---
-# Hardware Memory Ordering
+# 하드웨어 메모리 순서(Hardware Memory Ordering)
 
 한 core의 program이 load와 store를 특정 순서로 작성했다고 해서 다른 core가 모든 memory operation을 반드시 그 순서 그대로 관찰하는 것은 아니다. CPU는 store buffer, out-of-order execution과 cache hierarchy를 이용해 성능을 높일 수 있고, architecture는 어떤 순서를 반드시 보존해야 하는지를 **memory consistency model**로 정의한다.
 

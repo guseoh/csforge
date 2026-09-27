@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.memory-hierarchy.cache-line
 topicContentKey: computer-architecture.core.memory-hierarchy
 slug: cache-line
-title: "Cache Line"
+title: "캐시 라인(Cache Line)"
 summary: "cache가 연속 byte를 line 단위로 이동·저장하는 이유와 line size의 trade-off를 설명한다."
 level: 1
 status: PUBLISHED
@@ -14,10 +14,10 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "cache hit·miss와 lower-level access를 확인한다."
+    recommendation: "memory hierarchy, temporal/spatial locality, cache line, hit/miss와 AMAT 관계를 확인한다."
     displayOrder: 1
 ---
-# Cache Line
+# 캐시 라인(Cache Line)
 
 CPU cache는 보통 요청한 byte 하나만 저장하지 않는다. 일정 크기의 연속된 memory block을 **cache line** 단위로 가져와 보관한다.
 

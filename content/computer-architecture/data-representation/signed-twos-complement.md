@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.data-representation.signed-twos-complement
 topicContentKey: computer-architecture.core.data-representation
 slug: signed-twos-complement
-title: "부호 있는 정수와 2의 보수"
+title: "부호 있는 정수와 2의 보수(Signed and Two's Complement)"
 summary: "같은 고정 폭 bit pattern을 signed·unsigned로 다르게 해석할 수 있으며 two's complement가 음수를 표현하는 방식을 이해한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "고정 폭 정수와 수 표현의 기초를 확인한다."
     displayOrder: 1
 ---
-# 부호 있는 정수와 2의 보수
+# 부호 있는 정수와 2의 보수(Signed and Two's Complement)
 
 Memory에 저장된 bit pattern 자체에는 `양수`, `음수`라는 꼬리표가 붙어 있지 않습니다. 같은 bit들을 어떤 규칙으로 해석하느냐에 따라 값이 달라집니다.
 

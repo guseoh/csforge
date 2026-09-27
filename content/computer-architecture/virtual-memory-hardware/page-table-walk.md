@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.virtual-memory-hardware.page-table-walk
 topicContentKey: computer-architecture.core.virtual-memory-hardware
 slug: page-table-walk
-title: "Page-Table Walk"
+title: "페이지 테이블 순회(Page-Table Walk)"
 summary: "TLB miss 뒤 virtual page number의 각 index를 따라 page table을 읽어 translation과 permission을 확인하는 흐름을 설명한다."
 level: 2
 status: PUBLISHED
@@ -24,7 +24,7 @@ references:
     recommendation: "hierarchical page table과 large-page mapping의 실제 OS 구조를 확인한다."
     displayOrder: 2
 ---
-# Page-Table Walk
+# 페이지 테이블 순회(Page-Table Walk)
 
 TLB에 필요한 translation이 없다면 MMU는 page table에서 virtual page의 mapping을 찾아야 한다. Multi-level page table에서는 virtual page number를 여러 index로 나누고 root table부터 아래 level을 차례로 따라간다. 이 과정을 page-table walk라고 한다.
 

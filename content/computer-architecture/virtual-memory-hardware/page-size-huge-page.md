@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.virtual-memory-hardware.page-size-huge-page
 topicContentKey: computer-architecture.core.virtual-memory-hardware
 slug: page-size-huge-page
-title: "Page Size와 Huge Page"
+title: "페이지 크기와 대형 페이지(Page Size and Huge Page)"
 summary: "page size가 TLB reach·page-table footprint·memory 낭비·allocation 비용에 만드는 trade-off를 설명한다."
 level: 3
 status: PUBLISHED
@@ -31,7 +31,7 @@ references:
     recommendation: "Linux HugeTLB의 TLB 이점과 allocation·reservation 제약을 확인한다."
     displayOrder: 3
 ---
-# Page Size와 Huge Page
+# 페이지 크기와 대형 페이지(Page Size and Huge Page)
 
 Page는 virtual-to-physical translation의 기본 단위다. Page size가 커지면 하나의 mapping이 더 넓은 주소 범위를 덮고, 작아지면 더 세밀한 단위로 memory를 관리할 수 있다.
 

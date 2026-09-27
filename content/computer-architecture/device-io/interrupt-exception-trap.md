@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.device-io.interrupt-exception-trap
 topicContentKey: computer-architecture.core.device-io
 slug: interrupt-exception-trap
-title: "Interrupt·Exception과 Trap"
+title: "인터럽트·예외와 트랩(Interrupt, Exception and Trap)"
 summary: "interrupt와 exception의 발생 원인을 구분하고 둘이 trap entry로 control을 넘기는 관계를 설명한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "exception·interrupt의 원인과 trap handler로의 transfer 관계를 확인한다."
     displayOrder: 1
 ---
-# Interrupt·Exception과 Trap
+# 인터럽트·예외와 트랩(Interrupt, Exception and Trap)
 
 CPU가 현재 instruction sequence를 실행하던 중 다른 handler로 control을 넘겨야 하는 사건이 생길 수 있다. 이때 원인이 현재 instruction 바깥에서 비동기적으로 들어왔는지, 현재 instruction 실행 자체에서 발생했는지 먼저 구분하면 interrupt와 exception을 이해하기 쉽다.
 

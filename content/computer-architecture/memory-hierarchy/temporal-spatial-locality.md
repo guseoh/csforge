@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.memory-hierarchy.temporal-spatial-locality
 topicContentKey: computer-architecture.core.memory-hierarchy
 slug: temporal-spatial-locality
-title: "시간적·공간적 지역성"
+title: "시간적·공간적 지역성(Temporal and Spatial Locality)"
 summary: "최근 사용한 데이터와 인접 데이터를 다시 사용할 가능성이 cache 재사용에 어떤 영향을 주는지 설명한다."
 level: 1
 status: PUBLISHED
@@ -14,10 +14,10 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "cache hit·miss와 lower-level access를 확인한다."
+    recommendation: "memory hierarchy, temporal/spatial locality, cache line, hit/miss와 AMAT 관계를 확인한다."
     displayOrder: 1
 ---
-# 시간적·공간적 지역성
+# 시간적·공간적 지역성(Temporal and Spatial Locality)
 
 Cache가 효과를 내는 이유는 프로그램의 memory access가 완전히 무작위인 경우가 드물기 때문이다. 최근 사용한 값을 다시 사용하거나, 사용한 주소 주변의 데이터를 이어서 읽는 패턴이 자주 나타난다. 이런 성질을 locality라고 한다.
 

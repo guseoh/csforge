@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.pipeline-ilp.pipeline-hazards
 topicContentKey: computer-architecture.core.pipeline-ilp
 slug: pipeline-hazards
-title: "파이프라인 Hazard"
+title: "파이프라인 해저드(Pipeline Hazards)"
 summary: "다음 instruction이 예정된 cycle에 진행하지 못하게 만드는 structural·data·control hazard를 구분한다."
 level: 2
 status: PUBLISHED
@@ -14,10 +14,10 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "branch prediction과 flush 비용을 확인한다."
+    recommendation: "pipeline stages, structural/data/control hazards, forwarding/stall, branch prediction과 recovery를 확인한다."
     displayOrder: 1
 ---
-# 파이프라인 Hazard
+# 파이프라인 해저드(Pipeline Hazards)
 
 파이프라인에서는 여러 instruction이 동시에 진행되므로 항상 다음 stage로 이동할 수 있는 것은 아니다. 필요한 hardware가 이미 사용 중이거나, 앞 instruction의 결과가 아직 준비되지 않았거나, 다음 PC가 정해지지 않았다면 진행을 늦춰야 한다. 이런 제약을 pipeline hazard라고 한다.
 

@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.datapath-control.critical-path
 topicContentKey: computer-architecture.core.datapath-control
 slug: critical-path
-title: "Critical Path"
+title: "임계 경로(Critical Path)"
 summary: "register 사이의 가장 긴 조합 논리 경로가 clock period의 하한을 정하는 이유를 설명한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "register와 combinational datapath 사이의 timing 관계를 확인한다."
     displayOrder: 1
 ---
-# Critical Path
+# 임계 경로(Critical Path)
 
 동기식 CPU에서는 한 clock edge에서 나온 값이 조합 논리를 지나 다음 register 입력에 도착하고, 다음 clock edge 전에 충분히 안정되어야 한다. 이때 여러 register-to-register 경로 중 **가장 오래 걸리는 경로**를 critical path라고 한다.
 

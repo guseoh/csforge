@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.cache-organization.write-allocate
 topicContentKey: computer-architecture.core.cache-organization
 slug: write-allocate
-title: "Write Allocate"
+title: "쓰기 할당(Write Allocate)"
 summary: "write miss에서 해당 line을 cache로 가져올지 bypass할지 결정하는 write-allocate와 no-write-allocate를 비교한다."
 level: 2
 status: PUBLISHED
@@ -14,10 +14,10 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "access pattern과 cache line 재사용을 확인한다."
+    recommendation: "direct-mapped·set-associative·fully-associative mapping, tag/index/offset, replacement과 write policy를 확인한다."
     displayOrder: 1
 ---
-# Write Allocate
+# 쓰기 할당(Write Allocate)
 
 Write-through와 write-back은 **이미 cache에 있는 line을 수정했을 때** lower level에 언제 반영할지를 정한다. 반면 write-allocate와 no-write-allocate는 **write하려는 block이 cache에 없을 때** 무엇을 할지를 정한다.
 

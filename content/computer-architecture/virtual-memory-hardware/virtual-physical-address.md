@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.virtual-memory-hardware.virtual-physical-address
 topicContentKey: computer-architecture.core.virtual-memory-hardware
 slug: virtual-physical-address
-title: "Virtual Address와 Physical Address"
+title: "가상 주소와 물리 주소(Virtual and Physical Address)"
 summary: "process가 사용하는 virtual address가 page mapping을 통해 physical frame으로 변환되는 이유를 설명한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "MMU의 translation·protection 경계를 확인한다."
     displayOrder: 1
 ---
-# Virtual Address와 Physical Address
+# 가상 주소와 물리 주소(Virtual and Physical Address)
 
 Program이 사용하는 주소와 DRAM의 실제 위치는 같은 개념이 아니다. CPU instruction과 process가 사용하는 주소는 보통 **virtual address**이고, memory system이 실제 physical frame을 찾을 때 사용하는 주소가 **physical address**다.
 

@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.multicore-memory.cache-coherence-problem
 topicContentKey: computer-architecture.core.multicore-memory
 slug: cache-coherence-problem
-title: "Cache Coherence 문제"
+title: "캐시 일관성 문제(Cache Coherence Problem)"
 summary: "여러 core의 private cache에 같은 memory line 복사본이 있을 때 write 이후 최신 값을 일관되게 유지해야 하는 문제를 설명한다."
 level: 2
 status: PUBLISHED
@@ -14,10 +14,10 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "cache 복사본의 coherence 문제를 확인한다."
+    recommendation: "multicore cache sharing, coherence protocol, false sharing과 shared-memory ordering 경계를 확인한다."
     displayOrder: 1
 ---
-# Cache Coherence 문제
+# 캐시 일관성 문제(Cache Coherence Problem)
 
 여러 core가 같은 physical cache line을 읽으면 각 private cache에 그 line의 복사본이 존재할 수 있다. 이후 Core A가 값을 수정했는데 Core B가 아무 조치 없이 이전 copy를 계속 사용한다면 같은 memory location에 대해 서로 다른 값을 최신이라고 보게 된다.
 

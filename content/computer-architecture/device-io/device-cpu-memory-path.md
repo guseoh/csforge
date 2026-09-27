@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.device-io.device-cpu-memory-path
 topicContentKey: computer-architecture.core.device-io
 slug: device-cpu-memory-path
-title: "Device·CPU·Memory I/O 경로"
+title: "장치·CPU·메모리 입출력 경로(Device, CPU and Memory Path)"
 summary: "descriptor 준비부터 DMA·completion·interrupt 또는 polling·software consumption까지 device I/O의 end-to-end data path를 설명한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "coherent·streaming mapping, DMA ownership과 sync 시점을 확인한다."
     displayOrder: 1
 ---
-# Device·CPU·Memory I/O 경로
+# 장치·CPU·메모리 입출력 경로(Device, CPU and Memory Path)
 
 지금까지 본 programmed I/O, MMIO, DMA와 interrupt는 실제 I/O 경로에서 서로 연결되어 사용될 수 있다. Device에서 application-visible data까지 도달하는 과정을 하나의 흐름으로 보면 각 mechanism의 역할을 구분하기 쉽다.
 

@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.datapath-control.control-unit
 topicContentKey: computer-architecture.core.datapath-control
 slug: control-unit
-title: "Control Unit"
+title: "제어 장치(Control Unit)"
 summary: "instruction decode 결과가 ALU 연산·operand 선택·memory 접근·register write·next-PC 선택 신호로 이어지는 흐름을 이해한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "instruction decode가 ALU, memory, register write와 mux control signal로 연결되는 흐름을 확인한다."
     displayOrder: 1
 ---
-# Control Unit
+# 제어 장치(Control Unit)
 
 Datapath에는 ALU, register file, memory interface, multiplexer처럼 여러 component가 있지만 이들이 항상 같은 방식으로 연결되지는 않습니다. **Control unit은 현재 instruction을 decode해 어떤 경로와 state 변경을 사용할지 결정하는 신호를 만듭니다.**
 

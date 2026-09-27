@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.data-representation.bit-byte-word
 topicContentKey: computer-architecture.core.data-representation
 slug: bit-byte-word
-title: "Bit, Byte와 Word"
+title: "비트·바이트·워드(Bit, Byte and Word)"
 summary: "bit·byte·word가 각각 무엇을 나타내며 주소 공간과 register 폭에서 어떤 역할을 하는지 구분한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "고정 폭 정수와 수 표현의 기초를 확인한다."
     displayOrder: 1
 ---
-# Bit, Byte와 Word
+# 비트·바이트·워드(Bit, Byte and Word)
 
 컴퓨터는 결국 0과 1의 조합으로 정보를 표현합니다. **Bit**는 0 또는 1 하나를 저장하는 가장 작은 논리 단위이고, **byte**는 일반적으로 8개의 bit를 묶은 단위입니다. 현대의 일반적인 byte-addressable machine에서는 memory address 하나가 byte 하나를 가리킵니다.
 

@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.memory-hierarchy.cache-hit-miss
 topicContentKey: computer-architecture.core.memory-hierarchy
 slug: cache-hit-miss
-title: "Cache Hit과 Miss"
+title: "캐시 적중과 미스(Cache Hit and Miss)"
 summary: "cache lookup이 hit 또는 miss로 갈리는 조건과 miss 뒤 lower-level access 흐름을 설명한다."
 level: 2
 status: PUBLISHED
@@ -14,10 +14,10 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "cache hit·miss와 lower-level access를 확인한다."
+    recommendation: "memory hierarchy, temporal/spatial locality, cache line, hit/miss와 AMAT 관계를 확인한다."
     displayOrder: 1
 ---
-# Cache Hit과 Miss
+# 캐시 적중과 미스(Cache Hit and Miss)
 
 CPU가 memory address를 요청하면 cache는 해당 주소의 memory block이 현재 cache에 있는지 확인한다. 요청한 block과 일치하는 valid line을 찾으면 **hit**, 찾지 못하면 **miss**다.
 

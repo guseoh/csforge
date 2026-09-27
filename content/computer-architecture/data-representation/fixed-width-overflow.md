@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.data-representation.fixed-width-overflow
 topicContentKey: computer-architecture.core.data-representation
 slug: fixed-width-overflow
-title: "고정 폭 연산과 Overflow"
+title: "고정 폭 산술과 오버플로(Fixed-Width Arithmetic and Overflow)"
 summary: "n-bit register에 저장할 수 있는 범위를 넘어선 산술 결과가 어떤 bit pattern으로 남는지와 signed·unsigned overflow를 구분한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "고정 폭 정수와 수 표현의 기초를 확인한다."
     displayOrder: 1
 ---
-# 고정 폭 연산과 Overflow
+# 고정 폭 산술과 오버플로(Fixed-Width Arithmetic and Overflow)
 
 수학의 정수는 필요하면 계속 큰 값을 표현할 수 있지만 register에는 정해진 bit 수만 저장할 수 있습니다. 그래서 n-bit 연산의 결과가 표현 가능한 범위를 넘으면 수학적 결과 전체를 그대로 보존할 수 없습니다.
 

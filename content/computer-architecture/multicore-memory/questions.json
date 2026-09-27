@@ -170,7 +170,7 @@
       {"key": "D", "content": "read-only data만 여러 core가 읽을 때 line ownership이 계속 ping-pong하는 현상이다.", "displayOrder": 3, "rationaleMarkdown": "Read-only copy들은 여러 core에 동시에 남아도 되므로 일반적으로 write ownership을 주고받지 않는다. 지속적인 ping-pong은 서로 다른 writable data가 같은 line에 놓여 각 core가 번갈아 수정할 때 생긴다."}
     ],
     "correctChoiceKey": "C",
-    "explanationMarkdown": "true sharing은 여러 thread가 실제 같은 logical value를 공유하는 것이고 data race는 language synchronization 없이 conflicting access가 발생하는 correctness 문제다. cache-to-cache transfer, invalidation/false-sharing profiler, core scaling 결과와 실제 object/array layout을 확인해 같은 line의 write contention이 줄었는지 검증해야 한다."
+    "explanationMarkdown": "서로 다른 변수라도 같은 coherence cache line에 있으면, 각 코어의 독립적인 write가 line ownership 이전과 invalidation을 일으킬 수 있다. 논리적으로 같은 값을 공유하지 않아도 line 단위의 coherence traffic 때문에 성능이 떨어지는 현상이다."
   },
   {
     "kind": "question",

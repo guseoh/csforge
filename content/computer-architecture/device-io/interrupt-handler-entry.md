@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.device-io.interrupt-handler-entry
 topicContentKey: computer-architecture.core.device-io
 slug: interrupt-handler-entry
-title: "Interrupt Handler 진입"
+title: "인터럽트 핸들러 진입(Interrupt Handler Entry)"
 summary: "pending interrupt가 accepted된 뒤 saved PC·cause·privilege state를 거쳐 handler로 진입하고 복귀하는 흐름을 설명한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "mtvec, mepc, mcause와 machine-level interrupt/trap entry 상태 변화를 확인한다."
     displayOrder: 1
 ---
-# Interrupt Handler 진입
+# 인터럽트 핸들러 진입(Interrupt Handler Entry)
 
 Device나 timer가 interrupt를 발생시켰다고 해서 그 순간 곧바로 handler code가 실행되는 것은 아니다. 먼저 interrupt가 pending 상태가 되고, enable·priority·현재 privilege 같은 architecture 조건을 만족해 CPU가 그 interrupt를 받아들여야 한다.
 

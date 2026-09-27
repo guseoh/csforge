@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.performance.microbenchmark-boundary
 topicContentKey: computer-architecture.core.performance
 slug: microbenchmark-boundary
-title: "Microbenchmark의 측정 경계"
+title: "마이크로벤치마크의 측정 경계(Microbenchmark Boundary)"
 summary: "작은 benchmark가 무엇을 측정할 수 있고 JIT·dead-code elimination·cache state·OS noise 때문에 어떤 오판을 만들 수 있는지 설명한다."
 level: 3
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "JVM microbenchmark를 설계할 때 전용 harness를 사용하는 이유와 측정 경계를 확인한다."
     displayOrder: 1
 ---
-# Microbenchmark의 측정 경계
+# 마이크로벤치마크의 측정 경계(Microbenchmark Boundary)
 
 Microbenchmark는 작은 operation이나 code path의 비용을 통제된 조건에서 비교하는 실험이다. 범위를 좁히면 다른 I/O와 외부 변수를 줄이고 instruction, cache, allocation 같은 local mechanism을 자세히 볼 수 있다.
 

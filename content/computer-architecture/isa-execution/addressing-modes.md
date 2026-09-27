@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.isa-execution.addressing-modes
 topicContentKey: computer-architecture.core.isa-execution
 slug: addressing-modes
-title: "Addressing Modes"
+title: "주소 지정 방식(Addressing Modes)"
 summary: "instruction이 immediate·register·base plus offset 같은 방식으로 operand나 effective address를 만드는 원리를 target ISA의 실제 encoding과 구분해 이해한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "RV32I instruction formats, registers, load/store와 control-transfer encoding을 확인한다."
     displayOrder: 1
 ---
-# Addressing Modes
+# 주소 지정 방식(Addressing Modes)
 
 Instruction은 연산 종류뿐 아니라 **operand를 어디에서 가져올지**도 정해야 합니다. Addressing mode는 instruction이 값 자체나 memory에 접근할 effective address를 어떻게 얻는지를 설명하는 개념입니다.
 

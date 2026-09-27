@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.multicore-memory.false-sharing
 topicContentKey: computer-architecture.core.multicore-memory
 slug: false-sharing
-title: "False Sharing"
+title: "거짓 공유(False Sharing)"
 summary: "논리적으로 독립적인 변수도 같은 cache line에서 write되면 coherence ownership이 이동해 성능 간섭이 생기는 이유를 설명한다."
 level: 3
 status: PUBLISHED
@@ -14,7 +14,7 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "cache 복사본의 coherence 문제를 확인한다."
+    recommendation: "multicore cache sharing, coherence protocol, false sharing과 shared-memory ordering 경계를 확인한다."
     displayOrder: 1
   - url: "https://www.kernel.org/doc/html/latest/kernel-hacking/false-sharing.html"
     title: "False Sharing — The Linux Kernel documentation"
@@ -24,7 +24,7 @@ references:
     recommendation: "서로 다른 field가 같은 cache line을 공유할 때 coherence contention이 생기는 사례와 탐지 방법을 확인한다."
     displayOrder: 2
 ---
-# False Sharing
+# 거짓 공유(False Sharing)
 
 Thread A는 변수 A만, Thread B는 변수 B만 수정한다고 하자. 두 변수는 논리적으로 서로 독립적이므로 같은 값을 두 thread가 경쟁해서 수정하는 true sharing은 아니다.
 

@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.cache-organization.write-through-write-back
 topicContentKey: computer-architecture.core.cache-organization
 slug: write-through-write-back
-title: "Write-Through와 Write-Back"
+title: "쓰기 반영 시점: Write-Through와 Write-Back"
 summary: "cache hit write를 lower level에 언제 반영할지 결정하는 두 정책의 traffic·dirty eviction trade-off를 설명한다."
 level: 2
 status: PUBLISHED
@@ -14,10 +14,10 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "access pattern과 cache line 재사용을 확인한다."
+    recommendation: "direct-mapped·set-associative·fully-associative mapping, tag/index/offset, replacement과 write policy를 확인한다."
     displayOrder: 1
 ---
-# Write-Through와 Write-Back
+# 쓰기 반영 시점: Write-Through와 Write-Back
 
 CPU가 cache에 있는 line을 수정하면 상위 cache와 lower memory level 사이에 값이 달라질 수 있다. Write-through와 write-back은 **write hit가 발생했을 때 lower level에 변경을 언제 반영할지** 정하는 대표 정책이다.
 

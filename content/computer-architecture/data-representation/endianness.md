@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.data-representation.endianness
 topicContentKey: computer-architecture.core.data-representation
 slug: endianness
-title: "Endianness와 Byte 순서"
+title: "바이트 순서(Endianness)"
 summary: "여러 byte로 이루어진 값을 memory나 binary format에 배치할 때 big-endian과 little-endian이 byte 순서를 어떻게 다르게 정하는지 이해한다."
 level: 1
 status: PUBLISHED
@@ -24,7 +24,7 @@ references:
     recommendation: "BIG_ENDIAN과 LITTLE_ENDIAN의 byte ordering 정의를 확인한다."
     displayOrder: 2
 ---
-# Endianness와 Byte 순서
+# 바이트 순서(Endianness)
 
 한 byte 안에 들어가는 값은 순서를 고민할 필요가 없지만, 16-bit·32-bit처럼 여러 byte로 이루어진 값을 memory에 저장하면 **어느 byte를 낮은 주소에 놓을 것인지**를 정해야 합니다. 이 규칙이 endianness입니다.
 

@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.isa-execution.fetch-decode-execute
 topicContentKey: computer-architecture.core.isa-execution
 slug: fetch-decode-execute
-title: "Fetch-Decode-Execute"
+title: "명령어 인출·해독·실행(Fetch-Decode-Execute)"
 summary: "PC가 가리키는 instruction을 가져와 해석하고 operand를 처리한 뒤 register·memory·PC 같은 architectural state를 갱신하는 논리 흐름을 이해한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "RV32I instruction formats, registers, load/store와 control-transfer encoding을 확인한다."
     displayOrder: 1
 ---
-# Fetch-Decode-Execute
+# 명령어 인출·해독·실행(Fetch-Decode-Execute)
 
 Program Counter(PC)는 다음에 실행할 instruction의 주소를 나타냅니다. Processor는 PC가 가리키는 instruction을 가져오고(fetch), bit field를 해석해 어떤 연산과 operand가 필요한지 판단한 뒤(decode), 실제 계산이나 memory access를 수행합니다(execute).
 

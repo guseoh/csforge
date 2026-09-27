@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.memory-hierarchy.memory-hierarchy
 topicContentKey: computer-architecture.core.memory-hierarchy
 slug: memory-hierarchy
-title: "메모리 계층 구조"
+title: "메모리 계층 구조(Memory Hierarchy)"
 summary: "register·cache·DRAM·storage를 계층으로 두고 locality를 이용해 평균 접근 비용을 낮추는 이유를 설명한다."
 level: 1
 status: PUBLISHED
@@ -14,10 +14,10 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "cache hit·miss와 lower-level access를 확인한다."
+    recommendation: "memory hierarchy, temporal/spatial locality, cache line, hit/miss와 AMAT 관계를 확인한다."
     displayOrder: 1
 ---
-# 메모리 계층 구조
+# 메모리 계층 구조(Memory Hierarchy)
 
 CPU가 필요한 모든 데이터를 DRAM이나 storage에서 매번 가져온다면 연산보다 memory를 기다리는 시간이 더 길어질 수 있다. 반대로 CPU에 가까운 매우 빠른 저장 공간을 큰 용량으로 만드는 것은 비용·면적·전력 때문에 어렵다.
 

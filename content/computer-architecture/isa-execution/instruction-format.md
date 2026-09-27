@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.isa-execution.instruction-format
 topicContentKey: computer-architecture.core.isa-execution
 slug: instruction-format
-title: "Instruction Format"
+title: "명령어 형식(Instruction Format)"
 summary: "instruction bit pattern을 opcode·register·immediate 같은 field로 나누어 CPU가 어떤 연산과 operand를 사용할지 해석하는 방식을 이해한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "RV32I instruction formats, registers, load/store와 control-transfer encoding을 확인한다."
     displayOrder: 1
 ---
-# Instruction Format
+# 명령어 형식(Instruction Format)
 
 CPU가 실행하는 instruction도 memory에 저장된 bit pattern입니다. ISA는 이 bit들을 여러 field로 나누어 어떤 연산을 수행하고, 어떤 register나 상수를 operand로 사용할지 정합니다.
 

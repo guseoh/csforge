@@ -3,21 +3,22 @@ kind: concept
 contentKey: computer-architecture.core.pipeline-ilp.superscalar-out-of-order
 topicContentKey: computer-architecture.core.pipeline-ilp
 slug: superscalar-out-of-order
-title: "Superscalar와 Out-of-Order 실행"
+title: "슈퍼스칼라와 비순차 실행(Superscalar and Out-of-Order Execution)"
 summary: "여러 instruction을 동시에 issue하고 준비된 instruction을 먼저 실행하면서도 dependency와 precise architectural state를 보존하는 원리를 설명한다."
 level: 3
 status: PUBLISHED
 displayOrder: 50
 references:
-  - url: "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/pipelining-mips-implementation/index.html"
-    title: "Pipelining: MIPS Implementation"
+  - url: "https://ocw.mit.edu/courses/6-823-computer-system-architecture-fall-2005/resources/l14_superscalar/"
+    title: "MIT 6.823: Advanced Superscalar Architectures (Lecture 14)"
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "branch prediction과 flush 비용을 확인한다."
+    recommendation: "out-of-order issue, register renaming, speculative execution과 misprediction recovery를 확인한다."
     displayOrder: 1
+    relationNote: "여러 execution unit, rename과 실행 순서 복구의 세부 동작을 보완한다."
 ---
-# Superscalar와 Out-of-Order 실행
+# 슈퍼스칼라와 비순차 실행(Superscalar and Out-of-Order Execution)
 
 기본적인 single-issue pipeline은 여러 instruction의 단계를 겹치더라도 한 cycle에 새 instruction 하나만 issue한다. Superscalar CPU는 여러 execution unit과 더 넓은 front-end를 사용해 **한 cycle에 둘 이상의 instruction을 진행시킬 수 있도록** 설계한다.
 

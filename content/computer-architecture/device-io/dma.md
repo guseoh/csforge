@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.device-io.dma
 topicContentKey: computer-architecture.core.device-io
 slug: dma
-title: "DMA"
+title: "직접 메모리 접근(DMA)"
 summary: "CPU가 buffer와 descriptor를 준비한 뒤 device가 memory 사이의 bulk data transfer를 수행하는 흐름을 설명한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "coherent·streaming mapping, DMA ownership과 sync 시점을 확인한다."
     displayOrder: 1
 ---
-# DMA
+# 직접 메모리 접근(DMA)
 
 DMA(Direct Memory Access)는 CPU가 data의 각 byte를 직접 load/store하지 않고, device 또는 DMA engine이 memory와 device 사이의 bulk transfer를 수행하도록 하는 mechanism이다.
 

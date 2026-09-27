@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.device-io.memory-mapped-io
 topicContentKey: computer-architecture.core.device-io
 slug: memory-mapped-io
-title: "Memory-Mapped I/O"
+title: "메모리 사상 입출력(Memory-Mapped I/O)"
 summary: "device register를 CPU address space에 mapping해 load/store로 접근할 때 normal memory와 달라지는 side effect·cacheability·ordering을 설명한다."
 level: 1
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "device register I/O accessors와 MMIO 접근 경계를 확인한다."
     displayOrder: 1
 ---
-# Memory-Mapped I/O
+# 메모리 사상 입출력(Memory-Mapped I/O)
 
 Memory-Mapped I/O(MMIO)는 device의 control/status/data register를 CPU address space의 특정 영역에 배치하고, CPU가 load/store 형태로 접근하도록 만드는 방식이다.
 

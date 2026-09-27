@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.virtual-memory-hardware.multi-level-page-table
 topicContentKey: computer-architecture.core.virtual-memory-hardware
 slug: multi-level-page-table
-title: "Multi-Level Page Table"
+title: "다단계 페이지 테이블(Multi-Level Page Table)"
 summary: "큰 sparse virtual address space를 hierarchy로 나눠 필요한 page-table page만 만들면서 walk depth를 지불하는 이유를 설명한다."
 level: 2
 status: PUBLISHED
@@ -24,7 +24,7 @@ references:
     recommendation: "hierarchical page table과 large-page mapping의 실제 OS 구조를 확인한다."
     displayOrder: 2
 ---
-# Multi-Level Page Table
+# 다단계 페이지 테이블(Multi-Level Page Table)
 
 Virtual address space가 매우 크면 모든 virtual page에 대해 page-table entry를 미리 만드는 flat table은 대부분 비어 있을 수 있다. Process가 실제로 사용하는 주소 영역은 전체 virtual address space의 일부인 경우가 많기 때문이다.
 

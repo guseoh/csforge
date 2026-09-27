@@ -92,7 +92,7 @@
       {"key":"D","content":"Programmed I/O와 DMA는 동일한 mechanism 이름만 다르다.","displayOrder":3,"rationaleMarkdown":"programmed I/O는 CPU가 load/store 경로로 데이터를 옮기고 DMA는 controller가 memory와 block을 주고받는다. interrupt는 어느 방식에서도 완료를 알릴 수 있지만 DMA의 다른 이름은 아니다."}
     ],
     "correctChoiceKey": "B",
-    "explanationMarkdown": "Event가 매우 짧고 빈번하면 매번 interrupt/trap/context handling을 하는 비용과 wakeup 지연 시간이 실제 device wait보다 커질 수 있다."
+    "explanationMarkdown": "Polling은 CPU가 device 상태를 반복 확인하므로 대기 중 CPU 시간을 쓰지만, 짧고 빈번한 event에서는 interrupt 진입·복귀 비용과 wakeup 지연을 줄일 수 있다. Interrupt-driven I/O는 CPU가 다른 일을 할 수 있게 하지만 event마다 handler 처리 비용이 든다."
   },
   {
     "kind": "question",
@@ -131,7 +131,7 @@
       {"key":"D","content":"MMIO write는 device specification과 무관하게 항상 8-byte access만 허용한다.","displayOrder":3,"rationaleMarkdown":"지원하는 MMIO 접근 폭은 장치와 platform interface가 정한다. 일부 register는 좁은 접근을 허용하거나 정렬된 특정 폭을 요구한다. 모든 장치에 8 byte를 강제하면 유효한 장치 interface 다수를 쓸 수 없다."}
     ],
     "correctChoiceKey": "A",
-    "explanationMarkdown": "MMIO write가 interconnect나 bridge의 posted buffer에 머문 채 CPU가 다음 instruction으로 진행할 수 있기 때문이다. 첫 MMIO read 자체가 status bit를 clear하는 side effect를 만들 수 있어 두 번째 read에서는 event 정보가 사라질 수 있다."
+    "explanationMarkdown": "MMIO address는 device register를 가리키며 read/write가 상태 변화나 명령 실행 같은 side effect를 낼 수 있다. 또한 접근 순서·폭과 cache/ordering 규칙이 device contract에 따르므로 일반 RAM처럼 임의로 읽고 쓰거나 합칠 수 없다."
   },
   {
     "kind": "question",
@@ -170,7 +170,7 @@
       {"key":"D","content":"Device가 사용하는 DMA address는 IOMMU/bus mapping 때문에 CPU virtual address와 같다고 가정할 수 없고 ownership/sync 규칙도 지켜야 한다.","displayOrder":3,"rationaleMarkdown":"DMA 주소는 장치의 bus/IOMMU mapping 영역에서 해석되므로 CPU 가상 주소나 물리 주소와 같다고 할 수 없다. driver는 전송 완료까지 buffer 수명과 소유권·가시성 동기화도 관리해야 한다."}
     ],
     "correctChoiceKey": "D",
-    "explanationMarkdown": "Device가 비동기적으로 같은 memory를 읽거나 쓰는 동안 CPU가 내용을 바꾸면 transfer data race와 corruption이 생길 수 있다. NIC/DMA controller는 descriptor가 가리키는 buffer를 completion 전까지 비동기적으로 읽을 수 있다."
+    "explanationMarkdown": "DMA descriptor에는 CPU virtual address를 그대로 넣는 것이 아니라 device가 접근할 수 있도록 mapping한 DMA address를 사용한다. 전송 전에는 buffer와 mapping을 준비하고, 완료 후에는 synchronization을 거쳐 CPU와 device 사이의 ownership을 맞춘 뒤 buffer를 사용한다."
   },
   {
     "kind": "question",

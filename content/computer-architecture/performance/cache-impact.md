@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.performance.cache-impact
 topicContentKey: computer-architecture.core.performance
 slug: cache-impact
-title: "Cache가 CPU 성능에 미치는 영향"
+title: "캐시가 CPU 성능에 미치는 영향(Cache Impact)"
 summary: "cache miss가 memory stall과 CPI를 통해 CPU execution time을 바꾸는 과정을 locality·AMAT와 연결해 설명한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "CPU execution time, latency/throughput와 speedup을 구분해 성능을 계산하는 방법을 확인한다."
     displayOrder: 1
 ---
-# Cache가 CPU 성능에 미치는 영향
+# 캐시가 CPU 성능에 미치는 영향(Cache Impact)
 
 같은 instruction sequence를 실행해도 cache behavior가 다르면 필요한 cycle 수가 달라질 수 있다. Load/store가 가까운 cache에서 hit하면 빠르게 진행할 수 있지만, miss가 나서 lower-level cache나 DRAM을 기다리면 pipeline에 stall이 생길 수 있기 때문이다.
 

@@ -14,7 +14,7 @@
       {"key": "D", "content": "tag가 일치하면 index가 다른 line에도 배치할 수 있다.", "displayOrder": 3, "rationaleMarkdown": "Tag는 이미 선택된 line의 block identity를 검증하며 placement 위치를 바꾸지 않는다. Index가 다른 block은 tag가 우연히 같더라도 서로 다른 line에 매핑된다."}
     ],
     "correctChoiceKey": "A",
-    "explanationMarkdown": "direct-mapped cache에서 각 memory block은 하나의 index에만 들어갈 수 있다. 전체 line 수는 32KiB / 64B = 512개다."
+    "explanationMarkdown": "각 memory block은 주소의 index로 정해지는 단 하나의 cache line에만 배치될 수 있다. 그 line의 tag를 비교해 현재 저장된 block이 요청한 block인지 판별한다."
   },
   {
     "kind": "question",
@@ -92,7 +92,7 @@
       {"key": "D", "content": "capacity miss도 구조적으로 발생할 수 없다.", "displayOrder": 3, "rationaleMarkdown": "Fully-associative 배치는 mapping 충돌을 줄일 뿐 저장 가능한 전체 용량을 늘리지 않는다. 동시에 다시 쓸 working set이 cache보다 크면 필요한 block이 밀려나 capacity miss가 생긴다."}
     ],
     "correctChoiceKey": "C",
-    "explanationMarkdown": "block을 어느 line에도 둘 수 있어 특정 index 충돌은 피할 수 있지만 hit 여부를 찾으려면 많은 line의 tag를 비교하고 결과를 선택해야 한다. fully-associative라 placement conflict는 최소화되지만 cache가 동시에 보관할 수 있는 line은 32개뿐이다."
+    "explanationMarkdown": "Memory block은 cache의 어느 line에나 배치될 수 있어 index에 따른 placement conflict가 없다. 대신 hit를 찾으려면 여러 line의 tag를 비교해야 하므로 비교와 선택 회로가 커진다."
   },
   {
     "kind": "question",
@@ -131,7 +131,7 @@
       {"key": "D", "content": "virtual-to-physical translation이 끝난 뒤에는 더 이상 사용되지 않는다.", "displayOrder": 3, "rationaleMarkdown": "Address translation의 사용 여부나 cache 설계가 달라져도 line 내부 위치를 고르는 offset의 역할은 남는다. 예를 들어 page offset은 translation 전후에 보존되므로 byte 선택에 계속 쓰인다."}
     ],
     "correctChoiceKey": "B",
-    "explanationMarkdown": "64 byte는 2^6이므로 line 내부 64개 byte 위치를 구분하는 데 6 bit가 필요하다. 전체 line 수는 capacity와 line size가 같으므로 변하지 않는다."
+    "explanationMarkdown": "Offset은 cache line 안의 byte 위치를 고르고, index는 확인할 cache set을 선택한다. Tag는 그 set에 든 line이 요청한 memory block인지 확인한다."
   },
   {
     "kind": "question",
@@ -170,7 +170,7 @@
       {"key": "D", "content": "miss가 발생하면 선택된 set과 무관하게 cache 전체에서 victim을 고를 때", "displayOrder": 3, "rationaleMarkdown": "Set-associative cache에서 해당 block이 들어갈 수 있는 후보는 선택된 set의 way들이다. 다른 set까지 검색해 victim으로 삼으면 index 기반 placement 계약을 어기게 된다."}
     ],
     "correctChoiceKey": "B",
-    "explanationMarkdown": "LRU는 최근 사용한 line이 가까운 미래에 다시 사용될 가능성이 높다는 temporal locality에 기대어 가장 오래 사용하지 않은 line을 victim으로 고르려 한다. 한 번 읽고 재사용하지 않는 stream은 최근에 사용했다는 사실이 미래 재사용을 잘 예측하지 못한다."
+    "explanationMarkdown": "Miss가 선택한 set에 도착했을 때 사용 가능한 빈 way가 없으면 기존 line 하나를 내보내야 하므로 replacement policy가 victim을 고른다. 빈 way가 있으면 먼저 그 자리를 사용한다."
   },
   {
     "kind": "question",
@@ -209,7 +209,7 @@
       {"key": "D", "content": "write hit에서 cache line을 수정하고 dirty로 표시한 뒤 lower level 반영을 나중으로 미룰 수 있다.", "displayOrder": 3, "rationaleMarkdown": "Write-back은 hit한 line을 cache에서 수정하고 dirty로 표시해 lower level 쓰기를 뒤로 미룰 수 있다. Eviction이나 coherence 동작에서 최신 값을 전달해야 하므로 그 반영 자체가 사라지는 것은 아니다."}
     ],
     "correctChoiceKey": "D",
-    "explanationMarkdown": "write-through는 cache write를 lower level에도 전달하므로 같은 line을 반복 수정할 때 write traffic이 많아질 수 있지만 cache line 자체는 dirty write-back을 미룰 필요가 적다. CPU cache write policy는 CPU cache와 lower memory hierarchy 사이의 data movement를 다룬다."
+    "explanationMarkdown": "Write-back은 cache에서 값을 갱신하고 line을 dirty로 표시한 뒤, 그 line이 교체되거나 다른 coherence 동작이 요구될 때 lower level에 변경 내용을 반영한다. Write-through는 각 cache write를 lower level에도 전달한다."
   },
   {
     "kind": "question",
@@ -287,7 +287,7 @@
       {"key": "D", "content": "같은 set을 충돌시키도록 address를 의도적으로 배치한다.", "displayOrder": 3, "rationaleMarkdown": "같은 set으로 계속 매핑되는 block을 의도적으로 충돌시키면 cache 전체에 여유가 있어도 line이 반복 교체될 수 있다. 이런 conflict는 재사용을 돕기보다 locality 효과를 약화한다."}
     ],
     "correctChoiceKey": "A",
-    "explanationMarkdown": "전체 data를 한 번에 넓게 순회하는 대신 cache에 들어갈 정도의 작은 block을 반복 처리하면 해당 block의 line을 eviction 전에 여러 번 재사용할 수 있다. array layout이 CPU cache locality와 allocation을 개선했더라도 production 요청이 DB/network I/O, lock, queueing 같은 다른 비용에 지배되면 종단 간 지연 시간 영향은 작을 수 있다."
+    "explanationMarkdown": "연속된 배열 원소를 차례로 읽거나 쓰면 한 번 가져온 cache line의 이웃 원소를 곧 사용해 spatial locality를 활용한다. 큰 배열은 cache에 맞는 block 단위로 처리하면 그 block의 data도 eviction 전 재사용할 수 있다."
   },
   {
     "kind": "question",

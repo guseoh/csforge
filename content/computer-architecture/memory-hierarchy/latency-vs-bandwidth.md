@@ -3,7 +3,7 @@ kind: concept
 contentKey: computer-architecture.core.memory-hierarchy.latency-vs-bandwidth
 topicContentKey: computer-architecture.core.memory-hierarchy
 slug: latency-vs-bandwidth
-title: "지연 시간과 대역폭"
+title: "지연 시간과 대역폭(Latency versus Bandwidth)"
 summary: "한 번의 접근이 끝나는 시간과 단위 시간당 전송할 수 있는 양을 구분한다."
 level: 2
 status: PUBLISHED
@@ -14,10 +14,10 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "cache hit·miss와 lower-level access를 확인한다."
+    recommendation: "memory hierarchy, temporal/spatial locality, cache line, hit/miss와 AMAT 관계를 확인한다."
     displayOrder: 1
 ---
-# 지연 시간과 대역폭
+# 지연 시간과 대역폭(Latency versus Bandwidth)
 
 Memory가 `빠르다`는 말에는 서로 다른 두 질문이 섞일 수 있다. **지연 시간(latency)** 은 하나의 요청이 결과를 얻기까지 걸리는 시간이고, **대역폭(bandwidth)** 은 일정 시간 동안 얼마나 많은 data를 옮길 수 있는지를 뜻한다.
 
