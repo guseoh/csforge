@@ -1,5 +1,5 @@
 [
-  {"kind":"topic","contentKey":"infrastructure.core.compute","areaSlug":"infrastructure-cloud","slug":"compute","title":"Compute and runtime","description":"VM/container/serverless · resource requests/limits · configuration/secrets","displayOrder":10,"active":true},
-  {"kind":"topic","contentKey":"infrastructure.core.network","areaSlug":"infrastructure-cloud","slug":"network","title":"Infrastructure networking","description":"VPC/subnet/security boundary · load balancing/ingress · DNS/TLS lifecycle","displayOrder":20,"active":true},
-  {"kind":"topic","contentKey":"infrastructure.core.reliability","areaSlug":"infrastructure-cloud","slug":"reliability","title":"Storage and delivery reliability","description":"object/block/file storage · backup/restore RPO/RTO · IaC/immutable rollout","displayOrder":30,"active":true}
+  {"kind":"topic","contentKey":"infrastructure.core.compute","areaSlug":"infrastructure-cloud","slug":"compute","title":"컴퓨팅과 실행 환경","description":"VM·컨테이너·서버리스 · 자원 요청·제한 · 실행 설정·Secret","displayOrder":10,"active":true},
+  {"kind":"topic","contentKey":"infrastructure.core.network","areaSlug":"infrastructure-cloud","slug":"network","title":"인프라 네트워킹","description":"VPC·서브넷·보안 경계 · 부하 분산·진입 경로 · DNS·TLS 인증서 수명 주기","displayOrder":20,"active":true},
+  {"kind":"topic","contentKey":"infrastructure.core.reliability","areaSlug":"infrastructure-cloud","slug":"reliability","title":"저장소와 배포 신뢰성","description":"객체·블록·파일 저장소 · 백업·복구와 RPO/RTO · IaC·단계적 배포","displayOrder":30,"active":true}
 ]
