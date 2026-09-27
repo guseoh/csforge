@@ -3,8 +3,8 @@ kind: concept
 contentKey: database.core.sql.window-function
 topicContentKey: database.core.sql
 slug: window-function
-title: "Window function으로 row를 유지한 채 집계하기"
-summary: "GROUP BY처럼 row를 축약하지 않고 각 row에 partition·ordering 기준의 계산 결과를 붙이는 window function의 실행 모델과 ranking·running total 사용법을 이해한다."
+title: "윈도 함수(Window function)로 행을 유지한 채 계산하기"
+summary: "GROUP BY처럼 행을 줄이지 않고 각 행에 PARTITION BY·ORDER BY 기준의 계산 결과를 붙이는 윈도 함수의 실행 모델과 순위·누적 합계 사용법을 이해한다."
 level: 2
 status: PUBLISHED
 displayOrder: 40
@@ -14,11 +14,11 @@ references:
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
-    relationNote: OVER, PARTITION BY, ORDER BY와 row 보존 동작 확인
+    relationNote: OVER, PARTITION BY, ORDER BY와 행 보존 동작 확인
 ---
-# Window function으로 row를 유지한 채 집계하기
+# 윈도 함수(Window function)로 행을 유지한 채 계산하기
 
-회원별 주문 총액을 구하면서 각 주문도 그대로 보여 줘야 한다고 해 봅시다. `GROUP BY member_id`를 하면 주문 row가 회원별 한 row로 줄어들기 때문에 요구와 맞지 않습니다. Window function은 **원래 row를 유지한 채 관련 row 집합을 window로 보고 계산 결과를 붙입니다.**
+회원별 주문 총액을 구하면서 각 주문도 그대로 보여 줘야 한다고 해 봅시다. `GROUP BY member_id`를 사용하면 주문 행이 회원별 한 행으로 줄어들기 때문에 요구와 맞지 않습니다. 윈도 함수는 **원래 행을 유지한 채 관련 행 집합을 계산 범위(window)로 보고 결과를 붙입니다.**
 
 ```sql
 SELECT
@@ -29,7 +29,7 @@ SELECT
 FROM orders;
 ```
 
-결과는 다음처럼 row 수가 유지됩니다.
+결과는 다음처럼 행 수가 유지됩니다.
 
 ```text
 id  │ member │ amount │ member_total
@@ -39,9 +39,9 @@ id  │ member │ amount │ member_total
 103 │ 8      │ 5000   │ 5000
 ```
 
-### PARTITION BY는 group처럼 묶지만 row를 없애지 않는다
+### PARTITION BY는 그룹처럼 묶지만 행을 없애지 않는다
 
-`PARTITION BY member_id`는 계산 범위를 회원별로 나눕니다. 그러나 GROUP BY와 달리 각 주문 row 자체는 남습니다.
+`PARTITION BY member_id`는 계산 범위를 회원별로 나눕니다. 그러나 GROUP BY와 달리 각 주문 행 자체는 남습니다.
 
 ```text
 partition member=7
@@ -65,8 +65,8 @@ SELECT
 FROM orders;
 ```
 
-이제 같은 member 안에서 주문 순서대로 누적값을 계산할 수 있습니다. 순서가 같은 row가 있을 수 있다면 `id` 같은 tie-breaker를 포함해 deterministic order를 만드는 것이 좋습니다.
+이제 같은 회원 안에서 주문 순서대로 누적값을 계산할 수 있습니다. 정렬 값이 같은 행이 있을 수 있다면 `id` 같은 동률 해소 기준(tie-breaker)을 포함해 결정적인 순서를 만드는 것이 좋습니다.
 
-`ROW_NUMBER`, `RANK`, `LAG`, `LEAD`도 같은 window 모델 위에서 동작합니다. 예를 들어 회원별 최신 주문 하나를 고를 때 `ROW_NUMBER() OVER (PARTITION BY member_id ORDER BY created_at DESC, id DESC)`를 사용한 뒤 1번 row만 선택할 수 있습니다.
+`ROW_NUMBER`, `RANK`, `LAG`, `LEAD`도 같은 윈도 모델 위에서 동작합니다. 예를 들어 회원별 최신 주문 하나를 고를 때 `ROW_NUMBER() OVER (PARTITION BY member_id ORDER BY created_at DESC, id DESC)`를 사용한 뒤 1번 행만 선택할 수 있습니다.
 
-Window function은 “aggregate의 고급 버전”이 아니라 **row cardinality를 유지해야 할 때 사용하는 다른 계산 모델**입니다.
+윈도 함수는 “집계의 고급 버전”이 아니라 **행 수를 유지해야 할 때 사용하는 다른 계산 모델**입니다.
