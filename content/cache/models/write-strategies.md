@@ -14,13 +14,19 @@ references:
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
-    relationNote: "Cache-Aside와 write-through/write-behind의 차이 확인"
-  - url: "https://docs.spring.io/spring-framework/reference/integration/cache.html"
-    title: "Spring Framework Reference: Cache Abstraction"
+    relationNote: "Cache-Aside가 write-through/write-behind와 구분되는 쓰기 경로임을 확인"
+  - url: "https://docs.aws.amazon.com/AmazonElastiCache/latest/dg/Strategies.html"
+    title: "Amazon ElastiCache Documentation: Caching strategies"
     referenceType: OFFICIAL
     language: en
     displayOrder: 2
-    relationNote: "Spring Cache가 메서드 단위 캐시 경계를 제공하고 실제 저장소 동작은 캐시 구현체가 담당함을 확인"
+    relationNote: "write-through가 쓰기마다 캐시와 데이터베이스를 함께 갱신하며 추가 쓰기 지연이 생기는 특성 확인"
+  - url: "https://redis.io/docs/latest/integrate/write-behind/quickstart/write-behind-guide/"
+    title: "Redis Documentation: Write-behind quickstart"
+    referenceType: OFFICIAL
+    language: en
+    displayOrder: 3
+    relationNote: "write-behind가 Redis 변경을 비동기 파이프라인으로 하위 저장소에 반영하는 구조 확인"
 ---
 # 캐시 쓰기 전략과 원본 데이터 책임
 
