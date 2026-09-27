@@ -15,6 +15,12 @@ references:
     language: en
     displayOrder: 1
     relationNote: PostgreSQL 16 multicolumn B-tree의 선두 컬럼과 scan 범위 규칙 확인
+  - url: "https://www.postgresql.org/docs/current/indexes-multicolumn.html"
+    title: "PostgreSQL 18 Documentation: Multicolumn Indexes"
+    referenceType: OFFICIAL
+    language: en
+    displayOrder: 2
+    relationNote: PostgreSQL 18 B-tree skip scan 동작과 선두 컬럼 값의 distinct 수에 따른 planner 선택 확인
 ---
 # 복합 인덱스의 컬럼 순서
 
@@ -49,7 +55,7 @@ member 42
 
 ### 선두의 equality 조건이 탐색 범위를 먼저 좁힌다
 
-PostgreSQL 16의 multicolumn B-tree에서 선두 컬럼의 equality 조건과 그 뒤의 첫 inequality/range 조건은 실제로 스캔해야 할 인덱스 범위를 줄이는 데 중요합니다.
+PostgreSQL 16의 multicolumn B-tree에서는 선두 컬럼의 equality 조건과 그 뒤의 첫 inequality/range 조건이 실제 스캔 범위를 줄이는 데 중요합니다.
 
 예를 들어 `(a, b, c)` 인덱스에 다음 조건이 있다고 해 보겠습니다.
 
@@ -62,7 +68,9 @@ WHERE a = ?
 
 ### 첫 컬럼 조건이 없다고 인덱스가 문법적으로 사용 불가능한 것은 아니다
 
-`(a, b)` 인덱스가 있고 `WHERE b = ?`만 있다고 해서 PostgreSQL이 그 인덱스를 절대 사용할 수 없는 것은 아닙니다. 다만 앞쪽 `a`로 탐색 범위를 좁힐 수 없으므로 넓은 인덱스 구간을 확인해야 할 수 있고, planner는 sequential scan 같은 다른 계획이 더 싸다고 판단할 수 있습니다.
+PostgreSQL 16에서는 `(a, b)` 인덱스에 `WHERE b = ?`만 있으면 앞쪽 `a`로 탐색 범위를 좁힐 수 없어 넓은 인덱스 구간을 확인해야 할 수 있고, planner는 sequential scan 같은 다른 계획이 더 싸다고 판단할 수 있습니다. 따라서 선두 컬럼 조건이 없다고 인덱스를 문법적으로 사용할 수 없는 것은 아니지만, 비용상 선택되지 않는 경우가 많습니다.
+
+PostgreSQL 18의 B-tree는 상황에 따라 **skip scan**으로 뒤쪽 컬럼 조건도 활용할 수 있습니다. 앞쪽 컬럼의 distinct 값이 적을 때 가능한 각 값을 반복 탐색해 뒤쪽 조건의 범위를 좁힐 수 있으며, 유리한지는 planner가 통계와 비용을 보고 결정합니다. 이는 선두 컬럼의 조건이 일반적으로 탐색 범위를 좁힌다는 원칙을 없애지 않으므로, 지원 버전을 밝히고 실제 plan을 확인해야 합니다.
 
 그래서 "복합 인덱스는 왼쪽 컬럼이 없으면 절대 못 쓴다"라고 외우기보다 **어느 조건이 탐색 시작·종료 범위를 실제로 좁히는가**를 보는 편이 정확합니다.
 

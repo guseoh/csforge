@@ -42,6 +42,8 @@ CREATE TABLE orders (
 | `CASCADE`                | 자식이 부모의 lifecycle에 완전히 종속되어 함께 사라져야 함 |
 | `SET NULL`               | 관계가 끊겨도 자식 row 자체는 독립적으로 의미가 있음       |
 
+PostgreSQL에서 두 동작은 검사 시점이 다릅니다. `NO ACTION`은 기본값이며 위반 상태가 statement 끝까지 남으면 거부합니다. constraint가 deferrable이면 이 검사를 transaction 끝까지 미룰 수 있습니다. `RESTRICT`는 참조 row가 남아 있는 삭제·변경을 즉시 거부하며, deferrable constraint에서도 검사를 미룰 수 없습니다.
+
 예를 들어 주문 이력까지 회원 삭제와 함께 `CASCADE`로 지우는 것이 법적·업무 요구에 맞는지는 별도 판단입니다. ORM에서 `cascade = ALL`을 썼다는 이유로 DB foreign key의 `ON DELETE CASCADE`까지 기계적으로 맞추면 안 됩니다. 둘은 동작 계층도 다릅니다.
 
 ### 참조하는 column의 index는 별도 판단이다

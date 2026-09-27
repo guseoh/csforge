@@ -35,20 +35,22 @@ VALUES (101, 7, 'CREATED');
 UPDATE inventory
 SET quantity = quantity - 1
 WHERE sku_id = 55
-  AND quantity > 0;
-
-COMMIT;
+  AND quantity > 0
+RETURNING sku_id;
 ```
+
+애플리케이션은 `UPDATE ... RETURNING` 결과가 한 row인지 확인한 뒤 결정해야 합니다. 한 row면 `COMMIT`하고, 결과가 없으면 재고가 부족한 경우로 보고 `ROLLBACK`합니다. PostgreSQL은 조건에 맞는 row가 없어 UPDATE 결과가 0 rows여도 SQL 오류로 취급하지 않으므로, 확인 없이 commit하면 주문만 남을 수 있습니다.
 
 ### Atomicity: 중간 상태를 최종 결과로 남기지 않는다
 
-주문 INSERT는 성공했는데 재고 UPDATE가 실패했다면 둘 다 rollback하도록 경계를 만들 수 있습니다.
+주문 INSERT 뒤 재고 차감에서 SQL 오류가 나거나, 조건에 맞는 재고 row가 없어 애플리케이션이 transaction을 취소하면 둘 다 rollback하도록 경계를 만들 수 있습니다.
 
 ```text
 BEGIN
   │
   ├─ order INSERT ✓
-  ├─ inventory UPDATE ✗
+  ├─ inventory UPDATE error / no row
+  ├─ application rolls back on no row
   │
   ▼
 ROLLBACK

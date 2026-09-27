@@ -20,7 +20,7 @@ policies:
     rule: join 결과, B-tree, lock cycle, MVCC snapshot, WAL/recovery처럼 관계와 시간 순서가 핵심일 때 사용한다.
 topics:
 - key: database.core.model
-  title: Relational model
+  title: 관계형 데이터 모델
   order: 10
   scope: relation, NULL, normalization을 관계형 모델 관점에서 다룬다.
   boundary: Java/JPA entity model과 동일시하지 않는다.
@@ -47,7 +47,7 @@ topics:
     density: CORE
     visualization: TEXT
 - key: database.core.sql
-  title: SQL query semantics
+  title: SQL 질의 의미
   order: 20
   scope: SELECT 논리 순서, JOIN, aggregate, window function을 다룬다.
   boundary: optimizer가 실제로 실행하는 물리 순서를 논리 처리 순서와 동일시하지 않는다.
@@ -108,7 +108,7 @@ topics:
     density: CORE
     visualization: NONE
 - key: database.core.index
-  title: Index structures
+  title: 인덱스 구조
   order: 40
   scope: B-tree, composite, covering, partial index를 다룬다.
   boundary: 인덱스를 모든 query의 정답으로 제시하지 않고 workload와 planner 선택을 함께 본다.
@@ -169,7 +169,7 @@ topics:
     density: CORE
     visualization: NONE
 - key: database.core.transaction
-  title: Transaction fundamentals
+  title: 트랜잭션 기초
   order: 60
   scope: ACID, autocommit, multi-statement atomicity를 다룬다.
   boundary: Spring @Transactional proxy 동작은 Spring 영역에 둔다.
@@ -196,7 +196,7 @@ topics:
     density: CORE
     visualization: NONE
 - key: database.core.isolation
-  title: Isolation levels
+  title: 트랜잭션 격리 수준
   order: 70
   scope: read anomalies, PostgreSQL READ COMMITTED, SERIALIZABLE을 다룬다.
   boundary: ANSI anomaly 이름과 PostgreSQL MVCC 구현 설명을 구분한다.
@@ -250,7 +250,7 @@ topics:
     density: CORE
     visualization: NONE
 - key: database.core.mvcc
-  title: MVCC
+  title: MVCC와 스냅샷
   order: 90
   scope: row versions, snapshot visibility, old version cleanup을 PostgreSQL 관점에서 다룬다.
   boundary: 모든 DBMS가 동일한 MVCC storage/cleanup 구조를 쓴다고 일반화하지 않는다.
@@ -304,7 +304,7 @@ topics:
     density: CORE
     visualization: TEXT
 - key: database.core.replication
-  title: Replication
+  title: 복제
   order: 110
   scope: primary/standby, replication lag, failover consistency를 다룬다.
   boundary: consensus protocol 상세는 Distributed Systems 영역에 둔다.
@@ -331,7 +331,7 @@ topics:
     density: CORE
     visualization: TEXT
 - key: database.core.query-patterns
-  title: Backend query patterns
+  title: 백엔드 조회 패턴
   order: 120
   scope: offset/keyset pagination, batch/N+1을 DB query 관점에서 다룬다.
   boundary: JPA fetch API 자체는 Spring 영역과 연결한다.

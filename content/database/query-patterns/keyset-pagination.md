@@ -59,9 +59,13 @@ LIMIT 20;
 
 cursor가 `10:00` 하나뿐이면 다음 페이지에서 id 800의 위치를 정확히 표현할 수 없습니다. 그래서 `(created_at, id)`처럼 정렬 tie-breaker 전체를 cursor에 포함합니다.
 
+복합 비교에 쓰는 sort column은 가능하면 `NOT NULL`로 둡니다. 비교 tuple에 NULL이 끼면 PostgreSQL row comparison 결과가 UNKNOWN이 될 수 있어 cursor 경계에서 row를 건너뛸 수 있습니다. NULL 정렬이 필요하다면 `NULLS FIRST/LAST`와 일치하는 별도 predicate로 경계를 명시해야 합니다.
+
 ### 앞쪽 insert의 영향을 덜 받는다
 
 1페이지를 본 뒤 더 최신 row가 추가되어도 “마지막으로 본 key보다 뒤쪽”을 조건으로 읽으므로 offset 기준 위치가 밀리는 문제를 줄일 수 있습니다.
+
+Keyset은 여러 페이지를 하나의 snapshot으로 고정하지 않습니다. 정렬 key가 page 탐색 중 바뀌거나 row가 삭제되면 후속 결과도 바뀔 수 있으므로, sort key의 변경 가능성과 화면이 요구하는 일관성 범위를 함께 정합니다.
 
 ### random page jump는 어렵다
 

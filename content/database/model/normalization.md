@@ -9,12 +9,18 @@ level: 1
 status: PUBLISHED
 displayOrder: 30
 references:
+  - url: "https://www.cs.cmu.edu/~christos/courses/dbms.S12/slides/17NormI.pdf"
+    title: "CMU 15-415 Lecture 16: Schema Refinement and Normalization"
+    referenceType: COURSE
+    language: en
+    displayOrder: 1
+    relationNote: functional dependency와 중복으로 생기는 update·insert·delete anomaly 및 schema decomposition 설명 확인
   - url: "https://www.postgresql.org/docs/current/ddl-constraints.html"
     title: "PostgreSQL Documentation: Constraints"
     referenceType: OFFICIAL
     language: en
-    displayOrder: 1
-    relationNote: 정규화된 schema에서 key와 참조 무결성을 표현하는 DB constraint 확인
+    displayOrder: 2
+    relationNote: 이 Concept에서 사용하는 key와 참조 무결성을 표현하는 PostgreSQL constraint 확인
 ---
 # 정규화와 중복이 만드는 변경 문제
 
