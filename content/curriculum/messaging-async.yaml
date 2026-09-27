@@ -13,7 +13,7 @@ policies:
     topicDifficultyCoverage: [EASY, MEDIUM, HARD]
     areaTypeCoverage: [MULTIPLE_CHOICE, SHORT_ANSWER, DESCRIPTIVE, SCENARIO]
     hardRule: 중복 전달, 순서, 컨슈머 실패, 아웃박스 릴레이, 역압, 스키마 호환성 중 하나 이상을 실제 시간 흐름으로 판단하게 한다.
-    shortAnswerRule: 브로커나 전달 보장 용어 이름만으로 정답을 인정하지 않는다.
+    shortAnswerRule: SHORT_ANSWER는 메시지 키처럼 짧고 안정적으로 채점 가능한 용어·값·상태에만 사용하고, 원인·결과 설명이 필요한 문제는 DESCRIPTIVE 또는 SCENARIO로 묻는다.
   source:
     primary: [Apache Kafka Documentation, Kafka API Documentation, Confluent Schema Registry, Debezium Outbox Event Router, Transactional Outbox Pattern]
     rule: 브로커 구현의 보장과 애플리케이션의 멱등성·업무 순서 보장을 구분한다.
@@ -25,7 +25,7 @@ topics:
   title: 메시지와 브로커의 의미
   order: 10
   scope: 명령·이벤트·메시지, 토픽·파티션·키, 컨슈머 그룹과 오프셋을 다룬다.
-  boundary: Kafka API 보장과 업무 transaction·메시지 전달 보장을 혼동하지 않는다.
+  boundary: Kafka API 보장과 업무 트랜잭션·메시지 전달 보장을 혼동하지 않는다.
   concepts:
   - key: messaging.core.semantics.message-model
     title: 명령·이벤트·메시지의 역할
@@ -52,13 +52,13 @@ topics:
   title: 전달 보장·재시도·순서
   order: 20
   scope: 최대 1회(at-most-once)·최소 1회(at-least-once) 전달, exactly-once 표현의 보장 경계, 멱등 소비자, 재시도·DLQ와 순서·독성 메시지를 다룬다.
-  boundary: 브로커의 전달 보장이나 transaction 기능만으로 외부 업무 효과가 자동으로 exactly-once가 된다고 설명하지 않는다.
+  boundary: 브로커의 전달 보장이나 트랜잭션 기능만으로 외부 업무 효과가 자동으로 exactly-once가 된다고 설명하지 않는다.
   concepts:
   - key: messaging.core.delivery.at-least-once-idempotency
     title: 전달 보장과 멱등 컨슈머
     order: 10
     level: 2
-    objective: 확인 응답(ack)·오프셋 확정(commit) 시점에 따라 유실 또는 중복이 생기는 최대 1회(at-most-once)·최소 1회(at-least-once) 전달을 비교하고, exactly-once 주장의 broker·transaction 경계를 구분한 뒤 업무 멱등성을 설계한다.
+    objective: 확인 응답(ack)·오프셋 확정(commit) 시점에 따라 유실 또는 중복이 생기는 최대 1회(at-most-once)·최소 1회(at-least-once) 전달을 비교하고, exactly-once 주장의 브로커·트랜잭션 경계를 구분한 뒤 업무 멱등성을 설계한다.
     density: CORE
     visualization: DIAGRAM
   - key: messaging.core.delivery.retry-dlq
@@ -72,20 +72,20 @@ topics:
     title: 메시지 순서와 병렬 처리
     order: 30
     level: 3
-    objective: 파티션 내 순서(partition-local ordering)와 컨슈머 동시 처리(concurrency)·병렬성의 trade-off를 업무 순서에 적용한다.
+    objective: 파티션 내 순서(partition-local ordering)와 컨슈머 동시 처리(concurrency)·병렬성의 절충을 업무 순서에 적용한다.
     density: CORE
     visualization: DIAGRAM
 - key: messaging.core.workflow
   title: 신뢰성 있는 비동기 워크플로
   order: 30
   scope: 트랜잭셔널 아웃박스, 역압·처리 용량, 메시지 스키마 진화를 다룬다.
-  boundary: 메시지 브로커가 DB transaction에 자동 참여하거나 비동기 처리가 모든 문제를 해결한다고 가정하지 않는다.
+  boundary: 메시지 브로커가 DB 트랜잭션에 자동 참여하거나 비동기 처리가 모든 문제를 해결한다고 가정하지 않는다.
   concepts:
   - key: messaging.core.workflow.transactional-outbox
     title: 트랜잭셔널 아웃박스(Transactional Outbox)와 이중 쓰기 문제
     order: 10
     level: 3
-    objective: DB 확정(commit)과 메시지 발행(publish) 사이 이중 쓰기 구간(dual-write gap)을 outbox·relay와 컨슈머 중복 처리로 줄이는 흐름을 설명한다.
+    objective: DB 확정(commit)과 메시지 발행(publish) 사이 이중 쓰기 구간(dual-write gap)을 아웃박스·릴레이와 컨슈머 중복 처리로 줄이는 흐름을 설명한다.
     density: CORE
     visualization: DIAGRAM
   - key: messaging.core.workflow.backpressure-capacity
@@ -99,13 +99,13 @@ topics:
     title: 메시지 스키마의 호환 가능한 진화
     order: 30
     level: 2
-    objective: 생산자·소비자가 다른 버전으로 공존할 때 호환 가능한 필드 추가, 하위·상위 호환성(backward/forward compatibility), 메시지 재생과 migration을 설계한다.
+    objective: 생산자·소비자가 다른 버전으로 공존할 때 호환 가능한 필드 추가, 하위·상위 호환성(backward/forward compatibility), 메시지 재생과 마이그레이션을 설계한다.
     density: STANDARD
     visualization: TEXT
 boundaries:
 - area: Database
-  owns: 기준이 되는 transaction과 내구성 있는 업무 상태
-  messagingBoundary: outbox는 DB transaction 안에 저장한 발행 의도이며 브로커가 DB 상태를 소유하지 않는다.
+  owns: 기준이 되는 트랜잭션과 내구성 있는 업무 상태
+  messagingBoundary: 아웃박스는 DB 트랜잭션 안에 저장한 발행 의도이며 브로커가 DB 상태를 소유하지 않는다.
 - area: Backend Engineering
   owns: API·유스케이스 지연 시간과 비동기 처리 도입 판단
   messagingBoundary: 이 영역은 브로커의 전달 보장, 워크플로 의미와 복구를 깊게 다룬다.
