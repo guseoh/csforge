@@ -4,7 +4,7 @@ contentKey: computer-architecture.core.multicore-memory.false-sharing
 topicContentKey: computer-architecture.core.multicore-memory
 slug: false-sharing
 title: "거짓 공유(False Sharing)"
-summary: "논리적으로 독립적인 변수도 같은 cache line에서 write되면 coherence ownership이 이동해 성능 간섭이 생기는 이유를 설명한다."
+summary: "논리적으로 독립적인 변수도 같은 캐시 라인에서 쓰기가 반복되면 소유권 이동 때문에 성능 간섭이 생기는 이유를 설명한다."
 level: 3
 status: PUBLISHED
 displayOrder: 50
@@ -26,9 +26,9 @@ references:
 ---
 # 거짓 공유(False Sharing)
 
-Thread A는 변수 A만, Thread B는 변수 B만 수정한다고 하자. 두 변수는 논리적으로 서로 독립적이므로 같은 값을 두 thread가 경쟁해서 수정하는 true sharing은 아니다.
+스레드 A는 변수 A만, 스레드 B는 변수 B만 수정한다고 하자. 두 변수는 논리적으로 서로 독립적이므로 같은 값을 두 스레드가 경쟁해서 수정하는 진짜 공유(true sharing)는 아니다.
 
-하지만 두 변수가 **같은 cache line**에 놓여 있고 서로 다른 core가 반복해서 write한다면 hardware coherence는 field가 아니라 line 전체의 ownership을 조정한다.
+하지만 두 변수가 **같은 캐시 라인**에 놓여 있고 서로 다른 코어가 반복해서 쓰기를 수행한다면 하드웨어 캐시 일관성은 필드가 아니라 라인 전체의 소유권을 조정한다.
 
 ```text
 one cache line
@@ -37,18 +37,18 @@ one cache line
    core A        core B
 ```
 
-Core A가 A를 쓰기 위해 line의 write ownership을 얻으면 Core B의 같은 line copy가 invalid될 수 있다. 곧이어 B가 B를 쓰려면 다시 ownership을 가져와야 한다. 값 사이에 data dependency는 없지만 line이 core 사이를 오가며 coherence traffic이 늘어난다. 이것이 false sharing이다.
+Core A가 A를 쓰기 위해 라인의 쓰기 소유권을 얻으면 Core B의 같은 라인 복사본이 무효화될 수 있다. 곧이어 B가 B를 쓰려면 다시 소유권을 가져와야 한다. 값 사이에 데이터 의존성은 없지만 라인이 코어 사이를 오가며 캐시 일관성 트래픽이 늘어난다. 이것이 거짓 공유다.
 
-### True sharing과 원인이 다르다
+### 진짜 공유와 원인이 다르다
 
-두 thread가 실제로 같은 counter 하나를 갱신한다면 그 값 자체를 공유하므로 synchronization과 serialization이 필요하다. 이것은 true sharing이다.
+두 스레드가 실제로 같은 카운터 하나를 갱신한다면 그 값 자체를 공유하므로 동기화와 직렬화가 필요하다. 이것은 진짜 공유다.
 
-False sharing은 서로 다른 값을 수정하면서 physical layout 때문에 같은 coherence 단위를 경쟁하는 문제다. Correctness가 깨지는 것이 핵심이 아니라 **불필요한 ownership transfer로 처리량과 latency가 악화되는 것**이 핵심이다.
+거짓 공유는 서로 다른 값을 수정하면서 물리적 배치 때문에 같은 캐시 일관성 단위를 경쟁하는 문제다. 정확성이 깨지는 것이 핵심이 아니라 **불필요한 소유권 이동으로 처리량과 지연 시간이 악화되는 것**이 핵심이다.
 
-### Layout을 바꾸면 줄일 수 있지만 비용이 있다
+### 배치를 바꾸면 줄일 수 있지만 비용이 있다
 
-자주 write되는 독립 data를 서로 다른 cache line에 배치하도록 padding하거나 per-thread/per-core state로 나누면 false sharing을 줄일 수 있다.
+자주 쓰기가 발생하는 독립 데이터를 서로 다른 캐시 라인에 배치하도록 padding하거나 스레드별·코어별 상태로 나누면 거짓 공유를 줄일 수 있다.
 
-하지만 padding은 memory footprint를 늘리고, sharding한 state는 나중에 합치는 비용이 생긴다. 또한 실제 line size와 object layout에 따라 의도한 분리가 이루어지는지 확인해야 한다.
+하지만 padding은 메모리 사용량을 늘리고, 분할한 상태는 나중에 합치는 비용이 생긴다. 또한 실제 라인 크기와 객체 배치에 따라 의도한 분리가 이루어지는지 확인해야 한다.
 
-따라서 false sharing은 이름만 보고 padding부터 적용하는 문제가 아니다. 여러 core가 같은 line을 반복해서 write하고 있다는 evidence를 확인한 뒤 layout 변경 전후를 비교해야 한다.
+따라서 거짓 공유는 이름만 보고 padding부터 적용하는 문제가 아니다. 여러 코어가 같은 라인을 반복해서 쓰고 있다는 근거를 확인한 뒤 배치 변경 전후를 비교해야 한다.
