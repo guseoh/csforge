@@ -3,7 +3,7 @@ kind: concept
 contentKey: security.core.tokens-oauth.oauth-oidc
 topicContentKey: security.core.tokens-oauth
 slug: oauth-oidc
-title: "OAuth 2.0과 OpenID Connect의 목적 차이"
+title: "권한 위임(OAuth 2.0)과 사용자 인증(OpenID Connect)의 목적 차이"
 summary: "OAuth를 resource access delegation framework로, OIDC를 그 위의 authentication identity layer로 구분하고 authorization code + PKCE 흐름에서 access token과 ID token의 대상이 다름을 이해한다."
 level: 3
 status: PUBLISHED
@@ -21,14 +21,20 @@ references:
     language: en
     displayOrder: 2
     relationNote: authorization code interception 방어용 PKCE 확인
+  - url: "https://www.rfc-editor.org/rfc/rfc9700"
+    title: "RFC 9700: Best Current Practice for OAuth 2.0 Security"
+    referenceType: OFFICIAL
+    language: en
+    displayOrder: 3
+    relationNote: authorization code flow의 PKCE 현재 보안 권고와 client별 요구 확인
   - url: "https://openid.net/specs/openid-connect-core-1_0.html"
     title: "OpenID Connect Core 1.0"
     referenceType: OFFICIAL
     language: en
-    displayOrder: 3
+    displayOrder: 4
     relationNote: ID Token과 OIDC authentication layer 확인
 ---
-# OAuth 2.0과 OpenID Connect의 목적 차이
+# 권한 위임(OAuth 2.0)과 사용자 인증(OpenID Connect)의 목적 차이
 
 “구글 OAuth 로그인”이라는 표현 때문에 OAuth 자체가 login protocol이라고 생각하기 쉽습니다. OAuth 2.0의 핵심은 **resource owner가 client에게 protected resource 접근 권한을 위임**하는 것이고, OpenID Connect(OIDC)는 OAuth 2.0 위에 identity/authentication 정보를 표준화한 layer를 추가합니다.
 
@@ -49,7 +55,7 @@ Client ── authorize request ──► Authorization Server
   ◄──────────────────────────────────┘
 ```
 
-PKCE는 intercepted authorization code만 탈취한 공격자가 token으로 교환하는 것을 어렵게 합니다.
+PKCE는 authorization request의 code challenge와 token 교환 때의 verifier를 연결해 탈취된 authorization code만으로 token을 받을 수 없게 합니다. 현재 OAuth 보안 BCP(RFC 9700)는 public client에 PKCE 사용을 요구하고 confidential client에도 권고하며, verifier를 드러내지 않는 `S256` challenge method를 사용하도록 권고합니다.
 
 ### access token과 ID token은 audience가 다르다
 

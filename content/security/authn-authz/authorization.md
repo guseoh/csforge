@@ -3,7 +3,7 @@ kind: concept
 contentKey: security.core.authn-authz.authorization
 topicContentKey: security.core.authn-authz
 slug: authorization
-title: "Authorization과 resource-level permission"
+title: "인가와 리소스별 권한 판단"
 summary: "확인된 principal이 현재 operation과 resource에 대해 권한을 갖는지 서버가 판단해야 하며 role 검사와 ownership 검사가 서로 다른 축임을 이해한다."
 level: 1
 status: PUBLISHED
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: deny-by-default, every request authorization, least privilege 원칙 확인
 ---
-# Authorization과 resource-level permission
+# 인가와 리소스별 권한 판단
 
 로그인 사용자가 `/orders/123`을 호출했다고 해도 서버가 확인해야 할 질문은 하나 더 있습니다. **이 principal이 이 특정 order에 이 operation을 할 수 있는가?** 이것이 authorization입니다.
 

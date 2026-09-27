@@ -3,7 +3,7 @@ kind: concept
 contentKey: security.core.filter-chain.exception-translation
 topicContentKey: security.core.filter-chain
 slug: exception-translation
-title: "AuthenticationException·AccessDeniedException과 401/403 변환"
+title: "인증·인가 예외와 401·403 응답 변환"
 summary: "Security filter 내부의 인증 필요와 권한 부족 실패를 ExceptionTranslationFilter가 AuthenticationEntryPoint 또는 AccessDeniedHandler로 연결해 HTTP 응답으로 바꾸는 경계를 이해한다."
 level: 2
 status: PUBLISHED
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: AuthenticationException과 AccessDeniedException의 HTTP response translation 확인
 ---
-# AuthenticationException·AccessDeniedException과 401/403 변환
+# 인증·인가 예외와 401·403 응답 변환
 
 Security에서 실패가 났다고 모두 controller advice로 들어오는 것은 아닙니다. Controller보다 앞의 filter chain에서 발생한 authentication/authorization exception은 Spring Security의 exception translation 경계가 처리합니다.
 

@@ -3,7 +3,7 @@ kind: concept
 contentKey: security.core.auth-architecture.manager-provider
 topicContentKey: security.core.auth-architecture
 slug: manager-provider
-title: "AuthenticationManager와 AuthenticationProvider 위임 구조"
+title: "인증 관리자와 제공자(AuthenticationManager·AuthenticationProvider)의 위임 구조"
 summary: "ProviderManager가 Authentication type을 처리할 수 있는 provider를 찾아 인증을 위임하고 password·OTP·custom token 등 서로 다른 검증 방식을 같은 authentication pipeline에 조합하는 구조를 이해한다."
 level: 2
 status: PUBLISHED
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: ProviderManager와 AuthenticationProvider delegation 동작 확인
 ---
-# AuthenticationManager와 AuthenticationProvider 위임 구조
+# 인증 관리자와 제공자(AuthenticationManager·AuthenticationProvider)의 위임 구조
 
 애플리케이션에 비밀번호 로그인, API key, OTP 같은 인증 방식이 여러 개 생기면 하나의 거대한 `if credentialType` service에 모두 넣기보다 **각 credential 검증 책임을 provider로 분리**할 수 있습니다.
 

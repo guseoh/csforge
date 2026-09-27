@@ -3,7 +3,7 @@ kind: concept
 contentKey: security.core.authn-authz.identity-principal
 topicContentKey: security.core.authn-authz
 slug: identity-principal
-title: "Identity와 principal"
+title: "주체 identity와 principal"
 summary: "사용자라는 실제 identity와 현재 요청에서 그 주체를 표현하는 principal을 구분하고 username/email 같은 mutable attribute를 영구 identity로 오해하지 않는다."
 level: 1
 status: PUBLISHED
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: Authentication principal과 SecurityContext의 역할 확인
 ---
-# Identity와 principal
+# 주체 identity와 principal
 
 로그인한 사용자를 코드에서 `principal`이라고 부르는 경우가 많지만 identity와 principal은 같은 단어가 아닙니다. Identity는 시스템이 “누구인가”를 식별하는 개념이고, principal은 **현재 security context에서 그 주체를 표현하는 객체/표현**입니다.
 

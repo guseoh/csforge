@@ -3,7 +3,7 @@ kind: concept
 contentKey: security.core.access.vertical
 topicContentKey: security.core.access
 slug: vertical
-title: "Vertical privilege escalation"
+title: "수직 권한 상승"
 summary: "낮은 권한 principal이 관리자·운영자용 action을 직접 호출할 때 서버가 role/authority policy를 빠뜨려 높은 privilege operation을 실행하는 수직 권한 상승을 이해한다."
 level: 2
 status: PUBLISHED
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: least privilege와 permission validation 원칙 확인
 ---
-# Vertical privilege escalation
+# 수직 권한 상승
 
 수평 권한 상승이 “같은 등급 사용자끼리 남의 resource 접근”이라면 수직 권한 상승은 **낮은 privilege 사용자가 더 높은 역할의 기능을 수행**하는 문제입니다.
 

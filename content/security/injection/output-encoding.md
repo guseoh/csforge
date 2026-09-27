@@ -3,7 +3,7 @@ kind: concept
 contentKey: security.core.injection.output-encoding
 topicContentKey: security.core.injection
 slug: output-encoding
-title: "Output encoding과 context 경계"
+title: "출력 인코딩(output encoding)과 문맥별 보안 경계"
 summary: "같은 untrusted 문자열도 HTML body·attribute·URL·JavaScript context마다 parser가 다르게 해석하므로 출력 위치에 맞는 encoding과 safe sink를 사용해야 하는 이유를 이해한다."
 level: 2
 status: PUBLISHED
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: HTML/attribute/JavaScript/CSS/URL context별 output encoding 확인
 ---
-# Output encoding과 context 경계
+# 출력 인코딩(output encoding)과 문맥별 보안 경계
 
 XSS 방어를 위해 “모든 `<`를 `&lt;`로 바꾸자”처럼 하나의 escape 함수만 만들면 다른 parser context에서 실패할 수 있습니다. Browser는 HTML body, attribute, JavaScript, URL을 서로 다른 문법으로 해석합니다.
 

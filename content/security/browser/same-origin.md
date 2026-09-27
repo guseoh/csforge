@@ -3,7 +3,7 @@ kind: concept
 contentKey: security.core.browser.same-origin
 topicContentKey: security.core.browser
 slug: same-origin
-title: "Same-Origin Policy가 브라우저 script 읽기를 제한하는 방식"
+title: "동일 출처 정책(Same-Origin Policy)이 브라우저 script 읽기를 제한하는 방식"
 summary: "origin을 scheme·host·port 조합으로 이해하고 SOP가 cross-origin resource interaction 전체를 금지하는 것이 아니라 특히 script의 cross-origin read를 제한하는 browser isolation 정책임을 이해한다."
 level: 2
 status: PUBLISHED
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: origin 정의와 cross-origin read/write/embed 제약 확인
 ---
-# Same-Origin Policy가 브라우저 script 읽기를 제한하는 방식
+# 동일 출처 정책(Same-Origin Policy)이 브라우저 script 읽기를 제한하는 방식
 
 웹에서 공격자 사이트의 JavaScript가 사용자가 로그인한 은행 사이트의 응답을 마음대로 읽을 수 있다면 심각한 정보 노출이 됩니다. Same-Origin Policy(SOP)는 **서로 다른 origin의 document/script 사이 접근을 제한하는 브라우저 보안 경계**입니다.
 

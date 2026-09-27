@@ -3,7 +3,7 @@ kind: concept
 contentKey: security.core.password.work-factor
 topicContentKey: security.core.password
 slug: work-factor
-title: "Work factor와 로그인 검증 비용"
+title: "비밀번호 검증 비용(work factor)과 로그인 부하"
 summary: "password hashing을 공격자에게 비싸게 만들면서 정상 로그인 지연 시간과 서버 자원 고갈을 감당할 수 있도록 cost parameter를 측정·조정하고 알고리즘 upgrade를 계획한다."
 level: 2
 status: PUBLISHED
@@ -22,7 +22,7 @@ references:
     displayOrder: 2
     relationNote: adaptive one-way function과 DelegatingPasswordEncoder 확인
 ---
-# Work factor와 로그인 검증 비용
+# 비밀번호 검증 비용(work factor)과 로그인 부하
 
 Password hashing은 공격자가 많은 후보를 빠르게 시험하기 어렵도록 의도적으로 계산 비용을 높입니다. 하지만 정상 로그인도 같은 verifier 계산을 수행하므로 cost를 무조건 크게 잡을 수는 없습니다.
 

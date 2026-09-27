@@ -3,7 +3,7 @@ kind: concept
 contentKey: security.core.password.salt-hash
 topicContentKey: security.core.password
 slug: salt-hash
-title: "Salt와 password hash"
+title: "비밀번호 salt와 password hash"
 summary: "사용자별 random salt가 같은 비밀번호의 같은 hash를 피하고 precomputed rainbow-table 재사용을 어렵게 만드는 이유와 salt가 secret key가 아니라 hash와 함께 저장되는 값임을 이해한다."
 level: 1
 status: PUBLISHED
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: modern password hashing library의 per-password salt 사용 확인
 ---
-# Salt와 password hash
+# 비밀번호 salt와 password hash
 
 두 사용자가 같은 `password123`을 사용한다고 해 봅시다. salt 없이 같은 hash function만 적용하면 저장 값도 같습니다.
 

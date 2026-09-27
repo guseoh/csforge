@@ -3,7 +3,7 @@ kind: concept
 contentKey: security.core.filter-chain.servlet-filter
 topicContentKey: security.core.filter-chain
 slug: servlet-filter
-title: "Servlet Filter가 DispatcherServlet 앞에서 요청을 가로채는 위치"
+title: "서블릿 필터가 DispatcherServlet 앞에서 요청을 가로채는 위치"
 summary: "Servlet container filter chain이 DispatcherServlet/controller보다 앞뒤에서 요청·응답을 감쌀 수 있고 Spring Security가 이 표준 경계 위에서 동작하는 이유를 이해한다."
 level: 2
 status: PUBLISHED
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: Servlet Filter, DelegatingFilterProxy, FilterChainProxy 구조 확인
 ---
-# Servlet Filter가 DispatcherServlet 앞에서 요청을 가로채는 위치
+# 서블릿 필터가 DispatcherServlet 앞에서 요청을 가로채는 위치
 
 Spring MVC controller가 HTTP 요청의 첫 Java 코드라고 생각하기 쉽지만 Servlet stack에서는 filter가 더 앞에서 요청을 처리할 수 있습니다.
 

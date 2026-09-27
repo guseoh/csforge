@@ -3,7 +3,7 @@ kind: concept
 contentKey: security.core.tokens-oauth.jwt-lifecycle
 topicContentKey: security.core.tokens-oauth
 slug: jwt-lifecycle
-title: "JWT expiry·issuer·revocation lifecycle"
+title: "JWT 만료·발급자·대상 검증과 폐기 수명주기"
 summary: "stateless signature verification이 서버의 모든 session state를 없애는 것이 아니며 access token 수명, refresh token, key rotation, logout/revocation 요구에 따라 상태와 trade-off가 다시 생김을 이해한다."
 level: 3
 status: PUBLISHED
@@ -22,7 +22,7 @@ references:
     displayOrder: 2
     relationNote: access/refresh token 보안과 현대 OAuth security guidance 확인
 ---
-# JWT expiry·issuer·revocation lifecycle
+# JWT 만료·발급자·대상 검증과 폐기 수명주기
 
 JWT의 장점으로 “서버가 DB/session store를 조회하지 않고 signature만으로 요청을 검증할 수 있다”가 자주 언급됩니다. 하지만 이것을 **인증 시스템에 상태가 전혀 필요 없다**로 확대하면 logout, role 변경, token 탈취 대응에서 문제가 생깁니다.
 

@@ -3,7 +3,7 @@ kind: concept
 contentKey: security.core.access.bola-idor
 topicContentKey: security.core.access
 slug: bola-idor
-title: "BOLA/IDOR와 수평 권한 상승"
+title: "객체 수준 인가 실패(BOLA/IDOR)와 수평 권한 상승"
 summary: "클라이언트가 object ID를 바꿨을 때 서버가 object-level authorization을 하지 않아 다른 사용자의 resource에 접근하는 BOLA/IDOR 공격 흐름을 이해한다."
 level: 2
 status: PUBLISHED
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: API1:2023 BOLA attack와 authorization 요구 확인
 ---
-# BOLA/IDOR와 수평 권한 상승
+# 객체 수준 인가 실패(BOLA/IDOR)와 수평 권한 상승
 
 API가 다음처럼 동작한다고 해 봅시다.
 

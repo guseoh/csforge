@@ -3,7 +3,7 @@ kind: concept
 contentKey: security.core.session-cookie.session-id
 topicContentKey: security.core.session-cookie
 slug: session-id
-title: "Session ID가 브라우저와 서버 상태를 연결하는 방식"
+title: "세션 ID가 브라우저와 서버 상태를 연결하는 방식"
 summary: "브라우저가 보내는 opaque session identifier로 서버가 authentication/session state를 찾는 흐름과, identifier 탈취가 세션 탈취로 이어지는 이유를 설명한다."
 level: 2
 status: PUBLISHED
@@ -22,7 +22,7 @@ references:
     displayOrder: 2
     relationNote: session identifier entropy·lifecycle·cookie transport 보안 확인
 ---
-# Session ID가 브라우저와 서버 상태를 연결하는 방식
+# 세션 ID가 브라우저와 서버 상태를 연결하는 방식
 
 Session 기반 인증에서는 브라우저가 매 요청에 사용자 정보 전체를 보내는 대신 **서버가 발급한 session identifier**를 보낸다. 서버는 그 값을 session state를 찾는 key로 사용하고, 저장된 authentication을 현재 요청의 security context로 복원한다.
 

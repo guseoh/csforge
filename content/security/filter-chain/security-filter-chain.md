@@ -3,7 +3,7 @@ kind: concept
 contentKey: security.core.filter-chain.security-filter-chain
 topicContentKey: security.core.filter-chain
 slug: security-filter-chain
-title: "SecurityFilterChain 선택과 filter 실행 순서"
+title: "보안 필터 체인의 선택과 실행 순서"
 summary: "FilterChainProxy가 요청 matcher에 맞는 SecurityFilterChain 하나를 선택하고 그 안의 authentication·authorization·CSRF 등 filter를 순서대로 실행하는 구조를 이해한다."
 level: 2
 status: PUBLISHED
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: FilterChainProxy와 multiple SecurityFilterChain matching 동작 확인
 ---
-# SecurityFilterChain 선택과 filter 실행 순서
+# 보안 필터 체인의 선택과 실행 순서
 
 Spring Security 설정에서 `SecurityFilterChain` bean을 만든다고 해서 모든 chain의 filter를 매 요청에 전부 실행하는 것은 아닙니다. `FilterChainProxy`는 요청을 보고 **matching되는 SecurityFilterChain을 선택한 뒤 그 chain의 security filters를 실행**합니다.
 

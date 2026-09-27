@@ -3,7 +3,7 @@ kind: concept
 contentKey: security.core.context-authz.method-security
 topicContentKey: security.core.context-authz
 slug: method-security
-title: "Method security와 use-case authorization"
+title: "메서드 보안과 유스케이스 인가"
 summary: "HTTP route 규칙만으로 보호하기 어려운 privileged use-case를 method interceptor에서 다시 authorization하고, resource ownership 같은 동적 policy를 application argument와 principal에 연결한다."
 level: 3
 status: PUBLISHED
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: '@PreAuthorize와 method authorization interceptor 동작 확인'
 ---
-# Method security와 use-case authorization
+# 메서드 보안과 유스케이스 인가
 
 `/admin/**` route를 ADMIN만 허용하는 규칙은 HTTP 경계에서 명확합니다. 하지만 중요한 service method가 controller 외의 scheduler, message consumer, 다른 facade에서도 호출될 수 있다면 **use-case 자체에 authorization contract를 두는 것**을 검토할 수 있습니다.
 

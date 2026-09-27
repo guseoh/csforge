@@ -3,7 +3,7 @@ kind: concept
 contentKey: security.core.injection.sql-injection
 topicContentKey: security.core.injection
 slug: sql-injection
-title: "SQL injection과 값·코드 경계"
+title: "SQL 인젝션과 값·쿼리 구조의 경계"
 summary: "사용자 입력을 SQL 문자열 구조에 결합할 때 데이터가 SQL syntax로 해석되는 injection 원리를 이해하고 parameter binding과 allowlist로 value와 query structure를 분리한다."
 level: 2
 status: PUBLISHED
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: prepared statements와 allow-list validation 방어 확인
 ---
-# SQL injection과 값·코드 경계
+# SQL 인젝션과 값·쿼리 구조의 경계
 
 SQL injection은 특수문자 하나가 위험한 것이 아니라 **사용자가 준 데이터가 SQL 문법 일부로 합쳐져 DB parser가 code로 해석하는 순간** 발생합니다.
 

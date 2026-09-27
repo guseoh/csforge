@@ -3,7 +3,7 @@ kind: concept
 contentKey: security.core.auth-architecture.user-details
 topicContentKey: security.core.auth-architecture
 slug: user-details
-title: "UserDetailsService와 PasswordEncoder의 협력 경계"
+title: "사용자 조회(UserDetailsService)와 비밀번호 검증(PasswordEncoder)의 협력 경계"
 summary: "사용자 계정 조회와 password verifier 비교를 분리하고 UserDetails를 domain entity 전체와 동일시하지 않으며 password hash format upgrade까지 고려하는 login 협력 구조를 이해한다."
 level: 2
 status: PUBLISHED
@@ -22,7 +22,7 @@ references:
     displayOrder: 2
     relationNote: PasswordEncoder와 DelegatingPasswordEncoder 확인
 ---
-# UserDetailsService와 PasswordEncoder의 협력 경계
+# 사용자 조회(UserDetailsService)와 비밀번호 검증(PasswordEncoder)의 협력 경계
 
 Password login에서 필요한 책임을 나누면 흐름이 더 명확해집니다.
 

@@ -3,7 +3,7 @@ kind: concept
 contentKey: security.core.abuse.ssrf
 topicContentKey: security.core.abuse
 slug: ssrf
-title: "SSRF와 서버 outbound trust boundary"
+title: "서버 측 요청 위조(SSRF)와 outbound trust boundary"
 summary: "사용자가 제공한 URL을 서버가 대신 요청할 때 공격자가 localhost·private network·cloud metadata 같은 내부 목적지에 접근시키는 SSRF 흐름과 destination allowlist·redirect·DNS 검증을 이해한다."
 level: 3
 status: PUBLISHED
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: allowlist, IP/domain validation, network-layer restriction 방어 확인
 ---
-# SSRF와 서버 outbound trust boundary
+# 서버 측 요청 위조(SSRF)와 outbound trust boundary
 
 이미지 미리보기 API가 사용자가 보낸 URL을 서버가 다운로드한다고 해 봅시다.
 
@@ -45,7 +45,7 @@ Private Network / Metadata / localhost
 
 ### DNS resolution과 redirect도 경계다
 
-처음에는 public IP를 반환한 domain이 이후 private IP로 resolve되는 DNS rebinding, 허용 URL이 302 redirect로 internal URL을 가리키는 경우도 고려해야 합니다. Redirect를 자동 follow할지, 각 hop destination을 다시 검증할지 결정합니다.
+처음에는 public IP를 반환한 domain이 이후 private IP로 resolve되는 DNS rebinding, 허용 URL이 302 redirect로 internal URL을 가리키는 경우도 고려해야 합니다. A·AAAA resolution 결과를 검증하더라도 검사 후 다른 주소로 연결되는 틈이 생기지 않게 실제 연결 destination을 검증된 주소에 묶어야 합니다. Redirect는 기본적으로 끄거나, 각 hop의 URL과 resolution 결과를 다시 검증합니다.
 
 ### network egress restriction을 함께 둔다
 

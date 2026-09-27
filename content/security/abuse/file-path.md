@@ -3,7 +3,7 @@ kind: concept
 contentKey: security.core.abuse.file-path
 topicContentKey: security.core.abuse
 slug: file-path
-title: "File upload와 path traversal 경계"
+title: "파일 업로드와 경로 순회(path traversal) 경계"
 summary: "사용자 파일명·extension·Content-Type을 신뢰하지 않고 생성된 storage key, size/type 검증, web root 분리와 다운로드 authorization을 적용하며 `../` 경로 탈출을 막는 원리를 이해한다."
 level: 3
 status: PUBLISHED
@@ -22,7 +22,7 @@ references:
     displayOrder: 2
     relationNote: ../ 경로 조작과 base directory escape 위험 확인
 ---
-# File upload와 path traversal 경계
+# 파일 업로드와 경로 순회(path traversal) 경계
 
 사용자가 `../../config/application.yml`이라는 파일명을 upload하면 서버가 그대로 저장 경로에 붙이는 순간 단순 파일 기능이 filesystem write primitive로 바뀔 수 있습니다.
 

@@ -3,7 +3,7 @@ kind: concept
 contentKey: security.core.session-cookie.fixation-expiration
 topicContentKey: security.core.session-cookie
 slug: fixation-expiration
-title: "Session fixation·ID 교체·만료"
+title: "세션 고정(session fixation)·ID 교체·만료"
 summary: "로그인 전 공격자가 알고 있던 session ID를 인증 후에도 그대로 사용하면 생기는 fixation 위험과 authentication 시 ID rotation, idle/absolute timeout, logout invalidation lifecycle을 이해한다."
 level: 2
 status: PUBLISHED
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: authentication 성공 시 session fixation protection 전략 확인
 ---
-# Session fixation·ID 교체·만료
+# 세션 고정(session fixation)·ID 교체·만료
 
 Session hijacking은 이미 로그인된 session ID를 훔치는 공격이고, session fixation은 **공격자가 미리 알고 있는 session ID를 피해자가 로그인 후에도 계속 쓰게 만드는 공격**입니다.
 

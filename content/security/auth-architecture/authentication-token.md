@@ -3,7 +3,7 @@ kind: concept
 contentKey: security.core.auth-architecture.authentication-token
 topicContentKey: security.core.auth-architecture
 slug: authentication-token
-title: "Authentication 객체의 검증 전·후 상태"
+title: "인증 객체(Authentication)의 검증 전·후 상태"
 summary: "Spring Security Authentication이 principal·credentials·authorities를 운반하며 login input 단계의 unauthenticated token과 provider 검증 후 authenticated token의 의미가 다름을 이해한다."
 level: 2
 status: PUBLISHED
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: Authentication의 principal, credentials, authorities, authenticated 역할 확인
 ---
-# Authentication 객체의 검증 전·후 상태
+# 인증 객체(Authentication)의 검증 전·후 상태
 
 Spring Security의 `Authentication`을 “로그인된 사용자 객체”라고만 부르면 login 시작 단계에서 왜 Authentication 객체를 만드는지 이해하기 어렵습니다. 같은 interface가 **검증 요청을 운반하는 token**과 **검증 완료된 현재 principal** 두 역할에 사용될 수 있습니다.
 

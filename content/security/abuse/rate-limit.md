@@ -3,7 +3,7 @@ kind: concept
 contentKey: security.core.abuse.rate-limit
 topicContentKey: security.core.abuse
 slug: rate-limit
-title: "Rate limiting과 abuse control"
+title: "요청 속도 제한(rate limiting)과 남용 방어"
 summary: "로그인/API abuse에서 identity·IP·API key 같은 제한 key, window와 burst 정책, 여러 instance가 quota state를 공유할 때의 trade-off와 정상 사용자 오탐을 판단한다."
 level: 3
 status: PUBLISHED
@@ -22,7 +22,7 @@ references:
     displayOrder: 2
     relationNote: rate limit 초과 HTTP 429와 Retry-After semantics 확인
 ---
-# Rate limiting과 abuse control
+# 요청 속도 제한(rate limiting)과 남용 방어
 
 강한 password hashing이나 올바른 authorization이 있어도 공격자가 비싼 endpoint를 매우 높은 빈도로 호출할 수 있다면 brute force와 자원 고갈 위험이 남습니다. Rate limiting은 **특정 요청 주체나 signal을 기준으로 일정 시간 동안 허용할 요청량을 제한하는 abuse-control 수단**입니다.
 

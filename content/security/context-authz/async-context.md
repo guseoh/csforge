@@ -3,7 +3,7 @@ kind: concept
 contentKey: security.core.context-authz.async-context
 topicContentKey: security.core.context-authz
 slug: async-context
-title: "Async thread와 SecurityContext 전달"
+title: "비동기 스레드로 SecurityContext 전달"
 summary: "SecurityContext의 기본 thread-local 성격 때문에 executor의 다른 thread로 작업을 넘길 때 authentication이 자동으로 따라간다고 가정할 수 없고 명시적 context propagation이 필요한 경우를 이해한다."
 level: 3
 status: PUBLISHED
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: DelegatingSecurityContextRunnable/Executor로 context 전달하는 방식 확인
 ---
-# Async thread와 SecurityContext 전달
+# 비동기 스레드로 SecurityContext 전달
 
 요청 thread에서 current user를 잘 읽던 코드가 `@Async`나 custom executor로 넘긴 뒤 갑자기 anonymous/null이 되는 경우가 있습니다. 기본 SecurityContextHolder가 thread-local이라 **다른 worker thread에는 원래 thread의 context가 자동으로 존재하지 않기 때문**입니다.
 

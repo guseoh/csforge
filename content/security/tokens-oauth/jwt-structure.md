@@ -3,7 +3,7 @@ kind: concept
 contentKey: security.core.tokens-oauth.jwt-structure
 topicContentKey: security.core.tokens-oauth
 slug: jwt-structure
-title: "JWT 구조와 signed != encrypted"
+title: "JWT 구조와 서명 검증·암호화의 차이"
 summary: "JWT의 header·payload·signature/JWS 구조에서 base64url encoding이 암호화가 아니며 signature 검증은 변조 여부와 issuer 신뢰를 확인하는 과정이라는 점을 이해한다."
 level: 3
 status: PUBLISHED
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: JWT claims와 JOSE representation 표준 확인
 ---
-# JWT 구조와 signed != encrypted
+# JWT 구조와 서명 검증·암호화의 차이
 
 JWT access token 예제를 보면 `xxxxx.yyyyy.zzzzz` 세 부분이 보여 암호화된 문자열처럼 느껴집니다. 일반적인 signed JWT(JWS)에서는 header와 payload가 **base64url encoding**될 뿐 secret으로 숨겨지는 것이 아닙니다.
 

@@ -3,7 +3,7 @@ kind: concept
 contentKey: security.core.context-authz.context-holder
 topicContentKey: security.core.context-authz
 slug: context-holder
-title: "SecurityContextHolder와 요청 thread의 인증 상태"
+title: "요청 스레드의 인증 상태와 SecurityContextHolder"
 summary: "Spring Security가 현재 Authentication을 SecurityContext에 두고 기본적으로 thread-local strategy로 접근하게 하는 이유와 요청 종료 시 context cleanup이 중요한 이유를 이해한다."
 level: 3
 status: PUBLISHED
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: SecurityContextHolder, SecurityContext, Authentication 관계 확인
 ---
-# SecurityContextHolder와 요청 thread의 인증 상태
+# 요청 스레드의 인증 상태와 SecurityContextHolder
 
 Controller에서 매번 session store를 직접 조회하지 않아도 현재 사용자를 얻을 수 있는 이유는 Spring Security가 filter chain 앞쪽에서 authentication을 복원해 `SecurityContext`에 넣기 때문입니다.
 

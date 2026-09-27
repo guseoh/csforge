@@ -3,7 +3,7 @@ kind: concept
 contentKey: security.core.abuse.secret-logging
 topicContentKey: security.core.abuse
 slug: secret-logging
-title: "Secret·token logging과 운영 데이터 노출"
+title: "로그의 비밀정보·토큰 노출과 운영 위험"
 summary: "Authorization header·session cookie·password·reset token·API key가 debug/error/access log에 들어가면 log reader가 credential을 재사용할 수 있으므로 structured redaction과 최소 수집을 적용한다."
 level: 3
 status: PUBLISHED
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: authentication password/token/session identifier 등 로그 제외·마스킹 원칙 확인
 ---
-# Secret·token logging과 운영 데이터 노출
+# 로그의 비밀정보·토큰 노출과 운영 위험
 
 보안 기능을 제대로 구현하고도 log 한 줄 때문에 credential이 유출될 수 있습니다.
 

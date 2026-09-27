@@ -3,7 +3,7 @@ kind: concept
 contentKey: security.core.session-cookie.cookie-flags
 topicContentKey: security.core.session-cookie
 slug: cookie-flags
-title: "Secure·HttpOnly·SameSite가 막는 공격 범위"
+title: "쿠키 보안 속성(Secure·HttpOnly·SameSite)의 방어 범위"
 summary: "cookie attribute가 각각 전송 채널, JavaScript 접근, cross-site 전송을 제한한다는 점을 구분하고 하나의 flag가 session 탈취·CSRF·XSS를 모두 해결한다고 오해하지 않는다."
 level: 2
 status: PUBLISHED
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: Secure, HttpOnly, SameSite와 cookie scope 동작 확인
 ---
-# Secure·HttpOnly·SameSite가 막는 공격 범위
+# 쿠키 보안 속성(Secure·HttpOnly·SameSite)의 방어 범위
 
 Session cookie를 보호할 때 세 flag가 자주 함께 나오지만 역할은 서로 다릅니다.
 

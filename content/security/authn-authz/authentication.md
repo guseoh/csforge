@@ -3,7 +3,7 @@ kind: concept
 contentKey: security.core.authn-authz.authentication
 topicContentKey: security.core.authn-authz
 slug: authentication
-title: "Authentication이 주체를 확인하는 과정"
+title: "인증(authentication)이 주체를 확인하는 과정"
 summary: "credential을 받아 저장된 verifier와 검증하고 성공한 identity를 security context로 옮기는 흐름을 이해하며 로그인 성공이 모든 resource 접근 권한을 뜻하지 않음을 구분한다."
 level: 1
 status: PUBLISHED
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: username/password authentication 흐름 확인
 ---
-# Authentication이 주체를 확인하는 과정
+# 인증(authentication)이 주체를 확인하는 과정
 
 Authentication은 “로그인 화면을 보여 주는 기능”이 아니라 **제시된 credential이 어떤 identity에 해당하는지 검증하는 과정**입니다.
 

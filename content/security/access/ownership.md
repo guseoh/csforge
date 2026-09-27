@@ -3,7 +3,7 @@ kind: concept
 contentKey: security.core.access.ownership
 topicContentKey: security.core.access
 slug: ownership
-title: "Resource ownership authorization"
+title: "리소스 소유권 기반 인가"
 summary: "로그인 여부나 role만으로 충분하지 않은 사용자별 resource에서 current principal과 owner identity를 비교해 수평 권한 상승을 막는 서버측 authorization을 이해한다."
 level: 2
 status: PUBLISHED
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: object-level authorization과 every-request permission check 원칙 확인
 ---
-# Resource ownership authorization
+# 리소스 소유권 기반 인가
 
 `ROLE_USER`인 사용자끼리 서로의 주문을 보면 안 되는 서비스에서 role 검사만 통과시키면 authorization이 부족합니다. 같은 role 안에서도 **이 resource가 누구 소유인지**를 확인해야 합니다.
 

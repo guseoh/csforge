@@ -3,7 +3,7 @@ kind: concept
 contentKey: security.core.injection.jpql-native
 topicContentKey: security.core.injection
 slug: jpql-native
-title: "JPQL·native query에서도 injection이 생기는 경계"
+title: "JPQL·네이티브 쿼리에서도 인젝션이 생기는 경계"
 summary: "ORM을 사용한다고 injection이 사라지는 것이 아니라 JPQL/native SQL 문자열을 동적으로 조립하면 같은 구조 문제가 생기며 parameter binding과 identifier allowlist가 필요함을 이해한다."
 level: 2
 status: PUBLISHED
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: ORM 사용 여부와 무관한 parameterization 원칙 확인
 ---
-# JPQL·native query에서도 injection이 생기는 경계
+# JPQL·네이티브 쿼리에서도 인젝션이 생기는 경계
 
 JPA/Hibernate를 쓴다는 사실만으로 SQL injection이 자동 제거되는 것은 아닙니다. JPQL도 문자열 language이고 사용자 입력을 query structure에 직접 이어 붙이면 injection 가능성이 생깁니다.
 

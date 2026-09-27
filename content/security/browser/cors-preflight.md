@@ -3,7 +3,7 @@ kind: concept
 contentKey: security.core.browser.cors-preflight
 topicContentKey: security.core.browser
 slug: cors-preflight
-title: "CORS와 preflight가 허용 범위를 협상하는 방식"
+title: "교차 출처 리소스 공유(CORS)와 preflight 협상"
 summary: "CORS가 server 응답 헤더로 특정 origin의 browser script read를 허용하고 non-simple 요청 전에 preflight OPTIONS로 method/header permission을 확인하는 흐름을 이해한다."
 level: 2
 status: PUBLISHED
@@ -22,7 +22,7 @@ references:
     displayOrder: 2
     relationNote: CORS가 Security filter 전에 처리되어야 하는 servlet integration 확인
 ---
-# CORS와 preflight가 허용 범위를 협상하는 방식
+# 교차 출처 리소스 공유(CORS)와 preflight 협상
 
 Frontend가 `https://app.example.com`, API가 `https://api.example.com`이면 host가 달라 same-origin이 아닙니다. Browser는 SOP 때문에 frontend script가 API 응답을 자유롭게 읽지 못하게 하고, 서버가 CORS header로 **이 origin에게는 읽기를 허용한다**고 명시할 수 있습니다.
 

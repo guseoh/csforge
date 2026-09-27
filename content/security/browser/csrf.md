@@ -3,7 +3,7 @@ kind: concept
 contentKey: security.core.browser.csrf
 topicContentKey: security.core.browser
 slug: csrf
-title: "CSRF가 자동 credential 전송을 악용하는 방식"
+title: "사이트 간 요청 위조(CSRF)가 자동 credential 전송을 악용하는 방식"
 summary: "공격자 사이트가 victim browser에게 state-changing 요청을 만들게 하고 browser가 session cookie를 자동 첨부하는 특성을 악용하는 CSRF 흐름과 synchronizer token·SameSite 방어 지점을 이해한다."
 level: 2
 status: PUBLISHED
@@ -22,7 +22,7 @@ references:
     displayOrder: 2
     relationNote: synchronizer token, SameSite, origin verification 등 defense 확인
 ---
-# CSRF가 자동 credential 전송을 악용하는 방식
+# 사이트 간 요청 위조(CSRF)가 자동 credential 전송을 악용하는 방식
 
 사용자가 `bank.example`에 로그인해 session cookie를 가진 상태에서 `evil.example`을 방문했다고 해 봅시다. 공격자 페이지가 bank의 송금 endpoint로 form을 제출하면 **브라우저가 bank cookie를 자동으로 붙일 수 있다는 점**이 CSRF의 출발점입니다.
 

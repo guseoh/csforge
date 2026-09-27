@@ -3,7 +3,7 @@ kind: concept
 contentKey: security.core.foundations.cia-least
 topicContentKey: security.core.foundations
 slug: cia-least
-title: "CIA와 least privilege를 설계 판단에 적용하기"
+title: "기밀성·무결성·가용성과 최소 권한을 설계 판단에 적용하기"
 summary: "기밀성·무결성·가용성을 서로 다른 보안 목표로 구분하고 사용자·서비스·DB 계정에 필요한 최소 권한만 부여해 침해 시 영향 범위를 줄이는 원리를 이해한다."
 level: 1
 status: PUBLISHED
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: least privilege와 deny-by-default authorization 원칙 확인
 ---
-# CIA와 least privilege를 설계 판단에 적용하기
+# 기밀성·무결성·가용성과 최소 권한을 설계 판단에 적용하기
 
 보안 요구를 단순히 “데이터를 안전하게 한다”라고 묶으면 어떤 보호가 필요한지 판단하기 어렵습니다. CIA는 보호 목표를 **기밀성(Confidentiality), 무결성(Integrity), 가용성(Availability)**으로 나누어 보는 기본 틀입니다.
 

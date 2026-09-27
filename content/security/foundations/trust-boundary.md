@@ -3,7 +3,7 @@ kind: concept
 contentKey: security.core.foundations.trust-boundary
 topicContentKey: security.core.foundations
 slug: trust-boundary
-title: "Trust boundary와 입력 검증 책임"
+title: "신뢰 경계와 입력 검증 책임"
 summary: "브라우저·외부 API·파일·DB projection 등 신뢰 수준이 다른 경계를 넘어오는 데이터를 다시 검증해야 하는 이유와 client-side 검증을 보안 경계로 볼 수 없는 이유를 이해한다."
 level: 1
 status: PUBLISHED
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: server-side validation과 allowlist 중심 입력 검증 원칙 확인
 ---
-# Trust boundary와 입력 검증 책임
+# 신뢰 경계와 입력 검증 책임
 
 프론트엔드가 이미 검증을 했으니 backend는 같은 값을 다시 확인하지 않아도 된다고 생각하면 신뢰 경계를 잘못 잡은 것입니다. 공격자는 브라우저 UI를 거치지 않고 HTTP 요청을 직접 만들 수 있습니다.
 

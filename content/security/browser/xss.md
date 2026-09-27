@@ -3,7 +3,7 @@ kind: concept
 contentKey: security.core.browser.xss
 topicContentKey: security.core.browser
 slug: xss
-title: "XSS가 데이터를 실행 코드로 바꾸는 순간"
+title: "교차 사이트 스크립팅(XSS)이 데이터를 실행 코드로 바꾸는 순간"
 summary: "신뢰하지 않은 입력이 HTML·attribute·JavaScript·URL context에서 code로 해석되는 reflected/stored/DOM XSS 원리를 이해하고 context-aware output encoding과 safe DOM API를 적용한다."
 level: 2
 status: PUBLISHED
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: context-specific output encoding과 safe sink 원칙 확인
 ---
-# XSS가 데이터를 실행 코드로 바꾸는 순간
+# 교차 사이트 스크립팅(XSS)이 데이터를 실행 코드로 바꾸는 순간
 
 XSS의 핵심은 “사용자가 `<script>` 문자열을 입력했다”가 아니라 **원래 데이터여야 할 값이 browser parser에 의해 실행 가능한 code/context로 해석되는 것**입니다.
 
