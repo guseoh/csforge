@@ -1,14 +1,14 @@
 [
-  {"kind":"topic","contentKey":"database.core.model","areaSlug":"database","slug":"model","title":"관계형 데이터 모델","description":"relation/tuple, NULL의 3값 논리, 정규화","displayOrder":10,"active":true},
-  {"kind":"topic","contentKey":"database.core.sql","areaSlug":"database","slug":"sql","title":"SQL 질의 의미","description":"SELECT 논리 순서, JOIN, aggregate, window function","displayOrder":20,"active":true},
-  {"kind":"topic","contentKey":"database.core.schema","areaSlug":"database","slug":"schema","title":"Schema와 constraints","description":"primary key, foreign key, UNIQUE/CHECK constraint","displayOrder":30,"active":true},
-  {"kind":"topic","contentKey":"database.core.index","areaSlug":"database","slug":"index","title":"인덱스 구조","description":"B-tree, composite, covering/index-only, partial index","displayOrder":40,"active":true},
-  {"kind":"topic","contentKey":"database.core.optimizer","areaSlug":"database","slug":"optimizer","title":"Optimizer와 execution plan","description":"cost estimate, EXPLAIN, statistics와 row estimate","displayOrder":50,"active":true},
-  {"kind":"topic","contentKey":"database.core.transaction","areaSlug":"database","slug":"transaction","title":"트랜잭션 기초","description":"ACID, autocommit, multi-statement atomicity","displayOrder":60,"active":true},
-  {"kind":"topic","contentKey":"database.core.isolation","areaSlug":"database","slug":"isolation","title":"트랜잭션 격리 수준","description":"read anomalies, READ COMMITTED, SERIALIZABLE","displayOrder":70,"active":true},
-  {"kind":"topic","contentKey":"database.core.locking","areaSlug":"database","slug":"locking","title":"Locks와 concurrency","description":"row lock, deadlock, pessimistic locking","displayOrder":80,"active":true},
-  {"kind":"topic","contentKey":"database.core.mvcc","areaSlug":"database","slug":"mvcc","title":"MVCC와 스냅샷","description":"row versions, snapshot visibility, old version cleanup","displayOrder":90,"active":true},
-  {"kind":"topic","contentKey":"database.core.storage","areaSlug":"database","slug":"storage","title":"Storage와 recovery","description":"page/buffer, WAL, checkpoint와 crash recovery","displayOrder":100,"active":true},
-  {"kind":"topic","contentKey":"database.core.replication","areaSlug":"database","slug":"replication","title":"복제","description":"primary/replica, lag, failover consistency","displayOrder":110,"active":true},
-  {"kind":"topic","contentKey":"database.core.query-patterns","areaSlug":"database","slug":"query-patterns","title":"백엔드 조회 패턴","description":"offset/keyset pagination, batch와 N+1","displayOrder":120,"active":true}
+  {"kind":"topic","contentKey":"database.core.model","areaSlug":"database","slug":"model","title":"관계형 데이터 모델","description":"관계(relation)/튜플(tuple), NULL의 3값 논리, 정규화","displayOrder":10,"active":true},
+  {"kind":"topic","contentKey":"database.core.sql","areaSlug":"database","slug":"sql","title":"SQL 질의 의미","description":"SELECT 논리 순서, JOIN, 집계, 윈도 함수","displayOrder":20,"active":true},
+  {"kind":"topic","contentKey":"database.core.schema","areaSlug":"database","slug":"schema","title":"스키마와 제약 조건","description":"기본 키, 외래 키, UNIQUE/CHECK 제약 조건","displayOrder":30,"active":true},
+  {"kind":"topic","contentKey":"database.core.index","areaSlug":"database","slug":"index","title":"인덱스 구조","description":"B-tree, 복합·커버링·부분 인덱스, Index-only scan","displayOrder":40,"active":true},
+  {"kind":"topic","contentKey":"database.core.optimizer","areaSlug":"database","slug":"optimizer","title":"옵티마이저와 실행 계획","description":"비용 추정, EXPLAIN, 통계와 행 수 추정","displayOrder":50,"active":true},
+  {"kind":"topic","contentKey":"database.core.transaction","areaSlug":"database","slug":"transaction","title":"트랜잭션 기초","description":"ACID, 자동 커밋, 여러 SQL 문의 원자성","displayOrder":60,"active":true},
+  {"kind":"topic","contentKey":"database.core.isolation","areaSlug":"database","slug":"isolation","title":"트랜잭션 격리 수준","description":"읽기 이상 현상, READ COMMITTED, SERIALIZABLE","displayOrder":70,"active":true},
+  {"kind":"topic","contentKey":"database.core.locking","areaSlug":"database","slug":"locking","title":"잠금과 동시성","description":"행 잠금, 교착 상태, 비관적 잠금","displayOrder":80,"active":true},
+  {"kind":"topic","contentKey":"database.core.mvcc","areaSlug":"database","slug":"mvcc","title":"MVCC와 스냅샷","description":"행 버전, 스냅샷 가시성, 오래된 버전 정리","displayOrder":90,"active":true},
+  {"kind":"topic","contentKey":"database.core.storage","areaSlug":"database","slug":"storage","title":"저장 구조와 복구","description":"페이지/버퍼, WAL, 체크포인트와 장애 복구","displayOrder":100,"active":true},
+  {"kind":"topic","contentKey":"database.core.replication","areaSlug":"database","slug":"replication","title":"복제","description":"프라이머리/리플리카, 복제 지연, 장애 조치와 일관성","displayOrder":110,"active":true},
+  {"kind":"topic","contentKey":"database.core.query-patterns","areaSlug":"database","slug":"query-patterns","title":"백엔드 조회 패턴","description":"Offset/Keyset 페이지네이션, 배치 로딩과 N+1","displayOrder":120,"active":true}
 ]
