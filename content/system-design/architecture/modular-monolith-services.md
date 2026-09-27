@@ -3,8 +3,8 @@ kind: concept
 contentKey: system-design.core.architecture.modular-monolith-services
 topicContentKey: system-design.core.architecture
 slug: modular-monolith-services
-title: "Modular Monolith와 Service 분리"
-summary: "module boundary를 먼저 명확히 하고 독립 배포·확장·장애 격리의 실제 요구가 운영 복잡성보다 클 때 service 분리를 판단한다."
+title: "모듈형 모놀리스와 서비스 분리 (Modular Monolith)"
+summary: "모듈 경계를 먼저 분명히 한다. 독립 배포·확장·장애 격리의 실질적 이점이 운영 복잡성보다 클 때 서비스를 분리한다."
 level: 2
 status: PUBLISHED
 displayOrder: 30
@@ -14,17 +14,17 @@ references:
     referenceType: OTHER
     language: en
     displayOrder: 1
-    relationNote: "single deployable component과 module·service coupling trade-off 확인"
-  - url: "https://docs.aws.amazon.com/wellarchitected/latest/framework/definitions.html"
-    title: "AWS Well-Architected Framework: Definitions"
-    referenceType: OFFICIAL
+    relationNote: "단일 배포 단위와 모듈·서비스 결합도의 절충 확인"
+  - url: "https://martinfowler.com/articles/microservice-trade-offs.html"
+    title: "Martin Fowler: Microservice Trade-Offs"
+    referenceType: OTHER
     language: en
     displayOrder: 2
-    relationNote: "operational excellence·reliability·cost를 architecture 평가에 포함하는 관점 확인"
+    relationNote: "모듈 경계·독립 배포·분산 및 운영 비용 사이의 절충을 검토"
 ---
-# Modular Monolith와 Service 분리
+# 모듈형 모놀리스와 서비스 분리 (Modular Monolith)
 
-시스템이 커진다고 반드시 여러 service로 나눠야 하는 것은 아닙니다. 하나의 deployable application 안에서도 module별 public API와 data ownership을 명확히 하면 변경 범위를 제한할 수 있습니다. 반대로 process를 여러 개로 나눠도 서로의 table과 내부 모델을 직접 건드리면 distributed monolith가 될 수 있습니다.
+시스템이 커진다고 반드시 여러 서비스로 나눠야 하는 것은 아닙니다. 하나의 배포 단위 안에서도 모듈별 공개 API와 데이터 소유권을 분명히 하면 변경 범위를 제한할 수 있습니다. 반대로 프로세스를 여러 개로 나눠도 서로의 테이블과 내부 모델을 직접 다루면 분산 모놀리스(distributed monolith)가 될 수 있습니다.
 
 ```text
 one deployable application
