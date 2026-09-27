@@ -12,7 +12,7 @@ policies:
   question:
     topicDifficultyCoverage: [EASY, MEDIUM, HARD]
     areaTypeCoverage: [MULTIPLE_CHOICE, SHORT_ANSWER, DESCRIPTIVE, SCENARIO]
-    hardRule: 오래된 데이터, 동시 만료, 퇴출, 핫 키, 장애 복구나 원본 데이터와의 trade-off를 포함해 다단계로 판단하게 한다.
+    hardRule: 오래된 데이터, 동시 만료, 퇴출, 핫 키, 장애 복구나 원본 데이터와의 상충 관계를 포함해 다단계로 판단하게 한다.
     shortAnswerRule: 짧고 안정적으로 채점 가능한 용어·값·상태만 묻고, 원인·과정 설명이 필요하면 DESCRIPTIVE 또는 SCENARIO를 사용한다.
   source:
     primary: [Redis Documentation, HTTP caching specifications, Spring Cache reference]
@@ -72,7 +72,7 @@ topics:
     title: 동시 만료와 캐시 폭주
     order: 30
     level: 3
-    objective: 인기 키의 동시 미스·만료가 원본 저장소 부하를 폭증시키는 이유와 잠금·single-flight·선제 갱신의 trade-off를 판단한다.
+    objective: 인기 키의 동시 미스·만료가 원본 저장소 부하를 폭증시키는 이유와 잠금·single-flight·선제 갱신의 상충 관계를 판단한다.
     density: CORE
     visualization: DIAGRAM
 - key: cache.core.operations
