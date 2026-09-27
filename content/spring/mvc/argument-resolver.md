@@ -3,7 +3,7 @@ kind: concept
 contentKey: spring.core.mvc.argument-resolver
 topicContentKey: spring.core.mvc
 slug: argument-resolver
-title: "HandlerMethodArgumentResolver"
+title: "요청 인자 해석(HandlerMethodArgumentResolver)"
 summary: "Controller method parameter를 요청/context에서 어떤 방식으로 만들지 HandlerMethodArgumentResolver가 결정하며 custom current-user 같은 경계를 확장할 수 있음을 이해한다"
 level: 2
 status: PUBLISHED
@@ -22,7 +22,7 @@ references:
     displayOrder: 2
     relationNote: "supportsParameter/resolveArgument 확장 계약 확인"
 ---
-# HandlerMethodArgumentResolver
+# 요청 인자 해석(HandlerMethodArgumentResolver)
 
 Controller method를 보면 `HttpServletRequest`를 직접 뒤져 값을 꺼내지 않아도 다양한 parameter를 받을 수 있습니다.
 

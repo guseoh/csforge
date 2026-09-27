@@ -3,7 +3,7 @@ kind: concept
 contentKey: spring.core.transaction-aop.transaction-proxy
 topicContentKey: spring.core.transaction-aop
 slug: transaction-proxy
-title: "@Transactional proxy"
+title: "@Transactional 프록시"
 summary: "Spring declarative transaction이 proxy/interceptor를 통해 method 호출을 감싸고 transaction manager가 기존 transaction 참여·신규 시작·commit·rollback을 결정하는 흐름을 이해한다"
 level: 3
 status: PUBLISHED
@@ -22,7 +22,7 @@ references:
     displayOrder: 2
     relationNote: "@Transactional default propagation/isolation/rollback semantics 확인"
 ---
-# @Transactional proxy
+# @Transactional 프록시
 
 `@Transactional` method 안에 들어가면 DB transaction이 열린다는 설명은 출발점으로는 쓸 수 있지만 실제 동작을 이해하기에는 부족합니다. Spring의 전형적인 proxy mode에서는 caller가 target object를 직접 호출하는 대신 **transaction advice가 적용된 proxy를 통과할 때** declarative transaction이 시작됩니다.
 

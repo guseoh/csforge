@@ -3,7 +3,7 @@ kind: concept
 contentKey: spring.core.scope-lifecycle.scopes
 topicContentKey: spring.core.scope-lifecycle
 slug: scopes
-title: "singleton·prototype·request scope"
+title: "Bean 범위(scope): singleton·prototype·request"
 summary: "Bean scope가 같은 definition에서 몇 개의 instance를 언제 만들고 누구와 공유하는지 정하는 수명 규칙임을 이해한다"
 level: 2
 status: PUBLISHED
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: "singleton, prototype, request 등 Bean scope 계약 확인"
 ---
-# singleton·prototype·request scope
+# Bean 범위(scope): singleton·prototype·request
 
 Bean scope는 “이 annotation을 붙이면 어떻게 생성된다”는 문법보다 **같은 Bean definition을 조회할 때 어떤 instance를 얼마나 오래 공유할 것인가**를 정하는 수명 정책입니다.
 

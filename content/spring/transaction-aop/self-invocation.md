@@ -15,6 +15,14 @@ references:
     language: en
     displayOrder: 1
     relationNote: "proxy mode에서 external calls만 intercepted되고 self-invocation이 advice를 적용하지 않는 공식 설명 확인"
+  - url: "https://techblog.woowahan.com/2617/"
+    title: "AOP를 이용한 OAuth2 캐시 적용하기"
+    referenceType: COMPANY_TECH_BLOG
+    language: ko
+    depth: article
+    recommendation: "proxy 기반 AOP에서 self-invocation이 advice를 우회하는 실무 사례를 보충하되 세부 계약은 공식 문서를 따른다."
+    displayOrder: 2
+    relationNote: "AOP proxy 내부 호출이 advice 적용을 우회하는 운영 코드 사례 확인"
 ---
 # self-invocation 함정
 

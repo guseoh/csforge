@@ -3,7 +3,7 @@ kind: concept
 contentKey: spring.core.mvc.message-converter
 topicContentKey: spring.core.mvc
 slug: message-converter
-title: "HttpMessageConverter"
+title: "HTTP 메시지 변환(HttpMessageConverter)"
 summary: "HTTP message body와 Java object 사이 변환이 Content-Type과 Accept, converter 선택에 의해 이루어지며 JSON parsing 실패가 controller 실행 전 발생할 수 있음을 이해한다"
 level: 2
 status: PUBLISHED
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: "HttpMessageConverter가 request/response body를 읽고 쓰는 계약 확인"
 ---
-# HttpMessageConverter
+# HTTP 메시지 변환(HttpMessageConverter)
 
 `@RequestBody CreateOrderRequest request`에 JSON이 들어오는 것을 흔히 “Jackson이 DTO로 바꾼다”라고만 설명합니다. 실제 Spring MVC 관점에서는 **HTTP message body를 특정 Java type으로 읽을 수 있는 `HttpMessageConverter`를 선택**하는 단계가 먼저 있습니다. JSON converter가 내부에서 Jackson을 사용할 수 있지만 framework 계약과 JSON library 구현을 구분하는 것이 좋습니다.
 

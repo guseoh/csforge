@@ -21,6 +21,12 @@ references:
     language: en
     displayOrder: 2
     relationNote: "slice annotation별 auto-configuration 범위 확인"
+  - url: "https://docs.spring.io/spring-framework/reference/testing/annotations/integration-spring/annotation-mockitobean.html"
+    title: "Spring Framework Reference: @MockitoBean and @MockitoSpyBean"
+    referenceType: OFFICIAL
+    language: en
+    displayOrder: 3
+    relationNote: "현재 Spring Framework에서 slice context의 collaborator Bean을 Mockito mock으로 교체하는 방식 확인"
 ---
 # slice test와 context test
 
@@ -83,8 +89,11 @@ full application context를 띄우면 configuration wiring과 여러 component i
 ### test double이 많아질수록 “무엇을 검증했나”를 확인한다
 
 ```java
-@WebMvcTest
-@MockBean OrderService service;
+@WebMvcTest(OrderController.class)
+class OrderControllerTest {
+    @MockitoBean
+    OrderService service;
+}
 ```
 
 이 test는 controller→service 실제 transaction/domain behavior를 검증하지 않습니다. 그 대신 HTTP mapping/serialization contract에 집중할 수 있습니다. 이것을 알고 사용하면 좋은 slice이고, “주문 기능 전체가 검증됐다”고 착각하면 coverage gap이 됩니다.

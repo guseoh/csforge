@@ -55,6 +55,8 @@ class KakaoPayGateway implements PaymentGateway { }
 
 하지만 `@Primary`를 “무조건 이 Bean이 이긴다”라고 단순화하면 안 됩니다. collection injection처럼 여러 Bean을 모두 받는 경우나 명시적 qualifier가 있는 injection point 등 resolution 맥락이 다릅니다.
 
+Framework 6.2부터는 덜 선호되는 후보를 `@Fallback`으로 표시할 수도 있습니다. 같은 타입 후보 중 일반 후보가 하나 남으면 그 후보가 fallback 후보보다 우선됩니다. `@Fallback`은 일반 후보가 없는 경우를 위한 기본 후보 표시이며, injection point에서 특정 역할을 고르는 `@Qualifier`나 일반 후보를 표시하는 `@Primary`와는 다른 선택 의도입니다.
+
 ### `@Qualifier`는 필요한 의미를 더 구체적으로 표현한다
 
 ```java

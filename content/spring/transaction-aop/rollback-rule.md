@@ -15,12 +15,20 @@ references:
     language: en
     displayOrder: 1
     relationNote: "RuntimeException/Error 기본 rollback과 checked exception 기본 commit, rule customization 확인"
+  - url: "https://docs.spring.io/spring-framework/reference/data-access/transaction/declarative/annotations.html"
+    title: "Spring Framework Reference: Using @Transactional"
+    referenceType: OFFICIAL
+    language: en
+    displayOrder: 2
+    relationNote: "Framework 6.2부터 설정할 수 있는 전체 예외 rollback 기본값 확인"
 ---
 # rollback 규칙
 
 `@Transactional` 안에서 exception이 발생하면 모두 rollback된다고 외우면 실제 운영 코드에서 쉽게 틀립니다. Spring declarative transaction은 target method 호출 결과를 interceptor가 관찰하고 **transaction attribute의 rollback rule에 따라** rollback 여부를 판단합니다.
 
 기본적으로 전형적인 declarative transaction에서는 `RuntimeException`과 `Error`는 rollback 대상이고 checked exception은 기본 rollback 대상이 아닙니다.
+
+Framework 6.2부터는 transaction management 설정에서 애플리케이션의 기본 rollback 정책을 `ALL_EXCEPTIONS`로 바꿔 checked exception도 rollback되게 할 수 있습니다. 이는 annotation별 rule이 없는 경우의 전역 기본값을 바꾸는 설정이며, 예외별 차이가 필요하면 개별 rollback rule을 계속 명시할 수 있습니다.
 
 ```java
 @Transactional

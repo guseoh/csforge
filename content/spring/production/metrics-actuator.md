@@ -9,18 +9,24 @@ level: 3
 status: PUBLISHED
 displayOrder: 20
 references:
-  - url: "https://docs.spring.io/spring-boot/reference/actuator/index.html"
-    title: "Spring Boot Reference: Actuator"
+  - url: "https://docs.spring.io/spring-boot/reference/actuator/endpoints.html"
+    title: "Spring Boot Reference: Endpoints"
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
-    relationNote: Actuator endpoint와 production-ready feature 확인
-  - url: "https://docs.micrometer.io/micrometer/reference/"
-    title: "Micrometer Reference"
+    relationNote: Actuator endpoint 노출과 접근 제어 확인
+  - url: "https://docs.spring.io/spring-boot/reference/actuator/metrics.html"
+    title: "Spring Boot Reference: Metrics"
     referenceType: OFFICIAL
     language: en
     displayOrder: 2
-    relationNote: meter, tag, timer 등 metrics instrumentation 모델 확인
+    relationNote: Spring Boot의 Micrometer 연동과 metrics 수집 확인
+  - url: "https://docs.micrometer.io/micrometer/reference/concepts/meters.html"
+    title: "Micrometer Reference: Meters"
+    referenceType: OFFICIAL
+    language: en
+    displayOrder: 3
+    relationNote: meter identity, name, tag를 포함한 instrumentation 기본 개념 확인
 ---
 # Actuator와 metrics로 애플리케이션 상태 관측하기
 
