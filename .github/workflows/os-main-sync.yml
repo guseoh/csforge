@@ -1,0 +1,32 @@
+name: OS latest-main sync
+
+on:
+  push:
+    branches: [codex/content-operating-systems-quality]
+    paths: ['.github/workflows/os-main-sync.yml']
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: codex/content-operating-systems-quality
+          fetch-depth: 0
+      - name: Merge verified latest main
+        shell: bash
+        run: |
+          git config user.name 'guseoh'
+          git config user.email '81723538+guseoh@users.noreply.github.com'
+          git fetch origin main
+          expected='1d12d507efd4af29eea9c187c875d8ecd810b996'
+          actual="$(git rev-parse origin/main)"
+          test "$actual" = "$expected" || { echo "main moved: $actual"; exit 1; }
+          git merge --no-ff --no-commit origin/main
+          git rm .github/workflows/os-main-sync.yml
+          git diff --check --cached
+          git commit -m 'merge: sync latest main into OS quality branch'
+          git push origin HEAD:codex/content-operating-systems-quality
