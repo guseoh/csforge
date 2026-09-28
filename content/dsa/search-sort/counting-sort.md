@@ -14,7 +14,7 @@ references:
     referenceType: BOOK
     language: en
     depth: section
-    recommendation: "key-indexed counting과 LSD·MSD 기수 정렬, 안정적인 digit pass를 확인한다."
+    recommendation: "키 인덱스 계수법과 LSD·MSD 기수 정렬, 안정적인 자리별 정렬을 확인한다."
     displayOrder: 1
 ---
 # 계수 정렬(Counting Sort)
