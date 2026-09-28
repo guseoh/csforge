@@ -14,7 +14,7 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "IPv4 헤더의 출발지·목적지 주소와 IP 패킷 전달의 기본을 확인한다."
+    recommendation: "IPv4 주소, 헤더와 패킷 전달의 기본 규칙을 확인한다."
     displayOrder: 1
 ---
 # IPv4 주소
