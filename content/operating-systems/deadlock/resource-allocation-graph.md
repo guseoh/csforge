@@ -11,7 +11,7 @@ displayOrder: 30
 references:
   - url: "https://www.cs.uic.edu/~jbell/CourseNotes/OperatingSystems/7_Deadlocks.html"
     title: "Operating Systems: Deadlocks — UIC Course Notes"
-    referenceType: OFFICIAL
+    referenceType: COURSE
     language: en
     depth: section
     recommendation: "resource-allocation graph, safe state, Banker avoidance와 deadlock detection/recovery를 확인한다."
