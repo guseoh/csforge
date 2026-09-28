@@ -14,7 +14,7 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "인터넷 프로토콜 계층의 책임 경계를 확인한다."
+    recommendation: "인터넷 호스트의 네트워크 계층 구조와 계층별 책임 경계를 확인한다."
     displayOrder: 1
 ---
 # 캡슐화(Encapsulation)
