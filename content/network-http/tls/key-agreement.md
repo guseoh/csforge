@@ -4,7 +4,7 @@ contentKey: network-http.core.tls.key-agreement
 topicContentKey: network-http.core.tls
 slug: key-agreement
 title: "키 합의(Key Agreement)"
-summary: "ephemeral key share로 shared secret을 만들고 certificate authentication이 그 handshake를 service identity에 연결하는 역할 차이를 설명한다."
+summary: "TLS 1.3에서 임시 키를 교환해 공통 비밀을 만들고, 이 과정과 인증서 기반 서버 인증이 서로 다른 책임을 가진다는 점을 설명한다."
 level: 2
 status: PUBLISHED
 displayOrder: 60
@@ -17,20 +17,45 @@ references:
 ---
 # 키 합의(Key Agreement)
 
-key agreement의 목적은 client와 server가 **shared secret 자체를 network로 전송하지 않고도 같은 secret을 계산하는 것**이다. TLS 1.3의 일반적인 (EC)DHE 흐름에서는 양쪽이 ephemeral key share를 교환하고, 각자의 private contribution을 이용해 같은 shared secret과 이후 handshake key material을 파생한다.
+키 합의의 목적은 클라이언트와 서버가 **공통 비밀(shared secret)을 네트워크로 직접 보내지 않고도 양쪽에서 같은 값을 계산하는 것**이다. TLS 1.3의 일반적인 (EC)DHE 흐름에서는 양쪽이 연결마다 사용할 임시 키 쌍을 만들고 공개할 수 있는 key share만 상대에게 전달한다.
 
-여기서 key agreement와 certificate authentication을 같은 기능으로 보면 안 된다. ECDHE key share는 shared secret을 만드는 데 사용되고, certificate와 `CertificateVerify`는 현재 handshake가 어떤 authenticated endpoint와 이루어지고 있는지를 검증하는 데 사용된다.
+```text
+클라이언트                         서버
+임시 개인 키 a                    임시 개인 키 b
+임시 공개 key share A ────────>   
+                    <──────── 임시 공개 key share B
 
-| 단계 | 교환·계산 | 목적 |
-| --- | --- | --- |
-| Client와 server가 각자 ephemeral key pair 생성 | public key share를 상대에게 전달 | secret 자체를 보내지 않고 같은 shared secret을 계산할 재료 교환 |
-| 각 endpoint가 자기 private share와 상대 public share 사용 | 양쪽에서 같은 ECDHE shared secret 계산 | handshake traffic key 파생의 입력 마련 |
-| Server가 certificate와 CertificateVerify 제시 | client가 chain·identity와 handshake 서명을 검증 | 공유한 secret의 상대가 의도한 server인지 인증 |
+클라이언트: a + B로 계산
+서버:       b + A로 계산
+           ↓
+양쪽이 같은 shared secret 획득
+```
 
-### Certificate public key가 곧 ECDHE key share는 아니다
+실제 수학 연산은 사용하는 그룹에 따라 달라지지만, 중요한 점은 **공통 비밀 자체를 패킷에 담아 보내지 않는다는 것**이다. 이 공통 비밀은 이후 TLS 키 스케줄의 입력으로 사용되어 핸드셰이크와 애플리케이션 데이터를 보호할 키를 만드는 데 기여한다.
 
-certificate 기반 TLS 1.3에서 certificate의 public key를 그대로 ECDHE shared secret 계산에 사용하는 것으로 일반화하면 부정확하다. 일반적인 ECDHE handshake에서는 별도의 ephemeral key share가 key agreement에 사용되고, certificate private key는 handshake transcript에 대한 signature를 통해 인증에 기여한다.
+### 키 합의와 서버 인증은 서로 다른 질문이다
 
-이 분리가 중요한 이유는 unauthenticated key agreement 자체는 공격자와도 수행할 수 있기 때문이다. secret을 공유했다는 사실만으로 상대가 `api.example.com`이라는 것을 알 수 없다. certificate path와 service identity verification이 현재 key exchange를 의도한 상대와 연결해 준다.
+ECDHE로 같은 비밀 값을 만들었다고 해서 상대가 내가 원래 접속하려던 서버라는 사실까지 증명되지는 않는다. 공격자와도 별도의 키 합의를 수행할 수 있기 때문이다.
 
-Ephemeral key agreement는 handshake마다 새로운 key material을 사용함으로써 forward secrecy에 기여한다. 다만 TLS 1.3에는 PSK나 resumption처럼 세부 흐름이 다른 mode도 있으므로, 핵심은 특정 message 순서를 외우는 것보다 **secret 생성과 peer authentication이 서로 다른 책임을 가진다**는 점이다.
+인증서 기반 TLS 1.3에서는 역할이 다음처럼 나뉜다.
+
+| 기능 | 주된 역할 |
+| --- | --- |
+| ECDHE key share | 양쪽이 같은 공통 비밀을 계산할 재료 제공 |
+| 인증서 | 서버의 공개 키와 서비스 식별 정보를 제시 |
+| `CertificateVerify` | 서버가 인증서와 대응하는 개인 키를 실제로 제어함을 현재 핸드셰이크에 연결해 증명 |
+| 호스트 이름 검증 | 인증서의 서비스 이름이 원래 접속 대상과 일치하는지 확인 |
+
+즉 **키 합의는 비밀을 만드는 문제이고, 인증은 그 비밀을 누구와 만들고 있는지 확인하는 문제**다.
+
+### 인증서의 공개 키와 ECDHE key share는 같은 키라고 가정하면 안 된다
+
+일반적인 인증서 기반 TLS 1.3 ECDHE 연결에서는 키 합의에 사용하는 임시 key share와 서버 인증서에 들어 있는 공개 키가 서로 다른 역할을 가진다. 인증서의 개인 키는 `CertificateVerify` 서명에 사용되고, 임시 (EC)DHE 키는 공통 비밀을 만드는 데 사용된다.
+
+이 구분 덕분에 연결마다 새로운 임시 키 재료를 사용할 수 있고, 장기 인증 개인 키가 나중에 노출되더라도 과거에 기록해 둔 세션의 키를 단순히 복원하기 어렵게 만드는 **전방향 안전성(forward secrecy)**에 기여한다.
+
+### 모든 TLS 1.3 연결이 ECDHE 인증서 흐름만 사용하는 것은 아니다
+
+TLS 1.3에는 PSK와 세션 재개처럼 키 합의·인증 흐름이 달라지는 방식도 있다. 따라서 특정 메시지 순서를 모든 TLS 연결의 절대 규칙으로 외우기보다, **어떤 재료로 공통 비밀을 만들고 어떤 방식으로 상대를 인증하는지**를 분리해서 보는 편이 중요하다.
+
+핵심은 **TLS 키 합의가 공통 비밀을 직접 전송하지 않고 양쪽에서 계산하게 하며, 인증서 기반 인증이 그 키 합의를 의도한 서버의 식별 정보와 연결한다는 점**이다.
