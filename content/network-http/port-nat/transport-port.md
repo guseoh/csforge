@@ -4,7 +4,7 @@ contentKey: network-http.core.port-nat.transport-port
 topicContentKey: network-http.core.port-nat
 slug: transport-port
 title: "전송 계층 포트"
-summary: "한 host의 여러 transport endpoint를 port가 구분하는 이유를 설명한다."
+summary: "하나의 호스트 안에서 여러 TCP·UDP 통신 종단점을 포트 번호로 구분하는 이유를 설명한다."
 level: 1
 status: PUBLISHED
 displayOrder: 10
@@ -14,29 +14,38 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "transport port와 endpoint 식별 규칙을 확인한다."
+    recommendation: "TCP·UDP 서비스 이름과 포트 번호 공간, 포트가 전송 계층 식별자라는 점을 확인한다."
     displayOrder: 1
 ---
 # 전송 계층 포트
 
-Port는 transport layer에서 한 host 안의 여러 communication endpoint를 구분하기 위한 숫자다. IP address가 destination host/interface를 찾는 데 쓰인다면 port는 그 host 안에서 **어느 transport endpoint로 data를 전달할지** 구분하는 데 사용된다.
-
-TCP와 UDP는 서로 다른 transport protocol이므로 같은 port number를 각각 독립적으로 사용할 수 있다. 예를 들어 TCP 53과 UDP 53은 숫자는 같지만 서로 다른 protocol endpoint다.
-
-### Server port와 client ephemeral port
-
-Server는 보통 미리 정한 port에 bind/listen하고 client는 connection을 만들 때 temporary local port를 선택한다. 이 client-side port를 흔히 ephemeral port라고 부른다.
+포트(port)는 **하나의 호스트 안에서 어느 전송 계층 종단점으로 데이터를 전달할지 구분하는 번호**다. IP 주소가 네트워크에서 호스트·인터페이스 쪽으로 패킷을 전달하는 데 쓰인다면, 포트 번호는 그 호스트 안에서 TCP·UDP 통신 대상을 더 세분화한다.
 
 ```text
-client 192.0.2.10:53124
-          ↓
-server 198.51.100.20:443
+IP 주소 198.51.100.20
+   ├─ TCP 443  → HTTPS 서버
+   ├─ TCP 22   → SSH 서버
+   └─ UDP 53   → DNS 서버
 ```
 
-Server port 443 하나가 client 하나만 받을 수 있다는 뜻은 아니다. TCP에서는 각 connection이 local/remote address와 port 조합으로 구분되므로 하나의 listening port가 여러 client connection을 동시에 수용할 수 있다.
+TCP와 UDP는 서로 다른 전송 프로토콜이므로 같은 숫자의 포트를 각각 독립적으로 사용할 수 있다. TCP 53과 UDP 53은 포트 번호는 같지만 같은 종단점이 아니다.
 
-### Port는 process ID가 아니다
+### 서버 포트와 클라이언트 임시 포트
 
-Port 자체가 특정 process의 영구 identity는 아니다. Socket을 어떤 process가 소유하는지는 OS state에 달려 있고, process가 종료한 뒤 같은 port를 다른 process가 사용할 수도 있다.
+서버는 보통 잘 알려진 포트나 설정된 포트에 소켓을 bind하고 연결·데이터를 기다린다. 클라이언트는 외부 서버에 연결할 때 운영체제가 선택한 임시 로컬 포트(ephemeral port)를 사용하는 경우가 많다.
 
-Transport port의 핵심은 **host 내부 transport endpoint를 demultiplex하는 식별자이며, IP address와 함께 communication endpoint를 구성한다는 것**이다.
+```text
+클라이언트 192.0.2.10:53124
+              ↓ TCP 연결
+서버       198.51.100.20:443
+```
+
+서버가 TCP 443 하나에서 listen한다고 클라이언트 한 명만 받을 수 있는 것은 아니다. 연결마다 상대 IP·포트 조합이 다르기 때문에 운영체제는 여러 연결을 별도 상태로 관리할 수 있다.
+
+### 포트 번호는 프로세스 ID가 아니다
+
+포트는 운영체제 프로세스의 영구 신원이 아니다. 실제로 어느 프로세스가 해당 포트의 소켓을 소유하는지는 현재 운영체제 상태에 달려 있고, 프로세스가 종료된 뒤 다른 프로세스가 같은 포트를 사용할 수도 있다.
+
+또한 `443이면 항상 HTTPS`처럼 포트 번호만 보고 애플리케이션 프로토콜을 확정할 수도 없다. 관례와 등록 정보는 중요한 힌트지만 실제 프로토콜은 통신 당사자의 설정이 결정한다.
+
+핵심은 **포트가 IP 주소보다 한 단계 안쪽에서 TCP·UDP 통신 종단점을 구분하는 전송 계층 식별자라는 점**이다.

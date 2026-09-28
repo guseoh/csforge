@@ -4,7 +4,7 @@ contentKey: network-http.core.port-nat.inbound-reachability
 topicContentKey: network-http.core.port-nat
 slug: inbound-reachability
 title: "외부에서 내부로 연결하기"
-summary: "unsolicited inbound packet이 mapping 없이 도달하기 어려운 이유를 설명한다."
+summary: "상태 기반 NAT 뒤의 내부 종단점에 외부에서 새 연결을 시작하려면 기존 매핑이나 명시적인 목적지 변환 규칙이 필요한 이유를 설명한다."
 level: 2
 status: PUBLISHED
 displayOrder: 70
@@ -14,31 +14,49 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "NAT mapping과 inbound reachability를 확인한다."
+    recommendation: "NAT 변환 상태와 외부에서 시작한 패킷을 내부 주소로 전달하기 위한 정적 매핑의 필요성을 확인한다."
     displayOrder: 1
 ---
 # 외부에서 내부로 연결하기
 
-일반적인 stateful outbound NAT에서는 내부 host가 먼저 외부로 flow를 만들 때 translation mapping이 생성된다. 이후 외부에서 돌아오는 reply는 그 mapping을 이용해 어느 내부 endpoint로 보낼지 결정할 수 있다.
-
-반대로 외부 peer가 **기존 mapping 없이 먼저 새로운 packet을 보낼 때**는 NAT 장치가 어느 내부 address와 port를 destination으로 선택해야 하는지 알 수 없다. 그래서 별도 규칙이 없는 unsolicited inbound traffic은 내부 endpoint까지 전달되기 어렵다.
+일반적인 상태 기반 outbound NAT에서는 내부 호스트가 먼저 외부로 통신을 시작할 때 변환 매핑이 만들어진다. 이후 외부에서 돌아오는 응답은 그 매핑을 이용해 어느 내부 주소·포트로 보낼지 결정할 수 있다.
 
 ```text
-outbound flow 있음
-external reply → existing mapping → internal endpoint
-
-새 inbound flow
-external packet → no mapping → internal destination 불명확
+내부가 먼저 시작
+10.0.0.5:40000
+      ↓ NAT
+203.0.113.9:62000
+      ↑
+외부 응답은 기존 매핑으로 내부에 복귀
 ```
 
-### Static mapping과 port forwarding
+반대로 외부 호스트가 **아무 기존 매핑 없이** `203.0.113.9:8080`으로 새 연결을 시작하면 NAT 장치는 이것을 어느 내부 주소·포트로 바꿔야 하는지 알 수 없다.
 
-외부 address·port를 특정 내부 endpoint에 고정으로 연결하는 destination NAT나 port forwarding rule을 두면 새로운 inbound traffic의 translation destination을 정의할 수 있다.
+### 외부에서 새 흐름을 받으려면 목적지 매핑을 명시할 수 있다
 
-하지만 translation rule이 생겼다고 실제 service가 자동으로 준비되는 것은 아니다. 내부 endpoint에 listener가 있어야 하고, routing과 별도의 traffic policy도 조건을 만족해야 한다.
+포트 포워딩이나 정적 destination NAT 규칙을 두면 `공인 주소:포트 → 내부 주소:포트` 관계를 미리 정의할 수 있다.
 
-### NAT의 동작과 "차단"을 구분한다
+```text
+203.0.113.9:8443
+      ↓ 정적 목적지 매핑
+10.0.0.20:443
+```
 
-Mapping 없는 packet이 전달되지 않는 모습이 firewall 차단처럼 보일 수 있지만 원인은 다르다. NAT에서는 **translation할 내부 destination이 정의되지 않았기 때문**일 수 있고, firewall은 명시적인 allow/deny policy를 평가한다.
+이제 NAT는 새 외부 패킷을 어느 내부 종단점으로 변환할지 알 수 있다.
 
-Inbound Reachability의 핵심은 **stateful NAT 뒤의 내부 endpoint에 외부가 새 flow를 시작하려면 기존 mapping이나 명시적인 destination mapping이 필요하다는 것**이다.
+### 포트 포워딩이 있다고 서비스가 자동으로 열리는 것은 아니다
+
+변환 규칙이 맞아도 다음 조건이 별도로 필요하다.
+
+- NAT 장치까지의 라우팅이 존재해야 한다.
+- 방화벽·보안 그룹 등 접근 정책이 허용해야 한다.
+- 내부 서버가 해당 주소·포트에서 실제로 대기 중이어야 한다.
+- 반환 경로도 정상이어야 한다.
+
+따라서 `NAT 설정 완료 = 외부 접속 가능`으로 단정하면 안 된다.
+
+### 매핑이 없어 전달되지 않는 것과 방화벽이 차단한 것은 원인이 다르다
+
+상태 기반 NAT에서 외부 새 패킷이 내부로 들어가지 못하는 모습은 방화벽 차단처럼 보일 수 있다. 하지만 NAT에서는 **어느 내부 목적지로 변환해야 할지 정의되지 않았기 때문**일 수 있고, 방화벽은 명시적인 허용·차단 규칙을 평가한다.
+
+핵심은 **외부에서 NAT 뒤 내부 종단점으로 새 흐름을 시작하려면 번역할 내부 목적지를 기존 상태나 명시적 매핑으로 알 수 있어야 하며, 실제 접근 허용은 별도 정책이라는 점**이다.
