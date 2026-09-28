@@ -4,7 +4,7 @@ contentKey: network-http.core.http-message.response-message
 topicContentKey: network-http.core.http-message
 slug: response-message
 title: "HTTP 응답 메시지"
-summary: "status code·header fields·optional content가 request 처리 결과를 표현하는 방식을 설명한다."
+summary: "HTTP 응답에서 상태 코드·필드·선택적인 콘텐츠가 요청 처리 결과와 표현 데이터를 어떻게 전달하는지 설명한다."
 level: 1
 status: PUBLISHED
 displayOrder: 20
@@ -17,19 +17,56 @@ references:
 ---
 # HTTP 응답 메시지
 
-HTTP response는 server나 intermediary가 request에 대한 결과를 client에 전달하는 message다. status code는 요청 처리 결과의 HTTP-level 의미를 나타내고, header fields는 representation metadata, cache policy, location이나 조건 같은 추가 정보를 전달한다. 필요한 경우 content에 선택된 representation이나 error detail을 담는다.
+HTTP 응답은 서버나 HTTP 중개자가 **현재 요청을 어떻게 처리했는지** 클라이언트에 전달하는 메시지다. 응답을 읽을 때는 상태 코드, 응답 필드, 그리고 필요한 경우 포함되는 콘텐츠를 서로 다른 역할로 나눠 보는 것이 중요하다.
 
 ```text
-Response
-├─ status code
-├─ header fields
-└─ optional content
+HTTP 응답
+├─ 상태 코드           → 요청 처리 결과의 HTTP 의미
+├─ 필드                → 캐시·표현 형식·위치 등 추가 정보
+└─ 선택적인 콘텐츠     → 표현 데이터 또는 오류 상세
 ```
 
-status code는 response의 의미를 이해하는 첫 기준이지만 모든 결과를 body와 1:1로 연결하지 않는다. `204 No Content`처럼 content가 없는 응답도 있고, `304 Not Modified`처럼 기존 cached representation을 재사용하도록 알려 주는 response도 있다.
+상태 코드는 응답 의미를 이해하는 첫 기준이다. `200 OK`, `404 Not Found`, `503 Service Unavailable`처럼 요청을 HTTP 관점에서 어떻게 처리했는지 알려 준다. 응답 필드는 `Content-Type`, `Location`, `Cache-Control`, `ETag`처럼 그 결과를 해석하거나 재사용하는 데 필요한 정보를 전달할 수 있다.
 
-### Response가 도착했다는 사실과 원하는 작업의 완료는 다를 수 있다
+콘텐츠가 있다면 선택된 표현 데이터나 오류 상세를 담을 수 있다. 하지만 **모든 응답에 콘텐츠가 존재하는 것은 아니다.**
 
-HTTP response는 현재 request에 대해 protocol participant가 반환한 결과다. 예를 들어 `202 Accepted`는 요청을 접수했다는 의미를 표현할 수 있지만, 그 뒤의 비동기 작업이 이미 끝났다는 뜻은 아니다. 반대로 error status에도 문제를 설명하는 representation이 content로 포함될 수 있다.
+### 상태 코드와 콘텐츠 존재 여부는 1:1 관계가 아니다
 
-따라서 HTTP response를 이해할 때는 **status semantics, response metadata와 optional representation**을 함께 읽고, 특정 status가 application workflow에서 어떤 상태를 의미하는지는 API contract가 별도로 정의해야 한다.
+예를 들어 `204 No Content`는 성공 응답이지만 콘텐츠가 없다. `304 Not Modified`도 서버가 현재 표현 데이터를 다시 보내기보다 클라이언트가 가진 저장 응답을 재사용할 수 있음을 알려 주는 응답이다.
+
+```text
+200 OK
+→ 콘텐츠가 있을 수 있음
+
+204 No Content
+→ 성공했지만 콘텐츠 없음
+
+304 Not Modified
+→ 새 표현 콘텐츠를 보내지 않고 기존 저장 응답 재사용 유도
+```
+
+반대로 오류 상태라고 해서 콘텐츠가 없어야 하는 것도 아니다. `400`이나 `404` 응답에 문제 원인과 복구 방법을 설명하는 JSON 표현을 함께 보낼 수 있다.
+
+### HTTP 성공과 업무 처리 완료도 항상 같은 시점은 아니다
+
+`202 Accepted`는 대표적인 예다. 서버가 요청을 받아 이후 처리할 수 있다는 의미를 표현할 수 있지만, 비동기 작업이 이미 완료됐다는 뜻은 아니다.
+
+```text
+POST /reports
+      ↓
+202 Accepted
+      ↓
+작업 큐에 등록
+      ↓
+나중에 실제 보고서 생성 완료
+```
+
+이 경우 클라이언트가 실제 완료 여부를 알아야 한다면 작업 상태 조회 API나 별도 알림 계약이 필요하다. 상태 코드 하나만 보고 애플리케이션의 전체 작업 수명 주기를 추측해서는 안 된다.
+
+### 응답도 어느 중개자가 만들었는지 구분해야 한다
+
+CDN이나 리버스 프록시가 있는 환경에서는 클라이언트가 받은 응답을 원본 애플리케이션이 직접 만들었다고 단정할 수 없다. 캐시가 응답을 재사용하거나 게이트웨이가 백엔드 오류를 바탕으로 자체 응답을 만들 수도 있다.
+
+따라서 운영 장애에서는 상태 코드뿐 아니라 요청 ID, 캐시 상태, 프록시 로그, 원본 서버 로그를 연결해 **누가 그 응답을 생성했는지** 확인하는 것이 중요하다.
+
+핵심은 **HTTP 응답 메시지가 상태 코드·필드·선택적인 표현 콘텐츠를 함께 사용해 현재 요청에 대한 HTTP 결과를 전달하고, 애플리케이션의 최종 업무 완료 여부는 API 계약에 따라 별도로 해석해야 한다는 점**이다.
