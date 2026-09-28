@@ -36,7 +36,7 @@
     "contentKey": "operating-systems.core.kernel-boundary.os-resource-manager.q3",
     "promptMarkdown": "한 backend process가 file descriptor를 계속 열고 닫지 않아 결국 새 socket을 만들지 못한다. 이 문제를 `resource allocation → protection/limit → reclamation` 관점에서 분석하라.",
     "questionType": "SCENARIO",
-    "difficulty": "HARD",
+    "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": [
       "operating-systems.core.kernel-boundary.os-resource-manager"
@@ -171,7 +171,7 @@
     "contentKey": "operating-systems.core.kernel-boundary.privilege-protection.q4",
     "promptMarkdown": "HTTP `ADMIN` role 검사는 통과했지만 Linux process가 `/etc/secret`을 읽을 OS permission은 없다. 요청 결과와 두 permission 층의 관계를 설명하라.",
     "questionType": "SCENARIO",
-    "difficulty": "HARD",
+    "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": [
       "operating-systems.core.kernel-boundary.privilege-protection"
@@ -287,7 +287,7 @@
     "contentKey": "operating-systems.core.kernel-boundary.system-call-flow.q4",
     "promptMarkdown": "Socket read가 300 ms 걸렸지만 profiler상 해당 Java thread의 CPU 사용 시간은 매우 작다. System-call flow와 scheduler 관점에서 가능한 상태를 분석하라.",
     "questionType": "SCENARIO",
-    "difficulty": "HARD",
+    "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": [
       "operating-systems.core.kernel-boundary.system-call-flow"

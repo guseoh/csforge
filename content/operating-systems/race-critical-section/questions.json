@@ -193,7 +193,7 @@
     "contentKey": "operating-systems.core.race-critical-section.critical-section.q3",
     "promptMarkdown": "mutex를 잡은 채 500ms DB query를 수행하는 코드가 높은 contention에서 어떤 영향을 만드는지 설명하라.",
     "questionType": "SCENARIO",
-    "difficulty": "HARD",
+    "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": [
       "operating-systems.core.race-critical-section.critical-section"
@@ -295,7 +295,7 @@
     "contentKey": "operating-systems.core.race-critical-section.spin-vs-block.q3",
     "promptMarkdown": "single-core에서 lock owner가 preempt된 상태인데 waiter가 계속 spin하면 왜 특히 비효율적인가?",
     "questionType": "SCENARIO",
-    "difficulty": "HARD",
+    "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": [
       "operating-systems.core.race-critical-section.spin-vs-block"
