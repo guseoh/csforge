@@ -14,7 +14,7 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "호스트가 목적지 주소에 따라 직접 전달 또는 다음 홉 게이트웨이를 선택하는 IP 계층 동작을 확인한다."
+    recommendation: "인터넷 호스트의 네트워크 계층 구조와 계층별 책임 경계를 확인한다."
     displayOrder: 1
 ---
 # 기본 게이트웨이
