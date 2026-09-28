@@ -14,7 +14,7 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "ARP 요청이 로컬 이더넷 영역에서 브로드캐스트되는 동작을 확인한다."
+    recommendation: "로컬 링크에서 IPv4 주소와 이더넷 주소를 대응시키는 ARP 동작을 확인한다."
     displayOrder: 1
 ---
 # 브로드캐스트 도메인
