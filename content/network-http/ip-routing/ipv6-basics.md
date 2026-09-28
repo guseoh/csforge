@@ -21,7 +21,7 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "IPv6 경로 MTU 탐색과 ICMPv6 Packet Too Big을 이용한 송신 측 패킷 크기 조정을 확인한다."
+    recommendation: "IPv6 경로 MTU 탐색과 ICMPv6 Packet Too Big을 이용한 송신 측 패킷 크기 조정 규칙을 확인한다."
     displayOrder: 2
     relationNote: "IPv6 라우터가 전달 중 패킷을 단편화하지 않으므로 송신 측이 경로 MTU를 반영해야 하는 경계를 보충한다."
 ---
