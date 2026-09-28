@@ -50,6 +50,11 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
+    testLogging {
+        events 'failed'
+        exceptionFormat 'full'
+        showStandardStreams = true
+    }
     doFirst {
         def slurper = new groovy.json.JsonSlurper()
         def dsaRoot = project.file('../content/dsa')
