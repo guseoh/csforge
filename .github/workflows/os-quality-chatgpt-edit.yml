@@ -1,0 +1,118 @@
+name: OS quality ChatGPT edit
+
+on:
+  push:
+    branches:
+      - codex/content-operating-systems-quality
+
+permissions:
+  contents: write
+
+jobs:
+  apply-reviewed-difficulty-fixes:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: codex/content-operating-systems-quality
+          fetch-depth: 0
+
+      - name: Apply reviewed OS difficulty fixes
+        shell: bash
+        run: |
+          python - <<'PY'
+          import copy
+          import json
+          from pathlib import Path
+
+          targets = {
+              "content/operating-systems/kernel-boundary/questions.json": [
+                  "operating-systems.core.kernel-boundary.os-resource-manager.q3",
+                  "operating-systems.core.kernel-boundary.privilege-protection.q4",
+                  "operating-systems.core.kernel-boundary.system-call-flow.q4",
+              ],
+              "content/operating-systems/scheduling/questions.json": [
+                  "operating-systems.core.scheduling.timer-interrupt-preemption.q3",
+                  "operating-systems.core.scheduling.round-robin.q3",
+              ],
+              "content/operating-systems/race-critical-section/questions.json": [
+                  "operating-systems.core.race-critical-section.critical-section.q3",
+                  "operating-systems.core.race-critical-section.spin-vs-block.q3",
+              ],
+              "content/operating-systems/deadlock/questions.json": [
+                  "operating-systems.core.deadlock.deadlock-avoidance.q3",
+                  "operating-systems.core.deadlock.starvation.q3",
+              ],
+              "content/operating-systems/filesystem/questions.json": [
+                  "operating-systems.core.filesystem.file-descriptor.q3",
+                  "operating-systems.core.filesystem.open-file-table.q3",
+              ],
+              "content/operating-systems/io/questions.json": [
+                  "operating-systems.core.io.device-io-kernel-path.q3",
+              ],
+              "content/operating-systems/threads/questions.json": [
+                  "operating-systems.core.threads.thread-count-workload.q3",
+              ],
+          }
+
+          changed = []
+          for file_name, keys in targets.items():
+              path = Path(file_name)
+              text = path.read_text(encoding="utf-8")
+              before = json.loads(text)
+              updated = text
+
+              for key in keys:
+                  marker = f'"contentKey": "{key}"'
+                  start = updated.find(marker)
+                  if start < 0:
+                      raise SystemExit(f"missing contentKey: {key}")
+                  next_key = updated.find('"contentKey":', start + len(marker))
+                  end = len(updated) if next_key < 0 else next_key
+                  block = updated[start:end]
+                  hard = '"difficulty": "HARD"'
+                  medium = '"difficulty": "MEDIUM"'
+                  if hard not in block:
+                      if medium in block:
+                          continue
+                      raise SystemExit(f"expected HARD difficulty near: {key}")
+                  block = block.replace(hard, medium, 1)
+                  updated = updated[:start] + block + updated[end:]
+                  changed.append(key)
+
+              after = json.loads(updated)
+              before_masked = copy.deepcopy(before)
+              after_masked = copy.deepcopy(after)
+              target_set = set(keys)
+              for collection in (before_masked, after_masked):
+                  for q in collection:
+                      if q.get("contentKey") in target_set:
+                          q["difficulty"] = "__REVIEWED__"
+              if before_masked != after_masked:
+                  raise SystemExit(f"unexpected non-difficulty change in {file_name}")
+              path.write_text(updated, encoding="utf-8")
+
+          expected = sum(len(v) for v in targets.values())
+          if len(changed) != expected:
+              raise SystemExit(f"expected {expected} changes, got {len(changed)}: {changed}")
+          print(f"Changed {len(changed)} reviewed questions from HARD to MEDIUM")
+          for key in changed:
+              print(key)
+          PY
+
+          git diff --check
+          git diff --stat
+
+      - name: Commit reviewed fixes
+        shell: bash
+        run: |
+          if git diff --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add content/operating-systems/*/questions.json
+          git commit -m "fix: recalibrate OS question difficulty"
+          git push origin HEAD:codex/content-operating-systems-quality
