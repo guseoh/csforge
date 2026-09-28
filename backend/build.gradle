@@ -53,7 +53,14 @@ tasks.named('test') {
     doFirst {
         def slurper = new groovy.json.JsonSlurper()
         def questionFiles = fileTree('../content/dsa') { include '**/questions.json' }.files.toList().sort { it.path }
-        def counts = questionFiles.collectEntries { file -> [(file.parentFile.name): ((List) slurper.parse(file)).size()] }
+        def counts = [:]
+        questionFiles.each { file ->
+            def relative = file('../content/dsa').toPath().relativize(file.toPath()).toString().replace(File.separator, '/')
+            println "DSA_PARSING=${relative}"
+            def parsed = (List) slurper.parse(file)
+            counts[relative] = parsed.size()
+            println "DSA_COUNT=${relative}:${parsed.size()}"
+        }
         println "DSA_QUESTION_COUNTS=${counts}"
         println "DSA_QUESTION_TOTAL=${counts.values().sum()}"
     }
