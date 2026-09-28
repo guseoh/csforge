@@ -58,24 +58,24 @@
   {
     "kind": "question",
     "contentKey": "backend.core.api.methods-status.q2",
-    "promptMarkdown": "`201 Created`, `202 Accepted`, `409 Conflict`가 각각 어떤 계약을 표현하는지 설명하라.",
-    "questionType": "DESCRIPTIVE",
+    "promptMarkdown": "새 리소스 생성 완료, 요청은 수락했지만 처리가 아직 끝나지 않음, 현재 리소스 상태와 요청이 충돌함을 나타내는 HTTP 상태 코드를 순서대로 쓰라.",
+    "questionType": "SHORT_ANSWER",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["backend.core.api.methods-status"],
-    "modelAnswer": "201은 새 resource 생성 완료, 202는 처리가 접수됐지만 완료되지 않을 수 있음, 409는 현재 resource state와 요청이 충돌함을 표현한다.",
-    "explanationMarkdown": "201은 새 resource가 생성되어 그 결과를 표현할 수 있다는 뜻이고, 202는 접수만 완료되어 최종 결과가 아직 없을 수 있음을 나타낸다. 409는 현재 resource state와 요청이 충돌해 같은 입력을 단순 재전송할 문제가 아니라는 의미이므로 client의 다음 행동도 달라진다."
+    "explanationMarkdown": "201 Created는 새 리소스가 생성되었음을, 202 Accepted는 요청을 수락했지만 처리가 완료되지 않았을 수 있음을, 409 Conflict는 현재 리소스 상태와 요청이 충돌함을 나타낸다. SHORT_ANSWER에서는 이 세 상태 코드를 순서대로 짧게 채점한다.",
+    "acceptedAnswers": ["201, 202, 409", "201 202 409", "201/202/409"]
   },
   {
     "kind": "question",
     "contentKey": "backend.core.api.methods-status.q3",
-    "promptMarkdown": "결제 요청을 모든 실패 포함 `200 {success:false}`로 반환한다. 어떤 interoperability/contract 문제가 생기는가?",
+    "promptMarkdown": "결제 요청을 모든 실패 포함 `200 {success:false}`로 반환한다. 어떤 상호운용성·계약 문제가 생기는가?",
     "questionType": "SCENARIO",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["backend.core.api.methods-status"],
-    "modelAnswer": "HTTP client/proxy가 transport-level 성공으로만 해석하고 일반적인 실패 처리가 어려워진다. 적절한 status와 안정적 error body를 분리해야 한다.",
-    "explanationMarkdown": "실패를 200으로 포장하면 proxy·monitoring·generic client가 transport 성공으로 기록하고 retry나 alert, 사용자 수정 안내를 잘못 판단할 수 있다. HTTP status로 protocol-level 실패를 표현하고 body의 stable product code로 세부 원인과 retryability를 전달해야 한다."
+    "modelAnswer": "HTTP 클라이언트·프록시·관측 도구가 응답을 HTTP 성공 범주로 분류해 일반적인 실패 처리가 어려워진다. 실제 결과에 맞는 HTTP 상태와 안정적인 제품 오류 코드를 분리해야 한다.",
+    "explanationMarkdown": "업무 실패를 모두 200으로 포장하면 프록시·모니터링·일반 HTTP 클라이언트가 HTTP 수준에서는 성공 응답으로 분류하므로 재시도, 경보, 사용자 입력 수정 같은 후속 판단이 왜곡될 수 있다. HTTP 상태로 넓은 성공·실패 의미를 표현하고 응답 본문의 안정적인 제품 오류 코드로 구체적인 원인과 재시도 가능성을 전달해야 한다. TCP/TLS 전송 성공 여부와 HTTP 2xx/4xx/5xx 의미는 같은 층위가 아니다."
   },
   {
     "kind": "question",

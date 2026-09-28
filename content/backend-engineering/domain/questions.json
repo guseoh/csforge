@@ -108,12 +108,12 @@
   {
     "kind": "question",
     "contentKey": "backend.core.domain.invariant-lifecycle.q3",
-    "promptMarkdown": "`Order.place()`는 items empty를 막지만 public `setItems()`가 남아 있다. 무엇을 수정해야 하는가?",
+    "promptMarkdown": "Order는 `DRAFT`에서 `items`가 비어 있지 않을 때 `place()`되어 `PLACED`가 되고, 결제 요청은 그 시점의 total을 읽는다. 이후에도 public `setItems()`가 열려 있어 두 요청이 동시에 실행되었다.\n\n1. 결제 요청은 total 10,000원을 읽었다.\n2. 다른 요청이 line을 바꿔 total을 8,000원으로 저장했다.\n3. 첫 요청은 10,000원을 결제해 `PAID`로 저장하려 한다.\n\n합계와 생명주기 불변식을 어떻게 보호할지 Domain API와 DB 동시성 경계를 포함해 설명하라.",
     "questionType": "SCENARIO",
-    "difficulty": "MEDIUM",
+    "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["backend.core.domain.invariant-lifecycle"],
-    "modelAnswer": "다른 생성/변경 경로가 invariant를 우회한다. mutable setter를 제거하거나 invariant를 지키는 intention-revealing method로 제한한다.",
-    "explanationMarkdown": "`Order.place()`에서 empty items를 검사해도 public `setItems()`가 남으면 나중에 invalid state를 다시 만들 수 있다. setter를 제거하거나 non-empty와 상태 조건을 지키는 명령형 method만 공개해 생성 규칙과 변경 규칙을 같은 aggregate 경계에서 보호해야 한다."
+    "modelAnswer": "Aggregate가 `place()`에서 items와 total을 검증·확정하고 `PLACED`로 전이한 뒤 raw `setItems()`를 막아야 한다. 수정과 결제 시작은 expected version/status 조건으로 경쟁시키고, 결제 시작이 이기면 DB transaction 안에서 `paymentAttemptId`, 확정 amount, idempotency key와 `PAYMENT_PENDING` 같은 상태를 원자적으로 기록한다. 그 commit 뒤 외부 결제를 호출하고 결과를 반영한다. timeout이면 같은 idempotency key/attempt의 결과를 조회·재사용해 reconcile하며, 결제가 시작된 주문의 item 변경은 정책상 차단하거나 별도 명시적 전이로 다룬다.",
+    "explanationMarkdown": "생성 시 한 번 검증해도 공개 setter가 남아 있으면 주문이 놓인 뒤 item과 total의 불변식을 우회할 수 있다. 먼저 도메인 API가 허용된 수정과 결제 시작을 명시하고, optimistic version이나 조건부 UPDATE로 둘의 경쟁을 감지해야 한다. 결제가 이긴 뒤에는 외부 호출 전에 결제 시도 식별자와 확정 금액을 로컬 DB에 원자적으로 기록해 어떤 금액·작업을 수행하려 했는지 durable한 근거를 남긴다. 그 뒤 원격 결제를 DB transaction 밖에서 호출하고, 응답이 불명확하면 같은 operation identity로 공급자 상태를 조회·대조한다. 단순히 원격 호출을 transaction 밖으로 옮기는 것만으로는 금액과 작업 식별자의 경쟁 문제가 해결되지 않는다."
   }
 ]
