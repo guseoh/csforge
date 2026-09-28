@@ -4,7 +4,7 @@ contentKey: operating-systems.core.ipc.unix-domain-socket
 topicContentKey: operating-systems.core.ipc
 slug: unix-domain-socket
 title: "유닉스 도메인 소켓(Unix-Domain Socket)"
-summary: "host 내부 endpoint 통신과 network socket 차이를 설명한다."
+summary: "같은 호스트의 프로세스를 연결하는 소켓 IPC와 네트워크 소켓의 차이를 설명한다."
 level: 1
 status: PUBLISHED
 displayOrder: 50
@@ -19,22 +19,22 @@ references:
 ---
 # 유닉스 도메인 소켓(Unix-Domain Socket)
 
-Unix-domain socket(AF_UNIX/AF_LOCAL)은 **같은 host의 process 사이를 socket interface로 연결하는 IPC**다. Application은 `socket`, `bind`, `listen`, `accept`, `connect`, `read/write` 같은 socket lifecycle을 사용할 수 있지만 IP routing을 통해 remote host와 통신하는 network socket과는 endpoint 범위가 다르다.
+유닉스 도메인 소켓(`AF_UNIX`/`AF_LOCAL`)은 **같은 호스트의 프로세스 사이를 소켓 인터페이스로 연결하는 IPC**다. 애플리케이션은 `socket`, `bind`, `listen`, `accept`, `connect`, `read`/`write` 같은 소켓 생명주기를 사용할 수 있지만, IP 라우팅을 통해 원격 호스트와 통신하는 네트워크 소켓과는 통신 범위가 다르다.
 
-![같은 host의 client/server process를 연결하는 Unix-domain socket](/learning/operating-systems/unix-domain-socket.svg)
+![같은 호스트의 클라이언트/서버 프로세스를 연결하는 Unix-domain socket](/learning/operating-systems/unix-domain-socket.svg)
 
-### Socket type에 따라 data boundary가 달라진다
+### 소켓 종류에 따라 데이터 경계가 달라진다
 
-`SOCK_STREAM`을 사용하면 connected byte stream을 제공하므로 application message boundary를 직접 framing해야 한다. Datagram이나 seqpacket 계열은 다른 boundary semantics를 제공할 수 있다. 따라서 `Unix-domain socket은 message 단위를 자동 보존한다`고 일반화하면 안 된다.
+`SOCK_STREAM`을 사용하면 연결된 바이트 스트림을 제공하므로 애플리케이션이 메시지 경계를 직접 프레이밍해야 한다. 데이터그램이나 `SOCK_SEQPACKET` 계열은 다른 경계 계약을 제공할 수 있다. 따라서 **유닉스 도메인 소켓은 항상 메시지 단위를 자동 보존한다**고 일반화하면 안 된다.
 
-### Endpoint namespace도 lifecycle의 일부다
+### 엔드포인트 이름 공간도 생명주기의 일부다
 
-Pathname 기반 Unix-domain socket은 filesystem namespace의 path를 endpoint로 사용할 수 있다. Server가 종료된 뒤 pathname이 남아 있으면 다음 bind에 영향을 줄 수 있고, path permission도 접근 가능성에 영향을 준다. Linux의 abstract namespace처럼 별도 방식도 있지만 portable pathname semantics와는 다르다.
+경로명 기반 유닉스 도메인 소켓은 파일 시스템 이름 공간의 경로를 엔드포인트로 사용할 수 있다. 서버가 종료된 뒤 경로가 남아 있으면 다음 `bind()`에 영향을 줄 수 있고, 경로 권한도 접근 가능성에 영향을 준다. Linux의 추상 이름 공간(abstract namespace)처럼 별도 방식도 있지만 이식 가능한 경로명 방식과는 구분해야 한다.
 
-즉 local socket에서도 endpoint 생성·사용·close·cleanup이 명확한 lifecycle을 가져야 한다.
+즉 로컬 소켓에서도 엔드포인트 생성·사용·종료·정리가 명확한 생명주기를 가져야 한다.
 
-### Network socket과의 경계
+### 네트워크 소켓과의 경계
 
-Unix-domain socket은 host 내부 communication이므로 IP routing과 remote host failure를 다루지 않는다. 대신 local namespace와 peer credential 같은 host-local 기능을 활용할 수 있다. 다른 host로 통신 범위를 넓혀야 한다면 network socket 같은 다른 transport가 필요하다.
+유닉스 도메인 소켓은 한 호스트 안의 통신이므로 IP 라우팅이나 원격 호스트 장애를 직접 다루지 않는다. 대신 로컬 이름 공간과 상대 프로세스 자격 정보(peer credential) 같은 호스트 내부 기능을 활용할 수 있다. 다른 호스트까지 통신 범위를 넓혀야 한다면 네트워크 소켓 같은 다른 전송 수단이 필요하다.
 
-Unix-domain socket의 핵심은 **같은 host의 process를 socket semantics로 연결하며, stream/datagram boundary와 local endpoint lifecycle을 함께 관리한다는 것**이다.
+유닉스 도메인 소켓의 핵심은 **같은 호스트의 프로세스를 소켓 계약으로 연결하면서, 스트림/데이터그램의 데이터 경계와 로컬 엔드포인트 생명주기를 함께 관리한다는 것**이다.
