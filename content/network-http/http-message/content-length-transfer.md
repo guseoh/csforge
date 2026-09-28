@@ -63,7 +63,7 @@ chunk data
 
 ### Content-Length와 Transfer-Encoding을 동시에 보내면 안 된다
 
-RFC 9112에서 송신자는 `Transfer-Encoding`이 있는 메시지에 `Content-Length`를 함께 보내면 안 된다. 수신 메시지에 둘이 모두 존재하면 `Transfer-Encoding`이 메시지 길이 결정에서 우선하지만, 이런 조합 자체가 request smuggling 같은 공격을 나타낼 수 있어 오류로 취급할 이유가 크다. citeturn785911search0
+RFC 9112에서 송신자는 `Transfer-Encoding`이 있는 메시지에 `Content-Length`를 함께 보내면 안 된다. 수신 메시지에 둘이 모두 존재하면 `Transfer-Encoding`이 메시지 길이 결정에서 우선하지만, 이런 조합 자체가 request smuggling 같은 공격을 나타낼 수 있어 오류로 취급할 이유가 크다.
 
 ```text
 Content-Length: 5
@@ -91,7 +91,7 @@ Transfer-Encoding: chunked
 
 ### 요청에서 길이 정보가 전혀 없으면 본문 길이는 0으로 해석된다
 
-HTTP/1.1 요청에서 `Transfer-Encoding`도 유효한 `Content-Length`도 없고 다른 우선 규칙이 적용되지 않으면 메시지 본문 길이는 0이다. 따라서 헤더 뒤에 JSON 바이트를 그냥 이어 붙인다고 자동으로 요청 본문이 되지 않는다. RFC 9112는 요청 메시지가 길이나 transfer coding으로 명시적으로 프레이밍되며 둘 다 없으면 요청이 헤더 영역 뒤에서 끝난다고 설명한다. citeturn785911search0
+HTTP/1.1 요청에서 `Transfer-Encoding`도 유효한 `Content-Length`도 없고 다른 우선 규칙이 적용되지 않으면 메시지 본문 길이는 0이다. 따라서 헤더 뒤에 JSON 바이트를 그냥 이어 붙인다고 자동으로 요청 본문이 되지 않는다. RFC 9112는 요청 메시지가 길이나 transfer coding으로 명시적으로 프레이밍되며 둘 다 없으면 요청이 헤더 영역 뒤에서 끝난다고 설명한다.
 
 ### HTTP/2와 HTTP/3은 HTTP/1.1 chunked 프레이밍을 그대로 사용하지 않는다
 
