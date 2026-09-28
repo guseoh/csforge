@@ -4,7 +4,7 @@ contentKey: network-http.core.tcp.sliding-window
 topicContentKey: network-http.core.tcp
 slug: sliding-window
 title: "슬라이딩 윈도"
-summary: "ACK 전 여러 byte를 전송하는 sequence window를 설명한다."
+summary: "TCP가 ACK 하나를 기다릴 때마다 멈추지 않고 여러 바이트 범위를 전송한 뒤 ACK 진행에 맞춰 전송 가능한 범위를 이동시키는 방식을 설명한다."
 level: 2
 status: PUBLISHED
 displayOrder: 70
@@ -14,33 +14,43 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "transport connection과 application request의 경계를 확인한다."
+    recommendation: "TCP 송·수신 시퀀스 공간과 윈도 상태가 바이트 범위를 제한하는 규칙을 확인한다."
     displayOrder: 1
   - url: "https://www.rfc-editor.org/rfc/rfc5681"
     title: "TCP Congestion Control"
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "TCP congestion과 sending rate 조절을 확인한다."
+    recommendation: "혼잡 윈도가 네트워크에 확인 없이 내보낼 수 있는 데이터 양을 제한하는 원리를 확인한다."
     displayOrder: 2
 ---
 # 슬라이딩 윈도
 
-TCP는 byte 하나나 segment 하나를 보낼 때마다 ACK를 기다리는 stop-and-wait 방식이 아니라, 일정한 sequence 범위의 data를 **ACK 전에 여러 개 outstanding 상태로 유지**할 수 있다. ACK가 진행되면 확인된 왼쪽 범위가 빠지고 새로운 sequence 범위를 보낼 수 있게 되는데, 이를 sliding window 관점으로 이해할 수 있다.
+TCP가 바이트 하나나 세그먼트 하나를 보낸 뒤 매번 ACK 하나를 기다리는 stop-and-wait 방식만 사용한다면 왕복 시간이 긴 네트워크에서 전송 효율이 매우 낮아진다. TCP는 **일정한 바이트 범위를 ACK 전에 여러 개 전송해 미확인 상태로 둘 수 있고, ACK가 진행되면 전송 가능한 범위를 앞으로 이동**시킨다.
 
 ```text
-sequence space
-[ ACKed ][ outstanding ][ send 가능 ][ 아직 보낼 수 없음 ]
-          ↑ ACK 진행
-window가 오른쪽으로 이동
+시퀀스 공간
+
+[ 확인 완료 ][ 보냈지만 미확인 ][ 새로 보낼 수 있음 ][ 아직 제한됨 ]
+                  ↑ ACK 진행
+        윈도의 왼쪽 경계가 앞으로 이동
 ```
 
-### Window는 byte sequence 범위다
+### 윈도는 패킷 개수가 아니라 바이트 범위다
 
-TCP window는 단순한 packet 개수가 아니라 byte sequence 범위를 기준으로 한다. Segment 크기가 달라도 어떤 bytes가 이미 ACK되었고 어떤 bytes가 아직 outstanding인지 sequence number로 추적한다.
+세그먼트마다 크기가 달라도 TCP는 시퀀스 번호를 기준으로 어떤 바이트가 확인됐고 어떤 바이트가 아직 미확인인지 추적한다. 따라서 `윈도 10 = 패킷 10개`처럼 단순화하면 안 된다.
 
-### 실제 전송 가능 범위에는 여러 제약이 있다
+### 실제로 새로 보낼 수 있는 양은 여러 제한을 동시에 받는다
 
-Sender가 새 data를 얼마나 outstanding 상태로 둘 수 있는지는 receiver가 광고한 receive window(`rwnd`)와 sender의 congestion-control state(`cwnd`) 같은 제한을 함께 받는다. 일반적으로 sender는 이 둘 중 더 작은 범위를 넘겨 새 data를 보내지 않는다.
+대표적으로 다음 두 값이 중요하다.
 
-Sliding Window의 핵심은 **ACK를 기다리는 동안에도 여러 byte를 pipeline 형태로 전송하고, ACK progress에 맞춰 사용할 수 있는 sequence 범위를 앞으로 이동시키는 것**이다.
+- `rwnd`: 수신 측 버퍼가 얼마나 더 받을 수 있는지 광고한 수신 윈도
+- `cwnd`: 네트워크 혼잡 상태를 고려해 송신 측이 관리하는 혼잡 윈도
+
+송신 측은 수신자의 처리 능력과 네트워크 혼잡을 모두 넘지 않도록 전송량을 제한한다. 흔히 실제 미확인 데이터의 상한을 `min(rwnd, cwnd)` 관점으로 이해할 수 있다.
+
+### ACK가 진행되면 새로운 바이트 범위를 보낼 수 있다
+
+수신 측의 누적 ACK가 앞으로 이동하면 이전에 미확인 상태였던 바이트가 확인되고, 그만큼 윈도의 오른쪽에서도 새 데이터를 보낼 여지가 생긴다. 이 때문에 왕복마다 한 세그먼트만 보내는 것보다 링크를 더 효율적으로 사용할 수 있다.
+
+핵심은 **TCP 슬라이딩 윈도가 여러 바이트 범위를 동시에 전송 중 상태로 유지하고 ACK 진행에 따라 사용 가능한 시퀀스 범위를 앞으로 이동시키는 방식**이라는 점이다.
