@@ -1,0 +1,116 @@
+name: OS process curated question rewrite
+on:
+  push:
+    branches: [codex/content-operating-systems-quality]
+permissions:
+  contents: write
+jobs:
+  rewrite:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: codex/content-operating-systems-quality
+          fetch-depth: 0
+      - name: Rewrite process questions with reviewed phrases
+        shell: bash
+        run: |
+          python - <<'PY'
+          import copy,json,re
+          from pathlib import Path
+          p=Path('content/operating-systems/process/questions.json')
+          data=json.loads(p.read_text(encoding='utf-8'))
+          assert len(data)==28, len(data)
+          def ident(q):
+            return (q['contentKey'],q['questionType'],q['difficulty'],q['status'],copy.deepcopy(q.get('conceptKeys')),copy.deepcopy(q.get('acceptedAnswers')),q.get('correctChoiceKey'),[(c['key'],c['displayOrder']) for c in q.get('choices',[])])
+          before=[ident(q) for q in data]
+
+          # Exact phrases observed during full review. Longer phrases first.
+          pairs=[
+            ('same underlying open file description','같은 기반 열린 파일 상태(open file description)'),
+            ('underlying open file description','기반 열린 파일 상태(open file description)'),
+            ('open file description','열린 파일 상태(open file description)'),
+            ('address-space mapping','주소 공간 매핑'),('address-space','주소 공간'),('address space','주소 공간'),
+            ('virtual address-space','가상 주소 공간'),('virtual address','가상 주소'),('virtual layout','가상 주소 배치'),
+            ('virtual page','가상 페이지'),('virtual memory','가상 메모리'),
+            ('physical memory','물리 메모리'),('physical frame','물리 프레임'),('physical page','물리 페이지'),('physical copy','물리 페이지 전체 복사'),
+            ('page table','페이지 테이블'),('page-table','페이지 테이블'),('code page','코드 페이지'),('read-only page','읽기 전용 페이지'),
+            ('program image','프로그램 이미지'),('executable image','실행 이미지'),('executable file','실행 파일'),('executable','실행 파일'),
+            ('runtime state','런타임 상태'),('runtime metadata','런타임 메타데이터'),
+            ('process lifecycle','프로세스 생명주기'),('descriptor lifecycle','디스크립터 생명주기'),('lifecycle management','생명주기 관리'),('lifecycle leak','생명주기 누수'),
+            ('termination status','종료 상태'),('termination metadata','종료 메타데이터'),('termination result','종료 결과'),
+            ('process metadata','프로세스 메타데이터'),('kernel metadata','커널 메타데이터'),('kernel-side state','커널 측 상태'),
+            ('process state','프로세스 상태'),('scheduler state','스케줄러 상태'),('scheduling state','스케줄링 상태'),
+            ('execution state','실행 상태'),('execution context','실행 문맥'),('register context','레지스터 문맥'),('CPU execution context','CPU 실행 문맥'),
+            ('resource reference','자원 참조'),('resource state','자원 상태'),('resource condition','자원 조건'),('resource semantics','자원별 의미'),
+            ('process identity','프로세스 식별 정보'),('process entry','프로세스 엔트리'),('process table','프로세스 테이블'),('process-table','프로세스 테이블'),
+            ('file descriptor','파일 디스크립터'),('descriptor table entry','디스크립터 테이블 엔트리'),('descriptor table','디스크립터 테이블'),
+            ('file offset','파일 오프셋'),('open resource','열린 자원'),
+            ('copy-on-write','쓰기 시 복사(copy-on-write)'),('Copy-on-write','쓰기 시 복사(copy-on-write)'),
+            ('writable address space','쓰기 가능한 주소 공간'),('private writable memory','전용 쓰기 가능 메모리'),
+            ('thread stack','스레드 스택'),('native allocation','네이티브 할당'),('direct buffer','직접 버퍼'),('memory-mapped file','메모리 매핑 파일'),
+            ('JVM heap','JVM 힙'),('Java heap','Java 힙'),('shared library','공유 라이브러리'),
+            ('context switch','문맥 전환'),('scheduler queue','스케줄러 큐'),('runnable queue','실행 가능 큐'),('run queue','실행 큐'),
+            ('runnable task','실행 가능한 작업'),('runnable process','실행 가능한 프로세스'),('CPU core','CPU 코어'),('CPU contention','CPU 경합'),
+            ('I/O wait','I/O 대기'),('wait reason','대기 원인'),('event completion','사건 완료'),('event','사건'),
+            ('execution order','실행 순서'),('scheduling 대상','스케줄링 대상'),
+            ('side effect','부수 효과(side effect)'),('durable side effect','영속적인 부수 효과'),('durable progress','영속적인 진행 상태'),('durable checkpoint','영속 체크포인트'),
+            ('idempotency state','멱등성 상태'),('Stable job/item key','안정적인 작업/항목 키'),('Stable key','안정적인 키'),
+            ('duplicate write/message','중복 쓰기/메시지'),('DB write','DB 쓰기'),
+            ('process-group','프로세스 그룹'),('subprocess','하위 프로세스'),('process behavior','프로세스 동작'),
+            ('working directory','작업 디렉터리'),('environment variable','환경 변수'),('command-line argument','명령줄 인자'),
+            ('current working directory','현재 작업 디렉터리'),
+            ('program file','프로그램 파일'),('Program file','프로그램 파일'),('program behavior','프로그램 동작'),
+            ('Program은','프로그램은'),('Program은','프로그램은'),('Program 파일','프로그램 파일'),('program도','프로그램도'),('program을','프로그램을'),('program이','프로그램이'),('program은','프로그램은'),('program의','프로그램의'),
+            ('Process가','프로세스가'),('Process는','프로세스는'),('Process를','프로세스를'),('Process의','프로세스의'),('Process별','프로세스별'),
+            ('process가','프로세스가'),('process는','프로세스는'),('process를','프로세스를'),('process의','프로세스의'),('process에','프로세스에'),('process로','프로세스로'),('process와','프로세스와'),('process도','프로세스도'),('process마다','프로세스마다'),('process별','프로세스별'),('process ','프로세스 '),
+            ('Parent가','부모가'),('Parent는','부모는'),('Parent와','부모와'),('Parent의','부모의'),('parent가','부모가'),('parent는','부모는'),('parent와','부모와'),('parent의','부모의'),('parent에게','부모에게'),('parent ','부모 '),
+            ('Child가','자식이'),('Child는','자식은'),('Child의','자식의'),('child가','자식이'),('child는','자식은'),('child를','자식을'),('child의','자식의'),('child에','자식에'),('child도','자식도'),('child ','자식 '),
+            ('Resource마다','자원마다'),('resource가','자원이'),('resource는','자원은'),('resource를','자원을'),('resource와','자원과'),('resource에','자원에'),('resource도','자원도'),('resource ','자원 '),
+            ('metadata가','메타데이터가'),('metadata는','메타데이터는'),('metadata를','메타데이터를'),('metadata도','메타데이터도'),('metadata ','메타데이터 '),
+            ('status를','상태를'),('status가','상태가'),('status와','상태와'),('status ','상태 '),
+            ('state가','상태가'),('state는','상태는'),('state를','상태를'),('state와','상태와'),('state도','상태도'),('state ','상태 '),
+            ('application이','애플리케이션이'),('Application 실행','애플리케이션 실행'),('application의','애플리케이션의'),('application ','애플리케이션 '),
+            ('scheduling과','스케줄링과'),('scheduling을','스케줄링을'),('scheduling되는','스케줄링되는'),('scheduling ','스케줄링 '),
+            ('scheduler가','스케줄러가'),('scheduler의','스케줄러의'),('scheduler ','스케줄러 '),
+            ('kernel은','커널은'),('kernel이','커널이'),('kernel ','커널 '),('user code','사용자 코드'),
+            ('runtime ','런타임 '),('mapping을','매핑을'),('mapping이','매핑이'),('mapping과','매핑과'),('mapping ','매핑 '),
+            ('frame을','프레임을'),('frame에','프레임에'),('page를','페이지를'),('page가','페이지가'),('page는','페이지는'),('page ','페이지 '),
+            ('ready queue','준비 큐'),('waiting 상태','대기 상태'),('running 상태','실행 상태'),('runnable 상태','실행 가능 상태'),
+            ('runnable이','실행 가능 상태가'),('runnable해져','실행 가능 상태가 되어'),('runnable ','실행 가능 '),
+            ('execution resource','실행 자원'),('execution','실행'),('creation','생성'),('coordination','조정'),
+            ('interface는','인터페이스는'),('interface를','인터페이스를'),('interface','인터페이스'),
+            ('Long-running','장시간 실행되는'),('OS-level','운영체제 수준'),('Blocking','블로킹'),('blocking','블로킹'),
+            ('pipe buffer','파이프 버퍼'),('output','출력'),('capacity','용량'),
+            ('reaping','회수'),('reap','회수'),('Zombie','좀비'),('zombie','좀비'),
+          ]
+          def tr(s):
+            if not isinstance(s,str): return s
+            # Do not touch identifiers/acceptedAnswers; caller controls fields.
+            for a,b in pairs: s=s.replace(a,b)
+            return s
+          for q in data:
+            for f in ('promptMarkdown','modelAnswer','explanationMarkdown'):
+              if f in q: q[f]=tr(q[f])
+            for c in q.get('choices',[]):
+              c['content']=tr(c.get('content','')); c['rationaleMarkdown']=tr(c.get('rationaleMarkdown',''))
+          after=[ident(q) for q in data]
+          assert before==after, 'identity contract changed'
+          out=json.dumps(data,ensure_ascii=False,indent=2)+'\n'
+          for bad in ['자원를','자원가','상태를를','프로세스 process','부모 parent','자식 child','메타데이터 metadata']:
+            assert bad not in out, bad
+          p.write_text(out,encoding='utf-8')
+          print('questions',len(data),'identity preserved')
+          # report remaining high-priority explanatory English in learner text
+          text='\n'.join(str(v) for q in data for v in ([q.get('promptMarkdown',''),q.get('modelAnswer',''),q.get('explanationMarkdown','')]+[x for c in q.get('choices',[]) for x in (c.get('content',''),c.get('rationaleMarkdown',''))]))
+          for token in [' process ',' resource ',' lifecycle ',' application ',' parent ',' child ',' state ',' metadata ']:
+            print(token.strip(), text.lower().count(token))
+          PY
+          rm .github/workflows/os-process-question-rewrite.yml
+          git diff --check
+          git add content/operating-systems/process/questions.json .github/workflows/os-process-question-rewrite.yml
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git commit -m "refine OS process questions Korean-first"
+          git push
