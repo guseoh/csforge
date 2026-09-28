@@ -14,7 +14,7 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "QUIC connection·stream·loss recovery를 확인한다."
+    recommendation: "QUIC 연결·스트림·손실 복구와 혼잡 제어의 기본 규칙을 확인한다."
     displayOrder: 1
 ---
 # QUIC 전송 계층
