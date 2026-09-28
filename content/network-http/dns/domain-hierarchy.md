@@ -4,7 +4,7 @@ contentKey: network-http.core.dns.domain-hierarchy
 topicContentKey: network-http.core.dns
 slug: domain-hierarchy
 title: "도메인 계층 구조"
-summary: "root·TLD·authoritative zone으로 domain name을 계층 해석하는 구조를 설명한다."
+summary: "DNS 이름 공간이 루트부터 TLD·하위 도메인으로 계층화되고 zone과 위임으로 관리 책임이 나뉘는 구조를 설명한다."
 level: 1
 status: PUBLISHED
 displayOrder: 10
@@ -17,21 +17,27 @@ references:
 ---
 # 도메인 계층 구조
 
-DNS namespace는 점(`.`)으로 구분한 label을 계층적으로 배치한다. 완전한 domain name은 오른쪽에서 왼쪽으로 root, TLD, 그 아래 domain과 host label로 이어진다.
+DNS 이름 공간(namespace)은 점(`.`)으로 구분된 **레이블(label)을 계층적으로 연결한 구조**다. 완전한 도메인 이름은 오른쪽에서 왼쪽으로 루트, 최상위 도메인(TLD), 그 아래 도메인과 호스트 이름으로 이어진다.
 
 예를 들어 `www.example.com.`은 다음처럼 볼 수 있다.
 
 ```text
-root
+루트(.)
  └─ com
      └─ example
          └─ www
 ```
 
-### 하나의 서버가 전체 namespace를 관리하지 않는다
+### 하나의 DNS 서버가 전체 이름 공간을 관리하지 않는다
 
-DNS는 namespace를 zone 단위로 나누고 delegation으로 관리 책임을 분산한다. Parent zone은 child zone을 어느 name server가 책임지는지 알려 줄 수 있고, child zone의 authoritative server는 자기 zone의 record를 제공한다.
+DNS는 이름 공간을 zone 단위로 나누고 **위임(delegation)**으로 관리 책임을 분산한다. 상위 zone은 NS 레코드를 이용해 하위 zone을 어느 권한 서버가 담당하는지 알려 줄 수 있고, 하위 권한 서버는 자신이 맡은 zone의 레코드에 답한다.
 
-Domain과 zone은 항상 같은 범위가 아니다. 어떤 subdomain이 별도 zone으로 위임되면 parent domain tree 안에 있어도 authoritative 관리 경계는 나뉜다.
+이 구조 덕분에 루트 서버가 전 세계 모든 호스트 레코드를 직접 가지고 있을 필요가 없다.
 
-DNS hierarchy의 핵심은 **계층적인 이름 공간을 zone과 delegation으로 나누어 여러 authoritative server가 분산 관리한다는 것**이다.
+### 도메인 계층과 zone 경계는 항상 같지 않다
+
+`dev.example.com`이 `example.com` 아래에 있다는 사실만으로 두 이름이 반드시 같은 zone에서 관리된다고 볼 수는 없다. `dev.example.com`을 별도 zone으로 위임하면 DNS 이름 계층에는 포함되지만 권한 관리 경계는 분리된다.
+
+따라서 장애나 설정 문제를 조사할 때는 문자열의 도메인 계층뿐 아니라 **어디에서 zone이 나뉘고 어느 권한 서버로 위임됐는지** 확인해야 한다.
+
+DNS 계층 구조의 핵심은 **하나의 거대한 이름 목록을 한 서버가 관리하는 것이 아니라, 계층적인 이름 공간을 zone과 위임으로 나눠 여러 권한 서버가 분산 관리한다는 점**이다.
