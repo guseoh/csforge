@@ -52,12 +52,13 @@ tasks.named('test') {
     useJUnitPlatform()
     doFirst {
         def slurper = new groovy.json.JsonSlurper()
-        def questionFiles = fileTree('../content/dsa') { include '**/questions.json' }.files.toList().sort { it.path }
+        def dsaRoot = project.file('../content/dsa')
+        def questionFiles = fileTree(dsaRoot) { include '**/questions.json' }.files.toList().sort { it.path }
         def counts = [:]
-        questionFiles.each { file ->
-            def relative = file('../content/dsa').toPath().relativize(file.toPath()).toString().replace(File.separator, '/')
+        questionFiles.each { questionFile ->
+            def relative = dsaRoot.toPath().relativize(questionFile.toPath()).toString().replace(File.separator, '/')
             println "DSA_PARSING=${relative}"
-            def parsed = (List) slurper.parse(file)
+            def parsed = (List) slurper.parse(questionFile)
             counts[relative] = parsed.size()
             println "DSA_COUNT=${relative}:${parsed.size()}"
         }
@@ -91,8 +92,8 @@ tasks.register('generateCanonicalContentManifest') {
             project.relativePath(left).replace(File.separator, '/') <=> project.relativePath(right).replace(File.separator, '/')
         }
         manifest.parentFile.mkdirs()
-        manifest.text = canonicalFiles.collect { file ->
-            canonicalContentDirectory.toPath().relativize(file.toPath()).toString().replace(File.separator, '/')
+        manifest.text = canonicalFiles.collect { sourceFile ->
+            canonicalContentDirectory.toPath().relativize(sourceFile.toPath()).toString().replace(File.separator, '/')
         }.join('\n') + '\n'
     }
 }
