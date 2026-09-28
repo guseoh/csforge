@@ -14,7 +14,7 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "IPv4 주소와 이더넷 주소를 연결해 로컬 링크에서 다음 홉으로 프레임을 보내는 흐름을 확인한다."
+    recommendation: "로컬 링크에서 IPv4 주소와 이더넷 주소를 대응시키는 ARP 동작을 확인한다."
     displayOrder: 1
 ---
 # MAC 주소
