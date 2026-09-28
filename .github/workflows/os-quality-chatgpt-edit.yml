@@ -1,4 +1,4 @@
-name: OS quality ChatGPT audit
+name: OS quality ChatGPT Korean-first edit
 
 on:
   push:
@@ -6,10 +6,10 @@ on:
       - codex/content-operating-systems-quality
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
-  audit-korean-first-language:
+  apply-korean-first-pass:
     if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     steps:
@@ -18,108 +18,316 @@ jobs:
           ref: codex/content-operating-systems-quality
           fetch-depth: 0
 
-      - name: Audit learner-facing English tokens
+      - name: Apply reviewed Korean-first terminology pass
         shell: bash
         run: |
           python - <<'PY'
-          import collections
+          import copy
           import json
           import re
+          from collections import Counter
           from pathlib import Path
 
           root = Path("content/operating-systems")
-          samples = collections.defaultdict(list)
-          counts = collections.Counter()
-          locations = []
+          stats = Counter()
 
-          token_re = re.compile(r"(?<![A-Za-z0-9_])[A-Za-z][A-Za-z0-9_-]*(?![A-Za-z0-9_])")
-          url_re = re.compile(r"https?://\S+")
-          inline_code_re = re.compile(r"`[^`]*`")
-          fence_re = re.compile(r"```.*?```", re.S)
+          # Phrase-level translations come first so formal OS concepts remain precise.
+          phrases = [
+              (r"\bresource allocation graph\b", "자원 할당 그래프"),
+              (r"\bresource-allocation graph\b", "자원 할당 그래프"),
+              (r"\bmutual exclusion\b", "상호 배제"),
+              (r"\bbounded waiting\b", "유한 대기"),
+              (r"\bcircular wait\b", "순환 대기"),
+              (r"\bhold[- ]and[- ]wait\b", "점유 및 대기"),
+              (r"\bno preemption\b", "비선점"),
+              (r"\bsafe sequence\b", "안전 순서"),
+              (r"\bsafe state\b", "안전 상태"),
+              (r"\bunsafe state\b", "불안전 상태"),
+              (r"\bcritical section\b", "임계 구역"),
+              (r"\brace condition\b", "경쟁 상태"),
+              (r"\bshared mutable state\b", "공유 가변 상태"),
+              (r"\bcontext switch\b", "문맥 전환"),
+              (r"\bmode switch\b", "모드 전환"),
+              (r"\bsystem[- ]call\b", "시스템 콜"),
+              (r"\buser mode\b", "사용자 모드"),
+              (r"\bkernel mode\b", "커널 모드"),
+              (r"\baddress space\b", "주소 공간"),
+              (r"\baddress-space\b", "주소 공간"),
+              (r"\bvirtual address\b", "가상 주소"),
+              (r"\bphysical frame\b", "물리 프레임"),
+              (r"\bpage table\b", "페이지 테이블"),
+              (r"\bpage-table\b", "페이지 테이블"),
+              (r"\bpage fault\b", "페이지 폴트"),
+              (r"\bpage cache\b", "페이지 캐시"),
+              (r"\bworking set\b", "작업 집합(working set)"),
+              (r"\bfile descriptor\b", "파일 디스크립터"),
+              (r"\bfile-descriptor\b", "파일 디스크립터"),
+              (r"\bopen-file description\b", "열린 파일 설명(open file description)"),
+              (r"\bopen file description\b", "열린 파일 설명(open file description)"),
+              (r"\bfile object\b", "파일 객체"),
+              (r"\bobject identity\b", "객체 식별자"),
+              (r"\bdirectory entry\b", "디렉터리 엔트리"),
+              (r"\bthread pool\b", "스레드 풀"),
+              (r"\bconnection pool\b", "연결 풀"),
+              (r"\bevent loop\b", "이벤트 루프"),
+              (r"\bevent-loop\b", "이벤트 루프"),
+              (r"\bshared memory\b", "공유 메모리"),
+              (r"\bmessage queue\b", "메시지 큐"),
+              (r"\bnetwork socket\b", "네트워크 소켓"),
+              (r"\bblocking I/O\b", "블로킹 I/O"),
+              (r"\bnon-blocking\b", "논블로킹"),
+              (r"\bresponse time\b", "응답 시간"),
+              (r"\bturnaround time\b", "반환 시간(turnaround time)"),
+              (r"\btail latency\b", "꼬리 지연 시간(tail latency)"),
+              (r"\bhigh-priority\b", "높은 우선순위"),
+              (r"\blow-priority\b", "낮은 우선순위"),
+              (r"\bsingle-core\b", "단일 코어"),
+              (r"\bmulti-core\b", "멀티코어"),
+              (r"\bprocess-local\b", "프로세스 내부"),
+              (r"\bprocess-private\b", "프로세스 전용"),
+              (r"\buser-space\b", "사용자 공간"),
+              (r"\bkernel-space\b", "커널 공간"),
+              (r"\bfile-backed\b", "파일 기반"),
+              (r"\bread-only\b", "읽기 전용"),
+              (r"\bwrite-protected\b", "쓰기 보호된"),
+              (r"\bwrite-back\b", "쓰기 반영(write-back)"),
+              (r"\bpower[- ]loss\b", "전원 손실"),
+              (r"\bhost-local\b", "호스트 내부"),
+              (r"\bcross-layer\b", "계층 간"),
+              (r"\bdownstream\b", "하위 시스템"),
+              (r"\bupstream\b", "상위 시스템"),
+              (r"\bbackpressure\b", "역압(backpressure)"),
+              (r"\bbusy[- ]wait\b", "바쁜 대기(busy wait)"),
+              (r"\bbusy[- ]spin\b", "바쁜 대기(busy spin)"),
+              (r"\bcopy-on-write\b", "쓰기 시 복사(COW)"),
+              (r"\bzero-copy\b", "복사 최소화(zero-copy)"),
+          ]
 
-          def add_text(path, label, text):
-              if not isinstance(text, str) or not text.strip():
-                  return
-              clean = url_re.sub(" ", text)
-              clean = fence_re.sub(" ", clean)
-              clean = inline_code_re.sub(" ", clean)
-              tokens = [m.group(0).lower() for m in token_re.finditer(clean)]
-              for token in tokens:
-                  counts[token] += 1
-                  if len(samples[token]) < 12:
-                      snippet = re.sub(r"\s+", " ", text).strip()
-                      if len(snippet) > 180:
-                          snippet = snippet[:177] + "..."
-                      samples[token].append((str(path), label, snippet))
+          # These are ordinary explanatory words or conventional Korean transliterations.
+          # API names / identifiers such as epoll, mmap, fsync, PID, JVM, ABI, ISA, DMA,
+          # cgroup and RLIMIT_* are deliberately not present here.
+          words = {
+              "process": "프로세스", "thread": "스레드", "task": "작업",
+              "resource": "자원", "kernel": "커널", "state": "상태",
+              "file": "파일", "memory": "메모리", "mapping": "매핑",
+              "descriptor": "디스크립터", "application": "애플리케이션",
+              "context": "문맥", "lifecycle": "생명주기", "permission": "권한",
+              "failure": "실패", "result": "결과", "scheduler": "스케줄러",
+              "runnable": "실행 가능", "priority": "우선순위", "execution": "실행",
+              "shared": "공유", "protocol": "프로토콜", "frame": "프레임",
+              "message": "메시지", "namespace": "네임스페이스", "stack": "스택",
+              "cycle": "순환", "completion": "완료", "operation": "연산",
+              "metadata": "메타데이터", "blocking": "블로킹", "heap": "힙",
+              "parent": "부모", "child": "자식", "event": "이벤트",
+              "progress": "진행", "buffer": "버퍼", "mutex": "뮤텍스",
+              "invariant": "불변 조건", "byte": "바이트", "bytes": "바이트",
+              "owner": "소유자", "waiter": "대기자", "waiting": "대기",
+              "allocation": "할당", "protection": "보호", "reclamation": "회수",
+              "storage": "저장소", "readiness": "준비 상태", "pipe": "파이프",
+              "race": "경쟁", "interrupt": "인터럽트", "code": "코드",
+              "offset": "오프셋", "capacity": "용량", "access": "접근",
+              "path": "경로", "device": "장치", "driver": "드라이버",
+              "queue": "큐", "synchronization": "동기화", "user": "사용자",
+              "filesystem": "파일 시스템", "service": "서비스", "directory": "디렉터리",
+              "copy": "복사", "network": "네트워크", "stream": "스트림",
+              "semantics": "의미", "instruction": "명령어", "host": "호스트",
+              "resident": "상주", "runtime": "런타임", "program": "프로그램",
+              "pathname": "경로명", "inode": "아이노드", "workload": "워크로드",
+              "retry": "재시도", "lifetime": "수명", "timer": "타이머",
+              "dependency": "의존 관계", "timeout": "타임아웃", "locality": "지역성",
+              "boundary": "경계", "concurrency": "동시성", "handler": "핸들러",
+              "atomic": "원자적", "register": "레지스터", "semaphore": "세마포어",
+              "abstraction": "추상화", "hardware": "하드웨어", "software": "소프트웨어",
+              "policy": "정책", "reference": "참조", "update": "갱신",
+              "exception": "예외", "recovery": "복구", "library": "라이브러리",
+              "connection": "연결", "caller": "호출자", "pool": "풀",
+              "parallelism": "병렬성", "monitor": "모니터", "durability": "영속성",
+              "isolation": "격리", "privilege": "특권", "layer": "계층",
+              "mechanism": "메커니즘", "backend": "백엔드", "server": "서버",
+              "worker": "워커", "throughput": "처리량", "latency": "지연 시간",
+              "fairness": "공정성", "request": "요청", "response": "응답",
+              "object": "객체", "identity": "식별자", "mutable": "가변",
+              "immutable": "불변", "system": "시스템", "transaction": "트랜잭션",
+              "victim": "희생 작업", "contention": "경합", "limit": "제한",
+              "container": "컨테이너", "callback": "콜백", "endpoint": "엔드포인트",
+              "serialization": "직렬화", "framing": "프레이밍", "correlation": "연결 식별",
+          }
 
-          # Topic manifest and all question learner-facing fields.
-          for path in sorted(root.rglob("*.json")):
+          phrase_patterns = [(re.compile(p, re.I), r) for p, r in phrases]
+          word_pattern = re.compile(r"(?<![A-Za-z0-9_])(" + "|".join(sorted(map(re.escape, words), key=len, reverse=True)) + r")(?![A-Za-z0-9_])", re.I)
+          protected = re.compile(r"(`[^`]*`|https?://[^\s)\]>]+)")
+
+          def translate_plain(s):
+              original = s
+              for pat, repl in phrase_patterns:
+                  s, n = pat.subn(repl, s)
+                  if n:
+                      stats["phrase:" + pat.pattern] += n
+              def repl_word(m):
+                  key = m.group(0).lower()
+                  stats["word:" + key] += 1
+                  return words[key]
+              s = word_pattern.sub(repl_word, s)
+              return s
+
+          def translate(s):
+              if not isinstance(s, str) or not s:
+                  return s
+              parts = protected.split(s)
+              for i in range(0, len(parts), 2):
+                  parts[i] = translate_plain(parts[i])
+              return "".join(parts)
+
+          # Record structural identity before edits.
+          question_identity = {}
+          for path in sorted(root.rglob("questions.json")):
               data = json.loads(path.read_text(encoding="utf-8"))
-              if path.name == "topics.json":
-                  for item in data:
-                      add_text(path, item.get("contentKey", "topic") + ":title", item.get("title"))
-                      add_text(path, item.get("contentKey", "topic") + ":description", item.get("description"))
-                  continue
-              if path.name != "questions.json":
-                  continue
-              for q in data:
-                  key = q.get("contentKey", "question")
-                  add_text(path, key + ":prompt", q.get("promptMarkdown"))
-                  add_text(path, key + ":modelAnswer", q.get("modelAnswer"))
-                  add_text(path, key + ":explanation", q.get("explanationMarkdown"))
-                  for answer in q.get("acceptedAnswers", []) or []:
-                      add_text(path, key + ":acceptedAnswer", answer)
-                  for c in q.get("choices", []) or []:
-                      ck = c.get("key", "?")
-                      add_text(path, f"{key}:choice:{ck}", c.get("content"))
-                      add_text(path, f"{key}:rationale:{ck}", c.get("rationaleMarkdown"))
+              question_identity[str(path)] = [
+                  (q.get("contentKey"), q.get("questionType"), q.get("difficulty"), q.get("status"),
+                   copy.deepcopy(q.get("conceptKeys")), copy.deepcopy(q.get("acceptedAnswers")),
+                   q.get("correctChoiceKey"),
+                   [(c.get("key"), c.get("displayOrder")) for c in (q.get("choices") or [])])
+                  for q in data
+              ]
 
-          # Concepts: title/summary in frontmatter + prose body, excluding code fences and inline code.
+          allowed_q_fields = {"promptMarkdown", "modelAnswer", "explanationMarkdown", "content", "rationaleMarkdown"}
+          string_value_re = re.compile(
+              r'(?P<prefix>"(?P<key>promptMarkdown|modelAnswer|explanationMarkdown|content|rationaleMarkdown)"\s*:\s*)'
+              r'"(?P<value>(?:\\.|[^"\\])*)"'
+          )
+
+          changed_files = set()
+          # Update only learner-facing question fields, preserving original JSON formatting.
+          for path in sorted(root.rglob("questions.json")):
+              text = path.read_text(encoding="utf-8")
+              def replace_json_string(m):
+                  raw = m.group("value")
+                  value = json.loads('"' + raw + '"')
+                  new_value = translate(value)
+                  if new_value == value:
+                      return m.group(0)
+                  encoded = json.dumps(new_value, ensure_ascii=False)[1:-1]
+                  return m.group("prefix") + '"' + encoded + '"'
+              updated = string_value_re.sub(replace_json_string, text)
+              if updated != text:
+                  json.loads(updated)
+                  path.write_text(updated, encoding="utf-8")
+                  changed_files.add(str(path))
+
+          # Topic title/description only.
+          topic_path = root / "topics.json"
+          topic_text = topic_path.read_text(encoding="utf-8")
+          topic_re = re.compile(r'(?P<prefix>"(?:title|description)"\s*:\s*)"(?P<value>(?:\\.|[^"\\])*)"')
+          def replace_topic(m):
+              value = json.loads('"' + m.group("value") + '"')
+              new_value = translate(value)
+              if new_value == value:
+                  return m.group(0)
+              return m.group("prefix") + json.dumps(new_value, ensure_ascii=False)
+          updated = topic_re.sub(replace_topic, topic_text)
+          if updated != topic_text:
+              json.loads(updated)
+              topic_path.write_text(updated, encoding="utf-8")
+              changed_files.add(str(topic_path))
+
+          # Concept frontmatter: title/summary only. Body: prose outside fenced code.
+          fence = re.compile(r"```.*?```", re.S)
           for path in sorted(root.rglob("*.md")):
               text = path.read_text(encoding="utf-8")
+              front = ""
               body = text
               if text.startswith("---"):
                   parts = text.split("---", 2)
                   if len(parts) == 3:
-                      fm, body = parts[1], parts[2]
-                      for line in fm.splitlines():
-                          stripped = line.strip()
-                          if stripped.startswith("title:"):
-                              add_text(path, "frontmatter:title", stripped.split(":", 1)[1].strip().strip('"'))
-                          elif stripped.startswith("summary:"):
-                              add_text(path, "frontmatter:summary", stripped.split(":", 1)[1].strip().strip('"'))
-              body = fence_re.sub(" ", body)
-              body = inline_code_re.sub(" ", body)
-              for i, line in enumerate(body.splitlines(), 1):
-                  if line.strip():
-                      add_text(path, f"body:{i}", line)
+                      front, body = parts[1], parts[2]
+                      fm_lines = front.splitlines(keepends=True)
+                      new_lines = []
+                      for line in fm_lines:
+                          m = re.match(r'(\s*(?:title|summary):\s*)(.*?)(\r?\n)?$', line)
+                          if m:
+                              raw = m.group(2)
+                              quote = '"' if raw.startswith('"') and raw.endswith('"') else ''
+                              value = raw[1:-1] if quote else raw
+                              value2 = translate(value)
+                              raw = quote + value2 + quote if quote else value2
+                              line = m.group(1) + raw + (m.group(3) or "")
+                          new_lines.append(line)
+                      front = "".join(new_lines)
+              chunks = fence.split(body)
+              fences = fence.findall(body)
+              for i in range(len(chunks)):
+                  chunks[i] = translate(chunks[i])
+              rebuilt_body = chunks[0]
+              for f, c in zip(fences, chunks[1:]):
+                  rebuilt_body += f + c
+              updated = ("---" + front + "---" + rebuilt_body) if text.startswith("---") and text.split("---", 2).__len__() == 3 else rebuilt_body
+              if updated != text:
+                  path.write_text(updated, encoding="utf-8")
+                  changed_files.add(str(path))
 
-          # Curriculum learner-facing fields only. Avoid keys/slugs/contentKey noise.
+          # Curriculum: learner-facing scalar fields only, never keys/slugs/contentKey.
           curriculum = Path("content/curriculum/operating-systems.yaml")
           if curriculum.exists():
-              for i, line in enumerate(curriculum.read_text(encoding="utf-8").splitlines(), 1):
-                  m = re.match(r"\s*(title|description|scope|boundary|learningObjective|learningObjectiveKo|objective|visualization|visualizationNote|note):\s*(.*)$", line)
+              lines = curriculum.read_text(encoding="utf-8").splitlines(keepends=True)
+              new_lines = []
+              field_re = re.compile(r'(\s*(?:title|description|scope|boundary|learningObjective|learningObjectiveKo|objective|visualization|visualizationNote|note):\s*)(.*?)(\r?\n)?$')
+              for line in lines:
+                  m = field_re.match(line)
                   if m:
-                      add_text(curriculum, f"{m.group(1)}:{i}", m.group(2).strip().strip('"'))
+                      raw = m.group(2)
+                      quote = '"' if raw.startswith('"') and raw.endswith('"') else ''
+                      value = raw[1:-1] if quote else raw
+                      value2 = translate(value)
+                      raw2 = quote + value2 + quote if quote else value2
+                      line = m.group(1) + raw2 + (m.group(3) or "")
+                  new_lines.append(line)
+              updated = "".join(new_lines)
+              old = curriculum.read_text(encoding="utf-8")
+              if updated != old:
+                  curriculum.write_text(updated, encoding="utf-8")
+                  changed_files.add(str(curriculum))
 
-          print("=== TOP ENGLISH TOKENS IN LEARNER-FACING OS CONTENT ===")
-          for token, count in counts.most_common(180):
-              print(f"{count:4d} {token}")
+          # Validate question identity and accepted answers were untouched.
+          for path_str, before in question_identity.items():
+              data = json.loads(Path(path_str).read_text(encoding="utf-8"))
+              after = [
+                  (q.get("contentKey"), q.get("questionType"), q.get("difficulty"), q.get("status"),
+                   copy.deepcopy(q.get("conceptKeys")), copy.deepcopy(q.get("acceptedAnswers")),
+                   q.get("correctChoiceKey"),
+                   [(c.get("key"), c.get("displayOrder")) for c in (q.get("choices") or [])])
+                  for q in data
+              ]
+              if before != after:
+                  raise SystemExit(f"identity/answer contract changed unexpectedly: {path_str}")
 
-          review_terms = [
-              "state","resource","application","lifecycle","permission","failure","result","context",
-              "process","thread","task","scheduler","runnable","blocked","waiting","ready","owner","waiter",
-              "allocation","reclamation","protection","mapping","memory","page","frame","file","descriptor",
-              "directory","path","device","driver","queue","completion","readiness","service","server","worker",
-              "workload","throughput","latency","fairness","priority","progress","backend","hardware","software",
-              "kernel","user","system","operation","event","request","response","object","identity","reference",
-              "shared","private","mutable","immutable","runtime","layer","boundary","mechanism","policy"
-          ]
-          print("\n=== REVIEW TERM SAMPLES ===")
-          for token in review_terms:
-              if counts[token] == 0:
-                  continue
-              print(f"\n## {token} ({counts[token]})")
-              for path, label, snippet in samples[token]:
-                  print(f"- {path} | {label} | {snippet}")
+          # Inventory guards.
+          topics = json.loads((root / "topics.json").read_text(encoding="utf-8"))
+          concepts = list(root.rglob("*.md"))
+          questions = []
+          for p in root.rglob("questions.json"):
+              questions.extend(json.loads(p.read_text(encoding="utf-8")))
+          if (len(topics), len(concepts), len(questions)) != (12, 97, 331):
+              raise SystemExit(f"inventory drift: topics={len(topics)} concepts={len(concepts)} questions={len(questions)}")
+
+          print(f"changed files: {len(changed_files)}")
+          print("inventory: 12 Topics / 97 Concepts / 331 Questions")
+          print("top replacements:")
+          for name, count in stats.most_common(80):
+              print(f"{count:4d} {name}")
           PY
+
+          git diff --check
+          git diff --stat
+
+      - name: Commit Korean-first pass
+        shell: bash
+        run: |
+          if git diff --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add content/operating-systems content/curriculum/operating-systems.yaml
+          git commit -m "refine OS Korean-first learner language"
+          git push origin HEAD:codex/content-operating-systems-quality
