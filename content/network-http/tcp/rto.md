@@ -14,7 +14,7 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "SRTT·RTTVAR를 이용한 TCP RTO 계산과 반복 타임아웃의 지수 백오프 규칙을 확인한다."
+    recommendation: "TCP 재전송 타이머와 RTO 계산 규칙을 확인한다."
     displayOrder: 1
 ---
 # 재전송 타임아웃(RTO)
