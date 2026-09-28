@@ -4,7 +4,7 @@ contentKey: security.core.injection.jpql-native
 topicContentKey: security.core.injection
 slug: jpql-native
 title: "JPQL·네이티브 쿼리에서도 인젝션이 생기는 경계"
-summary: "ORM을 사용한다고 injection이 사라지는 것이 아니라 JPQL/native SQL 문자열을 동적으로 조립하면 같은 구조 문제가 생기며 parameter binding과 identifier allowlist가 필요함을 이해한다."
+summary: "JPA를 사용해도 사용자 입력을 JPQL·네이티브 쿼리의 구조에 직접 붙이면 인젝션 위험이 남는 이유와 값 바인딩·허용 목록의 역할을 이해한다."
 level: 2
 status: PUBLISHED
 displayOrder: 20
@@ -14,20 +14,20 @@ references:
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
-    relationNote: ORM 사용 여부와 무관한 parameterization 원칙 확인
+    relationNote: "ORM 사용 여부와 관계없는 매개변수 바인딩 원칙 확인"
 ---
 # JPQL·네이티브 쿼리에서도 인젝션이 생기는 경계
 
-JPA/Hibernate를 쓴다는 사실만으로 SQL injection이 자동 제거되는 것은 아닙니다. JPQL도 문자열 language이고 사용자 입력을 query structure에 직접 이어 붙이면 injection 가능성이 생깁니다.
+JPA나 Hibernate를 사용해도 SQL 인젝션이 자동으로 사라지는 것은 아닙니다. JPQL 문자열의 구조에 사용자 입력을 직접 붙이면 인젝션 위험이 남습니다.
 
 ```java
 String jpql = "select m from Member m where m.email = '" + email + "'";
 entityManager.createQuery(jpql, Member.class).getResultList();
 ```
 
-ORM은 이 문자열을 분석해 SQL로 변환할 뿐 **이미 오염된 query structure를 안전한 parameter로 되돌려 주지 않습니다.**
+ORM은 이 문자열을 분석해 SQL로 변환할 뿐 **이미 오염된 쿼리 구조를 안전한 매개변수로 되돌려 주지 않습니다.**
 
-### JPQL parameter를 사용한다
+### JPQL 매개변수를 사용한다
 
 ```java
 entityManager.createQuery(
@@ -38,25 +38,25 @@ entityManager.createQuery(
     .getResultList();
 ```
 
-Spring Data derived query나 type-safe query builder를 사용하면 문자열 조립 지점을 줄일 수 있지만 dynamic expression을 직접 만들 때는 같은 원칙이 필요합니다.
+Spring Data의 메서드 이름 기반 쿼리나 타입 안전 쿼리 생성기를 사용하면 문자열 조립을 줄일 수 있습니다. 동적 식을 직접 만들 때도 입력값과 쿼리 구조는 구분해야 합니다.
 
-### native query는 더 직접적으로 DB syntax와 연결된다
+### 네이티브 쿼리는 DB 문법과 직접 연결된다
 
 ```java
 @Query(value = "select * from member where email = :email", nativeQuery = true)
 ```
 
-parameter binding을 사용하면 value는 안전하게 전달할 수 있습니다. 반대로 table/column/sort direction 같은 structural 부분을 요청 값으로 직접 붙이면 위험합니다.
+값은 매개변수로 전달할 수 있습니다. 테이블·열 이름이나 정렬 방향처럼 쿼리의 구조가 되는 부분에는 요청 문자열을 직접 붙이지 않아야 합니다.
 
 ```java
 // 위험한 접근
 "ORDER BY " + request.getSort()
 ```
 
-허용 가능한 필드/방향을 enum으로 매핑합니다.
+허용할 필드와 정렬 방향을 서버의 열거형으로 매핑합니다.
 
-### injection과 authorization은 별개다
+### 인젝션과 인가는 별개다
 
-Query를 안전하게 parameterize해도 `findById(orderId)`로 다른 사용자의 주문을 반환하면 BOLA가 남습니다. Injection은 code/data 경계 문제이고 authorization은 principal/resource 권한 문제입니다.
+쿼리 값을 안전하게 바인딩해도 `findById(orderId)`로 다른 사용자의 주문을 반환하면 BOLA가 남습니다. 인젝션 방어는 쿼리의 문법과 값을 분리하고, 인가는 현재 사용자에게 해당 주문의 접근 권한이 있는지 판단합니다.
 
-ORM을 보안 기능으로 신뢰하기보다 **어떤 API가 value binding을 보장하고 어디에서 query structure를 직접 생성하는지**를 코드 리뷰에서 찾는 것이 중요합니다.
+ORM을 쓴다는 사실만 믿지 말고 **값을 매개변수로 전달하는 지점과 쿼리 구조를 직접 만드는 지점**을 구분해야 합니다.

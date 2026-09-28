@@ -3,8 +3,8 @@ kind: concept
 contentKey: security.core.browser.same-origin
 topicContentKey: security.core.browser
 slug: same-origin
-title: "동일 출처 정책(Same-Origin Policy)이 브라우저 script 읽기를 제한하는 방식"
-summary: "origin을 scheme·host·port 조합으로 이해하고 SOP가 cross-origin resource interaction 전체를 금지하는 것이 아니라 특히 script의 cross-origin read를 제한하는 browser isolation 정책임을 이해한다."
+title: "동일 출처 정책(SOP)이 브라우저의 응답 읽기를 제한하는 방식"
+summary: "출처를 스킴·호스트·포트로 판단하고, 동일 출처 정책이 모든 교차 출처 요청을 막는 것이 아니라 주로 응답 읽기를 제한한다는 점을 이해한다."
 level: 2
 status: PUBLISHED
 displayOrder: 10
@@ -14,44 +14,44 @@ references:
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
-    relationNote: origin 정의와 cross-origin read/write/embed 제약 확인
+    relationNote: "출처의 정의와 교차 출처 읽기·쓰기·삽입의 제약 확인"
 ---
-# 동일 출처 정책(Same-Origin Policy)이 브라우저 script 읽기를 제한하는 방식
+# 동일 출처 정책(SOP)이 브라우저의 응답 읽기를 제한하는 방식
 
-웹에서 공격자 사이트의 JavaScript가 사용자가 로그인한 은행 사이트의 응답을 마음대로 읽을 수 있다면 심각한 정보 노출이 됩니다. Same-Origin Policy(SOP)는 **서로 다른 origin의 document/script 사이 접근을 제한하는 브라우저 보안 경계**입니다.
+공격자 사이트의 JavaScript가 사용자가 로그인한 은행 사이트의 응답을 읽을 수 있다면 정보가 유출됩니다. 동일 출처 정책(SOP)은 **다른 출처의 문서와 스크립트에 대한 브라우저 접근을 제한**합니다.
 
-### origin은 scheme·host·port로 결정된다
+### 출처는 스킴·호스트·포트로 결정된다
 
-| URL                               | `https://shop.example.com:443`와 same origin? |
+| URL                               | `https://shop.example.com:443`와 동일 출처인가? |
 | --------------------------------- | --------------------------------------------- |
 | `https://shop.example.com/orders` | 예                                            |
-| `http://shop.example.com`         | 아니오 — scheme 다름                          |
-| `https://api.example.com`         | 아니오 — host 다름                            |
-| `https://shop.example.com:8443`   | 아니오 — port 다름                            |
+| `http://shop.example.com`         | 아니오 — 스킴 다름                          |
+| `https://api.example.com`         | 아니오 — 호스트 다름                            |
+| `https://shop.example.com:8443`   | 아니오 — 포트 다름                            |
 
-Path `/orders`와 `/admin`이 다르다고 origin이 달라지는 것은 아닙니다.
+경로 `/orders`와 `/admin`이 다르다고 출처가 달라지지는 않습니다.
 
-### cross-origin 요청 자체가 항상 금지되는 것은 아니다
+### 교차 출처 요청 자체가 항상 금지되는 것은 아니다
 
-HTML form POST, image/embed, navigation처럼 cross-origin write/embed가 가능한 경우가 있습니다. SOP의 핵심 방어 중 하나는 공격자 script가 **다른 origin의 응답 data를 자유롭게 읽는 것**을 막는 것입니다.
+다른 출처로 폼을 제출하거나 이미지를 불러오고 페이지를 이동할 수 있습니다. SOP는 이런 요청을 모두 금지하기보다 공격자 스크립트가 **다른 출처의 응답을 자유롭게 읽는 것**을 제한합니다.
 
 ```text
-attacker.example script
+attacker.example 스크립트
        │ fetch https://bank.example/account
        ▼
-Browser가 network request를 보낼 수 있는 경우도 있음
+브라우저가 네트워크 요청을 보낼 수 있는 경우도 있음
        │
-       └─ SOP/CORS 규칙에 따라 response를 script에 노출할지 결정
+       └─ SOP/CORS 규칙에 따라 응답을 스크립트에 노출할지 결정
 ```
 
-이 때문에 “SOP가 있으니 CSRF가 불가능하다”는 결론은 틀립니다. CSRF는 응답을 읽지 않아도 state-changing 요청이 성공하면 공격 목적을 달성할 수 있습니다.
+이 때문에 “SOP가 있으니 CSRF가 불가능하다”는 결론은 틀립니다. CSRF는 응답을 읽지 않아도 상태 변경 요청이 성공하면 공격 목적을 달성할 수 있습니다.
 
-### SOP는 서버 authorization이 아니다
+### SOP는 서버 인가가 아니다
 
-브라우저 정책이므로 `curl`, backend-to-backend HTTP client는 SOP에 의해 막히지 않습니다. 서버는 모든 요청에 authentication/authorization을 자체 적용해야 합니다.
+SOP는 브라우저 정책이므로 `curl`이나 서버 간 HTTP 요청에는 적용되지 않습니다. 서버는 요청마다 인증과 인가를 직접 수행해야 합니다.
 
 ### CORS는 SOP를 선택적으로 완화한다
 
-서버가 특정 다른 origin의 script에게 응답을 읽을 권한을 주고 싶을 때 CORS 응답 헤더를 사용합니다. 이것이 다음 Concept의 주제입니다.
+서버가 다른 출처의 스크립트에 응답 읽기를 허용하려면 CORS 응답 헤더를 사용합니다.
 
-SOP를 이해할 때는 “다른 domain 요청 금지” 한 줄이 아니라 **브라우저가 어떤 origin의 script에게 어떤 resource 응답을 노출할지를 제한하는 client-side isolation**으로 보는 것이 정확합니다.
+SOP가 막는 동작을 판단할 때는 요청 전송과 응답 읽기를 구분해야 합니다. 서버의 인가 검사는 어느 경우에도 별도로 필요합니다.

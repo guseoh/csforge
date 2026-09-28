@@ -4,7 +4,7 @@ contentKey: security.core.tokens-oauth.jwt-lifecycle
 topicContentKey: security.core.tokens-oauth
 slug: jwt-lifecycle
 title: "JWT 만료·발급자·대상 검증과 폐기 수명주기"
-summary: "stateless signature verification이 서버의 모든 session state를 없애는 것이 아니며 access token 수명, refresh token, key rotation, logout/revocation 요구에 따라 상태와 trade-off가 다시 생김을 이해한다."
+summary: "서명만으로 JWT를 검증해도 발급자·대상·만료 조건을 확인해야 하며, 액세스 토큰의 폐기와 리프레시 토큰 관리에는 서버 상태가 필요할 수 있음을 이해한다."
 level: 3
 status: PUBLISHED
 displayOrder: 20
@@ -14,19 +14,32 @@ references:
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
-    relationNote: exp, nbf, iss, aud 등 registered claims 확인
+    relationNote: "exp·nbf·iss·aud 등 등록된 클레임 확인"
   - url: "https://www.rfc-editor.org/rfc/rfc9700"
     title: "RFC 9700: Best Current Practice for OAuth 2.0 Security"
     referenceType: OFFICIAL
     language: en
     displayOrder: 2
-    relationNote: access/refresh token 보안과 현대 OAuth security guidance 확인
+    relationNote: "액세스·리프레시 토큰 보안과 OAuth 보안 권고 확인"
 ---
 # JWT 만료·발급자·대상 검증과 폐기 수명주기
 
-JWT의 장점으로 “서버가 DB/session store를 조회하지 않고 signature만으로 요청을 검증할 수 있다”가 자주 언급됩니다. 하지만 이것을 **인증 시스템에 상태가 전혀 필요 없다**로 확대하면 logout, role 변경, token 탈취 대응에서 문제가 생깁니다.
+JWT는 매 요청마다 중앙 저장소를 조회하지 않고 서명을 확인하는 방식으로 사용할 수 있습니다. 다만 서명만 맞는다고 토큰을 받아들여서는 안 됩니다. **신뢰하는 발급자가 이 API를 대상으로 발급했고 아직 유효한 토큰인지** 확인해야 하며, 로그아웃·권한 변경·토큰 탈취에 즉시 대응하려면 별도 서버 상태가 필요할 수 있습니다.
 
-### access token은 발급 시점 claim snapshot이다
+### 서명과 등록된 클레임을 함께 검증한다
+
+```text
+서명이 유효한 토큰 수신
+    │
+    ├─ iss: 신뢰하는 발급자인가?
+    ├─ aud: 현재 API가 대상에 포함되는가?
+    ├─ exp: 아직 만료되지 않았는가?
+    └─ nbf: 사용 가능 시각이 지났는가?
+```
+
+다른 API용 토큰은 서명이 유효하고 만료 전이어도 이 API에서 사용하면 안 됩니다. 발급자와 대상은 미리 정한 정책과 비교하고, `exp`·`nbf`는 현재 시각과 비교합니다. 이 검증을 통과한 뒤에도 계정 정지나 권한 변경을 즉시 반영해야 한다면 중앙 상태를 조회할지 결정해야 합니다.
+
+### 액세스 토큰에는 발급 시점의 권한 정보가 담긴다
 
 ```text
 10:00 발급
@@ -34,30 +47,30 @@ sub=42
 role=USER
 exp=10:15
 
-10:05 관리자에서 account disabled
+10:05 관리자가 계정 정지
 ```
 
-Resource server가 매 요청 user DB를 조회하지 않는다면 10:15까지 token의 old claim을 계속 신뢰할 수 있습니다. 짧은 access token lifetime은 stale authorization window를 줄이는 방법입니다.
+리소스 서버가 매 요청마다 계정 상태를 조회하지 않으면 10:15까지 토큰에 담긴 이전 권한을 계속 사용할 수 있습니다. 액세스 토큰의 수명을 줄이면 이 지연 구간이 짧아지지만 즉시 권한 회수를 보장하지는 않습니다.
 
-### logout은 token 파일을 지우는 것만으로 서버에서 사라지지 않는다
+### 클라이언트에서 토큰을 지워도 서버의 유효성은 바뀌지 않는다
 
-Client가 local token을 삭제해도 공격자가 복사본을 갖고 있다면 `exp`까지 사용할 수 있습니다. 즉시 revocation이 필요하면 denylist/token version/introspection 같은 server-side state를 도입할 수 있지만 stateless 장점이 줄어듭니다.
+클라이언트가 로컬 토큰을 삭제해도 공격자가 복사본을 갖고 있다면 만료 전까지 사용할 수 있습니다. 즉시 폐기가 필요하면 폐기 목록, 토큰 버전, 토큰 유효성 조회와 같은 서버 상태를 도입해야 합니다. 이때는 중앙 조회에 따른 지연과 가용성 비용을 함께 고려해야 합니다.
 
-### refresh token은 더 오래 사는 credential이다
+### 리프레시 토큰은 더 오래 유효한 자격 증명이다
 
-짧은 access token을 자주 갱신하기 위해 refresh token을 사용한다면 refresh token 탈취 위험과 rotation/reuse detection이 새 책임이 됩니다.
+짧은 액세스 토큰을 갱신하기 위해 리프레시 토큰을 사용한다면 토큰 탈취, 교체, 재사용 감지가 새로운 책임이 됩니다.
 
 ```text
-refresh token R1 사용
+리프레시 토큰 R1 사용
    │
-   ├─ R1 invalidate
+   ├─ R1 무효화
    └─ R2 발급
 
-이미 사용된 R1 재사용 감지 → token family compromise 의심
+이미 사용된 R1 재사용 감지 → 같은 계열의 토큰 탈취 의심
 ```
 
-### key rotation도 lifecycle이다
+### 서명 키 교체도 수명주기의 일부다
 
-Signing key를 바꿀 때 이미 발급된 token을 검증하기 위해 old verification key를 일정 기간 유지할 수 있습니다. `kid`와 JWKS 같은 메커니즘이 rotation을 도와주지만 key selection 자체도 신뢰된 issuer configuration 안에서 해야 합니다.
+서명 키를 바꿀 때 이전에 발급된 토큰을 검증하기 위해 기존 검증 키를 일정 기간 유지할 수 있습니다. `kid`와 JWKS는 키 선택을 돕지만, 토큰이 지정한 키를 무조건 신뢰해서는 안 됩니다. 신뢰하는 발급자의 키 집합 안에서 선택해야 합니다.
 
-JWT를 선택하는 질문은 “세션보다 최신 기술인가?”가 아니라 **요청마다 중앙 상태 조회를 줄이는 대신 token 유효 기간 동안 stale/revocation을 어떻게 받아들일 것인가**입니다.
+JWT를 선택할 때는 **중앙 상태 조회를 줄이는 대신 토큰의 유효 기간에 생기는 권한 변경·폐기 지연을 어떻게 다룰지** 결정해야 합니다.

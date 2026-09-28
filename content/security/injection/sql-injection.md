@@ -4,7 +4,7 @@ contentKey: security.core.injection.sql-injection
 topicContentKey: security.core.injection
 slug: sql-injection
 title: "SQL 인젝션과 값·쿼리 구조의 경계"
-summary: "사용자 입력을 SQL 문자열 구조에 결합할 때 데이터가 SQL syntax로 해석되는 injection 원리를 이해하고 parameter binding과 allowlist로 value와 query structure를 분리한다."
+summary: "사용자 입력을 SQL 문장에 직접 붙이면 데이터가 쿼리 문법으로 해석되는 원리와, 매개변수 바인딩·허용 목록으로 이를 막는 방법을 이해한다."
 level: 2
 status: PUBLISHED
 displayOrder: 10
@@ -14,11 +14,11 @@ references:
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
-    relationNote: prepared statements와 allow-list validation 방어 확인
+    relationNote: "준비된 문장과 허용 목록 검증을 통한 방어 확인"
 ---
 # SQL 인젝션과 값·쿼리 구조의 경계
 
-SQL injection은 특수문자 하나가 위험한 것이 아니라 **사용자가 준 데이터가 SQL 문법 일부로 합쳐져 DB parser가 code로 해석하는 순간** 발생합니다.
+SQL 인젝션은 **사용자가 준 데이터가 SQL 문장의 일부가 되어 DB가 쿼리 문법으로 해석할 때** 발생합니다.
 
 ```java
 String sql = "SELECT * FROM member WHERE email = '" + email + "'";
@@ -37,7 +37,7 @@ SELECT * FROM member
 WHERE email = '' OR '1'='1';
 ```
 
-### parameter binding은 data와 SQL structure를 분리한다
+### 매개변수 바인딩은 데이터와 SQL 구조를 분리한다
 
 ```java
 TypedQuery<Member> query = entityManager.createQuery(
@@ -47,15 +47,15 @@ TypedQuery<Member> query = entityManager.createQuery(
 query.setParameter("email", email);
 ```
 
-JPA/JPQL에서도 query structure와 parameter value를 분리해 전달하면 입력 문자열 안의 `' OR ...`가 JPQL/SQL operator로 승격되지 않습니다. 핵심은 특정 API 이름이 아니라 **untrusted value를 query 문자열에 이어 붙이지 않고 parameter로 전달하는 것**입니다.
+JPA나 JPQL에서도 쿼리 구조와 값을 분리하면 입력에 포함된 `' OR ...`가 연산자로 해석되지 않습니다. **신뢰할 수 없는 값을 문자열에 이어 붙이지 않고 매개변수로 전달하는 것**이 핵심입니다.
 
-### parameter는 column/table 이름을 대체하지 못한다
+### 매개변수로 열·테이블 이름을 지정할 수는 없다
 
 ```sql
 ORDER BY :sortField
 ```
 
-같이 identifier나 keyword 위치는 value parameter로 안전하게 bind할 수 없는 경우가 많습니다. 사용자에게 sort field를 받는다면 허용된 enum을 server-side mapping합니다.
+열 이름이나 SQL 키워드가 들어갈 위치에는 일반적인 값 매개변수를 사용할 수 없습니다. 정렬 필드를 요청으로 받는다면 허용된 이름만 서버의 열거형이나 매핑에서 선택합니다.
 
 ```java
 String orderBy = switch (sort) {
@@ -64,12 +64,12 @@ String orderBy = switch (sort) {
 };
 ```
 
-### escaping을 직접 구현하지 않는다
+### 문자 이스케이프를 직접 구현하지 않는다
 
-quote를 replace하는 식의 자체 escaping은 encoding, DB dialect, edge case를 놓치기 쉽습니다. Prepared statement/ORM parameter binding을 기본으로 사용합니다.
+따옴표를 직접 치환하는 방식은 인코딩과 DB 문법의 예외를 놓치기 쉽습니다. 준비된 문장이나 ORM의 매개변수 바인딩을 사용합니다.
 
-### 최소 권한도 impact를 줄인다
+### 최소 권한도 피해 범위를 줄인다
 
-Injection이 발생해도 application DB role이 superuser라면 피해 범위가 훨씬 커집니다. Parameterization이 1차 방어이고 least privilege는 침해 영향 범위를 줄이는 추가 층입니다.
+인젝션이 발생했을 때 애플리케이션 DB 계정에 관리자 권한까지 있다면 피해 범위가 커집니다. 매개변수 바인딩으로 인젝션을 막고 DB 계정의 최소 권한으로 피해를 제한합니다.
 
-SQL injection의 본질은 문자열 필터링이 아니라 **untrusted value가 executable query structure가 되는 경계를 없애는 것**입니다.
+SQL 인젝션 방어의 핵심은 **신뢰할 수 없는 값이 실행되는 쿼리의 구조로 들어가지 않게 하는 것**입니다.

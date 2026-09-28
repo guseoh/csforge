@@ -4,7 +4,7 @@ contentKey: security.core.abuse.rate-limit
 topicContentKey: security.core.abuse
 slug: rate-limit
 title: "요청 속도 제한(rate limiting)과 남용 방어"
-summary: "로그인/API abuse에서 identity·IP·API key 같은 제한 key, window와 burst 정책, 여러 instance가 quota state를 공유할 때의 trade-off와 정상 사용자 오탐을 판단한다."
+summary: "로그인과 API 요청의 남용을 제한할 때 계정·IP 등 제한 기준, 시간 구간, 순간 요청량, 여러 인스턴스의 한도 공유와 정상 사용자 오탐을 함께 판단한다."
 level: 3
 status: PUBLISHED
 displayOrder: 30
@@ -14,69 +14,69 @@ references:
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
-    relationNote: brute-force 방어를 위한 throttling/account lockout 고려 확인
+    relationNote: "무차별 대입 방어를 위한 속도 제한과 계정 잠금 고려 확인"
   - url: "https://www.rfc-editor.org/rfc/rfc6585#section-4"
     title: "RFC 6585: 429 Too Many Requests"
     referenceType: OFFICIAL
     language: en
     displayOrder: 2
-    relationNote: rate limit 초과 HTTP 429와 Retry-After semantics 확인
+    relationNote: "속도 제한 초과 시 HTTP 429와 Retry-After의 의미 확인"
 ---
 # 요청 속도 제한(rate limiting)과 남용 방어
 
-강한 password hashing이나 올바른 authorization이 있어도 공격자가 비싼 endpoint를 매우 높은 빈도로 호출할 수 있다면 brute force와 자원 고갈 위험이 남습니다. Rate limiting은 **특정 요청 주체나 signal을 기준으로 일정 시간 동안 허용할 요청량을 제한하는 abuse-control 수단**입니다.
+강한 비밀번호 해시 처리와 올바른 인가를 적용해도 공격자가 비용이 큰 엔드포인트를 반복 호출하면 비밀번호 추측과 자원 고갈 위험이 남습니다. 요청 속도 제한(rate limiting)은 **IP·계정처럼 정한 기준에 따라 일정 시간 동안 허용할 요청 수를 제한하는 방어**입니다.
 
 ### 무엇을 하나의 요청 주체로 볼지 먼저 정한다
 
-제한 key에 따라 막을 수 있는 공격과 정상 사용자 영향이 달라집니다.
+제한 키에 따라 막을 수 있는 공격과 정상 사용자 영향이 달라집니다.
 
 ```text
 IP 기준
   + 익명 요청에도 적용 가능
-  - NAT·proxy 뒤 여러 정상 사용자가 같은 IP를 공유할 수 있음
+  - NAT·프록시 뒤 여러 정상 사용자가 같은 IP를 공유할 수 있음
 
-Account/email 기준
-  + 특정 계정 대상 brute force를 제한하기 쉬움
+계정/이메일 기준
+  + 특정 계정 대상 무차별 대입을 제한하기 쉬움
   - 공격자가 여러 계정으로 분산할 수 있음
 
-Authenticated principal/API key 기준
-  + 사용자·client별 quota에 적합
-  - 인증 전 abuse에는 사용할 수 없음
+인증된 주체/API 키 기준
+  + 사용자·클라이언트별 한도에 적합
+  - 인증 전 남용에는 사용할 수 없음
 ```
 
-하나의 key만으로 충분하지 않은 경우 여러 signal을 조합할 수 있지만, 공격 차단률만 높이려다 정상 사용자를 과도하게 막지 않도록 false positive를 함께 봐야 합니다.
+한 가지 기준으로 충분하지 않다면 계정과 IP 등 여러 신호를 조합할 수 있습니다. 정상 사용자를 공격자로 잘못 판단해 차단하는 비용도 함께 고려해야 합니다.
 
-### Window 정책은 burst 허용 방식이 다르다
+### 시간 구간별 정책은 순간 요청량을 다르게 허용한다
 
-Fixed window는 구현이 단순하지만 경계 직전과 직후에 요청이 몰릴 수 있습니다.
+고정 시간 구간 방식은 구현이 단순하지만 구간 경계의 직전과 직후에 요청이 몰릴 수 있습니다.
 
 ```text
-12:00:59  100 requests
-12:01:00  window reset
-12:01:00  100 requests
+12:00:59  요청 100건
+12:01:00  시간 구간 재설정
+12:01:00  요청 100건
 ```
 
-Sliding window는 최근 일정 구간을 더 정확히 반영하고, token bucket은 일정 속도로 token을 보충하면서 제한된 burst를 허용할 수 있습니다. 어느 방식이 항상 더 좋은 것이 아니라 **허용해야 할 burst와 유지할 state 비용**이 다릅니다.
+이동 시간 구간 방식은 최근 요청량을 더 정확히 반영합니다. 토큰 버킷은 일정 속도로 토큰을 채워 짧은 시간의 요청 집중을 제한적으로 허용합니다. **얼마나 많은 순간 요청을 허용할지와 상태 유지 비용**에 따라 방식을 선택합니다.
 
-### 여러 instance에서는 quota state의 범위를 결정한다
+### 여러 인스턴스에서는 한도 상태의 범위를 결정한다
 
-한 process의 memory에 counter를 두면 그 instance가 본 요청만 계산합니다. 여러 application instance가 하나의 global quota를 공유해야 한다면 shared state나 gateway처럼 공통 지점에서 제한을 수행해야 할 수 있습니다.
+한 프로세스의 메모리에 카운터를 두면 그 인스턴스가 받은 요청만 계산합니다. 여러 인스턴스에 걸쳐 하나의 전역 한도를 강제해야 한다면 공유 저장소나 게이트웨이처럼 공통 지점에서 제한해야 합니다.
 
 ```text
-Client
-  ├─► Instance A : local count 60
-  └─► Instance B : local count 60
+클라이언트
+  ├─► 인스턴스 A: 로컬 집계 60건
+  └─► 인스턴스 B: 로컬 집계 60건
 
-정책이 global 100/min이라면
-두 local counter만으로는 실제 120 requests를 막지 못할 수 있음
+정책이 전역 분당 100건이라면
+두 로컬 카운터만으로는 실제 요청 120건을 막지 못할 수 있음
 ```
 
-반대로 instance별 제한이면 충분한 요구에 global distributed counter를 추가하면 네트워크 왕복, failure mode, 운영 복잡성만 늘 수 있습니다. 필요한 quota scope를 먼저 정의해야 합니다.
+인스턴스별 제한으로 충분하다면 분산 카운터는 네트워크 왕복과 장애 경로, 운영 복잡성을 늘립니다. 먼저 한도를 어느 범위에서 공유해야 하는지 정합니다.
 
-### Rate limit은 인증·인가를 대체하지 않는다
+### 요청 속도 제한은 인증·인가를 대체하지 않는다
 
-권한 없는 요청을 초당 5회로 줄여도 그 5회가 성공하면 authorization은 여전히 깨져 있습니다. Rate limiting은 요청 속도와 자원 소비를 제한하는 방어층이지 permission check가 아닙니다.
+권한 없는 요청을 초당 5회로 줄여도 그 5회가 성공한다면 인가 실패는 그대로입니다. 요청 속도 제한은 자원 소비를 줄이는 방어층이며 권한 검사와 별도로 적용합니다.
 
-Limit을 넘겼을 때는 `429 Too Many Requests`를 사용할 수 있고, 필요하면 `Retry-After`로 client가 언제 다시 시도할 수 있는지 알려줄 수 있습니다. 즉 client retry 정책도 abuse-control 설계와 연결됩니다.
+한도를 넘긴 요청에는 `429 Too Many Requests`를 반환할 수 있습니다. 필요하면 `Retry-After`로 재시도 시점을 알려 주고, 클라이언트의 재시도 정책도 함께 설계합니다.
 
-Rate limiting의 핵심은 `100 req/min` 같은 숫자를 외우는 것이 아니라 **어떤 공격을 어떤 주체 기준으로 늦추고, 어느 정도 burst와 정상 사용자 오탐을 허용하며, quota state를 어디까지 공유할 것인지**를 명시하는 것입니다.
+요청 속도 제한을 설계할 때는 **어떤 공격을 누구를 기준으로 늦출지, 순간 요청과 오탐을 어느 정도 허용할지, 한도 상태를 어디까지 공유할지** 정해야 합니다.

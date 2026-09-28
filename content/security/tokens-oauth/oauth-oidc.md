@@ -4,7 +4,7 @@ contentKey: security.core.tokens-oauth.oauth-oidc
 topicContentKey: security.core.tokens-oauth
 slug: oauth-oidc
 title: "권한 위임(OAuth 2.0)과 사용자 인증(OpenID Connect)의 목적 차이"
-summary: "OAuth를 resource access delegation framework로, OIDC를 그 위의 authentication identity layer로 구분하고 authorization code + PKCE 흐름에서 access token과 ID token의 대상이 다름을 이해한다."
+summary: "OAuth 2.0의 권한 위임과 OIDC의 사용자 인증을 구분하고, 인가 코드·PKCE 검증 흐름과 액세스 토큰·ID 토큰의 사용 대상을 이해한다."
 level: 3
 status: PUBLISHED
 displayOrder: 30
@@ -14,69 +14,69 @@ references:
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
-    relationNote: OAuth roles와 authorization code flow 기본 표준 확인
+    relationNote: "OAuth 역할과 인가 코드 흐름의 기본 표준 확인"
   - url: "https://www.rfc-editor.org/rfc/rfc7636"
     title: "RFC 7636: Proof Key for Code Exchange (PKCE)"
     referenceType: OFFICIAL
     language: en
     displayOrder: 2
-    relationNote: authorization code interception 방어용 PKCE 확인
+    relationNote: "인가 코드 가로채기 방어를 위한 PKCE 확인"
   - url: "https://www.rfc-editor.org/rfc/rfc9700"
     title: "RFC 9700: Best Current Practice for OAuth 2.0 Security"
     referenceType: OFFICIAL
     language: en
     displayOrder: 3
-    relationNote: authorization code flow의 PKCE 현재 보안 권고와 client별 요구 확인
+    relationNote: "인가 코드 흐름에서 PKCE의 현재 보안 권고와 클라이언트별 요구 확인"
   - url: "https://openid.net/specs/openid-connect-core-1_0.html"
     title: "OpenID Connect Core 1.0"
     referenceType: OFFICIAL
     language: en
     displayOrder: 4
-    relationNote: ID Token과 OIDC authentication layer 확인
+    relationNote: "ID 토큰과 OIDC 인증 계층 확인"
 ---
 # 권한 위임(OAuth 2.0)과 사용자 인증(OpenID Connect)의 목적 차이
 
-“구글 OAuth 로그인”이라는 표현 때문에 OAuth 자체가 login protocol이라고 생각하기 쉽습니다. OAuth 2.0의 핵심은 **resource owner가 client에게 protected resource 접근 권한을 위임**하는 것이고, OpenID Connect(OIDC)는 OAuth 2.0 위에 identity/authentication 정보를 표준화한 layer를 추가합니다.
+“구글 OAuth 로그인”이라는 표현 때문에 OAuth 자체를 로그인 프로토콜로 오해하기 쉽습니다. OAuth 2.0은 **리소스 소유자가 클라이언트에 리소스 접근 권한을 위임**하는 체계입니다. OpenID Connect(OIDC)는 OAuth 2.0 위에 사용자 인증 결과를 전달하는 표준을 더합니다.
 
-### authorization code flow의 역할을 나눈다
-
-```text
-User Browser
-    │
-    ▼
-Client ── authorize request ──► Authorization Server
-  ▲                                 │
-  │        authorization code       │
-  └─────────────────────────────────┘
-  │
-  ├─ code + PKCE verifier ─────────► Token Endpoint
-  │                                  │
-  │   access token (+ ID token)      │
-  ◄──────────────────────────────────┘
-```
-
-PKCE는 authorization request의 code challenge와 token 교환 때의 verifier를 연결해 탈취된 authorization code만으로 token을 받을 수 없게 합니다. 현재 OAuth 보안 BCP(RFC 9700)는 public client에 PKCE 사용을 요구하고 confidential client에도 권고하며, verifier를 드러내지 않는 `S256` challenge method를 사용하도록 권고합니다.
-
-### access token과 ID token은 audience가 다르다
+### 인가 코드와 PKCE의 검증 흐름
 
 ```text
-Access Token
-Client ─────────► Resource Server(API)
-목적: API access authorization
-
-ID Token
-Authorization Server ─────────► Client
-목적: 사용자가 어떻게 인증됐는지에 대한 identity claims
+클라이언트: 무작위 code_verifier 생성
+     │
+     ├─ code_challenge = BASE64URL(SHA256(code_verifier))
+     │
+     └─ 인증 요청(code_challenge, S256) ──► 인가 서버
+                                              │
+               인가 코드 ◄─────────────────────┘
+     │
+     └─ 토큰 요청(인가 코드, code_verifier) ──► 토큰 엔드포인트
+                                              │
+                 challenge 재계산·비교 ────────┤
+               액세스 토큰(+ ID 토큰) ◄────────┘
 ```
 
-Client가 ID token을 API bearer credential처럼 보내거나, API가 access token payload를 client profile로 오해하면 token purpose가 섞입니다.
+클라이언트는 인가 요청 전에 예측하기 어려운 `code_verifier`를 만들고 그 값에서 `code_challenge`를 계산합니다. 인가 서버는 인가 코드와 챌린지를 연결해 보관합니다. 토큰 요청이 오면 서버가 제출된 검증자로 챌린지를 다시 계산해 비교하므로, 코드를 가로챈 공격자는 검증자 없이 토큰으로 교환할 수 없습니다. OAuth 보안 모범 사례(RFC 9700)는 공개 클라이언트에 PKCE를 요구하고 기밀 클라이언트에도 권고하며, 검증자를 직접 노출하지 않는 `S256` 방식을 권고합니다.
+
+### 액세스 토큰과 ID 토큰은 사용 대상이 다르다
+
+```text
+액세스 토큰
+클라이언트 ─────────► 리소스 서버(API)
+목적: API 접근 권한 위임
+
+ID 토큰
+인가 서버 ─────────► 클라이언트
+목적: 사용자 인증 결과 전달
+```
+
+클라이언트가 ID 토큰을 API 호출용 자격 증명으로 보내거나, API가 액세스 토큰의 내용을 사용자 프로필로 해석하면 두 토큰의 목적을 혼동한 것입니다.
 
 ### OIDC는 `id_token` 검증이 핵심이다
 
-Client는 issuer, audience/client ID, signature, expiry, nonce 등 protocol 요구를 검증해야 합니다. 단순히 JWT payload의 email을 decode해 로그인 처리하면 안 됩니다.
+클라이언트는 발급자, 대상 클라이언트 ID, 서명, 만료, `nonce` 등 프로토콜이 요구하는 조건을 검증해야 합니다. JWT의 내용을 디코딩해 이메일만 읽고 로그인 처리해서는 안 됩니다.
 
-### OAuth authorization과 application authorization은 또 다르다
+### OAuth 권한 위임과 서비스 내부 인가도 구분한다
 
-Google이 “이 사용자가 누구인지” 알려 주고 access token scope를 발급해도 우리 서비스의 `ADMIN`, 주문 ownership 같은 domain permission은 우리 서버가 별도로 결정합니다.
+외부 제공자가 사용자 인증 결과와 액세스 토큰의 권한 범위를 전달해도, 우리 서비스의 `ADMIN` 권한이나 주문 소유권은 우리 서버가 별도로 판단합니다.
 
-OAuth/OIDC를 이해할 때 endpoint 이름보다 **누가 resource owner이고, client가 무엇을 위임받으며, 어떤 token을 어느 party가 소비하는지**를 역할별로 그리는 것이 가장 중요합니다.
+OAuth/OIDC를 이해할 때는 **누가 리소스 소유자인지, 클라이언트가 어떤 권한을 위임받는지, 각 토큰을 누가 사용하는지** 구분해야 합니다.
