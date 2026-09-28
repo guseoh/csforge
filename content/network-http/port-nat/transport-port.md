@@ -14,7 +14,7 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "TCP·UDP 서비스 이름과 포트 번호 공간, 포트가 전송 계층 식별자라는 점을 확인한다."
+    recommendation: "전송 프로토콜의 서비스 이름과 포트 번호 공간을 확인한다."
     displayOrder: 1
 ---
 # 전송 계층 포트
