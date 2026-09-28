@@ -14,7 +14,7 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "TCP의 OPEN 처리, SYN 교환과 초기 시퀀스 번호 확인을 포함한 연결 수립 상태 전이를 확인한다."
+    recommendation: "TCP 연결, 바이트 스트림, 시퀀스·ACK와 연결 상태의 기본 규칙을 확인한다."
     displayOrder: 1
 ---
 # TCP 3방향 핸드셰이크
