@@ -4,7 +4,7 @@ contentKey: network-http.core.http-message.representation
 topicContentKey: network-http.core.http-message
 slug: representation
 title: "표현 데이터(Representation)"
-summary: "URI로 식별되는 resource와 HTTP message로 전달되는 representation을 구분한다."
+summary: "URI가 식별하는 리소스와 HTTP 메시지로 전달되는 표현 데이터를 구분하고, 같은 리소스도 여러 형식으로 표현될 수 있는 이유를 설명한다."
 level: 1
 status: PUBLISHED
 displayOrder: 40
@@ -17,20 +17,53 @@ references:
 ---
 # 표현 데이터(Representation)
 
-HTTP에서 resource는 URI로 식별되는 개념적 대상이고, representation은 그 resource의 현재 또는 과거 상태를 특정 형식의 data와 metadata로 표현한 것이다. 둘을 구분하면 `resource = JSON 문서`처럼 wire format과 대상 자체를 동일시하는 오해를 피할 수 있다.
+HTTP에서 **리소스(resource)**는 URI가 식별하는 개념적 대상이고, **표현(representation)**은 그 리소스의 상태를 특정 형식의 데이터와 메타데이터로 나타낸 것이다. 이 둘을 구분해야 `리소스 = JSON 파일`처럼 대상 자체와 네트워크로 전달하는 형식을 같은 것으로 오해하지 않는다.
 
-예를 들어 `/users/42`라는 하나의 resource가 있다고 하자. server는 같은 resource를 JSON으로 표현할 수도 있고, HTML이나 다른 media type으로 표현할 수도 있다. resource identity는 같더라도 client preference와 server policy에 따라 전달되는 representation은 달라질 수 있다.
+예를 들어 `/users/42`라는 리소스가 있다고 하자. 이 URI가 가리키는 대상은 `42번 사용자`라는 논리적 리소스다. 서버는 같은 리소스를 JSON으로 표현할 수도 있고 HTML로 표현할 수도 있다.
 
-| Resource | 선택된 representation | Metadata 예 | 같은 resource인가? |
+```text
+리소스
+/users/42
+    │
+    ├─ application/json 표현
+    │   {"id":42,"name":"kim"}
+    │
+    └─ text/html 표현
+        <html>...</html>
+```
+
+전달되는 바이트는 달라도 두 응답이 같은 리소스 상태를 서로 다른 방식으로 표현할 수 있다.
+
+### 리소스와 표현 형식을 분리하면 API를 더 정확하게 이해할 수 있다
+
+`GET /users/42`의 의미를 `JSON 파일 하나를 가져온다`라고만 이해하면 이후 콘텐츠 협상이나 캐시 변형을 설명하기 어렵다. 더 정확한 관점은 `42번 사용자 리소스의 현재 표현을 요청한다`에 가깝다.
+
+| 리소스 | 선택된 표현 | 관련 메타데이터 | 같은 리소스인가? |
 | --- | --- | --- | --- |
-| /users/42 | JSON document | Content-Type: application/json | 예 |
-| /users/42 | HTML document | Content-Type: text/html | 예 |
-| /users/42 | 압축된 JSON bytes | Content-Type과 Content-Encoding | 예; wire bytes의 coding은 다를 수 있음 |
+| `/users/42` | JSON 문서 | `Content-Type: application/json` | 예 |
+| `/users/42` | HTML 문서 | `Content-Type: text/html` | 예 |
+| `/users/42` | gzip으로 인코딩된 JSON 바이트 | `Content-Type`, `Content-Encoding` | 예 |
 
-### Representation은 data와 metadata를 함께 본다
+이 구분 덕분에 서버는 리소스 식별자를 바꾸지 않고도 클라이언트가 처리할 수 있는 형식이나 언어에 맞는 표현을 선택할 수 있다.
 
-representation을 해석하려면 bytes만으로는 충분하지 않을 수 있다. `Content-Type` 같은 representation metadata가 format을 알려 주고, `Content-Encoding`은 data에 적용된 coding을 설명할 수 있다. validator나 cache metadata 역시 어떤 representation state를 재사용할 수 있는지 판단하는 데 관여한다.
+### 표현은 데이터와 그 데이터를 설명하는 메타데이터를 함께 본다
 
-content negotiation이 있다면 같은 resource에 여러 representation variant가 존재할 수 있다. 이때 cache는 요청의 어떤 조건에 따라 variant가 선택됐는지 구분해야 한다.
+표현을 올바르게 해석하려면 바이트만 보고 끝낼 수 없는 경우가 많다. `Content-Type`은 데이터의 미디어 유형을 알려 주고, `Content-Encoding`은 전달되는 콘텐츠에 어떤 콘텐츠 코딩이 적용됐는지 설명한다.
 
-핵심은 HTTP API의 resource를 특정 serializer 결과와 묶지 않는 것이다. **resource는 무엇을 가리키는가의 문제이고, representation은 그 resource를 이번 HTTP interaction에서 어떤 data 형태로 표현하는가의 문제**다.
+```text
+리소스 상태
+   ↓ JSON 표현 선택
+application/json 데이터
+   ↓ gzip 콘텐츠 코딩
+네트워크로 전달되는 압축 바이트
+```
+
+압축되었다고 리소스가 다른 리소스가 되는 것은 아니고, JSON을 HTML로 선택했다고 URI가 반드시 바뀌는 것도 아니다. 다만 캐시는 **어떤 요청 조건에 따라 어떤 표현이 선택됐는지** 구분해야 할 수 있다.
+
+### 캐시도 ‘리소스 하나 = 저장 응답 하나’라고 가정하면 안 된다
+
+같은 URI에 대해 `Accept-Language: ko`와 `Accept-Language: en`이 서로 다른 표현을 선택한다면 공유 캐시는 이 변형(variant)을 구분해야 한다. 그렇지 않으면 한국어 사용자의 응답을 영어 사용자에게 잘못 재사용할 수 있다.
+
+이때 `Vary` 같은 HTTP 메타데이터가 어떤 요청 필드가 표현 선택에 영향을 주었는지 알려 주는 역할을 할 수 있다.
+
+핵심은 **리소스는 ‘무엇을 식별하는가’의 문제이고 표현은 ‘그 리소스 상태를 이번 HTTP 교환에서 어떤 데이터와 메타데이터로 나타내는가’의 문제라는 점**이다.
