@@ -1,32 +1,296 @@
 [
-  {"kind":"question","contentKey":"dsa.core.graph.graph-model.q1","promptMarkdown":"`B를 먼저 알아야 A를 배울 수 있다`는 prerequisite를 `B -> A`로 모델링했다. 이 edge 의미에 맞는 설명은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["dsa.core.graph.graph-model"],"choices":[{"key":"A","content":"B가 A보다 먼저 처리되어야 한다","displayOrder":0,"rationaleMarkdown":"화살표는 prerequisite에서 dependent concept로 향하므로 B를 A보다 먼저 배워야 한다. `B -> A`를 지키는 topological order에서 B가 앞에 놓인다."},{"key":"B","content":"A와 B의 순서는 항상 무관하다","displayOrder":1,"rationaleMarkdown":"prerequisite edge는 순서 제약을 표현하므로 endpoint를 바꾸면 유효한 순서가 달라질 수 있다. 순서를 무관하게 보면 관계가 사라진다."},{"key":"C","content":"A가 반드시 B보다 먼저다","displayOrder":2,"rationaleMarkdown":"제시된 edge 방향은 B가 A에 앞선다는 뜻이지 반대가 아니다. 뒤집으면 A가 B의 prerequisite인 관계로 표현된다."},{"key":"D","content":"edge는 방향이 없는 관계다","displayOrder":3,"rationaleMarkdown":"화살표는 prerequisite에서 dependent로 향하는 방향 dependency를 나타낸다. 무방향 edge는 연관성만 보여 주고 어떤 concept가 먼저여야 하는지 표현하지 않는다."}],"correctChoiceKey":"A","explanationMarkdown":"주어진 edge 방향은 선행 조건에서 후행 대상이라는 domain 의미를 가진다. 방향을 반대로 해석하면 topological order와 dependency 처리 순서도 뒤집힌다."},
-  {"kind":"question","contentKey":"dsa.core.graph.graph-model.q2","promptMarkdown":"도로 graph에서 vertex, edge, weight를 각각 무엇으로 모델링할 수 있는지 한 예를 설명하라.","questionType":"DESCRIPTIVE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["dsa.core.graph.graph-model"],"modelAnswer":"도시나 교차로를 vertex, 두 지점을 잇는 도로를 edge, 거리·예상 시간·통행료 같은 비용을 weight로 둘 수 있다. 어떤 weight를 선택하느냐에 따라 최단 경로의 의미가 달라진다.","explanationMarkdown":"Graph의 weight는 단순 숫자가 아니라 무엇을 최적화할지 정의하는 domain 의미다. 같은 도로망도 거리, 예상 시간, 통행료 중 무엇을 weight로 두느냐에 따라 최단 경로가 달라지므로 product가 원하는 비용 기준을 먼저 고정해야 한다."},
-  {"kind":"question","contentKey":"dsa.core.graph.graph-model.q3","promptMarkdown":"서비스 dependency를 어떤 팀은 `consumer -> dependency`, 다른 팀은 `dependency -> consumer`로 저장했다. 동일한 topological sort 코드를 적용했을 때 잘못된 배포 순서가 나오는 이유와 수정 원칙을 설명하라.","questionType":"SCENARIO","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["dsa.core.graph.graph-model"],"modelAnswer":"edge 방향의 domain 의미가 서로 달라 동일한 ordering 결과를 같은 뜻으로 해석할 수 없다. graph schema에서 u->v의 의미를 하나로 고정하고 기존 edge를 그 계약에 맞춰 정규화한 뒤 알고리즘을 적용해야 한다.","explanationMarkdown":"graph schema에서 u->v의 의미를 하나로 고정하고 기존 edge를 그 계약에 맞춰 정규화한 뒤 알고리즘을 적용해야 한다."},
-
-  {"kind":"question","contentKey":"dsa.core.graph.adjacency-list-matrix.q1","promptMarkdown":"V=100,000, E=200,000인 sparse graph에서 모든 이웃을 자주 순회한다. 일반적으로 더 적합한 기본 표현은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["dsa.core.graph.adjacency-list-matrix"],"choices":[{"key":"A","content":"edge list만 저장해 vertex별 neighbor grouping은 하지 않는다","displayOrder":0,"rationaleMarkdown":"edge list는 간결하지만 한 vertex의 이웃을 반복해서 찾으려면 전체 목록을 훑어야 할 수 있다. 이 workload는 vertex별 이웃을 자주 순회한다."},{"key":"B","content":"100,000×100,000 adjacency matrix","displayOrder":1,"rationaleMarkdown":"100,000 × 100,000 matrix는 edge가 200,000개뿐이어도 100억 cell이 필요하다. sparse graph에서 공간을 낭비하고 없는 edge까지 많이 확인한다."},{"key":"C","content":"adjacency list","displayOrder":2,"rationaleMarkdown":"adjacency list는 실제 이웃만 저장해 vertex와 edge 수에 비례하는 공간을 쓴다. 한 vertex의 이웃 순회는 모든 V개 vertex가 아니라 degree에 비례한다."},{"key":"D","content":"각 vertex의 neighbor를 hash로 두지 않고 단일 전역 순서로만 저장한다","displayOrder":3,"rationaleMarkdown":"vertex별 이웃을 찾는 방법이 없는 전역 정렬 하나만으로는 국소 순회 비용이 크다. adjacency 구조는 edge를 시작 vertex별로 묶거나 색인한다."}],"correctChoiceKey":"C","explanationMarkdown":"Sparse graph의 adjacency list는 O(V+E) 공간에 실제 neighbor만 저장해 이웃 순회가 degree에 비례한다. V² 공간과 row 전체 확인이 필요한 matrix보다 이 workload에 자연스럽다."},
-  {"kind":"question","contentKey":"dsa.core.graph.adjacency-list-matrix.q2","promptMarkdown":"adjacency list와 matrix에서 `u`의 모든 neighbor를 순회하는 비용이 어떻게 다른지 설명하라.","questionType":"DESCRIPTIVE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["dsa.core.graph.adjacency-list-matrix"],"modelAnswer":"list는 저장된 실제 neighbor만 보므로 대략 degree(u)에 비례한다. matrix는 row u의 V개 칸을 확인해야 하므로 O(V)이다. 반대로 matrix는 특정 edge(u,v) 존재 확인을 O(1)에 할 수 있다.","explanationMarkdown":"matrix는 row u의 V개 칸을 확인해야 하므로 O(V)이다. 반대로 matrix는 특정 edge(u,v) 존재 확인을 O(1)에 할 수 있다."},
-  {"kind":"question","contentKey":"dsa.core.graph.adjacency-list-matrix.q3","promptMarkdown":"vertex 수가 200으로 작고 graph가 매우 dense하며 한 요청에서 `edge(u,v)가 존재하는가?`를 수백만 번 조회한다. representation을 선택할 때 무엇을 비교해야 하는가?","questionType":"SCENARIO","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["dsa.core.graph.adjacency-list-matrix"],"modelAnswer":"V² 공간을 충분히 감당할 수 있고 edge existence 조회가 지배적이면 matrix의 O(1) access가 유리할 수 있다. 반대로 neighbor traversal·동적 vertex 증가·memory 비용이 중요하면 list나 hash-backed adjacency를 비교해야 한다.","explanationMarkdown":"반대로 neighbor traversal·동적 vertex 증가·memory 비용이 중요하면 list나 hash-backed adjacency를 비교해야 한다."},
-
-  {"kind":"question","contentKey":"dsa.core.graph.bfs.q1","promptMarkdown":"BFS에서 vertex를 일반적으로 visited 처리하는 시점은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["dsa.core.graph.bfs"],"choices":[{"key":"A","content":"처음 dequeue한 vertex의 모든 neighbor를 처리한 뒤에만 표시한다","displayOrder":0,"rationaleMarkdown":"모든 이웃 처리가 끝날 때까지 기다리면 여러 parent가 같은 vertex를 먼저 queue에 넣을 수 있다. 발견 즉시 표시하면 중복 enqueue와 작업을 막는다."},{"key":"B","content":"처음 발견해 queue에 enqueue하는 순간","displayOrder":1,"rationaleMarkdown":"enqueue하는 즉시 visited로 표시하면 뒤따르는 edge가 같은 vertex를 다시 queue에 넣지 않는다. FIFO 순서는 첫 발견 level을 유지해 무가중치 graph 최단 경로에 활용된다."},{"key":"C","content":"같은 level의 모든 vertex를 dequeue한 뒤 한꺼번에 표시한다","displayOrder":2,"rationaleMarkdown":"level 전체가 끝난 뒤 visited를 갱신하면 같은 level의 여러 parent가 같은 vertex를 추가할 수 있다. 발견 시 표시하면 단순하고 vertex별 enqueue 횟수도 제한한다."},{"key":"D","content":"undirected graph에서는 parent edge만 제외하면 다른 중복 방문 관리는 필요 없다","displayOrder":3,"rationaleMarkdown":"무방향 edge는 이미 발견한 vertex로 돌아갈 수 있고 cycle은 더 많은 재방문을 만든다. parent edge만 제외해도 중복이나 반복 순회를 막지 못하므로 visited set이 필요하다."}],"correctChoiceKey":"B","explanationMarkdown":"처음 enqueue할 때 visited로 표시해야 다른 parent가 같은 vertex를 다시 queue에 넣는 것을 막을 수 있다. Dequeue까지 미루면 중복 enqueue가 발생해 BFS tree와 비용 관리가 복잡해진다."},
-  {"kind":"question","contentKey":"dsa.core.graph.bfs.q2","promptMarkdown":"A의 이웃이 B,C이고 B와 C 모두 D를 가리킨다. visited를 dequeue 시점에만 표시하면 D가 queue에 두 번 들어갈 수 있는 이유를 설명하라.","questionType":"DESCRIPTIVE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["dsa.core.graph.bfs"],"modelAnswer":"B가 D를 enqueue한 뒤에도 D는 아직 dequeue되지 않아 unvisited로 남아 있다. 이어 C를 처리하면 C도 D를 unvisited로 보고 다시 enqueue한다. 발견/enqueue 시점에 visited를 표시하면 중복 enqueue를 막는다.","explanationMarkdown":"이어 C를 처리하면 C도 D를 unvisited로 보고 다시 enqueue한다. 발견/enqueue 시점에 visited를 표시하면 중복 enqueue를 막는다."},
-  {"kind":"question","contentKey":"dsa.core.graph.bfs.q3","promptMarkdown":"A-B, A-C, B-D, C-E, D-F인 unweighted graph에서 A부터 BFS를 수행한다. D와 F의 최단 edge 수 거리를 쓰라.","questionType":"SHORT_ANSWER","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["dsa.core.graph.bfs"],"acceptedAnswers":["D는 2, F는 3","D=2, F=3"],"explanationMarkdown":"A에서 BFS를 수행하면 B와 C가 거리 1, D와 E가 거리 2, F가 거리 3인 level로 발견된다. 따라서 D의 최단 edge 수는 2이고 F는 3이다."},
-  {"kind":"question","contentKey":"dsa.core.graph.bfs.q4","promptMarkdown":"A→B 비용 100, A→C 비용 1, C→B 비용 1인 weighted graph에서 edge 수 기준 BFS가 B를 한 edge 거리로 먼저 찾는다. 이것이 최소 비용 경로가 아닌 이유와 필요한 알고리즘 조건을 설명하라.","questionType":"SCENARIO","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["dsa.core.graph.bfs"],"modelAnswer":"BFS는 모든 edge 비용을 동일하게 보고 edge 수가 가장 작은 path를 찾는다. A→B 비용은 100이지만 A→C→B는 비용 2라 더 싸다. non-negative weighted shortest path라면 Dijkstra 같은 weight-aware 알고리즘이 필요하다.","explanationMarkdown":"A→B 비용은 100이지만 A→C→B는 비용 2라 더 싸다. non-negative weighted shortest path라면 Dijkstra 같은 weight-aware 알고리즘이 필요하다."},
-
-  {"kind":"question","contentKey":"dsa.core.graph.dfs.q1","promptMarkdown":"DFS에서 현재 탐색 경로를 자연스럽게 표현하는 자료구조는?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["dsa.core.graph.dfs"],"choices":[{"key":"A","content":"indegree가 낮은 vertex를 고르는 priority queue가 DFS 경로를 대신한다","displayOrder":0,"rationaleMarkdown":"indegree 우선순위 queue는 일부 topological-order 알고리즘에서 쓰며 DFS의 중첩 경로를 표현하지 않는다. DFS는 가장 최근에 발견한 미완료 vertex를 따라간다."},{"key":"B","content":"FIFO queue만 가능하다","displayOrder":1,"rationaleMarkdown":"FIFO queue는 먼저 발견한 vertex를 먼저 탐색해 breadth-first 순서를 만든다. DFS는 현재 branch를 계속 따라가도록 last-in-first-out 동작이 필요하다."},{"key":"C","content":"visited 배열만 있으면 현재 경로 stack은 필요 없다","displayOrder":2,"rationaleMarkdown":"visited 상태는 vertex 재방문을 막지만 아직 활성화된 재귀 경로가 무엇인지는 기록하지 않는다. explicit stack이나 recursion stack이 경로와 재개 위치를 추적한다."},{"key":"D","content":"stack 또는 recursion call stack","displayOrder":3,"rationaleMarkdown":"DFS는 가장 최근의 미완료 branch로 내려가므로 LIFO stack으로 자연스럽게 표현한다. 재귀 구현은 같은 제어 흐름에 language call stack을 사용한다."}],"correctChoiceKey":"D","explanationMarkdown":"DFS는 가장 최근에 발견한 미완료 vertex로 계속 내려가므로 LIFO stack이 현재 탐색 경로를 표현한다. 재귀 구현에서는 language call stack이 같은 역할을 한다."},
-  {"kind":"question","contentKey":"dsa.core.graph.dfs.q2","promptMarkdown":"directed DFS에서 `UNVISITED`, `IN_PROGRESS`, `FINISHED`를 나누는 이유를 설명하라.","questionType":"DESCRIPTIVE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["dsa.core.graph.dfs"],"modelAnswer":"단순 visited는 현재 DFS path 안의 vertex와 이미 모든 descendant 처리를 끝낸 vertex를 구분하지 못한다. IN_PROGRESS ancestor로 돌아가는 edge는 cycle이지만 FINISHED vertex로 향하는 edge는 cycle이 아닐 수 있다.","explanationMarkdown":"IN_PROGRESS ancestor로 돌아가는 edge는 cycle이지만 FINISHED vertex로 향하는 edge는 cycle이 아닐 수 있다."},
-  {"kind":"question","contentKey":"dsa.core.graph.dfs.q3","promptMarkdown":"1→2→3→...→1,000,000 형태의 directed chain을 recursive DFS로 처리한다. O(V+E) 시간 복잡도만 보고 안전하다고 할 수 없는 이유와 대응을 설명하라.","questionType":"SCENARIO","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["dsa.core.graph.dfs"],"modelAnswer":"시간 복잡도와 별개로 recursion depth가 V에 비례해 call stack을 고갈시킬 수 있다. 입력 depth를 제한하거나 explicit stack 기반 iterative DFS를 사용해야 한다.","explanationMarkdown":"입력 depth를 제한하거나 explicit stack 기반 iterative DFS를 사용해야 한다."},
-
-  {"kind":"question","contentKey":"dsa.core.graph.connected-components.q1","promptMarkdown":"edge가 하나도 없는 isolated vertex 하나는 undirected graph에서 connected component인가?","questionType":"SHORT_ANSWER","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["dsa.core.graph.connected-components"],"acceptedAnswers":["예","yes","하나의 component다","자기 자신만 포함하는 connected component다"],"explanationMarkdown":"Connected component는 서로 도달 가능한 vertex의 maximal set이다. Edge가 없는 vertex도 자기 자신에는 도달할 수 있으므로 하나짜리 component를 이룬다."},
-  {"kind":"question","contentKey":"dsa.core.graph.connected-components.q2","promptMarkdown":"A-B-C, D-E, F 세 묶음이 서로 연결되지 않은 undirected graph가 있다. 전체 component 수와 각 묶음을 쓰라.","questionType":"SHORT_ANSWER","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["dsa.core.graph.connected-components"],"acceptedAnswers":["3개: {A,B,C}, {D,E}, {F}","3 components: ABC, DE, F"],"explanationMarkdown":"연결된 vertex 묶음별로 세면 `{A,B,C}`, `{D,E}`, `{F}`의 세 component다. Edge가 없는 F도 자기 자신을 포함하는 component로 센다."},
-  {"kind":"question","contentKey":"dsa.core.graph.connected-components.q3","promptMarkdown":"정적 graph에서 각 vertex에 component id를 미리 기록하면 반복 connectivity query를 빠르게 처리할 수 있다. 그런데 edge를 동적으로 삭제한 뒤 기존 id를 그대로 사용하면 왜 잘못될 수 있는가?","questionType":"SCENARIO","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["dsa.core.graph.connected-components"],"modelAnswer":"삭제된 edge가 component를 둘 이상으로 분리할 수 있지만 기존 id는 여전히 같은 집합이라고 표시한다. 정적 전처리 결과와 dynamic connectivity 상태를 구분하고 변경 후 재계산 또는 적절한 동적 자료구조가 필요하다.","explanationMarkdown":"정적 전처리 결과와 dynamic connectivity 상태를 구분하고 변경 후 재계산 또는 적절한 동적 자료구조가 필요하다."},
-
-  {"kind":"question","contentKey":"dsa.core.graph.cycle-detection.q1","promptMarkdown":"undirected DFS에서 현재 vertex v의 이미 방문한 neighbor u가 바로 v의 parent다. 이것만으로 cycle이라고 할 수 있는가?","questionType":"SHORT_ANSWER","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["dsa.core.graph.cycle-detection"],"acceptedAnswers":["아니다","no","parent edge의 반대 방향 표현일 수 있어 cycle 증거가 아니다"],"explanationMarkdown":"Undirected edge는 양쪽 adjacency list에 나타나므로 DFS tree에서 parent로 돌아가는 edge는 자연스럽게 다시 보인다. 이미 방문한 이웃이 parent가 아닐 때 cycle 증거가 된다."},
-  {"kind":"question","contentKey":"dsa.core.graph.cycle-detection.q2","promptMarkdown":"directed graph A→B, A→C, B→D, C→D에서 DFS 중 C가 이미 FINISHED인 D를 가리킨다고 하자. D가 visited라는 이유만으로 cycle이라 판단하면 안 되는 이유를 설명하라.","questionType":"DESCRIPTIVE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["dsa.core.graph.cycle-detection"],"modelAnswer":"D는 현재 C의 recursion path 안에 있는 ancestor가 아니라 이미 처리가 끝난 vertex다. Cycle 증거는 IN_PROGRESS ancestor로 되돌아가는 back edge이며 FINISHED vertex로의 edge는 DAG에서도 나타날 수 있다.","explanationMarkdown":"Cycle 증거는 IN_PROGRESS ancestor로 되돌아가는 back edge이며 FINISHED vertex로의 edge는 DAG에서도 나타날 수 있다."},
-  {"kind":"question","contentKey":"dsa.core.graph.cycle-detection.q3","promptMarkdown":"A→B→C→A를 DFS로 탐색할 때 C→A를 발견하는 순간 A의 상태는 무엇이어야 cycle이라고 판정할 수 있는가?","questionType":"SHORT_ANSWER","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["dsa.core.graph.cycle-detection"],"acceptedAnswers":["IN_PROGRESS","현재 DFS 경로 안의 상태","gray/in-progress"],"explanationMarkdown":"Directed DFS에서 `IN_PROGRESS`는 현재 recursion stack에 있는 vertex를 뜻한다. 그 vertex로 향하는 edge는 현재 경로의 ancestor로 돌아가는 back edge이므로 cycle을 만든다."},
-  {"kind":"question","contentKey":"dsa.core.graph.cycle-detection.q4","promptMarkdown":"prerequisite import에서 cycle이 발견되자 importer가 임의로 마지막 edge 하나를 삭제하고 Apply했다. 왜 이 처리가 검증 관점에서 위험한지 설명하라.","questionType":"SCENARIO","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["dsa.core.graph.cycle-detection"],"modelAnswer":"어떤 prerequisite를 제거할지는 authoring/domain decision이지 validator가 추측할 수 없다. 임의 보정은 canonical 의미를 바꾼다. cycle 경로와 관련 key를 오류로 보고하고 Apply를 차단해야 한다.","explanationMarkdown":"임의 보정은 canonical 의미를 바꾼다. cycle 경로와 관련 key를 오류로 보고하고 Apply를 차단해야 한다."},
-
-  {"kind":"question","contentKey":"dsa.core.graph.topological-sort.q1","promptMarkdown":"topological order가 존재하기 위한 graph 조건은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["dsa.core.graph.topological-sort"],"choices":[{"key":"A","content":"directed acyclic graph(DAG)","displayOrder":0,"rationaleMarkdown":"topological order에서는 각 edge의 source가 destination보다 먼저 와야 한다. directed acyclic graph는 이 순서를 만들 수 있지만 directed cycle은 선행 조건을 서로 모순되게 만든다."},{"key":"B","content":"self-loop만 없으면 더 긴 directed cycle이 있어도 가능하다","displayOrder":1,"rationaleMarkdown":"길이에 상관없이 directed cycle이 있으면 그 cycle의 각 vertex를 다음 vertex보다 계속 앞에 놓아 한 바퀴 돌 수 없다. self-loop만 제거해도 충분하지 않다."},{"key":"C","content":"cycle이 없는 undirected tree이면 edge 방향 없이도 가능하다","displayOrder":2,"rationaleMarkdown":"무방향 tree는 edge 방향을 정하기 전까지 directed prerequisite 관계가 없다. topological ordering은 방향 edge에 정의되며 만들어진 directed graph가 acyclic이어야 한다."},{"key":"D","content":"indegree가 0인 vertex 하나만 있으면 나머지 directed cycle과 무관하게 가능하다","displayOrder":3,"rationaleMarkdown":"indegree 0인 vertex가 하나 있어도 나머지 vertex 사이에 directed cycle이 있으면 전체 순서를 완성할 수 없다. directed graph 모든 component에 cycle이 없어야 한다."}],"correctChoiceKey":"A","explanationMarkdown":"Directed cycle 안에서는 어느 vertex도 모든 predecessor보다 먼저 배치할 수 없다. 따라서 모든 edge가 앞에서 뒤로 향하는 topological order는 DAG에서만 존재한다."},
-  {"kind":"question","contentKey":"dsa.core.graph.topological-sort.q2","promptMarkdown":"A→C, B→C, C→D에서 초기 indegree가 0인 vertex와 C가 queue에 들어가는 시점을 설명하라.","questionType":"DESCRIPTIVE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["dsa.core.graph.topological-sort"],"modelAnswer":"초기 indegree 0은 A와 B다. 둘이 모두 처리되어 A→C와 B→C edge가 제거된 효과가 난 뒤 C의 indegree가 0이 되어 queue에 들어간다. 이후 C가 처리되면 D가 가능해진다.","explanationMarkdown":"Kahn algorithm에서는 node를 처리할 때 outgoing edge를 제거한 효과로 후행 node의 indegree가 감소한다. C는 A와 B 두 prerequisite가 모두 처리된 뒤에야 indegree가 0이 되고, 그때 queue에 들어가므로 dependency가 모두 해소된 시점을 정확히 표현한다."},
-  {"kind":"question","contentKey":"dsa.core.graph.topological-sort.q3","promptMarkdown":"Kahn 알고리즘이 V=8 graph에서 5개 vertex만 output한 뒤 queue가 비었다. 남은 vertex가 있다는 사실이 의미하는 핵심 graph 상태는?","questionType":"SHORT_ANSWER","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["dsa.core.graph.topological-sort"],"acceptedAnswers":["남은 vertex 중 cycle에 속하는 정점이 있어 전체 graph에 valid topological order가 없다","cycle이 남아 있어 처리 수가 V보다 작다","directed cycle이 있다","cycle이 있다","cycle 존재"],"explanationMarkdown":"Kahn 알고리즘은 indegree가 0인 vertex만 제거한다. queue가 비고 vertex가 남았다면 남은 부분에는 적어도 하나의 directed cycle이 있다. cycle에서 도달 가능한 다른 vertex도 함께 남을 수 있으므로 남은 3개 모두가 cycle 위에 있다고 단정할 수는 없다."},
-  {"kind":"question","contentKey":"dsa.core.graph.topological-sort.q4","promptMarkdown":"동일 DAG에 indegree 0 vertex가 여러 개라 실행마다 topological order가 달라진다. 모든 결과가 dependency상 올바른데 API snapshot test가 흔들린다. correctness와 determinism을 분리해 해결하라.","questionType":"SCENARIO","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["dsa.core.graph.topological-sort"],"modelAnswer":"여러 topological order는 모두 correctness를 만족할 수 있다. 재현성이 별도 요구라면 indegree 0 후보를 stable key/displayOrder 기준 priority queue 등으로 tie-break한다. Tie-break는 dependency correctness가 아니라 deterministic output 계약이다.","explanationMarkdown":"Kahn 방식은 현재 indegree가 0인 정점 중 어느 것을 골라도 뒤 정점의 선행 조건은 지켜진다. 그래서 결과가 달라지는 것은 correctness 결함이 아니며, stable key tie-break는 snapshot 재현성만 추가하고 DAG 제약은 바꾸지 않는다."}
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.graph.graph-model.q1",
+    "promptMarkdown": "`B를 먼저 알아야 A를 배울 수 있다`는 선행 관계를 `B -> A`로 모델링했다. 이 간선의 의미에 맞는 설명은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.graph.graph-model"],
+    "choices": [
+      {"key": "A", "content": "B가 A보다 먼저 처리되어야 한다", "displayOrder": 0, "rationaleMarkdown": "화살표가 선행 항목 B에서 후행 항목 A로 향하므로 B를 먼저 처리해야 한다. 이 방향을 지키는 위상 순서에서도 B가 A보다 앞에 놓인다."},
+      {"key": "B", "content": "A와 B의 순서는 항상 무관하다", "displayOrder": 1, "rationaleMarkdown": "방향 간선은 순서 제약을 표현한다. 순서를 무관하게 보면 선행 관계 자체를 잃게 된다."},
+      {"key": "C", "content": "A가 반드시 B보다 먼저 처리되어야 한다", "displayOrder": 2, "rationaleMarkdown": "이는 제시된 간선 방향을 반대로 해석한 것이다. `B -> A`에서는 B가 A의 선행 조건이다."},
+      {"key": "D", "content": "이 간선은 방향이 없는 연관 관계만 뜻한다", "displayOrder": 3, "rationaleMarkdown": "선행 관계에는 방향이 중요하다. 무방향 간선으로 바꾸면 어떤 항목이 먼저여야 하는지 표현할 수 없다."}
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "그래프를 문제에 적용할 때는 간선 방향의 의미를 먼저 고정해야 한다. `B -> A`를 'B가 A의 선행 조건'으로 정의했다면 위상 정렬과 의존성 처리도 같은 의미를 따라야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.graph.graph-model.q2",
+    "promptMarkdown": "도로 그래프에서 정점, 간선, 가중치를 각각 무엇으로 모델링할 수 있는지 한 예를 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.graph.graph-model"],
+    "modelAnswer": "도시나 교차로를 정점, 두 지점을 잇는 도로를 간선, 거리·예상 시간·통행료 같은 비용을 가중치로 둘 수 있다. 무엇을 가중치로 선택하느냐에 따라 최단 경로의 의미도 달라진다.",
+    "explanationMarkdown": "그래프의 가중치는 단순한 숫자가 아니라 무엇을 최소화할지 나타내는 문제의 의미다. 같은 도로망이라도 거리, 시간, 통행료 중 어느 값을 사용하느냐에 따라 최적 경로가 달라질 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.graph.graph-model.q3",
+    "promptMarkdown": "서비스 의존성을 어떤 팀은 `consumer -> dependency`, 다른 팀은 `dependency -> consumer`로 저장했다. 같은 위상 정렬 코드를 적용했을 때 잘못된 배포 순서가 나올 수 있는 이유와 수정 원칙을 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.graph.graph-model"],
+    "modelAnswer": "두 팀이 간선 방향에 서로 다른 의미를 부여했기 때문에 같은 정렬 결과도 같은 순서를 뜻하지 않는다. `u -> v`가 무엇을 의미하는지 그래프 계약을 하나로 고정하고 기존 데이터를 그 계약에 맞게 정규화한 뒤 알고리즘을 적용해야 한다.",
+    "explanationMarkdown": "그래프 알고리즘은 간선 방향의 의미를 스스로 알 수 없다. 모델링 계약이 다르면 알고리즘이 형식적으로 올바르게 동작해도 업무상 순서는 반대로 해석될 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.graph.adjacency-list-matrix.q1",
+    "promptMarkdown": "V=100,000, E=200,000인 희소 그래프에서 각 정점의 모든 이웃을 자주 순회한다. 일반적으로 더 적합한 기본 표현은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.graph.adjacency-list-matrix"],
+    "choices": [
+      {"key": "A", "content": "간선 목록만 저장하고 정점별 이웃을 묶지 않는다", "displayOrder": 0, "rationaleMarkdown": "간선 목록만 있으면 특정 정점의 이웃을 찾을 때 전체 간선을 반복해서 훑어야 할 수 있다. 이 문제는 정점별 이웃 순회가 빈번하다."},
+      {"key": "B", "content": "100,000×100,000 인접 행렬", "displayOrder": 1, "rationaleMarkdown": "100,000×100,000 행렬은 간선이 200,000개뿐이어도 100억 칸이 필요하다. 희소 그래프에서는 많은 공간을 사용한다."},
+      {"key": "C", "content": "인접 리스트", "displayOrder": 2, "rationaleMarkdown": "인접 리스트는 실제 이웃을 중심으로 저장하므로 공간이 정점과 간선 수에 비례한다. 한 정점의 이웃 순회도 그 정점의 차수에 비례한다."},
+      {"key": "D", "content": "모든 이웃 정보를 하나의 전역 순서로만 저장한다", "displayOrder": 3, "rationaleMarkdown": "정점별 이웃을 바로 찾을 수 없는 전역 목록만으로는 이웃 순회가 비효율적일 수 있다."
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "희소 그래프에서 인접 리스트는 실제 간선 중심으로 저장해 `O(V+E)` 공간을 사용하고, 한 정점의 이웃 순회도 해당 정점의 차수에 비례한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.graph.adjacency-list-matrix.q2",
+    "promptMarkdown": "인접 리스트와 인접 행렬에서 정점 `u`의 모든 이웃을 순회하는 비용이 어떻게 다른지 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.graph.adjacency-list-matrix"],
+    "modelAnswer": "인접 리스트는 실제로 저장된 이웃만 보므로 대략 `degree(u)`에 비례한다. 인접 행렬은 `u`의 행에서 V개 칸을 확인해야 하므로 O(V)이다. 반대로 특정 간선 `(u,v)` 존재 여부는 행렬에서 O(1)에 확인할 수 있다.",
+    "explanationMarkdown": "자료구조 선택은 이웃 전체를 자주 순회하는지, 특정 두 정점 사이의 간선 존재 여부를 자주 확인하는지에 따라 달라질 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.graph.adjacency-list-matrix.q3",
+    "promptMarkdown": "정점 수가 200으로 작고 그래프가 매우 조밀하며 한 요청에서 `edge(u,v)가 존재하는가?`를 수백만 번 조회한다. 표현 방식을 선택할 때 무엇을 비교해야 하는가?",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.graph.adjacency-list-matrix"],
+    "modelAnswer": "V² 공간을 충분히 감당할 수 있고 특정 간선의 존재 여부 조회가 지배적이면 인접 행렬의 O(1) 조회가 유리할 수 있다. 반대로 이웃 순회 비용, 메모리 한도, 동적 정점 증가가 중요하면 인접 리스트나 해시 기반 표현과 비교해야 한다.",
+    "explanationMarkdown": "그래프가 작고 조밀하면 V² 공간의 부담이 작아질 수 있다. 자료 형태와 실제로 자주 수행하는 연산을 함께 보고 표현 방식을 선택해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.graph.bfs.q1",
+    "promptMarkdown": "BFS에서 정점을 일반적으로 방문 처리하는 시점은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.graph.bfs"],
+    "choices": [
+      {"key": "A", "content": "큐에서 꺼낸 뒤 그 정점의 모든 이웃 처리가 끝났을 때", "displayOrder": 0, "rationaleMarkdown": "방문 표시를 늦추면 여러 부모 정점이 같은 이웃을 아직 미방문으로 보고 큐에 중복으로 넣을 수 있다."},
+      {"key": "B", "content": "처음 발견해 큐에 넣는 순간", "displayOrder": 1, "rationaleMarkdown": "발견하는 순간 방문 표시를 하면 다른 간선이 같은 정점을 다시 큐에 넣는 것을 막을 수 있다. FIFO 순서도 첫 발견 거리의 의미를 유지한다."},
+      {"key": "C", "content": "같은 거리 단계의 모든 정점을 처리한 뒤 한꺼번에", "displayOrder": 2, "rationaleMarkdown": "한 단계가 끝날 때까지 방문 표시를 미루면 같은 단계의 여러 정점이 같은 이웃을 중복으로 추가할 수 있다."},
+      {"key": "D", "content": "무방향 그래프에서는 부모 간선만 제외하면 방문 처리가 필요 없다", "displayOrder": 3, "rationaleMarkdown": "사이클이나 여러 경로가 있는 그래프에서는 부모 간선 이외에도 이미 발견한 정점으로 돌아갈 수 있으므로 방문 상태가 필요하다."}
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "BFS에서는 일반적으로 정점을 처음 발견해 큐에 넣는 순간 방문 처리한다. 그래야 같은 정점이 여러 경로에서 중복으로 큐에 들어가는 일을 막을 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.graph.bfs.q2",
+    "promptMarkdown": "A의 이웃이 B,C이고 B와 C 모두 D를 가리킨다. 방문 표시를 큐에서 꺼내는 시점에만 하면 D가 큐에 두 번 들어갈 수 있는 이유를 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.graph.bfs"],
+    "modelAnswer": "B가 D를 큐에 넣은 뒤에도 D는 아직 꺼내지지 않았으므로 미방문 상태로 남아 있다. 이어 C를 처리하면 C도 D를 미방문으로 보고 다시 큐에 넣을 수 있다. D를 처음 발견할 때 바로 방문 처리하면 중복 삽입을 막을 수 있다.",
+    "explanationMarkdown": "BFS에서 발견 시 방문 표시를 하는 이유 중 하나는 같은 정점이 여러 부모 후보에 의해 큐에 중복으로 들어가는 일을 막기 위해서다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.graph.bfs.q3",
+    "promptMarkdown": "A-B, A-C, B-D, C-E, D-F인 비가중치 그래프에서 A부터 BFS를 수행한다. D와 F까지의 최소 간선 수를 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.graph.bfs"],
+    "modelAnswer": "A에서 B와 C는 간선 1개 거리, D와 E는 간선 2개 거리, F는 간선 3개 거리에서 처음 발견된다. 따라서 D까지는 2개, F까지는 3개다.",
+    "explanationMarkdown": "비가중치 그래프에서 BFS는 시작점에서 사용한 간선 수가 작은 정점부터 탐색하므로 처음 발견한 단계가 최소 간선 수가 된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.graph.bfs.q4",
+    "promptMarkdown": "A→B 비용 100, A→C 비용 1, C→B 비용 1인 가중치 그래프에서 간선 수 기준 BFS가 B를 간선 1개 거리로 먼저 찾는다. 이것이 최소 비용 경로가 아닌 이유와 필요한 알고리즘 조건을 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.graph.bfs"],
+    "modelAnswer": "BFS는 모든 간선의 비용이 같다고 볼 수 있을 때 간선 수 기준 최단 경로를 보장한다. A→B의 비용은 100이지만 A→C→B의 총비용은 2이므로 더 싸다. 간선 가중치가 모두 0 이상인 일반 가중치 최단 경로라면 다익스트라 알고리즘 같은 가중치 기반 방법이 필요하다.",
+    "explanationMarkdown": "BFS의 거리 단계는 사용한 간선 수를 최소화할 뿐 서로 다른 간선 가중치의 합을 최소화하지 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.graph.dfs.q1",
+    "promptMarkdown": "DFS에서 현재 탐색 경로를 자연스럽게 표현하는 자료구조는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.graph.dfs"],
+    "choices": [
+      {"key": "A", "content": "진입 차수가 낮은 정점을 고르는 우선순위 큐", "displayOrder": 0, "rationaleMarkdown": "진입 차수는 위상 정렬에서 사용할 수 있지만 DFS의 중첩된 현재 경로를 표현하지 않는다."},
+      {"key": "B", "content": "FIFO 큐", "displayOrder": 1, "rationaleMarkdown": "FIFO 큐는 먼저 발견한 정점을 먼저 처리하므로 너비 우선 탐색에 가깝다. DFS는 가장 최근에 진입한 미완료 정점으로 계속 내려간다."},
+      {"key": "C", "content": "방문 배열만 사용하면 현재 경로를 나타내는 스택은 필요 없다", "displayOrder": 2, "rationaleMarkdown": "방문 여부만으로는 현재 활성 탐색 경로와 되돌아갈 위치를 모두 표현할 수 없다."},
+      {"key": "D", "content": "스택 또는 재귀 호출 스택", "displayOrder": 3, "rationaleMarkdown": "DFS는 가장 최근에 진입한 경로를 먼저 이어 가므로 LIFO 구조와 잘 맞는다. 재귀 구현에서는 호출 스택이 같은 역할을 한다."}
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "DFS의 현재 탐색 경로는 LIFO 성질을 가진 스택으로 자연스럽게 표현된다. 재귀 구현에서는 실행 환경의 호출 스택이 이 역할을 담당한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.graph.dfs.q2",
+    "promptMarkdown": "방향 그래프 DFS에서 `UNVISITED`, `IN_PROGRESS`, `FINISHED`를 나누는 이유를 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.graph.dfs"],
+    "modelAnswer": "단순 방문 여부만으로는 현재 DFS 경로 안에 있는 정점과 이미 모든 하위 정점 처리를 끝낸 정점을 구분할 수 없다. 현재 처리 중인 `IN_PROGRESS` 정점으로 돌아가는 간선은 사이클의 증거가 될 수 있지만 `FINISHED` 정점으로 향하는 간선은 사이클이 아닐 수 있다.",
+    "explanationMarkdown": "방향 그래프의 사이클 검출에서는 '방문한 적이 있는가'뿐 아니라 그 정점이 현재 재귀 경로 안에 있는지도 구분해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.graph.dfs.q3",
+    "promptMarkdown": "1→2→3→...→1,000,000 형태의 긴 방향 체인을 재귀 DFS로 처리한다. O(V+E) 시간 복잡도만 보고 안전하다고 할 수 없는 이유와 대응을 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.graph.dfs"],
+    "modelAnswer": "시간 복잡도와 별개로 재귀 깊이가 V에 비례해 호출 스택을 고갈시킬 수 있다. 입력 깊이를 제한하거나 명시적인 스택을 사용하는 반복형 DFS를 검토해야 한다.",
+    "explanationMarkdown": "점근 시간 복잡도가 적절해도 재귀 깊이가 실행 환경의 스택 한도를 넘을 수 있다. 시간과 스택 공간을 별도로 봐야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.graph.connected-components.q1",
+    "promptMarkdown": "간선이 하나도 없는 고립 정점 하나는 무방향 그래프에서 연결 요소인가?",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.graph.connected-components"],
+    "acceptedAnswers": ["예", "하나의 연결 요소다", "자기 자신만 포함하는 연결 요소다", "yes"],
+    "explanationMarkdown": "연결 요소는 서로 도달 가능한 정점의 최대 묶음이다. 간선이 없는 정점도 자기 자신에는 도달할 수 있으므로 하나의 연결 요소를 이룬다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.graph.connected-components.q2",
+    "promptMarkdown": "A-B-C, D-E, F 세 묶음이 서로 연결되지 않은 무방향 그래프가 있다. 전체 연결 요소 수와 각 묶음을 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.graph.connected-components"],
+    "modelAnswer": "연결 요소는 `{A,B,C}`, `{D,E}`, `{F}`의 세 개다. 간선이 없는 F도 자기 자신만으로 하나의 연결 요소를 이룬다.",
+    "explanationMarkdown": "미방문 정점에서 탐색을 시작할 때마다 새로운 연결 요소 하나를 찾는다. 고립 정점도 크기 1인 연결 요소다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.graph.connected-components.q3",
+    "promptMarkdown": "정적 그래프에서 각 정점에 연결 요소 ID를 미리 기록해 반복 연결성 질의를 빠르게 처리한다. 그런데 간선을 동적으로 삭제한 뒤 기존 ID를 그대로 사용하면 왜 잘못될 수 있는가?",
+    "questionType": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.graph.connected-components"],
+    "modelAnswer": "삭제된 간선이 기존 연결 요소를 둘 이상으로 나눌 수 있지만 이전 ID는 여전히 같은 집합이라고 표시한다. 정적 전처리 결과가 더 이상 현재 그래프를 나타내지 않을 수 있으므로 변경 후 재계산하거나 동적 연결성에 맞는 자료구조가 필요하다.",
+    "explanationMarkdown": "전처리된 연결 요소 정보는 그래프 구조가 바뀌지 않는다는 전제가 있을 때만 그대로 재사용할 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.graph.cycle-detection.q1",
+    "promptMarkdown": "단순 무방향 그래프의 DFS에서 현재 정점 v의 이미 방문한 이웃 u가 부모 정점이라면 이것만으로 사이클이라고 할 수 있는가?",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.graph.cycle-detection"],
+    "acceptedAnswers": ["아니다", "부모 간선의 반대 방향 표현일 수 있어 사이클의 증거가 아니다", "no"],
+    "explanationMarkdown": "무방향 간선은 양쪽 정점의 인접 목록에 모두 나타난다. DFS 트리에서 부모로 돌아가는 간선은 원래 사용한 트리 간선을 반대쪽에서 다시 본 것일 수 있으므로 그 자체로 사이클의 증거는 아니다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.graph.cycle-detection.q2",
+    "promptMarkdown": "방향 그래프 A→B, A→C, B→D, C→D에서 DFS 중 C가 이미 `FINISHED` 상태인 D를 가리킨다고 하자. D를 방문했다는 이유만으로 사이클이라고 판단하면 안 되는 이유를 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.graph.cycle-detection"],
+    "modelAnswer": "D는 현재 C의 재귀 경로 안에 있는 조상 정점이 아니라 이미 탐색이 끝난 정점이다. 사이클의 증거가 되는 것은 현재 경로 안의 `IN_PROGRESS` 조상으로 되돌아가는 간선이며, `FINISHED` 정점으로 가는 간선은 DAG에서도 나타날 수 있다.",
+    "explanationMarkdown": "방향 그래프에서는 단순 방문 여부가 아니라 현재 탐색 경로 안에 있는 정점인지 구분해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.graph.cycle-detection.q3",
+    "promptMarkdown": "A→B→C→A를 DFS로 탐색할 때 C→A를 발견하는 순간 A의 상태는 무엇이어야 사이클이라고 판정할 수 있는가?",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.graph.cycle-detection"],
+    "acceptedAnswers": ["IN_PROGRESS", "현재 DFS 경로 안의 상태", "gray/in-progress"],
+    "explanationMarkdown": "`IN_PROGRESS`는 정점이 현재 DFS 재귀 경로 안에 있다는 뜻이다. C에서 이런 조상 정점 A로 돌아가는 간선이 존재하면 현재 경로와 합쳐 방향 사이클이 만들어진다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.graph.cycle-detection.q4",
+    "promptMarkdown": "선행 관계 콘텐츠를 가져오는 과정에서 사이클이 발견되자 가져오기 로직이 임의로 마지막 간선 하나를 삭제하고 적용했다. 왜 이 처리가 검증 관점에서 위험한지 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.graph.cycle-detection"],
+    "modelAnswer": "어떤 선행 관계를 제거할지는 작성자나 도메인 정책이 결정해야 할 문제이며 검증기가 추측할 수 없다. 임의 삭제는 canonical 의미를 바꾸므로 사이클 경로와 관련 키를 오류로 보고하고 적용을 차단해야 한다.",
+    "explanationMarkdown": "검증기의 역할은 잘못된 입력을 임의로 고쳐 의미를 바꾸는 것이 아니라 오류의 위치와 원인을 명확히 보고해 수정하도록 하는 것이다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.graph.topological-sort.q1",
+    "promptMarkdown": "위상 순서가 존재하기 위한 그래프 조건은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.graph.topological-sort"],
+    "choices": [
+      {"key": "A", "content": "방향 비순환 그래프(DAG)", "displayOrder": 0, "rationaleMarkdown": "위상 순서에서는 모든 방향 간선 `u -> v`에 대해 u가 v보다 먼저 와야 한다. 방향 사이클이 없을 때 이런 순서를 만들 수 있다."},
+      {"key": "B", "content": "자기 자신으로 향하는 간선만 없으면 더 긴 방향 사이클이 있어도 된다", "displayOrder": 1, "rationaleMarkdown": "길이에 상관없이 방향 사이클이 있으면 사이클의 모든 간선이 요구하는 선후 관계를 동시에 만족할 수 없다."},
+      {"key": "C", "content": "사이클이 없는 무방향 트리", "displayOrder": 2, "rationaleMarkdown": "위상 정렬은 방향 간선의 선행 관계에 대해 정의된다. 무방향 그래프만으로는 어떤 정점이 먼저여야 하는지 정해지지 않는다."},
+      {"key": "D", "content": "진입 차수가 0인 정점이 하나만 있으면 나머지 방향 사이클과 무관하다", "displayOrder": 3, "rationaleMarkdown": "일부 정점을 먼저 처리할 수 있어도 남은 부분에 방향 사이클이 있으면 전체 위상 순서를 완성할 수 없다."}
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "방향 사이클 안에서는 각 정점이 다음 정점보다 먼저 와야 한다는 조건이 한 바퀴 돌아 모순된다. 따라서 전체 위상 순서가 존재하려면 그래프가 DAG여야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.graph.topological-sort.q2",
+    "promptMarkdown": "A→C, B→C, C→D에서 초기 진입 차수가 0인 정점과 C가 큐에 들어가는 시점을 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.graph.topological-sort"],
+    "modelAnswer": "초기 진입 차수가 0인 정점은 A와 B다. A와 B가 모두 처리되어 두 간선 A→C, B→C가 제거된 효과가 생기면 C의 진입 차수가 0이 되어 큐에 들어간다. 이후 C가 처리되면 D의 진입 차수도 0이 된다.",
+    "explanationMarkdown": "Kahn 방식은 선행 정점을 처리할 때 후행 정점의 진입 차수를 줄인다. C는 두 선행 조건이 모두 해소된 뒤에야 후보가 된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.graph.topological-sort.q3",
+    "promptMarkdown": "Kahn 알고리즘이 V=8 그래프에서 5개 정점만 출력한 뒤 큐가 비었다. 남은 정점이 있다는 사실이 의미하는 핵심 그래프 상태는?",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.graph.topological-sort"],
+    "acceptedAnswers": ["방향 사이클이 있다", "사이클이 있다", "사이클 존재", "남은 부분에 방향 사이클이 있다"],
+    "explanationMarkdown": "Kahn 알고리즘은 진입 차수가 0인 정점만 제거한다. 큐가 비었는데 아직 정점이 남았다면 남은 부분에는 적어도 하나의 방향 사이클이 있다. 사이클에서 나가는 간선 때문에 함께 남은 정점도 있을 수 있으므로 남은 모든 정점이 반드시 사이클 위에 있다고 단정할 수는 없다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.graph.topological-sort.q4",
+    "promptMarkdown": "같은 DAG에서 진입 차수가 0인 정점이 여러 개라 실행마다 위상 순서가 달라진다. 모든 결과가 의존 관계상 올바른데 API 스냅샷 테스트가 흔들린다. 정확성과 결과의 결정성을 분리해 해결하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["dsa.core.graph.topological-sort"],
+    "modelAnswer": "여러 위상 순서가 모두 정확할 수 있다. 재현 가능한 결과가 별도 요구라면 진입 차수가 0인 후보를 안정적인 키나 `displayOrder` 기준 우선순위 큐로 선택해 동률 처리 순서를 고정한다. 이 규칙은 위상 정렬의 정확성 조건이 아니라 출력의 결정성을 추가하는 정책이다.",
+    "explanationMarkdown": "위상 정렬은 정답이 하나로 고정되지 않을 수 있다. 의존 관계를 지키는 정확성과 어떤 올바른 순서를 선택할지에 대한 재현성 정책을 구분해야 한다."
+  }
 ]

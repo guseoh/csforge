@@ -3,7 +3,7 @@ kind: concept
 contentKey: dsa.core.complexity.input-size-operation-count
 topicContentKey: dsa.core.complexity
 slug: input-size-operation-count
-title: "Input Size and Operation Count"
+title: "입력 크기와 연산 횟수"
 summary: "입력 크기를 정의하고 반복되는 기본 연산 수를 세어 알고리즘 비용을 모델링한다."
 level: 1
 status: PUBLISHED
@@ -14,10 +14,10 @@ references:
     referenceType: BOOK
     language: en
     depth: section
-    recommendation: "입력 크기와 basic operation count를 기준으로 linear scan 비용을 분석한다."
+    recommendation: "입력 크기와 기본 연산을 정하고 점근 시간·공간 및 분할 상환 비용을 분석한다."
     displayOrder: 1
 ---
-# Input Size and Operation Count
+# 입력 크기와 연산 횟수
 
 알고리즘의 비용을 비교하려면 먼저 **입력 크기 `n`이 무엇을 뜻하는지** 정해야 한다. 배열 문제라면 원소 수가 될 수 있고, 그래프라면 정점 수 `V`와 간선 수 `E`처럼 하나보다 여러 크기 변수가 필요할 수 있다. 문자열을 처리한다면 문자열의 길이가 실제 작업량을 결정할 수도 있다.
 
