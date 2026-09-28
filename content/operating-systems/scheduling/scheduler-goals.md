@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.scheduling.scheduler-goals
 topicContentKey: operating-systems.core.scheduling
 slug: scheduler-goals
-title: "스케줄러의 목표(Scheduler Goals)"
+title: "스케줄러의 목표(스케줄러 Goals)"
 summary: "반환 시간·응답 시간·처리량·공정성·CPU 활용률 목표가 왜 서로 충돌할 수 있는지 설명한다."
 level: 1
 status: PUBLISHED
@@ -18,7 +18,7 @@ references:
     relationNote: "이 Concept에서는 반환 시간, 응답 시간, 처리량, 공정성과 CPU 활용률을 하나의 지표로 단순화하지 않고 함께 비교하는 데 초점을 둔다."
     displayOrder: 1
 ---
-# 스케줄러의 목표(Scheduler Goals)
+# 스케줄러의 목표(스케줄러 Goals)
 
 스케줄러는 실행 가능한 작업 가운데 누구에게 CPU를 줄지 결정한다. 그런데 좋은 스케줄링을 판단하는 기준은 하나가 아니다. 어떤 작업 부하에서는 빠른 첫 응답이 중요하고, 어떤 작업 부하에서는 전체 작업을 가능한 빨리 끝내거나 특정 작업이 계속 밀리지 않게 하는 것이 더 중요할 수 있다.
 
@@ -26,10 +26,10 @@ references:
 
 | 기준 | 묻는 질문 |
 | --- | --- |
-| 반환 시간(turnaround time) | 도착한 작업이 완료될 때까지 얼마나 걸렸는가 |
-| 응답 시간(response time) | 도착한 작업이 처음 CPU를 받을 때까지 얼마나 걸렸는가 |
-| 처리량(throughput) | 단위 시간에 얼마나 많은 작업을 완료했는가 |
-| 공정성(fairness) | 특정 작업이 계속 실행 기회에서 배제되지 않는가 |
+| 반환 시간(반환 시간(turnaround time)) | 도착한 작업이 완료될 때까지 얼마나 걸렸는가 |
+| 응답 시간(응답 시간) | 도착한 작업이 처음 CPU를 받을 때까지 얼마나 걸렸는가 |
+| 처리량(처리량) | 단위 시간에 얼마나 많은 작업을 완료했는가 |
+| 공정성(공정성) | 특정 작업이 계속 실행 기회에서 배제되지 않는가 |
 | CPU 활용률(utilization) | CPU가 얼마나 활용되고 있는가 |
 
 ### 하나의 정책이 모든 기준을 동시에 최적화할 수는 없다

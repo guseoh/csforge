@@ -3,8 +3,8 @@ kind: concept
 contentKey: operating-systems.core.threads.thread-count-workload
 topicContentKey: operating-systems.core.threads
 slug: thread-count-workload
-title: "작업 부하별 스레드 수(Thread Count by Workload)"
-summary: "CPU 중심·블로킹 작업 부하와 downstream 용량을 바탕으로 적정 스레드 수를 추론한다."
+title: "작업 부하별 스레드 수(스레드 Count by 워크로드)"
+summary: "CPU 중심·블로킹 작업 부하와 하위 시스템 용량을 바탕으로 적정 스레드 수를 추론한다."
 level: 2
 status: PUBLISHED
 displayOrder: 80
@@ -18,7 +18,7 @@ references:
     relationNote: "이 Concept에서는 CPU를 실제 사용하는 시간과 대기 시간을 구분하고, 실행 가능한 스레드 수를 CPU 코어·메모리·연결 수 같은 제한 자원과 함께 판단한다."
     displayOrder: 1
 ---
-# 작업 부하별 스레드 수(Thread Count by Workload)
+# 작업 부하별 스레드 수(스레드 Count by 워크로드)
 
 적절한 스레드 수는 하나의 공식으로 정할 수 없다. **CPU를 계속 사용하는 작업인지, 자주 블로킹되는 작업인지**에 따라 실행 가능한 스레드가 실제 CPU를 사용하는 방식이 달라지기 때문이다.
 

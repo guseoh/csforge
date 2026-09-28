@@ -17,7 +17,7 @@ references:
     recommendation: "운영체제가 CPU·메모리·저장장치를 추상화하고 여러 프로그램이 자원을 안전하게 공유하도록 관리하는 전체 역할을 확인한다."
     displayOrder: 1
   - url: "https://man7.org/linux/man-pages/man2/syscalls.2.html"
-    title: "Linux System Calls"
+    title: "Linux 시스템 Calls"
     referenceType: OFFICIAL
     language: en
     depth: section

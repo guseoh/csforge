@@ -3,8 +3,8 @@ kind: concept
 contentKey: operating-systems.core.isolation.user-group-permission
 topicContentKey: operating-systems.core.isolation
 slug: user-group-permission
-title: "사용자·그룹·권한(User, Group, and Permission)"
-summary: "owner·group·mode permission이 resource 접근을 제한하는 과정을 설명한다."
+title: "사용자·그룹·권한(사용자, Group, and 권한)"
+summary: "소유자·group·mode 권한이 자원 접근을 제한하는 과정을 설명한다."
 level: 1
 status: PUBLISHED
 displayOrder: 20
@@ -24,25 +24,25 @@ references:
     recommendation: "directory traversal와 각 pathname component의 search permission 경계를 확인한다."
     displayOrder: 2
 ---
-# 사용자·그룹·권한(User, Group, and Permission)
+# 사용자·그룹·권한(사용자, Group, and 권한)
 
-Unix-like OS는 process가 가진 credential과 filesystem object의 permission을 비교해 access를 허용하거나 거부한다. 기본 mode bit는 owner, group, other에 대해 read·write·execute 권한을 표현하며, 실제 판정에는 process의 effective user/group 정보가 사용된다.
+Unix-like OS는 프로세스가 가진 credential과 파일 시스템 객체의 권한을 비교해 접근를 허용하거나 거부한다. 기본 mode bit는 소유자, group, other에 대해 read·write·execute 권한을 표현하며, 실제 판정에는 프로세스의 effective 사용자/group 정보가 사용된다.
 
-### File과 directory의 permission 의미는 다르다
+### 파일과 디렉터리의 권한 의미는 다르다
 
-Regular file에서 read는 content 읽기, write는 content 변경, execute는 실행 가능 여부와 연결된다. Directory에서는 read가 entry 목록 조회, write가 entry 생성·삭제 같은 namespace 변경, execute가 path component를 통과해 lookup할 수 있는 search 권한과 연결된다.
+Regular 파일에서 read는 content 읽기, write는 content 변경, execute는 실행 가능 여부와 연결된다. 디렉터리에서는 read가 entry 목록 조회, write가 entry 생성·삭제 같은 네임스페이스 변경, execute가 경로 component를 통과해 lookup할 수 있는 search 권한과 연결된다.
 
-따라서 `/srv/app/config.yaml`을 읽으려면 마지막 file의 read 권한만이 아니라 중간 directory들을 traverse할 권한도 필요하다.
+따라서 `/srv/app/config.yaml`을 읽으려면 마지막 파일의 read 권한만이 아니라 중간 디렉터리들을 traverse할 권한도 필요하다.
 
 ### Credential은 단순히 사용자 이름 하나가 아니다
 
-Process는 user ID와 group 정보를 가진다. Supplementary group, capability, ACL 같은 추가 mechanism도 access decision에 영향을 줄 수 있으므로 `owner/group/other bit만 보면 모든 permission을 설명할 수 있다`고 일반화하면 안 된다.
+프로세스는 사용자 ID와 group 정보를 가진다. Supplementary group, capability, ACL 같은 추가 메커니즘도 접근 decision에 영향을 줄 수 있으므로 `owner/group/other bit만 보면 모든 permission을 설명할 수 있다`고 일반화하면 안 된다.
 
-### Permission은 namespace visibility와 다른 문제다
+### 권한은 네임스페이스 visibility와 다른 문제다
 
-Path를 알고 있거나 namespace 안에서 object를 볼 수 있다고 실제 access가 허용되는 것은 아니다. Namespace는 무엇을 보느냐를, permission은 그 resource에 어떤 operation을 할 수 있느냐를 다룬다.
+경로를 알고 있거나 네임스페이스 안에서 객체를 볼 수 있다고 실제 접근가 허용되는 것은 아니다. 네임스페이스는 무엇을 보느냐를, 권한은 그 자원에 어떤 연산을 할 수 있느냐를 다룬다.
 
-이 Concept의 핵심은 **process credential과 object permission을 비교해 resource access를 제한하며, directory traversal과 file content permission의 의미가 서로 다르다는 것**이다.
+이 Concept의 핵심은 **프로세스 credential과 객체 권한을 비교해 자원 접근를 제한하며, 디렉터리 traversal과 파일 content 권한의 의미가 서로 다르다는 것**이다.
 
 ### 권한 bit의 의미
 

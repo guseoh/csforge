@@ -3,14 +3,14 @@ kind: concept
 contentKey: operating-systems.core.kernel-boundary.system-call
 topicContentKey: operating-systems.core.kernel-boundary
 slug: system-call
-title: "시스템 콜(System Call)"
+title: "시스템 콜(시스템 콜)"
 summary: "사용자 애플리케이션이 커널이 소유한 서비스를 요청하는 명시적인 운영체제 인터페이스를 설명한다."
 level: 1
 status: PUBLISHED
 displayOrder: 40
 references:
   - url: "https://man7.org/linux/man-pages/man2/syscalls.2.html"
-    title: "Linux System Calls"
+    title: "Linux 시스템 Calls"
     referenceType: OFFICIAL
     language: en
     depth: section
@@ -18,9 +18,9 @@ references:
     relationNote: "이 Concept에서는 애플리케이션 API와 커널 서비스 경계를 구분하고 Linux가 제공하는 시스템 콜 집합을 확인한다."
     displayOrder: 1
 ---
-# 시스템 콜(System Call)
+# 시스템 콜(시스템 콜)
 
-사용자 모드 애플리케이션은 파일 시스템, 소켓, 프로세스 생성, 가상 메모리 매핑처럼 커널이 관리하는 자원을 직접 조작할 수 없다. 이런 기능이 필요할 때 애플리케이션은 운영체제가 제공하는 **시스템 콜 인터페이스(system-call interface)**를 통해 커널 서비스를 요청한다.
+사용자 모드 애플리케이션은 파일 시스템, 소켓, 프로세스 생성, 가상 메모리 매핑처럼 커널이 관리하는 자원을 직접 조작할 수 없다. 이런 기능이 필요할 때 애플리케이션은 운영체제가 제공하는 **시스템 콜 인터페이스(시스템 콜 interface)**를 통해 커널 서비스를 요청한다.
 
 ```text
 애플리케이션

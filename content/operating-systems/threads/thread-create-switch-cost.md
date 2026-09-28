@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.threads.thread-create-switch-cost
 topicContentKey: operating-systems.core.threads
 slug: thread-create-switch-cost
-title: "스레드 생성과 문맥 전환 비용(Thread Creation and Context-Switch Cost)"
+title: "스레드 생성과 문맥 전환 비용(스레드 Creation and 문맥-Switch Cost)"
 summary: "스레드의 스택·메타데이터·생성·스케줄링 비용이 작업 부하 선택에 미치는 영향을 설명한다."
 level: 2
 status: PUBLISHED
@@ -18,7 +18,7 @@ references:
     relationNote: "이 Concept에서는 스레드 생성에 필요한 스택·실행 문맥과 실행 가능한 스레드가 많을 때 생기는 문맥 전환·캐시 지역성 비용을 중심으로 읽는다."
     displayOrder: 1
 ---
-# 스레드 생성과 문맥 전환 비용(Thread Creation and Context-Switch Cost)
+# 스레드 생성과 문맥 전환 비용(스레드 Creation and 문맥-Switch Cost)
 
 스레드는 프로세스보다 공유하는 자원이 많아 상대적으로 가볍게 만들 수 있지만 비용이 없는 실행 단위는 아니다. 스레드를 만들려면 실행 문맥과 스택, 런타임 또는 커널이 추적할 메타데이터가 필요하다. 커널이 직접 스케줄링하는 스레드라면 스케줄러가 관리할 작업 상태도 추가된다.
 

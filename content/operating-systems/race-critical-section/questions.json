@@ -2,7 +2,7 @@
   {
     "kind": "question",
     "contentKey": "operating-systems.core.race-critical-section.shared-mutable-state.q1",
-    "promptMarkdown": "shared mutable state가 concurrency correctness 문제의 핵심이 되는 조건으로 가장 적절한 것은?",
+    "promptMarkdown": "공유 가변 상태가 동시성 correctness 문제의 핵심이 되는 조건으로 가장 적절한 것은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
@@ -10,44 +10,44 @@
       "operating-systems.core.race-critical-section.shared-mutable-state"
     ],
     "choices": [
-      {"key":"A","content":"모든 값이 immutable이고 읽기만 한다","displayOrder":0,"rationaleMarkdown":"변경되지 않고 읽기만 하는 상태는 그 상태에 대한 경합 쓰기로 훼손되지 않는다. 다른 고려 사항이 있을 수는 있지만 이 공유 갱신 race 조건은 없다."},
-      {"key":"B","content":"둘 이상의 실행 흐름이 같은 변경 가능한 invariant에 영향을 줄 수 있다","displayOrder":1,"rationaleMarkdown":"여러 실행 흐름이 같은 변경 가능한 불변 조건에 영향을 주고 interleaving에 따라 그 조건이 깨질 수 있으면 concurrency가 정확성 문제가 된다. 경쟁하는 상태 전이가 가능해서 공유 접근이 중요하다."},
-      {"key":"C","content":"각 실행 흐름이 완전히 다른 process와 storage만 쓴다","displayOrder":2,"rationaleMarkdown":"각 실행 흐름이 완전히 분리된 상태와 저장소만 사용하면 같은 불변 조건에 대한 갱신 경쟁은 없다. 다른 결과를 위한 coordination은 필요할 수 있지만 여기서 말하는 공유 상태 조건은 빠져 있다."},
+      {"key":"A","content":"모든 값이 불변이고 읽기만 한다","displayOrder":0,"rationaleMarkdown":"변경되지 않고 읽기만 하는 상태는 그 상태에 대한 경합 쓰기로 훼손되지 않는다. 다른 고려 사항이 있을 수는 있지만 이 공유 갱신 경쟁 조건은 없다."},
+      {"key":"B","content":"둘 이상의 실행 흐름이 같은 변경 가능한 불변 조건에 영향을 줄 수 있다","displayOrder":1,"rationaleMarkdown":"여러 실행 흐름이 같은 변경 가능한 불변 조건에 영향을 주고 interleaving에 따라 그 조건이 깨질 수 있으면 동시성가 정확성 문제가 된다. 경쟁하는 상태 전이가 가능해서 공유 접근이 중요하다."},
+      {"key":"C","content":"각 실행 흐름이 완전히 다른 프로세스와 저장소만 쓴다","displayOrder":2,"rationaleMarkdown":"각 실행 흐름이 완전히 분리된 상태와 저장소만 사용하면 같은 불변 조건에 대한 갱신 경쟁은 없다. 다른 결과를 위한 coordination은 필요할 수 있지만 여기서 말하는 공유 상태 조건은 빠져 있다."},
       {"key":"D","content":"실행 순서가 결과에 전혀 영향을 주지 않는다","displayOrder":3,"rationaleMarkdown":"가능한 모든 interleaving에서 같은 유효한 결과가 나온다면 순서가 정확성을 위협하지 않는다. 실행 순서에 따라 불변 조건의 결과가 달라질 때 위험해진다."}
     ],
     "correctChoiceKey": "B",
-    "explanationMarkdown": "공유 자체보다 **공유된 상태가 변경되고 여러 실행 흐름의 interleaving이 그 invariant에 영향을 줄 수 있다는 점**이 핵심이다. Immutable data를 읽기만 하거나 서로 완전히 분리된 state를 다루는 경우에는 같은 형태의 update race가 생기지 않는다."
+    "explanationMarkdown": "공유 자체보다 **공유된 상태가 변경되고 여러 실행 흐름의 interleaving이 그 불변 조건에 영향을 줄 수 있다는 점**이 핵심이다. 불변 data를 읽기만 하거나 서로 완전히 분리된 상태를 다루는 경우에는 같은 형태의 갱신 경쟁가 생기지 않는다."
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.race-critical-section.shared-mutable-state.q2",
-    "promptMarkdown": "`balance`와 `version`이 하나의 invariant인데 각 필드를 서로 다른 lock/protocol로 독립 보호하고 두 값을 함께 읽는 공통 보호가 없다면 어떤 문제가 가능한가?",
+    "promptMarkdown": "`balance`와 `version`이 하나의 불변 조건인데 각 필드를 서로 다른 lock/프로토콜로 독립 보호하고 두 값을 함께 읽는 공통 보호가 없다면 어떤 문제가 가능한가?",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": [
       "operating-systems.core.race-critical-section.shared-mutable-state"
     ],
-    "modelAnswer": "한 thread가 balance만 새 값으로 바꾼 뒤 다른 thread가 balance와 version을 함께 읽으면 새 balance와 이전 version처럼 서로 다른 logical version의 조합을 관찰할 수 있다. 보호 대상은 변수 하나가 아니라 두 필드가 함께 유지해야 하는 invariant다.",
-    "explanationMarkdown": "각 field의 개별 update가 안전해도 **두 값을 하나의 일관된 상태로 관찰해야 한다는 invariant**는 별개다. 여러 field가 하나의 규칙을 이룬다면 read와 write가 같은 synchronization protocol 아래에서 그 규칙 전체를 보호하는지 확인해야 한다."
+    "modelAnswer": "한 스레드가 balance만 새 값으로 바꾼 뒤 다른 스레드가 balance와 version을 함께 읽으면 새 balance와 이전 version처럼 서로 다른 logical version의 조합을 관찰할 수 있다. 보호 대상은 변수 하나가 아니라 두 필드가 함께 유지해야 하는 불변 조건다.",
+    "explanationMarkdown": "각 field의 개별 갱신가 안전해도 **두 값을 하나의 일관된 상태로 관찰해야 한다는 불변 조건**는 별개다. 여러 field가 하나의 규칙을 이룬다면 read와 write가 같은 동기화 프로토콜 아래에서 그 규칙 전체를 보호하는지 확인해야 한다."
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.race-critical-section.shared-mutable-state.q3",
-    "promptMarkdown": "공유 mutable object를 없애고 immutable message를 queue로 전달하도록 바꾸면 사라지는 비용과 새로 생기는 비용을 비교하라.",
+    "promptMarkdown": "공유 가변 객체를 없애고 불변 메시지를 큐로 전달하도록 바꾸면 사라지는 비용과 새로 생기는 비용을 비교하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": [
       "operating-systems.core.race-critical-section.shared-mutable-state"
     ],
-    "modelAnswer": "같은 object를 여러 thread가 직접 수정하는 lock/race 범위는 줄일 수 있다. 대신 message copy·allocation·queueing·backpressure와 owner lifecycle 관리 비용이 생길 수 있다.",
-    "explanationMarkdown": "Single-owner와 message passing은 같은 mutable object를 여러 실행 흐름이 직접 수정하는 범위를 줄여 synchronization reasoning을 단순하게 만들 수 있다. 대신 queue capacity, message allocation/copy, backpressure, owner 실패와 lifecycle 같은 **다른 종류의 resource·운영 비용**을 설계해야 한다."
+    "modelAnswer": "같은 객체를 여러 스레드가 직접 수정하는 lock/경쟁 범위는 줄일 수 있다. 대신 메시지 복사·할당·queueing·backpressure와 소유자 생명주기 관리 비용이 생길 수 있다.",
+    "explanationMarkdown": "Single-소유자와 메시지 passing은 같은 가변 객체를 여러 실행 흐름이 직접 수정하는 범위를 줄여 동기화 reasoning을 단순하게 만들 수 있다. 대신 큐 용량, 메시지 할당/복사, 역압(backpressure), 소유자 실패와 생명주기 같은 **다른 종류의 자원·운영 비용**을 설계해야 한다."
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.race-critical-section.interleaving.q1",
-    "promptMarkdown": "초기 `counter=0`에서 T1과 T2가 각각 `counter++`를 수행한다. 두 thread가 모두 0을 read한 뒤 각각 1을 write하면 최종값은?",
+    "promptMarkdown": "초기 `counter=0`에서 T1과 T2가 각각 `counter++`를 수행한다. 두 스레드가 모두 0을 read한 뒤 각각 1을 write하면 최종값은?",
     "questionType": "SHORT_ANSWER",
     "difficulty": "EASY",
     "status": "PUBLISHED",
@@ -57,7 +57,7 @@
     "acceptedAnswers": [
       "1"
     ],
-    "explanationMarkdown": "두 thread가 모두 같은 이전 값 0을 읽으면 각자 계산한 결과가 1이다. 이후 두 번의 write가 모두 1을 저장하므로 한 번의 증가 효과가 사라지는 **lost update**가 발생하고 최종값은 1이 된다."
+    "explanationMarkdown": "두 스레드가 모두 같은 이전 값 0을 읽으면 각자 계산한 결과가 1이다. 이후 두 번의 write가 모두 1을 저장하므로 한 번의 증가 효과가 사라지는 **lost 갱신**가 발생하고 최종값은 1이 된다."
   },
   {
     "kind": "question",
@@ -70,38 +70,38 @@
       "operating-systems.core.race-critical-section.interleaving"
     ],
     "modelAnswer": "T1의 read-add-write가 끝난 뒤 T2가 수행하면 0→1→2가 된다. 반면 T1과 T2가 모두 0을 읽은 뒤 각각 1을 쓰면 마지막 write가 앞선 증가를 덮어써 1이 된다.",
-    "explanationMarkdown": "결정적인 차이는 두 `read-modify-write`가 **직렬로 끝나는지, 둘 다 같은 이전 값을 읽을 정도로 겹치는지**다. Source code는 같아도 scheduler가 만든 interleaving에 따라 관찰 가능한 결과가 달라질 수 있다."
+    "explanationMarkdown": "결정적인 차이는 두 `read-modify-write`가 **직렬로 끝나는지, 둘 다 같은 이전 값을 읽을 정도로 겹치는지**다. Source 코드는 같아도 스케줄러가 만든 interleaving에 따라 관찰 가능한 결과가 달라질 수 있다."
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.race-critical-section.interleaving.q3",
-    "promptMarkdown": "single-core 환경에서도 lost update가 가능한 이유를 설명하라.",
+    "promptMarkdown": "단일 코어 환경에서도 lost 갱신가 가능한 이유를 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": [
       "operating-systems.core.race-critical-section.interleaving"
     ],
-    "modelAnswer": "실제 같은 순간에 두 instruction이 실행되지 않아도 scheduler가 read와 write 사이에서 thread를 교대하면 위험한 interleaving이 만들어질 수 있다. parallelism은 필수 조건이 아니다.",
-    "explanationMarkdown": "Race에는 여러 core가 같은 순간에 instruction을 실행하는 **parallelism**이 필수적이지 않다. Single-core에서도 preemption이나 blocking 때문에 T1의 read와 write 사이에 T2가 실행되면 동일한 lost-update schedule이 만들어질 수 있다."
+    "modelAnswer": "실제 같은 순간에 두 명령어이 실행되지 않아도 스케줄러가 read와 write 사이에서 스레드를 교대하면 위험한 interleaving이 만들어질 수 있다. 병렬성은 필수 조건이 아니다.",
+    "explanationMarkdown": "경쟁에는 여러 core가 같은 순간에 명령어을 실행하는 **병렬성**이 필수적이지 않다. Single-core에서도 preemption이나 블로킹 때문에 T1의 read와 write 사이에 T2가 실행되면 동일한 lost-갱신 schedule이 만들어질 수 있다."
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.race-critical-section.interleaving.q4",
-    "promptMarkdown": "동시성 테스트를 10,000번 통과했다는 사실만으로 race가 없다고 증명할 수 없는 이유를 설명하라.",
+    "promptMarkdown": "동시성 테스트를 10,000번 통과했다는 사실만으로 경쟁가 없다고 증명할 수 없는 이유를 설명하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": [
       "operating-systems.core.race-critical-section.interleaving"
     ],
-    "modelAnswer": "테스트 실행 동안 scheduler가 위험한 interleaving을 선택하지 않았을 수 있다. correctness는 특정 timing에 기대지 않고 가능한 interleaving에서 invariant가 유지되는지 synchronization protocol로 보장해야 한다.",
-    "explanationMarkdown": "반복 테스트는 가능한 schedule의 일부만 관찰한다. 위험한 interleaving이 매우 드물다면 수많은 성공 실행 뒤에도 bug가 남을 수 있으므로, race correctness는 재현 빈도보다 **공유 invariant와 synchronization protocol**을 기준으로 판단해야 한다."
+    "modelAnswer": "테스트 실행 동안 스케줄러가 위험한 interleaving을 선택하지 않았을 수 있다. correctness는 특정 timing에 기대지 않고 가능한 interleaving에서 불변 조건가 유지되는지 동기화 프로토콜로 보장해야 한다.",
+    "explanationMarkdown": "반복 테스트는 가능한 schedule의 일부만 관찰한다. 위험한 interleaving이 매우 드물다면 수많은 성공 실행 뒤에도 bug가 남을 수 있으므로, 경쟁 correctness는 재현 빈도보다 **공유 불변 조건와 동기화 프로토콜**을 기준으로 판단해야 한다."
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.race-critical-section.race-condition.q1",
-    "promptMarkdown": "race condition을 가장 잘 설명한 것은?",
+    "promptMarkdown": "경쟁 condition을 가장 잘 설명한 것은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
@@ -109,52 +109,52 @@
       "operating-systems.core.race-critical-section.race-condition"
     ],
     "choices": [
-      {"key":"A","content":"concurrent action의 상대적 순서에 따라 program correctness가 달라질 수 있는 상황","displayOrder":0,"rationaleMarkdown":"race condition은 동시 동작의 timing이나 상대 순서에 따라 프로그램의 정확성이 달라질 수 있는 상태다. thread뿐 아니라 공유 상태나 외부 효과에 연산이 경합하는 곳에서도 생길 수 있다."},
-      {"key":"B","content":"두 thread가 존재하기만 하면 무조건 발생하는 오류","displayOrder":1,"rationaleMarkdown":"thread가 여러 개 있다는 사실만으로 race가 성립하지는 않는다. 독립 상태나 불변 상태를 사용할 수도 있다. 정확성이 달라질 수 있는 순서 경쟁이 있어야 한다."},
-      {"key":"C","content":"항상 deadlock cycle이 존재하는 상황","displayOrder":2,"rationaleMarkdown":"deadlock은 대기 의존성에 따른 진행성 실패이고 race는 순서에 따라 정확성이 달라질 수 있는 위험이다. 하나 없이 다른 하나가 발생할 수 있다."},
-      {"key":"D","content":"오직 같은 CPU instruction을 실행할 때만 생기는 문제","displayOrder":3,"rationaleMarkdown":"race는 두 thread가 같은 명령을 실행하는지가 아니라 경합 연산과 그 순서의 문제다. 파일 생성, database check-then-act, 요청 처리 순서도 race가 될 수 있다."}
+      {"key":"A","content":"concurrent action의 상대적 순서에 따라 프로그램 correctness가 달라질 수 있는 상황","displayOrder":0,"rationaleMarkdown":"경쟁 condition은 동시 동작의 timing이나 상대 순서에 따라 프로그램의 정확성이 달라질 수 있는 상태다. 스레드뿐 아니라 공유 상태나 외부 효과에 연산이 경합하는 곳에서도 생길 수 있다."},
+      {"key":"B","content":"두 스레드가 존재하기만 하면 무조건 발생하는 오류","displayOrder":1,"rationaleMarkdown":"스레드가 여러 개 있다는 사실만으로 경쟁가 성립하지는 않는다. 독립 상태나 불변 상태를 사용할 수도 있다. 정확성이 달라질 수 있는 순서 경쟁이 있어야 한다."},
+      {"key":"C","content":"항상 deadlock 순환이 존재하는 상황","displayOrder":2,"rationaleMarkdown":"deadlock은 대기 의존성에 따른 진행성 실패이고 경쟁는 순서에 따라 정확성이 달라질 수 있는 위험이다. 하나 없이 다른 하나가 발생할 수 있다."},
+      {"key":"D","content":"오직 같은 CPU 명령어을 실행할 때만 생기는 문제","displayOrder":3,"rationaleMarkdown":"경쟁는 두 스레드가 같은 명령을 실행하는지가 아니라 경합 연산과 그 순서의 문제다. 파일 생성, database check-then-act, 요청 처리 순서도 경쟁가 될 수 있다."}
     ],
     "correctChoiceKey": "A",
-    "explanationMarkdown": "Race condition의 핵심은 여러 action이 존재한다는 사실 자체가 아니라 **상대적인 실행 순서나 timing이 correctness에 영향을 준다는 점**이다. Shared-memory variable뿐 아니라 file 생성, DB check-then-act, 요청 ordering에서도 같은 종류의 경쟁이 생길 수 있다."
+    "explanationMarkdown": "경쟁 condition의 핵심은 여러 action이 존재한다는 사실 자체가 아니라 **상대적인 실행 순서나 timing이 correctness에 영향을 준다는 점**이다. 공유-메모리 variable뿐 아니라 파일 생성, DB check-then-act, 요청 ordering에서도 같은 종류의 경쟁이 생길 수 있다."
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.race-critical-section.race-condition.q2",
-    "promptMarkdown": "넓은 race condition과 language memory model의 data race를 같은 의미로 사용하면 안 되는 이유를 설명하라.",
+    "promptMarkdown": "넓은 경쟁 condition과 language 메모리 model의 data 경쟁를 같은 의미로 사용하면 안 되는 이유를 설명하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": [
       "operating-systems.core.race-critical-section.race-condition"
     ],
-    "modelAnswer": "race condition은 file creation, 요청 ordering, check-then-act처럼 shared memory가 없어도 timing에 따라 invariant가 깨지는 상황을 포함할 수 있다. Java의 data race는 같은 variable에 대한 conflicting access가 happens-before로 정렬되지 않은 경우처럼 memory model이 정의한 더 구체적인 조건을 가진다.",
-    "explanationMarkdown": "Java Language Specification에서 data race는 같은 variable에 대한 conflicting access가 happens-before로 정렬되지 않은 경우로 정의된다. 반면 race condition은 **더 넓은 correctness 개념**이므로 동일한 memory location을 직접 공유하지 않는 순서 경쟁까지 포함할 수 있다."
+    "modelAnswer": "경쟁 condition은 파일 creation, 요청 ordering, check-then-act처럼 공유 메모리가 없어도 timing에 따라 불변 조건가 깨지는 상황을 포함할 수 있다. Java의 data 경쟁는 같은 variable에 대한 conflicting 접근가 happens-before로 정렬되지 않은 경우처럼 메모리 model이 정의한 더 구체적인 조건을 가진다.",
+    "explanationMarkdown": "Java Language Specification에서 data 경쟁는 같은 variable에 대한 conflicting 접근가 happens-before로 정렬되지 않은 경우로 정의된다. 반면 경쟁 condition은 **더 넓은 correctness 개념**이므로 동일한 메모리 location을 직접 공유하지 않는 순서 경쟁까지 포함할 수 있다."
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.race-critical-section.race-condition.q3",
-    "promptMarkdown": "두 HTTP 요청이 다음 순서로 실행된다.\n\n- 요청 A: 같은 unique key가 존재하지 않음을 확인 → insert 시도\n- 요청 B: 같은 unique key가 존재하지 않음을 확인 → insert 시도\n\n질문: application lock보다 DB unique constraint가 중요한 이유를 설명하라.",
+    "promptMarkdown": "두 HTTP 요청이 다음 순서로 실행된다.\n\n- 요청 A: 같은 unique key가 존재하지 않음을 확인 → insert 시도\n- 요청 B: 같은 unique key가 존재하지 않음을 확인 → insert 시도\n\n질문: 애플리케이션 lock보다 DB unique constraint가 중요한 이유를 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": [
       "operating-systems.core.race-critical-section.race-condition"
     ],
-    "modelAnswer": "check와 insert 사이에 다른 요청이 끼어들 수 있고 여러 process/instance가 있다면 process-local lock만으로 canonical uniqueness를 보호하지 못할 수 있다. authoritative DB constraint가 최종 invariant를 보장해야 한다.",
-    "explanationMarkdown": "Application lock이 한 process의 thread만 직렬화한다면 다른 process나 instance의 요청은 그 lock을 통과하지 않을 수 있다. Uniqueness의 source of truth가 DB라면 **DB unique constraint가 최종 invariant 경계**가 되고, application에서는 constraint violation을 정상 경쟁 결과로 처리해야 한다."
+    "modelAnswer": "check와 insert 사이에 다른 요청이 끼어들 수 있고 여러 프로세스/instance가 있다면 프로세스 내부 lock만으로 canonical uniqueness를 보호하지 못할 수 있다. authoritative DB constraint가 최종 불변 조건를 보장해야 한다.",
+    "explanationMarkdown": "애플리케이션 lock이 한 프로세스의 스레드만 직렬화한다면 다른 프로세스나 instance의 요청은 그 lock을 통과하지 않을 수 있다. Uniqueness의 source of truth가 DB라면 **DB unique constraint가 최종 불변 조건 경계**가 되고, 애플리케이션에서는 constraint violation을 정상 경쟁 결과로 처리해야 한다."
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.race-critical-section.race-condition.q4",
-    "promptMarkdown": "`value`가 초기화 이후 더 이상 변경되지 않고 T1과 T2가 읽기만 한다. 이 두 read의 상대적 순서만으로 lost update가 생기지 않는 이유를 설명하라.",
+    "promptMarkdown": "`value`가 초기화 이후 더 이상 변경되지 않고 T1과 T2가 읽기만 한다. 이 두 read의 상대적 순서만으로 lost 갱신가 생기지 않는 이유를 설명하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": [
       "operating-systems.core.race-critical-section.race-condition"
     ],
-    "modelAnswer": "두 thread 모두 state를 변경하지 않으므로 한 thread의 update를 다른 thread가 덮어쓰는 transition 자체가 없다. 따라서 두 read의 순서만으로 lost update는 생기지 않는다. 다만 안전한 publication이나 다른 shared invariant는 별도 문제다.",
-    "explanationMarkdown": "Lost update에는 서로 경쟁하는 write/read-modify-write가 필요하다. 초기화가 끝난 동일 값을 두 thread가 읽기만 한다면 read 순서가 state를 바꾸지는 않는다. 다만 객체가 다른 thread에 **어떻게 publish되었는지** 같은 visibility 문제까지 자동으로 해결된다는 뜻은 아니다."
+    "modelAnswer": "두 스레드 모두 상태를 변경하지 않으므로 한 스레드의 갱신를 다른 스레드가 덮어쓰는 transition 자체가 없다. 따라서 두 read의 순서만으로 lost 갱신는 생기지 않는다. 다만 안전한 publication이나 다른 공유 불변 조건는 별도 문제다.",
+    "explanationMarkdown": "Lost 갱신에는 서로 경쟁하는 write/read-modify-write가 필요하다. 초기화가 끝난 동일 값을 두 스레드가 읽기만 한다면 read 순서가 상태를 바꾸지는 않는다. 다만 객체가 다른 스레드에 **어떻게 publish되었는지** 같은 visibility 문제까지 자동으로 해결된다는 뜻은 아니다."
   },
   {
     "kind": "question",
@@ -170,41 +170,41 @@
       {"key":"A","content":"오직 CPU-bound 계산만 있는 범위","displayOrder":0,"rationaleMarkdown":"critical section은 CPU를 많이 쓰는지보다 보호해야 하는 공유 불변 조건으로 정한다. 작은 상태 갱신도 중요 구역일 수 있고 긴 계산은 독립적일 수 있다."},
       {"key":"B","content":"함수 전체를 무조건 lock으로 감싼 범위","displayOrder":1,"rationaleMarkdown":"함수 전체를 lock으로 감싸면 무관한 작업까지 직렬화해 경합이 커질 수 있다. 불변 조건을 깨뜨릴 수 있는 상태 전이와 필요한 읽기·쓰기를 보호해야 한다."},
       {"key":"C","content":"logging statement가 있는 모든 줄","displayOrder":2,"rationaleMarkdown":"로그 기록은 보호해야 할 공유 상태 전이에 자동으로 포함되지 않는다. 무관한 동작이 있다는 이유로 모든 줄을 lock할 것이 아니라 불변 조건에 중요한 접근을 보호해야 한다."},
-      {"key":"D","content":"동시에 실행되면 shared invariant가 깨질 수 있는 state transition 범위","displayOrder":3,"rationaleMarkdown":"critical section은 동시 interleaving이 공유 불변 조건을 깨뜨릴 수 있는 코드 구역이다. lock은 그 구역의 배타성을 보장하는 한 가지 방법이다."}
+      {"key":"D","content":"동시에 실행되면 공유 불변 조건가 깨질 수 있는 상태 transition 범위","displayOrder":3,"rationaleMarkdown":"critical section은 동시 interleaving이 공유 불변 조건을 깨뜨릴 수 있는 코드 구역이다. lock은 그 구역의 배타성을 보장하는 한 가지 방법이다."}
     ],
     "correctChoiceKey": "D",
-    "explanationMarkdown": "Critical section은 특정 문법이나 함수 크기로 정하는 것이 아니라 **동시에 실행되면 보호하려는 shared invariant가 깨질 수 있는 범위**로 정한다. Lock은 그 범위를 보호하는 구현 수단 중 하나다."
+    "explanationMarkdown": "Critical section은 특정 문법이나 함수 크기로 정하는 것이 아니라 **동시에 실행되면 보호하려는 공유 불변 조건가 깨질 수 있는 범위**로 정한다. Lock은 그 범위를 보호하는 구현 수단 중 하나다."
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.race-critical-section.critical-section.q2",
-    "promptMarkdown": "mutual exclusion, progress, bounded waiting을 각각 설명하라.",
+    "promptMarkdown": "상호 배제, 진행, bounded 대기을 각각 설명하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": [
       "operating-systems.core.race-critical-section.critical-section"
     ],
-    "modelAnswer": "mutual exclusion은 competing execution이 critical section에 동시에 들어가지 못하게 하는 요구다. progress는 section이 비어 있고 진입하려는 contender가 있을 때 다음 진입자 결정이 무기한 미뤄지지 않게 하는 요구다. bounded waiting은 한 contender가 진입을 요청한 뒤 다른 contender가 먼저 진입할 수 있는 횟수에 유한한 bound가 있어야 한다는 성질이며, wall-clock 대기시간 SLA를 뜻하지 않는다.",
-    "explanationMarkdown": "세 요구는 서로 다른 문제를 본다. Mutual exclusion은 **동시 진입 금지**, progress는 **누군가 들어갈 수 있는데 결정 자체가 멈추지 않는 것**, bounded waiting은 **특정 contender가 계속 뒤로 밀리는 starvation을 제한하는 것**에 가깝다."
+    "modelAnswer": "mutual exclusion은 competing 실행이 critical section에 동시에 들어가지 못하게 하는 요구다. 진행는 section이 비어 있고 진입하려는 contender가 있을 때 다음 진입자 결정이 무기한 미뤄지지 않게 하는 요구다. bounded 대기은 한 contender가 진입을 요청한 뒤 다른 contender가 먼저 진입할 수 있는 횟수에 유한한 bound가 있어야 한다는 성질이며, wall-clock 대기시간 SLA를 뜻하지 않는다.",
+    "explanationMarkdown": "세 요구는 서로 다른 문제를 본다. Mutual exclusion은 **동시 진입 금지**, 진행는 **누군가 들어갈 수 있는데 결정 자체가 멈추지 않는 것**, bounded 대기은 **특정 contender가 계속 뒤로 밀리는 starvation을 제한하는 것**에 가깝다."
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.race-critical-section.critical-section.q3",
-    "promptMarkdown": "mutex를 잡은 채 500ms DB query를 수행하는 코드가 높은 contention에서 어떤 영향을 만드는지 설명하라.",
+    "promptMarkdown": "뮤텍스를 잡은 채 500ms DB query를 수행하는 코드가 높은 경합에서 어떤 영향을 만드는지 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": [
       "operating-systems.core.race-critical-section.critical-section"
     ],
-    "modelAnswer": "DB I/O를 기다리는 동안 lock도 유지되어 다른 thread가 shared invariant에 접근하지 못하고 queue 지연 시간이 전파된다. DB 호출을 lock 밖으로 옮길 수 있는지 검토하되 stale snapshot으로 correctness가 깨지지 않는지도 확인해야 한다.",
-    "explanationMarkdown": "Blocking DB I/O 동안 lock hold time이 길어지면 경쟁 thread가 모두 그 뒤에 줄을 서므로 꼬리 지연 시간(tail latency)과 contention이 커질 수 있다. 그러나 단순히 I/O를 lock 밖으로 옮기면 **검사한 state와 실제 변경 시점 사이가 벌어져** stale-state race가 생길 수 있어 invariant를 다시 설계해야 한다."
+    "modelAnswer": "DB I/O를 기다리는 동안 lock도 유지되어 다른 스레드가 공유 불변 조건에 접근하지 못하고 큐 지연 시간이 전파된다. DB 호출을 lock 밖으로 옮길 수 있는지 검토하되 stale snapshot으로 correctness가 깨지지 않는지도 확인해야 한다.",
+    "explanationMarkdown": "블로킹 DB I/O 동안 lock hold time이 길어지면 경쟁 스레드가 모두 그 뒤에 줄을 서므로 꼬리 지연 시간(꼬리 지연 시간(tail 지연 시간))과 경합이 커질 수 있다. 그러나 단순히 I/O를 lock 밖으로 옮기면 **검사한 상태와 실제 변경 시점 사이가 벌어져** stale-상태 경쟁가 생길 수 있어 불변 조건를 다시 설계해야 한다."
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.race-critical-section.atomic-operation.q1",
-    "promptMarkdown": "atomic operation의 핵심 의미는?",
+    "promptMarkdown": "원자적 연산의 핵심 의미는?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
@@ -212,13 +212,13 @@
       "operating-systems.core.race-critical-section.atomic-operation"
     ],
     "choices": [
-      {"key":"A","content":"모든 다른 memory access의 순서를 자동 보장한다","displayOrder":0,"rationaleMarkdown":"atomicity는 연산이 나뉘지 않은 하나처럼 보인다는 뜻이지 주변 모든 메모리 접근의 순서를 자동으로 정하지 않는다. 순서 의미에는 fence나 acquire/release 같은 별도 보장이 필요하다."},
-      {"key":"B","content":"항상 machine instruction 정확히 하나로만 구현된다","displayOrder":1,"rationaleMarkdown":"atomic operation은 전용 machine instruction·lock·runtime/platform 메커니즘으로 구현될 수 있다. 계약의 핵심은 관찰 시 분할되지 않는 것이지 반드시 명령 하나라는 뜻은 아니다."},
-      {"key":"C","content":"다른 실행 흐름에 하나의 indivisible state transition처럼 보인다","displayOrder":2,"rationaleMarkdown":"다른 실행 흐름은 중간 상태를 보거나 끼어들지 않고 그 연산을 하나의 상태 전이로 관찰한다. atomicity 자체가 더 큰 transaction 범위까지 정하지는 않는다."},
-      {"key":"D","content":"여러 database row의 business transaction을 자동 완성한다","displayOrder":3,"rationaleMarkdown":"CPU 수준 atomic primitive 하나가 여러 행을 포함하는 업무 transaction을 자동 완료하지 않는다. database atomicity는 DB transaction 경계와 자체 규칙이 보장한다."}
+      {"key":"A","content":"모든 다른 메모리 접근의 순서를 자동 보장한다","displayOrder":0,"rationaleMarkdown":"atomicity는 연산이 나뉘지 않은 하나처럼 보인다는 뜻이지 주변 모든 메모리 접근의 순서를 자동으로 정하지 않는다. 순서 의미에는 fence나 acquire/release 같은 별도 보장이 필요하다."},
+      {"key":"B","content":"항상 machine 명령어 정확히 하나로만 구현된다","displayOrder":1,"rationaleMarkdown":"원자적 연산은 전용 machine 명령어·lock·런타임/platform 메커니즘으로 구현될 수 있다. 계약의 핵심은 관찰 시 분할되지 않는 것이지 반드시 명령 하나라는 뜻은 아니다."},
+      {"key":"C","content":"다른 실행 흐름에 하나의 indivisible 상태 transition처럼 보인다","displayOrder":2,"rationaleMarkdown":"다른 실행 흐름은 중간 상태를 보거나 끼어들지 않고 그 연산을 하나의 상태 전이로 관찰한다. atomicity 자체가 더 큰 트랜잭션 범위까지 정하지는 않는다."},
+      {"key":"D","content":"여러 database row의 business 트랜잭션을 자동 완성한다","displayOrder":3,"rationaleMarkdown":"CPU 수준 원자적 primitive 하나가 여러 행을 포함하는 업무 트랜잭션을 자동 완료하지 않는다. database atomicity는 DB 트랜잭션 경계와 자체 규칙이 보장한다."}
     ],
     "correctChoiceKey": "C",
-    "explanationMarkdown": "Atomicity는 다른 execution이 연산의 **중간 state를 관찰하거나 끼어들 수 없는 하나의 transition처럼 보이는 성질**이다. Source line 수, machine instruction 수, 주변 memory ordering, business transaction 범위는 별도 계약이다."
+    "explanationMarkdown": "Atomicity는 다른 실행이 연산의 **중간 상태를 관찰하거나 끼어들 수 없는 하나의 transition처럼 보이는 성질**이다. Source line 수, machine 명령어 수, 주변 메모리 ordering, business 트랜잭션 범위는 별도 계약이다."
   },
   {
     "kind": "question",
@@ -230,39 +230,39 @@
     "conceptKeys": [
       "operating-systems.core.race-critical-section.atomic-operation"
     ],
-    "modelAnswer": "operation 자체가 중간 상태 없이 실행되어도 그 결과를 다른 thread가 언제 관찰하는지와 주변 memory access가 어떤 순서로 보이는지는 별도 memory-model semantics가 필요할 수 있다. 사용한 primitive의 계약을 확인해야 한다.",
-    "explanationMarkdown": "한 update가 찢어지지 않는다는 보장만으로 주변 read/write의 관찰 순서까지 결정되지는 않는다. 실제 atomic API가 acquire/release, volatile-like semantics 등 어떤 ordering·visibility를 제공하는지는 **해당 memory model과 primitive 계약**으로 확인해야 한다."
+    "modelAnswer": "연산 자체가 중간 상태 없이 실행되어도 그 결과를 다른 스레드가 언제 관찰하는지와 주변 메모리 접근가 어떤 순서로 보이는지는 별도 메모리-model 의미가 필요할 수 있다. 사용한 primitive의 계약을 확인해야 한다.",
+    "explanationMarkdown": "한 갱신가 찢어지지 않는다는 보장만으로 주변 read/write의 관찰 순서까지 결정되지는 않는다. 실제 원자적 API가 acquire/release, volatile-like 의미 등 어떤 ordering·visibility를 제공하는지는 **해당 메모리 model과 primitive 계약**으로 확인해야 한다."
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.race-critical-section.atomic-operation.q3",
-    "promptMarkdown": "atomic counter 하나로 `balance 감소 + ledger insert + status 변경` 전체를 exactly-once로 만들 수 없는 이유를 설명하라.",
+    "promptMarkdown": "원자적 counter 하나로 `balance 감소 + ledger insert + status 변경` 전체를 exactly-once로 만들 수 없는 이유를 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": [
       "operating-systems.core.race-critical-section.atomic-operation"
     ],
-    "modelAnswer": "counter의 한 변수 transition만 atomic할 뿐 여러 state가 함께 만족해야 하는 application invariant 전체를 보호하지 않는다. 더 큰 lock/transaction/idempotency protocol 등 해당 invariant 범위의 atomicity가 필요하다.",
-    "explanationMarkdown": "Atomic counter가 보장하는 범위는 그 counter의 operation이다. Balance, ledger, status처럼 여러 resource가 하나의 business invariant를 이루면 부분 성공과 retry까지 고려해야 하므로 **transaction 또는 idempotency 같은 더 큰 protocol 경계**가 필요하다."
+    "modelAnswer": "counter의 한 변수 transition만 원자적할 뿐 여러 상태가 함께 만족해야 하는 애플리케이션 불변 조건 전체를 보호하지 않는다. 더 큰 lock/트랜잭션/idempotency 프로토콜 등 해당 불변 조건 범위의 atomicity가 필요하다.",
+    "explanationMarkdown": "원자적 counter가 보장하는 범위는 그 counter의 연산이다. Balance, ledger, status처럼 여러 자원가 하나의 business 불변 조건를 이루면 부분 성공과 재시도까지 고려해야 하므로 **트랜잭션 또는 idempotency 같은 더 큰 프로토콜 경계**가 필요하다."
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.race-critical-section.atomic-operation.q4",
-    "promptMarkdown": "source code 한 줄이라는 사실만으로 operation이 atomic하다고 결론내릴 수 없는 이유를 설명하라.",
+    "promptMarkdown": "source 코드 한 줄이라는 사실만으로 연산이 원자적하다고 결론내릴 수 없는 이유를 설명하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": [
       "operating-systems.core.race-critical-section.atomic-operation"
     ],
-    "modelAnswer": "compiler/runtime/CPU에서 여러 load·compute·store step으로 분해될 수 있고 다른 execution이 그 사이에 interleave할 수 있기 때문이다. atomicity는 문법 줄 수가 아니라 primitive와 memory-model 계약으로 판단한다.",
-    "explanationMarkdown": "`counter++`처럼 한 줄로 보이는 표현도 실행 단계에서는 read-modify-write로 나뉠 수 있다. 다른 thread가 그 사이에 실행될 수 있으므로 **코드의 시각적 길이와 atomicity는 무관**하고, 실제 primitive의 보장을 확인해야 한다."
+    "modelAnswer": "compiler/런타임/CPU에서 여러 load·compute·store step으로 분해될 수 있고 다른 실행이 그 사이에 interleave할 수 있기 때문이다. atomicity는 문법 줄 수가 아니라 primitive와 메모리-model 계약으로 판단한다.",
+    "explanationMarkdown": "`counter++`처럼 한 줄로 보이는 표현도 실행 단계에서는 read-modify-write로 나뉠 수 있다. 다른 스레드가 그 사이에 실행될 수 있으므로 **코드의 시각적 길이와 atomicity는 무관**하고, 실제 primitive의 보장을 확인해야 한다."
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.race-critical-section.spin-vs-block.q1",
-    "promptMarkdown": "spin wait가 기다리는 동안 주로 소비하는 resource는?",
+    "promptMarkdown": "spin wait가 기다리는 동안 주로 소비하는 자원는?",
     "questionType": "SHORT_ANSWER",
     "difficulty": "EASY",
     "status": "PUBLISHED",
@@ -275,32 +275,32 @@
       "CPU cycles",
       "CPU 자원"
     ],
-    "explanationMarkdown": "Spin wait는 condition이 바뀌었는지 반복해서 확인하면서 runnable 상태로 CPU instruction을 계속 실행한다. 따라서 sleep/wakeup 비용을 피하는 대신 **기다리는 시간만큼 CPU cycle을 소비**한다."
+    "explanationMarkdown": "Spin wait는 condition이 바뀌었는지 반복해서 확인하면서 실행 가능 상태로 CPU 명령어을 계속 실행한다. 따라서 sleep/wakeup 비용을 피하는 대신 **기다리는 시간만큼 CPU 순환을 소비**한다."
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.race-critical-section.spin-vs-block.q2",
-    "promptMarkdown": "매우 짧은 wait에서 spin이 blocking보다 유리할 수 있는 이유를 설명하라.",
+    "promptMarkdown": "매우 짧은 wait에서 spin이 블로킹보다 유리할 수 있는 이유를 설명하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": [
       "operating-systems.core.race-critical-section.spin-vs-block"
     ],
-    "modelAnswer": "lock이 곧 풀릴 것이고 CPU 여유가 있다면 sleep/wakeup과 scheduler context switch 비용을 지불하는 것보다 잠깐 polling하는 비용이 작을 수 있다.",
-    "explanationMarkdown": "Blocking은 waiter를 sleep queue에 넣고 나중에 깨워 다시 schedule하는 비용이 든다. Owner가 실제로 곧 lock을 놓고 CPU 여유도 있다면 **짧은 busy-wait 비용이 sleep/wakeup 비용보다 작을 수 있다**는 것이 spin의 비용 모델이다."
+    "modelAnswer": "lock이 곧 풀릴 것이고 CPU 여유가 있다면 sleep/wakeup과 스케줄러 문맥 전환 비용을 지불하는 것보다 잠깐 polling하는 비용이 작을 수 있다.",
+    "explanationMarkdown": "블로킹은 대기자를 sleep 큐에 넣고 나중에 깨워 다시 schedule하는 비용이 든다. 소유자가 실제로 곧 lock을 놓고 CPU 여유도 있다면 **짧은 바쁜 대기(busy wait) 비용이 sleep/wakeup 비용보다 작을 수 있다**는 것이 spin의 비용 모델이다."
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.race-critical-section.spin-vs-block.q3",
-    "promptMarkdown": "single-core에서 lock owner가 preempt된 상태인데 waiter가 계속 spin하면 왜 특히 비효율적인가?",
+    "promptMarkdown": "single-core에서 lock 소유자가 preempt된 상태인데 대기자가 계속 spin하면 왜 특히 비효율적인가?",
     "questionType": "SCENARIO",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": [
       "operating-systems.core.race-critical-section.spin-vs-block"
     ],
-    "modelAnswer": "waiter가 현재 CPU slice를 쓰는 동안 같은 core의 lock owner는 실행되지 못해 lock을 해제할 수 없다. waiter의 busy-wait가 useful CPU time을 소비해 owner가 다시 schedule될 때까지의 대기를 늘릴 수 있다.",
-    "explanationMarkdown": "Single-core에서는 owner와 waiter가 같은 순간 CPU에서 실행될 수 없다. Owner가 다시 schedule되어야 lock을 해제할 수 있는데 waiter가 계속 spin하면 **해제 조건을 만들 수 없는 실행 흐름이 CPU를 소비**하므로 특히 비효율적이다."
+    "modelAnswer": "대기자가 현재 CPU slice를 쓰는 동안 같은 core의 lock 소유자는 실행되지 못해 lock을 해제할 수 없다. 대기자의 busy-wait가 useful CPU time을 소비해 소유자가 다시 schedule될 때까지의 대기를 늘릴 수 있다.",
+    "explanationMarkdown": "Single-core에서는 소유자와 대기자가 같은 순간 CPU에서 실행될 수 없다. 소유자가 다시 schedule되어야 lock을 해제할 수 있는데 대기자가 계속 spin하면 **해제 조건을 만들 수 없는 실행 흐름이 CPU를 소비**하므로 특히 비효율적이다."
   }
 ]
