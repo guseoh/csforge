@@ -9,18 +9,24 @@ level: 1
 status: PUBLISHED
 displayOrder: 10
 references:
+- url: https://google.aip.dev/121
+  title: "AIP-121: Resource-oriented design"
+  referenceType: OFFICIAL
+  language: en
+  displayOrder: 1
+  relationNote: 리소스와 관계를 API의 기본 구성 요소로 두고 표준 메서드와 사용자 정의 동작을 구분하는 원칙을 확인한다.
 - url: https://www.rfc-editor.org/rfc/rfc9110
   title: RFC 9110 HTTP Semantics
   referenceType: OFFICIAL
   language: en
-  displayOrder: 1
-  relationNote: HTTP 메서드, 상태 코드, representation의 표준 의미 확인
+  displayOrder: 2
+  relationNote: HTTP 메서드와 상태 코드의 표준 의미를 확인한다.
 ---
 # 리소스와 엔드포인트
 
 API를 설계할 때 URI에 어떤 동사를 넣을지부터 고민하면 실제 계약보다 이름 모양에 집중하기 쉽습니다. 먼저 **클라이언트가 무엇을 하나의 대상으로 보고, 그 대상의 어떤 상태를 조회하거나 변경하는가**를 정하는 편이 좋습니다.
 
-엔드포인트도 단순한 URL 문자열이 아닙니다. URI, HTTP 메서드, 요청 형식, 응답 representation, 상태 코드가 함께 외부 소비자가 의존하는 계약을 만듭니다.
+엔드포인트도 단순한 URL 문자열이 아닙니다. URI, HTTP 메서드, 요청 형식, 응답 표현, 상태 코드가 함께 외부 소비자가 의존하는 계약을 만듭니다.
 
 ### 동사 이름보다 클라이언트가 다루는 대상을 먼저 본다
 
