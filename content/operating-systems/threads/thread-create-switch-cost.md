@@ -14,7 +14,7 @@ references:
     referenceType: BOOK
     language: en
     depth: chapter
-    recommendation: "프로세스 안에서 스레드가 공유하는 상태와 스레드별 실행 문맥, 생성·스케줄링의 기본 모델을 확인한다."
+    recommendation: "process 안에서 thread가 공유하는 주소 공간과 thread별 실행 context를 확인한다."
     relationNote: "이 Concept에서는 스레드 생성에 필요한 스택·실행 문맥과 실행 가능한 스레드가 많을 때 생기는 문맥 전환·캐시 지역성 비용을 중심으로 읽는다."
     displayOrder: 1
 ---
