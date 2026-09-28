@@ -14,14 +14,14 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "DNS 메시지·레코드·응답 코드와 TTL의 기본 규칙을 확인한다."
+    recommendation: "DNS delegation과 service record의 역할을 확인한다."
     displayOrder: 1
   - url: "https://www.rfc-editor.org/rfc/rfc2308"
     title: "Negative Caching of DNS Queries"
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "NXDOMAIN·NODATA 부정 응답과 SOA 정보를 이용한 부정 캐시 수명을 확인한다."
+    recommendation: "NXDOMAIN/NODATA negative answer와 SOA 기반 negative TTL을 확인한다."
     displayOrder: 2
   - url: "https://www.rfc-editor.org/rfc/rfc9520"
     title: "Negative Caching of DNS Resolution Failures"
