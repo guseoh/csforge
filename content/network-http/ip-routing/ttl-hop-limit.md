@@ -14,7 +14,7 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "IPv4 TTL 필드가 패킷 수명을 제한하는 기본 규칙을 확인한다."
+    recommendation: "IPv4 주소, 헤더와 패킷 전달의 기본 규칙을 확인한다."
     displayOrder: 1
 ---
 # TTL과 Hop Limit
