@@ -1,0 +1,169 @@
+name: OS filesystem manual pass
+
+on:
+  push:
+    branches: [codex/content-operating-systems-quality]
+    paths: ['.github/workflows/os-filesystem-manual-pass.yml']
+
+permissions:
+  contents: write
+
+jobs:
+  rewrite:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: codex/content-operating-systems-quality
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Rewrite filesystem questions 1-17
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const path = 'content/operating-systems/filesystem/questions.json';
+          const qs = JSON.parse(fs.readFileSync(path, 'utf8'));
+          const immutable = q => ({kind:q.kind,contentKey:q.contentKey,questionType:q.questionType,difficulty:q.difficulty,status:q.status,conceptKeys:q.conceptKeys,acceptedAnswers:q.acceptedAnswers,correctChoiceKey:q.correctChoiceKey,choiceShape:q.choices?.map(c=>({key:c.key,displayOrder:c.displayOrder}))});
+          const before = qs.map(immutable);
+          const byKey = new Map(qs.map(q => [q.contentKey, q]));
+          function set(key, patch) {
+            const q = byKey.get(key); if (!q) throw new Error(`missing ${key}`);
+            for (const [k,v] of Object.entries(patch)) {
+              if (k === 'choices') {
+                for (const [ck, cv] of Object.entries(v)) {
+                  const c = q.choices.find(x => x.key === ck); if (!c) throw new Error(`missing ${key}.${ck}`);
+                  if (cv.content !== undefined) c.content = cv.content;
+                  if (cv.rationaleMarkdown !== undefined) c.rationaleMarkdown = cv.rationaleMarkdown;
+                }
+              } else q[k] = v;
+            }
+          }
+
+          set('operating-systems.core.filesystem.file-abstraction.q1', {
+            promptMarkdown:'`/tmp/a.txt`라는 경로명(pathname)과 실제 파일 객체의 관계를 가장 정확히 설명한 것은?',
+            choices:{
+              A:{content:'경로명은 `open()`할 때마다 같은 파일 오프셋을 전역으로 가리킨다',rationaleMarkdown:'각 `open()` 호출은 프로세스에 파일 디스크립터를 돌려주고, 그 파일 디스크립터가 가리키는 열린 파일 상태에 현재 오프셋이 속할 수 있다. 경로명 자체가 모든 `open()` 호출에서 공유하는 전역 오프셋을 갖지는 않는다.'},
+              B:{content:'경로명은 이름 공간에서 파일 객체를 찾는 이름이며, 파일 객체의 정체성 자체와 항상 같지는 않다',rationaleMarkdown:'경로명은 이름 공간에서 파일 객체를 찾는 이름이고 객체의 정체성은 별도다. 하드 링크로 여러 이름이 같은 객체를 가리킬 수 있고, `rename()` 뒤에도 이미 열린 참조가 계속 유효할 수 있다.'},
+              C:{content:'경로명이 바뀌면 이미 열린 파일 디스크립터가 반드시 즉시 무효화된다',rationaleMarkdown:'이미 열린 파일 디스크립터는 경로명을 다시 탐색하지 않고 열린 파일 객체에 대한 참조를 유지한다. 이름을 `rename()`해도 기존 열린 참조가 즉시 무효화되지는 않는다.'},
+              D:{content:'하나의 파일 객체에는 하드 링크를 포함해 이름이 하나만 존재할 수 있다',rationaleMarkdown:'하드 링크는 여러 디렉터리 엔트리의 이름을 같은 파일 객체에 연결할 수 있다. 따라서 경로명과 파일 객체의 정체성은 일대일 대응이 아니다.'}
+            },
+            explanationMarkdown:'경로명은 이름 공간에서 객체를 찾기 위한 이름이다. 하드 링크처럼 여러 이름이 같은 객체를 가리킬 수 있고, `rename()` 뒤에도 이미 열린 파일 디스크립터는 기존 참조를 유지할 수 있으므로 **이름과 파일 객체의 정체성을 분리**해야 한다.'
+          });
+          set('operating-systems.core.filesystem.file-abstraction.q2', {
+            promptMarkdown:'열려 있는 파일의 이름을 `rename()`한 뒤에도 기존 파일 디스크립터로 계속 읽을 수 있는 이유를 설명하라.',
+            modelAnswer:'파일 디스크립터는 경로명 문자열을 매번 다시 찾는 것이 아니라 이미 열린 커널 객체와 열린 파일 상태를 참조한다. `rename()`은 이름 공간의 이름 연결을 바꾸지만 기존 열린 참조를 자동으로 무효화하지 않는다.',
+            explanationMarkdown:'`open()` 이후 I/O는 경로명 문자열을 매번 다시 해석(resolve)하는 방식이 아니다. 파일 디스크립터는 이미 만들어진 열린 파일 상태를 가리키므로 **이름 공간의 이름 변경과 열린 파일 객체의 생명주기는 서로 다른 상태 변화**다.'
+          });
+          set('operating-systems.core.filesystem.file-abstraction.q3', {
+            promptMarkdown:'애플리케이션이 `write()` 성공만 확인하고 중요한 산출물을 `DURABLE` 상태로 표시한다. 어떤 계층 오해가 있는지 설명하라.',
+            modelAnswer:'`write()` 성공은 바이트가 커널이 관리하는 파일 상태에 전달된 것과 영속 저장 장치에 보존됐다는 것을 동일시한 오해다. 페이지 캐시와 쓰기 반영(write-back), `fsync()` 및 필요한 메타데이터 영속성을 요구사항에 맞게 별도로 확인해야 한다.',
+            explanationMarkdown:'일반적인 버퍼링 I/O에서 `write()` 성공은 커널이 데이터를 받아들였다는 경계일 수 있지만 전원 손실 뒤에도 보존된다는 뜻은 아니다. **더티 페이지, 쓰기 반영(write-back), `fsync()`와 메타데이터 영속성**을 실패 모델에 맞게 구분해야 한다.'
+          });
+
+          set('operating-systems.core.filesystem.file-descriptor.q1', {
+            promptMarkdown:'프로세스가 fd 3을 `close()`한 뒤 새 파일을 `open()`했다. 새 파일도 fd 3을 받을 수 있는가?',
+            choices:{
+              A:{content:'가능하다. fd 숫자는 프로세스별 파일 디스크립터 테이블의 슬롯이라 재사용될 수 있다',rationaleMarkdown:'파일 디스크립터는 프로세스별 테이블의 정수 핸들이므로 `close()` 뒤 그 슬롯을 재사용할 수 있다. 같은 숫자가 나중에 다른 열린 객체를 가리킬 수 있어 오래된 핸들을 다시 사용하면 위험하다.'},
+              B:{content:'불가능하다. fd 숫자는 한 파일의 영구적인 전역 ID다',rationaleMarkdown:'파일 디스크립터 숫자는 프로세스의 테이블 인덱스이지 파일의 영구적인 전역 정체성이 아니다. 서로 다른 프로세스는 같은 숫자를 독립적으로 사용할 수 있다.'},
+              C:{content:'가능하지만 모든 프로세스에서 동시에 fd 3이 같은 객체를 뜻한다',rationaleMarkdown:'파일 디스크립터 테이블은 프로세스마다 관리되므로 fd 3이 각 프로세스에서 같은 객체를 뜻할 필요가 없다. 상속이나 명시적 전달로 참조가 공유된 경우에만 관련 열린 파일 상태를 공유할 수 있다.'},
+              D:{content:'불가능하다. `close()`한 fd 숫자는 프로세스가 끝날 때까지 예약된다',rationaleMarkdown:'`close()`는 파일 디스크립터 슬롯을 해제해 이후 `open()`에서 재사용할 수 있게 한다. 번호를 프로세스 종료까지 예약하는 것은 일반적인 파일 디스크립터 생명주기 규칙이 아니다.'}
+            },
+            explanationMarkdown:'fd는 프로세스별 파일 디스크립터 테이블의 핸들이다. `close()`하면 해당 슬롯이 다시 사용 가능해질 수 있으므로 **같은 숫자가 시간에 따라 다른 객체를 가리킬 수 있다.**'
+          });
+          set('operating-systems.core.filesystem.file-descriptor.q2', {
+            promptMarkdown:'로그에 `fd=7`만 남기면 장시간 실행되는 서비스에서 당시 어떤 객체를 가리켰는지 복원하기 어려운 이유를 설명하라.',
+            modelAnswer:'fd는 프로세스별 값이고 `close()` 뒤 같은 숫자가 다른 객체에 재사용될 수 있다. 프로세스, 시점, 생명주기, 객체 종류, 경로 또는 연결 상대 같은 추가 맥락이 없으면 서로 다른 시점의 fd 7을 구분하기 어렵다.',
+            explanationMarkdown:'파일 디스크립터 번호에는 전역적이고 영구적인 정체성이 없다. 같은 프로세스에서도 `close()`와 `open()`을 거치며 재사용될 수 있으므로 **PID, 시점, 경로명 또는 연결 상대, 객체 종류 같은 맥락**을 함께 남겨야 의미 있게 추적할 수 있다.'
+          });
+          set('operating-systems.core.filesystem.file-descriptor.q3', {
+            promptMarkdown:'하위 프로세스를 종료했는데 파이프를 읽는 쪽이 EOF를 받지 못한다. 파일 디스크립터 생명주기 관점에서 먼저 확인할 것은?',
+            modelAnswer:'다른 프로세스나 스레드에 복제되거나 상속된 쓰기 끝(write end) 파일 디스크립터가 아직 열려 있는지 확인한다. 파이프의 모든 쓰기 참조가 닫혀야 읽는 쪽이 EOF를 관찰할 수 있는 구조인지 점검한다.',
+            explanationMarkdown:'파이프 EOF는 특정 writer 프로세스 하나의 종료가 아니라 **쓰기 끝을 참조하는 열린 파일 디스크립터가 모두 사라졌는가**와 연결된다. `dup()`·`fork()`·상속으로 남은 쓰기 끝이 있으면 커널은 여전히 쓸 주체가 존재할 수 있다고 보므로 EOF가 전달되지 않을 수 있다.'
+          });
+
+          set('operating-systems.core.filesystem.open-file-table.q1', {
+            promptMarkdown:'같은 경로명을 `open()` 두 번 한 경우와 `dup(fd)`한 경우의 대표적인 차이는?',
+            choices:{
+              A:{content:'두 번의 `open()`과 `dup()`은 모두 경로명만 공유하고 오프셋은 항상 독립적이다',rationaleMarkdown:'각 `open()` 호출은 보통 별도의 열린 파일 상태(open file description)와 오프셋을 만든다. 반면 `dup()`은 기존 열린 파일 상태를 가리키는 파일 디스크립터를 하나 더 만들므로, 경로명과 오프셋 공유 여부를 같은 층위에서 보면 안 된다.'},
+              B:{content:'두 번의 `open()`은 보통 별도 열린 파일 상태와 오프셋을 만들고, `dup()`은 같은 열린 파일 상태를 공유한다',rationaleMarkdown:'별도로 호출한 `open()`은 보통 자체 오프셋을 가진 새 열린 파일 상태를 만든다. `dup()`은 다른 파일 디스크립터가 같은 열린 파일 상태를 가리키게 하므로 두 파일 디스크립터가 오프셋과 파일 상태 플래그를 공유한다.'},
+              C:{content:'`dup()`은 실제 파일 내용을 새 파일로 복제하므로 쓰기 영향도 서로 분리된다',rationaleMarkdown:'`dup()`은 파일 내용을 복제하는 것이 아니라 파일 디스크립터 참조를 복제한다. 어느 파일 디스크립터로 쓰더라도 같은 실제 파일 객체에 영향을 준다.'},
+              D:{content:'두 번의 `open()`은 fd 숫자만 다르고 같은 열린 파일 상태를 반드시 재사용한다',rationaleMarkdown:'같은 경로명에 대해 `open()`을 각각 성공시키면 별도의 열린 파일 상태를 만들 수 있다. 같은 파일 객체를 가리킨다는 이유만으로 두 파일 디스크립터의 오프셋까지 공유되는 것은 아니다.'}
+            },
+            explanationMarkdown:'Linux/POSIX 모델에서 각 `open()`은 새 열린 파일 상태(open file description)를 만들 수 있지만 `dup()`은 기존 열린 파일 상태를 가리키는 파일 디스크립터를 하나 더 만든다. 그래서 `dup()`된 파일 디스크립터들은 **오프셋과 파일 상태 플래그를 공유**한다.'
+          });
+          set('operating-systems.core.filesystem.open-file-table.q2', {
+            promptMarkdown:'`fd2 = dup(fd1)` 뒤 `fd1`로 100바이트를 순차적으로 읽었다. 두 파일 디스크립터가 같은 열린 파일 상태를 공유한다면 `fd2`의 다음 순차 읽기는 어디서 시작하는가?',
+            explanationMarkdown:'`dup()`된 두 파일 디스크립터는 같은 열린 파일 상태의 현재 오프셋을 공유한다. `fd1`의 읽기가 오프셋을 100으로 옮겼으므로 `fd2`의 다음 순차 읽기도 **오프셋 100부터** 시작한다.'
+          });
+          set('operating-systems.core.filesystem.open-file-table.q3', {
+            promptMarkdown:'두 워커가 같은 열린 파일 상태를 공유한 채 `seek → read`를 각각 독립 작업처럼 수행한다. 어떤 경쟁 상태가 생길 수 있는가?',
+            modelAnswer:'공유 오프셋을 서로 변경해 한 워커의 `seek`와 다른 워커의 `read`가 교차할 수 있다. 위치 지정 I/O(positional I/O), 별도의 `open()`으로 얻은 독립 핸들, 필요한 동기화를 사용해 오프셋의 소유 관계를 명확히 한다.',
+            explanationMarkdown:'`seek`와 `read` 사이에 다른 워커가 공유 오프셋을 바꾸면 첫 워커는 자신이 의도한 위치가 아닌 곳을 읽을 수 있다. 문제의 핵심은 파일 내용이 아니라 **열린 파일 상태의 변경 가능한 오프셋을 여러 실행 흐름이 공유한다는 것**이다.'
+          });
+          set('operating-systems.core.filesystem.open-file-table.q4', {
+            promptMarkdown:'같은 inode를 가리키는 두 파일 디스크립터가 서로 독립적으로 `open()`되었다면 `오프셋이 독립적이다`와 `파일 내용이 독립적이다` 중 어느 설명이 맞는가? 이유도 설명하라.',
+            modelAnswer:'별도의 열린 파일 상태라면 오프셋은 독립적일 수 있지만 실제 파일 내용은 같은 파일 객체에 속하므로 쓰기의 영향은 공유될 수 있다. 열린 세션 상태와 파일 객체의 상태를 분리해야 한다.',
+            explanationMarkdown:'각 `open()`이 별도의 열린 파일 상태를 만들면 현재 오프셋은 분리될 수 있다. 하지만 두 열린 파일 상태가 같은 inode와 파일 객체를 가리키면 **실제 파일 내용은 공유**되므로 쓰기까지 독립적이라고 말할 수 없다.'
+          });
+
+          set('operating-systems.core.filesystem.directory-path.q1', {
+            promptMarkdown:'같은 프로세스에서 현재 작업 디렉터리(cwd)를 `/srv/app`에서 `/srv/test`로 바꾼 뒤 상대 경로 `data/a.txt`를 해석했다. 어떤 결론이 맞는가?',
+            choices:{
+              A:{content:'cwd는 화면에 표시하는 문자열일 뿐 경로 탐색에는 영향을 주지 않는다',rationaleMarkdown:'현재 작업 디렉터리는 상대 경로 해석을 시작하는 위치이지 화면에 표시하는 이름에 그치지 않는다. 이를 바꾸면 같은 상대 경로명을 조회하기 시작하는 위치도 달라진다.'},
+              B:{content:'상대 경로는 항상 파일 시스템 루트에서 시작하므로 결과가 같다',rationaleMarkdown:'절대 경로는 파일 시스템 루트에서 시작하지만 상대 경로는 프로세스의 현재 작업 디렉터리나 명시적으로 지정한 다른 디렉터리를 기준으로 시작한다. 따라서 같은 문자열도 서로 다른 객체를 가리킬 수 있다.'},
+              C:{content:'두 탐색은 서로 다른 시작 디렉터리에서 진행되므로 서로 다른 객체를 가리킬 수 있다',rationaleMarkdown:'상대 경로는 현재 적용되는 디렉터리 맥락에서 탐색을 시작한다. `/srv/app`과 `/srv/test`에서 `data/a.txt`를 해석하면 서로 다른 디렉터리 엔트리를 따라가므로 다른 객체에 도달할 수 있다.'},
+              D:{content:'상대 경로는 마지막 경로 요소만 보고 중간 디렉터리는 해석하지 않는다',rationaleMarkdown:'경로 해석은 마지막 파일 이름만 보는 것이 아니라 디렉터리 계층의 각 경로 요소를 차례로 처리한다. 중간 요소가 마지막 이름을 포함하는 디렉터리를 결정한다.'}
+            },
+            explanationMarkdown:'상대 경로는 파일 시스템 루트가 아니라 cwd 또는 명시한 디렉터리 파일 디스크립터 같은 **탐색 시작 맥락**에 의존한다. 따라서 문자열이 같아도 시작 디렉터리가 바뀌면 최종 객체가 달라질 수 있다.'
+          });
+          set('operating-systems.core.filesystem.directory-path.q2', {
+            promptMarkdown:'`/var/app/a` 경로명이 경로 요소별로 해석되는 흐름을 설명하라.',
+            modelAnswer:'파일 시스템 루트에서 `var` 디렉터리 엔트리를 찾고, 그 디렉터리에서 `app`, 다시 그 안에서 `a`를 찾는다. 각 중간 경로 요소의 존재 여부, 디렉터리인지 여부, 접근 권한과 심볼릭 링크·마운트 규칙이 최종 해석에 영향을 줄 수 있다.',
+            explanationMarkdown:'절대 경로는 파일 시스템 루트에서 시작해 경로 요소를 순서대로 해석한다. 중간 요소 하나라도 없거나 디렉터리가 아니거나 접근이 허용되지 않으면 뒤의 이름이 존재해도 탐색은 실패할 수 있다. **경로 해석은 마지막 파일 이름만 찾는 동작이 아니다.**'
+          });
+          set('operating-systems.core.filesystem.directory-path.q3', {
+            promptMarkdown:'파일의 마지막 경로명을 `unlink()`했는데 프로세스가 열린 fd로 계속 읽을 수 있다. 이 현상을 이름 공간과 객체 생명주기로 설명하라.',
+            modelAnswer:'`unlink()`는 디렉터리 엔트리라는 이름 연결을 제거한다. 열린 파일 디스크립터나 다른 참조가 실제 파일 객체를 계속 가리키면 그 객체와 데이터는 해당 참조가 끝날 때까지 유지될 수 있다.',
+            explanationMarkdown:'`unlink()`는 이름 공간의 디렉터리 엔트리를 제거한다. 이미 열린 파일 디스크립터는 실제 파일 객체에 대한 참조를 유지하므로 **이름의 생명주기와 열린 파일 객체의 생명주기가 다르다**는 점이 이 현상을 설명한다.'
+          });
+
+          set('operating-systems.core.filesystem.inode.q1', {
+            promptMarkdown:'Unix 계열 파일 시스템에서 inode와 파일 이름의 관계를 가장 잘 설명한 것은?',
+            choices:{
+              A:{content:'파일 이름을 바꾸면 실제 inode와 파일 내용이 반드시 새로 복사된다',rationaleMarkdown:'이름 변경은 디렉터리 엔트리의 이름 연결을 바꾸는 동작이다. 새 이름을 위해 파일 내용을 복사하거나 inode를 새로 할당하는 것이 일반적인 동작은 아니며, 기존 하드 링크도 같은 객체를 계속 가리킬 수 있다.'},
+              B:{content:'inode는 항상 전체 경로명 문자열이며 디렉터리 엔트리는 별도의 정체성을 갖지 않는다',rationaleMarkdown:'inode 기반 파일 시스템에서 inode는 객체의 메타데이터와 데이터 위치 참조를 담고, 디렉터리 엔트리는 이름을 객체 식별자에 연결한다. 경로명 자체가 inode인 것은 아니다.'},
+              C:{content:'inode 하나는 데이터 블록 하나와만 연결될 수 있어 큰 파일은 여러 inode가 필요하다',rationaleMarkdown:'inode는 직접·간접 매핑이나 extent 같은 구조를 통해 여러 블록에 걸친 파일 데이터를 나타낼 수 있다. inode 하나가 데이터 블록 하나만을 뜻하지 않는다.'},
+              D:{content:'디렉터리 엔트리가 이름을 inode 또는 객체 식별자에 연결하고, inode는 메타데이터와 데이터 위치 정보를 가진다',rationaleMarkdown:'디렉터리 엔트리는 이름을 inode 또는 파일 시스템 객체 식별자에 연결하고, inode는 메타데이터와 데이터 위치 정보를 담는다. 이름과 객체 정체성을 분리하면 하드 링크와 데이터 복사 없는 이름 변경을 설명할 수 있다.'}
+            },
+            explanationMarkdown:'Unix 계열 inode 모델에서 파일 이름은 디렉터리 엔트리에 있고 inode는 객체의 메타데이터와 데이터 위치 정보를 가진다. 이 분리 덕분에 **하드 링크와 `rename()`을 파일 내용 복제 없이** 처리할 수 있다.'
+          });
+          set('operating-systems.core.filesystem.inode.q2', {
+            promptMarkdown:'`a`와 `b`가 같은 inode를 가리키는 하드 링크이고 링크 수가 2다. `unlink(a)` 직후에도 `b`로 데이터를 읽을 수 있는 이유를 설명하라.',
+            modelAnswer:'`a` 디렉터리 엔트리만 제거되고 `b`가 같은 inode를 계속 참조하므로 실제 파일 객체와 데이터 블록이 유지된다. 이름 하나를 제거한 것과 객체의 생명주기가 끝나는 것은 서로 다르다.',
+            explanationMarkdown:'`unlink(a)`는 `a → inode` 연결 하나를 제거할 뿐 `b → 같은 inode` 연결은 남는다. 따라서 링크 수나 열린 참조가 남아 있는 동안 **실제 파일 객체와 데이터는 계속 살아 있다.**'
+          });
+          set('operating-systems.core.filesystem.inode.q3', {
+            promptMarkdown:'파일을 확장하는 동안 데이터 블록은 기록됐지만 inode의 크기·매핑 메타데이터가 장애 전에 영속화되지 못했다. 어떤 일관성 문제가 생길 수 있는가?',
+            modelAnswer:'저장 장치에 데이터가 존재해도 파일 메타데이터가 그 블록을 참조하지 못하거나 크기가 이전 값으로 남을 수 있다. 여러 영속 구조를 함께 바꾸는 갱신을 저널링이나 쓰기 순서 제어 등으로 장애 시 일관성 있게 다뤄야 한다.',
+            explanationMarkdown:'파일 확장은 데이터만 쓰는 단일 갱신이 아니다. 데이터 블록과 inode 크기·매핑 같은 메타데이터 중 일부만 영속화되면 **저장 장치에 바이트는 존재하지만 정상적인 경로와 파일 오프셋으로 도달할 수 없는 불일치**가 생길 수 있다.'
+          });
+          set('operating-systems.core.filesystem.inode.q4', {
+            promptMarkdown:'inode와 파일 이름을 분리하면 (1) 여러 이름이 한 파일 객체를 가리키게 하고, (2) 파일 내용을 복사하지 않고 이름을 바꾸는 동작을 각각 어떻게 가능하게 하는가? 두 동작의 이름을 쓰라.',
+            explanationMarkdown:'대표적으로 **hard link와 rename**이다. 여러 디렉터리 엔트리가 한 inode를 가리킬 수 있고 이름 연결만 바꿀 수 있으므로 실제 파일 내용을 매번 복제할 필요가 없다.'
+          });
+
+          const after = qs.map(immutable);
+          if (JSON.stringify(before) !== JSON.stringify(after)) throw new Error('question identity/answer/difficulty contract changed');
+          const target = qs.filter(q => q.contentKey.startsWith('operating-systems.core.filesystem.')).slice(0,17);
+          if (target.length !== 17) throw new Error(`expected 17 questions, got ${target.length}`);
+          fs.writeFileSync(path, JSON.stringify(qs, null, 2) + '\n');
+          NODE
+      - name: Commit first manual batch
+        run: |
+          git add content/operating-systems/filesystem/questions.json
+          git config user.name 'guseoh'
+          git config user.email '81723538+guseoh@users.noreply.github.com'
+          git commit -m 'content: polish first OS filesystem question batch'
+          git push origin HEAD:codex/content-operating-systems-quality
