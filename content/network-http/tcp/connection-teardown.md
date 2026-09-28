@@ -14,7 +14,7 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "TCP FIN 상태 전이, half-close와 RST를 이용한 연결 중단 의미를 확인한다."
+    recommendation: "TCP 연결, 바이트 스트림, 시퀀스·ACK와 연결 상태의 기본 규칙을 확인한다."
     displayOrder: 1
 ---
 # TCP 연결 종료
