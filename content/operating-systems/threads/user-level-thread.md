@@ -14,7 +14,7 @@ references:
     referenceType: BOOK
     language: en
     depth: chapter
-    recommendation: "프로세스 안에서 스레드가 공유하는 상태와 스레드별 실행 문맥, 생성·스케줄링의 기본 모델을 확인한다."
+    recommendation: "process 안에서 thread가 공유하는 주소 공간과 thread별 실행 context를 확인한다."
     relationNote: "이 Concept에서는 사용자 공간 런타임이 논리 스레드를 하나 이상의 커널 스레드에 매핑할 때의 전환 비용과 blocking 경계를 중심으로 읽는다."
     displayOrder: 1
 ---
