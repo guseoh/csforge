@@ -21,7 +21,7 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "SERVFAIL 등 조회 과정 실패를 이름·레코드 부재에 대한 부정 응답과 구분한다."
+    recommendation: "SERVFAIL 등 DNS 조회 과정의 실패를 이름·레코드 부재에 대한 부정 응답과 구분하는 규칙을 확인한다."
     displayOrder: 2
 ---
 # 부정 응답 캐시
