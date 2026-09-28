@@ -4,7 +4,7 @@ contentKey: network-http.core.local-delivery.default-gateway
 topicContentKey: network-http.core.local-delivery
 slug: default-gateway
 title: "기본 게이트웨이"
-summary: "외부 prefix packet을 next-hop gateway로 보내는 판단을 설명한다."
+summary: "목적지가 로컬 네트워크 밖에 있을 때 기본 경로가 다음 홉 라우터를 선택하는 방식과 최종 IP 목적지와의 차이를 설명한다."
 level: 1
 status: PUBLISHED
 displayOrder: 60
@@ -14,29 +14,37 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "Internet protocol layering의 책임 경계를 확인한다."
+    recommendation: "호스트가 목적지 주소에 따라 직접 전달 또는 다음 홉 게이트웨이를 선택하는 IP 계층 동작을 확인한다."
     displayOrder: 1
 ---
 # 기본 게이트웨이
 
-Host가 IP packet을 보낼 때 먼저 routing table을 보고 destination이 **직접 연결된 local prefix인지, 다른 network로 가야 하는지** 판단한다. Destination이 on-link라면 target host 자체가 next hop이 되고, local link에서 그 host의 MAC을 ARP/NDP로 찾는다.
+호스트가 IP 패킷을 보내려면 먼저 라우팅 정보를 보고 **목적지가 현재 로컬 네트워크에 직접 연결돼 있는지, 라우터를 거쳐야 하는지** 판단한다.
 
-Destination이 local prefix 밖에 있고 더 구체적인 route가 없다면 default route가 가리키는 gateway를 next hop으로 선택한다.
+목적지가 직접 연결된 prefix에 속하면 목적지 호스트 자체가 다음 홉이 될 수 있다. 이 경우 IPv4에서는 ARP, IPv6에서는 Neighbor Discovery를 이용해 그 이웃의 링크 계층 주소를 알아낸 뒤 프레임을 보낸다.
 
-### 최종 destination과 next hop은 다르다
+목적지가 로컬 네트워크 밖에 있고 더 구체적으로 일치하는 경로가 없다면 기본 경로(default route)가 가리키는 라우터를 다음 홉으로 선택한다. 흔히 이 다음 홉 라우터를 **기본 게이트웨이**라고 부른다.
 
-Remote server로 보내는 packet에서도 IP destination은 최종 server 주소를 유지한다. 하지만 현재 Ethernet frame의 destination MAC은 local gateway interface의 MAC이다.
+### 최종 목적지 IP와 현재 링크의 다음 홉은 다르다
+
+원격 서버로 가는 첫 번째 프레임에서도 IP 헤더의 목적지는 최종 서버다. 하지만 현재 링크의 프레임 목적지 MAC 주소는 기본 게이트웨이의 MAC 주소가 된다.
 
 ```text
-IP destination = remote server
-routing decision = default gateway
-frame destination = gateway MAC
+최종 IP 목적지 = 원격 서버
+        ↓
+라우팅 판단 = 기본 경로 사용
+        ↓
+현재 다음 홉 = 기본 게이트웨이 IP
+        ↓ ARP/NDP
+프레임 목적지 = 게이트웨이 MAC
 ```
 
-Gateway는 packet을 받은 뒤 자신의 routing table을 이용해 다음 hop을 다시 결정한다.
+게이트웨이는 패킷을 받은 뒤 자신의 라우팅 테이블을 사용해 또 다음 홉을 결정한다. 이렇게 각 라우터가 현재 위치에서 다음 홉을 선택하면서 최종 목적지까지 전달이 이어진다.
 
-### Default route는 catch-all route다
+### 기본 경로보다 더 구체적인 경로가 우선할 수 있다
 
-Default gateway가 모든 traffic을 무조건 받는 특별한 protocol인 것은 아니다. Routing table에 더 구체적인 prefix route가 있으면 그 route가 우선하고, 일치하는 구체적 route가 없을 때 default route가 사용된다.
+기본 경로는 모든 목적지에 무조건 우선하는 특별한 경로가 아니다. 목적지와 더 길게 일치하는 prefix 경로가 있으면 그 경로가 먼저 선택된다. 기본 경로는 더 구체적인 일치 경로가 없을 때 사용하는 포괄 경로다.
 
-핵심은 **host가 local subnet 밖의 destination으로 packet을 보낼 때 default route가 next-hop router를 제공하며, 최종 IP destination과 현재 link의 gateway MAC은 서로 다른 경계라는 것**이다.
+따라서 특정 사설망·VPN 목적지가 기본 게이트웨이로 잘못 나간다면 `기본 게이트웨이가 이상하다`고만 보기보다 더 구체적인 경로가 라우팅 테이블에 존재하는지 먼저 확인해야 한다.
+
+핵심은 **기본 게이트웨이가 로컬 네트워크 밖의 목적지로 갈 때 사용할 다음 홉을 제공하며, 최종 IP 목적지와 현재 링크에서 전달할 게이트웨이 주소는 서로 다른 정보라는 점**이다.

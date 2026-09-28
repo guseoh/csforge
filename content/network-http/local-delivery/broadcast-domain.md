@@ -4,7 +4,7 @@ contentKey: network-http.core.local-delivery.broadcast-domain
 topicContentKey: network-http.core.local-delivery
 slug: broadcast-domain
 title: "브로드캐스트 도메인"
-summary: "broadcast frame이 도달하는 local network 범위를 설명한다."
+summary: "하나의 링크 계층 브로드캐스트가 전달되는 범위와 VLAN·라우터가 그 범위를 나누는 이유를 설명한다."
 level: 1
 status: PUBLISHED
 displayOrder: 30
@@ -14,29 +14,34 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "local link delivery와 address resolution을 확인한다."
+    recommendation: "ARP 요청이 로컬 이더넷 영역에서 브로드캐스트되는 동작을 확인한다."
     displayOrder: 1
 ---
 # 브로드캐스트 도메인
 
-Broadcast domain은 하나의 link-layer broadcast frame이 **flood되어 도달할 수 있는 범위**다. Ethernet switch는 같은 forwarding domain 안에서 broadcast frame을 여러 port로 전달하지만, 일반적인 router는 그 frame을 다른 IP network로 그대로 넘기지 않는다.
+브로드캐스트 도메인은 **하나의 링크 계층 브로드캐스트 프레임이 전달되는 범위**다. 같은 브로드캐스트 도메인 안의 이더넷 스위치는 브로드캐스트 프레임을 필요한 여러 포트로 전달하지만, 일반적인 라우터는 그 링크 계층 프레임을 다른 IP 네트워크로 그대로 넘기지 않는다.
 
-### VLAN과 broadcast 범위
+ARP 요청이 대표적인 예다. 같은 로컬 링크의 IPv4 주소에 대응하는 MAC 주소를 찾을 때 ARP Request가 브로드캐스트되므로 같은 브로드캐스트 도메인의 장비들이 이를 볼 수 있다.
 
-하나의 물리 switch에 연결되어 있어도 VLAN이 다르면 서로 다른 broadcast domain이 될 수 있다. 반대로 같은 broadcast domain 안의 host들은 ARP 같은 local-link broadcast를 받을 수 있다.
+### VLAN은 하나의 물리 스위치 안에서도 브로드캐스트 범위를 나눌 수 있다
 
 ```text
-VLAN 10: Host A, Host B
-broadcast from A → A/B domain 안에서 전달
+VLAN 10
+  Host A ─┐
+  Host B ─┴─ A의 브로드캐스트가 전달될 수 있음
 
-VLAN 20: Host C
-→ VLAN 10 broadcast를 직접 받지 않음
+VLAN 20
+  Host C ─── VLAN 10의 링크 계층 브로드캐스트를 직접 받지 않음
 ```
 
-Broadcast domain과 IP subnet은 자주 함께 설계되지만 같은 개념은 아니다. Broadcast domain은 link-layer 전달 범위를, subnet은 IP prefix와 addressing 범위를 설명한다.
+따라서 여러 장비가 같은 물리 스위치에 꽂혀 있다는 사실만으로 같은 브로드캐스트 도메인이라고 볼 수는 없다. VLAN 구성에 따라 서로 다른 링크 계층 영역으로 분리될 수 있다.
 
-### IPv6에서는 같은 방식의 broadcast를 쓰지 않는다
+### 브로드캐스트 도메인과 IP 서브넷은 관련되지만 같은 개념은 아니다
 
-IPv6는 ARP broadcast 대신 multicast 기반 Neighbor Discovery를 사용한다. 따라서 `local discovery = 항상 broadcast`라고 일반화하면 안 된다.
+브로드캐스트 도메인은 링크 계층의 전달 범위를 설명하고, IP 서브넷은 주소 prefix를 이용해 네트워크 계층의 주소 범위를 설명한다. 실무에서는 하나의 VLAN과 하나의 IP 서브넷을 대응시키는 구성이 흔하지만, 두 용어의 계층과 책임은 다르다.
 
-핵심은 **broadcast domain이 local link에서 broadcast traffic이 도달하는 범위이며, router나 VLAN 같은 경계가 그 범위를 나눈다는 것**이다.
+### IPv6 이웃 탐색은 이더넷 브로드캐스트를 그대로 사용하지 않는다
+
+IPv6는 ARP 대신 ICMPv6 기반 Neighbor Discovery를 사용하며, 이웃 탐색에 멀티캐스트를 활용한다. 따라서 `로컬 주소 탐색은 항상 브로드캐스트`라고 일반화하면 IPv4 ARP 동작을 IPv6에 잘못 적용하게 된다.
+
+핵심은 **브로드캐스트 도메인이 링크 계층 브로드캐스트의 전달 범위이며, VLAN과 라우터 같은 경계가 이 범위를 분리한다는 점**이다.
