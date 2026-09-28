@@ -14,7 +14,7 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "QUIC 연결·스트림·손실 복구가 TCP 기반 HTTP/2와 어떻게 다른지 확인한다."
+    recommendation: "QUIC 연결·스트림·손실 복구와 혼잡 제어의 기본 규칙을 확인한다."
     displayOrder: 1
 ---
 # 전송 계층의 HOL 차단
