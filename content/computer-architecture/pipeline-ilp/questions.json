@@ -2,196 +2,196 @@
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.pipeline-ilp.pipeline-stages.q1",
-    "promptMarkdown": "5-stage pipeline이 충분히 채워지고 hazard가 없다고 가정할 때 가장 정확한 설명은?",
+    "promptMarkdown": "5단계 파이프라인이 충분히 채워지고 해저드가 없다고 가정할 때 가장 정확한 설명은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.pipeline-ilp.pipeline-stages"],
     "choices": [
-      {"key":"A","content":"모든 stage가 동시에 같은 instruction을 처리하도록 만든다.","displayOrder":0,"rationaleMarkdown":"pipeline의 각 stage는 다른 stage들이 앞선 명령이나 뒤따르는 명령을 처리하는 동안 별도 명령을 처리한다. 한 명령 자체는 여전히 stage들을 순서대로 지난다."},
-      {"key":"B","content":"instruction 하나가 거쳐야 하는 모든 stage를 제거해 지연 시간을 1 cycle로 만든다.","displayOrder":1,"rationaleMarkdown":"pipelining은 서로 다른 명령의 작업을 겹치지만 각 명령이 거쳐야 하는 stage를 없애지 않는다. 주된 이점은 steady state에서 완료 간격을 줄이는 것이지 명령 하나의 지연 시간을 한 cycle로 만드는 것이 아니다."},
-      {"key":"C","content":"여러 instruction의 서로 다른 stage를 겹쳐 실행해 steady state의 instruction 처리량을 높인다.","displayOrder":2,"rationaleMarkdown":"pipeline이 가득 차면 같은 cycle에 서로 다른 명령이 서로 다른 stage를 차지할 수 있다. 이 겹침은 명령 하나에 여러 stage가 필요한 사실을 유지하면서 instruction throughput을 높인다."},
-      {"key":"D","content":"branch와 data dependency가 있어도 별도 제어 없이 항상 CPI 1을 보장한다.","displayOrder":3,"rationaleMarkdown":"dependency와 control-flow 불확실성은 forwarding·stall·prediction 실패 복구를 여전히 요구할 수 있다. pipeline만으로 모든 명령 흐름에서 CPI 1을 보장하지 않는다."}
+      {"key":"A","content":"모든 단계가 동시에 같은 명령어를 처리하도록 만든다.","displayOrder":0,"rationaleMarkdown":"파이프라인의 각 단계는 다른 단계들이 앞선 명령이나 뒤따르는 명령을 처리하는 동안 별도 명령을 처리한다. 한 명령 자체는 여전히 단계들을 순서대로 지난다."},
+      {"key":"B","content":"명령어 하나가 거쳐야 하는 모든 단계를 제거해 지연 시간을 1사이클로 만든다.","displayOrder":1,"rationaleMarkdown":"파이프라이닝은 서로 다른 명령의 작업을 겹치지만 각 명령이 거쳐야 하는 단계를 없애지 않는다. 주된 이점은 안정 상태에서 완료 간격을 줄이는 것이지 명령 하나의 지연 시간을 한 사이클로 만드는 것이 아니다."},
+      {"key":"C","content":"여러 명령어의 서로 다른 단계를 겹쳐 실행해 안정 상태의 명령어 처리량을 높인다.","displayOrder":2,"rationaleMarkdown":"파이프라인이 가득 차면 같은 사이클에 서로 다른 명령이 서로 다른 단계를 차지할 수 있다. 이 겹침은 명령 하나에 여러 단계가 필요한 사실을 유지하면서 명령어 처리량을 높인다."},
+      {"key":"D","content":"분기와 데이터 의존성이 있어도 별도 제어 없이 항상 CPI 1을 보장한다.","displayOrder":3,"rationaleMarkdown":"의존성과 제어 흐름의 불확실성은 포워딩·스톨·예측 실패 복구를 여전히 요구할 수 있다. 파이프라인만으로 모든 명령 흐름에서 CPI 1을 보장하지 않는다."}
     ],
     "correctChoiceKey": "C",
-    "explanationMarkdown": "Pipeline이 채워지면 서로 다른 instruction이 각 stage에서 겹쳐 진행되어 이상적인 무-hazard 조건에서는 steady state에 cycle당 한 instruction을 완료할 수 있다. 한 instruction 자체가 stage를 거치는 시간은 여러 cycle로 남으므로 향상되는 것은 주로 처리량이다."
+    "explanationMarkdown": "파이프라인이 채워지면 서로 다른 명령어가 각 단계에서 겹쳐 진행되어 이상적인 무해저드 조건에서는 안정 상태에 사이클당 한 명령어를 완료할 수 있다. 한 명령어 자체가 모든 단계를 거치는 시간은 여러 사이클로 남으므로 향상되는 것은 주로 처리량이다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.pipeline-ilp.pipeline-stages.q2",
-    "promptMarkdown": "pipeline이 instruction 처리량을 높일 수 있어도 instruction 하나의 지연 시간을 반드시 줄이는 것은 아닌 이유를 설명하라.",
+    "promptMarkdown": "파이프라인이 명령어 처리량을 높일 수 있어도 명령어 하나의 지연 시간을 반드시 줄이는 것은 아닌 이유를 설명하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.pipeline-ilp.pipeline-stages"],
-    "modelAnswer": "pipeline은 서로 다른 instruction의 stage를 겹쳐 완료 간격을 줄이는 구조다. instruction 하나는 여전히 여러 stage를 지나야 하고 stage 사이 pipeline register 비용도 생기므로 개별 지연 시간이 반드시 줄지는 않는다. 이상적인 steady state 처리량과 한 instruction의 종단 간 지연 시간을 구분해야 한다.",
-    "explanationMarkdown": "Pipeline은 독립된 instruction의 진행을 겹쳐 다음 instruction을 시작하는 간격을 줄일 수 있지만, 한 instruction 자체는 필요한 모든 stage를 통과한다. 여기에 stage 경계의 pipeline register와 clock 조건도 있으므로 overlap으로 처리량이 좋아져도 단일 instruction의 종단 간 지연 시간이 줄었다고 결론낼 수는 없다."
+    "modelAnswer": "파이프라인은 서로 다른 명령어의 단계를 겹쳐 완료 간격을 줄이는 구조다. 명령어 하나는 여전히 여러 단계를 지나야 하고 단계 사이 파이프라인 레지스터 비용도 생기므로 개별 지연 시간이 반드시 줄지는 않는다. 이상적인 안정 상태 처리량과 한 명령어의 종단 간 지연 시간을 구분해야 한다.",
+    "explanationMarkdown": "파이프라인은 독립된 명령어의 진행을 겹쳐 다음 명령어를 시작하는 간격을 줄일 수 있지만, 한 명령어 자체는 필요한 모든 단계를 통과한다. 여기에 단계 경계의 파이프라인 레지스터와 클록 조건도 있으므로 겹쳐 실행해 처리량이 좋아져도 단일 명령어의 종단 간 지연 시간이 줄었다고 결론낼 수는 없다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.pipeline-ilp.pipeline-stages.q3",
-    "promptMarkdown": "어떤 CPU의 stage 조합 논리 지연이 90ps, 170ps, 110ps, 140ps이고 각 pipeline register overhead가 20ps라고 하자. 다른 조건이 같다면 현재 clock period를 제한하는 핵심 요소와, 가장 긴 stage를 둘로 나눌 때도 성능이 무조건 2배가 되지 않는 이유를 설명하라.",
+    "promptMarkdown": "어떤 CPU의 단계별 조합 논리 지연이 90ps, 170ps, 110ps, 140ps이고 각 파이프라인 레지스터 오버헤드가 20ps라고 하자. 다른 조건이 같다면 현재 클록 주기를 제한하는 핵심 요소와, 가장 긴 단계를 둘로 나눌 때도 성능이 무조건 2배가 되지 않는 이유를 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.pipeline-ilp.pipeline-stages"],
-    "modelAnswer": "현재 clock period는 가장 긴 170ps stage와 register overhead의 영향을 가장 크게 받으므로 단순 모델에서는 약 190ps보다 짧게 잡기 어렵다. 긴 stage를 나누면 critical stage 지연은 줄일 수 있지만 pipeline register overhead가 하나 더 생기고 다른 stage가 새 bottleneck이 될 수 있다. 또한 더 깊은 pipeline은 hazard 제어와 branch recovery 비용을 늘릴 수 있으므로 처리량이 정확히 2배가 된다고 볼 수 없다.",
-    "explanationMarkdown": "긴 stage를 나누면 critical stage 지연은 줄일 수 있지만 pipeline register overhead가 하나 더 생기고 다른 stage가 새 bottleneck이 될 수 있다. 또한 더 깊은 pipeline은 hazard 제어와 branch recovery 비용을 늘릴 수 있으므로 처리량이 정확히 2배가 된다고 볼 수 없다."
+    "modelAnswer": "현재 클록 주기는 가장 긴 170ps 단계와 레지스터 오버헤드의 영향을 가장 크게 받으므로 단순 모델에서는 약 190ps보다 짧게 잡기 어렵다. 긴 단계를 나누면 임계 단계 지연은 줄일 수 있지만 파이프라인 레지스터 오버헤드가 하나 더 생기고 다른 단계가 새 병목이 될 수 있다. 또한 더 깊은 파이프라인은 해저드 제어와 분기 복구 비용을 늘릴 수 있으므로 처리량이 정확히 2배가 된다고 볼 수 없다.",
+    "explanationMarkdown": "긴 단계를 나누면 임계 단계 지연은 줄일 수 있지만 파이프라인 레지스터 오버헤드가 하나 더 생기고 다른 단계가 새 병목이 될 수 있다. 또한 더 깊은 파이프라인은 해저드 제어와 분기 복구 비용을 늘릴 수 있으므로 처리량이 정확히 2배가 된다고 볼 수 없다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.pipeline-ilp.pipeline-hazards.q1",
-    "promptMarkdown": "`add r1, r2, r3` 바로 뒤에 `sub r4, r1, r5`가 실행될 때 두 번째 instruction이 첫 번째 instruction의 결과를 필요로 한다. 이 dependency는 무엇인가?",
+    "promptMarkdown": "`add r1, r2, r3` 바로 뒤에 `sub r4, r1, r5`가 실행될 때 두 번째 명령어가 첫 번째 명령어의 결과를 필요로 한다. 이 의존성은 무엇인가?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.pipeline-ilp.pipeline-hazards"],
     "choices": [
-      {"key":"A","content":"RAW(Read After Write) true dependency","displayOrder":0,"rationaleMarkdown":"첫 명령이 새 `r1` 값을 만들고 다음 명령이 그 값을 사용한다. 이 read-after-write 순서는 실제 data dependency이므로 지켜야 한다."},
-      {"key":"B","content":"WAR(Write After Read) name dependency","displayOrder":1,"rationaleMarkdown":"WAR는 앞선 read가 뒤이은 같은 이름의 write보다 먼저 실행되어야 하는 name dependency다. 여기서는 뒤 명령이 앞 명령의 결과를 읽으므로 방향이 반대다."},
-      {"key":"C","content":"WAW(Write After Write) name dependency","displayOrder":2,"rationaleMarkdown":"WAW는 두 명령이 같은 destination에 쓰며 순서를 보존해야 하는 경우다. 여기서 두 번째 명령은 `r1`에 쓰지 않고 읽는다."},
-      {"key":"D","content":"control hazard","displayOrder":3,"rationaleMarkdown":"control hazard는 branch 뒤 어떤 instruction address를 fetch할지 결정하는 문제다. 인접한 두 arithmetic 명령은 첫 결과가 둘째로 전달되는 값에 의존한다."}
+      {"key":"A","content":"RAW(Read After Write) 실제 의존성","displayOrder":0,"rationaleMarkdown":"첫 명령이 새 `r1` 값을 만들고 다음 명령이 그 값을 사용한다. 이 read-after-write 순서는 실제 데이터 의존성이므로 지켜야 한다."},
+      {"key":"B","content":"WAR(Write After Read) 이름 의존성","displayOrder":1,"rationaleMarkdown":"WAR는 앞선 읽기가 뒤이은 같은 이름의 쓰기보다 먼저 실행되어야 하는 이름 의존성이다. 여기서는 뒤 명령이 앞 명령의 결과를 읽으므로 방향이 반대다."},
+      {"key":"C","content":"WAW(Write After Write) 이름 의존성","displayOrder":2,"rationaleMarkdown":"WAW는 두 명령이 같은 목적지에 쓰며 순서를 보존해야 하는 경우다. 여기서 두 번째 명령은 `r1`에 쓰지 않고 읽는다."},
+      {"key":"D","content":"제어 해저드","displayOrder":3,"rationaleMarkdown":"제어 해저드는 분기 뒤 어떤 명령어 주소를 인출할지 결정하는 문제다. 인접한 두 산술 명령은 첫 결과가 둘째로 전달되는 값에 의존한다."}
     ],
     "correctChoiceKey": "A",
-    "explanationMarkdown": "두 번째 instruction은 r1을 읽기 전에 첫 번째 instruction이 r1 값을 생산해야 하므로 RAW true dependency다. 값이 준비되는 시점에 따라 forwarding으로 전달하거나 준비될 때까지 stall해야 한다."
+    "explanationMarkdown": "두 번째 명령어는 `r1`을 읽기 전에 첫 번째 명령어가 `r1` 값을 생산해야 하므로 RAW 실제 의존성이다. 값이 준비되는 시점에 따라 포워딩으로 전달하거나 준비될 때까지 스톨해야 한다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.pipeline-ilp.pipeline-hazards.q2",
-    "promptMarkdown": "structural hazard, data hazard, control hazard가 각각 무엇이 준비되지 않아서 발생하는지와 대표 대응 방법을 하나씩 연결해 설명하라.",
+    "promptMarkdown": "구조적 해저드, 데이터 해저드, 제어 해저드가 각각 무엇이 준비되지 않아서 발생하는지와 대표 대응 방법을 하나씩 연결해 설명하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.pipeline-ilp.pipeline-hazards"],
-    "modelAnswer": "structural hazard는 같은 cycle에 필요한 hardware resource가 부족할 때 생기며 resource 구성 변경이나 scheduling/stall로 처리한다. data hazard는 필요한 operand가 아직 준비되지 않았을 때 생기며 forwarding이나 stall, out-of-order scheduling 등을 사용한다. control hazard는 다음 PC가 확정되지 않았을 때 생기며 branch prediction으로 진행하고 예측 실패 시 flush와 redirect로 복구한다.",
-    "explanationMarkdown": "세 hazard는 각기 다른 준비 조건을 가리킨다. Structural hazard는 같은 시점에 필요한 hardware resource 충돌을, data hazard는 operand availability를, control hazard는 다음 PC 결정을 막는 branch 결과를 뜻한다. Resource 복제·stall, forwarding·stall, prediction·flush/redirect처럼 원인에 맞춰 대응한다."
+    "modelAnswer": "구조적 해저드는 같은 사이클에 필요한 하드웨어 자원이 부족할 때 생기며 자원 구성 변경이나 스케줄링/스톨로 처리한다. 데이터 해저드는 필요한 피연산자가 아직 준비되지 않았을 때 생기며 포워딩이나 스톨, 비순차 스케줄링 등을 사용한다. 제어 해저드는 다음 PC가 확정되지 않았을 때 생기며 분기 예측으로 진행하고 예측 실패 시 잘못된 작업을 폐기하고 올바른 주소로 재지정해 복구한다.",
+    "explanationMarkdown": "세 해저드는 각기 다른 준비 조건을 가리킨다. 구조적 해저드는 같은 시점에 필요한 하드웨어 자원 충돌을, 데이터 해저드는 피연산자 준비 여부를, 제어 해저드는 다음 PC 결정을 막는 분기 결과를 뜻한다. 자원 복제·스톨, 포워딩·스톨, 예측·폐기/재지정처럼 원인에 맞춰 대응한다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.pipeline-ilp.pipeline-hazards.q3",
-    "promptMarkdown": "out-of-order CPU에서 앞 instruction이 `r1`을 읽기 전에 뒤 instruction이 같은 architectural register `r1`에 값을 쓰려 한다. 이 관계를 RAW와 구분하고, register renaming이 왜 도움이 되는지 설명하라.",
+    "promptMarkdown": "비순차 실행 CPU에서 앞 명령어가 `r1`을 읽기 전에 뒤 명령어가 같은 아키텍처 레지스터 `r1`에 값을 쓰려 한다. 이 관계를 RAW와 구분하고 레지스터 이름 변경(register renaming)이 왜 도움이 되는지 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.pipeline-ilp.pipeline-hazards"],
-    "modelAnswer": "뒤 write가 앞 read를 추월하면 WAR(Write After Read) name dependency가 문제가 된다. 두 instruction이 실제로 같은 생산된 값을 공유해야 하는 RAW true dependency는 아니므로 architectural register 이름을 서로 다른 physical register로 rename하면 불필요한 충돌을 제거할 수 있다. renaming은 true dependency를 제거하는 것이 아니라 이름 재사용으로 생긴 false dependency를 제거한다.",
-    "explanationMarkdown": "WAR는 이름 재사용 때문에 생기는 false dependency라 physical register를 분리하면 독립적으로 실행할 수 있다. RAW는 앞 instruction이 만든 값을 뒤 instruction이 실제로 읽으므로 renaming 후에도 기다려야 한다. 이 구분이 out-of-order 실행에서 없앨 수 있는 제약과 유지할 의존성을 나눈다."
+    "modelAnswer": "뒤 쓰기가 앞 읽기를 추월하면 WAR(Write After Read) 이름 의존성이 문제가 된다. 두 명령어가 실제로 같은 생산 값을 공유해야 하는 RAW 실제 의존성은 아니므로 아키텍처 레지스터 이름을 서로 다른 물리 레지스터로 매핑하면 불필요한 충돌을 제거할 수 있다. 레지스터 이름 변경은 실제 의존성을 제거하는 것이 아니라 이름 재사용으로 생긴 거짓 의존성을 제거한다.",
+    "explanationMarkdown": "WAR는 이름 재사용 때문에 생기는 거짓 의존성이라 물리 레지스터를 분리하면 독립적으로 실행할 수 있다. RAW는 앞 명령어가 만든 값을 뒤 명령어가 실제로 읽으므로 이름 변경 후에도 기다려야 한다. 이 구분이 비순차 실행에서 없앨 수 있는 제약과 유지할 의존성을 나눈다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.pipeline-ilp.forwarding-and-stall.q1",
-    "promptMarkdown": "앞 instruction의 ALU 결과가 이미 계산되었지만 아직 register file에 write-back되지 않았고, 바로 뒤 instruction이 그 결과를 ALU operand로 필요로 한다. 가장 적절한 대응은?",
+    "promptMarkdown": "앞 명령어의 ALU 결과가 이미 계산되었지만 아직 레지스터 파일에 write-back되지 않았고, 바로 뒤 명령어가 그 결과를 ALU 피연산자로 필요로 한다. 가장 적절한 대응은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.pipeline-ilp.forwarding-and-stall"],
     "choices": [
-      {"key":"A","content":"consumer를 먼저 실행하고 값이 다르면 producer를 다시 실행한다.","displayOrder":0,"rationaleMarkdown":"입력이 준비되기 전에 consumer를 실행하면 오래되거나 잘못된 operand를 사용한다. processor가 일반적으로 producer를 나중에 재실행해 그 speculative 값을 검증하지 않는다."},
-      {"key":"B","content":"forwarding path가 있어도 register write-back까지 반드시 stall한다.","displayOrder":1,"rationaleMarkdown":"ALU 결과가 pipeline register에 이미 준비되어 있으면 bypass path로 consumer에 직접 보낼 수 있다. register-file write-back까지 기다리면 피할 수 있는 stall이 추가된다."},
-      {"key":"C","content":"register renaming으로 RAW true dependency 자체를 제거한다.","displayOrder":2,"rationaleMarkdown":"register renaming은 WAR·WAW 같은 false name dependency를 없애지만 producer가 계산해야 하는 RAW dependency를 없애지 않는다. consumer는 여전히 그 결과가 필요하다."},
-      {"key":"D","content":"준비된 결과를 다음 execution input으로 forwarding한다.","displayOrder":3,"rationaleMarkdown":"producer의 ALU 결과는 architectural register write-back 전에도 준비될 수 있다. forwarding이 이를 dependent instruction의 실행 입력으로 보내므로 register file을 기다릴 필요가 없다."}
+      {"key":"A","content":"소비자 명령어를 먼저 실행하고 값이 다르면 생산자 명령어를 다시 실행한다.","displayOrder":0,"rationaleMarkdown":"입력이 준비되기 전에 소비자 명령어를 실행하면 오래되거나 잘못된 피연산자를 사용한다. 프로세서가 일반적으로 생산자 명령어를 나중에 재실행해 그 추측 값을 검증하는 방식으로 이 문제를 해결하지는 않는다."},
+      {"key":"B","content":"포워딩 경로가 있어도 레지스터 write-back까지 반드시 스톨한다.","displayOrder":1,"rationaleMarkdown":"ALU 결과가 파이프라인 레지스터에 이미 준비되어 있으면 우회 경로로 소비자 명령어에 직접 보낼 수 있다. 레지스터 파일 write-back까지 기다리면 피할 수 있는 스톨이 추가된다."},
+      {"key":"C","content":"레지스터 이름 변경으로 RAW 실제 의존성 자체를 제거한다.","displayOrder":2,"rationaleMarkdown":"레지스터 이름 변경은 WAR·WAW 같은 거짓 이름 의존성을 없애지만 생산자가 계산해야 하는 RAW 의존성을 없애지 않는다. 소비자 명령어는 여전히 그 결과가 필요하다."},
+      {"key":"D","content":"준비된 결과를 다음 실행 입력으로 포워딩한다.","displayOrder":3,"rationaleMarkdown":"생산자의 ALU 결과는 아키텍처 레지스터에 write-back되기 전에도 준비될 수 있다. 포워딩이 이를 의존하는 명령어의 실행 입력으로 보내므로 레지스터 파일을 기다릴 필요가 없다."}
     ],
     "correctChoiceKey": "D",
-    "explanationMarkdown": "ALU instruction의 결과는 execute stage가 끝날 때 이미 준비될 수 있지만 load 값은 memory access가 끝난 뒤에야 얻어진다. forwarding은 값이 계산된 뒤 register write-back을 기다리지 않고 consumer로 전달할 수 있지만 cache miss 중 아직 도착하지 않은 load 값을 만들어 낼 수는 없다."
+    "explanationMarkdown": "ALU 명령어의 결과는 실행 단계가 끝날 때 이미 준비될 수 있지만 load 값은 메모리 접근이 끝난 뒤에야 얻어진다. 포워딩은 값이 계산된 뒤 레지스터 write-back을 기다리지 않고 소비자 명령어로 전달할 수 있지만 캐시 미스 중 아직 도착하지 않은 load 값을 만들어 낼 수는 없다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.pipeline-ilp.forwarding-and-stall.q2",
-    "promptMarkdown": "classic 5-stage pipeline에서 load 직후의 instruction이 그 load 결과를 사용하는 load-use hazard는 forwarding path가 있어도 stall이 필요할 수 있다. 그 이유를 값이 준비되는 시점과 consumer가 필요한 시점을 기준으로 설명하라.",
+    "promptMarkdown": "고전적인 5단계 파이프라인에서 load 직후의 명령어가 그 load 결과를 사용하는 load-use 해저드는 포워딩 경로가 있어도 스톨이 필요할 수 있다. 그 이유를 값이 준비되는 시점과 소비자 명령어가 필요한 시점을 기준으로 설명하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.pipeline-ilp.forwarding-and-stall"],
-    "modelAnswer": "ALU instruction의 결과는 execute stage가 끝날 때 이미 준비될 수 있지만 load 값은 memory access가 끝난 뒤에야 얻어진다. 바로 다음 consumer가 execute stage에서 operand를 필요로 하는 시점보다 load 결과가 늦게 준비되면 forwarding도 아직 존재하지 않는 값을 전달할 수 없다. 그래서 consumer를 잠시 멈추고 bubble을 넣은 뒤 값이 준비되면 전달해야 한다. 정확한 stall cycle 수는 pipeline과 memory 지연 시간에 따라 달라질 수 있다.",
-    "explanationMarkdown": "Forwarding은 producer 결과가 준비된 뒤 consumer에게 전달하는 경로이지 값을 미리 계산하는 기능은 아니다. Load-use 상황에서는 consumer의 사용 시점이 load의 memory access 완료보다 빠를 수 있어 bubble로 두 시점을 맞춘다. 필요한 stall 수는 pipeline과 memory 지연 시간에 따라 달라진다."
+    "modelAnswer": "ALU 명령어의 결과는 실행 단계가 끝날 때 이미 준비될 수 있지만 load 값은 메모리 접근이 끝난 뒤에야 얻어진다. 바로 다음 소비자 명령어가 실행 단계에서 피연산자를 필요로 하는 시점보다 load 결과가 늦게 준비되면 포워딩도 아직 존재하지 않는 값을 전달할 수 없다. 그래서 소비자 명령어를 잠시 멈추고 버블을 넣은 뒤 값이 준비되면 전달해야 한다. 정확한 스톨 사이클 수는 파이프라인과 메모리 지연 시간에 따라 달라질 수 있다.",
+    "explanationMarkdown": "포워딩은 생산자 결과가 준비된 뒤 소비자에게 전달하는 경로이지 값을 미리 계산하는 기능은 아니다. Load-use 상황에서는 소비자의 사용 시점이 load의 메모리 접근 완료보다 빠를 수 있어 버블로 두 시점을 맞춘다. 필요한 스톨 수는 파이프라인과 메모리 지연 시간에 따라 달라진다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.pipeline-ilp.forwarding-and-stall.q3",
-    "promptMarkdown": "한 instruction이 cache miss로 오래 기다리고 있다. 뒤에는 이 load 결과에 의존하는 instruction 2개와, 전혀 독립적인 정수 연산 3개가 있다. forwarding과 out-of-order execution이 각각 무엇을 할 수 있고 무엇은 해결하지 못하는지 설명하라.",
+    "promptMarkdown": "한 명령어가 캐시 미스로 오래 기다리고 있다. 뒤에는 이 load 결과에 의존하는 명령어 2개와, 전혀 독립적인 정수 연산 3개가 있다. 포워딩과 비순차 실행이 각각 무엇을 할 수 있고 무엇은 해결하지 못하는지 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.pipeline-ilp.forwarding-and-stall"],
-    "modelAnswer": "forwarding은 값이 계산된 뒤 register write-back을 기다리지 않고 consumer로 전달할 수 있지만 cache miss 중 아직 도착하지 않은 load 값을 만들어 낼 수는 없다. 따라서 그 load에 실제로 의존하는 두 instruction은 기다려야 한다. out-of-order engine은 dependency가 없는 정수 연산 3개를 먼저 실행해 일부 stall 시간을 숨길 수 있지만 true dependency chain 자체는 제거하지 못한다.",
-    "explanationMarkdown": "따라서 그 load에 실제로 의존하는 두 instruction은 기다려야 한다. out-of-order engine은 dependency가 없는 정수 연산 3개를 먼저 실행해 일부 stall 시간을 숨길 수 있지만 true dependency chain 자체는 제거하지 못한다."
+    "modelAnswer": "포워딩은 값이 계산된 뒤 레지스터 write-back을 기다리지 않고 소비자 명령어로 전달할 수 있지만 캐시 미스 중 아직 도착하지 않은 load 값을 만들어 낼 수는 없다. 따라서 그 load에 실제로 의존하는 두 명령어는 기다려야 한다. 비순차 실행 엔진은 의존성이 없는 정수 연산 3개를 먼저 실행해 일부 스톨 시간을 숨길 수 있지만 실제 의존성 연쇄 자체는 제거하지 못한다.",
+    "explanationMarkdown": "그 load에 실제로 의존하는 두 명령어는 기다려야 한다. 비순차 실행 엔진은 의존성이 없는 정수 연산 3개를 먼저 실행해 일부 스톨 시간을 숨길 수 있지만 실제 의존성 연쇄 자체는 제거하지 못한다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.pipeline-ilp.branch-prediction.q1",
-    "promptMarkdown": "conditional branch를 빠르게 fetch하기 위해 direction predictor와 branch target 정보가 각각 해결하는 문제의 조합으로 맞는 것은?",
+    "promptMarkdown": "조건부 분기 뒤 명령어를 빠르게 인출하기 위해 방향 예측기와 분기 대상 정보가 각각 해결하는 문제의 조합으로 맞는 것은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.pipeline-ilp.branch-prediction"],
     "choices": [
-      {"key":"A","content":"둘 중 하나만 있으면 모든 indirect branch와 conditional branch를 항상 정확히 예측한다.","displayOrder":0,"rationaleMarkdown":"direction과 target 정보는 fetch 결정을 돕지만 prediction은 틀릴 수 있고 indirect target도 실행 중 달라질 수 있다. 어떤 구조도 conditional·indirect branch가 항상 맞게 예측된다고 보장하지 않는다."},
-      {"key":"B","content":"direction predictor가 target 주소를 만들고, target 정보가 taken 여부를 결정한다.","displayOrder":1,"rationaleMarkdown":"direction predictor는 conditional branch가 taken일지 추정한다. predicted path에서 필요할 때 target 정보가 목적지 주소를 제공하며 두 정보는 서로 다른 질문에 답한다."},
-      {"key":"C","content":"둘 다 branch가 retire된 뒤에만 사용되므로 fetch와는 관계가 없다.","displayOrder":2,"rationaleMarkdown":"front end가 다음 fetch 주소를 알아야 하므로 branch가 retire되기 전에 prediction을 활용해야 한다. retire까지 기다리면 control-flow 지연을 감추는 예측 이점이 없다."},
-      {"key":"D","content":"direction predictor는 taken 여부를 추정하고, target 정보는 taken일 때 다음 fetch 주소를 제공한다.","displayOrder":3,"rationaleMarkdown":"direction predictor는 taken 여부를 추정하고 target 구조는 taken으로 예측된 경우 fetch 주소를 제공한다. 실행 결과가 branch를 확정하기 전에 다음 fetch 경로를 고르는 데 함께 쓰인다."}
+      {"key":"A","content":"둘 중 하나만 있으면 모든 간접 분기와 조건부 분기를 항상 정확히 예측한다.","displayOrder":0,"rationaleMarkdown":"방향과 대상 정보는 인출 결정을 돕지만 예측은 틀릴 수 있고 간접 분기 대상도 실행 중 달라질 수 있다. 어떤 구조도 조건부·간접 분기를 항상 맞게 예측한다고 보장하지 않는다."},
+      {"key":"B","content":"방향 예측기가 대상 주소를 만들고, 대상 정보가 분기 여부를 결정한다.","displayOrder":1,"rationaleMarkdown":"방향 예측기는 조건부 분기가 실행될지(taken)를 추정한다. 예측 경로에서 필요할 때 대상 정보가 목적지 주소를 제공하며 두 정보는 서로 다른 질문에 답한다."},
+      {"key":"C","content":"둘 다 분기가 retire된 뒤에만 사용되므로 명령어 인출과는 관계가 없다.","displayOrder":2,"rationaleMarkdown":"프런트엔드가 다음 인출 주소를 알아야 하므로 분기가 retire되기 전에 예측을 활용해야 한다. retire까지 기다리면 제어 흐름 지연을 감추는 예측의 이점이 없다."},
+      {"key":"D","content":"방향 예측기는 분기 여부를 추정하고, 대상 정보는 분기로 예측했을 때 다음 인출 주소를 제공한다.","displayOrder":3,"rationaleMarkdown":"방향 예측기는 분기 여부를 추정하고 대상 구조는 분기로 예측된 경우 인출 주소를 제공한다. 실행 결과가 분기를 확정하기 전에 다음 인출 경로를 고르는 데 함께 쓰인다."}
     ],
     "correctChoiceKey": "D",
-    "explanationMarkdown": "Direction predictor는 conditional branch가 taken인지 추정하고 target 정보는 taken 경로에서 다음 fetch 주소를 제공한다. Front end는 실제 실행 결과가 정해지기 전에 둘을 이용해 fetch 경로를 선택하며, 예측이 틀리면 올바른 주소로 redirect한다."
+    "explanationMarkdown": "방향 예측기는 조건부 분기가 실행될지 추정하고 대상 정보는 분기 경로에서 다음 인출 주소를 제공한다. 프런트엔드는 실제 실행 결과가 정해지기 전에 둘을 이용해 인출 경로를 선택하며, 예측이 틀리면 올바른 주소로 재지정한다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.pipeline-ilp.branch-prediction.q2",
-    "promptMarkdown": "branch prediction이 speculative execution을 가능하게 하는 흐름과, prediction이 틀렸을 때 architectural state를 보존하기 위한 복구 과정을 설명하라.",
+    "promptMarkdown": "분기 예측이 추측 실행(speculative execution)을 가능하게 하는 흐름과, 예측이 틀렸을 때 아키텍처 상태를 보존하기 위한 복구 과정을 설명하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.pipeline-ilp.branch-prediction"],
-    "modelAnswer": "CPU는 branch 결과가 확정되기 전에 예측한 방향과 target에서 instruction을 fetch하고 speculative하게 진행한다. 실제 결과가 예측과 다르면 잘못된 경로의 instruction이 architectural state에 반영되지 않도록 squash하고 올바른 PC로 redirect한 뒤 pipeline을 다시 채운다. 이때 버린 work와 refill 시간이 misprediction penalty가 된다.",
-    "explanationMarkdown": "실제 결과가 예측과 다르면 잘못된 경로의 instruction이 architectural state에 반영되지 않도록 squash하고 올바른 PC로 redirect한 뒤 pipeline을 다시 채운다. 이때 버린 work와 refill 시간이 misprediction penalty가 된다."
+    "modelAnswer": "CPU는 분기 결과가 확정되기 전에 예측한 방향과 대상에서 명령어를 인출하고 추측 실행을 진행한다. 실제 결과가 예측과 다르면 잘못된 경로의 명령어가 아키텍처 상태에 반영되지 않도록 폐기하고 올바른 PC로 재지정한 뒤 파이프라인을 다시 채운다. 이때 버린 작업과 재충전 시간이 예측 실패 비용이 된다.",
+    "explanationMarkdown": "실제 결과가 예측과 다르면 잘못된 경로의 명령어가 아키텍처 상태에 반영되지 않도록 폐기하고 올바른 PC로 재지정한 뒤 파이프라인을 다시 채운다. 이때 버린 작업과 재충전 시간이 예측 실패 비용이 된다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.pipeline-ilp.branch-prediction.q3",
-    "promptMarkdown": "어떤 workload에서 전체 instruction의 20%가 branch이고 branch misprediction rate가 5%, 한 번의 misprediction penalty가 12 cycle이라고 하자. 다른 stall을 무시할 때 misprediction이 instruction당 평균 몇 cycle의 추가 비용을 만드는지 계산하고, predictor 정확도가 workload 지연 시간에 미치는 의미를 설명하라.",
+    "promptMarkdown": "어떤 작업 부하에서 전체 명령어의 20%가 분기이고 분기 예측 실패율이 5%, 한 번의 예측 실패 비용이 12사이클이라고 하자. 다른 스톨을 무시할 때 예측 실패가 명령어당 평균 몇 사이클의 추가 비용을 만드는지 계산하고, 예측기 정확도가 작업 부하의 지연 시간에 미치는 의미를 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.pipeline-ilp.branch-prediction"],
-    "modelAnswer": "instruction당 branch는 0.20개이고 그중 5%가 miss이므로 instruction당 misprediction은 0.20 × 0.05 = 0.01회다. 한 번에 12 cycle을 잃으므로 평균 추가 비용은 0.01 × 12 = 0.12 cycle/instruction이다. 다른 조건이 같다면 이 비용은 CPI를 약 0.12 높이는 요인이지만 실제 지연 시간 영향은 baseline CPI, cache stall, workload의 branch 분포와 함께 봐야 한다.",
-    "explanationMarkdown": "한 번에 12 cycle을 잃으므로 평균 추가 비용은 0.01 × 12 = 0.12 cycle/instruction이다. 다른 조건이 같다면 이 비용은 CPI를 약 0.12 높이는 요인이지만 실제 지연 시간 영향은 baseline CPI, cache stall, workload의 branch 분포와 함께 봐야 한다."
+    "modelAnswer": "명령어당 분기는 0.20개이고 그중 5%가 실패하므로 명령어당 예측 실패는 0.20 × 0.05 = 0.01회다. 한 번에 12사이클을 잃으므로 평균 추가 비용은 0.01 × 12 = 0.12사이클/명령어다. 다른 조건이 같다면 이 비용은 CPI를 약 0.12 높이는 요인이지만 실제 지연 시간 영향은 기준 CPI, 캐시 스톨, 작업 부하의 분기 분포와 함께 봐야 한다.",
+    "explanationMarkdown": "한 번에 12사이클을 잃으므로 평균 추가 비용은 0.01 × 12 = 0.12사이클/명령어다. 다른 조건이 같다면 이 비용은 CPI를 약 0.12 높이는 요인이지만 실제 지연 시간 영향은 기준 CPI, 캐시 스톨, 작업 부하의 분기 분포와 함께 봐야 한다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.pipeline-ilp.superscalar-out-of-order.q1",
-    "promptMarkdown": "superscalar와 out-of-order execution에 대한 설명으로 가장 정확한 것은?",
+    "promptMarkdown": "슈퍼스칼라와 비순차 실행(out-of-order execution)에 대한 설명으로 가장 정확한 것은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.pipeline-ilp.superscalar-out-of-order"],
     "choices": [
-      {"key":"A","content":"모든 dependency를 제거해 어떤 두 instruction도 동시에 실행할 수 있게 한다.","displayOrder":0,"rationaleMarkdown":"out-of-order scheduling은 일부 stall을 감출 수 있지만 실제 data dependency를 없애지 않는다. consumer는 producer가 필요한 값을 제공할 때까지 기다린다."},
-      {"key":"B","content":"여러 execution resource로 독립 instruction을 병렬 처리하고, 준비된 instruction을 program order와 다른 시점에 실행할 수 있다.","displayOrder":1,"rationaleMarkdown":"superscalar 자원은 독립 연산을 병렬 issue할 수 있고 out-of-order scheduling은 오래된 명령이 막힌 동안 준비된 연산을 먼저 실행할 수 있다. 결과는 processor retirement 규칙에 맞춰 architectural state로 공개되어야 한다."},
-      {"key":"C","content":"architectural state도 항상 실행 완료 순서대로 즉시 공개한다.","displayOrder":2,"rationaleMarkdown":"실행은 program order 밖에서 일어날 수 있지만 precise architectural state를 유지하려고 processor는 완료된 명령을 순서대로 retire하는 경우가 흔하다. 완료 순서가 곧 공개 순서는 아니다."},
-      {"key":"D","content":"cache miss가 발생하면 뒤의 독립 instruction도 반드시 전부 멈춘다.","displayOrder":3,"rationaleMarkdown":"cache miss는 dependent 작업을 막을 수 있어도 자원과 reorder-buffer 용량이 허용하면 독립 명령을 계속 실행할 수 있다. 모든 뒤따르는 독립 명령을 즉시 멈추게 하지는 않는다."}
+      {"key":"A","content":"모든 의존성을 제거해 어떤 두 명령어도 동시에 실행할 수 있게 한다.","displayOrder":0,"rationaleMarkdown":"비순차 스케줄링은 일부 스톨을 감출 수 있지만 실제 데이터 의존성을 없애지 않는다. 소비자 명령어는 생산자가 필요한 값을 제공할 때까지 기다린다."},
+      {"key":"B","content":"여러 실행 자원으로 독립 명령어를 병렬 처리하고, 준비된 명령어를 프로그램 순서와 다른 시점에 실행할 수 있다.","displayOrder":1,"rationaleMarkdown":"슈퍼스칼라 자원은 독립 연산을 병렬로 발행할 수 있고 비순차 스케줄링은 오래된 명령이 막힌 동안 준비된 연산을 먼저 실행할 수 있다. 결과는 retire 규칙에 맞춰 아키텍처 상태로 공개되어야 한다."},
+      {"key":"C","content":"아키텍처 상태도 항상 실행 완료 순서대로 즉시 공개한다.","displayOrder":2,"rationaleMarkdown":"실행은 프로그램 순서 밖에서 일어날 수 있지만 정밀한 아키텍처 상태를 유지하려고 프로세서는 완료된 명령을 순서대로 retire하는 경우가 흔하다. 완료 순서가 곧 공개 순서는 아니다."},
+      {"key":"D","content":"캐시 미스가 발생하면 뒤의 독립 명령어도 반드시 전부 멈춘다.","displayOrder":3,"rationaleMarkdown":"캐시 미스는 의존하는 작업을 막을 수 있어도 자원과 재정렬 버퍼 용량이 허용하면 독립 명령을 계속 실행할 수 있다. 모든 뒤따르는 독립 명령을 즉시 멈추게 하지는 않는다."}
     ],
     "correctChoiceKey": "B",
-    "explanationMarkdown": "Superscalar processor는 여러 execution resource를 이용해 독립 instruction을 같은 cycle에 처리할 수 있고, out-of-order execution은 operand와 resource가 준비된 instruction을 program order와 다른 시점에 실행해 stall을 숨길 수 있다. 다만 RAW 같은 true dependency는 보존해야 하며 architectural state는 precise retirement 규칙에 따라 일관되게 공개되어야 한다."
+    "explanationMarkdown": "슈퍼스칼라 프로세서는 여러 실행 자원을 이용해 독립 명령어를 같은 사이클에 처리할 수 있고, 비순차 실행은 피연산자와 자원이 준비된 명령어를 프로그램 순서와 다른 시점에 실행해 스톨을 숨길 수 있다. 다만 RAW 같은 실제 의존성은 보존해야 하며 아키텍처 상태는 정밀한 retire 규칙에 따라 일관되게 공개되어야 한다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.pipeline-ilp.superscalar-out-of-order.q2",
-    "promptMarkdown": "out-of-order CPU에서 register renaming이 WAR/WAW dependency에는 도움이 되지만 RAW dependency를 제거할 수 없는 이유를 설명하라.",
+    "promptMarkdown": "비순차 실행 CPU에서 레지스터 이름 변경이 WAR/WAW 의존성에는 도움이 되지만 RAW 의존성을 제거할 수 없는 이유를 설명하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.pipeline-ilp.superscalar-out-of-order"],
-    "modelAnswer": "WAR와 WAW는 여러 instruction이 같은 architectural register 이름을 재사용해서 생기는 name dependency이므로 서로 다른 physical register를 할당하면 충돌을 제거할 수 있다. RAW는 consumer가 producer가 만든 실제 값을 필요로 하는 true dependency라서 register 이름을 바꿔도 값이 생산되기 전에 consumer를 실행할 수 없다.",
-    "explanationMarkdown": "RAW는 consumer가 producer가 만든 실제 값을 필요로 하는 true dependency라서 register 이름을 바꿔도 값이 생산되기 전에 consumer를 실행할 수 없다."
+    "modelAnswer": "WAR와 WAW는 여러 명령어가 같은 아키텍처 레지스터 이름을 재사용해서 생기는 이름 의존성이므로 서로 다른 물리 레지스터를 할당하면 충돌을 제거할 수 있다. RAW는 소비자 명령어가 생산자가 만든 실제 값을 필요로 하는 실제 의존성이라서 레지스터 이름을 바꿔도 값이 생산되기 전에 소비자를 실행할 수 없다.",
+    "explanationMarkdown": "RAW는 소비자 명령어가 생산자가 만든 실제 값을 필요로 하는 실제 의존성이라서 레지스터 이름을 바꿔도 값이 생산되기 전에 소비자를 실행할 수 없다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.pipeline-ilp.superscalar-out-of-order.q3",
-    "promptMarkdown": "program order상 앞선 instruction A가 long-지연 시간 cache miss를 겪고, 뒤의 B와 C는 A와 독립적이며, 더 뒤의 D는 A의 결과에 의존한다고 하자. out-of-order CPU가 B/C/D를 어떻게 다르게 다룰 수 있는지와, A에서 exception이 발생했을 때 precise architectural state를 유지해야 하는 이유를 설명하라.",
+    "promptMarkdown": "프로그램 순서상 앞선 명령어 A가 긴 지연 시간의 캐시 미스를 겪고, 뒤의 B와 C는 A와 독립적이며, 더 뒤의 D는 A의 결과에 의존한다고 하자. 비순차 실행 CPU가 B/C/D를 어떻게 다르게 다룰 수 있는지와, A에서 예외가 발생했을 때 정밀한 아키텍처 상태를 유지해야 하는 이유를 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.pipeline-ilp.superscalar-out-of-order"],
-    "modelAnswer": "B와 C는 A와 true dependency가 없으므로 operand와 execution resource가 준비되면 A보다 먼저 실행해 cache-miss 지연 시간을 일부 숨길 수 있다. D는 A의 실제 결과가 필요하므로 A가 완료될 때까지 기다려야 한다. B/C가 먼저 실행되더라도 A에서 exception이 발생하면 program은 A보다 뒤의 instruction 결과가 이미 architectural state에 반영된 것처럼 보여서는 안 된다. reorder/retirement mechanism이 program order에 맞춰 visible state를 확정해야 precise exception을 제공할 수 있다.",
-    "explanationMarkdown": "D는 A의 실제 결과가 필요하므로 A가 완료될 때까지 기다려야 한다. B/C가 먼저 실행되더라도 A에서 exception이 발생하면 program은 A보다 뒤의 instruction 결과가 이미 architectural state에 반영된 것처럼 보여서는 안 된다. reorder/retirement mechanism이 program order에 맞춰 visible state를 확정해야 precise exception을 제공할 수 있다."
+    "modelAnswer": "B와 C는 A와 실제 의존성이 없으므로 피연산자와 실행 자원이 준비되면 A보다 먼저 실행해 캐시 미스 지연 시간을 일부 숨길 수 있다. D는 A의 실제 결과가 필요하므로 A가 완료될 때까지 기다려야 한다. B/C가 먼저 실행되더라도 A에서 예외가 발생하면 프로그램은 A보다 뒤의 명령어 결과가 이미 아키텍처 상태에 반영된 것처럼 보여서는 안 된다. 재정렬·retire 메커니즘이 프로그램 순서에 맞춰 외부에 보이는 상태를 확정해야 정밀한 예외를 제공할 수 있다.",
+    "explanationMarkdown": "D는 A의 실제 결과가 필요하므로 A가 완료될 때까지 기다려야 한다. B/C가 먼저 실행되더라도 A에서 예외가 발생하면 프로그램은 A보다 뒤의 명령어 결과가 이미 아키텍처 상태에 반영된 것처럼 보여서는 안 된다. 재정렬·retire 메커니즘이 프로그램 순서에 맞춰 보이는 상태를 확정해야 정밀한 예외를 제공할 수 있다."
   }
 ]

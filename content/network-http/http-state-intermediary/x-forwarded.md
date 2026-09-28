@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.http-state-intermediary.x-forwarded
 topicContentKey: network-http.core.http-state-intermediary
 slug: x-forwarded
-title: "X-Forwarded Headers"
+title: "X-Forwarded-* 헤더"
 summary: "X-Forwarded-For·Proto·Host가 proxy 환경에서 원래 request 정보를 전달하는 관행과 해석 차이를 설명한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "forwarded identity와 trusted intermediary 경계를 확인한다."
     displayOrder: 1
 ---
-# X-Forwarded Headers
+# X-Forwarded-* 헤더
 
 `X-Forwarded-For`, `X-Forwarded-Proto`, `X-Forwarded-Host`는 proxy가 원래 request의 client address, scheme, host 정보를 다음 hop에 전달할 때 널리 쓰이는 관행적 field다. 표준화된 `Forwarded` field보다 오래 사용되어 왔기 때문에 실제 배포 환경에서 흔히 볼 수 있다.
 

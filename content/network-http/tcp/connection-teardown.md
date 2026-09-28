@@ -3,8 +3,8 @@ kind: concept
 contentKey: network-http.core.tcp.connection-teardown
 topicContentKey: network-http.core.tcp
 slug: connection-teardown
-title: "Connection Teardown"
-summary: "FIN·ACK 교환과 half-close 상태를 설명한다."
+title: "TCP 연결 종료"
+summary: "TCP의 양방향 바이트 스트림을 FIN·ACK로 방향별 종료하고 정상 종료와 RST 중단을 구분하는 과정을 설명한다."
 level: 1
 status: PUBLISHED
 displayOrder: 100
@@ -14,33 +14,37 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "transport connection과 application request의 경계를 확인한다."
+    recommendation: "TCP 연결, 바이트 스트림, 시퀀스·ACK와 연결 상태의 기본 규칙을 확인한다."
     displayOrder: 1
 ---
-# Connection Teardown
+# TCP 연결 종료
 
-TCP connection은 양방향 byte stream이므로 한쪽 방향의 전송 종료와 connection 전체 종료를 구분한다. Endpoint가 자신의 송신 stream에 더 보낼 data가 없으면 **FIN**을 보내고, peer는 그 FIN을 ACK한다. 반대 방향 stream은 별도로 계속 열려 있을 수 있다.
+TCP 연결은 양방향 바이트 스트림이므로 **A→B 전송 종료와 B→A 전송 종료를 따로 처리할 수 있다.** 한쪽이 더 보낼 바이트가 없으면 FIN을 보내 자신의 송신 방향 끝을 알리고 상대는 ACK로 이를 확인한다.
 
 ```text
-A ── FIN ──> B   A → B 방향 종료
+A ── FIN ──> B   A → B 방향의 바이트 스트림 종료
 A <─ ACK ─── B
 
-B는 아직 A에게 data를 보낼 수 있음
+B → A 방향은 아직 데이터 전송 가능
 
 A <─ FIN ─── B   B → A 방향도 종료
 A ── ACK ──> B
 ```
 
-이처럼 한쪽 송신만 닫힌 상태를 half-close라고 볼 수 있다.
+이처럼 한 방향의 송신만 끝나고 반대 방향은 열려 있는 상태를 half-close라고 한다.
 
-### FIN과 RST는 의미가 다르다
+### FIN은 `지금까지의 바이트 뒤에 더 이상 보낼 데이터가 없다`는 의미다
 
-FIN은 orderly하게 byte stream의 끝을 알리는 control이다. Receiver는 FIN 이전까지 정상적으로 전달된 bytes를 읽은 뒤 EOF를 관찰할 수 있다.
+FIN은 정상적인 바이트 스트림 끝을 표현한다. 수신 측은 FIN보다 앞선 데이터가 정상적으로 전달된 뒤 EOF를 관찰할 수 있다. FIN도 TCP 시퀀스 공간을 한 위치 사용하므로 ACK 계산에 반영된다.
 
-RST는 정상적인 stream 종료와 달리 connection을 abort하는 신호다. 현재 connection state가 더 이상 유효하지 않거나 즉시 연결을 중단해야 하는 상황에서 사용될 수 있다.
+### RST는 정상적인 FIN 종료와 다르다
 
-### Transport EOF와 application 완료는 다르다
+RST는 현재 연결 상태를 즉시 중단(abort)하는 신호다. 존재하지 않는 연결로 세그먼트가 왔거나 애플리케이션·운영체제가 연결을 즉시 포기하는 등 여러 상황에서 사용될 수 있다.
 
-Peer의 FIN을 받았다는 것은 상대 TCP가 더 이상 그 방향으로 bytes를 보내지 않는다는 뜻이다. 상대 application이 business operation을 성공적으로 commit했다는 뜻은 아니다.
+RST를 FIN과 같은 `정상 EOF`로 취급하면 애플리케이션이 아직 읽지 못한 데이터나 오류 상태를 놓칠 수 있다.
 
-Connection Teardown의 핵심은 **TCP의 두 방향을 독립적으로 종료할 수 있으며 FIN/ACK를 통한 orderly close와 RST 기반 abort를 구분해야 한다는 것**이다.
+### TCP EOF는 업무 처리 완료 신호가 아니다
+
+상대의 FIN을 받았다는 것은 상대 TCP가 그 방향으로 더 이상 바이트를 보내지 않겠다는 뜻이다. 주문이 데이터베이스에 commit됐거나 파일 저장이 성공했다는 뜻은 아니다.
+
+핵심은 **TCP가 두 송신 방향을 독립적으로 종료할 수 있고, FIN 기반 정상 종료와 RST 기반 즉시 중단은 의미가 다르다는 점**이다.

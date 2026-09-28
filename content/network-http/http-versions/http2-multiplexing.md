@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.http-versions.http2-multiplexing
 topicContentKey: network-http.core.http-versions
 slug: http2-multiplexing
-title: "HTTP/2 Multiplexing"
+title: "HTTP/2 멀티플렉싱"
 summary: "여러 stream의 frame을 하나의 connection에서 interleave해 HTTP/1.1 response-order HOL을 줄이는 방식을 설명한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "HTTP/2 stream·frame·multiplexing을 확인한다."
     displayOrder: 1
 ---
-# HTTP/2 Multiplexing
+# HTTP/2 멀티플렉싱
 
 HTTP/2는 여러 stream의 frame을 하나의 connection에서 interleave할 수 있다. 한 stream의 response가 아직 끝나지 않아도 다른 stream의 HEADERS나 DATA frame을 전달할 수 있으므로 HTTP/1.1 pipelining처럼 response 전체가 strict order로 완료될 필요가 없다.
 

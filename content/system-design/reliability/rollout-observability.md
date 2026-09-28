@@ -9,18 +9,18 @@ level: 2
 status: PUBLISHED
 displayOrder: 30
 references:
-  - url: "https://sre.google/sre-book/introduction/"
-    title: "Google SRE Book: Introduction"
+  - url: "https://sre.google/workbook/canarying-releases/"
+    title: "Google SRE Workbook: Canarying Releases"
     referenceType: OTHER
     language: en
     displayOrder: 1
-    relationNote: "progressive rollout·problem detection·safe rollback의 change management 확인"
-  - url: "https://docs.aws.amazon.com/wellarchitected/latest/framework/definitions.html"
-    title: "AWS Well-Architected Framework: Definitions"
-    referenceType: OFFICIAL
+    relationNote: "카나리 변경의 주요 지표를 평가하고 배포 확대·중단을 결정하는 방법 확인"
+  - url: "https://sre.google/sre-book/service-best-practices/"
+    title: "Google SRE Book: Production Services Best Practices"
+    referenceType: OTHER
     language: en
     displayOrder: 2
-    relationNote: "operational excellence와 reliability lifecycle의 architecture 평가 확인"
+    relationNote: "점진적 배포를 관측하고 이상 시 롤백하는 운영 원칙 확인"
 ---
 # 점진적 배포와 관측 피드백
 

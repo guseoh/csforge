@@ -3,8 +3,8 @@ kind: concept
 contentKey: spring.core.scope-lifecycle.scopes
 topicContentKey: spring.core.scope-lifecycle
 slug: scopes
-title: "singleton·prototype·request scope"
-summary: "Bean scope가 같은 definition에서 몇 개의 instance를 언제 만들고 누구와 공유하는지 정하는 수명 규칙임을 이해한다"
+title: "Bean 범위(scope): singleton·prototype·request"
+summary: "Bean scope가 같은 Bean 정의에서 객체를 언제 만들고 어느 범위에서 공유할지 정하는 수명 규칙임을 이해한다"
 level: 2
 status: PUBLISHED
 displayOrder: 10
@@ -16,17 +16,17 @@ references:
     displayOrder: 1
     relationNote: "singleton, prototype, request 등 Bean scope 계약 확인"
 ---
-# singleton·prototype·request scope
+# Bean 범위(scope): singleton·prototype·request
 
-Bean scope는 “이 annotation을 붙이면 어떻게 생성된다”는 문법보다 **같은 Bean definition을 조회할 때 어떤 instance를 얼마나 오래 공유할 것인가**를 정하는 수명 정책입니다.
+Bean scope는 “이 annotation을 붙이면 어떻게 생성된다”는 문법보다 **같은 Bean 정의를 조회할 때 객체를 언제 만들고 어느 범위에서 같은 객체를 공유할 것인가**를 정하는 수명 정책입니다.
 
-가장 흔한 singleton은 container가 하나의 공유 instance를 관리합니다. prototype은 요청할 때마다 새 instance를 만들고, web-aware context의 request scope는 HTTP 요청 하나 동안 같은 instance를 사용합니다.
+가장 흔한 singleton은 컨테이너가 하나의 공유 객체를 관리합니다. prototype은 Bean을 요청할 때마다 새 객체를 만들고, 웹 환경의 request scope는 HTTP 요청 하나 동안 같은 객체를 사용합니다.
 
-| scope     | instance 공유 범위                      | 대표적인 사용 의미                                |
-| --------- | --------------------------------------- | ------------------------------------------------- |
-| singleton | Spring container의 해당 Bean definition | stateless service, repository, client             |
-| prototype | Bean 요청/생성 시 새 instance           | 독립 mutable 작업 객체가 정말 필요한 경우         |
-| 요청   | HTTP 요청 하나                       | 요청-local state를 Bean으로 표현해야 하는 경우 |
+| scope     | 객체 공유 범위                        | 대표적인 사용 의미                         |
+| --------- | ------------------------------------- | ------------------------------------------ |
+| singleton | Spring 컨테이너의 해당 Bean 정의      | 상태 없는 Service·Repository·Client       |
+| prototype | Bean을 요청할 때마다 새 객체          | 독립된 변경 가능 작업 객체가 필요한 경우  |
+| request   | HTTP 요청 하나                        | 요청별 상태를 Bean으로 표현해야 하는 경우 |
 
 ### scope는 “객체가 몇 개인가”보다 “누가 같은 객체를 보는가”가 중요하다
 
@@ -40,11 +40,11 @@ Request A ──► request Bean #A
 Request B ──► request Bean #B
 ```
 
-singleton service field에 요청별 값을 저장하면 A와 B가 같은 memory state를 만집니다. request scope Bean은 각 요청마다 분리되지만, 그렇다고 모든 요청 data를 Bean으로 만들 필요는 없습니다. method parameter나 local variable이 더 단순한 경우가 많습니다.
+singleton Service 필드에 요청별 값을 저장하면 A와 B가 같은 메모리 상태를 만집니다. request scope Bean은 각 요청마다 분리되지만 그렇다고 모든 요청 데이터를 Bean으로 만들 필요는 없습니다. 메서드 매개변수나 지역 변수가 더 단순한 경우가 많습니다.
 
-### prototype은 “container가 평생 관리해 준다”는 뜻이 아니다
+### prototype은 “컨테이너가 평생 관리해 준다”는 뜻이 아니다
 
-prototype Bean은 container가 생성과 dependency injection까지는 수행하지만, singleton처럼 완전한 destruction lifecycle을 끝까지 추적해 주지 않는다는 점을 주의해야 합니다. 자원 해제가 필요한 prototype object라면 누가 cleanup 책임을 질지 별도로 설계해야 합니다.
+prototype Bean은 컨테이너가 생성과 의존성 주입까지는 수행하지만 singleton처럼 모든 소멸 과정을 끝까지 추적해 주지는 않습니다. 자원 해제가 필요한 prototype 객체라면 누가 정리 책임을 질지 별도로 설계해야 합니다.
 
 ```java
 @Scope("prototype")
@@ -52,25 +52,25 @@ prototype Bean은 container가 생성과 dependency injection까지는 수행하
 class ExportSession implements AutoCloseable { ... }
 ```
 
-`AutoCloseable`이라고 해서 Spring이 모든 prototype instance의 `close()`를 자동으로 기억했다가 context 종료 때 호출한다고 가정하면 안 됩니다.
+`AutoCloseable`이라고 해서 Spring이 모든 prototype 객체의 `close()`를 기억했다가 컨텍스트 종료 때 자동 호출한다고 가정하면 안 됩니다.
 
 ### Spring singleton과 thread safety는 다른 문제다
 
-scope가 singleton이라고 해서 immutable/thread-safe가 되는 것은 아닙니다. scope는 instance identity와 lifetime을 정할 뿐입니다.
+scope가 singleton이라고 해서 객체가 자동으로 불변이거나 thread-safe해지는 것은 아닙니다. scope는 객체의 공유 범위와 수명을 정할 뿐입니다.
 
 ```java
 @Service
 class CounterService {
-    private long count; // 여러 thread가 같은 field를 공유
+    private long count; // 여러 스레드가 같은 필드를 공유
 }
 ```
 
-이 field를 안전하게 만들지, 애초에 shared mutable state를 없앨지는 application design 문제입니다.
+이 필드를 동시성에 안전하게 만들지, 애초에 공유되는 변경 가능 상태를 없앨지는 애플리케이션 설계 문제입니다.
 
-### scope 선택은 실제 state lifetime에서 시작한다
+### scope 선택은 실제 상태의 수명에서 시작한다
 
-- application 전체에서 공유해도 되는 stateless collaborator인가?
-- 요청 하나에만 존재해야 하는 mutable state인가?
+- 애플리케이션 전체에서 공유해도 되는 상태 없는 협력 객체인가?
+- 요청 하나에만 존재해야 하는 변경 가능 상태인가?
 - 호출마다 완전히 독립된 객체가 필요한가?
 - 짧은 scope 객체를 긴 scope 객체가 붙잡는 문제는 없는가?
 

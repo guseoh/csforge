@@ -2,235 +2,235 @@
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.isa-execution.isa-vs-microarchitecture.q1",
-    "promptMarkdown": "다음 중 ISA가 보장하는 내용과 microarchitecture 구현 세부사항을 올바르게 구분한 것은?",
+    "promptMarkdown": "다음 중 ISA가 보장하는 내용과 마이크로아키텍처 구현 세부사항을 올바르게 구분한 것은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.isa-execution.isa-vs-microarchitecture"],
     "choices": [
-      {"key":"A","content":"L1 cache 크기는 ISA가 정의하므로 같은 ISA의 모든 CPU에서 동일하다.","displayOrder":0,"rationaleMarkdown":"ISA는 L1 cache 용량·associativity·latency처럼 구현 세부사항을 보통 고정하지 않는다. 같은 architecture 명령 계약을 서로 다른 cache hierarchy로 구현할 수 있다."},
-      {"key":"B","content":"ADD instruction의 architectural 결과는 ISA가 정의하고, pipeline 깊이는 microarchitecture가 선택할 수 있다.","displayOrder":1,"rationaleMarkdown":"ISA는 `ADD` 명령의 architecture상 결과와 외부에 보이는 exception을 정의한다. pipeline 단계 수는 그 동작을 유지하면서 달라질 수 있는 구현 선택이다."},
-      {"key":"C","content":"branch predictor의 종류는 compiler가 의존할 수 있는 ISA contract다.","displayOrder":2,"rationaleMarkdown":"branch predictor는 control flow를 추측하는 microarchitecture 메커니즘이다. software는 predictor 구조나 예측 결과와 관계없이 정확해야 한다."},
-      {"key":"D","content":"같은 ISA를 구현하면 모든 instruction의 cycle 수까지 동일해야 한다.","displayOrder":3,"rationaleMarkdown":"같은 ISA를 구현해도 microarchitecture에 따라 명령 latency와 throughput은 달라질 수 있다. ISA는 명령의 architecture상 동작을 정하지 보편적인 cycle 수를 정하지 않는다."}
+      {"key":"A","content":"L1 캐시 크기는 ISA가 정의하므로 같은 ISA의 모든 CPU에서 동일하다.","displayOrder":0,"rationaleMarkdown":"ISA는 L1 캐시 용량·연관도·지연 시간처럼 구현에 속하는 세부사항을 보통 고정하지 않는다. 같은 ISA의 명령어 계약을 서로 다른 캐시 계층 구조로 구현할 수 있다."},
+      {"key":"B","content":"ADD 명령어의 아키텍처상 결과는 ISA가 정의하고, 파이프라인 깊이는 마이크로아키텍처가 선택할 수 있다.","displayOrder":1,"rationaleMarkdown":"ISA는 `ADD` 명령의 아키텍처상 결과와 외부에 보이는 예외를 정의한다. 파이프라인 단계 수는 그 동작을 유지하면서 달라질 수 있는 구현 선택이다."},
+      {"key":"C","content":"분기 예측기의 종류는 컴파일러가 의존할 수 있는 ISA 계약이다.","displayOrder":2,"rationaleMarkdown":"분기 예측기는 제어 흐름을 추측하는 마이크로아키텍처 메커니즘이다. 소프트웨어는 예측기 구조나 예측 결과와 관계없이 정확해야 한다."},
+      {"key":"D","content":"같은 ISA를 구현하면 모든 명령어의 사이클 수까지 동일해야 한다.","displayOrder":3,"rationaleMarkdown":"같은 ISA를 구현해도 마이크로아키텍처에 따라 명령어 지연 시간과 처리량은 달라질 수 있다. ISA는 명령어의 아키텍처상 동작을 정하지 보편적인 사이클 수를 정하지 않는다."}
     ],
     "correctChoiceKey": "B",
-    "explanationMarkdown": "ISA는 instruction semantics 같은 architectural contract를 정의하지만 pipeline, cache, branch predictor, execution unit 등 microarchitecture는 달라질 수 있다. 같은 ISA가 보장하는 것은 instruction의 architectural semantics와 지원 feature이지 특정 지연 시간이 아니다."
+    "explanationMarkdown": "ISA는 명령어 의미 같은 아키텍처 계약을 정의하지만 파이프라인, 캐시, 분기 예측기, 실행 유닛 같은 마이크로아키텍처는 달라질 수 있다. 같은 ISA가 보장하는 것은 명령어의 아키텍처상 의미와 지원 기능이지 특정 지연 시간이 아니다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.isa-execution.isa-vs-microarchitecture.q2",
-    "promptMarkdown": "같은 ISA binary를 실행하는 두 CPU의 instruction count가 같아도 실행 시간이 달라질 수 있는 이유를 설명하라.",
+    "promptMarkdown": "같은 ISA 바이너리를 실행하는 두 CPU의 명령어 수가 같아도 실행 시간이 달라질 수 있는 이유를 설명하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.isa-execution.isa-vs-microarchitecture"],
-    "modelAnswer": "ISA는 instruction semantics 같은 architectural contract를 정의하지만 pipeline, cache, branch predictor, execution unit 등 microarchitecture는 달라질 수 있다. 이 차이가 CPI, cache miss, branch penalty를 바꾸므로 같은 instruction count라도 실행 시간은 달라질 수 있다.",
-    "explanationMarkdown": "ISA가 같다는 것은 instruction 의미와 architectural interface가 같다는 뜻이지 내부 실행 구조까지 같다는 뜻은 아니다. Pipeline·cache·predictor 차이가 CPI와 stall을 바꾸므로 같은 instruction count라도 실행 시간은 달라질 수 있다."
+    "modelAnswer": "ISA는 명령어 의미 같은 아키텍처 계약을 정의하지만 파이프라인, 캐시, 분기 예측기, 실행 유닛 같은 마이크로아키텍처는 달라질 수 있다. 이 차이가 CPI, 캐시 미스, 분기 실패 비용을 바꾸므로 같은 명령어 수라도 실행 시간은 달라질 수 있다.",
+    "explanationMarkdown": "ISA가 같다는 것은 명령어 의미와 아키텍처 인터페이스가 같다는 뜻이지 내부 실행 구조까지 같다는 뜻은 아니다. 파이프라인·캐시·예측기 차이가 CPI와 스톨을 바꾸므로 같은 명령어 수라도 실행 시간은 달라질 수 있다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.isa-execution.isa-vs-microarchitecture.q3",
-    "promptMarkdown": "서비스를 CPU A에서 CPU B로 옮기려 한다. 두 CPU는 같은 ISA와 필요한 extension을 지원하지만 A에서 측정한 특정 instruction sequence의 지연 시간이 40 ns였다. 이 40 ns를 B에서도 보장되는 계약으로 사용할 수 없는 이유와 이식 시 각각 무엇을 검증해야 하는지 설명하라.",
+    "promptMarkdown": "서비스를 CPU A에서 CPU B로 옮기려 한다. 두 CPU는 같은 ISA와 필요한 확장을 지원하지만 A에서 측정한 특정 명령어 시퀀스의 지연 시간이 40ns였다. 이 40ns를 B에서도 보장되는 계약으로 사용할 수 없는 이유와 이식 시 각각 무엇을 검증해야 하는지 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.isa-execution.isa-vs-microarchitecture"],
-    "modelAnswer": "같은 ISA가 보장하는 것은 instruction의 architectural semantics와 지원 feature이지 특정 지연 시간이 아니다. 먼저 B가 필요한 ISA extension과 ABI를 지원해 correctness가 유지되는지 확인하고, 성능은 B의 pipeline·cache·memory system에서 실제 workload를 다시 benchmark해야 한다.",
-    "explanationMarkdown": "이식성에서 ISA/ABI 호환은 correctness 조건이고, 지연 시간은 microarchitecture에 의존하는 성능 조건이다. 따라서 CPU B에서는 필요한 extension/ABI를 먼저 확인하고 workload 성능은 다시 측정해야 한다."
+    "modelAnswer": "같은 ISA가 보장하는 것은 명령어의 아키텍처상 의미와 지원 기능이지 특정 지연 시간이 아니다. 먼저 B가 필요한 ISA 확장과 ABI를 지원해 정확성이 유지되는지 확인하고, 성능은 B의 파이프라인·캐시·메모리 시스템에서 실제 작업 부하를 다시 측정해야 한다.",
+    "explanationMarkdown": "이식성에서 ISA/ABI 호환은 정확성 조건이고 지연 시간은 마이크로아키텍처에 의존하는 성능 조건이다. 따라서 CPU B에서는 필요한 확장/ABI를 먼저 확인하고 실제 작업 부하의 성능은 다시 측정해야 한다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.isa-execution.instruction-format.q1",
-    "promptMarkdown": "instruction format에 5-bit register field가 하나 있다. 이 field가 구분할 수 있는 register index의 개수는?",
+    "promptMarkdown": "명령어 형식에 5비트 레지스터 필드가 하나 있다. 이 필드가 구분할 수 있는 레지스터 인덱스의 개수는?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.isa-execution.instruction-format"],
     "choices": [
-      {"key":"A","content":"32개","displayOrder":0,"rationaleMarkdown":"독립적인 5개 bit는 `2^5`가지 패턴을 만들므로 register index 32개를 표현할 수 있다. 번호를 0부터 매기면 index 0부터 31에 해당한다."},
-      {"key":"B","content":"16개","displayOrder":1,"rationaleMarkdown":"16개 값은 `2^4 = 16`이므로 4 bit만으로 표현된다. 5-bit field는 binary 자리가 하나 더 있어 패턴 수가 두 배다."},
-      {"key":"C","content":"5개","displayOrder":2,"rationaleMarkdown":"field의 bit 폭은 가능한 값의 개수가 아니다. 5개 bit가 각각 독립적으로 달라질 수 있어 5개가 아니라 32개 조합이 나온다."},
-      {"key":"D","content":"64개","displayOrder":3,"rationaleMarkdown":"서로 다른 index 64개를 표현하려면 6 bit가 필요하다. 5-bit field는 조합이 32개뿐이라 0부터 63까지 모두 표현할 수 없다."}
+      {"key":"A","content":"32개","displayOrder":0,"rationaleMarkdown":"독립적인 5개 비트는 `2^5`가지 패턴을 만들므로 레지스터 인덱스 32개를 표현할 수 있다. 번호를 0부터 매기면 인덱스 0부터 31에 해당한다."},
+      {"key":"B","content":"16개","displayOrder":1,"rationaleMarkdown":"16개 값은 `2^4 = 16`이므로 4비트만으로 표현된다. 5비트 필드는 2진 자리가 하나 더 있어 패턴 수가 두 배다."},
+      {"key":"C","content":"5개","displayOrder":2,"rationaleMarkdown":"필드의 비트 폭은 가능한 값의 개수가 아니다. 5개 비트가 각각 독립적으로 달라질 수 있어 5개가 아니라 32개 조합이 나온다."},
+      {"key":"D","content":"64개","displayOrder":3,"rationaleMarkdown":"서로 다른 인덱스 64개를 표현하려면 6비트가 필요하다. 5비트 필드는 조합이 32개뿐이라 0부터 63까지 모두 표현할 수 없다."}
     ],
     "correctChoiceKey": "A",
-    "explanationMarkdown": "5 bit field는 `2⁵=32`개의 서로 다른 bit pattern을 표현한다. 따라서 register index 0부터 31까지 구분할 수 있다."
+    "explanationMarkdown": "5비트 필드는 `2⁵=32`개의 서로 다른 비트 패턴을 표현한다. 따라서 레지스터 인덱스 0부터 31까지 구분할 수 있다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.isa-execution.instruction-format.q2",
-    "promptMarkdown": "12-bit two's-complement signed immediate가 표현할 수 있는 정수 범위를 쓰라.",
+    "promptMarkdown": "12비트 2의 보수 부호 있는 즉시값(immediate)이 표현할 수 있는 정수 범위를 쓰라.",
     "questionType": "SHORT_ANSWER",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.isa-execution.instruction-format"],
     "acceptedAnswers": ["-2048부터 2047", "-2048..2047", "-2048 ~ 2047"],
-    "explanationMarkdown": "12-bit two's-complement 범위는 `-2¹¹`부터 `2¹¹-1`까지다. 따라서 표현 가능한 signed immediate는 -2048부터 2047이다."
+    "explanationMarkdown": "12비트 2의 보수 범위는 `-2¹¹`부터 `2¹¹-1`까지다. 따라서 표현 가능한 부호 있는 즉시값은 -2048부터 2047이다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.isa-execution.instruction-format.q3",
-    "promptMarkdown": "고정 32-bit instruction에서 opcode와 register field에 더 많은 bit를 할당하려 한다. 이 변경이 immediate 범위, encoding 공간, decode 복잡도와 code density에 어떤 trade-off를 만들 수 있는지 설명하라.",
+    "promptMarkdown": "고정 32비트 명령어에서 opcode와 레지스터 필드에 더 많은 비트를 할당하려 한다. 이 변경이 즉시값 범위, 인코딩 공간, 해독 복잡도와 코드 밀도에 어떤 트레이드오프를 만들 수 있는지 설명하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.isa-execution.instruction-format"],
-    "modelAnswer": "전체 instruction 폭이 고정이면 한 field에 bit를 더 주는 만큼 다른 field나 opcode 공간이 줄어든다. register 선택 폭이나 opcode 수는 늘릴 수 있지만 immediate 범위가 줄거나 다른 format이 필요해질 수 있다. 더 많은 기능을 여러 instruction으로 나누면 code density와 fetch bandwidth에도 영향을 줄 수 있으며, field 배치가 복잡해지면 decode hardware 비용도 달라질 수 있다.",
-    "explanationMarkdown": "Instruction 폭이 고정되어 있으면 encoding bit는 한정된 자원이다. Opcode/register에 더 많은 bit를 주면 immediate나 다른 format 공간이 줄 수 있고, 이를 보완하는 추가 instruction은 decode와 code density에도 영향을 준다."
+    "modelAnswer": "전체 명령어 폭이 고정이면 한 필드에 비트를 더 주는 만큼 다른 필드나 opcode 공간이 줄어든다. 레지스터 선택 폭이나 opcode 수는 늘릴 수 있지만 즉시값 범위가 줄거나 다른 형식이 필요해질 수 있다. 더 많은 기능을 여러 명령어로 나누면 코드 밀도와 명령어 인출 대역폭에도 영향을 줄 수 있으며, 필드 배치가 복잡해지면 해독 하드웨어 비용도 달라질 수 있다.",
+    "explanationMarkdown": "명령어 폭이 고정되어 있으면 인코딩 비트는 한정된 자원이다. Opcode/레지스터에 더 많은 비트를 주면 즉시값이나 다른 형식의 공간이 줄 수 있고, 이를 보완하는 추가 명령어는 해독 비용과 코드 밀도에도 영향을 준다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.isa-execution.registers.q1",
-    "promptMarkdown": "architectural register와 CPU cache를 구분한 설명으로 가장 적절한 것은?",
+    "promptMarkdown": "아키텍처 레지스터와 CPU 캐시를 구분한 설명으로 가장 적절한 것은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.isa-execution.registers"],
     "choices": [
-      {"key":"A","content":"cache는 항상 software-visible하지만 register는 software가 볼 수 없다.","displayOrder":0,"rationaleMarkdown":"architectural register는 ISA가 보이는 상태의 일부로 명령이 이름을 지정해 접근한다. cache 내용은 보통 hardware가 투명하게 관리하며 software가 cache line register를 선택해 쓰지 않는다."},
-      {"key":"B","content":"register와 cache는 모두 ISA에서 동일한 index로 접근하는 같은 저장소다.","displayOrder":1,"rationaleMarkdown":"register와 cache line은 역할과 주소 지정 방식이 다르다. 명령은 architectural register를 지정하고, hardware는 주소와 tag로 cache에서 memory block을 찾는다."},
-      {"key":"C","content":"register는 instruction이 직접 이름으로 읽고 쓰는 architectural state이고, cache는 memory block의 복사본을 hardware가 관리한다.","displayOrder":2,"rationaleMarkdown":"명령은 ISA가 이름 붙인 architectural register를 직접 읽고 쓴다. cache는 memory block의 hardware-managed 사본을 보관하므로 software가 cache line 번호를 일반 operand로 쓰지 않는다."},
-      {"key":"D","content":"register pressure가 증가하면 L1 cache line 수가 자동으로 늘어난다.","displayOrder":3,"rationaleMarkdown":"register가 부족하면 compiler가 stack이나 다른 메모리로 spill할 수 있지만 물리 cache line 개수가 바뀌는 것은 아니다. cache 용량은 hardware 속성이다."}
+      {"key":"A","content":"캐시는 항상 소프트웨어에 직접 보이지만 레지스터는 소프트웨어가 볼 수 없다.","displayOrder":0,"rationaleMarkdown":"아키텍처 레지스터는 ISA가 외부에 보이는 상태의 일부로 정의하며 명령어가 이름을 지정해 접근한다. 캐시 내용은 보통 하드웨어가 투명하게 관리하며 소프트웨어가 캐시 라인 레지스터를 선택해 쓰지 않는다."},
+      {"key":"B","content":"레지스터와 캐시는 모두 ISA에서 동일한 인덱스로 접근하는 같은 저장소다.","displayOrder":1,"rationaleMarkdown":"레지스터와 캐시 라인은 역할과 주소 지정 방식이 다르다. 명령어는 아키텍처 레지스터를 지정하고, 하드웨어는 주소와 태그를 이용해 캐시에서 메모리 블록을 찾는다."},
+      {"key":"C","content":"레지스터는 명령어가 직접 이름으로 읽고 쓰는 아키텍처 상태이고, 캐시는 메모리 블록의 복사본을 하드웨어가 관리한다.","displayOrder":2,"rationaleMarkdown":"명령어는 ISA가 이름 붙인 아키텍처 레지스터를 직접 읽고 쓴다. 캐시는 메모리 블록의 하드웨어 관리 사본을 보관하므로 소프트웨어가 캐시 라인 번호를 일반 피연산자로 쓰지 않는다."},
+      {"key":"D","content":"레지스터 압박이 증가하면 L1 캐시 라인 수가 자동으로 늘어난다.","displayOrder":3,"rationaleMarkdown":"레지스터가 부족하면 컴파일러가 스택이나 다른 메모리로 값을 내보낼 수 있지만 물리적인 캐시 라인 개수가 바뀌는 것은 아니다. 캐시 용량은 하드웨어 속성이다."}
     ],
     "correctChoiceKey": "C",
-    "explanationMarkdown": "Architectural register는 ISA가 이름과 읽기·쓰기 효과를 정의한 CPU state다. Cache는 memory block의 복사본을 hardware가 투명하게 관리하므로 instruction operand로 cache line 번호를 직접 지정하지 않는다."
+    "explanationMarkdown": "아키텍처 레지스터는 ISA가 이름과 읽기·쓰기 효과를 정의한 CPU 상태다. 캐시는 메모리 블록의 복사본을 하드웨어가 투명하게 관리하므로 명령어의 피연산자로 캐시 라인 번호를 직접 지정하지 않는다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.isa-execution.registers.q2",
-    "promptMarkdown": "RISC-V 표준 ABI에서 callee가 변경했다면 return 전에 복구해야 하는 integer saved-register 계열의 ABI 이름은?",
+    "promptMarkdown": "RISC-V 표준 ABI에서 피호출자(callee)가 변경했다면 반환 전에 복구해야 하는 정수 저장 레지스터 계열의 ABI 이름은?",
     "questionType": "SHORT_ANSWER",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.isa-execution.registers"],
     "acceptedAnswers": ["s0-s11", "s0 ~ s11", "saved registers s0-s11"],
-    "explanationMarkdown": "RISC-V ABI의 `s0`부터 `s11`은 callee-saved register다. Callee가 값을 바꾸면 caller가 기대한 값을 유지하도록 return 전에 복구해야 한다."
+    "explanationMarkdown": "RISC-V ABI의 `s0`부터 `s11`은 피호출자 보존(callee-saved) 레지스터다. 피호출자가 값을 바꾸면 호출자(caller)가 기대한 값을 유지하도록 반환 전에 복구해야 한다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.isa-execution.registers.q3",
-    "promptMarkdown": "JIT가 만든 hot loop에서 동시에 살아 있는 값이 많아 일부 값이 stack slot로 spill된다. register pressure가 execution path를 느리게 만드는 과정을 load/store 관점에서 설명하고, source local-variable 개수만으로 이 문제를 확정하면 안 되는 이유도 설명하라.",
+    "promptMarkdown": "JIT가 만든 자주 실행되는 반복문에서 동시에 살아 있는 값이 많아 일부 값이 스택 슬롯으로 밀려난다(spill). 이런 레지스터 압박이 실행 경로를 느리게 만드는 과정을 load/store 관점에서 설명하고, 소스 코드의 지역 변수 개수만으로 이 문제를 확정하면 안 되는 이유도 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.isa-execution.registers"],
-    "modelAnswer": "register에 남지 못한 값은 stack memory에 store되고 다시 필요할 때 load되어 추가 memory operation과 dependency를 만든다. 하지만 compiler/JIT는 variable lifetime, inlining, constant folding, register allocation을 바꾸므로 source local-variable 개수가 실제 architectural register pressure와 1:1 대응하지 않는다. generated code와 spill/load-store를 확인해야 한다.",
-    "explanationMarkdown": "Register pressure는 동시에 살아 있는 값이 물리적 register에 다 들어가지 못할 때 spill load/store로 비용이 나타난다. Source variable 수가 아니라 JIT가 실제로 만든 lifetime과 generated code를 봐야 pressure를 확인할 수 있다."
+    "modelAnswer": "레지스터에 남지 못한 값은 스택 메모리에 저장(store)되고 다시 필요할 때 읽혀(load) 추가 메모리 연산과 의존성을 만든다. 하지만 컴파일러/JIT는 변수의 생존 구간, 인라이닝, 상수 폴딩, 레지스터 할당을 바꾸므로 소스 코드의 지역 변수 개수가 실제 아키텍처 레지스터 압박과 1:1 대응하지 않는다. 생성된 코드와 실제 spill/load-store를 확인해야 한다.",
+    "explanationMarkdown": "레지스터 압박은 동시에 살아 있는 값이 물리 레지스터에 다 들어가지 못할 때 spill에 따른 load/store 비용으로 나타난다. 소스 변수 수가 아니라 JIT가 실제로 만든 생존 구간과 생성 코드를 봐야 압박을 확인할 수 있다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.isa-execution.fetch-decode-execute.q1",
-    "promptMarkdown": "conditional branch instruction을 실행한 결과 조건이 참이었다. fetch-decode-execute 관점에서 반드시 달라질 수 있는 architectural state는?",
+    "promptMarkdown": "조건부 분기의 조건이 참이고 분기 대상이 순차 실행 주소와 다르다. 분기가 반영된 뒤 다음 아키텍처 명령어를 정하기 위해 어떤 아키텍처 상태가 분기 대상을 가리키도록 갱신되는가?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.isa-execution.fetch-decode-execute"],
     "choices": [
-      {"key":"A","content":"항상 DRAM 전체","displayOrder":0,"rationaleMarkdown":"taken branch는 control flow와 보통 다음 PC를 바꾸지만 모든 DRAM을 자동으로 다시 쓰지는 않는다. memory 변경은 명령 의미나 주변 연산이 store를 실행할 때 생긴다."},
-      {"key":"B","content":"항상 모든 general-purpose register","displayOrder":1,"rationaleMarkdown":"conditional branch는 실행 여부를 정하기 위해 operand나 condition 상태를 보통 읽는다. 모든 범용 register를 수정할 필요는 없으며 선택된 다음 주소를 반영하는 control-flow 상태가 달라진다."},
-      {"key":"C","content":"다음 PC","displayOrder":2,"rationaleMarkdown":"조건이 참이면 architecture상 다음 PC는 fall-through 주소 대신 branch target이 된다. 추측 pipeline 상태는 버려질 수 있지만 외부에 보이는 control-flow 결과는 변경된 PC다."},
-      {"key":"D","content":"ISA 이름","displayOrder":3,"rationaleMarkdown":"branch를 실행해도 processor 명령 의미를 정의하는 ISA가 바뀌지 않는다. branch는 architecture 이름이 아니라 다음 PC 같은 실행 상태를 갱신한다."}
+      {"key":"A","content":"항상 DRAM 전체","displayOrder":0,"rationaleMarkdown":"실행되는 분기는 제어 흐름과 보통 다음 PC를 바꾸지만 모든 DRAM을 자동으로 다시 쓰지는 않는다. 메모리 변경은 명령어 의미나 주변 연산이 store를 실행할 때 생긴다."},
+      {"key":"B","content":"항상 모든 범용 레지스터","displayOrder":1,"rationaleMarkdown":"조건부 분기는 실행 여부를 정하기 위해 피연산자나 조건 상태를 보통 읽는다. 모든 범용 레지스터를 수정할 필요는 없으며 선택된 다음 주소를 반영하는 제어 흐름 상태가 달라진다."},
+      {"key":"C","content":"다음 PC","displayOrder":2,"rationaleMarkdown":"조건이 참이면 아키텍처상 다음 PC는 순차 주소 대신 분기 대상이 된다. 추측 실행 중인 파이프라인 상태는 버려질 수 있지만 외부에 보이는 제어 흐름 결과는 변경된 PC다."},
+      {"key":"D","content":"ISA 이름","displayOrder":3,"rationaleMarkdown":"분기를 실행해도 프로세서의 명령어 의미를 정의하는 ISA가 바뀌지 않는다. 분기는 ISA 이름이 아니라 다음 PC 같은 실행 상태를 갱신한다."}
     ],
     "correctChoiceKey": "C",
-    "explanationMarkdown": "Taken branch는 architectural next PC를 fall-through가 아니라 target으로 바꾼다. Pipeline이 미리 fetch한 fall-through instruction은 prediction이 틀렸다면 architectural state에 반영되지 않도록 폐기해야 한다."
+    "explanationMarkdown": "실행되는 분기는 아키텍처상 다음 PC를 순차 주소가 아니라 분기 대상으로 바꾼다. 파이프라인이 미리 인출한 순차 경로의 명령어는 예측이 틀렸다면 아키텍처 상태에 반영되지 않도록 폐기해야 한다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.isa-execution.fetch-decode-execute.q2",
-    "promptMarkdown": "fetch가 성공한 instruction도 이후 정상 완료되지 않을 수 있다. decode 또는 execute 이후 발생할 수 있는 두 가지 실패 경로를 예로 들어 설명하라.",
+    "promptMarkdown": "인출(fetch)에 성공한 명령어도 이후 정상 완료되지 않을 수 있다. 해독(decode) 또는 실행(execute) 이후 발생할 수 있는 두 가지 실패 경로를 예로 들어 설명하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.isa-execution.fetch-decode-execute"],
-    "modelAnswer": "decode에서 지원되지 않는 또는 illegal instruction encoding이 발견될 수 있고, execute/load-store 과정에서 권한이 없거나 mapping이 없는 address를 접근해 protection/page/access fault가 발생할 수 있다. 이런 경우 architectural exception path로 control이 이동한다.",
-    "explanationMarkdown": "Fetch 성공은 instruction 완료를 보장하지 않는다. Decode 단계에서 illegal encoding이 걸릴 수도 있고 execute/load-store 중 address permission이나 mapping 문제로 exception이 발생할 수도 있다."
+    "modelAnswer": "해독 단계에서 지원되지 않거나 잘못된 명령어 인코딩이 발견될 수 있고, 실행 또는 load/store 과정에서 권한이 없거나 매핑되지 않은 주소에 접근해 보호·페이지·접근 fault가 발생할 수 있다. 이런 경우 아키텍처가 정의한 예외 경로로 제어가 이동한다.",
+    "explanationMarkdown": "인출 성공은 명령어 완료를 보장하지 않는다. 해독 단계에서 잘못된 인코딩이 걸릴 수도 있고 실행/load-store 중 주소 권한이나 매핑 문제로 예외가 발생할 수도 있다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.isa-execution.fetch-decode-execute.q3",
-    "promptMarkdown": "PC=0x1000에서 branch instruction을 fetch했다. branch condition은 참이고 target은 0x1800이며, target instruction을 fetch할 때 instruction page fault가 발생한다. 논리적인 control-flow 상태 변화를 순서대로 설명하라.",
+    "promptMarkdown": "PC=0x1000에서 분기 명령어를 인출했다. 분기 조건은 참이고 대상은 0x1800이며, 대상 명령어를 인출할 때 명령어 페이지 fault가 발생한다. 논리적인 제어 흐름 상태 변화를 순서대로 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.isa-execution.fetch-decode-execute"],
-    "modelAnswer": "0x1000의 branch를 fetch/decode한 뒤 condition을 평가해 next PC를 0x1800 target으로 선택한다. 이후 target instruction fetch가 address translation 또는 mapping 문제로 page fault를 발생시키므로 target instruction은 정상 execute되지 않고 architecture의 exception path로 control이 넘어간다. OS가 fault를 해결할 수 있으면 이후 해당 fetch를 재시도할 수 있다.",
-    "explanationMarkdown": "Branch가 taken이면 다음 fetch 대상은 0x1800으로 바뀌지만 그 target fetch 자체가 page fault를 낼 수 있다. 이때 target instruction은 정상 실행되지 않고 exception handler로 control이 넘어간 뒤 해결 가능하면 fetch가 재시도된다."
+    "modelAnswer": "0x1000의 분기를 인출·해독한 뒤 조건을 평가해 다음 PC를 0x1800으로 선택한다. 이후 대상 명령어 인출이 주소 변환 또는 매핑 문제로 페이지 fault를 발생시키므로 대상 명령어는 정상 실행되지 않고 아키텍처의 예외 경로로 제어가 넘어간다. OS가 fault를 해결할 수 있으면 이후 해당 인출을 재시도할 수 있다.",
+    "explanationMarkdown": "분기가 실행되면 다음 인출 대상은 0x1800으로 바뀌지만 그 대상 인출 자체가 페이지 fault를 낼 수 있다. 이때 대상 명령어는 정상 실행되지 않고 예외 처리기로 제어가 넘어간 뒤 해결 가능하면 인출이 재시도된다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.isa-execution.addressing-modes.q1",
-    "promptMarkdown": "RV32I load/store에서 base register가 0x1000이고 signed offset이 24라면 effective address는?",
+    "promptMarkdown": "RV32I load/store에서 기준 레지스터 값이 0x1000이고 부호 있는 오프셋이 24라면 유효 주소(effective address)는?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.isa-execution.addressing-modes"],
     "choices": [
-      {"key":"A","content":"0x1024","displayOrder":0,"rationaleMarkdown":"offset은 십진수 24이며 16진수로 `0x18`이다. 이를 `0x1000`에 더하면 `0x1018`이 된다. `0x1024`는 십진수 숫자 24를 16진수 값으로 잘못 다뤘을 때 나온다."},
-      {"key":"B","content":"0x1018","displayOrder":1,"rationaleMarkdown":"이 RV32I load/store 형식에서 effective address는 base register 값과 sign-extended immediate의 합이다. 십진수 24는 `0x18`이므로 `0x1000 + 0x18 = 0x1018`이다."},
-      {"key":"C","content":"0x0FE8","displayOrder":2,"rationaleMarkdown":"양수 signed offset은 base에 더하며 빼지 않는다. `0x18`을 빼면 -24인 음수 offset에 해당한다."},
-      {"key":"D","content":"24","displayOrder":3,"rationaleMarkdown":"immediate는 주소 계산에 참여하지만 effective address 전체는 아니다. base register가 시작 주소이므로 두 값을 모두 더해야 한다."}
+      {"key":"A","content":"0x1024","displayOrder":0,"rationaleMarkdown":"오프셋은 십진수 24이며 16진수로 `0x18`이다. 이를 `0x1000`에 더하면 `0x1018`이 된다. `0x1024`는 십진수 숫자 24를 16진수 값으로 잘못 다뤘을 때 나온다."},
+      {"key":"B","content":"0x1018","displayOrder":1,"rationaleMarkdown":"이 RV32I load/store 형식에서 유효 주소는 기준 레지스터 값과 부호 확장된 즉시값의 합이다. 십진수 24는 `0x18`이므로 `0x1000 + 0x18 = 0x1018`이다."},
+      {"key":"C","content":"0x0FE8","displayOrder":2,"rationaleMarkdown":"양수 오프셋은 기준 주소에 더하며 빼지 않는다. `0x18`을 빼면 -24인 음수 오프셋에 해당한다."},
+      {"key":"D","content":"24","displayOrder":3,"rationaleMarkdown":"즉시값은 주소 계산에 참여하지만 유효 주소 전체는 아니다. 기준 레지스터가 시작 주소이므로 두 값을 모두 더해야 한다."}
     ],
     "correctChoiceKey": "B",
-    "explanationMarkdown": "Effective address는 base와 signed offset의 합이다. `0x1000 + 24(0x18) = 0x1018`이다."
+    "explanationMarkdown": "유효 주소는 기준 주소와 부호 있는 오프셋의 합이다. `0x1000 + 24(0x18) = 0x1018`이다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.isa-execution.addressing-modes.q2",
-    "promptMarkdown": "base address가 0x2000이고 4-byte 원소 배열의 index 7을 가리키려면 byte offset은 얼마인가?",
+    "promptMarkdown": "기준 주소가 0x2000이고 4바이트 원소 배열의 인덱스 7을 가리키려면 바이트 오프셋은 얼마인가?",
     "questionType": "SHORT_ANSWER",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.isa-execution.addressing-modes"],
     "acceptedAnswers": ["28", "28 bytes", "28 byte"],
-    "explanationMarkdown": "원소 하나가 4 byte이므로 index 7의 byte offset은 `7×4=28`이다. Base address에 더할 값은 28 byte다."
+    "explanationMarkdown": "원소 하나가 4바이트이므로 인덱스 7의 바이트 오프셋은 `7×4=28`이다. 기준 주소에 더할 값은 28바이트다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.isa-execution.addressing-modes.q3",
-    "promptMarkdown": "`node.next.value`를 읽는 high-level 표현을 '한 번의 indirect addressing'이라고 단정하면 왜 부정확한가? RISC-V 같은 load/store ISA에서 가능한 machine-level 흐름과 memory fault 경계를 설명하라.",
+    "promptMarkdown": "`node.next.value`를 읽는 고수준 표현을 '한 번의 간접 주소 지정'이라고 단정하면 왜 부정확한가? RISC-V 같은 load/store ISA에서 가능한 기계 수준 흐름과 메모리 fault 경계를 설명하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.isa-execution.addressing-modes"],
-    "modelAnswer": "첫 load가 node의 next pointer를 register로 읽고, 두 번째 load가 그 register를 base로 value field를 읽는 식으로 여러 instruction이 필요할 수 있다. 각 단계의 effective address 계산이 정상이어도 mapping, permission, alignment 등에 따라 실제 memory access에서 별도 fault가 날 수 있다. 일반적인 indirect 개념과 target ISA가 제공하는 실제 addressing mode를 구분해야 한다.",
-    "explanationMarkdown": "High-level field chain은 machine level에서 여러 pointer load와 address 계산으로 풀릴 수 있다. 각 memory access마다 translation·permission·alignment fault가 별도로 가능하므로 이를 하나의 간접 주소 지정으로 단순화하면 실제 failure boundary를 놓친다."
+    "modelAnswer": "첫 load가 `node`의 `next` 포인터를 레지스터로 읽고, 두 번째 load가 그 레지스터를 기준 주소로 사용해 `value` 필드를 읽는 식으로 여러 명령어가 필요할 수 있다. 각 단계의 유효 주소 계산이 정상이어도 매핑, 권한, 정렬 등에 따라 실제 메모리 접근에서 별도 fault가 날 수 있다. 일반적인 간접 주소 지정 개념과 대상 ISA가 제공하는 실제 주소 지정 방식을 구분해야 한다.",
+    "explanationMarkdown": "고수준 필드 연쇄 접근은 기계 수준에서 여러 포인터 load와 주소 계산으로 풀릴 수 있다. 각 메모리 접근마다 주소 변환·권한·정렬 fault가 별도로 가능하므로 이를 하나의 간접 주소 지정으로 단순화하면 실제 실패 경계를 놓친다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.isa-execution.procedure-call-machine-level.q1",
-    "promptMarkdown": "RISC-V 표준 calling convention의 procedure call에 대한 설명으로 맞는 것은?",
+    "promptMarkdown": "RISC-V 표준 호출 규약(calling convention)의 함수 호출에 대한 설명으로 맞는 것은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.isa-execution.procedure-call-machine-level"],
     "choices": [
-      {"key": "A", "content": "callee가 모든 register를 보존하므로 caller-saved register 구분은 필요 없다.", "displayOrder": 0, "rationaleMarkdown": "RISC-V 표준 ABI는 caller-saved와 callee-saved register를 구분한다. Callee-saved 값은 함수가 바꾸면 복원해야 하지만 caller-saved 값은 호출 뒤 보존된다고 가정할 수 없다."},
-      {"key": "B", "content": "모든 call은 ISA가 자동으로 모든 register를 stack에 저장한다.", "displayOrder": 1, "rationaleMarkdown": "JAL/JALR 같은 instruction은 control transfer와 return address 기록을 정의하지만 전체 register 저장을 자동으로 하지 않는다. 필요한 register를 stack에 보존하는 일은 compiler와 ABI 규칙에 따라 수행된다."},
-      {"key": "C", "content": "return address는 어떤 경우에도 register에 있을 수 없다.", "displayOrder": 2, "rationaleMarkdown": "RISC-V의 `ra` register는 return address를 담는 link register로 사용된다. 함수가 다른 함수를 호출하며 기존 return address를 보존해야 하는 경우에만 stack에 저장할 수 있다."},
-      {"key": "D", "content": "JAL/JALR 같은 control-transfer instruction과 ABI의 ra·argument·saved-register 규칙을 조합한다.", "displayOrder": 3, "rationaleMarkdown": "Call instruction은 return address를 register에 기록하고 control을 이동시키며, ABI는 argument·return·saved-register 사용 약속을 정한다. ISA 동작과 소프트웨어 calling convention이 함께 procedure call을 구성한다."}
+      {"key": "A", "content": "피호출자가 모든 레지스터를 보존하므로 호출자 보존 레지스터 구분은 필요 없다.", "displayOrder": 0, "rationaleMarkdown": "RISC-V 표준 ABI는 호출자 보존(caller-saved)과 피호출자 보존(callee-saved) 레지스터를 구분한다. 피호출자 보존 값은 함수가 바꾸면 복원해야 하지만 호출자 보존 값은 호출 뒤 보존된다고 가정할 수 없다."},
+      {"key": "B", "content": "모든 호출은 ISA가 자동으로 모든 레지스터를 스택에 저장한다.", "displayOrder": 1, "rationaleMarkdown": "JAL/JALR 같은 명령어는 제어 이동과 반환 주소 기록을 정의하지만 전체 레지스터 저장을 자동으로 하지 않는다. 필요한 레지스터를 스택에 보존하는 일은 컴파일러와 ABI 규칙에 따라 수행된다."},
+      {"key": "C", "content": "반환 주소는 어떤 경우에도 레지스터에 있을 수 없다.", "displayOrder": 2, "rationaleMarkdown": "RISC-V의 `ra` 레지스터는 반환 주소를 담는 링크 레지스터로 사용된다. 함수가 다른 함수를 호출하며 기존 반환 주소를 보존해야 하는 경우에만 스택에 저장할 수 있다."},
+      {"key": "D", "content": "JAL/JALR 같은 제어 이동 명령어와 ABI의 ra·인자·보존 레지스터 규칙을 조합한다.", "displayOrder": 3, "rationaleMarkdown": "호출 명령어는 반환 주소를 레지스터에 기록하고 제어를 이동시키며, ABI는 인자·반환값·보존 레지스터 사용 약속을 정한다. ISA 동작과 소프트웨어 호출 규약이 함께 함수 호출을 구성한다."}
     ],
     "correctChoiceKey": "D",
-    "explanationMarkdown": "함수 경계를 넘어 어떤 register 값이 유지되는지 공통 ABI 약속이 필요하다. RISC-V 표준 ABI에서 s 계열은 callee-saved이므로 caller는 call 뒤에도 원래 값이 유지된다고 가정할 수 있다."
+    "explanationMarkdown": "함수 경계를 넘어 어떤 레지스터 값이 유지되는지 공통 ABI 약속이 필요하다. RISC-V 표준 ABI에서 s 계열은 피호출자 보존 레지스터이므로 호출자는 함수 호출 뒤에도 원래 값이 유지된다고 가정할 수 있다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.isa-execution.procedure-call-machine-level.q2",
-    "promptMarkdown": "caller-saved와 callee-saved register 규칙이 왜 필요한지, 각각 누가 값을 보존해야 하는지 설명하라.",
+    "promptMarkdown": "호출자 보존(caller-saved)과 피호출자 보존(callee-saved) 레지스터 규칙이 왜 필요한지, 각각 누가 값을 보존해야 하는지 설명하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.isa-execution.procedure-call-machine-level"],
-    "modelAnswer": "함수 경계를 넘어 어떤 register 값이 유지되는지 공통 ABI 약속이 필요하다. Caller-saved 값이 call 이후에도 필요하면 caller가 call 전에 보존하고, callee-saved register를 callee가 변경했다면 callee가 return 전에 원래 값을 복구한다.",
-    "explanationMarkdown": "Calling convention은 call 전후 어떤 register 값이 유지되는지를 caller와 callee가 합의하는 계약이다. Caller-saved는 필요하면 caller가, callee-saved는 변경한 callee가 원래 값을 보존해야 서로 독립적으로 컴파일된 코드가 안전하게 호출된다."
+    "modelAnswer": "함수 경계를 넘어 어떤 레지스터 값이 유지되는지 공통 ABI 약속이 필요하다. 호출자 보존 값이 호출 이후에도 필요하면 호출자가 호출 전에 보존하고, 피호출자 보존 레지스터를 피호출자가 변경했다면 피호출자가 반환 전에 원래 값을 복구한다.",
+    "explanationMarkdown": "호출 규약은 함수 호출 전후 어떤 레지스터 값이 유지되는지를 호출자와 피호출자가 합의하는 계약이다. 호출자 보존 값은 필요하면 호출자가, 피호출자 보존 값은 변경한 피호출자가 원래 값을 보존해야 서로 독립적으로 컴파일된 코드가 안전하게 호출된다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.isa-execution.procedure-call-machine-level.q3",
-    "promptMarkdown": "callee가 `s1`을 임시 계산에 사용하면서 저장·복구하지 않은 채 return했다. caller는 call 전에 `s1`에 중요한 pointer를 보관하고 있었다. 모든 instruction 자체가 정상 실행됐더라도 프로그램이 깨질 수 있는 이유를 ABI 관점에서 설명하라.",
+    "promptMarkdown": "피호출자가 `s1`을 임시 계산에 사용하면서 저장·복구하지 않은 채 반환했다. 호출자는 호출 전에 `s1`에 중요한 포인터를 보관하고 있었다. 모든 명령어 자체가 정상 실행됐더라도 프로그램이 깨질 수 있는 이유를 ABI 관점에서 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.isa-execution.procedure-call-machine-level"],
-    "modelAnswer": "RISC-V 표준 ABI에서 s 계열은 callee-saved이므로 caller는 call 뒤에도 원래 값이 유지된다고 가정할 수 있다. Callee가 s1을 바꾸고 복구하지 않으면 ABI contract를 위반해 caller가 잘못된 pointer를 사용하게 된다. 이는 ISA arithmetic 오류가 아니라 calling convention에 따른 machine-state 보존 실패다.",
-    "explanationMarkdown": "`s1` 같은 callee-saved register는 caller가 return 뒤에도 값이 유지된다고 믿는다. Callee가 복구하지 않으면 instruction은 모두 정상이어도 ABI를 위반해 caller의 pointer 같은 machine state가 손상될 수 있다."
+    "modelAnswer": "RISC-V 표준 ABI에서 s 계열은 피호출자 보존 레지스터이므로 호출자는 호출 뒤에도 원래 값이 유지된다고 가정할 수 있다. 피호출자가 `s1`을 바꾸고 복구하지 않으면 ABI 계약을 위반해 호출자가 잘못된 포인터를 사용하게 된다. 이는 ISA 산술 오류가 아니라 호출 규약에 따른 기계 상태 보존 실패다.",
+    "explanationMarkdown": "`s1` 같은 피호출자 보존 레지스터는 호출자가 반환 뒤에도 값이 유지된다고 믿는다. 피호출자가 복구하지 않으면 명령어는 모두 정상이어도 ABI를 위반해 호출자의 포인터 같은 기계 상태가 손상될 수 있다."
   }
 ]

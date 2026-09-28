@@ -3,8 +3,8 @@ kind: concept
 contentKey: network-http.core.request-journey.http-request-delivery
 topicContentKey: network-http.core.request-journey
 slug: http-request-delivery
-title: "HTTP Request가 Origin에 도달하는 과정"
-summary: "완성된 HTTP request가 intermediary를 거쳐 origin server까지 전달되거나 중간에서 처리될 수 있는 흐름을 설명한다."
+title: "HTTP 요청의 전달 경로"
+summary: "완성된 HTTP 요청이 여러 중개자를 거쳐 원본 서버로 전달되거나, 캐시·게이트웨이 같은 중간 지점에서 직접 처리될 수 있는 흐름을 설명한다."
 level: 2
 status: PUBLISHED
 displayOrder: 60
@@ -15,22 +15,56 @@ references:
     language: en
     displayOrder: 1
 ---
-# HTTP Request가 Origin에 도달하는 과정
+# HTTP 요청의 전달 경로
 
-transport와 TLS channel이 준비되면 client는 HTTP method, target, header와 필요한 body로 request를 만든다. 이 request가 항상 client에서 origin server로 한 번에 직접 전달되는 것은 아니다. forward proxy, CDN, reverse proxy, gateway나 load balancer 같은 intermediary가 중간 hop으로 참여할 수 있다.
+전송 연결과 필요한 TLS 보안 상태가 준비되면 클라이언트는 메서드, 요청 대상, 헤더 필드와 필요한 본문으로 HTTP 요청을 만든다. 하지만 이 요청이 항상 **클라이언트에서 원본 애플리케이션 서버까지 하나의 연결로 직접 전달되는 것은 아니다.**
 
-intermediary는 request를 받아 다음 hop으로 새 HTTP message를 전달할 수 있다. 이때 upstream connection은 client connection과 별개의 transport state를 사용하며, 일부 header는 hop 성격에 따라 제거되거나 다시 만들어질 수 있다. 그래서 하나의 사용자 요청이 여러 HTTP connection을 거쳐 origin에 도달할 수 있다.
-
-### Origin까지 가지 않고 응답이 만들어질 수도 있다
-
-cache가 fresh한 response를 가지고 있다면 intermediary가 origin에 요청을 전달하지 않고 직접 응답할 수 있다. gateway가 request를 정책상 거부하거나 upstream 연결에 실패해 자체 error response를 만들 수도 있다. 따라서 client가 HTTP response를 받았다는 사실만으로 origin application이 반드시 실행됐다고 단정할 수 없다.
+실제 서비스 경로에는 정방향 프록시, CDN, 리버스 프록시, 로드 밸런서, API 게이트웨이 같은 HTTP 중개자가 들어갈 수 있다.
 
 ```text
-client
-  ↓ HTTP hop 1
-proxy / CDN / gateway
-  ↓ HTTP hop 2
-origin server
+클라이언트
+    ↓ HTTP 연결 A
+CDN / 리버스 프록시 / 게이트웨이
+    ↓ HTTP 연결 B
+원본 서버
 ```
 
-이 흐름의 핵심은 HTTP가 단순한 end-to-end socket 한 개와 동일하지 않다는 점이다. **각 intermediary는 하나의 HTTP participant가 되어 request를 받아 처리하거나 다음 hop으로 전달하고, 경우에 따라 자신이 response를 만들 수도 있다.**
+사용자 관점에서는 하나의 요청처럼 보이지만 네트워크와 HTTP 관점에서는 여러 홉의 요청·응답 교환으로 나뉠 수 있다.
+
+### 중개자는 다음 홉에 별도의 요청을 만들 수 있다
+
+앞단 프록시가 클라이언트의 HTTP 요청을 받았다고 하자. 프록시는 자신의 정책에 따라 백엔드를 선택하고, 백엔드와 별도의 TCP·QUIC 연결을 사용해 HTTP 요청을 전달할 수 있다.
+
+이 과정에서 다음 값들이 원래 클라이언트 연결과 달라질 수 있다.
+
+- 실제 상대 IP 주소와 포트
+- TLS 연결과 인증서
+- HTTP authority
+- 홉별 헤더 필드
+- 타임아웃과 재시도 정책
+
+따라서 `클라이언트가 보낸 바이트가 그대로 원본 서버 소켓까지 전달된다`고 가정하면 프록시 환경의 실제 동작을 놓치게 된다.
+
+### HTTP 헤더도 모두 종단 간 그대로 전달되는 것은 아니다
+
+HTTP에는 종단 간 의미를 전달하는 필드도 있고 특정 연결 홉에만 의미가 있는 필드도 있다. 중개자는 프로토콜 규칙과 자신의 설정에 따라 일부 필드를 제거·추가·정규화할 수 있다.
+
+또한 원래 클라이언트의 주소나 스킴 같은 정보를 백엔드에 전달하기 위해 `Forwarded`, `X-Forwarded-*` 계열 메타데이터를 새로 만들 수도 있다. 이런 값은 중개자가 다시 작성한 정보이므로 백엔드가 무조건 신뢰해서는 안 되고 신뢰할 프록시 경계를 함께 구성해야 한다.
+
+### 원본 서버까지 가지 않고 응답이 만들어질 수도 있다
+
+클라이언트가 HTTP 응답을 받았다는 사실만으로 원본 애플리케이션이 실행됐다고 단정할 수 없다.
+
+```text
+클라이언트
+   ↓
+CDN 캐시 ── fresh 응답 있음 ──> 즉시 응답
+   │
+   └─ 캐시 사용 불가 ──> 원본 서버로 전달
+```
+
+공유 캐시가 재사용 가능한 응답을 가지고 있으면 원본 서버에 요청을 보내지 않고 직접 응답할 수 있다. 게이트웨이가 접근 정책 때문에 요청을 거부하거나, 백엔드 연결 실패를 감지해 `502`·`504` 같은 응답을 만들 수도 있다.
+
+그래서 장애 분석에서는 **어떤 HTTP 홉에서 요청이 멈췄고 어느 구성 요소가 최종 응답을 만들었는지** 확인해야 한다. 원본 애플리케이션 로그가 없다는 사실 자체가 요청이 그 이전 중개자에서 끝났다는 단서가 될 수 있다.
+
+핵심은 **하나의 사용자 HTTP 요청이 여러 HTTP 홉과 연결을 거칠 수 있고, 각 중개자가 요청을 변환·전달하거나 직접 응답할 수 있다는 점**이다.

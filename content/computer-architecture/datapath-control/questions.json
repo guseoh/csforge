@@ -2,196 +2,196 @@
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.datapath-control.alu-datapath.q1",
-    "promptMarkdown": "ALU가 datapath에서 주로 담당하는 역할로 가장 적절한 것은?",
+    "promptMarkdown": "ALU가 데이터패스(datapath)에서 주로 담당하는 역할로 가장 적절한 것은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.datapath-control.alu-datapath"],
     "choices": [
-      {"key": "A", "content": "clock edge 사이에도 값을 영구적으로 보존하는 architectural register 역할을 한다", "displayOrder": 0, "rationaleMarkdown": "Architectural register는 clock edge를 기준으로 값을 보존하는 순차 상태 요소다. ALU는 입력 operand에 연산을 수행하는 조합 논리 경로로, 값을 계속 저장하는 역할과 다르다."},
-      {"key": "B", "content": "opcode를 해석해 CPU 전체의 control signal을 생성한다", "displayOrder": 1, "rationaleMarkdown": "Instruction 해석과 datapath 동작 신호 생성을 담당하는 부분은 control unit이다. ALU는 control이 고른 산술·논리 연산을 실제 operand에 적용한다."},
-      {"key": "C", "content": "operand에 산술·논리 연산을 수행하고 비교 결과 등을 계산한다", "displayOrder": 2, "rationaleMarkdown": "ALU는 입력 operand에 산술·bitwise 논리·shift 연산을 적용하고 비교 결과도 계산할 수 있다. Operand를 가져오고 결과를 저장할 위치는 주변 datapath와 control이 정한다."},
-      {"key": "D", "content": "항상 다음 instruction의 주소를 결정해 PC를 갱신한다", "displayOrder": 3, "rationaleMarkdown": "다음 PC는 순차 증가, branch 조건, target 선택 등 control-flow 경로가 결정한다. ALU가 branch 비교에 참여할 수는 있지만 매 instruction의 PC 갱신을 단독으로 담당하지 않는다."}
+      {"key": "A", "content": "클록 엣지 사이에도 값을 영구적으로 보존하는 아키텍처 레지스터 역할을 한다", "displayOrder": 0, "rationaleMarkdown": "아키텍처 레지스터는 클록 엣지를 기준으로 값을 보존하는 순차 상태 요소다. ALU는 입력 피연산자에 연산을 수행하는 조합 논리 경로로, 값을 계속 저장하는 역할과 다르다."},
+      {"key": "B", "content": "opcode를 해석해 CPU 전체의 제어 신호를 생성한다", "displayOrder": 1, "rationaleMarkdown": "명령어 해석과 데이터패스 동작 신호 생성을 담당하는 부분은 제어 장치다. ALU는 제어 장치가 고른 산술·논리 연산을 실제 피연산자에 적용한다."},
+      {"key": "C", "content": "피연산자에 산술·논리 연산을 수행하고 비교 결과 등을 계산한다", "displayOrder": 2, "rationaleMarkdown": "ALU는 입력 피연산자에 산술·비트 논리·시프트 연산을 적용하고 비교 결과도 계산할 수 있다. 피연산자를 가져오고 결과를 저장할 위치는 주변 데이터패스와 제어 장치가 정한다."},
+      {"key": "D", "content": "항상 다음 명령어의 주소를 결정해 PC를 갱신한다", "displayOrder": 3, "rationaleMarkdown": "다음 PC는 순차 증가, 분기 조건, 대상 주소 선택 같은 제어 흐름 경로가 결정한다. ALU가 분기 비교에 참여할 수는 있지만 매 명령어의 PC 갱신을 단독으로 담당하지 않는다."}
     ],
     "correctChoiceKey": "C",
-    "explanationMarkdown": "ALU는 선택된 operand에 덧셈·뺄셈, bitwise logic, shift, comparison 같은 연산을 수행한다. Datapath의 register와 mux가 operand와 결과의 이동을 담당하고 control signal이 수행할 연산과 write 여부를 고른다."
+    "explanationMarkdown": "ALU는 선택된 피연산자에 덧셈·뺄셈, 비트 논리, 시프트, 비교 같은 연산을 수행한다. 데이터패스의 레지스터와 멀티플렉서가 피연산자와 결과의 이동을 담당하고 제어 신호가 수행할 연산과 쓰기 여부를 고른다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.datapath-control.alu-datapath.q2",
-    "promptMarkdown": "datapath와 control signal이 서로 어떤 역할을 나누는지 설명하라.",
+    "promptMarkdown": "데이터패스와 제어 신호가 서로 어떤 역할을 나누는지 설명하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.datapath-control.alu-datapath"],
-    "modelAnswer": "datapath는 register, ALU, mux와 같은 구성 요소를 통해 실제 data를 이동·계산한다. control logic은 현재 instruction에 맞춰 어떤 operand를 선택할지, 어떤 ALU 연산을 할지, memory/register write를 허용할지 같은 signal을 만들어 datapath의 동작을 선택한다.",
-    "explanationMarkdown": "Datapath는 값을 실제로 저장·이동·계산하는 하드웨어 경로이고 control은 그 경로 중 어떤 동작을 이번 instruction에서 활성화할지 선택한다. 즉 계산 장치와 동작 선택 신호를 분리해 보면 instruction 실행 흐름이 명확해진다."
+    "modelAnswer": "데이터패스는 레지스터, ALU, 멀티플렉서 같은 구성 요소를 통해 실제 데이터를 이동·계산한다. 제어 논리는 현재 명령어에 맞춰 어떤 피연산자를 선택할지, 어떤 ALU 연산을 할지, 메모리/레지스터 쓰기를 허용할지 같은 신호를 만들어 데이터패스의 동작을 선택한다.",
+    "explanationMarkdown": "데이터패스는 값을 실제로 저장·이동·계산하는 하드웨어 경로이고 제어 장치는 그 경로 중 어떤 동작을 이번 명령어에서 활성화할지 선택한다. 계산 장치와 동작 선택 신호를 분리해 보면 명령어 실행 흐름이 명확해진다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.datapath-control.alu-datapath.q3",
-    "promptMarkdown": "`ADD x3, x1, x2`에서 x1=7, x2=5이고 ALU가 12를 정상 계산했지만 `RegWrite`가 비활성화되어 있다. instruction 완료 뒤 architectural state에 어떤 일이 생기는지 설명하라.",
+    "promptMarkdown": "`ADD x3, x1, x2`에서 x1=7, x2=5이고 ALU가 12를 정상 계산했지만 `RegWrite`가 비활성화되어 있다. 명령어 완료 뒤 아키텍처 상태에 어떤 일이 생기는지 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.datapath-control.alu-datapath"],
-    "modelAnswer": "ALU 내부에는 12라는 계산 결과가 만들어지지만 destination register에 write가 허용되지 않으므로 x3의 architectural value는 바뀌지 않는다. 이 사례는 datapath에서 값을 계산하는 것과 control signal이 그 결과를 architectural state로 commit하도록 허용하는 것이 별도 책임임을 보여 준다.",
-    "explanationMarkdown": "ALU가 올바른 값을 계산했어도 register write가 허용되지 않으면 architectural state에는 반영되지 않는다. 계산 결과 생성과 그 결과의 commit은 control signal에 의해 분리된 단계다."
+    "modelAnswer": "ALU 내부에는 12라는 계산 결과가 만들어지지만 목적지 레지스터에 쓰기가 허용되지 않으므로 x3의 아키텍처 값은 바뀌지 않는다. 이 사례는 데이터패스에서 값을 계산하는 것과 제어 신호가 그 결과를 아키텍처 상태에 반영하도록 허용하는 것이 별도 책임임을 보여 준다.",
+    "explanationMarkdown": "ALU가 올바른 값을 계산했어도 레지스터 쓰기가 허용되지 않으면 아키텍처 상태에는 반영되지 않는다. 계산 결과 생성과 그 결과의 상태 반영은 제어 신호에 의해 분리된 단계다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.datapath-control.control-unit.q1",
-    "promptMarkdown": "control unit의 책임으로 가장 적절한 것은?",
+    "promptMarkdown": "제어 장치(control unit)의 책임으로 가장 적절한 것은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.datapath-control.control-unit"],
     "choices": [
-      {"key": "A", "content": "instruction 종류와 무관하게 모든 datapath signal을 항상 같은 값으로 유지한다", "displayOrder": 0, "rationaleMarkdown": "Control signal은 instruction 종류와 현재 상태에 맞춰 달라져야 register, ALU, memory 경로가 올바르게 동작한다. 모든 signal을 고정하면 서로 다른 instruction을 구분해 실행할 수 없다."},
-      {"key": "B", "content": "모든 산술 결과를 장기간 저장하는 register file 자체가 된다", "displayOrder": 1, "rationaleMarkdown": "Register file은 operand와 결과 같은 architectural state를 보관하는 저장 요소다. Control unit은 어떤 register를 읽고 쓸지 선택하는 신호를 만들지만 저장소 자체가 되지는 않는다."},
-      {"key": "C", "content": "cache miss가 발생할 때마다 DRAM의 물리 cell을 직접 읽는다", "displayOrder": 2, "rationaleMarkdown": "Cache miss가 나면 memory hierarchy의 cache controller와 memory controller가 lower level 접근을 처리한다. Instruction control unit은 DRAM의 물리 cell을 직접 구동하지 않는다."},
-      {"key": "D", "content": "instruction을 해석해 ALU operation, operand selection, register/memory write 같은 control signal을 결정한다", "displayOrder": 3, "rationaleMarkdown": "Control unit은 instruction encoding과 processor 상태를 해석해 연산 종류, operand 경로, register·memory write 같은 신호를 정한다. 실제 값의 계산과 이동은 신호를 받은 datapath가 수행한다."}
+      {"key": "A", "content": "명령어 종류와 무관하게 모든 데이터패스 신호를 항상 같은 값으로 유지한다", "displayOrder": 0, "rationaleMarkdown": "제어 신호는 명령어 종류와 현재 상태에 맞춰 달라져야 레지스터, ALU, 메모리 경로가 올바르게 동작한다. 모든 신호를 고정하면 서로 다른 명령어를 구분해 실행할 수 없다."},
+      {"key": "B", "content": "모든 산술 결과를 장기간 저장하는 레지스터 파일 자체가 된다", "displayOrder": 1, "rationaleMarkdown": "레지스터 파일은 피연산자와 결과 같은 아키텍처 상태를 보관하는 저장 요소다. 제어 장치는 어떤 레지스터를 읽고 쓸지 선택하는 신호를 만들지만 저장소 자체가 되지는 않는다."},
+      {"key": "C", "content": "캐시 미스가 발생할 때마다 DRAM의 물리 셀을 직접 읽는다", "displayOrder": 2, "rationaleMarkdown": "캐시 미스가 나면 메모리 계층의 캐시 컨트롤러와 메모리 컨트롤러가 하위 계층 접근을 처리한다. 명령어 제어 장치는 DRAM의 물리 셀을 직접 구동하지 않는다."},
+      {"key": "D", "content": "명령어를 해석해 ALU 연산, 피연산자 선택, 레지스터/메모리 쓰기 같은 제어 신호를 결정한다", "displayOrder": 3, "rationaleMarkdown": "제어 장치는 명령어 인코딩과 프로세서 상태를 해석해 연산 종류, 피연산자 경로, 레지스터·메모리 쓰기 같은 신호를 정한다. 실제 값의 계산과 이동은 신호를 받은 데이터패스가 수행한다."}
     ],
     "correctChoiceKey": "D",
-    "explanationMarkdown": "Control unit은 instruction encoding과 현재 상태를 해석해 ALU operation, operand mux, register write, memory access, next PC 같은 control signal을 만든다. 실제 data 계산과 이동은 그 signal을 받은 datapath가 수행한다."
+    "explanationMarkdown": "제어 장치는 명령어 인코딩과 현재 상태를 해석해 ALU 연산, 피연산자 선택, 레지스터 쓰기, 메모리 접근, 다음 PC 같은 제어 신호를 만든다. 실제 데이터 계산과 이동은 그 신호를 받은 데이터패스가 수행한다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.datapath-control.control-unit.q2",
-    "promptMarkdown": "hardwired control과 microprogrammed control이 control signal을 만드는 방식을 비교하고 대표적인 trade-off를 설명하라.",
+    "promptMarkdown": "하드와이어드 제어(hardwired control)와 마이크로프로그램 제어(microprogrammed control)가 제어 신호를 만드는 방식을 비교하고 대표적인 트레이드오프를 설명하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.datapath-control.control-unit"],
-    "modelAnswer": "hardwired control은 조합·순차 논리 회로로 instruction과 상태를 직접 해석해 signal을 만들어 빠른 대신 복잡한 ISA 변경이나 수정이 어렵다. microprogrammed control은 control store의 microinstruction sequence로 signal을 정의해 복잡한 동작을 구조화하고 수정하기 쉽지만 control store 조회와 sequencing 비용이 추가될 수 있다.",
-    "explanationMarkdown": "Hardwired control은 회로가 직접 signal을 만들어 빠른 대신 변경 유연성이 낮고, microprogrammed control은 microinstruction으로 복잡한 control sequence를 표현하기 쉬운 대신 추가 lookup/sequencing 비용이 있다."
+    "modelAnswer": "하드와이어드 제어는 조합·순차 논리 회로로 명령어와 상태를 직접 해석해 신호를 만들어 빠른 대신 복잡한 ISA 변경이나 수정이 어렵다. 마이크로프로그램 제어는 제어 저장소의 마이크로명령어 시퀀스로 신호를 정의해 복잡한 동작을 구조화하고 수정하기 쉽지만 제어 저장소 조회와 순서 진행 비용이 추가될 수 있다.",
+    "explanationMarkdown": "하드와이어드 제어는 회로가 직접 신호를 만들어 빠른 대신 변경 유연성이 낮고, 마이크로프로그램 제어는 마이크로명령어로 복잡한 제어 순서를 표현하기 쉬운 대신 추가 조회와 순서 진행 비용이 있다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.datapath-control.control-unit.q3",
-    "promptMarkdown": "base register가 0x1000이고 immediate가 0x20인 load instruction에서 control unit이 두 번째 ALU operand로 immediate가 아니라 다른 register 값 0x80을 선택했다. 이후 memory read가 정상 수행된다면 어떤 오류가 생기는지 datapath 흐름으로 설명하라.",
+    "promptMarkdown": "기준 레지스터가 0x1000이고 즉시값이 0x20인 load 명령어에서 제어 장치가 두 번째 ALU 피연산자로 즉시값이 아니라 다른 레지스터 값 0x80을 선택했다. 이후 메모리 읽기가 정상 수행된다면 어떤 오류가 생기는지 데이터패스 흐름으로 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.datapath-control.control-unit"],
-    "modelAnswer": "정상 effective address는 0x1020이어야 하지만 잘못된 operand select 때문에 ALU가 0x1080을 계산한다. memory unit은 자신에게 전달된 주소를 정상적으로 읽을 수 있으므로 엉뚱한 위치의 값을 load하거나 protection/page fault가 발생할 수 있다. ALU 자체가 맞게 계산했어도 control signal이 틀리면 instruction semantics가 깨진다.",
-    "explanationMarkdown": "이 오류의 핵심은 ALU가 틀린 것이 아니라 잘못된 operand-select signal로 올바르지 않은 주소를 계산하게 된 점이다. Datapath component가 정상이어도 control이 잘못되면 instruction semantics 전체가 깨질 수 있다."
+    "modelAnswer": "정상 유효 주소는 0x1020이어야 하지만 잘못된 피연산자 선택 때문에 ALU가 0x1080을 계산한다. 메모리 장치는 자신에게 전달된 주소를 정상적으로 읽을 수 있으므로 엉뚱한 위치의 값을 load하거나 보호·페이지 fault가 발생할 수 있다. ALU 자체가 맞게 계산했어도 제어 신호가 틀리면 명령어 의미가 깨진다.",
+    "explanationMarkdown": "이 오류의 핵심은 ALU가 틀린 것이 아니라 잘못된 피연산자 선택 신호로 올바르지 않은 주소를 계산하게 된 점이다. 데이터패스 구성 요소가 정상이어도 제어가 잘못되면 명령어 의미 전체가 깨질 수 있다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.datapath-control.clock-cycle.q1",
-    "promptMarkdown": "동기식 CPU에서 clock cycle을 이해한 설명으로 가장 적절한 것은?",
+    "promptMarkdown": "동기식 CPU에서 클록 사이클을 이해한 설명으로 가장 적절한 것은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.datapath-control.clock-cycle"],
     "choices": [
-      {"key": "A", "content": "한 cycle은 microarchitecture와 무관하게 항상 instruction 하나의 전체 실행 시간이다", "displayOrder": 0, "rationaleMarkdown": "Instruction은 microarchitecture에 따라 여러 cycle을 쓸 수도 있고 pipeline에서는 여러 instruction이 cycle마다 겹쳐 진행될 수 있다. 따라서 cycle 하나를 instruction 전체 실행 시간과 동일시할 수 없다."},
-      {"key": "B", "content": "조합 논리가 계산할 시간을 둔 뒤 clock edge를 기준으로 순차 상태를 갱신하는 시간 단위다", "displayOrder": 1, "rationaleMarkdown": "동기식 회로에서는 한 edge 뒤 조합 논리가 다음 값을 계산하고, 이어지는 edge에서 register 같은 순차 상태를 갱신한다. Cycle은 이 경로가 timing 조건을 만족하도록 허용하는 기준 구간이다."},
-      {"key": "C", "content": "frequency가 높아지면 workload의 CPI도 반드시 같은 비율로 감소한다", "displayOrder": 2, "rationaleMarkdown": "Frequency는 cycle당 시간과 관계하고 CPI는 workload와 microarchitecture의 명령 처리량을 나타낸다. Clock을 빠르게 한다고 명령당 cycle 수가 같은 비율로 줄어들지는 않는다."},
-      {"key": "D", "content": "cycle time은 clock frequency와 비례하므로 frequency가 높을수록 길어진다", "displayOrder": 3, "rationaleMarkdown": "Clock frequency와 cycle time은 서로 역수 관계다. 같은 설계에서 frequency를 높이려면 cycle time을 줄여야 하므로 안정적인 계산을 위한 timing 제약도 더 엄격해진다."}
+      {"key": "A", "content": "한 사이클은 마이크로아키텍처와 무관하게 항상 명령어 하나의 전체 실행 시간이다", "displayOrder": 0, "rationaleMarkdown": "명령어는 마이크로아키텍처에 따라 여러 사이클을 쓸 수도 있고 파이프라인에서는 여러 명령어가 사이클마다 겹쳐 진행될 수 있다. 따라서 사이클 하나를 명령어 전체 실행 시간과 동일시할 수 없다."},
+      {"key": "B", "content": "조합 논리가 계산할 시간을 둔 뒤 클록 엣지를 기준으로 순차 상태를 갱신하는 시간 단위다", "displayOrder": 1, "rationaleMarkdown": "동기식 회로에서는 한 엣지 뒤 조합 논리가 다음 값을 계산하고, 이어지는 엣지에서 레지스터 같은 순차 상태를 갱신한다. 사이클은 이 경로가 타이밍 조건을 만족하도록 허용하는 기준 구간이다."},
+      {"key": "C", "content": "클록 주파수가 높아지면 작업 부하의 CPI도 반드시 같은 비율로 감소한다", "displayOrder": 2, "rationaleMarkdown": "클록 주파수는 사이클당 시간과 관계하고 CPI는 작업 부하와 마이크로아키텍처의 명령 처리 비용을 나타낸다. 클록을 빠르게 한다고 명령당 사이클 수가 같은 비율로 줄어들지는 않는다."},
+      {"key": "D", "content": "사이클 시간은 클록 주파수와 비례하므로 주파수가 높을수록 길어진다", "displayOrder": 3, "rationaleMarkdown": "클록 주파수와 사이클 시간은 서로 역수 관계다. 같은 설계에서 주파수를 높이려면 사이클 시간을 줄여야 하므로 안정적인 계산을 위한 타이밍 제약도 더 엄격해진다."}
     ],
     "correctChoiceKey": "B",
-    "explanationMarkdown": "동기식 datapath에서는 clock edge 사이에 조합 논리가 계산하고 다음 edge에서 register 같은 순차 상태가 갱신된다. Cycle time은 결과가 안정되고 setup 조건을 만족할 시간을 포함해야 한다."
+    "explanationMarkdown": "동기식 데이터패스에서는 클록 엣지 사이에 조합 논리가 계산하고 다음 엣지에서 레지스터 같은 순차 상태가 갱신된다. 사이클 시간은 결과가 안정되고 setup 조건을 만족할 시간을 포함해야 한다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.datapath-control.clock-cycle.q2",
-    "promptMarkdown": "clock frequency를 `f`라고 할 때 cycle time을 식으로 쓰라.",
+    "promptMarkdown": "클록 주파수를 `f`라고 할 때 사이클 시간을 식으로 쓰라.",
     "questionType": "SHORT_ANSWER",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.datapath-control.clock-cycle"],
     "acceptedAnswers": ["1/f", "frequency의 역수", "clock frequency의 역수"],
-    "explanationMarkdown": "Frequency는 초당 cycle 수이므로 한 cycle의 시간은 그 역수다. 따라서 cycle time은 `T=1/f`로 계산한다."
+    "explanationMarkdown": "주파수는 초당 사이클 수이므로 한 사이클의 시간은 그 역수다. 따라서 사이클 시간은 `T=1/f`로 계산한다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.datapath-control.clock-cycle.q3",
-    "promptMarkdown": "같은 instruction 수를 실행하는 CPU A는 3 GHz, 평균 CPI 1.5이고 CPU B는 4 GHz, 평균 CPI 2.4다. instruction 수가 같다는 조건에서 어느 CPU의 실행 시간이 더 짧은지 계산 근거와 함께 설명하라.",
+    "promptMarkdown": "같은 명령어 수를 실행하는 CPU A는 3GHz, 평균 CPI 1.5이고 CPU B는 4GHz, 평균 CPI 2.4다. 명령어 수가 같다는 조건에서 어느 CPU의 실행 시간이 더 짧은지 계산 근거와 함께 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.datapath-control.clock-cycle"],
-    "modelAnswer": "instruction 하나당 평균 시간은 CPI/clock rate로 비교할 수 있다. A는 1.5/3 GHz = 0.5 ns, B는 2.4/4 GHz = 0.6 ns이므로 같은 instruction 수라면 A가 더 짧다. clock rate만 높다고 반드시 빠른 것이 아니라 CPI를 함께 봐야 한다.",
-    "explanationMarkdown": "성능 비교에서는 clock rate만 보지 말고 `CPI / clock rate`로 instruction당 평균 시간을 봐야 한다. 이 조건에서는 A가 0.5ns, B가 0.6ns이므로 같은 instruction 수라면 A가 더 빠르다."
+    "modelAnswer": "명령어 하나당 평균 시간은 CPI/클록 주파수로 비교할 수 있다. A는 1.5/3GHz = 0.5ns, B는 2.4/4GHz = 0.6ns이므로 같은 명령어 수라면 A가 더 짧다. 클록 주파수만 높다고 반드시 빠른 것이 아니라 CPI를 함께 봐야 한다.",
+    "explanationMarkdown": "성능 비교에서는 클록 주파수만 보지 말고 `CPI / clock rate`로 명령어당 평균 시간을 봐야 한다. 이 조건에서는 A가 0.5ns, B가 0.6ns이므로 같은 명령어 수라면 A가 더 빠르다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.datapath-control.critical-path.q1",
-    "promptMarkdown": "동기식 datapath에서 critical path가 clock 설계에 미치는 영향으로 가장 적절한 것은?",
+    "promptMarkdown": "동기식 데이터패스에서 임계 경로(critical path)가 클록 설계에 미치는 영향으로 가장 적절한 것은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.datapath-control.critical-path"],
     "choices": [
-      {"key": "A", "content": "critical path는 instruction count만 결정하고 clock rate에는 영향을 주지 않는다", "displayOrder": 0, "rationaleMarkdown": "Instruction count는 프로그램과 ISA가 수행하는 작업량에 관한 값이고 critical path는 한 cycle 안에 신호가 통과하는 조합 논리 지연이다. 이 지연은 가능한 clock period를 제한한다."},
-      {"key": "B", "content": "가장 짧은 논리 경로만 끝나면 다른 경로가 계산 중이어도 다음 clock edge를 안전하게 줄 수 있다", "displayOrder": 1, "rationaleMarkdown": "다른 register 경로가 아직 값을 계산 중이면 다음 edge에서 그 값을 안전하게 capture하지 못할 수 있다. 가장 짧은 경로가 아니라 timing 제약을 만족해야 하는 가장 긴 경로가 period를 제한한다."},
-      {"key": "C", "content": "register 사이의 가장 긴 조합 논리 지연이 최소 cycle time의 하한을 제한한다", "displayOrder": 2, "rationaleMarkdown": "가장 긴 register-to-register 조합 경로가 다음 edge 전에 안정되어야 한다. 따라서 그 지연에 setup time 등 timing 여유를 더한 값이 최소 cycle time의 하한이 된다."},
-      {"key": "D", "content": "critical path가 길어질수록 같은 회로에서 안전한 최대 frequency도 자동으로 높아진다", "displayOrder": 3, "rationaleMarkdown": "조합 지연이 길어지면 결과가 안정되기까지 더 긴 cycle을 기다려야 한다. 같은 회로에서 안전한 최대 frequency는 보통 낮아지며, 논리 최적화나 pipeline 분할이 필요할 수 있다."}
+      {"key": "A", "content": "임계 경로는 명령어 수만 결정하고 클록 주파수에는 영향을 주지 않는다", "displayOrder": 0, "rationaleMarkdown": "명령어 수는 프로그램과 ISA가 수행하는 작업량에 관한 값이고 임계 경로는 한 사이클 안에 신호가 통과하는 조합 논리 지연이다. 이 지연은 가능한 클록 주기를 제한한다."},
+      {"key": "B", "content": "가장 짧은 논리 경로만 끝나면 다른 경로가 계산 중이어도 다음 클록 엣지를 안전하게 줄 수 있다", "displayOrder": 1, "rationaleMarkdown": "다른 레지스터 경로가 아직 값을 계산 중이면 다음 엣지에서 그 값을 안전하게 저장하지 못할 수 있다. 가장 짧은 경로가 아니라 타이밍 제약을 만족해야 하는 가장 긴 경로가 주기를 제한한다."},
+      {"key": "C", "content": "레지스터 사이의 가장 긴 조합 논리 지연이 최소 사이클 시간의 하한을 제한한다", "displayOrder": 2, "rationaleMarkdown": "가장 긴 레지스터 간 조합 경로가 다음 엣지 전에 안정되어야 한다. 따라서 그 지연에 setup time 같은 타이밍 여유를 더한 값이 최소 사이클 시간의 하한이 된다."},
+      {"key": "D", "content": "임계 경로가 길어질수록 같은 회로에서 안전한 최대 주파수도 자동으로 높아진다", "displayOrder": 3, "rationaleMarkdown": "조합 지연이 길어지면 결과가 안정되기까지 더 긴 사이클을 기다려야 한다. 같은 회로에서 안전한 최대 주파수는 보통 낮아지며, 논리 최적화나 파이프라인 분할이 필요할 수 있다."}
     ],
     "correctChoiceKey": "C",
-    "explanationMarkdown": "Register에서 출발해 조합 논리를 지나 다음 register에 도달하는 경로 중 가장 긴 지연이 critical path다. Clock period를 그보다 짧게 잡으면 다음 edge에서 안정된 값을 저장하지 못할 수 있다."
+    "explanationMarkdown": "레지스터에서 출발해 조합 논리를 지나 다음 레지스터에 도달하는 경로 중 가장 긴 지연이 임계 경로다. 클록 주기를 그보다 짧게 잡으면 다음 엣지에서 안정된 값을 저장하지 못할 수 있다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.datapath-control.critical-path.q2",
-    "promptMarkdown": "register timing margin을 이미 포함한 critical path가 1.25 ns라면 이 경로가 허용하는 최대 clock frequency는 대략 얼마인가?",
+    "promptMarkdown": "레지스터 타이밍 여유를 이미 포함한 임계 경로가 1.25ns라면 이 경로가 허용하는 최대 클록 주파수는 대략 얼마인가?",
     "questionType": "SHORT_ANSWER",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.datapath-control.critical-path"],
     "acceptedAnswers": ["800 MHz", "0.8 GHz", "800MHz", "0.8GHz"],
-    "explanationMarkdown": "최소 cycle time이 1.25 ns라면 최대 frequency는 그 역수다. `1 / 1.25 ns = 0.8 GHz`, 즉 약 800 MHz다."
+    "explanationMarkdown": "최소 사이클 시간이 1.25ns라면 최대 주파수는 그 역수다. `1 / 1.25 ns = 0.8 GHz`, 즉 약 800MHz다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.datapath-control.critical-path.q3",
-    "promptMarkdown": "한 stage의 critical path가 1.8 ns다. 이를 두 pipeline stage로 나눴더니 조합 논리 지연이 각각 0.85 ns와 0.95 ns가 되었고 각 stage에 register overhead 0.10 ns가 필요하다. 새 최소 cycle time과 이 변경의 지연 시간/처리량 trade-off를 설명하라.",
+    "promptMarkdown": "한 단계의 임계 경로가 1.8ns다. 이를 두 파이프라인 단계로 나눴더니 조합 논리 지연이 각각 0.85ns와 0.95ns가 되었고 각 단계에 레지스터 오버헤드 0.10ns가 필요하다. 새 최소 사이클 시간과 이 변경의 지연 시간/처리량 트레이드오프를 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.datapath-control.critical-path"],
-    "modelAnswer": "각 stage는 조합 논리와 register overhead를 합쳐야 하므로 0.95 ns와 1.05 ns가 필요하고 최소 cycle time은 더 긴 1.05 ns다. clock rate는 높일 수 있어 pipeline이 채워진 뒤 처리량은 좋아질 수 있지만 한 작업이 두 stage를 지나므로 cycle 수 기준 지연 시간과 pipeline register 비용, hazard 처리 복잡도는 증가할 수 있다.",
-    "explanationMarkdown": "새 cycle time은 가장 느린 stage의 조합 논리와 register overhead가 결정하므로 1.05ns가 기준이 된다. Stage를 나누면 throughput은 좋아질 수 있지만 추가 register와 더 깊어진 pipeline 때문에 latency·hazard 비용까지 함께 생긴다."
+    "modelAnswer": "각 단계는 조합 논리와 레지스터 오버헤드를 합쳐야 하므로 0.95ns와 1.05ns가 필요하고 최소 사이클 시간은 더 긴 1.05ns다. 클록 주파수는 높일 수 있어 파이프라인이 채워진 뒤 처리량은 좋아질 수 있지만 한 작업이 두 단계를 지나므로 사이클 수 기준 지연 시간과 파이프라인 레지스터 비용, 해저드 처리 복잡도는 증가할 수 있다.",
+    "explanationMarkdown": "새 사이클 시간은 가장 느린 단계의 조합 논리와 레지스터 오버헤드가 결정하므로 1.05ns가 기준이 된다. 단계를 나누면 처리량은 좋아질 수 있지만 추가 레지스터와 더 깊어진 파이프라인 때문에 지연 시간·해저드 비용까지 함께 생긴다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.datapath-control.branch-control-flow.q1",
-    "promptMarkdown": "conditional branch가 pipelined CPU의 fetch에 문제를 만드는 핵심 이유는?",
+    "promptMarkdown": "조건부 분기가 파이프라인 CPU의 명령어 인출에 문제를 만드는 핵심 이유는?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.datapath-control.branch-control-flow"],
     "choices": [
-      {"key": "A", "content": "branch condition과 target이 확정되기 전에는 다음에 fetch할 PC가 불확실할 수 있다", "displayOrder": 0, "rationaleMarkdown": "분기 결과와 target이 확정되기 전에는 다음 PC가 순차 주소일지 branch 주소일지 결정되지 않을 수 있다. 잘못된 경로를 fetch하면 조건이 확인된 뒤 이를 폐기하고 올바른 주소에서 재시작한다."},
-      {"key": "B", "content": "branch instruction은 register나 PC를 전혀 읽지 않으므로 pipeline에 dependency가 생길 수 없다", "displayOrder": 1, "rationaleMarkdown": "Conditional branch는 보통 condition에 필요한 register 값을 읽고 비교 결과에 의존한다. 이런 데이터 의존성과 target 계산 때문에 다음 fetch 주소가 즉시 확정되지 않을 수 있다."},
-      {"key": "C", "content": "branch opcode만 decode하면 condition 평가 없이 target 여부가 항상 확정된다", "displayOrder": 2, "rationaleMarkdown": "Opcode decode로 branch 종류와 target 계산에 필요한 정보 일부를 얻을 수 있어도 조건이 참인지 평가해야 실제 다음 PC가 정해진다. Decode만으로 모든 분기의 방향이 확정되지는 않는다."},
-      {"key": "D", "content": "branch prediction이 맞더라도 이미 fetch한 모든 instruction을 반드시 폐기해야 한다", "displayOrder": 3, "rationaleMarkdown": "Prediction이 맞으면 미리 가져온 instruction은 올바른 경로에 있으므로 계속 실행할 수 있다. Flush와 재시작 비용은 주로 예측이 틀려 speculative 경로를 폐기할 때 발생한다."}
+      {"key": "A", "content": "분기 조건과 대상이 확정되기 전에는 다음에 인출할 PC가 불확실할 수 있다", "displayOrder": 0, "rationaleMarkdown": "분기 결과와 대상이 확정되기 전에는 다음 PC가 순차 주소일지 분기 주소일지 결정되지 않을 수 있다. 잘못된 경로를 인출하면 조건이 확인된 뒤 이를 폐기하고 올바른 주소에서 재시작한다."},
+      {"key": "B", "content": "분기 명령어는 레지스터나 PC를 전혀 읽지 않으므로 파이프라인에 의존성이 생길 수 없다", "displayOrder": 1, "rationaleMarkdown": "조건부 분기는 보통 조건에 필요한 레지스터 값을 읽고 비교 결과에 의존한다. 이런 데이터 의존성과 대상 계산 때문에 다음 인출 주소가 즉시 확정되지 않을 수 있다."},
+      {"key": "C", "content": "분기 opcode만 해독하면 조건 평가 없이 대상 여부가 항상 확정된다", "displayOrder": 2, "rationaleMarkdown": "Opcode 해독으로 분기 종류와 대상 계산에 필요한 정보 일부를 얻을 수 있어도 조건이 참인지 평가해야 실제 다음 PC가 정해진다. 해독만으로 모든 분기의 방향이 확정되지는 않는다."},
+      {"key": "D", "content": "분기 예측이 맞더라도 이미 인출한 모든 명령어를 반드시 폐기해야 한다", "displayOrder": 3, "rationaleMarkdown": "예측이 맞으면 미리 가져온 명령어는 올바른 경로에 있으므로 계속 실행할 수 있다. 폐기와 재시작 비용은 주로 예측이 틀려 추측 실행 경로를 버릴 때 발생한다."}
     ],
     "correctChoiceKey": "A",
-    "explanationMarkdown": "Branch condition과 target이 확정되기 전에는 sequential PC와 target PC 중 어느 주소를 fetch할지 알 수 없다. Prediction이 틀리면 잘못 가져온 instruction을 squash하고 올바른 PC에서 다시 시작해 penalty가 생긴다."
+    "explanationMarkdown": "분기 조건과 대상이 확정되기 전에는 순차 PC와 대상 PC 중 어느 주소를 인출할지 알 수 없다. 예측이 틀리면 잘못 가져온 명령어를 폐기하고 올바른 PC에서 다시 시작해 비용이 생긴다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.datapath-control.branch-control-flow.q2",
-    "promptMarkdown": "branch prediction이 틀렸을 때 pipeline에서 어떤 instruction이 잘못된 경로에 들어오며 CPU가 어떻게 복구하는지 설명하라.",
+    "promptMarkdown": "분기 예측이 틀렸을 때 파이프라인에서 어떤 명령어가 잘못된 경로에 들어오며 CPU가 어떻게 복구하는지 설명하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.datapath-control.branch-control-flow"],
-    "modelAnswer": "예측한 PC를 따라 branch 뒤의 instruction들을 미리 fetch/decode했지만 실제 branch 결과가 반대라면 그 instruction들은 architectural state에 반영되면 안 된다. CPU는 잘못된 경로의 work를 squash/flush하고 실제 target PC에서 fetch를 다시 시작하며 그동안의 빈 cycle이 misprediction penalty가 된다.",
-    "explanationMarkdown": "Misprediction에서는 예측 경로로 이미 들어온 instruction들이 잘못된 speculative work가 된다. CPU는 이들을 architectural state에 반영하지 않고 폐기한 뒤 실제 branch target에서 다시 fetch해야 하므로 그 공백이 penalty가 된다."
+    "modelAnswer": "예측한 PC를 따라 분기 뒤의 명령어들을 미리 인출·해독했지만 실제 분기 결과가 반대라면 그 명령어들은 아키텍처 상태에 반영되면 안 된다. CPU는 잘못된 경로의 작업을 폐기하고 실제 대상 PC에서 인출을 다시 시작하며 그동안 생긴 빈 사이클이 분기 예측 실패 비용이 된다.",
+    "explanationMarkdown": "분기 예측 실패에서는 예측 경로로 이미 들어온 명령어들이 잘못된 추측 작업이 된다. CPU는 이들을 아키텍처 상태에 반영하지 않고 폐기한 뒤 실제 분기 대상에서 다시 인출해야 하므로 그 공백이 비용이 된다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.datapath-control.branch-control-flow.q3",
-    "promptMarkdown": "ideal CPI가 1인 pipeline에서 instruction의 20%가 branch이고 branch의 10%가 mispredict되며 misprediction 하나당 12 cycle의 penalty가 추가된다고 하자. 다른 stall이 없다면 평균 CPI를 추정하고, predictor 정확도가 성능에 미치는 영향을 설명하라.",
+    "promptMarkdown": "이상적인 CPI가 1인 파이프라인에서 명령어의 20%가 분기이고 분기의 10%가 잘못 예측되며, 잘못된 예측 하나당 12사이클의 추가 비용이 든다고 하자. 다른 스톨이 없다면 평균 CPI를 추정하고, 예측기 정확도가 성능에 미치는 영향을 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.datapath-control.branch-control-flow"],
-    "modelAnswer": "instruction당 추가 stall은 0.20 × 0.10 × 12 = 0.24 cycle이므로 평균 CPI는 약 1.24다. branch 비율이나 penalty가 큰 pipeline일수록 같은 정확도 개선이 줄이는 wasted work가 커진다. 다만 실제 성능은 predictor 비용, pipeline depth와 다른 stall도 함께 측정해야 한다.",
-    "explanationMarkdown": "추가 CPI는 `branch 비율 × mispredict 비율 × penalty`로 근사할 수 있어 여기서는 0.24다. Branch가 많고 pipeline recovery 비용이 큰 CPU일수록 predictor 정확도 개선의 성능 효과도 커진다."
+    "modelAnswer": "명령어당 추가 스톨은 0.20 × 0.10 × 12 = 0.24사이클이므로 평균 CPI는 약 1.24다. 분기 비율이나 실패 비용이 큰 파이프라인일수록 같은 정확도 개선으로 줄일 수 있는 낭비 작업이 커진다. 다만 실제 성능은 예측기 비용, 파이프라인 깊이와 다른 스톨도 함께 측정해야 한다.",
+    "explanationMarkdown": "추가 CPI는 `분기 비율 × 잘못된 예측 비율 × 실패 비용`으로 근사할 수 있어 여기서는 0.24다. 분기가 많고 파이프라인 복구 비용이 큰 CPU일수록 예측 정확도 개선의 성능 효과도 커진다."
   }
 ]

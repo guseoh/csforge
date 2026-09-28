@@ -3,8 +3,8 @@ kind: concept
 contentKey: network-http.core.tls.symmetric-session-key
 topicContentKey: network-http.core.tls
 slug: symmetric-session-key
-title: "Symmetric Traffic Key"
-summary: "handshake에서 파생한 symmetric traffic key로 application data를 효율적으로 보호하는 이유를 설명한다."
+title: "대칭 세션 키"
+summary: "TLS 1.3이 핸드셰이크에서 만든 비밀 값으로 방향별 트래픽 키를 파생해 애플리케이션 데이터를 효율적으로 보호하는 방식을 설명한다."
 level: 1
 status: PUBLISHED
 displayOrder: 70
@@ -15,16 +15,54 @@ references:
     language: en
     displayOrder: 1
 ---
-# Symmetric Traffic Key
+# 대칭 세션 키
 
-TLS는 handshake에서 public-key signature와 key agreement를 사용하지만, 이후의 application data를 매번 public-key 연산으로 암호화하지 않는다. handshake에서 만든 secret으로부터 **symmetric traffic key**를 파생하고, 효율적인 symmetric cryptography로 대량의 data를 보호한다.
+TLS는 핸드셰이크에서 공개 키 기반 서명과 키 합의를 사용하지만, 이후 HTTP 데이터를 매번 비싼 공개 키 연산으로 직접 암호화하지 않는다. 핸드셰이크에서 얻은 비밀 값으로부터 **대칭 방식의 트래픽 키(traffic key)**를 파생하고, 실제 애플리케이션 데이터는 이 키로 효율적으로 보호한다.
 
-TLS 1.3에서는 AEAD(Authenticated Encryption with Associated Data) 방식으로 confidentiality와 integrity를 함께 제공한다. 수신자는 올바른 key와 record state를 사용해야 data를 복호화할 수 있고, 인증 검증에 실패한 record를 정상 application data로 받아들이지 않는다.
+TLS 1.3에서는 AEAD(Authenticated Encryption with Associated Data) 방식으로 암호화와 무결성 검증을 함께 수행한다. 올바른 키와 레코드 상태를 가진 상대만 내용을 정상적으로 복호화할 수 있고, 인증 검증에 실패한 레코드는 정상 애플리케이션 데이터로 받아들이지 않는다.
 
-### 하나의 고정된 `session key`만 있는 것으로 단순화하지 않는다
+```text
+키 합의·핸드셰이크
+        ↓
+공통 비밀과 키 스케줄
+        ↓
+클라이언트 → 서버 트래픽 키
+서버 → 클라이언트 트래픽 키
+        ↓
+TLS 레코드의 애플리케이션 데이터 보호
+```
 
-실제 TLS 1.3 key schedule은 handshake 단계와 application-data 단계에서 여러 secret을 파생하며, client→server와 server→client 방향도 별도의 traffic secret을 사용한다. 그래서 모든 TLS encryption을 하나의 대칭키 하나로 처리한다고 이해하면 세부 구조를 놓치게 된다.
+### TLS 1.3에는 하나의 고정된 `세션 키` 하나만 있는 것이 아니다
 
-traffic key는 TLS connection의 cryptographic context에 속한다. key update나 connection 종료에 따라 상태가 바뀔 수 있으며, 다른 독립 connection의 payload를 같은 record state로 처리하지 않는다.
+학습할 때는 편의상 `세션 키를 만든다`고 표현하기도 하지만 실제 TLS 1.3 키 스케줄은 더 세분화되어 있다. 핸드셰이크 단계와 애플리케이션 데이터 단계에서 서로 다른 비밀 값을 파생하고, 클라이언트→서버와 서버→클라이언트 방향도 별도의 트래픽 비밀과 키를 사용한다.
 
-TLS가 network 위의 payload를 보호하더라도 두 endpoint 내부에서는 application이 평문 data를 사용한다. 따라서 TLS의 암호화 범위는 **wire 위의 endpoint-to-endpoint channel**이며, endpoint 내부 memory나 application log까지 자동으로 암호화하는 기능은 아니다.
+따라서 다음처럼 이해하는 편이 정확하다.
+
+```text
+TLS 연결 하나
+  ├─ 핸드셰이크 보호용 키 상태
+  ├─ 클라이언트 → 서버 애플리케이션 트래픽 키
+  └─ 서버 → 클라이언트 애플리케이션 트래픽 키
+```
+
+연결 중에는 KeyUpdate를 통해 이후 트래픽에 사용할 키 상태를 갱신할 수도 있다. 그러므로 `TLS 연결이 시작할 때 대칭 키 하나를 만들고 끝까지 그대로 쓴다`고 단순화하면 실제 구조를 놓치게 된다.
+
+### 대칭 키는 연결의 암호 상태에 속한다
+
+트래픽 키는 TLS 연결의 암호 상태와 함께 관리된다. 다른 독립적인 TLS 연결의 데이터를 같은 키·레코드 순서 상태로 처리하는 것이 아니다. 연결이 종료되면 그 연결에서 사용하던 암호 상태도 더 이상 새로운 통신에 그대로 이어 쓰지 않는다.
+
+### TLS는 네트워크 구간을 보호하지 종단점 내부의 평문까지 자동으로 보호하지 않는다
+
+TLS 레코드는 두 TLS 종단점 사이를 지나는 데이터를 보호한다. 하지만 수신 종단점이 데이터를 복호화해 애플리케이션에 넘긴 뒤에는 애플리케이션 메모리·로그·데이터베이스에 평문이 존재할 수 있다.
+
+```text
+애플리케이션 평문
+      ↓ TLS 암호화
+네트워크의 보호된 레코드
+      ↓ TLS 복호화
+상대 애플리케이션 평문
+```
+
+따라서 HTTPS를 사용한다고 서버 내부 로그나 데이터베이스 값까지 자동으로 암호화되는 것은 아니다. 저장 데이터 암호화와 민감 정보 로그 정책은 별도 보안 책임이다.
+
+핵심은 **TLS가 핸드셰이크에서 파생한 방향별 대칭 트래픽 키로 네트워크상의 애플리케이션 데이터를 효율적으로 보호하며, 이 키 상태는 해당 TLS 연결의 암호 문맥에 속한다는 점**이다.

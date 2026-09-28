@@ -3,8 +3,8 @@ kind: concept
 contentKey: performance.core.operations.capacity-autoscaling
 topicContentKey: performance.core.operations
 slug: capacity-autoscaling
-title: "용량 계획과 Autoscaling"
-summary: "수요·peak·headroom·확장 지연을 계산하고 autoscaling을 capacity 계획을 보조하는 feedback loop로 이해한다."
+title: "용량 계획과 자동 확장"
+summary: "수요·최대 부하·여유 용량·확장 지연을 고려하고 자동 확장을 용량 계획을 보조하는 피드백 루프로 이해한다."
 level: 2
 status: PUBLISHED
 displayOrder: 30
@@ -14,28 +14,30 @@ references:
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
-    relationNote: "metric 기반 horizontal scaling과 stabilization 확인"
+    relationNote: "메트릭 기반 수평 확장과 안정화 방식 확인"
 ---
-# 용량 계획과 Autoscaling
+# 용량 계획과 자동 확장
 
-Capacity planning은 현재 평균 사용량만 보고 instance 수를 정하는 일이 아닙니다. 평상시 수요뿐 아니라 peak와 burst, 한 instance나 zone이 사라졌을 때 남는 여유, 새로운 capacity가 실제로 준비되기까지 걸리는 시간과 비용을 함께 봐야 합니다.
+용량 계획(capacity planning)은 현재 평균 사용량만 보고 인스턴스 수를 정하는 일이 아닙니다. 평상시 수요뿐 아니라 최대 부하와 순간 급증, 한 인스턴스나 가용 영역이 사라졌을 때 남는 여유, 새로운 처리 용량이 실제로 준비되기까지 걸리는 시간과 비용을 함께 봐야 합니다.
 
-Autoscaling은 이 계획을 일부 자동화하는 feedback loop입니다. Metric이 변한 뒤 수집·평가되고 scale decision이 내려진 다음 새 instance가 시작되고 warm-up을 끝내야 실제 처리 capacity가 늘어납니다. 따라서 급격한 burst를 autoscaling 하나만으로 즉시 흡수할 수 있다고 가정하면 안 됩니다.
+자동 확장(autoscaling)은 이 계획을 일부 자동화하는 피드백 루프입니다. 메트릭이 변한 뒤 수집·평가되고 확장 결정이 내려진 다음 새 인스턴스가 시작되고 준비 과정을 끝내야 실제 처리 용량이 늘어납니다. 따라서 급격한 순간 부하를 자동 확장 하나만으로 즉시 흡수할 수 있다고 가정하면 안 됩니다.
 
 ```text
-demand 증가
+수요 증가
    ↓
-metric 관측
+메트릭 관측
    ↓
-scale decision
+확장 결정
    ↓
-instance start / warm-up
+인스턴스 시작 / 준비
    ↓
-실제 capacity 증가
+실제 처리 용량 증가
 ```
 
-Scaling signal도 workload에 맞아야 합니다. CPU가 낮아도 queue age나 DB connection wait가 계속 증가할 수 있고, 반대로 startup 중 CPU가 높다고 steady-state demand가 높다는 뜻은 아닙니다. Request concurrency, queue depth·age, user latency 같은 workload signal과 CPU·memory 같은 resource signal을 함께 해석하는 편이 좋습니다.
+확장 신호도 작업 부하에 맞아야 합니다. CPU가 낮아도 대기열의 가장 오래된 작업 시간이나 DB 연결 대기가 계속 증가할 수 있고, 반대로 시작 중 CPU가 높다고 안정 상태의 수요가 높다는 뜻은 아닙니다. 요청 동시성, 대기열 깊이·대기 시간, 사용자 지연 시간 같은 작업 부하 신호와 CPU·메모리 같은 자원 신호를 함께 해석하는 편이 좋습니다.
 
-Feedback loop가 너무 민감하면 scale up/down이 반복되는 flapping이 생길 수 있습니다. Min/max replica, stabilization window, cooldown, scale-up/down 속도를 정하고 metric delay와 startup time을 고려해 충분한 headroom을 둡니다.
+피드백 루프가 너무 민감하면 확장과 축소가 반복되는 흔들림(flapping)이 생길 수 있습니다. 일반 자동 확장기에서는 이를 줄이기 위해 일정 시간 추가 확장을 막는 cooldown 같은 개념을 사용할 수 있습니다. Kubernetes HPA에서는 같은 안정화 목적을 `stabilizationWindowSeconds`와 확장·축소 정책으로 제어합니다. `tolerance`처럼 허용 오차를 조절하는 세부 설정은 Kubernetes 버전에 따라 지원 상태나 설정 위치가 달라질 수 있으므로 사용하는 버전의 공식 문서를 확인해야 합니다. 따라서 일반적인 cooldown을 HPA의 고유 설정 이름처럼 사용하면 안 됩니다.
 
-마지막으로 application replica만 늘어난다고 전체 capacity가 같은 비율로 늘어나는 것은 아닙니다. DB connection 수, broker partition, external API quota, node capacity처럼 공유하는 downstream 한계가 먼저 포화될 수 있습니다. 그래서 capacity planning은 **한 component의 autoscaling 설정이 아니라 end-to-end 병목과 실패 여유를 계산하는 작업**입니다.
+HPA가 외부 메트릭을 사용하려면 해당 값을 Kubernetes가 조회할 수 있는 외부 메트릭 API 경로와 어댑터가 필요합니다. 신호가 늦게 수집되거나 새 Pod가 준비되기까지 시간이 걸리는 점을 반영해 최소/최대 복제본 수와 충분한 여유 용량도 함께 설계해야 합니다.
+
+마지막으로 애플리케이션 복제본만 늘어난다고 전체 처리 용량이 같은 비율로 늘어나는 것은 아닙니다. DB 연결 수, 브로커 파티션, 외부 API 할당량, 노드 용량처럼 공유하는 하위 시스템 한계가 먼저 포화될 수 있습니다. 그래서 용량 계획은 **한 구성 요소의 자동 확장 설정이 아니라 전체 요청 경로의 병목과 실패 여유를 계산하는 작업**입니다.

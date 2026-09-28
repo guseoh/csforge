@@ -3,8 +3,8 @@ kind: concept
 contentKey: network-http.core.port-nat.nat-vs-firewall
 topicContentKey: network-http.core.port-nat
 slug: nat-vs-firewall
-title: "NAT / Firewall"
-summary: "주소 변환과 명시적 traffic policy의 책임을 구분한다."
+title: "NAT와 방화벽의 차이"
+summary: "NAT의 주소·포트 변환과 방화벽의 명시적 트래픽 허용·차단 정책을 분리해 설명한다."
 level: 2
 status: PUBLISHED
 displayOrder: 80
@@ -14,24 +14,33 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "NAT mapping과 inbound reachability를 확인한다."
+    recommendation: "전통적인 IPv4 NAT/NAPT의 주소·포트 변환과 상태 관리 규칙을 확인한다."
     displayOrder: 1
 ---
-# NAT / Firewall
+# NAT와 방화벽의 차이
 
-NAT와 firewall은 같은 gateway 장비에 함께 구현되는 경우가 많지만 **서로 다른 문제를 해결한다.** NAT는 packet의 source/destination address나 port를 변환하고 그 translation 관계를 관리한다. Firewall은 traffic의 source, destination, protocol, port, connection state 같은 조건을 정책과 비교해 허용하거나 차단한다.
+NAT와 방화벽은 가정용 공유기나 클라우드 네트워크 장비에서 함께 동작하는 경우가 많아 같은 기능처럼 보이기 쉽다. 하지만 **NAT는 주소·포트를 변환하고, 방화벽은 트래픽을 허용할지 차단할지 판단한다.**
 
 ```text
-NAT      : 이 packet의 address/port를 무엇으로 바꿀까?
-Firewall : 이 packet을 통과시킬 것인가?
+NAT      : 이 패킷의 주소·포트를 무엇으로 바꿀까?
+방화벽   : 이 패킷을 통과시켜도 되는가?
+라우팅   : 이 패킷을 어느 다음 홉으로 보낼까?
 ```
 
-### Mapping이 있다는 것과 허용된다는 것은 다르다
+세 기능이 한 장비에 있어도 판단 기준과 상태는 다르다.
 
-NAT mapping이 존재해 reply를 어느 내부 endpoint로 되돌릴 수 있어도 firewall policy가 해당 traffic을 거부할 수 있다. 반대로 firewall이 packet을 허용해도 필요한 route나 translation mapping, destination listener가 없으면 connection은 성립하지 않는다.
+### NAT 매핑이 있다고 통신이 허용된 것은 아니다
 
-### NAT가 보안 장치처럼 보일 수 있는 이유
+NAT 매핑이 있어 응답 패킷을 어느 내부 종단점으로 돌려보낼 수 있더라도 방화벽 규칙이 트래픽을 거부하면 전달되지 않을 수 있다.
 
-Stateful outbound NAT에서는 mapping 없는 unsolicited inbound packet의 내부 destination을 정할 수 없어 전달되지 않는 경우가 많다. 결과만 보면 inbound traffic이 차단된 것처럼 보이지만 이것을 명시적인 security policy와 동일시하면 안 된다. Port forwarding 같은 mapping을 추가하면 reachability가 바뀔 수 있기 때문이다.
+반대로 방화벽이 허용해도 라우팅이 없거나 필요한 NAT 목적지 매핑이 없거나 서버 리스너가 없다면 연결은 성립하지 않는다.
 
-NAT / Firewall의 핵심은 **NAT는 endpoint translation을, firewall은 명시적인 traffic allow/deny policy를 담당하며 두 책임을 분리해야 한다는 것**이다.
+### NAT가 보안 장치처럼 보이는 이유
+
+일반적인 outbound NAT에서는 내부가 먼저 만든 매핑이 없으면 외부에서 시작한 패킷의 내부 목적지를 알 수 없어 전달하지 못할 수 있다. 결과만 보면 외부 접속을 막은 것처럼 보인다.
+
+하지만 정적 NAT·포트 포워딩을 추가하면 내부 목적지가 정의되어 도달 가능성이 달라진다. 이때 실제 접근을 허용할지는 방화벽 정책이 별도로 판단해야 한다.
+
+따라서 `NAT 뒤에 있으니 안전하다`를 보안 정책으로 삼으면 안 된다. **변환 관계와 허용 정책을 명시적으로 분리**해야 구성 변경 때 예상치 못한 노출을 줄일 수 있다.
+
+핵심은 **NAT는 네트워크 주소·포트의 변환 관계를, 방화벽은 트래픽의 명시적 허용·차단 정책을 담당하며 둘은 서로 대체하지 않는다는 점**이다.
