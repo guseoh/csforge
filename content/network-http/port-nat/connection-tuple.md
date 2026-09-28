@@ -14,7 +14,7 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "TCP 연결이 양쪽 소켓 정보로 구분되는 기본 연결 식별 경계를 확인한다."
+    recommendation: "TCP 연결, 바이트 스트림, 시퀀스·ACK와 연결 상태의 기본 규칙을 확인한다."
     displayOrder: 1
 ---
 # 연결 식별 튜플
