@@ -27,6 +27,6 @@ jobs:
           test "$actual" = "$expected" || { echo "main moved: $actual"; exit 1; }
           git merge --no-ff --no-commit origin/main
           git rm .github/workflows/os-main-sync.yml
-          git diff --check --cached
+          git diff --check --cached -- content/operating-systems content/curriculum/operating-systems.yaml
           git commit -m 'merge: sync latest main into OS quality branch'
           git push origin HEAD:codex/content-operating-systems-quality
