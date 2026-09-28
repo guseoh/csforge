@@ -4,7 +4,7 @@ contentKey: network-http.core.layering.why-layering
 topicContentKey: network-http.core.layering
 slug: why-layering
 title: "계층화가 필요한 이유"
-summary: "network 기능을 계층으로 나누는 이유를 설명한다."
+summary: "네트워크 기능을 계층별 책임과 계약으로 나누면 변경 영향과 장애 원인을 좁힐 수 있는 이유를 설명한다."
 level: 1
 status: PUBLISHED
 displayOrder: 10
@@ -14,28 +14,34 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "Internet protocol layering의 책임 경계를 확인한다."
+    recommendation: "인터넷 호스트의 링크·인터넷·전송·애플리케이션 계층 책임을 확인한다."
     displayOrder: 1
 ---
 # 계층화가 필요한 이유
 
-Network layering은 local link 전달, IP forwarding, transport delivery, application protocol처럼 서로 다른 문제를 **각각의 책임과 interface로 분리하기 위한 설계 방식**이다. 모든 기능을 하나의 protocol 안에 넣지 않고 계층별 계약으로 나누면 한 계층의 구현이 바뀌어도 다른 계층이 기대하는 interface를 유지할 수 있다.
+네트워크 통신에는 `같은 링크에서 다음 장비로 보내기`, `여러 네트워크를 지나 목적지까지 가기`, `목적지 호스트의 올바른 애플리케이션에 데이터 전달하기`, `받은 바이트를 HTTP 요청처럼 해석하기`처럼 서로 다른 문제가 겹쳐 있다. **계층화(layering)**는 이 문제들을 하나의 거대한 프로토콜로 처리하지 않고, 각 계층이 맡을 책임과 다음 계층에 제공할 계약을 나누는 방식이다.
 
-예를 들어 application은 Ethernet frame을 직접 만들지 않고 transport/network가 제공하는 communication interface를 사용한다. 반대로 router는 HTTP message의 의미를 몰라도 IP header를 보고 packet을 다음 hop으로 전달할 수 있다.
+예를 들어 웹 애플리케이션은 이더넷 프레임을 직접 만들 필요 없이 TCP 소켓을 통해 바이트를 보낼 수 있다. 반대로 라우터는 HTTP 메서드의 뜻을 몰라도 IP 목적지 주소와 라우팅 정보를 이용해 패킷을 다음 홉으로 전달할 수 있다.
 
-### 계층마다 질문이 다르다
+### 계층마다 답해야 하는 질문이 다르다
 
-| 계층 | 맡는 책임 | 답하는 질문 |
+| 계층 | 주된 책임 | 대표 질문 |
 | --- | --- | --- |
-| Link | 같은 local link의 다음 장비로 frame 전달 | 다음 hop까지 어떻게 전달할까? |
-| Network | 여러 network를 지나 destination host로 packet forwarding | 목적지 host까지 어떤 경로로 갈까? |
-| Transport | host 안의 endpoint에 delivery contract 제공 | 어떤 process에 어떤 전달 보장으로 보낼까? |
-| Application | 전달된 bytes를 protocol message와 의미로 해석 | 받은 data를 어떤 요청이나 응답으로 볼까? |
+| 링크 | 같은 로컬 링크에서 프레임 전달 | 다음 장비까지 어떻게 보낼까? |
+| 네트워크 | 여러 네트워크 사이에서 IP 패킷 전달 | 목적지까지 어느 다음 홉으로 갈까? |
+| 전송 | 호스트의 종단점 구분과 전송 특성 제공 | 어느 포트에 어떤 전달 특성으로 보낼까? |
+| 애플리케이션 | 전달된 바이트를 프로토콜 메시지로 해석 | 이 데이터는 어떤 요청·응답을 뜻할까? |
 
-이렇게 질문을 분리하면 장애를 분석할 때도 `어느 계층의 state와 guarantee가 깨졌는가`를 구분할 수 있다.
+이 구분은 단순한 암기용 표가 아니다. 장애를 볼 때도 `DNS는 주소를 찾았는가`, `IP 경로는 있는가`, `TCP 연결은 성립했는가`, `TLS 검증은 통과했는가`, `HTTP 요청은 유효한가`를 단계별로 나눠 볼 수 있게 한다.
 
-### 계층은 구현을 강제로 분리하는 규칙이 아니다
+### 하위 계층의 성공은 상위 계층의 성공을 보장하지 않는다
 
-실제 system에서는 NIC offload, proxy, kernel stack처럼 하나의 구현이 여러 계층과 관련된 일을 수행할 수 있다. Layering의 목적은 component를 반드시 물리적으로 나누는 데 있지 않고 **각 protocol이 무엇을 책임하고 무엇을 보장하지 않는지 명확히 reasoning하는 데** 있다.
+IP 패킷이 목적지 호스트까지 도착해도 TCP 포트에 리스너가 없으면 연결은 실패한다. TCP 연결이 성공해도 TLS 인증서 검증이 실패할 수 있고, TLS가 성공해도 HTTP 요청 형식이나 애플리케이션 권한 검사는 실패할 수 있다.
 
-하위 계층의 성공이 상위 계층의 성공을 자동으로 의미하지도 않는다. IP packet이 destination에 도착했다고 HTTP message가 유효하다는 뜻은 아니고, HTTP 응답을 받았다고 application business operation이 성공했다는 뜻도 아니다.
+따라서 `네트워크가 연결됐다 = 서비스가 정상이다`처럼 여러 계층의 성공 조건을 하나로 합치면 장애 원인을 잘못 찾기 쉽다.
+
+### 계층화는 구현을 반드시 물리적으로 쪼개라는 규칙이 아니다
+
+실제 시스템에서는 운영체제 커널, NIC 오프로딩, 프록시처럼 하나의 구성 요소가 여러 계층과 관련된 일을 할 수 있다. 계층화의 목적은 프로그램을 몇 개로 나눌지 결정하는 것이 아니라 **각 프로토콜이 무엇을 책임하고 무엇은 책임하지 않는지 구분해서 사고하는 것**이다.
+
+핵심은 **계층마다 관찰하는 주소·상태와 보장 범위가 다르며, 이 경계를 유지해야 변경 영향과 장애 원인을 정확히 좁힐 수 있다는 점**이다.
