@@ -14,7 +14,7 @@ references:
     referenceType: BOOK
     language: en
     depth: chapter
-    recommendation: "프로세스 안에서 스레드가 공유하는 상태와 스레드별 실행 문맥, 생성·스케줄링의 기본 모델을 확인한다."
+    recommendation: "process 안에서 thread가 공유하는 주소 공간과 thread별 실행 context를 확인한다."
     relationNote: "이 Concept에서는 CPU를 실제 사용하는 시간과 대기 시간을 구분하고, 실행 가능한 스레드 수를 CPU 코어·메모리·연결 수 같은 제한 자원과 함께 판단한다."
     displayOrder: 1
 ---
