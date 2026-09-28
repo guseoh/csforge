@@ -14,7 +14,7 @@ references:
     referenceType: BOOK
     language: en
     depth: section
-    recommendation: "inode, directory entry, data block과 allocation 구조가 파일 시스템 접근 경로를 만드는 방식을 확인한다."
+    recommendation: "inode, directory entry, data block, allocation 구조가 file-system access path를 만드는 방식을 확인한다."
     relationNote: "이 Concept에서는 파일 시스템 경로의 배경을 확인하는 보조 자료로 사용한다. page cache 자체의 동작은 Linux 공식 문서를 함께 본다."
     displayOrder: 1
   - url: "https://docs.kernel.org/admin-guide/mm/concepts.html"
