@@ -4,7 +4,7 @@ contentKey: operating-systems.core.scheduling.fcfs
 topicContentKey: operating-systems.core.scheduling
 slug: fcfs
 title: "선착순 스케줄링(FCFS)"
-summary: "도착 순서대로 실행하는 정책의 단순성과 convoy effect를 실제 대기 시간으로 설명한다."
+summary: "도착 순서대로 실행하는 정책의 단순성과 호송 효과(convoy effect)를 실제 대기 시간으로 설명한다."
 level: 1
 status: PUBLISHED
 displayOrder: 40
@@ -43,12 +43,12 @@ C = 110 ms
 평균 = 70 ms
 ```
 
-짧은 B와 C는 실행 자체는 각각 10 ms면 끝나지만 앞의 A 때문에 오래 기다린다. 이런 현상을 **convoy effect**라고 한다.
+짧은 B와 C는 실행 자체는 각각 10 ms면 끝나지만 앞의 A 때문에 오래 기다린다. 이런 현상을 **호송 효과(convoy effect)**라고 한다.
 
 ### 단순한 순서 정책의 한계다
 
 FCFS가 잘못된 정책이라는 뜻은 아니다. 작업 길이가 비슷하고 도착 순서를 보존하는 단순한 정책이 중요하다면 충분히 합리적일 수 있다. 문제는 도착 순서가 작업의 비용이나 응답 중요도를 전혀 반영하지 않는다는 데 있다.
 
-전통적인 FCFS 설명은 보통 비선점(non-preemptive) 모델을 가정한다. 한 작업이 CPU를 잡으면 CPU burst가 끝날 때까지 실행되므로 앞의 긴 작업이 뒤의 모든 작업의 대기 시간에 직접 영향을 준다.
+전통적인 FCFS 설명은 보통 비선점(non-preemptive) 모델을 가정한다. 한 작업이 CPU를 잡으면 CPU 버스트가 끝날 때까지 실행되므로 앞의 긴 작업이 뒤의 모든 작업의 대기 시간에 직접 영향을 준다.
 
 FCFS의 핵심은 FIFO 정의 자체가 아니라 **작업 시간 차이를 고려하지 않는 도착 순서 정책이 평균 대기 시간과 반환 시간을 크게 악화시킬 수 있다는 점**이다.
