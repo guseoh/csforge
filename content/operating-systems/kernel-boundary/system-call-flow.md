@@ -4,7 +4,7 @@ contentKey: operating-systems.core.kernel-boundary.system-call-flow
 topicContentKey: operating-systems.core.kernel-boundary
 slug: system-call-flow
 title: "시스템 콜 흐름(System Call Flow)"
-summary: "user 요청이 controlled kernel entry를 지나 argument validation·service 실행·return으로 이어지는 상태 변화를 설명한다."
+summary: "사용자 공간의 요청이 통제된 커널 진입을 지나 인자 검증·서비스 실행·결과 반환으로 이어지는 상태 변화를 설명한다."
 level: 2
 status: PUBLISHED
 displayOrder: 50
@@ -14,53 +14,53 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "Linux system-call ABI가 architecture별로 다른 instruction과 register convention을 사용하는 점을 확인한다."
+    recommendation: "Linux 시스템 콜 ABI가 아키텍처별로 서로 다른 명령어와 레지스터 규약을 사용하는 점을 확인한다."
     displayOrder: 1
 ---
 # 시스템 콜 흐름(System Call Flow)
 
-System call은 단순히 `user mode에서 kernel mode로 바뀐다`는 한 단계가 아니다. User space에서 요청을 준비하고, controlled entry를 지나 kernel이 argument를 검증하고 service를 실행한 뒤 결과를 다시 user space에 반환하는 흐름으로 볼 수 있다.
+시스템 콜은 단순히 `사용자 모드에서 커널 모드로 바뀐다`는 한 단계가 아니다. 사용자 공간에서 요청을 준비하고, 통제된 진입 경로를 지나 커널이 인자를 검증하고 서비스를 실행한 뒤 결과를 다시 사용자 공간에 반환하는 흐름으로 볼 수 있다.
 
 ```text
-user-space wrapper
+사용자 공간의 래퍼 함수
       ↓
-syscall number + arguments 준비
+시스템 콜 번호 + 인자 준비
       ↓
-controlled kernel entry
+통제된 커널 진입
       ↓
-validate / dispatch
+검증 / 요청 분기
       ↓
-kernel service
+커널 서비스
       ↓
-return value / error
+반환값 / 오류
       ↓
-user space 복귀
+사용자 공간 복귀
 ```
 
-### 1. User space에서 요청 정보를 준비한다
+### 1. 사용자 공간에서 요청 정보를 준비한다
 
-예를 들어 `read` 계열 요청이라면 file descriptor, user buffer address, 요청 길이 같은 argument가 필요하다. Runtime이나 library wrapper가 이 값을 system-call ABI에 맞게 준비한다.
+예를 들어 `read` 계열 요청이라면 파일 디스크립터, 사용자 버퍼 주소, 요청 길이 같은 인자가 필요하다. 런타임이나 라이브러리 래퍼가 이 값을 시스템 콜 ABI에 맞게 준비한다.
 
-### 2. CPU가 정해진 entry로 control을 넘긴다
+### 2. CPU가 정해진 진입 경로로 제어를 넘긴다
 
-Application은 임의의 kernel function으로 jump해 privilege를 얻지 않는다. Architecture가 제공하는 controlled entry mechanism을 통해 kernel handler로 들어가며, user execution을 다시 이어갈 수 있도록 필요한 state가 보존된다.
+애플리케이션은 임의의 커널 함수로 점프해 권한을 얻지 않는다. 아키텍처가 제공하는 통제된 진입 메커니즘을 통해 커널 처리기로 들어가며, 사용자 코드 실행을 다시 이어갈 수 있도록 필요한 상태가 보존된다.
 
-이 과정은 mode switch를 포함할 수 있지만 그 자체가 context switch를 뜻하지는 않는다.
+이 과정은 모드 전환을 포함할 수 있지만 그 자체가 문맥 전환을 뜻하지는 않는다.
 
-### 3. Kernel이 argument를 검증하고 service를 실행한다
+### 3. 커널이 인자를 검증하고 서비스를 실행한다
 
-Kernel은 syscall number를 기준으로 요청을 dispatch하고 descriptor, permission, user pointer와 length 같은 입력을 확인한다.
+커널은 시스템 콜 번호를 기준으로 요청을 분기하고 파일 디스크립터, 접근 권한, 사용자 포인터와 길이 같은 입력을 확인한다.
 
-Service가 즉시 끝날 수도 있지만 I/O나 resource를 기다려야 한다면 current task를 waiting 상태로 두고 scheduler가 다른 runnable task를 실행할 수 있다.
+서비스가 즉시 끝날 수도 있지만 I/O나 자원을 기다려야 한다면 현재 작업을 대기 상태로 두고 스케줄러가 다른 실행 가능한 작업을 실행할 수 있다.
 
 ```text
-service
-  ├─ immediately ready → return
-  └─ must wait → task sleeps → event → runnable → resume
+서비스 실행
+  ├─ 즉시 완료 가능 → 결과 반환
+  └─ 대기 필요      → 작업 대기 → 사건 발생 → 실행 가능 → 재개
 ```
 
-### 4. 결과를 반환하고 user execution을 재개한다
+### 4. 결과를 반환하고 사용자 코드 실행을 재개한다
 
-Service가 끝나면 kernel은 success result, partial result 또는 error를 ABI에 맞게 전달하고 user mode로 돌아간다. Library/runtime은 이를 자신이 제공하는 API 형태로 다시 해석할 수 있다.
+서비스가 끝나면 커널은 성공 결과, 부분 결과 또는 오류를 ABI에 맞게 전달하고 사용자 모드로 돌아간다. 라이브러리나 런타임은 이를 자신이 제공하는 API 형태로 다시 해석할 수 있다.
 
-System call flow를 이해하는 핵심은 **kernel entry 자체보다 검증·blocking·scheduling·return이 하나의 resource 요청 lifecycle로 이어진다는 것**이다.
+시스템 콜 흐름을 이해하는 핵심은 **커널 진입 자체보다 검증·대기·스케줄링·반환이 하나의 자원 요청 생명 주기로 이어진다는 것**이다.
