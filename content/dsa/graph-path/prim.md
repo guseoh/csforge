@@ -14,7 +14,7 @@ references:
     referenceType: BOOK
     language: en
     depth: section
-    recommendation: "MST의 cut property, Prim·Kruskal 선택과 구현 비용을 확인한다."
+    recommendation: "MST의 컷 속성(cut property), Prim·Kruskal 선택과 구현 비용을 확인한다."
     displayOrder: 1
 ---
 # 프림 알고리즘(Prim)
