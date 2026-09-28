@@ -1,676 +1,677 @@
 schemaVersion: 2
 area:
   key: data-structures-algorithms
-  title: "Data Structures & Algorithms"
-  baseline: "invariants, operations, correctness, complexity and algorithm selection"
+  title: "자료구조 & 알고리즘"
+  baseline: "불변식, 연산, 정확성, 복잡도, 알고리즘 선택"
   contentKeyPrefix: dsa.core
   status: CANONICAL_FOUNDATION
 policies:
   language:
     authoringLanguage: ko-KR
-    explanationRule: "Invariant에서 시작해 operation·state change·correctness·complexity·trade-off를 연결한다."
+    explanationRule: "불변식에서 시작해 연산·상태 변화·정확성·복잡도·상충 관계를 연결한다."
   question:
     hardRule: "자료구조 상태와 제약, 실패 경로 또는 복잡도를 함께 추론한다."
+    shortAnswerRule: "짧고 안정적으로 채점 가능한 단일 용어·값·상태만 묻고, 복수 결과나 원인·과정 설명이 필요하면 DESCRIPTIVE 또는 SCENARIO를 사용한다."
   visualization:
     values: [NONE, TEXT, DIAGRAM]
 topics:
   - key: dsa.core.complexity
-    title: "Complexity and Correctness"
+    title: "복잡도와 정확성"
     order: 10
-    scope: "입력 크기, 점근 표기, amortized analysis와 invariant를 다룬다."
+    scope: "입력 크기, 점근 표기, 분할 상환 분석과 불변식을 다룬다."
     boundary: "알고리즘의 비용과 정확성을 다루며 특정 Java collection API 사용법은 중심에 두지 않는다."
     concepts:
       - key: dsa.core.complexity.input-size-operation-count
-        title: "Input Size and Operation Count"
+        title: "입력 크기와 연산 횟수"
         order: 10
         level: 1
         objective: "입력 크기와 반복되는 기본 연산 수를 세어 비용을 모델링한다."
         density: CORE
         visualization: TEXT
       - key: dsa.core.complexity.big-o-theta-omega
-        title: "Big-O, Theta and Omega"
+        title: "Big-O·Theta·Omega 점근 표기"
         order: 20
         level: 1
         objective: "상한·정확한 차수·하한을 점근 표기로 구분한다."
         density: CORE
         visualization: TEXT
       - key: dsa.core.complexity.best-average-worst
-        title: "Best, Average and Worst Case"
+        title: "최선·평균·최악의 경우"
         order: 30
         level: 1
         objective: "입력 분포와 보장 수준에 따른 세 비용 관점을 비교한다."
         density: STANDARD
         visualization: TEXT
       - key: dsa.core.complexity.time-space-tradeoff
-        title: "Time-Space Trade-off"
+        title: "시간·공간 절충(Time-Space Trade-off)"
         order: 40
         level: 1
         objective: "추가 메모리로 시간을 줄이는 선택의 경계를 분석한다."
         density: CORE
         visualization: TEXT
       - key: dsa.core.complexity.amortized-analysis
-        title: "Amortized Analysis"
+        title: "분할 상환 분석(Amortized Analysis)"
         order: 50
         level: 2
         objective: "한 번 비싼 연산을 전체 sequence 평균 비용으로 설명한다."
         density: CORE
         visualization: DIAGRAM
       - key: dsa.core.complexity.invariant-correctness
-        title: "Invariant and Correctness"
+        title: "불변식과 정확성"
         order: 60
         level: 2
-        objective: "loop invariant가 초기·유지·종료 조건으로 정답을 보이는 과정을 설명한다."
+        objective: "루프 불변식이 초기·유지·종료 조건으로 정답을 보이는 과정을 설명한다."
         density: CORE
         visualization: TEXT
   - key: dsa.core.sequential
-    title: "Array and Linked Structures"
+    title: "배열과 연결 자료구조"
     order: 20
-    scope: "array, dynamic array와 singly/doubly linked structure의 상태를 다룬다."
-    boundary: "순차 자료구조의 연산과 locality를 다루며 allocator 구현은 소유하지 않는다."
+    scope: "배열, 동적 배열과 단일/이중 연결 구조의 상태를 다룬다."
+    boundary: "순차 자료구조의 연산과 지역성을 다루며 메모리 할당기 구현은 소유하지 않는다."
     concepts:
       - key: dsa.core.sequential.array
-        title: "Array"
+        title: "배열(Array)"
         order: 10
         level: 1
-        objective: "연속 저장과 index 계산이 constant-time 접근을 만드는 이유를 설명한다."
+        objective: "연속 저장과 인덱스 계산이 상수 시간 접근을 만드는 이유를 설명한다."
         density: CORE
         visualization: TEXT
       - key: dsa.core.sequential.dynamic-array
-        title: "Dynamic Array"
+        title: "동적 배열(Dynamic Array)"
         order: 20
         level: 1
-        objective: "capacity 부족 시 재할당·복사와 amortized append를 설명한다."
+        objective: "용량 부족 시 재할당·복사와 분할 상환 append를 설명한다."
         density: CORE
         visualization: DIAGRAM
       - key: dsa.core.sequential.singly-linked-list
-        title: "Singly Linked List"
+        title: "단일 연결 리스트(Singly Linked List)"
         order: 30
         level: 1
-        objective: "next 링크로 순회하고 위치를 알고 있을 때 삽입하는 invariant를 설명한다."
+        objective: "next 링크로 순회하고 위치를 알고 있을 때 삽입하는 불변식을 설명한다."
         density: STANDARD
         visualization: DIAGRAM
       - key: dsa.core.sequential.doubly-linked-list
-        title: "Doubly Linked List"
+        title: "이중 연결 리스트(Doubly Linked List)"
         order: 40
         level: 1
         objective: "prev·next를 함께 갱신해 양방향 삭제를 보장하는 과정을 설명한다."
         density: STANDARD
         visualization: DIAGRAM
       - key: dsa.core.sequential.array-vs-linked
-        title: "Array versus Linked"
+        title: "배열과 연결 리스트 비교"
         order: 50
         level: 2
-        objective: "접근·삽입·메모리 locality와 cache 비용으로 두 구조를 비교한다."
+        objective: "접근·삽입·메모리 지역성과 캐시 비용으로 두 구조를 비교한다."
         density: CORE
         visualization: TEXT
   - key: dsa.core.stack-queue-deque
-    title: "Stack, Queue and Deque"
+    title: "스택·큐·덱"
     order: 30
     scope: "LIFO·FIFO와 양끝 연산, monotonic 구조를 다룬다."
-    boundary: "추상 자료구조와 연산 invariant를 다루며 동시성 queue의 locking은 OS 영역과 구분한다."
+    boundary: "추상 자료구조와 연산 불변식을 다루며 동시성 큐의 locking은 OS 영역과 구분한다."
     concepts:
       - key: dsa.core.stack-queue-deque.stack
-        title: "Stack"
+        title: "스택(Stack)"
         order: 10
         level: 1
-        objective: "push·pop의 LIFO invariant와 호출·탐색에 쓰이는 이유를 설명한다."
+        objective: "push·pop의 LIFO 불변식과 호출·탐색에 쓰이는 이유를 설명한다."
         density: CORE
         visualization: TEXT
       - key: dsa.core.stack-queue-deque.queue
-        title: "Queue"
+        title: "큐(Queue)"
         order: 20
         level: 1
         objective: "enqueue·dequeue의 FIFO 상태와 producer-consumer 모델을 설명한다."
         density: CORE
         visualization: TEXT
       - key: dsa.core.stack-queue-deque.circular-queue
-        title: "Circular Queue"
+        title: "원형 큐(Circular Queue)"
         order: 30
         level: 2
         objective: "front·rear modulo 연산으로 빈 칸을 재사용하는 조건을 설명한다."
         density: STANDARD
         visualization: DIAGRAM
       - key: dsa.core.stack-queue-deque.deque
-        title: "Deque"
+        title: "덱(Deque)"
         order: 40
         level: 1
-        objective: "양 끝 삽입·삭제를 지원하는 invariant와 사용 사례를 비교한다."
+        objective: "양 끝 삽입·삭제를 지원하는 불변식과 사용 사례를 비교한다."
         density: CORE
         visualization: TEXT
       - key: dsa.core.stack-queue-deque.monotonic-stack-queue
-        title: "Monotonic Stack and Queue"
+        title: "단조 스택·큐(Monotonic Stack and Queue)"
         order: 50
         level: 2
         objective: "단조 후보를 유지하며 각 원소가 한 번 제거되는 비용을 증명한다."
         density: CORE
         visualization: DIAGRAM
   - key: dsa.core.hashing
-    title: "Hashing"
+    title: "해싱(Hashing)"
     order: 40
-    scope: "hash function, bucket, collision, load factor와 table resize를 다룬다."
-    boundary: "hash table의 자료구조 원리를 다루며 cryptographic hash나 Java Map 구현 세부는 보조로만 사용한다."
+    scope: "해시 함수, 버킷, 충돌, 부하율과 테이블 크기 조정을 다룬다."
+    boundary: "해시 테이블의 자료구조 원리를 다루며 cryptographic hash나 Java Map 구현 세부는 보조로만 사용한다."
     concepts:
       - key: dsa.core.hashing.hash-function
-        title: "Hash Function"
+        title: "해시 함수(Hash Function)"
         order: 10
         level: 1
-        objective: "key를 비교 가능한 hash value로 투영하는 목적과 분포를 설명한다."
+        objective: "key를 비교 가능한 해시 값으로 투영하는 목적과 분포를 설명한다."
         density: CORE
         visualization: TEXT
       - key: dsa.core.hashing.bucket-mapping
-        title: "Bucket Mapping"
+        title: "버킷 매핑(Bucket Mapping)"
         order: 20
         level: 1
-        objective: "hash value에서 bucket index를 계산하고 범위·음수 전제를 처리한다."
+        objective: "해시 값에서 버킷 인덱스를 계산하고 범위·음수 전제를 처리한다."
         density: CORE
         visualization: DIAGRAM
       - key: dsa.core.hashing.collision
-        title: "Collision"
+        title: "충돌(Collision)"
         order: 30
         level: 1
-        objective: "서로 다른 key가 같은 bucket을 선택하는 필연성과 처리 이유를 설명한다."
+        objective: "서로 다른 key가 같은 버킷을 선택하는 필연성과 처리 이유를 설명한다."
         density: CORE
         visualization: TEXT
       - key: dsa.core.hashing.separate-chaining
-        title: "Separate Chaining"
+        title: "분리 연결법(Separate Chaining)"
         order: 40
         level: 2
-        objective: "bucket 내부 collection으로 collision을 처리하는 비용과 삭제를 설명한다."
+        objective: "버킷 내부 collection으로 충돌을 처리하는 비용과 삭제를 설명한다."
         density: CORE
         visualization: DIAGRAM
       - key: dsa.core.hashing.open-addressing
-        title: "Open Addressing"
+        title: "개방 주소법(Open Addressing)"
         order: 50
         level: 2
-        objective: "빈 slot을 probe하며 저장하는 방식과 tombstone 조건을 설명한다."
+        objective: "빈 슬롯을 probe하며 저장하는 방식과 tombstone 조건을 설명한다."
         density: CORE
         visualization: DIAGRAM
       - key: dsa.core.hashing.load-factor
-        title: "Load Factor"
+        title: "부하율(Load Factor)"
         order: 60
         level: 2
-        objective: "entry 수와 bucket 수의 비율이 probe와 collision에 미치는 영향을 설명한다."
+        objective: "entry 수와 버킷 수의 비율이 probe와 충돌에 미치는 영향을 설명한다."
         density: CORE
         visualization: TEXT
       - key: dsa.core.hashing.resize
-        title: "Hash Table Resize"
+        title: "해시 테이블 크기 조정(Resize)"
         order: 70
         level: 2
-        objective: "capacity 변경 후 모든 key의 bucket을 재계산하는 비용을 분석한다."
+        objective: "용량 변경 후 모든 key의 버킷을 재계산하는 비용을 분석한다."
         density: CORE
         visualization: DIAGRAM
       - key: dsa.core.hashing.average-worst-lookup
-        title: "Average and Worst Lookup"
+        title: "평균·최악 탐색 비용"
         order: 80
         level: 2
         objective: "평균 O(1) 기대와 adversarial worst case의 차이를 설명한다."
         density: STANDARD
         visualization: TEXT
   - key: dsa.core.trees
-    title: "Trees and Ordered Structures"
+    title: "트리와 순서형 자료구조"
     order: 50
-    scope: "tree terminology, traversal, BST, balance, rotation, heap, priority queue와 trie를 다룬다."
-    boundary: "트리 자료구조의 invariant를 다루며 파일 시스템 tree의 OS semantics는 다루지 않는다."
+    scope: "tree terminology, traversal, BST, balance, rotation, heap, 우선순위 큐와 trie를 다룬다."
+    boundary: "트리 자료구조의 불변식을 다루며 파일 시스템 tree의 OS semantics는 다루지 않는다."
     concepts:
       - key: dsa.core.trees.tree-terminology
-        title: "Tree Terminology"
+        title: "트리 용어"
         order: 10
         level: 1
-        objective: "root·leaf·depth·height와 subtree 관계를 설명한다."
+        objective: "루트·리프·깊이·높이와 부분 트리 관계를 설명한다."
         density: CORE
         visualization: DIAGRAM
       - key: dsa.core.trees.binary-tree-traversal
-        title: "Binary Tree Traversal"
+        title: "이진 트리 순회(Binary Tree Traversal)"
         order: 20
         level: 1
         objective: "preorder·inorder·postorder·level order의 방문 상태를 비교한다."
         density: CORE
         visualization: DIAGRAM
       - key: dsa.core.trees.binary-search-tree
-        title: "Binary Search Tree"
+        title: "이진 탐색 트리(Binary Search Tree)"
         order: 30
         level: 1
-        objective: "left < node < right invariant가 검색 경로를 줄이는 이유를 설명한다."
+        objective: "left < 노드 < right 불변식이 검색 경로를 줄이는 이유를 설명한다."
         density: CORE
         visualization: DIAGRAM
       - key: dsa.core.trees.balanced-tree-motivation
-        title: "Balanced Tree Motivation"
+        title: "균형 트리의 필요성"
         order: 40
         level: 2
         objective: "편향된 BST가 선형화되는 문제와 balance의 목적을 설명한다."
         density: CORE
         visualization: TEXT
       - key: dsa.core.trees.tree-rotation
-        title: "Tree Rotation"
+        title: "트리 회전(Tree Rotation)"
         order: 50
         level: 2
         objective: "inorder를 유지하면서 높이를 바꾸는 rotation의 링크 갱신을 설명한다."
         density: CORE
         visualization: DIAGRAM
       - key: dsa.core.trees.heap
-        title: "Heap"
+        title: "힙(Heap)"
         order: 60
         level: 1
-        objective: "완전 이진 트리와 parent-child priority invariant를 설명한다."
+        objective: "완전 이진 트리와 parent-child priority 불변식을 설명한다."
         density: CORE
         visualization: DIAGRAM
       - key: dsa.core.trees.priority-queue
-        title: "Priority Queue"
+        title: "우선순위 큐(Priority Queue)"
         order: 70
         level: 1
         objective: "최우선 원소 추출 추상화와 heap 구현 비용을 설명한다."
         density: STANDARD
         visualization: TEXT
       - key: dsa.core.trees.trie
-        title: "Trie"
+        title: "트라이(Trie)"
         order: 80
         level: 2
-        objective: "문자열 prefix를 shared path로 저장하는 시간·메모리 trade-off를 설명한다."
+        objective: "문자열 prefix를 shared 경로로 저장하는 시간·메모리 상충 관계를 설명한다."
         density: STANDARD
         visualization: DIAGRAM
   - key: dsa.core.search-sort
-    title: "Searching and Sorting"
+    title: "탐색과 정렬"
     order: 60
-    scope: "search boundary, stable sort, comparison lower bound와 주요 정렬 알고리즘을 다룬다."
-    boundary: "알고리즘 invariant와 비용을 다루며 library 호출법은 중심에 두지 않는다."
+    scope: "search boundary, 안정 정렬, comparison lower bound와 주요 정렬 알고리즘을 다룬다."
+    boundary: "알고리즘 불변식과 비용을 다루며 library 호출법은 중심에 두지 않는다."
     concepts:
       - key: dsa.core.search-sort.linear-search
-        title: "Linear Search"
+        title: "선형 탐색(Linear Search)"
         order: 10
         level: 1
-        objective: "순차 검사와 조기 종료의 correctness·최악 비용을 설명한다."
+        objective: "순차 검사와 조기 종료의 정확성·최악 비용을 설명한다."
         density: CORE
         visualization: TEXT
       - key: dsa.core.search-sort.binary-search
-        title: "Binary Search"
+        title: "이진 탐색(Binary Search)"
         order: 20
         level: 1
         objective: "정렬된 구간을 반으로 줄이는 탐색 상태를 설명한다."
         density: CORE
         visualization: TEXT
       - key: dsa.core.search-sort.binary-search-boundary
-        title: "Binary Search Boundary"
+        title: "이진 탐색 경계값"
         order: 30
         level: 2
-        objective: "left·right invariant로 lower/upper boundary를 구현하는 조건을 설명한다."
+        objective: "left·right 불변식으로 lower/upper boundary를 구현하는 조건을 설명한다."
         density: CORE
         visualization: DIAGRAM
       - key: dsa.core.search-sort.stable-sort
-        title: "Stable Sort"
+        title: "안정 정렬(Stable Sort)"
         order: 40
         level: 1
         objective: "동일 key의 상대 순서를 보존하는 안정성의 의미와 비용을 설명한다."
         density: STANDARD
         visualization: TEXT
       - key: dsa.core.search-sort.comparison-sort-lower-bound
-        title: "Comparison Sort Lower Bound"
+        title: "비교 정렬의 하한(Comparison Sort Lower Bound)"
         order: 50
         level: 2
-        objective: "comparison decision tree가 Ω(n log n)을 제한하는 이유를 설명한다."
+        objective: "비교 결정 트리가 Ω(n log n)을 제한하는 이유를 설명한다."
         density: CORE
         visualization: DIAGRAM
       - key: dsa.core.search-sort.merge-sort
-        title: "Merge Sort"
+        title: "병합 정렬(Merge Sort)"
         order: 60
         level: 1
-        objective: "분할·정렬·merge invariant와 안정성·추가 공간을 분석한다."
+        objective: "분할·정렬·merge 불변식과 안정성·추가 공간을 분석한다."
         density: CORE
         visualization: DIAGRAM
       - key: dsa.core.search-sort.quicksort
-        title: "Quicksort"
+        title: "퀵 정렬(Quicksort)"
         order: 70
         level: 2
         objective: "pivot 분할과 최악 편향, 평균 성능을 비교한다."
         density: CORE
         visualization: DIAGRAM
       - key: dsa.core.search-sort.partition
-        title: "Partition"
+        title: "피벗 기준 분할(Partition)"
         order: 80
         level: 2
-        objective: "pivot보다 작은·큰 구간 invariant를 포인터 이동으로 유지한다."
+        objective: "pivot보다 작은·큰 구간 불변식을 포인터 이동으로 유지한다."
         density: CORE
         visualization: TEXT
       - key: dsa.core.search-sort.heap-sort
-        title: "Heap Sort"
+        title: "힙 정렬(Heap Sort)"
         order: 90
         level: 2
-        objective: "heap invariant를 이용해 in-place 정렬을 수행하는 과정을 설명한다."
+        objective: "heap 불변식을 이용해 in-place 정렬을 수행하는 과정을 설명한다."
         density: STANDARD
         visualization: DIAGRAM
       - key: dsa.core.search-sort.counting-sort
-        title: "Counting Sort"
+        title: "계수 정렬(Counting Sort)"
         order: 100
         level: 2
         objective: "제한된 key 범위의 빈도로 비교를 없애는 조건과 공간을 분석한다."
         density: STANDARD
         visualization: TEXT
       - key: dsa.core.search-sort.radix-sort
-        title: "Radix Sort"
+        title: "기수 정렬(Radix Sort)"
         order: 110
         level: 2
         objective: "자리별 stable pass가 전체 순서를 만드는 전제를 설명한다."
         density: STANDARD
         visualization: TEXT
   - key: dsa.core.recursion-backtracking
-    title: "Recursion and Search Space"
+    title: "재귀와 탐색 공간"
     order: 70
-    scope: "call state, divide-and-conquer, recurrence와 backtracking search tree를 다룬다."
-    boundary: "재귀적 알고리즘의 상태와 공간 탐색을 다루며 thread stack의 OS 동작은 다루지 않는다."
+    scope: "호출 상태, divide-and-conquer, 점화식과 백트래킹 search tree를 다룬다."
+    boundary: "재귀적 알고리즘의 상태와 공간 탐색을 다루며 스레드 스택의 OS 동작은 다루지 않는다."
     concepts:
       - key: dsa.core.recursion-backtracking.recursion-call-state
-        title: "Recursion Call State"
+        title: "재귀 호출 상태"
         order: 10
         level: 1
-        objective: "각 호출의 parameter·base case·return state를 추적한다."
+        objective: "각 호출의 parameter·base case·return 상태를 추적한다."
         density: CORE
         visualization: DIAGRAM
       - key: dsa.core.recursion-backtracking.divide-and-conquer
-        title: "Divide and Conquer"
+        title: "분할 정복(Divide and Conquer)"
         order: 20
         level: 1
         objective: "문제를 독립 부분 문제로 나누고 combine하는 구조를 설명한다."
         density: CORE
         visualization: DIAGRAM
       - key: dsa.core.recursion-backtracking.recurrence
-        title: "Recurrence"
+        title: "점화식(Recurrence)"
         order: 30
         level: 2
-        objective: "부분 문제 비용으로 전체 시간 recurrence를 세우고 해석한다."
+        objective: "부분 문제 비용으로 전체 시간 점화식을 세우고 해석한다."
         density: CORE
         visualization: TEXT
       - key: dsa.core.recursion-backtracking.backtracking-tree
-        title: "Backtracking Tree"
+        title: "백트래킹 탐색 트리"
         order: 40
         level: 2
         objective: "선택·복구로 탐색 상태를 분기하고 되돌리는 흐름을 설명한다."
         density: CORE
         visualization: DIAGRAM
       - key: dsa.core.recursion-backtracking.pruning
-        title: "Pruning"
+        title: "가지치기(Pruning)"
         order: 50
         level: 2
-        objective: "불가능한 branch를 조기에 제거해 search space를 줄이는 조건을 설명한다."
+        objective: "불가능한 분기를 조기에 제거해 탐색 공간을 줄이는 조건을 설명한다."
         density: STANDARD
         visualization: DIAGRAM
   - key: dsa.core.graph
-    title: "Graph Foundations"
+    title: "그래프 기초"
     order: 80
-    scope: "graph model, representation, BFS·DFS, component·cycle·topological order를 다룬다."
-    boundary: "그래프 탐색 기초를 다루며 shortest path 최적화는 graph-path에 둔다."
+    scope: "그래프 model, representation, BFS·DFS, 연결 요소·cycle·위상 순서를 다룬다."
+    boundary: "그래프 탐색 기초를 다루며 shortest 경로 최적화는 graph-path에 둔다."
     concepts:
       - key: dsa.core.graph.graph-model
-        title: "Graph Model"
+        title: "그래프 모델"
         order: 10
         level: 1
-        objective: "vertex·edge·direction·weight로 문제를 graph로 모델링한다."
+        objective: "정점·간선·direction·가중치로 문제를 그래프로 모델링한다."
         density: CORE
         visualization: DIAGRAM
       - key: dsa.core.graph.adjacency-list-matrix
-        title: "Adjacency List and Matrix"
+        title: "인접 리스트와 인접 행렬"
         order: 20
         level: 1
-        objective: "두 표현의 공간과 edge 조회 비용을 비교한다."
+        objective: "두 표현의 공간과 간선 조회 비용을 비교한다."
         density: CORE
         visualization: TEXT
       - key: dsa.core.graph.bfs
-        title: "BFS"
+        title: "너비 우선 탐색(BFS)"
         order: 30
         level: 1
-        objective: "queue와 visited 상태로 layer 순서 탐색을 설명한다."
+        objective: "큐와 visited 상태로 layer 순서 탐색을 설명한다."
         density: CORE
         visualization: DIAGRAM
       - key: dsa.core.graph.dfs
-        title: "DFS"
+        title: "깊이 우선 탐색(DFS)"
         order: 40
         level: 1
-        objective: "stack/recursion과 방문·완료 상태를 추적한다."
+        objective: "스택/재귀와 방문·완료 상태를 추적한다."
         density: CORE
         visualization: DIAGRAM
       - key: dsa.core.graph.connected-components
-        title: "Connected Components"
+        title: "연결 요소(Connected Components)"
         order: 50
         level: 1
-        objective: "미방문 정점에서 탐색을 반복해 component를 세는 이유를 설명한다."
+        objective: "미방문 정점에서 탐색을 반복해 연결 요소를 세는 이유를 설명한다."
         density: STANDARD
         visualization: TEXT
       - key: dsa.core.graph.cycle-detection
-        title: "Cycle Detection"
+        title: "사이클 검출(Cycle Detection)"
         order: 60
         level: 2
-        objective: "undirected parent과 directed recursion state로 cycle을 구분한다."
+        objective: "undirected parent과 directed 재귀 상태로 cycle을 구분한다."
         density: CORE
         visualization: DIAGRAM
       - key: dsa.core.graph.topological-sort
-        title: "Topological Sort"
+        title: "위상 정렬(Topological Sort)"
         order: 70
         level: 2
         objective: "DAG의 선행 관계를 indegree 또는 finish order로 선형화한다."
         density: CORE
         visualization: DIAGRAM
   - key: dsa.core.graph-path
-    title: "Shortest Path and Connectivity"
+    title: "최단 경로와 연결성"
     order: 90
     scope: "unweighted/BFS, Dijkstra, Bellman-Ford, all-pairs, union-find와 MST를 다룬다."
     boundary: "경로와 연결성 알고리즘을 다루며 네트워크 protocol의 routing semantics는 다루지 않는다."
     concepts:
       - key: dsa.core.graph-path.unweighted-shortest-path
-        title: "Unweighted Shortest Path"
+        title: "비가중치 최단 경로"
         order: 10
         level: 1
-        objective: "BFS layer가 edge 수 기준 최단 거리가 되는 이유를 설명한다."
+        objective: "BFS layer가 간선 수 기준 최단 거리가 되는 이유를 설명한다."
         density: CORE
         visualization: DIAGRAM
       - key: dsa.core.graph-path.dijkstra
-        title: "Dijkstra"
+        title: "다익스트라 알고리즘(Dijkstra)"
         order: 20
         level: 2
-        objective: "음수가 아닌 edge 조건에서 최소 tentative distance를 확정하고 relaxation하는 과정과 invariant를 설명한다."
+        objective: "음수가 아닌 간선 조건에서 최소 tentative distance를 확정하고 relaxation하는 과정과 불변식을 설명한다."
         density: CORE
         visualization: DIAGRAM
       - key: dsa.core.graph-path.bellman-ford
-        title: "Bellman-Ford"
+        title: "벨먼–포드 알고리즘(Bellman–Ford)"
         order: 30
         level: 2
-        objective: "모든 edge relaxation 반복과 negative cycle 감지를 설명한다."
+        objective: "모든 간선 relaxation 반복과 negative cycle 감지를 설명한다."
         density: CORE
         visualization: TEXT
       - key: dsa.core.graph-path.floyd-warshall
-        title: "Floyd-Warshall"
+        title: "플로이드–워셜 알고리즘(Floyd–Warshall)"
         order: 50
         level: 2
         objective: "허용한 중간 정점 집합을 늘리는 all-pairs DP를 설명한다."
         density: STANDARD
         visualization: DIAGRAM
       - key: dsa.core.graph-path.union-find
-        title: "Union-Find"
+        title: "서로소 집합 자료구조(Union–Find)"
         order: 60
         level: 1
-        objective: "disjoint set의 find·union으로 연결성을 관리하는 invariant를 설명한다."
+        objective: "disjoint set의 find·union으로 연결성을 관리하는 불변식을 설명한다."
         density: CORE
         visualization: DIAGRAM
       - key: dsa.core.graph-path.path-compression-union-rank
-        title: "Path Compression and Union by Rank"
+        title: "경로 압축과 랭크 기반 합치기"
         order: 70
         level: 2
         objective: "두 최적화가 parent tree 높이를 줄이는 상태 변화를 설명한다."
         density: CORE
         visualization: DIAGRAM
       - key: dsa.core.graph-path.minimum-spanning-tree
-        title: "Minimum Spanning Tree"
+        title: "최소 신장 트리(MST)"
         order: 80
         level: 2
-        objective: "모든 vertex를 최소 weight로 연결하는 invariant와 경계를 설명한다."
+        objective: "모든 정점을 최소 가중치로 연결하는 불변식과 경계를 설명한다."
         density: CORE
         visualization: TEXT
       - key: dsa.core.graph-path.kruskal
-        title: "Kruskal"
+        title: "크루스칼 알고리즘(Kruskal)"
         order: 90
         level: 2
-        objective: "가중치 순 edge를 cycle 없이 선택하는 과정을 설명한다."
+        objective: "가중치 순 간선을 cycle 없이 선택하는 과정을 설명한다."
         density: CORE
         visualization: TEXT
       - key: dsa.core.graph-path.prim
-        title: "Prim"
+        title: "프림 알고리즘(Prim)"
         order: 100
         level: 2
-        objective: "현재 tree와 frontier를 잇는 최소 edge 선택을 설명한다."
+        objective: "현재 tree와 frontier를 잇는 최소 간선 선택을 설명한다."
         density: STANDARD
         visualization: DIAGRAM
   - key: dsa.core.greedy
-    title: "Greedy"
+    title: "탐욕법(Greedy)"
     order: 100
-    scope: "greedy choice와 optimality proof, exchange argument와 interval scheduling을 다룬다."
+    scope: "탐욕 선택과 optimality 증명, 교환 논증과 구간 scheduling을 다룬다."
     boundary: "탐욕 알고리즘 증명을 다루며 DP 문제 카탈로그는 만들지 않는다."
     concepts:
       - key: dsa.core.greedy.greedy-choice
-        title: "Greedy Choice"
+        title: "탐욕 선택(Greedy Choice)"
         order: 10
         level: 1
-        objective: "현재 선택이 남은 문제를 손상하지 않는 greedy choice 조건을 설명한다."
+        objective: "현재 선택이 남은 문제를 손상하지 않는 탐욕 선택 조건을 설명한다."
         density: CORE
         visualization: TEXT
       - key: dsa.core.greedy.global-optimum-proof
-        title: "Global Optimum Proof"
+        title: "전역 최적성 증명"
         order: 20
         level: 2
-        objective: "local choice에서 전체 최적을 이끌어내는 증명 구조를 설명한다."
+        objective: "국소 선택에서 전체 최적을 이끌어내는 증명 구조를 설명한다."
         density: CORE
         visualization: TEXT
       - key: dsa.core.greedy.exchange-argument
-        title: "Exchange Argument"
+        title: "교환 논증(Exchange Argument)"
         order: 30
         level: 2
         objective: "최적해의 첫 선택을 greedy 선택으로 교환해도 손실이 없음을 보인다."
         density: CORE
         visualization: DIAGRAM
       - key: dsa.core.greedy.interval-scheduling
-        title: "Interval Scheduling"
+        title: "구간 스케줄링(Interval Scheduling)"
         order: 40
         level: 1
-        objective: "가장 빨리 끝나는 interval 선택이 최대 개수를 보장하는 이유를 설명한다."
+        objective: "가장 빨리 끝나는 구간 선택이 최대 개수를 보장하는 이유를 설명한다."
         density: CORE
         visualization: DIAGRAM
       - key: dsa.core.greedy.greedy-failure
-        title: "Greedy Failure"
+        title: "탐욕법이 실패하는 경우"
         order: 50
         level: 2
         objective: "증명 없는 local optimum이 반례에서 실패하는 조건을 판단한다."
         density: STANDARD
         visualization: TEXT
   - key: dsa.core.dynamic-programming
-    title: "Dynamic Programming"
+    title: "동적 계획법(Dynamic Programming)"
     order: 110
-    scope: "overlap, optimal substructure, memo/tabulation, state·transition과 공간 최적화를 다룬다."
+    scope: "overlap, optimal substructure, memo/테이블 방식, 상태·전이와 공간 최적화를 다룬다."
     boundary: "상태 기반 최적화를 다루며 특정 문제 목록 암기는 목표로 하지 않는다."
     concepts:
       - key: dsa.core.dynamic-programming.overlapping-subproblems
-        title: "Overlapping Subproblems"
+        title: "중복 부분 문제(Overlapping Subproblems)"
         order: 10
         level: 1
         objective: "재귀에서 같은 부분 문제가 반복되어 저장 가치가 생기는 이유를 설명한다."
         density: CORE
         visualization: DIAGRAM
       - key: dsa.core.dynamic-programming.optimal-substructure
-        title: "Optimal Substructure"
+        title: "최적 부분 구조(Optimal Substructure)"
         order: 20
         level: 2
         objective: "전체 최적해가 부분 최적해로 구성되는 조건을 설명한다."
         density: CORE
         visualization: TEXT
       - key: dsa.core.dynamic-programming.memoization
-        title: "Memoization"
+        title: "메모이제이션(Memoization)"
         order: 30
         level: 1
-        objective: "top-down 재귀 결과를 cache해 중복 계산을 제거한다."
+        objective: "하향식 재귀 결과를 캐시해 중복 계산을 제거한다."
         density: CORE
         visualization: DIAGRAM
       - key: dsa.core.dynamic-programming.tabulation
-        title: "Tabulation"
+        title: "상향식 계산(Tabulation)"
         order: 40
         level: 1
-        objective: "base state부터 dependency 순으로 bottom-up 표를 채운다."
+        objective: "base 상태부터 dependency 순으로 상향식 표를 채운다."
         density: CORE
         visualization: TEXT
       - key: dsa.core.dynamic-programming.state-definition
-        title: "DP State Definition"
+        title: "동적 계획법 상태 정의(DP State)"
         order: 50
         level: 2
-        objective: "state가 표현하는 부분 문제와 충분한 정보를 정확히 정의한다."
+        objective: "상태가 표현하는 부분 문제와 충분한 정보를 정확히 정의한다."
         density: CORE
         visualization: TEXT
       - key: dsa.core.dynamic-programming.transition
-        title: "DP Transition"
+        title: "동적 계획법 전이(DP Transition)"
         order: 60
         level: 2
-        objective: "이전 state에서 다음 state와 answer를 만드는 전이를 설명한다."
+        objective: "이전 상태에서 다음 상태와 answer를 만드는 전이를 설명한다."
         density: CORE
         visualization: DIAGRAM
       - key: dsa.core.dynamic-programming.initialization-order
-        title: "Initialization and Order"
+        title: "초기화와 계산 순서"
         order: 70
         level: 2
         objective: "base value와 계산 순서가 잘못될 때 생기는 오류를 분석한다."
         density: CORE
         visualization: TEXT
       - key: dsa.core.dynamic-programming.space-optimization
-        title: "Space Optimization"
+        title: "공간 최적화(Space Optimization)"
         order: 80
         level: 2
-        objective: "필요한 이전 state만 남겨 메모리를 줄이는 조건을 설명한다."
+        objective: "필요한 이전 상태만 남겨 메모리를 줄이는 조건을 설명한다."
         density: STANDARD
         visualization: TEXT
       - key: dsa.core.dynamic-programming.representative-dp-patterns
-        title: "Representative DP Patterns"
+        title: "대표 동적 계획법 패턴"
         order: 90
         level: 2
         objective: "선형·격자·배낭 모양을 state-transition으로 변환하는 기준을 비교한다."
         density: STANDARD
         visualization: DIAGRAM
   - key: dsa.core.algorithm-selection
-    title: "Practical Algorithm Selection"
+    title: "실전 알고리즘 선택"
     order: 120
-    scope: "constraint, memory limit, data shape, query pattern과 operation-driven 선택을 다룬다."
+    scope: "제약 조건, 메모리 limit, data shape, 질의 pattern과 operation-driven 선택을 다룬다."
     boundary: "알고리즘 선택 reasoning을 다루며 특정 서비스 architecture나 운영 측정은 다루지 않는다."
     concepts:
       - key: dsa.core.algorithm-selection.constraint-to-complexity
-        title: "Constraint to Complexity"
+        title: "입력 제약에서 복잡도 추정"
         order: 10
         level: 1
         objective: "입력 상한을 허용 복잡도와 후보 알고리즘으로 번역한다."
         density: CORE
         visualization: TEXT
       - key: dsa.core.algorithm-selection.memory-limit
-        title: "Memory Limit"
+        title: "메모리 한도(Memory Limit)"
         order: 20
         level: 1
         objective: "시간 개선을 위한 추가 메모리가 실제 제한을 넘는 조건을 판단한다."
         density: STANDARD
         visualization: TEXT
       - key: dsa.core.algorithm-selection.data-shape
-        title: "Data Shape"
+        title: "데이터 형태와 분포(Data Shape)"
         order: 30
         level: 1
         objective: "정렬·중복·범위·분포가 선택을 바꾸는 이유를 설명한다."
         density: STANDARD
         visualization: TEXT
       - key: dsa.core.algorithm-selection.preprocessing-query-cost
-        title: "Preprocessing and Query Cost"
+        title: "전처리와 질의 비용"
         order: 40
         level: 2
-        objective: "초기 전처리 비용과 반복 query 비용의 합을 비교한다."
+        objective: "초기 전처리 비용과 반복 질의 비용의 합을 비교한다."
         density: CORE
         visualization: DIAGRAM
       - key: dsa.core.algorithm-selection.online-offline
-        title: "Online and Offline"
+        title: "온라인·오프라인 알고리즘(Online/Offline)"
         order: 50
         level: 2
         objective: "입력이 순차 도착할 때와 전체를 미리 볼 때의 선택 차이를 설명한다."
         density: STANDARD
         visualization: TEXT
       - key: dsa.core.algorithm-selection.operation-driven-structure-choice
-        title: "Operation-Driven Structure Choice"
+        title: "연산 중심 자료구조 선택"
         order: 60
         level: 2
-        objective: "주요 operation 빈도와 invariant로 자료구조를 선택한다."
+        objective: "주요 연산 빈도와 불변식으로 자료구조를 선택한다."
         density: CORE
         visualization: DIAGRAM

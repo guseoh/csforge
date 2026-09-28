@@ -12,10 +12,10 @@ policies:
   question:
     topicDifficultyCoverage: [EASY, MEDIUM, HARD]
     areaTypeCoverage: [MULTIPLE_CHOICE, SHORT_ANSWER, DESCRIPTIVE, SCENARIO]
-    hardRule: 꼬리 지연 시간(p95/p99)·대기열, 프로파일러·부하 테스트, 관측 신호의 상관관계, SLI/SLO·오류 예산, 카디널리티, 알림·대응 절차, 장애 지휘 또는 자동 확장의 절충을 판단하게 한다.
-    shortAnswerRule: 메트릭·도구 이름만으로 정답을 인정하지 않고 무엇을 측정하며 운영에 어떤 의미인지 함께 설명하게 한다.
+    hardRule: 꼬리 지연 시간(p95/p99)·대기열, 프로파일러·마이크로벤치마크·부하 테스트, 관측 신호의 상관관계, SLI/SLO·오류 예산, 카디널리티, 알림·대응 절차, 장애 지휘 또는 자동 확장의 절충을 판단하게 한다.
+    shortAnswerRule: SHORT_ANSWER는 한 가지 용어·약어·값처럼 결정적으로 채점 가능한 답을 묻고, 측정 의미·근거·절충 설명이 필요하면 DESCRIPTIVE 또는 SCENARIO를 사용한다.
   source:
-    primary: [OpenTelemetry Documentation, Prometheus Documentation, Google SRE Book, Kubernetes Documentation, Oracle Java Flight Recorder Documentation]
+    primary: [OpenTelemetry Documentation, Prometheus Documentation, Google SRE Book, Kubernetes Documentation, Oracle Java Flight Recorder Documentation, OpenJDK JMH, Grafana k6 Documentation]
     rule: 관측 정보와 성능 측정은 시스템 동작을 설명하는 근거이며 원인·목표·운영 조치를 혼동하지 않는다.
   visualization:
     values: [NONE, TEXT, DIAGRAM]
@@ -58,7 +58,7 @@ topics:
     title: 관측 신호와 추적 문맥
     order: 10
     level: 1
-    objective: 관측 신호별 강점과 trace·span 문맥의 전파를 이용해 한 요청에서 나타난 증상을 연결한다.
+    objective: 관측 신호별 강점을 이해하고 서비스 경계를 넘어 전파되는 추적 문맥과 리소스·스팬 속성의 역할을 구분해 한 요청의 증상을 연결한다.
     density: CORE
     visualization: DIAGRAM
   - key: performance.core.observability.sli-slo-error-budget

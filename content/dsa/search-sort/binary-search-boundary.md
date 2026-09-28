@@ -3,21 +3,21 @@ kind: concept
 contentKey: dsa.core.search-sort.binary-search-boundary
 topicContentKey: dsa.core.search-sort
 slug: binary-search-boundary
-title: "Binary Search Boundary"
-summary: "left·right invariant로 lower/upper boundary를 구현하는 조건을 설명한다."
+title: "이진 탐색 경계값"
+summary: "left·right 불변식으로 lower/upper boundary를 구현하는 조건을 설명한다."
 level: 2
 status: PUBLISHED
 displayOrder: 30
 references:
-  - url: "https://algs4.cs.princeton.edu/14analysis/"
-    title: "Algorithms, 4th Edition: Analysis of Algorithms"
+  - url: "https://algs4.cs.princeton.edu/31elementary/"
+    title: "Algorithms, 4th Edition: Elementary Symbol Tables"
     referenceType: BOOK
     language: en
     depth: section
-    recommendation: "입력 크기와 basic operation count를 기준으로 linear scan 비용을 분석한다."
+    recommendation: "순차 탐색과 정렬 배열의 이진 탐색 전제·비용 및 순서 기반 연산을 비교한다."
     displayOrder: 1
 ---
-# Binary Search Boundary
+# 이진 탐색 경계값
 
 Boundary search는 특정 값을 하나 찾는 것이 아니라 **조건이 처음 false에서 true로 바뀌는 위치**를 찾는다. 정렬 배열에서 lower bound는 `value >= target`이 처음 참인 위치이고, upper bound는 `value > target`이 처음 참인 위치다.
 
@@ -27,7 +27,7 @@ value:   1 2 2 2 5 8
            ↑ lower bound
 ```
 
-Half-open interval `[left, right)`를 사용한다면 답 후보가 항상 그 구간 안에 있다는 invariant를 유지할 수 있다. Mid가 조건을 만족하면 mid도 답일 수 있으므로 `right = mid`, 만족하지 않으면 mid까지는 답이 아니므로 `left = mid + 1`로 이동한다.
+Half-open 구간 `[left, right)`를 사용한다면 답 후보가 항상 그 구간 안에 있다는 불변식을 유지할 수 있다. Mid가 조건을 만족하면 mid도 답일 수 있으므로 `right = mid`, 만족하지 않으면 mid까지는 답이 아니므로 `left = mid + 1`로 이동한다.
 
 ```text
 while left < right:

@@ -3,7 +3,7 @@ kind: concept
 contentKey: dsa.core.algorithm-selection.constraint-to-complexity
 topicContentKey: dsa.core.algorithm-selection
 slug: constraint-to-complexity
-title: "Constraint to Complexity"
+title: "입력 제약에서 복잡도 추정"
 summary: "입력 상한을 허용 복잡도와 후보 알고리즘으로 번역한다."
 level: 1
 status: PUBLISHED
@@ -14,10 +14,10 @@ references:
     referenceType: BOOK
     language: en
     depth: section
-    recommendation: "입력 크기와 basic operation count를 기준으로 linear scan 비용을 분석한다."
+    recommendation: "입력 크기와 기본 연산을 정하고 점근 시간·공간 및 분할 상환 비용을 분석한다."
     displayOrder: 1
 ---
-# Constraint to Complexity
+# 입력 제약에서 복잡도 추정
 
 알고리즘을 고를 때는 먼저 최대 입력 크기와 허용 비용을 확인한다. 입력 상한을 알면 어떤 점근 복잡도가 구조적으로 가능한지 후보를 빠르게 줄일 수 있다.
 
@@ -25,7 +25,7 @@ references:
 
 반대로 n이 작고 상한이 명확하다면 더 높은 복잡도의 단순한 알고리즘이 충분할 수 있다. `O(n²)`이라는 이유만으로 항상 잘못된 선택은 아니다.
 
-복잡도는 최종 정답이 아니라 **후보 제거 기준**이다. 같은 O(n log n)이라도 실제 상수, 메모리 사용, 입력 분포와 operation 종류가 다를 수 있다.
+복잡도는 최종 정답이 아니라 **후보 제거 기준**이다. 같은 O(n log n)이라도 실제 상수, 메모리 사용, 입력 분포와 연산 종류가 다를 수 있다.
 
 따라서 선택 순서는 보통 다음과 같다.
 

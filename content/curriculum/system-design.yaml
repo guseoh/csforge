@@ -1,104 +1,104 @@
 schemaVersion: 2
 area:
   key: system-design
-  title: System Design
-  baseline: requirements-first architecture synthesis and explicit trade-offs
+  title: 시스템 설계 (System Design)
+  baseline: 요구사항을 먼저 확인하고 트래픽·데이터 규모와 소유권을 추정해 아키텍처 선택의 절충을 드러낸다.
   contentKeyPrefix: system-design.core
   status: CANONICAL_FOUNDATION
 policies:
   language:
     authoringLanguage: ko-KR
-    explanationRule: 기능 요구와 품질 속성을 수치화하고 data ownership·traffic·failure·운영 비용을 architecture 선택으로 연결한다.
+    explanationRule: 기능 요구와 품질 속성을 수치화하고 데이터 소유권·트래픽·장애·운영 비용을 아키텍처 선택과 연결한다.
   question:
     topicDifficultyCoverage: [EASY, MEDIUM, HARD]
     areaTypeCoverage: [MULTIPLE_CHOICE, SHORT_ANSWER, DESCRIPTIVE, SCENARIO]
-    hardRule: requirement clarification, capacity estimate, ownership boundary, sync/async, read/write model, modularity, failure budget, isolation 또는 rollout·observability trade-off를 설계 상황으로 판단하게 한다.
-    shortAnswerRule: component 나열만으로 정답을 인정하지 않고 요구·보장·trade-off와 검증 방법을 함께 요구한다.
+    hardRule: 요구사항 구체화, 용량 추정, 소유권 경계, 동기/비동기 처리, 읽기/쓰기 모델, 모듈화, 오류 예산, 장애 격리 또는 점진적 배포·관측의 절충을 설계 상황에서 판단하게 한다.
+    shortAnswerRule: 구성 요소 나열에 그치지 않고 요구·보장·절충과 검증 방법을 함께 묻는다.
   source:
-    primary: [AWS Well-Architected Framework, Google SRE Book, Microservices.io Architecture Patterns]
-    rule: provider-specific product recipe가 아니라 requirements·constraints·operational feedback에 따른 architecture decision을 설명한다.
+    primary: [AWS Well-Architected Framework, Google SRE Book, Microservices.io Architecture Patterns, Martin Fowler]
+    rule: 클라우드 공급자별 제품 구성법이 아니라 요구사항·제약·운영 피드백에 따른 아키텍처 결정을 설명한다.
   visualization:
     values: [NONE, TEXT, DIAGRAM]
-    rule: requirement-to-architecture mapping, sync/async boundary, data ownership과 failure/rollout flow처럼 trade-off 관계가 핵심인 곳에 사용한다.
+    rule: 요구사항과 아키텍처의 연결, 동기/비동기 경계, 데이터 소유권, 장애·배포 흐름처럼 절충 관계가 핵심인 곳에 사용한다.
 topics:
 - key: system-design.core.requirements
-  title: Requirements and boundaries
+  title: 요구사항과 경계
   order: 10
-  scope: functional/non-functional requirement, capacity·data shape와 ownership boundary를 다룬다.
-  boundary: 개별 Database·Infrastructure resource 설명보다 설계 문제를 수치·경계로 정의하는 방법을 소유한다.
+  scope: 기능·품질 요구, 용량·데이터 규모와 소유권 경계를 다룬다.
+  boundary: 개별 데이터베이스·인프라 자원 설명보다 설계 문제를 수치와 경계로 정의하는 방법을 다룬다.
   concepts:
   - key: system-design.core.requirements.functional-nonfunctional
-    title: functional과 non-functional requirements
+    title: 기능 요구와 품질 요구
     order: 10
     level: 1
-    objective: user journey를 기능으로, latency·availability·durability·cost·security를 measurable constraint로 번역한다.
+    objective: 사용자 여정을 기능 요구로, 지연 시간·가용성·내구성·비용·보안을 측정 가능한 조건으로 바꾼다.
     density: CORE
     visualization: TEXT
   - key: system-design.core.requirements.capacity-data
-    title: capacity estimate와 data shape
+    title: 용량 추정과 데이터 규모
     order: 20
     level: 1
-    objective: QPS·payload·storage·read/write ratio·growth와 peak를 rough estimate로 연결하고 검증한다.
+    objective: 초당 요청 수(QPS)·요청 크기·저장량·읽기/쓰기 비율·성장률·최대 부하를 대략 추산하고 검증한다.
     density: CORE
     visualization: DIAGRAM
   - key: system-design.core.requirements.ownership-boundaries
-    title: data ownership과 consistency boundary
+    title: 데이터 소유권과 일관성 경계
     order: 30
     level: 2
-    objective: aggregate·source of truth·derived view와 team/API ownership을 분리한다.
+    objective: 애그리거트·원본 데이터·파생 뷰와 팀/API의 소유권 경계를 구분한다.
     density: CORE
     visualization: DIAGRAM
 - key: system-design.core.architecture
-  title: Architecture composition
+  title: 아키텍처 구성
   order: 20
-  scope: synchronous/asynchronous boundary, read/write model과 modular monolith/services 선택을 다룬다.
-  boundary: Messaging·Distributed Systems의 primitive를 반복하지 않고 요구사항에 맞는 composition과 migration seam을 소유한다.
+  scope: 동기/비동기 처리, 읽기/쓰기 모델, 모듈형 모놀리스와 서비스 분리 선택을 다룬다.
+  boundary: 메시징·분산 시스템의 기본 메커니즘을 반복하지 않고 요구사항에 맞는 구성과 이후 분리할 수 있는 경계를 다룬다.
   concepts:
   - key: system-design.core.architecture.sync-async
-    title: synchronous와 asynchronous boundary
+    title: 동기와 비동기 처리 경계
     order: 10
     level: 1
-    objective: user response와 background workflow를 latency·failure·delivery·state contract에 따라 나눈다.
+    objective: 사용자 응답과 백그라운드 작업을 지연 시간·실패 처리·전달 보장·상태 계약에 따라 나눈다.
     density: CORE
     visualization: DIAGRAM
   - key: system-design.core.architecture.read-write-models
-    title: read model과 write model
+    title: 쓰기 모델과 읽기 모델
     order: 20
     level: 2
-    objective: transactional write와 query/read projection의 shape·freshness·rebuildability trade-off를 설계한다.
+    objective: 트랜잭션 쓰기와 조회용 읽기 모델의 형태·최신성·재구성 가능성 사이의 절충을 설계한다.
     density: CORE
     visualization: DIAGRAM
   - key: system-design.core.architecture.modular-monolith-services
-    title: modular monolith와 services
+    title: 모듈형 모놀리스와 서비스 분리 (Modular Monolith)
     order: 30
     level: 2
-    objective: module boundary·team autonomy·deployment coupling·operational cost로 분리 시점을 판단한다.
+    objective: 모듈 경계·팀 자율성·배포 결합도·운영 비용을 고려해 분리 시점을 판단한다.
     density: CORE
     visualization: TEXT
 - key: system-design.core.reliability
-  title: Reliability and evolution
+  title: 신뢰성과 점진적 변화
   order: 30
-  scope: failure budget·load protection, isolation과 progressive rollout·observability를 다룬다.
-  boundary: Cache·Security·Performance·Infrastructure의 구현 primitive를 반복하지 않고 end-to-end design decision과 feedback loop를 소유한다.
+  scope: 오류 예산과 부하 보호, 장애 격리, 점진적 배포와 관측을 다룬다.
+  boundary: 캐시·보안·성능·인프라의 구현 메커니즘을 반복하지 않고 전체 흐름에 걸친 설계 판단과 운영 피드백 순환을 다룬다.
   concepts:
   - key: system-design.core.reliability.failure-budget
-    title: failure budget과 graceful degradation
+    title: 오류 예산과 기능 축소 (Graceful Degradation)
     order: 10
     level: 1
-    objective: SLO·error budget에 맞춰 optional feature를 줄이고 핵심 workflow를 보호한다.
+    objective: 서비스 수준 목표(SLO)·오류 예산에 맞춰 선택 기능을 축소하고 핵심 흐름을 보호한다.
     density: CORE
     visualization: DIAGRAM
   - key: system-design.core.reliability.failure-isolation
-    title: failure isolation과 load protection
+    title: 장애 격리와 부하 보호
     order: 20
     level: 2
-    objective: bulkhead·timeout·rate limit·backpressure를 dependency failure와 overload 전파 방지에 배치한다.
+    objective: 격벽(bulkhead)·시간 제한(timeout)·요청 제한(rate limit)·역압(backpressure)을 사용해 의존 서비스의 장애와 과부하 전파를 막는다.
     density: CORE
     visualization: DIAGRAM
   - key: system-design.core.reliability.rollout-observability
-    title: rollout과 observability feedback
+    title: 점진적 배포와 관측 피드백
     order: 30
     level: 2
-    objective: canary·rollback·telemetry·SLO gate로 architecture 변경을 점진적으로 검증한다.
+    objective: 카나리 배포·롤백·관측 지표·SLO 기준으로 아키텍처 변경을 점진적으로 검증한다.
     density: CORE
     visualization: DIAGRAM
