@@ -14,7 +14,7 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "NAT 변환 상태와 외부에서 시작한 패킷을 내부 주소로 전달하기 위한 정적 매핑의 필요성을 확인한다."
+    recommendation: "전통적인 IPv4 NAT/NAPT의 주소·포트 변환과 상태 관리 규칙을 확인한다."
     displayOrder: 1
 ---
 # 외부에서 내부로 연결하기
