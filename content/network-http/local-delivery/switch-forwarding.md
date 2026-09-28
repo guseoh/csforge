@@ -14,7 +14,7 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "ARP로 얻은 이더넷 주소가 같은 로컬 링크의 프레임 전달에 사용되는 맥락을 확인한다."
+    recommendation: "로컬 링크에서 IPv4 주소와 이더넷 주소를 대응시키는 ARP 동작을 확인한다."
     displayOrder: 1
 ---
 # 스위치의 프레임 전달
