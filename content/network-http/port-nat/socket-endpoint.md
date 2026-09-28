@@ -14,7 +14,7 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "전송 프로토콜별 포트 번호 공간과 서비스 종단점 식별의 기초를 확인한다."
+    recommendation: "전송 프로토콜의 서비스 이름과 포트 번호 공간을 확인한다."
     displayOrder: 1
 ---
 # 소켓 종단점
