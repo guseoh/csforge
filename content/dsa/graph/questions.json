@@ -50,7 +50,7 @@
       {"key": "A", "content": "간선 목록만 저장하고 정점별 이웃을 묶지 않는다", "displayOrder": 0, "rationaleMarkdown": "간선 목록만 있으면 특정 정점의 이웃을 찾을 때 전체 간선을 반복해서 훑어야 할 수 있다. 이 문제는 정점별 이웃 순회가 빈번하다."},
       {"key": "B", "content": "100,000×100,000 인접 행렬", "displayOrder": 1, "rationaleMarkdown": "100,000×100,000 행렬은 간선이 200,000개뿐이어도 100억 칸이 필요하다. 희소 그래프에서는 많은 공간을 사용한다."},
       {"key": "C", "content": "인접 리스트", "displayOrder": 2, "rationaleMarkdown": "인접 리스트는 실제 이웃을 중심으로 저장하므로 공간이 정점과 간선 수에 비례한다. 한 정점의 이웃 순회도 그 정점의 차수에 비례한다."},
-      {"key": "D", "content": "모든 이웃 정보를 하나의 전역 순서로만 저장한다", "displayOrder": 3, "rationaleMarkdown": "정점별 이웃을 바로 찾을 수 없는 전역 목록만으로는 이웃 순회가 비효율적일 수 있다."
+      {"key": "D", "content": "모든 이웃 정보를 하나의 전역 순서로만 저장한다", "displayOrder": 3, "rationaleMarkdown": "정점별 이웃을 바로 찾을 수 없는 전역 목록만으로는 이웃 순회가 비효율적일 수 있다."}
     ],
     "correctChoiceKey": "C",
     "explanationMarkdown": "희소 그래프에서 인접 리스트는 실제 간선 중심으로 저장해 `O(V+E)` 공간을 사용하고, 한 정점의 이웃 순회도 해당 정점의 차수에 비례한다."
