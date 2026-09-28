@@ -97,13 +97,13 @@
   {
     "kind": "question",
     "contentKey": "backend.core.dto-validation-error.error-contract.q2",
-    "promptMarkdown": "HTTP status와 product error code를 함께 쓰는 이유를 설명하라.",
+    "promptMarkdown": "HTTP 상태와 제품 오류 코드를 함께 쓰는 이유를 설명하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["backend.core.dto-validation-error.error-contract"],
-    "modelAnswer": "status는 generic HTTP 의미를, product code는 구체적인 business 실패를 제공해 client와 중간 software 모두 해석할 수 있게 한다.",
-    "explanationMarkdown": "HTTP status는 4xx/5xx처럼 transport와 일반적인 client/server 의미를 전달하고, product code는 `EMAIL_CONFLICT` 같은 세부 업무 원인을 안정적으로 표현한다. 둘을 합치면 중간 proxy의 처리와 client의 사용자 안내를 동시에 설계할 수 있다."
+    "modelAnswer": "HTTP 상태는 넓은 프로토콜 수준의 실패 의미를, 제품 오류 코드는 구체적인 업무 실패를 제공해 클라이언트와 중간 HTTP 소프트웨어가 함께 해석할 수 있게 한다.",
+    "explanationMarkdown": "HTTP 상태는 4xx/5xx처럼 HTTP 수준의 넓은 실패 범주를 전달하고, 제품 오류 코드는 `EMAIL_CONFLICT` 같은 구체적인 업무 원인을 안정적으로 표현한다. 둘을 함께 사용하면 프록시·일반 HTTP 클라이언트의 처리와 제품 클라이언트의 사용자 안내를 동시에 설계할 수 있다. HTTP 상태를 TCP 같은 전송 계층의 성공·실패와 혼동하면 안 된다."
   },
   {
     "kind": "question",
