@@ -4,7 +4,7 @@ contentKey: network-http.core.tls.tls-termination
 topicContentKey: network-http.core.tls
 slug: tls-termination
 title: "TLS 종료(Termination) 경계"
-summary: "proxy에서 TLS를 종료할 때 client-proxy와 proxy-backend가 별도 connection과 trust boundary가 되는 이유를 설명한다."
+summary: "리버스 프록시에서 TLS를 종료하면 클라이언트-프록시와 프록시-백엔드가 서로 다른 연결과 신뢰 경계가 되는 이유를 설명한다."
 level: 2
 status: PUBLISHED
 displayOrder: 80
@@ -17,22 +17,49 @@ references:
 ---
 # TLS 종료(Termination) 경계
 
-reverse proxy나 load balancer가 client와 직접 TLS handshake를 수행하면 그 장비가 TLS endpoint가 된다. client가 보낸 encrypted application data는 proxy에서 복호화되고, proxy는 내용을 읽은 뒤 backend로 별도의 connection을 만들어 전달한다. 이것이 TLS termination이다.
-
-이 구조에서는 `client → proxy`와 `proxy → backend`가 같은 end-to-end TLS connection이 아니다. 첫 구간의 certificate와 key는 proxy에서 끝나고, backend 구간은 평문 HTTP일 수도 있고 새로운 TLS connection일 수도 있다.
+리버스 프록시나 로드 밸런서가 클라이언트와 직접 TLS 핸드셰이크를 수행하면 그 장비가 **TLS 종단점(endpoint)**이 된다. 클라이언트가 보낸 암호화된 데이터는 프록시에서 복호화되고, 프록시는 HTTP 내용을 읽고 필요한 처리를 한 뒤 백엔드로 별도의 연결을 만들어 전달한다. 이를 TLS termination이라고 한다.
 
 ```text
-Client ── TLS connection A ──> [Proxy: 복호화·HTTP 처리]
-                                  │
-                                  └── HTTP 또는 TLS connection B ──> Backend
+Client ── TLS 연결 A ──> [Proxy: TLS 종료·복호화·HTTP 처리]
+                           │
+                           └── HTTP 또는 TLS 연결 B ──> Backend
 ```
 
-암호화와 peer identity 검증은 connection A와 B에서 각각 결정된다. Proxy가 평문으로 전달하면 보호 경계는 proxy에서 끝나고, TLS를 다시 사용하면 별도의 certificate 검증과 key가 필요하다.
+여기서 `클라이언트 → 프록시`와 `프록시 → 백엔드`는 하나의 종단 간 TLS 연결이 아니다. 첫 번째 연결의 인증서와 키 상태는 프록시에서 끝나고, 두 번째 구간은 평문 HTTP일 수도 있고 새로운 TLS 연결일 수도 있다.
 
-### Termination 지점이 trust boundary를 바꾼다
+### 첫 번째 TLS가 성공해도 백엔드 구간이 자동으로 보호되지는 않는다
 
-client는 외부 service identity를 proxy certificate로 검증한다. proxy가 backend와 다시 TLS를 맺는다면 이번에는 proxy가 backend certificate와 identity를 별도로 검증해야 한다. 첫 번째 TLS가 성공했다는 사실이 두 번째 hop을 자동으로 보호하지 않는다.
+프록시가 백엔드와 평문 HTTP로 통신한다면 TLS의 보호 범위는 프록시에서 끝난다. 백엔드 구간도 암호화해야 한다면 프록시와 백엔드 사이에서 별도의 TLS 연결을 만들어야 한다.
 
-proxy가 HTTP를 볼 수 있으므로 forwarding 과정에서 original scheme, host나 client 관련 metadata를 header로 전달하기도 한다. 이 정보는 TLS 자체가 end-to-end로 보존한 값이 아니라 **새 HTTP hop에서 intermediary가 다시 전달한 metadata**다. backend가 그 값을 신뢰하려면 요청이 실제로 신뢰한 proxy를 거쳐 왔다는 경계가 별도로 필요하다.
+이 두 연결의 인증도 각각 독립적이다.
 
-따라서 `HTTPS니까 browser에서 backend까지 모두 암호화된다`고 일반화하면 안 된다. TLS termination 구조에서는 **어디에서 복호화되는지, 이후 hop을 어떤 channel로 보호하는지, 각 hop에서 어떤 identity를 검증하는지**를 따로 확인해야 한다.
+```text
+연결 A
+클라이언트가 외부 서비스 인증서 검증
+
+연결 B가 TLS라면
+프록시가 백엔드 인증서와 서비스 식별 정보 검증
+```
+
+클라이언트가 프록시의 인증서를 올바르게 검증했다는 사실이 프록시→백엔드 연결의 상대 신원까지 자동으로 증명하지는 않는다.
+
+### TLS 종료 지점은 신뢰 경계를 바꾼다
+
+프록시에서 HTTP가 복호화되므로 프록시는 요청 헤더와 본문을 읽고 수정할 수 있다. 또한 백엔드에 새 요청을 만들면서 원래 요청의 scheme, host, 클라이언트 주소 같은 정보를 `Forwarded`나 `X-Forwarded-*` 계열 헤더로 전달할 수 있다.
+
+하지만 이런 값은 클라이언트와 백엔드 사이에서 TLS가 직접 보존한 정보가 아니다. **중간 프록시가 새로운 HTTP 홉에서 다시 작성해 전달한 메타데이터**다.
+
+따라서 백엔드가 이런 헤더를 보안 판단에 사용하려면 아무 인터넷 클라이언트가 보낸 값을 그대로 믿어서는 안 된다. 요청이 실제로 신뢰한 프록시를 거쳐 왔는지 확인하고, 프록시가 외부에서 들어온 위조 헤더를 제거·재작성하는 신뢰 경계를 구성해야 한다.
+
+### `HTTPS 서비스`와 `모든 내부 홉이 TLS`는 같은 말이 아니다
+
+사용자 브라우저에 HTTPS 자물쇠가 보인다는 것은 브라우저와 자신이 연결한 TLS 종단점 사이가 보호된다는 뜻이다. 그 뒤에 CDN, 로드 밸런서, 서비스 메시, 애플리케이션 서버가 여러 홉으로 존재한다면 각 홉의 보호 방식은 별도로 확인해야 한다.
+
+```text
+브라우저 → CDN → LB → 애플리케이션
+   TLS A     TLS B?   TLS C?
+```
+
+각 `?`는 인프라 설계에 따라 다르다. 첫 구간이 TLS라는 이유만으로 나머지 구간까지 자동으로 암호화되지는 않는다.
+
+핵심은 **TLS termination이 암호화가 끝나는 지점이자 새로운 신뢰 경계가 시작되는 지점이며, 그 뒤의 연결·인증·전달 메타데이터는 별도의 보안 계약으로 다뤄야 한다는 점**이다.
