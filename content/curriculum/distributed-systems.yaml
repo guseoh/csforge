@@ -1,104 +1,104 @@
 schemaVersion: 2
 area:
   key: distributed-systems
-  title: Distributed Systems
-  baseline: time, failure, consistency and coordination across independent processes
+  title: 분산 시스템
+  baseline: 독립적으로 동작하는 프로세스 사이의 시간·장애·일관성·조정 문제
   contentKeyPrefix: distributed.core
   status: CANONICAL_FOUNDATION
 policies:
   language:
     authoringLanguage: ko-KR
-    explanationRule: 여러 process·node가 독립적으로 실패하고 통신하는 환경에서 시간·일관성·조정의 보장과 비용을 명시한다.
+    explanationRule: 여러 프로세스·노드가 독립적으로 실패하고 통신하는 환경에서 시간·일관성·조정이 제공하는 보장과 비용을 설명한다.
   question:
     topicDifficultyCoverage: [EASY, MEDIUM, HARD]
     areaTypeCoverage: [MULTIPLE_CHOICE, SHORT_ANSWER, DESCRIPTIVE, SCENARIO]
-    hardRule: clock skew와 deadline, partial failure·failure detector, replication·quorum, leader election, lease fencing, saga compensation 또는 CAP trade-off를 운영 상황으로 판단하게 한다.
-    shortAnswerRule: 분산 시스템 용어 이름만으로 정답을 인정하지 않고 어떤 보장과 failure mode를 다루는지 함께 요구한다.
+    hardRule: 시계 오차와 요청 기한, 부분 장애·장애 감지기, 복제·정족수, 리더 선출, 임대와 펜싱, Saga 보상 작업 또는 CAP 절충을 운영 상황에서 판단하게 한다.
+    shortAnswerRule: 분산 시스템 용어 이름만으로 정답을 인정하지 않고 어떤 보장과 장애 상황을 다루는지 함께 설명하게 한다.
   source:
     primary: [IETF RFC 5905, gRPC Documentation, Kubernetes Documentation, etcd Documentation, Amazon Dynamo paper, ACM CAP paper]
-    rule: protocol·coordination primitive의 명시적 보장과 애플리케이션 수준의 추가 계약을 구분하고, Dynamo-style replica quorum과 consensus majority를 같은 모델로 설명하지 않는다.
+    rule: 프로토콜·조정 기본 요소가 명시적으로 제공하는 보장과 애플리케이션이 추가해야 하는 계약을 구분하고, Dynamo 방식의 복제본 정족수(N/R/W)와 합의 알고리즘의 다수결 정족수를 같은 모델로 설명하지 않는다.
   visualization:
     values: [NONE, TEXT, DIAGRAM]
-    rule: message delay, replica read/write, quorum, leader transition과 saga compensation처럼 시간·상태·관계가 핵심인 곳에 사용한다.
+    rule: 메시지 지연, 복제본 읽기·쓰기, 정족수, 리더 변경과 Saga 보상 작업처럼 시간·상태·관계가 핵심인 곳에 사용한다.
 topics:
 - key: distributed.core.time-failure
-  title: Time and failure
+  title: 분산 환경의 시간과 장애
   order: 10
-  scope: clock·deadline, partial failure와 failure detector의 한계를 다룬다.
-  boundary: Network & HTTP의 protocol semantics와 Backend/Messaging의 retry 구현을 반복하지 않고 분산 실행의 failure model을 소유한다.
+  scope: 시계·요청 기한, 부분 장애와 장애 감지기의 한계를 다룬다.
+  boundary: Network & HTTP의 프로토콜 의미론과 Backend/Messaging의 재시도 구현을 반복하지 않고 분산 실행의 장애 모델을 다룬다.
   concepts:
   - key: distributed.core.time-failure.clocks-deadlines
-    title: clocks와 deadlines
+    title: 분산 환경의 시계와 요청 기한
     order: 10
     level: 1
-    objective: wall clock·monotonic time·clock skew를 구분하고 end-to-end deadline을 전파한다.
+    objective: 실제 시각을 나타내는 wall clock과 경과 시간을 재는 monotonic time, 시계 오차를 구분하고 전체 요청 기한을 전달한다.
     density: CORE
     visualization: DIAGRAM
   - key: distributed.core.time-failure.partial-failure
-    title: partial failure
+    title: 부분 장애와 알 수 없는 결과
     order: 20
     level: 1
-    objective: network delay·loss·process crash가 전체 failure와 다른 이유 및 unknown outcome을 설명한다.
+    objective: 네트워크 지연·유실과 프로세스 종료가 전체 시스템 장애와 다른 이유, 결과를 알 수 없는 상태가 생기는 원인을 설명한다.
     density: CORE
     visualization: DIAGRAM
   - key: distributed.core.time-failure.failure-detectors
-    title: failure detector와 suspicion
+    title: 장애 감지와 의심 판단
     order: 30
     level: 2
-    objective: timeout 기반 liveness 판단의 false positive·false negative와 recovery state를 다루고 failure suspicion과 split-brain safety mechanism을 구분한다.
+    objective: 시간 초과 기반 생존 판단의 오탐·미탐과 복구 상태를 다루고, 장애 의심과 split-brain 방지 장치를 구분한다.
     density: CORE
     visualization: DIAGRAM
 - key: distributed.core.consistency
-  title: Replication and consistency
+  title: 복제와 일관성
   order: 20
-  scope: replica model, Dynamo-style read/write quorum·conflict와 consensus majority·leader transition의 서로 다른 보장과 비용을 다룬다.
-  boundary: Database의 transaction/isolation과 Messaging의 partition ordering을 반복하지 않고 복제된 state의 관측·조정 semantics를 소유한다. N/R/W quorum과 Raft-style consensus quorum은 공통 단어만 보고 같은 protocol로 취급하지 않는다.
+  scope: 복제본 모델, Dynamo 방식의 읽기·쓰기 정족수와 충돌 해결, 합의 알고리즘의 다수결 정족수와 리더 변경이 제공하는 서로 다른 보장과 비용을 다룬다.
+  boundary: Database의 트랜잭션·격리와 Messaging의 파티션 순서를 반복하지 않고 복제된 상태의 관측·조정 의미를 다룬다. N/R/W 정족수와 Raft 방식의 합의 정족수는 같은 단어를 쓴다는 이유만으로 같은 프로토콜로 취급하지 않는다.
   concepts:
   - key: distributed.core.consistency.replication-models
-    title: replication과 consistency models
+    title: 복제 방식과 일관성 모델
     order: 10
     level: 1
-    objective: primary/replica, synchronous/asynchronous replication과 linearizable·eventual read의 차이를 판단한다.
+    objective: 주 노드(primary)와 복제 노드(replica), 동기·비동기 복제를 구분하고 선형화 가능(linearizable) 읽기와 최종적 일관성(eventual consistency) 읽기의 차이를 판단한다.
     density: CORE
     visualization: DIAGRAM
   - key: distributed.core.consistency.quorum-conflict
-    title: quorum과 conflict resolution
+    title: 정족수 교집합과 충돌 해결
     order: 20
     level: 2
-    objective: 고정 replica 집합의 N/R/W quorum intersection이 직접 보장하는 것과 보장하지 않는 것을 설명하고, Dynamo-style repair/conflict resolution을 consensus majority와 구분해 data semantics에 맞게 판단한다.
+    objective: 고정된 복제본 집합에서 N/R/W 정족수의 교집합이 직접 보장하는 것과 보장하지 않는 것을 설명하고, Dynamo 방식의 복구·충돌 해결을 합의 알고리즘의 다수결 정족수와 구분해 데이터 의미에 맞게 판단한다.
     density: CORE
     visualization: TEXT
   - key: distributed.core.consistency.leader-election
-    title: leader election과 consensus boundary
+    title: 리더 선출과 합의 경계
     order: 30
     level: 2
-    objective: leader election 자체와 consensus를 동일시하지 않고 term/epoch·majority commit·committed/uncommitted operation 경계와 stale leader 차단을 설명한다.
+    objective: 리더 선출과 합의를 동일시하지 않고 세대(term/epoch)·다수결 커밋(commit), 확정·미확정 작업의 경계와 이전 리더의 쓰기 차단을 설명한다.
     density: CORE
     visualization: DIAGRAM
 - key: distributed.core.coordination
-  title: Coordination and trade-offs
+  title: 조정과 설계 절충
   order: 30
-  scope: lease/fencing, saga compensation과 CAP 관점의 availability 선택을 다룬다.
-  boundary: Cache·Messaging의 개별 lock/outbox mechanics보다 여러 aggregate·service 간 ownership과 consistency 계약을 소유한다.
+  scope: 임대(Lease)와 펜싱 토큰(Fencing Token), Saga 보상 작업, CAP 관점의 가용성 선택을 다룬다.
+  boundary: Cache·Messaging의 개별 잠금·outbox 동작보다 여러 애그리거트·서비스 사이의 소유권과 일관성 계약을 다룬다.
   concepts:
   - key: distributed.core.coordination.leases-fencing
-    title: leases와 fencing
+    title: 임대(Lease)와 펜싱 토큰(Fencing Token)
     order: 10
     level: 2
-    objective: lease expiry·stale owner와 fencing token으로 delayed actor의 side effect를 차단한다.
+    objective: 임대 만료 뒤에도 남아 있을 수 있는 이전 소유자와 fencing token을 이용해 지연된 작업의 부수 효과를 차단한다.
     density: CORE
     visualization: DIAGRAM
   - key: distributed.core.coordination.saga-compensation
-    title: saga와 compensation
+    title: Saga와 보상 작업
     order: 20
     level: 2
-    objective: local transaction sequence, orchestration/choreography와 business compensation의 한계를 판단한다.
+    objective: 로컬 트랜잭션의 순서, 중앙 조정과 이벤트 기반 조정, 업무 보상 작업의 한계를 판단한다.
     density: CORE
     visualization: DIAGRAM
   - key: distributed.core.coordination.cap-tradeoffs
-    title: CAP와 availability trade-off
+    title: 네트워크 분할에서 CAP 절충
     order: 30
     level: 2
-    objective: partition 중 consistency·availability 선택을 product invariant와 recovery policy에 연결한다.
+    objective: 네트워크 분할 중 일관성과 가용성의 선택을 제품의 핵심 불변 조건과 복구 정책에 연결한다.
     density: CORE
     visualization: DIAGRAM
