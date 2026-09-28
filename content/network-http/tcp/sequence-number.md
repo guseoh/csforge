@@ -14,7 +14,7 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "TCP 시퀀스 공간이 데이터 바이트와 SYN·FIN을 추적하는 규칙을 확인한다."
+    recommendation: "TCP 연결, 바이트 스트림, 시퀀스·ACK와 연결 상태의 기본 규칙을 확인한다."
     displayOrder: 1
 ---
 # TCP 시퀀스 번호
