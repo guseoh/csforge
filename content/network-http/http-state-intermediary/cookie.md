@@ -14,7 +14,7 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "Cookie·Set-Cookie 필드의 문법과 user agent의 저장·전송 규칙을 확인한다."
+    recommendation: "Cookie·Set-Cookie 필드 문법과 사용자 에이전트의 저장·전송 규칙을 확인한다."
     displayOrder: 1
 ---
 # Cookie로 상태 이어가기
