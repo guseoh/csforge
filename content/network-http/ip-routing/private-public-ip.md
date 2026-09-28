@@ -3,8 +3,8 @@ kind: concept
 contentKey: network-http.core.ip-routing.private-public-ip
 topicContentKey: network-http.core.ip-routing
 slug: private-public-ip
-title: "Private·Public IP"
-summary: "routable address와 private address의 reachability 경계를 설명한다."
+title: "사설 IP와 공인 IP"
+summary: "RFC 1918 사설 IPv4 주소와 공인 주소의 라우팅 범위를 구분하고, 주소 종류와 접근 허용 정책이 별개임을 설명한다."
 level: 1
 status: PUBLISHED
 displayOrder: 30
@@ -14,21 +14,38 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "private·public address와 NAT 경계를 확인한다."
+    recommendation: "RFC 1918 사설 IPv4 주소 범위와 공개 인터넷에서의 라우팅 경계를 확인한다."
     displayOrder: 1
 ---
-# Private·Public IP
+# 사설 IP와 공인 IP
 
-Private IPv4 address는 조직 내부에서 반복해서 사용할 수 있도록 예약된 address range다. 대표적으로 RFC 1918이 정의한 범위는 public Internet의 global routing 대상으로 사용하지 않는다. 그래서 서로 다른 private network에서 같은 address를 동시에 사용할 수 있다.
+사설 IPv4 주소는 독립된 내부 네트워크에서 반복해서 사용할 수 있도록 예약된 주소 범위다. RFC 1918은 다음 세 범위를 정의한다.
 
-Public address는 global Internet routing에 사용할 수 있는 address space에 속한다. 하지만 public address를 가진다는 사실만으로 특정 service가 실제로 reachable하다는 뜻은 아니다. Reachability에는 route, endpoint와 정책 같은 다른 조건도 필요하다.
+```text
+10.0.0.0/8
+172.16.0.0/12
+192.168.0.0/16
+```
 
-### Private address도 network 안에서는 직접 route될 수 있다
+이 주소들은 공개 인터넷에서 전역적으로 고유한 목적지로 라우팅하기 위한 주소가 아니다. 그래서 서로 관계없는 두 회사 내부망이 모두 `10.0.0.10`을 사용할 수 있다.
 
-`private = 통신 불가`가 아니다. 같은 private network나 서로 route가 구성된 private networks 사이에서는 NAT 없이 직접 통신할 수 있다. Public Internet 경계를 넘어갈 때 private address를 그대로 global route할 수 없기 때문에 NAT, proxy나 다른 explicit boundary가 사용될 수 있다.
+공인 주소는 공개 인터넷의 전역 라우팅에 사용할 수 있는 주소 공간에 속한다. 하지만 **공인 주소가 있다는 사실과 실제로 외부에서 서비스에 접속할 수 있다는 사실은 다르다.** 경로, 방화벽, 로드 밸런서, 서버 리스너 같은 조건이 별도로 맞아야 한다.
 
-### Address scope와 access policy는 다른 문제다
+| 구분 | 공개 인터넷 라우팅 | 여러 내부망에서 같은 값 재사용 | 접근 허용을 자동 결정하는가 |
+| --- | --- | --- | --- |
+| RFC 1918 사설 IPv4 | 해당 사설 prefix 자체는 전역 라우팅 대상으로 사용하지 않음 | 가능 | 아니오 |
+| 공인 주소 공간 | 전역 라우팅에 사용할 수 있음 | 전역 고유성 전제 | 아니오 |
 
-Private address라는 이유로 자동으로 trusted하거나, public address라는 이유로 자동으로 허용되는 것은 아니다. Private/public 구분은 **address의 routing scope**에 관한 것이며 traffic 허용 정책은 별도의 책임이다.
+### 사설 주소끼리는 NAT 없이도 통신할 수 있다
 
-핵심은 private IPv4 address가 여러 내부 network에서 재사용 가능한 non-global address이고, public address는 global routing에 사용할 수 있는 address라는 점이다.
+`사설 주소 = 외부 통신 불가`로 단순화하면 안 된다. 같은 사설망이나 VPN·전용망·피어링 등으로 서로 라우팅된 사설 네트워크 사이에서는 NAT 없이도 직접 통신할 수 있다.
+
+공개 인터넷으로 나갈 때는 사설 출발지 주소를 그대로 전역 라우팅할 수 없기 때문에 NAT/PAT, 프록시 같은 경계를 사용하는 경우가 많다. 하지만 NAT가 사설망 통신의 필수 조건은 아니다.
+
+### 사설 주소는 보안 신뢰 표시가 아니다
+
+사설 IP에서 들어온 요청이라고 자동으로 신뢰해서는 안 된다. SSRF, 내부 침해, 잘못된 라우팅·프록시 설정으로 사설 주소에서 악의적인 요청이 올 수도 있다. 반대로 공인 주소라고 무조건 차단해야 하는 것도 아니다.
+
+사설/공인 구분은 **주소의 라우팅 범위**를 설명하고, 실제 접근 허용·인증·인가 정책은 별도로 설계해야 한다.
+
+핵심은 **사설 IPv4 주소는 독립된 내부 네트워크에서 재사용할 수 있는 비전역 주소이고, 공인 주소는 전역 라우팅에 사용할 수 있지만 어느 쪽도 그 자체로 서비스 접근 가능성이나 신뢰를 보장하지 않는다는 점**이다.

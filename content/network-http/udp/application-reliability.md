@@ -3,8 +3,8 @@ kind: concept
 contentKey: network-http.core.udp.application-reliability
 topicContentKey: network-http.core.udp
 slug: application-reliability
-title: "UDP 위에서 신뢰성을 만드는 비용"
-summary: "sequence·ACK·timeout·retry를 상위 protocol이 추가할 때 필요한 상태와 trade-off를 설명한다."
+title: "UDP 위에 신뢰성 구현하기"
+summary: "시퀀스·ACK·타임아웃·재전송을 상위 프로토콜이 추가할 때 필요한 상태와 중복 처리·혼잡 제어 비용을 설명한다."
 level: 2
 status: PUBLISHED
 displayOrder: 50
@@ -16,27 +16,54 @@ references:
     depth: section
     recommendation: "UDP datagram과 application reliability 경계를 확인한다."
     displayOrder: 1
+  - url: "https://www.rfc-editor.org/rfc/rfc8085"
+    title: "UDP Usage Guidelines"
+    referenceType: OFFICIAL
+    language: en
+    depth: section
+    recommendation: "UDP를 사용하는 application의 혼잡 제어·메시지 크기·신뢰성 설계 지침을 확인한다."
+    displayOrder: 2
+    relationNote: "UDP 위에서 ACK·재전송·중복 제거 같은 신뢰성을 직접 구현할 때 추가되는 프로토콜 책임을 확인한다."
 ---
-# UDP 위에서 신뢰성을 만드는 비용
+# UDP 위에 신뢰성 구현하기
 
-UDP는 loss recovery와 ordering을 제공하지 않지만, 필요하다면 상위 protocol이 그 기능을 직접 만들 수 있다. 가장 단순한 형태에서도 sender는 message나 sequence를 식별하고, receiver는 무엇을 받았는지 ACK로 알려 주며, sender는 일정 시간 응답이 없으면 다시 보내는 상태를 관리해야 한다.
-
-여기에 순서 보장이 필요하면 out-of-order message를 임시로 보관하고 missing sequence가 채워질 때까지 기다리는 규칙이 추가된다. duplicate를 허용할 수 없다면 이미 처리한 identifier를 기억해야 하고, retry가 몰리지 않게 하려면 rate control과 backoff도 필요하다. 즉 reliability를 높일수록 protocol state와 memory, timer, failure recovery가 늘어난다.
-
-### ACK가 없다는 사실만으로 loss 원인을 알 수는 없다
-
-sender가 ACK를 받지 못한 이유는 원래 datagram이 유실되었기 때문일 수도 있고, receiver가 처리한 뒤 보낸 ACK만 유실되었기 때문일 수도 있다. 그래서 단순 retry는 duplicate delivery를 만들 수 있다. protocol은 같은 message를 다시 받았을 때 어떻게 식별하고 처리할지 정의해야 한다.
+UDP 자체는 손실 복구와 순서 보장을 제공하지 않지만, 상위 프로토콜이 필요한 기능을 직접 추가할 수 있다. 가장 단순한 재전송만 구현해도 **메시지를 식별할 번호, 수신 여부를 알리는 ACK, 기다릴 시간, 재전송 규칙**이 필요하다.
 
 ```text
-Sender                         Receiver
-  | ---- message seq=17 ------> | 처리 완료
-  | <------ ACK seq=17 -----X   | ACK 유실
-  |         timeout             |
-  | ---- retry seq=17 --------> | duplicate 식별 후 재적용 방지
+송신 측
+메시지 #17 전송
+      ↓
+ACK #17 대기
+  ├─ ACK 도착 → 완료
+  └─ timeout → 재전송 여부 판단
 ```
 
-Timeout은 receiver가 처리하지 않았다는 증거가 아니다. 같은 sequence를 다시 보낼 수 있게 하는 규칙과 receiver의 duplicate 처리 규칙이 함께 있어야 retry가 안전해진다.
+여기에 순서 보장까지 필요하면 먼저 도착한 뒤쪽 메시지를 임시로 보관하고 빠진 번호가 채워질 때까지 기다리는 규칙이 추가된다. 중복 적용을 막으려면 이미 처리한 메시지 식별자를 기억해야 한다. 다수 송신자가 동시에 재시도할 수 있다면 재시도 간격과 혼잡 제어도 필요하다.
 
-반대로 모든 message에 이런 비용이 필요한 것도 아니다. 최신 상태만 중요하다면 오래된 sequence를 버리고 새 상태를 계속 보내는 방식이 더 적합할 수 있다. UDP 위 reliability는 `TCP를 다시 구현해야 한다`가 아니라 **application 목적에 필요한 일부 보장만 선택해서 설계할 수 있지만, 선택한 보장의 상태와 실패 처리도 직접 책임져야 한다**는 의미다.
+즉 신뢰성을 하나씩 추가할수록 **연결 상태·메모리·타이머·복구 규칙**도 함께 늘어난다.
 
-QUIC처럼 이 책임을 체계적으로 구현하면 결과적으로 별도의 transport protocol이 된다. raw UDP가 단순하다는 사실과 UDP 위 protocol 전체가 단순하다는 사실은 구분해야 한다.
+### 타임아웃은 상대가 처리하지 않았다는 증거가 아니다
+
+가장 중요한 실패 경계 중 하나다. 송신 측이 ACK를 못 받았다고 하자.
+
+```text
+송신 측                         수신 측
+  | ---- message #17 ----------> | 처리 성공
+  | <------- ACK #17 -------X    | ACK만 유실
+  |          timeout             |
+  | ---- message #17 재전송 ---> | 중복 메시지
+```
+
+송신 측에서는 `메시지가 유실된 경우`와 `상대가 이미 처리했지만 ACK만 유실된 경우`를 timeout 하나만으로 구분할 수 없다. 따라서 같은 메시지를 재전송할 수 있게 하려면 수신 측도 **동일한 논리 메시지를 식별하고 중복 적용을 막을 규칙**을 가져야 한다.
+
+이 구조는 HTTP POST 재시도의 idempotency key 문제와도 비슷하다. 통신 실패는 실제 업무 효과가 발생하지 않았다는 증거가 아니므로, 안전한 재시도에는 논리 연산을 식별할 상태가 필요하다.
+
+### 모든 UDP 사용 사례에 강한 신뢰성이 필요한 것은 아니다
+
+최신 위치·게임 상태처럼 오래된 값은 버려도 되는 경우에는 모든 메시지를 순서대로 복구하는 것이 오히려 불필요한 지연을 만들 수 있다. 이런 프로토콜은 번호를 이용해 오래된 메시지를 버리되 누락 메시지를 끝까지 재전송하지 않을 수 있다.
+
+반대로 파일 조각처럼 빠진 데이터가 있으면 결과를 사용할 수 없는 경우에는 손실 복구와 재조립이 훨씬 중요하다.
+
+따라서 UDP 위 신뢰성을 설계한다는 것은 `TCP를 무조건 다시 구현한다`는 뜻이 아니다. **사용 사례에 필요한 보장만 선택할 수 있지만, 선택한 보장의 상태·재시도·중복 처리·혼잡 제어를 상위 프로토콜이 직접 책임진다는 뜻**이다.
+
+QUIC처럼 이 책임을 체계적으로 구현하면 결국 UDP 위에 별도의 완성된 전송 프로토콜이 만들어진다. `raw UDP가 단순하다`와 `UDP 위에 만든 전체 프로토콜도 단순하다`는 같은 말이 아니다.

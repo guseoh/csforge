@@ -3,8 +3,8 @@ kind: concept
 contentKey: network-http.core.dns.dns-failure
 topicContentKey: network-http.core.dns
 slug: dns-failure
-title: "DNS 실패"
-summary: "NXDOMAIN·SERVFAIL·timeout을 원인별로 구분하고 retry 경계를 설명한다."
+title: "DNS 조회 실패"
+summary: "NXDOMAIN·NODATA처럼 이름 데이터가 없다는 응답과 SERVFAIL·timeout처럼 조회 과정이 실패한 상태를 구분하고 재시도 경계를 설명한다."
 level: 2
 status: PUBLISHED
 displayOrder: 100
@@ -28,35 +28,39 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "SERVFAIL·timeout 등 resolution failure cache를 NXDOMAIN/NODATA와 구분한다."
+    recommendation: "SERVFAIL 등 DNS 조회 과정의 실패를 이름·레코드 부재에 대한 부정 응답과 구분하는 규칙을 확인한다."
     displayOrder: 3
 ---
-# DNS 실패
+# DNS 조회 실패
 
-Application이 DNS lookup에서 address를 얻지 못했다고 해서 모두 같은 실패는 아니다. **이름이나 record가 실제로 없다는 negative answer와, resolver가 useful answer를 만들지 못한 resolution failure를 구분**해야 한다.
+애플리케이션이 DNS에서 주소를 얻지 못했다고 해서 원인이 모두 같은 것은 아니다. 먼저 **이름이나 요청한 레코드가 실제로 없다는 부정 응답**과 **리졸버가 정상적인 답을 만들지 못한 조회 과정 실패**를 구분해야 한다.
 
-### Useful negative answer
+### 이름·레코드가 없다는 유효한 부정 응답
 
-- `NXDOMAIN`: query한 domain name 자체가 존재하지 않는다.
-- `NODATA`: name은 존재하지만 요청한 record type의 data가 없다.
+- `NXDOMAIN`: 질의한 도메인 이름 자체가 존재하지 않는다.
+- `NODATA`: 이름은 존재하지만 요청한 레코드 유형의 데이터가 없다.
 
-이 둘은 authoritative DNS data에 근거해 "없다"는 정보를 제공하는 유효한 negative answer다.
+이 둘은 권한 있는 DNS 데이터에 근거해 `없다`는 정보를 전달하는 결과다. 그래서 일정 시간 부정 캐시로 재사용될 수 있다.
 
-### Resolution failure
+### 조회 과정 자체가 실패한 경우
 
-- `SERVFAIL`: server/resolver가 문제 때문에 query를 완료하지 못했다.
-- `REFUSED`: server가 policy 등의 이유로 query 처리를 거절했다.
-- timeout/unreachable: 일정 시간 안에 usable DNS response를 얻지 못했다.
-- DNSSEC validation failure 같은 경우도 useful answer를 만들지 못하는 원인이 될 수 있다.
+- `SERVFAIL`: 서버나 리졸버가 오류 때문에 정상적인 답을 만들지 못했다.
+- `REFUSED`: 서버가 정책 등의 이유로 질의를 거절했다.
+- timeout·도달 불가: 정해진 시간 안에 사용할 수 있는 DNS 응답을 받지 못했다.
+- DNSSEC 검증 실패처럼 응답을 신뢰할 수 없어 최종 답을 만들지 못하는 경우도 있다.
 
 ```text
-lookup failure
-  ├─ NXDOMAIN / NODATA → 존재 여부에 대한 negative answer
-  └─ SERVFAIL / timeout ... → resolution 과정 실패
+DNS 조회 실패
+  ├─ NXDOMAIN / NODATA
+  │    → 이름·레코드 존재 여부에 대한 부정 응답
+  └─ SERVFAIL / timeout / 검증 실패 ...
+       → 이름 해석 과정 자체의 실패
 ```
 
-### Retry도 제한된 자원이다
+### 재시도는 실패 종류와 전체 시간 예산을 함께 봐야 한다
 
-Transient resolution failure에는 다른 authoritative server나 transport를 시도하는 retry가 도움이 될 수 있다. 하지만 같은 실패에 무제한 retry를 반복하면 DNS infrastructure와 전체 request deadline을 소모할 수 있다. Resolver는 retry와 short-lived failure caching을 통해 이런 반복을 제한할 수 있다.
+일시적인 조회 실패에서는 다른 권한 서버나 전송 경로를 시도하는 재시도가 도움이 될 수 있다. 하지만 수백 개 인스턴스가 같은 장애에 즉시 반복 질의를 보내면 느려진 DNS 서버에 부하를 더해 **재시도 폭주(retry storm)**를 만들 수 있다.
 
-DNS Failure의 핵심은 **name/type이 실제로 없는 상태와 DNS resolution 과정이 실패한 상태를 구분해야 하며, retry 가능성도 실패 종류에 따라 달라진다는 것**이다.
+따라서 재시도 횟수와 전체 시간 예산을 제한하고, 필요하면 지수 백오프와 지터를 사용해야 한다. 반대로 NXDOMAIN처럼 이름이 없다는 명시적 응답을 일시적 timeout과 똑같이 무한 재시도해서도 안 된다.
+
+DNS 조회 실패의 핵심은 **`응답이 없다`와 `없다는 응답을 받았다`를 구분하고, 실패 종류에 맞게 캐시·재시도 정책을 결정하는 것**이다.

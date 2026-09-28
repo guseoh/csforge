@@ -3,8 +3,8 @@ kind: concept
 contentKey: network-http.core.ip-routing.routing-table
 topicContentKey: network-http.core.ip-routing
 slug: routing-table
-title: "Routing Table"
-summary: "destination prefix와 next hop/interface의 관계를 설명한다."
+title: "라우팅 테이블"
+summary: "목적지 prefix를 다음 홉·출력 인터페이스와 연결하고 패킷의 전달 방향을 선택하는 라우팅 테이블의 역할을 설명한다."
 level: 1
 status: PUBLISHED
 displayOrder: 40
@@ -14,27 +14,39 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "IP routing table과 next hop 선택을 확인한다."
+    recommendation: "IPv4 라우터의 경로 선택과 다음 홉 전달 규칙을 확인한다."
     displayOrder: 1
 ---
-# Routing Table
+# 라우팅 테이블
 
-Routing table은 destination prefix와 next hop, egress interface 같은 forwarding 정보를 연결한 table이다. Host나 router는 packet의 destination address를 기준으로 matching route를 찾아 **어느 interface와 next hop으로 보낼지** 결정한다.
-
-Route entry는 보통 다음과 같은 정보를 가질 수 있다.
+라우팅 테이블은 **어떤 목적지 주소 범위를 어느 다음 홉·출력 인터페이스로 보낼지** 나타내는 전달 상태다. 호스트나 라우터는 패킷의 목적지 IP 주소를 라우팅 테이블과 비교해 다음 전달 방향을 정한다.
 
 ```text
-destination prefix → next hop → egress interface
+목적지 prefix → 다음 홉 → 출력 인터페이스
 ```
 
-Directly connected network라면 별도 gateway 없이 해당 interface로 직접 보낼 수 있고, remote network라면 router의 address가 next hop이 될 수 있다. 아무 구체적인 route가 없을 때 default route가 사용될 수 있다.
+직접 연결된 네트워크라면 별도 게이트웨이 없이 해당 인터페이스로 내보낼 수 있다. 원격 네트워크라면 다른 라우터의 주소가 다음 홉이 될 수 있다. 더 구체적인 경로가 하나도 없으면 기본 경로가 후보가 된다.
 
-### Route가 있다는 것은 전달 성공을 보장하지 않는다
+### 라우팅은 `어디로 보낼지`를 결정하고, 링크 계층은 `현재 다음 홉에 어떻게 보낼지`를 해결한다
 
-Routing table은 packet을 어느 방향으로 보낼지 결정할 뿐이다. Next hop의 link-layer address를 찾지 못하거나 이후 path에서 packet이 drop되면 실제 destination에는 도달하지 못할 수 있다.
+라우팅 테이블이 `다음 홉 = 192.0.2.1`을 선택했다고 해서 이더넷 프레임을 바로 만들 수 있는 것은 아니다. IPv4에서는 ARP 같은 이웃 주소 해석을 통해 그 다음 홉의 MAC 주소를 알아내야 할 수 있다.
 
-### 여러 route가 동시에 match될 수 있다
+```text
+목적지 IP
+   ↓ 라우팅 테이블 조회
+다음 홉 IP + 출력 인터페이스
+   ↓ ARP/NDP
+다음 홉 링크 계층 주소
+   ↓
+프레임 전송
+```
 
-Destination 하나가 여러 prefix에 포함될 수 있기 때문에 routing lookup에는 우선순위 규칙이 필요하다. 기본적으로 더 구체적인 prefix를 선택하는 longest-prefix match가 중요한 기준이 된다.
+### 경로 항목이 존재해도 실제 전달 성공은 보장되지 않는다
 
-Routing table의 핵심은 **destination prefix를 기준으로 packet의 next hop과 egress interface를 선택하는 forwarding state**라는 것이다.
+다음 홉이 응답하지 않거나 인터페이스가 내려가 있거나 이후 구간에서 패킷이 버려질 수 있다. 라우팅 테이블은 패킷을 어느 방향으로 보낼지 결정하는 정보이지 종단 간 도달 성공을 증명하는 표가 아니다.
+
+### 하나의 목적지에 여러 경로가 일치할 수 있다
+
+`10.1.2.30`은 `0.0.0.0/0`, `10.0.0.0/8`, `10.1.2.0/24`에 모두 포함될 수 있다. 이때 더 구체적인 prefix를 고르는 최장 접두사 일치가 핵심 기준이 된다. 같은 prefix 길이의 후보가 여러 개라면 metric, 정책 라우팅, ECMP 같은 추가 규칙이 개입할 수 있다.
+
+라우팅 테이블의 핵심은 **목적지 주소와 일치하는 경로를 찾아 다음 홉과 출력 인터페이스를 결정하는 네트워크 계층 전달 상태**라는 점이다.

@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.http-state-intermediary.cdn-http-intermediary
 topicContentKey: network-http.core.http-state-intermediary
 slug: cdn-http-intermediary
-title: "CDN HTTP Intermediary"
+title: "CDN의 HTTP 중개와 캐시"
 summary: "CDN edge가 reverse proxy와 shared cache로서 origin 앞에 별도 HTTP hop을 만드는 방식을 설명한다."
 level: 2
 status: PUBLISHED
@@ -15,7 +15,7 @@ references:
     language: en
     displayOrder: 1
 ---
-# CDN HTTP Intermediary
+# CDN의 HTTP 중개와 캐시
 
 CDN은 여러 edge location에 HTTP intermediary를 배치해 client 가까이에서 request를 받고 response를 전달하는 구조다. HTTP 관점에서는 origin 앞의 분산 reverse proxy이자, cache 기능을 사용할 경우 shared cache가 될 수 있다.
 

@@ -3,8 +3,8 @@ kind: concept
 contentKey: network-http.core.udp.checksum
 topicContentKey: network-http.core.udp
 slug: checksum
-title: "UDP Checksum과 오류 검출"
-summary: "UDP checksum이 전송 중 오류를 검출하지만 delivery reliability나 security를 제공하지 않는 경계를 설명한다."
+title: "UDP 체크섬"
+summary: "UDP 체크섬이 전송 중 비트 오류를 검출하지만 전달 신뢰성·순서 보장·보안 인증까지 제공하지는 않는 경계를 설명한다."
 level: 1
 status: PUBLISHED
 displayOrder: 30
@@ -17,16 +17,32 @@ references:
     recommendation: "UDP datagram과 application reliability 경계를 확인한다."
     displayOrder: 1
 ---
-# UDP Checksum과 오류 검출
+# UDP 체크섬
 
-UDP checksum은 UDP header와 payload, 그리고 IP source·destination 등의 일부 정보를 포함한 pseudo-header를 바탕으로 계산한다. 수신자는 같은 계산을 수행해 값이 맞지 않으면 전송 중 data가 손상되었을 가능성을 발견할 수 있다.
+UDP 체크섬(checksum)은 UDP 헤더와 데이터, 그리고 IP 출발지·목적지 등의 정보를 포함한 가상 헤더(pseudo-header)를 바탕으로 계산한다. 수신 측은 같은 방식으로 값을 확인해 **전송 과정에서 비트가 손상된 데이터그램을 발견하는 데 도움**을 받을 수 있다.
 
-이 기능의 목적은 **bit corruption 검출**이다. checksum이 맞는다고 datagram이 반드시 제때 도착했다거나, 중복이 아니거나, 올바른 순서라는 뜻은 아니다. 손실된 datagram을 다시 보내는 기능도 없으므로 checksum은 reliability와 별개의 메커니즘이다.
+여기서 체크섬이 제공하는 것은 오류 **검출**이지 전달 신뢰성 전체가 아니다.
 
-### Checksum과 보안 무결성은 다르다
+| 질문 | UDP 체크섬이 해결하는가? | 필요한 별도 기능 |
+| --- | --- | --- |
+| 전송 중 비트가 손상됐는가? | 검출에 도움을 줌 | 손상된 데이터 처리 정책 |
+| 데이터그램이 유실됐는가? | 아니오 | ACK·타임아웃·재전송 등 |
+| 순서가 바뀌었는가? | 아니오 | 시퀀스 번호·재정렬 규칙 |
+| 같은 메시지가 중복됐는가? | 아니오 | 메시지 식별자·중복 제거 |
+| 신뢰할 수 있는 상대가 보냈는가? | 아니오 | 인증·암호학적 무결성 보호 |
 
-UDP checksum은 공격자가 의도적으로 payload를 바꾸는 것을 막기 위한 cryptographic authentication이 아니다. 내용을 변경한 뒤 checksum까지 다시 계산할 수 있으므로 송신자의 신원이나 악의적 변조 여부를 증명하지 못한다. 그런 보장이 필요하면 상위 protocol에서 인증·암호화 메커니즘을 사용해야 한다.
+### 체크섬이 맞는다고 모든 데이터그램을 받았다는 뜻은 아니다
 
-IPv4 UDP에서는 checksum을 사용하지 않는 표현이 허용되지만, IPv6 UDP에서는 일반적인 통신에서 checksum 사용이 요구된다. 세부 예외가 존재할 수 있으므로 중요한 것은 `UDP checksum은 선택적인 부가 신뢰성`이라고 외우는 것이 아니라, **해당 IP version과 protocol 규칙에 따라 오류 검출 경계가 달라질 수 있다**는 점이다.
+체크섬은 **도착한 데이터그램의 내용이 우연한 전송 오류로 손상됐는지** 확인하는 장치다. 애초에 사라진 데이터그램은 검사할 대상 자체가 없으므로 누락 여부를 알려 주지 못한다. 먼저 보낸 데이터그램이 나중에 도착해도 체크섬은 순서 문제를 판단하지 않는다.
 
-결국 checksum은 `받은 datagram이 전송 중 손상되었는가`를 검출하는 데 도움을 주지만, `받아야 할 모든 datagram을 받았는가`나 `이 message를 신뢰해도 되는가`까지 답하지 않는다.
+### 체크섬과 보안 무결성은 다르다
+
+공격자가 데이터 내용을 의도적으로 바꾸고 체크섬도 다시 계산하면 UDP 체크섬만으로는 악의적 변조를 구분할 수 없다. 송신자의 신원을 증명하지도 않는다.
+
+따라서 공격자가 내용을 바꾸지 못하게 하거나 상대를 인증해야 한다면 TLS, DTLS, QUIC 같은 인증된 암호화나 상위 프로토콜의 메시지 인증 기능이 필요하다.
+
+### IPv4와 IPv6의 체크섬 규칙도 완전히 같지 않다
+
+IPv4 UDP에는 체크섬을 사용하지 않는 표현이 허용돼 왔지만, IPv6 UDP에서는 일반적인 통신에서 체크섬 사용이 요구된다. 일부 특수한 예외만 보고 `UDP 체크섬은 항상 선택 사항`이라고 일반화하면 안 된다.
+
+핵심은 **UDP 체크섬이 도착한 데이터그램의 우연한 전송 오류를 검출하는 기능이며, 손실 복구·순서·중복 제거·상대 인증을 대신하지 않는다는 점**이다.

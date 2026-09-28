@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.http-versions.keep-alive
 topicContentKey: network-http.core.http-versions
 slug: keep-alive
-title: "Persistent Connection·Keep-Alive"
+title: "지속 연결과 Keep-Alive"
 summary: "HTTP connection 재사용, HTTP/1.x Keep-Alive 신호와 TCP keepalive probe를 서로 다른 개념으로 구분한다."
 level: 1
 status: PUBLISHED
@@ -14,7 +14,7 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "HTTP/1.1 message framing과 body 경계를 확인한다."
+    recommendation: "HTTP/1.1 메시지 구문, 프레이밍과 연결 재사용 규칙을 확인한다."
     displayOrder: 1
   - url: "https://www.rfc-editor.org/rfc/rfc9113.html#section-8.2.2"
     title: "RFC 9113 Section 8.2.2: Connection-Specific Header Fields"
@@ -31,7 +31,7 @@ references:
     recommendation: "HTTP/3에서 connection-specific field가 금지되는 규칙을 확인한다."
     displayOrder: 3
 ---
-# Persistent Connection·Keep-Alive
+# 지속 연결과 Keep-Alive
 
 HTTP에서 persistent connection은 하나의 transport connection을 여러 HTTP exchange에 재사용하는 개념이다. HTTP/1.1에서는 persistence가 기본이며 `Connection: close`로 current connection을 더 이상 재사용하지 않겠다는 의사를 전달할 수 있다.
 

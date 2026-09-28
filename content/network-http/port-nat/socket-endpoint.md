@@ -3,8 +3,8 @@ kind: concept
 contentKey: network-http.core.port-nat.socket-endpoint
 topicContentKey: network-http.core.port-nat
 slug: socket-endpoint
-title: "Socket Endpoint"
-summary: "IP·port·protocol 조합으로 통신 endpoint를 표현한다."
+title: "소켓 종단점"
+summary: "IP 주소·포트·전송 프로토콜 조합으로 통신의 한쪽 종단점을 표현하고 listening socket과 연결 소켓을 구분한다."
 level: 1
 status: PUBLISHED
 displayOrder: 20
@@ -14,31 +14,41 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "transport port와 endpoint 식별 규칙을 확인한다."
+    recommendation: "전송 프로토콜의 서비스 이름과 포트 번호 공간을 확인한다."
     displayOrder: 1
 ---
-# Socket Endpoint
+# 소켓 종단점
 
-Socket endpoint는 transport communication의 한쪽 끝을 나타낸다. Internet socket을 단순화하면 **IP address, port, transport protocol**의 조합으로 local endpoint를 표현할 수 있다.
+통신 종단점(endpoint)은 네트워크 통신의 한쪽 끝을 뜻한다. 인터넷 소켓을 단순화하면 **IP 주소 + 포트 번호 + 전송 프로토콜**로 로컬 종단점을 표현할 수 있다.
 
 ```text
-TCP endpoint
-= IP address + TCP port
-
-UDP endpoint
-= IP address + UDP port
+TCP 종단점 = IPv4/IPv6 주소 + TCP 포트
+UDP 종단점 = IPv4/IPv6 주소 + UDP 포트
 ```
 
-Hostname은 endpoint 자체가 아니다. DNS를 통해 hostname을 하나 이상의 IP address로 해석한 뒤 선택된 address와 port가 실제 network endpoint를 구성한다.
+도메인 이름은 종단점 자체가 아니다. `api.example.com`을 DNS로 하나 이상의 IP 주소에 해석한 뒤, 실제로 선택한 IP 주소와 포트·전송 프로토콜이 네트워크 통신 종단점을 만든다.
 
-### Listening endpoint와 established connection
+### listening socket과 성립된 TCP 연결은 상태 범위가 다르다
 
-TCP server는 local address와 port에 listening socket을 두고 connection 요청을 기다린다. Connection이 만들어지면 accepted socket은 local endpoint뿐 아니라 remote endpoint도 함께 가진다.
+TCP 서버는 로컬 주소·포트에 listening socket을 두고 연결 요청을 기다린다. 연결이 성립하면 새 연결 상태는 로컬 종단점뿐 아니라 상대 종단점도 함께 가진다.
 
-UDP도 local address/port에 bind할 수 있지만 TCP와 같은 connection reliability/state machine을 자동으로 제공하는 것은 아니다. 같은 `socket` interface를 사용하더라도 transport protocol의 계약은 다르다.
+```text
+listen
+0.0.0.0:443
 
-### Wildcard bind
+연결 1
+192.0.2.10:53124 ↔ 198.51.100.20:443
 
-Server가 특정 local address가 아니라 wildcard address에 bind하면 여러 local interface로 들어오는 traffic을 받을 수 있다. 예를 들어 IPv4의 `0.0.0.0`은 일반적으로 모든 local IPv4 address에 대한 bind를 표현하는 데 사용된다.
+연결 2
+192.0.2.11:60431 ↔ 198.51.100.20:443
+```
 
-Socket endpoint의 핵심은 **transport protocol이 traffic을 어느 local communication endpoint에 전달할지 나타내는 address·port 조합**이라는 것이다.
+그래서 하나의 listen 포트에서 많은 TCP 연결을 동시에 받을 수 있다.
+
+UDP도 주소·포트에 bind할 수 있지만 TCP처럼 연결 수립 핸드셰이크와 신뢰성 상태를 자동으로 제공하지는 않는다. 같은 소켓 API를 사용한다고 두 전송 프로토콜의 보장이 같아지는 것은 아니다.
+
+### wildcard bind는 여러 로컬 주소에서 받을 수 있게 한다
+
+서버가 특정 IP 하나가 아니라 IPv4의 `0.0.0.0`처럼 wildcard 주소에 bind하면 일반적으로 여러 로컬 IPv4 주소로 들어오는 트래픽을 받을 수 있다. 반대로 특정 주소에만 bind하면 다른 인터페이스 주소로 패킷이 도착해도 그 소켓이 받지 못할 수 있다.
+
+핵심은 **소켓 종단점이 전송 프로토콜·로컬 주소·포트의 조합으로 통신의 한쪽 끝을 나타내며, DNS 이름·프로세스 ID·업무 사용자 신원과는 다른 개념이라는 점**이다.
