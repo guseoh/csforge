@@ -40,7 +40,6 @@ dependencies {
 
     runtimeOnly 'org.postgresql:postgresql'
     runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
-
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
     testImplementation 'org.springframework.security:spring-security-test'
@@ -51,6 +50,13 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
+    doFirst {
+        def slurper = new groovy.json.JsonSlurper()
+        def questionFiles = fileTree('../content/dsa') { include '**/questions.json' }.files.toList().sort { it.path }
+        def counts = questionFiles.collectEntries { file -> [(file.parentFile.name): ((List) slurper.parse(file)).size()] }
+        println "DSA_QUESTION_COUNTS=${counts}"
+        println "DSA_QUESTION_TOTAL=${counts.values().sum()}"
+    }
 }
 
 springBoot {
