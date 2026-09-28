@@ -14,7 +14,7 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "HTTP/1.1 메시지 프레이밍과 본문 길이 결정 규칙을 확인한다."
+    recommendation: "HTTP/1.1 메시지 구문, 프레이밍과 연결 재사용 규칙을 확인한다."
     displayOrder: 1
 ---
 # Content-Length와 전송 프레이밍
