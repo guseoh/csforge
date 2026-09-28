@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.kernel-boundary.system-call-flow
 topicContentKey: operating-systems.core.kernel-boundary
 slug: system-call-flow
-title: "시스템 콜 흐름(시스템 콜 Flow)"
+title: "시스템 콜 흐름(System Call Flow)"
 summary: "사용자 공간의 요청이 통제된 커널 진입을 지나 인자 검증·서비스 실행·결과 반환으로 이어지는 상태 변화를 설명한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "Linux 시스템 콜 ABI가 아키텍처별로 서로 다른 명령어와 레지스터 규약을 사용하는 점을 확인한다."
     displayOrder: 1
 ---
-# 시스템 콜 흐름(시스템 콜 Flow)
+# 시스템 콜 흐름(System Call Flow)
 
 시스템 콜은 단순히 `사용자 모드에서 커널 모드로 바뀐다`는 한 단계가 아니다. 사용자 공간에서 요청을 준비하고, 통제된 진입 경로를 지나 커널이 인자를 검증하고 서비스를 실행한 뒤 결과를 다시 사용자 공간에 반환하는 흐름으로 볼 수 있다.
 

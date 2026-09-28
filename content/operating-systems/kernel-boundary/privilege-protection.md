@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.kernel-boundary.privilege-protection
 topicContentKey: operating-systems.core.kernel-boundary
 slug: privilege-protection
-title: "특권과 보호(특권 and 보호)"
+title: "특권과 보호(Privilege and Protection)"
 summary: "CPU 권한 수준과 메모리 접근 권한이 낮은 권한의 실행 주체가 커널과 다른 프로세스의 자원을 침범하지 못하게 하는 방식을 설명한다."
 level: 1
 status: PUBLISHED
@@ -18,11 +18,11 @@ references:
     relationNote: "이 Concept에서는 CPU 권한과 보호된 상태 접근이 운영체제의 강제 가능한 보호 경계를 만드는 기반을 확인한다."
     displayOrder: 1
 ---
-# 특권과 보호(특권 and 보호)
+# 특권과 보호(Privilege and Protection)
 
 사용자 모드와 커널 모드가 실제 보호 경계가 되려면 낮은 권한의 코드가 금지된 연산을 시도했을 때 CPU와 메모리 관리 장치가 이를 막을 수 있어야 한다.
 
-CPU의 권한 수준은 현재 모드에서 실행할 수 있는 **특권 명령어(privileged 명령어)**와 제어 상태 접근을 제한한다. 메모리 보호는 페이지 매핑과 접근 권한을 통해 어떤 가상 주소를 읽고·쓰고·실행할 수 있는지 제한한다.
+CPU의 권한 수준은 현재 모드에서 실행할 수 있는 **특권 명령어(privileged instruction)**와 제어 상태 접근을 제한한다. 메모리 보호는 페이지 매핑과 접근 권한을 통해 어떤 가상 주소를 읽고·쓰고·실행할 수 있는지 제한한다.
 
 ```text
 현재 권한 수준

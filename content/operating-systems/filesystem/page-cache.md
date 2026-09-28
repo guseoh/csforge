@@ -3,14 +3,14 @@ kind: concept
 contentKey: operating-systems.core.filesystem.page-cache
 topicContentKey: operating-systems.core.filesystem
 slug: page-cache
-title: "페이지 캐시(페이지 캐시)"
+title: "페이지 캐시(Page Cache)"
 summary: "파일 데이터를 메모리에 유지해 저장장치 I/O를 줄이는 대신 dirty write-back과 메모리 압박을 만드는 흐름을 설명한다."
 level: 2
 status: PUBLISHED
 displayOrder: 80
 references:
   - url: "https://pages.cs.wisc.edu/~remzi/OSTEP/file-implementation.pdf"
-    title: "파일 시스템 Implementation"
+    title: "File System Implementation"
     referenceType: BOOK
     language: en
     depth: section
@@ -18,7 +18,7 @@ references:
     relationNote: "이 Concept에서는 파일 시스템 경로의 배경을 확인하는 보조 자료로 사용한다. page cache 자체의 동작은 Linux 공식 문서를 함께 본다."
     displayOrder: 1
   - url: "https://docs.kernel.org/admin-guide/mm/concepts.html"
-    title: "Concepts overview — Linux 커널 documentation"
+    title: "Concepts overview — Linux kernel documentation"
     referenceType: OFFICIAL
     language: en
     depth: section
@@ -32,7 +32,7 @@ references:
     recommendation: "Direct I/O로 OS page cache를 우회했을 때 cache miss와 메모리 제어의 절충이 어떻게 바뀌는지 실제 운영 사례로 확인한다."
     displayOrder: 3
 ---
-# 페이지 캐시(페이지 캐시)
+# 페이지 캐시(Page Cache)
 
 페이지 캐시는 **파일 데이터를 물리 메모리에 보관해 반복되는 저장장치 I/O를 줄이는 운영체제 캐시**다. 파일을 읽을 때 필요한 페이지가 이미 캐시에 있으면 저장장치에서 다시 가져오지 않고 메모리의 데이터를 사용할 수 있다.
 

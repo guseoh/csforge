@@ -3,7 +3,7 @@ kind: concept
 contentKey: operating-systems.core.threads.user-level-thread
 topicContentKey: operating-systems.core.threads
 slug: user-level-thread
-title: "사용자 수준 스레드(사용자-Level 스레드)"
+title: "사용자 수준 스레드(User-Level Thread)"
 summary: "런타임이 논리 스레드를 스케줄링하고 커널 스레드에 매핑하는 실행 모델을 설명한다."
 level: 2
 status: PUBLISHED
@@ -18,7 +18,7 @@ references:
     relationNote: "이 Concept에서는 사용자 공간 런타임이 논리 스레드를 하나 이상의 커널 스레드에 매핑할 때의 전환 비용과 blocking 경계를 중심으로 읽는다."
     displayOrder: 1
 ---
-# 사용자 수준 스레드(사용자-Level 스레드)
+# 사용자 수준 스레드(User-Level Thread)
 
 사용자 수준 스레드는 **애플리케이션 런타임이나 라이브러리가 논리적 실행 문맥과 스케줄링을 관리하는 모델**이다. 논리 스레드 사이의 전환을 매번 커널 스케줄러에 맡기지 않아도 되므로 생성·전환 비용을 줄이고 많은 논리 작업을 더 적은 수의 커널이 볼 수 있는 스레드 위에 올릴 수 있다.
 

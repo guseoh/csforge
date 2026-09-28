@@ -7,8 +7,8 @@
   {"kind":"topic","contentKey":"operating-systems.core.synchronization","areaSlug":"operating-systems","slug":"synchronization","title":"동기화","description":"뮤텍스·세마포어·조건 변수와 경합을 다룬다.","displayOrder":60,"active":true},
   {"kind":"topic","contentKey":"operating-systems.core.deadlock","areaSlug":"operating-systems","slug":"deadlock","title":"교착과 진행성","description":"교착 상태의 조건과 진행성 문제를 다룬다.","displayOrder":70,"active":true},
   {"kind":"topic","contentKey":"operating-systems.core.virtual-memory","areaSlug":"operating-systems","slug":"virtual-memory","title":"가상 메모리","description":"페이지 폴트, 페이지 교체와 작업 집합을 다룬다.","displayOrder":80,"active":true},
-  {"kind":"topic","contentKey":"operating-systems.core.filesystem","areaSlug":"operating-systems","slug":"filesystem","title":"파일과 파일 시스템","description":"파일 디스크립터·아이노드(아이노드)·페이지 캐시와 영속성을 다룬다.","displayOrder":90,"active":true},
-  {"kind":"topic","contentKey":"operating-systems.core.io","areaSlug":"operating-systems","slug":"io","title":"입출력 모델","description":"블로킹 입출력·준비 상태 통지·epoll·복사 최소화(복사 최소화(zero-복사))를 다룬다.","displayOrder":100,"active":true},
+  {"kind":"topic","contentKey":"operating-systems.core.filesystem","areaSlug":"operating-systems","slug":"filesystem","title":"파일과 파일 시스템","description":"파일 디스크립터·아이노드(inode)·페이지 캐시와 영속성을 다룬다.","displayOrder":90,"active":true},
+  {"kind":"topic","contentKey":"operating-systems.core.io","areaSlug":"operating-systems","slug":"io","title":"입출력 모델","description":"블로킹 입출력·준비 상태 통지·epoll·복사 최소화(zero-copy)를 다룬다.","displayOrder":100,"active":true},
   {"kind":"topic","contentKey":"operating-systems.core.ipc","areaSlug":"operating-systems","slug":"ipc","title":"프로세스 간 통신(IPC)","description":"프로세스 간 파이프·공유 메모리·소켓 통신을 다룬다.","displayOrder":110,"active":true},
-  {"kind":"topic","contentKey":"operating-systems.core.isolation","areaSlug":"operating-systems","slug":"isolation","title":"격리와 자원 제어","description":"권한·네임스페이스(네임스페이스)·cgroup과 컨테이너 경계를 다룬다.","displayOrder":120,"active":true}
+  {"kind":"topic","contentKey":"operating-systems.core.isolation","areaSlug":"operating-systems","slug":"isolation","title":"격리와 자원 제어","description":"권한·네임스페이스(namespace)·cgroup과 컨테이너 경계를 다룬다.","displayOrder":120,"active":true}
 ]

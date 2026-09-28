@@ -10,7 +10,7 @@ status: PUBLISHED
 displayOrder: 90
 references:
   - url: "https://pages.cs.wisc.edu/~remzi/OSTEP/file-implementation.pdf"
-    title: "파일 시스템 Implementation"
+    title: "File System Implementation"
     referenceType: BOOK
     language: en
     depth: section
@@ -25,7 +25,7 @@ references:
     recommendation: "C 표준 I/O의 unbuffered·line-buffered·block-buffered 모드와 fflush가 사용자 공간 stream buffer를 비우는 의미를 확인한다."
     displayOrder: 2
   - url: "https://docs.kernel.org/admin-guide/mm/concepts.html"
-    title: "Concepts overview — Linux 커널 documentation"
+    title: "Concepts overview — Linux kernel documentation"
     referenceType: OFFICIAL
     language: en
     depth: section

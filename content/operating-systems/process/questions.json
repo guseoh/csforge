@@ -8,85 +8,85 @@
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.process.program-vs-process"],
     "choices": [
-      {"key":"A","content":"Executable의 코드 page를 공유할 수 있으므로 두 실행의 프로세스 상태도 하나로 공유된다.","displayOrder":0,"rationaleMarkdown":"읽기 전용 executable page는 안전하게 공유할 수 있지만 각 실행은 여전히 자체 레지스터·스택·힙·매핑과 프로세스 정체성을 가진다. 코드를 공유해도 실행 상태까지 합쳐지지 않는다."},
-      {"key":"B","content":"프로그램 파일은 같아도 서로 다른 PID·주소 공간·런타임 상태를 가진 프로세스가 만들어질 수 있다.","displayOrder":1,"rationaleMarkdown":"executable은 정적인 파일이고 실행할 때마다 각자 PID·주소 공간 매핑·실행 상태를 가진 별도 프로세스가 생길 수 있다. 변경되지 않는 코드 page 일부를 공유해도 실행 상태는 합쳐지지 않는다."},
-      {"key":"C","content":"같은 executable을 실행하면 두 프로세스의 virtual address가 항상 같은 physical 프레임을 가리킨다.","displayOrder":2,"rationaleMarkdown":"서로 다른 프로세스에서 같은 가상 주소를 사용해도 각 주소 공간 매핑을 통해 다른 물리 프레임을 가리킬 수 있다. 코드 page 공유는 구현 선택이지 주소 숫자가 같아서 일어나는 결과가 아니다."},
+      {"key":"A","content":"Executable의 code page를 공유할 수 있으므로 두 실행의 process state도 하나로 공유된다.","displayOrder":0,"rationaleMarkdown":"읽기 전용 executable page는 안전하게 공유할 수 있지만 각 실행은 여전히 자체 register·stack·heap·mapping과 프로세스 정체성을 가진다. 코드를 공유해도 실행 상태까지 합쳐지지 않는다."},
+      {"key":"B","content":"Program file은 같아도 서로 다른 PID·address space·runtime state를 가진 process가 만들어질 수 있다.","displayOrder":1,"rationaleMarkdown":"executable은 정적인 파일이고 실행할 때마다 각자 PID·주소 공간 mapping·실행 상태를 가진 별도 프로세스가 생길 수 있다. 변경되지 않는 코드 page 일부를 공유해도 실행 상태는 합쳐지지 않는다."},
+      {"key":"C","content":"같은 executable을 실행하면 두 process의 virtual address가 항상 같은 physical frame을 가리킨다.","displayOrder":2,"rationaleMarkdown":"서로 다른 프로세스에서 같은 가상 주소를 사용해도 각 주소 공간 mapping을 통해 다른 물리 frame을 가리킬 수 있다. 코드 page 공유는 구현 선택이지 주소 숫자가 같아서 일어나는 결과가 아니다."},
       {"key":"D","content":"Executable이 같으면 OS는 두 실행을 같은 PID로 식별한다.","displayOrder":3,"rationaleMarkdown":"PID는 실행 중인 프로세스 인스턴스를 식별하지 executable 파일을 식별하지 않는다. 같은 프로그램을 다시 시작하면 새 프로세스와 다른 PID가 생길 수 있다."}
     ],
     "correctChoiceKey": "B",
-    "explanationMarkdown": "프로그램은 저장된 executable이라는 **정적인 코드·데이터 묶음**이고, 프로세스는 그 프로그램을 실행하면서 생긴 **동적인 실행 인스턴스**다. 같은 executable의 일부 읽기 전용 page가 공유될 수 있어도 PID, 주소 공간 매핑, 열린 자원와 실행 상태까지 하나가 되는 것은 아니다."
+    "explanationMarkdown": "Program은 저장된 executable이라는 **정적인 코드·데이터 묶음**이고, process는 그 program을 실행하면서 생긴 **동적인 실행 인스턴스**다. 같은 executable의 일부 read-only page가 공유될 수 있어도 PID, address-space mapping, 열린 resource와 실행 상태까지 하나가 되는 것은 아니다."
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.process.program-vs-process.q2",
-    "promptMarkdown": "`execve`가 성공한 경우를 '항상 새 PID의 프로세스를 하나 더 만든다'고 설명하면 안 되는 이유를 설명하라.",
+    "promptMarkdown": "`execve`가 성공한 경우를 '항상 새 PID의 process를 하나 더 만든다'고 설명하면 안 되는 이유를 설명하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.process.program-vs-process"],
-    "modelAnswer": "Unix-like 모델에서 execve는 성공하면 호출한 현재 프로세스의 프로그램 image를 새 executable image로 대체한다. 새 프로세스 생성은 fork 같은 creation 단계와 구분해야 하며, exec 자체를 새 PID 생성과 동일시하면 안 된다.",
-    "explanationMarkdown": "`fork`와 `exec`를 한 덩어리로 외우면 프로세스 creation과 프로그램-image replacement가 섞인다. `execve()`가 성공하면 **호출한 프로세스 자체가 새 프로그램 image를 실행**하므로, exec라는 동작만으로 별도의 새 PID가 반드시 생기는 것은 아니다."
+    "modelAnswer": "Unix-like 모델에서 execve는 성공하면 호출한 현재 process의 program image를 새 executable image로 대체한다. 새 process 생성은 fork 같은 creation 단계와 구분해야 하며, exec 자체를 새 PID 생성과 동일시하면 안 된다.",
+    "explanationMarkdown": "`fork`와 `exec`를 한 덩어리로 외우면 process creation과 program-image replacement가 섞인다. `execve()`가 성공하면 **호출한 process 자체가 새 program image를 실행**하므로, exec라는 동작만으로 별도의 새 PID가 반드시 생기는 것은 아니다."
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.process.program-vs-process.q3",
-    "promptMarkdown": "같은 Spring Boot JAR를 두 프로세스로 실행했는데 서로 다른 결과를 보였다. 프로그램 파일이 같아도 프로세스 behavior가 달라질 수 있는 런타임 상태를 네 가지 이상 제시하라.",
+    "promptMarkdown": "같은 Spring Boot JAR를 두 process로 실행했는데 서로 다른 결과를 보였다. Program 파일이 같아도 process behavior가 달라질 수 있는 runtime state를 네 가지 이상 제시하라.",
     "questionType": "SCENARIO",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.process.program-vs-process"],
-    "modelAnswer": "PID와 독립 주소 공간, environment variable, command-line argument, current working 디렉터리, credentials, open 파일/socket, scheduling/자원 상태 등이 다를 수 있다. 프로그램은 정적 executable이고 프로세스는 이런 실행 상태를 가진 별도 instance다.",
-    "explanationMarkdown": "같은 JAR라는 사실은 실행 코드의 출처가 같다는 뜻이지 런타임 상태가 같다는 뜻이 아니다. Environment, argument, working 디렉터리, credentials, 메모리, 파일/socket, scheduling 상태가 달라지면 같은 프로그램도 서로 다른 프로세스 behavior를 보일 수 있다."
+    "modelAnswer": "PID와 독립 address space, environment variable, command-line argument, current working directory, credentials, open file/socket, scheduling/resource state 등이 다를 수 있다. Program은 정적 executable이고 process는 이런 실행 state를 가진 별도 instance다.",
+    "explanationMarkdown": "같은 JAR라는 사실은 실행 코드의 출처가 같다는 뜻이지 runtime state가 같다는 뜻이 아니다. Environment, argument, working directory, credentials, memory, file/socket, scheduling 상태가 달라지면 같은 program도 서로 다른 process behavior를 보일 수 있다."
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.process.process-address-space.q1",
-    "promptMarkdown": "두 프로세스가 같은 가상 주소 값을 사용하면 반드시 같은 physical 메모리를 가리키는가?",
+    "promptMarkdown": "두 process가 같은 virtual address 값을 사용하면 반드시 같은 physical memory를 가리키는가?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.process.process-address-space"],
     "choices": [
-      {"key":"A","content":"ASLR을 사용하지 않는 경우에는 같은 virtual address가 항상 같은 physical 프레임을 뜻한다.","displayOrder":0,"rationaleMarkdown":"ASLR은 프로세스 가상 주소 배치 위치를 바꾸지만, ASLR이 없어도 가상 주소는 주소 공간 매핑을 통해 해석된다. 같은 숫자 주소가 프로세스마다 다르게 매핑될 수 있다."},
-      {"key":"B","content":"그렇다. 가상 주소 값 자체가 시스템-wide physical location을 식별한다.","displayOrder":1,"rationaleMarkdown":"가상 주소는 시스템 전체에서 통용되는 물리 위치가 아니다. 활성 프로세스의 page table이 해당 주소의 backing 물리 프레임을 결정한다."},
-      {"key":"C","content":"같은 virtual address가 보이면 두 프로세스가 같은 page table을 반드시 공유한다는 뜻이다.","displayOrder":2,"rationaleMarkdown":"프로세스마다 page table이 따로 있어도 우연히 같은 가상 주소 숫자를 사용할 수 있다. 주소 숫자가 같다고 페이지 테이블 구조나 물리 매핑을 공유한다는 뜻은 아니다."},
-      {"key":"D","content":"아니다. 프로세스별 주소 공간 매핑이 달라 서로 다른 physical 프레임을 가리킬 수 있다.","displayOrder":3,"rationaleMarkdown":"활성 프로세스의 주소 공간 매핑이 각 가상 주소를 변환한다. 두 프로세스가 같은 숫자 주소를 쓰면서 서로 다른 물리 프레임에 매핑할 수 있다."}
+      {"key":"A","content":"ASLR을 사용하지 않는 경우에는 같은 virtual address가 항상 같은 physical frame을 뜻한다.","displayOrder":0,"rationaleMarkdown":"ASLR은 프로세스 가상 주소 배치 위치를 바꾸지만, ASLR이 없어도 가상 주소는 주소 공간 mapping을 통해 해석된다. 같은 숫자 주소가 프로세스마다 다르게 mapping될 수 있다."},
+      {"key":"B","content":"그렇다. Virtual address 값 자체가 system-wide physical location을 식별한다.","displayOrder":1,"rationaleMarkdown":"가상 주소는 시스템 전체에서 통용되는 물리 위치가 아니다. 활성 프로세스의 page table이 해당 주소의 backing 물리 frame을 결정한다."},
+      {"key":"C","content":"같은 virtual address가 보이면 두 process가 같은 page table을 반드시 공유한다는 뜻이다.","displayOrder":2,"rationaleMarkdown":"프로세스마다 page table이 따로 있어도 우연히 같은 가상 주소 숫자를 사용할 수 있다. 주소 숫자가 같다고 page-table 구조나 물리 mapping을 공유한다는 뜻은 아니다."},
+      {"key":"D","content":"아니다. Process별 address-space mapping이 달라 서로 다른 physical frame을 가리킬 수 있다.","displayOrder":3,"rationaleMarkdown":"활성 프로세스의 주소 공간 mapping이 각 가상 주소를 변환한다. 두 프로세스가 같은 숫자 주소를 쓰면서 서로 다른 물리 frame에 mapping할 수 있다."}
     ],
     "correctChoiceKey": "D",
-    "explanationMarkdown": "Virtual address는 프로세스의 주소 공간 매핑을 통해 해석된다. 따라서 숫자가 같아도 서로 다른 페이지 테이블 매핑을 거쳐 다른 physical 프레임에 연결될 수 있다. ASLR은 virtual layout을 바꾸는 기술이지, virtual address를 시스템-wide physical address로 만드는 규칙이 아니다."
+    "explanationMarkdown": "Virtual address는 process의 address-space mapping을 통해 해석된다. 따라서 숫자가 같아도 서로 다른 page table mapping을 거쳐 다른 physical frame에 연결될 수 있다. ASLR은 virtual layout을 바꾸는 기술이지, virtual address를 system-wide physical address로 만드는 규칙이 아니다."
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.process.process-address-space.q2",
-    "promptMarkdown": "주소 공간 그림의 코드/data/힙/스택 배치를 모든 OS와 ABI의 고정 physical layout처럼 해석하면 안 되는 이유를 설명하라.",
+    "promptMarkdown": "Address-space 그림의 code/data/heap/stack 배치를 모든 OS와 ABI의 고정 physical layout처럼 해석하면 안 되는 이유를 설명하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.process.process-address-space"],
-    "modelAnswer": "그 그림은 역할과 virtual 매핑을 이해하기 위한 모델이다. 실제 가상 주소 배치는 architecture, loader, ABI, ASLR, 런타임에 따라 달라질 수 있고 physical page 배치는 별도 translation으로 결정된다.",
-    "explanationMarkdown": "교과서의 주소 공간 그림은 영역의 **역할과 관계를 설명하는 추상 모델**이다. 실제 virtual layout은 OS·ABI·loader·ASLR 등에 따라 달라지고, 그 virtual page가 어느 physical 프레임과 연결되는지는 또 다른 매핑 문제다."
+    "modelAnswer": "그 그림은 역할과 virtual mapping을 이해하기 위한 모델이다. 실제 virtual address 배치는 architecture, loader, ABI, ASLR, runtime에 따라 달라질 수 있고 physical page 배치는 별도 translation으로 결정된다.",
+    "explanationMarkdown": "교과서의 address-space 그림은 영역의 **역할과 관계를 설명하는 추상 모델**이다. 실제 virtual layout은 OS·ABI·loader·ASLR 등에 따라 달라지고, 그 virtual page가 어느 physical frame과 연결되는지는 또 다른 mapping 문제다."
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.process.process-address-space.q3",
-    "promptMarkdown": "JVM 프로세스 RSS가 커졌지만 Java 힙 사용률은 낮다. 프로세스 주소 공간 관점에서 추가로 확인할 영역을 설명하라.",
+    "promptMarkdown": "JVM process RSS가 커졌지만 Java heap 사용률은 낮다. Process address space 관점에서 추가로 확인할 영역을 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.process.process-address-space"],
-    "modelAnswer": "Java 힙 외에 스레드 스택, native 할당, direct 버퍼, metaspace/native 라이브러리 매핑, 메모리-mapped 파일 같은 프로세스 주소 공간 사용처를 확인해야 한다. JVM 힙 하나가 전체 프로세스 메모리를 대표하지 않는다.",
-    "explanationMarkdown": "RSS는 Java 힙만 세는 지표가 아니라 프로세스가 상주하게 사용하는 여러 메모리 매핑의 영향을 받는다. 따라서 스레드 스택, native/direct 할당, 런타임 메타데이터, 공유 라이브러리와 mmap 영역 등을 함께 봐야 하며, **JVM 힙 사용률만으로 OS가 보는 프로세스 메모리를 설명할 수 없다.**"
+    "modelAnswer": "Java heap 외에 thread stack, native allocation, direct buffer, metaspace/native library mapping, memory-mapped file 같은 process address-space 사용처를 확인해야 한다. JVM heap 하나가 전체 process memory를 대표하지 않는다.",
+    "explanationMarkdown": "RSS는 Java heap만 세는 지표가 아니라 process가 resident하게 사용하는 여러 memory mapping의 영향을 받는다. 따라서 thread stack, native/direct allocation, runtime metadata, shared library와 mmap 영역 등을 함께 봐야 하며, **JVM heap 사용률만으로 OS가 보는 process memory를 설명할 수 없다.**"
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.process.process-address-space.q4",
-    "promptMarkdown": "Virtual address에 매핑이 존재한다는 사실만으로 그 page가 현재 physical RAM에 상주한다고 단정할 수 없는 이유를 설명하라.",
+    "promptMarkdown": "Virtual address에 mapping이 존재한다는 사실만으로 그 page가 현재 physical RAM에 resident한다고 단정할 수 없는 이유를 설명하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.process.process-address-space"],
-    "modelAnswer": "Demand paging, 파일 기반 매핑, 쓰기 시 복사(COW) 등에서는 매핑과 physical residency가 분리될 수 있다. 실제 프레임은 접근 시 page fault를 통해 준비되거나 다른 매핑과 공유될 수 있다.",
-    "explanationMarkdown": "가상 주소-space의 존재와 현재 RAM residency는 같은 사실이 아니다. Demand paging에서는 매핑이 준비돼 있어도 접근 시점에 page fault를 거쳐 프레임이 채워질 수 있고, 파일 기반 매핑이나 복사-on-write처럼 backing·sharing 관계도 별도로 존재한다."
+    "modelAnswer": "Demand paging, file-backed mapping, copy-on-write 등에서는 mapping과 physical residency가 분리될 수 있다. 실제 frame은 접근 시 page fault를 통해 준비되거나 다른 mapping과 공유될 수 있다.",
+    "explanationMarkdown": "Virtual address-space의 존재와 현재 RAM residency는 같은 사실이 아니다. Demand paging에서는 mapping이 준비돼 있어도 접근 시점에 page fault를 거쳐 frame이 채워질 수 있고, file-backed mapping이나 copy-on-write처럼 backing·sharing 관계도 별도로 존재한다."
   },
   {
     "kind": "question",
@@ -97,46 +97,46 @@
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.process.pcb"],
     "choices": [
-      {"key":"A","content":"PCB는 프로세스 생명주기에 필요한 커널 메타데이터의 개념적 묶음이고 실제 OS는 여러 구조에 상태를 나눌 수 있다.","displayOrder":0,"rationaleMarkdown":"PCB는 scheduling과 저장된 실행 상태처럼 프로세스를 관리하는 데 필요한 커널 상태의 개념적 묶음이다. 실제 OS는 그 필드를 여러 내부 구조에 나누어 둘 수 있다."},
-      {"key":"B","content":"PCB라는 용어를 쓰는 OS라면 PID·scheduling·메모리 상태가 반드시 하나의 동일한 struct에 모여 있어야 한다.","displayOrder":1,"rationaleMarkdown":"교재의 PCB 그림은 정보의 범주를 설명하지 실제 struct 배치를 강제하지 않는다. 각 OS는 구현에 맞춰 프로세스 상태를 구성할 수 있다."},
-      {"key":"C","content":"PCB는 사용자 공간 프로세스가 직접 소유하고 갱신하는 런타임 객체를 뜻한다.","displayOrder":2,"rationaleMarkdown":"scheduling·credential·매핑에 쓰는 프로세스-control 상태는 커널이 관리하며 사용자 공간 코드가 소유하고 자유롭게 갱신하지 않는다. 사용자 라이브러리가 별도의 프로세스 관련 데이터를 둘 수는 있다."},
-      {"key":"D","content":"PCB의 field layout은 ISA가 정하므로 운영체제 구현과 무관하게 동일하다.","displayOrder":3,"rationaleMarkdown":"ISA는 명령과 machine 상태 동작을 정의하지만 OS 내부 자료 구조의 배치를 정하지 않는다. PCB의 필드와 위치는 구현 선택이다."}
+      {"key":"A","content":"PCB는 process lifecycle에 필요한 kernel metadata의 개념적 묶음이고 실제 OS는 여러 구조에 state를 나눌 수 있다.","displayOrder":0,"rationaleMarkdown":"PCB는 scheduling과 저장된 실행 상태처럼 프로세스를 관리하는 데 필요한 kernel 상태의 개념적 묶음이다. 실제 OS는 그 필드를 여러 내부 구조에 나누어 둘 수 있다."},
+      {"key":"B","content":"PCB라는 용어를 쓰는 OS라면 PID·scheduling·memory state가 반드시 하나의 동일한 struct에 모여 있어야 한다.","displayOrder":1,"rationaleMarkdown":"교재의 PCB 그림은 정보의 범주를 설명하지 실제 struct 배치를 강제하지 않는다. 각 OS는 구현에 맞춰 프로세스 상태를 구성할 수 있다."},
+      {"key":"C","content":"PCB는 user-space process가 직접 소유하고 갱신하는 runtime object를 뜻한다.","displayOrder":2,"rationaleMarkdown":"scheduling·credential·mapping에 쓰는 process-control 상태는 kernel이 관리하며 user-space code가 소유하고 자유롭게 갱신하지 않는다. 사용자 library가 별도의 process 관련 데이터를 둘 수는 있다."},
+      {"key":"D","content":"PCB의 field layout은 ISA가 정하므로 운영체제 구현과 무관하게 동일하다.","displayOrder":3,"rationaleMarkdown":"ISA는 명령과 machine state 동작을 정의하지만 OS 내부 자료 구조의 배치를 정하지 않는다. PCB의 필드와 위치는 구현 선택이다."}
     ],
     "correctChoiceKey": "A",
-    "explanationMarkdown": "PCB는 프로세스를 관리하는 데 필요한 커널-side 상태를 이해하기 위한 **개념적 모델**이다. 실제 Linux나 다른 OS가 그 정보를 어떤 struct에 어떻게 나눠 저장하는지는 구현 선택이며, 교과서의 PCB 그림을 특정 커널 struct와 1:1로 동일시하면 안 된다."
+    "explanationMarkdown": "PCB는 process를 관리하는 데 필요한 kernel-side state를 이해하기 위한 **개념적 모델**이다. 실제 Linux나 다른 OS가 그 정보를 어떤 struct에 어떻게 나눠 저장하는지는 구현 선택이며, 교과서의 PCB 그림을 특정 kernel struct와 1:1로 동일시하면 안 된다."
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.process.pcb.q2",
-    "promptMarkdown": "작업 A에서 B로 문맥 switch할 때 커널이 보존·복원해야 하는 상태의 종류를 세 가지 이상 설명하라.",
+    "promptMarkdown": "Task A에서 B로 context switch할 때 kernel이 보존·복원해야 하는 state의 종류를 세 가지 이상 설명하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.process.pcb"],
-    "modelAnswer": "재개에 필요한 CPU 실행 문맥, scheduling 상태/accounting, 주소 공간 relation, 작업 식별자와 자원 참조 같은 커널 메타데이터가 필요하다. 구체 레지스터/field 위치는 OS와 architecture에 따라 달라질 수 있다.",
-    "explanationMarkdown": "문맥 switch의 목적은 나중에 작업 A를 **중단 지점에서 다시 실행할 수 있게 상태를 보존**하고 작업 B의 실행 상태를 복원하는 것이다. CPU 문맥뿐 아니라 스케줄러와 주소 공간·자원 관계처럼 커널이 작업 생명주기을 관리하는 메타데이터도 함께 연결된다."
+    "modelAnswer": "재개에 필요한 CPU execution context, scheduling state/accounting, address-space relation, task identity와 resource reference 같은 kernel metadata가 필요하다. 구체 register/field 위치는 OS와 architecture에 따라 달라질 수 있다.",
+    "explanationMarkdown": "Context switch의 목적은 나중에 Task A를 **중단 지점에서 다시 실행할 수 있게 상태를 보존**하고 Task B의 실행 상태를 복원하는 것이다. CPU context뿐 아니라 scheduler와 address-space·resource 관계처럼 kernel이 task lifecycle을 관리하는 metadata도 함께 연결된다."
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.process.pcb.q3",
-    "promptMarkdown": "Java 스레드 dump에서 실행 가능로 보이는 스레드를 '현재 물리 CPU core에서 반드시 실행 중'이라고 결론 내리면 안 되는 이유를 OS 작업 상태와 연결해 설명하라.",
+    "promptMarkdown": "Java thread dump에서 RUNNABLE로 보이는 thread를 '현재 물리 CPU core에서 반드시 실행 중'이라고 결론 내리면 안 되는 이유를 OS task state와 연결해 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.process.pcb"],
-    "modelAnswer": "JVM 스레드 상태와 OS 스케줄러가 보는 실제 running/실행 가능 상태는 동일한 추상화이 아니다. 실행 가능 스레드라도 CPU core보다 실행 가능 작업가 많으면 스케줄러 큐에서 기다릴 수 있다. JVM 관찰과 OS CPU/스케줄러 metric을 함께 봐야 한다.",
-    "explanationMarkdown": "JVM의 스레드 상태와 OS 스케줄러 상태는 서로 다른 계층의 추상화이다. JVM에서 실행 가능로 분류됐다는 사실만으로 특정 순간 CPU core 위에서 실행 중이라고 단정할 수 없으며, 실제 CPU 경합을 보려면 OS의 실행 가능/running 상태와 스케줄러 지표를 함께 확인해야 한다."
+    "modelAnswer": "JVM thread state와 OS scheduler가 보는 실제 running/runnable 상태는 동일한 abstraction이 아니다. Runnable thread라도 CPU core보다 runnable task가 많으면 scheduler queue에서 기다릴 수 있다. JVM 관찰과 OS CPU/scheduler metric을 함께 봐야 한다.",
+    "explanationMarkdown": "JVM의 thread state와 OS scheduler state는 서로 다른 계층의 abstraction이다. JVM에서 RUNNABLE로 분류됐다는 사실만으로 특정 순간 CPU core 위에서 실행 중이라고 단정할 수 없으며, 실제 CPU contention을 보려면 OS의 runnable/running 상태와 scheduler 지표를 함께 확인해야 한다."
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.process.process-state.q1",
-    "promptMarkdown": "실행할 조건은 충족됐지만 아직 CPU를 배정받지 못한 작업의 교과서적 상태는?",
+    "promptMarkdown": "실행할 조건은 충족됐지만 아직 CPU를 배정받지 못한 task의 교과서적 상태는?",
     "questionType": "SHORT_ANSWER",
     "difficulty": "EASY",
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.process.process-state"],
     "acceptedAnswers": ["ready", "runnable", "ready 상태", "runnable 상태"],
-    "explanationMarkdown": "**Ready 또는 실행 가능**은 실행 조건은 갖췄지만 CPU 실행 기회를 기다리는 상태다. I/O 같은 이벤트 자체를 기다리는 blocked/대기과 구분해야 한다."
+    "explanationMarkdown": "**Ready 또는 runnable**은 실행 조건은 갖췄지만 CPU 실행 기회를 기다리는 상태다. I/O 같은 event 자체를 기다리는 blocked/waiting과 구분해야 한다."
   },
   {
     "kind": "question",
@@ -146,201 +146,201 @@
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.process.process-state"],
-    "modelAnswer": "Running 작업는 타이머/preemption 등으로 CPU에서 내려와 다시 실행 가능이 될 수 있다. 대기 작업는 기다리던 I/O/이벤트/자원 condition이 충족돼 실행 가능이 된다. 결과 상태는 같아도 전이 원인이 다르다.",
-    "explanationMarkdown": "두 전이는 결과적으로 ready가 되지만 원인이 다르다. `running → ready`는 실행 가능성이 사라진 것이 아니라 CPU를 양보하거나 선점당한 경우이고, `waiting → ready`는 이전까지 부족했던 I/O·이벤트 같은 진행 조건이 충족된 경우다."
+    "modelAnswer": "Running task는 timer/preemption 등으로 CPU에서 내려와 다시 runnable이 될 수 있다. Waiting task는 기다리던 I/O/event/resource condition이 충족돼 runnable이 된다. 결과 state는 같아도 전이 원인이 다르다.",
+    "explanationMarkdown": "두 전이는 결과적으로 ready가 되지만 원인이 다르다. `running → ready`는 실행 가능성이 사라진 것이 아니라 CPU를 양보하거나 선점당한 경우이고, `waiting → ready`는 이전까지 부족했던 I/O·event 같은 진행 조건이 충족된 경우다."
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.process.process-state.q3",
-    "promptMarkdown": "4-core 서버에서 실행 가능 작업가 100개이고 CPU 사용률도 매우 높다. '100개 작업가 동시에 CPU에서 실행 중'이라는 해석이 왜 틀린지 설명하라.",
+    "promptMarkdown": "4-core 서버에서 runnable task가 100개이고 CPU 사용률도 매우 높다. '100개 task가 동시에 CPU에서 실행 중'이라는 해석이 왜 틀린지 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.process.process-state"],
-    "modelAnswer": "동시에 실제 core에서 실행할 수 있는 작업 수는 CPU core 등 하드웨어 실행 용량에 제한된다. 나머지 실행 가능 작업는 실행 가능하지만 스케줄러 차례를 기다릴 수 있다. 실행 가능과 running을 구분해야 한다.",
-    "explanationMarkdown": "실행 가능은 **지금 실행할 수 있다**는 뜻이지 **지금 core에서 실행 중이다**라는 뜻이 아니다. 4개 core보다 실행 가능 작업가 훨씬 많으면 많은 작업가 run 큐에서 차례를 기다릴 수 있으므로 실행 가능 수와 실제 동시 running 수를 구분해야 한다."
+    "modelAnswer": "동시에 실제 core에서 실행할 수 있는 task 수는 CPU core 등 hardware execution capacity에 제한된다. 나머지 runnable task는 실행 가능하지만 scheduler 차례를 기다릴 수 있다. Runnable과 running을 구분해야 한다.",
+    "explanationMarkdown": "Runnable은 **지금 실행할 수 있다**는 뜻이지 **지금 core에서 실행 중이다**라는 뜻이 아니다. 4개 core보다 runnable task가 훨씬 많으면 많은 task가 run queue에서 차례를 기다릴 수 있으므로 runnable 수와 실제 동시 running 수를 구분해야 한다."
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.process.process-state.q4",
-    "promptMarkdown": "백엔드 워커 100개가 느릴 때 `runnable queue 증가`와 `대부분 socket I/O wait`가 서로 다른 진단을 요구하는 이유를 설명하라.",
+    "promptMarkdown": "Backend worker 100개가 느릴 때 `runnable queue 증가`와 `대부분 socket I/O wait`가 서로 다른 진단을 요구하는 이유를 설명하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.process.process-state"],
-    "modelAnswer": "실행 가능 큐 증가는 CPU 경합/scheduling delay 가능성을 시사하지만 I/O wait는 작업가 이벤트 완료을 기다려 CPU를 더 줘도 즉시 진행하지 못할 수 있음을 뜻한다. CPU metric과 wait reason을 함께 봐야 한다.",
-    "explanationMarkdown": "같은 '느림'이라도 실행 가능이 쌓인다면 CPU 실행 기회를 두고 경쟁하는 병목을 의심할 수 있고, I/O wait가 많다면 CPU를 추가해도 기다리는 외부 이벤트가 해결되지 않을 수 있다. 따라서 작업 상태는 병목 후보를 가르는 진단 신호다."
+    "modelAnswer": "Runnable queue 증가는 CPU contention/scheduling delay 가능성을 시사하지만 I/O wait는 task가 event completion을 기다려 CPU를 더 줘도 즉시 진행하지 못할 수 있음을 뜻한다. CPU metric과 wait reason을 함께 봐야 한다.",
+    "explanationMarkdown": "같은 '느림'이라도 runnable이 쌓인다면 CPU 실행 기회를 두고 경쟁하는 병목을 의심할 수 있고, I/O wait가 많다면 CPU를 추가해도 기다리는 외부 event가 해결되지 않을 수 있다. 따라서 task state는 병목 후보를 가르는 진단 신호다."
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.process.process-create.q1",
-    "promptMarkdown": "Unix-like 프로세스 model에서 `fork`와 `exec`의 역할을 가장 잘 구분한 것은?",
+    "promptMarkdown": "Unix-like process model에서 `fork`와 `exec`의 역할을 가장 잘 구분한 것은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.process.process-create"],
     "choices": [
-      {"key":"A","content":"fork와 exec 모두 항상 새 PID를 하나씩 추가하지만 address space에는 영향을 주지 않는다.","displayOrder":0,"rationaleMarkdown":"`fork()`는 보통 자체 PID와 주소 공간 상태를 가진 자식를 만든다. 성공한 `exec()`는 호출 프로세스의 프로그램 image를 교체한다. 둘 다 PID만 더하고 메모리는 그대로 두는 연산으로 정의되지 않는다."},
-      {"key":"B","content":"fork는 기존 프로세스의 프로그램 image만 바꾸고 exec가 별도 자식를 생성한다.","displayOrder":1,"rationaleMarkdown":"이 설명은 역할을 뒤집었다. `fork()`가 자식를 만들고, 성공한 `exec()`가 현재 프로세스의 executable image를 바꾼다. `exec()` 자체가 별도 자식를 만들지는 않는다."},
-      {"key":"C","content":"fork는 자식 프로세스를 만들고, exec는 성공 시 현재 프로세스의 프로그램 image를 교체할 수 있다.","displayOrder":2,"rationaleMarkdown":"`fork()`는 자식 프로세스를 만든다. 성공한 `exec()`는 PID를 유지할 수 있는 현재 프로세스에 새 프로그램 image를 적재한다. 두 호출은 프로세스 생성과 프로그램 교체를 나눈다."},
-      {"key":"D","content":"exec는 현재 PID를 유지할 수 있지만 기존 프로그램 image도 그대로 동시에 실행한다.","displayOrder":3,"rationaleMarkdown":"성공한 `exec()`는 두 프로그램을 같은 프로세스에서 동시에 실행하지 않고 현재 image를 교체한다. PID는 유지될 수 있지만 이전 코드는 더 이상 실행 image가 아니다."}
+      {"key":"A","content":"fork와 exec 모두 항상 새 PID를 하나씩 추가하지만 address space에는 영향을 주지 않는다.","displayOrder":0,"rationaleMarkdown":"`fork()`는 보통 자체 PID와 주소 공간 상태를 가진 child를 만든다. 성공한 `exec()`는 호출 프로세스의 프로그램 image를 교체한다. 둘 다 PID만 더하고 메모리는 그대로 두는 연산으로 정의되지 않는다."},
+      {"key":"B","content":"fork는 기존 process의 program image만 바꾸고 exec가 별도 child를 생성한다.","displayOrder":1,"rationaleMarkdown":"이 설명은 역할을 뒤집었다. `fork()`가 child를 만들고, 성공한 `exec()`가 현재 프로세스의 executable image를 바꾼다. `exec()` 자체가 별도 child를 만들지는 않는다."},
+      {"key":"C","content":"fork는 child process를 만들고, exec는 성공 시 현재 process의 program image를 교체할 수 있다.","displayOrder":2,"rationaleMarkdown":"`fork()`는 child process를 만든다. 성공한 `exec()`는 PID를 유지할 수 있는 현재 프로세스에 새 프로그램 image를 적재한다. 두 호출은 프로세스 생성과 프로그램 교체를 나눈다."},
+      {"key":"D","content":"exec는 현재 PID를 유지할 수 있지만 기존 program image도 그대로 동시에 실행한다.","displayOrder":3,"rationaleMarkdown":"성공한 `exec()`는 두 프로그램을 같은 프로세스에서 동시에 실행하지 않고 현재 image를 교체한다. PID는 유지될 수 있지만 이전 코드는 더 이상 실행 image가 아니다."}
     ],
     "correctChoiceKey": "C",
-    "explanationMarkdown": "Unix-like 프로세스 creation 흐름에서는 `fork()`가 새 자식를 만들고, `exec` 계열은 성공하면 **호출한 현재 프로세스의 프로그램 image를 교체**한다. 둘을 구분해야 '새 프로세스 생성'과 '현재 프로세스가 다른 프로그램을 실행하기'를 같은 동작으로 오해하지 않는다."
+    "explanationMarkdown": "Unix-like process creation 흐름에서는 `fork()`가 새 child를 만들고, `exec` 계열은 성공하면 **호출한 현재 process의 program image를 교체**한다. 둘을 구분해야 '새 process 생성'과 '현재 process가 다른 program을 실행하기'를 같은 동작으로 오해하지 않는다."
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.process.process-create.q2",
-    "promptMarkdown": "복사-on-write가 `fork 시 모든 physical page를 즉시 복사하지 않아도 된다`는 설명과 어떻게 연결되는지 설명하라.",
+    "promptMarkdown": "Copy-on-write가 `fork 시 모든 physical page를 즉시 복사하지 않아도 된다`는 설명과 어떻게 연결되는지 설명하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.process.process-create"],
-    "modelAnswer": "Fork 직후 부모/자식는 논리적으로 독립된 address space를 갖지만 아직 write되지 않은 physical page를 공유할 수 있다. 한쪽이 write할 때 필요한 page를 복사해 독립성을 유지하므로 초기 전체 physical 복사 비용을 미룰 수 있다.",
-    "explanationMarkdown": "중요한 구분은 **논리적 주소 공간 독립성**과 **즉시 physical page를 전부 복사하는가**가 다른 문제라는 점이다. 복사-on-write는 쓰기가 발생하기 전까지 일부 physical page를 공유하고, 변경 시 필요한 page만 분리해 fork 의미의 독립성을 유지할 수 있게 한다."
+    "modelAnswer": "Fork 직후 parent/child는 논리적으로 독립된 address space를 갖지만 아직 write되지 않은 physical page를 공유할 수 있다. 한쪽이 write할 때 필요한 page를 복사해 독립성을 유지하므로 초기 전체 physical copy 비용을 미룰 수 있다.",
+    "explanationMarkdown": "중요한 구분은 **논리적 address-space 독립성**과 **즉시 physical page를 전부 복사하는가**가 다른 문제라는 점이다. Copy-on-write는 쓰기가 발생하기 전까지 일부 physical page를 공유하고, 변경 시 필요한 page만 분리해 fork semantics의 독립성을 유지할 수 있게 한다."
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.process.process-create.q3",
-    "promptMarkdown": "다음 fork 결과를 생각하자.\n\n- 부모의 fd 3 ─┐\n- 자식의 fd 3  ─┴→ 같은 underlying 열린 파일 설명(open 파일 description)\n\n질문: 이 사실이 디스크립터가 완전 독립 복사라는 설명과 충돌하는 이유를 설명하라.",
+    "promptMarkdown": "다음 fork 결과를 생각하자.\n\n- Parent의 fd 3 ─┐\n- Child의 fd 3  ─┴→ 같은 underlying open file description\n\n질문: 이 사실이 descriptor가 완전 독립 복사라는 설명과 충돌하는 이유를 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.process.process-create"],
-    "modelAnswer": "부모와 자식는 각자 디스크립터 table entry를 가지지만 inherited entry가 같은 underlying open 파일 description을 참조할 수 있어 파일 오프셋/status 같은 상태가 연관될 수 있다. 자원마다 복제와 공유 의미를 따로 봐야 한다.",
-    "explanationMarkdown": "Fork 뒤 부모와 자식는 각자의 fd table을 가지지만, fd entry가 가리키는 **underlying open 파일 description은 공유될 수 있다.** 따라서 숫자가 같은 fd가 단순히 완전한 독립 복사본이라고 보면 파일 오프셋 같은 연결된 상태를 설명할 수 없다."
+    "modelAnswer": "Parent와 child는 각자 descriptor table entry를 가지지만 inherited entry가 같은 underlying open file description을 참조할 수 있어 file offset/status 같은 state가 연관될 수 있다. Resource마다 복제와 공유 semantics를 따로 봐야 한다.",
+    "explanationMarkdown": "Fork 뒤 parent와 child는 각자의 fd table을 가지지만, fd entry가 가리키는 **underlying open file description은 공유될 수 있다.** 따라서 숫자가 같은 fd가 단순히 완전한 독립 복사본이라고 보면 file offset 같은 연결된 state를 설명할 수 없다."
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.process.process-create.q4",
-    "promptMarkdown": "부모가 자식를 만든 직후 자식가 먼저 실행되면 깨지는 코드가 있다. 무엇이 잘못된 가정인지 설명하라.",
+    "promptMarkdown": "Parent가 child를 만든 직후 child가 먼저 실행되면 깨지는 코드가 있다. 무엇이 잘못된 가정인지 설명하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.process.process-create"],
-    "modelAnswer": "Fork 이후 부모와 자식는 별도의 scheduling 대상이며 별도 동기화 없이 누가 먼저 실행될지 가정하면 안 된다. 실행 순서가 필요하면 파이프, wait, 공유 동기화 등 명시적 coordination을 사용해야 한다.",
-    "explanationMarkdown": "부모-자식 관계는 실행 order 보장이 아니다. Fork 뒤 둘은 독립적인 scheduling 대상이므로 코드가 특정 순서를 요구한다면 스케줄러의 우연한 실행 순서가 아니라 wait·파이프·동기화 같은 명시적인 happens-before 조건을 만들어야 한다."
+    "modelAnswer": "Fork 이후 parent와 child는 별도의 scheduling 대상이며 별도 synchronization 없이 누가 먼저 실행될지 가정하면 안 된다. 실행 순서가 필요하면 pipe, wait, shared synchronization 등 명시적 coordination을 사용해야 한다.",
+    "explanationMarkdown": "Parent-child 관계는 execution order 보장이 아니다. Fork 뒤 둘은 독립적인 scheduling 대상이므로 코드가 특정 순서를 요구한다면 scheduler의 우연한 실행 순서가 아니라 wait·pipe·동기화 같은 명시적인 happens-before 조건을 만들어야 한다."
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.process.process-terminate.q1",
-    "promptMarkdown": "자식가 종료된 뒤 zombie로 남아 있다는 설명으로 가장 정확한 것은?",
+    "promptMarkdown": "Child가 종료된 뒤 zombie로 남아 있다는 설명으로 가장 정확한 것은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.process.process-terminate"],
     "choices": [
-      {"key":"A","content":"Zombie는 부모가 이미 wait로 status를 수집한 뒤에도 같은 메타데이터가 계속 남는 상태다.","displayOrder":0,"rationaleMarkdown":"부모가 `wait`로 자식 종료 상태를 수거하면 커널은 남은 프로세스-table 항목을 정리할 수 있다. 회수된 자식는 더 이상 zombie가 아니다."},
-      {"key":"B","content":"Zombie는 종료 요청을 받았지만 아직 사용자 코드를 계속 실행 중인 프로세스다.","displayOrder":1,"rationaleMarkdown":"zombie는 이미 사용자 코드 실행을 멈췄다. 종료 상태를 부모가 아직 수거하지 않은 채 남아 있는 exited 자식다."},
-      {"key":"C","content":"Zombie가 남아 있으면 종료 전의 전체 address space와 모든 open 파일도 반드시 유지된다.","displayOrder":2,"rationaleMarkdown":"프로세스가 종료되면 주소 공간과 실행에 필요한 대부분 자원이 해제된다. zombie 기록에는 부모가 종료 상태를 얻는 데 필요한 제한된 정보만 남는다."},
-      {"key":"D","content":"애플리케이션 실행은 끝났고 주요 자원는 정리됐지만 부모가 status를 수집하기 위한 최소 메타데이터가 남아 있을 수 있다.","displayOrder":3,"rationaleMarkdown":"자식는 실행을 마치고 대부분 자원이 정리되지만 부모가 종료 상태를 수거할 때까지 작은 프로세스-table 기록이 남을 수 있다. reaping이 남은 메타데이터를 해제한다."}
+      {"key":"A","content":"Zombie는 parent가 이미 wait로 status를 수집한 뒤에도 같은 metadata가 계속 남는 상태다.","displayOrder":0,"rationaleMarkdown":"부모가 `wait`로 child 종료 상태를 수거하면 kernel은 남은 process-table 항목을 정리할 수 있다. 회수된 child는 더 이상 zombie가 아니다."},
+      {"key":"B","content":"Zombie는 종료 요청을 받았지만 아직 user code를 계속 실행 중인 process다.","displayOrder":1,"rationaleMarkdown":"zombie는 이미 user code 실행을 멈췄다. 종료 상태를 부모가 아직 수거하지 않은 채 남아 있는 exited child다."},
+      {"key":"C","content":"Zombie가 남아 있으면 종료 전의 전체 address space와 모든 open file도 반드시 유지된다.","displayOrder":2,"rationaleMarkdown":"프로세스가 종료되면 주소 공간과 실행에 필요한 대부분 자원이 해제된다. zombie 기록에는 부모가 종료 상태를 얻는 데 필요한 제한된 정보만 남는다."},
+      {"key":"D","content":"Application 실행은 끝났고 주요 resource는 정리됐지만 parent가 status를 수집하기 위한 최소 metadata가 남아 있을 수 있다.","displayOrder":3,"rationaleMarkdown":"child는 실행을 마치고 대부분 자원이 정리되지만 부모가 종료 상태를 수거할 때까지 작은 process-table 기록이 남을 수 있다. reaping이 남은 메타데이터를 해제한다."}
     ],
     "correctChoiceKey": "D",
-    "explanationMarkdown": "Zombie는 자식의 **실행이 이미 끝난 상태**다. Address space와 디스크립터 같은 주요 실행 자원는 정리됐지만 부모가 종료 status를 수집할 수 있도록 최소한의 프로세스 entry가 남을 수 있으며, `wait` 계열로 reap하면 그 메타데이터도 회수된다."
+    "explanationMarkdown": "Zombie는 child의 **실행이 이미 끝난 상태**다. Address space와 descriptor 같은 주요 실행 resource는 정리됐지만 parent가 종료 status를 수집할 수 있도록 최소한의 process entry가 남을 수 있으며, `wait` 계열로 reap하면 그 metadata도 회수된다."
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.process.process-terminate.q2",
-    "promptMarkdown": "프로세스 exit 코드와 애플리케이션의 durable side effect를 같은 것으로 보면 안 되는 이유를 설명하라.",
+    "promptMarkdown": "Process exit code와 application의 durable side effect를 같은 것으로 보면 안 되는 이유를 설명하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.process.process-terminate"],
-    "modelAnswer": "Exit status는 프로세스-level 종료 결과다. 프로세스가 종료되기 전에 DB write나 외부 API 호출이 이미 반영됐을 수 있어 exit 실패가 모든 domain effect rollback을 뜻하지 않는다. Durable checkpoint/idempotency는 프로세스 생명주기 밖에서 설계해야 한다.",
-    "explanationMarkdown": "Exit status는 OS가 관찰하는 프로세스 종료 결과이지 DB 트랜잭션이나 외부 시스템의 상태를 되돌리는 전역 rollback 신호가 아니다. 프로세스가 실패하기 전에 이미 durable side effect가 commit됐을 수 있으므로 재시도 안전성은 별도의 idempotency·checkpoint 설계가 필요하다."
+    "modelAnswer": "Exit status는 process-level 종료 결과다. Process가 종료되기 전에 DB write나 외부 API 호출이 이미 반영됐을 수 있어 exit 실패가 모든 domain effect rollback을 뜻하지 않는다. Durable checkpoint/idempotency는 process lifecycle 밖에서 설계해야 한다.",
+    "explanationMarkdown": "Exit status는 OS가 관찰하는 process 종료 결과이지 DB transaction이나 외부 시스템의 상태를 되돌리는 전역 rollback 신호가 아니다. Process가 실패하기 전에 이미 durable side effect가 commit됐을 수 있으므로 재시도 안전성은 별도의 idempotency·checkpoint 설계가 필요하다."
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.process.process-terminate.q3",
-    "promptMarkdown": "Batch 워커가 강제 종료된 뒤 단순히 같은 job을 처음부터 재실행한다. 어떤 중복 effect 위험이 있고 어떤 상태를 프로세스 밖에 보존해야 하는지 설명하라.",
+    "promptMarkdown": "Batch worker가 강제 종료된 뒤 단순히 같은 job을 처음부터 재실행한다. 어떤 중복 effect 위험이 있고 어떤 state를 process 밖에 보존해야 하는지 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.process.process-terminate"],
-    "modelAnswer": "이전 프로세스가 일부 item을 이미 commit했을 수 있으므로 재실행 시 duplicate write/메시지가 생길 수 있다. Stable job/item key, checkpoint, idempotency 상태 등 durable 진행를 프로세스 메모리 밖에 보존하고 재시도 의미를 정의해야 한다.",
-    "explanationMarkdown": "강제 종료는 프로세스 메모리를 없애지만 이미 외부에 commit된 side effect까지 없애지 않는다. 따라서 **부분 완료 → 프로세스 종료 → 전체 재시도** 순서를 추적해 보면 중복 DB write나 메시지가 생길 수 있다. Stable key, durable checkpoint, idempotency 상태가 필요한 이유가 여기에 있다."
+    "modelAnswer": "이전 process가 일부 item을 이미 commit했을 수 있으므로 재실행 시 duplicate write/message가 생길 수 있다. Stable job/item key, checkpoint, idempotency state 등 durable progress를 process memory 밖에 보존하고 재시도 semantics를 정의해야 한다.",
+    "explanationMarkdown": "강제 종료는 process memory를 없애지만 이미 외부에 commit된 side effect까지 없애지 않는다. 따라서 **부분 완료 → process 종료 → 전체 재시도** 순서를 추적해 보면 중복 DB write나 message가 생길 수 있다. Stable key, durable checkpoint, idempotency state가 필요한 이유가 여기에 있다."
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.process.parent-child.q1",
-    "promptMarkdown": "Fork 이후 부모와 자식의 관계로 옳은 것은?",
+    "promptMarkdown": "Fork 이후 parent와 child의 관계로 옳은 것은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.process.parent-child"],
     "choices": [
-      {"key":"A","content":"일부 자원 상태는 규칙에 따라 상속/공유 관계가 남지만 두 프로세스는 별도 scheduling 대상이다.","displayOrder":0,"rationaleMarkdown":"fork는 별도로 scheduling되는 자식를 만들며, 일부 자원은 OS 규칙에 따라 복사·상속·참조된다. 부모-자식 관계가 부모를 먼저 실행하게 강제하지는 않는다."},
-      {"key":"B","content":"부모와 자식는 fork 이후 같은 writable address space를 계속 공동 소유한다.","displayOrder":1,"rationaleMarkdown":"부모와 자식는 논리적으로 쓰기 주소 공간이 분리된 별도 프로세스다. 복사-on-write가 처음에는 물리 page를 공유할 수 있지만 write는 매핑 의미에 따라 격리된다."},
-      {"key":"C","content":"부모-자식 관계 자체가 부모의 선행 실행을 보장한다.","displayOrder":2,"rationaleMarkdown":"fork 뒤 스케줄러는 부모나 자식 중 하나를 먼저 실행할 수 있고 두 실행은 교차할 수 있다. 부모 관계는 연결을 만들지만 보편적인 실행 순서를 정하지 않는다."},
-      {"key":"D","content":"자식는 부모의 PID와 스케줄러 상태를 그대로 사용하므로 독립적인 프로세스가 아니다.","displayOrder":3,"rationaleMarkdown":"자식는 자체 프로세스 식별자와 scheduling 상태를 가진다. 일부 handle이 공유 open-파일 description을 가리킬 수 있어도 자식가 같은 프로세스가 되는 것은 아니다."}
+      {"key":"A","content":"일부 resource state는 규칙에 따라 상속/공유 관계가 남지만 두 process는 별도 scheduling 대상이다.","displayOrder":0,"rationaleMarkdown":"fork는 별도로 scheduling되는 child를 만들며, 일부 자원은 OS 규칙에 따라 복사·상속·참조된다. 부모-자식 관계가 부모를 먼저 실행하게 강제하지는 않는다."},
+      {"key":"B","content":"Parent와 child는 fork 이후 같은 writable address space를 계속 공동 소유한다.","displayOrder":1,"rationaleMarkdown":"parent와 child는 논리적으로 쓰기 주소 공간이 분리된 별도 프로세스다. copy-on-write가 처음에는 물리 page를 공유할 수 있지만 write는 mapping 의미에 따라 격리된다."},
+      {"key":"C","content":"Parent-child 관계 자체가 parent의 선행 실행을 보장한다.","displayOrder":2,"rationaleMarkdown":"fork 뒤 scheduler는 parent나 child 중 하나를 먼저 실행할 수 있고 두 실행은 교차할 수 있다. 부모 관계는 연결을 만들지만 보편적인 실행 순서를 정하지 않는다."},
+      {"key":"D","content":"Child는 parent의 PID와 scheduler state를 그대로 사용하므로 독립적인 process가 아니다.","displayOrder":3,"rationaleMarkdown":"child는 자체 process identity와 scheduling 상태를 가진다. 일부 handle이 공유 open-file description을 가리킬 수 있어도 child가 같은 프로세스가 되는 것은 아니다."}
     ],
     "correctChoiceKey": "A",
-    "explanationMarkdown": "Fork는 부모와 자식 사이에 여러 상태를 규칙에 따라 복제하거나 연결하지만, 둘을 하나의 프로세스로 만드는 것은 아니다. Private writable 메모리는 논리적으로 분리되고 둘은 별도 scheduling 대상이며, fd처럼 일부 자원는 underlying 객체와 연결된 공유 의미를 가질 수 있다."
+    "explanationMarkdown": "Fork는 parent와 child 사이에 여러 state를 규칙에 따라 복제하거나 연결하지만, 둘을 하나의 process로 만드는 것은 아니다. Private writable memory는 논리적으로 분리되고 둘은 별도 scheduling 대상이며, fd처럼 일부 resource는 underlying object와 연결된 공유 semantics를 가질 수 있다."
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.process.parent-child.q2",
-    "promptMarkdown": "파이프의 write end가 자식 종료 후에도 다른 프로세스에 열려 있으면 reader가 EOF를 받지 못할 수 있는 이유를 디스크립터 생명주기과 연결해 설명하라.",
+    "promptMarkdown": "Pipe의 write end가 child 종료 후에도 다른 process에 열려 있으면 reader가 EOF를 받지 못할 수 있는 이유를 descriptor lifecycle과 연결해 설명하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.process.parent-child"],
-    "modelAnswer": "파이프 EOF는 모든 relevant writer 참조가 닫혔다는 조건과 연결된다. Fork로 inherited 디스크립터가 다른 프로세스에 남아 있으면 한 writer 프로세스가 종료돼도 커널은 write 엔드포인트가 아직 열려 있다고 볼 수 있어 reader가 EOF를 기다릴 수 있다.",
-    "explanationMarkdown": "파이프에서 EOF는 특정 writer 프로세스 하나가 끝났다는 뜻이 아니라 **write end를 가리키는 모든 relevant 디스크립터가 닫혔는가**와 연결된다. Fork로 복제된 write 디스크립터가 다른 프로세스에 남아 있으면 reader는 아직 writer 가능성이 있다고 보고 EOF를 받지 못할 수 있다."
+    "modelAnswer": "Pipe EOF는 모든 relevant writer reference가 닫혔다는 조건과 연결된다. Fork로 inherited descriptor가 다른 process에 남아 있으면 한 writer process가 종료돼도 kernel은 write endpoint가 아직 열려 있다고 볼 수 있어 reader가 EOF를 기다릴 수 있다.",
+    "explanationMarkdown": "Pipe에서 EOF는 특정 writer process 하나가 끝났다는 뜻이 아니라 **write end를 가리키는 모든 relevant descriptor가 닫혔는가**와 연결된다. Fork로 복제된 write descriptor가 다른 process에 남아 있으면 reader는 아직 writer 가능성이 있다고 보고 EOF를 받지 못할 수 있다."
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.process.parent-child.q3",
-    "promptMarkdown": "백엔드 부모 프로세스가 종료됐는데 자식 subprocess가 계속 살아 있다. '부모가 죽으면 자식도 반드시 즉시 죽는다'는 가정이 왜 안전하지 않은지 설명하라.",
+    "promptMarkdown": "Backend parent process가 종료됐는데 child subprocess가 계속 살아 있다. '부모가 죽으면 child도 반드시 즉시 죽는다'는 가정이 왜 안전하지 않은지 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.process.parent-child"],
-    "modelAnswer": "부모와 자식는 별도 프로세스 생명주기을 갖고 부모 termination과 자식 termination은 동일 사건이 아니다. Linux에서는 orphan이 nearest living 자식 subreaper 또는 init 역할의 프로세스로 reparent될 수 있다. Shutdown 시에는 프로세스-group과 signal 정책까지 포함해 자식 termination을 명시적으로 설계해야 한다.",
-    "explanationMarkdown": "부모와 자식는 별도 프로세스이므로 부모 종료 자체가 자식 종료 보장이 아니다. **Linux에서는** orphan descendant가 가장 가까운 살아 있는 자식 subreaper로 reparent될 수 있고, 그런 subreaper가 없으면 PID 네임스페이스의 init 역할 프로세스가 reaper가 될 수 있다. 따라서 subprocess shutdown은 reparenting에 기대지 말고 signal·프로세스-group·wait 정책으로 관리해야 한다."
+    "modelAnswer": "Parent와 child는 별도 process lifecycle을 갖고 parent termination과 child termination은 동일 사건이 아니다. Linux에서는 orphan이 nearest living child subreaper 또는 init 역할의 process로 reparent될 수 있다. Shutdown 시에는 process-group과 signal 정책까지 포함해 child termination을 명시적으로 설계해야 한다.",
+    "explanationMarkdown": "Parent와 child는 별도 process이므로 parent 종료 자체가 child 종료 보장이 아니다. **Linux에서는** orphan descendant가 가장 가까운 살아 있는 child subreaper로 reparent될 수 있고, 그런 subreaper가 없으면 PID namespace의 init 역할 process가 reaper가 될 수 있다. 따라서 subprocess shutdown은 reparenting에 기대지 말고 signal·process-group·wait 정책으로 관리해야 한다."
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.process.wait-reap.q1",
-    "promptMarkdown": "부모가 terminated 자식를 reap하는 대표 Linux interface는?",
+    "promptMarkdown": "Parent가 terminated child를 reap하는 대표 Linux interface는?",
     "questionType": "SHORT_ANSWER",
     "difficulty": "EASY",
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.process.wait-reap"],
     "acceptedAnswers": ["wait", "waitpid", "wait 계열", "wait()", "waitpid()"],
-    "explanationMarkdown": "대표적인 interface는 `wait()`와 `waitpid()` 같은 **wait 계열 호출**이다. 종료된 자식의 status를 수집하면서 남아 있던 termination 메타데이터를 reap하는 역할과 연결된다."
+    "explanationMarkdown": "대표적인 interface는 `wait()`와 `waitpid()` 같은 **wait 계열 호출**이다. 종료된 child의 status를 수집하면서 남아 있던 termination metadata를 reap하는 역할과 연결된다."
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.process.wait-reap.q2",
-    "promptMarkdown": "블로킹 `wait`에서 자식가 아직 실행 중이면 부모 상태가 어떻게 달라질 수 있는지 설명하라.",
+    "promptMarkdown": "Blocking `wait`에서 child가 아직 실행 중이면 parent state가 어떻게 달라질 수 있는지 설명하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.process.wait-reap"],
-    "modelAnswer": "부모는 자식의 relevant 상태 change를 기다리며 sleep/wait 상태가 될 수 있다. 자식가 종료하면 부모가 다시 실행 가능이 되고 스케줄러가 실행시킨 뒤 wait가 termination status를 반환하며 reap을 진행한다.",
-    "explanationMarkdown": "블로킹 wait는 CPU를 붙잡고 계속 polling하는 동작이 아니다. 기다릴 자식의 relevant 상태 change가 아직 없다면 부모는 sleep/wait 상태가 될 수 있고, 자식 종료 같은 이벤트가 발생하면 다시 실행 가능해져 status를 수집하고 reap을 완료한다."
+    "modelAnswer": "Parent는 child의 relevant state change를 기다리며 sleep/wait 상태가 될 수 있다. Child가 종료하면 parent가 다시 runnable이 되고 scheduler가 실행시킨 뒤 wait가 termination status를 반환하며 reap을 진행한다.",
+    "explanationMarkdown": "Blocking wait는 CPU를 붙잡고 계속 polling하는 동작이 아니다. 기다릴 child의 relevant state change가 아직 없다면 parent는 sleep/wait 상태가 될 수 있고, child 종료 같은 event가 발생하면 다시 runnable해져 status를 수집하고 reap을 완료한다."
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.process.wait-reap.q3",
-    "promptMarkdown": "Long-running 서버가 subprocess를 반복 생성하지만 종료 후 wait/reap을 하지 않는다. 시간이 지나며 어떤 OS-level 문제가 생기는가?",
+    "promptMarkdown": "Long-running server가 subprocess를 반복 생성하지만 종료 후 wait/reap을 하지 않는다. 시간이 지나며 어떤 OS-level 문제가 생기는가?",
     "questionType": "SCENARIO",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.process.wait-reap"],
-    "modelAnswer": "종료 자식에 대한 zombie 메타데이터가 누적되어 프로세스 table/PID 관련 자원를 소비할 수 있다. Zombie가 CPU를 계속 쓰는 문제가 아니라 부모가 termination 메타데이터를 회수하지 않는 생명주기 leak이다.",
-    "explanationMarkdown": "종료된 자식는 더 이상 사용자 코드를 실행하지 않지만 부모가 status를 수집하기 전에는 termination 정보를 담은 entry가 zombie로 남을 수 있다. 반복 생성·미회수가 누적되면 프로세스 table/PID 관련 자원를 소비하므로, 문제의 본질은 CPU leak이 아니라 **reaping이 빠진 생명주기 관리**다."
+    "modelAnswer": "종료 child에 대한 zombie metadata가 누적되어 process table/PID 관련 resource를 소비할 수 있다. Zombie가 CPU를 계속 쓰는 문제가 아니라 parent가 termination metadata를 회수하지 않는 lifecycle leak이다.",
+    "explanationMarkdown": "종료된 child는 더 이상 user code를 실행하지 않지만 parent가 status를 수집하기 전에는 termination 정보를 담은 entry가 zombie로 남을 수 있다. 반복 생성·미회수가 누적되면 process table/PID 관련 resource를 소비하므로, 문제의 본질은 CPU leak이 아니라 **reaping이 빠진 lifecycle 관리**다."
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.process.wait-reap.q4",
-    "promptMarkdown": "상황:\n- 자식 stdout 파이프를 부모가 충분히 읽지 않아 파이프 버퍼가 가득 찬다.\n- 부모는 자식 종료만 블로킹 wait하고 있다.\n\n질문: 이 상태에서 발생 가능한 교착성 대기 흐름을 설명하라.",
+    "promptMarkdown": "상황:\n- Child stdout pipe를 parent가 충분히 읽지 않아 pipe buffer가 가득 찬다.\n- Parent는 child 종료만 blocking wait하고 있다.\n\n질문: 이 상태에서 발생 가능한 교착성 대기 흐름을 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.process.wait-reap"],
-    "modelAnswer": "자식는 stdout write가 파이프 용량 때문에 block되어 종료 지점에 도달하지 못하고, 부모는 output을 drain하지 않은 채 자식 종료만 기다릴 수 있다. Subprocess executor는 output consumption과 프로세스 wait 순서를 함께 설계해야 한다.",
+    "modelAnswer": "Child는 stdout write가 pipe capacity 때문에 block되어 종료 지점에 도달하지 못하고, parent는 output을 drain하지 않은 채 child 종료만 기다릴 수 있다. Subprocess executor는 output consumption과 process wait 순서를 함께 설계해야 한다.",
     "explanationMarkdown": "상태를 순서대로 보면 `pipe full → child write block → child가 종료 지점에 못 감 → parent는 child 종료를 blocking wait → parent가 pipe를 읽지 않음`이 된다. 서로의 진행 조건이 충족되지 않으므로 교착성 대기가 지속될 수 있다. 해결은 output drain과 wait의 순서를 함께 설계하거나 concurrent drain·nonblocking I/O 같은 구조를 사용하는 것이다."
   }
 ]
