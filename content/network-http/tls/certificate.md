@@ -4,7 +4,7 @@ contentKey: network-http.core.tls.certificate
 topicContentKey: network-http.core.tls
 slug: certificate
 title: "서버 인증서"
-summary: "certificate가 public key와 service identity를 issuer signature로 연결하는 방식을 설명한다."
+summary: "서버 인증서가 공개 키와 서비스 식별 정보를 서명된 형태로 연결하고, 개인 키 보유 증명과 호스트 이름 검증이 별도 단계인 이유를 설명한다."
 level: 1
 status: PUBLISHED
 displayOrder: 20
@@ -17,18 +17,36 @@ references:
 ---
 # 서버 인증서
 
-TLS certificate는 endpoint의 public key와 그 key가 어떤 identity에 속한다고 주장하는지에 대한 정보를 함께 담는 서명된 data다. HTTPS server certificate라면 service identity는 보통 `subjectAltName`의 DNS name이나 IP address 형태로 표현되고, issuer의 digital signature가 certificate 내용이 발급 뒤 임의로 바뀌지 않았음을 검증하는 데 사용된다.
+TLS 서버 인증서는 단순한 `암호화 파일`이 아니다. 인증서에는 서버의 **공개 키(public key)**와 그 키가 어떤 서비스 식별 정보에 연결되어 있는지에 대한 정보가 들어 있고, 발급자의 전자서명이 인증서 내용이 발급 뒤 임의로 바뀌지 않았는지 검증할 수 있게 한다.
 
-certificate에는 public key가 들어가지만 대응하는 private key가 들어가는 것은 아니다. 실제 endpoint는 handshake에서 certificate에 대응하는 private key를 보유하고 있음을 증명해야 한다. 따라서 certificate 파일만 복사했다고 원래 server와 같은 인증을 수행할 수 있는 것은 아니다.
+HTTPS 서버 인증서에서는 서비스 이름이 보통 `subjectAltName` 확장에 DNS 이름이나 IP 주소 형태로 들어간다. 클라이언트는 인증서 체인을 신뢰할 수 있는지 확인한 뒤, 자신이 원래 접속하려던 호스트 이름과 인증서가 제시한 서비스 식별 정보가 일치하는지도 별도로 확인해야 한다.
 
-| 확인 대상 | 무엇을 확인하는가 | 무엇과 구별해야 하는가 |
+| 확인 대상 | 확인하는 내용 | 구분해야 할 것 |
 | --- | --- | --- |
-| Certificate chain과 유효 기간 | 발급 경로와 certificate 사용 조건 | 접속하려던 hostname과 일치하는지 |
-| Subject Alternative Name | certificate가 주장하는 DNS name 또는 IP identity | 상대 endpoint가 private key를 실제 보유하는지 |
-| Handshake의 private-key 증명 | 상대가 certificate의 public key와 짝인 private key를 제어함 | application 사용자의 권한 |
+| 인증서 체인과 유효성 | 신뢰한 발급 체계에서 유효하게 발급된 인증서인가 | 현재 접속한 서비스 이름과 일치하는가 |
+| `subjectAltName` | 인증서가 어떤 DNS 이름·IP 주소를 나타내는가 | 서버가 대응하는 개인 키를 실제로 가지고 있는가 |
+| `CertificateVerify` 등 핸드셰이크 검증 | 서버가 인증서 공개 키와 짝인 개인 키를 제어하는가 | 로그인 사용자의 권한 |
 
-### Certificate 하나만 보고 신뢰 여부가 끝나지 않는다
+### 인증서에는 개인 키가 들어 있지 않는다
 
-client는 leaf certificate 자체뿐 아니라 issuer가 누구인지, certificate가 유효 기간 안에 있는지, 용도 제약이 맞는지와 같은 검증을 수행한다. 그리고 별도로 자신이 접속하려던 hostname과 certificate가 제시한 service identity가 일치하는지도 확인해야 한다.
+외부에 전달되는 인증서에는 공개 키가 들어가지만 그 공개 키와 짝을 이루는 **개인 키(private key)**는 서버가 비밀로 보관해야 한다. TLS 핸드셰이크에서는 서버가 개인 키 자체를 네트워크로 보내는 대신, 현재 핸드셰이크 내용에 서명해 해당 개인 키를 실제로 제어하고 있음을 증명한다.
 
-이 역할을 구분하면 certificate를 `암호화를 위한 파일`로만 이해하는 오해를 피할 수 있다. 실제 application data 암호화에는 handshake에서 파생한 symmetric traffic key가 사용되고, certificate의 핵심 역할은 **public key와 identity를 인증 가능한 형태로 연결하는 것**이다.
+따라서 인증서 파일만 복사했다고 원래 서버와 같은 인증을 수행할 수 있는 것은 아니다. 인증서와 대응하는 개인 키를 가지고 있어야 인증서 기반 서버 인증을 완료할 수 있다.
+
+### 신뢰할 수 있는 인증서와 올바른 서비스 인증서는 같은 말이 아니다
+
+어떤 인증서가 신뢰할 수 있는 인증 기관 체인에 속하더라도 그 인증서가 내가 접속하려던 `api.example.com`의 인증서라는 보장은 없다. 예를 들어 신뢰받는 CA가 발급한 `other.example.net` 인증서를 제시했다면 체인 검증은 통과할 수 있어도 서비스 이름 검증에서는 거부되어야 한다.
+
+즉 서버 인증은 적어도 다음 두 질문을 함께 본다.
+
+```text
+이 인증서는 신뢰할 수 있는 발급 경로에 있는가?
+                    +
+이 인증서는 내가 접속하려던 서비스의 식별 정보를 담고 있는가?
+```
+
+### 실제 애플리케이션 데이터는 대칭 키로 보호한다
+
+인증서의 공개 키가 모든 HTTP 데이터를 직접 암호화하는 것도 아니다. TLS 1.3에서는 핸드셰이크에서 키 합의를 수행하고 여러 트래픽 키를 파생한 뒤, 실제 애플리케이션 데이터는 효율적인 대칭 암호 방식으로 보호한다.
+
+핵심은 **서버 인증서가 공개 키와 서비스 식별 정보를 검증 가능한 형태로 연결하고, 클라이언트가 신뢰 체인·서비스 이름·개인 키 보유 증명을 함께 확인할 수 있게 하는 인증 수단이라는 점**이다.
