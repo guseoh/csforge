@@ -14,7 +14,7 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "IPv4 주소와 네트워크 범위를 구분해 패킷을 전달하는 기본 개념을 확인한다."
+    recommendation: "IPv4 주소, 헤더와 패킷 전달의 기본 규칙을 확인한다."
     displayOrder: 1
 ---
 # CIDR prefix와 서브넷
