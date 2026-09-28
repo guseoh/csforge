@@ -1,104 +1,104 @@
 schemaVersion: 2
 area:
   key: performance-observability-operations
-  title: Performance, Observability & Operations
-  baseline: measurable runtime behavior, service objectives and operational feedback loops
+  title: 성능·관측·운영
+  baseline: 측정 가능한 실행 성능, 서비스 목표와 운영 피드백 루프
   contentKeyPrefix: performance.core
   status: CANONICAL_FOUNDATION
 policies:
   language:
     authoringLanguage: ko-KR
-    explanationRule: 성능 숫자를 단독 최적화하지 않고 workload·saturation·사용자 영향과 연결하며 telemetry에서 운영 조치까지의 feedback loop를 설명한다.
+    explanationRule: 성능 수치를 단독으로 최적화하지 않고 작업 부하·자원 포화·사용자 영향과 연결하며 관측 정보에서 운영 조치까지의 피드백 루프를 설명한다.
   question:
     topicDifficultyCoverage: [EASY, MEDIUM, HARD]
     areaTypeCoverage: [MULTIPLE_CHOICE, SHORT_ANSWER, DESCRIPTIVE, SCENARIO]
-    hardRule: p95/p99 latency·queueing, profiler와 load test, signal correlation, SLI/SLO·error budget, cardinality, alert/runbook, incident command 또는 autoscaling trade-off를 판단하게 한다.
-    shortAnswerRule: metric·tool 이름만으로 정답을 인정하지 않고 측정 대상과 운영 의미를 함께 요구한다.
+    hardRule: 꼬리 지연 시간(p95/p99)·대기열, 프로파일러·마이크로벤치마크·부하 테스트, 관측 신호의 상관관계, SLI/SLO·오류 예산, 카디널리티, 알림·대응 절차, 장애 지휘 또는 자동 확장의 절충을 판단하게 한다.
+    shortAnswerRule: SHORT_ANSWER는 한 가지 용어·약어·값처럼 결정적으로 채점 가능한 답을 묻고, 측정 의미·근거·절충 설명이 필요하면 DESCRIPTIVE 또는 SCENARIO를 사용한다.
   source:
-    primary: [OpenTelemetry Documentation, Prometheus Documentation, Google SRE Book, Kubernetes Documentation, Oracle Java Flight Recorder Documentation]
-    rule: telemetry와 성능 측정은 시스템 동작을 설명하는 관측 수단이며 원인·목표·운영 조치를 혼동하지 않는다.
+    primary: [OpenTelemetry Documentation, Prometheus Documentation, Google SRE Book, Kubernetes Documentation, Oracle Java Flight Recorder Documentation, OpenJDK JMH, Grafana k6 Documentation]
+    rule: 관측 정보와 성능 측정은 시스템 동작을 설명하는 근거이며 원인·목표·운영 조치를 혼동하지 않는다.
   visualization:
     values: [NONE, TEXT, DIAGRAM]
-    rule: latency distribution, telemetry correlation, SLO budget burn 또는 incident/capacity feedback loop처럼 시간과 관계가 핵심인 곳에 사용한다.
+    rule: 지연 시간 분포, 관측 신호의 상관관계, SLO 예산 소진 또는 장애·용량 피드백 루프처럼 시간과 관계가 핵심인 곳에 사용한다.
 topics:
 - key: performance.core.measurement
-  title: Runtime performance measurement
+  title: 성능 측정
   order: 10
-  scope: latency·throughput·saturation, queueing과 profiling/load test를 다룬다.
-  boundary: Java·database·network 자체의 상세 구현보다 workload 관측과 성능 판단 방법을 소유한다.
+  scope: 지연 시간·처리량·포화, 대기열과 프로파일링·부하 테스트를 다룬다.
+  boundary: Java·데이터베이스·네트워크 자체의 상세 구현보다 실제 부하에서 성능을 측정하고 판단하는 방법을 다룬다.
   concepts:
   - key: performance.core.measurement.latency-throughput
-    title: latency distribution과 throughput
+    title: 지연 시간 분포와 처리량
     order: 10
     level: 1
-    objective: 평균 대신 percentile latency와 throughput을 workload·concurrency·error rate와 함께 해석한다.
+    objective: 평균 대신 지연 시간의 백분위수와 처리량을 작업 부하·동시성·오류율과 함께 해석한다.
     density: CORE
     visualization: DIAGRAM
   - key: performance.core.measurement.saturation-queueing
-    title: saturation과 queueing
+    title: 포화와 대기열
     order: 20
     level: 2
-    objective: bounded resource, queue depth, utilization과 Little's Law 직관을 이용해 latency 증가와 overload를 설명한다.
+    objective: 제한된 자원, 대기열 길이, 이용률과 리틀의 법칙(Little's Law)을 이용해 지연 시간 증가와 과부하를 설명한다.
     density: CORE
     visualization: DIAGRAM
   - key: performance.core.measurement.profiling-load-testing
-    title: profiling과 load testing
+    title: 프로파일링과 부하 테스트
     order: 30
     level: 2
-    objective: profiler·benchmark·load test의 질문과 한계를 구분하고 재현 가능한 성능 실험을 설계한다.
+    objective: 프로파일러·마이크로벤치마크·부하 테스트가 답하는 질문과 한계를 구분하고 재현 가능한 성능 실험을 설계한다.
     density: CORE
     visualization: TEXT
 - key: performance.core.observability
-  title: Observability signals and objectives
+  title: 관측 신호와 서비스 목표
   order: 20
-  scope: metrics·logs·traces·context, SLI/SLO/error budget와 cardinality를 다룬다.
-  boundary: telemetry의 수집·질의·sampling 정책과 service objective를 소유하고 개별 business domain의 canonical data는 소유하지 않는다.
+  scope: 메트릭·로그·분산 추적과 문맥, SLI/SLO·오류 예산과 메트릭 카디널리티를 다룬다.
+  boundary: 관측 정보의 수집·질의·표본 추출 정책과 서비스 목표를 다루며 개별 비즈니스 영역의 기준 데이터는 소유하지 않는다.
   concepts:
   - key: performance.core.observability.signals-context
-    title: metrics·logs·traces와 context
+    title: 관측 신호와 추적 문맥
     order: 10
     level: 1
-    objective: signal별 강점과 trace/span context correlation을 이용해 한 요청의 증상을 연결한다.
+    objective: 관측 신호별 강점을 이해하고 서비스 경계를 넘어 전파되는 추적 문맥과 리소스·스팬 속성의 역할을 구분해 한 요청의 증상을 연결한다.
     density: CORE
     visualization: DIAGRAM
   - key: performance.core.observability.sli-slo-error-budget
-    title: SLI·SLO와 error budget
+    title: 서비스 수준 지표·목표와 오류 예산
     order: 20
     level: 2
-    objective: user-visible indicator에서 SLO를 만들고 budget 소비를 release·reliability 의사결정으로 연결한다.
+    objective: 사용자가 체감하는 서비스 수준 지표(SLI)에서 목표(SLO)를 만들고 오류 예산 소진을 배포·신뢰성 의사결정에 연결한다.
     density: CORE
     visualization: DIAGRAM
   - key: performance.core.observability.metric-cardinality
-    title: metric cardinality와 telemetry cost
+    title: 메트릭 카디널리티와 관측 비용
     order: 30
     level: 2
-    objective: label/attribute 조합이 series와 storage·query 비용을 어떻게 증가시키는지 제어한다.
+    objective: 레이블·속성 조합이 시계열 수와 저장·질의 비용을 어떻게 늘리는지 판단하고 불필요한 차원을 통제한다.
     density: CORE
     visualization: TEXT
 - key: performance.core.operations
-  title: Operational response and capacity
+  title: 운영 대응과 용량 계획
   order: 30
-  scope: alert·runbook, incident response, capacity planning과 autoscaling을 다룬다.
-  boundary: Backend Engineering의 resilience pattern과 Infrastructure의 resource primitive를 반복하지 않고 운영 signal·decision·action loop를 소유한다.
+  scope: 조치 가능한 알림·대응 절차, 장애 대응, 용량 계획과 자동 확장을 다룬다.
+  boundary: Backend Engineering의 회복탄력성 패턴과 Infrastructure의 자원 구현을 반복하지 않고 운영 신호·의사결정·조치 흐름을 다룬다.
   concepts:
   - key: performance.core.operations.alert-runbook
-    title: alert와 runbook
+    title: 알림과 대응 절차
     order: 10
     level: 1
-    objective: actionable alert를 user impact·symptom·threshold·runbook으로 연결하고 alert fatigue를 줄인다.
+    objective: 조치 가능한 알림을 사용자 영향·증상·임곗값·대응 절차와 연결하고 불필요한 알림을 줄인다.
     density: CORE
     visualization: TEXT
   - key: performance.core.operations.incident-response
-    title: incident response와 postmortem
+    title: 장애 대응과 사후 분석
     order: 20
     level: 2
-    objective: incident command, communication, mitigation, evidence 보존과 blameless learning을 운영한다.
+    objective: 장애 지휘·상황 공유·완화 조치, 근거 보존과 비난 없는 학습을 운영한다.
     density: CORE
     visualization: DIAGRAM
   - key: performance.core.operations.capacity-autoscaling
-    title: capacity planning과 autoscaling
+    title: 용량 계획과 자동 확장
     order: 30
     level: 2
-    objective: demand forecast, headroom, scaling signal과 stabilization을 capacity·cost·reliability trade-off로 판단한다.
+    objective: 수요 예측·여유 용량·확장 신호와 안정화 시간을 용량·비용·신뢰성의 절충으로 판단한다.
     density: CORE
     visualization: DIAGRAM
