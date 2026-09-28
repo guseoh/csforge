@@ -14,7 +14,7 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "DNS 레코드 TTL의 의미와 캐시에서 남은 TTL을 감소시키는 기본 규칙을 확인한다."
+    recommendation: "DNS 메시지·레코드·응답 코드와 TTL의 기본 규칙을 확인한다."
     displayOrder: 1
 ---
 # DNS TTL과 캐시
