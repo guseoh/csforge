@@ -24,6 +24,7 @@ jobs:
           python - <<'PY'
           import copy
           import json
+          import re
           from pathlib import Path
 
           targets = {
@@ -64,21 +65,25 @@ jobs:
               updated = text
 
               for key in keys:
-                  marker = f'"contentKey": "{key}"'
-                  start = updated.find(marker)
-                  if start < 0:
+                  marker = re.compile(r'"contentKey"\s*:\s*"' + re.escape(key) + r'"')
+                  match = marker.search(updated)
+                  if not match:
                       raise SystemExit(f"missing contentKey: {key}")
-                  next_key = updated.find('"contentKey":', start + len(marker))
-                  end = len(updated) if next_key < 0 else next_key
-                  block = updated[start:end]
-                  hard = '"difficulty": "HARD"'
-                  medium = '"difficulty": "MEDIUM"'
-                  if hard not in block:
-                      if medium in block:
+                  next_key = re.search(r'"contentKey"\s*:', updated[match.end():])
+                  end = len(updated) if not next_key else match.end() + next_key.start()
+                  block = updated[match.start():end]
+
+                  hard_match = re.search(r'"difficulty"\s*:\s*"HARD"', block)
+                  medium_match = re.search(r'"difficulty"\s*:\s*"MEDIUM"', block)
+                  if not hard_match:
+                      if medium_match:
                           continue
                       raise SystemExit(f"expected HARD difficulty near: {key}")
-                  block = block.replace(hard, medium, 1)
-                  updated = updated[:start] + block + updated[end:]
+
+                  old = hard_match.group(0)
+                  replacement = re.sub(r'"HARD"', '"MEDIUM"', old, count=1)
+                  block = block[:hard_match.start()] + replacement + block[hard_match.end():]
+                  updated = updated[:match.start()] + block + updated[end:]
                   changed.append(key)
 
               after = json.loads(updated)
