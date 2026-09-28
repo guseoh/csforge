@@ -14,7 +14,7 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "TCP가 순서 있는 바이트 스트림을 제공하고 누락된 앞쪽 바이트 뒤의 데이터를 순서대로 전달해야 하는 경계를 확인한다."
+    recommendation: "TCP 연결, 바이트 스트림, 시퀀스·ACK와 연결 상태의 기본 규칙을 확인한다."
     displayOrder: 1
 ---
 # TCP 전송 계층 HOL 차단
