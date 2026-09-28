@@ -13,7 +13,6 @@ references:
     title: "RFC 9111 HTTP Caching"
     referenceType: OFFICIAL
     language: en
-    depth: section
     displayOrder: 1
   - url: "https://www.rfc-editor.org/rfc/rfc5861"
     title: "HTTP Cache-Control Extensions for Stale Content"

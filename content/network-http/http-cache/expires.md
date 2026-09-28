@@ -13,7 +13,6 @@ references:
     title: "RFC 9111 HTTP Caching"
     referenceType: OFFICIAL
     language: en
-    depth: section
     displayOrder: 1
 ---
 # Expires와 만료 시각
