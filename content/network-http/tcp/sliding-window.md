@@ -14,14 +14,14 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "TCP 송·수신 시퀀스 공간과 윈도 상태가 바이트 범위를 제한하는 규칙을 확인한다."
+    recommendation: "TCP 연결, 바이트 스트림, 시퀀스·ACK와 연결 상태의 기본 규칙을 확인한다."
     displayOrder: 1
   - url: "https://www.rfc-editor.org/rfc/rfc5681"
     title: "TCP Congestion Control"
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "혼잡 윈도가 네트워크에 확인 없이 내보낼 수 있는 데이터 양을 제한하는 원리를 확인한다."
+    recommendation: "TCP 혼잡 제어의 slow start·congestion avoidance와 혼잡 윈도 조절 규칙을 확인한다."
     displayOrder: 2
 ---
 # 슬라이딩 윈도
