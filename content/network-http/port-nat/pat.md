@@ -14,7 +14,7 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "NAPT가 주소와 TCP·UDP 포트를 함께 변환해 여러 내부 세션을 구분하는 방식을 확인한다."
+    recommendation: "전통적인 IPv4 NAT/NAPT의 주소·포트 변환과 상태 관리 규칙을 확인한다."
     displayOrder: 1
 ---
 # 주소·포트 변환(PAT)
