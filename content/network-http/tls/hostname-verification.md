@@ -14,7 +14,7 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "reference identity와 인증서 subjectAltName의 service identity를 비교하는 현행 검증 규칙을 확인한다."
+    recommendation: "reference identity와 certificate의 subjectAltName에 제시된 service identity를 비교하는 현행 검증 규칙을 확인한다."
     displayOrder: 1
 ---
 # 호스트 이름 검증
