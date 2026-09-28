@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.http-methods.idempotent-method
 topicContentKey: network-http.core.http-methods
 slug: idempotent-method
-title: "Idempotent Method와 반복 요청"
+title: "멱등 메서드(Idempotent Method)"
 summary: "같은 요청을 여러 번 수행했을 때 intended effect가 한 번 수행한 것과 같다는 HTTP idempotency를 설명한다."
 level: 1
 status: PUBLISHED
@@ -15,11 +15,17 @@ references:
     language: en
     displayOrder: 1
 ---
-# Idempotent Method와 반복 요청
+# 멱등 메서드(Idempotent Method)
 
 HTTP에서 method가 **idempotent**하다는 것은 동일한 request를 여러 번 수행했을 때 client가 의도한 server effect가 한 번 수행했을 때와 같도록 method semantics가 정의되어 있다는 뜻이다. safe method와 PUT, DELETE가 idempotent method에 해당한다.
 
 예를 들어 특정 resource를 원하는 상태로 대체하는 동일 PUT request를 두 번 보내더라도 두 번째 요청이 `한 번 더 누적 변경`을 의미하지 않는다. DELETE도 이미 association이 제거된 target에 같은 삭제 의도를 반복한다고 해서 삭제 effect가 계속 누적되는 method가 아니다.
+
+| Request 반복 | Intended server effect | Response가 달라질 수 있는가? |
+| --- | --- | --- |
+| 같은 PUT으로 설정 값을 dark로 지정 | 값은 dark 상태로 유지 | 예; 날짜·상태 코드·동시 변경 관찰은 달라질 수 있음 |
+| 같은 DELETE로 target association 제거 | association은 계속 제거된 상태 | 예; 반복 요청은 404 또는 다른 resource-specific 응답일 수 있음 |
+| 같은 POST로 주문 생성 | application에 따라 새 주문이 추가될 수 있음 | 가능; 별도 중복 방지 계약이 필요할 수 있음 |
 
 ### Idempotent는 response가 항상 같다는 뜻이 아니다
 

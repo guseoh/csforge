@@ -3,8 +3,8 @@ kind: concept
 contentKey: network-http.core.dns.cname
 topicContentKey: network-http.core.dns
 slug: cname
-title: "CNAME"
-summary: "별칭이 canonical name으로 이어지는 record chain을 설명한다."
+title: "CNAME 레코드"
+summary: "한 DNS 이름을 다른 정식 이름의 별칭으로 연결하고, 최종 주소를 얻기 위해 추가 조회가 이어질 수 있는 과정을 설명한다."
 level: 1
 status: PUBLISHED
 displayOrder: 60
@@ -15,23 +15,25 @@ references:
     language: en
     displayOrder: 1
 ---
-# CNAME
+# CNAME 레코드
 
-CNAME record는 하나의 domain name을 **다른 canonical name의 alias로 연결**한다. Resolver가 alias name을 조회하면 CNAME target을 따라가 최종적으로 A, AAAA 같은 필요한 record를 다시 찾아야 할 수 있다.
+CNAME 레코드는 하나의 DNS 이름을 **다른 정식 이름(canonical name)의 별칭(alias)**으로 연결한다. CNAME 자체가 IPv4·IPv6 주소를 담는 것이 아니라, 리졸버가 가리키는 이름을 다시 해석해 최종 A·AAAA 레코드 등을 찾게 만든다.
 
 ```text
 service.example. CNAME edge.example.
 edge.example.    A     192.0.2.20
 ```
 
-이 경우 `service.example`은 직접 IPv4 address를 가진 것이 아니라 `edge.example`을 alias target으로 가리킨다.
+이 경우 `service.example`을 조회하면 먼저 `edge.example`이라는 정식 이름을 알게 되고, 실제 IPv4 주소는 `edge.example`의 A 레코드를 조회해 얻는다.
 
-### Alias chain은 추가 lookup을 만들 수 있다
+### CNAME 연결은 추가 DNS 조회를 만들 수 있다
 
-CNAME target이 다시 다른 CNAME을 가리키면 chain이 생긴다. Resolver는 chain을 따라 최종 answer를 찾아야 하므로 너무 긴 chain이나 cycle은 resolution 비용과 실패 가능성을 높인다.
+CNAME이 다시 다른 CNAME을 가리키면 별칭 연결이 여러 단계로 이어질 수 있다. 필요한 응답이 한 DNS 메시지에 함께 들어오는 경우도 있지만, 캐시 상태와 응답 구성에 따라 리졸버가 추가 조회를 수행할 수 있다.
 
-### CNAME owner의 data에는 제약이 있다
+연결이 지나치게 길면 조회 지연과 실패 지점이 늘어나고, 순환 참조가 생기면 정상적으로 최종 이름을 찾을 수 없다. 따라서 별칭 구조도 불필요하게 복잡하게 만들지 않는 편이 좋다.
 
-CNAME은 owner name이 다른 canonical name의 alias라는 의미이므로 일반적으로 같은 owner에 다른 종류의 ordinary data를 함께 두지 않는다. Zone apex처럼 SOA와 NS record가 반드시 필요한 이름에는 이 제약 때문에 전통적인 CNAME을 그대로 사용할 수 없다.
+### CNAME을 둔 이름에는 일반 DNS 데이터를 함께 두기 어렵다
 
-CNAME의 핵심은 **DNS name 자체를 다른 canonical DNS name에 연결하는 alias record이며, address는 target name을 추가로 해석해 얻는다는 것**이다.
+CNAME은 `이 이름은 다른 이름의 별칭이다`라는 의미를 가진다. 그래서 CNAME이 존재하는 이름에는 일반적으로 다른 종류의 DNS 데이터를 함께 둘 수 없다. zone 최상위 이름(apex)은 SOA·NS 레코드가 필요하므로 전통적인 CNAME을 그대로 둘 수 없는 이유도 여기에 있다.
+
+CNAME의 핵심은 **주소를 직접 저장하는 레코드가 아니라 DNS 이름을 다른 DNS 이름으로 연결하는 별칭 레코드이며, 최종 주소는 대상 이름을 추가로 해석해 얻는다는 점**이다.

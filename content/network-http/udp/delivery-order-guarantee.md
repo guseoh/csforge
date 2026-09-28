@@ -3,8 +3,8 @@ kind: concept
 contentKey: network-http.core.udp.delivery-order-guarantee
 topicContentKey: network-http.core.udp
 slug: delivery-order-guarantee
-title: "UDP의 전달·순서 보장 경계"
-summary: "UDP가 delivery·ordering·duplicate 제거를 보장하지 않는 이유와 그 의미를 설명한다."
+title: "UDP 전달과 순서 보장"
+summary: "UDP가 데이터그램의 도착·순서·중복 제거를 기본 보장하지 않으며 필요한 보장을 상위 프로토콜이 선택해야 하는 이유를 설명한다."
 level: 1
 status: PUBLISHED
 displayOrder: 20
@@ -17,23 +17,36 @@ references:
     recommendation: "UDP datagram과 application reliability 경계를 확인한다."
     displayOrder: 1
 ---
-# UDP의 전달·순서 보장 경계
+# UDP 전달과 순서 보장
 
-UDP는 datagram을 IP 위에 실어 전달하지만, 송신 이후 각 datagram이 목적지에 도착했는지를 확인하는 ACK나 재전송 상태를 유지하지 않는다. 그래서 network congestion, route 변화, buffer 부족 같은 이유로 datagram이 유실되어도 UDP 자체가 다시 보내지 않는다.
+UDP는 데이터그램을 IP 위에 실어 보내지만, 송신 뒤 **각 데이터그램이 목적지에 도착했는지 확인하는 ACK·재전송 상태를 기본적으로 유지하지 않는다.** 그래서 네트워크 혼잡, 경로 변화, 라우터·호스트 버퍼 부족 같은 이유로 데이터그램이 사라져도 UDP 자체가 다시 보내지 않는다.
 
-도착 순서도 보장하지 않는다. `D1 → D2 → D3` 순서로 보냈더라도 서로 다른 queueing 지연이나 path 변화 때문에 `D1 → D3 → D2`처럼 관찰될 수 있다. 또한 network나 중간 장비의 동작으로 duplicate가 생겨도 UDP 계층은 message ID를 기준으로 중복을 제거하지 않는다.
+도착 순서도 보장하지 않는다. `D1 → D2 → D3` 순서로 보냈더라도 각 패킷이 겪는 큐 지연이나 경로가 달라지면 `D1 → D3 → D2`처럼 관찰될 수 있다. 중복 데이터그램이 생겨도 UDP에는 애플리케이션 메시지 ID를 보고 중복을 제거하는 연결 상태가 없다.
 
 ```text
 송신 순서   : D1 → D2 → D3 → D4
-수신 가능성 : D1 → D3 → D2 → D2    (D4 유실, D2 재정렬·중복)
+수신 가능성 : D1 → D3 → D2 → D2
+                              ↑
+                 D4는 유실, D2는 중복 가능
 ```
 
-두 번째 줄은 가능한 관찰의 한 예일 뿐이다. UDP contract에는 어떤 datagram이 빠지고, 늦거나 중복될지를 예측하는 규칙도 없다.
+이 예시는 가능한 결과 하나일 뿐이다. UDP 계약에는 `몇 번째 데이터그램이 빠진다`거나 `얼마나 늦게 도착한다`는 규칙도 없다.
 
-### 어떤 보장이 필요한지는 상위 protocol이 결정한다
+### 필요한 신뢰성은 사용 사례에 따라 달라진다
 
-모든 UDP 사용자가 TCP와 같은 신뢰성을 다시 만들어야 하는 것은 아니다. 음성·영상이나 최신 상태 전송처럼 오래된 datagram을 뒤늦게 복구하는 것보다 현재 데이터를 계속 보내는 편이 나은 workload도 있다. 이런 경우 일부 loss와 reorder를 허용하는 것이 protocol 목표에 더 맞을 수 있다.
+모든 UDP 애플리케이션이 TCP와 똑같은 보장을 다시 구현해야 하는 것은 아니다. 실시간 음성·영상처럼 **오래된 데이터를 늦게 복구하는 것보다 지금의 데이터를 계속 받는 편이 중요한 경우**에는 일부 손실을 허용하는 설계가 더 적합할 수 있다.
 
-반대로 모든 message를 놓치지 않아야 한다면 sequence number, acknowledgement, timeout, retransmission과 duplicate detection 같은 메커니즘을 상위 protocol이 추가해야 한다. 그 순간 UDP가 단순하다는 장점 대신 더 많은 상태와 복구 규칙을 application protocol이 책임진다.
+반대로 모든 메시지를 빠짐없이 처리해야 한다면 상위 프로토콜에서 다음과 같은 상태가 필요해질 수 있다.
 
-핵심은 UDP를 `빠르지만 불안정한 TCP`로 이해하는 것이 아니다. UDP는 **datagram 전달이라는 더 얇은 계약을 제공하고, 그 위에서 필요한 신뢰성의 종류를 상위 protocol이 선택하게 하는 transport**다.
+- 시퀀스 번호로 순서를 식별한다.
+- ACK로 수신 여부를 알린다.
+- 타임아웃 뒤 필요한 메시지를 재전송한다.
+- 이미 처리한 메시지 ID를 기억해 중복 적용을 막는다.
+
+이런 기능을 추가할수록 복구 능력은 높아지지만 상태·타이머·메모리·재시도 정책이 함께 늘어난다.
+
+### UDP를 `빠르지만 불안정한 TCP`라고 보면 안 된다
+
+UDP는 TCP의 기능을 덜 정확하게 구현한 프로토콜이 아니다. **데이터그램 전달이라는 더 작은 계약을 제공하고, 그 위에서 어떤 신뢰성이 필요한지는 상위 프로토콜이 정하도록 한 전송 방식**이다.
+
+따라서 UDP를 선택할 때는 단순히 `빠르다`가 아니라 손실·재정렬·중복이 실제 업무에 어떤 영향을 주며 어떤 복구를 직접 책임질 것인지 판단해야 한다.

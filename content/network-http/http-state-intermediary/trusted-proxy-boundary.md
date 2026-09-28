@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.http-state-intermediary.trusted-proxy-boundary
 topicContentKey: network-http.core.http-state-intermediary
 slug: trusted-proxy-boundary
-title: "Trusted Proxy Boundary"
+title: "신뢰하는 프록시 경계"
 summary: "backend가 어떤 proxy가 추가한 forwarded metadata를 신뢰할 수 있는지 결정하는 boundary를 설명한다."
 level: 3
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "forwarded identity와 trusted intermediary 경계를 확인한다."
     displayOrder: 1
 ---
-# Trusted Proxy Boundary
+# 신뢰하는 프록시 경계
 
 Forwarded 또는 X-Forwarded field는 proxy가 관찰한 request metadata를 전달할 수 있지만, HTTP field 자체에는 누가 그 값을 썼는지를 증명하는 기능이 없다. External client가 임의의 `X-Forwarded-For`나 `Forwarded`를 보낼 수도 있기 때문에 backend가 모든 값을 그대로 신뢰하면 client address, scheme이나 host를 위조할 수 있다.
 
