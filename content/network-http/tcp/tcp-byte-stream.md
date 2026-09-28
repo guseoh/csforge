@@ -14,7 +14,7 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "TCP가 애플리케이션에 순서 있는 바이트 스트림을 제공하고 개별 write 경계를 보존하지 않는 전송 계약을 확인한다."
+    recommendation: "TCP 연결, 바이트 스트림, 시퀀스·ACK와 연결 상태의 기본 규칙을 확인한다."
     displayOrder: 1
 ---
 # TCP 바이트 스트림
