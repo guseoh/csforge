@@ -1,0 +1,182 @@
+name: OS kernel curated question edit
+
+on:
+  push:
+    branches:
+      - codex/content-operating-systems-quality
+
+permissions:
+  contents: write
+
+jobs:
+  edit-kernel-questions:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: codex/content-operating-systems-quality
+          fetch-depth: 0
+
+      - name: Apply curated kernel-boundary wording
+        shell: bash
+        run: |
+          python - <<'PY'
+          import copy, json, re
+          from pathlib import Path
+
+          path = Path('content/operating-systems/kernel-boundary/questions.json')
+          data = json.loads(path.read_text(encoding='utf-8'))
+          assert len(data) == 25, len(data)
+
+          def identity(q):
+              return (
+                  q.get('contentKey'), q.get('questionType'), q.get('difficulty'), q.get('status'),
+                  copy.deepcopy(q.get('conceptKeys')), copy.deepcopy(q.get('acceptedAnswers')),
+                  q.get('correctChoiceKey'),
+                  [(c.get('key'), c.get('displayOrder')) for c in (q.get('choices') or [])],
+              )
+          before = [identity(q) for q in data]
+
+          phrases = [
+              ('resource manager', '자원 관리자'),
+              ('resource-management', '자원 관리'),
+              ('resource management', '자원 관리'),
+              ('resource allocation', '자원 할당'),
+              ('protection boundary', '보호 경계'),
+              ('file descriptor', '파일 디스크립터'),
+              ('system-call interface', '시스템 콜 인터페이스'),
+              ('system call interface', '시스템 콜 인터페이스'),
+              ('system-call flow', '시스템 콜 흐름'),
+              ('system call flow', '시스템 콜 흐름'),
+              ('system-call entry', '시스템 콜 진입'),
+              ('system call entry', '시스템 콜 진입'),
+              ('system-call number', '시스템 콜 번호'),
+              ('system call number', '시스템 콜 번호'),
+              ('system-call argument', '시스템 콜 인자'),
+              ('system call argument', '시스템 콜 인자'),
+              ('system-call request', '시스템 콜 요청'),
+              ('system call request', '시스템 콜 요청'),
+              ('system-call', '시스템 콜'),
+              ('system call', '시스템 콜'),
+              ('user mode', '사용자 모드'),
+              ('kernel mode', '커널 모드'),
+              ('mode switch', '모드 전환'),
+              ('context switch', '문맥 전환'),
+              ('privilege level', '권한 수준'),
+              ('privileged instruction', '특권 명령어'),
+              ('privilege mode', '권한 모드'),
+              ('privilege mechanism', '권한 메커니즘'),
+              ('virtual memory', '가상 메모리'),
+              ('virtual address', '가상 주소'),
+              ('address space', '주소 공간'),
+              ('memory mapping', '메모리 매핑'),
+              ('page mapping', '페이지 매핑'),
+              ('page fault', '페이지 폴트'),
+              ('partial read', '부분 읽기'),
+              ('partial result', '부분 결과'),
+              ('return value', '반환값'),
+              ('return path', '복귀 경로'),
+              ('controlled entry', '통제된 진입'),
+              ('kernel entry', '커널 진입'),
+              ('user space', '사용자 공간'),
+              ('kernel service', '커널 서비스'),
+              ('kernel state', '커널 상태'),
+              ('network stack', '네트워크 스택'),
+              ('application policy', '애플리케이션 정책'),
+              ('application authorization', '애플리케이션 인가'),
+              ('business authorization', '비즈니스 인가'),
+              ('file permission', '파일 권한'),
+              ('access permission', '접근 권한'),
+              ('read/write/execute permission', '읽기/쓰기/실행 권한'),
+              ('hardware mechanism', '하드웨어 메커니즘'),
+              ('hardware resource', '하드웨어 자원'),
+              ('software convention', '소프트웨어 관례'),
+              ('software API', '소프트웨어 API'),
+              ('application/runtime abstraction', '애플리케이션/런타임 추상화'),
+              ('environment call', '환경 호출(environment call)'),
+              ('trap handler', '트랩 처리기'),
+              ('trap-entry', '트랩 진입'),
+              ('handler', '처리기'),
+              ('timer interrupt', '타이머 인터럽트'),
+              ('illegal-instruction exception', '잘못된 명령어 예외'),
+              ('asynchronous event', '비동기 사건'),
+              ('synchronous event', '동기 사건'),
+              ('synchronous exception', '동기 예외'),
+              ('application semantics', '애플리케이션 의미'),
+              ('service semantics', '서비스 의미'),
+              ('ISA mechanism', 'ISA 메커니즘'),
+              ('architecture-specific detail', '아키텍처별 세부사항'),
+              ('CPU core', 'CPU 코어'),
+              ('thread pool', '스레드 풀'),
+              ('Java thread', 'Java 스레드'),
+              ('runnable task', '실행 가능한 작업'),
+              ('I/O wait', 'I/O 대기'),
+              ('CPU work', 'CPU 작업'),
+              ('elapsed time', '경과 시간'),
+              ('elapsed', '경과'),
+              ('completion', '완료'),
+              ('lifecycle leak', '생명주기 누수'),
+              ('process lifecycle', '프로세스 생명주기'),
+              ('application role', '애플리케이션 역할'),
+              ('process-wide', '프로세스 전체'),
+          ]
+          words = {
+              'process':'프로세스','hardware':'하드웨어','resource':'자원','protection':'보호',
+              'application':'애플리케이션','scheduling':'스케줄링','memory':'메모리','device':'장치',
+              'scheduler':'스케줄러','runnable':'실행 가능','wait':'대기','privilege':'특권',
+              'kernel':'커널','user':'사용자','thread':'스레드','task':'작업','context':'문맥',
+              'mapping':'매핑','code':'코드','service':'서비스','interface':'인터페이스',
+              'library':'라이브러리','function':'함수','caller':'호출자','return':'반환',
+              'exception':'예외','interrupt':'인터럽트','instruction':'명령어','argument':'인자',
+              'entry':'진입','event':'사건','source':'발생원','category':'범주','architecture':'아키텍처',
+              'semantics':'의미','mechanism':'메커니즘','runtime':'런타임','native':'네이티브',
+              'layer':'계층','driver':'드라이버','register':'레지스터','permission':'권한',
+              'operation':'연산','policy':'정책','priority':'우선순위','reclamation':'회수',
+              'allocation':'할당','failure':'실패','error':'오류','result':'결과','state':'상태',
+              'role':'역할','authorization':'인가','abstraction':'추상화','dispatch':'분기',
+              'validation':'검증','buffering':'버퍼링','handler':'처리기','fault':'폴트',
+              'timer':'타이머','page':'페이지','pointer':'포인터','length':'길이','overflow':'오버플로',
+              'jump':'점프','controlled':'통제된','malicious':'악의적인','buggy':'버그가 있는',
+          }
+          phrase_patterns = [(re.compile(r'(?i)(?<![A-Za-z0-9_])' + re.escape(a) + r'(?![A-Za-z0-9_])'), b) for a,b in phrases]
+          word_pattern = re.compile(r'(?i)(?<![A-Za-z0-9_])(' + '|'.join(sorted(map(re.escape, words), key=len, reverse=True)) + r')(?![A-Za-z0-9_])')
+          protected = re.compile(r'(`[^`]*`)')
+
+          def translate_plain(s):
+              for p, r in phrase_patterns:
+                  s = p.sub(r, s)
+              return word_pattern.sub(lambda m: words[m.group(0).lower()], s)
+
+          def translate(s):
+              if not isinstance(s, str): return s
+              parts = protected.split(s)
+              for i in range(0, len(parts), 2):
+                  parts[i] = translate_plain(parts[i])
+              return ''.join(parts)
+
+          for q in data:
+              for f in ('promptMarkdown','modelAnswer','explanationMarkdown'):
+                  if f in q: q[f] = translate(q[f])
+              for c in q.get('choices') or []:
+                  for f in ('content','rationaleMarkdown'):
+                      if f in c: c[f] = translate(c[f])
+
+          after = [identity(q) for q in data]
+          assert before == after, 'question identity contract changed'
+          assert len(data) == 25
+          text = json.dumps(data, ensure_ascii=False, indent=2) + '\n'
+          path.write_text(text, encoding='utf-8')
+
+          # Catch the most common accidental double translations.
+          for bad in ('프로세스 프로세스','커널 커널','사용자 사용자','자원 자원','메모리 메모리','(사용자)','(커널)'):
+              assert bad not in text, bad
+          print('kernel questions:', len(data), 'identity preserved')
+          PY
+
+          git diff --check
+          git add content/operating-systems/kernel-boundary/questions.json
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git commit -m "refine OS kernel-boundary questions Korean-first"
+          git push
