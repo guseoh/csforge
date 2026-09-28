@@ -14,7 +14,7 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "인터넷 호스트의 계층별 책임과 상하위 계층 사이의 경계를 확인한다."
+    recommendation: "인터넷 호스트의 네트워크 계층 구조와 계층별 책임 경계를 확인한다."
     displayOrder: 1
 ---
 # 링크·네트워크·전송·애플리케이션 계층
