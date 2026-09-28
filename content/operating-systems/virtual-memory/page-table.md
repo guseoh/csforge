@@ -3,8 +3,8 @@ kind: concept
 contentKey: operating-systems.core.virtual-memory.page-table
 topicContentKey: operating-systems.core.virtual-memory
 slug: page-table
-title: "Page Table"
-summary: "OS가 virtual page의 mapping·permission·backing 상태를 추적하는 page-table 역할과 architecture 경계를 설명한다."
+title: "페이지 테이블(Page Table)"
+summary: "운영체제가 가상 페이지의 매핑과 접근 권한 상태를 관리하고 주소 변환 하드웨어가 이를 사용하는 경계를 설명한다."
 level: 1
 status: PUBLISHED
 displayOrder: 30
@@ -24,15 +24,15 @@ references:
     recommendation: "virtual page와 physical frame, page-table mapping 및 paging의 공간·비용 trade-off를 확인한다."
     displayOrder: 2
 ---
-# Page Table
+# 페이지 테이블(Page Table)
 
-Page table은 **process의 virtual page가 현재 어떤 physical frame과 연결되어 있고 어떤 접근이 허용되는지 표현하는 mapping state**다. 운영체제는 process별 page-table state를 만들고 변경하며, hardware는 그 state를 이용해 memory access를 translation하고 protection을 검사한다.
+페이지 테이블은 **프로세스의 가상 페이지가 어떤 물리 프레임과 연결되어 있고 어떤 접근이 허용되는지 표현하는 매핑 자료구조**다. 운영체제는 프로세스별 페이지 테이블과 관련 메모리 관리 상태를 만들고 변경한다. 일반적인 하드웨어 페이지 테이블 구조에서는 CPU의 주소 변환 하드웨어가 이 정보를 이용해 가상 주소를 물리 주소로 변환하고 접근 권한을 검사한다.
 
-![Virtual page number와 page offset을 이용해 page table의 mapping을 따라 physical frame으로 접근하는 구조](/learning/operating-systems/page-table-translation.svg)
+![가상 페이지 번호와 페이지 오프셋으로 페이지 테이블 매핑을 따라 물리 프레임에 접근하는 구조](/learning/operating-systems/page-table-translation.svg)
 
-### Mapping과 permission을 함께 표현한다
+### 매핑과 접근 권한을 함께 표현한다
 
-개념적으로 page-table entry에는 physical frame 정보와 read/write/execute 같은 protection 상태가 포함될 수 있다. 따라서 virtual address가 존재하는 것과 현재 access가 허용되는 것은 다른 질문이다.
+개념적으로 페이지 테이블 엔트리(page-table entry, PTE)에는 물리 프레임 정보와 읽기·쓰기·실행 같은 보호 상태가 포함될 수 있다. 따라서 가상 주소 범위가 존재한다는 사실과 현재 요청한 접근이 허용된다는 사실은 서로 다른 문제다.
 
 ```text
 virtual page
@@ -42,10 +42,10 @@ virtual page
    └─ mapping 있음 + permission 허용 → access 진행
 ```
 
-실제 entry bit 이름과 의미는 architecture마다 다르므로 `valid`, `present`, `accessed` 같은 특정 bit를 모든 시스템의 공통 규칙으로 일반화하지 않는다.
+실제 엔트리의 비트 이름과 의미는 CPU 아키텍처마다 다르므로 `valid`, `present`, `accessed` 같은 특정 비트를 모든 시스템의 공통 규칙으로 일반화하면 안 된다.
 
-### OS는 mapping lifecycle을 관리한다
+### 운영체제는 매핑의 생명주기를 관리한다
 
-Memory mapping 생성·해제, heap/stack 변화, file mapping, fork와 copy-on-write 같은 사건은 process의 mapping state를 바꾼다. Address space에 mapping이 있다고 모든 page가 지금 RAM에 resident한 것은 아니며, OS는 별도의 memory-management state와 함께 resident/backing 상태를 관리한다.
+메모리 매핑 생성·해제, 힙과 스택의 변화, 파일 매핑, `fork()`와 쓰기 시 복사(COW) 같은 사건은 프로세스의 가상 메모리 매핑 상태를 바꾼다. 주소 공간에 매핑이 있다고 모든 페이지가 지금 RAM에 상주하는 것은 아니며, 운영체제는 페이지 테이블 외의 메모리 관리 정보와 함께 상주 여부와 뒷받침 저장소 상태를 관리한다.
 
-Multi-level page table과 TLB, hardware page-table walk의 세부 동작은 Computer Architecture 영역의 책임이다. 이 Concept의 핵심은 **page table이 process별 virtual-memory mapping과 protection을 표현하고, OS가 그 lifecycle을 관리한다는 점**이다.
+다단계 페이지 테이블, TLB, 하드웨어 페이지 테이블 탐색의 세부 동작은 Computer Architecture 영역의 책임이다. 이 Concept의 핵심은 **페이지 테이블이 프로세스별 가상 메모리 매핑과 보호 정보를 표현하고, 운영체제가 그 생명주기를 관리한다는 점**이다.

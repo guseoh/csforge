@@ -3,8 +3,8 @@ kind: concept
 contentKey: operating-systems.core.filesystem.directory-path
 topicContentKey: operating-systems.core.filesystem
 slug: directory-path
-title: "Directory·Path"
-summary: "directory entry를 단계적으로 해석해 pathname을 file object로 resolve하는 과정과 이름·identity 경계를 설명한다."
+title: "디렉터리와 경로(Directory and Path)"
+summary: "디렉터리 항목을 단계적으로 해석해 경로명을 파일 객체로 찾는 과정과 이름·정체성의 경계를 설명한다."
 level: 1
 status: PUBLISHED
 displayOrder: 40
@@ -17,11 +17,11 @@ references:
     recommendation: "file, pathname, descriptor, shared open-file state를 Unix file-system API 흐름으로 확인한다."
     displayOrder: 1
 ---
-# Directory·Path
+# 디렉터리와 경로(Directory and Path)
 
-Pathname은 file object 자체가 아니라 **filesystem namespace에서 object를 찾아가기 위한 이름의 경로**다. Directory는 entry name을 다음 directory나 file object의 identifier에 연결하고, path resolution은 시작 directory에서 component를 하나씩 해석한다.
+경로명(pathname)은 파일 객체 자체가 아니라 **파일 시스템의 이름 공간에서 객체를 찾아가기 위한 이름의 경로**다. 디렉터리는 항목 이름을 다음 디렉터리나 파일 객체의 식별 정보에 연결하고, 경로 해석은 시작 디렉터리에서 각 구성 요소를 하나씩 찾아간다.
 
-예를 들어 `/var/app/data.txt`는 개념적으로 다음처럼 resolve된다.
+예를 들어 `/var/app/data.txt`는 개념적으로 다음처럼 해석된다.
 
 ```text
 / → "var" → var directory
@@ -29,16 +29,16 @@ Pathname은 file object 자체가 아니라 **filesystem namespace에서 object�
   → "data.txt" → target file
 ```
 
-중간 component가 없거나 directory가 아니거나 접근 권한이 없으면 최종 file object를 찾을 수 없다.
+중간 구성 요소가 존재하지 않거나 디렉터리가 아니거나 접근 권한이 없으면 최종 파일 객체까지 도달할 수 없다.
 
-### Absolute path와 relative path는 시작점이 다르다
+### 절대 경로와 상대 경로는 시작점이 다르다
 
-Absolute path는 root에서 시작하고, relative path는 current working directory나 directory descriptor처럼 지정된 기준 directory에서 시작한다. 같은 문자열 `data/a.txt`라도 시작 context가 다르면 다른 object를 찾을 수 있다.
+절대 경로는 루트 디렉터리에서 시작하고, 상대 경로는 현재 작업 디렉터리나 디렉터리 파일 디스크립터처럼 지정된 기준 디렉터리에서 시작한다. 같은 문자열 `data/a.txt`라도 시작 기준이 다르면 다른 객체를 찾을 수 있다.
 
-Symbolic link가 있으면 target pathname을 다시 해석해야 하므로 단순 문자열 분할만으로 실제 object resolution을 설명할 수 없다.
+심볼릭 링크가 있으면 링크가 가리키는 경로명을 다시 해석해야 하므로 단순히 문자열을 나누는 것만으로 실제 경로 해석 과정을 설명할 수 없다.
 
-### 이름과 object lifetime은 분리된다
+### 이름과 객체의 생명주기는 분리된다
 
-`unlink()`는 directory entry라는 이름 연결을 제거한다. 하지만 같은 object를 가리키는 다른 hard link나 열린 descriptor가 남아 있다면 underlying object가 즉시 사라지지 않을 수 있다.
+`unlink()`는 디렉터리 항목이라는 이름 연결을 제거한다. 하지만 같은 파일 객체를 가리키는 다른 하드 링크나 열린 파일 디스크립터가 남아 있다면 실제 파일 객체가 즉시 사라지지 않을 수 있다.
 
-Directory·Path의 핵심은 **pathname이 namespace lookup을 위한 이름이고 file identity와 open lifetime은 별도 상태라는 점**, 그리고 path resolution이 component별 directory lookup의 연쇄라는 점이다.
+디렉터리와 경로의 핵심은 **경로명이 이름 공간을 탐색하기 위한 이름이고 파일 객체의 정체성과 열린 생명주기는 별도 상태라는 점**, 그리고 경로 해석이 디렉터리 항목을 단계별로 찾는 과정이라는 점이다.

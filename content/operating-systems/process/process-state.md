@@ -3,8 +3,8 @@ kind: concept
 contentKey: operating-systems.core.process.process-state
 topicContentKey: operating-systems.core.process
 slug: process-state
-title: "Process State"
-summary: "ready·running·waiting·terminated 같은 상태를 CPU 배정과 event 대기라는 전이 원인으로 설명한다."
+title: "프로세스 상태(Process State)"
+summary: "준비·실행·대기·종료 상태를 CPU 배정과 사건 대기라는 전이 원인으로 설명한다."
 level: 1
 status: PUBLISHED
 displayOrder: 40
@@ -17,41 +17,41 @@ references:
     recommendation: "Linux가 observable process state를 어떻게 구분하는지 실제 state code를 확인한다."
     displayOrder: 1
 ---
-# Process State
+# 프로세스 상태(Process State)
 
-Process state는 현재 process가 **CPU를 실행 중인지, 실행 가능한데 차례를 기다리는지, 특정 event를 기다리는지**를 나타낸다. 교과서에서는 다음과 같은 단순한 상태 모델을 자주 사용한다.
+프로세스 상태는 현재 프로세스가 **CPU에서 실행 중인지, 실행할 수 있지만 차례를 기다리는지, 특정 사건을 기다리는지**를 나타낸다. 교과서에서는 다음과 같은 단순한 상태 모델을 자주 사용한다.
 
 ```text
-        dispatch
-Ready ────────> Running
-  ^              │   │
-  │              │   └─ blocking wait ──> Waiting
-  │              │                         │
-  └─ preemption ─┘                         └─ event → Ready
+           디스패치
+준비 ─────────────> 실행
+  ^                  │   │
+  │                  │   └─ 블로킹 대기 ──> 대기
+  │                  │                       │
+  └──── 선점 ────────┘                       └─ 사건 발생 → 준비
 
-Running ── exit ──> Terminated
+실행 ── 종료 ──> 종료됨
 ```
 
-### Ready와 Running은 다르다
+### 준비 상태와 실행 상태는 다르다
 
-Ready process는 실행할 조건은 갖췄지만 아직 CPU를 배정받지 못한 상태다. Running은 실제 CPU core에서 instruction을 실행하는 상태다.
+준비(ready) 상태의 프로세스는 실행할 조건은 갖췄지만 아직 CPU를 배정받지 못했다. 실행(running) 상태는 실제 CPU 코어에서 명령어를 실행하고 있는 상태다.
 
-Core 수보다 runnable process가 많다면 일부 process는 ready queue에서 기다려야 한다.
+CPU 코어 수보다 실행 가능한 프로세스가 많다면 일부 프로세스는 준비 큐에서 차례를 기다려야 한다.
 
-### Waiting은 CPU 차례를 기다리는 상태와 다르다
+### 대기 상태는 CPU 차례를 기다리는 상태와 다르다
 
-Process가 I/O completion, lock, timer 같은 event를 기다리는 동안에는 지금 CPU를 받아도 진행할 수 없는 경우가 있다. 이런 process는 waiting 또는 blocked 상태로 둘 수 있다.
+프로세스가 I/O 완료, 락, 타이머 같은 사건을 기다리는 동안에는 지금 CPU를 받아도 진행할 수 없는 경우가 있다. 이런 프로세스는 대기(waiting) 또는 블록(blocked) 상태로 둘 수 있다.
 
-Event가 발생하면 process는 바로 running이 되는 것이 아니라 다시 runnable 상태가 되고, scheduler가 CPU를 배정해야 실행을 재개한다.
+기다리던 사건이 발생하면 프로세스가 곧바로 실행 상태가 되는 것은 아니다. 다시 실행 가능 상태가 된 뒤 스케줄러가 CPU를 배정해야 실제 실행을 재개한다.
 
 ```text
-I/O complete
+I/O 완료
     ↓
-Waiting → Ready → scheduler dispatch → Running
+대기 → 준비 → 스케줄러가 CPU 배정 → 실행
 ```
 
-### 같은 Ready 전이라도 원인이 다르다
+### 같은 준비 상태로 전이되어도 원인이 다를 수 있다
 
-Running process가 timer interrupt로 선점되면 `Running → Ready`가 될 수 있고, I/O가 끝나면 `Waiting → Ready`가 될 수 있다. 결과 상태는 같지만 전이 원인이 다르다.
+실행 중인 프로세스가 타이머 인터럽트로 선점되면 `실행 → 준비`가 될 수 있고, I/O가 끝나면 `대기 → 준비`가 될 수 있다. 결과 상태는 같지만 전이 원인은 다르다.
 
-실제 OS는 interruptible sleep, stopped, zombie처럼 더 많은 상태를 구분할 수 있다. Ready/Running/Waiting 모델은 특정 Linux state code를 그대로 복사한 것이 아니라 **process가 왜 실행되거나 멈추는지 이해하기 위한 abstraction**이다.
+실제 운영체제는 interruptible sleep, stopped, zombie처럼 더 많은 상태를 구분할 수 있다. 준비/실행/대기 모델은 특정 Linux 상태 코드를 그대로 복사한 것이 아니라 **프로세스가 왜 실행되거나 멈추는지 이해하기 위한 추상화**다.

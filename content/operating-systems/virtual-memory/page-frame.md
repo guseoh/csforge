@@ -3,8 +3,8 @@ kind: concept
 contentKey: operating-systems.core.virtual-memory.page-frame
 topicContentKey: operating-systems.core.virtual-memory
 slug: page-frame
-title: "Page·Frame"
-summary: "virtual memory의 page와 physical memory의 frame을 같은 크기 단위로 나누어 mapping하는 이유를 설명한다."
+title: "페이지와 프레임(Page and Frame)"
+summary: "가상 메모리의 페이지와 물리 메모리의 프레임을 같은 크기 단위로 나누어 매핑하는 이유를 설명한다."
 level: 1
 status: PUBLISHED
 displayOrder: 20
@@ -17,9 +17,9 @@ references:
     recommendation: "virtual page와 physical frame, page-table mapping 및 paging의 공간·비용 trade-off를 확인한다."
     displayOrder: 1
 ---
-# Page·Frame
+# 페이지와 프레임(Page and Frame)
 
-Paging은 virtual address space를 고정 크기의 **page**로 나누고, physical memory를 같은 크기의 **frame**으로 나눈 뒤 둘을 mapping하는 방식이다. 이 구조 덕분에 process의 연속된 virtual page가 physical memory에서도 연속된 위치에 놓일 필요가 없다.
+페이징(paging)은 가상 주소 공간을 고정 크기의 **페이지(page)**로 나누고, 물리 메모리를 같은 크기의 **프레임(frame)**으로 나눈 뒤 둘을 매핑하는 방식이다. 이 구조 덕분에 프로세스의 연속된 가상 페이지가 물리 메모리에서도 연속된 위치에 놓일 필요는 없다.
 
 ```text
 Virtual pages           Physical frames
@@ -28,12 +28,12 @@ P1 ───────────────────> F2
 P2 ───────────────────> F15
 ```
 
-Process는 `P0 → P1 → P2`를 연속 주소처럼 사용하지만 실제 frame은 흩어져 있을 수 있다.
+프로세스는 `P0 → P1 → P2`를 연속된 주소처럼 사용하지만 실제 프레임은 물리 메모리 곳곳에 흩어져 있을 수 있다.
 
-### Page와 frame은 같은 크기지만 역할이 다르다
+### 페이지와 프레임은 크기는 같지만 역할이 다르다
 
-Page는 **virtual address-space의 단위**이고 frame은 **physical memory의 단위**다. Virtual page가 resident하다는 말은 그 page의 내용을 담을 physical frame이 현재 준비되어 있다는 뜻이다.
+페이지는 **가상 주소 공간의 단위**이고 프레임은 **물리 메모리의 단위**다. 어떤 가상 페이지가 현재 메모리에 상주한다는 말은 그 페이지의 내용을 담는 물리 프레임이 준비되어 있다는 뜻이다.
 
-고정 크기 단위를 사용하면 process 전체를 큰 연속 physical 영역에 배치할 필요가 없어 external fragmentation 문제를 줄일 수 있다. 반면 page 안의 일부 공간을 사용하지 않는 internal fragmentation과 mapping metadata 비용은 생긴다.
+고정 크기 단위를 사용하면 프로세스 전체를 하나의 큰 연속 물리 영역에 배치할 필요가 없어 외부 단편화(external fragmentation) 문제를 줄일 수 있다. 반면 페이지 안의 일부 공간을 사용하지 않는 내부 단편화(internal fragmentation)와 매핑 정보를 관리하는 비용은 생긴다.
 
-Page size 자체에도 trade-off가 있지만 hardware TLB reach와 page-table walk 세부는 Computer Architecture에서 다룬다. OS 관점에서 중요한 것은 **page/frame 단위가 allocation, fault, replacement와 sharing의 기본 단위가 된다는 점**이다.
+페이지 크기 자체에도 절충이 있지만 TLB 범위와 페이지 테이블 탐색의 하드웨어 세부는 Computer Architecture에서 다룬다. 운영체제 관점에서 중요한 것은 **페이지와 프레임이 할당, 페이지 폴트, 교체, 공유를 판단하는 기본 단위가 된다는 점**이다.

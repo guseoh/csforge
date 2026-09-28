@@ -3,8 +3,8 @@ kind: concept
 contentKey: operating-systems.core.ipc.shared-memory
 topicContentKey: operating-systems.core.ipc
 slug: shared-memory
-title: "Shared Memory"
-summary: "여러 process address space가 같은 backing memory를 매핑할 때 copy 비용과 synchronization 책임이 어떻게 바뀌는지 설명한다."
+title: "공유 메모리(Shared Memory)"
+summary: "여러 프로세스가 같은 기반 메모리를 매핑할 때 복사 비용과 동기화 책임이 어떻게 바뀌는지 설명한다."
 level: 2
 status: PUBLISHED
 displayOrder: 30
@@ -24,24 +24,24 @@ references:
     recommendation: "Android Binder가 프로세스 경계에서 copy 비용과 kernel-mediated IPC를 어떻게 다루는지 비교 사례로 확인한다."
     displayOrder: 2
 ---
-# Shared Memory
+# 공유 메모리(Shared Memory)
 
-Shared memory IPC는 서로 다른 process의 virtual address space에 **같은 backing memory를 매핑**해 data를 직접 공유하게 한다. Pipe나 socket처럼 sender가 kernel buffer에 bytes를 쓰고 receiver가 다시 읽는 stream path를 줄일 수 있어 큰 payload를 자주 교환하는 경우 copy 비용 측면에서 유리할 수 있다.
+공유 메모리 IPC는 서로 다른 프로세스의 가상 주소 공간에 **같은 기반 메모리(backing memory)를 매핑**해 데이터를 직접 공유하게 한다. 파이프나 소켓처럼 보내는 쪽이 커널 버퍼에 바이트를 쓰고 받는 쪽이 다시 읽는 경로를 줄일 수 있어, 큰 데이터를 자주 교환하는 경우 복사 비용 측면에서 유리할 수 있다.
 
-![서로 다른 virtual address가 같은 shared backing memory를 보는 구조](/learning/operating-systems/shared-memory-mapping.svg)
+![서로 다른 가상 주소가 같은 공유 기반 메모리를 보는 구조](/learning/operating-systems/shared-memory-mapping.svg)
 
-### 같은 backing을 보더라도 virtual address는 다를 수 있다
+### 같은 메모리를 공유해도 가상 주소는 다를 수 있다
 
-Process A와 B가 같은 shared-memory object를 map해도 각 process의 virtual address는 다를 수 있다. 따라서 shared region 안에 process-local raw pointer를 저장하고 다른 process가 그대로 해석하는 방식은 안전하지 않을 수 있다. Offset이나 index처럼 mapping base와 독립적인 representation이 필요하다.
+프로세스 A와 B가 같은 공유 메모리 객체를 매핑하더라도 각 프로세스에서 보이는 가상 주소는 다를 수 있다. 따라서 공유 영역 안에 한 프로세스에서만 의미가 있는 원시 포인터를 저장한 뒤 다른 프로세스가 그대로 해석하는 방식은 안전하지 않다. 매핑 시작 주소와 독립적으로 해석할 수 있는 **오프셋이나 인덱스 같은 표현**이 필요하다.
 
-### Data copy를 줄인 대신 synchronization 책임이 커진다
+### 데이터 복사를 줄인 대신 동기화 책임이 커진다
 
-Shared mapping 자체는 mutual exclusion, atomicity, memory ordering을 제공하지 않는다. 두 process가 같은 metadata를 동시에 수정한다면 process-shared mutex/semaphore, atomic protocol 또는 명확한 ownership rule이 필요하다.
+공유 매핑 자체는 상호 배제, 원자성, 메모리 순서를 자동으로 제공하지 않는다. 두 프로세스가 같은 메타데이터를 동시에 수정한다면 프로세스 간 공유가 가능한 뮤텍스·세마포어, 원자적 프로토콜 또는 명확한 소유권 규칙이 필요하다.
 
-예를 들어 producer-consumer ring buffer에서는 payload write와 publish index 갱신 순서가 protocol의 일부다. Payload가 완성되기 전에 producer가 새 index를 공개하면 consumer가 partially initialized data를 읽을 수 있다.
+예를 들어 생산자-소비자 링 버퍼에서는 payload 쓰기와 게시 인덱스(publish index) 갱신 순서가 프로토콜의 일부다. payload가 완성되기 전에 생산자가 새 인덱스를 공개하면 소비자가 아직 초기화가 끝나지 않은 데이터를 읽을 수 있다.
 
-### Lifetime도 직접 관리한다
+### 공유 메모리의 생명주기도 직접 관리해야 한다
 
-Shared-memory object의 이름을 제거하는 것과 이미 존재하는 mapping의 lifetime이 끝나는 것은 같은 사건이 아닐 수 있다. Participant가 crash하거나 restart하면 shared metadata가 stale한 상태로 남을 수 있으므로 owner, generation과 initialization state를 명확히 해야 한다.
+공유 메모리 객체의 이름을 제거하는 것과 이미 만들어진 매핑의 생명주기가 끝나는 것은 같은 사건이 아닐 수 있다. 참여 프로세스가 비정상 종료하거나 재시작하면 공유 메타데이터가 오래된 상태로 남을 수 있으므로 소유자, 세대(generation), 초기화 상태를 명확히 관리해야 한다.
 
-Shared memory의 핵심 trade-off는 **copy를 줄이는 대신 synchronization, layout과 participant lifecycle을 더 직접 책임진다는 것**이다.
+공유 메모리의 핵심 절충은 **데이터 복사를 줄일 수 있는 대신 동기화, 데이터 배치 구조, 참여 프로세스의 생명주기를 더 직접 책임진다는 것**이다.

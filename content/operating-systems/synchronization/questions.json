@@ -2,303 +2,297 @@
   {
     "kind": "question",
     "contentKey": "operating-systems.core.synchronization.mutex.q1",
-    "promptMarkdown": "mutex를 올바르게 사용하기 위한 가장 중요한 조건은?",
+    "promptMarkdown": "뮤텍스를 올바르게 사용하기 위한 가장 중요한 조건은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.synchronization.mutex"],
     "choices": [
-      {"key":"A","content":"각 thread가 자기만의 mutex를 사용하면 같은 state가 보호된다","displayOrder":0,"rationaleMarkdown":"각 thread가 서로 다른 mutex instance를 사용하면 같은 상태를 보호하도록 조정할 수 없다. 상호 배제를 지키려면 하나의 공유 보호 protocol을 따라야 한다."},
-      {"key":"B","content":"읽기 경로는 어떤 lock도 사용하지 않아도 항상 안전하다","displayOrder":1,"rationaleMarkdown":"보호하지 않은 read는 동시 write와 경합하거나 여러 필드로 된 불변 조건이 깨진 상태를 볼 수 있다. read도 공유 상태와 memory model에 따라 보호가 필요하며 읽기라는 이유만으로 안전하지 않다."},
-      {"key":"C","content":"같은 invariant에 접근하는 모든 competing path가 같은 protection protocol을 따른다","displayOrder":2,"rationaleMarkdown":"mutex는 그 불변 조건에 영향을 줄 수 있는 모든 경합 경로가 같은 lock protocol을 따를 때만 상태를 보호한다. 보호되지 않은 접근이나 다른 lock을 쓰는 경로가 있으면 race가 남는다."},
-      {"key":"D","content":"critical section을 가능한 길게 유지하면 race가 줄어든다","displayOrder":3,"rationaleMarkdown":"mutex를 필요 이상 오래 잡으면 더 많은 작업이 직렬화되고 경합이 커진다. 무관한 지연은 빼고 불변 조건을 유지하는 상태 전이만 보호해야 한다."}
+      {"key":"A","content":"각 스레드가 자기만의 뮤텍스를 사용하면 같은 상태가 보호된다.","displayOrder":0,"rationaleMarkdown":"각 스레드가 서로 다른 뮤텍스를 사용하면 같은 상태에 대한 상호 배제를 만들 수 없다. 하나의 공유 불변 조건을 보호하려면 경쟁 경로가 같은 보호 규칙을 따라야 한다."},
+      {"key":"B","content":"읽기 경로는 어떤 락도 사용하지 않아도 항상 안전하다.","displayOrder":1,"rationaleMarkdown":"보호되지 않은 읽기는 동시 쓰기와 경쟁하거나 여러 필드로 된 불변 조건이 깨진 상태를 볼 수 있다. 읽기라는 이유만으로 항상 안전한 것은 아니다."},
+      {"key":"C","content":"같은 불변 조건에 접근하는 모든 경쟁 경로가 같은 보호 규칙을 따른다.","displayOrder":2,"rationaleMarkdown":"뮤텍스는 그 불변 조건에 영향을 줄 수 있는 모든 경쟁 경로가 같은 락 규칙을 따를 때만 상태를 보호한다. 보호되지 않은 접근이나 다른 락을 쓰는 경로가 있으면 경쟁 상태가 남는다."},
+      {"key":"D","content":"임계 구역을 가능한 한 길게 유지하면 경쟁 상태가 줄어든다.","displayOrder":3,"rationaleMarkdown":"뮤텍스를 필요 이상 오래 잡으면 더 많은 작업이 직렬화되고 경합이 커진다. 불변 조건을 유지하는 데 필요한 상태 전이만 보호해야 한다."}
     ],
     "correctChoiceKey": "C",
-    "explanationMarkdown": "Mutex는 객체가 shared state를 자동으로 보호하는 장치가 아니다. **같은 invariant에 영향을 주는 모든 경쟁 경로가 동일한 보호 규칙을 따라야** 실제 mutual exclusion이 성립한다. 서로 다른 mutex를 사용하거나 일부 access가 보호 밖에 남으면 lock이 존재해도 race가 가능하다."
+    "explanationMarkdown": "뮤텍스 객체가 존재한다고 공유 상태가 자동으로 보호되는 것은 아니다. **같은 불변 조건에 영향을 주는 모든 경쟁 경로가 동일한 보호 규칙을 따라야** 실제 상호 배제가 성립한다. 서로 다른 뮤텍스를 사용하거나 일부 접근이 보호 밖에 남으면 락이 있어도 경쟁 상태가 가능하다."
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.synchronization.mutex.q2",
-    "promptMarkdown": "mutex의 ownership 의미가 counting semaphore와 다른 점을 설명하라.",
+    "promptMarkdown": "뮤텍스의 소유권 의미가 카운팅 세마포어와 어떻게 다른지 설명하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.synchronization.mutex"],
-    "modelAnswer": "전형적인 mutex는 하나의 owner가 critical section을 획득하고 그 owner가 release하는 mutual-exclusion 의미를 가진다. counting semaphore는 N개의 permit나 event handoff를 표현할 수 있어 ownership semantics가 다를 수 있다.",
-    "explanationMarkdown": "둘은 한 번에 하나만 통과시키는 형태로 겹쳐 보일 수 있지만 중심 계약이 다르다. Mutex는 **보호 구간의 owner와 배타성**을 표현하고, semaphore는 permit count와 wait/post를 이용해 capacity나 ordering까지 표현할 수 있다. 그래서 binary semaphore를 mutex와 완전히 같은 primitive라고 일반화하면 안 된다."
+    "modelAnswer": "전형적인 뮤텍스는 하나의 소유자가 임계 구역 진입 권한을 획득하고 그 소유자가 해제하는 상호 배제 의미를 가진다. 카운팅 세마포어는 N개의 허가나 실행 흐름 사이의 신호 전달을 표현할 수 있어 소유권 의미가 다르다.",
+    "explanationMarkdown": "둘은 한 번에 하나만 통과시키는 형태로 겹쳐 보일 수 있지만 중심 계약이 다르다. 뮤텍스는 **보호 구간의 소유자와 배타성**을 표현하고, 세마포어는 허가 수와 wait/post를 이용해 용량이나 실행 순서 신호를 표현할 수 있다. 이진 세마포어를 뮤텍스와 완전히 같은 도구라고 일반화하면 안 된다."
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.synchronization.mutex.q3",
-    "promptMarkdown": "mutex를 잡은 채 평균 300ms짜리 외부 API를 호출하고 동일 lock을 50개 요청이 경쟁한다. 어떤 문제가 예상되는가?",
+    "promptMarkdown": "뮤텍스를 잡은 채 평균 300 ms가 걸리는 외부 API를 호출하고, 같은 락을 50개 요청이 경쟁한다. 어떤 문제가 예상되는가?",
     "questionType": "SCENARIO",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.synchronization.mutex"],
-    "modelAnswer": "외부 API 지연 시간이 lock hold time이 되어 요청들이 직렬화되고 queue 지연 시간이 커진다. 외부 호출을 lock 밖으로 옮길 수 있는지 검토하되 shared invariant가 stale snapshot 때문에 깨지지 않는지도 확인해야 한다.",
-    "explanationMarkdown": "한 owner가 외부 API를 기다리는 300ms 동안 같은 mutex가 필요한 다른 요청은 protected state를 사용할 수 없다. 이때 외부 지연이 그대로 **lock service time과 waiter의 acquisition 지연 시간**로 전파된다. 다만 I/O를 밖으로 옮길 때는 그 사이 state가 바뀌어 stale한 판단을 하게 되지 않는지까지 확인해야 한다."
+    "modelAnswer": "외부 API 지연 시간이 그대로 락 보유 시간이 되어 요청들이 직렬화되고 대기열 지연이 커진다. 외부 호출을 락 밖으로 옮길 수 있는지 검토하되, 그 사이 공유 상태가 바뀌어 오래된 판단으로 불변 조건을 깨뜨리지 않는지도 확인해야 한다.",
+    "explanationMarkdown": "한 소유자가 외부 API를 기다리는 300 ms 동안 같은 뮤텍스가 필요한 다른 요청은 보호된 상태에 접근할 수 없다. 외부 지연이 그대로 **락 보유 시간과 다음 요청들의 획득 지연**으로 전파된다. 다만 I/O를 밖으로 옮길 때는 검사한 상태가 그 사이 바뀔 수 있다는 경쟁도 함께 재설계해야 한다."
   },
-
   {
     "kind": "question",
     "contentKey": "operating-systems.core.synchronization.semaphore.q1",
-    "promptMarkdown": "초기 permit가 3인 counting semaphore에서 3개 task가 acquire한 뒤 아직 release하지 않았다. 네 번째 task가 acquire하면 일반적으로 어떤 상태가 되는가?",
+    "promptMarkdown": "초기 허가 수가 3인 카운팅 세마포어에서 3개 작업이 획득한 뒤 아직 반환하지 않았다. 네 번째 작업이 다시 획득하려 하면 일반적으로 어떻게 되는가?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.synchronization.semaphore"],
     "choices": [
-      {"key":"A","content":"semaphore가 실제 resource capacity를 자동으로 하나 늘린다","displayOrder":0,"rationaleMarkdown":"semaphore는 permit 개수를 관리할 뿐 실제 underlying resource의 용량을 만들거나 늘리지 않는다. 자원은 애플리케이션이나 시스템이 별도로 준비해야 한다."},
-      {"key":"B","content":"permit가 반환될 때까지 기다린다","displayOrder":1,"rationaleMarkdown":"초기 count가 3일 때 세 번 acquire가 성공하면 남은 permit이 없다. blocking acquire는 다른 task가 permit을 release할 때까지 기다린다."},
-      {"key":"C","content":"기존 acquire 하나를 취소하고 그 permit를 강제로 가져온다","displayOrder":2,"rationaleMarkdown":"acquire는 사용 가능한 permit을 소비하지만 보통 다른 task에 이미 허용한 permit을 회수하지 않는다. 현재 보유자가 protocol에 따라 release해야 한다."},
-      {"key":"D","content":"permit가 0이어도 read-only task라면 자동 통과한다","displayOrder":3,"rationaleMarkdown":"counting semaphore는 task에 read-only 이름표가 있든 없든 permit 가용성을 적용한다. 자원 종류를 추론해 count가 0이어도 암묵적으로 통과시키지 않는다."}
+      {"key":"A","content":"세마포어가 실제 자원 용량을 자동으로 하나 늘린다.","displayOrder":0,"rationaleMarkdown":"세마포어는 허가 수를 관리할 뿐 실제 기반 자원의 용량을 만들거나 늘리지 않는다."},
+      {"key":"B","content":"허가가 반환될 때까지 기다린다.","displayOrder":1,"rationaleMarkdown":"초기 값이 3일 때 세 번의 획득이 성공하면 남은 허가가 없다. 블로킹 방식의 획득은 다른 작업이 허가를 반환할 때까지 기다린다."},
+      {"key":"C","content":"기존 획득 하나를 취소하고 그 허가를 강제로 가져온다.","displayOrder":2,"rationaleMarkdown":"획득은 사용 가능한 허가를 소비하지만 보통 다른 작업에 이미 허용한 허가를 회수하지 않는다. 현재 보유자가 정해진 규칙에 따라 반환해야 한다."},
+      {"key":"D","content":"허가가 0이어도 읽기 전용 작업이면 자동으로 통과한다.","displayOrder":3,"rationaleMarkdown":"세마포어는 작업 이름이나 읽기 여부를 추론하지 않는다. 허가 수가 동시 진행 가능 수를 정한다."}
     ],
     "correctChoiceKey": "B",
-    "explanationMarkdown": "세 task가 permit를 모두 소비하면 available count는 0이다. 일반적인 blocking acquire/wait는 **release/post로 permit가 다시 생길 때까지 진행하지 않는다.** Semaphore가 underlying connection이나 thread 같은 실제 resource를 자동으로 늘려 주는 것은 아니다."
+    "explanationMarkdown": "세 작업이 허가를 모두 소비하면 사용 가능한 값은 0이다. 일반적인 블로킹 `acquire`/`wait`는 **`release`/`post`로 허가가 다시 생길 때까지 진행하지 않는다.** 세마포어가 실제 연결이나 스레드 같은 기반 자원을 자동으로 늘려 주는 것은 아니다."
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.synchronization.semaphore.q2",
-    "promptMarkdown": "binary semaphore와 mutex가 항상 완전히 같은 primitive라고 볼 수 없는 이유를 설명하라.",
+    "promptMarkdown": "이진 세마포어(binary semaphore)와 뮤텍스가 항상 완전히 같은 동기화 도구라고 볼 수 없는 이유를 설명하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.synchronization.semaphore"],
-    "modelAnswer": "binary semaphore는 count 0/1로 mutual exclusion처럼 쓸 수 있지만 event signaling처럼 한 execution이 wait하고 다른 execution이 post하는 protocol에도 사용할 수 있다. 전형적인 mutex의 owner-release semantics와 같다고 일반화하면 안 된다.",
-    "explanationMarkdown": "Binary semaphore와 mutex는 한 번에 하나만 통과시키는 모습이 같을 수 있다. 하지만 semaphore는 **permit와 signaling**을 표현하므로 한 실행 흐름의 wait를 다른 실행 흐름의 post가 풀어 주는 protocol에도 쓰인다. 반면 mutex는 전형적으로 획득한 owner가 보호 구간을 끝내며 해제한다는 ownership 의미가 중심이다."
+    "modelAnswer": "이진 세마포어는 값 0/1로 상호 배제처럼 사용할 수 있지만, 한 실행 흐름이 기다리고 다른 실행 흐름이 `post`하는 신호 전달에도 사용할 수 있다. 전형적인 뮤텍스의 소유자-해제 의미와 같다고 일반화하면 안 된다.",
+    "explanationMarkdown": "이진 세마포어와 뮤텍스는 한 번에 하나만 통과시키는 모습이 같을 수 있다. 하지만 세마포어는 **허가와 신호 전달**을 표현하므로 한 실행 흐름의 대기를 다른 실행 흐름의 `post`가 풀어 주는 데도 쓸 수 있다. 반면 뮤텍스는 전형적으로 획득한 소유자가 보호 구간을 끝내며 해제한다는 소유권 의미가 중심이다."
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.synchronization.semaphore.q3",
-    "promptMarkdown": "외부 API 동시 호출을 20개로 제한하는 semaphore에서 exception path가 permit를 release하지 않는다. 시간이 지나면 어떤 장애가 가능한가?",
+    "promptMarkdown": "외부 API 동시 호출을 20개로 제한하는 세마포어에서 예외 경로가 허가를 반환하지 않는다. 시간이 지나면 어떤 장애가 가능한가?",
     "questionType": "SCENARIO",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.synchronization.semaphore"],
-    "modelAnswer": "permit가 누수되어 실제 resource가 비어 있어도 semaphore count가 점점 줄고 결국 모든 caller가 기다릴 수 있다. success, exception, timeout, cancellation 모든 경로에서 permit 반환을 보장해야 한다.",
-    "explanationMarkdown": "작업 자체가 종료돼도 release가 실행되지 않으면 semaphore가 보는 available permit만 감소한 채 복구되지 않는다. 이 **permit leak**가 누적되면 실제 외부 API가 한가해도 새 caller는 permit가 없다고 판단해 대기한다. Resource 사용 lifecycle과 permit 반환 lifecycle을 맞추는 것이 핵심이다."
+    "modelAnswer": "허가가 누수되어 실제 외부 자원이 비어 있어도 세마포어의 사용 가능 값이 점점 줄고 결국 모든 호출자가 기다릴 수 있다. 성공, 예외, 시간 초과, 취소 등 모든 종료 경로에서 허가 반환을 보장해야 한다.",
+    "explanationMarkdown": "작업 자체가 끝나도 반환이 실행되지 않으면 세마포어가 보는 사용 가능 허가만 감소한 채 복구되지 않는다. 이 **허가 누수(permit leak)**가 누적되면 실제 외부 API가 한가해도 새 호출자는 허가가 없다고 보고 대기한다. 실제 자원 사용 생명주기와 허가 반환 생명주기를 맞춰야 한다."
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.synchronization.semaphore.q4",
-    "promptMarkdown": "resource capacity가 5인데 잘못된 코드가 semaphore를 과다 release해 available permit가 7이 되었다. 왜 correctness 문제가 되는가?",
+    "promptMarkdown": "실제 자원 용량이 5인데 잘못된 코드가 세마포어를 과도하게 반환해 사용 가능한 허가가 7이 되었다. 왜 정확성 문제가 되는가?",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.synchronization.semaphore"],
-    "modelAnswer": "semaphore count가 실제 resource capacity보다 커져 최대 7개 caller가 통과할 수 있으므로 보호하려던 concurrency invariant가 깨진다. permit 수와 실제 resource lifecycle이 일치해야 한다.",
-    "explanationMarkdown": "Semaphore count가 실제 capacity를 모델링한다면 둘의 값이 어긋나는 순간 보호 규칙도 어긋난다. Capacity가 5인데 7 permit를 허용하면 **동시 실행 수를 5로 제한한다는 invariant**가 더 이상 보장되지 않는다."
+    "modelAnswer": "세마포어 값이 실제 자원 용량보다 커져 최대 7개 호출자가 통과할 수 있으므로 보호하려던 동시성 불변 조건이 깨진다. 허가 수와 실제 자원 생명주기가 일치해야 한다.",
+    "explanationMarkdown": "세마포어 값이 실제 용량을 모델링한다면 둘이 어긋나는 순간 보호 규칙도 어긋난다. 용량이 5인데 7개의 허가를 허용하면 **동시 실행 수를 5로 제한한다는 불변 조건**이 더 이상 보장되지 않는다."
   },
-
   {
     "kind": "question",
     "contentKey": "operating-systems.core.synchronization.condition-variable.q1",
-    "promptMarkdown": "condition variable이 주로 표현하는 것은?",
+    "promptMarkdown": "조건 변수(condition variable)가 주로 표현하는 것은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.synchronization.condition-variable"],
     "choices": [
-      {"key":"A","content":"shared predicate가 참이 될 때까지 효율적으로 기다리고 state 변경 뒤 다시 검사할 기회를 주는 것","displayOrder":0,"rationaleMarkdown":"condition variable은 공유 predicate가 false일 때 waiter를 재우고 상태 변경 뒤 깨워 다시 확인하게 한다. predicate는 보통 mutex 같은 synchronization protocol로 보호되는 공유 상태에 있다."},
-      {"key":"B","content":"mutex 없이 shared predicate 값을 condition variable 자체에 저장하는 것","displayOrder":1,"rationaleMarkdown":"condition variable은 predicate가 바뀌었을 수 있음을 알릴 뿐 그 값 자체를 저장하지 않는다. 실제 충족 여부는 공유 상태와 mutex를 확인해야 한다."},
-      {"key":"C","content":"signal한 thread가 protected resource의 소유권을 waiter에게 직접 예약해 주는 것","displayOrder":2,"rationaleMarkdown":"waiter에게 signal을 보내도 보호 자원의 소유권을 넘기거나 예약하지 않는다. 깨어난 thread는 mutex를 다시 얻고 predicate가 아직 참인지 확인해야 한다."},
-      {"key":"D","content":"critical section에 동시에 들어갈 수 있는 thread 수를 N개로 제한하는 것","displayOrder":3,"rationaleMarkdown":"condition variable은 predicate를 기다리는 수단이지 동시에 사용할 permit의 고정 개수를 나타내지 않는다. 용량이 N으로 정해진 접근에는 counting semaphore가 더 적합하다."}
+      {"key":"A","content":"공유 조건이 참이 될 때까지 효율적으로 기다리고 상태 변경 뒤 다시 검사할 기회를 주는 것","displayOrder":0,"rationaleMarkdown":"조건 변수는 공유 조건이 거짓일 때 대기자를 재우고 상태가 바뀌었을 때 깨워 다시 확인하게 한다. 조건은 보통 뮤텍스가 보호하는 공유 상태로 표현된다."},
+      {"key":"B","content":"뮤텍스 없이 공유 조건 값을 조건 변수 자체에 저장하는 것","displayOrder":1,"rationaleMarkdown":"조건 변수는 조건이 바뀌었을 수 있음을 알릴 뿐 그 값 자체를 저장하지 않는다. 실제 충족 여부는 보호된 공유 상태를 다시 확인해야 한다."},
+      {"key":"C","content":"신호를 보낸 스레드가 보호 자원의 소유권을 대기자에게 직접 예약해 주는 것","displayOrder":2,"rationaleMarkdown":"`signal`을 보내도 자원 소유권을 넘기거나 예약하지 않는다. 깨어난 스레드는 뮤텍스를 다시 얻고 조건이 아직 참인지 확인해야 한다."},
+      {"key":"D","content":"임계 구역에 동시에 들어갈 수 있는 스레드 수를 N개로 제한하는 것","displayOrder":3,"rationaleMarkdown":"조건 변수는 조건을 기다리는 수단이지 고정된 허가 수를 나타내지 않는다. N개의 동시 접근 제한은 카운팅 세마포어가 더 직접적인 모델이다."}
     ],
     "correctChoiceKey": "A",
-    "explanationMarkdown": "Condition variable은 predicate 값 자체를 저장하거나 resource를 예약하는 primitive가 아니다. Shared state는 mutex 같은 protection protocol 아래에 있고, condition variable은 **predicate가 바뀔 때까지 waiter를 재우고 다시 검사할 기회**를 제공한다. N개의 동시 접근 제한은 counting semaphore 쪽에 더 가깝다."
+    "explanationMarkdown": "조건 변수는 조건 값 자체를 저장하거나 자원을 예약하는 도구가 아니다. 공유 상태는 뮤텍스 같은 보호 규칙 아래에 있고, 조건 변수는 **조건이 바뀔 때까지 대기자를 재우고 다시 검사할 기회**를 제공한다."
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.synchronization.condition-variable.q2",
-    "promptMarkdown": "condition wait를 보통 `if`가 아니라 `while` predicate 검사 안에서 사용하는 이유를 설명하라.",
+    "promptMarkdown": "조건 대기를 보통 `if`가 아니라 `while` 조건 검사 안에서 사용하는 이유를 설명하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.synchronization.condition-variable"],
-    "modelAnswer": "깨어난 뒤 다른 thread가 먼저 resource를 소비했을 수 있고 spurious wakeup을 허용하는 API도 있기 때문에 predicate가 여전히 참인지 lock을 다시 획득한 상태에서 검사해야 한다.",
-    "explanationMarkdown": "Wakeup은 조건을 예약한 결과가 아니다. Waiter가 mutex를 다시 획득하기 전에 다른 thread가 state를 바꿀 수 있고 spurious wakeup도 가능하므로, **protected state를 다시 읽어 predicate를 검증하는 과정**이 필요하다. 그래서 `while (조건이 거짓) wait` 형태가 안전한 기본 protocol이다."
+    "modelAnswer": "깨어난 뒤 다른 스레드가 먼저 자원을 소비했을 수 있고 가짜 깨움(spurious wakeup)을 허용하는 API도 있기 때문에, 뮤텍스를 다시 획득한 상태에서 조건이 여전히 참인지 다시 검사해야 한다.",
+    "explanationMarkdown": "깨움은 조건을 예약한 결과가 아니다. 대기자가 뮤텍스를 다시 획득하기 전에 다른 스레드가 상태를 바꿀 수 있고 가짜 깨움도 가능하므로 **보호된 상태를 다시 읽어 조건을 검증**해야 한다. 그래서 `while (조건이 거짓) wait` 형태가 안전한 기본 규칙이다."
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.synchronization.condition-variable.q3",
-    "promptMarkdown": "다음 순서로 두 thread가 실행된다.\n\n1. Consumer가 queue가 비었음을 확인한다.\n2. Consumer가 mutex를 풀고 sleep에 들어가려 한다.\n3. 그 사이 producer가 item을 넣고 signal한다.\n\n질문: wait가 lock release와 원자적으로 연결되지 않으면 어떤 문제가 생길 수 있는가?",
+    "promptMarkdown": "다음 순서로 두 스레드가 실행된다.\n\n1. 소비자가 큐가 비었음을 확인한다.\n2. 소비자가 뮤텍스를 풀고 잠들려고 한다.\n3. 그 사이 생산자가 항목을 넣고 신호를 보낸다.\n\n질문: 대기 연산이 뮤텍스 해제와 경쟁에 안전하게 연결되지 않으면 어떤 문제가 생길 수 있는가?",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.synchronization.condition-variable"],
-    "modelAnswer": "consumer가 아직 wait set에 들어가기 전에 signal이 지나가 lost wakeup이 생길 수 있다. condition wait는 mutex release와 wait registration을 하나의 protocol로 제공해야 한다.",
-    "explanationMarkdown": "위험한 순서는 `empty 확인 → unlock → producer가 item 추가와 signal → consumer가 sleep`이다. Consumer가 wait에 등록되기 전에 notification이 지나가면 이후 깨워 줄 event가 없어 **조건은 이미 참인데 waiter는 잠든 lost wakeup**이 가능하다. 그래서 condition wait API는 mutex release와 wait 진입 사이의 race를 막는 계약이 중요하다."
+    "modelAnswer": "소비자가 아직 조건 변수의 대기 집합에 들어가기 전에 신호가 지나가 깨움 유실(lost wakeup)이 생길 수 있다. 조건 대기는 뮤텍스 해제와 대기 등록을 하나의 원자적인 규칙으로 연결해야 한다.",
+    "explanationMarkdown": "위험한 순서는 `빈 상태 확인 → unlock → 생산자가 항목 추가와 signal → 소비자가 sleep`이다. 소비자가 대기자로 등록되기 전에 통지가 지나가면 이후 깨워 줄 사건이 없어 **조건은 이미 참인데 대기자는 잠드는 깨움 유실**이 가능하다. POSIX 조건 대기는 이 경쟁을 막기 위해 뮤텍스 해제와 대기 진입을 연결한다."
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.synchronization.condition-variable.q4",
-    "promptMarkdown": "condition signal을 받았다는 사실과 predicate가 참이라는 사실이 같지 않은 이유를 설명하라.",
+    "promptMarkdown": "조건 변수의 신호를 받았다는 사실과 보호된 조건이 참이라는 사실이 같지 않은 이유를 설명하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.synchronization.condition-variable"],
-    "modelAnswer": "signal은 waiter에게 다시 실행해 state를 검사할 기회를 주는 event이지 condition 값 자체를 예약해 주는 것이 아니다. 여러 waiter나 경쟁 thread 때문에 wake 후 predicate가 다시 false일 수 있다.",
-    "explanationMarkdown": "Notification과 shared state의 현재 값은 서로 다른 것이다. Signal 뒤 waiter가 mutex를 다시 얻기까지 다른 thread가 resource를 소비할 수 있으므로 **wake는 재검사 기회이지 predicate=true 보증이 아니다.** 이 경계를 놓치면 `if` 한 번만 검사하는 코드가 잘못된 state에서 진행할 수 있다."
+    "modelAnswer": "신호는 대기자에게 다시 실행해 상태를 검사할 기회를 주는 사건이지 조건 값을 예약해 주는 것이 아니다. 여러 대기자나 경쟁 스레드 때문에 깨어난 뒤 조건이 다시 거짓일 수 있다.",
+    "explanationMarkdown": "통지와 공유 상태의 현재 값은 서로 다른 것이다. 신호 뒤 대기자가 뮤텍스를 다시 얻기까지 다른 스레드가 자원을 소비할 수 있으므로 **깨움은 재검사 기회이지 `predicate=true` 보증이 아니다.**"
   },
-
   {
     "kind": "question",
     "contentKey": "operating-systems.core.synchronization.monitor.q1",
-    "promptMarkdown": "monitor abstraction의 핵심 구성으로 가장 적절한 것은?",
+    "promptMarkdown": "모니터 추상화의 핵심 구성으로 가장 적절한 것은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.synchronization.monitor"],
     "choices": [
-      {"key":"A","content":"condition signaling만 제공하고 mutual exclusion은 사용하지 않는다","displayOrder":0,"rationaleMarkdown":"monitor는 상태를 보호하는 상호 배제와 predicate 대기를 위한 condition mechanism을 결합한다. 보호 없이 condition signal만 쓰면 동시 상태 갱신이 안전하지 않다."},
-      {"key":"B","content":"shared state는 밖에 노출하고 lock 객체만 한 class 안에 둔다","displayOrder":1,"rationaleMarkdown":"공유 상태를 abstraction 바깥에 노출하면 호출자가 lock과 불변 조건 규칙을 우회할 수 있다. monitor는 상태와 이를 지키는 연산을 하나의 경계 안에 둔다."},
-      {"key":"C","content":"shared state와 그 state를 다루는 operation, mutual exclusion과 condition waiting protocol을 한 경계에 둔다","displayOrder":2,"rationaleMarkdown":"monitor는 공유 상태와 연산, 상호 배제, 불변 조건을 지키는 condition protocol을 캡슐화한다. 호출자는 동기화 요소를 제각각 조합하지 않고 abstraction을 사용한다."},
-      {"key":"D","content":"caller가 매 호출마다 어떤 lock과 condition을 쓸지 임의로 선택하게 한다","displayOrder":3,"rationaleMarkdown":"각 호출자가 임의로 lock과 condition을 고르게 두면 protocol이 흩어져 일관되지 않은 조합이 생길 수 있다. monitor가 보호 상태의 동기화를 소유한다."}
+      {"key":"A","content":"조건 신호만 제공하고 상호 배제는 사용하지 않는다.","displayOrder":0,"rationaleMarkdown":"모니터는 상태를 보호하는 상호 배제와 조건 대기 규칙을 함께 다룬다. 보호 없이 조건 신호만 사용하면 공유 상태 갱신을 안전하게 만들 수 없다."},
+      {"key":"B","content":"공유 상태는 밖에 노출하고 락 객체만 한 클래스 안에 둔다.","displayOrder":1,"rationaleMarkdown":"공유 상태를 추상화 바깥에 노출하면 호출자가 락과 불변 조건 규칙을 우회할 수 있다. 모니터는 상태와 이를 지키는 연산을 하나의 경계 안에 둔다."},
+      {"key":"C","content":"공유 상태와 그 상태를 다루는 연산, 상호 배제와 조건 대기 규칙을 하나의 경계에 둔다.","displayOrder":2,"rationaleMarkdown":"모니터는 공유 상태와 연산, 상호 배제, 조건 대기를 하나의 추상화로 묶어 불변 조건을 같은 경계에서 관리한다."},
+      {"key":"D","content":"호출자가 매번 어떤 락과 조건을 쓸지 임의로 선택하게 한다.","displayOrder":3,"rationaleMarkdown":"호출자가 임의로 락과 조건을 고르면 동기화 규칙이 흩어져 일관되지 않은 조합이 생길 수 있다. 모니터가 보호 상태의 동기화를 소유하는 것이 핵심이다."}
     ],
     "correctChoiceKey": "C",
-    "explanationMarkdown": "Monitor의 가치는 primitive를 한 class에 모아 두는 데 그치지 않는다. **Protected state와 invariant를 조작하는 operation, mutual exclusion, condition protocol의 소유권을 같은 abstraction에 둬** caller가 synchronization 규칙을 우회하거나 제각각 조합할 가능성을 줄인다."
+    "explanationMarkdown": "모니터의 가치는 여러 동기화 도구를 한 클래스에 모아 두는 데 그치지 않는다. **보호 상태와 불변 조건을 조작하는 연산, 상호 배제, 조건 대기 규칙의 소유권을 같은 추상화에 둬** 호출자가 동기화 규칙을 우회하거나 제각각 조합할 가능성을 줄인다."
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.synchronization.monitor.q2",
-    "promptMarkdown": "monitor abstraction이 low-level lock 조합보다 invariant 관리에 도움이 되는 이유를 설명하라.",
+    "promptMarkdown": "모니터 추상화가 낮은 수준의 락 조합보다 불변 조건 관리에 도움이 되는 이유를 설명하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.synchronization.monitor"],
-    "modelAnswer": "shared state와 그 state를 조작하는 operation, lock/condition protocol을 하나의 owner abstraction 안에 두어 caller가 서로 다른 lock 규칙을 조합하다 invariant를 깨는 가능성을 줄일 수 있다.",
-    "explanationMarkdown": "Synchronization rule이 여러 caller에 흩어지면 같은 state를 다른 lock으로 보호하거나 signal 순서를 다르게 구현하는 실수가 생기기 쉽다. Monitor는 **state의 owner와 synchronization protocol의 owner를 맞춰** invariant가 유지되는 경로를 한 abstraction 안에서 관리하게 한다."
+    "modelAnswer": "공유 상태와 그 상태를 조작하는 연산, 락·조건 대기 규칙을 하나의 소유자 추상화 안에 두어 호출자가 서로 다른 락 규칙을 조합하다 불변 조건을 깨뜨릴 가능성을 줄일 수 있다.",
+    "explanationMarkdown": "동기화 규칙이 여러 호출자에 흩어지면 같은 상태를 다른 락으로 보호하거나 신호 순서를 다르게 구현하는 실수가 생기기 쉽다. 모니터는 **상태의 소유자와 동기화 규칙의 소유자를 맞춰** 불변 조건이 유지되는 경로를 한 추상화 안에서 관리하게 한다."
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.synchronization.monitor.q3",
-    "promptMarkdown": "monitor 안에서 외부 callback을 호출했더니 callback이 다시 같은 monitor operation을 호출하거나 오래 block한다. 어떤 위험을 검토해야 하는가?",
+    "promptMarkdown": "모니터 안에서 외부 콜백을 호출했더니 콜백이 다시 같은 모니터 연산을 호출하거나 오래 블로킹된다. 어떤 위험을 검토해야 하는가?",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.synchronization.monitor"],
-    "modelAnswer": "reentrancy semantics, lock hold time, unexpected nested state transition과 deadlock 가능성을 검토해야 한다. monitor가 shared invariant를 소유해도 외부 code를 lock 안에서 실행하면 abstraction 밖 behavior가 critical section에 들어온다.",
-    "explanationMarkdown": "외부 callback은 실행 시간과 재진입 경로를 monitor가 통제하기 어렵다. Callback이 오래 block하면 lock hold time이 늘고, 다시 monitor로 진입하면 구현의 reentrancy 규칙에 따라 nested transition이나 deadlock 위험이 생긴다. **Abstraction 밖 코드가 critical section 안으로 들어오는 것** 자체를 중요한 설계 신호로 봐야 한다."
+    "modelAnswer": "재진입 가능 여부, 락 보유 시간, 예상하지 못한 중첩 상태 전이와 교착 상태 가능성을 검토해야 한다. 모니터가 공유 불변 조건을 소유하더라도 외부 코드를 락 안에서 실행하면 추상화 바깥의 동작이 임계 구역에 들어온다.",
+    "explanationMarkdown": "외부 콜백은 실행 시간과 재진입 경로를 모니터가 통제하기 어렵다. 콜백이 오래 블로킹되면 락 보유 시간이 늘고, 다시 모니터로 진입하면 구현의 재진입 규칙에 따라 중첩 상태 전이나 교착 위험이 생긴다. **추상화 밖 코드가 임계 구역 안으로 들어오는 것** 자체를 중요한 설계 신호로 봐야 한다."
   },
-
   {
     "kind": "question",
     "contentKey": "operating-systems.core.synchronization.read-write-lock.q1",
-    "promptMarkdown": "read-write lock에서 여러 reader가 동시에 진입할 수 있는 조건으로 가장 적절한 것은?",
+    "promptMarkdown": "읽기-쓰기 잠금에서 여러 읽기 작업이 동시에 진입할 수 있는 조건으로 가장 적절한 것은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.synchronization.read-write-lock"],
     "choices": [
-      {"key":"A","content":"read lock을 얻은 reader는 다른 reader를 배제해야 한다","displayOrder":0,"rationaleMarkdown":"read-write lock은 writer가 lock을 소유하지 않을 때 호환 가능한 reader의 동시 접근을 허용한다. reader끼리도 배타적으로 만들면 읽기 공유라는 장점을 없앤다."},
-      {"key":"B","content":"메서드 이름이 `get`이면 내부 state를 변경해도 항상 read lock을 쓸 수 있다","displayOrder":1,"rationaleMarkdown":"메서드 이름만으로 연산이 읽기 전용임을 알 수 없다. 보호 상태를 변경한다면 `get`이라는 이름이어도 write-side 배타성이 필요하다."},
-      {"key":"C","content":"writer가 protected state를 변경하는 동안에도 reader는 항상 동시에 들어간다","displayOrder":2,"rationaleMarkdown":"writer는 보호 상태를 바꾸므로 보통 lock을 잡는 동안 reader가 들어오지 못하게 한다. 그렇지 않으면 reader가 일관되지 않은 중간 상태를 관찰할 수 있다."},
-      {"key":"D","content":"보호된 state를 변경하지 않는 read operation이고 현재 lock의 writer-exclusion/admission 조건을 만족한다","displayOrder":3,"rationaleMarkdown":"호환되는 읽기 전용 연산은 writer가 없고 구현의 admission 정책이 허용할 때 shared access를 가질 수 있다. 공정성과 대기 중 writer 처리 방식은 별도로 확인해야 한다."}
+      {"key":"A","content":"읽기 잠금을 얻은 작업은 다른 읽기 작업도 배제해야 한다.","displayOrder":0,"rationaleMarkdown":"읽기-쓰기 잠금은 호환 가능한 읽기 전용 접근을 함께 허용하는 것이 목적이다. 읽기끼리도 항상 배타적으로 만들면 이 장점을 잃는다."},
+      {"key":"B","content":"메서드 이름이 `get`이면 내부 상태를 변경해도 항상 읽기 잠금을 쓸 수 있다.","displayOrder":1,"rationaleMarkdown":"메서드 이름만으로 읽기 전용인지 판단할 수 없다. 보호 상태를 변경한다면 `get`이라는 이름이어도 쓰기 쪽 배타성이 필요할 수 있다."},
+      {"key":"C","content":"쓰기 작업이 보호 상태를 변경하는 동안에도 읽기 작업은 항상 동시에 들어간다.","displayOrder":2,"rationaleMarkdown":"쓰기 작업은 보호 상태를 변경하므로 보통 쓰기 잠금을 잡는 동안 읽기 작업도 배제한다. 그렇지 않으면 중간 상태를 관찰할 수 있다."},
+      {"key":"D","content":"보호 상태를 변경하지 않는 읽기 연산이고 현재 잠금의 쓰기 배타·진입 정책이 이를 허용한다.","displayOrder":3,"rationaleMarkdown":"읽기 전용 연산은 쓰기 잠금이 없고 구현의 진입 정책이 허용할 때 공유 접근을 가질 수 있다. 대기 중인 쓰기 작업을 어떻게 처리하는지는 별도 계약이다."}
     ],
     "correctChoiceKey": "D",
-    "explanationMarkdown": "Read-write lock은 **read-only access의 공유와 write access의 배타성**을 분리한다. 메서드 이름이 아니라 실제 protected state를 변경하는지가 중요하며, writer가 lock을 소유한 동안 reader를 동시에 허용하는 것이 기본 목적은 아니다. Waiting writer가 있을 때 새 reader를 허용하는 정책은 구현 계약을 확인해야 한다."
+    "explanationMarkdown": "읽기-쓰기 잠금은 **읽기 전용 접근의 공유와 쓰기 접근의 배타성**을 분리한다. 메서드 이름이 아니라 실제 보호 상태를 변경하는지가 중요하며, 대기 중인 쓰기 작업이 있을 때 새 읽기를 허용하는 정책은 구현·스케줄링 계약을 확인해야 한다."
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.synchronization.read-write-lock.q2",
-    "promptMarkdown": "read가 99%라는 사실만으로 read-write lock이 mutex보다 빠르다고 결론낼 수 없는 이유를 설명하라.",
+    "promptMarkdown": "읽기 비율이 99%라는 사실만으로 읽기-쓰기 잠금이 뮤텍스보다 빠르다고 결론 내릴 수 없는 이유를 설명하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.synchronization.read-write-lock"],
-    "modelAnswer": "read critical section이 매우 짧으면 reader count와 mode 관리 overhead가 이득보다 클 수 있고 contention 자체가 낮을 수도 있다. thread 수, hold time, writer 지연 시간과 fairness를 실제로 측정해야 한다.",
-    "explanationMarkdown": "Read-write lock은 mode와 reader 수를 관리하는 비용을 추가로 가진다. Read 비율이 높아도 critical section이 매우 짧거나 실제 동시 read contention이 낮으면 parallel-read 이득이 작다. **비율보다 hold time, thread 수, 실제 wait와 writer 지연 시간 요구**를 함께 측정해야 한다."
+    "modelAnswer": "읽기 임계 구역이 매우 짧으면 읽기 수와 잠금 모드를 관리하는 추가 비용이 이득보다 클 수 있고 실제 경합 자체가 낮을 수도 있다. 스레드 수, 락 보유 시간, 실제 대기 시간, 쓰기 지연과 공정성을 측정해야 한다.",
+    "explanationMarkdown": "읽기-쓰기 잠금은 잠금 모드와 읽기 작업 수를 관리하는 비용을 추가로 가진다. 읽기 비율이 높아도 임계 구역이 매우 짧거나 실제 동시 읽기 경합이 낮으면 병렬 읽기의 이득이 작다. **비율보다 락 보유 시간, 스레드 수, 실제 대기와 쓰기 지연 요구를 함께 측정해야 한다.**"
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.synchronization.read-write-lock.q3",
-    "promptMarkdown": "reader가 계속 유입되는 reader-preference 정책에서 writer가 오래 실행되지 못한다. 이 현상을 무엇으로 보고 어떤 trade-off를 조정해야 하는가?",
+    "promptMarkdown": "읽기 작업을 우선하는 정책에서 읽기 요청이 계속 유입되어 쓰기 작업이 오래 실행되지 못한다. 이 현상을 무엇으로 보고 어떤 절충을 조정해야 하는가?",
     "questionType": "SCENARIO",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.synchronization.read-write-lock"],
-    "modelAnswer": "writer starvation 가능성이다. writer preference나 fair policy를 고려할 수 있지만 그러면 새 reader 지연 시간이 증가할 수 있으므로 workload와 writer SLO를 기준으로 선택한다.",
-    "explanationMarkdown": "Reader-preference 정책이 새 reader를 계속 받아들이면 waiting writer가 진입할 빈 구간을 얻지 못할 수 있다. 이는 **writer starvation이라는 liveness 문제**다. Writer 우선이나 fairness를 강화하면 이를 줄일 수 있지만 새 reader가 더 기다릴 수 있으므로 한쪽 지연 시간을 공짜로 개선하는 선택은 아니다."
+    "modelAnswer": "쓰기 작업의 기아(writer starvation) 가능성이다. 쓰기 우선이나 공정한 정책을 고려할 수 있지만 그러면 새 읽기 작업의 지연 시간이 증가할 수 있으므로 작업 부하와 쓰기 지연 목표를 기준으로 선택해야 한다.",
+    "explanationMarkdown": "읽기 우선 정책이 새 읽기 요청을 계속 받아들이면 대기 중인 쓰기 작업이 진입할 빈 구간을 얻지 못할 수 있다. 이는 **쓰기 기아라는 진행성 문제**다. 쓰기 우선이나 공정성을 강화하면 이를 줄일 수 있지만 새 읽기가 더 기다릴 수 있으므로 한쪽 지연 시간을 공짜로 개선하는 선택은 아니다."
   },
-
   {
     "kind": "question",
     "contentKey": "operating-systems.core.synchronization.lock-granularity.q1",
-    "promptMarkdown": "coarse-grained lock의 대표적인 trade-off는?",
+    "promptMarkdown": "거친 잠금(coarse-grained lock)의 대표적인 절충으로 가장 적절한 것은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.synchronization.lock-granularity"],
     "choices": [
-      {"key":"A","content":"invariant reasoning은 단순해질 수 있지만 서로 독립적인 작업까지 같은 lock에서 직렬화할 수 있다","displayOrder":0,"rationaleMarkdown":"큰 범위를 하나의 lock으로 보호하면 복합 불변 조건을 이해하기 쉬워질 수 있지만 서로 독립된 상태에 대한 연산도 직렬화할 수 있다. 단순한 정확성 추론과 동시성·경합 사이의 trade-off다."},
-      {"key":"B","content":"lock 수가 적으므로 어떤 workload에서도 contention이 생기지 않는다","displayOrder":1,"rationaleMarkdown":"lock 개수가 적으면 순서 규칙을 단순화할 수 있지만 여러 thread가 같은 lock을 필요로 하면 여전히 경합한다. lock 수만으로 workload에 경합이 없다고 보장할 수 없다."},
-      {"key":"C","content":"여러 lock의 획득 순서를 관리해야 하므로 fine-grained locking보다 항상 deadlock 위험이 크다","displayOrder":2,"rationaleMarkdown":"fine-grained locking은 순서 조합을 늘리지만 coarse locking도 다른 lock과 상호작용하면 deadlock이 생길 수 있다. deadlock 위험은 획득 protocol에 달렸으며 한 방식이 항상 안전한 것은 아니다."},
-      {"key":"D","content":"protected state를 작게 나누므로 여러 영역의 병렬 접근이 자동으로 늘어난다","displayOrder":3,"rationaleMarkdown":"coarse lock은 상태를 독립 구역으로 나누기보다 넓은 범위를 보호한다. 동시성을 자동으로 높이기보다 낮출 수 있다."}
+      {"key":"A","content":"불변 조건 추론은 단순해질 수 있지만 서로 독립적인 작업까지 같은 락에서 직렬화할 수 있다.","displayOrder":0,"rationaleMarkdown":"큰 범위를 하나의 락으로 보호하면 복합 불변 조건을 이해하기 쉬워질 수 있지만 서로 독립된 상태에 대한 연산도 직렬화할 수 있다. 정확성 추론과 병렬성·경합 사이의 절충이다."},
+      {"key":"B","content":"락 수가 적으므로 어떤 작업 부하에서도 경합이 생기지 않는다.","displayOrder":1,"rationaleMarkdown":"락 개수가 적으면 순서 규칙은 단순해질 수 있지만 여러 스레드가 같은 락을 필요로 하면 여전히 경합한다."},
+      {"key":"C","content":"여러 락의 획득 순서를 관리해야 하므로 세밀한 잠금보다 항상 교착 위험이 크다.","displayOrder":2,"rationaleMarkdown":"세밀한 잠금은 락 조합을 늘릴 수 있지만 거친 잠금도 다른 락과 상호작용하면 교착 상태가 생길 수 있다. 위험은 실제 획득 규칙에 달려 있다."},
+      {"key":"D","content":"보호 상태를 작게 나누므로 여러 영역의 병렬 접근이 자동으로 늘어난다.","displayOrder":3,"rationaleMarkdown":"거친 잠금은 오히려 넓은 상태 범위를 하나로 보호하므로 서로 독립적인 작업까지 같은 락을 기다리게 할 수 있다."}
     ],
     "correctChoiceKey": "A",
-    "explanationMarkdown": "Coarse-grained lock은 큰 state 범위를 한 protocol로 보호하므로 composite invariant와 lock ordering을 추론하기 쉬워질 수 있다. 대신 서로 독립적인 작업도 같은 global lock을 기다려 **불필요한 serialization과 contention**이 생길 수 있다."
+    "explanationMarkdown": "거친 잠금은 큰 상태 범위를 하나의 규칙으로 보호하므로 복합 불변 조건과 락 순서를 추론하기 쉬워질 수 있다. 대신 서로 독립적인 작업도 같은 전역 락을 기다려 **불필요한 직렬화와 경합**이 생길 수 있다."
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.synchronization.lock-granularity.q2",
-    "promptMarkdown": "hash table의 global lock을 bucket별 lock으로 쪼갤 때 lookup/update는 빨라질 수 있지만 resize가 어려워지는 이유를 설명하라.",
+    "promptMarkdown": "해시 테이블의 전역 락을 버킷별 락으로 나눌 때 조회·갱신은 빨라질 수 있지만 크기 조정(resize)이 어려워지는 이유를 설명하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.synchronization.lock-granularity"],
-    "modelAnswer": "서로 다른 bucket은 병렬 접근할 수 있지만 resize는 bucket mapping과 table 전체 구조를 바꾸므로 여러 lock을 coordinated하게 획득하거나 별도 global protocol이 필요해 composite invariant와 lock ordering이 복잡해진다.",
-    "explanationMarkdown": "Bucket별 lock은 서로 다른 bucket의 독립 작업을 동시에 실행하게 해 준다. 하지만 resize는 table 크기와 여러 bucket의 위치 관계를 함께 바꾸므로 하나의 bucket lock만으로는 전체 invariant를 보호할 수 없다. 결국 **multi-lock ordering이나 별도 global coordination**이 필요해지는 것이 fine-grained locking의 비용이다."
+    "modelAnswer": "서로 다른 버킷은 병렬 접근할 수 있지만 크기 조정은 버킷 매핑과 테이블 전체 구조를 함께 바꾸므로 여러 락을 일관된 순서로 획득하거나 별도의 전역 동기화 규칙이 필요해 복합 불변 조건과 락 순서가 복잡해진다.",
+    "explanationMarkdown": "버킷별 락은 서로 다른 버킷의 독립 작업을 동시에 실행하게 해 준다. 하지만 크기 조정은 테이블 크기와 여러 버킷의 위치 관계를 함께 바꾸므로 하나의 버킷 락만으로는 전체 불변 조건을 보호할 수 없다. 결국 **여러 락의 일관된 획득 순서나 별도 전역 동기화**가 필요해지는 것이 세밀한 잠금의 비용이다."
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.synchronization.lock-granularity.q3",
-    "promptMarkdown": "contention 측정 없이 global lock을 64개 shard lock으로 바꿨더니 bug와 지연 시간이 모두 늘었다. 가능한 원인을 분석하라.",
+    "promptMarkdown": "경합을 측정하지 않고 전역 락을 64개 샤드 락으로 바꿨더니 결함과 지연 시간이 모두 늘었다. 가능한 원인을 분석하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.synchronization.lock-granularity"],
-    "modelAnswer": "실제 global lock contention이 낮았는데 복잡도만 늘렸거나 여러 shard를 함께 다루는 invariant와 lock ordering을 잘못 설계했을 수 있다. hot critical section과 independent invariant를 먼저 확인한 뒤 granularity를 바꿔야 한다.",
-    "explanationMarkdown": "두 문제를 나눠 봐야 한다. 성능 측면에서는 기존 global lock이 병목이 아니었다면 64개 lock의 routing/acquire 비용만 늘었을 수 있다. Correctness 측면에서는 여러 shard를 함께 바꾸는 operation의 **composite invariant나 lock ordering**이 새로 필요했는데 이를 놓쳤을 수 있다. 그래서 측정과 invariant 분석 없이 granularity부터 쪼개면 안 된다."
+    "modelAnswer": "실제 전역 락 경합은 낮았는데 복잡도와 락 선택 비용만 늘었거나, 여러 샤드를 함께 다루는 불변 조건과 락 획득 순서를 잘못 설계했을 수 있다. 실제 병목 임계 구역과 서로 독립적인 상태 범위를 먼저 확인한 뒤 세분성을 바꿔야 한다.",
+    "explanationMarkdown": "성능과 정확성을 나눠 봐야 한다. 기존 전역 락이 병목이 아니었다면 64개 락의 선택·획득 비용만 늘었을 수 있다. 정확성 측면에서는 여러 샤드를 함께 바꾸는 연산의 **복합 불변 조건과 락 획득 순서**가 새로 필요했는데 이를 놓쳤을 수 있다. 측정과 불변 조건 분석 없이 세분성부터 나누면 안 된다."
   },
-
   {
     "kind": "question",
     "contentKey": "operating-systems.core.synchronization.contention.q1",
-    "promptMarkdown": "lock contention이 높다는 의미로 가장 적절한 것은?",
+    "promptMarkdown": "잠금 경합(lock contention)이 높다는 의미로 가장 적절한 것은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.synchronization.contention"],
     "choices": [
-      {"key":"A","content":"코드에 mutex 객체가 하나라도 선언되어 있다","displayOrder":0,"rationaleMarkdown":"mutex를 선언했다는 사실만으로 thread가 그 mutex를 두고 경쟁한다고 볼 수 없다. 겹치는 요청 때문에 대기·spin·재시도가 생겨야 contention이다."},
-      {"key":"B","content":"여러 execution이 같은 제한된 synchronization resource를 동시에 원해 wait·spin·retry가 실제로 발생한다","displayOrder":1,"rationaleMarkdown":"높은 contention은 여러 실행이 같은 제한된 synchronization 지점을 동시에 요청해 실제로 대기·spin·재시도하는 상태다. 임계 구역이 짧아도 동시 요청이 충분히 많으면 hot spot이 될 수 있다."},
-      {"key":"C","content":"critical section이 짧으므로 동시 요청 수와 관계없이 대기가 절대 생기지 않는다","displayOrder":2,"rationaleMarkdown":"보유 시간이 짧으면 대기를 줄일 수 있지만 도착이 자주 겹치면 경합을 배제할 수 없다. contention은 도착률·보유 시간·가용 병렬 처리량에 좌우된다."},
-      {"key":"D","content":"lock acquisition이 모두 즉시 성공하고 waiter가 존재하지 않는다","displayOrder":3,"rationaleMarkdown":"모든 획득이 대기자 없이 즉시 끝난다면 lock을 사용하더라도 contention은 낮을 수 있다. lock이 있다는 것과 contention이 있다는 것은 같은 속성이 아니다."}
+      {"key":"A","content":"코드에 뮤텍스 객체가 하나라도 선언되어 있다.","displayOrder":0,"rationaleMarkdown":"뮤텍스를 선언했다는 사실만으로 여러 스레드가 그 뮤텍스를 두고 경쟁한다고 볼 수 없다. 실제 겹치는 요청 때문에 대기·바쁜 대기·재시도가 생겨야 경합이다."},
+      {"key":"B","content":"여러 실행 흐름이 같은 제한된 동기화 지점을 동시에 원해 대기·바쁜 대기·재시도가 실제로 발생한다.","displayOrder":1,"rationaleMarkdown":"높은 경합은 여러 실행 흐름이 같은 제한된 동기화 지점을 동시에 요청해 실제 대기나 재시도를 하는 상태다. 임계 구역이 짧아도 동시 요청이 충분히 많으면 병목이 될 수 있다."},
+      {"key":"C","content":"임계 구역이 짧으므로 동시 요청 수와 관계없이 대기가 절대 생기지 않는다.","displayOrder":2,"rationaleMarkdown":"보유 시간이 짧으면 대기를 줄일 수 있지만 요청 도착이 자주 겹치면 경합이 생길 수 있다."},
+      {"key":"D","content":"모든 락 획득이 즉시 성공하고 대기자가 존재하지 않는다.","displayOrder":3,"rationaleMarkdown":"모든 획득이 대기자 없이 즉시 끝난다면 락을 사용하더라도 경합은 낮을 수 있다. 락의 존재와 실제 경합은 다른 속성이다."}
     ],
     "correctChoiceKey": "B",
-    "explanationMarkdown": "Contention은 lock의 존재 여부가 아니라 **같은 serialization point를 여러 실행 흐름이 동시에 요구해 실제 대기나 retry가 생기는 정도**를 말한다. 짧은 critical section도 요청이 충분히 몰리면 hot point가 될 수 있고, 반대로 mutex가 있어도 경쟁이 드물면 contention은 낮을 수 있다."
+    "explanationMarkdown": "경합은 락의 존재 여부가 아니라 **같은 직렬화 지점을 여러 실행 흐름이 동시에 요구해 실제 대기나 재시도가 생기는 정도**를 말한다. 짧은 임계 구역도 요청이 충분히 몰리면 병목이 될 수 있고, 반대로 뮤텍스가 있어도 경쟁이 드물면 경합은 낮을 수 있다."
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.synchronization.contention.q2",
-    "promptMarkdown": "lock hold time이 길어질수록 같은 arrival rate에서 queueing이 커질 수 있는 이유를 설명하라.",
+    "promptMarkdown": "락 보유 시간이 길어질수록 같은 요청 도착률에서 대기열이 커질 수 있는 이유를 설명하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.synchronization.contention"],
-    "modelAnswer": "한 owner가 resource를 오래 점유하면 단위 시간당 lock을 통과할 수 있는 service capacity가 줄어들어 arriving waiter가 더 오래 쌓인다. 외부 I/O가 critical section 안에 있으면 그 지연 시간이 hold time으로 전파된다.",
-    "explanationMarkdown": "한 번에 하나만 통과하는 구간에서 owner가 더 오래 머물면 다음 요청이 lock을 얻는 주기가 길어진다. 같은 속도로 요청이 계속 도착하면 완료보다 도착이 빨라지는 구간에서 waiter가 누적된다. 특히 외부 I/O를 lock 안에서 기다리면 그 변동성까지 **hold time과 꼬리 지연 시간(tail latency)**에 전파된다."
+    "modelAnswer": "한 소유자가 자원을 오래 점유하면 단위 시간에 락을 통과할 수 있는 처리 용량이 줄어들어 새로 도착하는 대기자가 더 오래 쌓인다. 외부 I/O가 임계 구역 안에 있으면 그 지연 시간과 변동성도 락 보유 시간으로 전파된다.",
+    "explanationMarkdown": "한 번에 하나만 통과하는 구간에서 소유자가 더 오래 머물면 다음 요청이 락을 얻는 주기가 길어진다. 같은 속도로 요청이 계속 도착하면 처리보다 도착이 빨라지는 구간에서 대기자가 누적된다. 특히 외부 I/O를 락 안에서 기다리면 그 변동성까지 **락 보유 시간과 꼬리 지연 시간**에 전파된다."
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.synchronization.contention.q3",
-    "promptMarkdown": "lock-free atomic counter로 바꿨는데 CPU core 수를 늘릴수록 scalability가 나빠질 수 있는 이유를 설명하라.",
+    "promptMarkdown": "락 없는(lock-free) 원자적 카운터로 바꿨는데 CPU 코어 수를 늘릴수록 확장성이 나빠질 수 있는 이유를 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.synchronization.contention"],
-    "modelAnswer": "여러 CPU가 같은 cache line의 atomic update를 경쟁하면 cache coherence traffic과 retry가 serialization point가 될 수 있다. lock-free가 contention-free를 의미하지 않는다.",
-    "explanationMarkdown": "Explicit mutex를 없애도 공유 write hot spot은 남을 수 있다. 여러 core가 같은 atomic 변수를 갱신하면 cache line ownership이 core 사이를 이동하고 실패한 atomic operation이 retry될 수 있어 coherence 비용이 커진다. 따라서 **lock-free라는 progress 특성과 contention 부재는 같은 보장이 아니다.**"
+    "modelAnswer": "여러 CPU가 같은 캐시 라인의 원자적 갱신을 경쟁하면 캐시 일관성 트래픽과 재시도가 새로운 직렬화 지점이 될 수 있다. lock-free라는 진행성 보장이 contention-free를 뜻하지 않는다.",
+    "explanationMarkdown": "명시적 뮤텍스를 없애도 공유 쓰기 병목은 남을 수 있다. 여러 코어가 같은 원자 변수를 갱신하면 캐시 라인 소유권이 코어 사이를 이동하고 실패한 원자적 연산이 재시도될 수 있어 일관성 유지 비용이 커진다. 따라서 **lock-free라는 진행성 특성과 경합이 없다는 보장은 서로 다르다.**"
   },
   {
     "kind": "question",
@@ -308,7 +302,7 @@
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.synchronization.contention"],
-    "modelAnswer": "lock/primitive별 hold time, wait/acquisition 지연 시간, waiter 수, blocked 또는 spinning CPU time, 요청 처리량과 꼬리 지연 시간(tail latency)을 함께 봐야 한다. 실제 hot point를 모른 채 lock을 세분화하면 복잡도만 늘 수 있다.",
-    "explanationMarkdown": "한 지표만으로 원인을 확정하기 어렵다. Hold time은 owner가 얼마나 오래 resource를 점유하는지, acquisition 지연 시간과 waiter 수는 실제 경쟁 정도를, blocked/spinning time은 대기 비용을 보여 준다. 여기에 처리량과 p95/p99 같은 요청 지연 시간을 연결해야 **어떤 synchronization point가 사용자 성능에 영향을 주는지** 판단할 수 있다."
+    "modelAnswer": "락·동기화 도구별 보유 시간, 획득 대기 시간, 대기자 수, 블로킹 또는 바쁜 대기에 쓰인 CPU 시간, 요청 처리량과 꼬리 지연 시간을 함께 봐야 한다. 실제 병목 지점을 모른 채 락만 세분화하면 복잡도만 늘 수 있다.",
+    "explanationMarkdown": "한 지표만으로 원인을 확정하기 어렵다. 락 보유 시간은 소유자가 얼마나 오래 자원을 점유하는지, 획득 지연과 대기자 수는 실제 경쟁 정도를, 블로킹·바쁜 대기 시간은 대기 비용을 보여 준다. 여기에 처리량과 p95/p99 같은 요청 지연 시간을 연결해야 **어떤 동기화 지점이 사용자 성능에 영향을 주는지** 판단할 수 있다."
   }
 ]

@@ -3,8 +3,8 @@ kind: concept
 contentKey: operating-systems.core.isolation.host-kernel-sharing
 topicContentKey: operating-systems.core.isolation
 slug: host-kernel-sharing
-title: "Host Kernel Sharing"
-summary: "container가 별도 kernel이 아니라 host kernel을 공유하는 경계를 설명한다."
+title: "호스트 커널 공유(Host Kernel Sharing)"
+summary: "컨테이너가 별도 커널을 갖는 것이 아니라 호스트 커널을 공유하는 경계를 설명한다."
 level: 2
 status: PUBLISHED
 displayOrder: 70
@@ -17,30 +17,30 @@ references:
     recommendation: "process가 resource view를 분리하는 Linux namespace와 일반 process 경계를 구분한다."
     displayOrder: 1
 ---
-# Host Kernel Sharing
+# 호스트 커널 공유(Host Kernel Sharing)
 
-일반적인 Linux container는 namespace와 cgroup으로 process 환경을 분리하지만 **system call은 host kernel이 처리한다.** Container마다 독립 kernel이 있는 것이 아니며 scheduler, memory management, filesystem/network subsystem과 kernel code 자체를 host의 다른 process들과 공유한다.
+일반적인 Linux 컨테이너는 네임스페이스와 cgroup으로 프로세스 환경을 분리하지만 **시스템 콜은 호스트 커널이 처리한다.** 컨테이너마다 독립 커널이 존재하는 것이 아니며 스케줄러, 메모리 관리, 파일 시스템·네트워크 하위 시스템과 커널 코드 자체를 호스트의 다른 프로세스들과 공유한다.
 
-![container와 VM이 host kernel을 대하는 경계 차이](/learning/operating-systems/host-kernel-sharing.svg)
+![컨테이너와 가상 머신이 호스트 커널을 대하는 경계 차이](/learning/operating-systems/host-kernel-sharing.svg)
 
-### Namespace 분리와 kernel 분리는 다르다
+### 네임스페이스 분리와 커널 분리는 다르다
 
-Container 안에서 PID, mount, network view가 다르게 보이더라도 그 view를 구현하는 kernel은 동일하다. 따라서 namespace는 resource visibility를 분리할 뿐 별도의 kernel boundary를 만드는 mechanism은 아니다.
+컨테이너 안에서 PID, 마운트, 네트워크 관점이 다르게 보이더라도 그 관점을 구현하는 커널은 동일하다. 따라서 네임스페이스는 자원의 가시성과 이름 공간을 분리할 뿐 **별도의 커널 경계를 만드는 메커니즘은 아니다.**
 
-### VM과의 차이
+### 가상 머신과의 차이
 
-Virtual machine은 일반적으로 guest kernel을 별도로 실행하고 hypervisor 또는 virtual hardware 경계를 둔다. Container는 별도 guest kernel 없이 host kernel을 공유하므로 시작과 resource overhead가 작을 수 있지만 isolation boundary의 성격도 다르다.
+가상 머신은 일반적으로 게스트 커널을 별도로 실행하고 하이퍼바이저 또는 가상 하드웨어 경계를 둔다. 컨테이너는 별도 게스트 커널 없이 호스트 커널을 공유하므로 시작 비용과 자원 오버헤드가 작을 수 있지만, 격리 경계의 성격도 다르다.
 
 ```text
-Container
-processes → namespace/cgroup → host kernel
+컨테이너
+프로세스 → namespace/cgroup → 호스트 커널
 
-VM
-guest processes → guest kernel → hypervisor → host
+가상 머신
+게스트 프로세스 → 게스트 커널 → 하이퍼바이저 → 호스트
 ```
 
-### 권한을 넓히면 공유 kernel에 대한 접근 범위도 커진다
+### 권한을 넓히면 공유 커널과 호스트 자원에 대한 접근 범위도 커진다
 
-Container process에 많은 capability나 device access, host namespace를 허용하면 kernel과 host resource에 접근할 수 있는 범위가 넓어진다. 구체적인 hardening 정책은 Security 영역의 책임이지만, OS 관점에서 중요한 점은 **container isolation이 host kernel 공유라는 전제 위에 존재한다는 것**이다.
+컨테이너 프로세스에 많은 capability, 장치 접근, 호스트 네임스페이스 사용을 허용하면 커널과 호스트 자원에 접근할 수 있는 범위가 넓어진다. 구체적인 보안 강화 정책은 Security 영역의 책임이지만, 운영체제 관점에서 중요한 점은 **컨테이너 격리가 호스트 커널 공유라는 전제 위에 존재한다는 것**이다.
 
-Host Kernel Sharing의 핵심은 container가 별도 machine이 아니라 host kernel을 공유하는 process isolation 모델이며, 이것이 VM과 다른 중요한 경계라는 점이다.
+호스트 커널 공유의 핵심은 컨테이너가 별도 머신이 아니라 **호스트 커널을 공유하는 프로세스 격리 모델**이며, 이것이 별도 게스트 커널을 사용하는 가상 머신과 다른 중요한 경계라는 점이다.
