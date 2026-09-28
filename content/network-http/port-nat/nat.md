@@ -14,7 +14,7 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "전통적인 IPv4 NAT의 주소 변환과 반환 패킷을 원래 내부 주소로 되돌리는 상태를 확인한다."
+    recommendation: "전통적인 IPv4 NAT/NAPT의 주소·포트 변환과 상태 관리 규칙을 확인한다."
     displayOrder: 1
 ---
 # 네트워크 주소 변환(NAT)
