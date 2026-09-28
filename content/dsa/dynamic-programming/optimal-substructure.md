@@ -3,8 +3,8 @@ kind: concept
 contentKey: dsa.core.dynamic-programming.optimal-substructure
 topicContentKey: dsa.core.dynamic-programming
 slug: optimal-substructure
-title: "Optimal Substructure"
-summary: "전체 최적해가 부분 최적해로 구성되는 조건을 설명한다."
+title: "최적 부분 구조(Optimal Substructure)"
+summary: "전체 최적해가 부분 문제의 최적해로 구성될 수 있는 조건을 설명한다."
 level: 2
 status: PUBLISHED
 displayOrder: 20
@@ -14,17 +14,17 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "DP의 subproblem 정의, memoization, recurrence와 재사용 구조를 확인한다."
+    recommendation: "DP의 부분 문제 정의, 메모이제이션, 점화식과 재사용 구조를 확인한다."
     displayOrder: 1
 ---
-# Optimal Substructure
+# 최적 부분 구조(Optimal Substructure)
 
-Optimal substructure는 전체 문제의 optimal solution을 적절한 subproblem으로 나눴을 때, 그 안에 각 subproblem의 optimal solution이 포함되는 성질이다. 이 성질이 있어야 작은 state의 최적값을 이용해 더 큰 state의 최적값을 만들 수 있다.
+최적 부분 구조는 전체 문제의 최적해를 적절한 부분 문제로 나눴을 때 **전체 최적해 안에 각 부분 문제의 최적해를 사용할 수 있는 성질**이다. 이 성질이 있어야 작은 상태에서 구한 최적값을 이용해 더 큰 상태의 최적값을 구성할 수 있다.
 
-예를 들어 shortest path의 일부 구간이 그 구간 자체의 최단 경로가 아니라면, 그 부분을 더 짧은 경로로 바꿔 전체 경로도 더 짧게 만들 수 있다. 이는 원래 전체 경로가 최단이라는 가정과 모순이다.
+예를 들어 A에서 D까지의 최단 경로가 A→B→C→D라고 하자. 만약 B에서 D까지 이 경로보다 더 짧은 경로가 존재한다면 B→D 구간을 더 짧은 경로로 바꿔 A→D 전체 경로도 줄일 수 있다. 이는 처음 경로가 최단이었다는 가정과 모순된다.
 
-중요한 것은 **어떤 state definition 아래에서** 이 성질이 성립하는지다. 앞으로 가능한 선택이 과거의 추가 정보에 따라 달라지는데 state에서 그 정보를 빠뜨리면 서로 다른 subproblem을 하나로 합치게 된다.
+중요한 것은 **어떤 상태 정의 아래에서 이 성질이 성립하는가**다. 앞으로 가능한 선택이 과거의 추가 정보에 따라 달라지는데 상태에서 그 정보를 빠뜨리면 실제로는 서로 다른 부분 문제를 같은 문제로 취급하게 된다.
 
-Optimal substructure와 overlapping subproblems는 다른 성질이다. 전자는 작은 최적해로 큰 최적해를 만들 수 있는가를, 후자는 같은 작은 state가 반복되는가를 묻는다.
+최적 부분 구조와 중복 부분 문제(overlapping subproblems)는 서로 다른 성질이다. 최적 부분 구조는 작은 문제의 최적해로 큰 문제의 최적해를 구성할 수 있는지를 보고, 중복 부분 문제는 같은 상태가 여러 계산 경로에서 반복되는지를 본다.
 
-DP에서는 보통 이 두 성질을 함께 이용한다. State가 올바르게 정의되어야 recurrence가 작은 optimal answer를 안전하게 재사용할 수 있다.
+동적 계획법에서는 보통 이 두 성질을 함께 이용한다. 상태를 정확하게 정의해야 점화식이 작은 문제의 결과를 안전하게 재사용할 수 있다.

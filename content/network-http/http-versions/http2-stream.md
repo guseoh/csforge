@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.http-versions.http2-stream
 topicContentKey: network-http.core.http-versions
 slug: http2-stream
-title: "HTTP/2 Stream"
+title: "HTTP/2 스트림"
 summary: "하나의 HTTP/2 connection 안에서 request/response exchange를 독립된 stream과 frame으로 구분하는 방식을 설명한다."
 level: 2
 status: PUBLISHED
@@ -24,7 +24,7 @@ references:
     recommendation: "HTTP/2 stream identifier의 parity·증가·재사용 금지 규칙을 확인한다."
     displayOrder: 2
 ---
-# HTTP/2 Stream
+# HTTP/2 스트림
 
 HTTP/2는 하나의 connection 안에서 여러 logical request/response exchange를 **stream**으로 구분한다. 각 stream은 고유한 stream identifier를 가지며, HEADERS와 DATA 같은 frame이 어떤 stream에 속하는지 식별할 수 있다.
 

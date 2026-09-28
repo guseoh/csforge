@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.http-versions.http3
 topicContentKey: network-http.core.http-versions
 slug: http3
-title: "HTTP/3"
+title: "HTTP/3와 QUIC"
 summary: "HTTP semantics를 QUIC streams와 QPACK 위에 매핑하는 HTTP/3의 transport 차이를 설명한다."
 level: 2
 status: PUBLISHED
@@ -15,7 +15,7 @@ references:
     language: en
     displayOrder: 1
 ---
-# HTTP/3
+# HTTP/3와 QUIC
 
 HTTP/3는 GET, POST, status code, field와 representation 같은 HTTP semantics를 유지하면서 transport mapping을 QUIC 위로 옮긴 HTTP version이다. HTTP/1.1의 text message framing이나 HTTP/2-over-TCP connection을 그대로 UDP datagram에 넣는 방식이 아니다.
 

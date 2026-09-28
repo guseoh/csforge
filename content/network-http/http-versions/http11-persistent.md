@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.http-versions.http11-persistent
 topicContentKey: network-http.core.http-versions
 slug: http11-persistent
-title: "HTTP/1.1 Persistent Connection"
+title: "HTTP/1.1 지속 연결"
 summary: "HTTP/1.1이 하나의 TCP connection을 여러 request/response exchange에 재사용하는 기본 모델을 설명한다."
 level: 1
 status: PUBLISHED
@@ -14,10 +14,10 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "HTTP/1.1 message framing과 body 경계를 확인한다."
+    recommendation: "HTTP/1.1 메시지 구문, 프레이밍과 연결 재사용 규칙을 확인한다."
     displayOrder: 1
 ---
-# HTTP/1.1 Persistent Connection
+# HTTP/1.1 지속 연결
 
 HTTP/1.1은 하나의 TCP connection에서 여러 request/response exchange를 처리할 수 있는 persistent connection을 기본으로 사용한다. 새 request마다 TCP connection을 다시 만드는 비용을 줄이고, 이미 만들어진 transport state를 재사용할 수 있다.
 

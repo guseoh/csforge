@@ -1,114 +1,114 @@
 schemaVersion: 2
 area:
   key: cache
-  title: Cache
-  baseline: Redis-backed application caching
+  title: 캐시
+  baseline: Redis 기반 애플리케이션 캐싱
   contentKeyPrefix: cache.core
   status: CANONICAL_FOUNDATION
 policies:
   language:
     authoringLanguage: ko-KR
-    explanationRule: cache가 필요한 문제에서 시작해 hit/miss, freshness, invalidation, 메모리·운영 실패와 source of truth 경계를 연결한다.
+    explanationRule: 캐시가 필요한 문제에서 시작해 캐시 히트·미스, 최신성, 무효화, 메모리·운영 실패와 원본 데이터 경계를 연결한다.
   question:
     topicDifficultyCoverage: [EASY, MEDIUM, HARD]
     areaTypeCoverage: [MULTIPLE_CHOICE, SHORT_ANSWER, DESCRIPTIVE, SCENARIO]
-    hardRule: stale data, 동시 만료, eviction, hot key, 장애 복구나 source-of-truth trade-off를 포함해 판단하게 한다.
-    shortAnswerRule: cache 용어 이름만으로 정답을 인정하지 않는다.
+    hardRule: 오래된 데이터, 동시 만료, 퇴출, 핫 키, 장애 복구나 원본 데이터와의 상충 관계를 포함해 다단계로 판단하게 한다.
+    shortAnswerRule: 짧고 안정적으로 채점 가능한 용어·값·상태만 묻고, 원인·과정 설명이 필요하면 DESCRIPTIVE 또는 SCENARIO를 사용한다.
   source:
     primary: [Redis Documentation, HTTP caching specifications, Spring Cache reference]
-    rule: cache 구현의 library 동작과 application freshness·consistency 계약을 구분한다.
+    rule: 캐시 구현 라이브러리의 동작과 애플리케이션의 최신성·일관성 계약을 구분한다.
   visualization:
     values: [NONE, TEXT, DIAGRAM]
-    rule: cache-aside flow, invalidation race, stampede, eviction과 fallback처럼 상태·시간 순서가 핵심인 곳에 사용한다.
+    rule: Cache-Aside 흐름, 무효화 경쟁 상태, 캐시 스탬피드, 퇴출과 대체 처리처럼 상태·시간 순서가 핵심인 곳에 사용한다.
 topics:
 - key: cache.core.models
-  title: Cache models and keys
+  title: 캐시 모델과 키
   order: 10
-  scope: cache-aside, write-through/write-behind 선택과 key namespace·serialization 경계를 다룬다.
-  boundary: Redis 명령 자체보다 application use case의 cache contract와 PostgreSQL canonical state를 우선한다.
+  scope: Cache-Aside, write-through/write-behind 선택과 키 네임스페이스·직렬화 경계를 다룬다.
+  boundary: Redis 명령 자체보다 애플리케이션 사용 사례의 캐시 계약과 PostgreSQL 원본 상태를 우선한다.
   concepts:
   - key: cache.core.models.cache-aside
-    title: cache-aside read/write flow
+    title: 캐시 어사이드(Cache-Aside) 읽기·쓰기 흐름
     order: 10
     level: 1
-    objective: cache hit/miss와 fresh/stale을 구분하고 origin read, cache fill과 write invalidation의 기본 흐름을 설명한다.
+    objective: 캐시 히트·미스와 최신 값·오래된 값을 구분하고 원본 조회, 캐시 채우기, 원본 변경 뒤 무효화의 기본 흐름을 설명한다.
     density: CORE
     visualization: DIAGRAM
   - key: cache.core.models.write-strategies
-    title: write-through와 write-behind trade-off
+    title: 캐시 쓰기 전략과 원본 데이터 책임
     order: 20
     level: 2
-    objective: cache와 origin write를 연결하는 방식의 latency, durability, failure 순서와 적합한 use case를 비교한다.
+    objective: 캐시와 원본 저장소의 쓰기를 연결하는 방식의 지연 시간, 내구성, 실패 순서와 적합한 사용 사례를 비교한다.
     density: CORE
     visualization: TEXT
   - key: cache.core.models.key-serialization
-    title: cache key와 serialization contract
+    title: 캐시 키와 직렬화 계약
     order: 30
     level: 2
-    objective: key namespace, tenant·version 구분과 serialization schema 변경이 collision·호환성에 미치는 영향을 판단한다.
+    objective: 키 네임스페이스, 테넌트·버전 구분과 직렬화 스키마 변경이 키 충돌·호환성에 미치는 영향을 판단한다.
     density: STANDARD
     visualization: NONE
 - key: cache.core.consistency
-  title: Freshness and invalidation
+  title: 캐시 최신성과 무효화
   order: 20
-  scope: TTL, invalidation ordering, stale-while-revalidate와 cache stampede를 다룬다.
-  boundary: cache consistency는 Database transaction isolation과 다르며 freshness 계약으로 표현한다.
+  scope: TTL, 무효화 순서, 오래된 값을 잠시 허용하는 갱신 방식과 캐시 스탬피드를 다룬다.
+  boundary: 캐시 일관성은 데이터베이스 트랜잭션 격리와 다르며 최신성 계약으로 표현한다.
   concepts:
   - key: cache.core.consistency.ttl-freshness
-    title: TTL과 freshness window
+    title: 만료 시간(TTL)과 최신성 허용 범위
     order: 10
     level: 1
-    objective: TTL을 기술 숫자가 아니라 허용 가능한 stale window·변경 빈도·업무 위험과 연결한다.
+    objective: TTL을 단순한 기술 숫자가 아니라 허용 가능한 오래된 값의 시간·변경 빈도·업무 위험과 연결한다.
     density: CORE
     visualization: TEXT
   - key: cache.core.consistency.invalidation
-    title: invalidation과 update ordering
+    title: 캐시 무효화 순서와 오래된 값의 재등장
     order: 20
     level: 2
-    objective: origin update와 cache delete/update 사이의 실패 순서, stale read와 retry를 설계한다.
+    objective: 원본 변경과 캐시 삭제·갱신 사이의 실패 순서, 오래된 조회와 재시도를 설계한다.
     density: CORE
     visualization: DIAGRAM
   - key: cache.core.consistency.stampede
-    title: cache stampede와 request coalescing
+    title: 동시 만료와 캐시 폭주
     order: 30
     level: 3
-    objective: 인기 key의 동시 miss/만료가 origin 부하를 폭증시키는 이유와 lock·single-flight·early refresh의 trade-off를 판단한다.
+    objective: 인기 키의 동시 미스·만료가 원본 저장소 부하를 폭증시키는 이유와 잠금·single-flight·선제 갱신의 상충 관계를 판단한다.
     density: CORE
     visualization: DIAGRAM
 - key: cache.core.operations
-  title: Cache operations and failure
+  title: 캐시 운영과 장애 대응
   order: 30
-  scope: eviction/memory, hot key, cache 장애와 degraded behavior를 다룬다.
-  boundary: cache는 PostgreSQL canonical data를 대체하지 않으며 cache outage 시 핵심 학습 flow의 복구 경계를 설계한다.
+  scope: 퇴출과 메모리, 핫 키, 캐시 장애와 제한적 대체 처리를 다룬다.
+  boundary: 캐시는 PostgreSQL 원본 데이터를 대체하지 않으며 캐시 장애 시 핵심 학습 흐름의 복구 경계를 설계한다.
   concepts:
   - key: cache.core.operations.eviction-memory
-    title: eviction과 memory budget
+    title: 퇴출 정책과 메모리 예산
     order: 10
     level: 2
-    objective: maxmemory와 eviction policy, working set과 object size를 hit ratio·cache write failure와 연결한다.
+    objective: maxmemory와 퇴출 정책, 작업 집합과 객체 크기를 캐시 적중률·캐시 쓰기 실패와 연결한다.
     density: CORE
     visualization: TEXT
   - key: cache.core.operations.hot-key
-    title: hot key와 access skew
+    title: 핫 키와 접근 편향
     order: 20
     level: 3
-    objective: 특정 key에 traffic이 집중될 때 cache hit인데도 node·network 병목이 생기는 이유와 완화책을 판단한다.
+    objective: 특정 키에 트래픽이 집중될 때 캐시 히트 상황에서도 노드·네트워크 병목이 생기는 이유와 완화책을 판단한다.
     density: CORE
     visualization: DIAGRAM
   - key: cache.core.operations.availability-degraded-mode
-    title: cache 장애와 degraded mode
+    title: 캐시 장애와 제한적 대체 처리
     order: 30
     level: 2
-    objective: cache timeout·unavailable 상황에서 origin fallback, fail-open/closed, timeout budget과 correctness를 선택한다.
+    objective: 캐시 타임아웃·사용 불가 상황에서 원본 저장소 대체 처리, fail-open/fail-closed, 요청 시간 예산과 정확성의 우선순위를 선택한다.
     density: CORE
     visualization: DIAGRAM
 boundaries:
 - area: Database
-  owns: PostgreSQL durability, transaction, isolation과 canonical data
-  cacheBoundary: cache는 derived copy이며 origin commit과 freshness contract를 존중한다.
+  owns: PostgreSQL 내구성, 트랜잭션, 격리와 원본 데이터
+  cacheBoundary: 캐시는 파생 복사본이며 원본 커밋과 최신성 계약을 존중한다.
 - area: Backend Engineering
-  owns: use-case/API contract와 cache 도입 판단
-  cacheBoundary: Cache area는 cache model·consistency·운영 메커니즘을 깊게 다룬다.
+  owns: 사용 사례/API 계약과 캐시 도입 판단
+  cacheBoundary: Cache 영역은 캐시 모델·일관성·운영 메커니즘을 깊게 다룬다.
 - area: Messaging & Async Processing
-  owns: broker delivery와 event workflow
-  cacheBoundary: cache invalidation event가 필요할 때 delivery·중복·ordering 책임은 messaging과 연결한다.
+  owns: 브로커 전달과 이벤트 처리 흐름
+  cacheBoundary: 캐시 무효화 이벤트가 필요할 때 전달·중복·순서 보장 책임은 Messaging 영역과 연결한다.

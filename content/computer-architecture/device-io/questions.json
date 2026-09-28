@@ -2,235 +2,235 @@
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.device-io.interrupt-exception-trap.q1",
-    "promptMarkdown": "RISC-V 문맥에서 interrupt, exception, trap의 관계를 가장 정확하게 설명한 것은?",
+    "promptMarkdown": "RISC-V 문맥에서 인터럽트(interrupt), 예외(exception), 트랩(trap)의 관계를 가장 정확하게 설명한 것은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.device-io.interrupt-exception-trap"],
     "choices": [
-      {"key": "A", "content": "ECALL은 외부 interrupt이며 실행 중인 instruction과 관계가 없다.", "displayOrder": 0, "rationaleMarkdown": "RISC-V의 ECALL은 실행 중인 instruction이 environment call exception을 일으키는 동기 사건이다. 외부 timer나 device가 instruction과 독립적으로 알리는 interrupt와 구분된다."},
-      {"key": "B", "content": "trap은 exception·interrupt와 무관한 세 번째 외부 device event다.", "displayOrder": 1, "rationaleMarkdown": "RISC-V에서 trap은 exception 또는 interrupt 때문에 control이 handler로 옮겨지는 사건을 가리킨다. Exception·interrupt와 별개인 세 번째 외부 event로 정의되지 않는다."},
-      {"key": "C", "content": "exception은 항상 timer가 만들고 interrupt는 항상 illegal instruction이 만든다.", "displayOrder": 2, "rationaleMarkdown": "Timer interrupt는 instruction 실행과 독립적으로 도착할 수 있는 비동기 event다. Illegal instruction은 현재 instruction의 해석·실행에서 생기는 동기 exception이므로 발생 원인을 서로 바꾸어 설명했다."},
-      {"key": "D", "content": "interrupt는 비동기 외부 event, exception은 현재 instruction과 연관된 동기 event이고, trap은 이들 때문에 handler로 control이 이전되는 사건이다.", "displayOrder": 3, "rationaleMarkdown": "Interrupt는 현재 instruction의 의미와 독립적으로 도착하는 비동기 event이고 exception은 현재 instruction에서 발생하는 동기 event다. Trap은 이 둘에 대한 handler로 control이 이전되는 RISC-V의 용어다."}
+      {"key": "A", "content": "ECALL은 외부 인터럽트이며 실행 중인 명령어와 관계가 없다.", "displayOrder": 0, "rationaleMarkdown": "RISC-V의 ECALL은 실행 중인 명령어가 environment call 예외를 일으키는 동기 사건이다. 외부 타이머나 장치가 명령어와 독립적으로 알리는 인터럽트와 구분된다."},
+      {"key": "B", "content": "트랩은 예외·인터럽트와 무관한 세 번째 외부 장치 사건이다.", "displayOrder": 1, "rationaleMarkdown": "RISC-V에서 트랩은 예외 또는 인터럽트 때문에 제어가 처리기로 옮겨지는 사건을 가리킨다. 예외·인터럽트와 별개인 세 번째 외부 사건으로 정의되지 않는다."},
+      {"key": "C", "content": "예외는 항상 타이머가 만들고 인터럽트는 항상 잘못된 명령어가 만든다.", "displayOrder": 2, "rationaleMarkdown": "타이머 인터럽트는 명령어 실행과 독립적으로 도착할 수 있는 비동기 사건이다. 잘못된 명령어는 현재 명령어의 해석·실행에서 생기는 동기 예외이므로 발생 원인을 서로 바꾸어 설명했다."},
+      {"key": "D", "content": "인터럽트는 비동기 외부 사건, 예외는 현재 명령어와 연관된 동기 사건이고, 트랩은 이들 때문에 처리기로 제어가 이전되는 사건이다.", "displayOrder": 3, "rationaleMarkdown": "인터럽트는 현재 명령어의 의미와 독립적으로 도착하는 비동기 사건이고 예외는 현재 명령어에서 발생하는 동기 사건이다. 트랩은 이 둘 때문에 처리기로 제어가 이전되는 RISC-V의 용어다."}
     ],
     "correctChoiceKey": "D",
-    "explanationMarkdown": "ECALL은 현재 실행 중인 instruction 자체가 environment call exception을 발생시키므로 asynchronous device interrupt가 아니다. Timer는 현재 instruction의 의미와 독립적으로 발생하는 asynchronous interrupt이고, illegal instruction은 해당 instruction의 decode/execute와 직접 연관된 synchronous exception이다."
+    "explanationMarkdown": "ECALL은 현재 실행 중인 명령어 자체가 environment call 예외를 발생시키므로 비동기 장치 인터럽트가 아니다. 타이머는 현재 명령어의 의미와 독립적으로 발생하는 비동기 인터럽트이고, 잘못된 명령어는 해당 명령어의 해독·실행과 직접 연관된 동기 예외다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.device-io.interrupt-exception-trap.q2",
-    "promptMarkdown": "ECALL이 software가 의도적으로 요청한 동작인데도 RISC-V에서 synchronous exception/trap 흐름으로 설명할 수 있는 이유를 설명하라.",
+    "promptMarkdown": "ECALL이 소프트웨어가 의도적으로 요청한 동작인데도 RISC-V에서 동기 예외와 트랩 흐름으로 설명할 수 있는 이유를 설명하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.device-io.interrupt-exception-trap"],
-    "modelAnswer": "ECALL은 현재 실행 중인 instruction 자체가 environment call exception을 발생시키므로 asynchronous device interrupt가 아니다. 그 exception 때문에 processor가 privileged handler로 control을 넘기는 사건은 trap이며, handler가 system environment의 policy에 따라 요청을 처리한다.",
-    "explanationMarkdown": "ECALL은 software가 의도적으로 실행하더라도 현재 instruction 자체가 원인을 만든 synchronous exception이다. 그 원인으로 privileged handler에 control을 넘기는 공통 진입 절차를 trap으로 보면 interrupt와 exception의 관계가 정리된다."
+    "modelAnswer": "ECALL은 현재 실행 중인 명령어 자체가 environment call 예외를 발생시키므로 비동기 장치 인터럽트가 아니다. 그 예외 때문에 프로세서가 특권 처리기로 제어를 넘기는 사건은 트랩이며, 처리기가 시스템 환경의 정책에 따라 요청을 처리한다.",
+    "explanationMarkdown": "ECALL은 소프트웨어가 의도적으로 실행하더라도 현재 명령어 자체가 원인을 만든 동기 예외다. 그 원인으로 특권 처리기에 제어를 넘기는 공통 진입 절차를 트랩으로 보면 인터럽트와 예외의 관계가 정리된다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.device-io.interrupt-exception-trap.q3",
-    "promptMarkdown": "CPU가 instruction A를 실행하는 중 timer interrupt가 pending되었고, 다음 instruction B는 illegal instruction이다. timer event와 B의 illegal-instruction event를 각각 interrupt/exception으로 분류하고, 둘 모두 최종적으로 어떤 공통 control-transfer mechanism으로 처리될 수 있는지 설명하라.",
+    "promptMarkdown": "CPU가 명령어 A를 실행하는 중 타이머 인터럽트가 대기 상태가 되었고, 다음 명령어 B는 잘못된 명령어다. 타이머 사건과 B의 잘못된 명령어 사건을 각각 인터럽트/예외로 분류하고, 둘 모두 최종적으로 어떤 공통 제어 이동 메커니즘으로 처리될 수 있는지 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.device-io.interrupt-exception-trap"],
-    "modelAnswer": "Timer는 현재 instruction의 의미와 독립적으로 발생하는 asynchronous interrupt이고, illegal instruction은 B의 decode/execute와 직접 연관된 synchronous exception이다. Architecture의 우선순위와 enable 조건에 따라 실제로 어느 event를 먼저 받을지는 달라질 수 있지만, 받아들여진 원인은 trap entry를 통해 handler로 control이 이전되고 cause/PC state가 기록된다.",
-    "explanationMarkdown": "Timer는 현재 instruction과 독립적인 asynchronous interrupt이고 illegal instruction은 해당 instruction에서 발생한 synchronous exception이다. 원인의 종류는 달라도 CPU가 받아들이면 cause와 PC 상태를 기록하고 trap handler로 진입하는 공통 흐름을 사용할 수 있다."
+    "modelAnswer": "타이머는 현재 명령어의 의미와 독립적으로 발생하는 비동기 인터럽트이고, 잘못된 명령어는 B의 해독·실행과 직접 연관된 동기 예외다. 아키텍처의 우선순위와 활성화 조건에 따라 실제로 어느 사건을 먼저 받을지는 달라질 수 있지만, 받아들여진 원인은 트랩 진입을 통해 처리기로 제어가 이전되고 원인과 PC 상태가 기록된다.",
+    "explanationMarkdown": "타이머는 현재 명령어와 독립적인 비동기 인터럽트이고 잘못된 명령어는 해당 명령어에서 발생한 동기 예외다. 원인의 종류는 달라도 CPU가 받아들이면 원인과 PC 상태를 기록하고 트랩 처리기로 진입하는 공통 흐름을 사용할 수 있다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.device-io.interrupt-handler-entry.q1",
-    "promptMarkdown": "RISC-V machine-mode trap entry에서 역할의 연결이 올바른 것은?",
+    "promptMarkdown": "RISC-V machine-mode 트랩 진입에서 역할의 연결이 올바른 것은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.device-io.interrupt-handler-entry"],
     "choices": [
-      {"key":"A","content":"trap entry가 모든 general-purpose register를 반드시 hardware stack에 자동 저장한다.","displayOrder":0,"rationaleMarkdown":"RISC-V trap 진입은 trap 관련 CSR을 갱신하고 제어를 handler로 넘기지만 범용 register 전부를 하드웨어 stack에 자동 저장하지 않는다. handler는 ABI에 따라 필요한 register를 직접 보존해야 한다."},
-      {"key":"B","content":"mepc는 trap 원인을 저장하고 mcause는 복귀할 instruction address를 저장한다.","displayOrder":1,"rationaleMarkdown":"여기서는 CSR 역할이 뒤바뀌었다. `mepc`는 복귀에 쓸 중단·fault 명령 주소를 기록하고 `mcause`는 trap 발생 여부와 원인을 나타낸다."},
-      {"key":"C","content":"mepc는 중단/exception instruction 위치, mcause는 원인, mtvec는 handler entry configuration에 사용된다.","displayOrder":2,"rationaleMarkdown":"`mepc`는 trap과 관련된 명령 주소를, `mcause`는 원인을, `mtvec`는 machine-mode trap 진입 주소와 mode를 설정한다. 이 역할을 나누면 handler가 원인을 진단하고 실행을 재개하거나 다른 곳으로 보낼 수 있다."},
-      {"key":"D","content":"mtvec가 설정되면 interrupt enable과 pending state는 더 이상 필요 없다.","displayOrder":3,"rationaleMarkdown":"`mtvec`는 trap 진입 목적지를 제공할 뿐 interrupt enable이나 pending 상태를 대신하지 않는다. interrupt 수용 여부는 architecture가 정한 privilege·enable·pending 조건에도 달려 있다."}
+      {"key":"A","content":"트랩 진입이 모든 범용 레지스터를 반드시 하드웨어 스택에 자동 저장한다.","displayOrder":0,"rationaleMarkdown":"RISC-V 트랩 진입은 트랩 관련 CSR을 갱신하고 제어를 처리기로 넘기지만 범용 레지스터 전부를 하드웨어 스택에 자동 저장하지 않는다. 처리기는 ABI에 따라 필요한 레지스터를 직접 보존해야 한다."},
+      {"key":"B","content":"mepc는 트랩 원인을 저장하고 mcause는 복귀할 명령어 주소를 저장한다.","displayOrder":1,"rationaleMarkdown":"여기서는 CSR 역할이 뒤바뀌었다. `mepc`는 복귀에 쓸 중단·fault 명령 주소를 기록하고 `mcause`는 트랩 발생 여부와 원인을 나타낸다."},
+      {"key":"C","content":"mepc는 중단되거나 예외를 일으킨 명령어 위치, mcause는 원인, mtvec는 처리기 진입 설정에 사용된다.","displayOrder":2,"rationaleMarkdown":"`mepc`는 트랩과 관련된 명령 주소를, `mcause`는 원인을, `mtvec`는 machine-mode 트랩 진입 주소와 모드를 설정한다. 이 역할을 나누면 처리기가 원인을 진단하고 실행을 재개하거나 다른 곳으로 보낼 수 있다."},
+      {"key":"D","content":"mtvec가 설정되면 인터럽트 활성화와 대기 상태는 더 이상 필요 없다.","displayOrder":3,"rationaleMarkdown":"`mtvec`는 트랩 진입 목적지를 제공할 뿐 인터럽트 활성화나 대기 상태를 대신하지 않는다. 인터럽트 수용 여부는 아키텍처가 정한 특권 수준·활성화·대기 조건에도 달려 있다."}
     ],
     "correctChoiceKey": "C",
-    "explanationMarkdown": "RISC-V machine-mode trap entry에서 `mepc`는 복귀하거나 문제를 일으킨 instruction 위치, `mcause`는 interrupt 또는 exception 원인, `mtvec`는 handler entry를 정한다. 이 역할을 구분해야 원인 판별과 복귀 흐름을 정확히 이해할 수 있다."
+    "explanationMarkdown": "RISC-V machine-mode 트랩 진입에서 `mepc`는 복귀하거나 문제를 일으킨 명령어 위치, `mcause`는 인터럽트 또는 예외 원인, `mtvec`는 처리기 진입 위치를 정한다. 이 역할을 구분해야 원인 판별과 복귀 흐름을 정확히 이해할 수 있다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.device-io.interrupt-handler-entry.q2",
-    "promptMarkdown": "trap entry가 mepc/mcause 같은 일부 architectural state를 저장한다고 해서 handler software가 general-purpose register 보존을 무시할 수 없는 이유를 설명하라.",
+    "promptMarkdown": "트랩 진입이 mepc/mcause 같은 일부 아키텍처 상태를 저장한다고 해서 처리기 소프트웨어가 범용 레지스터 보존을 무시할 수 없는 이유를 설명하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.device-io.interrupt-handler-entry"],
-    "modelAnswer": "Interrupt는 임의의 execution point에 들어올 수 있으므로 중단된 code가 사용 중인 general-purpose register를 handler가 덮어쓰면 원래 program state가 손상된다. ISA가 trap entry에서 자동으로 보존하는 state와 software handler가 stack/save area에 추가로 보존해야 하는 state를 구분해야 한다.",
-    "explanationMarkdown": "Trap entry가 자동 보존하는 architectural state는 제한적이다. Handler가 일반 register를 사용한다면 중단된 code의 값이 덮어쓰이지 않도록 software가 필요한 register state를 별도로 저장·복원해야 한다."
+    "modelAnswer": "인터럽트는 임의의 실행 지점에 들어올 수 있으므로 중단된 코드가 사용 중인 범용 레지스터를 처리기가 덮어쓰면 원래 프로그램 상태가 손상된다. ISA가 트랩 진입에서 자동으로 보존하는 상태와 소프트웨어 처리기가 스택이나 저장 영역에 추가로 보존해야 하는 상태를 구분해야 한다.",
+    "explanationMarkdown": "트랩 진입이 자동 보존하는 아키텍처 상태는 제한적이다. 처리기가 범용 레지스터를 사용한다면 중단된 코드의 값이 덮어쓰이지 않도록 소프트웨어가 필요한 레지스터 상태를 별도로 저장·복원해야 한다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.device-io.interrupt-handler-entry.q3",
-    "promptMarkdown": "level-triggered device interrupt의 handler가 completion을 읽었지만 interrupt source를 acknowledge/clear하지 않고 return한다. CPU 사용률과 application 지연 시간에 어떤 현상이 생길 수 있는지 handler-entry 흐름으로 설명하라.",
+    "promptMarkdown": "레벨 트리거 장치 인터럽트의 처리기가 완료 상태를 읽었지만 인터럽트 원인을 acknowledge/clear하지 않고 복귀한다. CPU 사용률과 애플리케이션 지연 시간에 어떤 현상이 생길 수 있는지 처리기 진입 흐름으로 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.device-io.interrupt-handler-entry"],
-    "modelAnswer": "Device가 interrupt condition을 계속 asserted하면 return 직후 같은 interrupt가 다시 pending/accepted되어 trap entry가 반복될 수 있다. CPU가 handler에 계속 머물면서 application thread와 다른 work가 지연되고 interrupt storm처럼 CPU 사용률과 꼬리 지연 시간(tail latency)이 함께 증가할 수 있다. Driver는 device specification에 맞게 source를 consume하고 acknowledge/clear해야 한다.",
-    "explanationMarkdown": "Level-triggered source를 clear하지 않으면 return 직후 같은 interrupt가 다시 받아들여질 수 있다. 이 반복은 CPU를 handler에 묶어 application work를 밀어내므로 device contract에 맞는 acknowledge/clear가 handler correctness의 일부다."
+    "modelAnswer": "장치가 인터럽트 조건을 계속 유지하면 복귀 직후 같은 인터럽트가 다시 대기·수용되어 트랩 진입이 반복될 수 있다. CPU가 처리기에 계속 머물면서 애플리케이션 스레드와 다른 작업이 지연되고 인터럽트 폭주처럼 CPU 사용률과 꼬리 지연 시간이 함께 증가할 수 있다. 드라이버는 장치 명세에 맞게 원인을 소비하고 acknowledge/clear해야 한다.",
+    "explanationMarkdown": "레벨 트리거 원인을 해제하지 않으면 복귀 직후 같은 인터럽트가 다시 받아들여질 수 있다. 이 반복은 CPU를 처리기에 묶어 애플리케이션 작업을 밀어내므로 장치 계약에 맞는 acknowledge/clear가 처리기 정확성의 일부다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.device-io.programmed-io.q1",
-    "promptMarkdown": "busy polling programmed I/O와 interrupt-driven I/O의 trade-off를 올바르게 설명한 것은?",
+    "promptMarkdown": "바쁜 대기 폴링을 사용하는 프로그램 제어 I/O와 인터럽트 기반 I/O의 트레이드오프를 올바르게 설명한 것은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.device-io.programmed-io"],
     "choices": [
-      {"key":"A","content":"Interrupt를 쓰면 device transfer의 모든 byte가 CPU register를 거치지 않는 것이 항상 보장된다.","displayOrder":0,"rationaleMarkdown":"interrupt는 event를 알릴 뿐 장치와 메모리 사이의 모든 byte를 직접 옮기지 않는다. CPU가 직접 옮기는 programmed I/O와 DMA는 서로 다른 전송 방식이며 장치/controller가 어떤 방식을 지원하는지에 달렸다."},
-      {"key":"B","content":"Polling은 completion을 빠르게 감지할 수 있지만 CPU/MMIO access를 계속 소비할 수 있고, interrupt는 기다리는 CPU를 놓아주지만 entry/handler 비용이 있다.","displayOrder":1,"rationaleMarkdown":"자주 확인하면 polling으로 완료를 빨리 발견할 수 있지만 status 반복 조회가 CPU와 MMIO·interconnect 비용을 소비한다. interrupt를 쓰면 기다리는 동안 다른 작업을 할 수 있지만 통지·진입·handler 비용이 든다."},
-      {"key":"C","content":"Polling interval은 CPU 사용률과 completion 지연 시간에 아무 영향이 없다.","displayOrder":2,"rationaleMarkdown":"polling을 자주 하면 CPU 비용이 커지는 대신 완료를 알아채는 지연이 짧아질 수 있다. 드물게 확인하면 비용은 줄지만 발견 지연이 늘어난다. 균형은 event 빈도와 지연 요구에 달렸다."},
-      {"key":"D","content":"Programmed I/O와 DMA는 동일한 mechanism 이름만 다르다.","displayOrder":3,"rationaleMarkdown":"programmed I/O는 CPU가 load/store 경로로 데이터를 옮기고 DMA는 controller가 memory와 block을 주고받는다. interrupt는 어느 방식에서도 완료를 알릴 수 있지만 DMA의 다른 이름은 아니다."}
+      {"key":"A","content":"인터럽트를 쓰면 장치 전송의 모든 바이트가 CPU 레지스터를 거치지 않는 것이 항상 보장된다.","displayOrder":0,"rationaleMarkdown":"인터럽트는 사건을 알릴 뿐 장치와 메모리 사이의 모든 바이트를 직접 옮기지 않는다. CPU가 직접 옮기는 프로그램 제어 I/O와 DMA는 서로 다른 전송 방식이며 장치나 컨트롤러가 어떤 방식을 지원하는지에 달렸다."},
+      {"key":"B","content":"폴링은 완료를 빠르게 감지할 수 있지만 CPU/MMIO 접근을 계속 소비할 수 있고, 인터럽트는 기다리는 CPU를 놓아주지만 진입·처리 비용이 있다.","displayOrder":1,"rationaleMarkdown":"자주 확인하면 폴링으로 완료를 빨리 발견할 수 있지만 상태 반복 조회가 CPU와 MMIO·인터커넥트 비용을 소비한다. 인터럽트를 쓰면 기다리는 동안 다른 작업을 할 수 있지만 통지·진입·처리 비용이 든다."},
+      {"key":"C","content":"폴링 간격은 CPU 사용률과 완료 감지 지연 시간에 아무 영향이 없다.","displayOrder":2,"rationaleMarkdown":"폴링을 자주 하면 CPU 비용이 커지는 대신 완료를 알아채는 지연이 짧아질 수 있다. 드물게 확인하면 비용은 줄지만 발견 지연이 늘어난다. 균형은 사건 빈도와 지연 요구에 달렸다."},
+      {"key":"D","content":"프로그램 제어 I/O와 DMA는 동일한 메커니즘의 이름만 다르다.","displayOrder":3,"rationaleMarkdown":"프로그램 제어 I/O는 CPU가 load/store 경로로 데이터를 옮기고 DMA는 컨트롤러가 메모리와 블록을 주고받는다. 인터럽트는 어느 방식에서도 완료를 알릴 수 있지만 DMA의 다른 이름은 아니다."}
     ],
     "correctChoiceKey": "B",
-    "explanationMarkdown": "Event가 매우 짧고 빈번하면 매번 interrupt/trap/context handling을 하는 비용과 wakeup 지연 시간이 실제 device wait보다 커질 수 있다."
+    "explanationMarkdown": "폴링은 CPU가 장치 상태를 반복 확인하므로 대기 중 CPU 시간을 쓰지만, 짧고 빈번한 사건에서는 인터럽트 진입·복귀 비용과 깨우기 지연을 줄일 수 있다. 인터럽트 기반 I/O는 CPU가 다른 일을 할 수 있게 하지만 사건마다 처리 비용이 든다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.device-io.programmed-io.q2",
-    "promptMarkdown": "device가 작업 시작 후 120 μs에 ready가 되고 CPU가 50 μs 간격으로 status를 polling한다. 첫 polling을 0 μs에 수행했다면 ready를 처음 관찰하는 시점은 몇 μs인가?",
+    "promptMarkdown": "장치가 작업 시작 후 120 μs에 준비되고 CPU가 50 μs 간격으로 상태를 폴링한다. 첫 폴링을 0 μs에 수행했다면 준비 상태를 처음 관찰하는 시점은 몇 μs인가?",
     "questionType": "SHORT_ANSWER",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.device-io.programmed-io"],
     "acceptedAnswers": ["150 μs", "150us", "150 us", "150"],
-    "explanationMarkdown": "Polling 시점은 0, 50, 100, 150 μs다. Device가 120 μs에 ready가 되므로 그 뒤 첫 polling인 150 μs에 상태를 관찰한다."
+    "explanationMarkdown": "폴링 시점은 0, 50, 100, 150 μs다. 장치가 120 μs에 준비되므로 그 뒤 첫 폴링인 150 μs에 상태를 관찰한다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.device-io.programmed-io.q3",
-    "promptMarkdown": "초저지연 device는 보통 5 μs 안에 완료되지만 초당 수십만 번 event가 발생한다. 무조건 interrupt가 polling보다 낫다고 결론 내릴 수 없는 이유를 CPU cost, wakeup 지연 시간, event rate 관점에서 설명하라.",
+    "promptMarkdown": "초저지연 장치는 보통 5 μs 안에 완료되지만 초당 수십만 번 사건이 발생한다. 무조건 인터럽트가 폴링보다 낫다고 결론 내릴 수 없는 이유를 CPU 비용, 깨우기 지연 시간, 사건 발생률 관점에서 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.device-io.programmed-io"],
-    "modelAnswer": "Event가 매우 짧고 빈번하면 매번 interrupt/trap/context handling을 하는 비용과 wakeup 지연 시간이 실제 device wait보다 커질 수 있다. Busy polling은 CPU core를 계속 소비하지만 completion을 빠르게 관찰할 수 있으므로 dedicated core, power budget, interrupt moderation/batching과 실제 지연 시간/CPU utilization을 비교해 선택해야 한다.",
-    "explanationMarkdown": "Event가 매우 빠르고 빈번하면 interrupt 진입·복귀 비용과 wakeup 지연이 실제 device wait보다 더 커질 수 있다. Polling은 CPU를 소비하는 대신 completion을 즉시 관찰할 수 있으므로 event rate와 latency·CPU budget을 함께 비교해야 한다."
+    "modelAnswer": "사건이 매우 짧고 빈번하면 매번 인터럽트·트랩·문맥 처리를 하는 비용과 깨우기 지연 시간이 실제 장치 대기보다 커질 수 있다. 바쁜 대기 폴링은 CPU 코어를 계속 소비하지만 완료를 빠르게 관찰할 수 있으므로 전용 코어, 전력 예산, 인터럽트 완화·묶음 처리와 실제 지연 시간·CPU 사용률을 비교해 선택해야 한다.",
+    "explanationMarkdown": "사건이 매우 빠르고 빈번하면 인터럽트 진입·복귀 비용과 깨우기 지연이 실제 장치 대기보다 더 커질 수 있다. 폴링은 CPU를 소비하는 대신 완료를 즉시 관찰할 수 있으므로 사건 발생률과 지연 시간·CPU 예산을 함께 비교해야 한다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.device-io.memory-mapped-io.q1",
-    "promptMarkdown": "MMIO register access를 일반 RAM access와 동일하게 취급할 수 없는 이유로 가장 적절한 것은?",
+    "promptMarkdown": "MMIO 레지스터 접근을 일반 RAM 접근과 동일하게 취급할 수 없는 이유로 가장 적절한 것은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.device-io.memory-mapped-io"],
     "choices": [
-      {"key":"A","content":"read/write가 device command, status consumption 같은 side effect와 별도 ordering/cacheability 규칙을 가질 수 있다.","displayOrder":0,"rationaleMarkdown":"MMIO read/write는 event 확인·명령 전달·장치 상태 조회가 될 수 있어 접근을 반복하거나 순서를 바꾸면 동작이 달라질 수 있다. mapping 속성·순서·접근 폭도 platform 규칙이 정하므로 일반 cached RAM 가정을 그대로 적용할 수 없다."},
-      {"key":"B","content":"MMIO address는 어떤 architecture에서도 virtual address를 사용할 수 없다.","displayOrder":1,"rationaleMarkdown":"device register는 physical bus 주소에 도달하기 전에 프로세스나 kernel의 가상 주소 공간에 mapping될 수 있다. 필요한 mapping과 privilege는 platform/OS 문제이지 가상 주소를 보편적으로 금지하는 것은 아니다."},
-      {"key":"C","content":"MMIO read는 항상 side effect가 없고 CPU cache에 무기한 저장해도 된다.","displayOrder":2,"rationaleMarkdown":"device register는 read-to-clear·FIFO-pop·command side effect가 있을 수 있고, 낡은 값을 cache하면 hardware 변화를 놓칠 수 있다. driver는 architecture와 장치 계약에 맞는 mapping 및 접근 primitive를 사용한다."},
-      {"key":"D","content":"MMIO write는 device specification과 무관하게 항상 8-byte access만 허용한다.","displayOrder":3,"rationaleMarkdown":"지원하는 MMIO 접근 폭은 장치와 platform interface가 정한다. 일부 register는 좁은 접근을 허용하거나 정렬된 특정 폭을 요구한다. 모든 장치에 8 byte를 강제하면 유효한 장치 interface 다수를 쓸 수 없다."}
+      {"key":"A","content":"읽기·쓰기가 장치 명령, 상태 소비 같은 부작용과 별도 순서·캐시 가능성 규칙을 가질 수 있다.","displayOrder":0,"rationaleMarkdown":"MMIO 읽기·쓰기는 사건 확인·명령 전달·장치 상태 조회가 될 수 있어 접근을 반복하거나 순서를 바꾸면 동작이 달라질 수 있다. 매핑 속성·순서·접근 폭도 플랫폼 규칙이 정하므로 일반 캐시 가능한 RAM 가정을 그대로 적용할 수 없다."},
+      {"key":"B","content":"MMIO 주소는 어떤 아키텍처에서도 가상 주소를 사용할 수 없다.","displayOrder":1,"rationaleMarkdown":"장치 레지스터는 물리 버스 주소에 도달하기 전에 프로세스나 커널의 가상 주소 공간에 매핑될 수 있다. 필요한 매핑과 특권은 플랫폼·OS 문제이지 가상 주소를 보편적으로 금지하는 것은 아니다."},
+      {"key":"C","content":"MMIO 읽기는 항상 부작용이 없고 CPU 캐시에 무기한 저장해도 된다.","displayOrder":2,"rationaleMarkdown":"장치 레지스터는 읽으면 지워지는 상태, FIFO pop, 명령 부작용이 있을 수 있고 낡은 값을 캐시하면 하드웨어 변화를 놓칠 수 있다. 드라이버는 아키텍처와 장치 계약에 맞는 매핑 및 접근 기능을 사용한다."},
+      {"key":"D","content":"MMIO 쓰기는 장치 명세와 무관하게 항상 8바이트 접근만 허용한다.","displayOrder":3,"rationaleMarkdown":"지원하는 MMIO 접근 폭은 장치와 플랫폼 인터페이스가 정한다. 일부 레지스터는 좁은 접근을 허용하거나 정렬된 특정 폭을 요구한다. 모든 장치에 8바이트를 강제하면 유효한 장치 인터페이스 다수를 쓸 수 없다."}
     ],
     "correctChoiceKey": "A",
-    "explanationMarkdown": "MMIO write가 interconnect나 bridge의 posted buffer에 머문 채 CPU가 다음 instruction으로 진행할 수 있기 때문이다. 첫 MMIO read 자체가 status bit를 clear하는 side effect를 만들 수 있어 두 번째 read에서는 event 정보가 사라질 수 있다."
+    "explanationMarkdown": "MMIO 주소는 장치 레지스터를 가리키며 읽기·쓰기가 상태 변화나 명령 실행 같은 부작용을 낼 수 있다. 또한 접근 순서·폭과 캐시·순서 규칙이 장치 계약에 따르므로 일반 RAM처럼 임의로 읽고 쓰거나 합칠 수 없다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.device-io.memory-mapped-io.q2",
-    "promptMarkdown": "posted MMIO write 때문에 source code의 `write register A; write register B;` 순서와 device가 실제로 관찰하는 완료 시점이 단순히 같다고 볼 수 없는 이유를 설명하라.",
+    "promptMarkdown": "게시형(posted) MMIO 쓰기 때문에 소스 코드의 `레지스터 A 쓰기; 레지스터 B 쓰기;` 순서와 장치가 실제로 관찰하는 완료 시점이 단순히 같다고 볼 수 없는 이유를 설명하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.device-io.memory-mapped-io"],
-    "modelAnswer": "MMIO write가 interconnect나 bridge의 posted buffer에 머문 채 CPU가 다음 instruction으로 진행할 수 있기 때문이다. Device specification과 platform API가 순서를 요구한다면 read-back, ordered accessor 또는 적절한 I/O barrier처럼 documented mechanism을 사용해야 한다.",
-    "explanationMarkdown": "Posted MMIO write는 CPU가 다음 instruction으로 진행한 뒤에도 interconnect/bridge에 남아 있을 수 있다. Device가 요구하는 ordering은 일반 source-code 순서만 믿지 말고 documented accessor, read-back 또는 I/O barrier로 보장해야 한다."
+    "modelAnswer": "MMIO 쓰기가 인터커넥트나 브리지의 게시형 버퍼에 머문 채 CPU가 다음 명령어로 진행할 수 있기 때문이다. 장치 명세와 플랫폼 API가 순서를 요구한다면 다시 읽기(read-back), 순서가 보장된 접근 함수 또는 적절한 I/O 배리어처럼 문서화된 메커니즘을 사용해야 한다.",
+    "explanationMarkdown": "게시형 MMIO 쓰기는 CPU가 다음 명령어로 진행한 뒤에도 인터커넥트나 브리지에 남아 있을 수 있다. 장치가 요구하는 순서는 일반 소스 코드 순서만 믿지 말고 문서화된 접근 함수, 다시 읽기 또는 I/O 배리어로 보장해야 한다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.device-io.memory-mapped-io.q3",
-    "promptMarkdown": "어떤 device의 status register는 read-to-clear다. Driver가 디버깅을 위해 같은 register를 두 번 연속 읽고 두 번째 값만 처리했다. 어떤 오류가 생길 수 있으며 왜 normal memory variable을 읽는 것과 다른지 설명하라.",
+    "promptMarkdown": "어떤 장치의 상태 레지스터는 읽으면 지워지는(read-to-clear) 방식이다. 드라이버가 디버깅을 위해 같은 레지스터를 두 번 연속 읽고 두 번째 값만 처리했다. 어떤 오류가 생길 수 있으며 왜 일반 메모리 변수를 읽는 것과 다른지 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.device-io.memory-mapped-io"],
-    "modelAnswer": "첫 MMIO read 자체가 status bit를 clear하는 side effect를 만들 수 있어 두 번째 read에서는 event 정보가 사라질 수 있다. Normal RAM read는 일반적으로 값을 관찰하는 것만으로 device state를 소비하지 않지만 MMIO semantics는 device specification이 정하므로 accessor 호출 횟수와 순서도 correctness의 일부다.",
-    "explanationMarkdown": "MMIO register read는 단순 관찰이 아니라 device state를 바꾸는 operation일 수 있다. Read-to-clear register를 두 번 읽으면 첫 read가 event를 소비해 두 번째에는 정보가 사라질 수 있으므로 접근 횟수와 순서 자체가 protocol이다."
+    "modelAnswer": "첫 MMIO 읽기 자체가 상태 비트를 지우는 부작용을 만들 수 있어 두 번째 읽기에서는 사건 정보가 사라질 수 있다. 일반 RAM 읽기는 보통 값을 관찰하는 것만으로 장치 상태를 소비하지 않지만 MMIO의 의미는 장치 명세가 정하므로 접근 함수 호출 횟수와 순서도 정확성의 일부다.",
+    "explanationMarkdown": "MMIO 레지스터 읽기는 단순 관찰이 아니라 장치 상태를 바꾸는 연산일 수 있다. 읽으면 지워지는 레지스터를 두 번 읽으면 첫 읽기가 사건을 소비해 두 번째에는 정보가 사라질 수 있으므로 접근 횟수와 순서 자체가 프로토콜이다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.device-io.dma.q1",
-    "promptMarkdown": "DMA buffer와 address에 대한 설명으로 가장 정확한 것은?",
+    "promptMarkdown": "DMA 버퍼와 주소에 대한 설명으로 가장 정확한 것은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.device-io.dma"],
     "choices": [
-      {"key":"A","content":"DMA는 interrupt와 같은 말이므로 data transfer는 여전히 CPU가 byte마다 수행한다.","displayOrder":0,"rationaleMarkdown":"DMA는 CPU가 byte마다 옮기지 않고 controller가 memory와 데이터를 주고받게 한다. interrupt는 완료를 CPU에 알릴 수 있지만 통지와 데이터 이동은 별도 책임이다."},
-      {"key":"B","content":"DMA를 사용하면 CPU와 device가 같은 buffer를 아무 synchronization 없이 동시에 수정해도 된다.","displayOrder":1,"rationaleMarkdown":"장치가 비동기적으로 DMA buffer에 접근하는 동안 CPU도 같은 buffer를 읽거나 쓸 수 있다. 소유권 전환·memory barrier·필요한 cache 동기화가 race와 낡거나 손상된 데이터를 막는다."},
-      {"key":"C","content":"DMA completion 전에 software가 buffer를 free해도 controller가 자동으로 새 address를 찾는다.","displayOrder":2,"rationaleMarkdown":"장치는 완료나 명시적 취소까지 descriptor와 DMA 주소를 계속 사용할 수 있다. buffer를 일찍 해제하면 장치가 다른 용도로 재할당된 메모리를 덮어쓸 수 있으므로 문서화된 lifecycle을 지켜야 한다."},
-      {"key":"D","content":"Device가 사용하는 DMA address는 IOMMU/bus mapping 때문에 CPU virtual address와 같다고 가정할 수 없고 ownership/sync 규칙도 지켜야 한다.","displayOrder":3,"rationaleMarkdown":"DMA 주소는 장치의 bus/IOMMU mapping 영역에서 해석되므로 CPU 가상 주소나 물리 주소와 같다고 할 수 없다. driver는 전송 완료까지 buffer 수명과 소유권·가시성 동기화도 관리해야 한다."}
+      {"key":"A","content":"DMA는 인터럽트와 같은 말이므로 데이터 전송은 여전히 CPU가 바이트마다 수행한다.","displayOrder":0,"rationaleMarkdown":"DMA는 CPU가 바이트마다 옮기지 않고 컨트롤러가 메모리와 데이터를 주고받게 한다. 인터럽트는 완료를 CPU에 알릴 수 있지만 통지와 데이터 이동은 별도 책임이다."},
+      {"key":"B","content":"DMA를 사용하면 CPU와 장치가 같은 버퍼를 아무 동기화 없이 동시에 수정해도 된다.","displayOrder":1,"rationaleMarkdown":"장치가 비동기적으로 DMA 버퍼에 접근하는 동안 CPU도 같은 버퍼를 읽거나 쓸 수 있다. 소유권 전환·메모리 배리어·필요한 캐시 동기화가 경쟁 상태와 낡거나 손상된 데이터를 막는다."},
+      {"key":"C","content":"DMA 완료 전에 소프트웨어가 버퍼를 해제해도 컨트롤러가 자동으로 새 주소를 찾는다.","displayOrder":2,"rationaleMarkdown":"장치는 완료나 명시적 취소까지 디스크립터와 DMA 주소를 계속 사용할 수 있다. 버퍼를 일찍 해제하면 장치가 다른 용도로 재할당된 메모리를 덮어쓸 수 있으므로 문서화된 생명주기를 지켜야 한다."},
+      {"key":"D","content":"장치가 사용하는 DMA 주소는 IOMMU/버스 매핑 때문에 CPU 가상 주소와 같다고 가정할 수 없고 소유권·동기화 규칙도 지켜야 한다.","displayOrder":3,"rationaleMarkdown":"DMA 주소는 장치의 버스/IOMMU 매핑 영역에서 해석되므로 CPU 가상 주소나 물리 주소와 같다고 할 수 없다. 드라이버는 전송 완료까지 버퍼 수명과 소유권·가시성 동기화도 관리해야 한다."}
     ],
     "correctChoiceKey": "D",
-    "explanationMarkdown": "Device가 비동기적으로 같은 memory를 읽거나 쓰는 동안 CPU가 내용을 바꾸면 transfer data race와 corruption이 생길 수 있다. NIC/DMA controller는 descriptor가 가리키는 buffer를 completion 전까지 비동기적으로 읽을 수 있다."
+    "explanationMarkdown": "DMA 디스크립터에는 CPU 가상 주소를 그대로 넣는 것이 아니라 장치가 접근할 수 있도록 매핑한 DMA 주소를 사용한다. 전송 전에는 버퍼와 매핑을 준비하고, 완료 후에는 동기화를 거쳐 CPU와 장치 사이의 소유권을 맞춘 뒤 버퍼를 사용한다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.device-io.dma.q2",
-    "promptMarkdown": "DMA streaming mapping에서 CPU가 device에 buffer ownership을 넘긴 뒤 해당 buffer를 계속 수정하면 안 되는 이유를 설명하라.",
+    "promptMarkdown": "DMA 스트리밍 매핑에서 CPU가 장치에 버퍼 소유권을 넘긴 뒤 해당 버퍼를 계속 수정하면 안 되는 이유를 설명하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.device-io.dma"],
-    "modelAnswer": "Device가 비동기적으로 같은 memory를 읽거나 쓰는 동안 CPU가 내용을 바꾸면 transfer data race와 corruption이 생길 수 있다. 또한 non-coherent platform에서는 CPU cache와 device view가 달라질 수 있으므로 DMA API가 요구하는 map/sync/unmap과 ownership 전환 시점을 지켜야 한다.",
-    "explanationMarkdown": "DMA 중에는 device와 CPU가 같은 buffer를 비동기적으로 볼 수 있으므로 ownership을 동시에 가지면 data race가 생긴다. 특히 non-coherent system에서는 cache visibility까지 고려해 DMA API의 ownership 전환과 sync 규칙을 지켜야 한다."
+    "modelAnswer": "장치가 비동기적으로 같은 메모리를 읽거나 쓰는 동안 CPU가 내용을 바꾸면 전송 데이터 경쟁과 손상이 생길 수 있다. 또한 캐시 비일관(non-coherent) 플랫폼에서는 CPU 캐시와 장치가 보는 값이 달라질 수 있으므로 DMA API가 요구하는 map/sync/unmap과 소유권 전환 시점을 지켜야 한다.",
+    "explanationMarkdown": "DMA 중에는 장치와 CPU가 같은 버퍼를 비동기적으로 볼 수 있으므로 소유권을 동시에 가지면 데이터 경쟁이 생긴다. 특히 캐시 비일관 시스템에서는 캐시 가시성까지 고려해 DMA API의 소유권 전환과 동기화 규칙을 지켜야 한다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.device-io.dma.q3",
-    "promptMarkdown": "NIC transmit descriptor에 buffer A를 제출한 직후 application이 해당 memory를 object pool에 반환했고 다른 요청이 A를 덮어썼다. DMA completion은 아직 오지 않았다. 전송 데이터가 깨질 수 있는 이유와 안전한 lifetime 경계를 설명하라.",
+    "promptMarkdown": "NIC 송신 디스크립터에 버퍼 A를 제출한 직후 애플리케이션이 해당 메모리를 객체 풀에 반환했고 다른 요청이 A를 덮어썼다. DMA 완료는 아직 오지 않았다. 전송 데이터가 깨질 수 있는 이유와 안전한 수명 경계를 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.device-io.dma"],
-    "modelAnswer": "NIC/DMA controller는 descriptor가 가리키는 buffer를 completion 전까지 비동기적으로 읽을 수 있다. Pool 재사용으로 같은 memory가 덮어써지면 device가 원래 payload 대신 변경된 bytes를 전송할 수 있다. Buffer는 DMA ownership이 끝났다는 completion과 필요한 sync를 확인한 뒤에야 재사용/free해야 한다.",
-    "explanationMarkdown": "Descriptor 제출 뒤 completion 전까지는 NIC가 buffer를 계속 읽을 수 있다. 이 memory를 pool에 먼저 반환하면 다른 요청의 overwrite와 DMA read가 겹칠 수 있으므로 completion과 필요한 synchronization 뒤에만 재사용해야 한다."
+    "modelAnswer": "NIC/DMA 컨트롤러는 디스크립터가 가리키는 버퍼를 완료 전까지 비동기적으로 읽을 수 있다. 풀 재사용으로 같은 메모리가 덮어써지면 장치가 원래 페이로드 대신 변경된 바이트를 전송할 수 있다. 버퍼는 DMA 소유권이 끝났다는 완료와 필요한 동기화를 확인한 뒤에야 재사용하거나 해제해야 한다.",
+    "explanationMarkdown": "디스크립터 제출 뒤 완료 전까지는 NIC가 버퍼를 계속 읽을 수 있다. 이 메모리를 풀에 먼저 반환하면 다른 요청의 덮어쓰기와 DMA 읽기가 겹칠 수 있으므로 완료와 필요한 동기화 뒤에만 재사용해야 한다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.device-io.device-cpu-memory-path.q1",
-    "promptMarkdown": "DMA 기반 receive path의 일반적인 순서로 가장 자연스러운 것은?",
+    "promptMarkdown": "DMA 기반 수신 경로의 일반적인 순서로 가장 자연스러운 것은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.device-io.device-cpu-memory-path"],
     "choices": [
-      {"key":"A","content":"interrupt가 모든 bytes를 memory에 복사 → DMA가 application method를 호출","displayOrder":0,"rationaleMarkdown":"interrupt는 완료나 event를 알릴 뿐 보통 수신 byte를 하나씩 memory로 복사하지 않는다. DMA 수신에서는 software가 완료 통지를 처리하기 전에 장치가 준비된 buffer에 쓴다."},
-      {"key":"B","content":"application이 완료 callback 실행 → 그 뒤 device가 처음 data를 수신 → 마지막에 buffer를 할당","displayOrder":1,"rationaleMarkdown":"장치가 데이터를 받아 buffer에 쓰기 전에는 software가 완료된 수신 buffer를 소비할 수 없다. driver는 장치에 넘기기 전에 descriptor와 memory를 준비한다."},
-      {"key":"C","content":"CPU/driver가 descriptor와 buffer를 준비 → device/DMA가 memory에 기록 → completion을 알림 → software가 buffer를 소비","displayOrder":2,"rationaleMarkdown":"driver가 먼저 descriptor와 buffer를 장치에서 쓸 수 있게 제공하고 DMA가 수신 데이터를 기록한 뒤 완료를 알린다. software는 buffer를 읽기 전에 완료와 소유권을 확인해 장치가 사용하는 동안 접근하지 않는다."},
-      {"key":"D","content":"queue에 descriptor를 넣는 순간 physical device transfer도 항상 끝난다","displayOrder":3,"rationaleMarkdown":"descriptor 공개는 작업을 시작하거나 허용하지만 실제 전송 완료를 뜻하지 않는다. 장치는 비동기로 전송을 수행하고 interface에 따라 나중에 완료를 보고한다."}
+      {"key":"A","content":"인터럽트가 모든 바이트를 메모리에 복사 → DMA가 애플리케이션 메서드를 호출","displayOrder":0,"rationaleMarkdown":"인터럽트는 완료나 사건을 알릴 뿐 보통 수신 바이트를 하나씩 메모리로 복사하지 않는다. DMA 수신에서는 소프트웨어가 완료 통지를 처리하기 전에 장치가 준비된 버퍼에 쓴다."},
+      {"key":"B","content":"애플리케이션이 완료 콜백 실행 → 그 뒤 장치가 처음 데이터를 수신 → 마지막에 버퍼를 할당","displayOrder":1,"rationaleMarkdown":"장치가 데이터를 받아 버퍼에 쓰기 전에는 소프트웨어가 완료된 수신 버퍼를 소비할 수 없다. 드라이버는 장치에 넘기기 전에 디스크립터와 메모리를 준비한다."},
+      {"key":"C","content":"CPU/드라이버가 디스크립터와 버퍼를 준비 → 장치/DMA가 메모리에 기록 → 완료를 알림 → 소프트웨어가 버퍼를 소비","displayOrder":2,"rationaleMarkdown":"드라이버가 먼저 디스크립터와 버퍼를 장치에서 쓸 수 있게 제공하고 DMA가 수신 데이터를 기록한 뒤 완료를 알린다. 소프트웨어는 버퍼를 읽기 전에 완료와 소유권을 확인해 장치가 사용하는 동안 접근하지 않는다."},
+      {"key":"D","content":"큐에 디스크립터를 넣는 순간 물리 장치 전송도 항상 끝난다","displayOrder":3,"rationaleMarkdown":"디스크립터 공개는 작업을 시작하거나 허용하지만 실제 전송 완료를 뜻하지 않는다. 장치는 비동기로 전송을 수행하고 인터페이스에 따라 나중에 완료를 보고한다."}
     ],
     "correctChoiceKey": "C",
-    "explanationMarkdown": "Driver가 descriptor와 receive buffer를 준비해 device에 알리면 device가 DMA로 memory에 기록하고 completion을 알린다. 그 뒤 software가 ownership과 동기화 조건을 확인한 후 buffer를 소비한다."
+    "explanationMarkdown": "드라이버가 디스크립터와 수신 버퍼를 준비해 장치에 알리면 장치가 DMA로 메모리에 기록하고 완료를 알린다. 그 뒤 소프트웨어가 소유권과 동기화 조건을 확인한 후 버퍼를 소비한다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.device-io.device-cpu-memory-path.q2",
-    "promptMarkdown": "`write()`나 `send()` 같은 software API가 성공해 반환한 시점과 physical device가 실제 전송을 완료한 시점을 일반적으로 같은 순간으로 볼 수 없는 이유를 설명하라.",
+    "promptMarkdown": "`write()`나 `send()` 같은 소프트웨어 API가 성공해 반환한 시점과 물리 장치가 실제 전송을 완료한 시점을 일반적으로 같은 순간으로 볼 수 없는 이유를 설명하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.device-io.device-cpu-memory-path"],
-    "modelAnswer": "Software API는 data를 kernel buffer/queue에 받아들였거나 일정 contract를 만족했다는 뜻일 수 있고, 이후 queueing, DMA, device transfer가 비동기로 남아 있을 수 있다. 정확한 완료 의미는 API와 device path의 contract를 확인해야 하며 application completion, kernel enqueue, DMA completion, physical transmission을 구분해야 한다.",
-    "explanationMarkdown": "Software API 반환은 보통 어떤 software boundary까지 data가 받아들여졌다는 뜻이지 physical device completion과 동일하지 않다. Application enqueue, kernel queue, DMA, 실제 device transfer의 완료 시점을 구분해 API 계약을 읽어야 한다."
+    "modelAnswer": "소프트웨어 API는 데이터를 커널 버퍼나 큐에 받아들였거나 일정 계약을 만족했다는 뜻일 수 있고, 이후 큐 대기, DMA, 장치 전송이 비동기로 남아 있을 수 있다. 정확한 완료 의미는 API와 장치 경로의 계약을 확인해야 하며 애플리케이션 완료, 커널 큐 등록, DMA 완료, 물리 전송을 구분해야 한다.",
+    "explanationMarkdown": "소프트웨어 API 반환은 보통 어떤 소프트웨어 경계까지 데이터가 받아들여졌다는 뜻이지 물리 장치 완료와 동일하지 않다. 애플리케이션 등록, 커널 큐, DMA, 실제 장치 전송의 완료 시점을 구분해 API 계약을 읽어야 한다."
   },
   {
     "kind": "question",
     "contentKey": "computer-architecture.core.device-io.device-cpu-memory-path.q3",
-    "promptMarkdown": "Storage queue depth를 4에서 128로 높였더니 처리량은 증가했지만 p99 요청 지연 시간과 in-flight memory가 크게 늘었다. Device-CPU-memory path 관점에서 이 현상을 설명하라.",
+    "promptMarkdown": "저장장치 큐 깊이를 4에서 128로 높였더니 처리량은 증가했지만 p99 요청 지연 시간과 처리 중 메모리가 크게 늘었다. 장치-CPU-메모리 경로 관점에서 이 현상을 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": ["computer-architecture.core.device-io.device-cpu-memory-path"],
-    "modelAnswer": "더 많은 descriptor/요청을 동시에 제출하면 device와 DMA가 병렬성을 활용해 utilization과 aggregate 처리량을 높일 수 있다. 하지만 각 요청이 queue에서 더 오래 기다릴 수 있고 completion 전까지 buffer/descriptor ownership이 유지되어 in-flight memory도 증가한다. 따라서 queue depth는 처리량만이 아니라 queuing 지연 시간, memory pressure, cancellation/error recovery와 함께 조정해야 한다.",
-    "explanationMarkdown": "Queue depth를 키우면 device가 더 많은 요청을 병렬로 처리해 throughput을 높일 수 있지만 대기 요청과 in-flight buffer도 함께 늘어난다. 그래서 처리량 이득과 p99 queueing latency·memory pressure 사이의 trade-off를 같이 봐야 한다."
+    "modelAnswer": "더 많은 디스크립터와 요청을 동시에 제출하면 장치와 DMA가 병렬성을 활용해 사용률과 전체 처리량을 높일 수 있다. 하지만 각 요청이 큐에서 더 오래 기다릴 수 있고 완료 전까지 버퍼·디스크립터 소유권이 유지되어 처리 중 메모리도 증가한다. 따라서 큐 깊이는 처리량만이 아니라 큐 대기 지연 시간, 메모리 압박, 취소·오류 복구와 함께 조정해야 한다.",
+    "explanationMarkdown": "큐 깊이를 키우면 장치가 더 많은 요청을 병렬로 처리해 처리량을 높일 수 있지만 대기 요청과 처리 중 버퍼도 함께 늘어난다. 그래서 처리량 이득과 p99 큐 대기 지연·메모리 압박 사이의 트레이드오프를 같이 봐야 한다."
   }
 ]

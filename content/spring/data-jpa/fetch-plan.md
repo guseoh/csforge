@@ -3,8 +3,8 @@ kind: concept
 contentKey: spring.core.data-jpa.fetch-plan
 topicContentKey: spring.core.data-jpa
 slug: fetch-plan
-title: "fetch plan과 N+1"
-summary: "연관관계 LAZY/EAGER 설정과 실제 query별 fetch plan을 구분하고, parent 목록 뒤 association 접근이 반복 secondary query를 만드는 N+1을 query count로 진단한다"
+title: "조회 계획(fetch plan)과 N+1"
+summary: "연관관계의 LAZY/EAGER 설정과 실제 쿼리별 조회 계획을 구분하고, 부모 목록 조회 뒤 연관관계 접근이 추가 쿼리를 반복하는 N+1을 실제 쿼리 횟수로 진단한다"
 level: 2
 status: PUBLISHED
 displayOrder: 30
@@ -14,17 +14,17 @@ references:
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
-    relationNote: "EAGER/LAZY fetch semantics와 fetch join specification 확인"
+    relationNote: "EAGER/LAZY 로딩 의미와 fetch join 명세 확인"
   - url: "https://docs.spring.io/spring-data/jpa/reference/jpa/query-methods.html"
     title: "Spring Data JPA Reference: JPA Query Methods"
     referenceType: OFFICIAL
     language: en
     displayOrder: 2
-    relationNote: "@EntityGraph 등 query-specific fetch 구성 참고"
+    relationNote: "@EntityGraph 등 쿼리별 조회 계획 구성 참고"
 ---
-# fetch plan과 N+1
+# 조회 계획(fetch plan)과 N+1
 
-주문 20개를 조회한 뒤 각 주문의 회원 이름을 화면에 보여주려 한다고 해 보겠습니다.
+주문 20개를 조회한 뒤 각 주문의 회원 이름을 화면에 보여준다고 해 보겠습니다.
 
 ```java
 List<Order> orders = orderRepository.findAll(pageable).getContent();
@@ -33,7 +33,7 @@ for (Order order : orders) {
 }
 ```
 
-`member` association이 lazy이고 처음 query에서 함께 가져오지 않았다면 각 order의 member를 접근하는 시점에 추가 query가 실행될 수 있습니다.
+`member` 연관관계가 LAZY이고 첫 쿼리에서 함께 가져오지 않았다면 각 주문의 `member`에 접근하는 시점에 추가 쿼리가 실행될 수 있습니다.
 
 ```text
 1) SELECT orders ... limit 20      -> 1 query
@@ -43,20 +43,20 @@ for (Order order : orders) {
 21) SELECT member WHERE id=?       -> order 20
 ```
 
-이런 **첫 목록 query 1개 + 각 row/association마다 추가 query N개** 패턴을 N+1이라고 부릅니다.
+이런 **첫 목록 쿼리 1개 + 각 행·연관관계 접근마다 추가 쿼리 N개** 패턴을 N+1이라고 부릅니다.
 
-### LAZY가 나쁜 것이 아니라 실제 use case의 fetch plan이 없는 것이 문제다
+### LAZY가 나쁜 것이 아니라 기능에 맞는 조회 계획이 없는 것이 문제다
 
-모든 association을 `EAGER`로 바꾸면 N+1이 자동으로 사라진다고 생각하기 쉽지만 그렇지 않습니다. provider는 eager requirement를 만족시키기 위해 join 대신 secondary query를 사용할 수 있고, 필요 없는 graph까지 항상 로딩해 비용이 커질 수 있습니다.
+모든 연관관계를 `EAGER`로 바꾸면 N+1이 자동으로 사라진다고 생각하기 쉽지만 그렇지 않습니다. JPA provider는 EAGER 요구를 만족시키기 위해 join 대신 추가 쿼리를 사용할 수 있고 필요하지 않은 연관관계까지 항상 읽어 비용이 커질 수 있습니다.
 
 ```text
-mapping fetch type = 기본/계약 수준의 로딩 기대
-query fetch plan    = 이번 use case에서 무엇을 한 번에 가져올지
+연관관계의 fetch type = 기본 로딩 계약
+이번 쿼리의 fetch plan = 이 기능에서 무엇을 함께 가져올지
 ```
 
-대부분의 association을 lazy로 두고 실제 화면/use case마다 필요한 fetch plan을 명시적으로 선택하는 이유가 여기에 있습니다.
+대부분의 연관관계를 LAZY로 두고 실제 화면·기능마다 필요한 조회 계획을 명시적으로 선택하는 이유가 여기에 있습니다.
 
-### fetch join은 한 query에서 association을 가져오게 의도를 표현한다
+### fetch join은 한 쿼리에서 연관관계를 함께 가져오려는 의도를 표현한다
 
 ```jpql
 select o
@@ -65,7 +65,7 @@ join fetch o.member
 where o.status = :status
 ```
 
-member가 to-one이라면 list pagination과도 비교적 잘 결합할 수 있습니다. 하지만 collection fetch join은 SQL row 수가 parent×child로 늘어나고 pagination과 충돌할 수 있습니다.
+`member`처럼 to-one 연관관계는 목록 페이지 조회와 비교적 잘 결합할 수 있습니다. 하지만 collection fetch join은 SQL 결과 행 수가 부모×자식 수만큼 늘어나 페이지네이션과 충돌할 수 있습니다.
 
 ```text
 Order 1 - Item A
@@ -74,11 +74,11 @@ Order 1 - Item C
 Order 2 - Item D
 ```
 
-DB는 네 row를 보지만 application은 Order 두 개를 원합니다. 여기서 SQL-level `LIMIT`을 걸면 parent 기준 page가 깨질 수 있어 provider가 memory pagination warning/extra work를 할 수 있습니다.
+DB는 네 행을 보지만 애플리케이션은 Order 두 개를 원합니다. 이런 쿼리에 SQL 수준의 `LIMIT`을 적용하면 “부모 Order 20개”라는 페이지 단위와 맞지 않을 수 있고, JPA provider의 처리 전략에 따라 메모리 페이지네이션이나 추가 작업이 생길 수 있습니다.
 
-### batch fetch는 LAZY를 유지하면서 secondary query를 묶는다
+### batch fetch는 LAZY를 유지하면서 추가 쿼리를 묶는다
 
-association을 한 개씩 조회하는 대신 여러 identifier를 모아:
+연관관계를 한 개씩 조회하는 대신 여러 식별자를 모아 다음처럼 가져올 수 있습니다.
 
 ```sql
 SELECT *
@@ -86,18 +86,18 @@ FROM member
 WHERE id IN (?, ?, ?, ...)
 ```
 
-처럼 가져올 수 있습니다. query 수를 크게 줄이면서 collection pagination 문제를 피할 수 있지만, **언제 lazy initialization이 발생하는지**를 코드만 보고 추론하기가 fetch join보다 어려울 수 있습니다.
+쿼리 수를 크게 줄이면서 collection fetch join의 페이지네이션 문제를 피할 수 있지만, **어느 시점에 지연 로딩이 시작되는지**를 코드만 보고 파악하기는 fetch join보다 어려울 수 있습니다.
 
-### N+1은 “발생할 수 있다”가 아니라 실제 query count로 확인한다
+### N+1은 “발생할 수 있다”가 아니라 실제 쿼리 횟수로 확인한다
 
-repository method 한 줄만 보고 최적화하지 않습니다.
+Repository 메서드 한 줄만 보고 최적화하지 않습니다.
 
-1. 어떤 API/use case에서 문제가 있는가?
+1. 어떤 API·기능에서 문제가 있는가?
 2. 실제 SQL이 몇 번 실행되는가?
-3. parent/child cardinality가 얼마인가?
-4. pagination이 있는가?
-5. 필요한 data shape는 entity graph인가 DTO projection인가?
+3. 부모와 자식 데이터의 개수 관계가 어떤가?
+4. 페이지네이션이 있는가?
+5. 필요한 응답 데이터 모양은 Entity graph인가 DTO projection인가?
 
 fetch join, entity graph, batch fetch, projection 중 무엇이 맞는지는 이 조건에 따라 달라집니다.
 
-JPA 성능을 학습할 때 가장 중요한 습관은 **Java object traversal을 SQL execution과 연결해서 보는 것**입니다. getter 한 번이 이미 로딩된 memory access인지 DB query trigger인지 구분할 수 있어야 합니다.
+JPA 성능을 학습할 때 가장 중요한 습관은 **Java 객체 탐색을 실제 SQL 실행과 연결해서 보는 것**입니다. getter 한 번이 이미 읽어 둔 메모리 접근인지, 추가 DB 쿼리를 일으키는 접근인지 구분할 수 있어야 합니다.

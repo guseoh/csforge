@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.http-state-intermediary.forwarded-header
 topicContentKey: network-http.core.http-state-intermediary
 slug: forwarded-header
-title: "Forwarded Header"
+title: "Forwarded 헤더"
 summary: "proxy가 자신이 관찰한 client·host·scheme·hop 정보를 표준 Forwarded field로 전달하는 방식을 설명한다."
 level: 2
 status: PUBLISHED
@@ -17,7 +17,7 @@ references:
     recommendation: "forwarded identity와 trusted intermediary 경계를 확인한다."
     displayOrder: 1
 ---
-# Forwarded Header
+# Forwarded 헤더
 
 HTTP proxy가 request를 다음 hop으로 전달하면 backend가 보는 socket peer나 host·scheme은 원래 client가 사용한 값과 달라질 수 있다. `Forwarded` field는 intermediary가 자신이 관찰한 정보를 `for`, `by`, `host`, `proto` 같은 parameter로 다음 hop에 전달하기 위한 표준 형식이다.
 

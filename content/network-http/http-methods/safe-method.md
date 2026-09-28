@@ -3,8 +3,8 @@ kind: concept
 contentKey: network-http.core.http-methods.safe-method
 topicContentKey: network-http.core.http-methods
 slug: safe-method
-title: "Safe Method와 Read-Only Semantics"
-summary: "HTTP safe method가 client가 resource state change를 의도하지 않는 read-only semantics라는 의미를 설명한다."
+title: "안전한 메서드(Safe Method)"
+summary: "안전한 HTTP 메서드가 클라이언트가 대상 리소스의 상태 변경을 요청하지 않는 읽기 중심 의미를 가지며, 서버 내부의 모든 부수 효과를 금지하는 개념은 아닌 이유를 설명한다."
 level: 1
 status: PUBLISHED
 displayOrder: 10
@@ -15,22 +15,75 @@ references:
     language: en
     displayOrder: 1
 ---
-# Safe Method와 Read-Only Semantics
+# 안전한 메서드(Safe Method)
 
-HTTP method가 **safe**하다는 것은 client가 그 request를 통해 origin server의 resource state를 변경하도록 요청하거나 기대하지 않는다는 뜻이다. RFC 9110이 정의하는 GET, HEAD, OPTIONS, TRACE가 safe method에 해당한다.
-
-여기서 `safe = server에서 아무 상태도 바뀌지 않는다`고 해석하면 지나치다. server는 GET을 처리하면서 access log를 기록하거나 metric counter를 증가시킬 수 있다. 이런 부수 효과는 client가 요청한 resource 변경의 의미가 아니므로 safe semantics와 모순되지 않는다.
-
-### Safe method에 destructive action을 숨기면 안 된다
-
-예를 들어 다음 URI를 GET으로 호출했을 때 실제 삭제가 실행되도록 설계했다고 하자.
+HTTP 메서드가 **안전하다(safe)**는 것은 클라이언트가 그 요청을 통해 대상 리소스의 상태를 변경하도록 요구하거나 기대하지 않는다는 뜻이다. RFC 9110에서 GET, HEAD, OPTIONS, TRACE가 안전한 메서드로 정의된다.
 
 ```text
+안전한 메서드의 질문
+
+클라이언트가 이 요청으로
+대상 리소스의 상태 변경을 요구하는가?
+        ↓
+아니오 → safe semantics
+```
+
+여기서 `safe = 서버에서 아무 상태도 바뀌지 않는다`라고 이해하면 안 된다.
+
+서버는 GET을 처리하면서 접근 로그를 남기거나 요청 수 지표를 증가시킬 수 있다. 광고 조회가 과금 통계를 바꾸는 것처럼 부수 효과가 생길 수도 있다. 중요한 것은 이런 변화가 **클라이언트가 GET의 의미로 요청한 리소스 상태 변경이 아니라는 점**이다.
+
+### GET에 삭제 같은 동작을 숨기면 safe 계약을 깨뜨린다
+
+다음 API를 생각해 보자.
+
+```http
 GET /posts/42?do=delete
 ```
 
-method 이름이 GET이라고 실제 effect가 safe해지는 것은 아니다. crawler, prefetcher나 link checker는 safe method를 자동 실행할 수 있다는 전제에서 동작하기 때문에, GET에 resource state 변경을 숨기면 의도하지 않은 작업이 실행될 수 있다.
+메서드 이름이 GET이라는 이유만으로 이 요청이 안전해지는 것은 아니다. 실제로 게시글을 삭제한다면 서버가 GET의 표준 의미와 맞지 않는 동작을 구현한 것이다.
 
-safe semantics는 authorization이 필요 없다는 뜻도 아니다. private resource 조회처럼 state를 변경하지 않아도 접근 권한 검사는 필요할 수 있다.
+이런 설계가 특히 위험한 이유는 크롤러, 링크 검사기, 브라우저의 사전 가져오기(prefetch) 같은 도구가 **안전한 메서드는 상태 변경을 요청하지 않는다는 전제**로 GET을 자동 실행할 수 있기 때문이다.
 
-핵심은 **safe가 server implementation의 모든 side effect를 금지하는 속성이 아니라, client가 target resource의 state change를 요청하지 않는다는 HTTP-level contract**라는 점이다.
+```text
+크롤러가 링크 발견
+      ↓
+GET 자동 요청
+      ↓
+GET 안에 삭제 동작이 숨겨져 있다면
+의도하지 않은 삭제 발생 가능
+```
+
+따라서 삭제·결제·상태 전이처럼 사용자의 명시적인 변경 의도가 필요한 작업을 GET에 숨겨서는 안 된다.
+
+### Safe는 인증·인가가 필요 없다는 뜻도 아니다
+
+안전한 메서드는 리소스 상태 변경 의도에 관한 속성이지 공개 접근 여부에 관한 속성이 아니다.
+
+```http
+GET /members/me
+```
+
+이 요청은 조회 의미이므로 안전할 수 있지만, 다른 사용자가 임의로 조회하지 못하도록 인증과 인가는 필요할 수 있다.
+
+즉 다음 속성은 서로 다른 질문이다.
+
+```text
+Safe?
+→ 상태 변경을 요청하는가?
+
+Authorized?
+→ 이 사용자가 이 리소스에 접근할 권한이 있는가?
+```
+
+### Safe와 멱등성도 같은 속성이 아니다
+
+안전한 메서드는 모두 멱등하지만, 모든 멱등 메서드가 안전한 것은 아니다. PUT과 DELETE는 상태 변경을 요청하므로 안전하지 않지만, 같은 요청을 반복했을 때 의도된 효과가 누적되지 않도록 멱등하게 정의된다.
+
+```text
+GET     safe O / idempotent O
+PUT     safe X / idempotent O
+DELETE  safe X / idempotent O
+POST    safe X / idempotent X (메서드 자체 기준)
+```
+
+핵심은 **안전한 메서드가 서버 구현의 모든 부수 효과를 금지하는 것이 아니라, 클라이언트가 대상 리소스의 상태 변경을 요청하지 않는다는 HTTP 의미 계약이라는 점**이다.

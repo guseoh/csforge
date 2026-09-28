@@ -3,8 +3,8 @@ kind: concept
 contentKey: network-http.core.ip-routing.ttl-hop-limit
 topicContentKey: network-http.core.ip-routing
 slug: ttl-hop-limit
-title: "TTL·Hop Limit"
-summary: "hop count 수명이 loop를 제한하고 만료 오류를 만드는 과정을 설명한다."
+title: "TTL과 Hop Limit"
+summary: "IPv4 TTL과 IPv6 Hop Limit이 라우터를 지날 때 감소해 잘못된 라우팅 루프의 패킷을 끝내는 방식을 설명한다."
 level: 2
 status: PUBLISHED
 displayOrder: 70
@@ -14,28 +14,36 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "IP address와 packet forwarding의 기본을 확인한다."
+    recommendation: "IPv4 주소, 헤더와 패킷 전달의 기본 규칙을 확인한다."
     displayOrder: 1
 ---
-# TTL·Hop Limit
+# TTL과 Hop Limit
 
-IPv4 TTL(Time To Live)과 IPv6 Hop Limit은 packet이 router를 지날 때 감소하는 **network-layer lifetime counter**다. 값이 0이 되면 packet은 더 이상 forwarding되지 않고 폐기된다. 이 mechanism은 잘못된 route loop에서 packet이 network를 무한히 순환하는 것을 막는다.
-
-### 이름은 TTL이지만 실제로는 hop counter처럼 동작한다
-
-현대 IP forwarding에서 TTL은 보통 router hop마다 1씩 감소한다. IPv6는 이 의미를 더 직접적으로 `Hop Limit`이라고 부른다.
+IPv4의 TTL(Time To Live)과 IPv6의 Hop Limit은 **패킷이 라우터를 무한히 순환하지 못하도록 수명을 제한하는 네트워크 계층 필드**다. 라우터를 지날 때 값이 감소하고 더 전달할 수 없는 값이 되면 패킷은 폐기된다.
 
 ```text
-initial value = 3
-router 1 → 2
-router 2 → 1
-router 3 → 0 → discard
+초기 값 = 3
+라우터 1 → 2
+라우터 2 → 1
+라우터 3 → 만료 → 폐기
 ```
 
-Router는 packet을 폐기할 때 가능하면 source에 ICMP Time Exceeded message를 보낼 수 있다.
+라우팅 설정 오류로 A와 B가 서로를 다음 홉으로 계속 선택하더라도 TTL/Hop Limit이 없으면 같은 패킷이 네트워크 자원을 계속 소비할 수 있다. 수명 제한은 이런 루프를 결국 끝내는 안전장치다.
 
-### Traceroute와의 연결
+### IPv4 TTL이라는 이름과 실제 홉 기반 동작을 구분한다
 
-Traceroute는 작은 TTL/Hop Limit부터 점차 값을 늘려 packet을 보내고, 중간 router가 돌려주는 Time Exceeded 응답을 이용해 path의 hop을 추정한다. 다만 router가 ICMP 응답을 보내지 않거나 rate limit할 수도 있으므로 traceroute 결과가 모든 실제 forwarding 상태를 완벽하게 보여 주는 것은 아니다.
+IPv4의 역사적 TTL 정의에는 시간 개념이 있지만 실제 인터넷 전달에서는 라우터를 지날 때 최소 1씩 감소하므로 일반적으로 홉 제한처럼 관찰된다. IPv6는 필드 이름부터 이 의미를 `Hop Limit`으로 명확히 표현한다.
 
-TTL/Hop Limit의 핵심은 **packet lifetime을 hop 수로 제한해 routing loop가 network resource를 무한히 소비하지 못하게 하는 것**이다.
+### 패킷이 만료되면 ICMP가 경로 진단 단서를 줄 수 있다
+
+라우터는 TTL/Hop Limit이 만료된 패킷을 버리고 출발지에 ICMP Time Exceeded 계열 메시지를 보낼 수 있다. `traceroute`는 이 특성을 이용해 작은 값부터 점차 늘려 보내면서 각 단계에서 돌아오는 ICMP 응답으로 경로의 중간 홉을 추정한다.
+
+```text
+TTL 1 → 첫 라우터에서 만료 → ICMP 응답
+TTL 2 → 두 번째 라우터에서 만료 → ICMP 응답
+...
+```
+
+다만 라우터가 ICMP를 제한·차단하거나 반환 경로가 다를 수 있어 traceroute 결과가 실제 데이터 패킷의 모든 전달 상태를 완벽하게 보여 주는 것은 아니다.
+
+핵심은 **TTL/Hop Limit이 라우팅 루프 자체를 예방하는 것이 아니라, 루프에 들어간 패킷의 수명을 제한해 무한 순환을 막는다는 점**이다.

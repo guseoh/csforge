@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.http-state-intermediary.reverse-proxy
 topicContentKey: network-http.core.http-state-intermediary
 slug: reverse-proxy
-title: "Reverse Proxy"
+title: "역방향 프록시"
 summary: "origin 앞에서 client 요청을 받아 backend로 전달하는 reverse proxy의 hop과 connection 경계를 설명한다."
 level: 1
 status: PUBLISHED
@@ -15,7 +15,7 @@ references:
     language: en
     displayOrder: 1
 ---
-# Reverse Proxy
+# 역방향 프록시
 
 reverse proxy는 origin server 앞에서 client request를 받고, 선택한 backend로 별도의 upstream request를 전달하는 server-side intermediary다. client는 proxy를 public endpoint로 보지만 backend는 proxy와의 connection을 보게 된다.
 

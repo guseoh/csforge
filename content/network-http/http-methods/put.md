@@ -3,8 +3,8 @@ kind: concept
 contentKey: network-http.core.http-methods.put
 topicContentKey: network-http.core.http-methods
 slug: put
-title: "PUT과 Target State Replacement"
-summary: "PUT이 request representation으로 target resource state를 생성하거나 대체하도록 요청하는 idempotent semantics를 설명한다."
+title: "PUT과 전체 표현 교체"
+summary: "PUT이 요청 표현으로 대상 자원의 상태를 생성하거나 대체하도록 요청하는 멱등 의미를 설명한다."
 level: 1
 status: PUBLISHED
 displayOrder: 50
@@ -15,26 +15,51 @@ references:
     language: en
     displayOrder: 1
 ---
-# PUT과 Target State Replacement
+# PUT과 전체 표현 교체
 
-PUT은 request content에 담긴 representation이 나타내는 상태로 **target resource의 현재 상태를 생성하거나 대체해 달라**고 요청하는 method다. POST가 target에게 processing 방법을 맡기는 것과 달리, PUT에서는 client가 어느 target URI에 어떤 상태를 적용하려는지 알고 있다는 점이 중요하다.
+PUT은 요청 콘텐츠에 담긴 표현(representation)이 나타내는 상태로 **대상 자원의 현재 상태를 생성하거나 대체해 달라**고 요청하는 메서드다. POST가 대상 자원에 처리 방법을 맡기는 것과 달리, PUT에서는 클라이언트가 어느 대상 URI에 어떤 상태를 적용하려는지 알고 있다는 점이 중요하다.
 
 ```text
-before: /profiles/42의 표현 상태 = {"nickname":"old"}
-                  │
-                  └─ PUT /profiles/42 {"nickname":"new"}
-after : /profiles/42의 표현 상태 = {"nickname":"new"}
-repeat: 같은 PUT ───────────────→ 원하는 target state는 그대로
+변경 전: /profiles/42의 표현 상태 = {"nickname":"old"}
+                     │
+                     └─ PUT /profiles/42 {"nickname":"new"}
+변경 후: /profiles/42의 표현 상태 = {"nickname":"new"}
+반복   : 같은 PUT ───────────────→ 원하는 대상 상태는 그대로
 ```
 
-이 전후 관계는 target의 원하는 표현 상태를 대체한다는 semantics를 보여 준다. Server가 관리하는 내부 field나 저장 방식까지 request JSON 그대로 덮어쓴다는 뜻은 아니다.
+이 전후 관계는 대상 자원의 원하는 상태를 대체한다는 의미를 보여 준다. 서버가 관리하는 내부 필드나 저장 방식을 요청 JSON 그대로 덮어쓴다는 뜻은 아니다.
 
-resource가 아직 존재하지 않고 server가 PUT으로 생성을 허용한다면 성공 후 `201 Created`를 반환할 수 있다. 기존 resource의 상태를 성공적으로 대체했다면 `200 OK`나 `204 No Content` 같은 response가 사용될 수 있다.
+자원이 아직 존재하지 않고 서버가 PUT을 통한 생성을 허용한다면 성공 후 `201 Created`를 반환할 수 있다. 기존 자원의 상태를 성공적으로 대체했다면 `200 OK`나 `204 No Content` 같은 응답을 사용할 수 있다.
 
-### PUT은 idempotent하다
+### PUT은 멱등하다
 
-같은 target에 같은 desired state를 반복해서 PUT하는 것은 새로운 effect를 계속 누적하는 의미가 아니다. 그래서 PUT은 HTTP에서 idempotent method로 정의된다. 다만 두 요청 사이에 다른 actor가 resource를 변경하거나 server가 audit history를 남기면 관찰되는 response나 내부 기록은 달라질 수 있다.
+같은 대상에 같은 원하는 상태를 반복해서 PUT하는 것은 새로운 효과를 계속 누적하는 의미가 아니다. 그래서 PUT은 HTTP에서 멱등 메서드(idempotent method)로 정의된다.
 
-PUT을 `모든 field를 DB row에 그대로 overwrite한다`는 구현 규칙으로 축소해서도 안 된다. HTTP가 정의하는 것은 target resource state를 request representation으로 생성·대체하려는 **의도**이고, server가 그 representation을 어떻게 저장하고 파생 state를 어떻게 관리하는지는 resource implementation에 속한다.
+다만 멱등성이 다음을 뜻하는 것은 아니다.
 
-부분 변경이 필요하다면 PATCH처럼 patch semantics를 명시하는 method를 사용할 수 있다. 일반적인 API 설계에서 PUT과 PATCH를 구분하는 핵심은 **target의 원하는 상태를 표현하는가, 아니면 현재 상태에 적용할 변경 명령을 표현하는가**다.
+- 매번 같은 상태 코드나 응답 바이트가 반환된다.
+- 서버 코드가 정확히 한 번만 실행된다.
+- 요청마다 남기는 감사 로그까지 한 번만 기록된다.
+- 두 요청 사이 다른 사용자가 상태를 바꿔도 충돌이 자동 해결된다.
+
+멱등성은 **동일한 PUT 요청이 요구하는 대상 상태 효과가 반복 횟수만큼 누적되지 않는다는 HTTP 의미**에 관한 계약이다.
+
+### PUT은 데이터베이스 행 전체 덮어쓰기 규칙이 아니다
+
+PUT을 `모든 필드를 DB 행에 그대로 overwrite한다`는 구현 규칙으로 축소하면 안 된다. HTTP가 정의하는 것은 대상 자원을 요청 표현이 나타내는 상태로 생성·대체하려는 **의도**다. 서버가 표현을 어떻게 저장하고, 서버 전용 필드나 파생 상태를 어떻게 관리할지는 자원 구현의 책임이다.
+
+예를 들어 서버가 `updatedAt`, 내부 식별자, 감사 정보를 따로 관리해도 PUT 의미와 충돌하지 않는다. 중요한 것은 공개된 자원 표현 계약과 실제 적용 결과가 일관되는가다.
+
+### 부분 변경은 별도 의미로 구분한다
+
+일반적인 API에서 일부 필드만 바꾸려면 PATCH처럼 부분 변경 의미를 명시한 메서드를 사용할 수 있다.
+
+```text
+PUT
+→ 대상 자원이 원하는 전체 상태를 표현
+
+PATCH
+→ 현재 상태에 적용할 변경 지시를 표현
+```
+
+핵심은 **PUT이 특정 대상 URI의 원하는 상태를 표현하며, 동일 요청 반복의 의도한 상태 효과가 누적되지 않도록 멱등하게 정의된다는 점**이다.

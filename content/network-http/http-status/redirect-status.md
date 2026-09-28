@@ -3,7 +3,7 @@ kind: concept
 contentKey: network-http.core.http-status.redirect-status
 topicContentKey: network-http.core.http-status
 slug: redirect-status
-title: "Redirect Status와 Follow-up Request"
+title: "리다이렉션 상태 코드"
 summary: "301·302·303·307·308이 Location과 후속 request method 처리에 미치는 차이를 설명한다."
 level: 2
 status: PUBLISHED
@@ -15,7 +15,7 @@ references:
     language: en
     displayOrder: 1
 ---
-# Redirect Status와 Follow-up Request
+# 리다이렉션 상태 코드
 
 3xx response 중 여러 status는 `Location` field로 다른 URI를 알려 주고 user agent가 그 URI로 후속 request를 만들 수 있게 한다. 하지만 redirect code에 따라 새 URI가 일시적인지 영구적인지, 기존 method를 유지해야 하는지가 다르다.
 

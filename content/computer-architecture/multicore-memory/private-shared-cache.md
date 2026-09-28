@@ -3,8 +3,8 @@ kind: concept
 contentKey: computer-architecture.core.multicore-memory.private-shared-cache
 topicContentKey: computer-architecture.core.multicore-memory
 slug: private-shared-cache
-title: "Private Cache와 Shared Cache"
-summary: "core-private cache와 shared lower-level cache를 조합할 때 지연 시간·capacity·contention·coherence traffic이 어떻게 달라지는지 설명한다."
+title: "코어별 캐시와 공유 캐시(Private and Shared Cache)"
+summary: "코어별 캐시와 공유 하위 캐시를 조합할 때 지연 시간·용량·경합·캐시 일관성 트래픽이 어떻게 달라지는지 설명한다."
 level: 2
 status: PUBLISHED
 displayOrder: 20
@@ -14,12 +14,12 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "cache 복사본의 coherence 문제를 확인한다."
+    recommendation: "multicore cache sharing, coherence protocol, false sharing과 shared-memory ordering 경계를 확인한다."
     displayOrder: 1
 ---
-# Private Cache와 Shared Cache
+# 코어별 캐시와 공유 캐시(Private and Shared Cache)
 
-Multicore CPU는 cache level마다 다른 sharing 구조를 사용할 수 있다. 작은 상위 cache는 각 core에 private하게 두고, 더 큰 lower-level cache는 여러 core가 공유하는 식의 구성이 대표적이다.
+멀티코어 CPU는 캐시 계층마다 다른 공유 구조를 사용할 수 있다. 작은 상위 캐시는 각 코어에 독립적으로 두고, 더 큰 하위 캐시는 여러 코어가 공유하는 식의 구성이 대표적이다.
 
 ```text
 core A → private cache ─┐
@@ -27,24 +27,24 @@ core B → private cache ─┼─> shared lower-level cache → memory
 core C → private cache ─┘
 ```
 
-실제 level 구성은 CPU마다 다르므로 `L1은 항상 private, L3는 항상 shared`처럼 고정된 규칙으로 외우면 안 된다.
+실제 계층 구성은 CPU마다 다르므로 `L1은 항상 private, L3는 항상 shared`처럼 고정된 규칙으로 외우면 안 된다.
 
-### Private cache는 낮은 latency와 per-core locality에 유리하다
+### 코어별 캐시는 낮은 지연 시간과 코어 지역성에 유리하다
 
-Core 가까이에 있는 private cache는 다른 core의 lookup과 매번 경쟁하지 않고 자기 working set을 빠르게 재사용할 수 있다.
+코어 가까이에 있는 캐시는 다른 코어의 조회와 매번 경쟁하지 않고 자기 작업 집합을 빠르게 재사용할 수 있다.
 
-대신 같은 physical cache line이 여러 private cache에 복사될 수 있다. 여러 core가 shared writable data를 접근한다면 이 복사본을 일관되게 관리하기 위해 coherence protocol이 필요하다.
+대신 같은 물리 캐시 라인이 여러 코어별 캐시에 복사될 수 있다. 여러 코어가 쓰기 가능한 공유 데이터에 접근한다면 이 복사본을 일관되게 관리하기 위해 캐시 일관성 프로토콜이 필요하다.
 
-### Shared cache는 capacity를 함께 쓸 수 있다
+### 공유 캐시는 용량을 함께 쓸 수 있다
 
-Shared lower-level cache는 여러 core가 큰 capacity를 공동으로 사용할 수 있다. 한 core가 적게 쓰는 동안 다른 core가 더 많은 line을 사용할 수 있다는 장점이 있다.
+공유 하위 캐시는 여러 코어가 큰 용량을 공동으로 사용할 수 있다. 한 코어가 적게 쓰는 동안 다른 코어가 더 많은 라인을 사용할 수 있다는 장점이 있다.
 
-반면 여러 core가 같은 cache의 bank, port, interconnect와 capacity를 경쟁하므로 contention과 interference가 생길 수 있다.
+반면 여러 코어가 같은 캐시의 bank, port, interconnect와 용량을 경쟁하므로 경합과 간섭이 생길 수 있다.
 
-### Sharing 구조는 locality와 coherence 비용을 함께 바꾼다
+### 공유 구조는 지역성과 일관성 비용을 함께 바꾼다
 
-Thread가 다른 core로 이동하면 이전 core의 private cache에 있던 warm state를 그대로 사용할 수 없을 수 있다. Correctness는 coherence로 유지되더라도 cache locality가 달라져 성능이 바뀔 수 있다.
+스레드가 다른 코어로 이동하면 이전 코어의 캐시에 남아 있던 예열 상태를 그대로 사용할 수 없을 수 있다. 정확성은 캐시 일관성으로 유지되더라도 지역성이 달라져 성능이 바뀔 수 있다.
 
-반대로 모든 data를 shared cache에 둔다고 해서 coherence 비용이 사라지는 것도 아니다. Writable line의 ownership이 core 사이를 이동해야 한다면 private cache와 shared hierarchy 모두에서 추가 traffic이 생길 수 있다.
+반대로 모든 데이터를 공유 캐시에 둔다고 해서 캐시 일관성 비용이 사라지는 것도 아니다. 쓰기 가능한 라인의 소유권이 코어 사이를 이동해야 한다면 여러 캐시 계층에서 추가 트래픽이 생길 수 있다.
 
-따라서 private/shared cache는 `어느 쪽이 더 좋은가`의 문제가 아니라 **latency, capacity, interference, sharing pattern 사이의 trade-off**로 본다.
+따라서 코어별/공유 캐시는 `어느 쪽이 더 좋은가`의 문제가 아니라 **지연 시간, 용량, 간섭, 공유 패턴 사이의 절충**로 본다.
