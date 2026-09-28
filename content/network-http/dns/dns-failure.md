@@ -14,7 +14,7 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "DNS 응답 코드와 이름 해석 과정의 기본 동작을 확인한다."
+    recommendation: "DNS 메시지·레코드·응답 코드와 TTL의 기본 규칙을 확인한다."
     displayOrder: 1
   - url: "https://www.rfc-editor.org/rfc/rfc2308"
     title: "Negative Caching of DNS Queries"
@@ -28,7 +28,7 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "SERVFAIL 등 이름 해석 과정의 실패를 NXDOMAIN·NODATA와 구분해 임시로 기억하는 규칙을 확인한다."
+    recommendation: "SERVFAIL 등 DNS 조회 과정의 실패를 이름·레코드 부재에 대한 부정 응답과 구분하는 규칙을 확인한다."
     displayOrder: 3
 ---
 # DNS 조회 실패
