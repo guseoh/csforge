@@ -4,7 +4,7 @@ contentKey: network-http.core.tls.pki
 topicContentKey: network-http.core.tls
 slug: pki
 title: "공개 키 기반 구조(PKI)"
-summary: "trust anchor에서 leaf certificate까지 이어지는 CA chain으로 certificate를 검증하는 구조를 설명한다."
+summary: "클라이언트가 신뢰 기준점에서 서버 인증서까지 이어지는 인증서 체인을 검증하고, 이 검증과 서비스 이름 검증을 구분하는 이유를 설명한다."
 level: 2
 status: PUBLISHED
 displayOrder: 30
@@ -17,23 +17,44 @@ references:
 ---
 # 공개 키 기반 구조(PKI)
 
-Public Key Infrastructure(PKI)는 certificate를 누가 발급하고, client가 그 발급자를 어떻게 신뢰할지 연결하는 체계다. server가 제시한 leaf certificate가 intermediate CA의 서명을 받고, 그 intermediate가 다시 상위 CA의 서명을 받는 식으로 certificate path가 구성될 수 있다.
+공개 키 기반 구조(Public Key Infrastructure, PKI)는 **누가 인증서를 발급하고, 클라이언트가 그 발급자를 어떤 기준으로 신뢰할지** 연결하는 체계다. 서버가 제시한 인증서 하나를 무조건 믿는 것이 아니라, 클라이언트가 이미 신뢰하고 있는 기준점까지 인증서 발급 관계가 올바르게 이어지는지를 검증한다.
 
-client는 자신의 trust store에 있는 **trust anchor**를 출발점으로 certificate chain의 서명과 제약을 확인한다. server는 보통 leaf와 필요한 intermediate certificate를 전달하고, root certificate 자체는 client trust store에 이미 존재하는 신뢰 기준으로 사용된다.
+일반적인 웹 PKI에서는 서버 인증서(leaf certificate)가 중간 인증 기관(intermediate CA)의 서명을 받고, 그 중간 인증 기관이 다시 상위 인증 기관의 신뢰로 연결된다. 클라이언트는 자신의 신뢰 저장소(trust store)에 등록된 **신뢰 기준점(trust anchor)**을 바탕으로 이 경로를 검증한다.
 
 ```text
-server가 전달                         client가 보유
-[leaf certificate] → [intermediate CA] → [trusted root / trust anchor]
-        │
-        └─ SAN의 service name ─────────→ 요청 hostname과 별도 비교
+서버가 주로 전달
+[서버 인증서] → [중간 CA 인증서] ─────→ [신뢰 기준점]
+                                          ↑
+                              클라이언트 trust store
 ```
 
-Chain 검증은 leaf에서 intermediate를 거쳐 client가 이미 신뢰한 anchor에 도달하는지 확인한다. Service identity 확인은 같은 흐름에서 leaf의 이름과 요청 hostname을 별도로 대조한다.
+루트 인증서 자체를 서버가 보내야 신뢰가 생기는 것은 아니다. 중요한 것은 클라이언트가 이미 신뢰하는 기준점까지 유효한 인증 경로를 만들 수 있는가다.
 
-### Chain이 이어진다는 것과 hostname이 맞는다는 것은 다르다
+### 인증서 체인 검증에서는 여러 조건을 함께 본다
 
-certificate path가 신뢰할 수 있는 CA까지 정상적으로 이어져도 그것만으로 현재 접속한 hostname의 certificate라고 결론낼 수는 없다. PKI path validation은 `이 certificate가 신뢰한 발급 체계 안에서 유효한가`를 확인하고, hostname verification은 `이 certificate가 내가 접속하려던 service identity를 나타내는가`를 별도로 확인한다.
+클라이언트는 단순히 `서명 하나가 맞는가`만 확인하지 않는다. 인증서 경로의 서명 관계뿐 아니라 유효 기간, 인증 기관으로 사용할 수 있는지에 대한 제약, 키 사용 조건 등 인증서 검증 규칙을 함께 적용한다.
 
-이 차이 때문에 신뢰할 수 있는 CA가 발급한 다른 domain의 정상 certificate를 제시해도 hostname verification에서 거부되어야 한다. 반대로 이름이 적혀 있어도 그 certificate chain을 client가 신뢰하지 않으면 인증은 실패한다.
+```text
+서버 인증서
+   ↓ 발급자·서명·제약 확인
+중간 CA
+   ↓
+클라이언트가 신뢰한 기준점
+```
 
-PKI를 이해할 때는 `root CA를 믿으니 모든 것이 끝난다`가 아니라 **trust anchor → intermediate → leaf로 이어지는 서명 신뢰와 service identity 검증이 함께 필요하다**고 보는 것이 핵심이다.
+이 경로를 만들 수 없거나 인증서가 만료됐거나 필요한 제약을 만족하지 않으면 인증은 실패할 수 있다.
+
+### 체인을 신뢰할 수 있어도 호스트 이름이 다르면 실패해야 한다
+
+PKI의 인증서 경로 검증과 호스트 이름 검증은 서로 다른 질문이다.
+
+- 인증서 경로 검증: `이 인증서는 내가 신뢰한 발급 체계 안에서 유효한가?`
+- 서비스 이름 검증: `이 인증서가 내가 접속하려던 서비스 이름을 나타내는가?`
+
+신뢰할 수 있는 CA가 발급한 `other.example.net` 인증서라고 해도 사용자가 `api.example.com`에 접속했다면 서비스 이름이 다르므로 서버 인증에 성공해서는 안 된다. 반대로 인증서 안에 `api.example.com`이 적혀 있어도 그 인증서의 발급 경로를 클라이언트가 신뢰할 수 없다면 역시 실패한다.
+
+### 서버가 인증서를 보낸 사실만으로 신뢰가 만들어지지는 않는다
+
+서버는 자신에게 유리한 인증서를 얼마든지 제시할 수 있다. 어떤 인증 기관을 신뢰할지 결정하는 기준은 클라이언트 측에 있어야 한다. 운영체제·브라우저·애플리케이션의 trust store가 중요한 이유다.
+
+핵심은 **PKI가 서버 인증서에서 클라이언트가 이미 신뢰한 기준점까지 이어지는 인증 경로를 검증하게 하고, 그 경로 검증과 실제 서비스 이름 검증이 함께 이루어져야 서버 인증이 완성된다는 점**이다.
