@@ -363,7 +363,7 @@
   {
     "kind": "question",
     "contentKey": "operating-systems.core.filesystem.filesystem-block.q1",
-    "promptMarkdown": "filesystem block과 virtual-memory page의 관계를 가장 정확히 설명한 것은?",
+    "promptMarkdown": "파일 시스템 블록과 가상 메모리 페이지의 관계를 가장 정확히 설명한 것은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
@@ -373,36 +373,36 @@
     "choices": [
       {
         "key": "A",
-        "content": "크기가 같을 수도 있지만 persistent allocation과 virtual-memory translation이라는 책임이 다르다",
+        "content": "크기가 같을 수도 있지만 영속 저장 공간 할당과 가상 주소 변환이라는 책임은 서로 다르다",
         "displayOrder": 0,
-        "rationaleMarkdown": "파일 시스템 block은 영속 저장소의 할당과 파일 배치를 다루고, VM page는 가상 주소 변환과 메모리 상주 단위를 다룬다. 크기가 같도록 정할 수는 있어도 두 자료 구조의 책임은 별개다."
+        "rationaleMarkdown": "파일 시스템 블록은 영속 저장 장치에서 파일 데이터를 할당하고 배치하는 단위이고, 가상 메모리 페이지는 가상 주소 변환과 메모리 상주를 다루는 단위다. 크기가 같도록 정할 수는 있어도 두 자료 구조의 책임은 별개다."
       },
       {
         "key": "B",
-        "content": "크기가 같다면 page table이 filesystem block의 disk 위치까지 직접 결정하므로 같은 단위다",
+        "content": "크기가 같다면 페이지 테이블이 파일 시스템 블록의 디스크 위치까지 직접 결정하므로 같은 단위다",
         "displayOrder": 1,
-        "rationaleMarkdown": "page table은 가상 page를 물리 frame으로 변환하며, 영속 저장소의 파일 시스템 block 위치를 정하지 않는다. 두 단위의 크기가 같더라도 VM과 파일 시스템의 메타데이터 층위가 합쳐지지 않는다."
+        "rationaleMarkdown": "페이지 테이블은 가상 페이지를 물리 프레임으로 변환하며, 저장 장치의 파일 시스템 블록 위치를 정하지 않는다. 두 단위의 크기가 같더라도 가상 메모리와 파일 시스템의 메타데이터 층위가 합쳐지지 않는다."
       },
       {
         "key": "C",
-        "content": "filesystem block은 virtual address translation 단위이고 page는 storage allocation 단위다",
+        "content": "파일 시스템 블록은 가상 주소 변환 단위이고 페이지는 저장 공간 할당 단위다",
         "displayOrder": 2,
-        "rationaleMarkdown": "이 설명은 각 단위의 역할을 뒤바꾼다. VM page는 주소 변환에 쓰이고 파일 시스템 block은 영속 파일 데이터를 배치하는 단위다. 둘 다 저장소 기반 메모리와 관련될 수 있지만 서로 바꾸어 쓸 수 없다."
+        "rationaleMarkdown": "이 설명은 두 단위의 역할을 뒤바꾼다. 가상 메모리 페이지는 주소 변환과 상주에 쓰이고, 파일 시스템 블록은 영속 파일 데이터를 배치하는 단위다."
       },
       {
         "key": "D",
-        "content": "filesystem block과 VM page는 항상 같은 크기여야 file-backed mapping이 가능하다",
+        "content": "파일 시스템 블록과 가상 메모리 페이지는 항상 같은 크기여야 파일 기반 매핑이 가능하다",
         "displayOrder": 3,
-        "rationaleMarkdown": "file-backed mapping은 커널 메커니즘을 통해 파일 내용과 가상 메모리를 연결하지만, block 크기와 page 크기가 같아야 하는 것은 아니다. 커널은 서로 다른 offset과 단위를 처리한다."
+        "rationaleMarkdown": "파일 기반 매핑은 커널이 파일 내용과 가상 메모리를 연결하는 기능이다. 파일 시스템 블록 크기와 페이지 크기가 반드시 같아야 하는 것은 아니며 커널이 서로 다른 단위와 오프셋을 처리할 수 있다."
       }
     ],
     "correctChoiceKey": "A",
-    "explanationMarkdown": "Filesystem block은 persistent data allocation·layout의 단위이고 VM page는 virtual-memory translation·residency의 단위다. **크기가 같을 수 있어도 책임과 metadata 계층이 다르며, 두 크기가 반드시 같아야 하는 것도 아니다.**"
+    "explanationMarkdown": "파일 시스템 블록은 **영속 데이터의 할당·배치 단위**이고, 가상 메모리 페이지는 **주소 변환·상주 단위**다. 크기가 같을 수는 있어도 책임과 메타데이터 계층이 다르며 두 크기가 반드시 같아야 하는 것도 아니다."
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.filesystem.filesystem-block.q2",
-    "promptMarkdown": "block size가 4096 byte일 때 file offset 9000은 몇 번째 0-based logical block에 있고 block 내부 offset은 몇 byte인가?",
+    "promptMarkdown": "블록 크기가 4096바이트일 때 파일 오프셋 9000은 몇 번째 0-based 논리 블록에 있고, 그 블록 내부 오프셋은 몇 바이트인가?",
     "questionType": "SHORT_ANSWER",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
@@ -415,25 +415,25 @@
       "2번 block의 808 byte",
       "2 808"
     ],
-    "explanationMarkdown": "`9000 / 4096`의 몫은 2이고 나머지는 808이다. 따라서 **0-based logical block 2, block 내부 offset 808 byte**다."
+    "explanationMarkdown": "`9000 / 4096`의 몫은 2이고 나머지는 808이다. 따라서 **0-based 논리 블록 2, 블록 내부 오프셋 808바이트**다."
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.filesystem.filesystem-block.q3",
-    "promptMarkdown": "filesystem block이 4KiB라는 이유만으로 4KiB file write가 power-loss atomic하다고 결론낼 수 없는 이유를 설명하라.",
+    "promptMarkdown": "파일 시스템 블록이 4KiB라는 이유만으로 4KiB 파일 쓰기가 전원 손실에도 원자적이라고 결론낼 수 없는 이유를 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": [
       "operating-systems.core.filesystem.filesystem-block"
     ],
-    "modelAnswer": "filesystem allocation unit과 device atomic-write/durability unit은 다른 계층의 계약이다. filesystem, block layer, storage device의 ordering/atomicity 보장을 별도로 확인해야 한다.",
-    "explanationMarkdown": "4KiB filesystem block은 allocation/lookup 단위에 대한 정보다. **Power-loss atomicity는 filesystem, block layer, device가 제공하는 별도 계약**이므로 크기가 같다는 사실만으로 추론할 수 없다."
+    "modelAnswer": "파일 시스템의 할당 단위와 장치의 원자적 쓰기·영속성 단위는 서로 다른 계층의 계약이다. 파일 시스템, 블록 계층, 저장 장치가 제공하는 쓰기 순서와 원자성 보장을 별도로 확인해야 한다.",
+    "explanationMarkdown": "4KiB 파일 시스템 블록은 할당과 탐색 단위에 대한 정보다. **전원 손실 시 원자성은 파일 시스템, 블록 계층, 저장 장치가 제공하는 별도 계약**이므로 크기가 같다는 사실만으로 추론할 수 없다."
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.filesystem.allocation.q1",
-    "promptMarkdown": "연속 allocation을 사용한 file의 logical block 위치를 찾을 때 얻는 대표 이점은?",
+    "promptMarkdown": "연속 할당(contiguous allocation)을 사용하는 파일에서 논리 블록 위치를 찾을 때 얻는 대표적인 이점은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
@@ -443,62 +443,62 @@
     "choices": [
       {
         "key": "A",
-        "content": "allocation metadata가 필요 없어 crash 후에도 mapping을 복구할 필요가 없다",
+        "content": "할당 메타데이터가 필요 없어 장애 후에도 매핑을 복구할 필요가 없다",
         "displayOrder": 0,
-        "rationaleMarkdown": "연속 할당은 위치 계산을 단순하게 하지만 extent의 시작과 길이를 기록하는 메타데이터는 여전히 필요하다. 장애 복구에서도 할당 메타데이터와 파일 내용의 일관성을 유지해야 한다."
+        "rationaleMarkdown": "연속 할당은 위치 계산을 단순하게 하지만 extent의 시작과 길이 같은 메타데이터는 여전히 필요하다. 장애 복구에서도 할당 메타데이터와 파일 내용의 일관성을 유지해야 한다."
       },
       {
         "key": "B",
-        "content": "file 성장 시 주변 free space와 관계없이 항상 같은 영역으로 확장된다",
+        "content": "파일이 커질 때 주변 빈 공간과 관계없이 항상 같은 영역에서 확장할 수 있다",
         "displayOrder": 1,
-        "rationaleMarkdown": "연속 영역은 인접 공간이 남아 있거나 파일 시스템이 데이터를 옮길 수 있을 때만 제자리에서 확장할 수 있다. 자유 공간 배치와 무관하게 항상 확장된다고 보장하지 않는다."
+        "rationaleMarkdown": "연속 영역은 인접 공간이 남아 있거나 파일 시스템이 데이터를 옮길 수 있을 때만 제자리에서 확장할 수 있다. 주변 공간 배치와 무관하게 항상 확장된다고 보장할 수 없다."
       },
       {
         "key": "C",
-        "content": "시작 위치와 offset으로 sequential/random block 위치를 계산하기 쉽다",
+        "content": "시작 위치와 논리 오프셋으로 순차·임의 접근 시 블록 위치를 계산하기 쉽다",
         "displayOrder": 2,
-        "rationaleMarkdown": "시작 block과 논리 offset이 있으면 파일의 block 위치를 쉽게 계산할 수 있어 순차 접근과 직접 접근이 편리하다. 대신 인접 영역이 점유되어 있으면 확장이 어렵고 외부 단편화가 생길 수 있다."
+        "rationaleMarkdown": "시작 블록과 논리 오프셋이 있으면 파일의 블록 위치를 쉽게 계산할 수 있어 순차 접근과 직접 접근이 단순하다. 대신 인접 영역이 이미 사용 중이면 확장이 어렵고 외부 단편화가 생길 수 있다."
       },
       {
         "key": "D",
-        "content": "directory pathname lookup이 없어져 모든 file name이 전역적으로 유일해진다",
+        "content": "디렉터리 경로 탐색이 없어져 모든 파일 이름이 전역적으로 유일해진다",
         "displayOrder": 3,
-        "rationaleMarkdown": "할당 배치는 데이터 block의 위치에 영향을 주지만 pathname namespace 규칙을 결정하지 않는다. 디렉터리 조회와 이름의 유일성을 위한 메타데이터는 별도로 필요하다."
+        "rationaleMarkdown": "할당 방식은 데이터 블록의 위치에 영향을 주지만 경로명과 이름 공간 규칙을 결정하지 않는다. 디렉터리 탐색과 이름 관리를 위한 메타데이터는 별도로 필요하다."
       }
     ],
     "correctChoiceKey": "C",
-    "explanationMarkdown": "Contiguous allocation은 시작 위치와 logical block offset으로 위치를 계산하기 쉬워 lookup/locality 측면에서 단순하다. 대신 뒤 공간이 없을 때 성장하기 어렵고 **external fragmentation** 문제가 생길 수 있다."
+    "explanationMarkdown": "연속 할당은 시작 위치와 논리 블록 오프셋으로 위치를 계산하기 쉬워 탐색과 지역성 측면에서 단순하다. 대신 뒤쪽 공간이 없을 때 성장하기 어렵고 **외부 단편화(external fragmentation)** 문제가 생길 수 있다."
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.filesystem.allocation.q2",
-    "promptMarkdown": "linked allocation과 indexed allocation의 random access trade-off를 설명하라.",
+    "promptMarkdown": "연결 할당(linked allocation)과 인덱스 할당(indexed allocation)의 임의 접근 절충을 설명하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": [
       "operating-systems.core.filesystem.allocation"
     ],
-    "modelAnswer": "linked allocation은 흩어진 block을 유연하게 연결하지만 먼 offset까지 pointer를 따라야 할 수 있다. indexed 방식은 별도 index metadata로 위치 lookup을 빠르게 할 수 있지만 index 공간과 추가 metadata access가 필요하다.",
-    "explanationMarkdown": "Linked 방식은 free block을 유연하게 쓸 수 있지만 N번째 block을 찾기 위해 chain을 따라가야 할 수 있다. Indexed 방식은 **block 위치를 직접 찾기 위한 metadata 비용을 지불하고 random lookup을 개선**한다."
+    "modelAnswer": "연결 할당은 흩어진 블록을 유연하게 이어 쓸 수 있지만 먼 오프셋까지 포인터를 따라가야 할 수 있다. 인덱스 방식은 별도 인덱스 메타데이터로 블록 위치를 빠르게 찾을 수 있지만 인덱스 공간과 추가 메타데이터 접근 비용이 필요하다.",
+    "explanationMarkdown": "연결 방식은 빈 블록을 유연하게 사용할 수 있지만 N번째 블록을 찾기 위해 연결을 따라가야 할 수 있다. 인덱스 방식은 **블록 위치를 직접 찾기 위한 메타데이터 비용을 지불하고 임의 위치 탐색을 개선**한다."
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.filesystem.allocation.q3",
-    "promptMarkdown": "free-space bitmap에서는 block을 free로 표시했지만 inode mapping은 여전히 그 block을 참조하는 상태로 crash 후 복구됐다. 어떤 위험이 있는가?",
+    "promptMarkdown": "빈 공간 비트맵에서는 어떤 블록을 사용 가능으로 표시했지만 inode 매핑은 여전히 그 블록을 참조하는 상태로 장애 후 복구됐다. 어떤 위험이 있는가?",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": [
       "operating-systems.core.filesystem.allocation"
     ],
-    "modelAnswer": "allocator가 같은 block을 다른 file에 재할당할 수 있어 두 file이 동일 block을 참조하는 corruption 위험이 생긴다. allocation metadata와 inode update의 crash 일관성을 보장해야 한다.",
-    "explanationMarkdown": "Free-space metadata와 inode mapping이 서로 모순되면 allocator는 사용 중인 block을 free라고 믿을 수 있다. 그 block을 다른 file에 재할당하면 **서로 다른 file이 같은 storage block을 소유하는 corruption**으로 이어질 수 있다."
+    "modelAnswer": "할당기가 같은 블록을 다른 파일에 다시 할당할 수 있어 두 파일이 동일한 블록을 참조하는 손상 위험이 생긴다. 빈 공간 메타데이터와 inode 갱신이 장애 후에도 서로 일관되도록 보장해야 한다.",
+    "explanationMarkdown": "빈 공간 메타데이터와 inode 매핑이 서로 모순되면 할당기는 사용 중인 블록을 비어 있다고 믿을 수 있다. 그 블록을 다른 파일에 재할당하면 **서로 다른 파일이 같은 저장 블록을 소유하는 손상(corruption)**으로 이어질 수 있다."
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.filesystem.page-cache.q1",
-    "promptMarkdown": "cold-cache 상태에서 같은 file region을 두 번 읽었고 두 번째 read가 빨랐다. 가장 타당한 설명은?",
+    "promptMarkdown": "차가운 캐시(cold cache) 상태에서 같은 파일 구간을 두 번 읽었고 두 번째 읽기가 빨랐다. 가장 타당한 설명은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
@@ -508,57 +508,57 @@
     "choices": [
       {
         "key": "A",
-        "content": "read()가 성공하면 power loss에도 data가 durable하다는 뜻이므로 속도가 빨라진다",
+        "content": "`read()`가 성공하면 전원 손실 뒤에도 데이터가 영속적이라는 뜻이므로 속도가 빨라진다",
         "displayOrder": 0,
-        "rationaleMarkdown": "read가 성공했다는 것은 프로세스가 데이터를 받았다는 뜻이지, 데이터가 영속 매체에 기록되었다는 뜻은 아니다. 내구성에는 동기화 절차와 파일 시스템·저장 장치의 보장이 별도로 필요하다."
+        "rationaleMarkdown": "`read()` 성공은 프로세스가 데이터를 받았다는 뜻이지 데이터의 영속성이나 기록 완료를 뜻하지 않는다. 읽기 성능이 빨라진 이유와 영속성은 다른 문제다."
       },
       {
         "key": "B",
-        "content": "두 번째 read부터 pathname이 file content를 대신 저장해 cache가 필요 없어졌다",
+        "content": "두 번째 읽기부터는 경로명이 파일 내용을 대신 저장하므로 캐시가 필요 없어졌다",
         "displayOrder": 1,
-        "rationaleMarkdown": "pathname은 객체 이름을 나타낼 뿐 파일 내용을 저장하거나 캐시를 대신하지 않는다. 커널이 파일 page를 메모리에 유지하면 같은 영역을 반복해서 읽을 때 더 빨라질 수 있다."
+        "rationaleMarkdown": "경로명은 객체를 찾는 이름일 뿐 파일 내용을 저장하거나 캐시를 대신하지 않는다. 커널이 파일 페이지를 메모리에 유지하면 같은 영역을 반복해서 읽을 때 더 빨라질 수 있다."
       },
       {
         "key": "C",
-        "content": "page cache는 process마다 분리되므로 같은 file을 읽은 다른 process에는 재사용될 수 없다",
+        "content": "페이지 캐시는 프로세스마다 완전히 분리되므로 같은 파일을 읽은 다른 프로세스에는 재사용될 수 없다",
         "displayOrder": 2,
-        "rationaleMarkdown": "page cache는 일반적으로 파일 데이터를 보관하는 커널 캐시여서 I/O 경로와 파일 시스템 조건에 따라 여러 프로세스가 활용할 수 있다. 첫 read를 요청한 프로세스만 쓸 수 있는 전용 캐시는 아니다."
+        "rationaleMarkdown": "페이지 캐시는 일반적으로 파일 데이터를 보관하는 커널 캐시이므로 파일 시스템과 매핑 조건이 맞으면 여러 프로세스가 같은 캐시된 파일 페이지를 활용할 수 있다."
       },
       {
         "key": "D",
-        "content": "첫 read가 가져온 data가 page cache에 남아 storage read를 피했을 수 있다",
+        "content": "첫 번째 읽기로 가져온 데이터가 페이지 캐시에 남아 두 번째 저장 장치 읽기를 피했을 수 있다",
         "displayOrder": 3,
-        "rationaleMarkdown": "첫 read가 커널 page cache에 해당 page를 채우면, 같은 영역의 후속 read는 저장 장치 접근을 줄일 수 있다. 성능 측정에서는 cold cache와 warm cache 상태를 구분해야 한다."
+        "rationaleMarkdown": "첫 번째 읽기가 커널 페이지 캐시에 해당 파일 페이지를 채웠다면 같은 영역의 후속 읽기는 저장 장치 접근을 줄일 수 있다. 성능 측정에서는 차가운 캐시와 따뜻한 캐시를 구분해야 한다."
       }
     ],
     "correctChoiceKey": "D",
-    "explanationMarkdown": "첫 read가 storage에서 가져온 file page가 kernel page cache에 남아 있으면 이후 같은 region은 memory에서 제공될 수 있다. 따라서 benchmark에서는 **cold cache와 warm cache를 분리**해야 한다."
+    "explanationMarkdown": "첫 번째 읽기가 저장 장치에서 가져온 파일 페이지가 커널 페이지 캐시에 남아 있으면 이후 같은 영역은 메모리에서 제공될 수 있다. 따라서 벤치마크에서는 **차가운 캐시와 따뜻한 캐시(warm cache)를 구분**해야 한다."
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.filesystem.page-cache.q2",
-    "promptMarkdown": "buffered write가 page cache의 dirty page에 반영된 상태와 durable storage 완료 상태를 구분하라.",
+    "promptMarkdown": "버퍼링된 쓰기가 페이지 캐시의 더티 페이지에 반영된 상태와 영속 저장 장치에 기록이 끝난 상태를 구분하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": [
       "operating-systems.core.filesystem.page-cache"
     ],
-    "modelAnswer": "dirty page는 kernel memory에 최신 data가 있어 같은 system에서 읽을 수 있을 수 있지만 아직 storage write-back/flush가 끝나지 않았을 수 있다. crash durability는 별도 경계다.",
-    "explanationMarkdown": "Dirty page는 최신 bytes가 kernel memory에 있다는 뜻이지 영구 저장됐다는 뜻이 아니다. **Visibility와 persistence를 분리**해 write-back/fsync 전에는 power loss에 대한 durability를 별도로 판단해야 한다."
+    "modelAnswer": "더티 페이지는 커널 메모리에 최신 데이터가 있어 같은 시스템에서 다시 읽을 수 있을 수 있지만, 아직 저장 장치로 쓰기 반영(write-back)이 끝나지 않았을 수 있다. 장애 후 보존 여부는 별도의 영속성 경계다.",
+    "explanationMarkdown": "더티 페이지는 최신 바이트가 커널 메모리에 있다는 뜻이지 영구 저장됐다는 뜻은 아니다. **현재 시스템에서 보이는 상태와 장애 후에도 보존되는 상태를 분리**해 `write-back`이나 `fsync()` 전에는 전원 손실에 대한 영속성을 별도로 판단해야 한다."
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.filesystem.page-cache.q3",
-    "promptMarkdown": "대규모 one-time scan 직후 interactive file read 지연 시간과 major fault가 증가했다. page cache 관점에서 가능한 원인과 검증 방법을 설명하라.",
+    "promptMarkdown": "대규모 일회성 스캔 직후 대화형 파일 읽기의 지연 시간과 major fault가 증가했다. 페이지 캐시 관점에서 가능한 원인과 검증 방법을 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": [
       "operating-systems.core.filesystem.page-cache"
     ],
-    "modelAnswer": "scan이 기존 hot file pages를 cache에서 밀어냈을 수 있다. scan 전후 cache residency, storage read, reclaim/fault와 지연 시간을 비교하고 batch access/concurrency를 조절한다.",
-    "explanationMarkdown": "큰 sequential scan이 physical memory를 차지하면서 기존 interactive working set을 reclaim시켰다면 이후 요청이 다시 storage I/O를 유발할 수 있다. **scan 전후 residency·reclaim·read I/O·fault·꼬리 지연 시간(tail latency)을 시간축으로 함께 비교**해야 가설을 검증할 수 있다."
+    "modelAnswer": "대규모 스캔이 기존의 자주 사용되던 파일 페이지를 캐시에서 밀어냈을 수 있다. 스캔 전후의 페이지 상주 상태, 저장 장치 읽기, 메모리 회수, fault 수와 지연 시간을 함께 비교하고 스캔의 묶음 크기나 동시성을 조절한다.",
+    "explanationMarkdown": "큰 순차 스캔이 물리 메모리를 차지하면서 기존 대화형 작업 집합을 회수시켰다면 이후 요청이 다시 저장 장치 I/O를 유발할 수 있다. **스캔 전후의 상주 상태·메모리 회수·읽기 I/O·fault·꼬리 지연 시간(tail latency)을 시간축으로 함께 비교**해야 가설을 검증할 수 있다."
   },
   {
     "kind": "question",
@@ -573,62 +573,62 @@
     "choices": [
       {
         "key": "A",
-        "content": "flush가 성공하면 해당 file의 directory entry와 rename metadata도 durable하다",
+        "content": "`flush()`가 성공하면 해당 파일의 디렉터리 엔트리와 `rename()` 메타데이터도 영속화된다",
         "displayOrder": 0,
-        "rationaleMarkdown": "언어 라이브러리의 flush만으로 rename 같은 디렉터리 항목 변경이 내구성을 얻지는 않는다. 파일 데이터와 메타데이터를 보존하려면 플랫폼 계약에 따른 하위 계층 동기화가 필요하다."
+        "rationaleMarkdown": "언어 라이브러리의 `flush()`만으로 `rename()` 같은 디렉터리 엔트리 변경이 영속성을 얻지는 않는다. 파일 데이터와 메타데이터를 장애 후에도 보존하려면 플랫폼 계약에 따른 더 아래 계층의 동기화가 필요하다."
       },
       {
         "key": "B",
-        "content": "kernel dirty page와 device cache를 모두 비워 stable storage에 반드시 기록하는 동작이다",
+        "content": "커널 더티 페이지와 장치 캐시를 모두 비워 영속 저장 장치에 반드시 기록하는 동작이다",
         "displayOrder": 1,
-        "rationaleMarkdown": "`BufferedWriter.flush()`는 라이브러리 내부의 문자 또는 byte buffer를 underlying stream으로 넘긴다. 커널 page, 장치 cache, 영속 저장소까지 모두 비운다는 보장은 없으며, 내구성에는 별도 API와 파일 시스템 보장이 필요하다."
+        "rationaleMarkdown": "`BufferedWriter.flush()`는 라이브러리가 보유한 문자 또는 바이트 버퍼를 다음 계층으로 넘긴다. 커널 페이지 캐시와 장치 캐시까지 모두 비워 영속 저장을 완료한다는 보장은 없다."
       },
       {
         "key": "C",
-        "content": "user-space library buffer의 data를 underlying stream으로 전달하는 동작이며 power-loss durability까지 직접 보장하지는 않는다",
+        "content": "사용자 공간 라이브러리 버퍼의 데이터를 다음 스트림으로 전달하는 동작이며 전원 손실에 대한 영속성까지 직접 보장하지는 않는다",
         "displayOrder": 2,
-        "rationaleMarkdown": "이 메서드는 user-space writer buffer를 underlying stream으로 보내 다음 계층이 처리할 수 있게 한다. 전원 장애 뒤에도 데이터가 남는다는 보장까지 하지는 않는다."
+        "rationaleMarkdown": "`BufferedWriter.flush()`는 사용자 공간 버퍼의 내용을 다음 스트림으로 보내 이후 계층이 처리할 수 있게 한다. 전원 손실 뒤에도 데이터가 남는다는 보장까지 제공하지는 않는다."
       },
       {
         "key": "D",
-        "content": "buffer를 폐기해 이후 write가 항상 실패하도록 만드는 동작이다",
+        "content": "버퍼를 폐기해 이후 쓰기가 항상 실패하도록 만드는 동작이다",
         "displayOrder": 3,
-        "rationaleMarkdown": "flush는 버퍼에 쌓인 출력을 다음 계층으로 보낼 뿐 writer를 닫거나 사용 불능으로 만들지 않는다. stream을 닫거나 오류가 발생하지 않는 한 이후에도 계속 쓸 수 있다."
+        "rationaleMarkdown": "`flush()`는 버퍼에 쌓인 출력을 다음 계층으로 보낼 뿐 writer를 닫거나 사용 불능으로 만들지 않는다. 스트림을 닫거나 오류가 발생하지 않는 한 이후에도 계속 쓸 수 있다."
       }
     ],
     "correctChoiceKey": "C",
-    "explanationMarkdown": "Library `flush()`의 계약은 그 library가 보유한 user-space buffer를 다음 계층으로 전달하는 것이다. **Kernel page cache와 storage persistence는 더 아래 계층의 별도 상태**다."
+    "explanationMarkdown": "라이브러리 `flush()`의 계약은 **자신이 보유한 사용자 공간 버퍼를 다음 계층으로 전달하는 것**이다. 커널 페이지 캐시와 저장 장치 영속성은 더 아래 계층의 별도 상태다."
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.filesystem.buffering.q2",
-    "promptMarkdown": "작은 write를 user-space buffer에 모으면 성능이 좋아질 수 있는 이유와 trade-off를 설명하라.",
+    "promptMarkdown": "작은 쓰기를 사용자 공간 버퍼에 모으면 성능이 좋아질 수 있는 이유와 절충을 설명하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": [
       "operating-systems.core.filesystem.buffering"
     ],
-    "modelAnswer": "여러 작은 operation을 묶어 syscall/요청 수를 줄일 수 있지만 buffer memory와 flush 지연 시간이 늘고 아직 다음 계층으로 전달되지 않은 data의 실패 semantics를 관리해야 한다.",
-    "explanationMarkdown": "Batching은 작은 write 여러 개를 합쳐 syscall/요청 overhead를 줄일 수 있다. 대신 **buffer가 차지하는 memory, flush 시점의 지연 시간, 아직 아래 계층으로 전달되지 않은 data의 손실 범위**가 커질 수 있다."
+    "modelAnswer": "여러 작은 연산을 묶어 시스템 콜과 하위 요청 횟수를 줄일 수 있지만 버퍼 메모리가 더 필요하고 flush 지연 시간이 늘 수 있다. 아직 다음 계층으로 전달되지 않은 데이터가 장애 시 얼마나 손실될 수 있는지도 관리해야 한다.",
+    "explanationMarkdown": "묶음 처리(batching)는 작은 쓰기 여러 개를 합쳐 시스템 콜과 요청의 고정 비용을 줄일 수 있다. 대신 **버퍼가 차지하는 메모리, flush 시점의 지연 시간, 아직 아래 계층으로 전달되지 않은 데이터의 손실 범위**가 커질 수 있다."
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.filesystem.buffering.q3",
-    "promptMarkdown": "export 작업이 Java writer `flush()` 직후 완료 상태를 기록했지만 machine crash 후 file 내용이 사라졌다. 어떤 durability 경계를 빠뜨렸는가?",
+    "promptMarkdown": "내보내기 작업이 Java writer의 `flush()` 직후 완료 상태를 기록했지만 시스템 장애 뒤 파일 내용이 사라졌다. 어떤 영속성 경계를 빠뜨렸는가?",
     "questionType": "SCENARIO",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": [
       "operating-systems.core.filesystem.buffering"
     ],
-    "modelAnswer": "library buffer flush와 kernel/filesystem/storage durability를 동일시했다. 요구하는 실패 모델에 맞춰 file sync 및 필요 metadata sync를 별도로 정의해야 한다.",
-    "explanationMarkdown": "Writer `flush()`는 user-space buffer를 비운 것이지 stable storage까지 강제한 것이 아니다. **File data와 필요한 metadata가 crash 이후에도 남아야 한다면 OS/filesystem의 persistence boundary를 별도로 완료**해야 한다."
+    "modelAnswer": "라이브러리 버퍼의 flush와 커널·파일 시스템·저장 장치의 영속성을 동일시했다. 요구하는 실패 모델에 맞춰 파일 동기화와 필요한 메타데이터 동기화를 별도로 정의해야 한다.",
+    "explanationMarkdown": "writer의 `flush()`는 사용자 공간 버퍼를 다음 계층으로 보낸 것이지 영속 저장 장치까지 강제한 것이 아니다. **파일 데이터와 필요한 메타데이터가 장애 뒤에도 남아야 한다면 운영체제·파일 시스템의 영속성 경계를 별도로 완료**해야 한다."
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.filesystem.write-flush-fsync.q1",
-    "promptMarkdown": "일반적인 buffered file I/O에서 `write()`가 양의 값을 반환한 직후의 결론으로 맞는 것은?",
+    "promptMarkdown": "일반적인 버퍼링 파일 I/O에서 `write()`가 양의 값을 반환한 직후 내릴 수 있는 결론으로 맞는 것은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
@@ -638,69 +638,69 @@
     "choices": [
       {
         "key": "A",
-        "content": "반환한 byte 수와 무관하게 요청 buffer 전체가 stable storage에 기록되었다",
+        "content": "반환한 바이트 수와 무관하게 요청 버퍼 전체가 영속 저장 장치에 기록되었다",
         "displayOrder": 0,
-        "rationaleMarkdown": "양수 반환은 호출이 수락한 byte 수를 나타내며 요청한 양보다 적을 수도 있다. 버퍼 전체를 썼거나 데이터가 영속 저장소에 기록되었다는 뜻은 아니다."
+        "rationaleMarkdown": "양수 반환은 호출이 받아들인 바이트 수를 나타내며 요청한 양보다 적을 수도 있다. 요청 버퍼 전체를 썼거나 데이터가 영속 저장 장치에 기록되었다는 뜻은 아니다."
       },
       {
         "key": "B",
-        "content": "일부 또는 전체 bytes를 kernel/file state가 받아들였다는 뜻일 수 있지만 power loss 이후 persistence까지 확정하지는 않는다",
+        "content": "일부 또는 전체 바이트를 커널이 관리하는 파일 상태가 받아들였다는 뜻일 수 있지만 전원 손실 뒤의 보존까지 확정하지는 않는다",
         "displayOrder": 1,
-        "rationaleMarkdown": "성공한 `write()`는 일부 또는 전체 byte를 커널이 관리하는 상태에 둘 수 있고, 부분 쓰기도 처리해야 한다. 전원 장애 이후의 보존은 파일 시스템이 지원하는 동기화 같은 별도의 내구성 경계가 필요하다."
+        "rationaleMarkdown": "성공한 `write()`는 일부 또는 전체 바이트를 커널이 관리하는 상태에 둘 수 있고 부분 쓰기도 처리해야 한다. 전원 손실 뒤의 보존에는 파일 시스템이 제공하는 동기화 같은 별도의 영속성 경계가 필요하다."
       },
       {
         "key": "C",
-        "content": "library buffer와 kernel page cache가 있다면 write는 호출될 수 없다",
+        "content": "사용자 공간 버퍼와 커널 페이지 캐시가 있다면 `write()`는 호출될 수 없다",
         "displayOrder": 2,
-        "rationaleMarkdown": "user-space buffering과 커널 buffering은 함께 존재할 수 있다. 라이브러리가 시스템 호출 전에 버퍼링할 수 있고, 커널이 호출 뒤 쓴 page를 cache할 수도 있다. 버퍼링은 계층 사이의 데이터 이동 시점을 바꾸지만 `write()` 자체를 불가능하게 만들지는 않는다."
+        "rationaleMarkdown": "사용자 공간 버퍼링과 커널 버퍼링은 함께 존재할 수 있다. 라이브러리가 시스템 콜 전에 버퍼링할 수 있고, 커널이 시스템 콜 뒤 데이터를 페이지 캐시에 둘 수도 있다."
       },
       {
         "key": "D",
-        "content": "write 성공은 file data뿐 아니라 directory rename metadata의 durability도 확정한다",
+        "content": "`write()` 성공은 파일 데이터뿐 아니라 디렉터리의 `rename()` 메타데이터 영속성도 확정한다",
         "displayOrder": 3,
-        "rationaleMarkdown": "파일 데이터 쓰기와 rename 같은 디렉터리 메타데이터 변경은 서로 다른 내구성 요건을 가질 수 있다. 데이터 `write()` 성공만으로 어느 변경이든 내구성이 확립되지는 않는다."
+        "rationaleMarkdown": "파일 데이터 쓰기와 `rename()` 같은 디렉터리 메타데이터 변경은 서로 다른 영속성 요건을 가질 수 있다. 데이터 `write()` 성공만으로 이름 공간 변경까지 영속화되었다고 볼 수 없다."
       }
     ],
     "correctChoiceKey": "B",
-    "explanationMarkdown": "`write()`는 partial write가 가능하고 성공 반환이 곧 stable-storage commit을 뜻하지 않는다. **반환 byte 수와 persistence 경계를 별도로 확인**해야 한다."
+    "explanationMarkdown": "`write()`는 부분 쓰기(partial write)가 가능하고 성공 반환이 곧 영속 저장 완료를 뜻하지 않는다. **반환된 바이트 수와 영속성 경계를 별도로 확인**해야 한다."
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.filesystem.write-flush-fsync.q2",
-    "promptMarkdown": "`write → library flush → fsync`가 각각 다른 경계인 이유를 설명하라.",
+    "promptMarkdown": "`write → library flush → fsync`가 각각 다른 완료 경계인 이유를 설명하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": [
       "operating-systems.core.filesystem.write-flush-fsync"
     ],
-    "modelAnswer": "write는 kernel로 bytes를 전달하는 I/O 결과, library flush는 user-space buffering 해소, fsync는 filesystem/storage 쪽 persistence를 요청하는 더 강한 경계다. 정확한 보장은 API와 filesystem/storage 계약을 따라야 한다.",
-    "explanationMarkdown": "세 API는 서로 다른 buffer/state 층에 작용한다. `flush()`가 성공했다고 kernel dirty state까지 durable한 것은 아니며, **각 반환이 어느 계층까지의 완료를 뜻하는지**를 구분해야 한다."
+    "modelAnswer": "`write()`는 커널에 바이트를 전달한 I/O 결과이고, 라이브러리 `flush()`는 사용자 공간 버퍼를 다음 계층으로 내보내는 동작이다. `fsync()`는 파일 시스템과 저장 장치 쪽의 영속성을 요청하는 더 강한 경계다. 정확한 보장은 각 API와 파일 시스템·저장 장치 계약을 따라야 한다.",
+    "explanationMarkdown": "세 API는 서로 다른 버퍼와 상태 계층에 작용한다. 라이브러리 `flush()`가 성공했다고 커널의 더티 상태까지 영속화된 것은 아니며, **각 반환이 어느 계층까지의 완료를 뜻하는지**를 구분해야 한다."
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.filesystem.write-flush-fsync.q3",
-    "promptMarkdown": "`temp` file에 새 data를 쓰고 file 자체를 fsync한 뒤 `rename(temp, current)` 직후 crash했다. 요구사항이 '재부팅 후 새 이름도 반드시 보인다'라면 무엇을 추가 검토해야 하는가?",
+    "promptMarkdown": "`temp` 파일에 새 데이터를 쓰고 파일 자체를 `fsync()`한 뒤 `rename(temp, current)` 직후 장애가 발생했다. 요구사항이 “재부팅 후 새 이름도 반드시 보여야 한다”라면 무엇을 추가로 검토해야 하는가?",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": [
       "operating-systems.core.filesystem.write-flush-fsync"
     ],
-    "modelAnswer": "file data durability와 rename/directory metadata durability는 별도일 수 있다. 대상 OS/filesystem에서 directory entry 변경을 crash-durable하게 만드는 sync/ordering 계약을 확인해야 한다.",
-    "explanationMarkdown": "File 자체를 `fsync()`한 것은 file data/필요 metadata persistence를 강화하지만 **새 directory entry가 durable하다는 것까지 자동 보장하지 않을 수 있다.** 대상 filesystem에서 containing directory의 sync/ordering 요구를 확인해야 한다."
+    "modelAnswer": "파일 데이터의 영속성과 `rename()`으로 바뀐 디렉터리 엔트리의 영속성은 별도일 수 있다. 대상 운영체제와 파일 시스템에서 디렉터리 엔트리 변경을 장애 뒤에도 보존하기 위해 필요한 디렉터리 동기화와 쓰기 순서 계약을 확인해야 한다.",
+    "explanationMarkdown": "파일 자체를 `fsync()`한 것은 파일 데이터와 필요한 파일 메타데이터의 영속성을 강화하지만 **새 디렉터리 엔트리가 영속화됐다는 것까지 자동으로 보장하지 않을 수 있다.** 대상 파일 시스템에서 상위 디렉터리의 동기화와 쓰기 순서 요구를 확인해야 한다."
   },
   {
     "kind": "question",
     "contentKey": "operating-systems.core.filesystem.write-flush-fsync.q4",
-    "promptMarkdown": "모든 log record마다 fsync를 호출하자 처리량과 p99가 크게 악화됐다. correctness를 유지하면서 검토할 수 있는 설계 방향을 설명하라.",
+    "promptMarkdown": "모든 로그 레코드마다 `fsync()`를 호출하자 처리량과 p99 지연 시간이 크게 악화됐다. 정확성을 유지하면서 검토할 수 있는 설계 방향을 설명하라.",
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
     "conceptKeys": [
       "operating-systems.core.filesystem.write-flush-fsync"
     ],
-    "modelAnswer": "각 record가 개별 durable commit을 요구하는지 먼저 확인하고, 허용된다면 batching/group commit으로 여러 write의 durability 비용을 묶을 수 있다. 단 crash 시 잃을 수 있는 범위와 acknowledgement 시점을 명시해야 한다.",
-    "explanationMarkdown": "Durability wait는 비싼 storage ordering/flush를 만들 수 있다. Group commit은 비용을 묶을 수 있지만 **ACK 시점과 crash 시 잃을 수 있는 record 범위를 바꾸므로 correctness contract를 먼저 정한 뒤** 적용해야 한다."
+    "modelAnswer": "각 레코드가 개별적인 영속 커밋을 요구하는지 먼저 확인하고, 허용된다면 묶음 처리나 group commit으로 여러 쓰기의 영속성 비용을 함께 지불할 수 있다. 대신 장애 시 잃을 수 있는 범위와 성공 응답 시점을 명시해야 한다.",
+    "explanationMarkdown": "영속성 대기는 비싼 저장 장치 동기화와 쓰기 순서 보장을 만들 수 있다. Group commit은 비용을 묶을 수 있지만 **성공 응답 시점과 장애 시 잃을 수 있는 레코드 범위를 바꾸므로 정확성 계약을 먼저 정한 뒤** 적용해야 한다."
   }
 ]
