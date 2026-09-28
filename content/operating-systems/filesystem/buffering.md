@@ -14,7 +14,7 @@ references:
     referenceType: BOOK
     language: en
     depth: section
-    recommendation: "inode, directory entry, data block과 allocation 구조가 파일 시스템 접근 경로를 만드는 방식을 확인한다."
+    recommendation: "inode, directory entry, data block, allocation 구조가 file-system access path를 만드는 방식을 확인한다."
     relationNote: "이 Concept에서는 파일 시스템 계층의 배경을 확인하는 보조 자료로 사용하고, 사용자 공간 stream buffering과 커널 page cache는 별도 1차 자료로 확인한다."
     displayOrder: 1
   - url: "https://man7.org/linux/man-pages/man3/setbuf.3.html"
@@ -29,7 +29,7 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "파일 읽기·쓰기가 page cache를 거치고 dirty page가 backing storage로 동기화되는 커널 계층을 확인한다."
+    recommendation: "파일 읽기와 쓰기가 page cache를 거치는 방식, dirty page와 backing storage 동기화, 메모리 회수의 기본 경계를 확인한다."
     displayOrder: 3
 ---
 # 버퍼링(Buffering)
