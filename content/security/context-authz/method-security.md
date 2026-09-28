@@ -3,8 +3,8 @@ kind: concept
 contentKey: security.core.context-authz.method-security
 topicContentKey: security.core.context-authz
 slug: method-security
-title: "Method security와 use-case authorization"
-summary: "HTTP route 규칙만으로 보호하기 어려운 privileged use-case를 method interceptor에서 다시 authorization하고, resource ownership 같은 동적 policy를 application argument와 principal에 연결한다."
+title: "메서드 보안과 유스케이스 인가"
+summary: "HTTP 경로 규칙만으로 보호하기 어려운 서비스 메서드에 인가를 적용하고, 리소스 소유권 같은 동적 조건을 검사하는 흐름을 이해한다."
 level: 3
 status: PUBLISHED
 displayOrder: 20
@@ -14,11 +14,11 @@ references:
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
-    relationNote: '@PreAuthorize와 method authorization interceptor 동작 확인'
+    relationNote: "@PreAuthorize와 메서드 인가 인터셉터의 동작 확인"
 ---
-# Method security와 use-case authorization
+# 메서드 보안과 유스케이스 인가
 
-`/admin/**` route를 ADMIN만 허용하는 규칙은 HTTP 경계에서 명확합니다. 하지만 중요한 service method가 controller 외의 scheduler, message consumer, 다른 facade에서도 호출될 수 있다면 **use-case 자체에 authorization contract를 두는 것**을 검토할 수 있습니다.
+`/admin/**` 경로를 관리자에게만 허용하는 규칙은 HTTP 경계에서 명확합니다. 그러나 서비스 메서드가 컨트롤러 외의 스케줄러·메시지 소비자에서도 호출된다면 **유스케이스 자체의 인가 조건**을 별도로 확인해야 합니다.
 
 ```java
 @PreAuthorize("hasAuthority('CATALOG_WRITE')")
@@ -27,46 +27,46 @@ public void publishProduct(long productId) {
 }
 ```
 
-Spring Security method security는 Spring AOP interceptor가 method call 앞뒤에서 authorization을 수행하는 방식입니다.
+Spring Security 메서드 보안은 Spring AOP 인터셉터가 메서드 호출 전후에 인가를 수행하는 방식입니다.
 
 ```text
-Caller
+호출자
   │
   ▼
-Method Security Proxy/Interceptor
-  │ current Authentication + expression/policy
-  ├─ deny → exception
-  └─ allow
+메서드 보안 프록시/인터셉터
+  │ 현재 Authentication + 표현식/정책
+  ├─ 거부 → 예외
+  └─ 허용
        ▼
-    Target method
+    대상 메서드
 ```
 
-### ownership처럼 argument가 필요한 policy도 표현할 수 있다
+### 메서드 인자가 필요한 소유권 정책도 표현할 수 있다
 
 ```java
 @PreAuthorize("@orderAuth.canCancel(authentication, #orderId)")
 public void cancel(long orderId) { ... }
 ```
 
-복잡한 query와 domain state 판단을 SpEL 문자열에 전부 넣기보다 policy bean으로 분리해 test하는 편이 읽기 좋을 수 있습니다.
+복잡한 조회와 도메인 상태 판단을 SpEL 문자열에 모두 넣기보다 별도 정책 빈에서 검사하면 읽고 테스트하기 쉽습니다.
 
-### controller와 method에 같은 rule을 복붙하지 않는다
+### 컨트롤러와 메서드에 같은 규칙을 중복하지 않는다
 
-두 층에 중복 rule이 있으면 정책 변경 시 한쪽만 고칠 수 있습니다. HTTP coarse rule과 use-case/resource rule의 책임을 나눕니다.
+두 층에 규칙을 중복하면 정책을 바꿀 때 한쪽만 수정할 수 있습니다. HTTP 경로의 기본 제한과 유스케이스의 리소스별 인가 책임을 구분합니다.
 
 ```text
-HTTP layer
-- authenticated
-- /admin/** coarse role
+HTTP 계층
+- 인증 필요
+- /admin/** 기본 역할 검사
 
-Application use-case
-- ownership
-- state-dependent permission
-- privileged operation authority
+애플리케이션 유스케이스
+- 소유권
+- 상태에 따른 권한
+- 높은 권한을 요구하는 작업
 ```
 
-### proxy 경계를 이해해야 한다
+### 프록시 경계를 이해해야 한다
 
-기본 proxy 기반 method security에서는 같은 object 내부의 self-invocation이 interceptor를 통과하지 않는 설계가 될 수 있습니다. `@PreAuthorize` annotation을 붙였다는 사실만 보지 말고 실제 caller가 proxy 경계를 지나는지 확인합니다.
+기본 프록시 방식에서는 같은 객체 안에서 자기 메서드를 호출하면 인터셉터를 거치지 않을 수 있습니다. `@PreAuthorize`가 붙어 있다는 사실뿐 아니라 실제 호출이 프록시를 통과하는지 확인해야 합니다.
 
-Method security의 가치는 annotation 개수가 아니라 **HTTP transport와 무관하게 중요한 use-case permission을 명시적인 호출 경계에서 보호하는 것**입니다.
+메서드 보안은 HTTP 이외의 호출 경로에서도 **중요한 유스케이스의 권한 조건을 같은 경계에서 검사**할 때 의미가 있습니다.

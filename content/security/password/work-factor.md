@@ -3,8 +3,8 @@ kind: concept
 contentKey: security.core.password.work-factor
 topicContentKey: security.core.password
 slug: work-factor
-title: "Work factor와 로그인 검증 비용"
-summary: "password hashing을 공격자에게 비싸게 만들면서 정상 로그인 지연 시간과 서버 자원 고갈을 감당할 수 있도록 cost parameter를 측정·조정하고 알고리즘 upgrade를 계획한다."
+title: "비밀번호 검증 비용(work factor)과 로그인 부하"
+summary: "비밀번호 해시의 계산 비용을 조정해 오프라인 추측 공격의 비용을 높이면서도 정상 로그인 지연과 서버 자원 사용을 관리하는 방법을 이해한다."
 level: 2
 status: PUBLISHED
 displayOrder: 30
@@ -14,33 +14,33 @@ references:
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
-    relationNote: Argon2id/bcrypt work factor와 upgrade guidance 확인
+    relationNote: "Argon2id·bcrypt의 작업 비용과 상향 조정 지침 확인"
   - url: "https://docs.spring.io/spring-security/reference/features/authentication/password-storage.html"
     title: "Spring Security Reference: Password Storage"
     referenceType: OFFICIAL
     language: en
     displayOrder: 2
-    relationNote: adaptive one-way function과 DelegatingPasswordEncoder 확인
+    relationNote: "적응형 단방향 함수와 DelegatingPasswordEncoder 확인"
 ---
-# Work factor와 로그인 검증 비용
+# 비밀번호 검증 비용(work factor)과 로그인 부하
 
-Password hashing은 공격자가 많은 후보를 빠르게 시험하기 어렵도록 의도적으로 계산 비용을 높입니다. 하지만 정상 로그인도 같은 verifier 계산을 수행하므로 cost를 무조건 크게 잡을 수는 없습니다.
+비밀번호 해시는 공격자가 많은 후보를 빠르게 시험하기 어렵도록 계산 비용을 높입니다. 하지만 정상 로그인도 같은 검증을 수행하므로 비용을 무조건 크게 잡을 수는 없습니다.
 
-OWASP는 새 시스템에서 Argon2id를 우선 권고하고, 환경에 따라 scrypt나 PBKDF2를 사용하며 bcrypt는 주로 legacy 환경에서 다룹니다. 어떤 scheme을 사용하든 memory·iteration·cost 같은 parameter는 현재 hardware에서 측정해 정해야 합니다.
+OWASP는 새 시스템에 Argon2id를 우선 권고하고, 환경에 따라 scrypt나 PBKDF2를 대안으로 제시합니다. bcrypt는 주로 기존 시스템에서 다룹니다. 어떤 방식을 사용하든 메모리와 반복 횟수 등의 매개변수는 현재 하드웨어에서 측정해 정해야 합니다.
 
 ```text
-work factor가 너무 낮음
-→ offline cracking 비용이 낮음
+검증 비용이 너무 낮음
+→ 오프라인 비밀번호 추측 비용이 낮음
 
-work factor가 지나치게 높음
-→ 정상 로그인 latency·CPU/memory 비용 증가
+검증 비용이 지나치게 높음
+→ 정상 로그인 지연·CPU 및 메모리 사용량 증가
 → 대량 인증 요청에 대한 자원 고갈 위험 증가
 ```
 
-중요한 것은 공격자가 DB dump를 얻은 뒤 수행하는 **offline guessing**과 서비스 login endpoint를 반복 호출하는 **online attack**을 구분하는 것입니다. Work factor는 offline guessing을 비싸게 만들고, rate limiting이나 MFA는 online 공격을 제한하는 별도 방어입니다.
+공격자가 유출된 DB로 수행하는 **오프라인 비밀번호 추측**과 로그인 엔드포인트를 반복 호출하는 **온라인 공격**을 구분해야 합니다. 작업 비용(work factor)은 오프라인 추측의 비용을 높이고, 요청 속도 제한이나 다중 요소 인증(MFA)은 온라인 공격을 제한합니다.
 
-Hardware 성능과 권고 수준은 시간이 지나며 변하므로 저장된 hash format과 cost도 upgrade할 수 있어야 합니다. 로그인 성공 시 기존 verifier가 현재 정책보다 약한지 확인하고, raw password를 이미 검증한 그 시점에 새 parameter로 다시 hash해 저장하는 방식이 대표적입니다.
+하드웨어 성능과 권고 수준은 시간이 지나며 변하므로 저장된 해시 형식과 비용도 높일 수 있어야 합니다. 로그인에 성공했을 때 기존 해시가 현재 정책보다 약하면, 그 시점에 입력받은 비밀번호를 새 매개변수로 다시 해시해 저장할 수 있습니다.
 
-Spring Security의 `DelegatingPasswordEncoder`처럼 여러 encoded format을 식별할 수 있는 구조는 legacy verifier와 새 scheme을 점진적으로 전환하는 데 도움을 줍니다.
+Spring Security의 `DelegatingPasswordEncoder`처럼 여러 인코딩 형식을 식별하는 구조는 기존 해시를 새 방식으로 점진적으로 전환하는 데 도움이 됩니다.
 
-Work factor는 고정된 마법의 숫자가 아니라 **정상 인증 비용을 감당할 수 있으면서 공격자의 password guessing 비용을 충분히 높이는 현재 환경의 security parameter**입니다.
+작업 비용은 고정된 값이 아닙니다. **정상 인증 비용을 감당하면서 공격자의 비밀번호 추측 비용을 충분히 높이도록 현재 환경에서 정하는 보안 매개변수**입니다.

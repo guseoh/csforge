@@ -3,8 +3,8 @@ kind: concept
 contentKey: security.core.browser.cors-preflight
 topicContentKey: security.core.browser
 slug: cors-preflight
-title: "CORS와 preflight가 허용 범위를 협상하는 방식"
-summary: "CORS가 server 응답 헤더로 특정 origin의 browser script read를 허용하고 non-simple 요청 전에 preflight OPTIONS로 method/header permission을 확인하는 흐름을 이해한다."
+title: "교차 출처 리소스 공유(CORS)와 사전 요청"
+summary: "CORS 응답 헤더가 다른 출처의 스크립트에 응답 읽기를 허용하는 방식과, 일부 요청에서 사전 요청을 거쳐 허용된 메서드·헤더를 확인하는 흐름을 이해한다."
 level: 2
 status: PUBLISHED
 displayOrder: 20
@@ -14,62 +14,59 @@ references:
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
-    relationNote: simple request, preflight, credentials와 response header 흐름 확인
+    relationNote: "단순 요청·사전 요청·자격 증명·응답 헤더의 흐름 확인"
   - url: "https://docs.spring.io/spring-security/reference/servlet/integrations/cors.html"
     title: "Spring Security Reference: CORS"
     referenceType: OFFICIAL
     language: en
     displayOrder: 2
-    relationNote: CORS가 Security filter 전에 처리되어야 하는 servlet integration 확인
+    relationNote: "서블릿 환경에서 CORS를 보안 필터보다 먼저 처리해야 하는 이유 확인"
 ---
-# CORS와 preflight가 허용 범위를 협상하는 방식
+# 교차 출처 리소스 공유(CORS)와 사전 요청
 
-Frontend가 `https://app.example.com`, API가 `https://api.example.com`이면 host가 달라 same-origin이 아닙니다. Browser는 SOP 때문에 frontend script가 API 응답을 자유롭게 읽지 못하게 하고, 서버가 CORS header로 **이 origin에게는 읽기를 허용한다**고 명시할 수 있습니다.
+프런트엔드가 `https://app.example.com`, API가 `https://api.example.com`이면 호스트가 달라 출처도 다릅니다. 브라우저는 동일 출처 정책에 따라 프런트엔드 스크립트의 API 응답 읽기를 제한합니다. 서버는 CORS 응답 헤더로 **특정 출처에는 읽기를 허용한다**고 선언할 수 있습니다.
 
-### simple cross-origin GET의 흐름
+### 단순한 교차 출처 GET의 흐름
 
 ```text
-Browser
+브라우저 ── GET /orders ──► API
 Origin: https://app.example.com
-    │
-    ├──────── GET ────────► API
-    │                      │
-    │   Access-Control-Allow-Origin:
-    │   https://app.example.com
-    │◄─────────────────────┤
-    │
-    └─ response를 script에 노출
+
+API ── 응답 ──► 브라우저
+Access-Control-Allow-Origin: https://app.example.com
+
+브라우저가 응답을 스크립트에 노출
 ```
 
-CORS header가 없거나 origin이 맞지 않으면 browser가 script의 응답 접근을 차단할 수 있습니다. **서버가 요청을 전혀 받지 않았다는 뜻은 아닙니다.**
+CORS 헤더가 없거나 허용 출처가 맞지 않으면 브라우저가 스크립트의 응답 읽기를 차단할 수 있습니다. **서버가 요청을 전혀 받지 않았다는 뜻은 아닙니다.**
 
-### non-simple 요청은 preflight로 먼저 묻는다
+### 일부 요청은 사전 요청으로 허용 여부를 확인한다
 
 ```text
-Browser                         API
-  │ OPTIONS /orders              │
-  │ Origin: app.example.com      │
-  │ Access-Control-Request-Method: POST
-  ├─────────────────────────────►│
-  │                              │
-  │ Allow-Origin / Allow-Methods │
-  │◄─────────────────────────────┤
-  │
-  └── 허용될 때 실제 POST ──────►
+브라우저 ── 사전 요청 ──► API
+OPTIONS /orders
+Origin: https://app.example.com
+Access-Control-Request-Method: POST
+
+API ── 사전 요청 응답 ──► 브라우저
+Access-Control-Allow-Origin: https://app.example.com
+Access-Control-Allow-Methods: POST
+
+허용되면 브라우저 ── 실제 POST ──► API
 ```
 
-Custom header, 특정 content type/method 조합은 preflight 대상이 될 수 있습니다.
+사용자 정의 헤더나 특정 본문 형식·HTTP 메서드 조합은 사전 요청 대상이 될 수 있습니다.
 
-### credentials와 wildcard를 조심한다
+### 자격 증명을 보낼 때는 허용 출처를 명시한다
 
-Session cookie처럼 credential을 cross-origin 요청에 포함하려면 client의 credentials 설정과 서버의 `Access-Control-Allow-Credentials: true` 등이 필요합니다. Credentialed 응답에 `Access-Control-Allow-Origin: *`를 사용할 수 없고 구체적인 origin을 허용해야 합니다.
+세션 쿠키 같은 자격 증명을 교차 출처 요청에 포함하려면 브라우저의 자격 증명 전송 설정과 서버의 `Access-Control-Allow-Credentials: true` 등이 필요합니다. 이때 `Access-Control-Allow-Origin: *`를 사용할 수 없으며 허용할 출처를 구체적으로 지정해야 합니다.
 
 ### CORS는 CSRF 방어가 아니다
 
-Simple form 요청은 preflight 없이 cross-site로 전송될 수 있고, 응답을 읽지 않아도 서버 state가 바뀌면 CSRF가 성공할 수 있습니다. CORS를 엄격하게 설정했다고 CSRF token이 자동으로 불필요해지는 것은 아닙니다.
+단순한 폼 요청은 사전 요청 없이 다른 사이트에서 전송될 수 있습니다. 공격자가 응답을 읽지 못해도 서버 상태가 바뀌면 CSRF가 성공할 수 있으므로 CORS 설정만으로 CSRF 방어를 대신할 수 없습니다.
 
-### CORS error는 서버 log와 browser console을 함께 본다
+### CORS 오류는 서버 로그와 브라우저 콘솔을 함께 본다
 
-API 자체는 200을 반환했는데 browser가 CORS 때문에 응답을 script에 숨기는 경우가 있습니다. network 요청 유무, OPTIONS 응답, allow-origin/credentials header를 순서대로 확인하면 원인을 좁힐 수 있습니다.
+API가 200을 반환했어도 브라우저가 CORS 정책 때문에 응답 읽기를 막을 수 있습니다. 본 요청의 전송 여부, OPTIONS 응답, 출처·자격 증명 관련 응답 헤더를 순서대로 확인합니다.
 
-CORS는 firewall이 아니라 **브라우저에게 어떤 cross-origin script access를 허용할지 서버가 선언하는 protocol**입니다.
+CORS는 **어느 출처의 브라우저 스크립트에 응답 읽기를 허용할지 서버가 알리는 방식**입니다.
