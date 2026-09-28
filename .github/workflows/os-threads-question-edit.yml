@@ -1,0 +1,254 @@
+name: OS Threads curated question edit
+
+on:
+  push:
+    branches:
+      - codex/content-operating-systems-quality
+
+permissions:
+  contents: write
+
+jobs:
+  edit-threads-questions:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: codex/content-operating-systems-quality
+          fetch-depth: 0
+
+      - name: Apply curated Threads question wording
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import copy
+          import json
+          from pathlib import Path
+
+          path = Path('content/operating-systems/threads/questions.json')
+          data = json.loads(path.read_text(encoding='utf-8'))
+
+          before = [
+              (q['contentKey'], q['questionType'], q['difficulty'], q['status'],
+               copy.deepcopy(q.get('conceptKeys')), copy.deepcopy(q.get('acceptedAnswers')),
+               q.get('correctChoiceKey'), [(c['key'], c['displayOrder']) for c in q.get('choices', [])])
+              for q in data
+          ]
+          by_key = {q['contentKey']: q for q in data}
+
+          def edit(key, *, prompt=None, model=None, explanation=None, choices=None):
+              q = by_key[key]
+              if prompt is not None:
+                  q['promptMarkdown'] = prompt
+              if model is not None:
+                  q['modelAnswer'] = model
+              if explanation is not None:
+                  q['explanationMarkdown'] = explanation
+              if choices:
+                  choice_by_key = {c['key']: c for c in q['choices']}
+                  for ck, values in choices.items():
+                      c = choice_by_key[ck]
+                      if 'content' in values:
+                          c['content'] = values['content']
+                      if 'rationale' in values:
+                          c['rationaleMarkdown'] = values['rationale']
+
+          edit('operating-systems.core.threads.process-vs-thread.q1',
+               prompt='같은 프로세스의 두 스레드가 일반적으로 공유하는 것과 스레드별로 따로 가지는 것을 올바르게 짝지은 것은?',
+               explanation='같은 프로세스의 스레드들은 보통 코드·힙과 여러 프로세스 자원을 공유하지만, 각자 독립적으로 명령어를 실행해야 하므로 **프로그램 카운터·레지스터 문맥·스택**은 스레드별로 필요하다. 공유 자원과 실행 문맥의 경계를 구분하는 것이 핵심이다.',
+               choices={
+                   'A': {'content':'각 스레드가 독립된 주소 공간을 가지지만 열린 자원은 항상 공유한다','rationale':'한 프로세스의 스레드들은 보통 주소 공간을 공유한다. 반대로 서로 다른 프로세스는 각자 주소 공간 매핑을 가지며 파일 같은 자원의 공유·상속 여부도 운영체제 규칙에 따라 달라진다.'},
+                   'B': {'content':'같은 주소 공간을 쓰므로 스택과 레지스터 문맥도 하나를 공유한다','rationale':'주소 공간은 공유해도 각 스레드는 독립적으로 실행하기 위해 별도의 스택과 레지스터 문맥이 필요하다. 실행 문맥 하나만 공유하면 서로 다른 호출 경로를 유지할 수 없다.'},
+                   'C': {'content':'힙은 공유하고 각 스레드의 스택·레지스터 문맥은 분리한다','rationale':'한 프로세스의 스레드들은 보통 힙 객체와 코드 매핑을 공유하지만 각자 스택·레지스터·프로그램 카운터를 가진다. 그래서 공유 데이터에 접근하면서도 서로 다른 실행 흐름을 유지할 수 있다.'},
+                   'D': {'content':'스레드마다 힙은 분리되지만 프로그램 카운터는 프로세스 전체에서 하나다','rationale':'같은 프로세스의 스레드들은 힙 객체를 공유할 수 있지만 각자 현재 명령어 위치와 레지스터 상태를 가져야 한다. 프로세스 전체에 프로그램 카운터가 하나뿐이라면 여러 실행 흐름을 독립적으로 나타낼 수 없다.'}
+               })
+          edit('operating-systems.core.threads.process-vs-thread.q2',
+               prompt='같은 프로그램을 두 프로세스로 실행하는 경우와 한 프로세스 안에서 두 스레드를 실행하는 경우의 격리 차이를 설명하라.',
+               model='두 프로세스는 기본적으로 서로 다른 가상 주소 공간과 프로세스 자원·생명주기 경계를 가진다. 같은 프로세스의 스레드는 힙과 여러 프로세스 자원을 공유한다. 스레드 사이의 데이터 교환은 직접적이지만 메모리 손상이나 치명적 오류의 영향도 같은 프로세스 내부에서 함께 전파될 수 있다.',
+               explanation='프로세스를 나누면 주소 공간과 생명주기 경계가 강해져 직접 메모리를 공유하기 어렵고 IPC가 필요할 수 있다. 반대로 같은 프로세스의 스레드는 힙을 직접 공유해 데이터 교환 비용은 낮지만 경쟁 상태나 프로세스 전체를 끝낼 수 있는 치명적 오류의 영향도 함께 받을 수 있다.')
+          edit('operating-systems.core.threads.process-vs-thread.q3',
+               prompt='신뢰할 수 없는 플러그인을 호스트와 같은 프로세스의 스레드로 실행했더니 네이티브 메모리 오류로 서버 전체가 종료되었다. 스레드 대신 프로세스 경계를 고려할 이유를 설명하라.',
+               model='스레드는 호스트와 주소 공간·프로세스 생명주기를 공유하므로 네이티브 메모리 손상이나 치명적 오류가 프로세스 전체에 영향을 줄 수 있다. 별도 프로세스는 IPC 비용이 생기지만 주소 공간과 비정상 종료의 영향을 더 강하게 격리할 수 있다.',
+               explanation='이 상황의 핵심 요구는 단순한 동시성이 아니라 **장애 격리**다. 같은 프로세스의 스레드는 주소 공간과 생명주기를 공유하므로 네이티브 메모리 손상 같은 치명적 오류가 서버 프로세스 전체로 전파될 수 있다. 별도 프로세스는 IPC 비용을 지불하는 대신 메모리와 장애 경계를 더 강하게 분리한다.')
+
+          edit('operating-systems.core.threads.thread-shared-state.q1',
+               prompt='두 스레드가 같은 힙의 `counter`에 대해 동시에 읽기-수정-쓰기(read-modify-write)를 수행할 때 발생할 수 있는 대표 문제는?',
+               explanation='`counter = counter + 1`은 하나의 문장처럼 보여도 실제 실행은 읽기 → 계산 → 쓰기 단계로 나뉠 수 있다. 두 스레드가 같은 이전 값을 읽으면 각각 같은 새 값을 써서 한 번의 증가가 사라질 수 있다. **메모리를 공유한다는 사실만으로 연산의 원자성이 보장되지는 않는다.**',
+               choices={
+                   'A': {'content':'두 스레드가 같은 이전 값을 읽어 증가 한 번의 결과가 사라질 수 있다','rationale':'읽기-수정-쓰기가 하나의 원자적 연산으로 보호되지 않으면 여러 단계가 서로 교차할 수 있다. 두 스레드가 같은 이전 값을 읽고 같은 증가 값을 쓰면 한 번의 갱신 효과가 사라질 수 있다.'},
+                   'B': {'content':'같은 힙을 공유하므로 읽기-수정-쓰기 전체가 자동으로 원자적이 된다','rationale':'힙 공유는 두 스레드가 같은 값을 볼 수 있게 할 뿐 여러 단계의 갱신을 하나의 원자적 연산으로 묶어 주지는 않는다. 동기화나 원자적 연산이 별도로 필요하다.'},
+                   'C': {'content':'CPU가 여러 코어를 사용하면 같은 메모리 위치에 대한 접근은 자동으로 직렬화된다','rationale':'여러 코어가 캐시 일관성을 유지하더라도 여러 명령으로 이루어진 읽기-수정-쓰기 전체가 자동으로 하나의 원자적 연산이 되지는 않는다. 실행이 교차되면 한쪽 결과가 다른 쪽에 덮어써질 수 있다.'},
+                   'D': {'content':'각 스레드의 스택이 분리되어 있으므로 공유 힙의 갱신도 서로 영향을 주지 않는다','rationale':'스레드별 스택은 각자의 호출 상태를 분리할 뿐 공유 힙 객체를 격리하지 않는다. 공통 힙의 `counter`를 갱신하면 다른 스레드가 관찰하는 값에도 영향을 준다.'}
+               })
+          edit('operating-systems.core.threads.thread-shared-state.q2',
+               prompt="같은 프로세스의 여러 스레드가 파일 디스크립터를 공유할 때 단순히 '각 스레드가 독립된 파일 상태를 가진다'고 생각하면 안 되는 이유를 설명하라.",
+               model='파일 디스크립터와 그 디스크립터가 가리키는 열린 자원 상태가 프로세스 단위에서 공유될 수 있기 때문이다. 여러 스레드의 `read`·`write`·`close`가 같은 커널 객체와 파일 오프셋·소켓 상태에 영향을 줄 수 있으므로 어떤 상태가 공유되는지 운영체제의 자원 계약을 확인해야 한다.',
+               explanation='같은 프로세스의 스레드는 프로세스 단위의 디스크립터 테이블과 그 디스크립터가 가리키는 커널 자원을 함께 사용할 수 있다. 따라서 한 스레드의 `read`·`write`·`close`가 다른 스레드가 보는 파일 오프셋이나 소켓 생명주기에 영향을 줄 수 있어 자원별 공유 규칙을 확인해야 한다.')
+          edit('operating-systems.core.threads.thread-shared-state.q3',
+               prompt='T1과 T2가 같은 `balance`를 읽고 각각 `+10`을 계산한 뒤 쓴다. 초기값이 100이고 두 스레드가 모두 쓰기 전에 100을 읽었다면 최종값으로 가능한 것은?',
+               explanation='두 스레드가 모두 100을 읽었다면 각자 계산한 값은 110이다. 이후 T1과 T2가 차례로 110을 써도 최종값은 110이므로 한 번의 `+10` 효과가 사라진다. 이것이 읽기-수정-쓰기 실행 교차에서 나타나는 대표적인 **갱신 손실(lost update)**이다.')
+          edit('operating-systems.core.threads.thread-shared-state.q4',
+               prompt='DB 트랜잭션 안에서 실행되는 Java 코드라면 같은 싱글턴 필드에 대한 스레드 경쟁도 자동으로 해결된다고 볼 수 있는가? 이유를 설명하라.',
+               model='아니다. DB 트랜잭션은 DB가 관리하는 자원의 원자성·격리 계약이고 JVM 힙의 공유 가변 상태에 대한 스레드 동기화를 자동으로 제공하지 않는다. 자바 메모리 모델(Java Memory Model)과 원자성·락 계약은 별도로 고려해야 한다.',
+               explanation='DB 트랜잭션의 격리는 DB가 관리하는 데이터와 트랜잭션 사이의 계약이다. 같은 JVM 프로세스 안의 싱글턴 필드는 별도의 힙 공유 상태이므로 트랜잭션을 열었다는 이유만으로 Java 수준의 원자성·가시성·상호 배제가 생기지 않는다. 서로 다른 계층의 동시성 문제다.')
+
+          edit('operating-systems.core.threads.thread-private-state.q1',
+               prompt='스레드마다 독립적으로 유지되어야 하는 실행 상태는?',
+               explanation='각 스레드는 서로 다른 명령어 위치와 함수 호출 경로를 독립적으로 진행하므로 프로그램 카운터, 레지스터 문맥, 호출 스택이 필요하다. 힙·코드·여러 프로세스 자원은 같은 프로세스의 스레드 사이에서 공유될 수 있다.',
+               choices={
+                   'A': {'content':'프로세스 전체의 가상 주소 공간 매핑 전체','rationale':'프로세스 주소 공간은 보통 스레드마다 복제하지 않고 여러 스레드가 공유한다. 스레드별 실행 상태는 전체 주소 공간 매핑보다 범위가 좁다.'},
+                   'B': {'content':'프로세스의 모든 힙 객체와 코드 페이지','rationale':'한 프로세스 안의 힙 객체와 코드 페이지는 여러 스레드가 공유할 수 있다. 이를 스레드마다 모두 복제하는 것은 일반적인 스레드 모델이 아니다.'},
+                   'C': {'content':'프로세스가 연 모든 파일 디스크립터의 독립 복사본','rationale':'프로세스의 디스크립터 테이블은 스레드 사이에서 공유될 수 있어 각 스레드가 모든 디스크립터를 별도로 복제할 필요는 없다. 대신 CPU 실행 상태는 스레드마다 따로 필요하다.'},
+                   'D': {'content':'프로그램 카운터, 레지스터 문맥, 호출 스택','rationale':'각 스레드는 자신의 명령어 위치와 호출 경로에서 실행을 재개할 수 있도록 프로그램 카운터·레지스터 문맥·호출 스택을 따로 가져야 한다. 이들은 프로세스 전체가 공유하는 메모리 매핑과 다르다.'}
+               })
+          edit('operating-systems.core.threads.thread-private-state.q2',
+               prompt='지역 참조 변수가 한 스레드의 스택에 있다는 사실만으로 그 참조가 가리키는 객체까지 스레드 전용이라고 할 수 없는 이유를 설명하라.',
+               model='참조 변수 자체는 각 스레드의 스택 프레임에 있어도 그 값이 가리키는 객체는 공유 힙에 존재할 수 있다. 다른 스레드도 같은 객체의 참조를 얻을 수 있다면 그 객체의 상태는 공유된다.',
+               explanation='변수의 **저장 위치**와 그 변수가 가리키는 **객체의 공유 범위**는 다르다. 지역 참조 변수가 한 스레드의 스택에 있어도 대상 객체가 공유 힙에 있고 다른 스레드도 그 객체에 도달할 수 있다면 객체 상태는 공유된다.')
+          edit('operating-systems.core.threads.thread-private-state.q3',
+               prompt='스레드 풀의 작업 스레드에 요청 ID를 `ThreadLocal`로 저장하고 작업 종료 후 값을 제거하지 않았다. 다음 요청에서 이전 ID가 보일 수 있는 이유를 설명하라.',
+               model='스레드 풀은 같은 플랫폼 스레드를 여러 작업에 재사용할 수 있으므로 `ThreadLocal` 값의 생명주기가 요청이 아니라 작업 스레드에 묶일 수 있다. 작업 경계에서 값을 명시적으로 설정·제거하거나 안전한 문맥 전파 방식을 사용해야 한다.',
+               explanation='스레드 풀은 요청이 끝나도 작업 스레드를 종료하지 않고 다음 작업에 재사용할 수 있다. `ThreadLocal` 값은 요청이 아니라 **그 작업 스레드의 생명주기**에 붙으므로 정리가 빠지면 다음 작업이 이전 요청의 문맥을 관찰할 수 있다.')
+
+          edit('operating-systems.core.threads.kernel-thread.q1',
+               prompt='이 Topic에서 말하는 커널이 인식하는 스레드(kernel-visible thread)의 핵심 특징은?',
+               explanation='여기서 커널이 인식하는 스레드는 운영체제 스케줄러가 별도의 실행 상태로 추적할 수 있는 스레드를 뜻한다. 같은 프로세스의 여러 스레드가 주소 공간을 공유하면서도 서로 다른 실행 가능·대기 상태를 가질 수 있으므로 주소 공간 경계와 스케줄링 경계를 혼동하면 안 된다.',
+               choices={
+                   'A': {'content':'한 스레드가 블로킹되면 같은 프로세스의 다른 커널 스레드도 반드시 함께 블로킹된다','rationale':'커널이 인식하는 실행 문맥마다 실행 가능·대기 상태가 다를 수 있어 한 스레드가 기다린다고 같은 프로세스의 모든 스레드가 반드시 막히지는 않는다.'},
+                   'B': {'content':'같은 프로세스의 스레드는 커널이 하나의 스케줄링 문맥으로만 볼 수 있다','rationale':'커널이 스레드별로 독립적으로 스케줄링한다면 프로세스 하나의 문맥이 아니라 별도의 실행 문맥으로 추적한다. 그와 별개로 프로세스 주소 공간은 공유할 수 있다.'},
+                   'C': {'content':'커널이 인식하는 스레드마다 반드시 별도의 가상 주소 공간이 필요하다','rationale':'한 프로세스의 스레드들은 주소 공간을 공유하면서도 커널에 각각 별도 스케줄링 상태로 보일 수 있다. 별도 가상 주소 공간은 프로세스 격리와 관련된 경계이지 스레드별 필수 조건이 아니다.'},
+                   'D': {'content':'운영체제 스케줄러가 독립적인 실행 가능·대기 실행 문맥으로 관리할 수 있다','rationale':'운영체제는 스레드를 독립적으로 스케줄링할 수 있는 실행 문맥으로 추적한다. 스레드별 실행 상태가 있다고 해서 별도의 프로세스 주소 공간까지 생기는 것은 아니다.'}
+               })
+          edit('operating-systems.core.threads.kernel-thread.q2',
+               prompt='같은 프로세스의 T1이 블로킹 I/O로 대기 상태가 되어도 T2가 실행될 수 있는 이유를 설명하라.',
+               model='커널이 T1과 T2를 서로 다른 스케줄링 문맥으로 관리한다면 T1을 대기 상태로 두고 실행 가능한 T2를 같은 CPU의 다른 실행 구간이나 다른 CPU에 스케줄링할 수 있다.',
+               explanation='커널이 T1과 T2를 독립된 스케줄링 문맥으로 관리한다면 T1의 I/O 대기는 T1의 실행 가능성을 막는 사건이지 프로세스 전체를 자동으로 멈추는 사건이 아니다. T2가 실행 가능하다면 스케줄러는 T2에 CPU 실행 기회를 줄 수 있다.')
+          edit('operating-systems.core.threads.kernel-thread.q3',
+               prompt='4코어 CPU에서 CPU 계산 중심의 실행 가능한 커널 스레드를 4개에서 400개로 늘렸다. 실제 CPU 병렬성과 예상되는 추가 비용의 변화를 설명하라.',
+               model='동시에 CPU에서 실행할 수 있는 수는 CPU 코어라는 하드웨어 자원에 제한되므로 400으로 늘지 않는다. 실행 대기열과 스케줄링·문맥 전환 경쟁이 증가하고 캐시 지역성이 나빠질 수 있어 처리량이나 지연 시간이 오히려 악화될 수 있다.',
+               explanation='실행 가능한 스레드 수와 실제 병렬 실행 수는 다르다. 4코어에서 CPU 계산 중심 작업의 동시 실행은 하드웨어 자원에 제한되고 나머지는 차례를 기다린다. 스레드를 과도하게 늘리면 대기열과 문맥 전환·작업 집합 경쟁만 커질 수 있다.')
+
+          edit('operating-systems.core.threads.user-level-thread.q1',
+               prompt='사용자 수준 스레드의 논리적 스케줄링 결정을 직접 수행하는 주체는 보통 무엇인가?',
+               explanation='사용자 수준 스레드의 실행 가능 대기열과 전환 정책은 런타임이나 라이브러리가 관리할 수 있다. 커널은 논리 스레드 하나하나가 아니라 실제로 커널에 보이는 운반자 스레드나 실행 문맥을 스케줄링하므로 두 스케줄링 층을 구분해야 한다.',
+               choices={
+                   'A': {'content':'운영체제 스케줄러가 각 논리적 사용자 수준 스레드를 반드시 직접 선택한다','rationale':'사용자 수준 런타임은 논리 스레드를 각각 별도 커널 스케줄링 단위로 노출하지 않고 관리할 수 있다. 커널은 자신에게 보이는 프로세스나 운반자 실행 문맥을 스케줄링한다.'},
+                   'B': {'content':'애플리케이션 런타임 또는 사용자 공간 라이브러리','rationale':'애플리케이션 런타임이나 사용자 공간 라이브러리가 사용 가능한 운반자 스레드에서 어떤 논리 스레드를 실행할지 선택할 수 있다. 이는 커널의 스케줄링 위에 있는 별도 계층이다.'},
+                   'C': {'content':'CPU 하드웨어가 런타임 대기열을 읽어 논리 스레드를 직접 배치한다','rationale':'CPU는 선택된 기계어 실행 문맥을 실행하지만 애플리케이션의 사용자 공간 스레드 대기열을 직접 살펴보지 않는다. 런타임이 논리 스레드를 선택하고 실행 문맥을 준비한다.'},
+                   'D': {'content':'I/O 장치 드라이버가 애플리케이션의 모든 논리 스레드 대기열을 관리한다','rationale':'장치 드라이버는 하드웨어 연산과 완료를 관리하지만 애플리케이션의 논리 스레드 스케줄링 정책을 정하지 않는다. 사용자 수준 스케줄링은 런타임이나 라이브러리의 책임이다.'}
+               })
+          edit('operating-systems.core.threads.user-level-thread.q2',
+               prompt='논리적 사용자 수준 스레드 수와 실제 CPU 병렬성이 같은 숫자가 아닌 이유를 설명하라.',
+               model='런타임은 많은 논리 스레드를 더 적은 수의 운반자·커널 스레드에 다중화할 수 있고, 같은 순간 CPU에서 실제로 실행할 수 있는 수는 운반자 스레드와 CPU 코어 같은 실행 자원에 제한된다.',
+               explanation='논리 스레드는 런타임이 관리하는 동시성 단위이고 실제 CPU 실행은 커널이 인식하는 운반자 스레드와 CPU 코어를 통해 일어난다. 따라서 논리 작업이 매우 많아도 실제 병렬성은 아래 계층의 실행 자원 수를 넘을 수 없다.')
+          edit('operating-systems.core.threads.user-level-thread.q3',
+               prompt='다대일(many-to-one) 런타임에서 하나뿐인 운반자 스레드가 런타임이 인식하지 못하는 블로킹 시스템 콜에 들어갔다. 다른 논리 스레드에는 어떤 영향이 생길 수 있는가?',
+               model='유일한 운반자 스레드가 커널에서 블로킹되면 그 운반자 위의 다른 논리 스레드도 CPU를 얻지 못할 수 있다. 논블로킹 연동, 블로킹 전용 운반자·풀 또는 여러 커널 스레드로의 매핑 같은 설계가 필요하다.',
+               explanation='상태를 계층별로 추적해야 한다. 런타임에는 실행 가능한 논리 스레드가 남아 있어도 이를 실행할 유일한 운반자 스레드가 커널에서 잠들면 런타임이 CPU를 사용할 통로가 사라진다. 따라서 블로킹을 인식하는 연동이나 추가 운반자처럼 매핑 자체를 바꾸는 대응이 필요하다.')
+          edit('operating-systems.core.threads.user-level-thread.q4',
+               prompt="'사용자 수준 스레드 하나가 블로킹되면 프로세스 전체가 항상 멈춘다'라는 설명이 일반적으로 부정확한 이유를 설명하라.",
+               model='결과는 런타임의 매핑 방식과 블로킹 연동 방식에 따라 달라진다. 여러 운반자 스레드를 사용하거나 블로킹을 인식하는 런타임이라면 다른 논리 스레드는 계속 실행될 수 있으므로 단순한 다대일 모델의 한계를 모든 사용자 수준 스레드 구현에 일반화하면 안 된다.',
+               explanation='그 결론은 단순한 다대일 구현에서는 가능하지만 사용자 수준 스레드의 보편 법칙은 아니다. 여러 운반자 스레드를 사용하거나 런타임이 블로킹 연산을 감지해 기다리는 논리 스레드만 멈출 수 있다면 다른 논리 스레드는 계속 실행될 수 있다. **논리 스레드와 커널 스레드의 매핑, 블로킹 연동 방식을 먼저 확인해야 한다.**')
+
+          edit('operating-systems.core.threads.thread-create-switch-cost.q1',
+               prompt='스레드 수가 과도하게 증가할 때 함께 커질 수 있는 비용 조합으로 가장 적절한 것은?',
+               explanation='스레드는 스택과 실행 메타데이터를 필요로 하고, 실행 가능한 스레드가 많아지면 스케줄러가 더 많은 실행 후보를 관리한다. 같은 프로세스의 스레드 사이 문맥 전환도 비용이 있으며, 스레드 수를 늘린다고 하드웨어 병렬성이 같은 비율로 증가하는 것도 아니다.',
+               choices={
+                   'A': {'content':'스택·메타데이터 메모리와 실행 가능 스레드의 스케줄링·문맥 전환 비용','rationale':'각 스레드에는 스택과 관리 상태가 필요하고 실행 가능한 스레드가 많아지면 같은 CPU 실행 용량을 두고 경쟁하면서 스케줄링과 문맥 전환 비용이 커질 수 있다.'},
+                   'B': {'content':'스레드별 스택은 늘지만 실행 가능 스레드 사이의 스케줄링 경쟁은 스레드 수와 무관하다','rationale':'실행 가능한 스레드가 많아지면 같은 CPU 실행 용량을 두고 경쟁하므로 스케줄링 비용과 대기열 길이가 증가할 수 있다. 스택 메모리만 변하는 문제가 아니다.'},
+                   'C': {'content':'같은 프로세스의 스레드 전환은 레지스터와 실행 문맥을 전혀 저장·복원하지 않는다','rationale':'한 프로세스 안에서 스레드를 전환해도 서로 다른 레지스터와 실행 상태를 저장·복원해야 한다. 프로세스 전환보다 일부 비용이 작을 수 있지만 전환 자체가 무료는 아니다.'},
+                   'D': {'content':'스레드 수가 늘면 CPU 코어도 같은 비율로 늘어 전환 비용이 상쇄된다','rationale':'소프트웨어 스레드 수를 늘려도 하드웨어 CPU 코어가 새로 생기지는 않는다. 실제 병렬 실행 용량은 그대로인데 메모리와 스케줄링 비용이 늘 수 있다.'}
+               })
+          edit('operating-systems.core.threads.thread-create-switch-cost.q2',
+               prompt='매우 짧은 작업마다 새 플랫폼 스레드를 만들 때 스레드 풀이 유리할 수 있는 이유를 설명하라.',
+               model='작업 스레드와 스택·실행 문맥을 재사용해 작업마다 드는 생성·시작·종료 비용을 여러 작업에 나눌 수 있고, 동시에 활성화되는 스레드 수에도 경계를 둘 수 있다.',
+               explanation='실제 작업보다 스레드 생명주기 비용의 비중이 크다면 매번 새 플랫폼 스레드를 만들고 없애는 비용이 누적된다. 스레드 풀은 작업 스레드를 여러 작업에 재사용해 생성·종료 비용을 줄이고 동시에 활성 스레드 수를 제한하는 역할도 한다.')
+          edit('operating-systems.core.threads.thread-create-switch-cost.q3',
+               prompt='스레드 수를 크게 줄였더니 문맥 전환은 감소했지만 요청 지연 시간이 악화됐다. 가능한 이유를 설명하라.',
+               model='작업 스레드가 부족해 작업이 대기열에서 오래 기다리는 병목으로 이동했을 수 있다. 문맥 전환 수만 최적화하지 말고 대기열 지연 시간, 활성 작업 스레드 수, 실제 실행 시간, 처리량과 하위 시스템 대기를 함께 봐야 한다.',
+               explanation='한 지표가 좋아졌다고 전체 성능이 좋아졌다고 볼 수 없다. 스레드를 줄이면 스케줄링 비용은 낮아질 수 있지만 처리에 필요한 작업 스레드까지 부족해져 **대기열 지연 시간이 증가**할 수 있다. 전환 비용과 대기 비용을 함께 측정해 병목이 어디로 이동했는지 확인해야 한다.')
+
+          edit('operating-systems.core.threads.concurrency-vs-parallelism.q1',
+               prompt='단일 코어 CPU에서도 가능한 실행 구성은 무엇인가? 영문 용어로 답하라.',
+               explanation='단일 코어에서도 여러 작업을 번갈아 실행해 같은 시간 구간 안에서 함께 진행시키는 **동시성(concurrency)**은 가능하다. 반면 CPU 계산을 같은 순간 실제로 병렬 실행하려면 둘 이상의 실행 자원이 필요하다.')
+          edit('operating-systems.core.threads.concurrency-vs-parallelism.q2',
+               prompt='I/O 중심 서버에서 동시성이 성능에 도움이 되는 이유를 CPU 병렬성과 구분해서 설명하라.',
+               model='한 작업이 I/O를 기다리는 동안 다른 작업의 CPU 실행을 진행해 대기 시간을 겹칠 수 있기 때문이다. 이는 반드시 여러 CPU에서 계산을 동시에 수행하는 병렬성을 의미하지 않는다.',
+               explanation='I/O 중심 작업 부하의 이점은 여러 계산을 같은 순간에 수행해서만 생기는 것이 아니다. 한 작업이 네트워크나 디스크를 기다릴 때 다른 작업이 CPU를 사용하면 **대기 시간을 다른 작업의 실행과 겹칠 수 있다.** 그래서 동시성과 CPU 병렬성을 같은 말로 쓰면 안 된다.')
+          edit('operating-systems.core.threads.concurrency-vs-parallelism.q3',
+               prompt='2코어 CPU에서 CPU 계산 중심 작업 100개를 동시에 진행하도록 구성했지만 처리량이 거의 늘지 않았다. 이유를 설명하라.',
+               model='100개 작업을 동시에 관리할 수 있어도 실제 CPU 병렬성은 코어라는 하드웨어 자원에 제한된다. 추가 실행 가능 작업은 대기열과 문맥 전환을 늘릴 수 있으므로 작업 분할 방식과 적정 병렬성을 맞춰야 한다.',
+               explanation='동시 실행 후보를 100개로 늘려도 2코어가 제공하는 CPU 실행 용량은 그대로다. CPU 계산 중심 작업이 모두 실행 가능 상태라면 많은 작업이 차례를 기다리고 전환 경쟁만 늘 수 있으므로 작업 부하와 실제 하드웨어 병렬성을 함께 봐야 한다.')
+
+          edit('operating-systems.core.threads.thread-count-workload.q1',
+               prompt='CPU 계산 중심 작업 부하에서 스레드 수를 무한히 늘려도 처리량이 계속 증가하지 않는 직접적인 이유는?',
+               explanation='CPU 계산 중심 작업은 대부분의 시간을 CPU 실행에 사용하므로 코어가 이미 포화되면 추가 실행 가능 스레드가 새로운 계산 자원을 만들지 않는다. 오히려 실행 대기열과 문맥 전환 경쟁이 늘 수 있어 작업 부하에 맞는 병렬성이 필요하다.',
+               choices={
+                   'A': {'content':'I/O 중심 작업처럼 대기 시간이 크므로 CPU 계산 중심 작업도 스레드를 많이 둘수록 항상 유리하다','rationale':'I/O 중심 작업은 일부 스레드가 대기할 때 다른 실행 가능한 작업으로 이득을 볼 수 있지만 CPU 계산 중심 작업은 이미 CPU를 요구한다. 스레드를 추가한다고 같은 방식의 이득이 자동으로 생기지 않는다.'},
+                   'B': {'content':'CPU 실행 자원이 제한되어 있고 추가 실행 가능 스레드는 스케줄링 경쟁을 만든다','rationale':'사용 가능한 CPU 실행 자원이 포화되면 추가 실행 가능 스레드는 같은 코어를 두고 경쟁하면서 스케줄링 비용을 더한다. 처리량 개선이 멈추거나 오히려 낮아질 수 있다.'},
+                   'C': {'content':'스케줄러는 실행 가능한 스레드마다 동시에 하나의 물리 코어를 자동 할당한다','rationale':'스케줄러는 제한된 CPU 코어 위에 여러 실행 가능한 스레드를 번갈아 배치한다. 스레드마다 물리 코어를 하나씩 배정하지 않으며 CPU보다 스레드가 많은 상태도 일반적이다.'},
+                   'D': {'content':'스레드 수는 CPU 사용률과 무관하므로 코어 수보다 많아도 스케줄링 비용이 변하지 않는다','rationale':'실행 가능한 스레드 수는 CPU가 이미 바쁜 상황에서도 실행 대기열 경쟁과 문맥 전환 빈도에 영향을 줄 수 있다. 사용률을 별도로 측정한다고 추가 스레드의 비용이 사라지지는 않는다.'}
+               })
+          edit('operating-systems.core.threads.thread-count-workload.q2',
+               prompt='한 작업이 전체 10ms 중 CPU 1ms, 블로킹 I/O 9ms를 사용한다. 왜 CPU 코어 수보다 많은 동시 진행 작업(in-flight task)이 도움이 될 수 있는가?',
+               model='한 작업이 9ms 동안 I/O를 기다릴 때 다른 작업이 CPU를 사용할 수 있어 대기 시간을 서로 겹칠 수 있기 때문이다. 하지만 실제로 유효한 동시성은 하위 시스템의 처리 용량과 메모리·자원 한계에 의해 제한된다.',
+               explanation='한 작업이 대부분의 시간을 I/O에서 기다린다면 그 대기 구간에 다른 작업의 1ms CPU 실행을 진행할 수 있다. 그래서 코어 수보다 높은 동시성이 도움이 될 수 있지만 파일 디스크립터·연결 풀·하위 시스템 처리율 같은 다른 자원이 새로운 상한이 된다.')
+          edit('operating-systems.core.threads.thread-count-workload.q3',
+               prompt='실행기(executor)는 작업 스레드 200개를 사용하지만 DB 연결 풀은 20개다. DB 중심 요청이 몰릴 때 작업 스레드를 400개로 늘려도 처리량이 두 배가 되지 않을 수 있는 이유를 설명하라.',
+               model='동시에 DB 작업을 수행할 수 있는 용량은 연결 풀 20개에 제한되므로 추가 작업 스레드는 연결을 기다리는 작업만 늘릴 수 있다. DB 연결 풀 대기 시간, 실행 대기열, 처리량과 DB 포화 상태를 함께 측정해야 한다.',
+               explanation='병목 경로를 따라가면 작업 스레드를 200개에서 400개로 늘리는 것은 진행 중인 요청 수를 늘릴 뿐, DB에 동시에 진입할 수 있는 연결 20개라는 경계는 바꾸지 않는다. 추가 작업 스레드가 연결 대기만 늘린다면 처리량은 그대로이고 지연 시간·메모리 사용량이 악화될 수 있으므로 하위 시스템의 용량을 함께 측정해야 한다.')
+
+          edit('operating-systems.core.threads.thread-pool.q1',
+               prompt='초당 100개 작업을 처리할 수 있는 스레드 풀에 초당 150개 작업이 지속적으로 들어오고 작업을 버리지 않는다면, 초당 대기열에 추가로 쌓이는 작업 수는?',
+               explanation='지속적인 도착률이 150개/초이고 처리율이 100개/초이면 처리하지 못한 **50개/초**가 대기열에 누적된다. 대기열을 크게 만드는 것은 이 처리율 차이를 없애지 못한다.')
+          edit('operating-systems.core.threads.thread-pool.q2',
+               prompt='크기 제한이 없는 대기열(unbounded queue)이 과부하 문제를 해결하는 것이 아니라 뒤로 미루는 이유를 설명하라.',
+               model='작업 도착률이 처리율보다 계속 크면 대기열이 지속적으로 증가해 메모리 사용량과 대기 시간이 커진다. 요청을 받아들였다는 사실이 실제 처리 용량을 늘리지는 않는다.',
+               explanation='처리율보다 도착률이 오랫동안 높으면 대기열은 계속 증가한다. 크기 제한이 없는 대기열은 즉시 거부가 보이지 않게 할 뿐 처리 용량을 높이지 않으므로 결국 메모리 사용과 대기열 지연 시간으로 과부하 비용을 뒤로 미룬다.')
+          edit('operating-systems.core.threads.thread-pool.q3',
+               prompt='다음 실행 상태를 생각하자.\n\n- 작업 스레드 1: A 실행 → 자식 작업 제출 → 자식의 `get()` 대기\n- 작업 스레드 2: B 실행 → 자식 작업 제출 → 자식의 `get()` 대기\n- 두 자식 작업: 같은 스레드 풀 대기열에서 대기\n\n왜 전체 진행이 멈출 수 있는가?',
+               model='두 작업 스레드가 부모 A와 B에 점유된 채 자식 작업 완료를 기다려 자식 작업을 실행할 빈 작업 스레드가 없다. 락의 순환 대기가 없어도 실행 용량 고갈에 의한 스레드 기아 교착(thread-starvation deadlock) 형태가 된다.',
+               explanation='A와 B가 두 작업 스레드를 모두 점유하고 각 부모의 완료 조건인 자식 작업은 같은 풀 대기열에 있다. 자식을 실행할 빈 작업 스레드가 없고 부모는 자식이 끝날 때까지 작업 스레드를 놓지 않으므로 **실행 용량을 둘러싼 의존 순환**이 만들어진다. 락의 순환 대기가 없어도 진행이 멈출 수 있다.')
+          edit('operating-systems.core.threads.thread-pool.q4',
+               prompt='크기가 제한된 대기열이 가득 찼을 때 거부(rejection) 정책을 반드시 정의해야 하는 이유를 설명하라.',
+               model='처리 용량을 넘긴 작업을 무한히 기다리게 하지 않고 호출자에게 과부하 상태를 드러내기 위해서다. 거부, 호출자 실행(caller-runs), 요청률 제한 같은 선택은 상위 시스템으로 전달되는 역압과 지연 시간·오류 계약에 영향을 준다.',
+               explanation='크기가 제한된 대기열이 가득 찼다는 것은 현재 실행 시스템이 정한 처리 용량을 초과했다는 신호다. 이때 어떤 작업을 거부할지, 호출자에서 실행할지, 상위 시스템에서 유입량을 제한할지 정하지 않으면 과부하 처리 계약이 불명확해진다. 거부 정책은 실패 처리이면서 동시에 역압 정책의 일부다.')
+
+          edit('operating-systems.core.threads.java-virtual-thread-boundary.q1',
+               prompt='Java 가상 스레드가 CPU에서 Java 코드를 실행할 때 올라가는 플랫폼 스레드를 영문으로 무엇이라 부르는가?',
+               explanation='JDK 스케줄러가 가상 스레드를 실행하도록 올려놓는 플랫폼 스레드를 **carrier**라고 부른다. 가상 스레드는 수명 전체 동안 하나의 carrier에 고정될 필요가 없으며 다른 carrier에 다시 올라가 실행될 수 있다.')
+          edit('operating-systems.core.threads.java-virtual-thread-boundary.q2',
+               prompt='가상 스레드를 100,000개 만들었다고 CPU 병렬성이 100,000이 되는 것이 아닌 이유를 설명하라.',
+               model='가상 스레드는 JDK 스케줄러가 운반자 플랫폼 스레드에 올려 실행하고 실제 CPU 실행은 운반자 스레드와 CPU 자원에 제한된다. 많은 가상 스레드는 동시성을 적은 비용으로 표현할 수 있지만 CPU 코어를 추가하지 않는다.',
+               explanation='가상 스레드는 많은 논리 실행 흐름을 적은 비용으로 표현하지만 실제 Java 코드는 운반자 플랫폼 스레드 위에서 실행되고, 운반자 스레드는 다시 운영체제 스케줄러를 통해 CPU를 사용한다. 따라서 가상 스레드 수와 같은 순간 CPU에서 실행되는 병렬성은 서로 다른 숫자다.')
+          edit('operating-systems.core.threads.java-virtual-thread-boundary.q3',
+               prompt='Java 25에서 `synchronized` 블록 안의 일반적인 블로킹 I/O가 항상 운반자 고정(carrier pinning)을 만든다고 설명하면 왜 잘못인가?',
+               model='JEP 491이 JDK 24에 반영되면서 모니터 보유 때문에 발생하던 일반적인 `synchronized` 고정 제약이 제거되었다. Java 25에서는 네이티브·foreign 호출 등 남아 있는 고정 또는 운반자 점유 경계를 따로 확인해야 한다.',
+               explanation='이 설명은 가상 스레드 초기 구현의 제약을 현재 Java 25에 그대로 적용한 것이다. JDK 24의 JEP 491 이후 모니터를 보유하거나 `synchronized` 관련 대기 중인 가상 스레드도 운반자에서 분리될 수 있으므로 `synchronized = 항상 pinning`은 틀리다. 네이티브·foreign 호출처럼 남아 있는 경계는 별도로 확인해야 한다.')
+          edit('operating-systems.core.threads.java-virtual-thread-boundary.q4',
+               prompt='가상 스레드를 도입한 뒤 요청 동시성을 크게 늘렸지만 DB 처리량은 그대로이고 연결 대기만 증가했다. 원인을 분석하라.',
+               model='가상 스레드는 블로킹 동시성에 드는 스레드 비용을 낮추지만 DB 연결 풀과 데이터베이스 처리 용량을 늘리지 않는다. 하위 시스템의 처리 용량이 병목이므로 가상 스레드 수와 DB 동시성 한도를 분리하고 역압을 유지해야 한다.',
+               explanation='가상 스레드는 요청이 기다리는 동안 플랫폼 스레드 자원을 덜 점유하게 할 수 있지만 **DB 연결이나 DB 처리 용량을 새로 만들지는 않는다.** 요청 동시성만 크게 늘리면 더 많은 작업이 같은 연결 풀 앞에서 기다릴 수 있다. 스레드 모델과 하위 시스템의 동시성 한도를 별도로 측정하고 제한해야 한다.')
+
+          after = [
+              (q['contentKey'], q['questionType'], q['difficulty'], q['status'],
+               copy.deepcopy(q.get('conceptKeys')), copy.deepcopy(q.get('acceptedAnswers')),
+               q.get('correctChoiceKey'), [(c['key'], c['displayOrder']) for c in q.get('choices', [])])
+              for q in data
+          ]
+          assert before == after, 'question identity/answer/order contract changed'
+          assert len(data) == 34, len(data)
+          path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+          print('Threads questions reviewed:', len(data))
+          print('identity/type/difficulty/links/acceptedAnswers/correctChoice/displayOrder preserved')
+          PY
+
+          git diff --check
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add content/operating-systems/threads/questions.json
+          git rm .github/workflows/os-threads-question-edit.yml
+          git commit -m "refine OS Threads questions Korean-first"
+          git push origin HEAD:codex/content-operating-systems-quality
