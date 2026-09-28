@@ -40,6 +40,7 @@ dependencies {
 
     runtimeOnly 'org.postgresql:postgresql'
     runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
     testImplementation 'org.springframework.security:spring-security-test'
@@ -50,26 +51,6 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
-    testLogging {
-        events 'failed'
-        exceptionFormat 'full'
-        showStandardStreams = true
-    }
-    doFirst {
-        def slurper = new groovy.json.JsonSlurper()
-        def dsaRoot = project.file('../content/dsa')
-        def questionFiles = fileTree(dsaRoot) { include '**/questions.json' }.files.toList().sort { it.path }
-        def counts = [:]
-        questionFiles.each { questionFile ->
-            def relative = dsaRoot.toPath().relativize(questionFile.toPath()).toString().replace(File.separator, '/')
-            println "DSA_PARSING=${relative}"
-            def parsed = (List) slurper.parse(questionFile)
-            counts[relative] = parsed.size()
-            println "DSA_COUNT=${relative}:${parsed.size()}"
-        }
-        println "DSA_QUESTION_COUNTS=${counts}"
-        println "DSA_QUESTION_TOTAL=${counts.values().sum()}"
-    }
 }
 
 springBoot {
@@ -97,8 +78,8 @@ tasks.register('generateCanonicalContentManifest') {
             project.relativePath(left).replace(File.separator, '/') <=> project.relativePath(right).replace(File.separator, '/')
         }
         manifest.parentFile.mkdirs()
-        manifest.text = canonicalFiles.collect { sourceFile ->
-            canonicalContentDirectory.toPath().relativize(sourceFile.toPath()).toString().replace(File.separator, '/')
+        manifest.text = canonicalFiles.collect { file ->
+            canonicalContentDirectory.toPath().relativize(file.toPath()).toString().replace(File.separator, '/')
         }.join('\n') + '\n'
     }
 }
