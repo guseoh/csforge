@@ -16,6 +16,14 @@ references:
     depth: chapter
     recommendation: "process 안에서 thread가 공유하는 주소 공간과 thread별 실행 context를 확인한다."
     displayOrder: 1
+  - url: "https://www.cs.uic.edu/~jbell/CourseNotes/OperatingSystems/5_Synchronization.html"
+    title: "Operating Systems: Process Synchronization — UIC Course Notes"
+    referenceType: COURSE
+    language: en
+    depth: section
+    recommendation: "critical-section problem과 mutual exclusion·progress·bounded waiting 요구, mutex·semaphore 같은 synchronization 개념을 확인한다."
+    relationNote: "이 Concept에서는 5.2절의 critical-section problem과 세 가지 요구 조건을 직접 확인한다."
+    displayOrder: 2
 ---
 # 임계 구역(Critical Section)
 
