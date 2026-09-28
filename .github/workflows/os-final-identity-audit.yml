@@ -1,0 +1,123 @@
+name: OS final identity audit
+
+on:
+  push:
+    branches: [codex/content-operating-systems-quality]
+    paths: ['.github/workflows/os-final-identity-audit.yml']
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: codex/content-operating-systems-quality
+          fetch-depth: 0
+      - name: Audit OS canonical identity against wave baseline
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json, re, subprocess
+          from pathlib import Path
+
+          BASE='ad00fec24bd8a39e50fd0c82e32d44f213393bdb'
+          ROOT='content/operating-systems'
+
+          def git_show(path):
+              return subprocess.check_output(['git','show',f'{BASE}:{path}'], text=True, encoding='utf-8')
+
+          def load_json_current(path):
+              return json.loads(Path(path).read_text(encoding='utf-8'))
+          def load_json_base(path):
+              return json.loads(git_show(path))
+
+          # Topic catalog identity/order.
+          topic_path=f'{ROOT}/topics.json'
+          cur_topics=load_json_current(topic_path)
+          old_topics=load_json_base(topic_path)
+          assert len(cur_topics)==len(old_topics)==12, (len(cur_topics),len(old_topics))
+          topic_fields=('contentKey','areaSlug','slug','displayOrder','active')
+          for old,cur in zip(old_topics,cur_topics):
+              assert {k:old.get(k) for k in topic_fields} == {k:cur.get(k) for k in topic_fields}, (old['contentKey'],cur['contentKey'])
+
+          # Curriculum structural contract without depending on a YAML library.
+          def curriculum_structure(text):
+              topics=[]; concepts=[]
+              lines=text.splitlines()
+              i=0
+              while i < len(lines):
+                  line=lines[i]
+                  m=re.match(r'^(\s*)- key: (operating-systems\.core\.[\w.-]+)$', line)
+                  if not m:
+                      i+=1; continue
+                  indent=len(m.group(1)); key=m.group(2)
+                  block=[]; j=i+1
+                  while j<len(lines):
+                      nxt=lines[j]
+                      mm=re.match(r'^(\s*)- key: ', nxt)
+                      if mm and len(mm.group(1)) <= indent: break
+                      block.append(nxt); j+=1
+                  def val(name):
+                      pat=re.compile(r'^\s*'+re.escape(name)+r':\s*(.+?)\s*$')
+                      for b in block:
+                          x=pat.match(b)
+                          if x: return x.group(1).strip('"')
+                      return None
+                  if indent==2:
+                      topics.append((key,val('order')))
+                  elif indent==6:
+                      concepts.append((key,val('order'),val('level'),val('density'),val('visualization')))
+                  i=j
+              return topics,concepts
+          old_ct,old_cc=curriculum_structure(git_show('content/curriculum/operating-systems.yaml'))
+          cur_ct,cur_cc=curriculum_structure(Path('content/curriculum/operating-systems.yaml').read_text(encoding='utf-8'))
+          assert old_ct==cur_ct and len(cur_ct)==12, (len(old_ct),len(cur_ct))
+          assert old_cc==cur_cc and len(cur_cc)==97, (len(old_cc),len(cur_cc))
+
+          # Concept file identity/link/order.
+          def concept_meta(text):
+              fm=text.split('---',2)[1]
+              def one(name):
+                  m=re.search(r'^'+re.escape(name)+r':\s*"?([^"\n]+?)"?\s*$',fm,re.M)
+                  return m.group(1).strip() if m else None
+              return tuple(one(k) for k in ('contentKey','topicContentKey','slug','level','status','displayOrder'))
+          cur_mds=sorted(p for p in Path(ROOT).rglob('*.md'))
+          assert len(cur_mds)==97, len(cur_mds)
+          for p in cur_mds:
+              rel=p.as_posix()
+              old=concept_meta(git_show(rel)); cur=concept_meta(p.read_text(encoding='utf-8'))
+              assert old==cur, (rel,old,cur)
+
+          # Question identity, grading contract, links, and choice identity/order.
+          qpaths=sorted(p for p in Path(ROOT).rglob('questions.json'))
+          assert len(qpaths)==12, len(qpaths)
+          old_q={}; cur_q={}
+          for p in qpaths:
+              rel=p.as_posix()
+              for q in load_json_base(rel): old_q[q['contentKey']]=q
+              for q in load_json_current(rel): cur_q[q['contentKey']]=q
+          assert len(old_q)==len(cur_q)==331, (len(old_q),len(cur_q))
+          assert set(old_q)==set(cur_q)
+          def choice_shape(q):
+              return [(c['key'],c.get('displayOrder')) for c in q.get('choices',[])]
+          for key in sorted(old_q):
+              old,cur=old_q[key],cur_q[key]
+              for field in ('questionType','status','conceptKeys','correctChoiceKey','acceptedAnswers'):
+                  assert old.get(field)==cur.get(field), (key,field,old.get(field),cur.get(field))
+              assert choice_shape(old)==choice_shape(cur), (key,'choices',choice_shape(old),choice_shape(cur))
+
+          # Difficulty is intentionally reviewable; count only for reporting.
+          from collections import Counter
+          diff=Counter(q.get('difficulty') for q in cur_q.values())
+          types=Counter(q.get('questionType') for q in cur_q.values())
+          print('PASS topic identity/order: 12/12')
+          print('PASS curriculum structural identity: 12 topics / 97 concepts')
+          print('PASS concept identity/link/order: 97/97')
+          print('PASS question identity/type/status/links/answers/choice-order: 331/331')
+          print('Current question difficulty:', dict(sorted(diff.items())))
+          print('Current question types:', dict(sorted(types.items())))
+          PY
+          git diff --check 1d12d507efd4af29eea9c187c875d8ecd810b996...HEAD -- content/operating-systems content/curriculum/operating-systems.yaml
