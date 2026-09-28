@@ -21,7 +21,7 @@ references:
 
 일반적인 Linux 컨테이너는 네임스페이스와 cgroup으로 프로세스 환경을 분리하지만 **시스템 콜은 호스트 커널이 처리한다.** 컨테이너마다 독립 커널이 존재하는 것이 아니며 스케줄러, 메모리 관리, 파일 시스템·네트워크 하위 시스템과 커널 코드 자체를 호스트의 다른 프로세스들과 공유한다.
 
-![컨테이너와 VM이 호스트 커널을 대하는 경계 차이](/learning/operating-systems/host-kernel-sharing.svg)
+![컨테이너와 가상 머신이 호스트 커널을 대하는 경계 차이](/learning/operating-systems/host-kernel-sharing.svg)
 
 ### 네임스페이스 분리와 커널 분리는 다르다
 
