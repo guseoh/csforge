@@ -4,7 +4,7 @@ contentKey: network-http.core.tls.tls-purpose
 topicContentKey: network-http.core.tls
 slug: tls-purpose
 title: "TLS가 제공하는 보안"
-summary: "TLS가 endpoint 사이에서 confidentiality·integrity·peer authentication을 제공하는 목적과 경계를 설명한다."
+summary: "TLS가 두 통신 종단점 사이에서 기밀성·무결성·상대 인증을 제공하고, 그 보호가 애플리케이션 권한과 업무 성공까지 확장되지는 않는 경계를 설명한다."
 level: 1
 status: PUBLISHED
 displayOrder: 10
@@ -17,20 +17,40 @@ references:
 ---
 # TLS가 제공하는 보안
 
-network path에는 client와 server 사이의 packet을 관찰하거나 변조할 수 있는 여러 중간 지점이 존재한다. HTTP를 평문으로 주고받으면 중간에서 요청과 응답 내용을 읽거나 수정할 수 있고, client는 자신이 의도한 server와 통신하고 있는지도 별도로 확인하기 어렵다.
+클라이언트와 서버 사이의 네트워크 경로에는 라우터, 무선 네트워크, 프록시처럼 여러 중간 지점이 존재할 수 있다. HTTP 데이터를 평문으로 보내면 이런 경로에서 요청과 응답 내용을 읽거나 바꾸는 공격에 노출될 수 있고, 클라이언트도 지금 연결한 상대가 원래 의도한 서버인지 별도로 확인하기 어렵다.
 
-TLS는 두 TLS endpoint가 handshake를 거쳐 암호화된 channel을 만들도록 한다. 일반적인 certificate 기반 HTTPS에서는 이 channel이 세 가지 중요한 목표를 가진다. 전송 내용을 제3자가 읽기 어렵게 하는 **confidentiality**, 전송 중 data가 바뀌었는지 검출하는 **integrity**, 그리고 client가 certificate와 service identity를 검증해 의도한 server와 연결되었는지 확인하는 **authentication**이다.
+TLS는 두 통신 종단점이 핸드셰이크를 거쳐 **보호된 통신 채널**을 만들도록 한다. 일반적인 인증서 기반 HTTPS에서는 이 채널이 크게 세 가지 보안 목표를 제공한다.
 
-| 보안 목표 | TLS가 제공하는 보호 | 그 자체로 보장하지 않는 것 |
+| 보안 목표 | TLS가 제공하는 보호 | TLS만으로 해결되지 않는 것 |
 | --- | --- | --- |
-| Confidentiality | 두 TLS endpoint 사이 record 내용을 암호화 | TLS termination 이후의 구간과 모든 traffic metadata의 비밀성 |
-| Integrity | 전송 중 TLS record의 변경을 검출 | endpoint에서 처리된 뒤 data가 올바른 업무 상태인지 |
-| Server authentication | client가 certificate chain과 service identity를 검증하도록 지원 | 사용자 로그인·권한 부여; client 인증도 별도 설정이 필요 |
+| 기밀성(Confidentiality) | 두 TLS 종단점 사이에서 애플리케이션 데이터를 암호화 | TLS가 종료된 뒤의 구간, 로그·메모리에 남은 평문 데이터 |
+| 무결성(Integrity) | 전송 중 TLS 레코드가 바뀌었는지 검증 | 데이터 자체가 업무적으로 올바른지 여부 |
+| 상대 인증(Authentication) | 인증서와 서비스 이름 검증으로 의도한 서버와 연결했는지 확인 | 로그인 사용자의 권한, 업무 인가 |
 
-### TLS의 보호 범위는 endpoint 사이의 channel이다
+### TLS가 보호하는 범위는 두 TLS 종단점 사이다
 
-TLS가 보호하는 대상은 encryption이 적용되는 두 endpoint 사이의 traffic이다. reverse proxy에서 TLS가 종료되면 client와 proxy 사이 channel은 보호되지만, proxy가 복호화한 이후 backend까지의 구간은 별도의 connection이다. 그 구간을 다시 TLS로 보호할지는 별도 설계다.
+TLS는 네트워크 전체를 한 번에 암호화하는 기능이 아니라 **암호화가 실제로 적용되는 두 종단점 사이의 구간**을 보호한다. 예를 들어 리버스 프록시에서 TLS가 종료되면 브라우저와 프록시 사이의 통신은 TLS로 보호되지만, 프록시가 복호화한 뒤 백엔드로 보내는 구간은 별도의 연결이다.
 
-또한 TLS가 성공했다고 HTTP 요청의 권한이 허용된 것은 아니다. TLS server authentication은 `이 endpoint가 기대한 service identity인가`를 확인하는 문제이고, 로그인한 사용자가 특정 API를 호출할 수 있는지는 application authorization의 문제다.
+```text
+브라우저 ── TLS ──> 리버스 프록시 ── HTTP 또는 새로운 TLS ──> 백엔드
+```
 
-따라서 HTTPS를 이해할 때는 `암호화되어 있다`는 한 문장보다 **어느 두 endpoint 사이가 보호되는지, 상대 identity가 어떻게 검증되는지, TLS 이후 application이 어떤 권한 검사를 추가하는지**를 구분해야 한다.
+프록시와 백엔드 사이도 보호해야 한다면 그 구간에서 별도의 TLS 연결을 구성해야 한다. 첫 번째 TLS 연결이 성공했다고 두 번째 구간까지 자동으로 암호화되는 것은 아니다.
+
+### 서버 인증과 사용자 인증·인가는 다른 문제다
+
+TLS 서버 인증은 `지금 연결한 서버가 내가 접속하려던 서비스인가`를 확인하는 과정이다. 반면 로그인 사용자가 특정 API를 호출할 수 있는지는 애플리케이션의 인증·인가 정책이 결정한다.
+
+따라서 TLS 핸드셰이크가 성공해도 다음 단계는 여전히 실패할 수 있다.
+
+```text
+TLS 연결 성공
+   ↓
+HTTP 요청 파싱
+   ↓
+사용자 인증·인가
+   ↓
+업무 처리와 데이터 저장
+```
+
+핵심은 **TLS가 두 종단점 사이의 통신을 기밀성·무결성·상대 인증으로 보호하지만, 그 위에서 수행되는 HTTP 의미와 사용자 권한, 업무 처리 결과까지 대신 보장하지는 않는다는 점**이다.
