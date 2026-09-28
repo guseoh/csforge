@@ -112,10 +112,8 @@
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
-    "conceptKeys": [
-      "backend.core.domain.invariant-lifecycle"
-    ],
-    "modelAnswer": "Aggregate가 `place()`에서 non-empty items와 total을 검증·계산하고 `PLACED`로 전이해야 한다. 이후 raw `setItems()`를 막고 수정을 허용한다면 명시적인 amend 규칙으로 제한한다. 결제와 수정 요청은 expected version/status를 포함한 atomic transition을 경쟁시켜 한 요청만 이기게 하고, 결제가 먼저 예약되면 그때 확정한 amount를 고정한다. 결제는 DB transaction 밖에서 idempotency key로 호출한 뒤 결과를 저장하고, 결과가 불명확하면 provider 상태와 reconcile한다.",
-    "explanationMarkdown": "생성 시 한 번 검증해도 공개 setter가 있으면 주문이 놓인 뒤 item과 total의 invariant를 우회할 수 있다. Domain method가 유효한 생성·전이만 허용하고, optimistic version이나 조건부 update가 동시 변경을 감지해야 한다. 외부 결제 결과가 불명확해질 수 있으므로 DB transaction 안에서 원격 호출을 길게 기다리는 대신 안전한 재처리 경계를 둔다."
+    "conceptKeys": ["backend.core.domain.invariant-lifecycle"],
+    "modelAnswer": "Aggregate가 `place()`에서 items와 total을 검증·확정하고 `PLACED`로 전이한 뒤 raw `setItems()`를 막아야 한다. 수정과 결제 시작은 expected version/status 조건으로 경쟁시키고, 결제 시작이 이기면 DB transaction 안에서 `paymentAttemptId`, 확정 amount, idempotency key와 `PAYMENT_PENDING` 같은 상태를 원자적으로 기록한다. 그 commit 뒤 외부 결제를 호출하고 결과를 반영한다. timeout이면 같은 idempotency key/attempt의 결과를 조회·재사용해 reconcile하며, 결제가 시작된 주문의 item 변경은 정책상 차단하거나 별도 명시적 전이로 다룬다.",
+    "explanationMarkdown": "생성 시 한 번 검증해도 공개 setter가 남아 있으면 주문이 놓인 뒤 item과 total의 불변식을 우회할 수 있다. 먼저 도메인 API가 허용된 수정과 결제 시작을 명시하고, optimistic version이나 조건부 UPDATE로 둘의 경쟁을 감지해야 한다. 결제가 이긴 뒤에는 외부 호출 전에 결제 시도 식별자와 확정 금액을 로컬 DB에 원자적으로 기록해 어떤 금액·작업을 수행하려 했는지 durable한 근거를 남긴다. 그 뒤 원격 결제를 DB transaction 밖에서 호출하고, 응답이 불명확하면 같은 operation identity로 공급자 상태를 조회·대조한다. 단순히 원격 호출을 transaction 밖으로 옮기는 것만으로는 금액과 작업 식별자의 경쟁 문제가 해결되지 않는다."
   }
 ]
