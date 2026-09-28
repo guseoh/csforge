@@ -14,7 +14,7 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "NAT가 주소·포트 변환과 변환 상태를 담당한다는 점을 확인하고 방화벽 정책과 구분한다."
+    recommendation: "전통적인 IPv4 NAT/NAPT의 주소·포트 변환과 상태 관리 규칙을 확인한다."
     displayOrder: 1
 ---
 # NAT와 방화벽의 차이
