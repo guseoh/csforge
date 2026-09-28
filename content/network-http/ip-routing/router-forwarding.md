@@ -14,7 +14,7 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "IPv4 라우터의 목적지 경로 조회, TTL 처리와 다음 홉 전달 책임을 확인한다."
+    recommendation: "IPv4 라우터의 경로 선택과 다음 홉 전달 규칙을 확인한다."
     displayOrder: 1
 ---
 # 라우터의 패킷 전달
