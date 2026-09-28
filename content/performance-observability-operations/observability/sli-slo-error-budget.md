@@ -14,7 +14,7 @@ references:
     referenceType: OTHER
     language: en
     displayOrder: 1
-    relationNote: "SLI·SLO·error budget의 운영 의사결정 맥락 확인"
+    relationNote: "SLI·SLO·오류 예산의 운영 의사결정 맥락 확인"
 ---
 # 서비스 수준 지표·목표와 오류 예산
 

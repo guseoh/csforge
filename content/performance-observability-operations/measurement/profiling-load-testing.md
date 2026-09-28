@@ -9,12 +9,12 @@ level: 2
 status: PUBLISHED
 displayOrder: 30
 references:
-  - url: "https://docs.oracle.com/en/java/javase/25/jfapi/flight-recorder-api-programmers-guide.pdf"
-    title: "Oracle Java SE 25: Flight Recorder API Programmer's Guide"
+  - url: "https://docs.oracle.com/en/java/javase/25/troubleshoot/troubleshoot-performance-issues-using-jfr.html"
+    title: "Oracle Java SE 25: Troubleshoot Performance Issues Using Flight Recorder"
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
-    relationNote: "JFR 기록과 실행 중 프로파일링의 경계 확인"
+    relationNote: "JFR의 이벤트 기록과 실행 샘플링 이벤트를 이용한 프로파일링 범위 확인"
   - url: "https://github.com/openjdk/jmh"
     title: "OpenJDK Java Microbenchmark Harness (JMH)"
     referenceType: OFFICIAL
@@ -46,6 +46,6 @@ references:
 
 부하 테스트는 조건을 고정해야 의미가 있습니다. 빌드 버전, JVM, 자원 제한, 데이터셋, 캐시의 준비 상태, 요청 비율, 동시성, 준비 구간과 측정 구간이 달라지면 숫자를 직접 비교하기 어렵습니다. 한 번의 최고 TPS보다 같은 조건에서 기준 버전과 변경 버전을 반복 비교하는 편이 훨씬 유용합니다.
 
-운영 환경 프로파일링은 측정 자체의 부하와 데이터 노출 위험도 고려해야 합니다. JFR 같은 표본 기반 기록은 필요한 기간과 설정으로 관측 범위를 제어하고, 기록 파일에 스택 추적과 애플리케이션 메타데이터가 포함될 수 있으므로 접근 권한과 보존 정책을 함께 둡니다.
+운영 환경 프로파일링은 측정 자체의 부하와 데이터 노출 위험도 고려해야 합니다. JFR은 GC, 락, I/O, 클래스 로딩 등 다양한 JVM 이벤트를 기록하는 이벤트 기반 기록 시스템이며, 실행 프로파일링에는 `jdk.ExecutionSample` 같은 샘플링 이벤트도 사용합니다. 따라서 JFR 전체를 단순한 "표본 기반 기록"으로 이해하면 안 됩니다. 필요한 이벤트 종류와 기록 기간, 임계값, 실행 샘플링 주기 등을 목적에 맞게 조정하고, 기록 파일에 스택 추적과 애플리케이션 메타데이터가 포함될 수 있으므로 접근 권한과 보존 정책을 함께 둡니다.
 
 성능 실험의 핵심은 도구 이름이 아니라 **무엇을 확인하려는지 질문을 먼저 고정하고, 도구가 답할 수 있는 범위 안에서 결과를 해석하는 것**입니다. 최적화가 실제 사용자 지연 시간과 자원 포화를 개선했는지는 같은 작업 부하의 변경 전후 실험과 운영 관측 자료로 다시 확인합니다.

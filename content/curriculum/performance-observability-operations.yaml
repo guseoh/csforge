@@ -38,7 +38,7 @@ topics:
     title: 포화와 대기열
     order: 20
     level: 2
-    objective: 제한된 자원, 대기열 길이, 이용률과 Little의 법칙을 이용해 지연 시간 증가와 과부하를 설명한다.
+    objective: 제한된 자원, 대기열 길이, 이용률과 리틀의 법칙(Little's Law)을 이용해 지연 시간 증가와 과부하를 설명한다.
     density: CORE
     visualization: DIAGRAM
   - key: performance.core.measurement.profiling-load-testing

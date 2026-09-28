@@ -14,13 +14,13 @@ references:
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
-    relationNote: "label cardinality와 metric naming rule 확인"
+    relationNote: "레이블 카디널리티와 메트릭 이름 규칙 확인"
   - url: "https://opentelemetry.io/docs/concepts/signals/metrics/"
     title: "OpenTelemetry Documentation: Metrics"
     referenceType: OFFICIAL
     language: en
     displayOrder: 2
-    relationNote: "metric attribute 조합과 cardinality limit 확인"
+    relationNote: "메트릭 속성 조합과 카디널리티 제한 확인"
 ---
 # 메트릭 카디널리티와 관측 비용
 

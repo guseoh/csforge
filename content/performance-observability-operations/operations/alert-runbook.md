@@ -14,7 +14,7 @@ references:
     referenceType: OTHER
     language: en
     displayOrder: 1
-    relationNote: "monitoring signal과 alert 설계의 운영 관점 확인"
+    relationNote: "관측 신호와 알림 설계의 운영 관점 확인"
 ---
 # 알림과 대응 절차
 

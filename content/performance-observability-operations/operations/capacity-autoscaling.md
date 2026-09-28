@@ -14,7 +14,7 @@ references:
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
-    relationNote: "metric 기반 horizontal scaling과 stabilization 확인"
+    relationNote: "메트릭 기반 수평 확장과 안정화 방식 확인"
 ---
 # 용량 계획과 자동 확장
 
@@ -36,7 +36,7 @@ references:
 
 확장 신호도 작업 부하에 맞아야 합니다. CPU가 낮아도 대기열의 가장 오래된 작업 시간이나 DB 연결 대기가 계속 증가할 수 있고, 반대로 시작 중 CPU가 높다고 안정 상태의 수요가 높다는 뜻은 아닙니다. 요청 동시성, 대기열 깊이·대기 시간, 사용자 지연 시간 같은 작업 부하 신호와 CPU·메모리 같은 자원 신호를 함께 해석하는 편이 좋습니다.
 
-피드백 루프가 너무 민감하면 확장과 축소가 반복되는 흔들림(flapping)이 생길 수 있습니다. 일반 자동 확장기에서는 이를 줄이기 위해 일정 시간 추가 확장을 막는 cooldown 같은 개념을 사용할 수 있습니다. Kubernetes HPA에서는 같은 안정화 목적을 `stabilizationWindowSeconds`, 확장·축소 정책과 허용 오차(tolerance)로 제어합니다. 따라서 HPA 설정을 설명할 때 일반적인 cooldown을 HPA의 고유 설정 이름처럼 사용하지 않습니다.
+피드백 루프가 너무 민감하면 확장과 축소가 반복되는 흔들림(flapping)이 생길 수 있습니다. 일반 자동 확장기에서는 이를 줄이기 위해 일정 시간 추가 확장을 막는 cooldown 같은 개념을 사용할 수 있습니다. Kubernetes HPA에서는 같은 안정화 목적을 `stabilizationWindowSeconds`와 확장·축소 정책으로 제어합니다. `tolerance`처럼 허용 오차를 조절하는 세부 설정은 Kubernetes 버전에 따라 지원 상태나 설정 위치가 달라질 수 있으므로 사용하는 버전의 공식 문서를 확인해야 합니다. 따라서 일반적인 cooldown을 HPA의 고유 설정 이름처럼 사용하면 안 됩니다.
 
 HPA가 외부 메트릭을 사용하려면 해당 값을 Kubernetes가 조회할 수 있는 외부 메트릭 API 경로와 어댑터가 필요합니다. 신호가 늦게 수집되거나 새 Pod가 준비되기까지 시간이 걸리는 점을 반영해 최소/최대 복제본 수와 충분한 여유 용량도 함께 설계해야 합니다.
 

@@ -14,7 +14,7 @@ references:
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
-    relationNote: "metrics·logs·traces signal의 역할 확인"
+    relationNote: "메트릭·로그·분산 추적 신호의 역할 확인"
   - url: "https://opentelemetry.io/docs/concepts/context-propagation/"
     title: "OpenTelemetry Documentation: Context propagation"
     referenceType: OFFICIAL
