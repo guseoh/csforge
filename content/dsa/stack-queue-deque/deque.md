@@ -14,7 +14,7 @@ references:
     referenceType: BOOK
     language: en
     depth: section
-    recommendation: "스택·큐의 LIFO/FIFO 계약과 배열, 크기 조정 배열, 연결 리스트 구현을 비교한다."
+    recommendation: "스택·큐의 LIFO/FIFO 계약과 배열, 크기 조정 배열, linked-list 구현을 비교한다."
     displayOrder: 1
 ---
 # 덱(Deque)
