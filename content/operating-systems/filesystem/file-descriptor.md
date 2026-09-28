@@ -4,7 +4,7 @@ contentKey: operating-systems.core.filesystem.file-descriptor
 topicContentKey: operating-systems.core.filesystem
 slug: file-descriptor
 title: "파일 디스크립터(File Descriptor)"
-summary: "process-local integer handle이 kernel의 open object를 가리키고 lifetime·limit·inheritance를 만드는 구조를 설명한다."
+summary: "프로세스 내부의 정수 핸들이 커널의 열린 객체를 가리키고 생명주기·한도·상속을 만드는 구조를 설명한다."
 level: 1
 status: PUBLISHED
 displayOrder: 20
@@ -26,9 +26,9 @@ references:
 ---
 # 파일 디스크립터(File Descriptor)
 
-Unix 계열에서 file descriptor(fd)는 process가 이미 열린 I/O object를 참조할 때 사용하는 **작은 정수 handle**이다. `open()`이 성공하면 kernel은 open state를 만들고 process의 descriptor table에 entry를 추가한 뒤 fd를 반환한다.
+Unix 계열에서 파일 디스크립터(file descriptor, fd)는 프로세스가 이미 열린 I/O 객체를 참조할 때 사용하는 **작은 정수 핸들**이다. `open()`이 성공하면 커널은 열린 상태를 만들고 프로세스의 파일 디스크립터 테이블에 항목을 추가한 뒤 fd를 반환한다.
 
-![process-local descriptor가 kernel open state를 가리키는 구조](/learning/operating-systems/file-descriptor-open-state.svg)
+![프로세스별 파일 디스크립터가 커널의 열린 상태를 가리키는 구조](/learning/operating-systems/file-descriptor-open-state.svg)
 
 ```text
 process fd table
@@ -37,16 +37,16 @@ fd 1 → ...
 fd 3 → kernel open state → file/socket/pipe ...
 ```
 
-### fd 숫자 자체는 object identity가 아니다
+### fd 숫자 자체는 객체의 정체성이 아니다
 
-Fd `3`은 특정 file을 영구적으로 뜻하지 않는다. 해당 fd를 close한 뒤 다른 object를 열면 같은 숫자가 재사용될 수 있다. 다른 process의 fd 3도 전혀 다른 object를 가리킬 수 있다.
+fd `3`이 특정 파일을 영구적으로 뜻하는 것은 아니다. 해당 fd를 닫은 뒤 다른 객체를 열면 같은 숫자가 재사용될 수 있다. 다른 프로세스의 fd 3도 전혀 다른 객체를 가리킬 수 있다.
 
-따라서 file descriptor는 **process-local table의 index**로 이해하는 편이 정확하다.
+따라서 파일 디스크립터는 **프로세스별 테이블의 인덱스**로 이해하는 편이 정확하다.
 
-### Descriptor는 resource lifetime과 연결된다
+### 파일 디스크립터는 자원의 생명주기와 연결된다
 
-Open file, socket, pipe 같은 kernel object는 descriptor를 통해 참조된다. 필요 없는 fd를 닫지 않으면 process의 descriptor limit을 소비하고 underlying resource의 lifetime도 예상보다 길어질 수 있다.
+열린 파일, 소켓, 파이프 같은 커널 객체는 파일 디스크립터를 통해 참조된다. 필요 없는 fd를 닫지 않으면 프로세스의 파일 디스크립터 한도를 계속 소비하고, 참조 중인 커널 자원의 생명주기도 예상보다 길어질 수 있다.
 
-`dup()`이나 `fork()`로 descriptor가 복제되면 서로 다른 fd entry가 같은 open-file state를 참조할 수도 있다. 이때 어떤 상태가 공유되는지는 다음 Concept에서 다룬다.
+`dup()`이나 `fork()`로 파일 디스크립터가 복제되면 서로 다른 fd 항목이 같은 열린 파일 상태를 참조할 수도 있다. 이때 어떤 상태가 공유되는지는 다음 Concept에서 다룬다.
 
-File Descriptor의 핵심은 **pathname과 달리 이미 열린 kernel object를 가리키는 process-local handle이며, 숫자 자체보다 참조 관계와 lifetime이 중요하다는 점**이다.
+파일 디스크립터의 핵심은 **경로명과 달리 이미 열린 커널 객체를 가리키는 프로세스 내부 핸들이며, 숫자 자체보다 무엇을 참조하고 언제 닫히는지가 중요하다는 점**이다.
