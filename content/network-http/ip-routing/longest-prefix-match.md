@@ -14,7 +14,7 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "여러 경로가 목적지와 일치할 때 더 구체적인 경로를 선택하는 IPv4 전달 규칙을 확인한다."
+    recommendation: "IPv4 라우터의 경로 선택과 다음 홉 전달 규칙을 확인한다."
     displayOrder: 1
 ---
 # 최장 접두사 일치(Longest-Prefix Match)
