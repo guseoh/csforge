@@ -3,8 +3,8 @@ kind: concept
 contentKey: dsa.core.dynamic-programming.transition
 topicContentKey: dsa.core.dynamic-programming
 slug: transition
-title: "DP Transition"
-summary: "이전 state에서 다음 state와 answer를 만드는 전이를 설명한다."
+title: "동적 계획법 전이(DP Transition)"
+summary: "이전 상태에서 현재 상태의 답을 만드는 전이 규칙을 설명한다."
 level: 2
 status: PUBLISHED
 displayOrder: 60
@@ -14,21 +14,21 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "DP의 subproblem 정의, memoization, recurrence와 재사용 구조를 확인한다."
+    recommendation: "DP의 부분 문제 정의, 메모이제이션, 점화식과 재사용 구조를 확인한다."
     displayOrder: 1
 ---
-# DP Transition
+# 동적 계획법 전이(DP Transition)
 
-Transition은 현재 DP state의 answer를 어떤 더 작은 state와 선택으로부터 계산할지 정의하는 recurrence다. 핵심은 **현재 state에서 가능한 선택을 빠짐없이 나누고, 각 선택 뒤 남는 문제를 올바른 predecessor state로 표현하는 것**이다.
+전이는 현재 DP 상태의 답을 **어떤 더 작은 상태와 선택으로부터 계산할지 정의하는 규칙**이다. 핵심은 현재 상태에서 가능한 선택을 빠짐없이 나누고, 각 선택 뒤 남는 문제를 올바른 이전 상태로 표현하는 것이다.
 
-0/1 knapsack에서:
+예를 들어 0/1 배낭 문제에서 상태를 다음과 같이 정의했다고 하자.
 
 ```text
 dp[i][w]
-= 앞의 i개 item을 고려하고 capacity w일 때 최대 value
+= 앞의 i개 물건을 고려하고 용량 w일 때 얻을 수 있는 최대 가치
 ```
 
-라고 정의했다면 item i를 선택하지 않는 경우와 선택하는 경우를 비교할 수 있다.
+그러면 i번째 물건을 선택하지 않는 경우와 선택하는 경우를 비교할 수 있다.
 
 ```text
 dp[i][w] = max(
@@ -37,8 +37,8 @@ dp[i][w] = max(
 )
 ```
 
-두 번째 경우는 capacity가 충분할 때만 유효하다. 또 `i-1` state를 사용하기 때문에 같은 item을 한 번만 선택한다는 0/1 constraint가 recurrence에 반영된다.
+두 번째 경우는 현재 용량이 i번째 물건의 가중치 이상일 때만 유효하다. 또 `i-1` 상태를 참조하므로 **같은 물건을 한 번만 선택한다는 0/1 제약**이 점화식에 반영된다.
 
-Transition에서 가능한 branch를 누락하면 그 branch를 통해서만 얻을 수 있는 optimal solution을 놓친다. 반대로 impossible predecessor를 정상 후보로 포함하면 존재하지 않는 solution이 answer에 섞일 수 있다.
+가능한 선택 분기를 누락하면 그 분기를 통해서만 얻을 수 있는 최적해를 놓친다. 반대로 실제로 도달할 수 없는 이전 상태를 정상 후보로 포함하면 존재하지 않는 경로가 정답 계산에 섞일 수 있다.
 
-State와 transition은 서로 맞물린다. 필요한 predecessor를 현재 state로 표현할 수 없다면 state definition이 부족한 신호이고, state 의미가 불명확하면 recurrence도 올바르게 만들기 어렵다.
+상태와 전이는 서로 맞물린다. 필요한 이전 정보를 현재 상태로 표현할 수 없다면 상태 정의가 부족하다는 신호다. 반대로 상태의 의미가 불명확하면 어떤 이전 상태를 참조해야 하는지도 정할 수 없어 점화식을 올바르게 만들기 어렵다.
