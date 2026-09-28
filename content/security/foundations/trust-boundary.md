@@ -3,8 +3,8 @@ kind: concept
 contentKey: security.core.foundations.trust-boundary
 topicContentKey: security.core.foundations
 slug: trust-boundary
-title: "Trust boundary와 입력 검증 책임"
-summary: "브라우저·외부 API·파일·DB projection 등 신뢰 수준이 다른 경계를 넘어오는 데이터를 다시 검증해야 하는 이유와 client-side 검증을 보안 경계로 볼 수 없는 이유를 이해한다."
+title: "신뢰 경계와 입력 검증 책임"
+summary: "브라우저·외부 API·파일처럼 통제권이 다른 곳에서 들어온 데이터를 서버가 다시 검증해야 하는 이유와 신뢰 경계를 이해한다."
 level: 1
 status: PUBLISHED
 displayOrder: 20
@@ -14,52 +14,52 @@ references:
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
-    relationNote: server-side validation과 allowlist 중심 입력 검증 원칙 확인
+    relationNote: "서버 측 검증과 허용 목록 중심의 입력 검증 원칙 확인"
 ---
-# Trust boundary와 입력 검증 책임
+# 신뢰 경계와 입력 검증 책임
 
-프론트엔드가 이미 검증을 했으니 backend는 같은 값을 다시 확인하지 않아도 된다고 생각하면 신뢰 경계를 잘못 잡은 것입니다. 공격자는 브라우저 UI를 거치지 않고 HTTP 요청을 직접 만들 수 있습니다.
+프론트엔드가 이미 검증을 했으니 백엔드는 같은 값을 다시 확인하지 않아도 된다고 생각하면 신뢰 경계를 잘못 잡은 것입니다. 공격자는 브라우저 UI를 거치지 않고 HTTP 요청을 직접 만들 수 있습니다.
 
 ```text
-사용자 Browser
-     │  JSON / Header / Cookie
+사용자 브라우저
+     │  JSON / 헤더 / 쿠키
      ▼
-──────────── Trust Boundary ────────────
+──────────── 신뢰 경계 ────────────
      ▼
-Backend API
+백엔드 API
 ```
 
-Boundary를 넘는 순간 “이 값은 우리가 기대한 형식과 의미인가?”를 서버가 다시 확인해야 합니다.
+신뢰 경계를 넘은 값은 서버가 기대한 형식과 의미에 맞는지 다시 확인해야 합니다.
 
 ### 입력의 출처가 내부 코드처럼 보여도 경계를 확인한다
 
 외부 결제 API 응답도 우리가 통제하지 않는 데이터입니다.
 
 ```text
-Backend ── request ──► Payment Provider
-Backend ◄─ response ── Payment Provider
+백엔드 ── 요청 ──► 결제 서비스
+백엔드 ◄─ 응답 ── 결제 서비스
               │
-              └─ status / amount / signature / schema 검증 필요
+              └─ 상태 / 금액 / 서명 / 스키마 검증 필요
 ```
 
-외부 시스템 장애나 계약 변경, compromised upstream까지 고려하면 “서버끼리 통신하니 신뢰”라고 단정할 수 없습니다.
+외부 시스템의 장애·계약 변경·침해 가능성까지 고려하면 서버끼리 통신한다는 이유만으로 응답을 신뢰할 수 없습니다.
 
 ### 검증은 한 층에서 끝나지 않는다
 
 ```text
-HTTP parser / DTO validation
+HTTP 파서 / DTO 검증
         │  형식, 길이, 허용 값
         ▼
-Application / Domain
-        │  business invariant, 현재 상태
+애플리케이션 / 도메인
+        │  업무 불변식, 현재 상태
         ▼
-Persistence / DB constraint
-           uniqueness, FK, check
+영속성 / DB 제약
+           고유성, 외래 키, CHECK 제약
 ```
 
-예를 들어 `quantity=3`이 정수인지 확인하는 것은 API 검증이고, 현재 재고보다 작은지는 domain/use-case 규칙이며, quantity가 음수로 저장되지 않는 최종 하한선은 DB CHECK로 보강할 수 있습니다.
+`quantity=3`이 정수인지 확인하는 것은 API 입력 검증입니다. 주문 수량이 현재 재고 이내인지는 유스케이스 규칙이고, 음수 수량의 저장을 막는 마지막 제약은 DB의 `CHECK`로 보강할 수 있습니다.
 
-### client가 보내는 identity도 그대로 신뢰하지 않는다
+### 클라이언트가 보내는 신원도 그대로 신뢰하지 않는다
 
 ```json
 {
@@ -68,6 +68,6 @@ Persistence / DB constraint
 }
 ```
 
-로그인 사용자가 `memberId`를 바꿔 다른 사람 행위를 시도할 수 있으므로 ownership이 필요한 작업에서는 authentication principal에서 현재 사용자 identity를 얻고 resource와 비교합니다.
+로그인 사용자가 요청의 `memberId`를 바꿔 보낼 수 있습니다. 소유권이 필요한 작업에서는 서버가 인증한 주체의 사용자 ID를 얻어 리소스 소유자와 비교합니다.
 
-Trust boundary는 network firewall 하나를 뜻하지 않습니다. **데이터의 통제권이 바뀌는 지점마다 무엇을 다시 검증할지 결정하는 사고 도구**입니다.
+신뢰 경계는 네트워크 방화벽만 뜻하지 않습니다. **데이터의 통제권이 바뀌는 지점에서 무엇을 다시 검증해야 하는지** 나타냅니다.

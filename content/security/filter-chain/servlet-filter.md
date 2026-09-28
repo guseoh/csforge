@@ -3,8 +3,8 @@ kind: concept
 contentKey: security.core.filter-chain.servlet-filter
 topicContentKey: security.core.filter-chain
 slug: servlet-filter
-title: "Servlet Filter가 DispatcherServlet 앞에서 요청을 가로채는 위치"
-summary: "Servlet container filter chain이 DispatcherServlet/controller보다 앞뒤에서 요청·응답을 감쌀 수 있고 Spring Security가 이 표준 경계 위에서 동작하는 이유를 이해한다."
+title: "서블릿 필터가 DispatcherServlet 앞에서 요청을 가로채는 위치"
+summary: "서블릿 필터가 컨트롤러보다 앞에서 요청·응답을 처리하는 위치와 Spring Security가 이 경계에서 동작하는 이유를 이해한다."
 level: 2
 status: PUBLISHED
 displayOrder: 10
@@ -14,34 +14,34 @@ references:
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
-    relationNote: Servlet Filter, DelegatingFilterProxy, FilterChainProxy 구조 확인
+    relationNote: "Servlet Filter·DelegatingFilterProxy·FilterChainProxy의 관계 확인"
 ---
-# Servlet Filter가 DispatcherServlet 앞에서 요청을 가로채는 위치
+# 서블릿 필터가 DispatcherServlet 앞에서 요청을 가로채는 위치
 
-Spring MVC controller가 HTTP 요청의 첫 Java 코드라고 생각하기 쉽지만 Servlet stack에서는 filter가 더 앞에서 요청을 처리할 수 있습니다.
+Spring MVC 컨트롤러가 요청을 처음 처리한다고 생각하기 쉽지만 서블릿 필터가 그보다 앞에서 실행될 수 있습니다.
 
 ```text
-HTTP Request
+HTTP 요청
     │
     ▼
-Servlet Container
+서블릿 컨테이너
     │
     ▼
-Filter 1
+필터 1
     │
     ▼
-Filter 2
+필터 2
     │
     ▼
 DispatcherServlet
     │
     ▼
-Controller
+컨트롤러
 ```
 
-Filter는 `chain.doFilter(request, response)` 호출 전후에 logic을 넣을 수 있어 authentication, logging, CORS, compression 같은 cross-cutting 처리에 적합합니다.
+필터는 `chain.doFilter(request, response)` 호출 전후에 로직을 실행할 수 있어 인증, 로그 수집, CORS, 압축처럼 여러 요청에 공통으로 적용할 처리에 적합합니다.
 
-### filter가 chain을 계속 호출하지 않으면 controller까지 가지 않는다
+### 필터가 체인을 계속 호출하지 않으면 컨트롤러까지 가지 않는다
 
 ```java
 if (invalidRequest(request)) {
@@ -51,26 +51,26 @@ if (invalidRequest(request)) {
 chain.doFilter(request, response);
 ```
 
-Authentication filter가 credential 실패로 응답을 끝내면 MVC controller는 호출되지 않을 수 있습니다. 그래서 “controller breakpoint가 안 걸리는데 401이 난다”면 security filter chain을 먼저 볼 필요가 있습니다.
+인증 필터가 실패 응답을 반환하면 MVC 컨트롤러는 호출되지 않습니다. 컨트롤러의 중단점에 도달하지 않고 401이 발생한다면 먼저 보안 필터 체인을 확인합니다.
 
-### Spring bean과 Servlet filter lifecycle 사이를 연결해야 한다
+### Spring 빈과 서블릿 필터를 연결한다
 
-Spring Security는 `DelegatingFilterProxy`와 `FilterChainProxy`를 사용해 Servlet container filter mechanism과 Spring-managed security filters를 연결합니다.
+Spring Security는 `DelegatingFilterProxy`와 `FilterChainProxy`로 서블릿 컨테이너의 필터와 Spring이 관리하는 보안 필터를 연결합니다.
 
 ```text
-Servlet Container
+서블릿 컨테이너
    │
 DelegatingFilterProxy
    │
-Spring Bean: FilterChainProxy
+Spring 빈: FilterChainProxy
    │
-Security filters...
+보안 필터들...
 ```
 
-이 구조 덕분에 security filter들이 Spring dependency injection과 lifecycle을 활용할 수 있습니다.
+이 구조 덕분에 보안 필터도 Spring의 의존성 주입과 수명주기 관리를 사용할 수 있습니다.
 
-### filter와 interceptor를 같은 것으로 보면 안 된다
+### 필터와 인터셉터를 같은 것으로 보면 안 된다
 
-Spring MVC `HandlerInterceptor`는 DispatcherServlet이 handler를 찾는 MVC 경계 안쪽이고 Servlet Filter는 더 바깥쪽입니다. 요청 본문 wrapping, security context setup처럼 controller mapping 이전에 필요한 책임은 filter가 자연스러울 수 있습니다.
+Spring MVC의 `HandlerInterceptor`는 `DispatcherServlet` 안쪽에서 실행되고 서블릿 필터는 그보다 앞에서 실행됩니다. 요청 본문을 감싸거나 보안 컨텍스트를 준비하는 작업처럼 컨트롤러를 찾기 전에 필요한 처리는 필터에 둘 수 있습니다.
 
-Servlet Filter를 이해하면 Spring Security가 왜 controller annotation보다 앞에서 요청을 거부할 수 있는지, CORS를 security보다 먼저 처리해야 하는 경우가 왜 있는지가 연결됩니다.
+이 순서를 알면 컨트롤러가 실행되기 전에 401이 반환되는 이유와, CORS를 보안 필터보다 먼저 처리해야 하는 경우를 설명할 수 있습니다.

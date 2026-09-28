@@ -3,8 +3,8 @@ kind: concept
 contentKey: security.core.context-authz.context-holder
 topicContentKey: security.core.context-authz
 slug: context-holder
-title: "SecurityContextHolder와 요청 thread의 인증 상태"
-summary: "Spring Security가 현재 Authentication을 SecurityContext에 두고 기본적으로 thread-local strategy로 접근하게 하는 이유와 요청 종료 시 context cleanup이 중요한 이유를 이해한다."
+title: "요청 스레드의 인증 상태와 SecurityContextHolder"
+summary: "Spring Security가 현재 인증 정보를 `SecurityContext`에 보관하는 방식과 요청 종료 시 보안 컨텍스트를 정리해야 하는 이유를 이해한다."
 level: 3
 status: PUBLISHED
 displayOrder: 10
@@ -14,56 +14,56 @@ references:
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
-    relationNote: SecurityContextHolder, SecurityContext, Authentication 관계 확인
+    relationNote: "SecurityContextHolder·SecurityContext·Authentication의 관계 확인"
 ---
-# SecurityContextHolder와 요청 thread의 인증 상태
+# 요청 스레드의 인증 상태와 SecurityContextHolder
 
-Controller에서 매번 session store를 직접 조회하지 않아도 현재 사용자를 얻을 수 있는 이유는 Spring Security가 filter chain 앞쪽에서 authentication을 복원해 `SecurityContext`에 넣기 때문입니다.
+컨트롤러가 세션 저장소를 매번 직접 조회하지 않아도 현재 사용자를 알 수 있는 이유는 Spring Security가 앞선 필터에서 인증 상태를 복원해 `SecurityContext`에 넣기 때문입니다.
 
 ```text
-HTTP Request
+HTTP 요청
     │
     ▼
-Security filter
-    │ session/token에서 Authentication 복원
+보안 필터
+    │ 세션/토큰에서 Authentication 복원
     ▼
 SecurityContext
     │
     ▼
 SecurityContextHolder
     │
-    ├─ authorization filter
-    ├─ controller argument
-    └─ application current-principal adapter
+    ├─ 인가 필터
+    ├─ 컨트롤러 인자
+    └─ 애플리케이션의 현재 사용자 조회
 ```
 
-### 기본 thread-local 모델은 요청 처리 흐름에 잘 맞는다
+### 기본 스레드 로컬 모델은 요청 처리 흐름에 잘 맞는다
 
-Servlet 요청 하나가 한 worker thread에서 동기적으로 진행되는 동안 같은 thread의 코드가 현재 context를 쉽게 참조할 수 있습니다. 하지만 이것은 “Authentication이 global static 변수 하나에 저장된다”는 뜻이 아닙니다. Holder는 strategy를 통해 thread별 context를 관리합니다.
+서블릿 요청이 한 작업 스레드에서 동기적으로 처리되는 동안 같은 스레드의 코드가 현재 보안 컨텍스트를 참조할 수 있습니다. 인증 정보가 전역 정적 변수 하나에 저장된다는 뜻은 아닙니다. `SecurityContextHolder`는 저장 전략에 따라 스레드별 문맥을 관리합니다.
 
-### thread pool에서는 cleanup이 중요하다
+### 스레드 풀에서는 정리가 중요하다
 
-Tomcat worker thread는 요청이 끝나도 사라지지 않고 다음 요청에 재사용됩니다. 이전 Authentication이 thread-local에 남으면 다음 요청이 잘못된 principal을 볼 수 있으므로 Spring Security filter lifecycle은 요청 경계에서 context를 적절히 설정하고 정리합니다.
+Tomcat 작업 스레드는 다음 요청에 재사용됩니다. 이전 요청의 `Authentication`이 스레드 로컬에 남으면 다른 사용자의 인증 정보가 섞일 수 있으므로 요청이 끝날 때 문맥을 정리해야 합니다.
 
 ```text
-Thread-7
-Request A: member 42
-   │ context set
-   │ request 처리
-   └ context clear
+스레드-7
+요청 A: 회원 42
+   │ 문맥 설정
+   │ 요청 처리
+   └ 문맥 정리
 
-같은 Thread-7 재사용
-Request B: member 77
+같은 스레드-7 재사용
+요청 B: 회원 77
 ```
 
-Custom filter가 직접 context를 조작한다면 실패 path에서도 cleanup/persistence contract를 깨지 않는지 주의해야 합니다.
+사용자 정의 필터가 문맥을 직접 바꾼다면 요청 실패 경로에서도 저장·정리 규칙이 지켜지는지 확인해야 합니다.
 
-### domain/service가 holder에 직접 강하게 결합될 필요는 없다
+### 도메인이 보안 컨텍스트에 직접 의존하지 않게 한다
 
-Domain object가 `SecurityContextHolder`를 호출해 현재 사용자를 읽기 시작하면 security framework가 domain invariant 안으로 들어옵니다. API/application 경계에서 `CurrentMember` 같은 작은 abstraction으로 identity를 전달하면 test와 책임이 더 명확해질 수 있습니다.
+도메인 객체가 `SecurityContextHolder`를 직접 호출하면 도메인 규칙이 보안 프레임워크에 의존하게 됩니다. API나 애플리케이션 경계에서 현재 사용자 식별자를 전달하면 책임과 테스트 경계가 명확해집니다.
 
-### context는 immutable snapshot이라고 가정하면 안 된다
+### 문맥은 불변 스냅샷이라고 가정하면 안 된다
 
-Authentication과 principal 객체가 mutable하면 요청 중 예상치 못한 변경이 공유될 수 있습니다. 가능하면 current identity representation을 작고 안정적으로 유지합니다.
+`Authentication`과 인증 주체 객체가 변경 가능하면 요청 처리 중 예상치 못한 변경이 공유될 수 있습니다. 필요한 정보만 담은 안정적인 표현을 사용합니다.
 
-SecurityContextHolder의 핵심은 static API 이름이 아니라 **요청 security state를 현재 execution context에 연결하고 그 lifetime을 요청/thread lifecycle과 맞추는 것**입니다.
+`SecurityContextHolder`는 요청의 인증 상태를 현재 실행 문맥에 연결합니다. 그 수명을 요청과 작업 스레드의 수명에 맞춰 정리하는 것이 중요합니다.
