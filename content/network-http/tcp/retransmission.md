@@ -14,14 +14,14 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "TCP 재전송이 전송 계층 복구이고 애플리케이션 요청 재시도와 다른 동작임을 확인한다."
+    recommendation: "TCP 연결, 바이트 스트림, 시퀀스·ACK와 연결 상태의 기본 규칙을 확인한다."
     displayOrder: 1
   - url: "https://www.rfc-editor.org/rfc/rfc6298"
     title: "Computing TCP's Retransmission Timer"
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "TCP 재전송 타이머와 RTO 계산 원칙을 확인한다."
+    recommendation: "TCP 재전송 타이머와 RTO 계산 규칙을 확인한다."
     displayOrder: 2
 ---
 # 재전송
