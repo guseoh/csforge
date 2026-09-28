@@ -4,7 +4,7 @@ contentKey: operating-systems.core.isolation.container-process-model
 topicContentKey: operating-systems.core.isolation
 slug: container-process-model
 title: "컨테이너 프로세스 모델(Container Process Model)"
-summary: "container가 isolated process environment라는 모델을 설명한다."
+summary: "컨테이너를 호스트 커널 위에서 실행되는 격리된 프로세스 환경으로 이해하는 모델을 설명한다."
 level: 1
 status: PUBLISHED
 displayOrder: 60
@@ -26,20 +26,22 @@ references:
 ---
 # 컨테이너 프로세스 모델(Container Process Model)
 
-일반적인 Linux container는 별도의 guest kernel을 부팅한 virtual machine이 아니다. Host kernel 위에서 실행되는 process와 process tree에 namespace, cgroup, permission, filesystem view 같은 OS mechanism을 조합해 **독립된 실행 환경처럼 보이게 만든 것**이다.
+일반적인 Linux 컨테이너는 별도의 게스트 커널을 부팅한 가상 머신이 아니다. 호스트 커널 위에서 실행되는 프로세스와 프로세스 트리에 네임스페이스, cgroup, 권한, 파일 시스템 관점 같은 운영체제 메커니즘을 조합해 **독립된 실행 환경처럼 보이게 만든 것**이다.
 
-![host kernel 위 process tree와 namespace/cgroup으로 구성되는 container](/learning/operating-systems/container-process-model.svg)
+![호스트 커널 위 프로세스 트리와 namespace/cgroup으로 구성되는 컨테이너](/learning/operating-systems/container-process-model.svg)
 
-### Container의 중심에는 process가 있다
+### 컨테이너의 중심에는 프로세스가 있다
 
-Container를 시작하면 entrypoint process가 실행되고 그 아래 child process가 만들어질 수 있다. Container runtime은 이 process tree의 lifecycle과 namespace/cgroup 구성을 관리한다. Image는 실행 중인 process가 아니라 filesystem과 실행 환경을 구성하기 위한 입력이다.
+컨테이너를 시작하면 진입점(entrypoint) 프로세스가 실행되고 그 아래 자식 프로세스가 만들어질 수 있다. 컨테이너 런타임은 이 프로세스 트리의 생명주기와 네임스페이스·cgroup 구성을 관리한다. 이미지는 실행 중인 프로세스 자체가 아니라 **파일 시스템과 실행 환경을 준비하기 위한 입력**이다.
 
-### 격리는 여러 OS primitive의 조합이다
+### 격리는 여러 운영체제 기능의 조합이다
 
-Namespace는 PID·mount·network 같은 view를 분리하고, cgroup은 CPU·memory 같은 resource 사용을 관리한다. Permission과 capability는 어떤 privileged operation을 할 수 있는지 제한한다. Container라는 하나의 이름 뒤에서 서로 다른 OS mechanism이 각각 다른 책임을 가진다.
+네임스페이스는 PID·마운트·네트워크 같은 자원 관점을 분리하고, cgroup은 CPU·메모리 같은 자원 사용을 관리한다. 권한과 capability는 어떤 특권 연산을 수행할 수 있는지 제한한다. 컨테이너라는 하나의 이름 뒤에서 서로 다른 운영체제 메커니즘이 각각 다른 책임을 가진다.
 
-### Container 종료는 process lifecycle과 연결된다
+### 컨테이너 종료는 프로세스 생명주기와 연결된다
 
-Container의 main process가 종료되면 container lifecycle도 종료되는 것이 일반적이다. 따라서 container를 "항상 살아 있는 작은 machine"보다 **격리된 process environment와 그 lifecycle**로 이해하는 것이 정확하다.
+컨테이너의 주 프로세스가 종료되면 컨테이너 생명주기도 끝나는 것이 일반적이다. 또한 PID 네임스페이스의 init 역할을 맡은 프로세스에는 고아 프로세스 회수 같은 책임이 생길 수 있다. 하지만 **시그널 전달을 애플리케이션 자식에게 어떻게 중계할지는 별도의 supervisor·entrypoint 동작**이므로, PID 1이라는 이유만으로 자동 시그널 전달까지 보장된다고 보면 안 된다.
 
-Container process model의 핵심은 별도 kernel을 가진 VM이 아니라 **host kernel 위의 process들을 여러 isolation/resource-control primitive로 묶은 실행 단위**라는 것이다.
+따라서 컨테이너를 "항상 살아 있는 작은 머신"보다 **호스트 커널 위에서 격리된 프로세스 환경과 그 생명주기**로 이해하는 것이 정확하다.
+
+컨테이너 프로세스 모델의 핵심은 별도 커널을 가진 VM이 아니라 **호스트 커널 위의 프로세스들을 여러 격리·자원 제어 기능으로 묶은 실행 단위**라는 것이다.
