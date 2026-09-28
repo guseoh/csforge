@@ -122,7 +122,7 @@ topics:
         level: 1
         objective: "IPv4 주소의 네트워크 부분과 호스트 부분을 설명한다."
         density: CORE
-        visualization: TEXT
+        visualization: NONE
       - key: network-http.core.ip-routing.prefix-subnet
         title: "CIDR prefix와 서브넷"
         order: 20
@@ -136,7 +136,7 @@ topics:
         level: 1
         objective: "공인 주소와 사설 주소의 인터넷 도달 가능성 경계를 설명한다."
         density: STANDARD
-        visualization: TEXT
+        visualization: NONE
       - key: network-http.core.ip-routing.routing-table
         title: "라우팅 테이블"
         order: 40
@@ -281,7 +281,7 @@ topics:
         level: 1
         objective: "A 레코드의 IPv4 주소와 AAAA 레코드의 IPv6 주소 의미를 구분한다."
         density: CORE
-        visualization: TEXT
+        visualization: NONE
       - key: network-http.core.dns.cname
         title: "CNAME 레코드"
         order: 60
@@ -460,14 +460,14 @@ topics:
         level: 1
         objective: "도청·변조·서버 가장 위험을 줄이는 TLS의 보안 목표를 설명한다."
         density: CORE
-        visualization: TEXT
+        visualization: NONE
       - key: network-http.core.tls.certificate
         title: "서버 인증서"
         order: 20
         level: 1
         objective: "서비스 신원과 공개 키를 연결하는 서버 인증서의 역할을 설명한다."
         density: CORE
-        visualization: TEXT
+        visualization: NONE
       - key: network-http.core.tls.pki
         title: "공개 키 기반 구조(PKI)"
         order: 30
@@ -529,7 +529,7 @@ topics:
         level: 1
         objective: "scheme·host·port 조합으로 웹 origin을 정의하고 비교한다."
         density: CORE
-        visualization: TEXT
+        visualization: NONE
       - key: network-http.core.request-journey.dns-to-route
         title: "DNS 조회에서 라우팅까지"
         order: 30
@@ -612,21 +612,21 @@ topics:
         level: 1
         objective: "표현 데이터의 형식과 미디어 유형 이름의 관계를 설명한다."
         density: STANDARD
-        visualization: TEXT
+        visualization: NONE
       - key: network-http.core.http-message.content-type
         title: "Content-Type 헤더"
         order: 60
         level: 1
         objective: "현재 메시지 본문의 미디어 유형을 Content-Type으로 선언하는 이유를 설명한다."
         density: CORE
-        visualization: TEXT
+        visualization: NONE
       - key: network-http.core.http-message.accept
         title: "Accept 헤더와 응답 유형"
         order: 70
         level: 1
         objective: "클라이언트가 원하는 응답 표현 유형을 Accept 헤더로 전달하는 방식을 설명한다."
         density: STANDARD
-        visualization: TEXT
+        visualization: NONE
       - key: network-http.core.http-message.content-negotiation
         title: "콘텐츠 협상"
         order: 80
@@ -653,14 +653,14 @@ topics:
         level: 1
         objective: "안전한 메서드가 클라이언트가 의도한 서버 상태 변경을 요청하지 않는다는 의미를 설명한다."
         density: CORE
-        visualization: TEXT
+        visualization: NONE
       - key: network-http.core.http-methods.idempotent-method
         title: "멱등 메서드(Idempotent Method)"
         order: 20
         level: 1
         objective: "동일 요청을 반복해도 사용자가 의도한 서버 효과가 한 번 수행한 것과 같은 조건을 설명한다."
         density: CORE
-        visualization: TEXT
+        visualization: NONE
       - key: network-http.core.http-methods.get-head
         title: "GET과 HEAD"
         order: 30
@@ -715,14 +715,14 @@ topics:
         level: 1
         objective: "1xx~5xx 계열이 HTTP 응답 상태를 큰 범주로 나누는 방식을 설명한다."
         density: CORE
-        visualization: TEXT
+        visualization: NONE
       - key: network-http.core.http-status.200-201-202-204
         title: "성공 응답: 200·201·202·204"
         order: 20
         level: 1
         objective: "일반 성공·자원 생성·비동기 처리 수락·응답 콘텐츠 없는 성공을 구분한다."
         density: CORE
-        visualization: TEXT
+        visualization: NONE
       - key: network-http.core.http-status.redirect-status
         title: "리다이렉션 상태 코드"
         order: 30
@@ -736,21 +736,21 @@ topics:
         level: 1
         objective: "잘못된 요청·인증 필요·수행 거부·자원 없음 상태를 구분한다."
         density: CORE
-        visualization: TEXT
+        visualization: NONE
       - key: network-http.core.http-status.409-412
         title: "상태 충돌과 조건부 요청: 409·412"
         order: 50
         level: 2
         objective: "현재 자원 상태와의 충돌인 409와 명시한 요청 조건 실패인 412를 비교한다."
         density: CORE
-        visualization: TEXT
+        visualization: NONE
       - key: network-http.core.http-status.415-422
         title: "표현 오류: 415·422"
         order: 60
         level: 2
         objective: "지원하지 않는 미디어 유형과 이해했지만 처리할 수 없는 의미상 오류를 구분한다."
         density: STANDARD
-        visualization: TEXT
+        visualization: NONE
       - key: network-http.core.http-status.429
         title: "요청 제한과 429"
         order: 70
