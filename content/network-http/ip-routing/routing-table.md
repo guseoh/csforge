@@ -14,7 +14,7 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "IPv4 라우터가 목적지 prefix에 맞는 경로와 다음 홉을 선택하는 기본 규칙을 확인한다."
+    recommendation: "IPv4 라우터의 경로 선택과 다음 홉 전달 규칙을 확인한다."
     displayOrder: 1
 ---
 # 라우팅 테이블
