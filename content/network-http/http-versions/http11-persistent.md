@@ -14,7 +14,7 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "HTTP/1.1 message framing과 body 경계를 확인한다."
+    recommendation: "HTTP/1.1 메시지 구문, 프레이밍과 연결 재사용 규칙을 확인한다."
     displayOrder: 1
 ---
 # HTTP/1.1 지속 연결
