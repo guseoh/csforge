@@ -4,7 +4,7 @@ contentKey: operating-systems.core.deadlock.deadlock
 topicContentKey: operating-systems.core.deadlock
 slug: deadlock
 title: "교착 상태(Deadlock)"
-summary: "여러 execution이 서로 보유한 resource를 기다려 누구도 progress하지 못하는 dependency cycle을 설명한다."
+summary: "여러 실행 흐름이 서로 보유한 자원을 기다리며 누구도 진행하지 못하는 순환 의존 관계를 설명한다."
 level: 1
 status: PUBLISHED
 displayOrder: 10
@@ -33,11 +33,11 @@ references:
 ---
 # 교착 상태(Deadlock)
 
-Deadlock은 둘 이상의 실행 흐름이 **서로가 보유한 resource를 기다리면서 참여자 누구도 스스로 다음 단계로 진행할 수 없는 상태**다.
+교착 상태는 둘 이상의 실행 흐름이 **서로가 보유한 자원을 기다리면서 참여자 누구도 스스로 다음 단계로 진행할 수 없는 상태**다.
 
-단순히 lock을 오래 기다린다고 deadlock은 아니다. 현재 owner가 언젠가 resource를 release할 수 있다면 심한 contention일 수 있지만 progress 가능성은 남아 있다.
+단순히 락을 오래 기다린다고 교착 상태는 아니다. 현재 소유자가 언젠가 자원을 해제할 수 있다면 심한 경합일 수 있지만 진행 가능성은 남아 있다.
 
-두 thread가 lock을 반대 순서로 잡는 상황을 보자.
+두 스레드가 락을 반대 순서로 잡는 상황을 보자.
 
 ```text
 T1: holds L1 ───── waits for L2
@@ -48,16 +48,16 @@ T2: waits for L1 ───── holds L2
 
 ![두 thread와 두 lock이 서로를 기다리는 deadlock cycle](/learning/operating-systems/deadlock-cycle.svg)
 
-T1이 진행하려면 T2가 L2를 놓아야 하고, T2가 진행하려면 T1이 L1을 놓아야 한다. 둘 다 기다리는 상태에 들어갔기 때문에 scheduler가 실행 순서를 바꾸는 것만으로는 cycle이 풀리지 않는다.
+T1이 진행하려면 T2가 L2를 놓아야 하고, T2가 진행하려면 T1이 L1을 놓아야 한다. 둘 다 상대가 보유한 자원을 기다리므로 스케줄러가 실행 순서를 바꾸는 것만으로는 이 순환을 풀 수 없다.
 
-### 특정 interleaving에서만 만들어질 수 있다
+### 특정 실행 교차에서만 만들어질 수 있다
 
-같은 코드라도 T1이 L1과 L2를 모두 획득하고 release한 뒤 T2가 실행되면 deadlock이 생기지 않을 수 있다. 문제는 resource acquisition 순서가 특정 interleaving에서 circular dependency를 만들 수 있다는 점이다.
+같은 코드라도 T1이 L1과 L2를 모두 획득하고 해제한 뒤 T2가 실행되면 교착 상태가 생기지 않을 수 있다. 문제는 **자원 획득 순서가 특정 실행 교차에서 순환 의존 관계를 만들 수 있다는 점**이다.
 
-그래서 deadlock 가능성은 테스트 횟수보다 **누가 무엇을 보유하고 무엇을 기다리는지**를 추적하는 dependency 구조로 판단한다.
+그래서 교착 가능성은 테스트 횟수보다 `누가 무엇을 보유하고 무엇을 기다리는가`라는 의존 관계로 판단해야 한다.
 
-### Timeout과 deadlock prevention은 다르다
+### 시간 초과와 교착 예방은 다르다
 
-Timeout은 무한 대기를 끊고 실패 경로로 보낼 수 있지만 circular dependency 자체를 없애지는 않는다. Deadlock을 구조적으로 막으려면 resource protocol에서 cycle이 만들어지지 않도록 설계해야 한다.
+시간 초과(timeout)는 무한 대기를 끊고 실패 경로로 보낼 수 있지만 순환 의존 관계 자체를 없애지는 않는다. 교착을 구조적으로 막으려면 자원 획득 규칙에서 순환이 만들어지지 않도록 설계해야 한다.
 
-Deadlock의 핵심은 **기다림 자체가 아니라, 참여 execution 사이의 resource dependency가 cycle을 이루어 스스로 progress할 경로가 사라지는 것**이다.
+교착 상태의 핵심은 **기다림 자체가 아니라, 참여 실행 흐름 사이의 자원 의존 관계가 순환을 이루어 스스로 진행할 경로가 사라지는 것**이다.
