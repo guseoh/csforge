@@ -1,4 +1,4 @@
-name: OS final identity audit
+name: OS final validation
 
 on:
   push:
@@ -6,93 +6,112 @@ on:
     paths: ['.github/workflows/os-final-identity-audit.yml']
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
-  audit:
+  validate:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
         with:
           ref: codex/content-operating-systems-quality
           fetch-depth: 0
-      - name: Audit OS canonical identity against wave baseline
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: gradle
+      - name: Merge verified latest main
+        shell: bash
+        run: |
+          git config user.name 'guseoh'
+          git config user.email '81723538+guseoh@users.noreply.github.com'
+          git fetch origin main
+          expected='84b1376f1e39b7a4f779218076e6c0088a777a7f'
+          actual="$(git rev-parse origin/main)"
+          test "$actual" = "$expected" || { echo "main moved: $actual"; exit 1; }
+          git merge --no-ff --no-commit origin/main
+      - name: Audit OS canonical identity and difficulty contract
         shell: bash
         run: |
           python3 - <<'PY'
           import json, re, subprocess
+          from collections import Counter
           from pathlib import Path
 
           BASE='ad00fec24bd8a39e50fd0c82e32d44f213393bdb'
-          ROOT='content/operating-systems'
+          ROOT=Path('content/operating-systems')
 
           def git_show(path):
               return subprocess.check_output(['git','show',f'{BASE}:{path}'], text=True, encoding='utf-8')
 
           def load_json_current(path):
               return json.loads(Path(path).read_text(encoding='utf-8'))
+
           def load_json_base(path):
               return json.loads(git_show(path))
 
-          # Topic catalog identity/order.
-          topic_path=f'{ROOT}/topics.json'
+          # Topic catalog identity and order.
+          topic_path=ROOT / 'topics.json'
           cur_topics=load_json_current(topic_path)
-          old_topics=load_json_base(topic_path)
+          old_topics=load_json_base(topic_path.as_posix())
           assert len(cur_topics)==len(old_topics)==12, (len(cur_topics),len(old_topics))
           topic_fields=('contentKey','areaSlug','slug','displayOrder','active')
           for old,cur in zip(old_topics,cur_topics):
               assert {k:old.get(k) for k in topic_fields} == {k:cur.get(k) for k in topic_fields}, (old['contentKey'],cur['contentKey'])
 
-          # Curriculum structural contract without depending on a YAML library.
+          # Curriculum structural identity. Process every key line independently so nested Concepts are not skipped.
           def curriculum_structure(text):
               topics=[]; concepts=[]
               lines=text.splitlines()
-              i=0
-              while i < len(lines):
-                  line=lines[i]
+              for i,line in enumerate(lines):
                   m=re.match(r'^(\s*)- key: (operating-systems\.core\.[\w.-]+)$', line)
                   if not m:
-                      i+=1; continue
+                      continue
                   indent=len(m.group(1)); key=m.group(2)
-                  block=[]; j=i+1
-                  while j<len(lines):
-                      nxt=lines[j]
+                  block=[]
+                  for nxt in lines[i+1:]:
                       mm=re.match(r'^(\s*)- key: ', nxt)
-                      if mm and len(mm.group(1)) <= indent: break
-                      block.append(nxt); j+=1
+                      if mm and len(mm.group(1)) <= indent:
+                          break
+                      block.append(nxt)
                   def val(name):
                       pat=re.compile(r'^\s*'+re.escape(name)+r':\s*(.+?)\s*$')
                       for b in block:
                           x=pat.match(b)
-                          if x: return x.group(1).strip('"')
+                          if x:
+                              return x.group(1).strip('"')
                       return None
                   if indent==2:
                       topics.append((key,val('order')))
                   elif indent==6:
                       concepts.append((key,val('order'),val('level'),val('density'),val('visualization')))
-                  i=j
               return topics,concepts
-          old_ct,old_cc=curriculum_structure(git_show('content/curriculum/operating-systems.yaml'))
-          cur_ct,cur_cc=curriculum_structure(Path('content/curriculum/operating-systems.yaml').read_text(encoding='utf-8'))
+
+          curriculum=Path('content/curriculum/operating-systems.yaml')
+          old_ct,old_cc=curriculum_structure(git_show(curriculum.as_posix()))
+          cur_ct,cur_cc=curriculum_structure(curriculum.read_text(encoding='utf-8'))
           assert old_ct==cur_ct and len(cur_ct)==12, (len(old_ct),len(cur_ct))
           assert old_cc==cur_cc and len(cur_cc)==97, (len(old_cc),len(cur_cc))
 
-          # Concept file identity/link/order.
+          # Concept identity, Topic link, level/status/order.
           def concept_meta(text):
               fm=text.split('---',2)[1]
               def one(name):
                   m=re.search(r'^'+re.escape(name)+r':\s*"?([^"\n]+?)"?\s*$',fm,re.M)
                   return m.group(1).strip() if m else None
               return tuple(one(k) for k in ('contentKey','topicContentKey','slug','level','status','displayOrder'))
-          cur_mds=sorted(p for p in Path(ROOT).rglob('*.md'))
+
+          cur_mds=sorted(ROOT.rglob('*.md'))
           assert len(cur_mds)==97, len(cur_mds)
           for p in cur_mds:
               rel=p.as_posix()
-              old=concept_meta(git_show(rel)); cur=concept_meta(p.read_text(encoding='utf-8'))
+              old=concept_meta(git_show(rel))
+              cur=concept_meta(p.read_text(encoding='utf-8'))
               assert old==cur, (rel,old,cur)
 
-          # Question identity, grading contract, links, and choice identity/order.
-          qpaths=sorted(p for p in Path(ROOT).rglob('questions.json'))
+          # Question identity, type/status/link/answer and choice identity/order.
+          qpaths=sorted(ROOT.rglob('questions.json'))
           assert len(qpaths)==12, len(qpaths)
           old_q={}; cur_q={}
           for p in qpaths:
@@ -101,23 +120,66 @@ jobs:
               for q in load_json_current(rel): cur_q[q['contentKey']]=q
           assert len(old_q)==len(cur_q)==331, (len(old_q),len(cur_q))
           assert set(old_q)==set(cur_q)
+
           def choice_shape(q):
               return [(c['key'],c.get('displayOrder')) for c in q.get('choices',[])]
+
           for key in sorted(old_q):
               old,cur=old_q[key],cur_q[key]
               for field in ('questionType','status','conceptKeys','correctChoiceKey','acceptedAnswers'):
                   assert old.get(field)==cur.get(field), (key,field,old.get(field),cur.get(field))
               assert choice_shape(old)==choice_shape(cur), (key,'choices',choice_shape(old),choice_shape(cur))
 
-          # Difficulty is intentionally reviewable; count only for reporting.
-          from collections import Counter
+          medium_keys={
+              'operating-systems.core.kernel-boundary.os-resource-manager.q3',
+              'operating-systems.core.kernel-boundary.privilege-protection.q4',
+              'operating-systems.core.kernel-boundary.system-call-flow.q4',
+              'operating-systems.core.process.process-create.q4',
+              'operating-systems.core.scheduling.timer-interrupt-preemption.q3',
+              'operating-systems.core.scheduling.round-robin.q3',
+              'operating-systems.core.threads.thread-count-workload.q3',
+              'operating-systems.core.race-critical-section.critical-section.q3',
+              'operating-systems.core.race-critical-section.spin-vs-block.q3',
+              'operating-systems.core.deadlock.deadlock-avoidance.q3',
+              'operating-systems.core.deadlock.starvation.q3',
+              'operating-systems.core.virtual-memory.page-table.q3',
+              'operating-systems.core.virtual-memory.page-replacement.q4',
+              'operating-systems.core.virtual-memory.copy-on-write.q3',
+              'operating-systems.core.filesystem.file-descriptor.q3',
+              'operating-systems.core.filesystem.open-file-table.q3',
+              'operating-systems.core.io.device-io-kernel-path.q3',
+              'operating-systems.core.io.blocking-io.q3',
+              'operating-systems.core.io.epoll.q3',
+              'operating-systems.core.io.async-io.q3',
+              'operating-systems.core.ipc.unix-domain-socket.q3',
+              'operating-systems.core.isolation.process-isolation.q3',
+              'operating-systems.core.isolation.namespace.q3',
+              'operating-systems.core.isolation.host-kernel-sharing.q3',
+          }
+          for key in sorted(medium_keys):
+              assert cur_q[key]['difficulty']=='MEDIUM', (key,cur_q[key]['difficulty'])
+          assert cur_q['operating-systems.core.scheduling.multicore-affinity.q3']['difficulty']=='HARD'
+
           diff=Counter(q.get('difficulty') for q in cur_q.values())
           types=Counter(q.get('questionType') for q in cur_q.values())
           print('PASS topic identity/order: 12/12')
           print('PASS curriculum structural identity: 12 topics / 97 concepts')
           print('PASS concept identity/link/order: 97/97')
           print('PASS question identity/type/status/links/answers/choice-order: 331/331')
+          print('PASS reviewed MEDIUM dispositions:', len(medium_keys))
+          print('PASS multicore-affinity.q3 remains HARD')
           print('Current question difficulty:', dict(sorted(diff.items())))
           print('Current question types:', dict(sorted(types.items())))
           PY
-          git diff --check 1d12d507efd4af29eea9c187c875d8ecd810b996...HEAD -- content/operating-systems content/curriculum/operating-systems.yaml
+          git diff --check 84b1376f1e39b7a4f779218076e6c0088a777a7f...HEAD -- content/operating-systems content/curriculum/operating-systems.yaml
+      - name: Run canonical preview apply exact-reimport integration
+        working-directory: backend
+        run: |
+          chmod +x gradlew
+          ./gradlew test --tests com.guseoh.csforge.importcontent.CanonicalBootstrapIdempotencyIntegrationTest --no-daemon --stacktrace
+      - name: Commit latest-main sync and remove temporary validation workflow
+        shell: bash
+        run: |
+          git rm .github/workflows/os-final-identity-audit.yml
+          git commit -m 'merge: validate OS quality on latest main'
+          git push origin HEAD:codex/content-operating-systems-quality
