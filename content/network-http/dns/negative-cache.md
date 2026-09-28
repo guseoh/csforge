@@ -14,7 +14,7 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "NXDOMAIN·NODATA 부정 응답과 SOA 정보를 이용한 부정 캐시 수명을 확인한다."
+    recommendation: "NXDOMAIN/NODATA negative answer와 SOA 기반 negative TTL을 확인한다."
     displayOrder: 1
   - url: "https://www.rfc-editor.org/rfc/rfc9520"
     title: "Negative Caching of DNS Resolution Failures"
