@@ -14,7 +14,7 @@ references:
     referenceType: BOOK
     language: en
     depth: section
-    recommendation: "key-indexed counting과 LSD·MSD 기수 정렬, 안정적인 digit pass를 확인한다."
+    recommendation: "키 인덱스 계수법과 LSD·MSD 기수 정렬, 안정적인 자리별 정렬을 확인한다."
     displayOrder: 1
   - url: "https://www.unicode.org/reports/tr10/"
     title: "Unicode Technical Standard #10: Unicode Collation Algorithm"
