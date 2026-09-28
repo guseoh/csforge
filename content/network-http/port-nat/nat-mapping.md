@@ -14,7 +14,7 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "주소·포트 변환 상태가 반환 패킷을 원래 내부 흐름으로 연결하는 기본 NAT 동작을 확인한다."
+    recommendation: "전통적인 IPv4 NAT/NAPT의 주소·포트 변환과 상태 관리 규칙을 확인한다."
     displayOrder: 1
 ---
 # NAT 매핑과 만료
