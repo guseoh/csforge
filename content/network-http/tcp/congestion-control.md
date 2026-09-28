@@ -14,7 +14,7 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "slow start·congestion avoidance와 혼잡 윈도 조절의 표준 기본 동작을 확인한다."
+    recommendation: "TCP 혼잡 제어의 slow start·congestion avoidance와 혼잡 윈도 조절 규칙을 확인한다."
     displayOrder: 1
 ---
 # TCP 혼잡 제어
