@@ -1,0 +1,31 @@
+name: OS I/O manual pass v2
+
+on:
+  push:
+    branches: [codex/content-operating-systems-quality]
+    paths: ['.github/workflows/os-io-manual-pass-v2.yml']
+
+permissions:
+  contents: write
+
+jobs:
+  rewrite:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: codex/content-operating-systems-quality
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Apply reviewed first I/O question batch
+        run: |
+          awk '/^[[:space:]]*node <<'"'"'NODE'"'"'/{flag=1;next} /^[[:space:]]*NODE$/{flag=0} flag{sub(/^[[:space:]]{10}/, ""); print}' .github/workflows/os-io-manual-pass.yml > /tmp/rewrite.js
+          node /tmp/rewrite.js
+          git diff --check
+          git config user.name "guseoh"
+          git config user.email "81723538+guseoh@users.noreply.github.com"
+          git add content/operating-systems/io/questions.json
+          git commit -m "content: polish first OS I/O question batch"
+          git push origin HEAD:codex/content-operating-systems-quality
