@@ -14,7 +14,7 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "NS와 MX 레코드가 각각 어떤 이름을 가리키고 DNS에서 어떤 역할을 하는지 확인한다."
+    recommendation: "DNS 메시지·레코드·응답 코드와 TTL의 기본 규칙을 확인한다."
     displayOrder: 1
 ---
 # NS·MX 레코드
