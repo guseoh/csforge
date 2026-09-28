@@ -4,7 +4,7 @@ contentKey: network-http.core.http-methods.delete
 topicContentKey: network-http.core.http-methods
 slug: delete
 title: "DELETE와 삭제 의미"
-summary: "DELETE가 target URI와 current functionality의 association 제거를 요청하는 idempotent semantics를 설명한다."
+summary: "DELETE가 대상 URI와 현재 기능 사이의 연결을 제거하도록 요청하는 멱등 의미와 물리 데이터 삭제의 경계를 설명한다."
 level: 1
 status: PUBLISHED
 displayOrder: 70
@@ -17,19 +17,36 @@ references:
 ---
 # DELETE와 삭제 의미
 
-DELETE는 origin server에 **target resource와 그 URI가 현재 제공하는 functionality 사이의 association을 제거해 달라**고 요청하는 method다. 흔히 `resource 삭제`라고 표현하지만, HTTP는 backing database row나 file을 물리적으로 지우라고 강제하지 않는다.
+DELETE는 원본 서버에 **대상 자원과 그 URI가 현재 제공하는 기능 사이의 연결을 제거해 달라**고 요청하는 메서드다. 흔히 `자원을 삭제한다`고 표현하지만, HTTP는 데이터베이스 행이나 파일을 물리적으로 반드시 지우라고 강제하지 않는다.
 
-server는 resource 특성에 따라 data를 실제 삭제할 수도 있고, archive나 tombstone을 남기거나 storage를 계속 보존할 수도 있다. 중요한 것은 성공한 DELETE 이후 target URI가 이전과 같은 current functionality를 계속 제공하도록 두는 것이 아니라, server가 정의한 deletion semantics를 적용하는 것이다.
+서버는 자원 특성에 따라 데이터를 실제 삭제할 수도 있고, 보관 상태로 옮기거나 삭제 표시(tombstone)를 남기거나 저장 공간을 일정 기간 유지할 수도 있다. 중요한 것은 성공한 DELETE 이후 대상 URI가 이전과 같은 현재 기능을 계속 제공하도록 두는 것이 아니라, 서버가 정의한 삭제 의미를 적용하는 것이다.
 
-| 시점 | Target의 current functionality | 같은 DELETE의 intended effect | Possible response |
+| 시점 | 대상 URI의 현재 기능 | 같은 DELETE의 의도한 효과 | 가능한 응답 |
 | --- | --- | --- | --- |
-| 첫 요청 전 | 제공 중 | association 제거 | 200·202·204 등 resource 의미에 맞는 응답 |
-| 첫 요청 성공 후 | 제거되었거나 더 이상 제공하지 않음 | 이미 반영된 삭제 의도 유지 | 반복 요청은 404·204 등으로 다르게 표현될 수 있음 |
+| 첫 요청 전 | 제공 중 | 연결 제거 | `200`, `202`, `204` 등 자원 의미에 맞는 응답 |
+| 첫 요청 성공 후 | 제거됐거나 더 이상 제공하지 않음 | 이미 반영된 삭제 의도 유지 | 반복 요청은 `404`, `204` 등으로 다르게 표현될 수 있음 |
 
-### DELETE는 idempotent하다
+### DELETE는 멱등하다
 
-같은 DELETE request를 반복한다고 `삭제가 두 번 누적`되는 의미가 생기지는 않는다. 그래서 DELETE는 HTTP method semantics상 idempotent하다. 다만 첫 요청과 반복 요청의 response status가 반드시 같아야 한다는 뜻은 아니다. 이미 association이 사라진 상태를 server가 어떻게 표현하는지는 별도 resource semantics다.
+같은 DELETE 요청을 반복한다고 `삭제가 두 번 누적`되는 의미가 생기지는 않는다. 그래서 DELETE는 HTTP 의미상 멱등 메서드(idempotent method)다.
 
-삭제가 아직 실행되지 않았지만 비동기로 수행될 예정이면 `202 Accepted`, 삭제가 완료되고 추가 content가 없다면 `204 No Content`, 삭제 상태를 설명하는 representation을 반환한다면 `200 OK`를 사용할 수 있다.
+다만 멱등하다고 해서 첫 요청과 반복 요청의 응답 상태가 반드시 같아야 하는 것은 아니다. 첫 요청에서는 삭제에 성공해 `204`를 반환하고, 이후 같은 URI에 다시 DELETE하면 이미 대상이 없다는 의미로 `404`를 반환할 수도 있다. 응답이 달라도 의도한 삭제 효과가 더 누적되지 않는다면 멱등 의미와 충돌하지 않는다.
 
-DELETE를 이해할 때 핵심은 **HTTP가 URI mapping에 대한 삭제 의도를 정의하지, storage implementation의 물리 삭제 방식까지 정의하지 않는다**는 점이다.
+### 삭제 요청과 실제 저장소 정리는 별개일 수 있다
+
+삭제가 비동기로 수행될 예정이라면 `202 Accepted`, 삭제가 완료되고 추가 콘텐츠가 없다면 `204 No Content`, 삭제 결과를 설명하는 표현을 반환한다면 `200 OK`를 사용할 수 있다.
+
+```text
+DELETE 요청 성공
+      ↓
+HTTP 관점
+→ 대상 URI의 현재 기능 제거 의도 반영
+
+내부 저장소 관점
+→ 즉시 물리 삭제 / 소프트 삭제 / 보관 / 지연 정리 등
+   구현 정책에 따라 달라질 수 있음
+```
+
+또한 DELETE가 멱등하다고 이메일, 외부 이벤트 발행, 감사 로그 같은 모든 부수 효과가 자동으로 한 번만 실행되는 것도 아니다. 그런 중복 제어가 필요하면 애플리케이션이 별도 계약을 가져야 한다.
+
+핵심은 **HTTP의 DELETE가 URI와 현재 기능 사이의 연결 제거를 요청하지, 저장소 구현의 물리 삭제 방식이나 모든 외부 부수 효과까지 규정하는 것은 아니라는 점**이다.

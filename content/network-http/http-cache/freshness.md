@@ -14,7 +14,6 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "응답의 현재 나이, 신선도 수명, fresh·stale 판정과 재검증 규칙을 확인한다."
     displayOrder: 1
   - url: "https://www.rfc-editor.org/rfc/rfc5861"
     title: "HTTP Cache-Control Extensions for Stale Content"

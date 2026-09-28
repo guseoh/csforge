@@ -14,7 +14,6 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "Expires와 Date를 이용한 신선도 수명 계산, 현재 나이 계산, max-age 우선순위를 확인한다."
     displayOrder: 1
 ---
 # Expires와 만료 시각

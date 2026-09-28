@@ -14,7 +14,7 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "NS와 MX 레코드의 DNS 자료 형식과 기본 역할을 확인한다."
+    recommendation: "DNS delegation과 service record의 역할을 확인한다."
     displayOrder: 1
   - url: "https://www.rfc-editor.org/rfc/rfc5321"
     title: "Simple Mail Transfer Protocol"
@@ -47,7 +47,7 @@ NS가 가리키는 값은 DNS 서버의 **이름**이다. 실제 통신을 하�
 
 ### MX: 이 도메인의 메일을 어느 서버가 받을 것인가
 
-MX 레코드는 메일 교환기(mail exchanger)의 이름과 우선순위 값을 제공한다. 일반적으로 더 낮은 preference 값이 우선된다.
+MX 레코드는 메일 교환기(mail exchanger)의 이름과 우선순위 값을 제공한다. 일반적으로 더 낮은 우선순위 값이 먼저 선택된다.
 
 ```text
 example.com. MX 10 mail1.example.com.
@@ -58,7 +58,7 @@ example.com. MX 20 mail2.example.com.
 
 ### MX가 없다고 메일 전달이 곧바로 불가능한 것은 아니다
 
-SMTP에는 중요한 예외가 있다. 도메인에 **MX 레코드가 하나도 없으면**, 송신자는 그 도메인 자체를 preference 0의 암묵적 MX(implicit MX)처럼 취급하고 해당 이름의 주소 레코드로 직접 전달을 시도할 수 있다.
+SMTP에는 중요한 예외가 있다. 도메인에 **MX 레코드가 하나도 없으면**, 송신자는 그 도메인 자체를 우선순위 0의 암묵적 MX(implicit MX)처럼 취급하고 해당 이름의 주소 레코드로 직접 전달을 시도할 수 있다.
 
 ```text
 example.com. A 203.0.113.10
@@ -70,7 +70,7 @@ SMTP 송신 측
 → 얻은 주소로 메일 전달 시도
 ```
 
-반대로 MX 레코드가 하나 이상 존재한다면 명시된 MX 대상을 따라야 하며, 단순히 도메인 자신의 A·AAAA로 되돌아가는 이 fallback 규칙을 적용하면 안 된다.
+반대로 MX 레코드가 하나 이상 존재한다면 명시된 MX 대상을 따라야 하며, 단순히 도메인 자신의 A·AAAA로 되돌아가는 이 대체 규칙을 적용하면 안 된다.
 
 따라서 `웹용 A/AAAA는 정상인데 MX가 없다`는 사실만으로 메일 실패 원인을 확정할 수 없다. 실제로는 암묵적 MX 규칙에 따라 도메인 주소로 SMTP 연결이 가능한지까지 확인해야 한다.
 
@@ -82,7 +82,7 @@ SMTP 송신 측
 example.com. MX 0 .
 ```
 
-이 표현은 `MX가 없어서 암묵적 MX fallback을 시도해야 하는 상태`와 다르다. Null MX는 **이 도메인이 메일 수신 서비스를 제공하지 않는다는 명시적인 신호**다.
+이 표현은 `MX가 없어서 암묵적 MX 대체 규칙을 시도해야 하는 상태`와 다르다. Null MX는 **이 도메인이 메일 수신 서비스를 제공하지 않는다는 명시적인 신호**다.
 
 | DNS 상태 | SMTP 송신 측의 의미 |
 | --- | --- |
