@@ -14,7 +14,7 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "인터넷 호스트의 링크·인터넷·전송·애플리케이션 계층 책임을 확인한다."
+    recommendation: "인터넷 호스트의 네트워크 계층 구조와 계층별 책임 경계를 확인한다."
     displayOrder: 1
 ---
 # 계층화가 필요한 이유
