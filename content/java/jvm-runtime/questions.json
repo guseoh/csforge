@@ -734,7 +734,7 @@
         "key": "D",
         "content": "둘 중 하나가 원시 타입이 된다",
         "displayOrder": 3,
-        "rationaleMarkdown": "또 다른 로더가 같은 이름을 정의해도 참조 클래스가 원시 타입 타입으로 바뀌지 않는다."
+        "rationaleMarkdown": "또 다른 로더가 같은 이름을 정의해도 참조 클래스가 원시 타입으로 바뀌지 않는다."
       }
     ],
     "correctChoiceKey": "C",
@@ -1128,7 +1128,7 @@
       }
     ],
     "correctChoiceKey": "A",
-    "explanationMarkdown": "reachability 객체 그래프에서 root로부터 도달 불가능한한 객체가 회수 대상이 된다."
+    "explanationMarkdown": "도달 가능성(reachability) 객체 그래프에서 GC 루트로부터 도달할 수 없는 객체가 회수 대상이 된다."
   },
   {
     "kind": "question",

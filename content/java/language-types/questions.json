@@ -383,7 +383,7 @@
     "conceptKeys": ["java.core.language-types.pass-by-value"],
     "choices": [
       {"key": "A", "content": "매개변수 `value`가 호출자의 변수와 같은 저장 공간을 공유하므로 `value++`가 호출자에게 반영된다.", "displayOrder": 0, "rationaleMarkdown": "매개변수는 호출자 변수와 별도의 지역 변수다. 이름이 달라서가 아니라 호출할 때 원시 값이 복사되기 때문에 호출자 변수는 바뀌지 않는다."},
-      {"key": "B", "content": "원시 값이 복사되어 별도의 매개변수 변수가 만들어지기 때문이다", "displayOrder": 1, "rationaleMarkdown": "호출할 때 `int` 값이 메서드 매개변수에 복사되므로 증가 연산은 그 복사본만 바꾼다."},
+      {"key": "B", "content": "원시 값이 복사되어 별도의 매개변수가 만들어지기 때문이다", "displayOrder": 1, "rationaleMarkdown": "호출할 때 `int` 값이 메서드 매개변수에 복사되므로 증가 연산은 그 복사본만 바꾼다."},
       {"key": "C", "content": "메서드가 끝나면 매개변수의 최종 값을 호출자 변수에 자동으로 복사해 돌려준다.", "displayOrder": 2, "rationaleMarkdown": "메서드 안에서 매개변수에 새 값을 대입해도 호출자 변수에는 자동으로 반영되지 않는다. 새 값을 돌려주고 호출자가 직접 대입해야 한다."},
       {"key": "D", "content": "매개변수는 암묵적으로 `final`이어서 `value++`가 컴파일되지 않는다.", "displayOrder": 3, "rationaleMarkdown": "매개변수는 `final`로 선언하지 않으면 메서드 안에서 다시 대입하거나 증가할 수 있다. 이 코드에서는 증가가 매개변수 복사본에 적용된다."}
     ],
@@ -422,7 +422,7 @@
       {"key": "D", "content": "컴파일 오류다. 메서드 매개변수는 암묵적으로 `final`이므로 다시 대입할 수 없다.", "displayOrder": 3, "rationaleMarkdown": "매개변수는 암묵적으로 `final`이 아닙니다. 이 메서드는 컴파일되며 `value`만 새 객체를 가리키도록 바뀝니다."}
     ],
     "correctChoiceKey": "A",
-    "explanationMarkdown": "호출할 때 `caller`의 참조 값이 매개변수 `value`에 복사됩니다. 메서드 안에서 `value`를 새 객체로 재대입해도 `caller`는 바뀌지 않으므로 출력은 `old`입니다. 가리키는 객체의 상태를 변경하는 것과 매개변수 변수에 새 참조를 대입하는 것은 다릅니다."
+    "explanationMarkdown": "호출할 때 `caller`의 참조 값이 매개변수 `value`에 복사됩니다. 메서드 안에서 `value`를 새 객체로 재대입해도 `caller`는 바뀌지 않으므로 출력은 `old`입니다. 가리키는 객체의 상태를 변경하는 것과 매개변수에 새 참조를 대입하는 것은 다릅니다."
   },
   {
     "kind": "question",

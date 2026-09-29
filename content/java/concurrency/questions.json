@@ -3177,7 +3177,7 @@
       },
       {
         "key": "B",
-        "content": "weakly consistent 관찰일 수 있어 생성 시점 이후 변경과 전체 정렬을 보장하지 않는다",
+        "content": "약한 일관성(weakly consistent)을 가진 관찰일 수 있어 생성 시점 이후 변경과 전체 정렬을 보장하지 않는다",
         "displayOrder": 1,
         "rationaleMarkdown": "concurrent 반복자가 특정 순간의 정렬된 고정 스냅샷을 제공한다고 보장하지 않는다. weak consistency를 포함한 명세를 확인한다."
       },

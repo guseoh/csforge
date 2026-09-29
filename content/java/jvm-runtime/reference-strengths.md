@@ -14,7 +14,7 @@ references:
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
-    relationNote: 참조 강도와 reachability 처리 개요 확인
+    relationNote: 참조 강도와 도달 가능성 처리 개요 확인
   - url: "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/ref/PhantomReference.html"
     title: "PhantomReference (Java SE 25 API)"
     referenceType: OFFICIAL
@@ -40,7 +40,7 @@ references:
 User user = new User();
 ```
 
-살아 있는 루트에서 일반적인 강한 참조 경로가 객체까지 이어지면 그 객체는 strongly 도달 가능한합니다.
+살아 있는 루트에서 일반적인 강한 참조 경로가 객체까지 이어지면 그 객체는 **강하게 도달 가능한 상태(strongly reachable)** 입니다.
 
 ```text
 살아 있는 GC 루트 ──▶ owner ──▶ User
@@ -54,7 +54,7 @@ User user = new User();
 WeakReference<User> weak = new WeakReference<>(user);
 ```
 
-객체가 강한 참조나 소프트 참조로는 더 이상 도달되지 않고 `WeakReference`를 통해서만 도달 가능한 weakly 도달 가능한 상태가 되면, JVM의 참조 처리 과정에서 해당 약한 참조는 지워질 수 있습니다.
+객체가 강한 참조나 소프트 참조로는 더 이상 도달되지 않고 `WeakReference`를 통해서만 도달할 수 있는 **약하게 도달 가능한 상태(weakly reachable)** 가 되면, JVM의 참조 처리 과정에서 해당 약한 참조는 지워질 수 있습니다.
 
 ```text
 강한 참조 경로 존재
@@ -83,7 +83,7 @@ SoftReference 기반 캐시
    └─ 제거 순서 보장 없음
 ```
 
-그래서 일반 애플리케이션 캐시에는 최대 크기, TTL, 명시적인 제거 정책, hit/miss 관찰처럼 업무 정책을 표현할 수 있는 캐시 추상화가 더 적합한 경우가 많습니다.
+그래서 일반 애플리케이션 캐시에는 최대 크기, TTL, 명시적인 제거 정책, 적중/미적중(hit/miss) 관찰처럼 업무 정책을 표현할 수 있는 캐시 추상화가 더 적합한 경우가 많습니다.
 
 ### 팬텀 참조(Phantom Reference)는 객체를 다시 꺼내는 참조가 아니다
 
@@ -93,7 +93,7 @@ PhantomReference<Resource> phantom =
         new PhantomReference<>(resource, queue);
 ```
 
-`PhantomReference.get()`은 항상 `null`을 반환합니다. 목적은 참조 대상 객체를 다시 사용하기 위한 것이 아니라 객체가 phantom 도달 가능한 단계에 들어간 뒤 `ReferenceQueue`와 함께 **수명 종료 이후의 정리 작업이나 bookkeeping 시점을 관찰하는 것**입니다.
+`PhantomReference.get()`은 항상 `null`을 반환합니다. 목적은 참조 대상 객체를 다시 사용하기 위한 것이 아니라 객체가 **팬텀 도달 가능 상태(phantom reachable)** 에 들어간 뒤 `ReferenceQueue`와 함께 **수명 종료 이후의 정리·관리 시점을 관찰하는 것**입니다.
 
 이것도 결정적인 소멸자(deterministic destructor)는 아닙니다. GC와 참조 처리 시점을 애플리케이션이 정확히 지정할 수 없으므로 파일이나 소켓 같은 자원은 가능하면 `try-with-resources`와 명시적인 `close()`가 우선입니다.
 

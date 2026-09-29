@@ -117,7 +117,7 @@ very many threads × per-thread cache
 
 ```text
 ThreadLocal
-thread-bound mutable slot
+스레드에 묶인 가변 슬롯
 set -> get -> set/remove
 
 ScopedValue
