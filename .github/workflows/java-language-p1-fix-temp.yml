@@ -1,0 +1,114 @@
+name: Java language P1 fix temp
+
+on:
+  push:
+    branches: [codex/content-java-quality]
+    paths: [.github/workflows/java-language-p1-fix-temp.yml]
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Apply exact reviewed P1 corrections
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib, json
+
+          text_keys={'promptMarkdown','content','rationaleMarkdown','explanationMarkdown','modelAnswer','title','description','summary'}
+          def keep(o):
+              if isinstance(o,dict): return {k:keep(v) for k,v in o.items() if k not in text_keys}
+              if isinstance(o,list): return [keep(v) for v in o]
+              return o
+          def identity():
+              payload={}
+              for p in sorted(Path('content/java').rglob('*.json')):
+                  payload[str(p)]=keep(json.loads(p.read_text(encoding='utf-8')))
+              raw=json.dumps(payload,ensure_ascii=False,sort_keys=True,separators=(',',':')).encode()
+              return hashlib.sha256(raw).hexdigest()
+          before=identity()
+
+          fixes={
+            'content/java/jvm-runtime/reference-strengths.md': {
+              'relationNote: 참조 강도와 reachability 처리 개요 확인':'relationNote: 참조 강도와 도달 가능성 처리 개요 확인',
+              '살아 있는 루트에서 일반적인 강한 참조 경로가 객체까지 이어지면 그 객체는 strongly 도달 가능한합니다.':'살아 있는 루트에서 일반적인 강한 참조 경로가 객체까지 이어지면 그 객체는 **강하게 도달 가능한 상태(strongly reachable)** 입니다.',
+              '객체가 강한 참조나 소프트 참조로는 더 이상 도달되지 않고 `WeakReference`를 통해서만 도달 가능한 weakly 도달 가능한 상태가 되면, JVM의 참조 처리 과정에서 해당 약한 참조는 지워질 수 있습니다.':'객체가 강한 참조나 소프트 참조로는 더 이상 도달되지 않고 `WeakReference`를 통해서만 도달할 수 있는 **약하게 도달 가능한 상태(weakly reachable)** 가 되면, JVM의 참조 처리 과정에서 해당 약한 참조는 지워질 수 있습니다.',
+              '최대 크기, TTL, 명시적인 제거 정책, hit/miss 관찰처럼 업무 정책을 표현할 수 있는 캐시 추상화':'최대 크기, TTL, 명시적인 제거 정책, 적중/미적중(hit/miss) 관찰처럼 업무 정책을 표현할 수 있는 캐시 추상화',
+              '객체가 phantom 도달 가능한 단계에 들어간 뒤 `ReferenceQueue`와 함께 **수명 종료 이후의 정리 작업이나 bookkeeping 시점을 관찰하는 것**':'객체가 **팬텀 도달 가능 상태(phantom reachable)** 에 들어간 뒤 `ReferenceQueue`와 함께 **수명 종료 이후의 정리·관리 시점을 관찰하는 것**',
+            },
+            'content/java/jvm-runtime/questions.json': {
+              '참조 클래스가 원시 타입 타입으로 바뀌지 않는다.':'참조 클래스가 원시 타입으로 바뀌지 않는다.',
+              'reachability 객체 그래프에서 root로부터 도달 불가능한한 객체가 회수 대상이 된다.':'도달 가능성(reachability) 객체 그래프에서 GC 루트로부터 도달할 수 없는 객체가 회수 대상이 된다.',
+            },
+            'content/java/functional/questions.json': {
+              '`String`은 타입 이름이지 람다 매개변수 변수가 아니며':'`String`은 타입 이름이지 람다 매개변수가 아니며',
+            },
+            'content/java/exceptions-resources/questions.json': {
+              '예외 번역 시 원인 원인을 보존하는 주된 이유는?':'예외 번역 시 원인 예외(cause)를 보존하는 주된 이유는?',
+              '원인 보존은 checked/비검사 분류를 바꾸지 않는다.':'원인 보존은 검사 예외/비검사 예외 분류를 바꾸지 않는다.',
+              '내부 진단 chain을 유지하면서 안전한 API 메시지를 따로 선택할 수 있다.':'내부 진단의 원인 연결 관계를 유지하면서 안전한 API 메시지를 따로 선택할 수 있다.',
+              '원래 장애 지점과 스택 trace를 이어 볼 수 있어':'원래 장애 지점과 스택 추적(stack trace)을 이어 볼 수 있어',
+              '원인 chain은 추상화된 예외와 최초 실패를 연결한다.':'원인 예외 연결(cause chain)은 추상화된 예외와 최초 실패를 연결한다.',
+            },
+            'content/java/language-types/questions.json': {
+              '원시 값이 복사되어 별도의 매개변수 변수가 만들어지기 때문이다':'원시 값이 복사되어 별도의 매개변수가 만들어지기 때문이다',
+              '가리키는 객체의 상태를 변경하는 것과 매개변수 변수에 새 참조를 대입하는 것은 다릅니다.':'가리키는 객체의 상태를 변경하는 것과 매개변수에 새 참조를 대입하는 것은 다릅니다.',
+            },
+            'content/java/generics/questions.json': {
+              '`List<?>`는 런타임에서 원소 인자에 대해 검사하지 않는 reifiable 형태다. 알 수 있는 것은 List 여부이며 요소 타입은 와일드카드로 숨긴다.':'`List<?>`는 실행 시점에 검사 가능한 실체화 가능 타입(reifiable type)이다. 확인할 수 있는 것은 List 여부이며 요소 타입은 와일드카드로 숨긴다.',
+              'ArrayList<?>도 와일드카드 parameterization이라 런타임 클래스를 검사할 수 있다. 특정 요소 타입을 런타임에서 확인하려 하지 않는다.':'`ArrayList<?>`도 와일드카드로 매개변수화된 타입이므로 실행 시점에 클래스 자체를 검사할 수 있다. 특정 요소 타입을 실행 시점에 확인하려는 것은 아니다.',
+              '`List<String>`의 타입 argument는 erasure로 런타임 검사에 사용할 수 없다. Object 참조에 대해 그 제네릭 인자를 검사하는 instanceof는 허용되지 않는다.':'`List<String>`의 타입 인자(type argument)는 타입 소거(type erasure) 때문에 실행 시점 검사에 사용할 수 없다. Object 참조에 대해 그 제네릭 인자를 검사하는 `instanceof`는 허용되지 않는다.',
+              'Object에서 List<String>인지 검사하려면 런타임에 String 타입 인자를 검사해야 하므로 허용되지 않는다. List<?> 검사는 raw 런타임 List 종류만 확인할 수 있어 허용된다.':'Object에서 `List<String>`인지 검사하려면 실행 시점에 String 타입 인자를 확인해야 하므로 허용되지 않는다. `List<?>` 검사는 원시 List 클래스 자체만 확인하므로 허용된다.',
+              '피연산자의 정적 타입을 Object로 명시해 비검사 검사가 필요한 경우를 구분한다.':'피연산자의 정적 타입을 Object로 명시해 실행 시점에 어떤 검사가 가능한지 구분한다.',
+            },
+            'content/java/modern-language/questions.json': {
+              '프레임워크-managed 동일성이 핵심이면 record의 데이터 캐리어 성격과 맞지 않을 수 있다.':'프레임워크가 관리하는 동일성과 생명주기가 핵심이면 record의 데이터 캐리어 성격과 맞지 않을 수 있다.',
+              '상태 변경이 핵심인 가변 aggregate만':'상태 변경이 핵심인 가변 도메인 객체만',
+              'record의 구성 요소는 final 기반이라 가변 aggregate 상태 전이를 모델링하는 일반적인 선택은 아니다.':'record의 구성 요소는 final 기반이라 가변 도메인 객체의 상태 전이를 모델링하는 일반적인 선택은 아니다.',
+              '구성 값 자체가 중심인 데이터-oriented 값 캐리어':'구성 값 자체가 중심인 데이터 중심 값 캐리어',
+              '동일성과 생명주기, persistence proxy, 복잡한 상태 전이가 중심이면':'동일성과 생명주기, 영속성 프록시, 복잡한 상태 전이가 중심이면',
+            },
+            'content/java/concurrency/questions.json': {
+              'weakly consistent 관찰일 수 있어 생성 시점 이후 변경과 전체 정렬을 보장하지 않는다':'약한 일관성(weakly consistent)을 가진 관찰일 수 있어 생성 시점 이후 변경과 전체 정렬을 보장하지 않는다',
+            },
+            'content/java/concurrency/threadlocal-context.md': {
+              'thread-bound mutable slot':'스레드에 묶인 가변 슬롯',
+            },
+          }
+          for path,mapping in fixes.items():
+              p=Path(path); text=p.read_text(encoding='utf-8')
+              for old,new in mapping.items():
+                  if old not in text: raise RuntimeError(f'missing expected text: {path}: {old[:80]}')
+                  text=text.replace(old,new)
+              p.write_text(text,encoding='utf-8')
+
+          for p in Path('content/java').rglob('*.json'): json.loads(p.read_text(encoding='utf-8'))
+          after=identity()
+          if before != after: raise RuntimeError((before,after))
+          forbidden=['도달 가능한합니다','도달 불가능한한','원시 타입 타입','매개변수 변수','원인 원인','프레임워크-managed','데이터-oriented','weakly consistent 관찰','bookkeeping 시점','hit/miss 관찰','비검사 검사가','strongly 도달 가능한','weakly 도달 가능한','phantom 도달 가능한']
+          corpus='\n'.join(p.read_text(encoding='utf-8') for p in Path('content/java').rglob('*') if p.suffix in ('.json','.md'))
+          for token in forbidden:
+              if token in corpus: raise RuntimeError(f'forbidden residual: {token}')
+          print('Exact P1 language correction validation: PASS')
+          PY
+          git diff --check
+      - name: Commit clean P1 corrections
+        shell: bash
+        run: |
+          rm .github/workflows/java-language-p1-fix-temp.yml
+          git config user.name guseoh
+          git config user.email 81723538+guseoh@users.noreply.github.com
+          git add content/java .github/workflows/java-language-p1-fix-temp.yml
+          git diff --cached --check
+          git commit -m 'Fix final Java language review regressions'
+          git push origin HEAD:codex/content-java-quality
