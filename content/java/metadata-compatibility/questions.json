@@ -213,7 +213,7 @@
     "conceptKeys": ["java.core.metadata-compatibility.dynamic-proxy-invocationhandler"],
     "choices": [
       {"key": "A", "content": "지정된 인터페이스 목록", "displayOrder": 0, "rationaleMarkdown": "JDK Proxy API는 실행 시점에 지정한 인터페이스들을 구현하는 프록시 클래스를 만들며, 인터페이스 호출을 핸들러로 위임한다."},
-      {"key": "B", "content": "임의의 concrete super클래스의 모든 private 메서드", "displayOrder": 1, "rationaleMarkdown": "JDK 동적 프록시는 임의의 구체 클래스를 상속하는 도구가 아니다. 그 클래스의 private 메서드를 전부 구현 대상으로 만들지 않는다."},
+      {"key": "B", "content": "임의의 구체 클래스에 있는 모든 private 메서드", "displayOrder": 1, "rationaleMarkdown": "JDK 동적 프록시는 임의의 구체 클래스를 상속하는 도구가 아니다. 그 클래스의 private 메서드를 전부 구현 대상으로 만들지 않는다."},
       {"key": "C", "content": "OS 스레드 인터페이스", "displayOrder": 2, "rationaleMarkdown": "프록시 인터페이스는 운영체제의 스레드 스케줄링 계약이 아니다. JDK 프록시는 Java 인터페이스의 메서드 호출을 위임한다."},
       {"key": "D", "content": "애너테이션 프로세서 인터페이스만", "displayOrder": 3, "rationaleMarkdown": "애너테이션 프로세서는 컴파일 시점 확장 지점이다. 프록시 클래스 생성을 위한 JDK Proxy API의 입력이 아니다."}
     ],
@@ -265,8 +265,8 @@
     "choices": [
       {"key": "A", "content": "JDK 프록시는 오직 필드만 가로챈다", "displayOrder": 0, "rationaleMarkdown": "JDK 프록시는 인터페이스에 선언된 호출을 처리한다. 필드 access를 자동으로 가로채는 기능은 제공하지 않는다."},
       {"key": "B", "content": "구체 클래스는 항상 인터페이스다", "displayOrder": 1, "rationaleMarkdown": "구체 클래스는 클래스이며 인터페이스와 같은 타입 선언 범주가 아니다. 두 프록시 방식의 대상과 제약을 분리해야 한다."},
-      {"key": "C", "content": "둘은 Java API에서 완전히 동일하다", "displayOrder": 2, "rationaleMarkdown": "JDK 인터페이스 프록시와 concrete sub클래스 프록시는 생성 기반, 적용 가능한 타입, 제약이 다르다. 같은 API 동작을 보장한다고 볼 수 없다."},
-      {"key": "D", "content": "JDK 프록시는 인터페이스 기반이며 임의 구체 클래스 sub클래스 프록시를 기본 제공하지 않는다", "displayOrder": 3, "rationaleMarkdown": "JDK Proxy API의 프록시 클래스는 지정된 인터페이스를 구현한다. concrete super클래스를 임의로 상속하는 프록시는 별도 bytecode/라이브러리 방식이 필요하다."}
+      {"key": "C", "content": "둘은 Java API에서 완전히 동일하다", "displayOrder": 2, "rationaleMarkdown": "JDK 인터페이스 프록시와 구체 클래스의 하위 클래스를 만드는 프록시는 생성 기반, 적용 가능한 타입, 제약이 다르다. 같은 API 동작을 보장한다고 볼 수 없다."},
+      {"key": "D", "content": "JDK 프록시는 인터페이스 기반이며 임의 구체 클래스를 상속하는 프록시를 기본 제공하지 않는다", "displayOrder": 3, "rationaleMarkdown": "JDK Proxy API의 프록시 클래스는 지정된 인터페이스를 구현한다. 구체 클래스를 임의로 상속하는 프록시는 별도의 바이트코드 생성 도구나 라이브러리가 필요하다."}
     ],
     "correctChoiceKey": "D",
     "explanationMarkdown": "Proxy API의 기본 모델은 인터페이스 구현 실행 시점 클래스다."

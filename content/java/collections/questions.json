@@ -52,7 +52,7 @@
     "contentKey": "java.core.collections.arraylist-linkedlist-tradeoff.q7",
     "promptMarkdown": "목록에 100만 건이 있고 대부분 순회와 index 조회다. 가끔 중간 삽입이 필요하지만 삽입 위치를 찾는 비용도 포함해야 한다면 기본 선택과 확인할 근거는?",
     "questionType": "SCENARIO",
-    "difficulty": "HARD",
+    "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["java.core.collections.arraylist-linkedlist-tradeoff"],
     "modelAnswer": "대부분 순회와 index 조회라면 ArrayList를 우선 검토한다. LinkedList의 노드 연결 변경이 위치를 이미 알고 있을 때만 유리하며, index로 위치를 찾는 비용과 노드 allocation·cache locality까지 실제 workload로 측정한다.",

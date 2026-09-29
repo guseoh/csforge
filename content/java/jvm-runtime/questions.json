@@ -12,27 +12,27 @@
     "choices": [
       {
         "key": "A",
-        "content": "JVM이 이해하는 class file bytecode",
+        "content": "JVM이 실행할 수 있는 바이트코드가 담긴 클래스 파일",
         "displayOrder": 0,
-        "rationaleMarkdown": "javac는 Java source를 JVM bytecode와 metadata가 든 class file로 컴파일한다. 실행 중 JVM이 이를 해석하거나 JIT compile할 수 있다."
+        "rationaleMarkdown": "javac는 Java 소스를 JVM 바이트코드와 메타데이터가 담긴 클래스 파일로 컴파일한다. 실행 중 JVM은 바이트코드를 해석하거나 JIT 컴파일할 수 있다."
       },
       {
         "key": "B",
-        "content": "OS별 native executable만",
+        "content": "현재 OS에서 바로 실행할 수 있는 네이티브 실행 파일",
         "displayOrder": 1,
-        "rationaleMarkdown": "class file은 보통 현재 OS 전용 native executable로만 출력되는 파일이 아니다."
+        "rationaleMarkdown": "일반적인 javac 산출물은 특정 OS용 기계어가 아니라 JVM 클래스 파일이다."
       },
       {
         "key": "C",
-        "content": "JVM heap snapshot",
+        "content": "Java 소스의 추상 구문 트리(AST)를 그대로 저장한 파일",
         "displayOrder": 2,
-        "rationaleMarkdown": "heap snapshot은 runtime 진단 산출물이지 javac compile 결과가 아니다."
+        "rationaleMarkdown": "컴파일러는 소스의 구문 트리를 처리하지만 일반적인 최종 산출물은 구문 트리가 아니라 클래스 파일이다."
       },
       {
         "key": "D",
-        "content": "실행 중 thread dump",
+        "content": "실행 중 JIT 컴파일러가 만든 CPU별 기계어",
         "displayOrder": 3,
-        "rationaleMarkdown": "thread dump는 실행 중 thread 상태를 진단 도구가 수집한 결과이며 javac가 만들지 않는다."
+        "rationaleMarkdown": "JIT 기계어는 실행 중 JVM 구현이 만들 수 있다. javac의 일반적인 산출물과 단계가 다르다."
       }
     ],
     "correctChoiceKey": "A",
@@ -550,7 +550,7 @@
     "contentKey": "java.core.jvm-runtime.class-loading-linking-initialization.q5",
     "promptMarkdown": "`static final int x = 42`가 constant variable 조건을 만족해 compile-time constant로 사용되고, 다른 static block이 있는 class를 참조한다. 가장 주의할 결론은?",
     "questionType": "MULTIPLE_CHOICE",
-    "difficulty": "HARD",
+    "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": [
       "java.core.jvm-runtime.class-loading-linking-initialization"
@@ -1494,27 +1494,27 @@
     "choices": [
       {
         "key": "A",
-        "content": "모든 thread를 종료하는 것",
+        "content": "도달 가능한 모든 객체를 매 수집마다 새 주소로 옮기는 것",
         "displayOrder": 0,
-        "rationaleMarkdown": "garbage collection은 실행 중인 모든 thread를 종료하지 않고 program이 동작하는 동안 memory를 관리한다."
+        "rationaleMarkdown": "일부 수집기는 객체를 이동하지만 모든 도달 가능한 객체를 매번 옮기는 것이 GC의 목적이나 공통 계약은 아니다."
       },
       {
         "key": "B",
-        "content": "모든 객체를 serialize하는 것",
+        "content": "더 이상 사용하지 않는 지역 변수를 컴파일 시점에 제거하는 것",
         "displayOrder": 1,
-        "rationaleMarkdown": "GC는 객체를 직렬화하지 않고 reachability 등을 기준으로 storage를 관리한다."
+        "rationaleMarkdown": "컴파일러의 지역 변수 최적화와 실행 중 객체 저장 공간 회수는 다른 단계의 작업이다."
       },
       {
         "key": "C",
-        "content": "더 이상 reachable하지 않은 객체 storage를 회수하는 것",
+        "content": "더 이상 도달할 수 없는 객체의 메모리 공간을 회수하는 것",
         "displayOrder": 2,
-        "rationaleMarkdown": "더 이상 reachable하지 않은 객체가 차지한 memory를 회수하는 것이 GC의 주된 목적 중 하나다."
+        "rationaleMarkdown": "더 이상 도달할 수 없는 객체가 차지한 메모리 공간을 회수하는 것이 GC의 주된 목적 중 하나다."
       },
       {
         "key": "D",
-        "content": "source를 다시 compile하는 것",
+        "content": "메서드가 끝난 모든 객체의 저장 공간을 즉시 반환하는 것",
         "displayOrder": 3,
-        "rationaleMarkdown": "GC는 runtime memory 관리 과정이지 source compiler가 아니다."
+        "rationaleMarkdown": "메서드가 끝나도 다른 강한 참조가 남은 객체는 살아 있을 수 있고, 회수 가능한 객체도 즉시 회수되는 것은 아니다."
       }
     ],
     "correctChoiceKey": "C",
@@ -1681,7 +1681,7 @@
     "contentKey": "java.core.jvm-runtime.gc-fundamentals-collectors.q6",
     "promptMarkdown": "Java 코드의 결과가 G1과 ZGC에서 달라져도 된다고 주장하는 설명의 문제는?",
     "questionType": "MULTIPLE_CHOICE",
-    "difficulty": "HARD",
+    "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": [
       "java.core.jvm-runtime.gc-fundamentals-collectors"
@@ -1915,7 +1915,7 @@
     "contentKey": "java.core.jvm-runtime.java-memory-leaks.q6",
     "promptMarkdown": "GC log상 unreachable 객체는 잘 회수되지만 old generation이 계속 커진다. 가능한 진단은?",
     "questionType": "MULTIPLE_CHOICE",
-    "difficulty": "HARD",
+    "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": [
       "java.core.jvm-runtime.java-memory-leaks"
@@ -2149,7 +2149,7 @@
     "contentKey": "java.core.jvm-runtime.heap-metaspace-native-thread-memory.q6",
     "promptMarkdown": "동적 class loading이 반복되고 metaspace 사용이 증가하며 loader가 해제되지 않는다. 가장 타당한 연결은?",
     "questionType": "MULTIPLE_CHOICE",
-    "difficulty": "HARD",
+    "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": [
       "java.core.jvm-runtime.heap-metaspace-native-thread-memory"
@@ -2578,7 +2578,7 @@
     "contentKey": "java.core.jvm-runtime.runtime-diagnostics-jcmd-jstack-jfr.q5",
     "promptMarkdown": "장시간 지연 시간 spike와 GC pause, CPU 변동의 시간 관계를 비교하려면?",
     "questionType": "MULTIPLE_CHOICE",
-    "difficulty": "HARD",
+    "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": [
       "java.core.jvm-runtime.runtime-diagnostics-jcmd-jstack-jfr"
@@ -2617,7 +2617,7 @@
     "contentKey": "java.core.jvm-runtime.runtime-diagnostics-jcmd-jstack-jfr.q6",
     "promptMarkdown": "heap 사용량 증가와 thread 대기를 동시에 조사할 때 가장 정확한 도구 조합은?",
     "questionType": "MULTIPLE_CHOICE",
-    "difficulty": "HARD",
+    "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": [
       "java.core.jvm-runtime.runtime-diagnostics-jcmd-jstack-jfr"
