@@ -41,6 +41,14 @@ while (iterator.hasNext()) {
 }
 ```
 
+```text
+Iterable
+  └─ iterator() → Iterator cursor
+                   ├─ hasNext() → 다음 원소가 있는가?
+                   ├─ next()    → 다음 원소를 반환
+                   └─ remove()  → 직전 next 원소를 제거 (지원되는 경우)
+```
+
 배열의 enhanced for는 별도 규칙을 사용하지만 Iterable 객체 순회는 이런 iterator 개념으로 이해할 수 있습니다.
 
 ### 순회 중 컬렉션을 직접 수정하면 왜 문제일까

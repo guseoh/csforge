@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.collections.hashmap-hashing-collision
 topicContentKey: java.core.collections
 slug: hashmap-hashing-collision
-title: "HashMap 조회와 hash 충돌"
+title: "HashMap 조회와 해시 충돌"
 summary: "key의 hashCode로 후보 영역을 좁히고 equals로 실제 key를 확인하는 흐름, 충돌과 mutable key 문제를 이해한다"
 level: 2
 status: PUBLISHED
@@ -28,7 +28,7 @@ references:
     displayOrder: 3
     relationNote: hash·bucket·collision과 Java HashMap 구현 흐름을 시각적으로 보충
 ---
-# HashMap 조회와 hash 충돌
+# HashMap 조회와 해시 충돌
 
 `HashMap`의 핵심은 key 전체를 처음부터 순서대로 비교하는 대신 **hash 값을 이용해 비교할 후보를 좁히는 것**입니다. hashCode가 key의 유일한 번호는 아니므로 최종적으로는 논리적 동등성도 확인해야 합니다.
 

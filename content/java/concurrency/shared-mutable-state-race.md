@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.concurrency.shared-mutable-state-race
 topicContentKey: java.core.concurrency
 slug: shared-mutable-state-race
-title: "공유 가변 상태와 Race Condition"
+title: "공유 가변 상태와 경합 조건(Race Condition)"
 summary: "여러 thread가 같은 변경 가능한 상태를 읽고 쓸 때 실행 순서에 따라 값이 깨지는 이유와 보호할 상태 경계를 찾는다"
 level: 2
 status: PUBLISHED
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: shared variable, conflicting access, data race와 Java Memory Model 확인
 ---
-# 공유 가변 상태와 Race Condition
+# 공유 가변 상태와 경합 조건(Race Condition)
 
 Thread가 여러 개 존재하는 것만으로 상태가 깨지는 것은 아닙니다. 문제가 되는 지점은 **둘 이상의 thread가 같은 변경 가능한 상태에 접근하고, 적어도 하나가 그 상태를 쓰며, 필요한 동기화 없이 접근이 겹칠 수 있을 때**입니다.
 
@@ -41,7 +41,7 @@ class Counter {
 초기값이 0인 상태에서 두 thread가 다음처럼 겹칠 수 있습니다.
 
 ```text
-Thread A                  Thread B
+스레드 A                  스레드 B
 read count = 0            read count = 0
 compute 1                 compute 1
 write count = 1           write count = 1
@@ -51,18 +51,18 @@ write count = 1           write count = 1
 
 메서드는 두 번 호출됐지만 증가 하나가 사라졌습니다. 이런 결과를 **lost update**라고 부를 수 있습니다. 중요한 것은 `++`라는 문법 자체가 아니라, 여러 단계로 이루어진 갱신 전체가 하나의 원자적 경계로 보호되지 않았다는 점입니다.
 
-### race condition과 JMM의 data race는 같은 말로 뭉개지 않는다
+### 경쟁 상태(race condition)과 JMM의 data race는 같은 말로 뭉개지 않는다
 
-일반적으로 race condition은 실행 흐름의 상대적인 순서에 따라 프로그램의 올바름이 달라지는 문제를 가리킵니다.
+일반적으로 경쟁 상태(race condition)은 실행 흐름의 상대적인 순서에 따라 프로그램의 올바름이 달라지는 문제를 가리킵니다.
 
-Java Memory Model은 더 구체적으로 같은 shared variable에 대한 두 **conflicting access**가 있고, 서로 다른 thread에서 수행되며, 두 접근이 happens-before로 정렬되지 않았을 때 **data race**가 있다고 정의합니다. Conflicting access는 둘 중 적어도 하나가 write인 같은 변수의 접근입니다.
+Java Memory Model은 같은 공유 변수에 대한 두 충돌 접근(conflicting access)이 서로 다른 스레드에서 수행되고 happens-before 관계로 정렬되지 않았을 때 **데이터 경쟁(data race)**이 발생한다고 정의합니다. 충돌 접근은 같은 변수에 대한 접근 중 적어도 하나가 쓰기인 경우입니다.
 
 ```text
-race condition
+경쟁 상태(race condition)
 └─ 실행 순서가 결과의 올바름을 좌우하는 넓은 문제
 
-JMM data race
-└─ conflicting shared-memory access가 happens-before로 정렬되지 않은 경우
+JMM 데이터 경쟁(data race)
+└─ 서로 충돌하는 공유 메모리 접근이 happens-before로 정렬되지 않은 경우
 ```
 
 이 구분은 이후 happens-before를 배울 때 중요합니다. 모든 동시성 논리 오류가 반드시 data race 형태인 것은 아니며, data-race-free라고 해서 여러 operation의 업무 invariant가 자동으로 atomic해지는 것도 아닙니다.
@@ -82,9 +82,9 @@ if (stock > 0) {
 ```text
 invariant: stock >= 0
 
-check stock > 0
+재고 확인: stock > 0
        │
-       └─ decrement stock
+       └─ 재고 감소
           ↑ 하나의 논리적 경계로 보호 필요
 ```
 
@@ -101,10 +101,10 @@ Lock은 중요한 해결책이지만 유일한 해결책은 아닙니다. Immuta
 한 thread의 write가 다른 thread에 올바르게 관찰되는지와, 여러 단계의 갱신 사이에 다른 thread가 끼어들 수 없는지는 별개의 질문입니다.
 
 ```text
-visibility / ordering
+가시성(visibility) / 순서 보장(ordering)
 → 한 thread의 write를 다른 thread가 어떤 규칙으로 관찰하는가
 
-atomicity
+원자성(atomicity)
 → 여러 단계를 하나의 분할 불가능한 상태 전이로 다뤄야 하는가
 ```
 

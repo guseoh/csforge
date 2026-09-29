@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.enum-modeling.enum-ordinal-name-persistence
 topicContentKey: java.core.enum-modeling
 slug: enum-ordinal-name-persistence
-title: "enum ordinal과 외부 저장값"
+title: "enum 순번(ordinal)과 외부 저장값"
 summary: "enum의 선언 순서를 나타내는 ordinal을 안정적인 외부 식별자로 사용하기 위험한 이유와 name 기반 저장의 trade-off를 이해한다"
 level: 2
 status: PUBLISHED
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: name과 ordinal의 공식 의미 확인
 ---
-# enum ordinal과 외부 저장값
+# enum 순번(ordinal)과 외부 저장값
 
 모든 enum 상수에는 `name()`과 `ordinal()`이 있습니다. 둘 다 쉽게 얻을 수 있지만 **DB나 API처럼 오래 살아남는 외부 식별자로 그대로 써도 된다는 뜻은 아닙니다.** Java enum 내부 표현과 외부 데이터 계약은 수명이 다를 수 있습니다.
 

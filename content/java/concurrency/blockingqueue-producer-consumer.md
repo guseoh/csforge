@@ -26,12 +26,12 @@ references:
 
 파일을 읽는 작업은 빠른데 처리하는 작업은 느리거나, 요청을 받는 쪽과 실제 작업을 수행하는 쪽의 속도가 다를 수 있습니다. 두 쪽을 직접 맞물리게 하면 생산자가 소비자를 계속 기다리거나, 반대로 소비자가 할 일이 올 때까지 반복해서 확인하는 코드가 필요합니다.
 
-이때 queue를 사이에 두면 **생산자(producer)는 작업을 넣고 소비자(consumer)는 작업을 꺼내는 역할**로 나눌 수 있습니다. `BlockingQueue`는 여기에 "비어 있거나 가득 찼을 때 기다리는 동작"까지 API로 제공합니다.
+이때 대기열을 사이에 두면 **생산자(producer)는 작업을 넣고 소비자(consumer)는 작업을 꺼내는 역할**로 나뉩니다. `BlockingQueue`는 여기에 "비어 있거나 가득 찼을 때 기다리는 동작"까지 API로 제공합니다.
 
 ### queue가 두 작업의 속도 차이를 흡수한다
 
 ```text
-Producer ──▶ [ Task ][ Task ][     ] ──▶ Consumer
+생산자(producer) ──▶ [ 작업 ][ 작업 ][     ] ──▶ 소비자(consumer)
                  BlockingQueue
 ```
 
@@ -58,15 +58,15 @@ Task consume() throws InterruptedException {
 `put`은 queue가 가득 찼다면 자리가 생길 때까지 기다립니다. `take`는 queue가 비었다면 원소가 들어올 때까지 기다립니다.
 
 ```text
-queue full
+대기열 가득 참
 Producer -- put --> [기다림]
                        │
-Consumer -- take ------┘ 자리 발생
+소비자 -- take ------┘ 자리 발생
 
-queue empty
+대기열 비어 있음
 Consumer -- take --> [기다림]
                        │
-Producer -- put -------┘ 작업 도착
+생산자 -- put -------┘ 작업 도착
 ```
 
 이 기다림은 CPU를 계속 돌며 `isEmpty()`를 확인하는 busy waiting과 다릅니다. 정확히 어떤 OS 대기 방식이 사용되는지는 구현 영역이지만, Java API 관점에서는 호출 thread가 조건이 충족될 때까지 진행하지 않는 blocking operation입니다.
@@ -136,7 +136,7 @@ Consumer
 
 ### 문제를 풀 때 확인할 것
 
-1. producer와 consumer 중 어느 쪽이 더 빠를 수 있는지 봅니다.
+1. 생산자와 소비자 중 어느 쪽의 처리 속도가 더 빠를 수 있는지 살펴봅니다.
 2. queue에 capacity가 있는지 확인합니다.
 3. full일 때 `put`/`offer`가 어떻게 다르게 동작하는지 봅니다.
 4. empty일 때 `take`/`poll`을 구분합니다.
@@ -145,4 +145,4 @@ Consumer
 
 ### 학습 후 스스로 설명해 보기
 
-`BlockingQueue`는 producer와 consumer 사이에서 thread-safe하게 작업을 전달하고, queue가 비거나 가득 찬 상태에서 기다리는 API를 제공합니다. bounded queue를 사용하면 처리 속도보다 유입 속도가 계속 빠를 때 queue가 무제한으로 커지는 것을 막을 수 있습니다. 다만 queue에 넣었다는 사실은 실제 업무 처리가 완료됐다는 뜻이 아니므로 실패와 종료 정책은 별도로 설계해야 합니다.
+`BlockingQueue`는 생산자와 소비자 사이에서 스레드 안전하게 작업을 전달하고, 대기열이 비거나 가득 찬 상태에서 기다리는 API를 제공합니다. 크기가 제한된 대기열을 사용하면 처리 속도보다 유입 속도가 계속 빠를 때 대기열이 무제한으로 커지는 것을 막을 수 있습니다. 다만 대기열에 작업을 넣었다고 실제 처리가 완료된 것은 아니므로 실패와 종료 정책은 별도로 설계해야 합니다.

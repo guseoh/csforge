@@ -4,7 +4,7 @@ contentKey: java.core.coding-tests.comparator-for-coding-tests
 topicContentKey: java.core.coding-tests
 slug: comparator-for-coding-tests
 title: "코딩 테스트용 Comparator"
-summary: "문제의 다중 정렬 조건을 Comparator로 표현하고 subtraction overflow와 reversed 적용 범위를 피한다"
+summary: "여러 정렬 조건을 Comparator로 표현하고 뺄셈의 오버플로와 `reversed()`의 적용 범위를 확인한다"
 level: 2
 status: PUBLISHED
 displayOrder: 40

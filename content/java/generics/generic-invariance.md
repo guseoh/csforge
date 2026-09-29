@@ -4,7 +4,7 @@ contentKey: java.core.generics.generic-invariance
 topicContentKey: java.core.generics
 slug: generic-invariance
 title: "제네릭 불공변성과 잘못된 쓰기 방지"
-summary: "String이 Object의 하위 타입이어도 List<String>이 List<Object>의 하위 타입이 아닌 이유를 안전하지 않은 쓰기 가능성으로 이해한다"
+summary: "String이 Object의 하위 타입이어도 `List<String>`이 `List<Object>`의 하위 타입이 아닌 이유를 안전하지 않은 쓰기 가능성과 연결해 이해한다"
 level: 2
 status: PUBLISHED
 displayOrder: 20

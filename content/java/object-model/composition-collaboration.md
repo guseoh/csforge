@@ -20,7 +20,7 @@ references:
     referenceType: KOREAN_BLOG
     language: ko
     displayOrder: 2
-    relationNote: 상속의 구현 결합과 composition으로 책임을 위임하는 사례 비교
+    relationNote: 상속의 구현 결합과 합성으로 책임을 위임하는 사례 비교
 ---
 # 합성과 객체 협력
 

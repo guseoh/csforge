@@ -4,7 +4,7 @@ contentKey: java.core.concurrency.threadlocal-context
 topicContentKey: java.core.concurrency
 slug: threadlocal-context
 title: "ThreadLocal과 실행 문맥"
-summary: "ThreadLocal이 값을 thread별로 보관하는 방식과 thread pool 재사용·remove·virtual thread·비동기 경계에서 생기는 문제를 이해한다"
+summary: "ThreadLocal이 스레드별로 값을 보관하는 방식과 스레드 풀 재사용·`remove()`·가상 스레드·비동기 경계에서 생기는 문제를 이해한다"
 level: 3
 status: PUBLISHED
 displayOrder: 160
@@ -31,10 +31,10 @@ private static final ThreadLocal<String> REQUEST_ID = new ThreadLocal<>();
 ```
 
 ```text
-same ThreadLocal object
+같은 `ThreadLocal` 객체
       │
-      ├─ Thread A -> "req-A"
-      └─ Thread B -> "req-B"
+      ├─ 스레드 A -> "req-A"
+      └─ 스레드 B -> "req-B"
 ```
 
 ThreadLocal 객체가 thread마다 복제되는 것이 아니라, `get()`과 `set()`이 현재 thread에 연결된 값을 다룹니다.
@@ -90,9 +90,9 @@ localB.set(shared);
 두 thread가 서로 다른 ThreadLocal slot을 사용해도 값이 같은 mutable object reference라면 그 객체 자체는 여전히 공유됩니다. ThreadLocal은 값을 복사하거나 immutable하게 만들지 않습니다.
 
 ```text
-Thread A local ──┐
-                 ├──> same mutable List
-Thread B local ──┘
+스레드 A의 로컬 값 ──┐
+                 ├──> 같은 변경 가능한 List
+스레드 B의 로컬 값 ──┘
 ```
 
 ### Virtual thread에서는 fixed-worker leakage와 자원 비용을 나눠 본다
@@ -113,7 +113,7 @@ very many threads × per-thread cache
 
 ### One-way context라면 ScopedValue와 목적을 비교한다
 
-ThreadLocal은 같은 thread 안에서 값을 `set`, 변경, `remove`할 수 있는 mutable thread-bound storage입니다. Java 25의 `ScopedValue`는 caller가 제한된 dynamic scope 동안 값을 바인딩하고 callee가 읽는 **one-way context transmission**에 맞게 설계되었습니다.
+`ThreadLocal`은 같은 스레드 안에서 값을 `set`하고 변경하거나 `remove`할 수 있는 변경 가능 스레드별 저장소입니다. Java 25의 `ScopedValue`는 호출자가 제한된 동적 범위(dynamic scope) 동안 값을 바인딩하고 호출 대상이 읽는 **단방향 문맥 전달(one-way context transmission)**에 맞게 설계되었습니다.
 
 ```text
 ThreadLocal
@@ -121,7 +121,7 @@ thread-bound mutable slot
 set -> get -> set/remove
 
 ScopedValue
-outer caller binds
+바깥 호출자가 바인딩
       -> inner call chain reads
       -> scope 종료 시 이전 binding 복원
 ```

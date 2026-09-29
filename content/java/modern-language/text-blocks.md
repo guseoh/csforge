@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.modern-language.text-blocks
 topicContentKey: java.core.modern-language
 slug: text-blocks
-title: "Text Block으로 여러 줄 문자열 쓰기"
+title: "여러 줄 텍스트(Text Block)로 문자열 쓰기"
 summary: "여러 줄 문자열을 읽기 좋게 작성하되 실제 결과 문자열의 들여쓰기·줄바꿈·escape 규칙을 이해한다"
 level: 1
 status: PUBLISHED
@@ -22,7 +22,7 @@ references:
     displayOrder: 2
     relationNote: String literal과 text block 표현 확인
 ---
-# Text Block으로 여러 줄 문자열 쓰기
+# 여러 줄 텍스트(Text Block)로 문자열 쓰기
 
 JSON, SQL, HTML처럼 여러 줄인 문자열을 일반 string literal로 작성하면 실제 내용보다 따옴표와 `\n`, 문자열 연결 문법이 더 눈에 띌 수 있습니다.
 

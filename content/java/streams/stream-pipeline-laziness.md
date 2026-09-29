@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.streams.stream-pipeline-laziness
 topicContentKey: java.core.streams
 slug: stream-pipeline-laziness
-title: "Stream Pipeline과 지연 실행"
+title: "Stream 파이프라인(Stream Pipeline)과 지연 실행"
 summary: "source, 중간 연산, 최종 연산을 구분하고 중간 연산이 즉시 모든 데이터를 처리하지 않는 지연 실행과 short-circuit를 이해한다"
 level: 2
 status: PUBLISHED
@@ -22,7 +22,7 @@ references:
     displayOrder: 2
     relationNote: lambda와 stream을 실제 Java 코드에 적용하는 흐름 보충
 ---
-# Stream Pipeline과 지연 실행
+# Stream 파이프라인(Stream Pipeline)과 지연 실행
 
 Stream을 `List` 같은 데이터 저장소로 생각하면 실행 시점을 자주 헷갈립니다. Stream은 원소를 저장하는 컬렉션이라기보다 **source에서 값을 꺼내 여러 연산을 거쳐 결과를 만드는 처리 pipeline**입니다.
 
@@ -54,14 +54,14 @@ long count = filtered.count();
 ```
 
 ```text
-source
+원본
   │
   ▼
 filter ──> map ──> ...
   │
   ▼
-terminal operation
-  └─ 결과를 요구하며 pipeline 평가
+최종 연산
+  └─ 결과를 요구하며 파이프라인 평가
 ```
 
 다만 terminal operation을 호출했다고 모든 중간 lambda가 모든 원소에 정확히 한 번씩 실행된다고 가정해서는 안 됩니다. Stream 구현은 결과에 영향을 주지 않는 단계를 생략할 수 있고 short-circuit 연산은 필요한 원소까지만 소비할 수 있습니다.

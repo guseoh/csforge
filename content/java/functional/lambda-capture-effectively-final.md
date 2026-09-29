@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.functional.lambda-capture-effectively-final
 topicContentKey: java.core.functional
 slug: lambda-capture-effectively-final
-title: "Lambda의 지역 변수 캡처와 effectively final"
+title: "람다의 지역 변수 캡처와 effectively final"
 summary: "lambda가 바깥 지역 변수를 사용할 때 final 또는 사실상 final이어야 하는 규칙과 참조 객체 상태 변경을 구분한다"
 level: 2
 status: PUBLISHED
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: lambda에서 지역 변수 캡처와 effectively final 관련 규칙 확인
 ---
-# Lambda의 지역 변수 캡처와 effectively final
+# 람다의 지역 변수 캡처와 effectively final
 
 lambda 본문에서는 바깥 메서드의 지역 변수를 사용할 수 있습니다.
 
@@ -48,7 +48,7 @@ Runnable task = () -> names.add("java");
 `names` 변수 자체는 다시 대입되지 않으므로 캡처할 수 있습니다. 하지만 그 참조가 가리키는 `ArrayList`는 가변 객체이므로 `add()`할 수 있습니다.
 
 ```text
-captured local reference
+캡처된 지역 변수 참조
 names ─────> ArrayList
    X 재대입      │
                  └─ 내부 상태 변경 가능

@@ -54,8 +54,8 @@ Java SE 25 `AtomicInteger`의 `compareAndSet`은 이 조건부 변경 자체가 
 ```text
 초기값 = 0
 
-Thread A                    Thread B
-read 0                      read 0
+스레드 A                    스레드 B
+0 읽기                      0 읽기
 CAS(0, 1) -> 성공           CAS(0, 1) -> 실패
 실제값 1                    실제값이 이미 1
 ```
@@ -94,7 +94,7 @@ CAS를 사용하면 lock을 직접 획득하지 않는 갱신 알고리즘을 �
 경쟁이 낮을 때는 CAS 실패가 드물 수 있지만, 많은 thread가 같은 값에 몰리면 다음처럼 반복 재시도가 생길 수 있습니다.
 
 ```text
-read -> CAS fail -> read -> CAS fail -> ...
+읽기 → CAS 실패 → 다시 읽기 → CAS 실패 → ...
 ```
 
 따라서 "CAS는 lock보다 항상 빠르다"는 규칙도 없습니다. Contention과 작업 크기, 전체 알고리즘을 실제로 봐야 합니다.
@@ -112,7 +112,7 @@ AtomicInteger reserved;
 reserved <= available
 ```
 
-관련 값을 immutable state 하나에 묶고 `AtomicReference<State>` 전체를 조건부 교체하거나, 같은 lock 안에서 여러 값을 변경하는 방식처럼 **invariant 전체를 하나의 동기화 경계**에 넣어야 할 수 있습니다.
+관련 값을 하나의 불변 상태로 묶고 `AtomicReference<State>` 전체를 조건부 교체하거나, 같은 잠금 안에서 여러 값을 변경하는 방식처럼 **불변 조건 전체를 하나의 동기화 경계**에 넣어야 할 수 있습니다.
 
 ### ABA는 CAS가 상태의 history를 기억하지 않는다는 한계를 보여 준다
 

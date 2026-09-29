@@ -4,7 +4,7 @@ contentKey: java.core.api-design.method-contract-parameter-validation
 topicContentKey: java.core.api-design
 slug: method-contract-parameter-validation
 title: "메서드 계약과 매개변수 검증"
-summary: "메서드의 사전조건·상태조건·실패 후 상태를 구분하고, 검증과 side effect 순서를 설계해 잘못된 호출이 객체 invariant를 깨뜨리지 않게 한다"
+summary: "메서드의 사전조건·상태조건·실패 후 상태를 구분하고, 검증과 부수 효과의 순서를 설계해 잘못된 호출이 객체의 불변 조건을 깨뜨리지 않게 한다"
 level: 2
 status: PUBLISHED
 displayOrder: 50

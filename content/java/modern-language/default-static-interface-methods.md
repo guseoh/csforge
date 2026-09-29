@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.modern-language.default-static-interface-methods
 topicContentKey: java.core.modern-language
 slug: default-static-interface-methods
-title: "Interface의 default·static 메서드"
+title: "인터페이스(Interface)의 default·static 메서드"
 summary: "interface에 구현을 둘 수 있는 이유와 default 충돌·static 호출 규칙을 이해한다"
 level: 2
 status: PUBLISHED
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: default·static method와 interface inheritance 규칙 확인
 ---
-# Interface의 default·static 메서드
+# 인터페이스(Interface)의 default·static 메서드
 
 Interface는 구현 타입이 따라야 할 계약을 표현하지만, 현대 Java에서는 메서드 구현도 일부 가질 수 있습니다. 특히 `default` method는 구현체가 상속받을 수 있는 기본 instance 동작을 제공하고, `static` method는 interface 자체에 속하는 정적 동작을 제공합니다.
 
@@ -65,7 +65,7 @@ class Service implements A, B {
 
 충돌을 판단할 때는 다음 원리를 이해하면 됩니다. 클래스가 이미 같은 구체 메서드를 제공하면 그 클래스 메서드가 interface default보다 우선하고, interface 계층에서는 더 구체적인 하위 interface의 구현을 선택할 수 있습니다. 그래도 서로 관련 없는 default 후보가 남으면 구현 클래스가 명시적으로 override해야 합니다.
 
-### static interface method는 구현 객체에 상속되는 instance method가 아니다
+### `static` 인터페이스 메서드는 구현 객체에 상속되는 인스턴스 메서드가 아니다
 
 ```java
 interface Auditable {
@@ -77,7 +77,7 @@ interface Auditable {
 boolean ok = Auditable.valid("order");
 ```
 
-static method는 interface 이름으로 호출합니다. 구현 클래스나 구현 객체에서 다형적으로 dispatch되는 default method와 다릅니다.
+static method는 인터페이스 이름으로 호출합니다. 구현 클래스나 구현 객체에서 다형적으로 호출되는 default method와 다릅니다.
 
 ```java
 class Order implements Auditable { }
@@ -92,4 +92,4 @@ class Order implements Auditable { }
 
 여러 구현체가 자연스럽게 공유할 수 있는 기본 의미라면 default method가 유용합니다. 반대로 구현마다 서로 다른 상태·외부 의존성·복잡한 업무 흐름이 필요한데 interface default에 억지로 공통 코드를 넣으면 계약과 구현 책임이 섞일 수 있습니다.
 
-즉 default method의 핵심은 "interface에도 코드를 넣을 수 있다"가 아니라 **구현체가 상속받을 기본 instance 계약을 제공한다**는 데 있고, static method는 **interface와 관련된 정적 동작을 그 타입 이름 아래에 둔다**는 점에 있습니다. 두 규칙을 구분하면 충돌과 호출 문제도 함께 정리됩니다.
+즉 default method의 핵심은 "인터페이스에도 코드를 넣을 수 있다"가 아니라 **구현체가 상속받을 기본 인스턴스 계약을 제공한다**는 데 있고, static method는 **인터페이스와 관련된 정적 동작을 그 타입 이름 아래에 둔다**는 점에 있습니다. 두 규칙을 구분하면 충돌과 호출 문제도 함께 정리됩니다.

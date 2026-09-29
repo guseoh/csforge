@@ -42,7 +42,7 @@ int result = future.get();
 `submit()`이 반환됐다고 task가 완료된 것은 아닙니다. `future.get()`을 호출한 시점에도 결과가 준비되지 않았다면 현재 thread는 완료될 때까지 기다릴 수 있습니다.
 
 ```text
-caller ─ submit ─▶ executor/task
+호출자 ─ submit ─▶ executor/작업
   │                    │
   │ 다른 작업           │ 계산 중
   │                    ▼
@@ -157,9 +157,9 @@ future.cancel(true);
 비동기 작업 여러 개가 같은 mutable collection을 직접 수정하게 만들기보다 각 future가 결과를 만들고 마지막 단계에서 합치는 구조가 이해하기 쉬운 경우가 많습니다.
 
 ```text
-Task A -> Result A ┐
+작업 A -> 결과 A ┐
                    ├─ combine -> Final Result
-Task B -> Result B ┘
+작업 B -> 결과 B ┘
 ```
 
 이런 구조는 race를 줄이고 실패가 어느 stage에서 났는지 추적하기도 쉽습니다.

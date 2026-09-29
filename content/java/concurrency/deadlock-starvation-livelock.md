@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.concurrency.deadlock-starvation-livelock
 topicContentKey: java.core.concurrency
 slug: deadlock-starvation-livelock
-title: "Deadlock·Starvation·Livelock 구분하기"
+title: "교착 상태·기아·라이브락 구분하기"
 summary: "thread가 진행하지 못하는 원인을 deadlock·starvation·livelock으로 구분하고 대기 관계와 progress를 기준으로 진단한다"
 level: 3
 status: PUBLISHED
@@ -28,7 +28,7 @@ references:
     displayOrder: 3
     relationNote: platform thread monitoring과 deadlock detection 범위 확인
 ---
-# Deadlock·Starvation·Livelock 구분하기
+# 교착 상태·기아·라이브락 구분하기
 
 요청이 끝나지 않고 thread가 오래 살아 있다고 해서 모두 deadlock은 아닙니다. 동시성 문제를 진단할 때는 **thread가 무엇을 기다리는지와 시스템이 실제로 progress하고 있는지**를 봐야 합니다.
 
@@ -41,7 +41,7 @@ references:
 두 lock을 반대 순서로 획득한다고 해 보겠습니다.
 
 ```text
-Thread A                    Thread B
+스레드 A                    스레드 B
 lock X 획득                 lock Y 획득
     │                           │
 lock Y 기다림                lock X 기다림
@@ -72,8 +72,8 @@ synchronized (right) {
 ```text
 공통 규칙: X -> Y
 
-Thread A: X -> Y
-Thread B: X -> Y
+스레드 A: X -> Y
+스레드 B: X -> Y
 ```
 
 ### Timeout은 무한 대기를 피할 수 있지만 원인을 없애지는 않는다
@@ -87,8 +87,8 @@ Thread B: X -> Y
 전체 시스템이 계속 요청을 처리해도 특정 작업은 필요한 자원을 거의 얻지 못할 수 있습니다.
 
 ```text
-Task A: 실행 실행 실행 실행 ...
-Task B: 대기 ───────────────── 계속 대기
+작업 A: 실행 실행 실행 실행 ...
+작업 B: 대기 ───────────────── 계속 대기
 ```
 
 가능한 원인은 하나가 아닙니다. 우선순위 높은 작업이 계속 들어오거나, 긴 작업이 작은 thread pool을 계속 점유하거나, lock 경쟁에서 특정 thread가 반복해서 기회를 잃을 수 있습니다.
@@ -127,8 +127,8 @@ Thread B -> 정상 처리
 Thread dump에서는 어떤 lock을 기다리고 누가 소유하는지, 같은 대기 pattern이 여러 thread에 반복되는지를 확인할 수 있습니다.
 
 ```text
-Thread A -> waits for X -> owned by B
-Thread B -> waits for Y -> owned by A
+스레드 A -> X 대기 -> B가 소유
+스레드 B -> Y 대기 -> A가 소유
 ```
 
 이런 wait-for graph의 cycle은 deadlock을 설명하는 강한 증거입니다. 반면 starvation과 livelock은 한 번의 snapshot만으로 판단하기 어려울 수 있으므로 시간에 따른 CPU 사용량, queue 길이, 처리 완료 건수, 반복 stack pattern을 함께 봐야 합니다.

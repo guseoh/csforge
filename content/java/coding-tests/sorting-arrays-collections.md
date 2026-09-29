@@ -4,7 +4,7 @@ contentKey: java.core.coding-tests.sorting-arrays-collections
 topicContentKey: java.core.coding-tests
 slug: sorting-arrays-collections
 title: "배열과 컬렉션 정렬하기"
-summary: "primitive 배열, 객체 배열, List에 맞는 정렬 API를 고르고 원본 변경과 Comparator 사용 범위를 이해한다"
+summary: "원시 타입 배열, 객체 배열, List에 맞는 정렬 API를 고르고 원본 변경과 Comparator의 사용 범위를 이해한다"
 level: 1
 status: PUBLISHED
 displayOrder: 30
@@ -92,7 +92,7 @@ int[] values = {1, 2, 3};
 List<int[]> list = Arrays.asList(values);
 ```
 
-`int[]` 자체가 하나의 reference object이기 때문에 `List<Integer>`가 자동으로 만들어지지 않습니다. Primitive array와 boxed collection의 경계를 구분해야 합니다.
+`int[]` 자체가 하나의 참조형 객체이므로 `List<Integer>`가 자동으로 만들어지지 않습니다. 원시 배열과 박싱된 컬렉션의 경계를 구분해야 합니다.
 
 ### 전체 정렬이 필요한지 먼저 생각한다
 
@@ -108,7 +108,7 @@ Java 구현 단계에서는 선택한 알고리즘에 맞춰 `Arrays.sort`, `Lis
 
 ### 문제를 풀 때 확인할 것
 
-1. 정렬 대상이 primitive array, reference array, List 중 무엇인지 확인합니다.
+1. 정렬 대상이 원시 배열, 참조형 배열, `List` 중 무엇인지 확인합니다.
 2. 자연 순서인지 사용자 Comparator가 필요한지 봅니다.
 3. 정렬 API가 원본을 변경하는지 확인합니다.
 4. primitive를 comparator 때문에 불필요하게 boxing하고 있지 않은지 봅니다.
@@ -123,4 +123,4 @@ Java 구현 단계에서는 선택한 알고리즘에 맞춰 `Arrays.sort`, `Lis
 
 ### 학습 후 스스로 설명해 보기
 
-Java 정렬 API는 자료형에 따라 다릅니다. Primitive array는 해당 `Arrays.sort` overload를 사용하고 Comparator는 reference array나 List에서 활용합니다. 정렬은 보통 대상 자체의 순서를 바꾸므로 원본 보존 여부를 확인하고, primitive array를 객체 collection으로 자동 변환해 준다고 가정하지 않는 것이 중요합니다.
+Java 정렬 API는 자료형에 따라 다릅니다. 원시 배열은 `Arrays.sort`의 해당 오버로드를 사용하고, `Comparator`는 참조형 배열이나 `List`에서 활용합니다. 정렬은 보통 대상 자체의 순서를 바꾸므로 원본 보존 여부를 확인하고, 원시 배열이 객체 컬렉션으로 자동 변환된다고 가정하지 않는 것이 중요합니다.

@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.concurrency.synchronized-monitor
 topicContentKey: java.core.concurrency
 slug: synchronized-monitor
-title: "synchronized와 Monitor"
+title: "synchronized와 모니터(Monitor)"
 summary: "synchronized가 어떤 monitor를 기준으로 상호 배제와 memory visibility를 제공하는지 이해한다"
 level: 2
 status: PUBLISHED
@@ -22,7 +22,7 @@ references:
     displayOrder: 2
     relationNote: monitor lock과 happens-before memory consistency 확인
 ---
-# synchronized와 Monitor
+# synchronized와 모니터(Monitor)
 
 여러 thread가 같은 상태를 수정할 때 `synchronized`를 사용하면 특정 객체의 **monitor**를 기준으로 critical section에 한 번에 한 thread만 진입하게 할 수 있습니다. 하지만 키워드를 붙였다는 사실보다 **경쟁하는 모든 코드가 실제로 같은 monitor를 사용하는가**가 더 중요합니다.
 
@@ -37,10 +37,10 @@ synchronized (lock) {
 Thread는 본문에 들어가기 전에 `lock` 객체의 monitor를 획득해야 합니다. 다른 thread가 같은 monitor를 소유하고 있다면 획득할 때까지 기다립니다.
 
 ```text
-             same monitor
+             같은 모니터
                  │
-Thread A -> [ lock ] -> critical section -> [ unlock ]
-Thread B -> [              wait             ] -> enter
+스레드 A -> [ 잠금 ] -> 임계 영역 -> [ 잠금 해제 ]
+스레드 B -> [              대기             ] -> 진입
 ```
 
 JLS는 Java의 각 객체가 monitor와 연결되고 한 시점에 하나의 thread만 그 monitor lock을 소유한다고 정의합니다.
@@ -61,7 +61,7 @@ class Counter {
 
 Instance synchronized method는 호출 대상인 `this`의 monitor를 사용합니다. 서로 다른 인스턴스 `a`, `b`는 서로 다른 monitor를 가지므로 `a.increment()`와 `b.increment()`가 하나의 lock으로 직렬화되는 것은 아닙니다.
 
-Static synchronized method는 해당 class를 나타내는 `Class` 객체의 monitor를 사용합니다. 따라서 instance synchronized와 static synchronized를 "같은 클래스에 있으니 같은 lock"이라고 판단하면 안 됩니다.
+`static synchronized` 메서드는 해당 클래스를 나타내는 `Class` 객체의 모니터를 사용합니다. 따라서 인스턴스 `synchronized`와 정적 `synchronized`를 "같은 클래스에 있으니 같은 잠금"이라고 판단하면 안 됩니다.
 
 ### lock identity가 다르면 같은 상태를 보호하지 못한다
 
@@ -76,8 +76,8 @@ void increment() {
 매 호출마다 새 lock 객체를 만든다면 서로 다른 thread가 서로 다른 monitor를 획득할 수 있습니다. 둘 다 synchronized block 안에 있어도 `value++`에 대한 mutual exclusion은 만들어지지 않습니다.
 
 ```text
-Thread A -> monitor A -> value++
-Thread B -> monitor B -> value++
+스레드 A -> 모니터 A -> value++
+스레드 B -> 모니터 B -> value++
 
 monitor가 다르므로 서로 막지 않음
 ```
@@ -104,13 +104,13 @@ synchronized (lock) {
 한 monitor의 unlock은 synchronization order상 그 뒤의 같은 monitor lock과 synchronizes-with 관계를 만들고, 따라서 happens-before edge가 됩니다.
 
 ```text
-Thread A                         Thread B
-write shared state
+스레드 A                         스레드 B
+공유 상태 쓰기
       │
 unlock M ───────────────────▶ lock M
                                 │
                                 ▼
-                           read shared state
+                           공유 상태 읽기
 ```
 
 같은 thread의 program order와 이 edge를 연결하면 unlock 전에 수행한 write를 이후 같은 monitor를 획득한 thread의 후속 read와 연결할 수 있습니다.

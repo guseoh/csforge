@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.modern-language.sealed-types-closed-hierarchy
 topicContentKey: java.core.modern-language
 slug: sealed-types-closed-hierarchy
-title: "Sealed Type과 닫힌 계층"
+title: "봉인 타입(sealed type)과 닫힌 계층"
 summary: "허용할 하위 타입을 제한해 닫힌 타입 계층을 만들고 누락 없는 처리를 설계한다"
 level: 2
 status: PUBLISHED
@@ -22,7 +22,7 @@ references:
     displayOrder: 2
     relationNote: sealed interface와 허용 하위 타입 확인
 ---
-# Sealed Type과 닫힌 계층
+# 봉인 타입(sealed type)과 닫힌 계층
 
 어떤 타입은 가능한 종류가 의도적으로 정해져 있습니다. 결제 결과가 `Success`, `Failure`, `Pending` 세 종류뿐이라면 아무 클래스나 새로운 결과 타입을 추가할 수 있게 열어 두는 것보다 **허용된 subtype을 코드에 명시하는 편이 모델의 의도를 더 정확하게 표현**합니다.
 
@@ -70,7 +70,7 @@ String message = switch (result) {
 
 ```text
 외부에서 구현이 계속 추가되어야 함
-→ 열린 interface 후보
+→ 열린 인터페이스 후보
 
 가능한 variant가 코드와 함께 통제되어야 함
 → sealed hierarchy 후보

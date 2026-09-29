@@ -24,7 +24,7 @@ references:
 ---
 # Lock, ReentrantLock과 Condition
 
-단순히 한 번에 한 thread만 critical section에 들어가면 된다면 `synchronized`는 매우 좋은 기본 선택입니다. Scope를 벗어날 때 monitor가 자동으로 해제되므로 lock 반환을 빠뜨릴 위험도 적습니다.
+단순히 한 번에 한 thread만 임계 영역(critical section)에 들어가면 된다면 `synchronized`는 매우 좋은 기본 선택입니다. Scope를 벗어날 때 monitor가 자동으로 해제되므로 lock 반환을 빠뜨릴 위험도 적습니다.
 
 그런데 "lock을 500ms까지만 기다리고 포기하고 싶다", "lock을 기다리는 동안 interrupt에 반응하고 싶다", "한 lock 안에서 `notEmpty`와 `notFull`이라는 서로 다른 대기 조건을 관리하고 싶다" 같은 요구가 생기면 명시적인 `Lock` API가 필요할 수 있습니다.
 
@@ -47,7 +47,7 @@ try {
 lock.lock()
     │
     ▼
-critical section
+임계 영역(critical section)
     │
     └─ 정상/예외 모두
           ▼
@@ -89,7 +89,7 @@ if (lock.tryLock(500, TimeUnit.MILLISECONDS)) {
 
 ### Condition은 하나의 Lock 안에서 "어떤 상태가 될 때까지 기다린다"를 표현한다
 
-Producer-consumer queue를 직접 만든다고 가정하겠습니다. Consumer는 queue가 비어 있지 않을 때까지 기다려야 합니다.
+생산자·소비자 대기열을 직접 만든다고 가정하겠습니다. 소비자는 대기열이 빌 때까지 기다려야 합니다.
 
 ```java
 final Lock lock = new ReentrantLock();
@@ -111,11 +111,11 @@ Task take() throws InterruptedException {
 `await()`는 기다리는 동안 현재 lock을 release하고, 깨어난 뒤 다시 lock을 획득한 다음 반환합니다. Lock을 계속 들고 기다리면 producer가 queue에 값을 넣으러 들어올 수 없기 때문입니다.
 
 ```text
-consumer: lock -> queue empty -> await
+소비자: 잠금 -> 대기열 비어 있음 -> `await`
                             │
                             └─ lock release + wait
 
-producer:                   lock -> add -> signal -> unlock
+생산자:                   잠금 -> 추가 -> `signal` -> 잠금 해제
 
 consumer:                   wake -> lock reacquire -> condition 재확인
 ```

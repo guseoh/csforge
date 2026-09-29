@@ -4,7 +4,7 @@ contentKey: java.core.concurrency.concurrent-collections
 topicContentKey: java.core.concurrency
 slug: concurrent-collections
 title: "동시성 컬렉션"
-summary: "ConcurrentHashMap과 concurrent queue가 어떤 연산을 thread-safe하게 제공하는지 이해하고 여러 단계의 업무 규칙까지 자동으로 원자화된다고 오해하지 않는다"
+summary: "ConcurrentHashMap과 동시성 큐가 어떤 연산을 스레드 안전하게 제공하는지 이해하고 여러 단계의 업무 규칙까지 자동으로 원자화된다고 오해하지 않는다"
 level: 2
 status: PUBLISHED
 displayOrder: 150
@@ -75,8 +75,8 @@ map이 `Order` 참조를 안전하게 저장하고 조회한다고 해서 `Order
 
 ```text
 ConcurrentHashMap
-   └─ entry 자체의 concurrent 접근 계약
-        └─ Order 내부 mutable state는 별도 문제
+   └─ 항목 자체의 동시 접근 계약
+        └─ Order 내부의 변경 가능한 상태는 별도 문제
 ```
 
 collection의 thread-safety와 원소 객체의 thread-safety를 분리해서 봅니다.

@@ -3,8 +3,8 @@ kind: concept
 contentKey: java.core.modern-language.switch-expressions
 topicContentKey: java.core.modern-language
 slug: switch-expressions
-title: "Switch Expression으로 값 계산하기"
-summary: "switch가 값을 만드는 expression으로 동작할 때의 exhaustiveness, arrow rule, yield를 이해한다"
+title: "switch 식(switch expression)으로 값 계산하기"
+summary: "switch 식이 값을 반환할 때 모든 경우를 다루는 규칙, 화살표 레이블, `yield`의 의미를 이해한다"
 level: 1
 status: PUBLISHED
 displayOrder: 50
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: switch expression·yield·exhaustiveness 확인
 ---
-# Switch Expression으로 값 계산하기
+# switch 식(switch expression)으로 값 계산하기
 
 여러 상태에 따라 하나의 값을 정해야 할 때 예전 방식의 `switch` statement는 임시 변수를 먼저 만들고 각 `case`에서 값을 대입하는 코드가 자주 필요했습니다. 이 구조에서는 `break`를 빠뜨리거나 특정 분기에서 값을 대입하지 않는 실수가 생기기 쉽습니다.
 

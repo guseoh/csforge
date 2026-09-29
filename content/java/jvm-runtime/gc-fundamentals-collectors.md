@@ -3,8 +3,8 @@ kind: concept
 contentKey: java.core.jvm-runtime.gc-fundamentals-collectors
 topicContentKey: java.core.jvm-runtime
 slug: gc-fundamentals-collectors
-title: "GC 기본 원리와 Collector"
-summary: "GC가 unreachable 객체의 storage를 회수하는 이유와 pause·처리량·지연 시간 trade-off를 이해하고 G1/ZGC 같은 collector를 JVM 구현 선택으로 구분한다"
+title: "GC 기본 원리와 수집기(Collector)"
+summary: "GC가 더 이상 도달할 수 없는 객체의 메모리를 회수하는 이유와 일시 정지 시간·처리량·지연 시간의 장단점을 이해하고 G1·ZGC 같은 수집기를 JVM 구현 선택으로 구분한다"
 level: 3
 status: PUBLISHED
 displayOrder: 80
@@ -28,9 +28,9 @@ references:
     displayOrder: 3
     relationNote: GC의 세대별 흐름과 stop-the-world 관찰 포인트 보충
 ---
-# GC 기본 원리와 Collector
+# GC 기본 원리와 수집기(Collector)
 
-Java에서는 객체 storage를 개발자가 직접 `free()`하지 않습니다. JVMS는 heap에 automatic storage management system이 존재할 수 있음을 정의하고, 실제 HotSpot은 garbage collector가 더 이상 사용할 수 없는 객체의 storage를 회수합니다.
+Java에서는 객체 메모리를 개발자가 직접 `free()`하지 않습니다. JVMS는 heap에 자동 메모리 관리 시스템(automatic storage management system)이 존재할 수 있음을 정의하고, 실제 HotSpot은 가비지 컬렉터가 더 이상 사용할 수 없는 객체의 메모리를 회수합니다.
 
 GC가 있다는 사실은 메모리 문제를 신경 쓰지 않아도 된다는 뜻이 아닙니다. 서버에서는 **객체가 얼마나 빠르게 만들어지고, 얼마나 오래 살아 있으며, collector가 애플리케이션 실행을 얼마나 방해하는가**가 처리량과 지연 시간에 영향을 줍니다.
 
@@ -39,7 +39,7 @@ GC가 있다는 사실은 메모리 문제를 신경 쓰지 않아도 된다는 
 앞 Concept에서 본 것처럼 collector는 살아 있는 root에서 object graph를 따라 reachability를 판단합니다.
 
 ```text
-Roots
+GC 루트
  ├─▶ A ─▶ B
  └─▶ C
 
@@ -56,7 +56,7 @@ Collector에 따라 어떤 작업은 애플리케이션 thread를 멈춘 상태�
 
 ```text
 시간 ─────────────────────────▶
-Application  ██████░░██████░████
+애플리케이션  ██████░░██████░████
 GC work         ███      █████
                ↑        ↑
              pause 가능 구간
@@ -79,8 +79,8 @@ Batch 작업에서는 높은 총 처리량이 더 중요할 수 있고, 사용�
 G1, ZGC 같은 이름은 Java language의 메모리 모델이 아니라 HotSpot JVM이 제공하는 collector입니다.
 
 ```text
-Java/JVMS
-  └─ heap + automatic storage management라는 추상 계약
+Java/JVMS 명세
+  └─ 힙(heap)과 자동 메모리 관리(automatic storage management)에 관한 추상 계약
 
 HotSpot
   ├─ G1
@@ -110,7 +110,7 @@ B는 collector가 회수할 여유가 작고 계속 많은 객체를 처리해�
 - concurrent cycle 시간
 - CPU 사용량
 
-GC가 자주 돈다는 사실만으로 `-Xmx`를 늘리거나 collector부터 바꾸면 원인을 놓칠 수 있습니다. 실제로는 allocation 증가, cache/queue 성장, memory leak, heap sizing 문제가 원인일 수 있습니다.
+GC가 자주 실행된다는 이유만으로 `-Xmx`를 늘리거나 수집기를 바꾸면 원인을 놓칠 수 있습니다. 실제 원인은 메모리 할당 증가, 캐시·대기열 성장, 메모리 누수, 힙 크기 설정일 수 있습니다.
 
 ### collector 변경은 측정 이후의 선택이다
 
@@ -127,4 +127,4 @@ allocation rate가 비정상적으로 증가했는가?
 
 ### 정리
 
-GC는 더 이상 reachable하지 않은 객체의 storage를 자동으로 회수할 수 있게 합니다. 실제 collector는 pause와 concurrent work를 서로 다르게 배치하므로 처리량, 지연 시간, footprint 사이에 trade-off가 생깁니다. G1과 ZGC는 HotSpot 구현 선택이며 Java language 보장이 아닙니다. GC 문제는 heap 크기 하나보다 live set, allocation rate, pause, CPU와 workload를 함께 측정한 뒤 판단해야 합니다.
+GC는 더 이상 도달할 수 없는 객체의 메모리를 자동으로 회수할 수 있게 합니다. 실제 수집기는 일시 정지와 동시 작업을 서로 다르게 배치하므로 처리량, 지연 시간, 메모리 사용량 사이에 장단점이 생깁니다. G1과 ZGC는 HotSpot의 구현 선택이며 Java 언어의 보장이 아닙니다. GC 문제는 heap 크기 하나만 보지 말고 생존 객체 집합(live set), 할당률, 일시 정지 시간, CPU 사용량과 작업 부하를 함께 측정한 뒤 판단해야 합니다.

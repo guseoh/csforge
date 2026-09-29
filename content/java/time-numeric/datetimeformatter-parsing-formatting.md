@@ -44,7 +44,7 @@ String text = time.format(formatter);
 String
   │ parse
   ▼
-Temporal value
+Temporal 값
   │ format
   ▼
 String

@@ -84,7 +84,7 @@ enum Mode {
 
 ```text
 Mode.STANDARD
-└─ uses
+└─ 사용
    ▲   ▲
    │   │
    a   b

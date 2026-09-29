@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.design-patterns.decorator-pattern
 topicContentKey: java.core.design-patterns
 slug: decorator-pattern
-title: "Decorator로 책임을 겹쳐 붙이기"
+title: "데코레이터(Decorator)로 책임을 조합하기"
 summary: "같은 계약을 유지한 wrapper를 합성해 부가 책임을 조합하고, wrapper 순서·예외·상태가 실제 호출 의미를 어떻게 바꾸는지 추적한다"
 level: 2
 status: PUBLISHED
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: Java I/O에서 다른 stream을 감싸는 대표적인 합성 구조 참고
 ---
-# Decorator로 책임을 겹쳐 붙이기
+# 데코레이터(Decorator)로 책임을 조합하기
 
 기존 객체의 핵심 역할은 유지하면서 로깅, 측정, 압축처럼 **선택적인 책임을 조합해서 추가**하고 싶을 수 있습니다. 기능 조합마다 하위 클래스를 만들면 조합 수가 빠르게 늘어납니다.
 
@@ -57,16 +57,16 @@ DataReader reader = new LoggingReader(
 ```
 
 ```text
-Client
+클라이언트
   │
   ▼
-LoggingReader
+로깅 리더(LoggingReader)
   │
   ▼
-CachingReader
+캐시 리더(CachingReader)
   │
   ▼
-FileDataReader
+파일 데이터 리더(FileDataReader)
 ```
 
 ### 같은 계약을 유지하기 때문에 조합할 수 있다

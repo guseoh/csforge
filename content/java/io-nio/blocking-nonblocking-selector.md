@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.io-nio.blocking-nonblocking-selector
 topicContentKey: java.core.io-nio
 slug: blocking-nonblocking-selector
-title: "Blocking·Non-blocking I/O와 Selector"
+title: "블로킹·논블로킹 I/O와 Selector"
 summary: "Java NIO에서 blocking과 non-blocking 호출의 차이와 Selector가 여러 channel의 준비 상태를 관찰하는 방식을 이해한다"
 level: 3
 status: PUBLISHED
@@ -28,7 +28,7 @@ references:
     displayOrder: 3
     relationNote: interest set·ready set·key lifecycle과 readiness의 보장 범위 확인
 ---
-# Blocking·Non-blocking I/O와 Selector
+# 블로킹·논블로킹 I/O와 Selector
 
 Socket에서 데이터를 읽으려는데 아직 들어온 byte가 없다고 생각해 보겠습니다. Blocking mode에서는 읽기 작업이 진행될 조건이 될 때까지 현재 thread가 그 호출에서 기다릴 수 있습니다. Non-blocking mode에서는 **현재 가능한 만큼 처리하고 호출이 돌아오며**, 이후 다시 시도할 시점을 애플리케이션이 관리합니다.
 
@@ -41,7 +41,7 @@ Socket에서 데이터를 읽으려는데 아직 들어온 byte가 없다고 생
 Blocking read를 단순화하면 다음과 같습니다.
 
 ```text
-thread
+스레드
   │
   ├─ read(channel)
   │      └─ 읽을 데이터가 없으면 여기서 기다릴 수 있음
@@ -96,10 +96,10 @@ Channel B -> OP_WRITE 관심
 selection 이후에는 그 관심 작업 중 현재 수행할 준비가 되었다고 판단된 operation을 `SelectionKey`에서 확인합니다.
 
 ```text
-interest set
+관심 이벤트 집합(interest set)
    │ select
    ▼
-ready set
+준비된 이벤트 집합(ready set)
 ```
 
 전통적인 `selectedKeys()` loop에서는 처리한 key를 selected set에서 제거하는 등의 lifecycle도 애플리케이션이 관리합니다. Channel close나 key cancel도 selector 등록 상태와 연결되므로 key validity를 함께 봐야 합니다.
@@ -112,7 +112,7 @@ ready set
 TCP bytes 도착
    │
    ▼
-READ ready
+읽기 준비 완료(READ ready)
    │
    ▼
 channel.read(buffer)
@@ -138,7 +138,7 @@ Selector / SelectionKey
 JDK 구현
         │
         ▼
-OS별 I/O readiness mechanism
+OS별 입출력 준비 통지 방식
 ```
 
 따라서 "Selector = epoll"이라고 동일시하면 API 계약과 구현 세부를 섞게 됩니다.

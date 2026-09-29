@@ -48,7 +48,7 @@ worker.start();
 `start()`는 해당 Thread가 독립적으로 실행되도록 schedule하고 그 Thread에서 `run()`이 수행되게 합니다. 한 Thread 객체는 한 번만 시작할 수 있으며 종료한 뒤 다시 `start()`할 수 없습니다.
 
 ```text
-caller
+호출자
   │
   └─ start()
        │
@@ -56,7 +56,7 @@ caller
 worker thread -> run() -> terminate
 ```
 
-`run()`은 Thread가 실행할 본문이지 Thread 시작 API가 아닙니다. Java 25 `Thread` 문서는 direct `run()` 호출을 의도된 사용으로 보지 않습니다. Runnable task로 만든 platform thread에서는 caller가 직접 `run()`하면 그 caller에서 task가 실행될 수 있고, virtual thread의 `run()`을 직접 호출하면 아무 동작도 하지 않습니다. 새 Thread 실행이 목적이라면 `start()`를 사용해야 합니다.
+`run()`은 Thread가 실행할 본문이지 Thread 시작 API가 아닙니다. Java 25 `Thread` 문서는 direct `run()` 호출을 의도된 사용으로 보지 않습니다. Runnable task로 만든 platform thread에서는 호출자가 직접 `run()`하면 그 호출자에서 task가 실행될 수 있고, virtual thread의 `run()`을 직접 호출하면 아무 동작도 하지 않습니다. 새 Thread 실행이 목적이라면 `start()`를 사용해야 합니다.
 
 ### Thread.State는 Java가 제공하는 관찰 모델이다
 
@@ -79,19 +79,19 @@ worker.join();
 useResult();
 ```
 
-`join()`이 성공적으로 반환하면 caller는 worker가 종료된 뒤 다음 코드로 진행합니다. JMM에서는 시작과 종료 관찰에 별도의 happens-before 관계를 정의합니다.
+`join()`이 성공적으로 반환하면 호출자는 worker가 종료된 뒤 다음 코드로 진행합니다. JMM에서는 시작과 종료 관찰에 별도의 happens-before 관계를 정의합니다.
 
 ```text
-caller의 start 이전 action
+호출자의 `start` 이전 동작
       │
       ├─ start() ─────▶ worker actions
       │                    │
       │                 terminate
       │                    │
-      └──────────── successful join
+      └──────────── `join`의 정상 반환
                            │
                            ▼
-                    caller의 후속 action
+                    호출자의 후속 동작
 ```
 
 따라서 `join()`은 단순한 시간 대기 이상의 memory-ordering 의미를 가집니다.
@@ -138,4 +138,4 @@ Thread.currentThread().isInterrupted();  // 조회만
 
 Cancellation loop에서 어느 API를 사용하는지에 따라 signal을 소비하는 시점이 달라집니다.
 
-Thread lifecycle을 읽을 때는 `start()`로 실제 실행이 시작됐는지, 현재 어떤 종류의 대기 상태인지, interruption을 어떤 API가 관찰하는지, 그리고 `join()` 이후에 어떤 memory-ordering 보장이 생기는지를 순서대로 추적하세요. Interrupt는 강제 종료가 아니라 **작업 코드와 blocking API가 협력해 처리하는 cancellation protocol**입니다.
+스레드 생명주기를 살펴볼 때는 `start()`로 실행이 시작됐는지, 현재 어떤 대기 상태인지, 어떤 API가 인터럽트를 확인하는지, `join()` 뒤에 어떤 메모리 순서 보장이 생기는지 차례로 추적하세요. 인터럽트는 강제 종료가 아니라 **작업 코드와 대기 API가 협력해 처리하는 취소 프로토콜**입니다.

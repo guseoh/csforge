@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.generics.wildcards-pecs
 topicContentKey: java.core.generics
 slug: wildcards-pecs
-title: "Wildcard와 PECS"
+title: "와일드카드(Wildcard)와 PECS"
 summary: "제네릭 API가 값을 주로 읽는지 쓰는지에 따라 extends와 super 경계를 선택하고 PECS를 실제 데이터 흐름으로 이해한다"
 level: 2
 status: PUBLISHED
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: wildcard와 bounded type argument 규칙 확인
 ---
-# Wildcard와 PECS
+# 와일드카드(Wildcard)와 PECS
 
 제네릭은 기본적으로 불공변이기 때문에 `List<Integer>`를 `List<Number>`로 바로 넘길 수 없습니다. 하지만 어떤 API는 값을 추가할 필요 없이 여러 하위 타입 컬렉션에서 **읽기만** 하면 되고, 어떤 API는 특정 타입의 값을 더 넓은 상위 타입 컬렉션에 **쓰기만** 하면 됩니다.
 
@@ -61,7 +61,7 @@ static void addDefaults(List<? super Integer> values) {
 
 ### PECS는 데이터 흐름을 기억하기 위한 규칙이다
 
-흔히 **PECS: Producer Extends, Consumer Super**라고 정리합니다.
+흔히 **PECS: Producer Extends, Consumer Super(생산자는 extends, 소비자는 super)**라고 정리합니다.
 
 - API가 컬렉션에서 `T` 값을 받아 **읽는 source**로 사용하면 `? extends T`
 - API가 컬렉션에 `T` 값을 **쓰는 destination**으로 사용하면 `? super T`
@@ -80,7 +80,7 @@ static <T> void copy(
 ```
 
 ```text
-source                    destination
+원본(source)               대상(destination)
 ? extends T                  ? super T
     │                            ▲
     └────── T를 읽음 ────────────┘

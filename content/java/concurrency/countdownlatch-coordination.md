@@ -36,7 +36,7 @@ worker A 완료 -> 2
 worker B 완료 -> 1
 worker C 완료 -> 0
                     │
-                    └─ await 중인 thread 진행 가능
+                    └─ `await` 중인 스레드 진행 가능
 ```
 
 `countDown()`을 호출한 thread가 특별한 소유권을 갖는 것은 아닙니다. 여러 thread가 각각 완료 시점을 알릴 수 있습니다.

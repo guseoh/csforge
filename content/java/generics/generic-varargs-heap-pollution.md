@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.generics.generic-varargs-heap-pollution
 topicContentKey: java.core.generics
 slug: generic-varargs-heap-pollution
-title: "제네릭 varargs와 heap pollution"
+title: "제네릭 가변 인자(varargs)와 힙 오염(heap pollution)"
 summary: "제네릭 타입과 배열 기반 varargs가 만날 때 타입 안전성이 깨질 수 있는 이유와 SafeVarargs를 붙일 수 있는 조건을 이해한다"
 level: 3
 status: PUBLISHED
@@ -28,7 +28,7 @@ references:
     displayOrder: 3
     relationNote: SafeVarargs가 억제하는 경고와 선언 제약의 언어 규칙 확인
 ---
-# 제네릭 varargs와 heap pollution
+# 제네릭 가변 인자(varargs)와 힙 오염(heap pollution)
 
 varargs는 호출 시 여러 인자를 편하게 넘기게 해 주지만 구현에서는 배열과 연결됩니다.
 
@@ -109,6 +109,6 @@ static <T> void processAll(List<List<T>> lists) {
 }
 ```
 
-호출 편의와 API 형태에 따라 선택이 달라지지만, non-reifiable element type과 배열의 경계를 굳이 만들 이유가 없다면 collection 매개변수가 더 단순한 계약이 될 수 있습니다.
+호출 편의와 API 형태에 따라 선택이 달라지지만, 실체화할 수 없는(non-reifiable) 원소 타입과 배열의 경계를 굳이 만들 이유가 없다면 컬렉션 매개변수가 더 단순한 계약이 될 수 있습니다.
 
 이 Concept의 핵심은 annotation 이름을 외우는 것이 아닙니다. **varargs는 배열을 사용하고, 제네릭 타입 인자는 같은 방식으로 런타임에 표현되지 않기 때문에 alias를 통한 잘못된 쓰기가 heap pollution으로 이어질 수 있다**는 흐름을 이해하는 것입니다. `@SafeVarargs`는 그 위험이 없음을 개발자가 책임지고 선언하는 도구입니다.

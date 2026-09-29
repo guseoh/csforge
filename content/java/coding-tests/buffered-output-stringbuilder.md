@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.coding-tests.buffered-output-stringbuilder
 topicContentKey: java.core.coding-tests
 slug: buffered-output-stringbuilder
-title: "Buffered 출력과 StringBuilder"
+title: "버퍼링 출력과 StringBuilder"
 summary: "반복적인 정답 출력을 메모리에서 조립하거나 buffering해 작은 출력 호출을 줄이는 방법을 익힌다"
 level: 1
 status: PUBLISHED
@@ -22,7 +22,7 @@ references:
     displayOrder: 2
     relationNote: output buffering과 flush 계약 확인
 ---
-# Buffered 출력과 StringBuilder
+# 버퍼링 출력과 StringBuilder
 
 정답을 수십만 줄 출력하는 문제에서 반복문마다 `System.out.println()`을 호출하면 계산 자체보다 출력 호출이 더 큰 비용이 될 수 있습니다. 코딩테스트에서는 보통 **계산 결과를 먼저 모아 두고 큰 단위로 출력**하는 방식을 자주 사용합니다.
 

@@ -42,7 +42,7 @@ long result = tenPercent.discount(10_000);
 
 ### “메서드가 하나”가 아니라 “추상 메서드가 하나”다
 
-함수형 인터페이스는 default 메서드나 static 메서드를 가질 수 있습니다.
+함수형 인터페이스는 `default` 메서드나 `static` 메서드를 가질 수 있습니다.
 
 ```java
 @FunctionalInterface

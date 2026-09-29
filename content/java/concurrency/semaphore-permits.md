@@ -32,12 +32,12 @@ Semaphore slots = new Semaphore(3);
 
 ```text
 permit = 3
-Task A acquire -> 2
-Task B acquire -> 1
-Task C acquire -> 0
+작업 A 획득 -> 2
+작업 B 획득 -> 1
+작업 C 획득 -> 0
 Task D acquire -> 기다림
 
-Task B release -> 1
+작업 B 반환 -> 1
 Task D 진행 가능
 ```
 

@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.jvm-runtime.jit-hotspot-warmup
 topicContentKey: java.core.jvm-runtime
 slug: jit-hotspot-warmup
-title: "JIT·HotSpot과 Warm-up"
+title: "JIT·HotSpot과 워밍업(warm-up)"
 summary: "HotSpot이 실행 중 profiling과 JIT compilation으로 code를 최적화할 수 있다는 점과 warm-up·deoptimization이 benchmark 해석에 미치는 영향을 이해한다"
 level: 3
 status: PUBLISHED
@@ -28,7 +28,7 @@ references:
     displayOrder: 3
     relationNote: JVM warm-up과 실제 서비스 성능 측정 맥락을 보충
 ---
-# JIT·HotSpot과 Warm-up
+# JIT·HotSpot과 워밍업(warm-up)
 
 Java 프로그램은 실행 직후와 충분히 반복 실행된 뒤의 성능이 다를 수 있습니다. HotSpot JVM이 실행 중 정보를 수집하고 자주 실행되는 code를 **JIT(Just-In-Time) compile**해 native code로 최적화할 수 있기 때문입니다.
 
@@ -37,23 +37,23 @@ Java 프로그램은 실행 직후와 충분히 반복 실행된 뒤의 성능�
 ### `javac` compile과 JIT compile은 다른 단계다
 
 ```text
-Build time
-Java source
+빌드 시점
+Java 소스 코드
    │ javac
    ▼
-class file / bytecode
+클래스 파일 / 바이트코드
 
-Runtime
-class bytecode
+실행 시점
+클래스 파일의 바이트코드
    │
    ├─ interpreter로 실행 가능
    └─ HotSpot JIT compilation 가능
               │
               ▼
-          native code
+          네이티브 코드
 ```
 
-`javac`는 source를 class file로 만드는 compiler이고, JIT compiler는 runtime에 실제 실행 정보를 이용해 native code를 만들 수 있습니다. 둘을 같은 compile 단계로 설명하면 source/classfile/runtime 경계가 흐려집니다.
+`javac`는 소스 코드를 class file로 변환하고, JIT 컴파일러는 실행 시점의 정보를 이용해 native code를 만들 수 있습니다. 둘을 같은 컴파일 단계로 설명하면 소스 코드·class file·실행 시점의 경계가 흐려집니다.
 
 ### Runtime profile은 최적화의 근거가 될 수 있다
 
@@ -77,7 +77,7 @@ if (user.isPremium()) {
   └─ hot code 발견
           │
           ▼
-     JIT optimization
+     JIT 최적화
 ```
 
 어떤 threshold와 heuristic을 쓰는지는 HotSpot version과 option에 따라 달라질 수 있으므로 Java specification 보장처럼 외우지 않습니다.
@@ -86,16 +86,16 @@ if (user.isPremium()) {
 
 HotSpot은 빠른 startup과 높은 steady-state 성능을 함께 노리기 위해 여러 compilation level을 조합하는 tiered compilation을 사용할 수 있습니다.
 
-학습할 때 중요한 것은 compiler 이름과 threshold 숫자가 아니라 다음 흐름입니다.
+학습할 때 중요한 것은 컴파일러 이름과 임계값 숫자가 아니라 다음 흐름입니다.
 
 ```text
 초기 실행
    │
-profile 축적
+프로파일(profile) 축적
    │
-hot code 발견
+자주 실행되는 코드(hot code) 발견
    │
-더 최적화된 code 생성 가능
+더 최적화된 코드 생성 가능
 ```
 
 이 때문에 짧게 한 번 실행한 결과와 충분히 warm-up된 결과를 같은 상태라고 가정하면 benchmark를 잘못 해석할 수 있습니다.
@@ -107,7 +107,7 @@ Polymorphic method call도 runtime에서 항상 같은 비용으로 lookup되는
 ```text
 service.execute()
       │
-runtime에서 FastService만 반복 관찰
+실행 시점에 FastService만 반복 관찰
       │
       ▼
 JIT가 이 가정을 이용해 최적화 가능
@@ -120,12 +120,12 @@ JIT가 이 가정을 이용해 최적화 가능
 ```text
 가정: Type A만 온다
       │
- optimized code
+ 최적화된 코드
       │
  Type B 등장
       │
       ▼
-deoptimization / 재최적화 가능
+최적화 해제(deoptimization) / 재최적화 가능
 ```
 
 Deoptimization은 "JIT가 잘못된 결과를 냈다"는 뜻이 아니라, runtime observation에 기반한 가정이 더 이상 유효하지 않을 때 Java semantics를 유지하도록 실행 전략을 되돌리는 과정입니다.
@@ -148,7 +148,7 @@ Loop 자체가 최적화될 수 있고 결과를 사용하지 않으면 dead-cod
 
 ### Microbenchmark와 production measurement는 질문이 다르다
 
-JMH는 warm-up, fork, measurement iteration과 compiler optimization 영향을 고려한 microbenchmark 작성을 돕습니다. 하지만 JMH가 보여 주는 작은 Java operation의 상대 비용이 곧 production API latency는 아닙니다.
+JMH는 준비 실행(warm-up), 별도 JVM 실행(fork), 측정 반복(measurement iteration)과 컴파일러 최적화의 영향을 고려한 마이크로벤치마크 작성을 돕습니다. 하지만 JMH가 보여 주는 작은 Java operation의 상대 비용이 곧 production API latency는 아닙니다.
 
 ```text
 JMH

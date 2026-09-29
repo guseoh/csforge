@@ -4,7 +4,7 @@ contentKey: java.core.time-numeric.floating-point-precision
 topicContentKey: java.core.time-numeric
 slug: floating-point-precision
 title: "부동소수점 정밀도와 오차"
-summary: "binary floating-point가 일부 10진수를 근사해 저장하는 이유와 비교·금액 계산에서의 영향을 이해한다"
+summary: "이진 부동소수점이 일부 십진수를 근사해 저장하는 이유와 비교·금액 계산에 미치는 영향을 이해한다"
 level: 2
 status: PUBLISHED
 displayOrder: 60
@@ -33,8 +33,8 @@ references:
 ```java
 double value = 0.1 + 0.2;
 
-System.out.println(value);        // 0.30000000000000004처럼 보일 수 있음
-System.out.println(value == 0.3); // false가 될 수 있음
+System.out.println(value);        // 0.30000000000000004
+System.out.println(value == 0.3); // false
 ```
 
 이 결과는 무작위 오차가 아니라 **표현 가능한 값의 집합 안에서 정해진 부동소수점 연산을 수행한 결과**입니다.

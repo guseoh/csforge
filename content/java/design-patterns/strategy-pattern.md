@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.design-patterns.strategy-pattern
 topicContentKey: java.core.design-patterns
 slug: strategy-pattern
-title: "Strategy 패턴과 정책 교체"
+title: "전략(Strategy) 패턴과 정책 교체"
 summary: "조건문으로 늘어나는 정책 차이를 공통 계약 뒤의 교체 가능한 객체로 분리하고 언제 패턴이 필요한지 판단한다"
 level: 2
 status: PUBLISHED
@@ -22,7 +22,7 @@ references:
     displayOrder: 2
     relationNote: Strategy가 변하는 로직을 공통 계약 뒤로 분리하는 구조와 Command와의 차이를 한국어 예제로 복습
 ---
-# Strategy 패턴과 정책 교체
+# 전략(Strategy) 패턴과 정책 교체
 
 할인 방식이나 수수료 계산처럼 **전체 흐름은 같지만 특정 정책만 여러 형태로 바뀌는 경우**가 있습니다. 정책 종류가 적고 안정적이면 `if`나 `switch`가 가장 직접적일 수 있습니다. 하지만 같은 책임의 구현이 늘고 각 정책이 독립적으로 바뀐다면 한 메서드가 모든 정책을 알게 됩니다.
 

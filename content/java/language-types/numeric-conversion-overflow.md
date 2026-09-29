@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.language-types.numeric-conversion-overflow
 topicContentKey: java.core.language-types
 slug: numeric-conversion-overflow
-title: "숫자 변환과 overflow"
+title: "숫자 변환과 오버플로"
 summary: "숫자 타입의 넓히기·좁히기 변환과 연산 시 타입 승격, 정수 범위를 넘을 때의 결과를 코드로 추적한다"
 level: 1
 status: PUBLISHED
@@ -14,15 +14,15 @@ references:
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
-    relationNote: widening, narrowing, boxing 등 변환 규칙 확인
+    relationNote: 확장·축소·박싱 등 변환 규칙 확인
   - url: "https://docs.oracle.com/javase/specs/jls/se25/html/jls-4.html#jls-4.2.2"
     title: "JLS 4.2.2 Integer Operations"
     referenceType: OFFICIAL
     language: en
     displayOrder: 2
-    relationNote: 정수 연산과 overflow 규칙 확인
+    relationNote: 정수 연산과 오버플로 규칙 확인
 ---
-# 숫자 변환과 overflow
+# 숫자 변환과 오버플로
 
 Java 숫자 코드는 단순히 값만 보면 안 되고 **연산이 어떤 타입으로 수행되는지**까지 봐야 합니다. 작은 타입을 큰 타입에 넣을 때는 대부분 자연스럽게 변환되지만, 큰 타입을 작은 타입으로 줄이면 정보가 사라질 수 있습니다. 또한 정수 계산 결과가 타입이 표현할 수 있는 범위를 넘어가도 자동으로 예외가 발생하지 않습니다.
 
@@ -33,7 +33,7 @@ int count = 100;
 long total = count;
 ```
 
-`int` 값은 모든 가능한 `int` 값을 표현할 수 있는 `long`으로 변환될 수 있습니다. 이런 변환을 **넓히기 변환(widening conversion)** 이라고 합니다. 일반적으로 별도 형변환 표기를 요구하지 않습니다.
+`int` 값은 모든 가능한 `int` 값을 표현할 수 있는 `long`으로 변환될 수 있습니다. 이런 변환을 **확장 변환(widening conversion)**이라고 합니다. 일반적으로 별도 형변환 표기를 요구하지 않습니다.
 
 하지만 `long`을 `int`로 옮길 때는 값의 일부가 사라질 수 있으므로 명시적인 형변환이 필요합니다.
 
@@ -76,15 +76,15 @@ System.out.println(value);      // 2147483647
 System.out.println(value + 1);  // -2147483648
 ```
 
-Java 정수 연산은 표현 범위를 넘었다고 자동으로 `ArithmeticException`을 던지지 않습니다. 결과는 해당 정수 타입의 비트 폭에 맞춰 계산되어 값이 돌아갑니다. 이를 **overflow**라고 부릅니다.
+Java 정수 연산은 표현 범위를 넘었다고 자동으로 `ArithmeticException`을 던지지 않습니다. 결과는 해당 정수 타입의 비트 폭에 맞춰 계산되어 값이 돌아갑니다. 이를 **오버플로(overflow)**라고 부릅니다.
 
-이 때문에 개수, 금액의 최소 단위, 시간 합산처럼 값이 커질 수 있는 계산은 타입 범위를 먼저 확인해야 합니다. `int` 두 개를 더한 뒤 `long`에 넣는다고 이미 발생한 overflow가 복구되지는 않습니다.
+이 때문에 개수, 금액의 최소 단위, 시간 합산처럼 값이 커질 수 있는 계산은 타입 범위를 먼저 확인해야 합니다. `int` 두 개를 더한 뒤 `long`에 넣는다고 이미 발생한 오버플로가 복구되지는 않습니다.
 
 ```java
 int a = 2_000_000_000;
 int b = 2_000_000_000;
 
-long wrong = a + b;          // int 연산에서 이미 overflow
+long wrong = a + b;          // int 연산에서 이미 오버플로
 long right = (long) a + b;   // 한쪽을 long으로 올린 뒤 long 연산
 ```
 
@@ -96,7 +96,7 @@ long right = (long) a + b;   // 한쪽을 long으로 올린 뒤 long 연산
 System.out.println(0.1 + 0.2); // 보통 기대하는 0.3과 정확히 같지 않게 보일 수 있음
 ```
 
-이것은 정수 overflow와 다른 문제입니다. 금액처럼 십진수 정확성이 중요한 영역에서는 단순히 `double`을 사용하는 것보다 `BigDecimal` 같은 타입을 검토해야 합니다. 자세한 숫자 모델링은 별도 주제에서 다룹니다.
+이것은 정수 오버플로와 다른 문제입니다. 금액처럼 십진수 정확성이 중요한 영역에서는 단순히 `double`을 사용하는 것보다 `BigDecimal` 같은 타입을 검토해야 합니다. 자세한 숫자 모델링은 별도 주제에서 다룹니다.
 
 ### 문제를 풀 때 확인할 것
 

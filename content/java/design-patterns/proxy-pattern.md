@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.design-patterns.proxy-pattern
 topicContentKey: java.core.design-patterns
 slug: proxy-pattern
-title: "Proxy와 호출 중개"
+title: "프록시(Proxy)와 호출 중개"
 summary: "실제 객체 앞의 대리 객체가 접근 조건·지연 생성·캐시·원격 호출을 어떻게 중개하는지, 호출 경로와 검사 순서가 Proxy 의미를 어떻게 결정하는지 이해한다"
 level: 2
 status: PUBLISHED
@@ -16,15 +16,15 @@ references:
     displayOrder: 1
     relationNote: JDK dynamic Proxy API 확인
 ---
-# Proxy와 호출 중개
+# 프록시(Proxy)와 호출 중개
 
 Proxy는 호출자가 실제 객체를 직접 사용하지 않고 **같은 역할을 제공하는 대리 객체를 먼저 거치게 하는 구조**입니다.
 
 ```text
-Client
+클라이언트
   │ 같은 계약
   ▼
-Proxy
+프록시
   │ 접근 조건·지연 생성·원격 전달 등
   ▼
 실제 대상
@@ -85,8 +85,8 @@ Result read(User user) {
 또 Protection Proxy가 있어도 호출자가 실제 target 참조를 직접 얻을 수 있다면 정책을 우회할 수 있습니다.
 
 ```text
-정상: Client → Proxy → Target
-우회: Client ─────────→ Target
+정상: 클라이언트 → 프록시 → 대상 객체
+우회: 클라이언트 ─────────→ 대상 객체
 ```
 
 접근 제어가 목적이라면 민감한 대상에 도달하는 공개 경로가 모두 같은 정책을 통과하는지 확인해야 합니다.
@@ -98,7 +98,7 @@ Result read(User user) {
 Proxy가 바깥 객체라면 실제 호출이 그 Proxy를 거칠 때만 Proxy 로직이 실행된다는 점도 중요합니다.
 
 ```text
-Client → Proxy → Target.methodA()
+클라이언트 → 프록시 → 대상 객체.methodA()
                   └→ this.methodB()
 ```
 

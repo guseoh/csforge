@@ -20,7 +20,7 @@ references:
     referenceType: OFFICIAL
     language: en
     displayOrder: 2
-    relationNote: final class와 final method 규칙 확인
+    relationNote: final 클래스와 final 메서드 규칙 확인
 ---
 # final과 불변 객체는 같은 말이 아니다
 
@@ -71,7 +71,7 @@ final names ─────> ArrayList
 
 ### 불변성은 객체의 설계 문제다
 
-**불변 객체(immutable object)** 는 생성된 뒤 외부에서 관찰할 수 있는 상태가 바뀌지 않도록 설계된 객체입니다. 단순히 필드에 `final`을 붙이는 것만으로 충분하지 않을 수 있습니다.
+**불변 객체(immutable object)**는 생성된 뒤 외부에서 관찰할 수 있는 상태가 바뀌지 않도록 설계된 객체입니다. 단순히 필드에 `final`을 붙이는 것만으로 충분하지 않을 수 있습니다.
 
 ```java
 final class MemberNames {
@@ -101,10 +101,10 @@ class Parent {
 final class Utility {}
 ```
 
-`final` 인스턴스 메서드는 하위 클래스에서 override할 수 없게 합니다. `final` 클래스는 다른 클래스가 그 클래스를 상속하지 못하게 합니다. 따라서 변수의 `final`, 메서드의 `final`, 클래스의 `final`을 모두 “값을 못 바꾼다”로 묶어 설명하면 정확하지 않습니다.
+`final` 인스턴스 메서드는 하위 클래스에서 **재정의(override)**할 수 없게 합니다. `final` 클래스는 다른 클래스가 그 클래스를 상속하지 못하게 합니다. 따라서 변수의 `final`, 메서드의 `final`, 클래스의 `final`을 모두 “값을 못 바꾼다”로 묶어 설명하면 정확하지 않습니다.
 
 ### 실무에서 final을 쓰는 이유
 
 재대입할 이유가 없는 필드나 지역 변수에 `final`을 사용하면 객체가 어떤 의존성이나 값을 계속 유지해야 하는지 의도가 분명해집니다. 특히 생성자에서 주입받은 협력 객체를 `final` 필드에 두면 생성 이후 다른 객체로 바뀌지 않는다는 사실을 코드에서 확인하기 쉽습니다.
 
-하지만 동시성 안전성이나 객체 불변성까지 `final` 하나로 해결된다고 생각해서는 안 됩니다. `final` 필드의 동시성 관련 특별한 의미는 Java Memory Model 주제에서 별도로 다룹니다.
+하지만 동시성 안전성이나 객체 불변성까지 `final` 하나로 해결된다고 생각해서는 안 됩니다. `final` 필드의 동시성 관련 특별한 의미는 **Java 메모리 모델(Java Memory Model, JMM)** 주제에서 별도로 다룹니다.

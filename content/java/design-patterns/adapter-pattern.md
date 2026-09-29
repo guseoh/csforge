@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.design-patterns.adapter-pattern
 topicContentKey: java.core.design-patterns
 slug: adapter-pattern
-title: "Adapter로 외부 인터페이스와 경계 분리하기"
+title: "어댑터(Adapter)로 외부 인터페이스와 경계 분리하기"
 summary: "호환되지 않는 외부 API를 내부 계약으로 번역하면서 타입·단위·예외를 경계에 모으고, Adapter가 business policy까지 삼키지 않도록 책임을 구분한다"
 level: 2
 status: PUBLISHED
@@ -22,7 +22,7 @@ references:
     displayOrder: 2
     relationNote: 단위 변환 과정의 overflow를 안전하게 검사하는 exact arithmetic API 참고
 ---
-# Adapter로 외부 인터페이스와 경계 분리하기
+# 어댑터(Adapter)로 외부 인터페이스와 경계 분리하기
 
 외부 SDK나 오래된 모듈이 제공하는 API가 애플리케이션이 원하는 계약과 다를 수 있습니다. 호출 코드마다 외부 타입과 변환 규칙을 직접 알게 되면 외부 기술의 세부가 애플리케이션 전체로 퍼집니다.
 
@@ -62,15 +62,15 @@ final class VendorPaymentAdapter implements PaymentGateway {
 ```
 
 ```text
-Application
+애플리케이션
 Money / PaymentResult / PaymentGateway
         │
         ▼
-Adapter
+어댑터(Adapter)
 타입 · 단위 · 예외 번역
         │
         ▼
-Vendor SDK
+벤더 SDK
 ```
 
 ### Adapter는 메서드 이름만 바꾸는 wrapper가 아니다
@@ -81,7 +81,7 @@ Vendor SDK
 내부 의미          외부 표현
 Money              cents 정수
 PaymentId          vendor 문자열 ID
-PaymentDeclined    vendor error code
+PaymentDeclined    공급자 오류 코드
 Instant            epoch milliseconds
 ```
 

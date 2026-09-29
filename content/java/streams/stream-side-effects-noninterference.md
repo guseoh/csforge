@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.streams.stream-side-effects-noninterference
 topicContentKey: java.core.streams
 slug: stream-side-effects-noninterference
-title: "Stream의 부수효과와 non-interference"
+title: "Stream의 부수 효과와 간섭 금지(non-interference)"
 summary: "pipeline이 처리하는 source를 방해하거나 외부 공유 상태를 변경하면 결과 추론과 병렬 안전성이 어려워지는 이유를 이해한다"
 level: 2
 status: PUBLISHED
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: non-interference, stateless behavior 관련 공식 설명 확인
 ---
-# Stream의 부수효과와 non-interference
+# Stream의 부수 효과와 간섭 금지(non-interference)
 
 Stream pipeline의 lambda에서 외부 상태를 마음대로 바꿀 수는 있지만, 그렇게 하면 **입력과 출력만 보고 pipeline 결과를 이해하기 어려워집니다.** 특히 처리 중인 source 자체를 수정하거나 여러 실행 흐름이 같은 가변 상태를 변경하면 결과가 불안정해질 수 있습니다.
 
@@ -57,7 +57,7 @@ List<Integer> result = values.stream()
 
 로그 출력, metrics 기록처럼 결과 외의 동작이 실제 요구일 수 있습니다. `forEach` 자체도 부수효과를 수행하기 위한 terminal operation입니다.
 
-핵심은 “Stream에서는 side effect 금지”라는 절대 규칙이 아니라 **그 부수효과가 결과의 정확성, source 안정성, 병렬 실행 가능성에 영향을 주는가**를 판단하는 것입니다.
+핵심은 “Stream에서는 부수 효과를 금지한다”는 절대 규칙이 아니라 **그 부수 효과가 결과의 정확성, 입력 원본의 안정성, 병렬 실행 가능성에 영향을 주는지** 판단하는 것입니다.
 
 ### stateful lambda도 결과를 어렵게 만든다
 

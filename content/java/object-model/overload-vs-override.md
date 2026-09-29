@@ -4,7 +4,7 @@ contentKey: java.core.object-model.overload-vs-override
 topicContentKey: java.core.object-model
 slug: overload-vs-override
 title: "오버로딩과 오버라이딩"
-summary: "컴파일 시점의 overload 선택과 실행 시점의 override된 인스턴스 메서드 선택을 구분해 호출 결과를 예측한다"
+summary: "컴파일 시점의 오버로딩 선택과 실행 시점의 재정의된 인스턴스 메서드 선택을 구분해 호출 결과를 예측한다"
 level: 2
 status: PUBLISHED
 displayOrder: 90
@@ -14,13 +14,13 @@ references:
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
-    relationNote: overload resolution과 method invocation 규칙 확인
+    relationNote: 오버로드 해석과 메서드 호출 규칙 확인
   - url: "https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html#jls-8.4.8"
     title: "JLS 8.4.8 Inheritance, Overriding, and Hiding"
     referenceType: OFFICIAL
     language: en
     displayOrder: 2
-    relationNote: override 규칙 확인
+    relationNote: 오버라이딩 규칙 확인
 ---
 # 오버로딩과 오버라이딩
 
@@ -38,14 +38,14 @@ void print(String value) {
 }
 ```
 
-호출할 때 컴파일러는 인자 표현식의 타입과 적용 가능한 메서드 후보를 보고 어떤 overload를 사용할지 정합니다.
+호출할 때 컴파일러는 인자 표현식의 타입과 적용 가능한 메서드 후보를 보고 어떤 오버로드를 사용할지 정합니다.
 
 ```java
 Object value = "hello";
-print(value); // Object overload
+print(value); // Object 오버로드
 ```
 
-실제 객체가 `String`이어도 변수 표현식의 컴파일 시점 타입이 `Object`라면 overload 선택에서는 그 타입 정보가 중요합니다.
+실제 객체가 `String`이어도 변수 표현식의 컴파일 시점 타입이 `Object`라면 오버로드 선택에서는 그 타입 정보가 중요합니다.
 
 ### 오버라이딩은 선택된 인스턴스 메서드의 실제 구현을 고른다
 
@@ -67,7 +67,7 @@ Parent p = new Child();
 p.print("hello"); // child
 ```
 
-먼저 `print(Object)`라는 메서드 호출이 정해지고, 실행할 때 실제 객체가 `Child`이므로 override된 `Child.print(Object)`가 선택됩니다.
+먼저 `print(Object)`라는 메서드 호출이 정해지고, 실행할 때 실제 객체가 `Child`이므로 재정의된 `Child.print(Object)`가 선택됩니다.
 
 ### 둘이 섞이면 두 단계로 풀어야 한다
 
@@ -89,12 +89,12 @@ target.call(value);
 
 이 문제를 한 번에 보지 말고 나눕니다.
 
-1. 컴파일 시점: `target`은 `Parent`, `value`는 `Object`이므로 `call(Object)` overload가 선택됩니다.
-2. 실행 시점: 실제 객체는 `Child`이고 `call(Object)`를 override했으므로 `Child.call(Object)`가 실행됩니다.
+1. 컴파일 시점: `target`은 `Parent`, `value`는 `Object`이므로 `call(Object)` 오버로드가 선택됩니다.
+2. 실행 시점: 실제 객체는 `Child`이고 `call(Object)`를 재정의했으므로 `Child.call(Object)`가 실행됩니다.
 
 결과는 `C-Object`입니다.
 
-### 반환 타입만 바꿔서는 overload할 수 없다
+### 반환 타입만 바꿔서는 오버로드할 수 없다
 
 ```java
 // int find() {}
@@ -107,4 +107,4 @@ target.call(value);
 
 오버로딩은 같은 이름의 여러 메서드 중 어떤 메서드 서명을 호출할지 컴파일 시점에 결정하는 과정이고, 오버라이딩은 상속 관계에서 같은 인스턴스 메서드의 하위 구현을 제공하며 실제 객체 타입에 따라 실행 시점에 선택되는 것이라고 설명하면 됩니다.
 
-문제에서는 항상 **먼저 overload resolution, 그다음 override dispatch** 순서로 추적하면 좋습니다.
+문제에서는 항상 **먼저 오버로드 해석(overload resolution), 다음으로 재정의 메서드 선택(override dispatch)** 순서로 추적하면 좋습니다.

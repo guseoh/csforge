@@ -35,7 +35,7 @@ ScopedValue.where(REQUEST_ID, "req-42").run(() -> {
 `handleRequest()`와 그 아래에서 같은 thread로 직접 이어지는 호출은 `REQUEST_ID.get()`으로 현재 binding을 읽을 수 있습니다.
 
 ```text
-current thread
+현재 스레드
     │
     ├─ bind REQUEST_ID=req-42
     │      │
@@ -91,7 +91,7 @@ ScopedValue.where(REQUEST_ID, "req-42").run(() -> {
 ```
 
 ```text
-owner thread: REQUEST_ID=req-42
+소유 스레드: REQUEST_ID=req-42
        │
        └─ StructuredTaskScope
              ├─ subtask A -> binding inherited
@@ -100,7 +100,7 @@ owner thread: REQUEST_ID=req-42
 
 이것은 "ScopedValue는 비동기 작업에 자동 전파된다"는 뜻이 아니라 **StructuredTaskScope가 제공하는 inheritance 계약**입니다. Java 25에서 `ScopedValue`는 정식 API이고 `StructuredTaskScope`는 preview라는 API 상태도 구분해야 합니다.
 
-### binding이 읽기 중심이어도 value object 자체는 mutable할 수 있다
+### 바인딩이 읽기 중심이어도 값 객체 자체는 변경 가능할 수 있다
 
 ```java
 record RequestContext(List<String> permissions) { }
@@ -126,4 +126,4 @@ ScopedValue
 
 따라서 request context처럼 바깥에서 정하고 안쪽에서는 읽기만 하는 값에 ScopedValue가 잘 맞습니다. 반대로 같은 thread 안에서 계속 갱신해야 하는 상태라면 ThreadLocal이나 더 명시적인 객체 전달이 맞을 수 있습니다.
 
-ScopedValue 코드를 읽을 때는 **binding이 시작·종료되는 dynamic scope, 실행 thread가 바뀌는 경계, thread 간 inheritance를 제공하는 API가 실제로 있는지, 바인딩한 object 자체가 mutable한지**를 차례로 확인하세요. 핵심은 전역 context 저장소가 아니라 bounded one-way context transmission입니다.
+ScopedValue 코드를 읽을 때는 **바인딩이 시작·종료되는 동적 범위(dynamic scope), 실행 스레드가 바뀌는 경계, 스레드 간 상속을 제공하는 API가 실제로 있는지, 바인딩한 객체 자체가 변경 가능한지**를 차례로 확인하세요. 핵심은 전역 문맥 저장소가 아니라 범위가 정해진 단방향 문맥 전달입니다.

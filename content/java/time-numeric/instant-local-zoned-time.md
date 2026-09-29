@@ -46,7 +46,7 @@ Instant createdAt = Instant.parse("2026-08-31T05:00:00Z");
 
 ```text
 2026-08-31T05:00:00Z
-        │ same instant
+        │ 같은 Instant
         ├─ Asia/Seoul       -> 지역 시각 A
         └─ America/New_York -> 지역 시각 B
 ```

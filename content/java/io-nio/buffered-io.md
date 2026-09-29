@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.io-nio.buffered-io
 topicContentKey: java.core.io-nio
 slug: buffered-io
-title: "Buffered I/O와 버퍼링"
+title: "버퍼링 I/O와 버퍼의 역할"
 summary: "작은 I/O 요청을 buffer에 모으는 이유와 flush·close가 각각 무엇을 의미하는지 이해한다"
 level: 1
 status: PUBLISHED
@@ -22,22 +22,22 @@ references:
     displayOrder: 2
     relationNote: character output buffer·flush·close 계약 확인
 ---
-# Buffered I/O와 버퍼링
+# 버퍼링 I/O와 버퍼의 역할
 
 파일에 문자 한 개를 쓸 때마다 실제 하위 I/O 작업을 수행한다고 생각해 보겠습니다. 작은 작업이 매우 많이 반복되면 애플리케이션과 하위 I/O 계층 사이의 호출 횟수가 커집니다. **Buffering은 작은 읽기·쓰기를 메모리의 임시 공간에 모아 더 큰 단위로 처리하기 위한 방법**입니다.
 
 ### buffer는 애플리케이션과 실제 I/O 사이에 놓인다
 
 ```text
-application
+애플리케이션
    │ write("A")
    │ write("B")
    │ write("C")
    ▼
-buffer
+버퍼
    │ 여러 값을 모음
    ▼
-underlying I/O
+하위 입출력 계층
 ```
 
 출력 buffer는 작은 write 요청을 잠시 모았다가 buffer가 차거나 flush/close 같은 시점에 다음 계층으로 전달할 수 있습니다. 입력 buffer는 하위 계층에서 비교적 큰 단위로 읽어 둔 뒤 애플리케이션의 작은 read 요청에 그 데이터를 제공합니다.
@@ -102,7 +102,7 @@ Buffering이 I/O 호출 수를 줄일 수 있다고 해서 buffer를 크게 만�
 
 ### 문제를 풀 때 확인할 것
 
-1. buffer가 input 쪽인지 output 쪽인지 확인합니다.
+1. 버퍼가 입력 쪽인지 출력 쪽인지 확인합니다.
 2. 실제 하위 I/O와 애플리케이션 호출 사이에 어떤 데이터가 모이는지 봅니다.
 3. `flush()` 시점과 `close()` 시점을 구분합니다.
 4. 중간 결과를 즉시 보여 줘야 하는 요구가 있는지 확인합니다.

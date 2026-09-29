@@ -3,8 +3,8 @@ kind: concept
 contentKey: java.core.jvm-runtime.jvm-runtime-data-areas-frames
 topicContentKey: java.core.jvm-runtime
 slug: jvm-runtime-data-areas-frames
-title: "JVM Runtime Data Area와 Frame"
-summary: "JVM stack·frame·local variable array·operand stack·heap·method area를 JVMS의 추상 실행 영역으로 이해하고 source 변수와 물리 메모리를 단순 대응시키지 않는다"
+title: "JVM 런타임 데이터 영역(Runtime Data Area)과 프레임(Frame)"
+summary: "JVM 스택·프레임·지역 변수 배열·피연산자 스택·힙·메서드 영역을 JVMS가 정의하는 추상 실행 모델로 이해하고 소스 변수와 물리 메모리를 단순 대응시키지 않는다"
 level: 3
 status: PUBLISHED
 displayOrder: 50
@@ -22,32 +22,32 @@ references:
     displayOrder: 2
     relationNote: Java 객체와 참조가 runtime memory model에서 어떻게 연결되는지 보충
 ---
-# JVM Runtime Data Area와 Frame
+# JVM 런타임 데이터 영역(Runtime Data Area)과 프레임(Frame)
 
-"지역 변수는 stack, 객체는 heap"이라는 설명은 입문용 방향으로는 도움이 되지만 물리 메모리 배치 규칙으로 받아들이면 부정확해집니다. JVMS는 실행 중 필요한 구조를 **runtime data area라는 추상 모델**로 정의하고, 실제 HotSpot의 배치와 최적화는 구현에 맡깁니다.
+"지역 변수는 스택, 객체는 힙에 있다"는 설명은 입문 단계의 방향을 잡는 데 도움이 되지만, 이를 물리 메모리 배치 규칙으로 받아들이면 부정확합니다. JVMS는 실행에 필요한 구조를 **런타임 데이터 영역이라는 추상 모델**로 정의하며, HotSpot에서 실제로 배치하고 최적화하는 방식은 구현에 맡깁니다.
 
-![JVM Runtime Data Area의 thread별 stack과 공유 영역](/learning/java/jvm-runtime-data-areas.svg)
+![JVM 런타임 데이터 영역: 스레드별 스택과 공유 영역](/learning/java/jvm-runtime-data-areas.svg)
 
-### 각 thread에는 JVM stack이 있고 호출마다 frame이 생긴다
+### 각 스레드에는 JVM 스택이 있고 메서드 호출마다 프레임이 생긴다
 
-Method invocation마다 현재 thread의 JVM stack에 frame이 만들어집니다.
+메서드를 호출할 때마다 현재 스레드의 JVM 스택에 프레임이 만들어집니다.
 
 ```text
-Thread A JVM Stack
+스레드 A의 JVM 스택
 ┌─────────────────────┐
-│ frame: method C     │ <- 현재 실행
+│ 프레임: 메서드 C     │ <- 현재 실행
 ├─────────────────────┤
-│ frame: method B     │
+│ 프레임: 메서드 B     │
 ├─────────────────────┤
-│ frame: method A     │
+│ 프레임: 메서드 A     │
 └─────────────────────┘
 ```
 
-C가 정상 또는 비정상 종료되면 C의 frame은 현재 invocation에서 더 이상 사용되지 않고 caller인 B의 실행으로 돌아갑니다. 재귀 호출은 같은 method에 대한 frame이 여러 개 중첩되는 구조로 이해할 수 있습니다.
+C가 정상적으로 끝나거나 예외로 종료되면 해당 프레임은 호출에서 빠지고, 호출자인 B의 실행으로 돌아갑니다. 재귀 호출에서는 같은 메서드에 대한 프레임이 여러 개 쌓일 수 있습니다.
 
-### Frame의 핵심은 local variable array와 operand stack이다
+### 프레임에는 지역 변수 배열과 피연산자 스택이 있다
 
-JVMS frame에는 현재 method 실행에 필요한 local variable array와 operand stack 등이 있습니다.
+JVMS의 프레임에는 현재 메서드 실행에 필요한 지역 변수 배열과 피연산자 스택 등이 있습니다.
 
 ```java
 int c = a + b;
@@ -56,57 +56,57 @@ int c = a + b;
 개념적인 bytecode 실행은 다음처럼 볼 수 있습니다.
 
 ```text
-local variable array에서 a load
-local variable array에서 b load
+지역 변수 배열에서 a를 읽음
+지역 변수 배열에서 b를 읽음
         │
         ▼
-operand stack [a][b]
-        │ add
+피연산자 스택 [a][b]
+        │ 더하기
         ▼
         [c]
-        │ store
+        │ 저장
         ▼
-local variable array에 c
+지역 변수 배열에 c를 저장
 ```
 
-Source variable 이름과 JVM slot이 항상 1:1로 남아 있는 것은 아니며 debug metadata가 없거나 JIT 최적화가 적용되면 source 수준 정보와 실제 실행 표현은 더 달라질 수 있습니다.
+소스 변수 이름과 JVM 슬롯이 항상 일대일로 남아 있는 것은 아닙니다. 디버그 정보가 없거나 JIT 최적화가 적용되면 소스 수준의 정보와 실제 실행 표현이 더 달라질 수 있습니다.
 
-### JVM stack은 thread별이고 heap·method area는 공유 영역이다
+### JVM 스택은 스레드별이고 힙과 메서드 영역은 공유된다
 
-JVMS 추상 모델에서 JVM stack은 thread마다 private하게 생성됩니다. 반면 heap과 method area는 JVM의 모든 thread가 공유합니다.
+JVMS의 추상 모델에서 JVM 스택은 스레드마다 별도로 생성됩니다. 반면 힙과 메서드 영역은 JVM의 모든 스레드가 공유합니다.
 
 ```text
-Thread A -> JVM Stack A ┐
-Thread B -> JVM Stack B ├── references ──▶ Heap objects
-Thread C -> JVM Stack C ┘
+스레드 A -> JVM 스택 A ┐
+스레드 B -> JVM 스택 B ├── 참조 ──▶ 힙 객체
+스레드 C -> JVM 스택 C ┘
 
-                    └── shared Method Area
+                    └── 공유 메서드 영역
 ```
 
-Heap은 class instance와 array가 할당되는 논리적 영역이고 GC의 automatic storage management 대상입니다. Method area에는 class 수준 구조와 runtime constant pool 등이 연결됩니다.
+힙은 클래스 인스턴스와 배열이 할당되는 논리적 영역이며 GC의 자동 메모리 관리 대상입니다. 메서드 영역에는 클래스 수준 구조와 런타임 상수 풀 등이 포함됩니다.
 
-### Method area와 HotSpot Metaspace는 같은 specification 용어가 아니다
+### JVMS의 메서드 영역과 HotSpot의 Metaspace는 다른 개념이다
 
-JVMS의 **method area**는 논리적 runtime 영역입니다. HotSpot의 **Metaspace**는 class metadata를 native memory에서 관리하는 구체 구현입니다.
+JVMS의 **메서드 영역(method area)**은 논리적인 런타임 영역입니다. HotSpot의 **Metaspace**는 클래스 메타데이터를 네이티브 메모리에서 관리하는 구체적인 구현입니다.
 
 ```text
-JVMS contract
-Method Area
+JVMS 명세
+메서드 영역
 
-HotSpot implementation
-Metaspace 등으로 class metadata 관리
+HotSpot 구현
+Metaspace 등에서 클래스 메타데이터 관리
 ```
 
-따라서 `method area = metaspace`라고 완전히 같은 개념처럼 말하면 specification과 구현을 섞게 됩니다.
+따라서 `method area = metaspace`라고 두 용어를 같은 개념처럼 쓰면 명세와 구현을 혼동하게 됩니다.
 
-### 객체가 heap에 있다는 의미와 실제 allocation 최적화도 구분한다
+### 힙에 객체를 둔다는 추상 모델과 실제 할당 최적화를 구분한다
 
-JVMS는 객체와 배열을 heap에서 관리하는 추상 모델을 제공합니다. 하지만 JVM implementation은 observable behavior를 보존하면서 escape analysis나 scalar replacement 같은 최적화를 적용할 수 있습니다.
+JVMS는 객체와 배열을 힙에서 관리하는 추상 모델을 정의합니다. JVM 구현은 관찰 가능한 동작을 보존하면서 escape analysis나 scalar replacement 같은 최적화를 적용할 수 있습니다.
 
-Source에 `new Point()`가 보인다고 해서 성능 분석에서 "실제 독립 heap object가 반드시 하나 할당됐다"고 바로 결론내리면 안 됩니다.
+소스에 `new Point()`가 보인다는 이유만으로 성능 분석에서 "독립된 힙 객체가 반드시 하나 할당됐다"고 결론 내리면 안 됩니다.
 
-### 오류 이름도 실제 부족한 runtime resource를 기준으로 읽는다
+### 오류 이름은 실제로 부족한 런타임 자원을 기준으로 해석한다
 
-깊은 재귀는 frame이 계속 쌓이며 `StackOverflowError`로 이어질 수 있습니다. 반면 `OutOfMemoryError`는 Java heap만의 오류 이름이 아닙니다. Heap, class metadata, native thread/resource 등 서로 다른 부족 상황에서 원인이 달라질 수 있습니다.
+재귀 호출이 깊어지면 프레임이 계속 쌓여 `StackOverflowError`가 발생할 수 있습니다. 반면 `OutOfMemoryError`가 항상 Java 힙 부족을 뜻하는 것은 아닙니다. 힙, 클래스 메타데이터, 네이티브 메모리, 스레드 자원 등 실제로 부족한 곳에 따라 원인이 달라집니다.
 
-JVM 메모리 문제를 볼 때는 source 변수 종류를 특정 물리 주소에 일대일 대응하지 말고, **JVMS의 추상 영역 → 현재 JVM 구현 → 실제 진단 evidence** 순서로 확인하세요. 이 층위를 지키는 것이 JVM memory model 학습의 핵심입니다.
+JVM 메모리 문제를 볼 때는 소스 변수의 종류를 특정 물리 주소와 일대일로 대응시키지 말고, **JVMS의 추상 영역 → 현재 JVM 구현 → 실제 진단 근거** 순서로 확인하세요. 이 층위를 지키는 것이 JVM 메모리 모델을 이해하는 핵심입니다.

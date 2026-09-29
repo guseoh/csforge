@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.exceptions-resources.throwable-checked-unchecked-error
 topicContentKey: java.core.exceptions-resources
 slug: throwable-checked-unchecked-error
-title: "Throwable, checked exception, unchecked exception과 Error"
+title: "`Throwable`, 검사 예외(checked exception)·비검사 예외(unchecked exception)·`Error`"
 summary: "Java 예외 계층을 컴파일러 검사 관점에서 구분하고 checked와 unchecked를 단순한 좋고 나쁨으로 판단하지 않는다"
 level: 1
 status: PUBLISHED
@@ -22,7 +22,7 @@ references:
     displayOrder: 2
     relationNote: Throwable 계층의 기본 계약 확인
 ---
-# Throwable, checked exception, unchecked exception과 Error
+# `Throwable`, 검사 예외(checked exception)·비검사 예외(unchecked exception)·`Error`
 
 Java의 예외 계층을 볼 때 가장 먼저 구분할 것은 **컴파일러가 호출자에게 처리나 선언을 강제하는가**입니다. 심각도를 나누는 표가 아니라 언어 수준의 예외 처리 계약으로 이해해야 합니다.
 
@@ -38,7 +38,7 @@ Throwable
    └─ 그 밖의 여러 checked exception
 ```
 
-`Exception`의 하위 타입 중 `RuntimeException` 계열이 아닌 checked exception은 메서드 밖으로 전파될 수 있다면 `catch`하거나 `throws`로 선언해야 합니다.
+정확히는 `Throwable`의 하위 타입 가운데 `RuntimeException`이나 `Error`의 하위 타입이 아닌 것이 checked exception입니다. 보통 `Exception`의 하위 타입이 여기에 해당하지만, 직접 `Throwable`을 상속한 타입도 checked exception이 될 수 있습니다. 메서드 밖으로 전파된다면 `catch`하거나 `throws`로 선언해야 합니다.
 
 ```java
 void load() throws IOException {

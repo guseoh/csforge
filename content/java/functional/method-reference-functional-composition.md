@@ -24,7 +24,7 @@ references:
 ---
 # 메서드 참조와 함수 조합
 
-lambda가 단순히 이미 존재하는 메서드를 호출하기만 한다면 **메서드 참조(method reference)** 로 더 간결하게 표현할 수 있습니다.
+람다식이 이미 존재하는 메서드를 호출하기만 한다면 **메서드 참조(method reference)** 로 더 간결하게 표현할 수 있습니다.
 
 ```java
 names.stream()

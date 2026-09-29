@@ -51,10 +51,10 @@ Spring의 transaction-bound connection이나 container가 관리하는 stream처
 코드 <─ close ──┘
 
 빌린 자원
-owner ── open ──> resource
+소유자 ── open ──> 자원(resource)
              ▲
              └─ borrower는 사용만
-owner <─ close ──┘
+소유자 <─ close ──┘
 ```
 
 ### 반환값으로 자원을 넘기면 책임도 함께 넘긴다

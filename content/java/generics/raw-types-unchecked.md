@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.generics.raw-types-unchecked
 topicContentKey: java.core.generics
 slug: raw-types-unchecked
-title: "Raw type과 unchecked 경고"
+title: "로 타입(raw type)과 비검사 경고(unchecked warning)"
 summary: "제네릭 타입 정보를 생략하면 컴파일 시점 타입 안전성을 잃고 unchecked 경고가 런타임 오류 가능성을 알리는 이유를 이해한다"
 level: 2
 status: PUBLISHED
@@ -22,7 +22,7 @@ references:
     displayOrder: 2
     relationNote: unchecked conversion 규칙 확인
 ---
-# Raw type과 unchecked 경고
+# 로 타입(raw type)과 비검사 경고(unchecked warning)
 
 제네릭 클래스에서 타입 인자를 생략한 형태를 **raw type**이라고 합니다.
 

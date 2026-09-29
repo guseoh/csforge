@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.design-patterns.template-method-pattern
 topicContentKey: java.core.design-patterns
 slug: template-method-pattern
-title: "Template Method 패턴과 공통 실행 흐름"
+title: "템플릿 메서드(Template Method) 패턴과 공통 실행 흐름"
 summary: "공통 알고리즘의 순서와 변형 지점을 상위 타입에 명시하고, hook·예외·자원 정리·상속 결합·독립 변동 축의 조합 폭증까지 고려해 적용 여부를 판단한다"
 level: 2
 status: PUBLISHED
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: 메서드 override의 언어 규칙 확인
 ---
-# Template Method 패턴과 공통 실행 흐름
+# 템플릿 메서드(Template Method) 패턴과 공통 실행 흐름
 
 여러 작업이 **전체 처리 순서는 같고 일부 단계만 다를 때** 각 구현이 전체 흐름을 복사하면 순서 규칙까지 중복될 수 있습니다.
 

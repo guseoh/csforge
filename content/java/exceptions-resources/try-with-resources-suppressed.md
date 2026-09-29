@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.exceptions-resources.try-with-resources-suppressed
 topicContentKey: java.core.exceptions-resources
 slug: try-with-resources-suppressed
-title: "try-with-resources와 suppressed exception"
+title: "try-with-resources와 억제 예외(suppressed exception)"
 summary: "자동 자원 정리 순서와 본문 예외와 close 예외가 동시에 발생할 때 suppressed로 원인을 보존하는 방식을 이해한다"
 level: 2
 status: PUBLISHED
@@ -28,7 +28,7 @@ references:
     displayOrder: 3
     relationNote: try-with-resources와 JDK 7 자원 관리 문법을 한국어 사례로 보충
 ---
-# try-with-resources와 suppressed exception
+# try-with-resources와 억제 예외(suppressed exception)
 
 파일, stream, JDBC connection처럼 사용 후 정리가 필요한 자원은 정상 종료뿐 아니라 **중간에 예외가 발생해도 닫혀야 합니다.** `try-with-resources`는 `AutoCloseable` 자원의 수명을 언어 구조 안에 넣어 이런 정리 경로를 관리합니다.
 
@@ -54,15 +54,15 @@ try (
 종료 시에는 `second`가 먼저, `first`가 나중에 닫힙니다.
 
 ```text
-open first
+first 열기
    ↓
-open second
+second 열기
    ↓
 use
    ↓
-close second
+second 닫기
    ↓
-close first
+first 닫기
 ```
 
 두 번째 자원을 여는 도중 실패해도 이미 성공적으로 초기화된 첫 번째 자원은 정리 대상이 됩니다. 따라서 "try 본문까지 들어가야만 close된다"고 이해하면 부족합니다.
@@ -79,7 +79,7 @@ try (Resource r = open()) {
 
 ```text
 WorkException        ← 주 예외
-└─ suppressed
+└─ 억제된 예외(suppressed exception)
    └─ CloseException ← 정리 중 예외
 ```
 

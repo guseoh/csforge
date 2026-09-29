@@ -41,13 +41,13 @@ try (InputStream input = Files.newInputStream(path)) {
 이미지, 압축 파일, 암호화된 payload처럼 byte 자체의 값이 중요한 데이터는 중간에 문자로 바꾸지 않고 byte로 처리해야 합니다.
 
 ```text
-binary file
+바이너리 파일
     │
     ▼
 InputStream
     │ bytes
     ▼
-application
+애플리케이션
 ```
 
 binary data를 임의의 charset으로 문자열로 바꿨다가 다시 byte로 만드는 과정은 원래 데이터를 보존하지 못할 수 있습니다.
@@ -72,7 +72,7 @@ byte stream과 character stream 사이에는 charset 변환이 들어갑니다.
 ```text
 InputStream(bytes)
        │
-       │ charset decoding
+       │ 문자셋 디코딩
        ▼
 Reader(characters)
 ```

@@ -66,7 +66,7 @@ Member found = membersById.get(1L);
 
 `Map`은 key와 value의 대응 관계를 표현합니다. key는 중복될 수 없고 같은 key로 다시 `put`하면 기존 mapping의 value가 교체될 수 있습니다.
 
-`Map`은 `Collection`의 하위 인터페이스가 아니라 별도의 key-value 추상화입니다. 따라서 단순한 "값의 모음"이 아니라 key, value, entry라는 세 관점으로 사용할 수 있습니다.
+`Map`은 `Collection`의 하위 인터페이스가 아니라 별도의 키-값 추상화입니다. 따라서 단순한 "값의 모음"이 아니라 키, 값, 엔트리라는 세 관점으로 사용할 수 있습니다.
 
 ### Map의 collection view는 원본과 연결될 수 있다
 

@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.modern-language.pattern-matching
 topicContentKey: java.core.modern-language
 slug: pattern-matching
-title: "Pattern Matching으로 타입 분기하기"
+title: "패턴 매칭으로 타입 분기하기"
 summary: "타입 검사와 값 추출을 함께 표현하고 pattern variable의 사용 범위와 switch 분기 규칙을 이해한다"
 level: 2
 status: PUBLISHED
@@ -22,7 +22,7 @@ references:
     displayOrder: 2
     relationNote: instanceof pattern의 조건 평가와 pattern variable 확인
 ---
-# Pattern Matching으로 타입 분기하기
+# 패턴 매칭으로 타입 분기하기
 
 객체가 특정 타입인지 검사한 뒤 다시 cast하는 코드는 같은 사실을 두 번 표현합니다.
 

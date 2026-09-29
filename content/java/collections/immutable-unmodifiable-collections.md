@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.collections.immutable-unmodifiable-collections
 topicContentKey: java.core.collections
 slug: immutable-unmodifiable-collections
-title: "변경 불가 컬렉션과 unmodifiable view"
+title: "변경 불가 컬렉션과 수정 불가 뷰"
 summary: "List.of·copyOf처럼 수정할 수 없는 컬렉션과 원본을 감싼 unmodifiable view의 변경 전파·소유권 차이를 구분한다"
 level: 2
 status: PUBLISHED
@@ -28,7 +28,7 @@ references:
     displayOrder: 3
     relationNote: backing list view 계약 확인
 ---
-# 변경 불가 컬렉션과 unmodifiable view
+# 변경 불가 컬렉션과 수정 불가 뷰
 
 컬렉션을 “수정할 수 없다”는 결과만 보고 모두 같은 구조라고 생각하면 소유권 문제를 놓칠 수 있습니다. 특히 `List.copyOf`와 `Collections.unmodifiableList`는 둘 다 호출자가 `add`하지 못하게 만들 수 있지만 **원본과의 관계가 다릅니다.**
 
@@ -71,7 +71,7 @@ List<String> snapshot = List.copyOf(source);
 source.add("C");
 ```
 
-일반적으로 `snapshot`은 이후 source 변경을 따라가는 view가 아니라 입력 원소를 기반으로 한 변경 불가 List입니다. 다만 입력이 이미 적절한 unmodifiable List라면 API가 같은 인스턴스를 재사용할 수 있으므로 **반드시 새 객체를 만든다**고 말하면 안 됩니다.
+일반적으로 `snapshot`은 이후 입력 `List`의 변경을 따라가는 뷰가 아니라 입력 원소를 바탕으로 한 변경 불가 `List`입니다. 다만 입력이 이미 적절한 변경 불가 `List`라면 API가 같은 인스턴스를 재사용할 수 있으므로 **반드시 새 객체를 만든다**고 말하면 안 됩니다.
 
 또 `List.copyOf`는 원소 객체 자체를 깊게 복사하지 않습니다.
 

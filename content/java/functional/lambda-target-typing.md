@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.functional.lambda-target-typing
 topicContentKey: java.core.functional
 slug: lambda-target-typing
-title: "Lambda의 target type"
+title: "람다의 대상 타입(target type)"
 summary: "lambda 표현식의 매개변수와 반환 의미가 주변 함수형 인터페이스 문맥에서 결정되는 target typing을 이해한다"
 level: 2
 status: PUBLISHED
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: lambda와 target typing 규칙 확인
 ---
-# Lambda의 target type
+# 람다의 대상 타입(target type)
 
 다음 lambda만 따로 보면 `x`가 어떤 타입이고 전체 표현식이 어떤 Java 타입인지 알 수 없습니다.
 

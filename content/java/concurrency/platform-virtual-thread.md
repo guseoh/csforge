@@ -3,8 +3,8 @@ kind: concept
 contentKey: java.core.concurrency.platform-virtual-thread
 topicContentKey: java.core.concurrency
 slug: platform-virtual-thread
-title: "Platform Thread와 Virtual Thread"
-summary: "platform thread와 virtual thread의 자원 모델을 구분하고 I/O 중심 백엔드에서 virtual thread가 유리한 이유를 이해한다"
+title: "플랫폼 스레드(Platform Thread)와 가상 스레드(Virtual Thread)"
+summary: "플랫폼 스레드와 가상 스레드의 자원 모델을 구분하고 I/O 중심 백엔드에서 가상 스레드가 유리한 이유를 이해한다"
 level: 2
 status: PUBLISHED
 displayOrder: 30
@@ -28,7 +28,7 @@ references:
     displayOrder: 3
     relationNote: Java thread와 Executor를 운영 관점에서 연결해 이해
 ---
-# Platform Thread와 Virtual Thread
+# 플랫폼 스레드(Platform Thread)와 가상 스레드(Virtual Thread)
 
 Platform thread와 virtual thread는 둘 다 `java.lang.Thread`이지만 **실행을 뒷받침하는 자원 모델과 scheduling 방식이 다릅니다.** 이 차이 때문에 virtual thread는 특히 blocking I/O가 많은 서버에서 많은 동시 작업을 thread-per-task 스타일로 표현하기 좋습니다.
 
@@ -39,12 +39,12 @@ Platform thread와 virtual thread는 둘 다 `java.lang.Thread`이지만 **실�
 Java 25 문서는 platform thread를 일반적으로 OS kernel thread와 1:1로 연결되는 thread로 설명합니다.
 
 ```text
-Java platform thread A ── OS thread A
-Java platform thread B ── OS thread B
-Java platform thread C ── OS thread C
+Java 플랫폼 스레드 A ── OS 스레드 A
+Java 플랫폼 스레드 B ── OS 스레드 B
+Java 플랫폼 스레드 C ── OS 스레드 C
 ```
 
-그래서 platform thread를 매우 많이 만들면 stack과 native resource, OS scheduling 비용이 함께 커질 수 있습니다. 이 때문에 전통적인 server에서는 제한된 worker thread pool을 두고 task를 재사용 가능한 worker에 할당하는 구조가 흔합니다.
+따라서 플랫폼 스레드를 매우 많이 만들면 호출 스택과 네이티브 자원 사용량, OS 스케줄링 비용이 함께 커질 수 있습니다. 전통적인 서버에서는 제한된 작업 스레드 풀을 두고 작업을 재사용 가능한 스레드에 할당하는 구조가 흔합니다.
 
 ### Virtual thread는 Java runtime이 scheduling한다
 
@@ -55,10 +55,10 @@ Thread virtual = Thread.ofVirtual().start(this::handleRequest);
 Virtual thread 역시 `Thread` 객체이지만 특정 OS thread 하나에 생명주기 전체가 고정되지 않습니다. Java runtime이 실행할 때 platform thread에 mount하고, 이 platform thread가 **carrier** 역할을 합니다.
 
 ```text
-Virtual A ─┐
-Virtual B ─┼── runtime scheduler ── carrier platform thread 1
-Virtual C ─┤                    └─ carrier platform thread 2
-Virtual D ─┘
+가상 스레드 A ─┐
+가상 스레드 B ─┼── 실행 시점 스케줄러(runtime scheduler) ── 캐리어 플랫폼 스레드 1
+가상 스레드 C ─┤                    └─ 캐리어 플랫폼 스레드 2
+가상 스레드 D ─┘
 ```
 
 애플리케이션은 carrier의 identity나 정확한 개수를 correctness 계약으로 사용하면 안 됩니다. 그것은 JDK 구현과 runtime scheduling의 영역입니다.
@@ -107,11 +107,11 @@ try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
 제한해야 하는 것은 virtual thread 개수 자체보다 **실제로 희소한 자원**일 수 있습니다.
 
 ```text
-many virtual tasks
+많은 가상 스레드 작업
     │
-    ├─ CPU cores
-    ├─ DB connections
-    └─ external API quota
+    ├─ CPU 코어
+    ├─ DB 연결
+    └─ 외부 API 할당량
 ```
 
 DB가 connection 20개만 허용한다면 virtual thread를 수만 개 만들 수 있어도 DB 동시 사용량은 별도의 connection pool이나 Semaphore 같은 정책으로 제한해야 합니다.
@@ -125,10 +125,10 @@ DB가 connection 20개만 허용한다면 virtual thread를 수만 개 만들 �
 현재 Java 25 가이드는 virtual thread가 native method 또는 foreign function을 실행하는 동안에는 carrier에 pin될 수 있다고 설명합니다. Pinning은 correctness 오류는 아니지만 오래 blocking하면 scalability를 낮출 수 있습니다.
 
 ```text
-ordinary virtual-thread-aware blocking I/O
+일반적인 가상 스레드 대응 블로킹 입출력
 → carrier 양보 가능
 
-native / foreign call 동안 blocking
+native/foreign call 중 블로킹
 → carrier pinning 가능
 ```
 

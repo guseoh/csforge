@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.design-patterns.factory-pattern
 topicContentKey: java.core.design-patterns
 slug: factory-pattern
-title: "Factory와 객체 생성 책임"
+title: "팩터리(Factory)와 객체 생성 책임"
 summary: "구체 구현 선택뿐 아니라 dependency 조립·검증·재사용 여부 같은 생성 정책과 객체 수명을 한 경계에 모으고, 사용 책임과 생성 책임을 분리한다"
 level: 2
 status: PUBLISHED
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: Java 객체 생성 표현식의 언어 규칙 확인
 ---
-# Factory와 객체 생성 책임
+# 팩터리(Factory)와 객체 생성 책임
 
 객체를 사용하는 코드가 구체 구현 선택과 생성 방법까지 모두 알면 **사용 책임과 생성 책임이 섞일 수 있습니다.**
 

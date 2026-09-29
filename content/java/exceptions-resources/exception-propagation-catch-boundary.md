@@ -49,7 +49,7 @@ Order load(long id) {
 Repository
   │ SQLException 등 낮은 수준 실패
   ▼
-Application Service
+애플리케이션 서비스
   │ 필요하면 application 의미로 변환
   ▼
 API boundary

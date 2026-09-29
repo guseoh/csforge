@@ -61,10 +61,10 @@ void publish() {
 같은 thread에서 program order상 앞선 action은 뒤 action보다 happens-before합니다.
 
 ```text
-Thread A
+스레드 A
 
 data = 42
-   │ program order
+   │ 프로그램 순서(program order)
    ▼
 ready = true
 ```
@@ -76,13 +76,13 @@ ready = true
 한 monitor의 unlock은 synchronization order상 그 뒤에 오는 같은 monitor의 lock과 synchronizes-with 관계를 만들고, 따라서 happens-before edge가 됩니다.
 
 ```text
-Thread A                     Thread B
-write data
+스레드 A                     스레드 B
+data 쓰기
    │
 unlock M ────────────────▶ lock M
                               │
                               ▼
-                           read data
+                           data 읽기
 ```
 
 Volatile도 같은 방식으로 추론할 수 있습니다. 같은 volatile field에 대한 write는 synchronization order상 그 뒤의 read와 synchronizes-with 관계를 만듭니다.
@@ -104,15 +104,15 @@ void consume() {
 ```
 
 ```text
-Thread A                         Thread B
-write data
-   │ program order
+스레드 A                         스레드 B
+data 쓰기
+   │ 프로그램 순서(program order)
 write ready=true (volatile)
    │ synchronizes-with
-   └────────────────────────▶ read ready
-                                │ program order
+   └────────────────────────▶ ready 읽기
+                                │ 프로그램 순서(program order)
                                 ▼
-                              read data
+                              data 읽기
 ```
 
 Happens-before는 transitive하므로 이 경로를 통해 `data = 42`에서 reader의 `data` 접근까지 관계를 연결할 수 있습니다.
@@ -127,9 +127,9 @@ caller의 준비 작업
    start()
       │
       ▼
-worker actions
+작업 스레드의 동작
       │
-worker terminates
+작업 스레드 종료
       │
  join() returns
       │
@@ -155,7 +155,7 @@ data race
 
 Data race가 없는 올바르게 동기화된 프로그램은 sequentially consistent하게 보이는 실행을 기대할 수 있습니다. 다만 JLS가 명시하듯 data race가 없다고 해서 여러 operation을 하나의 atomic transaction처럼 묶어야 하는 논리 오류까지 자동으로 사라지는 것은 아닙니다.
 
-### happens-before와 atomicity를 분리한다
+### happens-before와 원자성(atomicity)를 분리한다
 
 `volatile int count`가 있어도 `count++`는 read-modify-write 전체가 하나의 atomic operation이 아닙니다.
 
@@ -163,7 +163,7 @@ Data race가 없는 올바르게 동기화된 프로그램은 sequentially consi
 happens-before / visibility
 → write와 read 사이의 관찰·순서 관계
 
-atomicity
+원자성(atomicity)
 → 여러 단계를 하나의 분할 불가능한 상태 전이로 보호할지
 ```
 

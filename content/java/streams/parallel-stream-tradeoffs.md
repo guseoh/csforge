@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.streams.parallel-stream-tradeoffs
 topicContentKey: java.core.streams
 slug: parallel-stream-tradeoffs
-title: "Parallel Stream의 선택 기준"
+title: "병렬 Stream의 선택 기준"
 summary: "parallel stream이 자동 성능 향상이 아니며 작업 분할·연산 비용·공유 상태·공통 실행 자원과 실제 측정이 필요한 이유를 이해한다"
 level: 3
 status: PUBLISHED
@@ -22,7 +22,7 @@ references:
     displayOrder: 2
     relationNote: 병렬 reduction, statelessness, ordering 관련 계약 확인
 ---
-# Parallel Stream의 선택 기준
+# 병렬 Stream의 선택 기준
 
 `parallel()`을 붙였다고 항상 빨라지는 것은 아닙니다. 병렬 처리는 일을 나누고 여러 worker에서 처리한 뒤 결과를 다시 합치는 비용을 추가합니다. **분할해서 얻는 이익이 이 비용보다 커야** 실제 성능이 좋아집니다.
 
@@ -35,10 +35,10 @@ long sum = values.parallelStream()
 ### 병렬화는 split → compute → combine 전체를 본다
 
 ```text
-Sequential
+순차 실행
 [전체 데이터] ─────────> 한 흐름으로 처리
 
-Parallel
+병렬 실행
 [전체 데이터]
    ├─ 부분 A ─ worker ─┐
    ├─ 부분 B ─ worker ─┼─> 결과 결합
@@ -95,11 +95,11 @@ values.parallelStream()
         .forEachOrdered(System.out::println);
 ```
 
-이 선택은 결과 순서를 보존하지만 공유 가변 상태를 thread-safe하게 만들어 주는 것은 아닙니다. 순서, thread-safety, 성능은 서로 다른 축입니다.
+이 선택은 결과 순서를 보존하지만 공유 가변 상태의 스레드 안전성을 보장하지는 않습니다. 순서 보장, 스레드 안전성, 성능은 서로 다른 기준입니다.
 
 ### 마지막 판단은 실제 workload 측정으로 한다
 
-parallel stream의 성능은 데이터 크기, source 분할 특성, CPU 수, 연산 비용, JIT, GC, 같은 프로세스의 다른 workload에 영향을 받습니다.
+병렬 Stream의 성능은 데이터 크기, 입력 원본의 분할 특성, CPU 수, 연산 비용, JIT, GC, 같은 프로세스에서 실행되는 다른 작업의 영향을 받습니다.
 
 ```text
 correctness 계약 확인

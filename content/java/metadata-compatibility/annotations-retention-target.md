@@ -3,8 +3,8 @@ kind: concept
 contentKey: java.core.metadata-compatibility.annotations-retention-target
 topicContentKey: java.core.metadata-compatibility
 slug: annotations-retention-target
-title: "Annotation의 Retention과 Target"
-summary: "annotation이 metadata라는 점과 @Target·@Retention이 어디에 붙고 언제까지 남는지를 결정한다는 점을 이해한다"
+title: "애너테이션의 보존 정책(Retention)과 적용 대상(Target)"
+summary: "애너테이션이 메타데이터라는 점과 `@Target`·`@Retention`이 부착 위치와 보존 기간을 정한다는 점을 이해한다"
 level: 2
 status: PUBLISHED
 displayOrder: 20
@@ -22,11 +22,11 @@ references:
     displayOrder: 2
     relationNote: SOURCE·CLASS·RUNTIME 보존 정책 확인
 ---
-# Annotation의 Retention과 Target
+# 애너테이션의 보존 정책(Retention)과 적용 대상(Target)
 
-Spring을 사용하면 `@Service`, `@Transactional`, `@Valid`처럼 annotation을 자주 만나기 때문에 annotation 자체가 기능을 실행한다고 생각하기 쉽습니다. Java 관점에서 annotation은 먼저 **class, method, field 같은 프로그램 요소에 붙이는 metadata**입니다. 실제 behavior는 compiler, annotation processor, framework처럼 그 metadata를 읽는 주체가 구현합니다.
+Spring을 사용하면 `@Service`, `@Transactional`, `@Valid`처럼 애너테이션을 자주 만나기 때문에 애너테이션 자체가 기능을 실행한다고 생각하기 쉽습니다. Java 관점에서 애너테이션은 먼저 **클래스·메서드·필드 같은 프로그램 요소에 붙이는 메타데이터**입니다. 실제 동작은 컴파일러, 애너테이션 프로세서, 프레임워크처럼 그 메타데이터를 읽는 주체가 구현합니다.
 
-### Annotation은 metadata이고 실행 주체는 따로 있다
+### 애너테이션은 메타데이터이며 실행 주체는 따로 있다
 
 ```java
 @interface Audited {
@@ -38,22 +38,22 @@ class OrderService {
 }
 ```
 
-이 코드는 `OrderService`에 `Audited` metadata를 붙입니다. 이 사실만으로 log나 transaction이 자동으로 시작되지는 않습니다.
+이 코드는 `OrderService`에 `Audited` 메타데이터를 붙입니다. 이것만으로 로그나 트랜잭션이 자동으로 시작되지는 않습니다.
 
 ```text
-Annotation metadata
+애너테이션 메타데이터
        │
-       ├─ compiler
-       ├─ annotation processor
-       └─ runtime framework
+       ├─ 컴파일러
+       ├─ 애너테이션 프로세서
+       └─ 실행 시점 프레임워크
               │
               ▼
-          실제 behavior
+          실제 동작
 ```
 
 그래서 custom annotation을 설계할 때도 "무엇을 붙일까"와 함께 **누가 언제 읽을 것인가**를 정해야 합니다.
 
-### `@Target`은 annotation을 붙일 수 있는 위치를 제한한다
+### `@Target`은 애너테이션을 붙일 수 있는 위치를 제한한다
 
 ```java
 @Target(ElementType.METHOD)
@@ -61,28 +61,28 @@ Annotation metadata
 }
 ```
 
-이 annotation은 method에 사용하도록 제한됩니다. `ElementType`에는 type, method, field, parameter, constructor, annotation type, type use 등 여러 위치가 있습니다.
+이 애너테이션은 메서드에만 사용할 수 있습니다. `ElementType`에는 타입, 메서드, 필드, 매개변수, 생성자, 애너테이션 타입, 타입 사용 위치 등이 있습니다.
 
 모든 enum 값을 암기하기보다 annotation의 의미가 어떤 프로그램 요소를 설명하는지 먼저 정합니다.
 
 ```text
 method 실행 특성 -> METHOD
 parameter 의미    -> PARAMETER
-field metadata    -> FIELD
+필드 메타데이터   -> FIELD
 타입 사용 자체    -> TYPE_USE
 ```
 
-### `@Retention`은 metadata가 언제까지 남는지 정한다
+### `@Retention`은 메타데이터를 어느 단계까지 보존할지 정한다
 
-Retention policy는 annotation을 어느 단계까지 유지할지 결정합니다.
+보존 정책(Retention policy)은 애너테이션 정보를 어느 단계까지 유지할지 결정합니다.
 
 | 정책 | 핵심 의미 |
 | --- | --- |
-| `SOURCE` | source 단계 이후 binary에 남길 필요가 없음 |
-| `CLASS` | class file에는 기록되지만 runtime reflection 노출은 요구하지 않음 |
-| `RUNTIME` | runtime reflection에서 조회할 수 있도록 유지 |
+| `SOURCE` | 소스 처리 이후 class file에 남길 필요가 없음 |
+| `CLASS` | class file에는 기록하지만 실행 시점 리플렉션 조회는 보장하지 않음 |
+| `RUNTIME` | 실행 시점 리플렉션으로 조회할 수 있도록 유지 |
 
-Runtime framework가 annotation을 직접 읽어야 한다면 보통 `RUNTIME` retention이 필요합니다.
+실행 시점 프레임워크가 애너테이션을 직접 읽어야 한다면 보통 `RUNTIME` 보존 정책이 필요합니다.
 
 ```java
 @Target(ElementType.METHOD)
@@ -91,25 +91,25 @@ Runtime framework가 annotation을 직접 읽어야 한다면 보통 `RUNTIME` r
 }
 ```
 
-반대로 compile-time annotation processor만 읽고 generated code를 만든다면 annotation이 runtime까지 남을 이유가 없을 수 있습니다.
+반대로 컴파일 시점 애너테이션 프로세서만 읽어 코드를 생성한다면 애너테이션 정보를 실행 시점까지 보존할 필요가 없을 수 있습니다.
 
-### Retention은 강할수록 좋은 설정이 아니다
+### 보존 기간이 길수록 좋은 설정은 아니다
 
 ```text
-Compile-time processor
-source annotation -> processor -> generated code
+컴파일 시 애너테이션 프로세서
+소스 애너테이션 -> 프로세서 -> 생성 코드
 
-Runtime framework
-class metadata -> reflection -> framework behavior
+실행 시점 프레임워크
+클래스 메타데이터 -> 리플렉션 -> 프레임워크 동작
 ```
 
-`RUNTIME`이 가장 오래 남는다고 모든 annotation에 무조건 적합한 것은 아닙니다. Metadata consumer가 compile time에만 존재한다면 SOURCE나 CLASS가 더 정확한 계약일 수 있습니다.
+`RUNTIME`이 가장 오래 정보를 남긴다고 모든 애너테이션에 적합한 것은 아닙니다. 메타데이터 사용 주체가 컴파일 시점에만 동작한다면 `SOURCE`나 `CLASS`가 더 알맞은 계약일 수 있습니다.
 
-또 `@Retention`을 생략하면 Java는 기본적으로 `CLASS` retention을 적용합니다. 따라서 runtime 조회가 필요한 annotation에서 retention을 명시하지 않으면 기대한 reflection 결과를 얻지 못할 수 있습니다.
+`@Retention`을 생략하면 Java는 기본적으로 `CLASS` 보존 정책을 적용합니다. 따라서 실행 시점 조회가 필요한 애너테이션에 보존 정책을 명시하지 않으면 기대한 리플렉션 결과를 얻지 못할 수 있습니다.
 
 ### `@Target`과 `@Retention`도 annotation이다
 
-Annotation type의 사용 규칙을 설명하는 annotation을 meta-annotation이라고 부릅니다.
+애너테이션 타입의 사용 규칙을 지정하는 애너테이션을 메타 애너테이션(meta-annotation)이라고 부릅니다.
 
 ```java
 @Target(ElementType.METHOD)
@@ -119,11 +119,11 @@ Annotation type의 사용 규칙을 설명하는 annotation을 meta-annotation�
 
 여기서 `@Target`, `@Retention`이 `Audited` 자체를 설명합니다. `@Inherited`, `@Repeatable`, `@Documented`도 meta-annotation이지만 각각 별도 계약을 가집니다.
 
-특히 `@Inherited`는 class-level annotation inheritance와 관련된 규칙이지 method annotation까지 모든 위치에 일반적으로 적용되는 상속 기능이 아닙니다.
+특히 `@Inherited`는 클래스 수준 애너테이션의 상속과 관련된 규칙입니다. 메서드 애너테이션 등 모든 위치에 일반적으로 적용되는 상속 기능은 아닙니다.
 
 ### Java annotation 규칙과 framework 탐색 규칙을 구분한다
 
-Java reflection이 annotation을 찾는 기본 규칙 위에 Spring 같은 framework가 meta-annotation 탐색이나 합성 규칙을 추가할 수 있습니다.
+Java 리플렉션의 기본 애너테이션 조회 규칙 위에 Spring 같은 프레임워크가 메타 애너테이션 탐색이나 합성 규칙을 더할 수 있습니다.
 
 ```text
 Java
@@ -133,8 +133,8 @@ Spring
   -> 그 metadata를 탐색·합성하고 기능 적용
 ```
 
-따라서 `@Transactional`이 transaction을 "직접 연다"고 설명하기보다 Spring infrastructure가 annotation metadata를 해석해 proxy/interceptor behavior를 적용한다고 이해하는 편이 정확합니다.
+따라서 `@Transactional`이 트랜잭션을 "직접 연다"고 설명하기보다 Spring 인프라가 애너테이션 메타데이터를 해석해 프록시·인터셉터 동작을 적용한다고 이해하는 편이 정확합니다.
 
 ### 정리
 
-Annotation은 프로그램 요소에 붙이는 metadata입니다. `@Target`은 사용할 수 있는 위치를, `@Retention`은 metadata가 어느 단계까지 남는지를 결정합니다. Runtime reflection이 필요하면 `RUNTIME` retention이 필요하고, compile-time processor만 소비한다면 runtime 보존이 필요하지 않을 수 있습니다. Annotation 자체와 annotation을 해석해 실제 기능을 수행하는 compiler/framework를 구분하는 것이 핵심입니다.
+애너테이션은 프로그램 요소에 붙이는 메타데이터입니다. `@Target`은 사용할 수 있는 위치를, `@Retention`은 메타데이터가 어느 단계까지 남는지를 결정합니다. 실행 중 리플렉션이 필요하면 `RUNTIME` 보존 정책이 필요하고, 컴파일 시 애너테이션 프로세서만 사용한다면 실행 시점까지 보존하지 않아도 될 수 있습니다. 애너테이션 자체와 이를 해석해 기능을 수행하는 컴파일러·프레임워크를 구분하는 것이 핵심입니다.
