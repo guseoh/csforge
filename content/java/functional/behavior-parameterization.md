@@ -84,7 +84,7 @@ execute(
 
 ### 백엔드 코드에서는 어디에 보일까
 
-정렬 기준 `Comparator`, 재시도할 작업, 조건부 처리, 컬렉션 필터링, transaction template의 callback 등 다양한 API가 행동 전달 방식을 사용합니다. Spring 같은 framework에서도 callback API를 자주 만나지만 원리는 Java 함수형 인터페이스와 객체 협력에서 시작합니다.
+정렬 기준 `Comparator`, 재시도할 작업, 조건부 처리, 컬렉션 필터링, transaction template의 콜백 등 다양한 API가 행동 전달 방식을 사용합니다. Spring 같은 프레임워크에서도 콜백 API를 자주 만나지만 원리는 Java 함수형 인터페이스와 객체 협력에서 시작합니다.
 
 ### 문제를 풀 때는 고정 부분과 변화 부분을 찾는다
 

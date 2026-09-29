@@ -73,7 +73,7 @@ Money / PaymentResult / PaymentGateway
 벤더 SDK
 ```
 
-### Adapter는 메서드 이름만 바꾸는 wrapper가 아니다
+### Adapter는 메서드 이름만 바꾸는 래퍼가 아니다
 
 실제 경계에서는 타입뿐 아니라 단위, 식별자, 시간 표현, 실패 방식이 다를 수 있습니다.
 
@@ -94,7 +94,7 @@ int vendorCents = Math.toIntExact(cents);
 
 ### 외부 예외도 경계에서 내부 의미로 번역할 수 있다
 
-`PaymentGateway`를 만들었는데 호출자가 모든 vendor 예외를 직접 catch해야 한다면 외부 세부가 여전히 새고 있습니다.
+`PaymentGateway`를 만들었는데 호출자가 모든 공급자 예외를 직접 catch해야 한다면 외부 세부가 여전히 새고 있습니다.
 
 ```java
 catch (VendorDeclinedException e) {

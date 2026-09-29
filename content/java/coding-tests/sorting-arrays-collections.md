@@ -26,7 +26,7 @@ references:
 
 코딩테스트에서 "정렬한다"는 알고리즘 요구가 같아도 Java 코드에서는 대상이 `int[]`, `Integer[]`, `List<Node>` 중 무엇인지에 따라 사용할 API가 달라집니다. 문제 풀이 전에 **현재 자료형과 원하는 정렬 기준을 먼저 확인**하면 컴파일 오류와 불필요한 변환을 줄일 수 있습니다.
 
-### primitive 배열은 Arrays.sort를 직접 사용할 수 있다
+### 원시 타입 배열은 Arrays.sort를 직접 사용할 수 있다
 
 ```java
 int[] numbers = {4, 1, 3, 2};
@@ -45,14 +45,14 @@ int[] sorted = Arrays.copyOf(numbers, numbers.length);
 Arrays.sort(sorted);
 ```
 
-### primitive 배열에는 객체 Comparator를 바로 줄 수 없다
+### 원시 타입 배열에는 객체 Comparator를 바로 줄 수 없다
 
 ```java
 int[] numbers = {3, 1, 2};
 // Arrays.sort(numbers, Comparator.reverseOrder()); // 불가
 ```
 
-`Comparator<T>`는 reference type을 비교하는 API입니다. `int[]`용 sort overload와 `Integer[]`용 sort overload는 다릅니다.
+`Comparator<T>`는 참조 타입을 비교하는 API입니다. `int[]`용 sort overload와 `Integer[]`용 sort overload는 다릅니다.
 
 내림차순이 필요하다면 문제 상황에 따라 다음 방법을 선택할 수 있습니다.
 
@@ -60,7 +60,7 @@ int[] numbers = {3, 1, 2};
 - `Integer[]` 또는 `List<Integer>` 사용
 - 애초에 우선순위 큐 등 다른 구조가 더 자연스러운지 검토
 
-단순히 comparator를 쓰기 위해 모든 primitive를 boxing하면 메모리와 코드가 불필요하게 늘 수 있으므로 요구에 맞게 선택합니다.
+단순히 비교자를 쓰기 위해 모든 원시 타입을 boxing하면 메모리와 코드가 불필요하게 늘 수 있으므로 요구에 맞게 선택합니다.
 
 ### 객체 배열과 List는 Comparator로 정렬 기준을 줄 수 있다
 
@@ -104,14 +104,14 @@ Java 구현 단계에서는 선택한 알고리즘에 맞춰 `Arrays.sort`, `Lis
 
 `Arrays.sort(array, fromIndex, toIndex)`처럼 일부 범위만 정렬하는 overload가 있습니다. 문제에서 이런 코드가 나오면 전체가 정렬됐다고 가정하면 안 됩니다.
 
-또 `List.sort`도 일반적으로 해당 mutable List의 순서를 바꾸는 연산입니다. `List.of(...)`처럼 변경할 수 없는 List에 직접 정렬을 시도할 수 있는지도 확인해야 합니다.
+또 `List.sort`도 일반적으로 해당 가변 List의 순서를 바꾸는 연산입니다. `List.of(...)`처럼 변경할 수 없는 List에 직접 정렬을 시도할 수 있는지도 확인해야 합니다.
 
 ### 문제를 풀 때 확인할 것
 
 1. 정렬 대상이 원시 배열, 참조형 배열, `List` 중 무엇인지 확인합니다.
 2. 자연 순서인지 사용자 Comparator가 필요한지 봅니다.
 3. 정렬 API가 원본을 변경하는지 확인합니다.
-4. primitive를 comparator 때문에 불필요하게 boxing하고 있지 않은지 봅니다.
+4. 원시 타입을 비교자 때문에 불필요하게 boxing하고 있지 않은지 봅니다.
 5. 전체 정렬인지 일부 범위 정렬인지 확인합니다.
 
 ### 자주 헷갈리는 부분

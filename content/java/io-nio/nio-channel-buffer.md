@@ -28,9 +28,9 @@ NIO 코드에서 `flip()`, `clear()`, `compact()`가 헷갈리는 이유는 같�
 
 Channel은 데이터가 오가는 통로이고 Buffer는 그 데이터를 애플리케이션이 읽고 쓰는 영역입니다.
 
-![NIO Buffer의 write mode와 read mode 전환](/learning/java/nio-buffer-flip.svg)
+![NIO Buffer의 쓰기 mode와 읽기 mode 전환](/learning/java/nio-buffer-flip.svg)
 
-### Buffer의 상태는 position·limit·capacity로 읽는다
+### Buffer의 상태는 position·limit·용량으로 읽는다
 
 - `capacity`: Buffer가 가질 수 있는 전체 요소 수
 - `limit`: 현재 접근할 수 있는 범위의 끝
@@ -55,7 +55,7 @@ ByteBuffer buffer = ByteBuffer.allocate(8);
 int count = channel.read(buffer);
 ```
 
-5 byte가 들어왔다면 앞 5칸이 채워지고 다음 쓰기 위치인 `position`은 5가 됩니다.
+5 바이트가 들어왔다면 앞 5칸이 채워지고 다음 쓰기 위치인 `position`은 5가 됩니다.
 
 ```text
 [ A B C D E _ _ _ ]
@@ -92,7 +92,7 @@ position   limit
 buffer.clear();
 ```
 
-핵심 효과는 `position = 0`, `limit = capacity`로 되돌려 전체 범위를 다시 쓸 수 있게 하는 것입니다. 기존 byte를 0으로 지우는 동작은 아닙니다.
+핵심 효과는 `position = 0`, `limit = capacity`로 되돌려 전체 범위를 다시 쓸 수 있게 하는 것입니다. 기존 바이트를 0으로 지우는 동작은 아닙니다.
 
 반면 아직 읽지 않은 데이터가 있고 다음 입력과 이어서 처리해야 한다면 `compact()`가 필요할 수 있습니다.
 
@@ -107,9 +107,9 @@ compact 후
 
 남은 값을 앞쪽으로 옮기고 그 뒤에 새 데이터를 쓸 공간을 만듭니다.
 
-### 한 번의 Channel read/write가 전체를 처리한다고 가정하지 않는다
+### 한 번의 Channel 읽기/쓰기가 전체를 처리한다고 가정하지 않는다
 
-Channel I/O는 partial read/write가 가능합니다. `channel.write(buffer)` 한 번으로 모든 remaining byte가 반드시 기록되는 것은 아닙니다.
+Channel I/O는 partial 읽기/쓰기가 가능합니다. `channel.write(buffer)` 한 번으로 모든 remaining 바이트가 반드시 기록되는 것은 아닙니다.
 
 ```java
 while (buffer.hasRemaining()) {
@@ -117,6 +117,6 @@ while (buffer.hasRemaining()) {
 }
 ```
 
-실제 반복 방식은 blocking/non-blocking mode와 protocol에 따라 달라질 수 있지만, 코드 추론에서는 **I/O 반환값과 Buffer의 현재 position/limit을 함께 추적**해야 합니다.
+실제 반복 방식은 블로킹/논블로킹 모드와 프로토콜에 따라 달라질 수 있지만, 코드 추론에서는 **I/O 반환값과 Buffer의 현재 position/limit을 함께 추적**해야 합니다.
 
 NIO Buffer 문제를 풀 때는 메서드 이름보다 각 단계의 `position`, `limit`, `capacity`를 직접 적어 보세요. `flip`은 쓰기 범위를 읽기 범위로 전환하고, `clear`는 전체를 다시 쓰기 준비 상태로 만들며, `compact`는 읽지 않은 데이터를 보존한다는 차이가 상태 값으로 자연스럽게 보입니다.

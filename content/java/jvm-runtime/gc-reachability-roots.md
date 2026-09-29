@@ -30,9 +30,9 @@ references:
 ---
 # GC 도달 가능성과 루트(Root)
 
-Java 객체의 수명은 "지역 변수가 scope를 벗어났는가"만으로 결정되지 않습니다. GC 관점에서 더 중요한 질문은 **살아 있는 runtime root에서 그 객체까지 참조 경로가 남아 있는가**입니다.
+Java 객체의 수명은 "지역 변수가 범위를 벗어났는가"만으로 결정되지 않습니다. GC 관점에서 더 중요한 질문은 **살아 있는 런타임 root에서 그 객체까지 참조 경로가 남아 있는가**입니다.
 
-![GC root에서 reachable한 객체와 끊긴 객체](/learning/java/gc-reachability.svg)
+![GC 루트에서 도달 가능한 객체와 끊긴 객체](/learning/java/gc-reachability.svg)
 
 ### 소스 코드의 범위와 실행 시점의 도달 가능성은 다른 개념이다
 

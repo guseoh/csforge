@@ -51,7 +51,7 @@ amount 비교
 
 ### reversed()가 어느 범위를 뒤집는지 확인한다
 
-“priority는 내림차순, 같은 priority에서는 id 오름차순”이라면 다음 두 코드는 의미가 다릅니다.
+“우선순위는 내림차순, 같은 우선순위에서는 id 오름차순”이라면 다음 두 코드는 의미가 다릅니다.
 
 ```java
 Comparator<Task> wrong = Comparator
@@ -78,7 +78,7 @@ Comparator<Task> byPriority =
         Comparator.comparingInt(Task::priority);
 ```
 
-priority가 같은 서로 다른 두 `Task`에 대해 이 Comparator는 0을 반환합니다. 일반적인 목록 정렬에서는 “같은 우선순위”라는 의미로 충분할 수 있습니다.
+우선순위가 같은 서로 다른 두 `Task`에 대해 이 Comparator는 0을 반환합니다. 일반적인 목록 정렬에서는 “같은 우선순위”라는 의미로 충분할 수 있습니다.
 
 하지만 `TreeSet`이나 `TreeMap`은 정렬 기준상 0인 값을 같은 원소나 키처럼 취급합니다. 두 Task를 모두 보존해야 한다면 ID 같은 tie-breaker를 추가해야 할 수 있습니다.
 

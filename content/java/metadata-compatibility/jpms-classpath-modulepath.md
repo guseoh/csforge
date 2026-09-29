@@ -101,7 +101,7 @@ opens   -> 실행 시점 심층 리플렉션 허용
 
 ### Classpath의 코드는 비명명 모듈(unnamed module)에 속한다
 
-명명 모듈에 속하지 않는 타입은 이를 정의한 `ClassLoader`의 비명명 모듈에 속합니다. Java 25 `Module` API에 따르면 비명명 모듈은 이름이 없으며, 일반적으로 classpath에서 로드된 타입이 여기에 속합니다.
+명명 모듈에 속하지 않는 타입은 이를 정의한 `ClassLoader`의 비명명 모듈에 속합니다. Java 25 `Module` API에 따르면 비명명 모듈은 이름이 없으며, 일반적으로 클래스패스에서 로드된 타입이 여기에 속합니다.
 
 ```text
 classpath의 클래스·JAR
@@ -110,7 +110,7 @@ classpath의 클래스·JAR
 비명명 모듈
 ```
 
-비명명 모듈은 기존 classpath 애플리케이션과의 호환성을 위해 명명 모듈보다 느슨한 접근 모델을 가집니다. 따라서 `module-info.java`를 사용하지 않는 Spring Boot 애플리케이션도 Java 실행 환경의 모듈 개념과 완전히 무관하지는 않습니다.
+비명명 모듈은 기존 클래스패스 애플리케이션과의 호환성을 위해 명명 모듈보다 느슨한 접근 모델을 가집니다. 따라서 `module-info.java`를 사용하지 않는 Spring Boot 애플리케이션도 Java 실행 환경의 모듈 개념과 완전히 무관하지는 않습니다.
 
 ### Module path에서는 모듈 그래프를 해석한다
 
@@ -129,7 +129,7 @@ classpath의 클래스·JAR
 모듈 그래프
 ```
 
-따라서 classpath와 module path는 옵션 이름만 다른 클래스 검색 경로가 아닙니다. 모듈 경로에는 모듈 식별성(module identity), 가독성(readability), `exports`·`opens` 같은 추가 계약이 있습니다.
+따라서 클래스패스와 module path는 옵션 이름만 다른 클래스 검색 경로가 아닙니다. 모듈 경로에는 모듈 식별성(module identity), 가독성(readability), `exports`·`opens` 같은 추가 계약이 있습니다.
 
 ### JPMS 도입 여부는 프레임워크 요구와 함께 판단한다
 

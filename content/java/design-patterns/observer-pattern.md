@@ -76,7 +76,7 @@ Observer는 직접 결합을 줄이는 대신 실행 흐름이 덜 눈에 보일
 
 ### 이벤트에는 필요한 사실만 담을 수 있다
 
-가변 aggregate 자체를 그대로 전달하면 구독자가 live 상태에 결합되거나 변경 시점을 해석하기 어려워질 수 있습니다.
+가변 aggregate 자체를 그대로 전달하면 구독자가 실행 중인 상태에 결합되거나 변경 시점을 해석하기 어려워질 수 있습니다.
 
 ```java
 record OrderCompleted(
@@ -100,4 +100,4 @@ class Publisher {
 
 짧게 살아야 할 객체가 오래 사는 publisher에 등록된다면 `subscribe()`뿐 아니라 언제 `unsubscribe()`해야 하는지도 설계해야 합니다.
 
-Observer는 객체 간 알림 구조를 말합니다. Kafka 같은 메시지 브로커의 durable storage, retry, delivery semantics까지 자동으로 포함하지 않습니다. **발행자와 반응을 분리한다는 구조와 실제 전달 실행 모델을 구분**하는 것이 핵심입니다.
+Observer는 객체 간 알림 구조를 말합니다. Kafka 같은 메시지 브로커의 durable 저장 공간, 재시도, delivery 의미론까지 자동으로 포함하지 않습니다. **발행자와 반응을 분리한다는 구조와 실제 전달 실행 모델을 구분**하는 것이 핵심입니다.

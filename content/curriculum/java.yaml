@@ -364,7 +364,7 @@ topics:
     density: STANDARD
     visualization: NONE
   - key: java.core.enum-modeling.enummap
-    title: "EnumMap으로 enum key 매핑하기"
+    title: "EnumMap으로 enum 키 매핑하기"
     order: 40
     level: 2
     objective: key가 enum으로 제한된 mapping에서 EnumMap이 일반 Map보다 의도를 잘 드러내는 경우를 판단한다.
@@ -1214,11 +1214,11 @@ topics:
 - key: java.core.jvm-runtime
   title: "JVM 런타임과 진단"
   order: 170
-  scope: JDK·JVM·class 파일, 바이트코드, 클래스 로딩, 런타임 데이터 영역, GC, 메모리, JIT와 기본 JVM 진단 도구를 다룬다.
+  scope: JDK·JVM·클래스 파일, 바이트코드, 클래스 로딩, 런타임 데이터 영역, GC, 메모리, JIT와 기본 JVM 진단 도구를 다룬다.
   boundary: 운영 환경 전반의 진단은 Performance/Operations 영역에서, 프로세스와 가상 메모리 이론은 OS 영역에서 다루며 여기서는 Java 런타임을 이해하는 JVM 기반에 집중한다.
   concepts:
   - key: java.core.jvm-runtime.jdk-jvm-classfile
-    title: "JDK·JVM·class 파일의 경계"
+    title: "JDK·JVM·클래스 파일의 경계"
     order: 10
     level: 1
     objective: "JDK, JVM, class file의 역할을 구분하고 Java 소스 코드→`javac`→바이트코드→JVM 실행 흐름을 설명한다."

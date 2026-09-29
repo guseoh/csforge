@@ -42,7 +42,7 @@ names.add("java");
 
 `var`는 지역 변수 타입 추론 기능이므로 필드나 메서드 반환 타입, 일반 메서드 매개변수의 타입을 대신하지 않습니다.
 
-lambda도 자체적으로 target type을 제공하지 않기 때문에 다음처럼 쓸 수 없습니다.
+lambda도 자체적으로 대상 타입을 제공하지 않기 때문에 다음처럼 쓸 수 없습니다.
 
 ```java
 // var mapper = value -> value.toString();

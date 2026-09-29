@@ -24,7 +24,7 @@ references:
 ---
 # 동적 프록시와 InvocationHandler
 
-여러 service method 호출 앞뒤에 logging, 권한 검사, transaction 같은 공통 동작을 넣고 싶을 때 각 target method를 직접 수정하는 대신 **target 앞에 proxy를 두고 호출을 중계**할 수 있습니다.
+여러 service 메서드 호출 앞뒤에 logging, 권한 검사, transaction 같은 공통 동작을 넣고 싶을 때 각 대상 메서드를 직접 수정하는 대신 **대상 앞에 proxy를 두고 호출을 중계**할 수 있습니다.
 
 JDK 동적 프록시는 실행 시 인터페이스를 구현하는 프록시 객체를 만들고, 프록시 메서드 호출을 `InvocationHandler` 하나로 전달합니다.
 

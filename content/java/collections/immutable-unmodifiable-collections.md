@@ -41,7 +41,7 @@ List<String> roles = List.of("USER", "ADMIN");
 
 `List.of`가 반환하는 List는 수정 연산을 지원하지 않습니다. null 원소도 허용하지 않습니다.
 
-### unmodifiableList는 원본을 감싸는 view다
+### unmodifiableList는 원본을 감싸는 뷰다
 
 ```java
 List<String> source = new ArrayList<>();
@@ -53,7 +53,7 @@ source.add("B");
 System.out.println(view); // 원본 변경이 보임
 ```
 
-`view.add()`는 막히지만 원본 `source`가 변경되면 view에서도 그 변경을 볼 수 있습니다.
+`view.add()`는 막히지만 원본 `source`가 변경되면 뷰에서도 그 변경을 볼 수 있습니다.
 
 ```text
 source ─────> 실제 가변 List
@@ -62,7 +62,7 @@ source ─────> 실제 가변 List
 unmodifiable view┘
 ```
 
-즉 “view를 수정할 수 없다”와 “데이터가 절대 변하지 않는다”는 같은 말이 아닙니다.
+즉 “뷰를 수정할 수 없다”와 “데이터가 절대 변하지 않는다”는 같은 말이 아닙니다.
 
 ### List.copyOf는 원본 변경과 분리할 수 있다
 
@@ -83,7 +83,7 @@ List 구조는 바꿀 수 없어도 `MutableMember`의 상태가 변하면 관�
 
 ### 불변성과 소유권을 함께 본다
 
-내부 컬렉션을 외부에 반환할 때 단순 unmodifiable view가 충분한지, snapshot copy가 필요한지는 원본이 이후 변해도 되는지에 따라 달라집니다.
+내부 컬렉션을 외부에 반환할 때 단순 unmodifiable 뷰가 충분한지, 스냅샷 복사가 필요한지는 원본이 이후 변해도 되는지에 따라 달라집니다.
 
 | 방식                       | 호출자가 구조 수정 | 원본 변경 반영              | 깊은 복사 |
 | -------------------------- | ------------------ | --------------------------- | --------- |
@@ -91,4 +91,4 @@ List 구조는 바꿀 수 없어도 `MutableMember`의 상태가 변하면 관�
 | `List.copyOf`              | 불가               | 일반적으로 원본 변경과 분리 | 아님      |
 | `unmodifiableList(source)` | 불가               | 반영됨                      | 아님      |
 
-문제에서는 “수정 메서드가 막힌다”만 보지 말고 **누가 실제 backing data를 소유하고 변경할 수 있는지**까지 추적해야 합니다.
+문제에서는 “수정 메서드가 막힌다”만 보지 말고 **누가 실제 기반 데이터를 소유하고 변경할 수 있는지**까지 추적해야 합니다.

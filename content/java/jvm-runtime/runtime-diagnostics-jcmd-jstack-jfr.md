@@ -98,7 +98,7 @@ jcmd <pid> Thread.dump_to_file -format=plain dump.txt
 
 `jcmd <pid> help`로 현재 JDK/JVM이 지원하는 진단 명령을 확인할 수 있습니다. 환경에 따라 다음 정보를 얻는 데 활용합니다.
 
-- thread dump
+- 스레드 덤프
 - 클래스 히스토그램
 - 힙 덤프
 - VM 플래그와 시스템 속성
@@ -152,7 +152,7 @@ JFR / 스레드 덤프
   -> 그 시각 JVM 내부에서 무엇이 일어났는가
 ```
 
-Application log, metric, distributed trace와 JVM evidence를 시간축으로 맞춰야 실제 장애 원인을 설명하기 쉬워집니다.
+Application log, metric, distributed trace와 JVM 근거를 시간축으로 맞춰야 실제 장애 원인을 설명하기 쉬워집니다.
 
 ### 진단 도구를 사용할 때도 비용을 고려한다
 

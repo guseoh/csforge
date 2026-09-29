@@ -26,7 +26,7 @@ references:
 
 Java 실행 시점에 클래스는 이름만으로 식별되지 않습니다. 같은 `com.example.Plugin`이라는 바이너리 이름(binary name)이라도 **서로 다른 `ClassLoader`가 각각 정의하면 별개의 실행 시점 타입(runtime type)** 이 될 수 있습니다. 이 규칙은 플러그인, 애플리케이션 서버, 핫 리로드 환경에서 발생하는 `ClassCastException`의 원리를 이해하는 핵심입니다.
 
-![ClassLoader 경계와 runtime type identity](/learning/java/classloader-type-identity.svg)
+![ClassLoader 경계와 런타임 타입 동일성](/learning/java/classloader-type-identity.svg)
 
 ### `ClassLoader`는 클래스를 찾아 정의한다
 
@@ -67,7 +67,7 @@ Java 실행 시점에 클래스는 이름만으로 식별되지 않습니다. �
 
 ### 실행 시점 타입 동일성에는 클래스를 정의한 로더가 포함된다
 
-두 loader가 같은 이름의 class를 각각 정의해 보겠습니다.
+두 로더가 같은 이름의 클래스를 각각 정의해 보겠습니다.
 
 ```text
 Loader A ──▶ com.example.Plugin
@@ -90,7 +90,7 @@ System.out.println(a == b);                         // false 가능
 바이너리 이름(binary name) + 클래스를 정의한 `ClassLoader`
 ```
 
-그래서 loader A가 정의한 `Plugin` 객체를 loader B가 정의한 같은 이름의 `Plugin`으로 cast할 수 없을 수 있습니다.
+그래서 로더 A가 정의한 `Plugin` 객체를 로더 B가 정의한 같은 이름의 `Plugin`으로 캐스팅할 수 없을 수 있습니다.
 
 ### 공통 API는 공유 로더 경계에 둔다
 
@@ -117,11 +117,11 @@ classpath / module path -> 탐색 경로
 ClassLoader             -> 실행 시점 로딩·정의 주체
 ```
 
-따라서 같은 jar가 classpath에 있다는 사실만으로 두 객체가 같은 defining loader의 같은 `Class`라고 결론내릴 수 없습니다.
+따라서 같은 jar가 클래스패스에 있다는 사실만으로 두 객체가 같은 defining 로더의 같은 `Class`라고 결론내릴 수 없습니다.
 
 ### 진단할 때는 이름뿐 아니라 로더도 확인한다
 
-이름이 같은데 cast가 실패하거나 hot reload 후 이상한 linkage 문제가 생기면 다음을 확인합니다.
+이름이 같은데 캐스팅이 실패하거나 hot reload 후 이상한 linkage 문제가 생기면 다음을 확인합니다.
 
 ```java
 System.out.println(value.getClass());

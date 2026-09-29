@@ -30,7 +30,7 @@ references:
 ---
 # BigDecimal로 금액과 반올림 다루기
 
-금액과 세율처럼 십진수 자체가 업무 의미인 값을 `double`로 다루면 binary floating-point의 근사 오차가 불필요하게 개입할 수 있습니다. `BigDecimal`은 **십진 값을 명시적으로 표현하고 scale과 반올림 정책을 제어**할 수 있게 합니다.
+금액과 세율처럼 십진수 자체가 업무 의미인 값을 `double`로 다루면 바이너리 floating-point의 근사 오차가 불필요하게 개입할 수 있습니다. `BigDecimal`은 **십진 값을 명시적으로 표현하고 scale과 반올림 정책을 제어**할 수 있게 합니다.
 
 다만 타입만 `BigDecimal`로 바꾼다고 금액 규칙이 자동으로 결정되는 것은 아닙니다. 생성 방법, 비교 의미, 나눗셈과 반올림 정책을 함께 봐야 합니다.
 
@@ -41,7 +41,7 @@ BigDecimal fromString = new BigDecimal("0.1");
 BigDecimal fromDouble = new BigDecimal(0.1);
 ```
 
-`0.1`이라는 `double` 값은 이미 binary floating-point 근사값입니다. `new BigDecimal(0.1)`은 그 근사값을 정확하게 BigDecimal로 옮기므로 사람이 기대한 십진 `0.1`과 다른 긴 값이 될 수 있습니다.
+`0.1`이라는 `double` 값은 이미 바이너리 floating-point 근사값입니다. `new BigDecimal(0.1)`은 그 근사값을 정확하게 BigDecimal로 옮기므로 사람이 기대한 십진 `0.1`과 다른 긴 값이 될 수 있습니다.
 
 원래 입력 계약이 십진 문자열이라면 문자열 생성이 그 의미를 직접 보존합니다.
 
@@ -63,9 +63,9 @@ System.out.println(a.equals(b));         // false
 
 `compareTo`는 수치적인 크기를 비교하고, `equals`는 값과 scale을 함께 고려합니다.
 
-따라서 "금액이 같다"라는 업무 의미가 무엇인지에 따라 비교 방식을 선택해야 합니다. 특히 `HashSet`이나 `HashMap` key처럼 객체의 `equals/hashCode` 계약을 사용하는 곳에서는 scale 차이가 실제 동등성 결과에 영향을 줍니다.
+따라서 "금액이 같다"라는 업무 의미가 무엇인지에 따라 비교 방식을 선택해야 합니다. 특히 `HashSet`이나 `HashMap` 키처럼 객체의 `equals/hashCode` 계약을 사용하는 곳에서는 scale 차이가 실제 동등성 결과에 영향을 줍니다.
 
-필요하다면 입력 scale을 정규화하거나, 금액 value object가 도메인에 맞는 동등성 계약을 제공하는 방법을 검토할 수 있습니다.
+필요하다면 입력 scale을 정규화하거나, 금액 값 객체가 도메인에 맞는 동등성 계약을 제공하는 방법을 검토할 수 있습니다.
 
 ### 나눗셈에는 명시적인 반올림 정책이 필요할 수 있다
 

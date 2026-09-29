@@ -59,9 +59,9 @@
     "status": "PUBLISHED",
     "conceptKeys": ["java.core.language-types.primitive-reference-values"],
     "choices": [
-      {"key": "A", "content": "value는 반드시 물리 메모리 주소 0을 담는다", "displayOrder": 0, "rationaleMarkdown": "Java는 `null`을 물리 주소 `0`으로 정의하지 않는다. 참조값의 내부 표현은 구현 세부다."},
-      {"key": "B", "content": "value는 객체가 없음을 나타내는 참조 값이다", "displayOrder": 1, "rationaleMarkdown": "`null`은 현재 어떤 객체도 가리키지 않음을 나타내는 특별한 참조값이다."},
-      {"key": "C", "content": "value를 사용하면 Object의 기본 객체가 자동 생성된다", "displayOrder": 2, "rationaleMarkdown": "`null` 참조를 사용한다고 기본 `Object`가 생성되지는 않는다. 역참조하면 `NullPointerException`이 발생할 수 있다."},
+      {"key": "A", "content": "값은 반드시 물리 메모리 주소 0을 담는다", "displayOrder": 0, "rationaleMarkdown": "Java는 `null`을 물리 주소 `0`으로 정의하지 않는다. 참조값의 내부 표현은 구현 세부다."},
+      {"key": "B", "content": "값은 객체가 없음을 나타내는 참조 값이다", "displayOrder": 1, "rationaleMarkdown": "`null`은 현재 어떤 객체도 가리키지 않음을 나타내는 특별한 참조값이다."},
+      {"key": "C", "content": "값을 사용하면 Object의 기본 객체가 자동 생성된다", "displayOrder": 2, "rationaleMarkdown": "`null` 참조를 사용한다고 기본 `Object`가 생성되지는 않는다. 역참조하면 `NullPointerException`이 발생할 수 있다."},
       {"key": "D", "content": "참조 변수에는 null을 대입할 수 없다", "displayOrder": 3, "rationaleMarkdown": "참조 타입의 변수에는 `null`을 대입할 수 있다."}
     ],
     "correctChoiceKey": "B",

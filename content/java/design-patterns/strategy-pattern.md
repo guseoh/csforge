@@ -101,7 +101,7 @@ Strategy가 반드시 setter로 런타임 교체되어야 하는 것도 아닙�
 
 ### 작은 정책은 lambda로도 표현할 수 있다
 
-계약이 함수 하나이고 별도 상태나 이름이 필요하지 않다면 functional interface와 lambda로 같은 경계를 만들 수 있습니다.
+계약이 함수 하나이고 별도 상태나 이름이 필요하지 않다면 함수형 인터페이스와 lambda로 같은 경계를 만들 수 있습니다.
 
 ```java
 DiscountPolicy vip = price -> price * 10 / 100;

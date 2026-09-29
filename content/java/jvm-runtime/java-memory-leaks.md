@@ -28,7 +28,7 @@ Java에 GC가 있어도 메모리 누수(memory leak)는 생길 수 있습니다
 
 따라서 업무상 이미 버려야 하는 객체라도 캐시, 리스너, `ThreadLocal`처럼 수명이 긴 소유자(owner)가 계속 참조하면 GC는 해당 객체를 정상적으로 유지합니다.
 
-![GC root부터 불필요한 객체까지 남아 있는 retained path](/learning/java/java-memory-retained-path.svg)
+![GC 루트부터 불필요한 객체까지 남아 있는 유지 경로(retained path)](/learning/java/java-memory-retained-path.svg)
 
 ### 메모리 누수의 핵심은 불필요한 객체가 여전히 도달 가능하다는 것이다
 
@@ -40,7 +40,7 @@ void remember(String id, byte[] payload) {
 }
 ```
 
-삭제 정책이 없다면 static map이 모든 payload를 계속 붙잡습니다.
+삭제 정책이 없다면 static map이 모든 페이로드를 계속 붙잡습니다.
 
 ```text
 GC 루트

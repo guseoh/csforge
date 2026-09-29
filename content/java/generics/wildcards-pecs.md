@@ -63,10 +63,10 @@ static void addDefaults(List<? super Integer> values) {
 
 흔히 **PECS: Producer Extends, Consumer Super(생산자는 extends, 소비자는 super)**라고 정리합니다.
 
-- API가 컬렉션에서 `T` 값을 받아 **읽는 source**로 사용하면 `? extends T`
+- API가 컬렉션에서 `T` 값을 받아 **읽는 소스**로 사용하면 `? extends T`
 - API가 컬렉션에 `T` 값을 **쓰는 destination**으로 사용하면 `? super T`
 
-source에서 destination으로 복사하는 API를 보면 두 방향이 한 번에 드러납니다.
+소스에서 destination으로 복사하는 API를 보면 두 방향이 한 번에 드러납니다.
 
 ```java
 static <T> void copy(
@@ -87,9 +87,9 @@ static <T> void copy(
                    T를 씀
 ```
 
-PECS는 모든 제네릭 선언에 기계적으로 붙이는 공식이 아닙니다. 한 컬렉션에서 복잡하게 읽고 쓰며 같은 구체 타입 관계를 유지해야 한다면 wildcard보다 named type parameter가 더 자연스러울 수도 있습니다.
+PECS는 모든 제네릭 선언에 기계적으로 붙이는 공식이 아닙니다. 한 컬렉션에서 복잡하게 읽고 쓰며 같은 구체 타입 관계를 유지해야 한다면 와일드카드보다 named 타입 매개변수가 더 자연스러울 수도 있습니다.
 
-### `List<?>`는 raw List와 다르다
+### `List<?>`는 원시 타입(raw type) List과 다르다
 
 ```java
 void inspect(List<?> values) {
@@ -101,4 +101,4 @@ void inspect(List<?> values) {
 
 raw `List`는 제네릭 검사를 일부 우회하므로 의미가 다릅니다. `List<?>`는 타입을 모르는 상태도 **타입 안전하게 표현**합니다.
 
-Wildcard 문제에서는 `extends`와 `super` 이름부터 외우기보다 해당 매개변수에서 **값이 어느 방향으로 흐르는지** 먼저 그리세요. 읽기 source인지 쓰기 destination인지가 보이면 왜 그 bound가 필요한지도 자연스럽게 따라옵니다.
+Wildcard 문제에서는 `extends`와 `super` 이름부터 외우기보다 해당 매개변수에서 **값이 어느 방향으로 흐르는지** 먼저 그리세요. 읽기 소스인지 쓰기 destination인지가 보이면 왜 그 bound가 필요한지도 자연스럽게 따라옵니다.

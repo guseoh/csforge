@@ -24,9 +24,9 @@ references:
 ---
 # HashMap·HashSet으로 개수 세기
 
-코딩테스트에서는 "각 문자열이 몇 번 등장했는가", "이 좌표를 이미 방문했는가", "서로 다른 값이 몇 개인가" 같은 상태를 자주 저장합니다. 이때 배열 index로 바로 표현하기 어려운 key라면 `HashMap`과 `HashSet`이 구현을 단순하게 해 줍니다.
+코딩테스트에서는 "각 문자열이 몇 번 등장했는가", "이 좌표를 이미 방문했는가", "서로 다른 값이 몇 개인가" 같은 상태를 자주 저장합니다. 이때 배열 인덱스로 바로 표현하기 어려운 키라면 `HashMap`과 `HashSet`이 구현을 단순하게 해 줍니다.
 
-### 빈도는 key와 count의 쌍으로 저장한다
+### 빈도는 키와 count의 쌍으로 저장한다
 
 가장 직관적인 코드는 다음과 같습니다.
 
@@ -39,7 +39,7 @@ for (String word : words) {
 }
 ```
 
-`getOrDefault(word, 0)`은 key가 없을 때 0을 반환합니다. 중요한 점은 **0을 실제 map에 저장하는 것은 아니라는 것**입니다.
+`getOrDefault(word, 0)`은 키가 없을 때 0을 반환합니다. 중요한 점은 **0을 실제 map에 저장하는 것은 아니라는 것**입니다.
 
 ```java
 int count = counts.getOrDefault("java", 0);
@@ -61,7 +61,7 @@ key 없음 -> 1 저장
 key 있음 -> 기존 count와 1을 합쳐 새 값 저장
 ```
 
-코딩테스트에서는 frequency counting 의도가 짧게 드러납니다. 다만 `merge`의 일반 계약에는 remapping 결과가 null일 때의 동작 등 더 많은 규칙이 있으므로 복잡한 사용에서는 공식 API를 확인합니다.
+코딩테스트에서는 frequency 개수 세기 의도가 짧게 드러납니다. 다만 `merge`의 일반 계약에는 remapping 결과가 null일 때의 동작 등 더 많은 규칙이 있으므로 복잡한 사용에서는 공식 API를 확인합니다.
 
 ### 방문 여부만 필요하면 Set이 더 직접적이다
 
@@ -100,7 +100,7 @@ key에 값이 따라감
 => Map
 ```
 
-모든 문제를 `Map<K, Boolean>`로 구현할 수는 있지만 값이 단순 membership이라면 Set이 의미를 더 잘 보여 줍니다.
+모든 문제를 `Map<K, Boolean>`로 구현할 수는 있지만 값이 단순 포함 여부라면 Set이 의미를 더 잘 보여 줍니다.
 
 ### 순회 순서를 기대하지 않는다
 
@@ -108,19 +108,19 @@ key에 값이 따라감
 
 출력이 정렬되어야 한다면:
 
-- key를 별도 List에 모아 정렬
-- `TreeMap`/`TreeSet` 같은 sorted collection이 요구에 맞는지 검토
-- 입력 순서 보존이 필요하면 다른 collection을 선택
+- 키를 별도 List에 모아 정렬
+- `TreeMap`/`TreeSet` 같은 정렬 컬렉션이 요구에 맞는지 검토
+- 입력 순서 보존이 필요하면 다른 컬렉션을 선택
 
 등을 고려합니다.
 
 "내 PC에서 넣은 순서대로 나왔다"는 테스트 결과를 계약으로 생각하면 안 됩니다.
 
-### equality가 key 의미를 결정한다
+### 동등성이 키 의미를 결정한다
 
-문자열이나 record처럼 key의 `equals/hashCode`가 올바르게 정의되어야 map/set이 같은 key를 같은 값으로 판단합니다.
+문자열이나 record처럼 키의 `equals/hashCode`가 올바르게 정의되어야 map/집합이 같은 키를 같은 값으로 판단합니다.
 
-Mutable 객체를 key로 넣은 뒤 equality에 사용되는 필드를 바꾸면 조회가 깨질 수 있습니다. 코딩테스트에서 custom key를 만들 때 record를 활용하면 값 기반 equality를 간결하게 만들 수 있는 경우가 있습니다.
+Mutable 객체를 키로 넣은 뒤 동등성에 사용되는 필드를 바꾸면 조회가 깨질 수 있습니다. 코딩테스트에서 사용자 정의 키를 만들 때 record를 활용하면 값 기반 동등성을 간결하게 만들 수 있는 경우가 있습니다.
 
 ```java
 record Position(int row, int col) { }
@@ -129,7 +129,7 @@ Set<Position> visited = new HashSet<>();
 
 ### 문제를 풀 때 확인할 것
 
-1. 필요한 상태가 membership인지 key-value인지 구분합니다.
+1. 필요한 상태가 포함 여부인지 키-값인지 구분합니다.
 2. 빈도 count의 초기값이 무엇인지 정합니다.
 3. `getOrDefault`가 값을 자동 저장한다고 착각하지 않습니다.
 4. `Set.add`의 반환값을 활용할 수 있는지 봅니다.
@@ -137,11 +137,11 @@ Set<Position> visited = new HashSet<>();
 
 ### 자주 헷갈리는 부분
 
-- `getOrDefault`는 누락된 key를 map에 삽입하지 않습니다.
+- `getOrDefault`는 누락된 키를 map에 삽입하지 않습니다.
 - `HashSet.add`는 새 원소가 실제로 추가됐는지 boolean으로 알려 줍니다.
-- HashMap/HashSet의 iteration order는 정렬이나 입력 순서를 보장하지 않습니다.
-- 일반 HashMap을 여러 thread가 공유한다고 counting 연산이 자동으로 thread-safe해지는 것은 아닙니다.
+- HashMap/HashSet의 순회 순서는 정렬이나 입력 순서를 보장하지 않습니다.
+- 일반 HashMap을 여러 스레드가 공유한다고 개수 세기 연산이 자동으로 스레드 안전해지는 것은 아닙니다.
 
 ### 학습 후 스스로 설명해 보기
 
-빈도 계산처럼 key마다 값이 필요하면 HashMap, 방문 여부나 중복 제거처럼 membership만 필요하면 HashSet이 자연스럽습니다. `getOrDefault`와 `merge`로 빈도 계산을 간단히 작성할 수 있고 `Set.add`의 반환값으로 처음 방문 여부를 바로 판단할 수 있습니다. 순회 순서는 보장되지 않으므로 출력 순서가 필요하면 별도 정렬이나 다른 collection을 선택해야 합니다.
+빈도 계산처럼 키마다 값이 필요하면 HashMap, 방문 여부나 중복 제거처럼 포함 여부만 필요하면 HashSet이 자연스럽습니다. `getOrDefault`와 `merge`로 빈도 계산을 간단히 작성할 수 있고 `Set.add`의 반환값으로 처음 방문 여부를 바로 판단할 수 있습니다. 순회 순서는 보장되지 않으므로 출력 순서가 필요하면 별도 정렬이나 다른 컬렉션을 선택해야 합니다.

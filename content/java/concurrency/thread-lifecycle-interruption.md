@@ -34,7 +34,7 @@ references:
 ---
 # Thread 생명주기와 중단
 
-`Thread` 객체를 만들었다고 새 실행 흐름이 이미 시작된 것은 아닙니다. Thread는 생성되고, `start()`를 통해 실행이 시작되며, `run()`이 끝나면 종료됩니다. 중간에는 monitor 획득, 다른 thread의 종료, sleep 같은 조건을 기다릴 수 있습니다.
+`Thread` 객체를 만들었다고 새 실행 흐름이 이미 시작된 것은 아닙니다. Thread는 생성되고, `start()`를 통해 실행이 시작되며, `run()`이 끝나면 종료됩니다. 중간에는 모니터 획득, 다른 스레드의 종료, sleep 같은 조건을 기다릴 수 있습니다.
 
 이 흐름을 이해하면 `start()`와 `run()`의 차이, `join()`의 의미, `interrupt()`가 왜 강제 종료 API가 아닌지를 함께 설명할 수 있습니다.
 
@@ -56,7 +56,7 @@ worker.start();
 worker thread -> run() -> terminate
 ```
 
-`run()`은 Thread가 실행할 본문이지 Thread 시작 API가 아닙니다. Java 25 `Thread` 문서는 direct `run()` 호출을 의도된 사용으로 보지 않습니다. Runnable task로 만든 platform thread에서는 호출자가 직접 `run()`하면 그 호출자에서 task가 실행될 수 있고, virtual thread의 `run()`을 직접 호출하면 아무 동작도 하지 않습니다. 새 Thread 실행이 목적이라면 `start()`를 사용해야 합니다.
+`run()`은 Thread가 실행할 본문이지 Thread 시작 API가 아닙니다. Java 25 `Thread` 문서는 direct `run()` 호출을 의도된 사용으로 보지 않습니다. Runnable 작업으로 만든 플랫폼 스레드에서는 호출자가 직접 `run()`하면 그 호출자에서 작업이 실행될 수 있고, 가상 스레드의 `run()`을 직접 호출하면 아무 동작도 하지 않습니다. 새 Thread 실행이 목적이라면 `start()`를 사용해야 합니다.
 
 ### Thread.State는 Java가 제공하는 관찰 모델이다
 
@@ -64,14 +64,14 @@ worker thread -> run() -> terminate
 
 - `NEW`: 아직 시작되지 않음
 - `RUNNABLE`: JVM에서 실행 가능한 상태
-- `BLOCKED`: monitor lock 획득을 기다림
+- `BLOCKED`: 모니터 lock 획득을 기다림
 - `WAITING`: 시간 제한 없이 특정 조건을 기다림
 - `TIMED_WAITING`: 시간 제한을 두고 기다림
 - `TERMINATED`: 실행 종료
 
-이 상태는 OS scheduler 상태와 1:1로 대응하지 않습니다. `RUNNABLE`이라고 해서 반드시 바로 그 순간 CPU core에서 instruction을 실행 중이라는 뜻은 아닙니다.
+이 상태는 OS scheduler 상태와 1:1로 대응하지 않습니다. `RUNNABLE`이라고 해서 반드시 바로 그 순간 CPU core에서 명령을 실행 중이라는 뜻은 아닙니다.
 
-### `join()`은 종료를 기다리고 memory ordering도 연결한다
+### `join()`은 종료를 기다리고 메모리 순서도 연결한다
 
 ```java
 worker.start();
@@ -79,7 +79,7 @@ worker.join();
 useResult();
 ```
 
-`join()`이 성공적으로 반환하면 호출자는 worker가 종료된 뒤 다음 코드로 진행합니다. JMM에서는 시작과 종료 관찰에 별도의 happens-before 관계를 정의합니다.
+`join()`이 성공적으로 반환하면 호출자는 작업자가 종료된 뒤 다음 코드로 진행합니다. JMM에서는 시작과 종료 관찰에 별도의 happens-before 관계를 정의합니다.
 
 ```text
 호출자의 `start` 이전 동작
@@ -94,7 +94,7 @@ useResult();
                     호출자의 후속 동작
 ```
 
-따라서 `join()`은 단순한 시간 대기 이상의 memory-ordering 의미를 가집니다.
+따라서 `join()`은 단순한 시간 대기 이상의 메모리-정렬 순서 의미를 가집니다.
 
 ### `interrupt()`는 강제 kill이 아니라 중단 요청이다
 
@@ -102,9 +102,9 @@ useResult();
 worker.interrupt();
 ```
 
-`interrupt()`는 대상 thread를 임의의 instruction 위치에서 즉시 종료하지 않습니다. 현재 thread가 무엇을 하고 있는지에 따라 interruption을 관찰하는 방식이 달라집니다.
+`interrupt()`는 대상 스레드를 임의의 명령 위치에서 즉시 종료하지 않습니다. 현재 스레드가 무엇을 하고 있는지에 따라 interruption을 관찰하는 방식이 달라집니다.
 
-`wait`, `join`, `sleep`에서 기다리는 thread가 interrupt되면 `InterruptedException`이 발생하고 interrupted status는 clear됩니다. 일반 실행 중이라면 interrupted status가 set되며 코드가 이를 확인해 협력적으로 종료할 수 있습니다.
+`wait`, `join`, `sleep`에서 기다리는 스레드가 interrupt되면 `InterruptedException`이 발생하고 interrupted status는 clear됩니다. 일반 실행 중이라면 interrupted status가 집합되며 코드가 이를 확인해 협력적으로 종료할 수 있습니다.
 
 ```java
 while (!Thread.currentThread().isInterrupted()) {
@@ -125,7 +125,7 @@ try {
 }
 ```
 
-`sleep`, `wait`, `join`이 `InterruptedException`을 던질 때 interrupted status는 이미 clear됩니다. 현재 계층이 checked exception을 상위에 다시 던질 수 없다면 status를 복원해 상위 실행 정책이 interruption을 계속 인식하게 하는 패턴을 사용할 수 있습니다.
+`sleep`, `wait`, `join`이 `InterruptedException`을 던질 때 interrupted status는 이미 clear됩니다. 현재 계층이 검사 예외를 상위에 다시 던질 수 없다면 status를 복원해 상위 실행 정책이 interruption을 계속 인식하게 하는 패턴을 사용할 수 있습니다.
 
 반대로 현재 계층이 cancellation을 최종 처리하고 종료한다면 기계적으로 항상 복원할 필요는 없습니다. 중요한 것은 **interruption을 catch한 뒤 아무 의미 없이 삼켜 cancellation signal을 잃지 않는 것**입니다.
 
