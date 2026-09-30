@@ -15,8 +15,8 @@ policies:
     - PRACTICAL_REASONING_CONNECTION
   level:
     L1: 일반적인 Java 코드를 읽고 쓰는 데 필요한 기반
-    L2: backend 개발에 필요한 설계, API 선택, trade-off, 실행 동작
-    L3: JMM/JVM/runtime/performance를 포함한 심화 추론
+    L2: 백엔드 개발에 필요한 설계, API 선택, 장단점, 실행 동작
+    L3: JMM/JVM 실행 원리와 성능을 포함한 심화 추론
   source:
     primary:
     - Java SE 25 JLS
@@ -28,27 +28,27 @@ policies:
     - Modern Java in Action
     - Established Java/JVM books and conference material
     - Verified Korean/company engineering material such as NAVER D2, 우아한형제들, LINE/LY, Kakao/KakaoPay, Hyperconnect
-    versionRule: runtime/implementation 주장은 Java SE 25 공식 자료와 대조하고 language, JVM specification, JDK/HotSpot implementation, OS behavior를 구분한다.
+    versionRule: 실행 시점·구현 의존 주장은 Java SE 25 공식 자료와 대조하고 언어 명세, JVM 명세, JDK/HotSpot 구현, OS 동작을 구분한다.
     urlRule: 실제로 확인한 reference만 기록하며 URL을 추측하거나 만들지 않는다.
   question:
     designRule: Question 수, 유형, 난이도는 각 Learning Objective를 가장 잘 검증하도록 결정한다.
-    reviewRule: Concept별 고정 quota를 두지 않고 Topic과 LearningArea 전체에서 유형과 난이도 coverage를 검토한다.
+    reviewRule: Concept별 고정 할당량을 두지 않고 Topic과 LearningArea 전체에서 유형과 난이도 구성을 검토한다.
     difficulty:
       EASY: 학습 직후 핵심 원칙을 직접 확인한다.
       MEDIUM: 코드 결과, 비교, 흔한 오해처럼 한 단계 더 추론한다.
-      HARD: 복합 코드, debugging, API 설계, concurrency/JVM reasoning, backend 상황을 결합하며 obscure trivia로 난이도를 만들지 않는다.
+      HARD: 복합 코드, 디버깅, API 설계, 동시성·JVM 추론, 백엔드 상황을 결합하며 지엽적인 암기로 난이도를 만들지 않는다.
     typeRule: 특정 Question type을 기본으로 우선하지 않고 Learning Objective와 채점 가능성에 맞는 유형을 선택한다.
-    distractorRule: 객관식 오답은 실제로 헷갈릴 수 있는 misconception을 사용하고 명백히 무관한 선택지로 정답을 노출하지 않는다.
+    distractorRule: 객관식 오답은 실제로 헷갈릴 수 있는 오해를 사용하고 명백히 무관한 선택지로 정답을 노출하지 않는다.
   visualization:
     values:
     - NONE
     - TEXT
     - DIAGRAM
     NONE: 시각화가 없어도 설명과 코드로 충분하다.
-    TEXT: text/ASCII 흐름이나 관계 그림이면 충분하다.
-    DIAGRAM: 참조 관계, 상태 전이, 실행 순서 등에서 실제 diagram/image가 학습 효과를 크게 높인다.
+    TEXT: 텍스트·ASCII 흐름이나 관계 그림이면 충분하다.
+    DIAGRAM: 참조 관계, 상태 전이, 실행 순서 등에서 실제 도식·이미지가 학습 효과를 크게 높인다.
   prerequisites:
-    rule: Topic 전체를 선형 course로 묶지 않는다. Concept 이해에 실제 선행 지식이 필요한 경우에만 선택적으로 prerequisites를 기록한다.
+    rule: Topic 전체를 선형 과정으로 묶지 않는다. Concept 이해에 실제 선행 지식이 필요한 경우에만 선택적으로 prerequisites를 기록한다.
 topics:
 - key: java.core.language-types
   title: "Java 언어와 값의 의미"
@@ -68,10 +68,10 @@ topics:
     title: "변수, 범위와 확정 할당"
     order: 20
     level: 1
-    objective: 필드·지역 변수·매개변수의 차이, scope, 초기화와 definite assignment 규칙을 구분한다.
+    objective: "필드·지역 변수·매개변수의 차이, 범위(scope), 초기화와 확정 할당(definite assignment) 규칙을 구분한다."
     density: CORE
     visualization: TEXT
-    visualizationNote: 작은 scope 구조와 변수를 사용할 수 있는 시점을 표시한다.
+    visualizationNote: 작은 범위 구조와 변수를 사용할 수 있는 시점을 표시한다.
   - key: java.core.language-types.numeric-conversion-overflow
     title: "숫자 변환과 오버플로"
     order: 30
@@ -83,7 +83,7 @@ topics:
     title: "박싱·언박싱과 래퍼 타입"
     order: 40
     level: 2
-    objective: boxing/unboxing, null unboxing 위험, wrapper equality와 캐시 관련 흔한 오해를 이해한다.
+    objective: "박싱·언박싱, `null` 언박싱 위험, 래퍼 객체의 동일성·동등성 차이와 캐시 관련 흔한 오해를 이해한다."
     density: CORE
     visualization: NONE
   - key: java.core.language-types.pass-by-value
@@ -100,7 +100,7 @@ topics:
     title: "배열 공변성과 저장 시 런타임 타입 검사"
     order: 60
     level: 2
-    objective: Java 배열의 고정 길이·참조형 성격과 배열 covariance가 ArrayStoreException 같은 런타임 검사를 만드는 이유를 설명한다.
+    objective: "Java 배열의 고정 길이·참조형 성격과 배열 공변성(covariance)이 `ArrayStoreException` 같은 런타임 검사를 만드는 이유를 설명한다."
     density: CORE
     visualization: DIAGRAM
     prerequisites:
@@ -117,12 +117,12 @@ topics:
     title: "String의 불변성과 문자열 비교"
     order: 80
     level: 1
-    objective: String이 불변 객체라는 의미와 ==가 identity를, equals가 문자열 내용을 비교한다는 차이를 코드 결과와 함께 설명한다.
+    objective: "String이 불변 객체라는 의미와 `==`가 객체 동일성을, `equals`가 문자열 내용의 동등성을 비교한다는 차이를 코드 결과와 함께 설명한다."
     density: CORE
     visualization: TEXT
     prerequisites:
     - java.core.language-types.primitive-reference-values
-    visualizationNote: 서로 다른 String 객체의 identity와 같은 문자열 내용 equality를 비교한다.
+    visualizationNote: "서로 다른 String 객체의 동일성과 같은 문자열 내용의 동등성을 비교한다."
   - key: java.core.language-types.string-pool-interning
     title: "문자열 풀(String Pool)과 intern()"
     order: 90
@@ -132,17 +132,17 @@ topics:
     visualization: TEXT
     prerequisites:
     - java.core.language-types.string-immutability-equality
-    visualizationNote: literal이 재사용되는 경우와 runtime에 별도 String 객체가 만들어지는 경우를 구분한다.
+    visualizationNote: "문자열 리터럴이 재사용되는 경우와 실행 시점에 별도 String 객체가 만들어지는 경우를 구분한다."
   - key: java.core.language-types.stringbuilder-mutable-text
     title: "StringBuilder와 반복 문자열 조립"
     order: 100
     level: 1
-    objective: 반복적인 문자열 조립에서 StringBuilder가 mutable buffer를 제공하는 이유와 String 불변성과의 차이를 이해하고 적절한 사용 범위를 판단한다.
+    objective: "반복적인 문자열 조립에서 StringBuilder가 변경 가능한 버퍼를 제공하는 이유와 String 불변성과의 차이를 이해하고 적절한 사용 범위를 판단한다."
     density: CORE
     visualization: DIAGRAM
     prerequisites:
     - java.core.language-types.string-immutability-equality
-    visualizationNote: String은 연결할 때마다 새 결과를 만들 수 있고 StringBuilder는 하나의 가변 buffer에 append한 뒤 String으로 확정하는 흐름을 비교한다.
+    visualizationNote: "String은 연결할 때마다 새 결과를 만들 수 있고 StringBuilder는 하나의 변경 가능한 버퍼에 `append`한 뒤 String으로 확정하는 흐름을 비교한다."
 - key: java.core.object-model
   title: "객체 생성, 상태와 객체지향"
   order: 20
@@ -178,7 +178,7 @@ topics:
     title: "캡슐화와 객체의 불변 조건"
     order: 40
     level: 1
-    objective: 상태 변경 규칙과 invariant를 객체 내부에 두고 무분별한 setter 노출보다 의도가 드러나는 동작으로 보호하는 이유를 설명한다.
+    objective: "상태 변경 규칙과 불변 조건(invariant)을 객체 내부에 두고 무분별한 setter 노출보다 의도가 드러나는 동작으로 보호하는 이유를 설명한다."
     density: CORE
     visualization: NONE
   - key: java.core.object-model.abstraction-responsibility
@@ -192,18 +192,18 @@ topics:
     title: "상속과 is-a 관계"
     order: 60
     level: 2
-    objective: 상속을 의미 있는 subtype/is-a 관계에 사용할 때의 장점과 강한 결합·취약한 기반 클래스 문제를 이해한다.
+    objective: "상속을 의미 있는 하위 타입(subtype)·is-a 관계에 사용할 때의 장점과 강한 결합·취약한 기반 클래스 문제를 이해한다."
     density: STANDARD
     visualization: TEXT
-    visualizationNote: is-a 계층과 has-a 협력 구조를 비교한다.
+    visualizationNote: "is-a 계층과 has-a 협력 구조를 비교한다."
   - key: java.core.object-model.composition-collaboration
     title: "합성과 객체 협력"
     order: 70
     level: 2
-    objective: 독립적으로 바뀌어야 하는 행동은 상속보다 객체 협력과 합성으로 분리하는 이유와 trade-off를 설명한다.
+    objective: "독립적으로 바뀌어야 하는 행동은 상속보다 객체 협력과 합성으로 분리하는 이유와 장단점을 설명한다."
     density: CORE
     visualization: DIAGRAM
-    visualizationNote: 상속으로 구현을 물려받는 구조와 collaborator에 위임하는 구조를 비교한다.
+    visualizationNote: "상속으로 구현을 물려받는 구조와 협력 객체에 위임하는 구조를 비교한다."
   - key: java.core.object-model.polymorphism-dynamic-dispatch
     title: "다형성과 런타임 메서드 선택"
     order: 80
@@ -232,7 +232,7 @@ topics:
     visualization: TEXT
     prerequisites:
     - java.core.object-model.polymorphism-dynamic-dispatch
-    visualizationNote: 상위 타입 참조가 하위 객체를 가리킬 때 안전한/위험한 downcast 경로를 비교한다.
+    visualizationNote: "상위 타입 참조가 하위 객체를 가리킬 때 안전하거나 위험한 하향 형변환 경로를 비교한다."
   - key: java.core.object-model.interface-vs-abstract-class
     title: "인터페이스와 추상 클래스 선택"
     order: 110
@@ -267,7 +267,7 @@ topics:
     title: "Builder로 복잡한 생성 인자 다루기"
     order: 20
     level: 2
-    objective: 선택 인자가 많거나 이름 있는 구성 단계가 필요할 때 builder를 사용하되 필수 invariant를 숨기지 않는다.
+    objective: "선택 인자가 많거나 이름 있는 구성 단계가 필요할 때 빌더(Builder)를 사용하되 필수 불변 조건을 숨기지 않는다."
     density: STANDARD
     visualization: NONE
   - key: java.core.api-design.dependency-injection-construction
@@ -277,7 +277,7 @@ topics:
     objective: "숨겨진 전역·정적 의존성보다 필요한 협력 객체를 명시적으로 전달해 결합도를 낮추고 테스트하기 쉬워지는 이유를 설명한다."
     density: CORE
     visualization: TEXT
-    visualizationNote: constructor로 보이는 dependency와 내부 global lookup을 비교한다.
+    visualizationNote: "생성자로 드러나는 의존성과 내부 전역 조회(global lookup)를 비교한다."
   - key: java.core.api-design.minimize-accessibility-api-surface
     title: "필요한 범위만 공개하기"
     order: 40
@@ -302,38 +302,38 @@ topics:
     title: "equals 계약과 논리적 동등성"
     order: 10
     level: 2
-    objective: reflexive·symmetric·transitive·consistent·null 규칙을 적용하고 어떤 상태를 논리적 equality에 포함할지 판단한다.
+    objective: "반사성(reflexive)·대칭성(symmetric)·추이성(transitive)·일관성(consistent)·null 규칙을 적용하고 어떤 상태를 논리적 동등성에 포함할지 판단한다."
     density: CORE
     visualization: NONE
   - key: java.core.object-contracts.hashcode-contract
     title: "hashCode와 equals의 계약"
     order: 20
     level: 2
-    objective: equals와 hashCode의 계약을 함께 지키고 위반 시 hash 기반 collection에서 발생하는 문제를 설명한다.
+    objective: "equals와 hashCode의 계약을 함께 지키고 위반 시 해시 기반 컬렉션에서 발생하는 문제를 설명한다."
     density: CORE
     visualization: TEXT
     prerequisites:
     - java.core.object-contracts.equals-contract
-    visualizationNote: 같은 객체가 같은 hash 후보 영역으로 이동한 뒤 equals로 확인되는 과정을 보여 준다.
+    visualizationNote: "같은 객체가 같은 해시 후보 영역으로 이동한 뒤 equals로 확인되는 과정을 보여 준다."
   - key: java.core.object-contracts.tostring-diagnostics
     title: "toString과 진단용 표현"
     order: 30
     level: 1
-    objective: debugging에 유용한 toString을 작성하되 안정적 serialization 형식이나 민감정보 안전 형식으로 오해하지 않는다.
+    objective: "디버깅에 유용한 toString을 작성하되 안정적인 직렬화 형식이나 민감정보 안전 형식으로 오해하지 않는다."
     density: STANDARD
     visualization: NONE
   - key: java.core.object-contracts.comparable-natural-order
     title: "Comparable과 자연 순서"
     order: 40
     level: 2
-    objective: 자연 순서를 정의하고 compareTo와 equals의 불일치가 sorted collection에 미치는 영향을 이해한다.
+    objective: "자연 순서를 정의하고 compareTo와 equals의 불일치가 정렬 컬렉션에 미치는 영향을 이해한다."
     density: STANDARD
     visualization: NONE
   - key: java.core.object-contracts.comparator-custom-order
     title: "Comparator로 정렬 기준 조합하기"
     order: 50
     level: 2
-    objective: 여러 기준을 안전하게 조합한 custom order를 만들고 subtraction 기반 비교의 overflow 위험을 피한다.
+    objective: "여러 기준을 안전하게 조합한 사용자 정의 순서를 만들고 뺄셈 기반 비교의 오버플로 위험을 피한다."
     density: CORE
     visualization: NONE
 - key: java.core.enum-modeling
@@ -353,7 +353,7 @@ topics:
     title: "enum 순번(ordinal)과 외부 저장값"
     order: 20
     level: 2
-    objective: ordinal은 선언 순서에 따라 바뀌므로 안정적 외부 identity로 사용하기 위험하다는 점과 name 사용의 trade-off를 이해한다.
+    objective: "ordinal은 선언 순서에 따라 바뀌므로 안정적인 외부 식별자로 사용하기 위험하다는 점과 name 사용의 장단점을 이해한다."
     density: STANDARD
     visualization: NONE
   - key: java.core.enum-modeling.enumset
@@ -367,7 +367,7 @@ topics:
     title: "EnumMap으로 enum 키 매핑하기"
     order: 40
     level: 2
-    objective: key가 enum으로 제한된 mapping에서 EnumMap이 일반 Map보다 의도를 잘 드러내는 경우를 판단한다.
+    objective: "키가 enum으로 제한된 매핑에서 EnumMap이 일반 Map보다 의도를 잘 드러내는 경우를 판단한다."
     density: STANDARD
     visualization: NONE
 - key: java.core.design-patterns
@@ -380,7 +380,7 @@ topics:
     title: "전략(Strategy) 패턴과 정책 교체"
     order: 10
     level: 2
-    objective: 정책·타입별 분기가 계속 늘어날 때 교체 가능한 behavior로 variation을 분리하는 Strategy의 적용 기준을 설명한다.
+    objective: "정책·타입별 분기가 계속 늘어날 때 교체 가능한 동작으로 변경 지점을 분리하는 전략(Strategy) 패턴의 적용 기준을 설명한다."
     density: CORE
     visualization: DIAGRAM
     prerequisites:
@@ -390,7 +390,7 @@ topics:
     title: "템플릿 메서드(Template Method) 패턴과 공통 실행 흐름"
     order: 20
     level: 2
-    objective: "공통 알고리즘의 뼈대(skeleton)를 상위 타입에 두고 일부 단계만 바꾸는 Template Method의 구조와 상속 결합의 장단점을 이해한다."
+    objective: "공통 알고리즘의 뼈대를 상위 타입에 두고 일부 단계만 바꾸는 Template Method의 구조와 상속 결합의 장단점을 이해한다."
     density: STANDARD
     visualization: NONE
   - key: java.core.design-patterns.factory-pattern
@@ -404,7 +404,7 @@ topics:
     title: "어댑터(Adapter)로 외부 인터페이스와 경계 분리하기"
     order: 40
     level: 2
-    objective: 외부 library나 다른 interface를 application이 기대하는 contract로 변환하여 경계를 보호한다.
+    objective: "외부 라이브러리나 다른 인터페이스를 애플리케이션이 기대하는 계약으로 변환하여 경계를 보호한다."
     density: CORE
     visualization: DIAGRAM
     visualizationNote: "외부 인터페이스를 애플리케이션이 사용하는 계약으로 변환하는 단방향 경계를 보여 준다."
@@ -417,25 +417,25 @@ topics:
     visualization: DIAGRAM
     prerequisites:
     - java.core.object-model.composition-collaboration
-    visualizationNote: 여러 decorator가 target을 감싸며 호출을 위임하는 구조를 보여 준다.
+    visualizationNote: "여러 데코레이터가 대상 객체를 감싸며 호출을 위임하는 구조를 보여 준다."
   - key: java.core.design-patterns.proxy-pattern
     title: "프록시(Proxy)와 호출 중개"
     order: 60
     level: 2
-    objective: 실제 객체를 대신해 접근 제어, lazy loading, 원격 호출, interception 같은 중개 책임을 수행하는 Proxy를 이해한다.
+    objective: "실제 객체를 대신해 접근 제어, 지연 로딩(lazy loading), 원격 호출, 호출 가로채기(interception) 같은 중개 책임을 수행하는 Proxy를 이해한다."
     density: CORE
     visualization: DIAGRAM
     prerequisites:
     - java.core.object-model.polymorphism-dynamic-dispatch
-    visualizationNote: 호출자가 proxy를 거쳐 target에 접근하는 흐름을 그린다.
+    visualizationNote: "호출자가 프록시를 거쳐 대상 객체에 접근하는 흐름을 그린다."
   - key: java.core.design-patterns.observer-pattern
     title: "옵저버(Observer)와 상태 변화 알림"
     order: 70
     level: 2
-    objective: 한 객체의 상태 변화나 event를 여러 관심 대상에게 알릴 때 Observer를 적용하고 coupling·subscription lifecycle을 고려한다.
+    objective: "한 객체의 상태 변화나 이벤트를 여러 관심 대상에게 알릴 때 Observer를 적용하고 결합도·구독 생명주기를 고려한다."
     density: STANDARD
     visualization: DIAGRAM
-    visualizationNote: publisher와 여러 subscriber 사이의 event 전달 관계를 보여 준다.
+    visualizationNote: "발행자와 여러 구독자 사이의 이벤트 전달 관계를 보여 준다."
   - key: java.core.design-patterns.state-pattern
     title: "상태(State) 패턴과 상태별 동작"
     order: 80
@@ -461,10 +461,10 @@ topics:
     title: "ArrayList와 LinkedList의 실제 선택 기준"
     order: 20
     level: 2
-    objective: 접근·순회·삽입·삭제·allocation·locality를 기준으로 ArrayList와 LinkedList를 비교하고 단순 Big-O 암기를 넘어 실제 trade-off를 설명한다.
+    objective: "접근·순회·삽입·삭제·할당(allocation)·지역성(locality)을 기준으로 ArrayList와 LinkedList를 비교하고 단순 Big-O 암기를 넘어 실제 장단점을 설명한다."
     density: CORE
     visualization: DIAGRAM
-    visualizationNote: array-backed storage와 node link 기반 구조의 접근·삽입 경로를 비교하고 물리 메모리 연속 배치를 Java 보장처럼 표현하지 않는다.
+    visualizationNote: "배열 기반 저장 구조와 노드 연결 구조의 접근·삽입 경로를 비교하고 물리 메모리 연속 배치를 Java 보장처럼 표현하지 않는다."
   - key: java.core.collections.hashmap-hashing-collision
     title: "HashMap 조회와 해시 충돌"
     order: 30
@@ -516,7 +516,7 @@ topics:
     title: "Iterable, Iterator와 순회 중 수정"
     order: 80
     level: 2
-    objective: "`Iterable`·`Iterator`와 확장 `for` 문의 관계, 순회 중 안전한 수정 방법, fail-fast 동작의 계약 범위를 설명한다."
+    objective: "`Iterable`·`Iterator`와 확장 `for` 문의 관계, 순회 중 안전한 수정 방법, 빠른 실패(fail-fast) 동작의 계약 범위를 설명한다."
     density: CORE
     visualization: TEXT
     visualizationNote: "`Iterator`의 커서와 구조 변경 검사 방식을 단순화해 보여 준다."
@@ -547,12 +547,12 @@ topics:
     title: "제네릭 불공변성과 잘못된 쓰기 방지"
     order: 20
     level: 2
-    objective: List<Integer>가 List<Number>의 subtype이 아닌 이유를 잘못된 write 가능성과 연결해 설명한다.
+    objective: "`List<Integer>`가 `List<Number>`의 하위 타입이 아닌 이유를 잘못된 값 쓰기 가능성과 연결해 설명한다."
     density: CORE
     visualization: TEXT
     prerequisites:
     - java.core.language-types.arrays-covariance-runtime-check
-    visualizationNote: 배열 covariance와 generic invariance를 unsafe write 관점에서 비교한다.
+    visualizationNote: "배열 공변성과 제네릭 불공변성을 안전하지 않은 값 쓰기 관점에서 비교한다."
   - key: java.core.generics.wildcards-pecs
     title: "와일드카드(Wildcard)와 PECS"
     order: 30
@@ -562,7 +562,7 @@ topics:
     visualization: DIAGRAM
     prerequisites:
     - java.core.generics.generic-invariance
-    visualizationNote: extends는 읽기, super는 쓰기 방향을 데이터 흐름으로 비교한다.
+    visualizationNote: "`extends`는 읽기, `super`는 쓰기 방향을 데이터 흐름으로 비교한다."
   - key: java.core.generics.raw-types-unchecked
     title: "로 타입(raw type)과 비검사 경고(unchecked warning)"
     order: 40
@@ -584,7 +584,7 @@ topics:
     title: "제네릭 가변 인자(varargs)와 힙 오염(heap pollution)"
     order: 60
     level: 3
-    objective: generic varargs에서 heap pollution이 발생할 수 있는 이유와 @SafeVarargs를 사용할 수 있는 조건을 설명한다.
+    objective: "제네릭 가변 인자에서 힙 오염이 발생할 수 있는 이유와 `@SafeVarargs`를 사용할 수 있는 조건을 설명한다."
     density: STANDARD
     visualization: NONE
     prerequisites:
@@ -606,10 +606,10 @@ topics:
     title: "예외 전파와 catch 경계"
     order: 20
     level: 2
-    objective: 예외를 무조건 가까운 곳에서 잡지 않고 recovery, translation, 사용자 응답처럼 책임이 있는 boundary에서 처리한다.
+    objective: "예외를 무조건 가까운 곳에서 잡지 않고 복구, 예외 변환, 사용자 응답처럼 책임이 있는 경계에서 처리한다."
     density: CORE
     visualization: DIAGRAM
-    visualizationNote: 예외가 여러 layer를 통과할 때 recovery·translation·logging·response 책임 지점을 실제 흐름으로 표시한다.
+    visualizationNote: "예외가 여러 계층을 통과할 때 복구·예외 변환·로깅·응답 책임 지점을 실제 흐름으로 표시한다."
   - key: java.core.exceptions-resources.exception-translation-cause
     title: "예외 변환과 원인 보존"
     order: 30
@@ -628,7 +628,7 @@ topics:
     title: "예외와 정상적인 분기 흐름 구분하기"
     order: 50
     level: 2
-    objective: 예외 상황과 정상적인 분기 조건을 구분하고 exception을 반복적인 일반 control flow로 남용할 때의 문제를 설명한다.
+    objective: "예외 상황과 정상적인 분기 조건을 구분하고 예외를 반복적인 일반 제어 흐름(control flow)으로 남용할 때의 문제를 설명한다."
     density: STANDARD
     visualization: NONE
   - key: java.core.exceptions-resources.failure-atomicity
@@ -645,7 +645,7 @@ topics:
     objective: "try-with-resources의 자원 종료 순서와 주 예외·억제된 예외(suppressed exception)가 함께 보존되는 방식을 설명한다."
     density: CORE
     visualization: TEXT
-    visualizationNote: 여러 resource가 역순으로 close되고 부가 예외가 suppressed로 붙는 흐름을 보여 준다.
+    visualizationNote: "여러 자원이 역순으로 닫히고 부가 예외가 억제 예외로 붙는 흐름을 보여 준다."
   - key: java.core.exceptions-resources.autocloseable-resource-ownership
     title: "AutoCloseable과 자원 소유권"
     order: 80
@@ -671,7 +671,7 @@ topics:
     title: "행동을 매개변수로 전달하기"
     order: 20
     level: 2
-    objective: 비슷한 control flow를 복제하는 대신 변화하는 behavior를 parameter로 전달하는 설계 방식을 이해한다.
+    objective: "비슷한 제어 흐름을 복제하는 대신 변화하는 동작을 매개변수로 전달하는 설계 방식을 이해한다."
     density: CORE
     visualization: NONE
     prerequisites:
@@ -732,7 +732,7 @@ topics:
     title: "reduce로 여러 값을 하나로 합치기"
     order: 30
     level: 2
-    objective: "축약 연산의 항등값과 결합 법칙을 이해하고 reduce보다 Collector나 반복문이 더 명확한 경우를 판단한다."
+    objective: "축약 연산의 항등원과 결합 법칙을 이해하고 reduce보다 Collector나 반복문이 더 명확한 경우를 판단한다."
     density: STANDARD
     visualization: NONE
     prerequisites:
@@ -750,7 +750,7 @@ topics:
     title: "toMap의 중복 키 처리"
     order: 50
     level: 2
-    objective: toMap에서 duplicate key가 발생할 때 merge policy를 명시해야 하는 이유와 잘못된 가정으로 생기는 실패를 설명한다.
+    objective: "`toMap`에서 중복 키가 발생할 때 병합 정책을 명시해야 하는 이유와 잘못된 가정으로 생기는 실패를 설명한다."
     density: STANDARD
     visualization: NONE
     prerequisites:
@@ -803,7 +803,7 @@ topics:
     visualization: TEXT
     prerequisites:
     - java.core.object-model.inheritance-is-a
-    visualizationNote: 허용된 subtype 집합과 exhaustive 분기 가능성을 보여 준다.
+    visualizationNote: "허용된 하위 타입 집합과 모든 경우를 빠짐없이 처리할 수 있는 분기 가능성을 보여 준다."
   - key: java.core.modern-language.local-variable-type-inference-var
     title: "var와 지역 변수 타입 추론"
     order: 40
@@ -815,7 +815,7 @@ topics:
     title: "switch 식(switch expression)으로 값 계산하기"
     order: 50
     level: 1
-    objective: expression 형태 switch, arrow label, exhaustiveness와 yield를 이해하고 statement switch와 결과 사용 방식을 구분한다.
+    objective: "식 형태의 switch, 화살표 레이블(arrow label), 완전성(exhaustiveness), `yield`를 이해하고 문 형태의 switch와 결과 사용 방식을 구분한다."
     density: STANDARD
     visualization: NONE
   - key: java.core.modern-language.pattern-matching
@@ -831,7 +831,7 @@ topics:
     title: "여러 줄 텍스트(Text Block)로 문자열 쓰기"
     order: 70
     level: 1
-    objective: multi-line text를 text block으로 표현하면서 incidental indentation, escape와 line terminator 처리의 기본 동작을 이해한다.
+    objective: "여러 줄 텍스트를 텍스트 블록(text block)으로 표현하면서 부수 들여쓰기(incidental indentation), 이스케이프, 줄 종료 문자 처리의 기본 동작을 이해한다."
     density: STANDARD
     visualization: NONE
   - key: java.core.modern-language.default-static-interface-methods
@@ -851,10 +851,10 @@ topics:
     title: "Instant·LocalDateTime·ZonedDateTime"
     order: 10
     level: 2
-    objective: 하나의 timeline 지점인 Instant, timezone 정보가 없는 local date-time, zone-aware time을 구분하고 변환 결과를 설명한다.
+    objective: "하나의 시간선(timeline) 지점인 Instant, 시간대 정보가 없는 지역 날짜·시간, 시간대가 포함된 시각을 구분하고 변환 결과를 설명한다."
     density: CORE
     visualization: DIAGRAM
-    visualizationNote: 하나의 Instant가 여러 ZoneId에서 서로 다른 local time으로 표현되는 모습을 보여 준다.
+    visualizationNote: "하나의 Instant가 여러 ZoneId에서 서로 다른 지역 시각으로 표현되는 모습을 보여 준다."
   - key: java.core.time-numeric.zoneid-dst
     title: "ZoneId와 서머타임 전환"
     order: 20
@@ -864,19 +864,19 @@ topics:
     visualization: DIAGRAM
     prerequisites:
     - java.core.time-numeric.instant-local-zoned-time
-    visualizationNote: DST gap과 overlap에서 local clock이 어떻게 건너뛰거나 겹치는지 보여 준다.
+    visualizationNote: "DST의 공백(gap)과 중복(overlap) 구간에서 지역 시계가 어떻게 건너뛰거나 겹치는지 보여 준다."
   - key: java.core.time-numeric.duration-period
     title: "Duration과 Period의 시간 의미"
     order: 30
     level: 2
-    objective: 시간 기반 양인 Duration과 날짜 기반 양인 Period를 구분하고 calendar 계산에서 결과가 달라질 수 있음을 이해한다.
+    objective: "시간 기반 양인 Duration과 날짜 기반 양인 Period를 구분하고 달력 계산에서 결과가 달라질 수 있음을 이해한다."
     density: STANDARD
     visualization: NONE
   - key: java.core.time-numeric.clock-testable-time
     title: "Clock으로 테스트 가능한 시간 만들기"
     order: 40
     level: 2
-    objective: 현재 시간이 business policy에 영향을 줄 때 Clock을 주입하여 코드의 결정성과 테스트 가능성을 높이는 이유를 설명한다.
+    objective: "현재 시간이 업무 정책에 영향을 줄 때 Clock을 주입하여 코드의 결정성과 테스트 가능성을 높이는 이유를 설명한다."
     density: CORE
     visualization: NONE
   - key: java.core.time-numeric.datetimeformatter-parsing-formatting
@@ -899,7 +899,7 @@ topics:
     title: "BigDecimal로 금액과 반올림 다루기"
     order: 70
     level: 2
-    objective: BigDecimal 생성, scale, rounding, equals와 compareTo 차이를 이해하고 금액 같은 decimal value를 안전하게 모델링한다.
+    objective: "BigDecimal 생성, 스케일(scale), 반올림(rounding), equals와 compareTo 차이를 이해하고 금액 같은 십진 값을 안전하게 모델링한다."
     density: CORE
     visualization: NONE
     prerequisites:
@@ -914,22 +914,22 @@ topics:
     title: "바이트·문자 스트림과 Charset"
     order: 10
     level: 1
-    objective: byte와 character, charset encoding/decoding을 구분하고 잘못된 문자셋 경계에서 mojibake가 생기는 이유를 설명한다.
+    objective: "바이트와 문자, 문자셋 인코딩·디코딩을 구분하고 잘못된 문자셋 경계에서 문자열이 깨지는 이유를 설명한다."
     density: CORE
     visualization: TEXT
-    visualizationNote: byte sequence가 명시된 charset을 거쳐 character로 바뀌는 경계를 보여 준다.
+    visualizationNote: "바이트 열이 명시된 문자셋을 거쳐 문자로 바뀌는 경계를 보여 준다."
   - key: java.core.io-nio.input-output-reader-writer
     title: "입출력과 Reader·Writer"
     order: 20
     level: 1
-    objective: 데이터가 binary인지 text인지에 따라 InputStream/OutputStream과 Reader/Writer abstraction을 선택한다.
+    objective: "데이터가 바이너리인지 텍스트인지에 따라 InputStream/OutputStream과 Reader/Writer 추상화를 선택한다."
     density: STANDARD
     visualization: NONE
   - key: java.core.io-nio.buffered-io
     title: "버퍼링 I/O와 버퍼의 역할"
     order: 30
     level: 1
-    objective: buffering이 작은 underlying I/O 호출 횟수를 줄여 처리 효율을 높이는 원리와 flush 시점을 이해한다.
+    objective: "버퍼링이 작은 하위 I/O 호출 횟수를 줄여 처리 효율을 높이는 원리와 `flush` 시점을 이해한다."
     density: CORE
     visualization: NONE
   - key: java.core.io-nio.path-files-api
@@ -943,20 +943,20 @@ topics:
     title: "NIO Channel과 Buffer"
     order: 50
     level: 2
-    objective: Channel과 Buffer의 position, limit, capacity와 flip/clear 흐름을 이해하고 read/write mode 전환을 예측한다.
+    objective: "Channel과 Buffer의 위치(position), 한계(limit), 용량(capacity)과 `flip`·`clear` 흐름을 이해하고 읽기·쓰기 모드 전환을 예측한다."
     density: CORE
     visualization: DIAGRAM
-    visualizationNote: Buffer의 position-limit-capacity 변화와 flip 전후 상태를 그린다.
+    visualizationNote: "Buffer의 position-limit-capacity 변화와 `flip` 전후 상태를 그린다."
   - key: java.core.io-nio.blocking-nonblocking-selector
     title: "블로킹·논블로킹 I/O와 Selector"
     order: 60
     level: 3
-    objective: blocking I/O와 non-blocking I/O를 구분하고 Selector가 여러 channel의 readiness를 한 thread에서 관찰하는 Java NIO model을 이해한다.
+    objective: "블로킹 I/O와 논블로킹 I/O를 구분하고 Selector가 여러 Channel의 준비 상태(readiness)를 한 스레드에서 관찰하는 Java NIO 모델을 이해한다."
     density: CORE
     visualization: DIAGRAM
     prerequisites:
     - java.core.io-nio.nio-channel-buffer
-    visualizationNote: 하나의 selector가 여러 channel readiness event를 확인하는 흐름을 보여 준다.
+    visualizationNote: "하나의 Selector가 여러 Channel의 준비 상태 이벤트를 확인하는 흐름을 보여 준다."
 - key: java.core.coding-tests
   title: "Java 코딩 테스트 도구"
   order: 150
@@ -967,7 +967,7 @@ topics:
     title: "BufferedReader 입력과 토큰화"
     order: 10
     level: 1
-    objective: BufferedReader와 tokenization, 숫자 parsing을 사용해 코딩테스트 입력을 안정적이고 효율적으로 읽는다.
+    objective: "BufferedReader와 토큰화, 숫자 파싱을 사용해 코딩 테스트 입력을 안정적이고 효율적으로 읽는다."
     density: CORE
     visualization: NONE
     prerequisites:
@@ -992,7 +992,7 @@ topics:
     title: "코딩 테스트용 Comparator"
     order: 40
     level: 2
-    objective: 오름차순·내림차순·다중 key 정렬용 Comparator를 overflow 없이 안전하게 작성한다.
+    objective: "오름차순·내림차순·다중 키 정렬용 Comparator를 오버플로 없이 안전하게 작성한다."
     density: CORE
     visualization: NONE
     prerequisites:
@@ -1019,7 +1019,7 @@ topics:
     title: "HashMap·HashSet으로 개수 세기"
     order: 70
     level: 1
-    objective: "빈도 세기(frequency counting), 방문 여부 판별, `getOrDefault`·`merge` 같은 Map·Set 활용 방식(idiom)을 코딩 테스트 구현에 활용한다."
+    objective: "빈도 세기(frequency counting), 방문 여부 판별, `getOrDefault`·`merge` 같은 Map·Set 활용 관용구(idiom)를 코딩 테스트 구현에 활용한다."
     density: CORE
     visualization: NONE
     prerequisites:
@@ -1034,7 +1034,7 @@ topics:
     title: "동시성과 병렬성"
     order: 10
     level: 1
-    objective: 여러 작업이 겹쳐 진행되는 concurrency와 실제로 동시에 CPU에서 실행되는 parallelism을 구분한다.
+    objective: "여러 작업이 겹쳐 진행되는 동시성(concurrency)과 실제로 동시에 CPU에서 실행되는 병렬성(parallelism)을 구분한다."
     density: STANDARD
     visualization: TEXT
     visualizationNote: "한 작업자에서 작업들이 번갈아 진행되는 경우와 여러 작업자가 실제로 동시에 실행하는 경우를 비교한다."
@@ -1042,20 +1042,20 @@ topics:
     title: "Thread 생명주기와 중단"
     order: 20
     level: 2
-    objective: "Thread의 시작·join·sleep과 생명주기 상태를 이해하고 interrupt가 강제 종료가 아닌 협력적 취소 신호임을 설명한다."
+    objective: "Thread의 시작·`join`·`sleep`과 생명주기 상태를 이해하고 `interrupt`가 강제 종료가 아닌 협력적 취소 신호임을 설명한다."
     density: CORE
     visualization: TEXT
-    visualizationNote: thread 상태 전이와 interrupt signal을 관찰하는 흐름을 보여 준다.
+    visualizationNote: "스레드 상태 전이와 중단 신호를 관찰하는 흐름을 보여 준다."
   - key: java.core.concurrency.platform-virtual-thread
     title: "플랫폼 스레드(Platform Thread)와 가상 스레드(Virtual Thread)"
     order: 30
     level: 2
-    objective: "Java Thread, 플랫폼 스레드, 가상 스레드를 구분하고 Java 25의 carrier 모델을 이해하되 `synchronized`가 가상 스레드를 carrier에 고정한다는 과거 설명을 일반화하지 않는다."
+    objective: "Java Thread, 플랫폼 스레드, 가상 스레드를 구분하고 Java 25의 캐리어(carrier) 모델을 이해하되 `synchronized`가 가상 스레드를 캐리어에 고정한다는 과거 설명을 일반화하지 않는다."
     density: CORE
     visualization: DIAGRAM
     prerequisites:
     - java.core.concurrency.thread-lifecycle-interruption
-    visualizationNote: "여러 가상 스레드가 carrier 역할의 플랫폼 스레드 위에서 실행되는 Java·OS 경계를 보여 준다."
+    visualizationNote: "여러 가상 스레드가 캐리어 역할의 플랫폼 스레드 위에서 실행되는 Java·OS 경계를 보여 준다."
   - key: java.core.concurrency.shared-mutable-state-race
     title: "공유 가변 상태와 경합 조건(Race Condition)"
     order: 40
@@ -1063,28 +1063,28 @@ topics:
     objective: "여러 스레드가 같은 변경 가능한 상태를 읽고 쓰는 실행 순서가 엇갈려 갱신 누락이나 경합 조건이 생기는 흐름을 식별하고 보호할 불변 조건을 찾는다."
     density: CORE
     visualization: DIAGRAM
-    visualizationNote: 두 read-modify-write가 겹쳐 update를 잃는 순서를 그린다.
+    visualizationNote: "두 읽기-수정-쓰기(read-modify-write)가 겹쳐 갱신을 잃는 순서를 그린다."
   - key: java.core.concurrency.synchronized-monitor
     title: "synchronized와 모니터(Monitor)"
     order: 50
     level: 2
-    objective: synchronized를 사용한 mutual exclusion, intrinsic monitor ownership과 reentrancy를 이해하고 어떤 critical section을 보호하는지 설명한다.
+    objective: "`synchronized`가 제공하는 상호 배제(mutual exclusion), 내장 모니터의 소유권과 재진입(reentrancy)을 이해하고 어떤 임계 구역을 보호하는지 설명한다."
     density: CORE
     visualization: DIAGRAM
     prerequisites:
     - java.core.concurrency.shared-mutable-state-race
-    visualizationNote: 하나의 monitor owner와 진입을 기다리는 thread, reentrant acquisition을 보여 준다.
+    visualizationNote: "하나의 모니터 소유자와 진입을 기다리는 스레드, 재진입 획득을 보여 준다."
   - key: java.core.concurrency.jmm-happens-before-visibility
     title: "JMM의 happens-before와 가시성"
     order: 60
     level: 3
-    objective: "CPU cache에 관한 통념이 아니라 Java Memory Model의 happens-before 관계를 통해 가시성과 실행 순서를 설명한다."
+    objective: "CPU 캐시에 관한 통념이 아니라 Java Memory Model의 happens-before 관계를 통해 가시성과 실행 순서를 설명한다."
     density: CORE
     visualization: DIAGRAM
     prerequisites:
     - java.core.concurrency.shared-mutable-state-race
     - java.core.concurrency.synchronized-monitor
-    visualizationNote: 한 synchronization action이 앞선 write를 이후 read에 보이게 하는 happens-before edge를 그린다.
+    visualizationNote: "한 동기화 동작(synchronization action)이 앞선 쓰기를 이후 읽기에서 보이게 하는 happens-before 관계를 그린다."
   - key: java.core.concurrency.safe-publication-final-fields
     title: "안전한 공개와 final 필드"
     order: 70
@@ -1095,7 +1095,7 @@ topics:
     prerequisites:
     - java.core.concurrency.jmm-happens-before-visibility
     - java.core.language-types.final-reference-and-immutability
-    visualizationNote: 잘못 publish된 객체와 happens-before가 있는 안전한 publication을 비교한다.
+    visualizationNote: "잘못 공개된 객체와 happens-before 관계가 있는 안전한 공개를 비교한다."
   - key: java.core.concurrency.volatile
     title: "volatile과 가시성"
     order: 80
@@ -1109,7 +1109,7 @@ topics:
     title: "Atomic 변수와 CAS"
     order: 90
     level: 3
-    objective: compare-and-set의 expected/current 비교, 성공·실패 retry와 contention을 이해하고 단일 atomic variable이 복합 invariant를 자동 보호하지 못함을 판단한다.
+    objective: "비교 후 설정(compare-and-set)의 기대값·현재값 비교, 성공·실패 뒤 재시도와 경쟁을 이해하고 단일 원자 변수가 복합 불변 조건을 자동 보호하지 못함을 판단한다."
     density: CORE
     visualization: DIAGRAM
     prerequisites:
@@ -1119,7 +1119,7 @@ topics:
     title: "Lock, ReentrantLock과 Condition"
     order: 100
     level: 3
-    objective: synchronized보다 timed/interruptible lock acquisition이나 여러 Condition이 필요한 경우 explicit Lock API를 선택하고 trade-off를 설명한다.
+    objective: "`synchronized`보다 시간 제한·중단 가능한 잠금 획득이나 여러 Condition이 필요한 경우 명시적인 Lock API를 선택하고 장단점을 설명한다."
     density: STANDARD
     visualization: NONE
     prerequisites:
@@ -1138,7 +1138,7 @@ topics:
     title: "BlockingQueue와 생산자·소비자"
     order: 120
     level: 2
-    objective: "BlockingQueue의 put·take와 제한 용량을 이용해 생산자와 소비자 사이의 작업 전달, 큐가 가득 차거나 비었을 때 기다리는 동작을 이해한다."
+    objective: "BlockingQueue의 `put`·`take`와 제한 용량을 이용해 생산자와 소비자 사이의 작업 전달, 큐가 가득 차거나 비었을 때 기다리는 동작을 이해한다."
     density: CORE
     visualization: DIAGRAM
     prerequisites:
@@ -1153,17 +1153,17 @@ topics:
     visualization: TEXT
     prerequisites:
     - java.core.concurrency.thread-lifecycle-interruption
-    visualizationNote: "여러 작업이 countDown을 호출하고 count가 0이 되면 기다리던 스레드가 진행하는 흐름을 보여 준다."
+    visualizationNote: "여러 작업이 `countDown`을 호출하고 count가 0이 되면 기다리던 스레드가 진행하는 흐름을 보여 준다."
   - key: java.core.concurrency.semaphore-permits
     title: "Semaphore와 동시 실행 허가 수"
     order: 140
     level: 2
-    objective: 동시에 사용할 수 있는 resource나 작업 수를 permit으로 제한하는 Semaphore의 acquire/release 동작과 concurrency limit 의미를 이해한다.
+    objective: "동시에 사용할 수 있는 자원이나 작업 수를 허가(permit) 수로 제한하는 Semaphore의 `acquire`·`release` 동작과 동시 실행 제한의 의미를 이해한다."
     density: STANDARD
     visualization: TEXT
     prerequisites:
     - java.core.concurrency.thread-lifecycle-interruption
-    visualizationNote: 제한된 permit을 여러 thread가 acquire하고 작업 후 release하는 흐름을 보여 준다.
+    visualizationNote: "제한된 허가 수를 여러 스레드가 `acquire`하고 작업 후 `release`하는 흐름을 보여 준다."
   - key: java.core.concurrency.concurrent-collections
     title: "동시성 컬렉션"
     order: 150
@@ -1182,7 +1182,7 @@ topics:
     visualization: DIAGRAM
     prerequisites:
     - java.core.concurrency.executor-task-thread-pools
-    visualizationNote: pooled worker에 context가 남는 경우와 명시적으로 정리되는 경우를 비교한다.
+    visualizationNote: "재사용되는 작업자 스레드에 실행 문맥이 남는 경우와 명시적으로 정리되는 경우를 비교한다."
   - key: java.core.concurrency.scoped-value-context
     title: "ScopedValue로 실행 문맥 전달하기"
     order: 170
@@ -1200,17 +1200,17 @@ topics:
     visualization: DIAGRAM
     prerequisites:
     - java.core.concurrency.executor-task-thread-pools
-    visualizationNote: dependent stage가 정상 완료와 exceptional completion으로 이어지는 경로를 보여 준다.
+    visualizationNote: "의존 단계가 정상 완료와 예외 완료(exceptional completion)로 이어지는 경로를 보여 준다."
   - key: java.core.concurrency.deadlock-starvation-livelock
     title: "교착 상태·기아·라이브락 구분하기"
     order: 190
     level: 3
-    objective: circular lock wait, 작업 기회 부족, 서로 반응만 하며 진전하지 못하는 liveness 문제를 구분하고 lock ordering과 progress 관점에서 진단한다.
+    objective: "순환 잠금 대기, 작업 기회 부족, 서로 반응만 하며 진전하지 못하는 진행성(liveness) 문제를 구분하고 잠금 순서와 진행 보장 관점에서 진단한다."
     density: CORE
     visualization: DIAGRAM
     prerequisites:
     - java.core.concurrency.synchronized-monitor
-    visualizationNote: deadlock의 순환 wait, starvation, livelock의 서로 다른 진행 실패를 비교한다.
+    visualizationNote: "교착 상태의 순환 대기, 기아, 라이브락의 서로 다른 진행 실패를 비교한다."
 - key: java.core.jvm-runtime
   title: "JVM 런타임과 진단"
   order: 170
@@ -1221,10 +1221,10 @@ topics:
     title: "JDK·JVM·클래스 파일의 경계"
     order: 10
     level: 1
-    objective: "JDK, JVM, class file의 역할을 구분하고 Java 소스 코드→`javac`→바이트코드→JVM 실행 흐름을 설명한다."
+    objective: "JDK, JVM, 클래스 파일의 역할을 구분하고 Java 소스 코드→`javac`→바이트코드→JVM 실행 흐름을 설명한다."
     density: CORE
     visualization: DIAGRAM
-    visualizationNote: "컴파일과 실행 시점의 경계를 보여 주고 바이트코드를 native code와 같은 것으로 표현하지 않는다."
+    visualizationNote: "컴파일과 실행 시점의 경계를 보여 주고 바이트코드를 네이티브 코드와 같은 것으로 표현하지 않는다."
   - key: java.core.jvm-runtime.bytecode-javap
     title: "바이트코드와 javap로 실행 흔적 읽기"
     order: 20
@@ -1246,7 +1246,7 @@ topics:
     title: "ClassLoader 위임과 타입 동일성"
     order: 40
     level: 3
-    objective: "어떤 `ClassLoader`가 클래스를 정의하는지와 위임 방식을 이해하고, 다른 로더가 같은 binary name의 클래스를 정의하면 서로 다른 실행 시점 타입이 될 수 있음을 설명한다."
+    objective: "어떤 `ClassLoader`가 클래스를 정의하는지와 위임 방식을 이해하고, 다른 로더가 같은 바이너리 이름(binary name)의 클래스를 정의하면 서로 다른 실행 시점 타입이 될 수 있음을 설명한다."
     density: CORE
     visualization: DIAGRAM
     prerequisites:
@@ -1355,7 +1355,7 @@ topics:
     visualization: DIAGRAM
     prerequisites:
     - java.core.metadata-compatibility.reflection-class-api
-    visualizationNote: interface 호출이 proxy와 InvocationHandler를 거쳐 target으로 전달되는 흐름을 보여 준다.
+    visualizationNote: "인터페이스 호출이 프록시와 InvocationHandler를 거쳐 대상 객체로 전달되는 흐름을 보여 준다."
   - key: java.core.metadata-compatibility.annotation-processing-vs-reflection
     title: "애너테이션 처리(Annotation Processing)와 리플렉션(Reflection)"
     order: 40
@@ -1378,7 +1378,7 @@ topics:
     title: "JPMS·클래스패스(Classpath)·모듈 경로(Module Path)"
     order: 60
     level: 2
-    objective: "classpath와 module path, 명명·비명명 모듈(named·unnamed module), `requires`·`exports`의 기본 의미를 이해하고 Java 모듈 시스템이 접근성과 의존성을 어떻게 명시하는지 설명한다."
+    objective: "클래스패스와 모듈 경로, 명명·비명명 모듈(named·unnamed module), `requires`·`exports`의 기본 의미를 이해하고 Java 모듈 시스템이 접근성과 의존성을 어떻게 명시하는지 설명한다."
     density: STANDARD
     visualization: NONE
   - key: java.core.metadata-compatibility.binary-compatibility-api-evolution
