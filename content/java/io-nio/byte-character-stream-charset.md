@@ -78,7 +78,7 @@ int bytes = text.getBytes(StandardCharsets.UTF_8).length;
 
 ### JVM의 기본 문자셋과 외부 데이터 계약은 별개다
 
-Java 25에서 `Charset.defaultCharset()`의 표준 기본값은 UTF-8입니다. 다만 Java API는 이 기본 문자셋이 **구현별 방식으로 변경될 수 있음**도 명시합니다. 예를 들어 런타임 설정에 따라 환경에서 유도된 기본 문자셋을 사용하도록 구성할 수 있습니다.
+Java 25에서 `Charset.defaultCharset()`의 기본값은 UTF-8입니다. 다만 Java API는 구현별 방식으로 이 기본값을 바꿀 수 있다고 명시합니다. Oracle JDK 25에서는 실행 시 `-Dfile.encoding=COMPAT`을 지정해 JDK 17 이하처럼 호스트 환경에 따라 기본 문자셋을 정할 수 있습니다. 이때 실행 중 `file.encoding` 값은 호스트 환경의 문자 인코딩 이름을 담는 `native.encoding` 값과 같아집니다. `native.encoding` 자체를 설정해 값을 바꿀 수는 없으며, `file.encoding`에서 지원되는 명령행 값은 `UTF-8`과 `COMPAT`입니다.
 
 따라서 다음 두 문장은 애초에 서로 다른 질문입니다.
 
