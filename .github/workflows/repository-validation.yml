@@ -56,15 +56,6 @@ jobs:
           from collections import Counter, defaultdict
           from pathlib import Path
 
-          targets = [Path('content/curriculum/java.yaml'), Path('content/java/topics.json')]
-          targets += sorted(Path('content/java').rglob('*.md'))
-          targets += sorted(Path('content/java').rglob('questions.json'))
-
-          strong_patterns = {
-              'duplicate_translation': re.compile(r'하위 수집기\(하위 수집기|객체 객체|변수 변수|원인 원인|검사 검사|타입 타입|도달 불가능한한|인터페이스\(인터페이스\)|::[가-힣]+'),
-              'broken_particle': re.compile(r'[가-힣]+가므로|[가-힣]+를\s+[이가]'),
-          }
-
           candidate_words = {
               'abstraction','application','associative','behavior','binary','bookkeeping','boxing','bucket','buffer',
               'callback','capacity','carrier','cause','collaborator','collection','compile-time','consumer','context',
@@ -76,95 +67,133 @@ jobs:
               'setter','shape','shared','signal','snapshot','source','subscriber','subtype','target','task','terminal',
               'thread','token','unchecked','unboxing','unmappable','value','variation','worker','workload','wrapper'
           }
-
           allowed_lower = {
               'happens-before','lock-free','wait-free','is-a','has-a','null','final','volatile','synchronized',
               'enum','record','sealed','var','instanceof','yield','switch','case','break','continue','return','throw',
               'throws','try','catch','finally','extends','super','this','static','public','protected','private','void',
               'byte','short','int','long','float','double','boolean','char','true','false'
           }
+          exact_bad = [
+              '하위 수집기(하위 수집기(후속 collector))', '객체 객체', '변수 변수', '원인 원인', '검사 검사',
+              '타입 타입', '도달 불가능한한', '인터페이스(인터페이스)', 'List::스트림', 'Stream::스트림'
+          ]
 
-          word_counts = Counter()
-          word_samples = defaultdict(list)
-          strong_hits = []
+          counts = Counter()
+          hits = defaultdict(list)
+          strong = []
+          scanned_fields = 0
 
-          def mask_markdown(text: str) -> str:
+          def mask(text: str) -> str:
               text = re.sub(r'```.*?```', ' ', text, flags=re.S)
               text = re.sub(r'`[^`]*`', ' ', text)
               text = re.sub(r'https?://\S+', ' ', text)
               text = re.sub(r'\[[^\]]*\]\([^)]*\)', ' ', text)
-              # Korean-first bilingual notation such as 원소 순서(encounter order) is acceptable.
               text = re.sub(r'(?<=[가-힣])\([A-Za-z][A-Za-z0-9 ._+/#:-]*\)', ' ', text)
               return text
 
-          def scan_text(path: Path, line_no: int, text: str):
-              masked = mask_markdown(text)
-              for name, pattern in strong_patterns.items():
-                  if pattern.search(masked):
-                      strong_hits.append((str(path), line_no, name, text.strip()))
+          def scan(path: str, locator: str, text):
+              global scanned_fields
+              if not isinstance(text, str) or not text.strip():
+                  return
+              scanned_fields += 1
+              masked = mask(text)
+              for bad in exact_bad:
+                  if bad in masked:
+                      strong.append((path, locator, bad, text.replace('\n', ' ')))
+              if re.search(r'::[가-힣]+', masked):
+                  strong.append((path, locator, 'translated_method_reference', text.replace('\n', ' ')))
               for token in re.findall(r'(?<![A-Za-z0-9_])([a-z][a-z-]*)(?![A-Za-z0-9_])', masked):
                   t = token.lower()
                   if t in allowed_lower or t not in candidate_words:
                       continue
-                  word_counts[t] += 1
-                  if len(word_samples[t]) < 12:
-                      word_samples[t].append((str(path), line_no, text.strip()))
+                  counts[t] += 1
+                  hits[t].append((path, locator, text.replace('\n', ' ')))
 
-          for path in targets:
-              if not path.exists():
+          # Curriculum: scan learner-facing scalar values, not YAML keys.
+          curriculum = Path('content/curriculum/java.yaml')
+          for i, line in enumerate(curriculum.read_text(encoding='utf-8').splitlines(), 1):
+              stripped = line.strip()
+              if not stripped or stripped.startswith('#') or ':' not in stripped:
                   continue
-              raw = path.read_text(encoding='utf-8')
-              if path.suffix == '.md':
-                  lines = raw.splitlines()
-                  in_front = False
-                  in_refs = False
-                  front_delims = 0
-                  for i, line in enumerate(lines, 1):
-                      if i == 1 and line.strip() == '---':
-                          in_front = True
-                          front_delims = 1
+              key, value = stripped.split(':', 1)
+              if key in {'key','contentKeyPrefix','status','order','level','density','visualization'}:
+                  continue
+              scan(str(curriculum), f'line {i}:{key}', value.strip().strip('"'))
+
+          # Topic JSON.
+          topics = Path('content/java/topics.json')
+          data = json.loads(topics.read_text(encoding='utf-8'))
+          for item in data:
+              ck = item.get('contentKey', '?')
+              scan(str(topics), ck + '.title', item.get('title'))
+              scan(str(topics), ck + '.description', item.get('description'))
+
+          # Questions: scan only learner-facing fields.
+          for path in sorted(Path('content/java').rglob('questions.json')):
+              data = json.loads(path.read_text(encoding='utf-8'))
+              for q in data:
+                  ck = q.get('contentKey', '?')
+                  for field in ('promptMarkdown','explanationMarkdown','modelAnswer'):
+                      scan(str(path), ck + '.' + field, q.get(field))
+                  for idx, answer in enumerate(q.get('acceptedAnswers') or []):
+                      scan(str(path), f'{ck}.acceptedAnswers[{idx}]', answer)
+                  for choice in q.get('choices') or []:
+                      key = choice.get('key', '?')
+                      scan(str(path), f'{ck}.choice[{key}].content', choice.get('content'))
+                      scan(str(path), f'{ck}.choice[{key}].rationale', choice.get('rationaleMarkdown'))
+
+          # Concepts: body + learner-facing front matter, excluding references and code.
+          for path in sorted(Path('content/java').rglob('*.md')):
+              lines = path.read_text(encoding='utf-8').splitlines()
+              in_front = bool(lines and lines[0].strip() == '---')
+              in_refs = False
+              in_code = False
+              for i, line in enumerate(lines, 1):
+                  if i == 1 and in_front:
+                      continue
+                  if in_front:
+                      if line.strip() == '---':
+                          in_front = False
                           continue
-                      if in_front and line.strip() == '---':
-                          front_delims += 1
-                          if front_delims == 2:
-                              in_front = False
+                      if re.match(r'^references\s*:', line):
+                          in_refs = True
                           continue
-                      if in_front:
-                          if re.match(r'^references\s*:', line):
-                              in_refs = True
+                      if in_refs:
+                          if line and not line.startswith(' ') and re.match(r'^[A-Za-z][A-Za-z0-9_-]*\s*:', line):
+                              in_refs = False
+                          else:
                               continue
-                          if in_refs:
-                              if re.match(r'^[A-Za-z][A-Za-z0-9_-]*\s*:', line) and not line.startswith(' '):
-                                  in_refs = False
-                              else:
-                                  continue
-                      scan_text(path, i, line)
-              else:
-                  for i, line in enumerate(raw.splitlines(), 1):
-                      scan_text(path, i, line)
+                      if ':' in line:
+                          k, v = line.strip().split(':', 1)
+                          if k in {'title','summary','relationNote'}:
+                              scan(str(path), f'line {i}:{k}', v.strip().strip('"'))
+                      continue
+                  if line.strip().startswith('```'):
+                      in_code = not in_code
+                      continue
+                  if not in_code:
+                      scan(str(path), f'line {i}', line)
 
-          out = []
-          out.append(f'FILES_SCANNED={len(targets)}')
-          out.append(f'STRONG_HITS={len(strong_hits)}')
-          out.append(f'CANDIDATE_OCCURRENCES={sum(word_counts.values())}')
-          out.append('')
-          out.append('=== STRONG HITS ===')
-          for path, line_no, name, text in strong_hits:
-              out.append(f'{path}:{line_no} [{name}] {text}')
-          out.append('')
-          out.append('=== CANDIDATE COUNTS ===')
-          for token, count in word_counts.most_common():
+          out = [
+              f'SCANNED_FIELDS={scanned_fields}',
+              f'STRONG_HITS={len(strong)}',
+              f'CANDIDATE_OCCURRENCES={sum(counts.values())}',
+              '',
+              '=== STRONG HITS ==='
+          ]
+          for path, locator, bad, text in strong:
+              out.append(f'{path} | {locator} | {bad} | {text}')
+          out += ['', '=== CANDIDATE COUNTS ===']
+          for token, count in counts.most_common():
               out.append(f'{token}\t{count}')
-          out.append('')
-          out.append('=== CANDIDATE SAMPLES ===')
-          for token, count in word_counts.most_common():
+          out += ['', '=== ALL CANDIDATE OCCURRENCES ===']
+          for token, count in counts.most_common():
               out.append(f'## {token} ({count})')
-              for path, line_no, text in word_samples[token]:
-                  out.append(f'{path}:{line_no} {text}')
+              for path, locator, text in hits[token]:
+                  out.append(f'{path} | {locator} | {text}')
 
-          report = '\n'.join(out) + '\n'
-          Path('java-language-audit.txt').write_text(report, encoding='utf-8')
-          print('\n'.join(out[:120]))
+          Path('java-language-audit.txt').write_text('\n'.join(out) + '\n', encoding='utf-8')
+          print('\n'.join(out[:160]))
           PY
       - name: Upload Java language audit
         uses: actions/upload-artifact@v4
