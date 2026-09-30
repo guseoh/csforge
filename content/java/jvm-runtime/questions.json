@@ -1032,9 +1032,9 @@
       },
       {
         "key": "B",
-        "content": "힙의 모든 객체가 도달 불가능한이 된다",
+        "content": "힙의 모든 객체가 도달 불가능한 상태가 된다",
         "displayOrder": 1,
-        "rationaleMarkdown": "스레드의 스택 프레임 공간이 부족해져도 모든 힙 객체의 reachability가 없어지지는 않는다."
+        "rationaleMarkdown": "스레드의 스택 프레임 공간이 부족해져도 모든 힙 객체의 도달 가능성이 사라지지는 않는다."
       },
       {
         "key": "C",
@@ -1118,7 +1118,7 @@
         "key": "C",
         "content": "항상 가장 오래된 객체",
         "displayOrder": 2,
-        "rationaleMarkdown": "객체의 나이가 단독 회수 기준은 아니다. 도달 가능한 오래된 객체도 실행 중인다."
+        "rationaleMarkdown": "객체의 나이가 단독 회수 기준은 아니다. 도달 가능한 오래된 객체도 계속 살아 있을 수 있다."
       },
       {
         "key": "D",
@@ -1194,9 +1194,9 @@
       },
       {
         "key": "C",
-        "content": "캐시 root에서 이어지는 A와 B는 여전히 도달 가능한일 수 있다",
+        "content": "캐시 root에서 이어지는 A와 B는 여전히 도달 가능한 상태일 수 있다",
         "displayOrder": 2,
-        "rationaleMarkdown": "root에서 캐시, A, B로 이어지는 참조 chain이 남아 두 객체를 도달 가능한하게 유지한다."
+        "rationaleMarkdown": "루트에서 캐시, A, B로 이어지는 참조 경로가 두 객체의 도달 가능성을 유지한다."
       },
       {
         "key": "D",
@@ -1617,7 +1617,7 @@
       },
       {
         "key": "B",
-        "content": "많은 객체가 여전히 도달 가능한이거나 수집기가 모든 영역을 같은 방식으로 회수하지 않기 때문이다",
+        "content": "많은 객체가 여전히 도달 가능한 상태이거나 수집기가 모든 영역을 같은 방식으로 회수하지 않기 때문이다",
         "displayOrder": 1,
         "rationaleMarkdown": "GC가 도달 불가능한 객체를 회수하면서 실행 중인 집합은 남길 수 있고 수집기가 일부 지역만 대상으로 처리할 수도 있다."
       },
@@ -1730,7 +1730,7 @@
         "key": "A",
         "content": "필요 없는 객체가 root에서 도달 가능한 채 retain되는 것",
         "displayOrder": 0,
-        "rationaleMarkdown": "메모리 누수는 애플리케이션에서 더 이상 필요 없는 객체가 원하지 않는 참조 경로를 통해 root에 도달 가능한하게 남아 있는 경우가 많다."
+        "rationaleMarkdown": "메모리 누수는 애플리케이션에서 더 이상 필요 없는 객체가 원하지 않는 참조 경로를 통해 루트에서 계속 도달 가능한 상태로 남아 있는 경우가 많다."
       },
       {
         "key": "B",
@@ -1742,7 +1742,7 @@
         "key": "C",
         "content": "GC가 전혀 실행되지 않는 것",
         "displayOrder": 2,
-        "rationaleMarkdown": "GC가 정상 동작해도 애플리케이션이 불필요해진 객체를 계속 도달 가능한하게 보유하면 회수할 수 없다."
+        "rationaleMarkdown": "GC가 정상 동작해도 애플리케이션이 불필요해진 객체를 계속 도달 가능한 상태로 보유하면 회수할 수 없다."
       },
       {
         "key": "D",
@@ -1781,13 +1781,13 @@
         "key": "C",
         "content": "정상 종료한 메서드 프레임",
         "displayOrder": 2,
-        "rationaleMarkdown": "완료된 프레임이 지역 값을 계속 살아 있게 보장하지 않는다. 실행이나 다른 root에서 필요한 참조인지가 기준이다."
+        "rationaleMarkdown": "메서드 호출이 끝나면 해당 프레임의 실행은 끝난다. 객체가 남는지는 다른 참조가 계속 가리키는지에 따라 달라진다."
       },
       {
         "key": "D",
         "content": "짧은 지역 변수 하나",
         "displayOrder": 3,
-        "rationaleMarkdown": "짧게 쓰인 지역 참조는 더 이상 도달 가능한하지 않게 되면 단독으로 누수를 만들지 않는다."
+        "rationaleMarkdown": "짧게 쓰인 지역 참조는 다른 참조도 없어서 더는 객체에 도달할 수 없게 되면 단독으로 누수를 만들지 않는다."
       }
     ],
     "correctChoiceKey": "B",
@@ -2728,7 +2728,7 @@
     "java.core.jvm-runtime.heap-metaspace-native-thread-memory"
   ],
   "modelAnswer": "Xmx는 Java 힙의 최대 크기를 제한할 뿐 프로세스 전체 RSS 상한이 아니다. Metaspace/클래스 메타데이터, 스레드 스택, direct/네이티브 버퍼, 코드 캐시, JVM 네이티브 structure와 라이브러리 할당 등이 힙 밖에서 추가로 메모리를 사용할 수 있다. Heap 사용량뿐 아니라 스레드 수/스택 크기, direct 버퍼, metaspace와 네이티브 메모리를 함께 측정하고 필요하면 NMT·jcmd 같은 구현 진단 도구를 사용해 영역별 사용량을 확인해야 한다.",
-  "explanationMarkdown": "Process 메모리와 Java 힙은 같은 숫자가 아니다. `-Xmx`는 힙 budget 하나만 정하고 JVM 프로세스에는 metaspace, 스레드 스택, direct 버퍼, JIT 코드 캐시 등 여러 네이티브/n힙 내부(on-heap) 소비자가 존재한다. Container 메모리 limit이나 RSS 문제를 분석할 때 힙 객체 그래프만 보면 원인을 놓칠 수 있다."
+  "explanationMarkdown": "프로세스 메모리와 Java 힙은 같은 숫자가 아니다. `-Xmx`는 힙 예산만 정하고 JVM 프로세스에는 Metaspace, 스레드 스택, direct buffer, JIT 코드 캐시 등 비힙·네이티브 메모리 소비자도 존재한다. 컨테이너 메모리 제한이나 RSS 문제를 분석할 때 힙 객체 그래프만 보면 원인을 놓칠 수 있다."
 },
 {
   "kind": "question",

@@ -30,7 +30,7 @@ references:
 Money a = new Money(10_000);
 Money b = new Money(10_000);
 
-System.out.println(a == b);       // false일 수 있음
+System.out.println(a == b);       // false
 System.out.println(a.equals(b));  // 값 동등성 계약에 따라 true 가능
 ```
 

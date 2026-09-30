@@ -75,6 +75,8 @@ String describe(Object value) {
 
 각 case가 타입 검사와 값 추출을 함께 수행하므로 여러 `if/else instanceof`보다 분기 구조가 선명해질 수 있습니다.
 
+selector가 `null`일 수 있다면 별도로 처리해야 합니다. `default`는 `null`과 일치하지 않으므로, null을 정상 입력으로 다뤄야 할 때는 `case null`을 명시하거나 switch 전에 null을 검사합니다.
+
 ### 넓은 패턴이 좁은 패턴을 가리면 안 된다
 
 ```java
