@@ -109,7 +109,6 @@ jobs:
                   counts[t] += 1
                   hits[t].append((path, locator, text.replace('\n', ' ')))
 
-          # Curriculum: scan learner-facing scalar values, not YAML keys.
           curriculum = Path('content/curriculum/java.yaml')
           for i, line in enumerate(curriculum.read_text(encoding='utf-8').splitlines(), 1):
               stripped = line.strip()
@@ -120,7 +119,6 @@ jobs:
                   continue
               scan(str(curriculum), f'line {i}:{key}', value.strip().strip('"'))
 
-          # Topic JSON.
           topics = Path('content/java/topics.json')
           data = json.loads(topics.read_text(encoding='utf-8'))
           for item in data:
@@ -128,7 +126,6 @@ jobs:
               scan(str(topics), ck + '.title', item.get('title'))
               scan(str(topics), ck + '.description', item.get('description'))
 
-          # Questions: scan only learner-facing fields.
           for path in sorted(Path('content/java').rglob('questions.json')):
               data = json.loads(path.read_text(encoding='utf-8'))
               for q in data:
@@ -142,7 +139,6 @@ jobs:
                       scan(str(path), f'{ck}.choice[{key}].content', choice.get('content'))
                       scan(str(path), f'{ck}.choice[{key}].rationale', choice.get('rationaleMarkdown'))
 
-          # Concepts: body + learner-facing front matter, excluding references and code.
           for path in sorted(Path('content/java').rglob('*.md')):
               lines = path.read_text(encoding='utf-8').splitlines()
               in_front = bool(lines and lines[0].strip() == '---')
@@ -200,6 +196,13 @@ jobs:
         with:
           name: java-language-audit
           path: java-language-audit.txt
+      - name: Upload Java content snapshot
+        uses: actions/upload-artifact@v4
+        with:
+          name: java-content-snapshot
+          path: |
+            content/curriculum/java.yaml
+            content/java
 
   deploy-backend:
     name: Deploy backend to Cloud Run
