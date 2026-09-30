@@ -4,7 +4,7 @@ contentKey: java.core.concurrency.scoped-value-context
 topicContentKey: java.core.concurrency
 slug: scoped-value-context
 title: "ScopedValue로 실행 문맥 전달하기"
-summary: "Java 25의 ScopedValue가 값을 현재 thread의 제한된 dynamic scope에 바인딩하고 StructuredTaskScope 같은 명시적 구조에서 자식 작업으로 상속하는 방식을 이해한다"
+summary: "Java 25의 ScopedValue가 값을 현재 스레드의 제한된 동적 범위에 바인딩하고 StructuredTaskScope 같은 명시적 구조에서 자식 작업으로 상속하는 방식을 이해한다"
 level: 3
 status: PUBLISHED
 displayOrder: 170
@@ -75,7 +75,7 @@ ScopedValue.where(REQUEST_ID, "req-42").run(() -> {
 });
 ```
 
-ScopedValue의 스레드 간 공유는 **구조화된 방식으로 명시적으로 지원되는 경우**에 한정됩니다. 새 스레드나 arbitrary executor로 작업을 넘겼다고 현재 바인딩이 자동 복사되는 일반 규칙은 없습니다.
+ScopedValue의 스레드 간 공유는 **구조화된 방식으로 명시적으로 지원되는 경우**에 한정됩니다. 새 스레드나 임의의 Executor로 작업을 넘겼다고 현재 바인딩이 자동 복사되는 일반 규칙은 없습니다.
 
 ### StructuredTaskScope에서는 바인딩 inheritance가 계약으로 제공된다
 

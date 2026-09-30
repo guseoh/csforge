@@ -4,7 +4,7 @@ contentKey: java.core.collections.hashmap-hashing-collision
 topicContentKey: java.core.collections
 slug: hashmap-hashing-collision
 title: "HashMap 조회와 해시 충돌"
-summary: "key의 hashCode로 후보 영역을 좁히고 equals로 실제 key를 확인하는 흐름, 충돌과 mutable key 문제를 이해한다"
+summary: "키의 hashCode로 후보 영역을 좁히고 equals로 실제 키를 확인하는 흐름, 충돌과 변경 가능한 키의 문제를 이해한다"
 level: 2
 status: PUBLISHED
 displayOrder: 30

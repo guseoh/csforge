@@ -4,7 +4,7 @@ contentKey: java.core.concurrency.jmm-happens-before-visibility
 topicContentKey: java.core.concurrency
 slug: jmm-happens-before-visibility
 title: "JMM의 happens-before와 가시성"
-summary: "여러 thread 사이에서 어떤 write를 안전하게 관찰할 수 있는지 Java Memory Model의 happens-before 관계로 추론한다"
+summary: "여러 스레드 사이에서 어떤 쓰기를 안전하게 관찰할 수 있는지 Java Memory Model의 happens-before 관계로 추론한다"
 level: 3
 status: PUBLISHED
 displayOrder: 60
@@ -139,9 +139,9 @@ caller의 후속 작업
 
 `java.util.concurrent`의 여러 API도 이보다 높은 수준의 메모리 consistency 효과를 계약으로 제공합니다. 예를 들어 Executor에 작업을 제출하기 전의 동작과 작업 실행, 비동기 계산과 `Future.get()`, `CountDownLatch.countDown()`과 성공적인 `await()` 사이의 관계를 공식 API 문서에서 정의합니다.
 
-### 데이터 경합(데이터 경합)은 happens-before로 정확히 정의된다
+### 데이터 경쟁(data race)은 happens-before로 정확히 정의된다
 
-JMM에서 같은 공유 변수에 대한 두 접근이 conflicting하고, 서로 다른 스레드에서 수행되며, 두 접근이 happens-before로 정렬되지 않았다면 프로그램에 데이터 경합(데이터 경합)이 있습니다.
+JMM에서 같은 공유 변수에 대한 두 접근 중 적어도 하나가 쓰기이고, 서로 다른 스레드에서 수행되며, 두 접근이 happens-before로 정렬되지 않았다면 프로그램에 데이터 경쟁이 있습니다.
 
 ```text
 같은 변수에 대한 read/write 또는 write/write
@@ -153,7 +153,7 @@ happens-before ordering 없음
 data race
 ```
 
-Data 경합이 없는 올바르게 동기화된 프로그램은 sequentially consistent하게 보이는 실행을 기대할 수 있습니다. 다만 JLS가 명시하듯 데이터 경합(데이터 경합)이 없다고 해서 여러 연산을 하나의 원자적 transaction처럼 묶어야 하는 논리 오류까지 자동으로 사라지는 것은 아닙니다.
+데이터 경쟁이 없는 올바르게 동기화된 프로그램에는 순차 일관성(sequential consistency)이 보장됩니다. 다만 JLS가 명시하듯 데이터 경쟁이 없다고 해서 여러 연산을 하나의 원자적 단위로 묶어야 하는 논리 오류까지 자동으로 사라지는 것은 아닙니다.
 
 ### happens-before와 원자성(atomicity)를 분리한다
 

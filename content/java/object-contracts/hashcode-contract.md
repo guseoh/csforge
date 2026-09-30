@@ -4,7 +4,7 @@ contentKey: java.core.object-contracts.hashcode-contract
 topicContentKey: java.core.object-contracts
 slug: hashcode-contract
 title: "hashCode와 equals의 계약"
-summary: "논리적으로 같은 객체는 같은 hashCode를 반환해야 하는 이유와 hash 기반 컬렉션에서 계약 위반이 만드는 문제를 이해한다"
+summary: "논리적으로 같은 객체는 같은 hashCode를 반환해야 하는 이유와 해시 기반 컬렉션에서 계약 위반이 만드는 문제를 이해한다"
 level: 2
 status: PUBLISHED
 displayOrder: 20

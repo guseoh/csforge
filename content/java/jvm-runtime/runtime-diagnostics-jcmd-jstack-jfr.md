@@ -4,7 +4,7 @@ contentKey: java.core.jvm-runtime.runtime-diagnostics-jcmd-jstack-jfr
 topicContentKey: java.core.jvm-runtime
 slug: runtime-diagnostics-jcmd-jstack-jfr
 title: "jcmd·jstack·JFR로 JVM 진단하기"
-summary: "증상에 따라 thread dump·jcmd·JFR이 제공하는 런타임 진단 근거를 구분하고 하나의 스냅샷만으로 원인을 단정하지 않는 흐름을 익힌다"
+summary: "증상에 따라 스레드 덤프·jcmd·JFR이 제공하는 런타임 진단 근거를 구분하고 하나의 스냅샷만으로 원인을 단정하지 않는 흐름을 익힌다"
 level: 3
 status: PUBLISHED
 displayOrder: 120

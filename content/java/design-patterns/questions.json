@@ -39,7 +39,7 @@
 {
   "kind": "question",
   "contentKey": "java.core.design-patterns.strategy-pattern.q7",
-  "promptMarkdown": "결제 수단별 수수료 계산 분기가 한 service에 계속 추가된다. Strategy로 분리할 때 어떤 variation을 인터페이스 계약으로 만들고, 단순 if/else가 더 나은 경우는 언제인가?",
+  "promptMarkdown": "결제 수단별 수수료 계산 분기가 한 서비스에 계속 추가된다. Strategy로 분리할 때 어떤 변경 가능성을 인터페이스 계약으로 만들고, 단순 if/else가 더 나은 경우는 언제인가?",
   "questionType": "SCENARIO",
   "difficulty": "MEDIUM",
   "status": "PUBLISHED",
@@ -47,7 +47,7 @@
     "java.core.design-patterns.strategy-pattern"
   ],
   "modelAnswer": "수수료 계산처럼 같은 책임의 정책이 독립적으로 추가·교체되고 호출자는 공통 입력/출력만 알면 될 때 Strategy 계약으로 분리한다. 정책이 하나뿐이고 변경 축도 작다면 추상화를 늘리지 않고 명확한 if가 더 읽기 좋다.",
-  "explanationMarkdown": "패턴 이름을 적용하는 것이 목표가 아니다. 반복되는 variation과 실제 교체 경계가 있을 때만 Strategy가 변경 비용을 줄인다."
+  "explanationMarkdown": "패턴 이름을 적용하는 것이 목표가 아니다. 반복적으로 달라지는 정책과 실제 교체 경계가 있을 때만 Strategy가 변경 비용을 줄인다."
 },
 {
   "kind": "question",

@@ -4,7 +4,7 @@ contentKey: java.core.exceptions-resources.throwable-checked-unchecked-error
 topicContentKey: java.core.exceptions-resources
 slug: throwable-checked-unchecked-error
 title: "`Throwable`, 검사 예외(checked exception)·비검사 예외(unchecked exception)·`Error`"
-summary: "Java 예외 계층을 컴파일러 검사 관점에서 구분하고 checked와 unchecked를 단순한 좋고 나쁨으로 판단하지 않는다"
+summary: "Java 예외 계층을 컴파일러 검사 관점에서 구분하고 검사 예외와 비검사 예외를 단순히 좋고 나쁨으로 판단하지 않는다"
 level: 1
 status: PUBLISHED
 displayOrder: 10

@@ -90,7 +90,7 @@ topics:
     title: "Java는 항상 값을 전달한다"
     order: 50
     level: 1
-    objective: Java가 항상 값을 전달하며 참조형도 참조 값이 복사된다는 점과 호출자 변수·매개변수 변수가 서로 다름을 설명한다.
+    objective: Java가 항상 값을 전달하며 참조형도 참조 값이 복사된다는 점과 호출자 변수와 매개변수가 서로 다른 변수임을 설명한다.
     density: CORE
     visualization: DIAGRAM
     prerequisites:
@@ -1390,20 +1390,20 @@ topics:
     visualization: NONE
 boundaries:
 - area: Data Structures & Algorithms
-  owns: BFS/DFS, shortest path, binary search, DP 같은 알고리즘과 자료구조 이론
+  owns: BFS·DFS, 최단 경로, 이진 탐색, 동적 계획법 같은 알고리즘과 자료구조 이론
   javaBoundary: Java에서는 컬렉션, 비교기, 큐, 힙, 맵·셋과 코딩 테스트 풀이에 필요한 구현 API를 다룬다.
 - area: Operating Systems
-  owns: scheduling, process, virtual memory, system call을 포함한 OS 동작
+  owns: 스케줄링, 프로세스, 가상 메모리, 시스템 콜을 포함한 운영체제 동작
   javaBoundary: Java는 Java 코드의 동작을 예측하는 데 필요한 `Thread`·JVM·JMM 경계를 다룬다.
 - area: Spring
-  owns: container, Bean lifecycle, MVC, transaction, AOP와 framework-specific behavior
+  owns: 컨테이너, 빈 생명 주기, MVC, 트랜잭션, AOP와 프레임워크 고유 동작
   javaBoundary: Java는 Spring의 바탕이 되는 객체 생성, 리플렉션, 애너테이션, 프록시, 스레드 처리 같은 언어·런타임 기능을 다룬다.
 - area: Database
-  owns: DB transaction, isolation, locking, schema와 persistence semantics
+  owns: DB 트랜잭션, 격리 수준, 잠금, 스키마와 영속화 의미
   javaBoundary: Java는 I/O·JDBC 자원 소유권 같은 Java API 계약까지만 다룬다.
 - area: Performance / Observability / Operations
-  owns: production diagnosis, capacity, 운영 대응과 end-to-end observability
+  owns: 운영 환경 진단, 처리 용량, 운영 대응과 전체 경로의 관측 가능성
   javaBoundary: Java는 JVM·JFR·`jcmd`, 힙·스레드 등 실행 시점의 근거를 읽기 위한 기반을 다룬다.
 - area: Network & HTTP
-  owns: TCP/IP, HTTP, socket/protocol behavior와 network architecture
+  owns: TCP/IP, HTTP, 소켓·프로토콜 동작과 네트워크 구조
   javaBoundary: Java는 바이트·문자 I/O, NIO `Channel`·`Buffer`·`Selector`처럼 Java 프로그램이 사용하는 API 추상화까지만 다룬다.

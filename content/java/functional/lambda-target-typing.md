@@ -4,7 +4,7 @@ contentKey: java.core.functional.lambda-target-typing
 topicContentKey: java.core.functional
 slug: lambda-target-typing
 title: "람다의 대상 타입(target type)"
-summary: "lambda 표현식의 매개변수와 반환 의미가 주변 함수형 인터페이스 문맥에서 결정되는 target typing을 이해한다"
+summary: "람다 표현식의 매개변수와 반환 의미가 주변 함수형 인터페이스 문맥에서 결정되는 대상 타입 추론(target typing)을 이해한다"
 level: 2
 status: PUBLISHED
 displayOrder: 30

@@ -4,7 +4,7 @@ contentKey: java.core.modern-language.default-static-interface-methods
 topicContentKey: java.core.modern-language
 slug: default-static-interface-methods
 title: "인터페이스(Interface)의 default·static 메서드"
-summary: "interface에 구현을 둘 수 있는 이유와 default 충돌·static 호출 규칙을 이해한다"
+summary: "인터페이스에 구현을 둘 수 있는 이유와 default 메서드 충돌·static 메서드 호출 규칙을 이해한다"
 level: 2
 status: PUBLISHED
 displayOrder: 80

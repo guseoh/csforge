@@ -4,7 +4,7 @@ contentKey: java.core.io-nio.input-output-reader-writer
 topicContentKey: java.core.io-nio
 slug: input-output-reader-writer
 title: "입출력과 Reader·Writer"
-summary: "데이터가 binary인지 text인지에 따라 byte stream과 character stream을 선택하고 자원 수명을 관리한다"
+summary: "데이터가 바이너리인지 텍스트인지에 따라 바이트 스트림과 문자 스트림을 선택하고 자원 수명을 관리한다"
 level: 1
 status: PUBLISHED
 displayOrder: 20

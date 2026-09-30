@@ -4,7 +4,7 @@ contentKey: java.core.concurrency.shared-mutable-state-race
 topicContentKey: java.core.concurrency
 slug: shared-mutable-state-race
 title: "공유 가변 상태와 경합 조건(Race Condition)"
-summary: "여러 thread가 같은 변경 가능한 상태를 읽고 쓸 때 실행 순서에 따라 값이 깨지는 이유와 보호할 상태 경계를 찾는다"
+summary: "여러 스레드가 같은 변경 가능한 상태를 읽고 쓸 때 실행 순서에 따라 값이 깨지는 이유와 보호할 상태 경계를 찾는다"
 level: 2
 status: PUBLISHED
 displayOrder: 40
@@ -51,9 +51,9 @@ write count = 1           write count = 1
 
 메서드는 두 번 호출됐지만 증가 하나가 사라졌습니다. 이런 결과를 **lost update**라고 부를 수 있습니다. 중요한 것은 `++`라는 문법 자체가 아니라, 여러 단계로 이루어진 갱신 전체가 하나의 원자적 경계로 보호되지 않았다는 점입니다.
 
-### 경쟁 상태(race condition)과 JMM의 데이터 경합(데이터 경합)은 같은 말로 뭉개지 않는다
+### 경쟁 상태(race condition)와 JMM의 데이터 경쟁(data race)을 구분한다
 
-일반적으로 경쟁 상태(race condition)은 실행 흐름의 상대적인 순서에 따라 프로그램의 올바름이 달라지는 문제를 가리킵니다.
+일반적으로 경쟁 상태는 실행 흐름의 상대적인 순서에 따라 프로그램의 올바름이 달라지는 문제를 가리킵니다.
 
 Java Memory Model은 같은 공유 변수에 대한 두 충돌 접근(conflicting access)이 서로 다른 스레드에서 수행되고 happens-before 관계로 정렬되지 않았을 때 **데이터 경쟁(data race)**이 발생한다고 정의합니다. 충돌 접근은 같은 변수에 대한 접근 중 적어도 하나가 쓰기인 경우입니다.
 
@@ -65,7 +65,7 @@ JMM 데이터 경쟁(data race)
 └─ 서로 충돌하는 공유 메모리 접근이 happens-before로 정렬되지 않은 경우
 ```
 
-이 구분은 이후 happens-before를 배울 때 중요합니다. 모든 동시성 논리 오류가 반드시 데이터 경합(데이터 경합) 형태인 것은 아니며, 데이터-경합-free라고 해서 여러 연산의 업무 불변 조건이 자동으로 원자적해지는 것도 아닙니다.
+이 구분은 이후 happens-before를 배울 때 중요합니다. 모든 동시성 논리 오류가 반드시 데이터 경쟁 형태인 것은 아니며, 데이터 경쟁이 없다고 해서 업무 불변 조건을 지키기 위한 여러 연산이 자동으로 하나의 원자적 연산이 되는 것도 아닙니다.
 
 ### 보호해야 하는 단위는 필드 하나보다 불변 조건일 수 있다
 

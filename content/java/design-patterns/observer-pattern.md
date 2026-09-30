@@ -98,6 +98,6 @@ class Publisher {
 }
 ```
 
-짧게 살아야 할 객체가 오래 사는 publisher에 등록된다면 `subscribe()`뿐 아니라 언제 `unsubscribe()`해야 하는지도 설계해야 합니다.
+짧게 살아야 할 객체가 오래 사는 발행자에 등록된다면 `subscribe()`뿐 아니라 언제 `unsubscribe()`해야 하는지도 설계해야 합니다.
 
 Observer는 객체 간 알림 구조를 말합니다. Kafka 같은 메시지 브로커의 durable 저장 공간, 재시도, delivery 의미론까지 자동으로 포함하지 않습니다. **발행자와 반응을 분리한다는 구조와 실제 전달 실행 모델을 구분**하는 것이 핵심입니다.

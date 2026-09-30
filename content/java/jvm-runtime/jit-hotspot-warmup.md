@@ -146,9 +146,9 @@ System.out.println(System.nanoTime() - start);
 
 Loop 자체가 최적화될 수 있고 결과를 사용하지 않으면 죽은 코드 제거(dead-code elimination) 같은 영향도 받을 수 있습니다.
 
-### Microbenchmark와 production measurement는 질문이 다르다
+### 마이크로벤치마크와 운영 환경 측정은 질문이 다르다
 
-JMH는 준비 실행(warm-up), 별도 JVM 실행(fork), 측정 반복(measurement iteration)과 컴파일러 최적화의 영향을 고려한 마이크로벤치마크 작성을 돕습니다. 하지만 JMH가 보여 주는 작은 Java 연산의 상대 비용이 곧 production API latency는 아닙니다.
+JMH는 준비 실행(warm-up), 별도 JVM 실행(fork), 측정 반복(measurement iteration)과 컴파일러 최적화의 영향을 고려한 마이크로벤치마크 작성을 돕습니다. 하지만 JMH가 보여 주는 작은 Java 연산의 상대 비용이 곧 운영 환경 API의 응답 지연 시간은 아닙니다.
 
 ```text
 JMH

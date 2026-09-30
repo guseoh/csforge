@@ -4,7 +4,7 @@ contentKey: java.core.collections.sorted-collections-tree
 topicContentKey: java.core.collections
 slug: sorted-collections-tree
 title: "TreeSet과 TreeMap의 정렬 기준"
-summary: "정렬된 Set·Map에서 Comparable 또는 Comparator가 원소 순서뿐 아니라 key·원소 구분에도 영향을 줄 수 있음을 이해한다"
+summary: "정렬된 Set·Map에서 Comparable 또는 Comparator가 원소 순서뿐 아니라 키·원소 구분에도 영향을 줄 수 있음을 이해한다"
 level: 2
 status: PUBLISHED
 displayOrder: 50

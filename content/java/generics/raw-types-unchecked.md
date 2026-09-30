@@ -4,7 +4,7 @@ contentKey: java.core.generics.raw-types-unchecked
 topicContentKey: java.core.generics
 slug: raw-types-unchecked
 title: "로 타입(raw type)과 비검사 경고(unchecked warning)"
-summary: "제네릭 타입 정보를 생략하면 컴파일 시점 타입 안전성을 잃고 unchecked 경고가 런타임 오류 가능성을 알리는 이유를 이해한다"
+summary: "제네릭 타입 정보를 생략하면 컴파일 시점 타입 안전성을 잃고 비검사 경고가 런타임 오류 가능성을 알리는 이유를 이해한다"
 level: 2
 status: PUBLISHED
 displayOrder: 40

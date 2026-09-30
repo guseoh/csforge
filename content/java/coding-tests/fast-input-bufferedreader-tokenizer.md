@@ -4,7 +4,7 @@ contentKey: java.core.coding-tests.fast-input-bufferedreader-tokenizer
 topicContentKey: java.core.coding-tests
 slug: fast-input-bufferedreader-tokenizer
 title: "BufferedReader 입력과 토큰화"
-summary: "코딩테스트 입력을 줄과 token 단위로 나누어 읽고 숫자 범위·EOF·입력 형식을 안전하게 처리한다"
+summary: "코딩 테스트 입력을 줄과 토큰 단위로 나누어 읽고 숫자 범위·EOF·입력 형식을 안전하게 처리한다"
 level: 1
 status: PUBLISHED
 displayOrder: 10

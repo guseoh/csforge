@@ -55,14 +55,14 @@
 {
   "kind": "question",
   "contentKey": "java.core.object-contracts.tostring-diagnostics.q5",
-  "promptMarkdown": "JPA Entity의 `toString()`이 모든 연관관계 컬렉션을 순회해 출력한다. 단순 로그 한 줄을 남겼는데 lazy loading SQL이 여러 번 실행되고 양방향 연관관계에서는 재귀 위험도 생겼다. `toString`을 진단용 계약으로 설계할 때 어떤 정보를 포함하고 무엇을 피해야 하는지 설명하라.",
+  "promptMarkdown": "JPA 엔티티의 `toString()`이 모든 연관관계 컬렉션을 순회해 출력한다. 단순 로그 한 줄을 남겼는데 지연 로딩으로 SQL이 여러 번 실행되고 양방향 연관관계에서는 재귀 위험도 생겼다. `toString`을 진단용 계약으로 설계할 때 어떤 정보를 포함하고 무엇을 피해야 하는지 설명하라.",
   "questionType": "SCENARIO",
   "difficulty": "MEDIUM",
   "status": "PUBLISHED",
   "conceptKeys": [
     "java.core.object-contracts.tostring-diagnostics"
   ],
-  "modelAnswer": "toString은 동일성과 핵심 scalar 상태처럼 빠르고 안전하게 읽을 수 있는 진단 정보 위주로 구성하고, lazy association 전체 탐색, 대용량 컬렉션, 순환 객체 그래프와 secret은 피하는 것이 좋다. 로그 호출이 DB I/O나 큰 계산을 암묵적으로 유발하면 관찰 행위 자체가 성능과 상태에 영향을 줄 수 있다. 구조화 로그나 별도 DTO가 필요하면 toString과 분리한다.",
+  "modelAnswer": "toString은 객체 식별 정보와 핵심 단일 값처럼 빠르고 안전하게 읽을 수 있는 진단 정보 위주로 구성하고, 지연 로딩되는 연관관계 전체 탐색, 대용량 컬렉션, 순환 객체 그래프와 민감 정보는 피하는 것이 좋다. 로그 호출이 DB I/O나 큰 계산을 암묵적으로 유발하면 관찰 행위 자체가 성능과 상태에 영향을 줄 수 있다. 구조화 로그나 별도 DTO가 필요하면 toString과 분리한다.",
   "explanationMarkdown": "`toString`은 업무 데이터의 직렬화 형식이나 객체 그래프 덤프가 아닙니다. 사람이 문제를 진단하는 데 필요한 정보를 제공하되, 호출 비용과 부수 효과를 예측할 수 있고 민감 정보와 순환 참조를 안전하게 다뤄야 합니다."
 },
 {

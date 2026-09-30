@@ -4,7 +4,7 @@ contentKey: java.core.design-patterns.decorator-pattern
 topicContentKey: java.core.design-patterns
 slug: decorator-pattern
 title: "데코레이터(Decorator)로 책임을 조합하기"
-summary: "같은 계약을 유지한 wrapper를 합성해 부가 책임을 조합하고, wrapper 순서·예외·상태가 실제 호출 의미를 어떻게 바꾸는지 추적한다"
+summary: "같은 계약을 유지하는 래퍼 객체를 합성해 부가 책임을 조합하고, 래퍼 순서·예외·상태가 실제 호출 의미를 어떻게 바꾸는지 추적한다"
 level: 2
 status: PUBLISHED
 displayOrder: 50

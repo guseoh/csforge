@@ -4,7 +4,7 @@ contentKey: java.core.concurrency.deadlock-starvation-livelock
 topicContentKey: java.core.concurrency
 slug: deadlock-starvation-livelock
 title: "교착 상태·기아·라이브락 구분하기"
-summary: "thread가 진행하지 못하는 원인을 deadlock·starvation·livelock으로 구분하고 대기 관계와 progress를 기준으로 진단한다"
+summary: "스레드가 진행하지 못하는 원인을 교착 상태·기아·라이브락으로 구분하고 대기 관계와 진행 여부를 기준으로 진단한다"
 level: 3
 status: PUBLISHED
 displayOrder: 190
@@ -124,7 +124,7 @@ Thread B -> 정상 처리
 
 ### 진단은 wait-for 관계와 시간에 따른 progress를 함께 본다
 
-스레드 덤프(스레드 덤프(thread 덤프))에서는 어떤 lock을 기다리고 누가 소유하는지, 같은 대기 패턴이 여러 스레드에 반복되는지를 확인할 수 있습니다.
+스레드 덤프(thread dump)에서는 어떤 락을 기다리고 누가 소유하는지, 같은 대기 패턴이 여러 스레드에 반복되는지를 확인할 수 있습니다.
 
 ```text
 스레드 A -> X 대기 -> B가 소유

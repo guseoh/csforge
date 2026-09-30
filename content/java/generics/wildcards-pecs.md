@@ -64,9 +64,9 @@ static void addDefaults(List<? super Integer> values) {
 흔히 **PECS: Producer Extends, Consumer Super(생산자는 extends, 소비자는 super)**라고 정리합니다.
 
 - API가 컬렉션에서 `T` 값을 받아 **읽는 소스**로 사용하면 `? extends T`
-- API가 컬렉션에 `T` 값을 **쓰는 destination**으로 사용하면 `? super T`
+- API가 컬렉션을 `T` 값을 **쓰는 대상**으로 사용하면 `? super T`
 
-소스에서 destination으로 복사하는 API를 보면 두 방향이 한 번에 드러납니다.
+원본에서 대상 컬렉션으로 복사하는 API를 보면 두 방향이 한 번에 드러납니다.
 
 ```java
 static <T> void copy(
@@ -101,4 +101,4 @@ void inspect(List<?> values) {
 
 raw `List`는 제네릭 검사를 일부 우회하므로 의미가 다릅니다. `List<?>`는 타입을 모르는 상태도 **타입 안전하게 표현**합니다.
 
-Wildcard 문제에서는 `extends`와 `super` 이름부터 외우기보다 해당 매개변수에서 **값이 어느 방향으로 흐르는지** 먼저 그리세요. 읽기 소스인지 쓰기 destination인지가 보이면 왜 그 bound가 필요한지도 자연스럽게 따라옵니다.
+와일드카드 문제에서는 `extends`와 `super` 이름부터 외우기보다 해당 매개변수에서 **값이 어느 방향으로 흐르는지** 먼저 그리세요. 읽기 원본인지 쓰기 대상인지가 보이면 왜 그 타입 경계가 필요한지도 자연스럽게 따라옵니다.

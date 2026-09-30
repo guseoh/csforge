@@ -43,7 +43,7 @@ PAID      → [Order2]
 CANCELLED → [Order3]
 ```
 
-하위 수집기(하위 수집기(후속 collector))를 사용하면 각 그룹에서 다시 개수나 합계를 계산할 수 있습니다.
+후속 수집기(downstream collector)를 사용하면 각 그룹에서 다시 개수나 합계를 계산할 수 있습니다.
 
 ```java
 Map<OrderStatus, Long> counts = orders.stream()
@@ -72,4 +72,4 @@ Map<Boolean, List<Order>> partition = orders.stream()
 
 ### 문제를 풀 때 결과 타입을 먼저 쓴다
 
-`groupingBy` 문제에서 가장 먼저 `Map<K, List<T>>`인지 `Map<K, Long>`인지 적어 보세요. 하위 수집기(하위 수집기(후속 collector))가 바뀌면 Map의 값 타입도 바뀝니다. **분류 기준 키와 그룹 안에서 무엇을 모을지**를 분리하면 쉽게 이해할 수 있습니다.
+`groupingBy` 문제에서 가장 먼저 `Map<K, List<T>>`인지 `Map<K, Long>`인지 적어 보세요. 후속 수집기가 바뀌면 Map의 값 타입도 바뀝니다. **분류 기준 키와 그룹 안에서 무엇을 모을지**를 분리하면 쉽게 이해할 수 있습니다.

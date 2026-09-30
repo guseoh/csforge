@@ -4,7 +4,7 @@ contentKey: java.core.streams.tomap-duplicate-keys
 topicContentKey: java.core.streams
 slug: tomap-duplicate-keys
 title: "toMap의 중복 키 처리"
-summary: "여러 원소가 같은 key로 변환될 수 있을 때 toMap의 충돌을 인식하고 비즈니스 의미에 맞는 merge 정책을 명시한다"
+summary: "여러 원소가 같은 키로 변환될 수 있을 때 toMap의 충돌을 인식하고 업무 의미에 맞는 병합 정책을 명시한다"
 level: 2
 status: PUBLISHED
 displayOrder: 50

@@ -4,7 +4,7 @@ contentKey: java.core.streams.stream-side-effects-noninterference
 topicContentKey: java.core.streams
 slug: stream-side-effects-noninterference
 title: "Stream의 부수 효과와 간섭 금지(non-interference)"
-summary: "pipeline이 처리하는 source를 방해하거나 외부 공유 상태를 변경하면 결과 추론과 병렬 안전성이 어려워지는 이유를 이해한다"
+summary: "파이프라인이 처리하는 입력 원본을 방해하거나 외부 공유 상태를 변경하면 결과 추론과 병렬 안전성이 어려워지는 이유를 이해한다"
 level: 2
 status: PUBLISHED
 displayOrder: 60
@@ -73,7 +73,7 @@ stream.filter(seen::add);
 - lambda가 소스를 직접 변경하는가?
 - 외부 가변 상태를 읽고 쓰는가?
 - 여러 원소 처리 순서가 바뀌면 결과도 달라지는가?
-- parallel로 바꿨을 때 데이터 경합(데이터 경합)이 생기는가?
+- 병렬 실행으로 바꿨을 때 데이터 경쟁(data race)이 생기는가?
 - 같은 목적의 수집기나 전용 연산이 있는가?
 
 이 기준으로 보면 Stream 코드의 “짧음”보다 **결과를 쉽게 추론할 수 있는가**를 평가할 수 있습니다.

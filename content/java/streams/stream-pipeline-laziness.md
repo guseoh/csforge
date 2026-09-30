@@ -4,7 +4,7 @@ contentKey: java.core.streams.stream-pipeline-laziness
 topicContentKey: java.core.streams
 slug: stream-pipeline-laziness
 title: "Stream 파이프라인(Stream Pipeline)과 지연 실행"
-summary: "source, 중간 연산, 최종 연산을 구분하고 중간 연산이 즉시 모든 데이터를 처리하지 않는 지연 실행과 short-circuit를 이해한다"
+summary: "입력 원본, 중간 연산, 최종 연산을 구분하고 중간 연산이 즉시 모든 데이터를 처리하지 않는 지연 실행과 단락 평가를 이해한다"
 level: 2
 status: PUBLISHED
 displayOrder: 10

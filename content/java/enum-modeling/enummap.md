@@ -4,7 +4,7 @@ contentKey: java.core.enum-modeling.enummap
 topicContentKey: java.core.enum-modeling
 slug: enummap
 title: "EnumMap으로 enum 키 매핑하기"
-summary: "key가 하나의 enum 타입으로 제한된 Map에서 EnumMap을 사용해 key 범위와 의도를 분명하게 표현한다"
+summary: "키가 하나의 enum 타입으로 제한된 Map에서 EnumMap을 사용해 키 범위와 의도를 분명하게 표현한다"
 level: 2
 status: PUBLISHED
 displayOrder: 40

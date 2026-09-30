@@ -4,7 +4,7 @@ contentKey: java.core.object-contracts.comparable-natural-order
 topicContentKey: java.core.object-contracts
 slug: comparable-natural-order
 title: "Comparable과 자연 순서"
-summary: "타입 자체가 하나의 대표 순서를 정의할 때 Comparable을 사용하고 compareTo와 equals의 일관성이 sorted collection에 미치는 영향을 이해한다"
+summary: "타입 자체가 하나의 대표 순서를 정의할 때 Comparable을 사용하고 compareTo와 equals의 일관성이 정렬 컬렉션에 미치는 영향을 이해한다"
 level: 2
 status: PUBLISHED
 displayOrder: 40

@@ -4,7 +4,7 @@ contentKey: java.core.jvm-runtime.gc-reachability-roots
 topicContentKey: java.core.jvm-runtime
 slug: gc-reachability-roots
 title: "GC 도달 가능성과 루트(Root)"
-summary: "객체가 source scope를 벗어나는 것과 GC 회수 가능 상태를 구분하고 살아 있는 root에서 객체까지의 reachability로 수명을 판단한다"
+summary: "객체를 가리키던 변수가 소스 코드의 범위를 벗어나는 것과 GC 회수 가능 상태를 구분하고 살아 있는 GC 루트에서 객체까지의 도달 가능성으로 수명을 판단한다"
 level: 2
 status: PUBLISHED
 displayOrder: 60

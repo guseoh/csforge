@@ -4,7 +4,7 @@ contentKey: java.core.exceptions-resources.exception-translation-cause
 topicContentKey: java.core.exceptions-resources
 slug: exception-translation-cause
 title: "예외 변환과 원인 보존"
-summary: "낮은 수준 기술 예외를 상위 계층이 이해할 의미로 바꾸되 cause를 보존해 진단 가능성을 잃지 않는다"
+summary: "낮은 수준의 기술 예외를 상위 계층이 이해할 의미로 바꾸되 원인 예외를 보존해 진단 가능성을 잃지 않는다"
 level: 2
 status: PUBLISHED
 displayOrder: 30

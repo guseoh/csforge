@@ -4,7 +4,7 @@ contentKey: java.core.time-numeric.zoneid-dst
 topicContentKey: java.core.time-numeric
 slug: zoneid-dst
 title: "ZoneId와 서머타임 전환"
-summary: "고정 offset과 지역 시간대 규칙을 구분하고 DST로 생기는 존재하지 않거나 중복되는 시간을 이해한다"
+summary: "고정 오프셋과 지역 시간대 규칙을 구분하고 DST로 생기는 존재하지 않거나 중복되는 시간을 이해한다"
 level: 2
 status: PUBLISHED
 displayOrder: 20

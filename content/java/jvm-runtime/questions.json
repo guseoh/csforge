@@ -2108,7 +2108,7 @@
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.heap-metaspace-native-thread-memory.q5",
-    "promptMarkdown": "Process 메모리에서 다음 결과가 함께 관측된다.\n\n| Signal | 변화 |\n| --- | --- |\n| RSS | 증가 |\n| 힙 덤프(힙 덤프(heap 덤프)) | 안정적 |\n| Thread 수 | 급증 |\n\n가장 먼저 세울 가설은?",
+    "promptMarkdown": "프로세스 메모리에서 다음 결과가 함께 관측된다.\n\n| 관측 대상 | 변화 |\n| --- | --- |\n| RSS | 증가 |\n| 힙 덤프(heap dump) | 안정적 |\n| 스레드 수 | 급증 |\n\n가장 먼저 세울 가설은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "HARD",
     "status": "PUBLISHED",
@@ -2220,7 +2220,7 @@
       }
     ],
     "correctChoiceKey": "A",
-    "explanationMarkdown": "JIT는 JVM 런타임 구현 behavior다."
+    "explanationMarkdown": "JIT는 JVM 런타임이 실행 중인 코드를 기계어로 컴파일하는 방식이다. Java 언어가 특정 컴파일 시점이나 최적화 단계를 모든 JVM에 요구하는 것은 아니므로 구현과 실행 상태를 구분해야 한다."
   },
   {
     "kind": "question",
@@ -2372,7 +2372,7 @@
         "key": "D",
         "content": "JVMS가 메서드 의미론을 바꿨다고 결론낸다",
         "displayOrder": 3,
-        "rationaleMarkdown": "JVM optimization은 지정된 프로그램 behavior를 보존해야 한다. 컴파일 단계가 메서드 의미를 바꾸지 않는다."
+        "rationaleMarkdown": "JVM의 최적화는 명세가 정한 프로그램의 관찰 가능한 동작을 보존해야 한다. 컴파일 단계가 메서드의 의미를 임의로 바꾸는 것은 아니다."
       }
     ],
     "correctChoiceKey": "A",
@@ -2600,7 +2600,7 @@
         "key": "C",
         "content": "JFR recording에서 시간축 event를 함께 분석한다",
         "displayOrder": 2,
-        "rationaleMarkdown": "JFR recording은 런타임 event를 시간축에 배치해 spike 주변 일시 중지 시간과 스레드 behavior를 비교할 수 있다."
+        "rationaleMarkdown": "JFR 기록은 런타임 이벤트를 시간축에 배치해 지연 급증 전후의 일시 중지 시간과 스레드 동작을 비교하는 근거를 제공한다."
       },
       {
         "key": "D",

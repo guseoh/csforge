@@ -4,7 +4,7 @@ contentKey: java.core.exceptions-resources.standard-exceptions-contract
 topicContentKey: java.core.exceptions-resources
 slug: standard-exceptions-contract
 title: "표준 예외로 메서드 계약 표현하기"
-summary: "잘못된 인자·잘못된 현재 상태·찾을 수 없는 원소처럼 의미에 맞는 표준 예외를 선택하고 불필요한 custom exception을 피한다"
+summary: "잘못된 인자·잘못된 현재 상태·찾을 수 없는 원소처럼 의미에 맞는 표준 예외를 선택하고 불필요한 사용자 정의 예외를 피한다"
 level: 2
 status: PUBLISHED
 displayOrder: 40

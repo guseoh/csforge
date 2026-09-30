@@ -4,7 +4,7 @@ contentKey: java.core.io-nio.buffered-io
 topicContentKey: java.core.io-nio
 slug: buffered-io
 title: "버퍼링 I/O와 버퍼의 역할"
-summary: "작은 I/O 요청을 buffer에 모으는 이유와 flush·close가 각각 무엇을 의미하는지 이해한다"
+summary: "작은 I/O 요청을 버퍼에 모으는 이유와 flush·close가 각각 무엇을 의미하는지 이해한다"
 level: 1
 status: PUBLISHED
 displayOrder: 30

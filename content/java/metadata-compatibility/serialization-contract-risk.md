@@ -4,7 +4,7 @@ contentKey: java.core.metadata-compatibility.serialization-contract-risk
 topicContentKey: java.core.metadata-compatibility
 slug: serialization-contract-risk
 title: "직렬화가 만드는 장기 계약"
-summary: "Java native serialization이 객체 graph를 byte stream으로 저장하는 계약이라는 점과 transient·serialVersionUID·신뢰하지 않는 역직렬화의 위험을 이해한다"
+summary: "Java 내장 직렬화가 객체 그래프를 바이트 스트림으로 저장하는 계약이라는 점과 transient·serialVersionUID·신뢰하지 않는 역직렬화의 위험을 이해한다"
 level: 2
 status: PUBLISHED
 displayOrder: 50
