@@ -47,6 +47,130 @@ jobs:
             echo 'Expected missing-secret failure did not occur' >&2
             exit 1
           fi
+      - name: Audit Java learner-facing language
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          import re
+          from collections import Counter, defaultdict
+          from pathlib import Path
+
+          targets = [Path('content/curriculum/java.yaml'), Path('content/java/topics.json')]
+          targets += sorted(Path('content/java').rglob('*.md'))
+          targets += sorted(Path('content/java').rglob('questions.json'))
+
+          strong_patterns = {
+              'duplicate_translation': re.compile(r'하위 수집기\(하위 수집기|객체 객체|변수 변수|원인 원인|검사 검사|타입 타입|도달 불가능한한|인터페이스\(인터페이스\)|::[가-힣]+'),
+              'broken_particle': re.compile(r'[가-힣]+가므로|[가-힣]+를\s+[이가]'),
+          }
+
+          candidate_words = {
+              'abstraction','application','associative','behavior','binary','bookkeeping','boxing','bucket','buffer',
+              'callback','capacity','carrier','cause','collaborator','collection','compile-time','consumer','context',
+              'contract','correlation','correctness','coupling','covariance','custom','debugging','decoding','default',
+              'destination','encoding','encounter','entry','equality','executor','failure','fallback','filesystem',
+              'handler','hash','identity','implementation','invariant','iteration','iterator','key','lazy','library',
+              'lifecycle','literal','mapping','mutable','native','offset','parallel','permit','pinning','priority',
+              'production','publisher','race','raw','reduction','resource','rewind','runtime','sequential','serialization',
+              'setter','shape','shared','signal','snapshot','source','subscriber','subtype','target','task','terminal',
+              'thread','token','unchecked','unboxing','unmappable','value','variation','worker','workload','wrapper'
+          }
+
+          allowed_lower = {
+              'happens-before','lock-free','wait-free','is-a','has-a','null','final','volatile','synchronized',
+              'enum','record','sealed','var','instanceof','yield','switch','case','break','continue','return','throw',
+              'throws','try','catch','finally','extends','super','this','static','public','protected','private','void',
+              'byte','short','int','long','float','double','boolean','char','true','false'
+          }
+
+          word_counts = Counter()
+          word_samples = defaultdict(list)
+          strong_hits = []
+
+          def mask_markdown(text: str) -> str:
+              text = re.sub(r'```.*?```', ' ', text, flags=re.S)
+              text = re.sub(r'`[^`]*`', ' ', text)
+              text = re.sub(r'https?://\S+', ' ', text)
+              text = re.sub(r'\[[^\]]*\]\([^)]*\)', ' ', text)
+              # Korean-first bilingual notation such as 원소 순서(encounter order) is acceptable.
+              text = re.sub(r'(?<=[가-힣])\([A-Za-z][A-Za-z0-9 ._+/#:-]*\)', ' ', text)
+              return text
+
+          def scan_text(path: Path, line_no: int, text: str):
+              masked = mask_markdown(text)
+              for name, pattern in strong_patterns.items():
+                  if pattern.search(masked):
+                      strong_hits.append((str(path), line_no, name, text.strip()))
+              for token in re.findall(r'(?<![A-Za-z0-9_])([a-z][a-z-]*)(?![A-Za-z0-9_])', masked):
+                  t = token.lower()
+                  if t in allowed_lower or t not in candidate_words:
+                      continue
+                  word_counts[t] += 1
+                  if len(word_samples[t]) < 12:
+                      word_samples[t].append((str(path), line_no, text.strip()))
+
+          for path in targets:
+              if not path.exists():
+                  continue
+              raw = path.read_text(encoding='utf-8')
+              if path.suffix == '.md':
+                  lines = raw.splitlines()
+                  in_front = False
+                  in_refs = False
+                  front_delims = 0
+                  for i, line in enumerate(lines, 1):
+                      if i == 1 and line.strip() == '---':
+                          in_front = True
+                          front_delims = 1
+                          continue
+                      if in_front and line.strip() == '---':
+                          front_delims += 1
+                          if front_delims == 2:
+                              in_front = False
+                          continue
+                      if in_front:
+                          if re.match(r'^references\s*:', line):
+                              in_refs = True
+                              continue
+                          if in_refs:
+                              if re.match(r'^[A-Za-z][A-Za-z0-9_-]*\s*:', line) and not line.startswith(' '):
+                                  in_refs = False
+                              else:
+                                  continue
+                      scan_text(path, i, line)
+              else:
+                  for i, line in enumerate(raw.splitlines(), 1):
+                      scan_text(path, i, line)
+
+          out = []
+          out.append(f'FILES_SCANNED={len(targets)}')
+          out.append(f'STRONG_HITS={len(strong_hits)}')
+          out.append(f'CANDIDATE_OCCURRENCES={sum(word_counts.values())}')
+          out.append('')
+          out.append('=== STRONG HITS ===')
+          for path, line_no, name, text in strong_hits:
+              out.append(f'{path}:{line_no} [{name}] {text}')
+          out.append('')
+          out.append('=== CANDIDATE COUNTS ===')
+          for token, count in word_counts.most_common():
+              out.append(f'{token}\t{count}')
+          out.append('')
+          out.append('=== CANDIDATE SAMPLES ===')
+          for token, count in word_counts.most_common():
+              out.append(f'## {token} ({count})')
+              for path, line_no, text in word_samples[token]:
+                  out.append(f'{path}:{line_no} {text}')
+
+          report = '\n'.join(out) + '\n'
+          Path('java-language-audit.txt').write_text(report, encoding='utf-8')
+          print('\n'.join(out[:120]))
+          PY
+      - name: Upload Java language audit
+        uses: actions/upload-artifact@v4
+        with:
+          name: java-language-audit
+          path: java-language-audit.txt
 
   deploy-backend:
     name: Deploy backend to Cloud Run
