@@ -14,7 +14,7 @@ references:
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
-    relationNote: compile-time annotation processing API 확인
+    relationNote: 컴파일 시점 애너테이션 처리 API 확인
   - url: "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/reflect/package-summary.html"
     title: "Java SE 25 API: java.lang.reflect"
     referenceType: OFFICIAL

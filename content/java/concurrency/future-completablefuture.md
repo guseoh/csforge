@@ -14,7 +14,7 @@ references:
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
-    relationNote: completion stage와 sync/async method 계약 확인
+    relationNote: CompletionStage와 동기·비동기 메서드 계약 확인
   - url: "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/Future.html"
     title: "Java SE 25 API: Future"
     referenceType: OFFICIAL
@@ -101,7 +101,7 @@ CompletableFuture<Profile> profile = userFuture
 
 `thenApply`와 `thenApplyAsync`의 차이를 단순히 "현재 스레드 / 새 스레드"로 외우면 틀릴 수 있습니다.
 
-Async suffix가 없는 단계는 completion을 일으킨 스레드나 해당 completion을 처리하는 스레드에서 실행될 수 있습니다. Async 계열은 명시적인 executor를 주지 않으면 `CompletableFuture`가 정한 기본 비동기 실행 시설을 사용합니다.
+`Async` 접미사가 없는 단계는 완료를 일으킨 스레드나 해당 완료를 처리하는 스레드에서 실행될 수 있습니다. Async 계열은 명시적인 executor를 주지 않으면 `CompletableFuture`가 정한 기본 비동기 실행 시설을 사용합니다.
 
 ```java
 future.thenApplyAsync(this::transform, myExecutor);
@@ -123,9 +123,9 @@ CompletableFuture<String> result = loadAsync()
 
 - `exceptionally`: 실패를 다른 결과로 복구하는 데 사용 가능
 - `handle`: 정상/실패 양쪽 결과를 보고 새 결과로 변환 가능
-- `whenComplete`: 결과/실패를 관찰하는 side-effect에 가깝고 원래 completion 의미를 유지하는 데 주로 사용
+- `whenComplete`: 결과나 실패를 부수 효과(side effect)로 관찰하며, 콜백에서 별도 예외가 발생하지 않으면 원래 완료 결과를 유지하는 데 주로 사용
 
-정확한 예외 전달과 wrapping 규칙은 각 API 계약을 확인합니다.
+예외 전달과 `CompletionException`으로 감싸는 규칙은 각 API 계약을 확인합니다.
 
 중요한 것은 예외를 `exceptionally(e -> null)`처럼 무조건 삼켜 "성공한 null"로 바꾸지 않는 것입니다. 호출자가 실패와 정상 빈 값을 구분해야 할 수 있습니다.
 
@@ -170,7 +170,7 @@ future.cancel(true);
 2. `get/join`이 어느 스레드를 기다리게 하는지 확인합니다.
 3. 다음 함수가 일반 값을 반환하는지 또 Future/CompletionStage를 반환하는지 봅니다.
 4. Async 메서드가 어떤 executor를 사용하는지 확인합니다.
-5. 정상 완료와 exceptional completion을 따로 추적합니다.
+5. 정상 완료와 예외 완료를 구분해 추적합니다.
 6. cancellation이 하위 작업을 실제로 멈추는지 추측하지 않습니다.
 
 ### 학습 후 스스로 설명해 보기

@@ -3,8 +3,8 @@ kind: concept
 contentKey: java.core.jvm-runtime.classloader-delegation-type-identity
 topicContentKey: java.core.jvm-runtime
 slug: classloader-delegation-type-identity
-title: "ClassLoader 위임과 타입 동일성"
-summary: "어떤 ClassLoader가 클래스를 정의했는지가 런타임 타입 동일성의 일부임을 이해하고, 위임 방식이 중복 로딩을 줄이는 원리를 설명한다"
+title: "클래스 로더(ClassLoader) 위임과 타입 동일성"
+summary: "어떤 `ClassLoader`가 클래스를 정의했는지가 실행 시점 타입 동일성의 일부임을 이해하고, 위임 방식이 중복 로딩을 줄이는 원리를 설명한다"
 level: 3
 status: PUBLISHED
 displayOrder: 40
@@ -14,17 +14,17 @@ references:
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
-    relationNote: loading·parent delegation·defining loader 확인
+    relationNote: 클래스 로딩·부모 위임·클래스를 정의한 로더 확인
   - url: "https://docs.oracle.com/javase/specs/jvms/se25/html/jvms-5.html#jvms-5.3"
     title: "Java SE 25 JVMS: Creation and Loading"
     referenceType: OFFICIAL
     language: en
     displayOrder: 2
-    relationNote: binary name과 defining loader의 runtime type identity 확인
+    relationNote: 바이너리 이름과 클래스를 정의한 로더가 실행 시점 타입 동일성에 미치는 영향 확인
 ---
-# ClassLoader 위임과 타입 동일성
+# 클래스 로더(ClassLoader) 위임과 타입 동일성
 
-Java 실행 시점에 클래스는 이름만으로 식별되지 않습니다. 같은 `com.example.Plugin`이라는 바이너리 이름(binary name)이라도 **서로 다른 `ClassLoader`가 각각 정의하면 별개의 실행 시점 타입(runtime type)** 이 될 수 있습니다. 이 규칙은 플러그인, 애플리케이션 서버, 핫 리로드 환경에서 발생하는 `ClassCastException`의 원리를 이해하는 핵심입니다.
+Java 실행 시점에 클래스는 이름만으로 식별되지 않습니다. 같은 `com.example.Plugin`이라는 바이너리 이름(binary name)이라도 **서로 다른 `ClassLoader`가 각각 정의하면 별개의 실행 시점 타입**이 될 수 있습니다. 이 규칙은 플러그인, 애플리케이션 서버, 핫 리로드(hot reload) 환경에서 발생하는 `ClassCastException`의 원리를 이해하는 핵심입니다.
 
 ![ClassLoader 경계와 런타임 타입 동일성](/learning/java/classloader-type-identity.svg)
 
@@ -65,7 +65,7 @@ Java 실행 시점에 클래스는 이름만으로 식별되지 않습니다. �
 
 그러나 **모든 사용자 정의 로더가 반드시 부모 우선(parent-first)이어야 하는 것은 아닙니다.** 플러그인이나 컨테이너가 자식 우선(child-first) 정책이나 다른 로더 구조를 사용할 수도 있으므로 실제 환경에서 해당 로더 구현의 계약을 확인해야 합니다.
 
-### 실행 시점 타입 동일성에는 클래스를 정의한 로더가 포함된다
+### 실행 시점 타입의 동일성에는 클래스를 정의한 로더가 포함된다
 
 두 로더가 같은 이름의 클래스를 각각 정의해 보겠습니다.
 
@@ -110,7 +110,7 @@ System.out.println(a == b);                         // false 가능
 
 ### Classpath와 `ClassLoader`는 같은 개념이 아니다
 
-Classpath나 module path는 클래스를 찾을 위치를 지정하는 경로·설정입니다. `ClassLoader`는 실행 시점에 실제 클래스 정의를 찾아 JVM에 제공하는 주체입니다.
+클래스패스(classpath)나 모듈 경로(module path)는 클래스를 찾을 위치를 지정하는 경로·설정입니다. `ClassLoader`는 실행 시점에 실제 클래스 정의를 찾아 JVM에 제공하는 주체입니다.
 
 ```text
 classpath / module path -> 탐색 경로
@@ -121,14 +121,14 @@ ClassLoader             -> 실행 시점 로딩·정의 주체
 
 ### 진단할 때는 이름뿐 아니라 로더도 확인한다
 
-이름이 같은데 캐스팅이 실패하거나 hot reload 후 이상한 linkage 문제가 생기면 다음을 확인합니다.
+이름이 같은데 캐스팅이 실패하거나 핫 리로드 뒤 클래스 연결 문제가 생기면 다음을 확인합니다.
 
 ```java
 System.out.println(value.getClass());
 System.out.println(value.getClass().getClassLoader());
 ```
 
-실제 `Class` 객체의 동일성(identity), 클래스를 정의한 로더, 클래스 바이트의 출처, 로더 위임 구조를 함께 살펴야 합니다. 특히 Spring Boot devtools, 플러그인 프레임워크, 애플리케이션 서버처럼 여러 로더가 공존하는 환경에서 중요합니다.
+실제 `Class` 객체의 동일성, 클래스를 정의한 로더, 클래스 바이트의 출처, 로더 위임 구조를 함께 살펴야 합니다. 특히 Spring Boot devtools, 플러그인 프레임워크, 애플리케이션 서버처럼 여러 로더가 공존하는 환경에서 중요합니다.
 
 ### 클래스 언로딩도 로더 수명과 연결된다
 

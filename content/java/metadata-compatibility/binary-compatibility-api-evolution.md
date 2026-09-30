@@ -14,13 +14,13 @@ references:
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
-    relationNote: binary compatibility rules 확인
+    relationNote: 바이너리 호환성 규칙 확인
   - url: "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/NoSuchMethodError.html"
     title: "Java SE 25 API: NoSuchMethodError"
     referenceType: OFFICIAL
     language: en
     displayOrder: 2
-    relationNote: binary linkage failure의 runtime 증상 확인
+    relationNote: 바이너리 연결 실패가 실행 시점에 나타나는 증상 확인
 ---
 # 바이너리 호환성과 API 진화
 

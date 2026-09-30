@@ -14,13 +14,13 @@ references:
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
-    relationNote: JVM stack·frame·heap·method area·runtime constant pool 추상 영역 확인
+    relationNote: JVM 스택·프레임·힙·메서드 영역·런타임 상수 풀의 추상 모델 확인
   - url: "https://d2.naver.com/helloworld/329631"
     title: "네이버 D2: Java Reference와 GC"
     referenceType: COMPANY_TECH_BLOG
     language: ko
     displayOrder: 2
-    relationNote: Java 객체와 참조가 runtime memory model에서 어떻게 연결되는지 보충
+    relationNote: Java 객체와 참조가 런타임 메모리 모델에서 연결되는 방식 보충
 ---
 # JVM 런타임 데이터 영역(Runtime Data Area)과 프레임(Frame)
 
@@ -101,7 +101,7 @@ Metaspace 등에서 클래스 메타데이터 관리
 
 ### 힙에 객체를 둔다는 추상 모델과 실제 할당 최적화를 구분한다
 
-JVMS는 객체와 배열을 힙에서 관리하는 추상 모델을 정의합니다. JVM 구현은 관찰 가능한 동작을 보존하면서 escape analysis나 scalar 대체 처리 같은 최적화를 적용할 수 있습니다.
+JVMS는 객체와 배열을 힙에서 관리하는 추상 모델을 정의합니다. JVM 구현은 관찰 가능한 동작을 보존하면서 탈출 분석(escape analysis)이나 스칼라 대체(scalar replacement) 같은 최적화를 적용할 수 있습니다.
 
 소스에 `new Point()`가 보인다는 이유만으로 성능 분석에서 "독립된 힙 객체가 반드시 하나 할당됐다"고 결론 내리면 안 됩니다.
 

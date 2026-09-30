@@ -2771,7 +2771,7 @@
   {
     "kind": "question",
     "contentKey": "java.core.concurrency.countdownlatch-coordination.q4",
-    "promptMarkdown": "3개 작업자와 주 스레드의 결과는 다음과 같다.\n\n1. Worker 하나가 예외로 끝난다.\n2. 모든 작업자가 completion 신호를 보내 latch count는 0이 된다.\n3. 주 스레드는 `latch.await()`에서 진행한다.\n4. 결과 목록에는 실패가 남아 있다.\n\n올바른 설계 판단은?",
+    "promptMarkdown": "3개 작업자와 주 스레드의 결과는 다음과 같다.\n\n1. 작업자 하나가 예외로 끝난다.\n2. 모든 작업자가 완료 신호를 보내 래치의 수가 0이 된다.\n3. 주 스레드는 `latch.await()`에서 진행한다.\n4. 결과 목록에는 실패가 남아 있다.\n\n올바른 설계 판단은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
@@ -2801,7 +2801,7 @@
         "key": "D",
         "content": "finally의 countDown으로 gate를 열고 실패 상태를 별도 전달해 주 스레드가 성공 여부를 확인한다",
         "displayOrder": 3,
-        "rationaleMarkdown": "finally에서 어느 경로든 completion gate를 열고 실패 기록은 별도로 전달해 대기자가 결과를 판단하게 한다."
+        "rationaleMarkdown": "finally에서 어떤 경로로 끝나더라도 래치 수를 줄여 대기자를 풀고, 실패 기록은 따로 전달해 대기자가 성공 여부를 판단하게 한다."
       }
     ],
     "correctChoiceKey": "D",
@@ -3179,7 +3179,7 @@
         "key": "B",
         "content": "약한 일관성(weakly consistent)을 가진 관찰일 수 있어 생성 시점 이후 변경과 전체 정렬을 보장하지 않는다",
         "displayOrder": 1,
-        "rationaleMarkdown": "concurrent 반복자가 특정 순간의 정렬된 고정 스냅샷을 제공한다고 보장하지 않는다. weak consistency를 포함한 명세를 확인한다."
+        "rationaleMarkdown": "concurrent 반복자가 특정 순간의 정렬된 고정 스냅샷을 제공한다고 보장하지 않는다. 약한 일관성(weak consistency)을 포함한 명세를 확인한다."
       },
       {
         "key": "C",
@@ -3725,28 +3725,28 @@
         "key": "B",
         "content": "thenCompose는 항상 동기다",
         "displayOrder": 1,
-        "rationaleMarkdown": "thenCompose는 다른 CompletionStage를 이어 하나로 평탄화하지만 함수를 동기 실행한다고 약속하지 않는다."
+        "rationaleMarkdown": "`thenCompose`는 다른 `CompletionStage`를 이어 결과 단계를 평탄화하지만, 함수를 동기 실행한다고 약속하지 않는다."
       },
       {
         "key": "C",
         "content": "둘은 이름만 다르고 결과가 항상 같다",
         "displayOrder": 2,
-        "rationaleMarkdown": "thenApply는 결과 값을 변환하고 thenCompose는 함수가 반환한 CompletionStage를 연결해 중첩 단계를 평탄화한다."
+        "rationaleMarkdown": "`thenApply`는 결과 값을 변환하고 `thenCompose`는 함수가 반환한 `CompletionStage`를 연결해 중첩된 단계를 평탄화한다."
       },
       {
         "key": "D",
         "content": "thenApply는 값 변환, thenCompose는 단계를 평탄화하는 조합이다",
         "displayOrder": 3,
-        "rationaleMarkdown": "함수 결과가 이미 단계라면 thenCompose가 그 completion을 이어간다. 이중 CompletionStage 타입을 반환하지 않는다."
+        "rationaleMarkdown": "함수가 다른 단계를 반환한다면 `thenCompose`가 그 완료 결과를 이어간다. 중첩된 `CompletionStage`를 반환하지 않는다."
       }
     ],
     "correctChoiceKey": "D",
-    "explanationMarkdown": "함수가 또 다른 CompletionStage를 반환할 때 compose가 중첩을 줄인다."
+    "explanationMarkdown": "함수가 또 다른 `CompletionStage`를 반환할 때 `compose` 계열 연산이 중첩을 줄인다."
   },
   {
     "kind": "question",
     "contentKey": "java.core.concurrency.future-completablefuture.q3",
-    "promptMarkdown": "CompletableFuture 단계가 exceptional completion되면?",
+    "promptMarkdown": "CompletableFuture 단계가 예외 완료(exceptional completion)되면?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
@@ -3756,9 +3756,9 @@
     "choices": [
       {
         "key": "A",
-        "content": "후속 단계는 completion 메서드 계약에 따라 실패 경로를 따를 수 있다",
+        "content": "후속 단계는 완료 메서드의 계약에 따라 실패 경로를 따를 수 있다",
         "displayOrder": 0,
-        "rationaleMarkdown": "앞 단계가 exceptional로 끝나면 후속 단계에도 실패가 전달될 수 있다. handle/exceptionally로 복구를 명시한다."
+        "rationaleMarkdown": "앞 단계가 예외로 끝나면 후속 단계에도 실패가 전달될 수 있다. `handle`이나 `exceptionally`로 복구를 명시한다."
       },
       {
         "key": "B",
@@ -3776,7 +3776,7 @@
         "key": "D",
         "content": "예외가 반드시 무시된다",
         "displayOrder": 3,
-        "rationaleMarkdown": "실패는 dependent 단계의 completion을 통해 관찰된다. 자동으로 버려지는 것이 아니다."
+        "rationaleMarkdown": "실패는 하위 단계의 완료 결과를 통해 관찰된다. 자동으로 버려지지 않는다."
       }
     ],
     "correctChoiceKey": "A",
@@ -3785,7 +3785,7 @@
   {
     "kind": "question",
     "contentKey": "java.core.concurrency.future-completablefuture.q4",
-    "promptMarkdown": "thenApplyAsync에 executor를 명시하지 않을 때의 설명은?",
+    "promptMarkdown": "`thenApplyAsync`에 `Executor`를 지정하지 않았을 때의 설명은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
@@ -3803,13 +3803,13 @@
         "key": "B",
         "content": "`CompletableFuture` API가 정한 기본 비동기 실행 수단(default asynchronous execution facility)을 사용한다",
         "displayOrder": 1,
-        "rationaleMarkdown": "executor를 지정하지 않은 CompletableFuture 비동기 메서드는 명세된 기본 비동기 실행 기능을 사용한다. 실행 정책이 중요하면 executor를 명시한다."
+        "rationaleMarkdown": "`CompletableFuture`의 비동기 메서드는 `Executor`를 지정하지 않으면 API가 정한 기본 비동기 실행 기능을 사용한다. 실행 정책이 중요하면 `Executor`를 직접 지정한다."
       },
       {
         "key": "C",
         "content": "OS가 Java 계약 없이 임의로 결과를 바꾼다",
         "displayOrder": 2,
-        "rationaleMarkdown": "결과는 CompletionStage completion 계약을 따른다. OS 스케줄링이 값을 임의 변경하지 않는다."
+        "rationaleMarkdown": "결과는 `CompletionStage`의 완료 계약을 따른다. 운영체제 스케줄링이 결과 값을 임의로 바꾸지는 않는다."
       },
       {
         "key": "D",
@@ -3842,13 +3842,13 @@
         "key": "B",
         "content": "항상 main 스레드다",
         "displayOrder": 1,
-        "rationaleMarkdown": "main 스레드에서 chain을 만들었다고 후속 completion 동작이 main에 고정되지 않는다."
+        "rationaleMarkdown": "main 스레드에서 단계 연결을 만들었다고 후속 완료 동작이 main 스레드에 고정되지는 않는다."
       },
       {
         "key": "C",
-        "content": "단계 실행은 completion을 수행하는 스레드나 호출자 등 API가 허용한 실행 맥락을 따르며 특정 스레드를 단정하면 안 된다",
+        "content": "단계 실행은 완료를 처리하는 스레드나 호출자 등 API가 허용한 실행 문맥을 따르므로 특정 스레드에서 실행된다고 단정하면 안 된다",
         "displayOrder": 2,
-        "rationaleMarkdown": "non-async 동작의 스레드 동일성은 한 가지로 보장되지 않는다. API가 허용하는 완료 또는 호출 문맥에서 실행될 수 있다."
+        "rationaleMarkdown": "비동기 접미사가 없는 하위 단계의 실행 스레드는 하나로 고정되지 않는다. API가 허용하는 완료 또는 호출 문맥에서 실행될 수 있다."
       },
       {
         "key": "D",
@@ -3887,13 +3887,13 @@
         "key": "C",
         "content": "취소는 모든 dependent 단계를 정상 완료한다",
         "displayOrder": 2,
-        "rationaleMarkdown": "취소 뒤 dependent 단계가 정상 성공으로 바뀌는 것은 아니다. 취소 전파와 복구는 completion 규칙에 따른다."
+        "rationaleMarkdown": "취소 뒤 하위 단계가 정상 성공으로 바뀌는 것은 아니다. 취소 전파와 복구는 완료 규칙에 따른다."
       },
       {
         "key": "D",
-        "content": "future의 취소 completion과 외부 작업 강제 중단은 별도라 하위 작업이 반드시 멈춘다고 할 수 없다",
+        "content": "future의 취소 완료와 외부 작업 강제 중단은 별개이므로 하위 작업이 반드시 멈춘다고 할 수 없다",
         "displayOrder": 3,
-        "rationaleMarkdown": "future 객체 그래프의 cancelled 상태와 이미 시작한 외부 HTTP 부수 효과는 다르다. 요청 중단 여부는 클라이언트 프로토콜에 달려 있다."
+        "rationaleMarkdown": "future 객체 그래프의 취소 상태와 이미 시작한 외부 HTTP 부수 효과는 별개다. 요청이 중단되는지는 클라이언트 프로토콜에 달려 있다."
       }
     ],
     "correctChoiceKey": "D",

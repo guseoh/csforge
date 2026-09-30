@@ -326,7 +326,7 @@
         "key": "A",
         "content": "컴파일러가 소스 construct를 여러 JVM 구조와 명령으로 번역할 수 있기 때문이다",
         "displayOrder": 0,
-        "rationaleMarkdown": "Compiler는 소스 표현을 여러 바이트코드 명령과 메타데이터로 바꿀 수 있어 소스 line과 명령이 일대일이 아니다."
+        "rationaleMarkdown": "컴파일러는 소스 코드 한 줄을 여러 바이트코드 명령과 메타데이터로 바꿀 수 있으므로 소스 코드 줄과 명령이 일대일로 대응하지 않는다."
       },
       {
         "key": "B",
@@ -392,7 +392,7 @@
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.class-loading-linking-initialization.q1",
-    "promptMarkdown": "클래스 생명주기에서 preparation의 설명으로 옳은 것은?",
+    "promptMarkdown": "클래스 생명주기에서 준비 단계(preparation)를 올바르게 설명한 것은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
@@ -404,34 +404,34 @@
         "key": "A",
         "content": "객체의 finalize를 호출하는 단계",
         "displayOrder": 0,
-        "rationaleMarkdown": "finalization은 객체 생명주기와 관련되고 클래스 preparation에서 호출하지 않는다."
+        "rationaleMarkdown": "객체 종료 처리(finalization)는 객체 생명주기와 관련되며 클래스 준비 단계에서 호출하지 않는다."
       },
       {
         "key": "B",
-        "content": "static block의 모든 코드를 실행하는 단계",
+        "content": "정적 초기화 블록의 모든 코드를 실행하는 단계",
         "displayOrder": 1,
-        "rationaleMarkdown": "작성한 static initializer 코드는 preparation이 아니라 초기화에서 실행한다."
+        "rationaleMarkdown": "개발자가 작성한 정적 초기화 코드는 준비 단계가 아니라 초기화 단계에서 실행한다."
       },
       {
         "key": "C",
-        "content": "static 필드를 위한 구조와 기본값을 준비하는 단계",
+        "content": "정적 필드에 필요한 저장 공간과 기본값을 준비하는 단계",
         "displayOrder": 2,
-        "rationaleMarkdown": "Preparation은 static 필드 저장 공간과 기본값을 준비하는 linking 단계다."
+        "rationaleMarkdown": "준비 단계(preparation)는 정적 필드의 저장 공간과 기본값을 마련하는 링킹(linking) 단계다."
       },
       {
         "key": "D",
         "content": "소스를 javac로 컴파일하는 단계",
         "displayOrder": 3,
-        "rationaleMarkdown": "javac의 소스 컴파일은 JVM 런타임 preparation의 일부가 아니다."
+        "rationaleMarkdown": "`javac`의 소스 컴파일은 JVM의 실행 시점 준비 단계에 포함되지 않는다."
       }
     ],
     "correctChoiceKey": "C",
-    "explanationMarkdown": "준비(preparation) 단계는 정적 필드의 기본값을 설정하며 초기화(initialization) 코드 실행과 구분된다."
+    "explanationMarkdown": "준비 단계(preparation)는 정적 필드의 기본값을 설정하며, 초기화 단계(initialization)에서 초기화 코드를 실행하는 것과 구분된다."
   },
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.class-loading-linking-initialization.q2",
-    "promptMarkdown": "linking에 포함되는 단계는?",
+    "promptMarkdown": "링킹(linking)에 포함되는 단계는?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
@@ -441,36 +441,36 @@
     "choices": [
       {
         "key": "A",
-        "content": "serialization과 reflection만",
+        "content": "직렬화와 리플렉션만",
         "displayOrder": 0,
-        "rationaleMarkdown": "Serialization과 reflection은 JVM linking의 정의된 하위 단계가 아니다."
+        "rationaleMarkdown": "직렬화와 리플렉션은 JVM 링킹의 하위 단계가 아니다."
       },
       {
         "key": "B",
         "content": "생성자 호출만",
         "displayOrder": 1,
-        "rationaleMarkdown": "Constructor invocation은 객체 생성의 일부이지 linking의 한 단계가 아니다."
+        "rationaleMarkdown": "생성자 호출은 객체 생성의 일부이지 링킹 단계가 아니다."
       },
       {
         "key": "C",
         "content": "GC와 JIT만",
         "displayOrder": 2,
-        "rationaleMarkdown": "GC와 JIT는 클래스 linking 단계 구분에 포함되지 않는다."
+        "rationaleMarkdown": "GC와 JIT는 클래스 링킹의 단계에 포함되지 않는다."
       },
       {
         "key": "D",
-        "content": "verification, preparation, resolution",
+        "content": "검증, 준비, 해석",
         "displayOrder": 3,
-        "rationaleMarkdown": "JVMS는 verification, preparation, resolution을 linking에 포함한다."
+        "rationaleMarkdown": "JVMS는 검증, 준비, 해석을 링킹에 포함한다."
       }
     ],
     "correctChoiceKey": "D",
-    "explanationMarkdown": "JVMS는 linking을 verification, preparation, resolution으로 나눈다."
+    "explanationMarkdown": "JVMS는 링킹을 검증(verification), 준비(preparation), 해석(resolution) 단계로 나눈다."
   },
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.class-loading-linking-initialization.q3",
-    "promptMarkdown": "static block과 필드 initializer의 실행 시점은 일반적으로?",
+    "promptMarkdown": "정적 초기화 블록과 필드 초기화식의 실행 시점은 일반적으로 언제인가?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
@@ -498,18 +498,18 @@
       },
       {
         "key": "D",
-        "content": "클래스 파일의 preparation 단계에서 소스 그대로",
+        "content": "클래스 파일의 준비 단계에서 소스 초기화식을 그대로 실행한다",
         "displayOrder": 3,
-        "rationaleMarkdown": "preparation과 developer가 작성한 initializer 코드 실행은 서로 다른 단계다."
+        "rationaleMarkdown": "준비 단계와 개발자가 작성한 초기화식을 실행하는 단계는 서로 다르다."
       }
     ],
     "correctChoiceKey": "A",
-    "explanationMarkdown": "개발자가 작성한 static 초기화 코드는 초기화에서 실행된다."
+    "explanationMarkdown": "개발자가 작성한 정적 초기화 코드는 초기화 단계에서 실행된다."
   },
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.class-loading-linking-initialization.q4",
-    "promptMarkdown": "resolution에 대한 설명으로 맞는 것은?",
+    "promptMarkdown": "해석(resolution)에 대한 설명으로 맞는 것은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
@@ -521,11 +521,11 @@
         "key": "A",
         "content": "모든 객체를 생성한다",
         "displayOrder": 0,
-        "rationaleMarkdown": "resolution은 symbolic 참조를 해석하는 단계이고 모든 객체를 생성하지 않는다."
+        "rationaleMarkdown": "해석 단계는 심볼릭 참조를 연결하며 모든 객체를 생성하지 않는다."
       },
       {
         "key": "B",
-        "content": "symbolic 참조를 사용할 수 있는 런타임 entity로 해석하며 시점은 지연될 수 있다",
+        "content": "심볼릭 참조를 실행 중인 클래스나 멤버에 연결하며 실제 시점은 미룰 수 있다",
         "displayOrder": 1,
         "rationaleMarkdown": "JVM은 심볼릭 참조를 실제 런타임 클래스나 멤버를 가리키는 참조로 해석합니다. 필요에 따라 해석 시점을 미룰 수 있습니다."
       },
@@ -533,7 +533,7 @@
         "key": "C",
         "content": "항상 초기화와 같은 단계다",
         "displayOrder": 2,
-        "rationaleMarkdown": "resolution은 초기화와 같은 단계가 아니며 lazy하게 수행될 수 있다."
+        "rationaleMarkdown": "해석은 초기화와 같은 단계가 아니며 실제 참조가 필요할 때까지 미룰 수 있다."
       },
       {
         "key": "D",
@@ -543,12 +543,12 @@
       }
     ],
     "correctChoiceKey": "B",
-    "explanationMarkdown": "JVMS는 resolution을 lazy하게 수행할 여지를 둔다."
+    "explanationMarkdown": "JVMS는 해석을 실제 참조가 필요해질 때까지 미룰 수 있도록 허용한다."
   },
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.class-loading-linking-initialization.q5",
-    "promptMarkdown": "`static final int x = 42`가 constant 변수 조건을 만족해 컴파일 시점 constant로 사용되고, 다른 static block이 있는 클래스를 참조한다. 가장 주의할 결론은?",
+    "promptMarkdown": "`static final int x = 42`가 상수 변수 조건을 만족해 컴파일 시점 상수로 사용되고, 같은 클래스에 다른 정적 초기화 블록도 있다. 가장 주의할 결론은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
@@ -558,25 +558,25 @@
     "choices": [
       {
         "key": "A",
-        "content": "resolution은 항상 모든 block을 실행한다",
+        "content": "해석은 항상 모든 정적 초기화 블록을 실행한다",
         "displayOrder": 0,
-        "rationaleMarkdown": "constant 변수 참조는 일반 active-use 초기화 trigger와 구분해야 한다. resolution이 모든 static block 실행을 뜻하지 않는다."
+        "rationaleMarkdown": "상수 변수 참조는 일반적인 능동 사용(active use)에 따른 초기화와 구분해야 한다. 해석 단계가 모든 정적 초기화 블록을 실행하는 것은 아니다."
       },
       {
         "key": "B",
-        "content": "어떤 static 코드도 절대 실행되지 않는다",
+        "content": "정적 초기화 코드는 어떤 경우에도 실행되지 않는다",
         "displayOrder": 1,
-        "rationaleMarkdown": "상수 참조만으로 초기화가 유발되지 않을 수 있지만, 다른 active use가 있으면 static 코드가 실행될 수 있다."
+        "rationaleMarkdown": "상수 참조만으로 초기화가 유발되지 않을 수 있지만, 다른 능동 사용이 있으면 정적 초기화 코드가 실행될 수 있다."
       },
       {
         "key": "C",
-        "content": "constant 변수 사용과 일반 클래스 초기화 trigger를 구분해야 한다",
+        "content": "컴파일 시점 상수 사용과 일반적인 클래스 초기화 조건을 구분해야 한다",
         "displayOrder": 2,
         "rationaleMarkdown": "컴파일 시점 상수를 사용하는 경우는 보통 클래스 초기화를 일으키지 않는 예외에 해당합니다. 상수가 아닌 정적 필드나 메서드에 접근하는 경우는 따로 판단해야 합니다."
       },
       {
         "key": "D",
-        "content": "preparation이 42를 계산하는 소스 코드를 실행한다",
+        "content": "준비 단계에서 42를 계산하는 소스 코드를 실행한다",
         "displayOrder": 3,
         "rationaleMarkdown": "준비 단계(preparation)는 정적 필드에 쓸 저장 공간을 마련하고 JVM 기본값을 설정하는 링킹 단계입니다. 상수 변수의 `ConstantValue` 적용은 클래스 초기화에서 `<clinit>`을 실행하기 전에 처리됩니다. 준비 단계에서 소스 초기화 코드를 실행해 `42`를 계산하는 것은 아닙니다."
       }
@@ -617,11 +617,11 @@
         "key": "D",
         "content": "초기화 실패가 후속 사용에서 초기화 오류 계열로 나타날 수 있다",
         "displayOrder": 3,
-        "rationaleMarkdown": "초기화 실패 클래스는 erroneous 상태가 될 수 있어 후속 접근에서 NoClassDefFoundError 같은 linkage 오류가 발생할 수 있다."
+        "rationaleMarkdown": "초기화에 실패한 클래스는 오류 상태(erroneous state)가 될 수 있어 후속 접근에서 `NoClassDefFoundError` 같은 연결 오류가 발생할 수 있다."
       }
     ],
     "correctChoiceKey": "D",
-    "explanationMarkdown": "JVMS의 초기화 실패 처리로 후속 사용은 원래 예외와 다른 linkage/오류 형태를 관찰할 수 있다."
+    "explanationMarkdown": "JVMS의 초기화 실패 처리에 따라 후속 사용에서 원래 예외와 다른 연결 오류(linkage error)가 나타날 수 있다."
   },
   {
     "kind": "question",
@@ -638,13 +638,13 @@
         "key": "A",
         "content": "바이너리 name과 defining ClassLoader",
         "displayOrder": 0,
-        "rationaleMarkdown": "참조 타입 동일성은 바이너리 name과 실제 defining ClassLoader를 함께 포함한다."
+        "rationaleMarkdown": "참조 타입의 동일성은 바이너리 이름과 실제로 클래스를 정의한 `ClassLoader`를 함께 포함한다."
       },
       {
         "key": "B",
         "content": "힙 크기와 OS 이름",
         "displayOrder": 1,
-        "rationaleMarkdown": "힙 크기나 OS 이름이 런타임 클래스의 assignment compatibility를 결정하지 않는다."
+        "rationaleMarkdown": "힙 크기나 운영체제 이름이 실행 시점 타입의 대입 호환성을 결정하지 않는다."
       },
       {
         "key": "C",
@@ -660,12 +660,12 @@
       }
     ],
     "correctChoiceKey": "A",
-    "explanationMarkdown": "같은 바이너리 name도 defining 로더가 다르면 다른 런타임 타입이 될 수 있다."
+    "explanationMarkdown": "같은 바이너리 이름이라도 클래스를 정의한 로더가 다르면 서로 다른 실행 시점 타입이 될 수 있다."
   },
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.classloader-delegation-type-identity.q2",
-    "promptMarkdown": "parent delegation의 일반적인 목적은?",
+    "promptMarkdown": "부모 위임(parent delegation)의 일반적인 목적은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
@@ -677,7 +677,7 @@
         "key": "A",
         "content": "GC를 생략하는 것",
         "displayOrder": 0,
-        "rationaleMarkdown": "delegation은 GC를 끄는 정책이 아니라 클래스 loading 요청 경로를 정한다."
+        "rationaleMarkdown": "위임은 GC를 끄는 정책이 아니라 클래스 로딩 요청의 경로를 정한다."
       },
       {
         "key": "B",
@@ -699,12 +699,12 @@
       }
     ],
     "correctChoiceKey": "B",
-    "explanationMarkdown": "ClassLoader의 delegation 구조는 공통/플랫폼 클래스 중복을 줄이는 데 사용된다."
+    "explanationMarkdown": "`ClassLoader`의 위임 구조는 공통·플랫폼 클래스를 중복 정의하는 일을 줄이는 데 사용된다."
   },
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.classloader-delegation-type-identity.q3",
-    "promptMarkdown": "두 로더가 같은 바이너리 name의 클래스를 각각 define하면?",
+    "promptMarkdown": "두 로더가 같은 바이너리 이름의 클래스를 각각 정의하면?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
@@ -716,7 +716,7 @@
         "key": "A",
         "content": "이름만 같으므로 캐스팅이 반드시 성공한다",
         "displayOrder": 0,
-        "rationaleMarkdown": "바이너리 name이 같아도 defining 로더가 다르면 JVM assignment-compatible 타입이라고 단정할 수 없다."
+        "rationaleMarkdown": "바이너리 이름이 같아도 클래스를 정의한 로더가 다르면 JVM에서 대입 호환되는 타입이라고 단정할 수 없다."
       },
       {
         "key": "B",
@@ -728,7 +728,7 @@
         "key": "C",
         "content": "두 Class 객체가 서로 다른 런타임 타입일 수 있다",
         "displayOrder": 2,
-        "rationaleMarkdown": "다른 ClassLoader가 클래스를 정의하면 같은 바이너리 name이라도 서로 다른 `Class` 객체와 런타임 타입이 될 수 있습니다."
+        "rationaleMarkdown": "다른 `ClassLoader`가 클래스를 정의하면 같은 바이너리 이름이라도 서로 다른 `Class` 객체와 실행 시점 타입이 될 수 있다."
       },
       {
         "key": "D",
@@ -743,7 +743,7 @@
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.classloader-delegation-type-identity.q4",
-    "promptMarkdown": "Class.getClassLoader()를 진단에 사용하는 이유는?",
+    "promptMarkdown": "`Class.getClassLoader()`를 진단에 사용하는 이유는?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
@@ -753,9 +753,9 @@
     "choices": [
       {
         "key": "A",
-        "content": "OS scheduler를 바꿔서",
+        "content": "운영체제 스케줄러 설정을 바꿔서",
         "displayOrder": 0,
-        "rationaleMarkdown": "Class.getClassLoader는 스레드 scheduling을 바꾸지 않고 클래스 definition 맥락을 조회한다."
+        "rationaleMarkdown": "`Class.getClassLoader()`는 스레드 스케줄링을 바꾸지 않고 클래스 정의에 사용된 로더 문맥을 조회한다."
       },
       {
         "key": "B",
@@ -767,22 +767,22 @@
         "key": "C",
         "content": "JIT 코드를 덤프해서",
         "displayOrder": 2,
-        "rationaleMarkdown": "로더 조회는 JIT machine 코드 덤프가 아니다. 실행 코드 진단은 다른 도구를 사용한다."
+        "rationaleMarkdown": "로더 조회는 JIT 기계어를 덤프하지 않는다. 실행 코드 진단에는 다른 도구를 사용한다."
       },
       {
         "key": "D",
-        "content": "해당 Class의 defining/loading 문맥을 비교하는 단서가 된다",
+        "content": "해당 `Class`를 정의한 로더를 확인하는 단서가 된다",
         "displayOrder": 3,
         "rationaleMarkdown": "getClassLoader로 클래스를 정의한 로더를 확인할 수 있다. bootstrap 정의 클래스는 null을 반환할 수 있다."
       }
     ],
     "correctChoiceKey": "D",
-    "explanationMarkdown": "로더 정보는 plugin·namespace·캐스팅 문제를 분석하는 런타임 근거다."
+    "explanationMarkdown": "로더 정보는 플러그인·이름 공간·캐스팅 문제를 분석할 때 실행 시점의 단서가 된다."
   },
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.classloader-delegation-type-identity.q5",
-    "promptMarkdown": "plugin 로더 L1이 만든 com.example.Service 객체를 app 로더 L2가 같은 바이너리 name의 Service로 캐스팅하려 한다. 예상되는 문제는?",
+    "promptMarkdown": "플러그인 로더 L1이 만든 `com.example.Service` 객체를 애플리케이션 로더 L2가 같은 바이너리 이름의 `com.example.Service`로 캐스팅하려 한다. 예상되는 문제는?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
@@ -794,7 +794,7 @@
         "key": "A",
         "content": "이름이 같아도 defining 로더가 다르면 ClassCastException이 날 수 있다",
         "displayOrder": 0,
-        "rationaleMarkdown": "바이너리 name만으로 타입이 같아지지 않는다. plugin과 app 로더가 서로 다른 Service를 정의하면 캐스팅에서 ClassCastException이 날 수 있다."
+        "rationaleMarkdown": "바이너리 이름만으로 타입이 같아지지 않는다. 플러그인 로더와 애플리케이션 로더가 서로 다른 `Service`를 정의하면 캐스팅에서 `ClassCastException`이 날 수 있다."
       },
       {
         "key": "B",
@@ -821,7 +821,7 @@
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.classloader-delegation-type-identity.q6",
-    "promptMarkdown": "사용자 정의 로더가 parent에 먼저 요청하는 방식과 child가 먼저 정의하는 방식을 바꿨다. 결과 분석에서 가장 중요한 것은?",
+    "promptMarkdown": "사용자 정의 로더의 부모 우선 위임과 자식 우선 정의 방식을 바꿨다. 결과를 분석할 때 가장 중요한 것은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
@@ -831,31 +831,31 @@
     "choices": [
       {
         "key": "A",
-        "content": "바이너리 클래스 이름이 같으면 정의한 ClassLoader와 관계없이 JVM에서 같은 실행 시점 타입이다",
+        "content": "바이너리 이름이 같으면 클래스를 정의한 `ClassLoader`와 관계없이 JVM에서 같은 실행 시점 타입이다",
         "displayOrder": 0,
         "rationaleMarkdown": "JVM 타입 동일성에는 바이너리 name과 defining 로더가 함께 고려되므로 이름만으로 같은 타입이 되지 않는다."
       },
       {
         "key": "B",
-        "content": "어느 로더가 실제 define했는지와 namespace/delegation 경계를 추적한다",
+        "content": "어느 로더가 실제로 클래스를 정의했는지와 이름 공간·위임 경계를 추적한다",
         "displayOrder": 1,
-        "rationaleMarkdown": "delegation 순서에 따라 실제 클래스를 정의한 로더가 달라질 수 있다. 그 로더와 namespace 경계를 추적한다."
+        "rationaleMarkdown": "위임 순서에 따라 실제로 클래스를 정의한 로더가 달라질 수 있다. 해당 로더와 이름 공간 경계를 추적한다."
       },
       {
         "key": "C",
-        "content": "두 로더가 동일한 클래스 바이트코드를 define했다면 서로 assignment-compatible한 같은 타입으로 취급된다",
+        "content": "두 로더가 같은 클래스 바이트코드를 정의했다면 서로 대입 호환되는 같은 타입으로 취급된다",
         "displayOrder": 2,
-        "rationaleMarkdown": "같은 클래스 바이트코드를 별도 로더가 정의해도 assignment가 호환되는 같은 런타임 타입이 되지 않을 수 있다."
+        "rationaleMarkdown": "같은 클래스 바이트코드를 별도 로더가 정의해도 대입 호환되는 같은 실행 시점 타입이 되지 않을 수 있다."
       },
       {
         "key": "D",
-        "content": "parent-first와 child-first 차이는 자원 검색 순서만 바꾸고 어떤 로더가 클래스를 define하는지는 바꾸지 않는다",
+        "content": "부모 우선과 자식 우선 방식의 차이는 자원 검색 순서만 바꾸고 어떤 로더가 클래스를 정의하는지는 바꾸지 않는다",
         "displayOrder": 3,
-        "rationaleMarkdown": "parent-first와 child-first는 클래스를 실제 정의할 로더를 바꿀 수 있어 자원 검색 순서만의 차이가 아니다."
+        "rationaleMarkdown": "부모 우선과 자식 우선 방식은 실제로 클래스를 정의할 로더를 바꿀 수 있어 자원 검색 순서만의 차이가 아니다."
       }
     ],
     "correctChoiceKey": "B",
-    "explanationMarkdown": "JVM에서 실행 중인 타입의 동일성을 판단할 때는 **바이너리 이름과 해당 클래스를 정의한 ClassLoader**를 함께 봐야 합니다. 위임 정책이 달라지면 같은 이름과 같은 바이트코드라도 실제 정의를 담당한 로더가 달라질 수 있으므로 이름 공간과 로더 경계를 추적해야 합니다."
+    "explanationMarkdown": "JVM에서 실행 중인 타입의 동일성을 판단할 때는 **바이너리 이름과 해당 클래스를 정의한 `ClassLoader`**를 함께 봐야 한다. 위임 정책이 달라지면 같은 이름과 같은 바이트코드라도 실제로 클래스를 정의한 로더가 달라질 수 있으므로 이름 공간과 로더 경계를 추적해야 한다."
   },
   {
     "kind": "question",
@@ -870,9 +870,9 @@
     "choices": [
       {
         "key": "A",
-        "content": "module 디스크립터",
+        "content": "모듈 서술자(module descriptor)",
         "displayOrder": 0,
-        "rationaleMarkdown": "module 디스크립터는 module 메타데이터를 담고 메서드 호출마다 생겼다 사라지는 실행 문맥이 아니다."
+        "rationaleMarkdown": "모듈 서술자(module descriptor)는 모듈 메타데이터를 담고 메서드 호출마다 생겼다 사라지는 실행 문맥이 아니다."
       },
       {
         "key": "B",
@@ -1262,7 +1262,7 @@
         "key": "A",
         "content": "런타임 진행성에 따라 이후 reachability를 일찍 끊어 회수 후보가 될 수 있다",
         "displayOrder": 0,
-        "rationaleMarkdown": "다른 strong 참조가 없고 참조도 더 필요 없으면 그 참조를 지워 reachability를 낮출 수 있지만, 이것이 GC 실행을 강제하지는 않는다."
+        "rationaleMarkdown": "다른 강한 참조가 없고 더 이상 참조가 필요하지 않으면 해당 참조를 지워 도달 가능성을 낮출 수 있지만, 이것이 GC 실행을 강제하지는 않는다."
       },
       {
         "key": "B",
@@ -1874,7 +1874,7 @@
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.java-memory-leaks.q5",
-    "promptMarkdown": "listener registry가 listener를 등록만 하고 해제하지 않는다. 요청 객체가 요청 후에도 남는 경로는?",
+    "promptMarkdown": "리스너 목록(listener registry)에 등록된 리스너를 해제하지 않았다. 요청 객체가 요청 처리가 끝난 뒤에도 남는 경로는?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
@@ -1884,31 +1884,31 @@
     "choices": [
       {
         "key": "A",
-        "content": "장수 registry root -> listener -> 요청 관련 객체 그래프가 이어질 수 있다",
+        "content": "수명이 긴 리스너 목록의 GC 루트 -> 리스너 -> 요청 관련 객체 그래프가 이어질 수 있다",
         "displayOrder": 0,
-        "rationaleMarkdown": "수명이 긴 registry가 listener를 참조하고 listener가 request 데이터를 참조하면 등록 해제 전까지 데이터가 간접 보유된다."
+        "rationaleMarkdown": "수명이 긴 목록이 리스너를 참조하고 리스너가 요청 데이터를 참조하면 해제 전까지 데이터가 간접적으로 유지된다."
       },
       {
         "key": "B",
-        "content": "request 범위가 모든 static root를 제거한다",
+        "content": "요청 범위가 모든 정적 GC 루트를 제거한다",
         "displayOrder": 1,
-        "rationaleMarkdown": "request 범위가 끝나도 listener registry 같은 무관한 static root가 자동으로 비워지지 않는다."
+        "rationaleMarkdown": "요청 범위가 끝나도 관련 없는 리스너 목록 같은 정적 GC 루트가 자동으로 비워지지는 않는다."
       },
       {
         "key": "C",
-        "content": "listener는 Java 객체가 아니다",
+        "content": "리스너는 Java 객체가 아니다",
         "displayOrder": 2,
-        "rationaleMarkdown": "listener도 보통 Java 객체이며 필드 참조를 통해 다른 객체를 붙잡을 수 있다."
+        "rationaleMarkdown": "리스너도 보통 Java 객체이며 필드 참조를 통해 다른 객체를 계속 참조할 수 있다."
       },
       {
         "key": "D",
-        "content": "GC가 listener를 항상 약한 참조로 바꾼다",
+        "content": "GC가 리스너를 항상 약한 참조로 바꾼다",
         "displayOrder": 3,
-        "rationaleMarkdown": "GC가 strong 참조를 weak로 바꾸지 않는다. registry가 가진 참조 종류와 제거 정책이 retention을 결정한다."
+        "rationaleMarkdown": "GC는 강한 참조를 약한 참조로 바꾸지 않는다. 목록이 어떤 참조를 보유하는지와 언제 제거하는지가 객체의 도달 가능성에 영향을 준다."
       }
     ],
     "correctChoiceKey": "A",
-    "explanationMarkdown": "등록 해제 없는 listener는 root에서 도달 가능한 retain path를 만든다."
+    "explanationMarkdown": "해제되지 않은 리스너는 GC 루트에서 도달 가능한 유지 경로(retained path)를 만든다."
   },
   {
     "kind": "question",
@@ -2177,7 +2177,7 @@
         "key": "D",
         "content": "ClassLoader와 클래스 메타데이터의 수명/retained 참조를 조사한다",
         "displayOrder": 3,
-        "rationaleMarkdown": "strong 참조가 남은 ClassLoader는 그 로더가 정의한 클래스가 unload되지 않게 유지할 수 있다. 로더의 소유자와 생명주기를 추적한다."
+        "rationaleMarkdown": "강한 참조가 남은 `ClassLoader`는 해당 로더가 정의한 클래스가 언로드되지 않게 유지할 수 있다. 로더를 참조하는 주체와 생명주기를 추적한다."
       }
     ],
     "correctChoiceKey": "D",
@@ -2204,7 +2204,7 @@
         "key": "B",
         "content": "OS 프로세스 생성 규칙",
         "displayOrder": 1,
-        "rationaleMarkdown": "OS 프로세스를 만드는 것은 just-in-time 컴파일의 뜻이 아니다."
+        "rationaleMarkdown": "운영체제 프로세스를 만드는 규칙은 적시 컴파일(just-in-time compilation)의 뜻이 아니다."
       },
       {
         "key": "C",
@@ -2241,9 +2241,9 @@
       },
       {
         "key": "B",
-        "content": "반복 실행·profiling 이후 런타임 최적화 상태가 달라지는 초기 구간",
+        "content": "반복 실행과 프로파일링 이후 실행 중 최적화 상태가 달라지는 초기 구간",
         "displayOrder": 1,
-        "rationaleMarkdown": "반복 실행으로 profiling 정보가 쌓이고 런타임 컴파일이 일어날 수 있어 초기 측정과 충분히 실행한 뒤 결과가 다를 수 있다."
+        "rationaleMarkdown": "반복 실행으로 프로파일 정보가 쌓이고 실행 중 컴파일이 일어날 수 있어 초기 측정과 충분히 실행한 뒤의 결과가 다를 수 있다."
       },
       {
         "key": "C",
@@ -2255,7 +2255,7 @@
         "key": "D",
         "content": "힙이 무조건 비워지는 시간",
         "displayOrder": 3,
-        "rationaleMarkdown": "GC가 benchmark 결과에 영향을 줄 수는 있지만 힙을 비우는 것이 워밍업(warm-up)의 정의는 아니다."
+        "rationaleMarkdown": "GC가 벤치마크 결과에 영향을 줄 수는 있지만 힙을 비우는 것이 워밍업의 정의는 아니다."
       }
     ],
     "correctChoiceKey": "B",
@@ -2264,7 +2264,7 @@
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.jit-hotspot-warmup.q3",
-    "promptMarkdown": "계층형 컴파일(tiered 컴파일)의 설명으로 옳은 것은?",
+    "promptMarkdown": "계층형 컴파일(tiered compilation)의 설명으로 옳은 것은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
@@ -2276,19 +2276,19 @@
         "key": "A",
         "content": "GC 수집기 이름이다",
         "displayOrder": 0,
-        "rationaleMarkdown": "계층형 컴파일(tiered 컴파일)은 런타임 코드 컴파일 전략이지 garbage 수집기가 아니다."
+        "rationaleMarkdown": "계층형 컴파일(tiered compilation)은 런타임 코드 컴파일 전략이지 가비지 수집기가 아니다."
       },
       {
         "key": "B",
         "content": "JVMS가 모든 JVM에 같은 임계값을 강제한다",
         "displayOrder": 1,
-        "rationaleMarkdown": "JVMS는 바이트코드의 의미를 지정할 뿐 모든 JVM 구현이 같은 tier 임계값을 쓰도록 정하지 않는다."
+        "rationaleMarkdown": "JVMS는 바이트코드의 의미를 지정할 뿐 모든 JVM 구현이 같은 계층별 임계값을 쓰도록 정하지 않는다."
       },
       {
         "key": "C",
-        "content": "HotSpot이 interpreter와 여러 컴파일 tier/프로파일을 조합할 수 있는 구현 전략이다",
+        "content": "HotSpot이 인터프리터와 여러 컴파일 단계·프로파일을 조합할 수 있는 구현 전략이다",
         "displayOrder": 2,
-        "rationaleMarkdown": "HotSpot은 startup과 실행 성능을 균형 잡도록 interpretation, profiling, 여러 컴파일 tier를 조합할 수 있다. 구체 정책은 구현 세부다."
+        "rationaleMarkdown": "HotSpot은 빠른 시작과 실행 성능의 균형을 위해 인터프리터 실행, 프로파일링, 여러 컴파일 단계를 조합할 수 있다. 구체적인 정책은 구현 세부 사항이다."
       },
       {
         "key": "D",
@@ -2298,12 +2298,12 @@
       }
     ],
     "correctChoiceKey": "C",
-    "explanationMarkdown": "계층형 컴파일(tiered 컴파일)은 HotSpot의 실행 최적화 구현 설명이다."
+    "explanationMarkdown": "계층형 컴파일(tiered compilation)은 HotSpot의 실행 최적화 구현 설명이다."
   },
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.jit-hotspot-warmup.q4",
-    "promptMarkdown": "짧은 microbenchmark가 실제보다 느리거나 빠르게 보일 수 있는 요인은?",
+    "promptMarkdown": "짧은 마이크로벤치마크가 실제보다 느리거나 빠르게 보일 수 있는 요인은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
@@ -2315,34 +2315,34 @@
         "key": "A",
         "content": "JIT가 측정 전 모든 코드를 최적화하기 때문이다",
         "displayOrder": 0,
-        "rationaleMarkdown": "짧은 test는 interpreter나 초기 컴파일 비용을 포함해 hot 코드가 나중에 최적화된 상태에 도달하기 전을 측정할 수 있다."
+        "rationaleMarkdown": "짧은 측정은 인터프리터 실행이나 초기 컴파일 비용을 포함해 자주 실행되는 코드가 최적화되기 전의 상태를 측정할 수 있다."
       },
       {
         "key": "B",
-        "content": "Java는 benchmark가 불가능하기 때문이다",
+        "content": "Java에서는 성능을 측정할 수 없기 때문이다",
         "displayOrder": 1,
-        "rationaleMarkdown": "Java도 성능 측정을 할 수 있지만 시작 비용과 실행 단계별 비용을 측정 대상 작업의 성능과 분리해야 한다."
+        "rationaleMarkdown": "Java에서도 성능을 측정할 수 있지만 시작 비용과 실행 단계별 비용을 측정 대상 작업의 성능과 구분해야 한다."
       },
       {
         "key": "C",
         "content": "바이트코드가 항상 네이티브이기 때문이다",
         "displayOrder": 2,
-        "rationaleMarkdown": "바이트코드와 machine 코드는 다르다. JVM은 일부 바이트코드를 해석하고 hot path를 컴파일할 수 있다."
+        "rationaleMarkdown": "바이트코드와 기계어는 다르다. JVM은 일부 바이트코드를 해석하고 자주 실행되는 경로를 컴파일할 수 있다."
       },
       {
         "key": "D",
-        "content": "클래스 loading, JIT 워밍업(warm-up), GC, OS noise가 측정에 섞일 수 있다",
+        "content": "클래스 로딩, JIT 워밍업, GC, 운영체제 변동 요인이 측정에 섞일 수 있다",
         "displayOrder": 3,
-        "rationaleMarkdown": "짧은 측정에는 클래스 loading, JIT 워밍업(warm-up), GC, OS scheduling noise가 모두 섞일 수 있다."
+        "rationaleMarkdown": "짧은 측정에는 클래스 로딩, JIT 워밍업, GC, 운영체제 스케줄링에 따른 변동이 모두 섞일 수 있다."
       }
     ],
     "correctChoiceKey": "D",
-    "explanationMarkdown": "실행 초기 비용과 런타임 noise를 측정 구간과 분리해야 한다."
+    "explanationMarkdown": "실행 초기 비용과 실행 중 변동 요인을 측정 구간과 구분해야 한다."
   },
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.jit-hotspot-warmup.q5",
-    "promptMarkdown": "메서드가 초기에 interpreter로 실행되다가 profiling 후 optimized 코드로 바뀌었다. 이전 결과와 later 결과를 비교할 때?",
+    "promptMarkdown": "메서드가 처음에는 인터프리터(interpreter)로 실행되다가 프로파일 정보를 수집한 뒤 최적화된 코드로 바뀌었다. 초기 결과와 이후 결과를 비교할 때 무엇을 기록해야 하는가?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
@@ -2352,9 +2352,9 @@
     "choices": [
       {
         "key": "A",
-        "content": "같은 소스라도 실행 phase와 HotSpot optimization 상태를 함께 기록한다",
+        "content": "같은 소스 코드라도 실행 단계와 HotSpot 최적화 상태를 함께 기록한다",
         "displayOrder": 0,
-        "rationaleMarkdown": "HotSpot은 런타임 phase에 따라 같은 소스를 다르게 실행하므로 성능 비교 시 워밍업(warm-up)과 VM 상태를 통제해 기록한다."
+        "rationaleMarkdown": "HotSpot은 실행 단계에 따라 같은 소스 코드를 다르게 실행하므로 성능 비교 시 워밍업과 가상 머신 상태를 통제해 기록한다."
       },
       {
         "key": "B",
@@ -2376,12 +2376,12 @@
       }
     ],
     "correctChoiceKey": "A",
-    "explanationMarkdown": "performance observation은 구현 상태와 워밍업(warm-up) phase의 영향을 받는다."
+    "explanationMarkdown": "성능 측정 결과는 구현 상태와 워밍업 단계의 영향을 받는다."
   },
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.jit-hotspot-warmup.q6",
-    "promptMarkdown": "HotSpot이 speculative optimization을 적용했다가 가정이 깨져 deoptimization했다. 이 사실에서 보장하지 않는 것은?",
+    "promptMarkdown": "HotSpot이 추측 기반 최적화(speculative optimization)를 적용했다가 가정이 깨져 최적화 해제(deoptimization)를 했다. 이 사실만으로 보장할 수 없는 것은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
@@ -2391,21 +2391,21 @@
     "choices": [
       {
         "key": "A",
-        "content": "profiling이 optimization 입력이 될 수 있다는 것",
+        "content": "프로파일링 정보가 최적화의 입력이 될 수 있다는 것",
         "displayOrder": 0,
         "rationaleMarkdown": "실행 시 프로파일링 정보를 최적화에 활용하는 것은 JVM 구현 전략이지 Java 소스 언어가 보장하는 동작은 아닙니다."
       },
       {
         "key": "B",
-        "content": "모든 JVM이 같은 임계값·deoptimization 정책을 쓴다는 것",
+        "content": "모든 JVM이 같은 임계값과 최적화 해제 정책을 쓴다는 것",
         "displayOrder": 1,
-        "rationaleMarkdown": "HotSpot 임계값과 speculative optimization은 구현 세부라 다른 호환 JVM은 다르게 선택할 수 있다."
+        "rationaleMarkdown": "HotSpot의 임계값과 추측 기반 최적화는 구현 세부 사항이므로 다른 JVM은 다른 방식을 선택할 수 있다."
       },
       {
         "key": "C",
-        "content": "런타임 컴파일이 구현 detail이라는 것",
+        "content": "실행 중 컴파일이 구현 세부 사항이라는 것",
         "displayOrder": 2,
-        "rationaleMarkdown": "JIT는 런타임이 선택하는 구현 동작이며 portable 코드는 language/API 의미론에 의존한다."
+        "rationaleMarkdown": "JIT는 JVM이 선택하는 구현 동작이며, 이식 가능한 코드는 Java 언어와 API의 의미에 의존한다."
       },
       {
         "key": "D",
@@ -2415,7 +2415,7 @@
       }
     ],
     "correctChoiceKey": "B",
-    "explanationMarkdown": "임계값과 정책은 JVM 구현 detail이며 JVMS 일반 보장이 아니다."
+    "explanationMarkdown": "임계값과 정책은 JVM 구현 세부 사항이며 JVMS가 모든 구현에 보장하는 내용은 아니다."
   },
   {
     "kind": "question",
@@ -2430,9 +2430,9 @@
     "choices": [
       {
         "key": "A",
-        "content": "module 디스크립터 생성",
+        "content": "모듈 서술자 생성",
         "displayOrder": 0,
-        "rationaleMarkdown": "스레드 덤프는 module 디스크립터를 만들지 않는다. module 메타데이터 진단은 다른 영역이다."
+        "rationaleMarkdown": "스레드 덤프는 모듈 서술자를 만들지 않는다. 모듈 메타데이터 진단은 다른 영역이다."
       },
       {
         "key": "B",
@@ -2694,20 +2694,20 @@
 {
   "kind": "question",
   "contentKey": "java.core.jvm-runtime.classloader-delegation-type-identity.q7",
-  "promptMarkdown": "플러그인 클래스 로더가 parent delegation을 우회해 애플리케이션과 같은 바이너리 name의 `com.example.Plugin` 인터페이스까지 별도로 define했다. 플러그인 구현 객체를 애플리케이션 쪽 `com.example.Plugin`으로 캐스팅할 때 실패할 수 있는 이유와 로더 경계 설계 방법을 설명하라.",
+  "promptMarkdown": "플러그인 클래스 로더가 부모 위임(parent delegation)을 우회해 애플리케이션과 같은 바이너리 이름의 `com.example.Plugin` 인터페이스까지 별도로 정의했다. 플러그인 구현 객체를 애플리케이션 쪽 `com.example.Plugin`으로 캐스팅할 때 실패할 수 있는 이유와 로더 경계 설계 방법을 설명하라.",
   "questionType": "SCENARIO",
   "difficulty": "HARD",
   "status": "PUBLISHED",
   "conceptKeys": [
     "java.core.jvm-runtime.classloader-delegation-type-identity"
   ],
-  "modelAnswer": "JVM의 런타임 타입 동일성에는 바이너리 name뿐 아니라 defining ClassLoader도 포함된다. 이름이 같아도 애플리케이션 로더가 define한 Plugin과 plugin 로더가 별도로 define한 Plugin은 서로 다른 타입이므로 캐스팅이 실패할 수 있다. 공유 API/인터페이스는 parent 로더가 한 번만 define하도록 delegation 경계를 잡고 plugin 로더는 구현 클래스만 별도로 load하는 방식으로 namespace를 설계해야 한다.",
-  "explanationMarkdown": "Class 이름 문자열이 같다는 사실만으로 JVM에서 같은 타입이 되는 것은 아니다. `binary name + defining loader`가 함께 타입 동일성을 만든다. Plugin architecture에서는 공통 API를 parent 쪽에서 공유하고 구현만 child 로더가 담당하게 해야 같은 인터페이스 계약을 양쪽이 실제로 공유할 수 있다."
+  "modelAnswer": "JVM의 실행 시점 타입 동일성에는 바이너리 이름뿐 아니라 해당 클래스를 정의한 `ClassLoader`도 포함된다. 이름이 같아도 애플리케이션 로더가 정의한 `Plugin`과 플러그인 로더가 별도로 정의한 `Plugin`은 서로 다른 타입이므로 캐스팅이 실패할 수 있다. 공유 API/인터페이스는 부모 로더가 한 번만 정의하도록 위임 경계를 잡고, 플러그인 로더는 구현 클래스만 별도로 로딩하는 방식으로 이름 공간을 설계해야 한다.",
+  "explanationMarkdown": "클래스 이름 문자열이 같다는 사실만으로 JVM에서 같은 타입이 되는 것은 아니다. `바이너리 이름 + 클래스를 정의한 로더`가 함께 타입 동일성을 만든다. 플러그인 아키텍처에서는 공통 API를 부모 로더에서 공유하고 구현 클래스만 자식 로더가 담당하게 해야 양쪽이 같은 인터페이스 계약을 공유할 수 있다."
 },
 {
   "kind": "question",
   "contentKey": "java.core.jvm-runtime.jvm-runtime-data-areas-frames.q7",
-  "promptMarkdown": "재귀 메서드가 호출될 때마다 작은 객체 하나를 힙에 만들고 다시 자신을 호출한다. Heap 여유가 충분한데도 깊은 재귀에서 `StackOverflowError`가 발생할 수 있는 이유를 스택 프레임과 힙 객체의 수명 관점에서 설명하라.",
+  "promptMarkdown": "재귀 메서드가 호출될 때마다 작은 객체 하나를 힙에 만들고 다시 자신을 호출한다. 힙 여유가 충분한데도 깊은 재귀에서 `StackOverflowError`가 발생할 수 있는 이유를 스택 프레임과 힙 객체의 수명 관점에서 설명하라.",
   "questionType": "DESCRIPTIVE",
   "difficulty": "MEDIUM",
   "status": "PUBLISHED",
@@ -2741,6 +2741,6 @@
     "java.core.jvm-runtime.jit-hotspot-warmup"
   ],
   "modelAnswer": "초기 지연 시간이 줄어드는 데는 클래스 로딩, JIT 컴파일과 프로파일링뿐 아니라 캐시 준비, 연결 생성, GC 상태, OS 페이지 캐시 등 여러 요인이 작용할 수 있습니다. JIT 임계값과 단계별 컴파일 정책도 JVM 구현 세부 사항입니다. 성능을 측정할 때는 준비 구간과 안정 상태 구간을 나누고 같은 작업 부하와 환경에서 반복 측정해야 합니다. JFR, 컴파일 로그 등 필요한 진단 자료로 원인 후보를 확인합니다.",
-  "explanationMarkdown": "Warm-up은 단일 원인 이름이 아니라 런타임과 주변 시스템의 초기 상태가 안정화되는 구간이다. HotSpot JIT가 중요한 요인일 수 있지만 클래스 loading, 애플리케이션 캐시, DB 연결, OS 캐시도 같은 시간대에 변한다. Benchmark는 초기 구간을 무시하기보다 목적에 따라 초기 기동(cold start)과 정상 상태(steady state)를 분리해 측정하고 원인을 별도 근거로 검증해야 한다."
+  "explanationMarkdown": "워밍업은 단일 원인의 이름이 아니라 실행 시점과 주변 시스템의 초기 상태가 안정되는 구간이다. HotSpot JIT가 중요한 요인일 수 있지만 클래스 로딩, 애플리케이션 캐시, DB 연결, 운영체제 캐시도 같은 시간대에 달라진다. 벤치마크는 초기 구간을 무시하기보다 목적에 따라 초기 기동(cold start)과 정상 상태(steady state)를 나누어 측정하고, 원인은 별도의 근거로 검증해야 한다."
 }
 ]

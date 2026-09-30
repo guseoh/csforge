@@ -14,13 +14,13 @@ references:
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
-    relationNote: class lifecycle 단계와 initialization trigger 확인
+    relationNote: 클래스 생명주기 단계와 초기화 유발 조건 확인
   - url: "https://engineering.linecorp.com/en/blog/line-open-jdk/"
     title: "LINE의 OpenJDK 적용기: 호환성 확인부터 주의 사항까지"
     referenceType: COMPANY_TECH_BLOG
     language: ko
     displayOrder: 2
-    relationNote: JDK 구현과 실행 환경 차이가 class/runtime 호환성에 미치는 영향 보충
+    relationNote: JDK 구현과 실행 환경 차이가 클래스와 런타임 호환성에 미치는 영향 보충
 ---
 # 클래스 로딩(Class Loading)·링킹(Linking)·초기화(Initialization)
 
@@ -30,10 +30,10 @@ Java 클래스를 처음 사용할 때 JVM은 클래스 파일을 읽자마자 �
 
 ### 로딩은 바이너리 표현에서 런타임 클래스를 만든다
 
-로딩 단계에서는 ClassLoader가 바이너리 name에 해당하는 클래스의 바이너리 표현을 찾아 JVM 안에 런타임 클래스를 만듭니다.
+로딩 단계에서는 ClassLoader가 바이너리 이름(binary name)에 해당하는 클래스의 바이너리 표현을 찾아 JVM 안에 런타임 클래스를 만듭니다.
 
 ```text
-com.example.Config (binary name)
+com.example.Config (바이너리 이름)
         │
         ▼
    ClassLoader
@@ -42,7 +42,7 @@ com.example.Config (binary name)
    실행 시점의 Class 객체
 ```
 
-클래스 바이트를 찾는 위치는 클래스패스, module path, 사용자 정의 ClassLoader 같은 실행 환경에 따라 달라질 수 있습니다. 중요한 점은 **로딩이 끝났다는 사실과 정적 초기화까지 끝났다는 사실은 다르다**는 것입니다.
+클래스 바이트를 찾는 위치는 클래스패스, 모듈 경로, 사용자 정의 `ClassLoader` 같은 실행 환경에 따라 달라질 수 있습니다. 중요한 점은 **로딩이 끝났다는 사실과 정적 초기화까지 끝났다는 사실은 다르다**는 것입니다.
 
 ### 링킹은 검증, 준비, 해석을 포함한다
 
@@ -127,7 +127,7 @@ validate(port)
 
 여러 스레드가 같은 클래스를 처음 사용하더라도 정적 초기화가 임의로 여러 번 동시에 실행되지는 않습니다. JVM은 클래스·인터페이스의 초기화 상태와 동기화 절차를 정의합니다.
 
-이 성질은 초기화-on-demand holder처럼 클래스 초기화를 안전한 공개 경계로 사용하는 패턴의 근거가 됩니다. 반대로 정적 초기화 블록에서 다른 lock을 얻거나 다른 클래스 초기화를 복잡하게 유발하면 초기화 의존성이 꼬일 수 있으므로 무거운 작업은 신중하게 둡니다.
+이 성질은 초기화 지연 홀더(initialization-on-demand holder) 패턴처럼 클래스 초기화를 안전한 공개 경계로 사용하는 패턴의 근거가 됩니다. 반대로 정적 초기화 블록에서 다른 잠금을 획득하거나 다른 클래스 초기화를 복잡하게 유발하면 초기화 의존성이 꼬일 수 있으므로 무거운 작업은 신중하게 둡니다.
 
 ### 초기화 실패와 클래스 부재를 구분한다
 

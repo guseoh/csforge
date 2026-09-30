@@ -20,7 +20,7 @@ references:
     referenceType: OFFICIAL
     language: en
     displayOrder: 2
-    relationNote: runtime type와 member 조회 API 확인
+    relationNote: 실행 시점 타입과 멤버 조회 API 확인
 ---
 # 리플렉션과 Class API
 
@@ -87,7 +87,7 @@ Object result = method.invoke(user);
 
 ### 비공개 멤버 접근에는 Java 접근 제어자 외에 모듈 경계도 적용된다
 
-예전 설명처럼 `setAccessible(true)`만 호출하면 어떤 private member든 항상 접근할 수 있다고 생각하면 안 됩니다.
+예전 설명처럼 `setAccessible(true)`만 호출하면 어떤 비공개 멤버에도 항상 접근할 수 있다고 생각하면 안 됩니다.
 
 현대 Java에서는 다음 경계가 함께 작용할 수 있습니다.
 

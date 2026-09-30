@@ -9,7 +9,7 @@
     "conceptKeys": ["java.core.metadata-compatibility.reflection-class-api"],
     "choices": [
       {"key": "A", "content": "로드된 클래스의 메서드·필드·생성자 정보", "displayOrder": 0, "rationaleMarkdown": "`Class`와 리플렉션의 멤버 API는 로드된 타입의 메서드, 필드, 생성자 같은 선언 정보를 조사합니다. 임의의 JVM 내부 상태를 모두 공개한다는 뜻은 아닙니다."},
-      {"key": "B", "content": "OS 커널의 scheduler 큐", "displayOrder": 1, "rationaleMarkdown": "OS scheduler 큐는 운영체제의 실행 관리 상태다. Java 리플렉션은 이를 표준 API로 열거하지 않는다."},
+      {"key": "B", "content": "운영체제 커널의 스케줄링 대기열", "displayOrder": 1, "rationaleMarkdown": "운영체제 스케줄링 대기열은 운영체제가 스레드 실행을 관리하는 상태다. Java 리플렉션은 이를 표준 API로 열거하지 않는다."},
       {"key": "C", "content": "모든 힙 객체의 물리 주소", "displayOrder": 2, "rationaleMarkdown": "일반 리플렉션은 객체의 모든 물리 힙 주소를 노출하지 않는다. 객체 배치나 주소는 VM 구현 세부에 속한다."},
       {"key": "D", "content": "컴파일 전 소스의 모든 주석", "displayOrder": 3, "rationaleMarkdown": "컴파일 전 주석은 소스 처리 단계에서 다룬다. 클래스 파일을 대상으로 하는 리플렉션이 원본 주석 전체를 보존한다고 보장하지 않는다."}
     ],
@@ -111,7 +111,7 @@
     "conceptKeys": ["java.core.metadata-compatibility.annotations-retention-target"],
     "choices": [
       {"key": "A", "content": "소스 컴파일을 금지한다", "displayOrder": 0, "rationaleMarkdown": "SOURCE와 CLASS는 보존 시점이 다르고, 실행 시점 리플렉션 조회가 필요하면 RUNTIME을 지정해야 한다."},
-      {"key": "B", "content": "모든 위치에 애너테이션을 허용한다", "displayOrder": 1, "rationaleMarkdown": "적용 위치는 @Target이 정하며, retention은 컴파일과 실행 과정에서 애너테이션 정보를 얼마나 남길지 정한다."},
+      {"key": "B", "content": "모든 위치에 애너테이션을 허용한다", "displayOrder": 1, "rationaleMarkdown": "적용 위치는 `@Target`이 정하며, 보존 정책은 컴파일과 실행 과정에서 애너테이션 정보가 얼마나 남을지 정한다."},
       {"key": "C", "content": "실행 시점 리플렉션에서 애너테이션을 조회할 수 있도록 보존한다", "displayOrder": 2, "rationaleMarkdown": "`RUNTIME` 보존 정책을 사용하면 실행 시점에도 읽을 수 있도록 애너테이션 정보가 클래스 파일에 기록되어 리플렉션 API로 조회할 수 있습니다."},
       {"key": "D", "content": "애너테이션을 자동 실행한다", "displayOrder": 3, "rationaleMarkdown": "애너테이션은 메타데이터일 뿐 자동으로 동작을 실행하지 않는다. 프레임워크가 읽어 별도 동작을 연결할 수는 있다."}
     ],
@@ -127,13 +127,13 @@
     "status": "PUBLISHED",
     "conceptKeys": ["java.core.metadata-compatibility.annotations-retention-target"],
     "choices": [
-      {"key": "A", "content": "애너테이션 보존 기간을 정한다", "displayOrder": 0, "rationaleMarkdown": "보존 기간은 @Retention이 담당한다. @Target은 그 애너테이션을 선언문이나 타입-use 중 어디에 붙일 수 있는지 제한한다."},
+      {"key": "A", "content": "애너테이션 보존 기간을 정한다", "displayOrder": 0, "rationaleMarkdown": "보존 기간은 @Retention이 담당한다. @Target은 그 애너테이션을 선언문이나 타입 사용 위치 중 어디에 붙일 수 있는지 제한한다."},
       {"key": "B", "content": "애너테이션 값을 계산한다", "displayOrder": 1, "rationaleMarkdown": "애너테이션 값은 선언할 때 정해진 상수 메타데이터다. @Target은 값을 계산하거나 변경하지 않는다."},
       {"key": "C", "content": "메서드 호출을 중지한다", "displayOrder": 2, "rationaleMarkdown": "메서드 호출 제어는 애너테이션 자체의 역할이 아니다. 도구가 애너테이션을 읽고 별도 정책을 적용할 수 있다."},
-      {"key": "D", "content": "애너테이션을 적용할 수 있는 syntax location을 제한한다", "displayOrder": 3, "rationaleMarkdown": "@Target은 ElementType 집합으로 적용 가능한 문법 위치를 제한해 잘못된 사용을 컴파일 시점에 드러내도록 한다."}
+      {"key": "D", "content": "애너테이션을 적용할 수 있는 문법상 위치를 제한한다", "displayOrder": 3, "rationaleMarkdown": "@Target은 ElementType 집합으로 적용 가능한 문법 위치를 제한해 잘못된 사용을 컴파일 시점에 드러내도록 한다."}
     ],
     "correctChoiceKey": "D",
-    "explanationMarkdown": "Target은 애너테이션 사용 위치를 ElementType으로 제한한다."
+    "explanationMarkdown": "`@Target`은 애너테이션 사용 위치를 `ElementType`으로 제한한다."
   },
   {
     "kind": "question",
@@ -181,7 +181,7 @@
       {"key": "A", "content": "프레임워크가 자동으로 소스를 재컴파일한다", "displayOrder": 0, "rationaleMarkdown": "실행 시점 리플렉션은 이미 컴파일된 클래스 파일의 메타데이터를 읽습니다. 소스를 다시 컴파일해도 조회되지 않은 애너테이션이 자동으로 복구되지는 않습니다."},
       {"key": "B", "content": "애너테이션이 반드시 RUNTIME으로 승격된다", "displayOrder": 1, "rationaleMarkdown": "프로세서나 프레임워크가 실행되어도 애너테이션 보존이 자동 변경되지는 않는다. 선언된 보존 정책이 그대로 적용된다."},
       {"key": "C", "content": "클래스 파일에는 남을 수 있지만 일반적인 실행 시점 리플렉션으로 조회되지 않을 수 있다", "displayOrder": 2, "rationaleMarkdown": "`CLASS` 보존 정책은 애너테이션을 클래스 파일에 남길 수 있지만 실행 시점 조회를 보장하지 않습니다. 프레임워크가 리플렉션으로 읽으려면 `RUNTIME` 보존 계약이 필요합니다."},
-      {"key": "D", "content": "Target이 retention을 바꾼다", "displayOrder": 3, "rationaleMarkdown": "적용 위치는 @Target, 보존 시점은 @Retention이 정한다. 전자를 바꿔도 후자의 정책은 달라지지 않는다."}
+      {"key": "D", "content": "`@Target`이 `@Retention` 설정을 바꾼다", "displayOrder": 3, "rationaleMarkdown": "적용 위치는 @Target, 보존 시점은 @Retention이 정한다. 전자를 바꿔도 후자의 정책은 달라지지 않는다."}
     ],
     "correctChoiceKey": "C",
     "explanationMarkdown": "실행 시점에 리플렉션으로 애너테이션을 읽으려면 `RUNTIME` 보존 정책이 필요합니다."
@@ -401,7 +401,7 @@
     "choices": [
       {"key": "A", "content": "스레드 스케줄링 순서", "displayOrder": 0, "rationaleMarkdown": "`serialVersionUID`는 스레드 스케줄링을 제어하지 않고 직렬화된 클래스 디스크립터의 호환성 판단에 관여한다."},
       {"key": "B", "content": "GC 수집기 선택", "displayOrder": 1, "rationaleMarkdown": "GC 수집기 선택과 무관하다. Java 직렬화에서 클래스 파일 버전 호환성에 쓰인다."},
-      {"key": "C", "content": "애너테이션 Target 위치", "displayOrder": 2, "rationaleMarkdown": "애너테이션 적용 위치는 @Target이 정하고 직렬화 스트림 버전 matching과 별개다."},
+      {"key": "C", "content": "애너테이션 적용 위치", "displayOrder": 2, "rationaleMarkdown": "애너테이션 적용 위치는 @Target이 정하고 직렬화 스트림 버전 일치 여부와 별개다."},
       {"key": "D", "content": "직렬화 형식과 클래스 진화의 호환성 판단", "displayOrder": 3, "rationaleMarkdown": "스트림 디스크립터의 serialVersionUID와 지역 serializable 클래스 값을 비교해 호환성을 판단한다. 직렬화된 form 진화는 별도 설계가 필요하다."}
     ],
     "correctChoiceKey": "D",

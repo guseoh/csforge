@@ -53,7 +53,7 @@ worker.start();
   └─ start()
        │
        ▼
-worker thread -> run() -> terminate
+작업자 스레드 -> run() -> 종료
 ```
 
 `run()`은 Thread가 실행할 본문이지 Thread 시작 API가 아닙니다. Java 25 `Thread` 문서는 direct `run()` 호출을 의도된 사용으로 보지 않습니다. Runnable 작업으로 만든 플랫폼 스레드에서는 호출자가 직접 `run()`하면 그 호출자에서 작업이 실행될 수 있고, 가상 스레드의 `run()`을 직접 호출하면 아무 동작도 하지 않습니다. 새 Thread 실행이 목적이라면 `start()`를 사용해야 합니다.
@@ -69,7 +69,7 @@ worker thread -> run() -> terminate
 - `TIMED_WAITING`: 시간 제한을 두고 기다림
 - `TERMINATED`: 실행 종료
 
-이 상태는 OS scheduler 상태와 1:1로 대응하지 않습니다. `RUNNABLE`이라고 해서 반드시 바로 그 순간 CPU core에서 명령을 실행 중이라는 뜻은 아닙니다.
+이 상태는 운영체제 스케줄러가 관리하는 상태와 1:1로 대응하지 않습니다. `RUNNABLE`이라고 해서 반드시 바로 그 순간 CPU 코어에서 명령을 실행 중이라는 뜻은 아닙니다.
 
 ### `join()`은 종료를 기다리고 메모리 순서도 연결한다
 

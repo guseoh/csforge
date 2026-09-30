@@ -85,7 +85,7 @@ final class LoggingHandler implements InvocationHandler {
 
 `proxy.hello("Kim")`을 호출하면 핸들러는 프록시 객체, 호출된 `Method`, 인수 배열을 받습니다. 대상 객체는 자동으로 전달되지 않으므로 핸들러가 직접 보유하거나 다른 방법으로 찾아야 합니다.
 
-### Target 대신 proxy를 다시 호출하면 재귀할 수 있다
+### 대상 객체 대신 프록시를 다시 호출하면 재귀할 수 있다
 
 ```java
 method.invoke(proxy, args);
