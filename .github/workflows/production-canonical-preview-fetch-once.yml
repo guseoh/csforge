@@ -19,6 +19,7 @@ jobs:
       GCP_REGION: asia-southeast1
       CLOUD_RUN_SERVICE: csforge
       PREVIEW_SERVICE: csforge-canonical-preview-once
+      CONTENT_BASE_SHA: b7accce59a7971a0ca5e95813c3a51227159cbb7
       BASE_PREVIEW_IMAGE: asia-southeast1-docker.pkg.dev/csforge-508510/csforge/csforge:preview-7f0a4316786a6147513717289e575fc166efc47b
       DIAGNOSTIC_IMAGE: asia-southeast1-docker.pkg.dev/csforge-508510/csforge/csforge:preview-diagnostic-${{ github.sha }}
     steps:
@@ -39,7 +40,14 @@ jobs:
         run: |
           set -euo pipefail
           gcloud auth configure-docker "${GCP_REGION}-docker.pkg.dev" --quiet
-          mkdir -p /tmp/preview-diagnostic
+          mkdir -p /tmp/preview-diagnostic/content/backend-engineering/api
+          mkdir -p /tmp/preview-diagnostic/content/dsa/search-sort
+          mkdir -p /tmp/preview-diagnostic/content/dsa/stack-queue-deque
+          mkdir -p /tmp/preview-diagnostic/content/infrastructure-cloud/compute
+          cp content/backend-engineering/api/questions.json /tmp/preview-diagnostic/content/backend-engineering/api/questions.json
+          cp content/dsa/search-sort/questions.json /tmp/preview-diagnostic/content/dsa/search-sort/questions.json
+          cp content/dsa/stack-queue-deque/questions.json /tmp/preview-diagnostic/content/dsa/stack-queue-deque/questions.json
+          cp content/infrastructure-cloud/compute/questions.json /tmp/preview-diagnostic/content/infrastructure-cloud/compute/questions.json
           cat > /tmp/preview-diagnostic/wrapper-entrypoint.sh <<'SH'
           #!/bin/sh
           set -u
@@ -78,7 +86,12 @@ jobs:
           FROM ${BASE_PREVIEW_IMAGE}
           USER root
           COPY wrapper-entrypoint.sh /app/wrapper-entrypoint.sh
+          COPY content/backend-engineering/api/questions.json /app/content/backend-engineering/api/questions.json
+          COPY content/dsa/search-sort/questions.json /app/content/dsa/search-sort/questions.json
+          COPY content/dsa/stack-queue-deque/questions.json /app/content/dsa/stack-queue-deque/questions.json
+          COPY content/infrastructure-cloud/compute/questions.json /app/content/infrastructure-cloud/compute/questions.json
           RUN sed -i 's/seq 1 120/seq 1 360/' /app/run-preview.sh \
+              && sed -i 's/5e1b3328af8844e7a22e8d440cd75b80a0ad740d/b7accce59a7971a0ca5e95813c3a51227159cbb7/g' /app/run-preview.sh \
               && chmod +x /app/wrapper-entrypoint.sh
           USER 10001:10001
           ENTRYPOINT ["/app/wrapper-entrypoint.sh"]
@@ -211,7 +224,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: production-canonical-preview-authenticated
+          name: production-canonical-preview-authenticated-${{ env.CONTENT_BASE_SHA }}
           path: /tmp/result.json
           if-no-files-found: warn
           retention-days: 7
