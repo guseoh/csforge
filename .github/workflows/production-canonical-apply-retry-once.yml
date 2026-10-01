@@ -1,0 +1,202 @@
+name: One-time production canonical apply retry
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/production-canonical-apply-retry-once.yml
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  apply-production-content:
+    runs-on: ubuntu-latest
+    env:
+      GCP_PROJECT_ID: csforge-508510
+      GCP_REGION: asia-southeast1
+      CLOUD_RUN_SERVICE: csforge
+      APPLY_SERVICE: csforge-canonical-apply-once
+      CONTENT_BASE_SHA: ba8c40c4907bbb35fbd662fbc1beb56f64ae7736
+      BASE_APPLY_IMAGE: asia-southeast1-docker.pkg.dev/csforge-508510/csforge/csforge:canonical-apply-f460990e8ebe61c941c0ae97920b5bb244f89b97
+      APPLY_IMAGE: asia-southeast1-docker.pkg.dev/csforge-508510/csforge/csforge:canonical-apply-retry-${{ github.sha }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ env.CONTENT_BASE_SHA }}
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v3
+        with:
+          project_id: ${{ env.GCP_PROJECT_ID }}
+          workload_identity_provider: projects/1003183509924/locations/global/workloadIdentityPools/github/providers/csforge
+          service_account: github-cloud-run-deployer@csforge-508510.iam.gserviceaccount.com
+
+      - name: Set up Google Cloud CLI
+        uses: google-github-actions/setup-gcloud@v3
+
+      - name: Patch validated preflight counts
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${CONTENT_BASE_SHA}"
+          gcloud auth configure-docker "${GCP_REGION}-docker.pkg.dev" --quiet
+          mkdir -p /tmp/canonical-apply-retry
+          cat > /tmp/canonical-apply-retry/Dockerfile <<'DOCKER'
+          ARG BASE_APPLY_IMAGE
+          FROM ${BASE_APPLY_IMAGE}
+          USER root
+          RUN sed -i \
+              -e 's/EXPECTED_SOURCE_FILES=378/EXPECTED_SOURCE_FILES=870/' \
+              -e 's/EXPECTED_BATCHES=7/EXPECTED_BATCHES=12/' \
+              -e 's/EXPECTED_TOPICS=75/EXPECTED_TOPICS=134/' \
+              -e 's/EXPECTED_QUESTIONS=2584/EXPECTED_QUESTIONS=2525/' \
+              /app/run-apply.sh \
+              && grep -q '^EXPECTED_SOURCE_FILES=870$' /app/run-apply.sh \
+              && grep -q '^EXPECTED_BATCHES=12$' /app/run-apply.sh \
+              && grep -q '^EXPECTED_TOTAL_ITEMS=3380$' /app/run-apply.sh \
+              && grep -q '^EXPECTED_TOPICS=134$' /app/run-apply.sh \
+              && grep -q '^EXPECTED_CONCEPTS=721$' /app/run-apply.sh \
+              && grep -q '^EXPECTED_QUESTIONS=2525$' /app/run-apply.sh \
+              && grep -q '^EXPECTED_AREAS=15$' /app/run-apply.sh
+          USER 10001:10001
+          DOCKER
+          docker build --build-arg BASE_APPLY_IMAGE="${BASE_APPLY_IMAGE}" \
+            --tag "${APPLY_IMAGE}" /tmp/canonical-apply-retry
+          docker push "${APPLY_IMAGE}"
+
+      - name: Create result token
+        id: token
+        shell: bash
+        run: |
+          token="$(openssl rand -hex 32)"
+          echo "::add-mask::${token}"
+          echo "value=${token}" >> "${GITHUB_OUTPUT}"
+
+      - name: Read production DB configuration
+        id: prod
+        shell: bash
+        env:
+          PREVIEW_RESULT_TOKEN: ${{ steps.token.outputs.value }}
+        run: |
+          set -euo pipefail
+          service_json="$(mktemp)"
+          gcloud run services describe "${CLOUD_RUN_SERVICE}" \
+            --project="${GCP_PROJECT_ID}" --region="${GCP_REGION}" --format=json > "${service_json}"
+          service_account="$(jq -r '.spec.template.spec.serviceAccountName // empty' "${service_json}")"
+          test -n "${service_account}"
+          python3 - "${service_json}" "${GITHUB_OUTPUT}" <<'PY'
+          import json, os, sys
+          service_path, output_path = sys.argv[1], sys.argv[2]
+          service = json.load(open(service_path, encoding='utf-8'))
+          wanted = {'DB_URL','DB_USERNAME','DB_PASSWORD','DB_MAX_POOL_SIZE','DB_MIN_IDLE','DB_CONNECTION_TIMEOUT','DB_VALIDATION_TIMEOUT'}
+          required = {'DB_URL','DB_USERNAME','DB_PASSWORD'}
+          entries = service['spec']['template']['spec']['containers'][0].get('env', [])
+          plain = {
+              'SPRING_PROFILES_ACTIVE':'local',
+              'CSFORGE_AI_ENABLED':'false',
+              'SPRING_FLYWAY_ENABLED':'false',
+              'SPRING_JPA_HIBERNATE_DDL_AUTO':'validate',
+              'PREVIEW_RESULT_TOKEN': os.environ['PREVIEW_RESULT_TOKEN'],
+          }
+          secrets, found = [], set()
+          for item in entries:
+              name = item.get('name')
+              if name not in wanted:
+                  continue
+              found.add(name)
+              if 'value' in item:
+                  plain[name] = item['value']
+                  continue
+              ref = item.get('valueFrom', {}).get('secretKeyRef', {})
+              if not ref.get('name') or not ref.get('key'):
+                  raise SystemExit(f'unsupported env source for {name}')
+              secrets.append(f"{name}={ref['name']}:{ref['key']}")
+          missing = required - found
+          if missing:
+              raise SystemExit('missing DB vars: ' + ','.join(sorted(missing)))
+          json.dump(plain, open('/tmp/apply-env.json','w',encoding='utf-8'))
+          with open(output_path,'a',encoding='utf-8') as out:
+              out.write('secrets=' + ','.join(secrets) + '\n')
+          PY
+          echo "service_account=${service_account}" >> "${GITHUB_OUTPUT}"
+
+      - name: Deploy private apply service
+        id: deploy
+        shell: bash
+        run: |
+          set -euo pipefail
+          args=(run deploy "${APPLY_SERVICE}" \
+            --project="${GCP_PROJECT_ID}" --region="${GCP_REGION}" \
+            --image="${APPLY_IMAGE}" \
+            --service-account="${{ steps.prod.outputs.service_account }}" \
+            --env-vars-file=/tmp/apply-env.json \
+            --cpu=1 --memory=1Gi --min=0 --max=1 --timeout=900 \
+            --no-cpu-throttling --cpu-boost \
+            --no-allow-unauthenticated --quiet)
+          if [[ -n "${{ steps.prod.outputs.secrets }}" ]]; then
+            args+=(--set-secrets="${{ steps.prod.outputs.secrets }}")
+          fi
+          gcloud "${args[@]}"
+          actual_url="$(gcloud run services describe "${APPLY_SERVICE}" \
+            --project="${GCP_PROJECT_ID}" --region="${GCP_REGION}" \
+            --format='value(status.url)')"
+          test -n "${actual_url}"
+          echo "url=${actual_url}" >> "${GITHUB_OUTPUT}"
+
+      - name: Mint apply service ID token
+        id: invoke_auth
+        uses: google-github-actions/auth@v3
+        with:
+          project_id: ${{ env.GCP_PROJECT_ID }}
+          workload_identity_provider: projects/1003183509924/locations/global/workloadIdentityPools/github/providers/csforge
+          service_account: github-cloud-run-deployer@csforge-508510.iam.gserviceaccount.com
+          token_format: id_token
+          id_token_audience: ${{ steps.deploy.outputs.url }}
+
+      - name: Fetch sanitized apply result
+        shell: bash
+        env:
+          PREVIEW_RESULT_TOKEN: ${{ steps.token.outputs.value }}
+          CLOUD_RUN_ID_TOKEN: ${{ steps.invoke_auth.outputs.id_token }}
+          APPLY_URL: ${{ steps.deploy.outputs.url }}
+        run: |
+          set -euo pipefail
+          code="000"
+          for _ in $(seq 1 500); do
+            code="$(curl --silent --show-error --output /tmp/result.json --write-out '%{http_code}' \
+              --header "Authorization: Bearer ${CLOUD_RUN_ID_TOKEN}" \
+              --header "X-Preview-Token: ${PREVIEW_RESULT_TOKEN}" \
+              "${APPLY_URL}/result" || true)"
+            if [[ "${code}" == "200" ]]; then
+              break
+            fi
+            if [[ "${code}" != "202" && "${code}" != "000" ]]; then
+              echo "Unexpected result HTTP ${code}"
+              cat /tmp/result.json || true
+              exit 1
+            fi
+            sleep 3
+          done
+          test "${code}" = "200"
+          jq . /tmp/result.json
+          jq -e '.state == "DONE" and .contentBaseSha == "ba8c40c4907bbb35fbd662fbc1beb56f64ae7736"' /tmp/result.json >/dev/null
+          jq -e '.destructiveApplyInvoked == true and .flywayEnabled == false' /tmp/result.json >/dev/null
+          jq -e '.apply.success == true and .apply.totals.created == 0 and .apply.totals.errors == 0 and .apply.totals.failed == 0' /tmp/result.json >/dev/null
+          jq -e '.postStatus.state == "READY" and .postStatus.readyBatches == .postStatus.totalBatches' /tmp/result.json >/dev/null
+          jq -e '.historyPreserved == true and .representativeContentVerified == true' /tmp/result.json >/dev/null
+
+      - name: Upload sanitized apply evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: production-canonical-apply-retry-${{ env.CONTENT_BASE_SHA }}
+          path: /tmp/result.json
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Remove temporary apply service
+        if: always()
+        run: gcloud run services delete "${APPLY_SERVICE}" --project="${GCP_PROJECT_ID}" --region="${GCP_REGION}" --quiet || true
