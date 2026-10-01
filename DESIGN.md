@@ -279,6 +279,7 @@ Code and diagrams should explain behavior, not decorate the article.
 
 - code blocks may use wider overflow than prose;
 - diagrams should clarify state, sequence, relationship, or execution flow;
+- learning SVGs rendered as external images must own an opaque canvas and remain readable independently of the host page theme;
 - tables are for real comparison, not for turning prose into a grid;
 - visual elements need readable captions or surrounding explanation when their meaning is not obvious.
 
