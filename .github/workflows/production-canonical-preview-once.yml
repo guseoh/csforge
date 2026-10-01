@@ -1,0 +1,206 @@
+name: One-time production canonical preview
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/production-canonical-preview-once.yml
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  preview-production-content:
+    runs-on: ubuntu-latest
+    env:
+      GCP_PROJECT_ID: csforge-508510
+      GCP_REGION: asia-southeast1
+      CLOUD_RUN_SERVICE: csforge
+      PREVIEW_SERVICE: csforge-canonical-preview-once
+      PREVIEW_IMAGE: asia-southeast1-docker.pkg.dev/csforge-508510/csforge/csforge:preview-${{ github.sha }}
+      CONTENT_BASE_SHA: 5e1b3328af8844e7a22e8d440cd75b80a0ad740d
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ env.CONTENT_BASE_SHA }}
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v3
+        with:
+          project_id: ${{ env.GCP_PROJECT_ID }}
+          workload_identity_provider: projects/1003183509924/locations/global/workloadIdentityPools/github/providers/csforge
+          service_account: github-cloud-run-deployer@csforge-508510.iam.gserviceaccount.com
+
+      - name: Set up Google Cloud CLI
+        uses: google-github-actions/setup-gcloud@v3
+
+      - name: Configure Artifact Registry authentication
+        run: gcloud auth configure-docker "${GCP_REGION}-docker.pkg.dev" --quiet
+
+      - name: Build pinned canonical image
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${CONTENT_BASE_SHA}"
+          docker build --file backend/Dockerfile --tag "${PREVIEW_IMAGE}" .
+          docker push "${PREVIEW_IMAGE}"
+
+      - name: Prepare production database environment
+        id: runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          service_json="$(mktemp)"
+          gcloud run services describe "${CLOUD_RUN_SERVICE}" --project="${GCP_PROJECT_ID}" --region="${GCP_REGION}" --format=json > "${service_json}"
+          service_account="$(jq -r '.spec.template.spec.serviceAccountName // empty' "${service_json}")"
+          test -n "${service_account}"
+
+          python3 - "${service_json}" "${GITHUB_OUTPUT}" <<'PY'
+          import json, sys
+          service_path, output_path = sys.argv[1], sys.argv[2]
+          with open(service_path, encoding='utf-8') as handle:
+              service = json.load(handle)
+          wanted = {'DB_URL','DB_USERNAME','DB_PASSWORD','DB_MAX_POOL_SIZE','DB_MIN_IDLE','DB_CONNECTION_TIMEOUT','DB_VALIDATION_TIMEOUT'}
+          required = {'DB_URL','DB_USERNAME','DB_PASSWORD'}
+          entries = service['spec']['template']['spec']['containers'][0].get('env', [])
+          plain = {'SPRING_PROFILES_ACTIVE':'local','CSFORGE_AI_ENABLED':'false'}
+          secrets, found = [], set()
+          for item in entries:
+              name = item.get('name')
+              if name not in wanted:
+                  continue
+              found.add(name)
+              if 'value' in item:
+                  plain[name] = item['value']
+                  continue
+              ref = item.get('valueFrom', {}).get('secretKeyRef', {})
+              secret_name, secret_version = ref.get('name'), ref.get('key')
+              if not secret_name or not secret_version:
+                  raise SystemExit(f'Unsupported environment source for {name}')
+              secrets.append(f'{name}={secret_name}:{secret_version}')
+          missing = required - found
+          if missing:
+              raise SystemExit('Missing required production DB variables: ' + ', '.join(sorted(missing)))
+          with open('/tmp/preview-env.json','w',encoding='utf-8') as handle:
+              json.dump(plain, handle)
+          with open(output_path,'a',encoding='utf-8') as handle:
+              handle.write('secrets=' + ','.join(secrets) + '\n')
+          PY
+          echo "service_account=${service_account}" >> "${GITHUB_OUTPUT}"
+
+      - name: Deploy private preview service
+        shell: bash
+        run: |
+          set -euo pipefail
+          args=(
+            run deploy "${PREVIEW_SERVICE}"
+            --project="${GCP_PROJECT_ID}"
+            --region="${GCP_REGION}"
+            --image="${PREVIEW_IMAGE}"
+            --service-account="${{ steps.runtime.outputs.service_account }}"
+            --env-vars-file=/tmp/preview-env.json
+            --cpu=1
+            --memory=1Gi
+            --min=0
+            --max=1
+            --timeout=900
+            --no-allow-unauthenticated
+            --quiet
+          )
+          if [[ -n "${{ steps.runtime.outputs.secrets }}" ]]; then
+            args+=(--set-secrets="${{ steps.runtime.outputs.secrets }}")
+          fi
+          gcloud "${args[@]}"
+
+      - name: Run read-only canonical preview through authenticated proxy
+        shell: bash
+        run: |
+          set -euo pipefail
+          gcloud run services proxy "${PREVIEW_SERVICE}" --project="${GCP_PROJECT_ID}" --region="${GCP_REGION}" --port=8081 >/tmp/preview-proxy.log 2>&1 &
+          proxy_pid=$!
+          cleanup_proxy() {
+            kill "${proxy_pid}" 2>/dev/null || true
+            wait "${proxy_pid}" 2>/dev/null || true
+          }
+          trap cleanup_proxy EXIT
+
+          ready=0
+          for _ in $(seq 1 90); do
+            if curl --fail --silent --show-error http://127.0.0.1:8081/actuator/health/readiness >/tmp/readiness.json; then
+              ready=1
+              break
+            fi
+            sleep 2
+          done
+          if [[ "${ready}" -ne 1 ]]; then
+            cat /tmp/preview-proxy.log || true
+            exit 11
+          fi
+
+          curl --fail --silent --show-error http://127.0.0.1:8081/api/canonical-bootstrap/status >/tmp/canonical-status.json
+
+          {
+            echo 'silent'
+            echo 'show-error'
+            echo 'fail-with-body'
+            echo 'request = "POST"'
+            echo 'url = "http://127.0.0.1:8081/api/imports/preview"'
+            find content -type f \( -name '*.md' -o -name '*.json' \) ! -path 'content/curriculum/*' | sort | while IFS= read -r file; do
+              printf 'form = "files=@%s;filename=%s"\n' "$file" "$file"
+            done
+          } >/tmp/curl-preview.conf
+
+          curl --config /tmp/curl-preview.conf >/tmp/preview.json
+
+          jq '{contentBaseSha: env.CONTENT_BASE_SHA, canApply, previewDigest, totals,
+               classifications: ([.items[].classification] | sort | group_by(.) | map({classification: .[0], count: length})),
+               itemCount: (.items | length), fileCount: (.files | length),
+               updatedFields: ([.items[] | select(.classification == "UPDATED") | .diffs[]?.field] | sort | group_by(.) | map({field: .[0], count: length}))}' /tmp/preview.json >/tmp/preview-summary.json
+
+          jq '{state, sourceFileCount, totalBatches, readyBatches, totalItems, canonicalItems, currentCounts,
+               countDelta: {
+                 topics: (.currentCounts.topics - .canonicalItems.topics),
+                 concepts: (.currentCounts.concepts - .canonicalItems.concepts),
+                 questions: (.currentCounts.questions - .canonicalItems.questions)
+               }}' /tmp/canonical-status.json >/tmp/status-summary.json
+
+          jq -r '.items[] | select(.classification == "CREATED") | [.kind, .contentKey] | @tsv' /tmp/preview.json >/tmp/created-items.tsv
+          jq -r '.items[] | select(.classification == "ERROR" or (.errors | length) > 0) | [.kind, .contentKey, .reason, (.errors | tostring)] | @tsv' /tmp/preview.json >/tmp/error-items.tsv
+          jq -r '.items[] | select(.classification == "UPDATED") | [.kind, .contentKey, ([.diffs[].field] | join(","))] | @tsv' /tmp/preview.json >/tmp/updated-items.tsv
+          jq -r '.items[] | select(.classification == "UPDATED") | . as $item | .diffs[]? | select(.field | test("reference"; "i")) | [$item.kind, $item.contentKey, .field, .before, .after] | @tsv' /tmp/preview.json >/tmp/reference-diffs.tsv
+
+          echo '=== CANONICAL STATUS ==='
+          cat /tmp/status-summary.json
+          echo '=== PREVIEW SUMMARY ==='
+          cat /tmp/preview-summary.json
+          echo '=== CREATED ITEMS ==='
+          cat /tmp/created-items.tsv || true
+          echo '=== VALIDATION ERRORS ==='
+          cat /tmp/error-items.tsv || true
+          echo '=== REFERENCE DIFFS ==='
+          cat /tmp/reference-diffs.tsv || true
+
+          jq -e '.canApply == true and .totals.errors == 0' /tmp/preview.json >/dev/null
+          test ! -s /tmp/error-items.tsv
+
+      - name: Upload preview evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: production-canonical-preview-${{ env.CONTENT_BASE_SHA }}
+          path: |
+            /tmp/canonical-status.json
+            /tmp/status-summary.json
+            /tmp/preview.json
+            /tmp/preview-summary.json
+            /tmp/created-items.tsv
+            /tmp/error-items.tsv
+            /tmp/updated-items.tsv
+            /tmp/reference-diffs.tsv
+          if-no-files-found: warn
+          retention-days: 7
+
+      - name: Remove preview-only service
+        if: always()
+        run: gcloud run services delete "${PREVIEW_SERVICE}" --project="${GCP_PROJECT_ID}" --region="${GCP_REGION}" --quiet || true
