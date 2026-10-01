@@ -1,4 +1,4 @@
-name: One-time production canonical question duplicate diagnostic
+name: One-time production canonical question batch diagnostic
 
 on:
   push:
@@ -12,7 +12,7 @@ permissions:
   id-token: write
 
 jobs:
-  diagnose-question-duplicates:
+  diagnose-question-batches:
     runs-on: ubuntu-latest
     env:
       GCP_PROJECT_ID: csforge-508510
@@ -21,7 +21,7 @@ jobs:
       DIAGNOSTIC_SERVICE: csforge-canonical-diagnostic-once
       CONTENT_BASE_SHA: ba8c40c4907bbb35fbd662fbc1beb56f64ae7736
       BASE_IMAGE: asia-southeast1-docker.pkg.dev/csforge-508510/csforge/csforge:canonical-apply-retry-061185f302775cea51fe27245eb96ed3e8484b1e
-      DIAGNOSTIC_IMAGE: asia-southeast1-docker.pkg.dev/csforge-508510/csforge/csforge:canonical-question-duplicates-${{ github.sha }}
+      DIAGNOSTIC_IMAGE: asia-southeast1-docker.pkg.dev/csforge-508510/csforge/csforge:canonical-question-batches-${{ github.sha }}
     steps:
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v3
@@ -33,15 +33,15 @@ jobs:
       - name: Set up Google Cloud CLI
         uses: google-github-actions/setup-gcloud@v3
 
-      - name: Build read-only duplicate diagnostic wrapper
+      - name: Build exact batch diagnostic wrapper
         shell: bash
         run: |
           set -euo pipefail
           gcloud auth configure-docker "${GCP_REGION}-docker.pkg.dev" --quiet
-          mkdir -p /tmp/question-diagnostic
-          cat > /tmp/question-diagnostic/run-diagnostic.sh <<'SH'
-          #!/bin/sh
-          set -eu
+          mkdir -p /tmp/question-batch-diagnostic
+          cat > /tmp/question-batch-diagnostic/run-diagnostic.sh <<'SH'
+          #!/bin/bash
+          set -euo pipefail
           java -jar /app/app.jar --spring.profiles.active=local --server.port=8081 >/tmp/java.log 2>&1 &
           java_pid=$!
           cleanup() {
@@ -52,86 +52,73 @@ jobs:
 
           ok=0
           for _ in $(seq 1 360); do
-            code=$(curl --silent --show-error --max-time 60 --output /tmp/status.json --write-out '%{http_code}' \
-              http://127.0.0.1:8081/api/canonical-bootstrap/status || true)
-            if [ "$code" = "200" ]; then ok=1; break; fi
+            code=$(curl --silent --show-error --max-time 60 --output /tmp/status.json --write-out '%{http_code}' http://127.0.0.1:8081/api/canonical-bootstrap/status || true)
+            if [[ "$code" == "200" ]]; then ok=1; break; fi
             if ! kill -0 "$java_pid" 2>/dev/null; then exit 21; fi
             sleep 2
           done
-          [ "$ok" -eq 1 ] || exit 22
+          [[ "$ok" -eq 1 ]]
 
-          : >/tmp/question-files.tsv
-          : >/tmp/question-items.tsv
-          for file in $(find /app/content -type f -name questions.json | sort); do
-            rel=${file#/app/}
-            bytes=$(wc -c <"$file" | tr -d ' ')
-            curl --silent --show-error --fail-with-body --max-time 180 \
-              -F "files=@${file};filename=${rel}" \
-              http://127.0.0.1:8081/api/imports/preview >/tmp/one-preview.json
-            count=$(jq '.items | length' /tmp/one-preview.json)
-            printf '%s\t%s\t%s\n' "$rel" "$count" "$bytes" >>/tmp/question-files.tsv
-            jq -r --arg file "$rel" '.items[] | [$file, (.itemIndex|tostring), .contentKey, .classification] | @tsv' \
-              /tmp/one-preview.json >>/tmp/question-items.tsv
+          mapfile -t question_files < <(find /app/content -type f -name questions.json | sort)
+          batch_no=10
+          batch_files=()
+          batch_items=0
+          batch_bytes=0
+          : >/tmp/batches.jsonl
+
+          preview_batch() {
+            local seq="$1"
+            shift
+            local -a files=("$@")
+            local -a args=(--silent --show-error --fail-with-body --max-time 600)
+            for file in "${files[@]}"; do
+              local rel="${file#/app/}"
+              args+=(-F "files=@${file};filename=${rel}")
+            done
+            curl "${args[@]}" http://127.0.0.1:8081/api/imports/preview >"/tmp/batch-${seq}.json"
+            jq -c --argjson batch "$seq" '{batch:$batch,canApply:.canApply,totals:.totals,errors:[.items[]|select(.classification=="ERROR")|{fileName,itemIndex,kind,contentKey,classification,reason,errors,diffs}]}' "/tmp/batch-${seq}.json" >>/tmp/batches.jsonl
+          }
+
+          for file in "${question_files[@]}"; do
+            rel="${file#/app/}"
+            curl --silent --show-error --fail-with-body --max-time 180 -F "files=@${file};filename=${rel}" http://127.0.0.1:8081/api/imports/preview >/tmp/single.json
+            item_count=$(jq '.items|length' /tmp/single.json)
+            byte_count=$(wc -c <"$file" | tr -d ' ')
+            if [[ ${#batch_files[@]} -gt 0 ]] && (( ${#batch_files[@]} == 100 || batch_items + item_count > 1000 || batch_bytes + byte_count > 20 * 1024 * 1024 )); then
+              preview_batch "$batch_no" "${batch_files[@]}"
+              batch_no=$((batch_no + 1))
+              batch_files=()
+              batch_items=0
+              batch_bytes=0
+            fi
+            batch_files+=("$file")
+            batch_items=$((batch_items + item_count))
+            batch_bytes=$((batch_bytes + byte_count))
           done
+          if [[ ${#batch_files[@]} -gt 0 ]]; then preview_batch "$batch_no" "${batch_files[@]}"; fi
 
           python3 <<'PY'
           import json
-          from collections import defaultdict
           from pathlib import Path
-
-          files = []
-          for line in Path('/tmp/question-files.tsv').read_text(encoding='utf-8').splitlines():
-              path, count, size = line.split('\t')
-              files.append({'path':path, 'items':int(count), 'bytes':int(size)})
-
-          # Canonical planner starts QUESTION batches after 9 ready Topic/Concept batches.
-          batch = 10
-          batch_files = 0
-          batch_items = 0
-          batch_bytes = 0
-          file_batch = {}
-          for f in files:
-              exceeds = batch_files > 0 and (batch_files == 100 or batch_items + f['items'] > 1000 or batch_bytes + f['bytes'] > 20 * 1024 * 1024)
-              if exceeds:
-                  batch += 1
-                  batch_files = batch_items = batch_bytes = 0
-              file_batch[f['path']] = batch
-              batch_files += 1
-              batch_items += f['items']
-              batch_bytes += f['bytes']
-
-          groups = defaultdict(list)
-          item_count = 0
-          for line in Path('/tmp/question-items.tsv').read_text(encoding='utf-8').splitlines():
-              file, index, key, classification = line.split('\t')
-              item_count += 1
-              groups[key].append({'fileName':file,'itemIndex':int(index),'classification':classification,'batch':file_batch[file]})
-
-          duplicates = []
-          for key, defs in sorted(groups.items()):
-              if len(defs) > 1:
-                  duplicates.append({'contentKey':key,'definitionCount':len(defs),'definitions':defs,'sameBatch':len({d['batch'] for d in defs}) == 1})
-
-          status = json.load(open('/tmp/status.json', encoding='utf-8'))
-          result = {
-              'state':'DONE',
-              'contentBaseSha':'ba8c40c4907bbb35fbd662fbc1beb56f64ae7736',
-              'destructiveApplyInvoked':False,
-              'flywayEnabled':False,
-              'questionFilesScanned':len(files),
-              'questionItemsScanned':item_count,
-              'canonicalStatus':status,
-              'questionBatchRange':[10, max(file_batch.values())],
-              'duplicateKeyCount':len(duplicates),
-              'duplicates':duplicates,
+          batches=[json.loads(x) for x in Path('/tmp/batches.jsonl').read_text(encoding='utf-8').splitlines() if x.strip()]
+          errors=[dict(item, batch=b['batch']) for b in batches for item in b['errors']]
+          result={
+            'state':'DONE',
+            'contentBaseSha':'ba8c40c4907bbb35fbd662fbc1beb56f64ae7736',
+            'destructiveApplyInvoked':False,
+            'flywayEnabled':False,
+            'canonicalStatus':json.load(open('/tmp/status.json',encoding='utf-8')),
+            'batches':batches,
+            'errorCount':len(errors),
+            'errorItems':errors,
           }
-          Path('/tmp/public-result.json.tmp').write_text(json.dumps(result, ensure_ascii=False), encoding='utf-8')
+          Path('/tmp/public-result.json.tmp').write_text(json.dumps(result,ensure_ascii=False),encoding='utf-8')
           Path('/tmp/public-result.json.tmp').replace('/tmp/public-result.json')
           PY
           SH
-          chmod +x /tmp/question-diagnostic/run-diagnostic.sh
+          chmod +x /tmp/question-batch-diagnostic/run-diagnostic.sh
 
-          cat > /tmp/question-diagnostic/wrapper-entrypoint.sh <<'SH'
+          cat > /tmp/question-batch-diagnostic/wrapper-entrypoint.sh <<'SH'
           #!/bin/sh
           set -u
           (
@@ -139,18 +126,18 @@ jobs:
             rc=$?
             if [ "$rc" -ne 0 ] && [ ! -f /tmp/public-result.json ]; then
               python3 - "$rc" <<'PY'
-          import json, sys
+          import json,sys
           from pathlib import Path
-          diag = (Path('/tmp/compute.log').read_text(encoding='utf-8', errors='replace') + '\n' + Path('/tmp/java.log').read_text(encoding='utf-8', errors='replace'))[-12000:]
-          Path('/tmp/public-result.json').write_text(json.dumps({'state':'ERROR','exitCode':int(sys.argv[1]),'diagnostic':diag,'contentBaseSha':'ba8c40c4907bbb35fbd662fbc1beb56f64ae7736','destructiveApplyInvoked':False,'flywayEnabled':False}, ensure_ascii=False), encoding='utf-8')
+          diag=(Path('/tmp/compute.log').read_text(encoding='utf-8',errors='replace')+'\n'+Path('/tmp/java.log').read_text(encoding='utf-8',errors='replace'))[-12000:]
+          Path('/tmp/public-result.json').write_text(json.dumps({'state':'ERROR','exitCode':int(sys.argv[1]),'diagnostic':diag,'contentBaseSha':'ba8c40c4907bbb35fbd662fbc1beb56f64ae7736','destructiveApplyInvoked':False,'flywayEnabled':False},ensure_ascii=False),encoding='utf-8')
           PY
             fi
           ) &
           exec python3 /app/result-server.py
           SH
-          chmod +x /tmp/question-diagnostic/wrapper-entrypoint.sh
+          chmod +x /tmp/question-batch-diagnostic/wrapper-entrypoint.sh
 
-          cat > /tmp/question-diagnostic/Dockerfile <<'DOCKER'
+          cat > /tmp/question-batch-diagnostic/Dockerfile <<'DOCKER'
           ARG BASE_IMAGE
           FROM ${BASE_IMAGE}
           USER root
@@ -160,7 +147,7 @@ jobs:
           USER 10001:10001
           ENTRYPOINT ["/app/wrapper-entrypoint.sh"]
           DOCKER
-          docker build --build-arg BASE_IMAGE="${BASE_IMAGE}" --tag "${DIAGNOSTIC_IMAGE}" /tmp/question-diagnostic
+          docker build --build-arg BASE_IMAGE="${BASE_IMAGE}" --tag "${DIAGNOSTIC_IMAGE}" /tmp/question-batch-diagnostic
           docker push "${DIAGNOSTIC_IMAGE}"
 
       - name: Create result token
@@ -179,32 +166,32 @@ jobs:
         run: |
           set -euo pipefail
           service_json="$(mktemp)"
-          gcloud run services describe "${CLOUD_RUN_SERVICE}" --project="${GCP_PROJECT_ID}" --region="${GCP_REGION}" --format=json > "${service_json}"
+          gcloud run services describe "${CLOUD_RUN_SERVICE}" --project="${GCP_PROJECT_ID}" --region="${GCP_REGION}" --format=json >"${service_json}"
           service_account="$(jq -r '.spec.template.spec.serviceAccountName // empty' "${service_json}")"
           test -n "${service_account}"
           python3 - "${service_json}" "${GITHUB_OUTPUT}" <<'PY'
-          import json, os, sys
-          service_path, output_path = sys.argv[1], sys.argv[2]
-          service = json.load(open(service_path, encoding='utf-8'))
-          wanted = {'DB_URL','DB_USERNAME','DB_PASSWORD','DB_MAX_POOL_SIZE','DB_MIN_IDLE','DB_CONNECTION_TIMEOUT','DB_VALIDATION_TIMEOUT'}
-          required = {'DB_URL','DB_USERNAME','DB_PASSWORD'}
-          entries = service['spec']['template']['spec']['containers'][0].get('env', [])
-          plain = {'SPRING_PROFILES_ACTIVE':'local','CSFORGE_AI_ENABLED':'false','SPRING_FLYWAY_ENABLED':'false','SPRING_JPA_HIBERNATE_DDL_AUTO':'validate','PREVIEW_RESULT_TOKEN':os.environ['PREVIEW_RESULT_TOKEN']}
-          secrets, found = [], set()
+          import json,os,sys
+          service_path,output_path=sys.argv[1],sys.argv[2]
+          service=json.load(open(service_path,encoding='utf-8'))
+          wanted={'DB_URL','DB_USERNAME','DB_PASSWORD','DB_MAX_POOL_SIZE','DB_MIN_IDLE','DB_CONNECTION_TIMEOUT','DB_VALIDATION_TIMEOUT'}
+          required={'DB_URL','DB_USERNAME','DB_PASSWORD'}
+          entries=service['spec']['template']['spec']['containers'][0].get('env',[])
+          plain={'SPRING_PROFILES_ACTIVE':'local','CSFORGE_AI_ENABLED':'false','SPRING_FLYWAY_ENABLED':'false','SPRING_JPA_HIBERNATE_DDL_AUTO':'validate','PREVIEW_RESULT_TOKEN':os.environ['PREVIEW_RESULT_TOKEN']}
+          secrets=[]; found=set()
           for item in entries:
-              name = item.get('name')
+              name=item.get('name')
               if name not in wanted: continue
               found.add(name)
-              if 'value' in item: plain[name] = item['value']; continue
-              ref = item.get('valueFrom', {}).get('secretKeyRef', {})
+              if 'value' in item: plain[name]=item['value']; continue
+              ref=item.get('valueFrom',{}).get('secretKeyRef',{})
               if not ref.get('name') or not ref.get('key'): raise SystemExit(f'unsupported env source for {name}')
               secrets.append(f"{name}={ref['name']}:{ref['key']}")
-          missing = required - found
-          if missing: raise SystemExit('missing DB vars: ' + ','.join(sorted(missing)))
-          json.dump(plain, open('/tmp/diag-env.json','w',encoding='utf-8'))
-          with open(output_path,'a',encoding='utf-8') as out: out.write('secrets=' + ','.join(secrets) + '\n')
+          missing=required-found
+          if missing: raise SystemExit('missing DB vars: '+','.join(sorted(missing)))
+          json.dump(plain,open('/tmp/diag-env.json','w',encoding='utf-8'))
+          with open(output_path,'a',encoding='utf-8') as out: out.write('secrets='+','.join(secrets)+'\n')
           PY
-          echo "service_account=${service_account}" >> "${GITHUB_OUTPUT}"
+          echo "service_account=${service_account}" >>"${GITHUB_OUTPUT}"
 
       - name: Deploy private diagnostic service
         id: deploy
@@ -216,7 +203,7 @@ jobs:
           gcloud "${args[@]}"
           actual_url="$(gcloud run services describe "${DIAGNOSTIC_SERVICE}" --project="${GCP_PROJECT_ID}" --region="${GCP_REGION}" --format='value(status.url)')"
           test -n "${actual_url}"
-          echo "url=${actual_url}" >> "${GITHUB_OUTPUT}"
+          echo "url=${actual_url}" >>"${GITHUB_OUTPUT}"
 
       - name: Mint diagnostic service ID token
         id: invoke_auth
@@ -245,13 +232,13 @@ jobs:
           done
           test "${code}" = "200"
           jq . /tmp/result.json
-          jq -e '.state == "DONE" and .contentBaseSha == "ba8c40c4907bbb35fbd662fbc1beb56f64ae7736" and .destructiveApplyInvoked == false and .flywayEnabled == false' /tmp/result.json >/dev/null
+          jq -e '.state=="DONE" and .contentBaseSha=="ba8c40c4907bbb35fbd662fbc1beb56f64ae7736" and .destructiveApplyInvoked==false and .flywayEnabled==false' /tmp/result.json >/dev/null
 
       - name: Upload diagnostic evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: production-canonical-question-duplicates-ba8c40c
+          name: production-canonical-question-batches-ba8c40c
           path: /tmp/result.json
           if-no-files-found: warn
           retention-days: 14
