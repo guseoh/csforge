@@ -19,7 +19,8 @@ jobs:
       GCP_REGION: asia-southeast1
       CLOUD_RUN_SERVICE: csforge
       PREVIEW_SERVICE: csforge-canonical-preview-once
-      PREVIEW_IMAGE: asia-southeast1-docker.pkg.dev/csforge-508510/csforge/csforge:preview-7f0a4316786a6147513717289e575fc166efc47b
+      BASE_PREVIEW_IMAGE: asia-southeast1-docker.pkg.dev/csforge-508510/csforge/csforge:preview-7f0a4316786a6147513717289e575fc166efc47b
+      DIAGNOSTIC_IMAGE: asia-southeast1-docker.pkg.dev/csforge-508510/csforge/csforge:preview-diagnostic-${{ github.sha }}
     steps:
       - uses: actions/checkout@v7
 
@@ -32,6 +33,58 @@ jobs:
 
       - name: Set up Google Cloud CLI
         uses: google-github-actions/setup-gcloud@v3
+
+      - name: Build diagnostic wrapper
+        shell: bash
+        run: |
+          set -euo pipefail
+          gcloud auth configure-docker "${GCP_REGION}-docker.pkg.dev" --quiet
+          mkdir -p /tmp/preview-diagnostic
+          cat > /tmp/preview-diagnostic/wrapper-entrypoint.sh <<'SH'
+          #!/bin/sh
+          set -u
+          (
+            /app/run-preview.sh >/tmp/compute.log 2>&1
+            rc=$?
+            if [ "$rc" -ne 0 ] && [ ! -f /tmp/public-result.json ]; then
+              phase=$(cat /tmp/preview-phase 2>/dev/null || echo UNKNOWN)
+              {
+                echo '=== compute ==='
+                tail -n 30 /tmp/compute.log 2>/dev/null || true
+                echo '=== spring ==='
+                tail -n 120 /tmp/java.log 2>/dev/null || true
+              } | sed -E \
+                -e 's#jdbc:[^ ]+#jdbc:[REDACTED]#g' \
+                -e 's#(password|DB_PASSWORD)[=:][^ ]+#\1=[REDACTED]#gi' \
+                -e 's#postgres(ql)?://[^@ ]+@#postgresql://[REDACTED]@#gi' \
+                >/tmp/diagnostic.txt
+              python3 - "$rc" "$phase" <<'PY'
+          import json, sys
+          from pathlib import Path
+          rc, phase = int(sys.argv[1]), sys.argv[2]
+          diagnostic = Path('/tmp/diagnostic.txt').read_text(encoding='utf-8', errors='replace')[-12000:]
+          Path('/tmp/public-result.json').write_text(json.dumps({
+              'state':'ERROR','exitCode':rc,'phase':phase,'diagnostic':diagnostic,
+              'destructiveApplyInvoked':False
+          }, ensure_ascii=False), encoding='utf-8')
+          PY
+            fi
+          ) &
+          exec python3 /app/result-server.py
+          SH
+          chmod +x /tmp/preview-diagnostic/wrapper-entrypoint.sh
+          cat > /tmp/preview-diagnostic/Dockerfile <<'DOCKER'
+          ARG BASE_PREVIEW_IMAGE
+          FROM ${BASE_PREVIEW_IMAGE}
+          USER root
+          COPY wrapper-entrypoint.sh /app/wrapper-entrypoint.sh
+          RUN chmod +x /app/wrapper-entrypoint.sh
+          USER 10001:10001
+          ENTRYPOINT ["/app/wrapper-entrypoint.sh"]
+          DOCKER
+          docker build --build-arg BASE_PREVIEW_IMAGE="${BASE_PREVIEW_IMAGE}" \
+            --tag "${DIAGNOSTIC_IMAGE}" /tmp/preview-diagnostic
+          docker push "${DIAGNOSTIC_IMAGE}"
 
       - name: Create result token
         id: token
@@ -96,7 +149,7 @@ jobs:
           set -euo pipefail
           args=(run deploy "${PREVIEW_SERVICE}" \
             --project="${GCP_PROJECT_ID}" --region="${GCP_REGION}" \
-            --image="${PREVIEW_IMAGE}" \
+            --image="${DIAGNOSTIC_IMAGE}" \
             --service-account="${{ steps.prod.outputs.service_account }}" \
             --env-vars-file=/tmp/preview-env.json \
             --cpu=1 --memory=1Gi --min=0 --max=1 --timeout=900 \
@@ -143,11 +196,12 @@ jobs:
               cat /tmp/result.json || true
               exit 1
             fi
-            sleep 5
+            sleep 3
           done
           test "${code}" = "200"
           jq . /tmp/result.json
-          jq -e '.state == "DONE" and .destructiveApplyInvoked == false' /tmp/result.json >/dev/null
+          jq -e '.destructiveApplyInvoked == false' /tmp/result.json >/dev/null
+          jq -e '.state == "DONE"' /tmp/result.json >/dev/null
           jq -e '.preview.canApply == true and .preview.totals.errors == 0' /tmp/result.json >/dev/null
           jq -e '.identitySafety.identitySafe == true' /tmp/result.json >/dev/null
 
