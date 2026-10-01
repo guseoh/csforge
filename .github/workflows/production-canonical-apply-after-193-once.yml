@@ -1,4 +1,4 @@
-name: One-time exact canonical apply after import fix
+name: One-time final read-only canonical verification and cleanup
 
 on:
   push:
@@ -18,7 +18,7 @@ jobs:
       GCP_PROJECT_ID: csforge-508510
       GCP_REGION: asia-southeast1
       CLOUD_RUN_SERVICE: csforge
-      APPLY_SERVICE: csforge-canonical-apply-after-194-once
+      APPLY_SERVICE: csforge-canonical-final-inspect-once
       CODE_BASE_SHA: 1d7018a812f62adc2f2f0d44a76f32c44719d081
       CONTENT_BASE_SHA: ba8c40c4907bbb35fbd662fbc1beb56f64ae7736
       EXACT_IMAGE: asia-southeast1-docker.pkg.dev/csforge-508510/csforge/csforge:canonical-exact-ba8c40c-code-1d7018a
@@ -128,154 +128,21 @@ jobs:
           cat > /tmp/canonical-apply-after-194/run-apply.sh <<'SH'
           #!/bin/bash
           set -euo pipefail
-
-          EXPECTED_FILES=870
-          EXPECTED_BATCHES=12
-          EXPECTED_ITEMS=3380
-          EXPECTED_TOPICS=134
-          EXPECTED_CONCEPTS=721
-          EXPECTED_QUESTIONS=2525
-          EXPECTED_AREAS=15
-          EXPECTED_UPDATED=2472
-          EXPECTED_UNCHANGED=908
-
           phase() { printf '%s' "$1" >/tmp/apply-phase; }
-
-          phase START_JAVA
+          phase READ_ONLY_STATUS
           java -jar /app/app.jar --spring.profiles.active=local --server.port=8081 >/tmp/java.log 2>&1 &
           java_pid=$!
-          cleanup() {
-            kill "$java_pid" 2>/dev/null || true
-            wait "$java_pid" 2>/dev/null || true
-          }
-          trap cleanup EXIT
-
-          phase WAIT_PREFLIGHT
+          trap 'kill "$java_pid" 2>/dev/null || true' EXIT
           ok=0
           for _ in $(seq 1 360); do
-            code=$(curl --silent --show-error --max-time 300 --output /tmp/pre.json --write-out '%{http_code}' \
-              http://127.0.0.1:8081/api/canonical-bootstrap/status || true)
+            code=$(curl --silent --show-error --max-time 300 --output /tmp/post.json --write-out '%{http_code}' http://127.0.0.1:8081/api/canonical-bootstrap/status || true)
             if [[ "$code" == "200" ]]; then ok=1; break; fi
             if ! kill -0 "$java_pid" 2>/dev/null; then exit 21; fi
             sleep 2
           done
           [[ "$ok" -eq 1 ]] || exit 22
-
-          phase ASSERT_PREFLIGHT
-          jq -e \
-            --argjson files "$EXPECTED_FILES" --argjson batches "$EXPECTED_BATCHES" \
-            --argjson items "$EXPECTED_ITEMS" --argjson topics "$EXPECTED_TOPICS" \
-            --argjson concepts "$EXPECTED_CONCEPTS" --argjson questions "$EXPECTED_QUESTIONS" \
-            --argjson areas "$EXPECTED_AREAS" '
-              .state == "PARTIAL" and .sourceFileCount == $files and
-              .totalBatches == $batches and .readyBatches == 9 and .totalItems == $items and
-              .canonicalItems.topics == $topics and .canonicalItems.concepts == $concepts and
-              .canonicalItems.questions == $questions and
-              .currentCounts.learningAreas == $areas and .currentCounts.topics == $topics and
-              .currentCounts.concepts == $concepts and .currentCounts.questions == $questions
-            ' /tmp/pre.json >/dev/null
-
-          phase PREPARE_DB
-          python3 <<'PY' >/tmp/pg-env
-          import os, shlex
-          from urllib.parse import urlparse, parse_qs, unquote
-          raw = os.environ['DB_URL']
-          if raw.startswith('jdbc:'): raw = raw[5:]
-          parsed = urlparse(raw)
-          if parsed.scheme not in {'postgresql', 'postgres'} or not parsed.hostname:
-              raise SystemExit('unsupported DB_URL')
-          db = unquote(parsed.path.lstrip('/'))
-          if not db: raise SystemExit('database name missing')
-          values = {
-              'PGHOST': parsed.hostname,
-              'PGPORT': str(parsed.port or 5432),
-              'PGDATABASE': db,
-              'PGUSER': os.environ['DB_USERNAME'],
-              'PGPASSWORD': os.environ['DB_PASSWORD'],
-          }
-          q = parse_qs(parsed.query)
-          if q.get('sslmode'): values['PGSSLMODE'] = q['sslmode'][0]
-          for key, value in values.items(): print(f'export {key}={shlex.quote(value)}')
-          PY
-          . /tmp/pg-env
-          rm -f /tmp/pg-env
-          export PGHOST PGPORT PGDATABASE PGUSER PGPASSWORD
-          [[ -z "${PGSSLMODE:-}" ]] || export PGSSLMODE
-          psql -X -v ON_ERROR_STOP=1 -Atc 'select 1' >/dev/null
-
-          snapshot() {
-            local dest="$1"
-            : >"$dest"
-            for table in concept_progress personal_note quiz_session quiz_question attempt wrong_note review_schedule review_history; do
-              exists=$(psql -X -v ON_ERROR_STOP=1 -Atc "SELECT to_regclass('public.${table}') IS NOT NULL;")
-              if [[ "$exists" == "t" ]]; then
-                psql -X -v ON_ERROR_STOP=1 -Atc "SELECT '${table}' || E'\\t' || count(*) || E'\\t' || md5(COALESCE(string_agg(md5(row_to_json(t)::text), '' ORDER BY md5(row_to_json(t)::text)), '')) FROM ${table} t;" >>"$dest"
-              fi
-            done
-          }
-
-          snapshot /tmp/history-before.tsv
-
-          phase APPLY_FIRST
-          : >/tmp/apply-invoked
-          curl --silent --show-error --fail-with-body --max-time 1200 \
-            --request POST http://127.0.0.1:8081/api/canonical-bootstrap >/tmp/first.json
-
-          phase ASSERT_FIRST
-          jq -e \
-            --argjson files "$EXPECTED_FILES" --argjson batches "$EXPECTED_BATCHES" \
-            --argjson items "$EXPECTED_ITEMS" --argjson updated "$EXPECTED_UPDATED" \
-            --argjson unchanged "$EXPECTED_UNCHANGED" --argjson topics "$EXPECTED_TOPICS" \
-            --argjson concepts "$EXPECTED_CONCEPTS" --argjson questions "$EXPECTED_QUESTIONS" \
-            --argjson areas "$EXPECTED_AREAS" '
-              .success == true and .state == "READY" and .sourceFileCount == $files and
-              .totalBatches == $batches and .completedBatches == $batches and .totalItems == $items and
-              .failedBatch == null and .failedKind == null and .failureMessage == null and
-              .totals.created == 0 and .totals.updated == $updated and .totals.unchanged == $unchanged and
-              .totals.skipped == 0 and .totals.errors == 0 and .totals.failed == 0 and
-              .currentCounts.learningAreas == $areas and .currentCounts.topics == $topics and
-              .currentCounts.concepts == $concepts and .currentCounts.questions == $questions
-            ' /tmp/first.json >/dev/null
-
-          phase VERIFY_HISTORY_FIRST
-          snapshot /tmp/history-first.tsv
-          cmp -s /tmp/history-before.tsv /tmp/history-first.tsv
-
-          phase VERIFY_REPRESENTATIVE_CONTENT
-          [[ "$(psql -X -v ON_ERROR_STOP=1 -Atc "SELECT count(*) FROM concept WHERE content_key='messaging.core.semantics.consumer-offset' AND title='컨슈머 그룹과 처리 위치';")" == "1" ]]
-          [[ "$(psql -X -v ON_ERROR_STOP=1 -Atc "SELECT count(*) FROM question WHERE (content_key='backend.core.api.methods-status.q2' AND question_type='DESCRIPTIVE') OR (content_key='dsa.core.search-sort.merge-sort.q1' AND question_type='SHORT_ANSWER') OR (content_key='dsa.core.stack-queue-deque.deque.q1' AND question_type='SHORT_ANSWER') OR (content_key='infrastructure.core.compute.execution-models.q1' AND question_type='SHORT_ANSWER');")" == "4" ]]
-
-          phase VERIFY_READY
-          curl --silent --show-error --fail-with-body --max-time 900 \
-            http://127.0.0.1:8081/api/canonical-bootstrap/status >/tmp/post.json
-          jq -e \
-            --argjson files "$EXPECTED_FILES" --argjson batches "$EXPECTED_BATCHES" \
-            --argjson items "$EXPECTED_ITEMS" --argjson topics "$EXPECTED_TOPICS" \
-            --argjson concepts "$EXPECTED_CONCEPTS" --argjson questions "$EXPECTED_QUESTIONS" \
-            --argjson areas "$EXPECTED_AREAS" '
-              .state == "READY" and .sourceFileCount == $files and .totalBatches == $batches and
-              .readyBatches == $batches and .totalItems == $items and
-              .canonicalItems.topics == $topics and .canonicalItems.concepts == $concepts and
-              .canonicalItems.questions == $questions and
-              .currentCounts.learningAreas == $areas and .currentCounts.topics == $topics and
-              .currentCounts.concepts == $concepts and .currentCounts.questions == $questions
-            ' /tmp/post.json >/dev/null
-
-          phase APPLY_SECOND
-          curl --silent --show-error --fail-with-body --max-time 1200 \
-            --request POST http://127.0.0.1:8081/api/canonical-bootstrap >/tmp/second.json
-          jq -e --argjson batches "$EXPECTED_BATCHES" --argjson items "$EXPECTED_ITEMS" '
-              .success == true and .state == "READY" and .completedBatches == $batches and
-              .totals.created == 0 and .totals.updated == 0 and .totals.unchanged == $items and
-              .totals.skipped == 0 and .totals.errors == 0 and .totals.failed == 0 and
-              .failedBatch == null and .failedKind == null and .failureMessage == null
-            ' /tmp/second.json >/dev/null
-
-          phase VERIFY_HISTORY_SECOND
-          snapshot /tmp/history-second.tsv
-          cmp -s /tmp/history-before.tsv /tmp/history-second.tsv
-
-          phase BUILD_RESULT
+          phase ASSERT_READY
+          jq -e '.state == "READY" and .sourceFileCount == 870 and .totalBatches == 12 and .readyBatches == 12 and .totalItems == 3380 and .currentCounts.learningAreas == 15 and .currentCounts.topics == 134 and .currentCounts.concepts == 721 and .currentCounts.questions == 2525' /tmp/post.json >/dev/null
           python3 <<'PY'
           import json
           from pathlib import Path
@@ -283,19 +150,12 @@ jobs:
               'state': 'DONE',
               'codeBaseSha': '1d7018a812f62adc2f2f0d44a76f32c44719d081',
               'contentBaseSha': 'ba8c40c4907bbb35fbd662fbc1beb56f64ae7736',
-              'exactJarContentVerified': True,
-              'preStatus': json.load(open('/tmp/pre.json', encoding='utf-8')),
-              'firstApply': json.load(open('/tmp/first.json', encoding='utf-8')),
-              'postStatus': json.load(open('/tmp/post.json', encoding='utf-8')),
-              'secondApply': json.load(open('/tmp/second.json', encoding='utf-8')),
-              'historyPreserved': True,
-              'representativeContentVerified': True,
-              'idempotencyVerified': True,
+              'postStatus': json.load(open('/tmp/post.json')),
+              'destructiveApplyInvoked': False,
               'flywayEnabled': False,
-              'destructiveApplyInvoked': True,
+              'exactJarContentVerified': True,
           }
-          Path('/tmp/public-result.json.tmp').write_text(json.dumps(result, ensure_ascii=False), encoding='utf-8')
-          Path('/tmp/public-result.json.tmp').replace('/tmp/public-result.json')
+          Path('/tmp/public-result.json').write_text(json.dumps(result), encoding='utf-8')
           PY
           phase DONE
           SH
@@ -463,11 +323,7 @@ jobs:
           test "${code}" = "200"
           jq . /tmp/result.json
           jq -e '.state == "DONE" and .codeBaseSha == "1d7018a812f62adc2f2f0d44a76f32c44719d081" and .contentBaseSha == "ba8c40c4907bbb35fbd662fbc1beb56f64ae7736"' /tmp/result.json >/dev/null
-          jq -e '.exactJarContentVerified == true and .destructiveApplyInvoked == true and .flywayEnabled == false' /tmp/result.json >/dev/null
-          jq -e '.firstApply.success == true and .firstApply.totals.created == 0 and .firstApply.totals.updated == 2472 and .firstApply.totals.unchanged == 908 and .firstApply.totals.errors == 0 and .firstApply.totals.failed == 0' /tmp/result.json >/dev/null
-          jq -e '.postStatus.state == "READY" and .postStatus.readyBatches == 12' /tmp/result.json >/dev/null
-          jq -e '.secondApply.success == true and .secondApply.totals.updated == 0 and .secondApply.totals.unchanged == 3380' /tmp/result.json >/dev/null
-          jq -e '.historyPreserved == true and .representativeContentVerified == true and .idempotencyVerified == true' /tmp/result.json >/dev/null
+          jq -e '.exactJarContentVerified == true and .destructiveApplyInvoked == false and .flywayEnabled == false and .postStatus.state == "READY" and .postStatus.readyBatches == 12' /tmp/result.json >/dev/null
 
       - name: Upload apply evidence
         if: always()
