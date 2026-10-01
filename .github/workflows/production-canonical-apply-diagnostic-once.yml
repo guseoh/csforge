@@ -1,4 +1,4 @@
-name: One-time production canonical question batch diagnostic
+name: One-time exact pinned production canonical apply
 
 on:
   push:
@@ -12,17 +12,21 @@ permissions:
   id-token: write
 
 jobs:
-  diagnose-question-batches:
+  apply-exact-pinned-content:
     runs-on: ubuntu-latest
     env:
       GCP_PROJECT_ID: csforge-508510
       GCP_REGION: asia-southeast1
       CLOUD_RUN_SERVICE: csforge
-      DIAGNOSTIC_SERVICE: csforge-canonical-diagnostic-once
+      APPLY_SERVICE: csforge-canonical-exact-apply-once
       CONTENT_BASE_SHA: ba8c40c4907bbb35fbd662fbc1beb56f64ae7736
-      BASE_IMAGE: asia-southeast1-docker.pkg.dev/csforge-508510/csforge/csforge:canonical-apply-retry-061185f302775cea51fe27245eb96ed3e8484b1e
-      DIAGNOSTIC_IMAGE: asia-southeast1-docker.pkg.dev/csforge-508510/csforge/csforge:canonical-question-batches-${{ github.sha }}
+      EXACT_IMAGE: asia-southeast1-docker.pkg.dev/csforge-508510/csforge/csforge:canonical-exact-ba8c40c4907bbb35fbd662fbc1beb56f64ae7736
+      APPLY_IMAGE: asia-southeast1-docker.pkg.dev/csforge-508510/csforge/csforge:canonical-exact-apply-${{ github.sha }}
     steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ env.CONTENT_BASE_SHA }}
+
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v3
         with:
@@ -33,15 +37,109 @@ jobs:
       - name: Set up Google Cloud CLI
         uses: google-github-actions/setup-gcloud@v3
 
-      - name: Build exact batch diagnostic wrapper
+      - name: Build and verify exact pinned backend image
         shell: bash
         run: |
           set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${CONTENT_BASE_SHA}"
           gcloud auth configure-docker "${GCP_REGION}-docker.pkg.dev" --quiet
-          mkdir -p /tmp/question-batch-diagnostic
-          cat > /tmp/question-batch-diagnostic/run-diagnostic.sh <<'SH'
+          docker build \
+            --label "org.opencontainers.image.revision=${CONTENT_BASE_SHA}" \
+            --file backend/Dockerfile \
+            --tag "${EXACT_IMAGE}" \
+            .
+
+          cid="$(docker create "${EXACT_IMAGE}")"
+          trap 'docker rm -f "${cid}" >/dev/null 2>&1 || true' EXIT
+          docker cp "${cid}:/app/app.jar" /tmp/exact-app.jar
+          docker rm -f "${cid}" >/dev/null
+          trap - EXIT
+
+          python3 <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+
+          expected_sha = 'ba8c40c4907bbb35fbd662fbc1beb56f64ae7736'
+          jar = Path('/tmp/exact-app.jar')
+          root = Path('content')
+          prefix = 'BOOT-INF/classes/canonical-content/'
+          with ZipFile(jar) as z:
+              manifest = z.read(prefix + 'manifest.txt').decode('utf-8').splitlines()
+              if len(manifest) != 870:
+                  raise SystemExit(f'expected 870 canonical source files, got {len(manifest)}')
+              if manifest != sorted(manifest) or len(manifest) != len(set(manifest)):
+                  raise SystemExit('canonical manifest is not sorted and unique')
+              mismatches = []
+              for rel in manifest:
+                  disk = (root / rel).read_bytes()
+                  packed = z.read(prefix + rel)
+                  if disk != packed:
+                      mismatches.append(rel)
+              if mismatches:
+                  raise SystemExit('packaged canonical content mismatch: ' + ', '.join(mismatches[:10]))
+          print(f'Exact image verified: {expected_sha}, canonical files={len(manifest)}, byte mismatches=0')
+          PY
+
+          docker push "${EXACT_IMAGE}"
+
+      - name: Build exact apply wrapper
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/exact-apply
+
+          cat > /tmp/exact-apply/result-server.py <<'PY'
+          import hmac
+          import os
+          from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+          from pathlib import Path
+
+          TOKEN = os.environ['PREVIEW_RESULT_TOKEN']
+          RESULT = Path('/tmp/public-result.json')
+          PORT = int(os.environ.get('PORT', '8080'))
+
+          class Handler(BaseHTTPRequestHandler):
+              def do_GET(self):
+                  if self.path != '/result':
+                      self.send_response(404); self.end_headers(); return
+                  supplied = self.headers.get('X-Preview-Token', '')
+                  if not hmac.compare_digest(supplied, TOKEN):
+                      self.send_response(403); self.end_headers(); return
+                  if not RESULT.exists():
+                      body = b'{"state":"RUNNING"}'
+                      self.send_response(202)
+                  else:
+                      body = RESULT.read_bytes()
+                      self.send_response(200)
+                  self.send_header('Content-Type', 'application/json; charset=utf-8')
+                  self.send_header('Content-Length', str(len(body)))
+                  self.end_headers()
+                  self.wfile.write(body)
+
+              def log_message(self, fmt, *args):
+                  return
+
+          ThreadingHTTPServer(('0.0.0.0', PORT), Handler).serve_forever()
+          PY
+
+          cat > /tmp/exact-apply/run-apply.sh <<'SH'
           #!/bin/bash
           set -euo pipefail
+
+          CONTENT_SHA='ba8c40c4907bbb35fbd662fbc1beb56f64ae7736'
+          EXPECTED_SOURCE_FILES=870
+          EXPECTED_BATCHES=12
+          EXPECTED_TOTAL_ITEMS=3380
+          EXPECTED_TOPICS=134
+          EXPECTED_CONCEPTS=721
+          EXPECTED_QUESTIONS=2525
+          EXPECTED_AREAS=15
+          EXPECTED_UPDATED=2472
+          EXPECTED_UNCHANGED=908
+
+          phase() { printf '%s' "$1" >/tmp/apply-phase; }
+
+          phase START_JAVA
           java -jar /app/app.jar --spring.profiles.active=local --server.port=8081 >/tmp/java.log 2>&1 &
           java_pid=$!
           cleanup() {
@@ -50,118 +148,246 @@ jobs:
           }
           trap cleanup EXIT
 
+          phase WAIT_PREFLIGHT
           ok=0
           for _ in $(seq 1 360); do
-            code=$(curl --silent --show-error --max-time 60 --output /tmp/status.json --write-out '%{http_code}' http://127.0.0.1:8081/api/canonical-bootstrap/status || true)
+            code=$(curl --silent --show-error --max-time 300 --output /tmp/pre-status.json --write-out '%{http_code}' \
+              http://127.0.0.1:8081/api/canonical-bootstrap/status || true)
             if [[ "$code" == "200" ]]; then ok=1; break; fi
             if ! kill -0 "$java_pid" 2>/dev/null; then exit 21; fi
             sleep 2
           done
-          [[ "$ok" -eq 1 ]]
+          [[ "$ok" -eq 1 ]] || exit 22
 
-          mapfile -t question_files < <(find /app/content -type f -name questions.json | sort)
-          batch_no=10
-          batch_files=()
-          batch_items=0
-          batch_bytes=0
-          : >/tmp/batches.jsonl
+          phase ASSERT_PREFLIGHT
+          jq -e \
+            --argjson files "$EXPECTED_SOURCE_FILES" \
+            --argjson batches "$EXPECTED_BATCHES" \
+            --argjson items "$EXPECTED_TOTAL_ITEMS" \
+            --argjson topics "$EXPECTED_TOPICS" \
+            --argjson concepts "$EXPECTED_CONCEPTS" \
+            --argjson questions "$EXPECTED_QUESTIONS" \
+            --argjson areas "$EXPECTED_AREAS" '
+              .state == "PARTIAL" and
+              .sourceFileCount == $files and .totalBatches == $batches and .readyBatches == 9 and
+              .totalItems == $items and
+              .canonicalItems.topics == $topics and .canonicalItems.concepts == $concepts and
+              .canonicalItems.questions == $questions and
+              .currentCounts.learningAreas == $areas and .currentCounts.topics == $topics and
+              .currentCounts.concepts == $concepts and .currentCounts.questions == $questions
+            ' /tmp/pre-status.json >/dev/null
 
-          preview_batch() {
-            local seq="$1"
-            shift
-            local -a files=("$@")
-            local -a args=(--silent --show-error --max-time 600 --output "/tmp/batch-${seq}.json" --write-out '%{http_code}')
-            for file in "${files[@]}"; do
-              local rel="${file#/app/}"
-              args+=(-F "files=@${file};filename=${rel}")
-            done
-            local code
-            code=$(curl "${args[@]}" http://127.0.0.1:8081/api/imports/preview || true)
-            if [[ "$code" != "200" ]]; then
-              python3 - "$seq" "$code" "/tmp/batch-${seq}.json" <<'PY' >>/tmp/batches.jsonl
-          import json,sys
-          from pathlib import Path
-          seq=int(sys.argv[1]); code=sys.argv[2]; p=Path(sys.argv[3])
-          body=p.read_text(encoding='utf-8',errors='replace') if p.exists() else ''
-          print(json.dumps({'batch':seq,'httpCode':code,'canApply':False,'totals':None,'errors':[],'httpBody':body[:4000]},ensure_ascii=False))
+          phase PREPARE_HISTORY_SNAPSHOT
+          python3 <<'PY' >/tmp/pg-env
+          import os, shlex
+          from urllib.parse import urlparse, parse_qs, unquote
+          raw = os.environ['DB_URL']
+          if raw.startswith('jdbc:'):
+              raw = raw[5:]
+          parsed = urlparse(raw)
+          if parsed.scheme not in {'postgresql', 'postgres'} or not parsed.hostname:
+              raise SystemExit('DB_URL is not a supported direct PostgreSQL URL')
+          dbname = unquote(parsed.path.lstrip('/'))
+          if not dbname:
+              raise SystemExit('DB_URL database name is missing')
+          values = {
+              'PGHOST': parsed.hostname,
+              'PGPORT': str(parsed.port or 5432),
+              'PGDATABASE': dbname,
+              'PGUSER': os.environ['DB_USERNAME'],
+              'PGPASSWORD': os.environ['DB_PASSWORD'],
+          }
+          query = parse_qs(parsed.query)
+          if query.get('sslmode'):
+              values['PGSSLMODE'] = query['sslmode'][0]
+          for key, value in values.items():
+              print(f"export {key}={shlex.quote(value)}")
           PY
-              return
-            fi
-            jq -c --argjson batch "$seq" '{batch:$batch,httpCode:"200",canApply:.canApply,totals:.totals,errors:[.items[]|select(.classification=="ERROR")|{fileName,itemIndex,kind,contentKey,classification,reason,errors,diffs}]}' "/tmp/batch-${seq}.json" >>/tmp/batches.jsonl
+          . /tmp/pg-env
+          rm -f /tmp/pg-env
+          export PGHOST PGPORT PGDATABASE PGUSER PGPASSWORD
+          [[ -z "${PGSSLMODE:-}" ]] || export PGSSLMODE
+          psql -X -v ON_ERROR_STOP=1 -Atc 'select 1' >/dev/null
+
+          snapshot_history() {
+            local dest="$1"
+            : >"$dest"
+            for table in quiz_session quiz_question attempt wrong_note review_schedule review_history; do
+              exists=$(psql -X -v ON_ERROR_STOP=1 -Atc "SELECT to_regclass('public.${table}') IS NOT NULL;")
+              if [[ "$exists" == "t" ]]; then
+                psql -X -v ON_ERROR_STOP=1 -Atc "SELECT '${table}' || E'\\t' || count(*) || E'\\t' || md5(COALESCE(string_agg(md5(row_to_json(t)::text), '' ORDER BY md5(row_to_json(t)::text)), '')) FROM ${table} t;" >>"$dest"
+              fi
+            done
           }
 
-          for file in "${question_files[@]}"; do
-            rel="${file#/app/}"
-            curl --silent --show-error --fail-with-body --max-time 180 -F "files=@${file};filename=${rel}" http://127.0.0.1:8081/api/imports/preview >/tmp/single.json
-            item_count=$(jq '.items|length' /tmp/single.json)
-            byte_count=$(wc -c <"$file" | tr -d ' ')
-            if [[ ${#batch_files[@]} -gt 0 ]] && (( ${#batch_files[@]} == 100 || batch_items + item_count > 1000 || batch_bytes + byte_count > 20 * 1024 * 1024 )); then
-              preview_batch "$batch_no" "${batch_files[@]}"
-              batch_no=$((batch_no + 1))
-              batch_files=()
-              batch_items=0
-              batch_bytes=0
-            fi
-            batch_files+=("$file")
-            batch_items=$((batch_items + item_count))
-            batch_bytes=$((batch_bytes + byte_count))
-          done
-          if [[ ${#batch_files[@]} -gt 0 ]]; then preview_batch "$batch_no" "${batch_files[@]}"; fi
+          snapshot_history /tmp/history-before.tsv
 
+          phase APPLY_FIRST
+          : >/tmp/apply-invoked
+          curl --silent --show-error --fail-with-body --max-time 1200 \
+            --request POST http://127.0.0.1:8081/api/canonical-bootstrap >/tmp/apply-first.json
+
+          phase ASSERT_FIRST_APPLY
+          jq -e \
+            --argjson files "$EXPECTED_SOURCE_FILES" \
+            --argjson batches "$EXPECTED_BATCHES" \
+            --argjson items "$EXPECTED_TOTAL_ITEMS" \
+            --argjson updated "$EXPECTED_UPDATED" \
+            --argjson unchanged "$EXPECTED_UNCHANGED" \
+            --argjson topics "$EXPECTED_TOPICS" \
+            --argjson concepts "$EXPECTED_CONCEPTS" \
+            --argjson questions "$EXPECTED_QUESTIONS" \
+            --argjson areas "$EXPECTED_AREAS" '
+              .success == true and .state == "READY" and
+              .sourceFileCount == $files and .totalBatches == $batches and
+              .completedBatches == $batches and .totalItems == $items and
+              .failedBatch == null and .failedKind == null and .failureMessage == null and
+              .totals.created == 0 and .totals.updated == $updated and .totals.unchanged == $unchanged and
+              .totals.skipped == 0 and .totals.errors == 0 and .totals.failed == 0 and
+              .currentCounts.learningAreas == $areas and .currentCounts.topics == $topics and
+              .currentCounts.concepts == $concepts and .currentCounts.questions == $questions
+            ' /tmp/apply-first.json >/dev/null
+
+          phase VERIFY_HISTORY_AFTER_FIRST
+          snapshot_history /tmp/history-after-first.tsv
+          cmp -s /tmp/history-before.tsv /tmp/history-after-first.tsv
+
+          phase VERIFY_REPRESENTATIVE_CONTENT
+          concept_ok=$(psql -X -v ON_ERROR_STOP=1 -Atc "SELECT count(*) FROM concept WHERE content_key='messaging.core.semantics.consumer-offset' AND title='컨슈머 그룹과 처리 위치';")
+          structure_ok=$(psql -X -v ON_ERROR_STOP=1 -Atc "SELECT count(*) FROM question WHERE (content_key='backend.core.api.methods-status.q2' AND question_type='DESCRIPTIVE') OR (content_key='dsa.core.search-sort.merge-sort.q1' AND question_type='SHORT_ANSWER') OR (content_key='dsa.core.stack-queue-deque.deque.q1' AND question_type='SHORT_ANSWER') OR (content_key='infrastructure.core.compute.execution-models.q1' AND question_type='SHORT_ANSWER');")
+          [[ "$concept_ok" == "1" ]]
+          [[ "$structure_ok" == "4" ]]
+
+          phase VERIFY_READY_AFTER_FIRST
+          curl --silent --show-error --fail-with-body --max-time 900 \
+            http://127.0.0.1:8081/api/canonical-bootstrap/status >/tmp/post-status.json
+          jq -e \
+            --argjson files "$EXPECTED_SOURCE_FILES" \
+            --argjson batches "$EXPECTED_BATCHES" \
+            --argjson items "$EXPECTED_TOTAL_ITEMS" \
+            --argjson topics "$EXPECTED_TOPICS" \
+            --argjson concepts "$EXPECTED_CONCEPTS" \
+            --argjson questions "$EXPECTED_QUESTIONS" \
+            --argjson areas "$EXPECTED_AREAS" '
+              .state == "READY" and .sourceFileCount == $files and
+              .totalBatches == $batches and .readyBatches == $batches and .totalItems == $items and
+              .canonicalItems.topics == $topics and .canonicalItems.concepts == $concepts and
+              .canonicalItems.questions == $questions and
+              .currentCounts.learningAreas == $areas and .currentCounts.topics == $topics and
+              .currentCounts.concepts == $concepts and .currentCounts.questions == $questions
+            ' /tmp/post-status.json >/dev/null
+
+          phase APPLY_SECOND_IDEMPOTENCY
+          curl --silent --show-error --fail-with-body --max-time 1200 \
+            --request POST http://127.0.0.1:8081/api/canonical-bootstrap >/tmp/apply-second.json
+          jq -e \
+            --argjson batches "$EXPECTED_BATCHES" \
+            --argjson items "$EXPECTED_TOTAL_ITEMS" '
+              .success == true and .state == "READY" and .completedBatches == $batches and
+              .totals.created == 0 and .totals.updated == 0 and .totals.unchanged == $items and
+              .totals.skipped == 0 and .totals.errors == 0 and .totals.failed == 0 and
+              .failedBatch == null and .failedKind == null and .failureMessage == null
+            ' /tmp/apply-second.json >/dev/null
+
+          phase VERIFY_HISTORY_AFTER_SECOND
+          snapshot_history /tmp/history-after-second.tsv
+          cmp -s /tmp/history-before.tsv /tmp/history-after-second.tsv
+
+          phase BUILD_RESULT
           python3 <<'PY'
           import json
           from pathlib import Path
-          batches=[json.loads(x) for x in Path('/tmp/batches.jsonl').read_text(encoding='utf-8').splitlines() if x.strip()]
-          errors=[dict(item,batch=b['batch']) for b in batches for item in b.get('errors',[])]
-          result={
-            'state':'DONE',
-            'contentBaseSha':'ba8c40c4907bbb35fbd662fbc1beb56f64ae7736',
-            'destructiveApplyInvoked':False,
-            'flywayEnabled':False,
-            'canonicalStatus':json.load(open('/tmp/status.json',encoding='utf-8')),
-            'batches':batches,
-            'errorCount':len(errors),
-            'errorItems':errors,
+          pre = json.load(open('/tmp/pre-status.json', encoding='utf-8'))
+          first = json.load(open('/tmp/apply-first.json', encoding='utf-8'))
+          post = json.load(open('/tmp/post-status.json', encoding='utf-8'))
+          second = json.load(open('/tmp/apply-second.json', encoding='utf-8'))
+          history = {}
+          for line in Path('/tmp/history-after-second.tsv').read_text(encoding='utf-8').splitlines():
+              if not line.strip(): continue
+              table, count, _digest = line.split('\t', 2)
+              history[table] = int(count)
+          result = {
+              'state':'DONE',
+              'contentBaseSha':'ba8c40c4907bbb35fbd662fbc1beb56f64ae7736',
+              'exactJarContentVerified':True,
+              'preStatus':pre,
+              'firstApply':first,
+              'postStatus':post,
+              'secondApply':second,
+              'historyPreserved':True,
+              'historyRowCounts':history,
+              'representativeContentVerified':True,
+              'idempotencyVerified':True,
+              'flywayEnabled':False,
+              'destructiveApplyInvoked':True,
           }
-          Path('/tmp/public-result.json.tmp').write_text(json.dumps(result,ensure_ascii=False),encoding='utf-8')
+          Path('/tmp/public-result.json.tmp').write_text(json.dumps(result, ensure_ascii=False), encoding='utf-8')
           Path('/tmp/public-result.json.tmp').replace('/tmp/public-result.json')
           PY
+          phase DONE
           SH
-          chmod +x /tmp/question-batch-diagnostic/run-diagnostic.sh
+          chmod +x /tmp/exact-apply/run-apply.sh
 
-          cat > /tmp/question-batch-diagnostic/wrapper-entrypoint.sh <<'SH'
+          cat > /tmp/exact-apply/wrapper-entrypoint.sh <<'SH'
           #!/bin/sh
           set -u
           (
-            /app/run-diagnostic.sh >/tmp/compute.log 2>&1
+            /app/run-apply.sh >/tmp/compute.log 2>&1
             rc=$?
             if [ "$rc" -ne 0 ] && [ ! -f /tmp/public-result.json ]; then
-              python3 - "$rc" <<'PY'
+              phase=$(cat /tmp/apply-phase 2>/dev/null || echo UNKNOWN)
+              invoked=false
+              [ -f /tmp/apply-invoked ] && invoked=true
+              {
+                echo '=== compute ==='
+                tail -n 100 /tmp/compute.log 2>/dev/null || true
+                echo '=== spring ==='
+                tail -n 160 /tmp/java.log 2>/dev/null || true
+              } | sed -E \
+                -e 's#jdbc:[^ ]+#jdbc:[REDACTED]#g' \
+                -e 's#(password|DB_PASSWORD|PGPASSWORD)[=:][^ ]+#\1=[REDACTED]#gi' \
+                -e 's#postgres(ql)?://[^@ ]+@#postgresql://[REDACTED]@#gi' \
+                >/tmp/diagnostic.txt
+              python3 - "$rc" "$phase" "$invoked" <<'PY'
           import json,sys
           from pathlib import Path
-          compute=Path('/tmp/compute.log').read_text(encoding='utf-8',errors='replace') if Path('/tmp/compute.log').exists() else ''
-          java=Path('/tmp/java.log').read_text(encoding='utf-8',errors='replace') if Path('/tmp/java.log').exists() else ''
-          diag=('=== compute ===\n'+compute+'\n=== spring ===\n'+java)[-16000:]
-          Path('/tmp/public-result.json').write_text(json.dumps({'state':'ERROR','exitCode':int(sys.argv[1]),'diagnostic':diag,'contentBaseSha':'ba8c40c4907bbb35fbd662fbc1beb56f64ae7736','destructiveApplyInvoked':False,'flywayEnabled':False},ensure_ascii=False),encoding='utf-8')
+          rc,phase,invoked=int(sys.argv[1]),sys.argv[2],sys.argv[3]=='true'
+          diagnostic=Path('/tmp/diagnostic.txt').read_text(encoding='utf-8',errors='replace')[-16000:]
+          payload={
+              'state':'ERROR','exitCode':rc,'phase':phase,'diagnostic':diagnostic,
+              'contentBaseSha':'ba8c40c4907bbb35fbd662fbc1beb56f64ae7736',
+              'destructiveApplyInvoked':invoked,'flywayEnabled':False
+          }
+          for name,path in [('preStatus','/tmp/pre-status.json'),('firstApply','/tmp/apply-first.json'),('postStatus','/tmp/post-status.json'),('secondApply','/tmp/apply-second.json')]:
+              p=Path(path)
+              if p.exists():
+                  try: payload[name]=json.loads(p.read_text(encoding='utf-8'))
+                  except Exception: pass
+          Path('/tmp/public-result.json').write_text(json.dumps(payload,ensure_ascii=False),encoding='utf-8')
           PY
             fi
           ) &
           exec python3 /app/result-server.py
           SH
-          chmod +x /tmp/question-batch-diagnostic/wrapper-entrypoint.sh
+          chmod +x /tmp/exact-apply/wrapper-entrypoint.sh
 
-          cat > /tmp/question-batch-diagnostic/Dockerfile <<'DOCKER'
-          ARG BASE_IMAGE
-          FROM ${BASE_IMAGE}
+          cat > /tmp/exact-apply/Dockerfile <<'DOCKER'
+          ARG EXACT_IMAGE
+          FROM ${EXACT_IMAGE}
           USER root
-          COPY run-diagnostic.sh /app/run-diagnostic.sh
+          RUN apt-get update \
+              && apt-get install --no-install-recommends --yes postgresql-client jq python3 \
+              && rm -rf /var/lib/apt/lists/*
+          COPY result-server.py /app/result-server.py
+          COPY run-apply.sh /app/run-apply.sh
           COPY wrapper-entrypoint.sh /app/wrapper-entrypoint.sh
-          RUN chmod +x /app/run-diagnostic.sh /app/wrapper-entrypoint.sh
+          RUN chmod +x /app/run-apply.sh /app/wrapper-entrypoint.sh
           USER 10001:10001
           ENTRYPOINT ["/app/wrapper-entrypoint.sh"]
           DOCKER
-          docker build --build-arg BASE_IMAGE="${BASE_IMAGE}" --tag "${DIAGNOSTIC_IMAGE}" /tmp/question-batch-diagnostic
-          docker push "${DIAGNOSTIC_IMAGE}"
+
+          docker build --build-arg EXACT_IMAGE="${EXACT_IMAGE}" --tag "${APPLY_IMAGE}" /tmp/exact-apply
+          docker push "${APPLY_IMAGE}"
 
       - name: Create result token
         id: token
@@ -194,39 +420,50 @@ jobs:
               'CSFORGE_AI_ENABLED':'false',
               'SPRING_FLYWAY_ENABLED':'false',
               'SPRING_JPA_HIBERNATE_DDL_AUTO':'validate',
-              'SPRING_SERVLET_MULTIPART_MAX_FILE_SIZE':'2MB',
-              'SPRING_SERVLET_MULTIPART_MAX_REQUEST_SIZE':'20MB',
-              'PREVIEW_RESULT_TOKEN':os.environ['PREVIEW_RESULT_TOKEN']
+              'PREVIEW_RESULT_TOKEN':os.environ['PREVIEW_RESULT_TOKEN'],
           }
           secrets=[]; found=set()
           for item in entries:
               name=item.get('name')
               if name not in wanted: continue
               found.add(name)
-              if 'value' in item: plain[name]=item['value']; continue
+              if 'value' in item:
+                  plain[name]=item['value']; continue
               ref=item.get('valueFrom',{}).get('secretKeyRef',{})
-              if not ref.get('name') or not ref.get('key'): raise SystemExit(f'unsupported env source for {name}')
+              if not ref.get('name') or not ref.get('key'):
+                  raise SystemExit(f'unsupported env source for {name}')
               secrets.append(f"{name}={ref['name']}:{ref['key']}")
           missing=required-found
-          if missing: raise SystemExit('missing DB vars: '+','.join(sorted(missing)))
-          json.dump(plain,open('/tmp/diag-env.json','w',encoding='utf-8'))
-          with open(output_path,'a',encoding='utf-8') as out: out.write('secrets='+','.join(secrets)+'\n')
+          if missing:
+              raise SystemExit('missing DB vars: '+','.join(sorted(missing)))
+          json.dump(plain,open('/tmp/apply-env.json','w',encoding='utf-8'))
+          with open(output_path,'a',encoding='utf-8') as out:
+              out.write('secrets='+','.join(secrets)+'\n')
           PY
           echo "service_account=${service_account}" >>"${GITHUB_OUTPUT}"
 
-      - name: Deploy private diagnostic service
+      - name: Deploy private exact apply service
         id: deploy
         shell: bash
         run: |
           set -euo pipefail
-          args=(run deploy "${DIAGNOSTIC_SERVICE}" --project="${GCP_PROJECT_ID}" --region="${GCP_REGION}" --image="${DIAGNOSTIC_IMAGE}" --service-account="${{ steps.prod.outputs.service_account }}" --env-vars-file=/tmp/diag-env.json --cpu=1 --memory=1Gi --min=0 --max=1 --timeout=900 --no-cpu-throttling --cpu-boost --no-allow-unauthenticated --quiet)
-          if [[ -n "${{ steps.prod.outputs.secrets }}" ]]; then args+=(--set-secrets="${{ steps.prod.outputs.secrets }}"); fi
+          args=(run deploy "${APPLY_SERVICE}" \
+            --project="${GCP_PROJECT_ID}" --region="${GCP_REGION}" \
+            --image="${APPLY_IMAGE}" \
+            --service-account="${{ steps.prod.outputs.service_account }}" \
+            --env-vars-file=/tmp/apply-env.json \
+            --cpu=1 --memory=1Gi --min=0 --max=1 --timeout=1800 \
+            --no-cpu-throttling --cpu-boost \
+            --no-allow-unauthenticated --quiet)
+          if [[ -n "${{ steps.prod.outputs.secrets }}" ]]; then
+            args+=(--set-secrets="${{ steps.prod.outputs.secrets }}")
+          fi
           gcloud "${args[@]}"
-          actual_url="$(gcloud run services describe "${DIAGNOSTIC_SERVICE}" --project="${GCP_PROJECT_ID}" --region="${GCP_REGION}" --format='value(status.url)')"
+          actual_url="$(gcloud run services describe "${APPLY_SERVICE}" --project="${GCP_PROJECT_ID}" --region="${GCP_REGION}" --format='value(status.url)')"
           test -n "${actual_url}"
           echo "url=${actual_url}" >>"${GITHUB_OUTPUT}"
 
-      - name: Mint diagnostic service ID token
+      - name: Mint exact apply service ID token
         id: invoke_auth
         uses: google-github-actions/auth@v3
         with:
@@ -236,34 +473,46 @@ jobs:
           token_format: id_token
           id_token_audience: ${{ steps.deploy.outputs.url }}
 
-      - name: Fetch diagnostic result
+      - name: Fetch and verify exact apply result
         shell: bash
         env:
           PREVIEW_RESULT_TOKEN: ${{ steps.token.outputs.value }}
           CLOUD_RUN_ID_TOKEN: ${{ steps.invoke_auth.outputs.id_token }}
-          DIAGNOSTIC_URL: ${{ steps.deploy.outputs.url }}
+          APPLY_URL: ${{ steps.deploy.outputs.url }}
         run: |
           set -euo pipefail
           code=000
-          for _ in $(seq 1 500); do
-            code="$(curl --silent --show-error --output /tmp/result.json --write-out '%{http_code}' --header "Authorization: Bearer ${CLOUD_RUN_ID_TOKEN}" --header "X-Preview-Token: ${PREVIEW_RESULT_TOKEN}" "${DIAGNOSTIC_URL}/result" || true)"
+          for _ in $(seq 1 700); do
+            code="$(curl --silent --show-error --output /tmp/result.json --write-out '%{http_code}' \
+              --header "Authorization: Bearer ${CLOUD_RUN_ID_TOKEN}" \
+              --header "X-Preview-Token: ${PREVIEW_RESULT_TOKEN}" \
+              "${APPLY_URL}/result" || true)"
             if [[ "${code}" == "200" ]]; then break; fi
-            if [[ "${code}" != "202" && "${code}" != "000" ]]; then cat /tmp/result.json || true; exit 1; fi
+            if [[ "${code}" != "202" && "${code}" != "000" ]]; then
+              echo "Unexpected result HTTP ${code}"
+              cat /tmp/result.json || true
+              exit 1
+            fi
             sleep 3
           done
           test "${code}" = "200"
           jq . /tmp/result.json
-          jq -e '.state=="DONE" and .contentBaseSha=="ba8c40c4907bbb35fbd662fbc1beb56f64ae7736" and .destructiveApplyInvoked==false and .flywayEnabled==false' /tmp/result.json >/dev/null
+          jq -e '.state == "DONE" and .contentBaseSha == "ba8c40c4907bbb35fbd662fbc1beb56f64ae7736"' /tmp/result.json >/dev/null
+          jq -e '.exactJarContentVerified == true and .destructiveApplyInvoked == true and .flywayEnabled == false' /tmp/result.json >/dev/null
+          jq -e '.firstApply.success == true and .firstApply.totals.created == 0 and .firstApply.totals.updated == 2472 and .firstApply.totals.unchanged == 908 and .firstApply.totals.errors == 0 and .firstApply.totals.failed == 0' /tmp/result.json >/dev/null
+          jq -e '.postStatus.state == "READY" and .postStatus.readyBatches == 12' /tmp/result.json >/dev/null
+          jq -e '.secondApply.success == true and .secondApply.totals.updated == 0 and .secondApply.totals.unchanged == 3380' /tmp/result.json >/dev/null
+          jq -e '.historyPreserved == true and .representativeContentVerified == true and .idempotencyVerified == true' /tmp/result.json >/dev/null
 
-      - name: Upload diagnostic evidence
+      - name: Upload exact apply evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: production-canonical-question-batches-ba8c40c-v2
+          name: production-canonical-exact-apply-ba8c40c
           path: /tmp/result.json
           if-no-files-found: warn
           retention-days: 14
 
-      - name: Remove temporary diagnostic service
+      - name: Remove temporary exact apply service
         if: always()
-        run: gcloud run services delete "${DIAGNOSTIC_SERVICE}" --project="${GCP_PROJECT_ID}" --region="${GCP_REGION}" --quiet || true
+        run: gcloud run services delete "${APPLY_SERVICE}" --project="${GCP_PROJECT_ID}" --region="${GCP_REGION}" --quiet || true
