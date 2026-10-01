@@ -1,5 +1,6 @@
 package com.guseoh.csforge.importcontent.application;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +21,7 @@ import com.guseoh.csforge.learning.domain.ReferenceType;
 import com.guseoh.csforge.learning.domain.Topic;
 import com.guseoh.csforge.learning.domain.TopicRepository;
 import com.guseoh.csforge.question.domain.Question;
+import com.guseoh.csforge.question.domain.QuestionChoice;
 import com.guseoh.csforge.question.domain.QuestionChoiceRepository;
 import com.guseoh.csforge.question.domain.QuestionDifficulty;
 import com.guseoh.csforge.question.domain.QuestionRepository;
@@ -51,6 +53,7 @@ public class ContentImportApplyService {
         Map<String, Reference> references = new HashMap<>(analysis.state().references());
         Map<String, Question> questions = new HashMap<>(analysis.state().questions());
         Map<ConceptReferenceId, ConceptReference> relationLinks = new HashMap<>();
+        List<DeferredCorrectChoice> deferredCorrectChoices = new ArrayList<>();
         analysis.state().conceptReferences().values().stream()
                 .flatMap(List::stream)
                 .forEach(link -> relationLinks.put(link.getId(), link));
@@ -66,9 +69,10 @@ public class ContentImportApplyService {
         }
         for (NormalizedImportItem item : analysis.items()) {
             if (item.kind() == ImportItemKind.QUESTION && shouldApply(item, analysis)) {
-                upsertQuestion(item, concepts, questions);
+                upsertQuestion(item, concepts, questions, deferredCorrectChoices);
             }
         }
+        completeDeferredCorrectChoices(deferredCorrectChoices);
         return new ImportApplyResult(
                 analysis.digest(),
                 count(analysis, ImportClassification.CREATED),
@@ -140,7 +144,11 @@ public class ContentImportApplyService {
         }
     }
 
-    private void upsertQuestion(NormalizedImportItem item, Map<String, Concept> concepts, Map<String, Question> questions) {
+    private void upsertQuestion(
+            NormalizedImportItem item,
+            Map<String, Concept> concepts,
+            Map<String, Question> questions,
+            List<DeferredCorrectChoice> deferredCorrectChoices) {
         Question question = questions.get(item.contentKey());
         List<Concept> linkedConcepts = item.conceptKeys().stream().map(concepts::get).toList();
         List<Question.ChoiceDraft> choices = item.choices().stream().map(choice -> new Question.ChoiceDraft(
@@ -155,16 +163,54 @@ public class ContentImportApplyService {
             }
             question.reviseMetadata(item.promptMarkdown(), QuestionDifficulty.valueOf(item.difficulty()), item.explanationMarkdown());
         }
+        boolean deferCorrectChoice = false;
         if (newQuestion || !QuestionStructureComparator.matches(item, question)) {
             if (!newQuestion) {
                 question.changeToDraft();
             }
             prepareChoiceOrderUpdate(question, choices);
-            question.replaceStructure(QuestionType.valueOf(item.questionType()), choices, item.correctChoiceKey(), item.acceptedAnswers(), item.modelAnswer(), linkedConcepts);
+            deferCorrectChoice = correctChoiceNeedsPersistedChoice(question, item);
+            question.replaceStructure(
+                    QuestionType.valueOf(item.questionType()),
+                    choices,
+                    deferCorrectChoice ? null : item.correctChoiceKey(),
+                    item.acceptedAnswers(),
+                    item.modelAnswer(),
+                    linkedConcepts);
+        }
+        if (deferCorrectChoice) {
+            Question saved = questionRepository.save(question);
+            questions.put(item.contentKey(), saved);
+            deferredCorrectChoices.add(new DeferredCorrectChoice(saved, item.correctChoiceKey(), targetStatus));
+            return;
         }
         question.setCanonicalStatus(targetStatus);
         Question saved = questionRepository.save(question);
         questions.put(item.contentKey(), saved);
+    }
+
+    private void completeDeferredCorrectChoices(List<DeferredCorrectChoice> deferredCorrectChoices) {
+        if (deferredCorrectChoices.isEmpty()) {
+            return;
+        }
+        questionRepository.flush();
+        for (DeferredCorrectChoice deferred : deferredCorrectChoices) {
+            QuestionChoice correctChoice = deferred.question().getChoices().stream()
+                    .filter(choice -> choice.getChoiceKey().equals(deferred.choiceKey()))
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalStateException("correctChoiceKey must match a persisted choice"));
+            deferred.question().defineCorrectChoice(correctChoice);
+            deferred.question().setCanonicalStatus(deferred.targetStatus());
+            questionRepository.save(deferred.question());
+        }
+    }
+
+    private static boolean correctChoiceNeedsPersistedChoice(Question question, NormalizedImportItem item) {
+        if (!QuestionType.MULTIPLE_CHOICE.name().equals(item.questionType()) || item.correctChoiceKey() == null) {
+            return false;
+        }
+        return question.getChoices().stream()
+                .noneMatch(choice -> choice.getChoiceKey().equals(item.correctChoiceKey()));
     }
 
     private void prepareChoiceOrderUpdate(Question question, List<Question.ChoiceDraft> incomingChoices) {
@@ -197,5 +243,8 @@ public class ContentImportApplyService {
     private static boolean shouldApply(NormalizedImportItem item, ImportAnalysis analysis) {
         return analysis.previews().stream().filter(preview -> preview.fileName().equals(item.fileName()) && preview.itemIndex() == item.itemIndex())
                 .map(ImportItemPreview::classification).anyMatch(c -> c == ImportClassification.CREATED || c == ImportClassification.UPDATED);
+    }
+
+    private record DeferredCorrectChoice(Question question, String choiceKey, QuestionStatus targetStatus) {
     }
 }
