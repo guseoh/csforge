@@ -1,4 +1,4 @@
-name: One-time production canonical question blocker diagnostic
+name: One-time production canonical question duplicate diagnostic
 
 on:
   push:
@@ -12,7 +12,7 @@ permissions:
   id-token: write
 
 jobs:
-  diagnose-question-blockers:
+  diagnose-question-duplicates:
     runs-on: ubuntu-latest
     env:
       GCP_PROJECT_ID: csforge-508510
@@ -21,7 +21,7 @@ jobs:
       DIAGNOSTIC_SERVICE: csforge-canonical-diagnostic-once
       CONTENT_BASE_SHA: ba8c40c4907bbb35fbd662fbc1beb56f64ae7736
       BASE_IMAGE: asia-southeast1-docker.pkg.dev/csforge-508510/csforge/csforge:canonical-apply-retry-061185f302775cea51fe27245eb96ed3e8484b1e
-      DIAGNOSTIC_IMAGE: asia-southeast1-docker.pkg.dev/csforge-508510/csforge/csforge:canonical-question-diagnostic-${{ github.sha }}
+      DIAGNOSTIC_IMAGE: asia-southeast1-docker.pkg.dev/csforge-508510/csforge/csforge:canonical-question-duplicates-${{ github.sha }}
     steps:
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v3
@@ -33,7 +33,7 @@ jobs:
       - name: Set up Google Cloud CLI
         uses: google-github-actions/setup-gcloud@v3
 
-      - name: Build read-only diagnostic wrapper
+      - name: Build read-only duplicate diagnostic wrapper
         shell: bash
         run: |
           set -euo pipefail
@@ -60,41 +60,70 @@ jobs:
           done
           [ "$ok" -eq 1 ] || exit 22
 
-          : >/tmp/error-items.jsonl
-          files=0
-          items=0
+          : >/tmp/question-files.tsv
+          : >/tmp/question-items.tsv
           for file in $(find /app/content -type f -name questions.json | sort); do
-            files=$((files + 1))
             rel=${file#/app/}
+            bytes=$(wc -c <"$file" | tr -d ' ')
             curl --silent --show-error --fail-with-body --max-time 180 \
               -F "files=@${file};filename=${rel}" \
               http://127.0.0.1:8081/api/imports/preview >/tmp/one-preview.json
             count=$(jq '.items | length' /tmp/one-preview.json)
-            items=$((items + count))
-            jq -c '.items[] | select(.classification == "ERROR") | {fileName,itemIndex,kind,contentKey,classification,reason,errors,diffs}' \
-              /tmp/one-preview.json >>/tmp/error-items.jsonl
+            printf '%s\t%s\t%s\n' "$rel" "$count" "$bytes" >>/tmp/question-files.tsv
+            jq -r --arg file "$rel" '.items[] | [$file, (.itemIndex|tostring), .contentKey, .classification] | @tsv' \
+              /tmp/one-preview.json >>/tmp/question-items.tsv
           done
 
-          python3 - "$files" "$items" <<'PY'
-          import json, sys
+          python3 <<'PY'
+          import json
+          from collections import defaultdict
           from pathlib import Path
-          files, items = int(sys.argv[1]), int(sys.argv[2])
-          errors = []
-          p = Path('/tmp/error-items.jsonl')
-          if p.exists():
-              for line in p.read_text(encoding='utf-8').splitlines():
-                  if line.strip(): errors.append(json.loads(line))
+
+          files = []
+          for line in Path('/tmp/question-files.tsv').read_text(encoding='utf-8').splitlines():
+              path, count, size = line.split('\t')
+              files.append({'path':path, 'items':int(count), 'bytes':int(size)})
+
+          # Canonical planner starts QUESTION batches after 9 ready Topic/Concept batches.
+          batch = 10
+          batch_files = 0
+          batch_items = 0
+          batch_bytes = 0
+          file_batch = {}
+          for f in files:
+              exceeds = batch_files > 0 and (batch_files == 100 or batch_items + f['items'] > 1000 or batch_bytes + f['bytes'] > 20 * 1024 * 1024)
+              if exceeds:
+                  batch += 1
+                  batch_files = batch_items = batch_bytes = 0
+              file_batch[f['path']] = batch
+              batch_files += 1
+              batch_items += f['items']
+              batch_bytes += f['bytes']
+
+          groups = defaultdict(list)
+          item_count = 0
+          for line in Path('/tmp/question-items.tsv').read_text(encoding='utf-8').splitlines():
+              file, index, key, classification = line.split('\t')
+              item_count += 1
+              groups[key].append({'fileName':file,'itemIndex':int(index),'classification':classification,'batch':file_batch[file]})
+
+          duplicates = []
+          for key, defs in sorted(groups.items()):
+              if len(defs) > 1:
+                  duplicates.append({'contentKey':key,'definitionCount':len(defs),'definitions':defs,'sameBatch':len({d['batch'] for d in defs}) == 1})
+
           status = json.load(open('/tmp/status.json', encoding='utf-8'))
           result = {
               'state':'DONE',
               'contentBaseSha':'ba8c40c4907bbb35fbd662fbc1beb56f64ae7736',
               'destructiveApplyInvoked':False,
               'flywayEnabled':False,
-              'questionFilesScanned':files,
-              'questionItemsScanned':items,
+              'questionFilesScanned':len(files),
+              'questionItemsScanned':item_count,
               'canonicalStatus':status,
-              'errorCount':len(errors),
-              'errorItems':errors,
+              'questionBatchRange':[10, max(file_batch.values())],
+              'duplicateKeyCount':len(duplicates),
+              'duplicates':duplicates,
           }
           Path('/tmp/public-result.json.tmp').write_text(json.dumps(result, ensure_ascii=False), encoding='utf-8')
           Path('/tmp/public-result.json.tmp').replace('/tmp/public-result.json')
@@ -222,7 +251,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: production-canonical-question-blockers-ba8c40c
+          name: production-canonical-question-duplicates-ba8c40c
           path: /tmp/result.json
           if-no-files-found: warn
           retention-days: 14
