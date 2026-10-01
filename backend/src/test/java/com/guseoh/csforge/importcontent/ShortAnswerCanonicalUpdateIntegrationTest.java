@@ -23,7 +23,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-/** 단답형 canonical 구조 갱신이 기존 허용 답안 행을 재사용하는지 PostgreSQL에서 검증한다. */
+/** 단답형 canonical 구조 갱신과 객관식 전환을 PostgreSQL에서 검증한다. */
 @Testcontainers
 @SpringBootTest
 class ShortAnswerCanonicalUpdateIntegrationTest {
@@ -68,7 +68,7 @@ class ShortAnswerCanonicalUpdateIntegrationTest {
 
     @Test
     void structuralUpdateReusesExistingAcceptedAnswerRows() {
-        ImportFilesCommand initial = command(List.of("test.concept.a"));
+        ImportFilesCommand initial = shortAnswerCommand(List.of("test.concept.a"));
         ImportPreviewResult initialPreview = previewService.preview(initial);
         assertTrue(initialPreview.canApply());
         applyService.apply(initial, initialPreview.previewDigest());
@@ -78,7 +78,7 @@ class ShortAnswerCanonicalUpdateIntegrationTest {
         long firstAnswerId = acceptedAnswerId(questionId, "10000000");
         long secondAnswerId = acceptedAnswerId(questionId, "-128");
 
-        ImportFilesCommand changed = command(List.of("test.concept.a", "test.concept.b"));
+        ImportFilesCommand changed = shortAnswerCommand(List.of("test.concept.a", "test.concept.b"));
         ImportPreviewResult changedPreview = previewService.preview(changed);
         assertTrue(changedPreview.canApply());
         assertEquals(1, changedPreview.updated());
@@ -102,6 +102,50 @@ class ShortAnswerCanonicalUpdateIntegrationTest {
         assertEquals(4, identicalPreview.unchanged());
     }
 
+    @Test
+    void shortAnswerCanTransitionToMultipleChoiceWithPersistedCorrectChoice() {
+        ImportFilesCommand initial = shortAnswerCommand(List.of("test.concept.a"));
+        ImportPreviewResult initialPreview = previewService.preview(initial);
+        assertTrue(initialPreview.canApply());
+        applyService.apply(initial, initialPreview.previewDigest());
+
+        long questionId = jdbc.queryForObject(
+                "select id from question where content_key = 'test.short-answer'", Long.class);
+
+        ImportFilesCommand changed = multipleChoiceCommand();
+        ImportPreviewResult changedPreview = previewService.preview(changed);
+        assertTrue(changedPreview.canApply());
+        assertEquals(1, changedPreview.updated());
+
+        applyService.apply(changed, changedPreview.previewDigest());
+
+        assertEquals("MULTIPLE_CHOICE", jdbc.queryForObject(
+                "select question_type from question where id = ?", String.class, questionId));
+        assertEquals(0, jdbc.queryForObject(
+                "select count(*) from question_answer where question_id = ? and answer_kind = 'ACCEPTED_TEXT'",
+                Integer.class,
+                questionId));
+        assertEquals(1, jdbc.queryForObject(
+                "select count(*) from question_answer where question_id = ? and answer_kind = 'CORRECT_CHOICE'",
+                Integer.class,
+                questionId));
+        assertEquals("B", jdbc.queryForObject(
+                "select choice.choice_key from question_answer answer "
+                        + "join question_choice choice on choice.id = answer.choice_id "
+                        + "where answer.question_id = ? and answer.answer_kind = 'CORRECT_CHOICE'",
+                String.class,
+                questionId));
+        assertEquals(2, jdbc.queryForObject(
+                "select count(*) from question_choice where question_id = ?",
+                Integer.class,
+                questionId));
+
+        ImportPreviewResult identicalPreview = previewService.preview(changed);
+        assertTrue(identicalPreview.canApply());
+        assertEquals(0, identicalPreview.updated());
+        assertEquals(4, identicalPreview.unchanged());
+    }
+
     private long acceptedAnswerId(long questionId, String answerText) {
         return jdbc.queryForObject(
                 "select id from question_answer where question_id = ? and answer_kind = 'ACCEPTED_TEXT' "
@@ -111,15 +155,7 @@ class ShortAnswerCanonicalUpdateIntegrationTest {
                 answerText);
     }
 
-    private ImportFilesCommand command(List<String> conceptKeys) {
-        String topic = "{\"kind\":\"topic\",\"contentKey\":\"test.topic\",\"areaSlug\":\"java\","
-                + "\"slug\":\"test-topic\",\"title\":\"Test topic\"}";
-        String conceptA = "{\"kind\":\"concept\",\"contentKey\":\"test.concept.a\","
-                + "\"topicContentKey\":\"test.topic\",\"slug\":\"concept-a\",\"title\":\"Concept A\","
-                + "\"contentMarkdown\":\"Concept A body\",\"level\":1,\"status\":\"PUBLISHED\"}";
-        String conceptB = "{\"kind\":\"concept\",\"contentKey\":\"test.concept.b\","
-                + "\"topicContentKey\":\"test.topic\",\"slug\":\"concept-b\",\"title\":\"Concept B\","
-                + "\"contentMarkdown\":\"Concept B body\",\"level\":1,\"status\":\"PUBLISHED\"}";
+    private ImportFilesCommand shortAnswerCommand(List<String> conceptKeys) {
         String concepts = conceptKeys.stream()
                 .map(key -> "\"" + key + "\"")
                 .reduce((left, right) -> left + "," + right)
@@ -129,6 +165,31 @@ class ShortAnswerCanonicalUpdateIntegrationTest {
                 + "\"difficulty\":\"EASY\",\"status\":\"PUBLISHED\",\"conceptKeys\":[" + concepts + "],"
                 + "\"acceptedAnswers\":[\"10000000\",\"-128\"],"
                 + "\"explanationMarkdown\":\"허용 답안을 확인한다.\"}";
+        return command(question);
+    }
+
+    private ImportFilesCommand multipleChoiceCommand() {
+        String question = "{\"kind\":\"question\",\"contentKey\":\"test.short-answer\","
+                + "\"promptMarkdown\":\"DNS와 TLS의 역할을 가장 잘 구분한 것은?\","
+                + "\"questionType\":\"MULTIPLE_CHOICE\",\"difficulty\":\"EASY\","
+                + "\"status\":\"PUBLISHED\",\"conceptKeys\":[\"test.concept.a\"],"
+                + "\"choices\":["
+                + "{\"key\":\"A\",\"content\":\"역할이 뒤바뀌었다.\",\"rationaleMarkdown\":\"오답이다.\",\"displayOrder\":0},"
+                + "{\"key\":\"B\",\"content\":\"DNS는 이름을 해석하고 TLS는 보안 채널을 제공한다.\","
+                + "\"rationaleMarkdown\":\"정답이다.\",\"displayOrder\":1}],"
+                + "\"correctChoiceKey\":\"B\",\"explanationMarkdown\":\"두 역할을 구분한다.\"}";
+        return command(question);
+    }
+
+    private ImportFilesCommand command(String question) {
+        String topic = "{\"kind\":\"topic\",\"contentKey\":\"test.topic\",\"areaSlug\":\"java\","
+                + "\"slug\":\"test-topic\",\"title\":\"Test topic\"}";
+        String conceptA = "{\"kind\":\"concept\",\"contentKey\":\"test.concept.a\","
+                + "\"topicContentKey\":\"test.topic\",\"slug\":\"concept-a\",\"title\":\"Concept A\","
+                + "\"contentMarkdown\":\"Concept A body\",\"level\":1,\"status\":\"PUBLISHED\"}";
+        String conceptB = "{\"kind\":\"concept\",\"contentKey\":\"test.concept.b\","
+                + "\"topicContentKey\":\"test.topic\",\"slug\":\"concept-b\",\"title\":\"Concept B\","
+                + "\"contentMarkdown\":\"Concept B body\",\"level\":1,\"status\":\"PUBLISHED\"}";
         return new ImportFilesCommand(List.of(
                 source("topic.json", topic),
                 source("concept-a.json", conceptA),
