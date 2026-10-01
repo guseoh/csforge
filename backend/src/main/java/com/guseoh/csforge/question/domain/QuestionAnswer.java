@@ -68,6 +68,18 @@ public class QuestionAnswer {
         this.answerText = null;
     }
 
+    void reviseAcceptedText(String answerText, int displayOrder) {
+        if (answerText == null || answerText.isBlank()) {
+            throw new IllegalArgumentException("answerText is required");
+        }
+        if (displayOrder < 0) {
+            throw new IllegalArgumentException("displayOrder must be non-negative");
+        }
+        this.answerText = answerText.trim();
+        this.choice = null;
+        this.displayOrder = displayOrder;
+    }
+
     void reviseModelAnswer(String answerText) {
         if (answerText == null || answerText.isBlank()) {
             throw new IllegalArgumentException("answerText is required");
