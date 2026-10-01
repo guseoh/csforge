@@ -18,7 +18,7 @@ jobs:
       GCP_PROJECT_ID: csforge-508510
       GCP_REGION: asia-southeast1
       CLOUD_RUN_SERVICE: csforge
-      PREVIEW_SERVICE: csforge-canonical-preview-once
+      PREVIEW_JOB: csforge-canonical-preview-once
       PREVIEW_IMAGE: asia-southeast1-docker.pkg.dev/csforge-508510/csforge/csforge:preview-${{ github.sha }}
       CONTENT_BASE_SHA: 5e1b3328af8844e7a22e8d440cd75b80a0ad740d
     steps:
@@ -36,17 +36,339 @@ jobs:
       - name: Set up Google Cloud CLI
         uses: google-github-actions/setup-gcloud@v3
 
-      - name: Install Cloud Run proxy component
-        run: gcloud components install cloud-run-proxy --quiet
-
       - name: Configure Artifact Registry authentication
         run: gcloud auth configure-docker "${GCP_REGION}-docker.pkg.dev" --quiet
 
-      - name: Build pinned canonical image
+      - name: Build preview-only image from pinned canonical content
+        shell: bash
         run: |
           set -euo pipefail
           test "$(git rev-parse HEAD)" = "${CONTENT_BASE_SHA}"
-          docker build --file backend/Dockerfile --tag "${PREVIEW_IMAGE}" .
+
+          base_image="csforge-preview-base:${CONTENT_BASE_SHA}"
+          docker build --file backend/Dockerfile --tag "${base_image}" .
+
+          cat > backend/scripts/production-canonical-preview.sh <<'SH'
+          #!/bin/sh
+          set -eu
+
+          java -jar /app/app.jar --spring.profiles.active=local --server.port=8080 &
+          app_pid=$!
+          cleanup() {
+            kill "$app_pid" 2>/dev/null || true
+            wait "$app_pid" 2>/dev/null || true
+          }
+          trap cleanup EXIT
+
+          ready=0
+          for _ in $(seq 1 120); do
+            if curl --fail --silent --show-error http://127.0.0.1:8080/actuator/health/readiness >/tmp/readiness.json; then
+              ready=1
+              break
+            fi
+            if ! kill -0 "$app_pid" 2>/dev/null; then
+              echo 'Application exited before readiness.' >&2
+              exit 11
+            fi
+            sleep 2
+          done
+          if [ "$ready" -ne 1 ]; then
+            echo 'Application did not become ready.' >&2
+            cat /tmp/readiness.json 2>/dev/null || true
+            exit 12
+          fi
+
+          # This endpoint is read-only. It uses the application's exact canonical planner
+          # and runs preview for every canonical batch without applying anything.
+          curl --fail --silent --show-error \
+            http://127.0.0.1:8080/api/canonical-bootstrap/status \
+            >/tmp/canonical-status.json
+
+          mkdir -p /tmp/batches /tmp/previews
+          python3 <<'PY'
+          import json
+          from pathlib import Path
+
+          root = Path('/app/content')
+          kind_order = {'TOPIC': 0, 'CONCEPT': 1, 'QUESTION': 2}
+          max_files = 100
+          max_items = 1000
+          max_file_bytes = 2 * 1024 * 1024
+          max_total_bytes = 20 * 1024 * 1024
+
+          parsed = []
+          for path in root.rglob('*'):
+              if not path.is_file():
+                  continue
+              rel = path.relative_to(root).as_posix()
+              if rel.startswith('examples/') or rel.startswith('curriculum/'):
+                  continue
+              if rel in {'README.md', 'AGENTS.md'}:
+                  continue
+              if path.name == 'topics.json':
+                  kind = 'TOPIC'
+              elif path.name == 'questions.json':
+                  kind = 'QUESTION'
+              elif path.suffix == '.md':
+                  kind = 'CONCEPT'
+              else:
+                  continue
+
+              size = path.stat().st_size
+              if size > max_file_bytes:
+                  raise SystemExit(f'Canonical file exceeds 2 MiB: {rel}')
+              if kind in {'TOPIC', 'QUESTION'}:
+                  with path.open(encoding='utf-8') as handle:
+                      data = json.load(handle)
+                  if not isinstance(data, list):
+                      raise SystemExit(f'Expected JSON array: {rel}')
+                  item_count = len(data)
+              else:
+                  item_count = 1
+              if item_count > max_items:
+                  raise SystemExit(f'Canonical file exceeds 1000 items: {rel}')
+              parsed.append((kind_order[kind], rel, kind, item_count, size))
+
+          parsed.sort(key=lambda item: (item[0], item[1]))
+          batches = []
+          current = []
+          current_kind = None
+          current_items = 0
+          current_bytes = 0
+          for _, rel, kind, item_count, size in parsed:
+              exceeds = bool(current) and (
+                  len(current) == max_files
+                  or current_items + item_count > max_items
+                  or current_bytes + size > max_total_bytes
+                  or current_kind != kind
+              )
+              if exceeds:
+                  batches.append((current_kind, current, current_items, current_bytes))
+                  current = []
+                  current_kind = None
+                  current_items = 0
+                  current_bytes = 0
+              if current_kind is None:
+                  current_kind = kind
+              current.append(rel)
+              current_items += item_count
+              current_bytes += size
+          if current:
+              batches.append((current_kind, current, current_items, current_bytes))
+
+          total_items = sum(item[3] for item in parsed)
+          by_kind = {
+              kind: sum(item[3] for item in parsed if item[2] == kind)
+              for kind in ('TOPIC', 'CONCEPT', 'QUESTION')
+          }
+          summary = {
+              'sourceFileCount': len(parsed),
+              'totalBatches': len(batches),
+              'totalItems': total_items,
+              'topics': by_kind['TOPIC'],
+              'concepts': by_kind['CONCEPT'],
+              'questions': by_kind['QUESTION'],
+          }
+          Path('/tmp/planner-summary.json').write_text(
+              json.dumps(summary, ensure_ascii=False), encoding='utf-8')
+          for index, (_, files, _, _) in enumerate(batches, 1):
+              Path(f'/tmp/batches/batch-{index:03d}.list').write_text(
+                  '\n'.join(files) + '\n', encoding='utf-8')
+          PY
+
+          # Guard that the client-side detailed batching exactly matches the server's
+          # canonical plan before using its per-item preview results.
+          python3 <<'PY'
+          import json
+          status = json.load(open('/tmp/canonical-status.json', encoding='utf-8'))
+          planner = json.load(open('/tmp/planner-summary.json', encoding='utf-8'))
+          expected = {
+              'sourceFileCount': status['sourceFileCount'],
+              'totalBatches': status['totalBatches'],
+              'totalItems': status['totalItems'],
+              'topics': status['canonicalItems']['topics'],
+              'concepts': status['canonicalItems']['concepts'],
+              'questions': status['canonicalItems']['questions'],
+          }
+          if planner != expected:
+              raise SystemExit(f'Planner mismatch: local={planner}, server={expected}')
+          PY
+
+          for batch_file in /tmp/batches/*.list; do
+            batch_name=$(basename "$batch_file" .list)
+            config="/tmp/${batch_name}.curl"
+            {
+              echo 'silent'
+              echo 'show-error'
+              echo 'fail-with-body'
+              echo 'request = "POST"'
+              echo 'url = "http://127.0.0.1:8080/api/imports/preview"'
+              while IFS= read -r rel; do
+                [ -n "$rel" ] || continue
+                printf 'form = "files=@%s;filename=%s"\n' "/app/content/$rel" "$rel"
+              done < "$batch_file"
+            } > "$config"
+            curl --config "$config" > "/tmp/previews/${batch_name}.json"
+          done
+
+          jq -s '
+            {
+              canApply: all(.[]; .canApply == true),
+              batchCount: length,
+              totals: reduce .[].totals as $t
+                ({created:0,updated:0,unchanged:0,skipped:0,errors:0};
+                 .created += $t.created |
+                 .updated += $t.updated |
+                 .unchanged += $t.unchanged |
+                 .skipped += $t.skipped |
+                 .errors += $t.errors),
+              items: [.[].items[]],
+              previewDigests: [.[].previewDigest]
+            }
+          ' /tmp/previews/*.json >/tmp/all-preview.json
+
+          jq '{canApply, batchCount, totals,
+               classifications: ([.items[].classification] | sort | group_by(.) |
+                 map({classification: .[0], count: length})),
+               updatedByKind: ([.items[] | select(.classification == "UPDATED") | .kind] |
+                 sort | group_by(.) | map({kind: .[0], count: length})),
+               updatedFields: ([.items[] | select(.classification == "UPDATED") | .diffs[]?.field] |
+                 sort | group_by(.) | map({field: .[0], count: length}))}' \
+            /tmp/all-preview.json >/tmp/preview-summary.json
+
+          jq '{state, sourceFileCount, totalBatches, readyBatches, totalItems,
+               canonicalItems, currentCounts,
+               countDelta: {
+                 learningAreas: (.currentCounts.learningAreas - .canonicalItems.learningAreas),
+                 topics: (.currentCounts.topics - .canonicalItems.topics),
+                 concepts: (.currentCounts.concepts - .canonicalItems.concepts),
+                 questions: (.currentCounts.questions - .canonicalItems.questions)
+               }}' /tmp/canonical-status.json >/tmp/status-summary.json
+
+          jq -r '.items[] | select(.classification == "CREATED") |
+            [.kind, .contentKey] | @tsv' /tmp/all-preview.json >/tmp/created-items.tsv
+          jq -r '.items[] | select(.classification == "ERROR" or (.errors | length) > 0) |
+            [.kind, .contentKey, (.reason // ""), (.errors | tostring)] | @tsv' \
+            /tmp/all-preview.json >/tmp/error-items.tsv
+          jq -r '.items[] | select(.classification == "UPDATED") |
+            [.kind, .contentKey, ([.diffs[].field] | join(","))] | @tsv' \
+            /tmp/all-preview.json >/tmp/updated-items.tsv
+          jq -r '.items[] | select(.classification == "UPDATED") | . as $item |
+            .diffs[]? | select(.field == "references") |
+            [$item.kind, $item.contentKey, (.before // ""), (.after // "")] | @tsv' \
+            /tmp/all-preview.json >/tmp/reference-diffs.tsv
+          jq -r '.items[] | select(.classification == "UPDATED") | . as $item |
+            .diffs[]? | select(.field == "structure" or .field == "history") |
+            [$item.kind, $item.contentKey, .field, (.before // ""), (.after // "")] | @tsv' \
+            /tmp/all-preview.json >/tmp/structure-history-diffs.tsv
+          jq -r '.items[] | select(.kind != null and .contentKey != null) |
+            [.kind, .contentKey] | @tsv' /tmp/all-preview.json | sort -u >/tmp/pack-keys.tsv
+
+          # Read-only identity check against the actual production database.
+          psql_url=${DB_URL#jdbc:}
+          export PGPASSWORD="$DB_PASSWORD"
+          psql "$psql_url" -U "$DB_USERNAME" -v ON_ERROR_STOP=1 -AtF '|' -c \
+            "SELECT 'TOPIC', content_key, id FROM topic
+             UNION ALL SELECT 'CONCEPT', content_key, id FROM concept
+             UNION ALL SELECT 'QUESTION', content_key, id FROM question
+             ORDER BY 1,2" \
+            | awk -F'|' 'BEGIN{OFS="\t"}{print $1,$2,$3}' >/tmp/db-key-id.tsv
+          cut -f1,2 /tmp/db-key-id.tsv >/tmp/db-keys.tsv
+          comm -23 /tmp/pack-keys.tsv /tmp/db-keys.tsv >/tmp/pack-missing-db.tsv || true
+          comm -13 /tmp/pack-keys.tsv /tmp/db-keys.tsv >/tmp/db-extra-pack.tsv || true
+
+          python3 <<'PY'
+          from pathlib import Path
+
+          src = Path('/tmp/reference-diffs.tsv')
+          out = Path('/tmp/reference-removals.tsv')
+          rows = []
+          if src.exists():
+              for line in src.read_text(encoding='utf-8').splitlines():
+                  parts = line.split('\t', 3)
+                  if len(parts) != 4:
+                      continue
+                  kind, key, before, after = parts
+                  before_count = before.count('https://') + before.count('http://')
+                  after_count = after.count('https://') + after.count('http://')
+                  if after_count < before_count:
+                      rows.append(f'{kind}\t{key}\t{before_count}\t{after_count}')
+          out.write_text(('\n'.join(rows) + '\n') if rows else '', encoding='utf-8')
+          PY
+
+          created_count=$(wc -l </tmp/created-items.tsv | tr -d ' ')
+          error_count=$(wc -l </tmp/error-items.tsv | tr -d ' ')
+          missing_count=$(wc -l </tmp/pack-missing-db.tsv | tr -d ' ')
+          extra_count=$(wc -l </tmp/db-extra-pack.tsv | tr -d ' ')
+          reference_diff_count=$(wc -l </tmp/reference-diffs.tsv | tr -d ' ')
+          reference_removal_count=$(wc -l </tmp/reference-removals.tsv | tr -d ' ')
+          structure_history_count=$(wc -l </tmp/structure-history-diffs.tsv | tr -d ' ')
+          pack_key_count=$(wc -l </tmp/pack-keys.tsv | tr -d ' ')
+          db_key_count=$(wc -l </tmp/db-keys.tsv | tr -d ' ')
+
+          jq -n \
+            --argjson created "$created_count" \
+            --argjson errors "$error_count" \
+            --argjson packMissingDb "$missing_count" \
+            --argjson dbExtraPack "$extra_count" \
+            --argjson referenceDiffs "$reference_diff_count" \
+            --argjson referenceRemovals "$reference_removal_count" \
+            --argjson structureOrHistoryDiffs "$structure_history_count" \
+            --argjson packKeys "$pack_key_count" \
+            --argjson dbKeys "$db_key_count" \
+            '{created:$created, errors:$errors, packMissingDb:$packMissingDb,
+              dbExtraPack:$dbExtraPack, referenceDiffs:$referenceDiffs,
+              referenceRemovals:$referenceRemovals,
+              structureOrHistoryDiffs:$structureOrHistoryDiffs,
+              packKeys:$packKeys, dbKeys:$dbKeys}' >/tmp/safety-summary.json
+
+          echo 'CSFORGE_PREVIEW_BEGIN'
+          echo 'CONTENT_BASE_SHA=5e1b3328af8844e7a22e8d440cd75b80a0ad740d'
+          echo '=== CANONICAL STATUS ==='
+          cat /tmp/status-summary.json
+          echo '=== PREVIEW SUMMARY ==='
+          cat /tmp/preview-summary.json
+          echo '=== IDENTITY / DELETE-RISK SUMMARY ==='
+          cat /tmp/safety-summary.json
+          echo '=== CREATED ITEMS ==='
+          cat /tmp/created-items.tsv || true
+          echo '=== PACK KEYS MISSING IN DB ==='
+          cat /tmp/pack-missing-db.tsv || true
+          echo '=== DB KEYS NOT PRESENT IN CURRENT PACK ==='
+          cat /tmp/db-extra-pack.tsv || true
+          echo '=== VALIDATION ERRORS ==='
+          cat /tmp/error-items.tsv || true
+          echo '=== REFERENCE REMOVALS ==='
+          cat /tmp/reference-removals.tsv || true
+          echo '=== QUESTION STRUCTURE / HISTORY DIFFS ==='
+          cat /tmp/structure-history-diffs.tsv || true
+          echo 'CSFORGE_PREVIEW_END'
+
+          jq -e '.canApply == true and .totals.errors == 0' /tmp/all-preview.json >/dev/null
+          test "$error_count" -eq 0
+          test "$created_count" -eq 0
+          test "$missing_count" -eq 0
+          # db-extra-pack is reported but is not destructive: import never deletes extra rows.
+          SH
+          chmod +x backend/scripts/production-canonical-preview.sh
+
+          cat > backend/Dockerfile.preview <<'DOCKER'
+          ARG BASE_IMAGE
+          FROM ${BASE_IMAGE}
+          USER root
+          RUN apt-get update \
+              && apt-get install --no-install-recommends --yes jq python3 postgresql-client \
+              && rm -rf /var/lib/apt/lists/*
+          COPY content /app/content
+          COPY backend/scripts/production-canonical-preview.sh /app/production-canonical-preview.sh
+          RUN chmod +x /app/production-canonical-preview.sh
+          USER 10001:10001
+          ENTRYPOINT ["/app/production-canonical-preview.sh"]
+          DOCKER
+
+          docker build --file backend/Dockerfile.preview \
+            --build-arg BASE_IMAGE="${base_image}" \
+            --tag "${PREVIEW_IMAGE}" .
           docker push "${PREVIEW_IMAGE}"
 
       - name: Prepare production database environment
@@ -55,7 +377,10 @@ jobs:
         run: |
           set -euo pipefail
           service_json="$(mktemp)"
-          gcloud run services describe "${CLOUD_RUN_SERVICE}" --project="${GCP_PROJECT_ID}" --region="${GCP_REGION}" --format=json > "${service_json}"
+          gcloud run services describe "${CLOUD_RUN_SERVICE}" \
+            --project="${GCP_PROJECT_ID}" \
+            --region="${GCP_REGION}" \
+            --format=json > "${service_json}"
           service_account="$(jq -r '.spec.template.spec.serviceAccountName // empty' "${service_json}")"
           test -n "${service_account}"
 
@@ -64,10 +389,18 @@ jobs:
           service_path, output_path = sys.argv[1], sys.argv[2]
           with open(service_path, encoding='utf-8') as handle:
               service = json.load(handle)
-          wanted = {'DB_URL','DB_USERNAME','DB_PASSWORD','DB_MAX_POOL_SIZE','DB_MIN_IDLE','DB_CONNECTION_TIMEOUT','DB_VALIDATION_TIMEOUT'}
+          wanted = {
+              'DB_URL','DB_USERNAME','DB_PASSWORD','DB_MAX_POOL_SIZE','DB_MIN_IDLE',
+              'DB_CONNECTION_TIMEOUT','DB_VALIDATION_TIMEOUT'
+          }
           required = {'DB_URL','DB_USERNAME','DB_PASSWORD'}
           entries = service['spec']['template']['spec']['containers'][0].get('env', [])
-          plain = {'SPRING_PROFILES_ACTIVE':'local','CSFORGE_AI_ENABLED':'false'}
+          plain = {
+              'SPRING_PROFILES_ACTIVE':'local',
+              'CSFORGE_AI_ENABLED':'false',
+              'SPRING_FLYWAY_ENABLED':'false',
+              'SPRING_JPA_HIBERNATE_DDL_AUTO':'validate'
+          }
           secrets, found = [], set()
           for item in entries:
               name = item.get('name')
@@ -92,12 +425,12 @@ jobs:
           PY
           echo "service_account=${service_account}" >> "${GITHUB_OUTPUT}"
 
-      - name: Deploy private preview service
+      - name: Deploy preview-only job
         shell: bash
         run: |
           set -euo pipefail
           args=(
-            run deploy "${PREVIEW_SERVICE}"
+            run jobs deploy "${PREVIEW_JOB}"
             --project="${GCP_PROJECT_ID}"
             --region="${GCP_REGION}"
             --image="${PREVIEW_IMAGE}"
@@ -105,10 +438,10 @@ jobs:
             --env-vars-file=/tmp/preview-env.json
             --cpu=1
             --memory=1Gi
-            --min=0
-            --max=1
-            --timeout=900
-            --no-allow-unauthenticated
+            --tasks=1
+            --parallelism=1
+            --task-timeout=30m
+            --max-retries=0
             --quiet
           )
           if [[ -n "${{ steps.runtime.outputs.secrets }}" ]]; then
@@ -116,94 +449,64 @@ jobs:
           fi
           gcloud "${args[@]}"
 
-      - name: Run read-only canonical preview through authenticated proxy
+      - name: Execute production read-only preview
+        id: execute
         shell: bash
         run: |
           set -euo pipefail
-          gcloud run services proxy "${PREVIEW_SERVICE}" --project="${GCP_PROJECT_ID}" --region="${GCP_REGION}" --port=8081 >/tmp/preview-proxy.log 2>&1 &
-          proxy_pid=$!
-          cleanup_proxy() {
-            kill "${proxy_pid}" 2>/dev/null || true
-            wait "${proxy_pid}" 2>/dev/null || true
-          }
-          trap cleanup_proxy EXIT
+          gcloud run jobs execute "${PREVIEW_JOB}" \
+            --project="${GCP_PROJECT_ID}" \
+            --region="${GCP_REGION}" \
+            --wait --quiet
+          execution="$(gcloud run jobs executions list \
+            --job="${PREVIEW_JOB}" \
+            --project="${GCP_PROJECT_ID}" \
+            --region="${GCP_REGION}" \
+            --limit=1 \
+            --sort-by='~metadata.creationTimestamp' \
+            --format='value(metadata.name)')"
+          test -n "${execution}"
+          echo "execution=${execution}" >> "${GITHUB_OUTPUT}"
+          succeeded="$(gcloud run jobs executions describe "${execution}" \
+            --project="${GCP_PROJECT_ID}" \
+            --region="${GCP_REGION}" \
+            --format='value(status.succeededCount)')"
+          test "${succeeded}" = "1"
 
-          ready=0
-          for _ in $(seq 1 90); do
-            if curl --fail --silent --show-error http://127.0.0.1:8081/actuator/health/readiness >/tmp/readiness.json; then
-              ready=1
-              break
-            fi
-            sleep 2
-          done
-          if [[ "${ready}" -ne 1 ]]; then
-            cat /tmp/preview-proxy.log || true
-            exit 11
+      - name: Collect preview evidence from job logs
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          execution="${{ steps.execute.outputs.execution }}"
+          if [[ -z "${execution}" ]]; then
+            execution="$(gcloud run jobs executions list \
+              --job="${PREVIEW_JOB}" \
+              --project="${GCP_PROJECT_ID}" \
+              --region="${GCP_REGION}" \
+              --limit=1 \
+              --sort-by='~metadata.creationTimestamp' \
+              --format='value(metadata.name)' || true)"
+          fi
+          if [[ -n "${execution}" ]]; then
+            gcloud logging read \
+              "resource.type=cloud_run_job AND resource.labels.job_name=${PREVIEW_JOB} AND labels.\"run.googleapis.com/execution_name\"=${execution}" \
+              --project="${GCP_PROJECT_ID}" \
+              --limit=1000 \
+              --order=asc \
+              --format='value(textPayload,jsonPayload.message)' \
+              | tee /tmp/production-canonical-preview.log
           fi
 
-          curl --fail --silent --show-error http://127.0.0.1:8081/api/canonical-bootstrap/status >/tmp/canonical-status.json
-
-          {
-            echo 'silent'
-            echo 'show-error'
-            echo 'fail-with-body'
-            echo 'request = "POST"'
-            echo 'url = "http://127.0.0.1:8081/api/imports/preview"'
-            find content -type f \( -name '*.md' -o -name '*.json' \) ! -path 'content/curriculum/*' | sort | while IFS= read -r file; do
-              printf 'form = "files=@%s;filename=%s"\n' "$file" "$file"
-            done
-          } >/tmp/curl-preview.conf
-
-          curl --config /tmp/curl-preview.conf >/tmp/preview.json
-
-          jq '{contentBaseSha: env.CONTENT_BASE_SHA, canApply, previewDigest, totals,
-               classifications: ([.items[].classification] | sort | group_by(.) | map({classification: .[0], count: length})),
-               itemCount: (.items | length), fileCount: (.files | length),
-               updatedFields: ([.items[] | select(.classification == "UPDATED") | .diffs[]?.field] | sort | group_by(.) | map({field: .[0], count: length}))}' /tmp/preview.json >/tmp/preview-summary.json
-
-          jq '{state, sourceFileCount, totalBatches, readyBatches, totalItems, canonicalItems, currentCounts,
-               countDelta: {
-                 topics: (.currentCounts.topics - .canonicalItems.topics),
-                 concepts: (.currentCounts.concepts - .canonicalItems.concepts),
-                 questions: (.currentCounts.questions - .canonicalItems.questions)
-               }}' /tmp/canonical-status.json >/tmp/status-summary.json
-
-          jq -r '.items[] | select(.classification == "CREATED") | [.kind, .contentKey] | @tsv' /tmp/preview.json >/tmp/created-items.tsv
-          jq -r '.items[] | select(.classification == "ERROR" or (.errors | length) > 0) | [.kind, .contentKey, .reason, (.errors | tostring)] | @tsv' /tmp/preview.json >/tmp/error-items.tsv
-          jq -r '.items[] | select(.classification == "UPDATED") | [.kind, .contentKey, ([.diffs[].field] | join(","))] | @tsv' /tmp/preview.json >/tmp/updated-items.tsv
-          jq -r '.items[] | select(.classification == "UPDATED") | . as $item | .diffs[]? | select(.field | test("reference"; "i")) | [$item.kind, $item.contentKey, .field, .before, .after] | @tsv' /tmp/preview.json >/tmp/reference-diffs.tsv
-
-          echo '=== CANONICAL STATUS ==='
-          cat /tmp/status-summary.json
-          echo '=== PREVIEW SUMMARY ==='
-          cat /tmp/preview-summary.json
-          echo '=== CREATED ITEMS ==='
-          cat /tmp/created-items.tsv || true
-          echo '=== VALIDATION ERRORS ==='
-          cat /tmp/error-items.tsv || true
-          echo '=== REFERENCE DIFFS ==='
-          cat /tmp/reference-diffs.tsv || true
-
-          jq -e '.canApply == true and .totals.errors == 0' /tmp/preview.json >/dev/null
-          test ! -s /tmp/error-items.tsv
-
-      - name: Upload preview evidence
+      - name: Upload preview log
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: production-canonical-preview-${{ env.CONTENT_BASE_SHA }}
-          path: |
-            /tmp/canonical-status.json
-            /tmp/status-summary.json
-            /tmp/preview.json
-            /tmp/preview-summary.json
-            /tmp/created-items.tsv
-            /tmp/error-items.tsv
-            /tmp/updated-items.tsv
-            /tmp/reference-diffs.tsv
+          path: /tmp/production-canonical-preview.log
           if-no-files-found: warn
           retention-days: 7
 
-      - name: Remove preview-only service
+      - name: Remove preview-only job
         if: always()
-        run: gcloud run services delete "${PREVIEW_SERVICE}" --project="${GCP_PROJECT_ID}" --region="${GCP_REGION}" --quiet || true
+        run: gcloud run jobs delete "${PREVIEW_JOB}" --project="${GCP_PROJECT_ID}" --region="${GCP_REGION}" --quiet || true
