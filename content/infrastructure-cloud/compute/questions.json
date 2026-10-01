@@ -2,19 +2,13 @@
   {
     "kind": "question",
     "contentKey": "infrastructure.core.compute.execution-models.q1",
-    "promptMarkdown": "VM·컨테이너·서버리스를 비교할 때 가장 먼저 확인할 기준으로 적절한 것은?",
-    "questionType": "MULTIPLE_CHOICE",
+    "promptMarkdown": "VM·컨테이너·서버리스를 비교할 때 애플리케이션 팀이 가장 먼저 확인할 핵심 기준을 한 구절로 쓰라.",
+    "questionType": "SHORT_ANSWER",
     "difficulty": "EASY",
     "status": "PUBLISHED",
     "conceptKeys": ["infrastructure.core.compute.execution-models"],
-    "choices": [
-      {"key":"A","content":"세 방식이 항상 같은 호스트 커널과 실행 환경을 사용하는지","displayOrder":0,"rationaleMarkdown":"VM·컨테이너·서버리스는 실행 경계와 관리 책임이 서로 다르므로 같은 호스트·실행 환경을 전제로 비교할 수 없다."},
-      {"key":"B","content":"호스트·실행 환경 관리 책임이 어디까지 플랫폼에 위임되는지","displayOrder":1,"rationaleMarkdown":"세 실행 모델의 핵심 차이는 호스트와 실행 환경을 누가 관리하고 애플리케이션 팀이 어떤 운영 책임을 남겨 두는지에 있다."},
-      {"key":"C","content":"어떤 방식이 항상 가장 저렴한지","displayOrder":2,"rationaleMarkdown":"비용은 부하 형태·유휴 시간·운영 인력·실행 제약에 따라 달라지므로 실행 모델 이름만으로 항상 가장 싼 방식을 정할 수 없다."},
-      {"key":"D","content":"실행 인스턴스의 로컬 쓰기 상태가 자동으로 영구 보존되는지","displayOrder":3,"rationaleMarkdown":"실행 인스턴스의 로컬 상태는 재생성 시 사라질 수 있다. 영구 데이터는 실행 단위와 분리된 저장소에 둬야 한다."}
-    ],
-    "correctChoiceKey": "B",
-    "explanationMarkdown": "VM·컨테이너·서버리스는 단순히 가벼운 실행 방식의 순서가 아니라 호스트 관리, 격리, 시작 방식, 확장과 패치 책임을 서로 다르게 나눈다. 따라서 애플리케이션 팀이 직접 통제할 범위와 플랫폼에 맡길 운영 책임을 먼저 확인해야 한다."
+    "acceptedAnswers": ["실행 환경과 운영 책임이 어디까지 플랫폼에 위임되는지 확인한다", "운영 책임과 실행 환경의 경계를 확인한다", "운영 책임 경계", "실행 환경과 운영 책임의 경계"],
+    "explanationMarkdown": "VM·컨테이너·서버리스는 단순히 가벼운 실행 방식의 순서가 아니라 호스트 관리, 격리, 시작 방식, 확장과 패치 책임을 서로 다르게 나눈다. 따라서 애플리케이션 팀이 직접 통제할 범위와 플랫폼에 맡길 운영 책임의 경계를 먼저 확인해야 한다."
   },
   {
     "kind": "question",
