@@ -125,6 +125,11 @@ public class Question extends AuditedEntity {
                 .filter(answer -> answer.getAnswerKind() == QuestionAnswerKind.MODEL_ANSWER)
                 .findFirst()
                 .orElse(null);
+        Map<String, QuestionAnswer> existingAcceptedAnswersByText = new HashMap<>();
+        answers.stream()
+                .filter(answer -> answer.getAnswerKind() == QuestionAnswerKind.ACCEPTED_TEXT)
+                .forEach(answer -> existingAcceptedAnswersByText.put(
+                        normalizedAcceptedAnswer(answer.getAnswerText()), answer));
         Map<String, QuestionChoice> existingChoicesByKey = new HashMap<>();
         choices.forEach(choice -> existingChoicesByKey.put(choice.getChoiceKey(), choice));
         Map<String, QuestionConcept> existingConceptLinksByKey = new HashMap<>();
@@ -156,7 +161,23 @@ public class Question extends AuditedEntity {
                 answers.add(existingCorrectAnswer);
             }
         }
-        if (acceptedAnswers != null) acceptedAnswers.forEach(this::addAcceptedAnswer);
+        if (acceptedAnswers != null) {
+            for (String answerText : acceptedAnswers) {
+                String normalized = requireText(answerText, "answerText").trim();
+                QuestionAnswer existingAnswer = existingAcceptedAnswersByText.remove(
+                        normalizedAcceptedAnswer(normalized));
+                if (existingAnswer == null) {
+                    addAcceptedAnswer(normalized);
+                }
+                else {
+                    int displayOrder = (int) answers.stream()
+                            .filter(answer -> answer.getAnswerKind() == QuestionAnswerKind.ACCEPTED_TEXT)
+                            .count();
+                    existingAnswer.reviseAcceptedText(normalized, displayOrder);
+                    answers.add(existingAnswer);
+                }
+            }
+        }
         if (modelAnswer != null) {
             if (existingModelAnswer == null) defineModelAnswer(modelAnswer);
             else {
@@ -230,9 +251,13 @@ public class Question extends AuditedEntity {
     private static void validateAcceptedAnswers(List<String> acceptedAnswers) {
         java.util.Set<String> normalized = new java.util.HashSet<>();
         for (String answer : acceptedAnswers) {
-            String value = requireText(answer, "answerText").trim().toLowerCase(java.util.Locale.ROOT);
+            String value = normalizedAcceptedAnswer(requireText(answer, "answerText"));
             if (!normalized.add(value)) throw new IllegalArgumentException("accepted answer must be unique within a question");
         }
+    }
+
+    private static String normalizedAcceptedAnswer(String answerText) {
+        return answerText.trim().toLowerCase(java.util.Locale.ROOT);
     }
 
     public QuestionChoice addChoice(String choiceKey, String contentMarkdown, String rationaleMarkdown, int displayOrder) {
