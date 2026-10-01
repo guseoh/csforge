@@ -1,4 +1,4 @@
-name: One-time production canonical apply diagnostic
+name: One-time production canonical question blocker diagnostic
 
 on:
   push:
@@ -12,15 +12,16 @@ permissions:
   id-token: write
 
 jobs:
-  apply-and-capture:
+  diagnose-question-blockers:
     runs-on: ubuntu-latest
     env:
       GCP_PROJECT_ID: csforge-508510
       GCP_REGION: asia-southeast1
       CLOUD_RUN_SERVICE: csforge
-      APPLY_SERVICE: csforge-canonical-apply-once
-      BASE_APPLY_IMAGE: asia-southeast1-docker.pkg.dev/csforge-508510/csforge/csforge:canonical-apply-retry-061185f302775cea51fe27245eb96ed3e8484b1e
-      DIAGNOSTIC_IMAGE: asia-southeast1-docker.pkg.dev/csforge-508510/csforge/csforge:canonical-apply-diagnostic-${{ github.sha }}
+      DIAGNOSTIC_SERVICE: csforge-canonical-diagnostic-once
+      CONTENT_BASE_SHA: ba8c40c4907bbb35fbd662fbc1beb56f64ae7736
+      BASE_IMAGE: asia-southeast1-docker.pkg.dev/csforge-508510/csforge/csforge:canonical-apply-retry-061185f302775cea51fe27245eb96ed3e8484b1e
+      DIAGNOSTIC_IMAGE: asia-southeast1-docker.pkg.dev/csforge-508510/csforge/csforge:canonical-question-diagnostic-${{ github.sha }}
     steps:
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v3
@@ -32,18 +33,15 @@ jobs:
       - name: Set up Google Cloud CLI
         uses: google-github-actions/setup-gcloud@v3
 
-      - name: Build result-capturing apply wrapper
+      - name: Build read-only diagnostic wrapper
         shell: bash
         run: |
           set -euo pipefail
           gcloud auth configure-docker "${GCP_REGION}-docker.pkg.dev" --quiet
-          mkdir -p /tmp/apply-diagnostic
-          cat > /tmp/apply-diagnostic/run-apply.sh <<'SH'
+          mkdir -p /tmp/question-diagnostic
+          cat > /tmp/question-diagnostic/run-diagnostic.sh <<'SH'
           #!/bin/sh
           set -eu
-
-          phase() { printf '%s' "$1" >/tmp/apply-phase; }
-          phase START_JAVA
           java -jar /app/app.jar --spring.profiles.active=local --server.port=8081 >/tmp/java.log 2>&1 &
           java_pid=$!
           cleanup() {
@@ -52,123 +50,88 @@ jobs:
           }
           trap cleanup EXIT
 
-          phase WAIT_PREFLIGHT
           ok=0
           for _ in $(seq 1 360); do
-            code=$(curl --silent --show-error --max-time 300 --output /tmp/pre-status.json --write-out '%{http_code}' \
+            code=$(curl --silent --show-error --max-time 60 --output /tmp/status.json --write-out '%{http_code}' \
               http://127.0.0.1:8081/api/canonical-bootstrap/status || true)
             if [ "$code" = "200" ]; then ok=1; break; fi
             if ! kill -0 "$java_pid" 2>/dev/null; then exit 21; fi
             sleep 2
           done
           [ "$ok" -eq 1 ] || exit 22
-          jq -e '.sourceFileCount == 870 and .totalBatches == 12 and .totalItems == 3380 and
-                 .canonicalItems.topics == 134 and .canonicalItems.concepts == 721 and .canonicalItems.questions == 2525 and
-                 .currentCounts.learningAreas == 15 and .currentCounts.topics == 134 and
-                 .currentCounts.concepts == 721 and .currentCounts.questions == 2525' /tmp/pre-status.json >/dev/null
 
-          phase PREPARE_HISTORY_SNAPSHOT
-          python3 <<'PY' >/tmp/pg-env
-          import os, shlex
-          from urllib.parse import urlparse, parse_qs, unquote
-          raw = os.environ['DB_URL']
-          if raw.startswith('jdbc:'):
-              raw = raw[5:]
-          parsed = urlparse(raw)
-          if parsed.scheme not in {'postgresql', 'postgres'} or not parsed.hostname:
-              raise SystemExit('DB_URL is not a direct PostgreSQL URL supported by the safety snapshot')
-          dbname = unquote(parsed.path.lstrip('/'))
-          if not dbname:
-              raise SystemExit('DB_URL database name is missing')
-          values = {
-              'PGHOST': parsed.hostname,
-              'PGPORT': str(parsed.port or 5432),
-              'PGDATABASE': dbname,
-              'PGUSER': os.environ['DB_USERNAME'],
-              'PGPASSWORD': os.environ['DB_PASSWORD'],
-          }
-          query = parse_qs(parsed.query)
-          if query.get('sslmode'):
-              values['PGSSLMODE'] = query['sslmode'][0]
-          for key, value in values.items():
-              print(f"export {key}={shlex.quote(value)}")
-          PY
-          . /tmp/pg-env
-          rm -f /tmp/pg-env
-          export PGHOST PGPORT PGDATABASE PGUSER PGPASSWORD
-          [ -z "${PGSSLMODE:-}" ] || export PGSSLMODE
-          psql -X -v ON_ERROR_STOP=1 -Atc 'select 1' >/dev/null
+          : >/tmp/error-items.jsonl
+          files=0
+          items=0
+          for file in $(find /app/content -type f -name questions.json | sort); do
+            files=$((files + 1))
+            rel=${file#/app/}
+            curl --silent --show-error --fail-with-body --max-time 180 \
+              -F "files=@${file};filename=${rel}" \
+              http://127.0.0.1:8081/api/imports/preview >/tmp/one-preview.json
+            count=$(jq '.items | length' /tmp/one-preview.json)
+            items=$((items + count))
+            jq -c '.items[] | select(.classification == "ERROR") | {fileName,itemIndex,kind,contentKey,classification,reason,errors,diffs}' \
+              /tmp/one-preview.json >>/tmp/error-items.jsonl
+          done
 
-          snapshot_history() {
-            dest="$1"
-            : >"$dest"
-            for table in quiz_session quiz_question attempt review_schedule review_history; do
-              psql -X -v ON_ERROR_STOP=1 -Atc "SELECT '$table' || E'\\t' || count(*) || E'\\t' || md5(COALESCE(string_agg(md5(row_to_json(t)::text), '' ORDER BY md5(row_to_json(t)::text)), '')) FROM $table t;" >>"$dest"
-            done
-          }
-          snapshot_history /tmp/history-before.tsv
-
-          phase APPLY
-          : >/tmp/apply-invoked
-          curl --silent --show-error --fail-with-body --max-time 900 \
-            --request POST http://127.0.0.1:8081/api/canonical-bootstrap >/tmp/apply.json
-
-          phase VERIFY
-          snapshot_history /tmp/history-after.tsv
-          if cmp -s /tmp/history-before.tsv /tmp/history-after.tsv; then
-            printf 'true' >/tmp/history-preserved
-          else
-            printf 'false' >/tmp/history-preserved
-          fi
-          curl --silent --show-error --fail-with-body --max-time 900 \
-            http://127.0.0.1:8081/api/canonical-bootstrap/status >/tmp/post-status.json
-          psql -X -v ON_ERROR_STOP=1 -Atc "SELECT count(*) FROM concept WHERE content_key='messaging.core.semantics.consumer-offset' AND title='컨슈머 그룹과 처리 위치';" >/tmp/concept-ok
-          psql -X -v ON_ERROR_STOP=1 -Atc "SELECT count(*) FROM question WHERE (content_key='backend.core.api.methods-status.q2' AND question_type='DESCRIPTIVE') OR (content_key='dsa.core.search-sort.merge-sort.q1' AND question_type='SHORT_ANSWER') OR (content_key='dsa.core.stack-queue-deque.deque.q1' AND question_type='SHORT_ANSWER') OR (content_key='infrastructure.core.compute.execution-models.q1' AND question_type='SHORT_ANSWER');" >/tmp/structure-ok
-
-          phase BUILD_RESULT
-          python3 <<'PY'
-          import json
+          python3 - "$files" "$items" <<'PY'
+          import json, sys
           from pathlib import Path
-          pre = json.load(open('/tmp/pre-status.json', encoding='utf-8'))
-          applied = json.load(open('/tmp/apply.json', encoding='utf-8'))
-          post = json.load(open('/tmp/post-status.json', encoding='utf-8'))
-          before = Path('/tmp/history-before.tsv').read_text(encoding='utf-8')
-          after = Path('/tmp/history-after.tsv').read_text(encoding='utf-8')
-          history_counts = {}
-          for line in after.splitlines():
-              if line.strip():
-                  table, count, _digest = line.split('\t', 2)
-                  history_counts[table] = int(count)
+          files, items = int(sys.argv[1]), int(sys.argv[2])
+          errors = []
+          p = Path('/tmp/error-items.jsonl')
+          if p.exists():
+              for line in p.read_text(encoding='utf-8').splitlines():
+                  if line.strip(): errors.append(json.loads(line))
+          status = json.load(open('/tmp/status.json', encoding='utf-8'))
           result = {
-              'state': 'DONE',
-              'contentBaseSha': 'ba8c40c4907bbb35fbd662fbc1beb56f64ae7736',
-              'preStatus': pre,
-              'applyResponse': applied,
-              'postStatus': post,
-              'historyPreserved': before == after,
-              'historyRowCounts': history_counts,
-              'representativeConceptVerified': Path('/tmp/concept-ok').read_text().strip() == '1',
-              'preservedQuestionStructuresVerified': Path('/tmp/structure-ok').read_text().strip() == '4',
-              'flywayEnabled': False,
-              'destructiveApplyInvoked': True,
+              'state':'DONE',
+              'contentBaseSha':'ba8c40c4907bbb35fbd662fbc1beb56f64ae7736',
+              'destructiveApplyInvoked':False,
+              'flywayEnabled':False,
+              'questionFilesScanned':files,
+              'questionItemsScanned':items,
+              'canonicalStatus':status,
+              'errorCount':len(errors),
+              'errorItems':errors,
           }
           Path('/tmp/public-result.json.tmp').write_text(json.dumps(result, ensure_ascii=False), encoding='utf-8')
           Path('/tmp/public-result.json.tmp').replace('/tmp/public-result.json')
           PY
-          phase DONE
           SH
-          chmod +x /tmp/apply-diagnostic/run-apply.sh
+          chmod +x /tmp/question-diagnostic/run-diagnostic.sh
 
-          cat > /tmp/apply-diagnostic/Dockerfile <<'DOCKER'
-          ARG BASE_APPLY_IMAGE
-          FROM ${BASE_APPLY_IMAGE}
+          cat > /tmp/question-diagnostic/wrapper-entrypoint.sh <<'SH'
+          #!/bin/sh
+          set -u
+          (
+            /app/run-diagnostic.sh >/tmp/compute.log 2>&1
+            rc=$?
+            if [ "$rc" -ne 0 ] && [ ! -f /tmp/public-result.json ]; then
+              python3 - "$rc" <<'PY'
+          import json, sys
+          from pathlib import Path
+          diag = (Path('/tmp/compute.log').read_text(encoding='utf-8', errors='replace') + '\n' + Path('/tmp/java.log').read_text(encoding='utf-8', errors='replace'))[-12000:]
+          Path('/tmp/public-result.json').write_text(json.dumps({'state':'ERROR','exitCode':int(sys.argv[1]),'diagnostic':diag,'contentBaseSha':'ba8c40c4907bbb35fbd662fbc1beb56f64ae7736','destructiveApplyInvoked':False,'flywayEnabled':False}, ensure_ascii=False), encoding='utf-8')
+          PY
+            fi
+          ) &
+          exec python3 /app/result-server.py
+          SH
+          chmod +x /tmp/question-diagnostic/wrapper-entrypoint.sh
+
+          cat > /tmp/question-diagnostic/Dockerfile <<'DOCKER'
+          ARG BASE_IMAGE
+          FROM ${BASE_IMAGE}
           USER root
-          COPY run-apply.sh /app/run-apply.sh
-          RUN chmod +x /app/run-apply.sh
+          COPY run-diagnostic.sh /app/run-diagnostic.sh
+          COPY wrapper-entrypoint.sh /app/wrapper-entrypoint.sh
+          RUN chmod +x /app/run-diagnostic.sh /app/wrapper-entrypoint.sh
           USER 10001:10001
+          ENTRYPOINT ["/app/wrapper-entrypoint.sh"]
           DOCKER
-          docker build --build-arg BASE_APPLY_IMAGE="${BASE_APPLY_IMAGE}" \
-            --tag "${DIAGNOSTIC_IMAGE}" /tmp/apply-diagnostic
+          docker build --build-arg BASE_IMAGE="${BASE_IMAGE}" --tag "${DIAGNOSTIC_IMAGE}" /tmp/question-diagnostic
           docker push "${DIAGNOSTIC_IMAGE}"
 
       - name: Create result token
@@ -187,8 +150,7 @@ jobs:
         run: |
           set -euo pipefail
           service_json="$(mktemp)"
-          gcloud run services describe "${CLOUD_RUN_SERVICE}" \
-            --project="${GCP_PROJECT_ID}" --region="${GCP_REGION}" --format=json > "${service_json}"
+          gcloud run services describe "${CLOUD_RUN_SERVICE}" --project="${GCP_PROJECT_ID}" --region="${GCP_REGION}" --format=json > "${service_json}"
           service_account="$(jq -r '.spec.template.spec.serviceAccountName // empty' "${service_json}")"
           test -n "${service_account}"
           python3 - "${service_json}" "${GITHUB_OUTPUT}" <<'PY'
@@ -198,42 +160,32 @@ jobs:
           wanted = {'DB_URL','DB_USERNAME','DB_PASSWORD','DB_MAX_POOL_SIZE','DB_MIN_IDLE','DB_CONNECTION_TIMEOUT','DB_VALIDATION_TIMEOUT'}
           required = {'DB_URL','DB_USERNAME','DB_PASSWORD'}
           entries = service['spec']['template']['spec']['containers'][0].get('env', [])
-          plain = {
-              'SPRING_PROFILES_ACTIVE':'local', 'CSFORGE_AI_ENABLED':'false',
-              'SPRING_FLYWAY_ENABLED':'false', 'SPRING_JPA_HIBERNATE_DDL_AUTO':'validate',
-              'PREVIEW_RESULT_TOKEN': os.environ['PREVIEW_RESULT_TOKEN'],
-          }
+          plain = {'SPRING_PROFILES_ACTIVE':'local','CSFORGE_AI_ENABLED':'false','SPRING_FLYWAY_ENABLED':'false','SPRING_JPA_HIBERNATE_DDL_AUTO':'validate','PREVIEW_RESULT_TOKEN':os.environ['PREVIEW_RESULT_TOKEN']}
           secrets, found = [], set()
           for item in entries:
               name = item.get('name')
               if name not in wanted: continue
               found.add(name)
-              if 'value' in item:
-                  plain[name] = item['value']; continue
+              if 'value' in item: plain[name] = item['value']; continue
               ref = item.get('valueFrom', {}).get('secretKeyRef', {})
-              if not ref.get('name') or not ref.get('key'):
-                  raise SystemExit(f'unsupported env source for {name}')
+              if not ref.get('name') or not ref.get('key'): raise SystemExit(f'unsupported env source for {name}')
               secrets.append(f"{name}={ref['name']}:{ref['key']}")
           missing = required - found
           if missing: raise SystemExit('missing DB vars: ' + ','.join(sorted(missing)))
-          json.dump(plain, open('/tmp/apply-env.json','w',encoding='utf-8'))
-          with open(output_path,'a',encoding='utf-8') as out:
-              out.write('secrets=' + ','.join(secrets) + '\n')
+          json.dump(plain, open('/tmp/diag-env.json','w',encoding='utf-8'))
+          with open(output_path,'a',encoding='utf-8') as out: out.write('secrets=' + ','.join(secrets) + '\n')
           PY
           echo "service_account=${service_account}" >> "${GITHUB_OUTPUT}"
 
-      - name: Deploy private diagnostic apply service
+      - name: Deploy private diagnostic service
         id: deploy
         shell: bash
         run: |
           set -euo pipefail
-          args=(run deploy "${APPLY_SERVICE}" --project="${GCP_PROJECT_ID}" --region="${GCP_REGION}"
-            --image="${DIAGNOSTIC_IMAGE}" --service-account="${{ steps.prod.outputs.service_account }}"
-            --env-vars-file=/tmp/apply-env.json --cpu=1 --memory=1Gi --min=0 --max=1 --timeout=900
-            --no-cpu-throttling --cpu-boost --no-allow-unauthenticated --quiet)
+          args=(run deploy "${DIAGNOSTIC_SERVICE}" --project="${GCP_PROJECT_ID}" --region="${GCP_REGION}" --image="${DIAGNOSTIC_IMAGE}" --service-account="${{ steps.prod.outputs.service_account }}" --env-vars-file=/tmp/diag-env.json --cpu=1 --memory=1Gi --min=0 --max=1 --timeout=900 --no-cpu-throttling --cpu-boost --no-allow-unauthenticated --quiet)
           if [[ -n "${{ steps.prod.outputs.secrets }}" ]]; then args+=(--set-secrets="${{ steps.prod.outputs.secrets }}"); fi
           gcloud "${args[@]}"
-          actual_url="$(gcloud run services describe "${APPLY_SERVICE}" --project="${GCP_PROJECT_ID}" --region="${GCP_REGION}" --format='value(status.url)')"
+          actual_url="$(gcloud run services describe "${DIAGNOSTIC_SERVICE}" --project="${GCP_PROJECT_ID}" --region="${GCP_REGION}" --format='value(status.url)')"
           test -n "${actual_url}"
           echo "url=${actual_url}" >> "${GITHUB_OUTPUT}"
 
@@ -247,37 +199,34 @@ jobs:
           token_format: id_token
           id_token_audience: ${{ steps.deploy.outputs.url }}
 
-      - name: Fetch captured apply result
+      - name: Fetch diagnostic result
         shell: bash
         env:
           PREVIEW_RESULT_TOKEN: ${{ steps.token.outputs.value }}
           CLOUD_RUN_ID_TOKEN: ${{ steps.invoke_auth.outputs.id_token }}
-          APPLY_URL: ${{ steps.deploy.outputs.url }}
+          DIAGNOSTIC_URL: ${{ steps.deploy.outputs.url }}
         run: |
           set -euo pipefail
-          code="000"
+          code=000
           for _ in $(seq 1 500); do
-            code="$(curl --silent --show-error --output /tmp/result.json --write-out '%{http_code}' \
-              --header "Authorization: Bearer ${CLOUD_RUN_ID_TOKEN}" \
-              --header "X-Preview-Token: ${PREVIEW_RESULT_TOKEN}" "${APPLY_URL}/result" || true)"
+            code="$(curl --silent --show-error --output /tmp/result.json --write-out '%{http_code}' --header "Authorization: Bearer ${CLOUD_RUN_ID_TOKEN}" --header "X-Preview-Token: ${PREVIEW_RESULT_TOKEN}" "${DIAGNOSTIC_URL}/result" || true)"
             if [[ "${code}" == "200" ]]; then break; fi
             if [[ "${code}" != "202" && "${code}" != "000" ]]; then cat /tmp/result.json || true; exit 1; fi
             sleep 3
           done
           test "${code}" = "200"
           jq . /tmp/result.json
-          jq -e '.state == "DONE" and .contentBaseSha == "ba8c40c4907bbb35fbd662fbc1beb56f64ae7736"' /tmp/result.json >/dev/null
-          jq -e '.destructiveApplyInvoked == true and .flywayEnabled == false' /tmp/result.json >/dev/null
+          jq -e '.state == "DONE" and .contentBaseSha == "ba8c40c4907bbb35fbd662fbc1beb56f64ae7736" and .destructiveApplyInvoked == false and .flywayEnabled == false' /tmp/result.json >/dev/null
 
-      - name: Upload captured apply evidence
+      - name: Upload diagnostic evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: production-canonical-apply-diagnostic-ba8c40c
+          name: production-canonical-question-blockers-ba8c40c
           path: /tmp/result.json
           if-no-files-found: warn
           retention-days: 14
 
-      - name: Remove temporary apply service
+      - name: Remove temporary diagnostic service
         if: always()
-        run: gcloud run services delete "${APPLY_SERVICE}" --project="${GCP_PROJECT_ID}" --region="${GCP_REGION}" --quiet || true
+        run: gcloud run services delete "${DIAGNOSTIC_SERVICE}" --project="${GCP_PROJECT_ID}" --region="${GCP_REGION}" --quiet || true
