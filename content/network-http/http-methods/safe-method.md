@@ -25,7 +25,7 @@ HTTP 메서드가 **안전하다(safe)**는 것은 클라이언트가 그 요청
 클라이언트가 이 요청으로
 대상 리소스의 상태 변경을 요구하는가?
         ↓
-아니오 → safe semantics
+아니오 → 안전한 메서드의 의미
 ```
 
 여기서 `safe = 서버에서 아무 상태도 바뀌지 않는다`라고 이해하면 안 된다.
@@ -80,10 +80,10 @@ Authorized?
 안전한 메서드는 모두 멱등하지만, 모든 멱등 메서드가 안전한 것은 아니다. PUT과 DELETE는 상태 변경을 요청하므로 안전하지 않지만, 같은 요청을 반복했을 때 의도된 효과가 누적되지 않도록 멱등하게 정의된다.
 
 ```text
-GET     safe O / idempotent O
-PUT     safe X / idempotent O
-DELETE  safe X / idempotent O
-POST    safe X / idempotent X (메서드 자체 기준)
+GET     안전 O / 멱등 O
+PUT     안전 X / 멱등 O
+DELETE  안전 X / 멱등 O
+POST    안전 X / 멱등 X (메서드 자체 기준)
 ```
 
 핵심은 **안전한 메서드가 서버 구현의 모든 부수 효과를 금지하는 것이 아니라, 클라이언트가 대상 리소스의 상태 변경을 요청하지 않는다는 HTTP 의미 계약이라는 점**이다.

@@ -4,7 +4,7 @@ contentKey: network-http.core.http-state-intermediary.gateway
 topicContentKey: network-http.core.http-state-intermediary
 slug: gateway
 title: "게이트웨이의 중계 역할"
-summary: "client와 upstream 사이에서 protocol·routing·policy boundary를 형성하는 gateway의 역할을 설명한다."
+summary: "게이트웨이가 클라이언트와 백엔드 사이에서 프로토콜 변환·경로 선택·경계 정책을 수행할 수 있는 중개 역할임을 설명한다."
 level: 2
 status: PUBLISHED
 displayOrder: 60
@@ -17,19 +17,19 @@ references:
 ---
 # 게이트웨이의 중계 역할
 
-Gateway는 client와 upstream 사이의 경계에서 request를 받아 다른 protocol endpoint나 backend로 전달하는 intermediary 역할을 가리킨다. Reverse proxy와 같은 제품 위에 구현될 수도 있지만, gateway라는 이름은 특히 routing, protocol translation이나 edge policy 같은 경계 기능을 강조할 때 자주 사용된다.
+게이트웨이는 클라이언트와 백엔드 사이에서 요청을 받아 다른 프로토콜의 대상이나 백엔드로 전달하는 중개자다. 역방향 프록시 제품 위에 구현될 수도 있다. ‘게이트웨이’라는 이름은 경로 선택, 프로토콜 변환, 외부 진입 경계의 정책 적용 같은 역할을 강조할 때 자주 쓰인다.
 
-예를 들어 external HTTP request를 내부 gRPC call로 바꾸거나, 여러 backend 중 하나를 선택해 요청을 전달할 수 있다. 이런 경우 client-facing request와 upstream request는 동일한 wire message가 아니며, gateway가 둘 사이의 변환 책임을 갖는다.
+예를 들어 외부 HTTP 요청을 내부 gRPC 호출로 바꾸거나 여러 백엔드 중 하나를 골라 전달할 수 있다. 이때 클라이언트가 보낸 요청과 백엔드로 가는 요청은 같은 전송 메시지가 아닐 수 있으며 게이트웨이가 둘 사이를 변환한다.
 
 ```text
-client request
+클라이언트 요청
     ↓
-gateway
-    ├─ route 선택
-    ├─ protocol / message 변환 가능
-    └─ upstream request
+게이트웨이
+    ├─ 경로 선택
+    ├─ 프로토콜·메시지 변환 가능
+    └─ 백엔드 요청
 ```
 
-Gateway가 authentication, rate limit, cache 같은 정책을 함께 수행할 수 있지만 그 기능들이 HTTP gateway의 보편적 필수 조건은 아니다. 또한 gateway가 request를 upstream에 성공적으로 전달했다는 사실이 backend의 domain operation까지 성공했다는 뜻도 아니다.
+게이트웨이가 인증, 요청 빈도 제한, 캐시 같은 정책을 수행할 수도 있지만 모든 게이트웨이에 공통으로 요구되는 기능은 아니다. 요청을 백엔드로 전달했다는 사실만으로 백엔드의 업무 처리가 성공한 것도 아니다.
 
-따라서 gateway를 이해할 때는 제품 이름보다 **어느 connection과 protocol을 종료하고, 무엇을 변환하며, 어느 지점에서 다음 hop을 새로 만드는가**를 보는 것이 중요하다.
+게이트웨이를 볼 때는 제품 이름보다 **어느 연결과 프로토콜을 끝내고, 무엇을 변환하며, 어느 지점에서 다음 요청 구간을 새로 시작하는지** 살펴봐야 한다.

@@ -4,7 +4,7 @@ contentKey: network-http.core.request-journey.url-components
 topicContentKey: network-http.core.request-journey
 slug: url-components
 title: "URL 구성 요소"
-summary: "URL의 스킴·authority·경로·질의·프래그먼트가 연결 대상과 HTTP 요청을 만드는 과정에서 각각 어떤 역할을 하는지 설명한다."
+summary: "URL의 스킴·호스트와 선택적 포트 정보(authority)·경로·질의·프래그먼트가 연결 대상과 HTTP 요청을 만드는 과정에서 각각 어떤 역할을 하는지 설명한다."
 level: 1
 status: PUBLISHED
 displayOrder: 10
@@ -50,7 +50,7 @@ https://api.example.com:8443/...
 
 ### 경로와 질의는 HTTP 요청 대상으로 이어진다
 
-일반적인 HTTP 요청에서는 경로와 질의 문자열이 request target을 구성하는 데 사용된다.
+일반적인 HTTP 요청에서는 경로와 질의 문자열이 요청 대상(request target)을 구성하는 데 사용된다.
 
 ```http
 GET /users/42?detail=true HTTP/1.1
@@ -61,7 +61,7 @@ Host: api.example.com:8443
 
 ### 프래그먼트는 일반적인 HTTP 요청에 전송되지 않는다
 
-`#profile` 같은 프래그먼트는 사용자 에이전트가 리소스를 받은 뒤 문서 내부 위치나 클라이언트 쪽 상태를 가리키는 데 사용한다. 일반적인 HTTP request target에는 포함되지 않는다.
+`#profile` 같은 프래그먼트는 사용자 에이전트가 리소스를 받은 뒤 문서 내부 위치나 클라이언트 쪽 상태를 가리키는 데 사용한다. 일반적인 HTTP 요청 대상(request target)에는 포함되지 않는다.
 
 따라서 서버에서 `#profile` 값을 받아 라우팅한다고 생각하면 URL 처리 경계를 잘못 이해한 것이다. 서버가 그 값이 필요하다면 질의 매개변수나 경로, 요청 본문처럼 실제 HTTP 요청에 포함되는 다른 방법을 사용해야 한다.
 

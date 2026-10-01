@@ -4,7 +4,7 @@ contentKey: network-http.core.http-state-intermediary.cookie
 topicContentKey: network-http.core.http-state-intermediary
 slug: cookie
 title: "Cookie로 상태 이어가기"
-summary: "user agent가 저장한 cookie를 조건에 맞는 HTTP 요청에 다시 보내는 state 흐름을 설명한다."
+summary: "HTTP 요청 사이에서 사용자 에이전트가 쿠키를 저장하고 조건에 맞는 다음 요청에 다시 보내는 상태 관리 방식을 설명한다."
 level: 1
 status: PUBLISHED
 displayOrder: 10
@@ -19,20 +19,18 @@ references:
 ---
 # Cookie로 상태 이어가기
 
-HTTP 자체의 request와 response는 이전 요청의 application state를 자동으로 기억하지 않는다. Cookie는 user agent가 server의 지시에 따라 작은 name/value 상태를 저장하고, 이후 요청이 정해진 조건에 맞을 때 그 값을 `Cookie` header로 다시 보내게 하는 state management mechanism이다.
+HTTP 요청은 서로 독립적이어서 이전 요청의 애플리케이션 상태를 자동으로 이어 주지 않는다. 쿠키는 서버가 응답의 `Set-Cookie` 필드로 보낸 이름·값 쌍을 사용자 에이전트가 저장하고, 다음 요청이 전송 조건을 만족할 때 `Cookie` 필드에 그 값을 담아 보내는 상태 관리 방식이다.
 
-보통 server는 session identifier 같은 값을 cookie로 전달하고, 이후 요청에서 돌아온 identifier를 이용해 server-side state를 찾을 수 있다. 하지만 cookie가 반드시 session ID일 필요는 없다. 어떤 의미를 부여하고 값을 어떻게 검증할지는 application contract가 정한다.
+서버는 세션 식별자 같은 값을 쿠키에 담아 보내고, 다음 요청에서 돌려받은 값으로 서버 쪽 세션 상태를 찾을 수 있다. 쿠키가 반드시 세션 ID인 것은 아니다. 서명된 토큰이나 설정값을 담을 수도 있으며 값의 의미와 유효성 검사는 애플리케이션이 정한다.
 
 ```text
-response: Set-Cookie
+응답: Set-Cookie
         ↓
-user agent가 저장
-        ↓
-조건에 맞는 다음 request
-        ↓
-request: Cookie
+사용자 에이전트가 저장
+        ↓ 조건을 만족하는 다음 요청
+요청: Cookie
 ```
 
-cookie의 전송 여부는 host/domain, path, secure channel, site context와 저장 lifetime 같은 scope 규칙에 영향을 받는다. 또한 `Cookie` request field에는 저장 시 사용한 모든 attribute가 다시 실리는 것이 아니라 전송 대상이 된 cookie의 name/value가 포함된다.
+쿠키를 보낼지는 호스트·도메인, 경로, HTTPS 같은 보안 전송 여부, 사이트 문맥, 저장 수명과 범위에 따라 결정된다. 요청의 `Cookie` 필드에는 저장 속성이 다시 들어가는 것이 아니라 선택된 쿠키의 이름과 값이 들어간다.
 
-Cookie가 요청에 포함됐다는 사실만으로 그 값이 신뢰할 수 있는 사용자 identity이거나 아직 유효한 session이라는 보장은 없다. **Cookie는 HTTP 요청 사이에 state token을 운반하는 mechanism이고, 그 token의 의미·유효성·권한은 별도의 application 검증 대상**이다.
+쿠키 값이 요청에 실려 왔다는 사실만으로 신뢰할 수 있는 사용자 신원 정보이거나 유효한 세션이라고 볼 수 없다. **쿠키는 요청 사이에 상태를 전달하는 수단이며, 값의 신뢰성·유효 기간·권한은 서버가 별도로 확인해야 한다.**

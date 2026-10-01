@@ -82,7 +82,7 @@ Vary: Accept-Language
 한국어 JSON과 영어 HTML이 서로 다른 바이트를 갖더라도 같은 URI가 식별하는 리소스의 서로 다른 표현일 수 있다.
 
 ```text
-리소스 identity
+리소스 식별 정보
        ↓
 여러 표현 variant
        ↓ 협상

@@ -4,7 +4,7 @@ contentKey: network-http.core.ip-routing.ipv6-basics
 topicContentKey: network-http.core.ip-routing
 slug: ipv6-basics
 title: "IPv6 주소와 전달 기초"
-summary: "IPv6의 128비트 주소, 주소 scope, NDP 기반 이웃 탐색과 송신 측 단편화 경계를 IPv4와 비교해 설명한다."
+summary: "IPv6의 128비트 주소, 주소 범위(scope), NDP 기반 이웃 탐색과 송신 측 단편화 경계를 IPv4와 비교해 설명한다."
 level: 1
 status: PUBLISHED
 displayOrder: 90
@@ -38,19 +38,19 @@ IPv6는 **128비트 주소**를 사용한다. IPv4의 32비트보다 훨씬 큰 
 
 ### 하나의 인터페이스에 범위가 다른 IPv6 주소가 함께 있을 수 있다
 
-IPv6 인터페이스는 link-local 주소와 global unicast 주소 등 서로 다른 범위의 주소를 동시에 가질 수 있다. 실제 패킷의 출발지 주소는 목적지와 운영체제의 source-address selection 규칙에 따라 달라질 수 있다.
+IPv6 인터페이스는 링크 로컬(link-local) 주소와 전역 유니캐스트(global unicast) 주소처럼 범위가 다른 주소를 동시에 가질 수 있다. 실제 패킷의 출발지 주소는 목적지와 운영체제의 출발지 주소 선택(source address selection) 규칙에 따라 달라질 수 있다.
 
-따라서 `인터페이스 하나 = IPv6 주소 하나`라고 생각하면 안 되고, 주소의 **값뿐 아니라 scope와 prefix**도 함께 봐야 한다.
+따라서 `인터페이스 하나 = IPv6 주소 하나`라고 생각하면 안 되고, 주소의 **값뿐 아니라 범위(scope)와 접두사(prefix)**도 함께 봐야 한다.
 
 ### IPv6는 ARP 대신 Neighbor Discovery를 사용한다
 
-IPv6의 로컬 전달에서는 ICMPv6 기반 Neighbor Discovery Protocol(NDP)이 이웃의 링크 계층 주소와 기본 라우터·prefix 정보를 알아내는 데 사용된다. IPv4 ARP처럼 이더넷 브로드캐스트에 의존하지 않고 멀티캐스트를 활용한다.
+IPv6의 로컬 전달에서는 ICMPv6 기반 이웃 탐색 프로토콜(Neighbor Discovery Protocol, NDP)이 이웃의 링크 계층 주소와 기본 라우터·접두사 정보를 알아내는 데 사용된다. IPv4 ARP처럼 이더넷 브로드캐스트에 의존하지 않고 멀티캐스트를 활용한다.
 
 ### 중간 라우터는 IPv6 패킷을 단편화하지 않는다
 
 IPv4에서는 조건에 따라 중간 라우터가 패킷을 단편화할 수 있지만 IPv6 라우터는 전달 중 패킷을 단편화하지 않는다. 다음 링크의 MTU보다 큰 패킷을 전달할 수 없으면 ICMPv6 `Packet Too Big`을 보내 송신 측이 더 작은 크기로 조정할 수 있게 한다.
 
-송신 측이 필요하면 Fragment 확장 헤더를 사용해 단편화를 수행할 수 있지만, 경로 MTU에 맞는 패킷을 보내는 것이 기본적인 전달 관점에서 중요하다.
+송신 측이 필요하면 Fragment(단편화) 확장 헤더를 사용해 단편화할 수 있지만, 경로 MTU에 맞는 패킷을 보내는 것이 기본적인 전달 관점에서 중요하다.
 
 ### IPv6라고 서비스 도달성이 자동으로 좋아지는 것은 아니다
 

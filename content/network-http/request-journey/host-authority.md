@@ -27,7 +27,7 @@ HTTP/1.1에서는 `Host`, HTTP/2·HTTP/3에서는 `:authority`가 이 정보를 
   └─ admin.example.com
 ```
 
-두 서비스가 같은 IP와 443 포트를 사용하더라도 HTTP authority가 다르면 리버스 프록시는 서로 다른 가상 호스트·백엔드로 요청을 보낼 수 있다.
+두 서비스가 같은 IP와 443 포트를 사용하더라도 HTTP 요청 대상(authority)이 다르면 리버스 프록시는 서로 다른 가상 호스트·백엔드로 요청을 보낼 수 있다.
 
 ### DNS, SNI, HTTP authority는 같은 이름을 사용할 수 있지만 역할은 다르다
 
@@ -56,7 +56,7 @@ Host: api.example.com
 Host: api.example.com 또는 백엔드용 authority
 ```
 
-프록시는 사설 IP의 백엔드로 연결하면서 원래 authority를 유지할 수도 있고, 백엔드 계약에 맞게 다른 authority를 사용할 수도 있다. 즉 **TCP 연결의 실제 목적지 IP·포트와 HTTP 요청의 논리적 대상은 서로 다른 정보**다.
+프록시는 사설 IP의 백엔드로 연결하면서 원래 요청 대상(authority)을 유지할 수도 있고, 백엔드 계약에 맞게 다른 authority를 사용할 수도 있다. 즉 **TCP 연결의 실제 목적지 IP·포트와 HTTP 요청의 논리적 대상(authority)은 서로 다른 정보**다.
 
 이 차이는 가상 호스팅, 리버스 프록시 라우팅, TLS 종료 뒤 백엔드 전달을 이해할 때 중요하다. 연결 주소만 보고 어느 HTTP 서비스가 요청을 처리할지 단정해서는 안 된다.
 
