@@ -18,11 +18,11 @@ jobs:
       GCP_PROJECT_ID: csforge-508510
       GCP_REGION: asia-southeast1
       CLOUD_RUN_SERVICE: csforge
-      APPLY_SERVICE: csforge-canonical-apply-after-193-once
-      CODE_BASE_SHA: e40f4831cf961eeb3365530e71e8df8b9f6c0ce3
+      APPLY_SERVICE: csforge-canonical-apply-after-194-once
+      CODE_BASE_SHA: 1d7018a812f62adc2f2f0d44a76f32c44719d081
       CONTENT_BASE_SHA: ba8c40c4907bbb35fbd662fbc1beb56f64ae7736
-      EXACT_IMAGE: asia-southeast1-docker.pkg.dev/csforge-508510/csforge/csforge:canonical-exact-ba8c40c-code-e40f483
-      APPLY_IMAGE: asia-southeast1-docker.pkg.dev/csforge-508510/csforge/csforge:canonical-apply-after-193-${{ github.sha }}
+      EXACT_IMAGE: asia-southeast1-docker.pkg.dev/csforge-508510/csforge/csforge:canonical-exact-ba8c40c-code-1d7018a
+      APPLY_IMAGE: asia-southeast1-docker.pkg.dev/csforge-508510/csforge/csforge:canonical-apply-after-194-${{ github.sha }}
 
     steps:
       - uses: actions/checkout@v7
@@ -90,9 +90,9 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p /tmp/canonical-apply-after-193
+          mkdir -p /tmp/canonical-apply-after-194
 
-          cat > /tmp/canonical-apply-after-193/result-server.py <<'PY'
+          cat > /tmp/canonical-apply-after-194/result-server.py <<'PY'
           import hmac
           import os
           from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -125,7 +125,7 @@ jobs:
           ThreadingHTTPServer(('0.0.0.0', PORT), Handler).serve_forever()
           PY
 
-          cat > /tmp/canonical-apply-after-193/run-apply.sh <<'SH'
+          cat > /tmp/canonical-apply-after-194/run-apply.sh <<'SH'
           #!/bin/bash
           set -euo pipefail
 
@@ -281,7 +281,7 @@ jobs:
           from pathlib import Path
           result = {
               'state': 'DONE',
-              'codeBaseSha': 'e40f4831cf961eeb3365530e71e8df8b9f6c0ce3',
+              'codeBaseSha': '1d7018a812f62adc2f2f0d44a76f32c44719d081',
               'contentBaseSha': 'ba8c40c4907bbb35fbd662fbc1beb56f64ae7736',
               'exactJarContentVerified': True,
               'preStatus': json.load(open('/tmp/pre.json', encoding='utf-8')),
@@ -299,9 +299,9 @@ jobs:
           PY
           phase DONE
           SH
-          chmod +x /tmp/canonical-apply-after-193/run-apply.sh
+          chmod +x /tmp/canonical-apply-after-194/run-apply.sh
 
-          cat > /tmp/canonical-apply-after-193/wrapper-entrypoint.sh <<'SH'
+          cat > /tmp/canonical-apply-after-194/wrapper-entrypoint.sh <<'SH'
           #!/bin/sh
           set -u
           (
@@ -322,7 +322,7 @@ jobs:
           payload = {
               'state':'ERROR', 'exitCode':rc, 'phase':phase,
               'diagnostic':diagnostic[-12000:],
-              'codeBaseSha':'e40f4831cf961eeb3365530e71e8df8b9f6c0ce3',
+              'codeBaseSha':'1d7018a812f62adc2f2f0d44a76f32c44719d081',
               'contentBaseSha':'ba8c40c4907bbb35fbd662fbc1beb56f64ae7736',
               'destructiveApplyInvoked':invoked, 'flywayEnabled':False,
           }
@@ -337,9 +337,9 @@ jobs:
           ) &
           exec python3 /app/result-server.py
           SH
-          chmod +x /tmp/canonical-apply-after-193/wrapper-entrypoint.sh
+          chmod +x /tmp/canonical-apply-after-194/wrapper-entrypoint.sh
 
-          cat > /tmp/canonical-apply-after-193/Dockerfile <<'DOCKER'
+          cat > /tmp/canonical-apply-after-194/Dockerfile <<'DOCKER'
           ARG EXACT_IMAGE
           FROM ${EXACT_IMAGE}
           USER root
@@ -354,7 +354,7 @@ jobs:
           ENTRYPOINT ["/app/wrapper-entrypoint.sh"]
           DOCKER
 
-          docker build --build-arg EXACT_IMAGE="${EXACT_IMAGE}" --tag "${APPLY_IMAGE}" /tmp/canonical-apply-after-193
+          docker build --build-arg EXACT_IMAGE="${EXACT_IMAGE}" --tag "${APPLY_IMAGE}" /tmp/canonical-apply-after-194
           docker push "${APPLY_IMAGE}"
 
       - name: Create result token
@@ -462,7 +462,7 @@ jobs:
           done
           test "${code}" = "200"
           jq . /tmp/result.json
-          jq -e '.state == "DONE" and .codeBaseSha == "e40f4831cf961eeb3365530e71e8df8b9f6c0ce3" and .contentBaseSha == "ba8c40c4907bbb35fbd662fbc1beb56f64ae7736"' /tmp/result.json >/dev/null
+          jq -e '.state == "DONE" and .codeBaseSha == "1d7018a812f62adc2f2f0d44a76f32c44719d081" and .contentBaseSha == "ba8c40c4907bbb35fbd662fbc1beb56f64ae7736"' /tmp/result.json >/dev/null
           jq -e '.exactJarContentVerified == true and .destructiveApplyInvoked == true and .flywayEnabled == false' /tmp/result.json >/dev/null
           jq -e '.firstApply.success == true and .firstApply.totals.created == 0 and .firstApply.totals.updated == 2472 and .firstApply.totals.unchanged == 908 and .firstApply.totals.errors == 0 and .firstApply.totals.failed == 0' /tmp/result.json >/dev/null
           jq -e '.postStatus.state == "READY" and .postStatus.readyBatches == 12' /tmp/result.json >/dev/null
@@ -473,7 +473,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: production-canonical-apply-after-193-ba8c40c
+          name: production-canonical-apply-after-194-ba8c40c
           path: /tmp/result.json
           if-no-files-found: warn
           retention-days: 14
