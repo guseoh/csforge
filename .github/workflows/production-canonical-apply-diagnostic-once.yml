@@ -70,13 +70,24 @@ jobs:
             local seq="$1"
             shift
             local -a files=("$@")
-            local -a args=(--silent --show-error --fail-with-body --max-time 600)
+            local -a args=(--silent --show-error --max-time 600 --output "/tmp/batch-${seq}.json" --write-out '%{http_code}')
             for file in "${files[@]}"; do
               local rel="${file#/app/}"
               args+=(-F "files=@${file};filename=${rel}")
             done
-            curl "${args[@]}" http://127.0.0.1:8081/api/imports/preview >"/tmp/batch-${seq}.json"
-            jq -c --argjson batch "$seq" '{batch:$batch,canApply:.canApply,totals:.totals,errors:[.items[]|select(.classification=="ERROR")|{fileName,itemIndex,kind,contentKey,classification,reason,errors,diffs}]}' "/tmp/batch-${seq}.json" >>/tmp/batches.jsonl
+            local code
+            code=$(curl "${args[@]}" http://127.0.0.1:8081/api/imports/preview || true)
+            if [[ "$code" != "200" ]]; then
+              python3 - "$seq" "$code" "/tmp/batch-${seq}.json" <<'PY' >>/tmp/batches.jsonl
+          import json,sys
+          from pathlib import Path
+          seq=int(sys.argv[1]); code=sys.argv[2]; p=Path(sys.argv[3])
+          body=p.read_text(encoding='utf-8',errors='replace') if p.exists() else ''
+          print(json.dumps({'batch':seq,'httpCode':code,'canApply':False,'totals':None,'errors':[],'httpBody':body[:4000]},ensure_ascii=False))
+          PY
+              return
+            fi
+            jq -c --argjson batch "$seq" '{batch:$batch,httpCode:"200",canApply:.canApply,totals:.totals,errors:[.items[]|select(.classification=="ERROR")|{fileName,itemIndex,kind,contentKey,classification,reason,errors,diffs}]}' "/tmp/batch-${seq}.json" >>/tmp/batches.jsonl
           }
 
           for file in "${question_files[@]}"; do
@@ -101,7 +112,7 @@ jobs:
           import json
           from pathlib import Path
           batches=[json.loads(x) for x in Path('/tmp/batches.jsonl').read_text(encoding='utf-8').splitlines() if x.strip()]
-          errors=[dict(item, batch=b['batch']) for b in batches for item in b['errors']]
+          errors=[dict(item,batch=b['batch']) for b in batches for item in b.get('errors',[])]
           result={
             'state':'DONE',
             'contentBaseSha':'ba8c40c4907bbb35fbd662fbc1beb56f64ae7736',
@@ -128,7 +139,9 @@ jobs:
               python3 - "$rc" <<'PY'
           import json,sys
           from pathlib import Path
-          diag=(Path('/tmp/compute.log').read_text(encoding='utf-8',errors='replace')+'\n'+Path('/tmp/java.log').read_text(encoding='utf-8',errors='replace'))[-12000:]
+          compute=Path('/tmp/compute.log').read_text(encoding='utf-8',errors='replace') if Path('/tmp/compute.log').exists() else ''
+          java=Path('/tmp/java.log').read_text(encoding='utf-8',errors='replace') if Path('/tmp/java.log').exists() else ''
+          diag=('=== compute ===\n'+compute+'\n=== spring ===\n'+java)[-16000:]
           Path('/tmp/public-result.json').write_text(json.dumps({'state':'ERROR','exitCode':int(sys.argv[1]),'diagnostic':diag,'contentBaseSha':'ba8c40c4907bbb35fbd662fbc1beb56f64ae7736','destructiveApplyInvoked':False,'flywayEnabled':False},ensure_ascii=False),encoding='utf-8')
           PY
             fi
@@ -176,7 +189,15 @@ jobs:
           wanted={'DB_URL','DB_USERNAME','DB_PASSWORD','DB_MAX_POOL_SIZE','DB_MIN_IDLE','DB_CONNECTION_TIMEOUT','DB_VALIDATION_TIMEOUT'}
           required={'DB_URL','DB_USERNAME','DB_PASSWORD'}
           entries=service['spec']['template']['spec']['containers'][0].get('env',[])
-          plain={'SPRING_PROFILES_ACTIVE':'local','CSFORGE_AI_ENABLED':'false','SPRING_FLYWAY_ENABLED':'false','SPRING_JPA_HIBERNATE_DDL_AUTO':'validate','PREVIEW_RESULT_TOKEN':os.environ['PREVIEW_RESULT_TOKEN']}
+          plain={
+              'SPRING_PROFILES_ACTIVE':'local',
+              'CSFORGE_AI_ENABLED':'false',
+              'SPRING_FLYWAY_ENABLED':'false',
+              'SPRING_JPA_HIBERNATE_DDL_AUTO':'validate',
+              'SPRING_SERVLET_MULTIPART_MAX_FILE_SIZE':'2MB',
+              'SPRING_SERVLET_MULTIPART_MAX_REQUEST_SIZE':'20MB',
+              'PREVIEW_RESULT_TOKEN':os.environ['PREVIEW_RESULT_TOKEN']
+          }
           secrets=[]; found=set()
           for item in entries:
               name=item.get('name')
@@ -238,7 +259,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: production-canonical-question-batches-ba8c40c
+          name: production-canonical-question-batches-ba8c40c-v2
           path: /tmp/result.json
           if-no-files-found: warn
           retention-days: 14
