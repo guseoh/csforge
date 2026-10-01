@@ -1,0 +1,238 @@
+name: Production canonical preview only
+
+on:
+  push:
+    branches:
+      - ops/prod-canonical-preview-20261001
+    paths:
+      - .github/workflows/production-canonical-preview-once.yml
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  preview-production-content:
+    runs-on: ubuntu-latest
+    env:
+      GCP_PROJECT_ID: csforge-508510
+      GCP_REGION: asia-southeast1
+      CLOUD_RUN_SERVICE: csforge
+      PREVIEW_JOB: csforge-canonical-preview-once
+      PREVIEW_IMAGE: asia-southeast1-docker.pkg.dev/csforge-508510/csforge/csforge:preview-${{ github.sha }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v3
+        with:
+          project_id: ${{ env.GCP_PROJECT_ID }}
+          workload_identity_provider: projects/1003183509924/locations/global/workloadIdentityPools/github/providers/csforge
+          service_account: github-cloud-run-deployer@csforge-508510.iam.gserviceaccount.com
+
+      - name: Set up Google Cloud CLI
+        uses: google-github-actions/setup-gcloud@v3
+
+      - name: Configure Artifact Registry authentication
+        run: gcloud auth configure-docker "${GCP_REGION}-docker.pkg.dev" --quiet
+
+      - name: Build preview-only image from current main content
+        shell: bash
+        run: |
+          set -euo pipefail
+          base_image="csforge-preview-base:${GITHUB_SHA}"
+          docker build --file backend/Dockerfile --tag "${base_image}" .
+
+          cat > backend/scripts/production-canonical-preview.sh <<'SH'
+          #!/bin/sh
+          set -eu
+
+          java -jar /app/app.jar --spring.profiles.active=local --server.port=8080 &
+          app_pid=$!
+          cleanup() {
+            kill "$app_pid" 2>/dev/null || true
+            wait "$app_pid" 2>/dev/null || true
+          }
+          trap cleanup EXIT
+
+          ready=0
+          for _ in $(seq 1 90); do
+            if curl --fail --silent --show-error http://127.0.0.1:8080/actuator/health/readiness >/tmp/readiness.json; then
+              ready=1
+              break
+            fi
+            if ! kill -0 "$app_pid" 2>/dev/null; then
+              exit 11
+            fi
+            sleep 2
+          done
+          test "$ready" -eq 1 || exit 12
+
+          {
+            echo 'silent'
+            echo 'show-error'
+            echo 'fail-with-body'
+            echo 'request = "POST"'
+            echo 'url = "http://127.0.0.1:8080/api/imports/preview"'
+            find /app/content -type f \( -name '*.md' -o -name '*.json' \) ! -path '/app/content/curriculum/*' | sort | while IFS= read -r file; do
+              rel=${file#/app/}
+              printf 'form = "files=@%s;filename=%s"\n' "$file" "$rel"
+            done
+          } >/tmp/curl-preview.conf
+
+          curl --config /tmp/curl-preview.conf >/tmp/preview.json
+
+          jq '{canApply, previewDigest, totals,
+               classifications: ([.items[].classification] | sort | group_by(.) | map({classification: .[0], count: length})),
+               itemCount: (.items | length), fileCount: (.files | length)}' /tmp/preview.json >/tmp/preview-summary.json
+
+          jq -r '.items[] | select(.classification == "UPDATED") | [.kind, .contentKey, ([.diffs[].field] | join(","))] | @tsv' /tmp/preview.json >/tmp/updated-items.tsv
+          jq -r '.items[] | select(.classification == "CREATED") | [.kind, .contentKey] | @tsv' /tmp/preview.json >/tmp/created-items.tsv
+          jq -r '.items[] | select(.classification == "ERROR" or (.errors | length) > 0) | [.kind, .contentKey, .reason, (.errors | tostring)] | @tsv' /tmp/preview.json >/tmp/error-items.tsv
+          jq -r '.items[] | select(.classification == "UPDATED") | . as $item | .diffs[]? | select(.field | test("reference"; "i")) | [$item.kind, $item.contentKey, .field, .before, .after] | @tsv' /tmp/preview.json >/tmp/reference-diffs.tsv
+
+          jq -r '.items[] | select(.kind != null and .contentKey != null) | [.kind, .contentKey] | @tsv' /tmp/preview.json | sort -u >/tmp/pack-keys.tsv
+
+          psql_url=${DB_URL#jdbc:}
+          export PGPASSWORD="$DB_PASSWORD"
+          psql "$psql_url" -U "$DB_USERNAME" -v ON_ERROR_STOP=1 -AtF '|' -c "SELECT 'TOPIC', content_key FROM topic UNION ALL SELECT 'CONCEPT', content_key FROM concept UNION ALL SELECT 'QUESTION', content_key FROM question ORDER BY 1,2" | sed 's/|/\t/' >/tmp/db-keys.tsv
+
+          comm -23 /tmp/pack-keys.tsv /tmp/db-keys.tsv >/tmp/pack-missing-db.tsv || true
+          comm -13 /tmp/pack-keys.tsv /tmp/db-keys.tsv >/tmp/db-extra-pack.tsv || true
+
+          pack_count=$(wc -l </tmp/pack-keys.tsv | tr -d ' ')
+          db_count=$(wc -l </tmp/db-keys.tsv | tr -d ' ')
+          missing_count=$(wc -l </tmp/pack-missing-db.tsv | tr -d ' ')
+          extra_count=$(wc -l </tmp/db-extra-pack.tsv | tr -d ' ')
+          created_count=$(wc -l </tmp/created-items.tsv | tr -d ' ')
+          error_count=$(wc -l </tmp/error-items.tsv | tr -d ' ')
+          reference_diff_count=$(wc -l </tmp/reference-diffs.tsv | tr -d ' ')
+
+          jq -n \
+            --argjson packKeyCount "$pack_count" \
+            --argjson dbKeyCount "$db_count" \
+            --argjson packMissingDb "$missing_count" \
+            --argjson dbExtraPack "$extra_count" \
+            --argjson createdItems "$created_count" \
+            --argjson errorItems "$error_count" \
+            --argjson referenceDiffs "$reference_diff_count" \
+            '{packKeyCount:$packKeyCount, dbKeyCount:$dbKeyCount, packMissingDb:$packMissingDb, dbExtraPack:$dbExtraPack, createdItems:$createdItems, errorItems:$errorItems, referenceDiffs:$referenceDiffs}' >/tmp/identity-summary.json
+
+          echo '=== PREVIEW SUMMARY ==='
+          cat /tmp/preview-summary.json
+          echo '=== IDENTITY / DELETE-RISK SUMMARY ==='
+          cat /tmp/identity-summary.json
+          echo '=== CREATED ITEMS (unexpected for quality-only waves) ==='
+          cat /tmp/created-items.tsv || true
+          echo '=== PACK KEYS MISSING IN DB ==='
+          cat /tmp/pack-missing-db.tsv || true
+          echo '=== DB KEYS NOT PRESENT IN CURRENT PACK ==='
+          cat /tmp/db-extra-pack.tsv || true
+          echo '=== VALIDATION ERRORS ==='
+          cat /tmp/error-items.tsv || true
+          echo '=== REFERENCE DIFFS ==='
+          cat /tmp/reference-diffs.tsv || true
+
+          jq -e '.canApply == true and .totals.errors == 0' /tmp/preview.json >/dev/null
+          test "$error_count" -eq 0
+          SH
+          chmod +x backend/scripts/production-canonical-preview.sh
+
+          cat > backend/Dockerfile.preview <<'DOCKER'
+          ARG BASE_IMAGE
+          FROM ${BASE_IMAGE}
+          USER root
+          RUN apt-get update \
+              && apt-get install --no-install-recommends --yes jq postgresql-client \
+              && rm -rf /var/lib/apt/lists/*
+          COPY content /app/content
+          COPY backend/scripts/production-canonical-preview.sh /app/production-canonical-preview.sh
+          RUN chmod +x /app/production-canonical-preview.sh
+          USER 10001:10001
+          ENTRYPOINT ["/app/production-canonical-preview.sh"]
+          DOCKER
+
+          docker build --file backend/Dockerfile.preview --build-arg BASE_IMAGE="${base_image}" --tag "${PREVIEW_IMAGE}" .
+          docker push "${PREVIEW_IMAGE}"
+
+      - name: Prepare production database environment
+        id: runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          service_json="$(mktemp)"
+          gcloud run services describe "${CLOUD_RUN_SERVICE}" --project="${GCP_PROJECT_ID}" --region="${GCP_REGION}" --format=json > "${service_json}"
+
+          service_account="$(jq -r '.spec.template.spec.serviceAccountName // empty' "${service_json}")"
+          test -n "${service_account}"
+
+          python3 - "${service_json}" "${GITHUB_OUTPUT}" <<'PY'
+          import json, sys
+          service_path, output_path = sys.argv[1], sys.argv[2]
+          with open(service_path, encoding='utf-8') as handle:
+              service = json.load(handle)
+          wanted = {'DB_URL','DB_USERNAME','DB_PASSWORD','DB_MAX_POOL_SIZE','DB_MIN_IDLE','DB_CONNECTION_TIMEOUT','DB_VALIDATION_TIMEOUT'}
+          required = {'DB_URL','DB_USERNAME','DB_PASSWORD'}
+          entries = service['spec']['template']['spec']['containers'][0].get('env', [])
+          plain = {'SPRING_PROFILES_ACTIVE':'local','CSFORGE_AI_ENABLED':'false'}
+          secrets, found = [], set()
+          for item in entries:
+              name = item.get('name')
+              if name not in wanted:
+                  continue
+              found.add(name)
+              if 'value' in item:
+                  plain[name] = item['value']
+                  continue
+              ref = item.get('valueFrom', {}).get('secretKeyRef', {})
+              secret_name, secret_version = ref.get('name'), ref.get('key')
+              if not secret_name or not secret_version:
+                  raise SystemExit(f'Unsupported environment source for {name}')
+              secrets.append(f'{name}={secret_name}:{secret_version}')
+          missing = required - found
+          if missing:
+              raise SystemExit('Missing required production DB variables: ' + ', '.join(sorted(missing)))
+          with open('/tmp/preview-env.json','w',encoding='utf-8') as handle:
+              json.dump(plain, handle)
+          with open(output_path,'a',encoding='utf-8') as handle:
+              handle.write('secrets=' + ','.join(secrets) + '\n')
+          PY
+          echo "service_account=${service_account}" >> "${GITHUB_OUTPUT}"
+
+      - name: Deploy preview-only job
+        shell: bash
+        run: |
+          set -euo pipefail
+          args=(
+            run jobs deploy "${PREVIEW_JOB}"
+            --project="${GCP_PROJECT_ID}"
+            --region="${GCP_REGION}"
+            --image="${PREVIEW_IMAGE}"
+            --service-account="${{ steps.runtime.outputs.service_account }}"
+            --env-vars-file=/tmp/preview-env.json
+            --cpu=1
+            --memory=1Gi
+            --tasks=1
+            --parallelism=1
+            --task-timeout=30m
+            --max-retries=0
+            --quiet
+          )
+          if [[ -n "${{ steps.runtime.outputs.secrets }}" ]]; then
+            args+=(--set-secrets="${{ steps.runtime.outputs.secrets }}")
+          fi
+          gcloud "${args[@]}"
+
+      - name: Execute production preview and print logs
+        shell: bash
+        run: |
+          set -euo pipefail
+          gcloud run jobs execute "${PREVIEW_JOB}" --project="${GCP_PROJECT_ID}" --region="${GCP_REGION}" --wait --quiet
+          execution="$(gcloud run jobs executions list --job="${PREVIEW_JOB}" --project="${GCP_PROJECT_ID}" --region="${GCP_REGION}" --limit=1 --sort-by='~metadata.creationTimestamp' --format='value(metadata.name)')"
+          succeeded="$(gcloud run jobs executions describe "${execution}" --project="${GCP_PROJECT_ID}" --region="${GCP_REGION}" --format='value(status.succeededCount)')"
+          test "${succeeded}" = "1"
+          gcloud logging read "resource.type=cloud_run_job AND resource.labels.job_name=${PREVIEW_JOB} AND labels.\"run.googleapis.com/execution_name\"=${execution}" --project="${GCP_PROJECT_ID}" --limit=500 --order=asc --format='value(textPayload,jsonPayload.message)'
+
+      - name: Remove preview-only job
+        if: always()
+        run: gcloud run jobs delete "${PREVIEW_JOB}" --project="${GCP_PROJECT_ID}" --region="${GCP_REGION}" --quiet || true
