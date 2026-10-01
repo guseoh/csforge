@@ -1,164 +1,61 @@
-name: One-time production canonical post-apply inspection
-
+name: One-time canonical temporary asset cleanup
 on:
   push:
-    branches:
-      - main
-    paths:
-      - .github/workflows/production-canonical-postapply-inspect-once.yml
-
+    branches: [main]
+    paths: [.github/workflows/production-canonical-postapply-inspect-once.yml]
 permissions:
   contents: read
   id-token: write
-
 jobs:
-  inspect-production-content:
+  cleanup-temporary-assets:
     runs-on: ubuntu-latest
-    env:
-      GCP_PROJECT_ID: csforge-508510
-      GCP_REGION: asia-southeast1
-      CLOUD_RUN_SERVICE: csforge
-      PREVIEW_SERVICE: csforge-canonical-preview-once
-      PREVIEW_IMAGE: asia-southeast1-docker.pkg.dev/csforge-508510/csforge/csforge:preview-diagnostic-ba8c40c4907bbb35fbd662fbc1beb56f64ae7736
     steps:
-      - name: Authenticate to Google Cloud
-        uses: google-github-actions/auth@v3
+      - uses: google-github-actions/auth@v3
         with:
-          project_id: ${{ env.GCP_PROJECT_ID }}
+          project_id: csforge-508510
           workload_identity_provider: projects/1003183509924/locations/global/workloadIdentityPools/github/providers/csforge
           service_account: github-cloud-run-deployer@csforge-508510.iam.gserviceaccount.com
-
-      - name: Set up Google Cloud CLI
-        uses: google-github-actions/setup-gcloud@v3
-
-      - name: Create result token
-        id: token
+      - uses: google-github-actions/setup-gcloud@v3
+      - name: Remove only temporary canonical assets
         shell: bash
-        run: |
-          token="$(openssl rand -hex 32)"
-          echo "::add-mask::${token}"
-          echo "value=${token}" >> "${GITHUB_OUTPUT}"
-
-      - name: Read production DB configuration
-        id: prod
-        shell: bash
-        env:
-          PREVIEW_RESULT_TOKEN: ${{ steps.token.outputs.value }}
         run: |
           set -euo pipefail
-          service_json="$(mktemp)"
-          gcloud run services describe "${CLOUD_RUN_SERVICE}" \
-            --project="${GCP_PROJECT_ID}" --region="${GCP_REGION}" --format=json > "${service_json}"
-          service_account="$(jq -r '.spec.template.spec.serviceAccountName // empty' "${service_json}")"
-          test -n "${service_account}"
-          python3 - "${service_json}" "${GITHUB_OUTPUT}" <<'PY'
-          import json, os, sys
-          service_path, output_path = sys.argv[1], sys.argv[2]
-          service = json.load(open(service_path, encoding='utf-8'))
-          wanted = {'DB_URL','DB_USERNAME','DB_PASSWORD','DB_MAX_POOL_SIZE','DB_MIN_IDLE','DB_CONNECTION_TIMEOUT','DB_VALIDATION_TIMEOUT'}
-          required = {'DB_URL','DB_USERNAME','DB_PASSWORD'}
-          entries = service['spec']['template']['spec']['containers'][0].get('env', [])
-          plain = {
-              'SPRING_PROFILES_ACTIVE':'local',
-              'CSFORGE_AI_ENABLED':'false',
-              'SPRING_FLYWAY_ENABLED':'false',
-              'SPRING_JPA_HIBERNATE_DDL_AUTO':'validate',
-              'PREVIEW_RESULT_TOKEN': os.environ['PREVIEW_RESULT_TOKEN'],
-          }
-          secrets, found = [], set()
-          for item in entries:
-              name = item.get('name')
-              if name not in wanted:
-                  continue
-              found.add(name)
-              if 'value' in item:
-                  plain[name] = item['value']
-                  continue
-              ref = item.get('valueFrom', {}).get('secretKeyRef', {})
-              if not ref.get('name') or not ref.get('key'):
-                  raise SystemExit(f'unsupported env source for {name}')
-              secrets.append(f"{name}={ref['name']}:{ref['key']}")
-          missing = required - found
-          if missing:
-              raise SystemExit('missing DB vars: ' + ','.join(sorted(missing)))
-          json.dump(plain, open('/tmp/preview-env.json','w',encoding='utf-8'))
-          with open(output_path,'a',encoding='utf-8') as out:
-              out.write('secrets=' + ','.join(secrets) + '\n')
+          python3 <<'PY'
+          import json, re, subprocess
+          project = 'csforge-508510'
+          region = 'asia-southeast1'
+          image = region + '-docker.pkg.dev/' + project + '/csforge/csforge'
+          def call(args):
+              return subprocess.check_output(['gcloud', *args, '--project=' + project, '--quiet'], text=True)
+          def read(args):
+              return json.loads(call([*args, '--format=json']))
+          revisions = read(['run', 'revisions', 'list', '--service=csforge', '--region=' + region])
+          protected = set()
+          for rev in revisions:
+              digest = rev.get('status', {}).get('imageDigest', '')
+              if '@' in digest: protected.add(digest.rsplit('@', 1)[1])
+          if not protected: raise SystemExit('production revision image protection unavailable')
+          services = read(['run', 'services', 'list', '--region=' + region])
+          deleted_services = []
+          for service in services:
+              name = service.get('metadata', {}).get('name', '')
+              if name.startswith('csforge-canonical-') and name.endswith('-once'):
+                  call(['run', 'services', 'delete', name, '--region=' + region])
+                  deleted_services.append(name)
+          images = read(['artifacts', 'docker', 'images', 'list', image, '--include-tags'])
+          deleted_images = []
+          pattern = re.compile(r'^(preview-|canonical-(apply|exact))')
+          for item in images:
+              version = item.get('version', '').rsplit('/', 1)[-1]
+              tags = item.get('tags', [])
+              if isinstance(tags, str): tags = [t.strip() for t in tags.split(',') if t.strip()]
+              tags = [t.rsplit('/tags/', 1)[-1] for t in tags]
+              if not tags or not all(pattern.match(t) for t in tags): continue
+              if not version.startswith('sha256:') or version in protected: continue
+              call(['artifacts', 'docker', 'images', 'delete', image + '@' + version, '--delete-tags'])
+              deleted_images.append({'digest': version, 'tags': tags})
+          remaining_services = read(['run', 'services', 'list', '--region=' + region])
+          if any(s.get('metadata', {}).get('name', '').startswith('csforge-canonical-') for s in remaining_services):
+              raise SystemExit('canonical temporary service remains')
+          print(json.dumps({'state':'DONE', 'productionRevisionDigestsProtected':len(protected), 'deletedServices':deleted_services, 'deletedTemporaryImages':deleted_images}, indent=2))
           PY
-          echo "service_account=${service_account}" >> "${GITHUB_OUTPUT}"
-
-      - name: Deploy private read-only preview service
-        id: deploy
-        shell: bash
-        run: |
-          set -euo pipefail
-          args=(run deploy "${PREVIEW_SERVICE}" \
-            --project="${GCP_PROJECT_ID}" --region="${GCP_REGION}" \
-            --image="${PREVIEW_IMAGE}" \
-            --service-account="${{ steps.prod.outputs.service_account }}" \
-            --env-vars-file=/tmp/preview-env.json \
-            --cpu=1 --memory=1Gi --min=0 --max=1 --timeout=900 \
-            --no-cpu-throttling --cpu-boost \
-            --no-allow-unauthenticated --quiet)
-          if [[ -n "${{ steps.prod.outputs.secrets }}" ]]; then
-            args+=(--set-secrets="${{ steps.prod.outputs.secrets }}")
-          fi
-          gcloud "${args[@]}"
-          actual_url="$(gcloud run services describe "${PREVIEW_SERVICE}" \
-            --project="${GCP_PROJECT_ID}" --region="${GCP_REGION}" \
-            --format='value(status.url)')"
-          test -n "${actual_url}"
-          echo "url=${actual_url}" >> "${GITHUB_OUTPUT}"
-
-      - name: Mint preview service ID token
-        id: invoke_auth
-        uses: google-github-actions/auth@v3
-        with:
-          project_id: ${{ env.GCP_PROJECT_ID }}
-          workload_identity_provider: projects/1003183509924/locations/global/workloadIdentityPools/github/providers/csforge
-          service_account: github-cloud-run-deployer@csforge-508510.iam.gserviceaccount.com
-          token_format: id_token
-          id_token_audience: ${{ steps.deploy.outputs.url }}
-
-      - name: Fetch sanitized read-only preview result
-        shell: bash
-        env:
-          PREVIEW_RESULT_TOKEN: ${{ steps.token.outputs.value }}
-          CLOUD_RUN_ID_TOKEN: ${{ steps.invoke_auth.outputs.id_token }}
-          PREVIEW_URL: ${{ steps.deploy.outputs.url }}
-        run: |
-          set -euo pipefail
-          code="000"
-          for _ in $(seq 1 500); do
-            code="$(curl --silent --show-error --output /tmp/result.json --write-out '%{http_code}' \
-              --header "Authorization: Bearer ${CLOUD_RUN_ID_TOKEN}" \
-              --header "X-Preview-Token: ${PREVIEW_RESULT_TOKEN}" \
-              "${PREVIEW_URL}/result" || true)"
-            if [[ "${code}" == "200" ]]; then
-              break
-            fi
-            if [[ "${code}" != "202" && "${code}" != "000" ]]; then
-              echo "Unexpected result HTTP ${code}"
-              cat /tmp/result.json || true
-              exit 1
-            fi
-            sleep 3
-          done
-          test "${code}" = "200"
-          jq . /tmp/result.json
-          jq -e '.state == "DONE" and .destructiveApplyInvoked == false' /tmp/result.json >/dev/null
-          jq -e '.preview.canApply == true and .preview.totals.errors == 0' /tmp/result.json >/dev/null
-          jq -e '.identitySafety.identitySafe == true' /tmp/result.json >/dev/null
-
-      - name: Upload post-apply inspection evidence
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: production-canonical-postapply-inspection-ba8c40c
-          path: /tmp/result.json
-          if-no-files-found: warn
-          retention-days: 14
-
-      - name: Remove temporary preview service
-        if: always()
-        run: gcloud run services delete "${PREVIEW_SERVICE}" --project="${GCP_PROJECT_ID}" --region="${GCP_REGION}" --quiet || true
