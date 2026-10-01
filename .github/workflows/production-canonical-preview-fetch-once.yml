@@ -19,20 +19,16 @@ jobs:
       GCP_REGION: asia-southeast1
       CLOUD_RUN_SERVICE: csforge
       PREVIEW_SERVICE: csforge-canonical-preview-once
-      PREVIEW_URL: https://csforge-canonical-preview-once-1003183509924.asia-southeast1.run.app
       PREVIEW_IMAGE: asia-southeast1-docker.pkg.dev/csforge-508510/csforge/csforge:preview-7f0a4316786a6147513717289e575fc166efc47b
     steps:
       - uses: actions/checkout@v7
 
       - name: Authenticate to Google Cloud
-        id: auth
         uses: google-github-actions/auth@v3
         with:
           project_id: ${{ env.GCP_PROJECT_ID }}
           workload_identity_provider: projects/1003183509924/locations/global/workloadIdentityPools/github/providers/csforge
           service_account: github-cloud-run-deployer@csforge-508510.iam.gserviceaccount.com
-          token_format: id_token
-          id_token_audience: ${{ env.PREVIEW_URL }}
 
       - name: Set up Google Cloud CLI
         uses: google-github-actions/setup-gcloud@v3
@@ -94,6 +90,7 @@ jobs:
           echo "service_account=${service_account}" >> "${GITHUB_OUTPUT}"
 
       - name: Deploy private preview result service
+        id: deploy
         shell: bash
         run: |
           set -euo pipefail
@@ -111,13 +108,25 @@ jobs:
           actual_url="$(gcloud run services describe "${PREVIEW_SERVICE}" \
             --project="${GCP_PROJECT_ID}" --region="${GCP_REGION}" \
             --format='value(status.url)')"
-          test "${actual_url}" = "${PREVIEW_URL}"
+          test -n "${actual_url}"
+          echo "url=${actual_url}" >> "${GITHUB_OUTPUT}"
+
+      - name: Mint preview service ID token
+        id: invoke_auth
+        uses: google-github-actions/auth@v3
+        with:
+          project_id: ${{ env.GCP_PROJECT_ID }}
+          workload_identity_provider: projects/1003183509924/locations/global/workloadIdentityPools/github/providers/csforge
+          service_account: github-cloud-run-deployer@csforge-508510.iam.gserviceaccount.com
+          token_format: id_token
+          id_token_audience: ${{ steps.deploy.outputs.url }}
 
       - name: Fetch sanitized preview result
         shell: bash
         env:
           PREVIEW_RESULT_TOKEN: ${{ steps.token.outputs.value }}
-          CLOUD_RUN_ID_TOKEN: ${{ steps.auth.outputs.id_token }}
+          CLOUD_RUN_ID_TOKEN: ${{ steps.invoke_auth.outputs.id_token }}
+          PREVIEW_URL: ${{ steps.deploy.outputs.url }}
         run: |
           set -euo pipefail
           code="000"
