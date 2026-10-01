@@ -4,7 +4,7 @@ contentKey: network-http.core.ip-routing.ttl-hop-limit
 topicContentKey: network-http.core.ip-routing
 slug: ttl-hop-limit
 title: "TTL과 Hop Limit"
-summary: "IPv4 TTL과 IPv6 Hop Limit이 라우터를 지날 때 감소해 잘못된 라우팅 루프의 패킷을 끝내는 방식을 설명한다."
+summary: "IPv4의 패킷 수명 제한 필드(TTL)와 IPv6의 홉 수 제한 필드(Hop Limit)가 라우터를 지날 때 줄어 잘못된 라우팅 루프의 패킷을 끝내는 방식을 설명한다."
 level: 2
 status: PUBLISHED
 displayOrder: 70
@@ -19,7 +19,7 @@ references:
 ---
 # TTL과 Hop Limit
 
-IPv4의 TTL(Time To Live)과 IPv6의 Hop Limit은 **패킷이 라우터를 무한히 순환하지 못하도록 수명을 제한하는 네트워크 계층 필드**다. 라우터를 지날 때 값이 감소하고 더 전달할 수 없는 값이 되면 패킷은 폐기된다.
+IPv4의 패킷 수명 제한 필드(TTL, Time To Live)와 IPv6의 홉 수 제한 필드(Hop Limit)는 **패킷이 라우터를 무한히 순환하지 못하도록 값을 줄이는 네트워크 계층 필드**다. 라우터를 지날 때 값이 감소하고 더 전달할 수 없는 값이 되면 패킷은 폐기된다.
 
 ```text
 초기 값 = 3

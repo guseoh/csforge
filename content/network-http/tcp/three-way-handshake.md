@@ -22,7 +22,7 @@ references:
 TCP로 데이터를 주고받기 전에 양쪽 종단점은 **서로의 초기 시퀀스 번호를 알리고 확인하면서 연결 상태를 맞춰야 한다.** 일반적인 능동 연결 수립에서 이 과정이 `SYN → SYN-ACK → ACK`의 3방향 핸드셰이크다.
 
 ```text
-Client                         Server
+클라이언트                     서버
   | -------- SYN, seq=x ------> |
   | <--- SYN,ACK seq=y ack=x+1 -|
   | -------- ACK ack=y+1 ------>|
@@ -41,9 +41,9 @@ TCP는 양방향 바이트 스트림이다. 양쪽이 각각 자신이 보낼 �
 3방향 핸드셰이크가 성공했다는 것은 **전송 계층 TCP 연결이 성립했다**는 뜻이다. HTTPS라면 그다음 TLS 핸드셰이크가 실패할 수 있고, TLS가 성공해도 HTTP 요청이나 애플리케이션 업무 처리가 실패할 수 있다.
 
 ```text
-TCP 3-way handshake
+TCP 3방향 핸드셰이크
         ↓
-TLS handshake (HTTPS라면)
+TLS 핸드셰이크(HTTPS라면)
         ↓
 HTTP 요청/응답
         ↓

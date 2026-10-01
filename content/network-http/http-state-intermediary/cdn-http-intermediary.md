@@ -4,7 +4,7 @@ contentKey: network-http.core.http-state-intermediary.cdn-http-intermediary
 topicContentKey: network-http.core.http-state-intermediary
 slug: cdn-http-intermediary
 title: "CDN의 HTTP 중개와 캐시"
-summary: "CDN edge가 reverse proxy와 shared cache로서 origin 앞에 별도 HTTP hop을 만드는 방식을 설명한다."
+summary: "CDN 엣지가 역방향 프록시와 공유 캐시로서 원본 서버 앞에 별도 HTTP 구간을 만들고 응답을 직접 반환할 수도 있음을 설명한다."
 level: 2
 status: PUBLISHED
 displayOrder: 100
@@ -17,16 +17,16 @@ references:
 ---
 # CDN의 HTTP 중개와 캐시
 
-CDN은 여러 edge location에 HTTP intermediary를 배치해 client 가까이에서 request를 받고 response를 전달하는 구조다. HTTP 관점에서는 origin 앞의 분산 reverse proxy이자, cache 기능을 사용할 경우 shared cache가 될 수 있다.
+CDN은 여러 엣지 지점에 HTTP 중개자를 배치해 클라이언트 가까이에서 요청을 받고 응답을 전달한다. HTTP 관점에서 CDN 엣지는 원본 서버 앞의 분산 역방향 프록시이며, 캐시 기능을 사용하면 여러 요청이 함께 이용하는 공유 캐시가 될 수 있다.
 
-edge가 request에 대해 fresh한 cached response를 가지고 있다면 origin까지 새 request를 보내지 않고 client에게 바로 응답할 수 있다. Cache miss나 revalidation이 필요하면 edge가 origin 쪽에 별도의 HTTP request를 만들기 때문에 client→edge와 edge→origin은 서로 다른 connection과 hop이다.
+엣지에 현재 재사용할 수 있는 신선한 응답이 있으면 원본 서버에 새 요청을 보내지 않고 클라이언트에 바로 돌려줄 수 있다. 캐시가 비었거나 다시 확인해야 하면 엣지는 원본 서버를 향한 별도 HTTP 요청을 만든다. 따라서 클라이언트에서 엣지까지와 엣지에서 원본까지는 서로 다른 연결 구간이다.
 
 ```text
-client → CDN edge
-          ├─ fresh cache hit → response
-          └─ miss / revalidation → origin
+클라이언트 → CDN 엣지
+               ├─ 신선한 응답 적중 → 응답 반환
+               └─ 미스·재검증 필요 → 원본 서버에 요청
 ```
 
-CDN은 TLS termination, compression, header transformation 같은 기능을 추가할 수 있지만, 이런 기능이 CDN의 모든 배포에서 동일하게 사용되는 것은 아니다. 또한 edge cache는 origin application의 database나 별도 application cache와 같은 state를 공유하는 것이 아니다.
+CDN은 TLS 종료, 압축, 필드 변환 같은 기능을 더할 수 있지만 모든 배포 환경에서 항상 켜져 있는 것은 아니다. 엣지 캐시는 원본 애플리케이션의 데이터베이스나 별도 애플리케이션 캐시와 같은 상태를 공유하지 않는다.
 
-따라서 client가 받은 response가 언제나 현재 origin request에서 만들어졌다고 가정하면 안 된다. **CDN은 origin 앞에서 request를 중계하거나 cached response를 직접 반환할 수 있는 HTTP intermediary**이며, freshness와 validator 같은 구체적인 cache semantics는 HTTP Cache Topic에서 다룬다.
+그러므로 클라이언트가 받은 응답이 매번 현재 원본 요청에서 새로 만들어졌다고 가정하면 안 된다. **CDN은 원본 서버 앞에서 요청을 전달하거나 저장된 응답을 직접 반환하는 HTTP 중개자**다. 응답을 언제 재사용하고 다시 확인하는지는 HTTP 캐시 규칙에 따라 판단한다.

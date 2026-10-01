@@ -113,7 +113,7 @@ topics:
   - key: network-http.core.ip-routing
     title: "IP 주소 지정과 라우팅"
     order: 30
-    scope: "IPv4/IPv6 주소, 서브넷, 라우팅 테이블, 패킷 전달, TTL과 ICMP를 다룬다."
+    scope: "IPv4/IPv6 주소, 서브넷, 라우팅 테이블, 패킷 전달, 수명 제한 필드(TTL)와 ICMP를 다룬다."
     boundary: "IP의 최선형(best-effort) 전달을 다루며 TCP 신뢰성은 전송 계층 주제에서 다룬다."
     concepts:
       - key: network-http.core.ip-routing.ipv4-address
@@ -127,7 +127,7 @@ topics:
         title: "CIDR prefix와 서브넷"
         order: 20
         level: 1
-        objective: "CIDR prefix가 주소 범위와 같은 네트워크 여부를 결정하는 방식을 설명한다."
+        objective: "CIDR 접두사(prefix)가 주소 범위와 같은 네트워크 여부를 결정하는 방식을 설명한다."
         density: CORE
         visualization: DIAGRAM
       - key: network-http.core.ip-routing.private-public-ip
@@ -141,14 +141,14 @@ topics:
         title: "라우팅 테이블"
         order: 40
         level: 1
-        objective: "목적지 prefix와 다음 홉·출력 인터페이스의 관계를 설명한다."
+        objective: "목적지 접두사(prefix)와 다음 홉·출력 인터페이스의 관계를 설명한다."
         density: CORE
         visualization: DIAGRAM
       - key: network-http.core.ip-routing.longest-prefix-match
         title: "최장 접두사 일치(Longest-Prefix Match)"
         order: 50
         level: 2
-        objective: "여러 경로 중 목적지와 가장 구체적으로 일치하는 prefix를 선택하는 이유를 설명한다."
+        objective: "여러 경로 중 목적지와 가장 구체적으로 일치하는 접두사를 선택하는 이유를 설명한다."
         density: CORE
         visualization: TEXT
       - key: network-http.core.ip-routing.router-forwarding
@@ -320,7 +320,7 @@ topics:
   - key: network-http.core.tcp
     title: "TCP"
     order: 60
-    scope: "바이트 스트림, 연결 수립, 시퀀스·ACK, 재전송, 윈도, 혼잡 제어와 연결 종료를 다룬다."
+    scope: "바이트 스트림, 연결 수립, 순서 번호·확인 응답(ACK), 재전송, 윈도, 혼잡 제어와 연결 종료를 다룬다."
     boundary: "TCP가 제공하는 전송 보장을 다루며 애플리케이션 메시지 경계는 HTTP/API 계약과 구분한다."
     concepts:
       - key: network-http.core.tcp.tcp-byte-stream
@@ -445,7 +445,7 @@ topics:
         title: "UDP 위에 신뢰성 구현하기"
         order: 50
         level: 2
-        objective: "시퀀스 번호·ACK·재시도를 애플리케이션이 직접 설계할 때의 비용과 책임을 설명한다."
+        objective: "순서 번호·확인 응답(ACK)·재시도를 애플리케이션이 직접 설계할 때의 비용과 책임을 설명한다."
         density: CORE
         visualization: DIAGRAM
   - key: network-http.core.tls
@@ -472,7 +472,7 @@ topics:
         title: "공개 키 기반 구조(PKI)"
         order: 30
         level: 2
-        objective: "CA 인증서 체인과 trust store를 이용해 서버 인증서를 검증하는 경로를 설명한다."
+        objective: "인증 기관(CA) 인증서 체인과 신뢰 저장소를 이용해 서버 인증서를 검증하는 경로를 설명한다."
         density: CORE
         visualization: DIAGRAM
       - key: network-http.core.tls.hostname-verification
@@ -513,21 +513,21 @@ topics:
   - key: network-http.core.request-journey
     title: "URL에서 HTTP 요청까지"
     order: 90
-    scope: "URL, origin, DNS·라우팅·전송 연결·TLS와 HTTP 요청 전달을 하나의 흐름으로 다룬다."
+    scope: "URL, 출처(Origin), DNS·라우팅·전송 연결·TLS와 HTTP 요청 전달을 하나의 흐름으로 다룬다."
     boundary: "요청이 여러 계층을 통과하는 연결 흐름을 다루며 각 계층의 상세 의미는 해당 주제에서 다룬다."
     concepts:
       - key: network-http.core.request-journey.url-components
         title: "URL 구성 요소"
         order: 10
         level: 1
-        objective: "scheme·authority·path·query·fragment가 무엇을 나타내고 어느 단계에서 사용되는지 구분한다."
+        objective: "스킴(scheme)·호스트와 선택적 포트 정보(authority)·경로(path)·질의(query)·프래그먼트(fragment)가 무엇을 나타내고 어느 단계에서 사용되는지 구분한다."
         density: CORE
         visualization: DIAGRAM
       - key: network-http.core.request-journey.origin
         title: "출처(Origin)"
         order: 20
         level: 1
-        objective: "scheme·host·port 조합으로 웹 origin을 정의하고 비교한다."
+        objective: "스킴(scheme)·호스트(host)·포트(port) 조합으로 웹 출처(Origin)를 정의하고 비교한다."
         density: CORE
         visualization: NONE
       - key: network-http.core.request-journey.dns-to-route
@@ -566,7 +566,7 @@ topics:
         density: CORE
         visualization: TEXT
       - key: network-http.core.request-journey.proxy-gateway-path
-        title: "Proxy와 Gateway 경유"
+        title: "프록시와 게이트웨이 경유"
         order: 80
         level: 2
         objective: "정방향 프록시·역방향 프록시·게이트웨이가 요청 경로를 바꾸는 지점을 구분한다."
@@ -631,7 +631,7 @@ topics:
         title: "콘텐츠 협상"
         order: 80
         level: 2
-        objective: "클라이언트 선호와 서버가 제공할 수 있는 표현 중 하나를 선택하는 trade-off를 설명한다."
+        objective: "클라이언트 선호와 서버가 제공할 수 있는 표현 중 하나를 선택할 때 고려할 절충점을 설명한다."
         density: CORE
         visualization: DIAGRAM
       - key: network-http.core.http-message.content-length-transfer
@@ -762,7 +762,7 @@ topics:
         title: "서버 오류: 500·502·503·504"
         order: 80
         level: 2
-        objective: "서버 내부 오류·잘못된 upstream 응답·일시적 서비스 불가·upstream 응답 지연을 구분한다."
+        objective: "서버 내부 오류·상위 서버(upstream)의 잘못된 응답·일시적 서비스 불가·상위 서버 응답 지연을 구분한다."
         density: CORE
         visualization: DIAGRAM
   - key: network-http.core.http-versions
@@ -851,7 +851,7 @@ topics:
         title: "응답 신선도(Freshness)"
         order: 10
         level: 1
-        objective: "저장된 HTTP 응답이 fresh인지 stale인지 판단하는 시간 모델을 설명한다."
+        objective: "저장된 HTTP 응답이 신선한지 오래됐는지 판단하는 시간 모델을 설명한다."
         density: CORE
         visualization: TEXT
       - key: network-http.core.http-cache.cache-control
@@ -872,7 +872,7 @@ topics:
         title: "ETag 검증자"
         order: 40
         level: 2
-        objective: "선택된 표현 데이터의 버전을 비교하는 검증자로 ETag를 사용하는 이유를 설명한다."
+        objective: "응답 표현의 버전을 비교하는 검증자로 ETag를 사용하는 이유를 설명한다."
         density: CORE
         visualization: TEXT
       - key: network-http.core.http-cache.last-modified
@@ -886,7 +886,7 @@ topics:
         title: "If-None-Match 조건부 요청"
         order: 60
         level: 2
-        objective: "ETag 조건부 요청이 304 또는 새로운 표현 데이터 전송으로 이어지는 흐름을 설명한다."
+        objective: "ETag를 이용한 조건부 요청이 304 응답 또는 새 표현 전송으로 이어지는 흐름을 설명한다."
         density: CORE
         visualization: DIAGRAM
       - key: network-http.core.http-cache.if-modified-since
@@ -914,7 +914,7 @@ topics:
         title: "중간 캐시의 재사용 판단"
         order: 100
         level: 2
-        objective: "프록시·CDN 캐시가 원본 서버와 클라이언트 사이에서 신선도와 재검증을 판단하는 흐름을 설명한다."
+        objective: "프록시·CDN 캐시가 원본 서버와 클라이언트 사이에서 응답의 신선도와 재검증 여부를 판단하는 흐름을 설명한다."
         density: CORE
         visualization: DIAGRAM
   - key: network-http.core.http-state-intermediary
@@ -969,7 +969,7 @@ topics:
         title: "Forwarded 헤더"
         order: 70
         level: 2
-        objective: "중개자가 원래 호스트·scheme·클라이언트 정보를 다음 홉에 전달하는 표준 Forwarded 헤더를 설명한다."
+        objective: "중개자가 원래 호스트·스킴(scheme)·클라이언트 정보를 다음 구간에 전달하는 표준 Forwarded 필드를 설명한다."
         density: CORE
         visualization: TEXT
       - key: network-http.core.http-state-intermediary.x-forwarded

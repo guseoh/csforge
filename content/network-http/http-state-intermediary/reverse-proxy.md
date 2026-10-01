@@ -4,7 +4,7 @@ contentKey: network-http.core.http-state-intermediary.reverse-proxy
 topicContentKey: network-http.core.http-state-intermediary
 slug: reverse-proxy
 title: "역방향 프록시"
-summary: "origin 앞에서 client 요청을 받아 backend로 전달하는 reverse proxy의 hop과 connection 경계를 설명한다."
+summary: "역방향 프록시가 공개 요청을 받아 백엔드로 새 요청을 전달하며, 두 연결 구간의 전송·TLS·시간 제한이 독립적임을 설명한다."
 level: 1
 status: PUBLISHED
 displayOrder: 50
@@ -17,14 +17,14 @@ references:
 ---
 # 역방향 프록시
 
-reverse proxy는 origin server 앞에서 client request를 받고, 선택한 backend로 별도의 upstream request를 전달하는 server-side intermediary다. client는 proxy를 public endpoint로 보지만 backend는 proxy와의 connection을 보게 된다.
+역방향 프록시는 원본 서버 앞에서 클라이언트 요청을 받고 선택한 백엔드로 별도 요청을 보내는 서버 쪽 중개자다. 클라이언트에는 공개 진입점으로 보이지만 백엔드가 연결 상대 주소로 관찰하는 대상은 프록시다.
 
 ```text
-client → reverse proxy → backend
+클라이언트 → 역방향 프록시 → 백엔드
 ```
 
-하나의 reverse proxy가 여러 backend 중 route를 선택하거나 TLS termination, load balancing, cache 같은 기능을 추가할 수 있다. 하지만 reverse proxy라는 역할 자체는 이런 기능 모두를 필수로 포함한다는 뜻이 아니다.
+역방향 프록시는 여러 백엔드 중 경로를 선택하거나 TLS 종료, 부하 분산, 캐시 기능을 제공할 수 있다. 이런 기능이 역방향 프록시 역할에 모두 필수로 포함되지는 않는다.
 
-client→proxy와 proxy→backend는 서로 다른 connection이므로 transport, TLS, timeout과 peer address도 각각 다를 수 있다. proxy가 client-facing TLS를 종료했다면 backend hop이 자동으로 TLS가 되는 것도 아니다. 또한 proxy가 request를 retry한다면 backend가 이미 처리한 요청과 중복될 가능성도 생긴다.
+클라이언트에서 프록시까지와 프록시에서 백엔드까지는 서로 다른 연결이다. 각 구간의 전송 방식, TLS, 시간 제한, 상대 주소가 다를 수 있다. 프록시가 클라이언트 쪽 TLS를 종료해도 백엔드 연결이 자동으로 TLS를 사용하는 것은 아니다. 프록시가 요청을 다시 보낼 때 백엔드가 첫 요청을 이미 처리했을 가능성도 있어 중복 효과가 생길 수 있다.
 
-그래서 reverse proxy 뒤의 backend가 원래 client scheme, host나 address를 알아야 한다면 intermediary가 별도 metadata를 전달해야 한다. **Reverse proxy의 핵심은 client-facing connection을 종료하고 backend 쪽에 새로운 HTTP hop을 만든다는 것**이다.
+백엔드가 원래 클라이언트의 스킴, 호스트 또는 주소를 알아야 한다면 프록시가 전달 필드로 별도 정보를 넘겨야 한다. **역방향 프록시는 클라이언트 쪽 연결을 받고 백엔드 쪽에 새로운 HTTP 요청 구간을 만드는 역할이다.**

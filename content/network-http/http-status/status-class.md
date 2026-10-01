@@ -17,18 +17,18 @@ references:
 ---
 # HTTP 상태 코드 계열
 
-HTTP status code의 첫 번째 숫자는 response가 속한 큰 의미 범위를 나타낸다. client는 이 class를 통해 결과의 성격을 빠르게 분류할 수 있지만, 실제 다음 행동은 구체적인 status code와 response fields를 함께 봐야 판단할 수 있다.
+HTTP 상태 코드의 첫 번째 숫자는 응답이 속하는 큰 의미 범위를 나타낸다. 클라이언트는 이 계열을 통해 결과를 빠르게 분류할 수 있지만, 다음 행동은 구체적인 상태 코드와 응답 필드를 함께 보고 판단해야 한다.
 
-| Class | 범위의 의미 | 해석할 때 주의할 점 |
+| 계열 | 의미 | 해석할 때 주의할 점 |
 | --- | --- | --- |
-| 1xx Informational | 요청 처리 중 보내는 중간 정보 | 최종 response가 뒤따를 수 있음 |
-| 2xx Successful | 요청이 성공 범주에 해당함; 202 Accepted처럼 처리가 완료되지 않은 응답도 포함 | 업무 상태의 모든 세부를 status 하나가 표현하지는 않음 |
-| 3xx Redirection | 추가 동작으로 요청을 완료할 수 있음 | 구체적인 redirect code와 Location을 확인 |
-| 4xx Client Error | 현재 요청의 조건과 연결된 실패 | authentication, authorization, validation은 서로 다른 상태 |
-| 5xx Server Error | 처리 과정의 서버 측 실패 또는 불가 상태 | retry 가능성은 code와 operation semantics에 따라 결정 |
+| 1xx 정보 응답(Informational) | 요청 처리 중 전달하는 중간 정보 | 최종 응답이 뒤따를 수 있음 |
+| 2xx 성공 응답(Successful) | 요청이 성공 범주에 해당함 | `202 Accepted`처럼 처리가 아직 끝나지 않은 응답도 포함 |
+| 3xx 리다이렉션(Redirection) | 추가 동작을 통해 요청을 완료할 수 있음 | 구체 상태 코드와 `Location` 필드를 확인 |
+| 4xx 클라이언트 오류(Client Error) | 현재 요청의 조건과 관련된 실패 | 인증·인가·요청 검증은 서로 다른 문제 |
+| 5xx 서버 오류(Server Error) | 서버 측 처리 실패 또는 처리 불가 상태 | 재시도 가능성은 상태 코드와 작업 의미에 따라 결정 |
 
-### Class만으로 retry나 업무 결과를 정할 수는 없다
+### 계열만으로 재시도나 업무 결과를 정할 수는 없다
 
-같은 4xx라도 `401`은 authentication challenge와 연결되고 `404`는 target resource를 찾지 못한 경우다. 같은 5xx라도 `500`은 server 내부 오류이고 `504`는 gateway가 upstream response를 제때 받지 못한 상태다. 따라서 `4xx는 절대 retry하지 않는다`, `5xx는 무조건 retry한다`처럼 class 하나만으로 복구 정책을 결정하면 안 된다.
+같은 4xx라도 `401`은 인증 challenge와 관련되고 `404`는 대상 리소스를 찾지 못한 경우다. 같은 5xx라도 `500`은 서버 내부 오류이고 `504`는 게이트웨이가 상위 서버의 응답을 제때 받지 못한 상태다. 따라서 `4xx는 절대 재시도하지 않는다`, `5xx는 무조건 재시도한다`처럼 계열 하나만으로 복구 정책을 정하면 안 된다.
 
-status code는 **현재 HTTP interaction의 결과를 표현하는 protocol signal**이다. application-specific error reason이나 장기 workflow 상태까지 하나의 숫자에 모두 담는 것이 아니므로, 필요한 세부 정보는 response representation과 header fields가 보완한다.
+상태 코드는 **현재 HTTP 교환의 결과를 나타내는 프로토콜 신호**다. 애플리케이션별 오류 사유나 장기 작업 상태까지 하나의 숫자에 모두 담지는 않으므로, 필요한 정보는 응답 표현과 헤더 필드로 보완한다.

@@ -4,7 +4,7 @@ contentKey: network-http.core.http-versions.http2-multiplexing
 topicContentKey: network-http.core.http-versions
 slug: http2-multiplexing
 title: "HTTP/2 멀티플렉싱"
-summary: "여러 stream의 frame을 하나의 connection에서 interleave해 HTTP/1.1 response-order HOL을 줄이는 방식을 설명한다."
+summary: "여러 스트림(stream)의 프레임(frame)을 하나의 연결에서 섞어 보내 HTTP/1.1의 응답 순서 대기(head-of-line blocking, HOL)를 줄이는 방식을 설명한다."
 level: 2
 status: PUBLISHED
 displayOrder: 60
@@ -19,19 +19,19 @@ references:
 ---
 # HTTP/2 멀티플렉싱
 
-HTTP/2는 여러 stream의 frame을 하나의 connection에서 interleave할 수 있다. 한 stream의 response가 아직 끝나지 않아도 다른 stream의 HEADERS나 DATA frame을 전달할 수 있으므로 HTTP/1.1 pipelining처럼 response 전체가 strict order로 완료될 필요가 없다.
+HTTP/2는 여러 스트림의 프레임을 하나의 연결에서 교차 전송할 수 있다. 한 스트림의 응답이 끝나지 않았어도 다른 스트림의 `HEADERS`나 `DATA` 프레임을 보낼 수 있으므로 HTTP/1.1 파이프라이닝처럼 응답 전체가 엄격한 순서로 끝날 필요가 없다.
 
 ```text
-connection frames
-  → stream 1 frame
-  → stream 3 frame
-  → stream 1 frame
-  → stream 5 frame
-  → stream 3 frame
+하나의 연결에서 프레임 교차 전송
+  → 스트림 1 프레임
+  → 스트림 3 프레임
+  → 스트림 1 프레임
+  → 스트림 5 프레임
+  → 스트림 3 프레임
 ```
 
-이 구조는 여러 request를 동시에 진행시키면서 connection 수와 반복 handshake 비용을 줄일 수 있게 한다. 특정 stream을 reset해도 다른 stream은 계속 진행할 수 있다.
+이 구조는 여러 요청을 동시에 처리하면서 연결 수와 반복 핸드셰이크 비용을 줄일 수 있다. 특정 스트림을 재설정해도 다른 스트림은 계속 진행할 수 있다.
 
-하지만 multiplexing이 모든 blocking을 없애는 것은 아니다. 여러 stream은 같은 connection의 transport, congestion state와 connection-level flow control을 공유한다. 특히 HTTP/2가 TCP 위에서 동작할 때 TCP의 ordered byte stream에서 loss가 발생하면 여러 HTTP/2 stream의 frame delivery가 함께 지연될 수 있다.
+하지만 멀티플렉싱이 모든 대기를 없애지는 않는다. 여러 스트림이 같은 연결의 전송 상태, 혼잡 상태와 연결 수준 흐름 제어를 공유한다. 특히 HTTP/2가 TCP 위에서 동작하면 TCP 바이트 스트림에서 손실이 발생했을 때 여러 스트림의 프레임 전달이 함께 지연될 수 있다.
 
-따라서 **HTTP/2 multiplexing은 HTTP-level stream을 독립적으로 interleave하는 기능이고, 아래 transport의 shared state까지 독립시키는 기능은 아니다.**
+따라서 **HTTP/2 멀티플렉싱은 HTTP 수준 스트림을 교차 전송하는 기능이지, 아래 전송 계층의 공유 상태까지 독립시키는 기능은 아니다.**

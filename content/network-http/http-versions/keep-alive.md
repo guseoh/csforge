@@ -4,7 +4,7 @@ contentKey: network-http.core.http-versions.keep-alive
 topicContentKey: network-http.core.http-versions
 slug: keep-alive
 title: "지속 연결과 Keep-Alive"
-summary: "HTTP connection 재사용, HTTP/1.x Keep-Alive 신호와 TCP keepalive probe를 서로 다른 개념으로 구분한다."
+summary: "HTTP 연결 재사용, HTTP/1.x Keep-Alive 신호와 TCP keepalive 탐지 패킷(probe)을 서로 다른 개념으로 구분한다."
 level: 1
 status: PUBLISHED
 displayOrder: 30
@@ -33,18 +33,18 @@ references:
 ---
 # 지속 연결과 Keep-Alive
 
-HTTP에서 persistent connection은 하나의 transport connection을 여러 HTTP exchange에 재사용하는 개념이다. HTTP/1.1에서는 persistence가 기본이며 `Connection: close`로 current connection을 더 이상 재사용하지 않겠다는 의사를 전달할 수 있다.
+HTTP 지속 연결은 하나의 전송 연결을 여러 HTTP 교환에 재사용하는 개념이다. HTTP/1.1에서는 연결 재사용이 기본이며 `Connection: close`로 현재 연결을 더 이상 재사용하지 않겠다는 의사를 전달할 수 있다.
 
-HTTP/1.0에서 사용되던 `Connection: keep-alive` 계열 extension과 HTTP/1.1의 기본 persistent connection model은 같은 역사적 위치가 아니다. 또한 HTTP/2와 HTTP/3에서는 `Connection`, `Keep-Alive` 같은 connection-specific field를 사용해 persistence를 협상하지 않는다.
+HTTP/1.0에서 사용된 `Connection: keep-alive` 확장과 HTTP/1.1의 기본 지속 연결은 같은 규칙이 아니다. HTTP/2와 HTTP/3에서는 `Connection`, `Keep-Alive` 같은 연결별 헤더 필드로 연결 지속성을 협상하지 않는다.
 
-이 개념은 TCP keepalive probe와도 다르다. HTTP persistence는 여러 HTTP request/response가 같은 connection을 재사용하는 문제이고, TCP keepalive는 오래 idle인 TCP peer가 여전히 reachable한지 확인하기 위한 transport mechanism이다.
+이 개념은 TCP 연결 유지 탐침(TCP keepalive probe)과도 다르다. HTTP 지속 연결은 여러 HTTP 요청·응답을 같은 연결에서 재사용하는 문제다. TCP keepalive는 오래 유휴한 TCP 상대가 계속 도달 가능한지 확인하는 전송 계층 기능이다.
 
 ```text
-HTTP persistent connection
-  → HTTP exchange 재사용
+HTTP 지속 연결
+  → 여러 HTTP 교환에서 연결 재사용
 
 TCP keepalive
-  → idle TCP peer 상태 탐지
+  → 유휴 TCP 상대의 도달 가능성 확인
 ```
 
-어떤 mechanism도 connection을 무기한 유지한다고 보장하지 않는다. **HTTP Keep-Alive를 이해할 때는 protocol version별 connection reuse 규칙과 transport-level keepalive를 분리하는 것이 핵심**이다.
+어느 기능도 연결을 무기한 유지한다고 보장하지 않는다. **HTTP 연결 재사용 규칙과 전송 계층의 keepalive 탐침을 구분하고, 프로토콜 버전에 맞는 동작을 적용해야 한다.**

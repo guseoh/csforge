@@ -4,7 +4,7 @@ contentKey: network-http.core.http-cache.private-shared-cache
 topicContentKey: network-http.core.http-cache
 slug: private-shared-cache
 title: "개인 캐시와 공유 캐시"
-summary: "한 사용자 에이전트가 쓰는 개인 캐시와 여러 사용자의 요청을 재사용하는 공유 캐시의 범위를 구분한다."
+summary: "한 사용자 에이전트가 쓰는 개인 캐시와 여러 사용자의 요청을 처리하는 공유 캐시의 범위를 구분한다."
 level: 2
 status: PUBLISHED
 displayOrder: 90
@@ -27,7 +27,7 @@ HTTP 캐시는 저장된 응답을 **누가 다시 사용할 수 있는가**에 
   → 여러 클라이언트 요청 사이에서 재사용 가능
 ```
 
-이 차이는 로그인 사용자마다 내용이 달라지는 응답에서 특히 중요하다. `Cache-Control: private`는 공유 캐시의 저장을 제한하면서 개인 캐시의 저장은 허용할 수 있다. `no-store`는 저장 자체를 더 강하게 제한한다. 공유 캐시에만 별도 freshness lifetime을 지정할 때는 `s-maxage`를 사용할 수 있다.
+이 차이는 로그인 사용자마다 내용이 달라지는 응답에서 특히 중요하다. `Cache-Control: private`는 공유 캐시의 저장을 제한하면서 개인 캐시의 저장은 허용할 수 있다. `no-store`는 저장 자체를 더 강하게 제한한다. 공유 캐시에만 별도 신선도 수명(freshness lifetime)을 지정할 때는 `s-maxage`를 사용할 수 있다.
 
 `Authorization`이 포함된 요청에 대한 응답은 공유 캐시에서 재사용 조건이 더 엄격하며, 공유 캐싱을 명시적으로 허용하는 지시어가 필요한 경우가 있다. 반대로 `Set-Cookie`가 존재한다는 사실만으로 HTTP 캐싱이 자동 금지되는 것은 아니다. 실제 캐시 가능 여부는 RFC의 캐시 규칙과 응답 지시어를 함께 봐야 한다.
 
