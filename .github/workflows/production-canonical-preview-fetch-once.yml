@@ -1,0 +1,152 @@
+name: One-time production canonical preview fetch
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/production-canonical-preview-fetch-once.yml
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  preview-production-content:
+    runs-on: ubuntu-latest
+    env:
+      GCP_PROJECT_ID: csforge-508510
+      GCP_REGION: asia-southeast1
+      CLOUD_RUN_SERVICE: csforge
+      PREVIEW_SERVICE: csforge-canonical-preview-once
+      PREVIEW_IMAGE: asia-southeast1-docker.pkg.dev/csforge-508510/csforge/csforge:preview-7f0a4316786a6147513717289e575fc166efc47b
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v3
+        with:
+          project_id: ${{ env.GCP_PROJECT_ID }}
+          workload_identity_provider: projects/1003183509924/locations/global/workloadIdentityPools/github/providers/csforge
+          service_account: github-cloud-run-deployer@csforge-508510.iam.gserviceaccount.com
+
+      - name: Set up Google Cloud CLI
+        uses: google-github-actions/setup-gcloud@v3
+
+      - name: Create result token
+        id: token
+        shell: bash
+        run: |
+          token="$(openssl rand -hex 32)"
+          echo "::add-mask::${token}"
+          echo "value=${token}" >> "${GITHUB_OUTPUT}"
+
+      - name: Read production DB configuration
+        id: prod
+        shell: bash
+        env:
+          PREVIEW_RESULT_TOKEN: ${{ steps.token.outputs.value }}
+        run: |
+          set -euo pipefail
+          service_json="$(mktemp)"
+          gcloud run services describe "${CLOUD_RUN_SERVICE}" \
+            --project="${GCP_PROJECT_ID}" --region="${GCP_REGION}" --format=json > "${service_json}"
+          service_account="$(jq -r '.spec.template.spec.serviceAccountName // empty' "${service_json}")"
+          test -n "${service_account}"
+          python3 - "${service_json}" "${GITHUB_OUTPUT}" <<'PY'
+          import json, os, sys
+          service_path, output_path = sys.argv[1], sys.argv[2]
+          service = json.load(open(service_path, encoding='utf-8'))
+          wanted = {'DB_URL','DB_USERNAME','DB_PASSWORD','DB_MAX_POOL_SIZE','DB_MIN_IDLE','DB_CONNECTION_TIMEOUT','DB_VALIDATION_TIMEOUT'}
+          required = {'DB_URL','DB_USERNAME','DB_PASSWORD'}
+          entries = service['spec']['template']['spec']['containers'][0].get('env', [])
+          plain = {
+              'SPRING_PROFILES_ACTIVE':'local',
+              'CSFORGE_AI_ENABLED':'false',
+              'SPRING_FLYWAY_ENABLED':'false',
+              'SPRING_JPA_HIBERNATE_DDL_AUTO':'validate',
+              'PREVIEW_RESULT_TOKEN': os.environ['PREVIEW_RESULT_TOKEN'],
+          }
+          secrets, found = [], set()
+          for item in entries:
+              name = item.get('name')
+              if name not in wanted:
+                  continue
+              found.add(name)
+              if 'value' in item:
+                  plain[name] = item['value']
+                  continue
+              ref = item.get('valueFrom', {}).get('secretKeyRef', {})
+              if not ref.get('name') or not ref.get('key'):
+                  raise SystemExit(f'unsupported env source for {name}')
+              secrets.append(f"{name}={ref['name']}:{ref['key']}")
+          missing = required - found
+          if missing:
+              raise SystemExit('missing DB vars: ' + ','.join(sorted(missing)))
+          json.dump(plain, open('/tmp/preview-env.json','w',encoding='utf-8'))
+          with open(output_path,'a',encoding='utf-8') as out:
+              out.write('secrets=' + ','.join(secrets) + '\n')
+          PY
+          echo "service_account=${service_account}" >> "${GITHUB_OUTPUT}"
+
+      - name: Deploy private preview result service
+        shell: bash
+        run: |
+          set -euo pipefail
+          args=(run deploy "${PREVIEW_SERVICE}" \
+            --project="${GCP_PROJECT_ID}" --region="${GCP_REGION}" \
+            --image="${PREVIEW_IMAGE}" \
+            --service-account="${{ steps.prod.outputs.service_account }}" \
+            --env-vars-file=/tmp/preview-env.json \
+            --cpu=1 --memory=1Gi --min=0 --max=1 --timeout=900 \
+            --no-allow-unauthenticated --quiet)
+          if [[ -n "${{ steps.prod.outputs.secrets }}" ]]; then
+            args+=(--set-secrets="${{ steps.prod.outputs.secrets }}")
+          fi
+          gcloud "${args[@]}"
+          gcloud run services describe "${PREVIEW_SERVICE}" \
+            --project="${GCP_PROJECT_ID}" --region="${GCP_REGION}" \
+            --format='value(status.url)' >/tmp/service-url.txt
+
+      - name: Fetch sanitized preview result
+        shell: bash
+        env:
+          PREVIEW_RESULT_TOKEN: ${{ steps.token.outputs.value }}
+        run: |
+          set -euo pipefail
+          url="$(cat /tmp/service-url.txt)"
+          id_token="$(gcloud auth print-identity-token --audiences="${url}")"
+          code="000"
+          for _ in $(seq 1 180); do
+            code="$(curl --silent --show-error --output /tmp/result.json --write-out '%{http_code}' \
+              --header "Authorization: Bearer ${id_token}" \
+              --header "X-Preview-Token: ${PREVIEW_RESULT_TOKEN}" \
+              "${url}/result" || true)"
+            if [[ "${code}" == "200" ]]; then
+              break
+            fi
+            if [[ "${code}" != "202" && "${code}" != "000" ]]; then
+              echo "Unexpected result HTTP ${code}"
+              cat /tmp/result.json || true
+              exit 1
+            fi
+            sleep 5
+          done
+          test "${code}" = "200"
+          jq . /tmp/result.json
+          jq -e '.state == "DONE" and .destructiveApplyInvoked == false' /tmp/result.json >/dev/null
+          jq -e '.preview.canApply == true and .preview.totals.errors == 0' /tmp/result.json >/dev/null
+          jq -e '.identitySafety.identitySafe == true' /tmp/result.json >/dev/null
+
+      - name: Upload sanitized preview result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: production-canonical-preview-authenticated
+          path: /tmp/result.json
+          if-no-files-found: warn
+          retention-days: 7
+
+      - name: Remove temporary preview service
+        if: always()
+        run: gcloud run services delete "${PREVIEW_SERVICE}" --project="${GCP_PROJECT_ID}" --region="${GCP_REGION}" --quiet || true
