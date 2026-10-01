@@ -20,7 +20,7 @@ references:
     referenceType: OFFICIAL
     language: en
     displayOrder: 2
-    relationNote: abstract class와 상속 규칙 확인
+    relationNote: 추상 클래스와 상속 규칙 확인
 ---
 # 인터페이스와 추상 클래스 선택
 

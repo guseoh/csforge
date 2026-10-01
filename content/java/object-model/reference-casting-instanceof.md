@@ -4,7 +4,7 @@ contentKey: java.core.object-model.reference-casting-instanceof
 topicContentKey: java.core.object-model
 slug: reference-casting-instanceof
 title: "참조 타입 변환과 instanceof"
-summary: "상위 타입으로의 안전한 변환과 하위 타입으로의 검사가 필요한 변환을 구분하고 pattern matching을 활용한다"
+summary: "상위 타입으로의 안전한 변환과 하위 타입으로의 검사가 필요한 변환을 구분하고 패턴 매칭을 활용한다"
 level: 2
 status: PUBLISHED
 displayOrder: 100
@@ -14,13 +14,13 @@ references:
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
-    relationNote: reference widening·narrowing conversion 규칙 확인
+    relationNote: 참조 타입 확장·축소 변환 규칙 확인
   - url: "https://docs.oracle.com/javase/specs/jls/se25/html/jls-15.html#jls-15.20.2"
     title: "JLS 15.20.2 The instanceof Operator"
     referenceType: OFFICIAL
     language: en
     displayOrder: 2
-    relationNote: instanceof와 pattern matching 규칙 확인
+    relationNote: "`instanceof`와 패턴 매칭 규칙 확인"
   - url: "https://tecoble.techcourse.co.kr/post/2021-04-26-instanceof/"
     title: "Tecoble: instanceof의 사용을 지양하자"
     referenceType: KOREAN_BLOG
@@ -48,7 +48,7 @@ Dog dog = new Dog();
 Animal animal = dog;
 ```
 
-이 방향을 흔히 **업캐스팅(upcasting)** 또는 widening reference conversion이라고 부르며 일반적으로 명시적인 cast가 필요하지 않습니다.
+이 방향은 흔히 **상향 형변환(upcasting)** 또는 넓히는 참조 변환(widening reference conversion)이라고 하며, 일반적으로 명시적 형변환이 필요하지 않습니다.
 
 ### 하위 타입으로 좁힐 때는 실제 객체가 중요하다
 
@@ -72,7 +72,7 @@ Animal 참조
                       → ClassCastException
 ```
 
-cast가 성공해도 객체가 새로 만들어지거나 다른 종류의 객체로 변하는 것은 아닙니다. **같은 객체를 더 구체적인 참조 타입으로 사용할 수 있는지 확인**하는 것입니다.
+형변환(cast)이 성공해도 객체가 새로 만들어지거나 다른 종류의 객체로 변하는 것은 아닙니다. **같은 객체를 더 구체적인 참조 타입으로 사용할 수 있는지 확인**하는 것입니다.
 
 ### instanceof 패턴으로 검사와 사용을 함께 표현할 수 있다
 
@@ -82,7 +82,7 @@ if (animal instanceof Dog dog) {
 }
 ```
 
-이 코드는 `animal`이 `Dog`와 호환되는 실제 객체인지 검사하고, 성공한 범위에서 `Dog` 타입 변수 `dog`를 제공합니다. 예전처럼 검사 뒤 다시 cast하는 코드보다 의도가 직접적입니다.
+이 코드는 `animal`이 `Dog`와 호환되는 실제 객체인지 검사하고, 성공한 범위에서 `Dog` 타입 변수 `dog`를 제공합니다. 예전처럼 검사 뒤 다시 형변환하는 코드보다 의도가 직접적입니다.
 
 ```java
 if (animal instanceof Dog) {
@@ -104,6 +104,6 @@ if (payment instanceof CardPayment card) {
 
 두 타입이 모두 같은 `pay()` 책임을 제공할 수 있다면 공통 타입에서 `payment.pay()`로 호출하는 편이 더 자연스러울 수 있습니다. 이런 경우 반복적인 타입 검사는 다형성으로 책임을 이동할 수 있는지 검토할 신호입니다.
 
-그렇다고 모든 `instanceof`가 나쁜 것은 아닙니다. 외부 입력의 종류를 분류하거나 sealed hierarchy의 variant를 명시적으로 처리하는 것처럼 **타입 자체가 분기의 중요한 정보인 경우**에는 타입 검사가 자연스럽습니다.
+그렇다고 모든 `instanceof`가 나쁜 것은 아닙니다. 외부 입력의 종류를 분류하거나 `sealed` 계층의 변형(variant)을 명시적으로 처리하는 것처럼 **타입 자체가 분기의 중요한 정보인 경우**에는 타입 검사가 자연스럽습니다.
 
-참조 타입 변환 문제를 볼 때는 **변수의 선언 타입 → 실제 객체 타입 → 좁히려는 타입과의 호환성**을 순서대로 확인하면 됩니다. cast는 객체를 바꾸는 연산이 아니라 같은 객체를 어떤 참조 타입으로 안전하게 다룰 수 있는지 확인하는 과정입니다.
+참조 타입 변환 문제를 볼 때는 **변수의 선언 타입 → 실제 객체 타입 → 좁히려는 타입과의 호환성**을 순서대로 확인하면 됩니다. 형변환은 객체를 바꾸는 연산이 아니라 같은 객체를 어떤 참조 타입으로 안전하게 다룰 수 있는지 확인하는 과정입니다.

@@ -18,13 +18,13 @@ references:
 ---
 # ArrayDeque로 스택과 큐 사용하기
 
-`ArrayDeque`는 앞과 뒤 양쪽에서 값을 넣고 뺄 수 있는 deque 구현입니다. 코딩테스트에서는 같은 타입을 **queue, stack, 양방향 deque**로 사용할 수 있어 자주 등장합니다.
+`ArrayDeque`는 앞과 뒤 양쪽에서 값을 넣고 뺄 수 있는 덱 구현입니다. 코딩테스트에서는 같은 타입을 **큐, 스택, 양방향 덱**으로 사용할 수 있어 자주 등장합니다.
 
 핵심은 메서드 이름을 많이 외우는 것보다 "나는 어느 쪽에 넣고 어느 쪽에서 뺄 것인가"를 처음부터 일관되게 정하는 것입니다.
 
 ### Queue로 사용할 때는 뒤에 넣고 앞에서 뺀다
 
-FIFO queue는 먼저 들어온 값이 먼저 나옵니다.
+FIFO 큐는 먼저 들어온 값이 먼저 나옵니다.
 
 ```java
 Deque<Integer> queue = new ArrayDeque<>();
@@ -49,7 +49,7 @@ pollFirst       addLast
 
 ### Stack으로 사용할 때는 같은 쪽에서 넣고 뺀다
 
-LIFO stack은 마지막에 넣은 값이 먼저 나옵니다.
+LIFO 스택은 마지막에 넣은 값이 먼저 나옵니다.
 
 ```java
 Deque<Integer> stack = new ArrayDeque<>();
@@ -61,7 +61,7 @@ stack.push(30);
 System.out.println(stack.pop()); // 30
 ```
 
-`push`와 `pop`은 deque의 앞쪽을 stack top으로 사용하는 API입니다.
+`push`와 `pop`은 덱의 앞쪽을 스택 top으로 사용하는 API입니다.
 
 ```text
 top
@@ -71,11 +71,11 @@ top
 push / pop
 ```
 
-직접 `addLast`/`removeLast`를 한 쌍으로 사용해도 LIFO를 만들 수 있지만, `push/pop`은 stack 의도를 더 바로 보여 줄 수 있습니다.
+직접 `addLast`/`removeLast`를 한 쌍으로 사용해도 LIFO를 만들 수 있지만, `push/pop`은 스택 의도를 더 바로 보여 줄 수 있습니다.
 
 ### `poll`과 `remove`는 비었을 때 동작이 다르다
 
-문제에서 빈 deque를 만날 가능성이 있다면 API 차이가 중요합니다.
+문제에서 빈 덱을 만날 가능성이 있다면 API 차이가 중요합니다.
 
 - `pollFirst()`, `pollLast()`: 비어 있으면 `null`
 - `removeFirst()`, `removeLast()`: 비어 있으면 예외
@@ -109,7 +109,7 @@ Deque<String> deque = new ArrayDeque<>();
 
 ### 이 Concept은 알고리즘보다 Java 구현 도구에 집중한다
 
-BFS에서 queue를 왜 쓰는지, DFS에서 stack을 어떻게 사용하는지는 Data Structures & Algorithms 영역에서 다룹니다. 여기서는 이미 선택한 자료구조를 **Java의 `ArrayDeque` API로 실수 없이 구현하는 것**이 목표입니다.
+BFS에서 큐를 왜 쓰는지, DFS에서 스택을 어떻게 사용하는지는 Data Structures & Algorithms 영역에서 다룹니다. 여기서는 이미 선택한 자료구조를 **Java의 `ArrayDeque` API로 실수 없이 구현하는 것**이 목표입니다.
 
 ### 문제를 풀 때 확인할 것
 
@@ -121,4 +121,4 @@ BFS에서 queue를 왜 쓰는지, DFS에서 stack을 어떻게 사용하는지�
 
 ### 학습 후 스스로 설명해 보기
 
-`ArrayDeque`는 양 끝 삽입·제거가 가능한 deque라서 queue와 stack을 모두 표현할 수 있습니다. Queue로는 보통 뒤에 넣고 앞에서 빼며, stack으로는 `push/pop` 같은 한쪽 끝 연산을 사용합니다. `poll`은 빈 경우 null, `remove`는 예외라는 차이와 null 원소를 허용하지 않는다는 점을 알아 두면 좋습니다.
+`ArrayDeque`는 양 끝 삽입·제거가 가능한 덱이라서 큐와 스택을 모두 표현할 수 있습니다. Queue로는 보통 뒤에 넣고 앞에서 빼며, 스택으로는 `push/pop` 같은 한쪽 끝 연산을 사용합니다. `poll`은 빈 경우 null, `remove`는 예외라는 차이와 null 원소를 허용하지 않는다는 점을 알아 두면 좋습니다.

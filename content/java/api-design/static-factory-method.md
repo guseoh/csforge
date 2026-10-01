@@ -4,7 +4,7 @@ contentKey: java.core.api-design.static-factory-method
 topicContentKey: java.core.api-design
 slug: static-factory-method
 title: "정적 팩터리 메서드"
-summary: "정적 팩터리가 생성 의미·구현 선택·인스턴스 수명·invariant를 어떤 경계에 모으는지 이해하고 constructor·Builder·별도 Factory와 구분한다"
+summary: "정적 팩터리가 생성 의미·구현 선택·인스턴스 수명·불변 조건을 어떤 경계에 모으는지 이해하고 생성자·Builder·별도 Factory와 구분한다"
 level: 2
 status: PUBLISHED
 displayOrder: 10

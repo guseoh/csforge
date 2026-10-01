@@ -3,8 +3,8 @@ kind: concept
 contentKey: java.core.generics.raw-types-unchecked
 topicContentKey: java.core.generics
 slug: raw-types-unchecked
-title: "Raw type과 unchecked 경고"
-summary: "제네릭 타입 정보를 생략하면 컴파일 시점 타입 안전성을 잃고 unchecked 경고가 런타임 오류 가능성을 알리는 이유를 이해한다"
+title: "로 타입(raw type)과 비검사 경고(unchecked warning)"
+summary: "제네릭 타입 정보를 생략하면 컴파일 시점 타입 안전성을 잃고 비검사 경고가 런타임 오류 가능성을 알리는 이유를 이해한다"
 level: 2
 status: PUBLISHED
 displayOrder: 40
@@ -22,9 +22,9 @@ references:
     displayOrder: 2
     relationNote: unchecked conversion 규칙 확인
 ---
-# Raw type과 unchecked 경고
+# 로 타입(raw type)과 비검사 경고(unchecked warning)
 
-제네릭 클래스에서 타입 인자를 생략한 형태를 **raw type**이라고 합니다.
+제네릭 클래스에서 타입 인자를 생략한 형태를 **로 타입**이라고 합니다.
 
 ```java
 List values = new ArrayList();
@@ -40,14 +40,14 @@ values.add("java");
 values.add(10);
 ```
 
-raw List에는 서로 다른 타입이 들어갈 수 있습니다. 이후 이것을 `List<String>`으로 다룬다면 문제가 늦게 드러납니다.
+원시 타입(raw type) List에는 서로 다른 타입이 들어갈 수 있습니다. 이후 이것을 `List<String>`으로 다룬다면 문제가 늦게 드러납니다.
 
 ```java
 List<String> names = values; // unchecked 경고
 String name = names.get(1);  // ClassCastException 가능
 ```
 
-컴파일러의 **unchecked 경고**는 “이 변환이 반드시 실패한다”는 뜻은 아닙니다. 제네릭 타입 정보만으로는 컴파일러가 안전성을 완전히 검증할 수 없다는 신호입니다.
+컴파일러의 **비검사 경고**는 “이 변환이 반드시 실패한다”는 뜻은 아닙니다. 제네릭 타입 정보만으로는 컴파일러가 안전성을 완전히 검증할 수 없다는 신호입니다.
 
 ### 경고를 무조건 숨기면 안 된다
 
@@ -55,11 +55,11 @@ String name = names.get(1);  // ClassCastException 가능
 @SuppressWarnings("unchecked")
 ```
 
-이 애너테이션은 코드가 안전해지는 기능이 아닙니다. 경고 표시만 억제합니다. 외부 라이브러리나 레거시 API 때문에 어쩔 수 없이 unchecked cast를 해야 한다면 범위를 가능한 작게 두고 **왜 안전하다고 판단할 수 있는지**를 확인해야 합니다.
+이 애너테이션은 코드가 안전해지는 기능이 아닙니다. 경고 표시만 억제합니다. 외부 라이브러리나 레거시 API 때문에 어쩔 수 없이 비검사 캐스팅을 해야 한다면 범위를 가능한 작게 두고 **왜 안전하다고 판단할 수 있는지**를 확인해야 합니다.
 
-예를 들어 런타임 검사를 먼저 수행한 뒤 좁은 helper 메서드에서 cast하는 식으로 위험한 경계를 한곳에 모을 수 있습니다.
+예를 들어 런타임 검사를 먼저 수행한 뒤 좁은 helper 메서드에서 캐스팅하는 식으로 위험한 경계를 한곳에 모을 수 있습니다.
 
-### raw type과 `List<?>`는 다르다
+### 로 타입과 `List<?>`는 다르다
 
 ```java
 List<?> unknown = List.of("a", "b");
@@ -71,4 +71,4 @@ List<?> unknown = List.of("a", "b");
 
 ### 실무에서는 경고를 기술 부채 신호로 본다
 
-빌드에 unchecked 경고가 계속 남아 있으면 실제 타입 오류와 오래된 코드 경계가 숨어 있을 수 있습니다. 모든 경고를 즉시 없앨 수 없더라도 새 코드에서 raw type을 만들지 않고, 필요한 억제는 좁고 설명 가능한 위치에 두는 것이 좋습니다.
+빌드에 비검사 경고가 계속 남아 있으면 실제 타입 오류와 오래된 코드 경계가 숨어 있을 수 있습니다. 모든 경고를 즉시 없앨 수 없더라도 새 코드에서 로 타입을 만들지 않고, 필요한 억제는 좁고 설명 가능한 위치에 두는 것이 좋습니다.

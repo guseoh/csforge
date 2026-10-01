@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.exceptions-resources.try-with-resources-suppressed
 topicContentKey: java.core.exceptions-resources
 slug: try-with-resources-suppressed
-title: "try-with-resources와 suppressed exception"
+title: "try-with-resources와 억제 예외(suppressed exception)"
 summary: "자동 자원 정리 순서와 본문 예외와 close 예외가 동시에 발생할 때 suppressed로 원인을 보존하는 방식을 이해한다"
 level: 2
 status: PUBLISHED
@@ -28,9 +28,9 @@ references:
     displayOrder: 3
     relationNote: try-with-resources와 JDK 7 자원 관리 문법을 한국어 사례로 보충
 ---
-# try-with-resources와 suppressed exception
+# try-with-resources와 억제 예외(suppressed exception)
 
-파일, stream, JDBC connection처럼 사용 후 정리가 필요한 자원은 정상 종료뿐 아니라 **중간에 예외가 발생해도 닫혀야 합니다.** `try-with-resources`는 `AutoCloseable` 자원의 수명을 언어 구조 안에 넣어 이런 정리 경로를 관리합니다.
+파일, 스트림, JDBC 연결처럼 사용 후 정리가 필요한 자원은 정상 종료뿐 아니라 **중간에 예외가 발생해도 닫혀야 합니다.** `try-with-resources`는 `AutoCloseable` 자원의 수명을 언어 구조 안에 넣어 이런 정리 경로를 관리합니다.
 
 ```java
 try (BufferedReader reader = Files.newBufferedReader(path)) {
@@ -54,15 +54,15 @@ try (
 종료 시에는 `second`가 먼저, `first`가 나중에 닫힙니다.
 
 ```text
-open first
+first 열기
    ↓
-open second
+second 열기
    ↓
 use
    ↓
-close second
+second 닫기
    ↓
-close first
+first 닫기
 ```
 
 두 번째 자원을 여는 도중 실패해도 이미 성공적으로 초기화된 첫 번째 자원은 정리 대상이 됩니다. 따라서 "try 본문까지 들어가야만 close된다"고 이해하면 부족합니다.
@@ -75,11 +75,11 @@ try (Resource r = open()) {
 } // close()도 CloseException을 던진다고 가정
 ```
 
-본문에서 발생한 `WorkException`을 정리 중 예외가 덮어쓰면 실제 작업 실패 원인을 잃게 됩니다. try-with-resources는 본문의 주 예외를 유지하고, close 중 발생한 추가 예외를 **suppressed exception**으로 연결할 수 있습니다.
+본문에서 발생한 `WorkException`을 정리 중 예외가 덮어쓰면 실제 작업 실패 원인을 잃게 됩니다. try-with-resources는 본문의 주 예외를 유지하고, close 중 발생한 추가 예외를 **suppressed 예외**로 연결할 수 있습니다.
 
 ```text
 WorkException        ← 주 예외
-└─ suppressed
+└─ 억제된 예외(suppressed exception)
    └─ CloseException ← 정리 중 예외
 ```
 
@@ -89,6 +89,6 @@ WorkException        ← 주 예외
 
 ### 자원 관리와 자원 소유권은 함께 봐야 한다
 
-직접 획득한 `AutoCloseable` 자원의 사용 범위가 명확하다면 try-with-resources가 좋은 기본 선택입니다. 하지만 framework나 다른 호출자가 생명주기를 소유하는 자원까지 현재 코드가 임의로 닫아야 한다는 뜻은 아닙니다.
+직접 획득한 `AutoCloseable` 자원의 사용 범위가 명확하다면 try-with-resources가 좋은 기본 선택입니다. 하지만 프레임워크나 다른 호출자가 생명주기를 소유하는 자원까지 현재 코드가 임의로 닫아야 한다는 뜻은 아닙니다.
 
-그래서 try-with-resources를 사용할 때는 두 가지를 함께 확인하면 됩니다. **이 코드가 자원의 소유자인가**, 그리고 **정상·실패 어느 경로에서도 소유한 자원을 정리하는가**입니다. 정리 중 발생한 추가 실패까지 보존해야 할 때 suppressed exception 규칙이 의미를 가집니다.
+그래서 try-with-resources를 사용할 때는 두 가지를 함께 확인하면 됩니다. **이 코드가 자원의 소유자인가**, 그리고 **정상·실패 어느 경로에서도 소유한 자원을 정리하는가**입니다. 정리 중 발생한 추가 실패까지 보존해야 할 때 suppressed 예외 규칙이 의미를 가집니다.

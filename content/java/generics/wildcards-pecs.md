@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.generics.wildcards-pecs
 topicContentKey: java.core.generics
 slug: wildcards-pecs
-title: "Wildcard와 PECS"
+title: "와일드카드(Wildcard)와 PECS"
 summary: "제네릭 API가 값을 주로 읽는지 쓰는지에 따라 extends와 super 경계를 선택하고 PECS를 실제 데이터 흐름으로 이해한다"
 level: 2
 status: PUBLISHED
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: wildcard와 bounded type argument 규칙 확인
 ---
-# Wildcard와 PECS
+# 와일드카드(Wildcard)와 PECS
 
 제네릭은 기본적으로 불공변이기 때문에 `List<Integer>`를 `List<Number>`로 바로 넘길 수 없습니다. 하지만 어떤 API는 값을 추가할 필요 없이 여러 하위 타입 컬렉션에서 **읽기만** 하면 되고, 어떤 API는 특정 타입의 값을 더 넓은 상위 타입 컬렉션에 **쓰기만** 하면 됩니다.
 
@@ -61,12 +61,12 @@ static void addDefaults(List<? super Integer> values) {
 
 ### PECS는 데이터 흐름을 기억하기 위한 규칙이다
 
-흔히 **PECS: Producer Extends, Consumer Super**라고 정리합니다.
+흔히 **PECS: Producer Extends, Consumer Super(생산자는 extends, 소비자는 super)**라고 정리합니다.
 
-- API가 컬렉션에서 `T` 값을 받아 **읽는 source**로 사용하면 `? extends T`
-- API가 컬렉션에 `T` 값을 **쓰는 destination**으로 사용하면 `? super T`
+- API가 컬렉션에서 `T` 값을 받아 **읽는 소스**로 사용하면 `? extends T`
+- API가 컬렉션을 `T` 값을 **쓰는 대상**으로 사용하면 `? super T`
 
-source에서 destination으로 복사하는 API를 보면 두 방향이 한 번에 드러납니다.
+원본에서 대상 컬렉션으로 복사하는 API를 보면 두 방향이 한 번에 드러납니다.
 
 ```java
 static <T> void copy(
@@ -80,16 +80,16 @@ static <T> void copy(
 ```
 
 ```text
-source                    destination
+원본(source)               대상(destination)
 ? extends T                  ? super T
     │                            ▲
     └────── T를 읽음 ────────────┘
                    T를 씀
 ```
 
-PECS는 모든 제네릭 선언에 기계적으로 붙이는 공식이 아닙니다. 한 컬렉션에서 복잡하게 읽고 쓰며 같은 구체 타입 관계를 유지해야 한다면 wildcard보다 named type parameter가 더 자연스러울 수도 있습니다.
+PECS는 모든 제네릭 선언에 기계적으로 붙이는 공식이 아닙니다. 한 컬렉션에서 복잡하게 읽고 쓰며 같은 구체 타입 관계를 유지해야 한다면 와일드카드보다 named 타입 매개변수가 더 자연스러울 수도 있습니다.
 
-### `List<?>`는 raw List와 다르다
+### `List<?>`는 원시 타입(raw type) List과 다르다
 
 ```java
 void inspect(List<?> values) {
@@ -101,4 +101,4 @@ void inspect(List<?> values) {
 
 raw `List`는 제네릭 검사를 일부 우회하므로 의미가 다릅니다. `List<?>`는 타입을 모르는 상태도 **타입 안전하게 표현**합니다.
 
-Wildcard 문제에서는 `extends`와 `super` 이름부터 외우기보다 해당 매개변수에서 **값이 어느 방향으로 흐르는지** 먼저 그리세요. 읽기 source인지 쓰기 destination인지가 보이면 왜 그 bound가 필요한지도 자연스럽게 따라옵니다.
+와일드카드 문제에서는 `extends`와 `super` 이름부터 외우기보다 해당 매개변수에서 **값이 어느 방향으로 흐르는지** 먼저 그리세요. 읽기 원본인지 쓰기 대상인지가 보이면 왜 그 타입 경계가 필요한지도 자연스럽게 따라옵니다.

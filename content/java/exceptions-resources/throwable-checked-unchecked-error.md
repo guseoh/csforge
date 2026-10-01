@@ -3,8 +3,8 @@ kind: concept
 contentKey: java.core.exceptions-resources.throwable-checked-unchecked-error
 topicContentKey: java.core.exceptions-resources
 slug: throwable-checked-unchecked-error
-title: "Throwable, checked exception, unchecked exception과 Error"
-summary: "Java 예외 계층을 컴파일러 검사 관점에서 구분하고 checked와 unchecked를 단순한 좋고 나쁨으로 판단하지 않는다"
+title: "`Throwable`, 검사 예외(checked exception)·비검사 예외(unchecked exception)·`Error`"
+summary: "Java 예외 계층을 컴파일러 검사 관점에서 구분하고 검사 예외와 비검사 예외를 단순히 좋고 나쁨으로 판단하지 않는다"
 level: 1
 status: PUBLISHED
 displayOrder: 10
@@ -22,7 +22,7 @@ references:
     displayOrder: 2
     relationNote: Throwable 계층의 기본 계약 확인
 ---
-# Throwable, checked exception, unchecked exception과 Error
+# `Throwable`, 검사 예외(checked exception)·비검사 예외(unchecked exception)·`Error`
 
 Java의 예외 계층을 볼 때 가장 먼저 구분할 것은 **컴파일러가 호출자에게 처리나 선언을 강제하는가**입니다. 심각도를 나누는 표가 아니라 언어 수준의 예외 처리 계약으로 이해해야 합니다.
 
@@ -38,7 +38,7 @@ Throwable
    └─ 그 밖의 여러 checked exception
 ```
 
-`Exception`의 하위 타입 중 `RuntimeException` 계열이 아닌 checked exception은 메서드 밖으로 전파될 수 있다면 `catch`하거나 `throws`로 선언해야 합니다.
+정확히는 `Throwable`의 하위 타입 가운데 `RuntimeException`이나 `Error`의 하위 타입이 아닌 것이 검사 예외입니다. 보통 `Exception`의 하위 타입이 여기에 해당하지만, 직접 `Throwable`을 상속한 타입도 검사 예외가 될 수 있습니다. 메서드 밖으로 전파된다면 `catch`하거나 `throws`로 선언해야 합니다.
 
 ```java
 void load() throws IOException {
@@ -46,17 +46,17 @@ void load() throws IOException {
 }
 ```
 
-반면 `NullPointerException`, `IllegalArgumentException` 같은 `RuntimeException` 계열과 `Error` 계열은 같은 compile-time checking을 강제받지 않습니다.
+반면 `NullPointerException`, `IllegalArgumentException` 같은 `RuntimeException` 계열과 `Error` 계열은 같은 컴파일 시점 checking을 강제받지 않습니다.
 
-### checked와 unchecked는 좋고 나쁨의 구분이 아니다
+### checked와 비검사는 좋고 나쁨의 구분이 아니다
 
-checked exception은 호출자가 실패 가능성을 컴파일 시점에 인식하게 만들 수 있습니다. 파일 접근 실패처럼 호출자가 다른 경로를 선택하거나 사용자에게 재시도를 요구할 수 있는 API에서는 이 계약이 유용할 수 있습니다.
+검사 예외는 호출자가 실패 가능성을 컴파일 시점에 인식하게 만들 수 있습니다. 파일 접근 실패처럼 호출자가 다른 경로를 선택하거나 사용자에게 재시도를 요구할 수 있는 API에서는 이 계약이 유용할 수 있습니다.
 
-하지만 호출자가 실제로 복구할 방법이 없는데 모든 계층이 의미 없이 `catch`나 `throws`를 반복하면 실패 책임이 오히려 흐려질 수 있습니다. 반대로 unchecked exception도 잘못된 인자나 상태 계약 위반을 명확하게 표현할 수 있습니다.
+하지만 호출자가 실제로 복구할 방법이 없는데 모든 계층이 의미 없이 `catch`나 `throws`를 반복하면 실패 책임이 오히려 흐려질 수 있습니다. 반대로 비검사 예외도 잘못된 인자나 상태 계약 위반을 명확하게 표현할 수 있습니다.
 
-따라서 선택 기준은 "checked가 더 안전하다" 또는 "현대 Java에서는 모두 unchecked다"가 아닙니다. **호출자에게 이 실패를 반드시 인식하고 처리하도록 강제하는 것이 API 계약에 도움이 되는가**를 봐야 합니다.
+따라서 선택 기준은 "checked가 더 안전하다" 또는 "현대 Java에서는 모두 비검사다"가 아닙니다. **호출자에게 이 실패를 반드시 인식하고 처리하도록 강제하는 것이 API 계약에 도움이 되는가**를 봐야 합니다.
 
-또 checked/unchecked는 심각도 분류도 아닙니다. checked exception이 운영상 치명적일 수도 있고, unchecked exception이 단순 입력 계약 위반일 수도 있습니다.
+또 checked/비검사는 심각도 분류도 아닙니다. 검사 예외가 운영상 치명적일 수도 있고, 비검사 예외가 단순 입력 계약 위반일 수도 있습니다.
 
 ### Error는 일반적인 비즈니스 복구 흐름과 구분한다
 

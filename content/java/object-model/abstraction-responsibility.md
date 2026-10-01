@@ -4,7 +4,7 @@ contentKey: java.core.object-model.abstraction-responsibility
 topicContentKey: java.core.object-model
 slug: abstraction-responsibility
 title: "추상화와 객체의 책임"
-summary: "추상화를 단순 interface 생성이 아니라 협력자가 알아야 할 책임과 변경 가능한 세부를 분리하는 과정으로 이해하고, 상태·행동·외부 경계의 책임 배치를 판단한다"
+summary: "추상화를 단순 인터페이스 생성이 아니라 협력자가 알아야 할 책임과 변경 가능한 세부를 분리하는 과정으로 이해하고, 상태·행동·외부 경계의 책임 배치를 판단한다"
 level: 2
 status: PUBLISHED
 displayOrder: 50
@@ -14,7 +14,7 @@ references:
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
-    relationNote: Java interface 계약의 언어 기반 확인
+    relationNote: Java 인터페이스 계약의 언어 기반 확인
 ---
 # 추상화와 객체의 책임
 

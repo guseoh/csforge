@@ -4,7 +4,7 @@ contentKey: java.core.exceptions-resources.standard-exceptions-contract
 topicContentKey: java.core.exceptions-resources
 slug: standard-exceptions-contract
 title: "표준 예외로 메서드 계약 표현하기"
-summary: "잘못된 인자·잘못된 현재 상태·찾을 수 없는 원소처럼 의미에 맞는 표준 예외를 선택하고 불필요한 custom exception을 피한다"
+summary: "잘못된 인자·잘못된 현재 상태·찾을 수 없는 원소처럼 의미에 맞는 표준 예외를 선택하고 불필요한 사용자 정의 예외를 피한다"
 level: 2
 status: PUBLISHED
 displayOrder: 40
@@ -24,7 +24,7 @@ references:
 ---
 # 표준 예외로 메서드 계약 표현하기
 
-예외 타입은 실패 원인을 호출자에게 전달하는 **이름 있는 계약**입니다. 모든 실패마다 새 custom exception을 만들기 전에 Java가 이미 제공하는 표준 예외가 의미를 정확히 표현하는지 확인할 수 있습니다.
+예외 타입은 실패 원인을 호출자에게 전달하는 **이름 있는 계약**입니다. 모든 실패마다 새 사용자 정의 예외를 만들기 전에 Java가 이미 제공하는 표준 예외가 의미를 정확히 표현하는지 확인할 수 있습니다.
 
 ### 인자 자체가 계약을 어기면 IllegalArgumentException
 
@@ -58,7 +58,7 @@ this.repository = Objects.requireNonNull(repository, "repository");
 
 `requireNonNull`은 null을 허용하지 않는 계약을 간단히 표현하고 실패하면 `NullPointerException`을 던집니다.
 
-### custom exception이 필요한 경우도 있다
+### 사용자 정의 예외가 필요한 경우도 있다
 
 ```java
 throw new InsufficientStockException(productId, requested, available);

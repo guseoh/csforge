@@ -3,8 +3,8 @@ kind: concept
 contentKey: java.core.streams.tomap-duplicate-keys
 topicContentKey: java.core.streams
 slug: tomap-duplicate-keys
-title: "toMap의 중복 Key 처리"
-summary: "여러 원소가 같은 key로 변환될 수 있을 때 toMap의 충돌을 인식하고 비즈니스 의미에 맞는 merge 정책을 명시한다"
+title: "toMap의 중복 키 처리"
+summary: "여러 원소가 같은 키로 변환될 수 있을 때 toMap의 충돌을 인식하고 업무 의미에 맞는 병합 정책을 명시한다"
 level: 2
 status: PUBLISHED
 displayOrder: 50
@@ -16,16 +16,16 @@ references:
     displayOrder: 1
     relationNote: duplicate key와 merge overload의 계약 확인
 ---
-# toMap의 중복 Key 처리
+# toMap의 중복 키 처리
 
-Stream의 각 원소를 key와 value로 바꿔 Map을 만들 수 있습니다.
+Stream의 각 원소를 키와 값으로 바꿔 Map을 만들 수 있습니다.
 
 ```java
 Map<Long, Order> byId = orders.stream()
         .collect(Collectors.toMap(Order::id, Function.identity()));
 ```
 
-이 코드는 **모든 주문 id가 서로 다르다**는 전제가 숨어 있습니다. 두 원소가 같은 key를 만들면 단순 `toMap(keyMapper, valueMapper)`는 중복 key를 자동으로 덮어쓰는 것이 아니라 실패할 수 있습니다.
+이 코드는 **모든 주문 id가 서로 다르다**는 전제가 숨어 있습니다. 두 원소가 같은 키를 만들면 단순 `toMap(keyMapper, valueMapper)`는 중복 키를 자동으로 덮어쓰는 것이 아니라 실패할 수 있습니다.
 
 ### 중복이 가능하면 어떤 값을 남길지 결정해야 한다
 
@@ -53,27 +53,27 @@ Map<String, Integer> counts = words.stream()
         ));
 ```
 
-같은 단어의 개수를 합치는 것은 중복 key가 곧 집계 대상이라는 의미이므로 자연스럽습니다.
+같은 단어의 개수를 합치는 것은 중복 키가 곧 집계 대상이라는 의미이므로 자연스럽습니다.
 
 ### groupingBy와 선택 기준이 다르다
 
-같은 key에 여러 값을 모두 보존해야 한다면 `groupingBy`가 더 맞습니다.
+같은 키에 여러 값을 모두 보존해야 한다면 `groupingBy`가 더 맞습니다.
 
 ```java
 Map<String, List<Member>> grouped = members.stream()
         .collect(Collectors.groupingBy(Member::team));
 ```
 
-`toMap` merge는 결국 key 하나당 value 하나를 남깁니다.
+`toMap` merge는 결국 키 하나당 값 하나를 남깁니다.
 
-### 문제를 풀 때 먼저 key 유일성을 확인한다
+### 문제를 풀 때 먼저 키 유일성을 확인한다
 
-- key가 정말 유일한가?
+- 키가 정말 유일한가?
 - 중복이면 오류여야 하는가?
 - 첫 값/마지막 값/합산 중 어떤 정책이 의미 있는가?
 - 여러 값을 모두 보관해야 하는가?
 
-`toMap`에서 발생하는 예외를 단순 API 함정으로 외우지 말고 **Map key의 의미와 데이터 계약 문제**로 이해하면 실무에서도 도움이 됩니다.
+`toMap`에서 발생하는 예외를 단순 API 함정으로 외우지 말고 **Map 키의 의미와 데이터 계약 문제**로 이해하면 실무에서도 도움이 됩니다.
 
 ```java
 Map<String, Order> latestByUser = orders.stream()

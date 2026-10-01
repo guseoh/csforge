@@ -42,7 +42,7 @@ long result = tenPercent.discount(10_000);
 
 ### “메서드가 하나”가 아니라 “추상 메서드가 하나”다
 
-함수형 인터페이스는 default 메서드나 static 메서드를 가질 수 있습니다.
+함수형 인터페이스는 `default` 메서드나 `static` 메서드를 가질 수 있습니다.
 
 ```java
 @FunctionalInterface
@@ -58,7 +58,7 @@ interface Checker {
 
 ### @FunctionalInterface는 무엇을 해 주나
 
-`@FunctionalInterface`를 붙이면 컴파일러가 해당 인터페이스가 함수형 인터페이스 규칙을 지키는지 검사합니다. 애너테이션이 없어도 규칙을 만족하면 lambda target이 될 수 있지만, 붙여 두면 “이 인터페이스는 lambda 사용을 위한 단일 추상 계약을 유지한다”는 의도를 표현할 수 있습니다.
+`@FunctionalInterface`를 붙이면 컴파일러가 해당 인터페이스가 함수형 인터페이스 규칙을 지키는지 검사합니다. 애너테이션이 없어도 규칙을 만족하면 lambda 대상이 될 수 있지만, 붙여 두면 “이 인터페이스는 lambda 사용을 위한 단일 추상 계약을 유지한다”는 의도를 표현할 수 있습니다.
 
 ### 표준 인터페이스를 먼저 익혀 두면 좋다
 
@@ -75,4 +75,4 @@ interface Checker {
 
 ### 문제를 풀 때 확인할 것
 
-lambda 앞에서 막히면 먼저 target functional interface의 추상 메서드를 적어 보세요. 매개변수 타입과 반환 타입이 보이면 lambda 본문이 무엇을 받아 무엇을 반환해야 하는지도 자연스럽게 결정됩니다.
+lambda 앞에서 막히면 먼저 대상 함수형 인터페이스의 추상 메서드를 적어 보세요. 매개변수 타입과 반환 타입이 보이면 lambda 본문이 무엇을 받아 무엇을 반환해야 하는지도 자연스럽게 결정됩니다.

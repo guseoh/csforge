@@ -24,7 +24,7 @@ references:
 ---
 # 메서드 참조와 함수 조합
 
-lambda가 단순히 이미 존재하는 메서드를 호출하기만 한다면 **메서드 참조(method reference)** 로 더 간결하게 표현할 수 있습니다.
+람다식이 이미 존재하는 메서드를 호출하기만 한다면 **메서드 참조(method reference)** 로 더 간결하게 표현할 수 있습니다.
 
 ```java
 names.stream()
@@ -40,7 +40,7 @@ names.stream()
 
 두 문법의 목적은 새로운 동작을 만드는 것이 아니라 **같은 함수형 인터페이스 계약에 기존 메서드를 연결**하는 것입니다.
 
-### 메서드 참조도 target type이 필요하다
+### 메서드 참조도 대상 타입이 필요하다
 
 ```java
 Function<String, Integer> length = String::length;
@@ -85,6 +85,6 @@ Function<String, Integer> trimAndParse = trim.andThen(parse);
 process(this::a);
 ```
 
-`a`라는 메서드 이름이 의미가 없으면 lambda보다 짧아도 이해하기 어렵습니다. 반대로 `Order::totalPrice`, `Member::email`처럼 역할이 분명한 메서드 참조는 pipeline을 읽기 쉽게 할 수 있습니다.
+`a`라는 메서드 이름이 의미가 없으면 lambda보다 짧아도 이해하기 어렵습니다. 반대로 `Order::totalPrice`, `Member::email`처럼 역할이 분명한 메서드 참조는 파이프라인을 읽기 쉽게 할 수 있습니다.
 
 또 복잡한 lambda를 무리하게 메서드 참조 형태로 바꾸려고 할 필요는 없습니다. **동작의 의도가 더 잘 보이는 표현을 선택**하는 것이 핵심입니다.

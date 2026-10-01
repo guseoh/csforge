@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.design-patterns.state-pattern
 topicContentKey: java.core.design-patterns
 slug: state-pattern
-title: "State 패턴과 상태별 행동"
+title: "상태(State) 패턴과 상태별 동작"
 summary: "상태별 허용 행동과 전이 규칙을 명시하고, 실패 시 상태 보존·전이 주체·enum 대안·workflow orchestration과의 경계를 함께 판단한다"
 level: 2
 status: PUBLISHED
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: class 기반 상태 객체 구현의 언어 기반 확인
 ---
-# State 패턴과 상태별 행동
+# 상태(State) 패턴과 상태별 동작
 
 객체의 행동이 현재 상태에 따라 달라지는 것은 자연스럽습니다. 상태가 몇 개 없고 규칙이 단순하다면 enum과 조건문만으로도 충분할 수 있습니다.
 
@@ -32,8 +32,8 @@ void cancel() {
 문제는 상태가 늘어나면서 여러 메서드가 같은 `switch(status)`를 반복하고, 상태별 허용 행동과 전이 규칙이 여러 곳에 흩어질 때입니다. State 패턴은 **현재 상태를 객체로 표현하고 그 상태에서 가능한 행동과 다음 상태를 가까이 모으는 방식**입니다.
 
 ```text
-Document
-   │ current state
+문서 객체
+   │ 현재 상태
    ▼
 DocumentState
    ├─ DraftState
@@ -101,13 +101,13 @@ State 객체가 다음 상태를 직접 Context에 설정할 수도 있고, 다�
 
 ### Strategy와 의도를 구분한다
 
-둘 다 interface와 여러 구현 객체를 사용해 코드 모양이 비슷할 수 있습니다.
+둘 다 인터페이스와 여러 구현 객체를 사용해 코드 모양이 비슷할 수 있습니다.
 
 ```text
-Strategy → 어떤 정책을 선택할 것인가
-State    → 현재 상태에서 무엇을 할 수 있고 어디로 전이하는가
+전략 패턴(Strategy) → 어떤 정책을 선택할 것인가
+상태 패턴(State) → 현재 상태에서 무엇을 할 수 있고 어디로 전이하는가
 ```
 
 할인 계산 방식을 고르는 문제는 Strategy에 가깝고, 주문이 `PAID → SHIPPED`로 진행되면서 가능한 행동이 달라지는 문제는 State에 가깝습니다.
 
-또 State 객체가 외부 결제 호출, 여러 저장소 조정, 트랜잭션 경계까지 모두 담당할 필요는 없습니다. State 패턴은 **객체 내부의 상태별 행동과 전이 규칙**을 모델링하는 도구이며, 여러 외부 작업을 조정하는 유스케이스 책임과는 구분하는 것이 좋습니다.
+상태 객체가 외부 결제 호출, 여러 저장소의 조정, 트랜잭션 경계까지 모두 담당할 필요는 없습니다. State 패턴은 **객체 내부의 상태별 동작과 전이 규칙**을 모델링하는 도구이며, 여러 외부 작업을 조정하는 사용 사례의 책임과는 구분하는 것이 좋습니다.

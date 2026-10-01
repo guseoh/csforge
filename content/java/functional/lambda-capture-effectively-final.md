@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.functional.lambda-capture-effectively-final
 topicContentKey: java.core.functional
 slug: lambda-capture-effectively-final
-title: "Lambda의 지역 변수 캡처와 effectively final"
+title: "람다의 지역 변수 캡처와 effectively final"
 summary: "lambda가 바깥 지역 변수를 사용할 때 final 또는 사실상 final이어야 하는 규칙과 참조 객체 상태 변경을 구분한다"
 level: 2
 status: PUBLISHED
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: lambda에서 지역 변수 캡처와 effectively final 관련 규칙 확인
 ---
-# Lambda의 지역 변수 캡처와 effectively final
+# 람다의 지역 변수 캡처와 effectively final
 
 lambda 본문에서는 바깥 메서드의 지역 변수를 사용할 수 있습니다.
 
@@ -48,7 +48,7 @@ Runnable task = () -> names.add("java");
 `names` 변수 자체는 다시 대입되지 않으므로 캡처할 수 있습니다. 하지만 그 참조가 가리키는 `ArrayList`는 가변 객체이므로 `add()`할 수 있습니다.
 
 ```text
-captured local reference
+캡처된 지역 변수 참조
 names ─────> ArrayList
    X 재대입      │
                  └─ 내부 상태 변경 가능
@@ -63,7 +63,7 @@ int[] count = {0};
 values.forEach(v -> count[0]++);
 ```
 
-배열 참조 `count`는 재대입되지 않으므로 컴파일됩니다. 하지만 실제로는 바깥의 가변 상태를 lambda에서 수정하고 있습니다. 단순 합계라면 `sum()`이나 collector처럼 외부 mutation이 없는 표현이 더 명확할 수 있습니다.
+배열 참조 `count`는 재대입되지 않으므로 컴파일됩니다. 하지만 실제로는 바깥의 가변 상태를 lambda에서 수정하고 있습니다. 단순 합계라면 `sum()`이나 수집기처럼 외부 변경이 없는 표현이 더 명확할 수 있습니다.
 
 여러 스레드에서 같은 가변 객체를 공유할 때의 가시성·원자성 문제는 effectively final 규칙이 해결해 주지 않습니다. 그 부분은 동시성 Topic의 별도 계약입니다.
 

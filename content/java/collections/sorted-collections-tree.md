@@ -4,7 +4,7 @@ contentKey: java.core.collections.sorted-collections-tree
 topicContentKey: java.core.collections
 slug: sorted-collections-tree
 title: "TreeSet과 TreeMap의 정렬 기준"
-summary: "정렬된 Set·Map에서 Comparable 또는 Comparator가 원소 순서뿐 아니라 key·원소 구분에도 영향을 줄 수 있음을 이해한다"
+summary: "정렬된 Set·Map에서 Comparable 또는 Comparator가 원소 순서뿐 아니라 키·원소 구분에도 영향을 줄 수 있음을 이해한다"
 level: 2
 status: PUBLISHED
 displayOrder: 50
@@ -24,7 +24,7 @@ references:
 ---
 # TreeSet과 TreeMap의 정렬 기준
 
-`TreeSet`과 `TreeMap`은 원소 또는 key를 **정렬된 순서로 유지하는 컬렉션**입니다. 자연 순서가 있으면 `Comparable`, 다른 순서가 필요하면 `Comparator`를 사용할 수 있습니다.
+`TreeSet`과 `TreeMap`은 원소 또는 키를 **정렬된 순서로 유지하는 컬렉션**입니다. 자연 순서가 있으면 `Comparable`, 다른 순서가 필요하면 `Comparator`를 사용할 수 있습니다.
 
 ```java
 Set<String> names = new TreeSet<>();
@@ -32,7 +32,7 @@ names.add("lee");
 names.add("kim");
 ```
 
-iteration하면 정렬 기준에 따른 순서로 값을 볼 수 있습니다.
+순회하면 정렬 기준에 따른 순서로 값을 볼 수 있습니다.
 
 ### 정렬 기준은 중복 판단에도 영향을 준다
 
@@ -43,13 +43,13 @@ Comparator<Member> byAge = Comparator.comparingInt(Member::age);
 Set<Member> set = new TreeSet<>(byAge);
 ```
 
-나이는 같지만 id가 다른 두 Member가 있어도 comparator가 나이만 비교해 `0`을 반환하면 하나가 중복처럼 취급될 수 있습니다.
+나이는 같지만 id가 다른 두 Member가 있어도 비교자가 나이만 비교해 `0`을 반환하면 하나가 중복처럼 취급될 수 있습니다.
 
-그래서 sorted collection의 ordering이 equals와 일관되지 않을 때 어떤 의미가 생기는지 꼭 확인해야 합니다.
+그래서 정렬 컬렉션의 정렬 순서가 equals와 일관되지 않을 때 어떤 의미가 생기는지 꼭 확인해야 합니다.
 
 ### 범위 조회에 유용한 API가 있다
 
-정렬된 구조를 기반으로 `NavigableSet`, `NavigableMap`은 특정 key보다 크거나 작은 값, 범위 view 등을 찾는 API를 제공합니다.
+정렬된 구조를 기반으로 `NavigableSet`, `NavigableMap`은 특정 키보다 크거나 작은 값, 범위 뷰 등을 찾는 API를 제공합니다.
 
 ```java
 map.floorEntry(key);
@@ -61,7 +61,7 @@ map.subMap(from, true, to, false);
 
 ### 내부 tree의 세부를 계약처럼 외우지 않는다
 
-JDK 구현은 self-balancing tree 구조를 사용하지만 정확한 node 배치와 회전 알고리즘을 `SortedMap`의 보장으로 생각하면 안 됩니다. Java 컬렉션 학습에서는 ordering, log(n) 기본 연산 특성, comparator 계약을 중심으로 이해하고 tree 알고리즘 자체는 DSA 영역에서 다룹니다.
+JDK 구현은 self-balancing tree 구조를 사용하지만 정확한 노드 배치와 회전 알고리즘을 `SortedMap`의 보장으로 생각하면 안 됩니다. Java 컬렉션 학습에서는 정렬 순서, log(n) 기본 연산 특성, 비교자 계약을 중심으로 이해하고 tree 알고리즘 자체는 DSA 영역에서 다룹니다.
 
 ### 선택 기준
 
@@ -70,7 +70,7 @@ JDK 구현은 self-balancing tree 구조를 사용하지만 정확한 node 배�
 | 요구 | 먼저 볼 선택 | 이유 |
 | --- | --- | --- |
 | 저장 중 정렬은 필요 없고 마지막에 한 번 정렬 | `List` + `sort` | 수집과 정렬의 시점을 분리하기 쉽다 |
-| 정렬된 head를 반복해서 꺼냄 | `PriorityQueue` | 전체 순서보다 다음 하나가 중요하다 |
-| 범위 조회와 정렬된 key 탐색 | `TreeMap`/`TreeSet` | ordering과 range view가 계약에 포함된다 |
+| 정렬된 헤드를 반복해서 꺼냄 | `PriorityQueue` | 전체 순서보다 다음 하나가 중요하다 |
+| 범위 조회와 정렬된 키 탐색 | `TreeMap`/`TreeSet` | 정렬 순서와 range 뷰가 계약에 포함된다 |
 
 세 구현의 내부 자료구조를 같은 것으로 취급하지 말고, **언제 순서가 필요하며 그 순서를 누가 유지할지**를 먼저 정합니다.

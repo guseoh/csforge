@@ -3,7 +3,7 @@ kind: concept
 contentKey: java.core.enum-modeling.enum-ordinal-name-persistence
 topicContentKey: java.core.enum-modeling
 slug: enum-ordinal-name-persistence
-title: "enum ordinal과 외부 저장값"
+title: "enum 순번(ordinal)과 외부 저장값"
 summary: "enum의 선언 순서를 나타내는 ordinal을 안정적인 외부 식별자로 사용하기 위험한 이유와 name 기반 저장의 trade-off를 이해한다"
 level: 2
 status: PUBLISHED
@@ -16,7 +16,7 @@ references:
     displayOrder: 1
     relationNote: name과 ordinal의 공식 의미 확인
 ---
-# enum ordinal과 외부 저장값
+# enum 순번(ordinal)과 외부 저장값
 
 모든 enum 상수에는 `name()`과 `ordinal()`이 있습니다. 둘 다 쉽게 얻을 수 있지만 **DB나 API처럼 오래 살아남는 외부 식별자로 그대로 써도 된다는 뜻은 아닙니다.** Java enum 내부 표현과 외부 데이터 계약은 수명이 다를 수 있습니다.
 
@@ -62,7 +62,7 @@ externalCode : 저장·API에서 유지할 별도 계약이 될 수 있음
 
 이 네 가지는 서로 다른 의미입니다.
 
-### 외부 계약이 더 오래가야 한다면 별도 code를 둘 수 있다
+### 외부 계약이 더 오래가야 한다면 별도 코드를 둘 수 있다
 
 ```java
 enum Status {
@@ -78,7 +78,7 @@ enum Status {
 }
 ```
 
-이렇게 하면 Java 상수 이름을 리팩터링하더라도 외부 code를 그대로 유지하는 전략을 선택할 수 있습니다. 다만 code 필드를 추가했다고 호환성 문제가 자동으로 사라지는 것은 아닙니다. 중복 code를 막고, 알 수 없는 값이나 삭제된 값, 과거 데이터의 migration을 어떻게 처리할지는 별도 계약입니다.
+이렇게 하면 Java 상수 이름을 리팩터링하더라도 외부 코드를 그대로 유지하는 전략을 선택할 수 있습니다. 다만 코드 필드를 추가했다고 호환성 문제가 자동으로 사라지는 것은 아닙니다. 중복 코드를 막고, 알 수 없는 값이나 삭제된 값, 과거 데이터의 migration을 어떻게 처리할지는 별도 계약입니다.
 
 ```java
 static Status fromCode(String code) {

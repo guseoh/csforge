@@ -4,7 +4,7 @@ contentKey: java.core.object-contracts.comparable-natural-order
 topicContentKey: java.core.object-contracts
 slug: comparable-natural-order
 title: "Comparable과 자연 순서"
-summary: "타입 자체가 하나의 대표 순서를 정의할 때 Comparable을 사용하고 compareTo와 equals의 일관성이 sorted collection에 미치는 영향을 이해한다"
+summary: "타입 자체가 하나의 대표 순서를 정의할 때 Comparable을 사용하고 compareTo와 equals의 일관성이 정렬 컬렉션에 미치는 영향을 이해한다"
 level: 2
 status: PUBLISHED
 displayOrder: 40
@@ -75,7 +75,7 @@ System.out.println(a.equals(b));    // false
 
 ### 정렬 기준에 사용하는 상태도 안정적이어야 한다
 
-`TreeSet` 같은 정렬 컬렉션에 객체를 넣은 뒤 `compareTo`에 사용하는 상태를 바꾸면, 저장된 위치와 이후 비교 결과가 달라질 수 있습니다. hash key의 동등성 상태를 바꾸는 문제와 비슷합니다.
+`TreeSet` 같은 정렬 컬렉션에 객체를 넣은 뒤 `compareTo`에 사용하는 상태를 바꾸면, 저장된 위치와 이후 비교 결과가 달라질 수 있습니다. 해시 키의 동등성 상태를 바꾸는 문제와 비슷합니다.
 
 따라서 정렬 컬렉션의 위치를 결정하는 상태는 가능한 한 컬렉션에 들어 있는 동안 안정적으로 유지하는 편이 좋습니다.
 

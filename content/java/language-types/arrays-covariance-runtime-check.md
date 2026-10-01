@@ -3,8 +3,8 @@ kind: concept
 contentKey: java.core.language-types.arrays-covariance-runtime-check
 topicContentKey: java.core.language-types
 slug: arrays-covariance-runtime-check
-title: "Arrays, covariance와 runtime store check"
-summary: "참조형 배열을 더 넓은 배열 타입으로 다룰 수 있을 때 왜 런타임 저장 검사가 필요한지 코드 흐름으로 이해한다"
+title: "배열 공변성과 저장 시 런타임 타입 검사"
+summary: "참조형 배열을 더 넓은 배열 타입으로 다룰 수 있을 때 왜 실행 시점 저장 검사가 필요한지 코드 흐름으로 이해한다"
 level: 2
 status: PUBLISHED
 displayOrder: 60
@@ -20,7 +20,7 @@ references:
     referenceType: OFFICIAL
     language: en
     displayOrder: 2
-    relationNote: 배열의 런타임 컴포넌트 타입과 저장 검사 규칙 확인
+    relationNote: 배열의 실행 시점 원소 타입과 저장 검사 규칙 확인
   - url: "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/ArrayStoreException.html"
     title: "Java SE 25 ArrayStoreException API"
     referenceType: OFFICIAL
@@ -28,11 +28,11 @@ references:
     displayOrder: 3
     relationNote: 배열에 잘못된 타입을 저장할 때 발생하는 예외 확인
 ---
-# Arrays, covariance와 runtime store check
+# 배열 공변성과 저장 시 런타임 타입 검사
 
 Java의 참조형 배열은 `String[]`을 `Object[]`로 다룰 수 있습니다. 문제는 **변수의 선언 타입이 `Object[]`라고 해서 실제 배열 객체까지 `Object[]`로 바뀌는 것은 아니라는 점**입니다. 실제 객체가 `String[]`이라면 그 배열은 여전히 `String`만 저장할 수 있습니다.
 
-![Object[] 변수와 실제 String[] 배열의 런타임 저장 검사](/learning/java/array-covariance.svg)
+![Object[] 변수와 실제 String[] 배열의 실행 시점 저장 검사](/learning/java/array-covariance.svg)
 
 ### 배열의 공변성
 
@@ -43,7 +43,7 @@ String[] names = {"kim", "lee"};
 Object[] values = names;
 ```
 
-이처럼 `String[]`을 `Object[]`로 취급할 수 있는 성질을 **공변성(covariance)** 이라고 합니다. 읽기만 보면 자연스럽습니다. `String[]`에서 꺼낸 모든 `String`은 `Object`이므로 다음 코드는 안전합니다.
+이처럼 `String[]`을 `Object[]`로 취급할 수 있는 성질을 **공변성(covariance)**이라고 합니다. 읽기만 보면 자연스럽습니다. `String[]`에서 꺼낸 모든 `String`은 `Object`이므로 다음 코드는 안전합니다.
 
 ```java
 Object value = values[0];
@@ -51,7 +51,7 @@ Object value = values[0];
 
 문제는 넓어진 타입을 통해 값을 저장할 때 생깁니다.
 
-### 왜 저장할 때 런타임 검사가 필요한가
+### 왜 저장할 때 실행 시점 검사가 필요한가
 
 ```java
 String[] names = new String[1];
@@ -62,7 +62,7 @@ values[0] = Integer.valueOf(1);
 
 `values`의 선언 타입은 `Object[]`입니다. 컴파일러는 `Integer`가 `Object`의 하위 타입이므로 이 저장 문장을 타입 규칙상 허용할 수 있습니다.
 
-하지만 `values`가 가리키는 실제 배열 객체는 `new String[1]`로 만들어졌습니다. Java 배열 객체는 런타임에도 자신의 원소 타입을 유지하므로, 값을 저장할 때 실제 배열에 들어갈 수 있는 타입인지 검사합니다. `String[]`에 `Integer`를 넣으려 하면 `ArrayStoreException`이 발생합니다.
+하지만 `values`가 가리키는 실제 배열 객체는 `new String[1]`로 만들어졌습니다. Java 배열 객체는 실행 중에도 자신의 원소 타입을 유지하므로, 값을 저장할 때 실제 배열에 들어갈 수 있는 타입인지 검사합니다. `String[]`에 `Integer`를 넣으려 하면 `ArrayStoreException`이 발생합니다.
 
 ```text
 Object[] values
@@ -73,7 +73,7 @@ Object[] values
       │
       ├─ String 저장   → 허용
       │
-      └─ Integer 저장  → 런타임 검사 실패
+      └─ Integer 저장  → 실행 시점 검사 실패
                          → ArrayStoreException
 ```
 
@@ -93,9 +93,9 @@ List<String> names = new ArrayList<>();
 // List<Object> values = names; // 컴파일 오류
 ```
 
-`List<String>`은 `List<Object>`의 하위 타입이 아닙니다. 제네릭 타입은 기본적으로 **불공변(invariant)** 이므로, 배열에서 저장 시점까지 남을 수 있는 일부 타입 오류를 컴파일 단계에서 막습니다.
+`List<String>`은 `List<Object>`의 하위 타입이 아닙니다. 제네릭 타입은 기본적으로 **불공변(invariant)**이므로, 배열에서 저장 시점까지 남을 수 있는 일부 타입 오류를 컴파일 단계에서 막습니다.
 
-이 차이를 “배열은 나쁘고 `List`는 좋다”로 단순화할 필요는 없습니다. 배열은 길이가 고정되어 있고 원시 타입 배열을 직접 표현할 수 있으며, 제네릭은 타입 소거와 와일드카드 같은 별도의 규칙을 가집니다. 여기서 잡아야 할 경계는 **참조형 배열의 공변성이 런타임 저장 검사를 필요하게 만들 수 있다**는 점입니다.
+이 차이를 “배열은 나쁘고 `List`는 좋다”로 단순화할 필요는 없습니다. 배열은 길이가 고정되어 있고 원시 타입 배열을 직접 표현할 수 있으며, 제네릭은 타입 소거와 와일드카드 같은 별도의 규칙을 가집니다. 여기서 잡아야 할 경계는 **참조형 배열의 공변성이 실행 시점 저장 검사를 필요하게 만들 수 있다**는 점입니다.
 
 ### API를 읽을 때는 선언 타입과 실제 배열 타입을 함께 본다
 

@@ -4,7 +4,7 @@ contentKey: java.core.time-numeric.floating-point-precision
 topicContentKey: java.core.time-numeric
 slug: floating-point-precision
 title: "부동소수점 정밀도와 오차"
-summary: "binary floating-point가 일부 10진수를 근사해 저장하는 이유와 비교·금액 계산에서의 영향을 이해한다"
+summary: "이진 부동소수점이 일부 십진수를 근사해 저장하는 이유와 비교·금액 계산에 미치는 영향을 이해한다"
 level: 2
 status: PUBLISHED
 displayOrder: 60
@@ -33,8 +33,8 @@ references:
 ```java
 double value = 0.1 + 0.2;
 
-System.out.println(value);        // 0.30000000000000004처럼 보일 수 있음
-System.out.println(value == 0.3); // false가 될 수 있음
+System.out.println(value);        // 0.30000000000000004
+System.out.println(value == 0.3); // false
 ```
 
 이 결과는 무작위 오차가 아니라 **표현 가능한 값의 집합 안에서 정해진 부동소수점 연산을 수행한 결과**입니다.
@@ -83,7 +83,7 @@ System.out.println(value == value); // false
 
 ### 정확한 십진 의미가 계약이면 타입 자체를 다시 선택한다
 
-금액처럼 `100.10`이라는 십진 의미와 반올림 규칙이 업무 계약이라면 binary floating-point의 근사를 억지로 tolerance로 다루는 것보다 **정확한 십진 모델을 선택**하는 편이 낫습니다.
+금액처럼 `100.10`이라는 십진 의미와 반올림 규칙이 업무 계약이라면 바이너리 floating-point의 근사를 억지로 tolerance로 다루는 것보다 **정확한 십진 모델을 선택**하는 편이 낫습니다.
 
 대표적으로 최소 화폐 단위를 정수로 표현하거나 `BigDecimal`을 사용할 수 있습니다. 어떤 방법이 맞는지는 통화 단위와 범위, 반올림 정책에 따라 달라집니다.
 

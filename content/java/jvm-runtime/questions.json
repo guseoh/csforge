@@ -12,31 +12,31 @@
     "choices": [
       {
         "key": "A",
-        "content": "JVM이 이해하는 class file bytecode",
+        "content": "JVM이 실행할 수 있는 바이트코드가 담긴 클래스 파일",
         "displayOrder": 0,
-        "rationaleMarkdown": "javac는 Java source를 JVM bytecode와 metadata가 든 class file로 컴파일한다. 실행 중 JVM이 이를 해석하거나 JIT compile할 수 있다."
+        "rationaleMarkdown": "javac는 Java 소스를 JVM 바이트코드와 메타데이터가 담긴 클래스 파일로 컴파일한다. 실행 중 JVM은 바이트코드를 해석하거나 JIT 컴파일할 수 있다."
       },
       {
         "key": "B",
-        "content": "OS별 native executable만",
+        "content": "현재 OS에서 바로 실행할 수 있는 네이티브 실행 파일",
         "displayOrder": 1,
-        "rationaleMarkdown": "class file은 보통 현재 OS 전용 native executable로만 출력되는 파일이 아니다."
+        "rationaleMarkdown": "일반적인 javac 산출물은 특정 OS용 기계어가 아니라 JVM 클래스 파일이다."
       },
       {
         "key": "C",
-        "content": "JVM heap snapshot",
+        "content": "Java 소스의 추상 구문 트리(AST)를 그대로 저장한 파일",
         "displayOrder": 2,
-        "rationaleMarkdown": "heap snapshot은 runtime 진단 산출물이지 javac compile 결과가 아니다."
+        "rationaleMarkdown": "컴파일러는 소스의 구문 트리를 처리하지만 일반적인 최종 산출물은 구문 트리가 아니라 클래스 파일이다."
       },
       {
         "key": "D",
-        "content": "실행 중 thread dump",
+        "content": "실행 중 JIT 컴파일러가 만든 CPU별 기계어",
         "displayOrder": 3,
-        "rationaleMarkdown": "thread dump는 실행 중 thread 상태를 진단 도구가 수집한 결과이며 javac가 만들지 않는다."
+        "rationaleMarkdown": "JIT 기계어는 실행 중 JVM 구현이 만들 수 있다. javac의 일반적인 산출물과 단계가 다르다."
       }
     ],
     "correctChoiceKey": "A",
-    "explanationMarkdown": "javac는 Java source를 class file 형식의 bytecode로 컴파일한다."
+    "explanationMarkdown": "javac는 Java 소스를 클래스 파일 형식의 바이트코드로 컴파일한다."
   },
   {
     "kind": "question",
@@ -51,36 +51,36 @@
     "choices": [
       {
         "key": "A",
-        "content": "JVM은 javac와 같은 compiler다",
+        "content": "JVM은 javac와 같은 컴파일러다",
         "displayOrder": 0,
-        "rationaleMarkdown": "JVM은 class file을 실행하는 runtime machine이고 javac는 별도 개발 도구다."
+        "rationaleMarkdown": "JVM은 클래스 파일을 실행하는 실행 가상 머신이고 javac는 별도 개발 도구다."
       },
       {
         "key": "B",
-        "content": "JDK는 개발 도구와 runtime 구성요소를 포함하고 JVM은 실행 모델을 담당한다",
+        "content": "JDK는 개발 도구와 런타임 구성요소를 포함하고 JVM은 실행 모델을 담당한다",
         "displayOrder": 1,
-        "rationaleMarkdown": "JDK 배포판은 개발 도구와 runtime 구성 요소를 포함하고 JVM은 실행 runtime의 virtual machine 부분이다."
+        "rationaleMarkdown": "JDK 배포판은 개발 도구와 런타임 구성 요소를 포함하고 JVM은 실행 런타임의 가상 머신 부분이다."
       },
       {
         "key": "C",
-        "content": "JDK는 class file이 하나다",
+        "content": "JDK는 클래스 파일이 하나다",
         "displayOrder": 2,
-        "rationaleMarkdown": "JDK에는 다양한 도구와 library가 있으며 하나의 class file과 동일한 개념이 아니다."
+        "rationaleMarkdown": "JDK에는 다양한 도구와 라이브러리가 있으며 하나의 클래스 파일과 동일한 개념이 아니다."
       },
       {
         "key": "D",
-        "content": "둘 다 OS kernel이다",
+        "content": "둘 다 OS 커널이다",
         "displayOrder": 3,
-        "rationaleMarkdown": "JDK와 JVM은 OS 위에서 실행되는 소프트웨어 층이지 operating system kernel이 아니다."
+        "rationaleMarkdown": "JDK와 JVM은 OS 위에서 실행되는 소프트웨어 층이지 operating system 커널이 아니다."
       }
     ],
     "correctChoiceKey": "B",
-    "explanationMarkdown": "JDK는 개발·실행 도구 배포물이고 JVM은 class file을 실행하는 runtime이다."
+    "explanationMarkdown": "JDK는 개발·실행 도구 배포물이고 JVM은 클래스 파일을 실행하는 런타임이다."
   },
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.jdk-jvm-classfile.q3",
-    "promptMarkdown": "class file에 포함될 수 있는 것으로 옳은 것은?",
+    "promptMarkdown": "클래스 파일에 포함될 수 있는 것으로 옳은 것은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
@@ -90,36 +90,36 @@
     "choices": [
       {
         "key": "A",
-        "content": "현재 객체의 모든 heap 값",
+        "content": "현재 객체의 모든 힙 값",
         "displayOrder": 0,
-        "rationaleMarkdown": "class file은 code와 metadata를 담지만 실행 중 할당된 모든 객체의 현재 heap 값을 담지 않는다."
+        "rationaleMarkdown": "클래스 파일은 코드와 메타데이터를 담지만 실행 중 할당된 모든 객체의 현재 힙 값을 담지 않는다."
       },
       {
         "key": "B",
-        "content": "OS process의 thread stack 전체",
+        "content": "OS 프로세스의 스레드 스택 전체",
         "displayOrder": 1,
-        "rationaleMarkdown": "thread stack은 live JVM process 상태이며 program class file 내부에 들어 있지 않다."
+        "rationaleMarkdown": "스레드 스택은 실행 중인 JVM 프로세스 상태이며 프로그램 클래스 파일 내부에 들어 있지 않다."
       },
       {
         "key": "C",
-        "content": "method code와 constant pool 같은 binary metadata",
+        "content": "메서드 코드와 상수 풀 같은 바이너리 메타데이터",
         "displayOrder": 2,
-        "rationaleMarkdown": "class-file format은 constant pool, method code, field, method와 attribute 정보를 표현할 수 있다."
+        "rationaleMarkdown": "클래스 파일 형식은 상수 풀, 메서드 코드, 필드와 메서드, 속성 정보를 표현할 수 있습니다."
       },
       {
         "key": "D",
         "content": "사용자 키보드 입력만",
         "displayOrder": 3,
-        "rationaleMarkdown": "keyboard input은 실행 중 I/O로 들어오며 일반 class-file content가 아니다."
+        "rationaleMarkdown": "키보드 입력은 실행 중 I/O로 들어오며 일반 클래스 파일 내용이 아니다."
       }
     ],
     "correctChoiceKey": "C",
-    "explanationMarkdown": "JVMS class file format은 code, constant pool, fields/methods와 attributes를 표현한다."
+    "explanationMarkdown": "JVMS 클래스 파일 형식은 코드, 상수 풀, 필드·메서드 정보와 속성을 표현한다."
   },
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.jdk-jvm-classfile.q4",
-    "promptMarkdown": "bytecode와 native machine code의 관계로 옳은 것은?",
+    "promptMarkdown": "바이트코드와 네이티브 기계어 코드의 관계로 옳은 것은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
@@ -129,38 +129,38 @@
     "choices": [
       {
         "key": "A",
-        "content": "둘은 모든 CPU에서 같은 binary다",
+        "content": "둘은 모든 CPU에서 같은 바이너리다",
         "displayOrder": 0,
-        "rationaleMarkdown": "bytecode는 JVM 명령을 정의한 표현이고 native machine code는 processor와 runtime 구현에 의존한다."
+        "rationaleMarkdown": "바이트코드는 JVM 명령을 정의한 표현이고 네이티브 기계어 코드는 프로세서와 런타임 구현에 의존한다."
       },
       {
         "key": "B",
-        "content": "native code만 class file에 저장된다",
+        "content": "네이티브 코드만 클래스 파일에 저장된다",
         "displayOrder": 1,
-        "rationaleMarkdown": "일반 class file에는 JVM instruction과 metadata가 저장되며 특정 OS용 native code만 담기지 않는다."
+        "rationaleMarkdown": "일반 클래스 파일에는 JVM 명령과 메타데이터가 저장되며 특정 OS용 네이티브 코드만 담기지 않는다."
       },
       {
         "key": "C",
-        "content": "bytecode는 Java language source와 동일하다",
+        "content": "바이트코드는 Java 언어 소스와 동일하다",
         "displayOrder": 2,
-        "rationaleMarkdown": "bytecode는 Java source와 같은 문법이나 표현이 아니다. compiler가 중간 class 형식으로 변환한다."
+        "rationaleMarkdown": "바이트코드는 Java 소스와 같은 문법이나 표현이 아니다. 컴파일러가 중간 클래스 형식으로 변환한다."
       },
       {
         "key": "D",
-        "content": "bytecode는 JVM instruction 형식이고 JVM implementation이 해석 또는 JIT할 수 있다",
+        "content": "바이트코드는 JVM 명령 형식이고 JVM 구현이 해석 또는 JIT할 수 있다",
         "displayOrder": 3,
-        "rationaleMarkdown": "JVM implementation은 bytecode를 해석하거나 runtime에 native instruction으로 compile할 수 있다. 두 방식은 실행 층이 다르다."
+        "rationaleMarkdown": "JVM 구현은 바이트코드를 해석하거나 런타임에 네이티브 명령으로 컴파일할 수 있다. 두 방식은 실행 층이 다르다."
       }
     ],
     "correctChoiceKey": "D",
-    "explanationMarkdown": "class file bytecode와 실제 CPU native code는 다른 실행 계층이다."
+    "explanationMarkdown": "클래스 파일 바이트코드와 실제 CPU 네이티브 코드는 다른 실행 계층이다."
   },
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.jdk-jvm-classfile.q5",
-    "promptMarkdown": "동일한 class file을 두 OS에서 실행했을 때 source를 다시 compile하지 않아도 될 수 있는 이유는?",
+    "promptMarkdown": "동일한 클래스 파일을 두 OS에서 실행했을 때 소스를 다시 컴파일하지 않아도 될 수 있는 이유는?",
     "questionType": "MULTIPLE_CHOICE",
-    "difficulty": "HARD",
+    "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": [
       "java.core.jvm-runtime.jdk-jvm-classfile"
@@ -168,38 +168,38 @@
     "choices": [
       {
         "key": "A",
-        "content": "JVM이 class file을 각 실행 환경의 runtime model에서 실행하기 때문이다",
+        "content": "JVM이 클래스 파일을 각 실행 환경의 실행 모델에서 실행하기 때문이다",
         "displayOrder": 0,
-        "rationaleMarkdown": "호환 JVM은 같은 class-file 표현을 여러 platform에서 처리할 수 있다. 다만 OS dependency와 runtime 지원이 있으면 실제 이식성은 제한될 수 있다."
+        "rationaleMarkdown": "호환 JVM은 같은 클래스 파일 표현을 여러 플랫폼에서 처리할 수 있다. 다만 OS 의존성과 런타임 지원이 있으면 실제 이식성은 제한될 수 있다."
       },
       {
         "key": "B",
-        "content": "class file이 OS kernel binary이기 때문이다",
+        "content": "클래스 파일이 OS 커널 바이너리이기 때문이다",
         "displayOrder": 1,
-        "rationaleMarkdown": "class file은 OS kernel binary가 아니며 JVM implementation으로 실행한다."
+        "rationaleMarkdown": "클래스 파일은 OS 커널 바이너리가 아니며 JVM 구현으로 실행한다."
       },
       {
         "key": "C",
-        "content": "javac가 모든 OS native code를 한 파일에 포함하기 때문이다",
+        "content": "javac가 모든 OS 네이티브 코드를 한 파일에 포함하기 때문이다",
         "displayOrder": 2,
-        "rationaleMarkdown": "javac가 한 class file에 모든 OS의 native machine code를 넣지 않는다. portability는 JVM bytecode 모델에서 온다."
+        "rationaleMarkdown": "javac가 한 클래스 파일에 모든 OS의 네이티브 기계어 코드를 넣지 않는다. 이식성은 JVM 바이트코드 모델에서 온다."
       },
       {
         "key": "D",
-        "content": "heap이 source를 재작성하기 때문이다",
+        "content": "힙이 소스를 재작성하기 때문이다",
         "displayOrder": 3,
-        "rationaleMarkdown": "heap은 runtime object를 저장한다. class를 source code로 다시 쓰는 기능은 아니다."
+        "rationaleMarkdown": "힙은 실행 중 객체를 저장한다. 클래스를 소스 코드로 다시 쓰는 기능은 아니다."
       }
     ],
     "correctChoiceKey": "A",
-    "explanationMarkdown": "JVM abstraction이 class file을 실행하므로 OS별 launcher/JVM이 같은 class file을 처리할 수 있다."
+    "explanationMarkdown": "JVM 추상화가 클래스 파일을 실행하므로 OS별 실행 도구/JVM이 같은 클래스 파일을 처리할 수 있다."
   },
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.jdk-jvm-classfile.q6",
-    "promptMarkdown": "JDK launcher로 class를 실행했지만 특정 JIT 최적화 결과가 OS마다 달랐다. 이를 가장 정확히 설명한 것은?",
+    "promptMarkdown": "JDK 실행 도구로 클래스를 실행했지만 특정 JIT 최적화 결과가 OS마다 달랐다. 이를 가장 정확히 설명한 것은?",
     "questionType": "MULTIPLE_CHOICE",
-    "difficulty": "HARD",
+    "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": [
       "java.core.jvm-runtime.jdk-jvm-classfile"
@@ -207,31 +207,31 @@
     "choices": [
       {
         "key": "A",
-        "content": "class file의 Java semantics가 OS마다 임의로 바뀐다",
+        "content": "클래스 파일의 Java 의미론이 OS마다 임의로 바뀐다",
         "displayOrder": 0,
         "rationaleMarkdown": "호환 JVM은 관찰 가능한 Java/JVM 동작을 보존해야 한다. OS에 따라 결과를 임의로 바꾸는 최적화는 허용되지 않는다."
       },
       {
         "key": "B",
-        "content": "Java/JVMS 실행 의미와 JDK/JVM implementation 최적화 세부를 분리해야 한다",
+        "content": "Java/JVMS 실행 의미와 JDK/JVM 구현 최적화 세부를 분리해야 한다",
         "displayOrder": 1,
-        "rationaleMarkdown": "specification이 관찰 동작을 정의하지만 특정 JIT algorithm, compile threshold, code generation은 구현 세부일 수 있다."
+        "rationaleMarkdown": "명세가 관찰 동작을 정의하지만 특정 JIT 알고리즘, 컴파일 임계값, 코드 생성은 구현 세부일 수 있다."
       },
       {
         "key": "C",
-        "content": "JDK가 source compatibility를 제거한다",
+        "content": "JDK가 소스 호환성을 제거한다",
         "displayOrder": 2,
-        "rationaleMarkdown": "JDK implementation 차이가 곧 Java source compatibility 약속의 소멸을 뜻하지 않는다."
+        "rationaleMarkdown": "JDK 구현이 다르다고 해서 Java 소스 호환성(source compatibility) 보장이 사라지는 것은 아닙니다."
       },
       {
         "key": "D",
-        "content": "bytecode가 자동으로 다른 source가 된다",
+        "content": "바이트코드가 자동으로 다른 소스가 된다",
         "displayOrder": 3,
-        "rationaleMarkdown": "heap이 bytecode를 다른 source program으로 번역하지 않는다. runtime 최적화도 지정된 의미를 보존한다."
+        "rationaleMarkdown": "JIT가 바이트코드를 다른 소스 프로그램으로 번역하는 것은 아니다. 런타임 최적화도 지정된 의미를 보존한다."
       }
     ],
     "correctChoiceKey": "B",
-    "explanationMarkdown": "실행의 관찰 가능한 의미와 특정 JVM/OS implementation의 최적화 결과는 다른 층위다."
+    "explanationMarkdown": "실행의 관찰 가능한 의미와 특정 JVM/OS 구현의 최적화 결과는 다른 층위다."
   },
   {
     "kind": "question",
@@ -246,31 +246,31 @@
     "choices": [
       {
         "key": "A",
-        "content": "heap을 강제로 정리한다",
+        "content": "힙을 강제로 정리한다",
         "displayOrder": 0,
-        "rationaleMarkdown": "GC 실행 옵션이 아니라 class file을 살펴보는 JDK 도구다."
+        "rationaleMarkdown": "GC 실행 옵션이 아니라 클래스 파일을 살펴보는 JDK 도구다."
       },
       {
         "key": "B",
-        "content": "source를 compile한다",
+        "content": "소스를 컴파일한다",
         "displayOrder": 1,
-        "rationaleMarkdown": "javac가 source를 compile하고 javap는 만들어진 class를 disassemble한다."
+        "rationaleMarkdown": "javac가 소스를 컴파일하고 javap는 만들어진 클래스를 disassemble한다."
       },
       {
         "key": "C",
-        "content": "class method의 bytecode instruction을 사람이 읽게 출력한다",
+        "content": "클래스 메서드의 바이트코드 명령을 사람이 읽게 출력한다",
         "displayOrder": 2,
-        "rationaleMarkdown": "javap -c는 class file의 Code attribute에 기록된 bytecode instruction을 사람이 읽을 수 있는 형태로 출력한다."
+        "rationaleMarkdown": "javap -c는 클래스 파일의 Code attribute에 기록된 바이트코드 명령을 사람이 읽을 수 있는 형태로 출력한다."
       },
       {
         "key": "D",
-        "content": "thread를 종료한다",
+        "content": "스레드를 종료한다",
         "displayOrder": 3,
-        "rationaleMarkdown": "javap는 thread를 종료하거나 interrupt하지 않는다; 지정한 class file을 분석한다."
+        "rationaleMarkdown": "javap는 스레드를 종료하거나 interrupt하지 않는다; 지정한 클래스 파일을 분석한다."
       }
     ],
     "correctChoiceKey": "C",
-    "explanationMarkdown": "javap는 class disassembly 도구이고 -c는 Code attribute를 출력한다."
+    "explanationMarkdown": "javap는 클래스 disassembly 도구이고 -c는 Code attribute를 출력한다."
   },
   {
     "kind": "question",
@@ -285,36 +285,36 @@
     "choices": [
       {
         "key": "A",
-        "content": "JIT가 만든 native assembly와 실제 inlining 결과",
+        "content": "JIT가 만든 네이티브 assembly와 실제 inlining 결과",
         "displayOrder": 0,
-        "rationaleMarkdown": "`javap -v`는 class file의 verbose metadata를 읽는 도구다. 실행 중 JIT가 어떤 native code를 만들고 무엇을 inline했는지는 runtime compiler 진단 영역이라 javap 출력만으로 확인할 수 없다."
+        "rationaleMarkdown": "`javap -v`는 클래스 파일의 상세 메타데이터를 보여 주는 도구입니다. 실행 중 JIT가 어떤 네이티브 코드를 만들고 무엇을 인라인했는지는 실행 시점 컴파일러 진단 영역이므로, `javap` 출력만으로 확인할 수 없습니다."
       },
       {
         "key": "B",
-        "content": "실행 중 heap object의 retained path와 GC root graph",
+        "content": "실행 중 힙 객체의 유지 경로(retained path)와 GC 루트 객체 그래프",
         "displayOrder": 1,
-        "rationaleMarkdown": "retained path와 live object graph는 heap dump나 runtime heap 진단이 필요한 정보다. 정적 class file을 verbose하게 보는 javap의 범위가 아니다."
+        "rationaleMarkdown": "객체의 참조 경로와 살아 있는 객체 그래프는 힙 덤프나 실행 중 힙 진단이 필요한 정보입니다. 정적 클래스 파일을 상세히 보여 주는 `javap`의 범위가 아닙니다."
       },
       {
         "key": "C",
-        "content": "현재 process의 thread stack과 monitor 대기 관계",
+        "content": "현재 프로세스의 스레드 스택과 모니터 대기 관계",
         "displayOrder": 2,
-        "rationaleMarkdown": "thread stack과 monitor wait는 jstack/jcmd 같은 live JVM 진단 정보다. `javap -v`는 실행 process 상태가 아니라 class-file 구조를 출력한다."
+        "rationaleMarkdown": "스레드 스택과 모니터 wait는 jstack/jcmd 같은 실행 중인 JVM 진단 정보다. `javap -v`는 실행 프로세스 상태가 아니라 클래스 파일 구조를 출력한다."
       },
       {
         "key": "D",
-        "content": "constant pool과 flags 같은 class file 정보",
+        "content": "상수 풀과 flags 같은 클래스 파일 정보",
         "displayOrder": 3,
-        "rationaleMarkdown": "`-v`는 constant pool, access flags, descriptors, attributes 등 class-file 구조를 더 자세히 보여 준다. runtime heap·thread·JIT 상태와는 구분해야 한다."
+        "rationaleMarkdown": "`-v`는 상수 풀, 접근 플래그(access flag), 디스크립터, 속성(attribute) 등 클래스 파일 구조를 더 자세히 보여 줍니다. 실행 중 힙·스레드·JIT 상태와는 구분해야 합니다."
       }
     ],
     "correctChoiceKey": "D",
-    "explanationMarkdown": "-v는 verbose class file 정보를 출력한다."
+    "explanationMarkdown": "-v는 verbose 클래스 파일 정보를 출력한다."
   },
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.bytecode-javap.q3",
-    "promptMarkdown": "javap 출력이 source 줄과 일대일로 맞지 않을 수 있는 이유는?",
+    "promptMarkdown": "javap 출력이 소스 줄과 일대일로 맞지 않을 수 있는 이유는?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
@@ -324,38 +324,38 @@
     "choices": [
       {
         "key": "A",
-        "content": "compiler가 source construct를 여러 JVM 구조와 instruction으로 번역할 수 있기 때문이다",
+        "content": "컴파일러가 소스 construct를 여러 JVM 구조와 명령으로 번역할 수 있기 때문이다",
         "displayOrder": 0,
-        "rationaleMarkdown": "Compiler는 source 표현을 여러 bytecode instruction과 metadata로 바꿀 수 있어 source line과 instruction이 일대일이 아니다."
+        "rationaleMarkdown": "컴파일러는 소스 코드 한 줄을 여러 바이트코드 명령과 메타데이터로 바꿀 수 있으므로 소스 코드 줄과 명령이 일대일로 대응하지 않는다."
       },
       {
         "key": "B",
-        "content": "javap가 source를 다시 작성하기 때문이다",
+        "content": "javap가 소스를 다시 작성하기 때문이다",
         "displayOrder": 1,
-        "rationaleMarkdown": "javap는 source를 고치는 source rewriter가 아니다."
+        "rationaleMarkdown": "javap는 소스를 고치는 소스 rewriter가 아니다."
       },
       {
         "key": "C",
-        "content": "JVM이 method를 삭제하기 때문이다",
+        "content": "JVM이 메서드를 삭제하기 때문이다",
         "displayOrder": 2,
-        "rationaleMarkdown": "JIT는 runtime code optimization이고 정적 javap 출력 때문에 method가 삭제되는 것이 아니다."
+        "rationaleMarkdown": "JIT는 런타임 코드 optimization이고 정적 javap 출력 때문에 메서드가 삭제되는 것이 아니다."
       },
       {
         "key": "D",
-        "content": "class file에는 method가 없기 때문이다",
+        "content": "클래스 파일에는 메서드가 없기 때문이다",
         "displayOrder": 3,
-        "rationaleMarkdown": "class file에는 method 정보와 method code를 위한 Code attribute가 포함될 수 있다."
+        "rationaleMarkdown": "클래스 파일에는 메서드 정보와 메서드 코드를 담는 `Code` 속성이 포함될 수 있습니다."
       }
     ],
     "correctChoiceKey": "A",
-    "explanationMarkdown": "source와 JVM representation은 일대일 대응이 아니며 compiler/debug 옵션의 영향도 받는다."
+    "explanationMarkdown": "소스 코드와 JVM 표현은 일대일로 대응하지 않으며 컴파일러와 디버그 옵션의 영향도 받는다."
   },
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.bytecode-javap.q4",
-    "promptMarkdown": "debug 정보 없이 compile된 class를 javap -c로 확인하고 source line과 local 변수 이름을 완전히 복원하려 했다. 가장 정확한 결론은?",
+    "promptMarkdown": "디버그 정보 없이 컴파일된 클래스 파일을 `javap -c`로 확인해 소스 줄과 지역 변수 이름을 완전히 복원하려 합니다. 가장 정확한 결론은 무엇인가요?",
     "questionType": "MULTIPLE_CHOICE",
-    "difficulty": "HARD",
+    "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": [
       "java.core.jvm-runtime.bytecode-javap"
@@ -363,36 +363,36 @@
     "choices": [
       {
         "key": "A",
-        "content": "JIT native code가 source line을 대신 제공한다",
+        "content": "JIT 네이티브 코드가 소스 line을 대신 제공한다",
         "displayOrder": 0,
-        "rationaleMarkdown": "JIT는 누락된 source line/local variable debug mapping을 자동 복원하는 정보원이 아니다."
+        "rationaleMarkdown": "JIT는 누락된 소스 줄·지역 변수의 디버그 대응 정보를 자동으로 복원하지 않는다."
       },
       {
         "key": "B",
-        "content": "bytecode 구조는 볼 수 있어도 optional debug mapping이 없으면 모든 source mapping을 확정할 수 없다",
+        "content": "바이트코드 구조는 볼 수 있어도 optional debug 매핑이 없으면 모든 소스 매핑을 확정할 수 없다",
         "displayOrder": 1,
-        "rationaleMarkdown": "javap -c는 bytecode를 보여 주지만 line/local-variable mapping은 compiler가 넣은 선택적 debug metadata에 달려 있다."
+        "rationaleMarkdown": "javap -c는 바이트코드를 보여 주지만 줄 번호/지역 변수 매핑은 컴파일러가 넣은 선택적 debug 메타데이터에 달려 있다."
       },
       {
         "key": "C",
-        "content": "javap가 source를 항상 완전히 복원한다",
+        "content": "javap가 소스를 항상 완전히 복원한다",
         "displayOrder": 2,
-        "rationaleMarkdown": "disassembly가 class file에 보존되지 않은 source 이름·줄 번호를 항상 복원할 수는 없다."
+        "rationaleMarkdown": "disassembly가 클래스 파일에 보존되지 않은 소스 이름·줄 번호를 항상 복원할 수는 없다."
       },
       {
         "key": "D",
-        "content": "debug 정보가 없으면 class file은 실행 불가다",
+        "content": "debug 정보가 없으면 클래스 파일은 실행 불가다",
         "displayOrder": 3,
-        "rationaleMarkdown": "debug metadata 없이도 유효한 class file은 실행될 수 있다."
+        "rationaleMarkdown": "debug 메타데이터 없이도 유효한 클래스 파일은 실행될 수 있다."
       }
     ],
     "correctChoiceKey": "B",
-    "explanationMarkdown": "javap -c는 Code attribute를 보지만 source line/local variable mapping은 compiler가 넣은 debug metadata에 좌우된다."
+    "explanationMarkdown": "`javap -c`는 `Code` 속성을 보여 주지만 소스 줄과 지역 변수 이름의 대응 정보는 컴파일러가 넣은 디버그 메타데이터에 달려 있습니다."
   },
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.class-loading-linking-initialization.q1",
-    "promptMarkdown": "class lifecycle에서 preparation의 설명으로 옳은 것은?",
+    "promptMarkdown": "클래스 생명주기에서 준비 단계(preparation)를 올바르게 설명한 것은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
@@ -404,34 +404,34 @@
         "key": "A",
         "content": "객체의 finalize를 호출하는 단계",
         "displayOrder": 0,
-        "rationaleMarkdown": "finalization은 object lifecycle와 관련되고 class preparation에서 호출하지 않는다."
+        "rationaleMarkdown": "객체 종료 처리(finalization)는 객체 생명주기와 관련되며 클래스 준비 단계에서 호출하지 않는다."
       },
       {
         "key": "B",
-        "content": "static block의 모든 코드를 실행하는 단계",
+        "content": "정적 초기화 블록의 모든 코드를 실행하는 단계",
         "displayOrder": 1,
-        "rationaleMarkdown": "작성한 static initializer 코드는 preparation이 아니라 initialization에서 실행한다."
+        "rationaleMarkdown": "개발자가 작성한 정적 초기화 코드는 준비 단계가 아니라 초기화 단계에서 실행한다."
       },
       {
         "key": "C",
-        "content": "static field를 위한 구조와 기본값을 준비하는 단계",
+        "content": "정적 필드에 필요한 저장 공간과 기본값을 준비하는 단계",
         "displayOrder": 2,
-        "rationaleMarkdown": "Preparation은 static field storage와 기본값을 준비하는 linking 단계다."
+        "rationaleMarkdown": "준비 단계(preparation)는 정적 필드의 저장 공간과 기본값을 마련하는 링킹(linking) 단계다."
       },
       {
         "key": "D",
-        "content": "source를 javac로 compile하는 단계",
+        "content": "소스를 javac로 컴파일하는 단계",
         "displayOrder": 3,
-        "rationaleMarkdown": "javac의 source compilation은 JVM runtime preparation의 일부가 아니다."
+        "rationaleMarkdown": "`javac`의 소스 컴파일은 JVM의 실행 시점 준비 단계에 포함되지 않는다."
       }
     ],
     "correctChoiceKey": "C",
-    "explanationMarkdown": "preparation은 static storage와 default value를 준비하고 initialization code 실행과 다르다."
+    "explanationMarkdown": "준비 단계(preparation)는 정적 필드의 기본값을 설정하며, 초기화 단계(initialization)에서 초기화 코드를 실행하는 것과 구분된다."
   },
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.class-loading-linking-initialization.q2",
-    "promptMarkdown": "linking에 포함되는 단계는?",
+    "promptMarkdown": "링킹(linking)에 포함되는 단계는?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
@@ -441,36 +441,36 @@
     "choices": [
       {
         "key": "A",
-        "content": "serialization과 reflection만",
+        "content": "직렬화와 리플렉션만",
         "displayOrder": 0,
-        "rationaleMarkdown": "Serialization과 reflection은 JVM linking의 정의된 하위 단계가 아니다."
+        "rationaleMarkdown": "직렬화와 리플렉션은 JVM 링킹의 하위 단계가 아니다."
       },
       {
         "key": "B",
-        "content": "constructor 호출만",
+        "content": "생성자 호출만",
         "displayOrder": 1,
-        "rationaleMarkdown": "Constructor invocation은 객체 생성의 일부이지 linking의 한 단계가 아니다."
+        "rationaleMarkdown": "생성자 호출은 객체 생성의 일부이지 링킹 단계가 아니다."
       },
       {
         "key": "C",
         "content": "GC와 JIT만",
         "displayOrder": 2,
-        "rationaleMarkdown": "GC와 JIT는 class linking 단계 구분에 포함되지 않는다."
+        "rationaleMarkdown": "GC와 JIT는 클래스 링킹의 단계에 포함되지 않는다."
       },
       {
         "key": "D",
-        "content": "verification, preparation, resolution",
+        "content": "검증, 준비, 해석",
         "displayOrder": 3,
-        "rationaleMarkdown": "JVMS는 verification, preparation, resolution을 linking에 포함한다."
+        "rationaleMarkdown": "JVMS는 검증, 준비, 해석을 링킹에 포함한다."
       }
     ],
     "correctChoiceKey": "D",
-    "explanationMarkdown": "JVMS는 linking을 verification, preparation, resolution으로 나눈다."
+    "explanationMarkdown": "JVMS는 링킹을 검증(verification), 준비(preparation), 해석(resolution) 단계로 나눈다."
   },
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.class-loading-linking-initialization.q3",
-    "promptMarkdown": "static block과 field initializer의 실행 시점은 일반적으로?",
+    "promptMarkdown": "정적 초기화 블록과 필드 초기화식의 실행 시점은 일반적으로 언제인가?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
@@ -480,36 +480,36 @@
     "choices": [
       {
         "key": "A",
-        "content": "class initialization 단계",
+        "content": "클래스 초기화 단계",
         "displayOrder": 0,
-        "rationaleMarkdown": "static field initializer와 static block은 class initialization 때 실행된다. preparation은 먼저 storage와 default value를 준비한다."
+        "rationaleMarkdown": "정적 필드 초기화식과 정적 초기화 블록은 클래스 초기화 단계에서 실행됩니다. 준비 단계에서는 그보다 먼저 저장 공간을 마련하고 기본값을 설정합니다."
       },
       {
         "key": "B",
-        "content": "GC root 탐색 단계",
+        "content": "GC 루트 탐색 단계",
         "displayOrder": 1,
-        "rationaleMarkdown": "GC root 탐색은 객체 도달성 분석이고, class의 static 초기화 코드를 실행하지 않는다."
+        "rationaleMarkdown": "GC 루트 탐색은 객체 도달성 분석이고, 클래스의 static 초기화 코드를 실행하지 않는다."
       },
       {
         "key": "C",
         "content": "javap 출력 단계",
         "displayOrder": 2,
-        "rationaleMarkdown": "javap는 class file을 읽어 보여 주는 도구라 live static block을 수행하지 않는다."
+        "rationaleMarkdown": "javap는 클래스 파일을 읽어 보여 주는 도구라 실행 중인 static block을 수행하지 않는다."
       },
       {
         "key": "D",
-        "content": "class file의 preparation 단계에서 source 그대로",
+        "content": "클래스 파일의 준비 단계에서 소스 초기화식을 그대로 실행한다",
         "displayOrder": 3,
-        "rationaleMarkdown": "preparation과 developer가 작성한 initializer code 실행은 서로 다른 단계다."
+        "rationaleMarkdown": "준비 단계와 개발자가 작성한 초기화식을 실행하는 단계는 서로 다르다."
       }
     ],
     "correctChoiceKey": "A",
-    "explanationMarkdown": "개발자가 작성한 static initialization code는 initialization에서 실행된다."
+    "explanationMarkdown": "개발자가 작성한 정적 초기화 코드는 초기화 단계에서 실행된다."
   },
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.class-loading-linking-initialization.q4",
-    "promptMarkdown": "resolution에 대한 설명으로 맞는 것은?",
+    "promptMarkdown": "해석(resolution)에 대한 설명으로 맞는 것은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
@@ -521,36 +521,36 @@
         "key": "A",
         "content": "모든 객체를 생성한다",
         "displayOrder": 0,
-        "rationaleMarkdown": "resolution은 symbolic reference를 해석하는 단계이고 모든 객체를 생성하지 않는다."
+        "rationaleMarkdown": "해석 단계는 심볼릭 참조를 연결하며 모든 객체를 생성하지 않는다."
       },
       {
         "key": "B",
-        "content": "symbolic reference를 사용할 수 있는 runtime entity로 해석하며 시점은 지연될 수 있다",
+        "content": "심볼릭 참조를 실행 중인 클래스나 멤버에 연결하며 실제 시점은 미룰 수 있다",
         "displayOrder": 1,
-        "rationaleMarkdown": "JVM은 symbolic reference를 사용할 수 있는 runtime class/member reference로 해석한다. 필요에 따라 그 시점을 미룰 수 있다."
+        "rationaleMarkdown": "JVM은 심볼릭 참조를 실제 런타임 클래스나 멤버를 가리키는 참조로 해석합니다. 필요에 따라 해석 시점을 미룰 수 있습니다."
       },
       {
         "key": "C",
-        "content": "항상 initialization과 같은 단계다",
+        "content": "항상 초기화와 같은 단계다",
         "displayOrder": 2,
-        "rationaleMarkdown": "resolution은 initialization과 같은 단계가 아니며 lazy하게 수행될 수 있다."
+        "rationaleMarkdown": "해석은 초기화와 같은 단계가 아니며 실제 참조가 필요할 때까지 미룰 수 있다."
       },
       {
         "key": "D",
-        "content": "항상 source compile 전에 수행된다",
+        "content": "항상 소스 컴파일 전에 수행된다",
         "displayOrder": 3,
-        "rationaleMarkdown": "source compile 전에 JVM이 수행하는 절차가 아니다."
+        "rationaleMarkdown": "소스 컴파일 전에 JVM이 수행하는 절차가 아니다."
       }
     ],
     "correctChoiceKey": "B",
-    "explanationMarkdown": "JVMS는 resolution을 lazy하게 수행할 여지를 둔다."
+    "explanationMarkdown": "JVMS는 해석을 실제 참조가 필요해질 때까지 미룰 수 있도록 허용한다."
   },
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.class-loading-linking-initialization.q5",
-    "promptMarkdown": "`static final int x = 42`가 constant variable 조건을 만족해 compile-time constant로 사용되고, 다른 static block이 있는 class를 참조한다. 가장 주의할 결론은?",
+    "promptMarkdown": "`static final int x = 42`가 상수 변수 조건을 만족해 컴파일 시점 상수로 사용되고, 같은 클래스에 다른 정적 초기화 블록도 있다. 가장 주의할 결론은?",
     "questionType": "MULTIPLE_CHOICE",
-    "difficulty": "HARD",
+    "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": [
       "java.core.jvm-runtime.class-loading-linking-initialization"
@@ -558,38 +558,38 @@
     "choices": [
       {
         "key": "A",
-        "content": "resolution은 항상 모든 block을 실행한다",
+        "content": "해석은 항상 모든 정적 초기화 블록을 실행한다",
         "displayOrder": 0,
-        "rationaleMarkdown": "constant variable 참조는 일반 active-use initialization trigger와 구분해야 한다. resolution이 모든 static block 실행을 뜻하지 않는다."
+        "rationaleMarkdown": "상수 변수 참조는 일반적인 능동 사용(active use)에 따른 초기화와 구분해야 한다. 해석 단계가 모든 정적 초기화 블록을 실행하는 것은 아니다."
       },
       {
         "key": "B",
-        "content": "어떤 static code도 절대 실행되지 않는다",
+        "content": "정적 초기화 코드는 어떤 경우에도 실행되지 않는다",
         "displayOrder": 1,
-        "rationaleMarkdown": "상수 참조만으로 초기화가 유발되지 않을 수 있지만, 다른 active use가 있으면 static code가 실행될 수 있다."
+        "rationaleMarkdown": "상수 참조만으로 초기화가 유발되지 않을 수 있지만, 다른 능동 사용이 있으면 정적 초기화 코드가 실행될 수 있다."
       },
       {
         "key": "C",
-        "content": "constant variable 사용과 일반 class initialization trigger를 구분해야 한다",
+        "content": "컴파일 시점 상수 사용과 일반적인 클래스 초기화 조건을 구분해야 한다",
         "displayOrder": 2,
-        "rationaleMarkdown": "compile-time constant의 사용은 보통 초기화를 촉발하지 않는 예외에 해당한다. 별도의 non-constant static field/method 접근은 따로 판단한다."
+        "rationaleMarkdown": "컴파일 시점 상수를 사용하는 경우는 보통 클래스 초기화를 일으키지 않는 예외에 해당합니다. 상수가 아닌 정적 필드나 메서드에 접근하는 경우는 따로 판단해야 합니다."
       },
       {
         "key": "D",
-        "content": "preparation이 42를 계산하는 source code를 실행한다",
+        "content": "준비 단계에서 42를 계산하는 소스 코드를 실행한다",
         "displayOrder": 3,
-        "rationaleMarkdown": "preparation은 static field를 위한 storage를 만들고 기본값으로 준비하는 linking 단계다. constant variable의 `ConstantValue` 적용은 class initialization 절차에서 `<clinit>` 실행보다 먼저 처리되며, preparation이 source initializer code를 실행해 42를 계산하는 것은 아니다."
+        "rationaleMarkdown": "준비 단계(preparation)는 정적 필드에 쓸 저장 공간을 마련하고 JVM 기본값을 설정하는 링킹 단계입니다. 상수 변수의 `ConstantValue` 적용은 클래스 초기화에서 `<clinit>`을 실행하기 전에 처리됩니다. 준비 단계에서 소스 초기화 코드를 실행해 `42`를 계산하는 것은 아닙니다."
       }
     ],
     "correctChoiceKey": "C",
-    "explanationMarkdown": "`static final int x = 42`처럼 constant variable인 static field의 사용은 일반적인 class initialization trigger와 구분해야 한다. preparation은 static field를 위한 storage를 만들고 기본값으로 준비하는 linking 단계이며, constant variable의 `ConstantValue`는 class initialization 절차에서 `<clinit>` 실행보다 먼저 적용된다. 따라서 constant variable 참조만 보고 다른 static block까지 실행됐다고 단정하면 안 된다."
+    "explanationMarkdown": "`static final int x = 42`처럼 상수 변수인 정적 필드의 사용은 일반적인 클래스 초기화 계기와 구분해야 합니다. 준비 단계에서는 정적 필드의 저장 공간과 기본값을 마련하고, 상수 변수의 `ConstantValue`는 클래스 초기화에서 `<clinit>`을 실행하기 전에 적용됩니다. 따라서 상수 변수만 참조했다고 다른 정적 초기화 블록까지 실행됐다고 단정하면 안 됩니다."
   },
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.class-loading-linking-initialization.q6",
-    "promptMarkdown": "class initialization 중 예외가 발생한 뒤 다른 code가 같은 class를 다시 사용한다. 가능한 관찰은?",
+    "promptMarkdown": "클래스 초기화 중 예외가 발생한 뒤 다른 코드가 같은 클래스를 다시 사용한다. 가능한 관찰은?",
     "questionType": "MULTIPLE_CHOICE",
-    "difficulty": "HARD",
+    "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": [
       "java.core.jvm-runtime.class-loading-linking-initialization"
@@ -597,36 +597,36 @@
     "choices": [
       {
         "key": "A",
-        "content": "JVM이 모든 thread를 종료한다",
+        "content": "JVM이 모든 스레드를 종료한다",
         "displayOrder": 0,
-        "rationaleMarkdown": "class initialization 실패는 JVM의 모든 thread를 종료시키지 않는다."
+        "rationaleMarkdown": "클래스 초기화 실패는 JVM의 모든 스레드를 종료시키지 않는다."
       },
       {
         "key": "B",
         "content": "항상 정상적으로 static block이 처음부터 재실행된다",
         "displayOrder": 1,
-        "rationaleMarkdown": "초기화가 실패한 class는 이후 사용에서 initialization code를 정상적으로 처음부터 재실행한다고 보장되지 않는다."
+        "rationaleMarkdown": "초기화가 실패한 클래스는 이후 사용에서 초기화 코드를 정상적으로 처음부터 재실행한다고 보장되지 않는다."
       },
       {
         "key": "C",
-        "content": "class file이 자동 삭제된다",
+        "content": "클래스 파일이 자동 삭제된다",
         "displayOrder": 2,
-        "rationaleMarkdown": "initialization exception 때문에 class file이 자동 삭제되는 것은 아니다."
+        "rationaleMarkdown": "초기화 예외 때문에 클래스 파일이 자동 삭제되는 것은 아니다."
       },
       {
         "key": "D",
-        "content": "초기화 실패가 후속 사용에서 initialization error 계열로 나타날 수 있다",
+        "content": "초기화 실패가 후속 사용에서 초기화 오류 계열로 나타날 수 있다",
         "displayOrder": 3,
-        "rationaleMarkdown": "초기화 실패 class는 erroneous 상태가 될 수 있어 후속 접근에서 NoClassDefFoundError 같은 linkage error가 발생할 수 있다."
+        "rationaleMarkdown": "초기화에 실패한 클래스는 오류 상태(erroneous state)가 될 수 있어 후속 접근에서 `NoClassDefFoundError` 같은 연결 오류가 발생할 수 있다."
       }
     ],
     "correctChoiceKey": "D",
-    "explanationMarkdown": "JVMS의 initialization 실패 처리로 후속 사용은 원래 예외와 다른 linkage/error 형태를 관찰할 수 있다."
+    "explanationMarkdown": "JVMS의 초기화 실패 처리에 따라 후속 사용에서 원래 예외와 다른 연결 오류(linkage error)가 나타날 수 있다."
   },
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.classloader-delegation-type-identity.q1",
-    "promptMarkdown": "runtime type identity에 포함되는 핵심 조합은?",
+    "promptMarkdown": "런타임 타입 동일성에 포함되는 핵심 조합은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
@@ -636,36 +636,36 @@
     "choices": [
       {
         "key": "A",
-        "content": "binary name과 defining ClassLoader",
+        "content": "바이너리 name과 defining ClassLoader",
         "displayOrder": 0,
-        "rationaleMarkdown": "reference type identity는 binary name과 실제 defining ClassLoader를 함께 포함한다."
+        "rationaleMarkdown": "참조 타입의 동일성은 바이너리 이름과 실제로 클래스를 정의한 `ClassLoader`를 함께 포함한다."
       },
       {
         "key": "B",
-        "content": "heap 크기와 OS 이름",
+        "content": "힙 크기와 OS 이름",
         "displayOrder": 1,
-        "rationaleMarkdown": "heap 크기나 OS 이름이 runtime class의 assignment compatibility를 결정하지 않는다."
+        "rationaleMarkdown": "힙 크기나 운영체제 이름이 실행 시점 타입의 대입 호환성을 결정하지 않는다."
       },
       {
         "key": "C",
-        "content": "method line number만",
+        "content": "메서드 line number만",
         "displayOrder": 2,
-        "rationaleMarkdown": "source line은 디버깅 metadata이지 class identity의 일부가 아니다."
+        "rationaleMarkdown": "소스 line은 디버깅 메타데이터이지 클래스 동일성의 일부가 아니다."
       },
       {
         "key": "D",
-        "content": "source file의 마지막 수정 시간",
+        "content": "소스 파일의 마지막 수정 시간",
         "displayOrder": 3,
-        "rationaleMarkdown": "filesystem timestamp도 runtime type identity를 구성하지 않는다."
+        "rationaleMarkdown": "파일 시스템 timestamp도 런타임 타입 동일성을 구성하지 않는다."
       }
     ],
     "correctChoiceKey": "A",
-    "explanationMarkdown": "같은 binary name도 defining loader가 다르면 다른 runtime type이 될 수 있다."
+    "explanationMarkdown": "같은 바이너리 이름이라도 클래스를 정의한 로더가 다르면 서로 다른 실행 시점 타입이 될 수 있다."
   },
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.classloader-delegation-type-identity.q2",
-    "promptMarkdown": "parent delegation의 일반적인 목적은?",
+    "promptMarkdown": "부모 위임(parent delegation)의 일반적인 목적은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
@@ -677,34 +677,34 @@
         "key": "A",
         "content": "GC를 생략하는 것",
         "displayOrder": 0,
-        "rationaleMarkdown": "delegation은 GC를 끄는 정책이 아니라 class loading 요청 경로를 정한다."
+        "rationaleMarkdown": "위임은 GC를 끄는 정책이 아니라 클래스 로딩 요청의 경로를 정한다."
       },
       {
         "key": "B",
-        "content": "상위 loader가 이미 정의한 type을 재사용해 namespace 중복을 줄이는 것",
+        "content": "상위 로더가 이미 정의한 타입을 재사용해 namespace 중복을 줄이는 것",
         "displayOrder": 1,
-        "rationaleMarkdown": "parent delegation은 공통 platform/API type을 child namespace마다 중복 정의하지 않고 재사용하는 데 도움을 준다."
+        "rationaleMarkdown": "parent delegation은 공통 플랫폼/API 타입을 child namespace마다 중복 정의하지 않고 재사용하는 데 도움을 준다."
       },
       {
         "key": "C",
         "content": "모든 module을 unnamed로 만드는 것",
         "displayOrder": 2,
-        "rationaleMarkdown": "module의 named/unnamed 상태와 class-loader delegation은 별도 개념이다."
+        "rationaleMarkdown": "module의 named/unnamed 상태와 클래스-로더 delegation은 별도 개념이다."
       },
       {
         "key": "D",
-        "content": "모든 class를 child가 먼저 정의하게 하는 것",
+        "content": "모든 클래스를 child가 먼저 정의하게 하는 것",
         "displayOrder": 3,
-        "rationaleMarkdown": "parent-first에서는 parent에 먼저 요청한다. 모든 class를 child가 먼저 정의하는 흐름이 아니다."
+        "rationaleMarkdown": "parent-first에서는 parent에 먼저 요청한다. 모든 클래스를 child가 먼저 정의하는 흐름이 아니다."
       }
     ],
     "correctChoiceKey": "B",
-    "explanationMarkdown": "ClassLoader의 delegation 구조는 공통/platform class 중복을 줄이는 데 사용된다."
+    "explanationMarkdown": "`ClassLoader`의 위임 구조는 공통·플랫폼 클래스를 중복 정의하는 일을 줄이는 데 사용된다."
   },
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.classloader-delegation-type-identity.q3",
-    "promptMarkdown": "두 loader가 같은 binary name의 class를 각각 define하면?",
+    "promptMarkdown": "두 로더가 같은 바이너리 이름의 클래스를 각각 정의하면?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
@@ -714,36 +714,36 @@
     "choices": [
       {
         "key": "A",
-        "content": "이름만 같으므로 cast가 반드시 성공한다",
+        "content": "이름만 같으므로 캐스팅이 반드시 성공한다",
         "displayOrder": 0,
-        "rationaleMarkdown": "binary name이 같아도 defining loader가 다르면 JVM assignment-compatible type이라고 단정할 수 없다."
+        "rationaleMarkdown": "바이너리 이름이 같아도 클래스를 정의한 로더가 다르면 JVM에서 대입 호환되는 타입이라고 단정할 수 없다."
       },
       {
         "key": "B",
         "content": "JVM이 항상 하나로 합친다",
         "displayOrder": 1,
-        "rationaleMarkdown": "JVM은 서로 다른 loader가 정의한 같은 이름의 class를 자동 병합하지 않는다. 별도 runtime type이 될 수 있다."
+        "rationaleMarkdown": "JVM은 서로 다른 로더가 정의한 같은 이름의 클래스를 자동 병합하지 않는다. 별도 런타임 타입이 될 수 있다."
       },
       {
         "key": "C",
-        "content": "두 Class 객체가 서로 다른 runtime type일 수 있다",
+        "content": "두 Class 객체가 서로 다른 런타임 타입일 수 있다",
         "displayOrder": 2,
-        "rationaleMarkdown": "다른 loader가 정의하면 같은 binary name도 서로 다른 Class object와 runtime type을 나타낼 수 있다."
+        "rationaleMarkdown": "다른 `ClassLoader`가 클래스를 정의하면 같은 바이너리 이름이라도 서로 다른 `Class` 객체와 실행 시점 타입이 될 수 있다."
       },
       {
         "key": "D",
-        "content": "둘 중 하나가 primitive가 된다",
+        "content": "둘 중 하나가 원시 타입이 된다",
         "displayOrder": 3,
-        "rationaleMarkdown": "또 다른 loader가 같은 이름을 정의해도 reference class가 primitive type으로 바뀌지 않는다."
+        "rationaleMarkdown": "또 다른 로더가 같은 이름을 정의해도 참조 클래스가 원시 타입으로 바뀌지 않는다."
       }
     ],
     "correctChoiceKey": "C",
-    "explanationMarkdown": "loader identity가 다르면 type identity도 달라진다."
+    "explanationMarkdown": "로더 동일성이 다르면 타입 동일성도 달라진다."
   },
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.classloader-delegation-type-identity.q4",
-    "promptMarkdown": "Class.getClassLoader()를 진단에 사용하는 이유는?",
+    "promptMarkdown": "`Class.getClassLoader()`를 진단에 사용하는 이유는?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
@@ -753,38 +753,38 @@
     "choices": [
       {
         "key": "A",
-        "content": "OS scheduler를 바꿔서",
+        "content": "운영체제 스케줄러 설정을 바꿔서",
         "displayOrder": 0,
-        "rationaleMarkdown": "Class.getClassLoader는 thread scheduling을 바꾸지 않고 class definition 맥락을 조회한다."
+        "rationaleMarkdown": "`Class.getClassLoader()`는 스레드 스케줄링을 바꾸지 않고 클래스 정의에 사용된 로더 문맥을 조회한다."
       },
       {
         "key": "B",
-        "content": "class의 모든 instance를 반환해서",
+        "content": "클래스의 모든 인스턴스를 반환해서",
         "displayOrder": 1,
-        "rationaleMarkdown": "Class 객체는 type metadata를 나타내지 모든 instance를 담은 collection이 아니다."
+        "rationaleMarkdown": "Class 객체는 타입 메타데이터를 나타내지 모든 인스턴스를 담은 컬렉션이 아니다."
       },
       {
         "key": "C",
-        "content": "JIT code를 덤프해서",
+        "content": "JIT 코드를 덤프해서",
         "displayOrder": 2,
-        "rationaleMarkdown": "loader 조회는 JIT machine code dump가 아니다. 실행 code 진단은 다른 도구를 사용한다."
+        "rationaleMarkdown": "로더 조회는 JIT 기계어를 덤프하지 않는다. 실행 코드 진단에는 다른 도구를 사용한다."
       },
       {
         "key": "D",
-        "content": "해당 Class의 defining/loading context를 비교하는 단서가 된다",
+        "content": "해당 `Class`를 정의한 로더를 확인하는 단서가 된다",
         "displayOrder": 3,
-        "rationaleMarkdown": "getClassLoader로 class를 정의한 loader를 확인할 수 있다. bootstrap 정의 class는 null을 반환할 수 있다."
+        "rationaleMarkdown": "getClassLoader로 클래스를 정의한 로더를 확인할 수 있다. bootstrap 정의 클래스는 null을 반환할 수 있다."
       }
     ],
     "correctChoiceKey": "D",
-    "explanationMarkdown": "loader 정보는 plugin·namespace·cast 문제를 분석하는 runtime evidence다."
+    "explanationMarkdown": "로더 정보는 플러그인·이름 공간·캐스팅 문제를 분석할 때 실행 시점의 단서가 된다."
   },
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.classloader-delegation-type-identity.q5",
-    "promptMarkdown": "plugin loader L1이 만든 com.example.Service 객체를 app loader L2가 같은 binary name의 Service로 cast하려 한다. 예상되는 문제는?",
+    "promptMarkdown": "플러그인 로더 L1이 만든 `com.example.Service` 객체를 애플리케이션 로더 L2가 같은 바이너리 이름의 `com.example.Service`로 캐스팅하려 한다. 예상되는 문제는?",
     "questionType": "MULTIPLE_CHOICE",
-    "difficulty": "HARD",
+    "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": [
       "java.core.jvm-runtime.classloader-delegation-type-identity"
@@ -792,38 +792,38 @@
     "choices": [
       {
         "key": "A",
-        "content": "이름이 같아도 defining loader가 다르면 ClassCastException이 날 수 있다",
+        "content": "이름이 같아도 defining 로더가 다르면 ClassCastException이 날 수 있다",
         "displayOrder": 0,
-        "rationaleMarkdown": "binary name만으로 타입이 같아지지 않는다. plugin과 app loader가 서로 다른 Service를 정의하면 cast에서 ClassCastException이 날 수 있다."
+        "rationaleMarkdown": "바이너리 이름만으로 타입이 같아지지 않는다. 플러그인 로더와 애플리케이션 로더가 서로 다른 `Service`를 정의하면 캐스팅에서 `ClassCastException`이 날 수 있다."
       },
       {
         "key": "B",
-        "content": "primitive widening이 적용된다",
+        "content": "원시 타입 widening이 적용된다",
         "displayOrder": 1,
-        "rationaleMarkdown": "primitive widening 규칙은 다른 namespace의 reference type 두 개에 적용되지 않는다."
+        "rationaleMarkdown": "원시 타입 확장 변환 규칙은 이름 공간이 다른 두 참조 타입에 적용되지 않습니다."
       },
       {
         "key": "C",
-        "content": "cast가 class file을 다시 compile한다",
+        "content": "캐스팅이 클래스 파일을 다시 컴파일한다",
         "displayOrder": 2,
-        "rationaleMarkdown": "cast는 runtime assignability를 검사하고 class file을 재컴파일하지 않는다."
+        "rationaleMarkdown": "캐스팅은 런타임 assignability를 검사하고 클래스 파일을 재컴파일하지 않는다."
       },
       {
         "key": "D",
         "content": "항상 자동 변환된다",
         "displayOrder": 3,
-        "rationaleMarkdown": "runtime은 class 이름 문자열이 같다는 이유만으로 reference를 자동 변환하지 않는다."
+        "rationaleMarkdown": "런타임은 클래스 이름 문자열이 같다는 이유만으로 참조를 자동 변환하지 않는다."
       }
     ],
     "correctChoiceKey": "A",
-    "explanationMarkdown": "runtime type identity에는 loader가 포함되므로 이름 문자열만으로 호환되지 않는다."
+    "explanationMarkdown": "런타임 타입 동일성에는 로더가 포함되므로 이름 문자열만으로 호환되지 않는다."
   },
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.classloader-delegation-type-identity.q6",
-    "promptMarkdown": "custom loader가 parent에 먼저 요청하는 방식과 child가 먼저 정의하는 방식을 바꿨다. 결과 분석에서 가장 중요한 것은?",
+    "promptMarkdown": "사용자 정의 로더의 부모 우선 위임과 자식 우선 정의 방식을 바꿨다. 결과를 분석할 때 가장 중요한 것은?",
     "questionType": "MULTIPLE_CHOICE",
-    "difficulty": "HARD",
+    "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": [
       "java.core.jvm-runtime.classloader-delegation-type-identity"
@@ -831,36 +831,36 @@
     "choices": [
       {
         "key": "A",
-        "content": "binary class name이 같으면 defining loader와 무관하게 JVM에서 같은 runtime type이다",
+        "content": "바이너리 이름이 같으면 클래스를 정의한 `ClassLoader`와 관계없이 JVM에서 같은 실행 시점 타입이다",
         "displayOrder": 0,
-        "rationaleMarkdown": "JVM type identity에는 binary name과 defining loader가 함께 고려되므로 이름만으로 같은 type이 되지 않는다."
+        "rationaleMarkdown": "JVM 타입 동일성에는 바이너리 name과 defining 로더가 함께 고려되므로 이름만으로 같은 타입이 되지 않는다."
       },
       {
         "key": "B",
-        "content": "어느 loader가 실제 define했는지와 namespace/delegation 경계를 추적한다",
+        "content": "어느 로더가 실제로 클래스를 정의했는지와 이름 공간·위임 경계를 추적한다",
         "displayOrder": 1,
-        "rationaleMarkdown": "delegation 순서에 따라 실제 class를 정의한 loader가 달라질 수 있다. 그 loader와 namespace 경계를 추적한다."
+        "rationaleMarkdown": "위임 순서에 따라 실제로 클래스를 정의한 로더가 달라질 수 있다. 해당 로더와 이름 공간 경계를 추적한다."
       },
       {
         "key": "C",
-        "content": "두 loader가 동일한 class bytecode를 define했다면 서로 assignment-compatible한 같은 type으로 취급된다",
+        "content": "두 로더가 같은 클래스 바이트코드를 정의했다면 서로 대입 호환되는 같은 타입으로 취급된다",
         "displayOrder": 2,
-        "rationaleMarkdown": "같은 class bytecode를 별도 loader가 정의해도 assignment가 호환되는 같은 runtime type이 되지 않을 수 있다."
+        "rationaleMarkdown": "같은 클래스 바이트코드를 별도 로더가 정의해도 대입 호환되는 같은 실행 시점 타입이 되지 않을 수 있다."
       },
       {
         "key": "D",
-        "content": "parent-first와 child-first 차이는 resource 검색 순서만 바꾸고 어떤 loader가 class를 define하는지는 바꾸지 않는다",
+        "content": "부모 우선과 자식 우선 방식의 차이는 자원 검색 순서만 바꾸고 어떤 로더가 클래스를 정의하는지는 바꾸지 않는다",
         "displayOrder": 3,
-        "rationaleMarkdown": "parent-first와 child-first는 class를 실제 정의할 loader를 바꿀 수 있어 resource 검색 순서만의 차이가 아니다."
+        "rationaleMarkdown": "부모 우선과 자식 우선 방식은 실제로 클래스를 정의할 로더를 바꿀 수 있어 자원 검색 순서만의 차이가 아니다."
       }
     ],
     "correctChoiceKey": "B",
-    "explanationMarkdown": "JVM의 runtime type identity는 **binary name과 defining class loader**를 함께 봐야 한다. delegation 정책이 달라지면 같은 이름·같은 bytecode라도 어느 loader가 실제 define했는지가 달라질 수 있으므로 namespace와 loader 경계를 추적해야 한다."
+    "explanationMarkdown": "JVM에서 실행 중인 타입의 동일성을 판단할 때는 **바이너리 이름과 해당 클래스를 정의한 `ClassLoader`**를 함께 봐야 한다. 위임 정책이 달라지면 같은 이름과 같은 바이트코드라도 실제로 클래스를 정의한 로더가 달라질 수 있으므로 이름 공간과 로더 경계를 추적해야 한다."
   },
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.jvm-runtime-data-areas-frames.q1",
-    "promptMarkdown": "method invocation마다 생성되어 method 완료 시 사라지는 JVMS 구조는?",
+    "promptMarkdown": "메서드 invocation마다 생성되어 메서드 완료 시 사라지는 JVMS 구조는?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
@@ -870,36 +870,36 @@
     "choices": [
       {
         "key": "A",
-        "content": "module descriptor",
+        "content": "모듈 서술자(module descriptor)",
         "displayOrder": 0,
-        "rationaleMarkdown": "module descriptor는 module metadata를 담고 method 호출마다 생겼다 사라지는 실행 context가 아니다."
+        "rationaleMarkdown": "모듈 서술자(module descriptor)는 모듈 메타데이터를 담고 메서드 호출마다 생겼다 사라지는 실행 문맥이 아니다."
       },
       {
         "key": "B",
-        "content": "heap 전체",
+        "content": "힙 전체",
         "displayOrder": 1,
-        "rationaleMarkdown": "heap은 runtime의 공유 영역이고 개별 method가 반환될 때 버려지지 않는다."
+        "rationaleMarkdown": "힙은 런타임의 공유 영역이고 개별 메서드가 반환될 때 버려지지 않는다."
       },
       {
         "key": "C",
-        "content": "frame",
+        "content": "프레임",
         "displayOrder": 2,
-        "rationaleMarkdown": "method invocation마다 frame이 만들어지고 해당 invocation이 완료되면 그 frame이 해제된다."
+        "rationaleMarkdown": "메서드 invocation마다 프레임이 만들어지고 해당 invocation이 완료되면 그 프레임이 해제된다."
       },
       {
         "key": "D",
-        "content": "method area",
+        "content": "메서드 area",
         "displayOrder": 3,
-        "rationaleMarkdown": "method area는 class structure를 위한 공유 추상 영역이지 호출별 frame이 아니다."
+        "rationaleMarkdown": "메서드 area는 클래스 structure를 위한 공유 추상 영역이지 호출별 프레임이 아니다."
       }
     ],
     "correctChoiceKey": "C",
-    "explanationMarkdown": "frame은 각 method invocation의 실행 context다."
+    "explanationMarkdown": "프레임은 각 메서드 invocation의 실행 문맥다."
   },
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.jvm-runtime-data-areas-frames.q2",
-    "promptMarkdown": "JVM stack의 frame에 포함되는 것은?",
+    "promptMarkdown": "JVM 스택의 프레임에 포함되는 것은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
@@ -909,36 +909,36 @@
     "choices": [
       {
         "key": "A",
-        "content": "모든 class loader namespace",
+        "content": "모든 클래스 로더 namespace",
         "displayOrder": 0,
-        "rationaleMarkdown": "class-loader namespace는 모든 frame 안에 저장되는 내용이 아니라 별도 runtime type metadata와 관련된다."
+        "rationaleMarkdown": "클래스-로더 namespace는 모든 프레임 안에 저장되는 내용이 아니라 별도 런타임 타입 메타데이터와 관련된다."
       },
       {
         "key": "B",
-        "content": "모든 thread의 heap 객체",
+        "content": "모든 스레드의 힙 객체",
         "displayOrder": 1,
-        "rationaleMarkdown": "heap 객체는 thread 간 참조될 수 있지만 각 method frame에 복사되지 않는다."
+        "rationaleMarkdown": "힙 객체는 스레드 간 참조될 수 있지만 각 메서드 프레임에 복사되지 않는다."
       },
       {
         "key": "C",
-        "content": "OS file descriptor table",
+        "content": "OS 파일 디스크립터 table",
         "displayOrder": 2,
-        "rationaleMarkdown": "OS file descriptor table은 process/OS 상태이지 JVM frame 구성 요소가 아니다."
+        "rationaleMarkdown": "OS 파일 디스크립터 table은 프로세스/OS 상태이지 JVM 프레임 구성 요소가 아니다."
       },
       {
         "key": "D",
-        "content": "local variable array와 operand stack",
+        "content": "지역 변수 배열과 피연산자 스택",
         "displayOrder": 3,
-        "rationaleMarkdown": "frame은 local variable array와 operand stack, method 실행 bookkeeping을 포함한다."
+        "rationaleMarkdown": "프레임에는 지역 변수 배열, 피연산자 스택, 메서드 실행에 필요한 관리 정보가 포함됩니다."
       }
     ],
     "correctChoiceKey": "D",
-    "explanationMarkdown": "frame은 method 실행에 필요한 locals, operand stack 등을 가진다."
+    "explanationMarkdown": "프레임은 메서드 실행에 필요한 locals, 피연산자 스택 등을 가진다."
   },
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.jvm-runtime-data-areas-frames.q3",
-    "promptMarkdown": "JVM heap에 대한 설명으로 옳은 것은?",
+    "promptMarkdown": "JVM 힙에 대한 설명으로 옳은 것은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
@@ -948,36 +948,36 @@
     "choices": [
       {
         "key": "A",
-        "content": "thread 사이에서 공유되고 객체 allocation을 위한 abstract area다",
+        "content": "스레드 사이에서 공유되고 객체 할당을 위한 abstract area다",
         "displayOrder": 0,
-        "rationaleMarkdown": "JVMS는 class instance와 array를 위한 thread 공유 heap을 설명하지만 실제 물리 배치는 구현에 따라 다를 수 있다."
+        "rationaleMarkdown": "JVMS는 클래스 인스턴스와 array를 위한 스레드 공유 힙을 설명하지만 실제 물리 배치는 구현에 따라 다를 수 있다."
       },
       {
         "key": "B",
-        "content": "OS stack과 항상 동일하다",
+        "content": "OS 스택과 항상 동일하다",
         "displayOrder": 1,
-        "rationaleMarkdown": "JVM heap과 OS thread stack은 서로 다른 개념이며 같은 layout을 보장하지 않는다."
+        "rationaleMarkdown": "JVM 힙과 OS 스레드 스택은 서로 다른 개념이며 같은 layout을 보장하지 않는다."
       },
       {
         "key": "C",
-        "content": "오직 primitive local만 저장한다",
+        "content": "오직 원시 타입 지역만 저장한다",
         "displayOrder": 2,
-        "rationaleMarkdown": "primitive local은 frame에 있을 수 있다. heap이 primitive local 전용 저장소가 아니다."
+        "rationaleMarkdown": "원시 타입 지역 변수도 프레임에 들어갈 수 있습니다. 힙은 원시 타입 지역 변수 전용 저장 공간이 아닙니다."
       },
       {
         "key": "D",
-        "content": "각 method마다 별도로 생성된다",
+        "content": "각 메서드마다 별도로 생성된다",
         "displayOrder": 3,
-        "rationaleMarkdown": "frame은 invocation별 구조다. 각 method마다 공유 heap을 하나씩 만들지 않는다."
+        "rationaleMarkdown": "프레임은 invocation별 구조다. 각 메서드마다 공유 힙을 하나씩 만들지 않는다."
       }
     ],
     "correctChoiceKey": "A",
-    "explanationMarkdown": "JVMS heap은 shared runtime data area로 객체 저장을 설명한다."
+    "explanationMarkdown": "JVMS 힙은 공유 런타임 데이터 영역으로 객체 저장을 설명한다."
   },
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.jvm-runtime-data-areas-frames.q4",
-    "promptMarkdown": "operand stack을 이해하는 실용적 방법은?",
+    "promptMarkdown": "피연산자 스택을 이해하는 실용적 방법은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
@@ -987,38 +987,38 @@
     "choices": [
       {
         "key": "A",
-        "content": "GC root와 같은 객체 graph로 본다",
+        "content": "GC 루트와 같은 객체 그래프로 본다",
         "displayOrder": 0,
-        "rationaleMarkdown": "GC root와 reachability는 bytecode 평가용 frame operand stack과 다른 개념이다."
+        "rationaleMarkdown": "GC 루트와 reachability는 바이트코드 평가용 프레임 피연산자 스택과 다른 개념이다."
       },
       {
         "key": "B",
-        "content": "bytecode 계산이 중간 값을 push/pop하는 frame 내부 stack으로 본다",
+        "content": "바이트코드 계산이 중간 값을 push/pop하는 프레임 내부 스택으로 본다",
         "displayOrder": 1,
-        "rationaleMarkdown": "bytecode 계산 중간값은 frame의 operand stack에 push하고 pop하여 다룬다."
+        "rationaleMarkdown": "바이트코드 계산 중간값은 프레임의 피연산자 스택에 push하고 pop하여 다룬다."
       },
       {
         "key": "C",
-        "content": "source parameter 목록과 항상 같은 배열로 본다",
+        "content": "소스 코드의 매개변수 목록과 항상 같은 배열로 본다",
         "displayOrder": 2,
-        "rationaleMarkdown": "parameter는 local-variable slot을 쓰고 중간 계산 operand는 stack을 쓴다. 두 구조를 혼동하면 안 된다."
+        "rationaleMarkdown": "매개변수는 지역 변수 슬롯을 쓰고 중간 계산 피연산자는 스택을 쓴다. 두 구조를 혼동하면 안 된다."
       },
       {
         "key": "D",
-        "content": "OS kernel queue로 본다",
+        "content": "OS 커널 큐로 본다",
         "displayOrder": 3,
-        "rationaleMarkdown": "operand stack은 추상 JVM 실행 구조이지 OS kernel queue가 아니다."
+        "rationaleMarkdown": "피연산자 스택은 추상 JVM 실행 구조이지 OS 커널 큐가 아니다."
       }
     ],
     "correctChoiceKey": "B",
-    "explanationMarkdown": "operand stack은 bytecode instruction의 계산 모델을 설명하는 추상 구조다."
+    "explanationMarkdown": "피연산자 스택은 바이트코드 명령의 계산 모델을 설명하는 추상 구조다."
   },
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.jvm-runtime-data-areas-frames.q5",
-    "promptMarkdown": "재귀 method가 깊어져 StackOverflowError가 발생했다. JVMS 관점의 1차 추론은?",
+    "promptMarkdown": "재귀 메서드가 깊어져 StackOverflowError가 발생했다. JVMS 관점의 1차 추론은?",
     "questionType": "MULTIPLE_CHOICE",
-    "difficulty": "HARD",
+    "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": [
       "java.core.jvm-runtime.jvm-runtime-data-areas-frames"
@@ -1026,38 +1026,38 @@
     "choices": [
       {
         "key": "A",
-        "content": "class loader가 두 type을 합친다",
+        "content": "클래스 로더가 두 타입을 합친다",
         "displayOrder": 0,
-        "rationaleMarkdown": "재귀로 인한 StackOverflowError는 class-loader identity가 아니라 중첩 invocation frame으로 설명하는 것이 직접적이다."
+        "rationaleMarkdown": "재귀로 인한 StackOverflowError는 클래스-로더 동일성이 아니라 중첩 invocation 프레임으로 설명하는 것이 직접적이다."
       },
       {
         "key": "B",
-        "content": "heap의 모든 객체가 unreachable이 된다",
+        "content": "힙의 모든 객체가 도달 불가능한 상태가 된다",
         "displayOrder": 1,
-        "rationaleMarkdown": "thread의 stack frame 공간이 부족해져도 모든 heap 객체의 reachability가 없어지지는 않는다."
+        "rationaleMarkdown": "스레드의 스택 프레임 공간이 부족해져도 모든 힙 객체의 도달 가능성이 사라지지는 않는다."
       },
       {
         "key": "C",
-        "content": "thread별 JVM stack에 frame이 계속 쌓이는 실행 조건을 의심한다",
+        "content": "스레드별 JVM 스택에 프레임이 계속 쌓이는 실행 조건을 의심한다",
         "displayOrder": 2,
-        "rationaleMarkdown": "재귀 호출마다 thread의 JVM stack에 frame이 쌓이고 중첩이 너무 깊으면 허용 깊이를 초과할 수 있다."
+        "rationaleMarkdown": "재귀 호출마다 스레드의 JVM 스택에 프레임이 쌓이고 중첩이 너무 깊으면 허용 깊이를 초과할 수 있다."
       },
       {
         "key": "D",
-        "content": "method area가 자동으로 GC된다",
+        "content": "메서드 area가 자동으로 GC된다",
         "displayOrder": 3,
-        "rationaleMarkdown": "재귀 깊이가 늘었다고 method-area metadata가 직접 회수되지는 않는다."
+        "rationaleMarkdown": "재귀 깊이가 늘었다고 메서드-area 메타데이터가 직접 회수되지는 않는다."
       }
     ],
     "correctChoiceKey": "C",
-    "explanationMarkdown": "재귀 호출은 frame을 늘려 thread stack 한도와 관련된 증상을 만들 수 있다."
+    "explanationMarkdown": "재귀 호출은 프레임을 늘려 스레드 스택 한도와 관련된 증상을 만들 수 있다."
   },
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.jvm-runtime-data-areas-frames.q6",
-    "promptMarkdown": "지역 변수 int x가 javap의 local slot에 보였다는 사실에서 물리 메모리 위치를 단정하면 안 되는 이유는?",
+    "promptMarkdown": "지역 변수 int x가 javap의 지역 변수 슬롯에 보였다는 사실에서 물리 메모리 위치를 단정하면 안 되는 이유는?",
     "questionType": "MULTIPLE_CHOICE",
-    "difficulty": "HARD",
+    "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": [
       "java.core.jvm-runtime.jvm-runtime-data-areas-frames"
@@ -1065,31 +1065,31 @@
     "choices": [
       {
         "key": "A",
-        "content": "local variable은 Java에 존재하지 않기 때문이다",
+        "content": "지역 변수는 Java에 존재하지 않기 때문이다",
         "displayOrder": 0,
-        "rationaleMarkdown": "Java local variable은 언어와 JVM 실행 모델에 존재하지만 최적화된 machine code가 같은 물리 저장 형태를 유지한다는 뜻은 아니다."
+        "rationaleMarkdown": "지역 변수는 Java 언어와 JVM 실행 모델에 존재한다. 다만 최적화된 기계어가 같은 물리 저장 형태를 유지한다는 뜻은 아니다."
       },
       {
         "key": "B",
-        "content": "int는 항상 heap에만 있기 때문이다",
+        "content": "int는 항상 힙에만 있기 때문이다",
         "displayOrder": 1,
-        "rationaleMarkdown": "int local이 반드시 heap에 있어야 하는 것은 아니다. JVMS의 local-variable 구조는 추상 모델이다."
+        "rationaleMarkdown": "`int` 지역 변수가 반드시 힙에 있어야 하는 것은 아니다. JVMS의 지역 변수 구조는 추상 모델이다."
       },
       {
         "key": "C",
         "content": "javap가 OS 주소를 숨기기 때문이다",
         "displayOrder": 2,
-        "rationaleMarkdown": "javap는 bytecode slot을 표시할 수 있지만 hardware address를 정하거나 실제 배치를 증명하지 않는다."
+        "rationaleMarkdown": "javap는 바이트코드 슬롯을 표시할 수 있지만 하드웨어 주소를 정하거나 실제 배치를 증명하지 않는다."
       },
       {
         "key": "D",
-        "content": "JVMS local variable array는 abstract area이고 JIT가 저장·최적화 위치를 바꿀 수 있기 때문이다",
+        "content": "JVMS에서 지역 변수 배열은 추상 영역으로 정의되며 JIT가 실제 저장 위치를 최적화할 수 있기 때문이다",
         "displayOrder": 3,
         "rationaleMarkdown": "JIT는 관찰 가능한 동작을 보존하며 값을 machine register에 두거나 제거·이동할 수 있어 JVMS slot이 고정 물리 주소를 뜻하지 않는다."
       }
     ],
     "correctChoiceKey": "D",
-    "explanationMarkdown": "source/JVMS 실행 모델과 특정 HotSpot 물리 배치를 분리해야 한다."
+    "explanationMarkdown": "소스/JVMS 실행 모델과 특정 HotSpot 물리 배치를 분리해야 한다."
   },
   {
     "kind": "question",
@@ -1106,29 +1106,29 @@
         "key": "A",
         "content": "root에서 더 이상 도달할 수 없는 객체",
         "displayOrder": 0,
-        "rationaleMarkdown": "collector는 live thread 상태와 static field 같은 root에서 reference graph를 추적하며 reference 규칙상 더 이상 도달할 수 없는 객체를 회수할 수 있다."
+        "rationaleMarkdown": "수집기는 살아 있는 스레드 상태와 정적 필드 같은 GC 루트에서 객체 참조 그래프를 따라가며, 참조 규칙상 더 이상 도달할 수 없는 객체를 회수할 수 있습니다."
       },
       {
         "key": "B",
-        "content": "현재 scope 안의 모든 객체",
+        "content": "현재 범위 안의 모든 객체",
         "displayOrder": 1,
-        "rationaleMarkdown": "local scope에 선언됐다는 사실만으로 회수 여부가 정해지지 않는다. 다른 reachable reference가 살려둘 수 있다."
+        "rationaleMarkdown": "지역 범위에 선언됐다는 사실만으로 회수 여부가 정해지지 않는다. 다른 도달 가능한 참조가 살려둘 수 있다."
       },
       {
         "key": "C",
         "content": "항상 가장 오래된 객체",
         "displayOrder": 2,
-        "rationaleMarkdown": "객체의 나이가 단독 회수 기준은 아니다. reachable한 오래된 객체도 live다."
+        "rationaleMarkdown": "객체의 나이가 단독 회수 기준은 아니다. 도달 가능한 오래된 객체도 계속 살아 있을 수 있다."
       },
       {
         "key": "D",
         "content": "모든 static 객체",
         "displayOrder": 3,
-        "rationaleMarkdown": "static field는 자신이 가리키는 graph를 root로 만들지 application의 모든 객체를 한꺼번에 root로 만들지는 않는다."
+        "rationaleMarkdown": "static 필드는 자신이 가리키는 객체 그래프를 root로 만들지 애플리케이션의 모든 객체를 한꺼번에 root로 만들지는 않는다."
       }
     ],
     "correctChoiceKey": "A",
-    "explanationMarkdown": "reachability graph에서 root로부터 unreachable한 객체가 reclaim 대상이 된다."
+    "explanationMarkdown": "도달 가능성(reachability) 객체 그래프에서 GC 루트로부터 도달할 수 없는 객체가 회수 대상이 된다."
   },
   {
     "kind": "question",
@@ -1145,34 +1145,34 @@
         "key": "A",
         "content": "항상 static으로 이동한다",
         "displayOrder": 0,
-        "rationaleMarkdown": "method가 반환돼도 객체가 static storage로 이동하지 않는다. 남은 reference의 reachability를 따진다."
+        "rationaleMarkdown": "메서드가 반환돼도 객체가 static 저장 공간으로 이동하지 않는다. 남은 참조의 reachability를 따진다."
       },
       {
         "key": "B",
-        "content": "다른 reachable 참조가 있으면 계속 살아 있을 수 있다",
+        "content": "다른 도달 가능한 참조가 있으면 계속 살아 있을 수 있다",
         "displayOrder": 1,
-        "rationaleMarkdown": "local variable scope가 끝난 뒤에도 다른 reachable reference가 가리키면 객체는 살아 있을 수 있다."
+        "rationaleMarkdown": "지역 변수의 범위가 끝나도 다른 도달 가능한 참조값이 가리키면 객체는 살아 있을 수 있다."
       },
       {
         "key": "C",
         "content": "GC가 예외를 던진다",
         "displayOrder": 2,
-        "rationaleMarkdown": "객체가 reachability를 유지한 채 method가 정상 반환한다고 GC exception이 발생하지 않는다."
+        "rationaleMarkdown": "객체가 reachability를 유지한 채 메서드가 정상 반환한다고 GC 예외가 발생하지 않는다."
       },
       {
         "key": "D",
         "content": "항상 즉시 deallocate된다",
         "displayOrder": 3,
-        "rationaleMarkdown": "local reference가 사라지는 것과 실제 회수 시점은 다르다. 회수 가능성과 collector 실행 시기를 구별한다."
+        "rationaleMarkdown": "지역 참조가 사라지는 것과 실제 회수 시점은 다르다. 회수 가능성과 수집기 실행 시기를 구별한다."
       }
     ],
     "correctChoiceKey": "B",
-    "explanationMarkdown": "source scope 종료와 object lifetime은 동일하지 않다."
+    "explanationMarkdown": "소스 범위 종료와 객체 수명은 동일하지 않다."
   },
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.gc-reachability-roots.q3",
-    "promptMarkdown": "static cache가 object A를 가리키고 A가 B를 가리킬 때, 지역 변수만 사라져도?",
+    "promptMarkdown": "static 캐시가 객체 A를 가리키고 A가 B를 가리킬 때, 지역 변수만 사라져도?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
@@ -1182,36 +1182,36 @@
     "choices": [
       {
         "key": "A",
-        "content": "JVM이 cache를 자동 clear한다",
+        "content": "JVM이 캐시를 자동 clear한다",
         "displayOrder": 0,
-        "rationaleMarkdown": "JVM이 static application cache를 자동 비우지 않는다. cache policy에 따라 application이 entry를 제거해야 한다."
+        "rationaleMarkdown": "JVM이 static 애플리케이션 캐시를 자동 비우지 않는다. 캐시 정책에 따라 애플리케이션이 entry를 제거해야 한다."
       },
       {
         "key": "B",
-        "content": "A와 B가 즉시 reclaim된다",
+        "content": "A와 B가 즉시 회수된다",
         "displayOrder": 1,
-        "rationaleMarkdown": "A는 static cache에서 도달 가능하고 B는 A를 통해 도달 가능하다. local variable이 없어져도 둘 다 회수 대상이 아니다."
+        "rationaleMarkdown": "A는 static 캐시에서 도달 가능하고 B는 A를 통해 도달 가능하다. 지역 변수가 사라져도 두 객체 모두 회수 대상이 아니다."
       },
       {
         "key": "C",
-        "content": "cache root에서 이어지는 A와 B는 여전히 reachable일 수 있다",
+        "content": "캐시 root에서 이어지는 A와 B는 여전히 도달 가능한 상태일 수 있다",
         "displayOrder": 2,
-        "rationaleMarkdown": "root에서 cache, A, B로 이어지는 reference chain이 남아 두 객체를 reachable하게 유지한다."
+        "rationaleMarkdown": "루트에서 캐시, A, B로 이어지는 참조 경로가 두 객체의 도달 가능성을 유지한다."
       },
       {
         "key": "D",
         "content": "B만 반드시 root가 된다",
         "displayOrder": 3,
-        "rationaleMarkdown": "B는 직접 root가 아니어도 A처럼 reachable한 객체를 통한 간접 경로가 살아 있으면 reachability가 유지된다."
+        "rationaleMarkdown": "B는 직접 root가 아니어도 A처럼 도달 가능한 객체를 통한 간접 경로가 살아 있으면 reachability가 유지된다."
       }
     ],
     "correctChoiceKey": "C",
-    "explanationMarkdown": "root에서 참조를 따라 도달 가능하면 지역 scope와 관계없이 보존된다."
+    "explanationMarkdown": "root에서 참조를 따라 도달 가능하면 지역 범위와 관계없이 보존된다."
   },
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.gc-reachability-roots.q4",
-    "promptMarkdown": "unreachable과 immediately reclaimed의 차이는?",
+    "promptMarkdown": "도달 불가능한과 immediately reclaimed의 차이는?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
@@ -1221,27 +1221,27 @@
     "choices": [
       {
         "key": "A",
-        "content": "reclaimed는 source scope만을 뜻한다",
+        "content": "reclaimed는 소스 범위만을 뜻한다",
         "displayOrder": 0,
-        "rationaleMarkdown": "unreachable 여부는 reference graph로 판단하며 source variable이 scope를 벗어났다는 사실만으로 결정하지 않는다."
+        "rationaleMarkdown": "도달 불가능한 여부는 참조 객체 그래프로 판단하며 소스 변수가 범위를 벗어났다는 사실만으로 결정하지 않는다."
       },
       {
         "key": "B",
         "content": "둘은 항상 같은 시각이다",
         "displayOrder": 1,
-        "rationaleMarkdown": "unreachable하면 collector 규칙상 회수 가능하지만 그 순간 storage가 반환된다는 뜻은 아니다."
+        "rationaleMarkdown": "도달 불가능한하면 수집기 규칙상 회수 가능하지만 그 순간 저장 공간이 반환된다는 뜻은 아니다."
       },
       {
         "key": "C",
-        "content": "unreachable은 반드시 살아 있는 상태다",
+        "content": "도달 불가능한은 반드시 살아 있는 상태다",
         "displayOrder": 2,
-        "rationaleMarkdown": "unreachable 객체가 반드시 계속 살아 있다고 정의되지 않는다. runtime이 수집할 때 회수할 수 있다."
+        "rationaleMarkdown": "도달 불가능한 객체가 반드시 계속 살아 있다고 정의되지 않는다. 런타임이 수집할 때 회수할 수 있다."
       },
       {
         "key": "D",
-        "content": "unreachable은 회수 가능한 상태이고 실제 회수 시점은 collector/runtime에 달려 있다",
+        "content": "도달 불가능한은 회수 가능한 상태이고 실제 회수 시점은 수집기/런타임에 달려 있다",
         "displayOrder": 3,
-        "rationaleMarkdown": "도달 가능한 경로가 없어지면 객체는 회수 대상이 된다. 실제 메모리 회수 시점은 collector 실행에 달려 있다."
+        "rationaleMarkdown": "도달 가능한 경로가 없어지면 객체는 회수 대상이 된다. 실제 메모리 회수 시점은 수집기 실행에 달려 있다."
       }
     ],
     "correctChoiceKey": "D",
@@ -1250,9 +1250,9 @@
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.gc-reachability-roots.q5",
-    "promptMarkdown": "긴 loop에서 더 이상 사용하지 않는 큰 local reference를 명시적으로 끊었다. 가능한 효과는?",
+    "promptMarkdown": "긴 loop에서 더 이상 사용하지 않는 큰 지역 참조를 명시적으로 끊었다. 가능한 효과는?",
     "questionType": "MULTIPLE_CHOICE",
-    "difficulty": "HARD",
+    "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": [
       "java.core.jvm-runtime.gc-reachability-roots"
@@ -1260,38 +1260,38 @@
     "choices": [
       {
         "key": "A",
-        "content": "runtime liveness에 따라 이후 reachability를 일찍 끊어 회수 후보가 될 수 있다",
+        "content": "런타임 진행성에 따라 이후 reachability를 일찍 끊어 회수 후보가 될 수 있다",
         "displayOrder": 0,
-        "rationaleMarkdown": "다른 strong reference가 없고 참조도 더 필요 없으면 그 참조를 지워 reachability를 낮출 수 있지만, 이것이 GC 실행을 강제하지는 않는다."
+        "rationaleMarkdown": "다른 강한 참조가 없고 더 이상 참조가 필요하지 않으면 해당 참조를 지워 도달 가능성을 낮출 수 있지만, 이것이 GC 실행을 강제하지는 않는다."
       },
       {
         "key": "B",
-        "content": "모든 static cache도 삭제된다",
+        "content": "모든 static 캐시도 삭제된다",
         "displayOrder": 1,
-        "rationaleMarkdown": "local variable 하나를 null로 만든다고 static cache처럼 다른 reference까지 지워지지 않는다."
+        "rationaleMarkdown": "지역 변수 하나에 `null`을 대입해도 정적 캐시 등 다른 참조값까지 사라지지는 않는다."
       },
       {
         "key": "C",
         "content": "GC가 비활성화된다",
         "displayOrder": 2,
-        "rationaleMarkdown": "참조를 해제해도 garbage collection 기능을 끄는 것은 아니며 객체의 reachability만 달라질 수 있다."
+        "rationaleMarkdown": "참조를 해제해도 가비지 컬렉션(GC) 기능을 끄는 것은 아니며 객체의 reachability만 달라질 수 있다."
       },
       {
         "key": "D",
         "content": "객체가 즉시 free된다고 보장된다",
         "displayOrder": 3,
-        "rationaleMarkdown": "reference를 지운 뒤에도 실제 메모리 회수 시점은 비동기적이고 즉시 실행된다고 보장되지 않는다."
+        "rationaleMarkdown": "참조를 지운 뒤에도 실제 메모리 회수 시점은 비동기적이고 즉시 실행된다고 보장되지 않는다."
       }
     ],
     "correctChoiceKey": "A",
-    "explanationMarkdown": "null 대입은 collector 실행 시점을 보장하지 않지만 불필요한 참조 경계를 줄일 수 있다."
+    "explanationMarkdown": "null 대입은 수집기 실행 시점을 보장하지 않지만 불필요한 참조 경계를 줄일 수 있다."
   },
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.gc-reachability-roots.q6",
     "promptMarkdown": "System.gc()를 호출한 직후 특정 객체가 사라졌다고 검증하려는 테스트가 불안정한 이유는?",
     "questionType": "MULTIPLE_CHOICE",
-    "difficulty": "HARD",
+    "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": [
       "java.core.jvm-runtime.gc-reachability-roots"
@@ -1299,36 +1299,36 @@
     "choices": [
       {
         "key": "A",
-        "content": "`System.gc()`가 반환하면 호출 시점의 모든 unreachable 객체가 이미 회수됐다고 보장된다",
+        "content": "`System.gc()`가 반환하면 호출 시점의 모든 도달 불가능한 객체가 이미 회수됐다고 보장된다",
         "displayOrder": 0,
-        "rationaleMarkdown": "`System.gc()` 호출의 반환을 특정 객체 회수 완료 barrier로 사용할 수 없다. collector 실행 여부·범위·시점과 개별 객체 reclaim은 runtime 정책에 달려 있어 즉시 회수를 검증하는 계약이 아니다."
+        "rationaleMarkdown": "`System.gc()` 호출의 반환을 특정 객체 회수 완료 barrier로 사용할 수 없다. 수집기 실행 여부·범위·시점과 개별 객체 회수는 런타임 정책에 달려 있어 즉시 회수를 검증하는 계약이 아니다."
       },
       {
         "key": "B",
-        "content": "GC 요청과 실제 collector 선택·실행·회수 시점이 deterministic contract가 아니기 때문이다",
+        "content": "GC 요청과 실제 수집기 선택·실행·회수 시점이 deterministic 계약이 아니기 때문이다",
         "displayOrder": 1,
-        "rationaleMarkdown": "`System.gc()`는 collection을 요청할 수 있지만 특정 collector 선택, full collection 수행, 특정 객체의 즉시 reclaim까지 결정적으로 보장하지 않는다. 이런 timing을 assertion으로 삼으면 테스트가 runtime 정책에 의존한다."
+        "rationaleMarkdown": "`System.gc()`는 컬렉션을 요청할 수 있지만 특정 수집기 선택, full 컬렉션 수행, 특정 객체의 즉시 회수까지 결정적으로 보장하지 않는다. 이런 timing을 assertion으로 삼으면 테스트가 런타임 정책에 의존한다."
       },
       {
         "key": "C",
-        "content": "지역 변수가 source scope를 벗어나면 그 순간 해당 객체를 살리는 모든 GC root가 반드시 제거된다",
+        "content": "지역 변수가 소스 범위를 벗어나면 그 순간 해당 객체를 살리는 모든 GC 루트가 반드시 제거된다",
         "displayOrder": 2,
-        "rationaleMarkdown": "source scope 종료만으로 모든 reachability가 사라진다고 단정할 수 없다. 다른 field·collection·thread state 등이 객체를 계속 가리킬 수 있고 JIT의 liveness 판단도 source lexical scope와 일대일이 아니다."
+        "rationaleMarkdown": "소스 코드에서 변수의 유효 범위가 끝났다고 모든 참조 경로가 사라지는 것은 아닙니다. 다른 필드·컬렉션·스레드 상태가 객체를 계속 가리킬 수 있고, JIT 컴파일러의 생존성 판단도 소스 코드의 어휘적 범위와 일대일로 대응하지 않습니다."
       },
       {
         "key": "D",
-        "content": "`System.gc()` 호출자가 사용할 collector와 collection 범위를 정확히 지정하므로 실행 결과는 JVM마다 동일하다",
+        "content": "`System.gc()` 호출자가 사용할 수집기와 컬렉션 범위를 정확히 지정하므로 실행 결과는 JVM마다 동일하다",
         "displayOrder": 3,
-        "rationaleMarkdown": "일반 `System.gc()` 호출은 애플리케이션이 정확한 collector algorithm이나 collection 범위를 지정하는 API가 아니다. JVM 구현·설정에 따라 처리 방식이 달라질 수 있다."
+        "rationaleMarkdown": "일반 `System.gc()` 호출은 애플리케이션이 정확한 수집기 알고리즘이나 컬렉션 범위를 지정하는 API가 아니다. JVM 구현·설정에 따라 처리 방식이 달라질 수 있다."
       }
     ],
     "correctChoiceKey": "B",
-    "explanationMarkdown": "GC는 runtime implementation 정책이며 특정 객체의 즉시 회수를 보장하지 않는다."
+    "explanationMarkdown": "GC는 런타임 구현 정책이며 특정 객체의 즉시 회수를 보장하지 않는다."
   },
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.reference-strengths.q1",
-    "promptMarkdown": "일반 local variable이 객체를 가리키는 reference strength는?",
+    "promptMarkdown": "일반 지역 변수가 객체를 직접 참조하고 있을 때, 이 참조는 어떤 종류의 참조인가?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
@@ -1338,36 +1338,36 @@
     "choices": [
       {
         "key": "A",
-        "content": "soft만",
+        "content": "소프트 참조(Soft Reference)",
         "displayOrder": 0,
-        "rationaleMarkdown": "일반적인 local Java reference는 strong reference다. SoftReference로 감싸지 않으면 soft가 되지 않는다."
+        "rationaleMarkdown": "`SoftReference`로 만든 참조가 아니므로 소프트 참조가 아니다."
       },
       {
         "key": "B",
-        "content": "weak",
+        "content": "약한 참조(Weak Reference)",
         "displayOrder": 1,
-        "rationaleMarkdown": "보통 local reference는 WeakReference wrapper가 아니므로 reachable 객체를 strong하게 보유한다."
+        "rationaleMarkdown": "`WeakReference`로 만든 참조가 아니므로 약한 참조가 아니다."
       },
       {
         "key": "C",
-        "content": "strong",
+        "content": "강한 참조(Strong Reference)",
         "displayOrder": 2,
-        "rationaleMarkdown": "유효한 일반 reference는 객체의 strong reachability를 제공한다."
+        "rationaleMarkdown": "일반 참조로 객체에 접근할 수 있는 동안에는 그 객체가 강하게 도달 가능한 상태다."
       },
       {
         "key": "D",
-        "content": "phantom",
+        "content": "팬텀 참조(Phantom Reference)",
         "displayOrder": 3,
-        "rationaleMarkdown": "phantom reachability는 PhantomReference API로 얻는다. 일반 local 변수로 만들지 않는다."
+        "rationaleMarkdown": "팬텀 참조는 `PhantomReference` API로 만들며, 일반 지역 변수 참조의 특성이 아니다."
       }
     ],
     "correctChoiceKey": "C",
-    "explanationMarkdown": "일반 참조는 strong reference로 reachability를 유지한다."
+    "explanationMarkdown": "일반 지역 변수로 객체를 참조하면 그 객체는 강하게 도달 가능한 상태로 유지된다. 소프트·약한·팬텀 참조는 각각 `SoftReference`, `WeakReference`, `PhantomReference` API를 사용해 만든다."
   },
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.reference-strengths.q2",
-    "promptMarkdown": "PhantomReference.get()에 대한 설명으로 옳은 것은?",
+    "promptMarkdown": "`PhantomReference.get()`의 동작을 바르게 설명한 것은 무엇인가요?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
@@ -1379,34 +1379,34 @@
         "key": "A",
         "content": "객체를 새로 생성한다",
         "displayOrder": 0,
-        "rationaleMarkdown": "PhantomReference는 referent의 새 instance를 생성하지 않는다."
+        "rationaleMarkdown": "`PhantomReference`는 참조 대상의 새 객체를 만들지 않는다."
       },
       {
         "key": "B",
         "content": "항상 원래 객체를 반환한다",
         "displayOrder": 1,
-        "rationaleMarkdown": "phantom reference의 get은 referent를 반환하지 않아 객체를 되살려 다시 쓰는 용도로 사용할 수 없다."
+        "rationaleMarkdown": "팬텀 참조의 `get()`은 참조 대상을 돌려주지 않으므로 객체를 되살려 다시 쓸 수 없다."
       },
       {
         "key": "C",
-        "content": "strong reference로 승격한다",
+        "content": "참조 대상을 강한 참조로 얻는다",
         "displayOrder": 2,
-        "rationaleMarkdown": "PhantomReference가 caller에게 referent를 strong reference로 승격하지 않는다."
+        "rationaleMarkdown": "`PhantomReference`에서 참조 대상에 대한 강한 참조를 얻을 수는 없다."
       },
       {
         "key": "D",
         "content": "원래 객체를 다시 얻는 방식으로 사용할 수 없다",
         "displayOrder": 3,
-        "rationaleMarkdown": "phantom reference에서 원래 객체를 복구할 수 없다. 정리 협조는 ReferenceQueue로 관찰한다."
+        "rationaleMarkdown": "팬텀 참조로 원래 객체를 되살릴 수는 없다. 정리 시점은 `ReferenceQueue`로 관찰할 수 있다."
       }
     ],
     "correctChoiceKey": "D",
-    "explanationMarkdown": "phantom reference는 resurrection을 허용하지 않으며 queue 관찰과 cleanup에 사용된다."
+    "explanationMarkdown": "팬텀 참조로 객체를 되살릴 수는 없다. 대신 `ReferenceQueue`를 이용해 객체 정리 시점을 관찰할 수 있다."
   },
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.reference-strengths.q3",
-    "promptMarkdown": "weak reference의 제한적인 용도로 적절한 것은?",
+    "promptMarkdown": "약한 참조를 제한적으로 활용하기에 적절한 경우는 무엇인가요?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
@@ -1416,38 +1416,38 @@
     "choices": [
       {
         "key": "A",
-        "content": "strong owner가 없어지면 사라질 수 있는 metadata/canonical mapping 보조",
+        "content": "강한 참조를 보유한 다른 객체가 없으면 사라져도 되는 부가 정보나 대표 객체 연결",
         "displayOrder": 0,
-        "rationaleMarkdown": "다른 strong owner가 없을 때 사라져도 되는 optional metadata나 canonical mapping은 weak reference 후보지만 존재를 보장하지 않는다."
+        "rationaleMarkdown": "다른 강한 참조가 없을 때 사라져도 되는 부가 정보나 대표 객체 연결은 약한 참조를 고려할 수 있다. 다만 대상 객체의 생존은 보장되지 않는다."
       },
       {
         "key": "B",
-        "content": "반드시 살아 있어야 하는 configuration owner",
+        "content": "반드시 유지해야 하는 설정 객체의 참조",
         "displayOrder": 1,
-        "rationaleMarkdown": "계속 사용할 필수 configuration은 strong reference나 명시 lifecycle로 보유해야 하며 WeakReference만 두면 안 된다."
+        "rationaleMarkdown": "계속 사용해야 하는 설정 객체는 강한 참조나 명시적인 수명 관리로 보유해야 한다. `WeakReference`만 사용하면 생존을 보장할 수 없다."
       },
       {
         "key": "C",
-        "content": "transaction commit 보장",
+        "content": "트랜잭션 커밋 보장",
         "displayOrder": 2,
-        "rationaleMarkdown": "reference strength는 database transaction의 commit/rollback을 제공하지 않는다."
+        "rationaleMarkdown": "참조의 강도는 데이터베이스 트랜잭션의 커밋이나 롤백과 관계가 없다."
       },
       {
         "key": "D",
-        "content": "모든 cache의 정밀한 TTL 정책",
+        "content": "모든 캐시의 정확한 만료 시간 관리",
         "displayOrder": 3,
-        "rationaleMarkdown": "weak reference는 정확한 TTL이나 eviction order를 구현하지 않으므로 시간 기준 만료는 cache 정책을 사용한다."
+        "rationaleMarkdown": "약한 참조는 정확한 만료 시간이나 제거 순서를 보장하지 않는다. 시간에 따른 만료는 캐시 정책으로 관리해야 한다."
       }
     ],
     "correctChoiceKey": "A",
-    "explanationMarkdown": "weak reference는 optional association에 적합하고 수명 정책을 완전히 통제하지 않는다."
+    "explanationMarkdown": "약한 참조는 객체가 살아 있음을 보장하지 않아도 되는 선택적 연결에 적합하다. 객체의 생존 기간을 세밀하게 통제하는 용도로는 적합하지 않다."
   },
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.reference-strengths.q4",
-    "promptMarkdown": "SoftReference에 대한 Java API 계약과 application cache 정책의 관계로 가장 정확한 것은?",
+    "promptMarkdown": "`SoftReference`에 대한 Java API 계약과 애플리케이션 캐시 정책의 관계를 가장 정확하게 설명한 것은 무엇인가요?",
     "questionType": "MULTIPLE_CHOICE",
-    "difficulty": "HARD",
+    "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": [
       "java.core.jvm-runtime.reference-strengths"
@@ -1455,31 +1455,31 @@
     "choices": [
       {
         "key": "A",
-        "content": "SoftReference는 TTL을 보장하므로 entry별 만료 정책이 필요 없다",
+        "content": "`SoftReference`가 고정된 생존 시간을 보장하므로 항목별 만료 정책은 필요 없다",
         "displayOrder": 0,
-        "rationaleMarkdown": "SoftReference는 항목별 고정 TTL을 보장하지 않는다. 결정적인 만료가 필요하면 cache 정책을 직접 둔다."
+        "rationaleMarkdown": "`SoftReference`는 항목별 고정 생존 시간을 보장하지 않는다. 정해진 시점에 만료해야 한다면 캐시 정책으로 직접 관리해야 한다."
       },
       {
         "key": "B",
-        "content": "JVM은 OOME를 던지기 전에 softly-reachable 객체의 soft reference를 clear해야 하지만, 일반적인 clear 시각과 순서는 보장하지 않으므로 명시적 cache 정책을 대신하지 않는다",
+        "content": "JVM은 `OutOfMemoryError`가 발생하기 전에 소프트 참조로만 도달 가능한 객체의 참조를 비워야 하지만, 참조를 비우는 시각과 순서는 보장하지 않으므로 명시적인 캐시 정책을 대신할 수 없다",
         "displayOrder": 1,
-        "rationaleMarkdown": "API는 softly reachable 객체의 soft reference가 OutOfMemoryError 전 clearing되도록 요구하지만 시기와 순서는 제한하지 않는다. 이는 application eviction schedule이 아니다."
+        "rationaleMarkdown": "Java API는 소프트 참조로만 도달 가능한 객체의 참조를 `OutOfMemoryError` 전에 비우도록 요구하지만, 그 시점과 순서는 정하지 않는다. 애플리케이션이 정한 캐시 제거 일정과는 다르다."
       },
       {
         "key": "C",
-        "content": "SoftReference는 strong reference보다 객체를 더 오래 반드시 유지한다",
+        "content": "`SoftReference`는 강한 참조보다 객체를 반드시 더 오래 유지한다",
         "displayOrder": 2,
-        "rationaleMarkdown": "strong reference가 사라진 뒤 memory 압력 등으로 soft reference가 clearing될 수 있다. 일정 시간 이상 반드시 남는다고 약속하지 않는다."
+        "rationaleMarkdown": "강한 참조가 사라진 뒤 메모리 압력 등에 따라 소프트 참조도 비워질 수 있다. 일정 시간 이상 객체가 남는다고 보장하지 않는다."
       },
       {
         "key": "D",
-        "content": "SoftReference.get()은 PhantomReference처럼 항상 null을 반환한다",
+        "content": "`SoftReference.get()`은 `PhantomReference`처럼 항상 `null`을 반환한다",
         "displayOrder": 3,
-        "rationaleMarkdown": "soft reference의 get은 clearing되기 전 referent를 반환할 수 있다. phantom reference와 달리 항상 null인 것은 아니다."
+        "rationaleMarkdown": "소프트 참조의 `get()`은 참조가 비워지기 전까지 대상을 반환할 수 있다. 팬텀 참조와 달리 항상 `null`을 반환하지는 않는다."
       }
     ],
     "correctChoiceKey": "B",
-    "explanationMarkdown": "SoftReference는 memory demand에 따라 GC가 clear할 수 있고 softly-reachable referent의 soft reference는 OOME 전에 clear되어야 한다. 하지만 clear 시각·순서나 TTL을 application이 통제하는 cache policy는 제공하지 않는다."
+    "explanationMarkdown": "메모리 수요에 따라 GC가 `SoftReference`를 비울 수 있으며, 소프트 참조로만 도달 가능한 객체의 참조는 `OutOfMemoryError`가 발생하기 전에 비워져야 한다. 하지만 참조를 비우는 시점이나 순서는 정해져 있지 않으므로, 애플리케이션이 만료 시점을 통제하는 캐시 정책을 대신할 수 없다."
   },
   {
     "kind": "question",
@@ -1494,31 +1494,31 @@
     "choices": [
       {
         "key": "A",
-        "content": "모든 thread를 종료하는 것",
+        "content": "도달 가능한 모든 객체를 매 수집마다 새 주소로 옮기는 것",
         "displayOrder": 0,
-        "rationaleMarkdown": "garbage collection은 실행 중인 모든 thread를 종료하지 않고 program이 동작하는 동안 memory를 관리한다."
+        "rationaleMarkdown": "일부 수집기는 객체를 이동하지만 모든 도달 가능한 객체를 매번 옮기는 것이 GC의 목적이나 공통 계약은 아니다."
       },
       {
         "key": "B",
-        "content": "모든 객체를 serialize하는 것",
+        "content": "더 이상 사용하지 않는 지역 변수를 컴파일 시점에 제거하는 것",
         "displayOrder": 1,
-        "rationaleMarkdown": "GC는 객체를 직렬화하지 않고 reachability 등을 기준으로 storage를 관리한다."
+        "rationaleMarkdown": "컴파일러의 지역 변수 최적화와 실행 중 객체 저장 공간 회수는 다른 단계의 작업이다."
       },
       {
         "key": "C",
-        "content": "더 이상 reachable하지 않은 객체 storage를 회수하는 것",
+        "content": "더 이상 도달할 수 없는 객체의 메모리 공간을 회수하는 것",
         "displayOrder": 2,
-        "rationaleMarkdown": "더 이상 reachable하지 않은 객체가 차지한 memory를 회수하는 것이 GC의 주된 목적 중 하나다."
+        "rationaleMarkdown": "더 이상 도달할 수 없는 객체가 차지한 메모리 공간을 회수하는 것이 GC의 주된 목적 중 하나다."
       },
       {
         "key": "D",
-        "content": "source를 다시 compile하는 것",
+        "content": "메서드가 끝난 모든 객체의 저장 공간을 즉시 반환하는 것",
         "displayOrder": 3,
-        "rationaleMarkdown": "GC는 runtime memory 관리 과정이지 source compiler가 아니다."
+        "rationaleMarkdown": "메서드가 끝나도 다른 강한 참조가 남은 객체는 살아 있을 수 있고, 회수 가능한 객체도 즉시 회수되는 것은 아니다."
       }
     ],
     "correctChoiceKey": "C",
-    "explanationMarkdown": "GC는 unreachable object가 차지한 storage를 reclaim한다."
+    "explanationMarkdown": "GC는 도달 불가능한 객체가 차지한 저장 공간을 회수한다."
   },
   {
     "kind": "question",
@@ -1533,31 +1533,31 @@
     "choices": [
       {
         "key": "A",
-        "content": "처리량은 source compile 시간만 뜻한다",
+        "content": "처리량은 소스 컴파일 시간만 뜻한다",
         "displayOrder": 0,
-        "rationaleMarkdown": "GC throughput은 source compilation 시간이 아니라 collector 비용을 고려해 애플리케이션이 완료하는 작업량과 관련된다."
+        "rationaleMarkdown": "GC 처리량은 소스 컴파일 시간이 아니라 수집기 비용을 고려해 애플리케이션이 완료하는 작업량과 관련된다."
       },
       {
         "key": "B",
         "content": "둘은 항상 동시에 최대가 된다",
         "displayOrder": 1,
-        "rationaleMarkdown": "모든 workload에서 throughput 최대와 pause 최소를 동시에 보장하는 collector는 없으며 trade-off가 있다."
+        "rationaleMarkdown": "모든 작업 부하에서 처리량 최대와 일시 중지 시간 최소를 동시에 보장하는 수집기는 없으며 트레이드오프가 있다."
       },
       {
         "key": "C",
-        "content": "지연 시간은 heap과 무관하다",
+        "content": "지연 시간은 힙과 무관하다",
         "displayOrder": 2,
-        "rationaleMarkdown": "heap 크기, live set, allocation rate와 object graph가 collector 비용 및 latency에 영향을 줄 수 있다."
+        "rationaleMarkdown": "힙 크기, 실행 중인 집합, 할당 rate와 객체 그래프가 수집기 비용 및 latency에 영향을 줄 수 있다."
       },
       {
         "key": "D",
-        "content": "collector 선택은 처리량과 pause/지연 목표 사이 trade-off를 포함한다",
+        "content": "수집기 선택은 처리량과 일시 중지 시간/지연 목표 사이 트레이드오프를 포함한다",
         "displayOrder": 3,
-        "rationaleMarkdown": "collector 선택은 애플리케이션 처리량과 pause/response-time 목표 사이의 trade-off를 고려한다."
+        "rationaleMarkdown": "수집기 선택은 애플리케이션 처리량과 일시 중지 시간/응답 시간 목표 사이의 트레이드오프를 고려한다."
       }
     ],
     "correctChoiceKey": "D",
-    "explanationMarkdown": "GC 작업 배치와 pause 정책은 서로 다른 성능 목표를 조정한다."
+    "explanationMarkdown": "GC 작업 배치와 일시 중지 시간 정책은 서로 다른 성능 목표를 조정한다."
   },
   {
     "kind": "question",
@@ -1572,36 +1572,36 @@
     "choices": [
       {
         "key": "A",
-        "content": "HotSpot/JDK가 제공하는 collector implementation 선택지이지 Java language semantics가 아니다",
+        "content": "HotSpot/JDK가 제공하는 수집기 구현 선택지이지 Java 언어 의미론이 아니다",
         "displayOrder": 0,
-        "rationaleMarkdown": "G1과 ZGC는 HotSpot/JDK runtime의 collector 구현 선택지이며 Java language semantics가 아니다."
+        "rationaleMarkdown": "G1과 ZGC는 HotSpot/JDK 런타임의 수집기 구현 선택지이며 Java 언어 의미론이 아니다."
       },
       {
         "key": "B",
-        "content": "두 collector는 항상 같은 pause를 보장한다",
+        "content": "두 수집기는 항상 같은 일시 중지 시간을 보장한다",
         "displayOrder": 1,
-        "rationaleMarkdown": "collector와 설정은 pause·throughput 특성이 다르며 이름만으로 같은 pause 목표를 보장하지 않는다."
+        "rationaleMarkdown": "수집기와 설정은 일시 중지 시간·처리량 특성이 다르며 이름만으로 같은 일시 중지 시간 목표를 보장하지 않는다."
       },
       {
         "key": "C",
-        "content": "collector가 object equality를 바꾼다",
+        "content": "수집기가 객체 동등성을 바꾼다",
         "displayOrder": 2,
-        "rationaleMarkdown": "collector 변경이 object의 equals/hashCode 동작을 재정의하지 않는다."
+        "rationaleMarkdown": "수집기 변경이 객체의 equals/hashCode 동작을 재정의하지 않는다."
       },
       {
         "key": "D",
         "content": "JLS가 모든 JVM에 하나만 강제한다",
         "displayOrder": 3,
-        "rationaleMarkdown": "JLS는 모든 JVM이 하나의 특정 HotSpot collector를 사용해야 한다고 요구하지 않는다."
+        "rationaleMarkdown": "JLS는 모든 JVM이 하나의 특정 HotSpot 수집기를 사용해야 한다고 요구하지 않는다."
       }
     ],
     "correctChoiceKey": "A",
-    "explanationMarkdown": "collector 이름과 세부 동작은 JVM implementation 문서의 영역이다."
+    "explanationMarkdown": "수집기 이름과 세부 동작은 JVM 구현 문서의 영역이다."
   },
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.gc-fundamentals-collectors.q4",
-    "promptMarkdown": "GC가 실행되었는데 heap이 크게 줄지 않을 수 있는 이유는?",
+    "promptMarkdown": "GC가 실행되었는데 힙이 크게 줄지 않을 수 있는 이유는?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
@@ -1611,36 +1611,36 @@
     "choices": [
       {
         "key": "A",
-        "content": "heap 객체는 GC 대상이 아니기 때문이다",
+        "content": "힙 객체는 GC 대상이 아니기 때문이다",
         "displayOrder": 0,
-        "rationaleMarkdown": "GC는 heap을 비우기 위해 reachable한 live 객체를 임의로 회수하지 않는다. 프로그램이 사용하는 객체는 보존해야 한다."
+        "rationaleMarkdown": "GC는 힙을 비우기 위해 도달 가능한 실행 중인 객체를 임의로 회수하지 않는다. 프로그램이 사용하는 객체는 보존해야 한다."
       },
       {
         "key": "B",
-        "content": "많은 객체가 여전히 reachable이거나 collector가 모든 영역을 같은 방식으로 회수하지 않기 때문이다",
+        "content": "많은 객체가 여전히 도달 가능한 상태이거나 수집기가 모든 영역을 같은 방식으로 회수하지 않기 때문이다",
         "displayOrder": 1,
-        "rationaleMarkdown": "GC가 unreachable 객체를 회수하면서 live set은 남길 수 있고 collector가 일부 region만 대상으로 처리할 수도 있다."
+        "rationaleMarkdown": "GC가 도달 불가능한 객체를 회수하면서 실행 중인 집합은 남길 수 있고 수집기가 일부 지역만 대상으로 처리할 수도 있다."
       },
       {
         "key": "C",
-        "content": "source scope가 모두 root이기 때문이다",
+        "content": "소스 범위가 모두 root이기 때문이다",
         "displayOrder": 2,
-        "rationaleMarkdown": "lexical scope만으로 객체가 모두 GC root인지 정해지지 않는다. 실제 reachability와 보유 reference를 본다."
+        "rationaleMarkdown": "lexical 범위만으로 객체가 모두 GC 루트인지 정해지지 않는다. 실제 reachability와 보유 참조를 본다."
       },
       {
         "key": "D",
         "content": "GC는 실행되면 무조건 실패하기 때문이다",
         "displayOrder": 3,
-        "rationaleMarkdown": "GC 뒤 heap에 객체가 남아 있다고 실패한 것은 아니다. 아직 reachable한 객체는 유지되어야 한다."
+        "rationaleMarkdown": "GC 뒤 힙에 객체가 남아 있다고 실패한 것은 아니다. 아직 도달 가능한 객체는 유지되어야 한다."
       }
     ],
     "correctChoiceKey": "B",
-    "explanationMarkdown": "GC는 reachable live set을 보존하며 실행마다 전체 heap을 비우지 않는다."
+    "explanationMarkdown": "GC는 도달 가능한 실행 중인 집합을 보존하며 실행마다 전체 힙을 비우지 않는다."
   },
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.gc-fundamentals-collectors.q5",
-    "promptMarkdown": "높은 allocation rate와 큰 live set, 짧은 pause 목표가 동시에 관찰된다. 가장 타당한 판단은?",
+    "promptMarkdown": "높은 할당 rate와 큰 실행 중인 집합, 짧은 일시 중지 시간 목표가 동시에 관찰된다. 가장 타당한 판단은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "HARD",
     "status": "PUBLISHED",
@@ -1650,38 +1650,38 @@
     "choices": [
       {
         "key": "A",
-        "content": "GC가 application leak을 자동 수정한다고 본다",
+        "content": "GC가 애플리케이션 누수를 자동 수정한다고 본다",
         "displayOrder": 0,
-        "rationaleMarkdown": "GC는 unreachable 객체를 회수할 수 있지만 application root가 계속 참조하는 객체는 없애지 못한다. 보유한 owner 경로를 찾아 해제한다."
+        "rationaleMarkdown": "GC는 도달 불가능한 객체를 회수할 수 있지만 애플리케이션 root가 계속 참조하는 객체는 없애지 못한다. 보유한 소유자 경로를 찾아 해제한다."
       },
       {
         "key": "B",
-        "content": "최신 collector를 근거 없이 고정한다",
+        "content": "최신 수집기를 근거 없이 고정한다",
         "displayOrder": 1,
-        "rationaleMarkdown": "새 collector가 모든 workload에 가장 낫지는 않다. 대표 조건에서 pause와 throughput을 측정해 비교한다."
+        "rationaleMarkdown": "새 수집기가 모든 작업 부하에 가장 낫지는 않다. 대표 조건에서 일시 중지 시간과 처리량을 측정해 비교한다."
       },
       {
         "key": "C",
-        "content": "collector 선택·heap 여유·allocation 패턴을 측정하며 trade-off를 평가한다",
+        "content": "수집기 선택·힙 여유·할당 패턴을 측정하며 트레이드오프를 평가한다",
         "displayOrder": 2,
-        "rationaleMarkdown": "큰 live data, 높은 allocation, 짧은 pause 목표가 함께 있으면 collector와 heap 여유, 객체 수명을 실제 workload로 측정해야 한다. 보편적인 설정값은 없다."
+        "rationaleMarkdown": "큰 실행 중인 데이터, 높은 할당, 짧은 일시 중지 시간 목표가 함께 있으면 수집기와 힙 여유, 객체 수명을 실제 작업 부하로 측정해야 한다. 보편적인 설정값은 없다."
       },
       {
         "key": "D",
         "content": "System.gc를 모든 요청에 넣는다",
         "displayOrder": 3,
-        "rationaleMarkdown": "요청마다 System.gc를 불러도 정확한 회수를 보장하지 않고 명시적 collection 요청의 비용만 더할 수 있다."
+        "rationaleMarkdown": "요청마다 System.gc를 불러도 정확한 회수를 보장하지 않고 명시적 컬렉션 요청의 비용만 더할 수 있다."
       }
     ],
     "correctChoiceKey": "C",
-    "explanationMarkdown": "collector 선택은 workload와 측정 evidence에 기반해야 하며 보편적인 최고 옵션은 없다."
+    "explanationMarkdown": "수집기 선택은 작업 부하와 측정 근거에 기반해야 하며 보편적인 최고 옵션은 없다."
   },
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.gc-fundamentals-collectors.q6",
     "promptMarkdown": "Java 코드의 결과가 G1과 ZGC에서 달라져도 된다고 주장하는 설명의 문제는?",
     "questionType": "MULTIPLE_CHOICE",
-    "difficulty": "HARD",
+    "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": [
       "java.core.jvm-runtime.gc-fundamentals-collectors"
@@ -1689,36 +1689,36 @@
     "choices": [
       {
         "key": "A",
-        "content": "JVM specification은 object lifetime을 전혀 정의하지 않는다",
+        "content": "JVM 명세는 객체 수명을 전혀 정의하지 않는다",
         "displayOrder": 0,
-        "rationaleMarkdown": "JVM spec은 관찰 가능한 Java 동작과 reference 의미를 제한하지만 collector의 정확한 회수 시점을 하나로 지정하지는 않는다."
+        "rationaleMarkdown": "JVM spec은 관찰 가능한 Java 동작과 참조 의미를 제한하지만 수집기의 정확한 회수 시점을 하나로 지정하지는 않는다."
       },
       {
         "key": "B",
-        "content": "GC는 Java semantics를 전부 재정의한다",
+        "content": "GC는 Java 의미론을 전부 재정의한다",
         "displayOrder": 1,
-        "rationaleMarkdown": "collector는 메모리 회수 정책을 구현하며 equals를 재정의하거나 임의의 언어 의미 변경을 허용하지 않는다."
+        "rationaleMarkdown": "수집기는 메모리 회수 정책을 구현하며 equals를 재정의하거나 임의의 언어 의미 변경을 허용하지 않는다."
       },
       {
         "key": "C",
-        "content": "두 collector는 OS process다",
+        "content": "두 수집기는 OS 프로세스다",
         "displayOrder": 2,
-        "rationaleMarkdown": "G1과 ZGC는 collector 구현 선택지이지 별도 OS process가 아니다."
+        "rationaleMarkdown": "G1과 ZGC는 수집기 구현 선택지이지 별도 OS 프로세스가 아니다."
       },
       {
         "key": "D",
-        "content": "collector는 성능/회수 구현을 바꿀 수 있지만 Java observable semantics를 임의로 깨는 것을 전제로 삼으면 안 된다",
+        "content": "수집기는 성능/회수 구현을 바꿀 수 있지만 Java observable 의미론을 임의로 깨는 것을 전제로 삼으면 안 된다",
         "displayOrder": 3,
-        "rationaleMarkdown": "collector마다 algorithm과 성능은 달라도 프로그램이 의존하는 관찰 가능한 Java 계약은 보존한다."
+        "rationaleMarkdown": "수집기마다 알고리즘과 성능은 달라도 프로그램이 의존하는 관찰 가능한 Java 계약은 보존한다."
       }
     ],
     "correctChoiceKey": "D",
-    "explanationMarkdown": "implementation 선택과 language/runtime 의미를 분리해 분석해야 한다."
+    "explanationMarkdown": "구현 선택과 language/런타임 의미를 분리해 분석해야 한다."
   },
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.java-memory-leaks.q1",
-    "promptMarkdown": "Java memory leak의 핵심은?",
+    "promptMarkdown": "Java 메모리 누수의 핵심은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
@@ -1728,36 +1728,36 @@
     "choices": [
       {
         "key": "A",
-        "content": "필요 없는 객체가 root에서 reachable한 채 retain되는 것",
+        "content": "필요 없는 객체가 root에서 도달 가능한 채 retain되는 것",
         "displayOrder": 0,
-        "rationaleMarkdown": "memory leak은 application에서 더 이상 필요 없는 객체가 원하지 않는 reference 경로를 통해 root에 reachable하게 남아 있는 경우가 많다."
+        "rationaleMarkdown": "메모리 누수는 애플리케이션에서 더 이상 필요 없는 객체가 원하지 않는 참조 경로를 통해 루트에서 계속 도달 가능한 상태로 남아 있는 경우가 많다."
       },
       {
         "key": "B",
-        "content": "모든 object가 static인 것",
+        "content": "모든 객체가 static인 것",
         "displayOrder": 1,
-        "rationaleMarkdown": "모든 객체가 static이어야 leak이 생기는 것은 아니다. 수명이 긴 어떤 owner도 object graph를 붙잡을 수 있다."
+        "rationaleMarkdown": "모든 객체가 static이어야 누수가 생기는 것은 아니다. 수명이 긴 어떤 소유자도 객체 그래프를 붙잡을 수 있다."
       },
       {
         "key": "C",
         "content": "GC가 전혀 실행되지 않는 것",
         "displayOrder": 2,
-        "rationaleMarkdown": "GC가 정상 동작해도 application이 불필요해진 객체를 계속 reachable하게 보유하면 회수할 수 없다."
+        "rationaleMarkdown": "GC가 정상 동작해도 애플리케이션이 불필요해진 객체를 계속 도달 가능한 상태로 보유하면 회수할 수 없다."
       },
       {
         "key": "D",
-        "content": "unreachable 객체가 너무 빨리 회수되는 것",
+        "content": "도달 불가능한 객체가 너무 빨리 회수되는 것",
         "displayOrder": 3,
-        "rationaleMarkdown": "unreachable 객체를 회수하는 것은 정상 동작이지 memory leak이 아니다."
+        "rationaleMarkdown": "도달 불가능한 객체를 회수하는 것은 정상 동작이지 메모리 누수가 아니다."
       }
     ],
     "correctChoiceKey": "A",
-    "explanationMarkdown": "GC가 정상이어도 잘못된 owner가 reference를 계속 유지하면 leak이 된다."
+    "explanationMarkdown": "GC가 정상이어도 잘못된 소유자가 참조를 계속 유지하면 누수가 된다."
   },
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.java-memory-leaks.q2",
-    "promptMarkdown": "leak 원인이 될 수 있는 것은?",
+    "promptMarkdown": "누수 원인이 될 수 있는 것은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
@@ -1767,36 +1767,36 @@
     "choices": [
       {
         "key": "A",
-        "content": "immutable String literal 하나만",
+        "content": "불변 String literal 하나만",
         "displayOrder": 0,
-        "rationaleMarkdown": "상수 문자열 하나가 설계상 유지되는 것을 곧바로 무한히 커지는 불필요한 object graph로 보기는 어렵다."
+        "rationaleMarkdown": "상수 문자열 하나가 설계상 유지되는 것을 곧바로 무한히 커지는 불필요한 객체 그래프로 보기는 어렵다."
       },
       {
         "key": "B",
-        "content": "삭제되지 않는 static cache",
+        "content": "삭제되지 않는 static 캐시",
         "displayOrder": 1,
-        "rationaleMarkdown": "오래 사는 static cache가 오래된 항목을 제거하지 않으면 객체를 보유해 live set이 커질 수 있다."
+        "rationaleMarkdown": "오래 사는 static 캐시가 오래된 항목을 제거하지 않으면 객체를 보유해 실행 중인 집합이 커질 수 있다."
       },
       {
         "key": "C",
-        "content": "정상 종료한 method frame",
+        "content": "정상 종료한 메서드 프레임",
         "displayOrder": 2,
-        "rationaleMarkdown": "완료된 frame이 local 값을 계속 살아 있게 보장하지 않는다. 실행이나 다른 root에서 필요한 reference인지가 기준이다."
+        "rationaleMarkdown": "메서드 호출이 끝나면 해당 프레임의 실행은 끝난다. 객체가 남는지는 다른 참조가 계속 가리키는지에 따라 달라진다."
       },
       {
         "key": "D",
-        "content": "짧은 local 변수 하나",
+        "content": "짧은 지역 변수 하나",
         "displayOrder": 3,
-        "rationaleMarkdown": "짧게 쓰인 local reference는 더 이상 reachable하지 않게 되면 단독으로 leak을 만들지 않는다."
+        "rationaleMarkdown": "짧게 쓰인 지역 참조는 다른 참조도 없어서 더는 객체에 도달할 수 없게 되면 단독으로 누수를 만들지 않는다."
       }
     ],
     "correctChoiceKey": "B",
-    "explanationMarkdown": "장수 static collection은 필요 없는 object graph를 계속 retain할 수 있다."
+    "explanationMarkdown": "장수 static 컬렉션은 필요 없는 객체 그래프를 계속 retain할 수 있다."
   },
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.java-memory-leaks.q3",
-    "promptMarkdown": "pool task에서 ThreadLocal.remove()를 빠뜨리면?",
+    "promptMarkdown": "풀 작업에서 ThreadLocal.remove()를 빠뜨리면?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
@@ -1806,36 +1806,36 @@
     "choices": [
       {
         "key": "A",
-        "content": "JVM stack frame이 모두 제거된다",
+        "content": "JVM 스택 프레임이 모두 제거된다",
         "displayOrder": 0,
-        "rationaleMarkdown": "ThreadLocal cleanup은 모든 JVM stack frame을 지우지 않는다. method 호출이 끝나면 해당 frame 수명은 별도 규칙으로 끝난다."
+        "rationaleMarkdown": "ThreadLocal cleanup은 모든 JVM 스택 프레임을 지우지 않는다. 메서드 호출이 끝나면 해당 프레임 수명은 별도 규칙으로 끝난다."
       },
       {
         "key": "B",
         "content": "모든 ThreadLocal 값이 즉시 GC된다",
         "displayOrder": 1,
-        "rationaleMarkdown": "긴 수명의 worker에 저장된 값은 remove하거나 다른 값으로 바꾸지 않으면 task가 끝나도 자동 삭제되지 않을 수 있다."
+        "rationaleMarkdown": "긴 수명의 작업자에 저장된 값은 remove하거나 다른 값으로 바꾸지 않으면 작업이 끝나도 자동 삭제되지 않을 수 있다."
       },
       {
         "key": "C",
-        "content": "재사용 worker가 이전 context와 그 graph를 오래 보유할 수 있다",
+        "content": "재사용 작업자가 이전 문맥과 그 객체 그래프를 오래 보유할 수 있다",
         "displayOrder": 2,
-        "rationaleMarkdown": "재사용 pool thread가 이전 task의 ThreadLocal 값과 그 context에서 reachable한 객체 graph를 계속 보유할 수 있다."
+        "rationaleMarkdown": "재사용 풀 스레드가 이전 작업의 ThreadLocal 값과 그 문맥에서 도달 가능한 객체 그래프를 계속 보유할 수 있다."
       },
       {
         "key": "D",
-        "content": "pool이 자동으로 shutdown된다",
+        "content": "풀이 자동으로 shutdown된다",
         "displayOrder": 3,
-        "rationaleMarkdown": "값을 지우지 않았다고 executor가 자동 종료되지는 않는다. worker 수명은 executor lifecycle이 정한다."
+        "rationaleMarkdown": "값을 지우지 않았다고 executor가 자동 종료되지는 않는다. 작업자 수명은 executor 생명주기가 정한다."
       }
     ],
     "correctChoiceKey": "C",
-    "explanationMarkdown": "ThreadLocal 값의 lifetime이 요청보다 길어질 수 있어 leak 경로가 된다."
+    "explanationMarkdown": "ThreadLocal 값의 수명이 요청보다 길어질 수 있어 누수 경로가 된다."
   },
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.java-memory-leaks.q4",
-    "promptMarkdown": "heap dump에서 leak을 찾을 때 retained path를 보는 이유는?",
+    "promptMarkdown": "힙 덤프에서 누수를 찾을 때 유지 경로(retained path)를 보는 이유는?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
@@ -1845,38 +1845,38 @@
     "choices": [
       {
         "key": "A",
-        "content": "class file version을 확인하기 위해",
+        "content": "클래스 파일 version을 확인하기 위해",
         "displayOrder": 0,
-        "rationaleMarkdown": "class-file version은 binary compatibility와 관련되고 현재 heap 객체를 붙잡는 reference를 보여주지 않는다."
+        "rationaleMarkdown": "클래스 파일 버전은 바이너리 호환성과 관련이 있으며 현재 힙 객체를 붙잡고 있는 참조를 보여 주지는 않습니다."
       },
       {
         "key": "B",
-        "content": "모든 source line을 compile하기 위해",
+        "content": "모든 소스 line을 컴파일하기 위해",
         "displayOrder": 1,
-        "rationaleMarkdown": "source를 다시 compile해도 현재 heap 객체가 어떤 reference로 살아 있는지는 찾지 못한다."
+        "rationaleMarkdown": "소스를 다시 컴파일해도 현재 힙 객체가 어떤 참조로 살아 있는지는 찾지 못한다."
       },
       {
         "key": "C",
-        "content": "JIT threshold를 바꾸기 위해",
+        "content": "JIT 임계값을 바꾸기 위해",
         "displayOrder": 2,
-        "rationaleMarkdown": "JIT compile threshold는 어떤 object graph가 유지되는지 보여주지 않는다."
+        "rationaleMarkdown": "JIT 컴파일 임계값은 어떤 객체 그래프가 유지되는지 보여주지 않는다."
       },
       {
         "key": "D",
-        "content": "큰 객체가 어떤 root를 통해 계속 reachable한지 찾기 위해",
+        "content": "큰 객체가 어떤 root를 통해 계속 도달 가능한지 찾기 위해",
         "displayOrder": 3,
-        "rationaleMarkdown": "retained path를 따라가면 root부터 객체까지 살아 있는 reference와 owner를 찾아 누가 retention을 만드는지 알 수 있다."
+        "rationaleMarkdown": "유지 경로(retained path)를 따라가면 root부터 객체까지 살아 있는 참조와 소유자를 찾아 누가 retention을 만드는지 알 수 있다."
       }
     ],
     "correctChoiceKey": "D",
-    "explanationMarkdown": "크기 자체보다 root까지의 참조 경로와 owner 정책이 원인 분석에 중요하다."
+    "explanationMarkdown": "크기 자체보다 root까지의 참조 경로와 소유자 정책이 원인 분석에 중요하다."
   },
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.java-memory-leaks.q5",
-    "promptMarkdown": "listener registry가 listener를 등록만 하고 해제하지 않는다. 요청 객체가 요청 후에도 남는 경로는?",
+    "promptMarkdown": "리스너 목록(listener registry)에 등록된 리스너를 해제하지 않았다. 요청 객체가 요청 처리가 끝난 뒤에도 남는 경로는?",
     "questionType": "MULTIPLE_CHOICE",
-    "difficulty": "HARD",
+    "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": [
       "java.core.jvm-runtime.java-memory-leaks"
@@ -1884,38 +1884,38 @@
     "choices": [
       {
         "key": "A",
-        "content": "장수 registry root -> listener -> 요청 관련 graph가 이어질 수 있다",
+        "content": "수명이 긴 리스너 목록의 GC 루트 -> 리스너 -> 요청 관련 객체 그래프가 이어질 수 있다",
         "displayOrder": 0,
-        "rationaleMarkdown": "수명이 긴 registry가 listener를 참조하고 listener가 request data를 참조하면 등록 해제 전까지 data가 간접 보유된다."
+        "rationaleMarkdown": "수명이 긴 목록이 리스너를 참조하고 리스너가 요청 데이터를 참조하면 해제 전까지 데이터가 간접적으로 유지된다."
       },
       {
         "key": "B",
-        "content": "request scope가 모든 static root를 제거한다",
+        "content": "요청 범위가 모든 정적 GC 루트를 제거한다",
         "displayOrder": 1,
-        "rationaleMarkdown": "request scope가 끝나도 listener registry 같은 무관한 static root가 자동으로 비워지지 않는다."
+        "rationaleMarkdown": "요청 범위가 끝나도 관련 없는 리스너 목록 같은 정적 GC 루트가 자동으로 비워지지는 않는다."
       },
       {
         "key": "C",
-        "content": "listener는 Java object가 아니다",
+        "content": "리스너는 Java 객체가 아니다",
         "displayOrder": 2,
-        "rationaleMarkdown": "listener도 보통 Java 객체이며 field reference를 통해 다른 객체를 붙잡을 수 있다."
+        "rationaleMarkdown": "리스너도 보통 Java 객체이며 필드 참조를 통해 다른 객체를 계속 참조할 수 있다."
       },
       {
         "key": "D",
-        "content": "GC가 listener를 항상 약한 참조로 바꾼다",
+        "content": "GC가 리스너를 항상 약한 참조로 바꾼다",
         "displayOrder": 3,
-        "rationaleMarkdown": "GC가 strong reference를 weak로 바꾸지 않는다. registry가 가진 reference 종류와 제거 정책이 retention을 결정한다."
+        "rationaleMarkdown": "GC는 강한 참조를 약한 참조로 바꾸지 않는다. 목록이 어떤 참조를 보유하는지와 언제 제거하는지가 객체의 도달 가능성에 영향을 준다."
       }
     ],
     "correctChoiceKey": "A",
-    "explanationMarkdown": "등록 해제 없는 listener는 root에서 도달 가능한 retain path를 만든다."
+    "explanationMarkdown": "해제되지 않은 리스너는 GC 루트에서 도달 가능한 유지 경로(retained path)를 만든다."
   },
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.java-memory-leaks.q6",
-    "promptMarkdown": "GC log상 unreachable 객체는 잘 회수되지만 old generation이 계속 커진다. 가능한 진단은?",
+    "promptMarkdown": "GC log상 도달 불가능한 객체는 잘 회수되지만 old 생성이 계속 커진다. 가능한 진단은?",
     "questionType": "MULTIPLE_CHOICE",
-    "difficulty": "HARD",
+    "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": [
       "java.core.jvm-runtime.java-memory-leaks"
@@ -1923,27 +1923,27 @@
     "choices": [
       {
         "key": "A",
-        "content": "모든 객체가 native만 차지한다",
+        "content": "모든 객체가 네이티브만 차지한다",
         "displayOrder": 0,
-        "rationaleMarkdown": "native memory 증가도 가능하지만 unreachable 객체가 회수된다는 사실만으로 reachable heap live set 증가를 배제하지 못한다."
+        "rationaleMarkdown": "네이티브 메모리 증가도 가능하지만 도달 불가능한 객체가 회수된다는 사실만으로 도달 가능한 힙 실행 중인 집합 증가를 배제하지 못한다."
       },
       {
         "key": "B",
-        "content": "GC는 정상이어도 cache/ThreadLocal 같은 reachable retain policy leak을 의심한다",
+        "content": "GC는 정상이어도 캐시/ThreadLocal 같은 도달 가능한 retain 정책 누수를 의심한다",
         "displayOrder": 1,
-        "rationaleMarkdown": "collector가 garbage를 회수해도 cache나 ThreadLocal이 불필요한 객체를 계속 보유할 수 있다. root에서 객체까지 경로를 조사한다."
+        "rationaleMarkdown": "수집기가 garbage를 회수해도 캐시나 ThreadLocal이 불필요한 객체를 계속 보유할 수 있다. root에서 객체까지 경로를 조사한다."
       },
       {
         "key": "C",
-        "content": "class file이 source로 바뀐다",
+        "content": "클래스 파일이 소스로 바뀐다",
         "displayOrder": 2,
-        "rationaleMarkdown": "old-generation 증가가 class file이 source code로 변했다는 뜻은 아니다. heap retention을 조사한다."
+        "rationaleMarkdown": "old 세대 사용량 증가가 클래스 파일이 소스 코드로 변했다는 뜻은 아니다. 힙 retention을 조사한다."
       },
       {
         "key": "D",
         "content": "GC가 전혀 동작하지 않는다",
         "displayOrder": 3,
-        "rationaleMarkdown": "unreachable 객체를 회수하는 동안에도 다른 reachable set이 커질 수 있다. GC 정상 동작과 memory leak 진단은 양립한다."
+        "rationaleMarkdown": "도달 불가능한 객체를 회수하는 동안에도 다른 도달 가능한 집합이 커질 수 있다. GC 정상 동작과 메모리 누수 진단은 양립한다."
       }
     ],
     "correctChoiceKey": "B",
@@ -1962,31 +1962,31 @@
     "choices": [
       {
         "key": "A",
-        "content": "metaspace와 native library 전체",
+        "content": "metaspace와 네이티브 라이브러리 전체",
         "displayOrder": 0,
-        "rationaleMarkdown": "-Xmx는 maximum Java heap을 제한한다. metaspace와 native library 등은 별도 memory consumer다."
+        "rationaleMarkdown": "-Xmx는 maximum Java 힙을 제한한다. metaspace와 네이티브 라이브러리 등은 별도 메모리 소비자다."
       },
       {
         "key": "B",
         "content": "프로세스 RSS 전체",
         "displayOrder": 1,
-        "rationaleMarkdown": "RSS에는 Java heap 이외의 영역도 포함되므로 Xmx 값과 정확히 같거나 그보다 작다고 보장되지 않는다."
+        "rationaleMarkdown": "RSS에는 Java 힙 이외의 영역도 포함되므로 Xmx 값과 정확히 같거나 그보다 작다고 보장되지 않는다."
       },
       {
         "key": "C",
-        "content": "Java heap의 상한",
+        "content": "Java 힙의 상한",
         "displayOrder": 2,
-        "rationaleMarkdown": "Xmx는 Java heap 상한이지 JVM process 전체 memory 상한이 아니다."
+        "rationaleMarkdown": "Xmx는 Java 힙 상한이지 JVM 프로세스 전체 메모리 상한이 아니다."
       },
       {
         "key": "D",
-        "content": "모든 thread stack",
+        "content": "모든 스레드 스택",
         "displayOrder": 3,
-        "rationaleMarkdown": "thread stack 크기는 Java heap maximum과 별도로 관리된다."
+        "rationaleMarkdown": "스레드 스택 크기는 Java 힙 maximum과 별도로 관리된다."
       }
     ],
     "correctChoiceKey": "C",
-    "explanationMarkdown": "Xmx는 heap 설정이며 프로세스의 모든 memory consumer 상한과 같지 않다."
+    "explanationMarkdown": "Xmx는 힙 설정이며 프로세스의 모든 메모리 소비자 상한과 같지 않다."
   },
   {
     "kind": "question",
@@ -2001,36 +2001,36 @@
     "choices": [
       {
         "key": "A",
-        "content": "각 local variable만 저장하는 영역",
+        "content": "각 지역 변수만 저장하는 영역",
         "displayOrder": 0,
-        "rationaleMarkdown": "Metaspace는 local variable을 보관하는 invocation frame이 아니다. method frame이 local-variable 상태를 표현한다."
+        "rationaleMarkdown": "Metaspace는 지역 변수를 보관하는 호출 프레임이 아닙니다. 메서드 프레임이 지역 변수 상태를 표현합니다."
       },
       {
         "key": "B",
-        "content": "모든 Java 객체가 저장되는 heap의 다른 이름",
+        "content": "모든 Java 객체가 저장되는 힙의 다른 이름",
         "displayOrder": 1,
-        "rationaleMarkdown": "HotSpot은 class metadata를 Metaspace에서 관리하고 Java heap에는 할당된 object가 저장되는 등 두 영역이 다르다."
+        "rationaleMarkdown": "HotSpot은 클래스 메타데이터를 Metaspace에서 관리하고 Java 힙에는 할당된 객체가 저장되는 등 두 영역이 다르다."
       },
       {
         "key": "C",
-        "content": "OS file cache와 같은 것",
+        "content": "OS 파일 캐시와 같은 것",
         "displayOrder": 2,
-        "rationaleMarkdown": "Metaspace는 VM이 관리하는 memory 영역이지 OS file cache가 아니다."
+        "rationaleMarkdown": "Metaspace는 VM이 관리하는 메모리 영역이지 OS 파일 캐시가 아니다."
       },
       {
         "key": "D",
-        "content": "class metadata를 위한 HotSpot 관리 영역으로, JVMS abstract method area와 구분한다",
+        "content": "클래스 메타데이터를 위한 HotSpot 관리 영역으로, JVMS의 추상적 메서드 영역(method area)과 구분한다",
         "displayOrder": 3,
-        "rationaleMarkdown": "HotSpot Metaspace는 class metadata 구현 영역이다. JVMS method area는 추상 실행 모델이라 둘을 필수로 같은 물리 layout이라고 보면 안 된다."
+        "rationaleMarkdown": "HotSpot Metaspace는 클래스 메타데이터 구현 영역이다. JVMS 메서드 area는 추상 실행 모델이라 둘을 필수로 같은 물리 layout이라고 보면 안 된다."
       }
     ],
     "correctChoiceKey": "D",
-    "explanationMarkdown": "metaspace라는 이름과 실제 layout은 HotSpot 구현이며 JVMS method area와 동일시하지 않는다."
+    "explanationMarkdown": "metaspace라는 이름과 실제 layout은 HotSpot 구현이며 JVMS 메서드 area와 동일시하지 않는다."
   },
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.heap-metaspace-native-thread-memory.q3",
-    "promptMarkdown": "많은 platform thread가 process memory를 늘릴 수 있는 이유는?",
+    "promptMarkdown": "많은 플랫폼 스레드가 프로세스 메모리를 늘릴 수 있는 이유는?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
@@ -2040,36 +2040,36 @@
     "choices": [
       {
         "key": "A",
-        "content": "각 thread의 stack reservation과 OS resource가 추가될 수 있어서",
+        "content": "각 스레드의 스택 reservation과 OS 자원이 추가될 수 있어서",
         "displayOrder": 0,
-        "rationaleMarkdown": "platform thread마다 native stack과 OS 자원이 필요할 수 있어 Java heap이 안정적이어도 thread 수 증가는 process memory를 늘릴 수 있다."
+        "rationaleMarkdown": "플랫폼 스레드마다 네이티브 스택과 OS 자원이 필요할 수 있어 Java 힙이 안정적이어도 스레드 수 증가는 프로세스 메모리를 늘릴 수 있다."
       },
       {
         "key": "B",
-        "content": "JIT가 source를 복사해서",
+        "content": "JIT가 소스를 복사해서",
         "displayOrder": 1,
-        "rationaleMarkdown": "JIT code cache도 memory를 쓸 수 있지만 thread마다 source가 복사돼 자원이 늘어나는 것은 아니다."
+        "rationaleMarkdown": "JIT 코드 캐시도 메모리를 쓸 수 있지만 스레드마다 소스가 복사돼 자원이 늘어나는 것은 아니다."
       },
       {
         "key": "C",
-        "content": "GC root가 삭제되어서",
+        "content": "GC 루트가 삭제되어서",
         "displayOrder": 2,
-        "rationaleMarkdown": "thread가 늘면 stack과 root가 추가될 수 있지만 기존 GC root를 자동 제거하지 않는다."
+        "rationaleMarkdown": "스레드가 늘면 스택과 root가 추가될 수 있지만 기존 GC 루트를 자동 제거하지 않는다."
       },
       {
         "key": "D",
-        "content": "thread는 heap을 전혀 쓰지 않아서",
+        "content": "스레드는 힙을 전혀 쓰지 않아서",
         "displayOrder": 3,
-        "rationaleMarkdown": "thread는 heap 객체를 참조하거나 생성할 수도 있고 native 자원도 쓴다. heap을 전혀 쓰지 않는다고 정의되지 않는다."
+        "rationaleMarkdown": "스레드는 힙 객체를 참조하거나 생성할 수도 있고 네이티브 자원도 쓴다. 힙을 전혀 쓰지 않는다고 정의되지 않는다."
       }
     ],
     "correctChoiceKey": "A",
-    "explanationMarkdown": "platform thread는 OS와 연결된 stack/자원을 사용하며 수가 늘면 process memory가 증가할 수 있다."
+    "explanationMarkdown": "플랫폼 스레드는 OS와 연결된 스택/자원을 사용하며 수가 늘면 프로세스 메모리가 증가할 수 있다."
   },
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.heap-metaspace-native-thread-memory.q4",
-    "promptMarkdown": "direct ByteBuffer의 Java reference가 heap에 있다는 사실로 확정할 수 없는 것은?",
+    "promptMarkdown": "direct ByteBuffer의 Java 참조가 힙에 있다는 사실로 확정할 수 없는 것은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
@@ -2079,36 +2079,36 @@
     "choices": [
       {
         "key": "A",
-        "content": "buffer API가 존재한다는 것",
+        "content": "버퍼 API가 존재한다는 것",
         "displayOrder": 0,
-        "rationaleMarkdown": "DirectByteBuffer는 Java 객체 reference지만 backing storage의 모든 byte가 heap에 있다는 뜻은 아니다."
+        "rationaleMarkdown": "DirectByteBuffer는 Java 객체 참조지만 기반 저장 공간의 모든 바이트가 힙에 있다는 뜻은 아니다."
       },
       {
         "key": "B",
-        "content": "backing storage가 전부 Java heap에 있다는 것",
+        "content": "기반 저장 공간이 전부 Java 힙에 있다는 것",
         "displayOrder": 1,
-        "rationaleMarkdown": "wrapper는 on-heap Java object여도 direct buffer data는 native memory를 사용할 수 있어 backing allocation이 전부 Java heap에 잡히지 않을 수 있다."
+        "rationaleMarkdown": "래퍼는 힙 내부(on-heap) Java 객체여도 direct 버퍼 데이터는 네이티브 메모리를 사용할 수 있어 기반 할당이 전부 Java 힙에 잡히지 않을 수 있다."
       },
       {
         "key": "C",
-        "content": "native allocation이 가능하다는 것",
+        "content": "네이티브 할당이 가능하다는 것",
         "displayOrder": 2,
-        "rationaleMarkdown": "direct buffer는 Java heap 밖의 memory를 쓸 수 있어 process memory 조사에 포함한다."
+        "rationaleMarkdown": "direct 버퍼는 Java 힙 밖의 메모리를 쓸 수 있어 프로세스 메모리 조사에 포함한다."
       },
       {
         "key": "D",
-        "content": "reference가 heap 객체일 수 있다는 것",
+        "content": "참조가 힙 객체일 수 있다는 것",
         "displayOrder": 3,
-        "rationaleMarkdown": "backing data가 일반 heap 밖에 있어도 application은 wrapper Java reference를 보유할 수 있다."
+        "rationaleMarkdown": "기반 데이터가 일반 힙 밖에 있어도 애플리케이션은 래퍼 Java 참조를 보유할 수 있다."
       }
     ],
     "correctChoiceKey": "B",
-    "explanationMarkdown": "wrapper/reference와 실제 backing native memory는 다른 관찰이다."
+    "explanationMarkdown": "래퍼/참조와 실제 기반 네이티브 메모리는 다른 관찰이다."
   },
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.heap-metaspace-native-thread-memory.q5",
-    "promptMarkdown": "Process memory에서 다음 결과가 함께 관측된다.\n\n| Signal | 변화 |\n| --- | --- |\n| RSS | 증가 |\n| Heap dump | 안정적 |\n| Thread 수 | 급증 |\n\n가장 먼저 세울 가설은?",
+    "promptMarkdown": "프로세스 메모리에서 다음 결과가 함께 관측된다.\n\n| 관측 대상 | 변화 |\n| --- | --- |\n| RSS | 증가 |\n| 힙 덤프(heap dump) | 안정적 |\n| 스레드 수 | 급증 |\n\n가장 먼저 세울 가설은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "HARD",
     "status": "PUBLISHED",
@@ -2120,36 +2120,36 @@
         "key": "A",
         "content": "metaspace만이 유일한 원인이다",
         "displayOrder": 0,
-        "rationaleMarkdown": "class metadata가 안정적이어도 heap, stack, native, direct buffer 사용량은 늘 수 있다. evidence로 범위를 좁힌다."
+        "rationaleMarkdown": "클래스 메타데이터가 안정적이어도 힙, 스택, 네이티브, direct 버퍼 사용량은 늘 수 있다. 근거로 범위를 좁힌다."
       },
       {
         "key": "B",
-        "content": "heap이 반드시 같은 크기로 증가했다",
+        "content": "힙이 반드시 같은 크기로 증가했다",
         "displayOrder": 1,
-        "rationaleMarkdown": "heap 지표가 안정적이면 heap이 RSS 증가와 같은 양만큼 올랐다는 근거가 없다. RSS에는 heap 밖 memory도 들어간다."
+        "rationaleMarkdown": "힙 지표가 안정적이면 힙이 RSS 증가와 같은 양만큼 올랐다는 근거가 없다. RSS에는 힙 밖 메모리도 들어간다."
       },
       {
         "key": "C",
-        "content": "thread stack/native resource를 heap leak과 별도로 조사한다",
+        "content": "스레드 스택/네이티브 자원을 힙 누수와 별도로 조사한다",
         "displayOrder": 2,
-        "rationaleMarkdown": "platform thread count 급증은 stack/native 사용량에 영향을 줄 수 있어 heap object와 나눠 조사한다."
+        "rationaleMarkdown": "플랫폼 스레드 count 급증은 스택/네이티브 사용량에 영향을 줄 수 있어 힙 객체와 나눠 조사한다."
       },
       {
         "key": "D",
         "content": "GC를 끄면 원인이 확정된다",
         "displayOrder": 3,
-        "rationaleMarkdown": "GC를 끄면 원인을 찾아주지 않고 memory pressure를 높일 수 있다."
+        "rationaleMarkdown": "GC를 끄면 원인을 찾아주지 않고 메모리 pressure를 높일 수 있다."
       }
     ],
     "correctChoiceKey": "C",
-    "explanationMarkdown": "process memory는 heap 외 stack/native/metaspace 등 여러 소비처를 포함한다."
+    "explanationMarkdown": "프로세스 메모리는 힙 외 스택/네이티브/metaspace 등 여러 소비처를 포함한다."
   },
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.heap-metaspace-native-thread-memory.q6",
-    "promptMarkdown": "동적 class loading이 반복되고 metaspace 사용이 증가하며 loader가 해제되지 않는다. 가장 타당한 연결은?",
+    "promptMarkdown": "동적 클래스 loading이 반복되고 metaspace 사용이 증가하며 로더가 해제되지 않는다. 가장 타당한 연결은?",
     "questionType": "MULTIPLE_CHOICE",
-    "difficulty": "HARD",
+    "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": [
       "java.core.jvm-runtime.heap-metaspace-native-thread-memory"
@@ -2157,36 +2157,36 @@
     "choices": [
       {
         "key": "A",
-        "content": "GC는 class metadata와 무관하므로 배제한다",
+        "content": "GC는 클래스 메타데이터와 무관하므로 배제한다",
         "displayOrder": 0,
-        "rationaleMarkdown": "HotSpot Metaspace는 class metadata를 담으므로 동적 class loading이 늘면 ClassLoader 수명과 unloading 여부가 중요할 수 있다."
+        "rationaleMarkdown": "HotSpot Metaspace는 클래스 메타데이터를 담으므로 동적 클래스 loading이 늘면 ClassLoader 수명과 unloading 여부가 중요할 수 있다."
       },
       {
         "key": "B",
         "content": "Xmx만 줄이면 항상 해결된다",
         "displayOrder": 1,
-        "rationaleMarkdown": "Xmx는 Java heap만 제한하고 Metaspace는 별도이므로 그것만 낮춰 class metadata retention을 해결하지 못한다."
+        "rationaleMarkdown": "Xmx는 Java 힙만 제한하고 Metaspace는 별도이므로 그것만 낮춰 클래스 메타데이터 retention을 해결하지 못한다."
       },
       {
         "key": "C",
-        "content": "local variable stack만 조사한다",
+        "content": "지역 변수 스택만 조사한다",
         "displayOrder": 2,
-        "rationaleMarkdown": "local stack 변수는 반복적인 class metadata 증가의 일차 증거가 아니다. loader와 class loading을 조사한다."
+        "rationaleMarkdown": "지역 스택 변수는 반복적인 클래스 메타데이터 증가의 일차 증거가 아니다. 로더와 클래스 loading을 조사한다."
       },
       {
         "key": "D",
-        "content": "ClassLoader와 class metadata의 lifetime/retained reference를 조사한다",
+        "content": "ClassLoader와 클래스 메타데이터의 수명/retained 참조를 조사한다",
         "displayOrder": 3,
-        "rationaleMarkdown": "strong reference가 남은 ClassLoader는 그 loader가 정의한 class가 unload되지 않게 유지할 수 있다. loader의 owner와 lifecycle을 추적한다."
+        "rationaleMarkdown": "강한 참조가 남은 `ClassLoader`는 해당 로더가 정의한 클래스가 언로드되지 않게 유지할 수 있다. 로더를 참조하는 주체와 생명주기를 추적한다."
       }
     ],
     "correctChoiceKey": "D",
-    "explanationMarkdown": "HotSpot metaspace와 class loader lifetime은 heap object leak과 다른 process memory 경로를 만들 수 있다."
+    "explanationMarkdown": "HotSpot metaspace와 클래스 로더 수명은 힙 객체 누수와 다른 프로세스 메모리 경로를 만들 수 있다."
   },
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.jit-hotspot-warmup.q1",
-    "promptMarkdown": "JIT compilation은 어느 계층의 현상인가?",
+    "promptMarkdown": "JIT 컴파일은 어느 계층의 현상인가?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
@@ -2196,36 +2196,36 @@
     "choices": [
       {
         "key": "A",
-        "content": "특정 JVM implementation이 runtime에 bytecode를 native code로 compile하는 동작",
+        "content": "특정 JVM 구현이 런타임에 바이트코드를 네이티브 코드로 컴파일하는 동작",
         "displayOrder": 0,
-        "rationaleMarkdown": "JIT는 runtime에 bytecode를 native code로 compile할 수 있는 JVM 구현 요소다. javac는 실행 전 source를 compile한다."
+        "rationaleMarkdown": "JIT는 런타임에 바이트코드를 네이티브 코드로 컴파일할 수 있는 JVM 구현 요소다. javac는 실행 전 소스를 컴파일한다."
       },
       {
         "key": "B",
-        "content": "OS process 생성 규칙",
+        "content": "OS 프로세스 생성 규칙",
         "displayOrder": 1,
-        "rationaleMarkdown": "OS process를 만드는 것은 just-in-time compilation의 뜻이 아니다."
+        "rationaleMarkdown": "운영체제 프로세스를 만드는 규칙은 적시 컴파일(just-in-time compilation)의 뜻이 아니다."
       },
       {
         "key": "C",
-        "content": "Serializable contract",
+        "content": "Serializable 계약",
         "displayOrder": 2,
-        "rationaleMarkdown": "serialization은 object/data 표현 계약이며 runtime code compile과 무관하다."
+        "rationaleMarkdown": "serialization은 객체/데이터 표현 계약이며 런타임 코드 컴파일과 무관하다."
       },
       {
         "key": "D",
-        "content": "Java source 문법의 compile-time 규칙",
+        "content": "Java 소스 문법의 컴파일 시점 규칙",
         "displayOrder": 3,
-        "rationaleMarkdown": "Java source compile은 실행 준비 단계이고 JIT compile은 runtime 구현 동작이다."
+        "rationaleMarkdown": "Java 소스 컴파일은 실행 준비 단계이고 JIT 컴파일은 런타임 구현 동작이다."
       }
     ],
     "correctChoiceKey": "A",
-    "explanationMarkdown": "JIT는 JVM runtime implementation behavior다."
+    "explanationMarkdown": "JIT는 JVM 런타임이 실행 중인 코드를 기계어로 컴파일하는 방식이다. Java 언어가 특정 컴파일 시점이나 최적화 단계를 모든 JVM에 요구하는 것은 아니므로 구현과 실행 상태를 구분해야 한다."
   },
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.jit-hotspot-warmup.q2",
-    "promptMarkdown": "warm-up이란?",
+    "promptMarkdown": "워밍업(warm-up)이란?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
@@ -2235,36 +2235,36 @@
     "choices": [
       {
         "key": "A",
-        "content": "class file이 삭제되는 시간",
+        "content": "클래스 파일이 삭제되는 시간",
         "displayOrder": 0,
-        "rationaleMarkdown": "warm-up은 class file을 지우는 게 아니라 실행 초기 profile과 최적화가 안정되기 전 상태를 뜻한다."
+        "rationaleMarkdown": "워밍업(warm-up)은 클래스 파일을 지우는 게 아니라 실행 초기 프로파일과 최적화가 안정되기 전 상태를 뜻한다."
       },
       {
         "key": "B",
-        "content": "반복 실행·profiling 이후 runtime 최적화 상태가 달라지는 초기 구간",
+        "content": "반복 실행과 프로파일링 이후 실행 중 최적화 상태가 달라지는 초기 구간",
         "displayOrder": 1,
-        "rationaleMarkdown": "반복 실행으로 profiling 정보가 쌓이고 runtime compilation이 일어날 수 있어 초기 측정과 충분히 실행한 뒤 결과가 다를 수 있다."
+        "rationaleMarkdown": "반복 실행으로 프로파일 정보가 쌓이고 실행 중 컴파일이 일어날 수 있어 초기 측정과 충분히 실행한 뒤의 결과가 다를 수 있다."
       },
       {
         "key": "C",
-        "content": "thread가 항상 sleep하는 상태",
+        "content": "스레드가 항상 sleep하는 상태",
         "displayOrder": 2,
-        "rationaleMarkdown": "thread를 잠들게 하는 것은 JIT warm-up의 의미와 관련없다."
+        "rationaleMarkdown": "스레드를 잠들게 하는 것은 JIT 워밍업(warm-up)의 의미와 관련없다."
       },
       {
         "key": "D",
-        "content": "heap이 무조건 비워지는 시간",
+        "content": "힙이 무조건 비워지는 시간",
         "displayOrder": 3,
-        "rationaleMarkdown": "GC가 benchmark 결과에 영향을 줄 수는 있지만 heap을 비우는 것이 warm-up의 정의는 아니다."
+        "rationaleMarkdown": "GC가 벤치마크 결과에 영향을 줄 수는 있지만 힙을 비우는 것이 워밍업의 정의는 아니다."
       }
     ],
     "correctChoiceKey": "B",
-    "explanationMarkdown": "처음 실행과 충분히 실행한 뒤의 JIT/profile 상태가 달라질 수 있다."
+    "explanationMarkdown": "처음 실행과 충분히 실행한 뒤의 JIT/프로파일 상태가 달라질 수 있다."
   },
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.jit-hotspot-warmup.q3",
-    "promptMarkdown": "tiered compilation의 설명으로 옳은 것은?",
+    "promptMarkdown": "계층형 컴파일(tiered compilation)의 설명으로 옳은 것은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
@@ -2274,36 +2274,36 @@
     "choices": [
       {
         "key": "A",
-        "content": "GC collector 이름이다",
+        "content": "GC 수집기 이름이다",
         "displayOrder": 0,
-        "rationaleMarkdown": "tiered compilation은 runtime code compilation 전략이지 garbage collector가 아니다."
+        "rationaleMarkdown": "계층형 컴파일(tiered compilation)은 런타임 코드 컴파일 전략이지 가비지 수집기가 아니다."
       },
       {
         "key": "B",
-        "content": "JVMS가 모든 JVM에 같은 threshold를 강제한다",
+        "content": "JVMS가 모든 JVM에 같은 임계값을 강제한다",
         "displayOrder": 1,
-        "rationaleMarkdown": "JVMS는 bytecode의 의미를 지정할 뿐 모든 JVM 구현이 같은 tier threshold를 쓰도록 정하지 않는다."
+        "rationaleMarkdown": "JVMS는 바이트코드의 의미를 지정할 뿐 모든 JVM 구현이 같은 계층별 임계값을 쓰도록 정하지 않는다."
       },
       {
         "key": "C",
-        "content": "HotSpot이 interpreter와 여러 compilation tier/profile을 조합할 수 있는 implementation 전략이다",
+        "content": "HotSpot이 인터프리터와 여러 컴파일 단계·프로파일을 조합할 수 있는 구현 전략이다",
         "displayOrder": 2,
-        "rationaleMarkdown": "HotSpot은 startup과 실행 성능을 균형 잡도록 interpretation, profiling, 여러 compilation tier를 조합할 수 있다. 구체 정책은 구현 세부다."
+        "rationaleMarkdown": "HotSpot은 빠른 시작과 실행 성능의 균형을 위해 인터프리터 실행, 프로파일링, 여러 컴파일 단계를 조합할 수 있다. 구체적인 정책은 구현 세부 사항이다."
       },
       {
         "key": "D",
-        "content": "javac가 여러 OS native binary를 만드는 기능이다",
+        "content": "javac가 여러 OS 네이티브 바이너리를 만드는 기능이다",
         "displayOrder": 3,
-        "rationaleMarkdown": "javac 결과의 portability는 HotSpot runtime compilation 방식과 다른 문제다."
+        "rationaleMarkdown": "javac 결과의 이식성은 HotSpot 런타임 컴파일 방식과 다른 문제다."
       }
     ],
     "correctChoiceKey": "C",
-    "explanationMarkdown": "tiered compilation은 HotSpot의 실행 최적화 구현 설명이다."
+    "explanationMarkdown": "계층형 컴파일(tiered compilation)은 HotSpot의 실행 최적화 구현 설명이다."
   },
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.jit-hotspot-warmup.q4",
-    "promptMarkdown": "짧은 microbenchmark가 실제보다 느리거나 빠르게 보일 수 있는 요인은?",
+    "promptMarkdown": "짧은 마이크로벤치마크가 실제보다 느리거나 빠르게 보일 수 있는 요인은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
@@ -2313,38 +2313,38 @@
     "choices": [
       {
         "key": "A",
-        "content": "JIT가 측정 전 모든 code를 최적화하기 때문이다",
+        "content": "JIT가 측정 전 모든 코드를 최적화하기 때문이다",
         "displayOrder": 0,
-        "rationaleMarkdown": "짧은 test는 interpreter나 초기 compilation 비용을 포함해 hot code가 나중에 최적화된 상태에 도달하기 전을 측정할 수 있다."
+        "rationaleMarkdown": "짧은 측정은 인터프리터 실행이나 초기 컴파일 비용을 포함해 자주 실행되는 코드가 최적화되기 전의 상태를 측정할 수 있다."
       },
       {
         "key": "B",
-        "content": "Java는 benchmark가 불가능하기 때문이다",
+        "content": "Java에서는 성능을 측정할 수 없기 때문이다",
         "displayOrder": 1,
-        "rationaleMarkdown": "Java도 benchmark할 수 있지만 시작 비용과 runtime phase를 목적 operation 성능과 분리해야 한다."
+        "rationaleMarkdown": "Java에서도 성능을 측정할 수 있지만 시작 비용과 실행 단계별 비용을 측정 대상 작업의 성능과 구분해야 한다."
       },
       {
         "key": "C",
-        "content": "bytecode가 항상 native이기 때문이다",
+        "content": "바이트코드가 항상 네이티브이기 때문이다",
         "displayOrder": 2,
-        "rationaleMarkdown": "bytecode와 machine code는 다르다. JVM은 일부 bytecode를 해석하고 hot path를 compile할 수 있다."
+        "rationaleMarkdown": "바이트코드와 기계어는 다르다. JVM은 일부 바이트코드를 해석하고 자주 실행되는 경로를 컴파일할 수 있다."
       },
       {
         "key": "D",
-        "content": "class loading, JIT warm-up, GC, OS noise가 측정에 섞일 수 있다",
+        "content": "클래스 로딩, JIT 워밍업, GC, 운영체제 변동 요인이 측정에 섞일 수 있다",
         "displayOrder": 3,
-        "rationaleMarkdown": "짧은 측정에는 class loading, JIT warm-up, GC, OS scheduling noise가 모두 섞일 수 있다."
+        "rationaleMarkdown": "짧은 측정에는 클래스 로딩, JIT 워밍업, GC, 운영체제 스케줄링에 따른 변동이 모두 섞일 수 있다."
       }
     ],
     "correctChoiceKey": "D",
-    "explanationMarkdown": "실행 초기 비용과 runtime noise를 측정 구간과 분리해야 한다."
+    "explanationMarkdown": "실행 초기 비용과 실행 중 변동 요인을 측정 구간과 구분해야 한다."
   },
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.jit-hotspot-warmup.q5",
-    "promptMarkdown": "method가 초기에 interpreter로 실행되다가 profiling 후 optimized code로 바뀌었다. 이전 결과와 later 결과를 비교할 때?",
+    "promptMarkdown": "메서드가 처음에는 인터프리터(interpreter)로 실행되다가 프로파일 정보를 수집한 뒤 최적화된 코드로 바뀌었다. 초기 결과와 이후 결과를 비교할 때 무엇을 기록해야 하는가?",
     "questionType": "MULTIPLE_CHOICE",
-    "difficulty": "HARD",
+    "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": [
       "java.core.jvm-runtime.jit-hotspot-warmup"
@@ -2352,38 +2352,38 @@
     "choices": [
       {
         "key": "A",
-        "content": "같은 source라도 실행 phase와 HotSpot optimization 상태를 함께 기록한다",
+        "content": "같은 소스 코드라도 실행 단계와 HotSpot 최적화 상태를 함께 기록한다",
         "displayOrder": 0,
-        "rationaleMarkdown": "HotSpot은 runtime phase에 따라 같은 source를 다르게 실행하므로 성능 비교 시 warm-up과 VM 상태를 통제해 기록한다."
+        "rationaleMarkdown": "HotSpot은 실행 단계에 따라 같은 소스 코드를 다르게 실행하므로 성능 비교 시 워밍업과 가상 머신 상태를 통제해 기록한다."
       },
       {
         "key": "B",
         "content": "javac를 매 호출마다 다시 실행한다",
         "displayOrder": 1,
-        "rationaleMarkdown": "runtime JIT compile은 method 호출마다 javac를 실행할 필요가 없다."
+        "rationaleMarkdown": "런타임 JIT 컴파일은 메서드 호출마다 javac를 실행할 필요가 없다."
       },
       {
         "key": "C",
-        "content": "GC가 method 반환값을 바꿨다고 본다",
+        "content": "GC가 메서드 반환값을 바꿨다고 본다",
         "displayOrder": 2,
-        "rationaleMarkdown": "GC가 측정 시간에는 영향을 주어도 method가 다른 값을 반환했다는 뜻은 아니다."
+        "rationaleMarkdown": "GC가 측정 시간에는 영향을 주어도 메서드가 다른 값을 반환했다는 뜻은 아니다."
       },
       {
         "key": "D",
-        "content": "JVMS가 method semantics를 바꿨다고 결론낸다",
+        "content": "JVMS가 메서드 의미론을 바꿨다고 결론낸다",
         "displayOrder": 3,
-        "rationaleMarkdown": "JVM optimization은 지정된 program behavior를 보존해야 한다. compilation 단계가 method 의미를 바꾸지 않는다."
+        "rationaleMarkdown": "JVM의 최적화는 명세가 정한 프로그램의 관찰 가능한 동작을 보존해야 한다. 컴파일 단계가 메서드의 의미를 임의로 바꾸는 것은 아니다."
       }
     ],
     "correctChoiceKey": "A",
-    "explanationMarkdown": "performance observation은 implementation state와 warm-up phase의 영향을 받는다."
+    "explanationMarkdown": "성능 측정 결과는 구현 상태와 워밍업 단계의 영향을 받는다."
   },
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.jit-hotspot-warmup.q6",
-    "promptMarkdown": "HotSpot이 speculative optimization을 적용했다가 가정이 깨져 deoptimization했다. 이 사실에서 보장하지 않는 것은?",
+    "promptMarkdown": "HotSpot이 추측 기반 최적화(speculative optimization)를 적용했다가 가정이 깨져 최적화 해제(deoptimization)를 했다. 이 사실만으로 보장할 수 없는 것은?",
     "questionType": "MULTIPLE_CHOICE",
-    "difficulty": "HARD",
+    "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": [
       "java.core.jvm-runtime.jit-hotspot-warmup"
@@ -2391,36 +2391,36 @@
     "choices": [
       {
         "key": "A",
-        "content": "profiling이 optimization 입력이 될 수 있다는 것",
+        "content": "프로파일링 정보가 최적화의 입력이 될 수 있다는 것",
         "displayOrder": 0,
-        "rationaleMarkdown": "runtime profiling을 최적화에 활용하는 것은 implementation 전략이지 Java source language의 보장이 아니다."
+        "rationaleMarkdown": "실행 시 프로파일링 정보를 최적화에 활용하는 것은 JVM 구현 전략이지 Java 소스 언어가 보장하는 동작은 아닙니다."
       },
       {
         "key": "B",
-        "content": "모든 JVM이 같은 threshold·deoptimization 정책을 쓴다는 것",
+        "content": "모든 JVM이 같은 임계값과 최적화 해제 정책을 쓴다는 것",
         "displayOrder": 1,
-        "rationaleMarkdown": "HotSpot threshold와 speculative optimization은 구현 세부라 다른 호환 JVM은 다르게 선택할 수 있다."
+        "rationaleMarkdown": "HotSpot의 임계값과 추측 기반 최적화는 구현 세부 사항이므로 다른 JVM은 다른 방식을 선택할 수 있다."
       },
       {
         "key": "C",
-        "content": "runtime compilation이 implementation detail이라는 것",
+        "content": "실행 중 컴파일이 구현 세부 사항이라는 것",
         "displayOrder": 2,
-        "rationaleMarkdown": "JIT는 runtime이 선택하는 구현 동작이며 portable code는 language/API semantics에 의존한다."
+        "rationaleMarkdown": "JIT는 JVM이 선택하는 구현 동작이며, 이식 가능한 코드는 Java 언어와 API의 의미에 의존한다."
       },
       {
         "key": "D",
-        "content": "특정 HotSpot 실행에서 code 상태가 변할 수 있다는 것",
+        "content": "특정 HotSpot 실행에서 코드 상태가 변할 수 있다는 것",
         "displayOrder": 3,
-        "rationaleMarkdown": "HotSpot은 profile이 쌓이면서 method의 compile 상태를 바꿀 수 있지만 모든 JVM이 같은 정책을 따라야 한다는 뜻은 아니다."
+        "rationaleMarkdown": "HotSpot은 프로파일이 쌓이면서 메서드의 컴파일 상태를 바꿀 수 있지만 모든 JVM이 같은 정책을 따라야 한다는 뜻은 아니다."
       }
     ],
     "correctChoiceKey": "B",
-    "explanationMarkdown": "threshold와 정책은 JVM implementation detail이며 JVMS 일반 보장이 아니다."
+    "explanationMarkdown": "임계값과 정책은 JVM 구현 세부 사항이며 JVMS가 모든 구현에 보장하는 내용은 아니다."
   },
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.runtime-diagnostics-jcmd-jstack-jfr.q1",
-    "promptMarkdown": "jstack이 주로 제공하는 evidence는?",
+    "promptMarkdown": "jstack이 주로 제공하는 근거는?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
@@ -2430,31 +2430,31 @@
     "choices": [
       {
         "key": "A",
-        "content": "module descriptor 생성",
+        "content": "모듈 서술자 생성",
         "displayOrder": 0,
-        "rationaleMarkdown": "thread dump는 module descriptor를 만들지 않는다. module metadata 진단은 다른 영역이다."
+        "rationaleMarkdown": "스레드 덤프는 모듈 서술자를 만들지 않는다. 모듈 메타데이터 진단은 다른 영역이다."
       },
       {
         "key": "B",
-        "content": "heap object retained path만",
+        "content": "힙 객체 유지 경로(retained path)만",
         "displayOrder": 1,
-        "rationaleMarkdown": "jstack은 thread stack과 상태를 보여주며 전체 retained heap object graph를 제공하지 않는다."
+        "rationaleMarkdown": "jstack은 스레드 스택과 상태를 보여주며 전체 retained 힙 객체 그래프를 제공하지 않는다."
       },
       {
         "key": "C",
-        "content": "thread stack trace와 상태·대기 관계",
+        "content": "스레드 스택 trace와 상태·대기 관계",
         "displayOrder": 2,
-        "rationaleMarkdown": "jstack은 thread stack trace와 상태를 수집한다. 대기 상태가 나타나 hang 원인을 추적하는 데 쓸 수 있다."
+        "rationaleMarkdown": "jstack은 스레드 스택 trace와 상태를 수집한다. 대기 상태가 나타나 멈춤 원인을 추적하는 데 쓸 수 있다."
       },
       {
         "key": "D",
-        "content": "class file compile result",
+        "content": "클래스 파일을 컴파일한 결과",
         "displayOrder": 3,
-        "rationaleMarkdown": "javac compile 결과와 실행 중 thread 진단은 답하는 질문이 다르다."
+        "rationaleMarkdown": "javac 컴파일 결과와 실행 중 스레드 진단은 답하는 질문이 다르다."
       }
     ],
     "correctChoiceKey": "C",
-    "explanationMarkdown": "jstack은 thread dump 중심 도구다."
+    "explanationMarkdown": "jstack은 스레드 덤프 중심 도구다."
   },
   {
     "kind": "question",
@@ -2471,25 +2471,25 @@
         "key": "A",
         "content": "DB query plan을 자동 생성하는 것",
         "displayOrder": 0,
-        "rationaleMarkdown": "JFR은 JVM/application runtime event를 기록하며 database query plan을 자동 생성하지 않는다."
+        "rationaleMarkdown": "JFR은 JVM/애플리케이션 런타임 event를 기록하며 database query plan을 자동 생성하지 않는다."
       },
       {
         "key": "B",
-        "content": "항상 source를 수정하는 것",
+        "content": "항상 소스를 수정하는 것",
         "displayOrder": 1,
-        "rationaleMarkdown": "Flight Recorder는 runtime event를 수집하는 도구이지 Java source를 편집하는 기능이 아니다."
+        "rationaleMarkdown": "Flight Recorder는 런타임 event를 수집하는 도구이지 Java 소스를 편집하는 기능이 아니다."
       },
       {
         "key": "C",
-        "content": "모든 heap object를 영구 저장하는 것",
+        "content": "모든 힙 객체를 영구 저장하는 것",
         "displayOrder": 2,
-        "rationaleMarkdown": "JFR은 선택한 event를 기록하지 모든 heap object를 영구 저장하지 않는다. object graph에는 heap 진단 도구를 사용한다."
+        "rationaleMarkdown": "JFR은 선택한 event를 기록하지 모든 힙 객체를 영구 저장하지 않는다. 객체 그래프에는 힙 진단 도구를 사용한다."
       },
       {
         "key": "D",
-        "content": "시간축의 runtime event recording을 수집해 성능·GC·thread 현상을 함께 보는 것",
+        "content": "시간축의 런타임 event recording을 수집해 성능·GC·스레드 현상을 함께 보는 것",
         "displayOrder": 3,
-        "rationaleMarkdown": "JFR은 GC, thread, allocation, execution event에 timestamp를 붙여 시간상 연관을 분석할 수 있게 한다."
+        "rationaleMarkdown": "JFR은 GC, 스레드, 할당, execution event에 timestamp를 붙여 시간상 연관을 분석할 수 있게 한다."
       }
     ],
     "correctChoiceKey": "D",
@@ -2508,27 +2508,27 @@
     "choices": [
       {
         "key": "A",
-        "content": "대상 JVM에 heap·VM·thread·recording 관련 진단 command를 요청할 때",
+        "content": "대상 JVM에 힙·VM·스레드·recording 관련 진단 command를 요청할 때",
         "displayOrder": 0,
-        "rationaleMarkdown": "jcmd는 실행 중인 JVM에 지원되는 진단 명령을 전달하며 명령에 따라 VM, heap, thread, recording 작업을 수행한다."
+        "rationaleMarkdown": "jcmd는 실행 중인 JVM에 지원되는 진단 명령을 전달하며 명령에 따라 VM, 힙, 스레드, recording 작업을 수행한다."
       },
       {
         "key": "B",
-        "content": "모든 OS process를 kill할 때",
+        "content": "모든 OS 프로세스를 kill할 때",
         "displayOrder": 1,
-        "rationaleMarkdown": "jcmd는 JVM 진단 인터페이스이지 범용 OS process kill 도구가 아니다."
+        "rationaleMarkdown": "jcmd는 JVM 진단 인터페이스이지 범용 OS 프로세스 kill 도구가 아니다."
       },
       {
         "key": "C",
-        "content": "annotation processor를 compile할 때",
+        "content": "annotation 프로세서를 컴파일할 때",
         "displayOrder": 2,
-        "rationaleMarkdown": "annotation processor는 컴파일 단계에서 실행된다. 이미 실행 중인 JVM에 보낼 jcmd command가 아니다."
+        "rationaleMarkdown": "annotation 프로세서는 컴파일 단계에서 실행된다. 이미 실행 중인 JVM에 보낼 jcmd command가 아니다."
       },
       {
         "key": "D",
-        "content": "Java source만 문법 검사할 때",
+        "content": "Java 소스만 문법 검사할 때",
         "displayOrder": 3,
-        "rationaleMarkdown": "source 문법 검사는 compiler나 linter가 담당하며 jcmd의 일반 목적은 runtime 진단이다."
+        "rationaleMarkdown": "소스 문법 검사는 컴파일러나 linter가 담당하며 jcmd의 일반 목적은 런타임 진단이다."
       }
     ],
     "correctChoiceKey": "A",
@@ -2537,7 +2537,7 @@
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.runtime-diagnostics-jcmd-jstack-jfr.q4",
-    "promptMarkdown": "thread가 BLOCKED 상태로 응답하지 않는 증상에서 첫 evidence로 유용한 것은?",
+    "promptMarkdown": "스레드가 BLOCKED 상태로 응답하지 않는 증상에서 첫 근거로 유용한 것은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
@@ -2547,38 +2547,38 @@
     "choices": [
       {
         "key": "A",
-        "content": "JFR 없이 source scope만 본다",
+        "content": "JFR 없이 소스 범위만 본다",
         "displayOrder": 0,
-        "rationaleMarkdown": "source scope는 실행 중 어떤 thread가 monitor를 잡았거나 어떤 lock을 기다리는지 보여주지 않는다."
+        "rationaleMarkdown": "소스 범위는 실행 중 어떤 스레드가 모니터를 잡았거나 어떤 lock을 기다리는지 보여주지 않는다."
       },
       {
         "key": "B",
-        "content": "jstack 또는 jcmd thread 출력으로 lock 대기 관계를 확인한다",
+        "content": "jstack 또는 jcmd 스레드 출력으로 lock 대기 관계를 확인한다",
         "displayOrder": 1,
-        "rationaleMarkdown": "jstack이나 jcmd thread dump에서 thread 상태와 lock wait를 확인해 BLOCKED thread에 대한 근거를 얻는다."
+        "rationaleMarkdown": "jstack이나 jcmd 스레드 덤프에서 스레드 상태와 lock wait를 확인해 BLOCKED 스레드에 대한 근거를 얻는다."
       },
       {
         "key": "C",
         "content": "Xmx를 즉시 두 배로 만든다",
         "displayOrder": 2,
-        "rationaleMarkdown": "근거 없이 Xmx를 바꾸는 것은 monitor contention 진단이 아니다."
+        "rationaleMarkdown": "근거 없이 Xmx를 바꾸는 것은 모니터 contention 진단이 아니다."
       },
       {
         "key": "D",
-        "content": "javap -c로 heap retained path를 찾는다",
+        "content": "javap -c로 힙 유지 경로(retained path)를 찾는다",
         "displayOrder": 3,
-        "rationaleMarkdown": "javap는 class-file bytecode를 조사하며 live process의 wait graph를 보여주지 않는다."
+        "rationaleMarkdown": "javap는 클래스 파일 바이트코드를 조사하며 실행 중인 프로세스의 wait 객체 그래프를 보여주지 않는다."
       }
     ],
     "correctChoiceKey": "B",
-    "explanationMarkdown": "thread dump는 누가 어떤 lock을 기다리는지 관찰하는 데 적합하다."
+    "explanationMarkdown": "스레드 덤프는 누가 어떤 lock을 기다리는지 관찰하는 데 적합하다."
   },
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.runtime-diagnostics-jcmd-jstack-jfr.q5",
-    "promptMarkdown": "장시간 지연 시간 spike와 GC pause, CPU 변동의 시간 관계를 비교하려면?",
+    "promptMarkdown": "장시간 지연 시간 spike와 GC 일시 중지 시간, CPU 변동의 시간 관계를 비교하려면?",
     "questionType": "MULTIPLE_CHOICE",
-    "difficulty": "HARD",
+    "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": [
       "java.core.jvm-runtime.runtime-diagnostics-jcmd-jstack-jfr"
@@ -2588,36 +2588,36 @@
         "key": "A",
         "content": "ThreadLocal.remove를 호출한다",
         "displayOrder": 0,
-        "rationaleMarkdown": "ThreadLocal cleanup은 latency spike와 GC/CPU event를 시간순으로 연결하는 timestamped evidence를 주지 않는다."
+        "rationaleMarkdown": "ThreadLocal cleanup은 latency spike와 GC/CPU event를 시간순으로 연결하는 timestamped 근거를 주지 않는다."
       },
       {
         "key": "B",
         "content": "jstack 한 장만으로 모든 원인을 확정한다",
         "displayOrder": 1,
-        "rationaleMarkdown": "jstack 한 번의 snapshot은 특정 순간의 thread 상태만 보여 latency, GC, CPU의 시간 관계를 입증하지 못한다."
+        "rationaleMarkdown": "jstack 한 번의 스냅샷은 특정 순간의 스레드 상태만 보여 latency, GC, CPU의 시간 관계를 입증하지 못한다."
       },
       {
         "key": "C",
         "content": "JFR recording에서 시간축 event를 함께 분석한다",
         "displayOrder": 2,
-        "rationaleMarkdown": "JFR recording은 runtime event를 timeline에 배치해 spike 주변 pause와 thread behavior를 비교할 수 있다."
+        "rationaleMarkdown": "JFR 기록은 런타임 이벤트를 시간축에 배치해 지연 급증 전후의 일시 중지 시간과 스레드 동작을 비교하는 근거를 제공한다."
       },
       {
         "key": "D",
         "content": "javac를 다시 실행한다",
         "displayOrder": 3,
-        "rationaleMarkdown": "source 재컴파일은 live process의 GC와 latency event를 측정하거나 진단하지 않는다."
+        "rationaleMarkdown": "소스 재컴파일은 실행 중인 프로세스의 GC와 latency event를 측정하거나 진단하지 않는다."
       }
     ],
     "correctChoiceKey": "C",
-    "explanationMarkdown": "JFR은 여러 runtime event를 시간 관계로 관찰하는 증거를 제공한다."
+    "explanationMarkdown": "JFR은 여러 런타임 event를 시간 관계로 관찰하는 증거를 제공한다."
   },
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.runtime-diagnostics-jcmd-jstack-jfr.q6",
-    "promptMarkdown": "heap 사용량 증가와 thread 대기를 동시에 조사할 때 가장 정확한 도구 조합은?",
+    "promptMarkdown": "힙 사용량 증가와 스레드 대기를 동시에 조사할 때 가장 정확한 도구 조합은?",
     "questionType": "MULTIPLE_CHOICE",
-    "difficulty": "HARD",
+    "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": [
       "java.core.jvm-runtime.runtime-diagnostics-jcmd-jstack-jfr"
@@ -2625,122 +2625,122 @@
     "choices": [
       {
         "key": "A",
-        "content": "JFR은 thread를 보여 주지 않으므로 모든 도구에서 제외한다",
+        "content": "JFR은 스레드를 보여 주지 않으므로 모든 도구에서 제외한다",
         "displayOrder": 0,
-        "rationaleMarkdown": "JFR과 jcmd도 thread 근거를 줄 수 있다. 명령과 event coverage가 질문에 맞는지 보고 선택한다."
+        "rationaleMarkdown": "JFR과 jcmd도 스레드 근거를 줄 수 있다. 명령과 event coverage가 질문에 맞는지 보고 선택한다."
       },
       {
         "key": "B",
-        "content": "jstack만 반복해 heap retained path를 확정한다",
+        "content": "jstack만 반복해 힙 유지 경로(retained path)를 확정한다",
         "displayOrder": 1,
-        "rationaleMarkdown": "jstack은 thread 상태에 유용하지만 heap retained path를 직접 확정하지 않는다."
+        "rationaleMarkdown": "jstack은 스레드 상태에 유용하지만 힙 유지 경로(retained path)를 직접 확정하지 않는다."
       },
       {
         "key": "C",
         "content": "javap만 사용한다",
         "displayOrder": 2,
-        "rationaleMarkdown": "javap는 static class-file metadata를 조사하고 live heap owner나 thread wait는 추적하지 못한다."
+        "rationaleMarkdown": "javap는 static 클래스 파일 메타데이터를 조사하고 실행 중인 힙 소유자나 스레드 wait는 추적하지 못한다."
       },
       {
         "key": "D",
-        "content": "heap histogram/dump에 맞는 jcmd command와 jstack을 각각 사용한다",
+        "content": "힙 histogram/덤프에 맞는 jcmd command와 jstack을 각각 사용한다",
         "displayOrder": 3,
-        "rationaleMarkdown": "heap 관련 jcmd histogram/dump 등은 객체 근거를 제공하고 thread dump는 block된 stack을 보여준다. 서로 보완한다."
+        "rationaleMarkdown": "힙 관련 jcmd histogram/덤프 등은 객체 근거를 제공하고 스레드 덤프는 block된 스택을 보여준다. 서로 보완한다."
       }
     ],
     "correctChoiceKey": "D",
-    "explanationMarkdown": "heap evidence와 thread evidence는 서로 다른 도구가 주로 제공하므로 증상별로 조합한다."
+    "explanationMarkdown": "힙 근거와 스레드 근거는 서로 다른 도구가 주로 제공하므로 증상별로 조합한다."
   }
 ,
 {
   "kind": "question",
   "contentKey": "java.core.jvm-runtime.runtime-diagnostics-jcmd-jstack-jfr.q7",
-  "promptMarkdown": "API 지연 시간이 상승했지만 CPU는 낮다. `jstack`에서는 다수의 요청 thread가 같은 외부 호출을 기다린다.\n\n어떤 가설을 세울 수 있으며, 한 번의 thread dump만으로 결론 내리지 않기 위해 무엇을 추가로 관찰해야 하는가?",
+  "promptMarkdown": "API 지연 시간이 상승했지만 CPU는 낮다. `jstack`에서는 다수의 요청 스레드가 같은 외부 호출을 기다린다.\n\n어떤 가설을 세울 수 있으며, 한 번의 스레드 덤프만으로 결론 내리지 않기 위해 무엇을 추가로 관찰해야 하는가?",
   "questionType": "SCENARIO",
   "difficulty": "HARD",
   "status": "PUBLISHED",
   "conceptKeys": [
     "java.core.jvm-runtime.runtime-diagnostics-jcmd-jstack-jfr"
   ],
-  "modelAnswer": "외부 호출 지연 시간이나 connection pool 대기가 병목일 가능성을 세운다. 시간 간격을 둔 여러 thread dump와 요청/remote 지연 시간, pool 사용량, timeout·error metric을 함께 비교해 thread 상태가 지속되는지와 원인을 분리한다.",
-  "explanationMarkdown": "jstack은 특정 시점의 stack evidence다. 원인과 상관관계를 만들려면 반복 snapshot과 애플리케이션·외부 시스템 지표를 함께 봐야 한다."
+  "modelAnswer": "외부 호출 지연 시간이나 연결 풀 대기가 병목일 가능성을 세운다. 시간 간격을 둔 여러 스레드 덤프와 요청/remote 지연 시간, 풀 사용량, 타임아웃·오류 metric을 함께 비교해 스레드 상태가 지속되는지와 원인을 분리한다.",
+  "explanationMarkdown": "jstack은 특정 시점의 스택 근거다. 원인과 상관관계를 만들려면 반복 스냅샷과 애플리케이션·외부 시스템 지표를 함께 봐야 한다."
 },
 {
   "kind": "question",
   "contentKey": "java.core.jvm-runtime.jdk-jvm-classfile.q7",
-  "promptMarkdown": "같은 `.class` 파일을 서로 다른 OS의 JVM에서 실행했는데 관찰되는 Java 동작은 같지만 실제 생성된 machine code와 최적화 결과는 다를 수 있다. Java source, class file bytecode, JVM 구현, native code의 경계를 나눠 설명하라.",
+  "promptMarkdown": "같은 `.class` 파일을 서로 다른 OS의 JVM에서 실행했는데 관찰되는 Java 동작은 같지만 실제 생성된 machine 코드와 최적화 결과는 다를 수 있다. Java 소스, 클래스 파일 바이트코드, JVM 구현, 네이티브 코드의 경계를 나눠 설명하라.",
   "questionType": "DESCRIPTIVE",
   "difficulty": "MEDIUM",
   "status": "PUBLISHED",
   "conceptKeys": [
     "java.core.jvm-runtime.jdk-jvm-classfile"
   ],
-  "modelAnswer": "javac는 Java source를 JVM specification이 정의한 class file과 bytecode 형태로 만든다. JVM 구현은 그 class file을 해석하거나 JIT compile해 현재 CPU/OS에 맞는 native code로 실행할 수 있다. Class file과 Java/JVMS가 보장하는 관찰 가능한 의미는 플랫폼 간 계약이고, 구체적인 machine code, JIT threshold와 최적화 방식은 JVM/OS implementation detail이다.",
-  "explanationMarkdown": "Java의 portability를 ‘같은 machine code가 어디서나 실행된다’로 이해하면 안 된다. 공유되는 것은 class file 형식과 JVM이 따라야 할 실행 의미이고, 실제 CPU 명령으로 바꾸는 과정은 각 JVM 구현이 담당한다. 그래서 동일 bytecode가 다른 플랫폼에서 다른 native code로 실행되어도 Java 수준의 계약은 유지될 수 있다."
+  "modelAnswer": "`javac`는 Java 소스 코드를 JVM 명세가 정의한 클래스 파일과 바이트코드로 만듭니다. JVM 구현은 클래스 파일을 해석하거나 JIT 컴파일해 현재 CPU와 OS에 맞는 네이티브 코드로 실행할 수 있습니다. 플랫폼 간 계약은 클래스 파일 형식과 Java/JVMS가 보장하는 관찰 가능한 의미입니다. 구체적인 기계어, JIT 임계값, 최적화 방식은 JVM 구현과 OS에 따라 달라집니다.",
+  "explanationMarkdown": "Java의 이식성을 ‘같은 machine 코드가 어디서나 실행된다’로 이해하면 안 된다. 공유되는 것은 클래스 파일 형식과 JVM이 따라야 할 실행 의미이고, 실제 CPU 명령으로 바꾸는 과정은 각 JVM 구현이 담당한다. 그래서 동일 바이트코드가 다른 플랫폼에서 다른 네이티브 코드로 실행되어도 Java 수준의 계약은 유지될 수 있다."
 },
 {
   "kind": "question",
   "contentKey": "java.core.jvm-runtime.class-loading-linking-initialization.q7",
-  "promptMarkdown": "어떤 class의 static field가 `static int value = loadValue();`로 선언되어 있다. 이 class가 처음 active use될 때 loading, linking의 preparation, initialization에서 `value`가 각각 어떤 의미를 가지는지 설명하라.",
+  "promptMarkdown": "어떤 클래스에 `static int value = loadValue();`가 선언되어 있습니다. 이 클래스를 처음 능동적으로 사용할 때 로딩, 링킹의 준비 단계, 초기화 단계에서 `value`가 각각 어떤 상태인지 설명하세요?",
   "questionType": "DESCRIPTIVE",
   "difficulty": "MEDIUM",
   "status": "PUBLISHED",
   "conceptKeys": [
     "java.core.jvm-runtime.class-loading-linking-initialization"
   ],
-  "modelAnswer": "Loading에서는 class의 binary representation을 읽어 runtime class를 만든다. Linking의 preparation에서는 static field를 위한 storage가 준비되고 `int value`에는 기본값 0이 먼저 설정된다. Initialization 단계에서 class initialization method가 실행되면서 `loadValue()`가 호출되고 그 결과가 value에 대입된다. Preparation의 기본값 설정과 source에 적힌 initializer 실행은 서로 다른 단계다.",
-  "explanationMarkdown": "Class lifecycle을 이해할 때 가장 자주 섞이는 부분이 preparation과 initialization이다. Preparation은 static storage와 JVM 기본값을 준비하는 단계이고, source의 static field initializer나 static block을 실제로 실행하는 것은 initialization이다. 이 구분은 class initialization 순서나 초기화 실패를 분석할 때 중요하다."
+  "modelAnswer": "로딩 단계에서는 클래스의 바이너리 표현을 읽어 런타임 클래스를 만듭니다. 링킹의 준비 단계에서는 정적 필드에 쓸 저장 공간을 마련하고 `int value`에 기본값 `0`을 설정합니다. 초기화 단계에서 클래스 초기화 메서드가 실행되며 `loadValue()`가 호출되고 그 결과가 `value`에 대입됩니다. 준비 단계의 기본값 설정과 소스 초기화식 실행은 서로 다른 단계입니다.",
+  "explanationMarkdown": "클래스 생명주기를 설명할 때 준비 단계(preparation)와 초기화 단계(initialization)를 혼동하기 쉽습니다. 준비 단계에서는 정적 필드의 저장 공간을 마련하고 JVM 기본값을 설정합니다. 소스 코드의 정적 필드 초기화식이나 정적 초기화 블록을 실제 실행하는 단계는 초기화 단계입니다. 이 구분은 클래스 초기화 순서와 초기화 실패를 분석할 때 중요합니다."
 },
 {
   "kind": "question",
   "contentKey": "java.core.jvm-runtime.classloader-delegation-type-identity.q7",
-  "promptMarkdown": "플러그인 class loader가 parent delegation을 우회해 애플리케이션과 같은 binary name의 `com.example.Plugin` interface까지 별도로 define했다. 플러그인 구현 객체를 애플리케이션 쪽 `com.example.Plugin`으로 cast할 때 실패할 수 있는 이유와 loader 경계 설계 방법을 설명하라.",
+  "promptMarkdown": "플러그인 클래스 로더가 부모 위임(parent delegation)을 우회해 애플리케이션과 같은 바이너리 이름의 `com.example.Plugin` 인터페이스까지 별도로 정의했다. 플러그인 구현 객체를 애플리케이션 쪽 `com.example.Plugin`으로 캐스팅할 때 실패할 수 있는 이유와 로더 경계 설계 방법을 설명하라.",
   "questionType": "SCENARIO",
   "difficulty": "HARD",
   "status": "PUBLISHED",
   "conceptKeys": [
     "java.core.jvm-runtime.classloader-delegation-type-identity"
   ],
-  "modelAnswer": "JVM의 runtime type identity에는 binary name뿐 아니라 defining ClassLoader도 포함된다. 이름이 같아도 애플리케이션 loader가 define한 Plugin과 plugin loader가 별도로 define한 Plugin은 서로 다른 타입이므로 cast가 실패할 수 있다. 공유 API/interface는 parent loader가 한 번만 define하도록 delegation 경계를 잡고 plugin loader는 구현 class만 별도로 load하는 방식으로 namespace를 설계해야 한다.",
-  "explanationMarkdown": "Class 이름 문자열이 같다는 사실만으로 JVM에서 같은 타입이 되는 것은 아니다. `binary name + defining loader`가 함께 type identity를 만든다. Plugin architecture에서는 공통 API를 parent 쪽에서 공유하고 구현만 child loader가 담당하게 해야 같은 interface 계약을 양쪽이 실제로 공유할 수 있다."
+  "modelAnswer": "JVM의 실행 시점 타입 동일성에는 바이너리 이름뿐 아니라 해당 클래스를 정의한 `ClassLoader`도 포함된다. 이름이 같아도 애플리케이션 로더가 정의한 `Plugin`과 플러그인 로더가 별도로 정의한 `Plugin`은 서로 다른 타입이므로 캐스팅이 실패할 수 있다. 공유 API/인터페이스는 부모 로더가 한 번만 정의하도록 위임 경계를 잡고, 플러그인 로더는 구현 클래스만 별도로 로딩하는 방식으로 이름 공간을 설계해야 한다.",
+  "explanationMarkdown": "클래스 이름 문자열이 같다는 사실만으로 JVM에서 같은 타입이 되는 것은 아니다. `바이너리 이름 + 클래스를 정의한 로더`가 함께 타입 동일성을 만든다. 플러그인 아키텍처에서는 공통 API를 부모 로더에서 공유하고 구현 클래스만 자식 로더가 담당하게 해야 양쪽이 같은 인터페이스 계약을 공유할 수 있다."
 },
 {
   "kind": "question",
   "contentKey": "java.core.jvm-runtime.jvm-runtime-data-areas-frames.q7",
-  "promptMarkdown": "재귀 메서드가 호출될 때마다 작은 객체 하나를 heap에 만들고 다시 자신을 호출한다. Heap 여유가 충분한데도 깊은 재귀에서 `StackOverflowError`가 발생할 수 있는 이유를 stack frame과 heap object의 수명 관점에서 설명하라.",
+  "promptMarkdown": "재귀 메서드가 호출될 때마다 작은 객체 하나를 힙에 만들고 다시 자신을 호출한다. 힙 여유가 충분한데도 깊은 재귀에서 `StackOverflowError`가 발생할 수 있는 이유를 스택 프레임과 힙 객체의 수명 관점에서 설명하라.",
   "questionType": "DESCRIPTIVE",
   "difficulty": "MEDIUM",
   "status": "PUBLISHED",
   "conceptKeys": [
     "java.core.jvm-runtime.jvm-runtime-data-areas-frames"
   ],
-  "modelAnswer": "각 메서드 호출은 현재 thread의 Java stack에 별도 frame을 만들고 이전 호출이 끝나기 전 재귀 호출을 하면 frame이 계속 누적된다. Frame 수가 thread stack 한계를 넘으면 heap 여유와 무관하게 StackOverflowError가 발생할 수 있다. 메서드 안에서 생성한 객체는 heap에 있고 참조가 살아 있는 동안 reachability의 영향을 받으므로 frame storage와 object storage는 다른 runtime 영역과 lifetime 규칙을 가진다.",
-  "explanationMarkdown": "Java stack은 method invocation별 frame을 보관하는 thread별 영역이고 heap은 객체가 저장되는 공유 영역이다. 재귀는 이전 frame을 제거하기 전에 새 frame을 계속 쌓기 때문에 stack만 먼저 고갈될 수 있다. ‘객체를 많이 만들었으니 heap 문제’처럼 한 메모리 영역으로만 해석하지 않고 어떤 데이터가 어느 runtime area에 놓이는지 분리해야 한다."
+  "modelAnswer": "각 메서드 호출은 현재 스레드의 Java 스택에 별도 프레임을 만들고 이전 호출이 끝나기 전 재귀 호출을 하면 프레임이 계속 누적된다. Frame 수가 스레드 스택 한계를 넘으면 힙 여유와 무관하게 StackOverflowError가 발생할 수 있다. 메서드 안에서 생성한 객체는 힙에 있고 참조가 살아 있는 동안 reachability의 영향을 받으므로 프레임 저장 공간과 객체 저장 공간은 다른 런타임 영역과 수명 규칙을 가진다.",
+  "explanationMarkdown": "Java 스택은 메서드 invocation별 프레임을 보관하는 스레드별 영역이고 힙은 객체가 저장되는 공유 영역이다. 재귀는 이전 프레임을 제거하기 전에 새 프레임을 계속 쌓기 때문에 스택만 먼저 고갈될 수 있다. ‘객체를 많이 만들었으니 힙 문제’처럼 한 메모리 영역으로만 해석하지 않고 어떤 데이터가 어느 런타임 area에 놓이는지 분리해야 한다."
 },
 {
   "kind": "question",
   "contentKey": "java.core.jvm-runtime.heap-metaspace-native-thread-memory.q7",
-  "promptMarkdown": "JVM 옵션은 `-Xmx512m`인데 OS에서 본 Java process RSS가 약 900MB까지 올라갔다. 많은 thread와 direct buffer를 사용하는 서비스라면 이 현상을 어떻게 설명하고 어떤 메모리 영역을 추가로 확인해야 하는가?",
+  "promptMarkdown": "JVM 옵션은 `-Xmx512m`인데 OS에서 본 Java 프로세스 RSS가 약 900MB까지 올라갔다. 많은 스레드와 direct 버퍼를 사용하는 서비스라면 이 현상을 어떻게 설명하고 어떤 메모리 영역을 추가로 확인해야 하는가?",
   "questionType": "SCENARIO",
   "difficulty": "HARD",
   "status": "PUBLISHED",
   "conceptKeys": [
     "java.core.jvm-runtime.heap-metaspace-native-thread-memory"
   ],
-  "modelAnswer": "Xmx는 Java heap의 최대 크기를 제한할 뿐 process 전체 RSS 상한이 아니다. Metaspace/class metadata, thread stack, direct/native buffer, code cache, JVM native structure와 library allocation 등이 heap 밖에서 추가로 메모리를 사용할 수 있다. Heap 사용량뿐 아니라 thread 수/stack 크기, direct buffer, metaspace와 native memory를 함께 측정하고 필요하면 NMT·jcmd 같은 구현 진단 도구를 사용해 영역별 사용량을 확인해야 한다.",
-  "explanationMarkdown": "Process memory와 Java heap은 같은 숫자가 아니다. `-Xmx`는 heap budget 하나만 정하고 JVM process에는 metaspace, thread stack, direct buffer, JIT code cache 등 여러 native/non-heap consumer가 존재한다. Container memory limit이나 RSS 문제를 분석할 때 heap graph만 보면 원인을 놓칠 수 있다."
+  "modelAnswer": "Xmx는 Java 힙의 최대 크기를 제한할 뿐 프로세스 전체 RSS 상한이 아니다. Metaspace/클래스 메타데이터, 스레드 스택, direct/네이티브 버퍼, 코드 캐시, JVM 네이티브 structure와 라이브러리 할당 등이 힙 밖에서 추가로 메모리를 사용할 수 있다. Heap 사용량뿐 아니라 스레드 수/스택 크기, direct 버퍼, metaspace와 네이티브 메모리를 함께 측정하고 필요하면 NMT·jcmd 같은 구현 진단 도구를 사용해 영역별 사용량을 확인해야 한다.",
+  "explanationMarkdown": "프로세스 메모리와 Java 힙은 같은 숫자가 아니다. `-Xmx`는 힙 예산만 정하고 JVM 프로세스에는 Metaspace, 스레드 스택, direct buffer, JIT 코드 캐시 등 비힙·네이티브 메모리 소비자도 존재한다. 컨테이너 메모리 제한이나 RSS 문제를 분석할 때 힙 객체 그래프만 보면 원인을 놓칠 수 있다."
 },
 {
   "kind": "question",
   "contentKey": "java.core.jvm-runtime.jit-hotspot-warmup.q7",
-  "promptMarkdown": "새 JVM을 띄운 직후 첫 수백 요청은 느리지만 이후 동일 요청의 지연 시간이 낮아졌다. 이 현상을 무조건 ‘JIT 덕분’이라고 단정하지 말아야 하는 이유와 성능 측정에서 warm-up을 어떻게 다뤄야 하는지 설명하라.",
+  "promptMarkdown": "새 JVM을 띄운 직후 첫 수백 요청은 느리지만 이후 동일 요청의 지연 시간이 낮아졌다. 이 현상을 무조건 ‘JIT 덕분’이라고 단정하지 말아야 하는 이유와 성능 측정에서 워밍업(warm-up)을 어떻게 다뤄야 하는지 설명하라.",
   "questionType": "DESCRIPTIVE",
   "difficulty": "HARD",
   "status": "PUBLISHED",
   "conceptKeys": [
     "java.core.jvm-runtime.jit-hotspot-warmup"
   ],
-  "modelAnswer": "초기 지연 변화에는 class loading, JIT compilation과 profiling뿐 아니라 cache warm-up, connection 생성, GC 상태, OS page cache 같은 여러 요인이 섞일 수 있다. JIT threshold와 tiered compilation 정책도 JVM implementation detail이다. 성능 측정에서는 warm-up 구간과 steady-state 구간을 분리하고 동일한 workload/환경에서 반복 측정하며 JFR, compilation log 또는 필요한 진단 증거로 원인 후보를 확인해야 한다.",
-  "explanationMarkdown": "Warm-up은 단일 원인 이름이 아니라 runtime과 주변 시스템의 초기 상태가 안정화되는 구간이다. HotSpot JIT가 중요한 요인일 수 있지만 class loading, application cache, DB connection, OS cache도 같은 시간대에 변한다. Benchmark는 초기 구간을 무시하기보다 목적에 따라 cold-start와 steady-state를 분리해 측정하고 원인을 별도 evidence로 검증해야 한다."
+  "modelAnswer": "초기 지연 시간이 줄어드는 데는 클래스 로딩, JIT 컴파일과 프로파일링뿐 아니라 캐시 준비, 연결 생성, GC 상태, OS 페이지 캐시 등 여러 요인이 작용할 수 있습니다. JIT 임계값과 단계별 컴파일 정책도 JVM 구현 세부 사항입니다. 성능을 측정할 때는 준비 구간과 안정 상태 구간을 나누고 같은 작업 부하와 환경에서 반복 측정해야 합니다. JFR, 컴파일 로그 등 필요한 진단 자료로 원인 후보를 확인합니다.",
+  "explanationMarkdown": "워밍업은 단일 원인의 이름이 아니라 실행 시점과 주변 시스템의 초기 상태가 안정되는 구간이다. HotSpot JIT가 중요한 요인일 수 있지만 클래스 로딩, 애플리케이션 캐시, DB 연결, 운영체제 캐시도 같은 시간대에 달라진다. 벤치마크는 초기 구간을 무시하기보다 목적에 따라 초기 기동(cold start)과 정상 상태(steady state)를 나누어 측정하고, 원인은 별도의 근거로 검증해야 한다."
 }
 ]

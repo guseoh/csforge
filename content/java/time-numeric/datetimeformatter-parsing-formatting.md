@@ -44,7 +44,7 @@ String text = time.format(formatter);
 String
   │ parse
   ▼
-Temporal value
+Temporal 값
   │ format
   ▼
 String
@@ -52,7 +52,7 @@ String
 
 문자열이 formatter가 기대하는 구조와 시간 필드 규칙을 만족하지 않으면 parsing은 실패할 수 있습니다.
 
-### pattern 문자는 실제 시간 필드를 뜻한다
+### 패턴 문자는 실제 시간 필드를 뜻한다
 
 Pattern은 단순한 출력 예시 문자열이 아닙니다. 각 문자가 서로 다른 필드를 나타냅니다.
 
@@ -61,7 +61,7 @@ MM -> month
 mm -> minute
 ```
 
-대소문자 하나가 의미를 바꿀 수 있으므로 중요한 외부 형식이라면 pattern 정의를 API 문서와 대조해야 합니다. `yyyy`와 `uuuu`처럼 비슷해 보여도 달력 의미가 다른 문자도 있습니다.
+대소문자 하나가 의미를 바꿀 수 있으므로 중요한 외부 형식이라면 패턴 정의를 API 문서와 대조해야 합니다. `yyyy`와 `uuuu`처럼 비슷해 보여도 달력 의미가 다른 문자도 있습니다.
 
 ### parse 가능성과 업무상 유효성은 다르다
 
@@ -89,9 +89,9 @@ Locale -> January / 1월 같은 문자 표현
 ZoneId -> 같은 Instant가 지역별로 몇 시인지 계산
 ```
 
-`LocalDateTime`처럼 원래 zone이 없는 값에 formatter를 사용한다고 숨은 실제 시점이 자동으로 생기지는 않습니다.
+`LocalDateTime`처럼 원래 시간대가 없는 값에 formatter를 사용한다고 숨은 실제 시점이 자동으로 생기지는 않습니다.
 
-반대로 `Instant`를 문자열로 표시할 때 formatter에 zone을 줄 수 있습니다.
+반대로 `Instant`를 문자열로 표시할 때 formatter에 시간대를 줄 수 있습니다.
 
 ```java
 DateTimeFormatter formatter = DateTimeFormatter
@@ -101,6 +101,6 @@ DateTimeFormatter formatter = DateTimeFormatter
 String text = formatter.format(instant);
 ```
 
-이때 zone은 이미 존재하는 `Instant`를 **어떤 지역 시각으로 표시할지** 결정합니다.
+이때 시간대는 이미 존재하는 `Instant`를 **어떤 지역 시각으로 표시할지** 결정합니다.
 
-DateTimeFormatter를 볼 때는 parse인지 format인지, pattern이 어떤 필드를 뜻하는지, Locale과 ZoneId 중 무엇이 표현에 영향을 주는지를 분리해서 보세요. Formatter는 문자열과 시간 값의 변환 계약이지 시간대 정책이나 비즈니스 유효성 전체를 대신하는 도구는 아닙니다.
+DateTimeFormatter를 볼 때는 parse인지 형식인지, 패턴이 어떤 필드를 뜻하는지, Locale과 ZoneId 중 무엇이 표현에 영향을 주는지를 분리해서 보세요. Formatter는 문자열과 시간 값의 변환 계약이지 시간대 정책이나 비즈니스 유효성 전체를 대신하는 도구는 아닙니다.
