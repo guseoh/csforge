@@ -78,7 +78,8 @@ jobs:
           FROM ${BASE_PREVIEW_IMAGE}
           USER root
           COPY wrapper-entrypoint.sh /app/wrapper-entrypoint.sh
-          RUN chmod +x /app/wrapper-entrypoint.sh
+          RUN sed -i 's/seq 1 120/seq 1 360/' /app/run-preview.sh \
+              && chmod +x /app/wrapper-entrypoint.sh
           USER 10001:10001
           ENTRYPOINT ["/app/wrapper-entrypoint.sh"]
           DOCKER
@@ -153,6 +154,7 @@ jobs:
             --service-account="${{ steps.prod.outputs.service_account }}" \
             --env-vars-file=/tmp/preview-env.json \
             --cpu=1 --memory=1Gi --min=0 --max=1 --timeout=900 \
+            --no-cpu-throttling --cpu-boost \
             --no-allow-unauthenticated --quiet)
           if [[ -n "${{ steps.prod.outputs.secrets }}" ]]; then
             args+=(--set-secrets="${{ steps.prod.outputs.secrets }}")
@@ -183,7 +185,7 @@ jobs:
         run: |
           set -euo pipefail
           code="000"
-          for _ in $(seq 1 180); do
+          for _ in $(seq 1 400); do
             code="$(curl --silent --show-error --output /tmp/result.json --write-out '%{http_code}' \
               --header "Authorization: Bearer ${CLOUD_RUN_ID_TOKEN}" \
               --header "X-Preview-Token: ${PREVIEW_RESULT_TOKEN}" \
