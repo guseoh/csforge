@@ -36,161 +36,106 @@ jobs:
       - name: Set up Google Cloud CLI
         uses: google-github-actions/setup-gcloud@v3
 
-      - name: Install Cloud Run proxy component
-        run: gcloud components install cloud-run-proxy --quiet
-
       - name: Configure Artifact Registry authentication
         run: gcloud auth configure-docker "${GCP_REGION}-docker.pkg.dev" --quiet
 
-      - name: Build pinned backend image
+      - name: Build preview result wrapper from pinned content
         shell: bash
         run: |
           set -euo pipefail
           test "$(git rev-parse HEAD)" = "${CONTENT_BASE_SHA}"
-          docker build --file backend/Dockerfile --tag "${PREVIEW_IMAGE}" .
-          docker push "${PREVIEW_IMAGE}"
+          base_image="csforge-preview-base:${CONTENT_BASE_SHA}"
+          docker build --file backend/Dockerfile --tag "${base_image}" .
 
-      - name: Prepare production database environment
-        id: runtime
-        shell: bash
-        run: |
-          set -euo pipefail
-          service_json="$(mktemp)"
-          gcloud run services describe "${CLOUD_RUN_SERVICE}" \
-            --project="${GCP_PROJECT_ID}" \
-            --region="${GCP_REGION}" \
-            --format=json > "${service_json}"
-          service_account="$(jq -r '.spec.template.spec.serviceAccountName // empty' "${service_json}")"
-          test -n "${service_account}"
+          cat > /tmp/result-server.py <<'PY'
+          import json
+          import os
+          from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+          from pathlib import Path
 
-          python3 - "${service_json}" "${GITHUB_OUTPUT}" <<'PY'
-          import json, sys
-          service_path, output_path = sys.argv[1], sys.argv[2]
-          with open(service_path, encoding='utf-8') as handle:
-              service = json.load(handle)
-          wanted = {
-              'DB_URL','DB_USERNAME','DB_PASSWORD','DB_MAX_POOL_SIZE','DB_MIN_IDLE',
-              'DB_CONNECTION_TIMEOUT','DB_VALIDATION_TIMEOUT'
-          }
-          required = {'DB_URL','DB_USERNAME','DB_PASSWORD'}
-          entries = service['spec']['template']['spec']['containers'][0].get('env', [])
-          plain = {
-              'SPRING_PROFILES_ACTIVE':'local',
-              'CSFORGE_AI_ENABLED':'false',
-              'SPRING_FLYWAY_ENABLED':'false',
-              'SPRING_JPA_HIBERNATE_DDL_AUTO':'validate'
-          }
-          secrets, found = [], set()
-          for item in entries:
-              name = item.get('name')
-              if name not in wanted:
-                  continue
-              found.add(name)
-              if 'value' in item:
-                  plain[name] = item['value']
-                  continue
-              ref = item.get('valueFrom', {}).get('secretKeyRef', {})
-              secret_name, secret_version = ref.get('name'), ref.get('key')
-              if not secret_name or not secret_version:
-                  raise SystemExit(f'Unsupported environment source for {name}')
-              secrets.append(f'{name}={secret_name}:{secret_version}')
-          missing = required - found
-          if missing:
-              raise SystemExit('Missing required production DB variables: ' + ', '.join(sorted(missing)))
-          with open('/tmp/preview-env.json','w',encoding='utf-8') as handle:
-              json.dump(plain, handle)
-          with open(output_path,'a',encoding='utf-8') as handle:
-              handle.write('secrets=' + ','.join(secrets) + '\n')
+          TOKEN = os.environ.get('PREVIEW_RESULT_TOKEN', '')
+          RESULT = Path('/tmp/public-result.json')
+
+          class Handler(BaseHTTPRequestHandler):
+              def log_message(self, fmt, *args):
+                  return
+
+              def _json(self, status, body):
+                  data = json.dumps(body, ensure_ascii=False).encode('utf-8')
+                  self.send_response(status)
+                  self.send_header('Content-Type', 'application/json; charset=utf-8')
+                  self.send_header('Cache-Control', 'no-store')
+                  self.send_header('Content-Length', str(len(data)))
+                  self.end_headers()
+                  self.wfile.write(data)
+
+              def do_GET(self):
+                  if self.path == '/healthz':
+                      self._json(200, {'status': 'ok'})
+                      return
+                  if self.path != '/result' or self.headers.get('X-Preview-Token') != TOKEN:
+                      self._json(404, {'error': 'not found'})
+                      return
+                  if not RESULT.exists():
+                      self._json(202, {'state': 'RUNNING'})
+                      return
+                  try:
+                      body = json.loads(RESULT.read_text(encoding='utf-8'))
+                  except Exception:
+                      self._json(500, {'state': 'ERROR', 'reason': 'result unreadable'})
+                      return
+                  self._json(200, body)
+
+          port = int(os.environ.get('PORT', '8080'))
+          ThreadingHTTPServer(('0.0.0.0', port), Handler).serve_forever()
           PY
-          echo "service_account=${service_account}" >> "${GITHUB_OUTPUT}"
 
-      - name: Deploy private read-only preview service
-        shell: bash
-        run: |
-          set -euo pipefail
-          args=(
-            run deploy "${PREVIEW_SERVICE}"
-            --project="${GCP_PROJECT_ID}"
-            --region="${GCP_REGION}"
-            --image="${PREVIEW_IMAGE}"
-            --service-account="${{ steps.runtime.outputs.service_account }}"
-            --env-vars-file=/tmp/preview-env.json
-            --cpu=1
-            --memory=1Gi
-            --min=0
-            --max=1
-            --timeout=900
-            --no-allow-unauthenticated
-            --quiet
-          )
-          if [[ -n "${{ steps.runtime.outputs.secrets }}" ]]; then
-            args+=(--set-secrets="${{ steps.runtime.outputs.secrets }}")
-          fi
-          gcloud "${args[@]}"
+          cat > /tmp/run-preview.sh <<'SH'
+          #!/bin/sh
+          set -eu
 
-      - name: Start authenticated proxy
-        shell: bash
-        run: |
-          set -euo pipefail
-          gcloud run services proxy "${PREVIEW_SERVICE}" \
-            --project="${GCP_PROJECT_ID}" \
-            --region="${GCP_REGION}" \
-            --port=8081 >/tmp/preview-proxy.log 2>&1 &
-          echo $! >/tmp/preview-proxy.pid
+          phase() { printf '%s' "$1" >/tmp/preview-phase; }
+          phase START_JAVA
+          java -jar /app/app.jar --spring.profiles.active=local --server.port=8081 >/tmp/java.log 2>&1 &
+          java_pid=$!
 
-          reachable=0
+          cleanup() {
+            kill "$java_pid" 2>/dev/null || true
+            wait "$java_pid" 2>/dev/null || true
+          }
+          trap cleanup EXIT
+
+          phase WAIT_STATUS
+          ok=0
           for _ in $(seq 1 120); do
-            code="$(curl --silent --output /tmp/readiness.json --write-out '%{http_code}' \
-              http://127.0.0.1:8081/actuator/health/readiness || true)"
-            if [[ "${code}" != "000" ]]; then
-              echo "Spring HTTP endpoint reachable; readiness HTTP ${code}."
-              reachable=1
+            code=$(curl --silent --show-error --output /tmp/canonical-status.json --write-out '%{http_code}' \
+              http://127.0.0.1:8081/api/canonical-bootstrap/status || true)
+            if [ "$code" = "200" ]; then
+              ok=1
               break
+            fi
+            if ! kill -0 "$java_pid" 2>/dev/null; then
+              exit 21
             fi
             sleep 2
           done
-          if [[ "${reachable}" -ne 1 ]]; then
-            cat /tmp/preview-proxy.log || true
-            exit 11
-          fi
+          [ "$ok" -eq 1 ] || exit 22
 
-      - name: Read canonical production status
-        shell: bash
-        run: |
-          set -euo pipefail
-          http_code="$(curl --silent --show-error \
-            --output /tmp/canonical-status.json \
-            --write-out '%{http_code}' \
-            http://127.0.0.1:8081/api/canonical-bootstrap/status || true)"
-          echo "canonical status HTTP ${http_code}"
-          cat /tmp/canonical-status.json
-          test "${http_code}" = "200"
-
-      - name: Reproduce exact canonical batch plan
-        shell: bash
-        run: |
-          set -euo pipefail
+          phase PLAN_BATCHES
           mkdir -p /tmp/batches /tmp/previews
           python3 <<'PY'
           import json
           from pathlib import Path
 
-          root = Path('content')
+          root = Path('/app/content')
           kind_order = {'TOPIC': 0, 'CONCEPT': 1, 'QUESTION': 2}
-          max_files = 100
-          max_items = 1000
-          max_file_bytes = 2 * 1024 * 1024
-          max_total_bytes = 20 * 1024 * 1024
-
           parsed = []
           area_slugs = set()
           for path in root.rglob('*'):
               if not path.is_file():
                   continue
               rel = path.relative_to(root).as_posix()
-              if rel.startswith('examples/') or rel.startswith('curriculum/'):
-                  continue
-              if rel in {'README.md', 'AGENTS.md'}:
+              if rel.startswith('examples/') or rel.startswith('curriculum/') or rel in {'README.md', 'AGENTS.md'}:
                   continue
               if path.name == 'topics.json':
                   kind = 'TOPIC'
@@ -200,42 +145,33 @@ jobs:
                   kind = 'CONCEPT'
               else:
                   continue
-
               size = path.stat().st_size
-              if size > max_file_bytes:
-                  raise SystemExit(f'Canonical file exceeds 2 MiB: {rel}')
+              if size > 2 * 1024 * 1024:
+                  raise SystemExit(f'file too large: {rel}')
               if kind in {'TOPIC', 'QUESTION'}:
                   data = json.loads(path.read_text(encoding='utf-8'))
                   if not isinstance(data, list):
-                      raise SystemExit(f'Expected JSON array: {rel}')
+                      raise SystemExit(f'expected array: {rel}')
                   item_count = len(data)
                   if kind == 'TOPIC':
                       area_slugs.update(item['areaSlug'] for item in data)
               else:
                   item_count = 1
-              if item_count > max_items:
-                  raise SystemExit(f'Canonical file exceeds 1000 items: {rel}')
+              if item_count > 1000:
+                  raise SystemExit(f'too many items: {rel}')
               parsed.append((kind_order[kind], rel, kind, item_count, size))
 
-          parsed.sort(key=lambda item: (item[0], item[1]))
-          batches = []
-          current = []
+          parsed.sort(key=lambda x: (x[0], x[1]))
+          batches, current = [], []
           current_kind = None
-          current_items = 0
-          current_bytes = 0
+          current_items = current_bytes = 0
           for _, rel, kind, item_count, size in parsed:
               exceeds = bool(current) and (
-                  len(current) == max_files
-                  or current_items + item_count > max_items
-                  or current_bytes + size > max_total_bytes
-                  or current_kind != kind
-              )
+                  len(current) == 100 or current_items + item_count > 1000 or
+                  current_bytes + size > 20 * 1024 * 1024 or current_kind != kind)
               if exceeds:
                   batches.append((current_kind, current, current_items, current_bytes))
-                  current = []
-                  current_kind = None
-                  current_items = 0
-                  current_bytes = 0
+                  current, current_kind, current_items, current_bytes = [], None, 0, 0
               if current_kind is None:
                   current_kind = kind
               current.append(rel)
@@ -244,217 +180,267 @@ jobs:
           if current:
               batches.append((current_kind, current, current_items, current_bytes))
 
-          by_kind = {
-              kind: sum(item[3] for item in parsed if item[2] == kind)
-              for kind in ('TOPIC', 'CONCEPT', 'QUESTION')
-          }
+          by_kind = {k: sum(x[3] for x in parsed if x[2] == k) for k in ('TOPIC','CONCEPT','QUESTION')}
           summary = {
-              'sourceFileCount': len(parsed),
-              'totalBatches': len(batches),
-              'totalItems': sum(item[3] for item in parsed),
-              'topics': by_kind['TOPIC'],
-              'concepts': by_kind['CONCEPT'],
-              'questions': by_kind['QUESTION'],
-              'learningAreas': len(area_slugs),
-          }
-          Path('/tmp/planner-summary.json').write_text(
-              json.dumps(summary, ensure_ascii=False), encoding='utf-8')
-          for index, (_, files, _, _) in enumerate(batches, 1):
-              Path(f'/tmp/batches/batch-{index:03d}.list').write_text(
-                  '\n'.join(files) + '\n', encoding='utf-8')
+              'sourceFileCount': len(parsed), 'totalBatches': len(batches),
+              'totalItems': sum(x[3] for x in parsed), 'topics': by_kind['TOPIC'],
+              'concepts': by_kind['CONCEPT'], 'questions': by_kind['QUESTION'],
+              'learningAreas': len(area_slugs)}
+          Path('/tmp/planner-summary.json').write_text(json.dumps(summary), encoding='utf-8')
+          for i, (_, files, _, _) in enumerate(batches, 1):
+              Path(f'/tmp/batches/batch-{i:03d}.list').write_text('\n'.join(files) + '\n', encoding='utf-8')
           PY
 
           python3 <<'PY'
           import json
-          status = json.load(open('/tmp/canonical-status.json', encoding='utf-8'))
-          planner = json.load(open('/tmp/planner-summary.json', encoding='utf-8'))
-          expected = {
-              'sourceFileCount': status['sourceFileCount'],
-              'totalBatches': status['totalBatches'],
-              'totalItems': status['totalItems'],
-              'topics': status['canonicalItems']['topics'],
-              'concepts': status['canonicalItems']['concepts'],
-              'questions': status['canonicalItems']['questions'],
-          }
-          local = {key: planner[key] for key in expected}
-          if local != expected:
-              raise SystemExit(f'Planner mismatch: local={local}, server={expected}')
+          s = json.load(open('/tmp/canonical-status.json', encoding='utf-8'))
+          p = json.load(open('/tmp/planner-summary.json', encoding='utf-8'))
+          expected = {'sourceFileCount':s['sourceFileCount'],'totalBatches':s['totalBatches'],
+                      'totalItems':s['totalItems'],'topics':s['canonicalItems']['topics'],
+                      'concepts':s['canonicalItems']['concepts'],'questions':s['canonicalItems']['questions']}
+          actual = {k:p[k] for k in expected}
+          if actual != expected:
+              raise SystemExit(f'planner mismatch: {actual} != {expected}')
           PY
 
-      - name: Preview every canonical batch against production DB
-        shell: bash
-        run: |
-          set -euo pipefail
+          phase PREVIEW_BATCHES
           for batch_file in /tmp/batches/*.list; do
-            batch_name="$(basename "$batch_file" .list)"
-            config="/tmp/${batch_name}.curl"
-            {
-              echo 'silent'
-              echo 'show-error'
-              echo 'fail-with-body'
-              echo 'request = "POST"'
-              echo 'url = "http://127.0.0.1:8081/api/imports/preview"'
-              while IFS= read -r rel; do
-                [[ -n "$rel" ]] || continue
-                printf 'form = "files=@%s;filename=%s"\n' "content/$rel" "$rel"
-              done < "$batch_file"
-            } > "$config"
-            curl --config "$config" > "/tmp/previews/${batch_name}.json"
+            batch_name=$(basename "$batch_file" .list)
+            set -- --silent --show-error --fail-with-body --request POST \
+              http://127.0.0.1:8081/api/imports/preview
+            while IFS= read -r rel; do
+              [ -n "$rel" ] || continue
+              set -- "$@" --form "files=@/app/content/$rel;filename=$rel"
+            done < "$batch_file"
+            curl "$@" > "/tmp/previews/${batch_name}.json"
           done
 
-          jq -s '
-            {
-              canApply: all(.[]; .canApply == true),
-              batchCount: length,
-              totals: reduce .[].totals as $t
-                ({created:0,updated:0,unchanged:0,skipped:0,errors:0};
-                 .created += $t.created |
-                 .updated += $t.updated |
-                 .unchanged += $t.unchanged |
-                 .skipped += $t.skipped |
-                 .errors += $t.errors),
-              items: [.[].items[]],
-              previewDigests: [.[].previewDigest]
-            }
-          ' /tmp/previews/*.json >/tmp/all-preview.json
+          phase AGGREGATE
+          jq -s '{
+            canApply: all(.[]; .canApply == true), batchCount: length,
+            totals: reduce .[].totals as $t ({created:0,updated:0,unchanged:0,skipped:0,errors:0};
+              .created += $t.created | .updated += $t.updated | .unchanged += $t.unchanged |
+              .skipped += $t.skipped | .errors += $t.errors),
+            items: [.[].items[]]
+          }' /tmp/previews/*.json >/tmp/all-preview.json
 
-      - name: Analyze diff and identity safety
-        shell: bash
-        run: |
-          set -euo pipefail
-          jq '{canApply, batchCount, totals,
-               classifications: ([.items[].classification] | sort | group_by(.) |
-                 map({classification: .[0], count: length})),
-               updatedByKind: ([.items[] | select(.classification == "UPDATED") | .kind] |
-                 sort | group_by(.) | map({kind: .[0], count: length})),
-               updatedFields: ([.items[] | select(.classification == "UPDATED") | .diffs[]?.field] |
-                 sort | group_by(.) | map({field: .[0], count: length}))}' \
-            /tmp/all-preview.json >/tmp/preview-summary.json
+          jq '{canApply,batchCount,totals,
+            classifications: ([.items[].classification] | sort | group_by(.) | map({classification:.[0],count:length})),
+            updatedByKind: ([.items[] | select(.classification=="UPDATED") | .kind] | sort | group_by(.) | map({kind:.[0],count:length})),
+            updatedFields: ([.items[] | select(.classification=="UPDATED") | .diffs[]?.field] | sort | group_by(.) | map({field:.[0],count:length}))
+          }' /tmp/all-preview.json >/tmp/preview-summary.json
 
-          jq '{state, sourceFileCount, totalBatches, readyBatches, totalItems,
-               canonicalItems, currentCounts}' \
-            /tmp/canonical-status.json >/tmp/status-summary.json
+          jq -r '.items[] | select(.classification=="CREATED") | [.kind,.contentKey] | @tsv' /tmp/all-preview.json >/tmp/created.tsv
+          jq -r '.items[] | select(.classification=="ERROR" or (.errors|length)>0) | [.kind,.contentKey,(.reason//""),(.errors|tostring)] | @tsv' /tmp/all-preview.json >/tmp/errors.tsv
+          jq -r '.items[] | select(.classification=="UPDATED") | . as $i | .diffs[]? | select(.field=="references") | [$i.kind,$i.contentKey,(.before//""),(.after//"")] | @tsv' /tmp/all-preview.json >/tmp/reference-diffs.tsv
+          jq -r '.items[] | . as $i | .diffs[]? | select(.field=="structure" or .field=="history") | [$i.classification,$i.kind,$i.contentKey,.field] | @tsv' /tmp/all-preview.json >/tmp/structure-history.tsv
 
-          jq -r '.items[] | select(.classification == "CREATED") |
-            [.kind, .contentKey] | @tsv' /tmp/all-preview.json >/tmp/created-items.tsv
-          jq -r '.items[] | select(.classification == "ERROR" or (.errors | length) > 0) |
-            [.kind, .contentKey, (.reason // ""), (.errors | tostring)] | @tsv' \
-            /tmp/all-preview.json >/tmp/error-items.tsv
-          jq -r '.items[] | select(.classification == "UPDATED") |
-            [.kind, .contentKey, ([.diffs[].field] | join(","))] | @tsv' \
-            /tmp/all-preview.json >/tmp/updated-items.tsv
-          jq -r '.items[] | select(.classification == "UPDATED") | . as $item |
-            .diffs[]? | select(.field == "references") |
-            [$item.kind, $item.contentKey, (.before // ""), (.after // "")] | @tsv' \
-            /tmp/all-preview.json >/tmp/reference-diffs.tsv
-          jq -r '.items[] | . as $item | .diffs[]? |
-            select(.field == "structure" or .field == "history") |
-            [$item.classification, $item.kind, $item.contentKey, .field, (.before // ""), (.after // "")] | @tsv' \
-            /tmp/all-preview.json >/tmp/structure-history-diffs.tsv
-
+          phase BUILD_RESULT
           python3 <<'PY'
           import json
           from pathlib import Path
 
           status = json.load(open('/tmp/canonical-status.json', encoding='utf-8'))
-          preview = json.load(open('/tmp/all-preview.json', encoding='utf-8'))
           planner = json.load(open('/tmp/planner-summary.json', encoding='utf-8'))
+          preview = json.load(open('/tmp/preview-summary.json', encoding='utf-8'))
 
-          refs = Path('/tmp/reference-diffs.tsv')
+          def tsv(path):
+              p = Path(path)
+              return [line.split('\t') for line in p.read_text(encoding='utf-8').splitlines() if line.strip()] if p.exists() else []
+
+          created = [{'kind':r[0],'contentKey':r[1]} for r in tsv('/tmp/created.tsv')]
+          errors = [{'kind':r[0],'contentKey':r[1],'reason':r[2],'errors':r[3]} for r in tsv('/tmp/errors.tsv')]
           removals = []
-          if refs.exists():
-              for line in refs.read_text(encoding='utf-8').splitlines():
-                  parts = line.split('\t', 3)
-                  if len(parts) != 4:
-                      continue
-                  kind, key, before, after = parts
-                  before_count = before.count('https://') + before.count('http://')
-                  after_count = after.count('https://') + after.count('http://')
-                  if after_count < before_count:
-                      removals.append({
-                          'kind': kind, 'contentKey': key,
-                          'beforeReferenceCount': before_count,
-                          'afterReferenceCount': after_count,
-                      })
-          Path('/tmp/reference-removals.json').write_text(
-              json.dumps(removals, ensure_ascii=False, indent=2), encoding='utf-8')
+          for row in tsv('/tmp/reference-diffs.tsv'):
+              if len(row) != 4:
+                  continue
+              before = row[2].count('https://') + row[2].count('http://')
+              after = row[3].count('https://') + row[3].count('http://')
+              if after < before:
+                  removals.append({'kind':row[0],'contentKey':row[1],
+                                   'beforeReferenceCount':before,'afterReferenceCount':after})
+          structure = [{'classification':r[0],'kind':r[1],'contentKey':r[2],'field':r[3]}
+                       for r in tsv('/tmp/structure-history.tsv') if len(r) >= 4]
 
-          canonical = status['canonicalItems']
-          current = status['currentCounts']
-          created = preview['totals']['created']
-          count_match = (
-              current['topics'] == canonical['topics'] and
-              current['concepts'] == canonical['concepts'] and
-              current['questions'] == canonical['questions'] and
-              current['learningAreas'] == planner['learningAreas']
-          )
-          # With unique contentKey constraints: CREATED=0 means every current-pack key
-          # already exists; equal row counts mean no extra/replacement key can coexist.
-          identity_safe = created == 0 and count_match
-          safety = {
-              'identitySafe': identity_safe,
-              'createdItems': created,
-              'canonicalLearningAreas': planner['learningAreas'],
-              'currentLearningAreas': current['learningAreas'],
-              'countMatch': count_match,
-              'referenceDiffs': sum(1 for _ in open('/tmp/reference-diffs.tsv', encoding='utf-8')),
-              'referenceRemovals': len(removals),
-              'structureOrHistoryDiffs': sum(1 for _ in open('/tmp/structure-history-diffs.tsv', encoding='utf-8')),
-              'errors': preview['totals']['errors'],
-              'canApply': preview['canApply'],
+          c = status['canonicalItems']; cur = status['currentCounts']
+          count_match = (cur['topics']==c['topics'] and cur['concepts']==c['concepts'] and
+                         cur['questions']==c['questions'] and cur['learningAreas']==planner['learningAreas'])
+          identity_safe = (preview['totals']['created']==0 and count_match)
+          result = {
+              'state':'DONE', 'contentBaseSha':'5e1b3328af8844e7a22e8d440cd75b80a0ad740d',
+              'canonicalStatus': {
+                  'state':status['state'],'sourceFileCount':status['sourceFileCount'],
+                  'totalBatches':status['totalBatches'],'readyBatches':status['readyBatches'],
+                  'totalItems':status['totalItems'],'canonicalItems':c,'currentCounts':cur},
+              'preview':preview,
+              'identitySafety': {
+                  'identitySafe':identity_safe,'countMatch':count_match,
+                  'canonicalLearningAreas':planner['learningAreas'],'currentLearningAreas':cur['learningAreas'],
+                  'createdItems':len(created),
+                  'note':'CREATED=0 plus equal unique-row counts means current canonical contentKeys have no missing/replacement/extra Topic, Concept, or Question keys.'},
+              'createdItems':created, 'errors':errors,
+              'referenceRemovals':removals,
+              'structureHistoryDiffs':structure,
+              'destructiveApplyInvoked':False
           }
-          Path('/tmp/safety-summary.json').write_text(
-              json.dumps(safety, ensure_ascii=False, indent=2), encoding='utf-8')
+          Path('/tmp/public-result.json.tmp').write_text(json.dumps(result,ensure_ascii=False),encoding='utf-8')
+          Path('/tmp/public-result.json.tmp').replace('/tmp/public-result.json')
           PY
 
-          echo '=== CANONICAL STATUS ==='
-          cat /tmp/status-summary.json
-          echo '=== PREVIEW SUMMARY ==='
-          cat /tmp/preview-summary.json
-          echo '=== IDENTITY / DELETE-RISK SUMMARY ==='
-          cat /tmp/safety-summary.json
-          echo '=== CREATED ITEMS ==='
-          cat /tmp/created-items.tsv || true
-          echo '=== VALIDATION ERRORS ==='
-          cat /tmp/error-items.tsv || true
-          echo '=== REFERENCE REMOVALS ==='
-          cat /tmp/reference-removals.json || true
-          echo '=== QUESTION STRUCTURE / HISTORY DIFFS ==='
-          cat /tmp/structure-history-diffs.tsv || true
+          phase DONE
+          SH
+          chmod +x /tmp/run-preview.sh
 
-          jq -e '.canApply == true and .totals.errors == 0' /tmp/all-preview.json >/dev/null
-          jq -e '.identitySafe == true' /tmp/safety-summary.json >/dev/null
+          cat > /tmp/wrapper-entrypoint.sh <<'SH'
+          #!/bin/sh
+          set -u
+          (
+            /app/run-preview.sh >/tmp/compute.log 2>&1
+            rc=$?
+            if [ "$rc" -ne 0 ] && [ ! -f /tmp/public-result.json ]; then
+              phase=$(cat /tmp/preview-phase 2>/dev/null || echo UNKNOWN)
+              tail -n 30 /tmp/compute.log 2>/dev/null \
+                | sed -E 's#jdbc:[^ ]+#jdbc:[REDACTED]#g; s#password=[^ ]+#password=[REDACTED]#gi' \
+                >/tmp/diagnostic.txt || true
+              python3 - "$rc" "$phase" <<'PY'
+          import json, sys
+          from pathlib import Path
+          rc, phase = int(sys.argv[1]), sys.argv[2]
+          diagnostic = Path('/tmp/diagnostic.txt').read_text(encoding='utf-8', errors='replace')[-5000:]
+          Path('/tmp/public-result.json').write_text(json.dumps({
+              'state':'ERROR','exitCode':rc,'phase':phase,'diagnostic':diagnostic,
+              'destructiveApplyInvoked':False
+          }, ensure_ascii=False), encoding='utf-8')
+          PY
+            fi
+          ) &
+          exec python3 /app/result-server.py
+          SH
+          chmod +x /tmp/wrapper-entrypoint.sh
 
-      - name: Upload complete preview evidence
+          cat > /tmp/Dockerfile.preview <<'DOCKER'
+          ARG BASE_IMAGE
+          FROM ${BASE_IMAGE}
+          USER root
+          RUN apt-get update \
+              && apt-get install --no-install-recommends --yes python3 jq \
+              && rm -rf /var/lib/apt/lists/*
+          COPY content /app/content
+          COPY /tmp/result-server.py /app/result-server.py
+          COPY /tmp/run-preview.sh /app/run-preview.sh
+          COPY /tmp/wrapper-entrypoint.sh /app/wrapper-entrypoint.sh
+          RUN chmod +x /app/run-preview.sh /app/wrapper-entrypoint.sh
+          USER 10001:10001
+          ENTRYPOINT ["/app/wrapper-entrypoint.sh"]
+          DOCKER
+
+          # Docker cannot COPY absolute host paths outside the context; stage generated files in repo temp dir.
+          mkdir -p backend/.preview-tmp
+          cp /tmp/result-server.py backend/.preview-tmp/result-server.py
+          cp /tmp/run-preview.sh backend/.preview-tmp/run-preview.sh
+          cp /tmp/wrapper-entrypoint.sh backend/.preview-tmp/wrapper-entrypoint.sh
+          sed -i 's#COPY /tmp/result-server.py#COPY backend/.preview-tmp/result-server.py#; s#COPY /tmp/run-preview.sh#COPY backend/.preview-tmp/run-preview.sh#; s#COPY /tmp/wrapper-entrypoint.sh#COPY backend/.preview-tmp/wrapper-entrypoint.sh#' /tmp/Dockerfile.preview
+          docker build --file /tmp/Dockerfile.preview --build-arg BASE_IMAGE="${base_image}" --tag "${PREVIEW_IMAGE}" .
+          docker push "${PREVIEW_IMAGE}"
+
+      - name: Prepare production database environment
+        id: runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          service_json="$(mktemp)"
+          gcloud run services describe "${CLOUD_RUN_SERVICE}" --project="${GCP_PROJECT_ID}" --region="${GCP_REGION}" --format=json > "${service_json}"
+          service_account="$(jq -r '.spec.template.spec.serviceAccountName // empty' "${service_json}")"
+          test -n "${service_account}"
+          python3 - "${service_json}" "${GITHUB_OUTPUT}" <<'PY'
+          import json, sys
+          service_path, output_path = sys.argv[1], sys.argv[2]
+          service = json.load(open(service_path, encoding='utf-8'))
+          wanted = {'DB_URL','DB_USERNAME','DB_PASSWORD','DB_MAX_POOL_SIZE','DB_MIN_IDLE','DB_CONNECTION_TIMEOUT','DB_VALIDATION_TIMEOUT'}
+          required = {'DB_URL','DB_USERNAME','DB_PASSWORD'}
+          entries = service['spec']['template']['spec']['containers'][0].get('env', [])
+          plain = {'SPRING_PROFILES_ACTIVE':'local','CSFORGE_AI_ENABLED':'false',
+                   'SPRING_FLYWAY_ENABLED':'false','SPRING_JPA_HIBERNATE_DDL_AUTO':'validate'}
+          secrets, found = [], set()
+          for item in entries:
+              name = item.get('name')
+              if name not in wanted: continue
+              found.add(name)
+              if 'value' in item:
+                  plain[name] = item['value']; continue
+              ref = item.get('valueFrom', {}).get('secretKeyRef', {})
+              if not ref.get('name') or not ref.get('key'):
+                  raise SystemExit(f'unsupported env source for {name}')
+              secrets.append(f"{name}={ref['name']}:{ref['key']}")
+          missing = required - found
+          if missing: raise SystemExit('missing DB vars: ' + ','.join(sorted(missing)))
+          json.dump(plain, open('/tmp/preview-env.json','w',encoding='utf-8'))
+          with open(output_path,'a',encoding='utf-8') as out:
+              out.write('secrets=' + ','.join(secrets) + '\n')
+          PY
+          echo "service_account=${service_account}" >> "${GITHUB_OUTPUT}"
+
+      - name: Generate result access token
+        id: token
+        shell: bash
+        run: |
+          token="$(openssl rand -hex 32)"
+          echo "::add-mask::${token}"
+          echo "value=${token}" >> "${GITHUB_OUTPUT}"
+
+      - name: Deploy temporary result-only service
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          path='/tmp/preview-env.json'
+          data=json.load(open(path,encoding='utf-8'))
+          data['PREVIEW_RESULT_TOKEN']='${{ steps.token.outputs.value }}'
+          json.dump(data,open(path,'w',encoding='utf-8'))
+          PY
+          args=(run deploy "${PREVIEW_SERVICE}" --project="${GCP_PROJECT_ID}" --region="${GCP_REGION}"
+            --image="${PREVIEW_IMAGE}" --service-account="${{ steps.runtime.outputs.service_account }}"
+            --env-vars-file=/tmp/preview-env.json --cpu=1 --memory=1Gi --min=0 --max=1 --timeout=900
+            --allow-unauthenticated --quiet)
+          if [[ -n "${{ steps.runtime.outputs.secrets }}" ]]; then
+            args+=(--set-secrets="${{ steps.runtime.outputs.secrets }}")
+          fi
+          gcloud "${args[@]}"
+          gcloud run services describe "${PREVIEW_SERVICE}" --project="${GCP_PROJECT_ID}" --region="${GCP_REGION}" --format='value(status.url)' >/tmp/service-url.txt
+
+      - name: Collect sanitized preview result
+        shell: bash
+        run: |
+          set -euo pipefail
+          url="$(cat /tmp/service-url.txt)"
+          for _ in $(seq 1 180); do
+            code="$(curl --silent --show-error --output /tmp/result.json --write-out '%{http_code}' \
+              --header 'X-Preview-Token: ${{ steps.token.outputs.value }}' "${url}/result" || true)"
+            if [[ "${code}" == "200" ]]; then
+              break
+            fi
+            if [[ "${code}" != "202" && "${code}" != "000" ]]; then
+              echo "Unexpected result HTTP ${code}"
+              cat /tmp/result.json || true
+            fi
+            sleep 5
+          done
+          test -s /tmp/result.json
+          jq . /tmp/result.json
+          jq -e '.state == "DONE" and .destructiveApplyInvoked == false' /tmp/result.json >/dev/null
+          jq -e '.preview.canApply == true and .preview.totals.errors == 0' /tmp/result.json >/dev/null
+          jq -e '.identitySafety.identitySafe == true' /tmp/result.json >/dev/null
+
+      - name: Upload preview evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: production-canonical-preview-${{ env.CONTENT_BASE_SHA }}
-          path: |
-            /tmp/canonical-status.json
-            /tmp/planner-summary.json
-            /tmp/status-summary.json
-            /tmp/all-preview.json
-            /tmp/preview-summary.json
-            /tmp/safety-summary.json
-            /tmp/created-items.tsv
-            /tmp/error-items.tsv
-            /tmp/updated-items.tsv
-            /tmp/reference-diffs.tsv
-            /tmp/reference-removals.json
-            /tmp/structure-history-diffs.tsv
-            /tmp/readiness.json
-            /tmp/preview-proxy.log
+          path: /tmp/result.json
           if-no-files-found: warn
           retention-days: 7
 
-      - name: Stop proxy
-        if: always()
-        run: |
-          if [[ -f /tmp/preview-proxy.pid ]]; then
-            kill "$(cat /tmp/preview-proxy.pid)" 2>/dev/null || true
-          fi
-
-      - name: Remove preview-only service
+      - name: Remove temporary result service
         if: always()
         run: gcloud run services delete "${PREVIEW_SERVICE}" --project="${GCP_PROJECT_ID}" --region="${GCP_REGION}" --quiet || true
