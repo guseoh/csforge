@@ -36,6 +36,9 @@ jobs:
       - name: Set up Google Cloud CLI
         uses: google-github-actions/setup-gcloud@v3
 
+      - name: Install Cloud Run proxy component
+        run: gcloud components install cloud-run-proxy --quiet
+
       - name: Configure Artifact Registry authentication
         run: gcloud auth configure-docker "${GCP_REGION}-docker.pkg.dev" --quiet
 
