@@ -1,4 +1,4 @@
-"""Read-only canonical inventory; semantic decisions come only from review-notes.json.
+"""Read-only inventory; semantic decisions come only from handwritten review evidence.
 
 Run: python docs/content-audit/learning-experience-2026/audit.py [--check]
 Requires the already available PyYAML (tested with 6.0.3); no runtime dependencies.
@@ -17,6 +17,9 @@ from urllib.parse import urlparse
 import xml.etree.ElementTree as ET
 
 import yaml
+
+sys.dont_write_bytecode = True
+from wave_review import WAVE_AREAS, load_wave, summarize_wave
 
 
 OUT = Path(__file__).resolve().parent
@@ -109,14 +112,21 @@ def main():
         if not condition:
             errors.append(message)
 
+    wave_reviews, wave_sources, wave_ledgers = load_wave(OUT, ROOT, BASELINE, read_json, sha, require)
+
     def decision(key, source_sha):
         reviewed = notes["items"].get(key)
+        if key in wave_reviews:
+            current = wave_reviews[key]
+            require(current["sourceSha256"] == source_sha, f"Stale Wave semantic evidence: {key}")
+            return {**current, "priorSampleReview": reviewed} if reviewed else current
         if reviewed:
             require(reviewed["sourceSha256"] == source_sha, f"Stale semantic evidence: {key}")
             require(reviewed["recommendation"] in DISPOSITIONS, f"Invalid disposition: {key}")
             require(bool(reviewed["basis"]), f"Missing semantic basis: {key}")
-            return reviewed
+            return {**reviewed, "qualityDecision": reviewed["recommendation"], "evidenceLevel": "CURRENT_PARTIAL"}
         return {"recommendation": "NEEDS_REVIEW", "severity": None,
+                "qualityDecision": "NEEDS_REVIEW", "evidenceLevel": "NEEDS_REVIEW",
                 "reviewScope": "INVENTORIED_ONLY",
                 "basis": "개별 의미 검토 미완료. 이전 PASS 보존; 수정 확정 대상 아님(README 검토 한계)."}
 
@@ -179,6 +189,7 @@ def main():
                    "textVisualizationSignals": {"structuralFenceCount": len(structural_fences), "tableLineCount": len(table_lines)},
                    "referenceEvidence": [], "linkedQuestions": [], "sourceSha256": sha(path),
                    "previousAreaReview": previous_areas[area]["manualAudit"],
+                   "priorEvidenceLevel": "PRIOR_REVIEWED",
                    "previousWave": {k: historical["areaWaves"][area][k] for k in ["number", "url", "title"]},
                    "review": decision(key, sha(path))}
             if plan.get("visualization") != "NONE" and not figures and not structural_fences and not table_lines:
@@ -193,6 +204,14 @@ def main():
             for r in meta.get("references", []):
                 ref = {"area": area, "contentKey": key, "file": relative(path), **r,
                        "verification": notes.get("urls", {}).get(r["url"], {"status": "NEEDS_REVIEW", "basis": "이번 감사에서 미접근. 기존 Wave의 출처 확인 근거 보존; URL 존재만으로 학습 가치를 판정하지 않는다."})}
+                current_sources = [s for s in wave_sources.get(r["url"], []) if s["area"] == area]
+                if current_sources:
+                    ref["priorVerification"] = ref["verification"]
+                    evidence = current_sources[0]
+                    ref["verification"] = {"status": evidence["evidenceLevel"], **evidence}
+                    ref["verification"]["qualityIssueIds"] = [
+                        f["id"] for f in wave_ledgers[area]["findings"] if f["quote"] == r["url"]
+                    ]
                 references.append(ref)
                 row["referenceEvidence"].append({"url": r["url"], "relationNote": r.get("relationNote"), "verification": ref["verification"]})
                 parsed = urlparse(r["url"])
@@ -241,10 +260,16 @@ def main():
     for c in concepts:
         require(bool(c["linkedQuestions"]), f"Concept without Questions: {c['contentKey']}")
         if c["review"]["recommendation"] == "KEEP":
-            require(all(notes["items"].get(k, {}).get("recommendation") == "KEEP" for k in c["linkedQuestions"]),
+            require(all(q["review"]["recommendation"] == "KEEP" for q in questions if q["contentKey"] in c["linkedQuestions"]),
                     f"KEEP without complete linked Question review: {c['contentKey']}")
-            require(all(r["verification"]["status"] == "CHECKED_RELEVANT" for r in c["referenceEvidence"]),
-                    f"KEEP without checked references: {c['contentKey']}")
+            if c["contentKey"] in wave_reviews:
+                # Canonical review may document an inaccessible supplemental source.
+                # KEEP is handwritten, with a checked primary source and explicit limits.
+                require(any(r["verification"]["status"] == "CURRENT_VERIFIED" for r in c["referenceEvidence"]),
+                        f"Wave KEEP without a checked supporting source: {c['contentKey']}")
+            else:
+                require(all(r["verification"]["status"] == "CHECKED_RELEVANT" for r in c["referenceEvidence"]),
+                        f"KEEP without checked references: {c['contentKey']}")
     for label, items in [("Topic", topics), ("Concept", concepts), ("Question", questions)]:
         keys = [i["contentKey"] for i in items]
         require(len(keys) == len(set(keys)), f"Global duplicate {label} key")
@@ -289,8 +314,28 @@ def main():
             row["labels"] = ["".join(e.itertext()) for e in tree.iter() if e.tag.endswith("}text")]
         assets.append(row)
     all_keys = {i["contentKey"] for i in concepts + questions}
+    expected_wave_keys = {i["contentKey"] for i in concepts + questions if i["area"] in WAVE_AREAS}
+    require(set(wave_reviews) == expected_wave_keys, "Wave 1 complete Concept/Question key coverage")
+    for item in concepts + questions:
+        if item["contentKey"] in wave_reviews:
+            require(wave_reviews[item["contentKey"]]["area"] == item["area"], f"Wave item area: {item['contentKey']}")
+    wave_findings = [f for data in wave_ledgers.values() for f in data["findings"]]
+    for area, ledger in wave_ledgers.items():
+        require({t["key"] for t in ledger["topics"]} == {t["contentKey"] for t in topics if t["area"] == area},
+                f"Wave 1 Topic key coverage: {area}")
+        require(len({s[0] for s in ledger["sources"]}) == len(ledger["sources"]), f"Duplicate Wave source: {area}")
+        require({r["url"] for r in references if r["area"] == area}.issubset({s[0] for s in ledger["sources"]}),
+                f"Wave 1 Reference coverage: {area}")
+    for finding in wave_findings:
+        require(finding["severity"] in {"P0", "P1", "P2"}, f"Wave finding severity: {finding['id']}")
+        require(set(finding["contentKeys"]).issubset(expected_wave_keys), f"Wave finding keys: {finding['id']}")
+        # JSON string escapes represent literal newline evidence in the source pack.
+        source = (ROOT / finding["file"]).read_text(encoding="utf-8")
+        require(finding["quote"] in source or json.dumps(finding["quote"], ensure_ascii=False)[1:-1] in source,
+                f"Wave quote not in source: {finding['id']}")
+        require(bool(finding["problem"]) and bool(finding["action"]), f"Wave finding reasoning: {finding['id']}")
     require(set(notes["items"]).issubset(all_keys), "Unknown manual review key")
-    finding_ids = [f["id"] for f in notes["findings"]]
+    finding_ids = [f["id"] for f in notes["findings"] + wave_findings]
     require(len(finding_ids) == len(set(finding_ids)), "Duplicate finding ID")
     for finding in notes["findings"]:
         require(finding["contentKey"] in all_keys, f"Unknown finding key: {finding['id']}")
@@ -312,8 +357,14 @@ def main():
                       "uniqueReferenceUrls": len({r["url"] for r in rs}),
                       "conceptDecisions": counted(c["review"]["recommendation"] for c in cs),
                       "questionDecisions": counted(q["review"]["recommendation"] for q in qs),
+                      "conceptEvidence": counted(c["review"]["evidenceLevel"] for c in cs),
+                      "questionEvidence": counted(q["review"]["evidenceLevel"] for q in qs),
+                      "semanticReviewStatus": "CURRENT_VERIFIED" if area in wave_ledgers else "NEEDS_REVIEW",
                       "areaVerdict": "NEEDS_REVIEW", "previousWave": {k: historical["areaWaves"][area][k] for k in ["number", "url", "title"]},
                       "semanticEvidence": notes.get("areas", {}).get(area, "새 전수 의미 검토 미완료; 이전 PASS를 취소하지 않는다.")})
+        if area in wave_ledgers:
+            areas[-1]["areaVerdict"] = "TARGETED_ENHANCE"
+            areas[-1]["semanticEvidence"] = wave_ledgers[area]["reviewMethod"]
     require(len(areas) == 15, "Expected 15 LearningAreas")
     manifest = {"baselineSha": BASELINE, "files": dict(sorted(sources.items()))}
     # Verify tracked source bytes against the pinned baseline; no checkout/import/network writes.
@@ -336,18 +387,20 @@ def main():
                                       "explanationPresent": bool(q.get("explanationMarkdown"))}} for q in questions]},
                  "reference-inventory.json": {"uniqueUrls": len(global_refs), "links": references},
                  "asset-inventory.json": assets, "candidates.json": candidates, "area-summary.json": areas,
-                 "source-manifest.json": manifest, "prior-delta.json": {"questionCounts": delta, "findings": notes["priorFindings"]}}
-    lines = ["# LearningArea별 감사 요약", "", "전수 인벤토리와 현재 샘플 의미 검토를 구분한다. 모든 Area의 새 전수 의미 판정은 NEEDS_REVIEW이며 이전 PASS를 취소하지 않는다.", "",
+                 "source-manifest.json": manifest, "prior-delta.json": {"questionCounts": delta, "findings": notes["priorFindings"]},
+                 "wave-1-summary.json": summarize_wave(wave_ledgers, concepts, questions),
+                 "wave-1-findings.json": wave_findings}
+    lines = ["# LearningArea별 감사 요약", "", "15 Area 전수 구조 인벤토리를 유지한다. Wave 1의 6 Area는 본문/문항 전수 직접 검토 CURRENT_VERIFIED, 나머지 9 Area는 새 전수 의미 검토 NEEDS_REVIEW다. 과거 PASS는 PRIOR_REVIEWED 근거로 보존한다.", "",
              "| Area | Topic | Concept | Question | 이번 본문 검토 | 이번 문항 검토 | Concept KEEP / ENHANCE / REVIEW |", "| --- | ---: | ---: | ---: | ---: | ---: | --- |"]
     for area in areas:
         name = area["area"]
-        body_reviews = sum(c["area"] == name and c["contentKey"] in notes["items"] for c in concepts)
-        question_reviews = sum(q["area"] == name and q["contentKey"] in notes["items"] for q in questions)
+        body_reviews = sum(c["area"] == name and c["review"]["evidenceLevel"] != "NEEDS_REVIEW" for c in concepts)
+        question_reviews = sum(q["area"] == name and q["review"]["evidenceLevel"] != "NEEDS_REVIEW" for q in questions)
         counts = area["conceptDecisions"]
         lines.append(f"| {name} | {area['topics']} | {area['concepts']} | {area['questions']} | {body_reviews} | {question_reviews} | {counts.get('KEEP', 0)} / {counts.get('TARGETED_ENHANCE', 0)} / {counts.get('NEEDS_REVIEW', 0)} |")
-    lines.extend(["", "판정의 근거는 review-notes.json, 원본 위치/metadata/Question 연결은 inventory.json, type/difficulty/level/density/시각화 분포는 area-summary.json에서 추적한다.", ""])
+    lines.extend(["", "검토 수에는 이전 초기 샘플 CURRENT_PARTIAL도 포함한다. 전수 완료 수는 wave-1-summary.json의 CURRENT_VERIFIED 수로 구별한다. 근거는 review-notes.json 및 wave-1/*.json, 위치/연결은 inventory.json에 있다.", ""])
     for area in areas:
-        lines.extend([f"## {area['area']}", "", area["semanticEvidence"], "", f"이전 전수 Wave: [PR #{area['previousWave']['number']}]({area['previousWave']['url']}). 새 Area 판정: **NEEDS_REVIEW**.", ""])
+        lines.extend([f"## {area['area']}", "", area["semanticEvidence"], "", f"이전 전수 Wave: [PR #{area['previousWave']['number']}]({area['previousWave']['url']}) (PRIOR_REVIEWED). 새 근거: **{area['semanticReviewStatus']}**. 품질: **{area['areaVerdict']}**.", ""])
     artifacts["area-summary.md"] = "\n".join(lines)
     if errors:
         print(json.dumps({"errors": errors}, ensure_ascii=False, indent=2))

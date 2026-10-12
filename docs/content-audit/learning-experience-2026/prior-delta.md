@@ -1,5 +1,15 @@
 # 이전 감사와 차이
 
+## PR #223 초기 샘플 → Wave 1
+
+동일 baseline을 유지한다. 초기 품질 NEEDS_REVIEW 705/2,427에서 **652/2,286**으로 감소했다. 자동 검사나 과거 PASS 재사용 대신 6 Area의 54/162를 직접 읽었다. 초기와 겹치는8/21의 근거는 inventory의 `priorSampleReview`에 보존하며, 과거 전수 Wave는 PRIOR_REVIEWED로 분리한다.
+
+`cache.core.consistency.invalidation.q2`는 초기 KEEP에서 TARGETED_ENHANCE로 변경했다. v1 확인 이후 v2 commit/DEL, 늦은 SET-v1의 race가 남아 비교·발행 원자 조건 보강이 필요하다는 **새 실행 순서 근거**다(W1-CACHE-002). 이전 전체 Cache PASS나 초기 올바른 설명을 취소하지 않는다. 나머지 초기 NEEDS_REVIEW→KEEP 6 Concept 및 invalidation→TARGETED_ENHANCE는 이번 본문·문항·공식 출처 직접 대조 결과다. 다른 초기 KEEP을 검토 없이 승격하지 않았다.
+
+Wave 1의 새 발견12그룹/11 Concept/9 Question은 [수동 ledger](wave-1/README.md)와 [집계](wave-1-summary.json)에 있다. 기존 Phase A resolved7 및 초기 LEX-001~006은 유지한다. 초기 샘플 수39/98은 역사 기록이며 현재 전수 의미 완료 수54/162와 혼동하지 않는다.
+
+## Phase A와 기존 Quality Wave
+
 Phase A baseline은 `d021928a...`, 이번은 `efe73a15...`다. Phase A 원본을 수정하지 않고 현재 해소 상태를 [prior-delta.json](prior-delta.json)에 기록했다.
 
 | 기존 ID / severity | 현재 | 근거 / 해결 이력 |

@@ -38,6 +38,15 @@
       "KEEP": 3,
       "NEEDS_REVIEW": 105
     },
+    "conceptEvidence": {
+      "CURRENT_PARTIAL": 1,
+      "NEEDS_REVIEW": 39
+    },
+    "questionEvidence": {
+      "CURRENT_PARTIAL": 3,
+      "NEEDS_REVIEW": 105
+    },
+    "semanticReviewStatus": "NEEDS_REVIEW",
     "areaVerdict": "NEEDS_REVIEW",
     "previousWave": {
       "number": 181,
@@ -80,19 +89,27 @@
     "referenceLinks": 17,
     "uniqueReferenceUrls": 10,
     "conceptDecisions": {
-      "NEEDS_REVIEW": 9
+      "KEEP": 7,
+      "TARGETED_ENHANCE": 2
     },
     "questionDecisions": {
-      "KEEP": 3,
-      "NEEDS_REVIEW": 24
+      "KEEP": 26,
+      "TARGETED_ENHANCE": 1
     },
-    "areaVerdict": "NEEDS_REVIEW",
+    "conceptEvidence": {
+      "CURRENT_VERIFIED": 9
+    },
+    "questionEvidence": {
+      "CURRENT_VERIFIED": 27
+    },
+    "semanticReviewStatus": "CURRENT_VERIFIED",
+    "areaVerdict": "TARGETED_ENHANCE",
     "previousWave": {
       "number": 187,
       "url": "https://github.com/guseoh/csforge/pull/187",
       "title": "Content quality: Cache"
     },
-    "semanticEvidence": "Cache-Aside hit≠최신/미스≠없음과 v1조회→v2commit→DEL→늦은fill race를 읽고 invalidation q셋을 대조했다. 최신 세대/전달 실패를 설명하는 기존 모델 보존. 모든 source/나머지6개Concept/q셋 의미 검토 미완료."
+    "semanticEvidence": "models→consistency→operations의 모든 본문과 27문항을 직접 읽고 아래 항목별 근거를 작성. 파서/키워드에 의한 의미 verdict 없음."
   },
   {
     "area": "computer-architecture",
@@ -135,6 +152,15 @@
       "NEEDS_REVIEW": 177,
       "TARGETED_ENHANCE": 1
     },
+    "conceptEvidence": {
+      "CURRENT_PARTIAL": 5,
+      "NEEDS_REVIEW": 56
+    },
+    "questionEvidence": {
+      "CURRENT_PARTIAL": 6,
+      "NEEDS_REVIEW": 177
+    },
+    "semanticReviewStatus": "NEEDS_REVIEW",
     "areaVerdict": "NEEDS_REVIEW",
     "previousWave": {
       "number": 183,
@@ -184,6 +210,15 @@
       "KEEP": 6,
       "NEEDS_REVIEW": 69
     },
+    "conceptEvidence": {
+      "CURRENT_PARTIAL": 3,
+      "NEEDS_REVIEW": 35
+    },
+    "questionEvidence": {
+      "CURRENT_PARTIAL": 6,
+      "NEEDS_REVIEW": 69
+    },
+    "semanticReviewStatus": "NEEDS_REVIEW",
     "areaVerdict": "NEEDS_REVIEW",
     "previousWave": {
       "number": 180,
@@ -223,19 +258,27 @@
     "referenceLinks": 23,
     "uniqueReferenceUrls": 16,
     "conceptDecisions": {
-      "NEEDS_REVIEW": 9
+      "KEEP": 8,
+      "TARGETED_ENHANCE": 1
     },
     "questionDecisions": {
-      "KEEP": 6,
-      "NEEDS_REVIEW": 21
+      "KEEP": 25,
+      "TARGETED_ENHANCE": 2
     },
-    "areaVerdict": "NEEDS_REVIEW",
+    "conceptEvidence": {
+      "CURRENT_VERIFIED": 9
+    },
+    "questionEvidence": {
+      "CURRENT_VERIFIED": 27
+    },
+    "semanticReviewStatus": "CURRENT_VERIFIED",
+    "areaVerdict": "TARGETED_ENHANCE",
     "previousWave": {
       "number": 191,
       "url": "https://github.com/guseoh/csforge/pull/191",
       "title": "Content quality: Distributed Systems"
     },
-    "semanticEvidence": "고정N/R/W 교차≠linearizability/consensus, Lease만료≠실제쓰기가중단됨과 자원token검사 body/q셋을 대조했다. Dynamo/Chubby/etcd 보장 원문과 나머지7개Concept의 새 전수 검토 미완료."
+    "semanticEvidence": "time-failure→consistency→coordination 전체 본문9/문항27 직접 읽음. Raft current-term commit·Dynamo sloppy quorum·etcd read/lease·Chubby sequencer·CAP 원저자 사본으로 주요 경계 대조."
   },
   {
     "area": "dsa",
@@ -277,6 +320,15 @@
       "KEEP": 10,
       "NEEDS_REVIEW": 283
     },
+    "conceptEvidence": {
+      "CURRENT_PARTIAL": 8,
+      "NEEDS_REVIEW": 76
+    },
+    "questionEvidence": {
+      "CURRENT_PARTIAL": 10,
+      "NEEDS_REVIEW": 283
+    },
+    "semanticReviewStatus": "NEEDS_REVIEW",
     "areaVerdict": "NEEDS_REVIEW",
     "previousWave": {
       "number": 182,
@@ -317,20 +369,27 @@
     "referenceLinks": 21,
     "uniqueReferenceUrls": 21,
     "conceptDecisions": {
-      "KEEP": 1,
-      "NEEDS_REVIEW": 8
+      "KEEP": 6,
+      "TARGETED_ENHANCE": 3
     },
     "questionDecisions": {
-      "KEEP": 3,
-      "NEEDS_REVIEW": 24
+      "KEEP": 25,
+      "TARGETED_ENHANCE": 2
     },
-    "areaVerdict": "NEEDS_REVIEW",
+    "conceptEvidence": {
+      "CURRENT_VERIFIED": 9
+    },
+    "questionEvidence": {
+      "CURRENT_VERIFIED": 27
+    },
+    "semanticReviewStatus": "CURRENT_VERIFIED",
+    "areaVerdict": "TARGETED_ENHANCE",
     "previousWave": {
       "number": 189,
       "url": "https://github.com/guseoh/csforge/pull/189",
       "title": "Content quality: Infrastructure & Cloud"
     },
-    "semanticEvidence": "resource-boundaries body/q1~q3와 Kubernetes source는 KEEP. request배치/CPU throttling/메모리OOM·eviction/JVM외메모리를 구분한다. 나머지 실행·네트워크·스토리지/복구 전수 검토 미완료."
+    "semanticEvidence": "compute→network→reliability의 9 본문/27 문항을 직접 읽고 모든 답·선택지 rationale·해설을 대조. 공식 문서는 도구 open뿐 아니라 관련 계약 부분을 확인한 범위로 평가."
   },
   {
     "area": "java",
@@ -374,6 +433,15 @@
       "NEEDS_REVIEW": 816,
       "TARGETED_ENHANCE": 1
     },
+    "conceptEvidence": {
+      "CURRENT_PARTIAL": 4,
+      "NEEDS_REVIEW": 141
+    },
+    "questionEvidence": {
+      "CURRENT_PARTIAL": 25,
+      "NEEDS_REVIEW": 816
+    },
+    "semanticReviewStatus": "NEEDS_REVIEW",
     "areaVerdict": "NEEDS_REVIEW",
     "previousWave": {
       "number": 178,
@@ -415,19 +483,27 @@
     "referenceLinks": 21,
     "uniqueReferenceUrls": 12,
     "conceptDecisions": {
-      "NEEDS_REVIEW": 9
+      "KEEP": 7,
+      "TARGETED_ENHANCE": 2
     },
     "questionDecisions": {
-      "KEEP": 3,
-      "NEEDS_REVIEW": 24
+      "KEEP": 25,
+      "TARGETED_ENHANCE": 2
     },
-    "areaVerdict": "NEEDS_REVIEW",
+    "conceptEvidence": {
+      "CURRENT_VERIFIED": 9
+    },
+    "questionEvidence": {
+      "CURRENT_VERIFIED": 27
+    },
+    "semanticReviewStatus": "CURRENT_VERIFIED",
+    "areaVerdict": "TARGETED_ENHANCE",
     "previousWave": {
       "number": 188,
       "url": "https://github.com/guseoh/csforge/pull/188",
       "title": "Content quality: Messaging & Async Processing"
     },
-    "semanticEvidence": "DB commit와 offset commit 순서별 종료→유실/중복, 로컬 중복기록과 업무 변경, Kafka EOS≠외부효과를 body/q셋에서 대조했다. 다른8개Concept와 Kafka42/outbox source의 새 전수 검토 미완료."
+    "semanticEvidence": "semantics→delivery→workflow 전체 본문/27문항의 모든 선택지·rationale·acceptedAnswers·modelAnswer·explanation을 직접 읽고 개별 판정. 출력 잘림 구간은 workflow 문항 전체로 다시 확인했다."
   },
   {
     "area": "network-http",
@@ -471,6 +547,15 @@
       "NEEDS_REVIEW": 372,
       "TARGETED_ENHANCE": 1
     },
+    "conceptEvidence": {
+      "CURRENT_PARTIAL": 3,
+      "NEEDS_REVIEW": 124
+    },
+    "questionEvidence": {
+      "CURRENT_PARTIAL": 9,
+      "NEEDS_REVIEW": 372
+    },
+    "semanticReviewStatus": "NEEDS_REVIEW",
     "areaVerdict": "NEEDS_REVIEW",
     "previousWave": {
       "number": 185,
@@ -518,6 +603,15 @@
       "KEEP": 11,
       "NEEDS_REVIEW": 320
     },
+    "conceptEvidence": {
+      "CURRENT_PARTIAL": 3,
+      "NEEDS_REVIEW": 94
+    },
+    "questionEvidence": {
+      "CURRENT_PARTIAL": 11,
+      "NEEDS_REVIEW": 320
+    },
+    "semanticReviewStatus": "NEEDS_REVIEW",
     "areaVerdict": "NEEDS_REVIEW",
     "previousWave": {
       "number": 184,
@@ -557,19 +651,26 @@
     "referenceLinks": 17,
     "uniqueReferenceUrls": 17,
     "conceptDecisions": {
-      "NEEDS_REVIEW": 9
+      "KEEP": 8,
+      "TARGETED_ENHANCE": 1
     },
     "questionDecisions": {
-      "KEEP": 3,
-      "NEEDS_REVIEW": 24
+      "KEEP": 27
     },
-    "areaVerdict": "NEEDS_REVIEW",
+    "conceptEvidence": {
+      "CURRENT_VERIFIED": 9
+    },
+    "questionEvidence": {
+      "CURRENT_VERIFIED": 27
+    },
+    "semanticReviewStatus": "CURRENT_VERIFIED",
+    "areaVerdict": "TARGETED_ENHANCE",
     "previousWave": {
       "number": 190,
       "url": "https://github.com/guseoh/csforge/pull/190",
       "title": "Content quality: Performance / Observability / Operations"
     },
-    "semanticEvidence": "queue증가/이용률 외 지표와 안정·동일경계 Little법칙 120/40=3초, shedding body/q셋을 대조했다. SRE자료 확인, 논문과 다른8개Concept/문항 새 전수 검토는 미완료."
+    "semanticEvidence": "measurement→observability→operations 본문9/문항27 직접 검토. EASY 문항의 쉬운 distractor는 입문 분류 능력으로만 인정하며 운영 숙련의 증거로 확대하지 않는다."
   },
   {
     "area": "security",
@@ -612,6 +713,15 @@
       "KEEP": 3,
       "NEEDS_REVIEW": 71
     },
+    "conceptEvidence": {
+      "CURRENT_PARTIAL": 2,
+      "NEEDS_REVIEW": 36
+    },
+    "questionEvidence": {
+      "CURRENT_PARTIAL": 3,
+      "NEEDS_REVIEW": 71
+    },
+    "semanticReviewStatus": "NEEDS_REVIEW",
     "areaVerdict": "NEEDS_REVIEW",
     "previousWave": {
       "number": 186,
@@ -661,6 +771,15 @@
       "KEEP": 4,
       "NEEDS_REVIEW": 73
     },
+    "conceptEvidence": {
+      "CURRENT_PARTIAL": 2,
+      "NEEDS_REVIEW": 35
+    },
+    "questionEvidence": {
+      "CURRENT_PARTIAL": 4,
+      "NEEDS_REVIEW": 73
+    },
+    "semanticReviewStatus": "NEEDS_REVIEW",
     "areaVerdict": "NEEDS_REVIEW",
     "previousWave": {
       "number": 179,
@@ -700,18 +819,26 @@
     "referenceLinks": 18,
     "uniqueReferenceUrls": 12,
     "conceptDecisions": {
-      "NEEDS_REVIEW": 9
+      "KEEP": 7,
+      "TARGETED_ENHANCE": 2
     },
     "questionDecisions": {
-      "KEEP": 3,
-      "NEEDS_REVIEW": 24
+      "KEEP": 25,
+      "TARGETED_ENHANCE": 2
     },
-    "areaVerdict": "NEEDS_REVIEW",
+    "conceptEvidence": {
+      "CURRENT_VERIFIED": 9
+    },
+    "questionEvidence": {
+      "CURRENT_VERIFIED": 27
+    },
+    "semanticReviewStatus": "CURRENT_VERIFIED",
+    "areaVerdict": "TARGETED_ENHANCE",
     "previousWave": {
       "number": 192,
       "url": "https://github.com/guseoh/csforge/pull/192",
       "title": "System Design Content Quality"
     },
-    "semanticEvidence": "sync/async durable accept와 사용자완료상태/CSV작업/결제-색인경계 body/q셋을 대조했다. Messaging세부와 architecture책임을 구분하는 기존 설명 보존. Saga/gRPC source와 다른8개Concept 검토 미완료."
+    "semanticEvidence": "requirements→architecture→reliability의 본문9와 27문항을 모두 직접 읽고 choices/rationale/accepted/model/explanation 개별 대조. 정밀 계산 및 접수/거절 상태 계약을 새 보강 대상으로 식별."
   }
 ]

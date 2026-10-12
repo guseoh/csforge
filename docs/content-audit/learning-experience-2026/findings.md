@@ -1,6 +1,6 @@
 # 선별 수정 제안
 
-기준선과 검토 한계는 [README](README.md)를 따른다. 정확한 source 인용과 contentKey는 [review-notes.json](review-notes.json)의 `findings`에 있다. P0 발견 0, P1 1그룹/2 Question, P2 5그룹이다. 미검토 대상에 문제가 없다고 결론 내린 수치가 아니다.
+기준선과 검토 한계는 [README](README.md)를 따른다. 아래는 **초기 샘플 감사의 6개 발견**이며 source 인용/contentKey는 [review-notes.json](review-notes.json)에 보존한다. 초기 P0 0 / P1 1그룹 / P2 5그룹이다. 새 Wave 1은 별도 [상세 목록](wave-1/README.md), [12개 발견 원문](wave-1-findings.json)에 있고 P0 1 / P1 7 / P2 4그룹이다. 새 P0는 ordering.q1의 A/B 복수 정답 문제다. 초기와 새 발견을 섞어 P0가 없다고 보고하지 않는다.
 
 | ID / 심각도 | contentKey / 파일 | 문제와 최소 변경 | 후속 |
 | --- | --- | --- | --- |
