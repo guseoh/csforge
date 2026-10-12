@@ -1,0 +1,1391 @@
+{
+  "area": "security",
+  "wave": "Wave 2",
+  "baselineSha": "efe73a15da14c996bd08344181d4d6f87073803d",
+  "reviewMethod": "12 Topic 전체 curriculum·38 Concept 원문 및74 Question의 모든 선택지/rationale/accepted/model/explanation을 직접 읽고 개별 근거를 작성. 불확실한 기술 주장은 실제 공식 계약과 대조하고 도구 접근 실패·검토 한계는 구분. 자동 parsing과 이전 PASS는 verdict 근거로 쓰지 않음.",
+  "topics": [
+    {
+      "key": "security.core.foundations",
+      "coverage": "공격경로/자산과경계·검증·권한·CIA를6문항모두읽음. q2의threat vsactor 표현정밀화후보를분리."
+    },
+    {
+      "key": "security.core.authn-authz",
+      "coverage": "장기identity/요청principal, 인증전후와resource인가를6문항에서검토. matches=true만으로최종인증보장하는문항전제를공식UserDetails상태계약과대조."
+    },
+    {
+      "key": "security.core.password",
+      "coverage": "plaintext/key별유출조건, publicsalt/추측비용, offline/online부하·점진재해시를6문항모두읽고공식절대조."
+    },
+    {
+      "key": "security.core.session-cookie",
+      "coverage": "bearer세션id/store폐기, cookie속성방어한계, fixation/만료경계를5문항과대조. site기준설명만보강후보."
+    },
+    {
+      "key": "security.core.browser",
+      "coverage": "4 Concept 전체와7 Question의origin판정·preflight/app결과·쿠키CSRF조건·XSS출력문맥을개별검토."
+    },
+    {
+      "key": "security.core.injection",
+      "coverage": "오염SQL/JPQL 실제구조와바인딩·identifier allowlist, 출력문맥을6문항모두직접대조."
+    },
+    {
+      "key": "security.core.access",
+      "coverage": "role/owner/nested관계와BOLA/수직권한상승, 모든읽기/변경경로를6문항에서검토. methodsecurity선행조건보강후보."
+    },
+    {
+      "key": "security.core.filter-chain",
+      "coverage": "containerfilter/MVC 위치,firstmatchingchain/permitAll,뒤쪽예외ETF처리를6문항과실제공식절대조."
+    },
+    {
+      "key": "security.core.auth-architecture",
+      "coverage": "untrustedtoken→provider검증→result, supports별위임/MFA별도, user조회/hash/state검사를6문항에서확인. Reference대상class명정밀화후보."
+    },
+    {
+      "key": "security.core.context-authz",
+      "coverage": "requestthread문맥수명·methodAOP범위·asynccapture/cleanup/latest권한을6문항에서개별검토."
+    },
+    {
+      "key": "security.core.tokens-oauth",
+      "coverage": "JWS/JWE·허용alg/key·issuer/audience/time·rotation/revocation 및OAuth역할/PKCE/OIDC를6문항모두검토,공식RFC와Core실제절대조."
+    },
+    {
+      "key": "security.core.abuse",
+      "coverage": "4 Concept/8 Question 전체의실제URLdestination·파일해석/경로/인가·limiter범위/오탐·secret로그경로를공식자료와대조."
+    }
+  ],
+  "concepts": [
+    [
+      "security.core.foundations.assets-threats",
+      "TARGETED_ENHANCE",
+      "L1 CORE 자산/공격능력·목표/악용경로 목표본문충족; 연결q2의위협행위자용어보강.",
+      "회원주문BOLA 조건·로그인/추측ID/소유권누락/결과,자산별영향·가능성,정보로그/속도제한 설명충분. q2모델이행위자를위협자체로부름.",
+      "TEXT 자산/공격결과/취약점과실행전제표가적절.",
+      "OWASP 실제 undesirable event 위협정의와threat agent/attack/vulnerability/impact 구분절확인.",
+      "q1 경로분류정확/q2 actor와event 표현보강."
+    ],
+    [
+      "security.core.foundations.trust-boundary",
+      "KEEP",
+      "L1 CORE 통제권변경/서버검증위치 목표충족.",
+      "직접HTTP우회·원격payment응답schema/금액/서명·DTO→domain→DB 책임·bodymemberId불신 구체적.",
+      "DIAGRAM 브라우저경계/외부응답/검증세층이유효.",
+      "OWASP 서버검증·내부source도경계넘으면검증·syntax/semantic/authorization별도절확인.",
+      "q1 accepted3구절모두서버검증핵심/q2 직접quantity우회."
+    ],
+    [
+      "security.core.foundations.cia-least",
+      "KEEP",
+      "L1 CORE CIA와API/DB최소권한 목표충족.",
+      "무단읽기/금액변경/이용중단,암호화≠인가,조회DB계정DDL/admin제거·UI숨김≠서버검사·침해범위분리 충분.",
+      "NONE 목표/실패/질문표와DB계정예로충분.",
+      "OWASPleastprivileges·denydefault·요청별권한및CIA영향을실제확인.",
+      "q1 adminDB침해범위/q2 무결성→가용성."
+    ],
+    [
+      "security.core.authn-authz.identity-principal",
+      "KEEP",
+      "L1 STANDARD stableID와현재context표현 목표충족.",
+      "member42·이메일변경·감사/ownerID, Entity전체principal의session/lazy/stale문제, clientmemberId불신 충분.",
+      "NONE 객체필드/이메일변경예로충분.",
+      "SpringSecurity 실제Authentication input/current결과·principal/credentials/authorities와context/ThreadLocal 범위확인.",
+      "q1 stableID accepted5 정확/q2 같은ID와갱신principal속성."
+    ],
+    [
+      "security.core.authn-authz.authentication",
+      "TARGETED_ENHANCE",
+      "L1 CORE credential검증/실패구분 목표는충족하나q3와그림이passwordmatch를최종성공의충분조건으로제시.",
+      "filter→manager→user→matches→context 단순비번흐름,hash복호화아님,계정탐색/MFA≠authz 정확. provider의account/credential상태검사통과라는단순화전제가누락됨.",
+      "TEXT 단순흐름은유지하되provider검사/성공결과후context 설치 및실패context금지를분명히해야함.",
+      "실제공식password개요의Dao/ProviderManager code와DAO절/UserDetails expired/locked/disabled계약 대조. LEX006의과거Reference개선제안은수정하지않음.",
+      "q1 authn/authz 다중연결정확/q2 enumeration정확/q3 충분조건오류."
+    ],
+    [
+      "security.core.authn-authz.authorization",
+      "KEEP",
+      "L1 CORE 요청별resource/action·role/owner 판단목표충족.",
+      "USER42/owner77 거절,서비스정책or조회조건id+member,HTTPadmin vs업무상태,denydefault/authnvsaccessdenied 구체적.",
+      "TEXT role✓owner✗와조회조건코드 적절.",
+      "OWASP 실제least/denydefault/everyrequest/resource relation 확인.",
+      "q1 accepted4 owner검사 모두정확. 권한계약이public공유허용인경우라는추가전제를임의로도입하지않음."
+    ],
+    [
+      "security.core.password.plaintext",
+      "KEEP",
+      "L1 CORE DB단독평문유출/별도복호화key조건·재설정목표충족.",
+      "원문복구대신검증자/matches, fastSHA부적합,DB+key공동침해위험,backup침해와재사용피해·짧은reset새password를설명. q2가DBonly암호문즉시복호화아님을명확화.",
+      "NONE 가입/검증흐름과fast해시반례 충분.",
+      "OWASP 실제hashvsencryption/slowadaptive·현재권고를대조.",
+      "q1 원문재발송신호 accepted4/q2 DBonlyvskey별위험."
+    ],
+    [
+      "security.core.password.salt-hash",
+      "KEEP",
+      "L1 CORE 계정별salt의같은암호다른값/사전계산재사용방지목표충족.",
+      "password123 saltA/B→X/Y, saltpublicencoded포함, library보통관리, saltfastSHA부족·pepper비밀/교체비용 설명충분.",
+      "TEXT 무salt동일값과다른salt검증자비교 유효.",
+      "OWASP실제Salting절 algorithms는salt입력필요/library보통자동관리·pepper별도대조.",
+      "q1 salt공개성/q2 계정별값효과는관련하지만다른측면검증."
+    ],
+    [
+      "security.core.password.work-factor",
+      "KEEP",
+      "L2 CORE 비용/로그인부하/재해시판단 목표충족.",
+      "Argon2id우선/bcryptlegacy·환경대안,mem/iterations측정,offline비용vsonline속도/MFA,성공시raw새policyrehash와Delegatingformatmigration 충분.",
+      "NONE low/highcost결과와rehash정책으로충분; 설정숫자를임의보편정답으로안줌.",
+      "OWASP실제Argon2id/scrypt/legacybcrypt/FIPS-PBKDF2및cost·Spring Delegatingiddispatch/upgrade지원절 대조.",
+      "q1 costDoS상충/q2 로그인시점진전환."
+    ],
+    [
+      "security.core.session-cookie.session-id",
+      "KEEP",
+      "L2 CORE cookieID→serverstate/context 및탈취재사용 목표충족.",
+      "로그인/다음요청S123왕복,불투명예측난도·URL로그노출·cookievsserverstate·member의여러session수명 충분. session기반설정의개념이며모든stateless필터저장을보장안함.",
+      "DIAGRAM 로그인SetCookie/다음Cookie lookup과피해자/공격자동일ID 유효.",
+      "Spring 실제HTTPcontextrepository/수동save/STATELESS구분 및OWASP meaninglessID/serverstate·entropy절확인.",
+      "q1 accepted4 credential/q2 삭제DB와실제store일치/폐기경계."
+    ],
+    [
+      "security.core.session-cookie.cookie-flags",
+      "TARGETED_ENHANCE",
+      "L2 CORE 세속성효과/한계는정확하나SameSite의site와origin기준차이를설명하지않음.",
+      "Secure일반HTTPS/HttpOnly≠동일출처fetch차단, Laxtopnavigation safe/NoneSecure,Path≠authz 정확. 동일사이트내공격을경고하지만어떤subdomain이같은site인지판단근거없음.",
+      "TEXT 표/SetCookie사례유효. app/api같은site다른origin 및scheme다른site 비교행보강후보.",
+      "MDN실제HttpOnly/SameSite/Domain/Path 범위와Site정의대조. 기본Lax2분POST예외와명시Lax는구분하되본문은명시Lax를설명하므로정답오류아님.",
+      "q1 D 동일출처XSS요청가능, 모든distractor/rationale정확."
+    ],
+    [
+      "security.core.session-cookie.fixation-expiration",
+      "KEEP",
+      "L2 CORE 고정ID/교체/idleabsolute/logout 목표충족.",
+      "공격자가X준비→victimloginX유지→reuse, authchangeID교체·설정속성유지, idlevsabsolute,serverinvalidate/contextclear/cookieexpiry·비번변경정책 충분.",
+      "DIAGRAM fixation세주체와logout폐기목록유효.",
+      "Springactual changeSessionId/newSession/migrateSession조건/기본 및none위험확인;모든설정에서browsercookie삭제자동이라는주장없음.",
+      "q1 accepted4 ID교체/q2 cookieMaxAge≠serverexpiry."
+    ],
+    [
+      "security.core.browser.same-origin",
+      "KEEP",
+      "L2 CORE scheme/host/port와읽기제한이유목표충족.",
+      "기본443/8443/http/host표,write/embed가능·read제약,CSRF응답읽기불필요·curl엔비적용·CORS완화 충분.",
+      "TEXT URL판정표와networkrequest가능→read검사 흐름 정확.",
+      "MDN실제crossorigin writes/embed허용/read제약 및defaultport origin정의대조.",
+      "q1 SOPvsCSRF다중연결/q2 세URL판정."
+    ],
+    [
+      "security.core.browser.cors-preflight",
+      "TARGETED_ENHANCE",
+      "L2 CORE Origin/OPTIONS→실제요청흐름과한계는충족하나헤더조건의실제JSON교환설명이부족.",
+      "app/api host다른origin, GET후read차단·POST서버처리vsread실패, credentials+명시origin/*불가,formCSRF와debug순서정확. diagram은method만보여주고JSONContent-Type/Request-Headers/Allow-Headers가없음.",
+      "DIAGRAM 기본OPTIONS와본POST순서는유효. application/json+content-type헤더허용/거절분기와credentials없는OPTIONS를구체화할후보.",
+      "MDN실제preflightheaders/credential/*제약과SpringSecurity CORS-before-security이유확인.",
+      "q1 본POST200후read차단/q2 preflight통과≠업무성공 정확."
+    ],
+    [
+      "security.core.browser.csrf",
+      "KEEP",
+      "L2 CORE auto credential상태변경·token/SameSite목표충족.",
+      "NoneSecure송신가정을명시한bank/evil formPOST, 응답읽기불필요, session예측불가token비교, unsafeGET금지·SameSite부가·manualAuthorization다른위협 충분.",
+      "DIAGRAM attackerform→cookie→인증처리 및session/token검증승패 유효.",
+      "Spring실제token은browser자동첨부아닌part에필요/unsafe검증과OWASPSameSite한계·site≠origin절확인.",
+      "q1 accepted4자동cookie동작정확; 다른SameSite조건은설명에전송허용일때로제한."
+    ],
+    [
+      "security.core.browser.xss",
+      "KEEP",
+      "L2 CORE untrusted값→출력파서code/문맥encoding·CSP역할 목표충족.",
+      "innerHTMLnickname→img onerror(ellipsis는개념적부분예),stored/reflected/DOM경로·문맥별grammar·ordinarydivtextContent·richHTML정화·HttpOnly/CSP부가 충분.",
+      "DIAGRAM 세유입경로→렌더/unsafe출력→실행과코드비교 유효.",
+      "OWASP실제ordinaryelementtextContent·attribute/JS문맥별보호·HTMLsanitize와추가controls 대조. textContent를script/style에도보편안전하다고주장안함.",
+      "q1 HttpOnly한계 cookieflags다중연결/q2 세문맥encoding."
+    ],
+    [
+      "security.core.injection.sql-injection",
+      "KEEP",
+      "L2 CORE 입력이쿼리문법으로바뀌는위험/바인딩 목표충족.",
+      "emailconcat에OR1=1→전체predicate, JPA namedparameter 안전, ORDERBYidentifier값bind불가와enum mapping,직접escape금지/DB최소권한 충분.",
+      "TEXT 공격전후SQL과safeJPA/allowlistcode가설명상충분.",
+      "OWASP 실제preparedcode/data분리와식별자/ASC/DESC allowlist절 확인.",
+      "q1 accepted4 원리/q2 sortkey+direction."
+    ],
+    [
+      "security.core.injection.jpql-native",
+      "KEEP",
+      "L2 CORE ORM이어도동적구조인젝션/allowlist 목표충족.",
+      "unsafecreateQuery vssetParameter, nativeSpringData @Query 값과정렬구조구분, 안전값bind≠BOLA방어, querybuilder범위 충분. annotation은method없는부분예이며portableJPA모든native namedparam보장이라고주장안함.",
+      "NONE 위험/안전JPQL쌍과구조경계코드로충분.",
+      "OWASP HQLnamedparam/ORM구조오염과동적tableallowlist 실제대조.",
+      "q1 sortconcat/q2 FROMentitychoice."
+    ],
+    [
+      "security.core.injection.output-encoding",
+      "KEEP",
+      "L2 CORE HTML/attr/URL/JS문법과검증만으론부족목표충족.",
+      "네출력placeholder문맥·textContent/innerHTML·sanitizevsencode·JSON이DOMsink로이어짐,URLscheme/구조생성은q2보강정확.",
+      "TEXT 문맥별markup쌍과safeDOMcode가유효. browser.xss와공통원리반복이지만backend→frontend 데이터계약경계확장.",
+      "이번Securitybrowser에서직접읽은OWASP contextencoding/ordinarytextsink/sanitize절대조.",
+      "q1 parser문맥/q2 attrinlineJS+URLpolicy 적용."
+    ],
+    [
+      "security.core.access.ownership",
+      "KEEP",
+      "L2 CORE currentprincipal/resource권한 목표충족.",
+      "42vs77 role✓owner✗, UUID는권한대체아님,queryscope+존재노출/복잡policy, support예외와nestedorder-item관계 모두구체적.",
+      "NONE 비교값/쿼리/policy예로충분.",
+      "OWASP매요청객체/action relation권한절실제대조.",
+      "q1 role-only/q2 controller한경로누락/응답cache경계."
+    ],
+    [
+      "security.core.access.bola-idor",
+      "KEEP",
+      "L2 CORE ID조작→수평권한실패 진단목표충족.",
+      "1001→1002/owner77 흐름,정상login공격·sequential≠원인/listscope/403vs404 policy, authn≠authz 충분. HTTP Authorization의session설명은개념적표기로실제헤더형식아님.",
+      "TEXT 공격조회→owner검사누락·listSQL범위 유효.",
+      "API1:2023 실제IDs integers/UUID/string·객체마다action검사와BFLA구분을확인.",
+      "q1 accepted4 UUID후권한/q2 nesteduser/order둘관계."
+    ],
+    [
+      "security.core.access.vertical",
+      "TARGETED_ENHANCE",
+      "L2 CORE UI≠인가/고권한작업 목표충족하나@PreAuthorize실행의활성화조건누락.",
+      "USERadmin직접호출→delete,routehasRole와업무method, support읽기/admin쓰기권한분해 충분. 애너테이션만으로method보안켜지는것아님과Springproxy호출조건이빠짐.",
+      "NONE route/method부분code와권한트리 적절; setup/불활성실패조건한줄보강.",
+      "OWASP실제least/everyrequest와공식Spring@EnableMethodSecurity활성화/AOPinterceptor조건 대조.",
+      "q1 adminserverguard accepted4/q2 bodyrole불신 정확."
+    ],
+    [
+      "security.core.filter-chain.servlet-filter",
+      "TARGETED_ENHANCE",
+      "L2 CORE filter위치/전후처리는충족하지만q2의본문stream소비/replaywrapper 지식은본문에없음.",
+      "container→filters→Dispatcher→controller·doFilter전400return·DelegatingProxy→SpringFilterChainProxy·HandlerInterceptor안쪽 설명정확. q2의한번소비·bounded재사용/secret제거를가르치지않음.",
+      "DIAGRAM 순방향/빈delegate유효. body소비전후상태→MVCempty와bounded재사용분기를보강후보.",
+      "Springactual architecturefilterchain/delegate/Lifecycle절과ContentCachingWrapper의읽힌것만cache·자동read/replay아님 API 대조.",
+      "q1 accepted4chain 정확/q2 기술답은정확하나선행본문부족."
+    ],
+    [
+      "security.core.filter-chain.security-filter-chain",
+      "TARGETED_ENHANCE",
+      "L2 CORE 첫일치/순서/permitAll은충족하나아무chain도match안될때의보호경계누락.",
+      "api일반first/adminnever 반례,authenticationcontext→authz·ETF뒤쪽위치,addFilterBefore/permitAll필터비제외 정확. securityMatcher와chain내requestMatchers/어디에도match안됨의차이를설명할필요.",
+      "DIAGRAM 두chainfirstmatch유효. unmatched→SpringSecurity필터없음 및catchall deny정책가지 후보.",
+      "Springactual firstmatch/0filters/ETF절 및Java config unmatchednotprotected 규칙대조.",
+      "q1 permitAll/q2 apiadmin순서 두문항정확."
+    ],
+    [
+      "security.core.filter-chain.exception-translation",
+      "KEEP",
+      "L2 CORE AuthException/AccessDenied→entrypoint/handler 목표충족.",
+      "ETF뒤쪽doFilter예외만포착·anonymousdenied도entrypoint,REST401vsformredirect,ControllerAdvice경계·safe로그 충분.401/403을일반API설계성격으로설명하며모든실패가이rule한개라는보장아님.",
+      "TEXT try뒤예외분기/각응답과JSON예가적절.",
+      "공식ETFactualtrydoFilter/예외타입·startauthentication/deniedhandler와다른예외비처리 절확인.",
+      "q1 advice만으론불충분/q2 API인증필요vs권한거절 의미."
+    ],
+    [
+      "security.core.auth-architecture.authentication-token",
+      "KEEP",
+      "L2 CORE pre/post principal/credential/authority/truststate 목표충족.",
+      "username입력 false→provider검증UserDetails/authorities true·credentials제거가능, 임의setAuthenticated/context우회금지 충분. 모든방식이UserDetails필수라는주장아님;주어진password예의상태.",
+      "TEXT pre/post표현/flow가정확.",
+      "공식Authentication2역할·credentialerasure·provider/context절이번Wave2에서직접확인.",
+      "q1 accepted4 untrustedstate/q2 manager성공+필요account검사전까지미인증."
+    ],
+    [
+      "security.core.auth-architecture.manager-provider",
+      "KEEP",
+      "L2 CORE 지원token provider위임/성공실패 목표충족.",
+      "DAO/APIkey/OTP별dependency와supportsClass코드,사용자조회/encoder협력, multipleproviders≠모든단계MFA·계정탐색정보경계 충분.",
+      "DIAGRAM manager→providers별type위임유효; fallback세부는별도심화이고본문이단일supports=true를성공보장으로안함.",
+      "공식ProviderManager delegate/unsupported/null/실패·성공 계약과DAO절을대조.",
+      "q1 분리책임/q2 C supports기준위임."
+    ],
+    [
+      "security.core.auth-architecture.user-details",
+      "TARGETED_ENHANCE",
+      "L2 CORE 조회/검증/계정상태목표본문충족. Reference제목UserDetailsService와실제UserDetails페이지대상불일치.",
+      "DAO→loadUser→hash+state+authority /matches,domainMember와표현분리record부분예, locked/disabled/expiredcredentials, {id} 점진형식 전환 정확.",
+      "NONE 협력흐름과record·상태/형식 설명으로충분.",
+      "canonicaluser-details는실제UserDetails/credentialmanagement페이지. 조회service의별도공식user-details-service 경로를직접대조하여제목/연결보강후보.",
+      "q1 accepted4두협력자/q2 조회실패rawDB/계정정보비노출정확; DB가용성실패와notfound를같은badcredentials로일반화하지않음."
+    ],
+    [
+      "security.core.context-authz.context-holder",
+      "TARGETED_ENHANCE",
+      "L3 CORE 조회/설정/정리수명본문충족. q2가다음asyncConcept의전달/재검증전략을요구하나단일링크.",
+      "필터→context→holder사용,동기threadstrategy≠global1변수,threadreusecleanup/실패경로·domain의명시actor·mutablecontext≠immutable snapshot 정확.",
+      "TEXT thread7 A42→clear→B77와조회관계 적절.",
+      "Spring실제ThreadLocal기본/FilterChainProxycleanup·newcontext공유race경계 확인.",
+      "q1 accepted4 누출/q2 정확한async응용답에선행link추가필요."
+    ],
+    [
+      "security.core.context-authz.method-security",
+      "TARGETED_ENHANCE",
+      "L3 CORE URLvs유스케이스/ownerproxy조건 충분; 활성화조건은여기도누락되어W2-SEC-005와같은최소보강범위.",
+      "PreAuthorizeauthority/orderAuthpolicy·proxy거부/허용·HTTP기본역할vs업무ownerstate·selfcallbypass 정확. EnableMethodSecurity가전제라는설명없음.",
+      "NONE code와proxy/state흐름충분; 실활성설정/guard거절조건짧게필요.",
+      "공식methodsecurity 활성화/AOPinterceptor·기본proxyselfcall조건실제대조.",
+      "q1 thisbypass/q2 controlleronly다른경로누락정확."
+    ],
+    [
+      "security.core.context-authz.async-context",
+      "KEEP",
+      "L3 CORE 새thread/재사용/명시전달 목표충족.",
+      "submitcapture→set→run→finallyclear, delegationwrapper·분석actorID/시스템권한선택·10분뒤role/logout상태판단·inheritablepool부족 설명충분.",
+      "DIAGRAM request12→worker3 unknown 및capture/run/cleanup 유효.",
+      "Springconcurrency 실제Runnablewrap/currentExecutor vs명시고정context·finally정리절확인. capture를immutabledeepcopy로과장안함.",
+      "q1 accepted3 기본ThreadLocal비전파/q2 늦은refund최신권한."
+    ],
+    [
+      "security.core.tokens-oauth.jwt-structure",
+      "KEEP",
+      "L3 CORE signedJWT공개payload/무결성과issuertrust 목표충족.",
+      "header.payload.signature/MAC,base64≠비밀·민감값금지,algallow/keytrust+iss/aud/exp/nbf/sub 조건,decodedrole불신·JWE별도 충분. JWT모든형식이3part라고확대안함.",
+      "TEXT compact필드와검증조건/claim표 유효.",
+      "RFC7519 JWSMAC/JWE 정의·등록claim선택성 및8725algallow+keybinding 실제확인.",
+      "q1 decodedrole검증/q2 signature≠현재API사용조건."
+    ],
+    [
+      "security.core.tokens-oauth.jwt-lifecycle",
+      "KEEP",
+      "L3 CORE exp/iss/aud·stale권한/즉시폐기 trade-off 목표충족.",
+      "10발급/05정지/15expire timeline,clientdelete≠serverrevocation·denylist/version/introspection 비용,refreshR1→R2/used재생의심·oldkey/kidtrustedJWKS 설명충분. refresh재생후activefamily폐기/재인가정책은추가심화가능하지만현학습목표보장오류없음.",
+      "NONE time/rotation숫자와조건목록으로충분.",
+      "RFC7519 exp경계/nbf/aud 및RFC9700publicrefresh senderconstraintorrotation·usedtoken검출후activegrant회수 절직접확인.",
+      "q115분stale권한/q2 oldkeyvalid와현재issuer/audtrust별도."
+    ],
+    [
+      "security.core.tokens-oauth.oauth-oidc",
+      "TARGETED_ENHANCE",
+      "L3 CORE 위임vs인증/토큰소비자와PKCE는정확하나인가코드전체actor/trustflow 설명부족.",
+      "verifier→S256challenge와codebound→교환compare,publicMUST/confidentialRECOMMEND,AT→RS/IDT→client,OIDC조건검증·내부admin별도 정확. browser/ownerconsent/redirectcallback frontchannel과tokenbackchannel이그림에서빠짐.",
+      "DIAGRAM PKCE부분흐름유효하지만owner·useragent·client·AS·RS 다섯역할과redirect/신뢰경계의전체sequence 보강후보.",
+      "RFC6749 owner-useragentredirect·clientid/scope/redirecturi,state,7636S256·9700권고/CSRFbinding/nonce차이 및OIDCCore IDTissuer/aud/exp/nonce조건 직접확인.",
+      "q1 accepted3 ATAPIvsIDTclientauth/q2 verifier검증 정확. 현문항은PKCE부분을검증하고전체redirect학습목표는미검증."
+    ],
+    [
+      "security.core.abuse.ssrf",
+      "KEEP",
+      "L3 CORE 서버대신요청/allowlist DNS redirect 경계목표충족.",
+      "preview localhost/metadata, startsWith userinfo호스트혼동,parse scheme/host/port·A/AAAA및검증주소에connectionbinding·redirectoff/단계재검증·egress·기능필요성 구체적.",
+      "DIAGRAM attackerURL→publicbackend→internal/metadata가신뢰경계를명확히함.",
+      "OWASP실제redirectdisable·IPv4/6검증·A/AAAA+검증주소연결결합·network layer대조.",
+      "q1 userinfo127host/q2 redirect/DNS 실제주소우회."
+    ],
+    [
+      "security.core.abuse.file-path",
+      "TARGETED_ENHANCE",
+      "L3 CORE 저장명/내용/인가/경로목표충족. ASCII예의한국어오타만P2정밀수정후보.",
+      "resolveuntrustedname ../../탈출·displaynamevsrandomstorage·MIME불신/parser취약점·webroot/별도origin activeHTML/SVG·downloadowner/normalizedroot+symlink를충분히구분. ‘벗어남할’표현비문.",
+      "TEXT root/filename예·metadata/storage·download검사 유효. normalize만으로symlink안전보장안함.",
+      "OWASP실제uploadtype/size/generatedname/outsidewebroot/authorizedaccess와PathTraversal../경계확인.",
+      "q1 accepted3표시/저장분리/q2 jpg만으론형식/경로/권한부족 정확."
+    ],
+    [
+      "security.core.abuse.rate-limit",
+      "KEEP",
+      "L3 CORE 계정/IP/burst/globalstate/오탐목표충족.",
+      "NAT/IP/계정분산·auth전키불가, fixed경계100+100/sliding/tokenbucket, A60B60>전역100·공유저장필수조건·429optionalRetryAfter·인가별도 충분.",
+      "TEXT 제한축장단점·fixedwindow시간예·2instance계수 유효.",
+      "OWASP실제accountcounter/distributedIP·threshold/window/duration/lockoutDoS와RFC6585 optional429/RetryAfter·집계scope미정의를대조.",
+      "q1 B 단일localRedis불필수/q2 distributedIP/NAT신호조합."
+    ],
+    [
+      "security.core.abuse.secret-logging",
+      "KEEP",
+      "L3 CORE password/token/session/key로그/trace/오류 노출목표충족.",
+      "Authorization/cookiecopy재사용·collector복제/삭제비용·rawhash/token/reset/privatekey금지·highentropyapikeyfingerprint·SDKtoString/body/DBparam·safeactorreason/correlation·실출력test 충분.",
+      "NONE 로그예/배포흐름과허용관측값으로충분.",
+      "OWASP실제dataexclude(session/token/password/DBsecret/key/card)·hash대안 및collection검증절확인.",
+      "q1 hashedpassword와bearer로그별위험/q2 prefix가항상안전아님."
+    ]
+  ],
+  "questions": [
+    [
+      "security.core.foundations.assets-threats.q1",
+      "KEEP",
+      "model/explanation 자산주문정보/로그인공격자의타인ID조회/소유권누락, ID난독화만으론방어불가 정확.",
+      "MEDIUM 본문경로와일치."
+    ],
+    [
+      "security.core.foundations.trust-boundary.q1",
+      "KEEP",
+      "accepted3항목모두클라이언트우회가능→서버검증원칙 정확; explanation 확인.",
+      "EASY 구절식답의핵심조건일치. 모든한국어동의표현을자동수용한다는보장아님."
+    ],
+    [
+      "security.core.foundations.cia-least.q1",
+      "KEEP",
+      "model/explanationCRUD앱계정admin이면침해시DB전체/DDL피해확대→필요권한제한 타당.",
+      "MEDIUM 권한제거가침해가능성자체를없앤다고주장안함."
+    ],
+    [
+      "security.core.foundations.assets-threats.q2",
+      "TARGETED_ENHANCE",
+      "model/explanation자산·공개ACL취약점·방어는타당하나‘위협은공격자’라며actor와event를같은정의로표현.",
+      "MEDIUM q1행위기준과용어일관성부족; 무단읽기/수집event와actor를나눠정밀화할P2후보."
+    ],
+    [
+      "security.core.foundations.trust-boundary.q2",
+      "KEEP",
+      "model/explanationquantity100000 직접요청API범위/권한·domainDB방어·상태전거절 정확.",
+      "MEDIUM API형식과업무범위를함께검증; 불필요DB권한대체없음."
+    ],
+    [
+      "security.core.foundations.cia-least.q2",
+      "KEEP",
+      "B 무결성→가용성. A/C/D는금액변경을기밀성/가용성으로혼동; rationale4/explanation 정확.",
+      "MEDIUM 두순차사건명시로모호성없음."
+    ],
+    [
+      "security.core.authn-authz.identity-principal.q1",
+      "KEEP",
+      "acceptedmemberId/member id/내부ID/변경안됨/불변ID5개 모두stableidentity; explanation확인.",
+      "MEDIUM memberId라는예시이외안정ID표현수용, 이메일가변조건명확."
+    ],
+    [
+      "security.core.authn-authz.authentication.q1",
+      "KEEP",
+      "model/explanation로그인은who, 타인order인가owner/role/policy 별도 정확.",
+      "EASY authentication+authorization다중연결적절."
+    ],
+    [
+      "security.core.authn-authz.authorization.q1",
+      "KEEP",
+      "accepted4개현재사용자owner/resource인가 검사 정확; explanation수평권한상승과대조.",
+      "MEDIUM 구체role-only상황의누락된조건명확."
+    ],
+    [
+      "security.core.authn-authz.identity-principal.q2",
+      "KEEP",
+      "model/explanationstable42vs현재principal변경이메일·이후갱신, 감사/ownerID유지 정확.",
+      "MEDIUM 현재context표현이모든session에서자동실시간갱신된다고주장안함."
+    ],
+    [
+      "security.core.authn-authz.authentication.q2",
+      "KEEP",
+      "model/explanation존재vswrongpassword응답차이enumeration·외부일관오류/내부증거 분리 정확.",
+      "MEDIUM 메시지만같으면모든timingsidechannel없다는보장아님."
+    ],
+    [
+      "security.core.authn-authz.authentication.q3",
+      "TARGETED_ENHANCE",
+      "model은matches=true이면완료Authentication/context라고단정. 사용자조회+비밀번호일치는expiredcredentials등provider상태검사까지통과한증거아님. false시인증실패방향은맞음.",
+      "MEDIUM 문제에계정/자격증명상태등다른필수검사가통과했다고제시되지않아Spring의최종성공보장을과장. scope전제또는provider전체성공조건보강필요."
+    ],
+    [
+      "security.core.password.plaintext.q1",
+      "KEEP",
+      "accepted4개모두원문저장or복구가능신호; explanation은암호문과평문조건구분.",
+      "EASY email로기존원문보내는것이라는조건명확."
+    ],
+    [
+      "security.core.password.salt-hash.q1",
+      "KEEP",
+      "A 공개salt/개별값/precompute재사용방지. B DB자동암호화/C fast항상안전/D key동일 오답; rationale4/explanation 정확.",
+      "MEDIUM salt와pepper역할을구분."
+    ],
+    [
+      "security.core.password.work-factor.q1",
+      "KEEP",
+      "model/explanation offline비용유지+targethardware latency/CPU/mem측정/online속도제한 정확.",
+      "MEDIUM 비용무조건최대/최소가정답아님."
+    ],
+    [
+      "security.core.password.plaintext.q2",
+      "KEEP",
+      "model/explanationDBonly평문즉시노출/암호문은key조건·원문복구대신전용hash/reset 정확.",
+      "HARD 침해범위를명시해암호화유출을무조건평문과동일하게보는오해방지."
+    ],
+    [
+      "security.core.password.salt-hash.q2",
+      "KEEP",
+      "D 같음암호라도다른hash/precompute·pattern노출완화. A online모두차단/B server검증불가/C 복구암호화 오답; rationale4/explanation 확인.",
+      "MEDIUM q1와관련되나공개성vs계정별분리효과로검증축이다름."
+    ],
+    [
+      "security.core.password.work-factor.q2",
+      "KEEP",
+      "model/explanation이미검증된raw로newcostrehash·일괄reset없이점진강화/온라인부하관리 정확.",
+      "MEDIUM 저장hash만으로새원문hash변환가능하다고주장안함."
+    ],
+    [
+      "security.core.session-cookie.session-id.q1",
+      "KEEP",
+      "accepted4개소지형/인증state credential 정확, explanation비번없이재사용위험대조.",
+      "EASY 숫자ID를정답으로받는문제가아닌보안성격질문."
+    ],
+    [
+      "security.core.session-cookie.cookie-flags.q1",
+      "KEEP",
+      "D 쿠키직접읽기제한vs동일origin요청자동전송. A 암호화/B JS실행금지/C crosssite차단은틀림; rationale4/explanation 확인.",
+      "MEDIUM A도아니다지만이유가틀려유일D가완전정답."
+    ],
+    [
+      "security.core.session-cookie.fixation-expiration.q1",
+      "KEEP",
+      "accepted4개인증시ID교체 정확; explanationpreknownX연결차단.",
+      "MEDIUM 기존속성모두삭제를필수라고강제안함."
+    ],
+    [
+      "security.core.session-cookie.session-id.q2",
+      "KEEP",
+      "model/explanation DB삭제vsauth실제cache/replica/store 확인, 모든경로id폐기와cookieexpiry 경계정확.",
+      "HARD 관측모순원인여러후보를허용하며Redis존재를가정안함."
+    ],
+    [
+      "security.core.session-cookie.fixation-expiration.q2",
+      "KEEP",
+      "model/explanationMaxAge browser보관vsserver idle/absolute/revocation별도 정확.",
+      "MEDIUM browser삭제만으로탈취한값의재사용금지보장안함."
+    ],
+    [
+      "security.core.browser.same-origin.q1",
+      "KEEP",
+      "model/explanationcrossoriginform전송가능·cookie허용상태이면응답읽기없이CSRF성공 정확.",
+      "MEDIUM formcookie전송은가능성으로설명하고모든SameSite브라우저에서무조건전송보장안함."
+    ],
+    [
+      "security.core.browser.cors-preflight.q1",
+      "KEEP",
+      "A 실제POST후read노출차단가능. B 항상0요청/C 반드시4xx/D 자동auth우회 오답; rationale4/explanation 정확.",
+      "MEDIUM 서버POST200로그조건으로요청도달이명확."
+    ],
+    [
+      "security.core.browser.csrf.q1",
+      "KEEP",
+      "accepted4개cookie자동첨부핵심 정확; explanation전송허용된crosssite조건명시.",
+      "MEDIUM 자동Authorization헤더로일반화하지않음."
+    ],
+    [
+      "security.core.browser.xss.q1",
+      "KEEP",
+      "model/explanationHttpOnly직접읽기만막음·victimoriginfetch자동cookie와DOM읽기/조작가능 정확.",
+      "MEDIUM cookie-flags.q1과같은방어한계를XSS피해시나리오에서다중연결. 중복성은있지만정답/연결오류없음."
+    ],
+    [
+      "security.core.browser.same-origin.q2",
+      "KEEP",
+      "model/explanationhttps생략443동일,8443port다름,http:443scheme다름 정확.",
+      "MEDIUM 명시current443이판정을결정."
+    ],
+    [
+      "security.core.browser.cors-preflight.q2",
+      "KEEP",
+      "model/explanationJSONPOST OPTIONS는origin/method/headers전송허가; 실제authz/validation/app결과·실제responseCORS검사별도 정확.",
+      "MEDIUM preflight성공과POST성공의순차상태를분리."
+    ],
+    [
+      "security.core.browser.xss.q2",
+      "KEEP",
+      "model/explanationHTMLtext/attribute/JSstring파서escape차이·safeAPI/contextencoding 정확.",
+      "MEDIUM q1 HttpOnly한계와다른예방목표;단일replace가정답아님."
+    ],
+    [
+      "security.core.injection.sql-injection.q1",
+      "KEEP",
+      "accepted4개쿼리구조/code와값/data분리 정확; explanation검토.",
+      "EASY preparedstatement원리질문, production을rawJDBC로변경하라는요청아님."
+    ],
+    [
+      "security.core.injection.jpql-native.q1",
+      "KEEP",
+      "model/explanation ORM도오염구조실행→값bind/identifierdirection허용매핑 정확.",
+      "MEDIUM sql.q2와관련되지만ORM이면안전오해검증."
+    ],
+    [
+      "security.core.injection.output-encoding.q1",
+      "KEEP",
+      "D 문맥별grammar/safeAPI. A URLencoding만/B HTML만/C HTMLparser만 오답; rationale4/explanation 정확.",
+      "MEDIUM A와D모두아니다지만이유가틀린A는정답아님."
+    ],
+    [
+      "security.core.injection.sql-injection.q2",
+      "KEEP",
+      "model/explanation identifier는valueparam아님→sortkeyenum/columnmapping+ASC/DESC allowlist 정확.",
+      "MEDIUM 구체동적정렬위험닫기."
+    ],
+    [
+      "security.core.injection.jpql-native.q2",
+      "KEEP",
+      "model/explanation제목bind만으로FROMentity구조안전안됨→서버지원대상/predefinedquery매핑 정확.",
+      "MEDIUM sort와다른entitysource 구조경계."
+    ],
+    [
+      "security.core.injection.output-encoding.q2",
+      "KEEP",
+      "model/explanation본문/attrURL/JS문맥분리·inline줄이기·허용scheme/구조URL생성 타당.",
+      "MEDIUM q1과공통핵심을실제세sink배치에적용. browser.xss.q2와겹치는기초는있으나backend출력계약의심화정확성오류없음."
+    ],
+    [
+      "security.core.access.ownership.q1",
+      "KEEP",
+      "model/explanationrole공통≠order권한→principalmember/owner비교 정확.",
+      "EASY authn.authorization과기초겹치지만소유policyTopic적용."
+    ],
+    [
+      "security.core.access.bola-idor.q1",
+      "KEEP",
+      "accepted4개currentaccess/owner/object인가 정확; explanationUUID비추측은보조 정확.",
+      "MEDIUM UUID라도매요청권한조건."
+    ],
+    [
+      "security.core.access.vertical.q1",
+      "KEEP",
+      "accepted4개adminrefundserver권한 검사 정확; explanationUI우회대조.",
+      "EASY 인증만추가하면해결한다는답을허용하지않음."
+    ],
+    [
+      "security.core.access.ownership.q2",
+      "KEEP",
+      "model/explanationcontroller하나외batch/export경로·존재/권한응답cache정보·applicationpolicy통과후반환변경 타당.",
+      "HARD findById자체를항상취약하다고주장안함; 여러경로누락진단."
+    ],
+    [
+      "security.core.access.bola-idor.q2",
+      "KEEP",
+      "model/explanationnesteduser와order의관계및currentprincipal의객체permission검사 정확.",
+      "MEDIUM 소유서비스기준과support예외는본문policy로구분;단순userId입력==current만으론모든BOLA해결아님."
+    ],
+    [
+      "security.core.access.vertical.q2",
+      "KEEP",
+      "model/explanationmutablebodyrole불신·검증principal+서버작업policy 정확.",
+      "MEDIUM q1guard위치와권한source를구분."
+    ],
+    [
+      "security.core.filter-chain.servlet-filter.q1",
+      "KEEP",
+      "accepted4개security/filterchain/dispatcher앞경계 정확; explanation컨트롤러미도달원인후보명시.",
+      "EASY401모든원인이필터라고무조건단정하는질문아님."
+    ],
+    [
+      "security.core.filter-chain.security-filter-chain.q1",
+      "KEEP",
+      "C 선택chain다른필터실행가능. A CORSCSRF자동off/B chain우회/D authfilter만제외 오답; rationale4/explanation 정확.",
+      "MEDIUM 인가허용과chain구성을구분."
+    ],
+    [
+      "security.core.filter-chain.exception-translation.q1",
+      "KEEP",
+      "model/explanation필터서이미처리면advice밖·entrypoint/deniedhandler맞춤 정확.",
+      "MEDIUM 모든AuthException이ETF에포착된다는주장아닌조건부경로."
+    ],
+    [
+      "security.core.filter-chain.servlet-filter.q2",
+      "TARGETED_ENHANCE",
+      "model/explanation공유본문stream소비·재사용wrapper/상한/secret제거는기술적으로타당.",
+      "MEDIUM 본문은‘감쌀수있다’만언급해소비후MVCempty·caching≠replay의근거부족. 정확한문항은유지하고선행설명/심화링크보강."
+    ],
+    [
+      "security.core.filter-chain.security-filter-chain.q2",
+      "KEEP",
+      "model/explanation첫apichain하나선택→구체admin먼저/api뒤·실제matcher검증 정확.",
+      "HARD 이미결과/순서조건명시. Bean등록순서를무조건Order없이보장한다고해석하지않음."
+    ],
+    [
+      "security.core.filter-chain.exception-translation.q2",
+      "KEEP",
+      "model/explanationREST보통401인증요구/403권한거절·내부이유비노출 정확.",
+      "MEDIUM body의anonymous/설정경로차이를함께읽는기본계약질문;403가모든설정에서인증성공증거라는확대안함."
+    ],
+    [
+      "security.core.auth-architecture.authentication-token.q1",
+      "KEEP",
+      "accepted4개미검증입력/검증전자격정보 trust상태정확; principal과credentials의서로다른필드역할은본문에서구분.",
+      "EASY 인증전username표현도신원검증결과아님."
+    ],
+    [
+      "security.core.auth-architecture.manager-provider.q1",
+      "KEEP",
+      "model/explanation 자격유형검증의존성독립/타입위임으로변경test추가 명확.",
+      "MEDIUM 분리provider가자동MFA를보장안함."
+    ],
+    [
+      "security.core.auth-architecture.user-details.q1",
+      "KEEP",
+      "accepted4개순서/구분자변형모두UserDetailsService+PasswordEncoder 두정확한협력자; explanationDAO조합.",
+      "MEDIUM UserDetails는결과객체이지조회service가아님."
+    ],
+    [
+      "security.core.auth-architecture.authentication-token.q2",
+      "KEEP",
+      "model/explanation manager성공전untrusted/필요한계정상태검사후완료결과만context, raw장기로그금지 정확.",
+      "MEDIUM authn.authentication.q3와달리계정검사전제명시되어충분조건오류없음."
+    ],
+    [
+      "security.core.auth-architecture.manager-provider.q2",
+      "KEEP",
+      "C supports type위임. A 자동commonprovider/B 토큰이름문자열skip/D APIkeyDB인가 오답; rationale4/explanation 정확.",
+      "MEDIUM ‘지원’은검증가능유형선택이지지원하면무조건성공뜻아님."
+    ],
+    [
+      "security.core.auth-architecture.user-details.q2",
+      "KEEP",
+      "model/explanation notfound사건의raw내부예외/계정존재정보를외부에노출금지·일관credential실패/내부감사 타당.",
+      "MEDIUM prompt가사용자못찾음이라sameinvalidcredential계약적절. 전체DB장애까지이정답으로확대하면안됨."
+    ],
+    [
+      "security.core.context-authz.context-holder.q1",
+      "KEEP",
+      "accepted4개이전identity혼입/context누출정확; explanationreusedthread와cleanup확인.",
+      "MEDIUM defaultthread 전략전제명시."
+    ],
+    [
+      "security.core.context-authz.method-security.q1",
+      "KEEP",
+      "model/explanationthis대상내호출은외부proxy우회가능→interceptor미실행 정확.",
+      "MEDIUM 기본proxy조건명시해AspectJ와혼동없음."
+    ],
+    [
+      "security.core.context-authz.async-context.q1",
+      "KEEP",
+      "accepted3개기본ThreadLocal은다른worker로자동전파안됨 정확; explanation명시전달/정리.",
+      "EASY 사용자설정strategy전역보장으로확대안함."
+    ],
+    [
+      "security.core.context-authz.context-holder.q2",
+      "TARGETED_ENHANCE",
+      "model/explanation worker다름/재사용·명시wrapper/cleanup·장기latest권한은정확.",
+      "MEDIUM 연결context-holder본문은동기수명/mutability만설명하고wrapper/latest인가의직접근거는같은Topic async-context에있음. 이검증된Concept를추가연결할필요."
+    ],
+    [
+      "security.core.context-authz.method-security.q2",
+      "KEEP",
+      "model/explanationcontrollerannotation만이면batch/consumer우회→actor/system권한/실제proxy정책 확인 타당.",
+      "HARD 애너테이션이컨트롤러에있다는조건명시로서비스프록시호출 자체를항상bypass라고오해하지않음."
+    ],
+    [
+      "security.core.context-authz.async-context.q2",
+      "KEEP",
+      "model/explanation10분뒤권한/계정변경가능·재검증/감사/취소정책 정확.",
+      "MEDIUM 모든비동기작업에사용자context필수라고강제안함."
+    ],
+    [
+      "security.core.tokens-oauth.jwt-structure.q1",
+      "KEEP",
+      "A encode불신+algkey/sign/issuer/aud/time검증. B 인코딩변조검증/C role이면trust/D sign만충분 오답; rationale4/explanation정확.",
+      "EASY 유일완전답이며L3목표기초오해확인."
+    ],
+    [
+      "security.core.tokens-oauth.jwt-lifecycle.q1",
+      "KEEP",
+      "model/explanation서버중앙state미조회면발급USER만료전유효·shortTTL vs즉시revocationstate trade-off 정확.",
+      "MEDIUM 부정한설정을권하지않고가능원인/선택지설명."
+    ],
+    [
+      "security.core.tokens-oauth.oauth-oidc.q1",
+      "KEEP",
+      "accepted3개AT→RS APIaccess/IDT→clientauth결과 정확; explanation소비자/대상분리.",
+      "MEDIUM JWTtoken모양과OAuth목적혼동없음."
+    ],
+    [
+      "security.core.tokens-oauth.jwt-structure.q2",
+      "KEEP",
+      "model/explanationvalidsign여도allowedalg/key·trustedissuer/aud/time조건필요 정확.",
+      "MEDIUM q1과핵심검증겹치지만구체JOSEheader/claim구분을서술."
+    ],
+    [
+      "security.core.tokens-oauth.jwt-lifecycle.q2",
+      "KEEP",
+      "model/explanationoldkey보유/signvalid≠현재issuertrust,다른APIaud거부·기간각각policy 정확.",
+      "MEDIUM jwt-structure검증축에keyrotation과trustperiod의차이를적용."
+    ],
+    [
+      "security.core.tokens-oauth.oauth-oidc.q2",
+      "KEEP",
+      "model/explanationcode에boundchallenge vs제시verifier의S256계산비교, code만탈취면교환실패 정확.",
+      "MEDIUM verifier도탈취되는경우까지보장안함; 공개clientPKCE지원/강제전제본문있음."
+    ],
+    [
+      "security.core.abuse.ssrf.q1",
+      "KEEP",
+      "model/explanation trusted.example@127.0.0.1의실제host127/userinfo,parseallowlist/DNS/redirect연결주소통제 정확.",
+      "MEDIUM 단순prefix검사를통과하는명확한반례."
+    ],
+    [
+      "security.core.abuse.file-path.q1",
+      "KEEP",
+      "accepted3개displayname/실제저장path분리·userinput불신 정확; explanation../경계대조.",
+      "MEDIUM random키가downloadauthz대체라는답아님."
+    ],
+    [
+      "security.core.abuse.rate-limit.q1",
+      "KEEP",
+      "B 단일현재in-memory가능·실제global/durable요구시sharedstate. A multi로컬자동global/C 항상Redis/D IPonly충분 오답; rationale4/explanation 정확.",
+      "MEDIUM A/C/D의부분문구아니다/재시작성질을완전답으로착각할모호성없음."
+    ],
+    [
+      "security.core.abuse.secret-logging.q1",
+      "KEEP",
+      "model/explanation 유효bearer원문은그대로인증재사용·SaaS복제/접근범위→원문미수집·fingerprint 타당.",
+      "EASY Authorization의모든scheme를bearer로일반화안하고소지형토큰시나리오를설명."
+    ],
+    [
+      "security.core.abuse.ssrf.q2",
+      "KEEP",
+      "model/explanation allowhost라도redirect/resolve private/loopback/metadata→모든단계scheme/host/port/IP·redirectcount/bodysize 상한 정확.",
+      "HARD 본문connectionbinding과함께읽으면DNScheck만으로TOCTOU닫힌다는오해없음."
+    ],
+    [
+      "security.core.abuse.file-path.q2",
+      "KEEP",
+      "model/explanation jpgextension≠actualformat/경로, separators/encoding/collision·generatedkey/root/normalize/content/size/downloadpolicy 타당.",
+      "MEDIUM 파일명과content해석의별도경계."
+    ],
+    [
+      "security.core.abuse.rate-limit.q2",
+      "KEEP",
+      "model/explanation 여러IP분산·NATfalsepositive/계정기기신호·privacy·window/응답/분산scope 타당.",
+      "MEDIUM q1 topology저장선택과다른limiterkey/오탐목표."
+    ],
+    [
+      "security.core.abuse.secret-logging.q2",
+      "KEEP",
+      "model/explanation8charprefix는형식/상관identifier등민감정보가능→원문미수집/highentropyfingerprint/accessTTL 정확.",
+      "MEDIUM 모든8글자만으로전체토큰복원가능이라고단정하지않고항상안전보장을거부함."
+    ]
+  ],
+  "sources": [
+    [
+      "https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html#login-throttling",
+      "CURRENT_VERIFIED",
+      "security.core.abuse: 실제accountcountervsdistributedIP·threshold/window/duration·lockoutDoS·MFA절확인. MFA권고통계숫자를본문보장으로채택안함."
+    ],
+    [
+      "https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html",
+      "CURRENT_VERIFIED",
+      "security.core.foundations: 실제leastprivileges/denydefault/매요청검증및CIA영향절확인.; security.core.authn-authz: 이번Securityfoundation에서직접읽은least/denydefault/everyrequest/resource권한절과본문대조.; security.core.access: 이번Wave2직접읽은least/defaultdeny/everyrequest/resourcepolicy절대조."
+    ],
+    [
+      "https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html",
+      "CURRENT_VERIFIED",
+      "security.core.browser: 실제SameSite부가방어·safeGETmutation위험·registrabledomain≠origin/형제host위협·clientCSRF한계 확인."
+    ],
+    [
+      "https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html",
+      "CURRENT_VERIFIED",
+      "security.core.browser: 실제HTML/attribute/JS출력문맥·ordinaryelementtextContent와sanitize/추가control역할확인.; security.core.injection: 이번Wave2에서직접읽은HTML/attribute/JS·ordinarytextContent·sanitize+출력문맥절로각예제대조."
+    ],
+    [
+      "https://cheatsheetseries.owasp.org/cheatsheets/File_Upload_Cheat_Sheet.html",
+      "CURRENT_VERIFIED",
+      "security.core.abuse: 실제generatedfilename/type·size·authz·outsidewebroot/handler·activecontent/parser위험절확인."
+    ],
+    [
+      "https://cheatsheetseries.owasp.org/cheatsheets/Input_Validation_Cheat_Sheet.html",
+      "CURRENT_VERIFIED",
+      "security.core.foundations: 실제server/client우회·internaltrustboundary·syntax/semantic및authorization별도 절확인."
+    ],
+    [
+      "https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html",
+      "CURRENT_VERIFIED",
+      "security.core.abuse: 실제sessionID/token/password/connectionstring/key/paymentdata를직접로그금지/제거·hash및관측값대안절확인."
+    ],
+    [
+      "https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html",
+      "CURRENT_VERIFIED",
+      "security.core.password: 실제hash/encryption·fastSHA부적합·현재Argon2id/scrypt/legacybcrypt/FIPS조건PBKDF2 및하드웨어costtrade-off절확인. 원문권고숫자를본문없는필수답으로강제안함."
+    ],
+    [
+      "https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html#salting",
+      "CURRENT_VERIFIED",
+      "security.core.password: 실제publicsalt의perpassword계산분리·algorithm입력과library자동관리구분확인."
+    ],
+    [
+      "https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html",
+      "CURRENT_VERIFIED",
+      "security.core.injection: 실제preparedcode/data분리·unsafe/safeHQLnamedparameter·table/column/sort ASC/DESC allowlist·escape비권고·leastprivilege절확인."
+    ],
+    [
+      "https://cheatsheetseries.owasp.org/cheatsheets/Server_Side_Request_Forgery_Prevention_Cheat_Sheet.html",
+      "CURRENT_VERIFIED",
+      "security.core.abuse: 실제redirectoff·IPv4/6/allowhost·A/AAAA검사와validatedaddressconnectionbinding/network방어절확인."
+    ],
+    [
+      "https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html",
+      "CURRENT_VERIFIED",
+      "security.core.session-cookie: 실제meaninglessID/서버meaning·생성entropy/CSPRNG·쿠키전송/수명관리절대조."
+    ],
+    [
+      "https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CORS",
+      "CURRENT_VERIFIED",
+      "security.core.browser: 실제Origin/RequestMethod/RequestHeaders·AllowMethods/AllowHeaders·preflightcredential미포함과ACAC/명시origin조건 확인."
+    ],
+    [
+      "https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie",
+      "CURRENT_VERIFIED",
+      "security.core.session-cookie: 공식Reference경로redirect본문Domain hostonly·Path비보안·Secure/HttpOnly·SameSite명시Lax/기본예외/NoneSecure절확인."
+    ],
+    [
+      "https://developer.mozilla.org/en-US/docs/Web/Security/Defenses/Same-origin_policy",
+      "CURRENT_VERIFIED",
+      "security.core.browser: 실제origin scheme/host/port 및crosswrites/embed/read제약·CSRFtoken방어 절확인."
+    ],
+    [
+      "https://docs.spring.io/spring-security/reference/features/authentication/password-storage.html",
+      "CURRENT_VERIFIED",
+      "security.core.password: 실제DelegatingPasswordEncoder {id}dispatch·legacy/modern형식/향후upgrade지원과adaptivecost범위확인. defaultbcrypt가새시스템OWASP우선Argon2id와동일하다고주장안함.; security.core.auth-architecture: 이번Wave2 Password검토에서직접읽은Delegating{ id }형식/legacy검증/upgrade지원과matches계약대조."
+    ],
+    [
+      "https://docs.spring.io/spring-security/reference/servlet/architecture.html",
+      "CURRENT_VERIFIED",
+      "security.core.filter-chain: 실제containerfilter/doFilter·DelegatingFilterProxy/FilterChainProxy·firstmatch/0filters·filterorder및ETF절확인."
+    ],
+    [
+      "https://docs.spring.io/spring-security/reference/servlet/architecture.html#servlet-exceptiontranslationfilter",
+      "CURRENT_VERIFIED",
+      "security.core.filter-chain: 실제ETF뒤쪽doFilter/AuthException·denied분기/RequestCache·다른예외비처리절직접확인."
+    ],
+    [
+      "https://docs.spring.io/spring-security/reference/servlet/architecture.html#servlet-securityfilterchain",
+      "CURRENT_VERIFIED",
+      "security.core.filter-chain: 실제SecurityFilterChain firstmatchingonly/각chain독립과0filter절직접확인;anchor의존재는정확한heading이름과별도접근검증한계."
+    ],
+    [
+      "https://docs.spring.io/spring-security/reference/servlet/authentication/architecture.html",
+      "CURRENT_VERIFIED",
+      "security.core.authn-authz: 실제Authentication두역할/principal·credentials·authority/manager/provider/context 및ThreadLocalcleanup절확인."
+    ],
+    [
+      "https://docs.spring.io/spring-security/reference/servlet/authentication/architecture.html#servlet-authentication-authentication",
+      "CURRENT_VERIFIED",
+      "security.core.auth-architecture: 이번Wave2에서실제Authentication2역할/필드/erasure와성공결과context설치를확인. anchor존재/동작과본문계약을구분."
+    ],
+    [
+      "https://docs.spring.io/spring-security/reference/servlet/authentication/architecture.html#servlet-authentication-providermanager",
+      "CURRENT_VERIFIED",
+      "security.core.auth-architecture: 실제delegate/providers유형/unsupported ProviderNotFound/null등계약확인;multi등록은all-successMFA아님."
+    ],
+    [
+      "https://docs.spring.io/spring-security/reference/servlet/authentication/architecture.html#servlet-authentication-securitycontextholder",
+      "CURRENT_VERIFIED",
+      "security.core.context-authz: 이번Wave2실제ThreadLocal기본/대체strategy·newcontext공유race·FilterChainProxycleanup절읽음;anchoraccess와본문지원범위구분."
+    ],
+    [
+      "https://docs.spring.io/spring-security/reference/servlet/authentication/passwords/index.html",
+      "CURRENT_VERIFIED",
+      "security.core.authn-authz: 현재공식본문 실제ProviderManager(DaoAuthenticationProvider)와UserDetailsService/PasswordEncoder설정code 및Reading/Storage링크확인. index만으로계정검사전체를읽었다고확대하지않음."
+    ],
+    [
+      "https://docs.spring.io/spring-security/reference/servlet/authentication/passwords/user-details.html",
+      "CURRENT_VERIFIED",
+      "security.core.auth-architecture: 실제페이지제목UserDetails·DAO반환principal·CredentialsContainer/ProviderManagererasure절확인. canonical제목UserDetailsService는다른API역할로metadata개선대상."
+    ],
+    [
+      "https://docs.spring.io/spring-security/reference/servlet/authentication/session-management.html",
+      "CURRENT_VERIFIED",
+      "security.core.session-cookie: 실제HTTPcontext 저장/customrepo·manualsave·STATELESS/no-save·explicit-save6+ 및sessionfixation전략절확인."
+    ],
+    [
+      "https://docs.spring.io/spring-security/reference/servlet/authentication/session-management.html#ns-session-fixation",
+      "CURRENT_VERIFIED",
+      "security.core.session-cookie: 같은본문실제fixation절 changeSessionId(3.1+)/newSession/migrateSession·none비권고 확인;anchor존재는본문절과별도확인대상."
+    ],
+    [
+      "https://docs.spring.io/spring-security/reference/servlet/authorization/method-security.html",
+      "CURRENT_VERIFIED",
+      "security.core.context-authz: 실제@EnableMethodSecurity와prepost기본·SpringAOPinterceptor/프록시조건을대조."
+    ],
+    [
+      "https://docs.spring.io/spring-security/reference/servlet/exploits/csrf.html",
+      "CURRENT_VERIFIED",
+      "security.core.browser: 실제synchronizertoken은form/header등자동browser첨부아닌part에필요한절과unsafe요청검증확인."
+    ],
+    [
+      "https://docs.spring.io/spring-security/reference/servlet/integrations/concurrency.html",
+      "CURRENT_VERIFIED",
+      "security.core.context-authz: 실제Runnable set/run/finallyclear·Executor명시고정context vsexecute시현재context capture·재사용을대조."
+    ],
+    [
+      "https://docs.spring.io/spring-security/reference/servlet/integrations/cors.html",
+      "CURRENT_VERIFIED",
+      "security.core.browser: 실제preflight에는JSESSIONID없어Security앞에서CORS처리해야한다는절확인;framework7의새PreFlighthandler까지모든설정을검증한것은아님."
+    ],
+    [
+      "https://openid.net/specs/openid-connect-core-1_0.html",
+      "CURRENT_VERIFIED",
+      "security.core.tokens-oauth: 실제3.1.3.7 issuerexact/audclientID/exp/보낸nonce반드시동일 및signature/TLS-direct예외와code/tokenrequest client·redirectbinding조건을확인. 모든flow모든nonce필수라고과장안함."
+    ],
+    [
+      "https://owasp.org/API-Security/editions/2023/en/0xa1-broken-object-level-authorization/",
+      "CURRENT_VERIFIED",
+      "security.core.access: 공식api-securityredirect 실제ID유형/매object action권한·ID비교만으론일부경우뿐/BOLA vsBFLA 절확인."
+    ],
+    [
+      "https://owasp.org/www-community/Threat_Modeling",
+      "CURRENT_VERIFIED",
+      "security.core.foundations: 공식community경로redirect본문 undesirableevent의위협과threatagent/attack/vulnerability/impact 구분·검증프레임워크 직접확인."
+    ],
+    [
+      "https://owasp.org/www-community/attacks/Path_Traversal",
+      "CURRENT_VERIFIED",
+      "security.core.abuse: 공식communityredirect실제../·absolute path/inputfile통제와directory밖read/write위험절확인."
+    ],
+    [
+      "https://www.rfc-editor.org/rfc/rfc6585#section-4",
+      "CURRENT_VERIFIED",
+      "security.core.abuse: 공식inforedirect본문4절429/optionalRetryAfter·정해지지않은identity/countscope·공격시drop가능 절확인. 기존fragment학습진입은redirect뒤별도점검가능."
+    ],
+    [
+      "https://www.rfc-editor.org/rfc/rfc6749",
+      "CURRENT_VERIFIED",
+      "security.core.tokens-oauth: 실제authorizationcode4.1 owner/useragentredirect·clientid/scope/localstate/redirectURI와code/token채널절읽음. 옛implicit/passwordgrant권고를현재그대로채택안함."
+    ],
+    [
+      "https://www.rfc-editor.org/rfc/rfc7519",
+      "CURRENT_VERIFIED",
+      "security.core.tokens-oauth: 공식inforedirect실제JWS/MAC/JWE·aud조건·exp현재시간before/nbf>=와clockskewleeway/등록claimsoptional절확인. appprofile필수조건을모든JWT표준필수와혼동안함."
+    ],
+    [
+      "https://www.rfc-editor.org/rfc/rfc7636",
+      "CURRENT_VERIFIED",
+      "security.core.tokens-oauth: 실제S256 BASE64URL SHA256 ASCIIverifier·challengeboundcode/검증절확인;ASCII/패딩세부미표시는설명공식의단순화이지다른알고리즘주장아님."
+    ],
+    [
+      "https://www.rfc-editor.org/rfc/rfc8725",
+      "CURRENT_VERIFIED",
+      "security.core.tokens-oauth: 실제algallowlist/헤더와사용alg일치·key1algorithm과issuer/audience정책범위대조."
+    ],
+    [
+      "https://www.rfc-editor.org/rfc/rfc9700",
+      "CURRENT_VERIFIED",
+      "security.core.tokens-oauth: 실제publicPKCEMUST/confidentialRECOMMEND·S256·transactionboundPKCE/nonce/state CSRF대안·refreshsenderboundorrotation과재생시active폐기확인."
+    ]
+  ],
+  "supplementalSources": [
+    [
+      "https://developer.mozilla.org/en-US/docs/Glossary/Site",
+      "CURRENT_VERIFIED",
+      "security.core.session-cookie: 실제site scheme+registrabledomain과origin의host/port 차이를읽어쿠키판단설명누락을대조."
+    ],
+    [
+      "https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/util/ContentCachingRequestWrapper.html",
+      "CURRENT_VERIFIED",
+      "security.core.filter-chain: 실제읽힌content만cache하고자동읽기를유발하지않는API계약확인. caching을controller자동replay보장으로추천하지않음."
+    ],
+    [
+      "https://docs.spring.io/spring-security/reference/api/java/org/springframework/security/authentication/dao/AbstractUserDetailsAuthenticationProvider.html",
+      "CURRENT_VERIFIED",
+      "security.core.authn-authz: 실제pre/post UserDetailsChecker·credential검증전상태확인계약과authenticate API 확인."
+    ],
+    [
+      "https://docs.spring.io/spring-security/reference/api/java/org/springframework/security/core/userdetails/UserDetails.html",
+      "CURRENT_VERIFIED",
+      "security.core.authn-authz: 실제expiredaccount/locked/disabled/expiredcredentials가인증을막는계약확인. passwordmatch만으로최종성공이라는보장에반례."
+    ],
+    [
+      "https://docs.spring.io/spring-security/reference/servlet/authentication/passwords/dao-authentication-provider.html",
+      "CURRENT_VERIFIED",
+      "security.core.authn-authz: 실제Filter→ProviderManager→DAO→userlookup→encoder→provider성공결과/context 절확인."
+    ],
+    [
+      "https://docs.spring.io/spring-security/reference/servlet/authentication/passwords/user-details-service.html",
+      "CURRENT_VERIFIED",
+      "security.core.auth-architecture: 실제UserDetailsService의DAO에서username/password/attributes조회역할과custombean조건을확인. canonicaltitle와class역할을구분하는직접자료."
+    ],
+    [
+      "https://docs.spring.io/spring-security/reference/servlet/authorization/method-security.html",
+      "CURRENT_VERIFIED",
+      "security.core.access: 실제@EnableMethodSecurity활성화/prepost기본과AOPmethodinterceptors절확인;Bootstarter만으론methodsecurity자동활성아님."
+    ],
+    [
+      "https://docs.spring.io/spring-security/reference/servlet/configuration/java.html",
+      "CURRENT_VERIFIED",
+      "security.core.filter-chain: 실제chain전체securityMatcher와인가requestMatchers별도·unmatched요청SpringSecurity보호없음규칙확인."
+    ],
+    [
+      "https://github.com/openjdk/jdk/blob/master/src/java.base/unix/classes/sun/nio/fs/UnixPath.java",
+      "CURRENT_VERIFIED",
+      "OpenJDK 공식 upstream 검색 본문에서 문자열 생성→normalizeAndCheck→checkNotNul의 InvalidPathException 거부 구현을 직접 읽음. master의 현대 Unix provider 근거이며 모든 OS/JDK25 runtime 테스트를 했다는 의미가 아님."
+    ]
+  ],
+  "findings": [
+    {
+      "id": "W2-SEC-001",
+      "severity": "P2",
+      "contentKeys": [
+        "security.core.foundations.assets-threats",
+        "security.core.foundations.assets-threats.q2"
+      ],
+      "file": "content/security/foundations/questions.json",
+      "quote": "위협은 이를 읽거나 수집하려는 공격자",
+      "problem": "모델과 해설은 공격자(threat actor/source)를 위협 자체로 지칭한다. 본문/q1의 구체 행위 기준과 OWASP의 undesirable event 정의에 맞춰 용어를 정밀화할 필요가 있다. 공격 의도는 읽기/수집으로 드러나므로 심각한 재작성 문제는 아니다.",
+      "action": "공격자는 위협 행위자, 위협은 공개된 주문/개인정보의 무단 열람·수집 상황으로 명시한다. 정확한 자산/ACL 취약점/최소 권한 방어는 유지하며 model/explanation의 해당 표현만 보강한다.",
+      "followupIssues": [
+        203
+      ]
+    },
+    {
+      "id": "W2-SEC-002",
+      "severity": "P0",
+      "contentKeys": [
+        "security.core.authn-authz.authentication",
+        "security.core.authn-authz.authentication.q3"
+      ],
+      "file": "content/security/authn-authz/questions.json",
+      "quote": "비밀번호 비교 결과가 `true`이면",
+      "problem": "q3는 사용자 조회 성공과 matches=true만으로 인증 완료 Authentication이 만들어져 context에 설정된다고 단정한다. Spring provider는 UserDetails 상태 검사를 수행하고 expired credentials 등이 인증을 막을 수 있어 비밀번호 일치만으로 최종 성공을 보장하지 않는다. 계정 상태 등의 추가 전제가 빠져 있다.",
+      "action": "q3에 계정/자격증명 상태와 필수 인증 검사가 통과했다는 전제를 명시하거나 모델을 matches는 비밀번호 검증 결과이며 provider 전체 검증 성공 후에만 완료 결과/context를 설치한다고 수정한다. 본문의 단순 흐름에도 전제와 provider 검사 경계를 표시한다. false의 미인증 및 별도 인가 설명은 유지한다. 정확한 계정 상태 근거가 있는 security.core.auth-architecture.user-details와 authentication-token.q2를 참고한다.",
+      "followupIssues": [
+        203
+      ]
+    },
+    {
+      "id": "W2-SEC-003",
+      "severity": "P1",
+      "contentKeys": [
+        "security.core.session-cookie.cookie-flags"
+      ],
+      "file": "content/security/session-cookie/cookie-flags.md",
+      "quote": "SameSite는 교차 사이트 자격 증명 전송을 줄인다",
+      "problem": "SameSite는 site 기준이나 본문은 site를 정의하지 않고 뒤의 SOP/CORS Topic의 origin 기준과도 구별하지 않는다. 같은 site 공격의 한계 경고만으로 app/api 서브도메인이나 포트 차이에서 쿠키 전송/응답 읽기의 다른 판정을 이해하기 어렵다.",
+      "action": "scheme + registrable domain의 site와 scheme + host + port의 origin을 비교한다. https app.example.com → api.example.com은 같은 site/다른 origin인 사례와 scheme/포트 차이를 제시한다. Domain/host-only cookie의 전송 범위와 SameSite/인가가 별도 조건임을 연결한다. 정확한 기존 속성 설명과 문항은 유지한다.",
+      "followupIssues": [
+        203
+      ]
+    },
+    {
+      "id": "W2-SEC-004",
+      "severity": "P1",
+      "contentKeys": [
+        "security.core.browser.cors-preflight"
+      ],
+      "file": "content/security/browser/cors-preflight.md",
+      "quote": "사용자 정의 헤더나 특정 본문 형식·HTTP 메서드 조합",
+      "problem": "L2 본문은 사전 요청 대상을 추상적으로만 설명하고 OPTIONS도 method 허용만 보여준다. q2의 JSON POST가 preflight를 일으키는 이유와 Content-Type application/json, Request-Headers/Allow-Headers 검사를 학습자가 본문에서 재현하기 어렵다.",
+      "action": "JSON POST의 OPTIONS Origin/Request-Method/Request-Headers: content-type와 응답 Allow-Origin/Methods/Headers를 끝까지 보여준다. preflight에는 쿠키가 없다는 조건, credentials 본요청 조건, 불허 시 실제 POST 미전송과 실제 응답 읽기 차단을 구분한다. CORS를 인가/CSRF 대체로 바꾸지 않으며 정확한 문항은 유지한다.",
+      "followupIssues": [
+        203
+      ]
+    },
+    {
+      "id": "W2-SEC-005",
+      "severity": "P1",
+      "contentKeys": [
+        "security.core.access.vertical",
+        "security.core.context-authz.method-security"
+      ],
+      "file": "content/security/access/vertical.md",
+      "quote": "@PreAuthorize(\"hasRole('ADMIN')\")",
+      "problem": "route 보안 뒤 method 보안 애너테이션을 보여주지만 @EnableMethodSecurity 등의 활성화 조건과 Spring AOP 호출 경계를 설명하지 않는다. 애너테이션만 붙여 실제로 검사되지 않는 실패를 놓치기 쉽다. 같은 활성화 전제가 L3 method-security 본문에도 빠져 있다.",
+      "action": "method security를 활성화한 설정과 Spring 관리 proxy 호출 전제를 명시한다. 미활성 설정/new 객체/self-invocation에서 기본 proxy 검사가 적용되지 않는 조건을 연결한다. 직접 검토한 security.core.context-authz.method-security를 심화 학습 링크로 연결하고 실제 거절 호출 검증을 권한다. 정확한 route/권한 분해와 문항은 유지한다.",
+      "followupIssues": [
+        203
+      ]
+    },
+    {
+      "id": "W2-SEC-006",
+      "severity": "P1",
+      "contentKeys": [
+        "security.core.filter-chain.servlet-filter",
+        "security.core.filter-chain.servlet-filter.q2"
+      ],
+      "file": "content/security/filter-chain/questions.json",
+      "quote": "공유하는 요청 본문 스트림의 소비와 래퍼 경계",
+      "problem": "q2는 필터의 본문 읽기 이후 MVC 재읽기/보안 로그 문제를 묻지만 연결 본문은 filter 위치/doFilter와 본문을 감쌀 수 있다는 설명만 제공한다. stream 소비와 wrapper의 cache/replay 차이를 학습할 선행 근거가 부족하다.",
+      "action": "필터의 본문 소비 → MVC 파싱 시 empty/불일치 상태를 설명한다. 대안의 읽기 위치/상한, 필요한 bounded replay, secret 로그 제거를 연결한다. ContentCachingRequestWrapper가 자동 replay를 보장하지 않음을 명시한다. 정확한 문항/model은 유지하며 본문 또는 검증된 선행 Concept 연결을 보강한다.",
+      "followupIssues": [
+        203
+      ]
+    },
+    {
+      "id": "W2-SEC-007",
+      "severity": "P1",
+      "contentKeys": [
+        "security.core.filter-chain.security-filter-chain"
+      ],
+      "file": "content/security/filter-chain/security-filter-chain.md",
+      "quote": "요청에 처음 일치하는 체인 하나의 필터만 실행",
+      "problem": "first match와 겹치는 matcher는 잘 설명하지만 모든 chain의 securityMatcher 밖인 요청은 Spring Security 필터의 보호를 받지 않는 실패 조건이 빠져 있다. chain 내부 anyRequest 인가가 바깥 요청까지 막는다고 오해하기 쉽다.",
+      "action": "securityMatcher는 chain 선택 범위, requestMatchers/anyRequest는 선택한 chain 내부 인가 규칙임을 구별한다. /api-only 설정의 unmatched 외부 경로와 마지막 catch-all chain의 명시적 공개/deny 정책, 실제 매칭 검증을 짧게 추가한다.",
+      "followupIssues": [
+        203
+      ]
+    },
+    {
+      "id": "W2-SEC-008",
+      "severity": "P1",
+      "contentKeys": [
+        "security.core.context-authz.context-holder",
+        "security.core.context-authz.context-holder.q2"
+      ],
+      "file": "content/security/context-authz/questions.json",
+      "quote": "명시적 전달용 래퍼와 작업 종료 정리를 사용하고",
+      "problem": "q2/model은 async worker wrapper와 장기 권한 재검증을 요구하지만 단일 연결 context-holder 본문은 현재 동기 thread 수명/mutability까지만 설명한다. 다음 async-context가 정확한 직접 학습 근거다.",
+      "action": "기존 q2에 직접 검토한 security.core.context-authz.async-context를 다중 연결하고 선행/심화 학습 순서를 명시한다. 정확한 model/정답은 유지하며 context-holder 전체를 다시 써서 async 설명을 중복할 필요는 없다.",
+      "followupIssues": [
+        203
+      ]
+    },
+    {
+      "id": "W2-SEC-009",
+      "severity": "P2",
+      "contentKeys": [
+        "security.core.auth-architecture.user-details"
+      ],
+      "file": "content/security/auth-architecture/user-details.md",
+      "quote": "Spring Security Reference: UserDetailsService",
+      "problem": "Reference 제목은 조회 협력자 UserDetailsService지만 실제 URL은 UserDetails 결과 객체/credential management 페이지다. 자료는 관련 있고 직접 읽혔으나 두 타입을 혼동하게 하는 metadata 불일치다.",
+      "action": "URL을 유지하면 제목을 UserDetails로 맞추고 relationNote를 결과 principal/credential 관리로 정밀화한다. 조회 service 흐름이 목적이면 직접 대조한 공식 user-details-service.html로 교체한다. 자료를 무조건 늘릴 필요는 없으며 정확한 본문/문항은 유지한다.",
+      "followupIssues": [
+        203
+      ]
+    },
+    {
+      "id": "W2-SEC-010",
+      "severity": "P1",
+      "contentKeys": [
+        "security.core.tokens-oauth.oauth-oidc"
+      ],
+      "file": "content/security/tokens-oauth/oauth-oidc.md",
+      "quote": "인가 코드와 PKCE의 검증 흐름",
+      "problem": "PKCE challenge 검증은 정확하지만 L3 인가 코드 목표의 resource owner/user agent, 동의, redirect callback과 client/AS/RS 신뢰 경계가 그림과 설명에서 빠져 있다. code가 어디를 경유하고 왜 token 교환과 다른지 학습하기 어렵다.",
+      "action": "owner/user agent/client/AS/RS의 인가 code → redirect callback → back-channel token → API 사용 전체 sequence를 도식 후보로 기록한다. code의 client/redirect URI/PKCE binding과 callback 상관 검증을 설명한다. state/nonce/PKCE의 역할 및 RFC9700의 조건부 CSRF 대안을 구별하고 모두를 무조건 동시 필수라고 단정하지 않는다. 정확한 PKCE/토큰 목적 문항은 유지한다.",
+      "followupIssues": [
+        203
+      ]
+    },
+    {
+      "id": "W2-SEC-011",
+      "severity": "P2",
+      "contentKeys": [
+        "security.core.abuse.file-path"
+      ],
+      "file": "content/security/abuse/file-path.md",
+      "quote": "벗어남할 수 있음",
+      "problem": "경로 탈출 ASCII 예의 벗어남할은 자연스럽지 않은 한국어 비문이다. 기술 방향과 나머지 파일 보안 경계/문항은 정확하다.",
+      "action": "해당 한 줄을 기준 디렉터리 밖으로 벗어날 수 있음으로 정밀 수정한다. 전체 재작성이나 이미지 수정은 필요하지 않다.",
+      "followupIssues": [
+        203
+      ]
+    },
+    {
+      "id": "W2-SEC-012",
+      "severity": "P2",
+      "contentKeys": [
+        "security.core.abuse.file-path"
+      ],
+      "file": "content/security/abuse/file-path.md",
+      "quote": "https://owasp.org/www-community/attacks/Path_Traversal",
+      "problem": "Reference의 ../ 경로와 입력 통제 설명은 관련 있고 직접 읽었지만, 같은 페이지의 %00.pdf 예시는 Java가 확장자 pdf로 보고 OS가 doc로 본다는 구형 동작을 현재판/실행환경 구분 없이 설명한다. 현재 OpenJDK upstream UnixPath는 NUL을 InvalidPathException으로 거부하므로 현대 Java NIO의 일반 동작으로 이 예제를 채택하면 안 된다. canonical 본문은 해당 NUL 주장을 채택하지 않아 본문 오류와 구분한다.",
+      "action": "Reference relationNote에 현대 Java에서 적용할 절(경로/허용 입력/저장 이름)과 구형 NUL 예제의 버전 한계를 명시하거나 현재 OWASP File Upload/검증된 JDK 자료로 학습 경로를 정리한다. 참고 페이지 전체를 무조건 정확하다고 승인하지 않는다. 특정 JDK25/OS 실행 결과는 후속 검증 전 확정하지 않는다.",
+      "followupIssues": [
+        203
+      ]
+    }
+  ],
+  "sourceHashes": {
+    "security.core.abuse.file-path": "755c669d5f2db8a4d514f2a9d0abae86dadf22a838d5cba38fbd91b58cc7e5a8",
+    "security.core.abuse.file-path.q1": "0bc12d3c4120eae565c694e623eed9d472838aa4088a818c0a9577e3164de780",
+    "security.core.abuse.file-path.q2": "88103519cdba0e225732b2736c4e78dd54e4e359194cf41d2afdb830345c0fdd",
+    "security.core.abuse.rate-limit": "b5d8ef65ad995122fe5a2afccc770fd37b767615bab30b3b43b1e7f855649193",
+    "security.core.abuse.rate-limit.q1": "d843c2aaacf9cd9063e60b4481d13f97fd653a7d0540f298e94dc525d83ffba9",
+    "security.core.abuse.rate-limit.q2": "2c01da133c13c9d3fc6bcfb007485d53d846ad1c021236947520c9433d861340",
+    "security.core.abuse.secret-logging": "945ef212f4018ff9c1d12c74091330d7877bf06d763041d70962aa034623b477",
+    "security.core.abuse.secret-logging.q1": "085d768d263c8c9a52bd58521f9ab18daa6b60101b527acc393d96faf08ec4fd",
+    "security.core.abuse.secret-logging.q2": "3000181a89d829bae8c6e3546fb63e82348285fc9fd7eee470c8647aabd8b739",
+    "security.core.abuse.ssrf": "161859e3914f8cefdaaa44ce2ab75b341c393417c3d62114be94e6594bc4ba42",
+    "security.core.abuse.ssrf.q1": "1d49370f34a80f19addec3cd41e750871cdd4fc818d8c2428e97f0d0c18d6bfa",
+    "security.core.abuse.ssrf.q2": "986b7ca53004d53f4ce88504baa1168e3195e46d308ff0b4cad03a9f8a51e89f",
+    "security.core.access.bola-idor": "ab68993a7bf34d9f1c9a36111404b3606d12c042274e8dce60b3bceb04155502",
+    "security.core.access.bola-idor.q1": "129396ab4ff855a8f20709090d3cf313adfdcf63a7a68e670329874790f0e9e1",
+    "security.core.access.bola-idor.q2": "9efe3fe8e3c2378e2f2ce089662aa851e2c68a567d484a414faaa3eb9f344afd",
+    "security.core.access.ownership": "3ecba2f6adc151f472ae2664c304392b9005e1319a8c5fd266cc4da72f89f626",
+    "security.core.access.ownership.q1": "2d455de4c301ee893cb7eaa6127d7870b09969636b6dfb630cf4a0656c00657a",
+    "security.core.access.ownership.q2": "7f074b01e529d7d46adc65475323e9366125941c754df2f5fbe90f614cec0471",
+    "security.core.access.vertical": "2bfe427da05d71d7ba9001868f290c70e4832a3d279b90b16221fd759880d825",
+    "security.core.access.vertical.q1": "9daae6327bdaec7dbd28d5cf1e46c8b8cfa0f045943b2bcf2b06039e06cc3476",
+    "security.core.access.vertical.q2": "d6eb681f8c11a3f9f0223fe9c83566a4bd707fcdf8d62e22e06a00935c6b456a",
+    "security.core.auth-architecture.authentication-token": "243b36890532ade96168c0564aba9fe3f9ba78a4dcbd9df75d7a65703859a749",
+    "security.core.auth-architecture.authentication-token.q1": "b9aee83310372b3076421420ac361f359dfa047fd1f3ffbde01f499fa53fb667",
+    "security.core.auth-architecture.authentication-token.q2": "4604e5ee5bf940fcc4c3776f2c20485dbbba484ee4989229fec92b95cb1a5a18",
+    "security.core.auth-architecture.manager-provider": "60ac3fa9c041088e8f06352eb6e2c0984a625ba3f6b239ac85e229e15e5b4d7e",
+    "security.core.auth-architecture.manager-provider.q1": "1b30d3dfec75d5d2ec7404f2542cd024459e7bc29db963a70d3ef81b4654c203",
+    "security.core.auth-architecture.manager-provider.q2": "91bdabab5833e2f643263a24574952d166a63e70fa87b96e9b1b6890d49d777f",
+    "security.core.auth-architecture.user-details": "58e3d9861284e958fab840e9438c5a6d7c4465506973be7d37b9b1f2f447d2ca",
+    "security.core.auth-architecture.user-details.q1": "75a5eb588c135909c54ec1ca8fdfba9c897813c4f9bfc3270933840c5c943a59",
+    "security.core.auth-architecture.user-details.q2": "8f4515d809c346705c19a1e370e07b27dbed4e1885844706c726d401ca6cbb84",
+    "security.core.authn-authz.authentication": "28f764f50e5d4daa04c53449a67778049953ceea2579206f0d095c9d44231a43",
+    "security.core.authn-authz.authentication.q1": "bab9dac38604b19f221064a1c5da24e87a2780ff77bb65bb20296b890c537b89",
+    "security.core.authn-authz.authentication.q2": "ce9e6f4df0c3d580dbd23dca80426fa39764292676cf4188bba9b25a296f2ec5",
+    "security.core.authn-authz.authentication.q3": "87ad5594652dde89b8cba138dc1e49c492fc5274b8cd7bfec57ef1adf809621a",
+    "security.core.authn-authz.authorization": "9acaa4dc2f9d8abe04407cc46a1d6ef2d09479f4f7af930f1bdd853d6a080e06",
+    "security.core.authn-authz.authorization.q1": "dbaf9af8a127ac359d6b47aac549d7247483c952308b7d774e4d56219c8c6a1d",
+    "security.core.authn-authz.identity-principal": "6af9ad4a92deeb6442c86edefa0137e4dae9081ca9a6e52468944141bd064a0c",
+    "security.core.authn-authz.identity-principal.q1": "1bfc65bcd0b3ff981ad4b66b8b1c3d47e1db8aecf9c6dd5a907bd3b88b05930a",
+    "security.core.authn-authz.identity-principal.q2": "8d02850e25395dc005437342d81fb2c1b4c4331500c2d2e9a3555fff884320d5",
+    "security.core.browser.cors-preflight": "3c26c1f83d4ad5b77b18ad5fc6f40a529f61dc7821fbf82652fc935a51c4a9bb",
+    "security.core.browser.cors-preflight.q1": "b3a9065f6aa0faf45cdb0b30d279e91d054a5ccf0d353b0e5e6b1396dd3824ab",
+    "security.core.browser.cors-preflight.q2": "5d0aa1284e41a85e1dccf0e2cf15e89b5f2adbd991f82f242476b1f62b20bf1e",
+    "security.core.browser.csrf": "d2302e91994e076234f6ced20775f0a9b28863cb66480c6b8fc7f860f1e1661c",
+    "security.core.browser.csrf.q1": "0c0074121bfba0cc4e34d0931dfc77dc6dbdf0265b8201518059816a58dbc72f",
+    "security.core.browser.same-origin": "94cae387a8c266aca7276649c400569b36372fee72ddc4263fc853bce074df96",
+    "security.core.browser.same-origin.q1": "9c63d40bf3a264a096b22201179e0c7a719d7d5316d3eabad3db8552d1aa886f",
+    "security.core.browser.same-origin.q2": "eb048b662778e534234b9010d38e4712dfdac8ce3cb0f617c65bb3d1046849ef",
+    "security.core.browser.xss": "ef6006a031a44eeacbbc5922cdf3dd7bccc996545c1c1bc1e54fb0b822fe0d03",
+    "security.core.browser.xss.q1": "edc6c3e844d75cc0d2848b812f3ea8e076779e929aa112baafc669c7398743b5",
+    "security.core.browser.xss.q2": "6674e9f848c19df0c0bc44af953603981f89d5a6541893a7f306f9fa419cd7d3",
+    "security.core.context-authz.async-context": "1bd04e98105761098ce7da17dbbddb2f7ad23204f33851bc2f20b9c862449c04",
+    "security.core.context-authz.async-context.q1": "8bc75f49418df3799724ca14feaa6cce9a025d220e29fd0b250ac910ff958493",
+    "security.core.context-authz.async-context.q2": "91ebc147c9be729c78d61be535d5ba643e4d4131411e7e47bb38cecc714032ce",
+    "security.core.context-authz.context-holder": "d6036fb7c9e19f69787923993f9fe12b738adcbcc6f7ed51a62ecd0dced4054f",
+    "security.core.context-authz.context-holder.q1": "f81b844d98fe111d1d17d82bb083fabcd663533f326a14446db0908a24bdbd89",
+    "security.core.context-authz.context-holder.q2": "e7755cc7a0da8d019ad2a852e3a302ddbb87374a36623b29eafbcea6fb69af05",
+    "security.core.context-authz.method-security": "8f04e38b64787b17b7329c9c826612f9e53d7d2153f7e1058748ce39bd8be2dc",
+    "security.core.context-authz.method-security.q1": "fd4bd31d2177b96c4e88fb0e6a351fecdd367c1be80c1f940745800016da1cda",
+    "security.core.context-authz.method-security.q2": "2387a559ca1ffc83c97853575fb1e4dc1602090f23471135eba379fa39625f0f",
+    "security.core.filter-chain.exception-translation": "c95b90bac616076846ad0b87cf7df118a09dc485dc671051c9d40a1eb8d8cb8a",
+    "security.core.filter-chain.exception-translation.q1": "023ebc648fc42daeb7ba5758fb9580460834236ae70dcb394d4368105ab777e9",
+    "security.core.filter-chain.exception-translation.q2": "b9cb0eac8258f7435e6a5f1c3a889f43d9da1f0e0572831e99c557f964321cc1",
+    "security.core.filter-chain.security-filter-chain": "ae644fa8bc902ffca3b5b04e1a78116ca273861d25a0f1b9cfd89c4bea7554d7",
+    "security.core.filter-chain.security-filter-chain.q1": "62b20633f7dbaa50745b6723ba121a852280c5f6fc186130634759ff01d07046",
+    "security.core.filter-chain.security-filter-chain.q2": "8e960925497c3450e119b7360ef63e638ff65640c99135e2d8ce79379d39d093",
+    "security.core.filter-chain.servlet-filter": "9811a5c228d5bac8644b964a93c8c1405d9d1a5f1a64c138e3706c660069ea3f",
+    "security.core.filter-chain.servlet-filter.q1": "5ff5edc048ebe0aafd7927e76d7195bfd9be5b8b9306fbf21a77516ad5fb6414",
+    "security.core.filter-chain.servlet-filter.q2": "03b9cd8fdabf5ca8fb9a0bf1f952dfd34e13b772c00110a8f107f701d04fde49",
+    "security.core.foundations.assets-threats": "bf1db3861e4bc689092e4c75ff5763da60f68f4bc2b3af08fa834ab2c222646d",
+    "security.core.foundations.assets-threats.q1": "0c4d6ecc1ab09ab7b643f457ef5c965cf7f8cf9b852a2d9f10dab1997cc3d5bb",
+    "security.core.foundations.assets-threats.q2": "b208a65e43e0a7411fd034037c74b10de9f9f295891efc721061488f189183c6",
+    "security.core.foundations.cia-least": "1448ca2b0a428f01920376f694f8c926c1ea6a8033ae08e0afed049fe285e9e7",
+    "security.core.foundations.cia-least.q1": "8bf1bd5699f1bbc19e1fe0fc04a5787b41f5f8b338d2eff75932b27b599c4ca8",
+    "security.core.foundations.cia-least.q2": "06749c751cbf668a10972c6a485830a1fdad4e93d69e90e421431b0752e08c73",
+    "security.core.foundations.trust-boundary": "29af6a41a136baa53bc00ba587d2aeaad302a6005bbac876c9cd81fe03853a68",
+    "security.core.foundations.trust-boundary.q1": "56fb75f5f63f4bdf1d861e768a4076061071992259f2d6a6a0a0ce0b1a7ec7c7",
+    "security.core.foundations.trust-boundary.q2": "ff9767e493531c6920e3a8f0ec787cfc31f652fe2a63126ce8c187166c583ef3",
+    "security.core.injection.jpql-native": "23fbce0d34e1bdcb6fc5047a0a13dc1cfb612f8f5ce919068a1593d44acc9bce",
+    "security.core.injection.jpql-native.q1": "db5f0316d1fe148b4a260389d44fa9444e153d9f2ec5ebf491d7993446a4935a",
+    "security.core.injection.jpql-native.q2": "0dbcf08c4bfc3f01bb737ec666fd30e2cf9d64101d509f9225b1898a90d396c3",
+    "security.core.injection.output-encoding": "68784d1a404b87d82b29635be19b878d3f56872dd8d6f1b5d35d86d1c85dc437",
+    "security.core.injection.output-encoding.q1": "504ac22ed5aace5e70011ed76bfb8cde30adff1b108947baf7e7be20af92d8dd",
+    "security.core.injection.output-encoding.q2": "f44fa3fc200c7f8bb1d68b9a4fea30e5d132af651df720d5a3cce8fbc3352c9a",
+    "security.core.injection.sql-injection": "90b88df138b9c131bd3abf7bccede5f5ea9e26e8c71ae3ef37c60c88122eeba5",
+    "security.core.injection.sql-injection.q1": "0dca42eeaebf72656693ae2a94c6bdbf63ce1ffb3009ed6968ff02cc05e8a22c",
+    "security.core.injection.sql-injection.q2": "96dc437e51faae1729c08dc85667c0b57deb6647d47bc9e1041a79b41e2f2c0e",
+    "security.core.password.plaintext": "53068e240757a4742b29c7aea9b4c1f4b843eb85be41bbc976f813b72828194a",
+    "security.core.password.plaintext.q1": "6b7632899f99b8813e8f1995eaa627914d89ad315eb2f3fd1bb4c061eb1a675a",
+    "security.core.password.plaintext.q2": "2f774f46d6847462d92075da9d31505fa956ecf2e9f06810fd01ca014d007aba",
+    "security.core.password.salt-hash": "a2ee6f9f5276c967eb9767b8ddef016200850cdbd20642eef15db8ad5e62cb25",
+    "security.core.password.salt-hash.q1": "543a2cf904040f395c6ded54381bd49aa93555f90ccc4b86459f2471e82828e7",
+    "security.core.password.salt-hash.q2": "e08680d80bc61ff82ab910cb1de421d0180664fb433d43982172ea4386112201",
+    "security.core.password.work-factor": "d5cf2ac91d26d6324066f04cbabdd4c040ab4cd5ff3866aa6269e4a66eb2c7db",
+    "security.core.password.work-factor.q1": "9eea9ddd657c4a25f95d31aa2d92ac4856226fbc9ced68deb3f985c07b8b034d",
+    "security.core.password.work-factor.q2": "7b79f704ae910cc29cf03ef96a23030dbc2275f3f9cc001cde3988a4be2e4d61",
+    "security.core.session-cookie.cookie-flags": "546eaf23705f6a7e1a7809aa5ffdf53757b9099352244b229b31ed0380320176",
+    "security.core.session-cookie.cookie-flags.q1": "c5868402032173053b01f15941c40f4fbfa916d73127b9bc547cde0654e12600",
+    "security.core.session-cookie.fixation-expiration": "a7bbcc19bf41f2ad5d96bbf6b5631154c44a07cd320e0dd30fa595305ca846d6",
+    "security.core.session-cookie.fixation-expiration.q1": "ae38f97bc4ec1f38cf216512c1236f523ac263258c121124285efcc53a0c8ecd",
+    "security.core.session-cookie.fixation-expiration.q2": "fc7cc71f6778c601f8565139ef1ebc0b5a3030f3349990d295f8810dbce1c02a",
+    "security.core.session-cookie.session-id": "74da74180bc45fabad3ebad8dc7689d8557621bf84d21da5af0c0046e12c5fad",
+    "security.core.session-cookie.session-id.q1": "4c6d8e25be495682e2a61dcbdd0757c2a7666da04e63ce1af6727a3f5d62d688",
+    "security.core.session-cookie.session-id.q2": "3a99b43898a61d22f8bdfe1191324057ab2f5467d1f76cf868318c1777c66f79",
+    "security.core.tokens-oauth.jwt-lifecycle": "4e47580dc56d20c0cf5afb323b54b2592bcdfbfa5918f16da819ccb1b20a28cd",
+    "security.core.tokens-oauth.jwt-lifecycle.q1": "b572566bf6ca110da9daa05001bda743d3559f176ec756f87169074d5271d85c",
+    "security.core.tokens-oauth.jwt-lifecycle.q2": "04bcdb6326a7f6dca6f94ec139e6d275a68658e1682498e52eabe8403471636c",
+    "security.core.tokens-oauth.jwt-structure": "9211937bd4489aa14330700291bd408897f0f2de12e6b353a6042dba7cdfc536",
+    "security.core.tokens-oauth.jwt-structure.q1": "bc36c0cbb91983a25941c132104241fa492a088bc31551e2ee1bf58f52e9e207",
+    "security.core.tokens-oauth.jwt-structure.q2": "9344cee3c3fb2147b8cda356797db1d1afd2b5277512f3b323f781dbf5a55c9c",
+    "security.core.tokens-oauth.oauth-oidc": "730c8e323fa3e2ae6482e6fe49c6f8070545047f767f15073b95db29147eecbc",
+    "security.core.tokens-oauth.oauth-oidc.q1": "4b30da32fb583462201bf2ce7535e60a1d016e10e592a4cd16b9540df9643b0b",
+    "security.core.tokens-oauth.oauth-oidc.q2": "d0eed3e853ea3714303d3db841c9916f53000aafa194226c8c48c7fccd7e2faf"
+  },
+  "curriculumSha256": "df7b61aaab15ba420a79e53a6a81df8b8066c0bd2d75957a155f192f8ea49821",
+  "topicCatalogSha256": "b81093bdfb2d276e8bc702f7609002690d428db0de7ffbdc8a4c749b268eb0d0"
+}

@@ -31,29 +31,27 @@
     "referenceLinks": 56,
     "uniqueReferenceUrls": 43,
     "conceptDecisions": {
-      "KEEP": 1,
-      "NEEDS_REVIEW": 39
+      "KEEP": 32,
+      "TARGETED_ENHANCE": 8
     },
     "questionDecisions": {
-      "KEEP": 3,
-      "NEEDS_REVIEW": 105
+      "KEEP": 107,
+      "TARGETED_ENHANCE": 1
     },
     "conceptEvidence": {
-      "CURRENT_PARTIAL": 1,
-      "NEEDS_REVIEW": 39
+      "CURRENT_VERIFIED": 40
     },
     "questionEvidence": {
-      "CURRENT_PARTIAL": 3,
-      "NEEDS_REVIEW": 105
+      "CURRENT_VERIFIED": 108
     },
-    "semanticReviewStatus": "NEEDS_REVIEW",
-    "areaVerdict": "NEEDS_REVIEW",
+    "semanticReviewStatus": "CURRENT_VERIFIED",
+    "areaVerdict": "TARGETED_ENHANCE",
     "previousWave": {
       "number": 181,
       "url": "https://github.com/guseoh/csforge/pull/181",
       "title": "Backend Engineering Content Quality"
     },
-    "semanticEvidence": "idempotency-key의 상태/fingerprint/commit 후 응답 실패/tenant/TTL과 q1~q3/Stripe 사례는 KEEP. 이전 usecase/pagination/retry/batch coverage 근거 보존, 나머지 body/Question의 새 검토는 미완료."
+    "semanticEvidence": "13 Topic 전체 curriculum·40 Concept 원문 및108 Question의 모든 선택지/rationale/accepted/model/explanation을 직접 읽고 개별 근거 작성. 공식 계약을 실제 대조하며 자동 parsing과 과거 PASS는 verdict 근거로 쓰지 않음."
   },
   {
     "area": "cache",
@@ -203,29 +201,27 @@
     "referenceLinks": 49,
     "uniqueReferenceUrls": 44,
     "conceptDecisions": {
-      "KEEP": 3,
-      "NEEDS_REVIEW": 35
+      "KEEP": 28,
+      "TARGETED_ENHANCE": 10
     },
     "questionDecisions": {
-      "KEEP": 6,
-      "NEEDS_REVIEW": 69
+      "KEEP": 71,
+      "TARGETED_ENHANCE": 4
     },
     "conceptEvidence": {
-      "CURRENT_PARTIAL": 3,
-      "NEEDS_REVIEW": 35
+      "CURRENT_VERIFIED": 38
     },
     "questionEvidence": {
-      "CURRENT_PARTIAL": 6,
-      "NEEDS_REVIEW": 69
+      "CURRENT_VERIFIED": 75
     },
-    "semanticReviewStatus": "NEEDS_REVIEW",
-    "areaVerdict": "NEEDS_REVIEW",
+    "semanticReviewStatus": "CURRENT_VERIFIED",
+    "areaVerdict": "TARGETED_ENHANCE",
     "previousWave": {
       "number": 180,
       "url": "https://github.com/guseoh/csforge/pull/180",
       "title": "Database Content Quality"
     },
-    "semanticEvidence": "MVCC visibility/row-lock/btree 본문·Question·공식 출처는 KEEP. 문장/트랜잭션 스냅샷, 일반 SELECT/충돌 잠금, 선택도/heap 비용을 구분한다. 남은 SQL/isolation/WAL/replication 전수 의미 검토는 미완료."
+    "semanticEvidence": "12 Topic의 curriculum 목표·전체 본문·75문항의 모든 선택지/rationale/accepted/model/explanation을 직접 읽고 개별 근거를 작성. PostgreSQL 공식 버전별 자료와 실제 source를 대조하며 자동 파싱/이전 PASS로 verdict를 부여하지 않음."
   },
   {
     "area": "distributed-systems",
@@ -706,29 +702,27 @@
     "referenceLinks": 50,
     "uniqueReferenceUrls": 41,
     "conceptDecisions": {
-      "NEEDS_REVIEW": 37,
-      "TARGETED_ENHANCE": 1
+      "KEEP": 26,
+      "TARGETED_ENHANCE": 12
     },
     "questionDecisions": {
-      "KEEP": 3,
-      "NEEDS_REVIEW": 71
+      "KEEP": 70,
+      "TARGETED_ENHANCE": 4
     },
     "conceptEvidence": {
-      "CURRENT_PARTIAL": 2,
-      "NEEDS_REVIEW": 36
+      "CURRENT_VERIFIED": 38
     },
     "questionEvidence": {
-      "CURRENT_PARTIAL": 3,
-      "NEEDS_REVIEW": 71
+      "CURRENT_VERIFIED": 74
     },
-    "semanticReviewStatus": "NEEDS_REVIEW",
-    "areaVerdict": "NEEDS_REVIEW",
+    "semanticReviewStatus": "CURRENT_VERIFIED",
+    "areaVerdict": "TARGETED_ENHANCE",
     "previousWave": {
       "number": 186,
       "url": "https://github.com/guseoh/csforge/pull/186",
       "title": "Content quality: Security"
     },
-    "semanticEvidence": "authentication/q3가 credential→context 성공/실패를 검증해 과거P1 해소. source 학습 동선만 P2. output-encoding은 HTML/JS code로 문맥 비교가 이미 있어 TEXT 신호 미탐지로 그림 강제 금지. OWASP/나머지문항 새 전수 대조 미완료."
+    "semanticEvidence": "12 Topic 전체 curriculum·38 Concept 원문 및74 Question의 모든 선택지/rationale/accepted/model/explanation을 직접 읽고 개별 근거를 작성. 불확실한 기술 주장은 실제 공식 계약과 대조하고 도구 접근 실패·검토 한계는 구분. 자동 parsing과 이전 PASS는 verdict 근거로 쓰지 않음."
   },
   {
     "area": "spring",
@@ -764,29 +758,26 @@
     "referenceLinks": 54,
     "uniqueReferenceUrls": 45,
     "conceptDecisions": {
-      "KEEP": 1,
-      "NEEDS_REVIEW": 36
+      "KEEP": 33,
+      "TARGETED_ENHANCE": 4
     },
     "questionDecisions": {
-      "KEEP": 4,
-      "NEEDS_REVIEW": 73
+      "KEEP": 77
     },
     "conceptEvidence": {
-      "CURRENT_PARTIAL": 2,
-      "NEEDS_REVIEW": 35
+      "CURRENT_VERIFIED": 37
     },
     "questionEvidence": {
-      "CURRENT_PARTIAL": 4,
-      "NEEDS_REVIEW": 73
+      "CURRENT_VERIFIED": 77
     },
-    "semanticReviewStatus": "NEEDS_REVIEW",
-    "areaVerdict": "NEEDS_REVIEW",
+    "semanticReviewStatus": "CURRENT_VERIFIED",
+    "areaVerdict": "TARGETED_ENHANCE",
     "previousWave": {
       "number": 179,
       "url": "https://github.com/guseoh/csforge/pull/179",
       "title": "Spring Content Quality"
     },
-    "semanticEvidence": "self-invocation과 lifecycle의 코드/ASCII/q셋에서 바깥 트랜잭션·내부 advice 우회, 생성/초기화/자원 소유권을 구분한다. lifecycle KEEP, self-invocation은 보충 출처 재확인 대기. 나머지 framework 계약 전수 PASS 미선언."
+    "semanticEvidence": "12 Topic의 curriculum 목표·전체 Concept 본문·모든 Question 선택지/rationale/accepted/model/explanation을 직접 읽어 개별 근거를 작성. 공식 자료로 계약/불확실 주장을 대조하며 자동 파싱·이전 PASS로 verdict를 부여하지 않음."
   },
   {
     "area": "system-design",

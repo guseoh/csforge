@@ -8,16 +8,18 @@
 
 ## 결론과 검토 한계
 
-전수 **인벤토리와 구조 대조**를 보존하고 [Wave 1 직접 의미 검토](wave-1/README.md)를 추가했다. 소형 6 Area의 18 Topic / **54 Concept / 162 Question 전체 본문·답·모든 선택지·rationale·modelAnswer·explanation**을 직접 읽고 개별 근거를 기록했다. 해당 범위의 근거는 `CURRENT_VERIFIED`이며, 품질은 KEEP 또는 TARGETED_ENHANCE로 따로 판정한다. 다른 9 Area의 새 전수 의미 검토는 미완료다. 전체 721/2,525 의미 감사 완료나 기존 Wave 대체를 선언하지 않는다. 이 Draft는 ChatGPT 최종 검토 뒤 후속 대상으로 사용하며 Issue를 자동으로 닫지 않는다.
+전수 **인벤토리와 구조 대조**, [Wave 1 직접 의미 검토](wave-1/README.md)를 보존하고 [Wave 2](wave-2/README.md)를 추가했다. Wave 1은 소형 6 Area의 18 Topic / 54 Concept / 162 Question, Wave 2는 Spring·Database·Backend Engineering·Security의 49 Topic / **153 Concept / 334 Question 전체 본문·답·모든 선택지·rationale·modelAnswer·acceptedAnswers·explanation**을 직접 읽은 근거다. 누적 전수 완료는 **207/721 Concept(28.71%) / 496/2,525 Question(19.64%)**, 10/15 Area다. 해당 범위의 근거는 `CURRENT_VERIFIED`이며 품질 판정은 별도다. 다른 5 Area의 새 전수 의미 검토는 미완료다. 전체 의미 감사 완료나 기존 Wave 대체를 선언하지 않는다. 이 Draft는 ChatGPT 최종 검토 뒤 후속 대상으로 사용하며 Issue를 자동으로 닫지 않는다.
 
 | 대상 | KEEP | TARGETED_ENHANCE | REWRITE_REQUIRED | NEEDS_REVIEW |
 | --- | ---: | ---: | ---: | ---: |
-| Concept | 50 | 19 | 0 | 652 |
-| Question | 227 | 12 | 0 | 2,286 |
+| Concept | 164 | 52 | 0 | 505 |
+| Question | 536 | 21 | 0 | 1,968 |
 
-초기 PR 감사의 39 Concept / 98 Question은 `review-notes.json`에 그대로 보존한다. Wave 1과 겹치는 8 / 21은 새 근거로 대체하며 원래 판단은 `priorSampleReview`에 남긴다. 현재 고유 직접 접근 수는 85 / 239이고, **이번 전수 완료는 54 / 162**다. 나머지 초기 샘플 31 / 77은 `CURRENT_PARTIAL`로 구분한다. 품질 NEEDS_REVIEW 652 Concept는 초기 부분 검토 미확정 16 + 새로운 개별 검토 없는 636이다. Question NEEDS_REVIEW는 2,286이다. 과거 Area PASS는 `PRIOR_REVIEWED` 근거로 보존하며 새 KEEP의 근거로 자동 사용하지 않는다.
+초기 PR 감사의 39 Concept / 98 Question은 `review-notes.json`에 그대로 보존한다. Wave 1과 겹치는 8 / 21 및 Wave 2와 겹치는 8 / 16은 새 전체 검토 근거로 연결하며 원래 판단은 `priorSampleReview`에 남긴다. 현재 고유 직접 접근 수는 230 / 557이고, 누적 전수 완료는 207 / 496이다. 나머지 초기 샘플 23 / 61은 `CURRENT_PARTIAL`로 구분한다. 품질 NEEDS_REVIEW 505 Concept는 초기 부분 검토 미확정 14 + 새로운 개별 검토 없는 491이다. Question NEEDS_REVIEW는 1,968이다. 과거 Area PASS는 `PRIOR_REVIEWED` 근거로 보존하며 새 KEEP의 근거로 자동 사용하지 않는다. Wave 1 summary는 당시 수량의 불변 snapshot이며 현재 누적 수량은 Wave 2 summary를 따른다.
 
 초기 [6개 발견](findings.md)과 새 [Wave 1 12개 발견](wave-1-findings.json)을 구분한다. 새 P0 1 / P1 7 / P2 4 그룹은 **11 Concept / 9 Question**의 정밀 보강 대상이다. 특히 `messaging.core.delivery.ordering.q1`은 A/B 모두 타당한 단일 정답 오류다. 전면 재작성이나 수량 quota의 근거는 없다. 검토 완료는 수정 완료를 뜻하지 않는다.
+
+[Wave 2 34개 발견](wave-2-findings.md)은 P0 5 / P1 23 / P2 6, **34 Concept / 9 Question**의 정밀 보강 대상이다. 핵심 오류는 Bean 초기화 도식 순서, HAVING/row lock acceptedAnswers의 요구 불충족, commit 후 outbox 기록, 비밀번호 일치만으로 인증 성공을 단정하는 전제다. 기존 초기·Wave 1 발견을 수정하거나 삭제하지 않았다. Wave 2의 미완료 항목은 0이며 전체 Issue #200의 품질 미확정 항목은 위 표와 같다.
 
 ## 방법과 근거 수준
 
@@ -27,8 +29,8 @@
 4. 이전 Phase A 7개 발견을 먼저 재확인했다. [차이](prior-delta.md), [현재 상태](prior-delta.json), [기존 PR 보고](external-evidence.json), [실제 병합/ancestor 증거](pr-merge-evidence.json)를 분리했다. PR 본문의 과거 Draft 문구보다 실제 병합 메타데이터를 따른다.
 5. 15개 Area의 위험 주제와 기존 지적, 새 이상 후보를 순차적으로 읽었다. 직접 검토는 문제의 필요성→상태/흐름→예제 결과→실패 경계→trade-off→Question 요구를 대조했다. `review-notes.json`에 contentKey별 근거/검토 범위/소스 hash를 남겼다. 이 hash는 판정 대상을 고정할 뿐 품질 점수가 아니다.
 6. `NONE/TEXT/DIAGRAM`에서 ASCII·timeline·상태 표도 동등한 시각화일 수 있다. fence/table/image 유무는 후보 신호만 만든다. 본문 글자 수나 그림 개수로 판정하지 않았다.
-7. 초기 canonical Reference 17개 직접 대조 기록을 보존했다. Wave 1의 82 고유 canonical URL 중 78개는 관련 내용/역할을 대조했고 4개는 상세 접근 NEEDS_REVIEW다. etcd API guarantees의 이전 부분 확인은 이번 Wave 관계에서 보장 절 직접 확인으로 보완했다. NIST withdrawn 판본은 접근 가능한 Reference의 품질 문제로 기록한다. 원문 전체나 모든 625 URL의 새 검증을 주장하지 않는다.
-8. 기존 60 SVG의 XML·소스 관계와 배포 URL을 전수 대조했다. 모두 HTTP200/SVG/소스 일치(줄바꿈 차이 허용)다. 브라우저에서는 값 전달/CAS/공유 메모리/페이지 폴트 4개만 독립 SVG 화면으로 확인했다. 모든 Concept Reader의 dark/light/mobile/human usage QA 완료를 뜻하지 않는다.
+7. 초기 canonical Reference 17개 직접 대조 기록을 보존했다. Wave 1의 82 고유 canonical URL 중 78개는 관련 내용/역할을 대조했고 4개는 상세 접근 NEEDS_REVIEW다. etcd 보장 절과 NIST withdrawn 판본의 Wave 1 근거를 유지한다. Wave 2는 209 관계/171 고유 URL 중 206 관계의 관련 주장·역할을 대조했다. JPA specification 2관계와 Version API 1관계는 대상 페이지 상세 접근 NEEDS_REVIEW다. RFC9110의 짧은 URL 접근 미확정은 동일 공식 `.html`로 확인한 의미 근거와 별도로 기록한다. 원문 전체나 모든 625 URL의 새 검증을 주장하지 않는다.
+8. 초기 감사에서 확인한 기존 60 SVG의 XML·소스 관계와 배포 URL 근거를 보존했다. 당시 모두 HTTP200/SVG/소스 일치(줄바꿈 차이 허용)이며 브라우저에서는 값 전달/CAS/공유 메모리/페이지 폴트 4개만 독립 SVG 화면으로 확인했다. Wave 2의 이미지 참조는 0이지만 기존 ASCII·상태 표·timeline을 개별로 평가했다. 모든 Concept Reader의 dark/light/mobile/human usage QA 완료나 배포 증거의 새 갱신을 뜻하지 않는다.
 
 ## 산출물 탐색
 
@@ -40,6 +42,9 @@
 | [findings.md](findings.md), [review-notes.json](review-notes.json) | 변경 대상과 정확한 인용/수정 방향/기존 결정 차이/후속 Issue |
 | [wave-1/README.md](wave-1/README.md), 6개 Area 수동 JSON | Topic별 직접 읽기와 Concept·Question별 의미 근거, 도식·Reference 평가 |
 | [wave-1-summary.json](wave-1-summary.json), [wave-1-findings.json](wave-1-findings.json) | 54/162 완료·잔여 재집계 및 새 12개 발견 원문 |
+| [wave-2/README.md](wave-2/README.md), 4개 Area 수동 JSON | 153/334 전체 개별 근거·source hash·관련 공식 문서 확인 범위 |
+| [wave-2-summary.json](wave-2-summary.json), [발견 JSON](wave-2-findings.json), [발견 보고](wave-2-findings.md) | Wave 2 완료 및 전체 누적 품질/근거 수량, 34개 발견의 인용·원문 위치 |
+| [Wave 2 도식·Reference·후속 범위](wave-2/visualization-reference-followups.md) | 상태/흐름 후보, 접근 미확정 출처, 기존 #202/#203/#222의 최소 델타 |
 | [visualization.md](visualization.md), [asset-inventory.json](asset-inventory.json) | 기존 그림 유지 근거와 상태/흐름별 선별 후보 |
 | [references.md](references.md), [reference-inventory.json](reference-inventory.json) | 모든 URL 관계/metadata/직접 확인 수준과 개선 제안 |
 | [prior-delta.md](prior-delta.md), [prior-delta.json](prior-delta.json) | Phase A 및 후속 Wave의 차이 |
@@ -59,7 +64,7 @@ git diff --check
 git diff efe73a15da14c996bd08344181d4d6f87073803d -- content frontend/public/learning
 ```
 
-첫 명령은 10개 JSON 보고서와 `area-summary.md`를 생성한다. 두 번째는 파일을 쓰지 않고 일관성을 확인한다. 수동 `review-notes.json`과 `wave-1/*.json`의 판정을 알고리즘으로 만들거나 변경하지 않는다. Concept/개별 Question object/Curriculum/Topic hash가 바뀌면 낡은 근거를 오류로 거절한다. Wave의 6 Area/18 Topic/216 key·Reference 관계 누락/중복과 발견 인용·key·ID도 확인한다. CRLF는 LF로 정규화하고 source의 기준선 Git object를 경로별 필터로 대조한다.
+첫 명령은 현재 inventory와 Wave 2 파생 보고서를 생성하며 Wave 1 파생 snapshot은 쓰지 않고 원래 overlay로 재현해 비교한다. 두 번째는 파일을 쓰지 않고 일관성을 확인한다. 수동 `review-notes.json`, `wave-1/*.json`, `wave-2/*.json`의 판정을 알고리즘으로 만들거나 변경하지 않는다. Concept/개별 Question object/Curriculum/Topic hash가 바뀌면 낡은 근거를 오류로 거절한다. Wave 1의 6 Area/18 Topic/216 key와 Wave 2의 4 Area/49 Topic/487 key·Reference 관계 누락/중복 및 발견 인용·key·ID를 확인한다. CRLF는 LF로 정규화하고 canonical/Curriculum/자산 945 파일의 기준선 Git object를 경로별 필터로 대조한다.
 
 외부 배포가 같은 기준선인지 먼저 확인한 후 필요할 때만 `python docs/content-audit/learning-experience-2026/verify-assets.py`로 기존 deployment URL의 자산 증거를 갱신한다. 네트워크가 필요하며 날짜/응답이 달라질 수 있다. 이미지 파일을 저장하거나 생성하지 않는다. 외부 URL의 성공은 교육적 PASS 판정에 사용하지 않는다.
 

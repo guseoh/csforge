@@ -19,7 +19,7 @@ import xml.etree.ElementTree as ET
 import yaml
 
 sys.dont_write_bytecode = True
-from wave_review import WAVE_AREAS, load_wave, summarize_wave
+from wave_review import WAVE_AREAS, WAVE_2_COUNTS, load_wave, summarize_wave
 
 
 OUT = Path(__file__).resolve().parent
@@ -112,12 +112,19 @@ def main():
         if not condition:
             errors.append(message)
 
-    wave_reviews, wave_sources, wave_ledgers = load_wave(OUT, ROOT, BASELINE, read_json, sha, require)
+    wave_1_reviews, wave_1_sources, wave_1_ledgers = load_wave(OUT, ROOT, BASELINE, read_json, sha, require)
+    wave_2_reviews, wave_2_sources, wave_2_ledgers = load_wave(OUT, ROOT, BASELINE, read_json, sha, require, wave=2)
+    require(not set(wave_1_reviews).intersection(wave_2_reviews), "Overlapping wave review keys")
+    wave_reviews = {**wave_1_reviews, **wave_2_reviews}
+    wave_ledgers = {**wave_1_ledgers, **wave_2_ledgers}
+    wave_sources = {url: wave_1_sources.get(url, []) + wave_2_sources.get(url, [])
+                    for url in set(wave_1_sources) | set(wave_2_sources)}
 
-    def decision(key, source_sha):
+    def decision(key, source_sha, reviews=None):
         reviewed = notes["items"].get(key)
-        if key in wave_reviews:
-            current = wave_reviews[key]
+        current_reviews = wave_reviews if reviews is None else reviews
+        if key in current_reviews:
+            current = current_reviews[key]
             require(current["sourceSha256"] == source_sha, f"Stale Wave semantic evidence: {key}")
             return {**current, "priorSampleReview": reviewed} if reviewed else current
         if reviewed:
@@ -210,8 +217,12 @@ def main():
                     evidence = current_sources[0]
                     ref["verification"] = {"status": evidence["evidenceLevel"], **evidence}
                     ref["verification"]["qualityIssueIds"] = [
-                        f["id"] for f in wave_ledgers[area]["findings"] if f["quote"] == r["url"]
+                        f["id"] for f in wave_ledgers[area]["findings"]
+                        if key in f["contentKeys"] and f["quote"] in {r["url"], r.get("title")}
                     ]
+                    access = wave_ledgers[area].get("referenceAccess", {}).get(r["url"])
+                    if access:
+                        ref["accessVerification"] = access
                 references.append(ref)
                 row["referenceEvidence"].append({"url": r["url"], "relationNote": r.get("relationNote"), "verification": ref["verification"]})
                 parsed = urlparse(r["url"])
@@ -314,18 +325,19 @@ def main():
             row["labels"] = ["".join(e.itertext()) for e in tree.iter() if e.tag.endswith("}text")]
         assets.append(row)
     all_keys = {i["contentKey"] for i in concepts + questions}
-    expected_wave_keys = {i["contentKey"] for i in concepts + questions if i["area"] in WAVE_AREAS}
-    require(set(wave_reviews) == expected_wave_keys, "Wave 1 complete Concept/Question key coverage")
+    expected_wave_keys = {i["contentKey"] for i in concepts + questions
+                          if i["area"] in WAVE_AREAS | set(WAVE_2_COUNTS)}
+    require(set(wave_reviews) == expected_wave_keys, "Waves complete Concept/Question key coverage")
     for item in concepts + questions:
         if item["contentKey"] in wave_reviews:
             require(wave_reviews[item["contentKey"]]["area"] == item["area"], f"Wave item area: {item['contentKey']}")
     wave_findings = [f for data in wave_ledgers.values() for f in data["findings"]]
     for area, ledger in wave_ledgers.items():
         require({t["key"] for t in ledger["topics"]} == {t["contentKey"] for t in topics if t["area"] == area},
-                f"Wave 1 Topic key coverage: {area}")
+                f"Wave Topic key coverage: {area}")
         require(len({s[0] for s in ledger["sources"]}) == len(ledger["sources"]), f"Duplicate Wave source: {area}")
         require({r["url"] for r in references if r["area"] == area}.issubset({s[0] for s in ledger["sources"]}),
-                f"Wave 1 Reference coverage: {area}")
+                f"Wave Reference coverage: {area}")
     for finding in wave_findings:
         require(finding["severity"] in {"P0", "P1", "P2"}, f"Wave finding severity: {finding['id']}")
         require(set(finding["contentKeys"]).issubset(expected_wave_keys), f"Wave finding keys: {finding['id']}")
@@ -379,6 +391,22 @@ def main():
         require(expected == actual, f"Canonical baseline bytes changed: {name}")
     delta = [{"area": a["area"], "before": previous_areas[a["area"]]["inventory"]["questionCount"],
               "now": a["questions"], "difference": a["questions"] - previous_areas[a["area"]]["inventory"]["questionCount"]} for a in areas]
+    # Wave 1 is a historical snapshot: validate it with its original review overlay.
+    wave_1_concepts = [{**c, "review": decision(c["contentKey"], c["sourceSha256"], wave_1_reviews)} for c in concepts]
+    wave_1_questions = [{**q, "review": decision(q["contentKey"], q["sourceSha256"], wave_1_reviews)} for q in questions]
+    wave_2_summary = summarize_wave(wave_2_ledgers, concepts, questions, wave=2)
+    wave_2_findings = [f for data in wave_2_ledgers.values() for f in data["findings"]]
+    for finding in wave_2_findings:
+        source = (ROOT / finding["file"]).read_text(encoding="utf-8")
+        offset = source.find(finding["quote"])
+        if offset < 0:
+            offset = source.find(json.dumps(finding["quote"], ensure_ascii=False)[1:-1])
+        finding["sourceLine"] = source[:offset].count("\n") + 1
+        finding["sourceFileSha256"] = sha(ROOT / finding["file"])
+    wave_2_summary["findingSeverity"] = counted(f["severity"] for f in wave_2_findings)
+    wave_2_summary["totals"] = {"topics": sum(len(d["topics"]) for d in wave_2_ledgers.values()),
+                                "concepts": len(wave_2_reviews.keys() & set(by_concept)),
+                                "questions": len(wave_2_reviews) - len(wave_2_reviews.keys() & set(by_concept))}
     artifacts = {"inventory.json": {"baselineSha": BASELINE, "topics": topics, "concepts": concepts},
                  "question-inventory.json": {"baselineSha": BASELINE, "questions": [
                      {**{k: q[k] for k in ["area", "file", "arrayIndex", "contentKey", "questionType", "difficulty", "status", "conceptKeys", "promptMarkdown", "sourceSha256", "review"]},
@@ -388,9 +416,20 @@ def main():
                  "reference-inventory.json": {"uniqueUrls": len(global_refs), "links": references},
                  "asset-inventory.json": assets, "candidates.json": candidates, "area-summary.json": areas,
                  "source-manifest.json": manifest, "prior-delta.json": {"questionCounts": delta, "findings": notes["priorFindings"]},
-                 "wave-1-summary.json": summarize_wave(wave_ledgers, concepts, questions),
-                 "wave-1-findings.json": wave_findings}
-    lines = ["# LearningArea별 감사 요약", "", "15 Area 전수 구조 인벤토리를 유지한다. Wave 1의 6 Area는 본문/문항 전수 직접 검토 CURRENT_VERIFIED, 나머지 9 Area는 새 전수 의미 검토 NEEDS_REVIEW다. 과거 PASS는 PRIOR_REVIEWED 근거로 보존한다.", "",
+                 "wave-1-summary.json": summarize_wave(wave_1_ledgers, wave_1_concepts, wave_1_questions),
+                 "wave-1-findings.json": [f for d in wave_1_ledgers.values() for f in d["findings"]],
+                 "wave-2-summary.json": wave_2_summary, "wave-2-findings.json": wave_2_findings}
+    finding_lines = ["# Wave 2 발견 사항", "", "개별 의미 검토에서 확정한 34개 그룹이다. 검토 완료와 수정 완료는 다르며 canonical 본문/문항은 변경하지 않았다. 기술적 확정과 Reference 접근성의 재확인 필요는 각 근거에서 구분한다.", ""]
+    for f in wave_2_findings:
+        source_url = f"https://github.com/guseoh/csforge/blob/{BASELINE}/{f['file']}#L{f['sourceLine']}"
+        finding_lines.extend([f"## {f['id']} — {f['severity']}", "",
+                              "대상: " + ", ".join(f"`{k}`" for k in f["contentKeys"]), "",
+                              f"원문: [{f['file']}:{f['sourceLine']}]({source_url})", "",
+                              *("> " + line for line in f["quote"].splitlines()), "",
+                              f"문제: {f['problem']}", "", f"최소 보강: {f['action']}", "",
+                              "후속: " + ", ".join(f"#{n}" for n in f["followupIssues"]), ""])
+    artifacts["wave-2-findings.md"] = "\n".join(finding_lines)
+    lines = ["# LearningArea별 감사 요약", "", "15 Area 전수 구조 인벤토리를 유지한다. Wave 1의 6 Area와 Wave 2의 4 Area는 본문/문항 전수 직접 검토 CURRENT_VERIFIED, 나머지 5 Area는 새 전수 의미 검토 NEEDS_REVIEW다. 과거 PASS는 PRIOR_REVIEWED 근거로 보존한다.", "",
              "| Area | Topic | Concept | Question | 이번 본문 검토 | 이번 문항 검토 | Concept KEEP / ENHANCE / REVIEW |", "| --- | ---: | ---: | ---: | ---: | ---: | --- |"]
     for area in areas:
         name = area["area"]
@@ -398,7 +437,7 @@ def main():
         question_reviews = sum(q["area"] == name and q["review"]["evidenceLevel"] != "NEEDS_REVIEW" for q in questions)
         counts = area["conceptDecisions"]
         lines.append(f"| {name} | {area['topics']} | {area['concepts']} | {area['questions']} | {body_reviews} | {question_reviews} | {counts.get('KEEP', 0)} / {counts.get('TARGETED_ENHANCE', 0)} / {counts.get('NEEDS_REVIEW', 0)} |")
-    lines.extend(["", "검토 수에는 이전 초기 샘플 CURRENT_PARTIAL도 포함한다. 전수 완료 수는 wave-1-summary.json의 CURRENT_VERIFIED 수로 구별한다. 근거는 review-notes.json 및 wave-1/*.json, 위치/연결은 inventory.json에 있다.", ""])
+    lines.extend(["", "검토 수에는 이전 초기 샘플 CURRENT_PARTIAL도 포함한다. 누적 전수 완료 수는 wave-2-summary.json의 CURRENT_VERIFIED 수로 구별한다. wave-1-summary.json은 당시 집계의 불변 snapshot이다. 근거는 review-notes.json 및 wave-1/*.json, wave-2/*.json, 위치/연결은 inventory.json에 있다.", ""])
     for area in areas:
         lines.extend([f"## {area['area']}", "", area["semanticEvidence"], "", f"이전 전수 Wave: [PR #{area['previousWave']['number']}]({area['previousWave']['url']}) (PRIOR_REVIEWED). 새 근거: **{area['semanticReviewStatus']}**. 품질: **{area['areaVerdict']}**.", ""])
     artifacts["area-summary.md"] = "\n".join(lines)
@@ -412,10 +451,10 @@ def main():
         else:
             encoded = data if isinstance(data, str) else json.dumps(data, ensure_ascii=False, indent=2) + "\n"
         path = OUT / name
-        if args.check:
+        if args.check or name.startswith("wave-1-"):
             if not path.exists() or path.read_text(encoding="utf-8") != encoded:
                 drift.append(name)
-        else:
+        elif not path.exists() or path.read_text(encoding="utf-8") != encoded:
             path.write_text(encoded, encoding="utf-8", newline="\n")
     if drift:
         print("Generated output drift: " + ", ".join(drift))

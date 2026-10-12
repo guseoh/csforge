@@ -1,0 +1,95 @@
+{
+  "baselineSha": "efe73a15da14c996bd08344181d4d6f87073803d",
+  "wave": "Wave 2",
+  "areas": [
+    {
+      "area": "backend-engineering",
+      "concepts": 40,
+      "questions": 108,
+      "currentVerifiedConcepts": 40,
+      "currentVerifiedQuestions": 108,
+      "conceptQuality": {
+        "KEEP": 32,
+        "TARGETED_ENHANCE": 8
+      },
+      "questionQuality": {
+        "KEEP": 107,
+        "TARGETED_ENHANCE": 1
+      }
+    },
+    {
+      "area": "database",
+      "concepts": 38,
+      "questions": 75,
+      "currentVerifiedConcepts": 38,
+      "currentVerifiedQuestions": 75,
+      "conceptQuality": {
+        "KEEP": 28,
+        "TARGETED_ENHANCE": 10
+      },
+      "questionQuality": {
+        "KEEP": 71,
+        "TARGETED_ENHANCE": 4
+      }
+    },
+    {
+      "area": "security",
+      "concepts": 38,
+      "questions": 74,
+      "currentVerifiedConcepts": 38,
+      "currentVerifiedQuestions": 74,
+      "conceptQuality": {
+        "KEEP": 26,
+        "TARGETED_ENHANCE": 12
+      },
+      "questionQuality": {
+        "KEEP": 70,
+        "TARGETED_ENHANCE": 4
+      }
+    },
+    {
+      "area": "spring",
+      "concepts": 37,
+      "questions": 77,
+      "currentVerifiedConcepts": 37,
+      "currentVerifiedQuestions": 77,
+      "conceptQuality": {
+        "KEEP": 33,
+        "TARGETED_ENHANCE": 4
+      },
+      "questionQuality": {
+        "KEEP": 77
+      }
+    }
+  ],
+  "allConceptQuality": {
+    "KEEP": 164,
+    "NEEDS_REVIEW": 505,
+    "TARGETED_ENHANCE": 52
+  },
+  "allQuestionQuality": {
+    "KEEP": 536,
+    "NEEDS_REVIEW": 1968,
+    "TARGETED_ENHANCE": 21
+  },
+  "allConceptEvidence": {
+    "CURRENT_PARTIAL": 23,
+    "CURRENT_VERIFIED": 207,
+    "NEEDS_REVIEW": 491
+  },
+  "allQuestionEvidence": {
+    "CURRENT_PARTIAL": 61,
+    "CURRENT_VERIFIED": 496,
+    "NEEDS_REVIEW": 1968
+  },
+  "findingSeverity": {
+    "P0": 5,
+    "P1": 23,
+    "P2": 6
+  },
+  "totals": {
+    "topics": 49,
+    "concepts": 153,
+    "questions": 334
+  }
+}

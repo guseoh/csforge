@@ -1,13 +1,13 @@
 # LearningArea별 감사 요약
 
-15 Area 전수 구조 인벤토리를 유지한다. Wave 1의 6 Area는 본문/문항 전수 직접 검토 CURRENT_VERIFIED, 나머지 9 Area는 새 전수 의미 검토 NEEDS_REVIEW다. 과거 PASS는 PRIOR_REVIEWED 근거로 보존한다.
+15 Area 전수 구조 인벤토리를 유지한다. Wave 1의 6 Area와 Wave 2의 4 Area는 본문/문항 전수 직접 검토 CURRENT_VERIFIED, 나머지 5 Area는 새 전수 의미 검토 NEEDS_REVIEW다. 과거 PASS는 PRIOR_REVIEWED 근거로 보존한다.
 
 | Area | Topic | Concept | Question | 이번 본문 검토 | 이번 문항 검토 | Concept KEEP / ENHANCE / REVIEW |
 | --- | ---: | ---: | ---: | ---: | ---: | --- |
-| backend-engineering | 13 | 40 | 108 | 1 | 3 | 1 / 0 / 39 |
+| backend-engineering | 13 | 40 | 108 | 40 | 108 | 32 / 8 / 0 |
 | cache | 3 | 9 | 27 | 9 | 27 | 7 / 2 / 0 |
 | computer-architecture | 10 | 61 | 183 | 5 | 6 | 0 / 2 / 59 |
-| database | 12 | 38 | 75 | 3 | 6 | 3 / 0 / 35 |
+| database | 12 | 38 | 75 | 38 | 75 | 28 / 10 / 0 |
 | distributed-systems | 3 | 9 | 27 | 9 | 27 | 8 / 1 / 0 |
 | dsa | 12 | 84 | 293 | 8 | 10 | 1 / 2 / 81 |
 | infrastructure-cloud | 3 | 9 | 27 | 9 | 27 | 6 / 3 / 0 |
@@ -16,17 +16,17 @@
 | network-http | 15 | 127 | 381 | 3 | 9 | 1 / 1 / 125 |
 | operating-systems | 12 | 97 | 331 | 3 | 11 | 0 / 0 / 97 |
 | performance-observability-operations | 3 | 9 | 27 | 9 | 27 | 8 / 1 / 0 |
-| security | 12 | 38 | 74 | 2 | 3 | 0 / 1 / 37 |
-| spring | 12 | 37 | 77 | 2 | 4 | 1 / 0 / 36 |
+| security | 12 | 38 | 74 | 38 | 74 | 26 / 12 / 0 |
+| spring | 12 | 37 | 77 | 37 | 77 | 33 / 4 / 0 |
 | system-design | 3 | 9 | 27 | 9 | 27 | 7 / 2 / 0 |
 
-검토 수에는 이전 초기 샘플 CURRENT_PARTIAL도 포함한다. 전수 완료 수는 wave-1-summary.json의 CURRENT_VERIFIED 수로 구별한다. 근거는 review-notes.json 및 wave-1/*.json, 위치/연결은 inventory.json에 있다.
+검토 수에는 이전 초기 샘플 CURRENT_PARTIAL도 포함한다. 누적 전수 완료 수는 wave-2-summary.json의 CURRENT_VERIFIED 수로 구별한다. wave-1-summary.json은 당시 집계의 불변 snapshot이다. 근거는 review-notes.json 및 wave-1/*.json, wave-2/*.json, 위치/연결은 inventory.json에 있다.
 
 ## backend-engineering
 
-idempotency-key의 상태/fingerprint/commit 후 응답 실패/tenant/TTL과 q1~q3/Stripe 사례는 KEEP. 이전 usecase/pagination/retry/batch coverage 근거 보존, 나머지 body/Question의 새 검토는 미완료.
+13 Topic 전체 curriculum·40 Concept 원문 및108 Question의 모든 선택지/rationale/accepted/model/explanation을 직접 읽고 개별 근거 작성. 공식 계약을 실제 대조하며 자동 parsing과 과거 PASS는 verdict 근거로 쓰지 않음.
 
-이전 전수 Wave: [PR #181](https://github.com/guseoh/csforge/pull/181) (PRIOR_REVIEWED). 새 근거: **NEEDS_REVIEW**. 품질: **NEEDS_REVIEW**.
+이전 전수 Wave: [PR #181](https://github.com/guseoh/csforge/pull/181) (PRIOR_REVIEWED). 새 근거: **CURRENT_VERIFIED**. 품질: **TARGETED_ENHANCE**.
 
 ## cache
 
@@ -42,9 +42,9 @@ cache replacement/ISA 경계/TLB/페이지 테이블/pipeline hazards를 읽었�
 
 ## database
 
-MVCC visibility/row-lock/btree 본문·Question·공식 출처는 KEEP. 문장/트랜잭션 스냅샷, 일반 SELECT/충돌 잠금, 선택도/heap 비용을 구분한다. 남은 SQL/isolation/WAL/replication 전수 의미 검토는 미완료.
+12 Topic의 curriculum 목표·전체 본문·75문항의 모든 선택지/rationale/accepted/model/explanation을 직접 읽고 개별 근거를 작성. PostgreSQL 공식 버전별 자료와 실제 source를 대조하며 자동 파싱/이전 PASS로 verdict를 부여하지 않음.
 
-이전 전수 Wave: [PR #180](https://github.com/guseoh/csforge/pull/180) (PRIOR_REVIEWED). 새 근거: **NEEDS_REVIEW**. 품질: **NEEDS_REVIEW**.
+이전 전수 Wave: [PR #180](https://github.com/guseoh/csforge/pull/180) (PRIOR_REVIEWED). 새 근거: **CURRENT_VERIFIED**. 품질: **TARGETED_ENHANCE**.
 
 ## distributed-systems
 
@@ -96,15 +96,15 @@ measurement→observability→operations 본문9/문항27 직접 검토. EASY �
 
 ## security
 
-authentication/q3가 credential→context 성공/실패를 검증해 과거P1 해소. source 학습 동선만 P2. output-encoding은 HTML/JS code로 문맥 비교가 이미 있어 TEXT 신호 미탐지로 그림 강제 금지. OWASP/나머지문항 새 전수 대조 미완료.
+12 Topic 전체 curriculum·38 Concept 원문 및74 Question의 모든 선택지/rationale/accepted/model/explanation을 직접 읽고 개별 근거를 작성. 불확실한 기술 주장은 실제 공식 계약과 대조하고 도구 접근 실패·검토 한계는 구분. 자동 parsing과 이전 PASS는 verdict 근거로 쓰지 않음.
 
-이전 전수 Wave: [PR #186](https://github.com/guseoh/csforge/pull/186) (PRIOR_REVIEWED). 새 근거: **NEEDS_REVIEW**. 품질: **NEEDS_REVIEW**.
+이전 전수 Wave: [PR #186](https://github.com/guseoh/csforge/pull/186) (PRIOR_REVIEWED). 새 근거: **CURRENT_VERIFIED**. 품질: **TARGETED_ENHANCE**.
 
 ## spring
 
-self-invocation과 lifecycle의 코드/ASCII/q셋에서 바깥 트랜잭션·내부 advice 우회, 생성/초기화/자원 소유권을 구분한다. lifecycle KEEP, self-invocation은 보충 출처 재확인 대기. 나머지 framework 계약 전수 PASS 미선언.
+12 Topic의 curriculum 목표·전체 Concept 본문·모든 Question 선택지/rationale/accepted/model/explanation을 직접 읽어 개별 근거를 작성. 공식 자료로 계약/불확실 주장을 대조하며 자동 파싱·이전 PASS로 verdict를 부여하지 않음.
 
-이전 전수 Wave: [PR #179](https://github.com/guseoh/csforge/pull/179) (PRIOR_REVIEWED). 새 근거: **NEEDS_REVIEW**. 품질: **NEEDS_REVIEW**.
+이전 전수 Wave: [PR #179](https://github.com/guseoh/csforge/pull/179) (PRIOR_REVIEWED). 새 근거: **CURRENT_VERIFIED**. 품질: **TARGETED_ENHANCE**.
 
 ## system-design
 
