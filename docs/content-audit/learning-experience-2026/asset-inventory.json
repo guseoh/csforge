@@ -1,0 +1,2205 @@
+[
+  {
+    "file": "frontend/public/learning/java/array-covariance.svg",
+    "url": "/learning/java/array-covariance.svg",
+    "sourceSha256": "57787a8d870e04eaf72a278995621ecab051b7d834121a89614edf2928541289",
+    "linkedConcepts": [],
+    "deploymentEvidence": {
+      "url": "/learning/java/array-covariance.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/array-covariance.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/array-covariance.svg",
+      "responseSha256": "57787a8d870e04eaf72a278995621ecab051b7d834121a89614edf2928541289",
+      "sourceSha256": "57787a8d870e04eaf72a278995621ecab051b7d834121a89614edf2928541289",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    "visualReview": {
+      "status": "NEEDS_REVIEW"
+    },
+    "viewBox": "0 0 980 500",
+    "labels": [
+      "컴파일 시점",
+      "Object[] values",
+      "선언 타입: Object[]",
+      "values[0] = 1",
+      "Integer는 Object → 허용",
+      "실행 시점",
+      "실제 배열 객체",
+      "String[]",
+      "Integer 저장 시도",
+      "실제 component 검사",
+      "저장 불가",
+      "ArrayStoreException",
+      "핵심: 변수의 선언 타입과 실제 배열 객체의 component type을 따로 추적한다."
+    ]
+  },
+  {
+    "file": "frontend/public/learning/java/array-list-linked-list.svg",
+    "url": "/learning/java/array-list-linked-list.svg",
+    "sourceSha256": "732f402ea904e2006d819b409d2e967604ddd61e2c6bad02d1c68293a2e3630f",
+    "linkedConcepts": [
+      "java.core.collections.arraylist-linkedlist-tradeoff"
+    ],
+    "deploymentEvidence": {
+      "url": "/learning/java/array-list-linked-list.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/array-list-linked-list.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/array-list-linked-list.svg",
+      "responseSha256": "732f402ea904e2006d819b409d2e967604ddd61e2c6bad02d1c68293a2e3630f",
+      "sourceSha256": "9713fed3a6c8ca418a4fea1a825edf20bd35fc5ab0a43c4247a7a50f916531b2",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    "visualReview": {
+      "status": "NEEDS_REVIEW"
+    },
+    "viewBox": "0 0 760 250",
+    "labels": [
+      "ArrayList · 배열 기반",
+      "index → 위치 계산",
+      "[0] A",
+      "[1] B",
+      "[2] C",
+      "[3] D",
+      "중간 삽입 → 뒤 요소를 이동",
+      "LinkedList · 노드 연결",
+      "index → 노드를 따라 이동",
+      "A | next",
+      "B | next",
+      "위치를 찾은 뒤 연결만 변경"
+    ]
+  },
+  {
+    "file": "frontend/public/learning/java/cas-retry.svg",
+    "url": "/learning/java/cas-retry.svg",
+    "sourceSha256": "6b8cf94fb63b03e7a7876d48f2ed4d3f46c896ee8e69a9c5d2f995277b1fae85",
+    "linkedConcepts": [
+      "java.core.concurrency.atomic-cas"
+    ],
+    "deploymentEvidence": {
+      "url": "/learning/java/cas-retry.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/cas-retry.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/cas-retry.svg",
+      "responseSha256": "6b8cf94fb63b03e7a7876d48f2ed4d3f46c896ee8e69a9c5d2f995277b1fae85",
+      "sourceSha256": "a18b10037ff2af73d72fc241dc79d8d3bd52564579b31fa47999c997b820809f",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    "visualReview": {
+      "status": "KEEP_IN_OBSERVED_VIEW",
+      "basis": "expected=current→update→CAS 성공/실패→재읽기 흐름과 contention/복합 불변 조건 경계가 본문과 일치. 독립 SVG 화면만 확인; 모든 reader/mobile/theme QA 완료 주장 아님.",
+      "checkedAt": "2026-10-12"
+    },
+    "viewBox": "0 0 1120 560",
+    "labels": [
+      "CAS는 예상값이 그대로일 때만 갱신하고, 경쟁에서 지면 다시 계산한다",
+      "1. 현재 값 읽기",
+      "expected = current",
+      "2. 새 값 계산",
+      "update = f(expected)",
+      "3. compareAndSet",
+      "current == expected ?",
+      "성공",
+      "current ← update",
+      "같음",
+      "실패",
+      "다른 thread가 먼저 변경",
+      "다름",
+      "최신 값 다시 읽고 retry",
+      "높은 contention에서는 실패와 재계산이 반복되어 CPU 비용이 커질 수 있다.",
+      "CAS primitive를 사용했다는 사실만으로 전체 알고리즘이 lock-free·wait-free라고 증명되지는 않는다.",
+      "여러 변수 사이의 invariant는 AtomicInteger를 각각 쓰는 것만으로 하나의 atomic transaction이 되지 않는다."
+    ]
+  },
+  {
+    "file": "frontend/public/learning/java/class-loading-lifecycle.svg",
+    "url": "/learning/java/class-loading-lifecycle.svg",
+    "sourceSha256": "7812488b67ff2c73d9ae438da3c497412df4d683cedfcb3529cb970b23af2c96",
+    "linkedConcepts": [
+      "java.core.jvm-runtime.class-loading-linking-initialization"
+    ],
+    "deploymentEvidence": {
+      "url": "/learning/java/class-loading-lifecycle.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/class-loading-lifecycle.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/class-loading-lifecycle.svg",
+      "responseSha256": "7812488b67ff2c73d9ae438da3c497412df4d683cedfcb3529cb970b23af2c96",
+      "sourceSha256": "718a9371320204f55a248f3baa69c7f5b2d7f911a0186fcaf5cceec20e0264f3",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    "visualReview": {
+      "status": "NEEDS_REVIEW"
+    },
+    "viewBox": "0 0 1100 360",
+    "labels": [
+      "Class lifecycle",
+      "class file을 읽고 검증한 뒤 초기화하고 사용할 수 있게 된다",
+      "Loading",
+      "binary representation",
+      "찾아 읽기",
+      "Linking",
+      "verification",
+      "preparation · resolution",
+      "Initialization",
+      "static initializer",
+      "실행",
+      "Use",
+      "method / field 호출",
+      "실행 준비 완료",
+      "resolution은 모든 symbolic reference를 initialization 전에 한 번에 끝내야 한다는 뜻이 아니다."
+    ]
+  },
+  {
+    "file": "frontend/public/learning/java/classloader-type-identity.svg",
+    "url": "/learning/java/classloader-type-identity.svg",
+    "sourceSha256": "d8cefd7b0198311ac75cd5f6f8d811c2211dc274e05a3ec162facfcac00a7d2e",
+    "linkedConcepts": [
+      "java.core.jvm-runtime.classloader-delegation-type-identity"
+    ],
+    "deploymentEvidence": {
+      "url": "/learning/java/classloader-type-identity.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/classloader-type-identity.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/classloader-type-identity.svg",
+      "responseSha256": "d8cefd7b0198311ac75cd5f6f8d811c2211dc274e05a3ec162facfcac00a7d2e",
+      "sourceSha256": "9bf3db70923d9ed779c3b962f33ad178764fb9a1a34eecb6d239c4480587d0ec",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    "visualReview": {
+      "status": "NEEDS_REVIEW"
+    },
+    "viewBox": "0 0 1120 560",
+    "labels": [
+      "같은 class 이름이어도 defining ClassLoader가 다르면 runtime type이 달라질 수 있다",
+      "Parent Loader",
+      "공통 PluginApi interface 정의",
+      "Plugin Loader A",
+      "com.example.Plugin 정의",
+      "Plugin Loader B",
+      "com.example.Plugin 정의",
+      "shared API",
+      "shared API",
+      "Type identity A",
+      "name + defining loader A",
+      "Type identity B",
+      "name + defining loader B",
+      "binary name이 같아도 곧바로 cast-compatible한 동일 타입이 되는 것은 아니다."
+    ]
+  },
+  {
+    "file": "frontend/public/learning/java/dst-gap-overlap.svg",
+    "url": "/learning/java/dst-gap-overlap.svg",
+    "sourceSha256": "40b02e99e0b371bfc85961a45378575f55a725f45e41bbe112906fe968ba60b4",
+    "linkedConcepts": [
+      "java.core.time-numeric.zoneid-dst"
+    ],
+    "deploymentEvidence": {
+      "url": "/learning/java/dst-gap-overlap.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/dst-gap-overlap.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/dst-gap-overlap.svg",
+      "responseSha256": "40b02e99e0b371bfc85961a45378575f55a725f45e41bbe112906fe968ba60b4",
+      "sourceSha256": "1d253617aa3f55302d0b49efeec5a839f174e67ef31fa45159ff03d4441ab19b",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    "visualReview": {
+      "status": "NEEDS_REVIEW"
+    },
+    "viewBox": "0 0 820 360",
+    "labels": [
+      "DST 전환: 존재하지 않는 시간과 두 번 나타나는 시간",
+      "Gap · 시계를 앞으로 이동",
+      "01:59",
+      "02:00–02:59",
+      "실제 순간이 없음",
+      "03:00",
+      "local clock이 한 구간을 건너뜀",
+      "Overlap · 시계를 뒤로 이동",
+      "01:59",
+      "02:30",
+      "offset A",
+      "02:30",
+      "offset B",
+      "03:00",
+      "같은 local time이 서로 다른 두 Instant 후보를 가질 수 있음"
+    ]
+  },
+  {
+    "file": "frontend/public/learning/java/dynamic-proxy-flow.svg",
+    "url": "/learning/java/dynamic-proxy-flow.svg",
+    "sourceSha256": "299df12a3a4b5aca3044b0c18598ea803baf23809edcf19073c82e2f36ccf7d1",
+    "linkedConcepts": [
+      "java.core.metadata-compatibility.dynamic-proxy-invocationhandler"
+    ],
+    "deploymentEvidence": {
+      "url": "/learning/java/dynamic-proxy-flow.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/dynamic-proxy-flow.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/dynamic-proxy-flow.svg",
+      "responseSha256": "299df12a3a4b5aca3044b0c18598ea803baf23809edcf19073c82e2f36ccf7d1",
+      "sourceSha256": "a3e54d8adcf65b2ea0d8946c8e1c3d183e703429aff31c27949c6b1c66a31df4",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    "visualReview": {
+      "status": "NEEDS_REVIEW"
+    },
+    "viewBox": "0 0 1100 430",
+    "labels": [
+      "호출이 proxy를 지나야 interception이 일어난다",
+      "Caller",
+      "Greeter reference",
+      "JDK Proxy",
+      "interface implementation",
+      "runtime-generated",
+      "InvocationHandler",
+      "before / policy",
+      "delegate call",
+      "Target",
+      "real implementation",
+      "interface call",
+      "invoke(...)",
+      "reflect/delegate",
+      "result / exception returns through handler",
+      "target을 직접 호출하면 이 proxy/handler 경로를 통과하지 않는다."
+    ]
+  },
+  {
+    "file": "frontend/public/learning/java/exception-boundaries.svg",
+    "url": "/learning/java/exception-boundaries.svg",
+    "sourceSha256": "a8a83fac0c172d87af8428e553ff6a3edc526fa84cec9b6b860e6373f6cd943b",
+    "linkedConcepts": [
+      "java.core.exceptions-resources.exception-propagation-catch-boundary"
+    ],
+    "deploymentEvidence": {
+      "url": "/learning/java/exception-boundaries.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/exception-boundaries.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/exception-boundaries.svg",
+      "responseSha256": "a8a83fac0c172d87af8428e553ff6a3edc526fa84cec9b6b860e6373f6cd943b",
+      "sourceSha256": "acf450f6316945dd6a9bde795e63b25e6981c2d057c1afade9fd6e29138159f8",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    "visualReview": {
+      "status": "NEEDS_REVIEW"
+    },
+    "viewBox": "0 0 1100 500",
+    "labels": [
+      "Catch at the boundary with responsibility",
+      "예외를 가까운 곳이 아니라 복구·변환·외부 응답을 책임지는 지점에서 처리한다.",
+      "Repository",
+      "낮은 수준의 실패",
+      "SQLException",
+      "TimeoutException",
+      "Application Service",
+      "복구 또는 의미 변환",
+      "fallback 실행",
+      "원인(cause) 보존",
+      "API Boundary",
+      "외부 계약으로 변환",
+      "HTTP status",
+      "안전한 error body",
+      "catch는 책임이 있을 때만 사용하고, 할 일이 없다면 예외를 호출 스택 위로 전파한다."
+    ]
+  },
+  {
+    "file": "frontend/public/learning/java/gc-reachability.svg",
+    "url": "/learning/java/gc-reachability.svg",
+    "sourceSha256": "ed28d0cce351cb94f2e17c04dd23246dbe76aae8d56746ac94992dde4f0934b7",
+    "linkedConcepts": [
+      "java.core.jvm-runtime.gc-reachability-roots"
+    ],
+    "deploymentEvidence": {
+      "url": "/learning/java/gc-reachability.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/gc-reachability.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/gc-reachability.svg",
+      "responseSha256": "ed28d0cce351cb94f2e17c04dd23246dbe76aae8d56746ac94992dde4f0934b7",
+      "sourceSha256": "4268b93e4008ba1406590b6acc867c6ca430dfe1c5ce7005de707f5db5eddeaf",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    "visualReview": {
+      "status": "NEEDS_REVIEW"
+    },
+    "viewBox": "0 0 1100 500",
+    "labels": [
+      "GC Reachability",
+      "root에서 strong reference를 따라갈 수 있는지가 핵심 기준이다",
+      "GC Roots",
+      "thread · static · runtime",
+      "Cache",
+      "reachable",
+      "User A",
+      "reachable",
+      "Address A",
+      "reachable",
+      "Session C",
+      "unreachable",
+      "Payload",
+      "reclaim candidate",
+      "unreachable은 즉시 삭제가 아니라, 다음 collector cycle에서 회수할 수 있는 상태다."
+    ]
+  },
+  {
+    "file": "frontend/public/learning/java/generics-pecs.svg",
+    "url": "/learning/java/generics-pecs.svg",
+    "sourceSha256": "5d1c40b6766f8e7a85901816d4f63feef16ee9c0bd346f89e35d27b993adfa2a",
+    "linkedConcepts": [
+      "java.core.generics.wildcards-pecs"
+    ],
+    "deploymentEvidence": {
+      "url": "/learning/java/generics-pecs.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/generics-pecs.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/generics-pecs.svg",
+      "responseSha256": "5d1c40b6766f8e7a85901816d4f63feef16ee9c0bd346f89e35d27b993adfa2a",
+      "sourceSha256": "50826061d0b780ea3662f63a796ec2cf5935dd3b45a507767de06529c8056cfe",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    "visualReview": {
+      "status": "NEEDS_REVIEW"
+    },
+    "viewBox": "0 0 1100 430",
+    "labels": [
+      "PECS = Producer Extends · Consumer Super",
+      "Producer · ? extends Number",
+      "List<Integer> 또는 List<Double>를 받을 수 있음",
+      "List<? extends Number>",
+      "읽기",
+      "Number로 안전하게 꺼냄",
+      "Consumer · ? super Integer",
+      "List<Integer>, List<Number>, List<Object>에 넣을 수 있음",
+      "쓰기",
+      "List<? super Integer>",
+      "API가 데이터를 어느 방향으로 사용하는지 먼저 그리면 wildcard 경계가 자연스럽게 결정된다."
+    ]
+  },
+  {
+    "file": "frontend/public/learning/java/happens-before.svg",
+    "url": "/learning/java/happens-before.svg",
+    "sourceSha256": "00c84df37fb51a9d8f4a71478a0aa39a0a2b2b624df9d4b4b47554bda2917052",
+    "linkedConcepts": [
+      "java.core.concurrency.jmm-happens-before-visibility"
+    ],
+    "deploymentEvidence": {
+      "url": "/learning/java/happens-before.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/happens-before.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/happens-before.svg",
+      "responseSha256": "00c84df37fb51a9d8f4a71478a0aa39a0a2b2b624df9d4b4b47554bda2917052",
+      "sourceSha256": "23e0978eca90d69645bc645eab7e800fc925c31b9cb40e5678e37de0cc17783c",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    "visualReview": {
+      "status": "NEEDS_REVIEW"
+    },
+    "viewBox": "0 0 1100 430",
+    "labels": [
+      "happens-before는 관찰 가능한 순서를 만든다",
+      "Thread A",
+      "x = 42",
+      "unlock(lock)",
+      "Thread B",
+      "lock(lock)",
+      "read x",
+      "synchronizes-with",
+      "동기화 경계가 없다면 단순히 코드가 앞에 쓰였다는 사실만으로 다른 thread의 read를 보장하지 않는다."
+    ]
+  },
+  {
+    "file": "frontend/public/learning/java/hashmap-buckets.svg",
+    "url": "/learning/java/hashmap-buckets.svg",
+    "sourceSha256": "fd723e23c5524af4d90e0b51fcf47dc8b300b49df1ebe606b71cc6999abc48c9",
+    "linkedConcepts": [
+      "java.core.collections.hashmap-hashing-collision"
+    ],
+    "deploymentEvidence": {
+      "url": "/learning/java/hashmap-buckets.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/hashmap-buckets.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/hashmap-buckets.svg",
+      "responseSha256": "fd723e23c5524af4d90e0b51fcf47dc8b300b49df1ebe606b71cc6999abc48c9",
+      "sourceSha256": "7d0ac69416fa7eb5c989c274a4cd14742247f3f349f62651a5261e7f659bc3ca",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    "visualReview": {
+      "status": "NEEDS_REVIEW"
+    },
+    "viewBox": "0 0 1100 430",
+    "labels": [
+      "HashMap 조회 흐름",
+      "hash만으로 끝나지 않고 bucket 안에서 key equality를 확인한다",
+      "key",
+      "hash(key)",
+      "hash → index",
+      "bucket[3]",
+      "collision 후보",
+      "entry: \"kim\" → 1",
+      "entry: \"lee\" → 2",
+      "equals()",
+      "같은 key면 교체, 아니면 다음 entry",
+      "mutable key를 저장 후 변경하면 hash/equality 경로가 달라져 entry를 찾지 못할 수 있다."
+    ]
+  },
+  {
+    "file": "frontend/public/learning/java/instant-zones.svg",
+    "url": "/learning/java/instant-zones.svg",
+    "sourceSha256": "b8f882f61a9f4d6fd68f2221872ed966d296e9f467495491c7211e145e5c2047",
+    "linkedConcepts": [
+      "java.core.time-numeric.instant-local-zoned-time"
+    ],
+    "deploymentEvidence": {
+      "url": "/learning/java/instant-zones.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/instant-zones.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/instant-zones.svg",
+      "responseSha256": "b8f882f61a9f4d6fd68f2221872ed966d296e9f467495491c7211e145e5c2047",
+      "sourceSha256": "9509c641889992d1435ee87e59a6f45714cde4af1e2b62963994d4d75e24b684",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    "visualReview": {
+      "status": "NEEDS_REVIEW"
+    },
+    "viewBox": "0 0 760 240",
+    "labels": [
+      "같은 순간을 지역 시간으로 표현하기",
+      "Instant",
+      "12:00Z",
+      "UTC 12:00",
+      "서울 21:00",
+      "뉴욕 07:00",
+      "LocalDateTime",
+      "Instant는 순서를 보존하고, ZoneId를 적용한 표현은 지역 규칙에 따라 달라진다"
+    ]
+  },
+  {
+    "file": "frontend/public/learning/java/java-execution-boundary.svg",
+    "url": "/learning/java/java-execution-boundary.svg",
+    "sourceSha256": "02b4dc15c8ae062e850e61b027ed6443f2795ccbc73010af823b2dda50a21f00",
+    "linkedConcepts": [
+      "java.core.jvm-runtime.jdk-jvm-classfile"
+    ],
+    "deploymentEvidence": {
+      "url": "/learning/java/java-execution-boundary.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/java-execution-boundary.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/java-execution-boundary.svg",
+      "responseSha256": "02b4dc15c8ae062e850e61b027ed6443f2795ccbc73010af823b2dda50a21f00",
+      "sourceSha256": "d23703efeed8a631d01e28d660ed209aee0b3b3b92522412e0924408f36a410e",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    "visualReview": {
+      "status": "NEEDS_REVIEW"
+    },
+    "viewBox": "0 0 760 230",
+    "labels": [
+      "Source · Compiler · Class File · JVM은 서로 다른 책임이다",
+      ".java source",
+      "javac",
+      ".class bytecode",
+      "JVM runtime",
+      "bytecode는 native machine code와 같지 않으며 JVM 구현이 실행 방식을 결정한다"
+    ]
+  },
+  {
+    "file": "frontend/public/learning/java/java-memory-retained-path.svg",
+    "url": "/learning/java/java-memory-retained-path.svg",
+    "sourceSha256": "68df4a4ee84bb001fe79b0c5ef2b46c6f83ac378429ead6b64a38e7f0fa41b92",
+    "linkedConcepts": [
+      "java.core.jvm-runtime.java-memory-leaks"
+    ],
+    "deploymentEvidence": {
+      "url": "/learning/java/java-memory-retained-path.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/java-memory-retained-path.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/java-memory-retained-path.svg",
+      "responseSha256": "68df4a4ee84bb001fe79b0c5ef2b46c6f83ac378429ead6b64a38e7f0fa41b92",
+      "sourceSha256": "869a42100728b78721afe2f620d5b0501de3399c904e0c10d4d0f7fb43c1cfb5",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    "visualReview": {
+      "status": "NEEDS_REVIEW"
+    },
+    "viewBox": "0 0 1120 520",
+    "labels": [
+      "Memory leak은 GC 실패보다 “필요 없는 객체가 왜 아직 reachable한가”의 문제다",
+      "GC Root",
+      "장수 owner",
+      "static cache / worker ThreadLocal",
+      "Session",
+      "업무상 이미 종료",
+      "Payload",
+      "large graph",
+      "이 경로가 남아 있으면 GC 관점에서는 정상적으로 reachable",
+      "해결 방향: owner의 lifecycle 정책 수정",
+      "remove · unregister · bounded cache · queue capacity · ClassLoader release",
+      "Heap에서 큰 객체 하나만 찾는 것보다 GC root까지의 retained path와 ownership 종료 지점을 추적하는 것이 핵심이다."
+    ]
+  },
+  {
+    "file": "frontend/public/learning/java/jvm-process-memory.svg",
+    "url": "/learning/java/jvm-process-memory.svg",
+    "sourceSha256": "50d22753217bf0ad9b74dae48ea258551682c9861e6cfe728f27e8435f849565",
+    "linkedConcepts": [
+      "java.core.jvm-runtime.heap-metaspace-native-thread-memory"
+    ],
+    "deploymentEvidence": {
+      "url": "/learning/java/jvm-process-memory.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/jvm-process-memory.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/jvm-process-memory.svg",
+      "responseSha256": "50d22753217bf0ad9b74dae48ea258551682c9861e6cfe728f27e8435f849565",
+      "sourceSha256": "efb2da276dd8e1b8be0419ee5dfb95929d444866f09eefbc02919a3f7d5afda8",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    "visualReview": {
+      "status": "NEEDS_REVIEW"
+    },
+    "viewBox": "0 0 1180 650",
+    "labels": [
+      "-Xmx는 Java heap의 한도이지 Java process 전체 RSS의 한도가 아니다",
+      "Java process / container memory",
+      "Java Heap",
+      "일반 Java object / array의 논리적 할당 영역",
+      "GC가 관리",
+      "-Xmx가 직접 제한하는 대표 영역",
+      "Metaspace",
+      "HotSpot class metadata",
+      "JVMS method area와",
+      "동일한 spec 용어는 아님",
+      "Thread stacks",
+      "platform thread의",
+      "stack/native resource",
+      "thread 수에 영향",
+      "Direct / native allocation",
+      "DirectByteBuffer backing storage",
+      "native library · mmap 등",
+      "JIT / Code cache",
+      "compiled native code와",
+      "runtime metadata",
+      "NMT로도 RSS 전부는 설명 못 함",
+      "HotSpot 내부 native memory 관찰에 유용",
+      "third-party/JDK native allocation은 별도 확인",
+      "예: -Xmx=1 GB인데 RSS=1.6 GB인 것 자체는 모순이 아니다. Heap 밖 memory consumer가 존재할 수 있다.",
+      "컨테이너 limit을 정할 때 heap 최대값 외 metaspace·thread·direct/native·JVM overhead를 위한 여유와 실제 측정이 필요하다."
+    ]
+  },
+  {
+    "file": "frontend/public/learning/java/jvm-runtime-data-areas.svg",
+    "url": "/learning/java/jvm-runtime-data-areas.svg",
+    "sourceSha256": "bb8f76c564c2119547cef024e468e5059ff13bb7f3cd4d14ed1c2189903e843d",
+    "linkedConcepts": [
+      "java.core.jvm-runtime.jvm-runtime-data-areas-frames"
+    ],
+    "deploymentEvidence": {
+      "url": "/learning/java/jvm-runtime-data-areas.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/jvm-runtime-data-areas.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/jvm-runtime-data-areas.svg",
+      "responseSha256": "bb8f76c564c2119547cef024e468e5059ff13bb7f3cd4d14ed1c2189903e843d",
+      "sourceSha256": "f77a70efb0dfb407e24c99d5ea901f50b3c0ffaa7a6011ccb131a06858f3fd96",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    "visualReview": {
+      "status": "NEEDS_REVIEW"
+    },
+    "viewBox": "0 0 1100 560",
+    "labels": [
+      "JVM Runtime Data Areas",
+      "thread별 실행 상태와 JVM 전체에서 공유되는 객체·클래스 영역",
+      "Thread A · JVM Stack",
+      "frame: method C · 현재 실행",
+      "frame: method B",
+      "frame: method A",
+      "local variable array · operand stack",
+      "Thread B · JVM Stack",
+      "frame: handle()",
+      "frame: main()",
+      "각 thread가 독립 보유",
+      "Heap · 공유",
+      "Order",
+      "User",
+      "Method Area · 공유",
+      "class metadata",
+      "runtime constant pool",
+      "static field 정보",
+      "references",
+      "JVMS의 추상 모델과 HotSpot의 실제 물리 배치를 같은 말로 취급하지 않는다."
+    ]
+  },
+  {
+    "file": "frontend/public/learning/java/nio-buffer-flip.svg",
+    "url": "/learning/java/nio-buffer-flip.svg",
+    "sourceSha256": "626acb573edf0abbaf08ee4b8078eb28d37fb30096bb34e1cb46a2486b578ce2",
+    "linkedConcepts": [
+      "java.core.io-nio.nio-channel-buffer"
+    ],
+    "deploymentEvidence": {
+      "url": "/learning/java/nio-buffer-flip.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/nio-buffer-flip.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/nio-buffer-flip.svg",
+      "responseSha256": "626acb573edf0abbaf08ee4b8078eb28d37fb30096bb34e1cb46a2486b578ce2",
+      "sourceSha256": "de27374474575dfce1241393f7871493e45198258c2528cd3b84c775bf7f4851",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    "visualReview": {
+      "status": "NEEDS_REVIEW"
+    },
+    "viewBox": "0 0 760 240",
+    "labels": [
+      "Buffer는 position·limit·capacity로 모드를 기억한다",
+      "write mode · put(\"ABC\") 뒤",
+      "A",
+      "B",
+      "C",
+      "_",
+      "position=3 · limit=capacity=4",
+      "flip()",
+      "read mode",
+      "A B C",
+      "position=0 · limit=3",
+      "clear()는 기록을 지우는 것이 아니라 다시 쓸 범위를 준비한다"
+    ]
+  },
+  {
+    "file": "frontend/public/learning/java/nio-selector-readiness.svg",
+    "url": "/learning/java/nio-selector-readiness.svg",
+    "sourceSha256": "1b2f3e63c4a38fc5cc5b83a39e2f12711dae335bf322d05d069ded886a961eb2",
+    "linkedConcepts": [
+      "java.core.io-nio.blocking-nonblocking-selector"
+    ],
+    "deploymentEvidence": {
+      "url": "/learning/java/nio-selector-readiness.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/nio-selector-readiness.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/nio-selector-readiness.svg",
+      "responseSha256": "1b2f3e63c4a38fc5cc5b83a39e2f12711dae335bf322d05d069ded886a961eb2",
+      "sourceSha256": "129b120590b0d03382af9d0b7c80e5646b0f620f9e94468de58196b50f6b17ff",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    "visualReview": {
+      "status": "NEEDS_REVIEW"
+    },
+    "viewBox": "0 0 900 430",
+    "labels": [
+      "Selector는 여러 Channel의 readiness를 한 loop에서 관찰한다",
+      "Channel A",
+      "interest: OP_READ",
+      "Channel B",
+      "interest: OP_WRITE",
+      "Channel C",
+      "interest: OP_READ",
+      "register",
+      "Selector",
+      "select()",
+      "selected-key set",
+      "현재 ready인 key",
+      "ready key",
+      "Application loop",
+      "1. key 상태 확인",
+      "2. 실제 read / write",
+      "3. partial 결과 처리",
+      "4. key lifecycle 정리",
+      "read-ready ≠ message complete",
+      "Readiness는 지금 I/O를 시도할 수 있다는 힌트다.",
+      "한 번의 read로 application message 전체가 완성된다는 보장은 없다."
+    ]
+  },
+  {
+    "file": "frontend/public/learning/java/pass-by-value.svg",
+    "url": "/learning/java/pass-by-value.svg",
+    "sourceSha256": "5463bd75c85a0d52d521f477e91160b9746112d2cbef7e8e13c33fe44ca623fa",
+    "linkedConcepts": [
+      "java.core.language-types.pass-by-value"
+    ],
+    "deploymentEvidence": {
+      "url": "/learning/java/pass-by-value.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/pass-by-value.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/pass-by-value.svg",
+      "responseSha256": "5463bd75c85a0d52d521f477e91160b9746112d2cbef7e8e13c33fe44ca623fa",
+      "sourceSha256": "5463bd75c85a0d52d521f477e91160b9746112d2cbef7e8e13c33fe44ca623fa",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    "visualReview": {
+      "status": "TARGETED_ENHANCE",
+      "basis": "브라우저에서 caller→A 경로가 value/B 라벨을 통과함. LEX-002. 본문 모델은 유지.",
+      "checkedAt": "2026-10-12"
+    },
+    "viewBox": "0 0 960 500",
+    "labels": [
+      "1. 호출 전",
+      "Member member",
+      "참조 값 A",
+      "Member 객체 A",
+      "name = \"kim\"",
+      "2. 메서드 호출 — 참조 값 A를 복사",
+      "Member member",
+      "참조 값 A",
+      "Member value",
+      "참조 값 A",
+      "Member 객체 A",
+      "name = \"kim\"",
+      "3. value = new Member() 이후",
+      "member · 참조 A",
+      "value · 참조 B",
+      "객체 A",
+      "객체 B"
+    ]
+  },
+  {
+    "file": "frontend/public/learning/java/priority-queue-heap.svg",
+    "url": "/learning/java/priority-queue-heap.svg",
+    "sourceSha256": "838d2f9cad55836105e19fbbbfbd8a952b2901ba1169a5fa4a88d422b96a7526",
+    "linkedConcepts": [
+      "java.core.collections.priorityqueue"
+    ],
+    "deploymentEvidence": {
+      "url": "/learning/java/priority-queue-heap.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/priority-queue-heap.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/priority-queue-heap.svg",
+      "responseSha256": "838d2f9cad55836105e19fbbbfbd8a952b2901ba1169a5fa4a88d422b96a7526",
+      "sourceSha256": "2ecc5a78c7a136bb535182a8af862203ca13ad09678bc9b50215073d20e89f13",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    "visualReview": {
+      "status": "NEEDS_REVIEW"
+    },
+    "viewBox": "0 0 1100 520",
+    "labels": [
+      "PriorityQueue는 “전체 정렬 목록”이 아니다",
+      "heap은 지금 꺼낼 head를 보장하고, 나머지 원소 전체의 순회 순서는 정렬 계약이 아니다",
+      "heap property",
+      "1",
+      "4",
+      "3",
+      "9",
+      "7",
+      "8",
+      "5",
+      "부모가 자식보다 우선할 뿐, 같은 level의 모든 값이 전체 정렬되어 있을 필요는 없다.",
+      "poll() → 1",
+      "poll() → 3",
+      "poll() → 4",
+      "poll을 반복하면 매번 현재 head를 제거하고 heap을 다시 맞춘다.",
+      "iterator()",
+      "정렬 순서 보장 없음",
+      "1, 4, 3, 9, 7, 8, 5",
+      "같은 내부 표현을 볼 수도 있지만",
+      "이 순서를 API 계약으로 쓰면 안 된다."
+    ]
+  },
+  {
+    "file": "frontend/public/learning/java/race-condition.svg",
+    "url": "/learning/java/race-condition.svg",
+    "sourceSha256": "d9309c88cf5ffa6cb6e36225804ac1c1e43b8106e2cb82dacc8c3acc4630a269",
+    "linkedConcepts": [
+      "java.core.concurrency.shared-mutable-state-race"
+    ],
+    "deploymentEvidence": {
+      "url": "/learning/java/race-condition.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/race-condition.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/race-condition.svg",
+      "responseSha256": "d9309c88cf5ffa6cb6e36225804ac1c1e43b8106e2cb82dacc8c3acc4630a269",
+      "sourceSha256": "3a683a8500bee39466837cb94faaef0f439f260c6430ca9bb8c190cf47f29551",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    "visualReview": {
+      "status": "NEEDS_REVIEW"
+    },
+    "viewBox": "0 0 760 270",
+    "labels": [
+      "counter++는 한 줄이어도 세 단계다",
+      "Thread A: read 0",
+      "Thread B: read 0",
+      "compute 0 + 1",
+      "compute 0 + 1",
+      "둘 다 write 1 → lost update"
+    ]
+  },
+  {
+    "file": "frontend/public/learning/java/strategy-pattern.svg",
+    "url": "/learning/java/strategy-pattern.svg",
+    "sourceSha256": "d57c31f6a12912252704f49c9e8740ba02238e8eee6d17d149c56c41a70b54bd",
+    "linkedConcepts": [
+      "java.core.design-patterns.strategy-pattern"
+    ],
+    "deploymentEvidence": {
+      "url": "/learning/java/strategy-pattern.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/strategy-pattern.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/strategy-pattern.svg",
+      "responseSha256": "d57c31f6a12912252704f49c9e8740ba02238e8eee6d17d149c56c41a70b54bd",
+      "sourceSha256": "d57c31f6a12912252704f49c9e8740ba02238e8eee6d17d149c56c41a70b54bd",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    "visualReview": {
+      "status": "NEEDS_REVIEW"
+    },
+    "viewBox": "0 0 960 500",
+    "labels": [
+      "Strategy — 안정된 흐름과 교체 가능한 정책",
+      "PriceCalculator",
+      "calculate(price)",
+      "DiscountPolicy",
+      "discount(price)",
+      "의존",
+      "RateDiscountPolicy",
+      "비율 할인 규칙",
+      "FixedDiscountPolicy",
+      "정액 할인 규칙",
+      "계약 구현",
+      "조립하는 코드가 구현을 선택한다",
+      "new PriceCalculator(new RateDiscountPolicy(...))",
+      "생성 시 주입"
+    ]
+  },
+  {
+    "file": "frontend/public/learning/java/stream-pipeline.svg",
+    "url": "/learning/java/stream-pipeline.svg",
+    "sourceSha256": "fab61ae31f178d686161467c108fe4e65ec4f470b978c3ad0c300dd4003bba1e",
+    "linkedConcepts": [
+      "java.core.streams.stream-pipeline-laziness"
+    ],
+    "deploymentEvidence": {
+      "url": "/learning/java/stream-pipeline.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/stream-pipeline.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/stream-pipeline.svg",
+      "responseSha256": "fab61ae31f178d686161467c108fe4e65ec4f470b978c3ad0c300dd4003bba1e",
+      "sourceSha256": "bc401f4f60ad39818b1aa7f6f0236d69b714b03cef54e312058d3bd8810a8040",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    "visualReview": {
+      "status": "NEEDS_REVIEW"
+    },
+    "viewBox": "0 0 760 210",
+    "labels": [
+      "중간 연산은 선을 그리고, terminal 연산이 흐르게 한다",
+      "Source",
+      "filter",
+      "map",
+      "collect",
+      "filter·map은 pipeline만 구성한다 · collect가 호출될 때 source 원소가 실제로 처리된다"
+    ]
+  },
+  {
+    "file": "frontend/public/learning/java/stringbuilder-mutable-text.svg",
+    "url": "/learning/java/stringbuilder-mutable-text.svg",
+    "sourceSha256": "c37f129c3323c17b9811ef75bfcc3dba25079652c1fb728cf933b8560c827a5b",
+    "linkedConcepts": [
+      "java.core.language-types.stringbuilder-mutable-text"
+    ],
+    "deploymentEvidence": {
+      "url": "/learning/java/stringbuilder-mutable-text.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/stringbuilder-mutable-text.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/stringbuilder-mutable-text.svg",
+      "responseSha256": "c37f129c3323c17b9811ef75bfcc3dba25079652c1fb728cf933b8560c827a5b",
+      "sourceSha256": "4f6806dfa6fcf971f8e90d08527cf2196e13bb0c375767a23b4d87863855ee0a",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    "visualReview": {
+      "status": "NEEDS_REVIEW"
+    },
+    "viewBox": "0 0 760 238",
+    "labels": [
+      "두 방식의 상태 변화",
+      "String +",
+      "result = old + next",
+      "새 문자열 · 복사 비용이 누적될 수 있음",
+      "StringBuilder",
+      "\"\"",
+      "append(\"0,\")",
+      "toString()",
+      "buffer에 누적 → 마지막에 String 확정"
+    ]
+  },
+  {
+    "file": "frontend/public/learning/java/values-and-references.svg",
+    "url": "/learning/java/values-and-references.svg",
+    "sourceSha256": "70de54ae02f30871d8738475d0a6307c6479dda299f51d4c5bd7aa01454abb2a",
+    "linkedConcepts": [
+      "java.core.language-types.primitive-reference-values"
+    ],
+    "deploymentEvidence": {
+      "url": "/learning/java/values-and-references.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/values-and-references.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/values-and-references.svg",
+      "responseSha256": "70de54ae02f30871d8738475d0a6307c6479dda299f51d4c5bd7aa01454abb2a",
+      "sourceSha256": "70de54ae02f30871d8738475d0a6307c6479dda299f51d4c5bd7aa01454abb2a",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    "visualReview": {
+      "status": "NEEDS_REVIEW"
+    },
+    "viewBox": "0 0 960 440",
+    "labels": [
+      "원시 값 복사",
+      "int a",
+      "10",
+      "int b",
+      "10",
+      "b를 바꿔도 a의 값은 그대로다.",
+      "참조 값 복사",
+      "Member first",
+      "참조 값",
+      "Member second",
+      "참조 값",
+      "Member 객체",
+      "name = \"lee\""
+    ]
+  },
+  {
+    "file": "frontend/public/learning/java/virtual-thread-carriers.svg",
+    "url": "/learning/java/virtual-thread-carriers.svg",
+    "sourceSha256": "b48a2a30948463428e9c849b6c5fd932861af9ff2e1759c84e12c8f5b03b2f18",
+    "linkedConcepts": [
+      "java.core.concurrency.platform-virtual-thread"
+    ],
+    "deploymentEvidence": {
+      "url": "/learning/java/virtual-thread-carriers.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/virtual-thread-carriers.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/virtual-thread-carriers.svg",
+      "responseSha256": "b48a2a30948463428e9c849b6c5fd932861af9ff2e1759c84e12c8f5b03b2f18",
+      "sourceSha256": "20923ede4dd6ce997e9d8ec31c5a7bcff997bb06bfb3ada7d4f9c653298e8857",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    "visualReview": {
+      "status": "NEEDS_REVIEW"
+    },
+    "viewBox": "0 0 1120 600",
+    "labels": [
+      "Virtual Thread는 carrier를 재사용하지만 외부 자원 한도까지 늘리지는 않는다",
+      "Virtual threads",
+      "Virtual A",
+      "Virtual B",
+      "Virtual C",
+      "Virtual D",
+      "Carrier platform threads",
+      "Carrier 1",
+      "Carrier 2",
+      "mount / schedule",
+      "지원되는 blocking I/O 대기",
+      "virtual thread suspend → carrier 재사용 가능",
+      "실제 희소 자원",
+      "CPU core · DB connection · 외부 API quota",
+      "virtual thread 수와 별도로 제한해야 함",
+      "Virtual thread는 특정 carrier에 평생 고정되지 않는다. 지원되는 blocking operation에서는 실행을 양보할 수 있다.",
+      "다만 모든 blocking operation의 unmount를 보장하지 않으며 native/foreign call에서는 carrier pinning이 생길 수 있다.",
+      "Thread가 가벼워져도 CPU·DB·외부 시스템 capacity는 그대로이므로 별도의 concurrency limit가 필요하다."
+    ]
+  },
+  {
+    "file": "frontend/public/learning/operating-systems/block-allocation-tradeoff.svg",
+    "url": "/learning/operating-systems/block-allocation-tradeoff.svg",
+    "sourceSha256": "bddff9c3fd1f561f34c0eb9759eb15bf7412f0f46b27c9e53b155501546fe56d",
+    "linkedConcepts": [
+      "operating-systems.core.filesystem.allocation"
+    ],
+    "deploymentEvidence": {
+      "url": "/learning/operating-systems/block-allocation-tradeoff.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/block-allocation-tradeoff.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/block-allocation-tradeoff.svg",
+      "responseSha256": "bddff9c3fd1f561f34c0eb9759eb15bf7412f0f46b27c9e53b155501546fe56d",
+      "sourceSha256": "bddff9c3fd1f561f34c0eb9759eb15bf7412f0f46b27c9e53b155501546fe56d",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    "visualReview": {
+      "status": "NEEDS_REVIEW"
+    },
+    "viewBox": "0 0 960 430",
+    "labels": [
+      "Block Allocation Trade-offs",
+      "Contiguous",
+      "fast position calculation, hard growth / fragmentation",
+      "Linked",
+      "flexible placement, pointer-chain random lookup",
+      "Indexed",
+      "index",
+      "direct lookup through metadata, index-space cost"
+    ]
+  },
+  {
+    "file": "frontend/public/learning/operating-systems/condition-variable-wait-signal.svg",
+    "url": "/learning/operating-systems/condition-variable-wait-signal.svg",
+    "sourceSha256": "98dc9a0a9ea14e36ff855e5a18e94200fd7ce889c62929e378a90ed6b927ae8f",
+    "linkedConcepts": [
+      "operating-systems.core.synchronization.condition-variable"
+    ],
+    "deploymentEvidence": {
+      "url": "/learning/operating-systems/condition-variable-wait-signal.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/condition-variable-wait-signal.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/condition-variable-wait-signal.svg",
+      "responseSha256": "98dc9a0a9ea14e36ff855e5a18e94200fd7ce889c62929e378a90ed6b927ae8f",
+      "sourceSha256": "9e058086afe78ff857cc7ac0d4d1fdad6761b7fa01dbd2b73a32f33ff1e7d5c7",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    "visualReview": {
+      "status": "NEEDS_REVIEW"
+    },
+    "viewBox": "0 0 1100 500",
+    "labels": [
+      "Condition Variable — wakeup은 조건 보장이 아니라 재검사 기회다",
+      "wait는 mutex release와 대기 진입을 연결하고, 돌아오기 전에 mutex를 다시 획득한다",
+      "Consumer",
+      "Producer",
+      "lock → queue empty 확인",
+      "predicate = false",
+      "wait(cond, mutex)",
+      "mutex release + wait 등록",
+      "lock(mutex)",
+      "item 추가 → predicate = true",
+      "signal(cond) → unlock",
+      "wake → mutex 재획득",
+      "while에서 predicate 다시 확인",
+      "signal이 item을 예약해 주는 것은 아니다.",
+      "mutex를 따로 unlock한 뒤 나중에 sleep하면 그 사이의 signal을 놓치는 lost wakeup race가 생길 수 있다."
+    ]
+  },
+  {
+    "file": "frontend/public/learning/operating-systems/container-process-model.svg",
+    "url": "/learning/operating-systems/container-process-model.svg",
+    "sourceSha256": "5d141222b7d431c2183e0d46f8d3d18ee4dbdde73799ff915b745eb6a620219e",
+    "linkedConcepts": [
+      "operating-systems.core.isolation.container-process-model"
+    ],
+    "deploymentEvidence": {
+      "url": "/learning/operating-systems/container-process-model.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/container-process-model.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/container-process-model.svg",
+      "responseSha256": "5d141222b7d431c2183e0d46f8d3d18ee4dbdde73799ff915b745eb6a620219e",
+      "sourceSha256": "5d141222b7d431c2183e0d46f8d3d18ee4dbdde73799ff915b745eb6a620219e",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    "visualReview": {
+      "status": "NEEDS_REVIEW"
+    },
+    "viewBox": "0 0 960 430",
+    "labels": [
+      "Container Process Model",
+      "Host kernel",
+      "Container process tree",
+      "PID 1 → worker → child",
+      "namespace / rootfs view",
+      "cgroup controls",
+      "CPU · memory · I/O",
+      "accounting / quota / limits",
+      "Image supplies filesystem/runtime inputs; the running container is processes on the host kernel, not a separate guest kernel."
+    ]
+  },
+  {
+    "file": "frontend/public/learning/operating-systems/contention-queue.svg",
+    "url": "/learning/operating-systems/contention-queue.svg",
+    "sourceSha256": "511808e017488feb1cf99ce3ffcadde3f54d4a225c49352adc881afae7743d03",
+    "linkedConcepts": [
+      "operating-systems.core.synchronization.contention"
+    ],
+    "deploymentEvidence": {
+      "url": "/learning/operating-systems/contention-queue.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/contention-queue.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/contention-queue.svg",
+      "responseSha256": "511808e017488feb1cf99ce3ffcadde3f54d4a225c49352adc881afae7743d03",
+      "sourceSha256": "7eb04c36e74216c19b7313b959f56aff8ad46a1ca69e96a40b731aadf3a9e7a4",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    "visualReview": {
+      "status": "NEEDS_REVIEW"
+    },
+    "viewBox": "0 0 1100 440",
+    "labels": [
+      "Contention — 하나의 serialization point에 queue가 쌓이는 과정",
+      "arrival rate와 hold time이 커지면 waiter의 acquisition latency와 tail latency가 함께 늘어난다",
+      "W4",
+      "W3",
+      "W2",
+      "W1",
+      "LOCK OWNER",
+      "critical section",
+      "hold time",
+      "done",
+      "hold time ↑  →  단위 시간당 직렬 구간 처리 여유 ↓  →  wait queue와 acquisition latency ↑",
+      "spin waiter는 CPU cycle을, blocking waiter는 sleep/wakeup·scheduling 비용을 사용할 수 있다.",
+      "explicit lock이 없어도 같은 atomic/cache line을 여러 CPU가 갱신하면 coherence contention이 남을 수 있다.",
+      "측정 대상: hold time · waiter 수 · acquisition latency · blocked/spinning time · throughput · p95/p99 latency"
+    ]
+  },
+  {
+    "file": "frontend/public/learning/operating-systems/context-switch-flow.svg",
+    "url": "/learning/operating-systems/context-switch-flow.svg",
+    "sourceSha256": "77fff46725a09b4f6b627e6eb18c5d84922ccfcd52303e2d4374577250a2ecf6",
+    "linkedConcepts": [
+      "operating-systems.core.scheduling.context-switch"
+    ],
+    "deploymentEvidence": {
+      "url": "/learning/operating-systems/context-switch-flow.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/context-switch-flow.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/context-switch-flow.svg",
+      "responseSha256": "77fff46725a09b4f6b627e6eb18c5d84922ccfcd52303e2d4374577250a2ecf6",
+      "sourceSha256": "ba65721955b04852b2c23277a6c339c5057f32db15cb3eb908148e94f1c2b8b3",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    "visualReview": {
+      "status": "NEEDS_REVIEW"
+    },
+    "viewBox": "0 0 960 360",
+    "labels": [
+      "Context Switch",
+      "Task A",
+      "running",
+      "Kernel / Scheduler",
+      "1. A register / PC / SP 저장",
+      "2. 다음 runnable task 선택",
+      "3. B execution context 복원",
+      "Task B",
+      "running",
+      "Mode switch가 발생해도 다른 task를 선택하지 않으면 context switch가 아닐 수 있다."
+    ]
+  },
+  {
+    "file": "frontend/public/learning/operating-systems/deadlock-avoidance-safe-sequence.svg",
+    "url": "/learning/operating-systems/deadlock-avoidance-safe-sequence.svg",
+    "sourceSha256": "1b27eb08e1fc467e9b6f1ac9f970485c3afc2a92c901fa4ace1ff288e2078d8d",
+    "linkedConcepts": [
+      "operating-systems.core.deadlock.deadlock-avoidance"
+    ],
+    "deploymentEvidence": {
+      "url": "/learning/operating-systems/deadlock-avoidance-safe-sequence.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/deadlock-avoidance-safe-sequence.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/deadlock-avoidance-safe-sequence.svg",
+      "responseSha256": "1b27eb08e1fc467e9b6f1ac9f970485c3afc2a92c901fa4ace1ff288e2078d8d",
+      "sourceSha256": "66476ac15724366f41a413da751724500461c534855f36ef286fc8350a27eac8",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    "visualReview": {
+      "status": "NEEDS_REVIEW"
+    },
+    "viewBox": "0 0 1100 500",
+    "labels": [
+      "Safe sequence: P2 → P1 → P3",
+      "Need ≤ Work인 process를 완료했다고 가정하고 Allocation을 Work에 돌려준다.",
+      "Available / Work",
+      "3",
+      "P2 완료",
+      "Need 2 ≤ Work 3",
+      "Allocation 2 반환",
+      "Work 5",
+      "P1 완료",
+      "Need 4 ≤ Work 5",
+      "Allocation 3 반환",
+      "Work 8",
+      "P3",
+      "Need 3 ≤ 8",
+      "완료 가능",
+      "Work 10",
+      "P1부터는 시작할 수 없다(Need 4 > Available 3). 하지만 P2 또는 P3부터 완료할 수 있으므로 safe state다.",
+      "Safe sequence는 실제 scheduler 순서를 고정하는 것이 아니라 모든 process가 끝날 수 있는 순서가 존재함을 보이는 증명이다."
+    ]
+  },
+  {
+    "file": "frontend/public/learning/operating-systems/deadlock-cycle.svg",
+    "url": "/learning/operating-systems/deadlock-cycle.svg",
+    "sourceSha256": "c4ab688493150468bac9d17e6aa9a616365c3ced9de68a5d9f4b1ff2d45e99bd",
+    "linkedConcepts": [
+      "operating-systems.core.deadlock.deadlock"
+    ],
+    "deploymentEvidence": {
+      "url": "/learning/operating-systems/deadlock-cycle.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/deadlock-cycle.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/deadlock-cycle.svg",
+      "responseSha256": "c4ab688493150468bac9d17e6aa9a616365c3ced9de68a5d9f4b1ff2d45e99bd",
+      "sourceSha256": "1da7e23f1696e3088f852c332a295e5a070c6d12979bbdc3c5c247903cadce86",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    "visualReview": {
+      "status": "NEEDS_REVIEW"
+    },
+    "viewBox": "0 0 1100 500",
+    "labels": [
+      "Deadlock: 서로의 release를 기다리는 cycle",
+      "request edge와 hold relation이 한 바퀴 닫히면 참여자 스스로 progress할 수 없다.",
+      "T1",
+      "holds L1 · waits L2",
+      "L2",
+      "owned by T2",
+      "T2",
+      "holds L2 · waits L1",
+      "L1",
+      "owned by T1",
+      "T1 requests",
+      "L2 → T2",
+      "T2 requests",
+      "L1 → T1",
+      "핵심: 긴 대기가 아니라 dependency가 cycle로 닫혀 각 participant가 상대의 progress를 필요로 한다."
+    ]
+  },
+  {
+    "file": "frontend/public/learning/operating-systems/device-io-kernel-path.svg",
+    "url": "/learning/operating-systems/device-io-kernel-path.svg",
+    "sourceSha256": "52a8e4294c0fb625ce7d8843f98e1e4f359899a203c07558f14cc79ad7cb813d",
+    "linkedConcepts": [
+      "operating-systems.core.io.device-io-kernel-path"
+    ],
+    "deploymentEvidence": {
+      "url": "/learning/operating-systems/device-io-kernel-path.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/device-io-kernel-path.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/device-io-kernel-path.svg",
+      "responseSha256": "52a8e4294c0fb625ce7d8843f98e1e4f359899a203c07558f14cc79ad7cb813d",
+      "sourceSha256": "52a8e4294c0fb625ce7d8843f98e1e4f359899a203c07558f14cc79ad7cb813d",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    "visualReview": {
+      "status": "NEEDS_REVIEW"
+    },
+    "viewBox": "0 0 960 420",
+    "labels": [
+      "Device I/O Kernel Path",
+      "Application",
+      "Kernel object",
+      "fs / socket layer",
+      "Driver",
+      "Device / DMA",
+      "actual hardware work",
+      "completion can be noticed via interrupt, polling, or a completion queue; submission and completion are separate moments."
+    ]
+  },
+  {
+    "file": "frontend/public/learning/operating-systems/epoll-interest-ready.svg",
+    "url": "/learning/operating-systems/epoll-interest-ready.svg",
+    "sourceSha256": "9572116059cd3c46660b25d3894f667f4ac9d371f5184f6b138955c4c7840eb0",
+    "linkedConcepts": [
+      "operating-systems.core.io.epoll"
+    ],
+    "deploymentEvidence": {
+      "url": "/learning/operating-systems/epoll-interest-ready.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/epoll-interest-ready.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/epoll-interest-ready.svg",
+      "responseSha256": "9572116059cd3c46660b25d3894f667f4ac9d371f5184f6b138955c4c7840eb0",
+      "sourceSha256": "9572116059cd3c46660b25d3894f667f4ac9d371f5184f6b138955c4c7840eb0",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    "visualReview": {
+      "status": "NEEDS_REVIEW"
+    },
+    "viewBox": "0 0 960 430",
+    "labels": [
+      "epoll: Interest List vs Ready List",
+      "Interest list",
+      "fd 10 : READ",
+      "fd 11 : READ",
+      "fd 12 : WRITE",
+      "persistent registered set",
+      "Ready list",
+      "fd 11 : readable",
+      "fd 12 : writable",
+      "readiness changes",
+      "epoll_wait() returns ready events; application still performs non-blocking read/write."
+    ]
+  },
+  {
+    "file": "frontend/public/learning/operating-systems/file-descriptor-open-state.svg",
+    "url": "/learning/operating-systems/file-descriptor-open-state.svg",
+    "sourceSha256": "11fdfaad9a90d783e9930e2bfa5e96635084ac9c3bf56ce649db9b797394f50b",
+    "linkedConcepts": [
+      "operating-systems.core.filesystem.file-descriptor",
+      "operating-systems.core.filesystem.open-file-table"
+    ],
+    "deploymentEvidence": {
+      "url": "/learning/operating-systems/file-descriptor-open-state.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/file-descriptor-open-state.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/file-descriptor-open-state.svg",
+      "responseSha256": "11fdfaad9a90d783e9930e2bfa5e96635084ac9c3bf56ce649db9b797394f50b",
+      "sourceSha256": "11fdfaad9a90d783e9930e2bfa5e96635084ac9c3bf56ce649db9b797394f50b",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    "visualReview": {
+      "status": "NEEDS_REVIEW"
+    },
+    "viewBox": "0 0 960 420",
+    "labels": [
+      "File Descriptor → Open File State",
+      "Process descriptor table",
+      "fd 3 ───────────┐",
+      "fd 7 ───────┐   │",
+      "Open file description",
+      "offset = 100",
+      "status flags",
+      "File / inode",
+      "shared content",
+      "dup()/fork() can create different fd entries that refer to the same open-file description."
+    ]
+  },
+  {
+    "file": "frontend/public/learning/operating-systems/host-kernel-sharing.svg",
+    "url": "/learning/operating-systems/host-kernel-sharing.svg",
+    "sourceSha256": "fa37fca78cbdc9450b24f0e79d800ddcab45c52819d39fc0c340e6ff027a9275",
+    "linkedConcepts": [
+      "operating-systems.core.isolation.host-kernel-sharing"
+    ],
+    "deploymentEvidence": {
+      "url": "/learning/operating-systems/host-kernel-sharing.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/host-kernel-sharing.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/host-kernel-sharing.svg",
+      "responseSha256": "fa37fca78cbdc9450b24f0e79d800ddcab45c52819d39fc0c340e6ff027a9275",
+      "sourceSha256": "fa37fca78cbdc9450b24f0e79d800ddcab45c52819d39fc0c340e6ff027a9275",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    "visualReview": {
+      "status": "NEEDS_REVIEW"
+    },
+    "viewBox": "0 0 960 430",
+    "labels": [
+      "Container vs VM Kernel Boundary",
+      "Containers",
+      "Process A · Process B",
+      "namespaces / cgroups / capabilities",
+      "Shared host kernel",
+      "Virtual Machine",
+      "Guest processes + guest kernel",
+      "separate guest OS boundary",
+      "Hypervisor / host",
+      "Containers are lightweight but share the host kernel attack surface; VMs add a guest-kernel/hypervisor boundary with additional cost."
+    ]
+  },
+  {
+    "file": "frontend/public/learning/operating-systems/inode-file-layout.svg",
+    "url": "/learning/operating-systems/inode-file-layout.svg",
+    "sourceSha256": "11232f1cfcf28b7b160b9bc287b4f85e9c433380a5917add5229b3d8f6f27fce",
+    "linkedConcepts": [
+      "operating-systems.core.filesystem.inode"
+    ],
+    "deploymentEvidence": {
+      "url": "/learning/operating-systems/inode-file-layout.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/inode-file-layout.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/inode-file-layout.svg",
+      "responseSha256": "11232f1cfcf28b7b160b9bc287b4f85e9c433380a5917add5229b3d8f6f27fce",
+      "sourceSha256": "11232f1cfcf28b7b160b9bc287b4f85e9c433380a5917add5229b3d8f6f27fce",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    "visualReview": {
+      "status": "NEEDS_REVIEW"
+    },
+    "viewBox": "0 0 960 420",
+    "labels": [
+      "Directory Entry, Inode, Data Blocks",
+      "Directory entries",
+      "a.txt → inode 42",
+      "b.txt → inode 42",
+      "inode 42",
+      "owner / mode / size",
+      "link count / mapping",
+      "Data blocks",
+      "B7  B9  B20",
+      "Two hard-link names can resolve to one inode; pathname removal and object lifetime are different events."
+    ]
+  },
+  {
+    "file": "frontend/public/learning/operating-systems/ipc-tradeoff.svg",
+    "url": "/learning/operating-systems/ipc-tradeoff.svg",
+    "sourceSha256": "1b93a3788b0624ba36c20c0d89cc41c2fd3fddc1fb8d8c67a0e0f15810a2dee1",
+    "linkedConcepts": [
+      "operating-systems.core.ipc.ipc-tradeoff"
+    ],
+    "deploymentEvidence": {
+      "url": "/learning/operating-systems/ipc-tradeoff.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/ipc-tradeoff.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/ipc-tradeoff.svg",
+      "responseSha256": "1b93a3788b0624ba36c20c0d89cc41c2fd3fddc1fb8d8c67a0e0f15810a2dee1",
+      "sourceSha256": "1b93a3788b0624ba36c20c0d89cc41c2fd3fddc1fb8d8c67a0e0f15810a2dee1",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    "visualReview": {
+      "status": "NEEDS_REVIEW"
+    },
+    "viewBox": "0 0 960 440",
+    "labels": [
+      "IPC Trade-off",
+      "Choose the boundary, not only the fastest data path.",
+      "Pipe / Queue",
+      "kernel buffer + capacity",
+      "Shared Memory",
+      "low-copy + sync burden",
+      "Unix Socket",
+      "local endpoint + framing",
+      "Network Socket",
+      "remote + failure/retry",
+      "Compare:",
+      "copy cost · message boundary · synchronization · backpressure · isolation · crash recovery",
+      "simpler isolation boundary",
+      "more direct shared state"
+    ]
+  },
+  {
+    "file": "frontend/public/learning/operating-systems/linux-namespace-view.svg",
+    "url": "/learning/operating-systems/linux-namespace-view.svg",
+    "sourceSha256": "e481845164daf5091f48a3d469ea781965b40ed5748bddb79f279bbf79780aa9",
+    "linkedConcepts": [
+      "operating-systems.core.isolation.namespace"
+    ],
+    "deploymentEvidence": {
+      "url": "/learning/operating-systems/linux-namespace-view.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/linux-namespace-view.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/linux-namespace-view.svg",
+      "responseSha256": "e481845164daf5091f48a3d469ea781965b40ed5748bddb79f279bbf79780aa9",
+      "sourceSha256": "e481845164daf5091f48a3d469ea781965b40ed5748bddb79f279bbf79780aa9",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    "visualReview": {
+      "status": "NEEDS_REVIEW"
+    },
+    "viewBox": "0 0 960 420",
+    "labels": [
+      "Linux Namespace Views",
+      "Namespace A",
+      "PID view: 1, 7, 12",
+      "mount view: /app",
+      "network: eth0-A / lo-A",
+      "Namespace B",
+      "PID view: 1, 4",
+      "mount view: /worker",
+      "network: eth0-B / lo-B",
+      "Both views can exist on the same host kernel. Namespace changes visibility/naming; cgroup controls resource accounting/limits."
+    ]
+  },
+  {
+    "file": "frontend/public/learning/operating-systems/mmap-file-access.svg",
+    "url": "/learning/operating-systems/mmap-file-access.svg",
+    "sourceSha256": "fe58d343be1538b3daa0a018692430f7088700847b373deea0f41487b6371d56",
+    "linkedConcepts": [
+      "operating-systems.core.io.mmap"
+    ],
+    "deploymentEvidence": {
+      "url": "/learning/operating-systems/mmap-file-access.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/mmap-file-access.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/mmap-file-access.svg",
+      "responseSha256": "fe58d343be1538b3daa0a018692430f7088700847b373deea0f41487b6371d56",
+      "sourceSha256": "fe58d343be1538b3daa0a018692430f7088700847b373deea0f41487b6371d56",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    "visualReview": {
+      "status": "NEEDS_REVIEW"
+    },
+    "viewBox": "0 0 960 420",
+    "labels": [
+      "mmap: Mapping vs Residency",
+      "Process virtual range",
+      "page A : resident",
+      "page B : not resident",
+      "Page cache",
+      "resident file pages",
+      "File backing",
+      "persistent file data",
+      "first touch fault",
+      "Creating the mapping does not require every file page to be resident; access can fault pages in lazily."
+    ]
+  },
+  {
+    "file": "frontend/public/learning/operating-systems/multicore-affinity.svg",
+    "url": "/learning/operating-systems/multicore-affinity.svg",
+    "sourceSha256": "19128fefcc3a0b3241343e770c73ab22688ed99181234c64ded5dacd0f138111",
+    "linkedConcepts": [
+      "operating-systems.core.scheduling.multicore-affinity"
+    ],
+    "deploymentEvidence": {
+      "url": "/learning/operating-systems/multicore-affinity.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/multicore-affinity.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/multicore-affinity.svg",
+      "responseSha256": "19128fefcc3a0b3241343e770c73ab22688ed99181234c64ded5dacd0f138111",
+      "sourceSha256": "28e350b1e1c850d7a651a999311b414cc48b4b4c86e01fb925bdc7a1ac542382",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    "visualReview": {
+      "status": "NEEDS_REVIEW"
+    },
+    "viewBox": "0 0 960 380",
+    "labels": [
+      "Multicore Affinity Trade-off",
+      "Affinity 유지",
+      "CPU0",
+      "Task A warm",
+      "CPU1",
+      "idle",
+      "cache locality 재사용 가능",
+      "하지만 CPU0 queue가 길면 imbalance",
+      "Migration / Load Balance",
+      "CPU0",
+      "A, B",
+      "CPU1",
+      "C, D",
+      "load 분산 / queue 감소 가능",
+      "migration 시 cache locality 비용 가능",
+      "hard affinity를 좁힐수록 scheduler의 load-balancing 선택지도 줄어든다."
+    ]
+  },
+  {
+    "file": "frontend/public/learning/operating-systems/page-fault-flow.svg",
+    "url": "/learning/operating-systems/page-fault-flow.svg",
+    "sourceSha256": "eba057662fa346881b46a12ff9ca2f7ca36aff05d470154bbb5ffb91307ed9c7",
+    "linkedConcepts": [
+      "operating-systems.core.virtual-memory.page-fault"
+    ],
+    "deploymentEvidence": {
+      "url": "/learning/operating-systems/page-fault-flow.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/page-fault-flow.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/page-fault-flow.svg",
+      "responseSha256": "eba057662fa346881b46a12ff9ca2f7ca36aff05d470154bbb5ffb91307ed9c7",
+      "sourceSha256": "5551c94cd3229a7cf2c65fe31b8059c23dd297794b7b0aa12ba19c333e0da581",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    "visualReview": {
+      "status": "KEEP_IN_OBSERVED_VIEW",
+      "basis": "mapping/permission 확인→recoverable frame→mapping/retry와 invalid error 경로를 분리; fault≠항상storage I/O. 독립 SVG 화면만 확인.",
+      "checkedAt": "2026-10-12"
+    },
+    "viewBox": "0 0 960 420",
+    "labels": [
+      "Page Fault Flow",
+      "memory access",
+      "translation 불가",
+      "fault handler",
+      "mapping / permission 확인",
+      "recoverable",
+      "frame / content 준비",
+      "invalid access",
+      "permission / mapping error",
+      "mapping update",
+      "instruction 재시도",
+      "process error",
+      "예: SIGSEGV 가능",
+      "Page fault ≠ 항상 storage I/O"
+    ]
+  },
+  {
+    "file": "frontend/public/learning/operating-systems/page-replacement.svg",
+    "url": "/learning/operating-systems/page-replacement.svg",
+    "sourceSha256": "49cb879b719270c4c3be63c9520e308007ba9ab2a543a3e5391c6386112718c9",
+    "linkedConcepts": [
+      "operating-systems.core.virtual-memory.page-replacement"
+    ],
+    "deploymentEvidence": {
+      "url": "/learning/operating-systems/page-replacement.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/page-replacement.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/page-replacement.svg",
+      "responseSha256": "49cb879b719270c4c3be63c9520e308007ba9ab2a543a3e5391c6386112718c9",
+      "sourceSha256": "d2ea8538cf031c7c580fcdbf7910acac408e74da0757caacdd77d25cf5368728",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    "visualReview": {
+      "status": "NEEDS_REVIEW"
+    },
+    "viewBox": "0 0 960 400",
+    "labels": [
+      "Page Replacement",
+      "Resident frames — all occupied",
+      "Page 1",
+      "recent",
+      "Page 2",
+      "victim candidate",
+      "Page 3",
+      "dirty?",
+      "Incoming Page 4",
+      "needs a frame",
+      "evict / write-back if needed",
+      "reuse frame",
+      "Victim 판단:",
+      "reuse 가능성 + dirty/write cost",
+      "Working set이 budget보다 크면 policy 개선만으로 fault를 없앨 수 없다."
+    ]
+  },
+  {
+    "file": "frontend/public/learning/operating-systems/page-table-translation.svg",
+    "url": "/learning/operating-systems/page-table-translation.svg",
+    "sourceSha256": "83132b3b2fae74afd08bd83bb4728aa2d60b928933ef06687843fba48e02ae57",
+    "linkedConcepts": [
+      "operating-systems.core.virtual-memory.page-table"
+    ],
+    "deploymentEvidence": {
+      "url": "/learning/operating-systems/page-table-translation.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/page-table-translation.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/page-table-translation.svg",
+      "responseSha256": "83132b3b2fae74afd08bd83bb4728aa2d60b928933ef06687843fba48e02ae57",
+      "sourceSha256": "89324d6e7dc65f250eafcb5deab9ee7e86476bd9ac3c23ad12af6652ec00808d",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    "visualReview": {
+      "status": "NEEDS_REVIEW"
+    },
+    "viewBox": "0 0 960 400",
+    "labels": [
+      "Page Table Translation",
+      "Virtual Address",
+      "VPN",
+      "offset",
+      "Page Table",
+      "VPN → PFN",
+      "R / W / X",
+      "present / mapping state",
+      "Physical Address",
+      "PFN",
+      "same offset",
+      "Mapping 존재와 접근 permission은 서로 다른 판단이다."
+    ]
+  },
+  {
+    "file": "frontend/public/learning/operating-systems/pipe-buffer-eof.svg",
+    "url": "/learning/operating-systems/pipe-buffer-eof.svg",
+    "sourceSha256": "7823b63fded0a24113d7cdc9101f89d33b91fdc45e55a9b6b117944cb58696e4",
+    "linkedConcepts": [
+      "operating-systems.core.ipc.pipe"
+    ],
+    "deploymentEvidence": {
+      "url": "/learning/operating-systems/pipe-buffer-eof.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/pipe-buffer-eof.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/pipe-buffer-eof.svg",
+      "responseSha256": "7823b63fded0a24113d7cdc9101f89d33b91fdc45e55a9b6b117944cb58696e4",
+      "sourceSha256": "7823b63fded0a24113d7cdc9101f89d33b91fdc45e55a9b6b117944cb58696e4",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    "visualReview": {
+      "status": "NEEDS_REVIEW"
+    },
+    "viewBox": "0 0 960 400",
+    "labels": [
+      "Pipe: Buffer, Backpressure, EOF",
+      "Producer",
+      "Kernel pipe buffer",
+      "bounded byte stream",
+      "Consumer",
+      "write",
+      "read",
+      "buffer full → writer may block / EAGAIN",
+      "all write-end references closed + buffer drained → reader can observe EOF"
+    ]
+  },
+  {
+    "file": "frontend/public/learning/operating-systems/process-isolation.svg",
+    "url": "/learning/operating-systems/process-isolation.svg",
+    "sourceSha256": "0579a51194e80f3b7761b370ae74503a3216d82378773e73f0f10fb86b7aefd9",
+    "linkedConcepts": [
+      "operating-systems.core.isolation.process-isolation"
+    ],
+    "deploymentEvidence": {
+      "url": "/learning/operating-systems/process-isolation.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/process-isolation.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/process-isolation.svg",
+      "responseSha256": "0579a51194e80f3b7761b370ae74503a3216d82378773e73f0f10fb86b7aefd9",
+      "sourceSha256": "0579a51194e80f3b7761b370ae74503a3216d82378773e73f0f10fb86b7aefd9",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    "visualReview": {
+      "status": "NEEDS_REVIEW"
+    },
+    "viewBox": "0 0 960 410",
+    "labels": [
+      "Process Isolation and Explicit IPC",
+      "Process A",
+      "virtual address space A",
+      "fd / credentials A",
+      "Process B",
+      "virtual address space B",
+      "fd / credentials B",
+      "explicit IPC",
+      "Separate address spaces contain user-memory faults, while kernel objects, files, devices, and explicit IPC can still connect processes."
+    ]
+  },
+  {
+    "file": "frontend/public/learning/operating-systems/read-write-lock.svg",
+    "url": "/learning/operating-systems/read-write-lock.svg",
+    "sourceSha256": "5a44ea7e338f85127d9a5ea63c5f57ff9ae2894158b1a2727219d4db7c94a02a",
+    "linkedConcepts": [
+      "operating-systems.core.synchronization.read-write-lock"
+    ],
+    "deploymentEvidence": {
+      "url": "/learning/operating-systems/read-write-lock.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/read-write-lock.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/read-write-lock.svg",
+      "responseSha256": "5a44ea7e338f85127d9a5ea63c5f57ff9ae2894158b1a2727219d4db7c94a02a",
+      "sourceSha256": "834363ec482b31b198f13c51af317dcfd6c74003e8fbff8e355cc924c74b7dec",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    "visualReview": {
+      "status": "NEEDS_REVIEW"
+    },
+    "viewBox": "0 0 1100 440",
+    "labels": [
+      "Read-Write Lock — reader 공유, writer 배타",
+      "여러 read-only access는 겹칠 수 있지만 write는 다른 reader와 writer가 빠진 뒤 진행한다",
+      "Reader 1",
+      "Reader 2",
+      "Reader 3",
+      "Shared read region",
+      "R1 · R2 · R3 동시 진행",
+      "protected state는 변경하지 않음",
+      "Writer",
+      "reader가 있는 동안 wait",
+      "Exclusive write",
+      "reader/writer 모두 배제",
+      "waiting writer가 있을 때 새 reader를 허용할지 등 fairness/admission 정책은 구현 계약을 확인해야 한다."
+    ]
+  },
+  {
+    "file": "frontend/public/learning/operating-systems/readiness-vs-completion.svg",
+    "url": "/learning/operating-systems/readiness-vs-completion.svg",
+    "sourceSha256": "8647c776ad5ef8a3a0a9a574dd9570b42fd01cf3679e080b4f435a1eb4337344",
+    "linkedConcepts": [
+      "operating-systems.core.io.readiness-vs-completion"
+    ],
+    "deploymentEvidence": {
+      "url": "/learning/operating-systems/readiness-vs-completion.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/readiness-vs-completion.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/readiness-vs-completion.svg",
+      "responseSha256": "8647c776ad5ef8a3a0a9a574dd9570b42fd01cf3679e080b4f435a1eb4337344",
+      "sourceSha256": "8647c776ad5ef8a3a0a9a574dd9570b42fd01cf3679e080b4f435a1eb4337344",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    "visualReview": {
+      "status": "NEEDS_REVIEW"
+    },
+    "viewBox": "0 0 960 430",
+    "labels": [
+      "Readiness vs Completion",
+      "Readiness",
+      "ready event",
+      "read/write",
+      "partial result / EAGAIN",
+      "Completion",
+      "submit operation",
+      "kernel work",
+      "completion result",
+      "Neither event by itself means the whole application message or business operation is complete."
+    ]
+  },
+  {
+    "file": "frontend/public/learning/operating-systems/resource-allocation-graph.svg",
+    "url": "/learning/operating-systems/resource-allocation-graph.svg",
+    "sourceSha256": "936b4d429f3760bf5317c9a446fd09796ab1a15b1b09ef9a147244926717a282",
+    "linkedConcepts": [
+      "operating-systems.core.deadlock.resource-allocation-graph"
+    ],
+    "deploymentEvidence": {
+      "url": "/learning/operating-systems/resource-allocation-graph.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/resource-allocation-graph.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/resource-allocation-graph.svg",
+      "responseSha256": "936b4d429f3760bf5317c9a446fd09796ab1a15b1b09ef9a147244926717a282",
+      "sourceSha256": "ce363853309535d9fb58248b175939ae904b8161d7a6039afff4054a29545e7c",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    "visualReview": {
+      "status": "NEEDS_REVIEW"
+    },
+    "viewBox": "0 0 1100 500",
+    "labels": [
+      "Resource-Allocation Graph",
+      "보라색 P→R은 request, 초록색 R→P는 allocation이다.",
+      "R1",
+      "1 instance",
+      "P1",
+      "R2",
+      "1 instance",
+      "P2",
+      "allocated",
+      "request",
+      "allocated",
+      "request R1",
+      "single instance: cycle ⇒ deadlock",
+      "multi instance: cycle만으로 확정하지 말고 수량까지 계산"
+    ]
+  },
+  {
+    "file": "frontend/public/learning/operating-systems/round-robin-quantum.svg",
+    "url": "/learning/operating-systems/round-robin-quantum.svg",
+    "sourceSha256": "2108ee3a2f4eead59c749b1e55f0cf39967e8202cf2d34468d17a24587d01fd9",
+    "linkedConcepts": [
+      "operating-systems.core.scheduling.round-robin"
+    ],
+    "deploymentEvidence": {
+      "url": "/learning/operating-systems/round-robin-quantum.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/round-robin-quantum.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/round-robin-quantum.svg",
+      "responseSha256": "2108ee3a2f4eead59c749b1e55f0cf39967e8202cf2d34468d17a24587d01fd9",
+      "sourceSha256": "80ac17adf4d1fe71b6b0367a0dd524edf6248690a9b748258e93f1cf9f640803",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    "visualReview": {
+      "status": "NEEDS_REVIEW"
+    },
+    "viewBox": "0 0 960 360",
+    "labels": [
+      "Round Robin — quantum = 10 ms",
+      "A",
+      "0–10 ms",
+      "B",
+      "10–20 ms",
+      "C",
+      "20–30 ms",
+      "A",
+      "30–40 ms",
+      "…",
+      "repeat",
+      "unfinished task → runnable queue 뒤로",
+      "작은 quantum: 빠른 turn-taking / 많은 switch · 큰 quantum: 적은 switch / FCFS에 가까워짐"
+    ]
+  },
+  {
+    "file": "frontend/public/learning/operating-systems/semaphore-permits.svg",
+    "url": "/learning/operating-systems/semaphore-permits.svg",
+    "sourceSha256": "d7c84cb96d883547b6a8dd1c06b1b5c53a95315eb8507f6aecbb4a80467b14fa",
+    "linkedConcepts": [
+      "operating-systems.core.synchronization.semaphore"
+    ],
+    "deploymentEvidence": {
+      "url": "/learning/operating-systems/semaphore-permits.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/semaphore-permits.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/semaphore-permits.svg",
+      "responseSha256": "d7c84cb96d883547b6a8dd1c06b1b5c53a95315eb8507f6aecbb4a80467b14fa",
+      "sourceSha256": "62020b14688969ddcb98f3241fdbd0e5e11c1ab1a487228ca8f0af7197192c17",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    "visualReview": {
+      "status": "NEEDS_REVIEW"
+    },
+    "viewBox": "0 0 1100 440",
+    "labels": [
+      "Semaphore — permit 3개를 공유하는 흐름",
+      "permit가 0이면 다음 acquire는 release/post가 일어날 때까지 진행하지 못한다",
+      "초기 permit = 3",
+      "available: ● ● ●",
+      "T1 acquire → 2",
+      "T2 acquire → 1",
+      "T3 acquire → 0",
+      "T4 acquire",
+      "permit 0 → wait",
+      "T2 release",
+      "permit 반환 → T4 진행",
+      "Semaphore count는 실제 resource capacity와 함께 관리되어야 한다. 누락된 release는 permit leak, 과다 release는 capacity invariant 붕괴로 이어질 수 있다."
+    ]
+  },
+  {
+    "file": "frontend/public/learning/operating-systems/shared-memory-mapping.svg",
+    "url": "/learning/operating-systems/shared-memory-mapping.svg",
+    "sourceSha256": "0b1ab59e922d045ce40e21386cb21bcacd68bc487c6e94f6c779aef1f3282d85",
+    "linkedConcepts": [
+      "operating-systems.core.ipc.shared-memory"
+    ],
+    "deploymentEvidence": {
+      "url": "/learning/operating-systems/shared-memory-mapping.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/shared-memory-mapping.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/shared-memory-mapping.svg",
+      "responseSha256": "0b1ab59e922d045ce40e21386cb21bcacd68bc487c6e94f6c779aef1f3282d85",
+      "sourceSha256": "0b1ab59e922d045ce40e21386cb21bcacd68bc487c6e94f6c779aef1f3282d85",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    "visualReview": {
+      "status": "KEEP_IN_OBSERVED_VIEW",
+      "basis": "두 서로 다른 VA→같은 backing과 동기화/순서/crash recovery 별도 책임을 드러낸다. 영어 라벨 번역은 이번 결함 확정 아님.",
+      "checkedAt": "2026-10-12"
+    },
+    "viewBox": "0 0 960 410",
+    "labels": [
+      "Shared Memory Mapping",
+      "Process A",
+      "VA 0x7000",
+      "Process B",
+      "VA 0xA000",
+      "Shared backing",
+      "same underlying data",
+      "Virtual addresses may differ. Sharing bytes does not provide mutual exclusion, ordering, or crash recovery."
+    ]
+  },
+  {
+    "file": "frontend/public/learning/operating-systems/stack-heap-address-space.svg",
+    "url": "/learning/operating-systems/stack-heap-address-space.svg",
+    "sourceSha256": "7f949596e0a56c8f68cf34648a21f8365076c6cd8f9e16db5453e8ef58617fd9",
+    "linkedConcepts": [
+      "operating-systems.core.virtual-memory.stack-heap-mapping"
+    ],
+    "deploymentEvidence": {
+      "url": "/learning/operating-systems/stack-heap-address-space.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/stack-heap-address-space.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/stack-heap-address-space.svg",
+      "responseSha256": "7f949596e0a56c8f68cf34648a21f8365076c6cd8f9e16db5453e8ef58617fd9",
+      "sourceSha256": "fa753c77b3505930a02ed15cc9b453d07ec3ef3e890be5834c08b648c97e2e58",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    "visualReview": {
+      "status": "NEEDS_REVIEW"
+    },
+    "viewBox": "0 0 960 430",
+    "labels": [
+      "Process Virtual Address Space",
+      "executable / shared libraries",
+      "file mappings / native mappings",
+      "dynamic heap region(s)",
+      "lifetime: dynamic allocation",
+      "Thread A stack",
+      "call state",
+      "Thread B stack",
+      "call state",
+      "layout / growth direction",
+      "ABI·OS·runtime dependent",
+      "그림의 위/아래 방향보다 region의 책임·lifetime·failure mode를 구분하는 것이 핵심이다."
+    ]
+  },
+  {
+    "file": "frontend/public/learning/operating-systems/starvation-aging.svg",
+    "url": "/learning/operating-systems/starvation-aging.svg",
+    "sourceSha256": "88c8531f8385cdff8a669fc79bb9c973f3fe619ab44f4fed8c2ff6a1dd6efb11",
+    "linkedConcepts": [
+      "operating-systems.core.scheduling.starvation-aging"
+    ],
+    "deploymentEvidence": {
+      "url": "/learning/operating-systems/starvation-aging.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/starvation-aging.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/starvation-aging.svg",
+      "responseSha256": "88c8531f8385cdff8a669fc79bb9c973f3fe619ab44f4fed8c2ff6a1dd6efb11",
+      "sourceSha256": "5115667d7fd427f1ad90f05e14e73917825d7dcdcb60c160c1c57e9d41553583",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    "visualReview": {
+      "status": "NEEDS_REVIEW"
+    },
+    "viewBox": "0 0 960 360",
+    "labels": [
+      "Starvation → Aging",
+      "ready queue",
+      "H1",
+      "H2",
+      "H3",
+      "… 계속 도착",
+      "Low-priority L",
+      "runnable but waiting",
+      "aging: wait time 반영",
+      "effective priority ↑",
+      "eventually gets CPU service"
+    ]
+  },
+  {
+    "file": "frontend/public/learning/operating-systems/thrashing-loop.svg",
+    "url": "/learning/operating-systems/thrashing-loop.svg",
+    "sourceSha256": "3b65369c063c6245821d4e2db6cedc7ebb483c1e9142cd7da5f7585c98b1ae9b",
+    "linkedConcepts": [
+      "operating-systems.core.virtual-memory.thrashing"
+    ],
+    "deploymentEvidence": {
+      "url": "/learning/operating-systems/thrashing-loop.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/thrashing-loop.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/thrashing-loop.svg",
+      "responseSha256": "3b65369c063c6245821d4e2db6cedc7ebb483c1e9142cd7da5f7585c98b1ae9b",
+      "sourceSha256": "e54847626db27c6a4776c3afbba94ac858a6169fb59febd21e1e738eb3876a98",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    "visualReview": {
+      "status": "NEEDS_REVIEW"
+    },
+    "viewBox": "0 0 960 400",
+    "labels": [
+      "Thrashing Loop",
+      "working set > memory budget",
+      "active pages fit하지 않음",
+      "fault / page-in",
+      "I/O·reclaim 증가",
+      "active page eviction",
+      "곧 다시 필요해짐",
+      "useful work 감소",
+      "CPU waits / throughput↓",
+      "단순 page fault 존재가 아니라 fault/reclaim/I/O가 useful execution을 압도하는 상태"
+    ]
+  },
+  {
+    "file": "frontend/public/learning/operating-systems/unix-domain-socket.svg",
+    "url": "/learning/operating-systems/unix-domain-socket.svg",
+    "sourceSha256": "3b5578e5443ce24f0f9093a63da7913f2ab72df610fff82846a186c247892d3d",
+    "linkedConcepts": [
+      "operating-systems.core.ipc.unix-domain-socket"
+    ],
+    "deploymentEvidence": {
+      "url": "/learning/operating-systems/unix-domain-socket.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/unix-domain-socket.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/unix-domain-socket.svg",
+      "responseSha256": "3b5578e5443ce24f0f9093a63da7913f2ab72df610fff82846a186c247892d3d",
+      "sourceSha256": "3b5578e5443ce24f0f9093a63da7913f2ab72df610fff82846a186c247892d3d",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    "visualReview": {
+      "status": "NEEDS_REVIEW"
+    },
+    "viewBox": "0 0 960 400",
+    "labels": [
+      "Unix-Domain Socket Lifecycle",
+      "Client process",
+      "AF_UNIX endpoint",
+      "path / local namespace",
+      "Server process",
+      "connect",
+      "accept",
+      "SOCK_STREAM → byte stream framing still required",
+      "Local endpoint permissions, peer credentials, close and stale-path cleanup are part of lifecycle."
+    ]
+  },
+  {
+    "file": "frontend/public/learning/operating-systems/virtual-address-space.svg",
+    "url": "/learning/operating-systems/virtual-address-space.svg",
+    "sourceSha256": "0144d42914486b85a62a99e5db29b8653886036cc2a7d8518c881024aa87cefc",
+    "linkedConcepts": [
+      "operating-systems.core.virtual-memory.virtual-address-space"
+    ],
+    "deploymentEvidence": {
+      "url": "/learning/operating-systems/virtual-address-space.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/virtual-address-space.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/virtual-address-space.svg",
+      "responseSha256": "0144d42914486b85a62a99e5db29b8653886036cc2a7d8518c881024aa87cefc",
+      "sourceSha256": "818d372e1a6acc15c508d9a2ccc394d06a2393a0827231c543d5780b0d28b1d7",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    "visualReview": {
+      "status": "NEEDS_REVIEW"
+    },
+    "viewBox": "0 0 960 400",
+    "labels": [
+      "Virtual Address Space",
+      "Process A",
+      "VA 0x400000",
+      "virtual page P",
+      "Process B",
+      "VA 0x400000",
+      "virtual page P",
+      "Physical Memory",
+      "Frame 12",
+      "Frame 87",
+      "같은 virtual address 숫자 ≠ 같은 physical byte"
+    ]
+  },
+  {
+    "file": "frontend/public/learning/operating-systems/write-flush-fsync.svg",
+    "url": "/learning/operating-systems/write-flush-fsync.svg",
+    "sourceSha256": "a52326086ec384ca2ad34a8e474dc4ae7f9a73b9990ed40976e3060887e0ebea",
+    "linkedConcepts": [
+      "operating-systems.core.filesystem.write-flush-fsync"
+    ],
+    "deploymentEvidence": {
+      "url": "/learning/operating-systems/write-flush-fsync.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/write-flush-fsync.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/write-flush-fsync.svg",
+      "responseSha256": "a52326086ec384ca2ad34a8e474dc4ae7f9a73b9990ed40976e3060887e0ebea",
+      "sourceSha256": "a52326086ec384ca2ad34a8e474dc4ae7f9a73b9990ed40976e3060887e0ebea",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    "visualReview": {
+      "status": "NEEDS_REVIEW"
+    },
+    "viewBox": "0 0 960 430",
+    "labels": [
+      "write → flush → fsync",
+      "User buffer",
+      "BufferedWriter",
+      "Kernel state",
+      "page cache / dirty",
+      "Filesystem",
+      "data + metadata",
+      "Storage",
+      "persistence",
+      "flush",
+      "write-back",
+      "fsync boundary",
+      "Important:",
+      "successful return at an earlier layer does not imply every later layer is durable.",
+      "A durable rename may also require the containing directory's metadata contract to be satisfied."
+    ]
+  }
+]

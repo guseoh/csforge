@@ -1,0 +1,717 @@
+[
+  {
+    "area": "backend-engineering",
+    "topics": 13,
+    "concepts": 40,
+    "questions": 108,
+    "questionTypes": {
+      "DESCRIPTIVE": 36,
+      "MULTIPLE_CHOICE": 35,
+      "SCENARIO": 37
+    },
+    "difficulty": {
+      "EASY": 31,
+      "HARD": 21,
+      "MEDIUM": 56
+    },
+    "visualization": {
+      "DIAGRAM": 16,
+      "NONE": 10,
+      "TEXT": 14
+    },
+    "levelDistribution": {
+      "1": 9,
+      "2": 15,
+      "3": 16
+    },
+    "densityDistribution": {
+      "CORE": 40
+    },
+    "figures": 0,
+    "referenceLinks": 56,
+    "uniqueReferenceUrls": 43,
+    "conceptDecisions": {
+      "KEEP": 1,
+      "NEEDS_REVIEW": 39
+    },
+    "questionDecisions": {
+      "KEEP": 3,
+      "NEEDS_REVIEW": 105
+    },
+    "areaVerdict": "NEEDS_REVIEW",
+    "previousWave": {
+      "number": 181,
+      "url": "https://github.com/guseoh/csforge/pull/181",
+      "title": "Backend Engineering Content Quality"
+    },
+    "semanticEvidence": "idempotency-key의 상태/fingerprint/commit 후 응답 실패/tenant/TTL과 q1~q3/Stripe 사례는 KEEP. 이전 usecase/pagination/retry/batch coverage 근거 보존, 나머지 body/Question의 새 검토는 미완료."
+  },
+  {
+    "area": "cache",
+    "topics": 3,
+    "concepts": 9,
+    "questions": 27,
+    "questionTypes": {
+      "DESCRIPTIVE": 9,
+      "MULTIPLE_CHOICE": 8,
+      "SCENARIO": 9,
+      "SHORT_ANSWER": 1
+    },
+    "difficulty": {
+      "EASY": 9,
+      "HARD": 6,
+      "MEDIUM": 12
+    },
+    "visualization": {
+      "DIAGRAM": 5,
+      "NONE": 1,
+      "TEXT": 3
+    },
+    "levelDistribution": {
+      "1": 2,
+      "2": 5,
+      "3": 2
+    },
+    "densityDistribution": {
+      "CORE": 8,
+      "STANDARD": 1
+    },
+    "figures": 0,
+    "referenceLinks": 17,
+    "uniqueReferenceUrls": 10,
+    "conceptDecisions": {
+      "NEEDS_REVIEW": 9
+    },
+    "questionDecisions": {
+      "KEEP": 3,
+      "NEEDS_REVIEW": 24
+    },
+    "areaVerdict": "NEEDS_REVIEW",
+    "previousWave": {
+      "number": 187,
+      "url": "https://github.com/guseoh/csforge/pull/187",
+      "title": "Content quality: Cache"
+    },
+    "semanticEvidence": "Cache-Aside hit≠최신/미스≠없음과 v1조회→v2commit→DEL→늦은fill race를 읽고 invalidation q셋을 대조했다. 최신 세대/전달 실패를 설명하는 기존 모델 보존. 모든 source/나머지6개Concept/q셋 의미 검토 미완료."
+  },
+  {
+    "area": "computer-architecture",
+    "topics": 10,
+    "concepts": 61,
+    "questions": 183,
+    "questionTypes": {
+      "DESCRIPTIVE": 49,
+      "MULTIPLE_CHOICE": 61,
+      "SCENARIO": 59,
+      "SHORT_ANSWER": 14
+    },
+    "difficulty": {
+      "EASY": 61,
+      "HARD": 61,
+      "MEDIUM": 61
+    },
+    "visualization": {
+      "DIAGRAM": 31,
+      "TEXT": 30
+    },
+    "levelDistribution": {
+      "1": 21,
+      "2": 34,
+      "3": 6
+    },
+    "densityDistribution": {
+      "CORE": 47,
+      "STANDARD": 14
+    },
+    "figures": 0,
+    "referenceLinks": 68,
+    "uniqueReferenceUrls": 25,
+    "conceptDecisions": {
+      "NEEDS_REVIEW": 59,
+      "TARGETED_ENHANCE": 2
+    },
+    "questionDecisions": {
+      "KEEP": 5,
+      "NEEDS_REVIEW": 177,
+      "TARGETED_ENHANCE": 1
+    },
+    "areaVerdict": "NEEDS_REVIEW",
+    "previousWave": {
+      "number": 183,
+      "url": "https://github.com/guseoh/csforge/pull/183",
+      "title": "Computer Architecture Content Quality"
+    },
+    "semanticEvidence": "cache replacement/ISA 경계/TLB/페이지 테이블/pipeline hazards를 읽었다. TLB miss≠fault, RAW≠WAR와 구현/ISA 경계는 설명된다. order metadata/TLBq1 설명만 P2. hardware source 및 나머지 전체 문항 대조는 미완료."
+  },
+  {
+    "area": "database",
+    "topics": 12,
+    "concepts": 38,
+    "questions": 75,
+    "questionTypes": {
+      "DESCRIPTIVE": 19,
+      "MULTIPLE_CHOICE": 13,
+      "SCENARIO": 21,
+      "SHORT_ANSWER": 22
+    },
+    "difficulty": {
+      "EASY": 18,
+      "HARD": 9,
+      "MEDIUM": 48
+    },
+    "visualization": {
+      "DIAGRAM": 9,
+      "NONE": 8,
+      "TEXT": 21
+    },
+    "levelDistribution": {
+      "1": 9,
+      "2": 19,
+      "3": 10
+    },
+    "densityDistribution": {
+      "CORE": 37,
+      "STANDARD": 1
+    },
+    "figures": 0,
+    "referenceLinks": 49,
+    "uniqueReferenceUrls": 44,
+    "conceptDecisions": {
+      "KEEP": 3,
+      "NEEDS_REVIEW": 35
+    },
+    "questionDecisions": {
+      "KEEP": 6,
+      "NEEDS_REVIEW": 69
+    },
+    "areaVerdict": "NEEDS_REVIEW",
+    "previousWave": {
+      "number": 180,
+      "url": "https://github.com/guseoh/csforge/pull/180",
+      "title": "Database Content Quality"
+    },
+    "semanticEvidence": "MVCC visibility/row-lock/btree 본문·Question·공식 출처는 KEEP. 문장/트랜잭션 스냅샷, 일반 SELECT/충돌 잠금, 선택도/heap 비용을 구분한다. 남은 SQL/isolation/WAL/replication 전수 의미 검토는 미완료."
+  },
+  {
+    "area": "distributed-systems",
+    "topics": 3,
+    "concepts": 9,
+    "questions": 27,
+    "questionTypes": {
+      "DESCRIPTIVE": 11,
+      "MULTIPLE_CHOICE": 6,
+      "SCENARIO": 9,
+      "SHORT_ANSWER": 1
+    },
+    "difficulty": {
+      "EASY": 7,
+      "HARD": 9,
+      "MEDIUM": 11
+    },
+    "visualization": {
+      "DIAGRAM": 8,
+      "TEXT": 1
+    },
+    "levelDistribution": {
+      "1": 3,
+      "2": 6
+    },
+    "densityDistribution": {
+      "CORE": 9
+    },
+    "figures": 0,
+    "referenceLinks": 23,
+    "uniqueReferenceUrls": 16,
+    "conceptDecisions": {
+      "NEEDS_REVIEW": 9
+    },
+    "questionDecisions": {
+      "KEEP": 6,
+      "NEEDS_REVIEW": 21
+    },
+    "areaVerdict": "NEEDS_REVIEW",
+    "previousWave": {
+      "number": 191,
+      "url": "https://github.com/guseoh/csforge/pull/191",
+      "title": "Content quality: Distributed Systems"
+    },
+    "semanticEvidence": "고정N/R/W 교차≠linearizability/consensus, Lease만료≠실제쓰기가중단됨과 자원token검사 body/q셋을 대조했다. Dynamo/Chubby/etcd 보장 원문과 나머지7개Concept의 새 전수 검토 미완료."
+  },
+  {
+    "area": "dsa",
+    "topics": 12,
+    "concepts": 84,
+    "questions": 293,
+    "questionTypes": {
+      "DESCRIPTIVE": 109,
+      "MULTIPLE_CHOICE": 48,
+      "SCENARIO": 96,
+      "SHORT_ANSWER": 40
+    },
+    "difficulty": {
+      "EASY": 86,
+      "HARD": 48,
+      "MEDIUM": 159
+    },
+    "visualization": {
+      "DIAGRAM": 44,
+      "TEXT": 40
+    },
+    "levelDistribution": {
+      "1": 40,
+      "2": 44
+    },
+    "densityDistribution": {
+      "CORE": 63,
+      "STANDARD": 21
+    },
+    "figures": 0,
+    "referenceLinks": 90,
+    "uniqueReferenceUrls": 25,
+    "conceptDecisions": {
+      "KEEP": 1,
+      "NEEDS_REVIEW": 81,
+      "TARGETED_ENHANCE": 2
+    },
+    "questionDecisions": {
+      "KEEP": 10,
+      "NEEDS_REVIEW": 283
+    },
+    "areaVerdict": "NEEDS_REVIEW",
+    "previousWave": {
+      "number": 182,
+      "url": "https://github.com/guseoh/csforge/pull/182",
+      "title": "Data Structures & Algorithms Content Quality"
+    },
+    "semanticEvidence": "pruning/fib 중복 ASCII로 과거 누락 해소 확인. overlapping KEEP. 초기화/공간 최적화의 덮어쓰기 trace만 선택 P2. 상태 키·최적성·선택 기준의 설명을 읽었지만 남은 구조/sort/search 및 출처·문항 전수 검토는 미완료."
+  },
+  {
+    "area": "infrastructure-cloud",
+    "topics": 3,
+    "concepts": 9,
+    "questions": 27,
+    "questionTypes": {
+      "DESCRIPTIVE": 9,
+      "MULTIPLE_CHOICE": 7,
+      "SCENARIO": 9,
+      "SHORT_ANSWER": 2
+    },
+    "difficulty": {
+      "EASY": 9,
+      "HARD": 8,
+      "MEDIUM": 10
+    },
+    "visualization": {
+      "DIAGRAM": 5,
+      "TEXT": 4
+    },
+    "levelDistribution": {
+      "1": 3,
+      "2": 5,
+      "3": 1
+    },
+    "densityDistribution": {
+      "CORE": 9
+    },
+    "figures": 0,
+    "referenceLinks": 21,
+    "uniqueReferenceUrls": 21,
+    "conceptDecisions": {
+      "KEEP": 1,
+      "NEEDS_REVIEW": 8
+    },
+    "questionDecisions": {
+      "KEEP": 3,
+      "NEEDS_REVIEW": 24
+    },
+    "areaVerdict": "NEEDS_REVIEW",
+    "previousWave": {
+      "number": 189,
+      "url": "https://github.com/guseoh/csforge/pull/189",
+      "title": "Content quality: Infrastructure & Cloud"
+    },
+    "semanticEvidence": "resource-boundaries body/q1~q3와 Kubernetes source는 KEEP. request배치/CPU throttling/메모리OOM·eviction/JVM외메모리를 구분한다. 나머지 실행·네트워크·스토리지/복구 전수 검토 미완료."
+  },
+  {
+    "area": "java",
+    "topics": 18,
+    "concepts": 145,
+    "questions": 841,
+    "questionTypes": {
+      "DESCRIPTIVE": 32,
+      "MULTIPLE_CHOICE": 767,
+      "SCENARIO": 41,
+      "SHORT_ANSWER": 1
+    },
+    "difficulty": {
+      "EASY": 262,
+      "HARD": 104,
+      "MEDIUM": 475
+    },
+    "visualization": {
+      "DIAGRAM": 40,
+      "NONE": 77,
+      "TEXT": 28
+    },
+    "levelDistribution": {
+      "1": 30,
+      "2": 95,
+      "3": 20
+    },
+    "densityDistribution": {
+      "CORE": 101,
+      "STANDARD": 44
+    },
+    "figures": 26,
+    "referenceLinks": 272,
+    "uniqueReferenceUrls": 210,
+    "conceptDecisions": {
+      "NEEDS_REVIEW": 143,
+      "TARGETED_ENHANCE": 2
+    },
+    "questionDecisions": {
+      "KEEP": 24,
+      "NEEDS_REVIEW": 816,
+      "TARGETED_ENHANCE": 1
+    },
+    "areaVerdict": "NEEDS_REVIEW",
+    "previousWave": {
+      "number": 178,
+      "url": "https://github.com/guseoh/csforge/pull/178",
+      "title": "content: Java LearningArea quality wave (1/15)"
+    },
+    "semanticEvidence": "값 전달/HashMap/CAS/GC 본문·Question을 읽었다. 값 복사·동등성·원자성·root 경계를 구분하는 기존 설명은 유지할 근거가 있다. CASq2 선택지와 값 전달 SVG만 선별. JVM/JMM·출처·나머지 문항의 새 전수 검토는 미완료."
+  },
+  {
+    "area": "messaging-async",
+    "topics": 3,
+    "concepts": 9,
+    "questions": 27,
+    "questionTypes": {
+      "DESCRIPTIVE": 10,
+      "MULTIPLE_CHOICE": 7,
+      "SCENARIO": 9,
+      "SHORT_ANSWER": 1
+    },
+    "difficulty": {
+      "EASY": 7,
+      "HARD": 9,
+      "MEDIUM": 11
+    },
+    "visualization": {
+      "DIAGRAM": 5,
+      "TEXT": 4
+    },
+    "levelDistribution": {
+      "1": 1,
+      "2": 6,
+      "3": 2
+    },
+    "densityDistribution": {
+      "CORE": 8,
+      "STANDARD": 1
+    },
+    "figures": 0,
+    "referenceLinks": 21,
+    "uniqueReferenceUrls": 12,
+    "conceptDecisions": {
+      "NEEDS_REVIEW": 9
+    },
+    "questionDecisions": {
+      "KEEP": 3,
+      "NEEDS_REVIEW": 24
+    },
+    "areaVerdict": "NEEDS_REVIEW",
+    "previousWave": {
+      "number": 188,
+      "url": "https://github.com/guseoh/csforge/pull/188",
+      "title": "Content quality: Messaging & Async Processing"
+    },
+    "semanticEvidence": "DB commit와 offset commit 순서별 종료→유실/중복, 로컬 중복기록과 업무 변경, Kafka EOS≠외부효과를 body/q셋에서 대조했다. 다른8개Concept와 Kafka42/outbox source의 새 전수 검토 미완료."
+  },
+  {
+    "area": "network-http",
+    "topics": 15,
+    "concepts": 127,
+    "questions": 381,
+    "questionTypes": {
+      "DESCRIPTIVE": 127,
+      "MULTIPLE_CHOICE": 127,
+      "SCENARIO": 127
+    },
+    "difficulty": {
+      "EASY": 126,
+      "HARD": 44,
+      "MEDIUM": 211
+    },
+    "visualization": {
+      "DIAGRAM": 53,
+      "NONE": 16,
+      "TEXT": 58
+    },
+    "levelDistribution": {
+      "1": 67,
+      "2": 59,
+      "3": 1
+    },
+    "densityDistribution": {
+      "CORE": 99,
+      "STANDARD": 28
+    },
+    "figures": 0,
+    "referenceLinks": 145,
+    "uniqueReferenceUrls": 46,
+    "conceptDecisions": {
+      "KEEP": 1,
+      "NEEDS_REVIEW": 125,
+      "TARGETED_ENHANCE": 1
+    },
+    "questionDecisions": {
+      "KEEP": 8,
+      "NEEDS_REVIEW": 372,
+      "TARGETED_ENHANCE": 1
+    },
+    "areaVerdict": "NEEDS_REVIEW",
+    "previousWave": {
+      "number": 185,
+      "url": "https://github.com/guseoh/csforge/pull/185",
+      "title": "Content quality: Network & HTTP"
+    },
+    "semanticEvidence": "TCP handshake/TLS1.3/trusted proxy flow와 q셋을 대조했다. TLS KEEP, proxyq1 선택지만 P1 제안. 과거7개 누락은 의미 있는ASCII로 해소. #198 한국어 전수 Wave 보존; 나머지RFC/HTTP 전체 검토는 미완료."
+  },
+  {
+    "area": "operating-systems",
+    "topics": 12,
+    "concepts": 97,
+    "questions": 331,
+    "questionTypes": {
+      "DESCRIPTIVE": 126,
+      "MULTIPLE_CHOICE": 86,
+      "SCENARIO": 100,
+      "SHORT_ANSWER": 19
+    },
+    "difficulty": {
+      "EASY": 99,
+      "HARD": 36,
+      "MEDIUM": 196
+    },
+    "visualization": {
+      "DIAGRAM": 47,
+      "TEXT": 50
+    },
+    "levelDistribution": {
+      "1": 43,
+      "2": 49,
+      "3": 5
+    },
+    "densityDistribution": {
+      "CORE": 75,
+      "STANDARD": 22
+    },
+    "figures": 34,
+    "referenceLinks": 142,
+    "uniqueReferenceUrls": 86,
+    "conceptDecisions": {
+      "NEEDS_REVIEW": 97
+    },
+    "questionDecisions": {
+      "KEEP": 11,
+      "NEEDS_REVIEW": 320
+    },
+    "areaVerdict": "NEEDS_REVIEW",
+    "previousWave": {
+      "number": 184,
+      "url": "https://github.com/guseoh/csforge/pull/184",
+      "title": "Operating Systems canonical content quality"
+    },
+    "semanticEvidence": "shared-memory L2와 서로 다른VA→같은 backing, RR quantum/cost, fault 복구/COW/재시도 및 q셋을 대조했다. 기존SVG는 유지할 근거가 있으나 primary 접근과 전체 프로세스/스레드/스케줄링/VM 의미 검토는 미완료."
+  },
+  {
+    "area": "performance-observability-operations",
+    "topics": 3,
+    "concepts": 9,
+    "questions": 27,
+    "questionTypes": {
+      "DESCRIPTIVE": 9,
+      "MULTIPLE_CHOICE": 6,
+      "SCENARIO": 9,
+      "SHORT_ANSWER": 3
+    },
+    "difficulty": {
+      "EASY": 9,
+      "HARD": 9,
+      "MEDIUM": 9
+    },
+    "visualization": {
+      "DIAGRAM": 6,
+      "TEXT": 3
+    },
+    "levelDistribution": {
+      "1": 3,
+      "2": 6
+    },
+    "densityDistribution": {
+      "CORE": 9
+    },
+    "figures": 0,
+    "referenceLinks": 17,
+    "uniqueReferenceUrls": 17,
+    "conceptDecisions": {
+      "NEEDS_REVIEW": 9
+    },
+    "questionDecisions": {
+      "KEEP": 3,
+      "NEEDS_REVIEW": 24
+    },
+    "areaVerdict": "NEEDS_REVIEW",
+    "previousWave": {
+      "number": 190,
+      "url": "https://github.com/guseoh/csforge/pull/190",
+      "title": "Content quality: Performance / Observability / Operations"
+    },
+    "semanticEvidence": "queue증가/이용률 외 지표와 안정·동일경계 Little법칙 120/40=3초, shedding body/q셋을 대조했다. SRE자료 확인, 논문과 다른8개Concept/문항 새 전수 검토는 미완료."
+  },
+  {
+    "area": "security",
+    "topics": 12,
+    "concepts": 38,
+    "questions": 74,
+    "questionTypes": {
+      "DESCRIPTIVE": 24,
+      "MULTIPLE_CHOICE": 10,
+      "SCENARIO": 23,
+      "SHORT_ANSWER": 17
+    },
+    "difficulty": {
+      "EASY": 12,
+      "HARD": 6,
+      "MEDIUM": 56
+    },
+    "visualization": {
+      "DIAGRAM": 12,
+      "NONE": 11,
+      "TEXT": 15
+    },
+    "levelDistribution": {
+      "1": 8,
+      "2": 20,
+      "3": 10
+    },
+    "densityDistribution": {
+      "CORE": 37,
+      "STANDARD": 1
+    },
+    "figures": 0,
+    "referenceLinks": 50,
+    "uniqueReferenceUrls": 41,
+    "conceptDecisions": {
+      "NEEDS_REVIEW": 37,
+      "TARGETED_ENHANCE": 1
+    },
+    "questionDecisions": {
+      "KEEP": 3,
+      "NEEDS_REVIEW": 71
+    },
+    "areaVerdict": "NEEDS_REVIEW",
+    "previousWave": {
+      "number": 186,
+      "url": "https://github.com/guseoh/csforge/pull/186",
+      "title": "Content quality: Security"
+    },
+    "semanticEvidence": "authentication/q3가 credential→context 성공/실패를 검증해 과거P1 해소. source 학습 동선만 P2. output-encoding은 HTML/JS code로 문맥 비교가 이미 있어 TEXT 신호 미탐지로 그림 강제 금지. OWASP/나머지문항 새 전수 대조 미완료."
+  },
+  {
+    "area": "spring",
+    "topics": 12,
+    "concepts": 37,
+    "questions": 77,
+    "questionTypes": {
+      "DESCRIPTIVE": 20,
+      "MULTIPLE_CHOICE": 23,
+      "SCENARIO": 24,
+      "SHORT_ANSWER": 10
+    },
+    "difficulty": {
+      "EASY": 21,
+      "HARD": 7,
+      "MEDIUM": 49
+    },
+    "visualization": {
+      "DIAGRAM": 6,
+      "NONE": 16,
+      "TEXT": 15
+    },
+    "levelDistribution": {
+      "1": 8,
+      "2": 20,
+      "3": 9
+    },
+    "densityDistribution": {
+      "CORE": 33,
+      "STANDARD": 4
+    },
+    "figures": 0,
+    "referenceLinks": 54,
+    "uniqueReferenceUrls": 45,
+    "conceptDecisions": {
+      "KEEP": 1,
+      "NEEDS_REVIEW": 36
+    },
+    "questionDecisions": {
+      "KEEP": 4,
+      "NEEDS_REVIEW": 73
+    },
+    "areaVerdict": "NEEDS_REVIEW",
+    "previousWave": {
+      "number": 179,
+      "url": "https://github.com/guseoh/csforge/pull/179",
+      "title": "Spring Content Quality"
+    },
+    "semanticEvidence": "self-invocation과 lifecycle의 코드/ASCII/q셋에서 바깥 트랜잭션·내부 advice 우회, 생성/초기화/자원 소유권을 구분한다. lifecycle KEEP, self-invocation은 보충 출처 재확인 대기. 나머지 framework 계약 전수 PASS 미선언."
+  },
+  {
+    "area": "system-design",
+    "topics": 3,
+    "concepts": 9,
+    "questions": 27,
+    "questionTypes": {
+      "DESCRIPTIVE": 9,
+      "MULTIPLE_CHOICE": 6,
+      "SCENARIO": 9,
+      "SHORT_ANSWER": 3
+    },
+    "difficulty": {
+      "EASY": 9,
+      "HARD": 9,
+      "MEDIUM": 9
+    },
+    "visualization": {
+      "DIAGRAM": 7,
+      "TEXT": 2
+    },
+    "levelDistribution": {
+      "1": 4,
+      "2": 5
+    },
+    "densityDistribution": {
+      "CORE": 9
+    },
+    "figures": 0,
+    "referenceLinks": 18,
+    "uniqueReferenceUrls": 12,
+    "conceptDecisions": {
+      "NEEDS_REVIEW": 9
+    },
+    "questionDecisions": {
+      "KEEP": 3,
+      "NEEDS_REVIEW": 24
+    },
+    "areaVerdict": "NEEDS_REVIEW",
+    "previousWave": {
+      "number": 192,
+      "url": "https://github.com/guseoh/csforge/pull/192",
+      "title": "System Design Content Quality"
+    },
+    "semanticEvidence": "sync/async durable accept와 사용자완료상태/CSV작업/결제-색인경계 body/q셋을 대조했다. Messaging세부와 architecture책임을 구분하는 기존 설명 보존. Saga/gRPC source와 다른8개Concept 검토 미완료."
+  }
+]
