@@ -1,5 +1,7 @@
 # 검증 근거
 
+현재 Wave 3 검증은 [wave-3/validation.md](wave-3/validation.md)를 따른다. 아래 수량과 실행 결과는 초기 및 Wave 1 시점의 역사 기록이며 Wave 2 산출물은 해당 폴더에 보존한다.
+
 2026-10-12, 기준선 `efe73a15da14c996bd08344181d4d6f87073803d`.
 
 | 검증 | 결과 |

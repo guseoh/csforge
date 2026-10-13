@@ -1,0 +1,2788 @@
+[
+  {
+    "area": "computer-architecture",
+    "contentKey": "computer-architecture.core.cache-organization.cache-friendly-access",
+    "file": "content/computer-architecture/cache-organization/cache-friendly-access.md",
+    "url": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/memory-hierarchy-design/index.html",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "cache-organization: 앞Topic에서도구접근실패후같은공식route를Windows TLS검증유지HEAD로확인해403을받았다. canonical본문은읽지못했으며cache-friendly의실제자료역할은미확정이다. / memory-hierarchy: 직접대상도구접근실패로6관계의canonical절/학습동선은미확정이다. 실제MIT/OpenJDK원저자발췌와closed수치추론은보충근거로분리하며없는Reference라확정하지않는다. 추가접근증거: Python은로컬issuer TLS검증오류이며Windows신뢰저장소의TLS검증유지HEAD는실제403. 실제본문/학습접근은미확정이다.",
+      "area": "computer-architecture",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/computer-architecture.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "computer-architecture",
+    "contentKey": "computer-architecture.core.cache-organization.direct-mapped-cache",
+    "file": "content/computer-architecture/cache-organization/direct-mapped-cache.md",
+    "url": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/cache-organization/index.html",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "cache-organization: web도구접근실패。Python HTTP는로컬issuer검증실패。TLS검증을유지한Windows기본신뢰HEAD는실제403이다. target본문/학습접근은확인하지못했으며없는URL/404로단정하지않는다.",
+      "area": "computer-architecture",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/computer-architecture.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "computer-architecture",
+    "contentKey": "computer-architecture.core.cache-organization.fully-associative-cache",
+    "file": "content/computer-architecture/cache-organization/fully-associative-cache.md",
+    "url": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/cache-organization/index.html",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "cache-organization: web도구접근실패。Python HTTP는로컬issuer검증실패。TLS검증을유지한Windows기본신뢰HEAD는실제403이다. target본문/학습접근은확인하지못했으며없는URL/404로단정하지않는다.",
+      "area": "computer-architecture",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/computer-architecture.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "computer-architecture",
+    "contentKey": "computer-architecture.core.cache-organization.index-tag-offset",
+    "file": "content/computer-architecture/cache-organization/index-tag-offset.md",
+    "url": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/cache-organization/index.html",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "cache-organization: web도구접근실패。Python HTTP는로컬issuer검증실패。TLS검증을유지한Windows기본신뢰HEAD는실제403이다. target본문/학습접근은확인하지못했으며없는URL/404로단정하지않는다.",
+      "area": "computer-architecture",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/computer-architecture.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "computer-architecture",
+    "contentKey": "computer-architecture.core.cache-organization.replacement-policy",
+    "file": "content/computer-architecture/cache-organization/replacement-policy.md",
+    "url": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/cache-organization/index.html",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "cache-organization: web도구접근실패。Python HTTP는로컬issuer검증실패。TLS검증을유지한Windows기본신뢰HEAD는실제403이다. target본문/학습접근은확인하지못했으며없는URL/404로단정하지않는다.",
+      "area": "computer-architecture",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/computer-architecture.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "computer-architecture",
+    "contentKey": "computer-architecture.core.cache-organization.set-associative-cache",
+    "file": "content/computer-architecture/cache-organization/set-associative-cache.md",
+    "url": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/cache-organization/index.html",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "cache-organization: web도구접근실패。Python HTTP는로컬issuer검증실패。TLS검증을유지한Windows기본신뢰HEAD는실제403이다. target본문/학습접근은확인하지못했으며없는URL/404로단정하지않는다.",
+      "area": "computer-architecture",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/computer-architecture.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "computer-architecture",
+    "contentKey": "computer-architecture.core.cache-organization.write-allocate",
+    "file": "content/computer-architecture/cache-organization/write-allocate.md",
+    "url": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/cache-organization/index.html",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "cache-organization: web도구접근실패。Python HTTP는로컬issuer검증실패。TLS검증을유지한Windows기본신뢰HEAD는실제403이다. target본문/학습접근은확인하지못했으며없는URL/404로단정하지않는다.",
+      "area": "computer-architecture",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/computer-architecture.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "computer-architecture",
+    "contentKey": "computer-architecture.core.cache-organization.write-through-write-back",
+    "file": "content/computer-architecture/cache-organization/write-through-write-back.md",
+    "url": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/cache-organization/index.html",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "cache-organization: web도구접근실패。Python HTTP는로컬issuer검증실패。TLS검증을유지한Windows기본신뢰HEAD는실제403이다. target본문/학습접근은확인하지못했으며없는URL/404로단정하지않는다.",
+      "area": "computer-architecture",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/computer-architecture.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "computer-architecture",
+    "contentKey": "computer-architecture.core.data-representation.binary-hex",
+    "file": "content/computer-architecture/data-representation/binary-hex.md",
+    "url": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/number-systems/index.html",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "data-representation: 직접 open 도구 접근 실패, 해당 URL의 정확한 절/학습 동선은 확인하지 못했다. 존재하지 않는 출처로 확정하지 않는다. 다른 실제 대학 강의의 표기/2의 보수/unsigned 절은 supplemental로 분리한다. 추가접근증거: Python은로컬issuer TLS검증오류이며Windows신뢰저장소의TLS검증유지HEAD는실제403. 실제본문/학습접근은미확정이다.",
+      "area": "computer-architecture",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/computer-architecture.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "computer-architecture",
+    "contentKey": "computer-architecture.core.data-representation.bit-byte-word",
+    "file": "content/computer-architecture/data-representation/bit-byte-word.md",
+    "url": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/number-systems/index.html",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "data-representation: 직접 open 도구 접근 실패, 해당 URL의 정확한 절/학습 동선은 확인하지 못했다. 존재하지 않는 출처로 확정하지 않는다. 다른 실제 대학 강의의 표기/2의 보수/unsigned 절은 supplemental로 분리한다. 추가접근증거: Python은로컬issuer TLS검증오류이며Windows신뢰저장소의TLS검증유지HEAD는실제403. 실제본문/학습접근은미확정이다.",
+      "area": "computer-architecture",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/computer-architecture.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "computer-architecture",
+    "contentKey": "computer-architecture.core.data-representation.fixed-width-overflow",
+    "file": "content/computer-architecture/data-representation/fixed-width-overflow.md",
+    "url": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/number-systems/index.html",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "data-representation: 직접 open 도구 접근 실패, 해당 URL의 정확한 절/학습 동선은 확인하지 못했다. 존재하지 않는 출처로 확정하지 않는다. 다른 실제 대학 강의의 표기/2의 보수/unsigned 절은 supplemental로 분리한다. 추가접근증거: Python은로컬issuer TLS검증오류이며Windows신뢰저장소의TLS검증유지HEAD는실제403. 실제본문/학습접근은미확정이다.",
+      "area": "computer-architecture",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/computer-architecture.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "computer-architecture",
+    "contentKey": "computer-architecture.core.data-representation.floating-point",
+    "file": "content/computer-architecture/data-representation/floating-point.md",
+    "url": "https://ieeexplore.ieee.org/document/8766227",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "data-representation: 직접 대상 접근 실패이며 검색도 이 target의2019전문을확보하지못했다. canonical IEEE 문서 전문/접근 편의는 미확정이다. 실제 Oracle 수치 가이드의 관련 binary32 필드/특수값 절로 주장을 교차 확인했다.",
+      "area": "computer-architecture",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/computer-architecture.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "computer-architecture",
+    "contentKey": "computer-architecture.core.data-representation.signed-twos-complement",
+    "file": "content/computer-architecture/data-representation/signed-twos-complement.md",
+    "url": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/number-systems/index.html",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "data-representation: 직접 open 도구 접근 실패, 해당 URL의 정확한 절/학습 동선은 확인하지 못했다. 존재하지 않는 출처로 확정하지 않는다. 다른 실제 대학 강의의 표기/2의 보수/unsigned 절은 supplemental로 분리한다. 추가접근증거: Python은로컬issuer TLS검증오류이며Windows신뢰저장소의TLS검증유지HEAD는실제403. 실제본문/학습접근은미확정이다.",
+      "area": "computer-architecture",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/computer-architecture.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "computer-architecture",
+    "contentKey": "computer-architecture.core.datapath-control.alu-datapath",
+    "file": "content/computer-architecture/datapath-control/alu-datapath.md",
+    "url": "https://www.cs.umd.edu/~meesh/cmsc311/clin-cmsc311/Lectures/lecture30/datapath.pdf",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "datapath-control: 직접도구접근403 Forbidden으로해당강의PDF의diagram/timing절을읽지못했다. 실제학습자접근/자료의전체정확성을확정하지않는다.",
+      "area": "computer-architecture",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/computer-architecture.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "computer-architecture",
+    "contentKey": "computer-architecture.core.datapath-control.clock-cycle",
+    "file": "content/computer-architecture/datapath-control/clock-cycle.md",
+    "url": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/performance/index.html",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "datapath-control: 직접도구접근실패로해당Performance절은읽지못했다. closedclock/CPI수치는독립적으로계산했고target자료내용을확인한근거로쓰지않는다. / performance: canonical 대상의 직접 web 접근은 실패했다. 이전 Topic에서 기록한 접근 근거를 유지하며 대체 공식 검색 본문을 읽었다고 canonical 페이지 자체를 확인 처리하지 않는다.",
+      "area": "computer-architecture",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/computer-architecture.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "computer-architecture",
+    "contentKey": "computer-architecture.core.datapath-control.control-unit",
+    "file": "content/computer-architecture/datapath-control/control-unit.md",
+    "url": "https://www.cs.umd.edu/~meesh/cmsc311/clin-cmsc311/Lectures/lecture30/datapath.pdf",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "datapath-control: 직접도구접근403 Forbidden으로해당강의PDF의diagram/timing절을읽지못했다. 실제학습자접근/자료의전체정확성을확정하지않는다.",
+      "area": "computer-architecture",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/computer-architecture.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "computer-architecture",
+    "contentKey": "computer-architecture.core.datapath-control.critical-path",
+    "file": "content/computer-architecture/datapath-control/critical-path.md",
+    "url": "https://www.cs.umd.edu/~meesh/cmsc311/clin-cmsc311/Lectures/lecture30/datapath.pdf",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "datapath-control: 직접도구접근403 Forbidden으로해당강의PDF의diagram/timing절을읽지못했다. 실제학습자접근/자료의전체정확성을확정하지않는다.",
+      "area": "computer-architecture",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/computer-architecture.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "computer-architecture",
+    "contentKey": "computer-architecture.core.isa-execution.isa-vs-microarchitecture",
+    "file": "content/computer-architecture/isa-execution/isa-vs-microarchitecture.md",
+    "url": "https://docs.riscv.org/reference/isa/unpriv/intro.html",
+    "verification": {
+      "status": "CURRENT_VERIFIED",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "isa-execution: 직접legacytarget접근은도구실패. 같은공식 v20260120 intro의software-visibleinterface와다양한구현허용/구현의존제거절을실제읽어의미를대조했다. 짧은URL도착은별도미확정이다.",
+      "area": "computer-architecture",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/computer-architecture.json",
+      "qualityIssueIds": []
+    },
+    "accessVerification": {
+      "status": "NEEDS_REVIEW",
+      "basis": "legacy직접도구접근은실패했지만동일공식현재판본문은접근해의미를대조했다. 실제학습자의legacyroute접근/redirect는별도확인필요."
+    }
+  },
+  {
+    "area": "computer-architecture",
+    "contentKey": "computer-architecture.core.memory-hierarchy.cache-hit-miss",
+    "file": "content/computer-architecture/memory-hierarchy/cache-hit-miss.md",
+    "url": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/memory-hierarchy-design/index.html",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "cache-organization: 앞Topic에서도구접근실패후같은공식route를Windows TLS검증유지HEAD로확인해403을받았다. canonical본문은읽지못했으며cache-friendly의실제자료역할은미확정이다. / memory-hierarchy: 직접대상도구접근실패로6관계의canonical절/학습동선은미확정이다. 실제MIT/OpenJDK원저자발췌와closed수치추론은보충근거로분리하며없는Reference라확정하지않는다. 추가접근증거: Python은로컬issuer TLS검증오류이며Windows신뢰저장소의TLS검증유지HEAD는실제403. 실제본문/학습접근은미확정이다.",
+      "area": "computer-architecture",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/computer-architecture.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "computer-architecture",
+    "contentKey": "computer-architecture.core.memory-hierarchy.cache-line",
+    "file": "content/computer-architecture/memory-hierarchy/cache-line.md",
+    "url": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/memory-hierarchy-design/index.html",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "cache-organization: 앞Topic에서도구접근실패후같은공식route를Windows TLS검증유지HEAD로확인해403을받았다. canonical본문은읽지못했으며cache-friendly의실제자료역할은미확정이다. / memory-hierarchy: 직접대상도구접근실패로6관계의canonical절/학습동선은미확정이다. 실제MIT/OpenJDK원저자발췌와closed수치추론은보충근거로분리하며없는Reference라확정하지않는다. 추가접근증거: Python은로컬issuer TLS검증오류이며Windows신뢰저장소의TLS검증유지HEAD는실제403. 실제본문/학습접근은미확정이다.",
+      "area": "computer-architecture",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/computer-architecture.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "computer-architecture",
+    "contentKey": "computer-architecture.core.memory-hierarchy.latency-vs-bandwidth",
+    "file": "content/computer-architecture/memory-hierarchy/latency-vs-bandwidth.md",
+    "url": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/memory-hierarchy-design/index.html",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "cache-organization: 앞Topic에서도구접근실패후같은공식route를Windows TLS검증유지HEAD로확인해403을받았다. canonical본문은읽지못했으며cache-friendly의실제자료역할은미확정이다. / memory-hierarchy: 직접대상도구접근실패로6관계의canonical절/학습동선은미확정이다. 실제MIT/OpenJDK원저자발췌와closed수치추론은보충근거로분리하며없는Reference라확정하지않는다. 추가접근증거: Python은로컬issuer TLS검증오류이며Windows신뢰저장소의TLS검증유지HEAD는실제403. 실제본문/학습접근은미확정이다.",
+      "area": "computer-architecture",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/computer-architecture.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "computer-architecture",
+    "contentKey": "computer-architecture.core.memory-hierarchy.memory-hierarchy",
+    "file": "content/computer-architecture/memory-hierarchy/memory-hierarchy.md",
+    "url": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/memory-hierarchy-design/index.html",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "cache-organization: 앞Topic에서도구접근실패후같은공식route를Windows TLS검증유지HEAD로확인해403을받았다. canonical본문은읽지못했으며cache-friendly의실제자료역할은미확정이다. / memory-hierarchy: 직접대상도구접근실패로6관계의canonical절/학습동선은미확정이다. 실제MIT/OpenJDK원저자발췌와closed수치추론은보충근거로분리하며없는Reference라확정하지않는다. 추가접근증거: Python은로컬issuer TLS검증오류이며Windows신뢰저장소의TLS검증유지HEAD는실제403. 실제본문/학습접근은미확정이다.",
+      "area": "computer-architecture",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/computer-architecture.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "computer-architecture",
+    "contentKey": "computer-architecture.core.memory-hierarchy.miss-penalty",
+    "file": "content/computer-architecture/memory-hierarchy/miss-penalty.md",
+    "url": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/memory-hierarchy-design/index.html",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "cache-organization: 앞Topic에서도구접근실패후같은공식route를Windows TLS검증유지HEAD로확인해403을받았다. canonical본문은읽지못했으며cache-friendly의실제자료역할은미확정이다. / memory-hierarchy: 직접대상도구접근실패로6관계의canonical절/학습동선은미확정이다. 실제MIT/OpenJDK원저자발췌와closed수치추론은보충근거로분리하며없는Reference라확정하지않는다. 추가접근증거: Python은로컬issuer TLS검증오류이며Windows신뢰저장소의TLS검증유지HEAD는실제403. 실제본문/학습접근은미확정이다.",
+      "area": "computer-architecture",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/computer-architecture.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "computer-architecture",
+    "contentKey": "computer-architecture.core.memory-hierarchy.temporal-spatial-locality",
+    "file": "content/computer-architecture/memory-hierarchy/temporal-spatial-locality.md",
+    "url": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/memory-hierarchy-design/index.html",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "cache-organization: 앞Topic에서도구접근실패후같은공식route를Windows TLS검증유지HEAD로확인해403을받았다. canonical본문은읽지못했으며cache-friendly의실제자료역할은미확정이다. / memory-hierarchy: 직접대상도구접근실패로6관계의canonical절/학습동선은미확정이다. 실제MIT/OpenJDK원저자발췌와closed수치추론은보충근거로분리하며없는Reference라확정하지않는다. 추가접근증거: Python은로컬issuer TLS검증오류이며Windows신뢰저장소의TLS검증유지HEAD는실제403. 실제본문/학습접근은미확정이다.",
+      "area": "computer-architecture",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/computer-architecture.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "computer-architecture",
+    "contentKey": "computer-architecture.core.multicore-memory.cache-coherence-problem",
+    "file": "content/computer-architecture/multicore-memory/cache-coherence-problem.md",
+    "url": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/multiprocessors/index.html",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "multicore-memory: canonical직접도구접근실패로관련coherence/ordering절은확인못했다. 실재하지않는URL로단정하지않으며접근가능Linux/RISC-V/JLS관련근거와분리한다.",
+      "area": "computer-architecture",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/computer-architecture.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "computer-architecture",
+    "contentKey": "computer-architecture.core.multicore-memory.coherence-protocol-model",
+    "file": "content/computer-architecture/multicore-memory/coherence-protocol-model.md",
+    "url": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/multiprocessors/index.html",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "multicore-memory: canonical직접도구접근실패로관련coherence/ordering절은확인못했다. 실재하지않는URL로단정하지않으며접근가능Linux/RISC-V/JLS관련근거와분리한다.",
+      "area": "computer-architecture",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/computer-architecture.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "computer-architecture",
+    "contentKey": "computer-architecture.core.multicore-memory.false-sharing",
+    "file": "content/computer-architecture/multicore-memory/false-sharing.md",
+    "url": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/multiprocessors/index.html",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "multicore-memory: canonical직접도구접근실패로관련coherence/ordering절은확인못했다. 실재하지않는URL로단정하지않으며접근가능Linux/RISC-V/JLS관련근거와분리한다.",
+      "area": "computer-architecture",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/computer-architecture.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "computer-architecture",
+    "contentKey": "computer-architecture.core.multicore-memory.hardware-memory-reordering",
+    "file": "content/computer-architecture/multicore-memory/hardware-memory-reordering.md",
+    "url": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/multiprocessors/index.html",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "multicore-memory: canonical직접도구접근실패로관련coherence/ordering절은확인못했다. 실재하지않는URL로단정하지않으며접근가능Linux/RISC-V/JLS관련근거와분리한다.",
+      "area": "computer-architecture",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/computer-architecture.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "computer-architecture",
+    "contentKey": "computer-architecture.core.multicore-memory.multicore-shared-memory",
+    "file": "content/computer-architecture/multicore-memory/multicore-shared-memory.md",
+    "url": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/multiprocessors/index.html",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "multicore-memory: canonical직접도구접근실패로관련coherence/ordering절은확인못했다. 실재하지않는URL로단정하지않으며접근가능Linux/RISC-V/JLS관련근거와분리한다.",
+      "area": "computer-architecture",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/computer-architecture.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "computer-architecture",
+    "contentKey": "computer-architecture.core.multicore-memory.private-shared-cache",
+    "file": "content/computer-architecture/multicore-memory/private-shared-cache.md",
+    "url": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/multiprocessors/index.html",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "multicore-memory: canonical직접도구접근실패로관련coherence/ordering절은확인못했다. 실재하지않는URL로단정하지않으며접근가능Linux/RISC-V/JLS관련근거와분리한다.",
+      "area": "computer-architecture",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/computer-architecture.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "computer-architecture",
+    "contentKey": "computer-architecture.core.performance.amdahl-law",
+    "file": "content/computer-architecture/performance/amdahl-law.md",
+    "url": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/performance/index.html",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "datapath-control: 직접도구접근실패로해당Performance절은읽지못했다. closedclock/CPI수치는독립적으로계산했고target자료내용을확인한근거로쓰지않는다. / performance: canonical 대상의 직접 web 접근은 실패했다. 이전 Topic에서 기록한 접근 근거를 유지하며 대체 공식 검색 본문을 읽었다고 canonical 페이지 자체를 확인 처리하지 않는다.",
+      "area": "computer-architecture",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/computer-architecture.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "computer-architecture",
+    "contentKey": "computer-architecture.core.performance.cache-impact",
+    "file": "content/computer-architecture/performance/cache-impact.md",
+    "url": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/performance/index.html",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "datapath-control: 직접도구접근실패로해당Performance절은읽지못했다. closedclock/CPI수치는독립적으로계산했고target자료내용을확인한근거로쓰지않는다. / performance: canonical 대상의 직접 web 접근은 실패했다. 이전 Topic에서 기록한 접근 근거를 유지하며 대체 공식 검색 본문을 읽었다고 canonical 페이지 자체를 확인 처리하지 않는다.",
+      "area": "computer-architecture",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/computer-architecture.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "computer-architecture",
+    "contentKey": "computer-architecture.core.performance.cpu-time",
+    "file": "content/computer-architecture/performance/cpu-time.md",
+    "url": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/performance/index.html",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "datapath-control: 직접도구접근실패로해당Performance절은읽지못했다. closedclock/CPI수치는독립적으로계산했고target자료내용을확인한근거로쓰지않는다. / performance: canonical 대상의 직접 web 접근은 실패했다. 이전 Topic에서 기록한 접근 근거를 유지하며 대체 공식 검색 본문을 읽었다고 canonical 페이지 자체를 확인 처리하지 않는다.",
+      "area": "computer-architecture",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/computer-architecture.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "computer-architecture",
+    "contentKey": "computer-architecture.core.performance.instruction-count-cpi-clock",
+    "file": "content/computer-architecture/performance/instruction-count-cpi-clock.md",
+    "url": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/performance/index.html",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "datapath-control: 직접도구접근실패로해당Performance절은읽지못했다. closedclock/CPI수치는독립적으로계산했고target자료내용을확인한근거로쓰지않는다. / performance: canonical 대상의 직접 web 접근은 실패했다. 이전 Topic에서 기록한 접근 근거를 유지하며 대체 공식 검색 본문을 읽었다고 canonical 페이지 자체를 확인 처리하지 않는다.",
+      "area": "computer-architecture",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/computer-architecture.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "computer-architecture",
+    "contentKey": "computer-architecture.core.performance.latency-throughput",
+    "file": "content/computer-architecture/performance/latency-throughput.md",
+    "url": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/performance/index.html",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "datapath-control: 직접도구접근실패로해당Performance절은읽지못했다. closedclock/CPI수치는독립적으로계산했고target자료내용을확인한근거로쓰지않는다. / performance: canonical 대상의 직접 web 접근은 실패했다. 이전 Topic에서 기록한 접근 근거를 유지하며 대체 공식 검색 본문을 읽었다고 canonical 페이지 자체를 확인 처리하지 않는다.",
+      "area": "computer-architecture",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/computer-architecture.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "computer-architecture",
+    "contentKey": "computer-architecture.core.performance.microbenchmark-boundary",
+    "file": "content/computer-architecture/performance/microbenchmark-boundary.md",
+    "url": "https://openjdk.org/projects/code-tools/jmh/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "performance: canonical homepage 직접 web 접근이 Internal Error로 실패했다. 공식 JMH sample의 실제 본문은 보충으로 읽었지만 대상 homepage의 실제 학습 경로는 미확정이다.",
+      "area": "computer-architecture",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/computer-architecture.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "computer-architecture",
+    "contentKey": "computer-architecture.core.performance.pipeline-branch-impact",
+    "file": "content/computer-architecture/performance/pipeline-branch-impact.md",
+    "url": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/performance/index.html",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "datapath-control: 직접도구접근실패로해당Performance절은읽지못했다. closedclock/CPI수치는독립적으로계산했고target자료내용을확인한근거로쓰지않는다. / performance: canonical 대상의 직접 web 접근은 실패했다. 이전 Topic에서 기록한 접근 근거를 유지하며 대체 공식 검색 본문을 읽었다고 canonical 페이지 자체를 확인 처리하지 않는다.",
+      "area": "computer-architecture",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/computer-architecture.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "computer-architecture",
+    "contentKey": "computer-architecture.core.pipeline-ilp.branch-prediction",
+    "file": "content/computer-architecture/pipeline-ilp/branch-prediction.md",
+    "url": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/pipelining-mips-implementation/index.html",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "pipeline-ilp: 직접도구403으로canonical관련절은읽지못했다. 같은대학강의발췌는supplemental로구별하며모든해당링크의학습자접근장애를확정하지않는다.",
+      "area": "computer-architecture",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/computer-architecture.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "computer-architecture",
+    "contentKey": "computer-architecture.core.pipeline-ilp.forwarding-and-stall",
+    "file": "content/computer-architecture/pipeline-ilp/forwarding-and-stall.md",
+    "url": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/pipelining-mips-implementation/index.html",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "pipeline-ilp: 직접도구403으로canonical관련절은읽지못했다. 같은대학강의발췌는supplemental로구별하며모든해당링크의학습자접근장애를확정하지않는다.",
+      "area": "computer-architecture",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/computer-architecture.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "computer-architecture",
+    "contentKey": "computer-architecture.core.pipeline-ilp.pipeline-hazards",
+    "file": "content/computer-architecture/pipeline-ilp/pipeline-hazards.md",
+    "url": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/pipelining-mips-implementation/index.html",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "pipeline-ilp: 직접도구403으로canonical관련절은읽지못했다. 같은대학강의발췌는supplemental로구별하며모든해당링크의학습자접근장애를확정하지않는다.",
+      "area": "computer-architecture",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/computer-architecture.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "computer-architecture",
+    "contentKey": "computer-architecture.core.pipeline-ilp.pipeline-stages",
+    "file": "content/computer-architecture/pipeline-ilp/pipeline-stages.md",
+    "url": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/pipelining-mips-implementation/index.html",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "pipeline-ilp: 직접도구403으로canonical관련절은읽지못했다. 같은대학강의발췌는supplemental로구별하며모든해당링크의학습자접근장애를확정하지않는다.",
+      "area": "computer-architecture",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/computer-architecture.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "computer-architecture",
+    "contentKey": "computer-architecture.core.virtual-memory-hardware.mmu",
+    "file": "content/computer-architecture/virtual-memory-hardware/mmu.md",
+    "url": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/virtual-memory/index.html",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "virtual-memory-hardware: 직접canonical접근도구실패로관련절/학습동선을확정하지못했다. 다른실제공식Linux근거와구별하고없는URL로단정하지않는다.",
+      "area": "computer-architecture",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/computer-architecture.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "computer-architecture",
+    "contentKey": "computer-architecture.core.virtual-memory-hardware.multi-level-page-table",
+    "file": "content/computer-architecture/virtual-memory-hardware/multi-level-page-table.md",
+    "url": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/virtual-memory/index.html",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "virtual-memory-hardware: 직접canonical접근도구실패로관련절/학습동선을확정하지못했다. 다른실제공식Linux근거와구별하고없는URL로단정하지않는다.",
+      "area": "computer-architecture",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/computer-architecture.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "computer-architecture",
+    "contentKey": "computer-architecture.core.virtual-memory-hardware.page-size-huge-page",
+    "file": "content/computer-architecture/virtual-memory-hardware/page-size-huge-page.md",
+    "url": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/virtual-memory/index.html",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "virtual-memory-hardware: 직접canonical접근도구실패로관련절/학습동선을확정하지못했다. 다른실제공식Linux근거와구별하고없는URL로단정하지않는다.",
+      "area": "computer-architecture",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/computer-architecture.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "computer-architecture",
+    "contentKey": "computer-architecture.core.virtual-memory-hardware.page-table-walk",
+    "file": "content/computer-architecture/virtual-memory-hardware/page-table-walk.md",
+    "url": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/virtual-memory/index.html",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "virtual-memory-hardware: 직접canonical접근도구실패로관련절/학습동선을확정하지못했다. 다른실제공식Linux근거와구별하고없는URL로단정하지않는다.",
+      "area": "computer-architecture",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/computer-architecture.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "computer-architecture",
+    "contentKey": "computer-architecture.core.virtual-memory-hardware.tlb",
+    "file": "content/computer-architecture/virtual-memory-hardware/tlb.md",
+    "url": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/virtual-memory/index.html",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "virtual-memory-hardware: 직접canonical접근도구실패로관련절/학습동선을확정하지못했다. 다른실제공식Linux근거와구별하고없는URL로단정하지않는다.",
+      "area": "computer-architecture",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/computer-architecture.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "computer-architecture",
+    "contentKey": "computer-architecture.core.virtual-memory-hardware.virtual-physical-address",
+    "file": "content/computer-architecture/virtual-memory-hardware/virtual-physical-address.md",
+    "url": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/virtual-memory/index.html",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "virtual-memory-hardware: 직접canonical접근도구실패로관련절/학습동선을확정하지못했다. 다른실제공식Linux근거와구별하고없는URL로단정하지않는다.",
+      "area": "computer-architecture",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/computer-architecture.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "dsa",
+    "contentKey": "dsa.core.algorithm-selection.constraint-to-complexity",
+    "file": "content/dsa/algorithm-selection/constraint-to-complexity.md",
+    "url": "https://algs4.cs.princeton.edu/14analysis/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "앞선 complexity 검토에서 공식 검색으로 일부 growth/실행 환경 관련 본문은 읽었지만 canonical 전체 접근은 실패했다. 전체 recommendation의 분할 상환 절과 세 연결 Concept별 충분성은 추가 Reference 확인이 필요하다. / 직접 web 요청은403이다. 공식 검색이 반환한 growth·기본 연산 모델·cache/GC/JIT 미포함 관련 실제 문장은 읽었으나 전체 canonical 내용과 특히 recommendation의 amortized 상세 학습 경로는 미확정이다.",
+      "area": "dsa",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/dsa.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "dsa",
+    "contentKey": "dsa.core.algorithm-selection.data-shape",
+    "file": "content/dsa/algorithm-selection/data-shape.md",
+    "url": "https://algs4.cs.princeton.edu/31elementary/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "앞선 search-sort 검토의 canonical 접근 실패를 유지한다. sorted/binary-search 사실은 실제 Oracle 공식 계약과 대조했지만 이 URL의 전체 내용 확인으로 승격하지 않는다. / canonical직접접근403으로target내용/학습경로가미확정이다. 본문searchtrace와edgecases는실제검토했다.",
+      "area": "dsa",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/dsa.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "dsa",
+    "contentKey": "dsa.core.algorithm-selection.data-shape",
+    "file": "content/dsa/algorithm-selection/data-shape.md",
+    "url": "https://algs4.cs.princeton.edu/34hash/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "앞선 hashing에서 공식 검색 부분 근거와 실제 author source는 확인했지만 canonical 전체 접근 실패가 남는다. 고른 분포와 clustering 경계는 직접 대조했다. / canonical직접web접근은Internal Error로실패했다. 공식검색에실제반환된modularmapping/키편중과uniform조건관련문장은읽었지만전체target학습경로는미확정이다. 실제저자공식코드는보충으로구별한다.",
+      "area": "dsa",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/dsa.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "dsa",
+    "contentKey": "dsa.core.algorithm-selection.data-shape",
+    "file": "content/dsa/algorithm-selection/data-shape.md",
+    "url": "https://algs4.cs.princeton.edu/41graph/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "앞선 graph의 실제 접근 실패를 유지한다. 본문의 list/matrix 공간 차이는 직접 추론했으며 URL 접근 실패를 죽은 링크로 단정하지 않는다. / graph에서직접403으로확인한동일target접근근거를재사용했다. 현재BFSpath관련원문·문항은실제읽었으나원격페이지확인은아니다. / canonical직접web접근403으로전체target의학습가치는미확정이다. 원문representation/BFS/DFS/components와문항을실제검토했다.",
+      "area": "dsa",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/dsa.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "dsa",
+    "contentKey": "dsa.core.algorithm-selection.data-shape",
+    "file": "content/dsa/algorithm-selection/data-shape.md",
+    "url": "https://algs4.cs.princeton.edu/51radix/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "앞선 search-sort의 실제 접근 실패를 유지한다. 계수 정렬의 n+k/범위 공간 사실과 canonical Reference 본문 확인을 구별한다. / canonical직접접근403으로target미확정이다. 본문count/radix의표현·시간·공간조건은실제검토했다.",
+      "area": "dsa",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/dsa.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "dsa",
+    "contentKey": "dsa.core.algorithm-selection.memory-limit",
+    "file": "content/dsa/algorithm-selection/memory-limit.md",
+    "url": "https://algs4.cs.princeton.edu/14analysis/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "앞선 complexity 검토에서 공식 검색으로 일부 growth/실행 환경 관련 본문은 읽었지만 canonical 전체 접근은 실패했다. 전체 recommendation의 분할 상환 절과 세 연결 Concept별 충분성은 추가 Reference 확인이 필요하다. / 직접 web 요청은403이다. 공식 검색이 반환한 growth·기본 연산 모델·cache/GC/JIT 미포함 관련 실제 문장은 읽었으나 전체 canonical 내용과 특히 recommendation의 amortized 상세 학습 경로는 미확정이다.",
+      "area": "dsa",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/dsa.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "dsa",
+    "contentKey": "dsa.core.algorithm-selection.operation-driven-structure-choice",
+    "file": "content/dsa/algorithm-selection/operation-driven-structure-choice.md",
+    "url": "https://algs4.cs.princeton.edu/cheatsheet/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "이번 Topic에서 실제 open이 Internal Error로 실패했다. 연산별 복잡도 비교라는 relation의 방향은 적절하지만 실제 표/구현 가정의 내용 확인은 남는다. 접근 실패를 404/콘텐츠 부재로 단정하지 않는다.",
+      "area": "dsa",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/dsa.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "dsa",
+    "contentKey": "dsa.core.algorithm-selection.preprocessing-query-cost",
+    "file": "content/dsa/algorithm-selection/preprocessing-query-cost.md",
+    "url": "https://algs4.cs.princeton.edu/14analysis/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "앞선 complexity 검토에서 공식 검색으로 일부 growth/실행 환경 관련 본문은 읽었지만 canonical 전체 접근은 실패했다. 전체 recommendation의 분할 상환 절과 세 연결 Concept별 충분성은 추가 Reference 확인이 필요하다. / 직접 web 요청은403이다. 공식 검색이 반환한 growth·기본 연산 모델·cache/GC/JIT 미포함 관련 실제 문장은 읽었으나 전체 canonical 내용과 특히 recommendation의 amortized 상세 학습 경로는 미확정이다.",
+      "area": "dsa",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/dsa.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "dsa",
+    "contentKey": "dsa.core.complexity.amortized-analysis",
+    "file": "content/dsa/complexity/amortized-analysis.md",
+    "url": "https://algs4.cs.princeton.edu/14analysis/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "앞선 complexity 검토에서 공식 검색으로 일부 growth/실행 환경 관련 본문은 읽었지만 canonical 전체 접근은 실패했다. 전체 recommendation의 분할 상환 절과 세 연결 Concept별 충분성은 추가 Reference 확인이 필요하다. / 직접 web 요청은403이다. 공식 검색이 반환한 growth·기본 연산 모델·cache/GC/JIT 미포함 관련 실제 문장은 읽었으나 전체 canonical 내용과 특히 recommendation의 amortized 상세 학습 경로는 미확정이다.",
+      "area": "dsa",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/dsa.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "dsa",
+    "contentKey": "dsa.core.complexity.best-average-worst",
+    "file": "content/dsa/complexity/best-average-worst.md",
+    "url": "https://algs4.cs.princeton.edu/14analysis/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "앞선 complexity 검토에서 공식 검색으로 일부 growth/실행 환경 관련 본문은 읽었지만 canonical 전체 접근은 실패했다. 전체 recommendation의 분할 상환 절과 세 연결 Concept별 충분성은 추가 Reference 확인이 필요하다. / 직접 web 요청은403이다. 공식 검색이 반환한 growth·기본 연산 모델·cache/GC/JIT 미포함 관련 실제 문장은 읽었으나 전체 canonical 내용과 특히 recommendation의 amortized 상세 학습 경로는 미확정이다.",
+      "area": "dsa",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/dsa.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "dsa",
+    "contentKey": "dsa.core.complexity.big-o-theta-omega",
+    "file": "content/dsa/complexity/big-o-theta-omega.md",
+    "url": "https://algs4.cs.princeton.edu/14analysis/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "앞선 complexity 검토에서 공식 검색으로 일부 growth/실행 환경 관련 본문은 읽었지만 canonical 전체 접근은 실패했다. 전체 recommendation의 분할 상환 절과 세 연결 Concept별 충분성은 추가 Reference 확인이 필요하다. / 직접 web 요청은403이다. 공식 검색이 반환한 growth·기본 연산 모델·cache/GC/JIT 미포함 관련 실제 문장은 읽었으나 전체 canonical 내용과 특히 recommendation의 amortized 상세 학습 경로는 미확정이다.",
+      "area": "dsa",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/dsa.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "dsa",
+    "contentKey": "dsa.core.complexity.input-size-operation-count",
+    "file": "content/dsa/complexity/input-size-operation-count.md",
+    "url": "https://algs4.cs.princeton.edu/14analysis/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "앞선 complexity 검토에서 공식 검색으로 일부 growth/실행 환경 관련 본문은 읽었지만 canonical 전체 접근은 실패했다. 전체 recommendation의 분할 상환 절과 세 연결 Concept별 충분성은 추가 Reference 확인이 필요하다. / 직접 web 요청은403이다. 공식 검색이 반환한 growth·기본 연산 모델·cache/GC/JIT 미포함 관련 실제 문장은 읽었으나 전체 canonical 내용과 특히 recommendation의 amortized 상세 학습 경로는 미확정이다.",
+      "area": "dsa",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/dsa.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "dsa",
+    "contentKey": "dsa.core.complexity.time-space-tradeoff",
+    "file": "content/dsa/complexity/time-space-tradeoff.md",
+    "url": "https://algs4.cs.princeton.edu/14analysis/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "앞선 complexity 검토에서 공식 검색으로 일부 growth/실행 환경 관련 본문은 읽었지만 canonical 전체 접근은 실패했다. 전체 recommendation의 분할 상환 절과 세 연결 Concept별 충분성은 추가 Reference 확인이 필요하다. / 직접 web 요청은403이다. 공식 검색이 반환한 growth·기본 연산 모델·cache/GC/JIT 미포함 관련 실제 문장은 읽었으나 전체 canonical 내용과 특히 recommendation의 amortized 상세 학습 경로는 미확정이다.",
+      "area": "dsa",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/dsa.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "dsa",
+    "contentKey": "dsa.core.graph.adjacency-list-matrix",
+    "file": "content/dsa/graph/adjacency-list-matrix.md",
+    "url": "https://algs4.cs.princeton.edu/41graph/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "앞선 graph의 실제 접근 실패를 유지한다. 본문의 list/matrix 공간 차이는 직접 추론했으며 URL 접근 실패를 죽은 링크로 단정하지 않는다. / graph에서직접403으로확인한동일target접근근거를재사용했다. 현재BFSpath관련원문·문항은실제읽었으나원격페이지확인은아니다. / canonical직접web접근403으로전체target의학습가치는미확정이다. 원문representation/BFS/DFS/components와문항을실제검토했다.",
+      "area": "dsa",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/dsa.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "dsa",
+    "contentKey": "dsa.core.graph.bfs",
+    "file": "content/dsa/graph/bfs.md",
+    "url": "https://algs4.cs.princeton.edu/41graph/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "앞선 graph의 실제 접근 실패를 유지한다. 본문의 list/matrix 공간 차이는 직접 추론했으며 URL 접근 실패를 죽은 링크로 단정하지 않는다. / graph에서직접403으로확인한동일target접근근거를재사용했다. 현재BFSpath관련원문·문항은실제읽었으나원격페이지확인은아니다. / canonical직접web접근403으로전체target의학습가치는미확정이다. 원문representation/BFS/DFS/components와문항을실제검토했다.",
+      "area": "dsa",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/dsa.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "dsa",
+    "contentKey": "dsa.core.graph.connected-components",
+    "file": "content/dsa/graph/connected-components.md",
+    "url": "https://algs4.cs.princeton.edu/41graph/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "앞선 graph의 실제 접근 실패를 유지한다. 본문의 list/matrix 공간 차이는 직접 추론했으며 URL 접근 실패를 죽은 링크로 단정하지 않는다. / graph에서직접403으로확인한동일target접근근거를재사용했다. 현재BFSpath관련원문·문항은실제읽었으나원격페이지확인은아니다. / canonical직접web접근403으로전체target의학습가치는미확정이다. 원문representation/BFS/DFS/components와문항을실제검토했다.",
+      "area": "dsa",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/dsa.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "dsa",
+    "contentKey": "dsa.core.graph.cycle-detection",
+    "file": "content/dsa/graph/cycle-detection.md",
+    "url": "https://algs4.cs.princeton.edu/42digraph/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "canonical직접web접근403이다. 관련Kahn구현은저자공식source로실제읽어별도보충했으며target페이지확인으로승격하지않는다.",
+      "area": "dsa",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/dsa.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "dsa",
+    "contentKey": "dsa.core.graph.cycle-detection",
+    "file": "content/dsa/graph/cycle-detection.md",
+    "url": "https://algs4.cs.princeton.edu/41graph/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "앞선 graph의 실제 접근 실패를 유지한다. 본문의 list/matrix 공간 차이는 직접 추론했으며 URL 접근 실패를 죽은 링크로 단정하지 않는다. / graph에서직접403으로확인한동일target접근근거를재사용했다. 현재BFSpath관련원문·문항은실제읽었으나원격페이지확인은아니다. / canonical직접web접근403으로전체target의학습가치는미확정이다. 원문representation/BFS/DFS/components와문항을실제검토했다.",
+      "area": "dsa",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/dsa.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "dsa",
+    "contentKey": "dsa.core.graph.dfs",
+    "file": "content/dsa/graph/dfs.md",
+    "url": "https://algs4.cs.princeton.edu/41graph/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "앞선 graph의 실제 접근 실패를 유지한다. 본문의 list/matrix 공간 차이는 직접 추론했으며 URL 접근 실패를 죽은 링크로 단정하지 않는다. / graph에서직접403으로확인한동일target접근근거를재사용했다. 현재BFSpath관련원문·문항은실제읽었으나원격페이지확인은아니다. / canonical직접web접근403으로전체target의학습가치는미확정이다. 원문representation/BFS/DFS/components와문항을실제검토했다.",
+      "area": "dsa",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/dsa.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "dsa",
+    "contentKey": "dsa.core.graph.graph-model",
+    "file": "content/dsa/graph/graph-model.md",
+    "url": "https://algs4.cs.princeton.edu/41graph/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "앞선 graph의 실제 접근 실패를 유지한다. 본문의 list/matrix 공간 차이는 직접 추론했으며 URL 접근 실패를 죽은 링크로 단정하지 않는다. / graph에서직접403으로확인한동일target접근근거를재사용했다. 현재BFSpath관련원문·문항은실제읽었으나원격페이지확인은아니다. / canonical직접web접근403으로전체target의학습가치는미확정이다. 원문representation/BFS/DFS/components와문항을실제검토했다.",
+      "area": "dsa",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/dsa.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "dsa",
+    "contentKey": "dsa.core.graph.topological-sort",
+    "file": "content/dsa/graph/topological-sort.md",
+    "url": "https://algs4.cs.princeton.edu/42digraph/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "canonical직접web접근403이다. 관련Kahn구현은저자공식source로실제읽어별도보충했으며target페이지확인으로승격하지않는다.",
+      "area": "dsa",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/dsa.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "dsa",
+    "contentKey": "dsa.core.graph-path.bellman-ford",
+    "file": "content/dsa/graph-path/bellman-ford.md",
+    "url": "https://algs4.cs.princeton.edu/44sp/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "canonical직접web접근은Internal Error로실패했다. 관련Dijkstra는저자공식source로보충대조했지만target전체및BF/Floyd학습경로는미확정이다.",
+      "area": "dsa",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/dsa.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "dsa",
+    "contentKey": "dsa.core.graph-path.dijkstra",
+    "file": "content/dsa/graph-path/dijkstra.md",
+    "url": "https://algs4.cs.princeton.edu/44sp/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "canonical직접web접근은Internal Error로실패했다. 관련Dijkstra는저자공식source로보충대조했지만target전체및BF/Floyd학습경로는미확정이다.",
+      "area": "dsa",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/dsa.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "dsa",
+    "contentKey": "dsa.core.graph-path.floyd-warshall",
+    "file": "content/dsa/graph-path/floyd-warshall.md",
+    "url": "https://algs4.cs.princeton.edu/44sp/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "canonical직접web접근은Internal Error로실패했다. 관련Dijkstra는저자공식source로보충대조했지만target전체및BF/Floyd학습경로는미확정이다.",
+      "area": "dsa",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/dsa.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "dsa",
+    "contentKey": "dsa.core.graph-path.kruskal",
+    "file": "content/dsa/graph-path/kruskal.md",
+    "url": "https://algs4.cs.princeton.edu/43mst/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "canonical직접접근실패이다. 저자공식lazy/eagerPrim의실제관련코드·cost절은보충으로구별하며target페이지자체는미확정이다.",
+      "area": "dsa",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/dsa.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "dsa",
+    "contentKey": "dsa.core.graph-path.minimum-spanning-tree",
+    "file": "content/dsa/graph-path/minimum-spanning-tree.md",
+    "url": "https://algs4.cs.princeton.edu/43mst/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "canonical직접접근실패이다. 저자공식lazy/eagerPrim의실제관련코드·cost절은보충으로구별하며target페이지자체는미확정이다.",
+      "area": "dsa",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/dsa.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "dsa",
+    "contentKey": "dsa.core.graph-path.path-compression-union-rank",
+    "file": "content/dsa/graph-path/path-compression-union-rank.md",
+    "url": "https://algs4.cs.princeton.edu/15uf/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "canonical직접접근실패이다. 저자공식UF의실제관련절은보충으로읽었지만target전체학습경로확인으로승격하지않는다.",
+      "area": "dsa",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/dsa.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "dsa",
+    "contentKey": "dsa.core.graph-path.prim",
+    "file": "content/dsa/graph-path/prim.md",
+    "url": "https://algs4.cs.princeton.edu/43mst/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "canonical직접접근실패이다. 저자공식lazy/eagerPrim의실제관련코드·cost절은보충으로구별하며target페이지자체는미확정이다.",
+      "area": "dsa",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/dsa.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "dsa",
+    "contentKey": "dsa.core.graph-path.union-find",
+    "file": "content/dsa/graph-path/union-find.md",
+    "url": "https://algs4.cs.princeton.edu/15uf/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "canonical직접접근실패이다. 저자공식UF의실제관련절은보충으로읽었지만target전체학습경로확인으로승격하지않는다.",
+      "area": "dsa",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/dsa.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "dsa",
+    "contentKey": "dsa.core.graph-path.unweighted-shortest-path",
+    "file": "content/dsa/graph-path/unweighted-shortest-path.md",
+    "url": "https://algs4.cs.princeton.edu/41graph/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "앞선 graph의 실제 접근 실패를 유지한다. 본문의 list/matrix 공간 차이는 직접 추론했으며 URL 접근 실패를 죽은 링크로 단정하지 않는다. / graph에서직접403으로확인한동일target접근근거를재사용했다. 현재BFSpath관련원문·문항은실제읽었으나원격페이지확인은아니다. / canonical직접web접근403으로전체target의학습가치는미확정이다. 원문representation/BFS/DFS/components와문항을실제검토했다.",
+      "area": "dsa",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/dsa.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "dsa",
+    "contentKey": "dsa.core.hashing.average-worst-lookup",
+    "file": "content/dsa/hashing/average-worst-lookup.md",
+    "url": "https://algs4.cs.princeton.edu/34hash/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "앞선 hashing에서 공식 검색 부분 근거와 실제 author source는 확인했지만 canonical 전체 접근 실패가 남는다. 고른 분포와 clustering 경계는 직접 대조했다. / canonical직접web접근은Internal Error로실패했다. 공식검색에실제반환된modularmapping/키편중과uniform조건관련문장은읽었지만전체target학습경로는미확정이다. 실제저자공식코드는보충으로구별한다.",
+      "area": "dsa",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/dsa.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "dsa",
+    "contentKey": "dsa.core.hashing.bucket-mapping",
+    "file": "content/dsa/hashing/bucket-mapping.md",
+    "url": "https://algs4.cs.princeton.edu/34hash/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "앞선 hashing에서 공식 검색 부분 근거와 실제 author source는 확인했지만 canonical 전체 접근 실패가 남는다. 고른 분포와 clustering 경계는 직접 대조했다. / canonical직접web접근은Internal Error로실패했다. 공식검색에실제반환된modularmapping/키편중과uniform조건관련문장은읽었지만전체target학습경로는미확정이다. 실제저자공식코드는보충으로구별한다.",
+      "area": "dsa",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/dsa.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "dsa",
+    "contentKey": "dsa.core.hashing.collision",
+    "file": "content/dsa/hashing/collision.md",
+    "url": "https://algs4.cs.princeton.edu/34hash/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "앞선 hashing에서 공식 검색 부분 근거와 실제 author source는 확인했지만 canonical 전체 접근 실패가 남는다. 고른 분포와 clustering 경계는 직접 대조했다. / canonical직접web접근은Internal Error로실패했다. 공식검색에실제반환된modularmapping/키편중과uniform조건관련문장은읽었지만전체target학습경로는미확정이다. 실제저자공식코드는보충으로구별한다.",
+      "area": "dsa",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/dsa.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "dsa",
+    "contentKey": "dsa.core.hashing.hash-function",
+    "file": "content/dsa/hashing/hash-function.md",
+    "url": "https://algs4.cs.princeton.edu/34hash/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "앞선 hashing에서 공식 검색 부분 근거와 실제 author source는 확인했지만 canonical 전체 접근 실패가 남는다. 고른 분포와 clustering 경계는 직접 대조했다. / canonical직접web접근은Internal Error로실패했다. 공식검색에실제반환된modularmapping/키편중과uniform조건관련문장은읽었지만전체target학습경로는미확정이다. 실제저자공식코드는보충으로구별한다.",
+      "area": "dsa",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/dsa.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "dsa",
+    "contentKey": "dsa.core.hashing.load-factor",
+    "file": "content/dsa/hashing/load-factor.md",
+    "url": "https://algs4.cs.princeton.edu/34hash/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "앞선 hashing에서 공식 검색 부분 근거와 실제 author source는 확인했지만 canonical 전체 접근 실패가 남는다. 고른 분포와 clustering 경계는 직접 대조했다. / canonical직접web접근은Internal Error로실패했다. 공식검색에실제반환된modularmapping/키편중과uniform조건관련문장은읽었지만전체target학습경로는미확정이다. 실제저자공식코드는보충으로구별한다.",
+      "area": "dsa",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/dsa.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "dsa",
+    "contentKey": "dsa.core.hashing.open-addressing",
+    "file": "content/dsa/hashing/open-addressing.md",
+    "url": "https://algs4.cs.princeton.edu/34hash/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "앞선 hashing에서 공식 검색 부분 근거와 실제 author source는 확인했지만 canonical 전체 접근 실패가 남는다. 고른 분포와 clustering 경계는 직접 대조했다. / canonical직접web접근은Internal Error로실패했다. 공식검색에실제반환된modularmapping/키편중과uniform조건관련문장은읽었지만전체target학습경로는미확정이다. 실제저자공식코드는보충으로구별한다.",
+      "area": "dsa",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/dsa.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "dsa",
+    "contentKey": "dsa.core.hashing.resize",
+    "file": "content/dsa/hashing/resize.md",
+    "url": "https://algs4.cs.princeton.edu/34hash/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "앞선 hashing에서 공식 검색 부분 근거와 실제 author source는 확인했지만 canonical 전체 접근 실패가 남는다. 고른 분포와 clustering 경계는 직접 대조했다. / canonical직접web접근은Internal Error로실패했다. 공식검색에실제반환된modularmapping/키편중과uniform조건관련문장은읽었지만전체target학습경로는미확정이다. 실제저자공식코드는보충으로구별한다.",
+      "area": "dsa",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/dsa.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "dsa",
+    "contentKey": "dsa.core.hashing.separate-chaining",
+    "file": "content/dsa/hashing/separate-chaining.md",
+    "url": "https://algs4.cs.princeton.edu/34hash/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "앞선 hashing에서 공식 검색 부분 근거와 실제 author source는 확인했지만 canonical 전체 접근 실패가 남는다. 고른 분포와 clustering 경계는 직접 대조했다. / canonical직접web접근은Internal Error로실패했다. 공식검색에실제반환된modularmapping/키편중과uniform조건관련문장은읽었지만전체target학습경로는미확정이다. 실제저자공식코드는보충으로구별한다.",
+      "area": "dsa",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/dsa.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "dsa",
+    "contentKey": "dsa.core.recursion-backtracking.divide-and-conquer",
+    "file": "content/dsa/recursion-backtracking/divide-and-conquer.md",
+    "url": "https://algs4.cs.princeton.edu/22mergesort/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "search-sort에서실제403으로확인한동일target접근근거를재사용했다. 본문frame·divide·recurrence는직접검토했고Cornell관련절을보충대조했지만canonical페이지확인은아니다. / canonical직접접근403으로target미확정이다. 원문decisiontree·merge의수학/trace를검토했으나원격학습가치확인이아니다.",
+      "area": "dsa",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/dsa.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "dsa",
+    "contentKey": "dsa.core.recursion-backtracking.recurrence",
+    "file": "content/dsa/recursion-backtracking/recurrence.md",
+    "url": "https://algs4.cs.princeton.edu/22mergesort/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "search-sort에서실제403으로확인한동일target접근근거를재사용했다. 본문frame·divide·recurrence는직접검토했고Cornell관련절을보충대조했지만canonical페이지확인은아니다. / canonical직접접근403으로target미확정이다. 원문decisiontree·merge의수학/trace를검토했으나원격학습가치확인이아니다.",
+      "area": "dsa",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/dsa.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "dsa",
+    "contentKey": "dsa.core.recursion-backtracking.recursion-call-state",
+    "file": "content/dsa/recursion-backtracking/recursion-call-state.md",
+    "url": "https://algs4.cs.princeton.edu/22mergesort/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "search-sort에서실제403으로확인한동일target접근근거를재사용했다. 본문frame·divide·recurrence는직접검토했고Cornell관련절을보충대조했지만canonical페이지확인은아니다. / canonical직접접근403으로target미확정이다. 원문decisiontree·merge의수학/trace를검토했으나원격학습가치확인이아니다.",
+      "area": "dsa",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/dsa.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "dsa",
+    "contentKey": "dsa.core.search-sort.binary-search-boundary",
+    "file": "content/dsa/search-sort/binary-search-boundary.md",
+    "url": "https://algs4.cs.princeton.edu/31elementary/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "앞선 search-sort 검토의 canonical 접근 실패를 유지한다. sorted/binary-search 사실은 실제 Oracle 공식 계약과 대조했지만 이 URL의 전체 내용 확인으로 승격하지 않는다. / canonical직접접근403으로target내용/학습경로가미확정이다. 본문searchtrace와edgecases는실제검토했다.",
+      "area": "dsa",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/dsa.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "dsa",
+    "contentKey": "dsa.core.search-sort.binary-search",
+    "file": "content/dsa/search-sort/binary-search.md",
+    "url": "https://algs4.cs.princeton.edu/31elementary/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "앞선 search-sort 검토의 canonical 접근 실패를 유지한다. sorted/binary-search 사실은 실제 Oracle 공식 계약과 대조했지만 이 URL의 전체 내용 확인으로 승격하지 않는다. / canonical직접접근403으로target내용/학습경로가미확정이다. 본문searchtrace와edgecases는실제검토했다.",
+      "area": "dsa",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/dsa.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "dsa",
+    "contentKey": "dsa.core.search-sort.comparison-sort-lower-bound",
+    "file": "content/dsa/search-sort/comparison-sort-lower-bound.md",
+    "url": "https://algs4.cs.princeton.edu/22mergesort/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "search-sort에서실제403으로확인한동일target접근근거를재사용했다. 본문frame·divide·recurrence는직접검토했고Cornell관련절을보충대조했지만canonical페이지확인은아니다. / canonical직접접근403으로target미확정이다. 원문decisiontree·merge의수학/trace를검토했으나원격학습가치확인이아니다.",
+      "area": "dsa",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/dsa.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "dsa",
+    "contentKey": "dsa.core.search-sort.counting-sort",
+    "file": "content/dsa/search-sort/counting-sort.md",
+    "url": "https://algs4.cs.princeton.edu/51radix/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "앞선 search-sort의 실제 접근 실패를 유지한다. 계수 정렬의 n+k/범위 공간 사실과 canonical Reference 본문 확인을 구별한다. / canonical직접접근403으로target미확정이다. 본문count/radix의표현·시간·공간조건은실제검토했다.",
+      "area": "dsa",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/dsa.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "dsa",
+    "contentKey": "dsa.core.search-sort.heap-sort",
+    "file": "content/dsa/search-sort/heap-sort.md",
+    "url": "https://algs4.cs.princeton.edu/24pq/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "trees에서직접403으로확인한동일target접근근거를재사용했다. 본문heap-prefix/suffix는실제검토했지만페이지자체확인으로승격하지않는다. / canonical직접접근403으로target내용미확정이다. 본문binaryheaptrace와비용합을검토했지만페이지access나모든PQ구현검증으로승격하지않는다.",
+      "area": "dsa",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/dsa.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "dsa",
+    "contentKey": "dsa.core.search-sort.linear-search",
+    "file": "content/dsa/search-sort/linear-search.md",
+    "url": "https://algs4.cs.princeton.edu/31elementary/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "앞선 search-sort 검토의 canonical 접근 실패를 유지한다. sorted/binary-search 사실은 실제 Oracle 공식 계약과 대조했지만 이 URL의 전체 내용 확인으로 승격하지 않는다. / canonical직접접근403으로target내용/학습경로가미확정이다. 본문searchtrace와edgecases는실제검토했다.",
+      "area": "dsa",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/dsa.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "dsa",
+    "contentKey": "dsa.core.search-sort.merge-sort",
+    "file": "content/dsa/search-sort/merge-sort.md",
+    "url": "https://algs4.cs.princeton.edu/22mergesort/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "search-sort에서실제403으로확인한동일target접근근거를재사용했다. 본문frame·divide·recurrence는직접검토했고Cornell관련절을보충대조했지만canonical페이지확인은아니다. / canonical직접접근403으로target미확정이다. 원문decisiontree·merge의수학/trace를검토했으나원격학습가치확인이아니다.",
+      "area": "dsa",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/dsa.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "dsa",
+    "contentKey": "dsa.core.search-sort.partition",
+    "file": "content/dsa/search-sort/partition.md",
+    "url": "https://algs4.cs.princeton.edu/23quicksort/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "canonical직접접근403으로target미확정이다. 본문대표partition·편향·중복조건을검토했으나원격전체풀이검증이아니다.",
+      "area": "dsa",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/dsa.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "dsa",
+    "contentKey": "dsa.core.search-sort.quicksort",
+    "file": "content/dsa/search-sort/quicksort.md",
+    "url": "https://algs4.cs.princeton.edu/23quicksort/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "canonical직접접근403으로target미확정이다. 본문대표partition·편향·중복조건을검토했으나원격전체풀이검증이아니다.",
+      "area": "dsa",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/dsa.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "dsa",
+    "contentKey": "dsa.core.search-sort.radix-sort",
+    "file": "content/dsa/search-sort/radix-sort.md",
+    "url": "https://algs4.cs.princeton.edu/51radix/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "앞선 search-sort의 실제 접근 실패를 유지한다. 계수 정렬의 n+k/범위 공간 사실과 canonical Reference 본문 확인을 구별한다. / canonical직접접근403으로target미확정이다. 본문count/radix의표현·시간·공간조건은실제검토했다.",
+      "area": "dsa",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/dsa.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "dsa",
+    "contentKey": "dsa.core.search-sort.stable-sort",
+    "file": "content/dsa/search-sort/stable-sort.md",
+    "url": "https://algs4.cs.princeton.edu/25applications/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "canonical직접접근403이다. stability는실제UTS10관련절로보충대조했지만target을확인처리하지않는다.",
+      "area": "dsa",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/dsa.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "dsa",
+    "contentKey": "dsa.core.sequential.array-vs-linked",
+    "file": "content/dsa/sequential/array-vs-linked.md",
+    "url": "https://algs4.cs.princeton.edu/13stacks/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "canonical 직접 요청은 Internal Error, index.php 및 DoublyLinkedList 예제 직접 요청은403이었다. 공식 검색에 실제 반환된 array/resizing full시double/quarter시halve와 recursive linked-node 관련 설명을 읽었지만 전체 페이지 및 sentinel 구현 학습 경로는 미확정이다. / sequential에서확인한canonical/index.php직접접근실패근거를재사용했다. 공식검색반환의실제LIFO/FIFO 설명과 stock-price index-stack exercise 항목은읽었지만전체페이지나모든연습풀이를확인처리하지않는다.",
+      "area": "dsa",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/dsa.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "dsa",
+    "contentKey": "dsa.core.sequential.array",
+    "file": "content/dsa/sequential/array.md",
+    "url": "https://algs4.cs.princeton.edu/13stacks/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "canonical 직접 요청은 Internal Error, index.php 및 DoublyLinkedList 예제 직접 요청은403이었다. 공식 검색에 실제 반환된 array/resizing full시double/quarter시halve와 recursive linked-node 관련 설명을 읽었지만 전체 페이지 및 sentinel 구현 학습 경로는 미확정이다. / sequential에서확인한canonical/index.php직접접근실패근거를재사용했다. 공식검색반환의실제LIFO/FIFO 설명과 stock-price index-stack exercise 항목은읽었지만전체페이지나모든연습풀이를확인처리하지않는다.",
+      "area": "dsa",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/dsa.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "dsa",
+    "contentKey": "dsa.core.sequential.doubly-linked-list",
+    "file": "content/dsa/sequential/doubly-linked-list.md",
+    "url": "https://algs4.cs.princeton.edu/13stacks/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "canonical 직접 요청은 Internal Error, index.php 및 DoublyLinkedList 예제 직접 요청은403이었다. 공식 검색에 실제 반환된 array/resizing full시double/quarter시halve와 recursive linked-node 관련 설명을 읽었지만 전체 페이지 및 sentinel 구현 학습 경로는 미확정이다. / sequential에서확인한canonical/index.php직접접근실패근거를재사용했다. 공식검색반환의실제LIFO/FIFO 설명과 stock-price index-stack exercise 항목은읽었지만전체페이지나모든연습풀이를확인처리하지않는다.",
+      "area": "dsa",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/dsa.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "dsa",
+    "contentKey": "dsa.core.sequential.dynamic-array",
+    "file": "content/dsa/sequential/dynamic-array.md",
+    "url": "https://algs4.cs.princeton.edu/13stacks/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "canonical 직접 요청은 Internal Error, index.php 및 DoublyLinkedList 예제 직접 요청은403이었다. 공식 검색에 실제 반환된 array/resizing full시double/quarter시halve와 recursive linked-node 관련 설명을 읽었지만 전체 페이지 및 sentinel 구현 학습 경로는 미확정이다. / sequential에서확인한canonical/index.php직접접근실패근거를재사용했다. 공식검색반환의실제LIFO/FIFO 설명과 stock-price index-stack exercise 항목은읽었지만전체페이지나모든연습풀이를확인처리하지않는다.",
+      "area": "dsa",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/dsa.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "dsa",
+    "contentKey": "dsa.core.sequential.singly-linked-list",
+    "file": "content/dsa/sequential/singly-linked-list.md",
+    "url": "https://algs4.cs.princeton.edu/13stacks/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "canonical 직접 요청은 Internal Error, index.php 및 DoublyLinkedList 예제 직접 요청은403이었다. 공식 검색에 실제 반환된 array/resizing full시double/quarter시halve와 recursive linked-node 관련 설명을 읽었지만 전체 페이지 및 sentinel 구현 학습 경로는 미확정이다. / sequential에서확인한canonical/index.php직접접근실패근거를재사용했다. 공식검색반환의실제LIFO/FIFO 설명과 stock-price index-stack exercise 항목은읽었지만전체페이지나모든연습풀이를확인처리하지않는다.",
+      "area": "dsa",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/dsa.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "dsa",
+    "contentKey": "dsa.core.stack-queue-deque.circular-queue",
+    "file": "content/dsa/stack-queue-deque/circular-queue.md",
+    "url": "https://algs4.cs.princeton.edu/13stacks/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "canonical 직접 요청은 Internal Error, index.php 및 DoublyLinkedList 예제 직접 요청은403이었다. 공식 검색에 실제 반환된 array/resizing full시double/quarter시halve와 recursive linked-node 관련 설명을 읽었지만 전체 페이지 및 sentinel 구현 학습 경로는 미확정이다. / sequential에서확인한canonical/index.php직접접근실패근거를재사용했다. 공식검색반환의실제LIFO/FIFO 설명과 stock-price index-stack exercise 항목은읽었지만전체페이지나모든연습풀이를확인처리하지않는다.",
+      "area": "dsa",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/dsa.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "dsa",
+    "contentKey": "dsa.core.stack-queue-deque.deque",
+    "file": "content/dsa/stack-queue-deque/deque.md",
+    "url": "https://algs4.cs.princeton.edu/13stacks/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "canonical 직접 요청은 Internal Error, index.php 및 DoublyLinkedList 예제 직접 요청은403이었다. 공식 검색에 실제 반환된 array/resizing full시double/quarter시halve와 recursive linked-node 관련 설명을 읽었지만 전체 페이지 및 sentinel 구현 학습 경로는 미확정이다. / sequential에서확인한canonical/index.php직접접근실패근거를재사용했다. 공식검색반환의실제LIFO/FIFO 설명과 stock-price index-stack exercise 항목은읽었지만전체페이지나모든연습풀이를확인처리하지않는다.",
+      "area": "dsa",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/dsa.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "dsa",
+    "contentKey": "dsa.core.stack-queue-deque.monotonic-stack-queue",
+    "file": "content/dsa/stack-queue-deque/monotonic-stack-queue.md",
+    "url": "https://algs4.cs.princeton.edu/13stacks/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "canonical 직접 요청은 Internal Error, index.php 및 DoublyLinkedList 예제 직접 요청은403이었다. 공식 검색에 실제 반환된 array/resizing full시double/quarter시halve와 recursive linked-node 관련 설명을 읽었지만 전체 페이지 및 sentinel 구현 학습 경로는 미확정이다. / sequential에서확인한canonical/index.php직접접근실패근거를재사용했다. 공식검색반환의실제LIFO/FIFO 설명과 stock-price index-stack exercise 항목은읽었지만전체페이지나모든연습풀이를확인처리하지않는다.",
+      "area": "dsa",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/dsa.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "dsa",
+    "contentKey": "dsa.core.stack-queue-deque.queue",
+    "file": "content/dsa/stack-queue-deque/queue.md",
+    "url": "https://algs4.cs.princeton.edu/13stacks/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "canonical 직접 요청은 Internal Error, index.php 및 DoublyLinkedList 예제 직접 요청은403이었다. 공식 검색에 실제 반환된 array/resizing full시double/quarter시halve와 recursive linked-node 관련 설명을 읽었지만 전체 페이지 및 sentinel 구현 학습 경로는 미확정이다. / sequential에서확인한canonical/index.php직접접근실패근거를재사용했다. 공식검색반환의실제LIFO/FIFO 설명과 stock-price index-stack exercise 항목은읽었지만전체페이지나모든연습풀이를확인처리하지않는다.",
+      "area": "dsa",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/dsa.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "dsa",
+    "contentKey": "dsa.core.stack-queue-deque.stack",
+    "file": "content/dsa/stack-queue-deque/stack.md",
+    "url": "https://algs4.cs.princeton.edu/13stacks/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "canonical 직접 요청은 Internal Error, index.php 및 DoublyLinkedList 예제 직접 요청은403이었다. 공식 검색에 실제 반환된 array/resizing full시double/quarter시halve와 recursive linked-node 관련 설명을 읽었지만 전체 페이지 및 sentinel 구현 학습 경로는 미확정이다. / sequential에서확인한canonical/index.php직접접근실패근거를재사용했다. 공식검색반환의실제LIFO/FIFO 설명과 stock-price index-stack exercise 항목은읽었지만전체페이지나모든연습풀이를확인처리하지않는다.",
+      "area": "dsa",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/dsa.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "dsa",
+    "contentKey": "dsa.core.trees.balanced-tree-motivation",
+    "file": "content/dsa/trees/balanced-tree-motivation.md",
+    "url": "https://algs4.cs.princeton.edu/33balanced/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "canonical직접접근403이다. 본문대표rotation/높이설명을검토했지만target의전체AVL/RB학습범위를확인했다고하지않는다.",
+      "area": "dsa",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/dsa.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "dsa",
+    "contentKey": "dsa.core.trees.binary-search-tree",
+    "file": "content/dsa/trees/binary-search-tree.md",
+    "url": "https://algs4.cs.princeton.edu/32bst/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "canonical직접web접근403으로전체target내용/학습경로를확인못했다. 본문tree및문항trace를실제로읽고추론했지만Reference검증을대신하지않는다.",
+      "area": "dsa",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/dsa.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "dsa",
+    "contentKey": "dsa.core.trees.binary-tree-traversal",
+    "file": "content/dsa/trees/binary-tree-traversal.md",
+    "url": "https://algs4.cs.princeton.edu/32bst/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "canonical직접web접근403으로전체target내용/학습경로를확인못했다. 본문tree및문항trace를실제로읽고추론했지만Reference검증을대신하지않는다.",
+      "area": "dsa",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/dsa.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "dsa",
+    "contentKey": "dsa.core.trees.heap",
+    "file": "content/dsa/trees/heap.md",
+    "url": "https://algs4.cs.princeton.edu/24pq/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "trees에서직접403으로확인한동일target접근근거를재사용했다. 본문heap-prefix/suffix는실제검토했지만페이지자체확인으로승격하지않는다. / canonical직접접근403으로target내용미확정이다. 본문binaryheaptrace와비용합을검토했지만페이지access나모든PQ구현검증으로승격하지않는다.",
+      "area": "dsa",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/dsa.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "dsa",
+    "contentKey": "dsa.core.trees.priority-queue",
+    "file": "content/dsa/trees/priority-queue.md",
+    "url": "https://algs4.cs.princeton.edu/24pq/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "trees에서직접403으로확인한동일target접근근거를재사용했다. 본문heap-prefix/suffix는실제검토했지만페이지자체확인으로승격하지않는다. / canonical직접접근403으로target내용미확정이다. 본문binaryheaptrace와비용합을검토했지만페이지access나모든PQ구현검증으로승격하지않는다.",
+      "area": "dsa",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/dsa.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "dsa",
+    "contentKey": "dsa.core.trees.tree-rotation",
+    "file": "content/dsa/trees/tree-rotation.md",
+    "url": "https://algs4.cs.princeton.edu/33balanced/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "canonical직접접근403이다. 본문대표rotation/높이설명을검토했지만target의전체AVL/RB학습범위를확인했다고하지않는다.",
+      "area": "dsa",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/dsa.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "dsa",
+    "contentKey": "dsa.core.trees.tree-terminology",
+    "file": "content/dsa/trees/tree-terminology.md",
+    "url": "https://algs4.cs.princeton.edu/32bst/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "canonical직접web접근403으로전체target내용/학습경로를확인못했다. 본문tree및문항trace를실제로읽고추론했지만Reference검증을대신하지않는다.",
+      "area": "dsa",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/dsa.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "dsa",
+    "contentKey": "dsa.core.trees.trie",
+    "file": "content/dsa/trees/trie.md",
+    "url": "https://algs4.cs.princeton.edu/52trie/",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "canonical직접접근403으로target내용미확정이다. 본문sharedpath·terminal·삭제·표현절충을실제검토했지만원격페이지학습가치는추가확인이필요하다.",
+      "area": "dsa",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/dsa.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "network-http",
+    "contentKey": "network-http.core.http-cache.304",
+    "file": "content/network-http/http-cache/304.md",
+    "url": "https://www.rfc-editor.org/rfc/rfc9110",
+    "verification": {
+      "status": "CURRENT_VERIFIED",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "http-cache: 동일 IETF RFC §8.8.2/8.8.3/13.1/13.2/15.4.5의 필요한 validator/precondition/304 조항을 읽었다. canonical URL 접근 문제와 의미 확인을 분리한다. | http-message: 공식Datatracker동일본문에서실제 §3.2 representation, §6.4.1 no/zero content, §7.2 Host, §8.1/8.3/8.3.1 type/coding·sniffing, §12.4.1/12.4.2/12.5.1 negotiationmayignore/quality/specificity, §12.5.5 Varyexpandscachekey, §15.3.3 202를읽었다. canonicalURL은앞선접근오류로referenceAccess에별도미확인표시한다. | http-methods: 공식Datatracker동일본문에서실제 §9.2.1safe/log/adcharge/unsafequery·§9.2.2idempotent/부수효과/response전retry, §9.3.1/2 GET/HEADcontent/header예외, §9.3.3/4POST대PUTintent·create/replace/storagehidden·§9.3.5DELETEassociation/physicalstorage/202~204시점을읽었다. 본문의methodsemantic대serverimplementation조건에대조했다. | http-state-intermediary: 동일 IETF §3.7의 proxy/gateway/tunnel과 §9.3.6 CONNECTblindforwarding을 실제 읽고 앞method/status/TLS 관련 확인을 연결했다. | http-status: 해당 status·Retry-After·인증 challenge 절의 의미를 IETF 동일 RFC에서 직접 읽었다. §15/15.3.1/2/3/5, §15.4.2/3/4/8/9, §15.5.1/2/4/5/10/13/16/21, §15.6.1/3/4/5, §10.2.3·11.6.1; 문서 전체를 검증했다는 뜻은 아니다. | request-journey: canonicalURL은웹도구오류였으나공식Datatracker동일RFC에서실제 §3.7 connectionchain/proxy/gateway/tunnel와§7.1/7.2targetauthority·Host/§7.3cache/proxy/originrouting을읽었다. 상세H2/H3필드전체검증은아니다.",
+      "area": "network-http",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/network-http.json",
+      "qualityIssueIds": []
+    },
+    "accessVerification": {
+      "status": "NEEDS_REVIEW",
+      "basis": "앞선 Topic에서 canonical URL 도구 접근 실패; 동일 공식 RFC로 의미를 대조했다. broken link로 확정하지 않는다."
+    }
+  },
+  {
+    "area": "network-http",
+    "contentKey": "network-http.core.http-cache.etag",
+    "file": "content/network-http/http-cache/etag.md",
+    "url": "https://www.rfc-editor.org/rfc/rfc9110",
+    "verification": {
+      "status": "CURRENT_VERIFIED",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "http-cache: 동일 IETF RFC §8.8.2/8.8.3/13.1/13.2/15.4.5의 필요한 validator/precondition/304 조항을 읽었다. canonical URL 접근 문제와 의미 확인을 분리한다. | http-message: 공식Datatracker동일본문에서실제 §3.2 representation, §6.4.1 no/zero content, §7.2 Host, §8.1/8.3/8.3.1 type/coding·sniffing, §12.4.1/12.4.2/12.5.1 negotiationmayignore/quality/specificity, §12.5.5 Varyexpandscachekey, §15.3.3 202를읽었다. canonicalURL은앞선접근오류로referenceAccess에별도미확인표시한다. | http-methods: 공식Datatracker동일본문에서실제 §9.2.1safe/log/adcharge/unsafequery·§9.2.2idempotent/부수효과/response전retry, §9.3.1/2 GET/HEADcontent/header예외, §9.3.3/4POST대PUTintent·create/replace/storagehidden·§9.3.5DELETEassociation/physicalstorage/202~204시점을읽었다. 본문의methodsemantic대serverimplementation조건에대조했다. | http-state-intermediary: 동일 IETF §3.7의 proxy/gateway/tunnel과 §9.3.6 CONNECTblindforwarding을 실제 읽고 앞method/status/TLS 관련 확인을 연결했다. | http-status: 해당 status·Retry-After·인증 challenge 절의 의미를 IETF 동일 RFC에서 직접 읽었다. §15/15.3.1/2/3/5, §15.4.2/3/4/8/9, §15.5.1/2/4/5/10/13/16/21, §15.6.1/3/4/5, §10.2.3·11.6.1; 문서 전체를 검증했다는 뜻은 아니다. | request-journey: canonicalURL은웹도구오류였으나공식Datatracker동일RFC에서실제 §3.7 connectionchain/proxy/gateway/tunnel와§7.1/7.2targetauthority·Host/§7.3cache/proxy/originrouting을읽었다. 상세H2/H3필드전체검증은아니다.",
+      "area": "network-http",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/network-http.json",
+      "qualityIssueIds": []
+    },
+    "accessVerification": {
+      "status": "NEEDS_REVIEW",
+      "basis": "앞선 Topic에서 canonical URL 도구 접근 실패; 동일 공식 RFC로 의미를 대조했다. broken link로 확정하지 않는다."
+    }
+  },
+  {
+    "area": "network-http",
+    "contentKey": "network-http.core.http-cache.if-modified-since",
+    "file": "content/network-http/http-cache/if-modified-since.md",
+    "url": "https://www.rfc-editor.org/rfc/rfc9110",
+    "verification": {
+      "status": "CURRENT_VERIFIED",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "http-cache: 동일 IETF RFC §8.8.2/8.8.3/13.1/13.2/15.4.5의 필요한 validator/precondition/304 조항을 읽었다. canonical URL 접근 문제와 의미 확인을 분리한다. | http-message: 공식Datatracker동일본문에서실제 §3.2 representation, §6.4.1 no/zero content, §7.2 Host, §8.1/8.3/8.3.1 type/coding·sniffing, §12.4.1/12.4.2/12.5.1 negotiationmayignore/quality/specificity, §12.5.5 Varyexpandscachekey, §15.3.3 202를읽었다. canonicalURL은앞선접근오류로referenceAccess에별도미확인표시한다. | http-methods: 공식Datatracker동일본문에서실제 §9.2.1safe/log/adcharge/unsafequery·§9.2.2idempotent/부수효과/response전retry, §9.3.1/2 GET/HEADcontent/header예외, §9.3.3/4POST대PUTintent·create/replace/storagehidden·§9.3.5DELETEassociation/physicalstorage/202~204시점을읽었다. 본문의methodsemantic대serverimplementation조건에대조했다. | http-state-intermediary: 동일 IETF §3.7의 proxy/gateway/tunnel과 §9.3.6 CONNECTblindforwarding을 실제 읽고 앞method/status/TLS 관련 확인을 연결했다. | http-status: 해당 status·Retry-After·인증 challenge 절의 의미를 IETF 동일 RFC에서 직접 읽었다. §15/15.3.1/2/3/5, §15.4.2/3/4/8/9, §15.5.1/2/4/5/10/13/16/21, §15.6.1/3/4/5, §10.2.3·11.6.1; 문서 전체를 검증했다는 뜻은 아니다. | request-journey: canonicalURL은웹도구오류였으나공식Datatracker동일RFC에서실제 §3.7 connectionchain/proxy/gateway/tunnel와§7.1/7.2targetauthority·Host/§7.3cache/proxy/originrouting을읽었다. 상세H2/H3필드전체검증은아니다.",
+      "area": "network-http",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/network-http.json",
+      "qualityIssueIds": []
+    },
+    "accessVerification": {
+      "status": "NEEDS_REVIEW",
+      "basis": "앞선 Topic에서 canonical URL 도구 접근 실패; 동일 공식 RFC로 의미를 대조했다. broken link로 확정하지 않는다."
+    }
+  },
+  {
+    "area": "network-http",
+    "contentKey": "network-http.core.http-cache.if-none-match",
+    "file": "content/network-http/http-cache/if-none-match.md",
+    "url": "https://www.rfc-editor.org/rfc/rfc9110",
+    "verification": {
+      "status": "CURRENT_VERIFIED",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "http-cache: 동일 IETF RFC §8.8.2/8.8.3/13.1/13.2/15.4.5의 필요한 validator/precondition/304 조항을 읽었다. canonical URL 접근 문제와 의미 확인을 분리한다. | http-message: 공식Datatracker동일본문에서실제 §3.2 representation, §6.4.1 no/zero content, §7.2 Host, §8.1/8.3/8.3.1 type/coding·sniffing, §12.4.1/12.4.2/12.5.1 negotiationmayignore/quality/specificity, §12.5.5 Varyexpandscachekey, §15.3.3 202를읽었다. canonicalURL은앞선접근오류로referenceAccess에별도미확인표시한다. | http-methods: 공식Datatracker동일본문에서실제 §9.2.1safe/log/adcharge/unsafequery·§9.2.2idempotent/부수효과/response전retry, §9.3.1/2 GET/HEADcontent/header예외, §9.3.3/4POST대PUTintent·create/replace/storagehidden·§9.3.5DELETEassociation/physicalstorage/202~204시점을읽었다. 본문의methodsemantic대serverimplementation조건에대조했다. | http-state-intermediary: 동일 IETF §3.7의 proxy/gateway/tunnel과 §9.3.6 CONNECTblindforwarding을 실제 읽고 앞method/status/TLS 관련 확인을 연결했다. | http-status: 해당 status·Retry-After·인증 challenge 절의 의미를 IETF 동일 RFC에서 직접 읽었다. §15/15.3.1/2/3/5, §15.4.2/3/4/8/9, §15.5.1/2/4/5/10/13/16/21, §15.6.1/3/4/5, §10.2.3·11.6.1; 문서 전체를 검증했다는 뜻은 아니다. | request-journey: canonicalURL은웹도구오류였으나공식Datatracker동일RFC에서실제 §3.7 connectionchain/proxy/gateway/tunnel와§7.1/7.2targetauthority·Host/§7.3cache/proxy/originrouting을읽었다. 상세H2/H3필드전체검증은아니다.",
+      "area": "network-http",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/network-http.json",
+      "qualityIssueIds": []
+    },
+    "accessVerification": {
+      "status": "NEEDS_REVIEW",
+      "basis": "앞선 Topic에서 canonical URL 도구 접근 실패; 동일 공식 RFC로 의미를 대조했다. broken link로 확정하지 않는다."
+    }
+  },
+  {
+    "area": "network-http",
+    "contentKey": "network-http.core.http-cache.intermediary-cache",
+    "file": "content/network-http/http-cache/intermediary-cache.md",
+    "url": "https://tech.kakao.com/posts/345",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "http-cache: 접근 응답에서 제목·작성자·navigation만 보이고 article body가 노출되지 않았다. 본문의 Wcache 설계·relationNote·학습 가치는 확인하지 못했다. 404 또는 부정확한 글로 판정하지 않는다.",
+      "area": "network-http",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/network-http.json",
+      "qualityIssueIds": []
+    },
+    "accessVerification": {
+      "status": "NEEDS_REVIEW",
+      "basis": "제목은 맞지만 JS article body가 도구 결과에 없으므로 실제 학습 가치 확인을 남긴다."
+    }
+  },
+  {
+    "area": "network-http",
+    "contentKey": "network-http.core.http-cache.last-modified",
+    "file": "content/network-http/http-cache/last-modified.md",
+    "url": "https://www.rfc-editor.org/rfc/rfc9110",
+    "verification": {
+      "status": "CURRENT_VERIFIED",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "http-cache: 동일 IETF RFC §8.8.2/8.8.3/13.1/13.2/15.4.5의 필요한 validator/precondition/304 조항을 읽었다. canonical URL 접근 문제와 의미 확인을 분리한다. | http-message: 공식Datatracker동일본문에서실제 §3.2 representation, §6.4.1 no/zero content, §7.2 Host, §8.1/8.3/8.3.1 type/coding·sniffing, §12.4.1/12.4.2/12.5.1 negotiationmayignore/quality/specificity, §12.5.5 Varyexpandscachekey, §15.3.3 202를읽었다. canonicalURL은앞선접근오류로referenceAccess에별도미확인표시한다. | http-methods: 공식Datatracker동일본문에서실제 §9.2.1safe/log/adcharge/unsafequery·§9.2.2idempotent/부수효과/response전retry, §9.3.1/2 GET/HEADcontent/header예외, §9.3.3/4POST대PUTintent·create/replace/storagehidden·§9.3.5DELETEassociation/physicalstorage/202~204시점을읽었다. 본문의methodsemantic대serverimplementation조건에대조했다. | http-state-intermediary: 동일 IETF §3.7의 proxy/gateway/tunnel과 §9.3.6 CONNECTblindforwarding을 실제 읽고 앞method/status/TLS 관련 확인을 연결했다. | http-status: 해당 status·Retry-After·인증 challenge 절의 의미를 IETF 동일 RFC에서 직접 읽었다. §15/15.3.1/2/3/5, §15.4.2/3/4/8/9, §15.5.1/2/4/5/10/13/16/21, §15.6.1/3/4/5, §10.2.3·11.6.1; 문서 전체를 검증했다는 뜻은 아니다. | request-journey: canonicalURL은웹도구오류였으나공식Datatracker동일RFC에서실제 §3.7 connectionchain/proxy/gateway/tunnel와§7.1/7.2targetauthority·Host/§7.3cache/proxy/originrouting을읽었다. 상세H2/H3필드전체검증은아니다.",
+      "area": "network-http",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/network-http.json",
+      "qualityIssueIds": []
+    },
+    "accessVerification": {
+      "status": "NEEDS_REVIEW",
+      "basis": "앞선 Topic에서 canonical URL 도구 접근 실패; 동일 공식 RFC로 의미를 대조했다. broken link로 확정하지 않는다."
+    }
+  },
+  {
+    "area": "network-http",
+    "contentKey": "network-http.core.http-message.accept",
+    "file": "content/network-http/http-message/accept.md",
+    "url": "https://www.rfc-editor.org/rfc/rfc9110",
+    "verification": {
+      "status": "CURRENT_VERIFIED",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "http-cache: 동일 IETF RFC §8.8.2/8.8.3/13.1/13.2/15.4.5의 필요한 validator/precondition/304 조항을 읽었다. canonical URL 접근 문제와 의미 확인을 분리한다. | http-message: 공식Datatracker동일본문에서실제 §3.2 representation, §6.4.1 no/zero content, §7.2 Host, §8.1/8.3/8.3.1 type/coding·sniffing, §12.4.1/12.4.2/12.5.1 negotiationmayignore/quality/specificity, §12.5.5 Varyexpandscachekey, §15.3.3 202를읽었다. canonicalURL은앞선접근오류로referenceAccess에별도미확인표시한다. | http-methods: 공식Datatracker동일본문에서실제 §9.2.1safe/log/adcharge/unsafequery·§9.2.2idempotent/부수효과/response전retry, §9.3.1/2 GET/HEADcontent/header예외, §9.3.3/4POST대PUTintent·create/replace/storagehidden·§9.3.5DELETEassociation/physicalstorage/202~204시점을읽었다. 본문의methodsemantic대serverimplementation조건에대조했다. | http-state-intermediary: 동일 IETF §3.7의 proxy/gateway/tunnel과 §9.3.6 CONNECTblindforwarding을 실제 읽고 앞method/status/TLS 관련 확인을 연결했다. | http-status: 해당 status·Retry-After·인증 challenge 절의 의미를 IETF 동일 RFC에서 직접 읽었다. §15/15.3.1/2/3/5, §15.4.2/3/4/8/9, §15.5.1/2/4/5/10/13/16/21, §15.6.1/3/4/5, §10.2.3·11.6.1; 문서 전체를 검증했다는 뜻은 아니다. | request-journey: canonicalURL은웹도구오류였으나공식Datatracker동일RFC에서실제 §3.7 connectionchain/proxy/gateway/tunnel와§7.1/7.2targetauthority·Host/§7.3cache/proxy/originrouting을읽었다. 상세H2/H3필드전체검증은아니다.",
+      "area": "network-http",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/network-http.json",
+      "qualityIssueIds": []
+    },
+    "accessVerification": {
+      "status": "NEEDS_REVIEW",
+      "basis": "앞선 Topic에서 canonical URL 도구 접근 실패; 동일 공식 RFC로 의미를 대조했다. broken link로 확정하지 않는다."
+    }
+  },
+  {
+    "area": "network-http",
+    "contentKey": "network-http.core.http-message.content-negotiation",
+    "file": "content/network-http/http-message/content-negotiation.md",
+    "url": "https://www.rfc-editor.org/rfc/rfc9110",
+    "verification": {
+      "status": "CURRENT_VERIFIED",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "http-cache: 동일 IETF RFC §8.8.2/8.8.3/13.1/13.2/15.4.5의 필요한 validator/precondition/304 조항을 읽었다. canonical URL 접근 문제와 의미 확인을 분리한다. | http-message: 공식Datatracker동일본문에서실제 §3.2 representation, §6.4.1 no/zero content, §7.2 Host, §8.1/8.3/8.3.1 type/coding·sniffing, §12.4.1/12.4.2/12.5.1 negotiationmayignore/quality/specificity, §12.5.5 Varyexpandscachekey, §15.3.3 202를읽었다. canonicalURL은앞선접근오류로referenceAccess에별도미확인표시한다. | http-methods: 공식Datatracker동일본문에서실제 §9.2.1safe/log/adcharge/unsafequery·§9.2.2idempotent/부수효과/response전retry, §9.3.1/2 GET/HEADcontent/header예외, §9.3.3/4POST대PUTintent·create/replace/storagehidden·§9.3.5DELETEassociation/physicalstorage/202~204시점을읽었다. 본문의methodsemantic대serverimplementation조건에대조했다. | http-state-intermediary: 동일 IETF §3.7의 proxy/gateway/tunnel과 §9.3.6 CONNECTblindforwarding을 실제 읽고 앞method/status/TLS 관련 확인을 연결했다. | http-status: 해당 status·Retry-After·인증 challenge 절의 의미를 IETF 동일 RFC에서 직접 읽었다. §15/15.3.1/2/3/5, §15.4.2/3/4/8/9, §15.5.1/2/4/5/10/13/16/21, §15.6.1/3/4/5, §10.2.3·11.6.1; 문서 전체를 검증했다는 뜻은 아니다. | request-journey: canonicalURL은웹도구오류였으나공식Datatracker동일RFC에서실제 §3.7 connectionchain/proxy/gateway/tunnel와§7.1/7.2targetauthority·Host/§7.3cache/proxy/originrouting을읽었다. 상세H2/H3필드전체검증은아니다.",
+      "area": "network-http",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/network-http.json",
+      "qualityIssueIds": []
+    },
+    "accessVerification": {
+      "status": "NEEDS_REVIEW",
+      "basis": "앞선 Topic에서 canonical URL 도구 접근 실패; 동일 공식 RFC로 의미를 대조했다. broken link로 확정하지 않는다."
+    }
+  },
+  {
+    "area": "network-http",
+    "contentKey": "network-http.core.http-message.content-type",
+    "file": "content/network-http/http-message/content-type.md",
+    "url": "https://www.rfc-editor.org/rfc/rfc9110",
+    "verification": {
+      "status": "CURRENT_VERIFIED",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "http-cache: 동일 IETF RFC §8.8.2/8.8.3/13.1/13.2/15.4.5의 필요한 validator/precondition/304 조항을 읽었다. canonical URL 접근 문제와 의미 확인을 분리한다. | http-message: 공식Datatracker동일본문에서실제 §3.2 representation, §6.4.1 no/zero content, §7.2 Host, §8.1/8.3/8.3.1 type/coding·sniffing, §12.4.1/12.4.2/12.5.1 negotiationmayignore/quality/specificity, §12.5.5 Varyexpandscachekey, §15.3.3 202를읽었다. canonicalURL은앞선접근오류로referenceAccess에별도미확인표시한다. | http-methods: 공식Datatracker동일본문에서실제 §9.2.1safe/log/adcharge/unsafequery·§9.2.2idempotent/부수효과/response전retry, §9.3.1/2 GET/HEADcontent/header예외, §9.3.3/4POST대PUTintent·create/replace/storagehidden·§9.3.5DELETEassociation/physicalstorage/202~204시점을읽었다. 본문의methodsemantic대serverimplementation조건에대조했다. | http-state-intermediary: 동일 IETF §3.7의 proxy/gateway/tunnel과 §9.3.6 CONNECTblindforwarding을 실제 읽고 앞method/status/TLS 관련 확인을 연결했다. | http-status: 해당 status·Retry-After·인증 challenge 절의 의미를 IETF 동일 RFC에서 직접 읽었다. §15/15.3.1/2/3/5, §15.4.2/3/4/8/9, §15.5.1/2/4/5/10/13/16/21, §15.6.1/3/4/5, §10.2.3·11.6.1; 문서 전체를 검증했다는 뜻은 아니다. | request-journey: canonicalURL은웹도구오류였으나공식Datatracker동일RFC에서실제 §3.7 connectionchain/proxy/gateway/tunnel와§7.1/7.2targetauthority·Host/§7.3cache/proxy/originrouting을읽었다. 상세H2/H3필드전체검증은아니다.",
+      "area": "network-http",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/network-http.json",
+      "qualityIssueIds": []
+    },
+    "accessVerification": {
+      "status": "NEEDS_REVIEW",
+      "basis": "앞선 Topic에서 canonical URL 도구 접근 실패; 동일 공식 RFC로 의미를 대조했다. broken link로 확정하지 않는다."
+    }
+  },
+  {
+    "area": "network-http",
+    "contentKey": "network-http.core.http-message.header-body",
+    "file": "content/network-http/http-message/header-body.md",
+    "url": "https://www.rfc-editor.org/rfc/rfc9110",
+    "verification": {
+      "status": "CURRENT_VERIFIED",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "http-cache: 동일 IETF RFC §8.8.2/8.8.3/13.1/13.2/15.4.5의 필요한 validator/precondition/304 조항을 읽었다. canonical URL 접근 문제와 의미 확인을 분리한다. | http-message: 공식Datatracker동일본문에서실제 §3.2 representation, §6.4.1 no/zero content, §7.2 Host, §8.1/8.3/8.3.1 type/coding·sniffing, §12.4.1/12.4.2/12.5.1 negotiationmayignore/quality/specificity, §12.5.5 Varyexpandscachekey, §15.3.3 202를읽었다. canonicalURL은앞선접근오류로referenceAccess에별도미확인표시한다. | http-methods: 공식Datatracker동일본문에서실제 §9.2.1safe/log/adcharge/unsafequery·§9.2.2idempotent/부수효과/response전retry, §9.3.1/2 GET/HEADcontent/header예외, §9.3.3/4POST대PUTintent·create/replace/storagehidden·§9.3.5DELETEassociation/physicalstorage/202~204시점을읽었다. 본문의methodsemantic대serverimplementation조건에대조했다. | http-state-intermediary: 동일 IETF §3.7의 proxy/gateway/tunnel과 §9.3.6 CONNECTblindforwarding을 실제 읽고 앞method/status/TLS 관련 확인을 연결했다. | http-status: 해당 status·Retry-After·인증 challenge 절의 의미를 IETF 동일 RFC에서 직접 읽었다. §15/15.3.1/2/3/5, §15.4.2/3/4/8/9, §15.5.1/2/4/5/10/13/16/21, §15.6.1/3/4/5, §10.2.3·11.6.1; 문서 전체를 검증했다는 뜻은 아니다. | request-journey: canonicalURL은웹도구오류였으나공식Datatracker동일RFC에서실제 §3.7 connectionchain/proxy/gateway/tunnel와§7.1/7.2targetauthority·Host/§7.3cache/proxy/originrouting을읽었다. 상세H2/H3필드전체검증은아니다.",
+      "area": "network-http",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/network-http.json",
+      "qualityIssueIds": []
+    },
+    "accessVerification": {
+      "status": "NEEDS_REVIEW",
+      "basis": "앞선 Topic에서 canonical URL 도구 접근 실패; 동일 공식 RFC로 의미를 대조했다. broken link로 확정하지 않는다."
+    }
+  },
+  {
+    "area": "network-http",
+    "contentKey": "network-http.core.http-message.media-type",
+    "file": "content/network-http/http-message/media-type.md",
+    "url": "https://www.rfc-editor.org/rfc/rfc9110",
+    "verification": {
+      "status": "CURRENT_VERIFIED",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "http-cache: 동일 IETF RFC §8.8.2/8.8.3/13.1/13.2/15.4.5의 필요한 validator/precondition/304 조항을 읽었다. canonical URL 접근 문제와 의미 확인을 분리한다. | http-message: 공식Datatracker동일본문에서실제 §3.2 representation, §6.4.1 no/zero content, §7.2 Host, §8.1/8.3/8.3.1 type/coding·sniffing, §12.4.1/12.4.2/12.5.1 negotiationmayignore/quality/specificity, §12.5.5 Varyexpandscachekey, §15.3.3 202를읽었다. canonicalURL은앞선접근오류로referenceAccess에별도미확인표시한다. | http-methods: 공식Datatracker동일본문에서실제 §9.2.1safe/log/adcharge/unsafequery·§9.2.2idempotent/부수효과/response전retry, §9.3.1/2 GET/HEADcontent/header예외, §9.3.3/4POST대PUTintent·create/replace/storagehidden·§9.3.5DELETEassociation/physicalstorage/202~204시점을읽었다. 본문의methodsemantic대serverimplementation조건에대조했다. | http-state-intermediary: 동일 IETF §3.7의 proxy/gateway/tunnel과 §9.3.6 CONNECTblindforwarding을 실제 읽고 앞method/status/TLS 관련 확인을 연결했다. | http-status: 해당 status·Retry-After·인증 challenge 절의 의미를 IETF 동일 RFC에서 직접 읽었다. §15/15.3.1/2/3/5, §15.4.2/3/4/8/9, §15.5.1/2/4/5/10/13/16/21, §15.6.1/3/4/5, §10.2.3·11.6.1; 문서 전체를 검증했다는 뜻은 아니다. | request-journey: canonicalURL은웹도구오류였으나공식Datatracker동일RFC에서실제 §3.7 connectionchain/proxy/gateway/tunnel와§7.1/7.2targetauthority·Host/§7.3cache/proxy/originrouting을읽었다. 상세H2/H3필드전체검증은아니다.",
+      "area": "network-http",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/network-http.json",
+      "qualityIssueIds": []
+    },
+    "accessVerification": {
+      "status": "NEEDS_REVIEW",
+      "basis": "앞선 Topic에서 canonical URL 도구 접근 실패; 동일 공식 RFC로 의미를 대조했다. broken link로 확정하지 않는다."
+    }
+  },
+  {
+    "area": "network-http",
+    "contentKey": "network-http.core.http-message.representation",
+    "file": "content/network-http/http-message/representation.md",
+    "url": "https://www.rfc-editor.org/rfc/rfc9110",
+    "verification": {
+      "status": "CURRENT_VERIFIED",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "http-cache: 동일 IETF RFC §8.8.2/8.8.3/13.1/13.2/15.4.5의 필요한 validator/precondition/304 조항을 읽었다. canonical URL 접근 문제와 의미 확인을 분리한다. | http-message: 공식Datatracker동일본문에서실제 §3.2 representation, §6.4.1 no/zero content, §7.2 Host, §8.1/8.3/8.3.1 type/coding·sniffing, §12.4.1/12.4.2/12.5.1 negotiationmayignore/quality/specificity, §12.5.5 Varyexpandscachekey, §15.3.3 202를읽었다. canonicalURL은앞선접근오류로referenceAccess에별도미확인표시한다. | http-methods: 공식Datatracker동일본문에서실제 §9.2.1safe/log/adcharge/unsafequery·§9.2.2idempotent/부수효과/response전retry, §9.3.1/2 GET/HEADcontent/header예외, §9.3.3/4POST대PUTintent·create/replace/storagehidden·§9.3.5DELETEassociation/physicalstorage/202~204시점을읽었다. 본문의methodsemantic대serverimplementation조건에대조했다. | http-state-intermediary: 동일 IETF §3.7의 proxy/gateway/tunnel과 §9.3.6 CONNECTblindforwarding을 실제 읽고 앞method/status/TLS 관련 확인을 연결했다. | http-status: 해당 status·Retry-After·인증 challenge 절의 의미를 IETF 동일 RFC에서 직접 읽었다. §15/15.3.1/2/3/5, §15.4.2/3/4/8/9, §15.5.1/2/4/5/10/13/16/21, §15.6.1/3/4/5, §10.2.3·11.6.1; 문서 전체를 검증했다는 뜻은 아니다. | request-journey: canonicalURL은웹도구오류였으나공식Datatracker동일RFC에서실제 §3.7 connectionchain/proxy/gateway/tunnel와§7.1/7.2targetauthority·Host/§7.3cache/proxy/originrouting을읽었다. 상세H2/H3필드전체검증은아니다.",
+      "area": "network-http",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/network-http.json",
+      "qualityIssueIds": []
+    },
+    "accessVerification": {
+      "status": "NEEDS_REVIEW",
+      "basis": "앞선 Topic에서 canonical URL 도구 접근 실패; 동일 공식 RFC로 의미를 대조했다. broken link로 확정하지 않는다."
+    }
+  },
+  {
+    "area": "network-http",
+    "contentKey": "network-http.core.http-message.request-message",
+    "file": "content/network-http/http-message/request-message.md",
+    "url": "https://www.rfc-editor.org/rfc/rfc9110",
+    "verification": {
+      "status": "CURRENT_VERIFIED",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "http-cache: 동일 IETF RFC §8.8.2/8.8.3/13.1/13.2/15.4.5의 필요한 validator/precondition/304 조항을 읽었다. canonical URL 접근 문제와 의미 확인을 분리한다. | http-message: 공식Datatracker동일본문에서실제 §3.2 representation, §6.4.1 no/zero content, §7.2 Host, §8.1/8.3/8.3.1 type/coding·sniffing, §12.4.1/12.4.2/12.5.1 negotiationmayignore/quality/specificity, §12.5.5 Varyexpandscachekey, §15.3.3 202를읽었다. canonicalURL은앞선접근오류로referenceAccess에별도미확인표시한다. | http-methods: 공식Datatracker동일본문에서실제 §9.2.1safe/log/adcharge/unsafequery·§9.2.2idempotent/부수효과/response전retry, §9.3.1/2 GET/HEADcontent/header예외, §9.3.3/4POST대PUTintent·create/replace/storagehidden·§9.3.5DELETEassociation/physicalstorage/202~204시점을읽었다. 본문의methodsemantic대serverimplementation조건에대조했다. | http-state-intermediary: 동일 IETF §3.7의 proxy/gateway/tunnel과 §9.3.6 CONNECTblindforwarding을 실제 읽고 앞method/status/TLS 관련 확인을 연결했다. | http-status: 해당 status·Retry-After·인증 challenge 절의 의미를 IETF 동일 RFC에서 직접 읽었다. §15/15.3.1/2/3/5, §15.4.2/3/4/8/9, §15.5.1/2/4/5/10/13/16/21, §15.6.1/3/4/5, §10.2.3·11.6.1; 문서 전체를 검증했다는 뜻은 아니다. | request-journey: canonicalURL은웹도구오류였으나공식Datatracker동일RFC에서실제 §3.7 connectionchain/proxy/gateway/tunnel와§7.1/7.2targetauthority·Host/§7.3cache/proxy/originrouting을읽었다. 상세H2/H3필드전체검증은아니다.",
+      "area": "network-http",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/network-http.json",
+      "qualityIssueIds": []
+    },
+    "accessVerification": {
+      "status": "NEEDS_REVIEW",
+      "basis": "앞선 Topic에서 canonical URL 도구 접근 실패; 동일 공식 RFC로 의미를 대조했다. broken link로 확정하지 않는다."
+    }
+  },
+  {
+    "area": "network-http",
+    "contentKey": "network-http.core.http-message.response-message",
+    "file": "content/network-http/http-message/response-message.md",
+    "url": "https://www.rfc-editor.org/rfc/rfc9110",
+    "verification": {
+      "status": "CURRENT_VERIFIED",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "http-cache: 동일 IETF RFC §8.8.2/8.8.3/13.1/13.2/15.4.5의 필요한 validator/precondition/304 조항을 읽었다. canonical URL 접근 문제와 의미 확인을 분리한다. | http-message: 공식Datatracker동일본문에서실제 §3.2 representation, §6.4.1 no/zero content, §7.2 Host, §8.1/8.3/8.3.1 type/coding·sniffing, §12.4.1/12.4.2/12.5.1 negotiationmayignore/quality/specificity, §12.5.5 Varyexpandscachekey, §15.3.3 202를읽었다. canonicalURL은앞선접근오류로referenceAccess에별도미확인표시한다. | http-methods: 공식Datatracker동일본문에서실제 §9.2.1safe/log/adcharge/unsafequery·§9.2.2idempotent/부수효과/response전retry, §9.3.1/2 GET/HEADcontent/header예외, §9.3.3/4POST대PUTintent·create/replace/storagehidden·§9.3.5DELETEassociation/physicalstorage/202~204시점을읽었다. 본문의methodsemantic대serverimplementation조건에대조했다. | http-state-intermediary: 동일 IETF §3.7의 proxy/gateway/tunnel과 §9.3.6 CONNECTblindforwarding을 실제 읽고 앞method/status/TLS 관련 확인을 연결했다. | http-status: 해당 status·Retry-After·인증 challenge 절의 의미를 IETF 동일 RFC에서 직접 읽었다. §15/15.3.1/2/3/5, §15.4.2/3/4/8/9, §15.5.1/2/4/5/10/13/16/21, §15.6.1/3/4/5, §10.2.3·11.6.1; 문서 전체를 검증했다는 뜻은 아니다. | request-journey: canonicalURL은웹도구오류였으나공식Datatracker동일RFC에서실제 §3.7 connectionchain/proxy/gateway/tunnel와§7.1/7.2targetauthority·Host/§7.3cache/proxy/originrouting을읽었다. 상세H2/H3필드전체검증은아니다.",
+      "area": "network-http",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/network-http.json",
+      "qualityIssueIds": []
+    },
+    "accessVerification": {
+      "status": "NEEDS_REVIEW",
+      "basis": "앞선 Topic에서 canonical URL 도구 접근 실패; 동일 공식 RFC로 의미를 대조했다. broken link로 확정하지 않는다."
+    }
+  },
+  {
+    "area": "network-http",
+    "contentKey": "network-http.core.http-methods.delete",
+    "file": "content/network-http/http-methods/delete.md",
+    "url": "https://www.rfc-editor.org/rfc/rfc9110",
+    "verification": {
+      "status": "CURRENT_VERIFIED",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "http-cache: 동일 IETF RFC §8.8.2/8.8.3/13.1/13.2/15.4.5의 필요한 validator/precondition/304 조항을 읽었다. canonical URL 접근 문제와 의미 확인을 분리한다. | http-message: 공식Datatracker동일본문에서실제 §3.2 representation, §6.4.1 no/zero content, §7.2 Host, §8.1/8.3/8.3.1 type/coding·sniffing, §12.4.1/12.4.2/12.5.1 negotiationmayignore/quality/specificity, §12.5.5 Varyexpandscachekey, §15.3.3 202를읽었다. canonicalURL은앞선접근오류로referenceAccess에별도미확인표시한다. | http-methods: 공식Datatracker동일본문에서실제 §9.2.1safe/log/adcharge/unsafequery·§9.2.2idempotent/부수효과/response전retry, §9.3.1/2 GET/HEADcontent/header예외, §9.3.3/4POST대PUTintent·create/replace/storagehidden·§9.3.5DELETEassociation/physicalstorage/202~204시점을읽었다. 본문의methodsemantic대serverimplementation조건에대조했다. | http-state-intermediary: 동일 IETF §3.7의 proxy/gateway/tunnel과 §9.3.6 CONNECTblindforwarding을 실제 읽고 앞method/status/TLS 관련 확인을 연결했다. | http-status: 해당 status·Retry-After·인증 challenge 절의 의미를 IETF 동일 RFC에서 직접 읽었다. §15/15.3.1/2/3/5, §15.4.2/3/4/8/9, §15.5.1/2/4/5/10/13/16/21, §15.6.1/3/4/5, §10.2.3·11.6.1; 문서 전체를 검증했다는 뜻은 아니다. | request-journey: canonicalURL은웹도구오류였으나공식Datatracker동일RFC에서실제 §3.7 connectionchain/proxy/gateway/tunnel와§7.1/7.2targetauthority·Host/§7.3cache/proxy/originrouting을읽었다. 상세H2/H3필드전체검증은아니다.",
+      "area": "network-http",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/network-http.json",
+      "qualityIssueIds": []
+    },
+    "accessVerification": {
+      "status": "NEEDS_REVIEW",
+      "basis": "앞선 Topic에서 canonical URL 도구 접근 실패; 동일 공식 RFC로 의미를 대조했다. broken link로 확정하지 않는다."
+    }
+  },
+  {
+    "area": "network-http",
+    "contentKey": "network-http.core.http-methods.get-head",
+    "file": "content/network-http/http-methods/get-head.md",
+    "url": "https://www.rfc-editor.org/rfc/rfc9110",
+    "verification": {
+      "status": "CURRENT_VERIFIED",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "http-cache: 동일 IETF RFC §8.8.2/8.8.3/13.1/13.2/15.4.5의 필요한 validator/precondition/304 조항을 읽었다. canonical URL 접근 문제와 의미 확인을 분리한다. | http-message: 공식Datatracker동일본문에서실제 §3.2 representation, §6.4.1 no/zero content, §7.2 Host, §8.1/8.3/8.3.1 type/coding·sniffing, §12.4.1/12.4.2/12.5.1 negotiationmayignore/quality/specificity, §12.5.5 Varyexpandscachekey, §15.3.3 202를읽었다. canonicalURL은앞선접근오류로referenceAccess에별도미확인표시한다. | http-methods: 공식Datatracker동일본문에서실제 §9.2.1safe/log/adcharge/unsafequery·§9.2.2idempotent/부수효과/response전retry, §9.3.1/2 GET/HEADcontent/header예외, §9.3.3/4POST대PUTintent·create/replace/storagehidden·§9.3.5DELETEassociation/physicalstorage/202~204시점을읽었다. 본문의methodsemantic대serverimplementation조건에대조했다. | http-state-intermediary: 동일 IETF §3.7의 proxy/gateway/tunnel과 §9.3.6 CONNECTblindforwarding을 실제 읽고 앞method/status/TLS 관련 확인을 연결했다. | http-status: 해당 status·Retry-After·인증 challenge 절의 의미를 IETF 동일 RFC에서 직접 읽었다. §15/15.3.1/2/3/5, §15.4.2/3/4/8/9, §15.5.1/2/4/5/10/13/16/21, §15.6.1/3/4/5, §10.2.3·11.6.1; 문서 전체를 검증했다는 뜻은 아니다. | request-journey: canonicalURL은웹도구오류였으나공식Datatracker동일RFC에서실제 §3.7 connectionchain/proxy/gateway/tunnel와§7.1/7.2targetauthority·Host/§7.3cache/proxy/originrouting을읽었다. 상세H2/H3필드전체검증은아니다.",
+      "area": "network-http",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/network-http.json",
+      "qualityIssueIds": []
+    },
+    "accessVerification": {
+      "status": "NEEDS_REVIEW",
+      "basis": "앞선 Topic에서 canonical URL 도구 접근 실패; 동일 공식 RFC로 의미를 대조했다. broken link로 확정하지 않는다."
+    }
+  },
+  {
+    "area": "network-http",
+    "contentKey": "network-http.core.http-methods.idempotent-method",
+    "file": "content/network-http/http-methods/idempotent-method.md",
+    "url": "https://www.rfc-editor.org/rfc/rfc9110",
+    "verification": {
+      "status": "CURRENT_VERIFIED",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "http-cache: 동일 IETF RFC §8.8.2/8.8.3/13.1/13.2/15.4.5의 필요한 validator/precondition/304 조항을 읽었다. canonical URL 접근 문제와 의미 확인을 분리한다. | http-message: 공식Datatracker동일본문에서실제 §3.2 representation, §6.4.1 no/zero content, §7.2 Host, §8.1/8.3/8.3.1 type/coding·sniffing, §12.4.1/12.4.2/12.5.1 negotiationmayignore/quality/specificity, §12.5.5 Varyexpandscachekey, §15.3.3 202를읽었다. canonicalURL은앞선접근오류로referenceAccess에별도미확인표시한다. | http-methods: 공식Datatracker동일본문에서실제 §9.2.1safe/log/adcharge/unsafequery·§9.2.2idempotent/부수효과/response전retry, §9.3.1/2 GET/HEADcontent/header예외, §9.3.3/4POST대PUTintent·create/replace/storagehidden·§9.3.5DELETEassociation/physicalstorage/202~204시점을읽었다. 본문의methodsemantic대serverimplementation조건에대조했다. | http-state-intermediary: 동일 IETF §3.7의 proxy/gateway/tunnel과 §9.3.6 CONNECTblindforwarding을 실제 읽고 앞method/status/TLS 관련 확인을 연결했다. | http-status: 해당 status·Retry-After·인증 challenge 절의 의미를 IETF 동일 RFC에서 직접 읽었다. §15/15.3.1/2/3/5, §15.4.2/3/4/8/9, §15.5.1/2/4/5/10/13/16/21, §15.6.1/3/4/5, §10.2.3·11.6.1; 문서 전체를 검증했다는 뜻은 아니다. | request-journey: canonicalURL은웹도구오류였으나공식Datatracker동일RFC에서실제 §3.7 connectionchain/proxy/gateway/tunnel와§7.1/7.2targetauthority·Host/§7.3cache/proxy/originrouting을읽었다. 상세H2/H3필드전체검증은아니다.",
+      "area": "network-http",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/network-http.json",
+      "qualityIssueIds": []
+    },
+    "accessVerification": {
+      "status": "NEEDS_REVIEW",
+      "basis": "앞선 Topic에서 canonical URL 도구 접근 실패; 동일 공식 RFC로 의미를 대조했다. broken link로 확정하지 않는다."
+    }
+  },
+  {
+    "area": "network-http",
+    "contentKey": "network-http.core.http-methods.post",
+    "file": "content/network-http/http-methods/post.md",
+    "url": "https://www.rfc-editor.org/rfc/rfc9110",
+    "verification": {
+      "status": "CURRENT_VERIFIED",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "http-cache: 동일 IETF RFC §8.8.2/8.8.3/13.1/13.2/15.4.5의 필요한 validator/precondition/304 조항을 읽었다. canonical URL 접근 문제와 의미 확인을 분리한다. | http-message: 공식Datatracker동일본문에서실제 §3.2 representation, §6.4.1 no/zero content, §7.2 Host, §8.1/8.3/8.3.1 type/coding·sniffing, §12.4.1/12.4.2/12.5.1 negotiationmayignore/quality/specificity, §12.5.5 Varyexpandscachekey, §15.3.3 202를읽었다. canonicalURL은앞선접근오류로referenceAccess에별도미확인표시한다. | http-methods: 공식Datatracker동일본문에서실제 §9.2.1safe/log/adcharge/unsafequery·§9.2.2idempotent/부수효과/response전retry, §9.3.1/2 GET/HEADcontent/header예외, §9.3.3/4POST대PUTintent·create/replace/storagehidden·§9.3.5DELETEassociation/physicalstorage/202~204시점을읽었다. 본문의methodsemantic대serverimplementation조건에대조했다. | http-state-intermediary: 동일 IETF §3.7의 proxy/gateway/tunnel과 §9.3.6 CONNECTblindforwarding을 실제 읽고 앞method/status/TLS 관련 확인을 연결했다. | http-status: 해당 status·Retry-After·인증 challenge 절의 의미를 IETF 동일 RFC에서 직접 읽었다. §15/15.3.1/2/3/5, §15.4.2/3/4/8/9, §15.5.1/2/4/5/10/13/16/21, §15.6.1/3/4/5, §10.2.3·11.6.1; 문서 전체를 검증했다는 뜻은 아니다. | request-journey: canonicalURL은웹도구오류였으나공식Datatracker동일RFC에서실제 §3.7 connectionchain/proxy/gateway/tunnel와§7.1/7.2targetauthority·Host/§7.3cache/proxy/originrouting을읽었다. 상세H2/H3필드전체검증은아니다.",
+      "area": "network-http",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/network-http.json",
+      "qualityIssueIds": []
+    },
+    "accessVerification": {
+      "status": "NEEDS_REVIEW",
+      "basis": "앞선 Topic에서 canonical URL 도구 접근 실패; 동일 공식 RFC로 의미를 대조했다. broken link로 확정하지 않는다."
+    }
+  },
+  {
+    "area": "network-http",
+    "contentKey": "network-http.core.http-methods.protocol-idempotency-boundary",
+    "file": "content/network-http/http-methods/protocol-idempotency-boundary.md",
+    "url": "https://www.rfc-editor.org/rfc/rfc9110",
+    "verification": {
+      "status": "CURRENT_VERIFIED",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "http-cache: 동일 IETF RFC §8.8.2/8.8.3/13.1/13.2/15.4.5의 필요한 validator/precondition/304 조항을 읽었다. canonical URL 접근 문제와 의미 확인을 분리한다. | http-message: 공식Datatracker동일본문에서실제 §3.2 representation, §6.4.1 no/zero content, §7.2 Host, §8.1/8.3/8.3.1 type/coding·sniffing, §12.4.1/12.4.2/12.5.1 negotiationmayignore/quality/specificity, §12.5.5 Varyexpandscachekey, §15.3.3 202를읽었다. canonicalURL은앞선접근오류로referenceAccess에별도미확인표시한다. | http-methods: 공식Datatracker동일본문에서실제 §9.2.1safe/log/adcharge/unsafequery·§9.2.2idempotent/부수효과/response전retry, §9.3.1/2 GET/HEADcontent/header예외, §9.3.3/4POST대PUTintent·create/replace/storagehidden·§9.3.5DELETEassociation/physicalstorage/202~204시점을읽었다. 본문의methodsemantic대serverimplementation조건에대조했다. | http-state-intermediary: 동일 IETF §3.7의 proxy/gateway/tunnel과 §9.3.6 CONNECTblindforwarding을 실제 읽고 앞method/status/TLS 관련 확인을 연결했다. | http-status: 해당 status·Retry-After·인증 challenge 절의 의미를 IETF 동일 RFC에서 직접 읽었다. §15/15.3.1/2/3/5, §15.4.2/3/4/8/9, §15.5.1/2/4/5/10/13/16/21, §15.6.1/3/4/5, §10.2.3·11.6.1; 문서 전체를 검증했다는 뜻은 아니다. | request-journey: canonicalURL은웹도구오류였으나공식Datatracker동일RFC에서실제 §3.7 connectionchain/proxy/gateway/tunnel와§7.1/7.2targetauthority·Host/§7.3cache/proxy/originrouting을읽었다. 상세H2/H3필드전체검증은아니다.",
+      "area": "network-http",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/network-http.json",
+      "qualityIssueIds": []
+    },
+    "accessVerification": {
+      "status": "NEEDS_REVIEW",
+      "basis": "앞선 Topic에서 canonical URL 도구 접근 실패; 동일 공식 RFC로 의미를 대조했다. broken link로 확정하지 않는다."
+    }
+  },
+  {
+    "area": "network-http",
+    "contentKey": "network-http.core.http-methods.put",
+    "file": "content/network-http/http-methods/put.md",
+    "url": "https://www.rfc-editor.org/rfc/rfc9110",
+    "verification": {
+      "status": "CURRENT_VERIFIED",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "http-cache: 동일 IETF RFC §8.8.2/8.8.3/13.1/13.2/15.4.5의 필요한 validator/precondition/304 조항을 읽었다. canonical URL 접근 문제와 의미 확인을 분리한다. | http-message: 공식Datatracker동일본문에서실제 §3.2 representation, §6.4.1 no/zero content, §7.2 Host, §8.1/8.3/8.3.1 type/coding·sniffing, §12.4.1/12.4.2/12.5.1 negotiationmayignore/quality/specificity, §12.5.5 Varyexpandscachekey, §15.3.3 202를읽었다. canonicalURL은앞선접근오류로referenceAccess에별도미확인표시한다. | http-methods: 공식Datatracker동일본문에서실제 §9.2.1safe/log/adcharge/unsafequery·§9.2.2idempotent/부수효과/response전retry, §9.3.1/2 GET/HEADcontent/header예외, §9.3.3/4POST대PUTintent·create/replace/storagehidden·§9.3.5DELETEassociation/physicalstorage/202~204시점을읽었다. 본문의methodsemantic대serverimplementation조건에대조했다. | http-state-intermediary: 동일 IETF §3.7의 proxy/gateway/tunnel과 §9.3.6 CONNECTblindforwarding을 실제 읽고 앞method/status/TLS 관련 확인을 연결했다. | http-status: 해당 status·Retry-After·인증 challenge 절의 의미를 IETF 동일 RFC에서 직접 읽었다. §15/15.3.1/2/3/5, §15.4.2/3/4/8/9, §15.5.1/2/4/5/10/13/16/21, §15.6.1/3/4/5, §10.2.3·11.6.1; 문서 전체를 검증했다는 뜻은 아니다. | request-journey: canonicalURL은웹도구오류였으나공식Datatracker동일RFC에서실제 §3.7 connectionchain/proxy/gateway/tunnel와§7.1/7.2targetauthority·Host/§7.3cache/proxy/originrouting을읽었다. 상세H2/H3필드전체검증은아니다.",
+      "area": "network-http",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/network-http.json",
+      "qualityIssueIds": []
+    },
+    "accessVerification": {
+      "status": "NEEDS_REVIEW",
+      "basis": "앞선 Topic에서 canonical URL 도구 접근 실패; 동일 공식 RFC로 의미를 대조했다. broken link로 확정하지 않는다."
+    }
+  },
+  {
+    "area": "network-http",
+    "contentKey": "network-http.core.http-methods.safe-method",
+    "file": "content/network-http/http-methods/safe-method.md",
+    "url": "https://www.rfc-editor.org/rfc/rfc9110",
+    "verification": {
+      "status": "CURRENT_VERIFIED",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "http-cache: 동일 IETF RFC §8.8.2/8.8.3/13.1/13.2/15.4.5의 필요한 validator/precondition/304 조항을 읽었다. canonical URL 접근 문제와 의미 확인을 분리한다. | http-message: 공식Datatracker동일본문에서실제 §3.2 representation, §6.4.1 no/zero content, §7.2 Host, §8.1/8.3/8.3.1 type/coding·sniffing, §12.4.1/12.4.2/12.5.1 negotiationmayignore/quality/specificity, §12.5.5 Varyexpandscachekey, §15.3.3 202를읽었다. canonicalURL은앞선접근오류로referenceAccess에별도미확인표시한다. | http-methods: 공식Datatracker동일본문에서실제 §9.2.1safe/log/adcharge/unsafequery·§9.2.2idempotent/부수효과/response전retry, §9.3.1/2 GET/HEADcontent/header예외, §9.3.3/4POST대PUTintent·create/replace/storagehidden·§9.3.5DELETEassociation/physicalstorage/202~204시점을읽었다. 본문의methodsemantic대serverimplementation조건에대조했다. | http-state-intermediary: 동일 IETF §3.7의 proxy/gateway/tunnel과 §9.3.6 CONNECTblindforwarding을 실제 읽고 앞method/status/TLS 관련 확인을 연결했다. | http-status: 해당 status·Retry-After·인증 challenge 절의 의미를 IETF 동일 RFC에서 직접 읽었다. §15/15.3.1/2/3/5, §15.4.2/3/4/8/9, §15.5.1/2/4/5/10/13/16/21, §15.6.1/3/4/5, §10.2.3·11.6.1; 문서 전체를 검증했다는 뜻은 아니다. | request-journey: canonicalURL은웹도구오류였으나공식Datatracker동일RFC에서실제 §3.7 connectionchain/proxy/gateway/tunnel와§7.1/7.2targetauthority·Host/§7.3cache/proxy/originrouting을읽었다. 상세H2/H3필드전체검증은아니다.",
+      "area": "network-http",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/network-http.json",
+      "qualityIssueIds": []
+    },
+    "accessVerification": {
+      "status": "NEEDS_REVIEW",
+      "basis": "앞선 Topic에서 canonical URL 도구 접근 실패; 동일 공식 RFC로 의미를 대조했다. broken link로 확정하지 않는다."
+    }
+  },
+  {
+    "area": "network-http",
+    "contentKey": "network-http.core.http-state-intermediary.cookie-scope",
+    "file": "content/network-http/http-state-intermediary/cookie-scope.md",
+    "url": "https://www.rfc-editor.org/rfc/rfc10025.html",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "http-state-intermediary: canonical URL과 IETF /doc/rfc10025 접근 실패. 공식 AUTH48-transition 교정본은 존재하지만 datatracker rfc6265bis-22 상태가 In Final Review라 최종 공표·정식 URL 학습 경로를 확인하지 못했다. 해당 의미는 공식 교정본 관련 절로 별도 대조했다.",
+      "area": "network-http",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/network-http.json",
+      "qualityIssueIds": [
+        "W3-NET-029"
+      ]
+    },
+    "accessVerification": {
+      "status": "NEEDS_REVIEW",
+      "basis": "canonicalURL 도구접근오류·공식finalreview상태; 정식공표와링크확인필요. nonexistent/404로확정하지않는다."
+    }
+  },
+  {
+    "area": "network-http",
+    "contentKey": "network-http.core.http-state-intermediary.cookie",
+    "file": "content/network-http/http-state-intermediary/cookie.md",
+    "url": "https://www.rfc-editor.org/rfc/rfc10025.html",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "http-state-intermediary: canonical URL과 IETF /doc/rfc10025 접근 실패. 공식 AUTH48-transition 교정본은 존재하지만 datatracker rfc6265bis-22 상태가 In Final Review라 최종 공표·정식 URL 학습 경로를 확인하지 못했다. 해당 의미는 공식 교정본 관련 절로 별도 대조했다.",
+      "area": "network-http",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/network-http.json",
+      "qualityIssueIds": [
+        "W3-NET-029"
+      ]
+    },
+    "accessVerification": {
+      "status": "NEEDS_REVIEW",
+      "basis": "canonicalURL 도구접근오류·공식finalreview상태; 정식공표와링크확인필요. nonexistent/404로확정하지않는다."
+    }
+  },
+  {
+    "area": "network-http",
+    "contentKey": "network-http.core.http-state-intermediary.gateway",
+    "file": "content/network-http/http-state-intermediary/gateway.md",
+    "url": "https://www.rfc-editor.org/rfc/rfc9110",
+    "verification": {
+      "status": "CURRENT_VERIFIED",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "http-cache: 동일 IETF RFC §8.8.2/8.8.3/13.1/13.2/15.4.5의 필요한 validator/precondition/304 조항을 읽었다. canonical URL 접근 문제와 의미 확인을 분리한다. | http-message: 공식Datatracker동일본문에서실제 §3.2 representation, §6.4.1 no/zero content, §7.2 Host, §8.1/8.3/8.3.1 type/coding·sniffing, §12.4.1/12.4.2/12.5.1 negotiationmayignore/quality/specificity, §12.5.5 Varyexpandscachekey, §15.3.3 202를읽었다. canonicalURL은앞선접근오류로referenceAccess에별도미확인표시한다. | http-methods: 공식Datatracker동일본문에서실제 §9.2.1safe/log/adcharge/unsafequery·§9.2.2idempotent/부수효과/response전retry, §9.3.1/2 GET/HEADcontent/header예외, §9.3.3/4POST대PUTintent·create/replace/storagehidden·§9.3.5DELETEassociation/physicalstorage/202~204시점을읽었다. 본문의methodsemantic대serverimplementation조건에대조했다. | http-state-intermediary: 동일 IETF §3.7의 proxy/gateway/tunnel과 §9.3.6 CONNECTblindforwarding을 실제 읽고 앞method/status/TLS 관련 확인을 연결했다. | http-status: 해당 status·Retry-After·인증 challenge 절의 의미를 IETF 동일 RFC에서 직접 읽었다. §15/15.3.1/2/3/5, §15.4.2/3/4/8/9, §15.5.1/2/4/5/10/13/16/21, §15.6.1/3/4/5, §10.2.3·11.6.1; 문서 전체를 검증했다는 뜻은 아니다. | request-journey: canonicalURL은웹도구오류였으나공식Datatracker동일RFC에서실제 §3.7 connectionchain/proxy/gateway/tunnel와§7.1/7.2targetauthority·Host/§7.3cache/proxy/originrouting을읽었다. 상세H2/H3필드전체검증은아니다.",
+      "area": "network-http",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/network-http.json",
+      "qualityIssueIds": []
+    },
+    "accessVerification": {
+      "status": "NEEDS_REVIEW",
+      "basis": "앞선 Topic에서 canonical URL 도구 접근 실패; 동일 공식 RFC로 의미를 대조했다. broken link로 확정하지 않는다."
+    }
+  },
+  {
+    "area": "network-http",
+    "contentKey": "network-http.core.http-state-intermediary.proxy",
+    "file": "content/network-http/http-state-intermediary/proxy.md",
+    "url": "https://www.rfc-editor.org/rfc/rfc9110",
+    "verification": {
+      "status": "CURRENT_VERIFIED",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "http-cache: 동일 IETF RFC §8.8.2/8.8.3/13.1/13.2/15.4.5의 필요한 validator/precondition/304 조항을 읽었다. canonical URL 접근 문제와 의미 확인을 분리한다. | http-message: 공식Datatracker동일본문에서실제 §3.2 representation, §6.4.1 no/zero content, §7.2 Host, §8.1/8.3/8.3.1 type/coding·sniffing, §12.4.1/12.4.2/12.5.1 negotiationmayignore/quality/specificity, §12.5.5 Varyexpandscachekey, §15.3.3 202를읽었다. canonicalURL은앞선접근오류로referenceAccess에별도미확인표시한다. | http-methods: 공식Datatracker동일본문에서실제 §9.2.1safe/log/adcharge/unsafequery·§9.2.2idempotent/부수효과/response전retry, §9.3.1/2 GET/HEADcontent/header예외, §9.3.3/4POST대PUTintent·create/replace/storagehidden·§9.3.5DELETEassociation/physicalstorage/202~204시점을읽었다. 본문의methodsemantic대serverimplementation조건에대조했다. | http-state-intermediary: 동일 IETF §3.7의 proxy/gateway/tunnel과 §9.3.6 CONNECTblindforwarding을 실제 읽고 앞method/status/TLS 관련 확인을 연결했다. | http-status: 해당 status·Retry-After·인증 challenge 절의 의미를 IETF 동일 RFC에서 직접 읽었다. §15/15.3.1/2/3/5, §15.4.2/3/4/8/9, §15.5.1/2/4/5/10/13/16/21, §15.6.1/3/4/5, §10.2.3·11.6.1; 문서 전체를 검증했다는 뜻은 아니다. | request-journey: canonicalURL은웹도구오류였으나공식Datatracker동일RFC에서실제 §3.7 connectionchain/proxy/gateway/tunnel와§7.1/7.2targetauthority·Host/§7.3cache/proxy/originrouting을읽었다. 상세H2/H3필드전체검증은아니다.",
+      "area": "network-http",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/network-http.json",
+      "qualityIssueIds": []
+    },
+    "accessVerification": {
+      "status": "NEEDS_REVIEW",
+      "basis": "앞선 Topic에서 canonical URL 도구 접근 실패; 동일 공식 RFC로 의미를 대조했다. broken link로 확정하지 않는다."
+    }
+  },
+  {
+    "area": "network-http",
+    "contentKey": "network-http.core.http-state-intermediary.reverse-proxy",
+    "file": "content/network-http/http-state-intermediary/reverse-proxy.md",
+    "url": "https://www.rfc-editor.org/rfc/rfc9110",
+    "verification": {
+      "status": "CURRENT_VERIFIED",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "http-cache: 동일 IETF RFC §8.8.2/8.8.3/13.1/13.2/15.4.5의 필요한 validator/precondition/304 조항을 읽었다. canonical URL 접근 문제와 의미 확인을 분리한다. | http-message: 공식Datatracker동일본문에서실제 §3.2 representation, §6.4.1 no/zero content, §7.2 Host, §8.1/8.3/8.3.1 type/coding·sniffing, §12.4.1/12.4.2/12.5.1 negotiationmayignore/quality/specificity, §12.5.5 Varyexpandscachekey, §15.3.3 202를읽었다. canonicalURL은앞선접근오류로referenceAccess에별도미확인표시한다. | http-methods: 공식Datatracker동일본문에서실제 §9.2.1safe/log/adcharge/unsafequery·§9.2.2idempotent/부수효과/response전retry, §9.3.1/2 GET/HEADcontent/header예외, §9.3.3/4POST대PUTintent·create/replace/storagehidden·§9.3.5DELETEassociation/physicalstorage/202~204시점을읽었다. 본문의methodsemantic대serverimplementation조건에대조했다. | http-state-intermediary: 동일 IETF §3.7의 proxy/gateway/tunnel과 §9.3.6 CONNECTblindforwarding을 실제 읽고 앞method/status/TLS 관련 확인을 연결했다. | http-status: 해당 status·Retry-After·인증 challenge 절의 의미를 IETF 동일 RFC에서 직접 읽었다. §15/15.3.1/2/3/5, §15.4.2/3/4/8/9, §15.5.1/2/4/5/10/13/16/21, §15.6.1/3/4/5, §10.2.3·11.6.1; 문서 전체를 검증했다는 뜻은 아니다. | request-journey: canonicalURL은웹도구오류였으나공식Datatracker동일RFC에서실제 §3.7 connectionchain/proxy/gateway/tunnel와§7.1/7.2targetauthority·Host/§7.3cache/proxy/originrouting을읽었다. 상세H2/H3필드전체검증은아니다.",
+      "area": "network-http",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/network-http.json",
+      "qualityIssueIds": []
+    },
+    "accessVerification": {
+      "status": "NEEDS_REVIEW",
+      "basis": "앞선 Topic에서 canonical URL 도구 접근 실패; 동일 공식 RFC로 의미를 대조했다. broken link로 확정하지 않는다."
+    }
+  },
+  {
+    "area": "network-http",
+    "contentKey": "network-http.core.http-state-intermediary.set-cookie",
+    "file": "content/network-http/http-state-intermediary/set-cookie.md",
+    "url": "https://www.rfc-editor.org/rfc/rfc10025.html",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "http-state-intermediary: canonical URL과 IETF /doc/rfc10025 접근 실패. 공식 AUTH48-transition 교정본은 존재하지만 datatracker rfc6265bis-22 상태가 In Final Review라 최종 공표·정식 URL 학습 경로를 확인하지 못했다. 해당 의미는 공식 교정본 관련 절로 별도 대조했다.",
+      "area": "network-http",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/network-http.json",
+      "qualityIssueIds": [
+        "W3-NET-029"
+      ]
+    },
+    "accessVerification": {
+      "status": "NEEDS_REVIEW",
+      "basis": "canonicalURL 도구접근오류·공식finalreview상태; 정식공표와링크확인필요. nonexistent/404로확정하지않는다."
+    }
+  },
+  {
+    "area": "network-http",
+    "contentKey": "network-http.core.http-status.200-201-202-204",
+    "file": "content/network-http/http-status/200-201-202-204.md",
+    "url": "https://www.rfc-editor.org/rfc/rfc9110",
+    "verification": {
+      "status": "CURRENT_VERIFIED",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "http-cache: 동일 IETF RFC §8.8.2/8.8.3/13.1/13.2/15.4.5의 필요한 validator/precondition/304 조항을 읽었다. canonical URL 접근 문제와 의미 확인을 분리한다. | http-message: 공식Datatracker동일본문에서실제 §3.2 representation, §6.4.1 no/zero content, §7.2 Host, §8.1/8.3/8.3.1 type/coding·sniffing, §12.4.1/12.4.2/12.5.1 negotiationmayignore/quality/specificity, §12.5.5 Varyexpandscachekey, §15.3.3 202를읽었다. canonicalURL은앞선접근오류로referenceAccess에별도미확인표시한다. | http-methods: 공식Datatracker동일본문에서실제 §9.2.1safe/log/adcharge/unsafequery·§9.2.2idempotent/부수효과/response전retry, §9.3.1/2 GET/HEADcontent/header예외, §9.3.3/4POST대PUTintent·create/replace/storagehidden·§9.3.5DELETEassociation/physicalstorage/202~204시점을읽었다. 본문의methodsemantic대serverimplementation조건에대조했다. | http-state-intermediary: 동일 IETF §3.7의 proxy/gateway/tunnel과 §9.3.6 CONNECTblindforwarding을 실제 읽고 앞method/status/TLS 관련 확인을 연결했다. | http-status: 해당 status·Retry-After·인증 challenge 절의 의미를 IETF 동일 RFC에서 직접 읽었다. §15/15.3.1/2/3/5, §15.4.2/3/4/8/9, §15.5.1/2/4/5/10/13/16/21, §15.6.1/3/4/5, §10.2.3·11.6.1; 문서 전체를 검증했다는 뜻은 아니다. | request-journey: canonicalURL은웹도구오류였으나공식Datatracker동일RFC에서실제 §3.7 connectionchain/proxy/gateway/tunnel와§7.1/7.2targetauthority·Host/§7.3cache/proxy/originrouting을읽었다. 상세H2/H3필드전체검증은아니다.",
+      "area": "network-http",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/network-http.json",
+      "qualityIssueIds": []
+    },
+    "accessVerification": {
+      "status": "NEEDS_REVIEW",
+      "basis": "앞선 Topic에서 canonical URL 도구 접근 실패; 동일 공식 RFC로 의미를 대조했다. broken link로 확정하지 않는다."
+    }
+  },
+  {
+    "area": "network-http",
+    "contentKey": "network-http.core.http-status.400-401-403-404",
+    "file": "content/network-http/http-status/400-401-403-404.md",
+    "url": "https://www.rfc-editor.org/rfc/rfc9110",
+    "verification": {
+      "status": "CURRENT_VERIFIED",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "http-cache: 동일 IETF RFC §8.8.2/8.8.3/13.1/13.2/15.4.5의 필요한 validator/precondition/304 조항을 읽었다. canonical URL 접근 문제와 의미 확인을 분리한다. | http-message: 공식Datatracker동일본문에서실제 §3.2 representation, §6.4.1 no/zero content, §7.2 Host, §8.1/8.3/8.3.1 type/coding·sniffing, §12.4.1/12.4.2/12.5.1 negotiationmayignore/quality/specificity, §12.5.5 Varyexpandscachekey, §15.3.3 202를읽었다. canonicalURL은앞선접근오류로referenceAccess에별도미확인표시한다. | http-methods: 공식Datatracker동일본문에서실제 §9.2.1safe/log/adcharge/unsafequery·§9.2.2idempotent/부수효과/response전retry, §9.3.1/2 GET/HEADcontent/header예외, §9.3.3/4POST대PUTintent·create/replace/storagehidden·§9.3.5DELETEassociation/physicalstorage/202~204시점을읽었다. 본문의methodsemantic대serverimplementation조건에대조했다. | http-state-intermediary: 동일 IETF §3.7의 proxy/gateway/tunnel과 §9.3.6 CONNECTblindforwarding을 실제 읽고 앞method/status/TLS 관련 확인을 연결했다. | http-status: 해당 status·Retry-After·인증 challenge 절의 의미를 IETF 동일 RFC에서 직접 읽었다. §15/15.3.1/2/3/5, §15.4.2/3/4/8/9, §15.5.1/2/4/5/10/13/16/21, §15.6.1/3/4/5, §10.2.3·11.6.1; 문서 전체를 검증했다는 뜻은 아니다. | request-journey: canonicalURL은웹도구오류였으나공식Datatracker동일RFC에서실제 §3.7 connectionchain/proxy/gateway/tunnel와§7.1/7.2targetauthority·Host/§7.3cache/proxy/originrouting을읽었다. 상세H2/H3필드전체검증은아니다.",
+      "area": "network-http",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/network-http.json",
+      "qualityIssueIds": []
+    },
+    "accessVerification": {
+      "status": "NEEDS_REVIEW",
+      "basis": "앞선 Topic에서 canonical URL 도구 접근 실패; 동일 공식 RFC로 의미를 대조했다. broken link로 확정하지 않는다."
+    }
+  },
+  {
+    "area": "network-http",
+    "contentKey": "network-http.core.http-status.409-412",
+    "file": "content/network-http/http-status/409-412.md",
+    "url": "https://www.rfc-editor.org/rfc/rfc9110",
+    "verification": {
+      "status": "CURRENT_VERIFIED",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "http-cache: 동일 IETF RFC §8.8.2/8.8.3/13.1/13.2/15.4.5의 필요한 validator/precondition/304 조항을 읽었다. canonical URL 접근 문제와 의미 확인을 분리한다. | http-message: 공식Datatracker동일본문에서실제 §3.2 representation, §6.4.1 no/zero content, §7.2 Host, §8.1/8.3/8.3.1 type/coding·sniffing, §12.4.1/12.4.2/12.5.1 negotiationmayignore/quality/specificity, §12.5.5 Varyexpandscachekey, §15.3.3 202를읽었다. canonicalURL은앞선접근오류로referenceAccess에별도미확인표시한다. | http-methods: 공식Datatracker동일본문에서실제 §9.2.1safe/log/adcharge/unsafequery·§9.2.2idempotent/부수효과/response전retry, §9.3.1/2 GET/HEADcontent/header예외, §9.3.3/4POST대PUTintent·create/replace/storagehidden·§9.3.5DELETEassociation/physicalstorage/202~204시점을읽었다. 본문의methodsemantic대serverimplementation조건에대조했다. | http-state-intermediary: 동일 IETF §3.7의 proxy/gateway/tunnel과 §9.3.6 CONNECTblindforwarding을 실제 읽고 앞method/status/TLS 관련 확인을 연결했다. | http-status: 해당 status·Retry-After·인증 challenge 절의 의미를 IETF 동일 RFC에서 직접 읽었다. §15/15.3.1/2/3/5, §15.4.2/3/4/8/9, §15.5.1/2/4/5/10/13/16/21, §15.6.1/3/4/5, §10.2.3·11.6.1; 문서 전체를 검증했다는 뜻은 아니다. | request-journey: canonicalURL은웹도구오류였으나공식Datatracker동일RFC에서실제 §3.7 connectionchain/proxy/gateway/tunnel와§7.1/7.2targetauthority·Host/§7.3cache/proxy/originrouting을읽었다. 상세H2/H3필드전체검증은아니다.",
+      "area": "network-http",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/network-http.json",
+      "qualityIssueIds": []
+    },
+    "accessVerification": {
+      "status": "NEEDS_REVIEW",
+      "basis": "앞선 Topic에서 canonical URL 도구 접근 실패; 동일 공식 RFC로 의미를 대조했다. broken link로 확정하지 않는다."
+    }
+  },
+  {
+    "area": "network-http",
+    "contentKey": "network-http.core.http-status.415-422",
+    "file": "content/network-http/http-status/415-422.md",
+    "url": "https://www.rfc-editor.org/rfc/rfc9110",
+    "verification": {
+      "status": "CURRENT_VERIFIED",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "http-cache: 동일 IETF RFC §8.8.2/8.8.3/13.1/13.2/15.4.5의 필요한 validator/precondition/304 조항을 읽었다. canonical URL 접근 문제와 의미 확인을 분리한다. | http-message: 공식Datatracker동일본문에서실제 §3.2 representation, §6.4.1 no/zero content, §7.2 Host, §8.1/8.3/8.3.1 type/coding·sniffing, §12.4.1/12.4.2/12.5.1 negotiationmayignore/quality/specificity, §12.5.5 Varyexpandscachekey, §15.3.3 202를읽었다. canonicalURL은앞선접근오류로referenceAccess에별도미확인표시한다. | http-methods: 공식Datatracker동일본문에서실제 §9.2.1safe/log/adcharge/unsafequery·§9.2.2idempotent/부수효과/response전retry, §9.3.1/2 GET/HEADcontent/header예외, §9.3.3/4POST대PUTintent·create/replace/storagehidden·§9.3.5DELETEassociation/physicalstorage/202~204시점을읽었다. 본문의methodsemantic대serverimplementation조건에대조했다. | http-state-intermediary: 동일 IETF §3.7의 proxy/gateway/tunnel과 §9.3.6 CONNECTblindforwarding을 실제 읽고 앞method/status/TLS 관련 확인을 연결했다. | http-status: 해당 status·Retry-After·인증 challenge 절의 의미를 IETF 동일 RFC에서 직접 읽었다. §15/15.3.1/2/3/5, §15.4.2/3/4/8/9, §15.5.1/2/4/5/10/13/16/21, §15.6.1/3/4/5, §10.2.3·11.6.1; 문서 전체를 검증했다는 뜻은 아니다. | request-journey: canonicalURL은웹도구오류였으나공식Datatracker동일RFC에서실제 §3.7 connectionchain/proxy/gateway/tunnel와§7.1/7.2targetauthority·Host/§7.3cache/proxy/originrouting을읽었다. 상세H2/H3필드전체검증은아니다.",
+      "area": "network-http",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/network-http.json",
+      "qualityIssueIds": []
+    },
+    "accessVerification": {
+      "status": "NEEDS_REVIEW",
+      "basis": "앞선 Topic에서 canonical URL 도구 접근 실패; 동일 공식 RFC로 의미를 대조했다. broken link로 확정하지 않는다."
+    }
+  },
+  {
+    "area": "network-http",
+    "contentKey": "network-http.core.http-status.500-502-503-504",
+    "file": "content/network-http/http-status/500-502-503-504.md",
+    "url": "https://www.rfc-editor.org/rfc/rfc9110",
+    "verification": {
+      "status": "CURRENT_VERIFIED",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "http-cache: 동일 IETF RFC §8.8.2/8.8.3/13.1/13.2/15.4.5의 필요한 validator/precondition/304 조항을 읽었다. canonical URL 접근 문제와 의미 확인을 분리한다. | http-message: 공식Datatracker동일본문에서실제 §3.2 representation, §6.4.1 no/zero content, §7.2 Host, §8.1/8.3/8.3.1 type/coding·sniffing, §12.4.1/12.4.2/12.5.1 negotiationmayignore/quality/specificity, §12.5.5 Varyexpandscachekey, §15.3.3 202를읽었다. canonicalURL은앞선접근오류로referenceAccess에별도미확인표시한다. | http-methods: 공식Datatracker동일본문에서실제 §9.2.1safe/log/adcharge/unsafequery·§9.2.2idempotent/부수효과/response전retry, §9.3.1/2 GET/HEADcontent/header예외, §9.3.3/4POST대PUTintent·create/replace/storagehidden·§9.3.5DELETEassociation/physicalstorage/202~204시점을읽었다. 본문의methodsemantic대serverimplementation조건에대조했다. | http-state-intermediary: 동일 IETF §3.7의 proxy/gateway/tunnel과 §9.3.6 CONNECTblindforwarding을 실제 읽고 앞method/status/TLS 관련 확인을 연결했다. | http-status: 해당 status·Retry-After·인증 challenge 절의 의미를 IETF 동일 RFC에서 직접 읽었다. §15/15.3.1/2/3/5, §15.4.2/3/4/8/9, §15.5.1/2/4/5/10/13/16/21, §15.6.1/3/4/5, §10.2.3·11.6.1; 문서 전체를 검증했다는 뜻은 아니다. | request-journey: canonicalURL은웹도구오류였으나공식Datatracker동일RFC에서실제 §3.7 connectionchain/proxy/gateway/tunnel와§7.1/7.2targetauthority·Host/§7.3cache/proxy/originrouting을읽었다. 상세H2/H3필드전체검증은아니다.",
+      "area": "network-http",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/network-http.json",
+      "qualityIssueIds": []
+    },
+    "accessVerification": {
+      "status": "NEEDS_REVIEW",
+      "basis": "앞선 Topic에서 canonical URL 도구 접근 실패; 동일 공식 RFC로 의미를 대조했다. broken link로 확정하지 않는다."
+    }
+  },
+  {
+    "area": "network-http",
+    "contentKey": "network-http.core.http-status.redirect-status",
+    "file": "content/network-http/http-status/redirect-status.md",
+    "url": "https://www.rfc-editor.org/rfc/rfc9110",
+    "verification": {
+      "status": "CURRENT_VERIFIED",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "http-cache: 동일 IETF RFC §8.8.2/8.8.3/13.1/13.2/15.4.5의 필요한 validator/precondition/304 조항을 읽었다. canonical URL 접근 문제와 의미 확인을 분리한다. | http-message: 공식Datatracker동일본문에서실제 §3.2 representation, §6.4.1 no/zero content, §7.2 Host, §8.1/8.3/8.3.1 type/coding·sniffing, §12.4.1/12.4.2/12.5.1 negotiationmayignore/quality/specificity, §12.5.5 Varyexpandscachekey, §15.3.3 202를읽었다. canonicalURL은앞선접근오류로referenceAccess에별도미확인표시한다. | http-methods: 공식Datatracker동일본문에서실제 §9.2.1safe/log/adcharge/unsafequery·§9.2.2idempotent/부수효과/response전retry, §9.3.1/2 GET/HEADcontent/header예외, §9.3.3/4POST대PUTintent·create/replace/storagehidden·§9.3.5DELETEassociation/physicalstorage/202~204시점을읽었다. 본문의methodsemantic대serverimplementation조건에대조했다. | http-state-intermediary: 동일 IETF §3.7의 proxy/gateway/tunnel과 §9.3.6 CONNECTblindforwarding을 실제 읽고 앞method/status/TLS 관련 확인을 연결했다. | http-status: 해당 status·Retry-After·인증 challenge 절의 의미를 IETF 동일 RFC에서 직접 읽었다. §15/15.3.1/2/3/5, §15.4.2/3/4/8/9, §15.5.1/2/4/5/10/13/16/21, §15.6.1/3/4/5, §10.2.3·11.6.1; 문서 전체를 검증했다는 뜻은 아니다. | request-journey: canonicalURL은웹도구오류였으나공식Datatracker동일RFC에서실제 §3.7 connectionchain/proxy/gateway/tunnel와§7.1/7.2targetauthority·Host/§7.3cache/proxy/originrouting을읽었다. 상세H2/H3필드전체검증은아니다.",
+      "area": "network-http",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/network-http.json",
+      "qualityIssueIds": []
+    },
+    "accessVerification": {
+      "status": "NEEDS_REVIEW",
+      "basis": "앞선 Topic에서 canonical URL 도구 접근 실패; 동일 공식 RFC로 의미를 대조했다. broken link로 확정하지 않는다."
+    }
+  },
+  {
+    "area": "network-http",
+    "contentKey": "network-http.core.http-status.status-class",
+    "file": "content/network-http/http-status/status-class.md",
+    "url": "https://www.rfc-editor.org/rfc/rfc9110",
+    "verification": {
+      "status": "CURRENT_VERIFIED",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "http-cache: 동일 IETF RFC §8.8.2/8.8.3/13.1/13.2/15.4.5의 필요한 validator/precondition/304 조항을 읽었다. canonical URL 접근 문제와 의미 확인을 분리한다. | http-message: 공식Datatracker동일본문에서실제 §3.2 representation, §6.4.1 no/zero content, §7.2 Host, §8.1/8.3/8.3.1 type/coding·sniffing, §12.4.1/12.4.2/12.5.1 negotiationmayignore/quality/specificity, §12.5.5 Varyexpandscachekey, §15.3.3 202를읽었다. canonicalURL은앞선접근오류로referenceAccess에별도미확인표시한다. | http-methods: 공식Datatracker동일본문에서실제 §9.2.1safe/log/adcharge/unsafequery·§9.2.2idempotent/부수효과/response전retry, §9.3.1/2 GET/HEADcontent/header예외, §9.3.3/4POST대PUTintent·create/replace/storagehidden·§9.3.5DELETEassociation/physicalstorage/202~204시점을읽었다. 본문의methodsemantic대serverimplementation조건에대조했다. | http-state-intermediary: 동일 IETF §3.7의 proxy/gateway/tunnel과 §9.3.6 CONNECTblindforwarding을 실제 읽고 앞method/status/TLS 관련 확인을 연결했다. | http-status: 해당 status·Retry-After·인증 challenge 절의 의미를 IETF 동일 RFC에서 직접 읽었다. §15/15.3.1/2/3/5, §15.4.2/3/4/8/9, §15.5.1/2/4/5/10/13/16/21, §15.6.1/3/4/5, §10.2.3·11.6.1; 문서 전체를 검증했다는 뜻은 아니다. | request-journey: canonicalURL은웹도구오류였으나공식Datatracker동일RFC에서실제 §3.7 connectionchain/proxy/gateway/tunnel와§7.1/7.2targetauthority·Host/§7.3cache/proxy/originrouting을읽었다. 상세H2/H3필드전체검증은아니다.",
+      "area": "network-http",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/network-http.json",
+      "qualityIssueIds": []
+    },
+    "accessVerification": {
+      "status": "NEEDS_REVIEW",
+      "basis": "앞선 Topic에서 canonical URL 도구 접근 실패; 동일 공식 RFC로 의미를 대조했다. broken link로 확정하지 않는다."
+    }
+  },
+  {
+    "area": "network-http",
+    "contentKey": "network-http.core.ip-routing.longest-prefix-match",
+    "file": "content/network-http/ip-routing/longest-prefix-match.md",
+    "url": "https://www.rfc-editor.org/rfc/rfc1812",
+    "verification": {
+      "status": "CURRENT_VERIFIED",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "ip-routing: Canonical직접route는접근실패했지만동일공식IETFdatatracker본문의§2.2.5most-specific와§5.3.1TTL감소/drop을읽었다. 본문의미확인과canonicalroute접근미확정을referenceAccess로분리한다.",
+      "area": "network-http",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/network-http.json",
+      "qualityIssueIds": []
+    },
+    "accessVerification": {
+      "status": "NEEDS_REVIEW",
+      "basis": "두직접canonicalroute조회에서도구접근실패가반복됐다. 동일공식IETF본문의관련의미는실제확인했지만학습자가사용할canonicalroute/redirect접근은추가확인이필요하며404로단정하지않는다."
+    }
+  },
+  {
+    "area": "network-http",
+    "contentKey": "network-http.core.ip-routing.router-forwarding",
+    "file": "content/network-http/ip-routing/router-forwarding.md",
+    "url": "https://www.rfc-editor.org/rfc/rfc1812",
+    "verification": {
+      "status": "CURRENT_VERIFIED",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "ip-routing: Canonical직접route는접근실패했지만동일공식IETFdatatracker본문의§2.2.5most-specific와§5.3.1TTL감소/drop을읽었다. 본문의미확인과canonicalroute접근미확정을referenceAccess로분리한다.",
+      "area": "network-http",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/network-http.json",
+      "qualityIssueIds": []
+    },
+    "accessVerification": {
+      "status": "NEEDS_REVIEW",
+      "basis": "두직접canonicalroute조회에서도구접근실패가반복됐다. 동일공식IETF본문의관련의미는실제확인했지만학습자가사용할canonicalroute/redirect접근은추가확인이필요하며404로단정하지않는다."
+    }
+  },
+  {
+    "area": "network-http",
+    "contentKey": "network-http.core.ip-routing.routing-table",
+    "file": "content/network-http/ip-routing/routing-table.md",
+    "url": "https://www.rfc-editor.org/rfc/rfc1812",
+    "verification": {
+      "status": "CURRENT_VERIFIED",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "ip-routing: Canonical직접route는접근실패했지만동일공식IETFdatatracker본문의§2.2.5most-specific와§5.3.1TTL감소/drop을읽었다. 본문의미확인과canonicalroute접근미확정을referenceAccess로분리한다.",
+      "area": "network-http",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/network-http.json",
+      "qualityIssueIds": []
+    },
+    "accessVerification": {
+      "status": "NEEDS_REVIEW",
+      "basis": "두직접canonicalroute조회에서도구접근실패가반복됐다. 동일공식IETF본문의관련의미는실제확인했지만학습자가사용할canonicalroute/redirect접근은추가확인이필요하며404로단정하지않는다."
+    }
+  },
+  {
+    "area": "network-http",
+    "contentKey": "network-http.core.request-journey.host-authority",
+    "file": "content/network-http/request-journey/host-authority.md",
+    "url": "https://www.rfc-editor.org/rfc/rfc9110",
+    "verification": {
+      "status": "CURRENT_VERIFIED",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "http-cache: 동일 IETF RFC §8.8.2/8.8.3/13.1/13.2/15.4.5의 필요한 validator/precondition/304 조항을 읽었다. canonical URL 접근 문제와 의미 확인을 분리한다. | http-message: 공식Datatracker동일본문에서실제 §3.2 representation, §6.4.1 no/zero content, §7.2 Host, §8.1/8.3/8.3.1 type/coding·sniffing, §12.4.1/12.4.2/12.5.1 negotiationmayignore/quality/specificity, §12.5.5 Varyexpandscachekey, §15.3.3 202를읽었다. canonicalURL은앞선접근오류로referenceAccess에별도미확인표시한다. | http-methods: 공식Datatracker동일본문에서실제 §9.2.1safe/log/adcharge/unsafequery·§9.2.2idempotent/부수효과/response전retry, §9.3.1/2 GET/HEADcontent/header예외, §9.3.3/4POST대PUTintent·create/replace/storagehidden·§9.3.5DELETEassociation/physicalstorage/202~204시점을읽었다. 본문의methodsemantic대serverimplementation조건에대조했다. | http-state-intermediary: 동일 IETF §3.7의 proxy/gateway/tunnel과 §9.3.6 CONNECTblindforwarding을 실제 읽고 앞method/status/TLS 관련 확인을 연결했다. | http-status: 해당 status·Retry-After·인증 challenge 절의 의미를 IETF 동일 RFC에서 직접 읽었다. §15/15.3.1/2/3/5, §15.4.2/3/4/8/9, §15.5.1/2/4/5/10/13/16/21, §15.6.1/3/4/5, §10.2.3·11.6.1; 문서 전체를 검증했다는 뜻은 아니다. | request-journey: canonicalURL은웹도구오류였으나공식Datatracker동일RFC에서실제 §3.7 connectionchain/proxy/gateway/tunnel와§7.1/7.2targetauthority·Host/§7.3cache/proxy/originrouting을읽었다. 상세H2/H3필드전체검증은아니다.",
+      "area": "network-http",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/network-http.json",
+      "qualityIssueIds": []
+    },
+    "accessVerification": {
+      "status": "NEEDS_REVIEW",
+      "basis": "앞선 Topic에서 canonical URL 도구 접근 실패; 동일 공식 RFC로 의미를 대조했다. broken link로 확정하지 않는다."
+    }
+  },
+  {
+    "area": "network-http",
+    "contentKey": "network-http.core.request-journey.http-request-delivery",
+    "file": "content/network-http/request-journey/http-request-delivery.md",
+    "url": "https://www.rfc-editor.org/rfc/rfc9110",
+    "verification": {
+      "status": "CURRENT_VERIFIED",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "http-cache: 동일 IETF RFC §8.8.2/8.8.3/13.1/13.2/15.4.5의 필요한 validator/precondition/304 조항을 읽었다. canonical URL 접근 문제와 의미 확인을 분리한다. | http-message: 공식Datatracker동일본문에서실제 §3.2 representation, §6.4.1 no/zero content, §7.2 Host, §8.1/8.3/8.3.1 type/coding·sniffing, §12.4.1/12.4.2/12.5.1 negotiationmayignore/quality/specificity, §12.5.5 Varyexpandscachekey, §15.3.3 202를읽었다. canonicalURL은앞선접근오류로referenceAccess에별도미확인표시한다. | http-methods: 공식Datatracker동일본문에서실제 §9.2.1safe/log/adcharge/unsafequery·§9.2.2idempotent/부수효과/response전retry, §9.3.1/2 GET/HEADcontent/header예외, §9.3.3/4POST대PUTintent·create/replace/storagehidden·§9.3.5DELETEassociation/physicalstorage/202~204시점을읽었다. 본문의methodsemantic대serverimplementation조건에대조했다. | http-state-intermediary: 동일 IETF §3.7의 proxy/gateway/tunnel과 §9.3.6 CONNECTblindforwarding을 실제 읽고 앞method/status/TLS 관련 확인을 연결했다. | http-status: 해당 status·Retry-After·인증 challenge 절의 의미를 IETF 동일 RFC에서 직접 읽었다. §15/15.3.1/2/3/5, §15.4.2/3/4/8/9, §15.5.1/2/4/5/10/13/16/21, §15.6.1/3/4/5, §10.2.3·11.6.1; 문서 전체를 검증했다는 뜻은 아니다. | request-journey: canonicalURL은웹도구오류였으나공식Datatracker동일RFC에서실제 §3.7 connectionchain/proxy/gateway/tunnel와§7.1/7.2targetauthority·Host/§7.3cache/proxy/originrouting을읽었다. 상세H2/H3필드전체검증은아니다.",
+      "area": "network-http",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/network-http.json",
+      "qualityIssueIds": []
+    },
+    "accessVerification": {
+      "status": "NEEDS_REVIEW",
+      "basis": "앞선 Topic에서 canonical URL 도구 접근 실패; 동일 공식 RFC로 의미를 대조했다. broken link로 확정하지 않는다."
+    }
+  },
+  {
+    "area": "network-http",
+    "contentKey": "network-http.core.request-journey.proxy-gateway-path",
+    "file": "content/network-http/request-journey/proxy-gateway-path.md",
+    "url": "https://www.rfc-editor.org/rfc/rfc9110",
+    "verification": {
+      "status": "CURRENT_VERIFIED",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "http-cache: 동일 IETF RFC §8.8.2/8.8.3/13.1/13.2/15.4.5의 필요한 validator/precondition/304 조항을 읽었다. canonical URL 접근 문제와 의미 확인을 분리한다. | http-message: 공식Datatracker동일본문에서실제 §3.2 representation, §6.4.1 no/zero content, §7.2 Host, §8.1/8.3/8.3.1 type/coding·sniffing, §12.4.1/12.4.2/12.5.1 negotiationmayignore/quality/specificity, §12.5.5 Varyexpandscachekey, §15.3.3 202를읽었다. canonicalURL은앞선접근오류로referenceAccess에별도미확인표시한다. | http-methods: 공식Datatracker동일본문에서실제 §9.2.1safe/log/adcharge/unsafequery·§9.2.2idempotent/부수효과/response전retry, §9.3.1/2 GET/HEADcontent/header예외, §9.3.3/4POST대PUTintent·create/replace/storagehidden·§9.3.5DELETEassociation/physicalstorage/202~204시점을읽었다. 본문의methodsemantic대serverimplementation조건에대조했다. | http-state-intermediary: 동일 IETF §3.7의 proxy/gateway/tunnel과 §9.3.6 CONNECTblindforwarding을 실제 읽고 앞method/status/TLS 관련 확인을 연결했다. | http-status: 해당 status·Retry-After·인증 challenge 절의 의미를 IETF 동일 RFC에서 직접 읽었다. §15/15.3.1/2/3/5, §15.4.2/3/4/8/9, §15.5.1/2/4/5/10/13/16/21, §15.6.1/3/4/5, §10.2.3·11.6.1; 문서 전체를 검증했다는 뜻은 아니다. | request-journey: canonicalURL은웹도구오류였으나공식Datatracker동일RFC에서실제 §3.7 connectionchain/proxy/gateway/tunnel와§7.1/7.2targetauthority·Host/§7.3cache/proxy/originrouting을읽었다. 상세H2/H3필드전체검증은아니다.",
+      "area": "network-http",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/network-http.json",
+      "qualityIssueIds": []
+    },
+    "accessVerification": {
+      "status": "NEEDS_REVIEW",
+      "basis": "앞선 Topic에서 canonical URL 도구 접근 실패; 동일 공식 RFC로 의미를 대조했다. broken link로 확정하지 않는다."
+    }
+  },
+  {
+    "area": "network-http",
+    "contentKey": "network-http.core.tls.hostname-verification",
+    "file": "content/network-http/tls/hostname-verification.md",
+    "url": "https://www.rfc-editor.org/rfc/rfc9525.html",
+    "verification": {
+      "status": "CURRENT_VERIFIED",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "tls: canonicalURL접근은도구오류였으나공식Datatracker동일RFC의§1.2/1.3 chain별도·SANonly/CN배제, §6.4 IPoctet비교/§7.1 한라벨wildcard를실제읽어본문계약을대조했다. 직접URL접근상태는referenceAccess에서NEEDS_REVIEW로분리한다.",
+      "area": "network-http",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/network-http.json",
+      "qualityIssueIds": []
+    },
+    "accessVerification": {
+      "status": "NEEDS_REVIEW",
+      "basis": "웹도구canonical .html URL Internal Error; 404/죽은링크로판정하지않는다. 공식Datatracker동일RFC본문은실제로확인했다."
+    }
+  },
+  {
+    "area": "operating-systems",
+    "contentKey": "operating-systems.core.deadlock.deadlock-detection-recovery",
+    "file": "content/operating-systems/deadlock/deadlock-detection-recovery.md",
+    "url": "https://d2.naver.com/helloworld/10963",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "deadlock: 실제 open은 navigation shell21줄만 제공했고 thread-dump 분석 본문은 확인하지 못했다. Dead link/404로 판정하지 않으며 관련 Concept의 기술 검증은 다른 실제 근거로 수행했다.",
+      "area": "operating-systems",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/operating-systems.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "operating-systems",
+    "contentKey": "operating-systems.core.deadlock.deadlock",
+    "file": "content/operating-systems/deadlock/deadlock.md",
+    "url": "https://d2.naver.com/helloworld/10963",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "deadlock: 실제 open은 navigation shell21줄만 제공했고 thread-dump 분석 본문은 확인하지 못했다. Dead link/404로 판정하지 않으며 관련 Concept의 기술 검증은 다른 실제 근거로 수행했다.",
+      "area": "operating-systems",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/operating-systems.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "operating-systems",
+    "contentKey": "operating-systems.core.deadlock.resource-allocation-graph",
+    "file": "content/operating-systems/deadlock/resource-allocation-graph.md",
+    "url": "https://d2.naver.com/helloworld/10963",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "deadlock: 실제 open은 navigation shell21줄만 제공했고 thread-dump 분석 본문은 확인하지 못했다. Dead link/404로 판정하지 않으며 관련 Concept의 기술 검증은 다른 실제 근거로 수행했다.",
+      "area": "operating-systems",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/operating-systems.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "operating-systems",
+    "contentKey": "operating-systems.core.io.async-io",
+    "file": "content/operating-systems/io/async-io.md",
+    "url": "https://tech.kakao.com/posts/680",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "io: 실제페이지의제목/george.5와69줄navigation만확인했으며io_uring 성능기사본문은노출되지않았다. 현재근거로사례의주장·성능을승인하지않는다.",
+      "area": "operating-systems",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/operating-systems.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "operating-systems",
+    "contentKey": "operating-systems.core.io.device-io-kernel-path",
+    "file": "content/operating-systems/io/device-io-kernel-path.md",
+    "url": "https://d2.naver.com/helloworld/47667",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "io: 실제open은21줄navigation shell만반환하여NIC/NAPI/softirq운영사례원문은미확인이다. Deadlink로판정하지않는다.",
+      "area": "operating-systems",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/operating-systems.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "operating-systems",
+    "contentKey": "operating-systems.core.io.epoll",
+    "file": "content/operating-systems/io/epoll.md",
+    "url": "https://d2.naver.com/helloworld/1469717",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "io: 실제open이21줄shell만제공하여HTTPS timeout/epoll운영전환본문은미확인이다. 오류본문없는상태를404로간주하지않는다.",
+      "area": "operating-systems",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/operating-systems.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "operating-systems",
+    "contentKey": "operating-systems.core.ipc.ipc-tradeoff",
+    "file": "content/operating-systems/ipc/ipc-tradeoff.md",
+    "url": "https://d2.naver.com/helloworld/2922312",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "ipc: 직접 열었지만 navigation shell만 제공했다. Browser 다중 프로세스 사례의 본문·현재성은 추가 확인이 필요하다.; isolation: IPC에서직접열었지만browserarticle본문없이navigation shell만제공됐다. 일반process보호근거를이전PASS만으로승격하지않는다.",
+      "area": "operating-systems",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/operating-systems.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "operating-systems",
+    "contentKey": "operating-systems.core.ipc.shared-memory",
+    "file": "content/operating-systems/ipc/shared-memory.md",
+    "url": "https://d2.naver.com/helloworld/47656",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "ipc: 직접 열었지만 navigation shell만 제공하여 Binder 사례 본문/정확한 학습 가치 확인이 불가능했다. 404 또는 기술 오류라고 판정하지 않는다.",
+      "area": "operating-systems",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/operating-systems.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "operating-systems",
+    "contentKey": "operating-systems.core.isolation.cgroup",
+    "file": "content/operating-systems/isolation/cgroup.md",
+    "url": "https://d2.naver.com/helloworld/7248350",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "isolation: 직접열었지만navigation shell만제공됐다. Kubernetes설정→Linuxmemorycontroller사례의본문/버전확인은추가검토가필요하다.",
+      "area": "operating-systems",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/operating-systems.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "operating-systems",
+    "contentKey": "operating-systems.core.isolation.container-process-model",
+    "file": "content/operating-systems/isolation/container-process-model.md",
+    "url": "https://d2.naver.com/helloworld/3661677",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "isolation: 직접열었지만navigation shell만제공됐다. Dockertranscoding배치/host의존사례본문은확인하지못했으며404로단정하지않는다.",
+      "area": "operating-systems",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/operating-systems.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "operating-systems",
+    "contentKey": "operating-systems.core.isolation.process-isolation",
+    "file": "content/operating-systems/isolation/process-isolation.md",
+    "url": "https://d2.naver.com/helloworld/2922312",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "ipc: 직접 열었지만 navigation shell만 제공했다. Browser 다중 프로세스 사례의 본문·현재성은 추가 확인이 필요하다.; isolation: IPC에서직접열었지만browserarticle본문없이navigation shell만제공됐다. 일반process보호근거를이전PASS만으로승격하지않는다.",
+      "area": "operating-systems",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/operating-systems.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "operating-systems",
+    "contentKey": "operating-systems.core.kernel-boundary.privilege-protection",
+    "file": "content/operating-systems/kernel-boundary/privilege-protection.md",
+    "url": "https://docs.riscv.org/reference/isa/priv/priv-intro.html",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "kernel-boundary: CA에서 확인한 짧은 canonical URL의 접근 미확정을 유지한다. 실제 공식 보충 ISA 관련 절과 URL 접근 확인을 구별한다.",
+      "area": "operating-systems",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/operating-systems.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "operating-systems",
+    "contentKey": "operating-systems.core.kernel-boundary.user-kernel-mode",
+    "file": "content/operating-systems/kernel-boundary/user-kernel-mode.md",
+    "url": "https://docs.riscv.org/reference/isa/priv/priv-intro.html",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "kernel-boundary: CA에서 확인한 짧은 canonical URL의 접근 미확정을 유지한다. 실제 공식 보충 ISA 관련 절과 URL 접근 확인을 구별한다.",
+      "area": "operating-systems",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/operating-systems.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "operating-systems",
+    "contentKey": "operating-systems.core.race-critical-section.critical-section",
+    "file": "content/operating-systems/race-critical-section/critical-section.md",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/threads-intro.pdf",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "race-critical-section: threads검토에서직접읽은shared-data/도입/context/creation관련본문을재사용해공유상태와실행교차를대조했다. 이Topic의relation은thread기본경계이며ULTmapping미확정과구별한다. referencecode실행이나모든언어의race허용동작승인은아니다.; threads: 실제 도입/별도stack·PC/TCB/creation/Why Use Threads와 shared-data 관련 본문을 읽었다. 관련 기본 Concept에는 유효하다. 그러나 ULT Concept의 relationNote가 요구하는 runtime logical→carrier mapping/blocking 절은 직접 확인하지 못했고 cache-cost 세부 범위도 미확정이다. 키워드 미검색만으로 그 절이 없다고 단정하지 않는다. 이 relation의 추가 확인 때문에 area URL 증거는 보수적으로 NEEDS_REVIEW로 남긴다.",
+      "area": "operating-systems",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/operating-systems.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "operating-systems",
+    "contentKey": "operating-systems.core.race-critical-section.interleaving",
+    "file": "content/operating-systems/race-critical-section/interleaving.md",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/threads-intro.pdf",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "race-critical-section: threads검토에서직접읽은shared-data/도입/context/creation관련본문을재사용해공유상태와실행교차를대조했다. 이Topic의relation은thread기본경계이며ULTmapping미확정과구별한다. referencecode실행이나모든언어의race허용동작승인은아니다.; threads: 실제 도입/별도stack·PC/TCB/creation/Why Use Threads와 shared-data 관련 본문을 읽었다. 관련 기본 Concept에는 유효하다. 그러나 ULT Concept의 relationNote가 요구하는 runtime logical→carrier mapping/blocking 절은 직접 확인하지 못했고 cache-cost 세부 범위도 미확정이다. 키워드 미검색만으로 그 절이 없다고 단정하지 않는다. 이 relation의 추가 확인 때문에 area URL 증거는 보수적으로 NEEDS_REVIEW로 남긴다.",
+      "area": "operating-systems",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/operating-systems.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "operating-systems",
+    "contentKey": "operating-systems.core.race-critical-section.race-condition",
+    "file": "content/operating-systems/race-critical-section/race-condition.md",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/threads-intro.pdf",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "race-critical-section: threads검토에서직접읽은shared-data/도입/context/creation관련본문을재사용해공유상태와실행교차를대조했다. 이Topic의relation은thread기본경계이며ULTmapping미확정과구별한다. referencecode실행이나모든언어의race허용동작승인은아니다.; threads: 실제 도입/별도stack·PC/TCB/creation/Why Use Threads와 shared-data 관련 본문을 읽었다. 관련 기본 Concept에는 유효하다. 그러나 ULT Concept의 relationNote가 요구하는 runtime logical→carrier mapping/blocking 절은 직접 확인하지 못했고 cache-cost 세부 범위도 미확정이다. 키워드 미검색만으로 그 절이 없다고 단정하지 않는다. 이 relation의 추가 확인 때문에 area URL 증거는 보수적으로 NEEDS_REVIEW로 남긴다.",
+      "area": "operating-systems",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/operating-systems.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "operating-systems",
+    "contentKey": "operating-systems.core.race-critical-section.shared-mutable-state",
+    "file": "content/operating-systems/race-critical-section/shared-mutable-state.md",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/threads-intro.pdf",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "race-critical-section: threads검토에서직접읽은shared-data/도입/context/creation관련본문을재사용해공유상태와실행교차를대조했다. 이Topic의relation은thread기본경계이며ULTmapping미확정과구별한다. referencecode실행이나모든언어의race허용동작승인은아니다.; threads: 실제 도입/별도stack·PC/TCB/creation/Why Use Threads와 shared-data 관련 본문을 읽었다. 관련 기본 Concept에는 유효하다. 그러나 ULT Concept의 relationNote가 요구하는 runtime logical→carrier mapping/blocking 절은 직접 확인하지 못했고 cache-cost 세부 범위도 미확정이다. 키워드 미검색만으로 그 절이 없다고 단정하지 않는다. 이 relation의 추가 확인 때문에 area URL 증거는 보수적으로 NEEDS_REVIEW로 남긴다.",
+      "area": "operating-systems",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/operating-systems.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "operating-systems",
+    "contentKey": "operating-systems.core.threads.concurrency-vs-parallelism",
+    "file": "content/operating-systems/threads/concurrency-vs-parallelism.md",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/threads-intro.pdf",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "race-critical-section: threads검토에서직접읽은shared-data/도입/context/creation관련본문을재사용해공유상태와실행교차를대조했다. 이Topic의relation은thread기본경계이며ULTmapping미확정과구별한다. referencecode실행이나모든언어의race허용동작승인은아니다.; threads: 실제 도입/별도stack·PC/TCB/creation/Why Use Threads와 shared-data 관련 본문을 읽었다. 관련 기본 Concept에는 유효하다. 그러나 ULT Concept의 relationNote가 요구하는 runtime logical→carrier mapping/blocking 절은 직접 확인하지 못했고 cache-cost 세부 범위도 미확정이다. 키워드 미검색만으로 그 절이 없다고 단정하지 않는다. 이 relation의 추가 확인 때문에 area URL 증거는 보수적으로 NEEDS_REVIEW로 남긴다.",
+      "area": "operating-systems",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/operating-systems.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "operating-systems",
+    "contentKey": "operating-systems.core.threads.java-virtual-thread-boundary",
+    "file": "content/operating-systems/threads/java-virtual-thread-boundary.md",
+    "url": "https://openjdk.org/jeps/444",
+    "verification": {
+      "status": "CURRENT_VERIFIED",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "threads: 직접open은실패했지만실제공식검색으로반환된Description/Scheduling/Executing관련본문을읽었다. platform OS wrapper와M:1/M:N·carrier교체·mount/unmount를대조했다. JDK21의역사문서이므로synchronizedpinning제약은25보장으로승격하지않는다.",
+      "area": "operating-systems",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/operating-systems.json",
+      "qualityIssueIds": []
+    },
+    "accessVerification": {
+      "status": "NEEDS_REVIEW",
+      "basis": "직접open실패와공식검색에서실제관련본문을읽은증거를구별한다. 검색본문의semantic확인은했지만직접URL가용성은미확정이다."
+    }
+  },
+  {
+    "area": "operating-systems",
+    "contentKey": "operating-systems.core.threads.java-virtual-thread-boundary",
+    "file": "content/operating-systems/threads/java-virtual-thread-boundary.md",
+    "url": "https://openjdk.org/jeps/491",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "threads: 직접canonicalopen이InternalError로실패했다. 사실은실제Oracle24release의JEP491변경과25guide로확인했지만이URL본문접근검증으로승격하지않는다.",
+      "area": "operating-systems",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/operating-systems.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "operating-systems",
+    "contentKey": "operating-systems.core.threads.kernel-thread",
+    "file": "content/operating-systems/threads/kernel-thread.md",
+    "url": "https://openjdk.org/jeps/444",
+    "verification": {
+      "status": "CURRENT_VERIFIED",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "threads: 직접open은실패했지만실제공식검색으로반환된Description/Scheduling/Executing관련본문을읽었다. platform OS wrapper와M:1/M:N·carrier교체·mount/unmount를대조했다. JDK21의역사문서이므로synchronizedpinning제약은25보장으로승격하지않는다.",
+      "area": "operating-systems",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/operating-systems.json",
+      "qualityIssueIds": []
+    },
+    "accessVerification": {
+      "status": "NEEDS_REVIEW",
+      "basis": "직접open실패와공식검색에서실제관련본문을읽은증거를구별한다. 검색본문의semantic확인은했지만직접URL가용성은미확정이다."
+    }
+  },
+  {
+    "area": "operating-systems",
+    "contentKey": "operating-systems.core.threads.process-vs-thread",
+    "file": "content/operating-systems/threads/process-vs-thread.md",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/threads-intro.pdf",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "race-critical-section: threads검토에서직접읽은shared-data/도입/context/creation관련본문을재사용해공유상태와실행교차를대조했다. 이Topic의relation은thread기본경계이며ULTmapping미확정과구별한다. referencecode실행이나모든언어의race허용동작승인은아니다.; threads: 실제 도입/별도stack·PC/TCB/creation/Why Use Threads와 shared-data 관련 본문을 읽었다. 관련 기본 Concept에는 유효하다. 그러나 ULT Concept의 relationNote가 요구하는 runtime logical→carrier mapping/blocking 절은 직접 확인하지 못했고 cache-cost 세부 범위도 미확정이다. 키워드 미검색만으로 그 절이 없다고 단정하지 않는다. 이 relation의 추가 확인 때문에 area URL 증거는 보수적으로 NEEDS_REVIEW로 남긴다.",
+      "area": "operating-systems",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/operating-systems.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "operating-systems",
+    "contentKey": "operating-systems.core.threads.thread-count-workload",
+    "file": "content/operating-systems/threads/thread-count-workload.md",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/threads-intro.pdf",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "race-critical-section: threads검토에서직접읽은shared-data/도입/context/creation관련본문을재사용해공유상태와실행교차를대조했다. 이Topic의relation은thread기본경계이며ULTmapping미확정과구별한다. referencecode실행이나모든언어의race허용동작승인은아니다.; threads: 실제 도입/별도stack·PC/TCB/creation/Why Use Threads와 shared-data 관련 본문을 읽었다. 관련 기본 Concept에는 유효하다. 그러나 ULT Concept의 relationNote가 요구하는 runtime logical→carrier mapping/blocking 절은 직접 확인하지 못했고 cache-cost 세부 범위도 미확정이다. 키워드 미검색만으로 그 절이 없다고 단정하지 않는다. 이 relation의 추가 확인 때문에 area URL 증거는 보수적으로 NEEDS_REVIEW로 남긴다.",
+      "area": "operating-systems",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/operating-systems.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "operating-systems",
+    "contentKey": "operating-systems.core.threads.thread-create-switch-cost",
+    "file": "content/operating-systems/threads/thread-create-switch-cost.md",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/threads-intro.pdf",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "race-critical-section: threads검토에서직접읽은shared-data/도입/context/creation관련본문을재사용해공유상태와실행교차를대조했다. 이Topic의relation은thread기본경계이며ULTmapping미확정과구별한다. referencecode실행이나모든언어의race허용동작승인은아니다.; threads: 실제 도입/별도stack·PC/TCB/creation/Why Use Threads와 shared-data 관련 본문을 읽었다. 관련 기본 Concept에는 유효하다. 그러나 ULT Concept의 relationNote가 요구하는 runtime logical→carrier mapping/blocking 절은 직접 확인하지 못했고 cache-cost 세부 범위도 미확정이다. 키워드 미검색만으로 그 절이 없다고 단정하지 않는다. 이 relation의 추가 확인 때문에 area URL 증거는 보수적으로 NEEDS_REVIEW로 남긴다.",
+      "area": "operating-systems",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/operating-systems.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "operating-systems",
+    "contentKey": "operating-systems.core.threads.thread-private-state",
+    "file": "content/operating-systems/threads/thread-private-state.md",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/threads-intro.pdf",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "race-critical-section: threads검토에서직접읽은shared-data/도입/context/creation관련본문을재사용해공유상태와실행교차를대조했다. 이Topic의relation은thread기본경계이며ULTmapping미확정과구별한다. referencecode실행이나모든언어의race허용동작승인은아니다.; threads: 실제 도입/별도stack·PC/TCB/creation/Why Use Threads와 shared-data 관련 본문을 읽었다. 관련 기본 Concept에는 유효하다. 그러나 ULT Concept의 relationNote가 요구하는 runtime logical→carrier mapping/blocking 절은 직접 확인하지 못했고 cache-cost 세부 범위도 미확정이다. 키워드 미검색만으로 그 절이 없다고 단정하지 않는다. 이 relation의 추가 확인 때문에 area URL 증거는 보수적으로 NEEDS_REVIEW로 남긴다.",
+      "area": "operating-systems",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/operating-systems.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "operating-systems",
+    "contentKey": "operating-systems.core.threads.thread-shared-state",
+    "file": "content/operating-systems/threads/thread-shared-state.md",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/threads-intro.pdf",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "race-critical-section: threads검토에서직접읽은shared-data/도입/context/creation관련본문을재사용해공유상태와실행교차를대조했다. 이Topic의relation은thread기본경계이며ULTmapping미확정과구별한다. referencecode실행이나모든언어의race허용동작승인은아니다.; threads: 실제 도입/별도stack·PC/TCB/creation/Why Use Threads와 shared-data 관련 본문을 읽었다. 관련 기본 Concept에는 유효하다. 그러나 ULT Concept의 relationNote가 요구하는 runtime logical→carrier mapping/blocking 절은 직접 확인하지 못했고 cache-cost 세부 범위도 미확정이다. 키워드 미검색만으로 그 절이 없다고 단정하지 않는다. 이 relation의 추가 확인 때문에 area URL 증거는 보수적으로 NEEDS_REVIEW로 남긴다.",
+      "area": "operating-systems",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/operating-systems.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "operating-systems",
+    "contentKey": "operating-systems.core.threads.user-level-thread",
+    "file": "content/operating-systems/threads/user-level-thread.md",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/threads-intro.pdf",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "race-critical-section: threads검토에서직접읽은shared-data/도입/context/creation관련본문을재사용해공유상태와실행교차를대조했다. 이Topic의relation은thread기본경계이며ULTmapping미확정과구별한다. referencecode실행이나모든언어의race허용동작승인은아니다.; threads: 실제 도입/별도stack·PC/TCB/creation/Why Use Threads와 shared-data 관련 본문을 읽었다. 관련 기본 Concept에는 유효하다. 그러나 ULT Concept의 relationNote가 요구하는 runtime logical→carrier mapping/blocking 절은 직접 확인하지 못했고 cache-cost 세부 범위도 미확정이다. 키워드 미검색만으로 그 절이 없다고 단정하지 않는다. 이 relation의 추가 확인 때문에 area URL 증거는 보수적으로 NEEDS_REVIEW로 남긴다.",
+      "area": "operating-systems",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/operating-systems.json",
+      "qualityIssueIds": []
+    }
+  },
+  {
+    "area": "operating-systems",
+    "contentKey": "operating-systems.core.virtual-memory.virtual-address-space",
+    "file": "content/operating-systems/virtual-memory/virtual-address-space.md",
+    "url": "https://d2.naver.com/helloworld/0128759",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "virtual-memory: 실제 open이21줄 navigation shell만 반환하여 ZGC address view/mapping의 원문·역사적 구현 범위를 확인하지 못했다. 404로 판정하지 않는다.",
+      "area": "operating-systems",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-3/operating-systems.json",
+      "qualityIssueIds": []
+    }
+  }
+]

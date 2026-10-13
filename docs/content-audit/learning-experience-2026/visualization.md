@@ -1,10 +1,12 @@
 # 도식 계약과 기존 자산
 
+Wave 3의 전수 시각화 판단·OS SVG 소스 의미 검토 및 구체 상태/흐름 후보는 [Wave 3 도식 기록](wave-3/visualization-reference-followups.md#도식화-추가개선-후보)에 있다. 아래 Wave 1 근거는 보존한다.
+
 Wave 1에서는 54 Concept의 현재 ASCII·표·시간선을 직접 읽고 계약과 학습 효과를 대조했다. 이 6 Area는 image/SVG 참조0이며 기존 Java/OS 60 SVG는 보존했다. 개별 유지/보강 근거는 [6개 ledger](wave-1/README.md)에 있다. 새 이미지 생성·본문 삽입은0이다.
 
 추가 선별 후보는 Write-Behind cache 기록→ACK→DB 및 crash, invalidation check/publish race, restart/recreate 상태 수명, 같은 평균·다른 꼬리의 분포, QPS→query/bytes 환산, rejected/degraded/accepted-pending 분기다. 기존 quorum·Lease 41/42·Saga·DNS overlap·HPA delay 도식은 유지한다. 개수로 판정하지 않았다.
 
-기존 60 SVG는 모두 Concept 본문에서 참조된다. Java26/OS34이며 다른 13개 Area는 image0이다. 이 차이는 품질 점수가 아니다. Database B-tree/MVCC/row-lock, Spring lifecycle/self-invocation, TLS, Distributed quorum/fencing, Cache invalidation에는 이미 의미 있는 ASCII·timeline이 있다. `DIAGRAM`은 본문과 동등한 효과의 시각화도 허용한다.
+현재 기준선에는 Java27/OS33의 60 SVG가 있다. Java array-covariance.svg 하나는 미연결이고 나머지 59개가 본문에 연결된다. 초기 보고의 Java26/OS34 및 전부 연결이라는 설명을 인벤토리와 대조해 정정하며 자산을 수정하지 않는다. 다른 13개 Area는 image0이지만 이 차이는 품질 점수가 아니다. Database B-tree/MVCC/row-lock, Spring lifecycle/self-invocation, TLS, Distributed quorum/fencing, Cache invalidation에는 이미 의미 있는 ASCII·timeline이 있다. `DIAGRAM`은 본문과 동등한 효과의 시각화도 허용한다.
 
 모든 source path/alt/viewBox/text label/연결 key/실제 deployment URL은 [asset-inventory.json](asset-inventory.json)에 있고 [deployment-evidence](deployment-evidence.json)는 HTTP200·SVG·소스 일치60/60을 기록한다. 실제 배포는 `efe73a15...`의 Production deployment6851629801이다. query string이 붙은 StringBuilder URL도 경로와 분리해 존재를 확인했다.
 

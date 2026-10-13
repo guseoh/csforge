@@ -1,0 +1,286 @@
+{
+  "area": "network-http",
+  "topic": "http-status",
+  "topicKey": "network-http.core.http-status",
+  "coverage": "8 Concept와 24 Question의 전체 본문과 모든 보기·rationale·modelAnswer·explanation·연결·난이도를 직접 읽었다. 계열과 구체 코드, 요청의 적용 여부와 비동기 업무 완료, 리다이렉션의 메서드, 인증 challenge와 존재 은폐, 조건부 충돌, 매체와 의미 오류, rate limit 및 gateway 홉을 개별 대조했다. RFC의 해당 절을 읽었으며 구현별 업무 오류 매핑을 프로토콜 필수사항으로 판정하지 않았다.",
+  "concepts": [
+    [
+      "network-http.core.http-status.status-class",
+      "KEEP",
+      "L1 계열과 구체 코드·업무 성공의 분리가 충분하다.",
+      "1xx 중간 응답, 202 미완료, 3xx 구체 코드, 4xx 현재 요청 조건과 5xx 서버 실패를 구분한다. 모든 4xx 재시도 금지나 모든 5xx 즉시 재시도를 주장하지 않는다.",
+      "NONE 계약에서 계열 표와 500/504 홉 비교가 충분하다.",
+      "RFC9110 §15/15.2/15.3/15.5/15.6의 계열 정의와 최종 응답 관계를 읽었다.",
+      "q1A 모든 보기, q2 코드·멱등성·처리 여부, q3 모든 오류 500 매핑 문제를 확인했다."
+    ],
+    [
+      "network-http.core.http-status.200-201-202-204",
+      "KEEP",
+      "L1 성공 계열 안의 생성·접수·무내용 차이가 충분하다.",
+      "201의 주 자원은 Location 또는 요청 대상 URI로 식별한다. 202는 접수했으나 미완료이고 최종 성공을 보장하지 않는다. 204는 응답 내용이 없다. 비동기 job 상태 조회가 자연스럽다.",
+      "NONE 계약의 코드별 표와 작업 접수·완료 비교가 충분하다.",
+      "RFC9110 §15.3.1/2/3/5와 §6.4.1을 실제 대조했다. 201에 Location이 언제나 필수라는 오해가 없다.",
+      "q1B 모든 보기, q2 네 코드 비교, q3 import 접수 이후 job ID/상태/결과 확인을 검토했다."
+    ],
+    [
+      "network-http.core.http-status.redirect-status",
+      "KEEP",
+      "L2 임시·영구와 후속 요청의 메서드 차이가 충분하다.",
+      "301/302의 POST→GET 허용, 303의 별도 결과 조회, 307/308의 자동 리다이렉션 시 메서드 유지가 정확하다. Location이 실제 새 요청을 유도한다는 책임이 드러난다.",
+      "DIAGRAM 계약의 코드·메서드 비교 표가 필요한 전이를 보여 준다. POST→302→GET와 POST→307→POST 두 시퀀스는 선택 보강 후보다.",
+      "RFC9110 §15.4/15.4.2/3/4/8/9를 읽었다. 자동 추종 여부 자체는 MAY이고 307의 추종 시 메서드 변경은 MUST NOT이다.",
+      "q1C 모든 보기, q2 303과 307/308의 의도 차이, q3 결제 후 결과 조회와 동일 명령 전송의 구별을 확인했다."
+    ],
+    [
+      "network-http.core.http-status.400-401-403-404",
+      "KEEP",
+      "L1 오류·인증·거부·존재 은폐의 구분이 충분하다.",
+      "400은 인식된 client 오류, 401은 유효한 인증 정보 부족 및 WWW-Authenticate, 403은 이해했으나 거부, 404는 현재 표현 없음 또는 존재 비공개다. 403을 반드시 로그인 완료로 고정하지 않는다.",
+      "NONE 계약에서 네 코드 표와 권한·은폐 예시가 충분하다.",
+      "RFC9110 §15.5.1/2/4/5와 §11.6.1을 실제 대조했다. 401의 challenge MUST와 인증 외 사유의 403도 확인했다.",
+      "q1D 모든 보기, q2 잘못된 요청과 자원 없음/은폐, q3 외부 404와 내부 인가 추적 분리를 확인했다."
+    ],
+    [
+      "network-http.core.http-status.409-412",
+      "KEEP",
+      "L2 일반 자원 상태 충돌과 명시한 전제조건 실패가 충분하다.",
+      "v3 If-Match 요청과 현재 v4 비교가 적용 전 중단을 설명한다. 예시의 If-Match/If-Unmodified-Since 범위에서 412를 설명하며 GET If-None-Match의 304까지 모두 412라고 일반화하지 않는다.",
+      "NONE 계약의 버전 전후와 조건부 요청 예시가 충분하다.",
+      "RFC9110 §15.5.10/13의 state conflict와 header precondition false를 읽었다. 충돌 해소 후 새 상태를 읽어 재시도하는 조건이 맞다.",
+      "q1A 모든 보기, q2 일반 충돌 대 header 조건, q3 ETag·If-Match 적용 전 비교와 최신 상태 병합을 확인했다."
+    ],
+    [
+      "network-http.core.http-status.415-422",
+      "KEEP",
+      "L2 지원하지 않는 형식과 지원 형식의 의미 오류를 구분하는 깊이가 충분하다.",
+      "JSON endpoint에 XML 및 지원 JSON의 도메인 규칙 위반을 구분한다. 415는 Content-Type뿐 아니라 coding·실제 데이터 검사로도 발생할 수 있다. q2의 해석 단계 표현은 지원 형식의 의미 해석 전이라는 교육 예시 범위로 읽었다.",
+      "NONE 계약의 오류 단계 표와 import 예시가 충분하다.",
+      "RFC9110 §15.5.16/21의 Content-Type/Encoding/직접 검사 및 supported type+correct syntax+unprocessible instructions를 대조했다.",
+      "q1B 모든 보기, q2 형식 대 의미 단계, q3 유효 JSON 업무 규칙 오류를 415로 혼동한 매핑을 확인했다."
+    ],
+    [
+      "network-http.core.http-status.429",
+      "KEEP",
+      "L2 식별 주체·집계 정책과 제한 회복 정보의 한계가 충분하다.",
+      "IP·사용자·자원·여러 서버 등 구현 정책을 구분하며 선택적 Retry-After가 즉시 성공이나 기존 작업 취소를 보장하지 않는다. cache 저장 금지도 정확하다.",
+      "DIAGRAM 계약의 요청 증가→정책 초과→429→선택적 Retry-After 흐름이 충분하다. 복수 client의 jitter 시간축은 선택 후보다.",
+      "RFC6585 §4의 정책 비지정·MAY Retry-After·MUST NOT cache와 RFC9110 §10.2.3의 date/seconds를 읽었다.",
+      "q1C 모든 보기, q2 seconds/date와 재시도 예산·중복 효과, q3 retry storm 및 backoff/jitter를 확인했다."
+    ],
+    [
+      "network-http.core.http-status.500-502-503-504",
+      "KEEP",
+      "L2 현재 서버 내부 실패 대 중개 홉·일시 불가·upstream 지연이 충분하다.",
+      "500 예상치 못한 조건, 502 invalid upstream response, 503 일시 과부하/점검, 504 upstream 응답 지연의 주체를 구분한다. timeout에도 업무가 적용됐을 수 있어 상태만으로 재시도하지 않는 설명이 정확하다.",
+      "DIAGRAM 계약의 네 코드와 실패 위치 텍스트가 충분하다. client→gateway→origin에 응답/timeout을 표시한 시퀀스는 선택 보강이다.",
+      "RFC9110 §15.6.1/3/4/5와 §10.2.3의 503 Retry-After MAY를 읽었다.",
+      "q1D 모든 보기, q2 네 원인과 처리 여부, q3 500으로 숨겨진 gateway 시간 초과 및 추적 연결을 확인했다."
+    ]
+  ],
+  "questions": [
+    [
+      "network-http.core.http-status.status-class.q1",
+      "KEEP",
+      "A 구체 코드와 문맥 정답; B transport/문법으로만 계열 구분, C 모든 비동기/DB 완료, D 같은 계열이면 같은 의미와 모든 rationale를 대조했다.",
+      "EASY 계열만으로 결론을 내리는 오해를 검증하며 유일 답이다."
+    ],
+    [
+      "network-http.core.http-status.status-class.q2",
+      "KEEP",
+      "model/explanation은 4xx 현재 요청 조건과 5xx error/unable, 409/429/502/503/504·Retry-After·멱등성·처리 여부를 함께 본다.",
+      "MEDIUM 계열 단정 대신 재시도 조건을 설명한다. 429 Topic과 관련되지만 범위가 다르다."
+    ],
+    [
+      "network-http.core.http-status.status-class.q3",
+      "KEEP",
+      "모든 오류 500이 인증·충돌·rate limit·gateway 신호를 없애는 원인과 구체 status+안정적 업무 코드로 개선하는 model/explanation이 맞다.",
+      "MEDIUM 실제 관측과 계약 문제이며 Concept 연결이 맞다."
+    ],
+    [
+      "network-http.core.http-status.200-201-202-204.q1",
+      "KEEP",
+      "B 202 접수·완료 미보장 정답; A 빈 본문 sync commit, C 언제나 Location, D 최종 거절과 rationale가 정확하다.",
+      "EASY 성공 코드 사이의 구체적인 오해를 비교한다."
+    ],
+    [
+      "network-http.core.http-status.200-201-202-204.q2",
+      "KEEP",
+      "model/explanation의 200 성공, 201 생성·Location 또는 target, 202 미완료, 204 무내용이 해당 RFC와 맞다.",
+      "MEDIUM 네 구분의 재진술이나 연결이 정확하고 모호하지 않다."
+    ],
+    [
+      "network-http.core.http-status.200-201-202-204.q3",
+      "KEEP",
+      "비동기 import의 202만으로 결과를 알 수 없으므로 job ID·조회·진행·오류·결과 위치를 제공하는 model/explanation이 맞다.",
+      "MEDIUM 프로토콜 접수와 업무 완료의 실패 조건을 추론한다."
+    ],
+    [
+      "network-http.core.http-status.redirect-status.q1",
+      "KEEP",
+      "C Location과 코드 의미 정답; A 서버 메모리/로그, B 인증서 검증, D 모든 POST 본문 재전송과 rationale를 확인했다.",
+      "EASY B/D는 실제 리다이렉션 오해이며 답이 유일하다."
+    ],
+    [
+      "network-http.core.http-status.redirect-status.q2",
+      "KEEP",
+      "model/explanation은 301/302 POST→GET 가능, 303 결과 조회, 307/308 자동 추종 시 메서드 유지를 구분한다.",
+      "MEDIUM 목적과 전이를 함께 설명하며 method Topic과 유의미하게 연결된다."
+    ],
+    [
+      "network-http.core.http-status.redirect-status.q3",
+      "KEEP",
+      "302를 추종한 일부 UA의 POST→GET과 303 결과 조회 대 307/308 동일 명령 이동·업무 상태 추적의 model/explanation이 맞다.",
+      "HARD 결제 작업 완료와 새로운 명령 전송을 구분하는 상황이다. 모든 client가 자동 변경한다고 단정하지 않는다."
+    ],
+    [
+      "network-http.core.http-status.400-401-403-404.q1",
+      "KEEP",
+      "D 401 유효 인증 부족+WWW-Authenticate 정답; 나머지 계열·존재·적용 후 은폐 오해와 모든 rationale를 확인했다.",
+      "EASY 인증 challenge 계약을 직접 확인한다."
+    ],
+    [
+      "network-http.core.http-status.400-401-403-404.q2",
+      "KEEP",
+      "model/explanation의 400 요청 조건과 404 현재 표현 없음/은폐가 다른 수정 방향으로 연결된다.",
+      "MEDIUM 404가 물리 삭제나 영구 부재만 뜻한다는 오해가 없다."
+    ],
+    [
+      "network-http.core.http-status.400-401-403-404.q3",
+      "KEEP",
+      "외부 존재 은폐 404를 유지하면서 내부 주체·자원·인가 거절 사유를 추적하는 model/explanation이 맞다.",
+      "HARD 보안 경계와 운영 진단을 구분하며 연결이 맞다."
+    ],
+    [
+      "network-http.core.http-status.409-412.q1",
+      "KEEP",
+      "A 현재 자원 상태 충돌 정답; B 지원 매체/검증, C If-Match 항상 참, D gateway timeout과 rationale가 정확하다.",
+      "EASY 412와 일반 충돌의 차이를 검증한다."
+    ],
+    [
+      "network-http.core.http-status.409-412.q2",
+      "KEEP",
+      "model/explanation의 현재 상태 충돌 대 명시 header 조건 false가 정확하고 If-Match 범위가 명확하다.",
+      "MEDIUM 같은 실패 느낌이지만 원인 계약을 구분한다."
+    ],
+    [
+      "network-http.core.http-status.409-412.q3",
+      "KEEP",
+      "model/explanation은 무조건 덮어쓰기를 ETag·If-Match 적용 전 비교·412·최신 상태 재조회/병합으로 개선한다.",
+      "HARD lost update와 조건부 요청을 연결한다. 자동 충돌 해소를 보장하지 않는다."
+    ],
+    [
+      "network-http.core.http-status.415-422.q1",
+      "KEEP",
+      "B 지원하지 않는 요청 content format 정답; A 모든 검증 완료, C 버전 충돌, D gateway timeout 및 rationale가 맞다.",
+      "EASY 매체 단계와 의미/상태·gateway 문제를 비교한다."
+    ],
+    [
+      "network-http.core.http-status.415-422.q2",
+      "KEEP",
+      "model/explanation의 미지원 매체/coding 대 지원 type·올바른 문법이나 의미 처리 불가가 정확하다. 415의 실제 데이터 검사 가능성도 Concept에서 확인했다.",
+      "MEDIUM 예시의 형식 해석과 의미 처리 단계로 답을 한정하면 명확하다."
+    ],
+    [
+      "network-http.core.http-status.415-422.q3",
+      "KEEP",
+      "유효 JSON과 지원 type인데 업무 규칙 위반을 415로 보내면 형식 수정으로 오도하므로 422 및 구체 업무 이유를 제공하는 model/explanation이 맞다.",
+      "MEDIUM API 오류 계약을 학습하며 연결이 맞다."
+    ],
+    [
+      "network-http.core.http-status.429.q1",
+      "KEEP",
+      "C 일정 기간 집계 정책 초과 정답; A 서비스 전체 점검만, B 기존 큐 모두 취소, D 즉시 성공 보장과 rationale를 확인했다.",
+      "EASY 503·작업 상태·회복 보장 오해를 구분한다."
+    ],
+    [
+      "network-http.core.http-status.429.q2",
+      "KEEP",
+      "model/explanation은 선택적 date/seconds·대기·멱등성·전체 deadline·시도 횟수·backoff/jitter를 구분한다.",
+      "MEDIUM 시간 형식과 재시도 정책의 한계를 설명한다."
+    ],
+    [
+      "network-http.core.http-status.429.q3",
+      "KEEP",
+      "model/explanation은 동시 즉시 retry storm을 Retry-After+backoff+jitter+최대 횟수와 중복 실행 안전성으로 개선한다.",
+      "HARD q2와 관련되지만 복수 client 동시 폭주 원인과 시간 분산을 추가 추론한다."
+    ],
+    [
+      "network-http.core.http-status.500-502-503-504.q1",
+      "KEEP",
+      "D invalid upstream response 정답; A 처리/효과 없음 보장, B 인증/인가, C 정상 제때 응답과 rationale가 맞다.",
+      "EASY A/C는 실제 gateway·retry 오해이며 답이 유일하다."
+    ],
+    [
+      "network-http.core.http-status.500-502-503-504.q2",
+      "KEEP",
+      "model/explanation은 500 내부·502 invalid·503 unavailable·504 timeout과 method/Retry-After/실제 처리 가능성을 구분한다.",
+      "MEDIUM 원인과 관측 주체를 설명한다."
+    ],
+    [
+      "network-http.core.http-status.500-502-503-504.q3",
+      "KEEP",
+      "model/explanation은 gateway 실패 의미를 보존하고 요청 ID·상위 연결 시간·응답 여부로 origin과 연결한다.",
+      "MEDIUM q2의 코드 정의를 운영 진단에 적용한다."
+    ]
+  ],
+  "sources": [
+    [
+      "https://www.rfc-editor.org/rfc/rfc9110",
+      "CURRENT_VERIFIED",
+      "해당 status·Retry-After·인증 challenge 절의 의미를 IETF 동일 RFC에서 직접 읽었다. §15/15.3.1/2/3/5, §15.4.2/3/4/8/9, §15.5.1/2/4/5/10/13/16/21, §15.6.1/3/4/5, §10.2.3·11.6.1; 문서 전체를 검증했다는 뜻은 아니다."
+    ],
+    [
+      "https://www.rfc-editor.org/rfc/rfc6585",
+      "CURRENT_VERIFIED",
+      "RFC Editor가 /info/rfc6585로 redirect한 실제 §4에서 사용자·집계 정책 비지정, 선택적 Retry-After와 429 cache 금지를 읽었다."
+    ]
+  ],
+  "supplementalSources": [
+    [
+      "https://datatracker.ietf.org/doc/html/rfc9110",
+      "CURRENT_VERIFIED",
+      "원래 canonical URL의 도구 접근 실패와 별도로 동일 공식 RFC의 필요한 status·Retry-After 절을 읽어 의미를 확인했다."
+    ]
+  ],
+  "referenceAccess": {
+    "https://www.rfc-editor.org/rfc/rfc9110": {
+      "status": "NEEDS_REVIEW",
+      "basis": "앞선 Network Topic에서 도구가 canonical URL 접근 오류를 반환했다. 링크가 404라고 확정하지 않으며 IETF 동일 RFC의 관련 절로 의미 검증을 분리했다."
+    }
+  },
+  "findings": [],
+  "sourceHashes": {
+    "network-http.core.http-status.200-201-202-204": "1ccdcdfcb6b4d57a682d0085c76bc43dc159524c2b4e897dc690f77c53a181de",
+    "network-http.core.http-status.200-201-202-204.q1": "2141fbfc5396b9f1598077fdd7f2b48435ed490f84dedd842bab6f8cf48b3eea",
+    "network-http.core.http-status.200-201-202-204.q2": "7a88980b54c737dda1bec14a70c2090431ac161b3db7a93f680835d324aa0dc8",
+    "network-http.core.http-status.200-201-202-204.q3": "207c5807ca098c8757b52cd35ad01edcc91a0cab165d6d5cfb91b209a33aa1db",
+    "network-http.core.http-status.400-401-403-404": "4184cd7435557ff7b60ba6ce2984f94c8a9458b773d34f9c6e556ff633d23d92",
+    "network-http.core.http-status.400-401-403-404.q1": "db51aaebce44a449c05e208de9b5b564ed8b4bf2b66f63966a7b79982d3a8ac5",
+    "network-http.core.http-status.400-401-403-404.q2": "55d0371baad988b6a38cdf1d95cb264bb0031da6bb88e329c9f16d0c5ce9b7db",
+    "network-http.core.http-status.400-401-403-404.q3": "3e2773b03c6b8f748cd101b97dde46aa939506d4571d4bb28f902bc3236add8c",
+    "network-http.core.http-status.409-412": "0fc454538629ef0736941babcfb47125905d282f9390bde5521a7f21695684e3",
+    "network-http.core.http-status.409-412.q1": "f7e7607d62468a56d37bcbac7aa056780234da9ec5615a19e03cc4e4772c7932",
+    "network-http.core.http-status.409-412.q2": "394df83d8e0ab348def3b6e0d97613fe5a2b3b9e28c34566c6efeba63fc8fbbc",
+    "network-http.core.http-status.409-412.q3": "0c856fa3567eefbfb6d6057ddc1d00c11eec28551224d1e7a2760671e7fb1691",
+    "network-http.core.http-status.415-422": "ea0959acb2dc397e5294377e108703a68f1c6d5c84649f1296cea63e1299bad9",
+    "network-http.core.http-status.415-422.q1": "c9b8757210c4d134cf9823b5970d3b8284ecdcf0ad2d8d6a3d8661e35b98536a",
+    "network-http.core.http-status.415-422.q2": "b061d59a9206fdf4c339294c1a67864f43a3880432eb9e775929e262e243109f",
+    "network-http.core.http-status.415-422.q3": "2c67acea0aae7b53996f14d53d23b34ad1e07f0d375296f2a79dbd95db2fe122",
+    "network-http.core.http-status.429": "c7b4aba23bd51f856ad7359f468abd8abec3a5c922ed86f672e6c76dd5e3f2b8",
+    "network-http.core.http-status.429.q1": "bbe14a6db197e72a718dbd6e53cc4ada83cd76b7c24a2d540c499da4159cb15a",
+    "network-http.core.http-status.429.q2": "f55b1140c7f3f37f8de5a682d15adbdfc7ac0a8fef44a995f160ea13d3a4b35e",
+    "network-http.core.http-status.429.q3": "31965bd4562f4c9e9992a3dbdcb4609e0fb3eab1397ca24fc625ab94c3ecdab4",
+    "network-http.core.http-status.500-502-503-504": "1295e115326affa5e6db8857e1971823736396cf872a24d48dfd20c766cb9984",
+    "network-http.core.http-status.500-502-503-504.q1": "a104f1920c134c94dfc5208a8043e08be32f2b83faf4567191b5568e79708ea7",
+    "network-http.core.http-status.500-502-503-504.q2": "97b6a13a0d03046b75434f8fcb83ba7e985bc006dc03bb9458d20d980f3ae3c2",
+    "network-http.core.http-status.500-502-503-504.q3": "802508ce4f4518f73c7e4c66cb5008bd057f2d19ae08a3a526a982d1b11bdc6d",
+    "network-http.core.http-status.redirect-status": "10a0c79a2d9660393578df12c1a2914768396f8997b00016f0a40ca02b1bd64b",
+    "network-http.core.http-status.redirect-status.q1": "41b1b84bde58976508d0fb992701b8b0ce2ebedc12519ec6c2b91aab3123c15d",
+    "network-http.core.http-status.redirect-status.q2": "06259f238646e3f4e8c4dcc3d758b10caa689915ddc1134cd3cf723fe0837bf1",
+    "network-http.core.http-status.redirect-status.q3": "c7614755fe662fe17c36a9286e8cb2042f167e661ae4481f53de87bbe5197b87",
+    "network-http.core.http-status.status-class": "ed1f81cc666bc6b4c07f5614dc3daa303e0e38c78858144d9fea861348ea7b20",
+    "network-http.core.http-status.status-class.q1": "2c9ecf10badbec888d5b048ba47239275eb2981c17b6a256a9239feb24cf5f47",
+    "network-http.core.http-status.status-class.q2": "eccc892c63a89141fb2f8b76950ac025f4ca7a996cd3baa4f2e5824f8a1524aa",
+    "network-http.core.http-status.status-class.q3": "b3eb15fee7a4f23a1162529c45beb3ef4fafbce368ca40ca8fdc78ea4fec537d"
+  }
+}

@@ -11,6 +11,10 @@ WAVE_2_COUNTS = {
     "spring": (12, 37, 77), "database": (12, 38, 75),
     "backend-engineering": (13, 40, 108), "security": (12, 38, 74),
 }
+WAVE_3_COUNTS = {
+    "computer-architecture": (10, 61, 183), "dsa": (12, 84, 293),
+    "operating-systems": (12, 97, 331), "network-http": (15, 127, 381),
+}
 CONCEPT_AXES = [
     "objectiveLevelDepth", "accuracyMechanismCodeExamplesClarityBoundaries",
     "visualization", "references", "linkedQuestionCoverage",
@@ -21,7 +25,8 @@ QUESTION_AXES = ["answerChoicesRationalesModelExplanation", "ambiguityDifficulty
 def load_wave(out, root, baseline, read_json, sha, require, wave=1):
     """A stale or incomplete ledger fails validation instead of receiving KEEP."""
     reviews, sources, ledgers = {}, {}, {}
-    counts = {a: (3, 9, 27) for a in WAVE_AREAS} if wave == 1 else WAVE_2_COUNTS
+    counts = {1: {a: (3, 9, 27) for a in WAVE_AREAS},
+              2: WAVE_2_COUNTS, 3: WAVE_3_COUNTS}[wave]
     paths = sorted((out / f"wave-{wave}").glob("*.json"))
     require({p.stem for p in paths} == set(counts), f"Wave {wave} area file coverage")
     for path in paths:
@@ -48,7 +53,8 @@ def load_wave(out, root, baseline, read_json, sha, require, wave=1):
                         f"Incomplete handwritten reasoning: {key}")
                 require(verdict in {"KEEP", "TARGETED_ENHANCE", "REWRITE_REQUIRED", "NEEDS_REVIEW"},
                         f"Invalid Wave quality decision: {key}")
-                findings = [f for f in data["findings"] if key in f["contentKeys"]]
+                findings = [f for f in data["findings"] + data.get("carriedForwardFindings", [])
+                            if key in f["contentKeys"]]
                 require(verdict not in {"TARGETED_ENHANCE", "REWRITE_REQUIRED"} or bool(findings),
                         f"Quality change without an actionable finding: {key}")
                 require(not findings or verdict in {"TARGETED_ENHANCE", "REWRITE_REQUIRED"},
@@ -78,6 +84,23 @@ def load_wave(out, root, baseline, read_json, sha, require, wave=1):
             require(url in {s[0] for s in data["sources"]}, f"Access note without source: {url}")
             require(access.get("status") in {"CURRENT_VERIFIED", "NEEDS_REVIEW"} and bool(access.get("basis")),
                     f"Reference access evidence: {url}")
+        for asset in data.get("visualizationAssets", []):
+            require(asset.get("reviewScope") == "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+                    f"Wave asset review scope: {asset.get('file')}")
+            require(sha(root / asset["file"]) == asset["sourceSha256"],
+                    f"Stale Wave asset evidence: {asset['file']}")
+        require(len({a["file"] for a in data.get("visualizationAssets", [])}) ==
+                len(data.get("visualizationAssets", [])), f"Duplicate Wave asset: {area}")
+        checked_urls = {s[0] for s in data["sources"] + supplemental if s[1] == "CURRENT_VERIFIED"}
+        concept_keys = {r[0] for r in data["concepts"]}
+        for key, support in data.get("supportingEvidence", {}).items():
+            require(key in concept_keys and support.get("kind") in {"CHECKED_SOURCE", "DIRECT_DERIVATION"}
+                    and bool(support.get("basis")), f"Concept supporting evidence: {key}")
+            require(set(support.get("urls", [])).issubset(checked_urls), f"Unverified supporting URL: {key}")
+            require(support["kind"] != "CHECKED_SOURCE" or bool(support.get("urls")),
+                    f"Missing checked supporting URL: {key}")
+            if key in reviews:
+                reviews[key]["supportingEvidence"] = support
     return reviews, sources, ledgers
 
 

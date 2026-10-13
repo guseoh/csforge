@@ -1,0 +1,269 @@
+{
+  "area": "computer-architecture",
+  "topic": "performance",
+  "topicKey": "computer-architecture.core.performance",
+  "coverage": "7 Concept와 21 Question의 모든 실제 필드를 두 bounded 출력에서 읽었다. 단위/측정 경계, CPU time·IC/CPI/clock, Amdahl의 기준 비율·상한, cache/branch의 조건부 모델, JMH/DCE와 종단 간 측정을 검토했다. 모든 계산을 직접 추론했으며 branch q1의 오답 rationale 계산을 선별했다. 이전 pipeline 문항과 같은 수치의 반복은 이미 W3-CA-003에서 최소 범위로 기록하며 새 finding으로 중복 계산하지 않는다.",
+  "concepts": [
+    [
+      "computer-architecture.core.performance.latency-throughput",
+      "KEEP",
+      "L1 단일 완료 시간과 단위 시간 완료량 구별을 충족한다.",
+      "5-stage fill 이후 overlap와 각 instruction의 전체 경로 지연, 자원 포화의 queue/stall을 구별한다. 동시성 증가가 개별 latency 감소를 보장하지 않는다.",
+      "TEXT cycle별 IF/ID/EX/MEM/WB와 자원 포화 분기 흐름이 충분하다.",
+      "UMD canonical performance 대상 접근은 이전 직접 요청 실패로 미확정이다. 실제 공식 검색 반환의 CPU equation 관련 절은 별도 supplemental로 범위를 제한한다.",
+      "q1 정의/단위, q2 250 ops/s, q3 batch 처리량·p99 절충을 검토했다."
+    ],
+    [
+      "computer-architecture.core.performance.cpu-time",
+      "KEEP",
+      "L1 CPU 실행 시간과 elapsed/clock/utilization 구별을 충족한다.",
+      "I/O와 scheduler 대기는 elapsed에 포함되며 CPU cycles/clock의 단순 모델과 cache/branch stall을 설명한다. 여러 코어의 누적 CPU time이 wall time보다 클 수 있어 사용률과 요청 비중을 동일시하지 않는다.",
+      "TEXT elapsed 구성과 cycle 식이 충분하다.",
+      "UMD canonical target 미확정이다. 관련 CPU equation의 공식 검색 본문을 별도로 확인했으며 OS별 accounting API까지 그 자료로 승인하지 않는다.",
+      "q1 480ms, q2 세 측정 경계, q3 전체 25%와 특정 core/thread 포화의 구별이 맞다."
+    ],
+    [
+      "computer-architecture.core.performance.instruction-count-cpi-clock",
+      "KEEP",
+      "L2 CPU time 세 항 분해 목표를 달성한다.",
+      "실행된 architectural IC×평균 CPI×cycle time와 1000/1260 cycles 비교가 맞다. workload/의존성/cache/branch와 clock 변화의 상호작용을 설명하며 GHz 또는 IC만으로 결론내리지 않는다.",
+      "TEXT 식·숫자 비교·각 항의 원인 연결이 충분하다.",
+      "UMD canonical 미확정이며 별도 공식 검색 결과의 IC×CPI×cycle time 관련 식만 대조했다. 같은 자료에 있는 다른 식의 오기까지 승인하지 않는다.",
+      "q1 1500cycles, q2 2us, q3 11.2억 대 10억 cycles를 검토했다."
+    ],
+    [
+      "computer-architecture.core.performance.amdahl-law",
+      "KEEP",
+      "L2 기준 시간 비율과 개선하지 않은 구간의 상한을 충족한다.",
+      "(1-p)+p/s의 직렬 합산 가정, 20%/10배의 0.82와 1.22배, 30%만 개선 시 1/0.7 상한이 맞다. p는 코드 크기가 아닌 기준 실행 시간이며 추가 동기화/경합 비용을 경계한다.",
+      "DIAGRAM baseline의 p가 p/s로 줄어도 1-p가 유지되는 상태와 숫자가 충분하다.",
+      "UMD canonical 접근 미확정, 공식 학과 검색 반환의 Amdahl 식을 별도 대조했다. 그 보충 URL의 직접 요청도 403으로 access 미확정이다.",
+      "q1 4/3, q2 최대 4/3, q3 0.92 시간과 1.087배 속도의 계산이 맞다."
+    ],
+    [
+      "computer-architecture.core.performance.cache-impact",
+      "KEEP",
+      "L2 cache miss→stall/CPI와 접근 패턴의 인과를 충족한다.",
+      "AMAT의 miss penalty는 추가 비용이라는 단순 모델이며 OOO/MLP의 overlap와 dependent pointer 추적을 구별한다. locality 개선과 추가 명령/prefetch 대역폭 비용을 함께 평가한다.",
+      "DIAGRAM 동일 IC의 hit/miss→stall→CPI 분기와 AMAT 식을 유지한다.",
+      "UMD target 미확정이다. 앞서 실제 읽은 공식 cache worksheet의 추가 miss penalty 모델과 대조하며 모든 실제 CPU stall을 선형 합으로 일반화하지 않는다.",
+      "q1 4ns, q2 같은 IC의 추가 cycles, q3 miss 감소와 IC 증가의 trade-off가 적합하다."
+    ],
+    [
+      "computer-architecture.core.performance.pipeline-branch-impact",
+      "KEEP",
+      "L2 분기 비율·실패율·복구 비용과 clock/CPI 절충을 달성한다.",
+      "0.20×0.05×12=0.12의 단순 기여와 기본 1.12가 맞다. 깊은 pipeline의 clock 이득과 복구 비용, branchless 추가 load/명령의 조건부 비용을 설명한다.",
+      "DIAGRAM 계약은 식·수치와 잘못된 경로 폐기/재시작의 흐름 설명으로 충족하며 새 이미지가 필수는 아니다.",
+      "UMD target 미확정이며 기존 공식 pipeline/OOO 보충의 관련 흐름과 단순 기댓값 계산을 대조했다.",
+      "q1 정답 D는 맞지만 B rationale의 100% 실패 계산은 W3-CA-010이다. q2 깊이와 q3 branchless 측정은 정확하다."
+    ],
+    [
+      "computer-architecture.core.performance.microbenchmark-boundary",
+      "KEEP",
+      "L3 국소 측정과 전체 성능·실험 조건 구별을 충족한다.",
+      "Java 결과 미사용은 DCE 가능성으로 설명하여 side effect가 있는 모든 호출이 제거된다고 하지 않는다. JIT/warmup/fork/result 소비, cache/input/frequency/열/OS 상태와 대표 workload의 별도 검증을 설명한다.",
+      "TEXT microbenchmark/end-to-end의 질문 구별과 Java 미사용 결과 예가 충분하다.",
+      "JMH canonical homepage 직접 접근은 실패하여 미확정이다. 실제 OpenJDK JMH DeadCode sample 원문을 읽어 반환값의 소비와 제거되는 계산을 대조했다.",
+      "q1 DCE 후보, q2 비교 조건, q3 국소 30%와 전체 1%의 Amdahl·scope 분석이 적합하다."
+    ]
+  ],
+  "questions": [
+    [
+      "computer-architecture.core.performance.latency-throughput.q1",
+      "KEEP",
+      "A 개별 latency/완료량 단위가 맞다. B 동비율 latency 감소, C batch 무조건 개선, D instruction/s와 HTTP request/s 직접 비교는 틀리며 모든 rationale/해설이 경계를 설명한다.",
+      "EASY 유일답이며 단위와 측정 대상이 명확하다."
+    ],
+    [
+      "computer-architecture.core.performance.latency-throughput.q2",
+      "KEEP",
+      "2500/10=250 ops/s이다. acceptedAnswers의 250/ops/s/작업·개 표기와 해설을 확인했다.",
+      "MEDIUM 산술은 간단하지만 측정 단위 목표와 일치하며 모호하지 않다."
+    ],
+    [
+      "computer-architecture.core.performance.latency-throughput.q3",
+      "KEEP",
+      "모델/해설은 batch 고정 비용 분산과 fill/queue 대기로 throughput 40% 증가와 p99 3배가 공존함을 설명하며 SLA·도착률·queue를 함께 선택한다.",
+      "HARD 성능 지표의 trade-off이고 실제 수치를 보편 보장으로 쓰지 않는다."
+    ],
+    [
+      "computer-architecture.core.performance.cpu-time.q1",
+      "KEEP",
+      "C 500-40+20=480ms가 맞다. A 이전 CPU40, B 전체 절반250, D 새 CPU20만 계산은 틀리며 모든 rationale/해설에 unchanged460ms가 있다.",
+      "EASY 다른 시간 유지 전제로 유일답이다."
+    ],
+    [
+      "computer-architecture.core.performance.cpu-time.q2",
+      "KEEP",
+      "모델/해설은 wall의 대기 포함, process/thread CPU 누적, system utilization의 코어·시간 분모를 구별한다.",
+      "MEDIUM 세 측정 경계 비교이며 q1 산술과 목표가 다르다."
+    ],
+    [
+      "computer-architecture.core.performance.cpu-time.q3",
+      "KEEP",
+      "모델/해설은 전체 25%가 특정 core/thread saturation을 배제하지 못하며 요청 CPU/runnable 대기/I/O/하위 호출과 core별 사용률을 분해한다.",
+      "HARD 관측 하나로 병목을 확정하지 않는 추론이 맞다."
+    ],
+    [
+      "computer-architecture.core.performance.instruction-count-cpi-clock.q1",
+      "KEEP",
+      "B 1000×1.5=1500cycles다. A 나눗셈667, C CPI만1.5, D IC=cycles 고정은 틀리며 각 rationale/해설이 평균과 clock 단위를 구별한다.",
+      "EASY 유일답이다."
+    ],
+    [
+      "computer-architecture.core.performance.instruction-count-cpi-clock.q2",
+      "KEEP",
+      "4000/(2×10^9)s=2us이다. acceptedAnswers 네 unit 표기와 해설의 0.5ns/cycle·2000ns를 확인했다.",
+      "MEDIUM 요청 단위가 명확하다."
+    ],
+    [
+      "computer-architecture.core.performance.instruction-count-cpi-clock.q3",
+      "KEEP",
+      "10억×1 대 7억×1.6=11.2억, clock 같아 후자가 12% 더 긴 CPU time이다. 모델/해설은 IC 감소만으로 평가하지 않는다.",
+      "HARD 세 항의 비교이며 앞 본문의 일반 예와 다른 수치 적용이다."
+    ],
+    [
+      "computer-architecture.core.performance.amdahl-law.q1",
+      "KEEP",
+      "D 새 시간0.5+0.5/2=0.75, 속도4/3이 맞다. A 변화 없음/B 전체2배/C4배는 틀리며 rationale/해설에 개선 안 된 구간이 남는다.",
+      "EASY unchanged 전제로 유일답이다."
+    ],
+    [
+      "computer-architecture.core.performance.amdahl-law.q2",
+      "KEEP",
+      "개선25%가0에 접근해도75%가 남아 최대1/0.75=4/3이다. acceptedAnswers 근사/분수와 해설이 맞다.",
+      "MEDIUM q1과 값은 같지만 유한 개선과 무한 상한이라는 목표가 다르다."
+    ],
+    [
+      "computer-architecture.core.performance.amdahl-law.q3",
+      "KEEP",
+      "모델은 0.9+0.1/5=0.92, speedup1.087배와 다음 측정의 큰 비중 DB 원인 검토를 설명한다. 8.7%는 속도 향상이며 지연 감소는 8%로 구별해 읽었다.",
+      "HARD 기준 비율과 재측정·우선순위 목표를 검증한다."
+    ],
+    [
+      "computer-architecture.core.performance.cache-impact.q1",
+      "KEEP",
+      "B 1+0.05×60=4ns다. A1.05/C60/D61은 miss 가중 비용·평균 경계가 틀리며 모든 rationale와 해설을 확인했다.",
+      "EASY miss penalty를 추가 비용으로 쓰는 본문 단순 모델에서 유일하다."
+    ],
+    [
+      "computer-architecture.core.performance.cache-impact.q2",
+      "KEEP",
+      "모델/해설은 architectural IC가 같아도 memory wait stall이 cycles/CPI/CPU time을 늘릴 수 있음을 설명한다. 일부 overlap 가능성을 배제하지 않는다.",
+      "MEDIUM 가능성 설명이며 모든 miss가 동일 stall이라고 단정하지 않는다."
+    ],
+    [
+      "computer-architecture.core.performance.cache-impact.q3",
+      "KEEP",
+      "모델/해설은 압축의 miss30% 감소와 encode/decode/index 추가 IC50%의 절충을 설명하며 cycles/CPI/CPU time을 함께 측정한다.",
+      "HARD miss counter 하나로 전체 성능을 결정하지 않는다."
+    ],
+    [
+      "computer-architecture.core.performance.pipeline-branch-impact.q1",
+      "TARGETED_ENHANCE",
+      "D 0.20×0.05×12=0.12는 정확하다. A0.01은 실패 빈도만, C12는 사건당 비용으로 틀리며 해설도 맞다. B1.2도 오답이나 그 rationale의 모든 분기 실패 해석은 실제2.4라 W3-CA-010이다.",
+      "EASY 유일답은 유지하고 B 계산 근거만 정밀 보강한다. 이전 Topic의 같은 기대값은 W3-CA-003에서 다룬다."
+    ],
+    [
+      "computer-architecture.core.performance.pipeline-branch-impact.q2",
+      "KEEP",
+      "모델/해설은 짧은 cycle 이득보다 mispredict recovery의 CPI 증가가 클 수 있는 조건을 설명한다.",
+      "MEDIUM 깊이 증가가 항상 느림/빠름이라는 보장을 피한다."
+    ],
+    [
+      "computer-architecture.core.performance.pipeline-branch-impact.q3",
+      "KEEP",
+      "모델/해설은 거의 정확한 기존 분기 대비 추가 load/cache miss/IC 비용, 실제 입력의 branch/miss/cycles·동작 동등성 측정을 요구한다.",
+      "HARD branchless를 일반 성능 보장으로 만들지 않는다."
+    ],
+    [
+      "computer-architecture.core.performance.microbenchmark-boundary.q1",
+      "KEEP",
+      "A 결과 미관찰 계산의 DCE 가능성이 맞다. B timer만 변화/C JIT에는 DCE 없음/D 반복으로 오류 자동 해결은 틀리며 모든 rationale/해설에 result 소비/JMH 경계가 있다.",
+      "EASY '특별히 의심'이라는 조건부 질문이며 부작용 있는 모든 계산 제거를 보장하지 않는다."
+    ],
+    [
+      "computer-architecture.core.performance.microbenchmark-boundary.q2",
+      "KEEP",
+      "모델/해설은 JIT·cache/branch history·input·frequency/열의 비교 조건 고정/기록이 코드 효과 귀속에 필요함을 설명한다.",
+      "MEDIUM 실험 설계 목표로 q1 DCE와 다르다."
+    ],
+    [
+      "computer-architecture.core.performance.microbenchmark-boundary.q3",
+      "KEEP",
+      "모델/해설은 parser 국소30%와 endpoint1%의 다른 측정 경계 및 DB/network/queue/GC 비중, 운영 추적·대표 부하의 재검증을 설명한다.",
+      "HARD 국소 효과의 종단 간 적용 조건이며 작은 비중 때문에 모순이 아니다."
+    ]
+  ],
+  "sources": [
+    [
+      "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/performance/index.html",
+      "NEEDS_REVIEW",
+      "canonical 대상의 직접 web 접근은 실패했다. 이전 Topic에서 기록한 접근 근거를 유지하며 대체 공식 검색 본문을 읽었다고 canonical 페이지 자체를 확인 처리하지 않는다."
+    ],
+    [
+      "https://openjdk.org/projects/code-tools/jmh/",
+      "NEEDS_REVIEW",
+      "canonical homepage 직접 web 접근이 Internal Error로 실패했다. 공식 JMH sample의 실제 본문은 보충으로 읽었지만 대상 homepage의 실제 학습 경로는 미확정이다."
+    ]
+  ],
+  "supplementalSources": [
+    [
+      "https://www.cs.umd.edu/~meesh/cmsc411/legacy/overview/chapter01.html",
+      "CURRENT_VERIFIED",
+      "공식 학과 검색 결과에 실제 반환된 Amdahl 식, IC×CPI×cycle time와 세 항의 상호 의존 관련 본문만 읽었다. 직접 접근은403이다. 검색 반환의 다른 CPU 식에 오기가 있으므로 그 식이나 전체 페이지 정확성까지 승인하지 않는다."
+    ],
+    [
+      "https://raw.githubusercontent.com/openjdk/jmh/master/jmh-samples/src/main/java/org/openjdk/jmh/samples/JMHSample_08_DeadCode.java",
+      "CURRENT_VERIFIED",
+      "OpenJDK 공식 저장소 sample의 실제 전체 원문을 읽었다. measureWrong의 미사용 결과, measureRight의 반환 결과와 Blackhole 소비 관련 설명을 대조했다. 벤치마크를 실제 실행하거나 모든 JMH sample을 검토했다고 하지 않는다."
+    ]
+  ],
+  "findings": [
+    {
+      "id": "W3-CA-010",
+      "severity": "P0",
+      "contentKeys": [
+        "computer-architecture.core.performance.pipeline-branch-impact.q1"
+      ],
+      "file": "content/computer-architecture/performance/questions.json",
+      "quote": "`1.2`는 20%의 분기마다 모두 예측에 실패한다고 본 계산에 가깝다.",
+      "problem": "정답 D=0.12는 맞지만 B의 rationale은 모든 분기 실패를 가정한 값을1.2에 가깝다고 설명한다. 실제 그 가정의 값은0.20×1×12=2.4이다. 1.2는 주어진5% 대신50% 실패율을 쓰면 나오는 값이어서 오답의 오류 경로를 잘못 가르친다.",
+      "action": "B rationale만 '실패율5%를50%로 잘못 적용한 값'처럼 실제1.2를 만드는 계산으로 정밀 수정한다. 정답·다른 rationale·해설은 유지한다.",
+      "followupIssues": [
+        201
+      ]
+    }
+  ],
+  "sourceHashes": {
+    "computer-architecture.core.performance.amdahl-law": "4ddea4f6b973d138edef265b38c0a5160af16bb6ffd804dec1e440ed36bfaf6a",
+    "computer-architecture.core.performance.amdahl-law.q1": "7f45da732a8dc224b7d4b60e22fb57896dafc7180f21597a230e755216d626ef",
+    "computer-architecture.core.performance.amdahl-law.q2": "073f86fc88ca0b8a6f253c7044660a16a6073db3fc2ee4d5cd09e73969a097db",
+    "computer-architecture.core.performance.amdahl-law.q3": "4ecac544807f22869a5f17f9cfaffcfbde5e803a5f2e097d3cf8ab94477fcd99",
+    "computer-architecture.core.performance.cache-impact": "6c8f9e1fcd2ea200f9ef2bcd0e73e62fcb48c9855cba83562cd723e9700bb2b9",
+    "computer-architecture.core.performance.cache-impact.q1": "a34d2caa574de4b3970a6b4ec04102755f4977053494fa03d8674d3b374f3f12",
+    "computer-architecture.core.performance.cache-impact.q2": "30ff803c2e0a99ae6aaf8713b6ea47b56233e290ac5349da3959d080d4a18e90",
+    "computer-architecture.core.performance.cache-impact.q3": "c1fe2c845f664f1a5a0f2863ee0ecee356cbf82b76b177b37cad9f9a7eed9fc8",
+    "computer-architecture.core.performance.cpu-time": "1c622d7b2e7098ab67fbd3e3621c2f3429caa163bfc05641dd6653a9e74de94f",
+    "computer-architecture.core.performance.cpu-time.q1": "972ae3cfc5f3a5b82970264f43a40a1396d7753191f49a8797319e57c9775530",
+    "computer-architecture.core.performance.cpu-time.q2": "ddbd04535e0acdb03645da2efced63557c2e354bffd5457b7d5852e8b9eb2e71",
+    "computer-architecture.core.performance.cpu-time.q3": "28e8fe76d61ebc6697b6bc3be8f26f3a4610ef5da01a6bf28947e78733483ec0",
+    "computer-architecture.core.performance.instruction-count-cpi-clock": "aaf360b8c3bb944e6974efba32ccd4c16bc0a856529a51d689a54c681a4732a6",
+    "computer-architecture.core.performance.instruction-count-cpi-clock.q1": "f7ca00fc387cf60259758572e31488350b719dc5da0f3b365ca429386bb074b7",
+    "computer-architecture.core.performance.instruction-count-cpi-clock.q2": "6123bd8d8a7fa606ed32dbf122b006deaf06be251c02efed4de870b338e5ed9c",
+    "computer-architecture.core.performance.instruction-count-cpi-clock.q3": "b64db0885adf1837c30ac8946906310bc1977c70a0996954a5dcc129fa842f9e",
+    "computer-architecture.core.performance.latency-throughput": "5aa13beabb20dc2b39b32928eb46a8665ee83e32dd4dd65694a28d7aac4ae2b5",
+    "computer-architecture.core.performance.latency-throughput.q1": "2e715cb82bc65d98c1925eef5daeddb88eb91817a2b7d7af59e246cc5ead4fe4",
+    "computer-architecture.core.performance.latency-throughput.q2": "604331dc42c21c4dc93ce71f56e5ff7c86090479fdbf6369840a671b6a0fa57b",
+    "computer-architecture.core.performance.latency-throughput.q3": "c73a302f8f5f1e89fafdec90a53323c2136b534257cf8ff3de5f38fa7a7f7415",
+    "computer-architecture.core.performance.microbenchmark-boundary": "673d604b0c106bc7ada859b247b3bb54b43df81df0a57f23fed8a85b74bb36e9",
+    "computer-architecture.core.performance.microbenchmark-boundary.q1": "a354ba06038cfd7e6b1243f5121a9037008d04d5529d4e08d678cece4f2db9dc",
+    "computer-architecture.core.performance.microbenchmark-boundary.q2": "015ec642a5adab907f6baecc73c2b12684bb6b6f6c1cf4d7986e43ff2b85fbf1",
+    "computer-architecture.core.performance.microbenchmark-boundary.q3": "d3e1251f5e4a199fc1a55f566cded684d5ee21a64aaf2a94a5822f147b5b579c",
+    "computer-architecture.core.performance.pipeline-branch-impact": "f18acee3f9febd14c6b326cd3a8409d6c2e214dbf98918dbd128fac1082ed952",
+    "computer-architecture.core.performance.pipeline-branch-impact.q1": "5c6d298edde060a98a30802b70ed364c594973e5ec6cf789d66f8974a46f4363",
+    "computer-architecture.core.performance.pipeline-branch-impact.q2": "c759044b32179ad79b4a34f0d539838f69a4ea57cba4a9f5a2a9fda215b94b86",
+    "computer-architecture.core.performance.pipeline-branch-impact.q3": "cb7de1e63638ed215f69c4866b7071d2510cb1ebcac287af15ec17ed5f196975"
+  }
+}

@@ -1,0 +1,441 @@
+{
+  "area": "operating-systems",
+  "topic": "scheduling",
+  "topicKey": "operating-systems.core.scheduling",
+  "coverage": "9 Concept와 31 Question의 실제 전체 본문/모든 필드를 읽었다. mode/context switch, timer≠항상task전환, 서로 다른 scheduler 목표, FCFS/SJF 대기 산술, RR queue 실행과 quantum overhead, 기아/역전/aging, hard affinity/NUMA 경계를 직접 비교했다. 기존 연결 SVG 네 개의 전체 XML에서 label·상태·화살표·시간 구간·좌표를 확인했다(브라우저 렌더 QA는 별도 미실시). OSTEP 관련 절과 Linux affinity/물리 core와 두 논리 CPU 예를 실제 읽었다. 본문의 물리 core 일반화, 한국어 답 누락, 문항 입력 조건 누락만 선별했다.",
+  "concepts": [
+    [
+      "operating-systems.core.scheduling.context-switch",
+      "TARGETED_ENHANCE",
+      "L1 A 저장/B 복원과 전환 비용의 목표는 충족한다.",
+      "mode/context 차이와 OS/ISA별 저장 위치, ASID·공유 주소 공간 비용 경계가 정확하다. 첫 문장의 core 하나/실행 흐름 하나 일반화는 SMT에서 성립하지 않아 W3-OS-004다.",
+      "DIAGRAM 실제 context-switch-flow.svg 전체 XML의 A running→register/PC/SP 저장→runnable 선택→B복원/running 및 mode 경계 caption은 본문과 맞다. 기존 자산 유지, 렌더 가독성 QA는 미실시다.",
+      "OSTEP timer/control/switch의 실제 관련 절과 Linux affinity의 same physical core/different CPU 예를 읽었다.",
+      "q1 모든 보기, q2 mode/context, q3 관측 상관/원인 지표, q4 thread/process 비용은 타당하다."
+    ],
+    [
+      "operating-systems.core.scheduling.timer-interrupt-preemption",
+      "KEEP",
+      "L2 자발적 양보 없이 제어권을 다시 얻는 이유를 충족한다.",
+      "timer→kernel accounting→A유지/B선택, preempted runnable≠I/O waiting, one-shot/tickless/실제 선점 조건을 구별한다. 모든 timer가 즉시 switch라고 하지 않는다.",
+      "TEXT 두 선택 분기와 running→runnable 상태가 충분하다.",
+      "OSTEP 실제 timer interrupt/control 획득/현재 유지 대 전환 결정을 읽어 대조했다. 고정 tick은 교육 모델로 한정한다.",
+      "q1 모든 보기, q2 같은 task 복귀, q3 priority/affinity/선점 조건 분석을 확인했다."
+    ],
+    [
+      "operating-systems.core.scheduling.scheduler-goals",
+      "KEEP",
+      "L1 response/turnaround/throughput/fairness/utilization의 다른 목표를 충족한다.",
+      "first-run-arrival 대 completion-arrival, A100/B10/C10의 순서 영향, 평균/최대대기·기아, 높은 utilization≠좋은 response가 정확하다.",
+      "TEXT 목표 표와 서로 다른 작업 길이/순서의 비용 비교가 충분하다.",
+      "OSTEP 실제 metric/response 식과 RR/turnaround trade-off 절을 읽었다. 응용 end-to-end p99와 OS first-run 정의를 구별한다.",
+      "q1 모든 보기, q2 두 시간 정의, q3 throughput+20%/p99두배의 SLO 절충을 확인했다."
+    ],
+    [
+      "operating-systems.core.scheduling.fcfs",
+      "KEEP",
+      "L1 도착 FIFO와 긴 작업의 convoy를 실제 대기로 충분히 설명한다.",
+      "동시 도착 A100/B10/C10의 대기0/100/110 평균70, 비선점 burst 모델과 적합 workload 경계가 정확하다.",
+      "TEXT 시간 축과 세 작업별 대기 수치가 충분하다.",
+      "OSTEP 실제 FIFO/convoy 예와 모든 arrival0 가정을 대조했다.",
+      "세 문항의 의도한0/8/10 및0/1/3 계산은 맞지만 독립 입력/arrival 전제가 부족해 W3-OS-006이다. 본문의 예는 전제가 명시돼 정확하다."
+    ],
+    [
+      "operating-systems.core.scheduling.sjf",
+      "KEEP",
+      "L2 burst 정보/동시 도착/비선점 전제와 평균·공정성 절충을 충족한다.",
+      "B10/C10/A100 대기0/10/20 평균10, burst 추정 오차, SRTF/STCF 별도 선점 규칙과 긴 작업 기아 가능성이 정확하다.",
+      "TEXT 실제 순서와 시간·대기 표가 충분하다.",
+      "OSTEP 실제 SJF optimal 조건과 늦은 도착/STCF, response 비교를 읽었다. 모든 workload에 무조건 optimal이라고 승인하지 않는다.",
+      "q1 모든 보기, q2 동시에 도착한1/2/8의 평균4/3, q3 예측/기아 보완을 확인했다."
+    ],
+    [
+      "operating-systems.core.scheduling.round-robin",
+      "KEEP",
+      "L1 quantum으로 실행 기회를 나누는 동작과 overhead 절충을 충족한다.",
+      "미완료는 queue뒤, I/O이면 할당량 전 sleep, 큰quantum FCFS/작은quantum switch 비용, response와 turnaround 목표 차이가 정확하다.",
+      "DIAGRAM 실제 round-robin-quantum.svg 전체 XML의 A0–10/B10–20/C20–30/A30–40과 unfinished queue뒤 caption이 전제와 맞다. 자산 유지, 렌더 QA 미실시다.",
+      "OSTEP 실제 RR/quantum/overhead/response와 turnaround 절을 대조했다. Reference의 고정 tick 배수 설명을 모든 OS 보장으로 확대하지 않는다.",
+      "q3/q4의 비용/블로킹은 정확하다. q1 Korean accepted는 W3-OS-005, q2 초기 queue/단일CPU 전제는 W3-OS-007이다."
+    ],
+    [
+      "operating-systems.core.scheduling.priority-scheduling",
+      "KEEP",
+      "L2 priority 선택과 낮은 task 지연/역전을 구별한다.",
+      "같은priority FIFO/RR 가능, effective priority 조정, 기아의 선택 배제 대 inversion의 low-owner dependency가 정확하다. 우선순위 상속을 일반 기아의 만능 해법으로 쓰지 않는다.",
+      "TEXT 높은/중간/낮은 후보와 두 원인 비교가 충분하다.",
+      "OSTEP 실제 priority boost/상위queue RR 서비스와 조정 관련 절을 읽었다. 일반 fixed priority와 MLFQ 예를 구별한다.",
+      "q1 모든 보기, q2 starvation/inversion, q3 30분 ready의aging/할당량 정책을 확인했다."
+    ],
+    [
+      "operating-systems.core.scheduling.starvation-aging",
+      "KEEP",
+      "L2 runnable task 배제와 기다림 기반 effective priority 보정을 충족한다.",
+      "전체 시스템 진행 대 특정task기아, gradual aging/periodic boost 목적, 너무 빠른 보정/너무 늦은 최대대기의 절충이 정확하다.",
+      "DIAGRAM 실제 starvation-aging.svg의 H계속 도착/L runnable waiting→aging wait 반영→effective priority 상승/service 모델은 충분하다. 정책의 예시 결과로 해석하며 무조건적인 실시간 상한은 아니다. 렌더 QA 미실시다.",
+      "OSTEP 실제 모든 task를 top queue로 boost하고 RR로 서비스하는 조건과 S값 조정을 읽었다.",
+      "q1 모든 보기, q2 원리, q3 과도한 보정, q4 deadlock 의존 관계와 대응 차이를 확인했다."
+    ],
+    [
+      "operating-systems.core.scheduling.multicore-affinity",
+      "KEEP",
+      "L3 cache locality와 허용CPU/load-balance/NUMA 절충을 충분히 추론한다.",
+      "warm reuse 가능성과 migration 비용, idle CPU가 있어도 hard mask 제약, 선호와 제한, memory placement 별도가 정확하다. affinity가 자동 NUMA pinning이라고 하지 않는다.",
+      "DIAGRAM 실제 multicore-affinity.svg의 CPU0 warm/CPU1idle 대 분산 A/B와C/D, hard affinity caption은 조건부 이득과 비용을 보여준다. 기존 자산 유지, 렌더 QA 미실시다.",
+      "OSTEP 실제 affinity/MQMS imbalance/migration과 Linux mask·per-thread·migration 관련 절을 읽었다. 이전판 Linux scheduler 서술을 최신 구현 전체로 승인하지 않는다.",
+      "q1 모든 보기, q2 trade-off, q3 8workerCPU0의 A/B 측정, q4 remote NUMA 비용을 확인했다."
+    ]
+  ],
+  "questions": [
+    [
+      "operating-systems.core.scheduling.context-switch.q1",
+      "KEEP",
+      "B A문맥 저장/B복원이 맞다. A mode만/C image 재적재/D 종료때만은 틀리며 모든 rationale/해설에 구현 경계가 있다.",
+      "EASY 다른 실행 흐름 선택이라는 정의가 정확하다."
+    ],
+    [
+      "operating-systems.core.scheduling.context-switch.q2",
+      "KEEP",
+      "mode는 같은 task 권한 변화, context는 task/CPU state 변화라는 모델/해설과 syscall/interrupt 비1:1이 맞다.",
+      "MEDIUM 전환 계기와 실제 scheduler 선택을 구별한다."
+    ],
+    [
+      "operating-systems.core.scheduling.context-switch.q3",
+      "KEEP",
+      "작은quantum/과다runnable/지역성 비용 후보와 voluntary/involuntary·queue·CPU/cache·throughput 지표의 모델/해설이 타당하다.",
+      "HARD 측정만으로 인과를 확정하지 않는다."
+    ],
+    [
+      "operating-systems.core.scheduling.context-switch.q4",
+      "KEEP",
+      "둘 다 문맥 전환이 필요하나 같은process 주소 공유 대 다른주소공간 영향을 비교하는 모델/해설이 맞다.",
+      "MEDIUM 비용은 OS/CPU 구현 의존이라고 한정한다."
+    ],
+    [
+      "operating-systems.core.scheduling.timer-interrupt-preemption.q1",
+      "KEEP",
+      "C 자발적 양보 없이 판단 기회가 맞다. A burst예측/B 모든대기완료/D 비용제거는 틀리며 모든 rationale/해설을 확인했다.",
+      "EASY 메커니즘의 실제 역할과 일치한다."
+    ],
+    [
+      "operating-systems.core.scheduling.timer-interrupt-preemption.q2",
+      "KEEP",
+      "정책상현재유지/다른runnable없음이면같은task복귀 모델과 해설이 맞다.",
+      "MEDIUM interrupt≠필수switch의 경계다."
+    ],
+    [
+      "operating-systems.core.scheduling.timer-interrupt-preemption.q3",
+      "KEEP",
+      "priority/affinity/실제preempt조건을 확인해야 한다는 모델/해설이 타당하다.",
+      "MEDIUM timer발생만으로 특정task CPU기회를 보장하지 않는다."
+    ],
+    [
+      "operating-systems.core.scheduling.scheduler-goals.q1",
+      "KEEP",
+      "A response/throughput/fairness/utilization이 맞다. B throughput자동전체최적/C turnaround하나충분/D switch0항상우선은 틀리며 각 rationale/해설이 정확하다.",
+      "EASY 서로 다른 목표의 조합을 검증한다."
+    ],
+    [
+      "operating-systems.core.scheduling.scheduler-goals.q2",
+      "KEEP",
+      "first CPU opportunity와 전체 완료의 다른 두 시간 모델/해설이 OSTEP 정의와 맞다.",
+      "MEDIUM RR response 개선≠turnaround 최적이다."
+    ],
+    [
+      "operating-systems.core.scheduling.scheduler-goals.q3",
+      "KEEP",
+      "batch throughput+20%와 interaction p99×2의 trade-off를 SLO/공정성·상태 지표로 평가하는 모델/해설이 타당하다.",
+      "MEDIUM 평균이나 한 지표만으로 성공을 확정하지 않는다."
+    ],
+    [
+      "operating-systems.core.scheduling.fcfs.q1",
+      "TARGETED_ENHANCE",
+      "세 accepted8/8ms는 모든 작업이 시작 시 ready인 모델에서 맞지만 순서만으로 B의 도착 시점이 정해지지 않는다. W3-OS-006이다.",
+      "EASY arrival0/초기queue 전제를 명시해야 8ms가 유일해진다."
+    ],
+    [
+      "operating-systems.core.scheduling.fcfs.q2",
+      "TARGETED_ENHANCE",
+      "모델0/8/10 평균6 산술은 맞다. burst/순서는 주지만 같은arrival0 및 overhead무시 전제를 주지 않는다. W3-OS-006이다.",
+      "MEDIUM q1의 전제가 독립 문항으로 전파된다고 가정할 수 없다."
+    ],
+    [
+      "operating-systems.core.scheduling.fcfs.q3",
+      "TARGETED_ENHANCE",
+      "모델C0/B1/A3 평균4/3은 이전 q의8/2/1 및 arrival0일 때만 맞다. prompt는 '같은 세 작업' 외 burst가 없다. W3-OS-006이다.",
+      "MEDIUM standalone 입력을 복구해야 한다. SJF.q2와 같은 수치지만 이 문항의 의도는 FCFS 순서/convoy 영향이다."
+    ],
+    [
+      "operating-systems.core.scheduling.sjf.q1",
+      "KEEP",
+      "C 최단burst가 맞다. A memory/B PID/D 언제나FCFS도착순서는 틀리며 모든 rationale/해설을 확인했다.",
+      "EASY 동시에 도착/정확burst/비선점 전제를 명시한다."
+    ],
+    [
+      "operating-systems.core.scheduling.sjf.q2",
+      "KEEP",
+      "동시도착 A8/B2/C1에서C→B→A, wait0/1/3 평균4/3의 모델/해설 산술이 맞다.",
+      "MEDIUM 세 burst와 arrival 전제가 문항 자체에 있다."
+    ],
+    [
+      "operating-systems.core.scheduling.sjf.q3",
+      "KEEP",
+      "futureburst추정/오차와 shortjobs계속도착 시 longstarvation, aging/공정성 보완 모델/해설이 타당하다.",
+      "MEDIUM 이상적인 입력 정보와 현실 한계를 검증한다."
+    ],
+    [
+      "operating-systems.core.scheduling.round-robin.q1",
+      "TARGETED_ENHANCE",
+      "FCFS/영문 세 accepted와 burst보다큰quantum 해설은 맞지만 선행 Concept의 '선착순 스케줄링' 답은 거부한다. W3-OS-005다.",
+      "EASY 정당한 한국어 답이 정확 일치 목록에 없다."
+    ],
+    [
+      "operating-systems.core.scheduling.round-robin.q2",
+      "TARGETED_ENHANCE",
+      "초기에둘다ready/단일CPU/overhead무시일때A2B2A2B2A1B1 모델과해설은 맞다. 해당조건이prompt에없어W3-OS-007이다.",
+      "MEDIUM A먼저라는조건만으로B의도착시점이나다중CPU실행을정하지못한다."
+    ],
+    [
+      "operating-systems.core.scheduling.round-robin.q3",
+      "KEEP",
+      "10→0.1ms quantum의 잦은switch/지역성 비용과 지표 비교 모델/해설이 타당하다.",
+      "MEDIUM 가능한 원인으로 제시하고 무조건 단일 원인이라고 하지 않는다."
+    ],
+    [
+      "operating-systems.core.scheduling.round-robin.q4",
+      "KEEP",
+      "I/O가먼저이면sleep/다른runnable→완료후ready라는모델/해설이맞다.",
+      "MEDIUM quantum은 반드시 끝까지 소비할 예약 시간이 아니다."
+    ],
+    [
+      "operating-systems.core.scheduling.priority-scheduling.q1",
+      "KEEP",
+      "D high계속이면low기아가능이맞다. A wait불가/B switch없음/C high항상short는틀리며모든rationale/해설을확인했다.",
+      "EASY 정책의 일반적인 위험을 조건부로 표현한다."
+    ],
+    [
+      "operating-systems.core.scheduling.priority-scheduling.q2",
+      "KEEP",
+      "runnable선택기아와lowowner자원때문highblocked역전, inheritance는주로후자라는모델/해설이맞다.",
+      "MEDIUM 선택정책과자원의존의다른원인을검증한다."
+    ],
+    [
+      "operating-systems.core.scheduling.priority-scheduling.q3",
+      "KEEP",
+      "30분ready의lowjob은aging/boost/최소실행기회/할당량을검토하며lockowner가없어inheritance는직접해법아님이라는모델/해설이맞다.",
+      "MEDIUM highworkload목표와최대대기SLO도명시한다."
+    ],
+    [
+      "operating-systems.core.scheduling.starvation-aging.q1",
+      "KEEP",
+      "A runnable이면서배제가능이맞다. B deadlockcycle필수/C 종료/D IOfault필수는틀리며모든rationale/해설이맞다.",
+      "EASY 다른원인의멈춤과구별한다."
+    ],
+    [
+      "operating-systems.core.scheduling.starvation-aging.q2",
+      "KEEP",
+      "기다림기반effectivepriority상승과보정규칙을정하는모델/해설이맞다.",
+      "MEDIUM 고정숫자대신진행가능성원리를설명한다."
+    ],
+    [
+      "operating-systems.core.scheduling.starvation-aging.q3",
+      "KEEP",
+      "과도한aging이원래priority차이를지워highlatency악화,속도/상한trade-off모델/해설이맞다.",
+      "MEDIUM 모든보정이모든목표를개선한다고하지않는다."
+    ],
+    [
+      "operating-systems.core.scheduling.starvation-aging.q4",
+      "KEEP",
+      "다른작업진행대특정배제와deadlock참여자의자원의존진행불가를비교하는모델/해설이맞다.",
+      "MEDIUM 원인별관측/정책·획득규칙/복구가다르다."
+    ],
+    [
+      "operating-systems.core.scheduling.multicore-affinity.q1",
+      "KEEP",
+      "D thread허용CPU집합이맞다. A priority만/B 자동NUMAmemory/C 모든CPU자유이동은틀리며각rationale/해설을확인했다.",
+      "EASY 실제Linuxmask계약과맞다."
+    ],
+    [
+      "operating-systems.core.scheduling.multicore-affinity.q2",
+      "KEEP",
+      "warmcache재사용가능대좁은mask로과부하queue/idlecapacity못씀모델/해설이맞다.",
+      "MEDIUM 선호와강한제약의절충을설명한다."
+    ],
+    [
+      "operating-systems.core.scheduling.multicore-affinity.q3",
+      "KEEP",
+      "8workerCPU0pinning의queue병목과mask넓힌뒤migration/cache/throughput/latency비교모델/해설이타당하다.",
+      "HARD 모든경우pinning제거가최적이라고하지않는다."
+    ],
+    [
+      "operating-systems.core.scheduling.multicore-affinity.q4",
+      "KEEP",
+      "CPU와memory다른NUMAnode이면remoteaccess비용가능,배치둘다관측하는모델/해설이맞다.",
+      "MEDIUM CPUmask만으로memorylocality자동보장은없다."
+    ]
+  ],
+  "sources": [
+    [
+      "https://pages.cs.wisc.edu/~remzi/OSTEP/Korean/06-cpu-mechanisms.pdf",
+      "CURRENT_VERIFIED",
+      "실제 한국어 PDF의 timer interrupt/control 획득, 현재유지/다른task 결정과 context 저장·복원 관련 pp7–10을 읽었다. 일부 한글 glyph 추출은 깨졌지만 관련 본문은 판단 가능하다. 전체16페이지나 그림 렌더/assembly 실행을 검증한 것은 아니다."
+    ],
+    [
+      "https://pages.cs.wisc.edu/~remzi/OSTEP/Korean/07-cpu-sched.pdf",
+      "CURRENT_VERIFIED",
+      "실제 assumptions/turnaround/FIFO·convoy/SJF·STCF 및 response/RR·quantum overhead 관련 절을 읽었다. 일반 원리와 이상 모델에 학습 가치가 있으며 고정tick배수·모든cache갱신 같은 단순 모델 문장을 모든 현대OS 보장으로 확대하지 않는다. 일부 glyph 추출/그림 QA는 범위 밖이다."
+    ],
+    [
+      "https://pages.cs.wisc.edu/~remzi/OSTEP/Korean/08-cpu-sched-mlfq.pdf",
+      "CURRENT_VERIFIED",
+      "실제 priority boost절의 주기S/상위queue/RR service와 조정 관련 본문을 읽었다. starvation 완화 recommendation에 맞는다. 전체12페이지나 모든 MLFQ 구현을 검증한 것은 아니다."
+    ],
+    [
+      "https://pages.cs.wisc.edu/~remzi/OSTEP/Korean/10-cpu-sched-multi.pdf",
+      "CURRENT_VERIFIED",
+      "실제 cache affinity/SQMS/MQMS imbalance/migration/work-stealing 및 요약 관련 본문을 읽었다. recommendation의 절충에 유효하다. 뒤의 이전판 Linux scheduler 분류를 현재Linux 전체 구현 보장으로 승인하지 않는다. 추출 그림의 시각 QA는 범위 밖이다."
+    ],
+    [
+      "https://man7.org/linux/man-pages/man2/sched_setaffinity.2.html",
+      "CURRENT_VERIFIED",
+      "실제 DESCRIPTION의 eligibleCPU/per-thread/migration과 NOTES, EXAMPLES의 물리2core·core당논리CPU2 비교를 읽었다. mask는 CPU 집합 제한이며 memory pinning 계약은 아니다. 예제 실행 측정 재현을 의미하지 않는다."
+    ]
+  ],
+  "supplementalSources": [
+    [
+      "https://docs.kernel.org/admin-guide/cputopology.html",
+      "CURRENT_VERIFIED",
+      "실제 core_id/sibling cpumask와 온라인·presentCPU 집합 관련 본문을 읽었다. 물리core/OS CPU 구별의 보조 자료이며 전체별architecture topology 검증은 아니다."
+    ]
+  ],
+  "findings": [
+    {
+      "id": "W3-OS-004",
+      "severity": "P1",
+      "contentKeys": [
+        "operating-systems.core.scheduling.context-switch"
+      ],
+      "file": "content/operating-systems/scheduling/context-switch.md",
+      "quote": "CPU 코어 하나는 한 순간에 하나의 실행 흐름만 실제로 수행한다.",
+      "problem": "물리 core와 OS가 scheduling하는 logical CPU를 구별하지 않는다. SMT에서는 같은 물리 core의 두 logical CPU가 다른 task를 동시에 실행할 수 있다. 실제 Linux affinity 예도 same core/different CPUs와 다른core를 구별한다.",
+      "action": "단일 논리 CPU/하드웨어 thread를 기준으로 한 시분할 모델이라고 한정하고 SMT 물리 core가 여러 논리 CPU를 제공할 수 있음을 짧게 명시한다. 정확한 A/B 저장·복원 도식과 나머지 설명은 유지한다.",
+      "followupIssues": [
+        201
+      ]
+    },
+    {
+      "id": "W3-OS-005",
+      "severity": "P0",
+      "contentKeys": [
+        "operating-systems.core.scheduling.round-robin.q1"
+      ],
+      "file": "content/operating-systems/scheduling/questions.json",
+      "quote": "라운드 로빈에서 시간 할당량(time quantum)이 매우 커지면 어떤 정책과 비슷해지는가?",
+      "problem": "acceptedAnswers는 FCFS와 영문 두 형태만 있지만 본문에서 학습한 '선착순 스케줄링'도 정확한 답이다. 현재 정확 일치 채점기에서는 한국어 답을 거부한다.",
+      "action": "기존 문항의 허용 답에 '선착순 스케줄링'을 추가한다. 의도한FCFS답·해설과 기능 구현은 유지한다.",
+      "additionalEvidence": [
+        {
+          "file": "content/operating-systems/scheduling/fcfs.md",
+          "quote": "title: \"선착순 스케줄링(FCFS)\""
+        }
+      ],
+      "followupIssues": [
+        201
+      ]
+    },
+    {
+      "id": "W3-OS-006",
+      "severity": "P1",
+      "contentKeys": [
+        "operating-systems.core.scheduling.fcfs.q1",
+        "operating-systems.core.scheduling.fcfs.q2",
+        "operating-systems.core.scheduling.fcfs.q3"
+      ],
+      "file": "content/operating-systems/scheduling/questions.json",
+      "quote": "같은 세 작업의 실행 순서를 C→B→A로 바꾸면 평균 대기 시간은 얼마이며, 이 결과가 FCFS의 어떤 한계를 보여 주는가?",
+      "problem": "q3 자체에는 A8/B2/C1 입력이 없다. q1/q2에는 burst/순서는 있지만 세 작업의 arrival0 또는 실행 시작 전 모두ready라는 전제가 없다. 순서만 A→B→C여도 A가0부터8까지 실행하고B가7에 도착하면 B대기는1이며 모델8이 유일하지 않다. 이전문항·본문의조건이독립출제에전파된다고가정한다.",
+      "action": "각 기존 문항에 필요한 burst와 초기queue/동시arrival0, 단일논리CPU·전환비용무시 전제를 명시한다. 의도한8/평균6/평균4/3 계산과 convoy 해설은 유지한다.",
+      "followupIssues": [
+        201
+      ]
+    },
+    {
+      "id": "W3-OS-007",
+      "severity": "P2",
+      "contentKeys": [
+        "operating-systems.core.scheduling.round-robin.q2"
+      ],
+      "file": "content/operating-systems/scheduling/questions.json",
+      "quote": "A와 B 두 CPU 중심 작업의 버스트가 각각 5이고 시간 할당량이 2다. A가 먼저 실행된다고 할 때 CPU 실행 순서를 할당량 단위로 적어라.",
+      "problem": "모델 A2B2A2B2A1B1은 단일CPU에서 두 작업이처음부터ready일때 타당하다. A먼저라는조건만으로는 B도착시점/초기준비상태나 다중CPU 실행을 정하지 못한다. 본문의 단순 RR 예를 암묵적으로 가져온다.",
+      "action": "기존 q2에 한 논리CPU, 시작시둘다ready, 전환비용무시의 교육 모델을 짧게 명시한다. burst/quantum/답의 실행 추적은 유지한다.",
+      "followupIssues": [
+        201
+      ]
+    }
+  ],
+  "sourceHashes": {
+    "operating-systems.core.scheduling.context-switch": "161309ce18690554499b61dbcb54f7bae7bdc1dbbbc55519de875c8cebd89970",
+    "operating-systems.core.scheduling.context-switch.q1": "7c687d612ac7f2f08efecf24109e8fc61d9bf01b8f1ac17e582695190a85ccb6",
+    "operating-systems.core.scheduling.context-switch.q2": "55f53074d2985cd2826a2cd73b637525cab102fff7e2ac47277936128f56c33c",
+    "operating-systems.core.scheduling.context-switch.q3": "4e5f6d01b39b73475bbc15e9546cd61cecc6914695a98ed386efb5377b3eb214",
+    "operating-systems.core.scheduling.context-switch.q4": "5b435abc7e07b952a11f6b6a7356d1b448e8df1c5da76e8c2b8538f2890d8c1c",
+    "operating-systems.core.scheduling.fcfs": "f607a780831d75231f9b07f5c26ebe3fabbb10b2a1bb88ff6e316b262983bca7",
+    "operating-systems.core.scheduling.fcfs.q1": "02cd5662dfa9917b197932187cd71576f883b237e7d466efc042a3fd8adc3bf2",
+    "operating-systems.core.scheduling.fcfs.q2": "5071dc08df6b38da793501984c7d0012a49039e39e0ae2724a9ac10b40f4d2bf",
+    "operating-systems.core.scheduling.fcfs.q3": "890cb586b033ebf8de4487ea9b19fca3e4be454db1d208060eaf3f85aa3b92d7",
+    "operating-systems.core.scheduling.multicore-affinity": "9d04520246605ca7d92dccc5e33144f6bad21884244ce824629ef752af111ce5",
+    "operating-systems.core.scheduling.multicore-affinity.q1": "7d3c2c286f448a31f7ea1455a3ce985c2db4dfd444527eb945701c5b5945c721",
+    "operating-systems.core.scheduling.multicore-affinity.q2": "42ce22c073037eca07ebfef266b7bfcd8b317bea51f677218e7a70f349ffee4c",
+    "operating-systems.core.scheduling.multicore-affinity.q3": "6a44b5bca6280c923f8ced36e2de6f04120a23f098dff742f0e8831c5011d1e0",
+    "operating-systems.core.scheduling.multicore-affinity.q4": "04835e8da6250d32f308fe764de4734eaf934c05f2070639c193feee7517a2a7",
+    "operating-systems.core.scheduling.priority-scheduling": "f31c659efc8d18c060870030f6962bec43cfd5910c3ad6098a61116a538c20b6",
+    "operating-systems.core.scheduling.priority-scheduling.q1": "2e4e02b0d9af6b7310b073a3a74a5463d7a77fafbb8d08d5e539ea9b4b41ce04",
+    "operating-systems.core.scheduling.priority-scheduling.q2": "2926bada7a0cc2d5c9311febf466743bdeca19473b7e777db1bbbcdf13903b56",
+    "operating-systems.core.scheduling.priority-scheduling.q3": "595a37da20a19a5dd6b2a1b7ab8282e2a4b6068f1cd6c5bd7a7565251a131363",
+    "operating-systems.core.scheduling.round-robin": "caf47386870aabc2f1fa0c393ca5c7c1967b89d8f6c4c6575bc2d65938d971e5",
+    "operating-systems.core.scheduling.round-robin.q1": "2a2535cb244820f37dfd756557c80f2f9c1d3d8a8393ef33d8bbbfab63eee592",
+    "operating-systems.core.scheduling.round-robin.q2": "70279b1f74e904024359cda80da2564c5a1dcadffbb032983ea5784f07fb6815",
+    "operating-systems.core.scheduling.round-robin.q3": "1f45485a8e743e52b64196491bb2648130777b9230e94c207f7006a8040b4fa2",
+    "operating-systems.core.scheduling.round-robin.q4": "e1ec1e3fa4f90ee90e1354735128813ec1720c94308283924542131f1b4e4df2",
+    "operating-systems.core.scheduling.scheduler-goals": "0b4a3fc6af008272baf2a181da269f9029f872c34ef44a33e7a350dae821a1b5",
+    "operating-systems.core.scheduling.scheduler-goals.q1": "8138a6d0535d8c410bb7486f980b746850da622a0fbca5b4978a6993734df81d",
+    "operating-systems.core.scheduling.scheduler-goals.q2": "717b14503c7d6b0bd9f53b8270eb51b90a7cc5d1dfc300bedb2d83a7dbe6f4fc",
+    "operating-systems.core.scheduling.scheduler-goals.q3": "3bc0ebb2bbd033cdf581906b6d7b001da4ad50f4c7ddeec9eac283eb27457f59",
+    "operating-systems.core.scheduling.sjf": "3d3e3dc9865838d6273980fd0c54db1fca226befbc3127f18e89c964b6cb2896",
+    "operating-systems.core.scheduling.sjf.q1": "f7bbd3f381047a0898af6027f245c27f74eb501b33554e58dd3c2d4a9582b60e",
+    "operating-systems.core.scheduling.sjf.q2": "1a103b920452731a907a479c61d8c1b71625f3d100a252e13761203885c9e733",
+    "operating-systems.core.scheduling.sjf.q3": "068ede7866953b8ad4dcc4e1ab6ddfe9c84e22cc050404beca51c24d7ae26e4a",
+    "operating-systems.core.scheduling.starvation-aging": "98327fa7f40e248d8865c96eae315f9ccd557b7ac8e1c13c343716f2d3ea8ce3",
+    "operating-systems.core.scheduling.starvation-aging.q1": "df2e69633b2e2d7fdd43486ee378f294052b59e01cc5ea749c821c6ffe9e684d",
+    "operating-systems.core.scheduling.starvation-aging.q2": "b6b66fb928d85ccf282b4c0e376409c85eca6b27e13685c1f861b92ff922e4ea",
+    "operating-systems.core.scheduling.starvation-aging.q3": "eacbcd827f81380081ad1ded6e2b0d0cac0470d08fc9ef08a3f8ad2bd3e8e0a8",
+    "operating-systems.core.scheduling.starvation-aging.q4": "0364fafcfb874769931b98a01b766c68514d7bb8202f63893837fdc88d8b0a5b",
+    "operating-systems.core.scheduling.timer-interrupt-preemption": "17994af67e20ba01ebac8b2153776f96e4c6c50d054245e0a0a322e3e875599c",
+    "operating-systems.core.scheduling.timer-interrupt-preemption.q1": "c94026bcbe720b5bb1bdb9e314abcbbda77a2b1fd46ab081d23fa73f8258fa1d",
+    "operating-systems.core.scheduling.timer-interrupt-preemption.q2": "13976a138528e8fec723b3ff80c172500646b6d381d9308932b1739bf81a8985",
+    "operating-systems.core.scheduling.timer-interrupt-preemption.q3": "0cd62c7a4f93908c61e1871fd11a5236da7aa9e95c86a19ea750e32724d3ebe7"
+  },
+  "visualizationAssets": [
+    {
+      "file": "frontend/public/learning/operating-systems/context-switch-flow.svg",
+      "sourceSha256": "77fff46725a09b4f6b627e6eb18c5d84922ccfcd52303e2d4374577250a2ecf6",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA"
+    },
+    {
+      "file": "frontend/public/learning/operating-systems/round-robin-quantum.svg",
+      "sourceSha256": "2108ee3a2f4eead59c749b1e55f0cf39967e8202cf2d34468d17a24587d01fd9",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA"
+    },
+    {
+      "file": "frontend/public/learning/operating-systems/starvation-aging.svg",
+      "sourceSha256": "88c8531f8385cdff8a669fc79bb9c973f3fe619ab44f4fed8c2ff6a1dd6efb11",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA"
+    },
+    {
+      "file": "frontend/public/learning/operating-systems/multicore-affinity.svg",
+      "sourceSha256": "19128fefcc3a0b3241343e770c73ab22688ed99181234c64ded5dacd0f138111",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA"
+    }
+  ]
+}

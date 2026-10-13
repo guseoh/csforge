@@ -1,0 +1,311 @@
+{
+  "area": "network-http",
+  "topic": "http-methods",
+  "topicKey": "network-http.core.http-methods",
+  "coverage": "8 Concept와 24 Question을 세 bounded 출력으로 전체 직접 읽었다. 모든 보기/rationale/model/explanation·난이도/연결·관련목표반복을 확인했다. Safe의의도대logging, idempotent효과대response/실행횟수, HEAD의no-content/header예외, POSTresource-specific대PUTstate, PATCHatomic대retry/If-Match, DELETEassociation대physicalcleanup·async, keyscope/parameters/state/expiry를 공식RFC와실제API계약의조건에대조했다.",
+  "concepts": [
+    [
+      "network-http.core.http-methods.safe-method",
+      "KEEP",
+      "L1 요청의변경의도대서버부수효과·인가·멱등성구분이 충분하다.",
+      "GET/HEAD/OPTIONS/TRACE safe와logs/metrics/adcharge가능, GETdo=delete→crawler/prefetch위험, private조회auth필요·PUTDELETEunsafeidempotent표가 정확하다.",
+      "NONE 계약의뜻/의도flow·method표와실제URI예시가 충분하다.",
+      "RFC9110 §9.2.1의read-only정의·logging/adcharge예외·GETunsafequery MUSTdisallow를 실제읽었다.",
+      "q1C 모든 보기, q2logging대intent, q3GETdelete와auth/인가·필요CSRF방어를 확인했다."
+    ],
+    [
+      "network-http.core.http-methods.idempotent-method",
+      "KEEP",
+      "L1 반복intendedeffect대response/전달/sideeffect의 깊이가 충분하다.",
+      "PUTdark/DELETEabsence/POSTcreate표, responseDate·204대404·동시변경과반복서버실행을 구분한다. 자동dedup보장은없으며client가실제로요구한결제효과자체를부수효과라는이유로멱등성판정에서제외하면안된다는범위로검토했다.",
+      "NONE 계약에반복효과대응답표가 충분하다.",
+      "RFC9110 §9.2.2의intendedeffect·requestedbyuser·로그/revision비멱등sideeffect허용·response전failure의retry근거를실제읽었다.",
+      "q1D 모든 보기, q2response다름, q3samePUTretry대조건부요청·applicationeffect구현책임을 확인했다."
+    ],
+    [
+      "network-http.core.http-methods.get-head",
+      "KEEP",
+      "L1 selectedrepresentation대HEADno-content·메타데이터예외/요청body경계가 충분하다.",
+      "GETbody대HEADheader 예시, content생성시만결정되는필드생략MAY와GET/HEADrequestcontent의일반의미없음을 구분한다. HEAD=먼저GET본문생성후버림이라고강제하지않는다.",
+      "TEXT GET/HEAD비교와내용예시가 충분하다.",
+      "RFC9110 §9.3.1/9.3.2의GETselected·GETcontentSHOULDNOT일반생성/HEADMUSTNOTresponsecontent·SHOULDsameheaders/MAYomit와RFC9112 §6.3을 실제읽었다.",
+      "q1A 모든 보기, q2dynamicCLmayomit, q3HEAD에extra body면H1persistent경계오염가능을 확인했다."
+    ],
+    [
+      "network-http.core.http-methods.post",
+      "KEEP",
+      "L1 resource-specificprocessing·create말고search/async대app재시도계약이 충분하다.",
+      "orders201/location·search200·job202표와POST대PUTclienttarget/desiredstate를 구분한다. 모든POST반드시중복 또는절대재시도불가로단정하지않고특정API의logicalID계약을둔다.",
+      "TEXT 사용사례표·method대applicationcontractflow가 충분하다.",
+      "RFC9110 §9.2.2/9.3.3/9.3.4의POST처리대PUTintent와201/location·app-knownidempotencyretry조건을 실제대조했다. Stripe의v1/v2다른retry결과계약도별도구현범위로읽었다.",
+      "q1B 모든 보기, q2기본method계약, q3결제keyscope/parameters/fingerprint·state/result/transaction/expiry를 확인했다."
+    ],
+    [
+      "network-http.core.http-methods.put",
+      "KEEP",
+      "L1 client-knowntarget의desiredstatecreate/replace대DB구현·PATCH가 충분하다.",
+      "nicknameold→new→repeatunchanged trace와서버전용updatedAt/ID대공개representation계약,201대200/204,로그/response/concurrency별도가 정확하다. 일반PUT대부분변경을구분하되특수partialPUT를모든HTTP에불가능하다고강제하지않는다.",
+      "DIAGRAM 계약의before/request/after/repeatstate trace가 효과적이다.",
+      "RFC9110 §9.3.4 create/replace·동시변경관측한계·저장내부숨김·POST대PUTintent·specialpartialPUT참조를실제읽었다.",
+      "q1C 모든 보기, q2desiredeffect반복, q3'전체교체로계약'한endpoint의silentmerge대PATCH/If-Match를 확인했다."
+    ],
+    [
+      "network-http.core.http-methods.patch",
+      "KEEP",
+      "L2 patchdocument대fullstate·atomicity대idempotency·basecondition이 충분하다.",
+      "renameMina대increment/append표,partialstate노출/failedpatch부분적용금지와ETagv7/v8base조건을 구분한다. 외부시스템자동분산transaction보장이아니라는표현은직접affectedresource의atomicHTTP계약을면제하는뜻이아니다.",
+      "TEXT PUT/PATCH와repeat표·If-Matchstate분기가 충분하다.",
+      "RFC5789 §2의instructiondocument·safe/idempotent기본아님·conditionalstrongETag와all-directlyaffectedfiles atomicMUST를 실제읽었다.",
+      "q1D 모든 보기와q2atomic문서실패vsrepeatedincrement는맞다. q3조건부요청이중복적용도막을수있는겹침범위를배제한해설은W3-NET-021이다."
+    ],
+    [
+      "network-http.core.http-methods.delete",
+      "KEEP",
+      "L1 URI현재functionassociation대물리정리·repeatresponse·async완료가 충분하다.",
+      "first204/repeat404와softdelete/archive/tombstone·지연정리,202notyet대204enacted대200statusrepresentation을 구분한다. 자동externaldedup과실행1회보장을주장하지않는다.",
+      "TEXT 전후table와HTTP의도대storageimplementationflow가 충분하다.",
+      "RFC9110 §9.3.5 associationremoval·물리data/storage회수필수아님·202/204/200의시점과§9.2.2repeat효과를 실제읽었다.",
+      "q1A 모든 보기, q2physicalcleanup/response동일성오해, q3sameDELETEretry와async/replica/downstreamtask확인을 확인했다."
+    ],
+    [
+      "network-http.core.http-methods.protocol-idempotency-boundary",
+      "KEEP",
+      "L2 methodsemantic대logicaloperationID/state의 책임과securityscope가 충분하다.",
+      "같은key→기존결과대methodintendedeffect, user/tenant/operation·mismatchedpayload·processing/result/expiry·외부effecttransaction경계를 설명한다. 메서드뜻이서버구현없이automaticdedup이된다는오해를막는다.",
+      "DIAGRAM 계약의두계약textflow와exactly-once부정관계가 충분하다. concurrentclaim/commit/response-loss상태seq는선택보강후보다.",
+      "RFC9110 §9.2.2를method근거로확인했고Stripe공식v1resultsave/parametercompare/expiry·v2failedworkretry차이를실제읽었다. 특정keyheader나expiry가HTTP전체필수라는주장이아니다.",
+      "q1B 모든 보기, q2externaleffect설계책임대자동실행1회, q3globalscopekeycollision의결과누출/오인과auth범위+fingerprint를 확인했다."
+    ]
+  ],
+  "questions": [
+    [
+      "network-http.core.http-methods.safe-method.q1",
+      "KEEP",
+      "C requested/expected변경없음정답; A logs포함모든쓰기금지/B auth없음/D querydelete도safe와모든rationale를RFC9110§9.2.1에대조했다.",
+      "EASY 중요한의도·권한·구현오해를비교하며답이유일하다."
+    ],
+    [
+      "network-http.core.http-methods.safe-method.q2",
+      "KEEP",
+      "model/explanation의logging/metric/ad조회과금과client가요구한resource변경분리가RFC의명시예시와맞다.",
+      "MEDIUM safe기준의의도대내부쓰기원인;연결이정확하다."
+    ],
+    [
+      "network-http.core.http-methods.safe-method.q3",
+      "KEEP",
+      "GETquerydelete를crawler/prefetch가자동수행할위험과unsafe메서드·auth/인가/필요CSRF로분리하는model/explanation이 정확하다.",
+      "MEDIUM 실제실패조건;GET이라는label만으로구현의파괴적효과가safe가되는것은아니다."
+    ],
+    [
+      "network-http.core.http-methods.idempotent-method.q1",
+      "KEEP",
+      "D repeatedintendedeffect 정답; A response전체같음/B delivery1회/C 모든external자동dedup과모든rationale가 맞다.",
+      "EASY semantic계약대실제dedup메커니즘을구별한다. 사용자에게요구된paymenteffect는서버구현이semantic계약을충족해야한다."
+    ],
+    [
+      "network-http.core.http-methods.idempotent-method.q2",
+      "KEEP",
+      "PUT200/204·Date/log다름대동일intendedstateeffect의model/explanation이 정확하다. 외부효과는자동제공이아닌app구현책임이라는범위다.",
+      "MEDIUM responsebyte대상태효과기준;단순실행횟수로판정하지않는다."
+    ],
+    [
+      "network-http.core.http-methods.idempotent-method.q3",
+      "KEEP",
+      "response전connectionloss에samePUTrepeat가능과external업무구현/concurrency조건부요청의model/explanation을§9.2.2에대조했다.",
+      "MEDIUM response분실의모호한상태;PUTlabel만으로전체app결과까지자동exactly-once라하지않는다."
+    ],
+    [
+      "network-http.core.http-methods.get-head.q1",
+      "KEEP",
+      "A sameGETmeaning/noresponsecontent 정답; B delete/status없음/C requestbodyonly/header없음/D auth조건우회와모든rationale가 맞다.",
+      "EASY HEADno-content범위;headermayomit예외를해설이명시한다."
+    ],
+    [
+      "network-http.core.http-methods.get-head.q2",
+      "KEEP",
+      "HEAD전송비용감소대실제content생성때만결정가능한CL등생략의model/explanation이RFC9110§9.3.2의MAY와맞다.",
+      "MEDIUM GET모든headers항상바이트동일이라는구현일반화를피한다."
+    ],
+    [
+      "network-http.core.http-methods.get-head.q3",
+      "KEEP",
+      "unexpectedHEADcontent가nextmessage로해석돼persistentconnectiondesync가능하다는model/explanation을H1bodylength우선규칙에대조했다.",
+      "MEDIUM '가능'한경계실패이며H2/H3모두동일nextmessage오류를필수로강제하지않는다."
+    ],
+    [
+      "network-http.core.http-methods.post.q1",
+      "KEEP",
+      "B target-specificprocessing 정답; A alwaysfullreplace/C readonlymetadata/D autoHTTPdedup의모든rationale와create말고다른사례해설이 맞다.",
+      "EASY POST단순create동의어오해;연결이적절하다."
+    ],
+    [
+      "network-http.core.http-methods.post.q2",
+      "KEEP",
+      "repeatedbytes가target규칙에따라neworder/job/event누적가능해기본method멱등이아니고별도logicalID계약이필요한model/explanation이 맞다.",
+      "MEDIUM POST모두반드시누적이라는보장이아닌가능성/기본계약이다."
+    ],
+    [
+      "network-http.core.http-methods.post.q3",
+      "KEEP",
+      "stablelogicalpaymentID와auth/tenant/operation·payloadfingerprint·processing/result/expiry·consistenttransaction을제시한model/explanation이 적절하다.",
+      "HARD timeout≠noeffect·다른payload같은key거부;특정제품의24h나모든error영구reuse를강제하지않는다."
+    ],
+    [
+      "network-http.core.http-methods.put.q1",
+      "KEEP",
+      "C targetstatecreate/replace 정답; A alwaysnewresource/B alwaysmissingfieldmerge/D externalautoexactly-once오답과rationale가 맞다.",
+      "EASY 원하는state대저장행전체의차이;값누적계약이아니다."
+    ],
+    [
+      "network-http.core.http-methods.put.q2",
+      "KEEP",
+      "sameURI/desiredrepresentation반복의intendedeffect가한번과같다는model/explanation이RFC9.3.4와맞다.",
+      "MEDIUM response/concurrency대semantic효과구분;serverimplementation을필요없다고하지않는다."
+    ],
+    [
+      "network-http.core.http-methods.put.q3",
+      "KEEP",
+      "'전체상태교체로계약'한PUT의silentmissingmerge는계약불일치이며replace준수/PATCH명시·If-Match를제시한model/explanation이 맞다.",
+      "MEDIUM 명시계약을조건으로해server전용필드나특수partialPUT까지HTTP상불가능이라하지않는다."
+    ],
+    [
+      "network-http.core.http-methods.patch.q1",
+      "KEEP",
+      "D patchdocument변경 정답; A readonly/B fullreplace/C autoidempotent오답과모든rationale,atomicity대repeat해설을확인했다.",
+      "EASY PATCHinstruction대PUTstate와atomic의별도축을비교한다."
+    ],
+    [
+      "network-http.core.http-methods.patch.q2",
+      "KEEP",
+      "failed문서일부적용/중간state노출금지대incrementrepeatnonidempotency의model/explanation이RFC5789§2MUST와맞다.",
+      "MEDIUM 단일patchatomicity대반복효과를분리해execution판정이가능하다."
+    ],
+    [
+      "network-http.core.http-methods.patch.q3",
+      "TARGETED_ENHANCE",
+      "model의operationID/absolute설정/If-Matchbase검사는유용하지만explanation의'하나의장치로둘을모두해결하려해선안됨'이조건부요청의overlap을배제한다. version-changingincrement에서sameIf-Match재적용도실패하므로W3-NET-021이다.",
+      "HARD 조건부patch의validalternative와412의결과확인한계를함께가르쳐야한다. 정답전부재작성은아니다."
+    ],
+    [
+      "network-http.core.http-methods.delete.q1",
+      "KEEP",
+      "A targetURI/functionassociation제거 정답; B allDBfilehistory물리파기/C association유지/D responseaudit항상같음과모든rationale가 맞다.",
+      "EASY HTTP의직접intent대storage정책을정확히비교한다."
+    ],
+    [
+      "network-http.core.http-methods.delete.q2",
+      "KEEP",
+      "association삭제의반복intendedeffect와softdelete/archive/reclaim·response/log정책별도의model/explanation이RFC9.3.5와맞다.",
+      "MEDIUM 물리즉시삭제/response동일성의두오해를분리한다."
+    ],
+    [
+      "network-http.core.http-methods.delete.q3",
+      "KEEP",
+      "sameDELETEretry의method근거와async/replica/downstreamcleanup/event완료를별도상태조회하는model/explanation이 적절하다.",
+      "MEDIUM 반복가능성대업무전체완료;새resource재생성같은다른상태의무제한retry를권하지않는다."
+    ],
+    [
+      "network-http.core.http-methods.protocol-idempotency-boundary.q1",
+      "KEEP",
+      "B semantic대logicalrequeststate 정답; same표준header/state없음·externalautomatic·다른payloadsamekey항상reuse오답과모든rationale가 맞다.",
+      "EASY method뜻대구현상태계약;payload/scope조건을포함한다."
+    ],
+    [
+      "network-http.core.http-methods.protocol-idempotency-boundary.q2",
+      "KEEP",
+      "PUTintendedstate대매요청mail/event/payment실행코드에key/uniqueconstraint/transaction/outbox/result저장필요라는model/explanation이 구현책임범위에서맞다.",
+      "MEDIUM HTTPsemantic이서버코드를자동dedup하지않음;요구된payment자체의효과가멱등성기준밖이라는보장으로해석하지않았다."
+    ],
+    [
+      "network-http.core.http-methods.protocol-idempotency-boundary.q3",
+      "KEEP",
+      "differentuser/tenantglobalsamekey의결과누출/중복오인과authsubject/operation·fingerprint·processing/completed/expiry의model/explanation이 적절하다.",
+      "HARD attacker-controlledkey와authorization경계를함께묻는다. randomkey충돌확률만으로소유자검증을대체하지않는다."
+    ]
+  ],
+  "sources": [
+    [
+      "https://www.rfc-editor.org/rfc/rfc9110",
+      "CURRENT_VERIFIED",
+      "공식Datatracker동일본문에서실제 §9.2.1safe/log/adcharge/unsafequery·§9.2.2idempotent/부수효과/response전retry, §9.3.1/2 GET/HEADcontent/header예외, §9.3.3/4POST대PUTintent·create/replace/storagehidden·§9.3.5DELETEassociation/physicalstorage/202~204시점을읽었다. 본문의methodsemantic대serverimplementation조건에대조했다."
+    ],
+    [
+      "https://www.rfc-editor.org/rfc/rfc5789",
+      "CURRENT_VERIFIED",
+      "실제 §2 PATCHinstructions대PUTstate·safe/idempotent기본아님·issuedidempotent/strongETagIf-Match·atomicallchanges및directlyaffectedfiles,예시conditionalPATCH를읽었다."
+    ]
+  ],
+  "referenceAccess": {
+    "https://www.rfc-editor.org/rfc/rfc9110": {
+      "status": "NEEDS_REVIEW",
+      "basis": "앞선canonicalURL웹도구Internal Error와공식Datatracker동일본문내용검증을분리한다. 직접링크접근확인실패를404로판정하지않는다."
+    }
+  },
+  "supplementalSources": [
+    [
+      "https://datatracker.ietf.org/doc/html/rfc9110",
+      "CURRENT_VERIFIED",
+      "sources에기록한실제§9method/safe/idempotent관련내용을읽었다. 문서전체전수검토는아니다."
+    ],
+    [
+      "https://docs.stripe.com/api/idempotent_requests",
+      "CURRENT_VERIFIED",
+      "공식문서본문을실제읽었다. v1실행시작후status/body저장·samekeyparameter검사/expiry후newrequest·validation/concurrentconflict는결과미저장, v2는failed/partialworkretry로updatedresponse를줄수있음을대조했다. 제품별정책을모든HTTPAPI의보장으로강제하지않는다."
+    ],
+    [
+      "https://www.rfc-editor.org/rfc/rfc9112",
+      "CURRENT_VERIFIED",
+      "http-message에서실제읽은§6.3 HEADnocontent/H1persistentframing규칙을이번HEADextra-body시나리오에대조했다."
+    ]
+  ],
+  "findings": [
+    {
+      "id": "W3-NET-021",
+      "severity": "P0",
+      "contentKeys": [
+        "network-http.core.http-methods.patch.q3"
+      ],
+      "file": "content/network-http/http-methods/questions.json",
+      "quote": "하나의 장치로 둘을 모두 해결하려 해서는 안 된다.",
+      "problem": "해설은중복적용은operationID,동시수정은conditionalrequest로엄격히분리하고한장치가양쪽을막는해법을배제한다. RFC5789 §2는PATCH를조건부strongETag/If-Match로idempotent하게발행할수있다고설명한다. counter변경이ETag v7→v8을만들고비교/변경을원자적으로수행하면,같은If-Match:v7retry는다시증가하지않고전제조건이실패하며제3자변경도검출한다. 다만412만으로최초요청성공대제3자수정을확정할수는없다.",
+      "action": "operationID는논리작업의결과재사용/중복식별,If-Match는base일치및조건에따라동일변경재적용차단에도쓰인다고설명한다. v7→v8→samev7retry실패의짧은상태예시와412후결과조회필요성을추가해두장치의겹침과한계를명시한다.",
+      "followupIssues": [
+        202
+      ]
+    }
+  ],
+  "sourceHashes": {
+    "network-http.core.http-methods.delete": "c604316147583508c4c6079586c7201c85d0d5c37237b3ac82ab9e8931177247",
+    "network-http.core.http-methods.delete.q1": "0bebbbfc7dfa856a9ddc2187a5b62d2adc65dd07af8b40559abff0b9bda11b30",
+    "network-http.core.http-methods.delete.q2": "36f4a6ae2a35240942e6c2c55e545c3702bdfe20bebdabe06c1fd7ec7f8612a9",
+    "network-http.core.http-methods.delete.q3": "d5a0dff79e01b414c7ab6de790cdb7fb97cf87cf87ab57595db9d45fdf13d8a4",
+    "network-http.core.http-methods.get-head": "a7feb464b05f6369936ad972c3eedaedcb0174f141ecf8c2061a89b778c1d7b8",
+    "network-http.core.http-methods.get-head.q1": "26c5e359a6e10d743f1684f79bd1ad8d5a65b32003064c3f23ca815883f5353e",
+    "network-http.core.http-methods.get-head.q2": "2c3278ca4072f62cbf51fa89b443de2e4d67a12a523eb9bb7ea65467e7eaf974",
+    "network-http.core.http-methods.get-head.q3": "ad6bf3fd65d3ce84f19400b65f4c536c231ceb3ea7e68a80a1503a9b70218476",
+    "network-http.core.http-methods.idempotent-method": "501d0ce34329e3aaae930468b844aa729d3dfd1da43d6c0529e83219780e7933",
+    "network-http.core.http-methods.idempotent-method.q1": "43452b75b6b98f8e4896f7236545b3f1cc1a3ab291e5fa1d6b6fb04dae805036",
+    "network-http.core.http-methods.idempotent-method.q2": "cea3ad56e57d1c99e08e6c8ca758fb719bdd45c8cc16bd8920dc321f86a299f1",
+    "network-http.core.http-methods.idempotent-method.q3": "ffe5d120ab47b1e065c8a900a48441550000693c0182af33e66f9294ced586a7",
+    "network-http.core.http-methods.patch": "0ecf76412b0a4d1721ca7bf86a5b6a72795e69ad4c41d9c54d50af72396390e4",
+    "network-http.core.http-methods.patch.q1": "1212209a7da05c1999109d8500f571c6217083b19d3a3cf56ac1e2a95a318992",
+    "network-http.core.http-methods.patch.q2": "0a08359ca2bf4d58a0d17d4d612aed462dfdd169ea4f17505d1b60251bd7a807",
+    "network-http.core.http-methods.patch.q3": "7bd7ded7f4bd849a94c16c97e4472a77f4f09915e30e0e74310635bd46e065f7",
+    "network-http.core.http-methods.post": "2ee9b8583a28333c97d234a1ff5192a1fa55bf2abd5f6ebfcc4bc49055d21a43",
+    "network-http.core.http-methods.post.q1": "8f2010714a63f106fc44e5152fb2d4cdd3743e45af7d745c857884603a03436d",
+    "network-http.core.http-methods.post.q2": "f72f4d38be146b306a63623f05369196ba0dce9da7207edde7fc7a6d8177a462",
+    "network-http.core.http-methods.post.q3": "3fc3a4a3249ca2437f23290f901540df95dd890a97bc3f451ef907e13605640e",
+    "network-http.core.http-methods.protocol-idempotency-boundary": "a972b6867656328b028975386126f1e669c2e3321d4b8fea1f6b7f1577d03cd0",
+    "network-http.core.http-methods.protocol-idempotency-boundary.q1": "36d011ab3730ad94f93fa12fb96e6683da6f299c6d30e4d08610db87950c7330",
+    "network-http.core.http-methods.protocol-idempotency-boundary.q2": "429ac06836c3f209ae7fb4f5e1be30e151d9875dab7f099bf9ed01e3ee3ab97d",
+    "network-http.core.http-methods.protocol-idempotency-boundary.q3": "2bcb82ef63b62ca1686d044ba70dbb52f378699045b56e3ca96e965bf19ee5ae",
+    "network-http.core.http-methods.put": "55dc9517bffc527092a346f29a8ac54130dcb9c7bf4e4fac4c0fce259c0346f7",
+    "network-http.core.http-methods.put.q1": "b242f800e8e0984c4245677474dfc059a85c77ec532945526831ae09dc87d94e",
+    "network-http.core.http-methods.put.q2": "e90035b9cc4a63be4d1696477f02b1b91b150cd4ca9baa62fcfaf3769f34dc00",
+    "network-http.core.http-methods.put.q3": "eecb7158d81392c166688cd6edf619ca0c76f7b2f2b94748339891a7bfd2f2d3",
+    "network-http.core.http-methods.safe-method": "b3f0d8c76764843a94c675f544693a710f60f6f25be71be2a0fd94246ed29341",
+    "network-http.core.http-methods.safe-method.q1": "9900da64c951884c08a8611b8295bb1f024de8e2d95e6b6613a91270a6c2b5ed",
+    "network-http.core.http-methods.safe-method.q2": "fb2d6d0468a69701ce07378731c5da20ed86fff2c5224f60f53e6632a305f3ce",
+    "network-http.core.http-methods.safe-method.q3": "0991e5f5f439fb2d15394bc7490befd0bb8dad394e6bab8b5fba0c7450d7729f"
+  }
+}

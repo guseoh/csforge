@@ -1,5 +1,7 @@
 # 후속 Issue 권장 범위
 
+Wave 3에서 검토 대기였던 CA·OS·DSA·Network를 전수 의미 검토했다. 아래의 초기 대기 문구를 최신 상태로 해석하지 않는다. 현재 확정 대상은 [Wave 3 최소 후속 범위](wave-3/visualization-reference-followups.md#기존-후속-issue별-최소-범위), 정확한 key/path/quote는 [새 발견](wave-3-findings.md)과 [계승 발견](wave-3-carried-findings.json)을 따른다. Wave 1·2의 원래 범위는 변경하지 않는다.
+
 확정 수정 scope와 검토 대기 scope를 구분한다. `NEEDS_REVIEW`는 자동 작성 backlog가 아니다. 각 후속 Issue는 현재 main/이전 Wave와 대조해 검토한 후, 필요한 파일만 최소 변경한다. 이번 Issue에서는 후속 구현·새 Issue 생성·Import·이미지 생성을 하지 않는다.
 
 | Issue | 선별 수정 제안 | 검토 대기 및 제외 |

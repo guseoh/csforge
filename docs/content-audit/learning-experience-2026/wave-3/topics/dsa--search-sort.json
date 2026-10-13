@@ -1,0 +1,514 @@
+{
+  "area": "dsa",
+  "topic": "search-sort",
+  "topicKey": "dsa.core.search-sort",
+  "coverage": "11 Concept 전체와 38 Question의 모든 실제 필드를 세 bounded 출력에서 읽었다. 검색의 정렬·상태·종료, lower/upper의sentinel과반열린검사구간, stable대deterministic와페이지snapshot, decision-tree모형, merge/partition의내부불변식과편향/중복, heap prefix/suffix, counting/radix의범위·representation을검토했다. UTS10의언어별collation·canonicalequivalence·원래순번으로강제stable,PostgreSQL의ORDER BY unique order와READ COMMITTED query별snapshot을실제대조했다. 이미읽은complexity의동일boundary표현은같은finding으로연결하고hash를갱신하지않는다.",
+  "concepts": [
+    [
+      "dsa.core.search-sort.linear-search",
+      "KEEP",
+      "L1 순차검사·earlyexit와최악비용을충족한다.",
+      "7/2/9/4의firstmatchtrace,검사prefix에target없음,absent끝도달,중복의first/any/all계약과분포/준비비용이정확하다.",
+      "TEXT 비교trace와검사prefix설명이충분하다.",
+      "Princeton31elementary직접403으로target미확정이다. 실제본문/문항의검색trace를직접추론했다.",
+      "q1 4비교/q2prefixinvariant/q3 n·조회반복·준비비용을검토했다."
+    ],
+    [
+      "dsa.core.search-sort.binary-search",
+      "KEEP",
+      "L1 정렬구간반감·경계/진행목표를충족한다.",
+      "mid18대target23의오른쪽제거,정렬전제,현재검색구간대상의보존,진행/중복일치contract와정렬파괴위험이정확하다.",
+      "TEXT 정렬배열/mid와반감방향이충분하다.",
+      "Princeton31elementarytarget미확정이다. 앞서실제읽은OracleArrays25binarySearch정렬/중복경계와대조했다.",
+      "q1오른쪽세값/q2보존·종료/q3동시정렬파괴를검토했다."
+    ],
+    [
+      "dsa.core.search-sort.binary-search-boundary",
+      "TARGETED_ENHANCE",
+      "L2 단조predicate·lower/upper와갱신은맞지만W3-DSA-014의answer범위불변식을고쳐야한다.",
+      ">=대>,F/T전이,right=mid/left=mid+1과0/n결과는정확하다. 하지만답이항상[left,right)안에있다는표현은right자체와sentinel n을배제해모순된다. 검사구간과정답경계를구별해야한다.",
+      "DIAGRAM F/T와lower위치는유지한다. knownFalse[0,left)/unknown[left,right)/knownTrue[right,n)와answer[left,right]를한상태에보여줄정밀보강후보다.",
+      "Princeton31elementarytarget미확정이다. 원문code와n/0edgecase를직접추적하여수학적모순을확인했다.",
+      "q1 1/4,q2단조,q4 0/n/0은정확하다. q3의mid가반열린구간에남는다는모델표현은W3-DSA-014이다."
+    ],
+    [
+      "dsa.core.search-sort.stable-sort",
+      "KEEP",
+      "L1 equalkey입력상대순서대결정성·비용을충족한다.",
+      "A10/B20/C10→A/C/B,secondary후stableprimary,comparator대안,inputorder변경대determinism과buffer/metadata비용이정확하다.",
+      "TEXT 입력/출력과동률관계가충분하다.",
+      "Princeton25applications직접403미확정이다. 실제UTS10 AppendixA stable/forcingstable와PostgreSQL unique-order절을보충대조했다.",
+      "q1 A먼저/q2inputorder대결정성은맞다. q3 페이지간데이터고정조건은W3-DSA-015이다."
+    ],
+    [
+      "dsa.core.search-sort.comparison-sort-lower-bound",
+      "TARGETED_ENHANCE",
+      "L2 decisiontree하한은충족하며W3-DSA-017의조사만정밀보강한다.",
+      "distinctn의n!순열,binary2^h≥n!,log(n!)=Theta(nlogn)와worstOmega,comparison-only대count/radix추가정보가정확하다. '계수정렬나'조사오류외구조재작성근거없다.",
+      "DIAGRAM계약은decisiontree의리프수/높이식으로하한관계를보여줘충족한다.",
+      "Princeton22mergesort직접403으로target미확정이다. distinctcase의리프수와growth하한을직접추론했다.",
+      "q1 n!/q2height/q3counting다른model을검토했다."
+    ],
+    [
+      "dsa.core.search-sort.merge-sort",
+      "TARGETED_ENHANCE",
+      "L1 split/mergeinvariant·stable/space는충족하며W3-DSA-017의조사만보강한다.",
+      "7/2/5/1분할→2/7와1/5→1/2/5/7,남은head최소로확정prefix,leveln×logn,arrayauxO(n)/equalleftstable가정확하다. '불변식다'가있다.",
+      "DIAGRAM 분할→정렬조각→최종merge가충분하여유지한다.",
+      "Princeton22mergesorttarget미확정이다. mergeprefix의모든남은값이상이라는불변식과level비용을직접대조했다.",
+      "q1결과/q2prefix확정/q3external정렬의제한buffer·순차I/O가적합하다."
+    ],
+    [
+      "dsa.core.search-sort.quicksort",
+      "KEEP",
+      "L2 pivotpartition·재귀와평균/최악·중복절충을충족한다.",
+      "작은/큰대표구간내부미정렬,balancedloglevel대0/n-1의quadraticsum/depthn,randomization은worst제거아님,3-way와기본swapunstable가정확하다.",
+      "DIAGRAM 대표pivot5구간과n→n-1사슬이분할품질을보여준다.",
+      "Princeton23quicksort직접403미확정이다. 원문대표구간/재귀비용·중복조건을직접검토했다.",
+      "q1partition확정/q2편향합/q3firstpivot방어/q4equal구간제외를검토했다."
+    ],
+    [
+      "dsa.core.search-sort.partition",
+      "KEEP",
+      "L2 pointer의classified/unknown영역과progress를충족한다.",
+      "Lomuto형대표[<|>=|unknown|pivot]에서작은값을경계로이동,unknown감소,pivot최종위치대구간내정렬아님,duplicate비교와3-way조건을설명한다. 모든partition이pivot최종위치를같게보장하지않는다.",
+      "TEXT 세영역/마지막pivot과갱신설명이충분하다.",
+      "Princeton23quicksorttarget미확정이다. 같은방식의영역불변식과문항의다른두pointer모형을조건별구별했다.",
+      "q1모든보기/q2progress/q3samevalue미진행/q4입력mutation계약을검토했다."
+    ],
+    [
+      "dsa.core.search-sort.heap-sort",
+      "KEEP",
+      "L2 inplace heap와완료suffix의상태목표를충족한다.",
+      "maxroot→현재마지막swap→heapsize감소/siftdown,heap-prefix/asc-finalsuffix,buildn+extractnlogn worst및기본unstable가정확하다.",
+      "DIAGRAM prefix/suffix와늘어나는완료영역이충분하다.",
+      "Princeton24pq접근미확정근거를재사용했다. 원문prefix/suffix와binaryheap의실제불변식을대조했다.",
+      "q1max와끝/q2두영역은맞다. q3의일반고유tie-break와stable의차이는W3-DSA-016이다."
+    ],
+    [
+      "dsa.core.search-sort.counting-sort",
+      "KEEP",
+      "L2 keyrange직접count와시간/공간조건을충족한다.",
+      "2/0/2/1/0의freq2/1/2→0/0/1/2/2,recordstable의누적범위/방향,O(n+k)·countO(k),sparse큰k와음수offset·비교모형경계가정확하다.",
+      "TEXT 실제빈도표와keyrange예가충분하다.",
+      "Princeton51radix직접403미확정이다. 원문count/누적배치·offset과모든문항수학을직접대조했다.",
+      "q1 smallk10/q2 key+3/q3 hugek/q4누적구간과방향을검토했다."
+    ],
+    [
+      "dsa.core.search-sort.radix-sort",
+      "KEEP",
+      "L2 LSD stablepass의낮은자리보존과표현조건을충족한다.",
+      "170/045/075/090/002/024의자리별순서,kpass후lowk정렬,stable다음pass,O(d(n+r))의조건,signed/variablelength의인코딩·끝규칙을설명한다. 모든radix방식이LSD라고하지않는다.",
+      "TEXT digitpass순서와불변식이목표에충분하다.",
+      "Princeton51radix접근미확정이다. 실제UTS10언어별collation/levels/canonical동등절을읽어rawUTF8대사용자order에대조했다.",
+      "q1stable필요/q2복잡도/q3signedrepresentation/q4localeorder를검토했다."
+    ]
+  ],
+  "questions": [
+    [
+      "dsa.core.search-sort.linear-search.q1",
+      "KEEP",
+      "4/7/2/9까지4비교다. accepted4/4번과해설을확인했다.",
+      "EASY 검사방향과배열이명확하다."
+    ],
+    [
+      "dsa.core.search-sort.linear-search.q2",
+      "KEEP",
+      "모델/해설은i이전모든원소가target아님을보존해ai일치가firstmatch이고다음iteration에도이어짐을설명한다.",
+      "MEDIUM firstcontract와prefixinvariant가직접연결된다."
+    ],
+    [
+      "dsa.core.search-sort.linear-search.q3",
+      "KEEP",
+      "모델/해설은n50한번대n50만반복에서index/정렬/메모리·갱신비용의회수와조회누적을비교한다.",
+      "HARD 전처리비용까지전체선택을평가한다."
+    ],
+    [
+      "dsa.core.search-sort.binary-search.q1",
+      "KEEP",
+      "mid18<target23이므로[23,31,42]가남는다. 두acceptedAnswers와정렬성질해설이맞다.",
+      "EASY 정렬배열과첫mid가명시된다."
+    ],
+    [
+      "dsa.core.search-sort.binary-search.q2",
+      "KEEP",
+      "모델/해설은대상가능구간보존의정확성과left/right진행의종료를분리한다.",
+      "MEDIUM 두조건을함께검증한다."
+    ],
+    [
+      "dsa.core.search-sort.binary-search.q3",
+      "KEEP",
+      "모델/해설은동시변경으로정렬이깨지면mid비교로절반을버리는논리가틀려target을놓칠수있음을설명한다.",
+      "MEDIUM data race의언어별결과를일반보장하지않고주어진정렬파괴상태를추론한다."
+    ],
+    [
+      "dsa.core.search-sort.binary-search-boundary.q1",
+      "KEEP",
+      "모델lower1/upper4와해설의>=대>가정렬배열과맞다.",
+      "EASY 0-based본문문맥이며중복세값의양경계이다."
+    ],
+    [
+      "dsa.core.search-sort.binary-search-boundary.q2",
+      "KEEP",
+      "모델/해설은정렬에서Fprefix/Tsuffix단조전이의첫T를반감함을설명한다.",
+      "MEDIUM predicate단조성과경계라는목표가명확하다."
+    ],
+    [
+      "dsa.core.search-sort.binary-search-boundary.q3",
+      "TARGETED_ENHANCE",
+      "left=mid+1이첫T후보mid를잃는오류는맞다. 하지만right=mid후mid가반열린후보구간에남는다는모델은틀린범위표현이어서W3-DSA-014이다. mid는가능한answer의오른쪽경계로보존된다.",
+      "MEDIUM 검사할미분류[left,right)와answer[left,right]를구별해야한다."
+    ],
+    [
+      "dsa.core.search-sort.binary-search-boundary.q4",
+      "KEEP",
+      "모델/해설의empty0/allsmalln/all≥0과삽입boundary범위가정확하다.",
+      "MEDIUM n은배열원소index가아닌sentinel이며C범위오류를확인하는실제근거다."
+    ],
+    [
+      "dsa.core.search-sort.stable-sort.q1",
+      "KEEP",
+      "equal10의입력A가C보다먼저라stable결과도A,C다. 두acceptedAnswers와해설을확인했다.",
+      "EASY 원래상대순서가명시된다."
+    ],
+    [
+      "dsa.core.search-sort.stable-sort.q2",
+      "KEEP",
+      "모델/해설은stable이현재inputorder만보존하여실행별input변경이면결과변경가능하며deterministic전체order에최종tie-break가필요함을설명한다.",
+      "MEDIUM 안정성대결정성이같지않음을검증한다."
+    ],
+    [
+      "dsa.core.search-sort.stable-sort.q3",
+      "TARGETED_ENHANCE",
+      "모델/해설은DB동률input이불안정할때score/id의uniqueorder가해당원인을해결하는정확한방법이다. 다만page사이데이터변경은tie-break로막지못해W3-DSA-015의고정dataset조건을보강한다.",
+      "HARD order미정대query별변경snapshot을분리해야다른올바른원인/대안을배제하지않는다."
+    ],
+    [
+      "dsa.core.search-sort.comparison-sort-lower-bound.q1",
+      "KEEP",
+      "distinctn의n!순열과acceptedn!/nfactorial,해설이맞다.",
+      "EASY distinct조건으로동등비교branch를배제한다."
+    ],
+    [
+      "dsa.core.search-sort.comparison-sort-lower-bound.q2",
+      "KEEP",
+      "모델/해설의binary최대2^h leaves≥n!→h≥log2(n!)=Omega(nlogn)이맞다.",
+      "MEDIUM worst높이하한이며모든입력별최소비교수라고하지않는다."
+    ],
+    [
+      "dsa.core.search-sort.comparison-sort-lower-bound.q3",
+      "KEEP",
+      "모델/해설은counting이정수range를index로사용해comparison-only밖이며k시간/메모리를지불함을설명한다.",
+      "HARD 하한모형과허용operation의차이를검증한다."
+    ],
+    [
+      "dsa.core.search-sort.merge-sort.q1",
+      "KEEP",
+      "heads1/2/5/7선택으로[1,2,5,7]이며두acceptedAnswers와해설이맞다.",
+      "EASY 두입력정렬전제가명확하다."
+    ],
+    [
+      "dsa.core.search-sort.merge-sort.q2",
+      "KEEP",
+      "모델/해설은두정렬sequence의head최소가모든남은값보다작거나같아결과prefix위치가바뀌지않는불변식을설명한다.",
+      "MEDIUM merge가선형에가능한정확성근거이다."
+    ],
+    [
+      "dsa.core.search-sort.merge-sort.q3",
+      "KEEP",
+      "모델/해설은정렬runs의head와일부buffer만유지해순차I/O로큰결과를만드는externalmerge동기를설명한다.",
+      "HARD disk전체를한번에RAM에올릴필요가없다는조건부모형이다."
+    ],
+    [
+      "dsa.core.search-sort.quicksort.q1",
+      "KEEP",
+      "모델/해설은[2,1]5[7,6]의pivot구간/위치만확정되고내부순서는미정임을설명한다.",
+      "EASY concrete값이distinct여서strict양구간이성립한다."
+    ],
+    [
+      "dsa.core.search-sort.quicksort.q2",
+      "KEEP",
+      "모델depthO(n)/work n+(n-1)+…=O(n²)와해설이맞다.",
+      "MEDIUM 매단계0/n-1이라는편향조건이다."
+    ],
+    [
+      "dsa.core.search-sort.quicksort.q3",
+      "KEEP",
+      "모델/해설은firstpivot정렬입력의극단분할·quadratic/stackn가능성과random/median/smaller-side재귀/다른sort전환을비교한다.",
+      "HARD tail최적화등모든구현이반드시stackn이라고하지않고가능성을표현한다."
+    ],
+    [
+      "dsa.core.search-sort.quicksort.q4",
+      "KEEP",
+      "모델/해설은3-way equal구간을재귀에서제외해중복재작업을줄이는조건을설명한다.",
+      "HARD 모든2-way가같은편향을필수로보인다고단정하지않는다."
+    ],
+    [
+      "dsa.core.search-sort.partition.q1",
+      "KEEP",
+      "B양내부완전정렬은보장안됨이맞다. A정의된구간조건/C방식에따라pivot확정가능/D불변식유지의각rationale와해설을확인했다.",
+      "EASY '보장되지않는것'의유일답이며C는모든방식의필수최종pivot이라고하지않는다."
+    ],
+    [
+      "dsa.core.search-sort.partition.q2",
+      "KEEP",
+      "모델/해설은invariant만맞아도pointer미진행이면종료못하여매iteration분류/progress가필요함을설명한다.",
+      "MEDIUM partition의classified영역에직접적용한다."
+    ],
+    [
+      "dsa.core.search-sort.partition.q3",
+      "KEEP",
+      "모델/해설은equal에서둘다멈추고swap후미진행이면동일위치swap무한반복가능,duplicate비교와이동규칙을정해야함을설명한다.",
+      "MEDIUM 주어진실패상태가명확하다."
+    ],
+    [
+      "dsa.core.search-sort.partition.q4",
+      "KEEP",
+      "모델/해설은inplace swap이입력순서를바꿔caller원본사용/복사/stability계약을명시해야함을설명한다.",
+      "MEDIUM 구현부작용과caller계약을연결한다."
+    ],
+    [
+      "dsa.core.search-sort.heap-sort.q1",
+      "KEEP",
+      "모델/해설은maxheaproot를현재heap마지막에보내고size감소후복구함을설명한다.",
+      "EASY in-place오름차순대표heap-sort의문맥이다."
+    ],
+    [
+      "dsa.core.search-sort.heap-sort.q2",
+      "KEEP",
+      "모델/해설은[0,size)maxheap/[size,n)asc최종suffix와root추출후siftdown을설명한다.",
+      "MEDIUM 각loopcheckpoint의영역불변식이다."
+    ],
+    [
+      "dsa.core.search-sort.heap-sort.q3",
+      "TARGETED_ENHANCE",
+      "모델의기본heap-sortunstable과worst/space대stable요구절충은맞다. 해설의일반고유tie-break만으로stable을강제할수는없어W3-DSA-016이다. 원래input순번을사용해야한다.",
+      "HARD determinism과원래동률상대순서보존을구별해야한다."
+    ],
+    [
+      "dsa.core.search-sort.counting-sort.q1",
+      "KEEP",
+      "모델/해설은n1000/k10의count직접index O(n+k)가유리할수있음을설명한다.",
+      "EASY 항상실측우위라고하지않는다."
+    ],
+    [
+      "dsa.core.search-sort.counting-sort.q2",
+      "KEEP",
+      "key+3=key-minKey(-3)로0..6이다. 두acceptedAnswers와해설을확인했다.",
+      "MEDIUM 최소값변수가-3인offset문맥이다."
+    ],
+    [
+      "dsa.core.search-sort.counting-sort.q3",
+      "KEEP",
+      "모델/해설은n100대k약10^9의count초기화/할당·공간낭비와comparison/좌표압축대안을설명한다.",
+      "HARD k를숨긴O(n)보장으로만들지않는다."
+    ],
+    [
+      "dsa.core.search-sort.counting-sort.q4",
+      "KEEP",
+      "모델/해설은freq대key별output구간위치의누적계산과입력순서보존배치방향이필요함을설명한다.",
+      "HARD 표준output-array stablecounting모형의정확성조건으로읽는다."
+    ],
+    [
+      "dsa.core.search-sort.radix-sort.q1",
+      "KEEP",
+      "모델/해설은higherdigit동률안에서lowdigits의기존order를stable로보존해야함을설명한다.",
+      "EASY LSD범위가명시되어MSD까지일반화하지않는다."
+    ],
+    [
+      "dsa.core.search-sort.radix-sort.q2",
+      "KEEP",
+      "d개pass×(n+r)=O(d(n+r))이며두acceptedAnswers와해설이맞다.",
+      "MEDIUM counting-style stablepass와radixr를명시한다."
+    ],
+    [
+      "dsa.core.search-sort.radix-sort.q3",
+      "KEEP",
+      "모델/해설은unsignedraw표현순서와signednumericorder가달라signbit변환/분리등정확한encoding규칙이필요함을설명한다.",
+      "HARD endian·digit선택까지모든구현에한방법을강제하지않는다."
+    ],
+    [
+      "dsa.core.search-sort.radix-sort.q4",
+      "KEEP",
+      "모델/해설은rawUTF8order와locale collation/canonical동등/case정책이다를수있음을설명한다. 실제UTS10의언어별öorder와levels/동등절에대조했다.",
+      "HARD 연결Reference relation이locale대rawbyte의보충목표를명시한다."
+    ]
+  ],
+  "sources": [
+    [
+      "https://algs4.cs.princeton.edu/31elementary/",
+      "NEEDS_REVIEW",
+      "canonical직접접근403으로target내용/학습경로가미확정이다. 본문searchtrace와edgecases는실제검토했다."
+    ],
+    [
+      "https://algs4.cs.princeton.edu/25applications/",
+      "NEEDS_REVIEW",
+      "canonical직접접근403이다. stability는실제UTS10관련절로보충대조했지만target을확인처리하지않는다."
+    ],
+    [
+      "https://algs4.cs.princeton.edu/22mergesort/",
+      "NEEDS_REVIEW",
+      "canonical직접접근403으로target미확정이다. 원문decisiontree·merge의수학/trace를검토했으나원격학습가치확인이아니다."
+    ],
+    [
+      "https://algs4.cs.princeton.edu/23quicksort/",
+      "NEEDS_REVIEW",
+      "canonical직접접근403으로target미확정이다. 본문대표partition·편향·중복조건을검토했으나원격전체풀이검증이아니다."
+    ],
+    [
+      "https://algs4.cs.princeton.edu/24pq/",
+      "NEEDS_REVIEW",
+      "trees에서직접403으로확인한동일target접근근거를재사용했다. 본문heap-prefix/suffix는실제검토했지만페이지자체확인으로승격하지않는다."
+    ],
+    [
+      "https://algs4.cs.princeton.edu/51radix/",
+      "NEEDS_REVIEW",
+      "canonical직접접근403으로target미확정이다. 본문count/radix의표현·시간·공간조건은실제검토했다."
+    ],
+    [
+      "https://www.unicode.org/reports/tr10/",
+      "CURRENT_VERIFIED",
+      "실제공식UTS10 rev55(Unicode18)의언어별collation/customization,levels,canonicalequivalent비교관련절과AppendixA stable·원래record순번으로forcingstable절을읽었다. rawUTF8대사용자order와heap-sort동률해설을대조했다. 전체locale별구현시험을수행했다고하지않는다."
+    ]
+  ],
+  "supplementalSources": [
+    [
+      "https://www.postgresql.org/docs/current/queries-limit.html",
+      "CURRENT_VERIFIED",
+      "공식PostgreSQL18 LIMIT/OFFSET의uniqueORDER BY와plan별roworder/비결정subset관련실제절을읽어stable-sortq3의동률순서원인을대조했다."
+    ],
+    [
+      "https://www.postgresql.org/docs/current/transaction-iso.html",
+      "CURRENT_VERIFIED",
+      "공식PostgreSQL18 ReadCommitted의SELECTquery시작snapshot과같은transaction의연속SELECT도중간commit으로다른데이터를볼수있다는관련실제절을읽었다. 전체isolation강의를추가하거나Wave2발견을수정하지않는다."
+    ]
+  ],
+  "findings": [
+    {
+      "id": "W3-DSA-014",
+      "severity": "P0",
+      "contentKeys": [
+        "dsa.core.search-sort.binary-search-boundary",
+        "dsa.core.search-sort.binary-search-boundary.q3",
+        "dsa.core.complexity.invariant-correctness"
+      ],
+      "file": "content/dsa/search-sort/binary-search-boundary.md",
+      "quote": "답 후보가 항상 그 구간 안에 있다는 불변식을 유지할 수 있다.",
+      "additionalEvidence": [
+        {
+          "file": "content/dsa/search-sort/questions.json",
+          "quote": "중간 위치를 후보 구간에 남긴다."
+        },
+        {
+          "file": "content/dsa/complexity/invariant-correctness.md",
+          "quote": "[left, right) : 아직 답 후보인 영역"
+        }
+      ],
+      "problem": "lower-bound code의[left,right)는아직검사할unknown원소구간이며가능한answer경계범위는닫힌[left,right]다. 처음right=n의allfalse답n은반열린구간밖이고predicate(mid)가true여서right=mid가되면mid도그구간밖이다. 따라서항상반열린구간안이라는본문및q3표현은기존0/nedgecase·코드와모순된다. complexity의같은영역표현도함께정밀보강해야한다.",
+      "action": "knownFalse[0,left),unknown[left,right),knownTrue[right,n)와가능한answer[left,right]를구별한다. right=mid는mid를정답경계로보존하고검사구간에서는제외한다고고친다. 코드·정확한0/n결과·lower/upper정의는유지한다.",
+      "followupIssues": [
+        202
+      ]
+    },
+    {
+      "id": "W3-DSA-015",
+      "severity": "P1",
+      "contentKeys": [
+        "dsa.core.search-sort.stable-sort.q3"
+      ],
+      "file": "content/dsa/search-sort/questions.json",
+      "quote": "`score DESC, id ASC`처럼 고유한 최종 동률 처리 기준을 추가해 전체 순서를 고정해야 한다.",
+      "problem": "동률ORDER BY원인과unique tie-break대안은맞지만prompt는데이터가page조회사이불변인지명시하지않는다. rowinsert/delete/score변경으로각querysnapshot이달라지면uniqueorder가있어도page행이이동할수있다. 그런올바른원인/대안을현재모델이구별하지않는다.",
+      "action": "불변dataset/동일snapshot에서동률순서문제를묻는다고prompt를한정하거나, tie-break는동률비결정성만해결하고데이터변경정책은별도라고해설에경계를추가한다. pagination기능구현은추가하지않는다.",
+      "followupIssues": [
+        202
+      ]
+    },
+    {
+      "id": "W3-DSA-016",
+      "severity": "P0",
+      "contentKeys": [
+        "dsa.core.search-sort.heap-sort.q3"
+      ],
+      "file": "content/dsa/search-sort/questions.json",
+      "quote": "고유 동률 처리 기준을 키에 포함하거나 안정성이 보장되는 다른 정렬 방법을 선택해야 한다.",
+      "problem": "stable요구의해결책을일반고유tie-break로표현한다. 임의idtie-break는결과결정성은줄수있어도입력에서equalkey의상대순서를보존하지않는다. 실제UTS10forcingstable은현재record순번등원래순서를보존하는증가값을사용한다.",
+      "action": "고유기준을원래입력순번/원래index로명시하여(originalKey,inputSequence)비교라고정밀보강한다. 다른stable알고리즘대안과정확한모델은유지한다.",
+      "followupIssues": [
+        202
+      ]
+    },
+    {
+      "id": "W3-DSA-017",
+      "severity": "P2",
+      "contentKeys": [
+        "dsa.core.search-sort.comparison-sort-lower-bound",
+        "dsa.core.search-sort.merge-sort"
+      ],
+      "file": "content/dsa/search-sort/comparison-sort-lower-bound.md",
+      "quote": "계수 정렬나 기수 정렬",
+      "additionalEvidence": [
+        {
+          "file": "content/dsa/search-sort/merge-sort.md",
+          "quote": "불변식**다."
+        }
+      ],
+      "problem": "두본문의'계수정렬나'와'불변식다'는한국어조사/서술오류다. 기술설명·도식의재작성근거는없다.",
+      "action": "해당표현만'계수정렬이나', '불변식이다'로정밀수정한다.",
+      "followupIssues": [
+        202
+      ]
+    }
+  ],
+  "sourceHashes": {
+    "dsa.core.search-sort.binary-search": "b310c5e6893e4026fd0a61e23a2906be13e3aa66236c7c504740e6cb1b98fb69",
+    "dsa.core.search-sort.binary-search-boundary": "de784bcbc0f2a187b913c393acb3ec9663b0a09d4e48f3588d177f5f3154a901",
+    "dsa.core.search-sort.binary-search-boundary.q1": "81418b0e8c4af15e138e0af3ea9b644710838a563600d1397804b6c6473c8368",
+    "dsa.core.search-sort.binary-search-boundary.q2": "676dd99d8e906bc3cd8969a5ed2beca5e01bf7ac5e1ed742d94b6e825d6c8ecf",
+    "dsa.core.search-sort.binary-search-boundary.q3": "1eb478b9d349dbf2716684aade85238b6bf8d91dec68330ebf220e7a2c9bdd61",
+    "dsa.core.search-sort.binary-search-boundary.q4": "646adc0314a95a33f6ad04d37a7c0909a3a1990b7e13fff0b42088f872fa0e04",
+    "dsa.core.search-sort.binary-search.q1": "0f6028cf625d22d00804fad49f9c49499f2cb007400e00d8e56e2d38701469b2",
+    "dsa.core.search-sort.binary-search.q2": "c432b7426699dc58c5964176750d12a661356867905e71cfecd8ee282bf016e8",
+    "dsa.core.search-sort.binary-search.q3": "1e907038c1ea6bb000a94849b78e23b3c39d9ae818715faec68496c0cbcd00f0",
+    "dsa.core.search-sort.comparison-sort-lower-bound": "28dda8699c676e1718a2e3a7d8fa80bf839a579efa498083da3647f133bfd7f1",
+    "dsa.core.search-sort.comparison-sort-lower-bound.q1": "9f11dc54690e5099f0c284381de43aef2ab6589289145bdcc23f2ed78a4498f0",
+    "dsa.core.search-sort.comparison-sort-lower-bound.q2": "14aa174e3265bb1ce6fe9ca01a29cea86ed955061987c137d6cfc33780988207",
+    "dsa.core.search-sort.comparison-sort-lower-bound.q3": "c6a3cb76a20ca19103d967111792c345d46dcf26ac034087be90c4bb2ce5f8d3",
+    "dsa.core.search-sort.counting-sort": "5abe5c2eb5ccdddcfdee0ab74819b8548e49ba92278405053ea4bf25a627e08e",
+    "dsa.core.search-sort.counting-sort.q1": "5acae7ed0b81a175f6636c2b1447e0bd927d9cf07304de563c83c2201812e8af",
+    "dsa.core.search-sort.counting-sort.q2": "8b2d0997b76a6c3461ab89ca40077f1d640c3e9aab3e961f07447c7b2a74bd70",
+    "dsa.core.search-sort.counting-sort.q3": "466804caaf1df400b2772be225d6dcd424f1c211ad0faee56d951fe6772a1f12",
+    "dsa.core.search-sort.counting-sort.q4": "9c3f41f067445d1647ba88009291bc9eef95f5c453d2fb8c5e4eec6fab03439d",
+    "dsa.core.search-sort.heap-sort": "2eb3b1972fbb8b90e51b2350344fbbeaa9a5aa5151b99fc3335cac1a39e7dbe5",
+    "dsa.core.search-sort.heap-sort.q1": "92231815b3b51355d9e37e81160695585d711531e3a92991d5e000fed99105c9",
+    "dsa.core.search-sort.heap-sort.q2": "40537a4ac61cc92056960148e0150a0a80b9d0d9e58fb363062ba7c69879147c",
+    "dsa.core.search-sort.heap-sort.q3": "bc2c6839a8808bdc527fb191ce8461c113ea00e76007f73dbdfa6c126b3b81cc",
+    "dsa.core.search-sort.linear-search": "033b10948ad9baad94585f1fe74f7f07105df268a91a976607e0f74042909b07",
+    "dsa.core.search-sort.linear-search.q1": "260e392a20d4254b6659479db3979a95223cf1eb293b3eadcf5e89c54b9b8a09",
+    "dsa.core.search-sort.linear-search.q2": "b0cd7b4466587384fd2ae47679ede0fe8330277be1f862e730925a975d94834c",
+    "dsa.core.search-sort.linear-search.q3": "c821a22b17ff2b46311f9dd144e0ef44ce348fbe9710238cf38dc738220cadb8",
+    "dsa.core.search-sort.merge-sort": "bcd103648a9a7399aaaa1140370bdd2da20e72eae5bb157e59480434dd78b9c9",
+    "dsa.core.search-sort.merge-sort.q1": "1e152aa5cacade8a661a0f914d78adf80fa83491afccc605e4fae16d9818fbe5",
+    "dsa.core.search-sort.merge-sort.q2": "a70c60806bfae11beddaf0c0ba9c7876797a839bea64f9d9868b9fa9c2d9ce76",
+    "dsa.core.search-sort.merge-sort.q3": "1ffbc2828979413d9aad5e79d282d810ef6cacbbebb9564c9554b39202b8af77",
+    "dsa.core.search-sort.partition": "15b7898a36afc83a738df07b2716080677eab165a7aee4672c27ca2aa8902c5f",
+    "dsa.core.search-sort.partition.q1": "25b38c925f6737f35073bf475a6cc355308c45deea83a5ea6609a6e473786c2e",
+    "dsa.core.search-sort.partition.q2": "142f584eca7bd3ec1c7f2118293126e1615bf35f3f1572aba564afbbbe9a543c",
+    "dsa.core.search-sort.partition.q3": "ed18c24629ef7def4833546035f0ef4e8211f0e20cd130c74fbec10c83f04736",
+    "dsa.core.search-sort.partition.q4": "13aad053e7df7fa930fe99dd7610690306ffcb0a12a37cdfb237722954e9e115",
+    "dsa.core.search-sort.quicksort": "cb338d76d8f47a5f235ed02659d7515fd4dc3ef8123476316a4288aee8588b98",
+    "dsa.core.search-sort.quicksort.q1": "fbef79b3f4e9c88e76f2d1ca6c29dad25d733ce26fc82977de85a8d19aba681b",
+    "dsa.core.search-sort.quicksort.q2": "a1243eb65bfb211753f759f0c65ebed2984d60a2340fe31f04be3d81a8dd4874",
+    "dsa.core.search-sort.quicksort.q3": "283c4e9cea34834a61167c599f7fee8b23183a5d9177ca7975d137f62d610649",
+    "dsa.core.search-sort.quicksort.q4": "ef78aa4a1169ba856c556b63e84724cfd6dc2fe8c9229b343243b7eaa813538c",
+    "dsa.core.search-sort.radix-sort": "bdd8ca78c2d71f2cede615d726e38223e926d82a6bb5cf35a13c3ae72ee60e80",
+    "dsa.core.search-sort.radix-sort.q1": "1167a425a698b2efe7cbddfce1c10416bcc61f3d43f36ec3e6c447bd29eef683",
+    "dsa.core.search-sort.radix-sort.q2": "cae163c7ef2e9a3ad5317ddadd6ab2885ab22309f67c1a645564e6f9ab3ff8d4",
+    "dsa.core.search-sort.radix-sort.q3": "0a4e1e33714a5d736a5e00349638f27b624ac539261a0577d49c7212ba28a511",
+    "dsa.core.search-sort.radix-sort.q4": "87e8f9ac560cf9dcc99fabe7d6ea1027c609e035fd7dc37fac99acf971f0afc6",
+    "dsa.core.search-sort.stable-sort": "9f52a3b5009482ef1a3fd5074988c38821a6cf3fca2d83abf698edcac640007c",
+    "dsa.core.search-sort.stable-sort.q1": "fd48e01b0bd77b163f3e3dcfb159de250e9dbf922ccd7b70829d63cc7dd0c61b",
+    "dsa.core.search-sort.stable-sort.q2": "8f335ac1463d9a94e2c3d3c3b0613524fb6fe5a87fb609f4141f8e96b5270875",
+    "dsa.core.search-sort.stable-sort.q3": "a0ae1427b6aad5df99c90ce02f3ea6a41ad522bad9b9b9be99b2dbab54110736"
+  }
+}

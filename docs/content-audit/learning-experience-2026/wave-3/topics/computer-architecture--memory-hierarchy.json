@@ -1,0 +1,243 @@
+{
+  "area": "computer-architecture",
+  "topic": "memory-hierarchy",
+  "topicKey": "computer-architecture.core.memory-hierarchy",
+  "coverage": "두 bounded 출력으로6 Concept/18 Question의모든필드를읽었다. 용량/속도/비용→지역성→라인→hit/miss→지연/대역폭→계층AMAT의순서가자연스럽다. 2ns/0.8ns,64byte3.2ns/64MB3.2ms,5ns/1.65ns를독립계산했다. 단순모델/계층local미스율/미스겹침을구별한다. cache-line.q3의심화거짓공유기법은연결부족으로기록한다. 대상false-sharingkey의존재는inventory로확인했고해당본문의의미검토는멀티코어Topic에서이어간다. 이후multicore-memory.false-sharing의실제본문/문항전부와공식Linux관련절을읽어해당학습연결대상의내용을직접확인했다.",
+  "concepts": [
+    [
+      "computer-architecture.core.memory-hierarchy.memory-hierarchy",
+      "KEEP",
+      "L1빠른작은계층대큰느린계층및지역성의절충목표를충분히달성한다.",
+      "register/cache/DRAM/storage표와작업집합재사용,miss하위조회,AMAT개요를설명하며OSpagecache/DBbuffer/appcache와hardware메커니즘을분리한다. 모든상위계층이동일한자동cache라는회로보장으로읽지않으며이전register구별과연결한다.",
+      "TEXT의속도/용량/비용방향표가역할비교를효과적으로보여준다.",
+      "UMD canonical target직접접근은NEEDS_REVIEW. 실제MIT공식학습가이드검색발췌의작은cache/큰main/disk및단순AMAT를보충확인했다. 교재의disk모든데이터가정은현재메모리의일반보장으로채택하지않는다.",
+      "q1계층동기,q2작은cache지역성,q3큰L1의hitdelay/면적/전력/집합절충을검사한다."
+    ],
+    [
+      "computer-architecture.core.memory-hierarchy.temporal-spatial-locality",
+      "KEEP",
+      "L1같은주소재사용대인접주소의미와캐시적중조건을달성한다.",
+      "line유지→재접근hit,연속배열라인재사용,큰stride/캐시교체와자료구조이름≠실패보장조건을정확히설명한다. 가능성의모델이지모든프로그램지역성보장이아니다.",
+      "TEXT의A0..배열/line개념은아직byte폭을고정하지않은추상예이며인접범위를보여준다. 이미지추가필수아님.",
+      "UMDtarget미확정이며MIT공식검색발췌의근래주소재사용설명을실제읽었다. 자료의LRU가정은모든hardwarepolicy로일반화하지않는다.",
+      "q1순차배열,q2재사용간교체,q3명시한row-major대columnstride의주소/효율이목표에맞다."
+    ],
+    [
+      "computer-architecture.core.memory-hierarchy.cache-line",
+      "KEEP",
+      "L1이웃byte의블록이동과공간지역성/전송·용량절충을달성한다.",
+      "예시64byte는일반보편폭이아니고가능예로표현한다. tag/valid/dirty,offset/set/tag의다음Topic위임과큰line의낭비·라인수감소가정확하다. multicorefalse-sharing은앞으로배울연결로명시한다.",
+      "DIAGRAM의요청byte와함께채워지는neighbor범위가목표를직접보여준다. 실제태그bit전체그림은다음Topic소유다.",
+      "canonicalUMDtarget미확정. 블록메타/범위는본문과연결문항의조건을검토했으며64byte가모든CPUISA보장이라고승인하지않는다.",
+      "q1offset/index/tag,q2큰line절충은정확하다. q3의심화소유권흐름은입문본문에없어W3-CA-004의추가Concept연결후보다."
+    ],
+    [
+      "computer-architecture.core.memory-hierarchy.cache-hit-miss",
+      "KEEP",
+      "L2유효tag일치/미스후하위조회·교체·fill상태목표를달성한다.",
+      "hit/miss분기와dirtyvictim가능성,compulsory/capacity/conflict원인,hit비용과misspenalty차이를정확히구별한다. 모든미스가항상dirtywrite를한다거나모든단계가직렬이라는주장은없다.",
+      "DIAGRAM의hit사용대miss→lower→fill→재개가상태를보여주며교체예외는본문으로보완한다.",
+      "UMDtarget미확정. 실제MIT공식가이드검색본문의cache검사/미스후mainfetch/fill흐름을관련보충근거로읽었다. modernCPU전체timing검증은아니다.",
+      "q1여유공간에도set충돌,q2victim/writeback/fill겹침가능,q3hit동일조건의2ns대0.8ns가충분하다."
+    ],
+    [
+      "computer-architecture.core.memory-hierarchy.latency-vs-bandwidth",
+      "KEEP",
+      "L2요청대기시간과지속전송량·병목구별을달성한다.",
+      "의존pointerchain대독립요청중첩/순차큰전송,대역폭포화시queue와latency증가를연결한다. 수치없이도시스템병목축을판단할인과가있다.",
+      "TEXT의loadA→주소B→loadB→주소C가dependencystall을보여준다. 전송시간계산은q3에서제공한다.",
+      "UMDtarget미확정. source를읽은것처럼하지않고closed단위계산과본문의조건별모형을독립대조한다.",
+      "q1단위/의미,q2독립중첩,q3작은64byte대64MB의고정/지속비용을검사한다."
+    ],
+    [
+      "computer-architecture.core.memory-hierarchy.miss-penalty",
+      "KEEP",
+      "L2계층별miss추가비용/확률가중목표를달성한다.",
+      "victim/dirty가능/lower/fill/retry와AMAT1+5%*80=5ns,localL2vsDRAM비용/overlap/prefetch/의존chain의한계를설명한다. 프로그램시간에모든miss80ns단순가산을금지한다.",
+      "TEXT의miss상태흐름과식/수치가충분하다. 실제방식을모두직렬로강제하는diagram보장은아니다.",
+      "UMDtarget미확정. MIT공식공개검색의simpleAMAT와추가패널티문제조건을실제읽었다. 단순모델의전제만대조하고모든실CPU의평균식을보장하지않는다.",
+      "q1식/q2닫힌5ns/q3명시nested식1.65ns와각항의local확률을검사한다."
+    ]
+  ],
+  "questions": [
+    [
+      "computer-architecture.core.memory-hierarchy.memory-hierarchy.q1",
+      "KEEP",
+      "A지역성으로속도/비용절충완화가맞다. B동일지연/C주소제거/D모두cache저장은false이며모든rationale/해설이각조건을설명한다.",
+      "EASY 계층필요성의유일답이다."
+    ],
+    [
+      "computer-architecture.core.memory-hierarchy.memory-hierarchy.q2",
+      "KEEP",
+      "모델/해설의최근/인접주소작업집합만유지→hit,나머지큰하위계층/fill조건이정확하다.",
+      "MEDIUM 시간/공간원인으로작은cache효율을설명하며특정hit율보장은없다."
+    ],
+    [
+      "computer-architecture.core.memory-hierarchy.memory-hierarchy.q3",
+      "KEEP",
+      "모델/해설의hitdelay,면적,전력및mapping/작업집합절충이최소세축을충족한다. 무조건큰L1좋음을부정하는근거가충분하다.",
+      "HARD 여러비용축의설계판단이며숫자없는문제라는이유로난이도를자동낮추지않는다."
+    ],
+    [
+      "computer-architecture.core.memory-hierarchy.temporal-spatial-locality.q1",
+      "KEEP",
+      "C연속int배열이인접line을재사용한다. Aregister재사용/B큰무작위/D강제evict는공간재사용효과가작다. 모든rationale/해설이가능성조건을지킨다.",
+      "EASY 직접적인spatial패턴으로C만최선이다. 모든Java객체배열연속payload보장으로일반화하지않는다."
+    ],
+    [
+      "computer-architecture.core.memory-hierarchy.temporal-spatial-locality.q2",
+      "KEEP",
+      "모델/해설은재사용시간이있어도간격내활성집합이크면먼저교체됨을설명한다. locality≠무조건hit가맞다.",
+      "MEDIUM temporal패턴과수용량제약의두조건추론이다."
+    ],
+    [
+      "computer-architecture.core.memory-hierarchy.temporal-spatial-locality.q3",
+      "KEEP",
+      "모델/해설은row연속대column큰stride의라인활용/미스/전송량차이를설명하고prefetch/집합크기예외를조건으로남긴다.",
+      "HARD layout→주소순서→line효율이며row-major를명시했다. Java배열의배열이항상하나의평평한행렬이라는보장은없다."
+    ],
+    [
+      "computer-architecture.core.memory-hierarchy.cache-line.q1",
+      "KEEP",
+      "Boffset내위치/indexset/tagblock이맞다. A역할혼합/C태그만/Dindexbyte및tag불필요는false며모든rationale/해설이tag와replacement를구별한다.",
+      "EASY addressfield기초이며본문offset/set/tag개요를다음organizationTopic으로확장한연결이다. setassoc조건을명시해fullyassoc의index부재와충돌하지않는다."
+    ],
+    [
+      "computer-architecture.core.memory-hierarchy.cache-line.q2",
+      "KEEP",
+      "모델/해설은neighborhit가능성과unusedbytes대역폭/라인수감소/오염·fill비용을양쪽으로설명한다.",
+      "MEDIUM line크기절충이며무조건큰라인더느림/더빠름이아니다."
+    ],
+    [
+      "computer-architecture.core.memory-hierarchy.cache-line.q3",
+      "TARGETED_ENHANCE",
+      "모델/해설의같은line소유권이동/false sharing과분리배치·실측은정확하다. 연결본문은이기법을다음Topic에이름만넘겨소유권상태를직접가르치지않는다.",
+      "HARD 두독립counter대line단위일관성의원인추론이다. 실제거짓공유Concept연결/학습순서를보강할W3-CA-004후보이며정답을고칠필요는없다."
+    ],
+    [
+      "computer-architecture.core.memory-hierarchy.cache-hit-miss.q1",
+      "KEEP",
+      "D conflict가맞다. A다른core무효화/Bfirst-only/Ccapacity-only는반복set충돌전제와다르다. 모든rationale/해설의부족way조건이맞다.",
+      "EASY 반복교체원인과전체여유를명시해분류가유일하다. 초기최초miss도있을수있으나B는only라전체현상을설명못한다."
+    ],
+    [
+      "computer-architecture.core.memory-hierarchy.cache-hit-miss.q2",
+      "KEEP",
+      "모델/해설은유효tag없음→빈자리/교체→필요dirtywrite→fetch/fill/tagstate갱신→재개를설명하며현CPU의겹침도명시한다.",
+      "MEDIUM 상태전이가본문목표에직접연결된다. dirty없으면항상write한다는조건오류가없다."
+    ],
+    [
+      "computer-architecture.core.memory-hierarchy.cache-hit-miss.q3",
+      "KEEP",
+      "A0.01*200=2ns,B0.04*20=0.8ns이다. 모델/해설은동일hit조건의단순추가비용과multi-level/overlap/bandwidth한계를구별한다.",
+      "HARD 미스확률과비용의trade-off계산이다. AMAT.q2/q3의단계식과유사하지만두설계선택이라는다른목표다."
+    ],
+    [
+      "computer-architecture.core.memory-hierarchy.latency-vs-bandwidth.q1",
+      "KEEP",
+      "B시간대data/time이맞다. A항상같은비율/C단위역전/D동일물리량은false다. 모든rationale와explanation이둘을구별한다.",
+      "EASY 지표기초확인이고q2/q3에서원인을응용한다."
+    ],
+    [
+      "computer-architecture.core.memory-hierarchy.latency-vs-bandwidth.q2",
+      "KEEP",
+      "모델/해설은독립요청대기구간중첩→전체완료량증가와의존chain제약을설명한다. 개별latency자체감소를필수로보장하지않는다.",
+      "MEDIUM 동시성대의존의흐름으로본문과직접연결된다."
+    ],
+    [
+      "computer-architecture.core.memory-hierarchy.latency-vs-bandwidth.q3",
+      "KEEP",
+      "20GB/s기준64byte=3.2ns,64MB=3.2ms(십진단위)라100ns시작비용의상대비중결론이맞다. 모델/해설은실제queue/cache가산을명시한다.",
+      "HARD 크기와지연/전송률두항비교다. 정확한MB/MiB수치표현을요구하지않아수ns/수ms답도타당하다."
+    ],
+    [
+      "computer-architecture.core.memory-hierarchy.miss-penalty.q1",
+      "KEEP",
+      "A hit+missrate*additionalpenalty가맞다. B모두0/Cwrong가중/Dclockonly는false며모든rationale가base비용과조건부추가를설명한다.",
+      "EASY 단순singlelayer를명시한다. 실제모든overlap모델로확대하지않는다."
+    ],
+    [
+      "computer-architecture.core.memory-hierarchy.miss-penalty.q2",
+      "KEEP",
+      "1+0.05*80=5ns이며accepted세표현모두값을답한다. 추가penalty80ns의전제가명시되어hit이중계산모호성이없다.",
+      "MEDIUM closed계산으로stable단답에맞다. bare5는질문단위ns맥락에맞는다."
+    ],
+    [
+      "computer-architecture.core.memory-hierarchy.miss-penalty.q3",
+      "KEEP",
+      "L2localmiss10%→8ns추가,L2평균13ns,L1miss5%→0.65ns,base1합1.65ns의모델/해설이맞다. 각항의분모/도달조건도설명한다.",
+      "HARD nested조건부비용이며정확한식을주어local대global미스율ambiguity를없앴다."
+    ]
+  ],
+  "sources": [
+    [
+      "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/memory-hierarchy-design/index.html",
+      "NEEDS_REVIEW",
+      "직접대상도구접근실패로6관계의canonical절/학습동선은미확정이다. 실제MIT/OpenJDK원저자발췌와closed수치추론은보충근거로분리하며없는Reference라확정하지않는다. 추가접근증거: Python은로컬issuer TLS검증오류이며Windows신뢰저장소의TLS검증유지HEAD는실제403. 실제본문/학습접근은미확정이다."
+    ]
+  ],
+  "supplementalSources": [
+    [
+      "https://ocw.mit.edu/courses/6-004-computation-structures-spring-2009/8aab78cf087999514dd6e0b73c6ab43e_MIT6_004s09_study_digital_guide.pdf",
+      "CURRENT_VERIFIED",
+      "공식검색으로제공된MemoryHierarchy의작은cache/큰main、조회후fill、simpleAMAT와locality부분텍스트를실제읽었다. textbookdisk포함과blocking모델의교육가정은일반hardware보장으로쓰지않는다. 전체PDF/diagram시각QA는아니다."
+    ],
+    [
+      "https://ocw.mit.edu/courses/6-004-computation-structures-spring-2017/e3780374f88b6201126fccda717635f7_caches_worksheet.pdf",
+      "CURRENT_VERIFIED",
+      "공식검색의cachehit2cycle/추가20cycle/90%조건과localindex/tag문제발췌를실제읽어추가패널티의가중모델을대조했다. worksheet전체나runtime시험은아니다."
+    ],
+    [
+      "https://openjdk.org/jeps/142",
+      "NEEDS_REVIEW",
+      "직접도구403이며이JEPtarget의본문을읽지못했다. 다른OpenJDK원저자발표발췌와구분한다."
+    ],
+    [
+      "https://cr.openjdk.org/~redestad/slides/openjdk-scalability.pdf",
+      "CURRENT_VERIFIED",
+      "실제공식개발자발표검색발췌의다른CPU가같은cacheline의별도memory에쓰는false-sharing과coherence비용설명을읽었다. 특정JDK25배치/모든CPUline크기보장은아니다."
+    ]
+  ],
+  "findings": [
+    {
+      "id": "W3-CA-004",
+      "severity": "P1",
+      "contentKeys": [
+        "computer-architecture.core.memory-hierarchy.cache-line.q3"
+      ],
+      "file": "content/computer-architecture/memory-hierarchy/questions.json",
+      "quote": "이것이 거짓 공유(false sharing)다.",
+      "problem": "문항과 정확한 모델은 두 코어의 line 소유권 이동과 배치 개선을 요구한다. 단일 연결 cache-line 본문은 line 이동/크기와 메타데이터 개요를 가르치며 거짓 공유를 뒤 Topic에 이름만 넘긴다. 소유권의 상태 변화를 배우는 직접 Concept 연결과 학습 순서 근거가 부족하다.",
+      "action": "기존 q3에 직접 전수 검토한 computer-architecture.core.multicore-memory.false-sharing을 추가 연결하고 해당 심화 Topic 이후의 응용임을 명시한다. 실제 본문은 line 소유권 이동과 padding/분할의 비용, 증거 확인을 설명해 문항의 직접 학습 근거가 된다. 정확한 모델과 입문 cache-line 본문은 유지하며 새 문항이나 중복 강의는 만들지 않는다.",
+      "followupIssues": [
+        201
+      ]
+    }
+  ],
+  "sourceHashes": {
+    "computer-architecture.core.memory-hierarchy.cache-hit-miss": "8407eeeb279b37bd21d58cc5825bfb44a827df26ed5f512d0852b2c42d77bb81",
+    "computer-architecture.core.memory-hierarchy.cache-hit-miss.q1": "8a40c0beb123d45f088a815ac712fc6cdd81ae14390e404fb1a267107b83004d",
+    "computer-architecture.core.memory-hierarchy.cache-hit-miss.q2": "abb05e14980f8cf77dd3aed88698b94862e3c2b6097ac6f7e24ae0ef19c99df9",
+    "computer-architecture.core.memory-hierarchy.cache-hit-miss.q3": "19cdfdd3642cc257d195cfc574a509f3208f10a08d7bb4d14420190703721802",
+    "computer-architecture.core.memory-hierarchy.cache-line": "dd87280255a9681ef6f634d50f4ec7d6d7d7e4b4356bb4cdfa52da8e0306c345",
+    "computer-architecture.core.memory-hierarchy.cache-line.q1": "edb935c9931629c9a0554bbd619a8c9966597dcde5d641f890c8e61abd207df6",
+    "computer-architecture.core.memory-hierarchy.cache-line.q2": "41d61649655e9f899e171b103e52861cd988939fe01d346ad24628fb8d87e18a",
+    "computer-architecture.core.memory-hierarchy.cache-line.q3": "f6dc92c525270b6f07005db6b32ddf0e58cc334f356827630ae330d02fc63813",
+    "computer-architecture.core.memory-hierarchy.latency-vs-bandwidth": "5e56ff4a380beb2d0a0e39094cd4d31fafb4f3e057077b4d435bf7bdc318b863",
+    "computer-architecture.core.memory-hierarchy.latency-vs-bandwidth.q1": "0dcfdb39aa6559b3e14ad31fd6f9f3c8219a24c2198664c1bd5629183682a8f3",
+    "computer-architecture.core.memory-hierarchy.latency-vs-bandwidth.q2": "5d3d331596d6993c96722319e40e4bd98041a5522250b89b213c43eb9cc5ccbc",
+    "computer-architecture.core.memory-hierarchy.latency-vs-bandwidth.q3": "25548ee7e070cb1acc42069053e1cd7d9b15621bc6573080cc98e5d58886656b",
+    "computer-architecture.core.memory-hierarchy.memory-hierarchy": "2dd89a6166a77d428e104d8e78e4aea6a9a441446e5ec74c0e03cda0b1308575",
+    "computer-architecture.core.memory-hierarchy.memory-hierarchy.q1": "cf12b715dd1602695d6476b6e265883b125d425b7ff35abf203ca7a345687160",
+    "computer-architecture.core.memory-hierarchy.memory-hierarchy.q2": "9bf979f6915997038b3a975cd8997428c33dac238421f27a1aaf467a146b0cf8",
+    "computer-architecture.core.memory-hierarchy.memory-hierarchy.q3": "8a0a706d9cec5cba9c4e0503b83ee8aa1496edf7bb4fc221a8ea06cc2c16bc8a",
+    "computer-architecture.core.memory-hierarchy.miss-penalty": "70d424185186e52e88107e82fd31432e500b9c62a2dd5125b4ee4a12d0def0cc",
+    "computer-architecture.core.memory-hierarchy.miss-penalty.q1": "706ecda9c1f4bcc09c7409fc71b221a0a8962a4440ee43d50de515f32efb9bcd",
+    "computer-architecture.core.memory-hierarchy.miss-penalty.q2": "422658208dc7255f1bf177ea71280f715167765d2ba28fdbd6d21a1a11f15d9b",
+    "computer-architecture.core.memory-hierarchy.miss-penalty.q3": "936c948bdcf6feceb35b5142767c1446f756bb351ef325b161ab6eb4711a9f75",
+    "computer-architecture.core.memory-hierarchy.temporal-spatial-locality": "dbe75acad13597192ff51679040b408b0bc80444ac4ad5f59991594fbbb423cd",
+    "computer-architecture.core.memory-hierarchy.temporal-spatial-locality.q1": "18ca8576f4b4edd2f93c5f5368f1067669cafea697767360711f0eca476e6862",
+    "computer-architecture.core.memory-hierarchy.temporal-spatial-locality.q2": "fb11c806923ee9106dd2bff29b91e7f22eaae31112ddcc31afe891f5bb32a266",
+    "computer-architecture.core.memory-hierarchy.temporal-spatial-locality.q3": "15277e9cdf2deef28cad74ae725c30dd78f3f51651cc5b86f6920aa4f00528f8"
+  }
+}

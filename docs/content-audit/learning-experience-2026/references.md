@@ -1,5 +1,7 @@
 # Reference 감사
 
+최신 Wave 3의 관계별 의미/접근 한계와 후속 범위는 [Wave 3 Reference 기록](wave-3/visualization-reference-followups.md#reference-문제와-미확인-범위)을 따른다. 아래는 초기·Wave 1 당시의 역사 기록이며 원래 근거를 보존한다. 모든 누적 관계는 reference-inventory.json에서 확인한다.
+
 625 고유 URL / 1,043 Concept 관계를 모두 인벤토리에 포함했다. 공유 URL의 title/referenceType/language/depth/recommendation conflict는0이고 관계별 displayOrder/relationNote는 별개로 보존한다. broad root 경로 후보는 자동 규칙상0이지만, 따라서 모든 URL이 직접적·유용하다는 결론은 낼 수 없다.
 
 초기 샘플은 canonical URL17개 직접 의미 대조, etcd 1개 접근만, 나머지607개 미완료였으며 기존 증거를 보존했다. Wave 1에서는 **82 고유 canonical URL 관계 중 78개**의 관련 내용·역할을 대조하고 4개는 상세 접근 `NEEDS_REVIEW`로 남겼다. etcd의 linearizability/serializable read·operation completion을 이번에 직접 확인했다. 원본 검증은 `priorVerification`, 새 관계별 근거는 `verification`에서 구분한다. 전문 전체/나머지 Area 모든 Reference를 읽었다고 주장하지 않는다.

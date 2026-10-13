@@ -1,0 +1,302 @@
+{
+  "area": "operating-systems",
+  "topic": "race-critical-section",
+  "topicKey": "operating-systems.core.race-critical-section",
+  "coverage": "6 Concept와21 Question의실제본문과모든필드를두bounded출력에서읽었다. balance/version복합불변식,0→1/2와10→11/12의실행추적,단일실행자원interleaving,넓은race와JLSdata-race조건,검사/갱신·DBUNIQUE권위,critical-section의세요구와wall-clock범위,atomicity대visibility/order,spin/block 비용을검토했다. 실제UIC5.2와OSTEP TAS/CAS·spin평가·two-phase절,Linuxfutex/spinlock와JLS17.4.5를대조했다. 구현·언어범위를일반보장으로확대하지않는다.",
+  "concepts": [
+    [
+      "operating-systems.core.race-critical-section.shared-mutable-state",
+      "KEEP",
+      "L1 공유가변상태와여러필드불변조건의보호필요를충족한다.",
+      "balance100/version7의부분갱신관찰,필드하나대복합invariant,단일소유/불변snapshot으로공유범위축소가정확하다. immutablepublication의별도경계는후속문항에서명시한다.",
+      "TEXT 두필드와부분갱신순서가충분하다.",
+      "실제OSTEPshared-data본과JLSHB/충돌접근정의의범위를대조했다.",
+      "q2의공통보호없음조건/q3의queue운영비용은맞다. q1보기의변경가능한불변조건표현은W3-OS-011이다."
+    ],
+    [
+      "operating-systems.core.race-critical-section.interleaving",
+      "KEEP",
+      "L1 두RMW의다른실행순서를직접추적한다.",
+      "초기0의직렬결과2/둘다read0결과1,단일실행자원preemption가능,10k시험≠all허용순서정확성이타당하다. counter++를교육용단계모델로단순화함을명시한다.",
+      "DIAGRAM 안전/위험순서의두열과실제read/add/write값이충분하다.",
+      "OSTEP실제sharedcounter/실행교차관련본문과locks의atomicprimitive범위를대조했다.",
+      "q1 accepted1, q2의직렬/둘다oldread 순서, q3한실행자원선점, q4표본시험한계를확인했다."
+    ],
+    [
+      "operating-systems.core.race-critical-section.race-condition",
+      "KEEP",
+      "L1 정확성의순서의존대언어data race의구체조건을충족한다.",
+      "counterlostupdate,파일/DBcheckthenact의넓은race,Javaconflicting access/HBunordered의정의가정확하다. shared존재만으로오류를확정하지않고invariant/구간을찾는다.",
+      "TEXT 정상/위험상태와세가지검토축이충분하다.",
+      "실제JLS17.4.5의unorderedconflictingaccess정의와OSTEP관련본문을대조했다. 모든언어data-race의동작을Java정의로일반화하지않는다.",
+      "q1모든보기,q2정의범위,q3DBUNIQUE최종권위,q4readonly대안전공개별도를확인했다."
+    ],
+    [
+      "operating-systems.core.race-critical-section.critical-section",
+      "KEEP",
+      "L1 invariant전체를덮는구간과mutual exclusion/progress/bounded waiting을충족한다.",
+      "tail확인/원소저장/tail갱신의같은전이,무관한코드밖으로·정확성유지,진입횟수bounded≠고정walltime가정확하다.",
+      "DIAGRAM entry→공유상태확인변경→exit의보호범위가충분하다.",
+      "실제UIC5.2의entry/exit/remainder와세요구를읽었다. 뒤의이전판kernel분류/하드웨어설명전체를현대보장으로승인하지않는다.",
+      "q1모든보기,q2세조건/q3DB500ms중lock대기와I/O밖이동시checkthenact재검토를확인했다."
+    ],
+    [
+      "operating-systems.core.race-critical-section.atomic-operation",
+      "KEEP",
+      "L2 관찰중간상태없음과원자성범위를충족한다.",
+      "one-source-line≠atomic,락/primitive로큰전이보호,atomicity≠주변visibility/order,여러필드개별atomic≠전체invariant가정확하다.10두nonatomic→11대atomic두번→12가맞다.",
+      "TEXT 실제두write11대연속10→11→12추적이충분하다.",
+      "OSTEP실제TAS/CAS고유계약과Linuxfutexatomiccompare-and-block/유저fastpath를대조했다. API별메모리순서는별도라고한정한다.",
+      "q1모든보기,q2order계약/q3counter≠여러business상태exactlyonce/q4한줄≠atomic을확인했다."
+    ],
+    [
+      "operating-systems.core.race-critical-section.spin-vs-block",
+      "KEEP",
+      "L2 CPU소비대sleep/wakeup비용과owner실행조건을충족한다.",
+      "짧은wait/CPU여유조건부spin이득,긴wait/선점owner/oversubscription비용,adaptive spin후block의trade-off가정확하다. 무조건spin또는block우월이라고하지않는다.",
+      "TEXT CPU/짧음/길음/owner상태비교표와조건별비용이충분하다.",
+      "실제pthread_spin_lock의반복검사,OSTEPspin평가·two-phase및futexblocking을읽었다.",
+      "q2짧은wait조건은맞다. q1KoreanCPU용어는W3-OS-013,q3physicalcore/SMT조건은W3-OS-012다."
+    ]
+  ],
+  "questions": [
+    [
+      "operating-systems.core.race-critical-section.shared-mutable-state.q1",
+      "TARGETED_ENHANCE",
+      "B의의도는맞고A불변readonly/C완전분리/D순서무영향의rationale/해설도맞다. 그러나정답보기의'변경가능한불변조건'은state와invariant를혼합해W3-OS-011이다.",
+      "EASY 정답개념은유일하나용어를정확히해야한다."
+    ],
+    [
+      "operating-systems.core.race-critical-section.shared-mutable-state.q2",
+      "KEEP",
+      "필드별보호만있고pair읽기공통보호없으면newbalance/oldversion조합가능이라는모델/해설이맞다.",
+      "MEDIUM 단일필드atomic·안전갱신≠복합snapshot이다."
+    ],
+    [
+      "operating-systems.core.race-critical-section.shared-mutable-state.q3",
+      "KEEP",
+      "singleowner/immutable message로directmutablelock범위감소대할당/복사/queue/역압/lifetime비용모델/해설이타당하다.",
+      "HARD 큐로옮기면동시성설계비용전체가없어진다고하지않는다."
+    ],
+    [
+      "operating-systems.core.race-critical-section.interleaving.q1",
+      "KEEP",
+      "초기0/두read0/두write1이므로accepted1과lostupdate해설이맞다.",
+      "EASY 입력과순서를자체명시한다."
+    ],
+    [
+      "operating-systems.core.race-critical-section.interleaving.q2",
+      "KEEP",
+      "0에서직렬read-add-write후두번째read1이면2,두read0이면두write1의모델/해설이맞다.",
+      "MEDIUM 문제의두++와결과2/1이전제한0모델의교차순서를설명한다. 원문은언어의모든허용값을열거한다고하지않는다."
+    ],
+    [
+      "operating-systems.core.race-critical-section.interleaving.q3",
+      "KEEP",
+      "같은순간명령실행없이도read/write사이선점교대로lostupdate가능이라는모델/해설이맞다.",
+      "MEDIUM singlecore에서가능하다는주장으로SMT가없어야한다는배타적보장은아니다."
+    ],
+    [
+      "operating-systems.core.race-critical-section.interleaving.q4",
+      "KEEP",
+      "10k테스트는일부실행순서만관찰해위험교차미관찰가능,invariant/동기화로보장하는모델/해설이맞다.",
+      "MEDIUM 반복성공과전수정확성증명을구별한다."
+    ],
+    [
+      "operating-systems.core.race-critical-section.race-condition.q1",
+      "KEEP",
+      "A relative순서가정확성에영향가능이맞다. B 두thread무조건/C deadlock필수/D 동일instruction동시만은틀리며모든rationale/해설이넓은race범위를설명한다.",
+      "EASY 파일/DB외부효과까지포함한다."
+    ],
+    [
+      "operating-systems.core.race-critical-section.race-condition.q2",
+      "KEEP",
+      "넓은checkthenact/파일/요청경쟁대Java동일변수conflicting/HBunordered 모델/해설이실제JLS정의와맞다.",
+      "MEDIUM language-memory정의와일반정확성개념을구별한다."
+    ],
+    [
+      "operating-systems.core.race-critical-section.race-condition.q3",
+      "KEEP",
+      "서로없는key확인후insert경쟁과processlocal락의다른instance미보호,DBUNIQUE권위/violation처리의모델/해설이맞다.",
+      "HARD DB소유invariant의최종경계를명시한다."
+    ],
+    [
+      "operating-systems.core.race-critical-section.race-condition.q4",
+      "KEEP",
+      "초기화후두readonly에는경쟁write없어lostupdate없고safe publication/다른invariant는별도라는모델/해설이맞다.",
+      "MEDIUM 읽기만하면모든visibility자동해결이라는오해도막는다."
+    ],
+    [
+      "operating-systems.core.race-critical-section.critical-section.q1",
+      "KEEP",
+      "D sharedinvariant깨질수있는전이범위가맞다. A CPU많음/B 무조건함수전체/C 로그모든줄은틀리며모든rationale/해설을확인했다.",
+      "EASY 보호대상으로구간을정한다."
+    ],
+    [
+      "operating-systems.core.race-critical-section.critical-section.q2",
+      "KEEP",
+      "mutual동시금지/progress빈구역다음결정지연금지/bounded타경쟁자진입횟수유한의모델/해설이UIC5.2와맞다.",
+      "MEDIUM bounded≠wallclockSLA를명시한다."
+    ],
+    [
+      "operating-systems.core.race-critical-section.critical-section.q3",
+      "KEEP",
+      "DB500mswait동안lockheld로경합/tail증가,I/O밖이동시상태검사-갱신공백재검토모델/해설이타당하다.",
+      "MEDIUM 무조건lock축소가정확성보장이라고하지않는다."
+    ],
+    [
+      "operating-systems.core.race-critical-section.atomic-operation.q1",
+      "KEEP",
+      "C indivisibleobservabletransition이맞다. A 주변모든order/B 한instruction필수/D DBbusiness전체자동은틀리며모든rationale/해설이범위를구별한다.",
+      "EASY source줄수/ISA명령수/tx범위는별도다."
+    ],
+    [
+      "operating-systems.core.race-critical-section.atomic-operation.q2",
+      "KEEP",
+      "tornupdate없음대주변order/visibility의별도API·memorymodel계약모델/해설이맞다.",
+      "MEDIUM acquire/release/volatile효과를개별계약으로판정한다."
+    ],
+    [
+      "operating-systems.core.race-critical-section.atomic-operation.q3",
+      "KEEP",
+      "counter한전이≠balance/ledger/status전체,부분성공/재시도까지tx/멱등성경계필요모델/해설이맞다.",
+      "HARD localatomic하나로exactlyonce전체보장하지않는다."
+    ],
+    [
+      "operating-systems.core.race-critical-section.atomic-operation.q4",
+      "KEEP",
+      "한줄counter++가여러실행단계가능이고atomic판정은도구/memory계약이라는모델/해설이맞다.",
+      "MEDIUM 본문정의와일치한다."
+    ],
+    [
+      "operating-systems.core.race-critical-section.spin-vs-block.q1",
+      "TARGETED_ENHANCE",
+      "CPU/CPUcycle(s)/CPU자원 네accepted와해설의CPU소비뜻은맞다. 실제해설의'CPU사이클' 한국어답이없어W3-OS-013이다.",
+      "EASY prompt는영문만요구하지않으며학습한한국어정답을허용해야한다."
+    ],
+    [
+      "operating-systems.core.race-critical-section.spin-vs-block.q2",
+      "KEEP",
+      "owner곧release/CPU여유면짧은검사비용<sleep/wakeup조건부모델/해설이맞다.",
+      "MEDIUM 항상짧으면spin우월이라고하지않는다."
+    ],
+    [
+      "operating-systems.core.race-critical-section.spin-vs-block.q3",
+      "TARGETED_ENHANCE",
+      "하나logicalCPU면waiterspin동안owner실행불가모델은맞다. 그러나해설은singlephysicalcore의두thread동시실행불가로일반화해SMT경계가빠진W3-OS-012다.",
+      "MEDIUM 두task가같은단일logicalCPU에서경쟁하는모델로범위를명시해야한다."
+    ]
+  ],
+  "sources": [
+    [
+      "https://pages.cs.wisc.edu/~remzi/OSTEP/threads-intro.pdf",
+      "CURRENT_VERIFIED",
+      "threads검토에서직접읽은shared-data/도입/context/creation관련본문을재사용해공유상태와실행교차를대조했다. 이Topic의relation은thread기본경계이며ULTmapping미확정과구별한다. referencecode실행이나모든언어의race허용동작승인은아니다."
+    ],
+    [
+      "https://docs.oracle.com/javase/specs/jls/se25/html/jls-17.html#jls-17.4.5",
+      "CURRENT_VERIFIED",
+      "실제17.4.5의HBunorderedconflictingaccess=data-race와monitor/volatile/start/join관계관련본문을읽었다. 정확히Java정의와범위를대조하며다른언어에일반화하지않는다."
+    ],
+    [
+      "https://www.cs.uic.edu/~jbell/CourseNotes/OperatingSystems/5_Synchronization.html",
+      "CURRENT_VERIFIED",
+      "실제5.2의critical entry/exit/remainder,mutual exclusion/progress/bounded waiting및nonzero진행속도가정을읽었다. 세요구추천에직접맞는다. 뒤의이전판kernel분류나instructionatomic단순화전체를현대구현보장으로승인하지않는다."
+    ],
+    [
+      "https://pages.cs.wisc.edu/~remzi/OSTEP/threads-locks.pdf",
+      "CURRENT_VERIFIED",
+      "실제28.7/28.8 TAS의test+set원자성과singleCPU선점owner비용/무공정성,28.9 CAS,28.16two-phase spin→sleep관련본문을읽었다.교육pseudo와2009glibc예를현재전체implementation검증으로확대하지않는다.전체22page/figureQA미실시다."
+    ],
+    [
+      "https://man7.org/linux/man-pages/man2/futex.2.html",
+      "CURRENT_VERIFIED",
+      "실제DESCRIPTION의atomiccompare-and-block,유저atomicfastpath와커널blocking/wakeup연결을읽었다. futex가대신user전체lockstate를관리한다고하지않는다."
+    ],
+    [
+      "https://www.man7.org/linux/man-pages/man3/pthread_spin_lock.3.html",
+      "CURRENT_VERIFIED",
+      "실제DESCRIPTION의locked때반복testing,trylockEBUSY및ownership/초기화UB경계를읽었다. contention시CPU계속검사의추천에맞는다."
+    ]
+  ],
+  "supplementalSources": [
+    [
+      "https://man7.org/linux/man-pages/man2/sched_setaffinity.2.html",
+      "CURRENT_VERIFIED",
+      "scheduling에서직접읽은samephysicalcore/twoCPUs공식예를재사용해spin문항의logicalCPU전제를대조했다."
+    ]
+  ],
+  "findings": [
+    {
+      "id": "W3-OS-011",
+      "severity": "P2",
+      "contentKeys": [
+        "operating-systems.core.race-critical-section.shared-mutable-state.q1"
+      ],
+      "file": "content/operating-systems/race-critical-section/questions.json",
+      "quote": "둘 이상의 실행 흐름이 같은 변경 가능한 불변 조건에 영향을 줄 수 있다.",
+      "problem": "정답보기는변경가능한state와유지해야하는invariant를'변경가능한불변조건'으로합친다. rationale/본문은state가변하고공유불변조건은유지돼야한다고정확히설명해보기용어만충돌한다.",
+      "action": "기존B를같은공유가변상태를읽거나변경해그상태의불변조건에영향을줄수있다는표현으로맞춘다. 정답키/다른보기/해설은유지한다.",
+      "followupIssues": [
+        201
+      ]
+    },
+    {
+      "id": "W3-OS-012",
+      "severity": "P1",
+      "contentKeys": [
+        "operating-systems.core.race-critical-section.spin-vs-block.q3"
+      ],
+      "file": "content/operating-systems/race-critical-section/questions.json",
+      "quote": "단일 코어에서는 락 소유자와 기다리는 스레드가 같은 순간 CPU에서 실행될 수 없다.",
+      "problem": "SMTphysicalcore는복수logicalCPU를제공하므로같은core라는말만으로owner/waiter동시실행불가를보장하지못한다. 이문항의의도한single-execution-resource모델과실제physicalcore를구별해야한다.",
+      "action": "기존prompt/해설을같은하나의logicalCPU(SMT없거나둘다같은logicalCPU에제한)에서경쟁하는모델로한정한다. owner가다시실행돼야release할수있다는정확한상태추적은유지한다.",
+      "followupIssues": [
+        201
+      ]
+    },
+    {
+      "id": "W3-OS-013",
+      "severity": "P0",
+      "contentKeys": [
+        "operating-systems.core.race-critical-section.spin-vs-block.q1"
+      ],
+      "file": "content/operating-systems/race-critical-section/questions.json",
+      "quote": "기다리는 시간만큼 CPU 사이클을 소비",
+      "problem": "prompt는영문만요구하지않고해설은CPU사이클이라가르치지만acceptedAnswers에는그한국어표현이없다. 현재trim/lowercase정확일치채점으로'CPU 사이클'정답을거부한다.",
+      "action": "기존허용답에'CPU 사이클'과본문의'CPU 시간'을추가한다. CPU답/기술설명/채점기기능은유지한다.",
+      "followupIssues": [
+        201
+      ]
+    }
+  ],
+  "sourceHashes": {
+    "operating-systems.core.race-critical-section.atomic-operation": "e51e59f20ee0724fd1180d495bcc4dc412025b2204c4767ab98027680ba94139",
+    "operating-systems.core.race-critical-section.atomic-operation.q1": "9ce79d7e2c6d599adbaf75e196cd29239cda4f31721b42dee36b367f1ca6e2c7",
+    "operating-systems.core.race-critical-section.atomic-operation.q2": "bf1af7bd0e623df5c058b08bedefa9481cb9d8ce2832aab48b6b9df03b515011",
+    "operating-systems.core.race-critical-section.atomic-operation.q3": "c6baaa0fc4b09f46a6b2b687f81bfaab5fc0d9d56aa9e44d323094e7e6c38fb8",
+    "operating-systems.core.race-critical-section.atomic-operation.q4": "692afe96165b81aa66cbe9a01afda2aef1c4b8e738e3cf80cdf8fbb4d18915b3",
+    "operating-systems.core.race-critical-section.critical-section": "a629bbefe99d6a891060f22abbbddcc7c3ba31dbe937c81bd4c521aa09ce798d",
+    "operating-systems.core.race-critical-section.critical-section.q1": "e2fa6100f8b2df0864491a8b1cb354b0965ec26071571eb3cdcdd304d7586399",
+    "operating-systems.core.race-critical-section.critical-section.q2": "3d2c4c002ff8f20f573e163ba62fa8e2cbb09a61d01fac2a9f8f0a1613b0b31b",
+    "operating-systems.core.race-critical-section.critical-section.q3": "6dbd4a8fc57a57efcead59026869b5586237d6bf3f7ada1884cd57d0d2b1711a",
+    "operating-systems.core.race-critical-section.interleaving": "49c0955e9577bf75090a70dbdea76546f9cd530682c853312140a95aa7ea41d2",
+    "operating-systems.core.race-critical-section.interleaving.q1": "3713544084c351f583a5d385b4f3baf9a23cd9467f21935f256f3f78a1708e71",
+    "operating-systems.core.race-critical-section.interleaving.q2": "b47d00181d4b1ca196014e2a3e643131f61e963ac9f02a867e77a769095ee998",
+    "operating-systems.core.race-critical-section.interleaving.q3": "dd665bc0110826562031191c0ce2fb81dc29b4b5f7151a72724503d8ae890509",
+    "operating-systems.core.race-critical-section.interleaving.q4": "f1d85463e11f7c5ac923b0c240aa1ab83f47ee41737bbb7e12f82120790cc52f",
+    "operating-systems.core.race-critical-section.race-condition": "affe2fe7a32dff3d1fbde8214279da001effd43ce6015240095a16cea8033f4d",
+    "operating-systems.core.race-critical-section.race-condition.q1": "3e6fd6f692b144e46bb9634c9c907e062131990f1b6d082594789a1db7b2e241",
+    "operating-systems.core.race-critical-section.race-condition.q2": "907078108fb611304a1f5e99bf83e550b3ee2a4033aede9835f28ae4d7b14e4b",
+    "operating-systems.core.race-critical-section.race-condition.q3": "66a5c317125c329f2712a53e43dd58b406aa3d3ddd4fb3673931ac1cb880e5ac",
+    "operating-systems.core.race-critical-section.race-condition.q4": "1f75c7421e62122e9c63d83a807804e662e74a4532ba98cfda19f467e9a81f69",
+    "operating-systems.core.race-critical-section.shared-mutable-state": "45276839832947ec7d8a3363f43a8abc287ef7dde3048d5f26f3601f5eae666e",
+    "operating-systems.core.race-critical-section.shared-mutable-state.q1": "25d9ab8504b1573f127f9439465b0a8b7e15b672544ca76f6782bea28b1ad551",
+    "operating-systems.core.race-critical-section.shared-mutable-state.q2": "7f43955b034ed263b26207daa4f1ae5c70ab8715757656386d7ffbfadadbc44b",
+    "operating-systems.core.race-critical-section.shared-mutable-state.q3": "1ecc032dd2f34409703bbf45b97d446ab85fdb0c303a9ec9c7fcc97a462eb80f",
+    "operating-systems.core.race-critical-section.spin-vs-block": "c8d5a2cc6f1fc401a597478de0052d6b728595ac9b01d26ca0a13168f60c72b2",
+    "operating-systems.core.race-critical-section.spin-vs-block.q1": "2ac9e082e10711287e424ff9f4ed72c02721abc74cacfc50659a97d9425f4684",
+    "operating-systems.core.race-critical-section.spin-vs-block.q2": "6ae099e526fcc5030a1782d1cc274db315c765b1e264214eb6d7e701e592393d",
+    "operating-systems.core.race-critical-section.spin-vs-block.q3": "52d0c7df87c0970ad28932156234bb37ebd110f43beef23ecc33993d7238b566"
+  }
+}

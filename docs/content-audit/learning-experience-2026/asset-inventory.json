@@ -1040,6 +1040,11 @@
     "visualReview": {
       "status": "NEEDS_REVIEW"
     },
+    "sourceSemanticReview": {
+      "file": "frontend/public/learning/operating-systems/block-allocation-tradeoff.svg",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "sourceSha256": "bddff9c3fd1f561f34c0eb9759eb15bf7412f0f46b27c9e53b155501546fe56d"
+    },
     "viewBox": "0 0 960 430",
     "labels": [
       "Block Allocation Trade-offs",
@@ -1071,6 +1076,11 @@
     },
     "visualReview": {
       "status": "NEEDS_REVIEW"
+    },
+    "sourceSemanticReview": {
+      "file": "frontend/public/learning/operating-systems/condition-variable-wait-signal.svg",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "sourceSha256": "98dc9a0a9ea14e36ff855e5a18e94200fd7ce889c62929e378a90ed6b927ae8f"
     },
     "viewBox": "0 0 1100 500",
     "labels": [
@@ -1111,6 +1121,11 @@
     "visualReview": {
       "status": "NEEDS_REVIEW"
     },
+    "sourceSemanticReview": {
+      "file": "frontend/public/learning/operating-systems/container-process-model.svg",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "sourceSha256": "5d141222b7d431c2183e0d46f8d3d18ee4dbdde73799ff915b745eb6a620219e"
+    },
     "viewBox": "0 0 960 430",
     "labels": [
       "Container Process Model",
@@ -1143,6 +1158,11 @@
     },
     "visualReview": {
       "status": "NEEDS_REVIEW"
+    },
+    "sourceSemanticReview": {
+      "file": "frontend/public/learning/operating-systems/contention-queue.svg",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "sourceSha256": "511808e017488feb1cf99ce3ffcadde3f54d4a225c49352adc881afae7743d03"
     },
     "viewBox": "0 0 1100 440",
     "labels": [
@@ -1182,6 +1202,11 @@
     "visualReview": {
       "status": "NEEDS_REVIEW"
     },
+    "sourceSemanticReview": {
+      "file": "frontend/public/learning/operating-systems/context-switch-flow.svg",
+      "sourceSha256": "77fff46725a09b4f6b627e6eb18c5d84922ccfcd52303e2d4374577250a2ecf6",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA"
+    },
     "viewBox": "0 0 960 360",
     "labels": [
       "Context Switch",
@@ -1215,6 +1240,11 @@
     },
     "visualReview": {
       "status": "NEEDS_REVIEW"
+    },
+    "sourceSemanticReview": {
+      "file": "frontend/public/learning/operating-systems/deadlock-avoidance-safe-sequence.svg",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "sourceSha256": "1b27eb08e1fc467e9b6f1ac9f970485c3afc2a92c901fa4ace1ff288e2078d8d"
     },
     "viewBox": "0 0 1100 500",
     "labels": [
@@ -1258,6 +1288,11 @@
     "visualReview": {
       "status": "NEEDS_REVIEW"
     },
+    "sourceSemanticReview": {
+      "file": "frontend/public/learning/operating-systems/deadlock-cycle.svg",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "sourceSha256": "c4ab688493150468bac9d17e6aa9a616365c3ced9de68a5d9f4b1ff2d45e99bd"
+    },
     "viewBox": "0 0 1100 500",
     "labels": [
       "Deadlock: 서로의 release를 기다리는 cycle",
@@ -1297,6 +1332,11 @@
     "visualReview": {
       "status": "NEEDS_REVIEW"
     },
+    "sourceSemanticReview": {
+      "file": "frontend/public/learning/operating-systems/device-io-kernel-path.svg",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "sourceSha256": "52a8e4294c0fb625ce7d8843f98e1e4f359899a203c07558f14cc79ad7cb813d"
+    },
     "viewBox": "0 0 960 420",
     "labels": [
       "Device I/O Kernel Path",
@@ -1328,6 +1368,11 @@
     },
     "visualReview": {
       "status": "NEEDS_REVIEW"
+    },
+    "sourceSemanticReview": {
+      "file": "frontend/public/learning/operating-systems/epoll-interest-ready.svg",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "sourceSha256": "9572116059cd3c46660b25d3894f667f4ac9d371f5184f6b138955c4c7840eb0"
     },
     "viewBox": "0 0 960 430",
     "labels": [
@@ -1365,6 +1410,11 @@
     "visualReview": {
       "status": "NEEDS_REVIEW"
     },
+    "sourceSemanticReview": {
+      "file": "frontend/public/learning/operating-systems/file-descriptor-open-state.svg",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "sourceSha256": "11fdfaad9a90d783e9930e2bfa5e96635084ac9c3bf56ce649db9b797394f50b"
+    },
     "viewBox": "0 0 960 420",
     "labels": [
       "File Descriptor → Open File State",
@@ -1398,6 +1448,11 @@
     },
     "visualReview": {
       "status": "NEEDS_REVIEW"
+    },
+    "sourceSemanticReview": {
+      "file": "frontend/public/learning/operating-systems/host-kernel-sharing.svg",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "sourceSha256": "fa37fca78cbdc9450b24f0e79d800ddcab45c52819d39fc0c340e6ff027a9275"
     },
     "viewBox": "0 0 960 430",
     "labels": [
@@ -1433,6 +1488,11 @@
     "visualReview": {
       "status": "NEEDS_REVIEW"
     },
+    "sourceSemanticReview": {
+      "file": "frontend/public/learning/operating-systems/inode-file-layout.svg",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "sourceSha256": "11232f1cfcf28b7b160b9bc287b4f85e9c433380a5917add5229b3d8f6f27fce"
+    },
     "viewBox": "0 0 960 420",
     "labels": [
       "Directory Entry, Inode, Data Blocks",
@@ -1466,6 +1526,11 @@
     },
     "visualReview": {
       "status": "NEEDS_REVIEW"
+    },
+    "sourceSemanticReview": {
+      "file": "frontend/public/learning/operating-systems/ipc-tradeoff.svg",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "sourceSha256": "1b93a3788b0624ba36c20c0d89cc41c2fd3fddc1fb8d8c67a0e0f15810a2dee1"
     },
     "viewBox": "0 0 960 440",
     "labels": [
@@ -1505,6 +1570,11 @@
     "visualReview": {
       "status": "NEEDS_REVIEW"
     },
+    "sourceSemanticReview": {
+      "file": "frontend/public/learning/operating-systems/linux-namespace-view.svg",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "sourceSha256": "e481845164daf5091f48a3d469ea781965b40ed5748bddb79f279bbf79780aa9"
+    },
     "viewBox": "0 0 960 420",
     "labels": [
       "Linux Namespace Views",
@@ -1539,6 +1609,11 @@
     "visualReview": {
       "status": "NEEDS_REVIEW"
     },
+    "sourceSemanticReview": {
+      "file": "frontend/public/learning/operating-systems/mmap-file-access.svg",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "sourceSha256": "fe58d343be1538b3daa0a018692430f7088700847b373deea0f41487b6371d56"
+    },
     "viewBox": "0 0 960 420",
     "labels": [
       "mmap: Mapping vs Residency",
@@ -1572,6 +1647,11 @@
     },
     "visualReview": {
       "status": "NEEDS_REVIEW"
+    },
+    "sourceSemanticReview": {
+      "file": "frontend/public/learning/operating-systems/multicore-affinity.svg",
+      "sourceSha256": "19128fefcc3a0b3241343e770c73ab22688ed99181234c64ded5dacd0f138111",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA"
     },
     "viewBox": "0 0 960 380",
     "labels": [
@@ -1615,6 +1695,11 @@
       "basis": "mapping/permission 확인→recoverable frame→mapping/retry와 invalid error 경로를 분리; fault≠항상storage I/O. 독립 SVG 화면만 확인.",
       "checkedAt": "2026-10-12"
     },
+    "sourceSemanticReview": {
+      "file": "frontend/public/learning/operating-systems/page-fault-flow.svg",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "sourceSha256": "eba057662fa346881b46a12ff9ca2f7ca36aff05d470154bbb5ffb91307ed9c7"
+    },
     "viewBox": "0 0 960 420",
     "labels": [
       "Page Fault Flow",
@@ -1652,6 +1737,11 @@
     },
     "visualReview": {
       "status": "NEEDS_REVIEW"
+    },
+    "sourceSemanticReview": {
+      "file": "frontend/public/learning/operating-systems/page-replacement.svg",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "sourceSha256": "49cb879b719270c4c3be63c9520e308007ba9ab2a543a3e5391c6386112718c9"
     },
     "viewBox": "0 0 960 400",
     "labels": [
@@ -1692,6 +1782,11 @@
     "visualReview": {
       "status": "NEEDS_REVIEW"
     },
+    "sourceSemanticReview": {
+      "file": "frontend/public/learning/operating-systems/page-table-translation.svg",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "sourceSha256": "83132b3b2fae74afd08bd83bb4728aa2d60b928933ef06687843fba48e02ae57"
+    },
     "viewBox": "0 0 960 400",
     "labels": [
       "Page Table Translation",
@@ -1728,6 +1823,11 @@
     "visualReview": {
       "status": "NEEDS_REVIEW"
     },
+    "sourceSemanticReview": {
+      "file": "frontend/public/learning/operating-systems/pipe-buffer-eof.svg",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "sourceSha256": "7823b63fded0a24113d7cdc9101f89d33b91fdc45e55a9b6b117944cb58696e4"
+    },
     "viewBox": "0 0 960 400",
     "labels": [
       "Pipe: Buffer, Backpressure, EOF",
@@ -1761,6 +1861,11 @@
     "visualReview": {
       "status": "NEEDS_REVIEW"
     },
+    "sourceSemanticReview": {
+      "file": "frontend/public/learning/operating-systems/process-isolation.svg",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "sourceSha256": "0579a51194e80f3b7761b370ae74503a3216d82378773e73f0f10fb86b7aefd9"
+    },
     "viewBox": "0 0 960 410",
     "labels": [
       "Process Isolation and Explicit IPC",
@@ -1793,6 +1898,11 @@
     },
     "visualReview": {
       "status": "NEEDS_REVIEW"
+    },
+    "sourceSemanticReview": {
+      "file": "frontend/public/learning/operating-systems/read-write-lock.svg",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "sourceSha256": "5a44ea7e338f85127d9a5ea63c5f57ff9ae2894158b1a2727219d4db7c94a02a"
     },
     "viewBox": "0 0 1100 440",
     "labels": [
@@ -1831,6 +1941,11 @@
     "visualReview": {
       "status": "NEEDS_REVIEW"
     },
+    "sourceSemanticReview": {
+      "file": "frontend/public/learning/operating-systems/readiness-vs-completion.svg",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "sourceSha256": "8647c776ad5ef8a3a0a9a574dd9570b42fd01cf3679e080b4f435a1eb4337344"
+    },
     "viewBox": "0 0 960 430",
     "labels": [
       "Readiness vs Completion",
@@ -1864,6 +1979,11 @@
     },
     "visualReview": {
       "status": "NEEDS_REVIEW"
+    },
+    "sourceSemanticReview": {
+      "file": "frontend/public/learning/operating-systems/resource-allocation-graph.svg",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "sourceSha256": "936b4d429f3760bf5317c9a446fd09796ab1a15b1b09ef9a147244926717a282"
     },
     "viewBox": "0 0 1100 500",
     "labels": [
@@ -1903,6 +2023,11 @@
     "visualReview": {
       "status": "NEEDS_REVIEW"
     },
+    "sourceSemanticReview": {
+      "file": "frontend/public/learning/operating-systems/round-robin-quantum.svg",
+      "sourceSha256": "2108ee3a2f4eead59c749b1e55f0cf39967e8202cf2d34468d17a24587d01fd9",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA"
+    },
     "viewBox": "0 0 960 360",
     "labels": [
       "Round Robin — quantum = 10 ms",
@@ -1939,6 +2064,11 @@
     },
     "visualReview": {
       "status": "NEEDS_REVIEW"
+    },
+    "sourceSemanticReview": {
+      "file": "frontend/public/learning/operating-systems/semaphore-permits.svg",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "sourceSha256": "d7c84cb96d883547b6a8dd1c06b1b5c53a95315eb8507f6aecbb4a80467b14fa"
     },
     "viewBox": "0 0 1100 440",
     "labels": [
@@ -1978,6 +2108,11 @@
       "basis": "두 서로 다른 VA→같은 backing과 동기화/순서/crash recovery 별도 책임을 드러낸다. 영어 라벨 번역은 이번 결함 확정 아님.",
       "checkedAt": "2026-10-12"
     },
+    "sourceSemanticReview": {
+      "file": "frontend/public/learning/operating-systems/shared-memory-mapping.svg",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "sourceSha256": "0b1ab59e922d045ce40e21386cb21bcacd68bc487c6e94f6c779aef1f3282d85"
+    },
     "viewBox": "0 0 960 410",
     "labels": [
       "Shared Memory Mapping",
@@ -2009,6 +2144,11 @@
     },
     "visualReview": {
       "status": "NEEDS_REVIEW"
+    },
+    "sourceSemanticReview": {
+      "file": "frontend/public/learning/operating-systems/stack-heap-address-space.svg",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "sourceSha256": "7f949596e0a56c8f68cf34648a21f8365076c6cd8f9e16db5453e8ef58617fd9"
     },
     "viewBox": "0 0 960 430",
     "labels": [
@@ -2046,6 +2186,11 @@
     "visualReview": {
       "status": "NEEDS_REVIEW"
     },
+    "sourceSemanticReview": {
+      "file": "frontend/public/learning/operating-systems/starvation-aging.svg",
+      "sourceSha256": "88c8531f8385cdff8a669fc79bb9c973f3fe619ab44f4fed8c2ff6a1dd6efb11",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA"
+    },
     "viewBox": "0 0 960 360",
     "labels": [
       "Starvation → Aging",
@@ -2081,6 +2226,11 @@
     "visualReview": {
       "status": "NEEDS_REVIEW"
     },
+    "sourceSemanticReview": {
+      "file": "frontend/public/learning/operating-systems/thrashing-loop.svg",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "sourceSha256": "3b65369c063c6245821d4e2db6cedc7ebb483c1e9142cd7da5f7585c98b1ae9b"
+    },
     "viewBox": "0 0 960 400",
     "labels": [
       "Thrashing Loop",
@@ -2115,6 +2265,11 @@
     "visualReview": {
       "status": "NEEDS_REVIEW"
     },
+    "sourceSemanticReview": {
+      "file": "frontend/public/learning/operating-systems/unix-domain-socket.svg",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "sourceSha256": "3b5578e5443ce24f0f9093a63da7913f2ab72df610fff82846a186c247892d3d"
+    },
     "viewBox": "0 0 960 400",
     "labels": [
       "Unix-Domain Socket Lifecycle",
@@ -2147,6 +2302,11 @@
     },
     "visualReview": {
       "status": "NEEDS_REVIEW"
+    },
+    "sourceSemanticReview": {
+      "file": "frontend/public/learning/operating-systems/virtual-address-space.svg",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "sourceSha256": "0144d42914486b85a62a99e5db29b8653886036cc2a7d8518c881024aa87cefc"
     },
     "viewBox": "0 0 960 400",
     "labels": [
@@ -2182,6 +2342,11 @@
     },
     "visualReview": {
       "status": "NEEDS_REVIEW"
+    },
+    "sourceSemanticReview": {
+      "file": "frontend/public/learning/operating-systems/write-flush-fsync.svg",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "sourceSha256": "a52326086ec384ca2ad34a8e474dc4ae7f9a73b9990ed40976e3060887e0ebea"
     },
     "viewBox": "0 0 960 430",
     "labels": [
