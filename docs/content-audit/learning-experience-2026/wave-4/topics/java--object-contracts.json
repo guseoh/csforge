@@ -99,151 +99,151 @@
     [
       "java.core.object-contracts.hashcode-contract.q1",
       "KEEP",
-      "q7 서술형: transient id null의 비교, 저장 후 식별값 발생, 업무 키/proxy 수명 고려 모범답안 충분. 4개 선택지/각 rationale/해설과 정답키 D 대조.",
+      "q1 D equals true이면 hash 같음, 반대 및 객체 고유성·주소는 보장 없음. 4개 선택지/각 rationale/해설과 정답키 D 대조.",
       "MC EASY / java.core.object-contracts.hashcode-contract 연결. 정답 성립 및 난도·중복 목표 확인"
     ],
     [
       "java.core.object-contracts.hashcode-contract.q2",
       "KEEP",
-      "q1 D equals true이면 hash 같음, 반대 및 객체 고유성·주소는 보장 없음. 4개 선택지/각 rationale/해설과 정답키 A 대조.",
+      "q2 A 해시는 영구 ID/실행 간 안정성 보장 없음. 충돌·저장 ID 분리. 4개 선택지/각 rationale/해설과 정답키 A 대조.",
       "MC MEDIUM / java.core.object-contracts.hashcode-contract 연결. 정답 성립 및 난도·중복 목표 확인"
     ],
     [
       "java.core.object-contracts.hashcode-contract.q3",
       "KEEP",
-      "q2 A 해시는 영구 ID/실행 간 안정성 보장 없음. 충돌·저장 ID 분리. 4개 선택지/각 rationale/해설과 정답키 C 대조.",
+      "q3 C 대소문자 정규화 equals와 원본 hash의 불일치, ROOT 정규화 전제 명시. 4개 선택지/각 rationale/해설과 정답키 C 대조.",
       "MC HARD / java.core.object-contracts.hashcode-contract 연결. 정답 성립 및 난도·중복 목표 확인"
     ],
     [
       "java.core.object-contracts.hashcode-contract.q4",
       "KEEP",
-      "q3 C 대소문자 정규화 equals와 원본 hash의 불일치, ROOT 정규화 전제 명시. 4개 선택지/각 rationale/해설과 정답키 B 대조.",
+      "q4 B id만 equals 사용하면 label을 hash에 쓰면 동등객체 다른 해시 가능. Objects.hash 편의 함수 한계. 4개 선택지/각 rationale/해설과 정답키 B 대조.",
       "MC MEDIUM / java.core.object-contracts.hashcode-contract 연결. 정답 성립 및 난도·중복 목표 확인"
     ],
     [
       "java.core.object-contracts.hashcode-contract.q5",
       "KEEP",
-      "q4 B id만 equals 사용하면 label을 hash에 쓰면 동등객체 다른 해시 가능. Objects.hash 편의 함수 한계. 4개 선택지/각 rationale/해설과 정답키 A 대조.",
+      "q5 A 매번 바뀌는 해시로 HashSet/HashMap 탐색 실패 가능, equals 대칭성과 분리. 4개 선택지/각 rationale/해설과 정답키 A 대조.",
       "MC EASY / java.core.object-contracts.hashcode-contract 연결. 정답 성립 및 난도·중복 목표 확인"
     ],
     [
       "java.core.object-contracts.hashcode-contract.q6",
       "KEEP",
-      "q5 A 매번 바뀌는 해시로 HashSet/HashMap 탐색 실패 가능, equals 대칭성과 분리. 4개 선택지/각 rationale/해설과 정답키 D 대조.",
+      "q6 D x만 hash도 equals(x,y) 만족, 같은 x 다른 y 충돌은 분포 품질 문제. 4개 선택지/각 rationale/해설과 정답키 D 대조.",
       "MC MEDIUM / java.core.object-contracts.hashcode-contract 연결. 정답 성립 및 난도·중복 목표 확인"
     ],
     [
       "java.core.object-contracts.tostring-diagnostics.q1",
       "KEEP",
-      "q6 D x만 hash도 equals(x,y) 만족, 같은 x 다른 y 충돌은 분포 품질 문제. 4개 선택지/각 rationale/해설과 정답키 B 대조.",
+      "q1 B 사람을 위한 진단, 직렬화/동등성/secret 안전 보장 아님. 4개 선택지/각 rationale/해설과 정답키 B 대조.",
       "MC EASY / java.core.object-contracts.tostring-diagnostics 연결. 정답 성립 및 난도·중복 목표 확인"
     ],
     [
       "java.core.object-contracts.tostring-diagnostics.q2",
       "KEEP",
-      "q1 B 사람을 위한 진단, 직렬화/동등성/secret 안전 보장 아님. 4개 선택지/각 rationale/해설과 정답키 A 대조.",
+      "q2 A secret 토큰은 제외; 공개 label/status/enum은 별도 데이터 정책 판단. 4개 선택지/각 rationale/해설과 정답키 A 대조.",
       "MC MEDIUM / java.core.object-contracts.tostring-diagnostics 연결. 정답 성립 및 난도·중복 목표 확인"
     ],
     [
       "java.core.object-contracts.tostring-diagnostics.q3",
       "KEEP",
-      "q2 A secret 토큰은 제외; 공개 label/status/enum은 별도 데이터 정책 판단. 4개 선택지/각 rationale/해설과 정답키 A 대조.",
+      "q3 A 상호 재귀·secret 유출·배치 파싱 결합 각각 해결, 버전형 별도 포맷 이전. 4개 선택지/각 rationale/해설과 정답키 A 대조.",
       "MC HARD / java.core.object-contracts.tostring-diagnostics 연결. 정답 성립 및 난도·중복 목표 확인"
     ],
     [
       "java.core.object-contracts.tostring-diagnostics.q4",
       "KEEP",
-      "q3 A 상호 재귀·secret 유출·배치 파싱 결합 각각 해결, 버전형 별도 포맷 이전. 4개 선택지/각 rationale/해설과 정답키 D 대조.",
+      "q4 D 양방향 객체 toString 재귀 StackOverflow 가능. 자동 순환 탐지 보장 아님. 4개 선택지/각 rationale/해설과 정답키 D 대조.",
       "MC MEDIUM / java.core.object-contracts.tostring-diagnostics 연결. 정답 성립 및 난도·중복 목표 확인"
     ],
     [
       "java.core.object-contracts.comparable-natural-order.q1",
       "KEEP",
-      "q4 D 양방향 객체 toString 재귀 StackOverflow 가능. 자동 순환 탐지 보장 아님. 4개 선택지/각 rationale/해설과 정답키 A 대조.",
+      "q1 A 타입 기본 자연 순서. Comparator 임시 기준과 equals/참조 동일성 구별. 4개 선택지/각 rationale/해설과 정답키 A 대조.",
       "MC EASY / java.core.object-contracts.comparable-natural-order 연결. 정답 성립 및 난도·중복 목표 확인"
     ],
     [
       "java.core.object-contracts.comparable-natural-order.q2",
       "KEEP",
-      "q1 A 타입 기본 자연 순서. Comparator 임시 기준과 equals/참조 동일성 구별. 4개 선택지/각 rationale/해설과 정답키 D 대조.",
+      "q2 D compareTo 0의 TreeSet 중복 간주, equals/hashCode로 우회되지 않음. 4개 선택지/각 rationale/해설과 정답키 D 대조.",
       "MC MEDIUM / java.core.object-contracts.comparable-natural-order 연결. 정답 성립 및 난도·중복 목표 확인"
     ],
     [
       "java.core.object-contracts.comparable-natural-order.q3",
       "KEEP",
-      "q2 D compareTo 0의 TreeSet 중복 간주, equals/hashCode로 우회되지 않음. 4개 선택지/각 rationale/해설과 정답키 D 대조.",
+      "q3 D MAX-(-1)과 -1-MAX 모두 MIN overflow; 양방향 부호 계약 위반, Integer.compare 안전. 4개 선택지/각 rationale/해설과 정답키 D 대조.",
       "MC HARD / java.core.object-contracts.comparable-natural-order 연결. 정답 성립 및 난도·중복 목표 확인"
     ],
     [
       "java.core.object-contracts.comparable-natural-order.q4",
       "KEEP",
-      "q3 D MAX-(-1)과 -1-MAX 모두 MIN overflow; 양방향 부호 계약 위반, Integer.compare 안전. 4개 선택지/각 rationale/해설과 정답키 A 대조.",
+      "q4 A 대표 자연 순서가 없으면 문맥별 Comparator. 전역 상태로 compareTo 변화 금지. 4개 선택지/각 rationale/해설과 정답키 A 대조.",
       "MC EASY / java.core.object-contracts.comparable-natural-order 연결. 정답 성립 및 난도·중복 목표 확인"
     ],
     [
       "java.core.object-contracts.comparable-natural-order.q5",
       "KEEP",
-      "q4 A 대표 자연 순서가 없으면 문맥별 Comparator. 전역 상태로 compareTo 변화 금지. 4개 선택지/각 rationale/해설과 정답키 C 대조.",
+      "q5 C equals/compareTo 차이로 HashSet/TreeSet 크기가 다름. 컴파일러가 일관성 강제 안 함. 4개 선택지/각 rationale/해설과 정답키 C 대조.",
       "MC MEDIUM / java.core.object-contracts.comparable-natural-order 연결. 정답 성립 및 난도·중복 목표 확인"
     ],
     [
       "java.core.object-contracts.comparator-custom-order.q1",
       "KEEP",
-      "q5 C equals/compareTo 차이로 HashSet/TreeSet 크기가 다름. 컴파일러가 일관성 강제 안 함. 4개 선택지/각 rationale/해설과 정답키 A 대조.",
+      "q1 A 문맥별 정렬이면 Comparator 적절, 비교 중 필드 변경은 위험. 4개 선택지/각 rationale/해설과 정답키 A 대조.",
       "MC EASY / java.core.object-contracts.comparator-custom-order 연결. 정답 성립 및 난도·중복 목표 확인"
     ],
     [
       "java.core.object-contracts.comparator-custom-order.q2",
       "KEEP",
-      "q1 A 문맥별 정렬이면 Comparator 적절, 비교 중 필드 변경은 위험. 4개 선택지/각 rationale/해설과 정답키 B 대조.",
+      "q2 B priority 먼저, 동률 title. 둘 다 동률이면 고유 ID tie-breaker 필요 가능. 4개 선택지/각 rationale/해설과 정답키 B 대조.",
       "MC MEDIUM / java.core.object-contracts.comparator-custom-order 연결. 정답 성립 및 난도·중복 목표 확인"
     ],
     [
       "java.core.object-contracts.comparator-custom-order.q3",
       "KEEP",
-      "q2 B priority 먼저, 동률 title. 둘 다 동률이면 고유 ID tie-breaker 필요 가능. 4개 선택지/각 rationale/해설과 정답키 B 대조.",
+      "q3 B subtraction overflow, Integer.compare 사용. 정확히 ±1 요구하지 않음. 4개 선택지/각 rationale/해설과 정답키 B 대조.",
       "MC MEDIUM / java.core.object-contracts.comparator-custom-order 연결. 정답 성립 및 난도·중복 목표 확인"
     ],
     [
       "java.core.object-contracts.comparator-custom-order.q4",
       "TARGETED_ENHANCE",
-      "q3 B subtraction overflow, Integer.compare 사용. 정확히 ±1 요구하지 않음. 4개 선택지/각 rationale/해설과 정답키 B 대조.",
+      "q4 B는 nullable String 값을 직접 비교할 때만 맞고 Task::title 추출이 없을 경우 Task Comparator는 아님. 4개 선택지/각 rationale/해설과 정답키 B 대조.",
       "MC MEDIUM / java.core.object-contracts.comparator-custom-order 연결. 타입 전제 보강 W4-JOBJ-003"
     ],
     [
       "java.core.object-contracts.comparator-custom-order.q5",
       "KEEP",
-      "q4 B는 nullable String 값을 직접 비교할 때만 맞고 Task::title 추출이 없을 경우 Task Comparator는 아님. 4개 선택지/각 rationale/해설과 정답키 C 대조.",
+      "q5 C 마지막 reversed는 id까지 역순, priority comparator만 reversed 후 id 비교. 4개 선택지/각 rationale/해설과 정답키 C 대조.",
       "MC HARD / java.core.object-contracts.comparator-custom-order 연결. 정답 성립 및 난도·중복 목표 확인"
     ],
     [
       "java.core.object-contracts.comparator-custom-order.q6",
       "KEEP",
-      "q5 C 마지막 reversed는 id까지 역순, priority comparator만 reversed 후 id 비교. 4개 선택지/각 rationale/해설과 정답키 A 대조.",
+      "q6 A 정렬 호출이 명시적 Comparator 우선, 자연순서와 동일 결과 의무 없음. 4개 선택지/각 rationale/해설과 정답키 A 대조.",
       "MC EASY / java.core.object-contracts.comparator-custom-order 연결. 정답 성립 및 난도·중복 목표 확인"
     ],
     [
       "java.core.object-contracts.equals-contract.q7",
       "KEEP",
-      "q6 A 정렬 호출이 명시적 Comparator 우선, 자연순서와 동일 결과 의무 없음. 모범답안·해설과 요구 수행 기준 대조.",
+      "q7 서술형: transient id null의 비교, 저장 후 식별값 발생, 업무 키/proxy 수명 고려 모범답안 충분. 모범답안·해설과 요구 수행 기준 대조.",
       "DESCRIPTIVE HARD / java.core.object-contracts.equals-contract 연결. 정답 성립 및 난도·중복 목표 확인"
     ],
     [
       "java.core.object-contracts.hashcode-contract.q7",
       "KEEP",
-      "q7 시나리오: TreeSet 비교 필드 바꾸면 저장 위치 안 옮겨짐, 제거→변경→재삽입. 모범답안·해설과 요구 수행 기준 대조.",
+      "q7 시나리오: HashSet 이메일 가변키의 bucket mismatch, 안전한 불변 키/제거 후 수정. 모범답안·해설과 요구 수행 기준 대조.",
       "SCENARIO HARD / java.core.object-contracts.hashcode-contract 연결. 정답 성립 및 난도·중복 목표 확인"
     ],
     [
       "java.core.object-contracts.tostring-diagnostics.q5",
       "KEEP",
-      "q7 시나리오: HashSet 이메일 가변키의 bucket mismatch, 안전한 불변 키/제거 후 수정. 모범답안·해설과 요구 수행 기준 대조.",
+      "q5 시나리오: JPA toString lazy/N+1 및 양방향 재귀, 안전한 식별 scalar 요약 선택. 모범답안·해설과 요구 수행 기준 대조.",
       "SCENARIO MEDIUM / java.core.object-contracts.tostring-diagnostics 연결. 정답 성립 및 난도·중복 목표 확인"
     ],
     [
       "java.core.object-contracts.comparator-custom-order.q7",
       "KEEP",
-      "q5 시나리오: JPA toString lazy/N+1 및 양방향 재귀, 안전한 식별 scalar 요약 선택. 모범답안·해설과 요구 수행 기준 대조.",
+      "q7 시나리오: TreeSet 비교 필드 바꾸면 저장 위치 안 옮겨짐, 제거→변경→재삽입. 모범답안·해설과 요구 수행 기준 대조.",
       "SCENARIO HARD / java.core.object-contracts.comparator-custom-order 연결. 정답 성립 및 난도·중복 목표 확인"
     ]
   ],
