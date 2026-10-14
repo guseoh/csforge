@@ -4,53 +4,54 @@
   "areas": [
     {
       "area": "java",
-      "concepts": 22,
-      "questions": 123,
-      "currentVerifiedConcepts": 22,
-      "currentVerifiedQuestions": 123,
+      "concepts": 27,
+      "questions": 151,
+      "currentVerifiedConcepts": 27,
+      "currentVerifiedQuestions": 151,
       "conceptQuality": {
-        "KEEP": 16,
-        "TARGETED_ENHANCE": 6
+        "KEEP": 19,
+        "TARGETED_ENHANCE": 8
       },
       "questionQuality": {
-        "KEEP": 116,
+        "KEEP": 144,
         "TARGETED_ENHANCE": 7
       }
     }
   ],
   "allConceptQuality": {
-    "KEEP": 492,
-    "NEEDS_REVIEW": 122,
-    "TARGETED_ENHANCE": 107
+    "KEEP": 495,
+    "NEEDS_REVIEW": 117,
+    "TARGETED_ENHANCE": 109
   },
   "allQuestionQuality": {
-    "KEEP": 1724,
-    "NEEDS_REVIEW": 699,
+    "KEEP": 1752,
+    "NEEDS_REVIEW": 671,
     "TARGETED_ENHANCE": 102
   },
   "allConceptEvidence": {
     "CURRENT_PARTIAL": 3,
-    "CURRENT_VERIFIED": 598,
-    "NEEDS_REVIEW": 120
+    "CURRENT_VERIFIED": 603,
+    "NEEDS_REVIEW": 115
   },
   "allQuestionEvidence": {
     "CURRENT_PARTIAL": 19,
-    "CURRENT_VERIFIED": 1807,
-    "NEEDS_REVIEW": 699
+    "CURRENT_VERIFIED": 1835,
+    "NEEDS_REVIEW": 671
   },
   "reviewedTopics": [
+    "java.core.api-design",
     "java.core.language-types",
     "java.core.object-model"
   ],
   "totals": {
-    "topics": 2,
-    "concepts": 22,
-    "questions": 123
+    "topics": 3,
+    "concepts": 27,
+    "questions": 151
   },
   "findingSeverity": {
-    "P0": 3,
+    "P0": 4,
     "P1": 3,
-    "P2": 1
+    "P2": 2
   },
   "carriedFindingSeverity": {
     "P2": 1
@@ -58,15 +59,15 @@
   "cumulativeComplete": {
     "areas": 14,
     "partialAreas": 1,
-    "topics": 118,
-    "concepts": 598,
-    "questions": 1807
+    "topics": 119,
+    "concepts": 603,
+    "questions": 1835
   },
   "references": {
-    "links": 44,
-    "uniqueUrls": 35,
+    "links": 53,
+    "uniqueUrls": 42,
     "meaningEvidence": {
-      "CURRENT_VERIFIED": 43,
+      "CURRENT_VERIFIED": 52,
       "NEEDS_REVIEW": 1
     }
   }

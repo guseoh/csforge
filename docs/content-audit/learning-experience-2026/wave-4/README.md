@@ -1,36 +1,35 @@
-# Wave 4 Java — 두 Topic 누적 감사
+# Wave 4 Java — 세 Topic 누적 감사
 
-2026-10-14, 기준선 `efe73a15da14c996bd08344181d4d6f87073803d`, 기존 Draft PR #223/브랜치 `audit/issue-200-learning-experience`. 이번 Delta는 object-model 12C/68Q 및 다중 Topic 누적 검증기 보완이다. canonical/Curriculum/SVG/DB/제품을 변경하지 않는다.
+2026-10-14, 기준선 `efe73a15da14c996bd08344181d4d6f87073803d`, 기존 Draft PR #223/브랜치 `audit/issue-200-learning-experience`. 이번 Delta는 Reference 관계 격리와 api-design5C/28Q 의미 검토다. canonical/Curriculum/SVG/DB/제품은 변경하지 않는다.
 
 | Topic | C / Q 전수 완료 | C KEEP / 보강 | Q KEEP / 보강 | 새 P0 / P1 / P2 |
 | --- | ---: | ---: | ---: | ---: |
 | language-types | 10 / 55 | 6 / 4 | 51 / 4 | 2 / 2 / 0 |
 | object-model | 12 / 68 | 10 / 2 | 65 / 3 | 1 / 1 / 1 |
-| 합계 | **22 / 123** | **16 / 6** | **116 / 7** | **3 / 3 / 1** |
+| api-design | 5 / 28 | 3 / 2 | 28 / 0 | 1 / 0 / 1 |
+| 합계 | **27 / 151** | **19 / 8** | **144 / 7** | **4 / 3 / 2** |
 
-새 발견7그룹과 기존 LEX-002 P2 계승1그룹을 별도 집계한다. 두 Topic의 CURRENT_VERIFIED 항목은22C/123Q, 품질 NEEDS_REVIEW/REWRITE_REQUIRED는0이다. Reference 확인 한계와 확정 오류는 별도이며 검토 완료가 무결점/교정 완료를 뜻하지 않는다.
+새 발견9그룹과 기존 LEX-002 P2 계승1그룹은 별도다. 검토된27C/151Q는 CURRENT_VERIFIED이며 REWRITE_REQUIRED/품질 NEEDS_REVIEW0이다. 의미 검토 완료는 교정 완료 또는 무결점 판정이 아니다.
 
-## Topic 근거·보존
+## 근거와 보존
 
-- [language-types 수기 ledger](topics/java--language-types.json)는 기존 commit393d098의 byte/hash/판정/발견/Reference/SVG/probe 근거 그대로다. [당시 보고서](language-types-report.md), [당시 검증](language-types-validation.md), [단일 Topic 당시 summary](snapshots/language-types-summary.json)를 원래 Git object에서 보존했다. snapshot 안의 당시/현재/다음 표현은 첫 실행 시점의 기록이다.
-- [object-model 수기 ledger](topics/java--object-model.json)와 [신규 의미 검토 결과](object-model-report.md)에 12C/68Q 전체의 개별 근거/80 source hash/실제 발견을 기록했다.
-- [누적 발견](findings.md), [발견 JSON](findings.json), [기존 계승](carried-findings.json), [Reference 미확정·문제](reference-issues.json), [최신 summary](summary.json), [검증](validation.md)을 함께 사용한다.
+- 기존 [language-types 원본](topics/java--language-types.json) 및 [object-model 원본](topics/java--object-model.json)은 Git81484fb와 bytes 동일하다. 판정·발견7그룹·LEX-002·SVG4개·probe를 보존한다.
+- [첫 Topic 보고서](language-types-report.md)/[당시 검증](language-types-validation.md)/[단일 Topic snapshot](snapshots/language-types-summary.json), [object-model 보고서](object-model-report.md), [두 Topic 당시 snapshot](snapshots/two-topic-summary.json)은 역사적 수량과 검토 한계의 기록이다.
+- [api-design의33개 개별 근거](topics/java--api-design.json)/[신규 보고서](api-design-report.md), [누적 발견](findings.md)/[JSON](findings.json), [계승](carried-findings.json), [최신 summary](summary.json), [검증](validation.md)을 함께 사용한다.
 
-## 누적 처리의 경계
+## Reference의 실제 귀속
 
-load_wave는 각 Topic 원본을 `topicLedgers`로 보존하고 Area에 topics/Concept/Question/발견/계승/SVG를 합산한다. 이전 `ledgers[area]=data` 덮어쓰기와 단일 Topic 고정 총계를 제거했다. 총계는 명시적으로 승인한 WAVE_4_TOPICS의 수량으로 검증하며 임의 Topic을 완료 처리하지 않는다.
+[관계별 수기 sidecar](reference-relations.json)와 [격리 수정 설명](reference-isolation.md)을 기준으로 `(contentKey, URL)`만 검증 근거를 부여한다. Topic 원본의 URL 확인 상태를 같은 Topic의 다른 Concept 또는 다른 Topic에 자동 전파하지 않는다. canonical 관계 집합/Reference 객체/hash의 누락·중복·무관한 URL·오래된 근거를 거절한다. supportingEvidence도 해당 Concept의 canonical/별도 보조 관계로 확인해야 한다.
 
-Reference source마다 실제 Concept key와 Topic 범위를 보존한다. 동일 URL을 다른 Topic에서 확인해도 현재 relation의 확인 수준·근거·접근 상태를 자동 승격하지 않는다. object-model의 JLS8을 NEEDS_REVIEW로 바꾼 메모리 안의 회귀 fixture에서도 language-types JLS8은 CURRENT_VERIFIED, object-model은 NEEDS_REVIEW, 미검토 Topic은 근거 없음으로 남는다. 원본 파일을 수정하는 테스트가 아니다. Topic별 중복 source URL, item key/hash, SVG의 중복/낡은 hash를 거절하고 probe는 있는 Topic에서만 원본 코드를 검증한다.
+기존44관계(43검토/1미확정)를 개별 대응하고 신규9관계를 직접 검토했다. 누적 **53관계/42 URL**, 의미 근거 **52 CURRENT_VERIFIED/1 NEEDS_REVIEW(D2)**다. 이52관계에는 확정 P0 오류가 있는 constructor/factory 출처2관계가 포함되며 [reference-issues.json](reference-issues.json)의 qualityIssueIds로 분리한다. 문서 전문 검증·모든 snippet 실행 PASS가 아니다.
 
-canonical Reference는 **44관계/35 URL**. 관련 내용 검토43관계 CURRENT_VERIFIED / language-types D2 1관계 NEEDS_REVIEW다. 이43관계에는 **확정 오류가 있는 constructor Reference 1관계**도 포함되며 qualityIssueIds 및 findings에서 P0로 별도 표시한다. 관련 절 검토와 출처 품질을 혼동하지 않는다.
-
-기존 language-types의 SVG4개 소스 의미 및 probe, 새 object-model의 제한된 초기화/Reference probe를 각각 보존한다. object-model은 본문 이미지0이며 ASCII·표·코드의 실제 설명 효과로 판단했다. 전체 runtime/성능 및 Reader/mobile/theme/human QA는 완료로 주장하지 않는다.
+기존 SVG4개 소스 검토와 두 probe를 보존한다. api-design 이미지 참조는0이며 실제 ASCII·코드·표가 목표에 충분한지 확인했다. 신규 제한 컴파일은 includeClosed 누락/한 줄 제거 성공/missing static의 호출 오류만 대조했다. runtime 전체·성능·Reader/mobile/theme/human QA는 미완료다.
 
 ## 누적 진행률·후속
 
-완료 Area14/부분 Java1, **118/134 Topic**, **598/721C(82.94%)·1,807/2,525Q(71.56%)** 전수 검토다. Java는 **2/18 Topic·22/145C·123/841Q**만 완료했다. 남은 새 전수 범위16 Topic/123C/718Q에는 기존 partial3C/19Q가 포함되며, 전체 근거 NEEDS_REVIEW120C/699Q와 품질 미확정122C/699Q를 구별한다. J-A는2/6 Topic·22/44C·123/240Q다.
+완료 Area14/부분 Java1, **119/134 Topic**, **603/721C(83.63%)·1,835/2,525Q(72.67%)** 전수 검토다. Java **3/18Topic·27/145C·151/841Q**, 잔여 **15Topic/118C/690Q**(기존 partial3C/19Q 포함). 전체 근거 NEEDS_REVIEW115C/671Q와 품질 미확정117C/671Q를 구별한다. J-A는3/6Topic·27/44C·151/240Q다.
 
-#201의 최소 보강은 기존 language-types 범위와 신규 초기화 설명1C/오답 feedback3Q, constructor Reference1C다. #222와 constructor 출처 오류1관계 및 D2 미확정1관계를 조정한다. 후속 구현·새 Issue/PR·merge는 하지 않는다. 다음 Topic은 `java.core.api-design`이며 이번 의미 검토 범위에 포함하지 않는다. **Wave4/Java/Issue200 전체 감사 완료가 아니다.** ChatGPT 최종 콘텐츠 품질 검토 후 다음 단계에 활용한다.
+#201에 신규Builder 예시 연결1C와 정확한 factory본문을 유지한 Reference1C만 권장하고 #222와 출처1관계 교체/한정을 조정한다. 기존 두 Topic/Wave1~3 후속 범위는 보존하며 구현하지 않는다. 다음 `java.core.object-contracts`5C/31Q는 이번에 의미 검토하지 않았다. **Wave4/Java/Issue200 전체 완료가 아니다.** ChatGPT 최종 콘텐츠 품질 검토 후 다음 단계에 활용한다.
 
 ## 재실행
 
@@ -38,8 +37,11 @@ canonical Reference는 **44관계/35 URL**. 관련 내용 검토43관계 CURRENT
 python docs/content-audit/learning-experience-2026/wave-4/check-accumulation.py
 python docs/content-audit/learning-experience-2026/wave-3/checkpoint-topic.py docs/content-audit/learning-experience-2026/wave-4/topics/java--language-types.json
 python docs/content-audit/learning-experience-2026/wave-3/checkpoint-topic.py docs/content-audit/learning-experience-2026/wave-4/topics/java--object-model.json
+python docs/content-audit/learning-experience-2026/wave-3/checkpoint-topic.py docs/content-audit/learning-experience-2026/wave-4/topics/java--api-design.json
 python docs/content-audit/learning-experience-2026/audit.py
 python docs/content-audit/learning-experience-2026/audit.py --check
-java docs/content-audit/learning-experience-2026/wave-4/probes/ObjectModelProbe.java
+python docs/content-audit/learning-experience-2026/wave-4/probes/check-api-design.py
 git diff --check
 ```
+
+Probe는 JDK25 javac와 쓰기 가능한 OS 임시 디렉터리가 필요하다. 감사 generate/--check와 의미 ledger 검증은 컴파일러/네트워크를 요구하지 않는다.

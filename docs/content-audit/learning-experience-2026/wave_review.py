@@ -2,6 +2,8 @@
 
 from collections import Counter
 
+import yaml
+
 
 WAVE_AREAS = {
     "cache", "messaging-async", "infrastructure-cloud",
@@ -15,7 +17,8 @@ WAVE_3_COUNTS = {
     "computer-architecture": (10, 61, 183), "dsa": (12, 84, 293),
     "operating-systems": (12, 97, 331), "network-http": (15, 127, 381),
 }
-WAVE_4_TOPICS = {"java--language-types": (1, 10, 55), "java--object-model": (1, 12, 68)}
+WAVE_4_TOPICS = {"java--language-types": (1, 10, 55), "java--object-model": (1, 12, 68),
+                 "java--api-design": (1, 5, 28)}
 CONCEPT_AXES = [
     "objectiveLevelDepth", "accuracyMechanismCodeExamplesClarityBoundaries",
     "visualization", "references", "linkedQuestionCoverage",
@@ -24,9 +27,77 @@ QUESTION_AXES = ["answerChoicesRationalesModelExplanation", "ambiguityDifficulty
 
 
 def scoped_sources(sources, url, area, key):
-    """Shared URLs retain the actual Topic/Concept scope of each review."""
+    """Wave 4 evidence belongs to exactly one (Concept key, URL) relation."""
     return [source for source in sources.get(url, []) if source["area"] == area
-            and ("contentKeys" not in source or key in source["contentKeys"])]
+            and ("contentKey" not in source or key == source["contentKey"])]
+
+
+def relation_sources(folder, root, baseline, read_json, sha, require, ledgers):
+    """Validate handwritten relation evidence against canonical front matter."""
+    path = folder / "reference-relations.json"
+    data = read_json(path)
+    require(data["baselineSha"] == baseline, "Reference relation baseline")
+    expected, concepts, supporting = {}, {}, set()
+    for aggregate in ledgers.values():
+        for part in aggregate["topicLedgers"].values():
+            for row in part["concepts"]:
+                key = row[0]
+                file = f"content/{part['area']}/{part['topic']}/{key.rsplit('.', 1)[1]}.md"
+                require((root / file).is_file(), f"Missing Reference relation canonical file: {key}")
+                if not (root / file).is_file():
+                    continue
+                meta = yaml.safe_load((root / file).read_text(encoding="utf-8-sig").split("---", 2)[1])
+                require(meta["contentKey"] == key and meta["topicContentKey"] == part["topicKey"],
+                        f"Reference relation canonical key: {key}")
+                concepts[key] = (file, part)
+                for ref in meta["references"]:
+                    pair = (key, ref["url"])
+                    require(pair not in expected, f"Duplicate canonical Reference relation: {pair}")
+                    expected[pair] = ref
+            supporting.update((key, url) for key, support in part.get("supportingEvidence", {}).items()
+                              for url in support.get("urls", []))
+    sources, actual, checked_support = {}, set(), set()
+    for kind, rows in [("references", data["references"]),
+                       ("supportingRelations", data.get("supportingRelations", []))]:
+        seen = set()
+        for row in rows:
+            key, url = row["contentKey"], row["url"]
+            pair = (key, url)
+            require(pair not in seen, f"Duplicate Reference relation: {pair}")
+            seen.add(pair)
+            require(key in concepts, f"Unreviewed Reference relation Concept: {key}")
+            if key not in concepts:
+                continue
+            file, part = concepts[key]
+            require(row["sourceFile"] == file and row["sourceSha256"] == sha(root / file),
+                    f"Stale Reference relation source: {pair}")
+            require(row["evidenceLevel"] in {"CURRENT_VERIFIED", "NEEDS_REVIEW"}
+                    and bool(row.get("basis")) and bool(row.get("limits")),
+                    f"Incomplete Reference relation reasoning: {pair}")
+            if kind == "references":
+                actual.add(pair)
+                require(pair in expected and row.get("reference") == expected.get(pair),
+                        f"Reference relation front matter mismatch: {pair}")
+                entry = {"area": part["area"], "topicKey": part["topicKey"],
+                         "contentKey": key, "evidenceFile": path.relative_to(root).as_posix(),
+                         **{field: row[field] for field in ("evidenceLevel", "basis", "limits", "sourceSha256")}}
+                if row.get("accessVerification"):
+                    require(row["accessVerification"].get("status") in {"CURRENT_VERIFIED", "NEEDS_REVIEW"}
+                            and bool(row["accessVerification"].get("basis")),
+                            f"Reference relation access evidence: {pair}")
+                    entry["accessVerification"] = row["accessVerification"]
+                sources.setdefault(url, []).append(entry)
+            else:
+                require(pair in supporting and url in {s[0] for s in part.get("supplementalSources", [])},
+                        f"Unrelated supporting Reference relation: {pair}")
+            if row["evidenceLevel"] == "CURRENT_VERIFIED":
+                checked_support.add(pair)
+    require(actual == set(expected), "Reference relation coverage")
+    require({(r["contentKey"], r["url"]) for r in data.get("supportingRelations", [])}
+            == supporting - set(expected), "Supporting Reference relation coverage")
+    for key, url in supporting:
+        require((key, url) in checked_support, f"Unverified supporting URL relation: {key} {url}")
+    return sources
 
 
 def load_wave(out, root, baseline, read_json, sha, require, wave=1):
@@ -84,10 +155,8 @@ def load_wave(out, root, baseline, read_json, sha, require, wave=1):
             require(evidence in {"CURRENT_VERIFIED", "NEEDS_REVIEW"} and bool(basis), f"Wave source evidence: {url}")
             entry = {"evidenceLevel": evidence, "basis": basis, "area": area,
                      "evidenceFile": path.relative_to(root).as_posix()}
-            if wave == 4:
-                entry["contentKeys"] = [r[0] for r in data["concepts"]]
-                entry["topicKey"] = data["topicKey"]
-            sources.setdefault(url, []).append(entry)
+            if wave != 4:
+                sources.setdefault(url, []).append(entry)
         supplemental = data.get("supplementalSources", [])
         require(len({s[0] for s in supplemental}) == len(supplemental), f"Duplicate supplemental source: {area}")
         for url, evidence, basis in supplemental:
@@ -109,7 +178,8 @@ def load_wave(out, root, baseline, read_json, sha, require, wave=1):
         for key, support in data.get("supportingEvidence", {}).items():
             require(key in concept_keys and support.get("kind") in {"CHECKED_SOURCE", "DIRECT_DERIVATION"}
                     and bool(support.get("basis")), f"Concept supporting evidence: {key}")
-            require(set(support.get("urls", [])).issubset(checked_urls), f"Unverified supporting URL: {key}")
+            if wave != 4:
+                require(set(support.get("urls", [])).issubset(checked_urls), f"Unverified supporting URL: {key}")
             require(support["kind"] != "CHECKED_SOURCE" or bool(support.get("urls")),
                     f"Missing checked supporting URL: {key}")
             if key in reviews:
@@ -130,6 +200,8 @@ def load_wave(out, root, baseline, read_json, sha, require, wave=1):
             for field in ("topics", "concepts", "questions", "findings", "carriedForwardFindings", "visualizationAssets"):
                 aggregate[field].extend(data.get(field, []))
             aggregate["supportingEvidence"].update(data.get("supportingEvidence", {}))
+    if wave == 4:
+        sources = relation_sources(folder, root, baseline, read_json, sha, require, ledgers)
     return reviews, sources, ledgers
 
 

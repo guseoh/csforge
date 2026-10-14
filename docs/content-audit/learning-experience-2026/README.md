@@ -6,11 +6,11 @@
 - Reference: 1,043 관계 / 625 고유 URL. 기존 이미지: Java 27 + OS 33 = 60 SVG, 현재 60개 모두 연결(ALT 대괄호 파서 누락을 Wave 4에서 정정).
 - [Issue #200](https://github.com/guseoh/csforge/issues/200), [Roadmap #199](https://github.com/guseoh/csforge/issues/199)
 
-## 현재 누적 결과 — Wave 4 두 Topic (2026-10-14)
+## 현재 누적 결과 — Wave 4 세 Topic (2026-10-14)
 
-[현재 Wave4](wave-4/README.md)는 language-types10C/55Q와 object-model12C/68Q를 합쳐 **2Topic/22C/123Q**, C KEEP16/보강6, Q KEEP116/보강7이다. 새 발견 누적P0 3/P1 3/P2 1과 기존LEX-002 P2 1그룹은 별도다. 두 Topic의 개별 원본과 단일 Topic snapshot을 보존하고 Reference 상태를 Topic/Concept 범위로 격리한다.
+[현재 Wave4](wave-4/README.md)는 language-types10C/55Q·object-model12C/68Q·api-design5C/28Q를 합쳐 **3Topic/27C/151Q**, C KEEP19/보강8, Q KEEP144/보강7이다. 새 발견 누적P0 4/P1 3/P2 2와 기존LEX-002 P2 계승1그룹은 별도다. 기존 두 Topic 원본/당시 snapshot을 보존하고 [Reference 개별 관계 sidecar](wave-4/reference-relations.json)로 같은 Topic의 Concept 간에도 검증을 격리한다.
 
-최신 누적 전수 항목 **598/721C(82.94%)·1,807/2,525Q(71.56%)·118/134 Topic**, 완료 Area14/부분Java1. Java16Topic/123C/718Q의새전수검토가남았다. 근거 NEEDS_REVIEW120C/699Q, 품질미확정122C/699Q. [신규 object-model 결과](wave-4/object-model-report.md), [최신 summary](wave-4/summary.json), [발견](wave-4/findings.md), [검증](wave-4/validation.md)을 따른다. Wave4/Issue200 전체 완료가 아니다.
+최신 누적 전수 항목 **603/721C(83.63%)·1,835/2,525Q(72.67%)·119/134Topic**, 완료 Area14/부분Java1. Java15Topic/118C/690Q의새전수검토가남았다. 근거 NEEDS_REVIEW115C/671Q, 품질미확정117C/671Q. [신규 api-design 결과](wave-4/api-design-report.md), [관계 격리 수정](wave-4/reference-isolation.md), [최신 summary](wave-4/summary.json), [발견](wave-4/findings.md), [검증](wave-4/validation.md)을 따른다. 기존 두 Topic 완료 당시598C/1,807Q와44Reference관계의 수량은 [불변 snapshot](wave-4/snapshots/two-topic-summary.json)에 보존한다. Wave4/Issue200 전체 완료가 아니다.
 
 ### 첫 language-types 실행 당시 기록
 

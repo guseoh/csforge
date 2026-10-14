@@ -1,5 +1,63 @@
 [
   {
+    "id": "W4-JAPI-001",
+    "severity": "P0",
+    "contentKeys": [
+      "java.core.api-design.static-factory-method"
+    ],
+    "file": "content/java/api-design/static-factory-method.md",
+    "quote": "https://tecoble.techcourse.co.kr/post/2020-05-26-static-factory-method/",
+    "problem": "연결 Tecoble 글의 캐시된 LottoNumber 정적 팩터리 예시는 public LottoNumber of(int number)로 static 없이 선언된다. 이 선언은 instance method이며 LottoNumber.of(1) 형태의 class 호출이 컴파일되지 않는다. 생성자를 private으로 막고 static 생성 진입점을 설명하는 핵심 예시가 계약과 모순된다. canonical 본문과7문항은 정확하며 외부 학습자료의 사실 오류만 기록한다.",
+    "action": "정확한 본문/문항은 유지한다. 잘못된 method 선언을 명시한 relationNote로 한정하거나 올바른 정적 팩터리 예시 출처로 교체하는1관계 최소 보강을 #201/#222에서 조정한다.",
+    "externalEvidence": [
+      {
+        "url": "https://tecoble.techcourse.co.kr/post/2020-05-26-static-factory-method/",
+        "checkedAt": "2026-10-14",
+        "sourceLocation": "캐시 LottoNumber 예시의 of 선언(웹 추출113~115행)",
+        "shortQuote": "public LottoNumber of(int number)"
+      }
+    ],
+    "officialEvidence": [
+      "https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html#jls-8.4.3.2",
+      "https://docs.oracle.com/javase/specs/jls/se25/html/jls-15.html#jls-15.12.3"
+    ],
+    "runtimeEvidence": "제한 재구성의 LottoNumber.of(1)이 non-static method compile error. 외부 전문 코드 전체 실행이 아니라 해당 선언/호출 모순만 대조.",
+    "followupIssues": [
+      201,
+      222
+    ],
+    "sourceLine": 18,
+    "sourceFileSha256": "2fe25601f38fa33cc582c2bbed62f9d161bb8736c211b85ef7a6a251a270c240"
+  },
+  {
+    "id": "W4-JAPI-002",
+    "severity": "P2",
+    "contentKeys": [
+      "java.core.api-design.builder-pattern-construction"
+    ],
+    "file": "content/java/api-design/builder-pattern-construction.md",
+    "quote": ".includeClosed(true)",
+    "additionalEvidence": [
+      {
+        "file": "content/java/api-design/builder-pattern-construction.md",
+        "quote": "private int size = 20;",
+        "sourceLine": 85,
+        "sourceFileSha256": "d803ccb9bc9bff8fc80724c18b92ecfdd2a3d45213463ae8f47249d9c5fce7ab"
+      }
+    ],
+    "problem": "첫 SearchOption.builder 호출은 includeClosed(true)를 쓰지만 뒤의 같은 이름 SearchOption 전체 예시는 keyword/page/size만 선언하고 includeClosed 메서드는 없다. 축약한 구현이라는 명시가 없어 두 예시를 연결해 따라 실행하면 method-not-found가 난다. Builder의 상태·검증·복사 개념 자체는 충분하고 정확하다.",
+    "action": "첫 호출에서 includeClosed 한 줄을 제거하거나 후속 예시는 keyword/page/size에 집중한 축약 구현이라고 명시한다. 기능/필드 전체 추가나 본문 재작성 없이 예시 연결1C만 보강한다. P2는 과거 전체 PASS를 취소하지 않는다.",
+    "officialEvidence": [
+      "https://docs.oracle.com/javase/specs/jls/se25/html/jls-15.html#jls-15.12.2.1"
+    ],
+    "runtimeEvidence": "본문의 full SearchOption+첫 호출을 발췌해 Objects import만 보충: includeClosed compile error. 그 한 호출만 제거한 제한 대조는 compile success.",
+    "followupIssues": [
+      201
+    ],
+    "sourceLine": 45,
+    "sourceFileSha256": "d803ccb9bc9bff8fc80724c18b92ecfdd2a3d45213463ae8f47249d9c5fce7ab"
+  },
+  {
     "id": "W4-JA-001",
     "severity": "P0",
     "contentKeys": [

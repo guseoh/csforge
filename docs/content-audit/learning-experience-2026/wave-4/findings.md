@@ -4,6 +4,46 @@ Topic별 직접 검토의 새 발견과 기존 계승을 분리한다. 검토 �
 
 ## 새 발견
 
+### W4-JAPI-001 — P0
+
+대상: `java.core.api-design.static-factory-method`
+
+원문: [content/java/api-design/static-factory-method.md:18](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/api-design/static-factory-method.md#L18)
+
+> https://tecoble.techcourse.co.kr/post/2020-05-26-static-factory-method/
+
+문제: 연결 Tecoble 글의 캐시된 LottoNumber 정적 팩터리 예시는 public LottoNumber of(int number)로 static 없이 선언된다. 이 선언은 instance method이며 LottoNumber.of(1) 형태의 class 호출이 컴파일되지 않는다. 생성자를 private으로 막고 static 생성 진입점을 설명하는 핵심 예시가 계약과 모순된다. canonical 본문과7문항은 정확하며 외부 학습자료의 사실 오류만 기록한다.
+
+최소 보강: 정확한 본문/문항은 유지한다. 잘못된 method 선언을 명시한 relationNote로 한정하거나 올바른 정적 팩터리 예시 출처로 교체하는1관계 최소 보강을 #201/#222에서 조정한다.
+
+공식 근거: [관련 계약](https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html#jls-8.4.3.2), [관련 계약](https://docs.oracle.com/javase/specs/jls/se25/html/jls-15.html#jls-15.12.3)
+
+실행/추론 대조: 제한 재구성의 LottoNumber.of(1)이 non-static method compile error. 외부 전문 코드 전체 실행이 아니라 해당 선언/호출 모순만 대조.
+
+후속: #201, #222
+
+### W4-JAPI-002 — P2
+
+대상: `java.core.api-design.builder-pattern-construction`
+
+원문: [content/java/api-design/builder-pattern-construction.md:45](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/api-design/builder-pattern-construction.md#L45)
+
+> .includeClosed(true)
+
+원문: [content/java/api-design/builder-pattern-construction.md:85](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/api-design/builder-pattern-construction.md#L85)
+
+> private int size = 20;
+
+문제: 첫 SearchOption.builder 호출은 includeClosed(true)를 쓰지만 뒤의 같은 이름 SearchOption 전체 예시는 keyword/page/size만 선언하고 includeClosed 메서드는 없다. 축약한 구현이라는 명시가 없어 두 예시를 연결해 따라 실행하면 method-not-found가 난다. Builder의 상태·검증·복사 개념 자체는 충분하고 정확하다.
+
+최소 보강: 첫 호출에서 includeClosed 한 줄을 제거하거나 후속 예시는 keyword/page/size에 집중한 축약 구현이라고 명시한다. 기능/필드 전체 추가나 본문 재작성 없이 예시 연결1C만 보강한다. P2는 과거 전체 PASS를 취소하지 않는다.
+
+공식 근거: [관련 계약](https://docs.oracle.com/javase/specs/jls/se25/html/jls-15.html#jls-15.12.2.1)
+
+실행/추론 대조: 본문의 full SearchOption+첫 호출을 발췌해 Objects import만 보충: includeClosed compile error. 그 한 호출만 제거한 제한 대조는 compile success.
+
+후속: #201
+
 ### W4-JA-001 — P0
 
 대상: `java.core.language-types.numeric-conversion-overflow`, `java.core.language-types.numeric-conversion-overflow.q1`, `java.core.language-types.numeric-conversion-overflow.q4`
