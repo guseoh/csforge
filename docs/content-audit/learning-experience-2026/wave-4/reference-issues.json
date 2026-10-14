@@ -15,6 +15,19 @@
       "basis": "2026-10-14 직접 open은 NAVER D2 shell 21줄이며 실제 글 본문이 노출되지 않음. 기존 PR의 GC 보조 역할은 보존하되 글의 설명·관련성 새 의미 검증은 미확정.",
       "area": "java",
       "evidenceFile": "docs/content-audit/learning-experience-2026/wave-4/topics/java--language-types.json",
+      "contentKeys": [
+        "java.core.language-types.primitive-reference-values",
+        "java.core.language-types.variables-scope-definite-assignment",
+        "java.core.language-types.numeric-conversion-overflow",
+        "java.core.language-types.boxing-unboxing-wrapper",
+        "java.core.language-types.pass-by-value",
+        "java.core.language-types.arrays-covariance-runtime-check",
+        "java.core.language-types.final-reference-and-immutability",
+        "java.core.language-types.string-immutability-equality",
+        "java.core.language-types.string-pool-interning",
+        "java.core.language-types.stringbuilder-mutable-text"
+      ],
+      "topicKey": "java.core.language-types",
       "qualityIssueIds": []
     },
     "priorVerification": {
@@ -24,6 +37,46 @@
     "accessVerification": {
       "status": "NEEDS_REVIEW",
       "basis": "직접 open 응답은 NAVER D2 shell만 노출. 본문 접근과 GC 연결의 학습 가치는 확인 필요, broken 판정 아님."
+    }
+  },
+  {
+    "area": "java",
+    "contentKey": "java.core.object-model.class-object-constructor",
+    "file": "content/java/object-model/class-object-constructor.md",
+    "url": "https://tecoble.techcourse.co.kr/post/2021-05-17-constructor/",
+    "title": "Tecoble: java에서 객체를 생성하는 다양한 방법",
+    "referenceType": "KOREAN_BLOG",
+    "language": "ko",
+    "displayOrder": 2,
+    "relationNote": "생성자 오버로딩과 이름 있는 생성 API를 비교하는 입문 예시 보충",
+    "verification": {
+      "status": "CURRENT_VERIFIED",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "생성자overload/this경로/namedfactory예시를읽음. int score를null/NPE라설명하는본문오류를확정(W4-JOM-003). 검토완료status는자료무결점PASS가아님.",
+      "area": "java",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-4/topics/java--object-model.json",
+      "contentKeys": [
+        "java.core.object-model.class-object-constructor",
+        "java.core.object-model.static-vs-instance-members",
+        "java.core.object-model.initialization-order-constructor-chaining",
+        "java.core.object-model.encapsulation-invariants",
+        "java.core.object-model.abstraction-responsibility",
+        "java.core.object-model.inheritance-is-a",
+        "java.core.object-model.composition-collaboration",
+        "java.core.object-model.polymorphism-dynamic-dispatch",
+        "java.core.object-model.overload-vs-override",
+        "java.core.object-model.reference-casting-instanceof",
+        "java.core.object-model.interface-vs-abstract-class",
+        "java.core.object-model.immutability-defensive-copy"
+      ],
+      "topicKey": "java.core.object-model",
+      "qualityIssueIds": [
+        "W4-JOM-003"
+      ]
+    },
+    "priorVerification": {
+      "status": "NEEDS_REVIEW",
+      "basis": "이번 감사에서 미접근. 기존 Wave의 출처 확인 근거 보존; URL 존재만으로 학습 가치를 판정하지 않는다."
     }
   }
 ]

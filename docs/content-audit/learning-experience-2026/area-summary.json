@@ -415,24 +415,24 @@
     "referenceLinks": 272,
     "uniqueReferenceUrls": 210,
     "conceptDecisions": {
-      "KEEP": 6,
-      "NEEDS_REVIEW": 134,
-      "TARGETED_ENHANCE": 5
+      "KEEP": 16,
+      "NEEDS_REVIEW": 122,
+      "TARGETED_ENHANCE": 7
     },
     "questionDecisions": {
-      "KEEP": 69,
-      "NEEDS_REVIEW": 767,
-      "TARGETED_ENHANCE": 5
+      "KEEP": 134,
+      "NEEDS_REVIEW": 699,
+      "TARGETED_ENHANCE": 8
     },
     "conceptEvidence": {
       "CURRENT_PARTIAL": 3,
-      "CURRENT_VERIFIED": 10,
-      "NEEDS_REVIEW": 132
+      "CURRENT_VERIFIED": 22,
+      "NEEDS_REVIEW": 120
     },
     "questionEvidence": {
       "CURRENT_PARTIAL": 19,
-      "CURRENT_VERIFIED": 55,
-      "NEEDS_REVIEW": 767
+      "CURRENT_VERIFIED": 123,
+      "NEEDS_REVIEW": 699
     },
     "semanticReviewStatus": "CURRENT_PARTIAL",
     "areaVerdict": "NEEDS_REVIEW",
@@ -441,7 +441,7 @@
       "url": "https://github.com/guseoh/csforge/pull/178",
       "title": "content: Java LearningArea quality wave (1/15)"
     },
-    "semanticEvidence": "language-types만의 10 Concept 전체 본문과 55 Question의 모든 실제 필드를 직접 읽었다. MC53/Scenario1/Descriptive1의 정답/모든 선택지와 rationale/모범 답안/해설, 전제·난도·중복 목표·연결을 개별 대조했다. 코드 출력은 주로 JLS/JDK 계약과 수기 상태 추론이며 제한된 4쟁점만 Java25 probe로 실제 실행했다. source hash 자동 계산은 이미 작성한 수기 판단을 고정할 뿐 PASS를 생성하지 않는다. PR178의 수정과 기존 partial 근거를 보존하며 다른 Java Topic은 미검토다."
+    "semanticEvidence": "java.core.language-types: language-types만의 10 Concept 전체 본문과 55 Question의 모든 실제 필드를 직접 읽었다. MC53/Scenario1/Descriptive1의 정답/모든 선택지와 rationale/모범 답안/해설, 전제·난도·중복 목표·연결을 개별 대조했다. 코드 출력은 주로 JLS/JDK 계약과 수기 상태 추론이며 제한된 4쟁점만 Java25 probe로 실제 실행했다. source hash 자동 계산은 이미 작성한 수기 판단을 고정할 뿐 PASS를 생성하지 않는다. PR178의 수정과 기존 partial 근거를 보존하며 다른 Java Topic은 미검토다.\njava.core.object-model: object-model 12 Concept 전체 본문과 68 Question 모든 실제 필드를 직접 읽고 MC62/Descriptive3/Scenario3를개별판정했다. 정답·모든보기/rationale·모범답안·해설·모호성·난도·중복목표·Concept연결과 C의목표/깊이/상태/코드/가독성/도식/Reference를각기록했다. 기존PR178근거와Java25JLS계약을대조하고자동파싱/길이/이전PASS로KEEP을생성하지않았다. 실행은초기화/Reference반례probe에만한정하며다른JavaTopic은확장하지않았다.\n"
   },
   {
     "area": "messaging-async",

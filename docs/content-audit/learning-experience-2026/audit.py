@@ -19,7 +19,7 @@ import xml.etree.ElementTree as ET
 import yaml
 
 sys.dont_write_bytecode = True
-from wave_review import WAVE_AREAS, WAVE_2_COUNTS, WAVE_3_COUNTS, WAVE_4_TOPICS, load_wave, summarize_wave
+from wave_review import WAVE_AREAS, WAVE_2_COUNTS, WAVE_3_COUNTS, WAVE_4_TOPICS, load_wave, scoped_sources, summarize_wave
 
 
 OUT = Path(__file__).resolve().parent
@@ -116,6 +116,9 @@ def main():
     wave_2_reviews, wave_2_sources, wave_2_ledgers = load_wave(OUT, ROOT, BASELINE, read_json, sha, require, wave=2)
     wave_3_reviews, wave_3_sources, wave_3_ledgers = load_wave(OUT, ROOT, BASELINE, read_json, sha, require, wave=3)
     wave_4_reviews, wave_4_sources, wave_4_ledgers = load_wave(OUT, ROOT, BASELINE, read_json, sha, require, wave=4)
+    wave_4_item_ledgers = {row[0]: data for aggregate in wave_4_ledgers.values()
+                         for data in aggregate["topicLedgers"].values()
+                         for row in data["concepts"] + data["questions"]}
     completed_ledgers = {**wave_1_ledgers, **wave_2_ledgers, **wave_3_ledgers}
     completed_reviews = {**wave_1_reviews, **wave_2_reviews, **wave_3_reviews}
     review_sets = [set(wave_1_reviews), set(wave_2_reviews), set(wave_3_reviews), set(wave_4_reviews)]
@@ -217,18 +220,19 @@ def main():
             for r in meta.get("references", []):
                 ref = {"area": area, "contentKey": key, "file": relative(path), **r,
                        "verification": notes.get("urls", {}).get(r["url"], {"status": "NEEDS_REVIEW", "basis": "이번 감사에서 미접근. 기존 Wave의 출처 확인 근거 보존; URL 존재만으로 학습 가치를 판정하지 않는다."})}
-                current_sources = [s for s in wave_sources.get(r["url"], []) if s["area"] == area]
+                current_sources = scoped_sources(wave_sources, r["url"], area, key)
                 if area in wave_4_ledgers and key not in wave_4_reviews:
                     current_sources = []  # A shared URL must not expand the reviewed Topic scope.
                 if current_sources:
                     ref["priorVerification"] = ref["verification"]
                     evidence = current_sources[0]
                     ref["verification"] = {"status": evidence["evidenceLevel"], **evidence}
+                    ref_ledger = wave_4_item_ledgers.get(key, wave_ledgers[area])
                     ref["verification"]["qualityIssueIds"] = [
-                        f["id"] for f in wave_ledgers[area]["findings"]
+                        f["id"] for f in ref_ledger["findings"]
                         if key in f["contentKeys"] and f["quote"] in {r["url"], r.get("title")}
                     ]
-                    access = wave_ledgers[area].get("referenceAccess", {}).get(r["url"])
+                    access = ref_ledger.get("referenceAccess", {}).get(r["url"])
                     if access:
                         ref["accessVerification"] = access
                 references.append(ref)
@@ -372,10 +376,12 @@ def main():
                            and (area not in wave_4_ledgers or any(c["topic"] == t["contentKey"] and c["contentKey"] in scope_keys for c in concepts))}
         require({t["key"] for t in ledger["topics"]} == expected_topics,
                 f"Wave Topic key coverage: {area}")
-        require(len({s[0] for s in ledger["sources"]}) == len(ledger["sources"]), f"Duplicate Wave source: {area}")
-        require({r["url"] for r in references if r["area"] == area
-                 and (area not in wave_4_ledgers or r["contentKey"] in scope_keys)}.issubset({s[0] for s in ledger["sources"]}),
-                f"Wave Reference coverage: {area}")
+        for part in ledger.get("topicLedgers", {area: ledger}).values():
+            part_keys = {r[0] for r in part["concepts"]}
+            require(len({s[0] for s in part["sources"]}) == len(part["sources"]), f"Duplicate Wave source: {area}")
+            require({r["url"] for r in references if r["area"] == area
+                     and (area not in wave_4_ledgers or r["contentKey"] in part_keys)}.issubset({s[0] for s in part["sources"]}),
+                    f"Wave Reference coverage: {area}")
     for finding in wave_findings + carried_findings:
         require(finding["severity"] in {"P0", "P1", "P2"}, f"Wave finding severity: {finding['id']}")
         require(set(finding["contentKeys"]).issubset(expected_wave_keys), f"Wave finding keys: {finding['id']}")
@@ -492,7 +498,8 @@ def main():
     wave_4_summary["totals"] = {"topics": len(wave_4_summary["reviewedTopics"]),
                                 "concepts": len(wave_4_reviews.keys() & set(by_concept)),
                                 "questions": len(wave_4_reviews) - len(wave_4_reviews.keys() & set(by_concept))}
-    require(wave_4_summary["totals"] == {"topics": 1, "concepts": 10, "questions": 55},
+    require(wave_4_summary["totals"] == dict(zip(("topics", "concepts", "questions"),
+                                               map(sum, zip(*WAVE_4_TOPICS.values(), strict=True)), strict=True)),
             "Wave 4 current Topic totals mismatch")
     wave_4_carried = [f for d in wave_4_ledgers.values() for f in d.get("carriedForwardFindings", [])]
     wave_4_summary["findingSeverity"] = counted(f["severity"] for f in wave_4_findings)
@@ -530,9 +537,10 @@ def main():
                       "wave-4/carried-findings.json": wave_4_carried,
                       "wave-4/reference-issues.json": [r for r in wave_4_refs
                                                        if r["verification"]["status"] == "NEEDS_REVIEW"
-                                                       or r.get("accessVerification", {}).get("status") == "NEEDS_REVIEW"]})
-    wave_4_lines = ["# Wave 4 language-types 발견", "",
-                    "10 Concept·55 Question 직접 검토의 새 발견과 기존 계승을 분리한다. 검토 완료는 교정 완료가 아니다.", ""]
+                                                       or r.get("accessVerification", {}).get("status") == "NEEDS_REVIEW"
+                                                       or r["verification"].get("qualityIssueIds")]})
+    wave_4_lines = ["# Wave 4 누적 발견", "",
+                    "Topic별 직접 검토의 새 발견과 기존 계승을 분리한다. 검토 완료는 교정 완료가 아니다.", ""]
     for label, findings in [("새 발견", wave_4_findings), ("기존 계승", wave_4_carried)]:
         wave_4_lines.extend([f"## {label}", ""])
         for finding in findings:
@@ -545,7 +553,7 @@ def main():
             wave_4_lines.extend([f"문제: {finding['problem']}", "", f"최소 보강: {finding['action']}", ""])
             if finding.get("officialEvidence"):
                 wave_4_lines.extend(["공식 근거: " + ", ".join(f"[관련 계약]({url})" for url in finding["officialEvidence"]), "",
-                                     f"실행 대조: {finding['runtimeEvidence']}", ""])
+                                     f"실행/추론 대조: {finding.get('runtimeEvidence', '공식 계약과 수기 코드/상태 추론; 실행 완료 주장이 아님.')}", ""])
             wave_4_lines.extend(["후속: " + ", ".join(f"#{n}" for n in finding["followupIssues"]), ""])
     artifacts["wave-4/findings.md"] = "\n".join(wave_4_lines)
     finding_lines = ["# Wave 2 발견 사항", "", "개별 의미 검토에서 확정한 34개 그룹이다. 검토 완료와 수정 완료는 다르며 canonical 본문/문항은 변경하지 않았다. 기술적 확정과 Reference 접근성의 재확인 필요는 각 근거에서 구분한다.", ""]
@@ -569,7 +577,7 @@ def main():
         wave_3_lines.extend([f"문제: {f['problem']}", "", f"최소 보강: {f['action']}", "",
                              "후속: " + ", ".join(f"#{n}" for n in f["followupIssues"]), ""])
     artifacts["wave-3-findings.md"] = "\n".join(wave_3_lines)
-    lines = ["# LearningArea별 감사 요약", "", "15 Area 전수 구조 인벤토리를 유지한다. Wave 1·2·3의 14 Area는 본문/문항 전수 직접 검토 CURRENT_VERIFIED다. Wave 4는 Java language-types 10C/55Q만 완료했으며 Java Area는 CURRENT_PARTIAL이다. 다른 Java Topic의 초기 샘플 CURRENT_PARTIAL과 NEEDS_REVIEW는 보존한다. 과거 PASS는 PRIOR_REVIEWED이며 Wave 4/Issue #200 전체 완료가 아니다.", "",
+    lines = ["# LearningArea별 감사 요약", "", "15 Area 전수 구조 인벤토리를 유지한다. Wave 1·2·3의 14 Area는 본문/문항 전수 직접 검토 CURRENT_VERIFIED다. Wave 4는 language-types/object-model 두 Topic 22C/123Q를 완료했으며 Java Area는 CURRENT_PARTIAL이다. 다른 Java Topic의 초기 샘플 CURRENT_PARTIAL과 NEEDS_REVIEW는 보존한다. 과거 PASS는 PRIOR_REVIEWED이며 Wave 4/Issue #200 전체 완료가 아니다.", "",
              "| Area | Topic | Concept | Question | 이번 본문 검토 | 이번 문항 검토 | Concept KEEP / ENHANCE / REVIEW |", "| --- | ---: | ---: | ---: | ---: | ---: | --- |"]
     for area in areas:
         name = area["area"]

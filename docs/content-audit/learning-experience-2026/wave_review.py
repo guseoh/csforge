@@ -15,12 +15,18 @@ WAVE_3_COUNTS = {
     "computer-architecture": (10, 61, 183), "dsa": (12, 84, 293),
     "operating-systems": (12, 97, 331), "network-http": (15, 127, 381),
 }
-WAVE_4_TOPICS = {"java--language-types": (1, 10, 55)}
+WAVE_4_TOPICS = {"java--language-types": (1, 10, 55), "java--object-model": (1, 12, 68)}
 CONCEPT_AXES = [
     "objectiveLevelDepth", "accuracyMechanismCodeExamplesClarityBoundaries",
     "visualization", "references", "linkedQuestionCoverage",
 ]
 QUESTION_AXES = ["answerChoicesRationalesModelExplanation", "ambiguityDifficultyDuplication"]
+
+
+def scoped_sources(sources, url, area, key):
+    """Shared URLs retain the actual Topic/Concept scope of each review."""
+    return [source for source in sources.get(url, []) if source["area"] == area
+            and ("contentKeys" not in source or key in source["contentKeys"])]
 
 
 def load_wave(out, root, baseline, read_json, sha, require, wave=1):
@@ -34,7 +40,8 @@ def load_wave(out, root, baseline, read_json, sha, require, wave=1):
     for path in paths:
         data = read_json(path)
         area = data["area"]
-        ledgers[area] = data
+        if wave != 4:
+            ledgers[area] = data
         require((wave == 4 and path.stem == area + "--" + data["topic"] or area == path.stem)
                 and data["baselineSha"] == baseline, f"Wave baseline/area: {area}")
         require(bool(data["reviewMethod"]), f"Wave review method: {area}")
@@ -77,6 +84,9 @@ def load_wave(out, root, baseline, read_json, sha, require, wave=1):
             require(evidence in {"CURRENT_VERIFIED", "NEEDS_REVIEW"} and bool(basis), f"Wave source evidence: {url}")
             entry = {"evidenceLevel": evidence, "basis": basis, "area": area,
                      "evidenceFile": path.relative_to(root).as_posix()}
+            if wave == 4:
+                entry["contentKeys"] = [r[0] for r in data["concepts"]]
+                entry["topicKey"] = data["topicKey"]
             sources.setdefault(url, []).append(entry)
         supplemental = data.get("supplementalSources", [])
         require(len({s[0] for s in supplemental}) == len(supplemental), f"Duplicate supplemental source: {area}")
@@ -104,10 +114,22 @@ def load_wave(out, root, baseline, read_json, sha, require, wave=1):
                     f"Missing checked supporting URL: {key}")
             if key in reviews:
                 reviews[key]["supportingEvidence"] = support
-        if wave == 4:
+        if wave == 4 and "probeEvidence" in data:
             probe = data["probeEvidence"]
             require(sha(root / probe["file"]) == probe["sourceSha256"] and probe["exitCode"] == 0
                     and bool(probe["stdout"]) and bool(probe["limits"]), "Stale/incomplete Wave 4 probe evidence")
+        if wave == 4:
+            aggregate = ledgers.setdefault(area, {"area": area, "baselineSha": baseline,
+                                                 "reviewMethod": "", "topicLedgers": {},
+                                                 "supportingEvidence": {}, **{field: [] for field in
+                                                 ("topics", "concepts", "questions", "findings",
+                                                  "carriedForwardFindings", "visualizationAssets")}})
+            require(data["topicKey"] not in aggregate["topicLedgers"], "Duplicate Wave 4 Topic key")
+            aggregate["topicLedgers"][data["topicKey"]] = data
+            aggregate["reviewMethod"] += data["topicKey"] + ": " + data["reviewMethod"] + "\n"
+            for field in ("topics", "concepts", "questions", "findings", "carriedForwardFindings", "visualizationAssets"):
+                aggregate[field].extend(data.get(field, []))
+            aggregate["supportingEvidence"].update(data.get("supportingEvidence", {}))
     return reviews, sources, ledgers
 
 

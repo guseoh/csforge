@@ -6,11 +6,17 @@
 - Reference: 1,043 관계 / 625 고유 URL. 기존 이미지: Java 27 + OS 33 = 60 SVG, 현재 60개 모두 연결(ALT 대괄호 파서 누락을 Wave 4에서 정정).
 - [Issue #200](https://github.com/guseoh/csforge/issues/200), [Roadmap #199](https://github.com/guseoh/csforge/issues/199)
 
-## 현재 누적 결과 — Wave 4 language-types (2026-10-14)
+## 현재 누적 결과 — Wave 4 두 Topic (2026-10-14)
 
-[첫 Topic 결과](wave-4/README.md): **10C/55Q 전수 검토**, C KEEP6/보강4, Q KEEP51/보강4. 새 발견 P0 2/P1 2/P2 0과 기존 LEX-002 P2 1그룹을 분리한다. Reference 20관계 중 관련 의미19/미확정1, SVG4개 소스 의미 확인이며 새 render QA는 아니다. 기존 Quality PR #178의 해결 근거를 재확인하고 보존했다.
+[현재 Wave4](wave-4/README.md)는 language-types10C/55Q와 object-model12C/68Q를 합쳐 **2Topic/22C/123Q**, C KEEP16/보강6, Q KEEP116/보강7이다. 새 발견 누적P0 3/P1 3/P2 1과 기존LEX-002 P2 1그룹은 별도다. 두 Topic의 개별 원본과 단일 Topic snapshot을 보존하고 Reference 상태를 Topic/Concept 범위로 격리한다.
 
-누적 전수 항목 **586/721C(81.28%)·1,739/2,525Q(68.87%)·117/134 Topic**, 완료 Area14/부분 Area1. Java17 Topic/135C/786Q는 새 전수 검토가 남았고 기존 partial3C/19Q를 포함한다. 근거 NEEDS_REVIEW132C/767Q, 품질 미확정134C/767Q. [최신 summary](wave-4/summary.json), [정확한 발견/최소 후속 범위](wave-4/findings.md), [검증](wave-4/validation.md)을 따른다. Wave 4/Issue #200 전체 완료가 아니다.
+최신 누적 전수 항목 **598/721C(82.94%)·1,807/2,525Q(71.56%)·118/134 Topic**, 완료 Area14/부분Java1. Java16Topic/123C/718Q의새전수검토가남았다. 근거 NEEDS_REVIEW120C/699Q, 품질미확정122C/699Q. [신규 object-model 결과](wave-4/object-model-report.md), [최신 summary](wave-4/summary.json), [발견](wave-4/findings.md), [검증](wave-4/validation.md)을 따른다. Wave4/Issue200 전체 완료가 아니다.
+
+### 첫 language-types 실행 당시 기록
+
+[첫 Topic 결과](wave-4/language-types-report.md): **10C/55Q 전수 검토**, C KEEP6/보강4, Q KEEP51/보강4. 새 발견 P0 2/P1 2/P2 0과 기존 LEX-002 P2 1그룹을 분리한다. Reference 20관계 중 관련 의미19/미확정1, SVG4개 소스 의미 확인이며 새 render QA는 아니다. 기존 Quality PR #178의 해결 근거를 재확인하고 보존했다.
+
+누적 전수 항목 **586/721C(81.28%)·1,739/2,525Q(68.87%)·117/134 Topic**, 완료 Area14/부분 Area1. Java17 Topic/135C/786Q는 새 전수 검토가 남았고 기존 partial3C/19Q를 포함한다. 근거 NEEDS_REVIEW132C/767Q, 품질 미확정134C/767Q. [당시 summary](wave-4/snapshots/language-types-summary.json), [당시 검증](wave-4/language-types-validation.md)을 따른다. Wave 4/Issue #200 전체 완료가 아니다.
 
 ## Wave 3 시점의 누적 결과 — 불변 기록
 
@@ -27,7 +33,7 @@
 
 ## Wave 1·2 시점의 기준선 기록
 
-아래의 수량·“현재”·미완료 범위는 Wave 2 당시의 역사 기록이다. 최신 누적 상태는 위 표와 wave-3-summary.json을 따른다.
+아래의 수량·“현재”·미완료 범위는 Wave 2 당시의 역사 기록이다. 최신 누적 상태는 위의 현재 누적 결과와 wave-4/summary.json을 따른다.
 
 전수 **인벤토리와 구조 대조**, [Wave 1 직접 의미 검토](wave-1/README.md)를 보존하고 [Wave 2](wave-2/README.md)를 추가했다. Wave 1은 소형 6 Area의 18 Topic / 54 Concept / 162 Question, Wave 2는 Spring·Database·Backend Engineering·Security의 49 Topic / **153 Concept / 334 Question 전체 본문·답·모든 선택지·rationale·modelAnswer·acceptedAnswers·explanation**을 직접 읽은 근거다. 누적 전수 완료는 **207/721 Concept(28.71%) / 496/2,525 Question(19.64%)**, 10/15 Area다. 해당 범위의 근거는 `CURRENT_VERIFIED`이며 품질 판정은 별도다. 다른 5 Area의 새 전수 의미 검토는 미완료다. 전체 의미 감사 완료나 기존 Wave 대체를 선언하지 않는다. 이 Draft는 ChatGPT 최종 검토 뒤 후속 대상으로 사용하며 Issue를 자동으로 닫지 않는다.
 

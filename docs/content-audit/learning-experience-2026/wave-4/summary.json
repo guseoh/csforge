@@ -4,51 +4,53 @@
   "areas": [
     {
       "area": "java",
-      "concepts": 10,
-      "questions": 55,
-      "currentVerifiedConcepts": 10,
-      "currentVerifiedQuestions": 55,
+      "concepts": 22,
+      "questions": 123,
+      "currentVerifiedConcepts": 22,
+      "currentVerifiedQuestions": 123,
       "conceptQuality": {
-        "KEEP": 6,
-        "TARGETED_ENHANCE": 4
+        "KEEP": 16,
+        "TARGETED_ENHANCE": 6
       },
       "questionQuality": {
-        "KEEP": 51,
-        "TARGETED_ENHANCE": 4
+        "KEEP": 116,
+        "TARGETED_ENHANCE": 7
       }
     }
   ],
   "allConceptQuality": {
-    "KEEP": 482,
-    "NEEDS_REVIEW": 134,
-    "TARGETED_ENHANCE": 105
+    "KEEP": 492,
+    "NEEDS_REVIEW": 122,
+    "TARGETED_ENHANCE": 107
   },
   "allQuestionQuality": {
-    "KEEP": 1659,
-    "NEEDS_REVIEW": 767,
-    "TARGETED_ENHANCE": 99
+    "KEEP": 1724,
+    "NEEDS_REVIEW": 699,
+    "TARGETED_ENHANCE": 102
   },
   "allConceptEvidence": {
     "CURRENT_PARTIAL": 3,
-    "CURRENT_VERIFIED": 586,
-    "NEEDS_REVIEW": 132
+    "CURRENT_VERIFIED": 598,
+    "NEEDS_REVIEW": 120
   },
   "allQuestionEvidence": {
     "CURRENT_PARTIAL": 19,
-    "CURRENT_VERIFIED": 1739,
-    "NEEDS_REVIEW": 767
+    "CURRENT_VERIFIED": 1807,
+    "NEEDS_REVIEW": 699
   },
   "reviewedTopics": [
-    "java.core.language-types"
+    "java.core.language-types",
+    "java.core.object-model"
   ],
   "totals": {
-    "topics": 1,
-    "concepts": 10,
-    "questions": 55
+    "topics": 2,
+    "concepts": 22,
+    "questions": 123
   },
   "findingSeverity": {
-    "P0": 2,
-    "P1": 2
+    "P0": 3,
+    "P1": 3,
+    "P2": 1
   },
   "carriedFindingSeverity": {
     "P2": 1
@@ -56,15 +58,15 @@
   "cumulativeComplete": {
     "areas": 14,
     "partialAreas": 1,
-    "topics": 117,
-    "concepts": 586,
-    "questions": 1739
+    "topics": 118,
+    "concepts": 598,
+    "questions": 1807
   },
   "references": {
-    "links": 20,
-    "uniqueUrls": 18,
+    "links": 44,
+    "uniqueUrls": 35,
     "meaningEvidence": {
-      "CURRENT_VERIFIED": 19,
+      "CURRENT_VERIFIED": 43,
       "NEEDS_REVIEW": 1
     }
   }

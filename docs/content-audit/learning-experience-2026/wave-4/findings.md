@@ -1,6 +1,6 @@
-# Wave 4 language-types 발견
+# Wave 4 누적 발견
 
-10 Concept·55 Question 직접 검토의 새 발견과 기존 계승을 분리한다. 검토 완료는 교정 완료가 아니다.
+Topic별 직접 검토의 새 발견과 기존 계승을 분리한다. 검토 완료는 교정 완료가 아니다.
 
 ## 새 발견
 
@@ -26,7 +26,7 @@
 
 공식 근거: [관련 계약](https://docs.oracle.com/javase/specs/jls/se25/html/jls-5.html#jls-5.2), [관련 계약](https://docs.oracle.com/javase/specs/jls/se25/html/jls-4.html#jls-4.12.4)
 
-실행 대조: probes/LanguageTypesProbe.java: implicitNarrowing=42:3; Temurin25.0.4.1에서 컴파일/실행, 보장의 근거는 JLS.
+실행/추론 대조: probes/LanguageTypesProbe.java: implicitNarrowing=42:3; Temurin25.0.4.1에서 컴파일/실행, 보장의 근거는 JLS.
 
 후속: #201
 
@@ -46,7 +46,7 @@
 
 공식 근거: [관련 계약](https://docs.oracle.com/javase/specs/jls/se25/html/jls-15.html#jls-15.26.2), [관련 계약](https://docs.oracle.com/javase/specs/jls/se25/html/jls-15.html#jls-15.18.1), [관련 계약](https://docs.oracle.com/javase/specs/jls/se25/html/jls-5.html#jls-5.1.8)
 
-실행 대조: probe의 String total + null은 null 문자열, int total + null은 NPE로 실제 재현.
+실행/추론 대조: probe의 String total + null은 null 문자열, int total + null은 NPE로 실제 재현.
 
 후속: #201
 
@@ -65,7 +65,7 @@
 
 공식 근거: [관련 계약](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html#toUpperCase())
 
-실행 대조: default tr-TR probe 결과 code points [75,304,77], Locale.ROOT는 KIM.
+실행/추론 대조: default tr-TR probe 결과 code points [75,304,77], Locale.ROOT는 KIM.
 
 후속: #201
 
@@ -87,9 +87,71 @@
 
 공식 근거: [관련 계약](https://docs.oracle.com/javase/specs/jls/se25/html/jls-15.html#jls-15.18.1), [관련 계약](https://docs.oracle.com/javase/specs/jls/se25/html/jls-3.html#jls-3.10.5)
 
-실행 대조: probe nonfinal part 연결 false / final constantPart 연결 true. 실행은 보조이며 동일성 보장의 근거는 JLS.
+실행/추론 대조: probe nonfinal part 연결 false / final constantPart 연결 true. 실행은 보조이며 동일성 보장의 근거는 JLS.
 
 후속: #201
+
+### W4-JOM-001 — P1
+
+대상: `java.core.object-model.initialization-order-constructor-chaining`
+
+원문: [content/java/object-model/initialization-order-constructor-chaining.md:129](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/object-model/initialization-order-constructor-chaining.md#L129)
+
+> System.out.println(name); // 생성 중에는 기대와 다른 상태일 수 있음
+
+문제: Parent생성자에서Child.print가실행되는핵심예시가어떤값을보는지기대와다를수있다는말에머문다. default값null과Child의nameinitializer kim의실행시점을설명하지않아학습자가실행결과/실패경계를자기힘으로설명하기어렵다. 현재객체field/block의소스순서및Java25prologue가직접fieldwrite를허용하는단계도본문의실행흐름에연결할필요가있다. 잘못된기술모델이나전체rewrite대상은아니다.
+
+최소 보강: 기존예시에new Child와관찰결과null→kim의작은상태표를추가한다. defaultvalues→prologue(있는경우)→this/super경로→현재class field/block textualorder→epilogue를명시하고일반initializer와prologue직접할당을구별한다. q2/q4의올바른Java25설명과정답은유지한다.
+
+공식 근거: [관련 계약](https://docs.oracle.com/javase/specs/jls/se25/html/jls-12.html#jls-12.5), [관련 계약](https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html#jls-8.8.7.1)
+
+실행/추론 대조: ObjectModelProbe의ordinary=null뒤ordinary=kim,early=ready. 한Temurin25실행관찰이며규범근거는JLS.
+
+후속: #201
+
+### W4-JOM-002 — P2
+
+대상: `java.core.object-model.initialization-order-constructor-chaining.q3`, `java.core.object-model.inheritance-is-a.q2`, `java.core.object-model.polymorphism-dynamic-dispatch.q6`
+
+원문: [content/java/object-model/questions.json:121](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/object-model/questions.json#L121)
+
+> `Parent` 생성자의 `P`는 하위 클래스 초기화 블록의 `I`보다 먼저 실행된다. 상위 클래스 생성이 완료된 뒤 하위 클래스 초기화가 진행된다.
+
+원문: [content/java/object-model/questions.json:259](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/object-model/questions.json#L259)
+
+> `protected`는 같은 패키지와 하위 클래스 경로에 노출되므로 `private`보다 접근 범위가 넓다.
+
+원문: [content/java/object-model/questions.json:382](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/object-model/questions.json#L382)
+
+> 필드 조회는 메서드 오버라이딩처럼 동적으로 선택되지 않는다. `x.value`는 참조 타입 `A`에 선언된 필드를 읽는다.
+
+문제: 세문항의정답/전체explanation은맞지만특정오답feedback이틀린부분을반박하지않는다. initq3 A PCI도P가I앞이라실제틀린C/I순서를짚어야한다. inheritanceq2 D는public과비교하는데해설은private와비교한다. polyq6 A AA도첫문자A가맞고틀린부분은label()의둘째문자다.
+
+최소 보강: 세rationale만각각I가C보다먼저,접근범위좁힘과invariant보호는다름,B.label이둘째B를반환함으로맞춘다. 정답/난도/전체해설/Concept는유지하며P2로전체PASS를취소하지않는다.
+
+공식 근거: [관련 계약](https://docs.oracle.com/javase/specs/jls/se25/html/jls-12.html#jls-12.5), [관련 계약](https://docs.oracle.com/javase/specs/jls/se25/html/jls-6.html#jls-6.6), [관련 계약](https://docs.oracle.com/javase/specs/jls/se25/html/jls-15.html#jls-15.12)
+
+실행/추론 대조: 공식 계약과 수기 코드/상태 추론; 실행 완료 주장이 아님.
+
+후속: #201
+
+### W4-JOM-003 — P0
+
+대상: `java.core.object-model.class-object-constructor`
+
+원문: [content/java/object-model/class-object-constructor.md:18](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/object-model/class-object-constructor.md#L18)
+
+> https://tecoble.techcourse.co.kr/post/2021-05-17-constructor/
+
+문제: 연결된학습자료는private int score를선언하고score를대입하지않는첫constructor에서null이들어가NPE가생길수있다고설명한다. int instancefield의기본값은0이며이것은틀린기술적근거다. canonical본문과5개문항은맞지만학습자를잘못된초기화모델로유도하는Reference이다.
+
+최소 보강: Reference를교체하거나관계설명에int기본값0과글의null/NPE설명오류를명확히한정한다. namedfactory/constructoroverload본래학습목표와정확한canonical본문/문항은유지한다. primary JLS4.12.5를직접근거로연결하는최소범위만후속검토한다.
+
+공식 근거: [관련 계약](https://docs.oracle.com/javase/specs/jls/se25/html/jls-4.html#jls-4.12.5)
+
+실행/추론 대조: ObjectModelProbe의omittedIntScore=0. 공식JLS와기사코드를대조한결과이며upstream문서수정/전체article코드실행은하지않음.
+
+후속: #201, #222
 
 ## 기존 계승
 
