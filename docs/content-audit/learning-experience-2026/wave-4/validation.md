@@ -20,3 +20,11 @@
 - 새 발견 그룹: W4-JOBJ-001 P0(인자 생성자 없는 Key), W4-JOBJ-002 P0(두 한국어 학습 자료의 Object.hashCode 고유 주소 일반화), W4-JOBJ-003 P1(Comparator q4 비교 대상 타입 전제).
 - 누적 기대: Java 4/18Topic·32C/182Q, 전체 120/134Topic·608/721C·1,866/2,525Q. 원본 저장소 audit.py generate/--check 및 Python 회귀 테스트와 최종 CI는 새 커밋에서 별도 확인한다.
 - canonical/Curriculum/SVG·DB/Import·제품 코드 변경 없음. Java25 전체 예제 실행 및 Reader/mobile/theme/human QA 완료는 주장하지 않는다. Draft/병합 보류.
+
+## enum-modeling checkpoint 확장 (2026-10-14)
+
+- 4개 Concept와 18개 Question(MC17/SCENARIO1)의 전체 본문·정답·모든 오답 rationale·모범 답안·해설을 직접 검토한 22개 수기 ledger row 및 해시를 추가했다.
+- 새 발견 W4-JENUM-001 P0(선행 enum에 존재하지 않는 COMPLETED)·W4-JENUM-002 P1(2개 Question의 미선언 enum/상수)를 추가했다. javac21 제한 재구성으로 상수·식별자 컴파일 오류 확인(전수 Java25 probe 아님).
+- 관계별 Reference5개 추가, Wave4 65관계/54URL(64 verified/1 D2 unverified); 누적 5Topic/36C/200Q, 전체 121Topic/612C/1884Q.
+- 실제 Python audit.py generate/--check, check-accumulation, checkpoint-topic 및 git diff --check 실행 결과는 아직 확인하지 못했다. 원격 GitHub 인벤토리 교차 검사와 Actions CI는 별개로 판단한다.
+- 변경은 감사 문서만. canonical/Curriculum/이미지/DB/Import/제품 무변경·Draft 병합 금지.
