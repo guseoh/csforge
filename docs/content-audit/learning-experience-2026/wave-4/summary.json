@@ -4,45 +4,46 @@
   "areas": [
     {
       "area": "java",
-      "concepts": 114,
-      "questions": 653,
-      "currentVerifiedConcepts": 114,
-      "currentVerifiedQuestions": 653,
+      "concepts": 133,
+      "questions": 766,
+      "currentVerifiedConcepts": 133,
+      "currentVerifiedQuestions": 766,
       "conceptQuality": {
-        "KEEP": 90,
-        "TARGETED_ENHANCE": 24
+        "KEEP": 107,
+        "TARGETED_ENHANCE": 26
       },
       "questionQuality": {
-        "KEEP": 622,
+        "KEEP": 733,
         "NEEDS_REVIEW": 3,
-        "TARGETED_ENHANCE": 28
+        "TARGETED_ENHANCE": 30
       }
     }
   ],
   "allConceptQuality": {
-    "KEEP": 566,
-    "NEEDS_REVIEW": 30,
-    "TARGETED_ENHANCE": 125
+    "KEEP": 583,
+    "NEEDS_REVIEW": 12,
+    "TARGETED_ENHANCE": 126
   },
   "allQuestionQuality": {
-    "KEEP": 2224,
-    "NEEDS_REVIEW": 178,
-    "TARGETED_ENHANCE": 123
+    "KEEP": 2329,
+    "NEEDS_REVIEW": 72,
+    "TARGETED_ENHANCE": 124
   },
   "allConceptEvidence": {
-    "CURRENT_PARTIAL": 2,
-    "CURRENT_VERIFIED": 690,
-    "NEEDS_REVIEW": 29
+    "CURRENT_PARTIAL": 1,
+    "CURRENT_VERIFIED": 709,
+    "NEEDS_REVIEW": 11
   },
   "allQuestionEvidence": {
-    "CURRENT_PARTIAL": 13,
-    "CURRENT_VERIFIED": 2337,
-    "NEEDS_REVIEW": 175
+    "CURRENT_PARTIAL": 6,
+    "CURRENT_VERIFIED": 2450,
+    "NEEDS_REVIEW": 69
   },
   "reviewedTopics": [
     "java.core.api-design",
     "java.core.coding-tests",
     "java.core.collections",
+    "java.core.concurrency",
     "java.core.design-patterns",
     "java.core.enum-modeling",
     "java.core.exceptions-resources",
@@ -58,14 +59,14 @@
     "java.core.time-numeric"
   ],
   "totals": {
-    "topics": 16,
-    "concepts": 114,
-    "questions": 653
+    "topics": 17,
+    "concepts": 133,
+    "questions": 766
   },
   "findingSeverity": {
     "P0": 9,
     "P1": 11,
-    "P2": 18
+    "P2": 22
   },
   "carriedFindingSeverity": {
     "P2": 1
@@ -73,16 +74,16 @@
   "cumulativeComplete": {
     "areas": 14,
     "partialAreas": 1,
-    "topics": 132,
-    "concepts": 690,
-    "questions": 2337
+    "topics": 133,
+    "concepts": 709,
+    "questions": 2450
   },
   "references": {
-    "links": 203,
-    "uniqueUrls": 162,
+    "links": 241,
+    "uniqueUrls": 189,
     "meaningEvidence": {
-      "CURRENT_VERIFIED": 195,
-      "NEEDS_REVIEW": 8
+      "CURRENT_VERIFIED": 230,
+      "NEEDS_REVIEW": 11
     }
   }
 }

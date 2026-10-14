@@ -172,6 +172,78 @@ Topic별 직접 검토의 새 발견과 기존 계승을 분리한다. 검토 �
 
 후속: #201
 
+### W4-JCON-001 — P2
+
+대상: `java.core.concurrency.locks-reentrantlock-condition`
+
+원문: [content/java/concurrency/locks-reentrantlock-condition.md:92](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/concurrency/locks-reentrantlock-condition.md#L92)
+
+> 소비자는 대기열이 빌 때까지 기다려야 합니다.
+
+문제: 소비자는 empty일 때 대기하고 원소가 생겨 non-empty가 될 때 진행해야 한다. 다음 while(queue.isEmpty()) await 코드와 반대인 한 문장.
+
+최소 보강: 비어 있지 않을 때까지/원소가 생길 때까지로 문장만 교정. 나머지 코드·질문 유지.
+
+공식 근거: [관련 계약](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/locks/Condition.html)
+
+실행/추론 대조: 공식 계약과 수기 코드/상태 추론; 실행 완료 주장이 아님.
+
+후속: #201
+
+### W4-JCON-002 — P2
+
+대상: `java.core.concurrency.safe-publication-final-fields.q1`
+
+원문: [content/java/concurrency/questions.json:1355](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/concurrency/questions.json#L1355)
+
+> 참조값만 공유하면 초기화 쓰기의 가시성이 보장되지 않는다. volatile, 같은 락 등 happens-before 공개를 사용한다.
+
+문제: 일반 초기화 쓰기 설명을 무조건화해 proper final field의 특별한 초기화 관찰 보장까지 부정하는 듯 읽힌다. 본문은 JLS17.5 예외를 정확히 별도 설명하고 정답C는 관계 보장이라는 포괄 설명으로 성립.
+
+최소 보강: 일반 non-final 상태 또는 final 특수 규칙 적용 밖이라는 한정과 본문 예외 연결만 추가. 정답/난도 유지.
+
+공식 근거: [관련 계약](https://docs.oracle.com/javase/specs/jls/se25/html/jls-17.html#jls-17.5)
+
+실행/추론 대조: 공식 계약과 수기 코드/상태 추론; 실행 완료 주장이 아님.
+
+후속: #201
+
+### W4-JCON-003 — P2
+
+대상: `java.core.concurrency.future-completablefuture.q2`
+
+원문: [content/java/concurrency/questions.json:3722](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/concurrency/questions.json#L3722)
+
+> thenApply의 매핑 함수도 실패해 dependent 단계를 exceptional로 완료할 수 있다. 예외 처리가 thenCompose에만 필요한 것은 아니다.
+
+문제: A보기는 thenApply만 예외를 처리한다인데 feedback은 thenCompose만 예외 처리가 필요하다를 반박해 논점과 방향이 다르다. 정답D와 본문 apply/compose는 정확.
+
+최소 보강: 둘 다 callback 실패로 exceptional completion 가능하며 apply/compose 차이는 일반 값 vsstage 연결이라고 A보기 자체를 반박.
+
+공식 근거: [관련 계약](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/CompletableFuture.html)
+
+실행/추론 대조: 공식 계약과 수기 코드/상태 추론; 실행 완료 주장이 아님.
+
+후속: #201
+
+### W4-JCON-004 — P2
+
+대상: `java.core.concurrency.threadlocal-context`
+
+원문: [content/java/concurrency/threadlocal-context.md:131](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/concurrency/threadlocal-context.md#L131)
+
+> 누가 집합하는가
+
+문제: 설정 주체/값 수명을 확인할 문장에서 집합하는가라는 부자연스러운 오기가 체크의 의도를 흐린다. ThreadLocal 기술 내용과 질문은 정확.
+
+최소 보강: 누가 설정하는가로 한 구절 교정. 본문 재작성 불필요.
+
+공식 근거: [관련 계약](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/ThreadLocal.html)
+
+실행/추론 대조: 공식 계약과 수기 코드/상태 추론; 실행 완료 주장이 아님.
+
+후속: #201
+
 ### W4-JDPAT-001 — P0
 
 대상: `java.core.design-patterns.factory-pattern`

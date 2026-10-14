@@ -106,6 +106,12 @@
       "basis": "expected=current→update→CAS 성공/실패→재읽기 흐름과 contention/복합 불변 조건 경계가 본문과 일치. 독립 SVG 화면만 확인; 모든 reader/mobile/theme QA 완료 주장 아님.",
       "checkedAt": "2026-10-12"
     },
+    "sourceSemanticReview": {
+      "file": "frontend/public/learning/java/cas-retry.svg",
+      "sourceSha256": "6b8cf94fb63b03e7a7876d48f2ed4d3f46c896ee8e69a9c5d2f995277b1fae85",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "basis": "1120x560 기대값→계산→비교→성공갱신/실패최신값 재read loop·전체progress/복합invariant caption 정확. 전체 SVG source/title/desc/rect/path/style/좌표 읽기; 모바일/테마 실제 렌더 미검증."
+    },
     "viewBox": "0 0 1120 560",
     "labels": [
       "CAS는 예상값이 그대로일 때만 갱신하고, 경쟁에서 지면 다시 계산한다",
@@ -439,6 +445,12 @@
     },
     "visualReview": {
       "status": "NEEDS_REVIEW"
+    },
+    "sourceSemanticReview": {
+      "file": "frontend/public/learning/java/happens-before.svg",
+      "sourceSha256": "00c84df37fb51a9d8f4a71478a0aa39a0a2b2b624df9d4b4b47554bda2917052",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "basis": "1100x430 write→unlock→동일 lock→read의 SW/추이 화살표가 본문 계약에 대응. 전체 SVG source/title/desc/rect/path/style/좌표 읽기; 모바일/테마 실제 렌더 미검증."
     },
     "viewBox": "0 0 1100 430",
     "labels": [
@@ -904,6 +916,12 @@
     "visualReview": {
       "status": "NEEDS_REVIEW"
     },
+    "sourceSemanticReview": {
+      "file": "frontend/public/learning/java/race-condition.svg",
+      "sourceSha256": "d9309c88cf5ffa6cb6e36225804ac1c1e43b8106e2cb82dacc8c3acc4630a269",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "basis": "760x270 둘 다 read0→compute1→둘 다write1 lostupdate. 도형/경로/텍스트 전부 읽고 body trace와 비교. 전체 SVG source/title/desc/rect/path/style/좌표 읽기; 모바일/테마 실제 렌더 미검증."
+    },
     "viewBox": "0 0 760 270",
     "labels": [
       "counter++는 한 줄이어도 세 단계다",
@@ -1095,6 +1113,12 @@
     },
     "visualReview": {
       "status": "NEEDS_REVIEW"
+    },
+    "sourceSemanticReview": {
+      "file": "frontend/public/learning/java/virtual-thread-carriers.svg",
+      "sourceSha256": "b48a2a30948463428e9c849b6c5fd932861af9ff2e1759c84e12c8f5b03b2f18",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "basis": "1120x600 여러 VT와 두 carrier의 시간에 따른 mount·지원IO 대기/외부quota·native 예외 caption 정확. 전체 SVG source/title/desc/rect/path/style/좌표 읽기; 모바일/테마 실제 렌더 미검증."
     },
     "viewBox": "0 0 1120 600",
     "labels": [

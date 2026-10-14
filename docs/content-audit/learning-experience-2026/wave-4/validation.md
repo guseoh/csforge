@@ -80,3 +80,7 @@
 ## metadata-compatibility checkpoint (2026-10-14)
 
 7C/39Q全본문·문항수기근거/46hash/인용·15관계및ProxySVG source/geometry를대조했다. 회귀18개/checkpoint/generate/--check errors/drift0/Python AST/diff PASS. Java16Topic/114C/653Q·전체690C/2337Q. Wave4 Reference203관계/162URL중195관련의미검토/8미확정이며확인된Woowa목적불일치는별도qualityIssueIds에연결했다. 앞선streams품질미확정3Q와기존ledger/Wave1~3/canonical/Curriculum/SVG보존. 직전 coding-tests HEADec693c369ea511481a3885e63923fb312a76db22의 [CI #1224](https://github.com/guseoh/csforge/actions/runs/38541995756)는SUCCESS. 신규checkpoint CI는push HEAD에서확인한다.
+
+## concurrency checkpoint (2026-10-14)
+
+19C113Q/132hash·인용/38관계 및4SVG 전체 source/좌표를 직접 대조. 회귀18개/checkpoint/generate errors0 통과. --check/Python AST/diff와 기존 근거 보존을 최종 대조한다. Java17Topic133C766Q·전체709C2450Q. Reference 누적241관계 중230의미 검토/11미확정, streams 품질 미확정3Q 유지. 직전 metadata HEAD97f6216d7df955d169654a91b8607dcf2858b549의 [CI #1225](https://github.com/guseoh/csforge/actions/runs/38543076624)는 실제 검증 job SUCCESS/Deploy SKIPPED. 현재 CI는 push HEAD에서 확인한다.

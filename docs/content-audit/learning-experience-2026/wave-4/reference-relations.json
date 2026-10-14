@@ -4436,6 +4436,862 @@
         "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--metadata-compatibility.json",
         "reviewedAt": "2026-10-14"
       }
+    },
+    {
+      "contentKey": "java.core.concurrency.concurrency-vs-parallelism",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Thread.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "Thread의 플랫폼 OS 스케줄/virtual VM 스케줄 구분을 실행 모델에 대응.",
+      "limits": "해당 Concept의 관련 공식 절/회사 단락과 relationNote 대조 범위. 전문/모든 코드 실행/Reader render QA 미검증. 동일 URL의 다른 Concept 자동 승격 없음.",
+      "sourceFile": "content/java/concurrency/concurrency-vs-parallelism.md",
+      "sourceSha256": "69e497e5006cee92638201f8877111f070c9da34d794e50abbc2fc63795d1c2c",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Thread.html",
+        "title": "Java SE 25 API: Thread",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "Java thread와 platform·virtual thread의 실행 모델 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--concurrency.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.concurrency.concurrency-vs-parallelism",
+      "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-17.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "JLS17의 shared variable/monitor·메모리 모델 경계를 동시성 의미에 대응.",
+      "limits": "해당 Concept의 관련 공식 절/회사 단락과 relationNote 대조 범위. 전문/모든 코드 실행/Reader render QA 미검증. 동일 URL의 다른 Concept 자동 승격 없음.",
+      "sourceFile": "content/java/concurrency/concurrency-vs-parallelism.md",
+      "sourceSha256": "69e497e5006cee92638201f8877111f070c9da34d794e50abbc2fc63795d1c2c",
+      "reference": {
+        "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-17.html",
+        "title": "Java SE 25 JLS Chapter 17: Threads and Locks",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 2,
+        "relationNote": "Java thread와 shared memory 규칙의 언어 수준 경계 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--concurrency.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.concurrency.thread-lifecycle-interruption",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Thread.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "Thread start/run/interrupt/interrupted/isInterrupted 실제 절 대조.",
+      "limits": "해당 Concept의 관련 공식 절/회사 단락과 relationNote 대조 범위. 전문/모든 코드 실행/Reader render QA 미검증. 동일 URL의 다른 Concept 자동 승격 없음.",
+      "sourceFile": "content/java/concurrency/thread-lifecycle-interruption.md",
+      "sourceSha256": "23558271821ac47f7e8c2cb070865a5f1d755840e6c7e0e9216c0cf2549bb7fd",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Thread.html",
+        "title": "Java SE 25 API: Thread",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "start, run, join, interrupt, sleep와 Thread.State 계약 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--concurrency.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.concurrency.thread-lifecycle-interruption",
+      "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-17.html#jls-17.4.5",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "JLS17.4.5의 start/종료탐지 join 추이 관계를 q6의 다른 호출 스레드에도 대응.",
+      "limits": "해당 Concept의 관련 공식 절/회사 단락과 relationNote 대조 범위. 전문/모든 코드 실행/Reader render QA 미검증. 동일 URL의 다른 Concept 자동 승격 없음.",
+      "sourceFile": "content/java/concurrency/thread-lifecycle-interruption.md",
+      "sourceSha256": "23558271821ac47f7e8c2cb070865a5f1d755840e6c7e0e9216c0cf2549bb7fd",
+      "reference": {
+        "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-17.html#jls-17.4.5",
+        "title": "The Java Language Specification — 17.4.5 Happens-before Order",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "depth": "section",
+        "recommendation": "Java에서 conflicting access와 happens-before를 기준으로 data race를 정의하는 정확한 경계를 확인한다.",
+        "displayOrder": 2,
+        "relationNote": "Thread.start와 thread termination/join의 happens-before 관계 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--concurrency.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.concurrency.thread-lifecycle-interruption",
+      "url": "https://d2.naver.com/helloworld/10963",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "D2 접근은 공통 shell만 반환. 실제 thread dump 사례·제목/추천을 확인하지 못함.",
+      "limits": "해당 Concept의 관련 공식 절/회사 단락과 relationNote 대조 범위. 전문/모든 코드 실행/Reader render QA 미검증. 동일 URL의 다른 Concept 자동 승격 없음.",
+      "sourceFile": "content/java/concurrency/thread-lifecycle-interruption.md",
+      "sourceSha256": "23558271821ac47f7e8c2cb070865a5f1d755840e6c7e0e9216c0cf2549bb7fd",
+      "reference": {
+        "url": "https://d2.naver.com/helloworld/10963",
+        "title": "스레드 덤프 분석하기",
+        "referenceType": "COMPANY_TECH_BLOG",
+        "language": "ko",
+        "depth": "article",
+        "recommendation": "JVM thread dump에서 lock owner와 waiter를 연결해 deadlock cycle을 해석하는 실제 사례를 확인한다.",
+        "displayOrder": 3,
+        "relationNote": "thread 상태와 blocked/waiting 진단을 실제 장애 흐름으로 연결"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--concurrency.json",
+        "reviewedAt": "2026-10-14"
+      },
+      "accessVerification": {
+        "status": "NEEDS_REVIEW",
+        "basis": "D2 접근은 공통 shell만 반환. 실제 thread dump 사례·제목/추천을 확인하지 못함."
+      }
+    },
+    {
+      "contentKey": "java.core.concurrency.platform-virtual-thread",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Thread.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "Thread carrier/currentThread/VM scheduling 관련절을 독립 대응.",
+      "limits": "해당 Concept의 관련 공식 절/회사 단락과 relationNote 대조 범위. 전문/모든 코드 실행/Reader render QA 미검증. 동일 URL의 다른 Concept 자동 승격 없음.",
+      "sourceFile": "content/java/concurrency/platform-virtual-thread.md",
+      "sourceSha256": "4aed5241976ef6d4600c002a4e60bc425d7ddf4cfce3b11d140086bdf7f2fd22",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Thread.html",
+        "title": "Java SE 25 API: Thread",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "Java 25의 플랫폼 스레드와 가상 스레드 Thread API 계약 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--concurrency.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.concurrency.platform-virtual-thread",
+      "url": "https://openjdk.org/jeps/491",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "JEP491 직접 open internal error. URL 자체의 본문 검토는 미확정; Oracle24 변화/25 guide는 별도 보조 근거.",
+      "limits": "해당 Concept의 관련 공식 절/회사 단락과 relationNote 대조 범위. 전문/모든 코드 실행/Reader render QA 미검증. 동일 URL의 다른 Concept 자동 승격 없음.",
+      "sourceFile": "content/java/concurrency/platform-virtual-thread.md",
+      "sourceSha256": "4aed5241976ef6d4600c002a4e60bc425d7ddf4cfce3b11d140086bdf7f2fd22",
+      "reference": {
+        "url": "https://openjdk.org/jeps/491",
+        "title": "JEP 491: Synchronize Virtual Threads without Pinning",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 2,
+        "relationNote": "JDK 24부터 synchronized가 가상 스레드를 캐리어에 고정하지 않도록 바뀐 구현 경계 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--concurrency.json",
+        "reviewedAt": "2026-10-14"
+      },
+      "accessVerification": {
+        "status": "NEEDS_REVIEW",
+        "basis": "JEP491 직접 open internal error. URL 자체의 본문 검토는 미확정; Oracle24 변화/25 guide는 별도 보조 근거."
+      }
+    },
+    {
+      "contentKey": "java.core.concurrency.platform-virtual-thread",
+      "url": "https://d2.naver.com/news/1203723",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "D2 news URL 공통 shell뿐. virtual thread 본문·운영 관점 학습가치 미확정.",
+      "limits": "해당 Concept의 관련 공식 절/회사 단락과 relationNote 대조 범위. 전문/모든 코드 실행/Reader render QA 미검증. 동일 URL의 다른 Concept 자동 승격 없음.",
+      "sourceFile": "content/java/concurrency/platform-virtual-thread.md",
+      "sourceSha256": "4aed5241976ef6d4600c002a4e60bc425d7ddf4cfce3b11d140086bdf7f2fd22",
+      "reference": {
+        "url": "https://d2.naver.com/news/1203723",
+        "title": "네이버 D2: Virtual Thread의 기본 개념 이해하기",
+        "referenceType": "COMPANY_TECH_BLOG",
+        "language": "ko",
+        "displayOrder": 3,
+        "relationNote": "Java 스레드와 Executor를 운영 관점에서 연결해 이해"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--concurrency.json",
+        "reviewedAt": "2026-10-14"
+      },
+      "accessVerification": {
+        "status": "NEEDS_REVIEW",
+        "basis": "D2 news URL 공통 shell뿐. virtual thread 본문·운영 관점 학습가치 미확정."
+      }
+    },
+    {
+      "contentKey": "java.core.concurrency.shared-mutable-state-race",
+      "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-17.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "JLS17.4 shared variables/conflicting accesses·17.4.5 data race 및 SC여도 compound logic 오류 가능성을 이 Concept에 대응.",
+      "limits": "해당 Concept의 관련 공식 절/회사 단락과 relationNote 대조 범위. 전문/모든 코드 실행/Reader render QA 미검증. 동일 URL의 다른 Concept 자동 승격 없음.",
+      "sourceFile": "content/java/concurrency/shared-mutable-state-race.md",
+      "sourceSha256": "291d1c97cc8d8abb1c38cfdf86b35a303a4a7658e9bb26b5e44b1f89a1ac0aa4",
+      "reference": {
+        "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-17.html",
+        "title": "Java SE 25 JLS Chapter 17: Threads and Locks",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "shared variable, conflicting access, data race와 Java Memory Model 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--concurrency.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.concurrency.synchronized-monitor",
+      "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-14.html#jls-14.19",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "JLS14.19 expression 평가/monitor 획득·정상/예외 unlock/재진입을 대조.",
+      "limits": "해당 Concept의 관련 공식 절/회사 단락과 relationNote 대조 범위. 전문/모든 코드 실행/Reader render QA 미검증. 동일 URL의 다른 Concept 자동 승격 없음.",
+      "sourceFile": "content/java/concurrency/synchronized-monitor.md",
+      "sourceSha256": "389e90d904c5b22ad3c3a9c0a141ebf6546688fc1b74f0957a1c37275834c7d8",
+      "reference": {
+        "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-14.html#jls-14.19",
+        "title": "Java SE 25 JLS: The synchronized Statement",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "synchronized statement와 monitor lock의 언어 규칙 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--concurrency.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.concurrency.synchronized-monitor",
+      "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-17.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "JLS17 monitor 소유 및 같은 monitor HB를 이 Concept 보호 범위에 대응.",
+      "limits": "해당 Concept의 관련 공식 절/회사 단락과 relationNote 대조 범위. 전문/모든 코드 실행/Reader render QA 미검증. 동일 URL의 다른 Concept 자동 승격 없음.",
+      "sourceFile": "content/java/concurrency/synchronized-monitor.md",
+      "sourceSha256": "389e90d904c5b22ad3c3a9c0a141ebf6546688fc1b74f0957a1c37275834c7d8",
+      "reference": {
+        "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-17.html",
+        "title": "Java SE 25 JLS Chapter 17: Threads and Locks",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 2,
+        "relationNote": "monitor lock과 happens-before memory consistency 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--concurrency.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.concurrency.jmm-happens-before-visibility",
+      "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-17.html#jls-17.4.5",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "JLS17.4.5의 HB/충돌 access/data race/DRF와 compound logic 별도 관계를 직접 대조.",
+      "limits": "해당 Concept의 관련 공식 절/회사 단락과 relationNote 대조 범위. 전문/모든 코드 실행/Reader render QA 미검증. 동일 URL의 다른 Concept 자동 승격 없음.",
+      "sourceFile": "content/java/concurrency/jmm-happens-before-visibility.md",
+      "sourceSha256": "03005835aa8a752e7ae0ebfadfa18c70de58182f11fa443a6ce4eadaabd0347f",
+      "reference": {
+        "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-17.html#jls-17.4.5",
+        "title": "The Java Language Specification — 17.4.5 Happens-before Order",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "depth": "section",
+        "recommendation": "Java에서 conflicting access와 happens-before를 기준으로 data race를 정의하는 정확한 경계를 확인한다.",
+        "displayOrder": 1,
+        "relationNote": "happens-before 정의와 synchronization edge 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--concurrency.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.concurrency.jmm-happens-before-visibility",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/package-summary.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "concurrent package memory consistency의 Executor submission/Future get/collection handoff를 역할별 대조.",
+      "limits": "해당 Concept의 관련 공식 절/회사 단락과 relationNote 대조 범위. 전문/모든 코드 실행/Reader render QA 미검증. 동일 URL의 다른 Concept 자동 승격 없음.",
+      "sourceFile": "content/java/concurrency/jmm-happens-before-visibility.md",
+      "sourceSha256": "03005835aa8a752e7ae0ebfadfa18c70de58182f11fa443a6ce4eadaabd0347f",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/package-summary.html",
+        "title": "Java SE 25 API: java.util.concurrent",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 2,
+        "relationNote": "Executor, Future, concurrent collection 등 고수준 API의 memory consistency effects 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--concurrency.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.concurrency.jmm-happens-before-visibility",
+      "url": "https://techblog.lycorp.co.jp/ko/20231216a",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "LY 기사 SC/TSO store buffer·bypass와 175~204절 SC-for-DRF/Java 예외를 읽음. CPU 배경 보충이며 JMM 규범 대체 아님.",
+      "limits": "해당 Concept의 관련 공식 절/회사 단락과 relationNote 대조 범위. 전문/모든 코드 실행/Reader render QA 미검증. 동일 URL의 다른 Concept 자동 승격 없음.",
+      "sourceFile": "content/java/concurrency/jmm-happens-before-visibility.md",
+      "sourceSha256": "03005835aa8a752e7ae0ebfadfa18c70de58182f11fa443a6ce4eadaabd0347f",
+      "reference": {
+        "url": "https://techblog.lycorp.co.jp/ko/20231216a",
+        "title": "LY 기술 블로그: 메모리 모델 입문 - Sequential Consistency와 Total Store Order 이해하기",
+        "referenceType": "COMPANY_TECH_BLOG",
+        "language": "ko",
+        "displayOrder": 3,
+        "relationNote": "CPU memory model과 SC-for-DRF 배경을 더 깊게 이해하는 보충 자료. Java의 실제 보장은 JLS의 JMM 계약을 우선한다."
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--concurrency.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.concurrency.safe-publication-final-fields",
+      "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-17.html#jls-17.5",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "JLS17.5의 constructor 완료/proper final·racy reference 특수 보장과 referent 초기 상태를 해당 본문에 대조.",
+      "limits": "해당 Concept의 관련 공식 절/회사 단락과 relationNote 대조 범위. 전문/모든 코드 실행/Reader render QA 미검증. 동일 URL의 다른 Concept 자동 승격 없음.",
+      "sourceFile": "content/java/concurrency/safe-publication-final-fields.md",
+      "sourceSha256": "f884a72ef5ef910b050bb1ebccfe4ef5b3c7e477b2087f7bdd6c6ef8c6ccc77c",
+      "reference": {
+        "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-17.html#jls-17.5",
+        "title": "Java SE 25 JLS: final Field Semantics",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "생성자 종료와 final 필드의 특별한 관찰 규칙 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--concurrency.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.concurrency.safe-publication-final-fields",
+      "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-17.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "JLS17.4.5 일반 HB와 final 특수 보장을 별도 관찰 규칙으로 대응.",
+      "limits": "해당 Concept의 관련 공식 절/회사 단락과 relationNote 대조 범위. 전문/모든 코드 실행/Reader render QA 미검증. 동일 URL의 다른 Concept 자동 승격 없음.",
+      "sourceFile": "content/java/concurrency/safe-publication-final-fields.md",
+      "sourceSha256": "f884a72ef5ef910b050bb1ebccfe4ef5b3c7e477b2087f7bdd6c6ef8c6ccc77c",
+      "reference": {
+        "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-17.html",
+        "title": "Java SE 25 JLS Chapter 17: Threads and Locks",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 2,
+        "relationNote": "일반 공유 상태의 스레드 간 가시성과 동기화 관계 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--concurrency.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.concurrency.volatile",
+      "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html#jls-8.3.1.4",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "JLS8.3.1.4 volatile 필드 규칙/불일치 예시를 비교.",
+      "limits": "해당 Concept의 관련 공식 절/회사 단락과 relationNote 대조 범위. 전문/모든 코드 실행/Reader render QA 미검증. 동일 URL의 다른 Concept 자동 승격 없음.",
+      "sourceFile": "content/java/concurrency/volatile.md",
+      "sourceSha256": "81062b87c042be520f2d94a1c0efb5f9f06ccbcf2bede20a03732961a1f3b47e",
+      "reference": {
+        "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html#jls-8.3.1.4",
+        "title": "Java SE 25 JLS: volatile Fields",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "volatile field의 Java 언어 규칙 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--concurrency.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.concurrency.volatile",
+      "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-17.html#jls-17.4.5",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "JLS17.4.5 volatile write→후속 read/HB 추이를 data flag 사례에 독립 대응.",
+      "limits": "해당 Concept의 관련 공식 절/회사 단락과 relationNote 대조 범위. 전문/모든 코드 실행/Reader render QA 미검증. 동일 URL의 다른 Concept 자동 승격 없음.",
+      "sourceFile": "content/java/concurrency/volatile.md",
+      "sourceSha256": "81062b87c042be520f2d94a1c0efb5f9f06ccbcf2bede20a03732961a1f3b47e",
+      "reference": {
+        "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-17.html#jls-17.4.5",
+        "title": "The Java Language Specification — 17.4.5 Happens-before Order",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "depth": "section",
+        "recommendation": "Java에서 conflicting access와 happens-before를 기준으로 data race를 정의하는 정확한 경계를 확인한다.",
+        "displayOrder": 2,
+        "relationNote": "volatile write/read의 happens-before 관계 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--concurrency.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.concurrency.atomic-cas",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/atomic/AtomicInteger.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "AtomicInteger compareAndSet boolean/VarHandle memory effects·updateAndGet 함수 재적용을 대조.",
+      "limits": "해당 Concept의 관련 공식 절/회사 단락과 relationNote 대조 범위. 전문/모든 코드 실행/Reader render QA 미검증. 동일 URL의 다른 Concept 자동 승격 없음.",
+      "sourceFile": "content/java/concurrency/atomic-cas.md",
+      "sourceSha256": "ac126b7dec3b939444f524e74827c88e466149a7bf459e7c5da2830e1c8deab6",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/atomic/AtomicInteger.html",
+        "title": "Java SE 25 API: AtomicInteger",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "원자적 갱신과 compareAndSet 계약 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--concurrency.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.concurrency.atomic-cas",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/atomic/package-summary.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "atomic package 단일 변수 lock-free programming toolkit 설명과 알고리즘 전체 보장 구분을 대응; 과거 Java8 문구를25 계약으로 사용 안 함.",
+      "limits": "해당 Concept의 관련 공식 절/회사 단락과 relationNote 대조 범위. 전문/모든 코드 실행/Reader render QA 미검증. 동일 URL의 다른 Concept 자동 승격 없음.",
+      "sourceFile": "content/java/concurrency/atomic-cas.md",
+      "sourceSha256": "ac126b7dec3b939444f524e74827c88e466149a7bf459e7c5da2830e1c8deab6",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/atomic/package-summary.html",
+        "title": "Java SE 25 API: java.util.concurrent.atomic",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 2,
+        "relationNote": "단일 변수의 원자적 갱신 도구가 제공하는 범위 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--concurrency.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.concurrency.locks-reentrantlock-condition",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/locks/Lock.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "Lock memory synchronization/tryLock/lockInterruptibly·finally와 구현별 지원 문서를 대조.",
+      "limits": "해당 Concept의 관련 공식 절/회사 단락과 relationNote 대조 범위. 전문/모든 코드 실행/Reader render QA 미검증. 동일 URL의 다른 Concept 자동 승격 없음.",
+      "sourceFile": "content/java/concurrency/locks-reentrantlock-condition.md",
+      "sourceSha256": "8b176163404717c0f880a110e983974c37e38da62fbacec098a016b452a8622d",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/locks/Lock.html",
+        "title": "Java SE 25 API: Lock",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "lock/unlock과 interruptible·timed acquisition의 계약 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--concurrency.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.concurrency.locks-reentrantlock-condition",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/locks/ReentrantLock.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "ReentrantLock owner/hold count·fairness≠scheduler fairness/untimed tryLock barging을 비교.",
+      "limits": "해당 Concept의 관련 공식 절/회사 단락과 relationNote 대조 범위. 전문/모든 코드 실행/Reader render QA 미검증. 동일 URL의 다른 Concept 자동 승격 없음.",
+      "sourceFile": "content/java/concurrency/locks-reentrantlock-condition.md",
+      "sourceSha256": "8b176163404717c0f880a110e983974c37e38da62fbacec098a016b452a8622d",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/locks/ReentrantLock.html",
+        "title": "Java SE 25 API: ReentrantLock",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 2,
+        "relationNote": "재진입과 fairness 설정의 계약 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--concurrency.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.concurrency.executor-task-thread-pools",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/package-summary.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "concurrent package Executors/task execution framework와 submission HB를 task/worker 분리 목적에 독립 대응.",
+      "limits": "해당 Concept의 관련 공식 절/회사 단락과 relationNote 대조 범위. 전문/모든 코드 실행/Reader render QA 미검증. 동일 URL의 다른 Concept 자동 승격 없음.",
+      "sourceFile": "content/java/concurrency/executor-task-thread-pools.md",
+      "sourceSha256": "01395bac2dc47e6c92f0fe33e7162c6df972155d38f836b58dede9e7ed0bb168",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/package-summary.html",
+        "title": "Java SE 25 API: java.util.concurrent",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "ExecutorService와 task execution framework 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--concurrency.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.concurrency.executor-task-thread-pools",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/ThreadPoolExecutor.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "ThreadPoolExecutor core/queue/max 정확한 순서와 CallerRuns shutdown discard·termination을 관련절 직접 확인.",
+      "limits": "해당 Concept의 관련 공식 절/회사 단락과 relationNote 대조 범위. 전문/모든 코드 실행/Reader render QA 미검증. 동일 URL의 다른 Concept 자동 승격 없음.",
+      "sourceFile": "content/java/concurrency/executor-task-thread-pools.md",
+      "sourceSha256": "01395bac2dc47e6c92f0fe33e7162c6df972155d38f836b58dede9e7ed0bb168",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/ThreadPoolExecutor.html",
+        "title": "Java SE 25 API: ThreadPoolExecutor",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 2,
+        "relationNote": "worker·queue·rejection 동작 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--concurrency.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.concurrency.blockingqueue-producer-consumer",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/BlockingQueue.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "BlockingQueue 4형태 표/atomic queuing·bulk 한계/null 및 close 부재/handoff HB를 이 본문에 대조.",
+      "limits": "해당 Concept의 관련 공식 절/회사 단락과 relationNote 대조 범위. 전문/모든 코드 실행/Reader render QA 미검증. 동일 URL의 다른 Concept 자동 승격 없음.",
+      "sourceFile": "content/java/concurrency/blockingqueue-producer-consumer.md",
+      "sourceSha256": "2a5a7f50e2240170a847aefbf6f9e6e51ddac7cc38681d300f5cc05500a6f400",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/BlockingQueue.html",
+        "title": "Java SE 25 API: BlockingQueue",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "put/take·offer/poll과 memory consistency 계약 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--concurrency.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.concurrency.blockingqueue-producer-consumer",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/ArrayBlockingQueue.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "ArrayBlockingQueue fixed capacity/FIFO/full put와 empty take 대기·fairness를 관련 경계에 대조.",
+      "limits": "해당 Concept의 관련 공식 절/회사 단락과 relationNote 대조 범위. 전문/모든 코드 실행/Reader render QA 미검증. 동일 URL의 다른 Concept 자동 승격 없음.",
+      "sourceFile": "content/java/concurrency/blockingqueue-producer-consumer.md",
+      "sourceSha256": "2a5a7f50e2240170a847aefbf6f9e6e51ddac7cc38681d300f5cc05500a6f400",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/ArrayBlockingQueue.html",
+        "title": "Java SE 25 API: ArrayBlockingQueue",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 2,
+        "relationNote": "고정 capacity queue의 동작 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--concurrency.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.concurrency.countdownlatch-coordination",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/CountDownLatch.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "CountDownLatch one-shot/여러 waiter/countDown·성공 await HB/timeout·interrupt 관련절을 직접 대조.",
+      "limits": "해당 Concept의 관련 공식 절/회사 단락과 relationNote 대조 범위. 전문/모든 코드 실행/Reader render QA 미검증. 동일 URL의 다른 Concept 자동 승격 없음.",
+      "sourceFile": "content/java/concurrency/countdownlatch-coordination.md",
+      "sourceSha256": "28fef979867d6fbab93eea001a567bbf16a22423ecdd0a78b50a0310d1761702",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/CountDownLatch.html",
+        "title": "Java SE 25 API: CountDownLatch",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "one-shot countDown/await와 memory consistency 계약 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--concurrency.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.concurrency.semaphore-permits",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/Semaphore.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "Semaphore ownership 없음/permit counter·fair acquisition 내부 FIFO·release→acquire HB를 이 자원 제한 목적에 대조.",
+      "limits": "해당 Concept의 관련 공식 절/회사 단락과 relationNote 대조 범위. 전문/모든 코드 실행/Reader render QA 미검증. 동일 URL의 다른 Concept 자동 승격 없음.",
+      "sourceFile": "content/java/concurrency/semaphore-permits.md",
+      "sourceSha256": "965a24e03439304c81d702c8ee8f8bdecb982d920072c84a2426de52e9cc2a80",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/Semaphore.html",
+        "title": "Java SE 25 API: Semaphore",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "permit acquire/release·fairness·memory consistency 계약 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--concurrency.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.concurrency.concurrent-collections",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/ConcurrentHashMap.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "CHM putIfAbsent/computeIfAbsent atomic invocation·짧은 callback/weak iteration/non-null value HB를 독립 대응.",
+      "limits": "해당 Concept의 관련 공식 절/회사 단락과 relationNote 대조 범위. 전문/모든 코드 실행/Reader render QA 미검증. 동일 URL의 다른 Concept 자동 승격 없음.",
+      "sourceFile": "content/java/concurrency/concurrent-collections.md",
+      "sourceSha256": "674fa05c3726d0638903232957afd144350da2855deaa191d3c08680831f8dcb",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/ConcurrentHashMap.html",
+        "title": "Java SE 25 API: ConcurrentHashMap",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "동시성 Map 연산과 compute/merge 계약 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--concurrency.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.concurrency.concurrent-collections",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/ConcurrentLinkedQueue.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "CLQ unbounded non-blocking FIFO/null 금지/weak iterator/poll empty를 해당 예시 목적에 대조.",
+      "limits": "해당 Concept의 관련 공식 절/회사 단락과 relationNote 대조 범위. 전문/모든 코드 실행/Reader render QA 미검증. 동일 URL의 다른 Concept 자동 승격 없음.",
+      "sourceFile": "content/java/concurrency/concurrent-collections.md",
+      "sourceSha256": "674fa05c3726d0638903232957afd144350da2855deaa191d3c08680831f8dcb",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/ConcurrentLinkedQueue.html",
+        "title": "Java SE 25 API: ConcurrentLinkedQueue",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 2,
+        "relationNote": "동시성 Queue의 offer/poll 계약 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--concurrency.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.concurrency.threadlocal-context",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/ThreadLocal.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "ThreadLocal per-thread copy/lifetime/removal 후 initialValue 재적용을 이 요청 경계에 대조.",
+      "limits": "해당 Concept의 관련 공식 절/회사 단락과 relationNote 대조 범위. 전문/모든 코드 실행/Reader render QA 미검증. 동일 URL의 다른 Concept 자동 승격 없음.",
+      "sourceFile": "content/java/concurrency/threadlocal-context.md",
+      "sourceSha256": "e5550b2ed5094e8911327601ab7653604abef13ba6c57fbf8c6590f52893835f",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/ThreadLocal.html",
+        "title": "Java SE 25 API: ThreadLocal",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "thread별 값과 remove·thread lifetime 계약 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--concurrency.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.concurrency.threadlocal-context",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Thread.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "Thread의 VT currentThread와 inheritable 생성 시점·carrier 비노출을 TL 전파/자원 논점에 독립 대응.",
+      "limits": "해당 Concept의 관련 공식 절/회사 단락과 relationNote 대조 범위. 전문/모든 코드 실행/Reader render QA 미검증. 동일 URL의 다른 Concept 자동 승격 없음.",
+      "sourceFile": "content/java/concurrency/threadlocal-context.md",
+      "sourceSha256": "e5550b2ed5094e8911327601ab7653604abef13ba6c57fbf8c6590f52893835f",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Thread.html",
+        "title": "Java SE 25 API: Thread",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 2,
+        "relationNote": "Java thread와 virtual thread 관련 API 경계 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--concurrency.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.concurrency.scoped-value-context",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/ScopedValue.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "ScopedValue per-thread bindings/rebinding/inheritance·shared value synchronization와 one-way transmission API note를 실제 역할별 대조.",
+      "limits": "해당 Concept의 관련 공식 절/회사 단락과 relationNote 대조 범위. 전문/모든 코드 실행/Reader render QA 미검증. 동일 URL의 다른 Concept 자동 승격 없음.",
+      "sourceFile": "content/java/concurrency/scoped-value-context.md",
+      "sourceSha256": "8b69a663d824b3765828ab51a6a114ecca1d9838a0e161f426bb91714126f329",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/ScopedValue.html",
+        "title": "Java SE 25 API: ScopedValue",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "Java 25 ScopedValue의 per-thread binding·rebinding·inheritance 계약 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--concurrency.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.concurrency.future-completablefuture",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/CompletableFuture.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "CompletableFuture nonasync/async policies·thenCompose/cancellation exceptional completion/interrupt flag 무효를 이 Concept에 대조.",
+      "limits": "해당 Concept의 관련 공식 절/회사 단락과 relationNote 대조 범위. 전문/모든 코드 실행/Reader render QA 미검증. 동일 URL의 다른 Concept 자동 승격 없음.",
+      "sourceFile": "content/java/concurrency/future-completablefuture.md",
+      "sourceSha256": "7e91e07ceae34aa035b93097f52584d5aae356c7f2d08ed087f0028b70e27fdb",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/CompletableFuture.html",
+        "title": "Java SE 25 API: CompletableFuture",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "CompletionStage와 동기·비동기 메서드 계약 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--concurrency.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.concurrency.future-completablefuture",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/Future.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "Future get blocking/취소 요청과 계산 결과 HB를 CF 구현 차이와 분리 대응.",
+      "limits": "해당 Concept의 관련 공식 절/회사 단락과 relationNote 대조 범위. 전문/모든 코드 실행/Reader render QA 미검증. 동일 URL의 다른 Concept 자동 승격 없음.",
+      "sourceFile": "content/java/concurrency/future-completablefuture.md",
+      "sourceSha256": "7e91e07ceae34aa035b93097f52584d5aae356c7f2d08ed087f0028b70e27fdb",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/Future.html",
+        "title": "Java SE 25 API: Future",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 2,
+        "relationNote": "결과 조회와 cancellation 계약 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--concurrency.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.concurrency.deadlock-starvation-livelock",
+      "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-17.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "JLS17 locks/wait·memory model이 자동 deadlock 해소하지 않음을 코드 모델에 대응.",
+      "limits": "해당 Concept의 관련 공식 절/회사 단락과 relationNote 대조 범위. 전문/모든 코드 실행/Reader render QA 미검증. 동일 URL의 다른 Concept 자동 승격 없음.",
+      "sourceFile": "content/java/concurrency/deadlock-starvation-livelock.md",
+      "sourceSha256": "90ee129c2bf858d47d77c8b59523aa557c836d10345ee4f09ec0f783bd0b5a6c",
+      "reference": {
+        "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-17.html",
+        "title": "Java SE 25 JLS Chapter 17: Threads and Locks",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "lock·wait와 thread execution 모델 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--concurrency.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.concurrency.deadlock-starvation-livelock",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/locks/Lock.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "Lock timed/interruptible 선택과 구현 명세 범위를 timeout recovery 목적에 대응.",
+      "limits": "해당 Concept의 관련 공식 절/회사 단락과 relationNote 대조 범위. 전문/모든 코드 실행/Reader render QA 미검증. 동일 URL의 다른 Concept 자동 승격 없음.",
+      "sourceFile": "content/java/concurrency/deadlock-starvation-livelock.md",
+      "sourceSha256": "90ee129c2bf858d47d77c8b59523aa557c836d10345ee4f09ec0f783bd0b5a6c",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/locks/Lock.html",
+        "title": "Java SE 25 API: Lock",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 2,
+        "relationNote": "timed/interruptible lock acquisition 선택지 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--concurrency.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.concurrency.deadlock-starvation-livelock",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.management/java/lang/management/ThreadMXBean.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "ThreadMXBean platform만 지원/monitor와 ownable cycle 탐지를 진단 범위에 직접 대조.",
+      "limits": "해당 Concept의 관련 공식 절/회사 단락과 relationNote 대조 범위. 전문/모든 코드 실행/Reader render QA 미검증. 동일 URL의 다른 Concept 자동 승격 없음.",
+      "sourceFile": "content/java/concurrency/deadlock-starvation-livelock.md",
+      "sourceSha256": "90ee129c2bf858d47d77c8b59523aa557c836d10345ee4f09ec0f783bd0b5a6c",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.management/java/lang/management/ThreadMXBean.html",
+        "title": "Java SE 25 API: ThreadMXBean",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 3,
+        "relationNote": "platform thread monitoring과 deadlock detection 범위 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--concurrency.json",
+        "reviewedAt": "2026-10-14"
+      }
     }
   ],
   "supportingRelations": [

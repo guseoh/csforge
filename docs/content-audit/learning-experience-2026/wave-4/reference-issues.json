@@ -57,6 +57,113 @@
   },
   {
     "area": "java",
+    "contentKey": "java.core.concurrency.platform-virtual-thread",
+    "file": "content/java/concurrency/platform-virtual-thread.md",
+    "url": "https://openjdk.org/jeps/491",
+    "title": "JEP 491: Synchronize Virtual Threads without Pinning",
+    "referenceType": "OFFICIAL",
+    "language": "en",
+    "displayOrder": 2,
+    "relationNote": "JDK 24부터 synchronized가 가상 스레드를 캐리어에 고정하지 않도록 바뀐 구현 경계 확인",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "area": "java",
+      "topicKey": "java.core.concurrency",
+      "contentKey": "java.core.concurrency.platform-virtual-thread",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-4/reference-relations.json",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "JEP491 직접 open internal error. URL 자체의 본문 검토는 미확정; Oracle24 변화/25 guide는 별도 보조 근거.",
+      "limits": "해당 Concept의 관련 공식 절/회사 단락과 relationNote 대조 범위. 전문/모든 코드 실행/Reader render QA 미검증. 동일 URL의 다른 Concept 자동 승격 없음.",
+      "sourceSha256": "4aed5241976ef6d4600c002a4e60bc425d7ddf4cfce3b11d140086bdf7f2fd22",
+      "accessVerification": {
+        "status": "NEEDS_REVIEW",
+        "basis": "JEP491 직접 open internal error. URL 자체의 본문 검토는 미확정; Oracle24 변화/25 guide는 별도 보조 근거."
+      },
+      "qualityIssueIds": []
+    },
+    "priorVerification": {
+      "status": "NEEDS_REVIEW",
+      "basis": "이번 감사에서 미접근. 기존 Wave의 출처 확인 근거 보존; URL 존재만으로 학습 가치를 판정하지 않는다."
+    },
+    "accessVerification": {
+      "status": "NEEDS_REVIEW",
+      "basis": "JEP491 직접 open internal error. URL 자체의 본문 검토는 미확정; Oracle24 변화/25 guide는 별도 보조 근거."
+    }
+  },
+  {
+    "area": "java",
+    "contentKey": "java.core.concurrency.platform-virtual-thread",
+    "file": "content/java/concurrency/platform-virtual-thread.md",
+    "url": "https://d2.naver.com/news/1203723",
+    "title": "네이버 D2: Virtual Thread의 기본 개념 이해하기",
+    "referenceType": "COMPANY_TECH_BLOG",
+    "language": "ko",
+    "displayOrder": 3,
+    "relationNote": "Java 스레드와 Executor를 운영 관점에서 연결해 이해",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "area": "java",
+      "topicKey": "java.core.concurrency",
+      "contentKey": "java.core.concurrency.platform-virtual-thread",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-4/reference-relations.json",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "D2 news URL 공통 shell뿐. virtual thread 본문·운영 관점 학습가치 미확정.",
+      "limits": "해당 Concept의 관련 공식 절/회사 단락과 relationNote 대조 범위. 전문/모든 코드 실행/Reader render QA 미검증. 동일 URL의 다른 Concept 자동 승격 없음.",
+      "sourceSha256": "4aed5241976ef6d4600c002a4e60bc425d7ddf4cfce3b11d140086bdf7f2fd22",
+      "accessVerification": {
+        "status": "NEEDS_REVIEW",
+        "basis": "D2 news URL 공통 shell뿐. virtual thread 본문·운영 관점 학습가치 미확정."
+      },
+      "qualityIssueIds": []
+    },
+    "priorVerification": {
+      "status": "NEEDS_REVIEW",
+      "basis": "이번 감사에서 미접근. 기존 Wave의 출처 확인 근거 보존; URL 존재만으로 학습 가치를 판정하지 않는다."
+    },
+    "accessVerification": {
+      "status": "NEEDS_REVIEW",
+      "basis": "D2 news URL 공통 shell뿐. virtual thread 본문·운영 관점 학습가치 미확정."
+    }
+  },
+  {
+    "area": "java",
+    "contentKey": "java.core.concurrency.thread-lifecycle-interruption",
+    "file": "content/java/concurrency/thread-lifecycle-interruption.md",
+    "url": "https://d2.naver.com/helloworld/10963",
+    "title": "스레드 덤프 분석하기",
+    "referenceType": "COMPANY_TECH_BLOG",
+    "language": "ko",
+    "depth": "article",
+    "recommendation": "JVM thread dump에서 lock owner와 waiter를 연결해 deadlock cycle을 해석하는 실제 사례를 확인한다.",
+    "displayOrder": 3,
+    "relationNote": "thread 상태와 blocked/waiting 진단을 실제 장애 흐름으로 연결",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "area": "java",
+      "topicKey": "java.core.concurrency",
+      "contentKey": "java.core.concurrency.thread-lifecycle-interruption",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-4/reference-relations.json",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "D2 접근은 공통 shell만 반환. 실제 thread dump 사례·제목/추천을 확인하지 못함.",
+      "limits": "해당 Concept의 관련 공식 절/회사 단락과 relationNote 대조 범위. 전문/모든 코드 실행/Reader render QA 미검증. 동일 URL의 다른 Concept 자동 승격 없음.",
+      "sourceSha256": "23558271821ac47f7e8c2cb070865a5f1d755840e6c7e0e9216c0cf2549bb7fd",
+      "accessVerification": {
+        "status": "NEEDS_REVIEW",
+        "basis": "D2 접근은 공통 shell만 반환. 실제 thread dump 사례·제목/추천을 확인하지 못함."
+      },
+      "qualityIssueIds": []
+    },
+    "priorVerification": {
+      "status": "NEEDS_REVIEW",
+      "basis": "이번 감사에서 미접근. 기존 Wave의 출처 확인 근거 보존; URL 존재만으로 학습 가치를 판정하지 않는다."
+    },
+    "accessVerification": {
+      "status": "NEEDS_REVIEW",
+      "basis": "D2 접근은 공통 shell만 반환. 실제 thread dump 사례·제목/추천을 확인하지 못함."
+    }
+  },
+  {
+    "area": "java",
     "contentKey": "java.core.design-patterns.strategy-pattern",
     "file": "content/java/design-patterns/strategy-pattern.md",
     "url": "https://tecoble.techcourse.co.kr/post/2021-10-04-strategy-command-pattern/",
