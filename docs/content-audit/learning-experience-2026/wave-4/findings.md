@@ -44,6 +44,53 @@ Topic별 직접 검토의 새 발견과 기존 계승을 분리한다. 검토 �
 
 후속: #201
 
+### W4-JENUM-001 — P0
+
+대상: `java.core.enum-modeling.enumset`
+
+원문: [content/java/enum-modeling/enumset.md:25](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/enum-modeling/enumset.md#L25)
+
+> OrderStatus.COMPLETED
+
+원문: [content/java/enum-modeling/enum-closed-values-behavior.md:36](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/enum-modeling/enum-closed-values-behavior.md#L36)
+
+> enum OrderStatus {
+>     READY,
+>     PAID,
+>     CANCELLED
+
+문제: EnumSet 예제의 OrderStatus.COMPLETED는 선행 Concept의 OrderStatus(READY/PAID/CANCELLED)에 없는 상수다. 동일 타입으로 학습 예제를 연결하면 컴파일 오류가 발생한다.
+
+최소 보강: PAID 등 실제 선언 상수로 바꾸거나 COMPLETED가 선언된 독립 enum을 예제에 명시한다. EnumSet 개념과 기존 Question 정답은 유지한다.
+
+공식 근거: [관련 계약](https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html#jls-8.9)
+
+실행/추론 대조: 선행 enum 정의를 기준으로 한 제한 javac 21 컴파일에서 cannot find symbol: COMPLETED 재현. Java25 전체 실행 아님.
+
+후속: #201
+
+### W4-JENUM-002 — P1
+
+대상: `java.core.enum-modeling.enumset.q2`, `java.core.enum-modeling.enummap.q2`
+
+원문: [content/java/enum-modeling/questions.json:12](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/enum-modeling/questions.json#L12)
+
+> EnumSet<Permission> set = EnumSet.of(READ);
+
+원문: [content/java/enum-modeling/questions.json:16](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/enum-modeling/questions.json#L16)
+
+> EnumMap<Day, Integer> hours = new EnumMap<>(Day.class);
+
+문제: 두 코드 결과 문항에 Permission/Day enum 선언과 READ의 수식 또는 static import 전제가 없다. 결과 해석 의도는 맞지만 독립 실행할 코드로는 컴파일할 수 없어 학습자가 실행 결과와 미정의 식별자를 혼동할 수 있다.
+
+최소 보강: q2 EnumSet에 Permission enum 정의/Permission.READ, q2 EnumMap에 Day 정의(MONDAY,SUNDAY) 또는 명확한 기존 타입 전제를 넣는다. 정답 B/C 및 해설 유지.
+
+공식 근거: [관련 계약](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/EnumSet.html), [관련 계약](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/EnumMap.html)
+
+실행/추론 대조: 제한 javac21 재구성에서 Permission/READ unresolved 증명; 타입 선언을 추가한 경우 원래 예상 결과에 부합.
+
+후속: #201
+
 ### W4-JA-001 — P0
 
 대상: `java.core.language-types.numeric-conversion-overflow`, `java.core.language-types.numeric-conversion-overflow.q1`, `java.core.language-types.numeric-conversion-overflow.q4`
@@ -254,52 +301,5 @@ Topic별 직접 검토의 새 발견과 기존 계승을 분리한다. 검토 �
 실행/추론 대조: ObjectModelProbe의omittedIntScore=0. 공식JLS와기사코드를대조한결과이며upstream문서수정/전체article코드실행은하지않음.
 
 후속: #201, #222
-
-### W4-JENUM-001 — P0
-
-대상: `java.core.enum-modeling.enumset`
-
-원문: [content/java/enum-modeling/enumset.md:25](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/enum-modeling/enumset.md#L25)
-
-> OrderStatus.COMPLETED
-
-원문: [content/java/enum-modeling/enum-closed-values-behavior.md:36](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/enum-modeling/enum-closed-values-behavior.md#L36)
-
-> enum OrderStatus {
->     READY,
->     PAID,
->     CANCELLED
-
-문제: EnumSet 예제의 OrderStatus.COMPLETED는 선행 Concept의 OrderStatus(READY/PAID/CANCELLED)에 없는 상수다. 동일 타입으로 학습 예제를 연결하면 컴파일 오류가 발생한다.
-
-최소 보강: PAID 등 실제 선언 상수로 바꾸거나 COMPLETED가 선언된 독립 enum을 예제에 명시한다. EnumSet 개념과 기존 Question 정답은 유지한다.
-
-공식 근거: [관련 계약](https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html#jls-8.9)
-
-실행/추론 대조: 선행 enum 정의를 기준으로 한 제한 javac 21 컴파일에서 cannot find symbol: COMPLETED 재현. Java25 전체 실행 아님.
-
-후속: #201
-
-### W4-JENUM-002 — P1
-
-대상: `java.core.enum-modeling.enumset.q2`, `java.core.enum-modeling.enummap.q2`
-
-원문: [content/java/enum-modeling/questions.json:12](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/enum-modeling/questions.json#L12)
-
-> EnumSet<Permission> set = EnumSet.of(READ);
-
-원문: [content/java/enum-modeling/questions.json:16](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/enum-modeling/questions.json#L16)
-
-> EnumMap<Day, Integer> hours = new EnumMap<>(Day.class);
-
-문제: 두 코드 결과 문항에 Permission/Day enum 선언과 READ의 수식 또는 static import 전제가 없다. 결과 해석 의도는 맞지만 독립 실행할 코드로는 컴파일할 수 없어 학습자가 실행 결과와 미정의 식별자를 혼동할 수 있다.
-
-최소 보강: q2 EnumSet에 Permission enum 정의/Permission.READ, q2 EnumMap에 Day 정의(MONDAY,SUNDAY) 또는 명확한 기존 타입 전제를 넣는다. 정답 B/C 및 해설 유지.
-
-공식 근거: [관련 계약](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/EnumSet.html), [관련 계약](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/EnumMap.html)
-
-실행/추론 대조: 제한 javac21 재구성에서 Permission/READ unresolved 증명; 타입 선언을 추가한 경우 원래 예상 결과에 부합.
-
-후속: #201
 
 ## 기존 계승
