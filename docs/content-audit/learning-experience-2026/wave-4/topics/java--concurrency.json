@@ -1156,7 +1156,7 @@
   "findings": [
     {
       "id": "W4-JCON-001",
-      "severity": "P2",
+      "severity": "P1",
       "contentKeys": [
         "java.core.concurrency.locks-reentrantlock-condition"
       ],
@@ -1279,5 +1279,15 @@
       "basis": "proper final 예외를 공식 대조한 뒤 정답 오류가 아닌 일반 feedback의 한정 P2로 확정."
     }
   ],
-  "preliminaryReadingSnapshot": "wave-4/concurrency-reading-in-progress.json은 앞10C61Q 미완료 당시 원본 기록; 본 정식19C113Q ledger로 읽기/판정/Reference 근거를 완성했고 이전 원본은 보존한다."
+  "preliminaryReadingSnapshot": "wave-4/concurrency-reading-in-progress.json은 앞10C61Q 미완료 당시 원본 기록; 본 정식19C113Q ledger로 읽기/판정/Reference 근거를 완성했고 이전 원본은 보존한다.",
+  "reviewAmendments": [
+    {
+      "reviewEvidence": "https://github.com/guseoh/csforge/pull/223#pullrequestreview-5519203970",
+      "previousCheckpoint": "cb14d65412c3829052c6940a8d890e0b2216905f",
+      "findingId": "W4-JCON-001",
+      "previousSeverity": "P2",
+      "currentSeverity": "P1",
+      "basis": "Condition Java25 bounded-buffer take는 비어 있는 동안 기다리고 원소가 생기면 진행한다.반대 조건 설명은 대기/진행의 핵심 misconception으로 단순 P2 문체 개선을 넘어선다. 올바른 while(empty) await 코드와 모든 Question 판정은 유지하고 한 문장만 #201에서 교정한다. 실행 코드/정답 결함 없이 핵심 설명의 상태 조건만 잘못된 범위를 근거로 리뷰의 P1을 채택한다."
+    }
+  ]
 }

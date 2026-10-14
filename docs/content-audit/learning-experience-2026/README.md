@@ -1,5 +1,7 @@
 # Issue #200 — 학습 경험 품질 기준선
 
+[최종 리뷰 반영](wave-4/final-review-delta.md): Stream 신규 P0 1/P1 1, Condition P2→P1. Wave4 새 발견 누적 P0 10/P1 14/P2 25이며 기존 품질 미확정3Q·Reference16관계와 판정/hash는 유지한다. 아래 초기 검증/집계는 해당 checkpoint 당시의 역사적 기록이다.
+
 - 초기 감사일: 2026-10-12, Wave 3: 2026-10-13 (Asia/Seoul)
 - 기준선: 최신 `origin/main` 확인 후 생성한 `audit/issue-200-learning-experience`, `efe73a15da14c996bd08344181d4d6f87073803d`
 - 범위: 15 LearningArea / 134 Topic / 721 Concept / 2,525 Question

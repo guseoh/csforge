@@ -146,7 +146,13 @@ def load_wave(out, root, baseline, read_json, sha, require, wave=1):
                             if key in f["contentKeys"]]
                 require(verdict not in {"TARGETED_ENHANCE", "REWRITE_REQUIRED"} or bool(findings),
                         f"Quality change without an actionable finding: {key}")
-                require(not findings or verdict in {"TARGETED_ENHANCE", "REWRITE_REQUIRED"},
+                unresolved = next((c for c in data.get("unresolvedReviewCases", [])
+                                   if c["contentKey"] == key), {})
+                pending_correction = (verdict == "NEEDS_REVIEW" and bool(findings)
+                                      and {f["id"] for f in findings} ==
+                                      set(unresolved.get("confirmedFindingIds", [])))
+                require(not findings or verdict in {"TARGETED_ENHANCE", "REWRITE_REQUIRED"}
+                        or pending_correction,
                         f"Finding contradicts handwritten quality decision: {key}")
                 reviews[key] = {
                     "recommendation": verdict, "qualityDecision": verdict,
@@ -172,6 +178,12 @@ def load_wave(out, root, baseline, read_json, sha, require, wave=1):
                         f"Unresolved review reasoning: {case['contentKey']}")
                 require(case["sourceQuote"] == prompts.get(case["contentKey"]),
                         f"Unresolved review quote mismatch: {case['contentKey']}")
+                if "confirmedFindingIds" in case:
+                    actual = {f["id"] for f in data["findings"]
+                              if case["contentKey"] in f["contentKeys"]}
+                    require(bool(actual) and set(case["confirmedFindingIds"]) == actual
+                            and bool(case.get("contractReview")),
+                            f"Unresolved confirmed finding coverage: {case['contentKey']}")
         for url, evidence, basis in data["sources"]:
             require(evidence in {"CURRENT_VERIFIED", "NEEDS_REVIEW"} and bool(basis), f"Wave source evidence: {url}")
             entry = {"evidenceLevel": evidence, "basis": basis, "area": area,

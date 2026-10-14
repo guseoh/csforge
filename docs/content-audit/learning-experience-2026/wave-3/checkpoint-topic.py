@@ -39,7 +39,13 @@ def main():
     for kind, width in (("concepts", 7), ("questions", 4)):
         for row in data[kind]:
             assert len(row) == width and all(isinstance(v, str) and v.strip() for v in row)
-            assert (row[1] in {"TARGETED_ENHANCE", "REWRITE_REQUIRED"}) == (row[0] in affected)
+            case = next((c for c in data.get("unresolvedReviewCases", [])
+                         if c["contentKey"] == row[0]), {})
+            finding_ids = {f["id"] for f in related_findings if row[0] in f["contentKeys"]}
+            pending = (row[1] == "NEEDS_REVIEW" and bool(finding_ids)
+                       and finding_ids == set(case.get("confirmedFindingIds", []))
+                       and bool(case.get("contractReview")))
+            assert (row[1] in {"TARGETED_ENHANCE", "REWRITE_REQUIRED"} or pending) == (row[0] in affected)
     for finding in findings:
         for anchor in [finding] + finding.get("additionalEvidence", []):
             raw = (ROOT / anchor["file"]).read_text(encoding="utf-8")

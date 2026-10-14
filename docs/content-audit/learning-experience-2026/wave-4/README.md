@@ -1,5 +1,7 @@
 # Wave 4 Java — 전체 의미 감사
 
+[최종 리뷰 반영](final-review-delta.md): Stream 신규 P0 1/P1 1, Condition P2→P1. Wave4 새 발견 누적 P0 10/P1 14/P2 25이며 기존 품질 미확정3Q·Reference16관계와 판정/hash는 유지한다. 아래 초기 검증/집계는 해당 checkpoint 당시의 역사적 기록이다.
+
 ## 최신 실행 — 잔여 Java 전체 통합 감사
 
 [Java 완료 보고서](java-completion-report.md): 잔여13Topic/109C/641Q를 확정해 Java18Topic/145C/841Q 전수 읽기 근거를 완성했다. Concept KEEP116/보강29, Question KEEP804/보강34/품질 미확정3이며 Reference16관계는 미확정이다. 최신 집계는 아래 진행률과 summary를 따른다. 콘텐츠 교정·ChatGPT 최종 검토·Issue200 최종 승인은 별도 단계다.

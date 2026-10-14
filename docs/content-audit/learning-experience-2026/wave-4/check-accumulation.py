@@ -69,14 +69,31 @@ class AccumulationChecks(unittest.TestCase):
         self.assertEqual(errors, [])
         self.assertEqual(set(reviews), concept_keys | question_keys)
 
-        previous_head = "5f31d79dd61df6325de89577e51cac1ad568d636"
+        previous_head = "cb14d65412c3829052c6940a8d890e0b2216905f"
         for name in self.parts:
-            if name == "java--jvm-runtime":
-                continue
             path = BASE / "wave-4/topics" / (name + ".json")
             previous_bytes = subprocess.check_output([
                 "git", "show", previous_head + ":" + path.relative_to(ROOT).as_posix()], cwd=ROOT)
-            self.assertEqual(path.read_bytes().replace(b"\r\n", b"\n"), previous_bytes)
+            if name not in {"java--streams", "java--concurrency"}:
+                self.assertEqual(path.read_bytes().replace(b"\r\n", b"\n"), previous_bytes)
+                continue
+            previous = json.loads(previous_bytes)
+            current = copy.deepcopy(self.parts[name])
+            amendment = current.pop("reviewAmendments")[0]
+            self.assertEqual(amendment["previousCheckpoint"], previous_head)
+            if name == "java--concurrency":
+                finding = next(f for f in current["findings"] if f["id"] == "W4-JCON-001")
+                self.assertEqual(finding["severity"], "P1")
+                finding["severity"] = "P2"
+            else:
+                added = current["findings"][-2:]
+                self.assertEqual([(f["id"], f["severity"]) for f in added],
+                                 [("W4-JSTR-003", "P0"), ("W4-JSTR-004", "P1")])
+                current["findings"] = current["findings"][:-2]
+                for case in current["unresolvedReviewCases"]:
+                    for field in ("confirmedFindingIds", "contractReview", "reviewEvidence"):
+                        self.assertTrue(case.pop(field))
+            self.assertEqual(current, previous)
         path = BASE / "wave-4/reference-relations.json"
         previous = json.loads(subprocess.check_output([
             "git", "show", previous_head + ":" + path.relative_to(ROOT).as_posix()], cwd=ROOT))
@@ -222,6 +239,19 @@ class AccumulationChecks(unittest.TestCase):
         key = part["unresolvedReviewCases"][0]["contentKey"]
         next(row for row in changed["java--streams"]["questions"] if row[0] == key)[1] = "KEEP"
         self.assertTrue(any("Unresolved review coverage" in e for e in self.load(parts=changed)[3]))
+
+    def test_confirmed_defects_do_not_promote_pending_question_quality(self):
+        reviews, _, _, errors = self.load()
+        self.assertEqual(errors, [])
+        for case in self.parts["java--streams"]["unresolvedReviewCases"]:
+            self.assertEqual(reviews[case["contentKey"]]["findingIds"], case["confirmedFindingIds"])
+            self.assertEqual(reviews[case["contentKey"]]["qualityDecision"], "NEEDS_REVIEW")
+        changed = copy.deepcopy(self.parts)
+        changed["java--streams"]["unresolvedReviewCases"][0]["confirmedFindingIds"] = ["W4-JSTR-004"]
+        self.assertTrue(any("Unresolved confirmed finding coverage" in e for e in self.load(parts=changed)[3]))
+        changed = copy.deepcopy(self.parts)
+        changed["java--streams"]["unresolvedReviewCases"][0]["contractReview"] = ""
+        self.assertTrue(any("Unresolved confirmed finding coverage" in e for e in self.load(parts=changed)[3]))
 
 
 if __name__ == "__main__":

@@ -5,14 +5,14 @@
 | 범위 | Topic / Concept / Question | 새 P0 / P1 / P2 |
 | --- | ---: | ---: |
 | 기존 첫5Topic 보존 | 5 / 36 / 200 | 7 / 5 / 2 |
-| 이번 잔여13Topic | 13 / 109 / 641 | 2 / 7 / 24 |
-| Java Wave4 누적 | 18 / 145 / 841 | 9 / 12 / 26 |
+| 잔여13Topic (최종 리뷰 반영) | 13 / 109 / 641 | 3 / 9 / 23 |
+| Java Wave4 누적 | 18 / 145 / 841 | 10 / 14 / 25 |
 
-계승 LEX-002 P2 1그룹은 위 새 발견과 별도다. 이번 이어서 진행한 마지막2Topic은 concurrency19C113Q 및 jvm-runtime12C75Q, 신규 P0 0/P1 1/P2 8이다. 이전 Topic의 판정·발견·Reference·SVG·probe 원본과 Wave1~3 근거를 보존했다.
+계승 LEX-002 P2 1그룹은 위 새 발견과 별도다. 최초 완료 checkpoint의 마지막2Topic은 concurrency19C113Q 및 jvm-runtime12C75Q, 당시 신규 P0 0/P1 1/P2 8이었다. 최종 리뷰의 Condition 상향으로 현재 두 Topic 집계는 P0 0/P1 2/P2 7이다. 이전 Topic의 판정·발견·Reference·SVG·probe 원본과 Wave1~3 근거를 보존했다.
 
 Java Concept KEEP116/보강29, Question KEEP804/보강34/NEEDS_REVIEW3, REWRITE_REQUIRED0. 전수 직접 읽기 근거 CURRENT_VERIFIED와 품질 KEEP을 분리한다. 전체 누적은15/15Area·134/134Topic·721/721C·2525/2525Q로 읽기 근거100%이며 미검토/partial 근거0이다. 전체 품질은 Concept KEEP592/보강129, Question KEEP2394/보강128/미확정3이다.
 
-남은 품질 미확정3Q는 streams의 java.core.streams.stream-pipeline-laziness.q2, java.core.streams.stream-reduce.q3/q5다. 실제 읽기와 관찰 probe를 완료했어도 peek elision/forEach, 순차 reduce의 비결합·identity 위반과 일반 보장 범위는 기존 근거가 확정되지 않아 KEEP으로 승격하지 않았다. 정확한 key·인용·공식 근거·확인 이유는 [streams ledger](topics/java--streams.json)의 unresolvedReviewCases를 따른다.
+[최종 리뷰 Delta](final-review-delta.md)에서 Stream P0/P1 발견과 Condition P1 상향을 반영했다. 아래 검증·완료 시점 기록은 cb14d654의 원 checkpoint이며 이번 Delta 실행 기록은 링크 문서를 따른다. 남은 품질 미확정3Q는 streams의 java.core.streams.stream-pipeline-laziness.q2, java.core.streams.stream-reduce.q3/q5다. 실제 읽기와 관찰 probe를 완료했어도 공식 Java25 계약 재확인으로 peek 출력 채점 결함 W4-JSTR-003 P0 및 reduce 계약/전제 W4-JSTR-004 P1을 확정했다. 최종 리뷰 요청에 따라 원문 품질 NEEDS_REVIEW는 교정·재채점 전 상태로 유지하며 KEEP으로 승격하지 않는다. 최초 미확정 reason/recommendation은 역사적 근거로 보존하고 contractReview/confirmedFindingIds에 현재 판단을 병기했다. 정확한 key·인용·공식 근거·확인 이유는 [streams ledger](topics/java--streams.json)의 unresolvedReviewCases를 따른다.
 
 Java Reference272관계/210URL 중256 관련 의미 검토/16 미확정이다. URL 응답·다른 Concept의 확인 상태로 관계를 승격하지 않는다. 미확정16은 Java 언어의 D2관계1, collections1, exceptions1, functional1, streams1, time1, io2, concurrency3, jvm-runtime5다. 동일 D2 URL의 서로 다른 학습 목적 관계도 각각 기록했다. 관련 문서가 확인돼도 제목/목적 오류가 있을 수 있어 qualityIssueIds와 상태를 분리한다.
 

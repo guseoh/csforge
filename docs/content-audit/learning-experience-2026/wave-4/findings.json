@@ -221,7 +221,7 @@
   },
   {
     "id": "W4-JCON-001",
-    "severity": "P2",
+    "severity": "P1",
     "contentKeys": [
       "java.core.concurrency.locks-reentrantlock-condition"
     ],
@@ -1199,6 +1199,59 @@
       201
     ],
     "sourceLine": 7,
+    "sourceFileSha256": "f5cbefc7c441f21dfe10fd3960ecd59610241a9a9dcac73dc551a55fa1189565"
+  },
+  {
+    "id": "W4-JSTR-003",
+    "severity": "P0",
+    "contentKeys": [
+      "java.core.streams.stream-pipeline-laziness.q2"
+    ],
+    "file": "content/java/streams/questions.json",
+    "quote": "`forEach`는 최종 연산이라 소스를 순회한다. `peek`의 관찰 동작도 각 원소 처리 중 호출된다.",
+    "problem": "Java 25 Stream 총론·package Side-effects는 결과에 영향을 주지 않는 중간 단계/behavioral parameter 생략을 허용한다. forEach 예외는 전달한 terminal action x -> {}의 실행에 대한 것으로 peek의 출력까지 보장하지 않는다. B |12는 기존 Temurin 관찰 결과일 뿐, C |만 출력을 규범적으로 불가능하다고 한 rationale은 잘못되었다. 단일 보장 출력 질문의 채점 결함을 P0로 확정한다. C로 정답만 교체하거나 B/C를 모두 항상 보장되는 출력이라 설명해서도 안 된다.",
+    "action": "후속 #201에서 지연 평가 목표를 유지하면서 출력을 forEachOrdered(System.out::print)의 terminal action으로 이동해 |12를 보장하도록 prompt와 전 선택지/rationale/해설을 함께 최소 수정하거나, peek 호출 보장 여부를 묻는 단일 정답 문제로 바꾼다. 원문은 NEEDS_REVIEW 유지, 수정본의 유일 정답 재검증 전 KEEP 금지.",
+    "officialEvidence": [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/stream/Stream.html",
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/stream/package-summary.html"
+    ],
+    "runtimeEvidence": "기존 제한 Temurin25 관찰 |12는 보존. 이번 delta는 공식 계약 재확인으로, |만 출력하는 구현을 실제 실행했다고 주장하지 않음.",
+    "reviewEvidence": "https://github.com/guseoh/csforge/pull/223#pullrequestreview-5519203970",
+    "followupIssues": [
+      201
+    ],
+    "sourceLine": 3,
+    "sourceFileSha256": "f5cbefc7c441f21dfe10fd3960ecd59610241a9a9dcac73dc551a55fa1189565"
+  },
+  {
+    "id": "W4-JSTR-004",
+    "severity": "P1",
+    "contentKeys": [
+      "java.core.streams.stream-reduce.q3",
+      "java.core.streams.stream-reduce.q5"
+    ],
+    "file": "content/java/streams/questions.json",
+    "quote": "순차 누적은 `((0 - 1) - 2) - 3`이므로 -6이다. 뺄셈은 결합 법칙을 만족하지 않으므로 부분 결과를 임의로 묶을 수 있는 병렬 축약의 연산으로 적합하지 않다.",
+    "additionalEvidence": [
+      {
+        "file": "content/java/streams/questions.json",
+        "quote": "순차 Stream에서는 다음 축약 연산이 항상 같은 순서로 계산되지만, 이를 병렬 Stream으로 바꾸면 결과를 신뢰하기 어렵다.  ```java int result = values.stream()         .reduce(0, (a, b) -> a - b); ```  뺄셈이 병렬 축약에 적합하지 않은 이유를 항등원과 결합 법칙 관점에서 설명하라.",
+        "sourceLine": 50,
+        "sourceFileSha256": "f5cbefc7c441f21dfe10fd3960ecd59610241a9a9dcac73dc551a55fa1189565"
+      }
+    ],
+    "problem": "reduce(identity, accumulator)의 항등원·결합법칙 요구는 순차/병렬 모두에 적용된다. 0-x != x이고 (1-2)-3=-4, 1-(2-3)=2이므로 뺄셈은 계약을 위반한다. q3의 -6은 명시 left-fold 및 기존 Temurin 관찰과 일치하지만 이를 일반 API 결과 보장으로 제시한 해설은 계약 위반을 병렬에만 한정하는 오해를 준다. q5의 항등원/결합 반례와 모범 답안 핵심은 정확하지만 순차 항상 같은 순서라는 무조건적 전제가 부적절하며, 한 줄 ```java int ... ```는 유효한 fenced code block 구성이 아니다. 동작 보장 한정과 핵심 misconception을 P1로 추적하며 임의의 다른 정답이나 예외 발생을 단정하지 않는다.",
+    "action": "후속 #201에서 q3은 명시 for-loop/left-fold 계산 질문으로 코드와 rationale/해설을 맞추거나 위반 계약 식별 질문으로 한정한다. q5는 순차·병렬 모두 API 요구를 만족해야 한다는 전제를 넣고 항상 같은 순서 표현을 삭제/한정한다. 올바른 항등원/결합 반례와 HARD 학습 목표는 유지하며 코드 fence를 독립 줄로 복구하고 실제 Reader 표시를 검증한다. 원문 두 문항 NEEDS_REVIEW 유지.",
+    "officialEvidence": [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/stream/Stream.html#reduce(T,java.util.function.BinaryOperator)",
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/stream/package-summary.html"
+    ],
+    "runtimeEvidence": "기존 제한 Temurin25 순차 -6 관찰 보존. contract violation은 컴파일 오류/반드시 exception이라는 뜻이 아니며 모든 JDK가 다른 결과를 낸다는 주장도 아님.",
+    "reviewEvidence": "https://github.com/guseoh/csforge/pull/223#pullrequestreview-5519203970",
+    "followupIssues": [
+      201
+    ],
+    "sourceLine": 19,
     "sourceFileSha256": "f5cbefc7c441f21dfe10fd3960ecd59610241a9a9dcac73dc551a55fa1189565"
   },
   {

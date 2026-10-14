@@ -60,9 +60,9 @@
     "questions": 841
   },
   "findingSeverity": {
-    "P0": 9,
-    "P1": 12,
-    "P2": 26
+    "P0": 10,
+    "P1": 14,
+    "P2": 25
   },
   "carriedFindingSeverity": {
     "P2": 1
