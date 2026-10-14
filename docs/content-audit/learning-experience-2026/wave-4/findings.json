@@ -1,0 +1,111 @@
+[
+  {
+    "id": "W4-JA-001",
+    "severity": "P0",
+    "contentKeys": [
+      "java.core.language-types.numeric-conversion-overflow",
+      "java.core.language-types.numeric-conversion-overflow.q1",
+      "java.core.language-types.numeric-conversion-overflow.q4"
+    ],
+    "file": "content/java/language-types/questions.json",
+    "quote": "`a`와 `b`가 `final`인지 여부가 원인이 아니다. 덧셈에서 적용되는 승격 규칙 때문이다.",
+    "additionalEvidence": [
+      {
+        "file": "content/java/language-types/questions.json",
+        "quote": "`int`에서 `byte`로는 더 작은 범위로 줄어드는 축소 변환이므로 대입에 명시적 형변환이 필요하다.",
+        "sourceLine": 237,
+        "sourceFileSha256": "49dbd6ba10d148eecb458f9b208ee1de4dd38ae860f9599d74c0aef4624f56d5"
+      },
+      {
+        "file": "content/java/language-types/numeric-conversion-overflow.md",
+        "quote": "반면 변수 연산은 같은 방식으로 처리되지 않습니다.",
+        "sourceLine": 67,
+        "sourceFileSha256": "2b4ba3b7c3b844644482069f4038af8553b5880267d92b80df723dc8b45c2cd0"
+      }
+    ],
+    "problem": "q1은 비상수 int 변수라는 전제 없이 int→byte 대입을 묻고 A 해설에서 cast 필수를 단정한다. byte x=42는 암시 축소가 허용된다. q4에서 final byte a=1,b=2로 바꾸면 a+b는 여전히 int이지만 값3인 상수 표현식이므로 byte c=a+b가 허용된다. final 여부가 무관하다는 해설과 본문의 모든 변수 연산 제외는 constant variable 경계를 놓친다. 핵심 승격/overflow 모델 전체는 타당하다.",
+    "action": "q1을 비상수 int 변수의 일반 대입으로 한정하고 상수 식의 범위 내 예외를 설명한다. q4 정답 A는 유지하되 D rationale와 본문의 변수 연산 한 문장을 비상수 변수/상수 변수로 구분한다. final만 붙인 모든 변수가 상수인 것으로 일반화하지 않는다.",
+    "officialEvidence": [
+      "https://docs.oracle.com/javase/specs/jls/se25/html/jls-5.html#jls-5.2",
+      "https://docs.oracle.com/javase/specs/jls/se25/html/jls-4.html#jls-4.12.4"
+    ],
+    "runtimeEvidence": "probes/LanguageTypesProbe.java: implicitNarrowing=42:3; Temurin25.0.4.1에서 컴파일/실행, 보장의 근거는 JLS.",
+    "followupIssues": [
+      201
+    ],
+    "sourceLine": 291,
+    "sourceFileSha256": "49dbd6ba10d148eecb458f9b208ee1de4dd38ae860f9599d74c0aef4624f56d5"
+  },
+  {
+    "id": "W4-JA-002",
+    "severity": "P1",
+    "contentKeys": [
+      "java.core.language-types.boxing-unboxing-wrapper.q6"
+    ],
+    "file": "content/java/language-types/questions.json",
+    "quote": "for (Integer n : values) {\n    total += n;\n}",
+    "problem": "prompt는 total의 선언 타입을 제시하지 않고 B rationale에서만 int total을 가정한다. String total=\"\"인 동일 반복문이면 +=는 문자열 연결이며 null 원소도 문자열 null로 들어가 NPE가 발생하지 않는다. D의 unboxing 결론은 수치 합계 전제에 의존한다.",
+    "action": "코드에 int total=0과 values의 Integer 컬렉션 타입/입력 전제를 명시한다. 기존 정답 D·null 산술 언박싱 설명·정확한 Concept 본문은 유지한다.",
+    "officialEvidence": [
+      "https://docs.oracle.com/javase/specs/jls/se25/html/jls-15.html#jls-15.26.2",
+      "https://docs.oracle.com/javase/specs/jls/se25/html/jls-15.html#jls-15.18.1",
+      "https://docs.oracle.com/javase/specs/jls/se25/html/jls-5.html#jls-5.1.8"
+    ],
+    "runtimeEvidence": "probe의 String total + null은 null 문자열, int total + null은 NPE로 실제 재현.",
+    "followupIssues": [
+      201
+    ],
+    "sourceLine": 384,
+    "sourceFileSha256": "49dbd6ba10d148eecb458f9b208ee1de4dd38ae860f9599d74c0aef4624f56d5"
+  },
+  {
+    "id": "W4-JA-003",
+    "severity": "P0",
+    "contentKeys": [
+      "java.core.language-types.string-immutability-equality"
+    ],
+    "file": "content/java/language-types/string-immutability-equality.md",
+    "quote": "name = name.toUpperCase();\nSystem.out.println(name); // KIM",
+    "problem": "이름 kim에 대한 인자 없는 toUpperCase는 기본 Locale을 사용한다. tr-TR에서는 i가 U+0130으로 대문자화되어 KİM이므로 Locale 전제 없는 KIM 고정 출력 주석은 일반 JDK API 보장이 아니다. 불변성/재대입 모델과 q6의 ab→AB는 맞다.",
+    "action": "이 예시에 Locale.ROOT를 명시하거나 Locale에 영향을 받지 않는 예시 문자열을 사용한다. 불변성 본문·모든 문항을 재작성하거나 locale Topic을 확장하지 않는다.",
+    "officialEvidence": [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html#toUpperCase()"
+    ],
+    "runtimeEvidence": "default tr-TR probe 결과 code points [75,304,77], Locale.ROOT는 KIM.",
+    "followupIssues": [
+      201
+    ],
+    "sourceLine": 49,
+    "sourceFileSha256": "d86e34aced3bd5eaca70d7f9e5fed9f1efa80ca3229b9bca33d839b226e468ae"
+  },
+  {
+    "id": "W4-JA-004",
+    "severity": "P1",
+    "contentKeys": [
+      "java.core.language-types.string-pool-interning",
+      "java.core.language-types.string-pool-interning.q4"
+    ],
+    "file": "content/java/language-types/questions.json",
+    "quote": "같은 문자열 풀 참조를 사용한다고 보장되지 않아 `b == \"java\"`는 `false`입니다.",
+    "additionalEvidence": [
+      {
+        "file": "content/java/language-types/string-pool-interning.md",
+        "quote": "결과의 문자열 내용은 `\"java\"`와 같지만 같은 객체라는 보장은 없습니다.",
+        "sourceLine": 94,
+        "sourceFileSha256": "c1e249c8bfa185f4868754522d324b57b0a15aa451ec85ea4126a4e4446406c8"
+      }
+    ],
+    "problem": "q4 C의 true/false는 맞지만 비보장이라는 말만으로 false를 확정할 수 없다. JLS15.18.1은 비상수 문자열 + 결과가 newly created String이라고 규정하며 JLS3.10.5 공식 예시도 runtime concat은 distinct라 설명한다. 최적화·JVM 구현에 따른 우연한 결과가 아닌 이유를 누락한다.",
+    "action": "본문의 해당 단락과 q4 explanation에 비상수 +는 새 String 객체를 만든다는 계약을 명시한다. part가 final 상수 변수라면 상수 식이 될 수 있다는 경계를 짧게 밝힌다. 정답 C와 intern/equals 모델 유지.",
+    "officialEvidence": [
+      "https://docs.oracle.com/javase/specs/jls/se25/html/jls-15.html#jls-15.18.1",
+      "https://docs.oracle.com/javase/specs/jls/se25/html/jls-3.html#jls-3.10.5"
+    ],
+    "runtimeEvidence": "probe nonfinal part 연결 false / final constantPart 연결 true. 실행은 보조이며 동일성 보장의 근거는 JLS.",
+    "followupIssues": [
+      201
+    ],
+    "sourceLine": 838,
+    "sourceFileSha256": "49dbd6ba10d148eecb458f9b208ee1de4dd38ae860f9599d74c0aef4624f56d5"
+  }
+]

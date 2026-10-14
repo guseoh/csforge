@@ -3,10 +3,16 @@
 - 초기 감사일: 2026-10-12, Wave 3: 2026-10-13 (Asia/Seoul)
 - 기준선: 최신 `origin/main` 확인 후 생성한 `audit/issue-200-learning-experience`, `efe73a15da14c996bd08344181d4d6f87073803d`
 - 범위: 15 LearningArea / 134 Topic / 721 Concept / 2,525 Question
-- Reference: 1,043 관계 / 625 고유 URL. 기존 이미지: Java 27 + OS 33 = 60 SVG(미연결 Java 자산 1개 포함).
+- Reference: 1,043 관계 / 625 고유 URL. 기존 이미지: Java 27 + OS 33 = 60 SVG, 현재 60개 모두 연결(ALT 대괄호 파서 누락을 Wave 4에서 정정).
 - [Issue #200](https://github.com/guseoh/csforge/issues/200), [Roadmap #199](https://github.com/guseoh/csforge/issues/199)
 
-## 현재 누적 결과 — Wave 3
+## 현재 누적 결과 — Wave 4 language-types (2026-10-14)
+
+[첫 Topic 결과](wave-4/README.md): **10C/55Q 전수 검토**, C KEEP6/보강4, Q KEEP51/보강4. 새 발견 P0 2/P1 2/P2 0과 기존 LEX-002 P2 1그룹을 분리한다. Reference 20관계 중 관련 의미19/미확정1, SVG4개 소스 의미 확인이며 새 render QA는 아니다. 기존 Quality PR #178의 해결 근거를 재확인하고 보존했다.
+
+누적 전수 항목 **586/721C(81.28%)·1,739/2,525Q(68.87%)·117/134 Topic**, 완료 Area14/부분 Area1. Java17 Topic/135C/786Q는 새 전수 검토가 남았고 기존 partial3C/19Q를 포함한다. 근거 NEEDS_REVIEW132C/767Q, 품질 미확정134C/767Q. [최신 summary](wave-4/summary.json), [정확한 발견/최소 후속 범위](wave-4/findings.md), [검증](wave-4/validation.md)을 따른다. Wave 4/Issue #200 전체 완료가 아니다.
+
+## Wave 3 시점의 누적 결과 — 불변 기록
 
 [Wave 3 전수 의미 검토](wave-3/README.md)에서 CA·DSA·OS·Network의 **49 Topic / 369 Concept / 1,188 Question** 전체를 직접 읽었다. 새 발견 100개 그룹은 **P0 30 / P1 27 / P2 43**, 계승 발견을 포함한 보강 대상은 55 Concept / 76 Question이다. 기존 발견 4개는 별도 계승하며 Wave 1·2 결과와 원래 근거를 보존한다. CURRENT_VERIFIED는 검토 근거 수준이며 KEEP 또는 수정 완료를 뜻하지 않는다.
 

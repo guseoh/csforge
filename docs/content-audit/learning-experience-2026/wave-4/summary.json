@@ -1,0 +1,71 @@
+{
+  "baselineSha": "efe73a15da14c996bd08344181d4d6f87073803d",
+  "wave": "Wave 4",
+  "areas": [
+    {
+      "area": "java",
+      "concepts": 10,
+      "questions": 55,
+      "currentVerifiedConcepts": 10,
+      "currentVerifiedQuestions": 55,
+      "conceptQuality": {
+        "KEEP": 6,
+        "TARGETED_ENHANCE": 4
+      },
+      "questionQuality": {
+        "KEEP": 51,
+        "TARGETED_ENHANCE": 4
+      }
+    }
+  ],
+  "allConceptQuality": {
+    "KEEP": 482,
+    "NEEDS_REVIEW": 134,
+    "TARGETED_ENHANCE": 105
+  },
+  "allQuestionQuality": {
+    "KEEP": 1659,
+    "NEEDS_REVIEW": 767,
+    "TARGETED_ENHANCE": 99
+  },
+  "allConceptEvidence": {
+    "CURRENT_PARTIAL": 3,
+    "CURRENT_VERIFIED": 586,
+    "NEEDS_REVIEW": 132
+  },
+  "allQuestionEvidence": {
+    "CURRENT_PARTIAL": 19,
+    "CURRENT_VERIFIED": 1739,
+    "NEEDS_REVIEW": 767
+  },
+  "reviewedTopics": [
+    "java.core.language-types"
+  ],
+  "totals": {
+    "topics": 1,
+    "concepts": 10,
+    "questions": 55
+  },
+  "findingSeverity": {
+    "P0": 2,
+    "P1": 2
+  },
+  "carriedFindingSeverity": {
+    "P2": 1
+  },
+  "cumulativeComplete": {
+    "areas": 14,
+    "partialAreas": 1,
+    "topics": 117,
+    "concepts": 586,
+    "questions": 1739
+  },
+  "references": {
+    "links": 20,
+    "uniqueUrls": 18,
+    "meaningEvidence": {
+      "CURRENT_VERIFIED": 19,
+      "NEEDS_REVIEW": 1
+    }
+  }
+}

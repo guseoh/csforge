@@ -3,7 +3,9 @@
     "file": "frontend/public/learning/java/array-covariance.svg",
     "url": "/learning/java/array-covariance.svg",
     "sourceSha256": "57787a8d870e04eaf72a278995621ecab051b7d834121a89614edf2928541289",
-    "linkedConcepts": [],
+    "linkedConcepts": [
+      "java.core.language-types.arrays-covariance-runtime-check"
+    ],
     "deploymentEvidence": {
       "url": "/learning/java/array-covariance.svg",
       "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/array-covariance.svg",
@@ -16,6 +18,12 @@
     },
     "visualReview": {
       "status": "NEEDS_REVIEW"
+    },
+    "sourceSemanticReview": {
+      "file": "frontend/public/learning/java/array-covariance.svg",
+      "sourceSha256": "57787a8d870e04eaf72a278995621ecab051b7d834121a89614edf2928541289",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "basis": "컴파일 Object[] 선언/Integer store 허용과 실행 String[] 실제 component 검사/ArrayStoreException의 두 단계·방향·라벨을 전체 소스로 확인. ALT의 Object[]/String[] 내부 괄호 때문에 이전 파서가 누락."
     },
     "viewBox": "0 0 980 500",
     "labels": [
@@ -745,6 +753,12 @@
       "basis": "브라우저에서 caller→A 경로가 value/B 라벨을 통과함. LEX-002. 본문 모델은 유지.",
       "checkedAt": "2026-10-12"
     },
+    "sourceSemanticReview": {
+      "file": "frontend/public/learning/java/pass-by-value.svg",
+      "sourceSha256": "5463bd75c85a0d52d521f477e91160b9746112d2cbef7e8e13c33fe44ca623fa",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "basis": "호출 전 A→호출 후 두 변수 A→매개변수 B 재대입을 읽었다. 마지막 caller 화살표 M253448H650의 parameter box 통과는 LEX-002 계승."
+    },
     "viewBox": "0 0 960 500",
     "labels": [
       "1. 호출 전",
@@ -928,6 +942,12 @@
     "visualReview": {
       "status": "NEEDS_REVIEW"
     },
+    "sourceSemanticReview": {
+      "file": "frontend/public/learning/java/stringbuilder-mutable-text.svg",
+      "sourceSha256": "c37f129c3323c17b9811ef75bfcc3dba25079652c1fb728cf933b8560c827a5b",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "basis": "String +의 중간 복사 비용 가능성과 빈 builder→append0,→toString의 흐름. grow 정책/무조건 성능을 보장하지 않으며 dark 배경/좌표 소스는 읽었으나 실제 렌더 QA 없음."
+    },
     "viewBox": "0 0 760 238",
     "labels": [
       "두 방식의 상태 변화",
@@ -960,6 +980,12 @@
     },
     "visualReview": {
       "status": "NEEDS_REVIEW"
+    },
+    "sourceSemanticReview": {
+      "file": "frontend/public/learning/java/values-and-references.svg",
+      "sourceSha256": "70de54ae02f30871d8738475d0a6307c6479dda299f51d4c5bd7aa01454abb2a",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "basis": "상단 int10 두 변수와 값 복사 화살표, 하단 first/second 화살표는 하나의 Member(name lee)로 연결. 물리 주소 표시는 없고 본문 ASCII가 상태 변화를 보완."
     },
     "viewBox": "0 0 960 440",
     "labels": [

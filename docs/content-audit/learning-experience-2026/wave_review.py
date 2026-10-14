@@ -15,6 +15,7 @@ WAVE_3_COUNTS = {
     "computer-architecture": (10, 61, 183), "dsa": (12, 84, 293),
     "operating-systems": (12, 97, 331), "network-http": (15, 127, 381),
 }
+WAVE_4_TOPICS = {"java--language-types": (1, 10, 55)}
 CONCEPT_AXES = [
     "objectiveLevelDepth", "accuracyMechanismCodeExamplesClarityBoundaries",
     "visualization", "references", "linkedQuestionCoverage",
@@ -26,16 +27,18 @@ def load_wave(out, root, baseline, read_json, sha, require, wave=1):
     """A stale or incomplete ledger fails validation instead of receiving KEEP."""
     reviews, sources, ledgers = {}, {}, {}
     counts = {1: {a: (3, 9, 27) for a in WAVE_AREAS},
-              2: WAVE_2_COUNTS, 3: WAVE_3_COUNTS}[wave]
-    paths = sorted((out / f"wave-{wave}").glob("*.json"))
+              2: WAVE_2_COUNTS, 3: WAVE_3_COUNTS, 4: WAVE_4_TOPICS}[wave]
+    folder = out / f"wave-{wave}"
+    paths = sorted((folder / "topics" if wave == 4 else folder).glob("*.json"))
     require({p.stem for p in paths} == set(counts), f"Wave {wave} area file coverage")
     for path in paths:
         data = read_json(path)
         area = data["area"]
         ledgers[area] = data
-        require(area == path.stem and data["baselineSha"] == baseline, f"Wave baseline/area: {area}")
+        require((wave == 4 and path.stem == area + "--" + data["topic"] or area == path.stem)
+                and data["baselineSha"] == baseline, f"Wave baseline/area: {area}")
         require(bool(data["reviewMethod"]), f"Wave review method: {area}")
-        topic_count, concept_count, question_count = counts.get(area, (0, 0, 0))
+        topic_count, concept_count, question_count = counts.get(path.stem, (0, 0, 0))
         require(len(data["topics"]) == topic_count, f"Wave Topic count: {area}")
         require(all(t.get("coverage") for t in data["topics"]), f"Wave Topic reasoning: {area}")
         require(sha(root / "content/curriculum" / (area + ".yaml")) == data["curriculumSha256"],
@@ -101,14 +104,19 @@ def load_wave(out, root, baseline, read_json, sha, require, wave=1):
                     f"Missing checked supporting URL: {key}")
             if key in reviews:
                 reviews[key]["supportingEvidence"] = support
+        if wave == 4:
+            probe = data["probeEvidence"]
+            require(sha(root / probe["file"]) == probe["sourceSha256"] and probe["exitCode"] == 0
+                    and bool(probe["stdout"]) and bool(probe["limits"]), "Stale/incomplete Wave 4 probe evidence")
     return reviews, sources, ledgers
 
 
 def summarize_wave(ledgers, concepts, questions, wave=1):
     rows = []
     for area in sorted(ledgers):
-        cs = [c for c in concepts if c["area"] == area]
-        qs = [q for q in questions if q["area"] == area]
+        scope = {r[0] for r in ledgers[area]["concepts"] + ledgers[area]["questions"]}
+        cs = [c for c in concepts if c["area"] == area and (wave != 4 or c["contentKey"] in scope)]
+        qs = [q for q in questions if q["area"] == area and (wave != 4 or q["contentKey"] in scope)]
         rows.append({"area": area, "concepts": len(cs), "questions": len(qs),
                      "currentVerifiedConcepts": sum(c["review"]["evidenceLevel"] == "CURRENT_VERIFIED" for c in cs),
                      "currentVerifiedQuestions": sum(q["review"]["evidenceLevel"] == "CURRENT_VERIFIED" for q in qs),

@@ -1,6 +1,6 @@
 # LearningArea별 감사 요약
 
-15 Area 전수 구조 인벤토리를 유지한다. Wave 1·2·3의 14 Area는 본문/문항 전수 직접 검토 CURRENT_VERIFIED다. Java는 새 전수 의미 검토 미완료이며 초기 샘플 CURRENT_PARTIAL과 NEEDS_REVIEW를 구분한다. 과거 PASS는 PRIOR_REVIEWED 근거로 보존한다. Wave 3 완료는 Issue #200 전체 감사 완료가 아니다.
+15 Area 전수 구조 인벤토리를 유지한다. Wave 1·2·3의 14 Area는 본문/문항 전수 직접 검토 CURRENT_VERIFIED다. Wave 4는 Java language-types 10C/55Q만 완료했으며 Java Area는 CURRENT_PARTIAL이다. 다른 Java Topic의 초기 샘플 CURRENT_PARTIAL과 NEEDS_REVIEW는 보존한다. 과거 PASS는 PRIOR_REVIEWED이며 Wave 4/Issue #200 전체 완료가 아니다.
 
 | Area | Topic | Concept | Question | 이번 본문 검토 | 이번 문항 검토 | Concept KEEP / ENHANCE / REVIEW |
 | --- | ---: | ---: | ---: | ---: | ---: | --- |
@@ -11,7 +11,7 @@
 | distributed-systems | 3 | 9 | 27 | 9 | 27 | 8 / 1 / 0 |
 | dsa | 12 | 84 | 293 | 84 | 293 | 72 / 12 / 0 |
 | infrastructure-cloud | 3 | 9 | 27 | 9 | 27 | 6 / 3 / 0 |
-| java | 18 | 145 | 841 | 4 | 25 | 0 / 2 / 143 |
+| java | 18 | 145 | 841 | 13 | 74 | 6 / 5 / 134 |
 | messaging-async | 3 | 9 | 27 | 9 | 27 | 7 / 2 / 0 |
 | network-http | 15 | 127 | 381 | 127 | 381 | 105 / 22 / 0 |
 | operating-systems | 12 | 97 | 331 | 97 | 331 | 83 / 14 / 0 |
@@ -20,7 +20,7 @@
 | spring | 12 | 37 | 77 | 37 | 77 | 33 / 4 / 0 |
 | system-design | 3 | 9 | 27 | 9 | 27 | 7 / 2 / 0 |
 
-검토 수에는 초기 샘플 CURRENT_PARTIAL도 포함한다. 누적 전수 완료는 wave-3-summary.json의 cumulativeComplete로 구별한다. wave-1-summary.json과 wave-2-summary.json은 당시 집계의 불변 snapshot이다. 근거는 review-notes.json 및 wave-1/*.json, wave-2/*.json, wave-3/*.json, 위치/연결은 inventory.json에 있다.
+검토 수에는 초기 샘플 CURRENT_PARTIAL도 포함한다. 최신 누적 전수 항목은 wave-4/summary.json의 cumulativeComplete로 구별한다. wave-1/2/3-summary.json은 당시 집계의 불변 snapshot이다. 근거는 review-notes.json 및 wave-1/2/3 ledger, wave-4/topics/*.json, 위치/연결은 inventory.json에 있다.
 
 ## backend-engineering
 
@@ -66,9 +66,9 @@ compute→network→reliability의 9 본문/27 문항을 직접 읽고 모든 �
 
 ## java
 
-값 전달/HashMap/CAS/GC 본문·Question을 읽었다. 값 복사·동등성·원자성·root 경계를 구분하는 기존 설명은 유지할 근거가 있다. CASq2 선택지와 값 전달 SVG만 선별. JVM/JMM·출처·나머지 문항의 새 전수 검토는 미완료.
+language-types만의 10 Concept 전체 본문과 55 Question의 모든 실제 필드를 직접 읽었다. MC53/Scenario1/Descriptive1의 정답/모든 선택지와 rationale/모범 답안/해설, 전제·난도·중복 목표·연결을 개별 대조했다. 코드 출력은 주로 JLS/JDK 계약과 수기 상태 추론이며 제한된 4쟁점만 Java25 probe로 실제 실행했다. source hash 자동 계산은 이미 작성한 수기 판단을 고정할 뿐 PASS를 생성하지 않는다. PR178의 수정과 기존 partial 근거를 보존하며 다른 Java Topic은 미검토다.
 
-이전 전수 Wave: [PR #178](https://github.com/guseoh/csforge/pull/178) (PRIOR_REVIEWED). 새 근거: **NEEDS_REVIEW**. 품질: **NEEDS_REVIEW**.
+이전 전수 Wave: [PR #178](https://github.com/guseoh/csforge/pull/178) (PRIOR_REVIEWED). 새 근거: **CURRENT_PARTIAL**. 품질: **NEEDS_REVIEW**.
 
 ## messaging-async
 

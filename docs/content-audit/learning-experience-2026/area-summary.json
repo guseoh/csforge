@@ -411,34 +411,37 @@
       "CORE": 101,
       "STANDARD": 44
     },
-    "figures": 26,
+    "figures": 27,
     "referenceLinks": 272,
     "uniqueReferenceUrls": 210,
     "conceptDecisions": {
-      "NEEDS_REVIEW": 143,
-      "TARGETED_ENHANCE": 2
+      "KEEP": 6,
+      "NEEDS_REVIEW": 134,
+      "TARGETED_ENHANCE": 5
     },
     "questionDecisions": {
-      "KEEP": 24,
-      "NEEDS_REVIEW": 816,
-      "TARGETED_ENHANCE": 1
+      "KEEP": 69,
+      "NEEDS_REVIEW": 767,
+      "TARGETED_ENHANCE": 5
     },
     "conceptEvidence": {
-      "CURRENT_PARTIAL": 4,
-      "NEEDS_REVIEW": 141
+      "CURRENT_PARTIAL": 3,
+      "CURRENT_VERIFIED": 10,
+      "NEEDS_REVIEW": 132
     },
     "questionEvidence": {
-      "CURRENT_PARTIAL": 25,
-      "NEEDS_REVIEW": 816
+      "CURRENT_PARTIAL": 19,
+      "CURRENT_VERIFIED": 55,
+      "NEEDS_REVIEW": 767
     },
-    "semanticReviewStatus": "NEEDS_REVIEW",
+    "semanticReviewStatus": "CURRENT_PARTIAL",
     "areaVerdict": "NEEDS_REVIEW",
     "previousWave": {
       "number": 178,
       "url": "https://github.com/guseoh/csforge/pull/178",
       "title": "content: Java LearningArea quality wave (1/15)"
     },
-    "semanticEvidence": "값 전달/HashMap/CAS/GC 본문·Question을 읽었다. 값 복사·동등성·원자성·root 경계를 구분하는 기존 설명은 유지할 근거가 있다. CASq2 선택지와 값 전달 SVG만 선별. JVM/JMM·출처·나머지 문항의 새 전수 검토는 미완료."
+    "semanticEvidence": "language-types만의 10 Concept 전체 본문과 55 Question의 모든 실제 필드를 직접 읽었다. MC53/Scenario1/Descriptive1의 정답/모든 선택지와 rationale/모범 답안/해설, 전제·난도·중복 목표·연결을 개별 대조했다. 코드 출력은 주로 JLS/JDK 계약과 수기 상태 추론이며 제한된 4쟁점만 Java25 probe로 실제 실행했다. source hash 자동 계산은 이미 작성한 수기 판단을 고정할 뿐 PASS를 생성하지 않는다. PR178의 수정과 기존 partial 근거를 보존하며 다른 Java Topic은 미검토다."
   },
   {
     "area": "messaging-async",
