@@ -44,6 +44,54 @@ Topic별 직접 검토의 새 발견과 기존 계승을 분리한다. 검토 �
 
 후속: #201
 
+### W4-JCOD-001 — P2
+
+대상: `java.core.coding-tests.priorityqueue-coding-tests`
+
+원문: [content/java/coding-tests/priorityqueue-coding-tests.md:92](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/coding-tests/priorityqueue-coding-tests.md#L92)
+
+> queue.offer(new State(newDistance, node));
+
+원문: [content/java/coding-tests/priorityqueue-coding-tests.md:28](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/coding-tests/priorityqueue-coding-tests.md#L28)
+
+> PriorityQueue<Integer> queue = new PriorityQueue<>();
+
+원문: [content/java/coding-tests/priorityqueue-coding-tests.md:103](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/coding-tests/priorityqueue-coding-tests.md#L103)
+
+> State state = queue.poll();
+
+문제: 앞서Integer queue를선언했는데후반State삽입/반환은같은queue이름을재사용하며State용큐선언을생략한다. 그대로연결하면State는Integer인자로호환되지않고pollInteger를State로받을수없다. 단독예시관점은맞지만타입전환문맥이없다.
+
+최소 보강: State예시앞에PriorityQueue<State> states와distance/node비교기전제를짧게명시하고해당두호출이름만통일. 본문heap/immutable/stale개념은유지.
+
+공식 근거: [관련 계약](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/PriorityQueue.html#offer(E)), [관련 계약](https://docs.oracle.com/javase/specs/jls/se25/html/jls-5.html#jls-5.3)
+
+실행/추론 대조: 공식 계약과 수기 코드/상태 추론; 실행 완료 주장이 아님.
+
+후속: #201
+
+### W4-JCOD-002 — P1
+
+대상: `java.core.coding-tests.priorityqueue-coding-tests.q1`
+
+원문: [content/java/coding-tests/questions.json:38](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/coding-tests/questions.json#L38)
+
+> 기본 생성한 `PriorityQueue<Integer>`의 헤드는 어떤 원소인가?
+
+원문: [content/java/coding-tests/questions.json:38](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/coding-tests/questions.json#L38)
+
+> 기본 Integer 큐는 null을 우선순위 값으로 반환하지 않는다. null은 원소 우선순위나 기본 헤드가 아니다.
+
+문제: 기본생성한큐를물으면서원소존재전제가없다. 기본생성직후empty라head원소없고peek/poll은null을반환한다. A최소원소는비어있지않은naturalInteger큐에맞고Dfeedback은null원소금지와empty반환을구분하지않아그전제를흐린다. A→D자동정답변경이나복수정답확정없이문제범위를한정해야함.
+
+최소 보강: prompt에원소가있는/defaultnaturalorder전제한문장추가하고Dfeedback에empty면조회null/저장null금지를구분. 정답A·난도·다른문항유지.
+
+공식 근거: [관련 계약](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/PriorityQueue.html#peek())
+
+실행/추론 대조: 공식 계약과 수기 코드/상태 추론; 실행 완료 주장이 아님.
+
+후속: #201
+
 ### W4-JCOL-001 — P0
 
 대상: `java.core.collections.hashmap-hashing-collision`

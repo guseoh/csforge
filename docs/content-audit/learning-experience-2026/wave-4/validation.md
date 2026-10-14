@@ -72,3 +72,7 @@
 ## io-nio checkpoint (2026-10-14)
 
 6C/35고유Q·15 Reference 관계·2SVG source와좌표를직접대조했다. 누적회귀18개/checkpoint/hash/인용/generate/--check errors/drift0/Python AST/diff PASS. 제한UTF8decoder probe는첫실행Windowsstdout인코딩실패후 숫자codepoint출력으로1회수정재실행성공. Java14Topic/100C/568Q·전체676C/2252Q;streams직접읽은품질미확정3Q유지. 기존ledger/Wave1~3/canonical/Curriculum/SVG보존. 직전 time-numeric HEAD335fbf5a595830267ced2b2530607e24a97c119c의 [CI #1222](https://github.com/guseoh/csforge/actions/runs/38540225247)는SUCCESS. 신규checkpoint CI는push HEAD에서확인한다.
+
+## coding-tests checkpoint (2026-10-14)
+
+7C/46고유Q/11관계전수근거·hash·인용을확인하고복수Concept문항중복집계없이누적했다. 회귀18개/checkpoint/generate/--check errors/drift0/Python AST/diff PASS. Java15Topic/107C/614Q·전체683C/2298Q이며streams직접읽은품질미확정3Q보존. NONE도식계약은코드·ASCII로실제목표와대조했다. 기존ledger/Wave1~3/canonical/Curriculum/SVG 무변경. 직전 io-nio HEADb00d7c8b41c7710130f9ad0f0bd4f39573480136의 [CI #1223](https://github.com/guseoh/csforge/actions/runs/38541155008)는SUCCESS. 신규checkpoint CI는push HEAD에서확인한다.

@@ -4,43 +4,44 @@
   "areas": [
     {
       "area": "java",
-      "concepts": 100,
-      "questions": 568,
-      "currentVerifiedConcepts": 100,
-      "currentVerifiedQuestions": 568,
+      "concepts": 107,
+      "questions": 614,
+      "currentVerifiedConcepts": 107,
+      "currentVerifiedQuestions": 614,
       "conceptQuality": {
-        "KEEP": 78,
-        "TARGETED_ENHANCE": 22
+        "KEEP": 84,
+        "TARGETED_ENHANCE": 23
       },
       "questionQuality": {
-        "KEEP": 541,
+        "KEEP": 586,
         "NEEDS_REVIEW": 3,
-        "TARGETED_ENHANCE": 24
+        "TARGETED_ENHANCE": 25
       }
     }
   ],
   "allConceptQuality": {
-    "KEEP": 554,
-    "NEEDS_REVIEW": 44,
-    "TARGETED_ENHANCE": 123
+    "KEEP": 560,
+    "NEEDS_REVIEW": 37,
+    "TARGETED_ENHANCE": 124
   },
   "allQuestionQuality": {
-    "KEEP": 2143,
-    "NEEDS_REVIEW": 263,
-    "TARGETED_ENHANCE": 119
+    "KEEP": 2188,
+    "NEEDS_REVIEW": 217,
+    "TARGETED_ENHANCE": 120
   },
   "allConceptEvidence": {
     "CURRENT_PARTIAL": 2,
-    "CURRENT_VERIFIED": 676,
-    "NEEDS_REVIEW": 43
+    "CURRENT_VERIFIED": 683,
+    "NEEDS_REVIEW": 36
   },
   "allQuestionEvidence": {
     "CURRENT_PARTIAL": 13,
-    "CURRENT_VERIFIED": 2252,
-    "NEEDS_REVIEW": 260
+    "CURRENT_VERIFIED": 2298,
+    "NEEDS_REVIEW": 214
   },
   "reviewedTopics": [
     "java.core.api-design",
+    "java.core.coding-tests",
     "java.core.collections",
     "java.core.design-patterns",
     "java.core.enum-modeling",
@@ -56,14 +57,14 @@
     "java.core.time-numeric"
   ],
   "totals": {
-    "topics": 14,
-    "concepts": 100,
-    "questions": 568
+    "topics": 15,
+    "concepts": 107,
+    "questions": 614
   },
   "findingSeverity": {
     "P0": 9,
-    "P1": 10,
-    "P2": 15
+    "P1": 11,
+    "P2": 16
   },
   "carriedFindingSeverity": {
     "P2": 1
@@ -71,15 +72,15 @@
   "cumulativeComplete": {
     "areas": 14,
     "partialAreas": 1,
-    "topics": 130,
-    "concepts": 676,
-    "questions": 2252
+    "topics": 131,
+    "concepts": 683,
+    "questions": 2298
   },
   "references": {
-    "links": 177,
-    "uniqueUrls": 146,
+    "links": 188,
+    "uniqueUrls": 149,
     "meaningEvidence": {
-      "CURRENT_VERIFIED": 169,
+      "CURRENT_VERIFIED": 180,
       "NEEDS_REVIEW": 8
     }
   }

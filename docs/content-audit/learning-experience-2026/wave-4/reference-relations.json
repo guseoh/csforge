@@ -3861,6 +3861,248 @@
         "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--io-nio.json",
         "reviewedAt": "2026-10-14"
       }
+    },
+    {
+      "contentKey": "java.core.coding-tests.fast-input-bufferedreader-tokenizer",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/BufferedReader.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "BufferedReader readLine개행제외/EOF무문자null·buffer계약을입력두단계에대조.",
+      "limits": "해당Concept관련절/학습목적만직접대조. 문서전문/모든snippet컴파일/성능/ReaderQA미검증;다른관계URL자동승격없음.",
+      "sourceFile": "content/java/coding-tests/fast-input-bufferedreader-tokenizer.md",
+      "sourceSha256": "716954a33faff24fd6a63ed6b653662da81083bac6f838824976a485117fd402",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/BufferedReader.html",
+        "title": "Java SE 25 API: BufferedReader",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "readLine과 buffering 계약 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--coding-tests.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.coding-tests.fast-input-bufferedreader-tokenizer",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/StringTokenizer.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "StringTokenizerlegacy/compatibility·hasMore/nextToken소진NoSuchElement를OJ고정문법문맥에대조.",
+      "limits": "해당Concept관련절/학습목적만직접대조. 문서전문/모든snippet컴파일/성능/ReaderQA미검증;다른관계URL자동승격없음.",
+      "sourceFile": "content/java/coding-tests/fast-input-bufferedreader-tokenizer.md",
+      "sourceSha256": "716954a33faff24fd6a63ed6b653662da81083bac6f838824976a485117fd402",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/StringTokenizer.html",
+        "title": "Java SE 25 API: StringTokenizer",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 2,
+        "relationNote": "delimiter 기반 token 순회 API와 legacy 성격 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--coding-tests.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.coding-tests.buffered-output-stringbuilder",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/StringBuilder.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "StringBuilder가변sequence/nosync/append메서드와마지막text전달역할을출력분리에대조.",
+      "limits": "해당Concept관련절/학습목적만직접대조. 문서전문/모든snippet컴파일/성능/ReaderQA미검증;다른관계URL자동승격없음.",
+      "sourceFile": "content/java/coding-tests/buffered-output-stringbuilder.md",
+      "sourceSha256": "4c49ea3813f47da3618d9dedb58c23cf62506abb0b3439d52110ba7b4e0c7c5b",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/StringBuilder.html",
+        "title": "Java SE 25 API: StringBuilder",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "mutable character sequence와 append API 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--coding-tests.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.coding-tests.buffered-output-stringbuilder",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/BufferedWriter.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "BufferedWriter문자buffer/flush하위/close먼저flush·newline시스템별을이출력Concept에독립대응.",
+      "limits": "해당Concept관련절/학습목적만직접대조. 문서전문/모든snippet컴파일/성능/ReaderQA미검증;다른관계URL자동승격없음.",
+      "sourceFile": "content/java/coding-tests/buffered-output-stringbuilder.md",
+      "sourceSha256": "4c49ea3813f47da3618d9dedb58c23cf62506abb0b3439d52110ba7b4e0c7c5b",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/BufferedWriter.html",
+        "title": "Java SE 25 API: BufferedWriter",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 2,
+        "relationNote": "output buffering과 flush 계약 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--coding-tests.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.coding-tests.sorting-arrays-collections",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Arrays.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "Arrays voidintsortnumeric/range[from,to)·Comparatorreferenceoverload와copy/asListprimitivearray1element를코드유형에대조.",
+      "limits": "해당Concept관련절/학습목적만직접대조. 문서전문/모든snippet컴파일/성능/ReaderQA미검증;다른관계URL자동승격없음.",
+      "sourceFile": "content/java/coding-tests/sorting-arrays-collections.md",
+      "sourceSha256": "0854b36caba15cd24b16d58081daa316f8d36659c1d38dfc3c90ce552cac2d7a",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Arrays.html",
+        "title": "Java SE 25 API: Arrays",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "primitive·reference 배열의 sort overload 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--coding-tests.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.coding-tests.sorting-arrays-collections",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "ListsortComparator순서/modifiable notnecessarilyresizable 및equalstable 계약을List변경과대조;defaultTimSort를모든언어보장으로확대없음.",
+      "limits": "해당Concept관련절/학습목적만직접대조. 문서전문/모든snippet컴파일/성능/ReaderQA미검증;다른관계URL자동승격없음.",
+      "sourceFile": "content/java/coding-tests/sorting-arrays-collections.md",
+      "sourceSha256": "0854b36caba15cd24b16d58081daa316f8d36659c1d38dfc3c90ce552cac2d7a",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html",
+        "title": "Java SE 25 API: List",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 2,
+        "relationNote": "List.sort와 Comparator 사용 계약 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--coding-tests.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.coding-tests.comparator-for-coding-tests",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Comparator.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "Comparatorcompare부호/reversed대상전체·thenComparing앞0때other/키extractor관련절을다중criteria우선순위에대조.",
+      "limits": "해당Concept관련절/학습목적만직접대조. 문서전문/모든snippet컴파일/성능/ReaderQA미검증;다른관계URL자동승격없음.",
+      "sourceFile": "content/java/coding-tests/comparator-for-coding-tests.md",
+      "sourceSha256": "267d4c6c17489751663915615aa4b8694cfe757128d1daee01bdae86a7cfeed0",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Comparator.html",
+        "title": "Java SE 25 API: Comparator",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "compare 결과, 비교 계약, comparing·thenComparing·reversed 조합 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--coding-tests.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.coding-tests.arraydeque-stack-queue",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/ArrayDeque.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "ArrayDeque끝API/nullNPE·pollFirstempty null/removeFirstNoSuchElement 및push/pop앞끝을FIFO/LIFOtrace와대조.",
+      "limits": "해당Concept관련절/학습목적만직접대조. 문서전문/모든snippet컴파일/성능/ReaderQA미검증;다른관계URL자동승격없음.",
+      "sourceFile": "content/java/coding-tests/arraydeque-stack-queue.md",
+      "sourceSha256": "634699a53b0f7fd2ff9dcaea2ebb52140dff50ef482e75730300585fb5ead45c",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/ArrayDeque.html",
+        "title": "Java SE 25 API: ArrayDeque",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "head·tail 삽입/조회/제거 API와 null 제한 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--coding-tests.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.coding-tests.priorityqueue-coding-tests",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/PriorityQueue.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "PriorityQueue leasthead/tiesarbitrary/iteratororder미보장/empty peeknull·nonnull원소계약을min/max/sequence/emptypremise에대조. 객체mutation을큐가감지한다는계약없음.",
+      "limits": "해당Concept관련절/학습목적만직접대조. 문서전문/모든snippet컴파일/성능/ReaderQA미검증;다른관계URL자동승격없음.",
+      "sourceFile": "content/java/coding-tests/priorityqueue-coding-tests.md",
+      "sourceSha256": "7e51e637813c2cb0e0c43f7be72da8d0bd02b6b4db5cf838797e9a24ab4e5d37",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/PriorityQueue.html",
+        "title": "Java SE 25 API: PriorityQueue",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "queue head, natural ordering, iterator ordering, null 제한과 시간 복잡도 계약 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--coding-tests.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.coding-tests.hashmap-hashset-counting",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/HashMap.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "HashMap getOrDefault조회noinsert/mergeabsent-or-null→value,remapnull삭제 및순서미보장을이nonnullcount예시에대조.",
+      "limits": "해당Concept관련절/학습목적만직접대조. 문서전문/모든snippet컴파일/성능/ReaderQA미검증;다른관계URL자동승격없음.",
+      "sourceFile": "content/java/coding-tests/hashmap-hashset-counting.md",
+      "sourceSha256": "e82ccfaf5d5bb50a07f03940c95978dfa1ee778f860a9d6550eed9e0b704ff05",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/HashMap.html",
+        "title": "Java SE 25 API: HashMap",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "getOrDefault·merge를 포함한 Map 동작 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--coding-tests.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.coding-tests.hashmap-hashset-counting",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/HashSet.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "HashSetadd return집합변경·equals관점새원소/iterationorder없음을visited·recordkey값목적에대조.",
+      "limits": "해당Concept관련절/학습목적만직접대조. 문서전문/모든snippet컴파일/성능/ReaderQA미검증;다른관계URL자동승격없음.",
+      "sourceFile": "content/java/coding-tests/hashmap-hashset-counting.md",
+      "sourceSha256": "e82ccfaf5d5bb50a07f03940c95978dfa1ee778f860a9d6550eed9e0b704ff05",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/HashSet.html",
+        "title": "Java SE 25 API: HashSet",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 2,
+        "relationNote": "add·contains와 Set uniqueness 계약 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--coding-tests.json",
+        "reviewedAt": "2026-10-14"
+      }
     }
   ],
   "supportingRelations": [
