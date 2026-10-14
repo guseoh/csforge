@@ -948,6 +948,12 @@
     "visualReview": {
       "status": "NEEDS_REVIEW"
     },
+    "sourceSemanticReview": {
+      "file": "frontend/public/learning/java/stream-pipeline.svg",
+      "sourceSha256": "fab61ae31f178d686161467c108fe4e65ec4f470b978c3ad0c300dd4003bba1e",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "basis": "760×210전체source/title/desc/rect/text/화살표경로를읽음. Source34..170/filter226..362/map418..554/collect610..726분리와terminal평가라벨은본문lazy모델일치. render/mobile/theme QA미완료."
+    },
     "viewBox": "0 0 760 210",
     "labels": [
       "중간 연산은 선을 그리고, terminal 연산이 흐르게 한다",

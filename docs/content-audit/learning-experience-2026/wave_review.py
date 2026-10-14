@@ -1,6 +1,7 @@
 """Validate and index handwritten wave evidence; never infer a quality verdict."""
 
 from collections import Counter
+import json
 
 import yaml
 
@@ -21,7 +22,7 @@ WAVE_4_TOPICS = {"java--language-types": (1, 10, 55), "java--object-model": (1, 
                  "java--api-design": (1, 5, 28), "java--object-contracts": (1, 5, 31), "java--enum-modeling": (1, 4, 18),
                  "java--design-patterns": (1, 8, 40), "java--collections": (1, 9, 51),
                  "java--generics": (1, 6, 37), "java--exceptions-resources": (1, 8, 46),
-                 "java--functional": (1, 5, 33)}
+                 "java--functional": (1, 5, 33), "java--streams": (1, 7, 41)}
 CONCEPT_AXES = [
     "objectiveLevelDepth", "accuracyMechanismCodeExamplesClarityBoundaries",
     "visualization", "references", "linkedQuestionCoverage",
@@ -154,6 +155,19 @@ def load_wave(out, root, baseline, read_json, sha, require, wave=1):
                 }
         require(set(data["sourceHashes"]) == {r[0] for r in data["concepts"] + data["questions"]},
                 f"Wave source hash key coverage: {area}")
+        if "unresolvedReviewCases" in data:
+            cases = data["unresolvedReviewCases"]
+            expected = {r[0] for r in data["questions"] if r[1] == "NEEDS_REVIEW"}
+            require(len(cases) == len(expected) and {c["contentKey"] for c in cases} == expected,
+                    f"Unresolved review coverage: {path.stem}")
+            questions = json.loads((root / "content" / area / data["topic"] / "questions.json").read_text(encoding="utf-8"))
+            prompts = {q["contentKey"]: q["promptMarkdown"] for q in questions}
+            for case in cases:
+                require(case["qualityVerdict"] == "NEEDS_REVIEW" and bool(case["reason"])
+                        and bool(case["officialEvidence"]) and bool(case["recommendation"]),
+                        f"Unresolved review reasoning: {case['contentKey']}")
+                require(case["sourceQuote"] == prompts.get(case["contentKey"]),
+                        f"Unresolved review quote mismatch: {case['contentKey']}")
         for url, evidence, basis in data["sources"]:
             require(evidence in {"CURRENT_VERIFIED", "NEEDS_REVIEW"} and bool(basis), f"Wave source evidence: {url}")
             entry = {"evidenceLevel": evidence, "basis": basis, "area": area,

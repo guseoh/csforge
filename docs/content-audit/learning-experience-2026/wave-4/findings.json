@@ -715,5 +715,62 @@
     ],
     "sourceLine": 18,
     "sourceFileSha256": "61b0f37de0a721795947d8c3b199fcf23cd4d5b0dad78ad411fc48801f55738c"
+  },
+  {
+    "id": "W4-JSTR-001",
+    "severity": "P2",
+    "contentKeys": [
+      "java.core.streams.tomap-duplicate-keys"
+    ],
+    "file": "content/java/streams/tomap-duplicate-keys.md",
+    "quote": "최신 값을 유지하려면 `second`를 선택할 수도 있습니다.",
+    "additionalEvidence": [
+      {
+        "file": "content/java/streams/tomap-duplicate-keys.md",
+        "quote": "Map<String, Order> latestByUser = orders.stream()",
+        "sourceLine": 79,
+        "sourceFileSha256": "71706e5091c89581f7abd46f30e3b1c5d40dd88d81504f9275e36d49ada07c13"
+      }
+    ],
+    "problem": "second/newOrder선택은입력에서나중에만난값일뿐시간상최신Order라는보장은없다. latestByUser이름과최신값표현에시간정렬입력전제가빠져있다. 마지막문단은최신시각비교필요를이미설명하므로그구분을예시와연결하는최소보강이다.",
+    "action": "입력이시간순정렬되었다는전제또는lastEncountered명칭을짧게추가. 최신시각비교가목표면명시시각기준merge를후속#201에서한정. 5Q의올바른new/last정답은유지.",
+    "officialEvidence": [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/stream/Collectors.html#toMap(java.util.function.Function,java.util.function.Function,java.util.function.BinaryOperator)"
+    ],
+    "runtimeEvidence": "명시Order(time20),Order(time10)입력의new승자time10. 시각최댓값자동선택아님을보이는제한반례.",
+    "followupIssues": [
+      201
+    ],
+    "sourceLine": 41,
+    "sourceFileSha256": "71706e5091c89581f7abd46f30e3b1c5d40dd88d81504f9275e36d49ada07c13"
+  },
+  {
+    "id": "W4-JSTR-002",
+    "severity": "P2",
+    "contentKeys": [
+      "java.core.streams.stream-map-filter-flatmap.q3",
+      "java.core.streams.stream-pipeline-laziness.q6"
+    ],
+    "file": "content/java/streams/questions.json",
+    "quote": "`filter`는 소스를 영구 수정하거나 삭제하지 않는다. 스트림 파이프라인에서 통과 여부를 판단한다.",
+    "additionalEvidence": [
+      {
+        "file": "content/java/streams/questions.json",
+        "quote": "비어 있는 리스트를 걸러도 비어 있지 않은 내부 리스트를 평탄화하지 않는다. 결과 구조가 그대로 중첩된다.",
+        "sourceLine": 12,
+        "sourceFileSha256": "f5cbefc7c441f21dfe10fd3960ecd59610241a9a9dcac73dc551a55fa1189565"
+      }
+    ],
+    "problem": "pipeline.q6 A는map소스삭제인데feedback은filter를반박한다. map-filter.q3 C의filter(List::isEmpty)는빈list만남기는데해설은빈list를제거하고비어있지않은list가남는것처럼설명한다. 정답B/A와전체해설은정확하며두오답feedback만엇갈린다.",
+    "action": "첫A는map도소스를영구삭제하는연산아님을설명. 둘째C는빈list만선택해도중첩구조유지/평탄화목적실패라고두문장만교정. 정답·본문·난도유지.",
+    "officialEvidence": [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/stream/Stream.html#filter(java.util.function.Predicate)"
+    ],
+    "runtimeEvidence": "제한probe isEmptyFilter=[[]]로빈list선택확인.",
+    "followupIssues": [
+      201
+    ],
+    "sourceLine": 7,
+    "sourceFileSha256": "f5cbefc7c441f21dfe10fd3960ecd59610241a9a9dcac73dc551a55fa1189565"
   }
 ]

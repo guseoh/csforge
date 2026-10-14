@@ -176,6 +176,20 @@ class AccumulationChecks(unittest.TestCase):
         self.assertTrue(any("Supporting Reference relation coverage" in e for e in errors))
         self.assertTrue(any("Unverified supporting URL relation" in e for e in errors))
 
+    def test_unresolved_quality_is_preserved_and_requires_exact_reasoning(self):
+        reviews, _, _, errors = self.load()
+        self.assertEqual(errors, [])
+        part = self.parts["java--streams"]
+        for case in part["unresolvedReviewCases"]:
+            self.assertEqual(reviews[case["contentKey"]]["qualityDecision"], "NEEDS_REVIEW")
+        changed = copy.deepcopy(self.parts)
+        changed["java--streams"]["unresolvedReviewCases"][0]["sourceQuote"] = "Not the actual prompt"
+        self.assertTrue(any("Unresolved review quote mismatch" in e for e in self.load(parts=changed)[3]))
+        changed = copy.deepcopy(self.parts)
+        key = part["unresolvedReviewCases"][0]["contentKey"]
+        next(row for row in changed["java--streams"]["questions"] if row[0] == key)[1] = "KEEP"
+        self.assertTrue(any("Unresolved review coverage" in e for e in self.load(parts=changed)[3]))
+
 
 if __name__ == "__main__":
     unittest.main()

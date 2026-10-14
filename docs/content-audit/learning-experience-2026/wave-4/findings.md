@@ -556,6 +556,50 @@ Topic별 직접 검토의 새 발견과 기존 계승을 분리한다. 검토 �
 
 후속: #201, #222
 
+### W4-JSTR-001 — P2
+
+대상: `java.core.streams.tomap-duplicate-keys`
+
+원문: [content/java/streams/tomap-duplicate-keys.md:41](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/streams/tomap-duplicate-keys.md#L41)
+
+> 최신 값을 유지하려면 `second`를 선택할 수도 있습니다.
+
+원문: [content/java/streams/tomap-duplicate-keys.md:79](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/streams/tomap-duplicate-keys.md#L79)
+
+> Map<String, Order> latestByUser = orders.stream()
+
+문제: second/newOrder선택은입력에서나중에만난값일뿐시간상최신Order라는보장은없다. latestByUser이름과최신값표현에시간정렬입력전제가빠져있다. 마지막문단은최신시각비교필요를이미설명하므로그구분을예시와연결하는최소보강이다.
+
+최소 보강: 입력이시간순정렬되었다는전제또는lastEncountered명칭을짧게추가. 최신시각비교가목표면명시시각기준merge를후속#201에서한정. 5Q의올바른new/last정답은유지.
+
+공식 근거: [관련 계약](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/stream/Collectors.html#toMap(java.util.function.Function,java.util.function.Function,java.util.function.BinaryOperator))
+
+실행/추론 대조: 명시Order(time20),Order(time10)입력의new승자time10. 시각최댓값자동선택아님을보이는제한반례.
+
+후속: #201
+
+### W4-JSTR-002 — P2
+
+대상: `java.core.streams.stream-map-filter-flatmap.q3`, `java.core.streams.stream-pipeline-laziness.q6`
+
+원문: [content/java/streams/questions.json:7](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/streams/questions.json#L7)
+
+> `filter`는 소스를 영구 수정하거나 삭제하지 않는다. 스트림 파이프라인에서 통과 여부를 판단한다.
+
+원문: [content/java/streams/questions.json:12](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/streams/questions.json#L12)
+
+> 비어 있는 리스트를 걸러도 비어 있지 않은 내부 리스트를 평탄화하지 않는다. 결과 구조가 그대로 중첩된다.
+
+문제: pipeline.q6 A는map소스삭제인데feedback은filter를반박한다. map-filter.q3 C의filter(List::isEmpty)는빈list만남기는데해설은빈list를제거하고비어있지않은list가남는것처럼설명한다. 정답B/A와전체해설은정확하며두오답feedback만엇갈린다.
+
+최소 보강: 첫A는map도소스를영구삭제하는연산아님을설명. 둘째C는빈list만선택해도중첩구조유지/평탄화목적실패라고두문장만교정. 정답·본문·난도유지.
+
+공식 근거: [관련 계약](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/stream/Stream.html#filter(java.util.function.Predicate))
+
+실행/추론 대조: 제한probe isEmptyFilter=[[]]로빈list선택확인.
+
+후속: #201
+
 ## 기존 계승
 
 ### LEX-002 — P2
