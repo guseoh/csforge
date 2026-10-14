@@ -2529,6 +2529,182 @@
         "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--exceptions-resources.json",
         "reviewedAt": "2026-10-14"
       }
+    },
+    {
+      "contentKey": "java.core.functional.functional-interface",
+      "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-9.html#jls-9.8",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "JLS9.8 notsealed/단일논리추상계약/Objectpublic예외·override-equivalent상속과annotation검증의관련절을SAM판단목표에대조.",
+      "limits": "해당Concept관련절/표준역할의학습의미만대조. 전문/전수snippet실행/ReaderQA아님;D2는본문미확정.",
+      "sourceFile": "content/java/functional/functional-interface.md",
+      "sourceSha256": "5a01513e7c118af9cb022f472ee7df1eb044eaa763d0742731cd8b2ae75f1fee",
+      "reference": {
+        "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-9.html#jls-9.8",
+        "title": "JLS 9.8 Functional Interfaces",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "함수형 인터페이스의 언어 규칙 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--functional.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.functional.functional-interface",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/function/package-summary.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "functionpackage의Function T→R/Consumer T→void/Predicate T→boolean/Supplier 무입력및Unary/Binary역할을본문표에개별대조.",
+      "limits": "해당Concept관련절/표준역할의학습의미만대조. 전문/전수snippet실행/ReaderQA아님;D2는본문미확정.",
+      "sourceFile": "content/java/functional/functional-interface.md",
+      "sourceSha256": "5a01513e7c118af9cb022f472ee7df1eb044eaa763d0742731cd8b2ae75f1fee",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/function/package-summary.html",
+        "title": "Java SE 25 API: java.util.function",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 2,
+        "relationNote": "표준 함수형 인터페이스 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--functional.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.functional.behavior-parameterization",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/function/package-summary.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "동일package의Predicate원소조건과Function입출력/Consumer부수효과형태를filter고정순회/변동동작역할에다시관계별대조. 다른Concept의동일URL확인상태를복사하지않음.",
+      "limits": "해당Concept관련절/표준역할의학습의미만대조. 전문/전수snippet실행/ReaderQA아님;D2는본문미확정.",
+      "sourceFile": "content/java/functional/behavior-parameterization.md",
+      "sourceSha256": "194126192ca63fa1673dac3ebc29557fd4d08db0fc285f9f128a632b297a6afb",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/function/package-summary.html",
+        "title": "Java SE 25 API: java.util.function",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "행동 전달에 사용할 표준 함수형 인터페이스 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--functional.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.functional.behavior-parameterization",
+      "url": "https://d2.naver.com/helloworld/4911107",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "D2응답21행shell이라람다/invokedynamic보조기사본문과학습가치미확정. invokedynamic를언어일반보장으로승격하지않음.",
+      "limits": "해당Concept관련절/표준역할의학습의미만대조. 전문/전수snippet실행/ReaderQA아님;D2는본문미확정.",
+      "sourceFile": "content/java/functional/behavior-parameterization.md",
+      "sourceSha256": "194126192ca63fa1673dac3ebc29557fd4d08db0fc285f9f128a632b297a6afb",
+      "reference": {
+        "url": "https://d2.naver.com/helloworld/4911107",
+        "title": "네이버 D2: 람다가 이끌어 갈 모던 Java",
+        "referenceType": "COMPANY_TECH_BLOG",
+        "language": "ko",
+        "displayOrder": 2,
+        "relationNote": "람다와 invokedynamic의 연결을 읽을 수 있는 보조 자료"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--functional.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.functional.lambda-target-typing",
+      "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-15.html#jls-15.27",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "JLS15.27 polytarget문맥/추론된parameter/groundtargetcongruence/checkedthrows를String.lengthboxing·Loader·vartarget없음에대조.",
+      "limits": "해당Concept관련절/표준역할의학습의미만대조. 전문/전수snippet실행/ReaderQA아님;D2는본문미확정.",
+      "sourceFile": "content/java/functional/lambda-target-typing.md",
+      "sourceSha256": "3a8de01e8efcf3c459bb60be970d208b6577b1fe8d8af90cda00434d6b9744b6",
+      "reference": {
+        "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-15.html#jls-15.27",
+        "title": "JLS 15.27 Lambda Expressions",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "lambda와 target typing 규칙 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--functional.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.functional.lambda-capture-effectively-final",
+      "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-15.html#jls-15.27.2",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "JLS15.27.2 lexicalthis/외부local·formal·exceptionparameterfinal또는effectivelyfinal/definitelyassigned를minimum재대입·sameList·loopindex에대조. 메모리구현세부는이계약아님.",
+      "limits": "해당Concept관련절/표준역할의학습의미만대조. 전문/전수snippet실행/ReaderQA아님;D2는본문미확정.",
+      "sourceFile": "content/java/functional/lambda-capture-effectively-final.md",
+      "sourceSha256": "985c6a950de88df24c5444bdb6e7debf9f04c82ab3fb4f1261dcd249af2e47fd",
+      "reference": {
+        "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-15.html#jls-15.27.2",
+        "title": "JLS 15.27.2 Lambda Body",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "lambda에서 지역 변수 캡처와 effectively final 관련 규칙 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--functional.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.functional.method-reference-functional-composition",
+      "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-15.html#jls-15.13",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "JLS15.13의bound/unboundreceiver/static/constructor/targetpoly와참조평가≠method실행을String::trim등4형태에대조.",
+      "limits": "해당Concept관련절/표준역할의학습의미만대조. 전문/전수snippet실행/ReaderQA아님;D2는본문미확정.",
+      "sourceFile": "content/java/functional/method-reference-functional-composition.md",
+      "sourceSha256": "813a914519d42e25cac592d5f1abdcdc707523bb6245443ea01b04fb963e8e72",
+      "reference": {
+        "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-15.html#jls-15.13",
+        "title": "JLS 15.13 Method Reference Expressions",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "메서드 참조 표현식 규칙 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--functional.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.functional.method-reference-functional-composition",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/function/Predicate.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "Predicate API and/or는short-circuit/negate는logicalnot,예외caller전파를paid.and(expensive)의조건합성에대조. FunctionandThen보장은별도보조API.",
+      "limits": "해당Concept관련절/표준역할의학습의미만대조. 전문/전수snippet실행/ReaderQA아님;D2는본문미확정.",
+      "sourceFile": "content/java/functional/method-reference-functional-composition.md",
+      "sourceSha256": "813a914519d42e25cac592d5f1abdcdc707523bb6245443ea01b04fb963e8e72",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/function/Predicate.html",
+        "title": "Java SE 25 API: Predicate",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 2,
+        "relationNote": "and/or/negate 조합 API 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--functional.json",
+        "reviewedAt": "2026-10-14"
+      }
     }
   ],
   "supportingRelations": [

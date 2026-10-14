@@ -113,6 +113,33 @@
   },
   {
     "area": "java",
+    "contentKey": "java.core.functional.behavior-parameterization",
+    "file": "content/java/functional/behavior-parameterization.md",
+    "url": "https://d2.naver.com/helloworld/4911107",
+    "title": "네이버 D2: 람다가 이끌어 갈 모던 Java",
+    "referenceType": "COMPANY_TECH_BLOG",
+    "language": "ko",
+    "displayOrder": 2,
+    "relationNote": "람다와 invokedynamic의 연결을 읽을 수 있는 보조 자료",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "area": "java",
+      "topicKey": "java.core.functional",
+      "contentKey": "java.core.functional.behavior-parameterization",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-4/reference-relations.json",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "D2응답21행shell이라람다/invokedynamic보조기사본문과학습가치미확정. invokedynamic를언어일반보장으로승격하지않음.",
+      "limits": "해당Concept관련절/표준역할의학습의미만대조. 전문/전수snippet실행/ReaderQA아님;D2는본문미확정.",
+      "sourceSha256": "194126192ca63fa1673dac3ebc29557fd4d08db0fc285f9f128a632b297a6afb",
+      "qualityIssueIds": []
+    },
+    "priorVerification": {
+      "status": "NEEDS_REVIEW",
+      "basis": "이번 감사에서 미접근. 기존 Wave의 출처 확인 근거 보존; URL 존재만으로 학습 가치를 판정하지 않는다."
+    }
+  },
+  {
+    "area": "java",
     "contentKey": "java.core.language-types.primitive-reference-values",
     "file": "content/java/language-types/primitive-reference-values.md",
     "url": "https://d2.naver.com/helloworld/329631",

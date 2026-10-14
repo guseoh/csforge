@@ -4,39 +4,39 @@
   "areas": [
     {
       "area": "java",
-      "concepts": 67,
-      "questions": 374,
-      "currentVerifiedConcepts": 67,
-      "currentVerifiedQuestions": 374,
+      "concepts": 72,
+      "questions": 407,
+      "currentVerifiedConcepts": 72,
+      "currentVerifiedQuestions": 407,
       "conceptQuality": {
-        "KEEP": 47,
+        "KEEP": 52,
         "TARGETED_ENHANCE": 20
       },
       "questionQuality": {
-        "KEEP": 360,
-        "TARGETED_ENHANCE": 14
+        "KEEP": 391,
+        "TARGETED_ENHANCE": 16
       }
     }
   ],
   "allConceptQuality": {
-    "KEEP": 523,
-    "NEEDS_REVIEW": 77,
+    "KEEP": 528,
+    "NEEDS_REVIEW": 72,
     "TARGETED_ENHANCE": 121
   },
   "allQuestionQuality": {
-    "KEEP": 1962,
-    "NEEDS_REVIEW": 454,
-    "TARGETED_ENHANCE": 109
+    "KEEP": 1993,
+    "NEEDS_REVIEW": 421,
+    "TARGETED_ENHANCE": 111
   },
   "allConceptEvidence": {
     "CURRENT_PARTIAL": 2,
-    "CURRENT_VERIFIED": 643,
-    "NEEDS_REVIEW": 76
+    "CURRENT_VERIFIED": 648,
+    "NEEDS_REVIEW": 71
   },
   "allQuestionEvidence": {
     "CURRENT_PARTIAL": 13,
-    "CURRENT_VERIFIED": 2058,
-    "NEEDS_REVIEW": 454
+    "CURRENT_VERIFIED": 2091,
+    "NEEDS_REVIEW": 421
   },
   "reviewedTopics": [
     "java.core.api-design",
@@ -44,20 +44,21 @@
     "java.core.design-patterns",
     "java.core.enum-modeling",
     "java.core.exceptions-resources",
+    "java.core.functional",
     "java.core.generics",
     "java.core.language-types",
     "java.core.object-contracts",
     "java.core.object-model"
   ],
   "totals": {
-    "topics": 9,
-    "concepts": 67,
-    "questions": 374
+    "topics": 10,
+    "concepts": 72,
+    "questions": 407
   },
   "findingSeverity": {
     "P0": 9,
     "P1": 9,
-    "P2": 8
+    "P2": 9
   },
   "carriedFindingSeverity": {
     "P2": 1
@@ -65,16 +66,16 @@
   "cumulativeComplete": {
     "areas": 14,
     "partialAreas": 1,
-    "topics": 125,
-    "concepts": 643,
-    "questions": 2058
+    "topics": 126,
+    "concepts": 648,
+    "questions": 2091
   },
   "references": {
-    "links": 117,
-    "uniqueUrls": 97,
+    "links": 125,
+    "uniqueUrls": 104,
     "meaningEvidence": {
-      "CURRENT_VERIFIED": 114,
-      "NEEDS_REVIEW": 3
+      "CURRENT_VERIFIED": 121,
+      "NEEDS_REVIEW": 4
     }
   }
 }

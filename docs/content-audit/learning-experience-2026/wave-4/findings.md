@@ -283,6 +283,28 @@ Topic별 직접 검토의 새 발견과 기존 계승을 분리한다. 검토 �
 
 후속: #201
 
+### W4-JFUN-001 — P2
+
+대상: `java.core.functional.behavior-parameterization.q3`, `java.core.functional.method-reference-functional-composition.q1`
+
+원문: [content/java/functional/questions.json:9](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/functional/questions.json#L9)
+
+> Function은 입력과 결과 타입이 명시된 동작이다. 인자 없는 부수 효과 계약은 Runnable/Consumer와 구별된다.
+
+원문: [content/java/functional/questions.json:27](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/functional/questions.json#L27)
+
+> `String`은 타입 이름이지 람다 매개변수가 아니며, `trim(String)`이라는 정적 API도 없습니다. 인스턴스 수신 객체와 호출 형태를 혼동했습니다.
+
+문제: behavior.q3 D rationale은인자없는부수효과를Runnable/Consumer라고묶지만Consumer는T입력하나를받는다. method-reference.q1 D rationale은String이type이름이어서lambda매개변수가될수없다고하지만String이라는대문자식별자는유효parameter이름이다. trim(String)helper미제시/표준String.trim은instance메서드라는이유로반박해야한다. 두정답C와본문표준타입/참조설명은맞다.
+
+최소 보강: 두오답feedback만Runnable무인자/Consumer입력T와유효식별자vs미제시helper·instance호출로교정. 정답/난도/본문유지.
+
+공식 근거: [관련 계약](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/function/Consumer.html), [관련 계약](https://docs.oracle.com/javase/specs/jls/se25/html/jls-15.html#jls-15.27.1)
+
+실행/추론 대조: 명시trimhelper를추가한probe에서Function<String,String> f=String -> trim(String)컴파일/실행java. 이helper가원문에존재하거나D를정답으로인정한다는주장은아님. Consumer.accept(input)호출확인.
+
+후속: #201
+
 ### W4-JGEN-001 — P1
 
 대상: `java.core.generics.type-erasure-reifiable-types`

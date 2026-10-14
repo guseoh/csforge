@@ -52,3 +52,7 @@
 ## exceptions-resources checkpoint (2026-10-14)
 
 8C/46Q의 수기 근거·hash·발견 인용/12 Reference 관계/1SVG source를 확인했다. 회귀17개 PASS, generate/--check errors/drift0, checkpoint PASS. Java9Topic/67C/374Q·전체643C/2058Q를 재집계했으며 기존 ledger/Wave1~3 변경은 없다. 명시된 helper 반례와 null 매핑의 제한 Java probe가 성공했다. 직전 generics HEAD35f4b037cc609e5908214fa2d78ff13cb72ffa93의 [CI #1217](https://github.com/guseoh/csforge/actions/runs/38533596230)는 SUCCESS: Backend tests/build, Frontend/Compose 성공, Cloud Run 배포 skipped. 신규 checkpoint CI는 push HEAD에서 확인한다.
+
+## functional checkpoint (2026-10-14)
+
+5C/33Q 개별 근거·hash·발견 인용과8 Reference 관계를 확인했다. 회귀17개 PASS, generate/--check errors/drift0, checkpoint PASS. Java10Topic/72C/407Q·전체648C/2091Q를 재집계했다. 제한 probe는 대문자 parameter 이름과 Consumer 입력만 확인한다. 기존 ledger/Wave1~3 및 canonical/Curriculum/SVG 변경은 없다. 직전 exceptions-resources HEAD55a045e572965bcc1e868bb1232cf1ca8c4b3b33의 [CI #1218](https://github.com/guseoh/csforge/actions/runs/38534798523)는 SUCCESS: Backend tests/build, Frontend/Compose 성공, 배포 skipped. 신규 checkpoint CI는 push HEAD에서 확인한다.
