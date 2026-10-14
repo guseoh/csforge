@@ -286,5 +286,40 @@
       "status": "NEEDS_REVIEW",
       "basis": "이번 감사에서 미접근. 기존 Wave의 출처 확인 근거 보존; URL 존재만으로 학습 가치를 판정하지 않는다."
     }
+  },
+  {
+    "area": "java",
+    "contentKey": "java.core.time-numeric.instant-local-zoned-time",
+    "file": "content/java/time-numeric/instant-local-zoned-time.md",
+    "url": "https://d2.naver.com/helloworld/645609",
+    "title": "네이버 D2: Java의 날짜와 시간 API",
+    "referenceType": "COMPANY_TECH_BLOG",
+    "language": "ko",
+    "displayOrder": 3,
+    "relationNote": "Java 날짜·시간 API가 local time과 timezone-aware time을 분리한 배경을 한국어로 함께 확인",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "area": "java",
+      "topicKey": "java.core.time-numeric",
+      "contentKey": "java.core.time-numeric.instant-local-zoned-time",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-4/reference-relations.json",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "D2직접open은메뉴/search shell21행만노출. local/aware배경글 본문·예시 의미 확인불가;broken으로확정하지않음.",
+      "limits": "한 Concept의 관련 절·학습 목적 직접 대조만. 문서 전문/모든snippet실행/ReaderQA 미검증; 공유URL의다른Concept 자동승격없음.",
+      "sourceSha256": "4a5ebcab0dec8273ca30b071114af59db7e875d0a08cb63e5512a21c433a3918",
+      "accessVerification": {
+        "status": "NEEDS_REVIEW",
+        "basis": "직접open응답D2 shell,날짜/time본문미확인;404broken판정아님."
+      },
+      "qualityIssueIds": []
+    },
+    "priorVerification": {
+      "status": "NEEDS_REVIEW",
+      "basis": "이번 감사에서 미접근. 기존 Wave의 출처 확인 근거 보존; URL 존재만으로 학습 가치를 판정하지 않는다."
+    },
+    "accessVerification": {
+      "status": "NEEDS_REVIEW",
+      "basis": "직접open응답D2 shell,날짜/time본문미확인;404broken판정아님."
+    }
   }
 ]

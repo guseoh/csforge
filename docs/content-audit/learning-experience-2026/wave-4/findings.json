@@ -810,5 +810,24 @@
     ],
     "sourceLine": 7,
     "sourceFileSha256": "f5cbefc7c441f21dfe10fd3960ecd59610241a9a9dcac73dc551a55fa1189565"
+  },
+  {
+    "id": "W4-JTIME-001",
+    "severity": "P2",
+    "contentKeys": [
+      "java.core.time-numeric.bigdecimal-money-rounding.q2"
+    ],
+    "file": "content/java/time-numeric/questions.json",
+    "quote": "BigDecimal은 equals를 상속해 제공하며 Comparable.compareTo도 가진다. 각 API의 계약 차이를 알아야 한다.",
+    "problem": "D feedback은BigDecimal이equals를상속해제공한다고하지만API는Object.equals재정의를명시한다. 같은문항정답C/본문의value+scale동등성은정확;override와identity상속을구별해야한다.",
+    "action": "D rationale의상속을재정의로최소교정하고정답·난도·본문은유지.",
+    "officialEvidence": [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/math/BigDecimal.html#equals(java.lang.Object)"
+    ],
+    "followupIssues": [
+      201
+    ],
+    "sourceLine": 36,
+    "sourceFileSha256": "081094c253096cb4b88c0cfea89ee88d2d77303f1f07693663069cb8a6571ce6"
   }
 ]

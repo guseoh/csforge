@@ -626,6 +626,24 @@ Topic별 직접 검토의 새 발견과 기존 계승을 분리한다. 검토 �
 
 후속: #201
 
+### W4-JTIME-001 — P2
+
+대상: `java.core.time-numeric.bigdecimal-money-rounding.q2`
+
+원문: [content/java/time-numeric/questions.json:36](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/time-numeric/questions.json#L36)
+
+> BigDecimal은 equals를 상속해 제공하며 Comparable.compareTo도 가진다. 각 API의 계약 차이를 알아야 한다.
+
+문제: D feedback은BigDecimal이equals를상속해제공한다고하지만API는Object.equals재정의를명시한다. 같은문항정답C/본문의value+scale동등성은정확;override와identity상속을구별해야한다.
+
+최소 보강: D rationale의상속을재정의로최소교정하고정답·난도·본문은유지.
+
+공식 근거: [관련 계약](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/math/BigDecimal.html#equals(java.lang.Object))
+
+실행/추론 대조: 공식 계약과 수기 코드/상태 추론; 실행 완료 주장이 아님.
+
+후속: #201
+
 ## 기존 계승
 
 ### LEX-002 — P2

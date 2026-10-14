@@ -64,3 +64,7 @@
 ## modern-language checkpoint (2026-10-14)
 
 8C/43Q의 개별 근거·hash·인용 및13 Reference 관계를 대조했다. 회귀18개 PASS, generate/--check errors/drift0, checkpoint PASS, Python AST/diff 검사 성공. Java12Topic/87C/491Q·전체663C/2175Q다. 기존 streams의 품질 미확정3Q, 앞선 ledger/Reference/Wave1~3/canonical/Curriculum/SVG는 보존한다. 직전 streams HEADf84f8d65faed89993a92f6eb2f3d6629cb86d3ec의 [CI #1220](https://github.com/guseoh/csforge/actions/runs/38537596804)는 SUCCESS. 신규 checkpoint CI는 push HEAD에서 확인한다.
+
+## time-numeric checkpoint (2026-10-14)
+
+7C/42Q의 수기 근거/hash/인용,15개 Reference 관계와2SVG 전체 source/geometry를 대조했다. 누적 회귀18개/checkpoint/generate/--check errors/drift0/Python AST/diff PASS. Java13Topic/94C/533Q·전체670C/2217Q를 재집계했다. Reference162관계 중156관련 의미 확인/6미확정; 직접 읽은 streams 품질 미확정3Q 보존. 기존 ledger/Wave1~3/canonical/Curriculum/SVG 무변경. 직전 modern-language HEADce243fb1f869b270e0a5e1e5b1c8ad439477ca15의 [CI #1221](https://github.com/guseoh/csforge/actions/runs/38539255954)는 SUCCESS. 현재 checkpoint CI는 push HEAD에서 확인한다.

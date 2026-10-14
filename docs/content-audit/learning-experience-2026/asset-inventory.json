@@ -224,6 +224,12 @@
     "visualReview": {
       "status": "NEEDS_REVIEW"
     },
+    "sourceSemanticReview": {
+      "file": "frontend/public/learning/java/dst-gap-overlap.svg",
+      "sourceSha256": "40b02e99e0b371bfc85961a45378575f55a725f45e41bbe112906fe968ba60b4",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "basis": "전체820x360 source/title/desc/marker/line/02시gap/두02:30와offsetA,B 및반복화살표확인. local표현소실과offset2개흐름은본문유럽식예시일치. 좌표box중첩없음;Reader render/mobile/theme미검증."
+    },
     "viewBox": "0 0 820 360",
     "labels": [
       "DST 전환: 존재하지 않는 시간과 두 번 나타나는 시간",
@@ -502,6 +508,12 @@
     },
     "visualReview": {
       "status": "NEEDS_REVIEW"
+    },
+    "sourceSemanticReview": {
+      "file": "frontend/public/learning/java/instant-zones.svg",
+      "sourceSha256": "b8f882f61a9f4d6fd68f2221872ed966d296e9f467495491c7211e145e5c2047",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "basis": "전체760x240 source/label·circle/path·rect geometry확인. 단일Instant의UTC12/서울21/뉴욕07은UTC-05예시로가능하며계절고정보장아님. 선택적date/offset한정가능;본문8월수치와동일시점가정안함. Reader render/mobile/theme미검증."
     },
     "viewBox": "0 0 760 240",
     "labels": [

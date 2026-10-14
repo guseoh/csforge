@@ -3189,6 +3189,340 @@
         "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--modern-language.json",
         "reviewedAt": "2026-10-14"
       }
+    },
+    {
+      "contentKey": "java.core.time-numeric.instant-local-zoned-time",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/time/Instant.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "Instant API epochsecond/nano·지역무관timeline 순서와atZone을 사건저장→표시 예시에 대응.",
+      "limits": "한 Concept의 관련 절·학습 목적 직접 대조만. 문서 전문/모든snippet실행/ReaderQA 미검증; 공유URL의다른Concept 자동승격없음.",
+      "sourceFile": "content/java/time-numeric/instant-local-zoned-time.md",
+      "sourceSha256": "4a5ebcab0dec8273ca30b071114af59db7e875d0a08cb63e5512a21c433a3918",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/time/Instant.html",
+        "title": "Java SE 25 API: Instant",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "timeline의 한 시점을 표현하는 Instant 계약 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--time-numeric.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.time-numeric.instant-local-zoned-time",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/time/ZonedDateTime.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "ZonedDateTime API local+zone+resolvedoffset 및sameInstant/sameLocal·0/1/2 offset관련절을변환 목적에대조.",
+      "limits": "한 Concept의 관련 절·학습 목적 직접 대조만. 문서 전문/모든snippet실행/ReaderQA 미검증; 공유URL의다른Concept 자동승격없음.",
+      "sourceFile": "content/java/time-numeric/instant-local-zoned-time.md",
+      "sourceSha256": "4a5ebcab0dec8273ca30b071114af59db7e875d0a08cb63e5512a21c433a3918",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/time/ZonedDateTime.html",
+        "title": "Java SE 25 API: ZonedDateTime",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 2,
+        "relationNote": "ZoneId 규칙을 적용한 날짜·시간 표현과 변환 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--time-numeric.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.time-numeric.instant-local-zoned-time",
+      "url": "https://d2.naver.com/helloworld/645609",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "D2직접open은메뉴/search shell21행만노출. local/aware배경글 본문·예시 의미 확인불가;broken으로확정하지않음.",
+      "limits": "한 Concept의 관련 절·학습 목적 직접 대조만. 문서 전문/모든snippet실행/ReaderQA 미검증; 공유URL의다른Concept 자동승격없음.",
+      "sourceFile": "content/java/time-numeric/instant-local-zoned-time.md",
+      "sourceSha256": "4a5ebcab0dec8273ca30b071114af59db7e875d0a08cb63e5512a21c433a3918",
+      "reference": {
+        "url": "https://d2.naver.com/helloworld/645609",
+        "title": "네이버 D2: Java의 날짜와 시간 API",
+        "referenceType": "COMPANY_TECH_BLOG",
+        "language": "ko",
+        "displayOrder": 3,
+        "relationNote": "Java 날짜·시간 API가 local time과 timezone-aware time을 분리한 배경을 한국어로 함께 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--time-numeric.json",
+        "reviewedAt": "2026-10-14"
+      },
+      "accessVerification": {
+        "status": "NEEDS_REVIEW",
+        "basis": "직접open응답D2 shell,날짜/time본문미확인;404broken판정아님."
+      }
+    },
+    {
+      "contentKey": "java.core.time-numeric.zoneid-dst",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/time/ZoneId.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "ZoneId of/getRules 및ZoneRulesProvider의동적변경가능·ZoneOffset고정rule을지역장기일정과별도대조.",
+      "limits": "한 Concept의 관련 절·학습 목적 직접 대조만. 문서 전문/모든snippet실행/ReaderQA 미검증; 공유URL의다른Concept 자동승격없음.",
+      "sourceFile": "content/java/time-numeric/zoneid-dst.md",
+      "sourceSha256": "a97afca45c4794135f3bcfc938d84e808b822eaad25b4bac163b42c08923fec8",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/time/ZoneId.html",
+        "title": "Java SE 25 API: ZoneId",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "지역 시간대 규칙을 식별하는 ZoneId 계약 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--time-numeric.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.time-numeric.zoneid-dst",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/time/ZonedDateTime.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "ZonedDateTime gap길이만큼forward/overlapprevious가능하면유지otherwiseearlier와Earlier/Later API를예약정책에대조.",
+      "limits": "한 Concept의 관련 절·학습 목적 직접 대조만. 문서 전문/모든snippet실행/ReaderQA 미검증; 공유URL의다른Concept 자동승격없음.",
+      "sourceFile": "content/java/time-numeric/zoneid-dst.md",
+      "sourceSha256": "a97afca45c4794135f3bcfc938d84e808b822eaad25b4bac163b42c08923fec8",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/time/ZonedDateTime.html",
+        "title": "Java SE 25 API: ZonedDateTime",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 2,
+        "relationNote": "DST gap·overlap에서 local time을 해석하는 규칙 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--time-numeric.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.time-numeric.duration-period",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/time/Duration.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "Duration APIseconds/nano와DAYS=24h ignoringDST를timeout·timeline연산에대조;초는JavaTimeScale한정.",
+      "limits": "한 Concept의 관련 절·학습 목적 직접 대조만. 문서 전문/모든snippet실행/ReaderQA 미검증; 공유URL의다른Concept 자동승격없음.",
+      "sourceFile": "content/java/time-numeric/duration-period.md",
+      "sourceSha256": "2c6179df6b91b3ab5368e77a08b6c47eb8addf13dc2c65d0c82104e02ef80fe9",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/time/Duration.html",
+        "title": "Java SE 25 API: Duration",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "seconds·nanoseconds 기반 시간량의 계약 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--time-numeric.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.time-numeric.duration-period",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/time/Period.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "Period APIYMD/dateamount와conceptualday local시각유지/DST예시를calendar연산에대조.",
+      "limits": "한 Concept의 관련 절·학습 목적 직접 대조만. 문서 전문/모든snippet실행/ReaderQA 미검증; 공유URL의다른Concept 자동승격없음.",
+      "sourceFile": "content/java/time-numeric/duration-period.md",
+      "sourceSha256": "2c6179df6b91b3ab5368e77a08b6c47eb8addf13dc2c65d0c82104e02ef80fe9",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/time/Period.html",
+        "title": "Java SE 25 API: Period",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 2,
+        "relationNote": "years·months·days 기반 날짜량의 계약 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--time-numeric.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.time-numeric.clock-testable-time",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/time/Clock.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "Clock API교체가능time source와fixed가동일Instant반환하는testing역할을 constructor주입/기한동일시각policy에대조.",
+      "limits": "한 Concept의 관련 절·학습 목적 직접 대조만. 문서 전문/모든snippet실행/ReaderQA 미검증; 공유URL의다른Concept 자동승격없음.",
+      "sourceFile": "content/java/time-numeric/clock-testable-time.md",
+      "sourceSha256": "731bfe28fab92eeac2f03c79fe8f98fde4ce5055081604a5da9375c4d7b83a4f",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/time/Clock.html",
+        "title": "Java SE 25 API: Clock",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "시스템 시계와 fixed·offset Clock 등 시간 source 계약 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--time-numeric.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.time-numeric.datetimeformatter-parsing-formatting",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/time/format/DateTimeFormatter.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "Formatter pattern표M/m/u/y/Y, Locale/overrideZone·parse2phase/resolverstyleSMARTdefault를본문parse/표시및businessvalidation분리에대조.",
+      "limits": "한 Concept의 관련 절·학습 목적 직접 대조만. 문서 전문/모든snippet실행/ReaderQA 미검증; 공유URL의다른Concept 자동승격없음.",
+      "sourceFile": "content/java/time-numeric/datetimeformatter-parsing-formatting.md",
+      "sourceSha256": "b89211c8faa42d327d1b5db239acdfc066ff0226875499d698e09547963a1f18",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/time/format/DateTimeFormatter.html",
+        "title": "Java SE 25 API: DateTimeFormatter",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "formatter pattern·Locale·ZoneId와 parse/format 계약 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--time-numeric.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.time-numeric.datetimeformatter-parsing-formatting",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/time/format/DateTimeFormatterBuilder.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "Builder의number/fraction/text/offset/zone/optional조립·appendPattern·mutable singlethread역할은복합formatter확장자료로적절. 현재본문이builder전수설명을요구하지않음.",
+      "limits": "한 Concept의 관련 절·학습 목적 직접 대조만. 문서 전문/모든snippet실행/ReaderQA 미검증; 공유URL의다른Concept 자동승격없음.",
+      "sourceFile": "content/java/time-numeric/datetimeformatter-parsing-formatting.md",
+      "sourceSha256": "b89211c8faa42d327d1b5db239acdfc066ff0226875499d698e09547963a1f18",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/time/format/DateTimeFormatterBuilder.html",
+        "title": "Java SE 25 API: DateTimeFormatterBuilder",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 2,
+        "relationNote": "복합적인 formatter를 조립하는 builder 계약 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--time-numeric.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.time-numeric.floating-point-precision",
+      "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-4.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "JLS4.2.3 binary32/64/NaN 및유한표현을입력근사와산술에대조;모든decimal근사라고확대안함.",
+      "limits": "한 Concept의 관련 절·학습 목적 직접 대조만. 문서 전문/모든snippet실행/ReaderQA 미검증; 공유URL의다른Concept 자동승격없음.",
+      "sourceFile": "content/java/time-numeric/floating-point-precision.md",
+      "sourceSha256": "991d8f9aa7b5449fe5071753cce1fbf08216d5a850b9eca1a599881afc57b5d5",
+      "reference": {
+        "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-4.html",
+        "title": "Java Language Specification 4장: Types, Values, and Variables",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "Java floating-point type과 값 집합 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--time-numeric.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.time-numeric.floating-point-precision",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Double.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "Double APINaN/infinity및compareTo총순서 vsprimitiveoperators selfNaNunequal을특수값·검증경계에대조.",
+      "limits": "한 Concept의 관련 절·학습 목적 직접 대조만. 문서 전문/모든snippet실행/ReaderQA 미검증; 공유URL의다른Concept 자동승격없음.",
+      "sourceFile": "content/java/time-numeric/floating-point-precision.md",
+      "sourceSha256": "991d8f9aa7b5449fe5071753cce1fbf08216d5a850b9eca1a599881afc57b5d5",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Double.html",
+        "title": "Java SE 25 API: Double",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 2,
+        "relationNote": "Double 비교와 NaN·infinity 같은 특수 값 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--time-numeric.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.time-numeric.bigdecimal-money-rounding",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/math/BigDecimal.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "BigDecimal doubleexactconstructor/Stringdirect/valueOfDouble.toString·equals override/value+scale/compareTo와divisionround계약을생성/동등성/연산에대조.",
+      "limits": "한 Concept의 관련 절·학습 목적 직접 대조만. 문서 전문/모든snippet실행/ReaderQA 미검증; 공유URL의다른Concept 자동승격없음.",
+      "sourceFile": "content/java/time-numeric/bigdecimal-money-rounding.md",
+      "sourceSha256": "4dc97b0da03a3b7079bcd119529d6ccbf80dc4f73f03a56bc10f05eb59ec58fc",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/math/BigDecimal.html",
+        "title": "Java SE 25 API: BigDecimal",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "값·scale·연산·equals·compareTo 계약 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--time-numeric.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.time-numeric.bigdecimal-money-rounding",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/math/RoundingMode.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "RoundingMode HALF_UP 양·음 halfway를nearest/tieaway모델및반올림시점은별도업무계약임에대조.",
+      "limits": "한 Concept의 관련 절·학습 목적 직접 대조만. 문서 전문/모든snippet실행/ReaderQA 미검증; 공유URL의다른Concept 자동승격없음.",
+      "sourceFile": "content/java/time-numeric/bigdecimal-money-rounding.md",
+      "sourceSha256": "4dc97b0da03a3b7079bcd119529d6ccbf80dc4f73f03a56bc10f05eb59ec58fc",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/math/RoundingMode.html",
+        "title": "Java SE 25 API: RoundingMode",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 2,
+        "relationNote": "명시적인 반올림 정책의 종류 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--time-numeric.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.time-numeric.bigdecimal-money-rounding",
+      "url": "https://tech.kakaopay.com/post/kakaopayins-legacy-improvement-with-aop/",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "Kakaopay 본문BigDecimal100.0vs100.000 shadow비교실패와serializer정규화단락·코드5를scale관계학습목적에대조. AOP/배포전체를Java일반보장으로사용안함.",
+      "limits": "한 Concept의 관련 절·학습 목적 직접 대조만. 문서 전문/모든snippet실행/ReaderQA 미검증; 공유URL의다른Concept 자동승격없음.",
+      "sourceFile": "content/java/time-numeric/bigdecimal-money-rounding.md",
+      "sourceSha256": "4dc97b0da03a3b7079bcd119529d6ccbf80dc4f73f03a56bc10f05eb59ec58fc",
+      "reference": {
+        "url": "https://tech.kakaopay.com/post/kakaopayins-legacy-improvement-with-aop/",
+        "title": "카카오페이 기술 블로그: 안전하게 레거시 코드 옮겨 보기",
+        "referenceType": "COMPANY_TECH_BLOG",
+        "language": "ko",
+        "displayOrder": 3,
+        "relationNote": "BigDecimal의 scale 차이가 실제 응답 비교·정규화에서 문제가 된 사례를 함께 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--time-numeric.json",
+        "reviewedAt": "2026-10-14"
+      }
     }
   ],
   "supportingRelations": [

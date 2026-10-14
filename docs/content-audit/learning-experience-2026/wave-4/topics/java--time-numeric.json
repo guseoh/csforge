@@ -1,0 +1,494 @@
+{
+  "area": "java",
+  "wave": 4,
+  "baselineSha": "efe73a15da14c996bd08344181d4d6f87073803d",
+  "reviewedAt": "2026-10-14",
+  "curriculumSha256": "0aad122de20d9205274f96887b562473a3a23de3dd406cbd684031438d4bbe0c",
+  "topicCatalogSha256": "2a167f43030df4dfc9742225d86dfcefdcd5cff2fc0d702c0b9101e00e6b172c",
+  "topic": "time-numeric",
+  "topicKey": "java.core.time-numeric",
+  "reviewMethod": "7C/42Q의 전체 본문과 정답·모든 선택지/rationale·모델·해설·난도·모호성·중복·연결을 직접 읽어 수기 판단. 자동화는 key/hash/인용 집계만 수행. Reference15관계를 독립 대조; D2 shell은 미확정.",
+  "topics": [
+    {
+      "key": "java.core.time-numeric",
+      "coverage": "사건/지역/반복/DST→경과·달력→Clock·문자변환→이진근사·십진금액 7C42Q 전수."
+    }
+  ],
+  "concepts": [
+    [
+      "java.core.time-numeric.instant-local-zoned-time",
+      "KEEP",
+      "L2 CORE: 실제 사건과 지역 달력 값·장기 반복/표시를 분리해 목적과 깊이 충분.",
+      "Instant 불변 시간축/LocalDateTime 무zone/offset과region규칙/atZone 및 toInstant 흐름 정확. ZoneId는 fixed종류도 있으나 여기 region문맥이 명시됨.",
+      "DIAGRAM: instant-zones 전체 SVG의 단일점→UTC12/서울21/뉴욕07/LocalDateTime 연결·760x240 좌표 읽음. 뉴욕07은 UTC-05인 날짜의 예시로 성립; 본문8월05Z 수치와 동일 예시라고 주장하지 않음. 날짜/offset annotation은 선택 보강 가능하나 기술결함 확정 아님.",
+      "Instant epoch초/nano·순서 및 ZonedDateTime의1/0/2 offset·sameInstant/sameLocal 관련 계약을 각각 대조. D2본문은 shell이라 한 관계 미확정.",
+      "7Q C/D/A/B/C/D 및 주문표시 시나리오: 시점·표현·반복정보·sameLocal gap정책을 분리하며 링크/난도 적절."
+    ],
+    [
+      "java.core.time-numeric.zoneid-dst",
+      "KEEP",
+      "L2 CORE: offset/지역Rule·gap/overlap·반복일정 의미를 단계적으로 설명하고 앞 Concept을 전제.",
+      "gap0/overlap2 offset, API 기본보정≠예약정책, calendar+day≠24h 정확. 미래법률을 언어 영구보장으로 과장하지 않음.",
+      "DIAGRAM: dst-gap-overlap SVG 전체820x360 좌표/화살표/title/desc/02시스킵·두02:30/offsetA,B 읽음. 유럽식 예시로 적합; 모든지역 항상02시라 주장하지 않음. render/mobile/theme 미검증.",
+      "ZoneId getRules의 provider/변경가능성과 fixedoffset예외, ZonedDateTime의gap앞으로shift·overlapprevious/earlier 및 선택메서드를 이 Concept에 독립 대응.",
+      "7Q A/B/C/D/A/B와 뉴욕9시반복 시나리오: DST경과변동/원래local규칙 보존 정확, Q6구현데이터≠언어보장 구분."
+    ],
+    [
+      "java.core.time-numeric.duration-period",
+      "KEEP",
+      "L2 STANDARD: timeout/TTL와monthlybilling을 비교해 초/nano와Y/M/D 선택 및 실패단위 설명 충분.",
+      "Jan31+1month=Feb28(2026), Zone있는calendarday vs24h와 지원단위 제한 정확. Duration초는JavaTimeScale이며 SI초 전반 보장으로 확대하지 않음.",
+      "NONE: 같은 시작→두시간량ASCII·표·월말코드가 목표에 충분. zone없는03-29예시는 개념 분기이며 특정지역전환 실행값을 확정하지 않음.",
+      "Duration의seconds/nanos/DAYS24h와 Period의conceptualday/local보존·YMD 계약을 각각 적용 대상에 대조.",
+      "4Q C/D/A/B: 90초 단위 오답0.09초·날짜량/기한 구분, 월말조정 근거와 distractor 정확."
+    ],
+    [
+      "java.core.time-numeric.clock-testable-time",
+      "KEEP",
+      "L2 CORE: 숨은now 의존→constructor주입→fixed 및 경계포함→singlecapture로 설계 이유 충분.",
+      "!now.isBefore deadline동일이면true, fixed는OS시계변경아님·clock주입≠domain정책·매판단다시read와한유스케이스일관성 구분 정확.",
+      "NONE: ExpiryPolicy/fixed/협력자ASCII와 now한번코드가 실행·의존 상태 충분.",
+      "Clock API 권장교체가능clock/fixed동일instant와 immutable/threadsafe default구현을 예제에 대응. framework필수라고 과장하지 않음.",
+      "7Q C/D/A/B/C/D+singlecapture서술: 정확한기한 포함·layer책임·요청일관성 각각검증. 시간정책 질문이 본문에 직접연결."
+    ],
+    [
+      "java.core.time-numeric.datetimeformatter-parsing-formatting",
+      "KEEP",
+      "L2 CORE: parse↔format/patternfield/parse가능≠businesspolicy/Locale≠ZoneId를 실제코드로 충분 설명.",
+      "uuuu-MM-dd HH:mm parse와Instant.withZone표시 정확. SMART/STRICT resolution과예약검증 구분; MMmonth/mmminute, 원본immutable과표현 구별.",
+      "NONE: 변환ASCII·responsibility목록·패턴코드가 학습목표 충분; 이미지 부재 결함 아님.",
+      "Formatter pattern표 u/year,y/yearofEra,Y/weekyear,M/month,m/minute·Locale/overrideZone/resolver2phase 및 Builder appendfield/optional·mutable singlethread역할을 각 관계에 대조.",
+      "6Q A/B/C/D/A/B: 모든4보기와해설대조. Locale표현·Zone시간축 연결 및 parse성공이domainvalid아님을 단계별 검증. Q4A의month수치 지정 부정은원본값과formatter축 문맥으로 유지."
+    ],
+    [
+      "java.core.time-numeric.floating-point-precision",
+      "KEEP",
+      "L2 STANDARD: 유한binary표현→산술round→문자표시·epsilon·NaN·money대안을 자연스럽게 설명.",
+      "0.1+0.2 !=0.3, NaNprimitive self==false, exact equality도요구따라 유효·epsilon단위와범위 필요 정확. 모든decimal이근사라는 일반화 없음.",
+      "NONE: 변환흐름/허용오차 코드/특수값 예시가 충분. 유한값 epsilon예제를모든NaN/infinity 비교안전으로 승인하지 않음.",
+      "JLS4.2.3 binary32/64 및 Double의NaN/infinity·primitive비교와wrapper totalordering를 각각대조.",
+      "4Q C/D/A/B: 허용오차/금액단위/overflow·특수값 정책 정확. Q4C의 항상0 주장은 일반보장 아님; 특정Math.round의NaN0 동작을 모든 rounding으로 일반화하지 않음."
+    ],
+    [
+      "java.core.time-numeric.bigdecimal-money-rounding",
+      "KEEP",
+      "L2 CORE: 생성→값/scale동등성→divide→rounding시점→Money계약 충분; 앞binaryConcept 선수 적절.",
+      "String vs double exactconversion/valueOf잃은입력복구아님·compareTo0/equalsfalse·divide2HALF_UP·roundatlinevstotal·currency 별도 정확.",
+      "NONE: 비교코드·두rounding흐름·Money항목이상태와tradeoff에 충분.",
+      "BigDecimal 생성/scale/equals override/compareTo·RoundingMode halfup양음 동작·Kakaopay shadow비교scale정규화사례를 세 관계 각각대조. 외부AOP전체구현 검증을 주장하지 않음.",
+      "7Q B/C/A/B/C/D+rounding시점서술: 정답/모델·연결 적절. q2D의 equals상속표현은 override계약을 흐려 W4-JTIME-001로 해당feedback만교정."
+    ]
+  ],
+  "questions": [
+    [
+      "java.core.time-numeric.instant-local-zoned-time.q1",
+      "KEEP",
+      "C 시간축; A특정날짜/Blocalclock/Dlocale배제.",
+      "실제 prompt/정답/모든보기·rationale 또는모델/전체해설·난도·연결을직접읽음. 단순용어→실행·정책으로별도목표;과거PASS 자동승격없음."
+    ],
+    [
+      "java.core.time-numeric.instant-local-zoned-time.q2",
+      "KEEP",
+      "D zone/offset없음; ABC날짜·시각필드는존재.",
+      "실제 prompt/정답/모든보기·rationale 또는모델/전체해설·난도·연결을직접읽음. 단순용어→실행·정책으로별도목표;과거PASS 자동승격없음."
+    ],
+    [
+      "java.core.time-numeric.instant-local-zoned-time.q3",
+      "KEEP",
+      "A지역무관event순서;B날짜없음/C잘린문자/D표시관습배제.",
+      "실제 prompt/정답/모든보기·rationale 또는모델/전체해설·난도·연결을직접읽음. 단순용어→실행·정책으로별도목표;과거PASS 자동승격없음."
+    ],
+    [
+      "java.core.time-numeric.instant-local-zoned-time.q4",
+      "KEEP",
+      "B같은사건의지역표현;A복제/C지역종속/Dlocal에zone숨음배제.",
+      "실제 prompt/정답/모든보기·rationale 또는모델/전체해설·난도·연결을직접읽음. 단순용어→실행·정책으로별도목표;과거PASS 자동승격없음."
+    ],
+    [
+      "java.core.time-numeric.instant-local-zoned-time.q5",
+      "KEEP",
+      "C recurrence/localtime/zone보존;Instant첫발생만으로부족. A날짜불능/B문자불능/D자동미래목록오답.",
+      "실제 prompt/정답/모든보기·rationale 또는모델/전체해설·난도·연결을직접읽음. 단순용어→실행·정책으로별도목표;과거PASS 자동승격없음."
+    ],
+    [
+      "java.core.time-numeric.instant-local-zoned-time.q6",
+      "KEEP",
+      "DsameInstant축vssameLocal목표와gap/overlap한정;ABC동일결과/문자only/zone삭제아님.",
+      "실제 prompt/정답/모든보기·rationale 또는모델/전체해설·난도·연결을직접읽음. 단순용어→실행·정책으로별도목표;과거PASS 자동승격없음."
+    ],
+    [
+      "java.core.time-numeric.instant-local-zoned-time.q7",
+      "KEEP",
+      "SCENARIO 모델 사건Instant저장→사용자zone표시/local만으로시점부족;MEDIUM·정답기준충분.",
+      "실제 prompt/정답/모든보기·rationale 또는모델/전체해설·난도·연결을직접읽음. 단순용어→실행·정책으로별도목표;과거PASS 자동승격없음."
+    ],
+    [
+      "java.core.time-numeric.zoneid-dst.q1",
+      "KEEP",
+      "A fixed차이vs지역날짜rule;BCD미래DST같음/날짜불가/offset사용불가배제.",
+      "실제 prompt/정답/모든보기·rationale 또는모델/전체해설·난도·연결을직접읽음. 단순용어→실행·정책으로별도목표;과거PASS 자동승격없음."
+    ],
+    [
+      "java.core.time-numeric.zoneid-dst.q2",
+      "KEEP",
+      "B 앞clock으로localgap; Aoverlap/C고정/Dinstant삭제아님.",
+      "실제 prompt/정답/모든보기·rationale 또는모델/전체해설·난도·연결을직접읽음. 단순용어→실행·정책으로별도목표;과거PASS 자동승격없음."
+    ],
+    [
+      "java.core.time-numeric.zoneid-dst.q3",
+      "KEEP",
+      "C twooffset/twoinstant;A사라짐/Bzone삭제/Dinstant지역화불가아님.",
+      "실제 prompt/정답/모든보기·rationale 또는모델/전체해설·난도·연결을직접읽음. 단순용어→실행·정책으로별도목표;과거PASS 자동승격없음."
+    ],
+    [
+      "java.core.time-numeric.zoneid-dst.q4",
+      "KEEP",
+      "D 보정·거절·재확인정책;AOS강제/Boffset의미자동보존/Cnull은숨김.",
+      "실제 prompt/정답/모든보기·rationale 또는모델/전체해설·난도·연결을직접읽음. 단순용어→실행·정책으로별도목표;과거PASS 자동승격없음."
+    ],
+    [
+      "java.core.time-numeric.zoneid-dst.q5",
+      "KEEP",
+      "A earlieroffset선택;BCD rule삭제/모든시점동일/DB업데이트아님.",
+      "실제 prompt/정답/모든보기·rationale 또는모델/전체해설·난도·연결을직접읽음. 단순용어→실행·정책으로별도목표;과거PASS 자동승격없음."
+    ],
+    [
+      "java.core.time-numeric.zoneid-dst.q6",
+      "KEEP",
+      "B 런타임ZoneRules·현실법률변동;ACD언어영구확정/OSonly/fixed자동갱신오답.",
+      "실제 prompt/정답/모든보기·rationale 또는모델/전체해설·난도·연결을직접읽음. 단순용어→실행·정책으로별도목표;과거PASS 자동승격없음."
+    ],
+    [
+      "java.core.time-numeric.zoneid-dst.q7",
+      "KEEP",
+      "SCENARIO9시 반복의DST 23/25h vs24h·localtime/날짜rule/zone보존과매발생계산 모델정확;HARD대입+설계.",
+      "실제 prompt/정답/모든보기·rationale 또는모델/전체해설·난도·연결을직접읽음. 단순용어→실행·정책으로별도목표;과거PASS 자동승격없음."
+    ],
+    [
+      "java.core.time-numeric.duration-period.q1",
+      "KEEP",
+      "Cseconds/nano vsYMD; A둘초/BPeriod시점/DDuration문자오답.",
+      "실제 prompt/정답/모든보기·rationale 또는모델/전체해설·난도·연결을직접읽음. 단순용어→실행·정책으로별도목표;과거PASS 자동승격없음."
+    ],
+    [
+      "java.core.time-numeric.duration-period.q2",
+      "KEEP",
+      "D90seconds;A90ms/B기한값/C90days배제.",
+      "실제 prompt/정답/모든보기·rationale 또는모델/전체해설·난도·연결을직접읽음. 단순용어→실행·정책으로별도목표;과거PASS 자동승격없음."
+    ],
+    [
+      "java.core.time-numeric.duration-period.q3",
+      "KEEP",
+      "A월가변달력;B24h/CD문자only·Instant날짜불능오답.",
+      "실제 prompt/정답/모든보기·rationale 또는모델/전체해설·난도·연결을직접읽음. 단순용어→실행·정책으로별도목표;과거PASS 자동승격없음."
+    ],
+    [
+      "java.core.time-numeric.duration-period.q4",
+      "KEEP",
+      "B2026Feb28;A/C/D월길이보정·지원연산대조.",
+      "실제 prompt/정답/모든보기·rationale 또는모델/전체해설·난도·연결을직접읽음. 단순용어→실행·정책으로별도목표;과거PASS 자동승격없음."
+    ],
+    [
+      "java.core.time-numeric.clock-testable-time.q1",
+      "KEEP",
+      "Ctime source교체·결정테스트;A스레드수/Btimezone제거/DJSON아님.",
+      "실제 prompt/정답/모든보기·rationale 또는모델/전체해설·난도·연결을직접읽음. 단순용어→실행·정책으로별도목표;과거PASS 자동승격없음."
+    ],
+    [
+      "java.core.time-numeric.clock-testable-time.q2",
+      "KEEP",
+      "D항상같은Instant;AOS정지/Bzone계산제거/Cexception숨김아님.",
+      "실제 prompt/정답/모든보기·rationale 또는모델/전체해설·난도·연결을직접읽음. 단순용어→실행·정책으로별도목표;과거PASS 자동승격없음."
+    ],
+    [
+      "java.core.time-numeric.clock-testable-time.q3",
+      "KEEP",
+      "A ==deadline isBeforefalse부정true;BCD유효/null/연장오답.",
+      "실제 prompt/정답/모든보기·rationale 또는모델/전체해설·난도·연결을직접읽음. 단순용어→실행·정책으로별도목표;과거PASS 자동승격없음."
+    ],
+    [
+      "java.core.time-numeric.clock-testable-time.q4",
+      "KEEP",
+      "Bread사이경계변화;Azone자동변화/CInstant가변/Dcompileconstant아님.",
+      "실제 prompt/정답/모든보기·rationale 또는모델/전체해설·난도·연결을직접읽음. 단순용어→실행·정책으로별도목표;과거PASS 자동승격없음."
+    ],
+    [
+      "java.core.time-numeric.clock-testable-time.q5",
+      "KEEP",
+      "Csource와업무rule별도;AB자동정책/검증불요,Daggregate생성오답.",
+      "실제 prompt/정답/모든보기·rationale 또는모델/전체해설·난도·연결을직접읽음. 단순용어→실행·정책으로별도목표;과거PASS 자동승격없음."
+    ],
+    [
+      "java.core.time-numeric.clock-testable-time.q6",
+      "KEEP",
+      "D업무계층시각·책임;Amapper항상생성/Bcompileconstant/C응답금지아님.",
+      "실제 prompt/정답/모든보기·rationale 또는모델/전체해설·난도·연결을직접읽음. 단순용어→실행·정책으로별도목표;과거PASS 자동승격없음."
+    ],
+    [
+      "java.core.time-numeric.clock-testable-time.q7",
+      "KEEP",
+      "DESCRIPTIVEsinglecapture기준now두정책공유;주입만으로read시점동일아님·MEDIUM모델충분.",
+      "실제 prompt/정답/모든보기·rationale 또는모델/전체해설·난도·연결을직접읽음. 단순용어→실행·정책으로별도목표;과거PASS 자동승격없음."
+    ],
+    [
+      "java.core.time-numeric.datetimeformatter-parsing-formatting.q1",
+      "KEEP",
+      "A Mmonth/mminute; B연도둘아님/Cfield≠Locale/Dparse사용안함오답.",
+      "실제 prompt/정답/모든보기·rationale 또는모델/전체해설·난도·연결을직접읽음. 단순용어→실행·정책으로별도목표;과거PASS 자동승격없음."
+    ],
+    [
+      "java.core.time-numeric.datetimeformatter-parsing-formatting.q2",
+      "KEEP",
+      "B월요일텍스트;AzoneRules/C원본숫자변경/Dlocalezone자동추론아님.",
+      "실제 prompt/정답/모든보기·rationale 또는모델/전체해설·난도·연결을직접읽음. 단순용어→실행·정책으로별도목표;과거PASS 자동승격없음."
+    ],
+    [
+      "java.core.time-numeric.datetimeformatter-parsing-formatting.q3",
+      "KEEP",
+      "Csystemdefaulthiddeninput다른Instant;Aparse불가/BLocalezone대체/D숫자불능아님.",
+      "실제 prompt/정답/모든보기·rationale 또는모델/전체해설·난도·연결을직접읽음. 단순용어→실행·정책으로별도목표;과거PASS 자동승격없음."
+    ],
+    [
+      "java.core.time-numeric.datetimeformatter-parsing-formatting.q4",
+      "KEEP",
+      "DLocale지역화 vs Zone축;ABCmonth자체지정/pathcharset/변환무관오답.",
+      "실제 prompt/정답/모든보기·rationale 또는모델/전체해설·난도·연결을직접읽음. 단순용어→실행·정책으로별도목표;과거PASS 자동승격없음."
+    ],
+    [
+      "java.core.time-numeric.datetimeformatter-parsing-formatting.q5",
+      "KEEP",
+      "A원래Instant유지 지역텍스트;B사건변경/C제어대체/D정보항상제거아님.",
+      "실제 prompt/정답/모든보기·rationale 또는모델/전체해설·난도·연결을직접읽음. 단순용어→실행·정책으로별도목표;과거PASS 자동승격없음."
+    ],
+    [
+      "java.core.time-numeric.datetimeformatter-parsing-formatting.q6",
+      "KEEP",
+      "B예약기간·zone의미·마감정책미보장;A/C/D정상parse의해석·formatter사용·accessor가능근거맞음.",
+      "실제 prompt/정답/모든보기·rationale 또는모델/전체해설·난도·연결을직접읽음. 단순용어→실행·정책으로별도목표;과거PASS 자동승격없음."
+    ],
+    [
+      "java.core.time-numeric.floating-point-precision.q1",
+      "KEEP",
+      "C유한binary못표현;A무작위/B문자선변환/DBigDecimal자동아님.",
+      "실제 prompt/정답/모든보기·rationale 또는모델/전체해설·난도·연결을직접읽음. 단순용어→실행·정책으로별도목표;과거PASS 자동승격없음."
+    ],
+    [
+      "java.core.time-numeric.floating-point-precision.q2",
+      "KEEP",
+      "D허용오차·range;ABC문자/절단/NaN임의일반값취급아님.",
+      "실제 prompt/정답/모든보기·rationale 또는모델/전체해설·난도·연결을직접읽음. 단순용어→실행·정책으로별도목표;과거PASS 자동승격없음."
+    ],
+    [
+      "java.core.time-numeric.floating-point-precision.q3",
+      "KEEP",
+      "Adecimal/단위/round계약;B산술불능/C통화자동/D정수nooverflow배제.",
+      "실제 prompt/정답/모든보기·rationale 또는모델/전체해설·난도·연결을직접읽음. 단순용어→실행·정책으로별도목표;과거PASS 자동승격없음."
+    ],
+    [
+      "java.core.time-numeric.floating-point-precision.q4",
+      "KEEP",
+      "B특수값정책/API구별;AprimitiveNaNself==false/Crounding항상0보장없음/Druntime없음오답.",
+      "실제 prompt/정답/모든보기·rationale 또는모델/전체해설·난도·연결을직접읽음. 단순용어→실행·정책으로별도목표;과거PASS 자동승격없음."
+    ],
+    [
+      "java.core.time-numeric.bigdecimal-money-rounding.q1",
+      "KEEP",
+      "B텍스트직접→decimal;Astringstorage/CvalueOfscale0/Dnegativeonly오답.",
+      "실제 prompt/정답/모든보기·rationale 또는모델/전체해설·난도·연결을직접읽음. 단순용어→실행·정책으로별도목표;과거PASS 자동승격없음."
+    ],
+    [
+      "java.core.time-numeric.bigdecimal-money-rounding.q2",
+      "TARGETED_ENHANCE",
+      "Cvalue+scale vsnumericcompare;ABscale무시/lexical배제. D오답feedback의상속은override로수정필요.",
+      "실제 prompt/정답/모든보기·rationale 또는모델/전체해설·난도·연결을직접읽음. 단순용어→실행·정책으로별도목표;과거PASS 자동승격없음."
+    ],
+    [
+      "java.core.time-numeric.bigdecimal-money-rounding.q3",
+      "KEEP",
+      "Aprecision/scale+round;BCD equals/double강제/scale0은비종료해결안됨.",
+      "실제 prompt/정답/모든보기·rationale 또는모델/전체해설·난도·연결을직접읽음. 단순용어→실행·정책으로별도목표;과거PASS 자동승격없음."
+    ],
+    [
+      "java.core.time-numeric.bigdecimal-money-rounding.q4",
+      "KEEP",
+      "B1.10vs1.1 compareTo0/equalsfalse;ACD다른numeric/자동0/noscale오답.",
+      "실제 prompt/정답/모든보기·rationale 또는모델/전체해설·난도·연결을직접읽음. 단순용어→실행·정책으로별도목표;과거PASS 자동승격없음."
+    ],
+    [
+      "java.core.time-numeric.bigdecimal-money-rounding.q5",
+      "KEEP",
+      "Ccurrency/unit/scale/roundstage/equality;AtoStringonly/B모든scale0/Ddouble순서아님.",
+      "실제 prompt/정답/모든보기·rationale 또는모델/전체해설·난도·연결을직접읽음. 단순용어→실행·정책으로별도목표;과거PASS 자동승격없음."
+    ],
+    [
+      "java.core.time-numeric.bigdecimal-money-rounding.q6",
+      "KEEP",
+      "Dequals/hashscale와canonicalization;AcompareToonly/B출력only/Ckey불가배제.",
+      "실제 prompt/정답/모든보기·rationale 또는모델/전체해설·난도·연결을직접읽음. 단순용어→실행·정책으로별도목표;과거PASS 자동승격없음."
+    ],
+    [
+      "java.core.time-numeric.bigdecimal-money-rounding.q7",
+      "KEEP",
+      "DESCRIPTIVE반올림비선형정보손실로linevsfinal합차이·currency/minorunit/roundstage명시 모델정확;HARD설계.",
+      "실제 prompt/정답/모든보기·rationale 또는모델/전체해설·난도·연결을직접읽음. 단순용어→실행·정책으로별도목표;과거PASS 자동승격없음."
+    ]
+  ],
+  "sources": [
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/time/Instant.html",
+      "CURRENT_VERIFIED",
+      "Instant API epochsecond/nano·지역무관timeline 순서와atZone을 사건저장→표시 예시에 대응."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/time/ZonedDateTime.html",
+      "CURRENT_VERIFIED",
+      "ZonedDateTime API local+zone+resolvedoffset 및sameInstant/sameLocal·0/1/2 offset관련절을변환 목적에대조."
+    ],
+    [
+      "https://d2.naver.com/helloworld/645609",
+      "NEEDS_REVIEW",
+      "D2직접open은메뉴/search shell21행만노출. local/aware배경글 본문·예시 의미 확인불가;broken으로확정하지않음."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/time/ZoneId.html",
+      "CURRENT_VERIFIED",
+      "ZoneId of/getRules 및ZoneRulesProvider의동적변경가능·ZoneOffset고정rule을지역장기일정과별도대조."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/time/Duration.html",
+      "CURRENT_VERIFIED",
+      "Duration APIseconds/nano와DAYS=24h ignoringDST를timeout·timeline연산에대조;초는JavaTimeScale한정."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/time/Period.html",
+      "CURRENT_VERIFIED",
+      "Period APIYMD/dateamount와conceptualday local시각유지/DST예시를calendar연산에대조."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/time/Clock.html",
+      "CURRENT_VERIFIED",
+      "Clock API교체가능time source와fixed가동일Instant반환하는testing역할을 constructor주입/기한동일시각policy에대조."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/time/format/DateTimeFormatter.html",
+      "CURRENT_VERIFIED",
+      "Formatter pattern표M/m/u/y/Y, Locale/overrideZone·parse2phase/resolverstyleSMARTdefault를본문parse/표시및businessvalidation분리에대조."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/time/format/DateTimeFormatterBuilder.html",
+      "CURRENT_VERIFIED",
+      "Builder의number/fraction/text/offset/zone/optional조립·appendPattern·mutable singlethread역할은복합formatter확장자료로적절. 현재본문이builder전수설명을요구하지않음."
+    ],
+    [
+      "https://docs.oracle.com/javase/specs/jls/se25/html/jls-4.html",
+      "CURRENT_VERIFIED",
+      "JLS4.2.3 binary32/64/NaN 및유한표현을입력근사와산술에대조;모든decimal근사라고확대안함."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Double.html",
+      "CURRENT_VERIFIED",
+      "Double APINaN/infinity및compareTo총순서 vsprimitiveoperators selfNaNunequal을특수값·검증경계에대조."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/math/BigDecimal.html",
+      "CURRENT_VERIFIED",
+      "BigDecimal doubleexactconstructor/Stringdirect/valueOfDouble.toString·equals override/value+scale/compareTo와divisionround계약을생성/동등성/연산에대조."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/math/RoundingMode.html",
+      "CURRENT_VERIFIED",
+      "RoundingMode HALF_UP 양·음 halfway를nearest/tieaway모델및반올림시점은별도업무계약임에대조."
+    ],
+    [
+      "https://tech.kakaopay.com/post/kakaopayins-legacy-improvement-with-aop/",
+      "CURRENT_VERIFIED",
+      "Kakaopay 본문BigDecimal100.0vs100.000 shadow비교실패와serializer정규화단락·코드5를scale관계학습목적에대조. AOP/배포전체를Java일반보장으로사용안함."
+    ]
+  ],
+  "referenceAccess": {},
+  "sourceHashes": {
+    "java.core.time-numeric.instant-local-zoned-time": "4a5ebcab0dec8273ca30b071114af59db7e875d0a08cb63e5512a21c433a3918",
+    "java.core.time-numeric.zoneid-dst": "a97afca45c4794135f3bcfc938d84e808b822eaad25b4bac163b42c08923fec8",
+    "java.core.time-numeric.duration-period": "2c6179df6b91b3ab5368e77a08b6c47eb8addf13dc2c65d0c82104e02ef80fe9",
+    "java.core.time-numeric.clock-testable-time": "731bfe28fab92eeac2f03c79fe8f98fde4ce5055081604a5da9375c4d7b83a4f",
+    "java.core.time-numeric.datetimeformatter-parsing-formatting": "b89211c8faa42d327d1b5db239acdfc066ff0226875499d698e09547963a1f18",
+    "java.core.time-numeric.floating-point-precision": "991d8f9aa7b5449fe5071753cce1fbf08216d5a850b9eca1a599881afc57b5d5",
+    "java.core.time-numeric.bigdecimal-money-rounding": "4dc97b0da03a3b7079bcd119529d6ccbf80dc4f73f03a56bc10f05eb59ec58fc",
+    "java.core.time-numeric.instant-local-zoned-time.q1": "9a57b2046be99a6261c578e28f951f3f7e78aff377057d675c74be986781b923",
+    "java.core.time-numeric.instant-local-zoned-time.q2": "91275e0ef6f6c84925b511287c7f603b679b3d8a24b95d5f73fc8bb04f899ef5",
+    "java.core.time-numeric.instant-local-zoned-time.q3": "943873dff6daaa187569628b274a5ad5c04de25caed7acfdcb2a58a67dd5ab4e",
+    "java.core.time-numeric.instant-local-zoned-time.q4": "3ed8a000a2b9d5b1010e09ac0b6a0ae29afdf5da2b0fca13945107edf2fbfd67",
+    "java.core.time-numeric.instant-local-zoned-time.q5": "c7105547b2274091e79bc11a28bbe258afb62e5e06171c2d3af03c1eb9675cd8",
+    "java.core.time-numeric.instant-local-zoned-time.q6": "69a52e06d889f43381249ad676a688038f3e6ee226e129dcd90ca73977b7545e",
+    "java.core.time-numeric.instant-local-zoned-time.q7": "f8e0802d5ee30602ed567d08cd2cf69b49dbb4ddcb20bc2c24cf23f56d5f4a3f",
+    "java.core.time-numeric.zoneid-dst.q1": "f55b2a1c9f785933d5af84a0c3f12003bef637dbb7dd2c03e46c2da646c8b36d",
+    "java.core.time-numeric.zoneid-dst.q2": "a60560fcd877aef8393a01f5aa49354e50ec95c2940dcc003828cf352d70f56a",
+    "java.core.time-numeric.zoneid-dst.q3": "fe4b2b0e71a7b9d3a5c40b5fc5d1835d8d17b72c55cdc4e1c8c68f0af3d5e7b6",
+    "java.core.time-numeric.zoneid-dst.q4": "8d9cbc4ba3cff8c4926953b1be50d7179560846cdd9616743d0c3b2011f1d0d0",
+    "java.core.time-numeric.zoneid-dst.q5": "38fa191674b851d988d16cdf34e25dc9ade55f8abe4696a57574999954f7a4b4",
+    "java.core.time-numeric.zoneid-dst.q6": "7d40fd1022b63264f75c8718719e1dcfac255ab51d44fe86fab44fb184156099",
+    "java.core.time-numeric.zoneid-dst.q7": "7ced7d56834f3aa6493646fe84d76e183c64d70a54ebed54c82a21d6b28fbef2",
+    "java.core.time-numeric.duration-period.q1": "022f55a0328b91f312e9781eae7e5e2971c4fce93139dc846bd52948f0f6f90b",
+    "java.core.time-numeric.duration-period.q2": "33f92ac4a61c285b4dfbcfe1118864dffecd269918ecda60e92bf5ad79a32885",
+    "java.core.time-numeric.duration-period.q3": "4902f4e240a199d87b0f1aff10eaaa8cdb850d1ec145073af127a52487decdcf",
+    "java.core.time-numeric.duration-period.q4": "5faa50150a722f72e86e02b4701340c779567218efb389be02bc8348e10c7b5f",
+    "java.core.time-numeric.clock-testable-time.q1": "9fabab30b456590dcb7fd8c17c5b33c7e31abf748b78c4302fdf3606f052a20f",
+    "java.core.time-numeric.clock-testable-time.q2": "72abe59e143ce153c37896897f10b4e52483c8ce1763f9ecb8050f3198ec1428",
+    "java.core.time-numeric.clock-testable-time.q3": "2361ecb308d2263b6286ad3a37527895b8daa87d73d3b97028661244f326753f",
+    "java.core.time-numeric.clock-testable-time.q4": "1446cbc779b2def6d0ffcbc8d7b89a883e466fb1ad7f83ebf3b2e69ee30b4cdd",
+    "java.core.time-numeric.clock-testable-time.q5": "834f2ba7fba92e682b5ead41fcfb49107d7818ce0d7fae0a7f3d8419efbb9691",
+    "java.core.time-numeric.clock-testable-time.q6": "bbca9df191b1adb381c65b2958d3a4799ba706c537ae96a5f182688612f201fc",
+    "java.core.time-numeric.clock-testable-time.q7": "c59d9409fd5a633e79545950fdec9fec657bf9d7ecdd2f9dd8048b55530351e7",
+    "java.core.time-numeric.datetimeformatter-parsing-formatting.q1": "d93a17bf545df0cbc9eba6bf48bc66c52b8fa951291128f2b5dd51a5fe4fa0db",
+    "java.core.time-numeric.datetimeformatter-parsing-formatting.q2": "7c5ef7ad4f083092f5f6ead8836d54d6378ece71c5017afde614a3744112c478",
+    "java.core.time-numeric.datetimeformatter-parsing-formatting.q3": "7e5585f17aad6aa7b69f4961035cb5570b44ae23179c5dd9bc0f0edf05889371",
+    "java.core.time-numeric.datetimeformatter-parsing-formatting.q4": "e9c0fa3ade09d15fc640d89969b74d3d6db8c3ff3141f6f61ac0a36efe3a8918",
+    "java.core.time-numeric.datetimeformatter-parsing-formatting.q5": "0d8fc2a800c6f69b1fe5bebc407db7f722006beca3f8eb94eb5d3ecb72004fe7",
+    "java.core.time-numeric.datetimeformatter-parsing-formatting.q6": "f4c033ab7672311931ed0354e3a0b9dcacb079ac6cb798cb1f6e7adef601be3a",
+    "java.core.time-numeric.floating-point-precision.q1": "186d9eb677a9d2fe92e336364d02821456137456a8ee64faea50a6dad94ba0e2",
+    "java.core.time-numeric.floating-point-precision.q2": "31383bdf8c62d58293e6885e086e1cc153b1e56ac5ebe77a8d432f0557024c22",
+    "java.core.time-numeric.floating-point-precision.q3": "41d8c82bd28a6e61efbd0f4dfd0b28d4f63d2e5eb785cd0368646701e2772b62",
+    "java.core.time-numeric.floating-point-precision.q4": "d766c76f18383832881c4cb397212d41371b86992d07eee6b93827d332697dd6",
+    "java.core.time-numeric.bigdecimal-money-rounding.q1": "64e06ad374a9fc9db840dcd2e248ed7c4c96efe5d4cab7ec8e1264fb9b6b55b5",
+    "java.core.time-numeric.bigdecimal-money-rounding.q2": "b6b58c44a2ea6f7ceafe8b4c08cdd76595aa159aec5398f0b9f4c794173d93a8",
+    "java.core.time-numeric.bigdecimal-money-rounding.q3": "0db23a4d48e3ad8eb47d61d3578f6c33f7686fd5aa1a79dca135e1f15b3699a8",
+    "java.core.time-numeric.bigdecimal-money-rounding.q4": "d37f5f17c0b77cf67cd70f21e396b8048f48dbdc0945de265be1a64dd643ed7c",
+    "java.core.time-numeric.bigdecimal-money-rounding.q5": "3ef7d6e648b8823b615da0ca937ab6109bbdbe70e76d1da70a48c210613e7256",
+    "java.core.time-numeric.bigdecimal-money-rounding.q6": "0b04deac50be572f9a45157e5092cc2c1d66f63b46f829592e5cab8d86766f79",
+    "java.core.time-numeric.bigdecimal-money-rounding.q7": "f6e379cd931bd7969c983b1a6d15da3ce2cd7da14fbe2adcfcd8d1b725bbf226"
+  },
+  "carriedForwardFindings": [],
+  "findings": [
+    {
+      "id": "W4-JTIME-001",
+      "severity": "P2",
+      "contentKeys": [
+        "java.core.time-numeric.bigdecimal-money-rounding.q2"
+      ],
+      "file": "content/java/time-numeric/questions.json",
+      "quote": "BigDecimal은 equals를 상속해 제공하며 Comparable.compareTo도 가진다. 각 API의 계약 차이를 알아야 한다.",
+      "problem": "D feedback은BigDecimal이equals를상속해제공한다고하지만API는Object.equals재정의를명시한다. 같은문항정답C/본문의value+scale동등성은정확;override와identity상속을구별해야한다.",
+      "action": "D rationale의상속을재정의로최소교정하고정답·난도·본문은유지.",
+      "officialEvidence": [
+        "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/math/BigDecimal.html#equals(java.lang.Object)"
+      ],
+      "followupIssues": [
+        201
+      ]
+    }
+  ],
+  "visualizationAssets": [
+    {
+      "file": "frontend/public/learning/java/instant-zones.svg",
+      "sourceSha256": "b8f882f61a9f4d6fd68f2221872ed966d296e9f467495491c7211e145e5c2047",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "basis": "전체760x240 source/label·circle/path·rect geometry확인. 단일Instant의UTC12/서울21/뉴욕07은UTC-05예시로가능하며계절고정보장아님. 선택적date/offset한정가능;본문8월수치와동일시점가정안함. Reader render/mobile/theme미검증."
+    },
+    {
+      "file": "frontend/public/learning/java/dst-gap-overlap.svg",
+      "sourceSha256": "40b02e99e0b371bfc85961a45378575f55a725f45e41bbe112906fe968ba60b4",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "basis": "전체820x360 source/title/desc/marker/line/02시gap/두02:30와offsetA,B 및반복화살표확인. local표현소실과offset2개흐름은본문유럽식예시일치. 좌표box중첩없음;Reader render/mobile/theme미검증."
+    }
+  ]
+}
