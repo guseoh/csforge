@@ -167,6 +167,84 @@
     "sourceFileSha256": "49dbd6ba10d148eecb458f9b208ee1de4dd38ae860f9599d74c0aef4624f56d5"
   },
   {
+    "id": "W4-JOBJ-001",
+    "severity": "P0",
+    "contentKeys": [
+      "java.core.object-contracts.hashcode-contract"
+    ],
+    "file": "content/java/object-contracts/hashcode-contract.md",
+    "quote": "Key key = new Key(\"A\");",
+    "additionalEvidence": [
+      {
+        "file": "content/java/object-contracts/hashcode-contract.md",
+        "quote": "class Key {",
+        "sourceLine": 91,
+        "sourceFileSha256": "173f8072b47acf18772702027f71f82513a0f50a9d4c53d5a840694ff7e9bb61"
+      }
+    ],
+    "problem": "Key 클래스에는 인자 생성자가 없으나 new Key(\"A\")를 호출하여 예제가 컴파일되지 않는다. hashCode/가변 키 의미 자체는 정확하다.",
+    "action": "Key(String value) 생성자와 non-null 필드 초기화만 추가하고 핵심 해시 동작 설명·연결 문항을 보존한다.",
+    "officialEvidence": [
+      "https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html#jls-8.8.9"
+    ],
+    "runtimeEvidence": "javac21 한정 컴파일에서 required no arguments / found String 확인. Java25 전체 본문 실행 주장이 아니다.",
+    "followupIssues": [
+      201
+    ],
+    "sourceLine": 110,
+    "sourceFileSha256": "173f8072b47acf18772702027f71f82513a0f50a9d4c53d5a840694ff7e9bb61"
+  },
+  {
+    "id": "W4-JOBJ-002",
+    "severity": "P0",
+    "contentKeys": [
+      "java.core.object-contracts.equals-contract",
+      "java.core.object-contracts.hashcode-contract"
+    ],
+    "file": "content/java/object-contracts/equals-contract.md",
+    "quote": "https://tecoble.techcourse.co.kr/post/2020-06-11-value-object/",
+    "additionalEvidence": [
+      {
+        "file": "content/java/object-contracts/hashcode-contract.md",
+        "quote": "https://tecoble.techcourse.co.kr/post/2020-07-29-equals-and-hashCode/",
+        "sourceLine": 18,
+        "sourceFileSha256": "173f8072b47acf18772702027f71f82513a0f50a9d4c53d5a840694ff7e9bb61"
+      }
+    ],
+    "problem": "두 Tecoble 참고 글에서 Object 기본 hashCode를 객체 실제 메모리 주소/고유 hash로 일반화하지만 Java SE25 Object API는 주소와 유일성을 보장하지 않는다. canonical 본문은 정확하여 외부 Reference 관계 오류로 분리한다.",
+    "action": "두 Concept의 한국어 Reference를 명세와 함께 한정하거나 정확한 자료로 교체한다. 해당 Concept 본문과 Q는 유지한다.",
+    "officialEvidence": [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html#hashCode()"
+    ],
+    "runtimeEvidence": "관련 공식 Javadoc과 한국어 출처 원문을 비교. JVM 구현이 API 보장이라는 주장은 하지 않음.",
+    "followupIssues": [
+      201,
+      222
+    ],
+    "sourceLine": 18,
+    "sourceFileSha256": "b1acf650ca4e2f76bd352a951b4662beebf91357f90b1d44fef15f9137ef1ad6"
+  },
+  {
+    "id": "W4-JOBJ-003",
+    "severity": "P1",
+    "contentKeys": [
+      "java.core.object-contracts.comparator-custom-order.q4"
+    ],
+    "file": "content/java/object-contracts/questions.json",
+    "quote": "null인 title을 마지막으로 보내는 Comparator 조합으로 적절한 것은?",
+    "problem": "정답 B는 nullable String 자체를 비교하면 맞지만 Task의 title 필드를 정렬하는 해석이라면 Comparator.comparing(Task::title, Comparator.nullsLast(...))가 필요하다. 인접한 Task 문항과 비교 대상 타입 전제가 혼동될 수 있다.",
+    "action": "String title 값 자체를 비교한다고 프롬프트에 명시하고 정답은 유지하거나 Task 비교자라면 키 추출 조합으로 정답/선택지 수정.",
+    "officialEvidence": [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Comparator.html"
+    ],
+    "runtimeEvidence": "Comparator<T> 제네릭 비교 대상과 key extractor 필요성을 공식 API와 대조. 전체 질문 실행 주장 아님.",
+    "followupIssues": [
+      201
+    ],
+    "sourceLine": 26,
+    "sourceFileSha256": "af9f719c671f9e8184a69aa1dc7769a0e33265f6283699edd957108d3db68118"
+  },
+  {
     "id": "W4-JOM-001",
     "severity": "P1",
     "contentKeys": [

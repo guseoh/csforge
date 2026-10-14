@@ -4,53 +4,54 @@
   "areas": [
     {
       "area": "java",
-      "concepts": 27,
-      "questions": 151,
-      "currentVerifiedConcepts": 27,
-      "currentVerifiedQuestions": 151,
+      "concepts": 32,
+      "questions": 182,
+      "currentVerifiedConcepts": 32,
+      "currentVerifiedQuestions": 182,
       "conceptQuality": {
-        "KEEP": 19,
-        "TARGETED_ENHANCE": 8
+        "KEEP": 22,
+        "TARGETED_ENHANCE": 10
       },
       "questionQuality": {
-        "KEEP": 144,
-        "TARGETED_ENHANCE": 7
+        "KEEP": 174,
+        "TARGETED_ENHANCE": 8
       }
     }
   ],
   "allConceptQuality": {
-    "KEEP": 495,
-    "NEEDS_REVIEW": 117,
-    "TARGETED_ENHANCE": 109
+    "KEEP": 498,
+    "NEEDS_REVIEW": 112,
+    "TARGETED_ENHANCE": 111
   },
   "allQuestionQuality": {
-    "KEEP": 1752,
-    "NEEDS_REVIEW": 671,
-    "TARGETED_ENHANCE": 102
+    "KEEP": 1782,
+    "NEEDS_REVIEW": 640,
+    "TARGETED_ENHANCE": 103
   },
   "allConceptEvidence": {
     "CURRENT_PARTIAL": 3,
-    "CURRENT_VERIFIED": 603,
-    "NEEDS_REVIEW": 115
+    "CURRENT_VERIFIED": 608,
+    "NEEDS_REVIEW": 110
   },
   "allQuestionEvidence": {
     "CURRENT_PARTIAL": 19,
-    "CURRENT_VERIFIED": 1835,
-    "NEEDS_REVIEW": 671
+    "CURRENT_VERIFIED": 1866,
+    "NEEDS_REVIEW": 640
   },
   "reviewedTopics": [
     "java.core.api-design",
     "java.core.language-types",
+    "java.core.object-contracts",
     "java.core.object-model"
   ],
   "totals": {
-    "topics": 3,
-    "concepts": 27,
-    "questions": 151
+    "topics": 4,
+    "concepts": 32,
+    "questions": 182
   },
   "findingSeverity": {
-    "P0": 4,
-    "P1": 3,
+    "P0": 6,
+    "P1": 4,
     "P2": 2
   },
   "carriedFindingSeverity": {
@@ -59,15 +60,15 @@
   "cumulativeComplete": {
     "areas": 14,
     "partialAreas": 1,
-    "topics": 119,
-    "concepts": 603,
-    "questions": 1835
+    "topics": 120,
+    "concepts": 608,
+    "questions": 1866
   },
   "references": {
-    "links": 53,
-    "uniqueUrls": 42,
+    "links": 60,
+    "uniqueUrls": 49,
     "meaningEvidence": {
-      "CURRENT_VERIFIED": 52,
+      "CURRENT_VERIFIED": 59,
       "NEEDS_REVIEW": 1
     }
   }

@@ -13,3 +13,10 @@
 - 제한 javac probe exit0: original builder includeClosed compile error / 해당호출 한줄 제거 compile success / 최소재구성 instance factory의 class호출 non-static compile error. Temurin25.0.4.1·임시디렉터리이며 해당쟁점만확인했다. 초기probe의 repository 경로 오프셋을 보정했고 sandbox 임시폴더 권한 실패는 승인된 제한 실행으로 해결했다. 실제 최종 stdout/hash는 신규ledger에 기록했다.
 
 새 commit의 GitHub CI는 PR/최종 보고에서 별도 확인한다. D2본문1관계, 공식문서전문/모든코드실행 및 Reader/mobile/theme/human QA는 미완료다. 다음 object-contracts5C/31Q는 미검토이며 Wave4/Java/Issue200 전체완료로선언하지않는다.
+
+## object-contracts 정식 checkpoint 추가 (2026-10-14)
+
+- 5C/31Q 전수 의미 근거와 36개 source hash, 관계별 Reference 7개 추가. 기존 세 Topic ledger 및 기존 Reference 관계/판정은 보존한다.
+- 새 발견 그룹: W4-JOBJ-001 P0(인자 생성자 없는 Key), W4-JOBJ-002 P0(두 한국어 학습 자료의 Object.hashCode 고유 주소 일반화), W4-JOBJ-003 P1(Comparator q4 비교 대상 타입 전제).
+- 누적 기대: Java 4/18Topic·32C/182Q, 전체 120/134Topic·608/721C·1,866/2,525Q. 원본 저장소 audit.py generate/--check 및 Python 회귀 테스트와 최종 CI는 새 커밋에서 별도 확인한다.
+- canonical/Curriculum/SVG·DB/Import·제품 코드 변경 없음. Java25 전체 예제 실행 및 Reader/mobile/theme/human QA 완료는 주장하지 않는다. Draft/병합 보류.

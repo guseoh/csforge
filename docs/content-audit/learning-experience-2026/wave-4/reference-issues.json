@@ -65,6 +65,64 @@
   },
   {
     "area": "java",
+    "contentKey": "java.core.object-contracts.equals-contract",
+    "file": "content/java/object-contracts/equals-contract.md",
+    "url": "https://tecoble.techcourse.co.kr/post/2020-06-11-value-object/",
+    "title": "VO(Value Object)란 무엇일까?",
+    "referenceType": "KOREAN_BLOG",
+    "language": "ko",
+    "displayOrder": 2,
+    "relationNote": "값 객체의 동일성·동등성 구분과 equals/hashCode 재정의를 한국어 예제로 복습",
+    "verification": {
+      "status": "CURRENT_VERIFIED",
+      "area": "java",
+      "topicKey": "java.core.object-contracts",
+      "contentKey": "java.core.object-contracts.equals-contract",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-4/reference-relations.json",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "한국어 VO 자료의 값 객체/동일성 설명은 유용하지만 Object 기본 해시를 메모리 주소로 일반화하는 오류(W4-JOBJ-002) 확인.",
+      "limits": "해당 Concept/관련 절 의미 검증, 문서 전문·모든 코드 실행/화면 QA 아님. 외부 출처 기술 오류는 별도 finding으로 분리.",
+      "sourceSha256": "b1acf650ca4e2f76bd352a951b4662beebf91357f90b1d44fef15f9137ef1ad6",
+      "qualityIssueIds": [
+        "W4-JOBJ-002"
+      ]
+    },
+    "priorVerification": {
+      "status": "NEEDS_REVIEW",
+      "basis": "이번 감사에서 미접근. 기존 Wave의 출처 확인 근거 보존; URL 존재만으로 학습 가치를 판정하지 않는다."
+    }
+  },
+  {
+    "area": "java",
+    "contentKey": "java.core.object-contracts.hashcode-contract",
+    "file": "content/java/object-contracts/hashcode-contract.md",
+    "url": "https://tecoble.techcourse.co.kr/post/2020-07-29-equals-and-hashCode/",
+    "title": "equals와 hashCode는 왜 같이 재정의해야 할까?",
+    "referenceType": "KOREAN_BLOG",
+    "language": "ko",
+    "displayOrder": 2,
+    "relationNote": "hash 기반 컬렉션에서 equals와 hashCode 계약이 함께 필요한 이유를 한국어 예제로 복습",
+    "verification": {
+      "status": "CURRENT_VERIFIED",
+      "area": "java",
+      "topicKey": "java.core.object-contracts",
+      "contentKey": "java.core.object-contracts.hashcode-contract",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-4/reference-relations.json",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "한국어 equals/hashCode 자료에서 기본 해시가 고유 주소/객체별 고유 번호라는 과도한 단정(W4-JOBJ-002) 확인.",
+      "limits": "해당 Concept/관련 절 의미 검증, 문서 전문·모든 코드 실행/화면 QA 아님. 외부 출처 기술 오류는 별도 finding으로 분리.",
+      "sourceSha256": "173f8072b47acf18772702027f71f82513a0f50a9d4c53d5a840694ff7e9bb61",
+      "qualityIssueIds": [
+        "W4-JOBJ-002"
+      ]
+    },
+    "priorVerification": {
+      "status": "NEEDS_REVIEW",
+      "basis": "이번 감사에서 미접근. 기존 Wave의 출처 확인 근거 보존; URL 존재만으로 학습 가치를 판정하지 않는다."
+    }
+  },
+  {
+    "area": "java",
     "contentKey": "java.core.object-model.class-object-constructor",
     "file": "content/java/object-model/class-object-constructor.md",
     "url": "https://tecoble.techcourse.co.kr/post/2021-05-17-constructor/",

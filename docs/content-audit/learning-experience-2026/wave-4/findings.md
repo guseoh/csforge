@@ -131,6 +131,68 @@ Topic별 직접 검토의 새 발견과 기존 계승을 분리한다. 검토 �
 
 후속: #201
 
+### W4-JOBJ-001 — P0
+
+대상: `java.core.object-contracts.hashcode-contract`
+
+원문: [content/java/object-contracts/hashcode-contract.md:110](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/object-contracts/hashcode-contract.md#L110)
+
+> Key key = new Key("A");
+
+원문: [content/java/object-contracts/hashcode-contract.md:91](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/object-contracts/hashcode-contract.md#L91)
+
+> class Key {
+
+문제: Key 클래스에는 인자 생성자가 없으나 new Key("A")를 호출하여 예제가 컴파일되지 않는다. hashCode/가변 키 의미 자체는 정확하다.
+
+최소 보강: Key(String value) 생성자와 non-null 필드 초기화만 추가하고 핵심 해시 동작 설명·연결 문항을 보존한다.
+
+공식 근거: [관련 계약](https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html#jls-8.8.9)
+
+실행/추론 대조: javac21 한정 컴파일에서 required no arguments / found String 확인. Java25 전체 본문 실행 주장이 아니다.
+
+후속: #201
+
+### W4-JOBJ-002 — P0
+
+대상: `java.core.object-contracts.equals-contract`, `java.core.object-contracts.hashcode-contract`
+
+원문: [content/java/object-contracts/equals-contract.md:18](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/object-contracts/equals-contract.md#L18)
+
+> https://tecoble.techcourse.co.kr/post/2020-06-11-value-object/
+
+원문: [content/java/object-contracts/hashcode-contract.md:18](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/object-contracts/hashcode-contract.md#L18)
+
+> https://tecoble.techcourse.co.kr/post/2020-07-29-equals-and-hashCode/
+
+문제: 두 Tecoble 참고 글에서 Object 기본 hashCode를 객체 실제 메모리 주소/고유 hash로 일반화하지만 Java SE25 Object API는 주소와 유일성을 보장하지 않는다. canonical 본문은 정확하여 외부 Reference 관계 오류로 분리한다.
+
+최소 보강: 두 Concept의 한국어 Reference를 명세와 함께 한정하거나 정확한 자료로 교체한다. 해당 Concept 본문과 Q는 유지한다.
+
+공식 근거: [관련 계약](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html#hashCode())
+
+실행/추론 대조: 관련 공식 Javadoc과 한국어 출처 원문을 비교. JVM 구현이 API 보장이라는 주장은 하지 않음.
+
+후속: #201, #222
+
+### W4-JOBJ-003 — P1
+
+대상: `java.core.object-contracts.comparator-custom-order.q4`
+
+원문: [content/java/object-contracts/questions.json:26](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/object-contracts/questions.json#L26)
+
+> null인 title을 마지막으로 보내는 Comparator 조합으로 적절한 것은?
+
+문제: 정답 B는 nullable String 자체를 비교하면 맞지만 Task의 title 필드를 정렬하는 해석이라면 Comparator.comparing(Task::title, Comparator.nullsLast(...))가 필요하다. 인접한 Task 문항과 비교 대상 타입 전제가 혼동될 수 있다.
+
+최소 보강: String title 값 자체를 비교한다고 프롬프트에 명시하고 정답은 유지하거나 Task 비교자라면 키 추출 조합으로 정답/선택지 수정.
+
+공식 근거: [관련 계약](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Comparator.html)
+
+실행/추론 대조: Comparator<T> 제네릭 비교 대상과 key extractor 필요성을 공식 API와 대조. 전체 질문 실행 주장 아님.
+
+후속: #201
+
 ### W4-JOM-001 — P1
 
 대상: `java.core.object-model.initialization-order-constructor-chaining`
@@ -194,17 +256,3 @@ Topic별 직접 검토의 새 발견과 기존 계승을 분리한다. 검토 �
 후속: #201, #222
 
 ## 기존 계승
-
-### LEX-002 — P2
-
-대상: `java.core.language-types.pass-by-value`
-
-원문: [frontend/public/learning/java/pass-by-value.svg:1](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/frontend/public/learning/java/pass-by-value.svg#L1)
-
-> M253 448 H650
-
-문제: 기존 발견 재확인: 3단계 caller→A 경로 y448이 parameter value box x342~547/y418~478와 라벨 y454를 통과한다. 호출자의 A와 parameter의 B 구분이 흐려질 수 있다. 과거 배포 screenshot 근거를 보존하되 이번 검토는 SVG 소스 의미/좌표이며 새 render QA는 아님.
-
-최소 보강: 기존 SVG caller 경로만 parameter box 밖으로 우회하거나 행을 분리한다. 본문/문항 모델은 유지하고 새 그림을 만들지 않는다.
-
-후속: #201
