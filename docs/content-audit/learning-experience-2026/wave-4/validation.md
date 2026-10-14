@@ -48,3 +48,7 @@
 ## generics checkpoint (2026-10-14)
 
 6C/37Q의 개별 hash/수기 근거/발견 인용과11 Reference 관계·PECS SVG source hash를 확인했다. 회귀17개 PASS, generate/--check errors/drift0, checkpoint PASS. Java8Topic/59C/328Q·전체635C/2012Q, 관계105중103의 관련 의미 확인/2미확정을 재집계했다. 한계는 checkpoint/ledger에 명시하며 자동 검사로 의미 판정을 생성하지 않는다. 직전 collections HEADcab16fcac68540efe585009511a6994826bff30b의 [Repository Validation #1216](https://github.com/guseoh/csforge/actions/runs/38532532282)는 SUCCESS: Backend tests/build, Frontend/Compose validation 성공, Cloud Run 배포 skipped. generics CI는 해당 push HEAD에서 별도 확인한다.
+
+## exceptions-resources checkpoint (2026-10-14)
+
+8C/46Q의 수기 근거·hash·발견 인용/12 Reference 관계/1SVG source를 확인했다. 회귀17개 PASS, generate/--check errors/drift0, checkpoint PASS. Java9Topic/67C/374Q·전체643C/2058Q를 재집계했으며 기존 ledger/Wave1~3 변경은 없다. 명시된 helper 반례와 null 매핑의 제한 Java probe가 성공했다. 직전 generics HEAD35f4b037cc609e5908214fa2d78ff13cb72ffa93의 [CI #1217](https://github.com/guseoh/csforge/actions/runs/38533596230)는 SUCCESS: Backend tests/build, Frontend/Compose 성공, Cloud Run 배포 skipped. 신규 checkpoint CI는 push HEAD에서 확인한다.

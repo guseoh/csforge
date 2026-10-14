@@ -314,6 +314,55 @@
     "sourceFileSha256": "6ceae356f6dbba8c576f9eded0ea184d01b946eaf9fb5a5dbf387c1e79ab7701"
   },
   {
+    "id": "W4-JEX-001",
+    "severity": "P1",
+    "contentKeys": [
+      "java.core.exceptions-resources.failure-atomicity"
+    ],
+    "file": "content/java/exceptions-resources/failure-atomicity.md",
+    "quote": "List<Item> updated = new ArrayList<>(items);",
+    "problem": "임시결과에서기존상태를지키는예시는List구조만복사하고Item참조는공유한다. validateAndModify가가변Item필드를바꾼뒤실패하면items재대입이없어도원본관찰상태가바뀐다. 구조만수정하거나불변Item이라는전제가없어실패원자성보장범위를확대해읽게된다.",
+    "action": "구조변경만/불변Item전제를명시하거나변경할원소의독립복사범위를설명. 공유원소변경→실패반례한줄만추가해rollback보장범위를한정;기존잔액/DB경계모델은유지.",
+    "officialEvidence": [
+      "https://docs.oracle.com/javase/specs/jls/se25/html/jls-11.html",
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/ArrayList.html#%3Cinit%3E(java.util.Collection)"
+    ],
+    "runtimeEvidence": "미정의validateAndModify에가변Item필드변경후throw를넣은명시반례probe: 원본value1→2. 원문에없는helper실제동작을확정하는것이아니라누락된복사범위전제를보이는반례.",
+    "followupIssues": [
+      201
+    ],
+    "sourceLine": 73,
+    "sourceFileSha256": "ea69371a3df4c8a4633560561524d7f7abea881fe49f564926cffa7b392dadaa"
+  },
+  {
+    "id": "W4-JEX-002",
+    "severity": "P2",
+    "contentKeys": [
+      "java.core.exceptions-resources.exception-as-control-flow"
+    ],
+    "file": "content/java/exceptions-resources/exception-as-control-flow.md",
+    "quote": "if (value == null) {",
+    "additionalEvidence": [
+      {
+        "file": "content/java/exceptions-resources/exception-as-control-flow.md",
+        "quote": "// 부재 처리",
+        "sourceLine": 52,
+        "sourceFileSha256": "cc1a567e3814d679fc0cf81c356b7d9d49a189634ddd3b5a8cc1dc6b7c955467"
+      }
+    ],
+    "problem": "일반Map의get==null을부재처리로사용하지만null매핑을허용하면키가존재해도null이반환된다. 이snippet에는nonnull값전제/정상적으로null을부재와같이취급하는정책이없다. 정상분기와실패구별전체설명은맞으며이코드의전제한정만필요하다.",
+    "action": "예시Map은null값을저장하지않는다는전제를추가하거나실제키부재구별시containsKey를쓴다고짧게보강. 정상흐름설계본문/4Q유지.",
+    "officialEvidence": [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Map.html#get(java.lang.Object)"
+    ],
+    "runtimeEvidence": "제한HashMapprobe present→null에서get=null/containsKey=true.",
+    "followupIssues": [
+      201
+    ],
+    "sourceLine": 51,
+    "sourceFileSha256": "cc1a567e3814d679fc0cf81c356b7d9d49a189634ddd3b5a8cc1dc6b7c955467"
+  },
+  {
     "id": "W4-JGEN-001",
     "severity": "P1",
     "contentKeys": [

@@ -243,6 +243,46 @@ Topic별 직접 검토의 새 발견과 기존 계승을 분리한다. 검토 �
 
 후속: #201
 
+### W4-JEX-001 — P1
+
+대상: `java.core.exceptions-resources.failure-atomicity`
+
+원문: [content/java/exceptions-resources/failure-atomicity.md:73](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/exceptions-resources/failure-atomicity.md#L73)
+
+> List<Item> updated = new ArrayList<>(items);
+
+문제: 임시결과에서기존상태를지키는예시는List구조만복사하고Item참조는공유한다. validateAndModify가가변Item필드를바꾼뒤실패하면items재대입이없어도원본관찰상태가바뀐다. 구조만수정하거나불변Item이라는전제가없어실패원자성보장범위를확대해읽게된다.
+
+최소 보강: 구조변경만/불변Item전제를명시하거나변경할원소의독립복사범위를설명. 공유원소변경→실패반례한줄만추가해rollback보장범위를한정;기존잔액/DB경계모델은유지.
+
+공식 근거: [관련 계약](https://docs.oracle.com/javase/specs/jls/se25/html/jls-11.html), [관련 계약](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/ArrayList.html#%3Cinit%3E(java.util.Collection))
+
+실행/추론 대조: 미정의validateAndModify에가변Item필드변경후throw를넣은명시반례probe: 원본value1→2. 원문에없는helper실제동작을확정하는것이아니라누락된복사범위전제를보이는반례.
+
+후속: #201
+
+### W4-JEX-002 — P2
+
+대상: `java.core.exceptions-resources.exception-as-control-flow`
+
+원문: [content/java/exceptions-resources/exception-as-control-flow.md:51](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/exceptions-resources/exception-as-control-flow.md#L51)
+
+> if (value == null) {
+
+원문: [content/java/exceptions-resources/exception-as-control-flow.md:52](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/exceptions-resources/exception-as-control-flow.md#L52)
+
+> // 부재 처리
+
+문제: 일반Map의get==null을부재처리로사용하지만null매핑을허용하면키가존재해도null이반환된다. 이snippet에는nonnull값전제/정상적으로null을부재와같이취급하는정책이없다. 정상분기와실패구별전체설명은맞으며이코드의전제한정만필요하다.
+
+최소 보강: 예시Map은null값을저장하지않는다는전제를추가하거나실제키부재구별시containsKey를쓴다고짧게보강. 정상흐름설계본문/4Q유지.
+
+공식 근거: [관련 계약](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Map.html#get(java.lang.Object))
+
+실행/추론 대조: 제한HashMapprobe present→null에서get=null/containsKey=true.
+
+후속: #201
+
 ### W4-JGEN-001 — P1
 
 대상: `java.core.generics.type-erasure-reifiable-types`

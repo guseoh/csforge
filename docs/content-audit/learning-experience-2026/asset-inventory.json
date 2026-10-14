@@ -303,6 +303,12 @@
     "visualReview": {
       "status": "NEEDS_REVIEW"
     },
+    "sourceSemanticReview": {
+      "file": "frontend/public/learning/java/exception-boundaries.svg",
+      "sourceSha256": "a8a83fac0c172d87af8428e553ff6a3edc526fa84cec9b6b860e6373f6cd943b",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "basis": "1100×500 전체source/title/desc/marker/style/rect/text/path를읽었다. Repository48..308→service404..696→API792..1052와화살표/cause·fallback·status/body라벨이본문책임흐름과일치. 실제Reader render/mobile/theme QA미완료."
+    },
     "viewBox": "0 0 1100 500",
     "labels": [
       "Catch at the boundary with responsibility",
