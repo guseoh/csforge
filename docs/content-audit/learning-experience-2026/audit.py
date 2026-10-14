@@ -578,7 +578,7 @@ def main():
         wave_3_lines.extend([f"문제: {f['problem']}", "", f"최소 보강: {f['action']}", "",
                              "후속: " + ", ".join(f"#{n}" for n in f["followupIssues"]), ""])
     artifacts["wave-3-findings.md"] = "\n".join(wave_3_lines)
-    lines = ["# LearningArea별 감사 요약", "", "15 Area 전수 구조 인벤토리를 유지한다. Wave 1·2·3의 14 Area는 본문/문항 전수 직접 검토 CURRENT_VERIFIED다. Wave 4는 language-types/object-model/api-design/object-contracts 네 Topic 32C/182Q를 완료했으며 Java Area는 CURRENT_PARTIAL이다. 다른 Java Topic의 초기 샘플 CURRENT_PARTIAL과 NEEDS_REVIEW는 보존한다. 과거 PASS는 PRIOR_REVIEWED이며 Wave 4/Issue #200 전체 완료가 아니다.", "",
+    lines = ["# LearningArea별 감사 요약", "", "15 Area 전수 구조 인벤토리를 유지한다. Wave 1·2·3의 14 Area는 본문/문항 전수 직접 검토 CURRENT_VERIFIED다. Wave 4는 language-types/object-model/api-design/object-contracts/enum-modeling 다섯 Topic 36C/200Q를 완료했으며 Java Area는 CURRENT_PARTIAL이다. 다른 Java Topic의 초기 샘플 CURRENT_PARTIAL과 NEEDS_REVIEW는 보존한다. 과거 PASS는 PRIOR_REVIEWED이며 Wave 4/Issue #200 전체 완료가 아니다.", "",
              "| Area | Topic | Concept | Question | 이번 본문 검토 | 이번 문항 검토 | Concept KEEP / ENHANCE / REVIEW |", "| --- | ---: | ---: | ---: | ---: | ---: | --- |"]
     for area in areas:
         name = area["area"]

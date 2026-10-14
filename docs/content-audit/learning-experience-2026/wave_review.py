@@ -18,7 +18,7 @@ WAVE_3_COUNTS = {
     "operating-systems": (12, 97, 331), "network-http": (15, 127, 381),
 }
 WAVE_4_TOPICS = {"java--language-types": (1, 10, 55), "java--object-model": (1, 12, 68),
-                 "java--api-design": (1, 5, 28), "java--object-contracts": (1, 5, 31)}
+                 "java--api-design": (1, 5, 28), "java--object-contracts": (1, 5, 31), "java--enum-modeling": (1, 4, 18)}
 CONCEPT_AXES = [
     "objectiveLevelDepth", "accuracyMechanismCodeExamplesClarityBoundaries",
     "visualization", "references", "linkedQuestionCoverage",

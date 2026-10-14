@@ -1309,6 +1309,111 @@
         "kind": "CURRENT_DIRECT_RELATION_REVIEW",
         "reviewedAt": "2026-10-14"
       }
+    },
+    {
+      "contentKey": "java.core.enum-modeling.enum-closed-values-behavior",
+      "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html#jls-8.9",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "JLS8.9 enum class/상수/instance의 선언·생성 계약 및 상수별 행동과 공유 상태 경계를 확인.",
+      "limits": "해당 관련 절의 의미 대조만 완료. 외부 문서 전문/모든 snippet 실행/Reader QA 아님.",
+      "sourceFile": "content/java/enum-modeling/enum-closed-values-behavior.md",
+      "sourceSha256": "99ee27e10edcf3a9314a421726b751a6eedaccf518aced1042812f04940dce33",
+      "reference": {
+        "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html#jls-8.9",
+        "title": "JLS 8.9 Enum Classes",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "enum class의 언어 규칙 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_RELATION_REVIEW",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.enum-modeling.enum-closed-values-behavior",
+      "url": "https://techblog.woowahan.com/2527/",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "우아한형제들 Java Enum 활용기 enum 응집 및 외부 코드 매핑 사례를 확인; 모든 전략이 enum 필수는 아님.",
+      "limits": "해당 관련 절의 의미 대조만 완료. 외부 문서 전문/모든 snippet 실행/Reader QA 아님.",
+      "sourceFile": "content/java/enum-modeling/enum-closed-values-behavior.md",
+      "sourceSha256": "99ee27e10edcf3a9314a421726b751a6eedaccf518aced1042812f04940dce33",
+      "reference": {
+        "url": "https://techblog.woowahan.com/2527/",
+        "title": "Java Enum 활용기",
+        "referenceType": "COMPANY_TECH_BLOG",
+        "language": "ko",
+        "displayOrder": 2,
+        "relationNote": "문자열 코드와 관련 행동을 enum으로 응집한 실제 Java 활용 사례를 한국어로 복습"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_RELATION_REVIEW",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.enum-modeling.enum-ordinal-name-persistence",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Enum.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "Java25 Enum API의 name 선언명, ordinal 선언위치, valueOf 정확 일치 계약 검증.",
+      "limits": "해당 관련 절의 의미 대조만 완료. 외부 문서 전문/모든 snippet 실행/Reader QA 아님.",
+      "sourceFile": "content/java/enum-modeling/enum-ordinal-name-persistence.md",
+      "sourceSha256": "57e5df1f567ed3ae15917b37f911760f7f349d66b140ef3a10902a1230c8be23",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Enum.html",
+        "title": "Java SE 25 API: Enum",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "name과 ordinal의 공식 의미 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_RELATION_REVIEW",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.enum-modeling.enumset",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/EnumSet.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "Java25 EnumSet API 단일 enum 타입/null 불허/complementOf/range; 예제 mismatch는 별도 발견.",
+      "limits": "해당 관련 절의 의미 대조만 완료. 외부 문서 전문/모든 snippet 실행/Reader QA 아님.",
+      "sourceFile": "content/java/enum-modeling/enumset.md",
+      "sourceSha256": "9d9b736d123932bd845244f74e0e868f90fc957ad239e5e2267301414b5cd530",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/EnumSet.html",
+        "title": "Java SE 25 API: EnumSet",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "EnumSet의 계약과 지원 연산 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_RELATION_REVIEW",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.enum-modeling.enummap",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/EnumMap.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "Java25 EnumMap API 키 enum/선언순서·null키 금지/null값 허용/getOrDefault 확인.",
+      "limits": "해당 관련 절의 의미 대조만 완료. 외부 문서 전문/모든 snippet 실행/Reader QA 아님.",
+      "sourceFile": "content/java/enum-modeling/enummap.md",
+      "sourceSha256": "b06750a87a3ba85763708c2d368e94448178d452827581990619aa47bb335248",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/EnumMap.html",
+        "title": "Java SE 25 API: EnumMap",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "EnumMap의 key 제한과 iteration order 계약 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_RELATION_REVIEW",
+        "reviewedAt": "2026-10-14"
+      }
     }
   ],
   "supportingRelations": [

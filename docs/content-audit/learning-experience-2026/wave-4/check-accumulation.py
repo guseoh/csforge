@@ -117,7 +117,7 @@ class AccumulationChecks(unittest.TestCase):
         self.assertTrue(any("Unverified supporting URL relation" in e for e in self.load(parts, relations)[3]))
 
     def test_previous_44_relations_and_two_ledgers_survive(self):
-        rows = [r for r in self.relations["references"] if not r["contentKey"].startswith(("java.core.api-design.", "java.core.object-contracts."))]
+        rows = [r for r in self.relations["references"] if not r["contentKey"].startswith(("java.core.api-design.", "java.core.object-contracts.", "java.core.enum-modeling."))]
         self.assertEqual(len(rows), 44)
         self.assertEqual(Counter(r["evidenceLevel"] for r in rows), {"CURRENT_VERIFIED": 43, "NEEDS_REVIEW": 1})
         for name in ["java--language-types", "java--object-model"]:
