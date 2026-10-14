@@ -76,3 +76,7 @@
 ## coding-tests checkpoint (2026-10-14)
 
 7C/46고유Q/11관계전수근거·hash·인용을확인하고복수Concept문항중복집계없이누적했다. 회귀18개/checkpoint/generate/--check errors/drift0/Python AST/diff PASS. Java15Topic/107C/614Q·전체683C/2298Q이며streams직접읽은품질미확정3Q보존. NONE도식계약은코드·ASCII로실제목표와대조했다. 기존ledger/Wave1~3/canonical/Curriculum/SVG 무변경. 직전 io-nio HEADb00d7c8b41c7710130f9ad0f0bd4f39573480136의 [CI #1223](https://github.com/guseoh/csforge/actions/runs/38541155008)는SUCCESS. 신규checkpoint CI는push HEAD에서확인한다.
+
+## metadata-compatibility checkpoint (2026-10-14)
+
+7C/39Q全본문·문항수기근거/46hash/인용·15관계및ProxySVG source/geometry를대조했다. 회귀18개/checkpoint/generate/--check errors/drift0/Python AST/diff PASS. Java16Topic/114C/653Q·전체690C/2337Q. Wave4 Reference203관계/162URL중195관련의미검토/8미확정이며확인된Woowa목적불일치는별도qualityIssueIds에연결했다. 앞선streams품질미확정3Q와기존ledger/Wave1~3/canonical/Curriculum/SVG보존. 직전 coding-tests HEADec693c369ea511481a3885e63923fb312a76db22의 [CI #1224](https://github.com/guseoh/csforge/actions/runs/38541995756)는SUCCESS. 신규checkpoint CI는push HEAD에서확인한다.

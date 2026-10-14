@@ -4103,6 +4103,339 @@
         "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--coding-tests.json",
         "reviewedAt": "2026-10-14"
       }
+    },
+    {
+      "contentKey": "java.core.metadata-compatibility.reflection-class-api",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/reflect/package-summary.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "reflectpackage JVMmodel/synthetic·encapsulation/security와멤버정보/프레임워크동작별도를대조.",
+      "limits": "Concept관련목적/절직접읽기범위. 전문·모든snippet실행/ReaderQA미검증. 검토완료는Reference문제없음의미아니며같은URL다른관계상태자동승격없음.",
+      "sourceFile": "content/java/metadata-compatibility/reflection-class-api.md",
+      "sourceSha256": "db055873309a67d87a271ed2988c993de11dbe20f6e29591ecd28af9c5601bea",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/reflect/package-summary.html",
+        "title": "Java SE 25 API: java.lang.reflect",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "runtime metadata inspection과 access 경계 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--metadata-compatibility.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.metadata-compatibility.reflection-class-api",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Class.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "ClassgetMethodspublic+inherited/getDeclaredMethods모든access직접선언+bridge/synthetic/런타임타입과annotations조회계약대조.",
+      "limits": "Concept관련목적/절직접읽기범위. 전문·모든snippet실행/ReaderQA미검증. 검토완료는Reference문제없음의미아니며같은URL다른관계상태자동승격없음.",
+      "sourceFile": "content/java/metadata-compatibility/reflection-class-api.md",
+      "sourceSha256": "db055873309a67d87a271ed2988c993de11dbe20f6e29591ecd28af9c5601bea",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Class.html",
+        "title": "Java SE 25 API: Class",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 2,
+        "relationNote": "실행 시점 타입과 멤버 조회 API 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--metadata-compatibility.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.metadata-compatibility.annotations-retention-target",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/annotation/package-summary.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "annotationpackageRetention/Target/Inherited/Repeatable역할분류를consumer/metadata메타축에대조.",
+      "limits": "Concept관련목적/절직접읽기범위. 전문·모든snippet실행/ReaderQA미검증. 검토완료는Reference문제없음의미아니며같은URL다른관계상태자동승격없음.",
+      "sourceFile": "content/java/metadata-compatibility/annotations-retention-target.md",
+      "sourceSha256": "4e93794a196518090723abf9a0f249d438e64259dab4c5e9ec866c4e4bf134ad",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/annotation/package-summary.html",
+        "title": "Java SE 25 API: java.lang.annotation",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "annotation support와 meta-annotation 개요 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--metadata-compatibility.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.metadata-compatibility.annotations-retention-target",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/annotation/RetentionPolicy.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "RetentionPolicySOURCEdiscard/CLASS기록VM보존불요및default/RUNTIMEreflect적용을사용시점에대조.",
+      "limits": "Concept관련목적/절직접읽기범위. 전문·모든snippet실행/ReaderQA미검증. 검토완료는Reference문제없음의미아니며같은URL다른관계상태자동승격없음.",
+      "sourceFile": "content/java/metadata-compatibility/annotations-retention-target.md",
+      "sourceSha256": "4e93794a196518090723abf9a0f249d438e64259dab4c5e9ec866c4e4bf134ad",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/annotation/RetentionPolicy.html",
+        "title": "Java SE 25 API: RetentionPolicy",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 2,
+        "relationNote": "SOURCE·CLASS·RUNTIME 보존 정책 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--metadata-compatibility.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.metadata-compatibility.dynamic-proxy-invocationhandler",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/reflect/Proxy.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "Proxy interfaces구성/duplicateforemostMethod regardlesscallerref와자기호출우회경로를인터페이스계약에대조.",
+      "limits": "Concept관련목적/절직접읽기범위. 전문·모든snippet실행/ReaderQA미검증. 검토완료는Reference문제없음의미아니며같은URL다른관계상태자동승격없음.",
+      "sourceFile": "content/java/metadata-compatibility/dynamic-proxy-invocationhandler.md",
+      "sourceSha256": "e23241c59b641d17f9dfd5e7c34befce912c585a42e267cc092bbac8b5080cba",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/reflect/Proxy.html",
+        "title": "Java SE 25 API: Proxy",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "interface-based proxy 생성과 호출 흐름 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--metadata-compatibility.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.metadata-compatibility.dynamic-proxy-invocationhandler",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/reflect/InvocationHandler.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "InvocationHandlerinvoke proxy/Method/args·primitivereturnboxing·nullunboxing/checkedoutside throws→UTE와invokeDefault별도계약을콜백학습에대조.",
+      "limits": "Concept관련목적/절직접읽기범위. 전문·모든snippet실행/ReaderQA미검증. 검토완료는Reference문제없음의미아니며같은URL다른관계상태자동승격없음.",
+      "sourceFile": "content/java/metadata-compatibility/dynamic-proxy-invocationhandler.md",
+      "sourceSha256": "e23241c59b641d17f9dfd5e7c34befce912c585a42e267cc092bbac8b5080cba",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/reflect/InvocationHandler.html",
+        "title": "Java SE 25 API: InvocationHandler",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 2,
+        "relationNote": "invoke callback contract 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--metadata-compatibility.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.metadata-compatibility.annotation-processing-vs-reflection",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/annotation/processing/package-summary.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "javax.annotation.processing처리환경/Processor·Filer로소스/클래스/resource생성도구역할을compile검증·산출물에대조.",
+      "limits": "Concept관련목적/절직접읽기범위. 전문·모든snippet실행/ReaderQA미검증. 검토완료는Reference문제없음의미아니며같은URL다른관계상태자동승격없음.",
+      "sourceFile": "content/java/metadata-compatibility/annotation-processing-vs-reflection.md",
+      "sourceSha256": "57ff3125cc0dc131c289e0f1bd70d9d05ba09bf6b9684e32016dc7417d3421c4",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/annotation/processing/package-summary.html",
+        "title": "Java SE 25 API: javax.annotation.processing",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "컴파일 시점 애너테이션 처리 API 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--metadata-compatibility.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.metadata-compatibility.annotation-processing-vs-reflection",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/reflect/package-summary.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "reflectpackage loadedmetadata/JVMmodel·소스구조1대1아님/접근제약을runtime조사축에독립대조.",
+      "limits": "Concept관련목적/절직접읽기범위. 전문·모든snippet실행/ReaderQA미검증. 검토완료는Reference문제없음의미아니며같은URL다른관계상태자동승격없음.",
+      "sourceFile": "content/java/metadata-compatibility/annotation-processing-vs-reflection.md",
+      "sourceSha256": "57ff3125cc0dc131c289e0f1bd70d9d05ba09bf6b9684e32016dc7417d3421c4",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/reflect/package-summary.html",
+        "title": "Java SE 25 API: java.lang.reflect",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 2,
+        "relationNote": "runtime reflection phase와 결과 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--metadata-compatibility.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.metadata-compatibility.serialization-contract-risk",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/Serializable.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "Serializablemarker·reachablegraph/UID호환·명시UID권고·transient/customhooks를본문장기형식계약에대조.",
+      "limits": "Concept관련목적/절직접읽기범위. 전문·모든snippet실행/ReaderQA미검증. 검토완료는Reference문제없음의미아니며같은URL다른관계상태자동승격없음.",
+      "sourceFile": "content/java/metadata-compatibility/serialization-contract-risk.md",
+      "sourceSha256": "8eefb58c69d68dbce6dfda1148817d0ae87ab0a75ac23b995a99714af28c6c6a",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/Serializable.html",
+        "title": "Java SE 25 API: Serializable",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "Serializable marker와 compatibility 개요 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--metadata-compatibility.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.metadata-compatibility.serialization-contract-risk",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/specs/serialization/index.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "Serializationspec index에서version5.5/5.6 classdescriptorSUID/requiredoptional과securityappendix관련범위를읽어UID≠모든진화안전확인. untrustedwarning/filter는ObjectInputStream보조API절실제대조.",
+      "limits": "Concept관련목적/절직접읽기범위. 전문·모든snippet실행/ReaderQA미검증. 검토완료는Reference문제없음의미아니며같은URL다른관계상태자동승격없음.",
+      "sourceFile": "content/java/metadata-compatibility/serialization-contract-risk.md",
+      "sourceSha256": "8eefb58c69d68dbce6dfda1148817d0ae87ab0a75ac23b995a99714af28c6c6a",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/specs/serialization/index.html",
+        "title": "Java Object Serialization Specification",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 2,
+        "relationNote": "object stream format·version·security contract 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--metadata-compatibility.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.metadata-compatibility.serialization-contract-risk",
+      "url": "https://techblog.woowahan.com/2550/",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "Woowa2550원문intro/ObjectStream사용/JVM영속·session/RMI/cache장점과사용처를확인. 하지만단점은다음포스팅에위임하여이관계의장기위험보충note는지원부족(W4-JMETA-002).",
+      "limits": "Concept관련목적/절직접읽기범위. 전문·모든snippet실행/ReaderQA미검증. 검토완료는Reference문제없음의미아니며같은URL다른관계상태자동승격없음.",
+      "sourceFile": "content/java/metadata-compatibility/serialization-contract-risk.md",
+      "sourceSha256": "8eefb58c69d68dbce6dfda1148817d0ae87ab0a75ac23b995a99714af28c6c6a",
+      "reference": {
+        "url": "https://techblog.woowahan.com/2550/",
+        "title": "자바 직렬화, 그것이 알고싶다. 훑어보기편",
+        "referenceType": "COMPANY_TECH_BLOG",
+        "language": "ko",
+        "displayOrder": 3,
+        "relationNote": "native serialization을 장기 데이터 계약과 운영 위험 관점에서 보충"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--metadata-compatibility.json",
+        "reviewedAt": "2026-10-14"
+      },
+      "qualityIssueIds": [
+        "W4-JMETA-002"
+      ]
+    },
+    {
+      "contentKey": "java.core.metadata-compatibility.jpms-classpath-modulepath",
+      "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-7.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "JLS7.7 requires/exports/opens의compile/runtime권한·unnamedexportopen을기초module그래프에대조.",
+      "limits": "Concept관련목적/절직접읽기범위. 전문·모든snippet실행/ReaderQA미검증. 검토완료는Reference문제없음의미아니며같은URL다른관계상태자동승격없음.",
+      "sourceFile": "content/java/metadata-compatibility/jpms-classpath-modulepath.md",
+      "sourceSha256": "52bea636dab58e258864d50fe5109a87ce536a5a64471f50bf8efe4fef0ad0f8",
+      "reference": {
+        "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-7.html",
+        "title": "Java SE 25 JLS Chapter 7: Packages and Modules",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "module declaration과 package/module 관계 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--metadata-compatibility.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.metadata-compatibility.jpms-classpath-modulepath",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Module.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "ModuleAPIdefiningClassLoaderunnamed/name-null/descriptor-null·readall 및qualifiedopen반영을classpath설명에대조.",
+      "limits": "Concept관련목적/절직접읽기범위. 전문·모든snippet실행/ReaderQA미검증. 검토완료는Reference문제없음의미아니며같은URL다른관계상태자동승격없음.",
+      "sourceFile": "content/java/metadata-compatibility/jpms-classpath-modulepath.md",
+      "sourceSha256": "52bea636dab58e258864d50fe5109a87ce536a5a64471f50bf8efe4fef0ad0f8",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Module.html",
+        "title": "Java SE 25 API: Module",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 2,
+        "relationNote": "named·unnamed module runtime metadata 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--metadata-compatibility.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.metadata-compatibility.binary-compatibility-api-evolution",
+      "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-13.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "JLS13 method변경/overloadexistingbinary는old참조·재compile선택바뀜/constantsinline·abstract/defaultinterface형태별규칙을세compat분리에대조.",
+      "limits": "Concept관련목적/절직접읽기범위. 전문·모든snippet실행/ReaderQA미검증. 검토완료는Reference문제없음의미아니며같은URL다른관계상태자동승격없음.",
+      "sourceFile": "content/java/metadata-compatibility/binary-compatibility-api-evolution.md",
+      "sourceSha256": "2afc009cea63c31ac579f517e589ea24e820cabd90162331d5c1dd566a229d09",
+      "reference": {
+        "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-13.html",
+        "title": "Java SE 25 JLS Chapter 13: Binary Compatibility",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "바이너리 호환성 규칙 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--metadata-compatibility.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.metadata-compatibility.binary-compatibility-api-evolution",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/NoSuchMethodError.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "NoSuchMethodError런타임변경연결오류·LinkageError계층을NoSuchMethodExceptionreflection과구분대조.",
+      "limits": "Concept관련목적/절직접읽기범위. 전문·모든snippet실행/ReaderQA미검증. 검토완료는Reference문제없음의미아니며같은URL다른관계상태자동승격없음.",
+      "sourceFile": "content/java/metadata-compatibility/binary-compatibility-api-evolution.md",
+      "sourceSha256": "2afc009cea63c31ac579f517e589ea24e820cabd90162331d5c1dd566a229d09",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/NoSuchMethodError.html",
+        "title": "Java SE 25 API: NoSuchMethodError",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 2,
+        "relationNote": "바이너리 연결 실패가 실행 시점에 나타나는 증상 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--metadata-compatibility.json",
+        "reviewedAt": "2026-10-14"
+      }
     }
   ],
   "supportingRelations": [

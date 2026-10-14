@@ -269,6 +269,12 @@
     "visualReview": {
       "status": "NEEDS_REVIEW"
     },
+    "sourceSemanticReview": {
+      "file": "frontend/public/learning/java/dynamic-proxy-flow.svg",
+      "sourceSha256": "299df12a3a4b5aca3044b0c18598ea803baf23809edcf19073c82e2f36ccf7d1",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "basis": "1100x430 source全部/title/desc/style/rect/paths/text읽음. Caller→interfaceProxy→handler→target와resultreturn/직접target우회caption은정확. stageboxes분리. 짧은arrow라벨밀도는Reader render/mobile/theme미검증;geometry만으로불필요한결함확정안함."
+    },
     "viewBox": "0 0 1100 430",
     "labels": [
       "호출이 proxy를 지나야 interception이 일어난다",

@@ -534,6 +534,54 @@ Topic별 직접 검토의 새 발견과 기존 계승을 분리한다. 검토 �
 
 후속: #201
 
+### W4-JMETA-001 — P2
+
+대상: `java.core.metadata-compatibility.annotation-processing-vs-reflection.q2`, `java.core.metadata-compatibility.serialization-contract-risk.q2`, `java.core.metadata-compatibility.jpms-classpath-modulepath.q3`
+
+원문: [content/java/metadata-compatibility/questions.json:336](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/metadata-compatibility/questions.json#L336)
+
+> 소스 주석은 컴파일 후 제거되거나 보존 정책에 따라 달라질 수 있어 실행 시점 리플렉션이 모든 원본 주석을 읽는다고 볼 수 없다.
+
+원문: [content/java/metadata-compatibility/questions.json:403](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/metadata-compatibility/questions.json#L403)
+
+> GC 수집기 선택과 무관하다. Java 직렬화에서 클래스 파일 버전 호환성에 쓰인다.
+
+원문: [content/java/metadata-compatibility/questions.json:408](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/metadata-compatibility/questions.json#L408)
+
+> serialVersionUID는 스트림과 클래스 파일 버전 호환성에 영향을 준다.
+
+원문: [content/java/metadata-compatibility/questions.json:487](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/metadata-compatibility/questions.json#L487)
+
+> 일반 클래스패스 항목은 이름 있는 모듈 디스크립터를 제공하지 않으므로 이름 없는 모듈의 일부로 취급된다.
+
+문제: processing.q2C는일반소스주석에Retention같은보존정책이있는듯설명한다. serialization.q2B/전체해설은serialVersionUID를클래스파일버전으로부르며JVMSmajor/minor와혼동가능. jpms.q3A는classpath항목이면descriptor없음이라고원인단정하지만modularJAR가module-info.class를포함한채classpath에놓여도nonmodular행동한다. 정답D/D/A와본문핵심은맞음.
+
+최소 보강: 해당feedback만일반주석은lexicaltoken단계제거/UID는streamclassdescriptor의serializationversion/module-info존재와해석경로별도라명시. 정답·난도·본문구조유지.
+
+공식 근거: [관련 계약](https://docs.oracle.com/javase/specs/jls/se25/html/jls-3.html#jls-3.2), [관련 계약](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/Serializable.html), [관련 계약](https://docs.oracle.com/en/java/javase/25/docs/specs/jar/jar.html#modular-jar-files)
+
+실행/추론 대조: 공식 계약과 수기 코드/상태 추론; 실행 완료 주장이 아님.
+
+후속: #201
+
+### W4-JMETA-002 — P2
+
+대상: `java.core.metadata-compatibility.serialization-contract-risk`
+
+원문: [content/java/metadata-compatibility/serialization-contract-risk.md:29](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/metadata-compatibility/serialization-contract-risk.md#L29)
+
+> native serialization을 장기 데이터 계약과 운영 위험 관점에서 보충
+
+문제: 연결한Woowa훑어보기편은ObjectStream입문·장점·사용처를설명하고단점은다음포스팅에위임한다. relationNote가주장하는장기호환/운영위험학습범위는이글본문에서확인되지않는다. canonical본문의정확한공식위험설명은유지하며이1관계관련성만보강.
+
+최소 보강: Reference relationNote를입문과사용처로좁히거나위험/버전진화를실제로다루는검증된자료로교체. 후속#222와#201에서이1관계만조정;다른직렬화본문재작성없음.
+
+공식 근거: [관련 계약](https://techblog.woowahan.com/2550/), [관련 계약](https://docs.oracle.com/en/java/javase/25/docs/specs/serialization/version.html), [관련 계약](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/ObjectInputStream.html)
+
+실행/추론 대조: 공식 계약과 수기 코드/상태 추론; 실행 완료 주장이 아님.
+
+후속: #201, #222
+
 ### W4-JMOD-001 — P2
 
 대상: `java.core.modern-language.default-static-interface-methods.q3`, `java.core.modern-language.local-variable-type-inference-var.q5`, `java.core.modern-language.switch-expressions.q4`

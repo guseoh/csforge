@@ -1,0 +1,532 @@
+{
+  "area": "java",
+  "wave": 4,
+  "baselineSha": "efe73a15da14c996bd08344181d4d6f87073803d",
+  "reviewedAt": "2026-10-14",
+  "curriculumSha256": "0aad122de20d9205274f96887b562473a3a23de3dd406cbd684031438d4bbe0c",
+  "topicCatalogSha256": "2a167f43030df4dfc9742225d86dfcefdcd5cff2fc0d702c0b9101e00e6b172c",
+  "topic": "metadata-compatibility",
+  "topicKey": "java.core.metadata-compatibility",
+  "reviewMethod": "7C/39Q의전본문·정답·모든선택지rationale·모델·해설·난도/중복/연결을직접읽음. 15 Reference 관계 공식관련절/회사원문단락독립대응. 실제읽기근거와품질판정분리·자동PASS없음.",
+  "topics": [
+    {
+      "key": "java.core.metadata-compatibility",
+      "coverage": "reflection→annotation→proxy→processing→serialization→JPMS→binary evolution7C39Q."
+    }
+  ],
+  "concepts": [
+    [
+      "java.core.metadata-compatibility.reflection-class-api",
+      "KEEP",
+      "L2 CORE: runtimeClass→범위조회→문자이름실패→invoke예외→access/JPMS→framework·성능빈도로충분설명.",
+      "getMethods public상속/getDeclared해당type·일반호출대비실행시검증/Object/boxing·access강제성공아님 정확. 선언은JVM모델이며synthetic/bridge포함가능;소스메서드만이라는배제주장없음.",
+      "NONE: Class멤버tree/정적vsruntime/언어+모듈및frameworkflowASCII로목표충분.",
+      "reflectpackage JVMmodel와Classmethods범위·Methodinvoke IllegalAccess/InvocationTarget/voidnull·AccessibleObjectopenness를관련역할에대조.",
+      "6Q A/B/C/D/A/B 전수확인. q6호출하려다는접근준비setAccessible거부경로로성립;invoke자체가직접InaccessibleObject를던진다고승인하지않음. 명시적준비API표시는선택보강가능."
+    ],
+    [
+      "java.core.metadata-compatibility.annotations-retention-target",
+      "KEEP",
+      "L2 CORE: 메타데이터vsconsumer→Target위치→Retention단계/defaultCLASS→meta→Inherited클래스한정/프레임워크합성으로깊이충분.",
+      "SOURCEcompilerdiscard/CLASS파일기록/runtime불요/RUNTIMEreflection·Target독립/일반메서드상속annotation아님 정확. SOURCE남길필요없음은기초표요약이며실제보존안됨본문후속명시.",
+      "NONE: metadata→compiler/processor/framework와source/runtime두흐름·정책표로충분.",
+      "annotationpackage meta소개/RetentionPolicy3상수·CLASSdefault를이Concept사용단계에독립대조.",
+      "6Q C/D/A/B/C/D 모든보기·feedback대조. q1A는다른정책요약이라선택반박은더직접화가능하나허위기술주장은아님;새결함으로제작안함."
+    ],
+    [
+      "java.core.metadata-compatibility.dynamic-proxy-invocationhandler",
+      "KEEP",
+      "L2 CORE: interfacecaller→proxy→handler→target→잘못된proxy재귀→직접호출우회→중복Method/예외계약 충분.",
+      "JDKProxy임의targetclasssubclass아님/target직접보유·selfinvocation우회·중복foremostMethodcallerinterface판별불가·returns/checkedthrows한정 정확. LoggingHandler는normalpathafter이며exceptionunwrap실전구현은본문/질문에서별도경고.",
+      "DIAGRAM: dynamic-proxy-flow1100x430 전체source/title/desc/style/rect/path·targetreturnhandler/callers실제경로읽음. stage55/315/610/900boxes분리;자기호출우회caption유용. 일부짧은arrow의text밀도는renderQA필요하나source만으로결함확정안함.",
+      "Proxy foreinterface/대상interfacevisibility·InvocationHandler proxy/Method/args 및nullableargs·primitivereturn/checkedUTE를각관계독립대조.",
+      "7Q A/B/C/D/A/B+DESCRIPTIVEselfinvoke 모델전수확인. runtimeException/error와declaredchecked구분·targetexceptionreflectionwrap주의 충분."
+    ],
+    [
+      "java.core.metadata-compatibility.annotation-processing-vs-reflection",
+      "KEEP",
+      "L2 STANDARD: javacround source/type검증/생성 vsloadedClass/동적type·retention·build비용·혼합AOT로균형있는설명.",
+      "processor컴파일확장/generatedcode과reflectionruntime동작구분정확;모든Springruntimeonly/processoralwaysfast 주장없음. SOURCE/CLASS도소스모델처리가능과runtimevisibility독립.",
+      "TEXT: 소스→javac/processround→generatedartifact와JVMload→Class→reflection 경로대조가목표충분.",
+      "processingpackage Processor/Filer환경역할과reflect JVMmodel·encapsulation을두관계에해당시점별대조.",
+      "4Q C/D/A/B 전체실제필드읽음. q2Cfeedback의주석보존정책표현만W4-JMETA-001 P2;정답D/코드생성vsruntime근본정확."
+    ],
+    [
+      "java.core.metadata-compatibility.serialization-contract-risk",
+      "TARGETED_ENHANCE",
+      "L2 STANDARD: marker/graph→transient resource→UID한계→longtermformat→untrustedrisk/filter→JSON별도계약 깊이충분.",
+      "기본직렬화nonstatic/nontransient객체graph/필드transient기본값/customhook복구·UIDsame≠모든진화안전·filter≠신뢰경계제거 정확. record/Externalizable특수규칙으로모든default객체를확대안함.",
+      "NONE: v1streamv2와untrusted→class/graph복원ASCII/Sessioncode가목표충분;보안경고공식근거일치.",
+      "Serializablemarker/UID·Serializationversion5.6/security 및ObjectInputStream직접warning대조. Woowa2550은입문장점/사용처만이고단점은다음편이라risk relationNote지원부족을W4-JMETA-002로기록.",
+      "5Q C/D/A/B+untrustedSCENARIO전수확인. q2B/전체해설의classfileversion표현은streamclassdescriptorUID vsJVMSformat구분W4-JMETA-001. 모델은유지."
+    ],
+    [
+      "java.core.metadata-compatibility.jpms-classpath-modulepath",
+      "KEEP",
+      "L2 STANDARD: classlookup→requiresreadability/export→public별도→opens→unnamed→modulegraph/프레임워크tradeoff로충분.",
+      "namedpublictype패키지exports·opensdeepreflection·unnameddefiningloader 및modulepathidentity정확. opens는runtimeaccess도포함하지만여기는deepreflection목표로설명하며compile접근으로과장안함.",
+      "NONE: 모듈requires/exportstree·classpath/graphASCII가설계기초충분.",
+      "JLS7.7module지시·exports/opens/unnamed와Moduleloader/getName/descriptor·readall을별도관계에대조. JAR25의modularjarclasspath는nonmodular행동을q3feedback검증에보조대조.",
+      "5Q C/D/A/B+DESCRIPTIVEexports/opens 전수검토. q3Aclasspath항목에descriptor없음단정은정정필요W4-JMETA-001;unnamed정답A는유지."
+    ],
+    [
+      "java.core.metadata-compatibility.binary-compatibility-api-evolution",
+      "KEEP",
+      "L2 STANDARD: source vsbinary vsbehavior→descriptor→Error/Exception→overload/default→constants→HTTP별도 기준으로깊이충분.",
+      "long→Longdescriptor다름/oldbinaryresolve≠newsourceoverload/nullStringIntegerambiguous·constinline과semanticchange정확. default진화충돌가능·추상method추가영향을JLS각형태로한정.",
+      "NONE: 재컴파일vsoldclasslink/constant전후/semantic≠binaryASCII와코드가충분.",
+      "JLS13중메서드변경/overloadexistingbinary참조고정/상수inline·interface진화와NoSuchMethodError Linkage성질을독립대조.",
+      "6Q C/D/A/B+시그니처진화SCENARIO/상수30→60SCENARIO 모두보기·모델확인. primitive/String중compileconstant만inline이라는전제명시."
+    ]
+  ],
+  "questions": [
+    [
+      "java.core.metadata-compatibility.reflection-class-api.q1",
+      "KEEP",
+      "Aloadedmember정보;BCDOSqueue/heapphysicaladdress/allsourcecomments아님.",
+      "실제prompt/모든보기rationale/정답/모델/전체해설·난도·연결직접검토. 용어→실행실패→설계응용서로구별,이전PASS복제없음."
+    ],
+    [
+      "java.core.metadata-compatibility.reflection-class-api.q2",
+      "KEEP",
+      "Bdeclaredvsinheritedpublic범위;ACDnative/fields/same목록오답.",
+      "실제prompt/모든보기rationale/정답/모델/전체해설·난도·연결직접검토. 용어→실행실패→설계응용서로구별,이전PASS복제없음."
+    ],
+    [
+      "java.core.metadata-compatibility.reflection-class-api.q3",
+      "KEEP",
+      "CObjecttype/boxing·reflectionexceptions;ABD항상int/nameonly/compileexception삭제아님.",
+      "실제prompt/모든보기rationale/정답/모델/전체해설·난도·연결직접검토. 용어→실행실패→설계응용서로구별,이전PASS복제없음."
+    ],
+    [
+      "java.core.metadata-compatibility.reflection-class-api.q4",
+      "KEEP",
+      "Daccesssuppress요청/module경계;ABCprivate영구public/objectcopy/항상성공아님.",
+      "실제prompt/모든보기rationale/정답/모델/전체해설·난도·연결직접검토. 용어→실행실패→설계응용서로구별,이전PASS복제없음."
+    ],
+    [
+      "java.core.metadata-compatibility.reflection-class-api.q5",
+      "KEEP",
+      "Astartupdynamicnamefailure;BCDautoRename/binary자동호환/runtime영향없음반박.",
+      "실제prompt/모든보기rationale/정답/모델/전체해설·난도·연결직접검토. 용어→실행실패→설계응용서로구별,이전PASS복제없음."
+    ],
+    [
+      "java.core.metadata-compatibility.reflection-class-api.q6",
+      "KEEP",
+      "BJPMSaccess분석;ACD없던member/stackOverflow/serialize요구아님. invoke하려다준비accessenable거부경로로읽음;invoke직접IllegalAccess vssetAccessibleInaccessible를공식대조.",
+      "실제prompt/모든보기rationale/정답/모델/전체해설·난도·연결직접검토. 용어→실행실패→설계응용서로구별,이전PASS복제없음."
+    ],
+    [
+      "java.core.metadata-compatibility.annotations-retention-target.q1",
+      "KEEP",
+      "CRUNTIMEreflection;AB컴파일금지/모든target/Dautoexecute아님. Afeedback은직접반박확장가능하나false아님.",
+      "실제prompt/모든보기rationale/정답/모델/전체해설·난도·연결직접검토. 용어→실행실패→설계응용서로구별,이전PASS복제없음."
+    ],
+    [
+      "java.core.metadata-compatibility.annotations-retention-target.q2",
+      "KEEP",
+      "DTarget위치;ABCretention/값계산/메서드중지아님.",
+      "실제prompt/모든보기rationale/정답/모델/전체해설·난도·연결직접검토. 용어→실행실패→설계응용서로구별,이전PASS복제없음."
+    ],
+    [
+      "java.core.metadata-compatibility.annotations-retention-target.q3",
+      "KEEP",
+      "ASOURCEcompiletools/runtime불가;BCD항상파일+reflection/더강함/JVM실행아님. Bfeedback CLASS로예를들지만runtime보장없음반박은유효.",
+      "실제prompt/모든보기rationale/정답/모델/전체해설·난도·연결직접검토. 용어→실행실패→설계응용서로구별,이전PASS복제없음."
+    ],
+    [
+      "java.core.metadata-compatibility.annotations-retention-target.q4",
+      "KEEP",
+      "Bmetaannotation;ACDproxy/stream/moduledescriptor아님.",
+      "실제prompt/모든보기rationale/정답/모델/전체해설·난도·연결직접검토. 용어→실행실패→설계응용서로구별,이전PASS복제없음."
+    ],
+    [
+      "java.core.metadata-compatibility.annotations-retention-target.q5",
+      "KEEP",
+      "Cclassfile기록과normalreflection별도;ABautorecompile/runtime승격/DTargetretention변경아님.",
+      "실제prompt/모든보기rationale/정답/모델/전체해설·난도·연결직접검토. 용어→실행실패→설계응용서로구별,이전PASS복제없음."
+    ],
+    [
+      "java.core.metadata-compatibility.annotations-retention-target.q6",
+      "KEEP",
+      "D잘못된METHODonFIELD가위치compile오류;ABRUNTIMETarget무시/Targetvisibility/C둘모든위치반박.",
+      "실제prompt/모든보기rationale/정답/모델/전체해설·난도·연결직접검토. 용어→실행실패→설계응용서로구별,이전PASS복제없음."
+    ],
+    [
+      "java.core.metadata-compatibility.dynamic-proxy-invocationhandler.q1",
+      "KEEP",
+      "A지정interfaces;BCDprivateclass메서드/OSthread/processoronly반박.",
+      "실제prompt/모든보기rationale/정답/모델/전체해설·난도·연결직접검토. 용어→실행실패→설계응용서로구별,이전PASS복제없음."
+    ],
+    [
+      "java.core.metadata-compatibility.dynamic-proxy-invocationhandler.q2",
+      "KEEP",
+      "Bhandlerinvoke;ACDloader/serializationhook/join콜백아님.",
+      "실제prompt/모든보기rationale/정답/모델/전체해설·난도·연결직접검토. 용어→실행실패→설계응용서로구별,이전PASS복제없음."
+    ],
+    [
+      "java.core.metadata-compatibility.dynamic-proxy-invocationhandler.q3",
+      "KEEP",
+      "Cproxy/Method/args;ABDsourcepath/GC/descriptorJIT아님.",
+      "실제prompt/모든보기rationale/정답/모델/전체해설·난도·연결직접검토. 용어→실행실패→설계응용서로구별,이전PASS복제없음."
+    ],
+    [
+      "java.core.metadata-compatibility.dynamic-proxy-invocationhandler.q4",
+      "KEEP",
+      "Dinterfacebased≠임의classsubclass;ABCfieldonly/classinterface/같은API반박.",
+      "실제prompt/모든보기rationale/정답/모델/전체해설·난도·연결직접검토. 용어→실행실패→설계응용서로구별,이전PASS복제없음."
+    ],
+    [
+      "java.core.metadata-compatibility.dynamic-proxy-invocationhandler.q5",
+      "KEEP",
+      "AInvocationTargetwrap와declaredexception;BCDautosuccess/compiledelete/target호출없음반박. HARD두호출경계.",
+      "실제prompt/모든보기rationale/정답/모델/전체해설·난도·연결직접검토. 용어→실행실패→설계응용서로구별,이전PASS복제없음."
+    ],
+    [
+      "java.core.metadata-compatibility.dynamic-proxy-invocationhandler.q6",
+      "KEEP",
+      "BforemostMethod callerreference구별미보장;ACDdeclclass항상호출interface/args추가/duplicate항상fail오답.",
+      "실제prompt/모든보기rationale/정답/모델/전체해설·난도·연결직접검토. 용어→실행실패→설계응용서로구별,이전PASS복제없음."
+    ],
+    [
+      "java.core.metadata-compatibility.dynamic-proxy-invocationhandler.q7",
+      "KEEP",
+      "DESCRIPTIVEtargetouter내thisinner→proxyhandler안거침·협력객체/weaving선택;Spring모든방식일반화없음.",
+      "실제prompt/모든보기rationale/정답/모델/전체해설·난도·연결직접검토. 용어→실행실패→설계응용서로구별,이전PASS복제없음."
+    ],
+    [
+      "java.core.metadata-compatibility.annotation-processing-vs-reflection.q1",
+      "KEEP",
+      "Ccompilephase;ABDGC/join/shutdown시점아님.",
+      "실제prompt/모든보기rationale/정답/모델/전체해설·난도·연결직접검토. 용어→실행실패→설계응용서로구별,이전PASS복제없음."
+    ],
+    [
+      "java.core.metadata-compatibility.annotation-processing-vs-reflection.q2",
+      "TARGETED_ENHANCE",
+      "Dloadedmetadata;ABCroundonly/OSsyscall/sourcecomments아님. Cfeedback이일반주석에도보존정책있는듯W4-JMETA-001.",
+      "실제prompt/모든보기rationale/정답/모델/전체해설·난도·연결직접검토. 용어→실행실패→설계응용서로구별,이전PASS복제없음."
+    ],
+    [
+      "java.core.metadata-compatibility.annotation-processing-vs-reflection.q3",
+      "KEEP",
+      "A생성소스/classes/resources;BCDOSprocess필수/GCroot/threaddump아님.",
+      "실제prompt/모든보기rationale/정답/모델/전체해설·난도·연결직접검토. 용어→실행실패→설계응용서로구별,이전PASS복제없음."
+    ],
+    [
+      "java.core.metadata-compatibility.annotation-processing-vs-reflection.q4",
+      "KEEP",
+      "Bprocessing성공≠runtimevisibility;ACDautoRUNTIME/생성code보존자동/reflectcompile재실행반박.",
+      "실제prompt/모든보기rationale/정답/모델/전체해설·난도·연결직접검토. 용어→실행실패→설계응용서로구별,이전PASS복제없음."
+    ],
+    [
+      "java.core.metadata-compatibility.serialization-contract-risk.q1",
+      "KEEP",
+      "Cdefaultstate제외;ABDstatic/암호화/final변경아님. customhook예외한정명시.",
+      "실제prompt/모든보기rationale/정답/모델/전체해설·난도·연결직접검토. 용어→실행실패→설계응용서로구별,이전PASS복제없음."
+    ],
+    [
+      "java.core.metadata-compatibility.serialization-contract-risk.q2",
+      "TARGETED_ENHANCE",
+      "DstreamUID/class진화;ABC스케줄/GC/Target아님. Bfeedback과전체해설의classfileversion명칭W4-JMETA-001 최소정정.",
+      "실제prompt/모든보기rationale/정답/모델/전체해설·난도·연결직접검토. 용어→실행실패→설계응용서로구별,이전PASS복제없음."
+    ],
+    [
+      "java.core.metadata-compatibility.serialization-contract-risk.q3",
+      "KEEP",
+      "A실제nonserializable도달graph면NotSerializable가능;BCDautoTransient/deepclone/Serializable승격반박. null/static/customhook모두실패라고과장없음.",
+      "실제prompt/모든보기rationale/정답/모델/전체해설·난도·연결직접검토. 용어→실행실패→설계응용서로구별,이전PASS복제없음."
+    ],
+    [
+      "java.core.metadata-compatibility.serialization-contract-risk.q4",
+      "KEEP",
+      "Btransient기본값/후복구;ACDstream재생성/UID복원/strong필드화없음.",
+      "실제prompt/모든보기rationale/정답/모델/전체해설·난도·연결직접검토. 용어→실행실패→설계응용서로구별,이전PASS복제없음."
+    ],
+    [
+      "java.core.metadata-compatibility.serialization-contract-risk.q5",
+      "KEEP",
+      "SCENARIOUIDcompat≠trustedinputsecurity/filterlimits/명시schema·DTO경계 모델정확. JSON역시무조건안전이라고보장안함.",
+      "실제prompt/모든보기rationale/정답/모델/전체해설·난도·연결직접검토. 용어→실행실패→설계응용서로구별,이전PASS복제없음."
+    ],
+    [
+      "java.core.metadata-compatibility.jpms-classpath-modulepath.q1",
+      "KEEP",
+      "Crequiresdependency/readability;ABDoverload/객체생성/GCroot아님.",
+      "실제prompt/모든보기rationale/정답/모델/전체해설·난도·연결직접검토. 용어→실행실패→설계응용서로구별,이전PASS복제없음."
+    ],
+    [
+      "java.core.metadata-compatibility.jpms-classpath-modulepath.q2",
+      "KEEP",
+      "Dpackageexports;ABCretention/private공개/경로copy아님.",
+      "실제prompt/모든보기rationale/정답/모델/전체해설·난도·연결직접검토. 용어→실행실패→설계응용서로구별,이전PASS복제없음."
+    ],
+    [
+      "java.core.metadata-compatibility.jpms-classpath-modulepath.q3",
+      "TARGETED_ENHANCE",
+      "Aunnamed;BCDGCautomatic/sourceonly/java.basealways아님. Afeedback의descriptor파일없음원인단정W4-JMETA-001;modularJARclasspath도unnamed가능.",
+      "실제prompt/모든보기rationale/정답/모델/전체해설·난도·연결직접검토. 용어→실행실패→설계응용서로구별,이전PASS복제없음."
+    ],
+    [
+      "java.core.metadata-compatibility.jpms-classpath-modulepath.q4",
+      "KEEP",
+      "Breadability+exports;ACDunnamed삭제/public이module무시/requires자동exports아님.",
+      "실제prompt/모든보기rationale/정답/모델/전체해설·난도·연결직접검토. 용어→실행실패→설계응용서로구별,이전PASS복제없음."
+    ],
+    [
+      "java.core.metadata-compatibility.jpms-classpath-modulepath.q5",
+      "KEEP",
+      "DESCRIPTIVEpublicAPIexport와privatedeepopen별도/qualifiedneededmodules만허용;HARD설계적절.",
+      "실제prompt/모든보기rationale/정답/모델/전체해설·난도·연결직접검토. 용어→실행실패→설계응용서로구별,이전PASS복제없음."
+    ],
+    [
+      "java.core.metadata-compatibility.binary-compatibility-api-evolution.q1",
+      "KEEP",
+      "Csource재compile;ABDoldbinary/behavior/serializeddata는별도.",
+      "실제prompt/모든보기rationale/정답/모델/전체해설·난도·연결직접검토. 용어→실행실패→설계응용서로구별,이전PASS복제없음."
+    ],
+    [
+      "java.core.metadata-compatibility.binary-compatibility-api-evolution.q2",
+      "KEEP",
+      "Doldcompiledlink;ABCsource/behavior/serialform별도.",
+      "실제prompt/모든보기rationale/정답/모델/전체해설·난도·연결직접검토. 용어→실행실패→설계응용서로구별,이전PASS복제없음."
+    ],
+    [
+      "java.core.metadata-compatibility.binary-compatibility-api-evolution.q3",
+      "KEEP",
+      "ANoSuchMethodError가능;BCDtransient복구/autonewoverload/소스항상success아님.",
+      "실제prompt/모든보기rationale/정답/모델/전체해설·난도·연결직접검토. 용어→실행실패→설계응용서로구별,이전PASS복제없음."
+    ],
+    [
+      "java.core.metadata-compatibility.binary-compatibility-api-evolution.q4",
+      "KEEP",
+      "Boldbinaryrefs와newsourceoverload별도;ACD항상old참조/항상same/runtimeonly반박.",
+      "실제prompt/모든보기rationale/정답/모델/전체해설·난도·연결직접검토. 용어→실행실패→설계응용서로구별,이전PASS복제없음."
+    ],
+    [
+      "java.core.metadata-compatibility.binary-compatibility-api-evolution.q5",
+      "KEEP",
+      "SCENARIOdescriptor변경linkfail가능/oldoverload유지·deprecate/majorversion·재compile계획모델정확.",
+      "실제prompt/모든보기rationale/정답/모델/전체해설·난도·연결직접검토. 용어→실행실패→설계응용서로구별,이전PASS복제없음."
+    ],
+    [
+      "java.core.metadata-compatibility.binary-compatibility-api-evolution.q6",
+      "KEEP",
+      "SCENARIO30inlineoldbinary와newconstant60차이·재compile/semantic주의;String/primitivecompileconstant한정정확.",
+      "실제prompt/모든보기rationale/정답/모델/전체해설·난도·연결직접검토. 용어→실행실패→설계응용서로구별,이전PASS복제없음."
+    ]
+  ],
+  "sources": [
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/reflect/package-summary.html",
+      "CURRENT_VERIFIED",
+      "reflectpackage JVMmodel/synthetic·encapsulation/security와멤버정보/프레임워크동작별도를대조."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Class.html",
+      "CURRENT_VERIFIED",
+      "ClassgetMethodspublic+inherited/getDeclaredMethods모든access직접선언+bridge/synthetic/런타임타입과annotations조회계약대조."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/annotation/package-summary.html",
+      "CURRENT_VERIFIED",
+      "annotationpackageRetention/Target/Inherited/Repeatable역할분류를consumer/metadata메타축에대조."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/annotation/RetentionPolicy.html",
+      "CURRENT_VERIFIED",
+      "RetentionPolicySOURCEdiscard/CLASS기록VM보존불요및default/RUNTIMEreflect적용을사용시점에대조."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/reflect/Proxy.html",
+      "CURRENT_VERIFIED",
+      "Proxy interfaces구성/duplicateforemostMethod regardlesscallerref와자기호출우회경로를인터페이스계약에대조."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/reflect/InvocationHandler.html",
+      "CURRENT_VERIFIED",
+      "InvocationHandlerinvoke proxy/Method/args·primitivereturnboxing·nullunboxing/checkedoutside throws→UTE와invokeDefault별도계약을콜백학습에대조."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/annotation/processing/package-summary.html",
+      "CURRENT_VERIFIED",
+      "javax.annotation.processing처리환경/Processor·Filer로소스/클래스/resource생성도구역할을compile검증·산출물에대조."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/Serializable.html",
+      "CURRENT_VERIFIED",
+      "Serializablemarker·reachablegraph/UID호환·명시UID권고·transient/customhooks를본문장기형식계약에대조."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/specs/serialization/index.html",
+      "CURRENT_VERIFIED",
+      "Serializationspec index에서version5.5/5.6 classdescriptorSUID/requiredoptional과securityappendix관련범위를읽어UID≠모든진화안전확인. untrustedwarning/filter는ObjectInputStream보조API절실제대조."
+    ],
+    [
+      "https://techblog.woowahan.com/2550/",
+      "CURRENT_VERIFIED",
+      "Woowa2550원문intro/ObjectStream사용/JVM영속·session/RMI/cache장점과사용처를확인. 하지만단점은다음포스팅에위임하여이관계의장기위험보충note는지원부족(W4-JMETA-002)."
+    ],
+    [
+      "https://docs.oracle.com/javase/specs/jls/se25/html/jls-7.html",
+      "CURRENT_VERIFIED",
+      "JLS7.7 requires/exports/opens의compile/runtime권한·unnamedexportopen을기초module그래프에대조."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Module.html",
+      "CURRENT_VERIFIED",
+      "ModuleAPIdefiningClassLoaderunnamed/name-null/descriptor-null·readall 및qualifiedopen반영을classpath설명에대조."
+    ],
+    [
+      "https://docs.oracle.com/javase/specs/jls/se25/html/jls-13.html",
+      "CURRENT_VERIFIED",
+      "JLS13 method변경/overloadexistingbinary는old참조·재compile선택바뀜/constantsinline·abstract/defaultinterface형태별규칙을세compat분리에대조."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/NoSuchMethodError.html",
+      "CURRENT_VERIFIED",
+      "NoSuchMethodError런타임변경연결오류·LinkageError계층을NoSuchMethodExceptionreflection과구분대조."
+    ]
+  ],
+  "referenceAccess": {},
+  "sourceHashes": {
+    "java.core.metadata-compatibility.reflection-class-api": "db055873309a67d87a271ed2988c993de11dbe20f6e29591ecd28af9c5601bea",
+    "java.core.metadata-compatibility.annotations-retention-target": "4e93794a196518090723abf9a0f249d438e64259dab4c5e9ec866c4e4bf134ad",
+    "java.core.metadata-compatibility.dynamic-proxy-invocationhandler": "e23241c59b641d17f9dfd5e7c34befce912c585a42e267cc092bbac8b5080cba",
+    "java.core.metadata-compatibility.annotation-processing-vs-reflection": "57ff3125cc0dc131c289e0f1bd70d9d05ba09bf6b9684e32016dc7417d3421c4",
+    "java.core.metadata-compatibility.serialization-contract-risk": "8eefb58c69d68dbce6dfda1148817d0ae87ab0a75ac23b995a99714af28c6c6a",
+    "java.core.metadata-compatibility.jpms-classpath-modulepath": "52bea636dab58e258864d50fe5109a87ce536a5a64471f50bf8efe4fef0ad0f8",
+    "java.core.metadata-compatibility.binary-compatibility-api-evolution": "2afc009cea63c31ac579f517e589ea24e820cabd90162331d5c1dd566a229d09",
+    "java.core.metadata-compatibility.reflection-class-api.q1": "961377011eb757a4bea29ccb0069f66d33e9a8f2f749eee8bb13c979c2eb3edf",
+    "java.core.metadata-compatibility.reflection-class-api.q2": "db9a9f945676337bd35dd760de28c9b1cb48b40e3cdf525462338940b590483c",
+    "java.core.metadata-compatibility.reflection-class-api.q3": "2803afdd9832d3675672d29a3b67966f1565d4873f2e1726f6e838c79246fa0a",
+    "java.core.metadata-compatibility.reflection-class-api.q4": "d8b208ebbac3d8c7fedf4a5b56e39caf574fe95a13cd9da798b76c85ce9547e9",
+    "java.core.metadata-compatibility.reflection-class-api.q5": "410991e2b82017f8491f83d32c257e6820853a2caf03b399950d91006051d438",
+    "java.core.metadata-compatibility.reflection-class-api.q6": "1184e71e92fa88269aa1825dcd5f3564e1a89fe85bf371d133bb658a83fcc219",
+    "java.core.metadata-compatibility.annotations-retention-target.q1": "4d71ce8a45d5c6424fdca57506530bc5b9de81e8f7097d441804f5d28bd75964",
+    "java.core.metadata-compatibility.annotations-retention-target.q2": "1de23ffbdf510cea5ac2d8a03c384d25770af5fc34274f834f453544f4f30d3e",
+    "java.core.metadata-compatibility.annotations-retention-target.q3": "6fe7228b1c10701d476a0b10a950e3f36e3ef0a7241f2d1db678aeab61f83e7b",
+    "java.core.metadata-compatibility.annotations-retention-target.q4": "7af0c6cfc164919067a40d96e24743673f7ef264011287a9ab33601ba8012268",
+    "java.core.metadata-compatibility.annotations-retention-target.q5": "df0f0e865004dc491ca610df69487c918ec60e16676f92bb989542ed69d783c6",
+    "java.core.metadata-compatibility.annotations-retention-target.q6": "5bc13ceb1f8deee4caa1196791740b78ba826aec01ea2c56c00ff6ca53283151",
+    "java.core.metadata-compatibility.dynamic-proxy-invocationhandler.q1": "c8255f215fcc1af29b803d64d1e1d8211ad0f1e07af2a49bf34199f9c654c240",
+    "java.core.metadata-compatibility.dynamic-proxy-invocationhandler.q2": "8b7b6961b24d7515379a65d70acfe5a652e5e0180ffe23802884cb792ed0aa0e",
+    "java.core.metadata-compatibility.dynamic-proxy-invocationhandler.q3": "9188d0a1dfa0ac69d45db9e8bc32d660ad71aa24d127b7b81943c318dbe330ff",
+    "java.core.metadata-compatibility.dynamic-proxy-invocationhandler.q4": "7ce999d86e7f82b3e12d03546cd6ecd277f1f096c16ed782890eddda4e84805d",
+    "java.core.metadata-compatibility.dynamic-proxy-invocationhandler.q5": "062b500dc8bccfd34f4ff6002078ae69ab373929dac04e40f5682c7c493be27e",
+    "java.core.metadata-compatibility.dynamic-proxy-invocationhandler.q6": "d38dfeaf03ba4c3a62b54d402ab70fc978b52c93aba9f3be602e23d8d68e88a7",
+    "java.core.metadata-compatibility.dynamic-proxy-invocationhandler.q7": "4a85969787ef6d83f7ac263a4b2903860ea91c85bb34bda93c8a9637c22928e4",
+    "java.core.metadata-compatibility.annotation-processing-vs-reflection.q1": "7152207dcdff2abd47d604995280807693800f43df4aa47517802f76aa20f078",
+    "java.core.metadata-compatibility.annotation-processing-vs-reflection.q2": "01b421194aec3d3a2fab7bb76ad1608771cb3d25a610c3fb7f4dd74c90c3243b",
+    "java.core.metadata-compatibility.annotation-processing-vs-reflection.q3": "0ffe9b332bf1743b3b06a16691c28ee916e690059f0987299d68946fb0102080",
+    "java.core.metadata-compatibility.annotation-processing-vs-reflection.q4": "19e016dd54bf60437963fc98b7385a1212092821683cb7dd6f47fc1cfb1e464e",
+    "java.core.metadata-compatibility.serialization-contract-risk.q1": "36b0d59322c4951a06593837f5ff2cfba3e1aa358a0bac0aa92b7332ceaec503",
+    "java.core.metadata-compatibility.serialization-contract-risk.q2": "0ec1e06d4a889af8efc81a5883c2e7f92a5930e8f775111f1fcf3b2cb918014f",
+    "java.core.metadata-compatibility.serialization-contract-risk.q3": "acca8374ede0f857eafb8fcfda866b76635c2bdb9a6eeef02bed21adc3401291",
+    "java.core.metadata-compatibility.serialization-contract-risk.q4": "14513635fdb6065324300d04104f666834474ea2e4c61acd2d4b6ce548d6a383",
+    "java.core.metadata-compatibility.serialization-contract-risk.q5": "f78777608e5135865169a8b1a9929c1136f8c0432007ac0f9521797bc6b27226",
+    "java.core.metadata-compatibility.jpms-classpath-modulepath.q1": "8082b19833b67a7ce758ccacf4dcb0d63423eec1f629f89e03bc77e61e8ff9b9",
+    "java.core.metadata-compatibility.jpms-classpath-modulepath.q2": "8d9ce3a813254f85c748bf75284b69da68e6d3ac48cf5400aa76c233fd69ef1b",
+    "java.core.metadata-compatibility.jpms-classpath-modulepath.q3": "871e9d0087a4e8272249197305f5b04d316b62d75427061852df13d152aa0554",
+    "java.core.metadata-compatibility.jpms-classpath-modulepath.q4": "aff3a86cfca14582b687ee7c77e4dc96051c300e67530fcb1984a52c7c17a54b",
+    "java.core.metadata-compatibility.jpms-classpath-modulepath.q5": "250de64ace4dd9f4d99337e6ffe36e6b9ea02cb15677ed7428f803852f2eb3e7",
+    "java.core.metadata-compatibility.binary-compatibility-api-evolution.q1": "e90247691aacf40695b2e05b060b3e68c8820bcba8f66a9eca8271ac0f99f287",
+    "java.core.metadata-compatibility.binary-compatibility-api-evolution.q2": "6a20ab15ef690bb4994b8fe66786061e69ff20e0a5559203e7fdf90e5ee3dd2d",
+    "java.core.metadata-compatibility.binary-compatibility-api-evolution.q3": "f8e3ee805eee4912e83f9a2e50163959fe44ac278767f1b15fcfd7aab5694fe6",
+    "java.core.metadata-compatibility.binary-compatibility-api-evolution.q4": "9e108bd6f77e82fa6dee3b466d0bab1a9b4fd22355d052c71529f6117c7949dc",
+    "java.core.metadata-compatibility.binary-compatibility-api-evolution.q5": "54a549b571eb3289311f40f7cd115d2e4d02148b2a980a1bd41de624dc4a68e0",
+    "java.core.metadata-compatibility.binary-compatibility-api-evolution.q6": "ead003858f635304d842794d5f7e2e9251dd5575f34c9408f53d3b96d4b3f3e0"
+  },
+  "carriedForwardFindings": [],
+  "findings": [
+    {
+      "id": "W4-JMETA-001",
+      "severity": "P2",
+      "contentKeys": [
+        "java.core.metadata-compatibility.annotation-processing-vs-reflection.q2",
+        "java.core.metadata-compatibility.serialization-contract-risk.q2",
+        "java.core.metadata-compatibility.jpms-classpath-modulepath.q3"
+      ],
+      "file": "content/java/metadata-compatibility/questions.json",
+      "quote": "소스 주석은 컴파일 후 제거되거나 보존 정책에 따라 달라질 수 있어 실행 시점 리플렉션이 모든 원본 주석을 읽는다고 볼 수 없다.",
+      "additionalEvidence": [
+        {
+          "file": "content/java/metadata-compatibility/questions.json",
+          "quote": "GC 수집기 선택과 무관하다. Java 직렬화에서 클래스 파일 버전 호환성에 쓰인다."
+        },
+        {
+          "file": "content/java/metadata-compatibility/questions.json",
+          "quote": "serialVersionUID는 스트림과 클래스 파일 버전 호환성에 영향을 준다."
+        },
+        {
+          "file": "content/java/metadata-compatibility/questions.json",
+          "quote": "일반 클래스패스 항목은 이름 있는 모듈 디스크립터를 제공하지 않으므로 이름 없는 모듈의 일부로 취급된다."
+        }
+      ],
+      "problem": "processing.q2C는일반소스주석에Retention같은보존정책이있는듯설명한다. serialization.q2B/전체해설은serialVersionUID를클래스파일버전으로부르며JVMSmajor/minor와혼동가능. jpms.q3A는classpath항목이면descriptor없음이라고원인단정하지만modularJAR가module-info.class를포함한채classpath에놓여도nonmodular행동한다. 정답D/D/A와본문핵심은맞음.",
+      "action": "해당feedback만일반주석은lexicaltoken단계제거/UID는streamclassdescriptor의serializationversion/module-info존재와해석경로별도라명시. 정답·난도·본문구조유지.",
+      "officialEvidence": [
+        "https://docs.oracle.com/javase/specs/jls/se25/html/jls-3.html#jls-3.2",
+        "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/Serializable.html",
+        "https://docs.oracle.com/en/java/javase/25/docs/specs/jar/jar.html#modular-jar-files"
+      ],
+      "followupIssues": [
+        201
+      ]
+    },
+    {
+      "id": "W4-JMETA-002",
+      "severity": "P2",
+      "contentKeys": [
+        "java.core.metadata-compatibility.serialization-contract-risk"
+      ],
+      "file": "content/java/metadata-compatibility/serialization-contract-risk.md",
+      "quote": "native serialization을 장기 데이터 계약과 운영 위험 관점에서 보충",
+      "problem": "연결한Woowa훑어보기편은ObjectStream입문·장점·사용처를설명하고단점은다음포스팅에위임한다. relationNote가주장하는장기호환/운영위험학습범위는이글본문에서확인되지않는다. canonical본문의정확한공식위험설명은유지하며이1관계관련성만보강.",
+      "action": "Reference relationNote를입문과사용처로좁히거나위험/버전진화를실제로다루는검증된자료로교체. 후속#222와#201에서이1관계만조정;다른직렬화본문재작성없음.",
+      "officialEvidence": [
+        "https://techblog.woowahan.com/2550/",
+        "https://docs.oracle.com/en/java/javase/25/docs/specs/serialization/version.html",
+        "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/ObjectInputStream.html"
+      ],
+      "followupIssues": [
+        201,
+        222
+      ]
+    }
+  ],
+  "visualizationAssets": [
+    {
+      "file": "frontend/public/learning/java/dynamic-proxy-flow.svg",
+      "sourceSha256": "299df12a3a4b5aca3044b0c18598ea803baf23809edcf19073c82e2f36ccf7d1",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "basis": "1100x430 source全部/title/desc/style/rect/paths/text읽음. Caller→interfaceProxy→handler→target와resultreturn/직접target우회caption은정확. stageboxes분리. 짧은arrow라벨밀도는Reader render/mobile/theme미검증;geometry만으로불필요한결함확정안함."
+    }
+  ],
+  "supplementalSources": [
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/specs/jar/jar.html",
+      "CURRENT_VERIFIED",
+      "modularJARclasspath배치시nonmodular처럼행동하며descriptor존재를unnamed반례로대조."
+    ],
+    [
+      "https://docs.oracle.com/javase/specs/jls/se25/html/jls-3.html#jls-3.2",
+      "CURRENT_VERIFIED",
+      "토큰translation단계주석discard를일반주석vsRetention구분대조."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/reflect/AccessibleObject.html",
+      "CURRENT_VERIFIED",
+      "setAccessible거부InaccessibleObject/tryfalse와MethodinvokeIllegalAccess구분."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/reflect/Method.html",
+      "CURRENT_VERIFIED",
+      "invoke실제targetexceptionwrapper·boxing/voidnull·IllegalAccess경로대조."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/ObjectInputStream.html",
+      "CURRENT_VERIFIED",
+      "untrusted역직렬화본질위험/필터클래스·resourcebound를canonical안전경계에대조."
+    ]
+  ]
+}

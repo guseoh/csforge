@@ -24,7 +24,8 @@ WAVE_4_TOPICS = {"java--language-types": (1, 10, 55), "java--object-model": (1, 
                  "java--generics": (1, 6, 37), "java--exceptions-resources": (1, 8, 46),
                  "java--functional": (1, 5, 33), "java--streams": (1, 7, 41),
                  "java--modern-language": (1, 8, 43), "java--time-numeric": (1, 7, 42),
-                 "java--io-nio": (1, 6, 35), "java--coding-tests": (1, 7, 46)}
+                 "java--io-nio": (1, 6, 35), "java--coding-tests": (1, 7, 46),
+                 "java--metadata-compatibility": (1, 7, 39)}
 CONCEPT_AXES = [
     "objectiveLevelDepth", "accuracyMechanismCodeExamplesClarityBoundaries",
     "visualization", "references", "linkedQuestionCoverage",

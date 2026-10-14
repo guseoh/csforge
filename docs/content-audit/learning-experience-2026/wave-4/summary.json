@@ -4,40 +4,40 @@
   "areas": [
     {
       "area": "java",
-      "concepts": 107,
-      "questions": 614,
-      "currentVerifiedConcepts": 107,
-      "currentVerifiedQuestions": 614,
+      "concepts": 114,
+      "questions": 653,
+      "currentVerifiedConcepts": 114,
+      "currentVerifiedQuestions": 653,
       "conceptQuality": {
-        "KEEP": 84,
-        "TARGETED_ENHANCE": 23
+        "KEEP": 90,
+        "TARGETED_ENHANCE": 24
       },
       "questionQuality": {
-        "KEEP": 586,
+        "KEEP": 622,
         "NEEDS_REVIEW": 3,
-        "TARGETED_ENHANCE": 25
+        "TARGETED_ENHANCE": 28
       }
     }
   ],
   "allConceptQuality": {
-    "KEEP": 560,
-    "NEEDS_REVIEW": 37,
-    "TARGETED_ENHANCE": 124
+    "KEEP": 566,
+    "NEEDS_REVIEW": 30,
+    "TARGETED_ENHANCE": 125
   },
   "allQuestionQuality": {
-    "KEEP": 2188,
-    "NEEDS_REVIEW": 217,
-    "TARGETED_ENHANCE": 120
+    "KEEP": 2224,
+    "NEEDS_REVIEW": 178,
+    "TARGETED_ENHANCE": 123
   },
   "allConceptEvidence": {
     "CURRENT_PARTIAL": 2,
-    "CURRENT_VERIFIED": 683,
-    "NEEDS_REVIEW": 36
+    "CURRENT_VERIFIED": 690,
+    "NEEDS_REVIEW": 29
   },
   "allQuestionEvidence": {
     "CURRENT_PARTIAL": 13,
-    "CURRENT_VERIFIED": 2298,
-    "NEEDS_REVIEW": 214
+    "CURRENT_VERIFIED": 2337,
+    "NEEDS_REVIEW": 175
   },
   "reviewedTopics": [
     "java.core.api-design",
@@ -50,6 +50,7 @@
     "java.core.generics",
     "java.core.io-nio",
     "java.core.language-types",
+    "java.core.metadata-compatibility",
     "java.core.modern-language",
     "java.core.object-contracts",
     "java.core.object-model",
@@ -57,14 +58,14 @@
     "java.core.time-numeric"
   ],
   "totals": {
-    "topics": 15,
-    "concepts": 107,
-    "questions": 614
+    "topics": 16,
+    "concepts": 114,
+    "questions": 653
   },
   "findingSeverity": {
     "P0": 9,
     "P1": 11,
-    "P2": 16
+    "P2": 18
   },
   "carriedFindingSeverity": {
     "P2": 1
@@ -72,15 +73,15 @@
   "cumulativeComplete": {
     "areas": 14,
     "partialAreas": 1,
-    "topics": 131,
-    "concepts": 683,
-    "questions": 2298
+    "topics": 132,
+    "concepts": 690,
+    "questions": 2337
   },
   "references": {
-    "links": 188,
-    "uniqueUrls": 149,
+    "links": 203,
+    "uniqueUrls": 162,
     "meaningEvidence": {
-      "CURRENT_VERIFIED": 180,
+      "CURRENT_VERIFIED": 195,
       "NEEDS_REVIEW": 8
     }
   }
