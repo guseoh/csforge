@@ -4,54 +4,55 @@
   "areas": [
     {
       "area": "java",
-      "concepts": 32,
-      "questions": 182,
-      "currentVerifiedConcepts": 32,
-      "currentVerifiedQuestions": 182,
+      "concepts": 36,
+      "questions": 200,
+      "currentVerifiedConcepts": 36,
+      "currentVerifiedQuestions": 200,
       "conceptQuality": {
-        "KEEP": 22,
-        "TARGETED_ENHANCE": 10
+        "KEEP": 25,
+        "TARGETED_ENHANCE": 11
       },
       "questionQuality": {
-        "KEEP": 174,
-        "TARGETED_ENHANCE": 8
+        "KEEP": 190,
+        "TARGETED_ENHANCE": 10
       }
     }
   ],
   "allConceptQuality": {
-    "KEEP": 498,
-    "NEEDS_REVIEW": 112,
-    "TARGETED_ENHANCE": 111
+    "KEEP": 501,
+    "NEEDS_REVIEW": 108,
+    "TARGETED_ENHANCE": 112
   },
   "allQuestionQuality": {
-    "KEEP": 1782,
-    "NEEDS_REVIEW": 640,
-    "TARGETED_ENHANCE": 103
+    "KEEP": 1798,
+    "NEEDS_REVIEW": 622,
+    "TARGETED_ENHANCE": 105
   },
   "allConceptEvidence": {
     "CURRENT_PARTIAL": 3,
-    "CURRENT_VERIFIED": 608,
-    "NEEDS_REVIEW": 110
+    "CURRENT_VERIFIED": 612,
+    "NEEDS_REVIEW": 106
   },
   "allQuestionEvidence": {
     "CURRENT_PARTIAL": 19,
-    "CURRENT_VERIFIED": 1866,
-    "NEEDS_REVIEW": 640
+    "CURRENT_VERIFIED": 1884,
+    "NEEDS_REVIEW": 622
   },
   "reviewedTopics": [
     "java.core.api-design",
+    "java.core.enum-modeling",
     "java.core.language-types",
     "java.core.object-contracts",
     "java.core.object-model"
   ],
   "totals": {
-    "topics": 4,
-    "concepts": 32,
-    "questions": 182
+    "topics": 5,
+    "concepts": 36,
+    "questions": 200
   },
   "findingSeverity": {
-    "P0": 6,
-    "P1": 4,
+    "P0": 7,
+    "P1": 5,
     "P2": 2
   },
   "carriedFindingSeverity": {
@@ -60,15 +61,15 @@
   "cumulativeComplete": {
     "areas": 14,
     "partialAreas": 1,
-    "topics": 120,
-    "concepts": 608,
-    "questions": 1866
+    "topics": 121,
+    "concepts": 612,
+    "questions": 1884
   },
   "references": {
-    "links": 60,
-    "uniqueUrls": 49,
+    "links": 65,
+    "uniqueUrls": 54,
     "meaningEvidence": {
-      "CURRENT_VERIFIED": 59,
+      "CURRENT_VERIFIED": 64,
       "NEEDS_REVIEW": 1
     }
   }

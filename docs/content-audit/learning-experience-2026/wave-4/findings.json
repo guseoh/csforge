@@ -330,5 +330,63 @@
     ],
     "sourceLine": 18,
     "sourceFileSha256": "61b0f37de0a721795947d8c3b199fcf23cd4d5b0dad78ad411fc48801f55738c"
+  },
+  {
+    "id": "W4-JENUM-001",
+    "severity": "P0",
+    "contentKeys": [
+      "java.core.enum-modeling.enumset"
+    ],
+    "file": "content/java/enum-modeling/enumset.md",
+    "quote": "OrderStatus.COMPLETED",
+    "additionalEvidence": [
+      {
+        "file": "content/java/enum-modeling/enum-closed-values-behavior.md",
+        "quote": "enum OrderStatus {\n    READY,\n    PAID,\n    CANCELLED",
+        "sourceLine": 36,
+        "sourceFileSha256": "99ee27e10edcf3a9314a421726b751a6eedaccf518aced1042812f04940dce33"
+      }
+    ],
+    "problem": "EnumSet 예제의 OrderStatus.COMPLETED는 선행 Concept의 OrderStatus(READY/PAID/CANCELLED)에 없는 상수다. 동일 타입으로 학습 예제를 연결하면 컴파일 오류가 발생한다.",
+    "action": "PAID 등 실제 선언 상수로 바꾸거나 COMPLETED가 선언된 독립 enum을 예제에 명시한다. EnumSet 개념과 기존 Question 정답은 유지한다.",
+    "officialEvidence": [
+      "https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html#jls-8.9"
+    ],
+    "runtimeEvidence": "선행 enum 정의를 기준으로 한 제한 javac 21 컴파일에서 cannot find symbol: COMPLETED 재현. Java25 전체 실행 아님.",
+    "followupIssues": [
+      201
+    ],
+    "sourceLine": 25,
+    "sourceFileSha256": "9d9b736d123932bd845244f74e0e868f90fc957ad239e5e2267301414b5cd530"
+  },
+  {
+    "id": "W4-JENUM-002",
+    "severity": "P1",
+    "contentKeys": [
+      "java.core.enum-modeling.enumset.q2",
+      "java.core.enum-modeling.enummap.q2"
+    ],
+    "file": "content/java/enum-modeling/questions.json",
+    "quote": "EnumSet<Permission> set = EnumSet.of(READ);",
+    "additionalEvidence": [
+      {
+        "file": "content/java/enum-modeling/questions.json",
+        "quote": "EnumMap<Day, Integer> hours = new EnumMap<>(Day.class);",
+        "sourceLine": 16,
+        "sourceFileSha256": "6ceae356f6dbba8c576f9eded0ea184d01b946eaf9fb5a5dbf387c1e79ab7701"
+      }
+    ],
+    "problem": "두 코드 결과 문항에 Permission/Day enum 선언과 READ의 수식 또는 static import 전제가 없다. 결과 해석 의도는 맞지만 독립 실행할 코드로는 컴파일할 수 없어 학습자가 실행 결과와 미정의 식별자를 혼동할 수 있다.",
+    "action": "q2 EnumSet에 Permission enum 정의/Permission.READ, q2 EnumMap에 Day 정의(MONDAY,SUNDAY) 또는 명확한 기존 타입 전제를 넣는다. 정답 B/C 및 해설 유지.",
+    "officialEvidence": [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/EnumSet.html",
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/EnumMap.html"
+    ],
+    "runtimeEvidence": "제한 javac21 재구성에서 Permission/READ unresolved 증명; 타입 선언을 추가한 경우 원래 예상 결과에 부합.",
+    "followupIssues": [
+      201
+    ],
+    "sourceLine": 12,
+    "sourceFileSha256": "6ceae356f6dbba8c576f9eded0ea184d01b946eaf9fb5a5dbf387c1e79ab7701"
   }
 ]
