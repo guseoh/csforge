@@ -1,0 +1,411 @@
+{
+  "area": "messaging-async",
+  "wave": "Wave 1",
+  "baselineSha": "efe73a15da14c996bd08344181d4d6f87073803d",
+  "reviewMethod": "semantics→delivery→workflow 전체 본문/27문항의 모든 선택지·rationale·acceptedAnswers·modelAnswer·explanation을 직접 읽고 개별 판정. 출력 잘림 구간은 workflow 문항 전체로 다시 확인했다.",
+  "topics": [
+    {
+      "key": "messaging.core.semantics",
+      "coverage": "명령/사실 계약→파티션 키→offset/replay의 다른 책임을 평가. consumer-offset.q3와 schema-evolution.q3는 replay가 겹치지만 전자는 위치·효과, 후자는 스키마 기간을 평가한다."
+    },
+    {
+      "key": "messaging.core.delivery",
+      "coverage": "재전달 멱등성→재시도·DLQ→추가/업무/완료 순서를 분리. ordering.q1의 A/B가 모두 타당한 이유여서 단일 정답 성립을 막는다."
+    },
+    {
+      "key": "messaging.core.workflow",
+      "coverage": "DB발행 의도 원자성, 처리 용량, 여러 버전 reader/writer 공존을 각각 3문항으로 검증. retry-dlq.q3/backpressure.q3는 중복 현상이 있으나 budget와 lag/정상 처리 경계로 초점이 다르다."
+    }
+  ],
+  "concepts": [
+    [
+      "messaging.core.semantics.message-model",
+      "KEEP",
+      "L1 Command/Event를 ChargeOrder/OrderPlaced와 HTTP 성공의 의미로 연결한다. TEXT 계약에 맞는 시간·의도 비교.",
+      "payload contract/수행 주체를 명시해 이벤트가 구독자 수로 정해진다는 오해를 예방. 용어·한국어 자연스럽고 코드 구현보다 계약 예가 적합.",
+      "TEXT 표/흐름 충분. 그림 추가 필요 없음.",
+      "Azure의 message/event 구분과 LINE의 task queue/event pipeline 사례는 입문 보조. LINE 원문 접근 오류 뒤 공식 검색 캐시에서 제목/초점 확인했으나 상세 본문은 추가 확인 대상.",
+      "q1 분류, q2 저장 전 HTTP 성공, q3 replay payload로 목표 분리."
+    ],
+    [
+      "messaging.core.semantics.partition-key",
+      "TARGETED_ENHANCE",
+      "L2 파티션 내 순서·그룹 병렬성·hot key를 설명. partition count/partitioner 변경 경계 포함.",
+      "본문은 키만으로 업무 순서를 보장하지 않음을 정확히 제한. 3→12 partition 예가 병목 판단에 적합.",
+      "DIAGRAM key→partition/group assignment ASCII 유지. 새 이미지 불필요.",
+      "Kafka Introduction의 일반 key routing은 ProducerRecord explicit partition/null key 조건과 함께 해석. OpenChat은 skew/lag 운영 사례.",
+      "q2/q3 충분하나 q1이 key routing 조건을 생략해 유일 accepted answer와 맞지 않음(W1-MSG-001)."
+    ],
+    [
+      "messaging.core.semantics.consumer-offset",
+      "KEEP",
+      "L2 기록 offset/현재 position/committed restart position을 나눠 처리·재시작 과정을 설명.",
+      "poll 진행과 업무 성공의 분리, offset gaps, DB→commit crash/replay 외부 효과가 적절. 구현 API 코드를 요구하는 목표가 아니므로 코드 부재는 결함 아님.",
+      "DIAGRAM log/position/commit 흐름으로 경계 보임. 현재 도식 유지.",
+      "KafkaConsumer 4.2 position은 poll에서 전진, commit은 복구 위치; gaps/next position 공식 계약 확인.",
+      "q1 세 위치, q2 같은 DBTx 멱등성, q3 retention/버전/부하/외부 효과 각각 개별 검토."
+    ],
+    [
+      "messaging.core.delivery.at-least-once-idempotency",
+      "KEEP",
+      "L2 ack 전후 crash→유실/중복과 같은 DBTx 처리 이력을 설명.",
+      "Kafka output+offset transaction과 외부 payment/DB 효과를 구별. duplicate key 판정과 업무변경을 함께 묶어야 하는 이유 충분.",
+      "DIAGRAM failure/재전달 ASCII가 핵심 상태를 보여 유지.",
+      "Kafka Design 외부 시스템 협력 한계와 Outbox pattern duplicate 설명 대조.",
+      "q1 전달 의미, q2 원자 DBTx, q3 Kafka EOS 범위로 서로 다른 목표."
+    ],
+    [
+      "messaging.core.delivery.retry-dlq",
+      "KEEP",
+      "L2 transient/permanent·bounded retry·poison message 분리와 DLQ 운영을 설명.",
+      "timeout≠미실행, backoff/jitter/budget, user state/replay contract 포함. pause/seek는 자동 해결이 아닌 경로 선택으로 서술.",
+      "TEXT 재시도/격리/재처리 설명 충분; 새 그림 우선 필요 없음.",
+      "Spring retry topic은 extra topic/listener와 순서 손실이 명시된 구현 기능. Decaton은 지연 retry 사례이지 Kafka 기본 DLQ 계약 아님.",
+      "q1 오류 종류, q2 schema poison, q3 여러 consumer retry storm의 정답/해설 적절."
+    ],
+    [
+      "messaging.core.delivery.ordering",
+      "TARGETED_ENHANCE",
+      "L3 partition append order와 business causality/worker completion을 분리.",
+      "Placed/Paid 다중 producer와 worker 순서 역전 예가 충분. global serial throughput trade-off 포함. 본문 재작성 근거 없음.",
+      "DIAGRAM append/processing 흐름 유지. 실제 오류는 문항 선택지.",
+      "Kafka intro는 쓰인 순서의 읽기를 보장, event timestamp에 따른 자동 재정렬을 보장하지 않음.",
+      "q2/q3 적절. q1 A와 B 둘 다 맞아 단일 정답 제약 깨짐(W1-MSG-002)."
+    ],
+    [
+      "messaging.core.workflow.transactional-outbox",
+      "KEEP",
+      "L3 dual-write 실패→business+outbox same DBTx→relay/CDC를 순차 설명.",
+      "publish 뒤 완료 표시 전 crash와 재전달, stable eventId, 업무 version, cleanup/oldest backlog까지 다뤄 충분.",
+      "DIAGRAM commit/relay와 crash branches 유지. 신규 이미지 불필요.",
+      "Outbox 원저자 pattern은 내구성 의도/relay duplicate, Debezium은 aggregateid key/event id header 구현을 뒷받침. Kafka transaction 외부 경계도 확인.",
+      "q1 atomic intent, q2 relay duplicate, q3 전체 업무순서/점유/version으로 별도 목표."
+    ],
+    [
+      "messaging.core.workflow.backpressure-capacity",
+      "KEEP",
+      "L2 10k/s vs 6k/s→10분 240만 backlog 산술·하위 용량을 연결.",
+      "broker storage≠processing capacity, bounded in-flight, retry의 용량 소비가 적절. 부하/효과 위치를 읽기 쉽게 나눈다.",
+      "TEXT 계약에서도 생산/worker/DB 흐름 ASCII가 이미 충분.",
+      "Kafka group describe LAG/assignment 예와 OpenChat skew/CPU 사례가 실제 관측값에 관련.",
+      "q1 backlog, q2 DB pool bottleneck shift, q3 retry HOL/order/offset 개별 목표."
+    ],
+    [
+      "messaging.core.workflow.schema-evolution",
+      "KEEP",
+      "L2 backward/forward/FULL/transitive를 reader 방향과 공존 기간으로 설명.",
+      "enum 추가≠항상 안전, 소비자 먼저 배포 조건, 오래된 replay decoder/외부 효과 경계를 정확히 포함.",
+      "TEXT reader/writer 방향과 배포 단계 도식 유지.",
+      "Confluent BACKWARD는 last version, TRANSITIVE는 all versions. format-specific rules와 실제 decoder는 별도라는 한계 적절.",
+      "q1 방향, q2 enum 배포, q3 6개월/비전이 replay로 중복 암기 방지."
+    ]
+  ],
+  "questions": [
+    [
+      "messaging.core.semantics.message-model.q1",
+      "KEEP",
+      "B Command=의도/Event=사실. A 역전, C broker 변환, D 구독자 수 결정은 모두 오답이며 네 rationale와 explanation이 이를 구별.",
+      "EASY 분류 입문·연결 정확; q2/q3 실행/설계와 차별."
+    ],
+    [
+      "messaging.core.semantics.message-model.q2",
+      "KEEP",
+      "저장 전에 성공하면 후속 실패 시 주문이 없을 수 있음. model/explanation의 operation 상태·retry 계약이 필요한 이유 타당.",
+      "MEDIUM 상황 추론, HTTP 성공 의미 질문 명확."
+    ],
+    [
+      "messaging.core.semantics.message-model.q3",
+      "KEEP",
+      "eventId/orderId/version/time/당시 값이 replay의 독립 계약. 최신 DB와 결합하면 사실이 바뀌는 이유, privacy/payload trade-off model/explanation 타당.",
+      "HARD 설계 판단; 고정 정답 목록 강요 없이 목표 연결."
+    ],
+    [
+      "messaging.core.semantics.partition-key.q1",
+      "TARGETED_ENHANCE",
+      "accepted 4종 message/record key 표기는 서로 동의어. explanation은 key를 사용할 수 있다고 제한하지만 prompt는 라우팅 입력을 무조건 단수로 묻는다.",
+      "EASY 단답에서 explicit partition/null key/custom partitioner를 배제해야 유일한 답. W1-MSG-001."
+    ],
+    [
+      "messaging.core.semantics.partition-key.q2",
+      "KEEP",
+      "3→12 변경은 전역 업무 순서 보장 안 됨. count mapping 변화/producer ordering/hotspot model와 해설 적절.",
+      "MEDIUM 확장 시 조건 판단; q1 단답과 다른 목표."
+    ],
+    [
+      "messaging.core.semantics.partition-key.q3",
+      "KEEP",
+      "partition/consumer만 증가해도 DB/API/핫키/rebalance/storage/order 한계 있음. model/explanation 충분.",
+      "HARD 용량 계획, backpressure.q2와 현상 공유하지만 Kafka 확장 경계 초점."
+    ],
+    [
+      "messaging.core.semantics.consumer-offset.q1",
+      "KEEP",
+      "record offset 식별, position 다음 poll 진행, committed 재시작 기준을 model/explanation이 분리. 처리 성공을 자동 commit으로 보지 않음.",
+      "MEDIUM 서술의 세 역할 범위 명확; 숫자 구현 문항이 아님."
+    ],
+    [
+      "messaging.core.semantics.consumer-offset.q2",
+      "KEEP",
+      "DB commit 후 offset commit 전 crash는 재전달. 처리 이력+업무변경 같은 DBTx/unique key model/explanation 적절.",
+      "MEDIUM 실패 순서 명확; idempotency.q2는 별도 부분 commit 분석."
+    ],
+    [
+      "messaging.core.semantics.consumer-offset.q3",
+      "KEEP",
+      "replay는 retention/schema/load/order와 외부 효과 분리 필요. model/explanation 무조건 위치 되돌리기 보장을 하지 않음.",
+      "HARD 운영 판단, schema.q3의 버전 전체 검사와 구분."
+    ],
+    [
+      "messaging.core.delivery.at-least-once-idempotency.q1",
+      "KEEP",
+      "D 같은 메시지 재전달 가능. A EOS, B poll=commit, C Kafka의 DB rollback은 오답. 각 rationale와 해설 정확.",
+      "EASY 보장 범위 입문; 연결 정확."
+    ],
+    [
+      "messaging.core.delivery.at-least-once-idempotency.q2",
+      "KEEP",
+      "processed_message 먼저만 commit하면 업무 유실, 업무 먼저만 commit하면 중복. 같은 DBTx와 uniqueness model/explanation 맞음.",
+      "MEDIUM 두 반쪽 상태를 묻는 명확한 scenario."
+    ],
+    [
+      "messaging.core.delivery.at-least-once-idempotency.q3",
+      "KEEP",
+      "출력 레코드+consumer offset 원자 commit/read_committed는 Kafka 내부, PG/payment/email 별도 idempotency/계약. model/explanation 타당.",
+      "HARD 시스템 간 원자성 한계, 정답 범위 충분."
+    ],
+    [
+      "messaging.core.delivery.retry-dlq.q1",
+      "KEEP",
+      "C transient timeout. A required field/B unknown schema/D unchanged permission은 즉시 반복으로 해소 안 됨. 네 rationale가 영구 오류 조건을 제한.",
+      "EASY 재시도 분류. timeout 완료 불확실성은 다음 문제에서 보완."
+    ],
+    [
+      "messaging.core.delivery.retry-dlq.q2",
+      "KEEP",
+      "poison schema가 정상 메시지를 막음. retry/DLQ 분리, 원인 metadata/replay/order/commit model/explanation 타당.",
+      "MEDIUM 복구 운영 판단, 자동 DLQ라는 모호성 없음."
+    ],
+    [
+      "messaging.core.delivery.retry-dlq.q3",
+      "KEEP",
+      "5개 consumer 즉시 retry는 storm. backoff/jitter/budget, pause/seek와 retrytopic 순서·중복·DLQ contract model/explanation 적절.",
+      "HARD 정책 조합; backpressure.q3와 budget 초점 구분."
+    ],
+    [
+      "messaging.core.delivery.ordering.q1",
+      "TARGETED_ENHANCE",
+      "B key≠업무 버전 직렬화는 맞음. A timestamp 자동 재정렬 없음도 맞고 A rationale 역시 사실임. C dedupe/D per-record reassignment는 오답. B 해설은 맞아도 A를 배제하지 못함.",
+      "MEDIUM 단일 MC가 A/B 복수 정답 허용(P0 W1-MSG-002). 선택지 A를 실제 오답으로 수정해야 함."
+    ],
+    [
+      "messaging.core.delivery.ordering.q2",
+      "KEEP",
+      "Placed/Paid 같은 partition이어도 parallel worker 완료 역전. key serial/version gate model/explanation 타당.",
+      "MEDIUM broker order와 완료 order 차이 명확."
+    ],
+    [
+      "messaging.core.delivery.ordering.q3",
+      "KEEP",
+      "single partition은 global append 범위를 늘리지만 producer causality/worker completion 보장 안 함. throughput/failure isolation trade-off model/explanation 충분.",
+      "HARD 직렬화 범위 선택, q2 단일 상황과 구분."
+    ],
+    [
+      "messaging.core.workflow.transactional-outbox.q1",
+      "KEEP",
+      "C business+발행의도 원자성. A duplicate 제거/B broker rollback/D business 대체는 오답; 네 rationale와 해설 정확.",
+      "EASY 필요 이유와 연결 정확."
+    ],
+    [
+      "messaging.core.workflow.transactional-outbox.q2",
+      "KEEP",
+      "publish 성공/완료 표시 전 crash 후 동일 eventId 재발행 가능. polling 및 CDC 구현 경계 model/explanation 명확.",
+      "MEDIUM crash window 개별 검증."
+    ],
+    [
+      "messaging.core.workflow.transactional-outbox.q3",
+      "KEEP",
+      "같은 키는 relay e42/e41 역전과 worker completion 해결 못함. sequence/version, claim/publish policy, consumer gap detection/eventId model/explanation 타당.",
+      "HARD 끝까지 순서 설계, ordering과 공유 원리를 의도적 적용."
+    ],
+    [
+      "messaging.core.workflow.backpressure-capacity.q1",
+      "KEEP",
+      "A lag/backlog 상승. B 무한 가속/C 저장공간=지연 없음/D consumer>partition 비례 증가 모두 오답. rationale 4개와 explanation 적절.",
+      "EASY 지속 입력 초과의 기본 징후, 명확한 연결."
+    ],
+    [
+      "messaging.core.workflow.backpressure-capacity.q2",
+      "KEEP",
+      "lag 감소/DB pool 고갈은 하위 용량 무시. in-flight/batch/pool/QPS 제한 model/explanation 정확.",
+      "MEDIUM 병목 이동 진단, partition-key.q3보다 관측 조건 구체적."
+    ],
+    [
+      "messaging.core.workflow.backpressure-capacity.q3",
+      "KEEP",
+      "poison의 반복→HOL/lag. retry 분리 시 order/offset/duplicate 재계약 model/explanation 충분.",
+      "HARD 시간 흐름과 개선의 trade-off 연결."
+    ],
+    [
+      "messaging.core.workflow.schema-evolution.q1",
+      "KEEP",
+      "D new reader reads old writer. A 무제한 변경/B FORWARD/C TRANSITIVE 자동은 오답; 각 rationale/explanation 방향·범위 정확.",
+      "EASY 명시된 Confluent 용어로 모호성 제한."
+    ],
+    [
+      "messaging.core.workflow.schema-evolution.q2",
+      "KEEP",
+      "unknown enum decoder 실패는 forward 위험. format/Registry 확인, backward 확보 후 old reader 종료→new producer model/explanation 타당.",
+      "MEDIUM addition≠safe를 배포 조건으로 검증."
+    ],
+    [
+      "messaging.core.workflow.schema-evolution.q3",
+      "KEEP",
+      "non-transitive는 직전 비교, 6개월 이력 decoder 목록/adapter와 replay 효과 분리 필요. model/explanation 정확.",
+      "HARD 현재 schema 이름만으로 전체 이력 보장 못하는 목표."
+    ]
+  ],
+  "sources": [
+    [
+      "https://kafka.apache.org/intro/",
+      "CURRENT_VERIFIED",
+      "append order/key와 독립 replay 기초. 일반 key 예는 모든 partitioner 조건의 보장이 아님."
+    ],
+    [
+      "https://kafka.apache.org/42/javadoc/org/apache/kafka/clients/consumer/KafkaConsumer.html",
+      "CURRENT_VERIFIED",
+      "position은 poll에서 전진; commit은 restart 기준/next offset; offset gaps와 업무 처리 분리."
+    ],
+    [
+      "https://kafka.apache.org/42/design/design/#message-delivery-semantics",
+      "CURRENT_VERIFIED",
+      "Kafka output/offset transaction과 외부 storage 협력 경계."
+    ],
+    [
+      "https://learn.microsoft.com/ko-kr/azure/architecture/guide/technology-choices/messaging",
+      "CURRENT_VERIFIED",
+      "비동기 message/event와 broker 선택의 입문; 제품 비교는 명령/사실 설계의 보조."
+    ],
+    [
+      "https://docs.spring.io/spring-kafka/reference/retrytopic.html",
+      "CURRENT_VERIFIED",
+      "extra topics/listeners 구현; How Pattern Works의 ordering loss를 함께 확인."
+    ],
+    [
+      "https://docs.spring.io/spring-kafka/reference/retrytopic/how-the-pattern-works.html",
+      "CURRENT_VERIFIED",
+      "non-blocking retry로 원 topic 순서 손실 확인."
+    ],
+    [
+      "https://microservices.io/patterns/data/transactional-outbox.html",
+      "CURRENT_VERIFIED",
+      "업무+outbox 로컬 원자 commit; relay duplicate와 consumer idempotency."
+    ],
+    [
+      "https://debezium.io/documentation/reference/stable/transformations/outbox-event-router.html",
+      "CURRENT_VERIFIED",
+      "outbox id/header 및 aggregateid/key 전달, 구현 의존."
+    ],
+    [
+      "https://docs.confluent.io/platform/current/schema-registry/fundamentals/schema-evolution.html",
+      "CURRENT_VERIFIED",
+      "BACKWARD vs TRANSITIVE reader 방향/대상 범위 확인; format별 한계."
+    ],
+    [
+      "https://kafka.apache.org/42/operations/basic-kafka-operations/",
+      "CURRENT_VERIFIED",
+      "group describe의 CURRENT-OFFSET/LOG-END-OFFSET/LAG 관측 절차."
+    ],
+    [
+      "https://engineering.linecorp.com/ko/blog/how-to-use-kafka-in-line-1/",
+      "NEEDS_REVIEW",
+      "원문 open InternalError. 공식 도메인 검색 캐시에서 제목/2019 task queue·event pipeline 초점은 확인. 전문 재접근·현재 버전 관련성 추가 확인; 죽은 링크로 확정하지 않음."
+    ],
+    [
+      "https://engineering.linecorp.com/ko/blog/how-line-openchat-server-handles-extreme-traffic-spikes",
+      "CURRENT_VERIFIED",
+      "OpenChat extreme traffic 운영 사례. 특정 부하의 case study로 한정; 일반 성능 보장 아님."
+    ],
+    [
+      "https://engineering.linecorp.com/ko/blog/decaton-case-studies",
+      "CURRENT_VERIFIED",
+      "스마트채널 작업 큐/비동기 event log 사례, 라이브러리 동작을 Kafka 자체 계약으로 확장하지 않음."
+    ],
+    [
+      "https://kafka.apache.org/42/javadoc/org/apache/kafka/clients/producer/ProducerRecord.html",
+      "CURRENT_VERIFIED",
+      "explicit partition 우선/null key 경계 확인. key가 모든 라우팅의 유일 입력이라는 질문 배제."
+    ]
+  ],
+  "findings": [
+    {
+      "id": "W1-MSG-001",
+      "severity": "P1",
+      "contentKeys": [
+        "messaging.core.semantics.partition-key",
+        "messaging.core.semantics.partition-key.q1"
+      ],
+      "file": "content/messaging-async/semantics/questions.json",
+      "quote": "Kafka에서 레코드를 특정 파티션으로 라우팅할 때 파티셔너가 사용하는 값은 무엇인가?",
+      "problem": "단답 acceptedAnswers는 key만 받지만 explicit partition/null key/custom partitioner 조건이 없다. 본문 조건부 key 설명과 문항의 무조건 표현 불일치.",
+      "action": "명시적 partition이 없고 key 기반 라우팅을 사용하는 경우의 레코드 필드를 묻도록 한정. accepted 동의어와 기존 contentKey 유지.",
+      "followupIssues": [
+        204
+      ]
+    },
+    {
+      "id": "W1-MSG-002",
+      "severity": "P0",
+      "contentKeys": [
+        "messaging.core.delivery.ordering",
+        "messaging.core.delivery.ordering.q1"
+      ],
+      "file": "content/messaging-async/delivery/questions.json",
+      "quote": "Kafka가 같은 키의 레코드를 이벤트 타임스탬프 순으로 재정렬하지 않기 때문이다.",
+      "problem": "A는 timestamp 자동 재정렬 없음, B는 key가 producer 업무 버전을 직렬화 안 함으로 둘 다 주어진 동시 발행의 순서 미보장 이유다. A rationale도 사실을 인정하므로 correctChoiceKey=B 단독을 뒷받침 못 함.",
+      "action": "A를 '브로커가 event timestamp로 자동 재정렬하므로' 같은 실제 오답으로 교체하거나 key 역할을 묻는 범위를 명확히 좁힌다. 모든 rationale와 explanation 일치 확인.",
+      "followupIssues": [
+        204
+      ]
+    }
+  ],
+  "sourceHashes": {
+    "messaging.core.semantics.message-model": "139102aa30b73f69c93980a5fa481783fa6017d56415cf69ef8e8423d76f6826",
+    "messaging.core.semantics.partition-key": "aad40b0c75e6d270e5722e9b1ccce3612ace265f5e1087a3bb61cd884ab2facd",
+    "messaging.core.semantics.consumer-offset": "7161629692760f3d27d9d992dd679e4afea0fa507410bb971d026ef12ad22f66",
+    "messaging.core.delivery.at-least-once-idempotency": "55d2407a17e33deff24deaed456079fb8685696925ddffdf15edfc5260f729c0",
+    "messaging.core.delivery.retry-dlq": "ec26f5a417eddc723335012b7224622272221e607abb6f116081598ce71af96c",
+    "messaging.core.delivery.ordering": "0d1448cdaa15c754a71400df30e36ca22232cda4419fe97fb027944246906212",
+    "messaging.core.workflow.transactional-outbox": "b14702846edd1c32ea126a330aec9b759f0d0fabff9103489ca01053a5969443",
+    "messaging.core.workflow.backpressure-capacity": "4bccf1cab5df67c7e173b0778dc253a6a85460879245bb151842d5c40cb6b7dc",
+    "messaging.core.workflow.schema-evolution": "906bf772d43a8a10fc22213b0237d90637f0a58cf1d91f21c71adbe1e5ff61b5",
+    "messaging.core.semantics.message-model.q1": "d8af2b656125a981a9f9d4d22142a149fcd017999bebcbb250049de0f676030e",
+    "messaging.core.semantics.message-model.q2": "076e68288091bf0932b2d117296d47709ec908ff896a25953945e2f7a700c2ec",
+    "messaging.core.semantics.message-model.q3": "83ce7e16a52fb9e9dffd20804d23c375d272989d530e8be64409c14498204ef0",
+    "messaging.core.semantics.partition-key.q1": "056cb6b982f27df956c82442bcef4cecc5ae5e22fd2e7c21aabc38e4a3e70421",
+    "messaging.core.semantics.partition-key.q2": "268dcdefee9310d8c33d1cf8e645618ee7dde9c9d58037dcf3997df34be445c1",
+    "messaging.core.semantics.partition-key.q3": "68f16c33ac14d3e29bf49ed804b841021846209c2646f9942ecdc5d18eb686b5",
+    "messaging.core.semantics.consumer-offset.q1": "b2318b201a13a4f74c9e03f4c3c782e96e5b15ca927ddb737cba0d75b0ad76a8",
+    "messaging.core.semantics.consumer-offset.q2": "930fc6e8d66129bb152eae5aba64a76ef9127df9b937b4be56c81737004c4e00",
+    "messaging.core.semantics.consumer-offset.q3": "bcbf9447dc96fcbdcbdf2b107671f34b4559e066f43d202f8c99db40c9935d2a",
+    "messaging.core.delivery.at-least-once-idempotency.q1": "bc3ed7c4e5343f1783dccf223e1887b6e9ef4a45b1b0790290701c0356cbe507",
+    "messaging.core.delivery.at-least-once-idempotency.q2": "6623a801b0d61e869d0821165a56caa5fae3fcbde82f8e3543b0de9de36724ce",
+    "messaging.core.delivery.at-least-once-idempotency.q3": "57e0f0bd7325cf4d851170296d2a44c6d9b36282384291dba46a828a55aad48d",
+    "messaging.core.delivery.retry-dlq.q1": "aa39a8dc2f0c0080a2fb4442232842e2723954fc27caa1542ba7835449dc352a",
+    "messaging.core.delivery.retry-dlq.q2": "62effe4d0f4f0046ced478ee481df830875c5945c20122161e9a0189f76fdf9f",
+    "messaging.core.delivery.retry-dlq.q3": "be369c95dd33e1e519e919c0dbae415867ad7eff255ede47ec065ed2bec5a802",
+    "messaging.core.delivery.ordering.q1": "b5420895d81dba55915f781959a2f0892f007708b6c7a5d88afc9ff6c0821b76",
+    "messaging.core.delivery.ordering.q2": "0fa06ee8114ada21da9a3a13a196e79591be4b615f7d01762077195ae94d0daf",
+    "messaging.core.delivery.ordering.q3": "6ba53c548203ccfab29484708ee680102e2e4a64265996b613812299cfb4569a",
+    "messaging.core.workflow.transactional-outbox.q1": "569ce6b203610a6d012f4d3e26302d58ad5515fe86679dd32252a0740d3d18a5",
+    "messaging.core.workflow.transactional-outbox.q2": "509d026259e99cf677e45534569b8e044fd8fd200a33c898bd160c39f781999a",
+    "messaging.core.workflow.transactional-outbox.q3": "47b2e12b53192215b303ba8d890647db39ddcf04d3fa796167e976f40ce97a80",
+    "messaging.core.workflow.backpressure-capacity.q1": "d39fb3464f0935c1c975458d29fcbece9f70ff61738a6f460be2bd9197f1ef5c",
+    "messaging.core.workflow.backpressure-capacity.q2": "6e7dab2018e2bf927e564496ea0a21d607b35da910fd8adbb19676fd20901018",
+    "messaging.core.workflow.backpressure-capacity.q3": "fbe8ff3fab3d7631ce83af2173feeb650ab0a4a6d46148fbbe77b85268c203a8",
+    "messaging.core.workflow.schema-evolution.q1": "313cdb2197f2a502de53961c016dac092d0910455c51137f9ca5d8398426b27e",
+    "messaging.core.workflow.schema-evolution.q2": "3b0183800d6bea426ea30dc27b37054923ed0d0277327dd4ee9eccd6ad7a9bbb",
+    "messaging.core.workflow.schema-evolution.q3": "2245c4843e2e4e4fa98e2eb807353964813059ffcb425f5faa46f4091aebca11"
+  },
+  "curriculumSha256": "71b052e3fb12290dd8f4abbd8254d486d2ac8dae7534ca7dd7a44b669499a19d",
+  "topicCatalogSha256": "bc594d6213e01b168a37af2c8ce11fb52337f003d828201400e17a3c66a5aaca"
+}

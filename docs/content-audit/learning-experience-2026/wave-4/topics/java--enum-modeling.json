@@ -1,0 +1,283 @@
+{
+  "area": "java",
+  "wave": 4,
+  "topic": "enum-modeling",
+  "topicKey": "java.core.enum-modeling",
+  "baselineSha": "efe73a15da14c996bd08344181d4d6f87073803d",
+  "reviewedAt": "2026-10-14",
+  "reviewMethod": "4 Concept/18 Question(MC17/SCENARIO1)의 실제 본문·정답·선택지별 rationale·modelAnswer·설명·난도·중복 및 연관성을 직접 검토하고 Java25/JLS/한국어 출처 관련 절과 대조했다. 이전 PASS 자동 승격 없이 수기 5축/2축 근거 기록.",
+  "topics": [
+    {
+      "key": "java.core.enum-modeling",
+      "coverage": "4C/18Q 닫힌 enum 값·공유 인스턴스/ordinal-name·외부 코드·EnumSet/EnumMap/null 경계 전수 검토."
+    }
+  ],
+  "concepts": [
+    [
+      "java.core.enum-modeling.enum-closed-values-behavior",
+      "KEEP",
+      "L1 닫힌 값/문자열 오타 대비, 상수별 공유 상태·행동과 동적 데이터 경계 정확.",
+      "READY/PAID/CANCELLED, Mode.STANDARD.uses의 공유 객체 상태, switch 전제 구분. JLS8.9 언어 보장과 설계 선택 분리.",
+      "TEXT: 여러 사용자가 하나의 Mode.STANDARD를 가리키는 ASCII 및 코드 충분.",
+      "JLS8.9와 우아한형제들 Java Enum 활용기의 enum 응집 사례 확인. 외부 코드와 내부 선언의 수명 구별.",
+      "q1~q5 정답/오답 rationale/예제 공유 상태/이름 비교/관리자 동적 확장 답안 검토."
+    ],
+    [
+      "java.core.enum-modeling.enum-ordinal-name-persistence",
+      "KEEP",
+      "L2 ordinal/name/externalCode의 호환성 trade-off, V1→V2 외부 값 변환과 migration 설명.",
+      "ordinal은 선언 위치, name은 선언 식별자, toString 표시·code alias는 별도 계약. fromCode 실패 정책 구분.",
+      "TEXT: 내부 상수/외부 저장 계약 ASCII로 변경의 주체와 수명을 보여줌.",
+      "Java25 Enum API name/ordinal/valueOf를 직접 대조. JPA 영속화는 별도 계약이라고 한정.",
+      "q1~q5 ordinal 의미 변화, name 리네임, low 코드 migration, 모르는 외부 값 정책을 확인."
+    ],
+    [
+      "java.core.enum-modeling.enumset",
+      "TARGETED_ENHANCE",
+      "L2 원소타입/부분집합, 중복·null·complement·range, 집합 mutability 주의까지 설명.",
+      "EnumSet의 계약은 맞지만 예제 OrderStatus.COMPLETED는 앞 Concept enum에 없음; 이어 따라하면 컴파일 오류(JENUM-001).",
+      "TEXT: 비트플래그 비교와 보완집합 코드가 충분. 새 이미지 필요없음.",
+      "Java25 EnumSet API에서 single enum type, null 삽입 예외/상수 선언순서/보완집합 동작 검증.",
+      "q1~q4 중 q2의 독립 코드에 Permission 정의/READ 식별자 전제가 빠짐(JENUM-002). 나머지 정답 해설 정확."
+    ],
+    [
+      "java.core.enum-modeling.enummap",
+      "KEEP",
+      "L2 단일 enum 키 기반 Map 설계, getOrDefault/null mapping과 iteration order 특성을 설명.",
+      "null key 금지/null value 허용 및 containsKey 구분, 비즈니스 키의 선언 순서 결합 주의는 정확.",
+      "NONE: switch/map 사례 및 객체 관계 없이 정확한 비교가 가능.",
+      "Java25 EnumMap API의 key restriction, null, order 직접 확인; 무조건 성능 우세 단정하지 않음.",
+      "q1~q4의 key 타입, 누락 기본값/null 값과 선언 순서 검토. q2 Day 선언 전제 보강(JENUM-002)."
+    ]
+  ],
+  "questions": [
+    [
+      "java.core.enum-modeling.enum-closed-values-behavior.q1",
+      "KEEP",
+      "C 타입으로 값/행동 범위를 제한, 나머지 자동 보정·공유 mutable state·동적 상수 추가는 보장 없음. 정답·각 보기의 rationale·해설 전체 대조.",
+      "MULTIPLE_CHOICE EASY; Concept java.core.enum-modeling.enum-closed-values-behavior 연결, 난도·중복 목표 판단."
+    ],
+    [
+      "java.core.enum-modeling.enum-closed-values-behavior.q2",
+      "KEEP",
+      "B valueOf(\"READY\")는 정확한 상수명과 일치. 순서/표시명/자동 trim·case 가정 거짓. 정답·각 보기의 rationale·해설 전체 대조.",
+      "MULTIPLE_CHOICE MEDIUM; Concept java.core.enum-modeling.enum-closed-values-behavior 연결, 난도·중복 목표 판단."
+    ],
+    [
+      "java.core.enum-modeling.enum-closed-values-behavior.q3",
+      "KEEP",
+      "B Mode.STANDARD 두 참조가 한 인스턴스이므로 uses=2/2, 주문별 필드 분리 필요. 정답·각 보기의 rationale·해설 전체 대조.",
+      "MULTIPLE_CHOICE HARD; Concept java.core.enum-modeling.enum-closed-values-behavior 연결, 난도·중복 목표 판단."
+    ],
+    [
+      "java.core.enum-modeling.enum-closed-values-behavior.q4",
+      "KEEP",
+      "C Enum.name()은 선언된 식별자 그대로. 외부 label/toString/정규화와 다름. 정답·각 보기의 rationale·해설 전체 대조.",
+      "MULTIPLE_CHOICE EASY; Concept java.core.enum-modeling.enum-closed-values-behavior 연결, 난도·중복 목표 판단."
+    ],
+    [
+      "java.core.enum-modeling.enum-closed-values-behavior.q5",
+      "KEEP",
+      "C enum은 동적 런타임 상태 목록 모델이 아님. 필드가 모두 컴파일 상수일 필요는 없음. 정답·각 보기의 rationale·해설 전체 대조.",
+      "MULTIPLE_CHOICE MEDIUM; Concept java.core.enum-modeling.enum-closed-values-behavior 연결, 난도·중복 목표 판단."
+    ],
+    [
+      "java.core.enum-modeling.enum-ordinal-name-persistence.q1",
+      "KEEP",
+      "C ordinal은 선언 순서 변경 시 다른 상태를 의미함. hash나 런타임 랜덤 위치 아님. 정답·각 보기의 rationale·해설 전체 대조.",
+      "MULTIPLE_CHOICE EASY; Concept java.core.enum-modeling.enum-ordinal-name-persistence 연결, 난도·중복 목표 판단."
+    ],
+    [
+      "java.core.enum-modeling.enum-ordinal-name-persistence.q2",
+      "KEEP",
+      "D name 저장은 순서 변경 영향 없고 리네임은 기존 식별자 로딩 실패/별칭 필요. 정답·각 보기의 rationale·해설 전체 대조.",
+      "MULTIPLE_CHOICE MEDIUM; Concept java.core.enum-modeling.enum-ordinal-name-persistence 연결, 난도·중복 목표 판단."
+    ],
+    [
+      "java.core.enum-modeling.enum-ordinal-name-persistence.q3",
+      "KEEP",
+      "B 외부 low 코드로 V2 NORMAL을 찾아 code low로 재저장. name/ordinal 자동 호환 불가. 정답·각 보기의 rationale·해설 전체 대조.",
+      "MULTIPLE_CHOICE HARD; Concept java.core.enum-modeling.enum-ordinal-name-persistence 연결, 난도·중복 목표 판단."
+    ],
+    [
+      "java.core.enum-modeling.enum-ordinal-name-persistence.q4",
+      "KEEP",
+      "D name 식별자 제거되면 valueOf 이전 문자열 실패, 컴파일러가 별칭 만들지 않음. 정답·각 보기의 rationale·해설 전체 대조.",
+      "MULTIPLE_CHOICE MEDIUM; Concept java.core.enum-modeling.enum-ordinal-name-persistence 연결, 난도·중복 목표 판단."
+    ],
+    [
+      "java.core.enum-modeling.enumset.q1",
+      "KEEP",
+      "C 한 enum 타입에 특화된 Set. 삽입 순서가 아닌 선언 순서이며 중복 개수 없음. 정답·각 보기의 rationale·해설 전체 대조.",
+      "MULTIPLE_CHOICE EASY; Concept java.core.enum-modeling.enumset 연결, 난도·중복 목표 판단."
+    ],
+    [
+      "java.core.enum-modeling.enumset.q2",
+      "TARGETED_ENHANCE",
+      "B 동일 READ를 두 번 추가해 Set 크기1. 그러나 Permission enum/READ 이름 자격 전제 누락. 정답·각 보기의 rationale·해설 전체 대조.",
+      "MULTIPLE_CHOICE MEDIUM; Concept java.core.enum-modeling.enumset 연결, 난도·중복 목표 판단."
+    ],
+    [
+      "java.core.enum-modeling.enumset.q3",
+      "KEEP",
+      "B WRITE의 보완집합 READ+EXECUTE에서 retainAll(a=WRITE+READ)은 READ만 남기고 EXECUTE 추가. 정답·각 보기의 rationale·해설 전체 대조.",
+      "MULTIPLE_CHOICE HARD; Concept java.core.enum-modeling.enumset 연결, 난도·중복 목표 판단."
+    ],
+    [
+      "java.core.enum-modeling.enumset.q4",
+      "KEEP",
+      "D EnumSet.add(null)은 NPE. 조회/제거와 삽입을 구분해야 함. 정답·각 보기의 rationale·해설 전체 대조.",
+      "MULTIPLE_CHOICE EASY; Concept java.core.enum-modeling.enumset 연결, 난도·중복 목표 판단."
+    ],
+    [
+      "java.core.enum-modeling.enummap.q1",
+      "KEEP",
+      "B EnumMap enum key만 제한하고 value는 일반 참조형. null key는 불허. 정답·각 보기의 rationale·해설 전체 대조.",
+      "MULTIPLE_CHOICE EASY; Concept java.core.enum-modeling.enummap 연결, 난도·중복 목표 판단."
+    ],
+    [
+      "java.core.enum-modeling.enummap.q2",
+      "TARGETED_ENHANCE",
+      "C SUNDAY가 미매핑이면 getOrDefault 0. 독립 문항에 Day enum 선언이 없음. 정답·각 보기의 rationale·해설 전체 대조.",
+      "MULTIPLE_CHOICE MEDIUM; Concept java.core.enum-modeling.enummap 연결, 난도·중복 목표 판단."
+    ],
+    [
+      "java.core.enum-modeling.enummap.q3",
+      "KEEP",
+      "A SUNDAY→null 매핑, TUESDAY→0, keySet은 MONDAY·SUNDAY 선언 순서, 문자열 결합으로 언박싱 없음. 정답·각 보기의 rationale·해설 전체 대조.",
+      "MULTIPLE_CHOICE HARD; Concept java.core.enum-modeling.enummap 연결, 난도·중복 목표 판단."
+    ],
+    [
+      "java.core.enum-modeling.enummap.q4",
+      "KEEP",
+      "B 닫힌 enum 키 정책을 타입으로 표현. 동적 문자열/혼합 enum/null key/삽입순서에 부적합. 정답·각 보기의 rationale·해설 전체 대조.",
+      "MULTIPLE_CHOICE MEDIUM; Concept java.core.enum-modeling.enummap 연결, 난도·중복 목표 판단."
+    ],
+    [
+      "java.core.enum-modeling.enum-ordinal-name-persistence.q5",
+      "KEEP",
+      "SCENARIO: valueOf는 정확한 선언명만 수용, UNKNOWN/거절·원본 코드 기록·외부/내부 매핑과 호환 정책을 설명. 모범 답안·해설 검토.",
+      "SCENARIO MEDIUM; Concept java.core.enum-modeling.enum-ordinal-name-persistence 연결, 난도·중복 목표 판단."
+    ]
+  ],
+  "sources": [
+    [
+      "https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html#jls-8.9",
+      "CURRENT_VERIFIED",
+      "JLS8.9 enum class/상수/instance의 선언·생성 계약 및 상수별 행동과 공유 상태 경계를 확인."
+    ],
+    [
+      "https://techblog.woowahan.com/2527/",
+      "CURRENT_VERIFIED",
+      "우아한형제들 Java Enum 활용기 enum 응집 및 외부 코드 매핑 사례를 확인; 모든 전략이 enum 필수는 아님."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Enum.html",
+      "CURRENT_VERIFIED",
+      "Java25 Enum API의 name 선언명, ordinal 선언위치, valueOf 정확 일치 계약 검증."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/EnumSet.html",
+      "CURRENT_VERIFIED",
+      "Java25 EnumSet API 단일 enum 타입/null 불허/complementOf/range; 예제 mismatch는 별도 발견."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/EnumMap.html",
+      "CURRENT_VERIFIED",
+      "Java25 EnumMap API 키 enum/선언순서·null키 금지/null값 허용/getOrDefault 확인."
+    ]
+  ],
+  "supplementalSources": [],
+  "supportingEvidence": {},
+  "referenceAccess": {},
+  "findings": [
+    {
+      "id": "W4-JENUM-001",
+      "severity": "P0",
+      "contentKeys": [
+        "java.core.enum-modeling.enumset"
+      ],
+      "file": "content/java/enum-modeling/enumset.md",
+      "quote": "OrderStatus.COMPLETED",
+      "additionalEvidence": [
+        {
+          "file": "content/java/enum-modeling/enum-closed-values-behavior.md",
+          "quote": "enum OrderStatus {\n    READY,\n    PAID,\n    CANCELLED",
+          "sourceLine": 36,
+          "sourceFileSha256": "99ee27e10edcf3a9314a421726b751a6eedaccf518aced1042812f04940dce33"
+        }
+      ],
+      "problem": "EnumSet 예제의 OrderStatus.COMPLETED는 선행 Concept의 OrderStatus(READY/PAID/CANCELLED)에 없는 상수다. 동일 타입으로 학습 예제를 연결하면 컴파일 오류가 발생한다.",
+      "action": "PAID 등 실제 선언 상수로 바꾸거나 COMPLETED가 선언된 독립 enum을 예제에 명시한다. EnumSet 개념과 기존 Question 정답은 유지한다.",
+      "officialEvidence": [
+        "https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html#jls-8.9"
+      ],
+      "runtimeEvidence": "선행 enum 정의를 기준으로 한 제한 javac 21 컴파일에서 cannot find symbol: COMPLETED 재현. Java25 전체 실행 아님.",
+      "followupIssues": [
+        201
+      ],
+      "sourceLine": 25,
+      "sourceFileSha256": "9d9b736d123932bd845244f74e0e868f90fc957ad239e5e2267301414b5cd530"
+    },
+    {
+      "id": "W4-JENUM-002",
+      "severity": "P1",
+      "contentKeys": [
+        "java.core.enum-modeling.enumset.q2",
+        "java.core.enum-modeling.enummap.q2"
+      ],
+      "file": "content/java/enum-modeling/questions.json",
+      "quote": "EnumSet<Permission> set = EnumSet.of(READ);",
+      "additionalEvidence": [
+        {
+          "file": "content/java/enum-modeling/questions.json",
+          "quote": "EnumMap<Day, Integer> hours = new EnumMap<>(Day.class);"
+        }
+      ],
+      "problem": "두 코드 결과 문항에 Permission/Day enum 선언과 READ의 수식 또는 static import 전제가 없다. 결과 해석 의도는 맞지만 독립 실행할 코드로는 컴파일할 수 없어 학습자가 실행 결과와 미정의 식별자를 혼동할 수 있다.",
+      "action": "q2 EnumSet에 Permission enum 정의/Permission.READ, q2 EnumMap에 Day 정의(MONDAY,SUNDAY) 또는 명확한 기존 타입 전제를 넣는다. 정답 B/C 및 해설 유지.",
+      "officialEvidence": [
+        "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/EnumSet.html",
+        "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/EnumMap.html"
+      ],
+      "runtimeEvidence": "제한 javac21 재구성에서 Permission/READ unresolved 증명; 타입 선언을 추가한 경우 원래 예상 결과에 부합.",
+      "followupIssues": [
+        201
+      ]
+    }
+  ],
+  "carriedForwardFindings": [],
+  "visualizationAssets": [],
+  "sourceHashes": {
+    "java.core.enum-modeling.enum-closed-values-behavior": "99ee27e10edcf3a9314a421726b751a6eedaccf518aced1042812f04940dce33",
+    "java.core.enum-modeling.enum-ordinal-name-persistence": "57e5df1f567ed3ae15917b37f911760f7f349d66b140ef3a10902a1230c8be23",
+    "java.core.enum-modeling.enumset": "9d9b736d123932bd845244f74e0e868f90fc957ad239e5e2267301414b5cd530",
+    "java.core.enum-modeling.enummap": "b06750a87a3ba85763708c2d368e94448178d452827581990619aa47bb335248",
+    "java.core.enum-modeling.enum-closed-values-behavior.q1": "e5315b08a5af28c525125760e1109e6fbcefbf83d3a14746eeeeeba1d40306b5",
+    "java.core.enum-modeling.enum-closed-values-behavior.q2": "29523e17f024f9a7f01fc293ce70da288611e741c7b3f433b81663b871dcac92",
+    "java.core.enum-modeling.enum-closed-values-behavior.q3": "ce0c281042d37549cbd7b696f45d86a547bde772119bb58d0872197b64cd1150",
+    "java.core.enum-modeling.enum-closed-values-behavior.q4": "15427acb72af851ab8e14924a136e0db1e717d3b1448ceccb2600f7c5735b04b",
+    "java.core.enum-modeling.enum-closed-values-behavior.q5": "a3bd7a46b95a62c33002ae8cf8e6fb78db27c2d4e943a412095de136fa0178e5",
+    "java.core.enum-modeling.enum-ordinal-name-persistence.q1": "e514f40d0988b0a248ee90e6abd3346a74d7870a37b108158ba8dc12aaca69a0",
+    "java.core.enum-modeling.enum-ordinal-name-persistence.q2": "4002afd5b79c2cd829b7dc702c3758e4f3b1aa529e93840af91a0017907138d5",
+    "java.core.enum-modeling.enum-ordinal-name-persistence.q3": "9023da3de25f168223c72f8c479c019e01a789c23aa539c43c382e445aa73209",
+    "java.core.enum-modeling.enum-ordinal-name-persistence.q4": "9d5e47e9caba1c29610aacb6a3db12bd0eb4b757d2f698a0c065465ff587de9b",
+    "java.core.enum-modeling.enumset.q1": "3495b1469900e4775fb39d81c69afa87a2ef76f06edf80c348980d049fdce55e",
+    "java.core.enum-modeling.enumset.q2": "82bb592bcda09b299290c20a7ea5f282479d3c2c876fb8a7b72af4f461925e0e",
+    "java.core.enum-modeling.enumset.q3": "7b1ee2447ee7941ebcde133763ae1fc83e283bca69097e7d1fe16f28ea2643ca",
+    "java.core.enum-modeling.enumset.q4": "9f4528380982109ebe0c07b622a0df21d50b2f7a09699f4f0e498d96371ab6a7",
+    "java.core.enum-modeling.enummap.q1": "425e7f944d51f762d30006496e076e67e10da25978d0aafbaf31637a2444bd05",
+    "java.core.enum-modeling.enummap.q2": "d21e481f219049241b63a6d7833d803c2f82dcdc5ae6b968aa01740ec855dc21",
+    "java.core.enum-modeling.enummap.q3": "8ceb513779a3cb73a914a930b70bccd3f9dab74f93806033cc7f67609aa22057",
+    "java.core.enum-modeling.enummap.q4": "1948257f1ac7f61b1c871a44e48cfc653d89b5bf0269b749e22ce2cbebea1b37",
+    "java.core.enum-modeling.enum-ordinal-name-persistence.q5": "184a7bbb999adb36d95c29331158df9a4b0b3e13331a79fd6ca3554b52c2ca0a"
+  },
+  "curriculumSha256": "0aad122de20d9205274f96887b562473a3a23de3dd406cbd684031438d4bbe0c",
+  "topicCatalogSha256": "2a167f43030df4dfc9742225d86dfcefdcd5cff2fc0d702c0b9101e00e6b172c",
+  "priorQualityReview": {
+    "pr": 178,
+    "url": "https://github.com/guseoh/csforge/pull/178",
+    "headSha": "e94902dfe7154ef054f0c591e5ab49d4cca81fac",
+    "evidence": "PR178는 이전 검토로 보존. 이번 4C/18Q 전부 다시 읽고 P0/P1 발견을 기록했으며 이전 PASS로 KEEP을 자동 생성하지 않는다."
+  }
+}

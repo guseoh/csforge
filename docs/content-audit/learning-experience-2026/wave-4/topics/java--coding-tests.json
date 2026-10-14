@@ -1,0 +1,528 @@
+{
+  "area": "java",
+  "wave": 4,
+  "baselineSha": "efe73a15da14c996bd08344181d4d6f87073803d",
+  "reviewedAt": "2026-10-14",
+  "curriculumSha256": "0aad122de20d9205274f96887b562473a3a23de3dd406cbd684031438d4bbe0c",
+  "topicCatalogSha256": "2a167f43030df4dfc9742225d86dfcefdcd5cff2fc0d702c0b9101e00e6b172c",
+  "topic": "coding-tests",
+  "topicKey": "java.core.coding-tests",
+  "reviewMethod": "7C/46고유Q를본문·실제모든질문필드/선택지/rationale/모델/해설·난도·연결별직접읽고수기판단. 복수연결q7들은한Q로집계.11개Reference관계공식관련절독립대조. 자동PASS아님.",
+  "topics": [
+    {
+      "key": "java.core.coding-tests",
+      "coverage": "입출력6+6/정렬6/Comparator7/Deque6/PQ8/빈도7의46고유Q와7C."
+    }
+  ],
+  "concepts": [
+    [
+      "java.core.coding-tests.fast-input-bufferedreader-tokenizer",
+      "KEEP",
+      "L1 CORE: readLine→token→numericrange→줄계약→EOF/빈줄→단순OJ와CSV별도로설명충분.",
+      "StringTokenizer소진시다음줄자동아님/readLineEOFnull·빈문자와구별/longsum과inputint범위별도정확. 초기template은두번째줄N개문맥뒤명시,모든입력일반보장아님.",
+      "NONE: tokenizerASCII와숫자loop/EOF코드가동작목표충분;L1에불필요한도식추가없음.",
+      "BufferedReader readLine개행미포함/EOFnull 및StringTokenizer legacy/nextToken소진exception을두관계별대조. OJ특정단순문법의사용으로한정.",
+      "6Q A/B/C/B/B/C 전체보기·rationale·코드값·입력계약직접확인. EASYAPI→MEDIUM부족입력/결과range순서적절."
+    ],
+    [
+      "java.core.coding-tests.buffered-output-stringbuilder",
+      "KEEP",
+      "L1 CORE: 가변조립/외부출력분리→Writerbuffer와별도역할→메모리bound→flush/소유/형식으로깊이충분.",
+      "빌더append가IO아님·threadsafe아님·전체메모리비용·반복+와단일+구별·flush≠close·물리durability아님정확.",
+      "NONE: append누적ASCII/두출력코드/shape검토목록으로목표충분. 고정성능배수나allocation전략언어보장없음.",
+      "StringBuilder mutable/nosync API와BufferedWriter flush/close를각역할에독립대조. 이전Topic의URL상태빌리지않음.",
+      "6Q A/B/A/A/A/A 모두필드·보기반박확인. 마지막flush/borrowedstdout과큰memory·interactivevisibility별도목표."
+    ],
+    [
+      "java.core.coding-tests.sorting-arrays-collections",
+      "KEEP",
+      "L1 CORE: primitive/reference/List API구분→mutationcopy→criteria→asListint[]→전체vs부분범위로충분.",
+      "int[]Comparatoroverload불가/Object[]Comparator·Listmodifiable/Arrays.asList(int[])는1arrayelement·rangehalfopen정확. primitive는정확한numeric일반순서이며다른floatNaN영역으로확대안함.",
+      "NONE: 실제정렬코드/주석·API비교와배열유형이충분;구체sort알고리즘재증명은DSA경계.",
+      "Arrays intsortvoidascending/range포함배제·referenceComparator 및Listsortmodifiable/notnecessarilyresizable/stable관련절을독립대조.",
+      "6단독Q A/B/B/A/A/A+hashcounting.q7 crosslink 직접확인. 부분sort범위·boxing·copy원본목표구별."
+    ],
+    [
+      "java.core.coding-tests.comparator-for-coding-tests",
+      "KEEP",
+      "L2 CORE: sign/overflow→키우선순위→reversed범위→0≠equals를짧은Student실행모델로충분설명.",
+      "Integercompare/comparingInt·lexicographicthen/score만reverse vs전체reverse/time-id정렬이정확. 비교기생성과collectionmutation구분.",
+      "NONE: 다중criteriaASCII와chain두코드가방향·tie조건학습에충분.",
+      "Comparator compare부호/thenComparing앞0때하위선택/reversed호출대상전체를PriorityQueue와sorting목표에대조.",
+      "7단독Q A/A/A/B/A/B+HARDscore↓time↑id↑모델및PQ.q7/hash.q7 crosslink를모두확인. key0만동점/equals아님;난도순서적절."
+    ],
+    [
+      "java.core.coding-tests.arraydeque-stack-queue",
+      "KEEP",
+      "L1 CORE: deque한타입에서FIFO앞뒤/LIFO같은끝→emptyAPI→peek/poll→null제약을상태코드로충분.",
+      "push앞/addLast뒤/pollFirst앞/removeexception·null불가정확. 이름섞임이자료구조변환/복잡도항상n을초래한다고과장하지않음.",
+      "NONE: front-back 및topASCII와1/2/3상태코드가충분;BFS이론은DSA경계.",
+      "ArrayDeque addLastnullNPE/removeFirstNoSuchElement/pollFirstnull및끝메서드계약을코드단계에대조.",
+      "6Q A/B/A/B/A/A 전체실제선택지와해설확인. q5trace[1,2]→[2]→[3,2]→last2 정확;1삽입q1은조합의FIFO계약질문."
+    ],
+    [
+      "java.core.coding-tests.priorityqueue-coding-tests",
+      "TARGETED_ENHANCE",
+      "L2 CORE: minhead/peekpoll→maxcomparator→tie-sequence→iterator≠sorted→mutablekey→빈상태로API목적충분.",
+      "mutablepriority자동reheap보장없음/recordentry+versionstale skip·FIFO동점비보장정확. 다만Integer queue 선언뒤State를같은queue로넣고poll한예시문맥연결은W4-JCOD-001 최소보강.",
+      "NONE: min3/Job타입/State유효성모델로목표충분;새그림필수아님.",
+      "PriorityQueueAPIleasthead/tiesarbitrary·iteration순서미보장/peekempty null과nonnull원소·복잡도를이Concept관계로직접대조.",
+      "8Q 전수검토. q1은기본생성후빈상태전제누락과Dnullfeedback이학습모호성을만들어W4-JCOD-002 P1. 나머지A/A/A/B/B+Jobsequence불변/staleversion두HARD모델정확."
+    ],
+    [
+      "java.core.coding-tests.hashmap-hashset-counting",
+      "KEEP",
+      "L1 CORE: count값과membership→getOrDefault비삽입→merge→addboolean→출력순서→equals/hashkey로충분.",
+      "명시counter코드에서valuesnonnull이고Integer::sum null안나옴;일반merge는nullmapping/nonnullvalue/remapnull삭제별도본문경고. counts나hash구조를자동concurrency안전으로과장안함.",
+      "NONE: key/count분기ASCII·visitedrecord와Map/Set선택code가충분.",
+      "HashMap getOrDefault/merge·orderno guarantee 및HashSet add새원소boolean·equals 기반uniqueness를두관계에직접대조.",
+      "7Q A/A/A/A/A/B+빈도↓word↑SCENARIO모델전수검토. Entry.count/word는서술한(word,count)전용tuple을가정한예시;Map.Entry의그런API보장으로읽지않음. 선택적record선언가능하나기술결함확정안함."
+    ]
+  ],
+  "questions": [
+    [
+      "java.core.coding-tests.fast-input-bufferedreader-tokenizer.q1",
+      "KEEP",
+      "A10 20개행제외; B개행/C배열/Dnull오답.",
+      "모든prompt/선택지rationale/정답/모델/해설·난도·모호성·중복·연결직접읽기. crosslink는고유Q1개로집계;이전QualityPASS자동승격없음."
+    ],
+    [
+      "java.core.coding-tests.fast-input-bufferedreader-tokenizer.q2",
+      "KEEP",
+      "B두번째EOFnull;A빈줄/C재사용/DIOException필수오답.",
+      "모든prompt/선택지rationale/정답/모델/해설·난도·모호성·중복·연결직접읽기. crosslink는고유Q1개로집계;이전QualityPASS자동승격없음."
+    ],
+    [
+      "java.core.coding-tests.fast-input-bufferedreader-tokenizer.q3",
+      "KEEP",
+      "C소진NoSuchElement;ABDlast반복/빈문자/다음줄auto아님.",
+      "모든prompt/선택지rationale/정답/모델/해설·난도·모호성·중복·연결직접읽기. crosslink는고유Q1개로집계;이전QualityPASS자동승격없음."
+    ],
+    [
+      "java.core.coding-tests.fast-input-bufferedreader-tokenizer.q4",
+      "KEEP",
+      "B입력intvs결과long최대100000범위;ACDbyte/tokenizer승격/합항상int반박.",
+      "모든prompt/선택지rationale/정답/모델/해설·난도·모호성·중복·연결직접읽기. crosslink는고유Q1개로집계;이전QualityPASS자동승격없음."
+    ],
+    [
+      "java.core.coding-tests.fast-input-bufferedreader-tokenizer.q5",
+      "KEEP",
+      "Btoken소진때nextline;ACD첫줄무한/0채움/split전체읽기아님.",
+      "모든prompt/선택지rationale/정답/모델/해설·난도·모호성·중복·연결직접읽기. crosslink는고유Q1개로집계;이전QualityPASS자동승격없음."
+    ],
+    [
+      "java.core.coding-tests.fast-input-bufferedreader-tokenizer.q6",
+      "KEEP",
+      "C필수입력부족실패;ABD기본0/재토큰/무한retry아님.",
+      "모든prompt/선택지rationale/정답/모델/해설·난도·모호성·중복·연결직접읽기. crosslink는고유Q1개로집계;이전QualityPASS자동승격없음."
+    ],
+    [
+      "java.core.coding-tests.buffered-output-stringbuilder.q1",
+      "KEEP",
+      "A가변조립·출력분리;BCDsort/close/threadspawn없음.",
+      "모든prompt/선택지rationale/정답/모델/해설·난도·모호성·중복·연결직접읽기. crosslink는고유Q1개로집계;이전QualityPASS자동승격없음."
+    ],
+    [
+      "java.core.coding-tests.buffered-output-stringbuilder.q2",
+      "KEEP",
+      "Bflush하위전달;ACDclose/별도Builder삭제/물리내구성아님.",
+      "모든prompt/선택지rationale/정답/모델/해설·난도·모호성·중복·연결직접읽기. crosslink는고유Q1개로집계;이전QualityPASS자동승격없음."
+    ],
+    [
+      "java.core.coding-tests.buffered-output-stringbuilder.q3",
+      "KEEP",
+      "Aappend메모리후printIO;BCD정렬/매appendOS/threadsafequeue아님.",
+      "모든prompt/선택지rationale/정답/모델/해설·난도·모호성·중복·연결직접읽기. crosslink는고유Q1개로집계;이전QualityPASS자동승격없음."
+    ],
+    [
+      "java.core.coding-tests.buffered-output-stringbuilder.q4",
+      "KEEP",
+      "A소유·borrowedstdout/flush수명;BCDautoClose/GC결정close/close후사용반박.",
+      "모든prompt/선택지rationale/정답/모델/해설·난도·모호성·중복·연결직접읽기. crosslink는고유Q1개로집계;이전QualityPASS자동승격없음."
+    ],
+    [
+      "java.core.coding-tests.buffered-output-stringbuilder.q5",
+      "KEEP",
+      "A호출수vswholememory;BCDauto압축/sync변환/IO사라짐아님.",
+      "모든prompt/선택지rationale/정답/모델/해설·난도·모호성·중복·연결직접읽기. crosslink는고유Q1개로집계;이전QualityPASS자동승격없음."
+    ],
+    [
+      "java.core.coding-tests.buffered-output-stringbuilder.q6",
+      "KEEP",
+      "A관찰경계flush+cost;BCDclose같음/Builder외부자동전달/reverse없음.",
+      "모든prompt/선택지rationale/정답/모델/해설·난도·모호성·중복·연결직접읽기. crosslink는고유Q1개로집계;이전QualityPASS자동승격없음."
+    ],
+    [
+      "java.core.coding-tests.sorting-arrays-collections.q1",
+      "KEEP",
+      "A배열mutateascending;BCD새배열/descending/Comparator필수아님.",
+      "모든prompt/선택지rationale/정답/모델/해설·난도·모호성·중복·연결직접읽기. crosslink는고유Q1개로집계;이전QualityPASS자동승격없음."
+    ],
+    [
+      "java.core.coding-tests.sorting-arrays-collections.q2",
+      "KEEP",
+      "BInteger[]comparator지원;ACDint[]/단일int/charliteral부적합.",
+      "모든prompt/선택지rationale/정답/모델/해설·난도·모호성·중복·연결직접읽기. crosslink는고유Q1개로집계;이전QualityPASS자동승격없음."
+    ],
+    [
+      "java.core.coding-tests.sorting-arrays-collections.q3",
+      "KEEP",
+      "Bcopy후sort;ACD원본자동보존/rename복구/autoBoxarraycopy반박.",
+      "모든prompt/선택지rationale/정답/모델/해설·난도·모호성·중복·연결직접읽기. crosslink는고유Q1개로집계;이전QualityPASS자동승격없음."
+    ],
+    [
+      "java.core.coding-tests.sorting-arrays-collections.q4",
+      "KEEP",
+      "AListsort·modifiable조건;BCD없는parse/ArraysListintclass/flush반박.",
+      "모든prompt/선택지rationale/정답/모델/해설·난도·모호성·중복·연결직접읽기. crosslink는고유Q1개로집계;이전QualityPASS자동승격없음."
+    ],
+    [
+      "java.core.coding-tests.sorting-arrays-collections.q5",
+      "KEEP",
+      "Aint[]Comparator없는overload;BCDsort자체불가/reverseStringonly/primitive미지원아님.",
+      "모든prompt/선택지rationale/정답/모델/해설·난도·모호성·중복·연결직접읽기. crosslink는고유Q1개로집계;이전QualityPASS자동승격없음."
+    ],
+    [
+      "java.core.coding-tests.sorting-arrays-collections.q6",
+      "KEEP",
+      "A[from,to);BCD전체/delete/범위반대아님.",
+      "모든prompt/선택지rationale/정답/모델/해설·난도·모호성·중복·연결직접읽기. crosslink는고유Q1개로집계;이전QualityPASS자동승격없음."
+    ],
+    [
+      "java.core.coding-tests.comparator-for-coding-tests.q1",
+      "KEEP",
+      "AIntegercompare;BCDsubtractoverflow/division/lexicalnumeric반박.",
+      "모든prompt/선택지rationale/정답/모델/해설·난도·모호성·중복·연결직접읽기. crosslink는고유Q1개로집계;이전QualityPASS자동승격없음."
+    ],
+    [
+      "java.core.coding-tests.comparator-for-coding-tests.q2",
+      "KEEP",
+      "Akeyextractor기준Comparator생성;BCD즉시sortedList/intarray/키상태변경아님.",
+      "모든prompt/선택지rationale/정답/모델/해설·난도·모호성·중복·연결직접읽기. crosslink는고유Q1개로집계;이전QualityPASS자동승격없음."
+    ],
+    [
+      "java.core.coding-tests.comparator-for-coding-tests.q3",
+      "KEEP",
+      "Adistance그뒤id↑;BCD id↓only/distance-id교차/string합순서손실반박.",
+      "모든prompt/선택지rationale/정답/모델/해설·난도·모호성·중복·연결직접읽기. crosslink는고유Q1개로집계;이전QualityPASS자동승격없음."
+    ],
+    [
+      "java.core.coding-tests.comparator-for-coding-tests.q4",
+      "KEEP",
+      "B전체reverse로둘방향반전;ACDfirstonly/Comparator삭제/copy아님.",
+      "모든prompt/선택지rationale/정답/모델/해설·난도·모호성·중복·연결직접읽기. crosslink는고유Q1개로집계;이전QualityPASS자동승격없음."
+    ],
+    [
+      "java.core.coding-tests.comparator-for-coding-tests.q5",
+      "KEEP",
+      "Asubtractoverflow;BCDlambda반환불가/numeric비교불가/equals객체변경아님.",
+      "모든prompt/선택지rationale/정답/모델/해설·난도·모호성·중복·연결직접읽기. crosslink는고유Q1개로집계;이전QualityPASS자동승격없음."
+    ],
+    [
+      "java.core.coding-tests.comparator-for-coding-tests.q6",
+      "KEEP",
+      "Bid에만reverse하위then;ACD전체뒤집기/두키합/tie표현불가반박.",
+      "모든prompt/선택지rationale/정답/모델/해설·난도·모호성·중복·연결직접읽기. crosslink는고유Q1개로집계;이전QualityPASS자동승격없음."
+    ],
+    [
+      "java.core.coding-tests.comparator-for-coding-tests.q7",
+      "KEEP",
+      "SCENARIOscore비교만reverse 뒤time/idascending;전체int영역subtract없음·HARD문장composition정확.",
+      "모든prompt/선택지rationale/정답/모델/해설·난도·모호성·중복·연결직접읽기. crosslink는고유Q1개로집계;이전QualityPASS자동승격없음."
+    ],
+    [
+      "java.core.coding-tests.arraydeque-stack-queue.q1",
+      "KEEP",
+      "A뒤삽입앞제거FIFO;BCD같은끝LIFO/조회clear동작삽입아님.",
+      "모든prompt/선택지rationale/정답/모델/해설·난도·모호성·중복·연결직접읽기. crosslink는고유Q1개로집계;이전QualityPASS자동승격없음."
+    ],
+    [
+      "java.core.coding-tests.arraydeque-stack-queue.q2",
+      "KEEP",
+      "B2;A1/Cnull/D예외는현재2원소trace와불일치.",
+      "모든prompt/선택지rationale/정답/모델/해설·난도·모호성·중복·연결직접읽기. crosslink는고유Q1개로집계;이전QualityPASS자동승격없음."
+    ],
+    [
+      "java.core.coding-tests.arraydeque-stack-queue.q3",
+      "KEEP",
+      "Aempty pollnull/removeexception;BCD둘null/둘exception/autoAdd반박.",
+      "모든prompt/선택지rationale/정답/모델/해설·난도·모호성·중복·연결직접읽기. crosslink는고유Q1개로집계;이전QualityPASS자동승격없음."
+    ],
+    [
+      "java.core.coding-tests.arraydeque-stack-queue.q4",
+      "KEEP",
+      "BnullNPE;ACD원소null/emptystring/뒤끝only허용반박.",
+      "모든prompt/선택지rationale/정답/모델/해설·난도·모호성·중복·연결직접읽기. crosslink는고유Q1개로집계;이전QualityPASS자동승격없음."
+    ],
+    [
+      "java.core.coding-tests.arraydeque-stack-queue.q5",
+      "KEEP",
+      "Afirst1 last2 trace;BCD추가3시점과tail혼동을해설이반박.",
+      "모든prompt/선택지rationale/정답/모델/해설·난도·모호성·중복·연결직접읽기. crosslink는고유Q1개로집계;이전QualityPASS자동승격없음."
+    ],
+    [
+      "java.core.coding-tests.arraydeque-stack-queue.q6",
+      "KEEP",
+      "A방향·LIFO/FIFO추적;BCD PQ로변환/autoNull/복잡도모두n아님.",
+      "모든prompt/선택지rationale/정답/모델/해설·난도·모호성·중복·연결직접읽기. crosslink는고유Q1개로집계;이전QualityPASS자동승격없음."
+    ],
+    [
+      "java.core.coding-tests.priorityqueue-coding-tests.q1",
+      "TARGETED_ENHANCE",
+      "W4-JCOD-002 P1: 비어있지않은naturalInteger큐라면Amin. 기본생성직후는empty이고peeknull. D의null원소금지와empty반환구별을feedback에서명시하고promptnonnullnonempty전제추가.",
+      "모든prompt/선택지rationale/정답/모델/해설·난도·모호성·중복·연결직접읽기. crosslink는고유Q1개로집계;이전QualityPASS자동승격없음."
+    ],
+    [
+      "java.core.coding-tests.priorityqueue-coding-tests.q2",
+      "KEEP",
+      "Apeekobserve/pollremove;BCD전체정렬복사/전체비우기/pollremove없음오답.",
+      "모든prompt/선택지rationale/정답/모델/해설·난도·모호성·중복·연결직접읽기. crosslink는고유Q1개로집계;이전QualityPASS자동승격없음."
+    ],
+    [
+      "java.core.coding-tests.priorityqueue-coding-tests.q3",
+      "KEEP",
+      "AreverseOrder;BCD삽입큰순/descendingList순서유지/ascendingcompare면max아님.",
+      "모든prompt/선택지rationale/정답/모델/해설·난도·모호성·중복·연결직접읽기. crosslink는고유Q1개로집계;이전QualityPASS자동승격없음."
+    ],
+    [
+      "java.core.coding-tests.priorityqueue-coding-tests.q4",
+      "KEEP",
+      "Aiteratornotordered;BCD항상reverse/noiterator/foreachdelete아님.",
+      "모든prompt/선택지rationale/정답/모델/해설·난도·모호성·중복·연결직접읽기. crosslink는고유Q1개로집계;이전QualityPASS자동승격없음."
+    ],
+    [
+      "java.core.coding-tests.priorityqueue-coding-tests.q5",
+      "KEEP",
+      "B키변경autohead미보장;ACDobserver/가변fieldcompile불가/clone없음.",
+      "모든prompt/선택지rationale/정답/모델/해설·난도·모호성·중복·연결직접읽기. crosslink는고유Q1개로집계;이전QualityPASS자동승격없음."
+    ],
+    [
+      "java.core.coding-tests.priorityqueue-coding-tests.q6",
+      "KEEP",
+      "B동점시sequence필요;ACDautoFIFO/delete/iteratorinsertion아님.",
+      "모든prompt/선택지rationale/정답/모델/해설·난도·모호성·중복·연결직접읽기. crosslink는고유Q1개로집계;이전QualityPASS자동승격없음."
+    ],
+    [
+      "java.core.coding-tests.priorityqueue-coding-tests.q7",
+      "KEEP",
+      "SCENARIOJobpriority/sequenceimmutable·thenComparingLong 및explicitremove/reinsert 모델정확.",
+      "모든prompt/선택지rationale/정답/모델/해설·난도·모호성·중복·연결직접읽기. crosslink는고유Q1개로집계;이전QualityPASS자동승격없음."
+    ],
+    [
+      "java.core.coding-tests.priorityqueue-coding-tests.q8",
+      "KEEP",
+      "SCENARIOstaleentryversion!=current skip,숫자priorityABA모호성을version으로구별;단조증가version전제명시·HARD적절.",
+      "모든prompt/선택지rationale/정답/모델/해설·난도·모호성·중복·연결직접읽기. crosslink는고유Q1개로집계;이전QualityPASS자동승격없음."
+    ],
+    [
+      "java.core.coding-tests.hashmap-hashset-counting.q1",
+      "KEEP",
+      "Adefault0return/noinsert;BCDautoPut/throw/다른keydelete아님.",
+      "모든prompt/선택지rationale/정답/모델/해설·난도·모호성·중복·연결직접읽기. crosslink는고유Q1개로집계;이전QualityPASS자동승격없음."
+    ],
+    [
+      "java.core.coding-tests.hashmap-hashset-counting.q2",
+      "KEEP",
+      "Atrue새equalkey없음;BCD이미있음/sort/refnull아님.",
+      "모든prompt/선택지rationale/정답/모델/해설·난도·모호성·중복·연결직접읽기. crosslink는고유Q1개로집계;이전QualityPASS자동승격없음."
+    ],
+    [
+      "java.core.coding-tests.hashmap-hashset-counting.q3",
+      "KEEP",
+      "A정수sum없는key1/있으면+1;BCDdelete/string/existingthrow아님. Bfeedback이이sum문맥한정임전체merge삭제없음보장아님.",
+      "모든prompt/선택지rationale/정답/모델/해설·난도·모호성·중복·연결직접읽기. crosslink는고유Q1개로집계;이전QualityPASS자동승격없음."
+    ],
+    [
+      "java.core.coding-tests.hashmap-hashset-counting.q4",
+      "KEEP",
+      "AordernoGuarantee;BCD noKey/descending/getOrDefaultdelete아님.",
+      "모든prompt/선택지rationale/정답/모델/해설·난도·모호성·중복·연결직접읽기. crosslink는고유Q1개로집계;이전QualityPASS자동승격없음."
+    ],
+    [
+      "java.core.coding-tests.hashmap-hashset-counting.q5",
+      "KEEP",
+      "Aprimitivecomponentrecordeqhash;BCDsetsort/int압축/identityonly아님.",
+      "모든prompt/선택지rationale/정답/모델/해설·난도·모호성·중복·연결직접읽기. crosslink는고유Q1개로집계;이전QualityPASS자동승격없음."
+    ],
+    [
+      "java.core.coding-tests.hashmap-hashset-counting.q6",
+      "KEEP",
+      "Bkeys별도sortcount조회;ACDHashMaplexical/count삭제/Setboolean정렬아님.",
+      "모든prompt/선택지rationale/정답/모델/해설·난도·모호성·중복·연결직접읽기. crosslink는고유Q1개로집계;이전QualityPASS자동승격없음."
+    ],
+    [
+      "java.core.coding-tests.hashmap-hashset-counting.q7",
+      "KEEP",
+      "SCENARIOcountmerge→key/tupleList→count↓word↑. custom(word,count)Entry가정시chain정확;Map.EntryAPI와혼동안함. MEDIUM관련3Concept응용목표별도.",
+      "모든prompt/선택지rationale/정답/모델/해설·난도·모호성·중복·연결직접읽기. crosslink는고유Q1개로집계;이전QualityPASS자동승격없음."
+    ]
+  ],
+  "sources": [
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/BufferedReader.html",
+      "CURRENT_VERIFIED",
+      "BufferedReader readLine개행제외/EOF무문자null·buffer계약을입력두단계에대조."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/StringTokenizer.html",
+      "CURRENT_VERIFIED",
+      "StringTokenizerlegacy/compatibility·hasMore/nextToken소진NoSuchElement를OJ고정문법문맥에대조."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/StringBuilder.html",
+      "CURRENT_VERIFIED",
+      "StringBuilder가변sequence/nosync/append메서드와마지막text전달역할을출력분리에대조."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/BufferedWriter.html",
+      "CURRENT_VERIFIED",
+      "BufferedWriter문자buffer/flush하위/close먼저flush·newline시스템별을이출력Concept에독립대응."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Arrays.html",
+      "CURRENT_VERIFIED",
+      "Arrays voidintsortnumeric/range[from,to)·Comparatorreferenceoverload와copy/asListprimitivearray1element를코드유형에대조."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html",
+      "CURRENT_VERIFIED",
+      "ListsortComparator순서/modifiable notnecessarilyresizable 및equalstable 계약을List변경과대조;defaultTimSort를모든언어보장으로확대없음."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Comparator.html",
+      "CURRENT_VERIFIED",
+      "Comparatorcompare부호/reversed대상전체·thenComparing앞0때other/키extractor관련절을다중criteria우선순위에대조."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/ArrayDeque.html",
+      "CURRENT_VERIFIED",
+      "ArrayDeque끝API/nullNPE·pollFirstempty null/removeFirstNoSuchElement 및push/pop앞끝을FIFO/LIFOtrace와대조."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/PriorityQueue.html",
+      "CURRENT_VERIFIED",
+      "PriorityQueue leasthead/tiesarbitrary/iteratororder미보장/empty peeknull·nonnull원소계약을min/max/sequence/emptypremise에대조. 객체mutation을큐가감지한다는계약없음."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/HashMap.html",
+      "CURRENT_VERIFIED",
+      "HashMap getOrDefault조회noinsert/mergeabsent-or-null→value,remapnull삭제 및순서미보장을이nonnullcount예시에대조."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/HashSet.html",
+      "CURRENT_VERIFIED",
+      "HashSetadd return집합변경·equals관점새원소/iterationorder없음을visited·recordkey값목적에대조."
+    ]
+  ],
+  "referenceAccess": {},
+  "sourceHashes": {
+    "java.core.coding-tests.fast-input-bufferedreader-tokenizer": "716954a33faff24fd6a63ed6b653662da81083bac6f838824976a485117fd402",
+    "java.core.coding-tests.buffered-output-stringbuilder": "4c49ea3813f47da3618d9dedb58c23cf62506abb0b3439d52110ba7b4e0c7c5b",
+    "java.core.coding-tests.sorting-arrays-collections": "0854b36caba15cd24b16d58081daa316f8d36659c1d38dfc3c90ce552cac2d7a",
+    "java.core.coding-tests.comparator-for-coding-tests": "267d4c6c17489751663915615aa4b8694cfe757128d1daee01bdae86a7cfeed0",
+    "java.core.coding-tests.arraydeque-stack-queue": "634699a53b0f7fd2ff9dcaea2ebb52140dff50ef482e75730300585fb5ead45c",
+    "java.core.coding-tests.priorityqueue-coding-tests": "7e51e637813c2cb0e0c43f7be72da8d0bd02b6b4db5cf838797e9a24ab4e5d37",
+    "java.core.coding-tests.hashmap-hashset-counting": "e82ccfaf5d5bb50a07f03940c95978dfa1ee778f860a9d6550eed9e0b704ff05",
+    "java.core.coding-tests.fast-input-bufferedreader-tokenizer.q1": "b5e153bf72a1ec76d4e991cd715cd20e0177ac85f022f948d85df5eb6065515a",
+    "java.core.coding-tests.fast-input-bufferedreader-tokenizer.q2": "2c2755e928884cbbaca7a59804fc2c9cf03b1963435f7b6391c9ceecc3af7f18",
+    "java.core.coding-tests.fast-input-bufferedreader-tokenizer.q3": "27e3db01cc0d15de116d3560ab2f8c26b9372496c3f4e5a524af2a7a2af9f9b0",
+    "java.core.coding-tests.fast-input-bufferedreader-tokenizer.q4": "93a659f0c9737b83f0af8af6e998ff10997960417ae733ddf17d2a73dd218aba",
+    "java.core.coding-tests.fast-input-bufferedreader-tokenizer.q5": "15e13941adf6cdb25c2465cb46e117d66265c94f54be11b7e15695445571c0dc",
+    "java.core.coding-tests.fast-input-bufferedreader-tokenizer.q6": "9b6c7f71ba6ffa978c801dbfcfe2be2ff6da9c1e32b2cdc42b4c95dcf8eef931",
+    "java.core.coding-tests.buffered-output-stringbuilder.q1": "1484054fdce50368a21d2ab90b5481369427fb0cc9120089411eae81ad6d3ef6",
+    "java.core.coding-tests.buffered-output-stringbuilder.q2": "556f728580844c3d4c58f7d1a6de6c3c11478556df4ecb2f68e787fa1b02da61",
+    "java.core.coding-tests.buffered-output-stringbuilder.q3": "570f0ac79ade81a92bc10096fd6b3cb23479aa7f4ee78f3e1f0d0afd3d21995b",
+    "java.core.coding-tests.buffered-output-stringbuilder.q4": "a453d16279fee0aaff8657410a66dc1d3d0c401553ec781dbceeda48c5e763b0",
+    "java.core.coding-tests.buffered-output-stringbuilder.q5": "2d20eda7145f6d5571fe1674e62a26db3dbb3921d287841191a05fdf9b1a6d4f",
+    "java.core.coding-tests.buffered-output-stringbuilder.q6": "20e405445b755493e8e67f115622fef0ba9c8704e61c26fe7224959107f48b52",
+    "java.core.coding-tests.sorting-arrays-collections.q1": "de6766ba9c0a57009c92910dba5ba38dafdaf89e8473db9a561e48c4182ae2f2",
+    "java.core.coding-tests.sorting-arrays-collections.q2": "ebfa8992df1f29ef81ba7d079ab19fca9e434538a58010af28316121d3eb3154",
+    "java.core.coding-tests.sorting-arrays-collections.q3": "16b55017f1bf094b073c8413ac7bc501c682e8e54af6d58444859492bd4f1438",
+    "java.core.coding-tests.sorting-arrays-collections.q4": "41cde21851cf83e337f1d312271dcfc2f9e283f7d17224468e199d960a8853d4",
+    "java.core.coding-tests.sorting-arrays-collections.q5": "b1accb423ed2625d791401d1c5085cc816b19f44d9fb81fc62f6b292de9bf390",
+    "java.core.coding-tests.sorting-arrays-collections.q6": "4ab25680338e7b2e86034c3449e67bb3ca2f001629e437019f1b8d791b9cd77f",
+    "java.core.coding-tests.comparator-for-coding-tests.q1": "0c05d1ed8e2008473b2a84b08cd720bd182523e6038e69a9a49d46a33d9be1f4",
+    "java.core.coding-tests.comparator-for-coding-tests.q2": "ed9d4476f8c7ed63be9692f06d13664d18784bc9943c476a5a81591b17f33b0e",
+    "java.core.coding-tests.comparator-for-coding-tests.q3": "b31df67a3e75d655fb2c0fea3ef6448f50ed099ab9ad2e2a0f5c6b48c892b3ba",
+    "java.core.coding-tests.comparator-for-coding-tests.q4": "9fe6d3c3f00d07b3111052523f8ed4fe37631bb5066c441089d7a11f7c58ed98",
+    "java.core.coding-tests.comparator-for-coding-tests.q5": "4245ae807394e0f47718f77d258f8a41a4249469ae6ab38ea22113c4832f562b",
+    "java.core.coding-tests.comparator-for-coding-tests.q6": "1c76f9b773534768b40ae2ffe91c782b7384787e03545af36dfd931d66d0c5eb",
+    "java.core.coding-tests.comparator-for-coding-tests.q7": "6b79ce150e91c49051e58b697906a08aa82c8616b3423654c45f5fa46c86c702",
+    "java.core.coding-tests.arraydeque-stack-queue.q1": "166acd5e4b5a9227dfa0015daf927e23833c592ac124c57223eecd1bddf85943",
+    "java.core.coding-tests.arraydeque-stack-queue.q2": "2a2ffb32ac29366c34d204435c64c60d56bea9af6b3cb46b3e41ace1ba7b8981",
+    "java.core.coding-tests.arraydeque-stack-queue.q3": "27d4f8605d4a23b6670c2d2f3733ad4b6472c5b9d8cb92ce55298d6a988f4e2b",
+    "java.core.coding-tests.arraydeque-stack-queue.q4": "834248df3e5c1bdb5b3e41dc969cfecb032bcee9f208eee69b0f56565e64a2fe",
+    "java.core.coding-tests.arraydeque-stack-queue.q5": "1e0bcf74cc6ab91640168a838ceeb98cddde913855cefa54d888f209e018b317",
+    "java.core.coding-tests.arraydeque-stack-queue.q6": "94222e35d5af080ecb10862895dd2bc1ff6ab41440ff9837e326a67201cdf9ab",
+    "java.core.coding-tests.priorityqueue-coding-tests.q1": "512cd6bd112dd8c46f42e77f4783545fb5ca12f71d080b2d2747d94c06c8cefc",
+    "java.core.coding-tests.priorityqueue-coding-tests.q2": "e16f25824248fb7f8b04f6929b28ca9449a3d1ff47997aa1687bd3931bad037f",
+    "java.core.coding-tests.priorityqueue-coding-tests.q3": "281b568f13de3a3f6578b78eb880f37d43bbc2d1910f8456e7c0b9b8ce76fa6d",
+    "java.core.coding-tests.priorityqueue-coding-tests.q4": "e9a6713318321f8fb1e1b9b33bfd4ce12033bf266ef646bb796c9a09fde0e171",
+    "java.core.coding-tests.priorityqueue-coding-tests.q5": "22c60297efbd132e65d5cc618a50b8f4d64dc98f864264008af707d0910fc0f5",
+    "java.core.coding-tests.priorityqueue-coding-tests.q6": "700b670f7ccf8e2d7e6d534c5293883bc5fd0cc7bee00440a9ef317383fc67ca",
+    "java.core.coding-tests.priorityqueue-coding-tests.q7": "31be4b881f2dd56570920068e527a57d5f6e5b209542a9e81c1f2d79225b893e",
+    "java.core.coding-tests.priorityqueue-coding-tests.q8": "c03102f315eff7da654a195104fafefd4fb21a5b80ed307eb4161fdfc0194baa",
+    "java.core.coding-tests.hashmap-hashset-counting.q1": "a780e595c3b386d91dd29851102c9d8c48a6348ac243ad595712b5e8b60fa955",
+    "java.core.coding-tests.hashmap-hashset-counting.q2": "c4c951ecd8363ed28ee3b918079e499b8fa1aa5bf8e19d8cca78b3f8047a713a",
+    "java.core.coding-tests.hashmap-hashset-counting.q3": "a971bee2f705169f8aa72960dc2bc19ca644353b298efefe729950dd723bbbc1",
+    "java.core.coding-tests.hashmap-hashset-counting.q4": "854fce7300d85dffb92a9784915b0b603b032f568f7a03826fbac61af3c2b2f4",
+    "java.core.coding-tests.hashmap-hashset-counting.q5": "ab5a65a4ecfd2fe06def8a14e9bf100ea95604dac590ab33e9bba298051c08c4",
+    "java.core.coding-tests.hashmap-hashset-counting.q6": "7d432a388556464c4ebe7644ef9a92af1d3b5bcc2ba3d55c7bd1b9b078c5c680",
+    "java.core.coding-tests.hashmap-hashset-counting.q7": "c848ed0861dcd01d0c6d5493cfc7e9b2f00a081cb38ddc0d75932694b5077beb"
+  },
+  "carriedForwardFindings": [],
+  "findings": [
+    {
+      "id": "W4-JCOD-001",
+      "severity": "P2",
+      "contentKeys": [
+        "java.core.coding-tests.priorityqueue-coding-tests"
+      ],
+      "file": "content/java/coding-tests/priorityqueue-coding-tests.md",
+      "quote": "queue.offer(new State(newDistance, node));",
+      "additionalEvidence": [
+        {
+          "file": "content/java/coding-tests/priorityqueue-coding-tests.md",
+          "quote": "PriorityQueue<Integer> queue = new PriorityQueue<>();"
+        },
+        {
+          "file": "content/java/coding-tests/priorityqueue-coding-tests.md",
+          "quote": "State state = queue.poll();"
+        }
+      ],
+      "problem": "앞서Integer queue를선언했는데후반State삽입/반환은같은queue이름을재사용하며State용큐선언을생략한다. 그대로연결하면State는Integer인자로호환되지않고pollInteger를State로받을수없다. 단독예시관점은맞지만타입전환문맥이없다.",
+      "action": "State예시앞에PriorityQueue<State> states와distance/node비교기전제를짧게명시하고해당두호출이름만통일. 본문heap/immutable/stale개념은유지.",
+      "officialEvidence": [
+        "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/PriorityQueue.html#offer(E)",
+        "https://docs.oracle.com/javase/specs/jls/se25/html/jls-5.html#jls-5.3"
+      ],
+      "followupIssues": [
+        201
+      ]
+    },
+    {
+      "id": "W4-JCOD-002",
+      "severity": "P1",
+      "contentKeys": [
+        "java.core.coding-tests.priorityqueue-coding-tests.q1"
+      ],
+      "file": "content/java/coding-tests/questions.json",
+      "quote": "기본 생성한 `PriorityQueue<Integer>`의 헤드는 어떤 원소인가?",
+      "additionalEvidence": [
+        {
+          "file": "content/java/coding-tests/questions.json",
+          "quote": "기본 Integer 큐는 null을 우선순위 값으로 반환하지 않는다. null은 원소 우선순위나 기본 헤드가 아니다."
+        }
+      ],
+      "problem": "기본생성한큐를물으면서원소존재전제가없다. 기본생성직후empty라head원소없고peek/poll은null을반환한다. A최소원소는비어있지않은naturalInteger큐에맞고Dfeedback은null원소금지와empty반환을구분하지않아그전제를흐린다. A→D자동정답변경이나복수정답확정없이문제범위를한정해야함.",
+      "action": "prompt에원소가있는/defaultnaturalorder전제한문장추가하고Dfeedback에empty면조회null/저장null금지를구분. 정답A·난도·다른문항유지.",
+      "officialEvidence": [
+        "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/PriorityQueue.html#peek()"
+      ],
+      "followupIssues": [
+        201
+      ]
+    }
+  ],
+  "visualizationAssets": []
+}

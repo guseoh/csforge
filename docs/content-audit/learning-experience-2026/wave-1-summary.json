@@ -1,0 +1,115 @@
+{
+  "baselineSha": "efe73a15da14c996bd08344181d4d6f87073803d",
+  "wave": "Wave 1",
+  "areas": [
+    {
+      "area": "cache",
+      "concepts": 9,
+      "questions": 27,
+      "currentVerifiedConcepts": 9,
+      "currentVerifiedQuestions": 27,
+      "conceptQuality": {
+        "KEEP": 7,
+        "TARGETED_ENHANCE": 2
+      },
+      "questionQuality": {
+        "KEEP": 26,
+        "TARGETED_ENHANCE": 1
+      }
+    },
+    {
+      "area": "distributed-systems",
+      "concepts": 9,
+      "questions": 27,
+      "currentVerifiedConcepts": 9,
+      "currentVerifiedQuestions": 27,
+      "conceptQuality": {
+        "KEEP": 8,
+        "TARGETED_ENHANCE": 1
+      },
+      "questionQuality": {
+        "KEEP": 25,
+        "TARGETED_ENHANCE": 2
+      }
+    },
+    {
+      "area": "infrastructure-cloud",
+      "concepts": 9,
+      "questions": 27,
+      "currentVerifiedConcepts": 9,
+      "currentVerifiedQuestions": 27,
+      "conceptQuality": {
+        "KEEP": 6,
+        "TARGETED_ENHANCE": 3
+      },
+      "questionQuality": {
+        "KEEP": 25,
+        "TARGETED_ENHANCE": 2
+      }
+    },
+    {
+      "area": "messaging-async",
+      "concepts": 9,
+      "questions": 27,
+      "currentVerifiedConcepts": 9,
+      "currentVerifiedQuestions": 27,
+      "conceptQuality": {
+        "KEEP": 7,
+        "TARGETED_ENHANCE": 2
+      },
+      "questionQuality": {
+        "KEEP": 25,
+        "TARGETED_ENHANCE": 2
+      }
+    },
+    {
+      "area": "performance-observability-operations",
+      "concepts": 9,
+      "questions": 27,
+      "currentVerifiedConcepts": 9,
+      "currentVerifiedQuestions": 27,
+      "conceptQuality": {
+        "KEEP": 8,
+        "TARGETED_ENHANCE": 1
+      },
+      "questionQuality": {
+        "KEEP": 27
+      }
+    },
+    {
+      "area": "system-design",
+      "concepts": 9,
+      "questions": 27,
+      "currentVerifiedConcepts": 9,
+      "currentVerifiedQuestions": 27,
+      "conceptQuality": {
+        "KEEP": 7,
+        "TARGETED_ENHANCE": 2
+      },
+      "questionQuality": {
+        "KEEP": 25,
+        "TARGETED_ENHANCE": 2
+      }
+    }
+  ],
+  "allConceptQuality": {
+    "KEEP": 50,
+    "NEEDS_REVIEW": 652,
+    "TARGETED_ENHANCE": 19
+  },
+  "allQuestionQuality": {
+    "KEEP": 227,
+    "NEEDS_REVIEW": 2286,
+    "TARGETED_ENHANCE": 12
+  },
+  "allConceptEvidence": {
+    "CURRENT_PARTIAL": 31,
+    "CURRENT_VERIFIED": 54,
+    "NEEDS_REVIEW": 636
+  },
+  "allQuestionEvidence": {
+    "CURRENT_PARTIAL": 77,
+    "CURRENT_VERIFIED": 162,
+    "NEEDS_REVIEW": 2286
+  }
+}

@@ -1,0 +1,2613 @@
+{
+  "area": "computer-architecture",
+  "wave": "Wave 3",
+  "baselineSha": "efe73a15da14c996bd08344181d4d6f87073803d",
+  "reviewMethod": "10 Topic의 curriculum 목표와 전체 Concept 원문 및 모든 Question 실제 필드를 직접 읽고 개별 근거를 작성했다. 불확실 기술은 실제 공식 자료와 대조하며 source 접근 미확정과 item 의미 검토를 구별한다. 이전 발견 재확인은 새 finding으로 중복 집계하지 않는다.",
+  "topics": [
+    {
+      "key": "computer-architecture.core.cache-organization",
+      "coverage": "두bounded출력으로8 Concept/24 Question의모든필드를읽었다. 배치자유도1way→set→fully、주소분해→교체→write-hit대write-miss축→배열재사용의목표가구별된다. 512line/128set/6offset/7index/19tag와32KiB간격모듈로매핑을직접계산했다. ISA보장과교육용index모델、CPU휘발성cache와DB영속성、writeback/allocate일반조합과고정규칙을구분한다. 새로운정답오류는발견하지않았다. UMDsource도구실패와Windows TLS검증유지HEAD403은Reference접근미확정으로기록한다."
+    },
+    {
+      "key": "computer-architecture.core.data-representation",
+      "coverage": "6 Concept와 18 Question의 전체 본문/선택지/rationale/accepted/model/explanation을 직접 읽었다. 주소 단위→표기→부호 해석→고정 폭 결과→실수 근사→직렬화 순서가 자연스럽다. binary-hex와 signed/overflow가 같은 FF를 재사용하지만 표기와 값, 확장과 연산이라는 다른 목표다. 계산을 직접 추론했으며 하드웨어와 Java/프로토콜 계약을 구별한다. IEEE/UMD canonical 페이지는 도구 접근 미확정으로 남기고 실제 읽은 공식 보충 자료와 구별했다."
+    },
+    {
+      "key": "computer-architecture.core.datapath-control",
+      "coverage": "5 Concept/15 Question를 전부 읽었다. ALU경로와control선택,clock기준과criticalpath제약,branch PC선택의서로다른목표를확인했다. 모든선택지/rationale와단답의계산을대조했고모델/해설전체를읽었다. control-unit.q3의정상메모리읽기전제와추가fault예만P2로선별했다. 기존UMD PDF403/Performance도구접근실패는Reference미확정으로분리하고기술오류로단정하지않았다."
+    },
+    {
+      "key": "computer-architecture.core.device-io",
+      "coverage": "6 Concept의 원문과 18 Question의 모든 실제 필드를 두 bounded 출력에서 읽었다. 비동기 interrupt와 instruction exception, RISC-V trap entry, PIO/MMIO의 side effect·posted write, DMA mapping·ownership·완료와 queue depth를 검토했다. RISC-V의 관련 ISA 절과 Linux의 MMIO 및 DMA API 절을 실제 대조했다. CPU ordering, 버스 write 도착, 장치 명령 완료를 같은 보장으로 승인하지 않는다."
+    },
+    {
+      "key": "computer-architecture.core.isa-execution",
+      "coverage": "6 Concept와18 Question 전체를 직접 읽었다. ISA/구현→encoding→register→논리실행→주소계산→호출ABI 순서의 책임이 분리되어 있다. RISC-V 공식 현재판의 programmer model/format/load-store/branch fault/JALR와 ABI register/procedure 절을 실제 확인했다. 명령어 형식 그림은 실제 bit 배치가 아닌 개념 그림이라고 표시되어 있어 오류로 판정하지 않는다. procedure의 핵심 SP 상태 변화 누락만 P1로 선별한다."
+    },
+    {
+      "key": "computer-architecture.core.memory-hierarchy",
+      "coverage": "두 bounded 출력으로6 Concept/18 Question의모든필드를읽었다. 용량/속도/비용→지역성→라인→hit/miss→지연/대역폭→계층AMAT의순서가자연스럽다. 2ns/0.8ns,64byte3.2ns/64MB3.2ms,5ns/1.65ns를독립계산했다. 단순모델/계층local미스율/미스겹침을구별한다. cache-line.q3의심화거짓공유기법은연결부족으로기록한다. 대상false-sharingkey의존재는inventory로확인했고해당본문의의미검토는멀티코어Topic에서이어간다. 이후multicore-memory.false-sharing의실제본문/문항전부와공식Linux관련절을읽어해당학습연결대상의내용을직접확인했다."
+    },
+    {
+      "key": "computer-architecture.core.multicore-memory",
+      "coverage": "6 Concept/18 Question全필드를두bounded출력으로읽었다. 공유memory대코어state、private/shared절충、coherence대atomicity/ordering、writeownership/최신source、false-sharing과JMM경계를검토했다. Linuxfalse-sharing의write/write및write/read조건/측정/비용과RISC-V RVWMO PPO/fence/acquire-release、JLS17.4의허용관찰/컴파일러최적화·HB를실제대조했다. x++문항의초기값누락과private-cache한국어비문만선별했다. false-sharing의두writer예는대표예로읽고반드시두writer가필수라는보장으로승인하지않는다."
+    },
+    {
+      "key": "computer-architecture.core.performance",
+      "coverage": "7 Concept와 21 Question의 모든 실제 필드를 두 bounded 출력에서 읽었다. 단위/측정 경계, CPU time·IC/CPI/clock, Amdahl의 기준 비율·상한, cache/branch의 조건부 모델, JMH/DCE와 종단 간 측정을 검토했다. 모든 계산을 직접 추론했으며 branch q1의 오답 rationale 계산을 선별했다. 이전 pipeline 문항과 같은 수치의 반복은 이미 W3-CA-003에서 최소 범위로 기록하며 새 finding으로 중복 계산하지 않는다."
+    },
+    {
+      "key": "computer-architecture.core.pipeline-ilp",
+      "coverage": "두 bounded 출력으로5 Concept/15 Question 전체를읽었다. stage겹침→세hazard→ready값forward/미준비stall→direction/target예측→rename/OOO/retire로학습순서와책임이이어진다. 모든MC선택지/rationale,서술모델/해설을대조했다. branch-prediction.q3은앞Topic branch-control-flow.q3의같은곱셈목표를숫자만바꿔반복하므로선택적P2목표재조정을기록한다. 나머지계산/의존성/precisestate는정확하다."
+    },
+    {
+      "key": "computer-architecture.core.virtual-memory-hardware",
+      "coverage": "6 Concept/18 Question 전부를두bounded출력으로읽었다. VA/PA·MMU정책경계·walk·TLB·sparsehierarchy·hugepage의학습순서를대조했다.4KiB12bit와512entry의2MiB/1GiB를계산했다. 기존LEX-003 order60/50과LEX-005 q1의512계산은재확인근거만추가하며새발견에중복집계하지않는다. Linuxpage_tables/HugeTLB공식절과MIPS R4000software refill소스를읽고하드웨어walker범위누락을선별했다. multi-level.q1의해설은sparse원인대hugeleaf차이를보강해야한다."
+    }
+  ],
+  "concepts": [
+    [
+      "computer-architecture.core.cache-organization.direct-mapped-cache",
+      "KEEP",
+      "L2한블록한후보의단순조회와충돌목표를달성한다.",
+      "index→line→tag、A/B교대교체와다른빈공간사용불가、용량대mapping절충을인과적으로설명한다. 유효라인조건은이전hit/missConcept와이어읽고tag일치만으로invalid라인도hit라고일반화하지않는다.",
+      "DIAGRAM의한후보선택과A/B순서가효과적이다. 512line충돌수치가q3에서보완된다.",
+      "UMDcache-organization의본문접근은미확정이다. web도구실패뒤TLS검증을유지한Windows HEAD도403이다. 이HTTP상태는교육적내용승인이나없는URL증거가아니다.",
+      "q1singlecandidate,q2반복conflict,q3같은offset/512block모듈로mapping을검사한다."
+    ],
+    [
+      "computer-architecture.core.cache-organization.set-associative-cache",
+      "KEEP",
+      "L2여러way로같은set충돌을줄이는목표를달성한다.",
+      "4way네후보/태그비교、가득차면교체、compare/selection/policy비용과compulsory/capacity한계를설명한다. 무조건associativity만높이면좋다는오해를피한다.",
+      "DIAGRAM의setindex→네way/tag비교가조회범위를명확히보여준다.",
+      "UMDtarget403으로미확정이며line/set및bit계산을본문과문항전제로직접대조했다. 실제CPU의hash/sliceindex방식을이식성보장으로쓰지않는다.",
+      "q1각set4way,q2512/128/6/7/19계산,q3동일set3block대2way한계가구별된다."
+    ],
+    [
+      "computer-architecture.core.cache-organization.fully-associative-cache",
+      "KEEP",
+      "L2 STANDARD의모든line후보대검색/교체비용목표를달성한다.",
+      "하나의set/여러tag비교、비용상승、cold/capacity잔존을정확히설명한다. 모든miss를제거한다고단정하지않고배치자유도대비가자연스럽다.",
+      "TEXT의requestedtag→line0/1/2비교와mapping자유도순서가충분하다.",
+      "UMDtarget접근미확정. 실제하드웨어전체가동일comparator배치라는보장은본문에없으며대표비교모델을검토했다.",
+      "q1anyline,q2큰cache비교비용,q332line/40activeblock의capacity원인을검사한다."
+    ],
+    [
+      "computer-architecture.core.cache-organization.index-tag-offset",
+      "KEEP",
+      "L2 C/B/A→set→bitwidth/주소위치목표를달성한다.",
+      "byte-address/power2전제를명시한다.32KiB/64/4=128set,offset6/index7/tag19(32bit)와way증가시index감소/tag증가가맞다. 실제index가더복잡할수있음을경계한다.",
+      "DIAGRAM highTag/index/lowOffset의도식과같은구성의수치유도가효과적이다.",
+      "UMDtarget미확정이며bit조합과단위는독립계산했다. MIT공식worksheet의tag/line구성발췌는앞Topic의보충근거로읽었다.",
+      "q1offset역할,q2log2폭,q3way2→4의set절반/index-1/tag+1을검사한다."
+    ],
+    [
+      "computer-architecture.core.cache-organization.replacement-policy",
+      "KEEP",
+      "L2 STANDARD의victim선택·hit율·구현비용목표를달성한다.",
+      "LRU의temporal가정、정확순서상태비용→pseudo/다른정책、수용량한계、dirtyvictim비용、directmapped선택없음이정확하다. 특정CPU가LRU를쓴다는보장은없다.",
+      "TEXT 계약이나원인별비교문단과세트가득참상태가명확해장식그림은필수가아니다. LRU순서표는선택적심화다.",
+      "UMDtarget미확정. 본문이대표정책과모든CPU계약을구별하는지검토했고자료자체를읽은것처럼처리하지않는다.",
+      "q1fullsetvictim,q2LRU가정/비용,q3일회stream의cachepollution을검사한다."
+    ],
+    [
+      "computer-architecture.core.cache-organization.write-through-write-back",
+      "KEEP",
+      "L2 writehit하위반영시점과dirty교체비용목표가충분하다.",
+      "WT매write전달/writebuffer대WB수정dirty/나중반영、트래픽·교체비용、coherence별도와DB영속성분리를정확히설명한다. eviction을대표예로쓰며모든WB가오직eviction때만반영한다고제한하지않는다.",
+      "TEXT의WT양쪽write와WBdirty→eviction흐름이조건과시점을보여준다.",
+      "UMDtarget미확정. CPUcache와하위휘발성memory반영이DBdurability가아님을본문/Question으로대조한다.",
+      "q1WBdirty/coherence,q2트래픽·victim비용,q3DB/OS/storage영속경계가단계별로구별된다."
+    ],
+    [
+      "computer-architecture.core.cache-organization.write-allocate",
+      "KEEP",
+      "L2 STANDARD의writemissfill대우회와재사용목표를달성한다.",
+      "miss→fill→수정과noallocate→lowerwrite、stream대곧read/write재사용、hitpolicy대misspolicy두축분리가정확하다. 대표WB+WA/WT+NWA조합을고정ISA규칙으로강제하지않는다.",
+      "TEXT의각miss분기흐름과두질문축이효과적이다.",
+      "UMDtarget미확정. 실제non-temporal처리방식전체를보장하지않고기법선택을target아키텍처/실측에의존시키는지확인했다.",
+      "q1miss라인확보,q2각흐름,q3두작업부하의정책선택이목표에맞다."
+    ],
+    [
+      "computer-architecture.core.cache-organization.cache-friendly-access",
+      "KEEP",
+      "L2 STANDARD의주소순서/stride/라인교체전재사용목표를달성한다.",
+      "순차대large stride、작업집합작은tile→temporal/spatial활용、배열이항상빠름아님/포인터작은집합재사용、padding비용·실측을설명한다. 단순0/16/32그림은폭미고정추상접근예다.",
+      "DIAGRAM의순차이웃재사용과큰stride다른line대비가실제접근효과를보여준다. 행렬전체코드추가필수아니다.",
+      "앞TopicUMDmemory-hierarchy-target의실제HEAD403을재사용하고내용확인은미확정으로남긴다. 기존정확한교과자료의수치가현재CPU성능보장이라는승격은없다.",
+      "q1순차,q2tile크기와교체전재사용,q3microbenchmark대운영I/O/lock/queue병목을구별한다."
+    ],
+    [
+      "computer-architecture.core.data-representation.bit-byte-word",
+      "KEEP",
+      "L1의 비트/바이트/워드 폭과 주소·레지스터 관계를 달성한다. 64-bit를 모든 접근 크기로 오해하지 않도록 다음 endian 목표에 연결한다.",
+      "바이트 주소 1000/1001과 32-bit의 연속 4바이트 예, 아키텍처의 자연 처리 폭과 더 작은 명령 폭을 구분한다. 보통 8-bit/일반 byte-addressable 조건을 밝혀 비보편 구현을 일반화하지 않는다. 연결된 한국어와 세 가지 오해 비교가 충분하다.",
+      "TEXT의 주소→1바이트 표가 주소 단위 관계를 정확히 보여준다. 외부 그림 추가 이득은 작다.",
+      "UMD number-systems canonical 대상의 실제 절 접근은 NEEDS_REVIEW다. 수 표현 공식 보충 자료는 별도 기록하며 주소/ISA 폭 전체를 확인한 자료로 확대하지 않는다.",
+      "q1은 단위/ISA/ABI 분리, q2는 4개 연속 주소, q3는 protocol의 3바이트 경계를 검사한다."
+    ],
+    [
+      "computer-architecture.core.data-representation.binary-hex",
+      "KEEP",
+      "L1의 4비트→16진수 변환 이유와 표기/폭/해석을 충분히 설명한다.",
+      "1010 0111→A7, FF의 unsigned255/signed-1, 03/0003의 폭 비교가 정확하다. 값을 바꾸는 연산과 표기 변경을 구별하며 자연스러운 원인·예시 설명이다.",
+      "TEXT의 nibble 대응과 8/16-bit 대비가 목표를 직접 보여준다.",
+      "canonical UMD 접근 미확정. 실제 읽은 같은 대학의 representation/value 원저자 강의가 표기와 해석 분리의 보충 근거다.",
+      "q1 A7과 q2 F0A5 계산, q3 로그의 폭·부호 계약 부족을 구별해 같은 목표의 단순 반복을 피한다."
+    ],
+    [
+      "computer-architecture.core.data-representation.signed-twos-complement",
+      "KEEP",
+      "L1의 같은 패턴/다른 부호 해석, 비대칭 범위와 sign extension을 달성한다.",
+      "FF=-1/255, n-bit 범위, +5 반전+1=-5, -1의 16-bit 확장이 정확하다. sign-magnitude와 구별하고 회로 재사용 이유도 설명한다. Java byte 응용은 언어의 부호 계약으로 분리한다.",
+      "TEXT의 패턴 해석·음수 생성·확장 예가 내부 비트 상태를 보여준다.",
+      "UMD canonical 대상은 NEEDS_REVIEW. 실제 공식 대학 강의의 two's complement 단일 0/덧셈/범위 내용을 보충 확인했다.",
+      "q1 FF, q2 최솟값의 절댓값 표현 불가, q3 Java sign extension과 unsigned 재해석을 검사한다."
+    ],
+    [
+      "computer-architecture.core.data-representation.fixed-width-overflow",
+      "KEEP",
+      "L1의 수학적 결과와 n-bit 저장 결과를 분리하는 목표가 충분하다.",
+      "255+1의 9번째 carry 제거와127+1의10000000/-128, 하드웨어 플래그와 자동 예외의 ISA 의존 경계를 정확히 설명한다. unsigned modulo와 signed 해석을 혼합하지 않는다. 코드 실행을 주장하지 않는다.",
+      "TEXT 덧셈의 carry와 남은 8비트가 변화 원인을 보여준다.",
+      "canonical UMD 접근 미확정, unsigned 범위의 실제 대학 강의와 독립적인 비트 계산을 보충 근거로 사용한다.",
+      "q1/q2의 결과와 q3의 곱셈 후 검사 정보 손실 및 안전한 계산 순서가 목표를 검사한다."
+    ],
+    [
+      "computer-architecture.core.data-representation.floating-point",
+      "KEEP",
+      "L2의 sign/exponent/significand, 반올림·간격·비결합성 목표를 달성한다. 전체 IEEE 예외/모든 rounding mode 강의는 이 범위의 필수 조건이 아니다.",
+      "binary32의1/8/23배치, bias127, normal/subnormal/zero/Inf/NaN 구분이 실제 읽은 Oracle 공식 수치 가이드와 일치한다. 0.1 근사→중간 반올림→순서 영향→금액 표현 선택의 원인 흐름이 충분하다.",
+      "DIAGRAM의 bit31/30..23/22..0 필드 도식은 단순 목록이 아니라 해석 식과 특수 exponent 상태에 연결된다. 이미지가 없어도 효과적이다.",
+      "IEEE8766227 대상 전문 접근 NEEDS_REVIEW. 실제 읽은 Oracle IEEE Arithmetic의 binary32 표/숨은 bit 설명으로 해당 주장을 교차 확인했지만 IEEE2019 전문 확인으로 승격하지 않는다.",
+      "q1 0.1 표현 이유, q2 중간 반올림의 비결합성, q3 금액 오차/동등 검사와 대체 표현·정책이 충분하다."
+    ],
+    [
+      "computer-architecture.core.data-representation.endianness",
+      "KEEP",
+      "L1의 메모리 바이트 배치와 외부 직렬화 계약 목표를 달성한다.",
+      "12345678의 big/little 배열과 숫자 자체/비트 순서/인코딩의 구별이 정확하다. TCP payload 스키마가 host 순서와 독립적임을 밝혀 모든 payload가 TCP header 순서를 따르는 것으로 일반화하지 않는다.",
+      "TEXT의 같은 값·두 주소별 배열이 endian 차이를 직접 보여준다.",
+      "Java25 ByteOrder의 MSB/LSB 순서와 nativeOrder를 직접 확인했다. RFC9293의 header와 pseudoheader network byte order 사례도 실제 확인했으며 application payload 스키마 전체를 정하는 근거로 쓰지 않는다.",
+      "q1 little 배열, q2 big 값01020304, q3 host→protocol 직렬화 경계로 단계가 다른 이해를 검사한다."
+    ],
+    [
+      "computer-architecture.core.datapath-control.alu-datapath",
+      "KEEP",
+      "L1의register→ALU→결과목표를ADD와LOAD로충분히달성한다.",
+      "ADD두입력/rd,LOADbase+imm→address→memory→rd와조합논리/상태요소차이가정확하다. 같은ALU가최종값이아닌주소를계산하는원인과control역할연결이자연스럽다.",
+      "DIAGRAM의두명령별실제데이터흐름이충분하다. 구성요소목록이나그림수만으로판정하지않았다.",
+      "UMDdatapath.pdf는직접403으로target절접근미확정. RV32I의실제ADD/load주소·효과절은앞Topic에서확인했고특정hardwareALU공유설계의일반보장으로쓰지않는다.",
+      "q1 ALU대상태/control,q2 데이터패스/control책임,q3계산12대쓰기gate가같은목표를다른각도로검사한다."
+    ],
+    [
+      "computer-architecture.core.datapath-control.control-unit",
+      "KEEP",
+      "L2해독→피연산자/ALU/memory/write/PC신호생성의목표를달성한다.",
+      "ADD/LOAD같은ALU·다른선택과RegWriteoff/잘못된operand의실패가충분하다. hardwired/microprogram대표절충은ISA뜻을바꾸지않는구현선택으로명시했다. 문체와인과관계가자연스럽다.",
+      "TEXT의ADD/LOAD경로차이가제어의목적을보여준다. 별도회로전체그림은필수가아니다.",
+      "UMD PDF403으로Reference절확인은NEEDS_REVIEW다. 신호예는단순화한교육설계이며모든CPU의같은signal이름을ISA보장으로제시하지않는다.",
+      "q1 책임,q2구현절충,q3잘못된operand주소를검사한다. q3모델의조건범위는W3-CA-002로선별했다."
+    ],
+    [
+      "computer-architecture.core.datapath-control.clock-cycle",
+      "KEEP",
+      "L1clockedge/주기/주파수와명령지연·처리량을구별하는목표를달성한다.",
+      "edge→조합지연→다음state,1/f와2GHz0.5ns, single/multi/pipeline차이와CPI미스영향이정확하다. GHz높음=항상빠름오해를구체적으로경계한다.",
+      "TEXT의edge간계산시간과stateQ→newstate가효과적이다.",
+      "UMD Performance 대상은도구접근미확정. 주파수역수/수치예는직접차원계산으로대조했고해당웹본문을읽은것처럼기록하지않는다.",
+      "q1cycle≠instructionlatency,q2inverse식,q3CPI/f의두CPU계산으로충분하다."
+    ],
+    [
+      "computer-architecture.core.datapath-control.critical-path",
+      "KEEP",
+      "L2의한주기하한과pipeline분할동기를달성한다.",
+      "가장긴reg간조합경로+regoverhead+여유,load의더긴경로,최악stage와불균형/추가비용을정확히설명한다. application느린함수와회로criticalpath를분리한다.",
+      "DIAGRAM이상태요소사이longestdelay를명시하며singlecycle/load/pipeline본문과연결된다. 수치추론은q2/q3에서제공된다.",
+      "UMD PDF접근403으로학습자료절은미확정. 각수치의overhead포함여부를본문/문항조건으로확인했다.",
+      "q1 longest대shortest,q2 timing포함1.25ns→800MHz,q3 stage0.95/1.05ns선택과latency/throughput절충이목표에맞다."
+    ],
+    [
+      "computer-architecture.core.datapath-control.branch-control-flow",
+      "KEEP",
+      "L2조건/target/nextPC선택시점과예측필요성을달성한다.",
+      "compare·PCrelative대indirect/return,조건평가까지의불확실성과wait/speculate대안이정확하다. 예측세부는다음Topic소유로넘겨중복강의를피한다.",
+      "TEXT의condition/target/sequential입력→nextPCselect→PC가흐름을명확히보여준다.",
+      "앞서실제읽은공식RV32I controltransfer의PCrelative/간접JALR/조건분기절과비교했다. 명세가특정predictor/cycle을보장한다고쓰지않는다.",
+      "q1인출불확실성,q2wrongpath폐기/재인출,q3branchrate*missrate*penalty추정으로학습단계가구별된다."
+    ],
+    [
+      "computer-architecture.core.device-io.interrupt-exception-trap",
+      "TARGETED_ENHANCE",
+      "L1의 원인과 제어 이전 구별 목표는 충족하며 한글 조사만 W3-CA-009로 보강한다.",
+      "timer/device는 외부 비동기 사건, illegal instruction/권한 위반은 현재 instruction 관련 exception이고 RISC-V trap은 handler로의 제어 이전이다. cause/PC/재개와 ISA·EEI 차이를 경계한다. '권한 수준로'의 조사 오류가 있다.",
+      "DIAGRAM의 외부 사건/현재 명령→trap→handler와 cause 표가 차이를 보여준다. 유지한다.",
+      "20240411 공식 Introduction의 Exceptions, Traps, and Interrupts 및 EEI 절을 실제 읽어 용어 범위를 확인했다.",
+      "q1 분류, q2 의도적인 ECALL의 동기 원인, q3 timer/illegal의 구별과 수락 조건을 개별 검토했다."
+    ],
+    [
+      "computer-architecture.core.device-io.interrupt-handler-entry",
+      "KEEP",
+      "L2 pending→수락→trap state→software save→handler→restore의 흐름이 충분하다.",
+      "enable/priority/mode에 따라 수락하며 mepc/mcause/mtvec와 GPR 보존의 책임을 구별한다. 원인 acknowledge/clear와 deferred work는 장치·OS 계약이며 normal call과 같지 않다.",
+      "TEXT의 진입 단계와 보존·복귀 순서가 필요한 상태 변화를 제공한다.",
+      "공식 Machine ISA redirect를 따라 실제 mtvec BASE/MODE, mepc, mcause, xIE/xPIE/xPP 진입 절을 대조했다. 새 extension의 모든 상태까지 일반화하지 않는다.",
+      "q1 CSR 역할, q2 추가 GPR 보존, q3 level cause 미제거의 반복 진입이 적합하다."
+    ],
+    [
+      "computer-architecture.core.device-io.programmed-io",
+      "KEEP",
+      "L2 CPU polling/data move와 interrupt/DMA 역할 구별을 충족한다.",
+      "status poll→ready→data register 접근, polling 간격의 CPU·bus 비용/탐지 지연, MMIO 속성과 interrupt 진입 비용의 절충을 설명한다. PIO가 언제나 더 느리다고 하지 않는다.",
+      "TEXT polling 순서와 관찰 간격이 충분하며 별도 그림은 필수가 아니다.",
+      "Linux 6.7 device-io의 port/MMIO 접근 및 accessor·장치 side effect 절을 대조했다. Linux API를 모든 ISA 명령의 보장으로 일반화하지 않는다.",
+      "q1 역할 구별, q2 120us 완료와 50us 관찰, q3 busy polling 선택의 측정·비용을 검토했다."
+    ],
+    [
+      "computer-architecture.core.device-io.memory-mapped-io",
+      "KEEP",
+      "L1 주소 공간의 device target와 일반 RAM의 차이를 충족한다.",
+      "read-to-clear/FIFO/write command의 부작용, 접근 폭·cacheability·ordering, posted write와 장치 도달의 차이를 설명한다. 문서화된 accessor/장벽 계약을 요구한다.",
+      "TEXT 주소→register와 read/write 효과 예가 충분하다.",
+      "Linux 6.7 device-io의 Accessing the device, ioremap/np/cache 절을 읽었다. 같은 장치 readback의 posted write 도착 확인과 CPU ordering의 별도 관계를 확인했다.",
+      "q1 side effect, q2 posted write와 플랫폼·장치 문서에 맞춘 ordering/readback, q3 디버그 read가 상태를 소모하는 실패를 검토했다."
+    ],
+    [
+      "computer-architecture.core.device-io.dma",
+      "KEEP",
+      "L2 CPU setup→device transfer→완료 후 반환과 ownership 목표를 충족한다.",
+      "CPU는 descriptor/주소·길이·방향을 준비하며 DMA 주소는 사용자 VA와 다르다. 전송 중 buffer 재사용 금지와 noncoherent sync, IRQ 알림과 데이터 이동의 구분이 정확하다.",
+      "DIAGRAM의 CPU 설정/device-memory 이동/완료 알림과 ownership 전환 설명을 유지한다.",
+      "Linux DMA API의 DMA address/mapping 구별, streaming sync-for-cpu→CPU 접근→sync-for-device 및 완료 후 unmap 절을 실제 대조했다.",
+      "q1 mapping·소유권, q2 CPU 동시 수정과 cache 동기화, q3 NIC 완료 전 buffer pool 반환을 검토했다."
+    ],
+    [
+      "computer-architecture.core.device-io.device-cpu-memory-path",
+      "KEEP",
+      "L2 요청/메모리 이동/알림/software 소비의 서로 다른 완료 시점을 충족한다.",
+      "descriptor 준비→DMA write→completion state→IRQ/poll→검사/소비가 분리된다. bytes/error 확인, 장치 완료 전 lifetime, submit return과 물리 완료의 차이를 설명한다.",
+      "DIAGRAM에서 CPU/device/memory 경로와 완료 관찰이 대응한다. 유지한다.",
+      "Linux DMA API의 완료 후 CPU sync·unmap, MMIO의 posted 접근 계약과 대조했다. queue depth의 실제 장치별 성능은 측정 대상으로 유지한다.",
+      "q1 수신 경로, q2 API return의 계약, q3 queue depth 증가의 throughput/tail·inflight memory 절충이 맞다."
+    ],
+    [
+      "computer-architecture.core.isa-execution.isa-vs-microarchitecture",
+      "KEEP",
+      "L1의 software-visible ISA와 구현 선택 경계를 달성한다. 성능과 정확성을 다른 검증 대상으로 연결한다.",
+      "ADD의 결과와 pipeline/cache/predictor 구현, 같은instruction수의다른CPI/시간, 배포확장지원과실측을 일관되게 구별한다. RISC-V 공식 intro의 구현을특정하지않는 interface 설명과 맞으며한국어 원인흐름도 충분하다.",
+      "TEXT 계약이지만 이 관계는 ISA계약/다른구현의 비교 문단과 구체 ADD 예로 충분히 전달된다. 그림 개수만으로 새 결함을 만들지 않는다.",
+      "canonical intro 직접도구접근은실패했으나 같은공식 현재 v20260120 intro의 software-visible/다양한microarchitecture 절을읽었다. 의미검증과짧은URL접근미확정을분리한다.",
+      "q1 ISA/구현분류, q2 같은명령수의성능차이, q3 이식정확성/실측분리로 학습목표를검사한다."
+    ],
+    [
+      "computer-architecture.core.isa-execution.instruction-format",
+      "KEEP",
+      "L1의 opcode/register/immediate/function 역할과 제한된encoding폭을달성한다.",
+      "RV32I의32bit/R-I-S유형과5bit32개 선택, immediate제한→추가명령 trade-off가 정확하다. 필드그림은 실제배치다름을명시해opcode의잘못된 실제위치주장을피한다. 실제배치 전체튜토리얼은L1필수가아니다.",
+      "TEXT의필드개념분해가형식별실제배치와분리되어효과적이다. bit인덱스그림추가는선택적이다.",
+      "canonicalrv32redirect를따라 실제공식 v20260120의baseformat/5bitregister/signextendedimmediate 절을읽었다.",
+      "q1 필드조합수, q2 signed12bit범위, q3 고정인코딩budget/밀도/해독절충이구별된다."
+    ],
+    [
+      "computer-architecture.core.isa-execution.registers",
+      "KEEP",
+      "L1의명령어이름으로관찰하는register와memory/cache/spill을충분히설명한다.",
+      "load→register산술→store 및컴파일러spill, ABI의역할위임이정확하다. physicalrenamefile과ISAregister전체를동일시하는주장은본문에없다. q3의physical용어는컴파일러할당문맥으로읽고아키텍처레지스터를명시한모델과대조했다.",
+      "TEXT의memory→register→memory상태가주소/피연산자역할을보여준다.",
+      "공식ABI register 표의x0/ra/sp/a/s/t와보존조건을 실제읽었다. ISAregister 접근과ABI이름/보존약속을동일계층으로쓰지않는다.",
+      "q1 cache와구별, q2 s0-s11보존이름은Reference/뒤호출심화응용, q3 실제live-range/spill대소스변수수 구별이다."
+    ],
+    [
+      "computer-architecture.core.isa-execution.fetch-decode-execute",
+      "KEEP",
+      "L1의PC인출/해독/실행과다음PC·예외목표를달성한다. 논리모델과OOO겹침을구별한다.",
+      "ADD/load효과, branch순차/target, unsupported/메모리fault와OS정책경계가정확하다. 공식RV32I targetinstructionfault와misalignedbranch자체fault의차이에반하는주장이없다. 실CPU모든단계의cycle순서를보장하지않는다.",
+      "DIAGRAM의논리단계및true/falsePC가지가초기학습에충분하며예외본문과연결된다.",
+      "실제RV32I registerPC/currentinstruction·controltransfer·targetpagefault 절을읽었다. fetch-decode는architectural논리추론이지명세의특정pipeline구현이아니다.",
+      "q1 takenbranch의PC,q2 fetch성공후fault,q3 branch1800→targetfetchfault→handler/retry조건을검사한다."
+    ],
+    [
+      "computer-architecture.core.isa-execution.addressing-modes",
+      "KEEP",
+      "L2의immediate/register/base+offset과고수준indirect분류의ISA차이를달성한다.",
+      "1000+12=100C, 배열base+index*size를산술후loadbase로사용, 단일고수준역참조가여러load일수있음과EA성공≠메모리성공을구별한다. 연결q3모델의두load가이경계를구체화한다. 모든ISA에복합indexed명령이있다고약속하지않는다.",
+      "TEXT의값원천/EA식과수치예가충분하며pointerchase두load의추가그림은선택적이다.",
+      "RV32I load/store의signextended12bitoffset,EEI별미정렬행동을 실제대조했다. 일반indirect분류와실제encoding구분이출처와맞다.",
+      "q1 decimal24→1018,q2 index7*4=28,q3 nextpointer→value두load/fault로범위를확장한다."
+    ],
+    [
+      "computer-architecture.core.isa-execution.procedure-call-machine-level",
+      "TARGETED_ENHANCE",
+      "L2의반환주소/인자/보존책임은충분하나objective의스택포인터호출·복귀변화는본문/그림에없다. W3-CA-001의작은상태예가필요하다.",
+      "ISA jump/link와ABI의a0-a7/callee/caller-saved분리, leaf의스택생략가능성, nonleaf에서ra보존설명은정확하다. 재귀프레임도 개념만나열해 실제SP복구와공간수명을추론할근거가부족하다.",
+      "DIAGRAM의PC/ra/인자와f3→f2→f1프레임은유지한다. entrySP→frame할당SP→nestedcall보존→복원SP의한timeline/표를추가할후보다.",
+      "공식procedure2.1.1의하향stack,standardABI의16byte정렬/수명·s계열복원·인자규칙을 실제읽어SP누락을확인했다. 모든ABI의일반보장으로확대하지않는다.",
+      "q1 ISA/ABI조합,q2 보존주체,q3 s1포인터손상은정확하다. q2와q3는규칙설명/실패응용으로구별되나SP상태목표는직접검사하지않는다."
+    ],
+    [
+      "computer-architecture.core.memory-hierarchy.memory-hierarchy",
+      "KEEP",
+      "L1빠른작은계층대큰느린계층및지역성의절충목표를충분히달성한다.",
+      "register/cache/DRAM/storage표와작업집합재사용,miss하위조회,AMAT개요를설명하며OSpagecache/DBbuffer/appcache와hardware메커니즘을분리한다. 모든상위계층이동일한자동cache라는회로보장으로읽지않으며이전register구별과연결한다.",
+      "TEXT의속도/용량/비용방향표가역할비교를효과적으로보여준다.",
+      "UMD canonical target직접접근은NEEDS_REVIEW. 실제MIT공식학습가이드검색발췌의작은cache/큰main/disk및단순AMAT를보충확인했다. 교재의disk모든데이터가정은현재메모리의일반보장으로채택하지않는다.",
+      "q1계층동기,q2작은cache지역성,q3큰L1의hitdelay/면적/전력/집합절충을검사한다."
+    ],
+    [
+      "computer-architecture.core.memory-hierarchy.temporal-spatial-locality",
+      "KEEP",
+      "L1같은주소재사용대인접주소의미와캐시적중조건을달성한다.",
+      "line유지→재접근hit,연속배열라인재사용,큰stride/캐시교체와자료구조이름≠실패보장조건을정확히설명한다. 가능성의모델이지모든프로그램지역성보장이아니다.",
+      "TEXT의A0..배열/line개념은아직byte폭을고정하지않은추상예이며인접범위를보여준다. 이미지추가필수아님.",
+      "UMDtarget미확정이며MIT공식검색발췌의근래주소재사용설명을실제읽었다. 자료의LRU가정은모든hardwarepolicy로일반화하지않는다.",
+      "q1순차배열,q2재사용간교체,q3명시한row-major대columnstride의주소/효율이목표에맞다."
+    ],
+    [
+      "computer-architecture.core.memory-hierarchy.cache-line",
+      "KEEP",
+      "L1이웃byte의블록이동과공간지역성/전송·용량절충을달성한다.",
+      "예시64byte는일반보편폭이아니고가능예로표현한다. tag/valid/dirty,offset/set/tag의다음Topic위임과큰line의낭비·라인수감소가정확하다. multicorefalse-sharing은앞으로배울연결로명시한다.",
+      "DIAGRAM의요청byte와함께채워지는neighbor범위가목표를직접보여준다. 실제태그bit전체그림은다음Topic소유다.",
+      "canonicalUMDtarget미확정. 블록메타/범위는본문과연결문항의조건을검토했으며64byte가모든CPUISA보장이라고승인하지않는다.",
+      "q1offset/index/tag,q2큰line절충은정확하다. q3의심화소유권흐름은입문본문에없어W3-CA-004의추가Concept연결후보다."
+    ],
+    [
+      "computer-architecture.core.memory-hierarchy.cache-hit-miss",
+      "KEEP",
+      "L2유효tag일치/미스후하위조회·교체·fill상태목표를달성한다.",
+      "hit/miss분기와dirtyvictim가능성,compulsory/capacity/conflict원인,hit비용과misspenalty차이를정확히구별한다. 모든미스가항상dirtywrite를한다거나모든단계가직렬이라는주장은없다.",
+      "DIAGRAM의hit사용대miss→lower→fill→재개가상태를보여주며교체예외는본문으로보완한다.",
+      "UMDtarget미확정. 실제MIT공식가이드검색본문의cache검사/미스후mainfetch/fill흐름을관련보충근거로읽었다. modernCPU전체timing검증은아니다.",
+      "q1여유공간에도set충돌,q2victim/writeback/fill겹침가능,q3hit동일조건의2ns대0.8ns가충분하다."
+    ],
+    [
+      "computer-architecture.core.memory-hierarchy.latency-vs-bandwidth",
+      "KEEP",
+      "L2요청대기시간과지속전송량·병목구별을달성한다.",
+      "의존pointerchain대독립요청중첩/순차큰전송,대역폭포화시queue와latency증가를연결한다. 수치없이도시스템병목축을판단할인과가있다.",
+      "TEXT의loadA→주소B→loadB→주소C가dependencystall을보여준다. 전송시간계산은q3에서제공한다.",
+      "UMDtarget미확정. source를읽은것처럼하지않고closed단위계산과본문의조건별모형을독립대조한다.",
+      "q1단위/의미,q2독립중첩,q3작은64byte대64MB의고정/지속비용을검사한다."
+    ],
+    [
+      "computer-architecture.core.memory-hierarchy.miss-penalty",
+      "KEEP",
+      "L2계층별miss추가비용/확률가중목표를달성한다.",
+      "victim/dirty가능/lower/fill/retry와AMAT1+5%*80=5ns,localL2vsDRAM비용/overlap/prefetch/의존chain의한계를설명한다. 프로그램시간에모든miss80ns단순가산을금지한다.",
+      "TEXT의miss상태흐름과식/수치가충분하다. 실제방식을모두직렬로강제하는diagram보장은아니다.",
+      "UMDtarget미확정. MIT공식공개검색의simpleAMAT와추가패널티문제조건을실제읽었다. 단순모델의전제만대조하고모든실CPU의평균식을보장하지않는다.",
+      "q1식/q2닫힌5ns/q3명시nested식1.65ns와각항의local확률을검사한다."
+    ],
+    [
+      "computer-architecture.core.multicore-memory.multicore-shared-memory",
+      "KEEP",
+      "L1의같은물리메모리대독립register/cache와세보장구별목표를달성한다.",
+      "core별state/storebuffer、동일linecopy-coherence대다른주소ordering、x++RMW원자성별도、Java언어계약경계가정확하다. 중앙register가모든작업을serial하게처리한다는오해를막는다.",
+      "DIAGRAM의privatecache두경로→sharedmemory와coherence/ordering비교가충분하다.",
+      "UMDcanonicaltarget접근은미확정。실제Linuxfalse-sharing과RVWMO/JLS관련절의범위를분리해기술적주장과대조했다.",
+      "q1구조/q2보장별질문/q3lostupdate는정답모델이가능하나초기x=0전제를W3-CA-007로보강한다."
+    ],
+    [
+      "computer-architecture.core.multicore-memory.private-shared-cache",
+      "TARGETED_ENHANCE",
+      "L2localdelay/capacity/간섭/coherence절충목표는충분하며W3-CA-008의한글표현만P2정밀수정후보다.",
+      "L1private/L3shared보편규칙금지、privatecopycoherence필요、sharedbank/port/interconnect경합、migrationcoldcache대값정확성구별이타당하다. 마지막절충로만자연스럽지않다.",
+      "DIAGRAM의세coreprivate→sharedlower→memory가구성/경합위치를보여준다. 기존그림은유지한다.",
+      "UMDtarget미확정。CPU별구성차이를본문이명시하며실제model/JMM의보장을cachetopology로승격하지않는다.",
+      "q1구성동기/q2migration/q3affinitytrade-off·측정은정확하고개별근거가있다."
+    ],
+    [
+      "computer-architecture.core.multicore-memory.cache-coherence-problem",
+      "KEEP",
+      "L2한corewrite와다른copy의충돌목표를달성한다.",
+      "X10→A20와oldBcopy문제、invalidating모델의ownership/재읽기、line단위와RMW/다른주소순서별도책임이명확하다. 프로토콜대표모형이지모든CPU메시지순서를의무화하지않는다.",
+      "DIAGRAM의초기복사본과A쓰기→B무효→ownership흐름이상태/원인을보여준다.",
+      "UMDtarget미확정。Linux공식false-sharing관련절의whole-line재조회/coherence비용과연결대조했으며모든coherence구현을그페이지로승인하지않는다.",
+      "q1coherence범위/q2invalidating원인/q3atomiccounter정확성과true-sharing확장성분리가타당하다."
+    ],
+    [
+      "computer-architecture.core.multicore-memory.coherence-protocol-model",
+      "KEEP",
+      "L3 CORE의라인권한/소유권/최신source와상태전이목표를달성한다. MESI모든이름외우기를목표로바꾸지않는다.",
+      "Shared읽기복수→Awriteownership/BInvalid→B재조회와dirtylatest는DRAM외다른owner에있을수있음、snoop대directory참여자탐색차이/토폴로지의존이맞다. Coherence가다른주소전체순서를정하지않음을경계한다.",
+      "DIAGRAM의A/B동일시점대상태전이와owner최신source본문이내부동작을보여준다. 모든transientstate강의는필수가아니다.",
+      "UMDtarget미확정。관련Linuxcoherencetraffic와실제RVWMO의관찰순서계약을별도대조했다. RVWMO를MESI구현명세로쓰지않는다.",
+      "q1권한/최신,q2snoop/directory,q3두reader→writer→reader의가능전이가목표에직접맞다."
+    ],
+    [
+      "computer-architecture.core.multicore-memory.false-sharing",
+      "KEEP",
+      "L3 독립필드와같은line의coherence비용목표를충분히달성한다. W3-CA-004의학습연결대상으로실제본문/문항을확인했다.",
+      "두counter같은line/writeownership왕복、true-sharing/data-race대성능문제、padding/percore·합치기/배치·메모리비용과증거선행이정확하다. 두writer는대표예이며공식Ref의writer/readercase도가능하다.",
+      "DIAGRAM의같은line A/B필드와각core접근은배치원인을보여주고소유권이동은직후문단으로설명한다. 새이미지필수아니다.",
+      "Linux공식본문의refcountwriter/name-reader、최소onewrite조건、perf-c2c/pahole/배치증거와대응의공간비용을실제읽었다. UMDtarget은미확정이다.",
+      "q1정확성대불필요traffic/q2true-sharing/race와구별/q3padding전후확정근거·비용이충분하다."
+    ],
+    [
+      "computer-architecture.core.multicore-memory.hardware-memory-reordering",
+      "KEEP",
+      "L3 CORE의관찰순서대ISA보존관계/JMM HB경계목표를달성한다.",
+      "storebuffer/OOO의내부순서와타core관찰、RVWMO PPO/명시sync、data/ready공개와fence/acquire-release、JVM의ISA에맞춘언어계약구현이정확하다. x86강도만으로Java동기화생략금지의인과가있다.",
+      "TEXT의program대observedorder와producer/consumer예가서로다른주소관계를보여준다. 모든litmustest결과행렬은현재목표의필수가아니다.",
+      "canonicalRVWMOredirect를따라공식v20260120의globalorder/PPO규칙과fence/aq/rl관련절을읽었다. JLS25 17.4와nonvolatile읽기재사용/HB관련절은supplemental로실제대조했다. 언어와ISA를같은규칙으로승인하지않는다.",
+      "q1weak조건/q2coherence만으로publication불가/q3x86대JMM의계층오해진단이맞다."
+    ],
+    [
+      "computer-architecture.core.performance.latency-throughput",
+      "KEEP",
+      "L1 단일 완료 시간과 단위 시간 완료량 구별을 충족한다.",
+      "5-stage fill 이후 overlap와 각 instruction의 전체 경로 지연, 자원 포화의 queue/stall을 구별한다. 동시성 증가가 개별 latency 감소를 보장하지 않는다.",
+      "TEXT cycle별 IF/ID/EX/MEM/WB와 자원 포화 분기 흐름이 충분하다.",
+      "UMD canonical performance 대상 접근은 이전 직접 요청 실패로 미확정이다. 실제 공식 검색 반환의 CPU equation 관련 절은 별도 supplemental로 범위를 제한한다.",
+      "q1 정의/단위, q2 250 ops/s, q3 batch 처리량·p99 절충을 검토했다."
+    ],
+    [
+      "computer-architecture.core.performance.cpu-time",
+      "KEEP",
+      "L1 CPU 실행 시간과 elapsed/clock/utilization 구별을 충족한다.",
+      "I/O와 scheduler 대기는 elapsed에 포함되며 CPU cycles/clock의 단순 모델과 cache/branch stall을 설명한다. 여러 코어의 누적 CPU time이 wall time보다 클 수 있어 사용률과 요청 비중을 동일시하지 않는다.",
+      "TEXT elapsed 구성과 cycle 식이 충분하다.",
+      "UMD canonical target 미확정이다. 관련 CPU equation의 공식 검색 본문을 별도로 확인했으며 OS별 accounting API까지 그 자료로 승인하지 않는다.",
+      "q1 480ms, q2 세 측정 경계, q3 전체 25%와 특정 core/thread 포화의 구별이 맞다."
+    ],
+    [
+      "computer-architecture.core.performance.instruction-count-cpi-clock",
+      "KEEP",
+      "L2 CPU time 세 항 분해 목표를 달성한다.",
+      "실행된 architectural IC×평균 CPI×cycle time와 1000/1260 cycles 비교가 맞다. workload/의존성/cache/branch와 clock 변화의 상호작용을 설명하며 GHz 또는 IC만으로 결론내리지 않는다.",
+      "TEXT 식·숫자 비교·각 항의 원인 연결이 충분하다.",
+      "UMD canonical 미확정이며 별도 공식 검색 결과의 IC×CPI×cycle time 관련 식만 대조했다. 같은 자료에 있는 다른 식의 오기까지 승인하지 않는다.",
+      "q1 1500cycles, q2 2us, q3 11.2억 대 10억 cycles를 검토했다."
+    ],
+    [
+      "computer-architecture.core.performance.amdahl-law",
+      "KEEP",
+      "L2 기준 시간 비율과 개선하지 않은 구간의 상한을 충족한다.",
+      "(1-p)+p/s의 직렬 합산 가정, 20%/10배의 0.82와 1.22배, 30%만 개선 시 1/0.7 상한이 맞다. p는 코드 크기가 아닌 기준 실행 시간이며 추가 동기화/경합 비용을 경계한다.",
+      "DIAGRAM baseline의 p가 p/s로 줄어도 1-p가 유지되는 상태와 숫자가 충분하다.",
+      "UMD canonical 접근 미확정, 공식 학과 검색 반환의 Amdahl 식을 별도 대조했다. 그 보충 URL의 직접 요청도 403으로 access 미확정이다.",
+      "q1 4/3, q2 최대 4/3, q3 0.92 시간과 1.087배 속도의 계산이 맞다."
+    ],
+    [
+      "computer-architecture.core.performance.cache-impact",
+      "KEEP",
+      "L2 cache miss→stall/CPI와 접근 패턴의 인과를 충족한다.",
+      "AMAT의 miss penalty는 추가 비용이라는 단순 모델이며 OOO/MLP의 overlap와 dependent pointer 추적을 구별한다. locality 개선과 추가 명령/prefetch 대역폭 비용을 함께 평가한다.",
+      "DIAGRAM 동일 IC의 hit/miss→stall→CPI 분기와 AMAT 식을 유지한다.",
+      "UMD target 미확정이다. 앞서 실제 읽은 공식 cache worksheet의 추가 miss penalty 모델과 대조하며 모든 실제 CPU stall을 선형 합으로 일반화하지 않는다.",
+      "q1 4ns, q2 같은 IC의 추가 cycles, q3 miss 감소와 IC 증가의 trade-off가 적합하다."
+    ],
+    [
+      "computer-architecture.core.performance.pipeline-branch-impact",
+      "KEEP",
+      "L2 분기 비율·실패율·복구 비용과 clock/CPI 절충을 달성한다.",
+      "0.20×0.05×12=0.12의 단순 기여와 기본 1.12가 맞다. 깊은 pipeline의 clock 이득과 복구 비용, branchless 추가 load/명령의 조건부 비용을 설명한다.",
+      "DIAGRAM 계약은 식·수치와 잘못된 경로 폐기/재시작의 흐름 설명으로 충족하며 새 이미지가 필수는 아니다.",
+      "UMD target 미확정이며 기존 공식 pipeline/OOO 보충의 관련 흐름과 단순 기댓값 계산을 대조했다.",
+      "q1 정답 D는 맞지만 B rationale의 100% 실패 계산은 W3-CA-010이다. q2 깊이와 q3 branchless 측정은 정확하다."
+    ],
+    [
+      "computer-architecture.core.performance.microbenchmark-boundary",
+      "KEEP",
+      "L3 국소 측정과 전체 성능·실험 조건 구별을 충족한다.",
+      "Java 결과 미사용은 DCE 가능성으로 설명하여 side effect가 있는 모든 호출이 제거된다고 하지 않는다. JIT/warmup/fork/result 소비, cache/input/frequency/열/OS 상태와 대표 workload의 별도 검증을 설명한다.",
+      "TEXT microbenchmark/end-to-end의 질문 구별과 Java 미사용 결과 예가 충분하다.",
+      "JMH canonical homepage 직접 접근은 실패하여 미확정이다. 실제 OpenJDK JMH DeadCode sample 원문을 읽어 반환값의 소비와 제거되는 계산을 대조했다.",
+      "q1 DCE 후보, q2 비교 조건, q3 국소 30%와 전체 1%의 Amdahl·scope 분석이 적합하다."
+    ],
+    [
+      "computer-architecture.core.pipeline-ilp.pipeline-stages",
+      "KEEP",
+      "L1의서로다른명령어단계중첩·유휴자원활용목표가충분하다.",
+      "대표5stage일뿐모든CPU보장이아님을명시한다. I1/2/3의shiftedcycle표와fill후완료간격대종단간latency,overhead/최악stage/불균형의비용이맞다. 한국어인과흐름이충분하다.",
+      "DIAGRAM의cycle1..7표가각명령별stage와동시진행을직접보여준다. 기존도식유지.",
+      "canonicalUMDtarget은403NEEDS_REVIEW. 실제검색으로읽은같은대학pipeline강의의stage/forwarding관련발췌는별도보충근거이며canonical전체를확인한것이아니다.",
+      "q1겹침,q2latency/throughput,q3max170+20=190ps와새병목을구별해검사한다."
+    ],
+    [
+      "computer-architecture.core.pipeline-ilp.pipeline-hazards",
+      "KEEP",
+      "L2의구조/데이터/제어원인구별목표를달성한다.",
+      "단일memoryport충돌,add→sub RAW,단순inorder와OOO의WAR/WAW이름재사용,미확정PC와기다림/추측실패가명확하다. 해저드처리없으면정확성도깨지는이유를설명한다.",
+      "DIAGRAM 계약은RAW명령전후와원인대응분류를텍스트로효과적으로보여준다. 모든해저드의회로이미지를필수로요구하지않는다.",
+      "UMDcanonicaltarget403. 같은대학강의검색본문의5stage WAR/WAW불발조건과복잡pipeline차이를 실제읽었으며특정MIPS교육모델만으로모든CPU를단정하지않는다.",
+      "q1RAW,q2각원인/대응,q3WAR rename과RAW보존의차이를검사한다."
+    ],
+    [
+      "computer-architecture.core.pipeline-ilp.forwarding-and-stall",
+      "KEEP",
+      "L2의값준비시점대소비시점과forward/bubble목표를달성한다.",
+      "producerALU결과준비후WB전우회,load주소와load값준비의차이,아직없는값은forward불가,정확한stall수구현의존을명시한다. load-use에서값이늦는인과가코드와연결된다.",
+      "DIAGRAM의producer→consumer우회와load/add명령쌍,ready대notready상태가핵심을설명한다. cycle별bubble추가표는선택적심화이며현재결함으로만들지않는다.",
+      "canonicalUMD403이고같은대학보충강의발췌의WB전ALU입력forward설명을 실제읽어비교했다. 전부runtime시험한근거는아니다.",
+      "q1ready값forward,q2load-use시점,q3독립3개대의존2개의OOO한계를검사한다."
+    ],
+    [
+      "computer-architecture.core.pipeline-ilp.branch-prediction",
+      "KEEP",
+      "L2의direction/target미리선택과예측실패비용·정확성목표를달성한다.",
+      "predict→fetch→실제확인→계속/폐기PC재지정,고정/이력패턴과무작위,architectural결과대추측작업을구별한다. 마이크로아키텍처cache흔적까지없어진다는보장은없다.",
+      "TEXT의taken예측과맞음/틀림분기가상태를보여주며본문의방향/대상과연결된다.",
+      "UMDcanonical403. 실제MITsuperscalar강의PDF의fetchprediction/branchresolution/kill/commit분리와맞는다. 정확한예측기별성능이나특정ISA보장을확정하지않는다.",
+      "q1방향/대상,q2wrongpath복구가목표에맞다. q3계산은정확하지만앞Topic문항과목표중복을W3-CA-003으로기록한다."
+    ],
+    [
+      "computer-architecture.core.pipeline-ilp.superscalar-out-of-order",
+      "KEEP",
+      "L3 STANDARD의폭/ready발행/의존성/rename/retire메커니즘목표를달성한다. 모든renameentry나ROB구현bit강의는범위밖이다.",
+      "Aload대기/B의존/C독립의선행실행,RAW보존과WAR/WAWphysicalmapping,순서retire/예외폐기,ILP부족/윈도전력절충을정확히설명한다. Java동기화대체아님도명시한다.",
+      "DIAGRAM의execute A(wait)/C(done)/B(wait)대architectural A→B→C순서대비가핵심을효과적으로보여준다. rename표/ROB그림은외부심화자료로보완가능하며추가그림자체를필수결함으로삼지않는다.",
+      "MIT공식resource설명과다운로드PDF의슬라이드2~4 ROB/tag/physicalrename/execute대commit/branchkill 내용을실제읽었다. PDF시각전체QA나현대CPU모든구현검증을주장하지않는다.",
+      "q1병렬자원대상태공개,q2false대true의존성,q3독립B/C대D대기/A예외시precise상태를검사한다."
+    ],
+    [
+      "computer-architecture.core.virtual-memory-hardware.virtual-physical-address",
+      "KEEP",
+      "L1프로세스VA대물리frame과페이지offset유지목표를달성한다.",
+      "A/B같은VA→다른frame가능/공유sameframe가능、VPN변환+offset、4096=2^12、매핑/권한fault와OS복구조건을구별한다. 주소공간예약대상주량은q3에서응용하며일반바이트페이징모형이명시된다.",
+      "TEXT의프로세스매핑쌍과VPN/offset분해가효과적이다.",
+      "UMDcanonicaltarget미확정. 실제Linuxpage_tables의VA→PA、pageframe/shift 및프로세스mm_context를보충확인했다. Linux구조를모든ISA의고정형식으로쓰지않는다.",
+      "q1프로세스별mapping,q2offset12/유지,q3예약대RSS의OS응용을검사한다."
+    ],
+    [
+      "computer-architecture.core.virtual-memory-hardware.mmu",
+      "TARGETED_ENHANCE",
+      "L2translation/protection위치와OSpolicy분리는충분하나miss→MMUwalk의hardwarewalker전제가없다. W3-CA-006의범위한정이필요하다.",
+      "매핑별R/W/X검사와권한실패、TLBmiss≠pagefault、OS집행/정책차이는맞다. 다만모든MMU가miss에직접PTwalk를실행하는것처럼설명해LinuxMIPSsoftware refill같은다른구현을일반화한다.",
+      "DIAGRAM의MMU역할과OS/하드웨어분리는유지하고miss하드웨어walker모형이라는주석을추가할후보다. software모든아키텍처강의는필수가아니다.",
+      "UMDtarget미확정. Linuxpage_tables관련절과upstreamMIPStlbex.c의R4000refill PT읽기/TLBwrite/eret와조건부HTW설정을실제읽었다. 특정master판본/미실행한모든ISA를확정하지않는다.",
+      "q1역할/q2권한fault와OS/q3같은frame다른권한정답은정확하다. 질문이요구하는translation집행자체와walker구현을분리한다."
+    ],
+    [
+      "computer-architecture.core.virtual-memory-hardware.page-table-walk",
+      "TARGETED_ENHANCE",
+      "L2계층entry→frame/offset·추가조회목표는충분하나MMU직접walk의대표구현전제보강이필요하다(W3-CA-006).",
+      "루트→각VPN인덱스→leaf/권한、cache/PWC때문에4level≠DRAM4회、유효miss대fault/OS정책을정확히설명한다. 첫문단은hardwarewalk를일반화하지만q1rationale는hardware/software순회를올바르게언급한다.",
+      "DIAGRAM의entry체인과valid대fault분기는유지하고hardware-managedTLB라는범위를붙이면된다. 프로세스메모리할당/교체정책을그림에추가하지않는다.",
+      "Linux공식page_tables의hierarchy/upperleaf/PWC/MMU설명을실제읽었다. generic한고수준문서만으로모든ISA의refill방식을승인하지않고MIPS소스로반례를구별한다.",
+      "q1유효매핑후재개,q2cache/hugeleaf로그4DRAM단정금지,q3dataMiss대translationMiss증거가정확하다."
+    ],
+    [
+      "computer-architecture.core.virtual-memory-hardware.tlb",
+      "TARGETED_ENHANCE",
+      "L2hit/miss·walk/fault·reach한계는충분하다. hardwarewalker범위누락은W3-CA-006으로정밀보강한다.",
+      "TLBtranslation/permission대datacache、hit이면walk회피、validmappingmiss≠fault、entry×pagesize및압박조건이정확하다. miss수행주체의ISA차이를짧게표시해야한다.",
+      "DIAGRAM의hitpermission대misswalk/fill은대표hardware방식의모형으로유지한다. source/target범위만명시하고장식이미지를추가하지않는다.",
+      "UMDtarget미확정. Linuxpage_tables/HugeTLB실제translation범위와MIPSsoftware refill소스를보충근거로읽었다.",
+      "q1정답C는맞지만512entry전제없는계산해설을LEX-005재확인으로유지한다. q2경로차이/q3제시한512모형의reach는정확하다."
+    ],
+    [
+      "computer-architecture.core.virtual-memory-hardware.multi-level-page-table",
+      "TARGETED_ENHANCE",
+      "L2희소공간의필요하위테이블/순회절충목표는달성한다. 기존LEX-003 metadata60대계획50불일치만재확인하며상대순서오류로과장하지않는다.",
+      "unused큰범위하위미생성、longerwalk·TLB완화、upperhugeleaf의가능성과ISA별차이를명확히설명한다. 관련본문의새구조적오류는없다.",
+      "DIAGRAM root→next→leaf/frame가계층을효과적으로보여준다. 단순계층예가전체Linux5level고정보장으로쓰이지않는다.",
+      "공식Linuxhierarchy/sparseholes메모리절약、folding/upperleaf관련절을직접대조했다. UMDtarget은별도미확정이다.",
+      "q1D정답은맞으나explanation의거대한매핑설명은W3-CA-005로구별한다. q2공간/순회와q3upperleaf상태는정확하다."
+    ],
+    [
+      "computer-architecture.core.virtual-memory-hardware.page-size-huge-page",
+      "KEEP",
+      "L3 STANDARD의TLBreach/테이블/내부낭비·할당절충목표를달성한다.",
+      "512*4KiB/2MiB차이、size별TLB다름、upperleaf지원조건、HugeTLB대THP정책다름과다른cache/NUMA/lock병목을못고치는경계를설명한다. page와line단위를명확히분리한다.",
+      "DIAGRAM의동일entry/두coverage수치대비가핵심관계를보여준다. 주소변환범위로이해할수있고새raster그림은필수가아니다.",
+      "Linuxpage_tables의upperleaf/큰연속범위와HugeTLB의pool/free/reserved/비swap/조기할당·단편화조건을실제읽었다. THP구현전체검토와HugeTLB직접운영시험은아니다.",
+      "q1translationbenefit대cache/NUMA/q2할당비용/q3힙size만으로활성화금지·측정선택이적절하다."
+    ]
+  ],
+  "questions": [
+    [
+      "computer-architecture.core.cache-organization.direct-mapped-cache.q1",
+      "KEEP",
+      "A한linecandidate가맞다. B여러way/C빈공간자유/Dtag로index변경은다른mapping이며모든rationale/해설을대조했다.",
+      "EASY directmapped전제가유일한답을만든다."
+    ],
+    [
+      "computer-architecture.core.cache-organization.direct-mapped-cache.q2",
+      "KEEP",
+      "모델/해설은같은index의A/B상호교체와다른빈line배치불가를설명한다. 전체작업집합작음≠mapping충돌없음이맞다.",
+      "MEDIUM mapping원인추론으로이전miss분류의구조적근거를보강한다."
+    ],
+    [
+      "computer-architecture.core.cache-organization.direct-mapped-cache.q3",
+      "KEEP",
+      "32KiB/64=512line、차이512block의mod512같음/다른tag/반복thrash가능성의모델/해설이맞다.",
+      "HARD 크기→block→index주기→충돌계산이다. 교육모델이며실CPUhash된index의보편결과로확대하지않는다."
+    ],
+    [
+      "computer-architecture.core.cache-organization.set-associative-cache.q1",
+      "KEEP",
+      "C각선택set4line이맞다. A전체4개/B네set복제/Dtag없이항상hit는false이며모든rationale/해설512line→128set예도맞다.",
+      "EASY way대전체line/set구별이다."
+    ],
+    [
+      "computer-architecture.core.cache-organization.set-associative-cache.q2",
+      "KEEP",
+      "모델/해설의512line、128set、offset6/index7/tag19가32bitbyte주소조건에맞다.",
+      "MEDIUM 다단계지만앞body같은예의직접확인이다. index-tag-offset.q2는다른256set폭으로자리역할을확인하는인접복습이다."
+    ],
+    [
+      "computer-architecture.core.cache-organization.set-associative-cache.q3",
+      "KEEP",
+      "2way에3activeblock을모두유지할수없어교체/정책에따른반복miss가능하다는모델/해설이맞다. 모든정책이항상100%miss라는단정은없다.",
+      "HARD set수용량/접근순서/policy조건의실패추론이다. LRU를전제하지않았으므로정확miss수는요구하지않는다."
+    ],
+    [
+      "computer-architecture.core.cache-organization.fully-associative-cache.q1",
+      "KEEP",
+      "Canyline이맞다. Atag없음/Bdirectmapped/Dcapacity없음은false이며모든rationale/해설은tag/offset필요와용량제약을구별한다.",
+      "EASY 배치자유도를검사한다."
+    ],
+    [
+      "computer-architecture.core.cache-organization.fully-associative-cache.q2",
+      "KEEP",
+      "모델/해설의많은tag비교/selection/wiring/policy비용과크기확대제약이타당하다.",
+      "MEDIUM freedom대비용절충으로q1보다원인을검사한다. 항상fullassoc가물리적으로불가능하다는주장은없다."
+    ],
+    [
+      "computer-architecture.core.cache-organization.fully-associative-cache.q3",
+      "KEEP",
+      "모델/해설은32line<40activeblock이라capacity교체가가능하며cold/capacity를associativity로제거못함을설명한다.",
+      "HARD표시에비해수용량단일조건응용이다. 정답오류는없으며접근분포없는문제에정확hit율을만들지않는다."
+    ],
+    [
+      "computer-architecture.core.cache-organization.index-tag-offset.q1",
+      "KEEP",
+      "Bline내위치가맞다. A역할혼합/Coffset으로block식별전체/D변환후불필요는false이며모든rationale의pageoffset유지예가적절하다.",
+      "EASY setassoc캐시주소역할을검사한다. 앞cache-line.q1의세필드소개와이Topic심화는연결복습이다."
+    ],
+    [
+      "computer-architecture.core.cache-organization.index-tag-offset.q2",
+      "KEEP",
+      "64=2^6/256=2^8로offset6/index8、남은tag의모델/해설이맞다. byte/power2교육모델조건을명시한다.",
+      "MEDIUM 폭도출이몸통목표이며주소의tag정확수치를묻지않으니주소폭없어도충분하다."
+    ],
+    [
+      "computer-architecture.core.cache-organization.index-tag-offset.q3",
+      "KEEP",
+      "고정C/B로line수같음、A두배→sets절반/index1bit감소/tag1bit증가의모델과해설이맞다.",
+      "HARD 자원분배→bitfield변화추론이다. 같은캐시변경이므로주소폭/offset고정의본문맥락이자연스럽다."
+    ],
+    [
+      "computer-architecture.core.cache-organization.replacement-policy.q1",
+      "KEEP",
+      "B선택set가득참+newblock일때victim선택이다. A빈way/C WT반영/D모든set검색은필요조건/배치범위를혼동한다. 모든rationale/해설이맞다.",
+      "EASY selectedset조건으로유일하다. 교체메타업데이트와실제victim선택의시점을혼동하지않는다."
+    ],
+    [
+      "computer-architecture.core.cache-organization.replacement-policy.q2",
+      "KEEP",
+      "모델/해설의최근사용대미래재사용가정/oldvictim과exactLRU의순서상태갱신비용→pseudo대안이타당하다.",
+      "MEDIUM policy동기와구현비용비교이며실CPU가LRU쓴다는암기를요구하지않는다."
+    ],
+    [
+      "computer-architecture.core.cache-organization.replacement-policy.q3",
+      "KEEP",
+      "모델/해설은일회stream의recency가재사용을예측못하고hotlineevict로pollution을만들수있음을설명한다.",
+      "HARD workload대policy실패판단이다. 순수stream만있는경우hotline을새로전제한예는가능원인으로읽으며항상LRU최악이라고단정하지않는다."
+    ],
+    [
+      "computer-architecture.core.cache-organization.write-through-write-back.q1",
+      "KEEP",
+      "D dirty수정/후반영이맞다. Acoherence불필요/B매write전달/Cdirty없고비용동일은false이며모든rationale와해설의대표반영시점을대조했다.",
+      "EASY hitpolicy구분이다. 다른coherence동작의반영은구현과요구조건에따라읽고모든요청이즉시DRAM갱신이라는뜻으로승인하지않는다."
+    ],
+    [
+      "computer-architecture.core.cache-organization.write-through-write-back.q2",
+      "KEEP",
+      "모델/해설은WT반복트래픽대WB변경모음/dirtyvictim비용을구별한다. WT도writebuffer가가능하다는본문경계와충돌하지않는다.",
+      "MEDIUM traffic대추가state절충,항상CPU가매write완료를기다린다는보장은없다."
+    ],
+    [
+      "computer-architecture.core.cache-organization.write-through-write-back.q3",
+      "KEEP",
+      "모델/해설은CPUcache/DRAM휘발성과DBlog/OSfsync/storageflush영속경계를구별한다. dirty최신값만으로commitdurable보장없음이정확하다.",
+      "HARD 서로다른계층의보장을구별하는응용이다. 모든DB가같은세부storage프로토콜을쓴다고의무화하지않는다."
+    ],
+    [
+      "computer-architecture.core.cache-organization.write-allocate.q1",
+      "KEEP",
+      "Dmissline확보후수정이맞다. A두번째miss까지대기/Bnoallocate/Cfill하고lower만수정은정의와다르며모든rationale/해설이흐름과재사용을설명한다.",
+      "EASY 일반WA모델을명시하며전부full-line발신최적화까지강의하는문항은아니다."
+    ],
+    [
+      "computer-architecture.core.cache-organization.write-allocate.q2",
+      "KEEP",
+      "모델/해설의WAfill→수정/재사용대NWA우회/일회stream오염절감이맞다.",
+      "MEDIUM 두정책및그조건을비교한다. writehitpolicy와같은축으로답하지않는다."
+    ],
+    [
+      "computer-architecture.core.cache-organization.write-allocate.q3",
+      "KEEP",
+      "모델/해설은큰일회버퍼대작은반복수정/read의재사용차이와NWA/non-temporal가능성/아키텍처실측조건을명시한다.",
+      "HARD workload별선택이며q2원칙을두실패/이득상황에응용한다. ISA무조건성능보장은없다."
+    ],
+    [
+      "computer-architecture.core.cache-organization.cache-friendly-access.q1",
+      "KEEP",
+      "A인접순회라인활용이최선이다. B큰무작위/C과대집합/D의도conflict는재사용효과가작다. 모든rationale/해설에원인이있다.",
+      "EASY 이Topic최적화선택으로앞spatial.q1과관련입문복습이다."
+    ],
+    [
+      "computer-architecture.core.cache-organization.cache-friendly-access.q2",
+      "KEEP",
+      "모델/해설은smalltile→evict전반복재사용/작업집합과tile크기·loopoverhead절충을설명한다.",
+      "MEDIUM 지역성원인을최적화기법에연결한다. tile만주면무조건speedup된다는단정은없다."
+    ],
+    [
+      "computer-architecture.core.cache-organization.cache-friendly-access.q3",
+      "KEEP",
+      "모델/해설의CPUlocality/할당개선과end-to-end I/O/lock/queue병목분리、IPC/miss/GC/대기/p95/p99확인방향이타당하다.",
+      "HARD 미시개선대전체병목의증거판단으로기존순회문제와구별된다. 실제bench/운영을실행한근거로기록하지않는다."
+    ],
+    [
+      "computer-architecture.core.data-representation.bit-byte-word.q1",
+      "KEEP",
+      "A의 단위/ISA 자연 폭이 맞다. B의64byte 강제, C의모든ISA word=pointer, D의byte=word는 각각 다른 과잉 일반화다. 모든 rationale와 explanation도 그 경계를 설명한다.",
+      "EASY 단위 확인이며 A만 성립한다. ABI와 ISA를 구별하는 C 해설도 타당하고 q2/q3 목표와 구별된다."
+    ],
+    [
+      "computer-architecture.core.data-representation.bit-byte-word.q2",
+      "KEEP",
+      "inclusive 시작+offset0..3으로1000..1003이다. accepted 세 표현 모두 같은 주소 범위를 명시하며 explanation의+3계산이 맞다.",
+      "MEDIUM 연속 주소 추론, endian/값 내용과 무관하다. 입력 표기 변형을 다 허용한다는 주장은 하지 않는다."
+    ],
+    [
+      "computer-architecture.core.data-representation.bit-byte-word.q3",
+      "KEEP",
+      "모델과 해설은3byte 스키마와8byte CPU 대표 폭을 구별하며 별도 padding 명시 조건도 포함한다. 포인터 폭만으로 protocol offset을 정하지 않는 결론이 맞다.",
+      "HARD 표시는 복잡한 실행 추론보다는 schema/ABI 경계 응용에 가깝다. 틀린 답이나 실질 모호성은 없고 별도 난이도 quota로 문제를 만들지 않는다."
+    ],
+    [
+      "computer-architecture.core.data-representation.binary-hex.q1",
+      "KEEP",
+      "D A7만 nibble순서/값을 보존한다. A107/C A07은 길이·값 변경, B7A는 순서 역전이며 모든 rationale와 해설의 계산이 정확하다.",
+      "EASY 변환, 다른 세 보기는 같은 표현상의 오해다. endian을 묻는 문항과 달리 숫자 표기를 검사한다."
+    ],
+    [
+      "computer-architecture.core.data-representation.binary-hex.q2",
+      "KEEP",
+      "F/0/A/5의 네 묶음으로F0A5, accepted의prefix유무 모두 같은 값이다. 설명도 순서를 유지한다.",
+      "MEDIUM 직접4묶음 변환이며 q1의 확장 적용이다. 정답의 부호 해석은 요구하지 않는다."
+    ],
+    [
+      "computer-architecture.core.data-representation.binary-hex.q3",
+      "KEEP",
+      "모델은8bit signed/unsigned의-1/255와 필드폭·필요시 endian/schema 정보를 구별한다. 로그FF만으로 음수임을 단정하지 않는 해설이 맞다.",
+      "HARD 진단 적용이지만 계산보다 누락된 계약을 찾는 문제다. q1/q2와 달리 불충분 정보 판정이라는 목표로 유지한다."
+    ],
+    [
+      "computer-architecture.core.data-representation.signed-twos-complement.q1",
+      "KEEP",
+      "C -1이 맞다. A -127은sign-magnitude, B255는unsigned, D0은zero패턴 오해이며 모든 rationale와 explanation이 해석 조건에 맞다.",
+      "EASY 명시한8bit2의보수 조건이 유일 답을 만든다."
+    ],
+    [
+      "computer-architecture.core.data-representation.signed-twos-complement.q2",
+      "KEEP",
+      "모델/해설의10000000=-128, 동일폭+128표현불가, 최솟값 부호반전 overflow가 맞다. 원인도 비대칭 범위로 설명한다.",
+      "MEDIUM 최솟값 해석과 반전 실패의 두 조건 추론이며 단순FF정의 반복이 아니다."
+    ],
+    [
+      "computer-architecture.core.data-representation.signed-twos-complement.q3",
+      "KEEP",
+      "byte FF=-1→int sign extension=-1, Byte.toUnsignedInt 또는&FF로255를 얻는 모델과 explanation이 맞다. 프로토콜 unsigned계약과Java타입을 분리한다.",
+      "HARD 언어확장/외부스키마 두 경계 적용으로 적절하다. 이미 연결본문의 부호확장을 배운 뒤 응용한다."
+    ],
+    [
+      "computer-architecture.core.data-representation.fixed-width-overflow.q1",
+      "KEEP",
+      "D 0이 modulo256 결과다. A80은이번합의하위패턴이아님, BFF는연산전값, C9bit저장은8bit전제위반이며 모든 rationale를 읽었다.",
+      "EASY 저장폭 명시로유일하다. C수학합과D저장값을 혼동하지 않는다."
+    ],
+    [
+      "computer-architecture.core.data-representation.fixed-width-overflow.q2",
+      "KEEP",
+      "accepted 두 표현의10000000/-128 모두 패턴과signed값을 답한다. explanation의127비트+1과해석이 맞다.",
+      "MEDIUM 패턴과해석을함께검사하며 원인만 적은 비응답을 accepted하지 않는다."
+    ],
+    [
+      "computer-architecture.core.data-representation.fixed-width-overflow.q3",
+      "KEEP",
+      "양수입력도곱이범위를넘고음수/작은양수로돌아 할당/검사를왜곡할 수 있다. 모델/해설은 연산전 검사 또는 넓은/검사산술→최종범위 순서를 제시한다. Java가 자동메모리밖쓰기한다고 단정하지 않는다.",
+      "HARD 입력범위와연산결과범위의분리/정보손실/수정순서 다단계 응용이다. 정확한32bitint조건이 있다."
+    ],
+    [
+      "computer-architecture.core.data-representation.floating-point.q1",
+      "KEEP",
+      "B 반복이진소수와유한precision이맞다. A정수만저장/C입력버림/D지수없음은모두false이며모든 rationale와해설의근사계약이일치한다.",
+      "EASY 단일원인질문, IEEE특정반올림모드를맞히는문제가아니다."
+    ],
+    [
+      "computer-architecture.core.data-representation.floating-point.q2",
+      "KEEP",
+      "모델/해설은중간반올림의시점과크기차이→작은값소실/다른표현→최종차이를올바르게설명한다. 항상다르다는단정도없다.",
+      "MEDIUM 연산순서의원인추론이며본문의비결합성학습목표와직접연결한다."
+    ],
+    [
+      "computer-architecture.core.data-representation.floating-point.q3",
+      "KEEP",
+      "모델/해설의누적근사와정확동등검사실패, 최소화폐단위정수/10진타입과scale/rounding/전송DB계약은타당하다. 모든정수표현이무조건overflow안전하다고약속하지않는다.",
+      "HARD 오차·비교·도메인표현·경계정책을함께판단한다. 금액으로응용하지만Backend전체구현을요구하지않는다."
+    ],
+    [
+      "computer-architecture.core.data-representation.endianness.q1",
+      "KEEP",
+      "A78563412만LSB낮은주소이다. Bbig순서/C바이트값까지변경/D임의재배열이며모든rationale가바이트와내부비트를구별한다.",
+      "EASY 명시한32bit/little전제로유일하다."
+    ],
+    [
+      "computer-architecture.core.data-representation.endianness.q2",
+      "KEEP",
+      "accepted01020304/1020304의leadingzero차이는같은unsigned32bit수치다. prefix없는표현도hex를명시한prompt에맞으며해설MSB결합이정확하다.",
+      "MEDIUM 전송배열→수치변환으로q1반대방향이다. signed변환을요구하지않는다."
+    ],
+    [
+      "computer-architecture.core.data-representation.endianness.q3",
+      "KEEP",
+      "모델/해설은명시한big프로토콜과littlehost의차이, serialize/deserialize와기준바이트검증을올바르게제시한다. TCPpayload자체가모든앱의endianness를정한다고주장하지않는다.",
+      "HARD 양쪽경계의원인과수정응용이며수신프로토콜big조건으로모호하지않다."
+    ],
+    [
+      "computer-architecture.core.datapath-control.alu-datapath.q1",
+      "KEEP",
+      "C산술/논리/비교가맞다. A상태저장/B전체control/D항상PC갱신은ALU역할과다르다. 모든rationale와해설은ALU와주변경로를구별한다.",
+      "EASY 같은hardware역할오해를비교하며유일답이다."
+    ],
+    [
+      "computer-architecture.core.datapath-control.alu-datapath.q2",
+      "KEEP",
+      "모델/해설의데이터이동·계산대operation/operand/write선택분리가정확하다. 저장소가제어신호그자체라는혼동이없다.",
+      "MEDIUM 책임비교로control-unit입문과중복연결되지만이Concept의구성요소관계를검사하는유용한복습이다."
+    ],
+    [
+      "computer-architecture.core.datapath-control.alu-datapath.q3",
+      "KEEP",
+      "7+5=12이어도RegWriteoff면x3유지라는모델과해설이교육용faultycontrol조건에맞다. 정상ISA ADD가그렇게정의된다는보장은아니다.",
+      "HARD에비해단일gate응용이지만정답/모호성문제는없다. 이전x3값을주지않아도바뀌지않음이라는요구를답할수있다."
+    ],
+    [
+      "computer-architecture.core.datapath-control.control-unit.q1",
+      "KEEP",
+      "D decode/state→signals가맞다. A고정신호/Bregisterfile동일/C DRAM직접구동은false이며모든rationale/해설이구성요소책임을구분한다.",
+      "EASY 단일책임분류,alu.q2와인접목표지만control관점으로검사한다."
+    ],
+    [
+      "computer-architecture.core.datapath-control.control-unit.q2",
+      "KEEP",
+      "모델/해설은직접논리대controlstore시퀀스와대표속도/변경유연성/조회비용을비교한다. 본문은가능성·대표절충으로구현범위를제시한다.",
+      "MEDIUM 구현비교로ISA의정확성변경을요구하지않는다. 실제모든CPU성능순위를단정하는답으로확대하지않는다."
+    ],
+    [
+      "computer-architecture.core.datapath-control.control-unit.q3",
+      "TARGETED_ENHANCE",
+      "1020정상주소와1080잘못주소는맞고해설의operand선택원인도정확하다. 그러나prompt가이후memoryread정상을가정했는데model이보호/페이지fault도결과로허용한다. W3-CA-002의조건범위정밀화가필요하다.",
+      "HARD 주소계산/메모리/제어원인연결이다. 정상접근전제에서는wronglocationread가답이며fault는전제없는다른경로로분리해야한다."
+    ],
+    [
+      "computer-architecture.core.datapath-control.clock-cycle.q1",
+      "KEEP",
+      "B edge간comb계산과state갱신이맞다. A한cycle=전체latency/C CPI반드시감소/D주기비례는false다. 모든rationale/setup해설이본문과일치한다.",
+      "EASY cycle/완료/성능단위의오해를검사한다."
+    ],
+    [
+      "computer-architecture.core.datapath-control.clock-cycle.q2",
+      "KEEP",
+      "accepted1/f와frequency역수의표현은실제관계를답한다. 해설T=1/f도정확하다.",
+      "MEDIUMlabel이지만stable정의식확인이다. 제목만답하는비응답은accepted하지않는다."
+    ],
+    [
+      "computer-architecture.core.datapath-control.clock-cycle.q3",
+      "KEEP",
+      "A1.5/3=0.5ns,B2.4/4=0.6ns로A빠름이다. 모델/해설은동일instructioncount조건과CPI/f를함께사용한다.",
+      "HARD 두축비교계산이며clock만비교하는오해를검사한다. elapsedI/O시간까지포함한측정이라고과장하지않는다."
+    ],
+    [
+      "computer-architecture.core.datapath-control.critical-path.q1",
+      "KEEP",
+      "C longestdelay가minimumcycle을제한한다. Ainstructioncount만/Bshortest기준/D길수록maxfreq높음은false다. 모든rationale·해설의setup/안정조건이맞다.",
+      "EASY timing의원인/제약을묻고application병목과섞지않는다."
+    ],
+    [
+      "computer-architecture.core.datapath-control.critical-path.q2",
+      "KEEP",
+      "1/1.25ns=0.8GHz=800MHz이고accepted네표현모두같은단위값이다. timing여유포함조건을확인했다.",
+      "MEDIUM inverse단위계산이며overhead를이중추가할여지가없다."
+    ],
+    [
+      "computer-architecture.core.datapath-control.critical-path.q3",
+      "KEEP",
+      "0.85+0.10=0.95,0.95+0.10=1.05ns의max가새cycle이다. 모델/해설은충전후throughput가능성과2stage latency/overhead/hazard절충을구분한다.",
+      "HARD stage분할·max·추가비용·latency/throughput다단계추론이다. 정확한실CPUspeedup값을보장하지않는다."
+    ],
+    [
+      "computer-architecture.core.datapath-control.branch-control-flow.q1",
+      "KEEP",
+      "A branch조건/target불확실성이맞다. B의존성없음/Cdecode만으로항상결정/D맞아도모두폐기는false며모든rationale와해설이wrongpath처리를설명한다.",
+      "EASY 결과확정전fetch문제로유일하다."
+    ],
+    [
+      "computer-architecture.core.datapath-control.branch-control-flow.q2",
+      "KEEP",
+      "모델/해설의예측뒤명령폐기→올바른nextPC재인출→빈cycle비용이정확하다. 실제대상PC는fallthrough도포함한올바른다음경로로읽으며always-taken주장은아니다.",
+      "MEDIUM 실패복구상태를검사한다. architectural폐기와microarchitecturalcache흔적전체제거를동일시하지않는다."
+    ],
+    [
+      "computer-architecture.core.datapath-control.branch-control-flow.q3",
+      "KEEP",
+      "0.20*0.10*12=0.24 추가CPI,base1+0.24=1.24가맞다. 모델/해설은비율의분모와다른stall없음가정을지킨다.",
+      "HARD 비율중첩·base합과성능절충이다. 이상화가정에맞는추정이며실제overlap까지정확히예측한다는보장은없다."
+    ],
+    [
+      "computer-architecture.core.device-io.interrupt-exception-trap.q1",
+      "KEEP",
+      "D 비동기 interrupt/명령 관련 exception/trap 제어 이전이 맞다. A ECALL 외부 사건, B trap 제3원인, C timer/illegal 분류 반전은 틀리며 모든 rationale을 확인했다. 해설의 ECALL/timer/illegal 예도 같은 분류이다.",
+      "EASY 유일답이며 RISC-V 용어 범위가 명시된다."
+    ],
+    [
+      "computer-architecture.core.device-io.interrupt-exception-trap.q2",
+      "KEEP",
+      "modelAnswer/explanation은 ECALL이 의도적이어도 현재 instruction의 environment-call exception이며 handler 진입 trap을 일으킴을 설명한다.",
+      "MEDIUM 의도성과 동기성 혼동을 검증하며 ISA·EEI 문맥에 연결된다."
+    ],
+    [
+      "computer-architecture.core.device-io.interrupt-exception-trap.q3",
+      "KEEP",
+      "timer pending은 비동기 원인이고 illegal instruction은 해당 명령의 exception이다. 모델/해설은 둘의 trap 진입과 enable·priority 조건을 구별하며 무조건 먼저 처리할 원인을 정하지 않는다.",
+      "HARD 원인과 수락 순서를 구별하는 실행 추론으로 q1 단순 반복이 아니다."
+    ],
+    [
+      "computer-architecture.core.device-io.interrupt-handler-entry.q1",
+      "KEEP",
+      "C mepc 관련 PC/mcause 원인/mtvec 진입 주소·mode가 맞다. A 모든 GPR 자동 stack 저장, B CSR 역할 반전, D mtvec가 pending/enable 제거는 틀리며 rationale와 해설이 역할을 설명한다.",
+      "EASY RISC-V M-mode라는 범위에서 유일답이다."
+    ],
+    [
+      "computer-architecture.core.device-io.interrupt-handler-entry.q2",
+      "KEEP",
+      "modelAnswer/explanation은 하드웨어가 저장하는 제한된 trap 상태와 handler가 덮어쓸 GPR의 추가 software 보존을 구별한다.",
+      "MEDIUM normal call과 비동기 진입의 차이를 검사한다."
+    ],
+    [
+      "computer-architecture.core.device-io.interrupt-handler-entry.q3",
+      "KEEP",
+      "level-triggered 원인을 clear/acknowledge하지 않으면 반환 후 pending이 남아 다시 수락될 수 있다는 모델과 높은 CPU 비용/지연 해설이 맞다.",
+      "HARD 장치 계약에 따른 조건부 실패이며 모든 IRQ가 같다는 보장은 없다."
+    ],
+    [
+      "computer-architecture.core.device-io.programmed-io.q1",
+      "KEEP",
+      "B CPU의 status polling/data 접근과 간격·interrupt entry 비용이 맞다. A interrupt가 모든 byte 이동, C polling 간격 무관, D PIO=DMA는 틀리며 rationale/해설이 역할을 구별한다.",
+      "EASY 본문 polling 정의와 직접 연결되며 유일하다."
+    ],
+    [
+      "computer-architecture.core.device-io.programmed-io.q2",
+      "KEEP",
+      "관찰 시점 0/50/100/150us 중 120us 완료 이후 최초는 150us이다. 정답과 acceptedAnswers의 150 표기 변형, 해설의 30us 추가 탐지 지연을 확인했다.",
+      "MEDIUM 단위와 최초 관찰이라는 조건이 명확하다."
+    ],
+    [
+      "computer-architecture.core.device-io.programmed-io.q3",
+      "KEEP",
+      "modelAnswer/explanation은 5us 목표와 빈번한 이벤트에서 interrupt entry/복귀 비용 대비 dedicated core polling의 후보를 비교하고 전력·CPU 점유·측정을 요구한다.",
+      "HARD 특정 workload의 조건부 선택이며 항상 polling 우위로 단정하지 않는다."
+    ],
+    [
+      "computer-architecture.core.device-io.memory-mapped-io.q1",
+      "KEEP",
+      "A device side effect와 폭/ordering/cacheability 조건이 맞다. B VA 접근 전면 금지, C read 부작용 없음, D 항상 8byte는 틀리며 각 rationale/해설이 문서 계약을 강조한다.",
+      "EASY RAM 접근과의 차이를 묻는 유일답이다."
+    ],
+    [
+      "computer-architecture.core.device-io.memory-mapped-io.q2",
+      "KEEP",
+      "모델/해설은 posted bus write의 CPU 진행과 target 도달을 구별하고 장치·플랫폼이 정한 ordered accessor/readback/barrier를 요구한다. 아무 CPU 장벽이나 장치 명령 완료를 보장한다고 승인하지 않는다.",
+      "MEDIUM A/B 순서 관찰은 문서 계약 문제이며 도착과 처리 완료를 구별한다."
+    ],
+    [
+      "computer-architecture.core.device-io.memory-mapped-io.q3",
+      "KEEP",
+      "모델/해설은 첫 debug read가 read-to-clear 상태를 소모하여 두 번째 read만 기록하면 원래 완료를 놓치는 순서를 추적한다.",
+      "HARD 상태를 바꾸는 관찰의 실패이며 read-to-clear 전제가 명확하다."
+    ],
+    [
+      "computer-architecture.core.device-io.dma.q1",
+      "KEEP",
+      "D DMA mapping/주소와 ownership·sync가 맞다. A DMA=IRQ/CPU 매 byte 이동, B 무동기 동시 buffer 수정, C 조기 해제 후 자동 주소 추적은 틀리며 모든 rationale/해설에 lifetime 경계가 있다.",
+      "EASY CPU 설정 책임과 전송 주체를 구별한다."
+    ],
+    [
+      "computer-architecture.core.device-io.dma.q2",
+      "KEEP",
+      "모델/해설은 streaming mapping 중 device ownership와 CPU 수정 race, noncoherent cache의 map/sync/unmap 계약을 설명한다.",
+      "MEDIUM 모든 플랫폼의 cache 동작을 동일시하지 않고 필요한 동기화를 조건화한다."
+    ],
+    [
+      "computer-architecture.core.device-io.dma.q3",
+      "KEEP",
+      "모델/해설은 descriptor 제출 후 device가 나중에 읽는 A를 pool 반환·덮어쓰면 잘못된 전송이 가능한 lifetime 순서를 설명한다. 완료와 필요한 sync 이후 재사용이 맞다.",
+      "HARD 실제 async 실패의 인과이며 q2와 재사용 시점이라는 목표가 다르다."
+    ],
+    [
+      "computer-architecture.core.device-io.device-cpu-memory-path.q1",
+      "KEEP",
+      "C buffer/descriptor 준비→DMA write→완료 알림→검사/소비가 맞다. A IRQ가 데이터 복사, B callback 후 buffer 준비, D descriptor 즉시 물리 완료는 틀리며 rationale와 해설이 단계 구분을 제공한다.",
+      "EASY 대표 수신 경로를 명시한 유일답이다."
+    ],
+    [
+      "computer-architecture.core.device-io.device-cpu-memory-path.q2",
+      "KEEP",
+      "modelAnswer/explanation은 write/send return이 queue acceptance일 수 있으며 DMA/물리 완료와 API 계약상 다를 수 있음을 설명한다.",
+      "MEDIUM 모든 API가 비동기라고 하지 않고 계약 확인을 요구한다."
+    ],
+    [
+      "computer-architecture.core.device-io.device-cpu-memory-path.q3",
+      "KEEP",
+      "depth 4→128의 throughput 증가와 tail latency/inflight memory 증가를 queue 체류·동시 요청·buffer 보유로 설명하고 cancel/error 비용 및 측정을 비교한다.",
+      "HARD 숫자를 성능 보장으로 쓰지 않는 상황 분석이다."
+    ],
+    [
+      "computer-architecture.core.isa-execution.isa-vs-microarchitecture.q1",
+      "KEEP",
+      "B ADD의미/깊이선택이맞다. A고정cache/Cpredictor계약/D동일cycles는구현을ISA로일반화한다. 모든rationale와explanation은그보장을분리한다.",
+      "EASY 분류로B만성립한다. 특정ISA의성능명세예외를부정하는전면주장이아니다."
+    ],
+    [
+      "computer-architecture.core.isa-execution.isa-vs-microarchitecture.q2",
+      "KEEP",
+      "모델/해설은같은명령수에도cache/pipeline/predictor→CPI/stall차이로시간이다를수있음을올바르게설명한다.",
+      "MEDIUM 원인비교, q1분류를실행비용에응용한다. 주파수까지모두나열해야만정답이라는닫힌rubric이아니다."
+    ],
+    [
+      "computer-architecture.core.isa-execution.isa-vs-microarchitecture.q3",
+      "KEEP",
+      "모델/해설은40ns가ISA계약이아니며확장/ABI정확성확인과B작업부하실측을분리한다. 이미확장지원조건이주어졌어도ABI·환경확인은남는다.",
+      "HARD 이식의정확성/성능두축판단이다. q2보다적용범위가다르고성능상한보장을만들지않는다."
+    ],
+    [
+      "computer-architecture.core.isa-execution.instruction-format.q1",
+      "KEEP",
+      "A32=2^5가맞다. B16/C5/D64는각4bit/폭과개수혼동/6bit이며모든rationale와설명이계산에맞다.",
+      "EASY 패턴수명시, 레지스터필드가모든reserved제약까지고려한ISA유효명령수라는뜻은아니다."
+    ],
+    [
+      "computer-architecture.core.isa-execution.instruction-format.q2",
+      "KEEP",
+      "signed12bit2C=-2048..2047이며accepted세문자열모두전체범위를답한다. 해설-2^11..2^11-1이맞다.",
+      "MEDIUM fixedwidth목표의ISA응용이다. 분기offset의implicitlowbit까지묻는문제가아니므로12bit그대로맞다."
+    ],
+    [
+      "computer-architecture.core.isa-execution.instruction-format.q3",
+      "KEEP",
+      "고정32bitbudget에서더넓은opcode/reg가imm/다른공간을압박하고추가format/명령수/코드밀도·해독비용이달라질수있다는모델/해설이타당하다.",
+      "HARD 여러제약의절충추론, 특정ISA의정확한비트재설계를요구하지않아열린답을self-check하는형식이적절하다."
+    ],
+    [
+      "computer-architecture.core.isa-execution.registers.q1",
+      "KEEP",
+      "C ISA이름상태대cache사본이맞다. A관찰성역전/B동일인덱스/D압박시cache용량증가는false이며모든rationale와explanation이역할차이를설명한다.",
+      "EASY 단위분류. cache를직접피연산자로선택하는일반보장을부정하는조건이며cache관리명령존재와충돌하지않는다."
+    ],
+    [
+      "computer-architecture.core.isa-execution.registers.q2",
+      "KEEP",
+      "accepted의s0-s11은공식ABI표의callee-saved정수계열이다. 바꾸면복구한다는해설도맞다. ra/a/t를accepted하지않는다.",
+      "MEDIUM은상태추론보다ABI이름회상에가깝다. stable단답이며연결Reference와뒤호출Concept를통한응용이라는한계를기록한다."
+    ],
+    [
+      "computer-architecture.core.isa-execution.registers.q3",
+      "KEEP",
+      "모델/해설은spill의store/reload비용과JITlive-range/inline/fold/allocation변화를제시한다. 소스변수수와실ISAregister압박의1:1추측을금지한다. 해설physical은할당된기계register문맥이며renamefile최대수로정답을만들지않는다.",
+      "HARD 실행메모리비용과관찰증거선택을함께추론한다. 실제JIT코드를실행했다고기록하지않는다."
+    ],
+    [
+      "computer-architecture.core.isa-execution.fetch-decode-execute.q1",
+      "KEEP",
+      "C 다음PC가맞다. A DRAM전체/B모든GPR/DISA이름변경은분기의필수효과가아니다. 모든rationale/해설은takenbranch와잘못인출한경로폐기를분리한다.",
+      "EASY target≠sequential조건으로유일하다. 실제예측기의임시PC값을묻지않는다."
+    ],
+    [
+      "computer-architecture.core.isa-execution.fetch-decode-execute.q2",
+      "KEEP",
+      "모델/해설의잘못된encoding또는unsupported와execution메모리권한/매핑fault예가맞다. 인출완료를전체완료로일반화하지않는다.",
+      "MEDIUM 두실패경로예,모든reservedencoding이반드시illegaltrap이라는RISC-V비보장으로단정하지않는다."
+    ],
+    [
+      "computer-architecture.core.isa-execution.fetch-decode-execute.q3",
+      "KEEP",
+      "모델/해설의1000branch→1800next→targetfetchpagefault→handler/해결시retry순서가맞다. 공식spec은targetaccess/pagefault를targetinstruction에보고하며그흐름과일치한다.",
+      "HARD takenbranch와새인출실패의다단계순서다. unmapped가반드시복구된다는보장은없고가능조건을명시한다."
+    ],
+    [
+      "computer-architecture.core.isa-execution.addressing-modes.q1",
+      "KEEP",
+      "B1018이decimal24의base합이다. Ahex혼동/C음수offset/Dbase누락이며모든rationale·해설의수치가맞다.",
+      "EASY signedoffset양수값을명시해유일하다. 0x1018주소의실제접근성공을묻지않는다."
+    ],
+    [
+      "computer-architecture.core.isa-execution.addressing-modes.q2",
+      "KEEP",
+      "index7*4=28byte이며accepted세값과해설모두base에더할offset을답한다.",
+      "MEDIUM 배열scale적용, 최종201C주소가아니라offset질문으로모호하지않다."
+    ],
+    [
+      "computer-architecture.core.isa-execution.addressing-modes.q3",
+      "KEEP",
+      "모델/해설의nextpointer첫load→그값base의value두번째load가가능하며각EA/변환/권한/정렬fault는별도다. 항상정렬fault라는단정없이가능성을제시한다.",
+      "HARD 고수준표현과ISA복수접근·실패경계를구별한다. 가능한흐름을요구하므로컴파일러가항상두load라는잘못된보장은없다."
+    ],
+    [
+      "computer-architecture.core.isa-execution.procedure-call-machine-level.q1",
+      "KEEP",
+      "D link명령+ABI약속이맞다. A모든register보존/B모두자동stack저장/Cra불가능은false이며모든rationale를ABI표/JAL로대조했다. 해설s계열보존도정확하다.",
+      "EASY RISC-V표준규약을명시한다. ISA가ra/sp전용register를강제한다는오해를피한다."
+    ],
+    [
+      "computer-architecture.core.isa-execution.procedure-call-machine-level.q2",
+      "KEEP",
+      "모델/해설은호출뒤필요한caller-saved는caller가미리보존,바꾼callee-saved는callee가복원한다. 별도컴파일코드의공통약속이유도설명한다.",
+      "MEDIUM 두책임비교다. q3와유사규칙이나원칙설명과포인터실패응용으로구별된다."
+    ],
+    [
+      "computer-architecture.core.isa-execution.procedure-call-machine-level.q3",
+      "KEEP",
+      "s1을변경미복구하면callee-saved위반으로caller포인터가손상된다는모델/해설이공식ABI와일치한다. 모든명령정상과호출약속정상은별개다.",
+      "HARD라는label에비해단일보존규칙응용이중심이다. 채점/정답문제는없고더많은숨은ABI조건을문항에강제하지않는다."
+    ],
+    [
+      "computer-architecture.core.memory-hierarchy.memory-hierarchy.q1",
+      "KEEP",
+      "A지역성으로속도/비용절충완화가맞다. B동일지연/C주소제거/D모두cache저장은false이며모든rationale/해설이각조건을설명한다.",
+      "EASY 계층필요성의유일답이다."
+    ],
+    [
+      "computer-architecture.core.memory-hierarchy.memory-hierarchy.q2",
+      "KEEP",
+      "모델/해설의최근/인접주소작업집합만유지→hit,나머지큰하위계층/fill조건이정확하다.",
+      "MEDIUM 시간/공간원인으로작은cache효율을설명하며특정hit율보장은없다."
+    ],
+    [
+      "computer-architecture.core.memory-hierarchy.memory-hierarchy.q3",
+      "KEEP",
+      "모델/해설의hitdelay,면적,전력및mapping/작업집합절충이최소세축을충족한다. 무조건큰L1좋음을부정하는근거가충분하다.",
+      "HARD 여러비용축의설계판단이며숫자없는문제라는이유로난이도를자동낮추지않는다."
+    ],
+    [
+      "computer-architecture.core.memory-hierarchy.temporal-spatial-locality.q1",
+      "KEEP",
+      "C연속int배열이인접line을재사용한다. Aregister재사용/B큰무작위/D강제evict는공간재사용효과가작다. 모든rationale/해설이가능성조건을지킨다.",
+      "EASY 직접적인spatial패턴으로C만최선이다. 모든Java객체배열연속payload보장으로일반화하지않는다."
+    ],
+    [
+      "computer-architecture.core.memory-hierarchy.temporal-spatial-locality.q2",
+      "KEEP",
+      "모델/해설은재사용시간이있어도간격내활성집합이크면먼저교체됨을설명한다. locality≠무조건hit가맞다.",
+      "MEDIUM temporal패턴과수용량제약의두조건추론이다."
+    ],
+    [
+      "computer-architecture.core.memory-hierarchy.temporal-spatial-locality.q3",
+      "KEEP",
+      "모델/해설은row연속대column큰stride의라인활용/미스/전송량차이를설명하고prefetch/집합크기예외를조건으로남긴다.",
+      "HARD layout→주소순서→line효율이며row-major를명시했다. Java배열의배열이항상하나의평평한행렬이라는보장은없다."
+    ],
+    [
+      "computer-architecture.core.memory-hierarchy.cache-line.q1",
+      "KEEP",
+      "Boffset내위치/indexset/tagblock이맞다. A역할혼합/C태그만/Dindexbyte및tag불필요는false며모든rationale/해설이tag와replacement를구별한다.",
+      "EASY addressfield기초이며본문offset/set/tag개요를다음organizationTopic으로확장한연결이다. setassoc조건을명시해fullyassoc의index부재와충돌하지않는다."
+    ],
+    [
+      "computer-architecture.core.memory-hierarchy.cache-line.q2",
+      "KEEP",
+      "모델/해설은neighborhit가능성과unusedbytes대역폭/라인수감소/오염·fill비용을양쪽으로설명한다.",
+      "MEDIUM line크기절충이며무조건큰라인더느림/더빠름이아니다."
+    ],
+    [
+      "computer-architecture.core.memory-hierarchy.cache-line.q3",
+      "TARGETED_ENHANCE",
+      "모델/해설의같은line소유권이동/false sharing과분리배치·실측은정확하다. 연결본문은이기법을다음Topic에이름만넘겨소유권상태를직접가르치지않는다.",
+      "HARD 두독립counter대line단위일관성의원인추론이다. 실제거짓공유Concept연결/학습순서를보강할W3-CA-004후보이며정답을고칠필요는없다."
+    ],
+    [
+      "computer-architecture.core.memory-hierarchy.cache-hit-miss.q1",
+      "KEEP",
+      "D conflict가맞다. A다른core무효화/Bfirst-only/Ccapacity-only는반복set충돌전제와다르다. 모든rationale/해설의부족way조건이맞다.",
+      "EASY 반복교체원인과전체여유를명시해분류가유일하다. 초기최초miss도있을수있으나B는only라전체현상을설명못한다."
+    ],
+    [
+      "computer-architecture.core.memory-hierarchy.cache-hit-miss.q2",
+      "KEEP",
+      "모델/해설은유효tag없음→빈자리/교체→필요dirtywrite→fetch/fill/tagstate갱신→재개를설명하며현CPU의겹침도명시한다.",
+      "MEDIUM 상태전이가본문목표에직접연결된다. dirty없으면항상write한다는조건오류가없다."
+    ],
+    [
+      "computer-architecture.core.memory-hierarchy.cache-hit-miss.q3",
+      "KEEP",
+      "A0.01*200=2ns,B0.04*20=0.8ns이다. 모델/해설은동일hit조건의단순추가비용과multi-level/overlap/bandwidth한계를구별한다.",
+      "HARD 미스확률과비용의trade-off계산이다. AMAT.q2/q3의단계식과유사하지만두설계선택이라는다른목표다."
+    ],
+    [
+      "computer-architecture.core.memory-hierarchy.latency-vs-bandwidth.q1",
+      "KEEP",
+      "B시간대data/time이맞다. A항상같은비율/C단위역전/D동일물리량은false다. 모든rationale와explanation이둘을구별한다.",
+      "EASY 지표기초확인이고q2/q3에서원인을응용한다."
+    ],
+    [
+      "computer-architecture.core.memory-hierarchy.latency-vs-bandwidth.q2",
+      "KEEP",
+      "모델/해설은독립요청대기구간중첩→전체완료량증가와의존chain제약을설명한다. 개별latency자체감소를필수로보장하지않는다.",
+      "MEDIUM 동시성대의존의흐름으로본문과직접연결된다."
+    ],
+    [
+      "computer-architecture.core.memory-hierarchy.latency-vs-bandwidth.q3",
+      "KEEP",
+      "20GB/s기준64byte=3.2ns,64MB=3.2ms(십진단위)라100ns시작비용의상대비중결론이맞다. 모델/해설은실제queue/cache가산을명시한다.",
+      "HARD 크기와지연/전송률두항비교다. 정확한MB/MiB수치표현을요구하지않아수ns/수ms답도타당하다."
+    ],
+    [
+      "computer-architecture.core.memory-hierarchy.miss-penalty.q1",
+      "KEEP",
+      "A hit+missrate*additionalpenalty가맞다. B모두0/Cwrong가중/Dclockonly는false며모든rationale가base비용과조건부추가를설명한다.",
+      "EASY 단순singlelayer를명시한다. 실제모든overlap모델로확대하지않는다."
+    ],
+    [
+      "computer-architecture.core.memory-hierarchy.miss-penalty.q2",
+      "KEEP",
+      "1+0.05*80=5ns이며accepted세표현모두값을답한다. 추가penalty80ns의전제가명시되어hit이중계산모호성이없다.",
+      "MEDIUM closed계산으로stable단답에맞다. bare5는질문단위ns맥락에맞는다."
+    ],
+    [
+      "computer-architecture.core.memory-hierarchy.miss-penalty.q3",
+      "KEEP",
+      "L2localmiss10%→8ns추가,L2평균13ns,L1miss5%→0.65ns,base1합1.65ns의모델/해설이맞다. 각항의분모/도달조건도설명한다.",
+      "HARD nested조건부비용이며정확한식을주어local대global미스율ambiguity를없앴다."
+    ],
+    [
+      "computer-architecture.core.multicore-memory.multicore-shared-memory.q1",
+      "KEEP",
+      "B같은physicalmemory/개별state/coherence/order가맞다. Acentralregserial/C모든RMWatomic/Dsync불필요는false며모든rationale/해설이세경계를분리한다.",
+      "EASY 공유memory구조목표의유일답이다."
+    ],
+    [
+      "computer-architecture.core.multicore-memory.multicore-shared-memory.q2",
+      "KEEP",
+      "모델/해설은동일위치copy/쓰기에coherence、다른연산관찰에ordering、분리불가RMW에atomicity를대응시킨다.",
+      "MEDIUM 세책임비교이며언어모델과hardware프로토콜을무조건동일시하지않는다."
+    ],
+    [
+      "computer-architecture.core.multicore-memory.multicore-shared-memory.q3",
+      "TARGETED_ENHANCE",
+      "초기x0이라면모델의두read0→각add1→두write1lostupdate는맞고해설도coherence≠RMWatomic을설명한다. 하지만prompt는초기값을주지않는다. W3-CA-007의전제보강후보다.",
+      "HARD interleaving목표이나초기-1이면두번정상증가도1이므로final1만으로lostupdate를추론못한다. 실행trace의초기조건을명시해야한다."
+    ],
+    [
+      "computer-architecture.core.multicore-memory.private-shared-cache.q1",
+      "KEEP",
+      "D전용lowdelay/공유용량·재사용이맞다. A모든CPU동일/Bcoherence제거/C한core만경합없음은false며모든rationale/해설에workload구현조건이있다.",
+      "EASY 실제대표구조를명시해유일하다."
+    ],
+    [
+      "computer-architecture.core.multicore-memory.private-shared-cache.q2",
+      "KEEP",
+      "모델/해설은이전core의warmworking-set대새corecold와refetch/coherence가정확성만유지함을설명한다.",
+      "MEDIUM migration→지역성손실→비용의상태추론이며항상miss증가라는보장이없다."
+    ],
+    [
+      "computer-architecture.core.multicore-memory.private-shared-cache.q3",
+      "KEEP",
+      "모델/해설의affinitylocality대loadbalance/NUMA/경합절충과miss/utilization/throughput/tail측정이타당하다.",
+      "HARD 성능주장조건과검증방향판단이다. CPU고정설정변경을이번감사에서수행하지않는다."
+    ],
+    [
+      "computer-architecture.core.multicore-memory.cache-coherence-problem.q1",
+      "KEEP",
+      "A같은linecopy최신값조정이맞다. Blanguage전체순서/CDBdurability/DRMW전체atomic은다른계층이며모든rationale/해설이구별한다.",
+      "EASY 해결하는문제를검사한다. coherence가false-sharing성능을없앤다는해설도없다."
+    ],
+    [
+      "computer-architecture.core.multicore-memory.cache-coherence-problem.q2",
+      "KEEP",
+      "모델/해설은Awrite전B무효화/ownership→B다시최신라인요청의원인을설명한다. invalidation모형조건에맞다.",
+      "MEDIUM 단계별권한과oldcopy실패이며프로토콜별message전체를고정하지않는다."
+    ],
+    [
+      "computer-architecture.core.multicore-memory.cache-coherence-problem.q3",
+      "KEEP",
+      "모델/해설은동일atomiccounterline의ownership왕복/무효화·interconnect/직렬화로확장성제한가능과분할집계·지표를제시한다. true-sharing원인을false-sharing으로잘못부르지않는다.",
+      "HARD atomic정확성대traffic성능을분리한다. core32가항상느리거나성능불변인ISA보장은없다."
+    ],
+    [
+      "computer-architecture.core.multicore-memory.coherence-protocol-model.q1",
+      "KEEP",
+      "C유효/최신source/권한추적이맞다. AJava직접정의/B모든CPU네상태/Ddiskdurability는false다. 모든rationale/해설이model/실구현경계를명시한다.",
+      "EASY state의의미를묻고이름암기를과도하게강제하지않는다."
+    ],
+    [
+      "computer-architecture.core.multicore-memory.coherence-protocol-model.q2",
+      "KEEP",
+      "모델/해설은snoop공통traffic관찰대directorysharer/owner메타로참여자선택·필요메시지범위차이를설명한다. 구체topology의존도명시한다.",
+      "MEDIUM 동일보장/다른구현비교이다."
+    ],
+    [
+      "computer-architecture.core.multicore-memory.coherence-protocol-model.q3",
+      "KEEP",
+      "모델/해설은A/BShared→A권한/BInvalid→A수정→B최신source요청/읽기상태의인과가맞다. A또는최신하위source를허용하며DRAM만최신이라는오해가없다.",
+      "HARD 여러상태변화추론이다. 상태/메시지이름의프로토콜차이를명시해정답모호성을줄인다."
+    ],
+    [
+      "computer-architecture.core.multicore-memory.false-sharing.q1",
+      "KEEP",
+      "C독립필드same line/writeownership경쟁이맞다. A반드시값오류/Bsamevarrace필수/D모두readonly왕복은false며모든rationale와해설의line단위를공식Linux관련절과대조했다.",
+      "EASY atleast-write조건이며반드시양쪽writer일때만이라는정답으로확대하지않는다."
+    ],
+    [
+      "computer-architecture.core.multicore-memory.false-sharing.q2",
+      "KEEP",
+      "모델/해설은논리samevalue sharing、언어sync없는충돌의race、독립fieldsame line의성능문제를구별한다. 원자/동기화해도false-sharing가능이맞다.",
+      "MEDIUM 세현상분류와정확성/성능축을검사한다. Javaword-tearing의정확성보장과충돌하지않는다."
+    ],
+    [
+      "computer-architecture.core.multicore-memory.false-sharing.q3",
+      "KEEP",
+      "모델/해설은padding만으로원인확정금지、실제배치/transfer/무효화/core비교/다른lockscheduler배제、memory/pressure절충을제시한다. Linux공식측정·배치관련절과맞다.",
+      "HARD 관측증거·대안원인·비용의다단계판단이다. 실제perf명령실행결과를새로주장하지않는다."
+    ],
+    [
+      "computer-architecture.core.multicore-memory.hardware-memory-reordering.q1",
+      "KEEP",
+      "B preserved밖다른관찰순서가능이맞다. A무조건역순/Ccoherence없을때만/DJMM=ISA는false이며모든rationale/해설을공식RVWMO/JLS와대조했다.",
+      "EASY weak모델의허용범위를검사한다."
+    ],
+    [
+      "computer-architecture.core.multicore-memory.hardware-memory-reordering.q2",
+      "KEEP",
+      "모델/해설은data/ready별도주소、coherence만으로순서부족、ISAorder또는언어HB를맞게설명한다.",
+      "MEDIUM publication의조건추론이다. release한쪽만으로모든소비자read를보장한다는닫힌규칙이없다."
+    ],
+    [
+      "computer-architecture.core.multicore-memory.hardware-memory-reordering.q3",
+      "KEEP",
+      "모델/해설은Java정확성을JMM으로판단하고JIT/ISA구현을구분한다. x86만으로sync필요가사라진다는주장을거부하며필요한volatile/lock/atomic대안도허용한다.",
+      "HARD 계층오해진단이다. 이미다른HB가있는모든flag도반드시volatile이어야한다는무조건규칙을만들지않는다."
+    ],
+    [
+      "computer-architecture.core.performance.latency-throughput.q1",
+      "KEEP",
+      "A 개별 latency/완료량 단위가 맞다. B 동비율 latency 감소, C batch 무조건 개선, D instruction/s와 HTTP request/s 직접 비교는 틀리며 모든 rationale/해설이 경계를 설명한다.",
+      "EASY 유일답이며 단위와 측정 대상이 명확하다."
+    ],
+    [
+      "computer-architecture.core.performance.latency-throughput.q2",
+      "KEEP",
+      "2500/10=250 ops/s이다. acceptedAnswers의 250/ops/s/작업·개 표기와 해설을 확인했다.",
+      "MEDIUM 산술은 간단하지만 측정 단위 목표와 일치하며 모호하지 않다."
+    ],
+    [
+      "computer-architecture.core.performance.latency-throughput.q3",
+      "KEEP",
+      "모델/해설은 batch 고정 비용 분산과 fill/queue 대기로 throughput 40% 증가와 p99 3배가 공존함을 설명하며 SLA·도착률·queue를 함께 선택한다.",
+      "HARD 성능 지표의 trade-off이고 실제 수치를 보편 보장으로 쓰지 않는다."
+    ],
+    [
+      "computer-architecture.core.performance.cpu-time.q1",
+      "KEEP",
+      "C 500-40+20=480ms가 맞다. A 이전 CPU40, B 전체 절반250, D 새 CPU20만 계산은 틀리며 모든 rationale/해설에 unchanged460ms가 있다.",
+      "EASY 다른 시간 유지 전제로 유일답이다."
+    ],
+    [
+      "computer-architecture.core.performance.cpu-time.q2",
+      "KEEP",
+      "모델/해설은 wall의 대기 포함, process/thread CPU 누적, system utilization의 코어·시간 분모를 구별한다.",
+      "MEDIUM 세 측정 경계 비교이며 q1 산술과 목표가 다르다."
+    ],
+    [
+      "computer-architecture.core.performance.cpu-time.q3",
+      "KEEP",
+      "모델/해설은 전체 25%가 특정 core/thread saturation을 배제하지 못하며 요청 CPU/runnable 대기/I/O/하위 호출과 core별 사용률을 분해한다.",
+      "HARD 관측 하나로 병목을 확정하지 않는 추론이 맞다."
+    ],
+    [
+      "computer-architecture.core.performance.instruction-count-cpi-clock.q1",
+      "KEEP",
+      "B 1000×1.5=1500cycles다. A 나눗셈667, C CPI만1.5, D IC=cycles 고정은 틀리며 각 rationale/해설이 평균과 clock 단위를 구별한다.",
+      "EASY 유일답이다."
+    ],
+    [
+      "computer-architecture.core.performance.instruction-count-cpi-clock.q2",
+      "KEEP",
+      "4000/(2×10^9)s=2us이다. acceptedAnswers 네 unit 표기와 해설의 0.5ns/cycle·2000ns를 확인했다.",
+      "MEDIUM 요청 단위가 명확하다."
+    ],
+    [
+      "computer-architecture.core.performance.instruction-count-cpi-clock.q3",
+      "KEEP",
+      "10억×1 대 7억×1.6=11.2억, clock 같아 후자가 12% 더 긴 CPU time이다. 모델/해설은 IC 감소만으로 평가하지 않는다.",
+      "HARD 세 항의 비교이며 앞 본문의 일반 예와 다른 수치 적용이다."
+    ],
+    [
+      "computer-architecture.core.performance.amdahl-law.q1",
+      "KEEP",
+      "D 새 시간0.5+0.5/2=0.75, 속도4/3이 맞다. A 변화 없음/B 전체2배/C4배는 틀리며 rationale/해설에 개선 안 된 구간이 남는다.",
+      "EASY unchanged 전제로 유일답이다."
+    ],
+    [
+      "computer-architecture.core.performance.amdahl-law.q2",
+      "KEEP",
+      "개선25%가0에 접근해도75%가 남아 최대1/0.75=4/3이다. acceptedAnswers 근사/분수와 해설이 맞다.",
+      "MEDIUM q1과 값은 같지만 유한 개선과 무한 상한이라는 목표가 다르다."
+    ],
+    [
+      "computer-architecture.core.performance.amdahl-law.q3",
+      "KEEP",
+      "모델은 0.9+0.1/5=0.92, speedup1.087배와 다음 측정의 큰 비중 DB 원인 검토를 설명한다. 8.7%는 속도 향상이며 지연 감소는 8%로 구별해 읽었다.",
+      "HARD 기준 비율과 재측정·우선순위 목표를 검증한다."
+    ],
+    [
+      "computer-architecture.core.performance.cache-impact.q1",
+      "KEEP",
+      "B 1+0.05×60=4ns다. A1.05/C60/D61은 miss 가중 비용·평균 경계가 틀리며 모든 rationale와 해설을 확인했다.",
+      "EASY miss penalty를 추가 비용으로 쓰는 본문 단순 모델에서 유일하다."
+    ],
+    [
+      "computer-architecture.core.performance.cache-impact.q2",
+      "KEEP",
+      "모델/해설은 architectural IC가 같아도 memory wait stall이 cycles/CPI/CPU time을 늘릴 수 있음을 설명한다. 일부 overlap 가능성을 배제하지 않는다.",
+      "MEDIUM 가능성 설명이며 모든 miss가 동일 stall이라고 단정하지 않는다."
+    ],
+    [
+      "computer-architecture.core.performance.cache-impact.q3",
+      "KEEP",
+      "모델/해설은 압축의 miss30% 감소와 encode/decode/index 추가 IC50%의 절충을 설명하며 cycles/CPI/CPU time을 함께 측정한다.",
+      "HARD miss counter 하나로 전체 성능을 결정하지 않는다."
+    ],
+    [
+      "computer-architecture.core.performance.pipeline-branch-impact.q1",
+      "TARGETED_ENHANCE",
+      "D 0.20×0.05×12=0.12는 정확하다. A0.01은 실패 빈도만, C12는 사건당 비용으로 틀리며 해설도 맞다. B1.2도 오답이나 그 rationale의 모든 분기 실패 해석은 실제2.4라 W3-CA-010이다.",
+      "EASY 유일답은 유지하고 B 계산 근거만 정밀 보강한다. 이전 Topic의 같은 기대값은 W3-CA-003에서 다룬다."
+    ],
+    [
+      "computer-architecture.core.performance.pipeline-branch-impact.q2",
+      "KEEP",
+      "모델/해설은 짧은 cycle 이득보다 mispredict recovery의 CPI 증가가 클 수 있는 조건을 설명한다.",
+      "MEDIUM 깊이 증가가 항상 느림/빠름이라는 보장을 피한다."
+    ],
+    [
+      "computer-architecture.core.performance.pipeline-branch-impact.q3",
+      "KEEP",
+      "모델/해설은 거의 정확한 기존 분기 대비 추가 load/cache miss/IC 비용, 실제 입력의 branch/miss/cycles·동작 동등성 측정을 요구한다.",
+      "HARD branchless를 일반 성능 보장으로 만들지 않는다."
+    ],
+    [
+      "computer-architecture.core.performance.microbenchmark-boundary.q1",
+      "KEEP",
+      "A 결과 미관찰 계산의 DCE 가능성이 맞다. B timer만 변화/C JIT에는 DCE 없음/D 반복으로 오류 자동 해결은 틀리며 모든 rationale/해설에 result 소비/JMH 경계가 있다.",
+      "EASY '특별히 의심'이라는 조건부 질문이며 부작용 있는 모든 계산 제거를 보장하지 않는다."
+    ],
+    [
+      "computer-architecture.core.performance.microbenchmark-boundary.q2",
+      "KEEP",
+      "모델/해설은 JIT·cache/branch history·input·frequency/열의 비교 조건 고정/기록이 코드 효과 귀속에 필요함을 설명한다.",
+      "MEDIUM 실험 설계 목표로 q1 DCE와 다르다."
+    ],
+    [
+      "computer-architecture.core.performance.microbenchmark-boundary.q3",
+      "KEEP",
+      "모델/해설은 parser 국소30%와 endpoint1%의 다른 측정 경계 및 DB/network/queue/GC 비중, 운영 추적·대표 부하의 재검증을 설명한다.",
+      "HARD 국소 효과의 종단 간 적용 조건이며 작은 비중 때문에 모순이 아니다."
+    ],
+    [
+      "computer-architecture.core.pipeline-ilp.pipeline-stages.q1",
+      "KEEP",
+      "C독립명령stage겹침이맞다. A한명령동시모든stage/Bstage제거1cycle/D모든경우CPI1은false며모든rationale/해설이fill/latency와무hazard전제를설명한다.",
+      "EASY 충분히채워짐/무hazard조건으로유일하다."
+    ],
+    [
+      "computer-architecture.core.pipeline-ilp.pipeline-stages.q2",
+      "KEEP",
+      "모델/해설은완료간격과한명령전체stage·regoverhead를분리해latency감소를무조건보장하지않는다.",
+      "MEDIUM throughput대latency원인을검사하며q1을기계적으로재진술한닫힌정답이아니다."
+    ],
+    [
+      "computer-architecture.core.pipeline-ilp.pipeline-stages.q3",
+      "KEEP",
+      "max170ps+20ps=190ps이며모델/해설의분할후다른stage병목/overhead/hazard비용이타당하다. 두배무보장이라는결론에근거가있다.",
+      "HARD 타이밍계산과분할절충을결합한다. 4stage교육설계라본문대표5stage와충돌하지않는다."
+    ],
+    [
+      "computer-architecture.core.pipeline-ilp.pipeline-hazards.q1",
+      "KEEP",
+      "A r1생산→소비RAW가맞다. B읽기후쓰기/C두쓰기/DPC해저드는이명령쌍과다르며모든rationale와해설이그방향을설명한다.",
+      "EASY 명령어피연산자가명확하다. 시간상stall이실제발생하는지는pipeline조건에따른다는해설이적절하다."
+    ],
+    [
+      "computer-architecture.core.pipeline-ilp.pipeline-hazards.q2",
+      "KEEP",
+      "모델/해설의자원부족→구성/스톨,미준비operand→forward/stall/OOO,PC미확정→prediction/recovery가올바르다.",
+      "MEDIUM 세원인과대응의mapping이며단순세이름만대답하는것으로모델을구성하지않았다."
+    ],
+    [
+      "computer-architecture.core.pipeline-ilp.pipeline-hazards.q3",
+      "KEEP",
+      "앞읽기전뒤쓰기의WAR이며physicalmapping으로이름충돌을제거하고RAW생산값의존은남는다는모델/해설이맞다.",
+      "HARD 이름대값/실행재정렬의상태추론이다. q1RAW와다른목표며뒤OOO심화설명과연결되는복습이다."
+    ],
+    [
+      "computer-architecture.core.pipeline-ilp.forwarding-and-stall.q1",
+      "KEEP",
+      "D준비결과forward가맞다. A생산자재실행으로미준비소비보정/B가능해도무조건WB대기/CRAWrename제거는잘못이다. 모든rationale/해설은값준비와경로를구분한다.",
+      "EASY forward가능교육조건의기법선택이다. forwarding없는CPU에서D구현을보장한다는질문이아니다."
+    ],
+    [
+      "computer-architecture.core.pipeline-ilp.forwarding-and-stall.q2",
+      "KEEP",
+      "모델/해설은load MEM완료후값대consumer EX필요시점이엇갈리므로bubble필요,stall수구현/메모리지연의존을정확히제시한다.",
+      "MEDIUM 고전5stage조건으로scope를고정하고모든CPU의1cycle로일반화하지않는다."
+    ],
+    [
+      "computer-architecture.core.pipeline-ilp.forwarding-and-stall.q3",
+      "KEEP",
+      "모델/해설은미도착load값을forward할수없음과의존2개대기/독립3개선행가능성을구별한다. OOO는일부지연을숨길뿐의존연쇄를없애지않는다.",
+      "HARD ready조건·독립/의존·두기법한계판단이다. 자원부족시반드시3개완료된다는단정은없다."
+    ],
+    [
+      "computer-architecture.core.pipeline-ilp.branch-prediction.q1",
+      "KEEP",
+      "D direction=taken판단,target=nextfetch가맞다. A항상정확/B역할역전/Cretire후만사용은false이며모든rationale와해설이명확하다.",
+      "EASY 방향과주소의두정보를구별한다. unconditional모든분기를direction필수로일반화하지않는다."
+    ],
+    [
+      "computer-architecture.core.pipeline-ilp.branch-prediction.q2",
+      "KEEP",
+      "모델/해설의prediction→speculativefetch/execute→틀림시architectural반영방지→올바른PC/재충전비용이맞다.",
+      "MEDIUM 복구상태응용으로앞branch-control-flow.q2와유사하지만이Concept의추측/확정경계를직접확인한다. 모든microarchitectural흔적제거는요구하지않는다."
+    ],
+    [
+      "computer-architecture.core.pipeline-ilp.branch-prediction.q3",
+      "TARGETED_ENHANCE",
+      "0.20*0.05*12=0.12cycle/instruction계산과CPI영향의모델/해설은정확하다. 앞branch-control-flow.q3와같은분기비율*실패율*penalty목표를숫자만바꿔반복한다.",
+      "HARD표시두문항이동일계산이며새상태추론이작다. 선택적P2로기존q3목표재조정후보다(W3-CA-003). 정답오류로확대하지않는다."
+    ],
+    [
+      "computer-architecture.core.pipeline-ilp.superscalar-out-of-order.q1",
+      "KEEP",
+      "B독립작업병렬/readyOOO가맞다. A모든의존없음/C완료순공개/Dcachemiss면모두대기는false다. 모든rationale는자원/ROB용량조건과retire의정밀상태를구별한다.",
+      "EASY 두구조의역할분리이며ISA가특정retire회로를의무화한다는보기는아니다."
+    ],
+    [
+      "computer-architecture.core.pipeline-ilp.superscalar-out-of-order.q2",
+      "KEEP",
+      "모델/해설은WAR/WAW이름재사용대RAW실제생산값의존을구별한다. physicalreg분리후에도생산값대기가남는결론이맞다.",
+      "MEDIUM hazard.q3의WAR시나리오를일반원칙으로확장한관련복습이며별도심각중복으로판정하지않는다."
+    ],
+    [
+      "computer-architecture.core.pipeline-ilp.superscalar-out-of-order.q3",
+      "KEEP",
+      "모델/해설은readyB/C선행가능,D의RAW대기,A예외에서뒤결과architectural미반영과프로그램순retire의precise예외를설명한다. 실제읽은MIT ROB/commit구분과일치한다.",
+      "HARD 의존·병렬실행·예외확정의다단계판단이다. cache흔적이나장치외부부수효과의완전rollback을보장하지않는다."
+    ],
+    [
+      "computer-architecture.core.virtual-memory-hardware.virtual-physical-address.q1",
+      "KEEP",
+      "A각PT따른다른frame가능이맞다. B같은수치=물리동일/CVA커널전용/D소프트웨어PA미리알아야함은false다. 모든rationale와해설은공유mapping가능성도남긴다.",
+      "EASY 현재주소공간조건이다. 공유의도는OS매핑정책도포함하며프로세스가명시적으로요청해야만공유라는보장으로읽지않는다."
+    ],
+    [
+      "computer-architecture.core.virtual-memory-hardware.virtual-physical-address.q2",
+      "KEEP",
+      "4096=2^12와VPN→PFN/offset유지의모델·해설이맞다.",
+      "MEDIUM byte/4KiB조건으로주소분해가명확하다. 다른pagesize도같은12bit라는일반화는없다."
+    ],
+    [
+      "computer-architecture.core.virtual-memory-hardware.virtual-physical-address.q3",
+      "KEEP",
+      "모델/해설은예약/미접근/demandpaging와RSS상주·공유/file계산차이를설명한다. 모든VA에즉시frame필수아님이맞다.",
+      "HARD JVM예약대OS상주측정경계응용이다. 가상size작으면항상RSS작음이나모든reservedzeroRAM이라는단정은없다."
+    ],
+    [
+      "computer-architecture.core.virtual-memory-hardware.mmu.q1",
+      "KEEP",
+      "B현재mapping변환/권한집행이맞다. A페이지회수policy/CTLBDisk강제/Dcachevictimpolicy는다른책임이다. 모든rationale/해설도그경계를설명한다.",
+      "EASY MMU역할을검사한다. TLBmiss의refill주체조건은ConceptW3-CA-006으로별도한정한다."
+    ],
+    [
+      "computer-architecture.core.virtual-memory-hardware.mmu.q2",
+      "KEEP",
+      "모델/해설은권한비교/fault발생대OS원인해석/복구·signalpolicy를구별한다. MMU가애플리케이션retry나victim을택하지않는다.",
+      "MEDIUM 층별실패책임으로질문과연결된다."
+    ],
+    [
+      "computer-architecture.core.virtual-memory-hardware.mmu.q3",
+      "KEEP",
+      "같은PFN에A RO/B RW매핑을따로두어다른쓰기결과를줄수있다는모델/해설이맞다. 물리페이지전역단일권한오해를반박한다.",
+      "HARD 공유frame/독립mapping/currentcontext를함께추론한다."
+    ],
+    [
+      "computer-architecture.core.virtual-memory-hardware.page-table-walk.q1",
+      "KEEP",
+      "C순회/유효매핑→fill/재개가맞다. A VA그대로버스/Balwaysfatal/D반드시disk는false이며B rationale의hardware또는softwarewalker언급도읽었다.",
+      "EASY valid/allowed조건이명시됐다. 단순TLBmiss와disk/pagefault를동일시하지않는다."
+    ],
+    [
+      "computer-architecture.core.virtual-memory-hardware.page-table-walk.q2",
+      "KEEP",
+      "모델/해설의여러PTE조회와cache/PWC/hugeupperleaf때문에4level≠항상DRAM4회가실제Linux문서관련절과맞다.",
+      "MEDIUM 논리조회대물리DRAM접근분리로구현의존성을경계한다."
+    ],
+    [
+      "computer-architecture.core.virtual-memory-hardware.page-table-walk.q3",
+      "KEEP",
+      "모델/해설은translationmiss→walk대datamiss→lowerfetch、page크기/배치/집합대응과분리된counter를제시한다. cache와walk접근겹침가능성을부정하는cycle순서보장은아니다.",
+      "HARD 두원인의실패경로/증거/개선대상판단이다."
+    ],
+    [
+      "computer-architecture.core.virtual-memory-hardware.tlb.q1",
+      "TARGETED_ENHANCE",
+      "Ctranslation+permission은맞다. A/Bdata복사/D전체PT태그없이복제는false이며모든rationale가역할을설명한다. explanation에는문항에없는512전제계산이갑자기나온다.",
+      "EASY 종류확인목표에맞춰LEX-005기존선택적해설정밀화를재확인한다. 새발견으로중복등록하지않고q3수치목표는유지한다."
+    ],
+    [
+      "computer-architecture.core.virtual-memory-hardware.tlb.q2",
+      "KEEP",
+      "모델/해설의hit캐시translation/permission、miss매핑검색、valid이면재개대mapping/permissionfault구별이맞다.",
+      "MEDIUM 경로차이확인이다. miss검색의hardware/software수행방식은본문scope보강에서구별한다."
+    ],
+    [
+      "computer-architecture.core.virtual-memory-hardware.tlb.q3",
+      "KEEP",
+      "512*4KiB=2MiB、512*2MiB=1GiB계산과대형page범위의모델/해설이맞다. size별TLB구조차이를명시한다.",
+      "HARD 이론reach를두size로계산/적용하되실CPU동일512entry를보장하지않는조건이명확하다."
+    ],
+    [
+      "computer-architecture.core.virtual-memory-hardware.multi-level-page-table.q1",
+      "TARGETED_ENHANCE",
+      "D미사용범위하위테이블미생성이맞다. Afault/permission제거/B모든VA한frame/C0delay는false이며모든rationale는맞다. explanation후반은이원인을설명하지않고hugeupperleaf로이동한다.",
+      "EASY sparse공간의원인목표와직접맞도록해설을보강할W3-CA-005다. D정답이나보기를바꿀필요는없다."
+    ],
+    [
+      "computer-architecture.core.virtual-memory-hardware.multi-level-page-table.q2",
+      "KEEP",
+      "모델/해설의flat많은빈entry대사용범위만하위할당/다단계조회비용과TLB완화가맞다.",
+      "MEDIUM 공간대lookup절충을검사한다. 특정5level고정이나모든계층의DRAM조회횟수를약속하지않는다."
+    ],
+    [
+      "computer-architecture.core.virtual-memory-hardware.multi-level-page-table.q3",
+      "KEEP",
+      "모델/해설은ISA가upperleaf큰범위매핑을허용하는조건→lower없는earlyfinish/entry절약·큰단위비용을설명한다.",
+      "HARD mapping상태/순회종료/메모리비용연결이며모든아키텍처지원으로일반화하지않는다."
+    ],
+    [
+      "computer-architecture.core.virtual-memory-hardware.page-size-huge-page.q1",
+      "KEEP",
+      "B큰reach/page-table부담감소가능이맞다. Aline자동커짐/Ccachemiss·NUMA제거/D모든OS항상확보는false다. 모든rationale/해설의allocation경계가공식절과일치한다.",
+      "EASY translation최적화의대표이유다."
+    ],
+    [
+      "computer-architecture.core.virtual-memory-hardware.page-size-huge-page.q2",
+      "KEEP",
+      "모델/해설은reach/PT혜택과internalwaste/정렬연속물리확보·단편화조건을구별한다.",
+      "MEDIUM 양면비교이며디스크영속단위를page크기와동일시하지않는다."
+    ],
+    [
+      "computer-architecture.core.virtual-memory-hardware.page-size-huge-page.q3",
+      "KEEP",
+      "모델/해설은병목이translation아닐가능성、HugeTLB/THP의다른OS계약、TLBwalk/RSS/PT/fault/GC/throughput/p95/99측정을제시한다. 큰힙만으로무조건켜라고하지않는다.",
+      "HARD 크기대병목·메모리정책·측정판단이다. 특정OS설정실행을감사에서수행하지않았다."
+    ]
+  ],
+  "findings": [
+    {
+      "id": "W3-CA-002",
+      "severity": "P0",
+      "contentKeys": [
+        "computer-architecture.core.datapath-control.control-unit.q3"
+      ],
+      "file": "content/computer-architecture/datapath-control/questions.json",
+      "quote": "메모리 장치는 자신에게 전달된 주소를 정상적으로 읽을 수 있으므로 엉뚱한 위치의 값을 load하거나 보호·페이지 fault가 발생할 수 있다.",
+      "problem": "질문은 이후 메모리 읽기가 정상 수행된다는 전제를 준다. 모델은 그 조건 아래 잘못된 위치의 값 읽기와 함께 보호/페이지 fault도 결과로 제시해 이미 주어진 정상 접근 조건을 벗어난다. 주소 계산과 제어 오류의 핵심 설명은 정확하지만 조건을 좁혀 읽는 학습자를 혼란시킬 수 있다.",
+      "action": "현재 전제를 유지하면 모델의 결과를 0x1080의 엉뚱한 값 읽기로 한정한다. fault 설명을 남기려면 정상 접근 전제를 제거했을 때의 별도 경우로 명시한다. 정확한 0x1020/0x1080 계산과 본문, 다른 선택지는 유지한다.",
+      "followupIssues": [
+        201
+      ]
+    },
+    {
+      "id": "W3-CA-009",
+      "severity": "P2",
+      "contentKeys": [
+        "computer-architecture.core.device-io.interrupt-exception-trap"
+      ],
+      "file": "content/computer-architecture/device-io/interrupt-exception-trap.md",
+      "quote": "어떤 권한 수준로 진입하는지",
+      "problem": "기술적 구별은 정확하지만 '권한 수준로'는 한국어 조사 오류다. 다른 표현을 재작성할 근거는 없다.",
+      "action": "해당 조사만 '권한 수준으로'로 정밀 수정한다. 기존 trap 분류·도식·문항은 유지한다.",
+      "followupIssues": [
+        201
+      ]
+    },
+    {
+      "id": "W3-CA-001",
+      "severity": "P1",
+      "contentKeys": [
+        "computer-architecture.core.isa-execution.procedure-call-machine-level"
+      ],
+      "file": "content/computer-architecture/isa-execution/procedure-call-machine-level.md",
+      "quote": "필요하면 register / local state를 stack에 보존",
+      "problem": "학습 목표는 스택 포인터·반환 주소·인자의 호출·복귀 상태 변화다. 본문은 ra/a0-a7과 보존 주체, 재귀 frame 이름은 설명하지만 SP의 frame 할당·중첩 호출·복귀 복원을 설명하지 않는다. 프레임 수명과 stack 위치 변화의 핵심 학습 근거가 빠져 있다.",
+      "action": "RISC-V 표준 ABI를 명시한 작은 non-leaf 예에 entry SP → 정렬된 frame 할당(SP 감소) → ra/s 보존과 nested call → 값 복원 → entry SP 복구의 상태 표/timeline을 추가한다. 기존 정확한 ISA/ABI 분리와 leaf 생략 가능성은 유지하며 모든 함수가 동일 frame을 만든다고 일반화하지 않는다. 기존 문항은 정확하므로 새 문항 생성이나 전체 재작성은 불필요하다.",
+      "followupIssues": [
+        201
+      ]
+    },
+    {
+      "id": "W3-CA-004",
+      "severity": "P1",
+      "contentKeys": [
+        "computer-architecture.core.memory-hierarchy.cache-line.q3"
+      ],
+      "file": "content/computer-architecture/memory-hierarchy/questions.json",
+      "quote": "이것이 거짓 공유(false sharing)다.",
+      "problem": "문항과 정확한 모델은 두 코어의 line 소유권 이동과 배치 개선을 요구한다. 단일 연결 cache-line 본문은 line 이동/크기와 메타데이터 개요를 가르치며 거짓 공유를 뒤 Topic에 이름만 넘긴다. 소유권의 상태 변화를 배우는 직접 Concept 연결과 학습 순서 근거가 부족하다.",
+      "action": "기존 q3에 직접 전수 검토한 computer-architecture.core.multicore-memory.false-sharing을 추가 연결하고 해당 심화 Topic 이후의 응용임을 명시한다. 실제 본문은 line 소유권 이동과 padding/분할의 비용, 증거 확인을 설명해 문항의 직접 학습 근거가 된다. 정확한 모델과 입문 cache-line 본문은 유지하며 새 문항이나 중복 강의는 만들지 않는다.",
+      "followupIssues": [
+        201
+      ]
+    },
+    {
+      "id": "W3-CA-007",
+      "severity": "P1",
+      "contentKeys": [
+        "computer-architecture.core.multicore-memory.multicore-shared-memory.q3"
+      ],
+      "file": "content/computer-architecture/multicore-memory/questions.json",
+      "quote": "두 스레드가 동일한 `int x`에 대해 각각 `x++`를 한 번 수행했다.",
+      "problem": "문항은 최종1을 lost update 사례로 설명하게 하지만 초기값을 주지 않는다. 모델은 초기0을 추가 전제로 두어 두read0→write1을 만든다. 초기-1이라면 두번 정상 증가만으로도1이므로 최종값1만으로 제시한 갱신 손실 원인을 추론할 수 없다. 모델의 interleaving 자체는 초기0에서 정확하다.",
+      "action": "prompt에 초기x=0과 원자적RMW가 아닌 교육용 read/add/write 모형을 명시한다. 정확한 두read0→두write1, coherence와RMW원자성의구분은 유지한다. 언어의 x++가 모든CPU에서항상동일한명령3개로내려간다는보장은하지않는다.",
+      "followupIssues": [
+        201
+      ]
+    },
+    {
+      "id": "W3-CA-008",
+      "severity": "P2",
+      "contentKeys": [
+        "computer-architecture.core.multicore-memory.private-shared-cache"
+      ],
+      "file": "content/computer-architecture/multicore-memory/private-shared-cache.md",
+      "quote": "절충**로 본다.",
+      "problem": "마지막 문장의 절충로는 조사가 자연스럽지 않다. 기술적 비교와 도식, 연결 문항은 정확하며 사소한 한국어 표현 문제다.",
+      "action": "해당 표현만 절충으로 본다로 수정한다. 본문 전체 재작성이나 기존 이미지/문항 수정은 불필요하다.",
+      "followupIssues": [
+        201
+      ]
+    },
+    {
+      "id": "W3-CA-010",
+      "severity": "P0",
+      "contentKeys": [
+        "computer-architecture.core.performance.pipeline-branch-impact.q1"
+      ],
+      "file": "content/computer-architecture/performance/questions.json",
+      "quote": "`1.2`는 20%의 분기마다 모두 예측에 실패한다고 본 계산에 가깝다.",
+      "problem": "정답 D=0.12는 맞지만 B의 rationale은 모든 분기 실패를 가정한 값을1.2에 가깝다고 설명한다. 실제 그 가정의 값은0.20×1×12=2.4이다. 1.2는 주어진5% 대신50% 실패율을 쓰면 나오는 값이어서 오답의 오류 경로를 잘못 가르친다.",
+      "action": "B rationale만 '실패율5%를50%로 잘못 적용한 값'처럼 실제1.2를 만드는 계산으로 정밀 수정한다. 정답·다른 rationale·해설은 유지한다.",
+      "followupIssues": [
+        201
+      ]
+    },
+    {
+      "id": "W3-CA-003",
+      "severity": "P2",
+      "contentKeys": [
+        "computer-architecture.core.pipeline-ilp.branch-prediction.q3"
+      ],
+      "file": "content/computer-architecture/pipeline-ilp/questions.json",
+      "quote": "명령어당 예측 실패는 0.20 × 0.05 = 0.01회다.",
+      "problem": "이 문항은 20% 분기·5% 실패·12cycle의 추가 CPI를 계산한다. 앞 Topic의 computer-architecture.core.datapath-control.branch-control-flow.q3는 20%·10%·12cycle을 같은 식으로 계산한다. 두 HARD 문항의 정답은 정확하지만 같은 학습 목표를 숫자만 바꿔 반복해 심화 상태 추론의 다양성이 작다. 핵심 목표가 검증됐으므로 선택적 P2다.",
+      "action": "앞 Topic의 비용 입문 계산을 유지하고 기존 branch-prediction.q3만 방향 예측 성공/목적지 예측 실패 또는 서로 다른 분기 패턴의 실행·폐기 흐름을 비교하는 응용으로 최소 재구성한다. 본문에 이미 있는 방향/대상·추측/확정 목표를 재사용하며 새 문항이나 예측기 세부 강의는 강제하지 않는다.",
+      "followupIssues": [
+        201
+      ]
+    },
+    {
+      "id": "W3-CA-005",
+      "severity": "P1",
+      "contentKeys": [
+        "computer-architecture.core.virtual-memory-hardware.multi-level-page-table.q1"
+      ],
+      "file": "content/computer-architecture/virtual-memory-hardware/questions.json",
+      "quote": "아키텍처가 상위 페이지 테이블 엔트리가 큰 물리 주소 범위를 직접 매핑하는 말단 엔트리 역할을 허용하면 해당 범위에 더 낮은 단계의 테이블이 필요하지 않다.",
+      "problem": "q1은 희소 가상 주소 공간에서 미사용 범위의 하위 테이블을 만들지 않는 이유를 묻고 정답 D 및 모든 rationale는 정확하다. explanation은 flat 테이블의 낭비를 말한 뒤 대형 페이지 upper-leaf의 별도 메커니즘으로 넘어가 정답의 결정적 원인을 설명하지 않는다. 대형 페이지 지원 없이도 희소 테이블의 장점은 성립한다.",
+      "action": "q1 해설 후반을 미사용 상위 entry에는 하위 테이블을 할당하지 않아 빈 범위의 PTE 저장 공간을 아낀다는 원인으로 맞춘다. 대형 페이지 upper-leaf 설명은 이미 그 조건을 묻는 q3에 유지한다. 정확한 D와 모든 보기, 본문은 변경할 필요가 없다.",
+      "followupIssues": [
+        201
+      ]
+    },
+    {
+      "id": "W3-CA-006",
+      "severity": "P1",
+      "contentKeys": [
+        "computer-architecture.core.virtual-memory-hardware.mmu",
+        "computer-architecture.core.virtual-memory-hardware.page-table-walk",
+        "computer-architecture.core.virtual-memory-hardware.tlb"
+      ],
+      "file": "content/computer-architecture/virtual-memory-hardware/page-table-walk.md",
+      "quote": "TLB에 필요한 주소 변환이 없다면 MMU는 페이지 테이블에서 가상 페이지의 매핑을 찾아야 한다.",
+      "problem": "세 본문은 TLB miss → MMU/page-table walk → fill을 일반 흐름으로 제시하면서 하드웨어 walker가 있는 대표 모델이라는 범위를 명시하지 않는다. Linux MIPS R4000 refill 경로는 소프트웨어가 PT entry를 읽고 TLB에 기록한 뒤 trap에서 복귀한다. 해당 소스는 hardware walker 지원 경로도 조건부로 구별하므로 모든 MMU/ISA에서 직접 하드웨어 순회가 이뤄진다는 설명은 과도하다. q1 rationale는 이미 hardware/software 가능성을 정확히 언급한다.",
+      "action": "세 본문의 동일 도식·설명을 하드웨어 관리 TLB/page walker가 있는 대표 방식으로 한정하고, 소프트웨어 관리 TLB는 miss/refill handler가 매핑 조회·엔트리 설치를 수행할 수 있다는 짧은 경계를 추가한다. TLB miss 자체와 디스크/page fault를 동일시하지 않는 기존 정확한 설명은 유지한다. 소프트웨어 refill 구현 튜토리얼이나 모든 문항 재작성은 불필요하다.",
+      "followupIssues": [
+        201
+      ]
+    }
+  ],
+  "carriedForwardFindings": [
+    {
+      "id": "LEX-003",
+      "severity": "P2",
+      "contentKeys": [
+        "computer-architecture.core.virtual-memory-hardware.multi-level-page-table"
+      ],
+      "file": "content/computer-architecture/virtual-memory-hardware/multi-level-page-table.md",
+      "quote": "displayOrder: 60",
+      "problem": "초기 LEX-003의 canonical60/Curriculum50 불일치를 전체 본문 검토 후 재확인했다. TLB40→현재60→huge70 상대 순서는 정상이다. 새로운 학습 순서 오류나 새 발견으로 중복 집계하지 않는다.",
+      "action": "기존 #201의 의도 확인 후 order metadata만 일치시키는 최소 범위를 유지한다. 초기 발견/근거는 수정하거나 삭제하지 않는다.",
+      "followupIssues": [
+        201
+      ]
+    },
+    {
+      "id": "LEX-005",
+      "severity": "P2",
+      "contentKeys": [
+        "computer-architecture.core.virtual-memory-hardware.tlb.q1"
+      ],
+      "file": "content/computer-architecture/virtual-memory-hardware/questions.json",
+      "quote": "4KiB 페이지에서는 512 × 4KiB = 2MiB, 2MiB 페이지에서는 512 × 2MiB = 1GiB의 가상 주소 범위를 같은 엔트리 수로 포함할 수 있다.",
+      "problem": "초기 LEX-005를 모든 선택지와 해설을 읽은 뒤 재확인했다. q1은 캐시하는 대상 종류를 묻는데 해설은 512entry 전제 없이 수치 계산으로 넘어간다. 정답 C와 수치 자체는 정확하며 새 발견으로 중복 집계하지 않는다.",
+      "action": "기존 #201 범위대로 q1 해설을 data/translation/permission 차이에 집중시키고 수치 계산은 전제를 준 q3에 유지한다. 초기 발견은 변경하지 않는다.",
+      "followupIssues": [
+        201
+      ]
+    }
+  ],
+  "sourceHashes": {
+    "computer-architecture.core.cache-organization.cache-friendly-access": "6a8c31bee5759e90df343119b06cdf869eaf329a0485fd025917b732cd0d8245",
+    "computer-architecture.core.cache-organization.cache-friendly-access.q1": "0d01271d2fb2888d689cb8a3545c9791ed28c596fd65d9ebb9e7265ec9dadfc1",
+    "computer-architecture.core.cache-organization.cache-friendly-access.q2": "770086deeda9f4bc4be6be59da2a70d61221a757581607a89681b85beca343e9",
+    "computer-architecture.core.cache-organization.cache-friendly-access.q3": "50b0d0ad9547db453cc08a55ab31d202e402a2e2ac2fda2ff128ece83dca2469",
+    "computer-architecture.core.cache-organization.direct-mapped-cache": "e4bd27233a9a1f78e06605fb6a7aba0df68cdc29ca684273b4da11de00a370ae",
+    "computer-architecture.core.cache-organization.direct-mapped-cache.q1": "0650a85de8811f8727a5f642ae64dad7bad669a97cb566441b61d7a38fb08734",
+    "computer-architecture.core.cache-organization.direct-mapped-cache.q2": "dcd307be4e82b1ec584e677296bdaa87b51df5662865617f6a3996ad51e9983a",
+    "computer-architecture.core.cache-organization.direct-mapped-cache.q3": "42831b170daeb9cb2eff7759c898d79e3d7c7bbd04aa1271ada1eebea593af56",
+    "computer-architecture.core.cache-organization.fully-associative-cache": "7daf37d232c9bb9626c56bf056b0fc245bad22b1989e5c5a7ebeb9f0998cc93a",
+    "computer-architecture.core.cache-organization.fully-associative-cache.q1": "d0cfff4353d8f4d61e1481c7868d02c6aa60a9c71ea9e8a9a653f970131420ee",
+    "computer-architecture.core.cache-organization.fully-associative-cache.q2": "daa6b7519825be102eb03ed37504a497e2b71cae3d294a90ebf599bb5c773b49",
+    "computer-architecture.core.cache-organization.fully-associative-cache.q3": "324cc71c6ea9c890e5d6081ddf67d0a619d774728435437b12086cea7ea4deec",
+    "computer-architecture.core.cache-organization.index-tag-offset": "e312e858475fd7ae8c58f08b60cc863f827600faca55d04f32d140a18e02ccfe",
+    "computer-architecture.core.cache-organization.index-tag-offset.q1": "43d43be6e2298ab029eeab88b5b086c5c237af09d844c1ce6f2028e1a0cc7a2c",
+    "computer-architecture.core.cache-organization.index-tag-offset.q2": "78500f251424c51b6f30d68e0a3a8de7d81648eccb98f67d37f8dddc92e45c7a",
+    "computer-architecture.core.cache-organization.index-tag-offset.q3": "8684a85a533fb16c043c4ab4f43b51fdd35869b52875cef328d1a4c553766dab",
+    "computer-architecture.core.cache-organization.replacement-policy": "125ea3c5a1213556f2c3a4f9b7140a81adbcc904f331c46d432cb590ee50ddf1",
+    "computer-architecture.core.cache-organization.replacement-policy.q1": "d2f2de358ad56285dfe3f7149f8d42fd5fe606adff1abb2cdf5ed14cf1fafcf6",
+    "computer-architecture.core.cache-organization.replacement-policy.q2": "8417236eba231433b60ea8b8ea40584a7013ace60572bf868477a77eb18cf7f5",
+    "computer-architecture.core.cache-organization.replacement-policy.q3": "f298a5c24efa3bf66ef3cf54fc37a85b0ed52b3e5eed98ac61d7ffddfab58a87",
+    "computer-architecture.core.cache-organization.set-associative-cache": "f276f1f936bc11a5c82b4d5fb494099fa7373ce7c382770d51bdd8d0611b6d90",
+    "computer-architecture.core.cache-organization.set-associative-cache.q1": "d3a7c98f3712d78b4ab09d7af290762d20d4fa0482eb4e59439ce0cab9b7f174",
+    "computer-architecture.core.cache-organization.set-associative-cache.q2": "80a541fe27327e4614950bc9e712dc078a5d3aa6e79faa84928041faf5af5530",
+    "computer-architecture.core.cache-organization.set-associative-cache.q3": "72d579e46ccfaf0ad96262fc1a63974ebf5a398747a3160bdfec4bd811bc3209",
+    "computer-architecture.core.cache-organization.write-allocate": "746a3b0d21fff135bff26f00dccc34bf3b9e66d9529021614c11c10791857112",
+    "computer-architecture.core.cache-organization.write-allocate.q1": "78e6a841b2c2b7134792410887f945f4567f022b0be664d1cc909c6eaee22dad",
+    "computer-architecture.core.cache-organization.write-allocate.q2": "551025353a570f38b179e549db2d0a3d1d68f37305bccf070b1b932e01e107fc",
+    "computer-architecture.core.cache-organization.write-allocate.q3": "863fda237f33f28464f0636dea6c0f45aaab30b866db85aae740fd7ea52d8a5c",
+    "computer-architecture.core.cache-organization.write-through-write-back": "21e9241ad768fd85db226987aed7bd2d6fb7edb72bb20da59797cf51f5474712",
+    "computer-architecture.core.cache-organization.write-through-write-back.q1": "74d192aa9588278dd6f408d54c3a774e9be191cafbee1efa17e03501fd1a6e74",
+    "computer-architecture.core.cache-organization.write-through-write-back.q2": "34a4a235192d229815cecd17a27f51cb5a6adaa8ea3cec4696d8946f67407c1e",
+    "computer-architecture.core.cache-organization.write-through-write-back.q3": "e9f907e1c02e89a4f1c391bc6ec3a7704daaecbdeeeec31baef4a7174182ff60",
+    "computer-architecture.core.data-representation.binary-hex": "70ff2b962aabc230ea68269eff1585b9243992c960191a3b045cfe490e1469af",
+    "computer-architecture.core.data-representation.binary-hex.q1": "9c67bc246876b5eddebaa485c49a3828c73470116d6361414638530e837f7bd0",
+    "computer-architecture.core.data-representation.binary-hex.q2": "09779408023797c89ec817d4569b8e735b3416f4d01a7bc3b4e52e24df749930",
+    "computer-architecture.core.data-representation.binary-hex.q3": "bee65640316c485abb5d0b31149dff2b805fe3858c6ae9322cecfb7e6439ea92",
+    "computer-architecture.core.data-representation.bit-byte-word": "ac8827163f7177243b78e84631f80356d4a0de7f8f285f6cd7dc178503356aef",
+    "computer-architecture.core.data-representation.bit-byte-word.q1": "df5816cfc2ee86f8a6a30f6a361db7d9ada8b3c576d4cc938f61847c82f31a2e",
+    "computer-architecture.core.data-representation.bit-byte-word.q2": "989f8ea5c8398ce1f28ca575053914ce3f4bee1247975b24060f1344af26a3f8",
+    "computer-architecture.core.data-representation.bit-byte-word.q3": "168c0fefeb2c7a2833049e480f063cd6c63617b3d7785d531a380fbb105f1cbe",
+    "computer-architecture.core.data-representation.endianness": "880a464353a0cdb36408130abe2237af61d5ee534f0c997305c4cc49b8c206c2",
+    "computer-architecture.core.data-representation.endianness.q1": "8739f433dcf653d96b987d76cc8cad14d9c6fa36187bda3645e19c8f516d43a4",
+    "computer-architecture.core.data-representation.endianness.q2": "73fa110e94fdc8dde95aef2460e53654de37698fba5d51e1c597feb8e9cb35b7",
+    "computer-architecture.core.data-representation.endianness.q3": "83cd2182722c03204d4371642f1840c04554e93e14ad9054954b097069a7f311",
+    "computer-architecture.core.data-representation.fixed-width-overflow": "ff5787faa21017c30f75d8a49e7538188096cb3a255f1075ecfa76e067d1e77f",
+    "computer-architecture.core.data-representation.fixed-width-overflow.q1": "71dcd3b0d9ad8caab3a66643dbe4ba4aefb3eaed24228da8afadaed26ad9919e",
+    "computer-architecture.core.data-representation.fixed-width-overflow.q2": "ba94373b7ecc8c8a442db674775353d7ac824f6d41168fc271477942ec44e636",
+    "computer-architecture.core.data-representation.fixed-width-overflow.q3": "186d5a0c4b1d1c5ddafa2b397bf8279c96d318a2d2bf111ea85cff68dd1688a0",
+    "computer-architecture.core.data-representation.floating-point": "144cdfdc18499a5fb5fd55072281ebd2465fe8d4a4a4d3308ca0411801321690",
+    "computer-architecture.core.data-representation.floating-point.q1": "e2f933069714845ed9df6bdf47bb71c8483094ae07d066a804a8971f4a29e895",
+    "computer-architecture.core.data-representation.floating-point.q2": "759b8911a7a218e4bddb87f75ac47e9e9436b473a30599036f88ca19f7e5241a",
+    "computer-architecture.core.data-representation.floating-point.q3": "140305b960f84692f5fba34a808a928e277c63783e9ed02ca11e466e1fa7970d",
+    "computer-architecture.core.data-representation.signed-twos-complement": "d1fd44de86805fba0b8b9bd2f7d662671adf0fc67c521212c24d340ae6a6b2cf",
+    "computer-architecture.core.data-representation.signed-twos-complement.q1": "b6afa7cc409872c25ce656932c219b83cece0d8ea84bdf3b4e8a4f5f1d4e8233",
+    "computer-architecture.core.data-representation.signed-twos-complement.q2": "d0478c8de44b885ae1f89e0a9e9c0bb5c86d484ab1686cb50cd4d2e791ad7499",
+    "computer-architecture.core.data-representation.signed-twos-complement.q3": "d93465857d1b52edbde002be4cdc6d8ba3b00b374315cf1563e0259450a33085",
+    "computer-architecture.core.datapath-control.alu-datapath": "3d3108e20c15c4677ad318dec857c3d88ffde85e23d0c256a387bcc9feb2248b",
+    "computer-architecture.core.datapath-control.alu-datapath.q1": "f490a8da6be2554f769780ba30aa32874632b0f19f95bcc12db3e81b0e36b3b4",
+    "computer-architecture.core.datapath-control.alu-datapath.q2": "1ee5cc69502ecb858defcbd40ea10826bb04941a73debc7100ed2154c9b80440",
+    "computer-architecture.core.datapath-control.alu-datapath.q3": "859806f0449fe7b764fca399f0ff78f292768c2d888476698f9b940bef94ca5c",
+    "computer-architecture.core.datapath-control.branch-control-flow": "2bc58e808bf5d2ebead32a53a0778b8cd6e6c2e172b3e5f9527acdbc1332f8ae",
+    "computer-architecture.core.datapath-control.branch-control-flow.q1": "69438b25bc7041a2b287a338df2863f5d993ba9b473f50f23f920968d6e9f8d2",
+    "computer-architecture.core.datapath-control.branch-control-flow.q2": "e5c4e7bb675bb030b647a81056dc5d6845ae1ceed6636a1f899f0fb2b983921c",
+    "computer-architecture.core.datapath-control.branch-control-flow.q3": "6fb76b9da0c2f1d2f634e63b13a03039bfa15519bb7f4ba8bb78ae1643f517c3",
+    "computer-architecture.core.datapath-control.clock-cycle": "f4f2d548bb024414613f0275dc56766276035b947293283ea703947e05d55115",
+    "computer-architecture.core.datapath-control.clock-cycle.q1": "7ac9da06a527d29e28a2da02447be3c6d7ed47d6174385e54b4ddb93b8637a0a",
+    "computer-architecture.core.datapath-control.clock-cycle.q2": "c6d82f1cb8abb8261d62290b0c44de495c6b28372f8084521baacf7e69d5df13",
+    "computer-architecture.core.datapath-control.clock-cycle.q3": "e9988b71b382ffbe673ddcaace8ad695855338c3b3bd076985de0899265ca9c3",
+    "computer-architecture.core.datapath-control.control-unit": "6077cc052948fe3ad4dffe123ff94204e57628af47680f2ec094bea1d1d00457",
+    "computer-architecture.core.datapath-control.control-unit.q1": "bda0d050a01857092c1d4fd1bddc9c808028283f8e905be387d8ff7f800078f8",
+    "computer-architecture.core.datapath-control.control-unit.q2": "36c2d83225a49d90a3c4999543a5ee4c8f9c3476de59b39042cc62665f790ce2",
+    "computer-architecture.core.datapath-control.control-unit.q3": "2a425600887b36c070faa65fc1f6f0482faeaa2fc66682e5fac0894827ade1a8",
+    "computer-architecture.core.datapath-control.critical-path": "b49e9df418672959b102997878dfa3029e5018070f925a17974b301f44d24de7",
+    "computer-architecture.core.datapath-control.critical-path.q1": "6a7606bce1ae6ca8243ccd900e050abe7217376932f6cb97a1dd7c2668422869",
+    "computer-architecture.core.datapath-control.critical-path.q2": "57e92c583906d42c5a17542086504fdbda11265193a0a98ac3efc19d253b1c87",
+    "computer-architecture.core.datapath-control.critical-path.q3": "74c249269332746dfa327b54441ecf53bb562d4d2f62a1b88b368dd7744f5317",
+    "computer-architecture.core.device-io.device-cpu-memory-path": "ab691ba564925e22539d9ab9beb6c0188b4bacfaa401b9d28113c3ec1773678f",
+    "computer-architecture.core.device-io.device-cpu-memory-path.q1": "c8daf13724dd1ddcd2b3f48b7d11976ae9ef3a967a0b59f0723026f5b883cf3a",
+    "computer-architecture.core.device-io.device-cpu-memory-path.q2": "908bf57cb0cd652f2b075acf0d6f83d118f6950d6b9c6fde977a68625546cbae",
+    "computer-architecture.core.device-io.device-cpu-memory-path.q3": "04014b894e3b669d77eba97e520e63c9c3c424e20f8ef6466ca9b8d4c9d4f911",
+    "computer-architecture.core.device-io.dma": "7342a822d442a9780da8d292dc060b4f49bbff38f9485f774a12558d80e7cefc",
+    "computer-architecture.core.device-io.dma.q1": "8a6e65e2d9576447c6d6dc8414a5ace4a8d659b4b2cd5ff83f70d89661b5c202",
+    "computer-architecture.core.device-io.dma.q2": "32998a183c658bf17c327d352854f1f677c42798e5604e2ce594b2c47746f4cd",
+    "computer-architecture.core.device-io.dma.q3": "d92a5f8f651cd01abe7a77145f3c85d9c37d3ef1facc91cd112b797f64c46f7c",
+    "computer-architecture.core.device-io.interrupt-exception-trap": "a3e01f3093c14db59ca32fa6bf37c68b6ce6cde48bc4bcb30d0510b1ff8e9c16",
+    "computer-architecture.core.device-io.interrupt-exception-trap.q1": "d0fea7a92a3dacac814b3b61b7a7062c4bcaadb7f2cf033f07f6c0830ae2a323",
+    "computer-architecture.core.device-io.interrupt-exception-trap.q2": "35bdf636a31ce9b7851e6a68b835ae8169773594eb1749b2d83d054f012ecfa2",
+    "computer-architecture.core.device-io.interrupt-exception-trap.q3": "747af924e1512a7ac14afbb3ed0536eecc54fa86fa6bbe23e04a59588ba5da4e",
+    "computer-architecture.core.device-io.interrupt-handler-entry": "771ac832c74c733b1d40e03462cc889fb1eb3f18a07cdbc1ca7b2bc5a89fba2c",
+    "computer-architecture.core.device-io.interrupt-handler-entry.q1": "2ead5bfd626986b46eb3832244353db71bc0f4f7279e8482b072f4052c08dbf7",
+    "computer-architecture.core.device-io.interrupt-handler-entry.q2": "d7b61ebd76bb4a9683f91d6ca1de6917185d74e80fefe8c7109d52cfd8fe5163",
+    "computer-architecture.core.device-io.interrupt-handler-entry.q3": "3689abf0fb65da6331aade49690b9e0accb3a37564cd86728eeb08981a4b3bab",
+    "computer-architecture.core.device-io.memory-mapped-io": "8434081ac1e7dc8a513a35180da9fcfa296a82d0fff0621e119f2ca5a7a8189b",
+    "computer-architecture.core.device-io.memory-mapped-io.q1": "5ef353f79affcab4d4885c697f0ab61aade4c8c601438fffd96b56c91ff1ab52",
+    "computer-architecture.core.device-io.memory-mapped-io.q2": "e6a12899efc67531556949487295cd6a5d94d671aa8b078511a89bf13e7e755c",
+    "computer-architecture.core.device-io.memory-mapped-io.q3": "d8a7d62428bb5f4d74c45f4a667205774696c4d4e7cbb17333509db5c1afb6b8",
+    "computer-architecture.core.device-io.programmed-io": "b173d5694566015dc748c5f17ec289b5456e40436df376f5ee13ff554a04559f",
+    "computer-architecture.core.device-io.programmed-io.q1": "510f698ae896cff8fd0bfd097b9b600bd3976a28e83fc5aea49f30d69a2afa8b",
+    "computer-architecture.core.device-io.programmed-io.q2": "c02f604e4a94ba82bcc8970252f29dc4c3dc5c8e384b90a596485dacbbec3287",
+    "computer-architecture.core.device-io.programmed-io.q3": "8a3b4c343883a5c845c31e0913870295e04ed98fbb93015f5b770643c25ec996",
+    "computer-architecture.core.isa-execution.addressing-modes": "59120e57b47ad9cfe3c322bc24478db961386cefa07bbe8f6bc2de29798b00c1",
+    "computer-architecture.core.isa-execution.addressing-modes.q1": "e952ff2a2d887e87a0355cd0e5d6ee2a7787fa3ee36737707e684104833c8e5a",
+    "computer-architecture.core.isa-execution.addressing-modes.q2": "1f7b2ee8e1a9c8d549bae2416ac65e38f72f15ebb71ad176c1afea71157cfc72",
+    "computer-architecture.core.isa-execution.addressing-modes.q3": "83929412a4fc0c0b8b1e8175fc9120ab41868849b9df0d0733394e4bba563bfa",
+    "computer-architecture.core.isa-execution.fetch-decode-execute": "7787fde7b3c015f2ddf8135fd2100376de394f6e4722be327a8b6c691abec703",
+    "computer-architecture.core.isa-execution.fetch-decode-execute.q1": "30a147ff009dd8907fce6eb87b549768769b5cb06e77276eea7d355ed356300c",
+    "computer-architecture.core.isa-execution.fetch-decode-execute.q2": "d444c6195685ec6f77af20bd6f6da6e3c8e4b72738114a22a1375abe0ecd1103",
+    "computer-architecture.core.isa-execution.fetch-decode-execute.q3": "a6b7294d74971011dfa5469dfdf40b28ad214df69c5adcedfb2f241b83e99c46",
+    "computer-architecture.core.isa-execution.instruction-format": "e78fe1233eba6ac8661c138c780b3831b9f75af0fd1f7bace0705e98e1cddd95",
+    "computer-architecture.core.isa-execution.instruction-format.q1": "b527584cbedc5ad354daaa04c939c26e105d90f03f8f70677910d4585e2374d3",
+    "computer-architecture.core.isa-execution.instruction-format.q2": "75db2ad3497364f1bd9e06054129ef2e8604fecd25f476368ee7492d86fee730",
+    "computer-architecture.core.isa-execution.instruction-format.q3": "3a440c90a1fc34b39762a374d6471583aaca4d6f483290b4c7ecb297b7b7d0e6",
+    "computer-architecture.core.isa-execution.isa-vs-microarchitecture": "12fbd26ea2f0dca34110913ed917875fe32f579119410e54a820ba75bc6f602f",
+    "computer-architecture.core.isa-execution.isa-vs-microarchitecture.q1": "3f074e0fad3ba977bc10e23cbd7ac926d384b3894386d9439b4456edc3c7491d",
+    "computer-architecture.core.isa-execution.isa-vs-microarchitecture.q2": "57221d51bfd2422feb243a9376bbbeabfeaaa80677161db9d1fa96dcf4fb5690",
+    "computer-architecture.core.isa-execution.isa-vs-microarchitecture.q3": "d6c205275c6f23a79707a8142bb0f1766c26d3062d065abdf46d136f9872579b",
+    "computer-architecture.core.isa-execution.procedure-call-machine-level": "e32e8caf8da61d42520888bf73c5a49829bb139a8961f488a47057ec4e229830",
+    "computer-architecture.core.isa-execution.procedure-call-machine-level.q1": "3c488ccf3e2e541c35fb3b179ea864fbf8df15da41148c27ec60bc21c04233f8",
+    "computer-architecture.core.isa-execution.procedure-call-machine-level.q2": "d57807860bf4ab27a3627024765925f832dc65efbabb6b8f18eba45f55208379",
+    "computer-architecture.core.isa-execution.procedure-call-machine-level.q3": "df0300c771334e4f58466e2d2389a2267e083e38993e02a63f2e3851c9cffddd",
+    "computer-architecture.core.isa-execution.registers": "04a31d633c778a142248c48f0358506b78d16637c0e6baca4edc525a35a0ab34",
+    "computer-architecture.core.isa-execution.registers.q1": "01220e1b2164ea3f9ac3d9b3f5b15c28bed4a1882bc5c41e44b3351b2d5aa51a",
+    "computer-architecture.core.isa-execution.registers.q2": "bf40d174d6309e2895e0574ac188f87d132ec015f22d0c3ff0775cce4c4bc93d",
+    "computer-architecture.core.isa-execution.registers.q3": "945fc4993f87352f68782c693f6822ad580a485ba8ee2d19149c32d1923e6309",
+    "computer-architecture.core.memory-hierarchy.cache-hit-miss": "8407eeeb279b37bd21d58cc5825bfb44a827df26ed5f512d0852b2c42d77bb81",
+    "computer-architecture.core.memory-hierarchy.cache-hit-miss.q1": "8a40c0beb123d45f088a815ac712fc6cdd81ae14390e404fb1a267107b83004d",
+    "computer-architecture.core.memory-hierarchy.cache-hit-miss.q2": "abb05e14980f8cf77dd3aed88698b94862e3c2b6097ac6f7e24ae0ef19c99df9",
+    "computer-architecture.core.memory-hierarchy.cache-hit-miss.q3": "19cdfdd3642cc257d195cfc574a509f3208f10a08d7bb4d14420190703721802",
+    "computer-architecture.core.memory-hierarchy.cache-line": "dd87280255a9681ef6f634d50f4ec7d6d7d7e4b4356bb4cdfa52da8e0306c345",
+    "computer-architecture.core.memory-hierarchy.cache-line.q1": "edb935c9931629c9a0554bbd619a8c9966597dcde5d641f890c8e61abd207df6",
+    "computer-architecture.core.memory-hierarchy.cache-line.q2": "41d61649655e9f899e171b103e52861cd988939fe01d346ad24628fb8d87e18a",
+    "computer-architecture.core.memory-hierarchy.cache-line.q3": "f6dc92c525270b6f07005db6b32ddf0e58cc334f356827630ae330d02fc63813",
+    "computer-architecture.core.memory-hierarchy.latency-vs-bandwidth": "5e56ff4a380beb2d0a0e39094cd4d31fafb4f3e057077b4d435bf7bdc318b863",
+    "computer-architecture.core.memory-hierarchy.latency-vs-bandwidth.q1": "0dcfdb39aa6559b3e14ad31fd6f9f3c8219a24c2198664c1bd5629183682a8f3",
+    "computer-architecture.core.memory-hierarchy.latency-vs-bandwidth.q2": "5d3d331596d6993c96722319e40e4bd98041a5522250b89b213c43eb9cc5ccbc",
+    "computer-architecture.core.memory-hierarchy.latency-vs-bandwidth.q3": "25548ee7e070cb1acc42069053e1cd7d9b15621bc6573080cc98e5d58886656b",
+    "computer-architecture.core.memory-hierarchy.memory-hierarchy": "2dd89a6166a77d428e104d8e78e4aea6a9a441446e5ec74c0e03cda0b1308575",
+    "computer-architecture.core.memory-hierarchy.memory-hierarchy.q1": "cf12b715dd1602695d6476b6e265883b125d425b7ff35abf203ca7a345687160",
+    "computer-architecture.core.memory-hierarchy.memory-hierarchy.q2": "9bf979f6915997038b3a975cd8997428c33dac238421f27a1aaf467a146b0cf8",
+    "computer-architecture.core.memory-hierarchy.memory-hierarchy.q3": "8a0a706d9cec5cba9c4e0503b83ee8aa1496edf7bb4fc221a8ea06cc2c16bc8a",
+    "computer-architecture.core.memory-hierarchy.miss-penalty": "70d424185186e52e88107e82fd31432e500b9c62a2dd5125b4ee4a12d0def0cc",
+    "computer-architecture.core.memory-hierarchy.miss-penalty.q1": "706ecda9c1f4bcc09c7409fc71b221a0a8962a4440ee43d50de515f32efb9bcd",
+    "computer-architecture.core.memory-hierarchy.miss-penalty.q2": "422658208dc7255f1bf177ea71280f715167765d2ba28fdbd6d21a1a11f15d9b",
+    "computer-architecture.core.memory-hierarchy.miss-penalty.q3": "936c948bdcf6feceb35b5142767c1446f756bb351ef325b161ab6eb4711a9f75",
+    "computer-architecture.core.memory-hierarchy.temporal-spatial-locality": "dbe75acad13597192ff51679040b408b0bc80444ac4ad5f59991594fbbb423cd",
+    "computer-architecture.core.memory-hierarchy.temporal-spatial-locality.q1": "18ca8576f4b4edd2f93c5f5368f1067669cafea697767360711f0eca476e6862",
+    "computer-architecture.core.memory-hierarchy.temporal-spatial-locality.q2": "fb11c806923ee9106dd2bff29b91e7f22eaae31112ddcc31afe891f5bb32a266",
+    "computer-architecture.core.memory-hierarchy.temporal-spatial-locality.q3": "15277e9cdf2deef28cad74ae725c30dd78f3f51651cc5b86f6920aa4f00528f8",
+    "computer-architecture.core.multicore-memory.cache-coherence-problem": "70b407aec8c4025dbc541ba1bf1e318560160264d0ca1c1429587ac96faa1fcf",
+    "computer-architecture.core.multicore-memory.cache-coherence-problem.q1": "a890e6b3b294d1e530991e5ea2aeefb4524bfa3ead01017aec34064f2521aaec",
+    "computer-architecture.core.multicore-memory.cache-coherence-problem.q2": "59c4f6571eaf574dcda09a952489b46d805fd5bf3371855ee111754644be9db7",
+    "computer-architecture.core.multicore-memory.cache-coherence-problem.q3": "5db884147edc774238cf6c97f557860793bc1b22cf662b81880408834123370f",
+    "computer-architecture.core.multicore-memory.coherence-protocol-model": "48192709fb2603db86c4507a4ef0d0719acaa73bb3535713b78f90b5a7fe2cb7",
+    "computer-architecture.core.multicore-memory.coherence-protocol-model.q1": "db6795654b44febd9fce1ab4c0a22edbc7346681b40486f126d905c98b297e10",
+    "computer-architecture.core.multicore-memory.coherence-protocol-model.q2": "696175c1e5b00ebb2a1b09cd063ab77070cc55de3e229a917c8bb488e12820be",
+    "computer-architecture.core.multicore-memory.coherence-protocol-model.q3": "7c7281eb29bc903f39a93d89e2bb91930490b4d1a93ba066faed6f85ff81f6de",
+    "computer-architecture.core.multicore-memory.false-sharing": "7f7ea02ae9a47d49521e5fee04d278d029570207b129e3fa114ab7716f3c1a9e",
+    "computer-architecture.core.multicore-memory.false-sharing.q1": "fd9d4cf596f89da41feb82e2ffddf1a318d4907dd79b027f7d930e55b85014f3",
+    "computer-architecture.core.multicore-memory.false-sharing.q2": "5158c41aa6a55444fade5530a141d875f385a7600a69599f3212f1b0fc7d8e8d",
+    "computer-architecture.core.multicore-memory.false-sharing.q3": "ad81ece5a75b9f267a5b797e201f7bd34119a4f03bfb52fd35f6d0a213756814",
+    "computer-architecture.core.multicore-memory.hardware-memory-reordering": "8f91d264e59b68e2866f10073bfcc5c1ce2939ce07bf9b16f650b81c2327b15b",
+    "computer-architecture.core.multicore-memory.hardware-memory-reordering.q1": "6d6d4cbb659acff285c8c582ba69ad867d103fcb08bcdd8ad99e216289f9aae0",
+    "computer-architecture.core.multicore-memory.hardware-memory-reordering.q2": "dd5a9f0e1a6cac9fc29fca801523fd0b6d6de4ac5259402f43ed6acb889ff5bc",
+    "computer-architecture.core.multicore-memory.hardware-memory-reordering.q3": "235fa537259caaccec2550388cd53d6c7d1812aa8aa5e717eda5ef381139bd45",
+    "computer-architecture.core.multicore-memory.multicore-shared-memory": "89c0e249739bcfad81fb87e026c7eefcd5ad716c8a2785d00793249b2933068f",
+    "computer-architecture.core.multicore-memory.multicore-shared-memory.q1": "52851917a6e8de0aee52bd5b0c7e3109429dad02f6b97b1522bebc6fc8c50c52",
+    "computer-architecture.core.multicore-memory.multicore-shared-memory.q2": "ccad31cbb41567d7ea881aaa429a2e427da2671cc3e553fc457faedd11802abf",
+    "computer-architecture.core.multicore-memory.multicore-shared-memory.q3": "0c4882b6231efe969b301d797099922b71b6ef1f61beefd234772ebaac1d76ef",
+    "computer-architecture.core.multicore-memory.private-shared-cache": "4fa44e7278c4d1379ba605bb2a49e36d24c7796ad68f5490ce0a75b1775a2ff7",
+    "computer-architecture.core.multicore-memory.private-shared-cache.q1": "4dcc79d9eff1b0773dc3ba5eade156623b679549ebaf95a4b164994f4678534d",
+    "computer-architecture.core.multicore-memory.private-shared-cache.q2": "7a68beb4e6c0fca79fce69a28a48b36a155c66e687df729ae5cf1fcd9a85aa59",
+    "computer-architecture.core.multicore-memory.private-shared-cache.q3": "5cabeea2a8b23fa0403f7c2dc312ac8523bf75ff8072d9361e9bc9332d89df2b",
+    "computer-architecture.core.performance.amdahl-law": "4ddea4f6b973d138edef265b38c0a5160af16bb6ffd804dec1e440ed36bfaf6a",
+    "computer-architecture.core.performance.amdahl-law.q1": "7f45da732a8dc224b7d4b60e22fb57896dafc7180f21597a230e755216d626ef",
+    "computer-architecture.core.performance.amdahl-law.q2": "073f86fc88ca0b8a6f253c7044660a16a6073db3fc2ee4d5cd09e73969a097db",
+    "computer-architecture.core.performance.amdahl-law.q3": "4ecac544807f22869a5f17f9cfaffcfbde5e803a5f2e097d3cf8ab94477fcd99",
+    "computer-architecture.core.performance.cache-impact": "6c8f9e1fcd2ea200f9ef2bcd0e73e62fcb48c9855cba83562cd723e9700bb2b9",
+    "computer-architecture.core.performance.cache-impact.q1": "a34d2caa574de4b3970a6b4ec04102755f4977053494fa03d8674d3b374f3f12",
+    "computer-architecture.core.performance.cache-impact.q2": "30ff803c2e0a99ae6aaf8713b6ea47b56233e290ac5349da3959d080d4a18e90",
+    "computer-architecture.core.performance.cache-impact.q3": "c1fe2c845f664f1a5a0f2863ee0ecee356cbf82b76b177b37cad9f9a7eed9fc8",
+    "computer-architecture.core.performance.cpu-time": "1c622d7b2e7098ab67fbd3e3621c2f3429caa163bfc05641dd6653a9e74de94f",
+    "computer-architecture.core.performance.cpu-time.q1": "972ae3cfc5f3a5b82970264f43a40a1396d7753191f49a8797319e57c9775530",
+    "computer-architecture.core.performance.cpu-time.q2": "ddbd04535e0acdb03645da2efced63557c2e354bffd5457b7d5852e8b9eb2e71",
+    "computer-architecture.core.performance.cpu-time.q3": "28e8fe76d61ebc6697b6bc3be8f26f3a4610ef5da01a6bf28947e78733483ec0",
+    "computer-architecture.core.performance.instruction-count-cpi-clock": "aaf360b8c3bb944e6974efba32ccd4c16bc0a856529a51d689a54c681a4732a6",
+    "computer-architecture.core.performance.instruction-count-cpi-clock.q1": "f7ca00fc387cf60259758572e31488350b719dc5da0f3b365ca429386bb074b7",
+    "computer-architecture.core.performance.instruction-count-cpi-clock.q2": "6123bd8d8a7fa606ed32dbf122b006deaf06be251c02efed4de870b338e5ed9c",
+    "computer-architecture.core.performance.instruction-count-cpi-clock.q3": "b64db0885adf1837c30ac8946906310bc1977c70a0996954a5dcc129fa842f9e",
+    "computer-architecture.core.performance.latency-throughput": "5aa13beabb20dc2b39b32928eb46a8665ee83e32dd4dd65694a28d7aac4ae2b5",
+    "computer-architecture.core.performance.latency-throughput.q1": "2e715cb82bc65d98c1925eef5daeddb88eb91817a2b7d7af59e246cc5ead4fe4",
+    "computer-architecture.core.performance.latency-throughput.q2": "604331dc42c21c4dc93ce71f56e5ff7c86090479fdbf6369840a671b6a0fa57b",
+    "computer-architecture.core.performance.latency-throughput.q3": "c73a302f8f5f1e89fafdec90a53323c2136b534257cf8ff3de5f38fa7a7f7415",
+    "computer-architecture.core.performance.microbenchmark-boundary": "673d604b0c106bc7ada859b247b3bb54b43df81df0a57f23fed8a85b74bb36e9",
+    "computer-architecture.core.performance.microbenchmark-boundary.q1": "a354ba06038cfd7e6b1243f5121a9037008d04d5529d4e08d678cece4f2db9dc",
+    "computer-architecture.core.performance.microbenchmark-boundary.q2": "015ec642a5adab907f6baecc73c2b12684bb6b6f6c1cf4d7986e43ff2b85fbf1",
+    "computer-architecture.core.performance.microbenchmark-boundary.q3": "d3e1251f5e4a199fc1a55f566cded684d5ee21a64aaf2a94a5822f147b5b579c",
+    "computer-architecture.core.performance.pipeline-branch-impact": "f18acee3f9febd14c6b326cd3a8409d6c2e214dbf98918dbd128fac1082ed952",
+    "computer-architecture.core.performance.pipeline-branch-impact.q1": "5c6d298edde060a98a30802b70ed364c594973e5ec6cf789d66f8974a46f4363",
+    "computer-architecture.core.performance.pipeline-branch-impact.q2": "c759044b32179ad79b4a34f0d539838f69a4ea57cba4a9f5a2a9fda215b94b86",
+    "computer-architecture.core.performance.pipeline-branch-impact.q3": "cb7de1e63638ed215f69c4866b7071d2510cb1ebcac287af15ec17ed5f196975",
+    "computer-architecture.core.pipeline-ilp.branch-prediction": "587ae67f8c9e4e89a46f08bb97941214ec937c788cb432c64036f651f129e52e",
+    "computer-architecture.core.pipeline-ilp.branch-prediction.q1": "226f65a08e746cad27a439a607c09b8f23f3e56e8744d85bffc0d54e2fbdc7f8",
+    "computer-architecture.core.pipeline-ilp.branch-prediction.q2": "1ebc12e5344f00a81af38429599046c7f26f857f615917f709463d7c470234a7",
+    "computer-architecture.core.pipeline-ilp.branch-prediction.q3": "61289bf31fc04b4f0570a671ce8ad82c1f20fa46c2c29ecd1b4be5fac1a9c960",
+    "computer-architecture.core.pipeline-ilp.forwarding-and-stall": "594ce2514033ee5068f37b1c381e95e2feae9d0f78b474f25d33a946973ba3cf",
+    "computer-architecture.core.pipeline-ilp.forwarding-and-stall.q1": "c1753e9ba067de76f2b249cf6f8a51d520c2991f04334315512a2c78c46bc457",
+    "computer-architecture.core.pipeline-ilp.forwarding-and-stall.q2": "067b19efc6beaa548de0d82a29e946b01c7108488ca3f7f78916a0213bdac773",
+    "computer-architecture.core.pipeline-ilp.forwarding-and-stall.q3": "4c1a2a4f5138ebfb3f73da57dfbdcc9aff643ff1195674e5539bc87d86456655",
+    "computer-architecture.core.pipeline-ilp.pipeline-hazards": "fdabd72c41495f89569ea0250a8634784688fdac6f9c44c68a0aa6b826132255",
+    "computer-architecture.core.pipeline-ilp.pipeline-hazards.q1": "fa3d53475ae51474fff68514ae4fbf244acdd935a3382eadb3a383ddd4cb0224",
+    "computer-architecture.core.pipeline-ilp.pipeline-hazards.q2": "c65e14768768d7983d4da548bd159e5c19fd7547f82acb6f609fd2c0b0734903",
+    "computer-architecture.core.pipeline-ilp.pipeline-hazards.q3": "9e461bb621fb795769ee4a5da8caface9a257b96a3ddc33acd780c5ea7b494da",
+    "computer-architecture.core.pipeline-ilp.pipeline-stages": "1e4ee130cd12190c254958133211ac1e9a828f48cb898fe63d27d34e38033092",
+    "computer-architecture.core.pipeline-ilp.pipeline-stages.q1": "9f51ccf7e9b078fe05857c7dfdaccd6212eba881e60f7e49c220833669948276",
+    "computer-architecture.core.pipeline-ilp.pipeline-stages.q2": "113c3740e04507813c9d60e02655c88d4187710a03cef79935cc06cceb50d877",
+    "computer-architecture.core.pipeline-ilp.pipeline-stages.q3": "3ba974e580eda0aea9348df1b0c18b9183a25df04720273738790129f93a1270",
+    "computer-architecture.core.pipeline-ilp.superscalar-out-of-order": "9c17ba8308f4b04e935b0c03ff44e300f54c3163528ae675b66fc7fe3515eb77",
+    "computer-architecture.core.pipeline-ilp.superscalar-out-of-order.q1": "2068aaf997fa8b82111f7f5ec44812e2640b3165cea2c60c516eb62cb1e79d94",
+    "computer-architecture.core.pipeline-ilp.superscalar-out-of-order.q2": "89457a01c0ec36f655c5eceb0cfc168b2675f5dba9515b448e80b921c5f882dc",
+    "computer-architecture.core.pipeline-ilp.superscalar-out-of-order.q3": "0cdc667f6780e93f47c9edcaa0947cc1e7a65725fe0a8db2e8eff3c3dc387155",
+    "computer-architecture.core.virtual-memory-hardware.mmu": "98a6a42dc61998bebeaa135d745ea4c722eb00f5dd03e39f8e567b33884485d0",
+    "computer-architecture.core.virtual-memory-hardware.mmu.q1": "44c5f44974fd8799f6bfdbeeae1db46fda743b7e5e3c2923db6267650b710fd1",
+    "computer-architecture.core.virtual-memory-hardware.mmu.q2": "bedf8f431e46daf339edb853768c743a0a563680724a8b0bcd9fd98742224db7",
+    "computer-architecture.core.virtual-memory-hardware.mmu.q3": "5a80ddc0def929b6695f93fc160bfc479138ed296a8f802ec780a70125dee319",
+    "computer-architecture.core.virtual-memory-hardware.multi-level-page-table": "b838a45794e4b6a0322bfc675f0a63949663fee7b8bd9d1df203cbd15bd28b66",
+    "computer-architecture.core.virtual-memory-hardware.multi-level-page-table.q1": "485758af8666d2ca41c10cbda5591ce7d4da64344fa7ca2788f9825c9e64e4cd",
+    "computer-architecture.core.virtual-memory-hardware.multi-level-page-table.q2": "a3125c2e78673552b6e4ab1da6876bfa20b1bcdfb69fbe728e05f22c0beeb001",
+    "computer-architecture.core.virtual-memory-hardware.multi-level-page-table.q3": "22d4340773172473d4a66dd7faeaabaa0d183e874471b37485154fb4f13fe79b",
+    "computer-architecture.core.virtual-memory-hardware.page-size-huge-page": "61e02c5e7933ccb4fa3e03e649b7e07346647a19bd660c71a7507a4c4c38ed4a",
+    "computer-architecture.core.virtual-memory-hardware.page-size-huge-page.q1": "ec6b64be53afa296795b7e0333ff97e10f8609211e9e784b1561316c9a133f87",
+    "computer-architecture.core.virtual-memory-hardware.page-size-huge-page.q2": "59f99b3393fc8d713185b776b1a45635c6c38180aca57d94ae1bc780bf36b88e",
+    "computer-architecture.core.virtual-memory-hardware.page-size-huge-page.q3": "90d7dcb0065ae2c6f6d28a0cc057ad51c27370cf0adf0bb02535c247c388bba0",
+    "computer-architecture.core.virtual-memory-hardware.page-table-walk": "d54a023d8ab6c0ad763992a5f2652438c4977f7dbea1f03e81e6957b87282297",
+    "computer-architecture.core.virtual-memory-hardware.page-table-walk.q1": "2b74b648a56e42c8a781f2dab11d112f04212d525790a271d96dadb186dfd396",
+    "computer-architecture.core.virtual-memory-hardware.page-table-walk.q2": "1a93b9ad77058c622a2720d1af360f48669ebd52a54466099161a80b8d45e388",
+    "computer-architecture.core.virtual-memory-hardware.page-table-walk.q3": "af27f526b987be67277275873f85b389183d4ad23b145d63fe131c36729b7d56",
+    "computer-architecture.core.virtual-memory-hardware.tlb": "a16cf9020e00bc6047834e995521797693cf3aa28e20cacab329e62715e787d3",
+    "computer-architecture.core.virtual-memory-hardware.tlb.q1": "1f03892a9a6a8364e9931edb22ec6b6a293d703eff05c9dba6c016f94559e55f",
+    "computer-architecture.core.virtual-memory-hardware.tlb.q2": "7ad0afddf6c5277bd62f9f3527b99e7d0ec3b86b97fe1fd1401560bacfc59ba2",
+    "computer-architecture.core.virtual-memory-hardware.tlb.q3": "5da750a8512fead04f5fdd2cfb99eda31e92261d683d3e91a7c1c41aac27d2c8",
+    "computer-architecture.core.virtual-memory-hardware.virtual-physical-address": "285cbc6b03e585bf1860938e8dadd36f06404a24ec64e4d301d9e9dc9d6251f2",
+    "computer-architecture.core.virtual-memory-hardware.virtual-physical-address.q1": "ca3bfd645123a47f083f43b4f89e022540bc1331b4afbaaaf7bcfb3c7a830921",
+    "computer-architecture.core.virtual-memory-hardware.virtual-physical-address.q2": "9bca82d39c22acf0c5f35f861dca33ecb24f30d62005197c6bb8b1735997c13c",
+    "computer-architecture.core.virtual-memory-hardware.virtual-physical-address.q3": "c6c8921af70b36f84b4203d9c5953ec21f58a08a8417ec06700ccdba7f5d48a9"
+  },
+  "sources": [
+    [
+      "https://docs.kernel.org/6.7/driver-api/device-io.html",
+      "CURRENT_VERIFIED",
+      "device-io: Linux 6.7의 Accessing the device와 ioremap/np/cache 절을 읽었다. MMIO side effect·속성과 PCI posted write/readback, CPU ordering의 별도 관계를 대조했다."
+    ],
+    [
+      "https://docs.kernel.org/core-api/dma-api-howto.html",
+      "CURRENT_VERIFIED",
+      "device-io: Dynamic DMA mapping Guide의 주소·mapping, incoherent cache line 주의, streaming mapping 재사용의 sync-for-cpu→CPU 접근→sync-for-device와 완료 후 unmap 절을 읽었다. 버퍼 소유권/수명과 notification 별도 책임에 실제 대조했다."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/ByteOrder.html",
+      "CURRENT_VERIFIED",
+      "data-representation: 실제 BIG_ENDIAN/LITTLE_ENDIAN의MSB/LSB순서와nativeOrder플랫폼선택 절을 읽어 메모리/외부형식 경계와 비교했다. API전체사용시험은 아니다."
+    ],
+    [
+      "https://docs.riscv.org/reference/abi/v1.0/riscv-cc-procedure-calling-convention.html",
+      "CURRENT_VERIFIED",
+      "isa-execution: 실제2.1/2.1.1의register보존,인자전달,하향stack와128bit정렬,SP아래데이터수명제약을읽었다. 표준ABI의설명이며모든ISA/ABI계약으로일반화하지않는다."
+    ],
+    [
+      "https://docs.riscv.org/reference/abi/v1.0/riscv-cc-register-convention.html",
+      "CURRENT_VERIFIED",
+      "isa-execution: 실제integerregister표의ra/sp/a0-a7/s0-s11및보존조건을읽었다. FP/vector의구판규칙전체를현재판일반보장으로인용하지않는다."
+    ],
+    [
+      "https://docs.riscv.org/reference/isa/priv/machine.html",
+      "CURRENT_VERIFIED",
+      "device-io: 공식 redirect를 따라 v20260120 Machine ISA의 mtvec BASE/MODE, mepc, mcause, xIE/xPIE/xPP trap-entry 절을 읽었다. 일반 GPR의 software 보존과 제한된 CSR 갱신을 구별했다."
+    ],
+    [
+      "https://docs.riscv.org/reference/isa/unpriv/intro.html",
+      "CURRENT_VERIFIED",
+      "isa-execution: 직접legacytarget접근은도구실패. 같은공식 v20260120 intro의software-visibleinterface와다양한구현허용/구현의존제거절을실제읽어의미를대조했다. 짧은URL도착은별도미확정이다."
+    ],
+    [
+      "https://docs.riscv.org/reference/isa/unpriv/rv32.html",
+      "CURRENT_VERIFIED",
+      "datapath-control: ISA Topic에서실제redirect현재판으로읽은branch/PCrelative/JALR controltransfer절을이Topic에재사용했다. 이번새CPU구현/예측기성능확인과는구별한다. / isa-execution: 실제redirect링크를따라 v20260120 RV32I2.1의architecturalregister/format/signextension/load-store/branchtargetfault/JAL/JALR관련절을읽었다. 전반부와load-store부분모두직접확인했으며spec전체를승인하지않는다."
+    ],
+    [
+      "https://docs.riscv.org/reference/isa/unpriv/rvwmo.html",
+      "CURRENT_VERIFIED",
+      "multicore-memory: 실제redirect를따라v20260120 RVWMO2.0의global/program/PPO、overlap/syntacticdependency、FENCE/acquire/release규칙을읽었다. mainmemory모델범위이며I/O/fetch/PTwalk를이절이완전히formalize한다는보장은아니다."
+    ],
+    [
+      "https://docs.riscv.org/reference/isa/v20240411/unpriv/intro.html",
+      "CURRENT_VERIFIED",
+      "device-io: 공식 20240411 Introduction의 EEI와 Exceptions, Traps, and Interrupts 절을 실제 읽었다. instruction 관련 exception/외부 asynchronous interrupt/trap 제어 이전과 EEI 처리 차이를 대조했다."
+    ],
+    [
+      "https://ieeexplore.ieee.org/document/8766227",
+      "NEEDS_REVIEW",
+      "data-representation: 직접 대상 접근 실패이며 검색도 이 target의2019전문을확보하지못했다. canonical IEEE 문서 전문/접근 편의는 미확정이다. 실제 Oracle 수치 가이드의 관련 binary32 필드/특수값 절로 주장을 교차 확인했다."
+    ],
+    [
+      "https://ocw.mit.edu/courses/6-823-computer-system-architecture-fall-2005/resources/l14_superscalar/",
+      "CURRENT_VERIFIED",
+      "pipeline-ilp: 공식resource설명과실제다운로드PDF슬라이드2~4의ROB/tag준비/physicalrename/execute와commit/branchkill구분을읽었다.2005강의의대표구조이며모든현대CPU내부방식·PDF전체시각QA를확정하지않는다."
+    ],
+    [
+      "https://openjdk.org/projects/code-tools/jmh/",
+      "NEEDS_REVIEW",
+      "performance: canonical homepage 직접 web 접근이 Internal Error로 실패했다. 공식 JMH sample의 실제 본문은 보충으로 읽었지만 대상 homepage의 실제 학습 경로는 미확정이다."
+    ],
+    [
+      "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/cache-organization/index.html",
+      "NEEDS_REVIEW",
+      "cache-organization: web도구접근실패。Python HTTP는로컬issuer검증실패。TLS검증을유지한Windows기본신뢰HEAD는실제403이다. target본문/학습접근은확인하지못했으며없는URL/404로단정하지않는다."
+    ],
+    [
+      "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/memory-hierarchy-design/index.html",
+      "NEEDS_REVIEW",
+      "cache-organization: 앞Topic에서도구접근실패후같은공식route를Windows TLS검증유지HEAD로확인해403을받았다. canonical본문은읽지못했으며cache-friendly의실제자료역할은미확정이다. / memory-hierarchy: 직접대상도구접근실패로6관계의canonical절/학습동선은미확정이다. 실제MIT/OpenJDK원저자발췌와closed수치추론은보충근거로분리하며없는Reference라확정하지않는다. 추가접근증거: Python은로컬issuer TLS검증오류이며Windows신뢰저장소의TLS검증유지HEAD는실제403. 실제본문/학습접근은미확정이다."
+    ],
+    [
+      "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/multiprocessors/index.html",
+      "NEEDS_REVIEW",
+      "multicore-memory: canonical직접도구접근실패로관련coherence/ordering절은확인못했다. 실재하지않는URL로단정하지않으며접근가능Linux/RISC-V/JLS관련근거와분리한다."
+    ],
+    [
+      "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/number-systems/index.html",
+      "NEEDS_REVIEW",
+      "data-representation: 직접 open 도구 접근 실패, 해당 URL의 정확한 절/학습 동선은 확인하지 못했다. 존재하지 않는 출처로 확정하지 않는다. 다른 실제 대학 강의의 표기/2의 보수/unsigned 절은 supplemental로 분리한다. 추가접근증거: Python은로컬issuer TLS검증오류이며Windows신뢰저장소의TLS검증유지HEAD는실제403. 실제본문/학습접근은미확정이다."
+    ],
+    [
+      "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/performance/index.html",
+      "NEEDS_REVIEW",
+      "datapath-control: 직접도구접근실패로해당Performance절은읽지못했다. closedclock/CPI수치는독립적으로계산했고target자료내용을확인한근거로쓰지않는다. / performance: canonical 대상의 직접 web 접근은 실패했다. 이전 Topic에서 기록한 접근 근거를 유지하며 대체 공식 검색 본문을 읽었다고 canonical 페이지 자체를 확인 처리하지 않는다."
+    ],
+    [
+      "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/pipelining-mips-implementation/index.html",
+      "NEEDS_REVIEW",
+      "pipeline-ilp: 직접도구403으로canonical관련절은읽지못했다. 같은대학강의발췌는supplemental로구별하며모든해당링크의학습자접근장애를확정하지않는다."
+    ],
+    [
+      "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/virtual-memory/index.html",
+      "NEEDS_REVIEW",
+      "virtual-memory-hardware: 직접canonical접근도구실패로관련절/학습동선을확정하지못했다. 다른실제공식Linux근거와구별하고없는URL로단정하지않는다."
+    ],
+    [
+      "https://www.cs.umd.edu/~meesh/cmsc311/clin-cmsc311/Lectures/lecture30/datapath.pdf",
+      "NEEDS_REVIEW",
+      "datapath-control: 직접도구접근403 Forbidden으로해당강의PDF의diagram/timing절을읽지못했다. 실제학습자접근/자료의전체정확성을확정하지않는다."
+    ],
+    [
+      "https://www.kernel.org/doc/html/latest/admin-guide/mm/hugetlbpage.html",
+      "CURRENT_VERIFIED",
+      "virtual-memory-hardware: 실제Overview/TLB희소자원、pool/free/reserved/surplus、non-swap、초기할당/연속물리메모리·단편화조건을읽었다. 특정kernel버전의실행/THP동작전체는별도다."
+    ],
+    [
+      "https://www.kernel.org/doc/html/latest/kernel-hacking/false-sharing.html",
+      "CURRENT_VERIFIED",
+      "multicore-memory: 실제본문의writerrefcount/readername예、최소1write의W/W및W/R조건、perf-c2c/pahole분석、memory/cache/TLB공간비용과coldpath과잉최적화금지절을읽었다. 특정지표실행이나모든CPU구현시험은아니다."
+    ],
+    [
+      "https://www.kernel.org/doc/html/latest/mm/page_tables.html",
+      "CURRENT_VERIFIED",
+      "virtual-memory-hardware: 실제VA/PA/PFN/offset、sparsehierarchy/level-folding/upperleaf、MMU/PWC와fault의고수준관련절을읽었다. 하위fault구현전체나모든ISArefill보장으로확대하지않는다."
+    ],
+    [
+      "https://www.rfc-editor.org/rfc/rfc9293.html",
+      "CURRENT_VERIFIED",
+      "data-representation: 실제3.1TCPheader과pseudoheader의IPv4주소 network byte order 사례를 읽었다. 전송 application payload의 스키마를TCP가정한다는주장으로사용하지않는다."
+    ]
+  ],
+  "supplementalSources": [
+    [
+      "https://cr.openjdk.org/~redestad/slides/openjdk-scalability.pdf",
+      "CURRENT_VERIFIED",
+      "memory-hierarchy: 실제공식개발자발표검색발췌의다른CPU가같은cacheline의별도memory에쓰는false-sharing과coherence비용설명을읽었다. 특정JDK25배치/모든CPUline크기보장은아니다."
+    ],
+    [
+      "https://docs.oracle.com/cd/E19957-01/806-3568/ncg_math.html",
+      "CURRENT_VERIFIED",
+      "data-representation: 공식 검색이 제공한 Single Format1/8/23필드,bias127,normal/subnormal/zero/Inf/NaN표와숨은선행bit/24bit정밀도설명을 실제 읽었다. IEEE2019전문이나현재모든CPU구현확인으로일반화하지않는다."
+    ],
+    [
+      "https://docs.oracle.com/javase/specs/jls/se25/html/jls-17.html#jls-17.4",
+      "CURRENT_VERIFIED",
+      "multicore-memory: 실제17.4허용execution/잘못동기화한컴파일러재배치、17.3nonvolatiledone반복read재사용、17.4.4/5volatile/monitor/thread HB절을읽어언어대ISA경계를대조했다. JMM전체causality증명이나특정JIT실행검증은아니다."
+    ],
+    [
+      "https://docs.riscv.org/reference/isa/v20260120/unpriv/intro.html",
+      "CURRENT_VERIFIED",
+      "isa-execution: 같은공식현재판intro의ISA/구현software-visibleinterface구분과byte-address/word정의를 실제 읽었다. legacyURL의직접도구실패와분리한다."
+    ],
+    [
+      "https://docs.riscv.org/reference/isa/v20260120/unpriv/rv32.html",
+      "CURRENT_VERIFIED",
+      "isa-execution: legacyrv32페이지가제공한redirect를따른실제현재판본문. 관련format/controltransfer/load-store 절 대조에사용했다."
+    ],
+    [
+      "https://docs.riscv.org/reference/isa/v20260120/unpriv/rvwmo.html",
+      "CURRENT_VERIFIED",
+      "multicore-memory: canonicalredirect가도착한실제공식현재판PPO/fence/aq/rl관련절을읽었다. 모든protocol/coherence상태의명세로쓰지않는다."
+    ],
+    [
+      "https://ocw.mit.edu/courses/6-004-computation-structures-spring-2009/8aab78cf087999514dd6e0b73c6ab43e_MIT6_004s09_study_digital_guide.pdf",
+      "CURRENT_VERIFIED",
+      "memory-hierarchy: 공식검색으로제공된MemoryHierarchy의작은cache/큰main、조회후fill、simpleAMAT와locality부분텍스트를실제읽었다. textbookdisk포함과blocking모델의교육가정은일반hardware보장으로쓰지않는다. 전체PDF/diagram시각QA는아니다."
+    ],
+    [
+      "https://ocw.mit.edu/courses/6-004-computation-structures-spring-2017/e3780374f88b6201126fccda717635f7_caches_worksheet.pdf",
+      "CURRENT_VERIFIED",
+      "memory-hierarchy: 공식검색의cachehit2cycle/추가20cycle/90%조건과localindex/tag문제발췌를실제읽어추가패널티의가중모델을대조했다. worksheet전체나runtime시험은아니다."
+    ],
+    [
+      "https://ocw.mit.edu/courses/6-823-computer-system-architecture-fall-2005/de5d7f798f868802112e1b6cdbc454cc_l14_superscalar.pdf",
+      "CURRENT_VERIFIED",
+      "pipeline-ilp: resource의실제PDF링크를따라슬라이드2~4텍스트의tag/data준비후issue,결과저장후commit,physicalmapping과branchrecovery를직접확인했다. screenshot호출은했지만이미지내용이도구출력에표시되지않아시각QA완료로기록하지않는다."
+    ],
+    [
+      "https://openjdk.org/jeps/142",
+      "NEEDS_REVIEW",
+      "memory-hierarchy: 직접도구403이며이JEPtarget의본문을읽지못했다. 다른OpenJDK원저자발표발췌와구분한다."
+    ],
+    [
+      "https://raw.githubusercontent.com/openjdk/jmh/master/jmh-samples/src/main/java/org/openjdk/jmh/samples/JMHSample_08_DeadCode.java",
+      "CURRENT_VERIFIED",
+      "performance: OpenJDK 공식 저장소 sample의 실제 전체 원문을 읽었다. measureWrong의 미사용 결과, measureRight의 반환 결과와 Blackhole 소비 관련 설명을 대조했다. 벤치마크를 실제 실행하거나 모든 JMH sample을 검토했다고 하지 않는다."
+    ],
+    [
+      "https://raw.githubusercontent.com/torvalds/linux/master/arch/mips/mm/tlbex.c",
+      "CURRENT_VERIFIED",
+      "virtual-memory-hardware: 공식upstreamsource의build_r4000_tlb_refill_handler에서PGD/PMD/PTE조회생성→TLBentrywrite→eret와cpu_has_htw조건부hardwarewalker설정을실제읽었다. softwarefastpath와do_page_faultslowpath구별도확인했다. master/도구cached본문의해당관련경로이며Linux전체실행검증이나모든MIPSsoftware-only주장아니다."
+    ],
+    [
+      "https://www.cs.umd.edu/class/sum2003/cmsc311/Notes/Data/repr.html",
+      "CURRENT_VERIFIED",
+      "data-representation: 원저자 대학 강의의representation/value구별,UB/2C같은패턴다른해석예를 실제 읽었다. canonical number-systems target확인과구별한다."
+    ],
+    [
+      "https://www.cs.umd.edu/class/sum2003/cmsc311/Notes/Data/twoscomp.html",
+      "CURRENT_VERIFIED",
+      "data-representation: 실제 검색본문의2C단일zero와덧셈회로공유/표현범위조건을읽었다. 오래된 C 구현의signedoverflow계약을Java/모든언어보장으로쓰지않는다."
+    ],
+    [
+      "https://www.cs.umd.edu/class/sum2003/cmsc311/Notes/Data/unsigned.html",
+      "CURRENT_VERIFIED",
+      "data-representation: 원저자강의의N-bit패턴수/최댓값2^N-1유도를 실제 읽었다. closed산술예는직접계산으로대조했다."
+    ],
+    [
+      "https://www.cs.umd.edu/~meesh/411/Pipelining_Lecture.pdf",
+      "NEEDS_REVIEW",
+      "pipeline-ilp: 검색의같은대학forwarding부분발췌는읽혔으나직접PDF접근은403으로전체/시각흐름은확인하지못했다."
+    ],
+    [
+      "https://www.cs.umd.edu/~meesh/411/pipe-lect-4up.pdf",
+      "CURRENT_VERIFIED",
+      "pipeline-ilp: 실제공식대학검색발췌의MIPS5stage WAR/WAW조건, RAW스톨과WB전ALUforward 설명을읽었다. PDF전체/diagram시각검토는아니다."
+    ],
+    [
+      "https://www.cs.umd.edu/~meesh/cmsc411/legacy/overview/chapter01.html",
+      "CURRENT_VERIFIED",
+      "performance: 공식 학과 검색 결과에 실제 반환된 Amdahl 식, IC×CPI×cycle time와 세 항의 상호 의존 관련 본문만 읽었다. 직접 접근은403이다. 검색 반환의 다른 CPU 식에 오기가 있으므로 그 식이나 전체 페이지 정확성까지 승인하지 않는다."
+    ]
+  ],
+  "referenceAccess": {
+    "https://docs.riscv.org/reference/isa/unpriv/intro.html": {
+      "status": "NEEDS_REVIEW",
+      "basis": "legacy직접도구접근은실패했지만동일공식현재판본문은접근해의미를대조했다. 실제학습자의legacyroute접근/redirect는별도확인필요."
+    }
+  },
+  "curriculumSha256": "b831dea17630236b6816d618bafc9dfac9a7dbf88463125c7bde452c29df196f",
+  "topicCatalogSha256": "db2a7b17ad7b6f0bafaa1841509955e3ed314d15b58e940ee234c501074048d0",
+  "supportingEvidence": {
+    "computer-architecture.core.cache-organization.direct-mapped-cache": {
+      "kind": "DIRECT_DERIVATION",
+      "urls": [],
+      "basis": "본문이 명시한 교육용 cache model에서 line offset/index/tag bit 분해와 block→set/way 배치, hit/conflict/eviction, dirty/write/allocate 분기를 직접 추론했다. 실제 CPU의 cache 크기·정책을 일반 보장으로 승인하지 않았다. 학습용 mapping과 실행 trace에 대한 판정이며 UMD target의 내용/접근/학습 가치는 미확인이다. 개별 동작 근거: index→line→tag、A/B교대교체와다른빈공간사용불가、용량대mapping절충을인과적으로설명한다. 유효라인조건은이전hit/missConcept와이어읽고tag일치만으로invalid라인도hit라고일반화하지않는다. Reference 한계: UMDcache-organization의본문접근은미확정이다. web도구실패뒤TLS검증을유지한Windows HEAD도403이다. 이HTTP상태는교육적내용승인이나없는URL증거가아니다."
+    },
+    "computer-architecture.core.cache-organization.set-associative-cache": {
+      "kind": "DIRECT_DERIVATION",
+      "urls": [],
+      "basis": "본문이 명시한 교육용 cache model에서 line offset/index/tag bit 분해와 block→set/way 배치, hit/conflict/eviction, dirty/write/allocate 분기를 직접 추론했다. 실제 CPU의 cache 크기·정책을 일반 보장으로 승인하지 않았다. 학습용 mapping과 실행 trace에 대한 판정이며 UMD target의 내용/접근/학습 가치는 미확인이다. 개별 동작 근거: 4way네후보/태그비교、가득차면교체、compare/selection/policy비용과compulsory/capacity한계를설명한다. 무조건associativity만높이면좋다는오해를피한다. Reference 한계: UMDtarget403으로미확정이며line/set및bit계산을본문과문항전제로직접대조했다. 실제CPU의hash/sliceindex방식을이식성보장으로쓰지않는다."
+    },
+    "computer-architecture.core.cache-organization.fully-associative-cache": {
+      "kind": "DIRECT_DERIVATION",
+      "urls": [],
+      "basis": "본문이 명시한 교육용 cache model에서 line offset/index/tag bit 분해와 block→set/way 배치, hit/conflict/eviction, dirty/write/allocate 분기를 직접 추론했다. 실제 CPU의 cache 크기·정책을 일반 보장으로 승인하지 않았다. 학습용 mapping과 실행 trace에 대한 판정이며 UMD target의 내용/접근/학습 가치는 미확인이다. 개별 동작 근거: 하나의set/여러tag비교、비용상승、cold/capacity잔존을정확히설명한다. 모든miss를제거한다고단정하지않고배치자유도대비가자연스럽다. Reference 한계: UMDtarget접근미확정. 실제하드웨어전체가동일comparator배치라는보장은본문에없으며대표비교모델을검토했다."
+    },
+    "computer-architecture.core.cache-organization.index-tag-offset": {
+      "kind": "DIRECT_DERIVATION",
+      "urls": [],
+      "basis": "본문이 명시한 교육용 cache model에서 line offset/index/tag bit 분해와 block→set/way 배치, hit/conflict/eviction, dirty/write/allocate 분기를 직접 추론했다. 실제 CPU의 cache 크기·정책을 일반 보장으로 승인하지 않았다. 학습용 mapping과 실행 trace에 대한 판정이며 UMD target의 내용/접근/학습 가치는 미확인이다. 개별 동작 근거: byte-address/power2전제를명시한다.32KiB/64/4=128set,offset6/index7/tag19(32bit)와way증가시index감소/tag증가가맞다. 실제index가더복잡할수있음을경계한다. Reference 한계: UMDtarget미확정이며bit조합과단위는독립계산했다. MIT공식worksheet의tag/line구성발췌는앞Topic의보충근거로읽었다."
+    },
+    "computer-architecture.core.cache-organization.replacement-policy": {
+      "kind": "DIRECT_DERIVATION",
+      "urls": [],
+      "basis": "본문이 명시한 교육용 cache model에서 line offset/index/tag bit 분해와 block→set/way 배치, hit/conflict/eviction, dirty/write/allocate 분기를 직접 추론했다. 실제 CPU의 cache 크기·정책을 일반 보장으로 승인하지 않았다. 학습용 mapping과 실행 trace에 대한 판정이며 UMD target의 내용/접근/학습 가치는 미확인이다. 개별 동작 근거: LRU의temporal가정、정확순서상태비용→pseudo/다른정책、수용량한계、dirtyvictim비용、directmapped선택없음이정확하다. 특정CPU가LRU를쓴다는보장은없다. Reference 한계: UMDtarget미확정. 본문이대표정책과모든CPU계약을구별하는지검토했고자료자체를읽은것처럼처리하지않는다."
+    },
+    "computer-architecture.core.cache-organization.write-through-write-back": {
+      "kind": "DIRECT_DERIVATION",
+      "urls": [],
+      "basis": "본문이 명시한 교육용 cache model에서 line offset/index/tag bit 분해와 block→set/way 배치, hit/conflict/eviction, dirty/write/allocate 분기를 직접 추론했다. 실제 CPU의 cache 크기·정책을 일반 보장으로 승인하지 않았다. 학습용 mapping과 실행 trace에 대한 판정이며 UMD target의 내용/접근/학습 가치는 미확인이다. 개별 동작 근거: WT매write전달/writebuffer대WB수정dirty/나중반영、트래픽·교체비용、coherence별도와DB영속성분리를정확히설명한다. eviction을대표예로쓰며모든WB가오직eviction때만반영한다고제한하지않는다. Reference 한계: UMDtarget미확정. CPUcache와하위휘발성memory반영이DBdurability가아님을본문/Question으로대조한다."
+    },
+    "computer-architecture.core.cache-organization.write-allocate": {
+      "kind": "DIRECT_DERIVATION",
+      "urls": [],
+      "basis": "본문이 명시한 교육용 cache model에서 line offset/index/tag bit 분해와 block→set/way 배치, hit/conflict/eviction, dirty/write/allocate 분기를 직접 추론했다. 실제 CPU의 cache 크기·정책을 일반 보장으로 승인하지 않았다. 학습용 mapping과 실행 trace에 대한 판정이며 UMD target의 내용/접근/학습 가치는 미확인이다. 개별 동작 근거: miss→fill→수정과noallocate→lowerwrite、stream대곧read/write재사용、hitpolicy대misspolicy두축분리가정확하다. 대표WB+WA/WT+NWA조합을고정ISA규칙으로강제하지않는다. Reference 한계: UMDtarget미확정. 실제non-temporal처리방식전체를보장하지않고기법선택을target아키텍처/실측에의존시키는지확인했다."
+    },
+    "computer-architecture.core.cache-organization.cache-friendly-access": {
+      "kind": "CHECKED_SOURCE",
+      "urls": [
+        "https://ocw.mit.edu/courses/6-004-computation-structures-spring-2009/8aab78cf087999514dd6e0b73c6ab43e_MIT6_004s09_study_digital_guide.pdf"
+      ],
+      "basis": "실제 MIT MemoryHierarchy/locality 관련 공식 검색 본문과 본문의 접근 순서를 대조했다. 연속 배치/stride 교육 model의 지역성 가능성이며 실측 가속이나 모든 객체 배치를 보장하지 않는다. 개별 동작 근거: 순차대large stride、작업집합작은tile→temporal/spatial활용、배열이항상빠름아님/포인터작은집합재사용、padding비용·실측을설명한다. 단순0/16/32그림은폭미고정추상접근예다. Reference 한계: 앞TopicUMDmemory-hierarchy-target의실제HEAD403을재사용하고내용확인은미확정으로남긴다. 기존정확한교과자료의수치가현재CPU성능보장이라는승격은없다."
+    },
+    "computer-architecture.core.data-representation.bit-byte-word": {
+      "kind": "CHECKED_SOURCE",
+      "urls": [
+        "https://www.cs.umd.edu/class/sum2003/cmsc311/Notes/Data/repr.html",
+        "https://www.cs.umd.edu/class/sum2003/cmsc311/Notes/Data/twoscomp.html",
+        "https://www.cs.umd.edu/class/sum2003/cmsc311/Notes/Data/unsigned.html",
+        "https://docs.oracle.com/cd/E19957-01/806-3568/ncg_math.html"
+      ],
+      "basis": "직접 읽은 원저자 강의의 N-bit 표현/해석/범위와 Oracle binary32 관련 표로 대조했다. 정확한 각 예의 산술은 원문 상태에서 직접 계산했다. canonical target/IEEE 전문의 접근·학습 가치는 미확인이다. 개별 동작 근거: 바이트 주소 1000/1001과 32-bit의 연속 4바이트 예, 아키텍처의 자연 처리 폭과 더 작은 명령 폭을 구분한다. 보통 8-bit/일반 byte-addressable 조건을 밝혀 비보편 구현을 일반화하지 않는다. 연결된 한국어와 세 가지 오해 비교가 충분하다. Reference 한계: UMD number-systems canonical 대상의 실제 절 접근은 NEEDS_REVIEW다. 수 표현 공식 보충 자료는 별도 기록하며 주소/ISA 폭 전체를 확인한 자료로 확대하지 않는다."
+    },
+    "computer-architecture.core.data-representation.binary-hex": {
+      "kind": "CHECKED_SOURCE",
+      "urls": [
+        "https://www.cs.umd.edu/class/sum2003/cmsc311/Notes/Data/repr.html",
+        "https://www.cs.umd.edu/class/sum2003/cmsc311/Notes/Data/twoscomp.html",
+        "https://www.cs.umd.edu/class/sum2003/cmsc311/Notes/Data/unsigned.html",
+        "https://docs.oracle.com/cd/E19957-01/806-3568/ncg_math.html"
+      ],
+      "basis": "직접 읽은 원저자 강의의 N-bit 표현/해석/범위와 Oracle binary32 관련 표로 대조했다. 정확한 각 예의 산술은 원문 상태에서 직접 계산했다. canonical target/IEEE 전문의 접근·학습 가치는 미확인이다. 개별 동작 근거: 1010 0111→A7, FF의 unsigned255/signed-1, 03/0003의 폭 비교가 정확하다. 값을 바꾸는 연산과 표기 변경을 구별하며 자연스러운 원인·예시 설명이다. Reference 한계: canonical UMD 접근 미확정. 실제 읽은 같은 대학의 representation/value 원저자 강의가 표기와 해석 분리의 보충 근거다."
+    },
+    "computer-architecture.core.data-representation.signed-twos-complement": {
+      "kind": "CHECKED_SOURCE",
+      "urls": [
+        "https://www.cs.umd.edu/class/sum2003/cmsc311/Notes/Data/repr.html",
+        "https://www.cs.umd.edu/class/sum2003/cmsc311/Notes/Data/twoscomp.html",
+        "https://www.cs.umd.edu/class/sum2003/cmsc311/Notes/Data/unsigned.html",
+        "https://docs.oracle.com/cd/E19957-01/806-3568/ncg_math.html"
+      ],
+      "basis": "직접 읽은 원저자 강의의 N-bit 표현/해석/범위와 Oracle binary32 관련 표로 대조했다. 정확한 각 예의 산술은 원문 상태에서 직접 계산했다. canonical target/IEEE 전문의 접근·학습 가치는 미확인이다. 개별 동작 근거: FF=-1/255, n-bit 범위, +5 반전+1=-5, -1의 16-bit 확장이 정확하다. sign-magnitude와 구별하고 회로 재사용 이유도 설명한다. Java byte 응용은 언어의 부호 계약으로 분리한다. Reference 한계: UMD canonical 대상은 NEEDS_REVIEW. 실제 공식 대학 강의의 two's complement 단일 0/덧셈/범위 내용을 보충 확인했다."
+    },
+    "computer-architecture.core.data-representation.fixed-width-overflow": {
+      "kind": "CHECKED_SOURCE",
+      "urls": [
+        "https://www.cs.umd.edu/class/sum2003/cmsc311/Notes/Data/repr.html",
+        "https://www.cs.umd.edu/class/sum2003/cmsc311/Notes/Data/twoscomp.html",
+        "https://www.cs.umd.edu/class/sum2003/cmsc311/Notes/Data/unsigned.html",
+        "https://docs.oracle.com/cd/E19957-01/806-3568/ncg_math.html"
+      ],
+      "basis": "직접 읽은 원저자 강의의 N-bit 표현/해석/범위와 Oracle binary32 관련 표로 대조했다. 정확한 각 예의 산술은 원문 상태에서 직접 계산했다. canonical target/IEEE 전문의 접근·학습 가치는 미확인이다. 개별 동작 근거: 255+1의 9번째 carry 제거와127+1의10000000/-128, 하드웨어 플래그와 자동 예외의 ISA 의존 경계를 정확히 설명한다. unsigned modulo와 signed 해석을 혼합하지 않는다. 코드 실행을 주장하지 않는다. Reference 한계: canonical UMD 접근 미확정, unsigned 범위의 실제 대학 강의와 독립적인 비트 계산을 보충 근거로 사용한다."
+    },
+    "computer-architecture.core.data-representation.floating-point": {
+      "kind": "CHECKED_SOURCE",
+      "urls": [
+        "https://www.cs.umd.edu/class/sum2003/cmsc311/Notes/Data/repr.html",
+        "https://www.cs.umd.edu/class/sum2003/cmsc311/Notes/Data/twoscomp.html",
+        "https://www.cs.umd.edu/class/sum2003/cmsc311/Notes/Data/unsigned.html",
+        "https://docs.oracle.com/cd/E19957-01/806-3568/ncg_math.html"
+      ],
+      "basis": "직접 읽은 원저자 강의의 N-bit 표현/해석/범위와 Oracle binary32 관련 표로 대조했다. 정확한 각 예의 산술은 원문 상태에서 직접 계산했다. canonical target/IEEE 전문의 접근·학습 가치는 미확인이다. 개별 동작 근거: binary32의1/8/23배치, bias127, normal/subnormal/zero/Inf/NaN 구분이 실제 읽은 Oracle 공식 수치 가이드와 일치한다. 0.1 근사→중간 반올림→순서 영향→금액 표현 선택의 원인 흐름이 충분하다. Reference 한계: IEEE8766227 대상 전문 접근 NEEDS_REVIEW. 실제 읽은 Oracle IEEE Arithmetic의 binary32 표/숨은 bit 설명으로 해당 주장을 교차 확인했지만 IEEE2019 전문 확인으로 승격하지 않는다."
+    },
+    "computer-architecture.core.datapath-control.alu-datapath": {
+      "kind": "DIRECT_DERIVATION",
+      "urls": [],
+      "basis": "본문의 교육용 datapath·clock/critical-path model과 값/분기 상태를 직접 따라 계산했다. 조합 경로와 cycle time의 조건부 식은 모델에 한정하며 특정 CPU의 실제 gate 배치/성능 검증을 뜻하지 않는다. canonical 강의 PDF는 미접근이다. 개별 동작 근거: ADD두입력/rd,LOADbase+imm→address→memory→rd와조합논리/상태요소차이가정확하다. 같은ALU가최종값이아닌주소를계산하는원인과control역할연결이자연스럽다. Reference 한계: UMDdatapath.pdf는직접403으로target절접근미확정. RV32I의실제ADD/load주소·효과절은앞Topic에서확인했고특정hardwareALU공유설계의일반보장으로쓰지않는다."
+    },
+    "computer-architecture.core.datapath-control.control-unit": {
+      "kind": "DIRECT_DERIVATION",
+      "urls": [],
+      "basis": "본문의 교육용 datapath·clock/critical-path model과 값/분기 상태를 직접 따라 계산했다. 조합 경로와 cycle time의 조건부 식은 모델에 한정하며 특정 CPU의 실제 gate 배치/성능 검증을 뜻하지 않는다. canonical 강의 PDF는 미접근이다. 개별 동작 근거: ADD/LOAD같은ALU·다른선택과RegWriteoff/잘못된operand의실패가충분하다. hardwired/microprogram대표절충은ISA뜻을바꾸지않는구현선택으로명시했다. 문체와인과관계가자연스럽다. Reference 한계: UMD PDF403으로Reference절확인은NEEDS_REVIEW다. 신호예는단순화한교육설계이며모든CPU의같은signal이름을ISA보장으로제시하지않는다."
+    },
+    "computer-architecture.core.datapath-control.clock-cycle": {
+      "kind": "DIRECT_DERIVATION",
+      "urls": [],
+      "basis": "본문의 교육용 datapath·clock/critical-path model과 값/분기 상태를 직접 따라 계산했다. 조합 경로와 cycle time의 조건부 식은 모델에 한정하며 특정 CPU의 실제 gate 배치/성능 검증을 뜻하지 않는다. canonical 강의 PDF는 미접근이다. 개별 동작 근거: edge→조합지연→다음state,1/f와2GHz0.5ns, single/multi/pipeline차이와CPI미스영향이정확하다. GHz높음=항상빠름오해를구체적으로경계한다. Reference 한계: UMD Performance 대상은도구접근미확정. 주파수역수/수치예는직접차원계산으로대조했고해당웹본문을읽은것처럼기록하지않는다."
+    },
+    "computer-architecture.core.datapath-control.critical-path": {
+      "kind": "DIRECT_DERIVATION",
+      "urls": [],
+      "basis": "본문의 교육용 datapath·clock/critical-path model과 값/분기 상태를 직접 따라 계산했다. 조합 경로와 cycle time의 조건부 식은 모델에 한정하며 특정 CPU의 실제 gate 배치/성능 검증을 뜻하지 않는다. canonical 강의 PDF는 미접근이다. 개별 동작 근거: 가장긴reg간조합경로+regoverhead+여유,load의더긴경로,최악stage와불균형/추가비용을정확히설명한다. application느린함수와회로criticalpath를분리한다. Reference 한계: UMD PDF접근403으로학습자료절은미확정. 각수치의overhead포함여부를본문/문항조건으로확인했다."
+    },
+    "computer-architecture.core.memory-hierarchy.memory-hierarchy": {
+      "kind": "CHECKED_SOURCE",
+      "urls": [
+        "https://ocw.mit.edu/courses/6-004-computation-structures-spring-2009/8aab78cf087999514dd6e0b73c6ab43e_MIT6_004s09_study_digital_guide.pdf",
+        "https://ocw.mit.edu/courses/6-004-computation-structures-spring-2017/e3780374f88b6201126fccda717635f7_caches_worksheet.pdf",
+        "https://cr.openjdk.org/~redestad/slides/openjdk-scalability.pdf"
+      ],
+      "basis": "직접 읽은 공식 검색 본문의 cache fill/locality·명시 추가 penalty 계산·cache line 공유 설명과 각 Concept의 수치/상태를 대조했다. PDF 전체/figure 시각 QA와 canonical UMD 링크 확인은 완료하지 않았다. 개별 동작 근거: register/cache/DRAM/storage표와작업집합재사용,miss하위조회,AMAT개요를설명하며OSpagecache/DBbuffer/appcache와hardware메커니즘을분리한다. 모든상위계층이동일한자동cache라는회로보장으로읽지않으며이전register구별과연결한다. Reference 한계: UMD canonical target직접접근은NEEDS_REVIEW. 실제MIT공식학습가이드검색발췌의작은cache/큰main/disk및단순AMAT를보충확인했다. 교재의disk모든데이터가정은현재메모리의일반보장으로채택하지않는다."
+    },
+    "computer-architecture.core.memory-hierarchy.temporal-spatial-locality": {
+      "kind": "CHECKED_SOURCE",
+      "urls": [
+        "https://ocw.mit.edu/courses/6-004-computation-structures-spring-2009/8aab78cf087999514dd6e0b73c6ab43e_MIT6_004s09_study_digital_guide.pdf",
+        "https://ocw.mit.edu/courses/6-004-computation-structures-spring-2017/e3780374f88b6201126fccda717635f7_caches_worksheet.pdf",
+        "https://cr.openjdk.org/~redestad/slides/openjdk-scalability.pdf"
+      ],
+      "basis": "직접 읽은 공식 검색 본문의 cache fill/locality·명시 추가 penalty 계산·cache line 공유 설명과 각 Concept의 수치/상태를 대조했다. PDF 전체/figure 시각 QA와 canonical UMD 링크 확인은 완료하지 않았다. 개별 동작 근거: line유지→재접근hit,연속배열라인재사용,큰stride/캐시교체와자료구조이름≠실패보장조건을정확히설명한다. 가능성의모델이지모든프로그램지역성보장이아니다. Reference 한계: UMDtarget미확정이며MIT공식검색발췌의근래주소재사용설명을실제읽었다. 자료의LRU가정은모든hardwarepolicy로일반화하지않는다."
+    },
+    "computer-architecture.core.memory-hierarchy.cache-line": {
+      "kind": "CHECKED_SOURCE",
+      "urls": [
+        "https://ocw.mit.edu/courses/6-004-computation-structures-spring-2009/8aab78cf087999514dd6e0b73c6ab43e_MIT6_004s09_study_digital_guide.pdf",
+        "https://ocw.mit.edu/courses/6-004-computation-structures-spring-2017/e3780374f88b6201126fccda717635f7_caches_worksheet.pdf",
+        "https://cr.openjdk.org/~redestad/slides/openjdk-scalability.pdf"
+      ],
+      "basis": "직접 읽은 공식 검색 본문의 cache fill/locality·명시 추가 penalty 계산·cache line 공유 설명과 각 Concept의 수치/상태를 대조했다. PDF 전체/figure 시각 QA와 canonical UMD 링크 확인은 완료하지 않았다. 개별 동작 근거: 예시64byte는일반보편폭이아니고가능예로표현한다. tag/valid/dirty,offset/set/tag의다음Topic위임과큰line의낭비·라인수감소가정확하다. multicorefalse-sharing은앞으로배울연결로명시한다. Reference 한계: canonicalUMDtarget미확정. 블록메타/범위는본문과연결문항의조건을검토했으며64byte가모든CPUISA보장이라고승인하지않는다."
+    },
+    "computer-architecture.core.memory-hierarchy.cache-hit-miss": {
+      "kind": "CHECKED_SOURCE",
+      "urls": [
+        "https://ocw.mit.edu/courses/6-004-computation-structures-spring-2009/8aab78cf087999514dd6e0b73c6ab43e_MIT6_004s09_study_digital_guide.pdf",
+        "https://ocw.mit.edu/courses/6-004-computation-structures-spring-2017/e3780374f88b6201126fccda717635f7_caches_worksheet.pdf",
+        "https://cr.openjdk.org/~redestad/slides/openjdk-scalability.pdf"
+      ],
+      "basis": "직접 읽은 공식 검색 본문의 cache fill/locality·명시 추가 penalty 계산·cache line 공유 설명과 각 Concept의 수치/상태를 대조했다. PDF 전체/figure 시각 QA와 canonical UMD 링크 확인은 완료하지 않았다. 개별 동작 근거: hit/miss분기와dirtyvictim가능성,compulsory/capacity/conflict원인,hit비용과misspenalty차이를정확히구별한다. 모든미스가항상dirtywrite를한다거나모든단계가직렬이라는주장은없다. Reference 한계: UMDtarget미확정. 실제MIT공식가이드검색본문의cache검사/미스후mainfetch/fill흐름을관련보충근거로읽었다. modernCPU전체timing검증은아니다."
+    },
+    "computer-architecture.core.memory-hierarchy.latency-vs-bandwidth": {
+      "kind": "CHECKED_SOURCE",
+      "urls": [
+        "https://ocw.mit.edu/courses/6-004-computation-structures-spring-2009/8aab78cf087999514dd6e0b73c6ab43e_MIT6_004s09_study_digital_guide.pdf",
+        "https://ocw.mit.edu/courses/6-004-computation-structures-spring-2017/e3780374f88b6201126fccda717635f7_caches_worksheet.pdf",
+        "https://cr.openjdk.org/~redestad/slides/openjdk-scalability.pdf"
+      ],
+      "basis": "직접 읽은 공식 검색 본문의 cache fill/locality·명시 추가 penalty 계산·cache line 공유 설명과 각 Concept의 수치/상태를 대조했다. PDF 전체/figure 시각 QA와 canonical UMD 링크 확인은 완료하지 않았다. 개별 동작 근거: 의존pointerchain대독립요청중첩/순차큰전송,대역폭포화시queue와latency증가를연결한다. 수치없이도시스템병목축을판단할인과가있다. Reference 한계: UMDtarget미확정. source를읽은것처럼하지않고closed단위계산과본문의조건별모형을독립대조한다."
+    },
+    "computer-architecture.core.memory-hierarchy.miss-penalty": {
+      "kind": "CHECKED_SOURCE",
+      "urls": [
+        "https://ocw.mit.edu/courses/6-004-computation-structures-spring-2009/8aab78cf087999514dd6e0b73c6ab43e_MIT6_004s09_study_digital_guide.pdf",
+        "https://ocw.mit.edu/courses/6-004-computation-structures-spring-2017/e3780374f88b6201126fccda717635f7_caches_worksheet.pdf",
+        "https://cr.openjdk.org/~redestad/slides/openjdk-scalability.pdf"
+      ],
+      "basis": "직접 읽은 공식 검색 본문의 cache fill/locality·명시 추가 penalty 계산·cache line 공유 설명과 각 Concept의 수치/상태를 대조했다. PDF 전체/figure 시각 QA와 canonical UMD 링크 확인은 완료하지 않았다. 개별 동작 근거: victim/dirty가능/lower/fill/retry와AMAT1+5%*80=5ns,localL2vsDRAM비용/overlap/prefetch/의존chain의한계를설명한다. 프로그램시간에모든miss80ns단순가산을금지한다. Reference 한계: UMDtarget미확정. MIT공식공개검색의simpleAMAT와추가패널티문제조건을실제읽었다. 단순모델의전제만대조하고모든실CPU의평균식을보장하지않는다."
+    },
+    "computer-architecture.core.multicore-memory.multicore-shared-memory": {
+      "kind": "DIRECT_DERIVATION",
+      "urls": [],
+      "basis": "본문의 두 CPU·cache copy 교육 모델에서 writer 변경/reader 이전 copy와 coherence 전이를 직접 따라 확인했다. 가정한 protocol state를 모든 ISA의 실제 구현으로 승인하지 않았다. 언어 ordering은 별도로 직접 읽은 JLS/RVWMO와 대조했고 원래 multiprocessors 링크는 미접근이다. 개별 동작 근거: core별state/storebuffer、동일linecopy-coherence대다른주소ordering、x++RMW원자성별도、Java언어계약경계가정확하다. 중앙register가모든작업을serial하게처리한다는오해를막는다. Reference 한계: UMDcanonicaltarget접근은미확정。실제Linuxfalse-sharing과RVWMO/JLS관련절의범위를분리해기술적주장과대조했다."
+    },
+    "computer-architecture.core.multicore-memory.cache-coherence-problem": {
+      "kind": "DIRECT_DERIVATION",
+      "urls": [],
+      "basis": "본문의 두 CPU·cache copy 교육 모델에서 writer 변경/reader 이전 copy와 coherence 전이를 직접 따라 확인했다. 가정한 protocol state를 모든 ISA의 실제 구현으로 승인하지 않았다. 언어 ordering은 별도로 직접 읽은 JLS/RVWMO와 대조했고 원래 multiprocessors 링크는 미접근이다. 개별 동작 근거: X10→A20와oldBcopy문제、invalidating모델의ownership/재읽기、line단위와RMW/다른주소순서별도책임이명확하다. 프로토콜대표모형이지모든CPU메시지순서를의무화하지않는다. Reference 한계: UMDtarget미확정。Linux공식false-sharing관련절의whole-line재조회/coherence비용과연결대조했으며모든coherence구현을그페이지로승인하지않는다."
+    },
+    "computer-architecture.core.multicore-memory.coherence-protocol-model": {
+      "kind": "DIRECT_DERIVATION",
+      "urls": [],
+      "basis": "본문의 두 CPU·cache copy 교육 모델에서 writer 변경/reader 이전 copy와 coherence 전이를 직접 따라 확인했다. 가정한 protocol state를 모든 ISA의 실제 구현으로 승인하지 않았다. 언어 ordering은 별도로 직접 읽은 JLS/RVWMO와 대조했고 원래 multiprocessors 링크는 미접근이다. 개별 동작 근거: Shared읽기복수→Awriteownership/BInvalid→B재조회와dirtylatest는DRAM외다른owner에있을수있음、snoop대directory참여자탐색차이/토폴로지의존이맞다. Coherence가다른주소전체순서를정하지않음을경계한다. Reference 한계: UMDtarget미확정。관련Linuxcoherencetraffic와실제RVWMO의관찰순서계약을별도대조했다. RVWMO를MESI구현명세로쓰지않는다."
+    },
+    "computer-architecture.core.performance.latency-throughput": {
+      "kind": "CHECKED_SOURCE",
+      "urls": [
+        "https://www.cs.umd.edu/~meesh/cmsc411/legacy/overview/chapter01.html"
+      ],
+      "basis": "실제 공식 학과 검색에 반환된 Amdahl·IC×CPI×cycle time 및 항의 상호 의존 본문을 읽고 각 원문의 closed 수치 예를 직접 계산했다. 해당 강의의 다른 오기나 전체 내용까지 승인하지 않는다. canonical performance URL은 별도로 미확인이다. 개별 동작 근거: 5-stage fill 이후 overlap와 각 instruction의 전체 경로 지연, 자원 포화의 queue/stall을 구별한다. 동시성 증가가 개별 latency 감소를 보장하지 않는다. Reference 한계: UMD canonical performance 대상 접근은 이전 직접 요청 실패로 미확정이다. 실제 공식 검색 반환의 CPU equation 관련 절은 별도 supplemental로 범위를 제한한다."
+    },
+    "computer-architecture.core.performance.cpu-time": {
+      "kind": "CHECKED_SOURCE",
+      "urls": [
+        "https://www.cs.umd.edu/~meesh/cmsc411/legacy/overview/chapter01.html"
+      ],
+      "basis": "실제 공식 학과 검색에 반환된 Amdahl·IC×CPI×cycle time 및 항의 상호 의존 본문을 읽고 각 원문의 closed 수치 예를 직접 계산했다. 해당 강의의 다른 오기나 전체 내용까지 승인하지 않는다. canonical performance URL은 별도로 미확인이다. 개별 동작 근거: I/O와 scheduler 대기는 elapsed에 포함되며 CPU cycles/clock의 단순 모델과 cache/branch stall을 설명한다. 여러 코어의 누적 CPU time이 wall time보다 클 수 있어 사용률과 요청 비중을 동일시하지 않는다. Reference 한계: UMD canonical target 미확정이다. 관련 CPU equation의 공식 검색 본문을 별도로 확인했으며 OS별 accounting API까지 그 자료로 승인하지 않는다."
+    },
+    "computer-architecture.core.performance.instruction-count-cpi-clock": {
+      "kind": "CHECKED_SOURCE",
+      "urls": [
+        "https://www.cs.umd.edu/~meesh/cmsc411/legacy/overview/chapter01.html"
+      ],
+      "basis": "실제 공식 학과 검색에 반환된 Amdahl·IC×CPI×cycle time 및 항의 상호 의존 본문을 읽고 각 원문의 closed 수치 예를 직접 계산했다. 해당 강의의 다른 오기나 전체 내용까지 승인하지 않는다. canonical performance URL은 별도로 미확인이다. 개별 동작 근거: 실행된 architectural IC×평균 CPI×cycle time와 1000/1260 cycles 비교가 맞다. workload/의존성/cache/branch와 clock 변화의 상호작용을 설명하며 GHz 또는 IC만으로 결론내리지 않는다. Reference 한계: UMD canonical 미확정이며 별도 공식 검색 결과의 IC×CPI×cycle time 관련 식만 대조했다. 같은 자료에 있는 다른 식의 오기까지 승인하지 않는다."
+    },
+    "computer-architecture.core.performance.amdahl-law": {
+      "kind": "CHECKED_SOURCE",
+      "urls": [
+        "https://www.cs.umd.edu/~meesh/cmsc411/legacy/overview/chapter01.html"
+      ],
+      "basis": "실제 공식 학과 검색에 반환된 Amdahl·IC×CPI×cycle time 및 항의 상호 의존 본문을 읽고 각 원문의 closed 수치 예를 직접 계산했다. 해당 강의의 다른 오기나 전체 내용까지 승인하지 않는다. canonical performance URL은 별도로 미확인이다. 개별 동작 근거: (1-p)+p/s의 직렬 합산 가정, 20%/10배의 0.82와 1.22배, 30%만 개선 시 1/0.7 상한이 맞다. p는 코드 크기가 아닌 기준 실행 시간이며 추가 동기화/경합 비용을 경계한다. Reference 한계: UMD canonical 접근 미확정, 공식 학과 검색 반환의 Amdahl 식을 별도 대조했다. 그 보충 URL의 직접 요청도 403으로 access 미확정이다."
+    },
+    "computer-architecture.core.performance.cache-impact": {
+      "kind": "CHECKED_SOURCE",
+      "urls": [
+        "https://www.cs.umd.edu/~meesh/cmsc411/legacy/overview/chapter01.html"
+      ],
+      "basis": "실제 공식 학과 검색에 반환된 Amdahl·IC×CPI×cycle time 및 항의 상호 의존 본문을 읽고 각 원문의 closed 수치 예를 직접 계산했다. 해당 강의의 다른 오기나 전체 내용까지 승인하지 않는다. canonical performance URL은 별도로 미확인이다. 개별 동작 근거: AMAT의 miss penalty는 추가 비용이라는 단순 모델이며 OOO/MLP의 overlap와 dependent pointer 추적을 구별한다. locality 개선과 추가 명령/prefetch 대역폭 비용을 함께 평가한다. Reference 한계: UMD target 미확정이다. 앞서 실제 읽은 공식 cache worksheet의 추가 miss penalty 모델과 대조하며 모든 실제 CPU stall을 선형 합으로 일반화하지 않는다."
+    },
+    "computer-architecture.core.performance.pipeline-branch-impact": {
+      "kind": "CHECKED_SOURCE",
+      "urls": [
+        "https://www.cs.umd.edu/~meesh/cmsc411/legacy/overview/chapter01.html"
+      ],
+      "basis": "실제 공식 학과 검색에 반환된 Amdahl·IC×CPI×cycle time 및 항의 상호 의존 본문을 읽고 각 원문의 closed 수치 예를 직접 계산했다. 해당 강의의 다른 오기나 전체 내용까지 승인하지 않는다. canonical performance URL은 별도로 미확인이다. 개별 동작 근거: 0.20×0.05×12=0.12의 단순 기여와 기본 1.12가 맞다. 깊은 pipeline의 clock 이득과 복구 비용, branchless 추가 load/명령의 조건부 비용을 설명한다. Reference 한계: UMD target 미확정이며 기존 공식 pipeline/OOO 보충의 관련 흐름과 단순 기댓값 계산을 대조했다."
+    },
+    "computer-architecture.core.performance.microbenchmark-boundary": {
+      "kind": "CHECKED_SOURCE",
+      "urls": [
+        "https://raw.githubusercontent.com/openjdk/jmh/master/jmh-samples/src/main/java/org/openjdk/jmh/samples/JMHSample_08_DeadCode.java"
+      ],
+      "basis": "실제 전체 OpenJDK JMH DeadCode sample의 미사용 결과/반환 결과/Blackhole 설명을 읽고 본문 예와 대조했다. benchmark를 실행하지 않았으며 JMH canonical homepage 접근은 미확인이다. 개별 동작 근거: Java 결과 미사용은 DCE 가능성으로 설명하여 side effect가 있는 모든 호출이 제거된다고 하지 않는다. JIT/warmup/fork/result 소비, cache/input/frequency/열/OS 상태와 대표 workload의 별도 검증을 설명한다. Reference 한계: JMH canonical homepage 직접 접근은 실패하여 미확정이다. 실제 OpenJDK JMH DeadCode sample 원문을 읽어 반환값의 소비와 제거되는 계산을 대조했다."
+    },
+    "computer-architecture.core.pipeline-ilp.pipeline-stages": {
+      "kind": "CHECKED_SOURCE",
+      "urls": [
+        "https://www.cs.umd.edu/~meesh/411/pipe-lect-4up.pdf"
+      ],
+      "basis": "실제 공식 강의 검색 발췌의 MIPS 5stage RAW/forwarding·WAR/WAW 조건을 읽고 본문의 교육용 timing trace를 직접 따라 검토했다. 다른 pipeline 구조나 모든 CPU에 일반화하지 않고 원래 target 접근은 미확인이다. 개별 동작 근거: 대표5stage일뿐모든CPU보장이아님을명시한다. I1/2/3의shiftedcycle표와fill후완료간격대종단간latency,overhead/최악stage/불균형의비용이맞다. 한국어인과흐름이충분하다. Reference 한계: canonicalUMDtarget은403NEEDS_REVIEW. 실제검색으로읽은같은대학pipeline강의의stage/forwarding관련발췌는별도보충근거이며canonical전체를확인한것이아니다."
+    },
+    "computer-architecture.core.pipeline-ilp.pipeline-hazards": {
+      "kind": "CHECKED_SOURCE",
+      "urls": [
+        "https://www.cs.umd.edu/~meesh/411/pipe-lect-4up.pdf"
+      ],
+      "basis": "실제 공식 강의 검색 발췌의 MIPS 5stage RAW/forwarding·WAR/WAW 조건을 읽고 본문의 교육용 timing trace를 직접 따라 검토했다. 다른 pipeline 구조나 모든 CPU에 일반화하지 않고 원래 target 접근은 미확인이다. 개별 동작 근거: 단일memoryport충돌,add→sub RAW,단순inorder와OOO의WAR/WAW이름재사용,미확정PC와기다림/추측실패가명확하다. 해저드처리없으면정확성도깨지는이유를설명한다. Reference 한계: UMDcanonicaltarget403. 같은대학강의검색본문의5stage WAR/WAW불발조건과복잡pipeline차이를 실제읽었으며특정MIPS교육모델만으로모든CPU를단정하지않는다."
+    },
+    "computer-architecture.core.pipeline-ilp.forwarding-and-stall": {
+      "kind": "CHECKED_SOURCE",
+      "urls": [
+        "https://www.cs.umd.edu/~meesh/411/pipe-lect-4up.pdf"
+      ],
+      "basis": "실제 공식 강의 검색 발췌의 MIPS 5stage RAW/forwarding·WAR/WAW 조건을 읽고 본문의 교육용 timing trace를 직접 따라 검토했다. 다른 pipeline 구조나 모든 CPU에 일반화하지 않고 원래 target 접근은 미확인이다. 개별 동작 근거: producerALU결과준비후WB전우회,load주소와load값준비의차이,아직없는값은forward불가,정확한stall수구현의존을명시한다. load-use에서값이늦는인과가코드와연결된다. Reference 한계: canonicalUMD403이고같은대학보충강의발췌의WB전ALU입력forward설명을 실제읽어비교했다. 전부runtime시험한근거는아니다."
+    },
+    "computer-architecture.core.pipeline-ilp.branch-prediction": {
+      "kind": "CHECKED_SOURCE",
+      "urls": [
+        "https://www.cs.umd.edu/~meesh/411/pipe-lect-4up.pdf"
+      ],
+      "basis": "실제 공식 강의 검색 발췌의 MIPS 5stage RAW/forwarding·WAR/WAW 조건을 읽고 본문의 교육용 timing trace를 직접 따라 검토했다. 다른 pipeline 구조나 모든 CPU에 일반화하지 않고 원래 target 접근은 미확인이다. 개별 동작 근거: predict→fetch→실제확인→계속/폐기PC재지정,고정/이력패턴과무작위,architectural결과대추측작업을구별한다. 마이크로아키텍처cache흔적까지없어진다는보장은없다. Reference 한계: UMDcanonical403. 실제MITsuperscalar강의PDF의fetchprediction/branchresolution/kill/commit분리와맞는다. 정확한예측기별성능이나특정ISA보장을확정하지않는다."
+    },
+    "computer-architecture.core.virtual-memory-hardware.virtual-physical-address": {
+      "kind": "CHECKED_SOURCE",
+      "urls": [
+        "https://www.kernel.org/doc/html/latest/mm/page_tables.html"
+      ],
+      "basis": "실제 Linux page-table의 VA/PA/PFN/offset·mapping 관련 절과 본문 주소 변환 trace를 대조했다. original UMD target 접근과 전체 구현 성능은 확인하지 않았다. 개별 동작 근거: A/B같은VA→다른frame가능/공유sameframe가능、VPN변환+offset、4096=2^12、매핑/권한fault와OS복구조건을구별한다. 주소공간예약대상주량은q3에서응용하며일반바이트페이징모형이명시된다. Reference 한계: UMDcanonicaltarget미확정. 실제Linuxpage_tables의VA→PA、pageframe/shift 및프로세스mm_context를보충확인했다. Linux구조를모든ISA의고정형식으로쓰지않는다."
+    }
+  }
+}

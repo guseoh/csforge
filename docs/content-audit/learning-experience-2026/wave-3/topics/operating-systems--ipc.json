@@ -1,0 +1,388 @@
+{
+  "area": "operating-systems",
+  "topic": "ipc",
+  "topicKey": "operating-systems.core.ipc",
+  "coverage": "7 Concept와 21 Question의 원문 전체와 모든 실제 문항 필드를 읽었다. Pipe의 ABC/DEF 쓰기·스트림 읽기·남은 쓰기 FD·버퍼 소진, signal의 mask/pending/handler, 공유 메모리의 서로 다른 VA·publication·복구, 메시지 큐의 경계/용량, UDS의 타입/권한, 원격 요청의 결과 불확실성과 IPC 선택 비용을 추적했다. 기존 SVG 4개 전체 소스와 좌표를 의미 검토했다. 공식 Linux/POSIX 문서의 관련 계약을 직접 확인했다. 픽셀 렌더 QA는 미수행이다.",
+  "concepts": [
+    [
+      "operating-systems.core.ipc.pipe",
+      "KEEP",
+      "L1 유한 커널 버퍼와 스트림·FD 생명주기를 충분히 설명한다.",
+      "전통적 단방향 모델, 두 FD와 fork 뒤 불필요한 끝 닫기, ABC/DEF 쓰기와 읽기 경계의 불일치, 가득 참/빈 상태의 blocking·nonblocking이 정확하다. 본문은 EOF의 필요 조건인 모든 쓰기 참조 닫기를 설명하고 연결 그림은 버퍼 소진까지 명시한다.",
+      "DIAGRAM 생산자→유한 버퍼→소비자와 all write references closed + buffer drained가 정확하다. 기존 그림 유지.",
+      "pipe(7)의 byte stream/용량/EOF/portable 단방향 범위와 POSIX read(3p)의 empty pipe 분기를 직접 대조했다.",
+      "q1 C와 모든 보기·rationale, q3 상속 쓰기 FD가 EOF를 지연하는 조건은 맞다. q2 독립 해설의 소진 조건 누락은 W3-OS-028이다."
+    ],
+    [
+      "operating-systems.core.ipc.signal",
+      "TARGETED_ENHANCE",
+      "L1 payload 채널과 제어 알림, handler 제약의 깊이는 충분하다.",
+      "발생→mask/pending→delivery와 default/handler, async-signal-safe와 standard signal 합쳐짐이 정확하다. 다만 정의가 비동기 사건으로만 한정되어 명령의 SIGSEGV/SIGFPE 같은 동기 발생을 빠뜨린 W3-OS-029이다.",
+      "TEXT pending/handler 상태 흐름이 적합하다. 그림 부재를 결함으로 판정하지 않는다.",
+      "signal(7)의 process/thread-directed hardware exception, mask/pending, standard nonqueue와 real-time queue를 직접 확인했다. signal-safety(7)의 중간 printf 재진입 사례도 대조했다.",
+      "q1 C의 제어 사건 대 payload/JSON/영속 큐, q2 handler 안전성, q3 명시된 standard signal의 coalescing을 개별 확인했다."
+    ],
+    [
+      "operating-systems.core.ipc.shared-memory",
+      "KEEP",
+      "L2 복사 감소와 동기화·복구 책임을 충분히 설명한다.",
+      "같은 backing에 A0x7000/B0xA000의 서로 다른 VA, 포인터 대신 offset/index, payload 쓰기 뒤 게시·process-shared 동기화와 generation/init/crash 복구가 타당하다. 이름 unlink와 기존 mapping 수명을 구분한다.",
+      "DIAGRAM 서로 다른 VA→같은 backing과 별도 exclusion/order/recovery가 정확하다. 유지.",
+      "shm_overview(7)의 shm_open→size→mmap·unlink/munmap 수명과 semaphore 필요성을 확인했다. mmap의 공유/개별 VA 계약은 앞서 VM/I/O에서 확인했다. D2 Binder 원문은 shell만 제공되어 미확인이다.",
+      "q1 D와 모든 distractor, q2 동기화·순서 책임, q3 ring head/tail·full/empty·publication·crash recovery의 HARD 적용 범위를 확인했다."
+    ],
+    [
+      "operating-systems.core.ipc.message-queue",
+      "KEEP",
+      "L1 스트림 대 독립 메시지·유한 용량을 충분히 구분한다.",
+      "kernel 메시지 send/receive 경계, 크기/용량 제한·block/fail, POSIX priority와 해당 API 범위가 적합하다. OS queue를 durable broker·자동 재전송/consumer group으로 일반화하지 않는다.",
+      "TEXT 경계와 포화→block/실패→생산자 정책 순서가 충분하다.",
+      "mq_overview(7)의 name/descriptor/send/receive/priority와 shutdown까지 kernel persistence를 실제 대조했다. 디스크 영속성을 보장하는 자료로 사용하지 않는다.",
+      "q1 A와 pointer/무한 용량/원격 영속 distractor, q2 stream framing 대 message boundary, q3 bounded wait/reject/admission/retry·queue 관측을 확인했다."
+    ],
+    [
+      "operating-systems.core.ipc.unix-domain-socket",
+      "KEEP",
+      "L1 local endpoint와 socket 타입·신뢰 경계를 충족한다.",
+      "AF_UNIX/LOCAL, stream framing과 datagram/seqpacket 차이, pathname/stale endpoint·abstract Linux 예외, peer credential을 설명한다. 로컬이라는 이유로 자동 신뢰하지 않는다. Path 권한은 영향을 줄 수 있는 조건으로 표현하여 POSIX 전체의 socket mode 보장으로 단정하지 않는다.",
+      "DIAGRAM client connect→local endpoint→server accept와 framing/권한/credential/stale 경계가 타당하다.",
+      "unix(7)의 타입·Linux pathname permissions와 POSIX 비보장·abstract 권한 무효/수명·SO_PEERCRED를 직접 대조했다. 세부 권한은 OS별 확인이 필요하다는 범위를 유지한다.",
+      "q1 A와 원격/mmap/모든 타입 경계 자동 보장 distractor, q2 IP 비용·local namespace/credential의 조건부 장점, q3 pathname 접근과 필요 시 peer 확인을 검토했다."
+    ],
+    [
+      "operating-systems.core.ipc.network-socket-ipc",
+      "TARGETED_ENHANCE",
+      "L1 호스트 경계와 serialization/framing·결과 불확실성은 충분하다.",
+      "서로 다른 주소 공간에서 raw pointer 공유 불가, TCP stream framing, 부분 read/write, send 성공≠상대 업무 완료, response 전 crash 뒤 재시도의 불확실성은 정확하다. Reset/timeout까지 local IPC에 없다고 묶은 W3-OS-030은 수정이 필요하다.",
+      "TEXT 송수신 단계와 identity/idempotency·timeout/retry 실패 경계가 충분하다.",
+      "socket(7)의 family/type·API와 timeout, send(2)의 local 전송 결과와 delivery 비보장, unix(7)의 ECONNRESET을 직접 대조했다.",
+      "q1 D와 자동 경계/재시도·pointer·send 완료 distractor, q2 length prefix/delimiter/fixed record, q3 response 전 crash의 불확실성과 요청 ID·멱등성을 확인했다."
+    ],
+    [
+      "operating-systems.core.ipc.ipc-tradeoff",
+      "TARGETED_ENHANCE",
+      "L2 비용·경계·동기화·격리·복구의 비교와 crash 적용은 충분하다.",
+      "비교 표와 유한 용량·backpressure, copy 감소 대 stale shared state, 정상 성능 대 복구 비용이 타당하다. Network 실패는 호스트/경로 원인이 추가되는 의미로 읽어야 하며 공통 timeout/reset과 구별할 문장 보강 후보이다.",
+      "DIAGRAM 위 카드들은 정확하지만 아래 수평 continuum의 오른쪽 shared state 라벨이 오른쪽 Network Socket 카드와 정렬되어 잘못된 순위를 암시하는 W3-OS-032이다. 축 제거 또는 실제 공유 정도와 카드 배치를 일치시킬 최소 후보를 기록한다.",
+      "pipe(7)/shm_overview(7)/unix(7)/socket(7)의 boundary·capacity·공유 책임을 대조했다. D2 browser 원문은 shell만 보여 미확인이다.",
+      "q2 shared memory 대 socket 격리 책임, q3 generation/version/commit publication·복구 대 정상 비용이 맞다. q1 A의 비현실 distractor는 W3-OS-031이다."
+    ]
+  ],
+  "questions": [
+    [
+      "operating-systems.core.ipc.pipe.q1",
+      "KEEP",
+      "정답 C의 전통적 단방향 byte stream이 맞다. A는 write별 메시지 경계, B는 user buffer 직접 공유, D는 항상 full duplex라는 잘못된 보장이다. 네 rationale와 해설은 buffer/copy/boundary를 일관되게 구분한다.",
+      "EASY 기본 모델 구분, q2 EOF 수명 및 q3 상속 FD 적용과 목표가 다르고 Concept 연결이 맞다."
+    ],
+    [
+      "operating-systems.core.ipc.pipe.q2",
+      "TARGETED_ENHANCE",
+      "Model/explanation은 모든 write-end 참조 닫기를 정확히 설명하지만 버퍼 소진을 빠뜨린 W3-OS-028이다. 100바이트 잔존 뒤 마지막 writer가 닫혀도 먼저100을 읽고 다음 양수길이 read가0이다. Concept 그림은 이미 이 조건을 충족한다.",
+      "MEDIUM EOF 조건 설명과 q3 상속 적용은 구별된다. 답의 필요·충분 조건을 닫기+빈 버퍼로 명시해야 한다. 선택지/acceptedAnswers 필드는 없다."
+    ],
+    [
+      "operating-systems.core.ipc.pipe.q3",
+      "KEEP",
+      "Model과 해설의 실제 producer 종료·buffer drained 뒤 부모의 불필요한 열린 write FD가 남으면 EOF 대신 대기한다는 추론이 맞다. FD 복제/상속 참조를 모두 닫아야 한다.",
+      "MEDIUM 구체적인 fork 수명 실패 진단이다. q2 조건 정의와 연결되지만 동일 문항의 반복은 아니다."
+    ],
+    [
+      "operating-systems.core.ipc.signal.q1",
+      "KEEP",
+      "정답 C 작은 제어 알림이 맞고 A 대용량 payload/BJSON stream/D영속 메시지 저장은 signal 계약이 아니다. 모든 rationale·해설은 IPC의 용도를 구분한다.",
+      "EASY 제어 메커니즘 목적이다. Prompt의 가장 알맞은 용도는 동기 발생 예외를 배제하는 전칭 정의가 아니며 q2/q3과 목표가 다르다."
+    ],
+    [
+      "operating-systems.core.ipc.signal.q2",
+      "KEEP",
+      "Handler가 중간에 공유/라이브러리 상태를 다시 만질 수 있어 lock·할당·logging 같은 임의 작업에 async-signal-safety 검토가 필요하다는 model/explanation이 맞다. 모든 log 함수가 언제나 불가라는 과잉 보장은 아니다.",
+      "MEDIUM reentrancy/교착의 이유를 설명한다. q1 목적 및 q3 pending 횟수와 다르며 연결이 맞다."
+    ],
+    [
+      "operating-systems.core.ipc.signal.q3",
+      "KEEP",
+      "Prompt가 standard signal로 한정하므로 반복 발생이 각각 독립 메시지로 queue되지 않고 pending 상태로 합쳐질 수 있다는 model/explanation이 맞다. Real-time signal의 별도 queue 계약과 충돌하지 않는다.",
+      "MEDIUM 이벤트 횟수 보존이라는 오해를 검증한다. q1 용도 및 q2 handler 안전성과 구별된다."
+    ],
+    [
+      "operating-systems.core.ipc.shared-memory.q1",
+      "KEEP",
+      "정답 D copy 비용 감소와 별도 동기화 책임이 맞다. A 동일 VA 강제/B자동 동기화/C상대 crash 때 복구 불필요는 모두 틀리며 rationale·해설도 맞다.",
+      "EASY 비용과 책임 구분이다. q2 순서 및 q3 ring 복구 적용과 다르다."
+    ],
+    [
+      "operating-systems.core.ipc.shared-memory.q2",
+      "KEEP",
+      "공유 backing만으로 exclusion/order가 제공되지 않으므로 process-shared 동기화와 payload 게시 순서가 필요하다는 model/explanation이 정확하다. 같은 숫자 VA나 프로세스별 mutex를 자동 보장하지 않는다.",
+      "MEDIUM 데이터 공유와 동기화의 차이를 설명한다. q1 선택 및 q3 종합 설계와 구분된다."
+    ],
+    [
+      "operating-systems.core.ipc.shared-memory.q3",
+      "KEEP",
+      "Ring head/tail·full/empty와 capacity, payload 완료 뒤 publication, process 간 동기화·visibility, owner crash의 미완성/세대 복구를 다룬 model/explanation이 충분하다. Copy 감소만으로 정합성·복구가 해결되지 않는다.",
+      "HARD 상태·순서·crash 복구를 종합하므로 난이도가 적합하다. Concept의 generation/init/수명 설명에 연결된다."
+    ],
+    [
+      "operating-systems.core.ipc.message-queue.q1",
+      "KEEP",
+      "정답 A message 단위 경계가 맞다. B pointer 직접 공유/C무한 용량/D원격 broker 수준 영속·재전송은 OS queue 보장이 아니다. 네 rationale와 explanation은 bounded kernel queue와 payload를 일관되게 구분한다.",
+      "EASY 목적/경계, q2 stream과의 차이 및 q3 포화 대응과 구별된다."
+    ],
+    [
+      "operating-systems.core.ipc.message-queue.q2",
+      "KEEP",
+      "Stream에는 앱 framing이 필요하고 queue는 전송된 메시지 단위를 받는다는 model/explanation이 맞다. 경계가 있다고 durable business 처리나 무제한 길이가 자동 보장되는 것은 아니다.",
+      "MEDIUM 경계가 parser에 주는 의미를 설명한다. q1 도구 선택보다 실행 책임이 구체적이다."
+    ],
+    [
+      "operating-systems.core.ipc.message-queue.q3",
+      "KEEP",
+      "가득 찬 queue에서 bounded wait/reject/admission/retry 정책과 생산 속도·queue 지연 관측이 필요하다는 model/explanation이 정확하다. 용량을 무한 확대하거나 무제한 재시도로 복구한다고 하지 않는다.",
+      "MEDIUM 유한 용량의 적용 문제이며 q1/q2 경계와 별도 목표이다."
+    ],
+    [
+      "operating-systems.core.ipc.unix-domain-socket.q1",
+      "KEEP",
+      "정답 A 같은 호스트 프로세스의 local endpoint가 맞다. B IP 기반 원격/C직접 mmap/D모든 socket 타입의 message 경계·자동 retry는 틀리다. 모든 rationale·해설이 stream/type을 구분한다.",
+      "EASY 경계·도구 모델이고 q2 선택 이유/q3 신뢰 경계와 다르다."
+    ],
+    [
+      "operating-systems.core.ipc.unix-domain-socket.q2",
+      "KEEP",
+      "IP 경로 비용을 줄일 수 있고 local endpoint·권한/credential 정책을 사용할 수 있다는 model/explanation이 맞다. 실제 성능과 API 지원에 따라 선택하며 항상 TCP보다 빠르다는 보장이 없다.",
+      "MEDIUM 조건부 비용·접근 정책 비교이다. Linux 권한/credential의 구현 범위는 canonical reference 검토에서 명시했다."
+    ],
+    [
+      "operating-systems.core.ipc.unix-domain-socket.q3",
+      "KEEP",
+      "같은 host에도 다른 사용자/프로세스가 있으므로 endpoint 소유/접근·stale path와 필요 시 peer credential 확인이 필요하다는 model/explanation이 맞다. 로컬 통신을 자동 신뢰하지 않는다.",
+      "MEDIUM 신뢰 경계 적용이다. Socket inode mode/credential 세부 보장은 OS마다 다르므로 Linux 자료의 범위를 유지한다. q1 목적/q2 성능과 구별된다."
+    ],
+    [
+      "operating-systems.core.ipc.network-socket-ipc.q1",
+      "KEEP",
+      "정답 D serialization/framing/partial I/O와 실패 처리 책임이 맞다. A 앱 경계·자동 retry/B상대 raw pointer 직접사용/Csend 성공=상대 업무 완료는 잘못된 보장이다. 네 rationale와 explanation이 정확하다.",
+      "EASY 별도 주소 공간·호스트 경계, q2 framing 및 q3 결과 불확실성과 구분된다."
+    ],
+    [
+      "operating-systems.core.ipc.network-socket-ipc.q2",
+      "KEEP",
+      "TCP byte stream에서 length prefix/delimiter/fixed-size record 같은 앱 framing과 partial 누적이 필요하다는 model/explanation이 맞다. 한 번 send=한 번 read라고 하지 않는다.",
+      "MEDIUM 경계 정의와 parser 책임이다. Pipe/MQ 비교와 재사용되는 기초이지만 해당 Topic의 원격 적용 연결이 적절하다."
+    ],
+    [
+      "operating-systems.core.ipc.network-socket-ipc.q3",
+      "KEEP",
+      "상대 처리 뒤 response 전에 crash/단절하면 처리 여부를 알 수 없으므로 요청 ID·멱등성 및 timeout/retry 정책이 필요하다는 model/explanation이 맞다. 재시도를 업무의 정확히 한 번 수행 보장으로 설명하지 않는다.",
+      "MEDIUM 실제 실패 순서 추론이다. q1 일반 책임/q2 byte framing과 별도 목표이다."
+    ],
+    [
+      "operating-systems.core.ipc.ipc-tradeoff.q1",
+      "TARGETED_ENHANCE",
+      "정답 B copy/latency/isolation/backpressure/recovery의 종합 기준이 정확하고 C clock만/D프로세스 수만은 불충분하다. A 변수명 길이는 실제 IPC 오해가 아닌 W3-OS-031의 약한 distractor이다. 모든 rationale/해설의 사실 오류는 없다.",
+      "EASY 선택 기준이지만 A가 이해 없이 제거 가능하다. Copy 비용 하나만으로 shared memory를 항상 선택한다는 현실 오해로 최소 교체할 후보이다."
+    ],
+    [
+      "operating-systems.core.ipc.ipc-tradeoff.q2",
+      "KEEP",
+      "공유 memory는 copy를 줄이는 대신 synchronization/state recovery를 앱이 맡고 socket은 주소 공간 격리와 framing/I/O 실패 책임이 있다는 model/explanation이 맞다. Socket이 모든 복구를 해결한다고 하지 않는다.",
+      "MEDIUM 구체 비용/책임 비교이다. q1 기준 선택과 q3 crash 정책 설계와 구별된다."
+    ],
+    [
+      "operating-systems.core.ipc.ipc-tradeoff.q3",
+      "KEEP",
+      "Producer crash의 stale/incomplete shared state에 generation/version/commit publication과 복구 절차를 정의하거나 격리된 대안을 선택하고 정상 성능·장애 비용을 함께 평가하라는 model/explanation이 충분하다.",
+      "HARD 상태 복구·설계 선택을 종합한다. Shared-memory ring 문항과 기초는 공유하지만 이 문항은 IPC 방식 선택과 복구 비용에 초점을 둔다."
+    ]
+  ],
+  "sources": [
+    [
+      "https://man7.org/linux/man-pages/man7/pipe.7.html",
+      "CURRENT_VERIFIED",
+      "DESCRIPTION의 finite byte stream·capacity/full/empty/EOF·전통적 단방향 portability를 직접 읽었다. 마지막 writer 닫기 뒤 buffered bytes를 먼저 소비한다는 정확한 조건은 POSIX read(3p)로 추가 확인했다."
+    ],
+    [
+      "https://man7.org/linux/man-pages/man7/signal.7.html",
+      "CURRENT_VERIFIED",
+      "Disposition·mask/pending·thread-directed hardware exception과 standard nonqueue/real-time queue 구간을 직접 읽었다. 동기 생성 사건과 비동기 handler 가능성을 구분한다."
+    ],
+    [
+      "https://man7.org/linux/man-pages/man7/shm_overview.7.html",
+      "CURRENT_VERIFIED",
+      "Create/open·size·mmap·munmap·unlink와 object 수명, 별도 semaphore 동기화 NOTES를 직접 읽었다. 전체 API 세부 구현 검증을 뜻하지 않는다."
+    ],
+    [
+      "https://man7.org/linux/man-pages/man7/mq_overview.7.html",
+      "CURRENT_VERIFIED",
+      "DESCRIP의 message API·name/descriptor·priority와 kernel persistence until shutdown을 직접 읽었다. Durable broker 계약으로 확대하지 않는다."
+    ],
+    [
+      "https://man7.org/linux/man-pages/man7/unix.7.html",
+      "CURRENT_VERIFIED",
+      "Types·pathname/abstract namespace·Linux permissions와 POSIX 비보장·peer credentials 및 ERRORS의 ECONNRESET을 직접 대조했다."
+    ],
+    [
+      "https://man7.org/linux/man-pages/man7/socket.7.html",
+      "CURRENT_VERIFIED",
+      "Socket layer의 family/type·connect/bind/listen/accept/send/recv·close/shutdown 및 SO_RCVTIMEO/SO_SNDTIMEO 구간을 읽었다. Timeout은 원격 전용이 아니다."
+    ],
+    [
+      "https://d2.naver.com/helloworld/47656",
+      "NEEDS_REVIEW",
+      "직접 열었지만 navigation shell만 제공하여 Binder 사례 본문/정확한 학습 가치 확인이 불가능했다. 404 또는 기술 오류라고 판정하지 않는다."
+    ],
+    [
+      "https://d2.naver.com/helloworld/2922312",
+      "NEEDS_REVIEW",
+      "직접 열었지만 navigation shell만 제공했다. Browser 다중 프로세스 사례의 본문·현재성은 추가 확인이 필요하다."
+    ]
+  ],
+  "supplementalSources": [
+    [
+      "https://man7.org/linux/man-pages/man3/read.3p.html",
+      "CURRENT_VERIFIED",
+      "POSIX Programmer's Manual DESCRIPTION의 empty pipe/FIFO에서 writer 없음→0·writer 있음→block/EAGAIN과 short read를 실제 읽었다. 일반 양수 count의 EOF 조건 보강에 사용한다."
+    ],
+    [
+      "https://man7.org/linux/man-pages/man7/signal-safety.7.html",
+      "CURRENT_VERIFIED",
+      "DESCRIPTION의 printf 중간 재진입 사례와 async-signal-safe 함수 제한을 실제 읽었다. Handler에서 임의 allocation/logging이 안전하다는 보장을 하지 않는다."
+    ],
+    [
+      "https://man7.org/linux/man-pages/man2/send.2.html",
+      "CURRENT_VERIFIED",
+      "DESCRIPTION의 local send return/버퍼·delivery 비보장과 partial 결과를 읽었다. Positive return을 peer business 완료로 해석하지 않는다."
+    ]
+  ],
+  "findings": [
+    {
+      "id": "W3-OS-028",
+      "severity": "P0",
+      "contentKeys": [
+        "operating-systems.core.ipc.pipe.q2"
+      ],
+      "file": "content/operating-systems/ipc/questions.json",
+      "quote": "해당 파이프의 모든 쓰기 끝 참조가 닫혀 더 이상 데이터를 쓸 주체가 없다고 커널이 판단할 때 읽는 쪽이 EOF를 관찰한다.",
+      "problem": "EOF 관찰 조건을 writer 닫기로만 설명한다. Buffer100바이트가 남은 뒤 마지막 writer를 닫으면 다음 read는 먼저 데이터를 반환한다. POSIX read(3p)는 empty pipe에서 열린 writer가 없을 때0을 반환한다. 연결 그림은 이미 buffer drained 조건을 정확히 표시하므로 그림과 Concept 유지 판단은 존중한다.",
+      "action": "Model과 explanation에 모든 쓰기 참조 닫기 AND buffered data 모두 소비를 추가하고, 잔여100 read 뒤 다음 양수길이 read0의 최소 추론 예시를 #201 범위에 포함한다.",
+      "followupIssues": [
+        201
+      ]
+    },
+    {
+      "id": "W3-OS-029",
+      "severity": "P0",
+      "contentKeys": [
+        "operating-systems.core.ipc.signal"
+      ],
+      "file": "content/operating-systems/ipc/signal.md",
+      "quote": "작은 비동기 사건을 알리는 제어 메커니즘",
+      "problem": "Signal 정의·결론이 비동기 사건으로 한정된다. signal(7)는 특정 명령이 발생시킨 SIGSEGV/SIGFPE 같은 hardware exception도 thread-directed signal로 정의한다. Handler가 비동기 실행될 수 있다는 별도 설명은 정확하다.",
+      "action": "정의에 비동기 제어 알림뿐 아니라 동기 예외 발생도 있음을 한 문장으로 구분하고 생성/전달/동기 대기 용어를 정리한다. Handler 안전성·standard signal 문항은 유지한다.",
+      "followupIssues": [
+        201
+      ]
+    },
+    {
+      "id": "W3-OS-030",
+      "severity": "P0",
+      "contentKeys": [
+        "operating-systems.core.ipc.network-socket-ipc"
+      ],
+      "file": "content/operating-systems/ipc/network-socket-ipc.md",
+      "quote": "연결 재설정(connection reset), 타임아웃, 패킷 손실, 경로 장애처럼 한 호스트 내부 IPC에는 없던 실패가 생긴다.",
+      "problem": "Reset과 timeout까지 local IPC에 없던 실패로 묶는다. unix(7)도 ECONNRESET을 정의하며 socket(7)의 I/O timeout은 local socket에도 적용된다. 호스트 간 경로/remote failure의 추가 경계라는 중심 설명은 정확하다.",
+      "action": "Reset/timeout은 local에서도 발생하는 공통 실패, 원격 host·routing·network partition은 추가 원인/경계로 분리한다. 재시도·결과 불확실성 문항은 유지한다.",
+      "followupIssues": [
+        201
+      ]
+    },
+    {
+      "id": "W3-OS-031",
+      "severity": "P2",
+      "contentKeys": [
+        "operating-systems.core.ipc.ipc-tradeoff.q1"
+      ],
+      "file": "content/operating-systems/ipc/questions.json",
+      "quote": "payload와 무관한 변수명 길이만 비교한다",
+      "problem": "A는 IPC 학습 목표와 관계없는 변수명 길이라 사전 지식 없이 제거할 수 있다. B 정답 및 나머지 rationale의 오류가 아니라 이해도 검증을 약하게 하는 distractor 품질 문제이다.",
+      "action": "Copy 비용이 적다는 이유만으로 shared memory를 항상 선택한다는 실제 오해 등으로 A와 해당 rationale만 보강한다. 다른 문항 목표를 일괄 변경하지 않는다.",
+      "followupIssues": [
+        201
+      ]
+    },
+    {
+      "id": "W3-OS-032",
+      "severity": "P2",
+      "contentKeys": [
+        "operating-systems.core.ipc.ipc-tradeoff"
+      ],
+      "file": "frontend/public/learning/operating-systems/ipc-tradeoff.svg",
+      "quote": "more direct shared state",
+      "problem": "카드는 왼쪽부터 Pipe/Queue, Shared Memory, Unix Socket, Network Socket인데 하단 continuum 오른쪽에 more direct shared state가 Network Socket과 x715로 정렬된다. 공유 상태 정도의 순서로 읽으면 실제 shared memory 위치와 반대 의미를 암시한다. 본문 표와 개별 카드 내용은 정확하며 이 발견은 SVG 전체 소스/좌표 의미 검토에 한정된다.",
+      "action": "기존 카드/비교 기준을 유지하면서 근거 없는 continuum을 제거하거나 shared memory 쪽에 공유 상태 책임 라벨을 직접 연결한다. 후속 #201의 최소 SVG 의미 보강 후보이며 이번 감사에서는 자산을 수정하지 않는다.",
+      "followupIssues": [
+        201
+      ],
+      "additionalEvidence": [
+        {
+          "file": "content/operating-systems/ipc/ipc-tradeoff.md",
+          "quote": "![IPC 방식별 복사, 격리, 동기화 책임 비교](/learning/operating-systems/ipc-tradeoff.svg)"
+        }
+      ]
+    }
+  ],
+  "visualizationAssets": [
+    {
+      "file": "frontend/public/learning/operating-systems/pipe-buffer-eof.svg",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "sourceSha256": "7823b63fded0a24113d7cdc9101f89d33b91fdc45e55a9b6b117944cb58696e4"
+    },
+    {
+      "file": "frontend/public/learning/operating-systems/shared-memory-mapping.svg",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "sourceSha256": "0b1ab59e922d045ce40e21386cb21bcacd68bc487c6e94f6c779aef1f3282d85"
+    },
+    {
+      "file": "frontend/public/learning/operating-systems/unix-domain-socket.svg",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "sourceSha256": "3b5578e5443ce24f0f9093a63da7913f2ab72df610fff82846a186c247892d3d"
+    },
+    {
+      "file": "frontend/public/learning/operating-systems/ipc-tradeoff.svg",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "sourceSha256": "1b93a3788b0624ba36c20c0d89cc41c2fd3fddc1fb8d8c67a0e0f15810a2dee1"
+    }
+  ],
+  "sourceHashes": {
+    "operating-systems.core.ipc.ipc-tradeoff": "3141cff85191d12a3a30cc364bc0e6bf6dc888f01b7ca0885014f3241522b2f6",
+    "operating-systems.core.ipc.ipc-tradeoff.q1": "d1a62fe195ab0b6ab2a5acfab2f325c788a7c14b61c70ed4a22cd6937ecf34ae",
+    "operating-systems.core.ipc.ipc-tradeoff.q2": "76b7228ffc7a00de0cbfb267fe99c355a1192d95333ebd8370c3d6faf0aeb4df",
+    "operating-systems.core.ipc.ipc-tradeoff.q3": "8704820659c9ca7f16b07119674a6f624b1b87d6b16cb047ac21510becb15c29",
+    "operating-systems.core.ipc.message-queue": "8f2070b8b29547fea038e0cf6846678382c6adf9987a9081c7546aac5862e3de",
+    "operating-systems.core.ipc.message-queue.q1": "19e541b6bc797e754c50c7039ffd07f17506dff1e9b92f3ff918e380a7b2bbfe",
+    "operating-systems.core.ipc.message-queue.q2": "0dc71616085feb8ed3964954aa184f264b2439c14b3a7bc7b500184de998c9dc",
+    "operating-systems.core.ipc.message-queue.q3": "9b96afe9e866ac2d0c8e6da56b228f0eb91b8e40cec3fb18aedc61f54241d6b0",
+    "operating-systems.core.ipc.network-socket-ipc": "c0b210da1d3ebdf5e382c3c7f2a56a3a4271434310caf7a9e64716652a906c81",
+    "operating-systems.core.ipc.network-socket-ipc.q1": "8655ac5a38dbf4f19ed64f3df08d53ddabe92e33ed2fb7aa630dd8d3b12f0a03",
+    "operating-systems.core.ipc.network-socket-ipc.q2": "531c1b8fed3ec685e8159c8e11902bf86006ab0d347d429b9d2d01201e88e632",
+    "operating-systems.core.ipc.network-socket-ipc.q3": "670b3109ccad99e5dcbdafc51c54d19fda4ba7cb6ceb373fafe90d7479a3cc6b",
+    "operating-systems.core.ipc.pipe": "51f29d6d4f4d1c0fa0bf28bb5fddf8f151707596f00642c6f5e719f5e46423c3",
+    "operating-systems.core.ipc.pipe.q1": "e6fed2f19906b47ba44be825bd63ac692bb641f5baa2c6508e9eff3c7e86a417",
+    "operating-systems.core.ipc.pipe.q2": "ff0bd9f4083ced2877043ae9236a23a20444a596bde61d19b1d72903b7572395",
+    "operating-systems.core.ipc.pipe.q3": "ae6b8ccf2a6b0bebe271201d8351f7949af6bd9ce260c19a86de8dfac041700f",
+    "operating-systems.core.ipc.shared-memory": "4dfc82b7cfc5d16e240fe9a3500475f1b9bddee7966bf62480e393d463844a7f",
+    "operating-systems.core.ipc.shared-memory.q1": "8a1ffda9879a9bfabaa2f89b1005434435e6ed10c7ab39738970dd836881949c",
+    "operating-systems.core.ipc.shared-memory.q2": "5d5d2f9ce6053a5f5496fc3791f8faf0e0b162dc0c3ae7327af6dbc2a64a02ab",
+    "operating-systems.core.ipc.shared-memory.q3": "6d7e2b7c1e8437cf1e51040232ef0e0f0aa80721bd124c0fc7f1aedcfdd36d4a",
+    "operating-systems.core.ipc.signal": "859f80e1aee76c22e0476dba82bca1840189e80293184e1f0beeb32621c1d4b2",
+    "operating-systems.core.ipc.signal.q1": "042cd59ac320ca8d3a5d6a7f2300cbb4f6a8aa3c2cef1f0e7d32476c0956cf71",
+    "operating-systems.core.ipc.signal.q2": "957dfcb89e4aaaf3d4e7ca9f7c41e7992c236e02ba327ef323e6bf0b31981b65",
+    "operating-systems.core.ipc.signal.q3": "d4199c5e92abbba9f1d80bd96bb53ec4a6f6cf5a9e901b29a5e593a44a45ad69",
+    "operating-systems.core.ipc.unix-domain-socket": "653e2b5868eaed75f56366cb0f8380abce36d7d6e289c86bdedfcc939bf580b5",
+    "operating-systems.core.ipc.unix-domain-socket.q1": "f13f34732e6c754fc4e99cb88f2c46b6ee7e5090e75c27dcb21bb3d8da97d0fb",
+    "operating-systems.core.ipc.unix-domain-socket.q2": "bb87496acb10f3ea32eee07c45d98ecf76b9f3b6c0b7313bd2655df17a725953",
+    "operating-systems.core.ipc.unix-domain-socket.q3": "fb5dcfe4ecf426cd13f107e7b85e64eaf18dc6a34be8703c0e5daad5515b318f"
+  }
+}

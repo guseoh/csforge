@@ -1,0 +1,532 @@
+{
+  "topicKey": "java.core.concurrency",
+  "status": "READING_IN_PROGRESS_NOT_FORMAL_CHECKPOINT",
+  "reviewedAt": "2026-10-14",
+  "limits": "10C61Q原문직접1차읽기만. 남은9C52Q/전체Reference관계·SVG/규범적용대조·Topic검증미완료. CURRENT_VERIFIED/KEEP부여없고generatedinventory/summary/P0P1P2미반영. Jvm12C75Q미착수.",
+  "conceptReadNotes": [
+    {
+      "contentKey": "java.core.concurrency.concurrency-vs-parallelism",
+      "file": "content/java/concurrency/concurrency-vs-parallelism.md",
+      "readBasis": "동시진행vs동시CPU실행/단일실행자원·IOwait/Thread-Executor≠CPU배치·외부bound·sharedstate가목표에충분한지읽음. 공식계약관계대조후판정확정필요.",
+      "finalVerdict": "NEEDS_REVIEW"
+    },
+    {
+      "contentKey": "java.core.concurrency.thread-lifecycle-interruption",
+      "file": "content/java/concurrency/thread-lifecycle-interruption.md",
+      "readBasis": "startonce/runplatformvsvirtualnop/State≠OS/성공무제한joinHB·interruptcooperative·catchclear/복원vs최종취소·interruptedclearvsisInterruptedread를읽음. Thread/JLS관련절및D2미대조.",
+      "finalVerdict": "NEEDS_REVIEW"
+    },
+    {
+      "contentKey": "java.core.concurrency.platform-virtual-thread",
+      "file": "content/java/concurrency/platform-virtual-thread.md",
+      "readBasis": "OS1:1보통/Java스케줄mount-carrier/지원IOunmount·CPU안늘음/외부Semaphore/Java24monitorpinning제거·native남음/TLcache비용 읽음. JEP491직접openinternalerror라아직본문미검증;공식Thread/guide별도대조필요.",
+      "finalVerdict": "NEEDS_REVIEW"
+    },
+    {
+      "contentKey": "java.core.concurrency.shared-mutable-state-race",
+      "file": "content/java/concurrency/shared-mutable-state-race.md",
+      "readBasis": "countread-compute-write/lostupdate·raceconditionvsJMMdata race·stockcheck-update·2Atomic필드≠한transaction·immutable/ownership대안 읽음. race-conditionSVG미검토.",
+      "finalVerdict": "NEEDS_REVIEW"
+    },
+    {
+      "contentKey": "java.core.concurrency.synchronized-monitor",
+      "file": "content/java/concurrency/synchronized-monitor.md",
+      "readBasis": "lock동일성/thisvsdeclaringClass/매newObject별도monitor·invariant최소경계/동일unlock-lockHB/재진입vsmutual exclusion 읽음. JLS14.19/17관련절추가대조필요.",
+      "finalVerdict": "NEEDS_REVIEW"
+    },
+    {
+      "contentKey": "java.core.concurrency.jmm-happens-before-visibility",
+      "file": "content/java/concurrency/jmm-happens-before-visibility.md",
+      "readBasis": "HB≠wallclock·programorder/synchronizeswith/transitive·volatileflag일반data·start/join/concurrentAPI·SCforDRF≠복합invariant 읽음. 일반자료CPU모델과Java규범관련성/도식대조미완료.",
+      "finalVerdict": "NEEDS_REVIEW"
+    },
+    {
+      "contentKey": "java.core.concurrency.safe-publication-final-fields",
+      "file": "content/java/concurrency/safe-publication-final-fields.md",
+      "readBasis": "완성참조≠일반상태관찰/volatilehandoff·잘생성final특별값·finalreachable초기화와후mutate별도·thisescape/factory후공개 읽음. final-field규범dereferencechain및q1rationale일반화한정추가대조필요.",
+      "finalVerdict": "NEEDS_REVIEW"
+    },
+    {
+      "contentKey": "java.core.concurrency.volatile",
+      "file": "content/java/concurrency/volatile.md",
+      "readBasis": "stop/publish선행dataHB·RAM캐시정의아님·count++복합비원자·여러필드vsimmutable참조교체 읽음. JLS8.3.1.4/17volatileorder추가대조필요.",
+      "finalVerdict": "NEEDS_REVIEW"
+    },
+    {
+      "contentKey": "java.core.concurrency.atomic-cas",
+      "file": "content/java/concurrency/atomic-cas.md",
+      "readBasis": "AtomicIntegerstrongexpected/updateboolean·retry/sideeffectupdate함수·CAS≠전체lockfree/waitfree·ABA/버전·2fieldsrollback한계 읽음. atomic패키지intro를확인했지만VarHandle/AtomicInteger메모리/progress범위개별대조미완료.",
+      "finalVerdict": "NEEDS_REVIEW"
+    },
+    {
+      "contentKey": "java.core.concurrency.locks-reentrantlock-condition",
+      "file": "content/java/concurrency/locks-reentrantlock-condition.md",
+      "readBasis": "explicitlock/finally/holdcount·timed/interruptible·awaitrelease/reacquire/while/spurious·multipleconditions/fairness≠CPUschedule 읽음. Condition공식boundedtake모델대조에서아래초기본문후보를확인;Lock/ReentrantLock개별Ref미완료.",
+      "finalVerdict": "NEEDS_REVIEW"
+    }
+  ],
+  "questionReadNotes": [
+    {
+      "contentKey": "java.core.concurrency.concurrency-vs-parallelism.q1",
+      "file": "content/java/concurrency/questions.json",
+      "readBasis": "A겹친진행vs실제병렬;나머지동일용어/한스레드병렬/CPU여럿필수반박.",
+      "finalVerdict": "NEEDS_REVIEW"
+    },
+    {
+      "contentKey": "java.core.concurrency.concurrency-vs-parallelism.q2",
+      "file": "content/java/concurrency/questions.json",
+      "readBasis": "B한코어번갈아진행;취소/sharedstack/서로다른cores오답.",
+      "finalVerdict": "NEEDS_REVIEW"
+    },
+    {
+      "contentKey": "java.core.concurrency.concurrency-vs-parallelism.q3",
+      "file": "content/java/concurrency/questions.json",
+      "readBasis": "C IO기회+외부bound;무제한스레드/OS동시보장/autoimmutable아님.",
+      "finalVerdict": "NEEDS_REVIEW"
+    },
+    {
+      "contentKey": "java.core.concurrency.concurrency-vs-parallelism.q4",
+      "file": "content/java/concurrency/questions.json",
+      "readBasis": "D한eventloopasync대기동시성;전체block/멀티CPU증명아님.",
+      "finalVerdict": "NEEDS_REVIEW"
+    },
+    {
+      "contentKey": "java.core.concurrency.concurrency-vs-parallelism.q5",
+      "file": "content/java/concurrency/questions.json",
+      "readBasis": "서술 IOwait기회+단일CPU비병렬/스레드비용·pool외부quota 모델읽음.",
+      "finalVerdict": "NEEDS_REVIEW"
+    },
+    {
+      "contentKey": "java.core.concurrency.thread-lifecycle-interruption.q1",
+      "file": "content/java/concurrency/questions.json",
+      "readBasis": "AplatformRunnable직접run vsvirtualnop;다른start/OSthread/항상IllegalState오답.",
+      "finalVerdict": "NEEDS_REVIEW"
+    },
+    {
+      "contentKey": "java.core.concurrency.thread-lifecycle-interruption.q2",
+      "file": "content/java/concurrency/questions.json",
+      "readBasis": "B없는State명칭;RUNNABLE/BLOCKED/NEW뜻대조.",
+      "finalVerdict": "NEEDS_REVIEW"
+    },
+    {
+      "contentKey": "java.core.concurrency.thread-lifecycle-interruption.q3",
+      "file": "content/java/concurrency/questions.json",
+      "readBasis": "Ccooperative취소;callerexception/forcekill/alllocks회수아님.",
+      "finalVerdict": "NEEDS_REVIEW"
+    },
+    {
+      "contentKey": "java.core.concurrency.thread-lifecycle-interruption.q4",
+      "file": "content/java/concurrency/questions.json",
+      "readBasis": "Dcatch뒤restore상위신호;무시/restart/false설정아님.",
+      "finalVerdict": "NEEDS_REVIEW"
+    },
+    {
+      "contentKey": "java.core.concurrency.thread-lifecycle-interruption.q5",
+      "file": "content/java/concurrency/questions.json",
+      "readBasis": "Acatchreturn·loop관찰종료가능;JVMkill/영구무시/autoJoin아님.",
+      "finalVerdict": "NEEDS_REVIEW"
+    },
+    {
+      "contentKey": "java.core.concurrency.thread-lifecycle-interruption.q6",
+      "file": "content/java/concurrency/questions.json",
+      "readBasis": "B Awrite→start→workertermination→Bjoinread추이;volatile변경/initialonly/메모리무관아님.",
+      "finalVerdict": "NEEDS_REVIEW"
+    },
+    {
+      "contentKey": "java.core.concurrency.platform-virtual-thread.q1",
+      "file": "content/java/concurrency/questions.json",
+      "readBasis": "Cplatform통상kernelmapping;CPU불가/usermodeonly/currentThread안됨아님.",
+      "finalVerdict": "NEEDS_REVIEW"
+    },
+    {
+      "contentKey": "java.core.concurrency.platform-virtual-thread.q2",
+      "file": "content/java/concurrency/questions.json",
+      "readBasis": "D많은blockingwait;CPU무제한/classloadingonly/process대체아님.",
+      "finalVerdict": "NEEDS_REVIEW"
+    },
+    {
+      "contentKey": "java.core.concurrency.platform-virtual-thread.q3",
+      "file": "content/java/concurrency/questions.json",
+      "readBasis": "Acurrentvirtual;carrier/PID/null아님.",
+      "finalVerdict": "NEEDS_REVIEW"
+    },
+    {
+      "contentKey": "java.core.concurrency.platform-virtual-thread.q4",
+      "file": "content/java/concurrency/questions.json",
+      "readBasis": "Bcarrier구성implementation;하나영구pin/sameThread/langschedulerGuarantee아님.",
+      "finalVerdict": "NEEDS_REVIEW"
+    },
+    {
+      "contentKey": "java.core.concurrency.platform-virtual-thread.q5",
+      "file": "content/java/concurrency/questions.json",
+      "readBasis": "C외부100boundSemaphore;IO무한/스레드countquota/모두platform변경아님.",
+      "finalVerdict": "NEEDS_REVIEW"
+    },
+    {
+      "contentKey": "java.core.concurrency.platform-virtual-thread.q6",
+      "file": "content/java/concurrency/questions.json",
+      "readBasis": "B JDK24후monitorpin해소/native남음:실제JEP추가대조전확정유보.",
+      "finalVerdict": "NEEDS_REVIEW"
+    },
+    {
+      "contentKey": "java.core.concurrency.platform-virtual-thread.q7",
+      "file": "content/java/concurrency/questions.json",
+      "readBasis": "시나리오10krequest vs30DBconnection/wait-timeout/admissionbudget 모델읽음.",
+      "finalVerdict": "NEEDS_REVIEW"
+    },
+    {
+      "contentKey": "java.core.concurrency.shared-mutable-state-race.q1",
+      "file": "content/java/concurrency/questions.json",
+      "readBasis": "Aread-add-write;lock/sleep/join·parse/sort·loadverify아님.",
+      "finalVerdict": "NEEDS_REVIEW"
+    },
+    {
+      "contentKey": "java.core.concurrency.shared-mutable-state-race.q2",
+      "file": "content/java/concurrency/questions.json",
+      "readBasis": "Blostupdate1 trace;예외/0/반드시2아님.",
+      "finalVerdict": "NEEDS_REVIEW"
+    },
+    {
+      "contentKey": "java.core.concurrency.shared-mutable-state-race.q3",
+      "file": "content/java/concurrency/questions.json",
+      "readBasis": "Cstockcheck+decrementinvariant;생성/각한쪽/출력만보호아님.",
+      "finalVerdict": "NEEDS_REVIEW"
+    },
+    {
+      "contentKey": "java.core.concurrency.shared-mutable-state-race.q4",
+      "file": "content/java/concurrency/questions.json",
+      "readBasis": "Dvisibility≠atomic;latestautoRMW/atomic이면visibility없음/OS캐시동의어아님.",
+      "finalVerdict": "NEEDS_REVIEW"
+    },
+    {
+      "contentKey": "java.core.concurrency.shared-mutable-state-race.q5",
+      "file": "content/java/concurrency/questions.json",
+      "readBasis": "A두Atomic중간불일치;autotransaction/allfieldlock/동시갱신아님.",
+      "finalVerdict": "NEEDS_REVIEW"
+    },
+    {
+      "contentKey": "java.core.concurrency.shared-mutable-state-race.q6",
+      "file": "content/java/concurrency/questions.json",
+      "readBasis": "B8→2경쟁빈도와정확성별도;immutable/autoHB/언어race해소아님.",
+      "finalVerdict": "NEEDS_REVIEW"
+    },
+    {
+      "contentKey": "java.core.concurrency.shared-mutable-state-race.q7",
+      "file": "content/java/concurrency/questions.json",
+      "readBasis": "서술volatilecheck/decrement비원자·같은lock/CAS/재고transaction경계 읽음.",
+      "finalVerdict": "NEEDS_REVIEW"
+    },
+    {
+      "contentKey": "java.core.concurrency.synchronized-monitor.q1",
+      "file": "content/java/concurrency/questions.json",
+      "readBasis": "Cthismonitor;결과/전역모니터/OSprocess아님.",
+      "finalVerdict": "NEEDS_REVIEW"
+    },
+    {
+      "contentKey": "java.core.concurrency.synchronized-monitor.q2",
+      "file": "content/java/concurrency/questions.json",
+      "readBasis": "D재진입;기아/serialization/erasure아님.",
+      "finalVerdict": "NEEDS_REVIEW"
+    },
+    {
+      "contentKey": "java.core.concurrency.synchronized-monitor.q3",
+      "file": "content/java/concurrency/questions.json",
+      "readBasis": "A별도Countermonitors;키워드무시/static/객체합침아님.",
+      "finalVerdict": "NEEDS_REVIEW"
+    },
+    {
+      "contentKey": "java.core.concurrency.synchronized-monitor.q4",
+      "file": "content/java/concurrency/questions.json",
+      "readBasis": "BdeclaringClassmonitor;newObj/allOSlocks/localvar아님.",
+      "finalVerdict": "NEEDS_REVIEW"
+    },
+    {
+      "contentKey": "java.core.concurrency.synchronized-monitor.q5",
+      "file": "content/java/concurrency/questions.json",
+      "readBasis": "Cvaluewriter/read서로다른lock보호불연결;autoidentity/reentrant보정/latest보장아님.",
+      "finalVerdict": "NEEDS_REVIEW"
+    },
+    {
+      "contentKey": "java.core.concurrency.synchronized-monitor.q6",
+      "file": "content/java/concurrency/questions.json",
+      "readBasis": "Dsameowner재진입;그자체deadlock/다른스레드동시진입/compile불가아님.",
+      "finalVerdict": "NEEDS_REVIEW"
+    },
+    {
+      "contentKey": "java.core.concurrency.jmm-happens-before-visibility.q1",
+      "file": "content/java/concurrency/questions.json",
+      "readBasis": "AprogramorderHB;전체thread동시순서/CPUflush/autolock아님.",
+      "finalVerdict": "NEEDS_REVIEW"
+    },
+    {
+      "contentKey": "java.core.concurrency.jmm-happens-before-visibility.q2",
+      "file": "content/java/concurrency/questions.json",
+      "readBasis": "Bsameunlock→laterlock;다른lockedge/필드volatile필수아님.",
+      "finalVerdict": "NEEDS_REVIEW"
+    },
+    {
+      "contentKey": "java.core.concurrency.jmm-happens-before-visibility.q3",
+      "file": "content/java/concurrency/questions.json",
+      "readBasis": "Cvolatilematchingwrite/readHB;threadterminate/mutex/deepcopy아님.",
+      "finalVerdict": "NEEDS_REVIEW"
+    },
+    {
+      "contentKey": "java.core.concurrency.jmm-happens-before-visibility.q4",
+      "file": "content/java/concurrency/questions.json",
+      "readBasis": "Dstart및successfulterminationjoinHB;네이밍/newthreadjoin/write삭제아님.",
+      "finalVerdict": "NEEDS_REVIEW"
+    },
+    {
+      "contentKey": "java.core.concurrency.jmm-happens-before-visibility.q5",
+      "file": "content/java/concurrency/questions.json",
+      "readBasis": "Adata42→unlock→lock→read transitive;CPUflush/lockcopy/final필수아님.",
+      "finalVerdict": "NEEDS_REVIEW"
+    },
+    {
+      "contentKey": "java.core.concurrency.jmm-happens-before-visibility.q6",
+      "file": "content/java/concurrency/questions.json",
+      "readBasis": "Breadytrue관찰datawritechain;data자체volatile필수/default0/edge무관아님.",
+      "finalVerdict": "NEEDS_REVIEW"
+    },
+    {
+      "contentKey": "java.core.concurrency.jmm-happens-before-visibility.q7",
+      "file": "content/java/concurrency/questions.json",
+      "readBasis": "서술generaldata→volatileflag→observedtrue→readdata;flagplain일때edge없음모델읽음.",
+      "finalVerdict": "NEEDS_REVIEW"
+    },
+    {
+      "contentKey": "java.core.concurrency.safe-publication-final-fields.q1",
+      "file": "content/java/concurrency/questions.json",
+      "readBasis": "C일반initialization전달경계;constructor없음/stackonly/final가변아님. Cfeedback의final특수예외한정공식대조필요.",
+      "finalVerdict": "NEEDS_REVIEW"
+    },
+    {
+      "contentKey": "java.core.concurrency.safe-publication-final-fields.q2",
+      "file": "content/java/concurrency/questions.json",
+      "readBasis": "Dconstructorregistrycallbackthisescape;private대입/newfactory/생성후return아님.",
+      "finalVerdict": "NEEDS_REVIEW"
+    },
+    {
+      "contentKey": "java.core.concurrency.safe-publication-final-fields.q3",
+      "file": "content/java/concurrency/questions.json",
+      "readBasis": "Afinal재대입제약≠List내용불변;deepcopy/공개무관/nullonly아님.",
+      "finalVerdict": "NEEDS_REVIEW"
+    },
+    {
+      "contentKey": "java.core.concurrency.safe-publication-final-fields.q4",
+      "file": "content/java/concurrency/questions.json",
+      "readBasis": "Bvolatile완성참조handoff;unsyncglobal/toString/localread아님.",
+      "finalVerdict": "NEEDS_REVIEW"
+    },
+    {
+      "contentKey": "java.core.concurrency.safe-publication-final-fields.q5",
+      "file": "content/java/concurrency/questions.json",
+      "readBasis": "Cvolatileinitialpublish와hosts이후보호;깊은불변/finalport모든변경lock아님.",
+      "finalVerdict": "NEEDS_REVIEW"
+    },
+    {
+      "contentKey": "java.core.concurrency.safe-publication-final-fields.q6",
+      "file": "content/java/concurrency/questions.json",
+      "readBasis": "D조기escape미완성관찰가능;finalinvalid/callback동일thread/this비참조아님.",
+      "finalVerdict": "NEEDS_REVIEW"
+    },
+    {
+      "contentKey": "java.core.concurrency.volatile.q1",
+      "file": "content/java/concurrency/questions.json",
+      "readBasis": "Avisibility/order;mutex/deepcopy/forceexit아님.",
+      "finalVerdict": "NEEDS_REVIEW"
+    },
+    {
+      "contentKey": "java.core.concurrency.volatile.q2",
+      "file": "content/java/concurrency/questions.json",
+      "readBasis": "Bstop관찰;sleep대체/OSscheduler/allstateatomic아님.",
+      "finalVerdict": "NEEDS_REVIEW"
+    },
+    {
+      "contentKey": "java.core.concurrency.volatile.q3",
+      "file": "content/java/concurrency/questions.json",
+      "readBasis": "CRMW단계비원자;compilefail/read금지/int불가아님.",
+      "finalVerdict": "NEEDS_REVIEW"
+    },
+    {
+      "contentKey": "java.core.concurrency.volatile.q4",
+      "file": "content/java/concurrency/questions.json",
+      "readBasis": "DJMM규범≠cachefolklore;nocache/notkeyword/OS항상same아님.",
+      "finalVerdict": "NEEDS_REVIEW"
+    },
+    {
+      "contentKey": "java.core.concurrency.volatile.q5",
+      "file": "content/java/concurrency/questions.json",
+      "readBasis": "Alostupdate1;반드시2/-1/exception아님.",
+      "finalVerdict": "NEEDS_REVIEW"
+    },
+    {
+      "contentKey": "java.core.concurrency.volatile.q6",
+      "file": "content/java/concurrency/questions.json",
+      "readBasis": "BwriteData→volatilewrite→readtrue→dataread;default필수/모든필드volatile/edge단절아님.",
+      "finalVerdict": "NEEDS_REVIEW"
+    },
+    {
+      "contentKey": "java.core.concurrency.atomic-cas.q1",
+      "file": "content/java/concurrency/questions.json",
+      "readBasis": "Cexpected같을때update;permanentlock/무조건write/expectedreturn아님.",
+      "finalVerdict": "NEEDS_REVIEW"
+    },
+    {
+      "contentKey": "java.core.concurrency.atomic-cas.q2",
+      "file": "content/java/concurrency/questions.json",
+      "readBasis": "D조건불일치update미적용;exception/delete/allthreadstop아님.",
+      "finalVerdict": "NEEDS_REVIEW"
+    },
+    {
+      "contentKey": "java.core.concurrency.atomic-cas.q3",
+      "file": "content/java/concurrency/questions.json",
+      "readBasis": "Acurrent재read/recompute;stale무한/null/무조건unlock아님.",
+      "finalVerdict": "NEEDS_REVIEW"
+    },
+    {
+      "contentKey": "java.core.concurrency.atomic-cas.q4",
+      "file": "content/java/concurrency/questions.json",
+      "readBasis": "BcontentionretryCPU비용;다른field자동/alwaysblock/autosleep아님. Cfeedback비blocking범위공식대조유보.",
+      "finalVerdict": "NEEDS_REVIEW"
+    },
+    {
+      "contentKey": "java.core.concurrency.atomic-cas.q5",
+      "file": "content/java/concurrency/questions.json",
+      "readBasis": "Ccurrent6/expected5 false;sum11/true7/rollback5아님.",
+      "finalVerdict": "NEEDS_REVIEW"
+    },
+    {
+      "contentKey": "java.core.concurrency.atomic-cas.q6",
+      "file": "content/java/concurrency/questions.json",
+      "readBasis": "D별도balance/version 사이관찰;CAS보호0/동일location/version불가아님.",
+      "finalVerdict": "NEEDS_REVIEW"
+    },
+    {
+      "contentKey": "java.core.concurrency.atomic-cas.q7",
+      "file": "content/java/concurrency/questions.json",
+      "readBasis": "시나리오stock/order2CAS≠transaction·rollbackCAS도실패/중간외부효과·단일stateCAS/lock/externaltx별도 읽음.",
+      "finalVerdict": "NEEDS_REVIEW"
+    },
+    {
+      "contentKey": "java.core.concurrency.locks-reentrantlock-condition.q1",
+      "file": "content/java/concurrency/questions.json",
+      "readBasis": "Afinallyunlock;catch생략/임의위치/생략아님.",
+      "finalVerdict": "NEEDS_REVIEW"
+    },
+    {
+      "contentKey": "java.core.concurrency.locks-reentrantlock-condition.q2",
+      "file": "content/java/concurrency/questions.json",
+      "readBasis": "Bwhilepredicate+lock·awaitrelease/reacquire;signal한번항상true/forceexit/noLock아님.",
+      "finalVerdict": "NEEDS_REVIEW"
+    },
+    {
+      "contentKey": "java.core.concurrency.locks-reentrantlock-condition.q3",
+      "file": "content/java/concurrency/questions.json",
+      "readBasis": "Ctimed/interruptible;OSscheduler/alwaysfast/graphimmutable아님.",
+      "finalVerdict": "NEEDS_REVIEW"
+    },
+    {
+      "contentKey": "java.core.concurrency.locks-reentrantlock-condition.q4",
+      "file": "content/java/concurrency/questions.json",
+      "readBasis": "Dwhile재check;signalAll가item예약/no-lockcheck후await1번아님.",
+      "finalVerdict": "NEEDS_REVIEW"
+    }
+  ],
+  "sourceHashes": {
+    "java.core.concurrency.concurrency-vs-parallelism": "69e497e5006cee92638201f8877111f070c9da34d794e50abbc2fc63795d1c2c",
+    "java.core.concurrency.thread-lifecycle-interruption": "23558271821ac47f7e8c2cb070865a5f1d755840e6c7e0e9216c0cf2549bb7fd",
+    "java.core.concurrency.platform-virtual-thread": "4aed5241976ef6d4600c002a4e60bc425d7ddf4cfce3b11d140086bdf7f2fd22",
+    "java.core.concurrency.shared-mutable-state-race": "291d1c97cc8d8abb1c38cfdf86b35a303a4a7658e9bb26b5e44b1f89a1ac0aa4",
+    "java.core.concurrency.synchronized-monitor": "389e90d904c5b22ad3c3a9c0a141ebf6546688fc1b74f0957a1c37275834c7d8",
+    "java.core.concurrency.jmm-happens-before-visibility": "03005835aa8a752e7ae0ebfadfa18c70de58182f11fa443a6ce4eadaabd0347f",
+    "java.core.concurrency.safe-publication-final-fields": "f884a72ef5ef910b050bb1ebccfe4ef5b3c7e477b2087f7bdd6c6ef8c6ccc77c",
+    "java.core.concurrency.volatile": "81062b87c042be520f2d94a1c0efb5f9f06ccbcf2bede20a03732961a1f3b47e",
+    "java.core.concurrency.atomic-cas": "ac126b7dec3b939444f524e74827c88e466149a7bf459e7c5da2830e1c8deab6",
+    "java.core.concurrency.locks-reentrantlock-condition": "8b176163404717c0f880a110e983974c37e38da62fbacec098a016b452a8622d",
+    "java.core.concurrency.concurrency-vs-parallelism.q1": "e46de31aa2cc829dd4efa661600c486f6eb631db33127c6e3047f519d7fa7de2",
+    "java.core.concurrency.concurrency-vs-parallelism.q2": "5a5fe36a8dd7304a02678bbd96b2aeca4c8037bfb8eced900ae013c9beaab3c7",
+    "java.core.concurrency.concurrency-vs-parallelism.q3": "1a650f193db9a41063e96576545f64e5a7b5891ee7c16fe09ffdb7ea88278f84",
+    "java.core.concurrency.concurrency-vs-parallelism.q4": "9937b16bf2483f27b3b79ca7859e7d0d51a03ae6d1cc44578af1c6fd39264e66",
+    "java.core.concurrency.concurrency-vs-parallelism.q5": "aa1c2c23385e1881caee13dfff5ed6e2b1a30057b89b87ecf4ddf977acca3683",
+    "java.core.concurrency.thread-lifecycle-interruption.q1": "c2b23243608c6f268bea6ec12073384d77a3fc10c0fb729d09edbaf58af73403",
+    "java.core.concurrency.thread-lifecycle-interruption.q2": "fba73aed6b8f2b35e8826204bf63863a6fbd83b158ccdc3db33ac3e7986a27fc",
+    "java.core.concurrency.thread-lifecycle-interruption.q3": "824d44de34ff6769e9816d9bb982d97e3e11de983d20880e80c7a2a000761521",
+    "java.core.concurrency.thread-lifecycle-interruption.q4": "eebef5e41c36d1b6863bf36ff560d1db29351c5f02d33a0bbb6361d28bcb26e9",
+    "java.core.concurrency.thread-lifecycle-interruption.q5": "b3d61454c69827b48c4cafcbc225e1bbdb24a5c067d9c189fb0fbb26d359a209",
+    "java.core.concurrency.thread-lifecycle-interruption.q6": "2d915375064960e710202ff899a6140eea7240fdc141f47af195bff5c17a4142",
+    "java.core.concurrency.platform-virtual-thread.q1": "62c75d08e3c93a818cf0cd53d44fd6546bb472b5220971314a5bfb2b152b7303",
+    "java.core.concurrency.platform-virtual-thread.q2": "889f7557f53abd887e50cc8c106aca51fb7cea990190584164de55e7dc7b16f0",
+    "java.core.concurrency.platform-virtual-thread.q3": "7d1e5f49c902b450f120732b25845e3766583db55ed820594fcd43c5387d4eb1",
+    "java.core.concurrency.platform-virtual-thread.q4": "9fa178e30f0083d0ddb25659112039e4d9c9246c437a3f8443d5eb05ec0a868f",
+    "java.core.concurrency.platform-virtual-thread.q5": "62b63c196308207876a74e8f415c645ce4eea37a25b0f5c177b7fc9beda739c1",
+    "java.core.concurrency.platform-virtual-thread.q6": "9b6bb6de6bfbb5b4c1507543ec6a38591f3299ae26c1016351014dd324b38343",
+    "java.core.concurrency.platform-virtual-thread.q7": "ed37157690a1ef0dce84cd1d3fa89e1e6258bd446f26e124afd4cbb65b8a50d7",
+    "java.core.concurrency.shared-mutable-state-race.q1": "e8b553e4d982ccf0a6b60f45b115616947e2a97335fe72976a6dbd7087a9e632",
+    "java.core.concurrency.shared-mutable-state-race.q2": "9ebc45859f665cd3744e365db2231c9d96a4bc3f5792dfa39bc26f6c8d1fa562",
+    "java.core.concurrency.shared-mutable-state-race.q3": "f251a8314384c93d54fbcce0d39a01d5f7779680208e9a7fcafee92260bff6aa",
+    "java.core.concurrency.shared-mutable-state-race.q4": "8b4e5c4392c80f392e6dd2a1cc07fdac7951dd72fc193389942b8b583a157fa1",
+    "java.core.concurrency.shared-mutable-state-race.q5": "9f8277fdc319a728030f75b17c2c604e1c63709d0f14a2931c35035862decb9b",
+    "java.core.concurrency.shared-mutable-state-race.q6": "7b4114594628bc1186e52872b69342632e690ddf451dcc00e1471496bd8b3134",
+    "java.core.concurrency.shared-mutable-state-race.q7": "d9ddb87b9371a4b07b7e370b26279b11748c8dbb5d204458fd1fc4c783c370e2",
+    "java.core.concurrency.synchronized-monitor.q1": "260da3a5933699bc52867eaf7e7f6e6c2256146b8eb8a5b827b316ec8dc76b0e",
+    "java.core.concurrency.synchronized-monitor.q2": "d6d92a9894f5f49a5349a354258a27819d65551b8911d195cd569821e0b4fce5",
+    "java.core.concurrency.synchronized-monitor.q3": "9c9aecee968942e66f0d84aa5522d7d90b75f3b2de14d1af119d8503252e2d44",
+    "java.core.concurrency.synchronized-monitor.q4": "ede4548dcbde0fc6e552f723ffb03f0c735228bdffb81d58c64b5b240486df0f",
+    "java.core.concurrency.synchronized-monitor.q5": "13d15217d77031f8830f35cfc952bfea32a3e308587dc711e7fa236c89c48b41",
+    "java.core.concurrency.synchronized-monitor.q6": "ee4fbd4f0b58bce1a7dd34e82b8aabf2ee5ffe4bb635a64260c8dcfb88087123",
+    "java.core.concurrency.jmm-happens-before-visibility.q1": "09ff72c686dddeb8e43b4d40757e12fd2043e81a1c686ab26ca24bd659575ded",
+    "java.core.concurrency.jmm-happens-before-visibility.q2": "92ed074006d4b0f52b43bf7634bc4780b43db525f5ef860f6885e6a875746e98",
+    "java.core.concurrency.jmm-happens-before-visibility.q3": "bae036ccccd79dcec0b3e7d31b1e5f57aba372456560372d86a25f81fee43088",
+    "java.core.concurrency.jmm-happens-before-visibility.q4": "4abf6e4c353be4af36d0a725a89a8a363b4360d49b0d239d3ede1c6d54246672",
+    "java.core.concurrency.jmm-happens-before-visibility.q5": "993ae258494816cb8de54bb444dd8e41b7a53edfab2ad3d370b8e58b180fd144",
+    "java.core.concurrency.jmm-happens-before-visibility.q6": "cd3eb3a0747fef6da91493dcf27667c1d65d7b7d54716d88871d1f3525137464",
+    "java.core.concurrency.jmm-happens-before-visibility.q7": "e414afb2636908f17a03a4076bc2f5563dd4804f41f3b9d63ef0d5ef9005e2b9",
+    "java.core.concurrency.safe-publication-final-fields.q1": "ac99418e17cc9916150ce5998fafbd5c6e0ee43522658f5e7a88eec76bfe7824",
+    "java.core.concurrency.safe-publication-final-fields.q2": "9ec0e19e61a14a0f879b6cf2b1a64378f79c338aa2ffe26d60b9a8c05fc74f60",
+    "java.core.concurrency.safe-publication-final-fields.q3": "41b63904a8ed2092195a76852967240d529c60e1572bd78157988468036169be",
+    "java.core.concurrency.safe-publication-final-fields.q4": "4968f1f1eb985b0ae750cefc984feef1e1f385395b4f319acdbeea4dc5cd08a1",
+    "java.core.concurrency.safe-publication-final-fields.q5": "f76cc9556bde8ffab27c48f4faf5f20de10498d25b28cd409718b20d07e62313",
+    "java.core.concurrency.safe-publication-final-fields.q6": "7f1b94b376b071b8f6852dfad38f9c15852798c93f6cb3a5b956ad1c3cf59948",
+    "java.core.concurrency.volatile.q1": "2fe825456ca1feaf32afd196436641d9c14ddd2378680bca93ae68bd6d2fad6b",
+    "java.core.concurrency.volatile.q2": "3e9d9c7692491fc6c200cfab394abf7edaabdac6daa5f7264f7f31c85c912a0d",
+    "java.core.concurrency.volatile.q3": "aaa40e456467619879929a7cfcc94e523aa44fc581942128bba2b5043201892b",
+    "java.core.concurrency.volatile.q4": "45e5667953c1cd5955c6751acc13a5fcbbcdb8dda64e064f44fea152f5d14d39",
+    "java.core.concurrency.volatile.q5": "e5952388fc83226f5df1540a820a8014960e7545a3613f34cdebcd84afb8abfe",
+    "java.core.concurrency.volatile.q6": "af3a617c64c5bd7eda6f0fb97c1eb6d418a7a8c37f30489da73e582e5ac97cd9",
+    "java.core.concurrency.atomic-cas.q1": "3aef4bd0ef7b88519984290d2c6dcde63159b5065d07a83f308dd596092112a9",
+    "java.core.concurrency.atomic-cas.q2": "e3a3f70db2eca6f09f92af2acf0b1238964b94ccde9055d655d179b5bf35a48c",
+    "java.core.concurrency.atomic-cas.q3": "174c94db64510b7110a4e715635c0574076e45f560795f7c281b3d15fbf2f709",
+    "java.core.concurrency.atomic-cas.q4": "936826df1fce1c149a30d422320fb4df4c4a57074f521bfdb3664642858f3e09",
+    "java.core.concurrency.atomic-cas.q5": "840f71ab09ef557a1920370911a258d1340b17ba419f65b39cb831421eb69af3",
+    "java.core.concurrency.atomic-cas.q6": "f52a8dc29311d77565b53683bcf2f6ee205f802eb53aab89aee79cd9498a9847",
+    "java.core.concurrency.atomic-cas.q7": "23fe43b552397b99f86bfb02ee09437046d59355f9fd4c65f56dba856732174f",
+    "java.core.concurrency.locks-reentrantlock-condition.q1": "c55d3267125170cd13c502355c1beb7d5088cc1c41b3bf212d58443c274b0e2c",
+    "java.core.concurrency.locks-reentrantlock-condition.q2": "2b3b9e419721fca2cab0832b0db9f5ee5c46eddd07ebf338399099ea4895df11",
+    "java.core.concurrency.locks-reentrantlock-condition.q3": "33588f0a1801569a1380904a69f28695ae14194ef0db14515378145c9187c3f6",
+    "java.core.concurrency.locks-reentrantlock-condition.q4": "497b2f453520c1abcddd8798f78a660e2295c0bc5dc0651adadd154c11a2eaef"
+  },
+  "candidateObservations": [
+    {
+      "contentKey": "java.core.concurrency.locks-reentrantlock-condition",
+      "file": "content/java/concurrency/locks-reentrantlock-condition.md",
+      "sourceQuote": "소비자는 대기열이 빌 때까지 기다려야 합니다.",
+      "status": "NOT_FINALIZED_TOPIC_INCOMPLETE",
+      "candidateSeverity": "P2",
+      "reason": "본문한문장은empty될때까지소비자wait라고하나뒤while(queue.isEmpty())await와공식Condition.take예제는item사용가능까지wait. code/이후흐름정확;empty→nonempty조건문구한곳최소보강후보. formalTopic전수완료전누적발견집계없음.",
+      "officialEvidence": [
+        "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/locks/Condition.html"
+      ]
+    },
+    {
+      "contentKey": "java.core.concurrency.atomic-cas.q4",
+      "status": "NEEDS_REVIEW",
+      "reason": "CASfeedback의mutex처럼차단안함범위와Atomic/VarHandle규범·전체progressguarantee를추가대조할것. 현재packageintro만확인;과거Java버전규범을25로추측전파안함."
+    },
+    {
+      "contentKey": "java.core.concurrency.safe-publication-final-fields.q1",
+      "status": "NEEDS_REVIEW",
+      "reason": "참조만전달하면initialization가시성없음이라는일반feedback과올바른final필드특별규칙의한정확인. 본문은특수예외정확히구분;무조건P0/KEEP확정안함."
+    }
+  ]
+}

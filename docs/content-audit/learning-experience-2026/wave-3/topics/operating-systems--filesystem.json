@@ -1,0 +1,517 @@
+{
+  "area": "operating-systems",
+  "topic": "filesystem",
+  "topicKey": "operating-systems.core.filesystem",
+  "coverage": "10 Concept·33 Question을 실제 읽었다. 마지막 출력의 중간 잘림과 Python 출력 인코딩 문제는 해당4개 본문과 allocation.q1의 정확한 UTF-8 재출력으로 회복했다. Pathname/fd/open description/inode 층, dup/fork offset, link/unlink/rename 수명,9000/4096=2 remainder808, allocation/bitmap 갱신, page cache/dirty, library flush/syscall write/fsync 및 directory durability를 개별 검토했다. 기존 SVG4개 전체 소스를 읽었고 픽셀 렌더 QA는 수행하지 않았다.",
+  "concepts": [
+    [
+      "operating-systems.core.filesystem.file-abstraction",
+      "KEEP",
+      "L1 regular file의 byte/metadata와 이름·열린 상태 분리가 충분하다.",
+      "Path lookup→object→open fd와 hard link/rename의 identity, metadata 대 bytes, socket/pipe의 비영속·비seek 차이를 명시한다. 영속 저장을 다루는 파일 시스템 모델이며 모든 regular file이 power-loss durable라는 보장이 아니다.",
+      "TEXT 객체 찾기와 열린 핸들 관계가 충분하다.",
+      "OSTEP39.1~39.4의 실제 byte array·directory name/inode와 descriptor, open(2)의 path 제거 뒤 참조 유지와 대조했다.",
+      "q1 B와 모든 보기, q2 rename 후 열린 fd, q3 write와 durable의 차이를 확인했다."
+    ],
+    [
+      "operating-systems.core.filesystem.file-descriptor",
+      "KEEP",
+      "L1 process-local 작은 정수와 열린 자원 수명이 충분하다.",
+      "fd table index·close 이후 번호 재사용·다른 process의 같은 번호와 leak/한도, dup/fork의 열린 상태 공유를 정확히 구분한다.",
+      "DIAGRAM fd3/fd7→shared open description→inode와 offset100/flags가 적절하다.",
+      "Linux open DESCRIPTION의 lowest unused fd·새 open description과 dup DESCRIPTION, 앞서 읽은 pipe EOF 계약을 대조했다.",
+      "q1 A/모든 보기, q2 PID·시점·객체 로그, q3 다른 write-end fd 상속이 EOF를 지연하는 이유가 타당하다."
+    ],
+    [
+      "operating-systems.core.filesystem.open-file-table",
+      "KEEP",
+      "L2 fd·open session·file object와 offset 공유의 깊이가 충분하다.",
+      "별도 open은 별도 offset, dup/fork는 공통 offset/status flags, 별도 offset이어도 같은 bytes를 수정할 수 있다는 설명이 정확하다. File descriptor flags와 status flags는 별도임을 공식 자료에서 확인했다.",
+      "DIAGRAM 공유 offset100의 관계를 충분히 보여준다. 상태가100이라는 그림만으로 standalone q2의 초기 offset0을 암묵적으로 줄 수는 없다.",
+      "OSTEP39.6의 fork/lseek·dup와 Linux dup의 offset/status 대 FD_CLOEXEC 비공유를 실제 대조했다.",
+      "q1 B/모든 보기, q3 seek/read 교차와 positional I/O, q4 offset 대 contents는 타당하다. q2 초기값 누락은 W3-OS-020이다."
+    ],
+    [
+      "operating-systems.core.filesystem.directory-path",
+      "KEEP",
+      "L1 탐색 시작 문맥과 경로별 directory entry 조회가 충분하다.",
+      "/→var→app→data.txt, 중간 존재·directory·권한, 절대root 대 cwd/dirfd·symlink 재해석, unlink와 열린 수명 분리가 정확하다.",
+      "TEXT 경로 요소의 순서와 실패 조건이 충분하다.",
+      "OSTEP39의 directory 이름/inode·hard link와 open(2)의 openat·이미 열린 참조를 대조했다. Mount/root 문맥은 각 process가 보는 이름 공간의 범위이다.",
+      "q1 cwd 변경 C/모든 보기, q2 각 요소의 조회/권한/link/mount, q3 마지막 이름 삭제 뒤 fd가 남는 상태를 확인했다."
+    ],
+    [
+      "operating-systems.core.filesystem.inode",
+      "KEEP",
+      "L1 이름과 분리된 metadata/data 위치·수명의 깊이가 충분하다.",
+      "a.txt→inode42→metadata/block mapping, 두 이름과 link count·open 참조, direct/indirect/extent 구현 차이가 타당하다. Unix inode 대표 모델이며 모든 filesystem이 같은 inode 구조라는 단정이 없다.",
+      "DIAGRAM a/b→inode42→B7/B9/B20·link count가 본문과 일치한다.",
+      "OSTEP40.3/40.4의 실제 inode 필드·indirect/extent·directory와39.14 hard link, open의 경로 제거 뒤 열린 참조를 대조했다.",
+      "q1 D/모든 보기, q2 link2에서unlink(a), q3 bytes 대 metadata crash는 정확하다. q4의 한국어 정답 누락은 W3-OS-021이다."
+    ],
+    [
+      "operating-systems.core.filesystem.filesystem-block",
+      "TARGETED_ENHANCE",
+      "L1 logical byte offset 대 block/VM page/device 단위 구분은 충분하다.",
+      "9000/4096의 block2/offset808 계산과 크기별 metadata/internal 낭비 trade-off는 정확하다. 다만 808번째라는 서수는 zero-based offset808의809번째 byte와 혼동되어 W3-OS-022이다.",
+      "TEXT 계산식과 계층별 단위 비교가 충분하다.",
+      "OSTEP40의 실제4KiB block model과 inode/extent mapping을 대조했다. 같은 크기를 atomic power-loss write 계약으로 확대하지 않는다.",
+      "q1 A/모든 보기, q2 명시0-based2/808 값, q3 device atomicity 별도는 정확하다. q2 표기의 한국어 accepted 누락은 W3-OS-021이다."
+    ],
+    [
+      "operating-systems.core.filesystem.allocation",
+      "TARGETED_ENHANCE",
+      "L2 contiguous/linked/indexed 비용과 성장·불일치를 충분히 설명한다.",
+      "Contiguous 계산/확장, linked pointer-chain/random access, indexed metadata, 현대 조합과 bitmap/file mapping의 동시 갱신이 타당하다. 본문 재작성은 필요 없다.",
+      "DIAGRAM contiguous/linked 행은 유용하나 indexed 행의3개 선은 실제 block 객체/entry 없이 허공에 끝나 mapping을 추적할 수 없다. W3-OS-024로 구체 index entry와 destination block을 권한다.",
+      "OSTEP40.3 direct/indirect/extent·linked/FAT와40.4 directory, bitmap/inode 갱신 및 journaling crash 사례를 대조했다.",
+      "q1 C/모든 보기·metadata는여전히필요, q2 chain 대 index, q3 free로 표시/아직inode가참조하는 double allocation 위험을 확인했다."
+    ],
+    [
+      "operating-systems.core.filesystem.page-cache",
+      "KEEP",
+      "L2 hit/miss·dirty/write-back·reclaim 비용이 충분하다.",
+      "반복 read/readahead·cold/warm, buffered write→dirty→backing, 관찰가능 대 power-loss durable, 공유 physical budget/reclaim를 구분한다. 일반 buffered/persistent backing 모델이다.",
+      "TEXT read hit/miss와 dirty write-back 흐름이 충분하다.",
+      "Linux MM Concepts의 Page cache/Anonymous/Reclaim 절과 Toss 작성자의 Flink1.20/RocksDB Direct I/O·Block Cache 운영 사례를 실제 읽었다. K8s라면 항상 Direct I/O를 쓴다는 일반 보장으로 승인하지 않는다. OSTEP는 표시된 배경 relationNote로 사용한다.",
+      "q1 D/모든 보기, q2 dirty 대 durable, q3 scan 후 cache eviction·major/I/O/reclaim/tail의 가설 검증이 타당하다."
+    ],
+    [
+      "operating-systems.core.filesystem.buffering",
+      "KEEP",
+      "L1 생산/소비 단위와 여러 버퍼·flush 경계의 차이가 충분하다.",
+      "사용자→kernel/page cache→device, 작은 쓰기 batching과 memory/flush delay/loss window, 아래 계층 완료는 별도라는 설명이 타당하다.",
+      "TEXT 계층 흐름이 충분하며 그림 개수로 결함을 만들지 않는다.",
+      "실제 setbuf의 unbuffered/line/block 및 fflush, Linux page cache와 JDK25 BufferedWriter.write/Writer.flush의 다음 stream/OS 전달 계약을 대조했다.",
+      "q1 C/모든 보기, q2 호출 고정 비용 대 buffer/loss, q3 flush 후 crash의 파일/metadata 동기화 부족이 정확하다."
+    ],
+    [
+      "operating-systems.core.filesystem.write-flush-fsync",
+      "KEEP",
+      "L2 반환된 byte 수·library flush·durability와 crash consistency의 경계가 충분하다.",
+      "write(fd,buf,n)의 partial 반환, library flush는 kernel 호출로 이어질 수 있음, Linux fsync file metadata 대 directory entry, journaling 내부 정합 대 application ack를 구분한다.",
+      "DIAGRAM user buffer→kernel dirty→filesystem→storage와 directory 계약 경고를 유지한다. Title write는 Writer.write인지 syscall인지 표기하면 좋지만 본문은 두 계층을 이미 구분한다.",
+      "실제 Linux write 반환/NOTES·fsync DESCRIPTION의 file+directory, OSTEP39.7 및42.1/42.3의 append crash·journal/checkpoint·device ordering을 대조했다.",
+      "q1 B/모든 보기·partial, q3 file fsync후rename과directory, q4 group commit ack/loss 조건은 타당하다. q2 arrow와 model의 syscall/library 혼동은 W3-OS-023이다."
+    ]
+  ],
+  "questions": [
+    [
+      "operating-systems.core.filesystem.file-abstraction.q1",
+      "KEEP",
+      "B pathname은namespace이름. A전역offset/Crename즉시fd무효/D한이름만이라는 모든 보기·rationale·explanation이 정확하다.",
+      "EASY 이름/객체 층을 구분한다."
+    ],
+    [
+      "operating-systems.core.filesystem.file-abstraction.q2",
+      "KEEP",
+      "model/explanation의 open state 참조와 rename의 namespace 변경이 별도라는 설명이 맞다.",
+      "MEDIUM q1 인식에서 열린 수명 이유로 확장한다."
+    ],
+    [
+      "operating-systems.core.filesystem.file-abstraction.q3",
+      "KEEP",
+      "write 성공만으로 DURABLE 표시는 kernel 전달과 power-loss 보존의 혼동이며 page cache/write-back/fsync·필요 metadata 확인이라는 model/explanation이 정확하다.",
+      "MEDIUM 후속 fsync Concept와 연결되는 실패 경계이다."
+    ],
+    [
+      "operating-systems.core.filesystem.file-descriptor.q1",
+      "KEEP",
+      "A close3뒤open3 재사용가능. B전역ID/C모든process같은3/D종료까지예약의 모든 rationale·explanation이 맞다.",
+      "EASY 가능성을 묻고 항상3 반환이라고 단정하지 않는다."
+    ],
+    [
+      "operating-systems.core.filesystem.file-descriptor.q2",
+      "KEEP",
+      "model/explanation의 process-local·시간별재사용 때문에 PID/시점/객체/경로·peer 수명 context가 필요하다는 답이 맞다.",
+      "MEDIUM identity 추적의 실패 조건이다."
+    ],
+    [
+      "operating-systems.core.filesystem.file-descriptor.q3",
+      "KEEP",
+      "model/explanation의 남은복제/상속 write-end fd가 EOF를지연한다는 이유는 실제 pipe 계약과 맞다.",
+      "MEDIUM 모든write참조제거가필요조건이며 buffered data가있으면먼저읽어야하는상세를부정하지않는다."
+    ],
+    [
+      "operating-systems.core.filesystem.open-file-table.q1",
+      "KEEP",
+      "B별도open별도offset/dup공유. A항상독립/C파일내용복사/Dopen반드시같은description의 모든 rationale·explanation이 정확하다.",
+      "EASY inode같음과session같음을 구분한다."
+    ],
+    [
+      "operating-systems.core.filesystem.open-file-table.q2",
+      "TARGETED_ENHANCE",
+      "dup는offset공유가맞지만100바이트read뒤offset100은초기0에서만맞다. Prompt에초기offset/다른변경없음이없어 W3-OS-020이다. accepted에도 explanation의오프셋100 표기가없다.",
+      "MEDIUM standalone문항의숫자전제를명시해야한다. 다른문항/그림을숨은전제로사용하지않는다."
+    ],
+    [
+      "operating-systems.core.filesystem.open-file-table.q3",
+      "KEEP",
+      "seek/read사이다른worker가offset을바꾸어잘못된위치read가능, positional I/O/별도open/동기화의model/explanation이맞다.",
+      "MEDIUM 한read의offset갱신원자성과두호출sequence의원자성을혼동하지않는다."
+    ],
+    [
+      "operating-systems.core.filesystem.open-file-table.q4",
+      "KEEP",
+      "별도open은독립offset이지만같은inodebytes수정은공유된다는model/explanation이맞다.",
+      "MEDIUM session과object상태차이를명확히평가한다."
+    ],
+    [
+      "operating-systems.core.filesystem.directory-path.q1",
+      "KEEP",
+      "Ccwd/srv/app→/srv/test뒤data/a.txt는다른시작객체가능. A표시만/B항상root/D마지막만이라는모든rationale·explanation이맞다.",
+      "EASY 다르다고보장하지않고달라질수있음을답한다."
+    ],
+    [
+      "operating-systems.core.filesystem.directory-path.q2",
+      "KEEP",
+      "root→var→app→a와존재/directory/권한/link/mount규칙의model/explanation이정확하다.",
+      "MEDIUM 시작context가명시된구성요소실행순서이다."
+    ],
+    [
+      "operating-systems.core.filesystem.directory-path.q3",
+      "KEEP",
+      "마지막이름unlink뒤open참조가객체/data수명을유지한다는model/explanation이맞다.",
+      "MEDIUM inode q2는link가남는경우이며이문항은마지막link없는openref라는다른상태이다."
+    ],
+    [
+      "operating-systems.core.filesystem.inode.q1",
+      "KEEP",
+      "Dnameentry→inode/metadata·mapping. Arename복사/B전체pathname/C한block만이라는모든rationale·explanation이정확하다.",
+      "EASY inode대표모델을명시한다."
+    ],
+    [
+      "operating-systems.core.filesystem.inode.q2",
+      "KEEP",
+      "a/b동일inode link2에서unlink(a)뒤b는남아object/data유지한다는model/explanation이맞다.",
+      "MEDIUM 이름하나대객체삭제의구별이다."
+    ],
+    [
+      "operating-systems.core.filesystem.inode.q3",
+      "KEEP",
+      "data만durable이고inode size/mapping이old이면bytes접근불가·정합문제가능이라는model/explanation이맞다.",
+      "HARD journal/ordering의필요를추론하며모든filedata가journal에들어간다는보장이아니다."
+    ],
+    [
+      "operating-systems.core.filesystem.inode.q4",
+      "TARGETED_ENHANCE",
+      "값hard link와rename은정확하지만accepted는English/hybrid뿐이며하드 링크와 rename도거절한다. W3-OS-021이다.",
+      "MEDIUM 한국어본문/질문의명칭을인정해야한다. 두동작의역할은문제에서명확하다."
+    ],
+    [
+      "operating-systems.core.filesystem.filesystem-block.q1",
+      "KEEP",
+      "A크기같을수있지만책임별도. BPT가diskblock결정/C역할반대/D항상같아야mapping의모든rationale·explanation이맞다.",
+      "EASY 주소변환/영속할당층구별이다."
+    ],
+    [
+      "operating-systems.core.filesystem.filesystem-block.q2",
+      "TARGETED_ENHANCE",
+      "명시0-based block2/offset808 계산은맞다. accepted가블록2, 오프셋808이라는한국어표기를인정하지않아W3-OS-021이다.",
+      "MEDIUM 수치정답오류가아닌표기·채점계약문제이며요구format은없다."
+    ],
+    [
+      "operating-systems.core.filesystem.filesystem-block.q3",
+      "KEEP",
+      "filesystem4KiB할당과device atomicity/power-lossdurability는별도계약이라는model/explanation이정확하다.",
+      "MEDIUM 크기동일에서보장을추론하는오해이다."
+    ],
+    [
+      "operating-systems.core.filesystem.allocation.q1",
+      "KEEP",
+      "Cstart+offset계산단순. Ametadata불필요/B항상제자리확장/Dnamespace유일의모든rationale를UTF-8로확인했다. C계산장점·growth/fragmentation대가는정확하다.",
+      "EASY data배치와namespace를구분하는D도다른층의오해를평가한다."
+    ],
+    [
+      "operating-systems.core.filesystem.allocation.q2",
+      "KEEP",
+      "linked흩어진block/pointer순회대indexedmetadata비용/직접찾기의model/explanation이맞다.",
+      "MEDIUM 특정현대FS전체를단일분류로고정하지않는다."
+    ],
+    [
+      "operating-systems.core.filesystem.allocation.q3",
+      "KEEP",
+      "bitmapfree/inode아직참조이면같은block다른file에재할당하는corruption위험의model/explanation이정확하다.",
+      "HARD 복수영속구조의불변조건을추론한다."
+    ],
+    [
+      "operating-systems.core.filesystem.page-cache.q1",
+      "KEEP",
+      "D첫readcache가다음storage접근회피가능. Aread=durable/Bpathname이data보관/Cprocess별완전분리의모든rationale·explanation이맞다.",
+      "EASY cold/warm가설이며측정만으로반드시cachehit임을단정하지않는다."
+    ],
+    [
+      "operating-systems.core.filesystem.page-cache.q2",
+      "KEEP",
+      "model/explanation의dirty는최신kernelbytes지만backingwrite미완료·power-loss별도라는설명이맞다.",
+      "MEDIUM 현재관찰과crash뒤보존을구분한다."
+    ],
+    [
+      "operating-systems.core.filesystem.page-cache.q3",
+      "KEEP",
+      "scan이hotfilepage를evict했을가능성과상주/reclaim/readI/O/fault/tail을시간축비교하는model/explanation이타당하다.",
+      "HARD 가설과검증방법이며buffered read가항상majorcounter를올린다고일반화하지않는다."
+    ],
+    [
+      "operating-systems.core.filesystem.buffering.q1",
+      "KEEP",
+      "CBufferedWriter.flush는다음stream/OS전달이며power-loss보장아님. Adirectoryrename도durable/Bkerneldevice모두flush/D폐기·이후실패의모든rationale가JDK25Writer계약과맞다.",
+      "EASY 반환의계층별의미를확인한다."
+    ],
+    [
+      "operating-systems.core.filesystem.buffering.q2",
+      "KEEP",
+      "작은쓰기를합쳐syscall고정비용감소대bufferRAM/delay/아직미전달losswindow의model/explanation이맞다.",
+      "MEDIUM throughput만이아닌trade-off이다."
+    ],
+    [
+      "operating-systems.core.filesystem.buffering.q3",
+      "KEEP",
+      "writerflush후완료표시·systemcrashloss는OS/file/device·필요metadata동기화경계누락이라는model/explanation이정확하다.",
+      "MEDIUM 같은경계에반복연결되지만buffering.q1인식대실제실패원인추론이다."
+    ],
+    [
+      "operating-systems.core.filesystem.write-flush-fsync.q1",
+      "KEEP",
+      "Bpositive반환된일부/전체kernel수용대power-loss미확정. A전체durable/C두buffer면호출불가/Drename까지durable의모든rationale·explanation이맞다.",
+      "EASY partialbytecount와durability두경계를묻는다."
+    ],
+    [
+      "operating-systems.core.filesystem.write-flush-fsync.q2",
+      "TARGETED_ENHANCE",
+      "각APImodel정의는맞지만promptwrite→libraryflush→fsync와modelwrite()=kernel전달의순서가충돌한다. Writer.write와syscallwrite를구분해야하는W3-OS-023이다.",
+      "MEDIUM 경계비교질문을순차호출프로토콜로오독하기쉽다. flatAPI목록또는정확한layer흐름으로최소보강한다."
+    ],
+    [
+      "operating-systems.core.filesystem.write-flush-fsync.q3",
+      "KEEP",
+      "filefsync뒤renametemp/current의directoryentrydurability·디렉터리동기화/ordering확인이model/explanation에Linux계약과맞다.",
+      "HARD 새이름의재부팅보존이라는failuremodel이명확하다."
+    ],
+    [
+      "operating-systems.core.filesystem.write-flush-fsync.q4",
+      "KEEP",
+      "레코드별fsync비용대허용된groupcommit,ack시점/loss상한을먼저정의하는model/explanation이정확하다.",
+      "HARD batching이무조건동일durability라는답이아니다."
+    ]
+  ],
+  "sources": [
+    [
+      "https://pages.cs.wisc.edu/~remzi/OSTEP/file-intro.pdf",
+      "CURRENT_VERIFIED",
+      "실제39.1~39.4 byte/name/fd,39.6 fork/dup공유offset,39.7fsync와directory,39.12/39.14directory/hardlink관련절을읽었다. Open후path참조와수명은Linuxopen도대조했고29페이지전체를검토했다고주장하지않는다."
+    ],
+    [
+      "https://man7.org/linux/man-pages/man2/open.2.html",
+      "CURRENT_VERIFIED",
+      "DESCRIPTION의processfdindex·lowestunused·초기offset0·새description·path제거/변경뒤참조유지,openat와O_DIRECT/O_SYNC범위를실제읽었다."
+    ],
+    [
+      "https://man7.org/linux/man-pages/man2/dup.2.html",
+      "CURRENT_VERIFIED",
+      "DESCRIPTION의같은description/offset/statusflags공유와FD_CLOEXEC비공유·dup2close/reuse원자적범위를읽었다."
+    ],
+    [
+      "https://pages.cs.wisc.edu/~remzi/OSTEP/file-implementation.pdf",
+      "CURRENT_VERIFIED",
+      "실제40.3inode필드/direct·indirect/extent·linked/FAT,40.4directoryentry,40.6bitmap/inode/data갱신의관련본문을읽었다. VSFS/역사적측정값은모델로한정하며현재FS모두의I/O횟수/구조보장으로승인하지않는다."
+    ],
+    [
+      "https://docs.kernel.org/admin-guide/mm/concepts.html",
+      "CURRENT_VERIFIED",
+      "실제Pagecache의bufferedread/write/dirtybacking과Anonymous/Reclaim의배경을읽었다. DirectI/O예외는open공식문서와대조했다."
+    ],
+    [
+      "https://toss.tech/article/flink-realtime-frequency-capping",
+      "CURRENT_VERIFIED",
+      "실제DirectI/O절의Flink1.20/RocksDBfilterblockmiss·자체BlockCache·read/flushcompaction설정과trade-off를읽었다. 특정운영사례이며K8s의자동기본규칙이나모든현행Flink보장으로확대하지않는다."
+    ],
+    [
+      "https://man7.org/linux/man-pages/man3/setbuf.3.html",
+      "CURRENT_VERIFIED",
+      "DESCRIPTION의unbuffered/block/line모드와fflush및buffer수명조건을읽었다. Cstream자료이며JavaAPI는별도공식문서를대조했다."
+    ],
+    [
+      "https://pages.cs.wisc.edu/~remzi/OSTEP/file-journaling.pdf",
+      "CURRENT_VERIFIED",
+      "실제42.1append의inode/bitmap/data3갱신및6부분crash,42.3journalwrite/checkpoint와devicewritecache/ordering관련절을읽었다. Ext3datajournal모델을모든FS가모든filedata를journal에쓴다는보장으로확대하지않는다."
+    ],
+    [
+      "https://man7.org/linux/man-pages/man2/write.2.html",
+      "CURRENT_VERIFIED",
+      "실제DESCRIPTION/RETURN의partialbytecount와offset,NOTES의success≠diskcommit·delayederror를읽었다."
+    ],
+    [
+      "https://man7.org/linux/man-pages/man2/fsync.2.html",
+      "CURRENT_VERIFIED",
+      "실제DESCRIPTION의modifiedfiledata/metadata·devicecacheflush/blocking과directory별도fsync,fdatasync필요metadata차이·오류를읽었다."
+    ]
+  ],
+  "supplementalSources": [
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/BufferedWriter.html",
+      "CURRENT_VERIFIED",
+      "실제write(char[],off,len)의buffer/큰write우회및flush/close를읽었다."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/Writer.html",
+      "CURRENT_VERIFIED",
+      "실제flush의writer/outputstreamchain전달과OSfile이면bytes전달만보장·physicaldisk미보장이라는규정을읽었다."
+    ],
+    [
+      "https://man7.org/linux/man-pages/man7/pipe.7.html",
+      "CURRENT_VERIFIED",
+      "앞서실제읽은모든write-endfd가닫혀야EOF라는계약을fd수명문항에재사용했다."
+    ]
+  ],
+  "findings": [
+    {
+      "id": "W3-OS-020",
+      "severity": "P1",
+      "contentKeys": [
+        "operating-systems.core.filesystem.open-file-table.q2"
+      ],
+      "file": "content/operating-systems/filesystem/questions.json",
+      "quote": "`fd2 = dup(fd1)` 뒤 `fd1`로 100바이트를 순차적으로 읽었다.",
+      "problem": "초기 offset0이 명시되지 않았다. Dup는 현재 offset을 공유할 뿐 초기화하지 않으므로 시작offset500이면 실제100바이트read후600이다. Explanation의 offset100과 accepted100만으로 일반 조건의 답을 확정할 수 없다. 또한 한국어 오프셋 100 표기도 허용되지 않는다.",
+      "action": "일반 seekable file·초기offset0·정확히100바이트read완료·다른offset변경없음을 문항에 명시하고 오프셋 100 등 본문 언어 표기를 accepted에 추가한다. 공유offset이라는 원리는 유지한다.",
+      "followupIssues": [
+        201
+      ]
+    },
+    {
+      "id": "W3-OS-021",
+      "severity": "P0",
+      "contentKeys": [
+        "operating-systems.core.filesystem.inode.q4",
+        "operating-systems.core.filesystem.filesystem-block.q2"
+      ],
+      "file": "content/operating-systems/filesystem/questions.json",
+      "quote": "hard link와 rename",
+      "problem": "inode.q4는 한국어 하드 링크와 rename을 accepted에 두지 않고 English/hybrid만 허용한다. Block.q2도 블록 2, 오프셋 808 같은 질문/해설의 한국어 명칭으로 쓴 정확한 답을 거절한다. 영어 또는 특정 표기 요구가 없으며 grader는 trim/lowercase 뒤 literal equality만 비교한다.",
+      "action": "각 문항에 canonical 한국어 명칭의 대표 표기를 추가하거나 요구 답안 형식을 정확히 명시한다. 값 hard link/rename과2/808 및 올바른 해설은 유지한다. 이번 감사에서 채점 기능은 변경하지 않는다.",
+      "followupIssues": [
+        201
+      ],
+      "additionalEvidence": [
+        {
+          "file": "content/operating-systems/filesystem/questions.json",
+          "quote": "2번 block의 808 byte"
+        },
+        {
+          "file": "backend/src/main/java/com/guseoh/csforge/quiz/application/grading/ShortAnswerGradingStrategy.java",
+          "quote": "anyMatch(submitted::equals)"
+        }
+      ]
+    },
+    {
+      "id": "W3-OS-022",
+      "severity": "P2",
+      "contentKeys": [
+        "operating-systems.core.filesystem.filesystem-block"
+      ],
+      "file": "content/operating-systems/filesystem/filesystem-block.md",
+      "quote": "세 번째 논리 블록의 808번째 바이트",
+      "problem": "0-based block2/offset808 계산은 정확하지만 자연어 808번째 byte는 해당 block의offset807로 읽힌다. Offset808은809번째 byte이다. 아래 식과 문항의 명시0-based 계산은 맞다.",
+      "action": "서수를 809번째로 바꾸거나 블록 내부 오프셋 808바이트 지점으로 표현해 기준을 일치시킨다. 계산과 Question의 수치를 변경하지 않는다.",
+      "followupIssues": [
+        201
+      ]
+    },
+    {
+      "id": "W3-OS-023",
+      "severity": "P2",
+      "contentKeys": [
+        "operating-systems.core.filesystem.write-flush-fsync.q2"
+      ],
+      "file": "content/operating-systems/filesystem/questions.json",
+      "quote": "write → library flush → fsync",
+      "problem": "Prompt의 arrow는 write→libraryflush라는 실행순서를 암시하지만 model은 write()를 kernel에 전달하는 syscall로 정의한다. BufferedWriter.write의 사용자buffer기록과syscallwrite는별도이며libraryflush가오히려syscallwrite를유발할수있다. 각 반환경계 설명은 정확하다.",
+      "action": "Arrow를 없애 세API의 경계 비교로 묻거나 Writer.write→Writer.flush(아래 syscallwrite 수행)→fsync로 계층을 명시한다. Direct syscallwrite 경로에는 libraryflush가 필수가 아니라는 점을 구분한다.",
+      "followupIssues": [
+        201
+      ]
+    },
+    {
+      "id": "W3-OS-024",
+      "severity": "P2",
+      "contentKeys": [
+        "operating-systems.core.filesystem.allocation"
+      ],
+      "file": "frontend/public/learning/operating-systems/block-allocation-tradeoff.svg",
+      "quote": "M270 358 L390 330",
+      "problem": "Indexed 행에는 index 상자와3개선만 있고 끝점에 destination block이나 entry/논리번호가 없어 실제 index lookup/mapping을 따라갈 수 없다. Contiguous/linked 행과 본문의 trade-off는 타당하므로 새 이미지나 전체 본문 재작성은 필요 없다.",
+      "action": "후속 보강에서 기존 indexed 행에 entry[0..2]와각 물리block(B7/B9/B20 등)을 표시해 논리block번호→indexentry→destination을 직접 추적하게 한다. 기존 도식의 비교와 자산은 유지한다.",
+      "followupIssues": [
+        201
+      ]
+    }
+  ],
+  "visualizationAssets": [
+    {
+      "file": "frontend/public/learning/operating-systems/file-descriptor-open-state.svg",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "sourceSha256": "11fdfaad9a90d783e9930e2bfa5e96635084ac9c3bf56ce649db9b797394f50b"
+    },
+    {
+      "file": "frontend/public/learning/operating-systems/inode-file-layout.svg",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "sourceSha256": "11232f1cfcf28b7b160b9bc287b4f85e9c433380a5917add5229b3d8f6f27fce"
+    },
+    {
+      "file": "frontend/public/learning/operating-systems/block-allocation-tradeoff.svg",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "sourceSha256": "bddff9c3fd1f561f34c0eb9759eb15bf7412f0f46b27c9e53b155501546fe56d"
+    },
+    {
+      "file": "frontend/public/learning/operating-systems/write-flush-fsync.svg",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "sourceSha256": "a52326086ec384ca2ad34a8e474dc4ae7f9a73b9990ed40976e3060887e0ebea"
+    }
+  ],
+  "sourceHashes": {
+    "operating-systems.core.filesystem.allocation": "cdbcba88388f33594036feb1680a7f658f41355c1c1a774480880310c3b8b7ae",
+    "operating-systems.core.filesystem.allocation.q1": "467abc346b7b97cecfca0cc5063dfd0281d6d5b62bcd3c3d9b46f25e93f885c2",
+    "operating-systems.core.filesystem.allocation.q2": "3abb0a509dd08bde7aa04e2881b8c5000928766a3f41fd029882fe747e0e23b5",
+    "operating-systems.core.filesystem.allocation.q3": "a4c84be598d5200e62b63ca1b2be268f84a6c9830027f2124fb11ba8bee267ba",
+    "operating-systems.core.filesystem.buffering": "662b05b09dffb33f8976bed066e416e99bf66567605d014a6e0d13b3d41d602d",
+    "operating-systems.core.filesystem.buffering.q1": "581be2068abc7c7f7d14369baf32a71f15924951b2c9a27bf29d522e572daf3e",
+    "operating-systems.core.filesystem.buffering.q2": "9155830493736b1ccb8abc3dfc123ee9a6010cc8e2dd56ab468c758a30d64aea",
+    "operating-systems.core.filesystem.buffering.q3": "7b2dcd00fb7d94a0dd2c51a34fe7db064857d0ea44acbf630386478bb21a365c",
+    "operating-systems.core.filesystem.directory-path": "d49a9b87586d80e4b4fbd031a0d9699bc3e3ac3cd7979fff8fd95fc3a03521bc",
+    "operating-systems.core.filesystem.directory-path.q1": "a6327b11c9f3d337d496ec2571bd55a80359b4e31f2656bf845182f43fdcc678",
+    "operating-systems.core.filesystem.directory-path.q2": "8fa0d963feb8a48d0e4675c0580f4f1782b4735938b308d9a6cd91dd75965bc1",
+    "operating-systems.core.filesystem.directory-path.q3": "28dd57887e2c9ee10d425063e9f81f35a557433af31292e63c80f6dda66759d6",
+    "operating-systems.core.filesystem.file-abstraction": "f1ad60d3f9cf4acfe39180962a759d12f99a80f9ba69706d952ab3805302b0e5",
+    "operating-systems.core.filesystem.file-abstraction.q1": "ffbc63225ee049f077b5bf6ab4e2e10716e687786329fcd86904edf1653f4179",
+    "operating-systems.core.filesystem.file-abstraction.q2": "81b3b396b8c0703282dcee49a2002c32438425c1b9093fec43cff180cdf6ee4d",
+    "operating-systems.core.filesystem.file-abstraction.q3": "c44fa468d227f5a12665def6c34516a122b9eef5974a6b66f3846d3c5d42b559",
+    "operating-systems.core.filesystem.file-descriptor": "9a6280e04c383e2befb43df01ac0f6472eaed87742cbf512a2a4cb350c8bfb1d",
+    "operating-systems.core.filesystem.file-descriptor.q1": "300fde839e18aefa9be271fa2fcd172bd385cbc8406f2b2961e30aea94c51a14",
+    "operating-systems.core.filesystem.file-descriptor.q2": "6be23d379a8869b86b07fc7d9bc61f60ca2e960bc4eaa4c22bc6532136252c9c",
+    "operating-systems.core.filesystem.file-descriptor.q3": "51a93acf3e3a35c6d858a66fd22ad8611e558e384569e72c11f2268282d2b5a8",
+    "operating-systems.core.filesystem.filesystem-block": "11c16d78c2147c40a1109acbab6946229188ab10de89c838ff7af51b4c042470",
+    "operating-systems.core.filesystem.filesystem-block.q1": "d0e4a059e5e129be13061f9ed11eb96afaf468930cdf224afd6729e82184f5fe",
+    "operating-systems.core.filesystem.filesystem-block.q2": "7dde7cb6c32476a92bd8435e0c4d27e09db12d3131f476b6cba119bfa266b02d",
+    "operating-systems.core.filesystem.filesystem-block.q3": "1f17744128fbdcca912b54c1a0135488ea2ae35073fac1035d6724905ff1b72a",
+    "operating-systems.core.filesystem.inode": "00a1947a262c1001e38f58b717d7f36e67877c73c376ea349c1403047cab3500",
+    "operating-systems.core.filesystem.inode.q1": "261a113879e09a2f8416aed3476d482be5a28accc88f6ee270a1edbe198635de",
+    "operating-systems.core.filesystem.inode.q2": "24ec96c30890e52186e8d02ebd2feb682a2b77a4fb376fe0f67ad3018fcbd004",
+    "operating-systems.core.filesystem.inode.q3": "ccdc7b19d15fdfe13b3cce46a04a38a56e6a85ccc33b3d5f71c68d2e88adfc14",
+    "operating-systems.core.filesystem.inode.q4": "579b50b1de498b5ef149522d948aeefb2f74bd408eaaf0b6c7c22fd45a4d61ef",
+    "operating-systems.core.filesystem.open-file-table": "44bf0f1ebb90ac46743c03482e950a4d5280023c40a7a64afe4982fac9e29ed0",
+    "operating-systems.core.filesystem.open-file-table.q1": "233b4089be156d85718195866a2089003b9cc7008419131867ce7dc73d9597e3",
+    "operating-systems.core.filesystem.open-file-table.q2": "71c01de61e3273d073843be00e28af6c563fb00a77cb76adf7a26c5637c818a2",
+    "operating-systems.core.filesystem.open-file-table.q3": "709712dc8568a2ab8d08e8e8e8a63bc8ad45e051c79b58784b3ada342255b369",
+    "operating-systems.core.filesystem.open-file-table.q4": "0ec9a426fac9796d19fcda75f9130e97bc8d7ab68e0ebac1f1b44e661a4cc307",
+    "operating-systems.core.filesystem.page-cache": "892e6ffb226c54340eea2d700966241b7240f8ae96c273040032ce4bcbc77c73",
+    "operating-systems.core.filesystem.page-cache.q1": "102688f84ee6de7f45961412e3c2e7b7de5738496adc3f9fd6540b78f0ac90d8",
+    "operating-systems.core.filesystem.page-cache.q2": "b94e8e4de7b04f4cbff68f8b0d821e63e371a2cd22f745f5a024e41e60863aa8",
+    "operating-systems.core.filesystem.page-cache.q3": "8d607c0178f6b7b1ae065ded671f3e876af0b099adbc09a2ba50f459a38fb5fd",
+    "operating-systems.core.filesystem.write-flush-fsync": "c06a816e90039b5e109cd957ee23f1303db40c58de9c5234585712031a0db623",
+    "operating-systems.core.filesystem.write-flush-fsync.q1": "110226806a52206cc938a995856e21dd812792e8f42784f67ea3d9a5a96eeb59",
+    "operating-systems.core.filesystem.write-flush-fsync.q2": "bb5d8eaf2e023a2f6e31b4ea07fadf232c159bf035ced2a8c0c8a2977c944a3f",
+    "operating-systems.core.filesystem.write-flush-fsync.q3": "7363ca83cc0189d286f3d2614c50488fb721f2cb4c60df82d323462e6ec05a89",
+    "operating-systems.core.filesystem.write-flush-fsync.q4": "e05cdf2b5dcdd415f9f55b2438b38bac9ef201c32f1b43368c3f5958f9b979d3"
+  }
+}

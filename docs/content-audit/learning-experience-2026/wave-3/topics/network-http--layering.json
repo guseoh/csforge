@@ -1,0 +1,228 @@
+{
+  "area": "network-http",
+  "topic": "layering",
+  "topicKey": "network-http.core.layering",
+  "coverage": "6 Concept와18 Question의 실제 원문·모든 보기/rationale/model/explanation·Concept 연결을 두 bounded 출력으로 읽었다. Ethernet→Wi-Fi/VPN 변경 책임, local link/IP/transport/application 보장, 송신 payload/header와 수신 validation/reassembly, proxy의 새 연결, TCP 메시지 경계 비보장과 MTU/PMTU·IPv4 DF·IPv6 source fragmentation·ICMP blackhole를 추적했다. RFC1122 관련 계층/용어 구간과RFC1191/8201 및보충RFC9293/8200 관련절을 실제 대조했다. 계층별 표와 text flow의 학습 충분성을 판단했으며 그림 개수로 결함을 만들지 않았다.",
+  "concepts": [
+    [
+      "network-http.core.layering.why-layering",
+      "KEEP",
+      "L1 다른 전달 문제를 책임/계약으로 나누는 목적과 장애 진단이 충분하다.",
+      "App은 socket 계약, router는IP/route를 사용한다. DNS→IP→TCP→TLS→HTTP 각각 성공 조건과 lower success≠business success, NIC offload/proxy의 여러계층 구현을 구분한다. 물리프로그램분리를강제하지않는다.",
+      "TEXT responsibility table과failure chain으로학습목표가충족된다. 별도그림추가불필요.",
+      "RFC1122 1.1.3의application/transport/internet/link와IP비보장구간을읽었다. 1989문서전체TCP규칙을현재보장으로확장하지않고 modernTCP기본계약은RFC9293로대조했다.",
+      "q1D와모든보기·rationale, q2TCPACK≠HTTPparse/commit, q3Ethernet/NIC의존app분리시나리오를개별확인했다."
+    ],
+    [
+      "network-http.core.layering.link-network-transport-application",
+      "KEEP",
+      "L1 주소·전달범위와TCP/UDP·app보장의비교가충분하다.",
+      "MAC현재홉·IPbest-effort·port/connection·HTTP/DNSmeaning을구분한다. TCPorderedstream/flow/recovery대UDPboundary/non-delivery가맞으며연결성공≠업무완료이다.",
+      "DIAGRAM계획대실제는4계층책임표와전달설명이다. 인접encapsulation/decapsulationtextflow가방향과경계를보충하여현재이해에충분하다. Layer별address/payload경계를한그림에합치는선택후보는있으나이미지부재만으로보강판정하지않는다.",
+      "RFC1122 1.1.3의4계층·IPbest-effort, RFC9293 2.2의byte-stream/port/retransmission을직접대조했다.",
+      "q1A순서와모든보기, q2transport대app, q3segment재전송과HTTP업무재시도의멱등성차이를검토했다."
+    ],
+    [
+      "network-http.core.layering.encapsulation",
+      "KEEP",
+      "L1 payload에계층별전달정보추가와비1:1단위의깊이가충분하다.",
+      "HTTPbytes→TCPsegment→IP→linkheader/trailer의flow가맞다. 큰메시지의분할·read병합·router홉별새frame과최종IProute의일반모델을구분한다. NAT/proxy없는일반전달이라는범위에적합하다.",
+      "DIAGRAM계획을text흐름과header+payload중첩으로표현한다. 상태/방향이명확해학습충분성은KEEP이며추후nestedbox선택후보이다.",
+      "RFC1122 1.3.3 segment/IPdatagram/frame의encapsulation을대조했다. RFC9293 2.2/3.1의applicationstream→segment→IP와header분리를읽었다.",
+      "q1B/모든보기·rationale, q2메시지분할/홉frame, q3reverseproxyTCP/TLStermination뒤새IP/port/seq와상위HTTPmeaning유지를검토했다."
+    ],
+    [
+      "network-http.core.layering.decapsulation",
+      "KEEP",
+      "L1 수신단계조건과router대destination처리를충분히설명한다.",
+      "Link검증→IP목적지/protocol→transportport/state→appflow와drop위치,router다음홉재캡슐화대destinationTCPstream/HTTPframing을구분한다. 기본IPforwarder모델이지L7proxy/firewall의검사불가라는보편주장은아니다.",
+      "DIAGRAM계획에수신4단계와routerforward의textflow가있다. Destination까지올라오는범위와재캡슐화가명확하여KEEP.",
+      "RFC1122 계층/단위와RFC9293 stream복원계약을읽어header제거만으로HTTPmessage완성이라는오해가없는지대조했다.",
+      "q1C/모든보기, q2header/state/reassembly후appframing, q3wrongMACdrop뒤app로그없음과하위counter/capture진단을확인했다."
+    ],
+    [
+      "network-http.core.layering.frame-packet-segment-message",
+      "KEEP",
+      "L1 단위·header책임과경계보존대reliability가충분하다.",
+      "Frame/link·packet/IP·segmentTCP/datagramUDP·messageapp의교육용표와도구packet넓은용법주의가적절하다. TCPsegment경계는app에보존되지않고HTTPContent-Length/framing,UDPboundary≠delivery를구분한다.",
+      "TEXT 단위표와HTTP1→multiple segments/packets/framesflow로충분하다.",
+      "RFC1122 1.3.3 단위/중첩을직접읽었다. 이RFC의lower-layer message는transportunit으로쓰이므로본문의applicationmessage와용어문맥을구별한다. RFC9293 2.2/3.1로TCPsegment/stream확인.",
+      "q1D/모든보기·rationale, q2TCPseq/port/ACK대IProute, q3capture의multipleTCPsegment와HTTPparser경계를검토했다."
+    ],
+    [
+      "network-http.core.layering.mtu",
+      "KEEP",
+      "L2 link/pathMTU·fragmentation·blackhole·대응의깊이가충분하다.",
+      "MTU≠appmessagemax·MSS, PMTU의minhop·tunnelheader비용,IPv4DFdrop/ICMP대IPv6router비fragment/source조정,fragment하나손실뒤재조립실패와PMTUD/PLPMTUD를정확히구분한다. RouterICMP가언제나도착한다고하지않는다.",
+      "TEXT IPv4fragment/DF대IPv6PTB표와VPNfailureflow가충분하다. 값만암기시키지않는다.",
+      "RFC1191 §§1/2/4의minhop·DFdrop/ICMP, RFC8201 §§2/3/4/6의PTB·source조정·ICMPfilter/PLPMTUD, RFC8200 §§4.5/5의source-onlyfragment·1280linkminimum를읽었다.",
+      "q1A/모든보기의MTU대MSS/IPv6router/firsthop대path, q2version별처리·blackhole, q3VPNsize-dependenttimeout진단과MTU/MSS·ICMP/PLPMTUD를검토했다."
+    ]
+  ],
+  "questions": [
+    [
+      "network-http.core.layering.why-layering.q1",
+      "KEEP",
+      "정답D 책임/인터페이스분리가Ethernet→Wi-Fi변경범위를줄인다. A하위전체직접제어/B오류합침/C동일주소·메시지경계강제는틀리고모든rationale·해설도맞다.",
+      "EASY 계약대구현의변경영향이며q2관찰·q3직접NIC의존실패와다르다. 연결이맞다."
+    ],
+    [
+      "network-http.core.layering.why-layering.q2",
+      "KEEP",
+      "Model/explanation은link/IP/TCP/HTTP/businesscommit의다른성공지점을나누며TCPACK≠HTTPparse/DBcommit을설명한다. 하위완료를업무완료로확대하지않는다.",
+      "MEDIUM 실패경계설명이고q1변경독립성/q3환경교체코드의존과별도목표이다. 선택지/acceptedAnswers는없다."
+    ],
+    [
+      "network-http.core.layering.why-layering.q3",
+      "KEEP",
+      "HTTPapp이Ethernetframe/NIC에직접묶여Wi-Fi/VPN변경에실패하므로socket/OS하위계약에맡기고app의HTTPmeaning에집중하라는model/explanation이타당하다.",
+      "MEDIUM 구체원인이주어진scenario이며계층분리만으로모든Wi-Fi/VPN장애가없어진다고하지않는다. 연결이맞다."
+    ],
+    [
+      "network-http.core.layering.link-network-transport-application.q1",
+      "KEEP",
+      "정답A app→transport→network→link가맞다. B/C/D는계층순서가맞지않고네rationale와해설도전달범위/단위와일치한다.",
+      "EASY 일반송신모델로한정되어예외rawlink실험프로그램의순서와혼동하지않는다. q2책임/q3재시도와다르다."
+    ],
+    [
+      "network-http.core.layering.link-network-transport-application.q2",
+      "KEEP",
+      "Transport의port/connection/stream/datagram대HTTP/DNS의문법·의미/업무처리,ACK≠parse/commit의model/explanation이맞다.",
+      "MEDIUM 책임설명이다. Why-layeringq2와기초를공유하지만여기는transport/app두계층계약의비교이며상위Topic학습을연결한다."
+    ],
+    [
+      "network-http.core.layering.link-network-transport-application.q3",
+      "KEEP",
+      "TCPseq/ACK/segmentretransmit을HTTPapp이중복구현하면상태가충돌하고app은requestretry의method/idempotence/sideeffect를판단해야한다는model/explanation이맞다.",
+      "MEDIUM TCP재전송단위대HTTP재실행단위를실제설계오해에적용한다. App레벨timeout/retry가불필요하다고답하지않는다."
+    ],
+    [
+      "network-http.core.layering.encapsulation.q1",
+      "KEEP",
+      "정답B payload에하위헤더추가가맞다. A모든header삭제/C항상동일packet경계/D모든router가HTTPbody해석은틀리며모든rationale·해설이중첩모델과일치한다.",
+      "EASY 정의·message경계오해를검증한다. q2관계설명과q3새proxyconnection으로진행한다."
+    ],
+    [
+      "network-http.core.layering.encapsulation.q2",
+      "KEEP",
+      "HTTPbytes의일부→TCPsegment→IPpayload→linkframe,메시지여러segment와홉frame변화의model/explanation이맞다.",
+      "MEDIUM TCP로전송되는HTTP라는prompt범위이다. HTTP/3QUIC를모든HTTP에배제하는보편보장으로해석하지않는다."
+    ],
+    [
+      "network-http.core.layering.encapsulation.q3",
+      "KEEP",
+      "Reverseproxy가clientTCP/TLS를종료하고origin새연결을만들수있으므로IP/port/seq가새로되고HTTPmethod/path/body를유지·수정후재전송하는model/explanation이맞다.",
+      "MEDIUM IP/port변화가주어진HTTPproxy연결scenario이며L4passthrough가항상TLS종료한다는보장이없다. 연결경계목표와맞다."
+    ],
+    [
+      "network-http.core.layering.decapsulation.q1",
+      "KEEP",
+      "정답C 수신계층이자기header/state확인뒤상위payload전달이다. Aapp생성전/B송신header붙이기전/D응답뒤에만은틀리고네rationale·해설이맞다.",
+      "EASY 수신방향인식이다. q2단계설명·q3drop관찰지점과구별된다."
+    ],
+    [
+      "network-http.core.layering.decapsulation.q2",
+      "KEEP",
+      "Link검증→IP목적지/상위protocol→TCPseq/ACK/reassembly→orderedstream→HTTPboundary/meaning의model/explanation이맞다. Packet1=HTTP1로가정하지않는다.",
+      "MEDIUM 각단계실패관찰을설명한다. q1방향과q3wrongMAC적용으로이어진다."
+    ],
+    [
+      "network-http.core.layering.decapsulation.q3",
+      "KEEP",
+      "WrongMAC프레임이link에서drop되면IP/TCP/HTTP/app로그까지안올라오므로NIC/switchcounters·capture·계층관찰이필요하다는model/explanation이맞다.",
+      "MEDIUM 링크폐기라는premise에조건부로답한다. Promiscuouscapture가능성이나로그없음의다른원인을배제하는전칭보장은없다."
+    ],
+    [
+      "network-http.core.layering.frame-packet-segment-message.q1",
+      "KEEP",
+      "정답D 계층별unit과상위data실림이맞다. A모두link/BTCP=HTTP경계/CIP는transportheader안포함은틀리고모든rationale·해설이맞다.",
+      "EASY protocolunit구분이다. Encapsulation정의q1과연결되는발판이며q2책임/q3capture추론이추가검증한다."
+    ],
+    [
+      "network-http.core.layering.frame-packet-segment-message.q2",
+      "KEEP",
+      "TCPport/seq/ACK/stream일부와IPsrc/dst/protocol/segmentpayload,endpoint상태대router전달책임의model/explanation이맞다.",
+      "MEDIUM 두계층unit에집중하여일반계층표q2와구별된다. 연결이맞다."
+    ],
+    [
+      "network-http.core.layering.frame-packet-segment-message.q3",
+      "KEEP",
+      "HTTP1이TCPstream의여러segments/MSS/path로보이고수신seq복원뒤HTTPparser가경계를해석한다는model/explanation이맞다.",
+      "MEDIUM capture실행추론이다. Congestion상태는전송방식/시점에영향을주며메시지경계를보장하지않는다. q1/q2와다르다."
+    ],
+    [
+      "network-http.core.layering.mtu.q1",
+      "KEEP",
+      "정답A link가한번에운반하는networkpacket크기가맞다. BMTU=MSS/headers포함동일단위/CIPv6routerfragment/Dfirsthop=path는틀리고모든rationale·해설이정확하다.",
+      "EASY 실제size계약오해를세distractor로검증한다. q2version동작/q3VPNfailure와다르다."
+    ],
+    [
+      "network-http.core.layering.mtu.q2",
+      "KEEP",
+      "IPv4조건부fragment/DFdrop·ICMP대IPv6router비fragment/PTB/source조정과PMTUDblackhole의model/explanation이맞다.",
+      "MEDIUM IPv4/6경계가명시되어있다. IPv6sourcefragment가불가능하거나ICMP항상전달된다는보장이없다."
+    ],
+    [
+      "network-http.core.layering.mtu.q3",
+      "KEEP",
+      "VPN외부header로유효MTU가줄어size-dependentdrop,크기probe/DF/PTB·ICMP·PMTUD와interfaceMTU/MSS확인,ICMP허용/PLPMTUD대안의model/explanation이충분하다.",
+      "MEDIUM 작은요청정상·큰응답timeout을원인단서로쓰되MTU라고확정하지않고검증을요구한다. Scenario난이도/Concept연결이적합하다."
+    ]
+  ],
+  "sources": [
+    [
+      "https://www.rfc-editor.org/rfc/rfc1122",
+      "CURRENT_VERIFIED",
+      "직접route가현재info페이지로redirect되어본문을제공한다. 1.1.3의4계층·IPbest-effort와1.3.3의단위·encapsulation schematic을실제읽었다. 역사적문서의message용어는lowertransport문맥이며현재TCP규칙전체검증이아니다."
+    ],
+    [
+      "https://www.rfc-editor.org/rfc/rfc1191",
+      "CURRENT_VERIFIED",
+      "실제본문 §§1/2/4의minhopPMTU·DF설정·routerdrop/ICMP·source크기조정을읽었다. IPv4의계약으로한정한다."
+    ],
+    [
+      "https://www.rfc-editor.org/rfc/rfc8201",
+      "CURRENT_VERIFIED",
+      "실제본문 §§2/3/4/6의link/pathMTU·PTB검증과source조정·ICMPfilterblackhole/PLPMTUD관련구간을읽었다. IPv6routerfragment규칙은RFC8200으로보충대조했다."
+    ]
+  ],
+  "supplementalSources": [
+    [
+      "https://www.rfc-editor.org/rfc/rfc9293",
+      "CURRENT_VERIFIED",
+      "§2.2의orderedbyte-stream·TCPsegment→IP·retransmission·port와§3.1의header분리를직접읽었다. 현재TCP의기본계약만확인했으며전체RFC검토를뜻하지않는다."
+    ],
+    [
+      "https://www.rfc-editor.org/rfc/rfc8200",
+      "CURRENT_VERIFIED",
+      "§4.5의IPv6source-onlyfragment와§5의minimum1280·sourcefragment/reassembly를직접읽었다. PMTUD와appmessage크기는구분한다."
+    ]
+  ],
+  "findings": [],
+  "sourceHashes": {
+    "network-http.core.layering.decapsulation": "d35458ae4d03ea5787dd52c3fdb50b77a84d26941e01d868b18016b757179551",
+    "network-http.core.layering.decapsulation.q1": "496c5bc10d9519a665252170d2a1d242d6762f6dff30327ba2804006c28c517b",
+    "network-http.core.layering.decapsulation.q2": "e0f055da69160c4d768e5b845c795306de902cdd1012e5b8cc6fc412cdd40476",
+    "network-http.core.layering.decapsulation.q3": "8c0df3278dfbd6d3a0b1d33ac0dcb025c98fdc90502a8f95628552e772792520",
+    "network-http.core.layering.encapsulation": "effbf19d02ef201af16b30c7014f71c37c94d646056b8e132ce8bac7df301833",
+    "network-http.core.layering.encapsulation.q1": "f29058601830275855b22221d8cabc458bf168339bef4e6f1b2db9a813e4b9e3",
+    "network-http.core.layering.encapsulation.q2": "a474dd5da01a2728152d9bc6cb5167f10bac8c919721f46b92b12d95a75a65be",
+    "network-http.core.layering.encapsulation.q3": "0f72736795165fb30cbcd4e64b6febaf2624c1d96593876176cb3be5cdaa0c51",
+    "network-http.core.layering.frame-packet-segment-message": "df0706dca320200bb59322d20904efa8e6439a3d4a95156acf7e3f0cb18821b2",
+    "network-http.core.layering.frame-packet-segment-message.q1": "d35b47cdea14b6108f0b72979e76f9b74e6495e3d713b7f5610191906f9a5483",
+    "network-http.core.layering.frame-packet-segment-message.q2": "7375e320e458e6ecd3a07a141ac1b3c7b8a2b64d26fcbfd7a21c252a435da74a",
+    "network-http.core.layering.frame-packet-segment-message.q3": "8440e7b4d5a9abed3926617b3c79c6e5ae9a6b31110025156930c849066da746",
+    "network-http.core.layering.link-network-transport-application": "22f1c2b16c36cee5b1eb408f51da0ff7452fc0a18e9581246367384b9c057fca",
+    "network-http.core.layering.link-network-transport-application.q1": "92deb05403efb002c06a1e9abad9a4d21db97dbca28c8def4ebe368e0a35018c",
+    "network-http.core.layering.link-network-transport-application.q2": "31625fb077fa797d5fff18b3af3ba4e1126caf37546968154106f401646bae3a",
+    "network-http.core.layering.link-network-transport-application.q3": "47ef097ec72f8adf4db7a6af926d0f0aaa0de742222f5d4ddde2cea216ca3d24",
+    "network-http.core.layering.mtu": "ca59fb6f738feed98da0ce1d13334382a5005f117001b7101f1e79fef39122e4",
+    "network-http.core.layering.mtu.q1": "cb6974c9ea4fb99eaf0f7fce8205dee4cff2cd63cddd3ad8d3b7b7345ace14f3",
+    "network-http.core.layering.mtu.q2": "a5584ebefa65db782d3a5536210932a86ac225241242796f192f309733ada95d",
+    "network-http.core.layering.mtu.q3": "a40bebfd6c642406faf570f9d4a850042c59479b793555ceb82ef4fa18972cc3",
+    "network-http.core.layering.why-layering": "dfb78bd45fc3835fc7eea62cbf07ec9a8b479f838b2dabe0d59aa26b45aac710",
+    "network-http.core.layering.why-layering.q1": "bcf14a4f0764d5173be002b2a06e496ff7f9ed47ddd4ddcf6a2581960fb397d3",
+    "network-http.core.layering.why-layering.q2": "e871109f33c633fb9826fef823afed8ff638299107eda85244c920d846e5bd32",
+    "network-http.core.layering.why-layering.q3": "7362442f23859c884c2fa5d4d5e1cb0803c90d97586aaef8de0dd1888fbd004f"
+  }
+}

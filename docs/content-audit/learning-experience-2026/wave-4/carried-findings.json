@@ -1,0 +1,18 @@
+[
+  {
+    "id": "LEX-002",
+    "severity": "P2",
+    "contentKeys": [
+      "java.core.language-types.pass-by-value"
+    ],
+    "file": "frontend/public/learning/java/pass-by-value.svg",
+    "quote": "M253 448 H650",
+    "problem": "기존 발견 재확인: 3단계 caller→A 경로 y448이 parameter value box x342~547/y418~478와 라벨 y454를 통과한다. 호출자의 A와 parameter의 B 구분이 흐려질 수 있다. 과거 배포 screenshot 근거를 보존하되 이번 검토는 SVG 소스 의미/좌표이며 새 render QA는 아님.",
+    "action": "기존 SVG caller 경로만 parameter box 밖으로 우회하거나 행을 분리한다. 본문/문항 모델은 유지하고 새 그림을 만들지 않는다.",
+    "followupIssues": [
+      201
+    ],
+    "sourceLine": 1,
+    "sourceFileSha256": "5463bd75c85a0d52d521f477e91160b9746112d2cbef7e8e13c33fe44ca623fa"
+  }
+]

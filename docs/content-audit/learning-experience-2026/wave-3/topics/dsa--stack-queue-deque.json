@@ -1,0 +1,226 @@
+{
+  "area": "dsa",
+  "topic": "stack-queue-deque",
+  "topicKey": "dsa.core.stack-queue-deque",
+  "coverage": "5 Concept의 전체 원문과 18 Question의 모든 실제 필드를 읽었다. LIFO/FIFO와 완료 순서·자원 상한, modulo·rear 정의·logical order·empty/full, deque 끝별 후보 제거, 단조 dominance·동일 값·push/pop 총량을 검토했다. circular q1의 rear 의미 불일치와 monotonic q3에서 가능한 값-only 대안을 배제하는 전제 누락을 선별했다. 일반 DS contract를 concurrent queue 구현의 보장으로 확장하지 않는다.",
+  "concepts": [
+    [
+      "dsa.core.stack-queue-deque.stack",
+      "KEEP",
+      "L1 LIFO와 최근 상태 복원 목표를 충족한다.",
+      "A/B/C push→C/B pop, size-1 top 또는 linked head 구현, 괄호/iterativeDFS 동기와 empty contract를 설명한다. 값 저장 방식과 추상 순서를 구별한다.",
+      "TEXT push/pop 전후 상태와 top/bottom이 충분하다.",
+      "기존 Princeton13stacks 직접 접근 실패를 유지하며 공식 검색의 LIFO·collection 구현 관련 반환 문장만 확인했다.",
+      "q1 C/B, q2 중첩괄호, q3 depth별 call stack/명시 상태 자원 한도를 검토했다."
+    ],
+    [
+      "dsa.core.stack-queue-deque.queue",
+      "KEEP",
+      "L1 FIFO·front/rear와 producer-consumer 순서 목표를 달성한다.",
+      "enqueue A/B/C→dequeueA, shiftO(n)대index/circular/head-tail 구현, dequeue순서≠병렬 작업 완료순서가 정확하다.",
+      "TEXT front/rear 상태와 구현 비용이 충분하다.",
+      "Princeton canonical 전체 직접 접근은 미확정이다. 공식 검색의 FIFO 의미와 실제 본문 실행 예를 대조했다.",
+      "q1 A/B, q2 병렬 완료 역전, q3 생산1000/소비600의 backlog400/sec를 검토했다."
+    ],
+    [
+      "dsa.core.stack-queue-deque.circular-queue",
+      "KEEP",
+      "L2 modulo 재사용·logicalFIFO·empty/full 불변식을 충족한다.",
+      "capacity>0, front3의B/C/D/E, size0..capacity 또는 spare slot, rear다음enqueue 위치 정의가 정확하다. 구조와 overflow 정책을 분리한다.",
+      "DIAGRAM 실제 slot0..4와logical wrap순서가 충분하다.",
+      "Princeton target 전체 접근은 미확정이고 기존 circular/resizing 모델의 조건과 원문 상태를 직접 검토했다.",
+      "q1 modulo0은 맞지만 rear정의 용어는 W3-DSA-007이다. q2 순서/q3두표현/q4drop정책은 정확하다."
+    ],
+    [
+      "dsa.core.stack-queue-deque.deque",
+      "KEEP",
+      "L1 양끝 연산·스택/큐 조합과 범위 후보 적용을 충족한다.",
+      "same-endLIFO/opposite-endFIFO, circular/doubly 구현의 resize/locality/pointer 비용, 임의 middle/priority 계약 아님이 명확하다. sliding 후보의 앞만료/뒤dominance를 설명한다.",
+      "TEXT 양끝 화살표·제거 조건이 충분하다.",
+      "Princeton canonical 직접 접근 미확정이다. 본문 추상 연산과 실제 문항의 양끝 trace를 대조했다.",
+      "q1 C/A, q2 두사용법, q3 앞만료/뒤작은후보, q4priority와끝위치 차이를 검토했다."
+    ],
+    [
+      "dsa.core.stack-queue-deque.monotonic-stack-queue",
+      "KEEP",
+      "L2 후보 dominance와 전체 선형 비용 증명을 달성한다.",
+      "2/1→4에서두pop, greater대greater-equal의동일값 의미, 각입력1push/최대1pop, indexdeque의expiry와dominance가 정확하다. index 사용을 대표 구현으로 제시하여 가능한 모든 구현을 금지하지 않는다.",
+      "DIAGRAM의입력2/1/4와pop1/pop2/push4 및총push/pop bound가 상태와 비용을 보여준다.",
+      "Princeton target 직접 접근은 미확정이며 공식 검색의 stock price index-stack exercise 항목은 확인했지만 전체 풀이를 읽었다고 하지 않는다.",
+      "q1 3→4확정/q2총연산/q4동일값은 맞다. q3는 값-only도 가능한 입력 접근 조건을 W3-DSA-008로 구별한다."
+    ]
+  ],
+  "questions": [
+    [
+      "dsa.core.stack-queue-deque.stack.q1",
+      "KEEP",
+      "modelAnswer의C/B와 해설의남은A는 LIFO trace와 맞다.",
+      "EASY push/pop 순서가 명확하다."
+    ],
+    [
+      "dsa.core.stack-queue-deque.stack.q2",
+      "KEEP",
+      "모델/해설은 ([{}])에서최근열린괄호와다음닫힌괄호의짝을top으로 비교하는 중첩역순을 설명한다.",
+      "MEDIUM 단순 출력과 다른LIFO 동기이다."
+    ],
+    [
+      "dsa.core.stack-queue-deque.stack.q3",
+      "KEEP",
+      "모델/해설은 depth백만의 call-stack고갈 대 explicit상태메모리 증가, 둘다depth상한/초과거부가 필요함을 설명한다.",
+      "HARD 재귀제거를 자원사용 제거로 오인하지 않는다. 대표적인 heap명시stack 모델로 읽는다."
+    ],
+    [
+      "dsa.core.stack-queue-deque.queue.q1",
+      "KEEP",
+      "모델A/B와해설의남은C는FIFO trace와맞다.",
+      "EASY stackq1과 대조하는 서로 다른순서 계약이다."
+    ],
+    [
+      "dsa.core.stack-queue-deque.queue.q2",
+      "KEEP",
+      "모델/해설은 FIFO꺼냄과 다중작업자의 실행시간차에 따른 완료역전을 구별한다.",
+      "MEDIUM queue 자체가종단간완료순서를 보장하지 않는다."
+    ],
+    [
+      "dsa.core.stack-queue-deque.queue.q3",
+      "KEEP",
+      "1000-600=400대기/sec 누적이며10분간240000항목증가 가능하다. 모델/해설은queue·latency·memory증가와capacity/거부/역압을 설명한다.",
+      "HARD 지속된생산우위라는조건에서 안정성을 평가한다."
+    ],
+    [
+      "dsa.core.stack-queue-deque.circular-queue.q1",
+      "TARGETED_ENHANCE",
+      "지정식(4+1)%5=0과acceptedAnswer0/해설은 정확하다. 하지만본문rear=다음삽입위치 정의와prompt의 '다음삽입위치' 식이 한칸어긋나 W3-DSA-007이다.",
+      "EASY 계산유일답은유지하고현재삽입뒤rear갱신이라는상태시점을 맞춘다."
+    ],
+    [
+      "dsa.core.stack-queue-deque.circular-queue.q2",
+      "KEEP",
+      "모델/해설의front3에서size4를3/4/0/1로읽는B/C/D/E가맞다.",
+      "MEDIUM 물리배열대logicalFIFO의wraptrace이다."
+    ],
+    [
+      "dsa.core.stack-queue-deque.circular-queue.q3",
+      "KEEP",
+      "모델/해설은front==rear가empty/full둘다될수있어size또는1spareslot/nextRear==front계약으로 구별함을 설명한다.",
+      "MEDIUM 한구현방식을모든ring의필수로 만들지않는다."
+    ],
+    [
+      "dsa.core.stack-queue-deque.circular-queue.q4",
+      "KEEP",
+      "모델/해설은로그oldestdrop허용과미처리작업overwrite유실의다른overflow정책을구별한다.",
+      "HARD 순환저장구조와보존계약이서로다름을 검증한다."
+    ],
+    [
+      "dsa.core.stack-queue-deque.deque.q1",
+      "KEEP",
+      "backA/backB/frontC→[C,A,B]→frontC/A이다. 두acceptedAnswers C,A와C A 및해설을확인했다.",
+      "EASY 사용끝이명시되어유일하다."
+    ],
+    [
+      "dsa.core.stack-queue-deque.deque.q2",
+      "KEEP",
+      "모델/해설은한끝넣기/빼기LIFO,back넣기/front빼기FIFO를 정확히 설명한다.",
+      "MEDIUM 조합정의로다른끝을동등하게선택한답도성립한다."
+    ],
+    [
+      "dsa.core.stack-queue-deque.deque.q3",
+      "KEEP",
+      "모델/해설은front의window밖index와back의new보다작은후보제거를 구별한다. 동등값을남기는strict비교도올바르다.",
+      "MEDIUM 두제거조건을본문에서설명하며전체알고리즘코드가정답에필수는아니다."
+    ],
+    [
+      "dsa.core.stack-queue-deque.deque.q4",
+      "KEEP",
+      "모델/해설은빠른양끝위치연산이middle의최우선선택불변식을제공하지않으며heapPQ가후보임을 설명한다.",
+      "MEDIUM deque이름이나O(1)만으로요구를결정하지않는다."
+    ],
+    [
+      "dsa.core.stack-queue-deque.monotonic-stack-queue.q1",
+      "KEEP",
+      "모델3pop/nextgreater4확정,5남김/push4→[5,4]와해설이맞다.",
+      "EASY stack순서/top이명확하다."
+    ],
+    [
+      "dsa.core.stack-queue-deque.monotonic-stack-queue.q2",
+      "KEEP",
+      "모델/해설의각입력최대1push/1pop→총O(n)이맞다. 특정iteration의pop수를전체nestedn²로오인하지않는다.",
+      "MEDIUM aggregate비용증명을검증한다."
+    ],
+    [
+      "dsa.core.stack-queue-deque.monotonic-stack-queue.q3",
+      "TARGETED_ENHANCE",
+      "index방식의expiry판단은맞지만값-only가반드시불가능하지않다. outgoing값을알고duplicate를유지하면front==outgoing일때한개pop하는구현도성립한다. 모델/해설의필수index단정은 W3-DSA-008이다.",
+      "MEDIUM 이전입력접근/만료값/동일값관리조건을주지않아올바른대안답이있다. [5,5,1],k2에서값deque[5,5]→old5pop→new1추가[5,1]로두번째5를보존한다."
+    ],
+    [
+      "dsa.core.stack-queue-deque.monotonic-stack-queue.q4",
+      "KEEP",
+      "모델/해설은strictnextgreater면같은값에서해결/pop못하고greater-equal면가능함을 설명한다.",
+      "MEDIUM 비교semantics의차이가중복값처리조건과직접연결된다."
+    ]
+  ],
+  "sources": [
+    [
+      "https://algs4.cs.princeton.edu/13stacks/",
+      "NEEDS_REVIEW",
+      "sequential에서확인한canonical/index.php직접접근실패근거를재사용했다. 공식검색반환의실제LIFO/FIFO 설명과 stock-price index-stack exercise 항목은읽었지만전체페이지나모든연습풀이를확인처리하지않는다."
+    ]
+  ],
+  "supplementalSources": [],
+  "findings": [
+    {
+      "id": "W3-DSA-007",
+      "severity": "P1",
+      "contentKeys": [
+        "dsa.core.stack-queue-deque.circular-queue.q1"
+      ],
+      "file": "content/dsa/stack-queue-deque/questions.json",
+      "quote": "현재 `rear=4`라면 다음 삽입 위치를 계산하는 `(rear+1) mod capacity`의 결과는?",
+      "problem": "본문은rear를다음enqueue위치로정의하므로현재rear4의이번삽입위치는4이다. 문항은rear+1을다음삽입위치로부른다. 주어진식의정답0은맞지만rear의상태시점정의가본문과다르다.",
+      "action": "문항을 'rear4위치에삽입한후다음enqueue를위해rear를갱신하는식'으로명시한다. 정답0과modulo해설은유지한다.",
+      "followupIssues": [
+        202
+      ]
+    },
+    {
+      "id": "W3-DSA-008",
+      "severity": "P1",
+      "contentKeys": [
+        "dsa.core.stack-queue-deque.monotonic-stack-queue.q3"
+      ],
+      "file": "content/dsa/stack-queue-deque/questions.json",
+      "quote": "인덱스를 함께 저장해 `index < windowLeft`인 후보를 제거해야 한다.",
+      "problem": "prompt는덱에값만저장했다는조건만주고이전입력·만료값접근을금지하지않는다. 만료값을알수있고new보다strict하게작은값만뒤에서제거해동일값을유지한다면front가outgoing과같을때한개pop하는값-only구현도정확하다. 따라서index자체가반드시필요하다는model/explanation은가능한올바른대안을배제한다.",
+      "action": "위치/만료를판별할정보가필요하다고설명하고index는대표방법으로한정한다. 또는이전입력·만료값·중복개수정보를별도로알수없다는전제를prompt에추가한다. 값-only대안은동일값보존및outgoing접근조건과함께평가한다.",
+      "followupIssues": [
+        202
+      ]
+    }
+  ],
+  "sourceHashes": {
+    "dsa.core.stack-queue-deque.circular-queue": "429d8781f26efbc70d979cda7a03d43d85f425d19e63d0fbbe810191e065b91f",
+    "dsa.core.stack-queue-deque.circular-queue.q1": "f267a7118c66b8971a44912ee52061e8b1c7dfafd57cb85abe505139f868c28f",
+    "dsa.core.stack-queue-deque.circular-queue.q2": "8c985f536021a956d9aed45e537a1acc7f0edcc615ab284d733de218bde643cc",
+    "dsa.core.stack-queue-deque.circular-queue.q3": "4bbae51edfa1e66eed9a55bd793f08b2b79d3d181adfd42e543ba8f724ff708f",
+    "dsa.core.stack-queue-deque.circular-queue.q4": "67f9afcdd4f86405ac6554e916f800bb759612b5eead9e38d28653f1b9314cc0",
+    "dsa.core.stack-queue-deque.deque": "9557939dfea7bde889f551d41a0051a7dd33dd128cacd939a278c1700a886bb2",
+    "dsa.core.stack-queue-deque.deque.q1": "3f1684a00a6295fc078a0d517b5177d166ecbb870227e2705aa9cfbee2c092c9",
+    "dsa.core.stack-queue-deque.deque.q2": "f856ca32421b7b403935ef72da71bd4e7708468a7a310a58bb791cea9ef330f6",
+    "dsa.core.stack-queue-deque.deque.q3": "57ef67b739bf8db429457a18045c5ae785bad45f20fd72138b9e311d838c23fd",
+    "dsa.core.stack-queue-deque.deque.q4": "4f9370c9e4268bf7ce3445829a78c3308690a743effe19c5f57bdd77c2b39814",
+    "dsa.core.stack-queue-deque.monotonic-stack-queue": "8cdacede3f9413a7a2ca8df49a362452272dad6bf4a5d1673f2022908970e579",
+    "dsa.core.stack-queue-deque.monotonic-stack-queue.q1": "7f3650f136b02d986b746a546fe8867af6171703b959bcdf00a07190074d15d2",
+    "dsa.core.stack-queue-deque.monotonic-stack-queue.q2": "65001bff3a006dc122f711eeaea70060c07fc634b59608eaba85ed00b0648d00",
+    "dsa.core.stack-queue-deque.monotonic-stack-queue.q3": "f31acb789c5e113cae2ed5436bf243e7869243b59bf7657efea7385bfcb5b0b7",
+    "dsa.core.stack-queue-deque.monotonic-stack-queue.q4": "b65e3b1a16b008f53c201fc8d38793b760c75cc5d5f8b399688c6f6a54041cc0",
+    "dsa.core.stack-queue-deque.queue": "c9453c7706a9bbd3b56d12e60b08c54a7a93dbd356aa5f6c68018c9268949222",
+    "dsa.core.stack-queue-deque.queue.q1": "0cb38c03eeffd492d7ae91b1ca3974a87647bcf164763297dce3e8f24863c7cc",
+    "dsa.core.stack-queue-deque.queue.q2": "426df91947f6c6768bcfe7b6bcfce794ca8774b725069e62d6ac70058dac0e74",
+    "dsa.core.stack-queue-deque.queue.q3": "124f688693b7f9c2bb5c8b35fd9f500b3d20975862bed0c5e07a836959fdedc7",
+    "dsa.core.stack-queue-deque.stack": "557a64ee816f89926ff4bb28c911651d5740ccf5fd4c1bf3fc9353d11dcc000f",
+    "dsa.core.stack-queue-deque.stack.q1": "631aa56fec0f87867fb7a1bb7dea4f7bf6306cdb49e30754bd88f23bbf2dd753",
+    "dsa.core.stack-queue-deque.stack.q2": "94adc3396ced522b08b563f8b91c5298748f2c31345c7800f8299e834d0a2d06",
+    "dsa.core.stack-queue-deque.stack.q3": "4d4e7dd9b422a888ac4f7edf3ac4b5a7b4cb49b8dbedabdc2e92de103b9d76e8"
+  }
+}

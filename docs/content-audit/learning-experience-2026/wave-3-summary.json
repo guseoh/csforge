@@ -1,0 +1,144 @@
+{
+  "baselineSha": "efe73a15da14c996bd08344181d4d6f87073803d",
+  "wave": "Wave 3",
+  "areas": [
+    {
+      "area": "computer-architecture",
+      "concepts": 61,
+      "questions": 183,
+      "currentVerifiedConcepts": 61,
+      "currentVerifiedQuestions": 183,
+      "conceptQuality": {
+        "KEEP": 54,
+        "TARGETED_ENHANCE": 7
+      },
+      "questionQuality": {
+        "KEEP": 176,
+        "TARGETED_ENHANCE": 7
+      }
+    },
+    {
+      "area": "dsa",
+      "concepts": 84,
+      "questions": 293,
+      "currentVerifiedConcepts": 84,
+      "currentVerifiedQuestions": 293,
+      "conceptQuality": {
+        "KEEP": 72,
+        "TARGETED_ENHANCE": 12
+      },
+      "questionQuality": {
+        "KEEP": 271,
+        "TARGETED_ENHANCE": 22
+      }
+    },
+    {
+      "area": "network-http",
+      "concepts": 127,
+      "questions": 381,
+      "currentVerifiedConcepts": 127,
+      "currentVerifiedQuestions": 381,
+      "conceptQuality": {
+        "KEEP": 105,
+        "TARGETED_ENHANCE": 22
+      },
+      "questionQuality": {
+        "KEEP": 360,
+        "TARGETED_ENHANCE": 21
+      }
+    },
+    {
+      "area": "operating-systems",
+      "concepts": 97,
+      "questions": 331,
+      "currentVerifiedConcepts": 97,
+      "currentVerifiedQuestions": 331,
+      "conceptQuality": {
+        "KEEP": 83,
+        "TARGETED_ENHANCE": 14
+      },
+      "questionQuality": {
+        "KEEP": 305,
+        "TARGETED_ENHANCE": 26
+      }
+    }
+  ],
+  "allConceptQuality": {
+    "KEEP": 476,
+    "NEEDS_REVIEW": 143,
+    "TARGETED_ENHANCE": 102
+  },
+  "allQuestionQuality": {
+    "KEEP": 1614,
+    "NEEDS_REVIEW": 816,
+    "TARGETED_ENHANCE": 95
+  },
+  "allConceptEvidence": {
+    "CURRENT_PARTIAL": 4,
+    "CURRENT_VERIFIED": 576,
+    "NEEDS_REVIEW": 141
+  },
+  "allQuestionEvidence": {
+    "CURRENT_PARTIAL": 25,
+    "CURRENT_VERIFIED": 1684,
+    "NEEDS_REVIEW": 816
+  },
+  "findingSeverity": {
+    "P0": 30,
+    "P1": 27,
+    "P2": 43
+  },
+  "carriedFindingSeverity": {
+    "P1": 1,
+    "P2": 3
+  },
+  "totals": {
+    "topics": 49,
+    "concepts": 369,
+    "questions": 1188
+  },
+  "cumulativeComplete": {
+    "areas": 14,
+    "topics": 116,
+    "concepts": 576,
+    "questions": 1684
+  },
+  "references": {
+    "computer-architecture": {
+      "links": 68,
+      "uniqueUrls": 25,
+      "meaningEvidence": {
+        "CURRENT_VERIFIED": 22,
+        "NEEDS_REVIEW": 46
+      },
+      "accessNeedsReview": 1
+    },
+    "dsa": {
+      "links": 90,
+      "uniqueUrls": 25,
+      "meaningEvidence": {
+        "CURRENT_VERIFIED": 20,
+        "NEEDS_REVIEW": 70
+      },
+      "accessNeedsReview": 0
+    },
+    "network-http": {
+      "links": 145,
+      "uniqueUrls": 46,
+      "meaningEvidence": {
+        "CURRENT_VERIFIED": 141,
+        "NEEDS_REVIEW": 4
+      },
+      "accessNeedsReview": 41
+    },
+    "operating-systems": {
+      "links": 142,
+      "uniqueUrls": 86,
+      "meaningEvidence": {
+        "CURRENT_VERIFIED": 116,
+        "NEEDS_REVIEW": 26
+      },
+      "accessNeedsReview": 2
+    }
+  }
+}

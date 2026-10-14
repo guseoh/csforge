@@ -1,0 +1,424 @@
+{
+  "area": "operating-systems",
+  "topic": "deadlock",
+  "topicKey": "operating-systems.core.deadlock",
+  "coverage": "8 Concept·30 Question의 본문과 모든 선택지/rationale/accepted/model/explanation을 세 출력에서 읽었다. 자원 인스턴스 수, 순환과 진행성, 예방/회피/탐지의 구분, Banker 3→5→8→10과 다른 안전 순서, callback의 역방향 획득, victim 기아를 추적했다. 기존 SVG3개의 전체 소스와 상태/간선을 대조했다. 원문 관측과 모범답안의 모순, self-deadlock 범위, Reference 알고리즘의 부정확성을 분리했다.",
+  "concepts": [
+    [
+      "operating-systems.core.deadlock.deadlock",
+      "TARGETED_ENHANCE",
+      "L1 보유·대기 순환과 단순 긴 경합의 차이를 충족한다.",
+      "T1/L1/L2/T2 순환과 실행 교차, scheduler만으로 해소 불가, timeout 후 정리·복구가 타당하다. 다만 정의의 둘 이상은 NORMAL mutex self-deadlock을 제외하므로 W3-OS-014로 범위를 보강한다.",
+      "DIAGRAM deadlock-cycle.svg의 요청/소유 간선과 방향이 일치한다.",
+      "OSTEP32.3과 JDK8 tutorial의 두 thread 예제, POSIX NORMAL relock 및 kernel lock recursion 자료를 대조했다. D2 본문은 미확인이다.",
+      "q1 모든 보기, q2 소유/대기 확인, q3 JVM/DB cycle, q4 timeout/정리/재시도 구분이 타당하다."
+    ],
+    [
+      "operating-systems.core.deadlock.coffman-conditions",
+      "KEEP",
+      "L2 네 필요 조건을 자원 획득 규칙에 대응시킨다.",
+      "배타성·hold/wait·안전한 강제 회수 불가·순환의 표와 실제 두 lock 상태가 맞다. 프로그램상 조건 가능성만으로 현재 교착을 증명하지 않으며 전역 순서와 일괄 확보의 비용을 설명한다.",
+      "TEXT 조건 표와 두 요청/소유 관계가 충분하다.",
+      "실제 OSTEP32.3의 네 조건과 ordering/hold-and-wait 절을 대조했다.",
+      "q1 D와 모든 distractor, q2 순환 대기의 accepted Korean/English, q3 네 조건에 대응하는 가정을 확인했다."
+    ],
+    [
+      "operating-systems.core.deadlock.resource-allocation-graph",
+      "KEEP",
+      "L2 요청/할당 방향 및 단일·다중 인스턴스 순환의 의미를 충족한다.",
+      "P→R/R→P, R1→P1→R2→P2→R1과 단일 instance의 cycle⇒deadlock이 정확하다. 다중 instance의 수량과 현재 요청을 구분하고 wait-for 축약을 단일 모델로 한정한다.",
+      "DIAGRAM resource-allocation-graph.svg의 네 간선·1 instance 및 다중 수량 경고가 정확하다.",
+      "UIC7.2.2/7.6.1의 해당 절은 타당하다. 같은 자료의 회피/다중 탐지 오류를 별도 W3-OS-016으로 기록했다. D2 본문은 미확인이다.",
+      "q1 모든 보기, q2 accepted 교착상태, q3 다중 instance가 맞다. q4의 추가 관계 예시는 관측 조건과 충돌하여 W3-OS-015이다."
+    ],
+    [
+      "operating-systems.core.deadlock.deadlock-prevention",
+      "KEEP",
+      "L2 필요 조건 하나를 제거하는 구조적 제약과 비용을 비교한다.",
+      "L1<L2<L3의 엄격한 획득 방향과 모든 callback 경로 준수, 일괄 확보 이용률, 선점 시 상태 복구 가능성이 타당하다. Timeout은 복구 수단으로 구분한다.",
+      "TEXT 허용/금지 순서와 조건별 비용 표가 충분하다.",
+      "OSTEP32.3 ordering/hold-and-wait와 kernel lockdep dependency·callback annotation·검증 전제를 실제 읽었다. Lockdep는 Linux 도구이며 JVM에 바로 실행하는 도구라는 설명이 아니다.",
+      "q1 예방/회피/탐지 모든 보기, q2 순서 증명, q3 callback 역간선, q4 timeout 반론을 확인했다."
+    ],
+    [
+      "operating-systems.core.deadlock.deadlock-avoidance",
+      "TARGETED_ENHANCE",
+      "L3 최대 요구량으로 안전 상태를 판정하는 깊이가 충분하다.",
+      "본문 Need4/2/3·Available3에서 P2→P1→P3와 Work5/8/10이 맞다. P3 시작도 가능하고 실제 scheduler 순서를 강제하지 않는다. Unsafe≠현재 deadlock과 최대 요구량/보수적 승인 비용이 정확하다. 결함은 연결 Reference의 알고리즘 설명이다.",
+      "DIAGRAM safe-sequence.svg의 Need≤Work와 3→5→8→10, P1 시작 불가·P2/P3 가능이 정확하다.",
+      "UIC7.5 첫 문장은 예방과 혼동하며 safety의 < 조건도 잘못됐다. Cornell 공식 강의의 ≤와 Request 기반 탐지를 대조하여 W3-OS-016으로 경고/교체를 권한다.",
+      "q1 D와 모든 보기, q2 unsafe, q3 대안 safe sequence 및 수치, q4 backend 최대 요구량 전제를 확인했다."
+    ],
+    [
+      "operating-systems.core.deadlock.deadlock-detection-recovery",
+      "TARGETED_ENHANCE",
+      "L2 탐지·victim·rollback과 검사 주기의 절충을 충족한다.",
+      "본문은 단일 cycle 대 다중 Available/Allocation/현재 Request를 정확히 구분한다. 상태 복구 없는 mutex 강탈 위험과 victim 반복 기아가 유용하다. 연결 Reference가 Need를 현재 Request로 교체하지 않아 별도 주의가 필요하다.",
+      "TEXT 수집→탐지→희생자→복구→진행과 비용 설명이 충분하다.",
+      "UIC7.6.2의 Steps2/3 unchanged는 safety Need와 current Request 차이를 놓친다. Cornell Detection Algorithm의 request≤work와 recovery를 대조한 W3-OS-016이다. D2 본문은 미확인이다.",
+      "q1 모든 보기, q2 검사 비용/방치 비용, q3 상태 중간 단계, q4 반복 victim 기아를 확인했다."
+    ],
+    [
+      "operating-systems.core.deadlock.livelock",
+      "KEEP",
+      "L2 실행 활동과 유효한 완료의 차이를 충족한다.",
+      "두 worker의 conflict/retry 대칭, backoff/jitter가 확률을 높일 뿐 보장하지 않는 설명이 타당하다. Retry 종료와 deadlock blocking을 구분한다.",
+      "TEXT 두 worker의 반복과 completion0 및 비교 표로 충분하다.",
+      "OSTEP32.3 trylock/unlock 재시도와 random delay, Oracle JDK8 starvelive의 상호 반응 예제를 실제 읽었다.",
+      "q1 C와 모든 보기, q2 활동/완료 비교, q3 retry 한도·jitter·멱등성 별도를 확인했다."
+    ],
+    [
+      "operating-systems.core.deadlock.starvation",
+      "KEEP",
+      "L2 전체 진행과 특정 흐름의 기회 배제를 구분한다.",
+      "H1..H4 선택과 L 대기, reader preference writer 기아, 공정성/응답/throughput 절충이 타당하다. Scheduling의 aging을 반복 상세 설명하지 않고 실패 의미를 연결한다.",
+      "TEXT dispatch와 L 대기 및 세 진행성 실패 비교가 충분하다.",
+      "Oracle starvelive와 UIC recovery의 반복 victim starvation, 앞서 확인한 rwlock admission·aging 자료와 대조했다.",
+      "q1 모든 보기, q2 reader admission, q3 준비 L1시간과 등급별 지표, q4 priority inheritance와 일반 기아의 차이를 확인했다."
+    ]
+  ],
+  "questions": [
+    [
+      "operating-systems.core.deadlock.deadlock.q1",
+      "KEEP",
+      "B 상호 소유 lock 대기 순환. A 독립/C 소유자가 진행/D 정상 release라는 모든 보기·rationale와 explanation이 맞다.",
+      "EASY 구체 두 thread cycle을 평가한다."
+    ],
+    [
+      "operating-systems.core.deadlock.deadlock.q2",
+      "KEEP",
+      "model/explanation은 시간만이 아니라 소유자·대기자와 스스로 반환 가능한 경로를 확인한다.",
+      "MEDIUM 긴 경합과 교착의 증거를 구분한다."
+    ],
+    [
+      "operating-systems.core.deadlock.deadlock.q3",
+      "KEEP",
+      "T1→R→T2→A→T1과 JVM lock/DB transaction의 전체 획득 순서·범위 변경이 model/explanation에 정확하다.",
+      "HARD 서로 다른 자원 계층의 identity 연결 목표이다."
+    ],
+    [
+      "operating-systems.core.deadlock.deadlock.q4",
+      "KEEP",
+      "3초 timeout 뒤 보유 자원 반환/rollback와 같은 retry 패턴 충돌·livelock 위험을 model/explanation이 구분한다.",
+      "MEDIUM timeout과 구조적 예방의 차이를 복구 관점으로 묻는다."
+    ],
+    [
+      "operating-systems.core.deadlock.coffman-conditions.q1",
+      "KEEP",
+      "D 배제·hold/wait·비선점·순환. A starvation/livelock/B 선점·비순환/C 공유·hold금지라는 모든 오답·rationale를 확인했다.",
+      "EASY 이름만이 아니라 반대 성질을 구분한다."
+    ],
+    [
+      "operating-systems.core.deadlock.coffman-conditions.q2",
+      "KEEP",
+      "accepted circular wait/순환 대기/circular-wait와 한 방향 의존 설명이 정확하다.",
+      "EASY 전역 순서가 깨는 조건을 명확하게 묻는다."
+    ],
+    [
+      "operating-systems.core.deadlock.coffman-conditions.q3",
+      "KEEP",
+      "A/B 배타·강제 회수 불가 가정이 명시되어 네 조건과 T1→B→T2→A→T1의 model/explanation이 맞다.",
+      "MEDIUM 이름을 실제 상태에 대응시킨다."
+    ],
+    [
+      "operating-systems.core.deadlock.resource-allocation-graph.q1",
+      "KEEP",
+      "B P→R 요청. A는 R→P 할당/C 반환은 간선 제거/D resource 제거 아님이라는 모든 rationale·explanation이 정확하다.",
+      "EASY 방향 해석이며 claim edge의 별도 모델을 문제에 요구하지 않는다."
+    ],
+    [
+      "operating-systems.core.deadlock.resource-allocation-graph.q2",
+      "KEEP",
+      "1 instance R1/R2가 명시되어 cycle의 deadlock 판정과 accepted Korean/English가 정확하다.",
+      "EASY 다중 instance와 구분할 전제가 충분하다."
+    ],
+    [
+      "operating-systems.core.deadlock.resource-allocation-graph.q3",
+      "KEEP",
+      "다른 available instance/먼저 완료하는 process의 반환 때문에 cycle만으로 확정할 수 없다는 model/explanation이 맞다.",
+      "MEDIUM 수량과 현재 요청을 검토한다."
+    ],
+    [
+      "operating-systems.core.deadlock.resource-allocation-graph.q4",
+      "TARGETED_ENHANCE",
+      "추가 소유/대기·ID 상관관계가 필요하다는 model 앞부분과 explanation은 타당하다. 그러나 관측 T1 waits A를 예시에서 T1 owns A로 바꾸므로 W3-OS-015이다.",
+      "HARD 관측을 보존한 graph 증명이 필요하다. 현 예시는 JVM monitor의 동일 thread 재획득 계약과도 충돌한다."
+    ],
+    [
+      "operating-systems.core.deadlock.deadlock-prevention.q1",
+      "KEEP",
+      "B 필요 조건 구조 제거. A 안전 순서/C 사후 victim/D timeout이라는 모든 보기와 rationale·explanation이 정확하다.",
+      "EASY 세 전략의 구분이다."
+    ],
+    [
+      "operating-systems.core.deadlock.deadlock-prevention.q2",
+      "KEEP",
+      "model/explanation은 cycle 완성에 필요한 역방향 간선이 엄격한 L1<L2<L3 순서로 금지됨을 설명한다.",
+      "MEDIUM 조건 이름을 반복하는 문항과 달리 순서 증명을 평가한다."
+    ],
+    [
+      "operating-systems.core.deadlock.deadlock-prevention.q3",
+      "KEEP",
+      "L2 보유 callback의 L1 획득은 전체 graph 역간선이며 model/explanation의 callback 계약·해제 가능성·검증 도구가 타당하다.",
+      "HARD 재진입 가능성을 무조건 현재 deadlock이라고 하지 않고 전역 순서 위반으로 평가한다."
+    ],
+    [
+      "operating-systems.core.deadlock.deadlock-prevention.q4",
+      "KEEP",
+      "5초 timeout은 획득 순환을 제거하지 않으며 자원 정리 후 복구와 다르다는 model/explanation이 맞다.",
+      "MEDIUM deadlock q4는 retry/복구까지, 이 문항은 예방 정의의 반론이라 목표의 일부 겹침을 허용한다."
+    ],
+    [
+      "operating-systems.core.deadlock.deadlock-avoidance.q1",
+      "KEEP",
+      "D 승인 후 안전 순서 존재. A timeout/B 현재 cycle/C 조건 제거라는 모든 보기·rationale·explanation이 정확하다.",
+      "EASY 미래 최대 요구량의 안전성을 확인한다."
+    ],
+    [
+      "operating-systems.core.deadlock.deadlock-avoidance.q2",
+      "KEEP",
+      "model/explanation의 unsafe는 최대 미래 요구량 완료 보장 부재이며 현재 cycle과 다르다는 답이 정확하다.",
+      "MEDIUM 미래 worst case와 현재 상태를 구분한다."
+    ],
+    [
+      "operating-systems.core.deadlock.deadlock-avoidance.q3",
+      "KEEP",
+      "Need4/2/3, Work3→5→8→10의 P2/P1/P3 및 P3/P1/P2 대안이 맞다. Need≤Work 확인과 Allocation 반환 설명도 정확하다.",
+      "MEDIUM 총10/할당7/가용3 전제가 완전하며 여러 안전 순서를 model이 인정한다."
+    ],
+    [
+      "operating-systems.core.deadlock.deadlock-avoidance.q4",
+      "KEEP",
+      "backend request의 미래 DB connection/memory/lock 최대량 불확실·매 승인 계산 비용, timeout/lease의 별도 성질이 model/explanation에 타당하다.",
+      "MEDIUM 적용 전제와 운영 정책의 구별이다."
+    ],
+    [
+      "operating-systems.core.deadlock.deadlock-detection-recovery.q1",
+      "KEEP",
+      "A 허용 후 검사·victim/rollback. B 사전 안전/C 순서 예방/D timeout만 판정이라는 모든 보기·rationale가 정확하다.",
+      "EASY 느린 I/O와 graph 증거를 구분한다."
+    ],
+    [
+      "operating-systems.core.deadlock.deadlock-detection-recovery.q2",
+      "KEEP",
+      "model/explanation의 검사 계산 비용과 오래 보유된 자원·뒤 대기자 장애 비용 절충이 타당하다.",
+      "MEDIUM 검사 빈도의 구체 trade-off이다."
+    ],
+    [
+      "operating-systems.core.deadlock.deadlock-detection-recovery.q3",
+      "KEEP",
+      "중간 상태의 mutex만 회수하면 불변조건이 깨진다는 model/explanation과 rollback/restart 경계가 맞다.",
+      "MEDIUM 자원 회수와 상태 복구를 구분한다."
+    ],
+    [
+      "operating-systems.core.deadlock.deadlock-detection-recovery.q4",
+      "KEEP",
+      "반복 victim은 해당 transaction의 starvation이며 나이·재시도·rollback 비용·우선순위 등의 보정이 model/explanation에 타당하다.",
+      "HARD 전체 cycle 복구와 개별 완료의 차이를 검증한다."
+    ],
+    [
+      "operating-systems.core.deadlock.livelock.q1",
+      "KEEP",
+      "C 활동/rollback/retry 지속·완료 없음. A starvation/B blocking deadlock/D 성공 retry라는 모든 보기·rationale·explanation이 맞다.",
+      "EASY 세 진행성 실패의 관측을 구분한다."
+    ],
+    [
+      "operating-systems.core.deadlock.livelock.q2",
+      "KEEP",
+      "model/explanation의 deadlock 대기 graph와 livelock의 활동량 대비 낮은 성공량 비교가 정확하다.",
+      "MEDIUM 전형적 blocking 관측 비교이며 spin wait까지 반드시 CPU0이라는 단정은 아니다."
+    ],
+    [
+      "operating-systems.core.deadlock.livelock.q3",
+      "KEEP",
+      "같은 시점 두 worker rollback/retry의 충돌 재생과 jitter/backoff/한도·최종 실패, 멱등성 별도가 model/explanation에 맞다.",
+      "HARD 무작위 지연이 정확성 또는 성공을 자동 보장한다고 하지 않는다."
+    ],
+    [
+      "operating-systems.core.deadlock.starvation.q1",
+      "KEEP",
+      "A 다른 작업 진행 가능. B 반드시 cycle/C deadlock의 나머지는 항상 완료/D CPU 높을 때만이라는 모든 보기·rationale가 정확하다.",
+      "EASY 독립 작업의 진행은 deadlock에도 가능하지만 C는 항상 정상이라는 부정확한 조건이라 유일 답에 문제 없다."
+    ],
+    [
+      "operating-systems.core.deadlock.starvation.q2",
+      "KEEP",
+      "대기 writer가 있어도 계속 reader 입장 허용하면 배타 기회가 없을 수 있다는 model/explanation과 정책 trade-off가 정확하다.",
+      "MEDIUM synchronization의 rwlock q3과 목표 일부 겹치지만 진행성 분류를 연결한다."
+    ],
+    [
+      "operating-systems.core.deadlock.starvation.q3",
+      "KEEP",
+      "준비 L1시간/상위 등급 계속 완료에서 기아와 가장 오래/꼬리 대기·등급별 실행 기회, aging/할당량 등이 model/explanation에 맞다.",
+      "MEDIUM 가장 가깝다는 질문이며 시간만으로 일반 deadlock을 확정하지 않는다."
+    ],
+    [
+      "operating-systems.core.deadlock.starvation.q4",
+      "KEEP",
+      "model/explanation의 PI는 높은 waiter 때문에 낮은 owner를 올리는 priority inversion 대책이며 일반 runnable 저우선 작업 기아와 다르다.",
+      "MEDIUM 원인·정책을 구분하며 scheduling Topic과 연결된다."
+    ]
+  ],
+  "sources": [
+    [
+      "https://pages.cs.wisc.edu/~remzi/OSTEP/threads-bugs.pdf",
+      "CURRENT_VERIFIED",
+      "32.3의 실제 두 lock cycle·네 조건·strict ordering·일괄 확보 비용·trylock/unlock livelock/random delay를 읽었다. 역사적 Java Vector/Linux 사례를 현행 모든 구현으로 승인하지 않는다."
+    ],
+    [
+      "https://docs.oracle.com/javase/tutorial/essential/concurrency/deadlock.html",
+      "CURRENT_VERIFIED",
+      "JDK8 tutorial의 Friend.bow/bowBack 상호 synchronized 예제를 실제 읽고 두 monitor 순환을 대조했다. 최신 JDK 변경 안내를 읽었으며 이 monitor 학습 범위만 사용한다."
+    ],
+    [
+      "https://docs.oracle.com/javase/tutorial/essential/concurrency/starvelive.html",
+      "CURRENT_VERIFIED",
+      "실제 starvation의 긴 synchronized 점유 및 livelock의 두 사람 상호 양보 설명을 읽었다. 오래된 tutorial의 범위를 표시한다."
+    ],
+    [
+      "https://d2.naver.com/helloworld/10963",
+      "NEEDS_REVIEW",
+      "실제 open은 navigation shell21줄만 제공했고 thread-dump 분석 본문은 확인하지 못했다. Dead link/404로 판정하지 않으며 관련 Concept의 기술 검증은 다른 실제 근거로 수행했다."
+    ],
+    [
+      "https://www.cs.uic.edu/~jbell/CourseNotes/OperatingSystems/7_Deadlocks.html",
+      "CURRENT_VERIFIED",
+      "7.2~7.7의 실제 본문을 읽었다. RAG·단일 cycle·safe/unsafe·recovery는 학습 가치가 있지만 7.5의 조건 제거 혼동, safety Need<Work, detection의 unchanged Need 비교는 W3-OS-016의 확인된 주의 사항이다. URL 확인과 내용의 품질을 구분한다."
+    ],
+    [
+      "https://docs.kernel.org/locking/lockdep-design.html",
+      "CURRENT_VERIFIED",
+      "실제 lock class와 held→new dependency, recursion/inversion, nested subclass, callback annotations 및 proof 전제·관측 chain 범위를 읽었다. 임의의 JVM/DB graph를 자동 검증한다는 보장이 아니다."
+    ]
+  ],
+  "supplementalSources": [
+    [
+      "https://man7.org/linux/man-pages/man3/pthread_mutex_lock.3p.html",
+      "CURRENT_VERIFIED",
+      "POSIX 표에서 NORMAL의 동일 owner relock은 deadlock, ERRORCHECK는 error, RECURSIVE는 recursive라는 구분을 실제 확인했다."
+    ],
+    [
+      "https://docs.oracle.com/javase/specs/jls/se25/html/jls-17.html#jls-17.1",
+      "CURRENT_VERIFIED",
+      "17.1의 같은 thread가 같은 monitor를 여러 번 lock할 수 있다는 규정을 읽어 q4의 소유/대기 모순을 대조했다."
+    ],
+    [
+      "https://www.cs.cornell.edu/courses/cs4410/2013su/slides/lecture10.pdf",
+      "CURRENT_VERIFIED",
+      "실제 p2~13의 safe state·가정 승인·Need≤Work/Allocation 반환과 p14~20의 current Request≤Work 탐지·victim/rollback/starvation을 읽었다. Safe sequence를 실행 schedule 강제로 해석하지 않는다."
+    ],
+    [
+      "https://www.cs.utexas.edu/~EWD/transcriptions/EWD06xx/EWD623.html",
+      "CURRENT_VERIFIED",
+      "Dijkstra 원고 transcription의 bounded loan/prestated maximum·가정 승인/안전 pattern·claim 차이를 읽었다. Markup 불완전 경고와 일부 인덱스/부등호 transcription 오류 때문에 정확한 의사코드는 Cornell 강의와 대조했다."
+    ]
+  ],
+  "findings": [
+    {
+      "id": "W3-OS-014",
+      "severity": "P2",
+      "contentKeys": [
+        "operating-systems.core.deadlock.deadlock"
+      ],
+      "file": "content/operating-systems/deadlock/deadlock.md",
+      "quote": "교착 상태는 둘 이상의 실행 흐름이",
+      "problem": "두 실행 흐름 이상을 일반 정의의 필수 조건으로 두면 단일 thread가 자신이 가진 비재귀 mutex를 다시 기다리는 self-deadlock을 제외한다. POSIX NORMAL relock은 실제 deadlock이며 kernel lockdep도 recursion deadlock을 구분한다. 두 thread 예제 자체는 정확하다.",
+      "action": "대표적 상호 교착 모델이라고 범위를 붙이거나 일반 정의에서 둘 이상 제한을 제거하고 NORMAL mutex self-deadlock 한 문장을 추가한다. Java monitor 재진입과 구별한다.",
+      "followupIssues": [
+        201
+      ]
+    },
+    {
+      "id": "W3-OS-015",
+      "severity": "P1",
+      "contentKeys": [
+        "operating-systems.core.deadlock.resource-allocation-graph.q4"
+      ],
+      "file": "content/operating-systems/deadlock/questions.json",
+      "quote": "예를 들어 T1이 R을 기다리고 T2가 A를 기다리며 A의 소유자가 T1이면",
+      "problem": "관측은 T1이 JVM monitor A를 기다린다는 조건인데 모범 예시는 T1을 A의 소유자로 바꾸고 A의 waiter를 T2로 바꾼다. 같은 monitor를 보유한 thread의 재획득은 JLS17.1에서 가능하므로 이 예시는 원래 관측을 보존한 상호 교착 그래프가 아니다.",
+      "action": "원래 관측 T1→A와 R→T2를 보존하는 추가 관계를 설계한다. 예: A owner=T2, T1 owns another resource S, T2 waits S라면 T1→A→T2→S→T1을 닫고 R은 T2의 추가 보유 관측으로 둔다. 또는 문제의 T1 waits A를 T2 waits A로 수정하여 기존 모범 예시와 정확히 맞춘다.",
+      "followupIssues": [
+        201
+      ]
+    },
+    {
+      "id": "W3-OS-016",
+      "severity": "P2",
+      "contentKeys": [
+        "operating-systems.core.deadlock.deadlock-avoidance",
+        "operating-systems.core.deadlock.deadlock-detection-recovery"
+      ],
+      "file": "content/operating-systems/deadlock/deadlock-avoidance.md",
+      "quote": "https://www.cs.uic.edu/~jbell/CourseNotes/OperatingSystems/7_Deadlocks.html",
+      "problem": "연결 강의의 7.5 첫 문장은 avoidance를 필요 조건 제거로 설명하여 prevention과 혼동한다. 7.5.3.1은 Need<Work라 적어 equality의 완료를 잘못 막고, 7.6.2는 safety의 Steps2/3를 unchanged라 하여 현재 Request 대신 미래 Need로 탐지하게 만든다. Canonical 본문과 수치·문항의 Need≤Work/현재 Request 설명은 정확하다.",
+      "action": "관련 Reference에 오류 절과 정확한 조건을 명시하거나 검증한 Cornell lecture10의 safety p9와 detection p18 등으로 교체한다. RAG/회복의 타당한 절은 유지할 수 있으며 canonical 설명을 잘못된 Reference에 맞춰 변경하지 않는다.",
+      "followupIssues": [
+        201
+      ],
+      "additionalEvidence": [
+        {
+          "file": "content/operating-systems/deadlock/deadlock-detection-recovery.md",
+          "quote": "https://www.cs.uic.edu/~jbell/CourseNotes/OperatingSystems/7_Deadlocks.html"
+        }
+      ]
+    }
+  ],
+  "visualizationAssets": [
+    {
+      "file": "frontend/public/learning/operating-systems/deadlock-cycle.svg",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "sourceSha256": "c4ab688493150468bac9d17e6aa9a616365c3ced9de68a5d9f4b1ff2d45e99bd"
+    },
+    {
+      "file": "frontend/public/learning/operating-systems/resource-allocation-graph.svg",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "sourceSha256": "936b4d429f3760bf5317c9a446fd09796ab1a15b1b09ef9a147244926717a282"
+    },
+    {
+      "file": "frontend/public/learning/operating-systems/deadlock-avoidance-safe-sequence.svg",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "sourceSha256": "1b27eb08e1fc467e9b6f1ac9f970485c3afc2a92c901fa4ace1ff288e2078d8d"
+    }
+  ],
+  "sourceHashes": {
+    "operating-systems.core.deadlock.coffman-conditions": "cece6d305c42fbaade7ea09d640095e0184a3ad25f3827100c7a9f6fcf51f07f",
+    "operating-systems.core.deadlock.coffman-conditions.q1": "ed98e9f017440648470e0b360131571963dfbad5203d7f3215211285e8ca3aea",
+    "operating-systems.core.deadlock.coffman-conditions.q2": "11ffb0c080e5cb86e55f7812a9649751c103358a9088f58c2d1ffab3ba42d9fe",
+    "operating-systems.core.deadlock.coffman-conditions.q3": "43f4edbeff79fc2ab60823443b657aeff09510e0d7cca726e812ef7dd2c5cddf",
+    "operating-systems.core.deadlock.deadlock": "6f103f8f0f578a868964be151e49c08df84976b387e3c2d923e3cbe23b0ebea3",
+    "operating-systems.core.deadlock.deadlock-avoidance": "15c32bb0b9b5e4fbdd6c2ec75b143dda58b11e2955a5802d4bb343ca2c70afa9",
+    "operating-systems.core.deadlock.deadlock-avoidance.q1": "3e167701b57b43dca0448b7ca726ececb973c2f1f06b68c0f44ed07c06cbb1cf",
+    "operating-systems.core.deadlock.deadlock-avoidance.q2": "ea45e2c3f8b7ecc689213f5be5efa0f550a63e8818d670022140cd146b1921ef",
+    "operating-systems.core.deadlock.deadlock-avoidance.q3": "e4286f866d27b6e05ef3f92f6713849f11fa992561415bac46524080234cf7fb",
+    "operating-systems.core.deadlock.deadlock-avoidance.q4": "735c247619549ddb7d84cba63b9dffcb45b819fee1ddfbab5cb5bcca2f068c2b",
+    "operating-systems.core.deadlock.deadlock-detection-recovery": "4ce1dc0e3af1d41d188de9895309d920f9b8834f86026c6d93c78de64dd686fa",
+    "operating-systems.core.deadlock.deadlock-detection-recovery.q1": "a817e4ffac0836e2dda1d5feb83c5aa379cc54b5acc4240d6e2b080fcb743677",
+    "operating-systems.core.deadlock.deadlock-detection-recovery.q2": "c21b2dc43131a4502ba81465d26cd348ad62f4dc8390f908fbe580eebfae6746",
+    "operating-systems.core.deadlock.deadlock-detection-recovery.q3": "0f2355ae840a7e80a0442cfb2eec3b8a774325601818f5e258dcd3ea1248f46d",
+    "operating-systems.core.deadlock.deadlock-detection-recovery.q4": "abae1199563baeb55683e6e738c7b3a6b534c57d1dd92ef3c86acbc546fb0c9c",
+    "operating-systems.core.deadlock.deadlock-prevention": "a269c13b5ce58ea9d44d7fe5db3b00dceba665a14d9ae5adef51a82457c15be5",
+    "operating-systems.core.deadlock.deadlock-prevention.q1": "420736b158ee6aa4aa79d2f9356fccc50596d2f650bc560128974872e29942fb",
+    "operating-systems.core.deadlock.deadlock-prevention.q2": "2e169c2903b6b56a2aac9853a380b0a902977afbb3b6186720b819320d79062e",
+    "operating-systems.core.deadlock.deadlock-prevention.q3": "de0337be654c5e8ee7cba773d9e471d9e8dd87fcac8d71af9f633f6b30df6562",
+    "operating-systems.core.deadlock.deadlock-prevention.q4": "c8ad1ec796107b375dd06c5d2b9617874761d1fbc46ba128d5c8a19f8e25e3f9",
+    "operating-systems.core.deadlock.deadlock.q1": "a83eb6ddd6a0f922d7cbcd3e15e253c99a2a57433c34b20d41ce7fa473beb829",
+    "operating-systems.core.deadlock.deadlock.q2": "c356b1a619df22c99a1709018dbaaa9c3e540ce3db1d4a4f625ba2ed6ae630b2",
+    "operating-systems.core.deadlock.deadlock.q3": "e9e58d085079131de7d83c77a573713ea3f0d57cd631d0d1ae6c54745db3e28a",
+    "operating-systems.core.deadlock.deadlock.q4": "130ac58c6103e8ec9822a7b3046d7f3fe10d64bb49ca69024f965d10232a4e11",
+    "operating-systems.core.deadlock.livelock": "5f99258e25cc18cb817d672082a77f289cdb86511a052b5f5d1ca5930e79f337",
+    "operating-systems.core.deadlock.livelock.q1": "e273d8500d0be276edb5e6ab60536aad174cc0430d635e9f502be814933b50b1",
+    "operating-systems.core.deadlock.livelock.q2": "57ae07eb9e72a6bd780ba90f488fc1d450099b24be9e98393ed4b89195688002",
+    "operating-systems.core.deadlock.livelock.q3": "6ffe616545e2f748efa897c26f8408e7d3ecdb5ada46b35e916cb6ba321f60f7",
+    "operating-systems.core.deadlock.resource-allocation-graph": "d189562caf8a181dc664c4feff14aea553df1a32a43c8af60f88cf42c3dc09a1",
+    "operating-systems.core.deadlock.resource-allocation-graph.q1": "9c4c8a23befbe3f4db9a1227e09549849199b770a714b44aa75610458b8a1828",
+    "operating-systems.core.deadlock.resource-allocation-graph.q2": "38c97df4d7bef4383978601021ee357940edd075fdec1afcd0fcc1099b884326",
+    "operating-systems.core.deadlock.resource-allocation-graph.q3": "d7d00b86e330012924123bcb4b58a292bd1e414ec46be2722648240a177182d6",
+    "operating-systems.core.deadlock.resource-allocation-graph.q4": "526d51da03849ca99af71fd6b1257fab90956fb9392c4bdcd13359973b741333",
+    "operating-systems.core.deadlock.starvation": "c7779d239bc17ac572ae19cfb67fa13b097cc224f57825f114cc88f902854b37",
+    "operating-systems.core.deadlock.starvation.q1": "0cd3febde8d9f839039b3edc67dbaa8cc36a9deb992479ace1795babb6770eee",
+    "operating-systems.core.deadlock.starvation.q2": "e26ea295bf5a04e0cf9f515e25d1a190e943e5a40a609dd4a44711e1a154abd7",
+    "operating-systems.core.deadlock.starvation.q3": "fa31392569a6c5538383a10ae8c9decbfe9f835acb4676c2f77e40f00f7f1104",
+    "operating-systems.core.deadlock.starvation.q4": "2046e0b47eef0a3323b29e8e24141944d24f0d9eda9ccf410b1738cd6179e594"
+  }
+}

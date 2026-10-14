@@ -1,0 +1,1369 @@
+{
+  "area": "database",
+  "wave": "Wave 2",
+  "baselineSha": "efe73a15da14c996bd08344181d4d6f87073803d",
+  "reviewMethod": "12 Topic의 curriculum 목표·전체 본문·75문항의 모든 선택지/rationale/accepted/model/explanation을 직접 읽고 개별 근거를 작성. PostgreSQL 공식 버전별 자료와 실제 source를 대조하며 자동 파싱/이전 PASS로 verdict를 부여하지 않음.",
+  "topics": [
+    {
+      "key": "database.core.model",
+      "coverage": "관계집합/SQL bag·schema/identity, NULL UNKNOWN, 현재사실/역사snapshot을 분리. normalization의 insert/delete 설명과 relation 문항의 목표 중복을 보강 대상으로 확정."
+    },
+    {
+      "key": "database.core.sql",
+      "coverage": "논리 처리와 물리계획, ON/WHERE 행보존, group 축약/window 유지의 순서가 적절. select-order acceptedAnswers 비응답과 window frame 목표 누락 발견."
+    },
+    {
+      "key": "database.core.schema",
+      "coverage": "stable identity/업무유일성·FK 참조/삭제·UNIQUE/CHECK/NULL을 분리. 사전검사와 최종경합 제약의 다른 목적 및 PostgreSQL 명시조건 충분."
+    },
+    {
+      "key": "database.core.index",
+      "coverage": "범위/정렬·key/payload·visibility·predicate 함의와 쓰기비용을 분리. PG16/18 skip scan 차이를 명시해 보장 과장이 없음. covering 문항 두개는 같은 가시성 목표 반복."
+    },
+    {
+      "key": "database.core.optimizer",
+      "coverage": "cost추정/실측·tree/loops·stats분포/상관을 연결. 올바른 loops 평균 및 ANALYZE 실제 실행 경고는 유지. parameter와 최신stats의 다른 한계는 보강 필요."
+    },
+    {
+      "key": "database.core.transaction",
+      "coverage": "ACID 각각의실패범위·서버문장TX/클라이언트autocommit·READCOMMITTED조건부UPDATE 경합을분리. zero affected rows는오류/단일실패원인이아님을설명."
+    },
+    {
+      "key": "database.core.isolation",
+      "coverage": "표준 이상 이름과PG실제보장, 단순SELECTsnapshot과concurrentUPDATE, committedhistory 직렬성과재시도를분리. SERIALIZABLE 코드의재시도소진 경로만보강."
+    },
+    {
+      "key": "database.core.locking",
+      "coverage": "일반MVCCread/lockingread·단방향wait/circularwait·선점/retry비용을구분. 정확한본문과문항을유지하고row-lock.q2의비응답accepted만최소수정대상."
+    },
+    {
+      "key": "database.core.mvcc",
+      "coverage": "version공존→snapshot선택→회수가능성의흐름은정확. RC/RR snapshot시점은명시되나visibility의tuple metadata/commit-state 목표는설명이부족."
+    },
+    {
+      "key": "database.core.storage",
+      "coverage": "page/sharedbuffer/OS-cache/device·dirtydata/WALflush·REDO/MVCCcommit·checkpoint/backup을구별. PG16/최신stats명칭차이와softWAL보존을공식자료로대조."
+    },
+    {
+      "key": "database.core.replication",
+      "coverage": "physicalstandby/readserving·localcommit/remote writeflushapply·stale읽기/복구가능WAL확보·promotion/orchestration/fencing을정확히분리. 논리복제/합의전체설계를이Topic보장으로확대하지 않음."
+    },
+    {
+      "key": "database.core.query-patterns",
+      "coverage": "offset위치/seekkey·stableorder/snapshot별도·roundtrip/row증식/page단위를분리. keyset 첫도식의cursor 경계표시만보강, 실제SQL/문항은정확."
+    }
+  ],
+  "concepts": [
+    [
+      "database.core.model.relation-tuple",
+      "TARGETED_ENHANCE",
+      "L1 CORE schema/tuple·set vsbag·물리순서 구분 본문 목표 충족.",
+      "DDL NOTNULL/PK·같은값중복과 DISTINCT/UNIQUE·식별자 vs변경가능 email·ORDER BY 경계 정확, 한국어와 예 충분.",
+      "TEXT schema행 표·identity 변경 흐름 충분.",
+      "PG ddl-basics table/schema와 row순서 미보장 계약 대조.",
+      "q1/q2 모두 행순서/ORDER BY를 반복하여 핵심 set/bag·DISTINCT/키의 다른 역할 검증 공백."
+    ],
+    [
+      "database.core.model.null-three-valued",
+      "KEEP",
+      "L1 CORE UNKNOWN과 WHERE TRUE 행 추론 목표 충족.",
+      "=NULL/ISNULL 진리표·leftjoin coupon 없음→오른쪽NULL·nullable NOTIN/NOTEXISTS 의미 및 sentinel손실 설명 충분. scalar ordinary comparison 범위로 이해하며 null-safe predicate까지 일반화하지 않음.",
+      "TEXT 진리표와 leftjoin 상태 흐름 유효.",
+      "PG comparison의 ordinary NULLunknown/ISNULL, 추가 공식 subquery절의 NOTIN RHS NULL 결과 직접 확인.",
+      "q1 올바른조건/q2 NOTIN unknown과 상관 NOTEXISTS 검토."
+    ],
+    [
+      "database.core.model.normalization",
+      "TARGETED_ENHANCE",
+      "L1 CORE 현재원본/snapshot·읽기/동기화 trade-off 충분. curriculum의 삽입/삭제 이상은 본문 예가 없음.",
+      "현재email 중복→update anomaly와 member 분리/FK예, 주문당시주소와현재사실의 시점구분 정확. insert/delete로 사실을 표현/보존 못하는 실패 상태 설명 부족.",
+      "TEXT 갱신전/분리후 상태표 유효. 마지막주문삭제→회원사실소실 및 주문없는회원삽입 불가 예 추가 필요.",
+      "CMU PDF의 FD→redundancy/insertion/deletion 배경과 PG referential integrity 확인. CMU targeted FD절을 모든 normalization 실무예 검증으로 일반화하지 않음.",
+      "q1 update anomaly/q2 historical snapshot은 타당하나 insert/delete 목표는 검사하지 않음."
+    ],
+    [
+      "database.core.sql.select-order",
+      "TARGETED_ENHANCE",
+      "L1 CORE FROM→WHERE→GROUP/HAVING→SELECT→ORDER 목표는 본문으로 충족. 연결q1 단답 채점 계약 오류가 보강 대상.",
+      "AVG HAVING·output alias ORDER허용/WHERE미허용·optimizer predicate/index 재배치 설명 정확. 논리 순서 그림은 물리 실행 계약 아님 명시.",
+      "TEXT clause 단계 흐름이 적절하며 수정 불필요.",
+      "PG SELECT output alias 허용/비허용 위치와 정렬/물리계산 조건 대조.",
+      "q2 별칭 이유는 정확. q1 accepted에 요청한절을 말하지 않은 이유문이 포함."
+    ],
+    [
+      "database.core.sql.join-semantics",
+      "KEEP",
+      "L1 CORE INNER/LEFT와 ON/WHERE unmatched 보존 목표 충족.",
+      "coupon NULL 사례에 이어 member/order PAID 필터의 유지→WHERE제거→ON매칭 비교가 정확. INNER 단순조건 동치 가능성과 optimizer 한계 구분.",
+      "TEXT join후NULL행 표와 필터단계 비교 충분.",
+      "PG table-expressions LEFT의 unmatched NULL행 보존 및 outer ON≠WHERE 계약 대조.",
+      "q1 사라짐 원인/q2 모든회원 합계 유지와NULL합계 정책 확장."
+    ],
+    [
+      "database.core.sql.aggregate",
+      "KEEP",
+      "L1 CORE 그룹축약·NULL처리 목표 충족, HAVING은 바로앞 select-order Concept에서 단계 설명됨.",
+      "1000주문→최대80회원 그룹과 COUNT*/column, 비그룹 order_id 다수 모호성 예 타당. 실제 functional-dependency 허용 DBMS 예외까지 이 입문 예가 부정하지 않음.",
+      "NONE 그룹 입력/합계 ASCII와 SQL로 충분.",
+      "PG aggregate count 입력행/비NULL값 및 빈SUM NULL 계약 확인.",
+      "q1 100/30 계산/q2 상세행 유지 여부 window와 다중 연결."
+    ],
+    [
+      "database.core.sql.window-function",
+      "TARGETED_ENHANCE",
+      "L2 CORE partition/행유지와orderby/tie-break는 충족. curriculum frame 목표는 정의/예가 없음.",
+      "member total 행수유지와 unique id 누적예·rownum최신 선택은 타당. partition과 current-row frame의 다른 계산범위/default peer포함·ROWS 선택을 설명하지 못함.",
+      "TEXT 행별 total/partition 표 충분하나 동일created_at peer의 frame 결과 비교 추가 필요.",
+      "PG tutorial-window의 virtual table/기본frame/동률peer누적합 및 후속filter subquery 계약 대조.",
+      "q1 rownum tie-break 정확하나 frame이나 running SUM 결과 검증 없음."
+    ],
+    [
+      "database.core.schema.primary-key",
+      "KEEP",
+      "L1 CORE natural/surrogate 안정성·행식별 목표 충족.",
+      "PG UNIQUE/NOTNULL+Btree 생성, 변경email/참조전파·국가code 자연키·sequence gap·공개ID 선택을 설명. UUID를 권한검사 대체 보장으로 주장하지 않음.",
+      "NONE DDL/identity 속성변화 ASCII 충분.",
+      "PG primary-key 계약과 추가 sequence 공식자료 rollback/gap 대조.",
+      "q1 변경자연키 부담/q2 stable rowidentity."
+    ],
+    [
+      "database.core.schema.foreign-key",
+      "KEEP",
+      "L1 CORE 존재경합·삭제action 목표 충족.",
+      "exists→부모삭제→INSERT 경쟁, NOACTION statement/deferrable 종료 vsRESTRICT 비지연, cascade/SETNULL 생명주기·ORM cascade별도·자식index 비자동 설명 충분.",
+      "TEXT action 비교표와 app/DB 목적 구분 유효.",
+      "PG FK 절 action/deferral·referenced index와 referencing 비자동계약 확인.",
+      "q1 최종DB장치/q2 자식index 별도설계."
+    ],
+    [
+      "database.core.schema.unique-check",
+      "KEEP",
+      "L1 CORE 동시유일성/row조건/NULL 목표 충족.",
+      "A/B 모두없음 후insert, UNIQUE conflict처리·period CHECK·crossrow CHECK한계·UNKNOWN허용/NOTNULL·PG NULLSNOTDISTINCT 옵션 충분.",
+      "NONE 경쟁흐름과 DDL/경계 설명 적절.",
+      "PG UNIQUE Btree/default NULLdistinct·CHECK true/null 및 다른row 참조불가 계약 대조.",
+      "q1 경합최종UNIQUE/q2 CHECKNULL 존재보장 아님."
+    ],
+    [
+      "database.core.index.btree",
+      "KEEP",
+      "L2 CORE 정렬탐색/범위와heap/쓰기비용 목표 충족.",
+      "created_at 범위SQL·balanced page 구조/row위치/힙후보 접근·99% seq 선택·index유지/HOT 조건 설명 충분. 아래 earlier/later 그림은 단일separator 단순모형이며 이진트리만 가능하다는 주장 없음.",
+      "DIAGRAM pivot→범위→heap 그림과 비용비교 충분. 선택적 후속도식은 여러separator/leaf연결 및 lowerbound찾기→인접leaf→heap 경로를 보여주면 좋으나 현 설명의 정확성 결함으로 판정하지 않음.",
+      "PG Btree equality/range/sorted-return 및 planner선택 계약 대조.",
+      "q1 선택도비용/q2 정렬key와leaf 순서 원인."
+    ],
+    [
+      "database.core.index.composite-index",
+      "KEEP",
+      "L2 CORE equality/range/order와 선두조건 목표 충족.",
+      "member/status/time/id 연속범위·PG16 선두equality+첫range·후속필터·선두없어도문법불가아님·PG18skip scan/lowdistinct 조건과 실측 충분.",
+      "TEXT 계층키순서와 구체SQL 비교 유효.",
+      "PG16/18 multicolumn 문서를 각각 직접 대조, 일반버전 혼동 없음.",
+      "q1 equality→range/q2 prefix고정→backwardorder 경로."
+    ],
+    [
+      "database.core.index.covering-index",
+      "TARGETED_ENHANCE",
+      "L2 CORE columns충족≠visibility 비용 목표 본문 충족. 연결q2의 동일목표 반복만 P2 보강.",
+      "INCLUDE payload≠search/orderkey·visibility map allvisible아닐때heap·큰payload쓰기/cache비용·HeapFetches/BUFFERS실측 정확. 본문 재작성 불필요.",
+      "TEXT indexentry key/payload 표 유효. allvisible 분기 도식은 선택보완이며 본문조건은 충분.",
+      "PG indexonly의VM분기와INCLUDE payload/nonkey/unique범위 대조.",
+      "q1/q2 모두 allvisible/HeapFetches 원인을 반복. 기존q2를 payload/비용 선택으로 확장하면 더넓은 설명 검증."
+    ],
+    [
+      "database.core.index.partial-index",
+      "KEEP",
+      "L2 STANDARD 부분행과query함의·분포 목표 충족.",
+      "PENDING5만/전체1억 예·literalpredicate/parameterized불매칭 가능·분포변화·active구독partialUNIQUE 충분. 실제 member_id가회원식별자의nonNULL을갖는 전제로 회원당하나 설명 타당.",
+      "NONE subset/count/DDL·query 비교로 충분. subset ASCII는 PAID/CANCELLED가index제외라고 명시.",
+      "PG partial predicate planning-time함의/parameter한계와부분UNIQUE 계약 확인.",
+      "q1 subset비용과함의/q2 endedNULL인회원키만유일."
+    ],
+    [
+      "database.core.optimizer.cost-estimate",
+      "KEEP",
+      "L2 CORE 예상행/I/O/CPU와후보선택 목표 충족.",
+      "seq/index 비교·MCV/histogram→selectivity→cost·startup/total 내부단위·작게추정된nestedloop 반복 설명 충분. 전역최적계획이나항상실측최저 보장을 주장하지 않음.",
+      "NONE 비교흐름·cost node예로 충분.",
+      "PG planner paths/cheapest 후보와EXPLAIN 비용/실시간 단위 계약 확인.",
+      "q1 두cost명칭/단위/q2 추정≠항상빠름."
+    ],
+    [
+      "database.core.optimizer.explain",
+      "KEEP",
+      "L2 CORE tree/estimatedactual/loops/time/buffers 병목연결 목표 충족.",
+      "1000rows×20loops 평균/반복과tree, 상위time하위포함·read≠물리device·ANALYZE UPDATE 실실행/명시rollback 외부effect제외 설명 정확.",
+      "TEXT plan tree·rows/loops표·쓰기실행 예가 적절.",
+      "PG using-explain per-execution actual 평균과loops乘算·ANALYZE실행 계약 대조.",
+      "q1 1000×200흐름/q2 DELETE 실행부작용."
+    ],
+    [
+      "database.core.optimizer.statistics",
+      "TARGETED_ENHANCE",
+      "L2 CORE freshness/skew/상관은 설명하지만 curriculum의 parameter 영향과오래된stats 구분은 마지막bullet만있음.",
+      "90/9/1 분포와KR/KRW 독립1%vs9.5%·extendedstats/target비용·autovacuum 조사 충분. 최신통계에서도 parameter별 selectivity 및generic/custom plan 차이가 남는 과정은 미설명.",
+      "NONE 분포/상관수치와진단분기 충분. 같은query의PAID/PENDING parameters/계획 차이 표를 추가하면 부족목표를 검증 가능.",
+      "PG planner-stats dependencies/ANALYZE와추가PREPARE 공식 generic/custom 계획 계약 대조.",
+      "q1 correlation/q2 대량INSERT freshness 정확, parameter 원인 검사 없음."
+    ],
+    [
+      "database.core.transaction.acid",
+      "KEEP",
+      "L2 CORE order/inventory 변화로A/C/I/D 목표 충족.",
+      "INSERT후조건UPDATE RETURNING한행검사→commit/없으면app rollback, no-row는SQLerror아님·DBconstraints와업무규칙·동시성/원격효과한계·sync_commit off 최근성공유실 설명 정확. 일반내구성은fsync등정상설정 전제로해석.",
+      "TEXT 중간실패/zero결과→rollback 상태흐름 유효.",
+      "PG transactions allornothing 및runtimeWALnonoff localflush/off loss/fsync별도위험 계약 대조.",
+      "q1 외부부수효과/q2 consistency와constraints의책임."
+    ],
+    [
+      "database.core.transaction.autocommit",
+      "KEEP",
+      "L2 CORE 문장별commit vs다중TX partialstate 목표 충족.",
+      "PG everySQLimplicitTX와JDBC/도구client정책 분리·송금부분성공/BEGIN묶기·긴I/O connection/lock/snapshot비용·Springmanager 연결 충분.",
+      "TEXT 두statement 동일commit/rollback 경계와긴TX흐름 유효.",
+      "PG tutorial implicit BEGIN/COMMIT 및일부client자동블록 주의 대조.",
+      "q1 부분송금원인/q2 단일문장원자성을다중문장으로확장못함."
+    ],
+    [
+      "database.core.transaction.atomic-write",
+      "KEEP",
+      "L2 CORE stale read/absolute overwrite 경쟁→conditionalUPDATE/affectedcount 목표 충족.",
+      "quantity1 A/Bread, PGRC lockwait후updatedWHERE재평가→Bfalse, zero는부재/다른조건도가능·존재보장정책·복잡domainSQL경계 충분.",
+      "NONE 경합순서/1→0→재평가false와SQL/Java조건 충분.",
+      "PG UPDATE count0는error아님·RETURNING, RC concurrentUPDATE 최신버전WHERE재평가 계약 대조.",
+      "q1 조건검사/변경 원자경계/q2 복잡policy나외부효과 만능아님."
+    ],
+    [
+      "database.core.isolation.anomalies",
+      "KEEP",
+      "L2 CORE dirty/nonrepeatable/phantom/readskew/lostupdate의시간흐름 목표 충족.",
+      "미commit뒤rollback·same행다른값·집합insert·두read10후absolute9덮기·A/B다른시점 readskew와다른행write skew 설명 정확. PG RU=RC/dirty금지와원자증감 다름 명시.",
+      "DIAGRAM 첫4현상T1/T2실행선이관측/대기/commit을구분. read/write skew는예의순서를문장으로보완.",
+      "PG transaction-iso SQL표준현상/PG RU/RC 및직렬화이상 정의 대조.",
+      "q1 same행nonrepeatable/q2 set증가phantom, 다른현상은rationale와본문으로비교."
+    ],
+    [
+      "database.core.isolation.read-committed",
+      "KEEP",
+      "L2 CORE 명령별snapshot→연속SELECT 다른결과 목표 충족.",
+      "한ordinarySELECT중다른commit못봄·다음SELECT보임·UPDATEwait/WHEREupdated재평가·SpringTX≠same snapshot·RR대안 설명 충분. 자기TX쓴값가시성은공식source 추가조건이며본문은타TX관측비교.",
+      "DIAGRAM T1/T2와singleSELECT S→다음command 비교유효.",
+      "PG RC default/ordinarySELECT시작snapshot·selfwrites가시성과동시UPDATE조건 대조.",
+      "q1 snapshot범위/q2 staleread/조건부SQL·lock/version과count."
+    ],
+    [
+      "database.core.isolation.serializable",
+      "TARGETED_ENHANCE",
+      "L3 CORE committed read/write history 직렬성·SSIabort·전체logic재시도 목표충족. boundedretry소진후실패 경로가코드에없음.",
+      "두의사write skew·unsafe dependencyabort·SQLSTATE40001·새snapshot에서logic전체·외부효과idempotency·UNIQUE별도 정확. MAX_RETRIES모두실패하면catch후loop탈출하여실패를상위로전달하는예가없음.",
+      "TEXT 두의사경합/abort/retry시퀀스는유효. 성공/일시실패재시도/예산소진실패의세종료상태 추가필요.",
+      "PG serializable SSI read/write dependency/predicate nonblocking 및failurehandling 전체logic/재시도성공미보장 대조.",
+      "q1 마지막UPDATE만retry금지/q2 committedhistory동등 정확. 소진반환은검사안함."
+    ],
+    [
+      "database.core.locking.row-lock",
+      "TARGETED_ENHANCE",
+      "L2 CORE UPDATE/FORUPDATE 대기와유지기간 본문목표충족. q2채점표현부족 보강.",
+      "conflictingwriters/lockers vsordinarysnapshotread·transactionend·외부I/O보유시간·다중행/FK/table상호작용 정확. 전용 lockmode전체행렬의학습을요구하지 않는 범위.",
+      "TEXT T1변경→T2wait→commit후진행과writer/reader 버전 비교 충분.",
+      "PGrowlocking nonlockingread비영향·FORUPDATEconflict·TXend/savepointrollback·isolation별error조건 대조.",
+      "q1 일반SELECT와최신버전 구분정확, q2wait답중cause-only가accepted."
+    ],
+    [
+      "database.core.locking.deadlock",
+      "KEEP",
+      "L2 CORE 역순획득→순환대기→victimabort/순서규칙 목표충족.",
+      "A/B보유+상대대기그래프·일반wait/timeout과다름·작은ID먼저·wholeTXretry/외부effect·전역lock직렬화비용 충분. 모든다른잠금까지없앤다고확대하지 않음.",
+      "DIAGRAM T1/T2획득/wait와동일order예 유효.",
+      "PGdeadlock automaticabort·victim예측불가·consistentorder 예방확인.",
+      "q1 획득순서/q2 피해TX 전체재시도와외부효과."
+    ],
+    [
+      "database.core.locking.pessimistic",
+      "KEEP",
+      "L2 CORE 충돌률/재작업비용과선점wait trade-off 목표충족.",
+      "coupon읽기lock후rule갱신은부분흐름예, conflict낮음optimistic/atomic·긴외부I/O/connection점유·SKIPLOCKEDqueue vs일반조회한계 정확.",
+      "NONE timeline/비교표/SQL로충분.",
+      "PGlockingclause NOWAITerror/SKIPLOCKEDskip·inconsistentview와queue이용 계약 대조.",
+      "q1 5초보유비용/q2 낮은경합대안 선택."
+    ],
+    [
+      "database.core.mvcc.versions",
+      "KEEP",
+      "L2 CORE UPDATE다중버전/오래된읽기공존 목표충족.",
+      "100→200 두version·old≠dead/reclaimable·격리별다음statement·HOT가능성/cleanup비용·MVCC≠nolocks 정확. 모든업데이트가새indexentry를요구한다고과장하지않음.",
+      "DIAGRAM old/new boxes·active snapshot→old→reclaimable 상태와T1/T2 유효.",
+      "PGmvccintro snapshot/읽기쓰기경합감소 및HOT조건/중간버전pruning 계약 대조.",
+      "q1 version/visibility원인/q2 oldsnapshot 회수지연·운영확인, xmin용어는visibility보강과연계."
+    ],
+    [
+      "database.core.mvcc.visibility",
+      "TARGETED_ENHANCE",
+      "L2 CORE RC/RR시점추론은충족. curriculum xmin/xmax·commit 상태로어느tuple을고르는목표는미설명.",
+      "snapshot≠전체복사·RC새command/RR첫query부터고정·PGphantom금지·최신성/정리tradeoff 정확. 내부metadata·활성/commit/abort 상태 판별은없어 앞isolation의재설명에머묾.",
+      "DIAGRAM S1/S2와BEGIN후첫query 고정이유효. tupleversion별생성/무효화TX와snapshot전후선택표 추가필요.",
+      "PGchapter는탐색용TOC이며settransaction 시점계약직접확인. 추가systemcolumns로xmin/xmax와visible nonzero xmax 대조.",
+      "q1/q2 둘다isolation/snapshot수명 판단이며tuplemetadata/commit-state 목표검증 없음."
+    ],
+    [
+      "database.core.mvcc.cleanup",
+      "KEEP",
+      "L2 CORE 필요없는version회수/장기TX방해 목표충족.",
+      "A/B/Cold/current·oldsnapshot이볼수있으면회수불가·VACUUM내부reuse vsFULL재작성/강한lock·idleTX조건부지연·autovacuum운영 충분. summaryXID관리는운영나이관측으로범위제한하며freeze/복구runbook전체아님.",
+      "TEXT oldsnapshot보존→VACUUM차단 및dead→free공간표 충분.",
+      "PG routinevacuuming reuse/endpage특수truncation·FULL ACCESS EXCLUSIVE 및backendxmin장기TX 확인.",
+      "q1 장기TX지연원인/q2 일반VACUUM≠항상파일축소."
+    ],
+    [
+      "database.core.storage.pages-buffer",
+      "KEEP",
+      "L3 CORE page disk/buffer 이동과dirty생성 목표충족.",
+      "기본build8KB·hit/miss→파일/OS-cache→device구분·sharedread≠physicalIO·dirtied/written·WAL과후속datawrite·흩어진heapcost 설명 충분.",
+      "DIAGRAM relationpages/sharedbuffer hit/miss·UPDATEWAL/dirty→나중write가계층/상태를보여줌.",
+      "PGpage-layout·resource sharedbuffer/OScache·EXPLAIN BUFFERS 의미 직접확인.",
+      "q1 관리단위/q2 dirty와durable계약의별도사건."
+    ],
+    [
+      "database.core.storage.wal",
+      "KEEP",
+      "L3 CORE durablelog선행→지연datapage/장애REDO 목표충족.",
+      "dirty/WAL생성→로그durable→commit가능·datapage나중write가능·REDO≠커밋된TX만재생/undo거꾸로·synccommit설정조건·WALreplicationcost 정확. datapage가항상commit후에만쓰인다는보장아님.",
+      "DIAGRAM 선행내구성순서와뒤datawrite 가능흐름 유효.",
+      "PGwalintro logflush선행/redo·매commit모든pageflush불필요 및앞runtimeWAL 설정계약 대조.",
+      "q1 순서/복구원인/q2 durablecommit후dirtypage미반영crash."
+    ],
+    [
+      "database.core.storage.checkpoint-recovery",
+      "KEEP",
+      "L3 CORE redopoint로복구범위제한·정상IO trade-off 목표충족.",
+      "record→redopoint→WAL재적용·checkpointfrequency/fullpageimage·maxwalsize softlimit/slot/archive보존·PG16bgwriter vs최신checkpointer·backup별도 정확.",
+      "TEXT redopoint기준장애시퀀스와복구/IO비용표 충분.",
+      "PGwal-config checkpointtrigger/분산write/fullpagecost/neverhardlimit 및추가PG16/18 stats뷰별명칭 대조.",
+      "q1 잦은checkpoint 비용/q2 같은저장소복구≠별도backup."
+    ],
+    [
+      "database.core.replication.primary-replica",
+      "KEEP",
+      "L3 CORE primaryWAL→standby적용/읽기확장 목표충족.",
+      "physicalstreaming쓰기원본·HotStandby읽기구성별도·defaultasync/create→paidlag·API별routing·DELETE도복제돼backup아님 충분.",
+      "DIAGRAM Primary→StandbyA/HotStandbyB와commit/oldread 시간차 유효.",
+      "PGwarmstandby physicalrecovery/streamingasync/HotStandbyreadonly 역할 대조.",
+      "q1 lag원인/q2 단순같은replica/순서≠read-after-write보장."
+    ],
+    [
+      "database.core.replication.lag",
+      "KEEP",
+      "L3 CORE primarycommit후apply시간차→stale/read-after-write 목표충족.",
+      "generated/sent/receive/flush/replay 단계·CPU/IO/복구충돌·취소GEToldstate·primarypin/positionwait·stage지표 충분. COMMIT그림은commit처리pipeline을표현하며모든변경WAL이성공응답후생성된다는순서보장으로읽지 않음.",
+      "TEXT 단계흐름과POST/GET사례가최신성차이를보여줌.",
+      "PGstreaming생성즉시stream/async, 추가monitoring sent/write/flush/replayLSN 및lag시간≠catchupETA 확인.",
+      "q1 primarypin/LSNwait/q2 lag임계routing회복정책 확장."
+    ],
+    [
+      "database.core.replication.failover",
+      "KEEP",
+      "L3 CORE 승격대상WAL확보/미전송·미적용/RPO·RTO 목표충족.",
+      "asyncsuccess후WAL안전확보전crash·이미확보WAL은promotion전복구·remote_write/on/remote_apply서로다름·실제대상ack계약·slowstandbyavailability·core자동orchestrator아님/fencing 충분.",
+      "TEXT crash/WALnotpresent/promote와ack단계·RPO/RTO표 효과적.",
+      "PGfailover promotion/core소프트웨어경계/STONITH와warmstandby의승격전availableWALrestore·syncack계약 대조.",
+      "q1 success후missingcommits/q2 durability/latency/availability교환."
+    ],
+    [
+      "database.core.query-patterns.offset-pagination",
+      "KEEP",
+      "L3 CORE stableORDER/OFFSET비용/page drift 목표충족.",
+      "20+200000skip·uniqueid order·동시변경위치밀림·작은목록/임의번호UI trade-off 충분. 앞INSERT는기존행중복, 삭제/키변경은기존행누락의대표경로로구분하여읽음.",
+      "TEXT skip/return 범위와앞INSERT→OFFSET이동그림 충분.",
+      "PG LIMIT/OFFSET uniqueorder·서버skipped행도계산 필요 확인.",
+      "q1 skip비용/q2 정렬위치동시변경과order만으로snapshot고정못함."
+    ],
+    [
+      "database.core.query-patterns.keyset-pagination",
+      "TARGETED_ENHANCE",
+      "L3 CORE tuplekey/strictseek/앞INSERT영향감소 목표본문충족. 첫ASCII경계가cursor800을다음쪽에둬오해유발.",
+      "DESC(created_at,id)<lasttupleSQL·동률id/NULLcomparison·앞INSERTvs키변경/삭제·snapshot아님·임의page/역방향cost 정확. 그림의last800과separatorbefore800 불일치.",
+      "TEXT 같은시간tie표는정확. 첫그림의소비완료/lastcursor/다음조건범위를명시하여800뒤에경계두는수정 필요.",
+      "PGrowconstructor lexicographic comparison/decisiveNULLunknown과추가index prefix계약 대조.",
+      "q1 cursorid/q2 timestamponly가same-timeid행누락 원인 정확."
+    ],
+    [
+      "database.core.query-patterns.batch-n-plus-one",
+      "KEEP",
+      "L3 CORE measuredN+1/JOIN/batch/벌크 trade-off 목표충족.",
+      "100관련조회+1목록→왕복/connection/SQL반복·JOINprojection·INIDmap·collectionrow증식LIMIT부모의미·별도COUNTcost 설명 충분. 쿼리수를유일성능기준으로삼지않음.",
+      "TEXT 101왕복과parent2×10items→20rows/2orders 비교 유효.",
+      "PGtableexpressions JOINrowsemantics, aggregateCOUNT 비용의앞Topic자료와연결. Reference가앱왕복성능숫자의실측증명이라고주장하지 않음.",
+      "q1 perquery1ms≠전체latency/q2 collectionfetch와parentpage경계."
+    ]
+  ],
+  "questions": [
+    [
+      "database.core.model.relation-tuple.q1",
+      "KEEP",
+      "accepted4 ORDER BY와미보장 이유 정확; explanation unique tie-break까지 포함.",
+      "EASY 특정절 질문과 accepted 짧은표현 일치."
+    ],
+    [
+      "database.core.model.null-three-valued.q1",
+      "KEEP",
+      "accepted5 ISNULL 정확; explanation ordinary equality UNKNOWN→WHERE탈락 타당.",
+      "MEDIUM 단답 자체는 입문수준이나 기술오류/모호성 없음."
+    ],
+    [
+      "database.core.model.null-three-valued.q2",
+      "KEEP",
+      "model/explanation RHSNULL→NOTINunknown, NULL처리/상관조건 함께NOTEXISTS 검토 정확.",
+      "MEDIUM 무조건 NOTEXISTS 치환이나 NULL포함에도TRUE 보장을 하지 않음."
+    ],
+    [
+      "database.core.model.normalization.q1",
+      "KEEP",
+      "C 일부복사만갱신→현재사실불일치 정확. A PK자동전파/B 읽기빨라서갱신보장/D FK가email동기화 오답; rationale4·해설 확인.",
+      "MEDIUM 현재email이라는 전제와 snapshot 구별, 가까운 제약 오해 distractor 적절."
+    ],
+    [
+      "database.core.model.normalization.q2",
+      "KEEP",
+      "model/explanation 주문당시주소≠현재주소이며 역사보존 의미 때문에 제거불가 정확.",
+      "MEDIUM q1과 다른 사실/시점 목표."
+    ],
+    [
+      "database.core.model.relation-tuple.q2",
+      "TARGETED_ENHANCE",
+      "model/explanation relation은행순서포함않음→ORDER BY/tie-break 정확.",
+      "MEDIUM q1과 동일 정렬절/미보장 목표를 반복하며 본문의 SQL bag/중복/키 구분을 전혀검증하지 않음. 기존q2의 목표 변경 권장."
+    ],
+    [
+      "database.core.sql.select-order.q1",
+      "TARGETED_ENHANCE",
+      "HAVING 정답과 explanation은 정확. accepted 첫 항목은 WHERE가집계전이라는 이유만 말하고 질문의 SQL절을 쓰지 않아 비응답을 정답으로 인정할 수 있음.",
+      "MEDIUM 명확한 절 단답 질문에 prose 원인 답의 채점범위 불일치; P0 accepted 수정 대상."
+    ],
+    [
+      "database.core.sql.select-order.q2",
+      "KEEP",
+      "model/explanation group→SELECTCOUNT별칭n→ORDER참조 정확, 물리실행/DBMS허용 별도 명시.",
+      "MEDIUM q1 aggregate필터와 다른 alias위치 목표."
+    ],
+    [
+      "database.core.sql.join-semantics.q1",
+      "KEEP",
+      "model/explanation LEFT NULL보존뒤WHERENULL=PAID는TRUE아님→제거, ON비교 타당.",
+      "MEDIUM 명시된 null-rejecting predicate 전제."
+    ],
+    [
+      "database.core.sql.join-semantics.q2",
+      "KEEP",
+      "model/explanation WHERE필터로unmatched제거 vsONpaid매칭/회원보존·SUM NULL의COALESCE정책 타당.",
+      "MEDIUM q1과 원인 겹치나 전체회원별집계 요구/NULL합계 판단을 확장해 단순 반복만은 아님."
+    ],
+    [
+      "database.core.sql.aggregate.q1",
+      "KEEP",
+      "accepted2 100/30 계산 정확. explanation NULL70개 제외 타당.",
+      "EASY 입력수가명확한 결과 계산."
+    ],
+    [
+      "database.core.sql.aggregate.q2",
+      "KEEP",
+      "model/explanation 회원한행이면GROUP BY, 상세유지와total이면SUM OVER partition 정확.",
+      "MEDIUM 두 Concept 연결은 행단위 모델 비교 목적과 일치."
+    ],
+    [
+      "database.core.sql.window-function.q1",
+      "KEEP",
+      "model/explanation created_at동률 rownum1 선택 불안정→unique id tie-break 정확.",
+      "MEDIUM 계산frame과별개 정렬결정성 질문 자체는 타당; frame 목표는 Concept 보강."
+    ],
+    [
+      "database.core.schema.primary-key.q1",
+      "KEEP",
+      "model/explanation 변경email이면PK/FK/외부참조전파, surrogate+별도UNIQUE검토/불변natural 허용 타당.",
+      "MEDIUM 숫자ID 무조건정답을 피함."
+    ],
+    [
+      "database.core.schema.primary-key.q2",
+      "KEEP",
+      "accepted8 stable rowidentity 동의표현 정확, explanation nonNULL참조기준/업무유일성과분리 타당.",
+      "EASY 한구절 역할질문과 짧은accepted 일치."
+    ],
+    [
+      "database.core.schema.foreign-key.q1",
+      "KEEP",
+      "accepted3 FKconstraint 정확, explanation 사전SELECT틈/부모삭제와자식INSERT 무결성 타당.",
+      "EASY 경쟁순서와최종보호 계약 명시."
+    ],
+    [
+      "database.core.schema.foreign-key.q2",
+      "KEEP",
+      "C referencing별도index 선택 정확. A FK=index/B 모든FK자동Btree/D JOIN불필요 오답; rationale4·해설 확인.",
+      "MEDIUM PostgreSQL로한정해 InnoDB 자동index와의 일괄보장 혼동 방지."
+    ],
+    [
+      "database.core.schema.unique-check.q1",
+      "KEEP",
+      "accepted4 emailUNIQUE 필요 정확; explanation 두exists조회후경합/violation변환 타당.",
+      "MEDIUM 기본schema uniqueness로조건명확. Spring검증과같은예나 이Area에서는DB소유목표의입문 연결."
+    ],
+    [
+      "database.core.schema.unique-check.q2",
+      "KEEP",
+      "model/explanation endedNULL→UNKNOWN CHECK통과 가능, 필수존재NOTNULL 별도 정확.",
+      "MEDIUM PG CHECK와SQLWHERE의UNKNOWN 처리 차이 검증."
+    ],
+    [
+      "database.core.index.btree.q1",
+      "KEEP",
+      "model/explanation99%후보의index+heap random비용이seq보다클수있음, 플래너오류단정불가 정확.",
+      "MEDIUM 인덱스존재≠선택보장, 실제추정/비용확인 조건."
+    ],
+    [
+      "database.core.index.btree.q2",
+      "KEEP",
+      "accepted8 sortedkey/range시작+인접leaf 동의표현 정확. explanation order활용시sort감소 조건 명시.",
+      "EASY 구조적성질 단답과 원인 해설 일치."
+    ],
+    [
+      "database.core.index.composite-index.q1",
+      "KEEP",
+      "model/explanation member equality먼저범위고정→time범위, 반대넓은시간후member필터 가능 정확.",
+      "MEDIUM 항상빠름아닌natural candidate/실측, skipscan버전 차이와 모순없음."
+    ],
+    [
+      "database.core.index.composite-index.q2",
+      "KEEP",
+      "model/explanation tenant/status prefix고정→created_at DESC backward scan가능/plan확인 정확.",
+      "MEDIUM q1 range선택과 다른 정렬삭제 경로 목표."
+    ],
+    [
+      "database.core.index.covering-index.q1",
+      "KEEP",
+      "accepted6 VMallvisible없음→MVCCheap 필요 정확, explanation payload와HeapFetches0구분 타당.",
+      "MEDIUM PG 명시조건 및대표원인 명확."
+    ],
+    [
+      "database.core.index.covering-index.q2",
+      "TARGETED_ENHANCE",
+      "model/explanation VMallvisible와HeapFetches 확인 정확.",
+      "MEDIUM q1 원인과같은 답/해설을 재질문. 정답결함은없고 payload/key역할·크기쓰기비용으로기존q2 목표확장 P2 권장."
+    ],
+    [
+      "database.core.index.partial-index.q1",
+      "KEEP",
+      "model/explanation 작은subset의탐색/유지비용과predicate함의/분포재평가 정확.",
+      "MEDIUM 0.1%유리가능성이지항상보장 아님."
+    ],
+    [
+      "database.core.index.partial-index.q2",
+      "KEEP",
+      "accepted4 endedNULL active member키중복금지 정확, explanation 종료행predicate밖 제외 타당.",
+      "EASY 회원키가있는구독의조건부유일성, NULLmember 자체의존재보장과는 별도."
+    ],
+    [
+      "database.core.optimizer.cost-estimate.q1",
+      "KEEP",
+      "accepted6 startup/total plannerunit 또는실시간아님 정확. explanation0.43firstrow전/128.17allrows 타당.",
+      "EASY 요구한명칭둘+단위성격 모두충족."
+    ],
+    [
+      "database.core.optimizer.cost-estimate.q2",
+      "KEEP",
+      "model/explanation stats/가정 vs분포/cache/concurrent실측 차이와rows/time/buffers 검증 타당.",
+      "MEDIUM cost를밀리초로직접변환하지 않음."
+    ],
+    [
+      "database.core.optimizer.explain.q1",
+      "KEEP",
+      "model/explanation rows1000평균×loops200≈20만반환흐름 정확.",
+      "MEDIUM 평균반환rows와총scan검사행을동일시하지 않고 대략흐름으로 제한."
+    ],
+    [
+      "database.core.optimizer.explain.q2",
+      "KEEP",
+      "B ANALYZE실DELETE 부작용 정확. A parser만/C DELETEplan없음/D 자동rollback 오답; rationale4·해설 확인.",
+      "EASY rollback하더라도 실행비용/trigger 고려 명시."
+    ],
+    [
+      "database.core.optimizer.statistics.q1",
+      "KEEP",
+      "model/explanation correlatedcountry/currency독립추정→underestimate·dependencies 통계검토 정확.",
+      "MEDIUM 단순equality상수 사례는 공식dependencies 적용범위와일치."
+    ],
+    [
+      "database.core.optimizer.statistics.q2",
+      "KEEP",
+      "A freshness/ANALYZE재비교 정확. B allindex/C cost밀리초확정/D stats무관 오답; rationale4·해설 확인.",
+      "MEDIUM freshness최초조사이지매번ANALYZE만하면해결 보장아님."
+    ],
+    [
+      "database.core.transaction.acid.q1",
+      "KEEP",
+      "model/explanation 로컬DBrollback≠외부PG취소, 보상/idempotency/상태기록 필요 정확.",
+      "MEDIUM 주어진분리자원 전제로원자성범위 확인. Springrollback문항과는Area책임이달라교차연결 가능."
+    ],
+    [
+      "database.core.transaction.acid.q2",
+      "KEEP",
+      "model/explanation 정의한유효상태/invariants와UNIQUE/FK/CHECK부분집행, 모든업무/외부보장 아님 타당.",
+      "MEDIUM ACID consistency와분산consistency 보장확대 방지."
+    ],
+    [
+      "database.core.transaction.autocommit.q1",
+      "KEEP",
+      "model/explanation 첫UPDATEcommit→두번째미실행partial, 두변경동일TX 경계 필요 정확.",
+      "EASY 실패후남는상태를원인으로서술."
+    ],
+    [
+      "database.core.transaction.autocommit.q2",
+      "KEEP",
+      "B 동일commit/rollback 경계 정확. A SQL실행않음/C 외부API자동rollback/D 단일문장atomic→두문장자동atomic 오답; rationale4·해설 대조.",
+      "MEDIUM q1사례와겹치나D의단일SQL원자성과다중업무경계 구분을 추가검증."
+    ],
+    [
+      "database.core.transaction.atomic-write.q1",
+      "KEEP",
+      "accepted8 condition+decrement DB원자처리와readmodifywrite틈감소 정확. explanationcount1success/0재고부족등조건실패 및다른invariants별도 타당.",
+      "MEDIUM 0의부재/여러조건은본문에서정책전제명시, explanation의'등'을재고만확정으로해석않음."
+    ],
+    [
+      "database.core.transaction.atomic-write.q2",
+      "KEEP",
+      "C 작은DBinvariant강점/복잡흐름책임 정확. A isolation무의미/B 원격효과atomic/D UPDATE제어없음 오답; rationale4·해설 확인.",
+      "MEDIUM SQL조건부갱신을모든domain정책대체로확대하지 않음."
+    ],
+    [
+      "database.core.isolation.anomalies.q1",
+      "KEEP",
+      "accepted2 nonrepeatable 정의 정확, explanation dirty/phantom 차이 타당.",
+      "EASY same행/T2commit사이 두read 조건명확."
+    ],
+    [
+      "database.core.isolation.anomalies.q2",
+      "KEEP",
+      "B phantom 정확. A dirty미commit/C deadlock순환대기/D lostwrite staleoverwrite 오답; rationale4·해설 대조.",
+      "MEDIUM 집합변경과행변경/대기 현상 분리."
+    ],
+    [
+      "database.core.isolation.read-committed.q1",
+      "KEEP",
+      "accepted9 statement/command 시작snapshot 정확, explanation transaction전체고정아님 타당.",
+      "MEDIUM 대표범위질문에단위/원인 동의표현 모두일치."
+    ],
+    [
+      "database.core.isolation.read-committed.q2",
+      "KEEP",
+      "model/explanation firstSELECTstale→UPDATE현재행/WHERE재평가가능·조건부SQL/version/lock,count 필요 정확.",
+      "HARD T2이미commit후UPDATE면대기없을수있고 explanation은대기후경로를가능성으로만표현. TX만으로불변식보장하지않음."
+    ],
+    [
+      "database.core.isolation.serializable.q1",
+      "KEEP",
+      "model/explanation40001강한격리abort→새TX의전체SELECT/검증/SQL결정logic, sideeffectidempotency 정확.",
+      "HARD 원인·전체경계·외부효과 구분. 소진실패는본문추가대상."
+    ],
+    [
+      "database.core.isolation.serializable.q2",
+      "KEEP",
+      "C committed read/write history serialorder동등 정확. A 원격atomic/B 무조건동시commit/D final값만같으면anomaly승인 오답; rationale4·해설 확인.",
+      "MEDIUM 최종값만의동등성과관측포함보장을구분."
+    ],
+    [
+      "database.core.locking.row-lock.q1",
+      "KEEP",
+      "C snapshotvisible 일반SELECT는보통rowlockwait않음 정확. A 항상최신/B 일반SELECT도무조건wait/D isolation이름만결정 오답; rationale4·해설 확인.",
+      "MEDIUM PGordinaryread와lockingread 전제명확, 별도tablelock 가능성을 '보통/반드시'로제한."
+    ],
+    [
+      "database.core.locking.row-lock.q2",
+      "TARGETED_ENHANCE",
+      "대기한다는다섯accepted와explanation은정확. 나머지accepted는같은행lockingread가TXlock과충돌한다는원인만말해 요청한T2의행동을답하지 않음.",
+      "EASY 행동단답질문에cause-only nonanswer를허용하는 P0채점범위 문제. NOWAIT/SKIPLOCKED는해설에서별도조건."
+    ],
+    [
+      "database.core.locking.deadlock.q1",
+      "KEEP",
+      "accepted7 consistentorder 정확, explanation같은자원순서경로의예방·다른locks자동제거아님 타당.",
+      "EASY 역순획득원인이명확하므로가장직접규칙 단일목표."
+    ],
+    [
+      "database.core.locking.deadlock.q2",
+      "KEEP",
+      "model/explanation victimTXDB변경rollback→wholeusecase재시도·원격효과idempotency/보상 필요 정확.",
+      "HARD 보통전체경계이며savepoint복구등특수구현까지확대하는가이드 아님."
+    ],
+    [
+      "database.core.locking.pessimistic.q1",
+      "KEEP",
+      "model/explanation 낮은conflict의5초lock/connectionwait 비용과optimistic/atomic 대안 타당.",
+      "MEDIUM 외부effect 재실행가능성/실제변경경계 검토전제."
+    ],
+    [
+      "database.core.locking.pessimistic.q2",
+      "KEEP",
+      "model/explanation version/conditionalquantity로짧은conflict감지·충돌률/rework/외부효과/poolwait 비교 타당.",
+      "HARD지정이나입문설계선택은MEDIUM에가까움. q1비용보다재시도허용조건의대안판단을확장하며정답문제 없음."
+    ],
+    [
+      "database.core.mvcc.versions.q1",
+      "KEEP",
+      "accepted9 버전공존/snapshot가시성 동의표현 정확, explanation oldtuple 즉시교체아님 타당.",
+      "EASY snapshot오래됨이명시돼RC다음SELECT의새snapshot 일반화아님."
+    ],
+    [
+      "database.core.mvcc.versions.q2",
+      "KEEP",
+      "model/explanation oldsnapshot이볼수있으면보존→longTX/xmin범위/vacuum지연 확인 타당.",
+      "MEDIUM oldversion과reclaimabledead를본문에서분리. xmin세부정의는visibility보강이도움되지만답의보존원인은충족."
+    ],
+    [
+      "database.core.mvcc.visibility.q1",
+      "KEEP",
+      "model/explanation RCstatement마다 vsRR첫query확정후유지 정확.",
+      "MEDIUM ordinarySELECT/T2중간commit 비교, 자기TXwrites까지부정하지않음."
+    ],
+    [
+      "database.core.mvcc.visibility.q2",
+      "KEEP",
+      "model/explanation isolation/snapshot시점을먼저확인하고RC다음command의committedINSERT 가능 vsRR미포함 정확.",
+      "MEDIUM commit여부/시점이모델의조건으로명시. q1에서구체INSERT판단으로확장, missingmetadata목표는Concept보강."
+    ],
+    [
+      "database.core.mvcc.cleanup.q1",
+      "KEEP",
+      "model/explanation idleTX가snapshot/xmin범위를붙잡는경우 oldtuple회수지연 가능 정확.",
+      "HARD 모든idleTX가같은영향이라고확정하지않는조건부원인 조사."
+    ],
+    [
+      "database.core.mvcc.cleanup.q2",
+      "KEEP",
+      "A 내부reuse≠항상파일축소 정확. B 매번FULL재작성/C index만삭제/D MVCC무관stat만 오답; rationale4·해설 확인.",
+      "EASY 일반VACUUM의특수endpage반환을'항상'대문으로부정하므로모순없음."
+    ],
+    [
+      "database.core.storage.pages-buffer.q1",
+      "KEEP",
+      "accepted9 page/block관리단위 정확. explanation rowlogical과pagephysical 접근/캐시 구분.",
+      "EASY 각긴accepted도질문단위를명시하므로cause-only비응답 문제없음."
+    ],
+    [
+      "database.core.storage.pages-buffer.q2",
+      "KEEP",
+      "model/explanation dirty는메모리와파일차이/WALdurable경계별도·pagewrite나중가능 정확.",
+      "MEDIUM 이미영구기록됐다는결론을거부, fsync/sync정책조건 유지."
+    ],
+    [
+      "database.core.storage.wal.q1",
+      "KEEP",
+      "model/explanation WAL선행durable/설정커밋레코드경계→REDO reconstruct 정확.",
+      "MEDIUM datapageflush와commitdurability 두조건분리."
+    ],
+    [
+      "database.core.storage.wal.q2",
+      "KEEP",
+      "model/explanation durablecommitWAL후dirtydata미writecrash→redo물리변경복구, committed WAL만선택재생아님 정확.",
+      "HARD durable설정/커밋기록완료전제가명확, redo/visibility층구분."
+    ],
+    [
+      "database.core.storage.checkpoint-recovery.q1",
+      "KEEP",
+      "C dirtywrite/WAL비용 정상IO영향 정확. A backup/B IO없음/D recovery무관 오답; rationale4·해설 대조.",
+      "MEDIUM recovery이득vsnormalIO의trade-off를조건부로설명."
+    ],
+    [
+      "database.core.storage.checkpoint-recovery.q2",
+      "KEEP",
+      "accepted4 checkpoint≠별도backup/다른failuremodel 정확, explanation media-loss/PITR backup/archive 별도 타당.",
+      "EASY 예/아니오외근거까지포함하며source교차보장확대없음."
+    ],
+    [
+      "database.core.replication.primary-replica.q1",
+      "KEEP",
+      "accepted6 async전송/replay시간차·즉시반영미보장/replicationlag 정확. explanationqueryvisible까지별도시점 타당.",
+      "EASY 지연대표원인 한구절, unsupportedDB장애단정아님."
+    ],
+    [
+      "database.core.replication.primary-replica.q2",
+      "KEEP",
+      "D replay늦어oldstate 정확. A 모든standbycommit전replay/B 같은연결고정이면자동read-after-write/C stream이면어느replica나최신 오답; rationale4·해설 대조.",
+      "MEDIUM source순서/replica고정/현재replayposition의다른조건을묻는 distractor 충분."
+    ],
+    [
+      "database.core.replication.lag.q1",
+      "KEEP",
+      "model/explanation primary후속read·사용자/sessionpin·필요LSNwait와latencycost 타당.",
+      "MEDIUM 시간pin은실용완화책이며어떤장애에도최신성절대보장으로표현하지 않음."
+    ],
+    [
+      "database.core.replication.lag.q2",
+      "KEEP",
+      "model/explanation lag넘은replica일시제외/회복후포함·필요readprimary/허용staleread분배 타당.",
+      "HARD q1의후속write필요와다른nodehealth/routing정책 및부하검토 목표."
+    ],
+    [
+      "database.core.replication.failover.q1",
+      "KEEP",
+      "model/explanation targetstandby가커밋복구WAL확보전primary소실→newhistory없음 정확.",
+      "HARD 단순notyetreplayed를유실원인으로확정하지않고안전한WAL확보/RPOack수준 구분."
+    ],
+    [
+      "database.core.replication.failover.q2",
+      "KEEP",
+      "A 원격단계ack로loss위험감소/latencyavailability비용 정확. B 둘다항상감소/C async와latencyequal/D sync도local만 오답; rationale4·해설 확인.",
+      "MEDIUM sync설정대상/단계조건과backup별도 명확."
+    ],
+    [
+      "database.core.query-patterns.offset-pagination.q1",
+      "KEEP",
+      "accepted9 skippedrow처리 비용 정확, explanation plan/index/data조건실측 타당.",
+      "EASY 큰OFFSET숫자500000은예시이며고정본문200000과계산정답불일치 아님."
+    ],
+    [
+      "database.core.query-patterns.offset-pagination.q2",
+      "KEEP",
+      "model/explanation 위치기억이라앞변경에같은OFFSET행달라짐·stableORDER≠고정집합 타당.",
+      "MEDIUM 앞INSERT는주로기존행중복, model은INSERT/DELETE통합drift 설명. 누락은삭제/키변경또는이미지난앞신규행 등범위에따라해석하며모든frontINSERT가원래행을누락시킨다고판정하지 않음."
+    ],
+    [
+      "database.core.query-patterns.keyset-pagination.q1",
+      "KEEP",
+      "accepted5 id동률해소 포함 정확, explanationcursor/queryORDER 전체계약일치 타당.",
+      "MEDIUM 명시된두컬럼정렬에서빠진id로단일답."
+    ],
+    [
+      "database.core.query-patterns.keyset-pagination.q2",
+      "KEEP",
+      "model/explanation created_atstrict<는같은시각남은행skip, ORtime< /time=+id< 경계 정확.",
+      "MEDIUM q1key명칭보다누락실행조건을확장해검증. tupleNULL/mixed방향은본문조건별도."
+    ],
+    [
+      "database.core.query-patterns.batch-n-plus-one.q1",
+      "KEEP",
+      "model/explanation1+100왕복·SQL/연결부가비용누적, JOIN/batch결과shape검토 정확.",
+      "MEDIUM 실제로order마다한쿼리라는전제, ORM동일identity캐시를가정하지 않음."
+    ],
+    [
+      "database.core.query-patterns.batch-n-plus-one.q2",
+      "KEEP",
+      "model/explanation1..manyrow증식LIMIT/OFFSET부모20과충돌/전송량·부모먼저page후batchDTO대안 타당.",
+      "HARD SQLrow vsEntity 단위와queries/rows/page정확성 동시평가, Springfetch API 문법목표아님."
+    ]
+  ],
+  "sources": [
+    [
+      "https://www.postgresql.org/docs/current/ddl-basics.html",
+      "CURRENT_VERIFIED",
+      "database.core.model: table schema/rows와 명시적sorting 없을 때 순서미보장 확인."
+    ],
+    [
+      "https://www.postgresql.org/docs/current/functions-comparison.html",
+      "CURRENT_VERIFIED",
+      "database.core.model: ordinary scalar NULL 비교unknown와 ISNULL, null-safe DISTINCT별도계약 확인."
+    ],
+    [
+      "https://www.cs.cmu.edu/~christos/courses/dbms.S12/slides/17NormI.pdf",
+      "CURRENT_VERIFIED",
+      "database.core.model: 실제 PDF의 FD→redundancy/inconsistency와 insertion/deletion 배경 및 함수종속 정의 대조. 구체 모든 anomaly 예의 완성된 실습자료로 판정하지 않음."
+    ],
+    [
+      "https://www.postgresql.org/docs/current/ddl-constraints.html",
+      "CURRENT_VERIFIED",
+      "database.core.model: FK 비NULL 참조값이대상행의키를 요구하는 referential integrity, PK/UNIQUE 계약 확인. / database.core.schema: UNIQUE 기본NULLdistinct/options·CHECK true/null 통과·crossrow 제한 확인. 앞model과 동일 source의 추가절 직접 대조."
+    ],
+    [
+      "https://www.postgresql.org/docs/current/sql-select.html",
+      "CURRENT_VERIFIED",
+      "database.core.sql: SELECT alias는ORDER/GROUP 가능·WHERE/HAVING불가와logical output/physical expression평가 차이 확인."
+    ],
+    [
+      "https://www.postgresql.org/docs/current/queries-table-expressions.html",
+      "CURRENT_VERIFIED",
+      "database.core.sql: LEFTunmatched NULL보존 및outer ON과WHERE 결과 비동치 확인. / database.core.query-patterns: sql Topic에서직접확인한JOIN매칭행별row생성과outer보존 계약 재사용."
+    ],
+    [
+      "https://www.postgresql.org/docs/current/functions-aggregate.html",
+      "CURRENT_VERIFIED",
+      "database.core.sql: count*입력행/count(expr)비NULL, 빈sumNULL 및coalesce 의미 확인."
+    ],
+    [
+      "https://www.postgresql.org/docs/current/tutorial-window.html",
+      "CURRENT_VERIFIED",
+      "database.core.sql: partition/virtualtable행유지·ORDER있는defaultframe의currentpeer포함·subquery후속filter와rownum 동률 한계 확인."
+    ],
+    [
+      "https://www.postgresql.org/docs/current/ddl-constraints.html#DDL-CONSTRAINTS-PRIMARY-KEYS",
+      "CURRENT_VERIFIED",
+      "database.core.schema: PK unique/nonNULL 및 자동uniqueBtree 확인."
+    ],
+    [
+      "https://www.postgresql.org/docs/current/ddl-constraints.html#DDL-CONSTRAINTS-FK",
+      "CURRENT_VERIFIED",
+      "database.core.schema: delete/update actions·NOACTION deferrable/RESTRICT 비지연·referencing index 비자동 확인."
+    ],
+    [
+      "https://www.postgresql.org/docs/current/indexes-types.html#INDEXES-TYPES-BTREE",
+      "CURRENT_VERIFIED",
+      "database.core.index: Btree equality/range/order 활용·LIKE 제약과planner 고려확인."
+    ],
+    [
+      "https://www.postgresql.org/docs/16/indexes-multicolumn.html",
+      "CURRENT_VERIFIED",
+      "database.core.index: 선두equality+첫inequality scan범위, 오른쪽filter/선두없는wide scan 확인."
+    ],
+    [
+      "https://www.postgresql.org/docs/18/indexes-multicolumn.html",
+      "CURRENT_VERIFIED",
+      "database.core.index: skipscan dynamic equality·선두distinct 적을때반복탐색이유리하다는 조건 확인."
+    ],
+    [
+      "https://www.postgresql.org/docs/current/indexes-index-only-scans.html",
+      "CURRENT_VERIFIED",
+      "database.core.index: VMallvisible 분기·payloadINCLUDE와key검색/unique범위·크기 비용 대조."
+    ],
+    [
+      "https://www.postgresql.org/docs/current/indexes-partial.html",
+      "CURRENT_VERIFIED",
+      "database.core.index: planning predicate implication/param한계·subsetUNIQUE 역할 확인."
+    ],
+    [
+      "https://www.postgresql.org/docs/current/planner-optimizer.html",
+      "CURRENT_VERIFIED",
+      "database.core.optimizer: 후보paths 비용선택·joinheuristic과최종tree 책임 확인."
+    ],
+    [
+      "https://www.postgresql.org/docs/current/using-explain.html",
+      "CURRENT_VERIFIED",
+      "database.core.optimizer: arbitrary cost vs actualms·per-executionrows/time/loops 및실행ANALYZE 확인."
+    ],
+    [
+      "https://www.postgresql.org/docs/current/planner-stats.html",
+      "CURRENT_VERIFIED",
+      "database.core.optimizer: ANALYZE sample/target비용·dependencies 독립성오차와 equality상수 적용한계 확인."
+    ],
+    [
+      "https://www.postgresql.org/docs/current/tutorial-transactions.html",
+      "CURRENT_VERIFIED",
+      "database.core.transaction: allornothing·BEGIN/COMMIT/ROLLBACK와everySQL implicitTX/client자동블록 대조."
+    ],
+    [
+      "https://www.postgresql.org/docs/current/runtime-config-wal.html",
+      "CURRENT_VERIFIED",
+      "database.core.transaction: nonoff localflush/off 지연성공·최근TXloss와fsyncoff의corruption위험 구별 확인."
+    ],
+    [
+      "https://www.postgresql.org/docs/current/sql-update.html",
+      "CURRENT_VERIFIED",
+      "database.core.transaction: UPDATE count0 비오류·RETURNING 결과, matched값불변/trigger suppression 변형 확인."
+    ],
+    [
+      "https://www.postgresql.org/docs/current/transaction-iso.html",
+      "CURRENT_VERIFIED",
+      "database.core.transaction: RC동시UPDATE wait후commit/rollback결과와 최신행WHERE재평가 확인. 복잡search조건과다른행snapshot한계도확인. / database.core.isolation: SQL이상정의·PG RU=RC/RRphantom금지·일반SELECT자기TXwrites및동시UPDATE차이 확인."
+    ],
+    [
+      "https://www.postgresql.org/docs/current/transaction-iso.html#XACT-READ-COMMITTED",
+      "CURRENT_VERIFIED",
+      "database.core.isolation: ordinarySELECT시작snapshot/다음SELECT새commit·UPDATEwait후latestWHERE재평가 확인."
+    ],
+    [
+      "https://www.postgresql.org/docs/current/transaction-iso.html#XACT-SERIALIZABLE",
+      "CURRENT_VERIFIED",
+      "database.core.isolation: committedhistory직렬성·dependency monitoring abort·predicate locksnonblocking 및SQLSTATE40001 확인."
+    ],
+    [
+      "https://www.postgresql.org/docs/current/mvcc-serialization-failure-handling.html",
+      "CURRENT_VERIFIED",
+      "database.core.isolation: SQL선택/값결정 포함complete transaction retry와성공미보장/지속충돌/다른errorcode주의 확인."
+    ],
+    [
+      "https://www.postgresql.org/docs/current/explicit-locking.html#LOCKING-ROWS",
+      "CURRENT_VERIFIED",
+      "database.core.locking: 일반read비영향/writers-lockersconflict·FORUPDATEwait·TXend/savepointrollback과RR/SERIALIZABLE변경error 확인."
+    ],
+    [
+      "https://www.postgresql.org/docs/current/explicit-locking.html#LOCKING-DEADLOCKS",
+      "CURRENT_VERIFIED",
+      "database.core.locking: deadlock자동victimabort·consistent획득order·일반wait와순환 구분확인."
+    ],
+    [
+      "https://www.postgresql.org/docs/current/sql-select.html#SQL-FOR-UPDATE-SHARE",
+      "CURRENT_VERIFIED",
+      "database.core.locking: NOWAIT/SKIPLOCKED row정책·tablelock별도·inconsistent view/queue의미 확인."
+    ],
+    [
+      "https://www.postgresql.org/docs/current/mvcc-intro.html",
+      "CURRENT_VERIFIED",
+      "database.core.mvcc: 실제intro 본문snapshot기준·read/write경합감소 및명시locks병존 확인."
+    ],
+    [
+      "https://www.postgresql.org/docs/current/storage-hot.html",
+      "CURRENT_VERIFIED",
+      "database.core.mvcc: index참조컬럼미변경+samepage여유→HOT/nonnewindex, old/intermediateversion pruning 계약 확인."
+    ],
+    [
+      "https://www.postgresql.org/docs/current/mvcc.html",
+      "CURRENT_VERIFIED",
+      "database.core.mvcc: 실제chapterTOC는isolation/locking/serialization 세부로가는탐색경로. 자체상세visibility증명으로판정하지않고링크한공식절과함께사용."
+    ],
+    [
+      "https://www.postgresql.org/docs/current/sql-set-transaction.html",
+      "CURRENT_VERIFIED",
+      "database.core.mvcc: RR첫query/data-mod SQL 고정·RCstatement·selfsession/default와snapshotimport조건 확인."
+    ],
+    [
+      "https://www.postgresql.org/docs/current/routine-vacuuming.html",
+      "CURRENT_VERIFIED",
+      "database.core.mvcc: 필요없는rowversion reuse/FULLrewrite·특수endpagesOS반환·longTXbackendxmin/replicationslot 보존범위 확인."
+    ],
+    [
+      "https://www.postgresql.org/docs/current/storage-page-layout.html",
+      "CURRENT_VERIFIED",
+      "database.core.storage: table/index fixedpage보통8KB·compile변경가능 확인."
+    ],
+    [
+      "https://www.postgresql.org/docs/current/runtime-config-resource.html#RUNTIME-CONFIG-RESOURCE-MEMORY",
+      "CURRENT_VERIFIED",
+      "database.core.storage: shared_buffers 관리block과OScache별도 사용 확인."
+    ],
+    [
+      "https://www.postgresql.org/docs/current/sql-explain.html",
+      "CURRENT_VERIFIED",
+      "database.core.storage: BUFFERS shared/local/temp hit/read/dirtied/written·파일block timing 의미 확인."
+    ],
+    [
+      "https://www.postgresql.org/docs/current/wal-intro.html",
+      "CURRENT_VERIFIED",
+      "database.core.storage: datafile변경전 WALdurable기록·매commitdatapageflush불필요와REDO 확인."
+    ],
+    [
+      "https://www.postgresql.org/docs/current/wal-configuration.html",
+      "CURRENT_VERIFIED",
+      "database.core.storage: checkpointredopoint/trigger·분산dirty쓰기·fullpageWAL증가·maxwalsize비절대상한/slotarchive보존 확인."
+    ],
+    [
+      "https://www.postgresql.org/docs/current/warm-standby.html",
+      "CURRENT_VERIFIED",
+      "database.core.replication: physicalWALrecovery/HotStandbyreadonly·asyncstreaming·승격전archive/pg_walavailableWALrestore 확인."
+    ],
+    [
+      "https://www.postgresql.org/docs/current/warm-standby.html#STREAMING-REPLICATION",
+      "CURRENT_VERIFIED",
+      "database.core.replication: 생성된record단위stream/async가시성지연·네트워크대역폭/standby따라가기 조건 확인."
+    ],
+    [
+      "https://www.postgresql.org/docs/current/warm-standby-failover.html",
+      "CURRENT_VERIFIED",
+      "database.core.replication: corefailuredetection소프트웨어없음·pg_ctlpromote/pg_promote 및oldprimarySTONITH경계 확인."
+    ],
+    [
+      "https://www.postgresql.org/docs/current/warm-standby.html#SYNCHRONOUS-REPLICATION",
+      "CURRENT_VERIFIED",
+      "database.core.replication: syncnames집합/FIRSTANY·remote_write/on/apply단계·roundtrip 및standby장애쓰기대기 계약 확인."
+    ],
+    [
+      "https://www.postgresql.org/docs/current/queries-limit.html",
+      "CURRENT_VERIFIED",
+      "database.core.query-patterns: uniqueORDER필요/OFFSET앞행computed 및LIMITplanner영향 계약 확인."
+    ],
+    [
+      "https://www.postgresql.org/docs/current/functions-comparisons.html#ROW-WISE-COMPARISON",
+      "CURRENT_VERIFIED",
+      "database.core.query-patterns: tuple동일개수/left-to-right lexicographic strictcomparison과첫decisiveNULLunknown 확인."
+    ]
+  ],
+  "findings": [
+    {
+      "id": "W2-DB-001",
+      "severity": "P1",
+      "contentKeys": [
+        "database.core.model.normalization"
+      ],
+      "file": "content/database/model/normalization.md",
+      "quote": "update anomaly",
+      "problem": "Curriculum 목표는 갱신·삽입·삭제 이상을 줄이는 정규화지만 본문과 문항은 갱신 이상과 snapshot만 다룬다. 주문 없는 회원의 사실을 입력하지 못하거나 마지막 주문 삭제로 회원 사실까지 사라지는 실패 조건을 이해할 근거가 없다.",
+      "action": "기존 주문/회원 표를 재사용해 주문 없는 회원 삽입과 마지막 주문 삭제 전후를 설명한다. 분리한 모델이 각 사실을 독립적으로 보존하는 이유를 추가한다. 정규형 암기나 새 Concept 생성 없이 기존 설명을 보강한다.",
+      "followupIssues": [
+        202
+      ]
+    },
+    {
+      "id": "W2-DB-002",
+      "severity": "P1",
+      "contentKeys": [
+        "database.core.model.relation-tuple",
+        "database.core.model.relation-tuple.q2"
+      ],
+      "file": "content/database/model/questions.json",
+      "quote": "관계형 모델에서 테이블의 행 순서가 본질적인 속성이 아니라고 보는 이유",
+      "problem": "q1/q2는 모두 ORDER BY, 행 순서 미보장, 동률 해소를 검사한다. 핵심 목표인 순수 set/SQL bag과 DISTINCT/저장 key 제약은 개별 문항에서 검증되지 않아 목표 중복과 공백이 생긴다. q2의 현재 정답 자체는 정확하다.",
+      "action": "q1의 정렬 입문을 유지한다. 기존 q2를 동일 tuple 중복이 SQL에서 가능한 이유, DISTINCT 결과와 PK/UNIQUE 저장 제약의 차이를 설명하는 목표로 최소 재구성한다.",
+      "followupIssues": [
+        202
+      ]
+    },
+    {
+      "id": "W2-DB-003",
+      "severity": "P0",
+      "contentKeys": [
+        "database.core.sql.select-order",
+        "database.core.sql.select-order.q1"
+      ],
+      "file": "content/database/sql/questions.json",
+      "quote": "WHERE는 GROUP BY와 집계 계산 전에 개별 행을 필터링하므로 아직 AVG 결과가 없기 때문이다",
+      "problem": "질문은 그룹 집계 필터에 사용하는 SQL 절을 요구하지만 acceptedAnswers 첫 문장은 HAVING이라는 답 없이 WHERE 사용 불가의 이유만 제시한다. 이 문자열을 그대로 낸 비응답이 정답으로 채점될 수 있다. 정답 절과 해설, Concept 본문은 정확하다.",
+      "action": "기존 q1 acceptedAnswers를 HAVING 또는 HAVING을 명시한 동등 표현으로 제한하고 원인만 적은 문장은 explanation에 유지한다. 채점 normalization 후 비응답이 정답이 되지 않는지 검증한다. canonical 수정은 후속 Issue 범위다.",
+      "followupIssues": [
+        202
+      ]
+    },
+    {
+      "id": "W2-DB-004",
+      "severity": "P1",
+      "contentKeys": [
+        "database.core.sql.window-function"
+      ],
+      "file": "content/database/sql/window-function.md",
+      "quote": "ORDER BY created_at, id",
+      "problem": "Curriculum은 PARTITION/ORDER/frame에서 순위·누적합 계산을 목표로 하지만 본문은 frame을 정의하지 않는다. 같은 정렬값의 peer가 기본 frame에 함께 들어가는 누적합과 명시적 ROWS의 범위를 구별할 근거가 없다.",
+      "action": "기존 누적합 예에 partition과 현재 행의 frame, PostgreSQL 기본 frame의 peer 포함을 설명한다. ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW와 비교한다. 같은 created_at 두 행의 결과 표와 unique id 추가 시 의미 차이를 보여준다. rownum 후속 filter에 subquery가 필요하다는 실행 예도 짧게 덧붙일 수 있다.",
+      "followupIssues": [
+        202
+      ]
+    },
+    {
+      "id": "W2-DB-005",
+      "severity": "P2",
+      "contentKeys": [
+        "database.core.index.covering-index",
+        "database.core.index.covering-index.q2"
+      ],
+      "file": "content/database/index/questions.json",
+      "quote": "실행 계획에서 함께 확인할 PostgreSQL 상태는 무엇인가?",
+      "problem": "q1/q2의 답과 해설은 모두 visibility map의 all-visible 미충족 → Heap Fetches라는 같은 목표를 반복한다. 두 정답은 정확하고 핵심 가시성 목표도 검증되므로 P2의 선택적 보강으로 분류한다.",
+      "action": "q1을 유지하고 기존 q2를 key/INCLUDE payload 차이 또는 큰 payload의 쓰기·캐시 비용과 읽기 이득을 선택하는 사례로 확장한다. 정확한 본문과 가시성 설명은 유지하며 새 문항 추가는 불필요하다.",
+      "followupIssues": [
+        202
+      ]
+    },
+    {
+      "id": "W2-DB-006",
+      "severity": "P1",
+      "contentKeys": [
+        "database.core.optimizer.statistics"
+      ],
+      "file": "content/database/optimizer/statistics.md",
+      "quote": "expression / parameter 영향",
+      "problem": "Curriculum은 오래된 통계와 parameter/데이터 쏠림을 구별하는 진단 목표지만 parameter 영향은 원인 목록 한 줄뿐이다. ANALYZE로 통계를 갱신한 뒤에도 같은 prepared query가 parameter 분포/generic 추정으로 다른 비용을 내는 이유를 설명하지 않는다.",
+      "action": "기존 PAID/PENDING 분포를 재사용해 같은 query의 다른 값에 대한 예상/실제 행수 차이와 PG generic/custom 계획을 비교한다. EXPLAIN EXECUTE로 실제 parameter와 plan을 확인하는 경로를 제시한다. force_custom을 만능 처방으로 권장하지 않으며 정확한 freshness/correlation 설명과 문항은 유지한다.",
+      "followupIssues": [
+        202
+      ]
+    },
+    {
+      "id": "W2-DB-007",
+      "severity": "P1",
+      "contentKeys": [
+        "database.core.isolation.serializable"
+      ],
+      "file": "content/database/isolation/serializable.md",
+      "quote": "backoff(attempt);",
+      "problem": "bounded retry Java 예는 모든 SerializationFailure를 catch하고 마지막 시도에도 backoff한 뒤 loop를 그냥 끝낸다. MAX_RETRIES 전부 실패해도 실패 전달/result가 없어 호출자가 성공처럼 흐름을 계속할 수 있다.",
+      "action": "전체 TX 재시도 원리는 유지하고 마지막 실패는 재throw 또는 소진 예외/명시적 실패 결과로 전달한다. 다음 시도가 있을 때만 backoff하며 예산 소진·관측·외부 부수 효과 경계를 짧게 기록한다. 실제 Spring retry 기능 구현은 감사 범위 밖이다.",
+      "followupIssues": [
+        202
+      ]
+    },
+    {
+      "id": "W2-DB-008",
+      "severity": "P0",
+      "contentKeys": [
+        "database.core.locking.row-lock",
+        "database.core.locking.row-lock.q2"
+      ],
+      "file": "content/database/locking/questions.json",
+      "quote": "같은 row에 대한 locking read가 T1의 transaction lock과 충돌하기 때문이다",
+      "problem": "질문은 T2의 일반적인 동작을 묻지만 acceptedAnswers 중 한 항목은 충돌 원인만 말하고 대기 동작을 답하지 않는다. 같은 잠금 충돌은 NOWAIT 오류/SKIP LOCKED 제외 정책과도 관련되므로 충돌이라는 말만으로 행동 답을 완성하지 못한다. 현재 대기 정답과 해설은 정확하다.",
+      "action": "원인만 적은 문장에 대기 동작까지 명시하거나 acceptedAnswers에서 제거하고 해설에 유지한다. 명확한 대기 답은 보존하고 요청 동작을 빠뜨린 비응답이 채점을 통과하지 않도록 확인한다.",
+      "followupIssues": [
+        202
+      ]
+    },
+    {
+      "id": "W2-DB-009",
+      "severity": "P1",
+      "contentKeys": [
+        "database.core.mvcc.visibility"
+      ],
+      "file": "content/database/mvcc/visibility.md",
+      "quote": "가시성 규칙이 읽을 버전을 선택합니다.",
+      "problem": "Curriculum은 xmin/xmax와 commit 상태로 tuple 선택을 개념적으로 추론하게 하지만 본문과 문항은 RC/RR snapshot 수명만 설명한다. 어떤 생성/갱신 TX의 버전이 snapshot에서 보이는지 판단하는 가시성 규칙 자체가 빠져 있다.",
+      "action": "기존 S1/S2 그림에 old/new tuple의 생성 xmin, 무효화 TX와 commit/abort 상태를 붙인다. UPDATE 전과 commit 후 snapshot의 version 선택을 보여준다. 자기 write, 미commit/abort 및 visible nonzero xmax 예외를 짧게 설명한다. xmax의 lock/multixact 용도 때문에 숫자 대소나 0만으로 단정할 수 없다는 한계를 명시한다. 모든 내부 bit 암기는 불필요하다.",
+      "followupIssues": [
+        202
+      ]
+    },
+    {
+      "id": "W2-DB-010",
+      "severity": "P1",
+      "contentKeys": [
+        "database.core.query-patterns.keyset-pagination"
+      ],
+      "file": "content/database/query-patterns/keyset-pagination.md",
+      "quote": "803 ─ 802 ─ 801 │ 800 ─ 799 ─ 798",
+      "problem": "첫 도식은 page 1의 마지막 cursor를 800이라고 쓰면서 구분선을 801과 800 사이에 둔다. strict tuple < cursor SQL은 800을 다시 반환하지 않고 799부터 이어야 하므로 소비한 행과 다음 조회 경계를 잘못 읽을 수 있다. SQL과 뒤의 tie 표, 문항은 정확하다.",
+      "action": "같은 created_at에서 803…800을 소비 완료 쪽에 두고 800 뒤에 경계를 표시한다. 다음 쪽은 799/798로 명시하고 strict 조건이 cursor 행을 제외함을 덧붙인다. 정확한 SQL·문항·순서 조건은 유지한다.",
+      "followupIssues": [
+        202
+      ]
+    }
+  ],
+  "sourceHashes": {
+    "database.core.index.btree": "270a298d938f3d68c674887bb73439bd99d51d0e7b547e1af9340e46b55a07c2",
+    "database.core.index.btree.q1": "409023517dd37d9759a2243771a3c07bd54eb9eeb977c02eb259679ae2512712",
+    "database.core.index.btree.q2": "414d43ac7c1588a4333ef2f1351c57552f7387bb16d566aedfa4b10952ac0f87",
+    "database.core.index.composite-index": "494e5bec34d2160bef2ae4d1c9386979ac02835a3036dcef19d87a37f84a7974",
+    "database.core.index.composite-index.q1": "38a80272a463d8e84a1cc39999f29eac45eba624c6ba2e7aa46b61bcbf1ad175",
+    "database.core.index.composite-index.q2": "a2c414ad1ac3514e752ab706ad8e6a4a163d2f545df147e4c26b579feee50dff",
+    "database.core.index.covering-index": "7bb7ec93262af1b498523aa83e52b06e595765c4464b50c7427ba4c8377cdbff",
+    "database.core.index.covering-index.q1": "62ab41e33dcae76483dbf85279e4898c935891faf1df627c5be241d2eba597ca",
+    "database.core.index.covering-index.q2": "f546ecaa914c95bb6229e15a47d60fe0ba12f951148fb0c2c70d829df510bc95",
+    "database.core.index.partial-index": "409e8a775c61742674ba140e42f18c0cfefcaee8b30d6f3f25cc07385949513f",
+    "database.core.index.partial-index.q1": "15dbad2231d946d2f9981eae095c1d5394ae4b155735887c48967c4bf943f8bc",
+    "database.core.index.partial-index.q2": "527a526dfde1dd9566c67bfbd9ae80ca34d4e82665c16ebc32c155773b45fc74",
+    "database.core.isolation.anomalies": "0d5b8d061dba90b603df2fb0076d14a9ab6d8dea6cc79a67ddff9f21a1aedacb",
+    "database.core.isolation.anomalies.q1": "024c11b5ecc64761ec889042bbd50c269a8a33188ed21c01f53f2e25d5b854b3",
+    "database.core.isolation.anomalies.q2": "bdc05352de42dbd89a751aa2381cacae03abd57c47c7b0b6aba6cc5e5061c0af",
+    "database.core.isolation.read-committed": "9620512839050ad7104acb16bd56ccf1a388c676edb2366f59695d66cd03c325",
+    "database.core.isolation.read-committed.q1": "1d540dfb5461e441e71c32a034ee25149628a69c006afdc258e7b0ff279c0075",
+    "database.core.isolation.read-committed.q2": "ebd222a450b2b7a11fb18e4a0bf3734747906a83c294701b7b8a68bf7abb6640",
+    "database.core.isolation.serializable": "3da10691b47342834cd3fcc8d7de280ecdbdcb483ed720cdedc4307671ee670b",
+    "database.core.isolation.serializable.q1": "d72758b248977bf53b2b7f9506f34bc91cf19a2f4bb32167aea79d3e0d5c45de",
+    "database.core.isolation.serializable.q2": "402b76c97ae5c28bf04e69dfaad92b317b1ff8d3ddc502f0085bf8e693ab47dc",
+    "database.core.locking.deadlock": "bbcd20d20021135c55fbf1447c23069a209f7a30833b797a4b659fad7fff5ec1",
+    "database.core.locking.deadlock.q1": "c87157ab3cecefeb6568c9301a8dbd2b684c12e53a66ec697881a5257dadf662",
+    "database.core.locking.deadlock.q2": "52a58b905da691d884a7ba7ad01026cb2ce87ea0a17568953cf9c6b2636095a6",
+    "database.core.locking.pessimistic": "76f3a6629cca7963c1af6fe196233033143e630ae67c2c45cb099951200d67a2",
+    "database.core.locking.pessimistic.q1": "7d0590d8a27ca905905031de5318057b5050b00b580e1182eae31bde005475f0",
+    "database.core.locking.pessimistic.q2": "becb8b98e63e389b468eaddb4a462ccc8540d1d3e409c46a651adf9a9ea2046b",
+    "database.core.locking.row-lock": "486ce74431f77998237309b897fd597940c30b423b7415ff2d4a40c0290c863f",
+    "database.core.locking.row-lock.q1": "ee7e45e88a0b1d591b015784ca0f97fae963abf27740881d4fed10fdefadd6cf",
+    "database.core.locking.row-lock.q2": "3982152d135040e713202783ca1cd1cdc3d0c0caf45075e74cdaeb356823ef0f",
+    "database.core.model.normalization": "ecb0c632ef985617ce36ca59b0ca932b103454591b27c3d317163793e5a500e9",
+    "database.core.model.normalization.q1": "66bd61b77edac7016a696165150749df90f962a6533427e69c6b1be2a857f999",
+    "database.core.model.normalization.q2": "a1d5d81f3c84a28a091b88fefb180e082f6480551db8ea75242fae46dfdc4283",
+    "database.core.model.null-three-valued": "71ff3c9bf3d2478df6d126682c7a91621ace9915ffe0b9abfcab2cc3ceaf5aa9",
+    "database.core.model.null-three-valued.q1": "555f5541e2f8e16921e2962e30cfebc81231786bc0d5325ec0c42cdb45fb1812",
+    "database.core.model.null-three-valued.q2": "0ebdbe51b5ed9214b24021191cd6327df2cfcc39b67b267a96a6aca4e00a41d2",
+    "database.core.model.relation-tuple": "3d6499790bbca8d38e19c683384c90b163cebb9e67b025a5132cad7f9d515e2c",
+    "database.core.model.relation-tuple.q1": "473884abdd9e2f7791b80d63a85eff0e2e9d78717ef01eefc0091d66fbf7e2d8",
+    "database.core.model.relation-tuple.q2": "7b7285a37b6b2c09be58cf57bd5fa3709d47d67f73716953ba4f749c83c92de7",
+    "database.core.mvcc.cleanup": "f41a20ed3771e765a914fcb3ccb336ac361271104eaab6ada957d2704b8da8ad",
+    "database.core.mvcc.cleanup.q1": "6ea128cef20a28d2a316b0d63aa5da9c3ef48cf5f35b53b7d701078ad8ae2224",
+    "database.core.mvcc.cleanup.q2": "8b601b558a4c888cb54333c14937b4f5b5a88a1e552d43fd1a15e88da3869cf2",
+    "database.core.mvcc.versions": "4802a2db47a6c78fdbf7967c0f5b5753abf10807c78b6ddf6d35f7b0427c493e",
+    "database.core.mvcc.versions.q1": "9d4514f1aa5f37c95fb168142a720ca672f5cc0ac165c4c57f4458baf7e35289",
+    "database.core.mvcc.versions.q2": "2473391fb4a198b3f0329cc32f436699e54ba5ecc48fbca8931d28af8ff5f5e5",
+    "database.core.mvcc.visibility": "18f0172619438397265536890c0744a480a6825456e5f8d01bd04bd0a2f2c363",
+    "database.core.mvcc.visibility.q1": "731a493afd15fbd53c5764ada970268cf91c05fa34c2dce24e6cfb4d6f23bc7e",
+    "database.core.mvcc.visibility.q2": "a115e529c870e29fcfb98ba933b5bfb7cd306757d89cb66437922c4542a5c294",
+    "database.core.optimizer.cost-estimate": "db7f8ff0825e1c2586ccc4fabd8e468198d33bbb3b78fc3f7feac1c8122466f6",
+    "database.core.optimizer.cost-estimate.q1": "21bf988360a714ca8c78f114aab60df99e06910739a1f12c32a6514f6c344f07",
+    "database.core.optimizer.cost-estimate.q2": "5667170223ff3b42594cb3848f458e3ffe6c7a9b98fe4f927c8a18b5e146e548",
+    "database.core.optimizer.explain": "f0d7745556026891e542a2bb29bf2b18b7b1092514ee064ebb363370e211c88c",
+    "database.core.optimizer.explain.q1": "5d98a7e563d4984f647ff9568b5ac736e3b707c1afdcea56b57b14bf2c4126cb",
+    "database.core.optimizer.explain.q2": "86c2b90183615109e1cc4ac94e967f59a18007e633dd0f1a5992762cc4920500",
+    "database.core.optimizer.statistics": "ae3cf5eb2c1cacabace4204b7db7586b7cf613184c9e562050e81dcb1f57d558",
+    "database.core.optimizer.statistics.q1": "0e5e36f8263e131b2fce107a5f9a9ce6fd461ffee6ea7f3d63fa24c61541af8f",
+    "database.core.optimizer.statistics.q2": "e995c688df25182c6cd7329a790931f2f413ec6c2e0c4d9da4ddba0c6a003391",
+    "database.core.query-patterns.batch-n-plus-one": "8486fb7b6bb197eefe603047163e4f9da272e0fa9562783500779a4d873cc785",
+    "database.core.query-patterns.batch-n-plus-one.q1": "8aa5b94419eac6951981d81466ea04a305506710b8dab1c23a44624ea2a661b8",
+    "database.core.query-patterns.batch-n-plus-one.q2": "df1278ebeda4d2471f79732c46293397bbf68437735e377f568cefea0d0c0ddd",
+    "database.core.query-patterns.keyset-pagination": "1cd61c5fe2fb140a3ff7b893f53fb0d9e3b7e8960c52d2c90b65624dd4e79232",
+    "database.core.query-patterns.keyset-pagination.q1": "b31e9221f06764f2ae53daad3615b744ea8a885c5e189207ace8c1f98a4577b8",
+    "database.core.query-patterns.keyset-pagination.q2": "e5a31a3f8eb51656df8438a6a5e4356bdccc129835e4bff9494dc8031a3d4c4a",
+    "database.core.query-patterns.offset-pagination": "97ce624bf48b0b177197cbf15fab9b5dbe89a05c34ad8560968cfe4cc0b7f057",
+    "database.core.query-patterns.offset-pagination.q1": "61857a88306fba8a8bed04b779e6467416a2dc60effbf450f772ed752288ef27",
+    "database.core.query-patterns.offset-pagination.q2": "c8c4ca8b4a3a3ca4f3f475bd3d7effee33436e7732e5a683ce8c7295defe0344",
+    "database.core.replication.failover": "a428daec5c95f630cb368ea4fbc1c7eb5318ee2b99544fd88d81350947a7e54a",
+    "database.core.replication.failover.q1": "7b05b5ba9731381e2754c5ea8c2b72679a23338c58ad7db4ede9b276e1b874b7",
+    "database.core.replication.failover.q2": "84d8c2c0683be8fb89fd96d32b3008f26dc3b80e0b4a00bd3a14e8483d06708b",
+    "database.core.replication.lag": "29f57427839e9e35cd598a34392ca3672137a42d526c7e8c692ca65cdfc9bd65",
+    "database.core.replication.lag.q1": "67d9e2e7a28a05a638ec54bc4b42af1b2e7450d8d32af98c093305ecc729afba",
+    "database.core.replication.lag.q2": "a6171fa18260d4d3b84f2548a9f4de266a2320be64c9106cf259fdee7f3d9437",
+    "database.core.replication.primary-replica": "641d34bb90d05d6068844662ae26df0eb12b7f3c281c601b41d9e80082f64bba",
+    "database.core.replication.primary-replica.q1": "03f762dcdeafb408b02e7b1dc3110badf04b36889f050beb4e61b57baf9e1d78",
+    "database.core.replication.primary-replica.q2": "3234aa9882c4a9f78d2f60cc97dd2d78a9f7387b8b2dcf210ab20f46868eb7bb",
+    "database.core.schema.foreign-key": "45514706af5e5576b4c92bb9615d4c3f6f32d65da6e2629700123051852dc23b",
+    "database.core.schema.foreign-key.q1": "062aaffaa35bb22a4ed39604ba7ddc0ab081693c5014bf7d99c71189b20d23d3",
+    "database.core.schema.foreign-key.q2": "f7ac77c5dafc10840c72a5c0ff2216ad42b70bb9b63042675b5fd822ae1b77a4",
+    "database.core.schema.primary-key": "b7aabfa89c08cbfdd35138351e8797392ab53febff5824f1c3ee1cdf4e822efd",
+    "database.core.schema.primary-key.q1": "6c90d2ff4ccbee2e41352ad0a970d4c42f4a10dbb633fc19b7d098db881da7cc",
+    "database.core.schema.primary-key.q2": "7cb7731d5439121457429084cac0b47e5cbd9f655b3ed81c8eeda82ccd7cd854",
+    "database.core.schema.unique-check": "7d7d596c8b79e023518ecc148c1f625d721e16f1a4b5dc31302591ca96455cd4",
+    "database.core.schema.unique-check.q1": "6d90a84a35c1c4ba17f5a1cffcbc65a1c06b85d77117ed6f657cb137eb8f3691",
+    "database.core.schema.unique-check.q2": "35172fcd18f2c99f87f301b177edcd7209ceb02ba178866797f2c69fadb62064",
+    "database.core.sql.aggregate": "2064055a9450b5f0079f960a01a896c7f209b04db0a0a6c159ca35e28e6fa491",
+    "database.core.sql.aggregate.q1": "10c772f2c2ed1249da80b45c23cdf65c1b13c6f4da7399d1d1ddb94d8b40287f",
+    "database.core.sql.aggregate.q2": "54d3eda44f44386ac3a90f91e6587a2476c3a8dcaaec30ead5c5bdb5c8755804",
+    "database.core.sql.join-semantics": "9abea47b1fa3b31a8b2e7f81081d527bc9fa10f3dff9f4e0f19db33404ec8d07",
+    "database.core.sql.join-semantics.q1": "e0c53deae1f6d0926ad5db0e2d03a798688e95c95fec84bdcca64784ab019fd0",
+    "database.core.sql.join-semantics.q2": "3b6a35a36395b5bfb8bcc780249a7f64f307b723c5c8d54849e7feec3d2f2b9f",
+    "database.core.sql.select-order": "1b4164e5d4e79b05b7c7327f23bc7e515cb63b0c263dc9f5fb51c73905695a9f",
+    "database.core.sql.select-order.q1": "619b03c1d37afb1b17f897419e549f9fbc9952732df66709ae6e2dab21a008c5",
+    "database.core.sql.select-order.q2": "5e8aec9474c176ce429bcac443e7a2cfcbb97ad8e9e6c7c51efc83577658aaff",
+    "database.core.sql.window-function": "aa0b4882a363223168172e72f131e04ff7f32c58e85ed19d5ba8b47ea63e05b8",
+    "database.core.sql.window-function.q1": "3727b99a28d0d1d51467f4de31c63a582acdad0f5f23a56bc9c260673be35ff0",
+    "database.core.storage.checkpoint-recovery": "70ff28bfc00252f9d313ba150a2330116b05ececff87558aa60bef9fc3cd4789",
+    "database.core.storage.checkpoint-recovery.q1": "94ada21edb2683e7d0ded86b401c0f3dd08df16feb56b38792396a87af7902c3",
+    "database.core.storage.checkpoint-recovery.q2": "c116298971f490edf366d991f10f2e747172c617bd80aa245e65d4964722e8a8",
+    "database.core.storage.pages-buffer": "4065ca0a997deadee3d5851582cdb0c606bbe77a7dfd5b55dd574367cf235a30",
+    "database.core.storage.pages-buffer.q1": "3ede9c55323ada2dadd9939ce6b709449e1527e301489ed3b11831bc4469312e",
+    "database.core.storage.pages-buffer.q2": "b7eedc7ce01a5ccc0164d148b90c161a0d216b7d4cbd1978805cf6d992737b31",
+    "database.core.storage.wal": "943981eefd04a8c0c14ded458f99fdc8e2bd2d14651d8c6687e08d46216de8fe",
+    "database.core.storage.wal.q1": "b5467a3d42e305e20a0bd1cac1fe833d2b943ba2ccedffd723655bbdb14da071",
+    "database.core.storage.wal.q2": "7c9d1c06cd7c6c31a82deb236b05c55b034a7299e21ecf297db99dad240cf33e",
+    "database.core.transaction.acid": "f6176ff831531633a56b2e1a319ebf56a6fa496ede7faf113615efa4729b0f53",
+    "database.core.transaction.acid.q1": "e34925f1ad94f839a0d7742d1e66fb73aa7ea3f2ffec2af116fbaea5a872e207",
+    "database.core.transaction.acid.q2": "e057a30b9aabf1664bec3b44eec2da0fb623286b58bfbd573bb03c97a3dea684",
+    "database.core.transaction.atomic-write": "a2205f2a792cfea6cf8bcdd3c3ece9c6b1ebcdd7c6fd06e5b48b4ffdcc4bd55d",
+    "database.core.transaction.atomic-write.q1": "63dc9eeb7ebea1db19b0f5fb73e12acae0c39f7ad5fa14fffa72c49eaca8cb24",
+    "database.core.transaction.atomic-write.q2": "cbd5ece487dfd4e7006dfbbaf1679e50dc16db677aa1ef0cf2f45d9df8e62076",
+    "database.core.transaction.autocommit": "e1d4246ca49dad175f09e38e4d1511032a049ad4f338738336d3c37070a5d825",
+    "database.core.transaction.autocommit.q1": "1fb1688f8a6d4bea8a9da81cae94182dcc3a2cdc296e65646d9c4001bef94a23",
+    "database.core.transaction.autocommit.q2": "8effe199536900af69ae7704bf2700d73fb063dffdef7034d7cb0035cb28e2c0"
+  },
+  "curriculumSha256": "8bd3dc92723059ddb8d6bf6ab366ed45138bf208724536291fa0a8fd8a7e5804",
+  "topicCatalogSha256": "0efb22d349b800e30a9d48f9e5b975b4a7be4e9715709825b3765a69b188f467",
+  "supplementalSources": [
+    [
+      "https://www.postgresql.org/docs/current/functions-subquery.html",
+      "CURRENT_VERIFIED",
+      "database.core.model: NOTIN RHSNULL/leftNULL→UNKNOWN 및 EXISTS 행존재조건 대조."
+    ],
+    [
+      "https://www.postgresql.org/docs/current/functions-sequence.html",
+      "CURRENT_VERIFIED",
+      "database.core.schema: nextval abort후값반환않음/ONCONFLICT도gap·gapless 보장불가 확인."
+    ],
+    [
+      "https://www.postgresql.org/docs/current/sql-prepare.html",
+      "CURRENT_VERIFIED",
+      "database.core.optimizer: generic는parameter공통/custom은실제값사용, plan_cache_mode·EXPLAINEXECUTE 관측으로값민감성 구분하는 계약 확인."
+    ],
+    [
+      "https://www.postgresql.org/docs/current/ddl-system-columns.html",
+      "CURRENT_VERIFIED",
+      "database.core.mvcc: xmin은rowversion생성TX/xmax삭제TX(visible해도nonzero가능), commit/abort 판별없이xmax0만으로가시성확정불가 확인."
+    ],
+    [
+      "https://www.postgresql.org/docs/16/monitoring-stats.html",
+      "CURRENT_VERIFIED",
+      "database.core.storage: PG16pg_stat_bgwriter checkpoints_timed/req·write/sync_time 확인."
+    ],
+    [
+      "https://www.postgresql.org/docs/current/monitoring-stats.html",
+      "CURRENT_VERIFIED",
+      "database.core.storage: PG18pg_stat_checkpointer num_timed/requested/done·write/sync와skippedcounter 의미 확인. / database.core.replication: pg_stat_replication sent/write/flush/replay_lsn과lag의ack-delay 의미, idleNULL/catchupETA아님 확인."
+    ]
+  ]
+}

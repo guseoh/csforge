@@ -1,0 +1,481 @@
+{
+  "area": "java",
+  "wave": 4,
+  "topic": "generics",
+  "topicKey": "java.core.generics",
+  "baselineSha": "efe73a15da14c996bd08344181d4d6f87073803d",
+  "reviewedAt": "2026-10-14",
+  "reviewMethod": "6C/37Q의전체본문/정답/모든보기rationale/서술모델/해설/난도/모호성/연결을직접읽고수기근거를기록. JLS/JDK관련절과Reference11관계,SVG전체소스대조. 자동판정/과거PASS전파없음.",
+  "topics": [
+    {
+      "key": "java.core.generics",
+      "coverage": "6C/37Q전수: genericT→invariance→PECS→raw경계→erasure/reifiable→varargs안전성순서."
+    }
+  ],
+  "concepts": [
+    [
+      "java.core.generics.generic-types-methods",
+      "KEEP",
+      "L1 CORE: Object상자의잘못된Integer→String읽기와Box<T>의정적삽입방어,메서드T추론을연결해필요성/동작설명충분.",
+      "두Box는대체예시이며echo의독립T와클래스T구별을문항에서추론. erasure를타입검사부재로설명하지않음.",
+      "NONE: 상태/타입오류코드와컴파일vs런타임질문이충분.",
+      "JLS4.5의reference타입argument/bound와8.4.4의메서드타입변수/추론을해당목표에대조.",
+      "q1~q6: add/get,first String,java/7,입출력T,rawvsObject,Class토큰의중첩타입한계를직접검토."
+    ],
+    [
+      "java.core.generics.generic-invariance",
+      "KEEP",
+      "L2 CORE: 안전하지않은동일목록쓰기의반례→불공변차단→배열의실행검사→와일드카드로읽기범위확장설명이충분.",
+      "같은목록alias와별도copy의변경대상이구별된다. 배열저장시Cat[]에Dog거절을언어타입모델로설명.",
+      "TEXT: alias→Integer저장→String계약붕괴ASCII와배열비교표가효과적.",
+      "JLS4.10의T<S가C<T><C<S>를함의하지않는규칙을읽기값upcast와목록대입차이에대조.",
+      "6Q정답/보기검토. q4 B의Double삽입에Integer반례를설명하는rationale만P2;본문불공변모델은유지."
+    ],
+    [
+      "java.core.generics.wildcards-pecs",
+      "KEEP",
+      "L2 CORE: sum과addDefaults/copy로producer와consumer의값흐름을설명하고namedT가필요한양방향사용을비교.",
+      "extends를immutable로확대하지않고clear가능성/구체T쓰기제약과null만허용하는정적경계를구별. super읽기Object도정확.",
+      "DIAGRAM: generics-pecs.svg전체source의producer좌→Number읽기와Integer→consumer우쓰기/title/desc/좌표를확인. 별도Reader render미완료.",
+      "JLS4.5.1 upper/lower bound와addAll/Reference queue의관련예시를실제copy의src/dst흐름에대조.",
+      "8Q를읽음. q3 B의Double일수있어Double로못읽는다는오답논리만P2. 나머지copy A/서술PECS/동일T와반환wildcard의한계타당."
+    ],
+    [
+      "java.core.generics.raw-types-unchecked",
+      "KEEP",
+      "L2 STANDARD: legacy이유→혼합저장→unchecked대입→후속String캐스팅실패의시점을충분히설명.",
+      "SuppressWarnings는검사추가아님,작은검증경계/원본alias위험이q3복사설계로연결. List<?>는rawtypes와구별.",
+      "NONE: 세줄실패경로와외부별칭시나리오가충분하며그림개수로결함을만들지않음.",
+      "JLS4.8 raw정의/erasedmember/legacy한계와5.1.9 raw→parameterized unchecked변환을각관계에대조.",
+      "4Q D읽기후실패/D복사별칭분리/CObjectparameterization거절까지보기와해설전수검토."
+    ],
+    [
+      "java.core.generics.type-erasure-reifiable-types",
+      "TARGETED_ENHANCE",
+      "L3 CORE: compile검사/runtimeobject/Signature메타데이터구별과reifiable/배열/토큰제약이목표에맞음.",
+      "newArray(Class<T>,int)는int.class도Class<Integer>로받지만int[]를T[]즉Object[]로cast해CCE가나는입력경계가누락됨(W4-JGEN-001 P1). String.class예시는동작하며erasure설명전체rewrite불필요.",
+      "TEXT: compile/runtime/metadata3층표현과Object value명시instanceof예시가충분.",
+      "JLS4.6의leftmostbound소거와4.7의unboundedwildcard범주를대조. JLS15.8.2/Array.newInstance는보조계약으로primitive토큰의실제배열과genericT[]차이를확인.",
+      "7Q C소거/AList<?>/Object전제C불가/B명시토큰/C오해/Dtrue뒤String읽기CCE/overloadsignature충돌서술을검토. 객체Object전제를Java16이후모든instanceof금지로확대하지않음."
+    ],
+    [
+      "java.core.generics.generic-varargs-heap-pollution",
+      "KEEP",
+      "L3 STANDARD: erased List[]의alias쓰기→타입화읽기CCE와개발자보증/허용선언위치/배열escape위험을충분히설명.",
+      "List<Integer>저장자체는List[]검사를통과하고String읽기cast가실패. SafeVarargs는검사추가아니며static/final/private/constructor문법과실제안전성별개.",
+      "NONE: 실제unsafe코드와ASCII배열alias→실패흐름이충분.",
+      "JLS4.12.2의같은List[] pollution예시,SafeVarargsAPI의unsafealias반례/JLS9.6.4.7 declaration와callsite경고범위를각대조.",
+      "6Q A배열경계/D오염/A읽기CCE/A컬렉션대안/A무근거annotation/배열escape시나리오의일부storecheckvs제네릭차이를검토."
+    ]
+  ],
+  "questions": [
+    [
+      "java.core.generics.generic-types-methods.q1",
+      "KEEP",
+      "A: add/get정적String관계가직접효과. B가변성/Cruntime인자보존/Dnull컴파일거절은아님;String final은존재하는새하위class를보장하는문항아님.",
+      "모든실제필드를직접검토;선택지별반박/난도/중복/Concept연결은앞근거. 실제실행은별도제한probe만."
+    ],
+    [
+      "java.core.generics.generic-types-methods.q2",
+      "KEEP",
+      "C: List.of(a)의String과대입문맥이first의T를String으로추론. AObject항상/BList반환/Dvoid아님.",
+      "모든실제필드를직접검토;선택지별반박/난도/중복/Concept연결은앞근거. 실제실행은별도제한probe만."
+    ],
+    [
+      "java.core.generics.generic-types-methods.q3",
+      "KEEP",
+      "A: 클래스T=String과echo의독립T=Integer,출력java/7. B동일T/C클래스변경/D소거로항상실패를각반박.",
+      "모든실제필드를직접검토;선택지별반박/난도/중복/Concept연결은앞근거. 실제실행은별도제한probe만."
+    ],
+    [
+      "java.core.generics.generic-types-methods.q4",
+      "KEEP",
+      "B: 입력원소와반환의같은T관계. A항상int/C고정String/D상수읽기에는불필요한타입변수.",
+      "모든실제필드를직접검토;선택지별반박/난도/중복/Concept연결은앞근거. 실제실행은별도제한probe만."
+    ],
+    [
+      "java.core.generics.generic-types-methods.q5",
+      "KEEP",
+      "B: List<Object>는명시parameterization/rawList는일부검사포기. AString목록공변/CrawString만/Dadd금지아님.",
+      "모든실제필드를직접검토;선택지별반박/난도/중복/Concept연결은앞근거. 실제실행은별도제한probe만."
+    ],
+    [
+      "java.core.generics.generic-invariance.q1",
+      "KEEP",
+      "C: Cat목록을Animal로alias허용시Dog삽입반례. A런타임class/B읽기Object만/D상속타입argument불가아님.",
+      "모든실제필드를직접검토;선택지별반박/난도/중복/Concept연결은앞근거. 실제실행은별도제한probe만."
+    ],
+    [
+      "java.core.generics.generic-invariance.q2",
+      "KEEP",
+      "B: Cat[]→Animal[]공변대입은컴파일,Dogstore시ArrayStoreException. A실행정상/C대입컴파일실패/D자동Cat변환아님.",
+      "모든실제필드를직접검토;선택지별반박/난도/중복/Concept연결은앞근거. 실제실행은별도제한probe만."
+    ],
+    [
+      "java.core.generics.generic-invariance.q3",
+      "KEEP",
+      "C: A대입만컴파일오류. 새ArrayList<Number>(ints)별도copy,2.5추가후[1]/[1, 2.5]. Bcopy불가/Dalias공유아님.",
+      "모든실제필드를직접검토;선택지별반박/난도/중복/Concept연결은앞근거. 실제실행은별도제한probe만."
+    ],
+    [
+      "java.core.generics.generic-invariance.q4",
+      "TARGETED_ENHANCE",
+      "A정답Number읽기는맞고B/C임의Double/Integer쓰기금지. B rationale이Double목록에Integer쓰기를들어Double선택지와엇갈림W4-JGEN-002 P2. D List<Number>직접대입불가.",
+      "모든실제필드를직접검토;선택지별반박/난도/중복/Concept연결은앞근거. 실제실행은별도제한probe만."
+    ],
+    [
+      "java.core.generics.generic-invariance.q5",
+      "KEEP",
+      "A: Integer원소의Numberupcast와List<Integer>→List<Number>불공변은다름. BInteger상속부정/C역전/D값읽기와목록대입동일규칙반박.",
+      "모든실제필드를직접검토;선택지별반박/난도/중복/Concept연결은앞근거. 실제실행은별도제한probe만."
+    ],
+    [
+      "java.core.generics.generic-invariance.q6",
+      "KEEP",
+      "A: 실제Double목록일수있어Integer삽입금지. BNumber읽기불가/Cnull포함읽기금지/D반환타입만add검사아님.",
+      "모든실제필드를직접검토;선택지별반박/난도/중복/Concept연결은앞근거. 실제실행은별도제한probe만."
+    ],
+    [
+      "java.core.generics.wildcards-pecs.q1",
+      "KEEP",
+      "B extends: source에서T읽기생산자. Asuper소비/Crawtypes검사포기/Dvoid타입argument아님.",
+      "모든실제필드를직접검토;선택지별반박/난도/중복/Concept연결은앞근거. 실제실행은별도제한probe만."
+    ],
+    [
+      "java.core.generics.wildcards-pecs.q2",
+      "KEEP",
+      "B: Integer쓰기는모든?superInteger에정적안전. AString/DDouble불가,C읽기는Integer항상아니라Object. 구조수정지원은별도계약.",
+      "모든실제필드를직접검토;선택지별반박/난도/중복/Concept연결은앞근거. 실제실행은별도제한probe만."
+    ],
+    [
+      "java.core.generics.wildcards-pecs.q3",
+      "TARGETED_ENHANCE",
+      "C Number정답. AInteger만/DString은불가. B rationale의실제Double일수있어Double못읽음은반례논리반대,실제Integer일수있어야함W4-JGEN-002 P2.",
+      "모든실제필드를직접검토;선택지별반박/난도/중복/Concept연결은앞근거. 실제실행은별도제한probe만."
+    ],
+    [
+      "java.core.generics.wildcards-pecs.q4",
+      "KEEP",
+      "B: 반환wildcard가구체타입관계를숨겨호출부사용어려움. A읽기금지/CObject고정/D모든타입추가가능아님.",
+      "모든실제필드를직접검토;선택지별반박/난도/중복/Concept연결은앞근거. 실제실행은별도제한probe만."
+    ],
+    [
+      "java.core.generics.wildcards-pecs.q5",
+      "KEEP",
+      "B namedT로입력과반환동일타입읽기쓰기연결. Araw관계손실/Cextends쓰기제약/DsuperObject동일T표현못함.",
+      "모든실제필드를직접검토;선택지별반박/난도/중복/Concept연결은앞근거. 실제실행은별도제한probe만."
+    ],
+    [
+      "java.core.generics.wildcards-pecs.q6",
+      "KEEP",
+      "A: src?extendsT→T읽기→dst?superT쓰기, sink.get정적Object. Bdstextends쓰기불가/Csrcsuper읽기불가/DT,T는Integer와Number같이못받음.",
+      "모든실제필드를직접검토;선택지별반박/난도/중복/Concept연결은앞근거. 실제실행은별도제한probe만."
+    ],
+    [
+      "java.core.generics.raw-types-unchecked.q1",
+      "KEEP",
+      "D: 타입오류가늦은CCE경계로나타남. AObjectparameterization동일/B검사강화/C자동전수검사없음.",
+      "모든실제필드를직접검토;선택지별반박/난도/중복/Concept연결은앞근거. 실제실행은별도제한probe만."
+    ],
+    [
+      "java.core.generics.raw-types-unchecked.q2",
+      "KEEP",
+      "D C에서Integer→Stringinsertedcast가실패. Arawadd정상/B대입전수원소검사안함/C경고허용은값변환아님.",
+      "모든실제필드를직접검토;선택지별반박/난도/중복/Concept연결은앞근거. 실제실행은별도제한probe만."
+    ],
+    [
+      "java.core.generics.raw-types-unchecked.q3",
+      "KEEP",
+      "D: 검사하며typed새copy로외부raw구조alias끊기. A진단억제/Bfinal참조/Cwrapper만은raw원본42추가못막음. HARD별칭추론타당.",
+      "모든실제필드를직접검토;선택지별반박/난도/중복/Concept연결은앞근거. 실제실행은별도제한probe만."
+    ],
+    [
+      "java.core.generics.raw-types-unchecked.q4",
+      "KEEP",
+      "C: 명시List<Object>→List<String>대입컴파일오류. AObject원소upcast와혼동/Brawunchecked변환과다름/D빈목록여부타입규칙안바꿈.",
+      "모든실제필드를직접검토;선택지별반박/난도/중복/Concept연결은앞근거. 실제실행은별도제한probe만."
+    ],
+    [
+      "java.core.generics.type-erasure-reifiable-types.q1",
+      "KEEP",
+      "C: 정적검사유지하며argument실행표현소거로legacy호환. A검사부재/B항상String/D인스턴스인자보존아님.",
+      "모든실제필드를직접검토;선택지별반박/난도/중복/Concept연결은앞근거. 실제실행은별도제한probe만."
+    ],
+    [
+      "java.core.generics.type-erasure-reifiable-types.q2",
+      "KEEP",
+      "A List<?>reifiable; BList<String>/CMap<String,Integer>/D임의T[]는nonreifiable. 유형분류MEDIUM타당.",
+      "모든실제필드를직접검토;선택지별반박/난도/중복/Concept연결은앞근거. 실제실행은별도제한probe만."
+    ],
+    [
+      "java.core.generics.type-erasure-reifiable-types.q3",
+      "KEEP",
+      "C: Object피연산자에서List<String>unchecked검사불가. AList<?>/BArrayList<?>/DObject가능. Object전제를다른정적타입instanceof에전파않음.",
+      "모든실제필드를직접검토;선택지별반박/난도/중복/Concept연결은앞근거. 실제실행은별도제한probe만."
+    ],
+    [
+      "java.core.generics.type-erasure-reifiable-types.q4",
+      "KEEP",
+      "B: Class<T>명시런타임토큰이필요정보제공. AT이름/CtoString캐스팅/DgetClass항상T회복불가. 토큰필요성이모든primitive토큰을T[]로지원한다는정답은아님.",
+      "모든실제필드를직접검토;선택지별반박/난도/중복/Concept연결은앞근거. 실제실행은별도제한probe만."
+    ],
+    [
+      "java.core.generics.type-erasure-reifiable-types.q5",
+      "KEEP",
+      "C: 컴파일시점검사전혀없다는것이오해. A인자직접알기제한/Blegacy/C반박/Dreifiable연관모두대조.",
+      "모든실제필드를직접검토;선택지별반박/난도/중복/Concept연결은앞근거. 실제실행은별도제한probe만."
+    ],
+    [
+      "java.core.generics.type-erasure-reifiable-types.q6",
+      "KEEP",
+      "D: List<?>검사true→List<String>uncheckedcastList종류통과→Integer를String으로읽기CCE. A원소검사false/B전수검사/C문자열7자동변환아님.",
+      "모든실제필드를직접검토;선택지별반박/난도/중복/Concept연결은앞근거. 실제실행은별도제한probe만."
+    ],
+    [
+      "java.core.generics.generic-varargs-heap-pollution.q1",
+      "KEEP",
+      "A: nonreifiable제네릭과배열varargs경계가위험. Bargument까지storecheck/C모든Stringcast/D자동rawList생성아님.",
+      "모든실제필드를직접검토;선택지별반박/난도/중복/Concept연결은앞근거. 실제실행은별도제한probe만."
+    ],
+    [
+      "java.core.generics.generic-varargs-heap-pollution.q2",
+      "KEEP",
+      "D: declaredparameterized계약과실제참조의불일치. A유효Number혼합/B<?>Object읽기/C빈목록인자자동Object아님.",
+      "모든실제필드를직접검토;선택지별반박/난도/중복/Concept연결은앞근거. 실제실행은별도제한probe만."
+    ],
+    [
+      "java.core.generics.generic-varargs-heap-pollution.q3",
+      "KEEP",
+      "A: List[]에List<Integer>store는통과, String반환castCCE. static선언위치허용과보증거짓구별. B자동변환/CArrayStore검사argument/Dstatic금지아님.",
+      "모든실제필드를직접검토;선택지별반박/난도/중복/Concept연결은앞근거. 실제실행은별도제한probe만."
+    ],
+    [
+      "java.core.generics.generic-varargs-heap-pollution.q4",
+      "KEEP",
+      "A: List<List<T>>컬렉션입력은varargs배열경계를피함. B<?>...뒤무검증Tcast/Craw.../DObject...강제cast안전성제공못함.",
+      "모든실제필드를직접검토;선택지별반박/난도/중복/Concept연결은앞근거. 실제실행은별도제한probe만."
+    ],
+    [
+      "java.core.generics.generic-varargs-heap-pollution.q5",
+      "KEEP",
+      "A잘못: 무근거경고숨기기는안전성미확인. B작성자주장/C배열제네릭경계/D런타임검사추가없음정확.",
+      "모든실제필드를직접검토;선택지별반박/난도/중복/Concept연결은앞근거. 실제실행은별도제한probe만."
+    ],
+    [
+      "java.core.generics.wildcards-pecs.q7",
+      "KEEP",
+      "DESCRIPTIVE: 임의Number쓰기에는List<Number>또는?superNumber,특정T소비는?superT. 모델/해설이하한타입과사용목표연결,PECS암기와구별.",
+      "모든실제필드를직접검토;선택지별반박/난도/중복/Concept연결은앞근거. 실제실행은별도제한probe만."
+    ],
+    [
+      "java.core.generics.wildcards-pecs.q8",
+      "KEEP",
+      "DESCRIPTIVE: 읽기srcextends/쓰기dstsuper,T/T보다Integer→Number호환조합확장. q6의HARD실행문제와달리설계이유서술로목표반복의역할있음.",
+      "모든실제필드를직접검토;선택지별반박/난도/중복/Concept연결은앞근거. 실제실행은별도제한probe만."
+    ],
+    [
+      "java.core.generics.type-erasure-reifiable-types.q7",
+      "KEEP",
+      "DESCRIPTIVE: 두process의erasedListsignature충돌,다른이름/추가토큰·wrapper/한genericAPI대안타당. 런타임모든generic선언metadata소멸이라고말하지않음.",
+      "모든실제필드를직접검토;선택지별반박/난도/중복/Concept연결은앞근거. 실제실행은별도제한probe만."
+    ],
+    [
+      "java.core.generics.generic-types-methods.q6",
+      "KEEP",
+      "DESCRIPTIVE: T.class불가와Class<T>명시registry토큰,Class하나로List<String>중첩정보전체표현못함을모델/해설에서확인.",
+      "모든실제필드를직접검토;선택지별반박/난도/중복/Concept연결은앞근거. 실제실행은별도제한probe만."
+    ],
+    [
+      "java.core.generics.generic-varargs-heap-pollution.q6",
+      "KEEP",
+      "SCENARIO: static필드배열escape는외부alias쓰기가능해보증의심. reifiable실제array가일부store거절하지만List<String>/Integer구분못함,복사/컬렉션대안타당.",
+      "모든실제필드를직접검토;선택지별반박/난도/중복/Concept연결은앞근거. 실제실행은별도제한probe만."
+    ]
+  ],
+  "findings": [
+    {
+      "id": "W4-JGEN-001",
+      "severity": "P1",
+      "contentKeys": [
+        "java.core.generics.type-erasure-reifiable-types"
+      ],
+      "file": "content/java/generics/type-erasure-reifiable-types.md",
+      "quote": "T[] result = (T[]) Array.newInstance(type, length);",
+      "problem": "newArray의Class<T>는int.class도Class<Integer>로받는다. 이때reflection이int[]를만들지만T[]의erasure는Object[]여서helper내cast가CCE를던진다. 안전한uncheckedcast라고보이게하는예시에참조타입토큰전제가빠져있다. reflection으로소거를복원하지않는설명과String.class경로는맞다.",
+      "action": "참조타입Class토큰만지원한다고명시하고primitive/void토큰거절전제를짧게보강. int.class와Integer.class차이한줄반례,기존erasure본문/정답유지.",
+      "officialEvidence": [
+        "https://docs.oracle.com/javase/specs/jls/se25/html/jls-15.html#jls-15.8.2",
+        "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/reflect/Array.html#newInstance(java.lang.Class,int)"
+      ],
+      "runtimeEvidence": "제한probe Class<Integer> token=int.class는컴파일,reflection int[],newArray(token,1)는helper내CCE. String.class는String[]반환.",
+      "followupIssues": [
+        201
+      ]
+    },
+    {
+      "id": "W4-JGEN-002",
+      "severity": "P2",
+      "contentKeys": [
+        "java.core.generics.generic-invariance.q4",
+        "java.core.generics.wildcards-pecs.q3"
+      ],
+      "file": "content/java/generics/questions.json",
+      "quote": "컴파일러는 실제 와일드카드 타입이 List<Double>일 가능성을 배제할 수 없다. Double 목록에 Integer를 넣는 것은 안전하지 않다.",
+      "additionalEvidence": [
+        {
+          "file": "content/java/generics/questions.json",
+          "quote": "실제 원소 타입이 Double일 수 있어 모든 항목을 Double로 읽을 수 없다. 상위 타입으로 읽어야 한다."
+        }
+      ],
+      "problem": "invariance.q4 B는Double추가인데rationale은Double목록에Integer추가반례로뒤바뀌어있다. PECS.q3 B는Double로읽기인데실제Double일수있어못읽는다는반대이유를든다. 정답A/C와전체해설은정확하며이두오답feedback만부정확하다.",
+      "action": "첫B는실제Integer목록에Double쓸수없음,둘째B는실제Integer등다른Number목록일수있어Double로좁힐수없음으로두문장만교정. 정답/난도/본문유지.",
+      "officialEvidence": [
+        "https://docs.oracle.com/javase/specs/jls/se25/html/jls-4.html#jls-4.5.1",
+        "https://docs.oracle.com/javase/specs/jls/se25/html/jls-4.html#jls-4.10"
+      ],
+      "followupIssues": [
+        201
+      ]
+    }
+  ],
+  "carriedForwardFindings": [],
+  "sources": [
+    [
+      "https://docs.oracle.com/javase/specs/jls/se25/html/jls-4.html#jls-4.5",
+      "CURRENT_VERIFIED",
+      "JLS4.5의reference타입argument/bound로Box<T>의정적원소계약을대조."
+    ],
+    [
+      "https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html#jls-8.4.4",
+      "CURRENT_VERIFIED",
+      "JLS8.4.4의메서드자체타입변수/인자추론·scope로first/echo의독립T관계를대조."
+    ],
+    [
+      "https://docs.oracle.com/javase/specs/jls/se25/html/jls-4.html#jls-4.10",
+      "CURRENT_VERIFIED",
+      "JLS4.10은T<S가C<T><C<S>를함의하지않음을명시. 원소upcast와list대입거절/배열공변비교목표에대조."
+    ],
+    [
+      "https://docs.oracle.com/javase/specs/jls/se25/html/jls-4.html#jls-4.5.1",
+      "CURRENT_VERIFIED",
+      "JLS4.5.1 upper/lower boundedwildcard/containment와addAll/Reference의생산·소비예시를copy읽기/쓰기설계에대조."
+    ],
+    [
+      "https://docs.oracle.com/javase/specs/jls/se25/html/jls-4.html#jls-4.8",
+      "CURRENT_VERIFIED",
+      "JLS4.8의raw정의/erasedmember와legacy호환·unchecked경고를혼합저장예시에대조."
+    ],
+    [
+      "https://docs.oracle.com/javase/specs/jls/se25/html/jls-5.html#jls-5.1.9",
+      "CURRENT_VERIFIED",
+      "JLS5.1.9 rawG→G<T> uncheckedconversion·경고조건을names=raw시점과후속읽기CCE에대조."
+    ],
+    [
+      "https://docs.oracle.com/javase/specs/jls/se25/html/jls-4.html#jls-4.6",
+      "CURRENT_VERIFIED",
+      "JLS4.6 G<T>→G/타입변수leftmostbound/서명소거를runtime종류와소스검사차이에대조."
+    ],
+    [
+      "https://docs.oracle.com/javase/specs/jls/se25/html/jls-4.html#jls-4.7",
+      "CURRENT_VERIFIED",
+      "JLS4.7의unboundedwildcards/raw/비generic/reifiable배열범주와migration호환이유를List<?>/List<String>판별에대조."
+    ],
+    [
+      "https://docs.oracle.com/javase/specs/jls/se25/html/jls-4.html#jls-4.12.2",
+      "CURRENT_VERIFIED",
+      "JLS4.12.2 Object[]alias→List<Integer>store→StringcastCCE반례를본문unsafe상태흐름에직접대조."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/SafeVarargs.html",
+      "CURRENT_VERIFIED",
+      "SafeVarargsAPI의static/final/private/constructor제약과unsafealias반례·작성자주장/검사추가없음을대조."
+    ],
+    [
+      "https://docs.oracle.com/javase/specs/jls/se25/html/jls-9.html#jls-9.6.4.7",
+      "CURRENT_VERIFIED",
+      "JLS9.6.4.7의non-local callsite+declaration경고억제와safe배열읽기/전달예시를배열escape보증과구별."
+    ]
+  ],
+  "referenceAccess": {},
+  "visualizationAssets": [
+    {
+      "file": "frontend/public/learning/java/generics-pecs.svg",
+      "sourceSha256": "5d1c40b6766f8e7a85901816d4f63feef16ee9c0bd346f89e35d27b993adfa2a",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "basis": "1100×430 전체source/title/desc/styles/marker/좌우rect/text/path를읽었다. 왼쪽extendsNumber→Number읽기와Integer→오른쪽superInteger쓰기의방향이본문과일치. 열48..498/602..1052는분리. Reader render/mobile/theme QA미완료."
+    }
+  ],
+  "sourceHashes": {
+    "java.core.generics.generic-types-methods": "018a4fd597e705b1ad6af393a25612c6b5094e47204d1944485c51d4facee7f4",
+    "java.core.generics.generic-invariance": "f7dc498e1b23e879a15ea337b3ee084539f8420bda616142dda336d370f6db4f",
+    "java.core.generics.wildcards-pecs": "aaa289c4a261ac060d5643e3a9fe8eb9a50ccb64528e778b1e301e3d34f5f61d",
+    "java.core.generics.raw-types-unchecked": "971dc4e31342d3d3008606ac15230fe146bf8b163d15674b67ffb3aa50bbe8b2",
+    "java.core.generics.type-erasure-reifiable-types": "065f057ced3257a275a0ce2c7d4204b738715703b2dffc3190bdb94d27785304",
+    "java.core.generics.generic-varargs-heap-pollution": "89732772a4c88ecec30a81464abca99155c6c3734c33cbdf470fbb3b52a179b0",
+    "java.core.generics.generic-types-methods.q1": "36a6d44b046167f8410761fba550790972f4c660ef532e72e5d7ba8f72b2c424",
+    "java.core.generics.generic-types-methods.q2": "b82c81b6e365a17b89e8c91f8e84693eaaec74eef2757dde366783ae5f8b256d",
+    "java.core.generics.generic-types-methods.q3": "41a3012c5092e0b61f066e26a42bc0a14ef99bdd069284c8dc9db38c56cc7663",
+    "java.core.generics.generic-types-methods.q4": "484cae5688583ac749d252d051457ecc2d4c2c192c50c89a9176a34b4265f9b4",
+    "java.core.generics.generic-types-methods.q5": "9cfd356cb58d7e65a5ddcd08af125dee4c8ebad8ddc8658d36b3548052d5af9f",
+    "java.core.generics.generic-invariance.q1": "f663ff420a169617c264335bb53ac48e5f72f0f434c94204352875a5cea4f66c",
+    "java.core.generics.generic-invariance.q2": "558accce739b53f598bf2004b664b09150b0bac7d24abe38dc56e0809bd7f51b",
+    "java.core.generics.generic-invariance.q3": "f41724ccb5d3d80585957d35561cceb29f122d45fc12c4fd3590e61a8d95272e",
+    "java.core.generics.generic-invariance.q4": "041e118b427aaf2ad7dac50f6c002401c49a9a37e5634db74e46634bbff0b61b",
+    "java.core.generics.generic-invariance.q5": "32ea9f8c92c6e8ccb729d073cef233e98ff10d37885b6c51261a68ea44ff3bc1",
+    "java.core.generics.generic-invariance.q6": "e2ab2bcd2736df7213ec3482ac1824f2d54f4a25a52df4e3febeda047a452100",
+    "java.core.generics.wildcards-pecs.q1": "b018c4315b1aa0cef36e85e11e1a96d47851d9da02ae2d08c8942b097bb2080b",
+    "java.core.generics.wildcards-pecs.q2": "893e9eff45778bfa84311a06bc978d84a47d7a289b07cbb5d5b9f2ee20e287ab",
+    "java.core.generics.wildcards-pecs.q3": "672ba87e7fb166b2c86a0ea86187d7cdfbf9bda9e4a057956fb15a17a94bcc70",
+    "java.core.generics.wildcards-pecs.q4": "e0451b43001fce4ae84c823e3d8f703b8f62422cb9c178df47d6c0dcb96dbe4b",
+    "java.core.generics.wildcards-pecs.q5": "5e30217cf935cf8cece445bd390caacc3a0f98074887f0478d5e6723eb21f755",
+    "java.core.generics.wildcards-pecs.q6": "db4c8cabfef602dc030108fc5e0d9b653fc5a23af00b2eef3037f46784e11571",
+    "java.core.generics.raw-types-unchecked.q1": "a2ea77d01185ebb815f9e83f0513affbaaa99a558529712906542fc4b3ced042",
+    "java.core.generics.raw-types-unchecked.q2": "753fc0fd4389b88a1906df8325e373a04658454dc08db6c3a4d290424230be2f",
+    "java.core.generics.raw-types-unchecked.q3": "4c40620d43d36def53203480cbe46580e0b5c4db11e021616b09b9f71930f503",
+    "java.core.generics.raw-types-unchecked.q4": "ddd3451e94fcd3efd4bf014f6918d2275b3290af0e092de54c6b6544ebceb505",
+    "java.core.generics.type-erasure-reifiable-types.q1": "52b8d16df02172e040fee700d64f4d2bd17c4f75e79e4d4aa773ba55b67cd0f4",
+    "java.core.generics.type-erasure-reifiable-types.q2": "30da2625c8b4f9ab26539c5f3b5024643238d201b402c906bb46e61c101e4d7a",
+    "java.core.generics.type-erasure-reifiable-types.q3": "879f4b287cee9c926be19bfa7a52d1c0d44ec58af56f7ed81da9ae69f519817b",
+    "java.core.generics.type-erasure-reifiable-types.q4": "2d5d7ad322ff5c20602338ab240889f1de0bb50001f2e2ddd735630b9b0e6837",
+    "java.core.generics.type-erasure-reifiable-types.q5": "cbe43a29759b2061ea2af138a289dc2cecc9cbdd1701f0feddab1e38a19b30b7",
+    "java.core.generics.type-erasure-reifiable-types.q6": "7ad73b9e8027300b7f7f0d6d463b19fdf1ebd306ca021129d0709690575d7d9f",
+    "java.core.generics.generic-varargs-heap-pollution.q1": "bb26cf65fd918fc0ac70fbf4d7975e09ca1764bd1ab683ea71d7cbd57f8a4b88",
+    "java.core.generics.generic-varargs-heap-pollution.q2": "1042b50ef9cba5845233fad97cae8e481a5d38a6a5782f72d11c80e383409579",
+    "java.core.generics.generic-varargs-heap-pollution.q3": "d109a3a4de4300a7d16a26d23eb506197b75142b4bc1d83b157eae3d2222394c",
+    "java.core.generics.generic-varargs-heap-pollution.q4": "5127c714b271b481f8f386edf8d24e03f64b9699ecdecd5134c479d441214720",
+    "java.core.generics.generic-varargs-heap-pollution.q5": "e2694a85223beb7c330a5ede68ea088e2815b26be952e300f2ead66fa2b6893e",
+    "java.core.generics.wildcards-pecs.q7": "4c658b40540b165e4747a16e9ff5130e471c38086a524b26bd8d4e49d46adc32",
+    "java.core.generics.wildcards-pecs.q8": "80ac1c2a545e916d95b4e4ae19cfacf4cfdb29a9584e576c470eeb8fe734da14",
+    "java.core.generics.type-erasure-reifiable-types.q7": "1f3358b20e29fe31a8c0dce53aaaca36b9ab90e096d16c821e95b228cfa92d7f",
+    "java.core.generics.generic-types-methods.q6": "5ce965abb28f44071ee855eaacea61af20c0aceee4dd1d9b9bdf60d90e100195",
+    "java.core.generics.generic-varargs-heap-pollution.q6": "7f919aaba4c09f6691c4744760340d13407a7e320904b0ffc05eb9de51506b80"
+  },
+  "curriculumSha256": "0aad122de20d9205274f96887b562473a3a23de3dd406cbd684031438d4bbe0c",
+  "topicCatalogSha256": "2a167f43030df4dfc9742225d86dfcefdcd5cff2fc0d702c0b9101e00e6b172c",
+  "probeEvidence": {
+    "file": "docs/content-audit/learning-experience-2026/wave-4/probes/GenericsTokenProbe.java",
+    "sourceSha256": "0c5171004ea6d2cd8fc6e5a291241b5fba21288cc2b086c0c2eb918a1007c82f",
+    "command": "java docs/content-audit/learning-experience-2026/wave-4/probes/GenericsTokenProbe.java",
+    "runtime": "Temurin25.0.4.1+1-LTS Windows",
+    "exitCode": 0,
+    "stdout": [
+      "runtime=25.0.4.1+1-LTS",
+      "referenceToken=java.lang.String[]",
+      "primitiveArray=int[]",
+      "genericPrimitiveToken=ClassCastException"
+    ],
+    "limits": "newArray토큰경계만실행. 모든37Q/snippet전체실행/HotSpot세부/ReaderQA아님."
+  },
+  "supplementalSources": [
+    [
+      "https://docs.oracle.com/javase/specs/jls/se25/html/jls-15.html#jls-15.8.2",
+      "CURRENT_VERIFIED",
+      "primitiveclassliteral의타입Class<boxedB>와실제primitiveClass객체를구별."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/reflect/Array.html#newInstance(java.lang.Class,int)",
+      "CURRENT_VERIFIED",
+      "지정componentClass실제배열생성/int[]vsInteger[]를대조;canonicalURL관계에자동귀속하지않음."
+    ]
+  ]
+}

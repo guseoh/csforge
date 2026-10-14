@@ -1,0 +1,349 @@
+{
+  "area": "operating-systems",
+  "topic": "isolation",
+  "topicKey": "operating-systems.core.isolation",
+  "coverage": "7 Concept와21 Question의 원문·모든 보기/rationale/model/explanation/연결을 직접 읽었다. 주소 공간 격리 대 공유 객체, 파일·디렉터리 권한과 credential, namespace visibility 대 cgroup resource, memory.max/reclaim/OOM/group policy와 RLIMIT_NPROC UID/thread/privilege 예외, container image/process/PID1 lifecycle, shared kernel 대 VM 경계를 검토했다. 기존 SVG4개 전체 소스/좌표를 읽었으며 픽셀 QA는 수행하지 않았다. Linux manpage·kernel cgroup v2 관련 구간을 직접 대조했다.",
+  "concepts": [
+    [
+      "operating-systems.core.isolation.process-isolation",
+      "KEEP",
+      "L1 주소 공간과 접근 경계의 목적·threads 비교가 충분하다.",
+      "일반 사용자 pointer로 다른 process heap 직접 침범 불가, fork 상속 FD·mapping/공유 kernel·files와 명시적 IPC를 구분한다. 모든 자원/장애의 완전 독립이나 같은 UID의 모든 관리 API 차단을 보장하지 않는다.",
+      "DIAGRAM 별도 VA A/B와 명시적 IPC가 정확하다. 하단 긴 caption의 실제 렌더 가독성은 미확인이며 의미는 유지 가능하다.",
+      "namespaces(7)의 resource view와 앞서 읽은 fork/mmap·process address 자료를 일반 VA 경계와 구분했다. D2 browser article는 IPC에서 직접 연 shell만 보여 미확인이다.",
+      "q1 B/모든 보기·rationale, q2 thread 대비 주소 변환 경계, q3 동적 plugin의 native crash와 별도 process/IPC 대안을 검토했다."
+    ],
+    [
+      "operating-systems.core.isolation.user-group-permission",
+      "TARGETED_ENHANCE",
+      "L1 owner/group/other와 directory search·least privilege의 설명은 충분하다.",
+      "파일 rwx 대 directory list/name 변경/search, 중간 경로 검사와 supplementary groups/ACL/capabilities·visibility≠permission이 정확하다. 실제 파일 판정을 eUID/eGID로만 단정한 문장은 Linux fsuid/fsgid 예외를 놓친 W3-OS-034이다.",
+      "TEXT 비교 표와 /srv/app/config.yaml의 경로 순서가 충분하다. 그림 추가 불필요.",
+      "credentials(7)의 real/effective/saved/filesystem/supplementary IDs와 path_resolution(7)의 search·owner/group/other 선택·fsuid/fsgid를 실제 대조했다.",
+      "q2 필요한 연산만 허용·directory/UID/GID/보조 정책, q3 777 변조/권한상승 위험은 타당하다. q1의 모든 distractor가 목표와 무관한 W3-OS-033이다."
+    ],
+    [
+      "operating-systems.core.isolation.namespace",
+      "KEEP",
+      "L2 자원 관점과 생성/상속별 계약·경계를 충분히 설명한다.",
+      "PID/mount/network/IPC/UTS/user views를 같은 kernel 위에서 분리하며 하나의 namespace=완성container 또는 resource cap으로 일반화하지 않는다. 보이는 객체의 권한과 writable bind mount의 실제 공유를 구분한다.",
+      "DIAGRAM A/B의 PID1·다른 mount/network view와 shared kernel·cgroup 별도 책임이 타당하다. 종류별 namespace를 한 그림의 묶음으로 보여주는 요약이다.",
+      "namespaces(7)의 유형/clone·unshare·setns와 pid_namespaces(7)의 계층별 PID/관찰 범위, path_resolution의 mount view를 실제 확인했다.",
+      "q1 D/모든 보기·rationale, q2 동일 task의 다른 PID, q3 writable bind mount의 host 파일 변경과 readonly/권한·propagation 제한을 검토했다."
+    ],
+    [
+      "operating-systems.core.isolation.cgroup",
+      "KEEP",
+      "L2 그룹 계측·quota/weight·resource별 결과와 namespace 차이가 충분하다.",
+      "CPU throttle와 memory reclaim→조건부 memcg OOM을 구분한다. memory.max≠메모리 사전예약·항상 즉시 죽임·group 전체 종료를 명시하며 oom.group 별도 정책이 정확하다. Controller/config별 차이 범위도 적합하다.",
+      "TEXT A/B→cgroup→CPU/memory/I/O 책임 흐름이 충분하다.",
+      "cgroups(7)의 hierarchy/controller·v1/v2 설명을 읽었다. memory.max·memory.oom.group의 정확한 v2 계약은 kernel cgroup-v2에서 직접 확인했다. 해당 v2 section을 canonical에 추가하는 Reference 개선 후보이며 D2 Kubernetes 사례 원문은 shell만 제공해 미확인이다.",
+      "q1 A와 namespace역전/memory예약/quota=cpuset distractor, q2 visibility 대 amount, q3 reclaim·memcgOOM·group정책을 대조했다."
+    ],
+    [
+      "operating-systems.core.isolation.resource-limit",
+      "KEEP",
+      "L2 soft/hard와 resource별 실패·누수 원인 경계가 충분하다.",
+      "Linux RLIMIT_NPROC는 caller realUID의 extant threads 포함·root/CAP_SYS_ADMIN/RESOURCE 예외를 정확히 한정한다. FD/AS/stack·quota의 다른 동작, limit증가≠누수해결을 설명한다. rlimit perprocess속성과 NPROC 집계 범위를 혼동하지 않는다.",
+      "TEXT soft≤hard→resource request→resource별 실패 흐름이 타당하다.",
+      "getrlimit(2)의 soft/hard·AS/stack·NOFILE EMFILE·NPROC UID/thread와 privilege 예외 및 shared perprocess limits를 직접 읽었다.",
+      "q1 B/모든 보기와 자원별 throttle/실패 범위, q2 limit/quota의 조건부 용어, q3 close/풀 반환·timeout·계측으로 누수원인을 수정해야 함을 검토했다."
+    ],
+    [
+      "operating-systems.core.isolation.container-process-model",
+      "KEEP",
+      "L1 process tree·image inputs·OS 기능 조합·lifecycle의 기본 모델이 충분하다.",
+      "일반 Linux container≠별도 guest kernel, namespace/cgroup/권한의 다른 책임, PID1 orphan reaping 대 앱 signal forwarding을 분리한다. Init 종료 뒤 kernel이 namespace 전체를 강제 종료하는 추가 경계는 q3의 필요한 보강이지 정상 forwarding 설명의 오류는 아니다.",
+      "DIAGRAM shared host kernel 안의 PID1→worker→child와 namespace/rootfs·cgroup 책임이 맞다. 이미지 자체가 살아 있는 프로세스로 표현되지 않는다.",
+      "namespaces(7)/pid_namespaces(7)의 실제 생성·init/adoption·init 종료 SIGKILL을 대조했다. D2 transcode 사례는 shell만 보여 미확인이다.",
+      "q1 C/모든 보기, q2 reaping 대 forwarding 책임은 타당하다. q3 사후 PID1 reaping을 제안하는 종료 시점/namespace 범위 모호성은 W3-OS-035이다."
+    ],
+    [
+      "operating-systems.core.isolation.host-kernel-sharing",
+      "KEEP",
+      "L2 shared syscall/kernel attack surface 대 guest/hypervisor 경계를 충분히 설명한다.",
+      "일반 Linux container 범위를 명시해 VM/sandbox 예외를 전체 container에 강제하지 않는다. Namespace view≠별도 kernel, VM의 추가 kernel/hypervisor 비용, capability/device/host mount의 공격 면 증가가 타당하다.",
+      "DIAGRAM 두 container process→shared kernel 대guest process+guest kernel→hypervisor/host가 정확하다. 텍스트 flow도 경계를 보완한다.",
+      "namespaces(7)의 같은 global kernel resource abstraction과 capability 요구를 확인했다. 앞서 VM 및 process 자료와 일치한다. 특정 hypervisor 구현이 항상 host OS syscall을 통과한다는 상세 보장이 아니다.",
+      "q1 C/모든 보기·rationale, q2 kernel/capability 의존과 VM 추가경계, q3 최소capability/device/mount·위협모델 대안을 검토했다."
+    ]
+  ],
+  "questions": [
+    [
+      "operating-systems.core.isolation.process-isolation.q1",
+      "KEEP",
+      "정답B 별도VA/접근 경계가 맞다. A동일VA기본/Cthread독립VA/D명시적공유금지는 모두틀리며 모든rationale·해설이 ordinary user memory 경계를 적절히 한정한다.",
+      "EASY 경계 인식이고 q2 이유 설명·q3plugin crash 적용으로 진행한다. 같은 중심 개념의 발판이며 세 문항이 동일 문구/상황은 아니다."
+    ],
+    [
+      "operating-systems.core.isolation.process-isolation.q2",
+      "KEEP",
+      "Model/explanation의 다른VA/주소변환·보호 대 thread sharedheap/global과 IPC/lifecycle비용이 정확하다. 모든 파일/커널장애의 독립을 보장하지 않는다.",
+      "MEDIUM 경계의 이유를 설명하며 q1 인식·q3 구체crash 설계와 구분된다. 선택지/acceptedAnswers 필드는 없다."
+    ],
+    [
+      "operating-systems.core.isolation.process-isolation.q3",
+      "KEEP",
+      "Host에 native plugin 직접로드→동일VA/credentials에서 잘못된pointer/global변경/crash영향, 별도process·최소IPC/샌드박스 대안의 model/explanation이 충분하다.",
+      "MEDIUM concrete failure 적용이고 host권한까지 자동분리된다고 답하지 않는다. Concept 연결과 난이도가 맞다."
+    ],
+    [
+      "operating-systems.core.isolation.user-group-permission.q1",
+      "TARGETED_ENHANCE",
+      "정답A owner/group/other와 해설은 맞다. B확장자/경로길이/시각·Cclient/server/transaction·Dcache종류는 모두 권한 주체와 무관한 W3-OS-033이다. 모든rationale의 사실 오류는 없다.",
+      "EASY라도 세 distractor 모두 사전 지식 없이 제거 가능하다. Real/effective ID·owner 일치 뒤otherfallback·보조group 같은 실제 오해를 검증할 최소 후보이다."
+    ],
+    [
+      "operating-systems.core.isolation.user-group-permission.q2",
+      "KEEP",
+      "Model/explanation의 필요한 identity·객체·연산만 허용, 중간directory search·supplementary groups·mount/ACL/capability 확인이 타당하다. chmod범위를 무작정 넓히지 않는다.",
+      "MEDIUM least privilege의 적용이다. 대표eUID/GID 진단은 일반적으로 유효하며 Linux filesystemID 예외는 Concept W3-OS-034에서 추가한다. q1분류/q3 777 위험과 다르다."
+    ],
+    [
+      "operating-systems.core.isolation.user-group-permission.q3",
+      "KEEP",
+      "777은 unrelateduser에도write/execute를열어변조·권한상승 원인이 될 수 있고 owner/group/minimalmode·원래실패UID/path/mount 원인 진단이 필요하다는 model/explanation이 맞다.",
+      "MEDIUM 배포 실패의 unsafe workaround 적용이다. 모든777file이즉시privilege escalation된다는 전칭 보장은 없으며 연결이 맞다."
+    ],
+    [
+      "operating-systems.core.isolation.namespace.q1",
+      "KEEP",
+      "정답D PID/mount/network view가 맞다. A공유bind 내용까지자동COW/B명령인코딩·kernel복제/C자동memory상한은틀리며 모든rationale·해설도맞다. B는비현실적이지만A/C가실제namespace 오해를 검증한다.",
+      "EASY view대content/resourcelimit 구분이다. q2PID 적용·q3bind쓰기 위험과 다르다."
+    ],
+    [
+      "operating-systems.core.isolation.namespace.q2",
+      "KEEP",
+      "동일 task가namespace별다른PID관점을갖되별도kernel/resourcecap은아니라는model/explanation이맞다. Ancestor-visible task의 namespace별PID 계약과 일치한다.",
+      "MEDIUM PID관점 가상화 설명이고 q1분류·q3 mount content 위험과 다르다. 새namespace creation/setns의 세부PID이동을 보장하지 않는다."
+    ],
+    [
+      "operating-systems.core.isolation.namespace.q3",
+      "KEEP",
+      "Writable hostbind→실제hostobjects 수정가능, 최소path/readonly·propagation·filepermissions을별도로제한해야 한다는model/explanation이맞다.",
+      "MEDIUM visibility만으로완전격리판정하는오해를실제실패에적용한다. Linuxmount namespace와Concept연결이적합하다."
+    ],
+    [
+      "operating-systems.core.isolation.cgroup.q1",
+      "KEEP",
+      "정답A 계측/컨트롤러 정책이맞다. Bnamespace와책임역전/Cmemory.max예약·OOM없음/Dquota만으로코어고정은틀리다. 모든rationale·해설이 상한·reservation·affinity를정확히구분한다.",
+      "EASY지만 실제 운영 오해를 담은 distractor가 유효하다. q2책임설명·q3memorypressure 적용과다르다."
+    ],
+    [
+      "operating-systems.core.isolation.cgroup.q2",
+      "KEEP",
+      "Namespace view대cgroupresource accounting/cap/weight의 model/explanation이맞다. Cgroup설정만으로PID/mount관점이분리되지않는다.",
+      "MEDIUM 역할비교설명이다. q1표현선택과 q3reclaim/OOM운영결과로 확장되는 발판이며 Concept연결이맞다."
+    ],
+    [
+      "operating-systems.core.isolation.cgroup.q3",
+      "KEEP",
+      "Model/explanation의 memory.max→reclaim시도→못맞추면memcgOOM과group전체종료는oom.group별도 정책이라는조건이 kernelv2와일치한다. 항상모든allocation/OOM이groupkill이라고하지않는다.",
+      "MEDIUM hostpressure완화·관찰·정책선택을검증한다. 정확한v2필드이며 canonicalreference에kernelv2section추가가학습도움이된다."
+    ],
+    [
+      "operating-systems.core.isolation.resource-limit.q1",
+      "KEEP",
+      "정답B 명시적실패/자원별throttle가맞다. A무한용량/C같은오류·시점/Dlimit증가가누수queue정리는틀리며모든rationale·해설이resource별계약을구분한다.",
+      "EASY 상한효과이고 prompt일반resource범위는rlimit뿐아니라quota/cgroup을포괄한다. q2용어/q3FD누수와다르다."
+    ],
+    [
+      "operating-systems.core.isolation.resource-limit.q2",
+      "KEEP",
+      "Limit은보유/최대량,quota는기간/그룹budget을가리키는경우가많지만실제하위시스템계약을확인하라는 model/explanation이적절하다. 이용어에보편API정의를강제하지않는다.",
+      "MEDIUM 이름만보고단위를단정하는오해검증이다. q1효과와q3FD누수 진단에이어지는목표이다."
+    ],
+    [
+      "operating-systems.core.isolation.resource-limit.q3",
+      "KEEP",
+      "FD상한증가는고갈지연일뿐close소유권·pool반환/timeout과사용량계측이필요하다는 model/explanation이정확하다.",
+      "MEDIUM leak원인대안전boundary 구분이며 정해진환경없이임의한도 숫자를요구하지않는다. 연결이맞다."
+    ],
+    [
+      "operating-systems.core.isolation.container-process-model.q1",
+      "KEEP",
+      "정답C hostkernel process환경이맞다. Aimage=실행프로세스/B항상guestkernelVM/Drestart메모리·inflight자동복원은틀리며모든rationale/해설도맞다.",
+      "EASY 일반Linux범위를명시했다. q2PID1책임과q3shutdown 실패적용과다르다."
+    ],
+    [
+      "operating-systems.core.isolation.container-process-model.q2",
+      "KEEP",
+      "PIDnamespace init의orphan wait/reap와앱signalforwarding은supervisor가명시구현해야한다는 model/explanation이맞다. Kernel이자동forward한다고하지않는다.",
+      "MEDIUM reaping대forwarding을분리한다. 가까운ancestor subreaper 예외는필요시추가학습범위이며 q3의이미종료한init 문제와구별한다."
+    ],
+    [
+      "operating-systems.core.isolation.container-process-model.q3",
+      "TARGETED_ENHANCE",
+      "Model은PID1wait/forward정책·graceful timeout을다루지만 prompt주프로세스종료후라는시점과 privatePIDnamespaceinit사망의kernelSIGKILL을구별하지않는W3-OS-035이다. 이미죽은PID1은reap/forward할수없다.",
+      "MEDIUM lifecycle오류진단에 중요한premise가없다. 살아있는init하의worker정리누락인지init사망후cleanuphook누락인지구분해 prompt/model을맞춰야한다."
+    ],
+    [
+      "operating-systems.core.isolation.host-kernel-sharing.q1",
+      "KEEP",
+      "정답C hostkernel/syscall기반이맞다. A모든view그대로/B항상guestkernel/Dimage가hostkernel대체는틀리며모든rationale·해설이정확하다.",
+      "EASY sharedkernel대namespaceview를구분한다. Container모델q1과기초가연결되지만 이문항은kernel실행기반에집중하고q2/q3보안경계로진행한다."
+    ],
+    [
+      "operating-systems.core.isolation.host-kernel-sharing.q2",
+      "KEEP",
+      "Sharedkernel의syscall취약점·capability영향대VMguest/hypervisor추가경계·운영비용의 model/explanation이충분하다. VM절대안전보장이없다.",
+      "MEDIUM 격리경계의원인과tradeoff설명이다. 일반Linuxcontainer로한정된Concept와연결되고q3실제특권설정으로확장된다."
+    ],
+    [
+      "operating-systems.core.isolation.host-kernel-sharing.q3",
+      "KEEP",
+      "광범위capability·device·hostmount가attack surface를키우므로최소권한과필요시VM대안을검토하라는 model/explanation이타당하다.",
+      "MEDIUM 위협모델적용이다. Capability하나가항상hostroot를즉시획득한다는과잉보장이없으며q1/q2와목표가다르다."
+    ]
+  ],
+  "sources": [
+    [
+      "https://man7.org/linux/man-pages/man7/namespaces.7.html",
+      "CURRENT_VERIFIED",
+      "DESCRIPTION의resource abstraction·유형목록·clone/unshare/setns·capability조건을직접읽었다. Container조합과일반VA보호는구별한다."
+    ],
+    [
+      "https://man7.org/linux/man-pages/man7/credentials.7.html",
+      "CURRENT_VERIFIED",
+      "User/group identifiers의real/effective/saved/filesystem/supplementary IDs와Linuxfsuid/fsgid예외·보통eUID/GID와같음·변경가능조건을직접읽었다."
+    ],
+    [
+      "https://man7.org/linux/man-pages/man7/path_resolution.7.html",
+      "CURRENT_VERIFIED",
+      "Pathstep별search권한과root/mountview, owner/group/other선택·Linuxfsuid/fsgid·capability예외를직접읽었다."
+    ],
+    [
+      "https://man7.org/linux/man-pages/man7/cgroups.7.html",
+      "CURRENT_VERIFIED",
+      "DESCRIPTION의hierarchy/controller계측제한과v1/v2구분을직접읽었다. memory.max와oom.group의세부계약은이페이지에서찾지못했으며kernelv2공식section을보충검증했다."
+    ],
+    [
+      "https://man7.org/linux/man-pages/man2/getrlimit.2.html",
+      "CURRENT_VERIFIED",
+      "Soft/hard·AS/stack·NOFILE·NPROCrealUID/threads와root/capability예외·perprocesssharedlimits구간을직접읽었다."
+    ],
+    [
+      "https://d2.naver.com/helloworld/2922312",
+      "NEEDS_REVIEW",
+      "IPC에서직접열었지만browserarticle본문없이navigation shell만제공됐다. 일반process보호근거를이전PASS만으로승격하지않는다."
+    ],
+    [
+      "https://d2.naver.com/helloworld/7248350",
+      "NEEDS_REVIEW",
+      "직접열었지만navigation shell만제공됐다. Kubernetes설정→Linuxmemorycontroller사례의본문/버전확인은추가검토가필요하다."
+    ],
+    [
+      "https://d2.naver.com/helloworld/3661677",
+      "NEEDS_REVIEW",
+      "직접열었지만navigation shell만제공됐다. Dockertranscoding배치/host의존사례본문은확인하지못했으며404로단정하지않는다."
+    ]
+  ],
+  "supplementalSources": [
+    [
+      "https://man7.org/linux/man-pages/man7/pid_namespaces.7.html",
+      "CURRENT_VERIFIED",
+      "Namespaceinit·orphanadoption/subreaper와init사망시전체SIGKILL·ancestor별PID관찰구간을직접읽었다. Forwarding정책과namespace강제종료를구분한다."
+    ],
+    [
+      "https://docs.kernel.org/admin-guide/cgroup-v2.html",
+      "CURRENT_VERIFIED",
+      "CPUweight/max의controller범위·periodbudget과memory.max/reclaim/OOM·memory.oom.groupdefault0/개별OOM보호예외구간을직접읽었다. Cgroupv2정확한필드의학습Reference추가후보이다."
+    ]
+  ],
+  "findings": [
+    {
+      "id": "W3-OS-033",
+      "severity": "P2",
+      "contentKeys": [
+        "operating-systems.core.isolation.user-group-permission.q1"
+      ],
+      "file": "content/operating-systems/isolation/questions.json",
+      "quote": "파일 확장자·경로명 길이·생성 시각",
+      "problem": "B파일속성/C애플리케이션역할/Dcache종류의세distractor모두permission주체학습목표와무관하다. A정답과rationale의사실오류가아니라Unixcredential/mode오해를검증하지못하는문항품질문제이다.",
+      "action": "실제owner선택뒤other로fallback한다는오해·realID대effectiveID·보조group미고려등대표오해를담도록distractor/rationale만정밀보강한다.",
+      "followupIssues": [
+        201
+      ]
+    },
+    {
+      "id": "W3-OS-034",
+      "severity": "P0",
+      "contentKeys": [
+        "operating-systems.core.isolation.user-group-permission"
+      ],
+      "file": "content/operating-systems/isolation/user-group-permission.md",
+      "quote": "실제 판정에는 프로세스의 유효 사용자·그룹 정보가 사용된다.",
+      "problem": "일반Unix설명뒤Linux공식References를제공하지만filesystem권한판정을eUID/eGID로단정한다. credentials(7)와path_resolution(7)는Linuxfsuid/fsgid를사용하고보통effectiveIDs와같지만별도로변경가능함을명시한다. 기본mode/table과leastprivilege는유효하다.",
+      "action": "일반Unix와Linux파일검사의범위를한문장으로구분하고fsuid/fsgid는보통eUID/eGID와같지만별도ID임을짧게보충한다. 새API사용을권장하거나본문전체를재작성하지않는다.",
+      "followupIssues": [
+        201
+      ]
+    },
+    {
+      "id": "W3-OS-035",
+      "severity": "P1",
+      "contentKeys": [
+        "operating-systems.core.isolation.container-process-model.q3"
+      ],
+      "file": "content/operating-systems/isolation/questions.json",
+      "quote": "주 프로세스 하나의 종료만으로 자식 생명주기까지 자동 정리된다고 가정하면 안 된다.",
+      "problem": "Prompt는주프로세스가이미종료했다고하는데model은PID1의wait/forward를점검하라고한다. 그주프로세스가privatePIDnamespaceinit라면죽은PID1은정리할수없고kernel은남은namespaceprocess를SIGKILL한다(pid_namespaces(7)). Gracefulapplicationcleanup누락과살아있는childprocess누락·hostPID공유모드를구별해야한다.",
+      "action": "기본privatePIDnamespace를명시하고PID1이살아있는동안forward→childexit/reap→initexit의정상종료순서와init사망뒤kernelSIGKILL을대조한다. 또는살아있는init아래worker만종료했다는premise로좁힌다. 기존q2의reaping/forwarding분리는유지한다.",
+      "followupIssues": [
+        201
+      ]
+    }
+  ],
+  "visualizationAssets": [
+    {
+      "file": "frontend/public/learning/operating-systems/process-isolation.svg",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "sourceSha256": "0579a51194e80f3b7761b370ae74503a3216d82378773e73f0f10fb86b7aefd9"
+    },
+    {
+      "file": "frontend/public/learning/operating-systems/linux-namespace-view.svg",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "sourceSha256": "e481845164daf5091f48a3d469ea781965b40ed5748bddb79f279bbf79780aa9"
+    },
+    {
+      "file": "frontend/public/learning/operating-systems/container-process-model.svg",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "sourceSha256": "5d141222b7d431c2183e0d46f8d3d18ee4dbdde73799ff915b745eb6a620219e"
+    },
+    {
+      "file": "frontend/public/learning/operating-systems/host-kernel-sharing.svg",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "sourceSha256": "fa37fca78cbdc9450b24f0e79d800ddcab45c52819d39fc0c340e6ff027a9275"
+    }
+  ],
+  "sourceHashes": {
+    "operating-systems.core.isolation.cgroup": "6faf134c9c82f9305974014984cf0cbabadf810bbe0f7c096591b80da87541f0",
+    "operating-systems.core.isolation.cgroup.q1": "d2fb6cd053af2f1df0524c56c44a1d3b70c2ceb5d1c2f71e50d21013c91d5af2",
+    "operating-systems.core.isolation.cgroup.q2": "2aeac5e42e4b0092c3462d1ef7d9a2ee191a9f07268319c2ef0b57bb677a3259",
+    "operating-systems.core.isolation.cgroup.q3": "54cc95e0bbb4beaa56854b7928947b73e27678994fd69a12d181e59e49bdbeeb",
+    "operating-systems.core.isolation.container-process-model": "1d4f349def74c93abe5ea6862e9a7e9389604761b5b71ddea085c517a0f7f607",
+    "operating-systems.core.isolation.container-process-model.q1": "d586cbc78a5feb9d1667652f9166c4d3bff448e8a7f7fc6675a95b1ca7cf38cf",
+    "operating-systems.core.isolation.container-process-model.q2": "08dea5a42590488a5136776fc47f6c9516114077623f8e9736eb078def565285",
+    "operating-systems.core.isolation.container-process-model.q3": "ee3f3f4cb58154d59620df5754fb1eca8fa7583394501380312944e7929a9c84",
+    "operating-systems.core.isolation.host-kernel-sharing": "0d092368b0ea856d42a919a43247892d96136c8cc3cce7a761dfdc54ffba38f9",
+    "operating-systems.core.isolation.host-kernel-sharing.q1": "6d87b23dd2e3e7aa903191560fc5e1d92dc3d1058a06c06d18e9eb29ff1564aa",
+    "operating-systems.core.isolation.host-kernel-sharing.q2": "a2fb6882891556c72f6cd18b67db08a06e52b039938ef3af8f3bbd7f34b34df0",
+    "operating-systems.core.isolation.host-kernel-sharing.q3": "769ecfef623e08590fc8db7c390f3f84ab570d5b3b4665ce68d5d1ebcffd65f5",
+    "operating-systems.core.isolation.namespace": "075e2b54cb012f540d887ae68477f6e3a7a732119b286983cfd7b0ae1f6b050f",
+    "operating-systems.core.isolation.namespace.q1": "183d6f401d6fe317cedfdd83db58c12e51ca0aac9768160c78107504188b96fd",
+    "operating-systems.core.isolation.namespace.q2": "1b8ea6d9e4796dd477479795e13b5c3296d20657bca7c1fd456cbfc785f9943a",
+    "operating-systems.core.isolation.namespace.q3": "16526f9ddd113a9e57edea10e07f5542fb92bcda9cd6f788b1ecf021efcb96e9",
+    "operating-systems.core.isolation.process-isolation": "a023b0f748491b1242b748470f5361cb5d9e1bca87d5c79687285cfc1f4d9421",
+    "operating-systems.core.isolation.process-isolation.q1": "0a9fd3b2d4fa54d52796c77a824076eec1c9d13bb7056940d18beb52098d0214",
+    "operating-systems.core.isolation.process-isolation.q2": "cca6156bc0c85b7060507e2d05c6483a2a72725498504b377c42c851a7766b30",
+    "operating-systems.core.isolation.process-isolation.q3": "695dfb80ad8eabb42a1da1988ce337679bd1923add30ebaf904406d153f0c061",
+    "operating-systems.core.isolation.resource-limit": "5249e92542df4de5ddc87d4298165fbe00d10772d039c668246b6b8626c874d0",
+    "operating-systems.core.isolation.resource-limit.q1": "f7d7b6bc3cc63bde38d5ba8a8b4c061fcbfaa7716013ee4dffa3f25008c3c9fb",
+    "operating-systems.core.isolation.resource-limit.q2": "5aa808e5e8e129344425bd00bacd93c297a25d3eb5658a1c27e658d9f5376684",
+    "operating-systems.core.isolation.resource-limit.q3": "cb186dd53d938db06508649c2a66b1093cb997dc84e6657dce9a0980aadeac35",
+    "operating-systems.core.isolation.user-group-permission": "1c3b262aea7de622fd572a904b45c2cfbe0361428f1de46be874ec80716b8159",
+    "operating-systems.core.isolation.user-group-permission.q1": "542e5ef1d9e757b8d59c3a319034b3528c2a2dafe1fb74e9ac1d376010518409",
+    "operating-systems.core.isolation.user-group-permission.q2": "cc217a0855918527a7e6afced75d501c65239097bb7d037fc373c085b43cea4d",
+    "operating-systems.core.isolation.user-group-permission.q3": "28dd258661f74d15f2ea99e6d34d4ac9fce6a297dc923d5b9db840175a0704aa"
+  }
+}

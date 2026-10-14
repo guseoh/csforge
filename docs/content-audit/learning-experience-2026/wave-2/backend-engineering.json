@@ -1,0 +1,1594 @@
+{
+  "area": "backend-engineering",
+  "wave": "Wave 2",
+  "baselineSha": "efe73a15da14c996bd08344181d4d6f87073803d",
+  "reviewMethod": "13 Topic 전체 curriculum·40 Concept 원문 및108 Question의 모든 선택지/rationale/accepted/model/explanation을 직접 읽고 개별 근거 작성. 공식 계약을 실제 대조하며 자동 parsing과 과거 PASS는 verdict 근거로 쓰지 않음.",
+  "topics": [
+    {
+      "key": "backend.core.layering",
+      "coverage": "호출흐름/소스의존방향·유스케이스조정/상태불변식·공급자표현/내부의미를분리. orchestration의outbox기록순서오류는P0최소보강 대상."
+    },
+    {
+      "key": "backend.core.domain",
+      "coverage": "stableidentity/valueequality·유효생성/모든전이·domain상태와JPA관리상태를분리. invariant-lifecycle.q3은HARD응용의DB/결제협력목표가추가Concept연결없어보강 대상."
+    },
+    {
+      "key": "backend.core.api",
+      "coverage": "리소스/명령 경계, safe/idempotent 및 상태코드, 구조·의미·소비자 호환성을 모든 문항과 대조했다."
+    },
+    {
+      "key": "backend.core.dto-validation-error",
+      "coverage": "DTO 노출/변경 경계, 각 검증 실패 경계, 안정 오류 및 unknown outcome을 전체 문항과 대조."
+    },
+    {
+      "key": "backend.core.list",
+      "coverage": "응답 상한과 내부 query 비용, 필터/정렬 문맥, 수정 가능한 cursor 키와 snapshot 한계를 모든 9문항에서 확인."
+    },
+    {
+      "key": "backend.core.idempotency",
+      "coverage": "결과 불명·원자 예약·fingerprint·scope·TTL·외부 효과 복구를 모든 문항에서 읽고 검토."
+    },
+    {
+      "key": "backend.core.concurrency-transaction",
+      "coverage": "100→101 갱신손실, v7 조건 쓰기, local atomicity/원격 실패를 실제 SQL·문항과 대조. Version reference의 404는 본문 정확성과 구분."
+    },
+    {
+      "key": "backend.core.external",
+      "coverage": "client timeout 실제 계약, 신뢰할 수 없는 응답 검증, breaker 상태/window와 독립 capacity/fallback을 9문항과 대조."
+    },
+    {
+      "key": "backend.core.retry",
+      "coverage": "영구/일시 실패와 재실행 안전성, jitter/다중계층 부하, deadline 남은 예산/취소 한계를 모든 문항과 대조."
+    },
+    {
+      "key": "backend.core.bulk-batch",
+      "coverage": "multipart 경계와읽기/전송/commit단위, persistence context, durable진행/외부중복을6문항모두검토."
+    },
+    {
+      "key": "backend.core.time-money",
+      "coverage": "Instant/반복지역달력, now 경계/Clock, decimal 생성과분배합계를6문항과대조. DST 영향의L3설명만보강대상."
+    },
+    {
+      "key": "backend.core.evolution",
+      "coverage": "배포중schema/consumer공존, 캐시의측정·최신성, 비동기handoff와consumer중복을9문항및관련전Topic과대조."
+    },
+    {
+      "key": "backend.core.testing-recovery",
+      "coverage": "테스트가통과하는실제경계와부분실패완료근거, 복구후불변식/ADR 선택을6문항모두검토."
+    }
+  ],
+  "concepts": [
+    [
+      "backend.core.layering.dependency-direction",
+      "KEEP",
+      "L1 CORE API→application→domain·외부구현변경격리 목표충족.",
+      "패키지만분리≠책임·RequestEntity노출massassignment·DTO/command/domain변경이유·모든interface강제금지 충분. JPAannotatedentity전체금지나다중module강제가아닌구체API/Repository타입·규칙의결합경계로해석.",
+      "DIAGRAM 계층책임/infra역할과request변환경로가효과적. 소스방향과runtime호출을본문에서명시구별.",
+      "MS DDD layers/presentationmodel/domaininvariants·infra의존성절 직접확인. .NET/마이크로서비스구체배치를CSForge에그대로이식하는자료아님.",
+      "q1 방향/q2 서로다른변경이유/q3 status외부조립누수."
+    ],
+    [
+      "backend.core.layering.orchestration-rule",
+      "TARGETED_ENHANCE",
+      "L1 CORE 협력순서와domainstatus 소유목표충족하나outbox를DBcommit후기록하는순서가원자handoff계약위반.",
+      "cancel domainguard와service조회/TX조정·refund성공후DB실패/DB먼저후remote복구판단 정확. 예의3DB확정→4refund또는outbox기록에서outbox는함께commit해야함.",
+      "TEXT 책임표는유효. 취소domain/DB+outbox동일TX/commit후relay와직접환불별도분기를구분할필요.",
+      "MS tactical domain/application서비스·도메인이벤트역할확인. 추가AWS공식outbox의business/outboxsameTX를실제순서와대조.",
+      "q1 소유책임/q2 invariantvs협력/q3 원격환불/로컬커밋분리 모두타당."
+    ],
+    [
+      "backend.core.layering.infrastructure-boundary",
+      "KEEP",
+      "L1 CORE DB/HTTP/broker외부표현→내부의미 목표충족.",
+      "SDKPaymentIntent/status대신gateway/result·429/timeout/optional필드/진단id분류·모든Runtime하나로압축금지/enum전부복제금지·실제boundary필요조건 충분.",
+      "TEXT contract→adapter→SDK/오류표현 및판단표 유효.",
+      "MS anti-corruption은의미번역·복잡도/latency·관측·business/orchestration배제 경계확인.",
+      "q1 보호목적/q2 실패와metadata번역/q3 provider교체모델누수."
+    ],
+    [
+      "backend.core.domain.entity",
+      "KEEP",
+      "L1 CORE 속성변화에도같은business대상/JPA표현 구분목표충족.",
+      "Orderidentity/status/address·PK/public번호·pay/ship/cancel vssetter·JPA와domain겹칠수있음/annotation자동규칙아님·단순projection도적절 설명 충분.",
+      "NONE 동일identity와속성변화/행동코드로충분.",
+      "MS domainmodel의ID/timecontinuity·관련statebehavior 및boundedcontext동일ID다른model을대조.",
+      "q1 identity/q2 내부외부ID변경/q3 rawstatus전이우회."
+    ],
+    [
+      "backend.core.domain.value-object",
+      "KEEP",
+      "L1 CORE 값조합/equality·반복규칙/불변타입 목표충족.",
+      "amount+currency→Money생성검증·samevalue교환·새discounted값·mutablekey/equality위험·이름있는실제규칙/모든wrapper금지·DTO변경이유구분 충분. 코드가equals/rounding구현전체를제시한다고주장하지 않음.",
+      "NONE 유효생성경계/동일값비교·DTO표와부분Money호출로충분.",
+      "MS VO ID없음/immutability/equalitycomponent 원칙 직접확인. C#/EFlegacymapping을Java실행지침으로채택하지 않음.",
+      "q1 도입조건/q2 currency/decimal경계/q3 외부List변경ownership."
+    ],
+    [
+      "backend.core.domain.invariant-lifecycle",
+      "TARGETED_ENHANCE",
+      "L1 CORE 생성/전이/terminalrule 본문목표충족. q3결제경합과durableattempt보호의필수선행Concept연결이빠짐.",
+      "emptyitems유효생성·publicsetter우회·PAID-onlyship·domain/DB방어목적·Java한메서드원격atomic아님 정확. q3모델의expectedversion/PAYMENT_PENDING/operationidentity/reconciliation은이본문에서학습할수없음.",
+      "DIAGRAM 생성거부/valid전이와CREATED→PAID→SHIPPING→COMPLETED/cancelled 그래프유효.",
+      "MS validations 생성/모든변경에서alwaysvalid 및실패후부분mutation위험 대조.",
+      "q1 invariant/q2 enum≠transition 정확; q3HARD응용자체는타당하나단일L1Concept연결로고급DB/멱등성답의학습범위부족."
+    ],
+    [
+      "backend.core.api.resource-endpoint",
+      "KEEP",
+      "L1 CORE DB 테이블 대신 외부 리소스와 명령의 수명/계약을 설계하는 목표 충족.",
+      "cancel 명령과 cancellation 리소스의 요구 차이, URI+method+status 계약, 과도한 중첩과 소유/권한 경계, 목록/오류/멱등성 고려가 구체적이다.",
+      "NONE 명령/리소스 예시와 잘못된 URI 비교로 충분.",
+      "AIP121의 API와 DB 스키마 분리 및 custom method를 대조했다. HTTP 의미는 공식 RFC9110 HTML 동일 문서로 확인.",
+      "q1 외부 계약/q2 취소 기록 수명/q3 정체성·권한에 필요한 parent 경계."
+    ],
+    [
+      "backend.core.api.methods-status",
+      "TARGETED_ENHANCE",
+      "L1 CORE idempotent 및 상태코드 목표는 충족하나 safe 의미를 표의 라벨로만 제시한다.",
+      "DELETE 204→404와 요청 의도 효과/응답 구분, 201 생성·202 미완료·409 현재 상태 충돌은 정확. safe의 요청 의도상 읽기 전용과 부수 logging, unsafe GET의 prefetch 위험이 빠졌다.",
+      "TEXT 메서드 표와 오류 body가 적절. safe GET와 unsafe-but-idempotent PUT 비교 설명을 추가할 필요.",
+      "RFC9110 9.2.1/9.2.2 및 15.3.2/15.3.3/15.5.10을 실제 HTML 본문에서 대조.",
+      "q1 멱등 효과/q2 상태코드 구분/q3 모든 오류 200의 상호운용 문제 모두 정확."
+    ],
+    [
+      "backend.core.api.compatibility",
+      "KEEP",
+      "L1 CORE 구조·의미·소비자 호환성과 점진적 교체 목표 충족.",
+      "금액 필드 의미 변경, optional 필드의 unknown 정책 조건, enum exhaustive 소비자 실패, 공존/이동/사용량/폐기, 버전 비용과 의미 contract test를 설명한다.",
+      "TEXT 공존→이동→관측→폐기 순서와 변경 비교가 충분.",
+      "AIP180 source/wire/semantic 호환성 및 unknown enum 조건, RFC9457 확장 필드 무시와 내부 정보 노출 경계를 확인.",
+      "q1 의미 변경/q2 enum 소비자/q3 한 달 공존 전환 계획."
+    ],
+    [
+      "backend.core.dto-validation-error.dto-boundary",
+      "KEEP",
+      "L2 CORE over-posting/lazy 직렬화/변경 결합 목표 충족.",
+      "Request→Command→domain 번역, 서버 소유 필드, 응답 projection, 기계적 DTO 복사 비용, DTO≠권한/불변식 보장이 구체적. 작은 유스케이스 판단은 일반 설계 설명이며 저장소 구현 규칙을 변경하지 않음.",
+      "TEXT 번역 화살표와 record/금지 Entity 요청 예가 충분.",
+      "OAS Schema Object 입력·출력 타입 및 요청/응답 계약 범위를 확인; OAS가 도메인 계층 설계를 강제한다고 주장하지 않음.",
+      "q1 변경 이유/q2 조회 projection/q3 over-posting."
+    ],
+    [
+      "backend.core.dto-validation-error.validation-layers",
+      "KEEP",
+      "L2 CORE 형식/권한/domain/DB 제약과 의도적 중복 목표 충족.",
+      "두 exists 검사→동시 INSERT→UNIQUE 승패, 모든 진입점 domain guard, SQL 오류 번역과 진단 보존, API/DB 길이 목적을 설명. DB 제약이 모든 업무 불변식을 자동 보호한다고 주장하지 않음.",
+      "DIAGRAM 두 요청 race와 DB→업무 의미→409 흐름이 유효.",
+      "PG constraints의 UNIQUE/FK/CHECK 범위와 동시 무결성 대조(이번 Database 검토에서 실제 공식 절 확인).",
+      "q1 사전 검사 race/q2 shape vs lifecycle/q3 SQL 세부 비노출."
+    ],
+    [
+      "backend.core.dto-validation-error.error-contract",
+      "KEEP",
+      "L2 CORE code/message/field/retryability/trace 분리 목표 충족.",
+      "message parsing 결합, 409+제품 코드, nested field 경로, 5xx≠안전 retry/unknown 결과, 내부 stack/SQL와 trace 연결, RFC 형식 선택 조건 충분.",
+      "NONE 구체 JSON과 trace 경계 설명으로 충분.",
+      "RFC9457 실제 확장 및 보안 절의 내부 정보 노출/기계 타입 경계 대조.",
+      "q1 stable code/q2 HTTP vs 제품/q3 retry identity와 결과 조회; 연결 오류 개념에 멱등성과 함께 보라는 본문 선행 설명 있음."
+    ],
+    [
+      "backend.core.list.pagination",
+      "KEEP",
+      "L2 CORE bounded size/정렬/count 필요성 목표 충족.",
+      "unique tie-breaker와 요청 간 snapshot 차이, deep OFFSET 비용은 plan 의존, size+1/COUNT 제품 조건을 설명. LIMIT가 DB 내부 읽기까지 상한이라고 과장하지 않음.",
+      "NONE SQL/size 응답과 count 결정 가지로 충분.",
+      "AIP158 실제 max/default/continuation 및 PG LIMIT unique order/deep OFFSET 절 대조.",
+      "q1 자원 보호/q2 동률/q3 count 없는 hasNext."
+    ],
+    [
+      "backend.core.list.filter-sort",
+      "KEEP",
+      "L2 CORE 지원 필드/연산과 결정 순서 목표 충족.",
+      "외부 sort 이름→allowlist 실제 식, OR/AND/빈 값/날짜 경계, 조건 복잡도 거절, cursor 문맥과 index 측정 충분.",
+      "TEXT filter→후보→전체 order→page 경계가 정확.",
+      "AIP132 ordering comparator/field 및 AIP160 지원 필드·연산/validation 정책을 확인. AIP DSL 자체 채택이 필수라고 주장하지 않음.",
+      "q1 identifier는 value bind 아님/q2 문맥 종속/q3 내부 컬럼 교체."
+    ],
+    [
+      "backend.core.list.cursor",
+      "KEEP",
+      "L2 CORE opaque continuation 및 큰 OFFSET/삽입 drift 조건 목표 충족.",
+      "11 삽입→6 중복, strict tuple< DESC SQL, mutable key/snapshot 한계, encode≠보안/authz, 임의 페이지/count trade-off 구체적.",
+      "TEXT 숫자 offset 변화와 tuple SQL/token 왕복이 적절.",
+      "AIP158 opacity/권한 대체 금지와 PG LIMIT 비용 절 확인; token이 keyset 구현을 강제한다고 해석하지 않음.",
+      "q1 경계/q2 동률/q3 mutablekey·index·page37/count 요구."
+    ],
+    [
+      "backend.core.idempotency.repeat-request",
+      "KEEP",
+      "L2 CORE commit 후 응답 유실과 재POST 중복 목표 충족.",
+      "timeout≠rollback, UI 밖 retry, 안정 business key UNIQUE와 기존 결과 연결, HTTP 의미/제품 operation 구분 충분.",
+      "DIAGRAM DB commit 뒤 응답 X와 재INSERT 흐름 정확.",
+      "RFC9110 공식 HTML idempotent 효과와 Stripe v1 재응답 실제 절 대조.",
+      "q1 unknown/q2 UI 외 retry/q3 기존 business identity."
+    ],
+    [
+      "backend.core.idempotency.idempotency-key",
+      "KEEP",
+      "L2 CORE key/fingerprint/status/result 모델 목표 충족.",
+      "NOT_SEEN→PROCESSING→완료/실패 정책, different payload 충돌, operation 시작 전 vs commit 후 결과, caller scope/authz, 민감 snapshot/TTL를 구체화.",
+      "DIAGRAM 상태 분기와 10000/20000 payload 충돌 적절.",
+      "Stripe 실제 v1 parameter 비교·실행 시작 후 결과/500 저장·validation/동시 충돌 미저장, v2 차이를 확인; 본문은 사례를 보편 정책으로 강제하지 않음.",
+      "q1 mismatch/q2 processing vs completed/q3 tenant scope."
+    ],
+    [
+      "backend.core.idempotency.race-expiry",
+      "KEEP",
+      "L3 CORE 원자 소유권/processing 복구/만료/외부 효과 목표 충족.",
+      "SELECT→effect→INSERT 반례, UNIQUE ON CONFLICT 예약, takeover timeout만으로 안전 아님, TTL보장 끝, 원격 성공→local crash/공급자 계약 필요 정확. SQL은 예약 부분 예시이며 완전 schema 구현으로 제시하지 않음.",
+      "DIAGRAM race·만료 timeline·원격 성공 crash가 유효.",
+      "Stripe v1 24시간 이후 pruning·새 요청 및 동시 충돌 미저장 실제 확인. 외부 결과 조회 가능성은 공급자별 계약 확인이 필요하며 key 자체가 보편 조회 endpoint라는 보장 아님.",
+      "q1 선예약/q2 예약 뒤 crash/q3 동시·외부복구·TTL 종합."
+    ],
+    [
+      "backend.core.concurrency-transaction.lost-update",
+      "KEEP",
+      "L2 CORE 이전 값 read/계산/늦은 write 목표 충족.",
+      "100 두 read→101 두write, count=count+1 원자 변경, version/lock/UNIQUE별 목적 및 Transaction≠자동 직렬화 설명 충분.",
+      "DIAGRAM 두 요청 timeline과 version 승패 유효.",
+      "이번 Database에서 실제 PG READ COMMITTED concurrent UPDATE 재평가와 isolation 범위 확인.",
+      "q1 본질/q2 atomic 증감/q3 annotation만으론 부족."
+    ],
+    [
+      "backend.core.concurrency-transaction.optimistic",
+      "TARGETED_ENHANCE",
+      "L2 CORE stale 감지/처리 본문은충분. 유일 Reference는도구직접404와공식검색색인이엇갈려접근성재확인 대상.",
+      "v7→v8 SQL/0row, @Version 코드, conflict≠merge/무조건retry아님, 0row≠항상version 원인과404/409 구분 정확.",
+      "TEXT version 두 writer timeline과 policy 가지로 충분.",
+      "canonical직접도구접근404/uppercase경로불가, 공식검색의동일URL revision/optimistic conflict 본문은직접읽음. 링크자체가틀렸다고확정하지않고접근성NEEDS_REVIEW로구분.",
+      "q1 detector/q2 사용자 의도/q3 주어진timeline의0row와 다른원인 모두 정확."
+    ],
+    [
+      "backend.core.concurrency-transaction.usecase-transaction",
+      "KEEP",
+      "L2 CORE 유스케이스 local 원자 경계 및 긴 원격 호출 자원 목표 충족.",
+      "orders/inventory/coupon 함께 성공, configured resource manager/AOP, remote 자동rollback 아님, connection/lock 점유, 결제성공localrollback, chunk partial 의미를 구체화.",
+      "DIAGRAM 참여/비참여 자원과 원격 성공/local실패 경계가 적절.",
+      "Spring 공식 transaction 개요와 declarative 원격 context 비전파 절 실제 확인.",
+      "q1 local boundary/q2 resource-local connection 조건/q3 commit뒤publish 실패."
+    ],
+    [
+      "backend.core.external.timeouts",
+      "KEEP",
+      "L2 CORE 연결/응답 대기·상위 budget·자원 고갈 목표 충족.",
+      "resolution→연결→전송→처리→수신 구간, client마다 DNS/TLS/body 포함 차이, timeout≠remote 미실행, 1000ms에서DB150 남은budget, retry증폭·관측 충분.",
+      "TEXT 구간/예산/attempt 흐름과 결과 유실 그림 적절.",
+      "JDK25 client connectTimeout 신규연결에만 적용/재사용이면효과없음, request timeout 미설정무한 및 Spring REST client 선택 실제 확인.",
+      "q1 TCPconnect/q2 상위800ms와하위1s/2s/q3 결제unknown+budget."
+    ],
+    [
+      "backend.core.external.remote-errors",
+      "KEEP",
+      "L2 CORE 2xx≠schema/business 유효, 내부 typed 실패 번역 목표 충족.",
+      "orderId null 정상JSON반례, status/media/body상한/enum/조합 검증, vendor model 차단,429/5xx/malformed/unknown 구분과metadata 제한 충분.",
+      "NONE 구체 body와 adapter 경계 단계로 충분.",
+      "RFC9110 동일공식HTML response representation과 Spring REST client의 abstraction 선택 범위 확인; provider business semantics는자체계약검증 필요.",
+      "q1 필수값/q2 success=false/q3 정책별실패 분류."
+    ],
+    [
+      "backend.core.external.circuit-fallback",
+      "KEEP",
+      "L3 CORE 실패window/상태전이/허용degraded결과 목표 충족.",
+      "최소sample/rate/probe설정, timeout/capacity는별도, stale추천vs결제false-success, user400과가용성실패통계 선택을설명. breaker가원격복구/동시수 자동보장안함.",
+      "DIAGRAM CLOSED→OPEN→HALF_OPEN 양방향 평가유효; 특정1회probe로일반화하지않음.",
+      "Resilience4j 실제 minimum/window/slowcall·OPEN거절·HALF_OPEN configuredrate 및 function호출동시제한안함/bulkhead semaphore·boundedpool 대조.",
+      "q1 OPEN/q2 domainfallback/q3 window와capacity분리."
+    ],
+    [
+      "backend.core.retry.transient-permanent",
+      "KEEP",
+      "L2 CORE 실패 회복 가능성·operation 안전·시간 목표 충족.",
+      "429/503/serialization 후보와credential/validation 조건, 상태숫자만으로분류금지, transient여도commitunknown·idempotency필요, 빠른실패자원보호 충분.",
+      "NONE 조건 가지와결제예로충분.",
+      "AWS 실제retry과부하/sideeffectunknown·failureclassification절확인.",
+      "q1 두축/q2 429시점/q3 credential교체전중단."
+    ],
+    [
+      "backend.core.retry.backoff-jitter",
+      "KEEP",
+      "L2 CORE 간격증가/무작위분산/상한 목표 충족.",
+      "1000동기retry→jitter,100/200/400/800 및최대지연/시도/ownership/관측, 임의공식강제금지 정확. ‘3회 재시도’와‘최대3회 시도’ 용어는수치구현시구별할필요가있지만정답은곱셈원리만요구.",
+      "TEXT 동기/분산시점숫자와계층트리 충분.",
+      "gRPC 실제 maxAttempts/backoff±20%/throttling과 AWS capped retry/jitter/ownership 확인.",
+      "q1 분산/q2 계층곱셈/q3 retry storm 완화."
+    ],
+    [
+      "backend.core.retry.deadline",
+      "KEEP",
+      "L3 CORE 상위예산·timeout/backoff·safe재실행 목표 충족.",
+      "1s×3+backoff가2s초과,DB300→remaining1700,취소≠remote미실행,작업시간가치/응답작성여유 충분. 예시는총시도3을전제하며실제설정에는maxAttempts/maxRetries구별해야함.",
+      "DIAGRAM elapsed→remaining 및전체예산분해와remotecommit분리 유효.",
+      "gRPC 실제 elapsed차감·언어별전파·서버spawn작업중단은application책임 절 대조.",
+      "q1 범위/q2 worstbudget/q3 remote계속실행."
+    ],
+    [
+      "backend.core.bulk-batch.file-api",
+      "TARGETED_ENHANCE",
+      "L3 CORE 크기/streaming/path/authz는충족하나목표의multipart개수제한이본문에없음.",
+      "서버tempname·filename불신·실제decode/schema·업로드와processing완료/조회권한·임시정리 충분. 작은part다수의parser/metadata압박과per-file vs전체request 상한을구분할필요.",
+      "DIAGRAM 업로드→temp→validate→적용과202status조회가유효. 상한거절/부분수신정리상태를경계에짧게표시하면좋음.",
+      "RFC7578 실제filename directory불신/multiplefiles별part절대조; 표준이자동보안상한을제공하지않음.",
+      "q1 pathtraversal/q2 2GB후처리·권한·정리 정확."
+    ],
+    [
+      "backend.core.bulk-batch.bulk-processing",
+      "KEEP",
+      "L3 CORE 읽기/writebatch/commit과부분성공 목표충족.",
+      "100만건 메모리/왕복/lock,1000읽기100전송1000commit과Springchunk정의구분, JPAflush/clear 관리수·ID/batching조건, 실패1001범위 질문 구체적.",
+      "DIAGRAM 세단위분해와실패완료범위질문이적절; 실제chunk그림을새asset으로만들필수없음.",
+      "SpringBatch실제commitinterval 항목묶음write후TXcommit 대조.",
+      "q1 PC메모리/q2 전체vs1000chunk를batch-recovery와다중연결."
+    ],
+    [
+      "backend.core.bulk-batch.batch-recovery",
+      "KEEP",
+      "L3 CORE 완료증명/checkpoint/중복/운영자복구 목표충족.",
+      "durablemetadata,checkpoint≠idempotency,메일후기록전crash,transient/invalid/codebug정책, metadata/businesscommit엇갈림과부분성공 의미 정확.",
+      "DIAGRAM A/B완료C실패D미시작·crash후checkpoint재개·effect기록간격 적절.",
+      "SpringBatch완료Step skip기본/allowStartIfComplete/startLimit 운영개입을실제확인; 외부exactlyonce보장아님.",
+      "q1 송금checkpoint+identity/q2 8만알림완료증거."
+    ],
+    [
+      "backend.core.time-money.instant-zone",
+      "TARGETED_ENHANCE",
+      "L3 CORE 절대시점/지역규칙 구분은충족하나 DST 예약·마감영향목표의실제변환예가없음.",
+      "사건Instant vs매주월09지역rule, offset≠ZoneId,API→DB→표시 의미유실 정확. DST를언급하지만존재하지않는/두번존재하는local time의판단·정책을설명하지않음.",
+      "TEXT UTC→지역표시와경계흐름유효. gap/overlap의0/2offset→선택instant 비교표를후보로기록.",
+      "JDK25 Instant timeline과ZoneId rules 실제확인; ZonedDateTime 공식gap0/overlap2/forwardshift·earlier/later 선택절로보강필요성검증.",
+      "q1 사건모델/q2 반복rule 모두정확하나DST선택자체는미검증."
+    ],
+    [
+      "backend.core.time-money.clock-expiry",
+      "KEEP",
+      "L3 CORE 명시시간입력/경계포함 테스트목표충족.",
+      "!isBefore의now>=expiresAt, fixedclock직전/동일/직후, 달력now와monotonic elapsed구분이구체적. 코드조각은생성자까지포함한독립class라고제시하지않음.",
+      "NONE 짧은guard/fixed코드와경계표로충분.",
+      "JDK25 Clockfixed의항상같은Instant와test사용계약직접확인.",
+      "q1 test입력/q2 API/정리불일치와반복작업수렴."
+    ],
+    [
+      "backend.core.time-money.money-rounding",
+      "KEEP",
+      "L3 CORE 단위/decimal/scale/rounding/경계정밀도목표충족.",
+      "item먼저vs총합round,KRW/minorunit,문자열0.1,10000→3334+3333+3333 remainder, DB/API/PG단위변환을구체화.",
+      "NONE 분배숫자·계산순서와짧은decimal코드충분.",
+      "BigDecimal(double)의이진근사보존과string/valueOf변환차이 공식실제절대조.",
+      "q1 constructor근사/q2 총액보존."
+    ],
+    [
+      "backend.core.evolution.migration",
+      "TARGETED_ENHANCE",
+      "L3 CORE expand/data이전/전환/contract순서는충족하나공존중쓰기와backfill진행의정합성설명이부족.",
+      "name→first/last추가·채움·사용확인·제거, ALTER/lock/IO/온라인지원측정, appliedmigration앞으로교정 정확. oldversion이계속name수정할때이미backfill한새값의갱신근거/검증이없음.",
+      "DIAGRAM 3단계는유효. old/newwriter와backfill의동시진행/대조완료→contract금지해제 timeline 후보.",
+      "Flyway 실제checksum history/적용후수정금지·rollforward절확인; Flyway가runtime dualwrite정합성을자동제공안함.",
+      "q1 공존/q2 큰테이블잠금·버전조건/q3 history변조 모두정확."
+    ],
+    [
+      "backend.core.evolution.api-evolution",
+      "KEEP",
+      "L3 CORE 여러consumer전환·의미변경·폐기공존목표충족.",
+      "L1 compatibility를선행으로명시하고실제old/new공존·usage0/rollback/SDK잔존·versionmaintenance비용을설명. 이중표현제공을DB원자dualwrite보장으로주장하지않음.",
+      "TEXT old/newtimeline·6단계운영절차가충분.",
+      "RFC9110은method/representation기반Reference이며rollout전체증명아님; 이번실제AIP180확인과본문consumer조건대조.",
+      "q1 단위의미/q2 모바일unknownenum. L1문항과목표겹치지만장기consumer공존적용이며오류없음."
+    ],
+    [
+      "backend.core.evolution.cache-adoption",
+      "KEEP",
+      "L3 CORE 측정조회/원본부하/stale/무효화비용목표충족.",
+      "DB8+JSON2+외부120 bottleneck반례,재고vscategory허용stale,DB성공cachedelete실패,sourceDB와hit/eviction관측 충분.",
+      "TEXT 지연분해와삭제승패흐름유효.",
+      "Redis 공식실제miss→primary→fill, write→invalidate/TTL 절확인. 마케팅latency수치는본문보장으로채택안함.",
+      "q1 측정비중/q2 stale재고/원본책임."
+    ],
+    [
+      "backend.core.evolution.async-adoption",
+      "KEEP",
+      "L3 CORE 응답분리제품가치·delivery/retry/idempotency비용목표충족.",
+      "재고/주문은성공응답전,색인/분석은지연가능,commit/publish양방향실패, 동일DBbusiness+outboxcommit후relay·consumer중복/실패상태 정확.",
+      "DIAGRAM 같은TX의두row→commit→publisher→broker→consumer가정확; layering.orchestration의잘못된순서와구분.",
+      "원작성자Microservices.io outbox의DBmessage저장→relay·TX결과와send조건/consumer멱등근거확인.",
+      "q1 durablehandoff/q2 at-least-onceconsumer."
+    ],
+    [
+      "backend.core.testing-recovery.testing-strategy",
+      "TARGETED_ENHANCE",
+      "L3 CORE unit/DB/HTTP/E2E조합목표충족하나외부시스템대역목표는repository mock 반례외설명없음.",
+      "givenstate→행동→결과/거절, mock은DBUNIQUE/flushcommit재현안함,H2vsPG·도구보다위험경계 선택 정확. provider fake/HTTPstub와실제client parsing/status/timeout 검증범위가빠짐.",
+      "TEXT 위험→검증종류표/상태계약예 적절; 외부대역과실제어댑터의신뢰경계행 추가후보.",
+      "SpringTestContext IoC/DI/TX 지원과JUnitoverview 실제확인; 도구지원이테스트전략자동보장아님.",
+      "q1 DBmock한계/q2 E2E전용비용 정확."
+    ],
+    [
+      "backend.core.testing-recovery.failure-recovery",
+      "KEEP",
+      "L3 CORE 탐지/근거/복구종류/불변식확인 목표충족.",
+      "DB+payment성공/event실패, durable state에서누락만재생,compensation≠rollback·반복실패·manual, 상태이름만으로복구안됨 충분.",
+      "DIAGRAM 완료checklist와탐지→근거→조치→불변식→완료/판단실패 흐름유효.",
+      "Microsoft실제보상동시변경/이전상태복원아님·보상도실패/멱등/수동개입, GoogleSREretrybudget 과부하증폭 직접확인.",
+      "q1 전체재실행중복/q2 unknown 결과대사."
+    ],
+    [
+      "backend.core.testing-recovery.tradeoffs",
+      "KEEP",
+      "L3 CORE 실제문제/측정·추상화/운영/되돌림조건 목표충족.",
+      "모든tech실제책임+새failuremode, 느림→측정→작은변경→전후측정, 반복정책samechange추상화와framework숨김비용, index쓰기비용/재검토조건 표 충분.",
+      "NONE ADR표와측정결정흐름으로충분.",
+      "Fowler원작성자internalquality→이해/미래변경비용절직접확인. 예시p95수치는측정교훈이며원문실험값주장아님.",
+      "q1 병목증거/q2 brokerADR일관성/관측/대안."
+    ]
+  ],
+  "questions": [
+    [
+      "backend.core.layering.dependency-direction.q1",
+      "KEEP",
+      "B runtime호출가능/안쪽구체표현결합제한 정확. A domainHTTP/JPA/C 모든interface자동역전/D folder분리면domain책임불필요 오답; rationale4·해설 확인.",
+      "EASY 필요한업무규칙의소유를논하며모든단순CRUD에복잡domainmodel강제라는답아님."
+    ],
+    [
+      "backend.core.layering.dependency-direction.q2",
+      "KEEP",
+      "model/explanation HTTP표현/usecase입력/domain lifecycle변경이유분리와필요의미번역 타당.",
+      "MEDIUM 타입개수의식이아닌실제변경경계 이유."
+    ],
+    [
+      "backend.core.layering.dependency-direction.q3",
+      "KEEP",
+      "model/explanation Entity외부조립→status누수, 허용DTO→command→domain행동/서버값보호 정확.",
+      "MEDIUM API변경전파와massassignment사례가objective연결."
+    ],
+    [
+      "backend.core.layering.orchestration-rule.q1",
+      "KEEP",
+      "A domainstate/application협력·TX·복구 정확. B entityrepository순서/C controller모든rules/D stateonlyservice항상 오답; rationale4·해설 대조.",
+      "EASY 원칙과상황조건으로책임구분."
+    ],
+    [
+      "backend.core.layering.orchestration-rule.q2",
+      "KEEP",
+      "model/explanation 배송시취소금지 intrinsicrule vs조회/행동/저장 협력순서 정확.",
+      "MEDIUM q1개념을실제취소변경이유로검증."
+    ],
+    [
+      "backend.core.layering.orchestration-rule.q3",
+      "KEEP",
+      "model/explanation remote환불성공/localcommit실패는조정경계, idempotency/durablehandoff/보상/대사 필요 타당.",
+      "HARD outbox선택을무조건정답으로강제않고실제조건/책임필요. 본문의후commitoutbox순서는모델답에없음."
+    ],
+    [
+      "backend.core.layering.infrastructure-boundary.q1",
+      "KEEP",
+      "D 외부타입/오류/프로토콜변화번역 정확. A 이름짧게/B 모든Runtime/C 전부async 오답; rationale4·해설 확인.",
+      "EASY A는낮은매력이나B/C는실제실패의미/실행모델오해를검증."
+    ],
+    [
+      "backend.core.layering.infrastructure-boundary.q2",
+      "KEEP",
+      "model/explanation429rate-limit후retry후보/공급자code필요의미/reqid관측 metadata보존 타당.",
+      "MEDIUM 무조건429재시도나domain에서HTTP유출을보장하지 않음."
+    ],
+    [
+      "backend.core.layering.infrastructure-boundary.q3",
+      "KEEP",
+      "model/explanation vendorSDK→adapterPaymentResult/Gateway내부계약으로수정 타당.",
+      "MEDIUM q2실패분류와다른typedomain공급자결합 판단."
+    ],
+    [
+      "backend.core.domain.entity.q1",
+      "KEEP",
+      "D lifetime identity 정확. A JPA필수/B PKbusinessID항상같음/C allfinal필수 오답; rationale4·해설 확인.",
+      "EASY 구현선택과domain필수특징을분리."
+    ],
+    [
+      "backend.core.domain.entity.q2",
+      "KEEP",
+      "model/explanation internaljoin/storageID와externalnamespace변경/노출/생성·별도unique계약 타당.",
+      "MEDIUM schemaPK와연결되나domainsemanticidentifier 목표의설명."
+    ],
+    [
+      "backend.core.domain.entity.q3",
+      "KEEP",
+      "model/explanation rawsetStatus가선행/terminal조건우회→의도행동guard 정확.",
+      "MEDIUM 단순setter명칭변경만으로모든규칙이자동생긴다고 주장하지 않음."
+    ],
+    [
+      "backend.core.domain.value-object.q1",
+      "KEEP",
+      "A 반복validation/equality/calculation과noidentity값 의미 정확. B 모든Stringwrapper/C table1:1필수/D sharedmutable 적합 오답; rationale4·해설 대조.",
+      "EASY 도입의실제규칙/ownership 조건 명확."
+    ],
+    [
+      "backend.core.domain.value-object.q2",
+      "KEEP",
+      "model/explanation amount/currency/scale/rounding의생성·연산경계와서명/equality, storage/display별도 타당.",
+      "MEDIUM 구현하지않은임의rounding정책을정답으로강제하지 않음."
+    ],
+    [
+      "backend.core.domain.value-object.q3",
+      "KEEP",
+      "model/explanation originalListalias변경→값/equality안정성깨짐, defensivecopy/immutablecollection 타당.",
+      "MEDIUM 주어진List구조변경에대한소유분리이며내부mutableelements까지shallowcopy로해결한다고확대하지않음."
+    ],
+    [
+      "backend.core.domain.invariant-lifecycle.q1",
+      "KEEP",
+      "C 유효생존중생성+모든전이조건보존 정확. A ctor검사후setter자유/B DBdomain둘중하나/D 원격자동rollback 오답; rationale4·해설 확인.",
+      "EASY 외부에유효상태로존재하는경계의invariant 정의와일치."
+    ],
+    [
+      "backend.core.domain.invariant-lifecycle.q2",
+      "KEEP",
+      "model/explanation enum은값집합뿐·허용transition/조건/실패상태/외부effect경계 필요 타당.",
+      "MEDIUM terminal재전이금지와실패기존상태보존을검증."
+    ],
+    [
+      "backend.core.domain.invariant-lifecycle.q3",
+      "TARGETED_ENHANCE",
+      "model/explanation item변경차단/expectedversion경합·확정amount/attempt/key/PENDING durable기록후remotecall·unknown결과대사 방향은정확.",
+      "HARD는ConceptL1과독립이며고난도자체가결함아님. 하지만연결은단일invariant-lifecycle뿐으로DBversion/조건UPDATE·durableattempt·멱등성/reconciliation을검증하는선행본문/Concept링크가없음."
+    ],
+    [
+      "backend.core.api.resource-endpoint.q1",
+      "KEEP",
+      "A 리소스 URI+method/status 계약 정확. B DB 이름/C 모든 명령 POST/D 항상 깊은 중첩은 틀림. 4 rationale와 explanation 대조.",
+      "EASY 리소스 설계 목표가 명확."
+    ],
+    [
+      "backend.core.api.resource-endpoint.q2",
+      "KEEP",
+      "modelAnswer/explanation 취소 명령과 별도 기록 리소스의 수명·조회 요구 기준 정확.",
+      "MEDIUM URI 형태 하나를 무조건 정답으로 강제하지 않음."
+    ],
+    [
+      "backend.core.api.resource-endpoint.q3",
+      "KEEP",
+      "modelAnswer/explanation parent가 identity/authz에 필요한지와 canonical route 판단 타당.",
+      "MEDIUM 내부 테이블 관계와 공개 경로를 구분."
+    ],
+    [
+      "backend.core.api.methods-status.q1",
+      "KEEP",
+      "D 반복 의도 효과 정의 정확. A DELETE404/B 모든 응답200/C POST는 결코 멱등 불가 오답. rationale4와 explanation 확인.",
+      "EASY 응답 동일성 오해를 검증."
+    ],
+    [
+      "backend.core.api.methods-status.q2",
+      "KEEP",
+      "modelAnswer/explanation 201 생성/202 접수 미완료/409 현재 상태 충돌 정확.",
+      "MEDIUM 202가 최종 성공이라는 모호성 없음."
+    ],
+    [
+      "backend.core.api.methods-status.q3",
+      "KEEP",
+      "modelAnswer/explanation 모든 오류200은 HTTP 소비자/관측/분류 계약을 훼손하며 body 사업 코드와 HTTP 상태를 분리해야 함.",
+      "MEDIUM TCP/TLS 문제와 HTTP 표현을 혼동하지 않음."
+    ],
+    [
+      "backend.core.api.compatibility.q1",
+      "KEEP",
+      "B 같은 타입 금액의 의미 변경이 가장 위험. A optional 필드는 조건부/C 신규 endpoint/D 오탈자 수정과 비교. rationale4와 explanation 확인.",
+      "EASY A도 strict 소비자에서는 위험하나 가장 위험한 무통보 의미 변경 B의 기준이 명시됨."
+    ],
+    [
+      "backend.core.api.compatibility.q2",
+      "KEEP",
+      "modelAnswer/explanation unknown enum의 strict 역직렬화/exhaustive 분기 실패와 fallback/capability rollout 타당.",
+      "MEDIUM optional 필드 추가와 구별되는 목표."
+    ],
+    [
+      "backend.core.api.compatibility.q3",
+      "KEEP",
+      "modelAnswer/explanation 구/신 계약 공존, 양쪽 서버 지원, 소비자 이전, 사용량/폐기 안내, 제거의 단계 타당.",
+      "HARD 상황의 전환 범위를 검증; 새 버전 이름만으로 해결되지 않음."
+    ],
+    [
+      "backend.core.dto-validation-error.dto-boundary.q1",
+      "KEEP",
+      "C 표현/내부 모델의 변경·노출 범위 분리. A boilerplate/B lazy 자동 제거/D DTO만 검증 오답; rationale4/explanation 정확.",
+      "EASY 경계 목적 명확."
+    ],
+    [
+      "backend.core.dto-validation-error.dto-boundary.q2",
+      "KEEP",
+      "model/explanation 조회는 representation의 필드만 필요하며 lifecycle graph 복원이 필수 아님.",
+      "MEDIUM 읽기 projection과 쓰기 불변식을 혼동하지 않음."
+    ],
+    [
+      "backend.core.dto-validation-error.dto-boundary.q3",
+      "KEEP",
+      "model/explanation role/status/time over-posting과 서버 소유 생성/전이 경계 타당.",
+      "MEDIUM 요청 필드 제거만으로 권한 검사가 완료된다고 주장하지 않음."
+    ],
+    [
+      "backend.core.dto-validation-error.validation-layers.q1",
+      "KEEP",
+      "D DB UNIQUE가 race 최종 방어. A 빠른 service/B @Valid/C JPA 자동 해결 오답; rationale4/explanation 정확.",
+      "EASY API 검증과 concurrent 저장 경계를 구분."
+    ],
+    [
+      "backend.core.dto-validation-error.validation-layers.q2",
+      "KEEP",
+      "model/explanation 길이/필수 API contract와 배송 후 취소 domain 상태 규칙을 모든 진입 경로에 적용.",
+      "MEDIUM q1과 다른 실패 경계 목표."
+    ],
+    [
+      "backend.core.dto-validation-error.validation-layers.q3",
+      "KEEP",
+      "model/explanation unique violation을 안정 conflict 코드로 번역하고 raw SQL/constraint 숨김.",
+      "MEDIUM 같은 race를 실제 오류 번역에 적용하는 응용."
+    ],
+    [
+      "backend.core.dto-validation-error.error-contract.q1",
+      "KEEP",
+      "A code/type 정확. B 한글 전체/C stack/D SQL은 불안정·내부 정보; rationale4/explanation 확인.",
+      "EASY 안정 계약과 사용자 문구 구분."
+    ],
+    [
+      "backend.core.dto-validation-error.error-contract.q2",
+      "KEEP",
+      "model/explanation 넓은 HTTP 범주와 업무 원인을 함께 제공; TCP 성공과 HTTP 상태 혼동 금지.",
+      "MEDIUM 의미 층위 구분."
+    ],
+    [
+      "backend.core.dto-validation-error.error-contract.q3",
+      "KEEP",
+      "model/explanation 5xx 뒤 commit 여부 불명확→중복 결제; retryability와 operation identity/조회/보류 필요 정확.",
+      "HARD 결제 scenario에 오류 계약을 적용. 본문이 같은 unknown outcome과 멱등성 협력을 직접 설명하므로 domain.q3과 달리 연결 근거 있음."
+    ],
+    [
+      "backend.core.list.pagination.q1",
+      "KEEP",
+      "D 반환·직렬화·전송량 상한 정확. A UI만/B OFFSET 클수록 적은일/C 항상COUNT 오답; rationale4/explanation이 내부 DB 비용 별도 명시.",
+      "EASY 시스템 목표."
+    ],
+    [
+      "backend.core.list.pagination.q2",
+      "KEEP",
+      "model/explanation 동률 created_at에 id 보조 키로 deterministic order.",
+      "MEDIUM snapshot을 자동 보장하지 않음."
+    ],
+    [
+      "backend.core.list.pagination.q3",
+      "KEEP",
+      "model/explanation size+1/Slice와 다른 count 소비자 요구 확인 타당.",
+      "MEDIUM 무조건 COUNT 제거 아님."
+    ],
+    [
+      "backend.core.list.filter-sort.q1",
+      "KEEP",
+      "A 허용 목록 매핑 정확. B 항상index/C 자동cursor/D DB이름노출호환 좋음 오답; rationale4/explanation 검토.",
+      "EASY value bind와 identifier 구분."
+    ],
+    [
+      "backend.core.list.filter-sort.q2",
+      "KEEP",
+      "model/explanation 후보+전체 순서의 조합이 cursor 의미를 결정.",
+      "MEDIUM 단순 SQL injection 문항과 다른 목표."
+    ],
+    [
+      "backend.core.list.filter-sort.q3",
+      "KEEP",
+      "model/explanation recent 논리 키→SortField→실제 컬럼 경계 타당.",
+      "MEDIUM 의미 계약 유지."
+    ],
+    [
+      "backend.core.list.cursor.q1",
+      "KEEP",
+      "C 마지막 키 비교로 OFFSET/삽입 이동 완화. A encrypted offset/B 항상전체count/D 정렬불필요 오답; rationale4/explanation 확인.",
+      "EASY 기본 조건 명확."
+    ],
+    [
+      "backend.core.list.cursor.q2",
+      "KEEP",
+      "model/explanation tuple+id tie-breaker로 마지막 위치 재현 정확.",
+      "MEDIUM pagination.q2와 관련되지만 cursor 값 구성 적용 목표."
+    ],
+    [
+      "backend.core.list.cursor.q3",
+      "KEEP",
+      "model/explanation tuple DESC/복합 Btree 검토, mutable timestamp 누락·중복, 별도 snapshot/count/page anchor 비용 모두 정확.",
+      "HARD 네 가지 상충 요구가 명시되어 무조건 keyset PASS를 유도하지 않음."
+    ],
+    [
+      "backend.core.idempotency.repeat-request.q1",
+      "KEEP",
+      "B 응답 없어도 commit 가능. A 반드시rollback/C browser만/D POST절대retry불가 오답; rationale4/explanation 확인.",
+      "EASY unknown outcome 명확."
+    ],
+    [
+      "backend.core.idempotency.repeat-request.q2",
+      "KEEP",
+      "model/explanation SDK/proxy/여러 기기의 UI 밖 반복과 서버 작업 identity 보호 정확.",
+      "MEDIUM UI UX와 최종 보장 구분."
+    ],
+    [
+      "backend.core.idempotency.repeat-request.q3",
+      "KEEP",
+      "model/explanation 같은 business key UNIQUE/기존 결과 조회, payload 동일성 전제 확인.",
+      "MEDIUM 새 key table을 무조건 요구하지 않음."
+    ],
+    [
+      "backend.core.idempotency.idempotency-key.q1",
+      "KEEP",
+      "C fingerprint 불일치 거절. A 무조건 첫응답/B 둘다실행/D key삭제재실행 오답; rationale4/explanation 정확.",
+      "EASY 키의 논리 의미 검증."
+    ],
+    [
+      "backend.core.idempotency.idempotency-key.q2",
+      "KEEP",
+      "model/explanation 소유 처리중과 저장 완료 결과 재사용/대기 정책 구분.",
+      "MEDIUM 실패 복구를 자동 해결한다고 주장하지 않음."
+    ],
+    [
+      "backend.core.idempotency.idempotency-key.q3",
+      "KEEP",
+      "model/explanation tenant/account namespace와 fingerprint/authz/TTL 같은 범위 적용 정확.",
+      "MEDIUM UUID 충돌 확률이 아니라 이름 공간 계약 질문."
+    ],
+    [
+      "backend.core.idempotency.race-expiry.q1",
+      "KEEP",
+      "D 두 빈SELECT 후 중복effect 정확. A 선조회면다른완료/B TTL자동합침/C UNIQUE원격취소 오답; rationale4/explanation 확인.",
+      "EASY effect 이전 소유권."
+    ],
+    [
+      "backend.core.idempotency.race-expiry.q2",
+      "KEEP",
+      "model/explanation 원자 예약 먼저, loser 기존 결과/대기, 예약 뒤 crash 복구 필요 정확.",
+      "MEDIUM q1과 core 중복은 있으나 commit/복구까지 설명을 요구하는 서술 적용."
+    ],
+    [
+      "backend.core.idempotency.race-expiry.q3",
+      "KEEP",
+      "model/explanation 50분 processing 보류·동일 공급자 operation 대사·different payload 충돌·24시간 retry면1시간TTL부족 정확.",
+      "HARD 세 시점 조건 명확. 공급자 조회/재시도 방법은 해당 공급자 계약 내 선택이며 DB UNIQUE만으로 원격 exactly-once를 주장하지 않음."
+    ],
+    [
+      "backend.core.concurrency-transaction.lost-update.q1",
+      "KEEP",
+      "C stale read-modify-write가 앞선변경을 덮음. A read만/B UNIQUE거절/D 모든lock대기 오답; rationale4/explanation 정확.",
+      "EASY lost update의 구체 상태 변화."
+    ],
+    [
+      "backend.core.concurrency-transaction.lost-update.q2",
+      "KEEP",
+      "model/explanation DB current value의 한 statement 증감이며 복합field rule은 별도 판단.",
+      "MEDIUM ORM 사용 자체로 해결한다고 주장하지 않음."
+    ],
+    [
+      "backend.core.concurrency-transaction.lost-update.q3",
+      "KEEP",
+      "model/explanation 일반 read-modify-write 직렬화 안됨→atomic/version/lock 선택 정확.",
+      "HARD 응용 내용은 비교적 단순하지만 정답/연결 오류 없음; 난이도 재조정은 선택적."
+    ],
+    [
+      "backend.core.concurrency-transaction.optimistic.q1",
+      "KEEP",
+      "A expectedversion 비교 stale감지. B 선block/C TX제거/D 자동merge 오답; rationale4/explanation 확인.",
+      "EASY detector와 resolver 구분; 실제 DB의 UPDATE lock 존재를 부정하지 않음."
+    ],
+    [
+      "backend.core.concurrency-transaction.optimistic.q2",
+      "KEEP",
+      "model/explanation 최신 가격/재고에 사용자가 승인 안한 명령 적용 위험 정확.",
+      "MEDIUM 자동 retry의 의미 조건."
+    ],
+    [
+      "backend.core.concurrency-transaction.optimistic.q3",
+      "KEEP",
+      "model/explanation 주어진 v7두read/v8commit에서는 stale 근거 강함, 일반0row는삭제/다른predicate 구분.",
+      "MEDIUM 원인 단정 모호성 해소."
+    ],
+    [
+      "backend.core.concurrency-transaction.usecase-transaction.q1",
+      "KEEP",
+      "B local 업무 atomic boundary. A repository마다/C controller길이/D 외부호출수 오답; rationale4/explanation 정확.",
+      "EASY 동일 local 자원 전제 명시."
+    ],
+    [
+      "backend.core.concurrency-transaction.usecase-transaction.q2",
+      "KEEP",
+      "model/explanation DB작업 시작된 일반 resource-local JPA/Hibernate connection/획득lock은 보통TX종료까지, provider차이와 밖으로이동시실패계약 명시.",
+      "MEDIUM 실제 connection handling 조건으로 과장 제거."
+    ],
+    [
+      "backend.core.concurrency-transaction.usecase-transaction.q3",
+      "KEEP",
+      "model/explanation commit후broker실패는별도resource→durable handoff/재발행/대사 필요 정확.",
+      "HARD 구현 자체보다 실패 경계 판단. outbox를다른TX에기록하라는오류는여기없음."
+    ],
+    [
+      "backend.core.external.timeouts.q1",
+      "KEEP",
+      "A TCPconnection establishment timeout. B 연결후read/C poolacquire/D 전체deadline은다른범위; rationale4/explanation 실제client조건명시.",
+      "EASY TCP연결시도라는조건이A를명확히함."
+    ],
+    [
+      "backend.core.external.timeouts.q2",
+      "KEEP",
+      "model/explanation 하위1s/2s가상위800ms초과후worker점유; elapsed뺀budget필요 정확.",
+      "MEDIUM 구체설정수치대조."
+    ],
+    [
+      "backend.core.external.timeouts.q3",
+      "KEEP",
+      "model/explanation commit후응답유실가능과identity/조회/deadline/attempt/backoff 조건 정확.",
+      "HARD 외부결제unknown에본문직접연결."
+    ],
+    [
+      "backend.core.external.remote-errors.q1",
+      "KEEP",
+      "D schema/필수값검증. A 무조건retry/B body없이성공/C vendor바로Entity 오답; rationale4/explanation 정확.",
+      "EASY HTTP계층성공과업무값구분."
+    ],
+    [
+      "backend.core.external.remote-errors.q2",
+      "KEEP",
+      "model/explanation200+success=false는업무실패→adapter검증/typed번역 정확.",
+      "MEDIUM 필수필드누락과업무상태가다른검증축."
+    ],
+    [
+      "backend.core.external.remote-errors.q3",
+      "KEEP",
+      "model/explanation malformed계약/429rate/500가용성/timeoutunknown과 정책별typed+안전metadata 타당.",
+      "MEDIUM 모든vendor예외복제 요구아님."
+    ],
+    [
+      "backend.core.external.circuit-fallback.q1",
+      "KEEP",
+      "B OPEN 즉시거절. A timeout까지허용후성공/C 모두probe/D 자동cachedfallback 오답; rationale4/explanation 검토.",
+      "EASY 차단과대체성공분리."
+    ],
+    [
+      "backend.core.external.circuit-fallback.q2",
+      "KEEP",
+      "model/explanation stale추천의허용degraded와확인없는결제성공금지 정확.",
+      "MEDIUM domain의효과가다른두상황명확."
+    ],
+    [
+      "backend.core.external.circuit-fallback.q3",
+      "KEEP",
+      "model/explanation sample/rate CLOSED→OPEN→limited HALF_OPEN 평가, breaker≠동시capacity, 별도semaphore/pool 정확.",
+      "HARD 설정의rate조건으로1probe성공자동회복 오해방지."
+    ],
+    [
+      "backend.core.retry.transient-permanent.q1",
+      "KEEP",
+      "C 회복가능성+재실행안전성. A method/body/B CPU메모리만/D status숫자만 오답; rationale4/explanation remaining예산도명시.",
+      "EASY 두축질문과세번째예산조건이충돌하지않음."
+    ],
+    [
+      "backend.core.retry.transient-permanent.q2",
+      "KEEP",
+      "model/explanation429의ratewindow/Retry-After 회복과deadline/idempotency 확인 정확.",
+      "MEDIUM 모든4xx영구오해검증."
+    ],
+    [
+      "backend.core.retry.transient-permanent.q3",
+      "KEEP",
+      "model/explanation같은badcredential반복지연/부하, rotation후별도재시작 정확.",
+      "MEDIUM 상태변경가능성조건명시."
+    ],
+    [
+      "backend.core.retry.backoff-jitter.q1",
+      "KEEP",
+      "A 시간축분산. B 항상0/C 무한retry/D 멱등대체 오답; rationale4/explanation 확인.",
+      "EASY 부하와정확성분리."
+    ],
+    [
+      "backend.core.retry.backoff-jitter.q2",
+      "KEEP",
+      "model/explanation 계층별시도수곱셈과ownership/전체예산 정확.",
+      "MEDIUM 3회에첫시도를포함하는지는명시안되어3×3이나4×4를단일수치정답으로강제하지않는현문항유지가능. 구현예제로확장시총attempts정의필요."
+    ],
+    [
+      "backend.core.retry.backoff-jitter.q3",
+      "KEEP",
+      "model/explanation 지수+jitter+maxdelay/attempt예산 및실패/안전성 조건정확.",
+      "MEDIUM q1개념을1000client 장애에적용."
+    ],
+    [
+      "backend.core.retry.deadline.q1",
+      "KEEP",
+      "B 전체시간한계vs특정대기. A 같은용어/C batch전용/D timeout만있으면불필요 오답; rationale4/explanation 확인.",
+      "EASY 일반설계범위, gRPC API에서는deadline/timeout표현변환가능함을부정하지않음."
+    ],
+    [
+      "backend.core.retry.deadline.q2",
+      "KEEP",
+      "model/explanation timeout+backoff+local누적으로SLA초과/remaining계산 정확.",
+      "MEDIUM 숫자정답아닌예산원리. 최대retry3이면총attempt4라는설정정의는구현에서명시할필요."
+    ],
+    [
+      "backend.core.retry.deadline.q3",
+      "KEEP",
+      "model/explanation caller취소와remoteeffect취소별개→조회/identity/대사 정확.",
+      "HARD 구현코드없는경계판단이라상대난도는낮을수있으나정답/연결결함없음."
+    ],
+    [
+      "backend.core.bulk-batch.file-api.q1",
+      "KEEP",
+      "C ../로root외경로 선택. A MIME/B 크기/D 이름충돌도위험이나질문의직접경로위험아님; rationale4/explanation 정확.",
+      "EASY 가장직접위험으로다중정답모호성해소."
+    ],
+    [
+      "backend.core.bulk-batch.bulk-processing.q1",
+      "KEEP",
+      "B 관리엔티티누적/flushclear. A batch전송/C indexflush/D pool대기는다른원인; rationale4/explanation 확인.",
+      "MEDIUM heap증가증상과후보관측을연결;원인을무조건확정안함."
+    ],
+    [
+      "backend.core.bulk-batch.batch-recovery.q1",
+      "KEEP",
+      "model/explanation checkpoint위치vsidempotenteffect, 송금identity/처리기록 정확.",
+      "MEDIUM 두보호수단목표구분."
+    ],
+    [
+      "backend.core.bulk-batch.bulk-processing.q2",
+      "KEEP",
+      "model/explanation100만전체원자성과1000부분commit의자원/rollback/PC·WAL/checkpoint/실패보고 trade-off 타당.",
+      "HARD 원문 두Concept연결이복구요구를충분히뒷받침."
+    ],
+    [
+      "backend.core.bulk-batch.file-api.q2",
+      "KEEP",
+      "model/explanation2GB수신후비동기파싱/검증/처리ID·소유권·temp정리 경계타당.",
+      "HARD 업로드수신시간자체가사라진다고주장하지않음."
+    ],
+    [
+      "backend.core.bulk-batch.batch-recovery.q2",
+      "KEEP",
+      "model/explanation8만진행숫자만으론전송완료불확실→항목identity/발송상태/provider중복방지·대사 타당.",
+      "HARD q1을실제crash시점의증명문제로확장."
+    ],
+    [
+      "backend.core.time-money.instant-zone.q1",
+      "KEEP",
+      "D Instant+표시ZoneId. A timezone없는문자열/B LocalTime만/C OS기본만 오답; rationale4/explanation 정확.",
+      "EASY 발생사건한시점이라는조건명확."
+    ],
+    [
+      "backend.core.time-money.clock-expiry.q1",
+      "KEEP",
+      "C 명시now입력/경계test. A 시간빠름/B UTC9강제/D TX열기 오답; rationale4/explanation 확인.",
+      "MEDIUM 개념인지에는쉬운distractor도있지만정답모호성없음."
+    ],
+    [
+      "backend.core.time-money.money-rounding.q1",
+      "KEEP",
+      "model/explanationdouble0.1이미근사→constructor정확보존, string/valueOf/minorunit와별도round정책 타당.",
+      "MEDIUM valueOf가이미double산술오차를무조건복원한다는주장없음."
+    ],
+    [
+      "backend.core.time-money.instant-zone.q2",
+      "KEEP",
+      "model/explanation한Instant는반복지역rule아님→localtime/일정+ZoneId로매일실제instant계산 정확.",
+      "MEDIUM 서울은현대DST없지만다른지역규칙조건으로일반모델의필요성을설명."
+    ],
+    [
+      "backend.core.time-money.clock-expiry.q2",
+      "KEEP",
+      "model/explanation배타expiresAt now>=경계공유/ACTIVE조건업데이트 반복수렴, fixed09:59:59.999/10/후 테스트 정확.",
+      "HARD 반복DB전이는본문시간경계에연결된합리적응용; 원격효과보장으로확대안함."
+    ],
+    [
+      "backend.core.time-money.money-rounding.q2",
+      "KEEP",
+      "model/explanation독립round후총10000검증·최소단위remainder배분순서 정책 정확.",
+      "MEDIUM 특정배분순서를유일정답으로강제하지않음."
+    ],
+    [
+      "backend.core.evolution.migration.q1",
+      "KEEP",
+      "B old/new같은schema공존. A DBTX배포동시변경/C backfill이면old자동적응/D 배포시작old트래픽없음 오답; rationale4/explanation정확.",
+      "EASY 호환구간의구체trigger."
+    ],
+    [
+      "backend.core.evolution.cache-adoption.q1",
+      "KEEP",
+      "D DB8 vs외부120 개선비중측정. A DB항상먼저/B 평균만/C 외부도동비율개선 오답; rationale4/explanation 확인.",
+      "MEDIUM tail/부하도검토하고평균하나로단정안함."
+    ],
+    [
+      "backend.core.evolution.api-evolution.q1",
+      "KEEP",
+      "model/explanation unknownfield허용조건optional vs원→센트의미변경 정확.",
+      "MEDIUM 통화단위가같은숫자타입이어도breaking이라는목표."
+    ],
+    [
+      "backend.core.evolution.async-adoption.q1",
+      "KEEP",
+      "model/explanationcommit후publish전crash→같은TXbusiness/outbox+relay 정확.",
+      "HARD 실제broker존재가전제아니며실패경계있는경우검토."
+    ],
+    [
+      "backend.core.evolution.cache-adoption.q2",
+      "KEEP",
+      "model/explanationDB뒤delete실패stale·원본DB/TTL관측/우회/요구별강한전략 타당.",
+      "HARD 캐시재고값으로최종차감불변식보장한다고주장하지않음."
+    ],
+    [
+      "backend.core.evolution.migration.q2",
+      "KEEP",
+      "model/explanation DB버전별ALTERlock/rewrite·IO/backfill/replication/old호환성, nullable단계선택 정확.",
+      "HARD 모든DB버전의컬럼추가가무조건rewrite라는일반화없음."
+    ],
+    [
+      "backend.core.evolution.async-adoption.q2",
+      "KEEP",
+      "model/explanationat-least-once중복을정상조건→consumeridentity/멱등projection/실패관측 정확.",
+      "MEDIUM 생산자의절대무중복을가정안함."
+    ],
+    [
+      "backend.core.evolution.api-evolution.q2",
+      "KEEP",
+      "model/explanation구모바일enum strictdecode/exhaustiveswitch 확인→fallback/capability/점진배포·사용량 관측정확.",
+      "MEDIUM API.compatibility.q2와기초목표중첩은있으나장기배포운영상황에적용."
+    ],
+    [
+      "backend.core.evolution.migration.q3",
+      "KEEP",
+      "model/explanation 적용history 같은버전다른SQL 위험→새migration앞으로교정 정확.",
+      "MEDIUM q1의schema공존과다른실행이력목표."
+    ],
+    [
+      "backend.core.testing-recovery.testing-strategy.q1",
+      "KEEP",
+      "C 실제DB/TX는mock소유아님. A mock재현/B annotation만/D save호출검증 충분 오답; rationale4/explanation 정확.",
+      "MEDIUM 실제flushcommit경계를명시."
+    ],
+    [
+      "backend.core.testing-recovery.tradeoffs.q1",
+      "KEEP",
+      "D 지연/DB/CPU/IO측정. A cache가정/B 모든읽기우회/C TTL먼저 오답; rationale4/explanation 정확.",
+      "EASY cache-adoption.q1과측정목표중첩은있으나ADR선택기초로단순확인."
+    ],
+    [
+      "backend.core.testing-recovery.failure-recovery.q1",
+      "KEEP",
+      "model/explanation DB/payment이미성공→전체retry중복, 현재durablestate에서누락이벤트/대사/보상조건 정확.",
+      "HARD 각단계성공상태가명시되고localrollback을답으로허용하지않음."
+    ],
+    [
+      "backend.core.testing-recovery.testing-strategy.q2",
+      "KEEP",
+      "model/explanation E2E실제연결vs느림/격리어려움,unit/DB/API/E2E조합 타당.",
+      "MEDIUM mock모두대체도금지; q1 DB경계와조합설계목표구분."
+    ],
+    [
+      "backend.core.testing-recovery.failure-recovery.q2",
+      "KEEP",
+      "model/explanation identity/provider조회·durablestatus/lastattempt/requestID·대사/manual전환 정확.",
+      "HARD providerkey를무조건조회endpoint로가정하지말고계약지원범위확인필요."
+    ],
+    [
+      "backend.core.testing-recovery.tradeoffs.q2",
+      "KEEP",
+      "model/explanation 측정문제/보장/broker책임/DBoutbox일관성/중복retry관측대안/검증지표·재검토조건 타당.",
+      "HARD 앞Topic기술을고르는종합ADR이며실제구현을요구하지않음."
+    ]
+  ],
+  "sources": [
+    [
+      "https://aws.amazon.com/builders-library/timeouts-retries-and-backoff-with-jitter/",
+      "CURRENT_VERIFIED",
+      "backend.core.retry: 공식Builder페이지로redirect된본문의timeout자원·retry증폭·sideeffectunknown·단일ownership·jitter 실제 절 확인."
+    ],
+    [
+      "https://docs.junit.org/current/user-guide/",
+      "CURRENT_VERIFIED",
+      "backend.core.testing-recovery: 공식JUnit6.1.3overviewredirect의플랫폼/Jupiter 실행구조확인; 개별assertionAPI전체검증이아님."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/math/BigDecimal.html",
+      "CURRENT_VERIFIED",
+      "backend.core.time-money: 실제double0.1변환의근사값보존/string권장 및scale/rounding계약 대조."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/time/Clock.html",
+      "CURRENT_VERIFIED",
+      "backend.core.time-money: 실제fixed의동일Instant와test목적절직접확인."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/time/Instant.html",
+      "CURRENT_VERIFIED",
+      "backend.core.time-money: 실제timeline의한시점정의확인; 미래반복지역일정정의와구분."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/time/ZoneId.html",
+      "CURRENT_VERIFIED",
+      "backend.core.time-money: 실제fixedoffset/geographicregion 및ZoneRules가Instant↔LocalDateTime의offset변환규칙을제공하는절확인."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.net.http/java/net/http/HttpClient.Builder.html",
+      "CURRENT_VERIFIED",
+      "backend.core.external: 실제 connectTimeout 신규연결시도/기존연결재사용무효 및양의duration절확인."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.net.http/java/net/http/HttpRequest.Builder.html",
+      "CURRENT_VERIFIED",
+      "backend.core.external: 실제 requesttimeout/send exceptional completion·미설정무한절확인. 모든bodyconsumer완료/DNS범위를추측하지않음."
+    ],
+    [
+      "https://docs.spring.io/spring-batch/reference/step/chunk-oriented-processing.html",
+      "CURRENT_VERIFIED",
+      "backend.core.bulk-batch: 실제Batch6.0.5 chunk의commitinterval 읽기→write→TXcommit설명확인."
+    ],
+    [
+      "https://docs.spring.io/spring-batch/reference/step/chunk-oriented-processing/restart.html",
+      "CURRENT_VERIFIED",
+      "backend.core.bulk-batch: 실제COMPLETED기본skip/allowStartIfComplete예외/startLimit와수동개입절 확인. 모든JobRepository설정/외부효과atomic보장검증아님."
+    ],
+    [
+      "https://docs.spring.io/spring-framework/reference/data-access/transaction.html",
+      "CURRENT_VERIFIED",
+      "backend.core.concurrency-transaction: 실제 manager추상화/JPA 등resource 통합 개요 확인; 같은chapter declarative의remote context전파 미지원 절 직접 대조."
+    ],
+    [
+      "https://docs.spring.io/spring-framework/reference/testing/integration.html",
+      "CURRENT_VERIFIED",
+      "backend.core.testing-recovery: 실제TestContext framework중립성과IoCcache/fixtureDI/testTX목표절확인."
+    ],
+    [
+      "https://docs.spring.io/spring-framework/reference/web/webmvc-client.html",
+      "CURRENT_VERIFIED",
+      "backend.core.external: 실제 RestClient 동기/WebClient reactive/HTTPserviceproxy 선택개요 확인. 하위페이지의모든변환설정을확인했다고확대하지않음."
+    ],
+    [
+      "https://docs.stripe.com/api/idempotent_requests",
+      "CURRENT_VERIFIED",
+      "backend.core.idempotency: 실제24줄 v1/v2 차이·v1 처음 status/body(500포함)·parameter 비교·24h pruning·실행 미시작 validation/동시 충돌 미저장을 모두 확인. CLI/플러그인 설치 안내는 실행하지 않음."
+    ],
+    [
+      "https://documentation.red-gate.com/fd/versioned-migrations-273973333.html",
+      "CURRENT_VERIFIED",
+      "backend.core.evolution: 실제 appliedorderedonce/checksum/history 및permanent환경적용후기존수정대신새version rollforward 절확인."
+    ],
+    [
+      "https://google.aip.dev/121",
+      "CURRENT_VERIFIED",
+      "backend.core.api: 실제 리소스 모델·DB 스키마 분리·standard/custom methods 절을 확인. management-plane 규칙을 모든 API의 구현 보장으로 확대하지 않음."
+    ],
+    [
+      "https://google.aip.dev/132",
+      "CURRENT_VERIFIED",
+      "backend.core.list: 실제 List order_by natural comparator/변경 문서화와 선택적 filter 계약 절 확인."
+    ],
+    [
+      "https://google.aip.dev/158",
+      "CURRENT_VERIFIED",
+      "backend.core.list: 실제 max/default page size·요청 문맥·opacity·base64 한계·token≠권한 절 직접 확인."
+    ],
+    [
+      "https://google.aip.dev/160",
+      "CURRENT_VERIFIED",
+      "backend.core.list: 실제 지원 필드/연산/타입 validation과 정책 제한 확인. 서비스의 단순 전용 필터와 이 DSL의 OR 우선순위를 동일하다고 주장하지 않음."
+    ],
+    [
+      "https://google.aip.dev/180",
+      "CURRENT_VERIFIED",
+      "backend.core.api: source/wire/semantic compatibility와 required 필드·unknown enum 소비자 조건을 직접 확인."
+    ],
+    [
+      "https://grpc.io/docs/guides/deadlines/",
+      "CURRENT_VERIFIED",
+      "backend.core.retry: 실제 elapsed차감timeout전파·Java/Go기본·C++enable조건과cancel후spawnedwork application중단책임을확인."
+    ],
+    [
+      "https://grpc.io/docs/guides/retry/",
+      "CURRENT_VERIFIED",
+      "backend.core.retry: 실제 transparentretry와configuredpolicy 구분, maxAttempts/expbackoff/±20%jitter·token throttling절확인. 가이드의모든languageimplementation검증은아님."
+    ],
+    [
+      "https://jakarta.ee/specifications/persistence/3.2/apidocs/jakarta.persistence/jakarta/persistence/version",
+      "NEEDS_REVIEW",
+      "backend.core.concurrency-transaction: 도구가404 Not Found를보고했다. uppercase Version.html 직접접근도도구불가; 공식 대체 경로 검증 필요. 본문 stale-write 메커니즘과이URL의학습가치를구분."
+    ],
+    [
+      "https://learn.microsoft.com/ko-kr/azure/architecture/microservices/model/tactical-domain-driven-design",
+      "CURRENT_VERIFIED",
+      "backend.core.layering: domainservice업무규칙/applicationserviceusecase조정·TX와domain/integrationevent 경계 확인."
+    ],
+    [
+      "https://learn.microsoft.com/ko-kr/azure/architecture/patterns/anti-corruption-layer",
+      "CURRENT_VERIFIED",
+      "backend.core.layering: 서로다른모델/의미번역·observability/latencycost·번역계층에business/orchestration배제 조건 확인."
+    ],
+    [
+      "https://learn.microsoft.com/ko-kr/azure/architecture/patterns/compensating-transaction",
+      "CURRENT_VERIFIED",
+      "backend.core.testing-recovery: 실제본문보상≠원상복원/동시변경고려·보상도실패/durable진행/idempotent/manual절확인. 접근banner와달리해당본문은읽혔음."
+    ],
+    [
+      "https://learn.microsoft.com/ko-kr/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/ddd-oriented-microservice",
+      "CURRENT_VERIFIED",
+      "backend.core.layering: 접근안내banner가있지만실제DDD계층본문은조회됨. presentation/domain타입분리·aggregatevalidity·application조정/infra방향을직접대조. 특정.NET배치와순수POCO권고는JPA전체금지근거로사용않음."
+    ],
+    [
+      "https://learn.microsoft.com/ko-kr/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/domain-model-layer-validations",
+      "CURRENT_VERIFIED",
+      "backend.core.domain: 실제본문alwaysvalid/ctor와mutation에서invariant보호·검증실패후부분변경위험 확인. accessbanner만으로미조회판정하지않음."
+    ],
+    [
+      "https://learn.microsoft.com/ko-kr/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/implement-value-objects",
+      "CURRENT_VERIFIED",
+      "backend.core.domain: VOnoID/immutable·samevalue교환·component equality 확인. EF/C#코드의Java이식이나현대EFmapping전체보장아님."
+    ],
+    [
+      "https://learn.microsoft.com/ko-kr/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/microservice-domain-model",
+      "CURRENT_VERIFIED",
+      "backend.core.domain: domain Entity ID/timecontinuity·상태관련behavior 및JPA와별개의도메인정의 근거 확인."
+    ],
+    [
+      "https://martinfowler.com/articles/is-quality-worth-cost.html",
+      "CURRENT_VERIFIED",
+      "backend.core.testing-recovery: 원작성자의실제internalquality와모듈이해/미래기능변경비용관계절확인. 정량pseudo그래프를실험수치로확대하지않음."
+    ],
+    [
+      "https://microservices.io/patterns/data/transactional-outbox.html",
+      "CURRENT_VERIFIED",
+      "backend.core.evolution: 패턴원작성자의DB에message를business변경transaction의일부로저장하고별도relay가전달하는절확인; consumer중복방어와별도 운영비용 대조."
+    ],
+    [
+      "https://redis.io/docs/latest/develop/use-cases/cache-aside/",
+      "CURRENT_VERIFIED",
+      "backend.core.evolution: 실제cachemiss primary조회/fill·primarywrite후invalidate·TTL과stampede 비용절확인; 광고latency를보편보장으로채택안함."
+    ],
+    [
+      "https://resilience4j.readme.io/docs/bulkhead",
+      "CURRENT_VERIFIED",
+      "backend.core.external: 실제 semaphore와boundedqueue/fixedpool 구현의동시실행상한/maxwait 범위확인."
+    ],
+    [
+      "https://resilience4j.readme.io/docs/circuitbreaker",
+      "CURRENT_VERIFIED",
+      "backend.core.external: 실제 최소표본·failure/slowrate·OPEN/HALF_OPEN·함수호출동시제한별도 절직접확인."
+    ],
+    [
+      "https://spec.openapis.org/oas/latest.html",
+      "CURRENT_VERIFIED",
+      "backend.core.dto-validation-error: 실제 OAS3.2.1 Schema Object 입력·출력 타입 절 확인. latest 링크의 향후 판본 변동 및 OAS가 자동 runtime 검증/DDD 경계를 제공하지 않음을 구분."
+    ],
+    [
+      "https://sre.google/sre-book/handling-overload/",
+      "CURRENT_VERIFIED",
+      "backend.core.testing-recovery: 실제perrequest/perclientretrybudget·계층retry곱셈과overload빠른거절절직접확인. DB/payment복구의직접예제Reference는아닌운영관점보조."
+    ],
+    [
+      "https://www.postgresql.org/docs/current/ddl-constraints.html",
+      "CURRENT_VERIFIED",
+      "backend.core.dto-validation-error: 이번 Wave2 Database 검토에서 UNIQUE/FK/CHECK 및 null·교차 row 제약 범위를 실제 확인; 여기서는 저장 무결성 경계 근거로 사용."
+    ],
+    [
+      "https://www.postgresql.org/docs/current/queries-limit.html",
+      "CURRENT_VERIFIED",
+      "backend.core.list: 이번 Wave2 Database에서 unique ORDER BY 및 큰 OFFSET 건너뛰는 row 비용 절 실제 확인; keyset 자동 snapshot 보장 근거로 확대하지 않음."
+    ],
+    [
+      "https://www.postgresql.org/docs/current/transaction-iso.html",
+      "CURRENT_VERIFIED",
+      "backend.core.concurrency-transaction: 이번 Wave2 Database 공식 READ COMMITTED concurrent UPDATE/조건재평가와직렬화오류 절 실제 대조."
+    ],
+    [
+      "https://www.rfc-editor.org/rfc/rfc7578",
+      "CURRENT_VERIFIED",
+      "backend.core.bulk-batch: 공식info리다이렉트본문 filename경로불신과같은name의multiplefiles별part절 실제확인."
+    ],
+    [
+      "https://www.rfc-editor.org/rfc/rfc9110",
+      "CURRENT_VERIFIED",
+      "backend.core.api: 동일 RFC의 공식 .html 본문 9.2.1 safe, 9.2.2 idempotent, 201/202/409 절을 직접 확인했다. 원래 short URL의 도구 직접 접근은 실패했으며 URL 접근성 검증과 문서 의미 검증은 구분한다.; backend.core.idempotency: 공식 동일 RFC HTML의 idempotent 의도 효과/통신 실패 재시도 절 실제 확인. short URL 도구 접근은 실패해 접근성은 별도 미확인.; backend.core.external: 동일RFC 공식HTML response/status/representation 의미절확인. shortURL도구직접접근은실패해접근성미확인.; backend.core.evolution: 공식동일RFCHTML method/representation 의미확인. shortURL도구접근실패, consumerrollout의직접Reference는아님."
+    ],
+    [
+      "https://www.rfc-editor.org/rfc/rfc9457",
+      "CURRENT_VERIFIED",
+      "backend.core.api: 공식 info 경로로 리다이렉트된 RFC 본문 extension member MUST ignore, problem detail의 내부 정보 노출 주의를 확인.; backend.core.dto-validation-error: 같은 Wave2에서 실제 RFC 본문 extension 및 security consideration 확인; 제품 코드/trace 예시는 허용 설계이며 표준 필수 field로 확대하지 않음."
+    ]
+  ],
+  "supplementalSources": [
+    [
+      "https://docs.aws.amazon.com/prescriptive-guidance/latest/cloud-design-patterns/transactional-outbox.html",
+      "CURRENT_VERIFIED",
+      "backend.core.layering: business table과outboxtable을same transaction기록하고별도relay가committedrows전송하는계약확인. AWS샘플전체구현을그대로권장하지않으며공통원자기록계약만대조."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/time/ZonedDateTime.html",
+      "CURRENT_VERIFIED",
+      "backend.core.time-money: 실제gap validoffset0/overlap2와forwardshift·earlier/lateroffset선택절확인. TZDB특정날짜는후속예제작성시판본과함께검증."
+    ],
+    [
+      "https://docs.spring.io/spring-framework/reference/data-access/transaction/declarative.html",
+      "CURRENT_VERIFIED",
+      "backend.core.concurrency-transaction: AOP 및 local/JTA manager와remote context전파미지원 절을 직접 읽어 use-case guarantee 범위 검증."
+    ],
+    [
+      "https://docs.spring.io/spring-framework/reference/testing/spring-mvc-test-client.html",
+      "CURRENT_VERIFIED",
+      "backend.core.testing-recovery: 공식HTTPclient testing에서실제client에요청/응답대역을붙이는경계와mockwebserver선택을읽고외부대역보강범위를대조."
+    ],
+    [
+      "https://google.aip.dev/180",
+      "CURRENT_VERIFIED",
+      "backend.core.evolution: 이번 Wave2 api검토에서직접읽은consumer semantic/wire호환조건으로진화본문을대조."
+    ],
+    [
+      "https://www.rfc-editor.org/rfc/rfc9110.html",
+      "CURRENT_VERIFIED",
+      "backend.core.api: 동일 RFC9110의 공식 HTML 실제 절을 읽었다. safe의 요청 의미/부수 효과 및 automation 위험, idempotent 효과, 201/202/409를 검증.; backend.core.idempotency: 동일 공식 RFC 9.2.2를 직접 확인한 대체 읽기 경로.; backend.core.external: 같은RFC 공식HTML을실제로읽은경로; shortroute접근성검증대체라고주장하지않음.; backend.core.evolution: 동일공식RFC의직접확인경로."
+    ]
+  ],
+  "findings": [
+    {
+      "id": "W2-BE-001",
+      "severity": "P0",
+      "contentKeys": [
+        "backend.core.layering.orchestration-rule"
+      ],
+      "file": "content/backend-engineering/layering/orchestration-rule.md",
+      "quote": "4. 외부 환불 요청 또는 outbox 기록",
+      "problem": "번호 흐름은 3단계 DB 변경 확정 뒤 4단계 outbox 기록을 대안으로 제시한다. transactional outbox는 업무 변경과 전달 의도를 같은 DB TX로 원자적으로 commit해야 한다. commit 뒤 기록하면 중간 crash에 전달 의도가 유실돼 원래 dual-write 문제가 남는다.",
+      "action": "직접 환불의 별도 복구 방식과 outbox 방식을 나눈다. outbox는 상태 변경 + outbox 기록 → 동일 TX commit → 별도 relay 환불/전송으로 표시한다. 정확한 책임 설명과 문항, 이전 Wave 1 결과는 유지한다.",
+      "followupIssues": [
+        203
+      ]
+    },
+    {
+      "id": "W2-BE-002",
+      "severity": "P1",
+      "contentKeys": [
+        "backend.core.domain.invariant-lifecycle",
+        "backend.core.domain.invariant-lifecycle.q3"
+      ],
+      "file": "content/backend-engineering/domain/questions.json",
+      "quote": "Domain API와 DB 동시성 경계를 포함해 설명하라",
+      "problem": "q3의 질문과 정확한 모델은 domain 전이 외에도 expected version/조건부 UPDATE, durable 결제 attempt/금액, idempotency key, unknown 결과 대사를 요구한다. 연결 Concept는 L1 invariant-lifecycle 하나뿐이며 본문은 이 DB/분산 실패 보호 기법을 설명하지 않아 학습 목표 연결이 부족하다.",
+      "action": "HARD 응용 문항과 정확한 실패 시나리오는 유지하고 관련 Concept를 다중 연결한다. 학습 순서/선행 목표와 모델의 필수 domain 답 및 심화 실패 복구 기준을 명시하거나 심화 Topic 이후에 배치한다. L1 전체 재작성이나 신규 문항은 불필요하다. 직접 검토한 후보: backend.core.concurrency-transaction.optimistic, backend.core.idempotency.idempotency-key, backend.core.idempotency.race-expiry, backend.core.testing-recovery.failure-recovery.",
+      "followupIssues": [
+        203
+      ]
+    },
+    {
+      "id": "W2-BE-003",
+      "severity": "P1",
+      "contentKeys": [
+        "backend.core.api.methods-status"
+      ],
+      "file": "content/backend-engineering/api/methods-status.md",
+      "quote": "safe, idempotent",
+      "problem": "Curriculum의 safe/idempotent 의미 목표 중 safe는 표의 true/false만 제공한다. GET이 왜 안전해야 하는지, logging 등 부수 효과와 요청된 변경의 차이, PUT의 unsafe/idempotent 조합을 학습할 근거가 부족하다.",
+      "action": "safe를 요청 의도상 읽기 전용으로 설명하고 logging은 부수 효과일 수 있음을 구분한다. 상태를 바꾸는 GET이 prefetch/자동 탐색으로 실행되는 실패 예와 GET vs PUT 비교를 짧게 추가한다. 기존 멱등성·상태코드 설명과 정확한 문항은 유지한다.",
+      "followupIssues": [
+        203
+      ]
+    },
+    {
+      "id": "W2-BE-004",
+      "severity": "P2",
+      "contentKeys": [
+        "backend.core.concurrency-transaction.optimistic"
+      ],
+      "file": "content/backend-engineering/concurrency-transaction/optimistic.md",
+      "quote": "https://jakarta.ee/specifications/persistence/3.2/apidocs/jakarta.persistence/jakarta/persistence/version",
+      "problem": "유일한 공식 Reference의 직접 접근에서 도구가 404를 보고했지만 공식 검색에는 동일 URL의 Version 본문이 색인되어 있다. 모든 학습자에게 깨진 링크라고 확정할 근거는 부족하며 접근성을 재확인해야 한다. 검색 본문의 revision/optimistic conflict 계약은 canonical 설명과 일치한다.",
+      "action": "동일 Jakarta Persistence 3.2 Version API의 접근성을 실제 브라우저/공식 canonical 링크로 재확인하고 필요한 경우 검증된 공식 경로로 Reference만 교체한다. 도구의 404만으로 대소문자 경로가 틀렸다고 단정하지 않는다. 본문과 정답은 유지한다.",
+      "followupIssues": [
+        203
+      ]
+    },
+    {
+      "id": "W2-BE-005",
+      "severity": "P1",
+      "contentKeys": [
+        "backend.core.bulk-batch.file-api"
+      ],
+      "file": "content/backend-engineering/bulk-batch/file-api.md",
+      "quote": "서버와 reverse proxy의 최대 본문 크기",
+      "problem": "목표는 multipart 개수와 크기를 함께 제한하는 것이지만 본문은 최대 본문 크기/동시 업로드/디스크만 설명하며 part 개수 상한은 제시하지 않는다. 총 byte가 작아도 많은 작은 part의 metadata/parser 부담이라는 별도 자원 비용을 판단하기 어렵다.",
+      "action": "전체 request 크기, 개별 file 크기, part/file 개수, 동시 수와 temp quota를 분리한 계약 표 및 거절/부분 수신 정리 예를 추가한다. 서버/parser 설정은 실제 구현에 따라 검증하며 RFC multipart가 자동으로 상한을 준다고 표현하지 않는다.",
+      "followupIssues": [
+        203
+      ]
+    },
+    {
+      "id": "W2-BE-006",
+      "severity": "P1",
+      "contentKeys": [
+        "backend.core.time-money.instant-zone"
+      ],
+      "file": "content/backend-engineering/time-money/instant-zone.md",
+      "quote": "DST나 정책 변경을 다시 계산하기 어려워질 수 있습니다.",
+      "problem": "L3 목표는 DST/offset 변화의 예약·마감 영향을 설명하는 것이지만 본문은 ZoneId의 필요성만 제시한다. local time이 유효 offset 0개/2개를 갖는 경우와 업무 선택 정책을 설명하지 않는다.",
+      "action": "DST 지역의 gap/overlap 한 쌍을 검증된 TZDB 날짜로 제시한다. 예약을 거절/이동하거나 earlier/later offset을 택하는 정책을 명시한다. LocalDateTime + ZoneRules 유효 offset → 정책 → Instant 흐름을 보여주고 Java 기본 resolver와 업무 정책을 구별한다.",
+      "followupIssues": [
+        203
+      ]
+    },
+    {
+      "id": "W2-BE-007",
+      "severity": "P1",
+      "contentKeys": [
+        "backend.core.evolution.migration"
+      ],
+      "file": "content/backend-engineering/evolution/migration.md",
+      "quote": "필요하면 backfill / dual write",
+      "problem": "L3 공존 배포 예에서 old version이 name을 계속 수정하면 이미 backfill한 first/last 값이 낡을 수 있다. 이 흐름과 해결 조건이 빠져 있어 단계 이름만으로 데이터 사용 전환의 안전성을 판단하기 어렵다.",
+      "action": "old/new writer와 backfill이 겹치는 한 row의 timeline을 보여준다. authoritative 읽기/쓰기 경계, 검증된 dual write 또는 catch-up 조건, idempotent backfill/진행 대조와 rollback 호환성을 정한다. old 쓰기 종료와 데이터 일치 확인 후 contract한다. 특정 trigger/도구를 무조건 도입하지 않는다.",
+      "followupIssues": [
+        203
+      ]
+    },
+    {
+      "id": "W2-BE-008",
+      "severity": "P1",
+      "contentKeys": [
+        "backend.core.testing-recovery.testing-strategy"
+      ],
+      "file": "content/backend-engineering/testing-recovery/testing-strategy.md",
+      "quote": "무엇을 믿지 않는지에 따라 테스트가 달라진다",
+      "problem": "Curriculum 목표의 외부 시스템 대역이 본문 표와 예제에서 빠져 있다. repository mock이 DB를 증명하지 못한다는 설명만으로 vendor client의 HTTP/body/업무 오류/unknown timeout을 어느 경계에서 시험할지 판단하기 어렵다.",
+      "action": "외부 adapter의 순수 fake와 실제 HTTP client에 붙이는 stub/mock server가 잡는 회귀를 구분한다. 200 필수값 누락/429/500/timeout 검증 예와 provider contract fixture의 판본/민감값 제거를 기록한다. 대역 성공은 실제 provider 보장 증거가 아님을 명시한다. 특정 도구의 전체 튜토리얼은 불필요하다.",
+      "followupIssues": [
+        203
+      ]
+    }
+  ],
+  "sourceHashes": {
+    "backend.core.api.compatibility": "06eaf7f95b375f38cb9538d99a5a4c0fac7a4e6e3d2f2a36b4f0fba643e4f40e",
+    "backend.core.api.compatibility.q1": "12595971a95549276785aa83e5a28ce4d202fb6647ed0c368362cfcfe3117bb1",
+    "backend.core.api.compatibility.q2": "b7b332ee96e748a34922b2aad741df683e1da2c127e0fc35d1acaf2971ea7a78",
+    "backend.core.api.compatibility.q3": "c9ab10e7475293657c5f699ca88459039d4cee734d40ab97cda8cc13bc4073a3",
+    "backend.core.api.methods-status": "4e63e605194e6ace82ee1fd3eaebe8ce2399b27aceaeb82b98de3e8e2beb75db",
+    "backend.core.api.methods-status.q1": "5b953dda115c2aeef77bfa47c218e17f280657e8f6923e711fce61ffa846d97c",
+    "backend.core.api.methods-status.q2": "0df2a6fda7fa993dbc87e249cc744292cdb17cbde44099d3801e6c2bba361d70",
+    "backend.core.api.methods-status.q3": "794da2d62d62fe5e1960ce4a81ca2ddb8a26676e42016d9601ad6563cc68aa91",
+    "backend.core.api.resource-endpoint": "72dc15012ecc7d2821ef68c80b0165e5370590850551852d900c3dead5190532",
+    "backend.core.api.resource-endpoint.q1": "6bd4351e27da504c29ff9775b142d71639db5e665e56f342a2490d33b79511aa",
+    "backend.core.api.resource-endpoint.q2": "c8e9c85aa4077da12f445a6dcf8f30eb88230bc3f21e35101bf735a65db439a6",
+    "backend.core.api.resource-endpoint.q3": "5389c60606ecdb5511c3d46235800a1fca5595c6be7c71d65a876c9439bbd148",
+    "backend.core.bulk-batch.batch-recovery": "8438c33879efa8ff301f1a41746c452bba6e5990d78b6ac1d0403dc5bcf09363",
+    "backend.core.bulk-batch.batch-recovery.q1": "138d4d4e33498e1e970ea69b9a123c01bf7a4d5752f12ec695dfaf6a182e89c7",
+    "backend.core.bulk-batch.batch-recovery.q2": "0fe819a636026d427cc69ea3a33f0d81f72b94eb396bdb6a235c4b1e2b076600",
+    "backend.core.bulk-batch.bulk-processing": "51bb8145af407818944ad9efe7d28826f33eb6e028baf9f83bb325bbbfad136e",
+    "backend.core.bulk-batch.bulk-processing.q1": "768dac6d4f261d2016b89c63ba922139f9fd20caddb2b0903181f5412e05ab08",
+    "backend.core.bulk-batch.bulk-processing.q2": "8dbf9e0c827cea761b5d1e49b5c3bf5b19e45242102e344ce87b2724f99daa54",
+    "backend.core.bulk-batch.file-api": "a82762ddfe997696caae70d75e309f08afa8e43d12f52f853ca399761ffa4df4",
+    "backend.core.bulk-batch.file-api.q1": "578f5351d5f9e24fc79995aac420b767cacd56851fd508cbf1f16b0a9a1f7041",
+    "backend.core.bulk-batch.file-api.q2": "ec57abdd2700bf85ef48546faad622b7d75db339bdb82f1b54d3f7f6b75cc5c7",
+    "backend.core.concurrency-transaction.lost-update": "e0ebc2c74cdc39e5df030a686f10026f753e0a41af319701046e16f44ad438ce",
+    "backend.core.concurrency-transaction.lost-update.q1": "a3cb2a352484da0dc6125150c43e9ae3e01979b1ad295a02e25c78f5a55a331a",
+    "backend.core.concurrency-transaction.lost-update.q2": "28c7250d834d54c2a6040b5b76431d994ba5cdc373620a0aabe5568d22d41725",
+    "backend.core.concurrency-transaction.lost-update.q3": "ec72abacad5f4088346c4166e67fed035e87df0019b225caf2cd92674b0271fd",
+    "backend.core.concurrency-transaction.optimistic": "72f0eb8e95919ce44be7bcdcdd1e332ea0ee83d8d4e35a126d24aa1cc11c2baa",
+    "backend.core.concurrency-transaction.optimistic.q1": "052474c3719a5ece6911ab0e05277d4e3febbf42c9aa4bfe34e56dbeb86f5ed4",
+    "backend.core.concurrency-transaction.optimistic.q2": "d34ea30564e2a976809e3a6271618b2505b7bc58a792a58751d174a414fa0240",
+    "backend.core.concurrency-transaction.optimistic.q3": "68fdb0332ba97da82ce7eb762faa5e3eaa8eb7b0323baa9dc87838fa72a566c8",
+    "backend.core.concurrency-transaction.usecase-transaction": "69ef38ee01d75aeca88baa781a5f8807c01f583e2d18d753b65d4792a6a7599e",
+    "backend.core.concurrency-transaction.usecase-transaction.q1": "6de08f0ab9479d118dd84c7d8e923c0dc74ce0ffd586cd7547d6a85f08b128c9",
+    "backend.core.concurrency-transaction.usecase-transaction.q2": "9d0056faceeaa1381db9eb510115eec309a3ec56acbb9fce3255346dfdcf8bef",
+    "backend.core.concurrency-transaction.usecase-transaction.q3": "903fe19609eb41393afaf89f35f54d1ad05a6d427d00a00478a2787117249a15",
+    "backend.core.domain.entity": "2b246da23603287da1ffee2fd14c396072ad75a00e6c8ab336970eabc2c03157",
+    "backend.core.domain.entity.q1": "df956e034210d4f430db61de4d27701f2c8343f8f23233be43d9c58eb52be955",
+    "backend.core.domain.entity.q2": "cb960ead1ca5b21cb52c0d8c19c7261eeb36a357fb7a6280b11614cf78ffc886",
+    "backend.core.domain.entity.q3": "6a6dbe7c68983900835b7a8829196fb3dbdfb2642544f0864aebd7e5524df203",
+    "backend.core.domain.invariant-lifecycle": "a7cbe2db552291be6e28a355e541ae4ff80f41c68d69c94c2667dd4a8b90ea3d",
+    "backend.core.domain.invariant-lifecycle.q1": "e00b840d70552b3e06e2ef21b8cf8d4f0490258082502056dafbfccc2fba55d9",
+    "backend.core.domain.invariant-lifecycle.q2": "baa37b5e3446f0a775a5b50004677fc76d8722d17c431b625bf9c5a5e76004f8",
+    "backend.core.domain.invariant-lifecycle.q3": "4af1c5fb45cf1b7b0c9d2a40221309f4b55d0356b0044f77ef54b9b2e11c433b",
+    "backend.core.domain.value-object": "1f7cef2f11045f86c774901a88c714387f495b5236b1a4b1fcaffad647199169",
+    "backend.core.domain.value-object.q1": "936c6936217502059969b06e0803aed754b9fbc6b3b7c057247065f2c078e793",
+    "backend.core.domain.value-object.q2": "ccbbca6647ee3cad5c78adb72deb407415866ec0ca137aacf855946ff5097e68",
+    "backend.core.domain.value-object.q3": "66ca9451d3b3c54ae7c983a4ad778c77ac17511a6182498b49b3366311e8e69c",
+    "backend.core.dto-validation-error.dto-boundary": "5673c156a28e117b0f50c6bfa54a6c903b205e0e79e8b5062676fdadb905aebf",
+    "backend.core.dto-validation-error.dto-boundary.q1": "b893c7f2f7066ff6cd8f81369a0fd67bebf6df68588610935d1f78b1abd876ab",
+    "backend.core.dto-validation-error.dto-boundary.q2": "961bf5db34f9c5ccd85fd615d9d6d6cb14bdb0f22fa0fb15d6f8592c034a3ba7",
+    "backend.core.dto-validation-error.dto-boundary.q3": "5d28d590af21a9b09c5686cd9c50dfa6d60b702ad4f66103a5efb1401e570a2f",
+    "backend.core.dto-validation-error.error-contract": "3663f62c16f2ba523c5f9199ff9857f192409297a9a5e19bfa7b0fd62fbbdafb",
+    "backend.core.dto-validation-error.error-contract.q1": "93f4314e89699f1c10b026be7ae3b6e23e3ee52ae19f858bb9be76091f87ec1c",
+    "backend.core.dto-validation-error.error-contract.q2": "a4b101fa8562922fadd493cd146b3e8a3d27c8a663634aedc437902a4c1acbc9",
+    "backend.core.dto-validation-error.error-contract.q3": "f0d1715344e0a43d343420faadb608a59a028e9ccb5626746aa327b519f982f7",
+    "backend.core.dto-validation-error.validation-layers": "d9664e0ff68aecbc4c95e789a601e8e55e2bee54060b57b3099ed9488237096e",
+    "backend.core.dto-validation-error.validation-layers.q1": "bede0dfb7e97578ab90ce8544695f27cdd5b7533538539ee6c2e2f6328e1f4b8",
+    "backend.core.dto-validation-error.validation-layers.q2": "64465605a4ffb2e9ad09c698a2ec467df7e7d571ed6b5d016f97072715b350be",
+    "backend.core.dto-validation-error.validation-layers.q3": "a2a49c89eb2868c12a22116db7d31faf696cc0711809d8c5a19f867ddb7281aa",
+    "backend.core.evolution.api-evolution": "1f9006b2218c4eb35e93f57c49ceddfc174954b1b68d91f1a46e8b289affd91d",
+    "backend.core.evolution.api-evolution.q1": "c7c5c56a71849a992182ca0ec2d372c772fef9188a8a39f64d0a53566a4853f3",
+    "backend.core.evolution.api-evolution.q2": "13f697df7b79bf4ae2e26cbaddc42e287958b126fd4e9475e0d0587e023aa6ba",
+    "backend.core.evolution.async-adoption": "01118cbd2727c1ea7209f1f93f7c90481680331f1b3926ab91f874185e812e00",
+    "backend.core.evolution.async-adoption.q1": "166a4602a374445272af1a487e9dd9bc11a42e27e23f6ac933971fcb24523131",
+    "backend.core.evolution.async-adoption.q2": "af31c8733771ffd09974da7e364ecdc5390d9c1cc363e746d3abdfb520ff0284",
+    "backend.core.evolution.cache-adoption": "80afe824ebd3adf185956afe410ccd645ed15b33b4bf1391f73d38c5339a01d4",
+    "backend.core.evolution.cache-adoption.q1": "1b6519f37e181ee3b634b17ec81dc7b7bc498e353eba9a0fef9e0f703621a072",
+    "backend.core.evolution.cache-adoption.q2": "4f22d4e7bbd0ed5dc25ec4314198f160038fd41a76f54d68bfcc084cf0898f58",
+    "backend.core.evolution.migration": "a0903b2e6c1ea7e6f4b05a46ee2acc862e78617d5842399c605a915142afc339",
+    "backend.core.evolution.migration.q1": "ee57b41af9fda7cb8b4c5e7695fc62a50ce01968f13508d50e4a5f9437c44f56",
+    "backend.core.evolution.migration.q2": "a14c299b1f26fec9305cd9e58698e8039fbeb01eb4835302c36c16a1e3834804",
+    "backend.core.evolution.migration.q3": "fa7db7dcb757a2bab299d8dc1a601ed6557061029aec528c54c205e21ccb67c2",
+    "backend.core.external.circuit-fallback": "b00235be9be0a092eebfa4a7848114e45c19eac2a7c0356d7d4e0720b0312e5d",
+    "backend.core.external.circuit-fallback.q1": "0e6ced2134b800aa5151056adad2358c266c41a33cdfd10b17bbcadabf016a7c",
+    "backend.core.external.circuit-fallback.q2": "39c90ffd2d0f7ca3384be728ee190dafd339c80de9648b5ca871844a12162926",
+    "backend.core.external.circuit-fallback.q3": "2ffa704effebd27631ac58482cd04ef8237bdebfdf1d7f0e0bb3020d0a924520",
+    "backend.core.external.remote-errors": "fd5c501eb13e116b968f7d918f98d60bd638cabe31630def507329661c241eb0",
+    "backend.core.external.remote-errors.q1": "3cfde87d623c89ca595d009cff52e5cefbcd3cb5dd3afa6f1d2fd3fe009ab690",
+    "backend.core.external.remote-errors.q2": "7f3371a3f9b9f068c6df475bceec6b04f9789e641e7f7f1961f4be9590471837",
+    "backend.core.external.remote-errors.q3": "ad043a90a565c22ab079d4fe0a5d907e43a50cc28075fe5a396191667d5c0661",
+    "backend.core.external.timeouts": "4cd96364767a64b7a22ad18a9effcbdae563262c518792322cd8e9fa5e705a68",
+    "backend.core.external.timeouts.q1": "304bea83e22708837d21bab2343742e756a938071da2534cf69ee366ec8b4efa",
+    "backend.core.external.timeouts.q2": "ece0c3c55b656fa07941d240e6ff0b490ac55270fb46fabd58a7f08c86ffff21",
+    "backend.core.external.timeouts.q3": "a69f482942a57f7860a5907afd9f9178ff57ecbada12656da507d478f216eea3",
+    "backend.core.idempotency.idempotency-key": "bd60d334bb3a0f40f28cdc2eab55dc9c0a52bb089bcbc7042ac4cd7c6fb9a259",
+    "backend.core.idempotency.idempotency-key.q1": "a7e1acb38aed9b6f2add520de0449518d7bc1f512874a486bd0256f966b82510",
+    "backend.core.idempotency.idempotency-key.q2": "a8275cd52bc2e4518557d6f83d50b7d4324ab6937401a4c756f8f63014ecf7c5",
+    "backend.core.idempotency.idempotency-key.q3": "d71978a9cc686f52d1e77ff92f9d61df8bc8a6e205a3334e5a1826858aa01fbf",
+    "backend.core.idempotency.race-expiry": "71858b884fd1573d25ef8c568c3ffad51c84671089dc4b5a3b3669fdbc5e2f39",
+    "backend.core.idempotency.race-expiry.q1": "8783a8a42619823b2d639c131eaff5831bc868faf1f4d84ab459a66d800197e0",
+    "backend.core.idempotency.race-expiry.q2": "046eb8f32c3c38ad0ffd7ddb6cbe0d40567de2f7a8fa2d53dabbcd1e2d566e66",
+    "backend.core.idempotency.race-expiry.q3": "a020e0bc8a1b43402a37b4648a3b47cb3bddfd9f8fdbb96965152c79401c5e78",
+    "backend.core.idempotency.repeat-request": "69752ba7bc877ee16fc3f1aab935d36efdfc84007d0cfc349a9840349cec7e46",
+    "backend.core.idempotency.repeat-request.q1": "d39e3077c961b3a92227ac76a6f52e92b9f8ae0bd640e041830774c41dcea2c0",
+    "backend.core.idempotency.repeat-request.q2": "9e0905bb279c7c791a23e3695ba6d1dec2675a90044d9671cd5ab09860315c06",
+    "backend.core.idempotency.repeat-request.q3": "97876b6f749cf3789e73d5c2c54202c54f253db3989e438c5601e8e054a14b45",
+    "backend.core.layering.dependency-direction": "dd3692cef5b3dd60b3b03b215383a34ab095c7842ef0fe7f9c09781fb74055f4",
+    "backend.core.layering.dependency-direction.q1": "c137bb58064733726e099c5e30bf7a1ed4575ebb674652b393dc750bdf82dc29",
+    "backend.core.layering.dependency-direction.q2": "0377843fb65471c8ef83776963fa683735e60831e16adb81536f4953a9f58fa7",
+    "backend.core.layering.dependency-direction.q3": "9a7f6a4f67689bfdb27780843175f8bc5c8de32a233f11019004acab45abfe58",
+    "backend.core.layering.infrastructure-boundary": "a5e7711bf2c6eaeb1d98bbda37a90e8b507461d19f62c7b06f17c6532e4cbad4",
+    "backend.core.layering.infrastructure-boundary.q1": "f3c761fd734308b98f57a6e4baa1181d6d56951a13fda2f1ef57472205dabee0",
+    "backend.core.layering.infrastructure-boundary.q2": "b23f120956769253ace42c9cbf82a0331e4e7b9b653809c8dd940e3ac48f3906",
+    "backend.core.layering.infrastructure-boundary.q3": "9fd6b5df40dc9acd028cbf3e380c32da0f9b576d2ce0f57d51584c7200c6a54b",
+    "backend.core.layering.orchestration-rule": "c6ff2e101aace542fb2cfcb4712f4a277333f9fa9c296158fbf7e10d7776cf4f",
+    "backend.core.layering.orchestration-rule.q1": "0c6e4a79940e123b897c5f94d881fdea300bfc7fdc384612ac0fd424668ee399",
+    "backend.core.layering.orchestration-rule.q2": "70f647fb137ee34cd239b87598d53280c0448b49879e80ce3af824622a688903",
+    "backend.core.layering.orchestration-rule.q3": "015a0138f35efa78b4778f75e3f51f01388390c3500df0519ba8f740e0ac1c4e",
+    "backend.core.list.cursor": "e5115e9f83d4e3a0c207fdd285ecdecb004c9457a8cf03b5301821b509950618",
+    "backend.core.list.cursor.q1": "30877401e6298546f80176460fa368c369d501fd21c5120b6512c6e1496be5c7",
+    "backend.core.list.cursor.q2": "dccdf7ee884a0f56b706e84e0d812654341f7bb067df1c4c4727584b77443d10",
+    "backend.core.list.cursor.q3": "40cdba5c79cff50aa5cd073bee59b15c1208fb1e3ea098c1494110fcebb14641",
+    "backend.core.list.filter-sort": "be708eb45b7523b06082b750b1c31d244969f1324ecb3fd674dc582dd82fdf6f",
+    "backend.core.list.filter-sort.q1": "90f1849dc31dd3a73afe6ed21c13b2e12eeba496853ff9b92033261d83818504",
+    "backend.core.list.filter-sort.q2": "f904bc82f28a45034f1a4db69eeaa9683d2f91111c5dabdce0cf66c299ba5945",
+    "backend.core.list.filter-sort.q3": "a53c8c620a982a186aa106f1d0f0776ba717c91fadc20189c2ba2098671d74ec",
+    "backend.core.list.pagination": "a348ab04e4e43575e107d21505a850a5893bdf188d0ce4d0168ccb65a25c3c88",
+    "backend.core.list.pagination.q1": "acec80000ab50cbe0afaccab0b9b15646b8a4a7ab5e8795ef16c13d3182c6d0f",
+    "backend.core.list.pagination.q2": "3f2b72d8251d3563e12624c8f92d4007257c490cb55b207a57bd6a401caa601c",
+    "backend.core.list.pagination.q3": "c5ac95ce519495ac4c282a59000442536e057532951568299386bb78a5fa25a7",
+    "backend.core.retry.backoff-jitter": "82157afb34843b2d428260040e44eaab03d7abc74fd3c7b4e3fcc75156660d8f",
+    "backend.core.retry.backoff-jitter.q1": "dea2501f339fe3a275ff83efff0838c63efc1aec4a8c5e2c47c362f6cfecbfdc",
+    "backend.core.retry.backoff-jitter.q2": "1e20ff7bfaf435238dd46cbed97cb04a0ed7ed1148ca853e99a4f50e1fe6f104",
+    "backend.core.retry.backoff-jitter.q3": "87d815ff8176d1cdfb95895b2c1bf9afe6b137f3d7570b286f66ab280bdf8a51",
+    "backend.core.retry.deadline": "c06033efcbf472d85c9727db41950cd04fa17885344e7611a67a257bfb3ba3ad",
+    "backend.core.retry.deadline.q1": "7545b8af3fd25d3be198e20d4f3e040e0c7c99dfe9e0dfc225f1bca32f720cb7",
+    "backend.core.retry.deadline.q2": "5ef8bfa879283e0667d264e823b05ad77c09796075bca272ae074dd54e39c309",
+    "backend.core.retry.deadline.q3": "6661afc2edcc7f0a4988e468cf3e3ddd350c647d417b0ba3966675a4a1c5a632",
+    "backend.core.retry.transient-permanent": "e9c88a2fcce150b8bc842357a752d40042b4440aa8ba86097bc26aa50a8a4f8d",
+    "backend.core.retry.transient-permanent.q1": "64d50198a7a663313f1dd2f2a2eda8d211ef5bc7f062906ec47d08cadeb7c012",
+    "backend.core.retry.transient-permanent.q2": "060ab76f1a6a6250274a2a8252e6006cf93c92be7a44514b6e102c8352040657",
+    "backend.core.retry.transient-permanent.q3": "fb58807dfd4de2d321aec2605a474454b2dfa00c2e7ec0c269f0c7ebe3d13857",
+    "backend.core.testing-recovery.failure-recovery": "4c90ae28dd3c07538b97dd2bff4283d23f119e54dc4a98765cea2e02798d3ad1",
+    "backend.core.testing-recovery.failure-recovery.q1": "e1c04643e1327b2849d4a75261b3024e9cb0376c696076120f8c13181bb31c5d",
+    "backend.core.testing-recovery.failure-recovery.q2": "8267dcb57bd8e970d83c08a837db314d0399c753a82743b5e6dd1e1ee8890280",
+    "backend.core.testing-recovery.testing-strategy": "08d88d9608102df08d5ecf09e5fc4bb2f06c4bf277d15b9ec78128f08d437a3f",
+    "backend.core.testing-recovery.testing-strategy.q1": "09c4436c04beb98cb4fa40f09831dbc03b56a6a2e3c99f1777446a103bd6a3ac",
+    "backend.core.testing-recovery.testing-strategy.q2": "81f45ff64b8ebe77ad8d273fba2d65b30c161f654da9a70b5d37643de2acf780",
+    "backend.core.testing-recovery.tradeoffs": "014ed3ab1bdd45a9f23b2db504986484ef9daac433b0e5d821ec8b2abce9e062",
+    "backend.core.testing-recovery.tradeoffs.q1": "0fafbb882775f30439ebad859aa38814b18f9ff669fb7c07e43ff18b7368a215",
+    "backend.core.testing-recovery.tradeoffs.q2": "4025baf6263c9011c22f0cd56f05f4042e1443c3e89acfeb29bf733490f7110e",
+    "backend.core.time-money.clock-expiry": "9a643f320fc920180de9a6fddc9db14f3ff0eba34f60989266264fcb428b054f",
+    "backend.core.time-money.clock-expiry.q1": "8d0d0dda2fa1b29f4aba508baa06d9cfc116905fe77b2a7049d32129ea0a4314",
+    "backend.core.time-money.clock-expiry.q2": "3bbd5d7dcc7a486e989b02fc3c7deb76f03b9b260f3f11a9ef1ad75a726b0d09",
+    "backend.core.time-money.instant-zone": "c37832856123ef12cd326e5c99a3d8171b6308edebdf64f6a3530ca5cc31cd2a",
+    "backend.core.time-money.instant-zone.q1": "193ab9d4e8ab762ea16a5f89175c8031399e6e0e243b9b302849b36fe5ee336c",
+    "backend.core.time-money.instant-zone.q2": "2a45bffbd9c0bcdd22da423425b90bf720b0aaa5de83034352a50dd97e7d5e7d",
+    "backend.core.time-money.money-rounding": "cdb42c8d5d0f7387a727b8867d74384584339049b3b3ff0e07642a05f66c4636",
+    "backend.core.time-money.money-rounding.q1": "7401c8ff21328bfeb7fa3d7bd32a0cc7d90d829b54d9d5713c8ee5362ea28bb7",
+    "backend.core.time-money.money-rounding.q2": "658cae767690f535e51d42976f28f9290e47f24f8c0acfb5e37ddbd930894288"
+  },
+  "curriculumSha256": "40806044a55d1b1f1b7868e0af461f77399b30b3d5e9a1b9aa9ea3c18bba1134",
+  "topicCatalogSha256": "2a25e1b43706b24318b7053374cfbbb2da9f1499c2990aa9c25855d519233cf4",
+  "referenceAccess": {
+    "https://www.rfc-editor.org/rfc/rfc9110": {
+      "status": "NEEDS_REVIEW",
+      "basis": "canonical short URL 도구 직접 접근은 실패했다. 동일 공식 RFC의 https://www.rfc-editor.org/rfc/rfc9110.html 본문 의미는 직접 검증했지만 short route의 학습자 접근성은 확인하지 못했다."
+    }
+  }
+}
