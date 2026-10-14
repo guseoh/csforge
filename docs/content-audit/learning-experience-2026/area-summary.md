@@ -1,6 +1,6 @@
 # LearningArea별 감사 요약
 
-15 Area 구조 인벤토리와 Wave1~3 근거를 유지한다. Wave4 정식 checkpoint는 7 Topic/53C/291Q이며 Java 상태는 CURRENT_PARTIAL다. 미검토 항목을 완료로 승격하지 않는다. 과거 PASS와 새 검토 근거/품질 판정을 구별한다.
+15 Area 구조 인벤토리와 Wave1~3 근거를 유지한다. Wave4 정식 checkpoint는 8 Topic/59C/328Q이며 Java 상태는 CURRENT_PARTIAL다. 미검토 항목을 완료로 승격하지 않는다. 과거 PASS와 새 검토 근거/품질 판정을 구별한다.
 
 | Area | Topic | Concept | Question | 이번 본문 검토 | 이번 문항 검토 | Concept KEEP / ENHANCE / REVIEW |
 | --- | ---: | ---: | ---: | ---: | ---: | --- |
@@ -11,7 +11,7 @@
 | distributed-systems | 3 | 9 | 27 | 9 | 27 | 8 / 1 / 0 |
 | dsa | 12 | 84 | 293 | 84 | 293 | 72 / 12 / 0 |
 | infrastructure-cloud | 3 | 9 | 27 | 9 | 27 | 6 / 3 / 0 |
-| java | 18 | 145 | 841 | 55 | 304 | 36 / 18 / 91 |
+| java | 18 | 145 | 841 | 61 | 341 | 41 / 19 / 85 |
 | messaging-async | 3 | 9 | 27 | 9 | 27 | 7 / 2 / 0 |
 | network-http | 15 | 127 | 381 | 127 | 381 | 105 / 22 / 0 |
 | operating-systems | 12 | 97 | 331 | 97 | 331 | 83 / 14 / 0 |
@@ -70,6 +70,7 @@ java.core.api-design: 5본문과MC25/DESCRIPTIVE2/SCENARIO1 전체28문항의모
 java.core.collections: 9C/51Q 전체본문과정답/모든선택지rationale/모범답안/해설/난도/모호성/중복/연결을직접읽었다. 계약/구현층위와관계별Reference19개및SVG3개전체source를대조. 자동판정/이전PASS복제없음.
 java.core.design-patterns: 기존1차메모를불변으로보존하고8C/40Q전체본문/모든정답/선택지rationale/modelAnswer/explanation/난도/모호성/중복/연결을현재직접읽었다. 후보2건은원문/공식계약대조로확정하고새P2두건을추가. 자동PASS없음.
 java.core.enum-modeling: 4 Concept/18 Question(MC17/SCENARIO1)의 실제 본문·정답·선택지별 rationale·modelAnswer·설명·난도·중복 및 연관성을 직접 검토하고 Java25/JLS/한국어 출처 관련 절과 대조했다. 이전 PASS 자동 승격 없이 수기 5축/2축 근거 기록.
+java.core.generics: 6C/37Q의전체본문/정답/모든보기rationale/서술모델/해설/난도/모호성/연결을직접읽고수기근거를기록. JLS/JDK관련절과Reference11관계,SVG전체소스대조. 자동판정/과거PASS전파없음.
 java.core.language-types: language-types만의 10 Concept 전체 본문과 55 Question의 모든 실제 필드를 직접 읽었다. MC53/Scenario1/Descriptive1의 정답/모든 선택지와 rationale/모범 답안/해설, 전제·난도·중복 목표·연결을 개별 대조했다. 코드 출력은 주로 JLS/JDK 계약과 수기 상태 추론이며 제한된 4쟁점만 Java25 probe로 실제 실행했다. source hash 자동 계산은 이미 작성한 수기 판단을 고정할 뿐 PASS를 생성하지 않는다. PR178의 수정과 기존 partial 근거를 보존하며 다른 Java Topic은 미검토다.
 java.core.object-contracts: 5개 Concept 본문과 31개 Question(MC27/DESCRIPTIVE1/SCENARIO3)의 각 정답/오답 선택지/rationale/모범답안/해설, 모호성·난도·중복목표·연결을 직접 의미 검토했다. 이전 PR178 PASS 자동 승인 없이 수기 판정했다. Java25 공식 API와 한국어 출처를 관계 단위로 대조했다.
 java.core.object-model: object-model 12 Concept 전체 본문과 68 Question 모든 실제 필드를 직접 읽고 MC62/Descriptive3/Scenario3를개별판정했다. 정답·모든보기/rationale·모범답안·해설·모호성·난도·중복목표·Concept연결과 C의목표/깊이/상태/코드/가독성/도식/Reference를각기록했다. 기존PR178근거와Java25JLS계약을대조하고자동파싱/길이/이전PASS로KEEP을생성하지않았다. 실행은초기화/Reference반례probe에만한정하며다른JavaTopic은확장하지않았다.

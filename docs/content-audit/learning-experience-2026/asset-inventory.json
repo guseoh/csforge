@@ -381,6 +381,12 @@
     "visualReview": {
       "status": "NEEDS_REVIEW"
     },
+    "sourceSemanticReview": {
+      "file": "frontend/public/learning/java/generics-pecs.svg",
+      "sourceSha256": "5d1c40b6766f8e7a85901816d4f63feef16ee9c0bd346f89e35d27b993adfa2a",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "basis": "1100×430 전체source/title/desc/styles/marker/좌우rect/text/path를읽었다. 왼쪽extendsNumber→Number읽기와Integer→오른쪽superInteger쓰기의방향이본문과일치. 열48..498/602..1052는분리. Reader render/mobile/theme QA미완료."
+    },
     "viewBox": "0 0 1100 430",
     "labels": [
       "PECS = Producer Extends · Consumer Super",

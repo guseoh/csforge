@@ -44,3 +44,7 @@
 ## collections checkpoint (2026-10-14)
 
 9C/51Q의 수기 근거·hash·인용, 19개 Reference 관계와 3SVG source hash를 확인했다. 누적 회귀17개 PASS, generate errors0, checkpoint PASS, --check drift0이다. 최신 Java7Topic/53C/291Q 및 전체629C/1975Q를 재집계했다. 제한 Java probe는 copyOf null NPE와 get의 mapping 보존을 확인했다. 이전5Topic ledger·65관계의 보존과 Topic/Concept 간 Reference 격리는 회귀 검사에 포함된다. 새 산출물 외 canonical/Curriculum/SVG 변경은 없다. 직전 design-patterns HEAD20e8ad21의 Repository Validation #1215(run38530080210)는 SUCCESS였고, collections CI는 push된 HEAD에 대해 별도로 확인한다.
+
+## generics checkpoint (2026-10-14)
+
+6C/37Q의 개별 hash/수기 근거/발견 인용과11 Reference 관계·PECS SVG source hash를 확인했다. 회귀17개 PASS, generate/--check errors/drift0, checkpoint PASS. Java8Topic/59C/328Q·전체635C/2012Q, 관계105중103의 관련 의미 확인/2미확정을 재집계했다. 한계는 checkpoint/ledger에 명시하며 자동 검사로 의미 판정을 생성하지 않는다. 직전 collections HEADcab16fcac68540efe585009511a6994826bff30b의 [Repository Validation #1216](https://github.com/guseoh/csforge/actions/runs/38532532282)는 SUCCESS: Backend tests/build, Frontend/Compose validation 성공, Cloud Run 배포 skipped. generics CI는 해당 push HEAD에서 별도 확인한다.

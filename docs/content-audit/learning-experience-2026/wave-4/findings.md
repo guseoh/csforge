@@ -243,6 +243,46 @@ Topic별 직접 검토의 새 발견과 기존 계승을 분리한다. 검토 �
 
 후속: #201
 
+### W4-JGEN-001 — P1
+
+대상: `java.core.generics.type-erasure-reifiable-types`
+
+원문: [content/java/generics/type-erasure-reifiable-types.md:105](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/generics/type-erasure-reifiable-types.md#L105)
+
+> T[] result = (T[]) Array.newInstance(type, length);
+
+문제: newArray의Class<T>는int.class도Class<Integer>로받는다. 이때reflection이int[]를만들지만T[]의erasure는Object[]여서helper내cast가CCE를던진다. 안전한uncheckedcast라고보이게하는예시에참조타입토큰전제가빠져있다. reflection으로소거를복원하지않는설명과String.class경로는맞다.
+
+최소 보강: 참조타입Class토큰만지원한다고명시하고primitive/void토큰거절전제를짧게보강. int.class와Integer.class차이한줄반례,기존erasure본문/정답유지.
+
+공식 근거: [관련 계약](https://docs.oracle.com/javase/specs/jls/se25/html/jls-15.html#jls-15.8.2), [관련 계약](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/reflect/Array.html#newInstance(java.lang.Class,int))
+
+실행/추론 대조: 제한probe Class<Integer> token=int.class는컴파일,reflection int[],newArray(token,1)는helper내CCE. String.class는String[]반환.
+
+후속: #201
+
+### W4-JGEN-002 — P2
+
+대상: `java.core.generics.generic-invariance.q4`, `java.core.generics.wildcards-pecs.q3`
+
+원문: [content/java/generics/questions.json:10](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/generics/questions.json#L10)
+
+> 컴파일러는 실제 와일드카드 타입이 List<Double>일 가능성을 배제할 수 없다. Double 목록에 Integer를 넣는 것은 안전하지 않다.
+
+원문: [content/java/generics/questions.json:15](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/generics/questions.json#L15)
+
+> 실제 원소 타입이 Double일 수 있어 모든 항목을 Double로 읽을 수 없다. 상위 타입으로 읽어야 한다.
+
+문제: invariance.q4 B는Double추가인데rationale은Double목록에Integer추가반례로뒤바뀌어있다. PECS.q3 B는Double로읽기인데실제Double일수있어못읽는다는반대이유를든다. 정답A/C와전체해설은정확하며이두오답feedback만부정확하다.
+
+최소 보강: 첫B는실제Integer목록에Double쓸수없음,둘째B는실제Integer등다른Number목록일수있어Double로좁힐수없음으로두문장만교정. 정답/난도/본문유지.
+
+공식 근거: [관련 계약](https://docs.oracle.com/javase/specs/jls/se25/html/jls-4.html#jls-4.5.1), [관련 계약](https://docs.oracle.com/javase/specs/jls/se25/html/jls-4.html#jls-4.10)
+
+실행/추론 대조: 공식 계약과 수기 코드/상태 추론; 실행 완료 주장이 아님.
+
+후속: #201
+
 ### W4-JA-001 — P0
 
 대상: `java.core.language-types.numeric-conversion-overflow`, `java.core.language-types.numeric-conversion-overflow.q1`, `java.core.language-types.numeric-conversion-overflow.q4`

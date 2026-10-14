@@ -19,7 +19,8 @@ WAVE_3_COUNTS = {
 }
 WAVE_4_TOPICS = {"java--language-types": (1, 10, 55), "java--object-model": (1, 12, 68),
                  "java--api-design": (1, 5, 28), "java--object-contracts": (1, 5, 31), "java--enum-modeling": (1, 4, 18),
-                 "java--design-patterns": (1, 8, 40), "java--collections": (1, 9, 51)}
+                 "java--design-patterns": (1, 8, 40), "java--collections": (1, 9, 51),
+                 "java--generics": (1, 6, 37)}
 CONCEPT_AXES = [
     "objectiveLevelDepth", "accuracyMechanismCodeExamplesClarityBoundaries",
     "visualization", "references", "linkedQuestionCoverage",

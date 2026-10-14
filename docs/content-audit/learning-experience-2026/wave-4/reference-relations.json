@@ -2023,6 +2023,248 @@
         "kind": "CURRENT_DIRECT_RELATION_REVIEW",
         "reviewedAt": "2026-10-14"
       }
+    },
+    {
+      "contentKey": "java.core.generics.generic-types-methods",
+      "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-4.html#jls-4.5",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "JLS4.5의reference타입argument/bound로Box<T>의정적원소계약을대조.",
+      "limits": "해당 Concept 관련 절의 의미 대조만 확인. 문서 전문·모든 코드 실행·Reader QA 확인은 아님.",
+      "sourceFile": "content/java/generics/generic-types-methods.md",
+      "sourceSha256": "018a4fd597e705b1ad6af393a25612c6b5094e47204d1944485c51d4facee7f4",
+      "reference": {
+        "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-4.html#jls-4.5",
+        "title": "JLS 4.5 Parameterized Types",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "매개변수화 타입의 언어 규칙 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--generics.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.generics.generic-types-methods",
+      "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html#jls-8.4.4",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "JLS8.4.4의메서드자체타입변수/인자추론·scope로first/echo의독립T관계를대조.",
+      "limits": "해당 Concept 관련 절의 의미 대조만 확인. 문서 전문·모든 코드 실행·Reader QA 확인은 아님.",
+      "sourceFile": "content/java/generics/generic-types-methods.md",
+      "sourceSha256": "018a4fd597e705b1ad6af393a25612c6b5094e47204d1944485c51d4facee7f4",
+      "reference": {
+        "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html#jls-8.4.4",
+        "title": "JLS 8.4.4 Generic Methods",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 2,
+        "relationNote": "제네릭 메서드 규칙 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--generics.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.generics.generic-invariance",
+      "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-4.html#jls-4.10",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "JLS4.10은T<S가C<T><C<S>를함의하지않음을명시. 원소upcast와list대입거절/배열공변비교목표에대조.",
+      "limits": "해당 Concept 관련 절의 의미 대조만 확인. 문서 전문·모든 코드 실행·Reader QA 확인은 아님.",
+      "sourceFile": "content/java/generics/generic-invariance.md",
+      "sourceSha256": "f7dc498e1b23e879a15ea337b3ee084539f8420bda616142dda336d370f6db4f",
+      "reference": {
+        "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-4.html#jls-4.10",
+        "title": "JLS 4.10 Subtyping",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "매개변수화 타입의 하위 타입 관계 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--generics.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.generics.wildcards-pecs",
+      "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-4.html#jls-4.5.1",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "JLS4.5.1 upper/lower boundedwildcard/containment와addAll/Reference의생산·소비예시를copy읽기/쓰기설계에대조.",
+      "limits": "해당 Concept 관련 절의 의미 대조만 확인. 문서 전문·모든 코드 실행·Reader QA 확인은 아님.",
+      "sourceFile": "content/java/generics/wildcards-pecs.md",
+      "sourceSha256": "aaa289c4a261ac060d5643e3a9fe8eb9a50ccb64528e778b1e301e3d34f5f61d",
+      "reference": {
+        "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-4.html#jls-4.5.1",
+        "title": "JLS 4.5.1 Type Arguments of Parameterized Types",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "wildcard와 bounded type argument 규칙 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--generics.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.generics.raw-types-unchecked",
+      "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-4.html#jls-4.8",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "JLS4.8의raw정의/erasedmember와legacy호환·unchecked경고를혼합저장예시에대조.",
+      "limits": "해당 Concept 관련 절의 의미 대조만 확인. 문서 전문·모든 코드 실행·Reader QA 확인은 아님.",
+      "sourceFile": "content/java/generics/raw-types-unchecked.md",
+      "sourceSha256": "971dc4e31342d3d3008606ac15230fe146bf8b163d15674b67ffb3aa50bbe8b2",
+      "reference": {
+        "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-4.html#jls-4.8",
+        "title": "JLS 4.8 Raw Types",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "raw type 규칙 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--generics.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.generics.raw-types-unchecked",
+      "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-5.html#jls-5.1.9",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "JLS5.1.9 rawG→G<T> uncheckedconversion·경고조건을names=raw시점과후속읽기CCE에대조.",
+      "limits": "해당 Concept 관련 절의 의미 대조만 확인. 문서 전문·모든 코드 실행·Reader QA 확인은 아님.",
+      "sourceFile": "content/java/generics/raw-types-unchecked.md",
+      "sourceSha256": "971dc4e31342d3d3008606ac15230fe146bf8b163d15674b67ffb3aa50bbe8b2",
+      "reference": {
+        "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-5.html#jls-5.1.9",
+        "title": "JLS 5.1.9 Unchecked Conversion",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 2,
+        "relationNote": "unchecked conversion 규칙 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--generics.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.generics.type-erasure-reifiable-types",
+      "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-4.html#jls-4.6",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "JLS4.6 G<T>→G/타입변수leftmostbound/서명소거를runtime종류와소스검사차이에대조.",
+      "limits": "해당 Concept 관련 절의 의미 대조만 확인. 문서 전문·모든 코드 실행·Reader QA 확인은 아님.",
+      "sourceFile": "content/java/generics/type-erasure-reifiable-types.md",
+      "sourceSha256": "065f057ced3257a275a0ce2c7d4204b738715703b2dffc3190bdb94d27785304",
+      "reference": {
+        "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-4.html#jls-4.6",
+        "title": "JLS 4.6 Type Erasure",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "타입 소거 규칙 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--generics.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.generics.type-erasure-reifiable-types",
+      "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-4.html#jls-4.7",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "JLS4.7의unboundedwildcards/raw/비generic/reifiable배열범주와migration호환이유를List<?>/List<String>판별에대조.",
+      "limits": "해당 Concept 관련 절의 의미 대조만 확인. 문서 전문·모든 코드 실행·Reader QA 확인은 아님.",
+      "sourceFile": "content/java/generics/type-erasure-reifiable-types.md",
+      "sourceSha256": "065f057ced3257a275a0ce2c7d4204b738715703b2dffc3190bdb94d27785304",
+      "reference": {
+        "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-4.html#jls-4.7",
+        "title": "JLS 4.7 Reifiable Types",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 2,
+        "relationNote": "런타임에 완전히 표현 가능한 타입 범주 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--generics.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.generics.generic-varargs-heap-pollution",
+      "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-4.html#jls-4.12.2",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "JLS4.12.2 Object[]alias→List<Integer>store→StringcastCCE반례를본문unsafe상태흐름에직접대조.",
+      "limits": "해당 Concept 관련 절의 의미 대조만 확인. 문서 전문·모든 코드 실행·Reader QA 확인은 아님.",
+      "sourceFile": "content/java/generics/generic-varargs-heap-pollution.md",
+      "sourceSha256": "89732772a4c88ecec30a81464abca99155c6c3734c33cbdf470fbb3b52a179b0",
+      "reference": {
+        "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-4.html#jls-4.12.2",
+        "title": "JLS 4.12.2 Variables of Reference Type",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "heap pollution 정의와 관련 규칙 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--generics.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.generics.generic-varargs-heap-pollution",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/SafeVarargs.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "SafeVarargsAPI의static/final/private/constructor제약과unsafealias반례·작성자주장/검사추가없음을대조.",
+      "limits": "해당 Concept 관련 절의 의미 대조만 확인. 문서 전문·모든 코드 실행·Reader QA 확인은 아님.",
+      "sourceFile": "content/java/generics/generic-varargs-heap-pollution.md",
+      "sourceSha256": "89732772a4c88ecec30a81464abca99155c6c3734c33cbdf470fbb3b52a179b0",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/SafeVarargs.html",
+        "title": "Java SE 25 API: SafeVarargs",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 2,
+        "relationNote": "SafeVarargs 적용 대상과 프로그래머의 안전성 약속 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--generics.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.generics.generic-varargs-heap-pollution",
+      "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-9.html#jls-9.6.4.7",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "JLS9.6.4.7의non-local callsite+declaration경고억제와safe배열읽기/전달예시를배열escape보증과구별.",
+      "limits": "해당 Concept 관련 절의 의미 대조만 확인. 문서 전문·모든 코드 실행·Reader QA 확인은 아님.",
+      "sourceFile": "content/java/generics/generic-varargs-heap-pollution.md",
+      "sourceSha256": "89732772a4c88ecec30a81464abca99155c6c3734c33cbdf470fbb3b52a179b0",
+      "reference": {
+        "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-9.html#jls-9.6.4.7",
+        "title": "JLS 9.6.4.7 @SafeVarargs",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 3,
+        "relationNote": "SafeVarargs가 억제하는 경고와 선언 제약의 언어 규칙 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--generics.json",
+        "reviewedAt": "2026-10-14"
+      }
     }
   ],
   "supportingRelations": [
