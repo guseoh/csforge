@@ -4,56 +4,57 @@
   "areas": [
     {
       "area": "java",
-      "concepts": 36,
-      "questions": 200,
-      "currentVerifiedConcepts": 36,
-      "currentVerifiedQuestions": 200,
+      "concepts": 44,
+      "questions": 240,
+      "currentVerifiedConcepts": 44,
+      "currentVerifiedQuestions": 240,
       "conceptQuality": {
-        "KEEP": 25,
-        "TARGETED_ENHANCE": 11
+        "KEEP": 30,
+        "TARGETED_ENHANCE": 14
       },
       "questionQuality": {
-        "KEEP": 190,
-        "TARGETED_ENHANCE": 10
+        "KEEP": 229,
+        "TARGETED_ENHANCE": 11
       }
     }
   ],
   "allConceptQuality": {
-    "KEEP": 501,
-    "NEEDS_REVIEW": 108,
-    "TARGETED_ENHANCE": 112
+    "KEEP": 506,
+    "NEEDS_REVIEW": 100,
+    "TARGETED_ENHANCE": 115
   },
   "allQuestionQuality": {
-    "KEEP": 1798,
-    "NEEDS_REVIEW": 622,
-    "TARGETED_ENHANCE": 105
+    "KEEP": 1837,
+    "NEEDS_REVIEW": 582,
+    "TARGETED_ENHANCE": 106
   },
   "allConceptEvidence": {
     "CURRENT_PARTIAL": 3,
-    "CURRENT_VERIFIED": 612,
-    "NEEDS_REVIEW": 106
+    "CURRENT_VERIFIED": 620,
+    "NEEDS_REVIEW": 98
   },
   "allQuestionEvidence": {
     "CURRENT_PARTIAL": 19,
-    "CURRENT_VERIFIED": 1884,
-    "NEEDS_REVIEW": 622
+    "CURRENT_VERIFIED": 1924,
+    "NEEDS_REVIEW": 582
   },
   "reviewedTopics": [
     "java.core.api-design",
+    "java.core.design-patterns",
     "java.core.enum-modeling",
     "java.core.language-types",
     "java.core.object-contracts",
     "java.core.object-model"
   ],
   "totals": {
-    "topics": 5,
-    "concepts": 36,
-    "questions": 200
+    "topics": 6,
+    "concepts": 44,
+    "questions": 240
   },
   "findingSeverity": {
-    "P0": 7,
-    "P1": 5,
-    "P2": 2
+    "P0": 8,
+    "P1": 6,
+    "P2": 4
   },
   "carriedFindingSeverity": {
     "P2": 1
@@ -61,15 +62,15 @@
   "cumulativeComplete": {
     "areas": 14,
     "partialAreas": 1,
-    "topics": 121,
-    "concepts": 612,
-    "questions": 1884
+    "topics": 122,
+    "concepts": 620,
+    "questions": 1924
   },
   "references": {
-    "links": 65,
-    "uniqueUrls": 54,
+    "links": 75,
+    "uniqueUrls": 59,
     "meaningEvidence": {
-      "CURRENT_VERIFIED": 64,
+      "CURRENT_VERIFIED": 74,
       "NEEDS_REVIEW": 1
     }
   }

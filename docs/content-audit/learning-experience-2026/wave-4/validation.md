@@ -36,3 +36,7 @@
 - 수정 커밋 `e6e17f0f60d9aa60b50cadbe3d713a403ac03fec`의 [재실행 #38523599416](https://github.com/guseoh/csforge/actions/runs/38523599416)은 **SUCCESS**: `check-accumulation.py` **16/16 PASS**, 다섯 Java Topic의 `checkpoint-topic.py` 모두 **PASS**, `audit.py` generate 및 `--check` **errors 0/drift 0**, 이어지는 `git diff --exit-code -- docs/content-audit/learning-experience-2026/`, baseline의 `content`/학습 이미지 변경 없음, `git diff --check` 모두 **PASS**.
 - 검증한 전체 범위는 **15 Area/134 Topic/721 Concept/2,525 Question/Reference 1,043관계·625URL/SVG 60**, Wave4 부분 완료 **Java5 Topic/36C/200Q**, 전체 누적 전수 검토 **121 Topic/612C/1,884Q**다. D2 Reference 1관계 미확정, 외부 자료의 사실 오류 및 후속 교정 대상은 별도 유지한다.
 - 검증용 `.github/workflows/csforge-audit-verification-once.yml`은 성공 후 커밋 `eb9043d75c60a29bc473157053256d68131c59ce`에서 **삭제**했다. 최종 PR diff에서 워크플로·canonical·DB·제품 경로를 남기지 않는다. 읽기 전용 실행으로 배포하지 않았으며 별도 Import Apply/Human Reader QA는 수행하지 않았다.
+
+## design-patterns 실제 로컬 checkpoint 검증 (2026-10-14)
+
+기존ff3bf6b4를fast-forward한후원본8C/40Q와전체48개source hash/인용/10Reference/1SVG를정식검토했다. 누적회귀17개PASS, audit.py generate/--check errors/drift0, design-patterns checkpoint PASS. 최신6Topic/44C/240Q·전체620C/1924Q를확인했다. 새세부P2 두건을기존후보와구별했다. 코드변경의구문/diff와canonical/앞5ledger/관계/snapshot불변을대조한다. CI는push된실제commit에대해따로확인한다. 과거단락의5Topic/미실행상태는역사적기록이다.

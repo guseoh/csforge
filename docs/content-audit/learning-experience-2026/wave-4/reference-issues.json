@@ -30,6 +30,35 @@
   },
   {
     "area": "java",
+    "contentKey": "java.core.design-patterns.strategy-pattern",
+    "file": "content/java/design-patterns/strategy-pattern.md",
+    "url": "https://tecoble.techcourse.co.kr/post/2021-10-04-strategy-command-pattern/",
+    "title": "전략패턴과 커맨드패턴",
+    "referenceType": "KOREAN_BLOG",
+    "language": "ko",
+    "displayOrder": 2,
+    "relationNote": "Strategy가 변하는 로직을 공통 계약 뒤로 분리하는 구조와 Command와의 차이를 한국어 예제로 복습",
+    "verification": {
+      "status": "CURRENT_VERIFIED",
+      "area": "java",
+      "topicKey": "java.core.design-patterns",
+      "contentKey": "java.core.design-patterns.strategy-pattern",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-4/reference-relations.json",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "Transportation→Bus/Bicycle전략위임은학습에관련되나Command부분의뒤바뀐account/Account와method오타,다른인자→overload필수일반화가있어W4-JDPAT-002 P1로한정한다.",
+      "limits": "해당Concept의관련절/학습역할만직접확인;외부전체코드실행/문서전문/renderQA아님.",
+      "sourceSha256": "5307ec30269d51a68dabee6848808b1bd653874fb0a27b657bc575e012cff8f1",
+      "qualityIssueIds": [
+        "W4-JDPAT-002"
+      ]
+    },
+    "priorVerification": {
+      "status": "NEEDS_REVIEW",
+      "basis": "이번 감사에서 미접근. 기존 Wave의 출처 확인 근거 보존; URL 존재만으로 학습 가치를 판정하지 않는다."
+    }
+  },
+  {
+    "area": "java",
     "contentKey": "java.core.language-types.primitive-reference-values",
     "file": "content/java/language-types/primitive-reference-values.md",
     "url": "https://d2.naver.com/helloworld/329631",

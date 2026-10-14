@@ -117,7 +117,7 @@ class AccumulationChecks(unittest.TestCase):
         self.assertTrue(any("Unverified supporting URL relation" in e for e in self.load(parts, relations)[3]))
 
     def test_previous_44_relations_and_two_ledgers_survive(self):
-        rows = [r for r in self.relations["references"] if not r["contentKey"].startswith(("java.core.api-design.", "java.core.object-contracts.", "java.core.enum-modeling."))]
+        rows = [r for r in self.relations["references"] if r["contentKey"].startswith(("java.core.language-types.", "java.core.object-model."))]
         self.assertEqual(len(rows), 44)
         self.assertEqual(Counter(r["evidenceLevel"] for r in rows), {"CURRENT_VERIFIED": 43, "NEEDS_REVIEW": 1})
         for name in ["java--language-types", "java--object-model"]:
@@ -131,6 +131,18 @@ class AccumulationChecks(unittest.TestCase):
         url = "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html#hashCode()"
         self.assertEqual([r["evidenceLevel"] for r in scoped_sources(sources, url, "java", "java.core.object-contracts.hashcode-contract")], ["CURRENT_VERIFIED"])
         self.assertEqual(scoped_sources(sources, url, "java", "java.core.object-contracts.equals-contract"), [])
+
+    def test_first_five_topic_ledgers_and_relations_survive(self):
+        baseline = "ff3bf6b4da89076e30988b5b7fa58a3e3d723544"
+        names = ["language-types", "object-model", "api-design", "object-contracts", "enum-modeling"]
+        for name in names:
+            path = BASE / "wave-4/topics" / ("java--" + name + ".json")
+            self.assertEqual(path.read_bytes().replace(b"\r\n", b"\n"), subprocess.check_output(
+                ["git", "show", baseline + ":" + path.relative_to(ROOT).as_posix()], cwd=ROOT))
+        path = BASE / "wave-4/reference-relations.json"
+        previous = json.loads(subprocess.check_output(["git", "show", baseline + ":" + path.relative_to(ROOT).as_posix()], cwd=ROOT))
+        for row in previous["references"]:
+            self.assertIn(row, self.relations["references"])
 
     def test_duplicate_reference_relation_is_rejected(self):
         relations = copy.deepcopy(self.relations)

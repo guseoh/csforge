@@ -415,6 +415,8 @@ def main():
         cs = [c for c in concepts if c["area"] == area]
         qs = [q for q in questions if q["area"] == area]
         rs = [r for r in references if r["area"] == area]
+        complete = area in completed_ledgers or (area in wave_4_ledgers and
+                    {i["contentKey"] for i in cs + qs}.issubset(wave_4_reviews))
         areas.append({"area": area, "topics": sum(t["area"] == area for t in topics), "concepts": len(cs),
                       "questions": len(qs), "questionTypes": counted(q["questionType"] for q in qs),
                       "difficulty": counted(q["difficulty"] for q in qs), "visualization": counted(c["visualization"] for c in cs),
@@ -425,11 +427,11 @@ def main():
                       "questionDecisions": counted(q["review"]["recommendation"] for q in qs),
                       "conceptEvidence": counted(c["review"]["evidenceLevel"] for c in cs),
                       "questionEvidence": counted(q["review"]["evidenceLevel"] for q in qs),
-                      "semanticReviewStatus": "CURRENT_VERIFIED" if area in completed_ledgers else "CURRENT_PARTIAL" if area in wave_4_ledgers else "NEEDS_REVIEW",
+                      "semanticReviewStatus": "CURRENT_VERIFIED" if complete else "CURRENT_PARTIAL" if area in wave_4_ledgers else "NEEDS_REVIEW",
                       "areaVerdict": "NEEDS_REVIEW", "previousWave": {k: historical["areaWaves"][area][k] for k in ["number", "url", "title"]},
                       "semanticEvidence": notes.get("areas", {}).get(area, "새 전수 의미 검토 미완료; 이전 PASS를 취소하지 않는다.")})
         if area in wave_ledgers:
-            areas[-1]["areaVerdict"] = "TARGETED_ENHANCE" if area in completed_ledgers else "NEEDS_REVIEW"
+            areas[-1]["areaVerdict"] = "TARGETED_ENHANCE" if complete else "NEEDS_REVIEW"
             areas[-1]["semanticEvidence"] = wave_ledgers[area]["reviewMethod"]
     require(len(areas) == 15, "Expected 15 LearningAreas")
     manifest = {"baselineSha": BASELINE, "files": dict(sorted(sources.items()))}
@@ -505,8 +507,8 @@ def main():
     wave_4_carried = [f for d in wave_4_ledgers.values() for f in d.get("carriedForwardFindings", [])]
     wave_4_summary["findingSeverity"] = counted(f["severity"] for f in wave_4_findings)
     wave_4_summary["carriedFindingSeverity"] = counted(f["severity"] for f in wave_4_carried)
-    wave_4_summary["cumulativeComplete"] = {"areas": len(completed_ledgers),
-                                          "partialAreas": len(wave_4_ledgers),
+    wave_4_summary["cumulativeComplete"] = {"areas": sum(a["semanticReviewStatus"] == "CURRENT_VERIFIED" for a in areas),
+                                          "partialAreas": sum(a["semanticReviewStatus"] == "CURRENT_PARTIAL" for a in areas),
                                           "topics": sum(len(d["topics"]) for d in wave_ledgers.values()),
                                           "concepts": len(wave_reviews.keys() & set(by_concept)),
                                           "questions": len(wave_reviews) - len(wave_reviews.keys() & set(by_concept))}
@@ -540,6 +542,16 @@ def main():
                                                        if r["verification"]["status"] == "NEEDS_REVIEW"
                                                        or r.get("accessVerification", {}).get("status") == "NEEDS_REVIEW"
                                                        or r["verification"].get("qualityIssueIds")]})
+    totals = wave_4_summary["totals"]
+    progress_lines = ["# Wave 4 정식 checkpoint 진행률", "", "수기 ledger를 검증한 뒤 집계한 생성 산출물이다. 검토 완료는 교정·Reference 무결점·Reader QA 완료가 아니다.", "", "| Topic | C / Q | C KEEP / 보강 / 미확정 | Q KEEP / 보강 / 미확정 | 새 P0 / P1 / P2 |", "| --- | ---: | --- | --- | --- |"]
+    for part in wave_4_ledgers["java"]["topicLedgers"].values():
+        c_quality = Counter(r[1] for r in part["concepts"])
+        q_quality = Counter(r[1] for r in part["questions"])
+        severity = Counter(f["severity"] for f in part["findings"])
+        progress_lines.append(f"| {part['topic']} | {len(part['concepts'])} / {len(part['questions'])} | {c_quality['KEEP']} / {c_quality['TARGETED_ENHANCE'] + c_quality['REWRITE_REQUIRED']} / {c_quality['NEEDS_REVIEW']} | {q_quality['KEEP']} / {q_quality['TARGETED_ENHANCE'] + q_quality['REWRITE_REQUIRED']} / {q_quality['NEEDS_REVIEW']} | {severity['P0']} / {severity['P1']} / {severity['P2']} |")
+    cumulative = wave_4_summary["cumulativeComplete"]
+    progress_lines.extend(["", f"Java {totals['topics']}/18 Topic · {totals['concepts']}/145C · {totals['questions']}/841Q. 전체 {cumulative['topics']}/134 Topic · {cumulative['concepts']}/721C · {cumulative['questions']}/2525Q.", "", f"전체 근거 NEEDS_REVIEW: {wave_4_summary['allConceptEvidence'].get('NEEDS_REVIEW', 0)}C/{wave_4_summary['allQuestionEvidence'].get('NEEDS_REVIEW', 0)}Q; CURRENT_PARTIAL은 별도다.", "", f"Wave4 Reference: {len(wave_4_refs)}관계 / {len({r['url'] for r in wave_4_refs})}URL, 의미 근거 {counted(r['verification']['status'] for r in wave_4_refs)}. confirmed source 오류는 reference-issues.json에 별도로 포함한다.", "", "최신 수량은 summary.json, 실제 판정/근거는 topics/*.json 및 reference-relations.json, 후속 최소 수정 범위는 findings.md를 따른다.", ""])
+    artifacts["wave-4/progress.md"] = "\n".join(progress_lines)
     wave_4_lines = ["# Wave 4 누적 발견", "",
                     "Topic별 직접 검토의 새 발견과 기존 계승을 분리한다. 검토 완료는 교정 완료가 아니다.", ""]
     for label, findings in [("새 발견", wave_4_findings), ("기존 계승", wave_4_carried)]:
@@ -578,7 +590,9 @@ def main():
         wave_3_lines.extend([f"문제: {f['problem']}", "", f"최소 보강: {f['action']}", "",
                              "후속: " + ", ".join(f"#{n}" for n in f["followupIssues"]), ""])
     artifacts["wave-3-findings.md"] = "\n".join(wave_3_lines)
-    lines = ["# LearningArea별 감사 요약", "", "15 Area 전수 구조 인벤토리를 유지한다. Wave 1·2·3의 14 Area는 본문/문항 전수 직접 검토 CURRENT_VERIFIED다. Wave 4는 language-types/object-model/api-design/object-contracts/enum-modeling 다섯 Topic 36C/200Q를 완료했으며 Java Area는 CURRENT_PARTIAL이다. 다른 Java Topic의 초기 샘플 CURRENT_PARTIAL과 NEEDS_REVIEW는 보존한다. 과거 PASS는 PRIOR_REVIEWED이며 Wave 4/Issue #200 전체 완료가 아니다.", "",
+    java_status = next(a["semanticReviewStatus"] for a in areas if a["area"] == "java")
+    totals = wave_4_summary["totals"]
+    lines = ["# LearningArea별 감사 요약", "", f"15 Area 구조 인벤토리와 Wave1~3 근거를 유지한다. Wave4 정식 checkpoint는 {totals['topics']} Topic/{totals['concepts']}C/{totals['questions']}Q이며 Java 상태는 {java_status}다. 미검토 항목을 완료로 승격하지 않는다. 과거 PASS와 새 검토 근거/품질 판정을 구별한다.", "",
              "| Area | Topic | Concept | Question | 이번 본문 검토 | 이번 문항 검토 | Concept KEEP / ENHANCE / REVIEW |", "| --- | ---: | ---: | ---: | ---: | ---: | --- |"]
     for area in areas:
         name = area["area"]

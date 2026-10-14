@@ -44,6 +44,78 @@ Topic별 직접 검토의 새 발견과 기존 계승을 분리한다. 검토 �
 
 후속: #201
 
+### W4-JDPAT-001 — P0
+
+대상: `java.core.design-patterns.factory-pattern`
+
+원문: [content/java/design-patterns/factory-pattern.md:105](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/design-patterns/factory-pattern.md#L105)
+
+> PaymentProcessorFactory.create(type)
+
+원문: [content/java/design-patterns/factory-pattern.md:45](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/design-patterns/factory-pattern.md#L45)
+
+> PaymentProcessor create(PaymentType type)
+
+문제: 본문위의create는config를보유한Factory인스턴스메서드인데뒤에서클래스이름으로호출한다. 해당선언에static이없어같은모델로는컴파일불가다. 기존1차후보를독립대조해확정했으며Factory모델과4Q는맞다.
+
+최소 보강: config로Factory인스턴스를생성한뒤factory.create(type)를보이는최소호출수정. 생성정책/수명설명및Question유지.
+
+공식 근거: [관련 계약](https://docs.oracle.com/javase/specs/jls/se25/html/jls-15.html#jls-15.12.3)
+
+실행/추론 대조: Temurin javac25.0.4.1 최소호출재구성에서non-static compile error. 전체본문compile주장아님.
+
+후속: #201
+
+### W4-JDPAT-002 — P1
+
+대상: `java.core.design-patterns.strategy-pattern`
+
+원문: [content/java/design-patterns/strategy-pattern.md:18](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/design-patterns/strategy-pattern.md#L18)
+
+> https://tecoble.techcourse.co.kr/post/2021-10-04-strategy-command-pattern/
+
+문제: 관련글Strategy부분의정책위임은유용하나Command예시에account타입/Account변수뒤바뀜과scratchAllLotery철자불일치가있다. 서로다른인자가필요하면Strategy는overload밖에없다는설명은입력객체/전략자체상태대안이가능함을누락한다. 외부자료의관련부분과한계를구분해야한다.
+
+최소 보강: 관련Strategy부분과Command코드미완성/일반화한계를relationNote로한정하거나더정확한한국어자료로교체. 정확한canonicalStrategy본문/8Q유지. #201/#222 출처1관계조정.
+
+후속: #201, #222
+
+### W4-JDPAT-003 — P2
+
+대상: `java.core.design-patterns.template-method-pattern`
+
+원문: [content/java/design-patterns/template-method-pattern.md:73](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/design-patterns/template-method-pattern.md#L73)
+
+> class CsvImportJob extends ImportJob {
+
+원문: [content/java/design-patterns/template-method-pattern.md:38](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/design-patterns/template-method-pattern.md#L38)
+
+> protected abstract void validate();
+
+문제: 구체CsvImportJob의후속예시는transform/afterSave만보이고필수validate구현은생략한다. 생략표시없이완전class형태여서앞ImportJob과연결해실행하면validate미구현컴파일오류. 핵심순서/hook모델은맞고명시적설명예시의작은문맥공백이다.
+
+최소 보강: validate등다른필수구현을생략한발췌라고한문장표시하거나짧은validate구현추가. 전체재작성/4Q변경불필요하며P2로이전PASS를취소하지않음.
+
+공식 근거: [관련 계약](https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html#jls-8.4.3.1)
+
+실행/추론 대조: 본문ImportJob/CsvImportJob발췌에ParsedData/parseCsv/audit미정의협력자만보충했으며validate미구현compile error. 전수코드실행아님.
+
+후속: #201
+
+### W4-JDPAT-004 — P2
+
+대상: `java.core.design-patterns.decorator-pattern.q3`
+
+원문: [content/java/design-patterns/questions.json:23](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/design-patterns/questions.json#L23)
+
+> Metrics가 바깥이면 delegate로 한 번 진입하고 내부 Retry가 대상을 재호출하므로 counter는 한 번 증가한다.
+
+문제: A보기는두조합모두1이라틀리지만rationale는첫조합이1이라는맞는부분만설명한다. 뒤Retry(Metrics)의counter2를반박근거로말해야한다. 정답C/전체해설은정확하다.
+
+최소 보강: A의rationale에두번째조합은각재시도마다Metrics를거쳐2가된다는한문장추가. 정답/난도/본문유지.
+
+후속: #201
+
 ### W4-JENUM-001 — P0
 
 대상: `java.core.enum-modeling.enumset`

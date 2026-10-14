@@ -874,6 +874,12 @@
     "visualReview": {
       "status": "NEEDS_REVIEW"
     },
+    "sourceSemanticReview": {
+      "file": "frontend/public/learning/java/strategy-pattern.svg",
+      "sourceSha256": "d57c31f6a12912252704f49c9e8740ba02238e8eee6d17d149c56c41a70b54bd",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "basis": "960×500 viewBox/title/desc/전체rect/text/path/marker소스를읽음. calculator(55,105)→policy(365,105) 실선,두구현(665,70/235)→계약점선과조립박스(180,355)주입화살표가역할분리를보인다. Fixed구현은본문계약의다른정책예시. 실제pixel/Reader/mobile/themeQA는미실시."
+    },
     "viewBox": "0 0 960 500",
     "labels": [
       "Strategy — 안정된 흐름과 교체 가능한 정책",

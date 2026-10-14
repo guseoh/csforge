@@ -1,5 +1,11 @@
 # Wave 4 Java — 다섯 Topic 누적 감사
 
+## 최신 실행 — 잔여 Java 전체 통합 감사
+
+[자동 생성 진행률](progress.md)과 summary.json이 최신 수량이다. 기존5개Topic과 Wave1~3 근거는 보존한다. design-patterns 정식48항목 checkpoint를 검증했고 [확정 근거](design-patterns-checkpoint.md)를 추가했다. 잔여 전체 목표는 Issue200 계약의18Topic/145C/841Q이며 완료한 Topic만 집계한다. 아래 수량/다음Topic 문장은 앞선 실행 당시의 역사적 기록이다. 현재 다음은 collections9C/51Q다.
+
+
+
 2026-10-14, 기준선 `efe73a15da14c996bd08344181d4d6f87073803d`, 기존 Draft PR #223/브랜치 `audit/issue-200-learning-experience`. 이번 Delta는 enum-modeling 4C/18Q의 정식 checkpoint와 Reference5관계 편입이다. 앞선 네 Topic ledger와 검증 상태를 보존한다. 기존 세 Topic 원본과 격리 계약을 보존한다. canonical/Curriculum/SVG/DB/제품은 변경하지 않는다.
 
 | Topic | C / Q 전수 완료 | C KEEP / 보강 | Q KEEP / 보강 | 새 P0 / P1 / P2 |
