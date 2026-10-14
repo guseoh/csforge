@@ -28,3 +28,11 @@
 - 관계별 Reference5개 추가, Wave4 65관계/54URL(64 verified/1 D2 unverified); 누적 5Topic/36C/200Q, 전체 121Topic/612C/1884Q.
 - 실제 Python audit.py generate/--check, check-accumulation, checkpoint-topic 및 git diff --check 실행 결과는 아직 확인하지 못했다. 원격 GitHub 인벤토리 교차 검사와 Actions CI는 별개로 판단한다.
 - 변경은 감사 문서만. canonical/Curriculum/이미지/DB/Import/제품 무변경·Draft 병합 금지.
+
+## enum-modeling 실제 Actions 감사 재검증 (2026-10-14)
+
+- 일회성 **읽기 전용** `CSForge Audit Verification Once` 워크플로를 Draft 브랜치에서 실행했다. 최초 [실행 #38523229234](https://github.com/guseoh/csforge/actions/runs/38523229234)는 **검증 실패**: `audit.py` generate 및 `--check` 각각 errors/drift0이었으나, Git에서 추적하는 생성 결과와의 `git diff --exit-code`에서 **area-summary.json/md, inventory.json, reference-inventory.json, wave-4/findings.md 총 5파일의 생성 산출물 불일치**를 발견했다. 기존 수기 결과의 정렬·기존 항목 순서 및 계승 LEX-002 설명이 생성기 출력과 불일치한 부분이었다.
+- 생성기의 실제 unified diff를 정확히 적용하여 위 **5개 감사 산출물만** 교정했다. Concept·Question 원문, Curriculum, SVG/이미지, 기타 제품 파일은 수정하지 않았다.
+- 수정 커밋 `e6e17f0f60d9aa60b50cadbe3d713a403ac03fec`의 [재실행 #38523599416](https://github.com/guseoh/csforge/actions/runs/38523599416)은 **SUCCESS**: `check-accumulation.py` **16/16 PASS**, 다섯 Java Topic의 `checkpoint-topic.py` 모두 **PASS**, `audit.py` generate 및 `--check` **errors 0/drift 0**, 이어지는 `git diff --exit-code -- docs/content-audit/learning-experience-2026/`, baseline의 `content`/학습 이미지 변경 없음, `git diff --check` 모두 **PASS**.
+- 검증한 전체 범위는 **15 Area/134 Topic/721 Concept/2,525 Question/Reference 1,043관계·625URL/SVG 60**, Wave4 부분 완료 **Java5 Topic/36C/200Q**, 전체 누적 전수 검토 **121 Topic/612C/1,884Q**다. D2 Reference 1관계 미확정, 외부 자료의 사실 오류 및 후속 교정 대상은 별도 유지한다.
+- 검증용 `.github/workflows/csforge-audit-verification-once.yml`은 성공 후 커밋 `eb9043d75c60a29bc473157053256d68131c59ce`에서 **삭제**했다. 최종 PR diff에서 워크플로·canonical·DB·제품 경로를 남기지 않는다. 읽기 전용 실행으로 배포하지 않았으며 별도 Import Apply/Human Reader QA는 수행하지 않았다.
