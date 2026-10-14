@@ -303,3 +303,17 @@ Topic별 직접 검토의 새 발견과 기존 계승을 분리한다. 검토 �
 후속: #201, #222
 
 ## 기존 계승
+
+### LEX-002 — P2
+
+대상: `java.core.language-types.pass-by-value`
+
+원문: [frontend/public/learning/java/pass-by-value.svg:1](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/frontend/public/learning/java/pass-by-value.svg#L1)
+
+> M253 448 H650
+
+문제: 기존 발견 재확인: 3단계 caller→A 경로 y448이 parameter value box x342~547/y418~478와 라벨 y454를 통과한다. 호출자의 A와 parameter의 B 구분이 흐려질 수 있다. 과거 배포 screenshot 근거를 보존하되 이번 검토는 SVG 소스 의미/좌표이며 새 render QA는 아님.
+
+최소 보강: 기존 SVG caller 경로만 parameter box 밖으로 우회하거나 행을 분리한다. 본문/문항 모델은 유지하고 새 그림을 만들지 않는다.
+
+후속: #201

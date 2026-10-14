@@ -67,8 +67,8 @@ compute→network→reliability의 9 본문/27 문항을 직접 읽고 모든 �
 ## java
 
 java.core.api-design: 5본문과MC25/DESCRIPTIVE2/SCENARIO1 전체28문항의모든실제필드·모든선택지/rationale·정답·modelAnswer·explanation·모호성/난도/중복/Concept연결을직접읽었다. 각각의5축C/2축Q수기평가이며자동화/과거PASS판정없음. 공식관련절과한국어출처를대조하고Reference는개별관계sidecar로귀속한다.
-java.core.language-types: language-types만의 10 Concept 전체 본문과 55 Question의 모든 실제 필드를 직접 읽었다. MC53/Scenario1/Descriptive1의 정답/모든 선택지와 rationale/모범 답안/해설, 전제·난도·중복 목표·연결을 개별 대조했다. 코드 출력은 주로 JLS/JDK 계약과 수기 상태 추론이며 제한된 4쟁점만 Java25 probe로 실제 실행했다. source hash 자동 계산은 이미 작성한 수기 판단을 고정할 뿐 PASS를 생성하지 않는다. PR178의 수정과 기존 partial 근거를 보존하며 다른 Java Topic은 미검토다.
 java.core.enum-modeling: 4 Concept/18 Question(MC17/SCENARIO1)의 실제 본문·정답·선택지별 rationale·modelAnswer·설명·난도·중복 및 연관성을 직접 검토하고 Java25/JLS/한국어 출처 관련 절과 대조했다. 이전 PASS 자동 승격 없이 수기 5축/2축 근거 기록.
+java.core.language-types: language-types만의 10 Concept 전체 본문과 55 Question의 모든 실제 필드를 직접 읽었다. MC53/Scenario1/Descriptive1의 정답/모든 선택지와 rationale/모범 답안/해설, 전제·난도·중복 목표·연결을 개별 대조했다. 코드 출력은 주로 JLS/JDK 계약과 수기 상태 추론이며 제한된 4쟁점만 Java25 probe로 실제 실행했다. source hash 자동 계산은 이미 작성한 수기 판단을 고정할 뿐 PASS를 생성하지 않는다. PR178의 수정과 기존 partial 근거를 보존하며 다른 Java Topic은 미검토다.
 java.core.object-contracts: 5개 Concept 본문과 31개 Question(MC27/DESCRIPTIVE1/SCENARIO3)의 각 정답/오답 선택지/rationale/모범답안/해설, 모호성·난도·중복목표·연결을 직접 의미 검토했다. 이전 PR178 PASS 자동 승인 없이 수기 판정했다. Java25 공식 API와 한국어 출처를 관계 단위로 대조했다.
 java.core.object-model: object-model 12 Concept 전체 본문과 68 Question 모든 실제 필드를 직접 읽고 MC62/Descriptive3/Scenario3를개별판정했다. 정답·모든보기/rationale·모범답안·해설·모호성·난도·중복목표·Concept연결과 C의목표/깊이/상태/코드/가독성/도식/Reference를각기록했다. 기존PR178근거와Java25JLS계약을대조하고자동파싱/길이/이전PASS로KEEP을생성하지않았다. 실행은초기화/Reference반례probe에만한정하며다른JavaTopic은확장하지않았다.
 
