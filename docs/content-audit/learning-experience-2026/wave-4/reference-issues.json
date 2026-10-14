@@ -140,6 +140,76 @@
   },
   {
     "area": "java",
+    "contentKey": "java.core.io-nio.byte-character-stream-charset",
+    "file": "content/java/io-nio/byte-character-stream-charset.md",
+    "url": "https://d2.naver.com/helloworld/76650",
+    "title": "네이버 D2: 한글 인코딩의 이해 2편 - 유니코드와 Java를 이용한 한글 처리",
+    "referenceType": "COMPANY_TECH_BLOG",
+    "language": "ko",
+    "displayOrder": 3,
+    "relationNote": "Unicode와 UTF-8의 바이트 표현, Java 문자열·입출력 인코딩의 배경 이해. 기본 charset 관련 내용은 JDK 18 이전 기준이므로 Java 25 공식 문서를 우선한다.",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "area": "java",
+      "topicKey": "java.core.io-nio",
+      "contentKey": "java.core.io-nio.byte-character-stream-charset",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-4/reference-relations.json",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "D2인코딩76650 직접open shell21행. Unicode/Java본문의현행가치미확인;canonical의JDK18전기본charset한정은보존.",
+      "limits": "관련Concept학습목적·절만직접대조;문서전문/모든snippet실행/ReaderQA미검증. 동일URL관계상태자동전파없음.",
+      "sourceSha256": "de3b32767800de4a8f74a545b6a606f47df9dd9a86c35d065cafba577290df86",
+      "accessVerification": {
+        "status": "NEEDS_REVIEW",
+        "basis": "직접open D2메뉴/search shell만. 관련본문미확인;broken확정아님."
+      },
+      "qualityIssueIds": []
+    },
+    "priorVerification": {
+      "status": "NEEDS_REVIEW",
+      "basis": "이번 감사에서 미접근. 기존 Wave의 출처 확인 근거 보존; URL 존재만으로 학습 가치를 판정하지 않는다."
+    },
+    "accessVerification": {
+      "status": "NEEDS_REVIEW",
+      "basis": "직접open D2메뉴/search shell만. 관련본문미확인;broken확정아님."
+    }
+  },
+  {
+    "area": "java",
+    "contentKey": "java.core.io-nio.path-files-api",
+    "file": "content/java/io-nio/path-files-api.md",
+    "url": "https://d2.naver.com/helloworld/1219",
+    "title": "네이버 D2: JDK 7의 NIO.2와 파일 API",
+    "referenceType": "COMPANY_TECH_BLOG",
+    "language": "ko",
+    "displayOrder": 3,
+    "relationNote": "Path·Files와 try-with-resources를 실제 파일 처리 흐름으로 연결",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "area": "java",
+      "topicKey": "java.core.io-nio",
+      "contentKey": "java.core.io-nio.path-files-api",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-4/reference-relations.json",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "D2NIO2의1219는다른Topic예외자원과URL같아도별도직접open shell이라이Path관계도미확정.",
+      "limits": "관련Concept학습목적·절만직접대조;문서전문/모든snippet실행/ReaderQA미검증. 동일URL관계상태자동전파없음.",
+      "sourceSha256": "12786c90582d456fef4a363b4968666b2886126d63d29fe239f09e90421253ef",
+      "accessVerification": {
+        "status": "NEEDS_REVIEW",
+        "basis": "직접open D2메뉴/search shell만. 관련본문미확인;broken확정아님."
+      },
+      "qualityIssueIds": []
+    },
+    "priorVerification": {
+      "status": "NEEDS_REVIEW",
+      "basis": "이번 감사에서 미접근. 기존 Wave의 출처 확인 근거 보존; URL 존재만으로 학습 가치를 판정하지 않는다."
+    },
+    "accessVerification": {
+      "status": "NEEDS_REVIEW",
+      "basis": "직접open D2메뉴/search shell만. 관련본문미확인;broken확정아님."
+    }
+  },
+  {
+    "area": "java",
     "contentKey": "java.core.language-types.primitive-reference-values",
     "file": "content/java/language-types/primitive-reference-values.md",
     "url": "https://d2.naver.com/helloworld/329631",

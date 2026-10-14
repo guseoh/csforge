@@ -706,6 +706,12 @@
     "visualReview": {
       "status": "NEEDS_REVIEW"
     },
+    "sourceSemanticReview": {
+      "file": "frontend/public/learning/java/nio-buffer-flip.svg",
+      "sourceSha256": "626acb573edf0abbaf08ee4b8078eb28d37fb30096bb34e1cb46a2486b578ce2",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "basis": "760x240 전체source/title/desc/rect/text/path읽음. 좌4동일슬롯ABC_과우2rect/ABC한셀은상태숫자label은맞아도같은공간·바이트단위비교를흐림;W4-JIO-003. sourcegeometry검토만,render/mobile/theme아님."
+    },
     "viewBox": "0 0 760 240",
     "labels": [
       "Buffer는 position·limit·capacity로 모드를 기억한다",
@@ -741,6 +747,12 @@
     },
     "visualReview": {
       "status": "NEEDS_REVIEW"
+    },
+    "sourceSemanticReview": {
+      "file": "frontend/public/learning/java/nio-selector-readiness.svg",
+      "sourceSha256": "1b2f3e63c4a38fc5cc5b83a39e2f12711dae335bf322d05d069ded886a961eb2",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "basis": "900x430 전체source/3channelinterest→register→selector/select→readykey→appstate/partial/lifecycle 및readready≠message라벨검토. box경계분리·화살표적절;선택직후snapshot이며일반currentready영구집합을보장아님. render/mobile/theme없음."
     },
     "viewBox": "0 0 900 430",
     "labels": [

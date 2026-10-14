@@ -443,6 +443,64 @@
     "sourceFileSha256": "2a79e7984eeb19fbe27338e25bd88a49168888ef729dbc6d02f6c35edf086215"
   },
   {
+    "id": "W4-JIO-001",
+    "severity": "P1",
+    "contentKeys": [
+      "java.core.io-nio.byte-character-stream-charset.q7"
+    ],
+    "file": "content/java/io-nio/questions.json",
+    "quote": "I/O 버퍼의 크기는 전송 효율 단위이지 문자 단위가 아니다. 가변 길이 문자셋에서는 디코더가 이전 청크 끝의 미완성 바이트를 기억하고 다음 청크와 이어야 올바른 문자 스트림을 만들 수 있다.",
+    "problem": "CharsetDecoder를언급한model/해설이미완성바이트를decoder내부가기억하는것처럼설명한다. decode false UNDERFLOW는input잔여바이트를호출자가보존해다음입력과재공급해야하는경우가있고same decoder만재사용하고input버리면UTF8손실. 원래목적·오류정책은맞지만상태소유경계가중요하게빠짐.",
+    "action": "model/해설에ByteBuffer position..limit의미소비byte를compact/carry하고새byte후flip하여같은decoder에제공함·endOfInput/flush를짧게명시. 청크독립newString의문제/난도유지.",
+    "officialEvidence": [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/charset/CharsetDecoder.html#decode(java.nio.ByteBuffer,java.nio.CharBuffer,boolean)",
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/ByteBuffer.html#compact()"
+    ],
+    "followupIssues": [
+      201
+    ],
+    "sourceLine": 52,
+    "sourceFileSha256": "bb569bad13c8d03bc0f75f424d44e357d32c6cc73fa6e97caa66644aa9240663"
+  },
+  {
+    "id": "W4-JIO-002",
+    "severity": "P2",
+    "contentKeys": [
+      "java.core.io-nio.nio-channel-buffer.q4"
+    ],
+    "file": "content/java/io-nio/questions.json",
+    "quote": "flip은 position/limit만 교환 관계로 바꾸며 용량 8을 limit보다 크게 설정하지 않는다. 읽기 가능 범위가 3이다.",
+    "problem": "Cfeedback은flip을position/limit교환관계라고부른다. flip은swap이아니며oldposition→limit뒤position=0이다. 정답B·본문과나머지해설숫자는맞음.",
+    "action": "Cfeedback한곳의교환표현만두대입으로교정;정답/난도/본문유지.",
+    "officialEvidence": [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/Buffer.html#flip()"
+    ],
+    "followupIssues": [
+      201
+    ],
+    "sourceLine": 30,
+    "sourceFileSha256": "bb569bad13c8d03bc0f75f424d44e357d32c6cc73fa6e97caa66644aa9240663"
+  },
+  {
+    "id": "W4-JIO-003",
+    "severity": "P2",
+    "contentKeys": [
+      "java.core.io-nio.nio-channel-buffer"
+    ],
+    "file": "frontend/public/learning/java/nio-buffer-flip.svg",
+    "quote": ">A B C</text>",
+    "problem": "좌측은capacity4를4동일셀ABC_로표현하지만flip오른쪽은동일폭rect2개이고ABC를한셀에묶는다. p0/l3숫자label은맞아도flip이저장공간/바이트배치를줄이거나묶는동작처럼보일수있다.",
+    "action": "후속에서양쪽동일4슬롯/ABC_배치유지하고읽기가능3셀과limit3커서만강조. 새image제작없이기존SVG상태시각encoding최소교정권고.",
+    "officialEvidence": [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/Buffer.html#flip()"
+    ],
+    "followupIssues": [
+      201
+    ],
+    "sourceLine": 13,
+    "sourceFileSha256": "626acb573edf0abbaf08ee4b8078eb28d37fb30096bb34e1cb46a2486b578ce2"
+  },
+  {
     "id": "W4-JA-001",
     "severity": "P0",
     "contentKeys": [

@@ -68,3 +68,7 @@
 ## time-numeric checkpoint (2026-10-14)
 
 7C/42Q의 수기 근거/hash/인용,15개 Reference 관계와2SVG 전체 source/geometry를 대조했다. 누적 회귀18개/checkpoint/generate/--check errors/drift0/Python AST/diff PASS. Java13Topic/94C/533Q·전체670C/2217Q를 재집계했다. Reference162관계 중156관련 의미 확인/6미확정; 직접 읽은 streams 품질 미확정3Q 보존. 기존 ledger/Wave1~3/canonical/Curriculum/SVG 무변경. 직전 modern-language HEADce243fb1f869b270e0a5e1e5b1c8ad439477ca15의 [CI #1221](https://github.com/guseoh/csforge/actions/runs/38539255954)는 SUCCESS. 현재 checkpoint CI는 push HEAD에서 확인한다.
+
+## io-nio checkpoint (2026-10-14)
+
+6C/35고유Q·15 Reference 관계·2SVG source와좌표를직접대조했다. 누적회귀18개/checkpoint/hash/인용/generate/--check errors/drift0/Python AST/diff PASS. 제한UTF8decoder probe는첫실행Windowsstdout인코딩실패후 숫자codepoint출력으로1회수정재실행성공. Java14Topic/100C/568Q·전체676C/2252Q;streams직접읽은품질미확정3Q유지. 기존ledger/Wave1~3/canonical/Curriculum/SVG보존. 직전 time-numeric HEAD335fbf5a595830267ced2b2530607e24a97c119c의 [CI #1222](https://github.com/guseoh/csforge/actions/runs/38540225247)는SUCCESS. 신규checkpoint CI는push HEAD에서확인한다.

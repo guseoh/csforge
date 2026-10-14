@@ -345,6 +345,60 @@ Topic별 직접 검토의 새 발견과 기존 계승을 분리한다. 검토 �
 
 후속: #201
 
+### W4-JIO-001 — P1
+
+대상: `java.core.io-nio.byte-character-stream-charset.q7`
+
+원문: [content/java/io-nio/questions.json:52](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/io-nio/questions.json#L52)
+
+> I/O 버퍼의 크기는 전송 효율 단위이지 문자 단위가 아니다. 가변 길이 문자셋에서는 디코더가 이전 청크 끝의 미완성 바이트를 기억하고 다음 청크와 이어야 올바른 문자 스트림을 만들 수 있다.
+
+문제: CharsetDecoder를언급한model/해설이미완성바이트를decoder내부가기억하는것처럼설명한다. decode false UNDERFLOW는input잔여바이트를호출자가보존해다음입력과재공급해야하는경우가있고same decoder만재사용하고input버리면UTF8손실. 원래목적·오류정책은맞지만상태소유경계가중요하게빠짐.
+
+최소 보강: model/해설에ByteBuffer position..limit의미소비byte를compact/carry하고새byte후flip하여같은decoder에제공함·endOfInput/flush를짧게명시. 청크독립newString의문제/난도유지.
+
+공식 근거: [관련 계약](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/charset/CharsetDecoder.html#decode(java.nio.ByteBuffer,java.nio.CharBuffer,boolean)), [관련 계약](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/ByteBuffer.html#compact())
+
+실행/추론 대조: 공식 계약과 수기 코드/상태 추론; 실행 완료 주장이 아님.
+
+후속: #201
+
+### W4-JIO-002 — P2
+
+대상: `java.core.io-nio.nio-channel-buffer.q4`
+
+원문: [content/java/io-nio/questions.json:30](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/io-nio/questions.json#L30)
+
+> flip은 position/limit만 교환 관계로 바꾸며 용량 8을 limit보다 크게 설정하지 않는다. 읽기 가능 범위가 3이다.
+
+문제: Cfeedback은flip을position/limit교환관계라고부른다. flip은swap이아니며oldposition→limit뒤position=0이다. 정답B·본문과나머지해설숫자는맞음.
+
+최소 보강: Cfeedback한곳의교환표현만두대입으로교정;정답/난도/본문유지.
+
+공식 근거: [관련 계약](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/Buffer.html#flip())
+
+실행/추론 대조: 공식 계약과 수기 코드/상태 추론; 실행 완료 주장이 아님.
+
+후속: #201
+
+### W4-JIO-003 — P2
+
+대상: `java.core.io-nio.nio-channel-buffer`
+
+원문: [frontend/public/learning/java/nio-buffer-flip.svg:13](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/frontend/public/learning/java/nio-buffer-flip.svg#L13)
+
+> >A B C</text>
+
+문제: 좌측은capacity4를4동일셀ABC_로표현하지만flip오른쪽은동일폭rect2개이고ABC를한셀에묶는다. p0/l3숫자label은맞아도flip이저장공간/바이트배치를줄이거나묶는동작처럼보일수있다.
+
+최소 보강: 후속에서양쪽동일4슬롯/ABC_배치유지하고읽기가능3셀과limit3커서만강조. 새image제작없이기존SVG상태시각encoding최소교정권고.
+
+공식 근거: [관련 계약](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/Buffer.html#flip())
+
+실행/추론 대조: 공식 계약과 수기 코드/상태 추론; 실행 완료 주장이 아님.
+
+후속: #201
+
 ### W4-JA-001 — P0
 
 대상: `java.core.language-types.numeric-conversion-overflow`, `java.core.language-types.numeric-conversion-overflow.q1`, `java.core.language-types.numeric-conversion-overflow.q4`

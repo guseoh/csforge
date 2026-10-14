@@ -1,0 +1,511 @@
+{
+  "area": "java",
+  "wave": 4,
+  "baselineSha": "efe73a15da14c996bd08344181d4d6f87073803d",
+  "reviewedAt": "2026-10-14",
+  "curriculumSha256": "0aad122de20d9205274f96887b562473a3a23de3dd406cbd684031438d4bbe0c",
+  "topicCatalogSha256": "2a167f43030df4dfc9742225d86dfcefdcd5cff2fc0d702c0b9101e00e6b172c",
+  "topic": "io-nio",
+  "topicKey": "java.core.io-nio",
+  "reviewMethod": "6C/35고유Q의 전본문 및 모든실제문항필드 직접 의미 읽기. crosslink selector.q7을 두 Concept에 대응하되 Q수량1개. 공식API/제한decoder probe와15관계 독립대조;자동판정없음.",
+  "topics": [
+    {
+      "key": "java.core.io-nio",
+      "coverage": "bytes/charset→Reader→buffering→Path/Files→Buffer상태→Selector/readiness6C35Q."
+    }
+  ],
+  "concepts": [
+    [
+      "java.core.io-nio.byte-character-stream-charset",
+      "KEEP",
+      "L1 CORE: byte↔문자·생산/소비규칙과길이unit/손실경계/기본charsetvs외부계약을명확히설명.",
+      "UTF16unit≠codepoint, UTF8가변길이·mojibake/replacement/원형항상복구아님 정확. Java25UTF8와OracleCOMPAT/native.encoding한정이최신API와일치.",
+      "TEXT: encode/decode 및InputStream→charset→ReaderASCII가목표충분. 청크 q7의구현보존책임은별도발견.",
+      "Charset/StandardCharsets의변환·기본UTF8/구현specific 및필수상수에각각대조. D2인코딩글shell미확정이며JDK18전내용한정canonicalnote보존.",
+      "7Q A/B/C/B/A/A 및UTF8청크SCENARIO직접검토; q7해설의decoder내부자동보관뉘앙스는W4-JIO-001로 buffer잔여보존명시. 본문핵심KEEP."
+    ],
+    [
+      "java.core.io-nio.input-output-reader-writer",
+      "KEEP",
+      "L1 STANDARD: PNG바이트/JSON텍스트·read반환·partial·EOF·자원소유를기초순서로충분설명.",
+      "readNBytes(8)는최대8/EOF더짧을수있고header길이검증을보장하지않음. Readerint는UTF16unit/EOF-1; count만write코드·borrowedclose구분정확.",
+      "NONE: bytes/charset/ReaderASCII와copyloop·TWR로흐름충분. 모든Reader내부codec존재를일반화하지않고byte경계wrapper문맥으로읽음.",
+      "InputStream read의atmost/count/EOF및Reader char0..65535/EOF/close문자추상화에각관계독립대조.",
+      "4Q B/A/A/A 모든보기feedback·readcharvs정수파싱/UTF8factory/flushvsclose소유권정확."
+    ],
+    [
+      "java.core.io-nio.buffered-io",
+      "KEEP",
+      "L1 CORE: 작은호출batch/prefetch→flush관찰/close→메모리·측정tradeoff 충분.",
+      "Javabuffer전달≠OS/crashdurability, flush≠close, TWR예외경로시도·큰buffer선형보장없음 정확.",
+      "NONE: outputflow·flush/close상태ASCII와BufferedWriter예제충분.",
+      "BufferedInputStream internalarray여러byte리필/BufferedWriter의문자buffer·flush/close먼저flush를각역할에대조.",
+      "4Q A/A/A/A의모든보기와해설전수확인; 기본원리/계층보장/범위종료/interactivepolicy서로목표다름. 정답위치편중은이번의미결함으로만들지않음."
+    ],
+    [
+      "java.core.io-nio.path-files-api",
+      "KEEP",
+      "L2 CORE: 위치값→상대base→actualIO실패/TOCTOU→wholememory→normalize와security별도를충분설명.",
+      "Path생성≠exists/open, exists≠뒤read보장, normalize≠auth/symlinksafe, move의atomic지원≠crashdurability구분정확.",
+      "NONE: Path/Filesbranch·코드·메모리/인가설명으로목표충분. 특정provider/OS호출을보장으로과장하지않음.",
+      "Pathnormalize noFS/symlink와resolveabsolute분기,Filesread전체/actualexception·moveATOMIC의existingtargetimplspecific·지원실패를관계별대조. D2NIO2shell미확정.",
+      "7Q A/B/A/B/A/A와경로/IO/boundedSCENARIO 모든필드대조. model은normalize/realpath정책을완전원자sandbox로보장한다고주장하지않음."
+    ],
+    [
+      "java.core.io-nio.nio-channel-buffer",
+      "TARGETED_ENHANCE",
+      "L2 CORE: 0<=p<=l<=c/쓰기→flip→읽기→clear또는compact 상태값·partialwrite로동작설명 충분.",
+      "flip(l=oldp,p=0)/clear데이터0아님/compactunread보존·channel반환값정확. whilewrite예제는block/nonblock별차이본문한정으로busyspin무조건안전주장없음.",
+      "DIAGRAM: nio-buffer-flip전체source760x240에서왼4슬롯ABC_/오른2rectangle에ABC한셀 및빈셀이그려져상태동일공간을오독가능. W4-JIO-003의보강후원리·정확한숫자label유지.",
+      "Buffer기본커서/flip/clear와Channelopen-close수명에대조. ByteBuffercompact와WritableByteChannelpartial0쓰기는supplemental관련절에서구체화;모든Channel이read/write를가진것아님.",
+      "6단독Q+A/B참조되는selector.q7 전수연결확인. q4C교환표현P2; 나머지A/A/B/B/A/A 및crosslink프레이밍모델정확."
+    ],
+    [
+      "java.core.io-nio.blocking-nonblocking-selector",
+      "KEEP",
+      "L3 CORE: mode→등록→interest/ready→keylifecycle→partial/framing→OS층위가순차적으로충분설명.",
+      "등록nonblocking/select는wait가능/selectedKeys처리후제거·cancel≠close/readiness힌트≠complete/epoll언어보장아님 정확.",
+      "DIAGRAM: nio-selector-readiness900x430 전체source/3channel등록→Selector→application상태/partial/lifecycle 및≠messagecomplete라벨검토. 선택직후상태스냅샷이며영구currentready집합으로확대안함.",
+      "SelectableChannelregister/configureBlocking제약·Selectortraditionalselectedsets vsConsumerforms·SelectionKeyhint/invalid를각관계에대조.",
+      "7Q A/A/A/B/A/B+partialheaderSCENARIO; EOF/zero/compact/framing/cancellation책임모델정확. crosslinkBuffer목표중복이아니라실제활용."
+    ]
+  ],
+  "questions": [
+    [
+      "java.core.io-nio.byte-character-stream-charset.q1",
+      "KEEP",
+      "A8bit와문자↔charset;BCDonebyte/allOS/nocharsetmetadata반박정확.",
+      "정답/모든보기rationale 또는모델·해설·난도·Concept연결개별읽기. 기초용어→상태실행→실패정책으로구별;이전PASS복제없음."
+    ],
+    [
+      "java.core.io-nio.byte-character-stream-charset.q2",
+      "KEEP",
+      "Bwrongchars/error/replacement가능; A원본자동판별/C항상exception/D길이only반박.",
+      "정답/모든보기rationale 또는모델·해설·난도·Concept연결개별읽기. 기초용어→상태실행→실패정책으로구별;이전PASS복제없음."
+    ],
+    [
+      "java.core.io-nio.byte-character-stream-charset.q3",
+      "KEEP",
+      "Cdefault와외부계약별도; AOS반드시다름/B파일자동변환/Dclose조건오답.",
+      "정답/모든보기rationale 또는모델·해설·난도·Concept연결개별읽기. 기초용어→상태실행→실패정책으로구별;이전PASS복제없음."
+    ],
+    [
+      "java.core.io-nio.byte-character-stream-charset.q4",
+      "KEEP",
+      "B정보손실가능;AString원본추적/CUTF8decode없음/D경로변경오답.",
+      "정답/모든보기rationale 또는모델·해설·난도·Concept연결개별읽기. 기초용어→상태실행→실패정책으로구별;이전PASS복제없음."
+    ],
+    [
+      "java.core.io-nio.byte-character-stream-charset.q5",
+      "KEEP",
+      "Abyte기반ZIP과char변환경계부적합;BCD파일불가/ASCIIonly/압축자동해제반박.",
+      "정답/모든보기rationale 또는모델·해설·난도·Concept연결개별읽기. 기초용어→상태실행→실패정책으로구별;이전PASS복제없음."
+    ],
+    [
+      "java.core.io-nio.byte-character-stream-charset.q6",
+      "KEEP",
+      "Areport/replace/ignore오류정책;BCD모두1문자/OS이름/버퍼off반박.",
+      "정답/모든보기rationale 또는모델·해설·난도·Concept연결개별읽기. 기초용어→상태실행→실패정책으로구별;이전PASS복제없음."
+    ],
+    [
+      "java.core.io-nio.byte-character-stream-charset.q7",
+      "TARGETED_ENHANCE",
+      "SCENARIO모델의불완전바이트보존목적은맞지만해설은decoder가기억한다고단정. W4-JIO-001: CharsetDecoder UNDERFLOW뒤inputremaining을호출자compact/carry하여같은decoder에재공급해야함.",
+      "정답/모든보기rationale 또는모델·해설·난도·Concept연결개별읽기. 기초용어→상태실행→실패정책으로구별;이전PASS복제없음."
+    ],
+    [
+      "java.core.io-nio.input-output-reader-writer.q1",
+      "KEEP",
+      "Bbyte원형복사; A/C/D문자왕복·buffer가charset삭제·always복구반박.",
+      "정답/모든보기rationale 또는모델·해설·난도·Concept연결개별읽기. 기초용어→상태실행→실패정책으로구별;이전PASS복제없음."
+    ],
+    [
+      "java.core.io-nio.input-output-reader-writer.q2",
+      "KEEP",
+      "Achar범위와EOF;BStringwhole/Cnochar/Dcloseonly오답.",
+      "정답/모든보기rationale 또는모델·해설·난도·Concept연결개별읽기. 기초용어→상태실행→실패정책으로구별;이전PASS복제없음."
+    ],
+    [
+      "java.core.io-nio.input-output-reader-writer.q3",
+      "KEEP",
+      "AnewBufferedReaderexplicitUTF8;BCDdouble/ByteBuffer자동decode/allbinaryReader반박.",
+      "정답/모든보기rationale 또는모델·해설·난도·Concept연결개별읽기. 기초용어→상태실행→실패정책으로구별;이전PASS복제없음."
+    ],
+    [
+      "java.core.io-nio.input-output-reader-writer.q4",
+      "KEEP",
+      "Aflush전달vsclose수명;BCD파일삭제/String가변/close때charset최초선택아님.",
+      "정답/모든보기rationale 또는모델·해설·난도·Concept연결개별읽기. 기초용어→상태실행→실패정책으로구별;이전PASS복제없음."
+    ],
+    [
+      "java.core.io-nio.buffered-io.q1",
+      "KEEP",
+      "Abatch/prefetch와호출비용;BCD암호화/추론/close책임제거아님.",
+      "정답/모든보기rationale 또는모델·해설·난도·Concept연결개별읽기. 기초용어→상태실행→실패정책으로구별;이전PASS복제없음."
+    ],
+    [
+      "java.core.io-nio.buffered-io.q2",
+      "KEEP",
+      "A다음층전달;Bphysicaldurability/Cclose/Dinputpositionreset없음.",
+      "정답/모든보기rationale 또는모델·해설·난도·Concept연결개별읽기. 기초용어→상태실행→실패정책으로구별;이전PASS복제없음."
+    ],
+    [
+      "java.core.io-nio.buffered-io.q3",
+      "KEEP",
+      "ATWRclose(flush시도)·resource종료;BCD매write영구저장/범위밖open/Inputonlyclose아님.",
+      "정답/모든보기rationale 또는모델·해설·난도·Concept연결개별읽기. 기초용어→상태실행→실패정책으로구별;이전PASS복제없음."
+    ],
+    [
+      "java.core.io-nio.buffered-io.q4",
+      "KEEP",
+      "A관찰경계flush와batchtradeoff;BCD무료/newresource/close전절대출력안됨반박.",
+      "정답/모든보기rationale 또는모델·해설·난도·Concept연결개별읽기. 기초용어→상태실행→실패정책으로구별;이전PASS복제없음."
+    ],
+    [
+      "java.core.io-nio.path-files-api.q1",
+      "KEEP",
+      "APath값/Files작업;Bhandle/formatter/Ccharsetonly/Dclasspathonly아님.",
+      "정답/모든보기rationale 또는모델·해설·난도·Concept연결개별읽기. 기초용어→상태실행→실패정책으로구별;이전PASS복제없음."
+    ],
+    [
+      "java.core.io-nio.path-files-api.q2",
+      "KEEP",
+      "B값만구성;Aexistpermission/C자동create/D항상absolute반박.",
+      "정답/모든보기rationale 또는모델·해설·난도·Concept연결개별읽기. 기초용어→상태실행→실패정책으로구별;이전PASS복제없음."
+    ],
+    [
+      "java.core.io-nio.path-files-api.q3",
+      "KEEP",
+      "Acheck-then-act경합;BCDlock/readPath미사용/OS변경금지없음.",
+      "정답/모든보기rationale 또는모델·해설·난도·Concept연결개별읽기. 기초용어→상태실행→실패정책으로구별;이전PASS복제없음."
+    ],
+    [
+      "java.core.io-nio.path-files-api.q4",
+      "KEEP",
+      "Broot/symlink/auth정책;ACDnormalize인가/relative항상안전/lengthonly아님.",
+      "정답/모든보기rationale 또는모델·해설·난도·Concept연결개별읽기. 기초용어→상태실행→실패정책으로구별;이전PASS복제없음."
+    ],
+    [
+      "java.core.io-nio.path-files-api.q5",
+      "KEEP",
+      "Awholememory/bound;BCD자동paging/heap무관/always빠름반박.",
+      "정답/모든보기rationale 또는모델·해설·난도·Concept연결개별읽기. 기초용어→상태실행→실패정책으로구별;이전PASS복제없음."
+    ],
+    [
+      "java.core.io-nio.path-files-api.q6",
+      "KEEP",
+      "Aatomic옵션/provider/storagedurability구분; Bmove없음/Ctype/DReader무관반박.",
+      "정답/모든보기rationale 또는모델·해설·난도·Concept연결개별읽기. 기초용어→상태실행→실패정책으로구별;이전PASS복제없음."
+    ],
+    [
+      "java.core.io-nio.path-files-api.q7",
+      "KEEP",
+      "SCENARIObase/normalize-realpath/symlinkpolicy·actualIO실패·streambound3책임모델정확;HARD.",
+      "정답/모든보기rationale 또는모델·해설·난도·Concept연결개별읽기. 기초용어→상태실행→실패정책으로구별;이전PASS복제없음."
+    ],
+    [
+      "java.core.io-nio.nio-channel-buffer.q1",
+      "KEEP",
+      "Acapacity/limit/position세축;BCD순서혼동/OSoffset/같은cursor반박.",
+      "정답/모든보기rationale 또는모델·해설·난도·Concept연결개별읽기. 기초용어→상태실행→실패정책으로구별;이전PASS복제없음."
+    ],
+    [
+      "java.core.io-nio.nio-channel-buffer.q2",
+      "KEEP",
+      "Aflip읽기준비;Bclear범위capacity/Ccompact/DOSoffsetrewind아님.",
+      "정답/모든보기rationale 또는모델·해설·난도·Concept연결개별읽기. 기초용어→상태실행→실패정책으로구별;이전PASS복제없음."
+    ],
+    [
+      "java.core.io-nio.nio-channel-buffer.q3",
+      "KEEP",
+      "Bposition0 limitcap;A메모리0/Ccompact/DI/Oflush반박.",
+      "정답/모든보기rationale 또는모델·해설·난도·Concept연결개별읽기. 기초용어→상태실행→실패정책으로구별;이전PASS복제없음."
+    ],
+    [
+      "java.core.io-nio.nio-channel-buffer.q4",
+      "TARGETED_ENHANCE",
+      "Bposition0 limit3정답. Cfeedback의교환관계는swap아니므로W4-JIO-002: oldposition→limit 및0→position으로교정.",
+      "정답/모든보기rationale 또는모델·해설·난도·Concept연결개별읽기. 기초용어→상태실행→실패정책으로구별;이전PASS복제없음."
+    ],
+    [
+      "java.core.io-nio.nio-channel-buffer.q5",
+      "KEEP",
+      "Apartial/0가능반환·remaining;BCDcapacity자동증가/autoFlip/path커서아님.",
+      "정답/모든보기rationale 또는모델·해설·난도·Concept연결개별읽기. 기초용어→상태실행→실패정책으로구별;이전PASS복제없음."
+    ],
+    [
+      "java.core.io-nio.nio-channel-buffer.q6",
+      "KEEP",
+      "Aunread앞복사뒤position·쓰기공간;BCDautoframe/clear논리보존/커서불변반박.",
+      "정답/모든보기rationale 또는모델·해설·난도·Concept연결개별읽기. 기초용어→상태실행→실패정책으로구별;이전PASS복제없음."
+    ],
+    [
+      "java.core.io-nio.blocking-nonblocking-selector.q1",
+      "KEEP",
+      "A대기vs현재partial반환;BCDwhole즉시/noresource/API차이없음반박.",
+      "정답/모든보기rationale 또는모델·해설·난도·Concept연결개별읽기. 기초용어→상태실행→실패정책으로구별;이전PASS복제없음."
+    ],
+    [
+      "java.core.io-nio.blocking-nonblocking-selector.q2",
+      "KEEP",
+      "A여러channelreadiness;BCDHTTP조립/모든API변환/channel마다OSthread아님.",
+      "정답/모든보기rationale 또는모델·해설·난도·Concept연결개별읽기. 기초용어→상태실행→실패정책으로구별;이전PASS복제없음."
+    ],
+    [
+      "java.core.io-nio.blocking-nonblocking-selector.q3",
+      "KEEP",
+      "Anonblocking후register;BCDblocking필수/closed등록/selector캐스트아님.",
+      "정답/모든보기rationale 또는모델·해설·난도·Concept연결개별읽기. 기초용어→상태실행→실패정책으로구별;이전PASS복제없음."
+    ],
+    [
+      "java.core.io-nio.blocking-nonblocking-selector.q4",
+      "KEEP",
+      "B전체message미보장;A힌트/Cchannel연결/Dinterest조건은맞고invalid상태별도.",
+      "정답/모든보기rationale 또는모델·해설·난도·Concept연결개별읽기. 기초용어→상태실행→실패정책으로구별;이전PASS복제없음."
+    ],
+    [
+      "java.core.io-nio.blocking-nonblocking-selector.q5",
+      "KEEP",
+      "Aselectedset소비/lifecycle;BCDauto제거/cancel즉시close+집합정리/oneshot반박.",
+      "정답/모든보기rationale 또는모델·해설·난도·Concept연결개별읽기. 기초용어→상태실행→실패정책으로구별;이전PASS복제없음."
+    ],
+    [
+      "java.core.io-nio.blocking-nonblocking-selector.q6",
+      "KEEP",
+      "BAPI추상vsOS구현;ACDsyscall수보장/epoll필수/protocol자동반박.",
+      "정답/모든보기rationale 또는모델·해설·난도·Concept연결개별읽기. 기초용어→상태실행→실패정책으로구별;이전PASS복제없음."
+    ],
+    [
+      "java.core.io-nio.blocking-nonblocking-selector.q7",
+      "KEEP",
+      "SCENARIOfirst2header→remainingcompact→fillflip→parserlength/bounds와EOF0keylifecycle 분리모델정확;HARD·Buffercrosslink1개Q만계수.",
+      "정답/모든보기rationale 또는모델·해설·난도·Concept연결개별읽기. 기초용어→상태실행→실패정책으로구별;이전PASS복제없음."
+    ]
+  ],
+  "sources": [
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/charset/Charset.html",
+      "CURRENT_VERIFIED",
+      "Charset encode/decode·defaultUTF8/impl-specific COMPAT계약을본문JDK25 기본과외부규칙구분에대응. Systemfile/nativeencoding관련절도보조대조."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/charset/StandardCharsets.html",
+      "CURRENT_VERIFIED",
+      "StandardCharsets모든Java구현지원상수/UTF8definition을명시encoding코드에대조."
+    ],
+    [
+      "https://d2.naver.com/helloworld/76650",
+      "NEEDS_REVIEW",
+      "D2인코딩76650 직접open shell21행. Unicode/Java본문의현행가치미확인;canonical의JDK18전기본charset한정은보존."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/InputStream.html",
+      "CURRENT_VERIFIED",
+      "InputStreamreadatmost/count·EOF-1/readNBytes더짧은EOF와close수명계약을바이트복사와소유경계에대조."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/Reader.html",
+      "CURRENT_VERIFIED",
+      "Reader.readchar0..65535/EOF-1·charbuffer및close추상화를문자단위읽기에대조;모든Reader가byte디코더내장아님."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/BufferedInputStream.html",
+      "CURRENT_VERIFIED",
+      "BufferedInputStream내부array와여러byte리필·mark/reset역할을prefetch에대조;하위stream직접병용주의는관련추가학습."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/BufferedWriter.html",
+      "CURRENT_VERIFIED",
+      "BufferedWriter의문자batch/newLine시스템separator/flush 및close먼저flush를현재코드에대조;내구성보장으로확대안함."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html",
+      "CURRENT_VERIFIED",
+      "Pathnormalize noactualFS·symlink후differenttarget가능/resolve와absolute기준을경로값·인가분리에대조."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Files.html",
+      "CURRENT_VERIFIED",
+      "Files readStringwholememory/예외/exists비원자·ATOMIC_MOVE다른옵션무시/targetreplaceimplspecific/다른provider지원실패를작업실패·교체목표에대조."
+    ],
+    [
+      "https://d2.naver.com/helloworld/1219",
+      "NEEDS_REVIEW",
+      "D2NIO2의1219는다른Topic예외자원과URL같아도별도직접open shell이라이Path관계도미확정."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/Buffer.html",
+      "CURRENT_VERIFIED",
+      "Buffer0<=p<=l<=c/flip oldp→l,p0/clear nonerase를단계상태대조. compact는문서링크의ByteBuffer구체계약을보조대조하며Buffer선언자체method라하지않음."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/channels/Channel.html",
+      "CURRENT_VERIFIED",
+      "Channelopen/close/isOpen연결추상화를통로·수명에대조. partialwrite는하위WritableByteChannel보조절의0..remaining·socketnonblock한정별도확인."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/channels/SelectableChannel.html",
+      "CURRENT_VERIFIED",
+      "SelectableChannelregister blocking금지/configureBlockingfalse와등록후true변경실패를예제흐름에대조."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/channels/Selector.html",
+      "CURRENT_VERIFIED",
+      "Selectortraditional선택집합에추가·기존readybit보존/호출자remove·cancelcycle와Consumer선택이집합에안넣는차이를lifecycle문맥에대조."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/channels/SelectionKey.html",
+      "CURRENT_VERIFIED",
+      "SelectionKeyreadyset은hintnotguarantee·external/IO로stale가능·cancelinvalid/registration역할을readiness≠framing에대조."
+    ]
+  ],
+  "referenceAccess": {},
+  "sourceHashes": {
+    "java.core.io-nio.byte-character-stream-charset": "de3b32767800de4a8f74a545b6a606f47df9dd9a86c35d065cafba577290df86",
+    "java.core.io-nio.input-output-reader-writer": "eb1396b3a44245bc1f7d94910f876e762f97a57ed31171fac7468c26ffedd010",
+    "java.core.io-nio.buffered-io": "8553ae18b91b2603a201770f7300364ef311812327c066d002f3f1890fcaec6e",
+    "java.core.io-nio.path-files-api": "12786c90582d456fef4a363b4968666b2886126d63d29fe239f09e90421253ef",
+    "java.core.io-nio.nio-channel-buffer": "b33a3945627dbfea76b4498cb229833db6114fa8d6ae5c3dc91e6782e3805a3c",
+    "java.core.io-nio.blocking-nonblocking-selector": "a54f84997a17a92863f071cd0c474d45c29f8f99e34bbe408220d7a663f97cce",
+    "java.core.io-nio.byte-character-stream-charset.q1": "21581f82ce0769713e45e19546fb63a17a1ca6801f3b654ca12ffc958347614d",
+    "java.core.io-nio.byte-character-stream-charset.q2": "05d1329142601031e79e886e2ac032e894bdbe28a5412c82abe9aa3e13d6d436",
+    "java.core.io-nio.byte-character-stream-charset.q3": "fde5ab0688e471bf5646f3f5b506f40e25a2ea22cbf3a375740621e7bd5b9fd4",
+    "java.core.io-nio.byte-character-stream-charset.q4": "fa44d93072178e76760c37839d334816baba863d5102fafe85e8f49753aa0a02",
+    "java.core.io-nio.byte-character-stream-charset.q5": "4c090b0ae5a2aba042c7526559561c20478ce45512be9ba43a76066badf06777",
+    "java.core.io-nio.byte-character-stream-charset.q6": "d6c139e2fb89fde214b6b76ae9c294cb7c44394ae889a952b0580c9c81544c13",
+    "java.core.io-nio.byte-character-stream-charset.q7": "ff8d6a47007927fa89f2a9e01331c90c30ad3f7f53b43ad65c273f9e719a01da",
+    "java.core.io-nio.input-output-reader-writer.q1": "a4f1a9240efc10dc0a688fd1d74bc2ee7139f0f6da4ac75388602543373f86aa",
+    "java.core.io-nio.input-output-reader-writer.q2": "bd9a8628276cd63777e3a26e56f0d76ebad28448cd2599389081dc027b6adcd3",
+    "java.core.io-nio.input-output-reader-writer.q3": "d6e0db65e9e17ef43085096e776f47118840ebfe6cd86ed80dd11dc288a99e5e",
+    "java.core.io-nio.input-output-reader-writer.q4": "02fa69cf373f23d6a1afa793732aba81abdfef36bd807fbd5ea497f5b99b0209",
+    "java.core.io-nio.buffered-io.q1": "1e440dd1e6165271f9e6b686816ae7352d701e3fe5c85bf0ef9c89af0a3eb4b1",
+    "java.core.io-nio.buffered-io.q2": "bad8cd70b4786d2f558971631a8c4054a2e124455a93296ff3e727883fb27ae7",
+    "java.core.io-nio.buffered-io.q3": "a80c7457320346c38ea624a3339aa20a348d22fa7e8b8abc52ca3e6d85925670",
+    "java.core.io-nio.buffered-io.q4": "e69a2b231eba3495e3ab78cd9b456839061e899fbb0d0ad9a7f6f13932ebfce4",
+    "java.core.io-nio.path-files-api.q1": "5e9d65d1dba813a47d28b2672788b482ced0783c6a8453e0023f78ff340724b7",
+    "java.core.io-nio.path-files-api.q2": "5c2e463e81e917cdb9c089726d25de45baa1b1a0868b2767d375fc3ebbc19126",
+    "java.core.io-nio.path-files-api.q3": "82e3dc5a16c307fdf74abc22fb2479ce812a3487e588df86a3f77684d64ae3e9",
+    "java.core.io-nio.path-files-api.q4": "448aca190f5fc2bfb9e46bb3ff93ef64401d1c3354444fc151939942956cc63e",
+    "java.core.io-nio.path-files-api.q5": "5e2e74662fb678f65be490c459d7cf8b0828a467ef5a79893a0611b8facf2a52",
+    "java.core.io-nio.path-files-api.q6": "9209299468e5b2c260e11bbbafc9feb43b5ef62a1660155bb40589ff25fbdb99",
+    "java.core.io-nio.path-files-api.q7": "7a2bab02710c41cb8c9df15adc5d86f46439c46a88575a8b5a149cdd976ba5d7",
+    "java.core.io-nio.nio-channel-buffer.q1": "8100fca60a76839005190380b0923df35ea78ce0bc10b373659a7b8b1feb3530",
+    "java.core.io-nio.nio-channel-buffer.q2": "727159e5b8e0dcd63933df1a191a3cac646eec280353fa47f9d2264a26334a7b",
+    "java.core.io-nio.nio-channel-buffer.q3": "882d17e192ad6484678e38ff1eea03d9b896e93f7a80ffa8f89bbf0622a4981b",
+    "java.core.io-nio.nio-channel-buffer.q4": "d6dbcf0f6660b96991b377751c71dbeee42e96296ffa1c249035bf2d656c3a67",
+    "java.core.io-nio.nio-channel-buffer.q5": "801a12fbf9a1a890bb27aa47a0272645cd761568bdf36b986899f591375efda5",
+    "java.core.io-nio.nio-channel-buffer.q6": "a228c04b7a4a1d79cc3d1b147f9e7406165f1f8fe083f4f95b575817b9271291",
+    "java.core.io-nio.blocking-nonblocking-selector.q1": "e6d9df3af01fb71e4422c81de2698ced9554a8230fcff6f69538c8d59c754264",
+    "java.core.io-nio.blocking-nonblocking-selector.q2": "cd6d2445dcfc2ea2721bf201796bbd509d1670679cb1fdcfbb80e1fc7dd802cb",
+    "java.core.io-nio.blocking-nonblocking-selector.q3": "0e424d4ff6927a938e4655cc8b85523998afead2c3df0fa05973f3960cd5fa2f",
+    "java.core.io-nio.blocking-nonblocking-selector.q4": "b81040e89ef0c68521ff87d98b181acccd2db8fba8875382ec1f917e71d6917d",
+    "java.core.io-nio.blocking-nonblocking-selector.q5": "09ec9d2689e17cfaedc551b6bac36257a74812fbfff7157220d0dd9e9df22fb2",
+    "java.core.io-nio.blocking-nonblocking-selector.q6": "5453630e5e016c9d73ac4b556511915a10dc3100e47b33f63f529e40ac007634",
+    "java.core.io-nio.blocking-nonblocking-selector.q7": "f45d44b3d5fc3831dd41509f8cb3097d0d4ea093d956d2bd0e3bcc7306e31e28"
+  },
+  "carriedForwardFindings": [],
+  "findings": [
+    {
+      "id": "W4-JIO-001",
+      "severity": "P1",
+      "contentKeys": [
+        "java.core.io-nio.byte-character-stream-charset.q7"
+      ],
+      "file": "content/java/io-nio/questions.json",
+      "quote": "I/O 버퍼의 크기는 전송 효율 단위이지 문자 단위가 아니다. 가변 길이 문자셋에서는 디코더가 이전 청크 끝의 미완성 바이트를 기억하고 다음 청크와 이어야 올바른 문자 스트림을 만들 수 있다.",
+      "problem": "CharsetDecoder를언급한model/해설이미완성바이트를decoder내부가기억하는것처럼설명한다. decode false UNDERFLOW는input잔여바이트를호출자가보존해다음입력과재공급해야하는경우가있고same decoder만재사용하고input버리면UTF8손실. 원래목적·오류정책은맞지만상태소유경계가중요하게빠짐.",
+      "action": "model/해설에ByteBuffer position..limit의미소비byte를compact/carry하고새byte후flip하여같은decoder에제공함·endOfInput/flush를짧게명시. 청크독립newString의문제/난도유지.",
+      "officialEvidence": [
+        "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/charset/CharsetDecoder.html#decode(java.nio.ByteBuffer,java.nio.CharBuffer,boolean)",
+        "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/ByteBuffer.html#compact()"
+      ],
+      "followupIssues": [
+        201
+      ]
+    },
+    {
+      "id": "W4-JIO-002",
+      "severity": "P2",
+      "contentKeys": [
+        "java.core.io-nio.nio-channel-buffer.q4"
+      ],
+      "file": "content/java/io-nio/questions.json",
+      "quote": "flip은 position/limit만 교환 관계로 바꾸며 용량 8을 limit보다 크게 설정하지 않는다. 읽기 가능 범위가 3이다.",
+      "problem": "Cfeedback은flip을position/limit교환관계라고부른다. flip은swap이아니며oldposition→limit뒤position=0이다. 정답B·본문과나머지해설숫자는맞음.",
+      "action": "Cfeedback한곳의교환표현만두대입으로교정;정답/난도/본문유지.",
+      "officialEvidence": [
+        "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/Buffer.html#flip()"
+      ],
+      "followupIssues": [
+        201
+      ]
+    },
+    {
+      "id": "W4-JIO-003",
+      "severity": "P2",
+      "contentKeys": [
+        "java.core.io-nio.nio-channel-buffer"
+      ],
+      "file": "frontend/public/learning/java/nio-buffer-flip.svg",
+      "quote": ">A B C</text>",
+      "problem": "좌측은capacity4를4동일셀ABC_로표현하지만flip오른쪽은동일폭rect2개이고ABC를한셀에묶는다. p0/l3숫자label은맞아도flip이저장공간/바이트배치를줄이거나묶는동작처럼보일수있다.",
+      "action": "후속에서양쪽동일4슬롯/ABC_배치유지하고읽기가능3셀과limit3커서만강조. 새image제작없이기존SVG상태시각encoding최소교정권고.",
+      "officialEvidence": [
+        "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/Buffer.html#flip()"
+      ],
+      "followupIssues": [
+        201
+      ]
+    }
+  ],
+  "visualizationAssets": [
+    {
+      "file": "frontend/public/learning/java/nio-buffer-flip.svg",
+      "sourceSha256": "626acb573edf0abbaf08ee4b8078eb28d37fb30096bb34e1cb46a2486b578ce2",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "basis": "760x240 전체source/title/desc/rect/text/path읽음. 좌4동일슬롯ABC_과우2rect/ABC한셀은상태숫자label은맞아도같은공간·바이트단위비교를흐림;W4-JIO-003. sourcegeometry검토만,render/mobile/theme아님."
+    },
+    {
+      "file": "frontend/public/learning/java/nio-selector-readiness.svg",
+      "sourceSha256": "1b2f3e63c4a38fc5cc5b83a39e2f12711dae335bf322d05d069ded886a961eb2",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "basis": "900x430 전체source/3channelinterest→register→selector/select→readykey→appstate/partial/lifecycle 및readready≠message라벨검토. box경계분리·화살표적절;선택직후snapshot이며일반currentready영구집합을보장아님. render/mobile/theme없음."
+    }
+  ],
+  "probeEvidence": {
+    "file": "docs/content-audit/learning-experience-2026/wave-4/probes/check-decoder-boundary.py",
+    "sourceSha256": "8e4dea6117ecc574174fb7438bb52e280a9ccf1e56e3985bd5412e1aaa525dbe",
+    "command": "python docs/content-audit/learning-experience-2026/wave-4/probes/check-decoder-boundary.py",
+    "runtime": "Temurin javac25.0.4.1 Windows",
+    "exitCode": 0,
+    "stdout": [
+      "javac 25.0.4.1",
+      "first=UNDERFLOW;position=0;remaining=2",
+      "preserved=UNDERFLOW;codePoint=54620",
+      "tailOnly=MALFORMED[1]"
+    ],
+    "limits": "UTF8split한byte문자와callercompact보존반례만. 모든35Q실행/OS IOperformance/ReaderQA미수행. 첫probe는stdout native인코딩으로PythonUTF8decode실패;출력을codepoint숫자로바꾼1회retry성공. file.encoding와stdout.encoding는별도임."
+  },
+  "supplementalSources": [
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/charset/CharsetDecoder.html",
+      "CURRENT_VERIFIED",
+      "decode UNDERFLOW/inputposition·endOfInput/flush/erroractions을q7상태소유에대조."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/ByteBuffer.html",
+      "CURRENT_VERIFIED",
+      "compact remainingcopy/positioncount/limitcapacity를unread보존에대조."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/channels/WritableByteChannel.html",
+      "CURRENT_VERIFIED",
+      "write0..remaining,positionadvance/limitunchanged및nonblocksockets만일부가능을보조대조."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/System.html",
+      "CURRENT_VERIFIED",
+      "file.encodingUTF8/COMPAT·native.encoding및stdout.encoding별도표를기본charset설명에대조."
+    ]
+  ]
+}
