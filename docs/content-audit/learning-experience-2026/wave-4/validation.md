@@ -40,3 +40,7 @@
 ## design-patterns 실제 로컬 checkpoint 검증 (2026-10-14)
 
 기존ff3bf6b4를fast-forward한후원본8C/40Q와전체48개source hash/인용/10Reference/1SVG를정식검토했다. 누적회귀17개PASS, audit.py generate/--check errors/drift0, design-patterns checkpoint PASS. 최신6Topic/44C/240Q·전체620C/1924Q를확인했다. 새세부P2 두건을기존후보와구별했다. 코드변경의구문/diff와canonical/앞5ledger/관계/snapshot불변을대조한다. CI는push된실제commit에대해따로확인한다. 과거단락의5Topic/미실행상태는역사적기록이다.
+
+## collections checkpoint (2026-10-14)
+
+9C/51Q의 수기 근거·hash·인용, 19개 Reference 관계와 3SVG source hash를 확인했다. 누적 회귀17개 PASS, generate errors0, checkpoint PASS, --check drift0이다. 최신 Java7Topic/53C/291Q 및 전체629C/1975Q를 재집계했다. 제한 Java probe는 copyOf null NPE와 get의 mapping 보존을 확인했다. 이전5Topic ledger·65관계의 보존과 Topic/Concept 간 Reference 격리는 회귀 검사에 포함된다. 새 산출물 외 canonical/Curriculum/SVG 변경은 없다. 직전 design-patterns HEAD20e8ad21의 Repository Validation #1215(run38530080210)는 SUCCESS였고, collections CI는 push된 HEAD에 대해 별도로 확인한다.

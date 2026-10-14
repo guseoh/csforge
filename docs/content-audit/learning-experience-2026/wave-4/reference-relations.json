@@ -1624,6 +1624,405 @@
         "kind": "CURRENT_DIRECT_RELATION_REVIEW",
         "reviewedAt": "2026-10-14"
       }
+    },
+    {
+      "contentKey": "java.core.collections.list-set-map-contracts",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "Listordered/index/duplicate/remove첫원소/subListbacked및원본외부구조변경undefined를해당시퀀스/뷰목표에대조.",
+      "limits": "관련API절/학습목적만대조;전문/모든예제실행/renderQA아님.",
+      "sourceFile": "content/java/collections/list-set-map-contracts.md",
+      "sourceSha256": "2ffe15b55901dc0ec214bb43e1b3c5af53b2523131bd7e59a23ecb8151f4ab1e",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html",
+        "title": "Java SE 25 API: List",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "List 계약 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_RELATION_REVIEW",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.collections.list-set-map-contracts",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Set.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "Set일반계약은equals중복없음. Hash/tree의기제차이와equals비일관TreeSet이일반Set계약을어긴다는한계를구별.",
+      "limits": "관련API절/학습목적만대조;전문/모든예제실행/renderQA아님.",
+      "sourceFile": "content/java/collections/list-set-map-contracts.md",
+      "sourceSha256": "2ffe15b55901dc0ec214bb43e1b3c5af53b2523131bd7e59a23ecb8151f4ab1e",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Set.html",
+        "title": "Java SE 25 API: Set",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 2,
+        "relationNote": "Set 계약 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_RELATION_REVIEW",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.collections.list-set-map-contracts",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Map.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "Map은Collection하위가아닌key-value매핑이고keySet/values/entrySet은backedview이며삭제가매핑에도반영됨을대조.",
+      "limits": "관련API절/학습목적만대조;전문/모든예제실행/renderQA아님.",
+      "sourceFile": "content/java/collections/list-set-map-contracts.md",
+      "sourceSha256": "2ffe15b55901dc0ec214bb43e1b3c5af53b2523131bd7e59a23ecb8151f4ab1e",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Map.html",
+        "title": "Java SE 25 API: Map",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 3,
+        "relationNote": "Map 계약과 keySet/values/entrySet view 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_RELATION_REVIEW",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.collections.arraylist-linkedlist-tradeoff",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/ArrayList.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "ArrayList resizable array/get O1/끝add amortized/growth미지정/best-effort를해당접근·resize설명에대조.",
+      "limits": "관련API절/학습목적만대조;전문/모든예제실행/renderQA아님.",
+      "sourceFile": "content/java/collections/arraylist-linkedlist-tradeoff.md",
+      "sourceSha256": "81b947b23099bf60adef5d321434530c1f2426c41f6aa0bc5875b9320462e4da",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/ArrayList.html",
+        "title": "Java SE 25 API: ArrayList",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "resizable-array List 구현과 연산 특성 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_RELATION_REVIEW",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.collections.arraylist-linkedlist-tradeoff",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/LinkedList.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "LinkedList doublylinked/ListDeque/index는가까운끝부터순회하는API를위치탐색비용에대조.",
+      "limits": "관련API절/학습목적만대조;전문/모든예제실행/renderQA아님.",
+      "sourceFile": "content/java/collections/arraylist-linkedlist-tradeoff.md",
+      "sourceSha256": "81b947b23099bf60adef5d321434530c1f2426c41f6aa0bc5875b9320462e4da",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/LinkedList.html",
+        "title": "Java SE 25 API: LinkedList",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 2,
+        "relationNote": "doubly-linked List/Deque 구현 계약 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_RELATION_REVIEW",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.collections.hashmap-hashing-collision",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/HashMap.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "HashMap get반환/null허용/분산조건성능계약을대조. 조회SVG의교체라벨은이API와모순되며별도발견.",
+      "limits": "관련API절/학습목적만대조;전문/모든예제실행/renderQA아님.",
+      "sourceFile": "content/java/collections/hashmap-hashing-collision.md",
+      "sourceSha256": "62c96ec02e92696f4ec8c2c99a8e8b92728a14b0fa7af86ff43ce8b95a437ff3",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/HashMap.html",
+        "title": "Java SE 25 API: HashMap",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "HashMap의 key-value 및 성능 계약 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_RELATION_REVIEW",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.collections.hashmap-hashing-collision",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html#hashCode()",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "Object equals인객체의hash동일/다른객체충돌가능을mutablekey/동등성설명에대조.",
+      "limits": "관련API절/학습목적만대조;전문/모든예제실행/renderQA아님.",
+      "sourceFile": "content/java/collections/hashmap-hashing-collision.md",
+      "sourceSha256": "62c96ec02e92696f4ec8c2c99a8e8b92728a14b0fa7af86ff43ce8b95a437ff3",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html#hashCode()",
+        "title": "Java SE 25 API: Object.hashCode",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 2,
+        "relationNote": "hashCode 계약 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_RELATION_REVIEW",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.collections.hashmap-hashing-collision",
+      "url": "https://d2.naver.com/helloworld/831311",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "D2응답은21행shell만노출되어HashMap관련본문/도식의실제학습가치를이번에확정하지못함. brokenURL이라고확정하지않는다.",
+      "limits": "관련API절/학습목적만대조;전문/모든예제실행/renderQA아님.",
+      "sourceFile": "content/java/collections/hashmap-hashing-collision.md",
+      "sourceSha256": "62c96ec02e92696f4ec8c2c99a8e8b92728a14b0fa7af86ff43ce8b95a437ff3",
+      "reference": {
+        "url": "https://d2.naver.com/helloworld/831311",
+        "title": "Java HashMap은 어떻게 동작하는가?",
+        "referenceType": "COMPANY_TECH_BLOG",
+        "language": "ko",
+        "displayOrder": 3,
+        "relationNote": "hash·bucket·collision과 Java HashMap 구현 흐름을 시각적으로 보충"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_RELATION_REVIEW",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.collections.hashset-set-semantics",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/HashSet.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "HashSet backingHashMap/순서미보장/null허용/add동등원소false와retainAll을집합중복목표에대조.",
+      "limits": "관련API절/학습목적만대조;전문/모든예제실행/renderQA아님.",
+      "sourceFile": "content/java/collections/hashset-set-semantics.md",
+      "sourceSha256": "316391492b7f932d6ffa869af86920872e142692290c4d96760132c00b546e56",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/HashSet.html",
+        "title": "Java SE 25 API: HashSet",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "HashSet의 Set 계약과 성능 특성 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_RELATION_REVIEW",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.collections.sorted-collections-tree",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/TreeSet.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "TreeSet natural/Comparator compare0 및equals불일관이면Set일반계약실패라는한계를나이/길이동률예시에대조.",
+      "limits": "관련API절/학습목적만대조;전문/모든예제실행/renderQA아님.",
+      "sourceFile": "content/java/collections/sorted-collections-tree.md",
+      "sourceSha256": "b0d18dd0dfa9c5ba2897d70acfd6f0d24d0562d81d28050ae44e371ec7e2dbd4",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/TreeSet.html",
+        "title": "Java SE 25 API: TreeSet",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "정렬된 Set 계약 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_RELATION_REVIEW",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.collections.sorted-collections-tree",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/TreeMap.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "TreeMap natural/comparator/NavigableMap/logn API를floor/ceiling/subMap와정렬유지목표에대조.",
+      "limits": "관련API절/학습목적만대조;전문/모든예제실행/renderQA아님.",
+      "sourceFile": "content/java/collections/sorted-collections-tree.md",
+      "sourceSha256": "b0d18dd0dfa9c5ba2897d70acfd6f0d24d0562d81d28050ae44e371ec7e2dbd4",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/TreeMap.html",
+        "title": "Java SE 25 API: TreeMap",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 2,
+        "relationNote": "정렬된 Map 계약 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_RELATION_REVIEW",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.collections.queue-deque-arraydeque",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Deque.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "Deque의queue뒤추가앞제거/stack앞pushpop 및exception/specialvalue쌍을방향실행문제에대조.",
+      "limits": "관련API절/학습목적만대조;전문/모든예제실행/renderQA아님.",
+      "sourceFile": "content/java/collections/queue-deque-arraydeque.md",
+      "sourceSha256": "68df015b6204fd5e94ba6d63a03c3bcc05d3bbf1c9d97843fff7cd2ea543b652",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Deque.html",
+        "title": "Java SE 25 API: Deque",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "Deque의 양끝 연산과 stack 사용 계약 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_RELATION_REVIEW",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.collections.queue-deque-arraydeque",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/ArrayDeque.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "ArrayDeque resizable/null금지/비동기화·블로킹없음관련API를기본선택/생산자소비자한계에대조.",
+      "limits": "관련API절/학습목적만대조;전문/모든예제실행/renderQA아님.",
+      "sourceFile": "content/java/collections/queue-deque-arraydeque.md",
+      "sourceSha256": "68df015b6204fd5e94ba6d63a03c3bcc05d3bbf1c9d97843fff7cd2ea543b652",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/ArrayDeque.html",
+        "title": "Java SE 25 API: ArrayDeque",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 2,
+        "relationNote": "ArrayDeque 구현 특성 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_RELATION_REVIEW",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.collections.priorityqueue",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/PriorityQueue.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "PriorityQueue leasthead/tie임의/iterator순서미보장/removeObject선형을poll반복/tie-breaker/재삽입전략에대조.",
+      "limits": "관련API절/학습목적만대조;전문/모든예제실행/renderQA아님.",
+      "sourceFile": "content/java/collections/priorityqueue.md",
+      "sourceSha256": "5fbda10bf0bbd93ff4dfce86c8c25a104fe9cd354d684b765cb665062b391a4d",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/PriorityQueue.html",
+        "title": "Java SE 25 API: PriorityQueue",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "heap 기반 priority queue의 head와 iteration 계약 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_RELATION_REVIEW",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.collections.iterable-iterator-foreach-modification",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Iterable.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "Iterable.iterator의cursor제공을컬렉션enhancedfor역할에대조. 배열문법은그API가보장하는것아님.",
+      "limits": "관련API절/학습목적만대조;전문/모든예제실행/renderQA아님.",
+      "sourceFile": "content/java/collections/iterable-iterator-foreach-modification.md",
+      "sourceSha256": "dcfb89bbd22d5846e03419d8c3b852b7237a67c43f7561c72408a32cf975f5bd",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Iterable.html",
+        "title": "Java SE 25 API: Iterable",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "Iterable 계약 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_RELATION_REVIEW",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.collections.iterable-iterator-foreach-modification",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Iterator.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "Iterator.remove optional/next당1회/외부수정unspecified를제거경로및연속remove문항에대조.",
+      "limits": "관련API절/학습목적만대조;전문/모든예제실행/renderQA아님.",
+      "sourceFile": "content/java/collections/iterable-iterator-foreach-modification.md",
+      "sourceSha256": "dcfb89bbd22d5846e03419d8c3b852b7237a67c43f7561c72408a32cf975f5bd",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Iterator.html",
+        "title": "Java SE 25 API: Iterator",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 2,
+        "relationNote": "next/remove 및 iteration 계약 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_RELATION_REVIEW",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.collections.immutable-unmodifiable-collections",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html#of()",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "List.of unmodifiable/null거절을본문의생성부터수정불가계약에대조.",
+      "limits": "관련API절/학습목적만대조;전문/모든예제실행/renderQA아님.",
+      "sourceFile": "content/java/collections/immutable-unmodifiable-collections.md",
+      "sourceSha256": "20615425b623bdb9c0abea9325dba148e9f83f22622441c01b6cda7af1549358",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html#of()",
+        "title": "Java SE 25 API: List.of",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "unmodifiable List factory 계약 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_RELATION_REVIEW",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.collections.immutable-unmodifiable-collections",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html#copyOf(java.util.Collection)",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "List.copyOf는입력구조후속변경미반영/같은identity재사용가능/shallow/null NPE임을개별확인. q6의nullable전제공백은별도.",
+      "limits": "관련API절/학습목적만대조;전문/모든예제실행/renderQA아님.",
+      "sourceFile": "content/java/collections/immutable-unmodifiable-collections.md",
+      "sourceSha256": "20615425b623bdb9c0abea9325dba148e9f83f22622441c01b6cda7af1549358",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html#copyOf(java.util.Collection)",
+        "title": "Java SE 25 API: List.copyOf",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 2,
+        "relationNote": "unmodifiable copy 계약 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_RELATION_REVIEW",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.collections.immutable-unmodifiable-collections",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Collections.html#unmodifiableList(java.util.List)",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "Collections.unmodifiableList의read-through/UOE를원본clear와wrapper권한설명에대조.",
+      "limits": "관련API절/학습목적만대조;전문/모든예제실행/renderQA아님.",
+      "sourceFile": "content/java/collections/immutable-unmodifiable-collections.md",
+      "sourceSha256": "20615425b623bdb9c0abea9325dba148e9f83f22622441c01b6cda7af1549358",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Collections.html#unmodifiableList(java.util.List)",
+        "title": "Java SE 25 API: Collections.unmodifiableList",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 3,
+        "relationNote": "backing list view 계약 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_RELATION_REVIEW",
+        "reviewedAt": "2026-10-14"
+      }
     }
   ],
   "supportingRelations": [

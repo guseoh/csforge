@@ -8,7 +8,7 @@
 
 ## 현재 누적 결과 — Java 잔여 전체 순차 감사
 
-최신 정식 checkpoint 수량/품질/Reference 상태는 [Wave4 생성 진행률](wave-4/progress.md)과 [summary](wave-4/summary.json)를 따른다. 기존5개Topic36C/200Q 및Wave1~3를보존하고design-patterns8C/40Q를현재직접읽어확정했다. 전체620/721C·1,924/2,525Q이며미검토범위를완료로표시하지않는다. [design-patterns 확정결과](wave-4/design-patterns-checkpoint.md), [기존관계격리](wave-4/reference-isolation.md), [누적발견](wave-4/findings.md)에근거가있다. 아래는앞선실행시점의기록이다.
+최신 정식 checkpoint 수량/품질/Reference 상태는 [Wave4 생성 진행률](wave-4/progress.md)과 [summary](wave-4/summary.json)를 따른다. 기존5개Topic36C/200Q 및 Wave1~3를 보존하며 잔여 Topic을 순차적으로 직접 읽어 확정한다. 미검토 범위를 완료로 표시하지 않는다. 각 Topic의 checkpoint와 수기 ledger, [기존 관계 격리](wave-4/reference-isolation.md), [누적 발견](wave-4/findings.md)에 근거가 있다. 아래는 앞선 실행 시점의 기록이다.
 
 ### 첫 language-types 실행 당시 기록
 

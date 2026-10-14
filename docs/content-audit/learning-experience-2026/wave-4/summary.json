@@ -4,42 +4,43 @@
   "areas": [
     {
       "area": "java",
-      "concepts": 44,
-      "questions": 240,
-      "currentVerifiedConcepts": 44,
-      "currentVerifiedQuestions": 240,
+      "concepts": 53,
+      "questions": 291,
+      "currentVerifiedConcepts": 53,
+      "currentVerifiedQuestions": 291,
       "conceptQuality": {
-        "KEEP": 30,
-        "TARGETED_ENHANCE": 14
+        "KEEP": 36,
+        "TARGETED_ENHANCE": 17
       },
       "questionQuality": {
-        "KEEP": 229,
-        "TARGETED_ENHANCE": 11
+        "KEEP": 279,
+        "TARGETED_ENHANCE": 12
       }
     }
   ],
   "allConceptQuality": {
-    "KEEP": 506,
-    "NEEDS_REVIEW": 100,
-    "TARGETED_ENHANCE": 115
+    "KEEP": 512,
+    "NEEDS_REVIEW": 91,
+    "TARGETED_ENHANCE": 118
   },
   "allQuestionQuality": {
-    "KEEP": 1837,
-    "NEEDS_REVIEW": 582,
-    "TARGETED_ENHANCE": 106
+    "KEEP": 1881,
+    "NEEDS_REVIEW": 537,
+    "TARGETED_ENHANCE": 107
   },
   "allConceptEvidence": {
-    "CURRENT_PARTIAL": 3,
-    "CURRENT_VERIFIED": 620,
-    "NEEDS_REVIEW": 98
+    "CURRENT_PARTIAL": 2,
+    "CURRENT_VERIFIED": 629,
+    "NEEDS_REVIEW": 90
   },
   "allQuestionEvidence": {
-    "CURRENT_PARTIAL": 19,
-    "CURRENT_VERIFIED": 1924,
-    "NEEDS_REVIEW": 582
+    "CURRENT_PARTIAL": 13,
+    "CURRENT_VERIFIED": 1975,
+    "NEEDS_REVIEW": 537
   },
   "reviewedTopics": [
     "java.core.api-design",
+    "java.core.collections",
     "java.core.design-patterns",
     "java.core.enum-modeling",
     "java.core.language-types",
@@ -47,14 +48,14 @@
     "java.core.object-model"
   ],
   "totals": {
-    "topics": 6,
-    "concepts": 44,
-    "questions": 240
+    "topics": 7,
+    "concepts": 53,
+    "questions": 291
   },
   "findingSeverity": {
-    "P0": 8,
-    "P1": 6,
-    "P2": 4
+    "P0": 9,
+    "P1": 7,
+    "P2": 6
   },
   "carriedFindingSeverity": {
     "P2": 1
@@ -62,16 +63,16 @@
   "cumulativeComplete": {
     "areas": 14,
     "partialAreas": 1,
-    "topics": 122,
-    "concepts": 620,
-    "questions": 1924
+    "topics": 123,
+    "concepts": 629,
+    "questions": 1975
   },
   "references": {
-    "links": 75,
-    "uniqueUrls": 59,
+    "links": 94,
+    "uniqueUrls": 76,
     "meaningEvidence": {
-      "CURRENT_VERIFIED": 74,
-      "NEEDS_REVIEW": 1
+      "CURRENT_VERIFIED": 92,
+      "NEEDS_REVIEW": 2
     }
   }
 }

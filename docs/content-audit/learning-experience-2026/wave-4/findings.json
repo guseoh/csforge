@@ -58,6 +58,107 @@
     "sourceFileSha256": "d803ccb9bc9bff8fc80724c18b92ecfdd2a3d45213463ae8f47249d9c5fce7ab"
   },
   {
+    "id": "W4-JCOL-001",
+    "severity": "P0",
+    "contentKeys": [
+      "java.core.collections.hashmap-hashing-collision"
+    ],
+    "file": "frontend/public/learning/java/hashmap-buckets.svg",
+    "quote": "같은 key면 교체, 아니면 다음 entry",
+    "problem": "HashMap조회도식의title/desc/헤더는lookup/get인데equals뒤라벨은같은key면교체라고설명해put갱신과혼동한다. get은기존값을반환하며매핑을교체하지않는다. 본문/Q의해시모델은맞으며SVG의조회행동오류만확정한다.",
+    "action": "해당라벨을같은key면value반환,아니면다음entry로교정하고조회/삽입흐름을구별. 기존SVG1개라벨만#201후속,새그림/본문rewrite불필요.",
+    "officialEvidence": [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/HashMap.html#get(java.lang.Object)"
+    ],
+    "runtimeEvidence": "제한probe get1후mapping1유지. 규범근거는JDKget계약.",
+    "followupIssues": [
+      201
+    ],
+    "sourceLine": 10,
+    "sourceFileSha256": "fd723e23c5524af4d90e0b51fcf47dc8b300b49df1ebe606b71cc6999abc48c9"
+  },
+  {
+    "id": "W4-JCOL-002",
+    "severity": "P2",
+    "contentKeys": [
+      "java.core.collections.arraylist-linkedlist-tradeoff"
+    ],
+    "file": "frontend/public/learning/java/array-list-linked-list.svg",
+    "quote": "<rect x=\"382\" y=\"96\" width=\"116\" height=\"52\"",
+    "additionalEvidence": [
+      {
+        "file": "frontend/public/learning/java/array-list-linked-list.svg",
+        "quote": "<rect x=\"450\" y=\"96\" width=\"92\" height=\"52\"",
+        "sourceLine": 15,
+        "sourceFileSha256": "732f402ea904e2006d819b409d2e967604ddd61e2c6bad02d1c68293a2e3630f"
+      }
+    ],
+    "problem": "좌측ArrayList끝칸382..498과우측LinkedList첫노드450..542가같은y96..148에서48px중첩한다. 비교할두구조를별도공간으로읽기어려운sourcegeometry후보이며새pixelrender완료주장은아니다.",
+    "action": "두열의간격/폭을조정해칸/노드가겹치지않도록기존SVG좌표만보강. 의미모델/정답유지,Readerrender후속확인.",
+    "followupIssues": [
+      201
+    ],
+    "sourceLine": 8,
+    "sourceFileSha256": "732f402ea904e2006d819b409d2e967604ddd61e2c6bad02d1c68293a2e3630f"
+  },
+  {
+    "id": "W4-JCOL-003",
+    "severity": "P2",
+    "contentKeys": [
+      "java.core.collections.hashmap-hashing-collision",
+      "java.core.collections.priorityqueue"
+    ],
+    "file": "content/java/collections/hashmap-hashing-collision.md",
+    "quote": "Key key = new Key(\"kim\");",
+    "additionalEvidence": [
+      {
+        "file": "content/java/collections/hashmap-hashing-collision.md",
+        "quote": "class Key {",
+        "sourceLine": 75,
+        "sourceFileSha256": "62c96ec02e92696f4ec8c2c99a8e8b92728a14b0fa7af86ff43ce8b95a437ff3"
+      },
+      {
+        "file": "content/java/collections/priorityqueue.md",
+        "quote": "queue.offer(job);",
+        "sourceLine": 81,
+        "sourceFileSha256": "5fbda10bf0bbd93ff4dfce86c8c25a104fe9cd354d684b765cb665062b391a4d"
+      },
+      {
+        "file": "content/java/collections/priorityqueue.md",
+        "quote": "PriorityQueue<Integer> queue = new PriorityQueue<>();",
+        "sourceLine": 28,
+        "sourceFileSha256": "5fbda10bf0bbd93ff4dfce86c8c25a104fe9cd354d684b765cb665062b391a4d"
+      }
+    ],
+    "problem": "HashMap Key전체class모양에는String생성자가없는데뒤에서new Key(String)을쓴다. PriorityQueue는앞Integer queue와뒤Job예시에서같은queue이름을쓰고이미선언된Job큐는jobs라연결실행시타입이맞지않는다. 독립발췌/생략표시가없어따라쓰기문맥이불명확하며자료구조모델은정확하다.",
+    "action": "Key생성자생략을명시/짧게제시하고Job예시는typed Job큐선언또는jobs사용으로연결. 두예시문맥만보강,모든본문코드standalone化/rewrite불필요.",
+    "followupIssues": [
+      201
+    ],
+    "sourceLine": 82,
+    "sourceFileSha256": "62c96ec02e92696f4ec8c2c99a8e8b92728a14b0fa7af86ff43ce8b95a437ff3"
+  },
+  {
+    "id": "W4-JCOL-004",
+    "severity": "P1",
+    "contentKeys": [
+      "java.core.collections.immutable-unmodifiable-collections.q6"
+    ],
+    "file": "content/java/collections/questions.json",
+    "quote": "문자열 목록을 전달 시점의 구성으로 고정해 반환하려 한다. 소스는 나중에 add/remove될 수 있다. 맞는 선택은?",
+    "problem": "정답D의copyOf스냅샷은nonnull원소를전제로하는데문자열목록의null허용여부가제시되지않는다. null을포함한유효한ArrayList<String>이면copyOf가NPE를던져요구한결과를반환하지않고보기중일반해법이없어진다. 실질입력전제공백이며nonnull입력에서는정답D가맞다.",
+    "action": "prompt에source와원소는null아님한절을추가하고D해설에copyOf의null거절을한정. 정답/난도/뷰vs스냅샷학습목표유지.",
+    "officialEvidence": [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html#copyOf(java.util.Collection)"
+    ],
+    "runtimeEvidence": "제한probe ArrayList(Arrays.asList(A,null))의copyOf가NPE. 명세의null요소거절대조.",
+    "followupIssues": [
+      201
+    ],
+    "sourceLine": 49,
+    "sourceFileSha256": "e4cea179131375e857f60fc1f2b975f12a17e8dbe12c4d0be4d142fb14cde25e"
+  },
+  {
     "id": "W4-JDPAT-001",
     "severity": "P0",
     "contentKeys": [

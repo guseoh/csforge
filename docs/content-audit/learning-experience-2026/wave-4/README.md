@@ -2,7 +2,7 @@
 
 ## 최신 실행 — 잔여 Java 전체 통합 감사
 
-[자동 생성 진행률](progress.md)과 summary.json이 최신 수량이다. 기존5개Topic과 Wave1~3 근거는 보존한다. design-patterns 정식48항목 checkpoint를 검증했고 [확정 근거](design-patterns-checkpoint.md)를 추가했다. 잔여 전체 목표는 Issue200 계약의18Topic/145C/841Q이며 완료한 Topic만 집계한다. 아래 수량/다음Topic 문장은 앞선 실행 당시의 역사적 기록이다. 현재 다음은 collections9C/51Q다.
+[자동 생성 진행률](progress.md)과 summary.json이 최신 수량이다. 기존5개Topic과 Wave1~3 근거는 보존한다. 잔여 Topic별 checkpoint와 topics/*.json에 직접 검토한 근거를 추가한다. 잔여 전체 목표는 Issue200 계약의18Topic/145C/841Q이며 완료한 Topic만 집계한다. 아래 수량/다음Topic 문장은 앞선 실행 당시의 역사적 기록이다. Topic마다 검증·push한 뒤 별도 승인 요청 없이 다음 Topic을 진행한다.
 
 
 

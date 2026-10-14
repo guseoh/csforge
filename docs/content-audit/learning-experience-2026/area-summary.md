@@ -1,6 +1,6 @@
 # LearningArea별 감사 요약
 
-15 Area 구조 인벤토리와 Wave1~3 근거를 유지한다. Wave4 정식 checkpoint는 6 Topic/44C/240Q이며 Java 상태는 CURRENT_PARTIAL다. 미검토 항목을 완료로 승격하지 않는다. 과거 PASS와 새 검토 근거/품질 판정을 구별한다.
+15 Area 구조 인벤토리와 Wave1~3 근거를 유지한다. Wave4 정식 checkpoint는 7 Topic/53C/291Q이며 Java 상태는 CURRENT_PARTIAL다. 미검토 항목을 완료로 승격하지 않는다. 과거 PASS와 새 검토 근거/품질 판정을 구별한다.
 
 | Area | Topic | Concept | Question | 이번 본문 검토 | 이번 문항 검토 | Concept KEEP / ENHANCE / REVIEW |
 | --- | ---: | ---: | ---: | ---: | ---: | --- |
@@ -11,7 +11,7 @@
 | distributed-systems | 3 | 9 | 27 | 9 | 27 | 8 / 1 / 0 |
 | dsa | 12 | 84 | 293 | 84 | 293 | 72 / 12 / 0 |
 | infrastructure-cloud | 3 | 9 | 27 | 9 | 27 | 6 / 3 / 0 |
-| java | 18 | 145 | 841 | 47 | 259 | 30 / 15 / 100 |
+| java | 18 | 145 | 841 | 55 | 304 | 36 / 18 / 91 |
 | messaging-async | 3 | 9 | 27 | 9 | 27 | 7 / 2 / 0 |
 | network-http | 15 | 127 | 381 | 127 | 381 | 105 / 22 / 0 |
 | operating-systems | 12 | 97 | 331 | 97 | 331 | 83 / 14 / 0 |
@@ -67,6 +67,7 @@ compute→network→reliability의 9 본문/27 문항을 직접 읽고 모든 �
 ## java
 
 java.core.api-design: 5본문과MC25/DESCRIPTIVE2/SCENARIO1 전체28문항의모든실제필드·모든선택지/rationale·정답·modelAnswer·explanation·모호성/난도/중복/Concept연결을직접읽었다. 각각의5축C/2축Q수기평가이며자동화/과거PASS판정없음. 공식관련절과한국어출처를대조하고Reference는개별관계sidecar로귀속한다.
+java.core.collections: 9C/51Q 전체본문과정답/모든선택지rationale/모범답안/해설/난도/모호성/중복/연결을직접읽었다. 계약/구현층위와관계별Reference19개및SVG3개전체source를대조. 자동판정/이전PASS복제없음.
 java.core.design-patterns: 기존1차메모를불변으로보존하고8C/40Q전체본문/모든정답/선택지rationale/modelAnswer/explanation/난도/모호성/중복/연결을현재직접읽었다. 후보2건은원문/공식계약대조로확정하고새P2두건을추가. 자동PASS없음.
 java.core.enum-modeling: 4 Concept/18 Question(MC17/SCENARIO1)의 실제 본문·정답·선택지별 rationale·modelAnswer·설명·난도·중복 및 연관성을 직접 검토하고 Java25/JLS/한국어 출처 관련 절과 대조했다. 이전 PASS 자동 승격 없이 수기 5축/2축 근거 기록.
 java.core.language-types: language-types만의 10 Concept 전체 본문과 55 Question의 모든 실제 필드를 직접 읽었다. MC53/Scenario1/Descriptive1의 정답/모든 선택지와 rationale/모범 답안/해설, 전제·난도·중복 목표·연결을 개별 대조했다. 코드 출력은 주로 JLS/JDK 계약과 수기 상태 추론이며 제한된 4쟁점만 Java25 probe로 실제 실행했다. source hash 자동 계산은 이미 작성한 수기 판단을 고정할 뿐 PASS를 생성하지 않는다. PR178의 수정과 기존 partial 근거를 보존하며 다른 Java Topic은 미검토다.

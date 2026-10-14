@@ -62,6 +62,12 @@
     "visualReview": {
       "status": "NEEDS_REVIEW"
     },
+    "sourceSemanticReview": {
+      "file": "frontend/public/learning/java/array-list-linked-list.svg",
+      "sourceSha256": "732f402ea904e2006d819b409d2e967604ddd61e2c6bad02d1c68293a2e3630f",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "basis": "760×250 전체source/title/desc/칸·노드·next경로를읽었다. 참조슬롯vs노드탐색설명은타당하나두열48px중첩P2를기록."
+    },
     "viewBox": "0 0 760 250",
     "labels": [
       "ArrayList · 배열 기반",
@@ -443,6 +449,12 @@
     "visualReview": {
       "status": "NEEDS_REVIEW"
     },
+    "sourceSemanticReview": {
+      "file": "frontend/public/learning/java/hashmap-buckets.svg",
+      "sourceSha256": "fd723e23c5524af4d90e0b51fcf47dc8b300b49df1ebe606b71cc6999abc48c9",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "basis": "1100×430 전체source/hash→bucket→entry/equals라벨과화살표를읽음. 조회에교체라는라벨이put동작을섞는P0."
+    },
     "viewBox": "0 0 1100 430",
     "labels": [
       "HashMap 조회 흐름",
@@ -799,6 +811,12 @@
     },
     "visualReview": {
       "status": "NEEDS_REVIEW"
+    },
+    "sourceSemanticReview": {
+      "file": "frontend/public/learning/java/priority-queue-heap.svg",
+      "sourceSha256": "838d2f9cad55836105e19fbbbfbd8a952b2901ba1169a5fa4a88d422b96a7526",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "basis": "1100×520 전체부모자식선1,4,3,9,7,8,5와poll1→3→4/iterator미보장텍스트가본문과일치. 실제render미완료."
     },
     "viewBox": "0 0 1100 520",
     "labels": [

@@ -30,6 +30,33 @@
   },
   {
     "area": "java",
+    "contentKey": "java.core.collections.hashmap-hashing-collision",
+    "file": "content/java/collections/hashmap-hashing-collision.md",
+    "url": "https://d2.naver.com/helloworld/831311",
+    "title": "Java HashMap은 어떻게 동작하는가?",
+    "referenceType": "COMPANY_TECH_BLOG",
+    "language": "ko",
+    "displayOrder": 3,
+    "relationNote": "hash·bucket·collision과 Java HashMap 구현 흐름을 시각적으로 보충",
+    "verification": {
+      "status": "NEEDS_REVIEW",
+      "area": "java",
+      "topicKey": "java.core.collections",
+      "contentKey": "java.core.collections.hashmap-hashing-collision",
+      "evidenceFile": "docs/content-audit/learning-experience-2026/wave-4/reference-relations.json",
+      "evidenceLevel": "NEEDS_REVIEW",
+      "basis": "D2응답은21행shell만노출되어HashMap관련본문/도식의실제학습가치를이번에확정하지못함. brokenURL이라고확정하지않는다.",
+      "limits": "관련API절/학습목적만대조;전문/모든예제실행/renderQA아님.",
+      "sourceSha256": "62c96ec02e92696f4ec8c2c99a8e8b92728a14b0fa7af86ff43ce8b95a437ff3",
+      "qualityIssueIds": []
+    },
+    "priorVerification": {
+      "status": "NEEDS_REVIEW",
+      "basis": "이번 감사에서 미접근. 기존 Wave의 출처 확인 근거 보존; URL 존재만으로 학습 가치를 판정하지 않는다."
+    }
+  },
+  {
+    "area": "java",
     "contentKey": "java.core.design-patterns.strategy-pattern",
     "file": "content/java/design-patterns/strategy-pattern.md",
     "url": "https://tecoble.techcourse.co.kr/post/2021-10-04-strategy-command-pattern/",

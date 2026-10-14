@@ -44,6 +44,86 @@ Topic별 직접 검토의 새 발견과 기존 계승을 분리한다. 검토 �
 
 후속: #201
 
+### W4-JCOL-001 — P0
+
+대상: `java.core.collections.hashmap-hashing-collision`
+
+원문: [frontend/public/learning/java/hashmap-buckets.svg:10](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/frontend/public/learning/java/hashmap-buckets.svg#L10)
+
+> 같은 key면 교체, 아니면 다음 entry
+
+문제: HashMap조회도식의title/desc/헤더는lookup/get인데equals뒤라벨은같은key면교체라고설명해put갱신과혼동한다. get은기존값을반환하며매핑을교체하지않는다. 본문/Q의해시모델은맞으며SVG의조회행동오류만확정한다.
+
+최소 보강: 해당라벨을같은key면value반환,아니면다음entry로교정하고조회/삽입흐름을구별. 기존SVG1개라벨만#201후속,새그림/본문rewrite불필요.
+
+공식 근거: [관련 계약](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/HashMap.html#get(java.lang.Object))
+
+실행/추론 대조: 제한probe get1후mapping1유지. 규범근거는JDKget계약.
+
+후속: #201
+
+### W4-JCOL-002 — P2
+
+대상: `java.core.collections.arraylist-linkedlist-tradeoff`
+
+원문: [frontend/public/learning/java/array-list-linked-list.svg:8](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/frontend/public/learning/java/array-list-linked-list.svg#L8)
+
+> <rect x="382" y="96" width="116" height="52"
+
+원문: [frontend/public/learning/java/array-list-linked-list.svg:15](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/frontend/public/learning/java/array-list-linked-list.svg#L15)
+
+> <rect x="450" y="96" width="92" height="52"
+
+문제: 좌측ArrayList끝칸382..498과우측LinkedList첫노드450..542가같은y96..148에서48px중첩한다. 비교할두구조를별도공간으로읽기어려운sourcegeometry후보이며새pixelrender완료주장은아니다.
+
+최소 보강: 두열의간격/폭을조정해칸/노드가겹치지않도록기존SVG좌표만보강. 의미모델/정답유지,Readerrender후속확인.
+
+후속: #201
+
+### W4-JCOL-003 — P2
+
+대상: `java.core.collections.hashmap-hashing-collision`, `java.core.collections.priorityqueue`
+
+원문: [content/java/collections/hashmap-hashing-collision.md:82](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/collections/hashmap-hashing-collision.md#L82)
+
+> Key key = new Key("kim");
+
+원문: [content/java/collections/hashmap-hashing-collision.md:75](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/collections/hashmap-hashing-collision.md#L75)
+
+> class Key {
+
+원문: [content/java/collections/priorityqueue.md:81](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/collections/priorityqueue.md#L81)
+
+> queue.offer(job);
+
+원문: [content/java/collections/priorityqueue.md:28](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/collections/priorityqueue.md#L28)
+
+> PriorityQueue<Integer> queue = new PriorityQueue<>();
+
+문제: HashMap Key전체class모양에는String생성자가없는데뒤에서new Key(String)을쓴다. PriorityQueue는앞Integer queue와뒤Job예시에서같은queue이름을쓰고이미선언된Job큐는jobs라연결실행시타입이맞지않는다. 독립발췌/생략표시가없어따라쓰기문맥이불명확하며자료구조모델은정확하다.
+
+최소 보강: Key생성자생략을명시/짧게제시하고Job예시는typed Job큐선언또는jobs사용으로연결. 두예시문맥만보강,모든본문코드standalone化/rewrite불필요.
+
+후속: #201
+
+### W4-JCOL-004 — P1
+
+대상: `java.core.collections.immutable-unmodifiable-collections.q6`
+
+원문: [content/java/collections/questions.json:49](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/collections/questions.json#L49)
+
+> 문자열 목록을 전달 시점의 구성으로 고정해 반환하려 한다. 소스는 나중에 add/remove될 수 있다. 맞는 선택은?
+
+문제: 정답D의copyOf스냅샷은nonnull원소를전제로하는데문자열목록의null허용여부가제시되지않는다. null을포함한유효한ArrayList<String>이면copyOf가NPE를던져요구한결과를반환하지않고보기중일반해법이없어진다. 실질입력전제공백이며nonnull입력에서는정답D가맞다.
+
+최소 보강: prompt에source와원소는null아님한절을추가하고D해설에copyOf의null거절을한정. 정답/난도/뷰vs스냅샷학습목표유지.
+
+공식 근거: [관련 계약](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html#copyOf(java.util.Collection))
+
+실행/추론 대조: 제한probe ArrayList(Arrays.asList(A,null))의copyOf가NPE. 명세의null요소거절대조.
+
+후속: #201
+
 ### W4-JDPAT-001 — P0
 
 대상: `java.core.design-patterns.factory-pattern`
