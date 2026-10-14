@@ -1162,6 +1162,153 @@
         "kind": "CURRENT_DIRECT_RELATION_REVIEW",
         "reviewedAt": "2026-10-14"
       }
+    },
+    {
+      "contentKey": "java.core.object-contracts.comparable-natural-order",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Comparable.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "Java25 Comparable API의 compareTo 순서 부호/정렬 일관성 및 TreeSet 비교상 동등성 의미를 이 Concept와 대조.",
+      "limits": "해당 Concept/관련 절 의미 검증, 문서 전문·모든 코드 실행/화면 QA 아님. 외부 출처 기술 오류는 별도 finding으로 분리.",
+      "sourceFile": "content/java/object-contracts/comparable-natural-order.md",
+      "sourceSha256": "781c503463000282bf09eced8e79b43f3512a3bb6bbdf6c571d01ca45a019210",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Comparable.html",
+        "title": "Java SE 25 API: Comparable",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "자연 순서와 compareTo 계약 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_RELATION_REVIEW",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.object-contracts.comparator-custom-order",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Comparator.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "Java25 Comparator API의 comparing/thenComparing/reversed/nullsLast·키 추출 계약과 코드 및 문항 비교.",
+      "limits": "해당 Concept/관련 절 의미 검증, 문서 전문·모든 코드 실행/화면 QA 아님. 외부 출처 기술 오류는 별도 finding으로 분리.",
+      "sourceFile": "content/java/object-contracts/comparator-custom-order.md",
+      "sourceSha256": "ecba0c34e6c229a3d9f9425c3296b053cdb8ed0169890ec58e19e6d31be28806",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Comparator.html",
+        "title": "Java SE 25 API: Comparator",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "Comparator 계약과 조합 API 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_RELATION_REVIEW",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.object-contracts.equals-contract",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html#equals(java.lang.Object)",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "Java25 Object.equals의 반사·대칭·추이·일관·null 규약과 상속/값 객체 비교 기준을 대조.",
+      "limits": "해당 Concept/관련 절 의미 검증, 문서 전문·모든 코드 실행/화면 QA 아님. 외부 출처 기술 오류는 별도 finding으로 분리.",
+      "sourceFile": "content/java/object-contracts/equals-contract.md",
+      "sourceSha256": "b1acf650ca4e2f76bd352a951b4662beebf91357f90b1d44fef15f9137ef1ad6",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html#equals(java.lang.Object)",
+        "title": "Java SE 25 API: Object.equals",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "equals의 공식 계약 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_RELATION_REVIEW",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.object-contracts.equals-contract",
+      "url": "https://tecoble.techcourse.co.kr/post/2020-06-11-value-object/",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "한국어 VO 자료의 값 객체/동일성 설명은 유용하지만 Object 기본 해시를 메모리 주소로 일반화하는 오류(W4-JOBJ-002) 확인.",
+      "limits": "해당 Concept/관련 절 의미 검증, 문서 전문·모든 코드 실행/화면 QA 아님. 외부 출처 기술 오류는 별도 finding으로 분리.",
+      "sourceFile": "content/java/object-contracts/equals-contract.md",
+      "sourceSha256": "b1acf650ca4e2f76bd352a951b4662beebf91357f90b1d44fef15f9137ef1ad6",
+      "reference": {
+        "url": "https://tecoble.techcourse.co.kr/post/2020-06-11-value-object/",
+        "title": "VO(Value Object)란 무엇일까?",
+        "referenceType": "KOREAN_BLOG",
+        "language": "ko",
+        "displayOrder": 2,
+        "relationNote": "값 객체의 동일성·동등성 구분과 equals/hashCode 재정의를 한국어 예제로 복습"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_RELATION_REVIEW",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.object-contracts.hashcode-contract",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html#hashCode()",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "Java25 Object.hashCode의 동등 객체 같은 해시·충돌 허용·실행 사이 안정성 비보장 규약 대조.",
+      "limits": "해당 Concept/관련 절 의미 검증, 문서 전문·모든 코드 실행/화면 QA 아님. 외부 출처 기술 오류는 별도 finding으로 분리.",
+      "sourceFile": "content/java/object-contracts/hashcode-contract.md",
+      "sourceSha256": "173f8072b47acf18772702027f71f82513a0f50a9d4c53d5a840694ff7e9bb61",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html#hashCode()",
+        "title": "Java SE 25 API: Object.hashCode",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "hashCode 공식 계약 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_RELATION_REVIEW",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.object-contracts.hashcode-contract",
+      "url": "https://tecoble.techcourse.co.kr/post/2020-07-29-equals-and-hashCode/",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "한국어 equals/hashCode 자료에서 기본 해시가 고유 주소/객체별 고유 번호라는 과도한 단정(W4-JOBJ-002) 확인.",
+      "limits": "해당 Concept/관련 절 의미 검증, 문서 전문·모든 코드 실행/화면 QA 아님. 외부 출처 기술 오류는 별도 finding으로 분리.",
+      "sourceFile": "content/java/object-contracts/hashcode-contract.md",
+      "sourceSha256": "173f8072b47acf18772702027f71f82513a0f50a9d4c53d5a840694ff7e9bb61",
+      "reference": {
+        "url": "https://tecoble.techcourse.co.kr/post/2020-07-29-equals-and-hashCode/",
+        "title": "equals와 hashCode는 왜 같이 재정의해야 할까?",
+        "referenceType": "KOREAN_BLOG",
+        "language": "ko",
+        "displayOrder": 2,
+        "relationNote": "hash 기반 컬렉션에서 equals와 hashCode 계약이 함께 필요한 이유를 한국어 예제로 복습"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_RELATION_REVIEW",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.object-contracts.tostring-diagnostics",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html#toString()",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "Java25 Object.toString 공식 API의 진단용 문자열 형태만 확인. 직렬화 포맷과 보안 정책 보장이 아님.",
+      "limits": "해당 Concept/관련 절 의미 검증, 문서 전문·모든 코드 실행/화면 QA 아님. 외부 출처 기술 오류는 별도 finding으로 분리.",
+      "sourceFile": "content/java/object-contracts/tostring-diagnostics.md",
+      "sourceSha256": "701890e5f44c3fc8ed177280a5b5383a23112bd024e6e21da7ed61e277aaa1d3",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html#toString()",
+        "title": "Java SE 25 API: Object.toString",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "Object.toString 기본 계약 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_RELATION_REVIEW",
+        "reviewedAt": "2026-10-14"
+      }
     }
   ],
   "supportingRelations": [

@@ -117,13 +117,20 @@ class AccumulationChecks(unittest.TestCase):
         self.assertTrue(any("Unverified supporting URL relation" in e for e in self.load(parts, relations)[3]))
 
     def test_previous_44_relations_and_two_ledgers_survive(self):
-        rows = [r for r in self.relations["references"] if not r["contentKey"].startswith("java.core.api-design.")]
+        rows = [r for r in self.relations["references"] if not r["contentKey"].startswith(("java.core.api-design.", "java.core.object-contracts."))]
         self.assertEqual(len(rows), 44)
         self.assertEqual(Counter(r["evidenceLevel"] for r in rows), {"CURRENT_VERIFIED": 43, "NEEDS_REVIEW": 1})
         for name in ["java--language-types", "java--object-model"]:
             path = BASE / "wave-4/topics" / (name + ".json")
             prior_bytes = subprocess.check_output(["git", "show", "81484fb00c172b5fa7e109e2aa3d914dba28b4c8:" + path.relative_to(ROOT).as_posix()], cwd=ROOT)
             self.assertEqual(path.read_bytes().replace(b"\r\n", b"\n"), prior_bytes)
+
+    def test_new_object_contracts_reference_relation_is_scoped(self):
+        _, sources, _, errors = self.load()
+        self.assertEqual(errors, [])
+        url = "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html#hashCode()"
+        self.assertEqual([r["evidenceLevel"] for r in scoped_sources(sources, url, "java", "java.core.object-contracts.hashcode-contract")], ["CURRENT_VERIFIED"])
+        self.assertEqual(scoped_sources(sources, url, "java", "java.core.object-contracts.equals-contract"), [])
 
     def test_duplicate_reference_relation_is_rejected(self):
         relations = copy.deepcopy(self.relations)
