@@ -432,6 +432,32 @@ Topic별 직접 검토의 새 발견과 기존 계승을 분리한다. 검토 �
 
 후속: #201
 
+### W4-JMOD-001 — P2
+
+대상: `java.core.modern-language.default-static-interface-methods.q3`, `java.core.modern-language.local-variable-type-inference-var.q5`, `java.core.modern-language.switch-expressions.q4`
+
+원문: [content/java/modern-language/questions.json:32](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/modern-language/questions.json#L32)
+
+> 각 case에서 enclosing 메서드를 바로 return할 수도 있지만 이는 기존 문맥에 따라 의미를 바꾼다. switch expression 자체는 분기값을 산출해 기존 호출 구조를 보존할 수 있다.
+
+원문: [content/java/modern-language/questions.json:26](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/modern-language/questions.json#L26)
+
+> diamond가 명시된 생성자식의 제네릭 인수는 String으로 추론된다. var는 로 타입으로 지우지 않으므로 다른 타입 원소를 넣을 수 없다.
+
+원문: [content/java/modern-language/questions.json:48](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/modern-language/questions.json#L48)
+
+> 인터페이스를 static으로 바꾸면 인스턴스 계약과 사용 방식이 달라진다. 충돌 해결을 위해 무관한 모든 선언을 바꿀 필요는 없다.
+
+문제: switch.q4 C는switch식block에서outerreturn가능하다고하지만JLS14.17상그식밖return은compile오류다. var.q5 A는new ArrayList<String>()의명시적타입인자를diamond추론이라고부른다. default-static.q3 D는interface타입static이instance계약을바꾸는것처럼설명하지만nestedinterface는이미implicitstatic이고top-levelstatic은허용문맥아니다. 세정답D/C/A와본문모델은맞으며오답feedback만부정확하다.
+
+최소 보강: 세feedback만switch식block은yield/outerreturn금지,명시<String>인자유지,var지우지않음,nested타입static과default/static메서드별도계약으로교정. 정답/난도/본문유지.
+
+공식 근거: [관련 계약](https://docs.oracle.com/javase/specs/jls/se25/html/jls-14.html#jls-14.17), [관련 계약](https://docs.oracle.com/javase/specs/jls/se25/html/jls-14.html#jls-14.4.1), [관련 계약](https://docs.oracle.com/javase/specs/jls/se25/html/jls-9.html#jls-9.1.1.3)
+
+실행/추론 대조: 제한javac25: switchexpr블록returncompile오류/yieldONE성공. nestedinterface의implicit/explicitstatic선언모두instance defaultlabel호출가능.
+
+후속: #201
+
 ### W4-JOBJ-001 — P0
 
 대상: `java.core.object-contracts.hashcode-contract`

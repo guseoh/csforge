@@ -2903,6 +2903,292 @@
         "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--streams.json",
         "reviewedAt": "2026-10-14"
       }
+    },
+    {
+      "contentKey": "java.core.modern-language.optional-return-boundary",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Optional.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "Optional API의반환값부재의도/valuebased,of/ofNullable/map null→empty/flatMapnonnullOptional/orElseGet조건supplier를본문과q5변환흐름에대조.",
+      "limits": "해당Concept관련절·학습역할만대조. JLS전문/전체snippet실행/ReaderQA아님;동일URL다른Concept자동전파없음.",
+      "sourceFile": "content/java/modern-language/optional-return-boundary.md",
+      "sourceSha256": "be5172f250101ae51945d6cee48ab3ac92e4b7351197bb2f1b65e996dd961208",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Optional.html",
+        "title": "Java SE 25 API: Optional",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "Optional 생성·변환·대체값 API와 value-based 의미 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--modern-language.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.modern-language.record-data-modeling",
+      "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "JLS8.10의implicitfinal/componentprivatefinal/accessor/componenteqhash/canonical·compact검증정규화규칙을Tags참조·복사예시에대조.",
+      "limits": "해당Concept관련절·학습역할만대조. JLS전문/전체snippet실행/ReaderQA아님;동일URL다른Concept자동전파없음.",
+      "sourceFile": "content/java/modern-language/record-data-modeling.md",
+      "sourceSha256": "10bd6f3f62c934d7955e9840c633bb813b4bede114ce07b8409aa28788d928c1",
+      "reference": {
+        "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html",
+        "title": "Java Language Specification 8장: Classes",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "record declaration·component·canonical constructor 규칙 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--modern-language.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.modern-language.record-data-modeling",
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Record.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "Record API의shallowtransparentcarrier/generated멤버와copyinvariant를데이터중심모델링·가변구성요소한계에대조.",
+      "limits": "해당Concept관련절·학습역할만대조. JLS전문/전체snippet실행/ReaderQA아님;동일URL다른Concept자동전파없음.",
+      "sourceFile": "content/java/modern-language/record-data-modeling.md",
+      "sourceSha256": "10bd6f3f62c934d7955e9840c633bb813b4bede114ce07b8409aa28788d928c1",
+      "reference": {
+        "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Record.html",
+        "title": "Java SE 25 API: Record",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 2,
+        "relationNote": "record의 공통 기반 타입과 의미 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--modern-language.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.modern-language.sealed-types-closed-hierarchy",
+      "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "JLS8.1.1.2/8.1.6의directpermits/정책/단위추론을닫힌class계층목표에대조. recordimplicitfinal이하위정책을충족함도확인.",
+      "limits": "해당Concept관련절·학습역할만대조. JLS전문/전체snippet실행/ReaderQA아님;동일URL다른Concept자동전파없음.",
+      "sourceFile": "content/java/modern-language/sealed-types-closed-hierarchy.md",
+      "sourceSha256": "0c7a5832677d54161203f1bc4dc4a84b942ec87e16da33850ac0ab89d5c46ed7",
+      "reference": {
+        "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html",
+        "title": "Java Language Specification 8장: Classes",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "sealed class·permits와 직접 하위 타입의 제약 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--modern-language.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.modern-language.sealed-types-closed-hierarchy",
+      "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-9.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "JLS9.1.4 sealedinterface허용directsubclass/subinterface/같은unitpermits추론을PaymentResult3record에관계별대조.",
+      "limits": "해당Concept관련절·학습역할만대조. JLS전문/전체snippet실행/ReaderQA아님;동일URL다른Concept자동전파없음.",
+      "sourceFile": "content/java/modern-language/sealed-types-closed-hierarchy.md",
+      "sourceSha256": "0c7a5832677d54161203f1bc4dc4a84b942ec87e16da33850ac0ab89d5c46ed7",
+      "reference": {
+        "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-9.html",
+        "title": "Java Language Specification 9장: Interfaces",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 2,
+        "relationNote": "sealed interface와 허용 하위 타입 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--modern-language.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.modern-language.local-variable-type-inference-var",
+      "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-14.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "JLS14.4.1 varinitializer의standalone타입·upwardprojection/nulltype거절과지역선언제약을ArrayList명시String예시에대조.",
+      "limits": "해당Concept관련절·학습역할만대조. JLS전문/전체snippet실행/ReaderQA아님;동일URL다른Concept자동전파없음.",
+      "sourceFile": "content/java/modern-language/local-variable-type-inference-var.md",
+      "sourceSha256": "9e7741847f397c5c4a9904476dbe2b1b8e763c50727acd76573173060dc5e402",
+      "reference": {
+        "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-14.html",
+        "title": "Java Language Specification 14장: Blocks, Statements, and Patterns",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "local variable type inference 규칙 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--modern-language.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.modern-language.switch-expressions",
+      "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-15.html#jls-15.28",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "JLS15.28.1 exhaustive/결과expression/yieldtarget과normalcompletion금지를month/grade/enum결과계산에대조.",
+      "limits": "해당Concept관련절·학습역할만대조. JLS전문/전체snippet실행/ReaderQA아님;동일URL다른Concept자동전파없음.",
+      "sourceFile": "content/java/modern-language/switch-expressions.md",
+      "sourceSha256": "f0de050284cd9d8809df6d7274e134c58398d21b204931c0e99c46c2a3853c4e",
+      "reference": {
+        "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-15.html#jls-15.28",
+        "title": "Java SE 25 JLS 15.28: switch Expressions",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "switch 식의 결과값·완전성(exhaustiveness)·실행 규칙 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--modern-language.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.modern-language.switch-expressions",
+      "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-14.html#jls-14.11.1",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "JLS14.11.1의공통switchblock·arrow/colon·case label/exhaustiveness규칙을statement와expression구별에대조.",
+      "limits": "해당Concept관련절·학습역할만대조. JLS전문/전체snippet실행/ReaderQA아님;동일URL다른Concept자동전파없음.",
+      "sourceFile": "content/java/modern-language/switch-expressions.md",
+      "sourceSha256": "f0de050284cd9d8809df6d7274e134c58398d21b204931c0e99c46c2a3853c4e",
+      "reference": {
+        "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-14.html#jls-14.11.1",
+        "title": "Java SE 25 JLS 14.11.1: Switch Blocks",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 2,
+        "relationNote": "switch 문과 switch 식에 공통으로 적용되는 레이블·화살표 규칙 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--modern-language.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.modern-language.pattern-matching",
+      "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-14.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "JLS14 switchdominance(Object가String지배)/null별도/패턴scope/exhaustive집합을본문if·switch결과에대조.",
+      "limits": "해당Concept관련절·학습역할만대조. JLS전문/전체snippet실행/ReaderQA아님;동일URL다른Concept자동전파없음.",
+      "sourceFile": "content/java/modern-language/pattern-matching.md",
+      "sourceSha256": "64493deae5ac00163e1f362aa82d577dab85999e5646e2c277e6e3f4ae9b53bd",
+      "reference": {
+        "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-14.html",
+        "title": "Java Language Specification 14장: Blocks, Statements, and Patterns",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "pattern switch의 scope·dominance·exhaustiveness 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--modern-language.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.modern-language.pattern-matching",
+      "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-15.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "JLS15.20.2 instanceof type검사/패턴바인딩과같은String참조의독립바인딩을value재대입q5에대조.",
+      "limits": "해당Concept관련절·학습역할만대조. JLS전문/전체snippet실행/ReaderQA아님;동일URL다른Concept자동전파없음.",
+      "sourceFile": "content/java/modern-language/pattern-matching.md",
+      "sourceSha256": "64493deae5ac00163e1f362aa82d577dab85999e5646e2c277e6e3f4ae9b53bd",
+      "reference": {
+        "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-15.html",
+        "title": "Java Language Specification 15장: Expressions",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 2,
+        "relationNote": "instanceof pattern의 조건 평가와 pattern variable 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--modern-language.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.modern-language.text-blocks",
+      "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-3.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "JLS3.10.6 LF정규화→stripIndent→translateEscapes순서와\\s/continuation규칙을결과공백·newline경계에대조.",
+      "limits": "해당Concept관련절·학습역할만대조. JLS전문/전체snippet실행/ReaderQA아님;동일URL다른Concept자동전파없음.",
+      "sourceFile": "content/java/modern-language/text-blocks.md",
+      "sourceSha256": "789354a795afcec08a831c3f6fb352bd7213117ed25617b245e8ae0423a2254e",
+      "reference": {
+        "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-3.html",
+        "title": "Java Language Specification 3장: Lexical Structure",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "text block token, 줄바꿈과 escape 처리 규칙 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--modern-language.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.modern-language.text-blocks",
+      "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-15.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "JLS15.8.1의stringliteral/textblock은String표현식임을결과객체/자동template·JSON검증아님목표에대조.",
+      "limits": "해당Concept관련절·학습역할만대조. JLS전문/전체snippet실행/ReaderQA아님;동일URL다른Concept자동전파없음.",
+      "sourceFile": "content/java/modern-language/text-blocks.md",
+      "sourceSha256": "789354a795afcec08a831c3f6fb352bd7213117ed25617b245e8ae0423a2254e",
+      "reference": {
+        "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-15.html",
+        "title": "Java Language Specification 15장: Expressions",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 2,
+        "relationNote": "String literal과 text block 표현 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--modern-language.json",
+        "reviewedAt": "2026-10-14"
+      }
+    },
+    {
+      "contentKey": "java.core.modern-language.default-static-interface-methods",
+      "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-9.html",
+      "evidenceLevel": "CURRENT_VERIFIED",
+      "basis": "JLS9.4/9.4.1 default인스턴스구현상속/static미상속·더구체메서드/무관default충돌규칙을A.super/typename호출에대조. nestedtypeimplicitstatic은별도계약.",
+      "limits": "해당Concept관련절·학습역할만대조. JLS전문/전체snippet실행/ReaderQA아님;동일URL다른Concept자동전파없음.",
+      "sourceFile": "content/java/modern-language/default-static-interface-methods.md",
+      "sourceSha256": "a8a34fbec58a2510668d72c3d28bb53bb74d4111b13352babacb7d59307d459c",
+      "reference": {
+        "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-9.html",
+        "title": "Java Language Specification 9장: Interfaces",
+        "referenceType": "OFFICIAL",
+        "language": "en",
+        "displayOrder": 1,
+        "relationNote": "default·static method와 interface inheritance 규칙 확인"
+      },
+      "evidenceOrigin": {
+        "kind": "CURRENT_DIRECT_REVIEW",
+        "ledger": "docs/content-audit/learning-experience-2026/wave-4/topics/java--modern-language.json",
+        "reviewedAt": "2026-10-14"
+      }
     }
   ],
   "supportingRelations": [

@@ -60,3 +60,7 @@
 ## streams checkpoint (2026-10-14)
 
 7C/41Q 전수 읽기의 개별 근거/hash/인용과9 Reference 관계/1SVG를 대조했다. 3Q 품질 미확정을 독립 사례로 보존하고, 사례 key·판정·확인 이유/공식 근거/원문 prompt 정확 일치를 생성기에서 검증한다. 누적 회귀18개 PASS, generate/--check errors/drift0, checkpoint PASS. Java11Topic/79C/448Q·전체655C/2132Q는 전수 읽기 근거 집계이며 품질미확정3Q가있다. 기존 ledger/Wave1~3/canonical/Curriculum/SVG 무변경. 직전 functional HEADd9cd4bd79afe3018ca91bbc6235fee865546787e의 [CI #1219](https://github.com/guseoh/csforge/actions/runs/38535861589)는 SUCCESS. 신규 checkpoint CI는 push HEAD에서 확인한다.
+
+## modern-language checkpoint (2026-10-14)
+
+8C/43Q의 개별 근거·hash·인용 및13 Reference 관계를 대조했다. 회귀18개 PASS, generate/--check errors/drift0, checkpoint PASS, Python AST/diff 검사 성공. Java12Topic/87C/491Q·전체663C/2175Q다. 기존 streams의 품질 미확정3Q, 앞선 ledger/Reference/Wave1~3/canonical/Curriculum/SVG는 보존한다. 직전 streams HEADf84f8d65faed89993a92f6eb2f3d6629cb86d3ec의 [CI #1220](https://github.com/guseoh/csforge/actions/runs/38537596804)는 SUCCESS. 신규 checkpoint CI는 push HEAD에서 확인한다.

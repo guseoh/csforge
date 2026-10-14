@@ -22,7 +22,8 @@ WAVE_4_TOPICS = {"java--language-types": (1, 10, 55), "java--object-model": (1, 
                  "java--api-design": (1, 5, 28), "java--object-contracts": (1, 5, 31), "java--enum-modeling": (1, 4, 18),
                  "java--design-patterns": (1, 8, 40), "java--collections": (1, 9, 51),
                  "java--generics": (1, 6, 37), "java--exceptions-resources": (1, 8, 46),
-                 "java--functional": (1, 5, 33), "java--streams": (1, 7, 41)}
+                 "java--functional": (1, 5, 33), "java--streams": (1, 7, 41),
+                 "java--modern-language": (1, 8, 43)}
 CONCEPT_AXES = [
     "objectiveLevelDepth", "accuracyMechanismCodeExamplesClarityBoundaries",
     "visualization", "references", "linkedQuestionCoverage",
