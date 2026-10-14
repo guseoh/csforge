@@ -1,0 +1,44 @@
+name: CSForge Audit Verification Once
+
+on:
+  push:
+    branches:
+      - audit/issue-200-learning-experience
+
+permissions:
+  contents: read
+
+jobs:
+  validate-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install audit dependency
+        run: python -m pip install PyYAML==6.0.3
+      - name: Accumulation and reference isolation regressions
+        run: python docs/content-audit/learning-experience-2026/wave-4/check-accumulation.py
+      - name: Check all Java Wave 4 topic checkpoints
+        shell: bash
+        run: |
+          set -euo pipefail
+          for file in docs/content-audit/learning-experience-2026/wave-4/topics/java--*.json; do
+            python docs/content-audit/learning-experience-2026/wave-3/checkpoint-topic.py "$file"
+          done
+      - name: Generate audit and check for drift
+        run: |
+          python docs/content-audit/learning-experience-2026/audit.py
+          python docs/content-audit/learning-experience-2026/audit.py --check
+          git diff --exit-code -- docs/content-audit/learning-experience-2026/
+      - name: Verify baseline source and whitespace
+        shell: bash
+        run: |
+          set -euo pipefail
+          baseline=efe73a15da14c996bd08344181d4d6f87073803d
+          test -z "$(git diff --name-only "$baseline" HEAD -- content frontend/public/learning)"
+          git diff --check "$baseline" HEAD
