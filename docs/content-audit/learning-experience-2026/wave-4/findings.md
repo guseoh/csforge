@@ -519,6 +519,112 @@ Topic별 직접 검토의 새 발견과 기존 계승을 분리한다. 검토 �
 
 후속: #201
 
+### W4-JJVM-001 — P2
+
+대상: `java.core.jvm-runtime.gc-reachability-roots.q4`, `java.core.jvm-runtime.gc-reachability-roots.q5`, `java.core.jvm-runtime.java-memory-leaks.q6`
+
+원문: [content/java/jvm-runtime/questions.json:1214](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/jvm-runtime/questions.json#L1214)
+
+> 도달 불가능한과 immediately reclaimed의 차이는?
+
+원문: [content/java/jvm-runtime/questions.json:1263](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/jvm-runtime/questions.json#L1263)
+
+> 런타임 진행성에 따라 이후 reachability를 일찍 끊어 회수 후보가 될 수 있다
+
+원문: [content/java/jvm-runtime/questions.json:1916](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/jvm-runtime/questions.json#L1916)
+
+> GC log상 도달 불가능한 객체는 잘 회수되지만 old 생성이 계속 커진다. 가능한 진단은?
+
+문제: gc-roots.q4의 도달 불가능한과/도달 불가능한하면 표현은 번역된 형용사를 명사처럼 잘못 써 정의를 읽기 어렵게 한다. q5A의 런타임 진행성은 참조 liveness(생존성)와 실행 progress를 혼동한다. leaks.q6 old 생성은 old generation(세대) 오기다. 정답D/A/B와학습목표는유지 가능.
+
+최소 보강: q4를 도달 불가 상태와 실제 회수로 자연스럽게 정리; q5A를 참조 생존성/JIT 최적화에 따른 가능성으로, leaks.q6를 old 세대 사용량으로 문항 표현만교정.
+
+공식 근거: [관련 계약](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/ref/package-summary.html), [관련 계약](https://docs.oracle.com/en/java/javase/25/gctuning/garbage-first-g1-garbage-collector1.html)
+
+실행/추론 대조: 공식 계약과 수기 코드/상태 추론; 실행 완료 주장이 아님.
+
+후속: #201
+
+### W4-JJVM-002 — P1
+
+대상: `java.core.jvm-runtime.heap-metaspace-native-thread-memory.q4`
+
+원문: [content/java/jvm-runtime/questions.json:2100](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/jvm-runtime/questions.json#L2100)
+
+> 참조가 힙 객체일 수 있다는 것
+
+원문: [content/java/jvm-runtime/questions.json:2072](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/jvm-runtime/questions.json#L2072)
+
+> direct ByteBuffer의 Java 참조가 힙에 있다는 사실로 확정할 수 없는 것은?
+
+문제: 확정할 수 없는 것을 하나 고르는 문항의 D는 reference value 자체가 heap object일 수 있다고 기술한다. Java reference value와 그 대상인 ByteBuffer wrapper는 다른 개념이다. D를 문자 그대로 읽으면 의도한 B 외에도 부정확하다고 판단할 수 있고, wrapper로 읽을 때만 B가유일해진다. 정답 B를 임의로 D로 바꾸지 않는다.
+
+최소 보강: prompt와D를 참조 대상인 Java 래퍼 객체/참조값/실제 backing bytes로명확히분리하고 D는 래퍼 객체의논리적 heap 모델로 표현. B는 backing 전부heap보장없음으로유지.
+
+공식 근거: [관련 계약](https://docs.oracle.com/javase/specs/jls/se25/html/jls-4.html#jls-4.3.1), [관련 계약](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/ByteBuffer.html)
+
+실행/추론 대조: 공식 계약과 수기 코드/상태 추론; 실행 완료 주장이 아님.
+
+후속: #201
+
+### W4-JJVM-003 — P2
+
+대상: `java.core.jvm-runtime.gc-fundamentals-collectors`
+
+원문: [content/java/jvm-runtime/gc-fundamentals-collectors.md:33](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/jvm-runtime/gc-fundamentals-collectors.md#L33)
+
+> JVMS는 힙에 자동 메모리 관리 시스템(automatic storage management system)이 존재할 수 있음을 정의하고
+
+문제: JVMS2.5.3은 heap storage가 automatic storage management system에 의해 회수되며 명시 deallocation을 하지 않는 모델을 정의한다. 선택에 맡기는 것은 system의 존재 자체라기보다 type/technique다. 첫문장은 존재도선택인듯규범을약화한다. 이후구현선택/GC핵심설명은정확.
+
+최소 보강: 자동관리시스템을정의하되 특정 기법/수집기는구현에맡긴다로 첫문장만정밀화. 모든객체즉시회수/특정수집기강제를추가하지않음.
+
+공식 근거: [관련 계약](https://docs.oracle.com/javase/specs/jvms/se25/html/jvms-2.html#jvms-2.5.3)
+
+실행/추론 대조: 공식 계약과 수기 코드/상태 추론; 실행 완료 주장이 아님.
+
+후속: #201
+
+### W4-JJVM-004 — P2
+
+대상: `java.core.jvm-runtime.jit-hotspot-warmup`
+
+원문: [content/java/jvm-runtime/jit-hotspot-warmup.md:25](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/content/java/jvm-runtime/jit-hotspot-warmup.md#L25)
+
+> 새로운 포인트 적립 시스템 개발기
+
+문제: Woowa2588 현재 실제 제목은 신규 포인트 시스템 전환기 #2 – 오픈 준비 단계로 series/편이다르다. 7-1에 실제warmup/측정사례가있어학습목적은맞으며제목metadata만정밀화. 역사적첫테스트버림은해당workload사례로한정하고보편2회warmup규칙으로확대안함.
+
+최소 보강: Reference title을실제현재제목으로맞추고 relationNote에7-1warmup/workload사례위치를안내. 공식HotSpot근거와현재본문은유지.
+
+공식 근거: [관련 계약](https://techblog.woowahan.com/2588/)
+
+실행/추론 대조: 공식 계약과 수기 코드/상태 추론; 실행 완료 주장이 아님.
+
+후속: #201, #222
+
+### W4-JJVM-005 — P2
+
+대상: `java.core.jvm-runtime.jvm-runtime-data-areas-frames`
+
+원문: [frontend/public/learning/java/jvm-runtime-data-areas.svg:31](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/frontend/public/learning/java/jvm-runtime-data-areas.svg#L31)
+
+> M358 235H690
+
+원문: [frontend/public/learning/java/jvm-runtime-data-areas.svg:21](https://github.com/guseoh/csforge/blob/efe73a15da14c996bd08344181d4d6f87073803d/frontend/public/learning/java/jvm-runtime-data-areas.svg#L21)
+
+> x="420" y="190" width="194" height="63"
+
+문제: ThreadA→Heap references path가 y235/x358..690으로 지나가며 ThreadB의 현재frame rect x420..614/y190..253 내부를가로지른다. A의독립frame에서공유heap으로이어질선을B의frame영역과분리하지않아계층/참조경계가혼동될수있다. source좌표와path의명백한교차를근거로하며실제Reader렌더결함범위는미검증.
+
+최소 보강: ThreadA reference를ThreadB stack밖 별도상단/하단lane으로라우팅하고각thread→heap edge를출발frame에연결. 추상영역/본문은재작성하지않음.
+
+공식 근거: [관련 계약](https://docs.oracle.com/javase/specs/jvms/se25/html/jvms-2.html#jvms-2.6)
+
+실행/추론 대조: 공식 계약과 수기 코드/상태 추론; 실행 완료 주장이 아님.
+
+후속: #201
+
 ### W4-JA-001 — P0
 
 대상: `java.core.language-types.numeric-conversion-overflow`, `java.core.language-types.numeric-conversion-overflow.q1`, `java.core.language-types.numeric-conversion-overflow.q4`

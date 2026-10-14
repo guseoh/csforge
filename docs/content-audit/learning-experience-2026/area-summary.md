@@ -1,6 +1,6 @@
 # LearningArea별 감사 요약
 
-15 Area 구조 인벤토리와 Wave1~3 근거를 유지한다. Wave4 정식 checkpoint는 17 Topic/133C/766Q이며 Java 상태는 CURRENT_PARTIAL다. 미검토 항목을 완료로 승격하지 않는다. 과거 PASS와 새 검토 근거/품질 판정을 구별한다.
+15 Area 구조 인벤토리와 Wave1~3 근거를 유지한다. Wave4 정식 checkpoint는 18 Topic/145C/841Q이며 Java 상태는 CURRENT_VERIFIED다. 미검토 항목을 완료로 승격하지 않는다. 과거 PASS와 새 검토 근거/품질 판정을 구별한다.
 
 | Area | Topic | Concept | Question | 이번 본문 검토 | 이번 문항 검토 | Concept KEEP / ENHANCE / REVIEW |
 | --- | ---: | ---: | ---: | ---: | ---: | --- |
@@ -11,7 +11,7 @@
 | distributed-systems | 3 | 9 | 27 | 9 | 27 | 8 / 1 / 0 |
 | dsa | 12 | 84 | 293 | 84 | 293 | 72 / 12 / 0 |
 | infrastructure-cloud | 3 | 9 | 27 | 9 | 27 | 6 / 3 / 0 |
-| java | 18 | 145 | 841 | 134 | 772 | 107 / 26 / 12 |
+| java | 18 | 145 | 841 | 145 | 841 | 116 / 29 / 0 |
 | messaging-async | 3 | 9 | 27 | 9 | 27 | 7 / 2 / 0 |
 | network-http | 15 | 127 | 381 | 127 | 381 | 105 / 22 / 0 |
 | operating-systems | 12 | 97 | 331 | 97 | 331 | 83 / 14 / 0 |
@@ -76,6 +76,7 @@ java.core.exceptions-resources: 8C/46Q 전체원문과정답/모든보기rationa
 java.core.functional: 5C/33Q의전체본문/정답/모든선택지rationale/모델/해설/난도/모호성/중복/Concept연결을직접읽고개별수기근거를기록. JLS/JDK관련절/8Reference관계를대조. 자동PASS/이전판정복제없음.
 java.core.generics: 6C/37Q의전체본문/정답/모든보기rationale/서술모델/해설/난도/모호성/연결을직접읽고수기근거를기록. JLS/JDK관련절과Reference11관계,SVG전체소스대조. 자동판정/과거PASS전파없음.
 java.core.io-nio: 6C/35고유Q의 전본문 및 모든실제문항필드 직접 의미 읽기. crosslink selector.q7을 두 Concept에 대응하되 Q수량1개. 공식API/제한decoder probe와15관계 독립대조;자동판정없음.
+java.core.jvm-runtime: 12C75Q 전수 본문·정답/모든보기와rationale·실제모델/해설·난도/중복/Concept 연결을 직접 읽고 개별 수기 근거 기록. 공식 JVMS/JLS/API·HotSpot 구현·회사 관련절을 관계별 대조. hash/집계 자동화가 품질 판정 생성하지 않음.
 java.core.language-types: language-types만의 10 Concept 전체 본문과 55 Question의 모든 실제 필드를 직접 읽었다. MC53/Scenario1/Descriptive1의 정답/모든 선택지와 rationale/모범 답안/해설, 전제·난도·중복 목표·연결을 개별 대조했다. 코드 출력은 주로 JLS/JDK 계약과 수기 상태 추론이며 제한된 4쟁점만 Java25 probe로 실제 실행했다. source hash 자동 계산은 이미 작성한 수기 판단을 고정할 뿐 PASS를 생성하지 않는다. PR178의 수정과 기존 partial 근거를 보존하며 다른 Java Topic은 미검토다.
 java.core.metadata-compatibility: 7C/39Q의전본문·정답·모든선택지rationale·모델·해설·난도/중복/연결을직접읽음. 15 Reference 관계 공식관련절/회사원문단락독립대응. 실제읽기근거와품질판정분리·자동PASS없음.
 java.core.modern-language: 8C/43Q全본문/정답/모든보기rationale/서술·시나리오모델/해설/난도/모호성/중복/연결을직접읽고수기기록. JLS/JDK관련절과13Reference관계를개별대조. 기존PASS복제없고앞streams미확정3Q유지.
@@ -85,7 +86,7 @@ java.core.streams: 7C/41Q全본문/정답/선택지rationale/acceptedAnswers/서
 java.core.time-numeric: 7C/42Q의 전체 본문과 정답·모든 선택지/rationale·모델·해설·난도·모호성·중복·연결을 직접 읽어 수기 판단. 자동화는 key/hash/인용 집계만 수행. Reference15관계를 독립 대조; D2 shell은 미확정.
 
 
-이전 전수 Wave: [PR #178](https://github.com/guseoh/csforge/pull/178) (PRIOR_REVIEWED). 새 근거: **CURRENT_PARTIAL**. 품질: **NEEDS_REVIEW**.
+이전 전수 Wave: [PR #178](https://github.com/guseoh/csforge/pull/178) (PRIOR_REVIEWED). 새 근거: **CURRENT_VERIFIED**. 품질: **TARGETED_ENHANCE**.
 
 ## messaging-async
 

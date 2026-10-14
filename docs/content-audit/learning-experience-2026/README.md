@@ -8,6 +8,8 @@
 
 ## 현재 누적 결과 — Java 잔여 전체 순차 감사
 
+[Java 완료 보고서](wave-4/java-completion-report.md)에서 Java18Topic/145C/841Q 및 누적15Area/134Topic/721C/2525Q의 전수 읽기 근거를 완성했다. 미검토/partial 근거는0이며, 읽고도 품질을 확정하지 못한 streams3Q와 Java Reference16관계는 별도로 남긴다. 교정·ChatGPT 최종 검토·Issue200 최종 승인은 완료 범위와 구분한다.
+
 최신 정식 checkpoint 수량/품질/Reference 상태는 [Wave4 생성 진행률](wave-4/progress.md)과 [summary](wave-4/summary.json)를 따른다. 기존5개Topic36C/200Q 및 Wave1~3를 보존하며 잔여 Topic을 순차적으로 직접 읽어 확정한다. 미검토 범위를 완료로 표시하지 않는다. 각 Topic의 checkpoint와 수기 ledger, [기존 관계 격리](wave-4/reference-isolation.md), [누적 발견](wave-4/findings.md)에 근거가 있다. 아래는 앞선 실행 시점의 기록이다.
 
 ### 첫 language-types 실행 당시 기록

@@ -1,0 +1,1016 @@
+{
+  "area": "java",
+  "wave": 4,
+  "baselineSha": "efe73a15da14c996bd08344181d4d6f87073803d",
+  "reviewedAt": "2026-10-14",
+  "curriculumSha256": "0aad122de20d9205274f96887b562473a3a23de3dd406cbd684031438d4bbe0c",
+  "topicCatalogSha256": "2a167f43030df4dfc9742225d86dfcefdcd5cff2fc0d702c0b9101e00e6b172c",
+  "topic": "jvm-runtime",
+  "topicKey": "java.core.jvm-runtime",
+  "reviewMethod": "12C75Q 전수 본문·정답/모든보기와rationale·실제모델/해설·난도/중복/Concept 연결을 직접 읽고 개별 수기 근거 기록. 공식 JVMS/JLS/API·HotSpot 구현·회사 관련절을 관계별 대조. hash/집계 자동화가 품질 판정 생성하지 않음.",
+  "topics": [
+    {
+      "key": "java.core.jvm-runtime",
+      "coverage": "JDK/classfile→javap→load/identity→frames→GC/reference→leaks/processmemory→JIT/diagnostics12C75Q."
+    }
+  ],
+  "concepts": [
+    [
+      "java.core.jvm-runtime.jdk-jvm-classfile",
+      "KEEP",
+      "L1 CORE: source→javac→classfile→VM→native 책임/compile vsruntime 실패까지 충분.",
+      "JDK≠JVM/classfile≠instruction array/JVMS 추상 의미 vsHotSpot interpreter/JIT·OS 이식성 제한 정확. CNFE/NCDFE/NSME를 구분된 실패 후보로 언급하며 동일 원인으로 단정하지 않음.",
+      "DIAGRAM: execution boundary source 전체/760x230 네 박스와 bytecode≠native caption이 compile/runtime 경계에 유효.",
+      "JVMS25 목차와2.1/2.13의 추상 모델·classfile/명령 범위를 역할별 확인; 전체 명세 모든 절 검토를 주장하지 않음. javac description 소스 선언→JVM classfiles/출력 경로·언어 타입 확인 시점을 대조.",
+      "7Q 개별 실제 필드/보기/모델 검토는 questions row에서추적. 기초구분→실행/도구/오해 적용으로 연결; 같은단어라도전제/추론목표가달라 중복삭제필요없음."
+    ],
+    [
+      "java.core.jvm-runtime.bytecode-javap",
+      "KEEP",
+      "L2 STANDARD: add의 locals→operand stack→iadd→return·c/v 선택→debug/최종native 한계 충분.",
+      "instance add this,a,b slots 모델 정확. invocation 종류는 나타날 수 있다고 표현하고 특정compiler 배열/JIT dynamic cost를 언어 보장으로 만들지 않음.",
+      "NONE: load a/b→iadd stack 그림/빌드실행 단계 ASCII로 학습 목표 충분.",
+      "javap disassembly·c bytecodes/v verbose/l debug tables와 정적 classfile 출력 범위를 직접 확인. JVMS4.1 구조/4.7.3 Code/max locals/stack·optional LineNumberTable/LocalVariableTable를 내용에 대조.",
+      "4Q 개별 실제 필드/보기/모델 검토는 questions row에서추적. 기초구분→실행/도구/오해 적용으로 연결; 같은단어라도전제/추론목표가달라 중복삭제필요없음."
+    ],
+    [
+      "java.core.jvm-runtime.class-loading-linking-initialization",
+      "KEEP",
+      "L3 CORE: load→verify/prepare→lazy resolution→static init/실패·동기화 순서로 충분.",
+      "JVMS5.4 verify/prepare beforeinit·resolution 이후에도 가능·5.5 ConstantValue beforeclinit·erroneous state/EIIE vs후속 NCDFE 정확. 이전PR178의 수정 내용을 다시 결함으로 만들지 않음.",
+      "DIAGRAM: lifecycle SVG 전체source/1100x360 phase boxes와 lazy resolution 경고caption 일치. 그림의 Use는 전형적 능동 사용 요약이며 모든 field 참조가 init이라는 보장 아님; 본문/Q상수예외 명시.",
+      "JVMS5.3/5.4/5.5의 로딩·준비/해석 시점·ConstantValue/동기화/erroneous state 실제 절을 대조. LINE 기사 코드 호환성/JavaFX Pair CNFE·VM옵션/architecture·검증 절을 읽음. 역사적 JDK 배포 사례이며 Java25 권고/일반모든배포보장 아님.",
+      "7Q 개별 실제 필드/보기/모델 검토는 questions row에서추적. 기초구분→실행/도구/오해 적용으로 연결; 같은단어라도전제/추론목표가달라 중복삭제필요없음."
+    ],
+    [
+      "java.core.jvm-runtime.classloader-delegation-type-identity",
+      "KEEP",
+      "L3 CORE: 기본parent-first→custom child-first→name+definer→공통API·unloading 수명 충분.",
+      "initiating/defining loader를 구분할 name+actual defining 목적 정확. 기본loadClass 순서 findLoaded→parent→findClass와 namespace예외·bootstrap null 정확. unloading 조건은 JLS12.7로 보조 확인하며 도달 불가≠즉시 unload.",
+      "DIAGRAM: 1120x560 shared PluginApi parent와 두 Plugin 정의/별도type identity·X cast 불일치 source/좌표를 읽음. parent 화살표는공유API관계라VM 고정위임트리 보장 아님.",
+      "ClassLoader defaultloadClass 3단계·override/배열 loader·actualdefiner/부트스트랩 관련절 대응. JVMS5.3 이름+defining loader/runtimepackage와 initiating loader 차이를 별도 Concept 목적에 대조.",
+      "7Q 개별 실제 필드/보기/모델 검토는 questions row에서추적. 기초구분→실행/도구/오해 적용으로 연결; 같은단어라도전제/추론목표가달라 중복삭제필요없음."
+    ],
+    [
+      "java.core.jvm-runtime.jvm-runtime-data-areas-frames",
+      "TARGETED_ENHANCE",
+      "L3 CORE: frame 호출/반환·exception→locals/operand→sharedheap/methodarea→physical최적화/오류 충분.",
+      "JVMS2 추상 모델·heap/shared, stack/thread-local, method area≠physicalMetaspace, scalar replacement allocation 제거 정확. exception frame 종료는 caller의 예외 처리/전파를 포함하며 정상 nextstatement 실행 보장이 아님.",
+      "DIAGRAM: 1100x560 전체source에서 A reference M358235H690이 B frame x420..614/y190..253을 가로지름(W4-JJVM-005). 본문 기술은 유지하고 독립 stack을 침범하지 않게 경로만 최소 보강.",
+      "JVMS2.5/2.6 thread stack/heap/methodarea/runtime pool·frame locals/operand stack 및 normal/abrupt 종료를 직접 대조. D2 URL329631은 article shell만 반환. 메모리 모델 보충 relation의 실제본문 미확정; 다른 Concept 관계와독립.",
+      "7Q 개별 실제 필드/보기/모델 검토는 questions row에서추적. 기초구분→실행/도구/오해 적용으로 연결; 같은단어라도전제/추론목표가달라 중복삭제필요없음."
+    ],
+    [
+      "java.core.jvm-runtime.gc-reachability-roots",
+      "KEEP",
+      "L2 CORE: scope≠liveness→roots graph→cycle 회수→eligibility≠timing→retained owner 충분.",
+      "root 종류는 구현별·return참조 유지/lexical scope≠JIT liveness/System.gc nonbarrier·불필요함≠unreachable 정확. 강한 경로 설명은 기본 graph 모델이며 ref강도 특수 의미는 별도절/후속Concept으로 구분.",
+      "DIAGRAM: 1100x500 source 전체 root→Cache→User→Address stronggraph vs Session/Payload 회수후보·점선제거경로 읽음. 점선에 cut표시/삭제전후 범례 추가는 선택 보강 후보; 점선만으로 live강한edge라는결함 확정안함.",
+      "JVMS2.5.3 sharedheap/automatic storage·구체적수집기 미지정을 회수 가능성과 구분. ref package strongly/softly/weakly/phantom/unreachable·통지 async를 해당 roots 기본모델의 확장 경계에 대응. D2 URL329631 shell만으로 reachability 복습본문/추천 확인 못함.",
+      "6Q 개별 실제 필드/보기/모델 검토는 questions row에서추적. 기초구분→실행/도구/오해 적용으로 연결; 같은단어라도전제/추론목표가달라 중복삭제필요없음."
+    ],
+    [
+      "java.core.jvm-runtime.reference-strengths",
+      "KEEP",
+      "L3 STANDARD: strong→weak optionalrelation→soft memory demand/OOM vsTTL→phantom queue/명시close 충분.",
+      "proper reachability 구분·SoftReference OOM 전에 clearing/no TTL·Phantom get alwaysnull/queue가Reference 자체 보유안함 정확. cleanup 알림≠referent 실제메모리 회수 완료 barrier.",
+      "NONE: 관계/참조처리→queue→cleanup ASCII가 필요한 수명 책임에 충분.",
+      "ref package 5도달성·notification/Reference객체 자체 수명 책임을 이 선택목적에 독립 대조. PhantomReference atomic clear/등록queue 이후enqueue·getnull 및queue null가능 절을 대조. D2 URL329631 shell만; 강한/소프트/약한/팬텀 학습흐름의 실제원문 미확정.",
+      "4Q 개별 실제 필드/보기/모델 검토는 questions row에서추적. 기초구분→실행/도구/오해 적용으로 연결; 같은단어라도전제/추론목표가달라 중복삭제필요없음."
+    ],
+    [
+      "java.core.jvm-runtime.gc-fundamentals-collectors",
+      "TARGETED_ENHANCE",
+      "L3 CORE: reachability→concurrent/STW phase→throughput/pause/footprint→live set/측정 기반 선택 충분.",
+      "G1/ZGC HotSpot 선택·zero pause/보편최적collector 아님 정확. 첫 문장 JVMS automatic system 존재할 수 있음은 존재 자체도 임의인 듯 약화하므로 W4-JJVM-003 한곳 정밀화; 기법은 구현선택.",
+      "NONE: graph/시간축 pause/concurrent·8GB 다른 live set ASCII로 목적 충분. GC-dependent weak/soft timing 관찰은 같은 허용 계약 안에서도 달라질 수 있어 결과 동일성을 무조건 보장하지 않음.",
+      "GC25 guide index와 AvailableCollectors/G1 실제절 throughput/pause 목표·collector 선택 시작점/live data dependency를 읽음. JVMS2.5.3의 automatic storage system과 비명시 deallocation·기법 미지정을 해당 첫문장에 독립 대조. D2 GC1329 shell만. 역사적 세대별 flow/STW 학습가치 및 현재25 적합성 미확정.",
+      "6Q 개별 실제 필드/보기/모델 검토는 questions row에서추적. 기초구분→실행/도구/오해 적용으로 연결; 같은단어라도전제/추론목표가달라 중복삭제필요없음."
+    ],
+    [
+      "java.core.jvm-runtime.java-memory-leaks",
+      "KEEP",
+      "L2 CORE: 업무수명≠reachability→cache/listener/TL/loader→retainedpath→overload/backlog vsleak 충분.",
+      "GC 정상/불필요strongretain 양립·풀TLfinallyremove/loader수명·FullGC후live set성장도단서만·weak 일괄전환금지 정확. q6 old 생성 오기만정밀교정.",
+      "DIAGRAM: 1120x520 source전체 Root→장수owner→종료Session→Payload와 lifecycle책임 선택유용. 아래cut표시는정책주석이며실제위edge제거전후 상태를선택보강가능; 기술틀림단정안함.",
+      "ref package reachability/강도·프로그램의 의미상불필요함을 GC가 알지못하는 retained관계에 대조. ThreadLocal thread 살아있고키accessible일때value참조 및remove 재초기화 계약을 장수worker누수 관계에독립대응.",
+      "6Q 개별 실제 필드/보기/모델 검토는 questions row에서추적. 기초구분→실행/도구/오해 적용으로 연결; 같은단어라도전제/추론목표가달라 중복삭제필요없음."
+    ],
+    [
+      "java.core.jvm-runtime.heap-metaspace-native-thread-memory",
+      "KEEP",
+      "L3 CORE: Xmx≠RSS→nonheap/Metaspace/stack/direct/code→NMT한계→container budget 충분.",
+      "Metaspace는HotSpot native classmetadata/stack resource·reservation≠resident 소비, VT비용별도·directbacking vswrapper 및NMT third-party/JDK allocation 제외 정확. q4 참조값=객체 보기 모호성 W4-JJVM-002,본문은재작성안함.",
+      "DIAGRAM:1180x650 source전체 프로세스 안의 heap/Xmx·metadata/threads/direct/codecache 분리와NMT≠RSS caption/좌표 유효. 면적은실측비율아님.",
+      "JVMS2.5 heap/stack/methodarea 추상 경계를 process영역에 독립 대조. GC25 OtherConsiderations ClassMetadata의JDK8+ native/loader chunks/unloading·MaxMetaspace를 실제 구현 목적에대응. NMT25 본문 HotSpot 내부만/JDK·third-party 제외·defaultoff/start옵션/jcmd baseline·예약/확정량을 대조.",
+      "7Q 개별 실제 필드/보기/모델 검토는 questions row에서추적. 기초구분→실행/도구/오해 적용으로 연결; 같은단어라도전제/추론목표가달라 중복삭제필요없음."
+    ],
+    [
+      "java.core.jvm-runtime.jit-hotspot-warmup",
+      "TARGETED_ENHANCE",
+      "L3 CORE: javac/JIT→profile/tiered→speculation/deopt→warmup 가변·JMHvsproduction 충분.",
+      "HotSpot 구현정책·고정횟수보장없음/새type가정해제·DCE/멀티원인 startup 해석 정확. JDK25 deoptimization header의speculation 이유와invalidate/recompile를보조대조. Woowa Reference제목만현재원문과불일치(W4-JJVM-004).",
+      "NONE: build/runtime·profile→hotcode→optimization 및 A→B deopt ASCII로충분.",
+      "JVMS2 서두/2.13 특정 layout/JIT강제하지않는 추상기계 범위를 이 구현 논점에독립 대조. VM25 guide와 performance enhancements의 tiered profiling/codecache/escape analysis 실제 절을따라 읽음; index열람만을상세검토라주장안함. Woowa2588 실제 제목은 신규 포인트 시스템 전환기 #2 – 오픈 준비 단계. 7-1 warmup/첫테스트버림 운영사례를읽음;목적은맞으나제목정밀화필요. 두번째테스트면항상준비완료라는일반규칙아님.",
+      "7Q 개별 실제 필드/보기/모델 검토는 questions row에서추적. 기초구분→실행/도구/오해 적용으로 연결; 같은단어라도전제/추론목표가달라 중복삭제필요없음."
+    ],
+    [
+      "java.core.jvm-runtime.runtime-diagnostics-jcmd-jstack-jfr",
+      "KEEP",
+      "L3 CORE: 증상질문→dump snapshot/반복→VT dump→histogram/heap/JFR time axis→ops비용 충분.",
+      "jcmd25 format plain/json 정확. dump≠완전일관성/자동deadlock·histogram≠retainedpath·JFR≠업무trace/NMT설정비용 정확. 기존 수정 plain 옵션과 NMT한계를다시결함으로분류안함.",
+      "NONE:질문분해/반복dump·CPU/GC/allocation/lock 시간축 ASCII가도구선택에충분. Reader렌더/실제진단명령전체실행은안함.",
+      "jcmd25 help/동일대상환경·Thread.dump_to_file plain/json·GC histogram/heapdump 비용/JFR명령을역할별대조. jstack25 stacktrace/BCI/line정보whenavailable·l lock정보와진단범위를확인. jfr25 print/view/summary·파일조작은runtime recording 시작jcmd와역할구분해대조. D2 GC모니터링6043 shell만. 실제지표/도구선택 기사본문 미확정.",
+      "7Q 개별 실제 필드/보기/모델 검토는 questions row에서추적. 기초구분→실행/도구/오해 적용으로 연결; 같은단어라도전제/추론목표가달라 중복삭제필요없음."
+    ]
+  ],
+  "questions": [
+    [
+      "java.core.jvm-runtime.jdk-jvm-classfile.q1",
+      "KEEP",
+      "A javac classfile+metadata; OSbinary/AST보존/JITnative 산출물과단계대비.",
+      "실제 MULTIPLE_CHOICE/EASY 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.jdk-jvm-classfile.q2",
+      "KEEP",
+      "B JDK 도구배포와 JVM 실행core; javac동일/하나class/OSkernel 아님.",
+      "실제 MULTIPLE_CHOICE/EASY 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.jdk-jvm-classfile.q3",
+      "KEEP",
+      "C methods/constantpool/attributes; 현재heap/스레드stack/입력파일only 아님.",
+      "실제 MULTIPLE_CHOICE/MEDIUM 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.jdk-jvm-classfile.q4",
+      "KEEP",
+      "D bytecode JVM명령 vsnative CPU; 모든CPU같은binary/class에nativeonly/source동일 아님.",
+      "실제 MULTIPLE_CHOICE/MEDIUM 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.jdk-jvm-classfile.q5",
+      "KEEP",
+      "AcompatibleVM portableclassfile; OSdependency 제약명시/모든OS machinecode내장/힙source rewriting 아님.",
+      "실제 MULTIPLE_CHOICE/MEDIUM 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.jdk-jvm-classfile.q6",
+      "KEEP",
+      "Bobservablecontract vsJITimplementation; OS임의의미/바이트코드source변환/구현차이가소스규칙삭제 아님.",
+      "실제 MULTIPLE_CHOICE/MEDIUM 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.bytecode-javap.q1",
+      "KEEP",
+      "C Code disassembly; heapclean/javaccompile/스레드종료 아님.",
+      "실제 MULTIPLE_CHOICE/EASY 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.bytecode-javap.q2",
+      "KEEP",
+      "Dverbosepool/flags/descriptor; liveJIT/retainedgraph/threadwait metadata아님.",
+      "실제 MULTIPLE_CHOICE/EASY 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.bytecode-javap.q3",
+      "KEEP",
+      "Amulti-instruction/metadata compiler번역; sourcerewrite/runtimeJVMdelete/no-method 아님.",
+      "실제 MULTIPLE_CHOICE/MEDIUM 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.bytecode-javap.q4",
+      "KEEP",
+      "Boptionaldebug없으면원본line/name완전복원불가; JIT재생성/alwayssource/invalidclass 아님.",
+      "실제 MULTIPLE_CHOICE/MEDIUM 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.class-loading-linking-initialization.q1",
+      "KEEP",
+      "Cstaticstorage/defaults preparation; finalizer/staticblock/javac 아님.",
+      "실제 MULTIPLE_CHOICE/EASY 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.class-loading-linking-initialization.q2",
+      "KEEP",
+      "Dverify/prepare/resolve; serialize/reflection/constructor/GC-JIT 단계아님.",
+      "실제 MULTIPLE_CHOICE/EASY 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.class-loading-linking-initialization.q3",
+      "KEEP",
+      "Astatic sourceinit 실행; roots/javap/preparation sourcecode아님.",
+      "실제 MULTIPLE_CHOICE/MEDIUM 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.class-loading-linking-initialization.q4",
+      "KEEP",
+      "Bsymbolic→runtime target lazy가능; 모든object생성/init동일/sourcecompile전 아님.",
+      "실제 MULTIPLE_CHOICE/MEDIUM 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.class-loading-linking-initialization.q5",
+      "KEEP",
+      "C constant참조≠activeinit; Dfeedback ConstantValue는init-beforeclinit 정확. 예전수정존중하고다시preparation이라고교정하지않음.",
+      "실제 MULTIPLE_CHOICE/MEDIUM 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.class-loading-linking-initialization.q6",
+      "KEEP",
+      "Derroneous후NCDFE 가능; 모든threads종료/항상재init/class삭제 아님. nonError최초EIIE와후속을규범대조.",
+      "실제 MULTIPLE_CHOICE/MEDIUM 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.classloader-delegation-type-identity.q1",
+      "KEEP",
+      "A name+definingloader;heapOS/linenumber/mtime 아님.",
+      "실제 MULTIPLE_CHOICE/EASY 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.classloader-delegation-type-identity.q2",
+      "KEEP",
+      "B공통type재사용;GC생략/unnamed강제/child항상선정 아님.",
+      "실제 MULTIPLE_CHOICE/EASY 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.classloader-delegation-type-identity.q3",
+      "KEEP",
+      "Cdifferentdefiners 별도Class; auto합침/primitive변환/cast항상성공 아님.",
+      "실제 MULTIPLE_CHOICE/MEDIUM 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.classloader-delegation-type-identity.q4",
+      "KEEP",
+      "D actualdefiner 단서 bootstrapnull; OS설정/allinstances/JIT덤프 아님.",
+      "실제 MULTIPLE_CHOICE/MEDIUM 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.classloader-delegation-type-identity.q5",
+      "KEEP",
+      "A별도Service정의로CCE가능; widening/recompile/자동convert 아님.",
+      "실제 MULTIPLE_CHOICE/MEDIUM 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.classloader-delegation-type-identity.q6",
+      "KEEP",
+      "B정의주체/namespace추적; samebytes≠sameClass/위임정책resourceonly 아님.",
+      "실제 MULTIPLE_CHOICE/MEDIUM 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.jvm-runtime-data-areas-frames.q1",
+      "KEEP",
+      "C invocation frame;module descriptor/힙전체/methodarea 아님.",
+      "실제 MULTIPLE_CHOICE/EASY 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.jvm-runtime-data-areas-frames.q2",
+      "KEEP",
+      "Dlocals+operand; 전체loader/heap복사/OSFDtable 아님.",
+      "실제 MULTIPLE_CHOICE/EASY 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.jvm-runtime-data-areas-frames.q3",
+      "KEEP",
+      "Asharedabstract heap; OSstack동일/primitivelocals전용/method별heap 아님.",
+      "실제 MULTIPLE_CHOICE/MEDIUM 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.jvm-runtime-data-areas-frames.q4",
+      "KEEP",
+      "Bframe intermediate push/pop; rootsgraph/params동일array/kernelqueue 아님.",
+      "실제 MULTIPLE_CHOICE/MEDIUM 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.jvm-runtime-data-areas-frames.q5",
+      "KEEP",
+      "Crecursiveframe누적; loader합침/allheapunreachable/methodarea자동회수 아님.",
+      "실제 MULTIPLE_CHOICE/MEDIUM 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.jvm-runtime-data-areas-frames.q6",
+      "KEEP",
+      "Dslot 추상모델/JITregister·제거가능; nolocals/intheaponly/javapOSaddress숨김 아님.",
+      "실제 MULTIPLE_CHOICE/MEDIUM 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.gc-reachability-roots.q1",
+      "KEEP",
+      "A참조규칙상root도달불가회수후보; lexical모두/oldest/static모두 아님.",
+      "실제 MULTIPLE_CHOICE/EASY 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.gc-reachability-roots.q2",
+      "KEEP",
+      "Breturn참조등잔존수명; static이동/GC예외/즉시free 아님.",
+      "실제 MULTIPLE_CHOICE/EASY 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.gc-reachability-roots.q3",
+      "KEEP",
+      "Cstaticcache→A→B strongpath;autoclear/즉시회수/B직접root필수 아님.",
+      "실제 MULTIPLE_CHOICE/MEDIUM 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.gc-reachability-roots.q4",
+      "TARGETED_ENHANCE",
+      "Deligibility≠reclaim time; A/B/C 및전체문장문법의 도달 불가능한 표현은W4-JJVM-001. 정답목표는정확.",
+      "실제 MULTIPLE_CHOICE/MEDIUM 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.gc-reachability-roots.q5",
+      "TARGETED_ENHANCE",
+      "Aunused localnull은경로줄일수있으나JIT참조생존성·다른path에좌우; A 런타임 진행성은 liveness용어 혼동(W4-JJVM-001). 정답유지.",
+      "실제 MULTIPLE_CHOICE/MEDIUM 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.gc-reachability-roots.q6",
+      "KEEP",
+      "BSystem.gc nonbarrier/시점불지정;A반환완료보장/C모든roots소멸/D선택범위API보장 아님.",
+      "실제 MULTIPLE_CHOICE/MEDIUM 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.reference-strengths.q1",
+      "KEEP",
+      "Cnormal local reference strong관계;Soft/Weak/Phantomwrapper아님. 실제참조생존성은roots본문별도.",
+      "실제 MULTIPLE_CHOICE/EASY 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.reference-strengths.q2",
+      "KEEP",
+      "Dphantom get항상null/queue관찰;newobject/originalreturn/strongget 아님.",
+      "실제 MULTIPLE_CHOICE/EASY 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.reference-strengths.q3",
+      "KEEP",
+      "Aoptionalmetadata관계;필수config/DBcommit/정확TTL 아님.",
+      "실제 MULTIPLE_CHOICE/MEDIUM 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.reference-strengths.q4",
+      "KEEP",
+      "BSoftOOM전에clear/no일정·순서;TTL/strong보다항상장수/항상null 아님. 공식Soft25exact계약대조.",
+      "실제 MULTIPLE_CHOICE/MEDIUM 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.gc-fundamentals-collectors.q1",
+      "KEEP",
+      "C storage reclaim;alwaysmove/compilelocals제거/method끝즉시free 아님.",
+      "실제 MULTIPLE_CHOICE/EASY 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.gc-fundamentals-collectors.q2",
+      "KEEP",
+      "Dthroughput/pause tradeoff; compiletime/max동시항상/heap무관 아님.",
+      "실제 MULTIPLE_CHOICE/EASY 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.gc-fundamentals-collectors.q3",
+      "KEEP",
+      "AHotSpot 선택;같은pause/equals변경/JLS강제 아님.",
+      "실제 MULTIPLE_CHOICE/MEDIUM 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.gc-fundamentals-collectors.q4",
+      "KEEP",
+      "Blive set남음/partialcollection;heapGC대상아님/lexicalallroot/alwaysfail 아님. Afeedback은live대상한정으로반박하며heap자체가불대상이라고승인안함.",
+      "실제 MULTIPLE_CHOICE/MEDIUM 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.gc-fundamentals-collectors.q5",
+      "KEEP",
+      "C실제live/alloc/pause/workload측정; GCauto누수교정/최신항상best/everyrequestgc 아님.",
+      "실제 MULTIPLE_CHOICE/HARD 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.gc-fundamentals-collectors.q6",
+      "KEEP",
+      "D임의observable계약위반불가; Weak/Soft 처리시점등허용되는관찰은GC별달라질수있음. 정답은모든결과동일강제가아닌임의의미변경반박이라KEEP.",
+      "실제 MULTIPLE_CHOICE/MEDIUM 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.java-memory-leaks.q1",
+      "KEEP",
+      "A업무상불필요strongretain; allstatic/noGC/빠른회수 아님.",
+      "실제 MULTIPLE_CHOICE/EASY 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.java-memory-leaks.q2",
+      "KEEP",
+      "B무삭제staticcache;의도된literal하나/종료frame/다른참조없는짧은local 아님.",
+      "실제 MULTIPLE_CHOICE/EASY 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.java-memory-leaks.q3",
+      "KEEP",
+      "C재사용worker stalegraph; 모든stack제거/모든TL즉시GC/autoshutdown 아님.",
+      "실제 MULTIPLE_CHOICE/MEDIUM 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.java-memory-leaks.q4",
+      "KEEP",
+      "Droot owner 경로; classversion/recompile/JITthreshold관찰 아님.",
+      "실제 MULTIPLE_CHOICE/MEDIUM 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.java-memory-leaks.q5",
+      "KEEP",
+      "Aregistry→listener→requestgraph;요청끝staticclear/listenernonobject/GC참조강도변환 아님.",
+      "실제 MULTIPLE_CHOICE/MEDIUM 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.java-memory-leaks.q6",
+      "TARGETED_ENHANCE",
+      "B정상GC와unwantedretain 양립;nativeonly/noGC/source변환 아님. prompt old 생성은old 세대오기로W4-JJVM-001.",
+      "실제 MULTIPLE_CHOICE/MEDIUM 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.heap-metaspace-native-thread-memory.q1",
+      "KEEP",
+      "Cmaximumheap; metaspaceall/RSSall/stackall 아님.",
+      "실제 MULTIPLE_CHOICE/EASY 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.heap-metaspace-native-thread-memory.q2",
+      "KEEP",
+      "DHotSpotmetadata≠abstractmethodarea;locals/allheapobject/filecache 아님.",
+      "실제 MULTIPLE_CHOICE/EASY 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.heap-metaspace-native-thread-memory.q3",
+      "KEEP",
+      "Aplatformstack/OSresource; source복사/root삭제/heap전혀미사용 아님. 예약량자체가RSS와동일한것은아님.",
+      "실제 MULTIPLE_CHOICE/MEDIUM 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.heap-metaspace-native-thread-memory.q4",
+      "TARGETED_ENHANCE",
+      "Bdirectbacking전부heap 단정불가지만 D 참조가 힙 객체 혼동으로문자그대로다른답논거가능(W4-JJVM-002 P1). 래퍼대상/참조값/바이트저장소를분리해야유일성이명확.",
+      "실제 MULTIPLE_CHOICE/MEDIUM 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.heap-metaspace-native-thread-memory.q5",
+      "KEEP",
+      "CRSS증가/heap안정/thread증가 가설; metaspaceonly/heap같이증가/GCdisable진단 아님.",
+      "실제 MULTIPLE_CHOICE/HARD 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.heap-metaspace-native-thread-memory.q6",
+      "KEEP",
+      "Dloaderretain→metadata수명;GC무관/Xmx낮추면항상/localstackonly 아님.",
+      "실제 MULTIPLE_CHOICE/MEDIUM 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.jit-hotspot-warmup.q1",
+      "KEEP",
+      "A runtime VM codecompile; OScreation/serialization/source문법규칙 아님.",
+      "실제 MULTIPLE_CHOICE/EASY 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.jit-hotspot-warmup.q2",
+      "KEEP",
+      "Binitialprofiling/optimizedstate변화; class삭제/sleep/heapalwaysclear 아님.",
+      "실제 MULTIPLE_CHOICE/EASY 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.jit-hotspot-warmup.q3",
+      "KEEP",
+      "Cinterpreter/profile/compiletiers HotSpot전략;GCname/JVMSsame threshold/javacOSmulti 아님.",
+      "실제 MULTIPLE_CHOICE/MEDIUM 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.jit-hotspot-warmup.q4",
+      "KEEP",
+      "Dloading/JIT/GC/OS노이즈; 선최적화항상/측정불가/bytecodenative동일 아님.",
+      "실제 MULTIPLE_CHOICE/MEDIUM 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.jit-hotspot-warmup.q5",
+      "KEEP",
+      "A동일source라도state기록; percalljavac/GC반환임의/JVMS의미변경 아님.",
+      "실제 MULTIPLE_CHOICE/MEDIUM 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.jit-hotspot-warmup.q6",
+      "KEEP",
+      "B모든VM동일threshold/deopt 보장불가;A실행profile 입력가능/C구현선택/DHotSpotstate변화는관련가정과양립.",
+      "실제 MULTIPLE_CHOICE/MEDIUM 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.runtime-diagnostics-jcmd-jstack-jfr.q1",
+      "KEEP",
+      "Cstackstate/wait; module생성/retainedheaponly/compileartifact 아님.",
+      "실제 MULTIPLE_CHOICE/EASY 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.runtime-diagnostics-jcmd-jstack-jfr.q2",
+      "KEEP",
+      "Dtimestamp runtimeevents; DBplan/sourceedit/allheap영구저장 아님.",
+      "실제 MULTIPLE_CHOICE/EASY 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.runtime-diagnostics-jcmd-jstack-jfr.q3",
+      "KEEP",
+      "AVM command 진단; OSallkill/processorcompile/sourcegrammar 아님.",
+      "실제 MULTIPLE_CHOICE/MEDIUM 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.runtime-diagnostics-jcmd-jstack-jfr.q4",
+      "KEEP",
+      "BBLOCKED monitorowner/wait 출력; 소스only/Xmx두배/javapheapretained 아님.",
+      "실제 MULTIPLE_CHOICE/MEDIUM 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.runtime-diagnostics-jcmd-jstack-jfr.q5",
+      "KEEP",
+      "CJFRtimeaxis; TLremove/onesnapshot모든원인/javacrecompile 아님.",
+      "실제 MULTIPLE_CHOICE/MEDIUM 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.runtime-diagnostics-jcmd-jstack-jfr.q6",
+      "KEEP",
+      "Dheapcommand+stack 보완;JFRthread불가/jstackretained/javapruntime 아님.",
+      "실제 MULTIPLE_CHOICE/MEDIUM 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.runtime-diagnostics-jcmd-jstack-jfr.q7",
+      "KEEP",
+      "SCENARIO lowCPU/외부callwait→latency/pool가설; 여러dump·remote/pooltimeout metric 대조 모델충분. 한덤프확정금지.",
+      "실제 SCENARIO/HARD 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.jdk-jvm-classfile.q7",
+      "KEEP",
+      "DESCRIPTIVE source→javac→classfile→VM/native와구현threshold/OS차이모델·설명전체확인.",
+      "실제 DESCRIPTIVE/MEDIUM 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.class-loading-linking-initialization.q7",
+      "KEEP",
+      "DESCRIPTIVE load binary→preparevalue0→initloadValue호출후대입;model/해설단계구분충분.",
+      "실제 DESCRIPTIVE/MEDIUM 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.classloader-delegation-type-identity.q7",
+      "KEEP",
+      "SCENARIO 공통Plugin API 부모정의→child구현만; 둘다interface정의시cast실패 모델·설명충분.",
+      "실제 SCENARIO/HARD 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.jvm-runtime-data-areas-frames.q7",
+      "KEEP",
+      "DESCRIPTIVE heap여유 vsstackframe 깊이별한계/객체reachability 모델 읽음. physicalallocation항상필수라는추가보장으로확대안함.",
+      "실제 DESCRIPTIVE/MEDIUM 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.heap-metaspace-native-thread-memory.q7",
+      "KEEP",
+      "SCENARIO Xmx512/RSS900은nonheapextra로가능;stack/direct/metadata/codecache/NMT한계 모델·설명확인.",
+      "실제 SCENARIO/HARD 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ],
+    [
+      "java.core.jvm-runtime.jit-hotspot-warmup.q7",
+      "KEEP",
+      "DESCRIPTIVE 첫요청느림을JIT단독원인단정금지; cache/connection/GC/OS·cold vssteady/JFR 근거 모델·설명충분.",
+      "실제 DESCRIPTIVE/HARD 및 모든 존재 필드 읽음. API/명세 또는해당구현·단계로근거한정, 참조강도/GC timing과일반계약구분. absent acceptedAnswers/model 필드를검토했다고기재안함."
+    ]
+  ],
+  "sources": [
+    [
+      "https://docs.oracle.com/javase/specs/jvms/se25/html/",
+      "CURRENT_VERIFIED",
+      "java.core.jvm-runtime.jdk-jvm-classfile: JVMS25 목차와2.1/2.13의 추상 모델·classfile/명령 범위를 역할별 확인; 전체 명세 모든 절 검토를 주장하지 않음."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/specs/man/javac.html",
+      "CURRENT_VERIFIED",
+      "java.core.jvm-runtime.jdk-jvm-classfile: javac description 소스 선언→JVM classfiles/출력 경로·언어 타입 확인 시점을 대조."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/specs/man/javap.html",
+      "CURRENT_VERIFIED",
+      "java.core.jvm-runtime.bytecode-javap: javap disassembly·c bytecodes/v verbose/l debug tables와 정적 classfile 출력 범위를 직접 확인."
+    ],
+    [
+      "https://docs.oracle.com/javase/specs/jvms/se25/html/jvms-4.html",
+      "CURRENT_VERIFIED",
+      "java.core.jvm-runtime.bytecode-javap: JVMS4.1 구조/4.7.3 Code/max locals/stack·optional LineNumberTable/LocalVariableTable를 내용에 대조."
+    ],
+    [
+      "https://docs.oracle.com/javase/specs/jvms/se25/html/jvms-5.html",
+      "CURRENT_VERIFIED",
+      "java.core.jvm-runtime.class-loading-linking-initialization: JVMS5.3/5.4/5.5의 로딩·준비/해석 시점·ConstantValue/동기화/erroneous state 실제 절을 대조."
+    ],
+    [
+      "https://engineering.linecorp.com/en/blog/line-open-jdk/",
+      "CURRENT_VERIFIED",
+      "java.core.jvm-runtime.class-loading-linking-initialization: LINE 기사 코드 호환성/JavaFX Pair CNFE·VM옵션/architecture·검증 절을 읽음. 역사적 JDK 배포 사례이며 Java25 권고/일반모든배포보장 아님."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/ClassLoader.html",
+      "CURRENT_VERIFIED",
+      "java.core.jvm-runtime.classloader-delegation-type-identity: ClassLoader defaultloadClass 3단계·override/배열 loader·actualdefiner/부트스트랩 관련절 대응."
+    ],
+    [
+      "https://docs.oracle.com/javase/specs/jvms/se25/html/jvms-5.html#jvms-5.3",
+      "CURRENT_VERIFIED",
+      "java.core.jvm-runtime.classloader-delegation-type-identity: JVMS5.3 이름+defining loader/runtimepackage와 initiating loader 차이를 별도 Concept 목적에 대조."
+    ],
+    [
+      "https://docs.oracle.com/javase/specs/jvms/se25/html/jvms-2.html",
+      "CURRENT_VERIFIED",
+      "java.core.jvm-runtime.jvm-runtime-data-areas-frames: JVMS2.5/2.6 thread stack/heap/methodarea/runtime pool·frame locals/operand stack 및 normal/abrupt 종료를 직접 대조. java.core.jvm-runtime.heap-metaspace-native-thread-memory: JVMS2.5 heap/stack/methodarea 추상 경계를 process영역에 독립 대조. java.core.jvm-runtime.jit-hotspot-warmup: JVMS2 서두/2.13 특정 layout/JIT강제하지않는 추상기계 범위를 이 구현 논점에독립 대조."
+    ],
+    [
+      "https://d2.naver.com/helloworld/329631",
+      "NEEDS_REVIEW",
+      "java.core.jvm-runtime.jvm-runtime-data-areas-frames: D2 URL329631은 article shell만 반환. 메모리 모델 보충 relation의 실제본문 미확정; 다른 Concept 관계와독립. java.core.jvm-runtime.gc-reachability-roots: D2 URL329631 shell만으로 reachability 복습본문/추천 확인 못함. java.core.jvm-runtime.reference-strengths: D2 URL329631 shell만; 강한/소프트/약한/팬텀 학습흐름의 실제원문 미확정."
+    ],
+    [
+      "https://docs.oracle.com/javase/specs/jvms/se25/html/jvms-2.html#jvms-2.5.3",
+      "CURRENT_VERIFIED",
+      "java.core.jvm-runtime.gc-reachability-roots: JVMS2.5.3 sharedheap/automatic storage·구체적수집기 미지정을 회수 가능성과 구분. java.core.jvm-runtime.gc-fundamentals-collectors: JVMS2.5.3의 automatic storage system과 비명시 deallocation·기법 미지정을 해당 첫문장에 독립 대조."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/ref/package-summary.html",
+      "CURRENT_VERIFIED",
+      "java.core.jvm-runtime.gc-reachability-roots: ref package strongly/softly/weakly/phantom/unreachable·통지 async를 해당 roots 기본모델의 확장 경계에 대응. java.core.jvm-runtime.reference-strengths: ref package 5도달성·notification/Reference객체 자체 수명 책임을 이 선택목적에 독립 대조. java.core.jvm-runtime.java-memory-leaks: ref package reachability/강도·프로그램의 의미상불필요함을 GC가 알지못하는 retained관계에 대조."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/ref/PhantomReference.html",
+      "CURRENT_VERIFIED",
+      "java.core.jvm-runtime.reference-strengths: PhantomReference atomic clear/등록queue 이후enqueue·getnull 및queue null가능 절을 대조."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/gctuning/",
+      "CURRENT_VERIFIED",
+      "java.core.jvm-runtime.gc-fundamentals-collectors: GC25 guide index와 AvailableCollectors/G1 실제절 throughput/pause 목표·collector 선택 시작점/live data dependency를 읽음. java.core.jvm-runtime.heap-metaspace-native-thread-memory: GC25 OtherConsiderations ClassMetadata의JDK8+ native/loader chunks/unloading·MaxMetaspace를 실제 구현 목적에대응."
+    ],
+    [
+      "https://d2.naver.com/helloworld/1329",
+      "NEEDS_REVIEW",
+      "java.core.jvm-runtime.gc-fundamentals-collectors: D2 GC1329 shell만. 역사적 세대별 flow/STW 학습가치 및 현재25 적합성 미확정."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/ThreadLocal.html",
+      "CURRENT_VERIFIED",
+      "java.core.jvm-runtime.java-memory-leaks: ThreadLocal thread 살아있고키accessible일때value참조 및remove 재초기화 계약을 장수worker누수 관계에독립대응."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/vm/native-memory-tracking.html",
+      "CURRENT_VERIFIED",
+      "java.core.jvm-runtime.heap-metaspace-native-thread-memory: NMT25 본문 HotSpot 내부만/JDK·third-party 제외·defaultoff/start옵션/jcmd baseline·예약/확정량을 대조."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/vm/index.html",
+      "CURRENT_VERIFIED",
+      "java.core.jvm-runtime.jit-hotspot-warmup: VM25 guide와 performance enhancements의 tiered profiling/codecache/escape analysis 실제 절을따라 읽음; index열람만을상세검토라주장안함."
+    ],
+    [
+      "https://techblog.woowahan.com/2588/",
+      "CURRENT_VERIFIED",
+      "java.core.jvm-runtime.jit-hotspot-warmup: Woowa2588 실제 제목은 신규 포인트 시스템 전환기 #2 – 오픈 준비 단계. 7-1 warmup/첫테스트버림 운영사례를읽음;목적은맞으나제목정밀화필요. 두번째테스트면항상준비완료라는일반규칙아님."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/specs/man/jcmd.html",
+      "CURRENT_VERIFIED",
+      "java.core.jvm-runtime.runtime-diagnostics-jcmd-jstack-jfr: jcmd25 help/동일대상환경·Thread.dump_to_file plain/json·GC histogram/heapdump 비용/JFR명령을역할별대조."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/specs/man/jstack.html",
+      "CURRENT_VERIFIED",
+      "java.core.jvm-runtime.runtime-diagnostics-jcmd-jstack-jfr: jstack25 stacktrace/BCI/line정보whenavailable·l lock정보와진단범위를확인."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/specs/man/jfr.html",
+      "CURRENT_VERIFIED",
+      "java.core.jvm-runtime.runtime-diagnostics-jcmd-jstack-jfr: jfr25 print/view/summary·파일조작은runtime recording 시작jcmd와역할구분해대조."
+    ],
+    [
+      "https://d2.naver.com/helloworld/6043",
+      "NEEDS_REVIEW",
+      "java.core.jvm-runtime.runtime-diagnostics-jcmd-jstack-jfr: D2 GC모니터링6043 shell만. 실제지표/도구선택 기사본문 미확정."
+    ]
+  ],
+  "referenceAccess": {
+    "https://d2.naver.com/helloworld/329631": {
+      "status": "NEEDS_REVIEW",
+      "basis": "직접open은공통D2 shell로article 본문을반환하지않음. 5개관계별의미검토미확정;URL응답만으로승격안함."
+    },
+    "https://d2.naver.com/helloworld/1329": {
+      "status": "NEEDS_REVIEW",
+      "basis": "직접open은공통D2 shell로article 본문을반환하지않음. 5개관계별의미검토미확정;URL응답만으로승격안함."
+    },
+    "https://d2.naver.com/helloworld/6043": {
+      "status": "NEEDS_REVIEW",
+      "basis": "직접open은공통D2 shell로article 본문을반환하지않음. 5개관계별의미검토미확정;URL응답만으로승격안함."
+    }
+  },
+  "sourceHashes": {
+    "java.core.jvm-runtime.jdk-jvm-classfile": "77f7c2186068578f5d1633259a68f1b6883282b5cb4a2a543ebe71b74adfd105",
+    "java.core.jvm-runtime.bytecode-javap": "31eef33dd41803dfacdb2fc085fba6fb017d83bdf030001d07735fc831989a53",
+    "java.core.jvm-runtime.class-loading-linking-initialization": "5c048443b2ed5a3ad55059add6924e82517f5dca03dca5adc80ac2e8ca8cddc4",
+    "java.core.jvm-runtime.classloader-delegation-type-identity": "243736b8175a617e02bfa95f7cfef467be5f84cef45ca56f8001fdbaaf36ef99",
+    "java.core.jvm-runtime.jvm-runtime-data-areas-frames": "442a6d2703cce822a62d832fed34c1f703dde6d54ea4df68ddf09e93f47d12d6",
+    "java.core.jvm-runtime.gc-reachability-roots": "c58b066d764ea53342e89ea6b7ce0df906a96e032f50d6249a424e7fd8e80220",
+    "java.core.jvm-runtime.reference-strengths": "402457b789d126f1db34f46ce178e10a700cf5ccac8df2b64dde644eb8e5f780",
+    "java.core.jvm-runtime.gc-fundamentals-collectors": "3ad1c359ac4a315852156829ded4bd4aa507ea52188c1acb4b10bd70fbc4b5cf",
+    "java.core.jvm-runtime.java-memory-leaks": "89a57815ce4095ff7f59b8e1c7577ce29ac4a119bead0e85564718120ded18cc",
+    "java.core.jvm-runtime.heap-metaspace-native-thread-memory": "beacfe3c8154fd3ed33213db6fa39b135e3cb93fe13d5f91762d37c207c35356",
+    "java.core.jvm-runtime.jit-hotspot-warmup": "df122458c042befa506c4438593fd836f125bb63f0d1aa901c5723fa96d9a61c",
+    "java.core.jvm-runtime.runtime-diagnostics-jcmd-jstack-jfr": "20902d04f687934f147a02941d8a2a0f831d8bc3517559a4ae0eed7e62eaf733",
+    "java.core.jvm-runtime.jdk-jvm-classfile.q1": "4416a1a1ff0d0fdb2a0107feb6c4a3adf064bf525b1a6822909d50aedbcc5ec5",
+    "java.core.jvm-runtime.jdk-jvm-classfile.q2": "6f94dde35674030b18afe056e78f9278d4659bf7fefd1a0d60068b52b08991a8",
+    "java.core.jvm-runtime.jdk-jvm-classfile.q3": "c3bff1320de51c46c0914eb97a560263094c4b6286a494c7c93f837414360b48",
+    "java.core.jvm-runtime.jdk-jvm-classfile.q4": "5c3d05ed744e926ba63c5b1f05c4229b19c106e07a3b9f46b8921037d66459fa",
+    "java.core.jvm-runtime.jdk-jvm-classfile.q5": "e23f4bb049119e3fb41e0d861075b5c157295b55f6602d4329cc755d4008b92f",
+    "java.core.jvm-runtime.jdk-jvm-classfile.q6": "988dfd48ff4491ac4bf9861eaeb3dedb60f3274714082a31e3aba5ab40c10d84",
+    "java.core.jvm-runtime.bytecode-javap.q1": "c397a24b429fc23599db9535ab39254995a3af39f42345798ca846be0c0bf8a9",
+    "java.core.jvm-runtime.bytecode-javap.q2": "46885c759a6f616c235befefff50f72d420f9d3f7f478296644d8ec872cb9436",
+    "java.core.jvm-runtime.bytecode-javap.q3": "ceeaa8c263aa20886949134f5483df5692c2b43dd6d9fb5b30dd52501ea6f047",
+    "java.core.jvm-runtime.bytecode-javap.q4": "cafaaf4ded775d3b6d278b945f028d13a0f9b6241b4793d41a65fd3d305244f0",
+    "java.core.jvm-runtime.class-loading-linking-initialization.q1": "26948d092f68dcb0dcb2720d8a4f040de62fcbf34bcf6ea2a8b4009a8f4397de",
+    "java.core.jvm-runtime.class-loading-linking-initialization.q2": "75dc44755005c4f7ff0a9b5868a6cf2476116200732d46ff844b365599720bef",
+    "java.core.jvm-runtime.class-loading-linking-initialization.q3": "bd00815354904fa96e3b1def3da381481231984e16b5dd48b7e321f91004fc0c",
+    "java.core.jvm-runtime.class-loading-linking-initialization.q4": "40872e58621578f8aab15d30dced9cbd817ad7af69443d648ff03b9b321a2f31",
+    "java.core.jvm-runtime.class-loading-linking-initialization.q5": "7772d4197da510a4f411c021212e938d1026a18e6fd9ab19718e80957dc434fc",
+    "java.core.jvm-runtime.class-loading-linking-initialization.q6": "fba0b3621ae2dc654e88bba1d70f33327d6d900bf4221386ec9e54f516641f04",
+    "java.core.jvm-runtime.classloader-delegation-type-identity.q1": "359578d2aa4aa9430e1a16b1409587c2744d16b7426b5f14afef5cc4ef9c6ed8",
+    "java.core.jvm-runtime.classloader-delegation-type-identity.q2": "53c448627c60641242ddf5a3771f1a11ded2058efa7178ca239660b5c8f4704e",
+    "java.core.jvm-runtime.classloader-delegation-type-identity.q3": "dc1947e8c8efa5b97679956614c885835e636c4e0a9f9524c225244895006562",
+    "java.core.jvm-runtime.classloader-delegation-type-identity.q4": "91f6c67e12d199d9bf3216ab2068e2c38bd8f7899124e459ee80fef6d1544a64",
+    "java.core.jvm-runtime.classloader-delegation-type-identity.q5": "7f01a19c4c22ef2e22a3f460396ee186a81237f44f436811fb5cafb83f24538a",
+    "java.core.jvm-runtime.classloader-delegation-type-identity.q6": "05c561b2e776fb1f934ec55bd091a695710b637786e3049377c11131d5f6e092",
+    "java.core.jvm-runtime.jvm-runtime-data-areas-frames.q1": "804928a0d11ac3851eb2d20469d60b866d4bde1d633b29e881c5e9ce6649f20f",
+    "java.core.jvm-runtime.jvm-runtime-data-areas-frames.q2": "5c5aba933f1d51048bef05519e0c62beec7738a2fdef834d804c5142fa1ee20b",
+    "java.core.jvm-runtime.jvm-runtime-data-areas-frames.q3": "14726d6a3def521b0d156bf96a5d345b219417acebdd62d77f1e6d9151eb02ee",
+    "java.core.jvm-runtime.jvm-runtime-data-areas-frames.q4": "9cb0af584e37ea2ccf88f15d5e8b953af90034c3d912bad444d277c0ed6f7ff3",
+    "java.core.jvm-runtime.jvm-runtime-data-areas-frames.q5": "be2377448f9c0ba96df1cbe34cefff4da9c41544222b97bc6b283a003f828abc",
+    "java.core.jvm-runtime.jvm-runtime-data-areas-frames.q6": "03cd3ff03df9f7892b4a207bffac66a44f7117db87dda0a710d67eac17cce771",
+    "java.core.jvm-runtime.gc-reachability-roots.q1": "26b7726cffd92f0d3d08a6667a08073bd85ad6e20b2416d9d7046e9fb426dab4",
+    "java.core.jvm-runtime.gc-reachability-roots.q2": "310b9f3ff545369a6d8e90fbe726a34119df4aa51159eb98778521fedaf1edb2",
+    "java.core.jvm-runtime.gc-reachability-roots.q3": "150bd83208c01021366793b227c794de85b5a5968b253f9b7f7c8043af032f48",
+    "java.core.jvm-runtime.gc-reachability-roots.q4": "898e5db670ac92b6f1ed527132aa667eb1b3230ed8e6720cffcff9715d0e89ef",
+    "java.core.jvm-runtime.gc-reachability-roots.q5": "2b35d1df68d3eb09842086adcc56ef6ffa103d9f178679846bf51b51fe50d95d",
+    "java.core.jvm-runtime.gc-reachability-roots.q6": "07455302743285ce970ce98e6ae90b55310e3253201d832ad43f9b2e25067f4d",
+    "java.core.jvm-runtime.reference-strengths.q1": "ed5ddf0a7a08b9142111ccba1836bb9b744be881273622e4aa5025bb01628d67",
+    "java.core.jvm-runtime.reference-strengths.q2": "f1efeb2bd8161206f918aeafc3bfb5a9dc145670a20888a35fb9f930e0503ebe",
+    "java.core.jvm-runtime.reference-strengths.q3": "985c242d9f48c13a79f0d7a615b29866e3789114c90f9e266cc7900bd6e92ec1",
+    "java.core.jvm-runtime.reference-strengths.q4": "bd92c222db32554aa51416eef3bcd1479ada4cb5921b89fff4bb8bf22fa19d00",
+    "java.core.jvm-runtime.gc-fundamentals-collectors.q1": "4965e2b631ef1c46e06c40318d77341bd66e101d43745c5ce3d1ad5f90f71dd4",
+    "java.core.jvm-runtime.gc-fundamentals-collectors.q2": "90ed491b71aaf005b21d7bc3e524c9d6845ae676b44eed26dad00dba30e53f54",
+    "java.core.jvm-runtime.gc-fundamentals-collectors.q3": "9981ceb28b2c3ed351c84fe2953bac15c96050b0ca3223a247bd8b70ad5e0328",
+    "java.core.jvm-runtime.gc-fundamentals-collectors.q4": "0241c41dbe45b97fd99ebc9d41c6dd9bd8d3519aae5e851d146e2c00858f1aab",
+    "java.core.jvm-runtime.gc-fundamentals-collectors.q5": "5ef03742271864da0c0fe7f4ad274a4489ecf7db2451df9df47e59c9183520f7",
+    "java.core.jvm-runtime.gc-fundamentals-collectors.q6": "fd1fa08c28822a05d830097fb4f81d3f4490b0cfa2e26438609c5cd2e12ca383",
+    "java.core.jvm-runtime.java-memory-leaks.q1": "7627b83fc76c2f93331d7c0c5e5ddea96e0739539a3aa655b70a2ddb32c109bc",
+    "java.core.jvm-runtime.java-memory-leaks.q2": "c088f04db0acac6cf9d6e90cacc353f41196f8078ee80c01bbc62b9588364592",
+    "java.core.jvm-runtime.java-memory-leaks.q3": "1386f11f3c7e3a827ae746efa2b76b0c5e04f318397f3d4e162cbb988408ef12",
+    "java.core.jvm-runtime.java-memory-leaks.q4": "3f5ec51b4a0b22813ecdf17d4e25e2d78f7cd72171ab01e6b7c3a066f39715bb",
+    "java.core.jvm-runtime.java-memory-leaks.q5": "915326b65339a238cac77414d28ec2555341445a5f2073848f99544c984ca810",
+    "java.core.jvm-runtime.java-memory-leaks.q6": "ec946b62d6289a33ff9d933725277ac72314ceef4cf021cad549f0b8e5c0a863",
+    "java.core.jvm-runtime.heap-metaspace-native-thread-memory.q1": "b17e0a93ec8eeb9ecd85e1fba8b8e58724e3116d550e2a97913eccc3495718e3",
+    "java.core.jvm-runtime.heap-metaspace-native-thread-memory.q2": "fda799605068fc9721751ec166d61588c5de02104f3c321b4f5e471b3dd09d7c",
+    "java.core.jvm-runtime.heap-metaspace-native-thread-memory.q3": "10ab01c1d714a5779069194659cf264ef42be66da27ef983ac3428abd92a2a7e",
+    "java.core.jvm-runtime.heap-metaspace-native-thread-memory.q4": "3bf2ad1a60b3dbd146b2792e8b66f899fdcdca49e91718dae976eee24cc54eda",
+    "java.core.jvm-runtime.heap-metaspace-native-thread-memory.q5": "348211409cfe4cb65c8da59c28af514b19ccbe9304f0c4cc59e73525fa428b64",
+    "java.core.jvm-runtime.heap-metaspace-native-thread-memory.q6": "bf0c17c2284e796df204e2fa2adc85bef5d5c79a016ecfbb21bf59e6f0151961",
+    "java.core.jvm-runtime.jit-hotspot-warmup.q1": "be7bc92f8f97a19ad54c0dc398a4ae0f34affbf6b4278e959e872ee7070ebe01",
+    "java.core.jvm-runtime.jit-hotspot-warmup.q2": "5734b0a0da116fd0248757fa22592fe49128ac9d4014d39c5b758b34e86df6f2",
+    "java.core.jvm-runtime.jit-hotspot-warmup.q3": "0a0b0b9966ea97384a48ed5d7220515b61b7b3adac9e398a292a40fd5b58df58",
+    "java.core.jvm-runtime.jit-hotspot-warmup.q4": "f165da1c7e0a7a204af483c4b8819dc78cc3e0920a81a78fd9d512cc39d2a52a",
+    "java.core.jvm-runtime.jit-hotspot-warmup.q5": "d0c0f635f8c2166e0efcd3d975592567c616cb9076564f7653259b0f3fbb657c",
+    "java.core.jvm-runtime.jit-hotspot-warmup.q6": "95a66bd7e84d3c42a7cc08b08e446849363cdc473b004a1dc2db40c66b43d230",
+    "java.core.jvm-runtime.runtime-diagnostics-jcmd-jstack-jfr.q1": "75964fa112be1e6a13261318b614b47311aa6b80a4ed61a3ca382266c7207645",
+    "java.core.jvm-runtime.runtime-diagnostics-jcmd-jstack-jfr.q2": "4cf262cb29cc541b064067d82106d026e1a230cd871bcc9a146f291b298e8a19",
+    "java.core.jvm-runtime.runtime-diagnostics-jcmd-jstack-jfr.q3": "1f54823d6d6f85f9e3f63cbe4a60684ae58fd358d64132368ab759689cf126f2",
+    "java.core.jvm-runtime.runtime-diagnostics-jcmd-jstack-jfr.q4": "38411e5bd7ae805eff1d954e6ac7d2749357cd4e70b7d1abd8764215fa441169",
+    "java.core.jvm-runtime.runtime-diagnostics-jcmd-jstack-jfr.q5": "7e80236cbcdd7ff68984ef82923417391ab582249a5cfe3ef6f21b53aa5210ac",
+    "java.core.jvm-runtime.runtime-diagnostics-jcmd-jstack-jfr.q6": "2157c7077dcc9cd80440aa37771b9661fc64ba990516648d7f73cd565938fff1",
+    "java.core.jvm-runtime.runtime-diagnostics-jcmd-jstack-jfr.q7": "3497d15b6ccd8baa74ac487ff4bfa35cc9046bec7c8126556bdedc5d62460879",
+    "java.core.jvm-runtime.jdk-jvm-classfile.q7": "99c752a8812fc8f0deb6ee0bd5af844cffa7f9f574a969f9764788d0b8459a79",
+    "java.core.jvm-runtime.class-loading-linking-initialization.q7": "57d25304eebdbaee3b52c057725c7f3c3b13e6c4fcd621c918eaef31209bf80d",
+    "java.core.jvm-runtime.classloader-delegation-type-identity.q7": "e9e25d7e68921614e2d4d868a3deed90a7c188b3d3c1cffb20aaf0d46db28bd8",
+    "java.core.jvm-runtime.jvm-runtime-data-areas-frames.q7": "1264d54344ded817265cec71033e17905c544501d229553d70e2564643bb1850",
+    "java.core.jvm-runtime.heap-metaspace-native-thread-memory.q7": "5a85f1e4115c067e4f6f79375437903f2635e74212b8f71a6eb0f271aad7cc7d",
+    "java.core.jvm-runtime.jit-hotspot-warmup.q7": "50fd2fd79aa38003dd82a762542cc5e271c05bb1a691b44ad899fe9b0da1d71f"
+  },
+  "carriedForwardFindings": [],
+  "findings": [
+    {
+      "id": "W4-JJVM-001",
+      "severity": "P2",
+      "contentKeys": [
+        "java.core.jvm-runtime.gc-reachability-roots.q4",
+        "java.core.jvm-runtime.gc-reachability-roots.q5",
+        "java.core.jvm-runtime.java-memory-leaks.q6"
+      ],
+      "file": "content/java/jvm-runtime/questions.json",
+      "quote": "도달 불가능한과 immediately reclaimed의 차이는?",
+      "problem": "gc-roots.q4의 도달 불가능한과/도달 불가능한하면 표현은 번역된 형용사를 명사처럼 잘못 써 정의를 읽기 어렵게 한다. q5A의 런타임 진행성은 참조 liveness(생존성)와 실행 progress를 혼동한다. leaks.q6 old 생성은 old generation(세대) 오기다. 정답D/A/B와학습목표는유지 가능.",
+      "action": "q4를 도달 불가 상태와 실제 회수로 자연스럽게 정리; q5A를 참조 생존성/JIT 최적화에 따른 가능성으로, leaks.q6를 old 세대 사용량으로 문항 표현만교정.",
+      "officialEvidence": [
+        "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/ref/package-summary.html",
+        "https://docs.oracle.com/en/java/javase/25/gctuning/garbage-first-g1-garbage-collector1.html"
+      ],
+      "followupIssues": [
+        201
+      ],
+      "additionalEvidence": [
+        {
+          "file": "content/java/jvm-runtime/questions.json",
+          "quote": "런타임 진행성에 따라 이후 reachability를 일찍 끊어 회수 후보가 될 수 있다"
+        },
+        {
+          "file": "content/java/jvm-runtime/questions.json",
+          "quote": "GC log상 도달 불가능한 객체는 잘 회수되지만 old 생성이 계속 커진다. 가능한 진단은?"
+        }
+      ]
+    },
+    {
+      "id": "W4-JJVM-002",
+      "severity": "P1",
+      "contentKeys": [
+        "java.core.jvm-runtime.heap-metaspace-native-thread-memory.q4"
+      ],
+      "file": "content/java/jvm-runtime/questions.json",
+      "quote": "참조가 힙 객체일 수 있다는 것",
+      "problem": "확정할 수 없는 것을 하나 고르는 문항의 D는 reference value 자체가 heap object일 수 있다고 기술한다. Java reference value와 그 대상인 ByteBuffer wrapper는 다른 개념이다. D를 문자 그대로 읽으면 의도한 B 외에도 부정확하다고 판단할 수 있고, wrapper로 읽을 때만 B가유일해진다. 정답 B를 임의로 D로 바꾸지 않는다.",
+      "action": "prompt와D를 참조 대상인 Java 래퍼 객체/참조값/실제 backing bytes로명확히분리하고 D는 래퍼 객체의논리적 heap 모델로 표현. B는 backing 전부heap보장없음으로유지.",
+      "officialEvidence": [
+        "https://docs.oracle.com/javase/specs/jls/se25/html/jls-4.html#jls-4.3.1",
+        "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/ByteBuffer.html"
+      ],
+      "followupIssues": [
+        201
+      ],
+      "additionalEvidence": [
+        {
+          "file": "content/java/jvm-runtime/questions.json",
+          "quote": "direct ByteBuffer의 Java 참조가 힙에 있다는 사실로 확정할 수 없는 것은?"
+        }
+      ]
+    },
+    {
+      "id": "W4-JJVM-003",
+      "severity": "P2",
+      "contentKeys": [
+        "java.core.jvm-runtime.gc-fundamentals-collectors"
+      ],
+      "file": "content/java/jvm-runtime/gc-fundamentals-collectors.md",
+      "quote": "JVMS는 힙에 자동 메모리 관리 시스템(automatic storage management system)이 존재할 수 있음을 정의하고",
+      "problem": "JVMS2.5.3은 heap storage가 automatic storage management system에 의해 회수되며 명시 deallocation을 하지 않는 모델을 정의한다. 선택에 맡기는 것은 system의 존재 자체라기보다 type/technique다. 첫문장은 존재도선택인듯규범을약화한다. 이후구현선택/GC핵심설명은정확.",
+      "action": "자동관리시스템을정의하되 특정 기법/수집기는구현에맡긴다로 첫문장만정밀화. 모든객체즉시회수/특정수집기강제를추가하지않음.",
+      "officialEvidence": [
+        "https://docs.oracle.com/javase/specs/jvms/se25/html/jvms-2.html#jvms-2.5.3"
+      ],
+      "followupIssues": [
+        201
+      ]
+    },
+    {
+      "id": "W4-JJVM-004",
+      "severity": "P2",
+      "contentKeys": [
+        "java.core.jvm-runtime.jit-hotspot-warmup"
+      ],
+      "file": "content/java/jvm-runtime/jit-hotspot-warmup.md",
+      "quote": "새로운 포인트 적립 시스템 개발기",
+      "problem": "Woowa2588 현재 실제 제목은 신규 포인트 시스템 전환기 #2 – 오픈 준비 단계로 series/편이다르다. 7-1에 실제warmup/측정사례가있어학습목적은맞으며제목metadata만정밀화. 역사적첫테스트버림은해당workload사례로한정하고보편2회warmup규칙으로확대안함.",
+      "action": "Reference title을실제현재제목으로맞추고 relationNote에7-1warmup/workload사례위치를안내. 공식HotSpot근거와현재본문은유지.",
+      "officialEvidence": [
+        "https://techblog.woowahan.com/2588/"
+      ],
+      "followupIssues": [
+        201,
+        222
+      ]
+    },
+    {
+      "id": "W4-JJVM-005",
+      "severity": "P2",
+      "contentKeys": [
+        "java.core.jvm-runtime.jvm-runtime-data-areas-frames"
+      ],
+      "file": "frontend/public/learning/java/jvm-runtime-data-areas.svg",
+      "quote": "M358 235H690",
+      "problem": "ThreadA→Heap references path가 y235/x358..690으로 지나가며 ThreadB의 현재frame rect x420..614/y190..253 내부를가로지른다. A의독립frame에서공유heap으로이어질선을B의frame영역과분리하지않아계층/참조경계가혼동될수있다. source좌표와path의명백한교차를근거로하며실제Reader렌더결함범위는미검증.",
+      "action": "ThreadA reference를ThreadB stack밖 별도상단/하단lane으로라우팅하고각thread→heap edge를출발frame에연결. 추상영역/본문은재작성하지않음.",
+      "officialEvidence": [
+        "https://docs.oracle.com/javase/specs/jvms/se25/html/jvms-2.html#jvms-2.6"
+      ],
+      "followupIssues": [
+        201
+      ],
+      "additionalEvidence": [
+        {
+          "file": "frontend/public/learning/java/jvm-runtime-data-areas.svg",
+          "quote": "x=\"420\" y=\"190\" width=\"194\" height=\"63\""
+        }
+      ]
+    }
+  ],
+  "visualizationAssets": [
+    {
+      "file": "frontend/public/learning/java/java-execution-boundary.svg",
+      "sourceSha256": "02b4dc15c8ae062e850e61b027ed6443f2795ccbc73010af823b2dda50a21f00",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "basis": "760x230 source→javac→class→VM와native별도caption. 전체SVG의title/desc/styles/rect/text/path·좌표를직접읽음. actualReader/mobile/theme QA 미수행."
+    },
+    {
+      "file": "frontend/public/learning/java/class-loading-lifecycle.svg",
+      "sourceSha256": "7812488b67ff2c73d9ae438da3c497412df4d683cedfcb3529cb970b23af2c96",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "basis": "1100x360 phaseboxes/lazyresolution경고. 전체SVG의title/desc/styles/rect/text/path·좌표를직접읽음. actualReader/mobile/theme QA 미수행."
+    },
+    {
+      "file": "frontend/public/learning/java/classloader-type-identity.svg",
+      "sourceSha256": "d8cefd7b0198311ac75cd5f6f8d811c2211dc274e05a3ec162facfcac00a7d2e",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "basis": "1120x560 parent공통API/twoPlugin 정의 및name+definer/castX 경계. 전체SVG의title/desc/styles/rect/text/path·좌표를직접읽음. actualReader/mobile/theme QA 미수행."
+    },
+    {
+      "file": "frontend/public/learning/java/jvm-runtime-data-areas.svg",
+      "sourceSha256": "bb8f76c564c2119547cef024e468e5059ff13bb7f3cd4d14ed1c2189903e843d",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "basis": "1100x560 thread별frames/sharedheap·methodarea 및추상 vsphysicalcaption. A→Heap edge의 Bframe 침범은W4-JJVM-005. 전체SVG의title/desc/styles/rect/text/path·좌표를직접읽음. actualReader/mobile/theme QA 미수행."
+    },
+    {
+      "file": "frontend/public/learning/java/gc-reachability.svg",
+      "sourceSha256": "ed28d0cce351cb94f2e17c04dd23246dbe76aae8d56746ac94992dde4f0934b7",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "basis": "1100x500 strongroot→cache→User→Address와pointedremovedroute/회수후보. 점선삭제전후범례선택보강. 전체SVG의title/desc/styles/rect/text/path·좌표를직접읽음. actualReader/mobile/theme QA 미수행."
+    },
+    {
+      "file": "frontend/public/learning/java/java-memory-retained-path.svg",
+      "sourceSha256": "68df4a4ee84bb001fe79b0c5ef2b46c6f83ac378429ead6b64a38e7f0fa41b92",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "basis": "1120x520 장수owner→끝난Session→Payload와cleanup/lifecycle책임. cut은별도policy주석이며정확한삭제전후경로도선택보강가능. 전체SVG의title/desc/styles/rect/text/path·좌표를직접읽음. actualReader/mobile/theme QA 미수행."
+    },
+    {
+      "file": "frontend/public/learning/java/jvm-process-memory.svg",
+      "sourceSha256": "50d22753217bf0ad9b74dae48ea258551682c9861e6cfe728f27e8435f849565",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "basis": "1180x650 process내heap/Xmx·metadata/threads/direct/codecache/NMT 경계정확;다른박스면적은실측비율아님. 전체SVG의title/desc/styles/rect/text/path·좌표를직접읽음. actualReader/mobile/theme QA 미수행."
+    }
+  ],
+  "supplementalSources": [
+    [
+      "https://docs.oracle.com/en/java/javase/25/vm/java-hotspot-virtual-machine-performance-enhancements.html",
+      "CURRENT_VERIFIED",
+      "tiered profiling/segmentedcodecache/escapeanalysis scalarallocation제거와stack할당변경아님을대조."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/gctuning/available-collectors.html",
+      "CURRENT_VERIFIED",
+      "collector선택시작점/G1mostlyconcurrent·ZGC목표·workload의존을대조."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/gctuning/other-considerations.html",
+      "CURRENT_VERIFIED",
+      "classmetadata native/loaderchunks/unload·Metaspace 옵션을대조."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/gctuning/garbage-first-g1-garbage-collector1.html",
+      "CURRENT_VERIFIED",
+      "G1regions/young-old·pause/concurrentcycle 및old generation용어를대조."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/ref/SoftReference.html",
+      "CURRENT_VERIFIED",
+      "OOM전 clearing/no시각·순서보장 및강한referent 잔존을대조."
+    ],
+    [
+      "https://docs.oracle.com/javase/specs/jls/se25/html/jls-12.html#jls-12.7",
+      "CURRENT_VERIFIED",
+      "classunload ifandonlyif definingloader reclaimable·bootstrapunload불가와최적화선택을대조."
+    ],
+    [
+      "https://docs.oracle.com/javase/specs/jls/se25/html/jls-4.html#jls-4.3.1",
+      "CURRENT_VERIFIED",
+      "referencevalue vsclassinstance/arrayobject를q4D모호성에대조."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/ByteBuffer.html",
+      "CURRENT_VERIFIED",
+      "direct contents may outsideGCheap·wrapper/reference/backing 경계를대조."
+    ],
+    [
+      "https://raw.githubusercontent.com/openjdk/jdk/jdk-25-ga/src/hotspot/share/runtime/deoptimization.hpp",
+      "CURRENT_VERIFIED",
+      "JDK25고정tag DeoptReason speculateclass/unstableif·DeoptAction reinterpret/invalidate/recompile 및frame복원comment를구현가능성에대조;전체코드구현/실행검증아님."
+    ],
+    [
+      "https://raw.githubusercontent.com/openjdk/jmh/master/jmh-samples/src/main/java/org/openjdk/jmh/samples/JMHSample_12_Forking.java",
+      "CURRENT_VERIFIED",
+      "공식JMH sample profile오염과별도JVMfork/비fork비교를직접읽음. 실행미수행."
+    ],
+    [
+      "https://raw.githubusercontent.com/openjdk/jmh/master/jmh-samples/src/main/java/org/openjdk/jmh/samples/JMHSample_08_DeadCode.java",
+      "CURRENT_VERIFIED",
+      "공식sample unused computation DCE/returnresult implicitconsumption 실제comments/code 읽음;벤치마크실행아님."
+    ]
+  ],
+  "reviewLimits": "전체12C75Q 직접읽기/hash/수기근거완료와품질무결점은별개. D2 5Reference관계본문미확정. glossary직접URL에러는규범근거로사용안하고JDK25source한정검증. Readerrender/모든snippet·collector/JIT timing benchmark실행미수행. 기존streams미확정3Q변경없음."
+}

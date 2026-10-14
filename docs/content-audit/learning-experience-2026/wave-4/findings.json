@@ -638,6 +638,136 @@
     "sourceFileSha256": "626acb573edf0abbaf08ee4b8078eb28d37fb30096bb34e1cb46a2486b578ce2"
   },
   {
+    "id": "W4-JJVM-001",
+    "severity": "P2",
+    "contentKeys": [
+      "java.core.jvm-runtime.gc-reachability-roots.q4",
+      "java.core.jvm-runtime.gc-reachability-roots.q5",
+      "java.core.jvm-runtime.java-memory-leaks.q6"
+    ],
+    "file": "content/java/jvm-runtime/questions.json",
+    "quote": "도달 불가능한과 immediately reclaimed의 차이는?",
+    "problem": "gc-roots.q4의 도달 불가능한과/도달 불가능한하면 표현은 번역된 형용사를 명사처럼 잘못 써 정의를 읽기 어렵게 한다. q5A의 런타임 진행성은 참조 liveness(생존성)와 실행 progress를 혼동한다. leaks.q6 old 생성은 old generation(세대) 오기다. 정답D/A/B와학습목표는유지 가능.",
+    "action": "q4를 도달 불가 상태와 실제 회수로 자연스럽게 정리; q5A를 참조 생존성/JIT 최적화에 따른 가능성으로, leaks.q6를 old 세대 사용량으로 문항 표현만교정.",
+    "officialEvidence": [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/ref/package-summary.html",
+      "https://docs.oracle.com/en/java/javase/25/gctuning/garbage-first-g1-garbage-collector1.html"
+    ],
+    "followupIssues": [
+      201
+    ],
+    "additionalEvidence": [
+      {
+        "file": "content/java/jvm-runtime/questions.json",
+        "quote": "런타임 진행성에 따라 이후 reachability를 일찍 끊어 회수 후보가 될 수 있다",
+        "sourceLine": 1263,
+        "sourceFileSha256": "b171ecf6374729a83cd9f71d5ef74df3b539a198ad6c592abaad216eb6a33aed"
+      },
+      {
+        "file": "content/java/jvm-runtime/questions.json",
+        "quote": "GC log상 도달 불가능한 객체는 잘 회수되지만 old 생성이 계속 커진다. 가능한 진단은?",
+        "sourceLine": 1916,
+        "sourceFileSha256": "b171ecf6374729a83cd9f71d5ef74df3b539a198ad6c592abaad216eb6a33aed"
+      }
+    ],
+    "sourceLine": 1214,
+    "sourceFileSha256": "b171ecf6374729a83cd9f71d5ef74df3b539a198ad6c592abaad216eb6a33aed"
+  },
+  {
+    "id": "W4-JJVM-002",
+    "severity": "P1",
+    "contentKeys": [
+      "java.core.jvm-runtime.heap-metaspace-native-thread-memory.q4"
+    ],
+    "file": "content/java/jvm-runtime/questions.json",
+    "quote": "참조가 힙 객체일 수 있다는 것",
+    "problem": "확정할 수 없는 것을 하나 고르는 문항의 D는 reference value 자체가 heap object일 수 있다고 기술한다. Java reference value와 그 대상인 ByteBuffer wrapper는 다른 개념이다. D를 문자 그대로 읽으면 의도한 B 외에도 부정확하다고 판단할 수 있고, wrapper로 읽을 때만 B가유일해진다. 정답 B를 임의로 D로 바꾸지 않는다.",
+    "action": "prompt와D를 참조 대상인 Java 래퍼 객체/참조값/실제 backing bytes로명확히분리하고 D는 래퍼 객체의논리적 heap 모델로 표현. B는 backing 전부heap보장없음으로유지.",
+    "officialEvidence": [
+      "https://docs.oracle.com/javase/specs/jls/se25/html/jls-4.html#jls-4.3.1",
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/ByteBuffer.html"
+    ],
+    "followupIssues": [
+      201
+    ],
+    "additionalEvidence": [
+      {
+        "file": "content/java/jvm-runtime/questions.json",
+        "quote": "direct ByteBuffer의 Java 참조가 힙에 있다는 사실로 확정할 수 없는 것은?",
+        "sourceLine": 2072,
+        "sourceFileSha256": "b171ecf6374729a83cd9f71d5ef74df3b539a198ad6c592abaad216eb6a33aed"
+      }
+    ],
+    "sourceLine": 2100,
+    "sourceFileSha256": "b171ecf6374729a83cd9f71d5ef74df3b539a198ad6c592abaad216eb6a33aed"
+  },
+  {
+    "id": "W4-JJVM-003",
+    "severity": "P2",
+    "contentKeys": [
+      "java.core.jvm-runtime.gc-fundamentals-collectors"
+    ],
+    "file": "content/java/jvm-runtime/gc-fundamentals-collectors.md",
+    "quote": "JVMS는 힙에 자동 메모리 관리 시스템(automatic storage management system)이 존재할 수 있음을 정의하고",
+    "problem": "JVMS2.5.3은 heap storage가 automatic storage management system에 의해 회수되며 명시 deallocation을 하지 않는 모델을 정의한다. 선택에 맡기는 것은 system의 존재 자체라기보다 type/technique다. 첫문장은 존재도선택인듯규범을약화한다. 이후구현선택/GC핵심설명은정확.",
+    "action": "자동관리시스템을정의하되 특정 기법/수집기는구현에맡긴다로 첫문장만정밀화. 모든객체즉시회수/특정수집기강제를추가하지않음.",
+    "officialEvidence": [
+      "https://docs.oracle.com/javase/specs/jvms/se25/html/jvms-2.html#jvms-2.5.3"
+    ],
+    "followupIssues": [
+      201
+    ],
+    "sourceLine": 33,
+    "sourceFileSha256": "3ad1c359ac4a315852156829ded4bd4aa507ea52188c1acb4b10bd70fbc4b5cf"
+  },
+  {
+    "id": "W4-JJVM-004",
+    "severity": "P2",
+    "contentKeys": [
+      "java.core.jvm-runtime.jit-hotspot-warmup"
+    ],
+    "file": "content/java/jvm-runtime/jit-hotspot-warmup.md",
+    "quote": "새로운 포인트 적립 시스템 개발기",
+    "problem": "Woowa2588 현재 실제 제목은 신규 포인트 시스템 전환기 #2 – 오픈 준비 단계로 series/편이다르다. 7-1에 실제warmup/측정사례가있어학습목적은맞으며제목metadata만정밀화. 역사적첫테스트버림은해당workload사례로한정하고보편2회warmup규칙으로확대안함.",
+    "action": "Reference title을실제현재제목으로맞추고 relationNote에7-1warmup/workload사례위치를안내. 공식HotSpot근거와현재본문은유지.",
+    "officialEvidence": [
+      "https://techblog.woowahan.com/2588/"
+    ],
+    "followupIssues": [
+      201,
+      222
+    ],
+    "sourceLine": 25,
+    "sourceFileSha256": "df122458c042befa506c4438593fd836f125bb63f0d1aa901c5723fa96d9a61c"
+  },
+  {
+    "id": "W4-JJVM-005",
+    "severity": "P2",
+    "contentKeys": [
+      "java.core.jvm-runtime.jvm-runtime-data-areas-frames"
+    ],
+    "file": "frontend/public/learning/java/jvm-runtime-data-areas.svg",
+    "quote": "M358 235H690",
+    "problem": "ThreadA→Heap references path가 y235/x358..690으로 지나가며 ThreadB의 현재frame rect x420..614/y190..253 내부를가로지른다. A의독립frame에서공유heap으로이어질선을B의frame영역과분리하지않아계층/참조경계가혼동될수있다. source좌표와path의명백한교차를근거로하며실제Reader렌더결함범위는미검증.",
+    "action": "ThreadA reference를ThreadB stack밖 별도상단/하단lane으로라우팅하고각thread→heap edge를출발frame에연결. 추상영역/본문은재작성하지않음.",
+    "officialEvidence": [
+      "https://docs.oracle.com/javase/specs/jvms/se25/html/jvms-2.html#jvms-2.6"
+    ],
+    "followupIssues": [
+      201
+    ],
+    "additionalEvidence": [
+      {
+        "file": "frontend/public/learning/java/jvm-runtime-data-areas.svg",
+        "quote": "x=\"420\" y=\"190\" width=\"194\" height=\"63\"",
+        "sourceLine": 21,
+        "sourceFileSha256": "bb8f76c564c2119547cef024e468e5059ff13bb7f3cd4d14ed1c2189903e843d"
+      }
+    ],
+    "sourceLine": 31,
+    "sourceFileSha256": "bb8f76c564c2119547cef024e468e5059ff13bb7f3cd4d14ed1c2189903e843d"
+  },
+  {
     "id": "W4-JA-001",
     "severity": "P0",
     "contentKeys": [

@@ -153,6 +153,12 @@
     "visualReview": {
       "status": "NEEDS_REVIEW"
     },
+    "sourceSemanticReview": {
+      "file": "frontend/public/learning/java/class-loading-lifecycle.svg",
+      "sourceSha256": "7812488b67ff2c73d9ae438da3c497412df4d683cedfcb3529cb970b23af2c96",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "basis": "1100x360 phaseboxes/lazyresolution경고. 전체SVG의title/desc/styles/rect/text/path·좌표를직접읽음. actualReader/mobile/theme QA 미수행."
+    },
     "viewBox": "0 0 1100 360",
     "labels": [
       "Class lifecycle",
@@ -191,6 +197,12 @@
     },
     "visualReview": {
       "status": "NEEDS_REVIEW"
+    },
+    "sourceSemanticReview": {
+      "file": "frontend/public/learning/java/classloader-type-identity.svg",
+      "sourceSha256": "d8cefd7b0198311ac75cd5f6f8d811c2211dc274e05a3ec162facfcac00a7d2e",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "basis": "1120x560 parent공통API/twoPlugin 정의 및name+definer/castX 경계. 전체SVG의title/desc/styles/rect/text/path·좌표를직접읽음. actualReader/mobile/theme QA 미수행."
     },
     "viewBox": "0 0 1120 560",
     "labels": [
@@ -365,6 +377,12 @@
     },
     "visualReview": {
       "status": "NEEDS_REVIEW"
+    },
+    "sourceSemanticReview": {
+      "file": "frontend/public/learning/java/gc-reachability.svg",
+      "sourceSha256": "ed28d0cce351cb94f2e17c04dd23246dbe76aae8d56746ac94992dde4f0934b7",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "basis": "1100x500 strongroot→cache→User→Address와pointedremovedroute/회수후보. 점선삭제전후범례선택보강. 전체SVG의title/desc/styles/rect/text/path·좌표를직접읽음. actualReader/mobile/theme QA 미수행."
     },
     "viewBox": "0 0 1100 500",
     "labels": [
@@ -565,6 +583,12 @@
     "visualReview": {
       "status": "NEEDS_REVIEW"
     },
+    "sourceSemanticReview": {
+      "file": "frontend/public/learning/java/java-execution-boundary.svg",
+      "sourceSha256": "02b4dc15c8ae062e850e61b027ed6443f2795ccbc73010af823b2dda50a21f00",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "basis": "760x230 source→javac→class→VM와native별도caption. 전체SVG의title/desc/styles/rect/text/path·좌표를직접읽음. actualReader/mobile/theme QA 미수행."
+    },
     "viewBox": "0 0 760 230",
     "labels": [
       "Source · Compiler · Class File · JVM은 서로 다른 책임이다",
@@ -594,6 +618,12 @@
     },
     "visualReview": {
       "status": "NEEDS_REVIEW"
+    },
+    "sourceSemanticReview": {
+      "file": "frontend/public/learning/java/java-memory-retained-path.svg",
+      "sourceSha256": "68df4a4ee84bb001fe79b0c5ef2b46c6f83ac378429ead6b64a38e7f0fa41b92",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "basis": "1120x520 장수owner→끝난Session→Payload와cleanup/lifecycle책임. cut은별도policy주석이며정확한삭제전후경로도선택보강가능. 전체SVG의title/desc/styles/rect/text/path·좌표를직접읽음. actualReader/mobile/theme QA 미수행."
     },
     "viewBox": "0 0 1120 520",
     "labels": [
@@ -630,6 +660,12 @@
     },
     "visualReview": {
       "status": "NEEDS_REVIEW"
+    },
+    "sourceSemanticReview": {
+      "file": "frontend/public/learning/java/jvm-process-memory.svg",
+      "sourceSha256": "50d22753217bf0ad9b74dae48ea258551682c9861e6cfe728f27e8435f849565",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "basis": "1180x650 process내heap/Xmx·metadata/threads/direct/codecache/NMT 경계정확;다른박스면적은실측비율아님. 전체SVG의title/desc/styles/rect/text/path·좌표를직접읽음. actualReader/mobile/theme QA 미수행."
     },
     "viewBox": "0 0 1180 650",
     "labels": [
@@ -679,6 +715,12 @@
     },
     "visualReview": {
       "status": "NEEDS_REVIEW"
+    },
+    "sourceSemanticReview": {
+      "file": "frontend/public/learning/java/jvm-runtime-data-areas.svg",
+      "sourceSha256": "bb8f76c564c2119547cef024e468e5059ff13bb7f3cd4d14ed1c2189903e843d",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "basis": "1100x560 thread별frames/sharedheap·methodarea 및추상 vsphysicalcaption. A→Heap edge의 Bframe 침범은W4-JJVM-005. 전체SVG의title/desc/styles/rect/text/path·좌표를직접읽음. actualReader/mobile/theme QA 미수행."
     },
     "viewBox": "0 0 1100 560",
     "labels": [

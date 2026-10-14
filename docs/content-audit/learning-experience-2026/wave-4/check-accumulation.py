@@ -9,6 +9,8 @@ import sys
 import subprocess
 import unittest
 
+import yaml
+
 sys.dont_write_bytecode = True
 BASE = Path(__file__).resolve().parent.parent
 ROOT = BASE.parents[2]
@@ -49,6 +51,37 @@ class AccumulationChecks(unittest.TestCase):
             for item in first[field]:
                 self.assertIn(item, area[field])
         self.assertEqual(sum(len(entries) for entries in sources.values()), len(self.relations["references"]))
+
+    def test_complete_java_coverage_and_previous_checkpoint_preserved(self):
+        catalog = json.loads((ROOT / "content/java/topics.json").read_text(encoding="utf-8"))
+        self.assertEqual(len(catalog), 18)
+        self.assertEqual({part["topicKey"] for part in self.parts.values()},
+                         {topic["contentKey"] for topic in catalog})
+        concept_keys, question_keys = set(), set()
+        for topic in catalog:
+            directory = ROOT / "content/java" / topic["slug"]
+            concept_keys.update(yaml.safe_load(path.read_text(encoding="utf-8").split("---", 2)[1])["contentKey"]
+                                for path in directory.glob("*.md"))
+            question_keys.update(row["contentKey"] for row in json.loads(
+                (directory / "questions.json").read_text(encoding="utf-8")))
+        self.assertEqual((len(concept_keys), len(question_keys)), (145, 841))
+        reviews, _, _, errors = self.load()
+        self.assertEqual(errors, [])
+        self.assertEqual(set(reviews), concept_keys | question_keys)
+
+        previous_head = "5f31d79dd61df6325de89577e51cac1ad568d636"
+        for name in self.parts:
+            if name == "java--jvm-runtime":
+                continue
+            path = BASE / "wave-4/topics" / (name + ".json")
+            previous_bytes = subprocess.check_output([
+                "git", "show", previous_head + ":" + path.relative_to(ROOT).as_posix()], cwd=ROOT)
+            self.assertEqual(path.read_bytes().replace(b"\r\n", b"\n"), previous_bytes)
+        path = BASE / "wave-4/reference-relations.json"
+        previous = json.loads(subprocess.check_output([
+            "git", "show", previous_head + ":" + path.relative_to(ROOT).as_posix()], cwd=ROOT))
+        for row in previous["references"]:
+            self.assertIn(row, self.relations["references"])
 
     def test_shared_url_status_cannot_cross_topic(self):
         url = "https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html"

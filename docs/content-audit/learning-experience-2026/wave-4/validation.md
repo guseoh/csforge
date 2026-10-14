@@ -84,3 +84,9 @@
 ## concurrency checkpoint (2026-10-14)
 
 19C113Q/132hash·인용/38관계 및4SVG 전체 source/좌표를 직접 대조. 회귀18개/checkpoint/generate errors0 통과. --check/Python AST/diff와 기존 근거 보존을 최종 대조한다. Java17Topic133C766Q·전체709C2450Q. Reference 누적241관계 중230의미 검토/11미확정, streams 품질 미확정3Q 유지. 직전 metadata HEAD97f6216d7df955d169654a91b8607dcf2858b549의 [CI #1225](https://github.com/guseoh/csforge/actions/runs/38543076624)는 실제 검증 job SUCCESS/Deploy SKIPPED. 현재 CI는 push HEAD에서 확인한다.
+
+## jvm-runtime 및 Java 전체 최종 checkpoint (2026-10-14)
+
+12C75Q/87hash·인용·31관계·7SVG 전체 source/좌표를 직접 대조했다. checkpoint-topic.py PASS. canonical catalog의18Topic/145C/841Q key-set을 독립 비교하고 직전17Topic ledger/241Reference 관계 원본 보존을 회귀에 추가했다. check-accumulation.py 19개 PASS. audit.py generate와 --check errors/drift0, 변경 Python6개 AST PASS, git diff --check PASS. 기준선 대비 content/backend/frontend/.github 변경 경로0, 작업 시작점 대비 Wave1~3 변경0이다.
+
+Java18Topic145C841Q 및 전체15Area134Topic721C2525Q의 전수 읽기 근거가 완성됐다. Java C KEEP116/보강29, Q KEEP804/보강34/품질 미확정3을 분리한다. Reference272관계/210URL 중256관련 의미 검토/16미확정. 잔여13Topic 새 P0 2/P1 7/P2 24와 기존첫5Topic/계승LEX-002를 별도로 집계했다. Reader render/mobile/theme·모든snippet/GC/JIT timing 실행은 미수행이다. 직전 concurrency HEAD5f31d79dd61df6325de89577e51cac1ad568d636의 [CI #1226](https://github.com/guseoh/csforge/actions/runs/38571441198)는 실제 Backend tests/build·Frontend/Compose step SUCCESS, Deploy SKIPPED다. 최종 push HEAD의 CI는 PR에서 확인한다. 콘텐츠 교정·ChatGPT 최종 품질 검토·Issue200 최종 승인은 별도 단계다.

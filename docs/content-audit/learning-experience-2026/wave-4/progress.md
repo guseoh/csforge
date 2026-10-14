@@ -14,6 +14,7 @@
 | functional | 5 / 33 | 5 / 0 / 0 | 31 / 2 / 0 | 0 / 0 / 1 |
 | generics | 6 / 37 | 5 / 1 / 0 | 35 / 2 / 0 | 0 / 1 / 1 |
 | io-nio | 6 / 35 | 5 / 1 / 0 | 33 / 2 / 0 | 0 / 1 / 2 |
+| jvm-runtime | 12 / 75 | 9 / 3 / 0 | 71 / 4 / 0 | 0 / 1 / 4 |
 | language-types | 10 / 55 | 6 / 4 / 0 | 51 / 4 / 0 | 2 / 2 / 0 |
 | metadata-compatibility | 7 / 39 | 6 / 1 / 0 | 36 / 3 / 0 | 0 / 0 / 2 |
 | modern-language | 8 / 43 | 8 / 0 / 0 | 40 / 3 / 0 | 0 / 0 / 1 |
@@ -22,10 +23,10 @@
 | streams | 7 / 41 | 6 / 1 / 0 | 36 / 2 / 3 | 0 / 0 / 2 |
 | time-numeric | 7 / 42 | 7 / 0 / 0 | 41 / 1 / 0 | 0 / 0 / 1 |
 
-Java 17/18 Topic · 133/145C · 766/841Q. 전체 133/134 Topic · 709/721C · 2450/2525Q.
+Java 18/18 Topic · 145/145C · 841/841Q. 전체 134/134 Topic · 721/721C · 2525/2525Q.
 
-전체 근거 NEEDS_REVIEW: 11C/69Q; CURRENT_PARTIAL은 별도다.
+전체 근거 NEEDS_REVIEW: 0C/0Q; CURRENT_PARTIAL은 별도다.
 
-Wave4 Reference: 241관계 / 189URL, 의미 근거 {'CURRENT_VERIFIED': 230, 'NEEDS_REVIEW': 11}. confirmed source 오류는 reference-issues.json에 별도로 포함한다.
+Wave4 Reference: 272관계 / 210URL, 의미 근거 {'CURRENT_VERIFIED': 256, 'NEEDS_REVIEW': 16}. confirmed source 오류는 reference-issues.json에 별도로 포함한다.
 
 최신 수량은 summary.json, 실제 판정/근거는 topics/*.json 및 reference-relations.json, 후속 최소 수정 범위는 findings.md를 따른다.
