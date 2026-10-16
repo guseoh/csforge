@@ -16,6 +16,10 @@ import yaml
 ROOT = Path(__file__).resolve().parents[3]
 BASE = "2ab1ccbb29ca0bc07858c20f56ae3a4826018d4f"
 DOC_PREFIX = "docs/content-corrections/issue-222-java/"
+AUXILIARY_PATHS = {
+    "backend/src/test/java/com/guseoh/csforge/importcontent/JavaReferenceCorrectionIntegrationTest.java",
+    ".github/workflows/repository-validation.yml",  # temporary PR-only CI instrumentation
+}
 CHANGED_CONCEPTS = {
     "api-design/static-factory-method",
     "collections/hashmap-hashing-collision",
@@ -74,7 +78,7 @@ def main():
         ["git", "diff", "--name-only", BASE, "HEAD"], cwd=ROOT, text=True
     ).splitlines())
     assert changed & {p for p in changed if p.startswith("content/")} == EXPECTED_PATHS, changed
-    assert all(p in EXPECTED_PATHS or p.startswith(DOC_PREFIX) for p in changed), changed
+    assert all(p in EXPECTED_PATHS or p.startswith(DOC_PREFIX) or p in AUXILIARY_PATHS for p in changed), changed
     assert len(EXPECTED_PATHS) == 22
     deleted_relations, title_changes, note_changes = [], [], []
     concept_keys = set()
