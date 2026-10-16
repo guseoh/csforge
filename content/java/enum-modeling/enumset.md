@@ -20,7 +20,11 @@ references:
 
 여러 enum 값 중 일부를 묶어 표현해야 할 때 `Set<OrderStatus>`를 사용할 수 있습니다. 이때 원소가 하나의 enum 타입으로 제한된다는 사실이 분명하다면 `EnumSet`이라는 전용 구현을 사용할 수 있습니다.
 
+이 예제에서는 앞선 상태 모델에 완료 상태까지 포함한 다음 enum을 사용합니다.
+
 ```java
+enum OrderStatus { READY, PAID, COMPLETED, CANCELLED }
+
 EnumSet<OrderStatus> terminal = EnumSet.of(
         OrderStatus.COMPLETED,
         OrderStatus.CANCELLED

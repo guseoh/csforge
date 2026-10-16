@@ -1211,7 +1211,7 @@
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.gc-reachability-roots.q4",
-    "promptMarkdown": "도달 불가능한과 immediately reclaimed의 차이는?",
+    "promptMarkdown": "객체가 도달 불가능한 상태라는 것과 메모리가 즉시 회수된다는 것의 차이는?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
@@ -1221,31 +1221,31 @@
     "choices": [
       {
         "key": "A",
-        "content": "reclaimed는 소스 범위만을 뜻한다",
+        "content": "실제 회수 여부는 소스 코드의 변수 범위만으로 결정된다",
         "displayOrder": 0,
-        "rationaleMarkdown": "도달 불가능한 여부는 참조 객체 그래프로 판단하며 소스 변수가 범위를 벗어났다는 사실만으로 결정하지 않는다."
+        "rationaleMarkdown": "도달 가능성은 참조 그래프와 실행 중 참조의 생존성으로 판단한다. 소스 변수의 범위만으로 실제 회수 여부를 결정할 수 없다."
       },
       {
         "key": "B",
         "content": "둘은 항상 같은 시각이다",
         "displayOrder": 1,
-        "rationaleMarkdown": "도달 불가능한하면 수집기 규칙상 회수 가능하지만 그 순간 저장 공간이 반환된다는 뜻은 아니다."
+        "rationaleMarkdown": "도달 불가능해져 회수 대상이 되더라도 그 순간 저장 공간이 반환된다는 뜻은 아니다."
       },
       {
         "key": "C",
-        "content": "도달 불가능한은 반드시 살아 있는 상태다",
+        "content": "도달 불가능한 객체는 반드시 계속 살아 있어야 한다",
         "displayOrder": 2,
-        "rationaleMarkdown": "도달 불가능한 객체가 반드시 계속 살아 있다고 정의되지 않는다. 런타임이 수집할 때 회수할 수 있다."
+        "rationaleMarkdown": "도달 불가능한 객체를 계속 보관해야 할 의무는 없다. 다만 실제 회수 시점은 수집기/런타임이 정한다."
       },
       {
         "key": "D",
-        "content": "도달 불가능한은 회수 가능한 상태이고 실제 회수 시점은 수집기/런타임에 달려 있다",
+        "content": "도달 불가능한 객체는 회수 대상이지만 실제 회수 시점은 수집기/런타임에 달려 있다",
         "displayOrder": 3,
         "rationaleMarkdown": "도달 가능한 경로가 없어지면 객체는 회수 대상이 된다. 실제 메모리 회수 시점은 수집기 실행에 달려 있다."
       }
     ],
     "correctChoiceKey": "D",
-    "explanationMarkdown": "GC timing은 즉시 deallocation 계약이 아니다."
+    "explanationMarkdown": "도달 불가능한 상태와 실제 저장 공간 회수는 구분됩니다. 더 이상 도달할 수 없어도 GC가 그 순간 즉시 실행되거나 메모리를 바로 반환한다는 계약은 아닙니다."
   },
   {
     "kind": "question",
@@ -1260,9 +1260,9 @@
     "choices": [
       {
         "key": "A",
-        "content": "런타임 진행성에 따라 이후 reachability를 일찍 끊어 회수 후보가 될 수 있다",
+        "content": "다른 참조와 JIT의 참조 생존성 처리에 따라 더 일찍 회수 후보가 될 수 있지만, 효과나 회수 시점은 보장되지 않는다",
         "displayOrder": 0,
-        "rationaleMarkdown": "다른 강한 참조가 없고 더 이상 참조가 필요하지 않으면 해당 참조를 지워 도달 가능성을 낮출 수 있지만, 이것이 GC 실행을 강제하지는 않는다."
+        "rationaleMarkdown": "다른 강한 참조가 없을 때 null 대입이 참조 보유 기간을 줄일 수 있다. 다만 JIT가 마지막 사용 이후 참조를 이미 생존하지 않는 것으로 처리할 수 있어 명시적 null 대입의 추가 효과도 보장되지 않는다."
       },
       {
         "key": "B",
@@ -1913,7 +1913,7 @@
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.java-memory-leaks.q6",
-    "promptMarkdown": "GC log상 도달 불가능한 객체는 잘 회수되지만 old 생성이 계속 커진다. 가능한 진단은?",
+    "promptMarkdown": "GC log상 도달 불가능한 객체는 잘 회수되지만 old 세대 사용량이 계속 커진다. 가능한 진단은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
@@ -1925,7 +1925,7 @@
         "key": "A",
         "content": "모든 객체가 네이티브만 차지한다",
         "displayOrder": 0,
-        "rationaleMarkdown": "네이티브 메모리 증가도 가능하지만 도달 불가능한 객체가 회수된다는 사실만으로 도달 가능한 힙 실행 중인 집합 증가를 배제하지 못한다."
+        "rationaleMarkdown": "네이티브 메모리 증가도 가능하지만 도달 불가능한 객체가 회수된다는 사실만으로 도달 가능한 힙 객체 집합 증가를 배제하지 못한다."
       },
       {
         "key": "B",
@@ -2069,7 +2069,7 @@
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.heap-metaspace-native-thread-memory.q4",
-    "promptMarkdown": "direct ByteBuffer의 Java 참조가 힙에 있다는 사실로 확정할 수 없는 것은?",
+    "promptMarkdown": "direct ByteBuffer를 나타내는 Java 래퍼 객체와 그 참조값, 실제 데이터 저장 공간을 구분하려 한다. 래퍼가 논리적인 Java 힙 객체라는 사실만으로 결론낼 수 없는 설명은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
@@ -2081,7 +2081,7 @@
         "key": "A",
         "content": "버퍼 API가 존재한다는 것",
         "displayOrder": 0,
-        "rationaleMarkdown": "DirectByteBuffer는 Java 객체 참조지만 기반 저장 공간의 모든 바이트가 힙에 있다는 뜻은 아니다."
+        "rationaleMarkdown": "ByteBuffer 래퍼를 통해 Java 버퍼 API를 사용할 수 있다는 설명이다. 객체의 참조값 자체가 데이터 바이트라는 뜻은 아니다."
       },
       {
         "key": "B",
@@ -2097,13 +2097,13 @@
       },
       {
         "key": "D",
-        "content": "참조가 힙 객체일 수 있다는 것",
+        "content": "참조 대상인 Java 래퍼 객체와 실제 데이터 저장 공간은 구분된다는 것",
         "displayOrder": 3,
-        "rationaleMarkdown": "기반 데이터가 일반 힙 밖에 있어도 애플리케이션은 래퍼 Java 참조를 보유할 수 있다."
+        "rationaleMarkdown": "참조값은 객체를 가리키는 값이고, 그 대상인 래퍼 객체와 실제 backing bytes는 다른 개념이다. 이 문항은 논리적 객체 모델을 전제로 하며 HotSpot의 물리적 할당 최적화를 단정하지 않는다."
       }
     ],
     "correctChoiceKey": "B",
-    "explanationMarkdown": "래퍼/참조와 실제 기반 네이티브 메모리는 다른 관찰이다."
+    "explanationMarkdown": "참조값, 그 대상인 ByteBuffer 래퍼 객체, 데이터를 담는 기반 저장 공간은 구분해야 합니다. 래퍼가 논리적 힙 객체라는 사실은 기반 바이트까지 전부 Java 힙에 있다는 보장이 아닙니다. direct 버퍼는 힙 밖의 메모리를 사용할 수 있습니다. 따라서 확정할 수 없는 설명은 B 하나입니다."
   },
   {
     "kind": "question",

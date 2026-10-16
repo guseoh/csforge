@@ -67,13 +67,15 @@ void decrease(long amount) {
 
 ### 임시 결과에서 계산한 뒤 성공한 상태만 반영할 수 있다
 
-복잡한 변경은 기존 상태를 즉시 수정하기보다 임시 결과를 만든 뒤 유효성이 확인되면 반영하는 방식이 도움이 될 수 있습니다.
+복잡한 변경은 기존 상태를 즉시 수정하기보다 임시 결과를 만든 뒤 유효성이 확인되면 반영하는 방식이 도움이 될 수 있습니다. 다음은 `Item`이 불변 값이고 목록에 `null`이 없으며, `validateAndModify`가 목록의 원소 추가·제거·교체만 수행한다는 전제입니다.
 
 ```java
 List<Item> updated = new ArrayList<>(items);
 validateAndModify(updated);
 items = List.copyOf(updated);
 ```
+
+`new ArrayList<>(items)`는 목록 구조만 복사하며 `Item` 참조는 공유합니다. 가변 `Item`의 필드를 수정한 뒤 검증이 실패하면 `items` 재대입 전이라도 원본에서 그 변경이 보입니다. 그런 작업까지 실패 원자성을 보장하려면 수정할 원소의 독립 복사나 불변 값으로의 교체가 필요하며, 얕은 복사를 rollback으로 취급하면 안 됩니다.
 
 불변 값으로 다음 상태를 계산하는 방식도 같은 방향입니다.
 

@@ -1,20 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="760" height="250" viewBox="0 0 760 250" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="400" viewBox="0 0 480 400" role="img" aria-labelledby="title desc">
   <title id="title">ArrayList와 LinkedList의 저장 구조 비교</title>
-  <desc id="desc">ArrayList는 연속된 칸에서 index로 접근하고 LinkedList는 노드의 next 연결을 따라간다.</desc>
-  <rect width="760" height="250" rx="14" fill="#fbfafc"/>
-  <text x="34" y="42" font-family="sans-serif" font-size="18" font-weight="700" fill="#292132">ArrayList · 배열 기반</text>
-  <text x="34" y="72" font-family="sans-serif" font-size="14" fill="#665c70">index → 위치 계산</text>
-  <g stroke="#7a5ac7" stroke-width="2">
-    <rect x="34" y="96" width="116" height="52" fill="#eee8ff"/><rect x="150" y="96" width="116" height="52" fill="#eee8ff"/><rect x="266" y="96" width="116" height="52" fill="#eee8ff"/><rect x="382" y="96" width="116" height="52" fill="#eee8ff"/>
-  </g>
-  <g font-family="monospace" font-size="15" text-anchor="middle" fill="#39275d"><text x="92" y="128">[0] A</text><text x="208" y="128">[1] B</text><text x="324" y="128">[2] C</text><text x="440" y="128">[3] D</text></g>
-  <text x="34" y="185" font-family="sans-serif" font-size="14" fill="#665c70">중간 삽입 → 뒤 요소를 이동</text>
-  <text x="450" y="42" font-family="sans-serif" font-size="18" font-weight="700" fill="#292132">LinkedList · 노드 연결</text>
-  <text x="450" y="72" font-family="sans-serif" font-size="14" fill="#665c70">index → 노드를 따라 이동</text>
-  <g stroke="#7a5ac7" stroke-width="2" fill="#f4efff">
-    <rect x="450" y="96" width="92" height="52" rx="8"/><rect x="584" y="96" width="92" height="52" rx="8"/><rect x="718" y="96" width="8" height="52" rx="4"/>
-    <path d="M542 122h34m-7-6 7 6-7 6M676 122h34m-7-6 7 6-7 6" fill="none"/>
-  </g>
-  <g font-family="monospace" font-size="15" text-anchor="middle" fill="#39275d"><text x="496" y="126">A | next</text><text x="630" y="126">B | next</text></g>
-  <text x="450" y="185" font-family="sans-serif" font-size="14" fill="#665c70">위치를 찾은 뒤 연결만 변경</text>
+  <desc id="desc">위의 ArrayList는 배열의 인덱스로 접근하고 아래의 LinkedList는 노드 연결을 따라간다. 두 저장 구조는 겹치지 않는 별도 행이다.</desc>
+  <rect width="480" height="400" rx="14" fill="#fbfafc"/>
+  <g font-family="sans-serif" fill="#292132"><text x="28" y="38" font-size="23" font-weight="700">ArrayList · 배열 기반</text><text x="28" y="70" font-size="18">index → 위치 계산</text><text x="28" y="225" font-size="23" font-weight="700">LinkedList · 노드 연결</text><text x="28" y="257" font-size="18">index → 노드를 따라 이동</text></g>
+  <g stroke="#7a5ac7" stroke-width="2" fill="#eee8ff"><rect x="28" y="90" width="100" height="58"/><rect x="128" y="90" width="100" height="58"/><rect x="228" y="90" width="100" height="58"/><rect x="328" y="90" width="100" height="58"/></g>
+  <g font-family="monospace" font-size="20" text-anchor="middle" fill="#39275d"><text x="78" y="126">[0] A</text><text x="178" y="126">[1] B</text><text x="278" y="126">[2] C</text><text x="378" y="126">[3] D</text></g>
+  <g stroke="#7a5ac7" stroke-width="2" fill="#f4efff"><rect x="28" y="278" width="138" height="58" rx="8"/><rect x="218" y="278" width="138" height="58" rx="8"/><rect x="408" y="278" width="12" height="58" rx="4"/><path d="M166 307h42m-8-7 8 7-8 7M356 307h42m-8-7 8 7-8 7" fill="none"/></g>
+  <g font-family="monospace" font-size="20" text-anchor="middle" fill="#39275d"><text x="97" y="314">A | next</text><text x="287" y="314">B | next</text></g>
+  <g font-family="sans-serif" font-size="18" fill="#51445e"><text x="28" y="180">중간 삽입 → 뒤 요소를 이동</text><text x="28" y="374">위치를 찾은 뒤 연결만 변경</text></g>
 </svg>

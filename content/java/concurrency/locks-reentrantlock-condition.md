@@ -89,7 +89,7 @@ if (lock.tryLock(500, TimeUnit.MILLISECONDS)) {
 
 ### Condition은 하나의 Lock 안에서 "어떤 상태가 될 때까지 기다린다"를 표현한다
 
-생산자·소비자 대기열을 직접 만든다고 가정하겠습니다. 소비자는 대기열이 빌 때까지 기다려야 합니다.
+생산자·소비자 대기열을 직접 만든다고 가정하겠습니다. 소비자는 대기열이 비어 있는 동안 기다리고, 원소가 생겨 비어 있지 않게 되면 가져올 수 있습니다.
 
 ```java
 final Lock lock = new ReentrantLock();
