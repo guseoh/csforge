@@ -228,19 +228,19 @@
   {
     "kind": "question",
     "contentKey": "java.core.language-types.numeric-conversion-overflow.q1",
-    "promptMarkdown": "다음 중 별도 형변환 없이 허용되는 원시 타입 변환은?",
+    "promptMarkdown": "상수 변수가 아닌 변수의 값을 일반 대입한다고 할 때 별도 형변환 없이 허용되는 원시 타입 변환은?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
     "conceptKeys": ["java.core.language-types.numeric-conversion-overflow"],
     "choices": [
-      {"key": "A", "content": "`int`를 `byte`로 대입", "displayOrder": 0, "rationaleMarkdown": "`int`에서 `byte`로는 더 작은 범위로 줄어드는 축소 변환이므로 대입에 명시적 형변환이 필요하다."},
+      {"key": "A", "content": "`int`를 `byte`로 대입", "displayOrder": 0, "rationaleMarkdown": "일반 int 변수의 값을 byte에 대입하려면 명시적 축소 변환이 필요하다. 다만 byte 범위 안의 int 상수 식은 대입 문맥에서 형변환 없이 허용되는 별도 예외가 있다."},
       {"key": "B", "content": "`int`를 `long`으로 대입", "displayOrder": 1, "rationaleMarkdown": "`int`에서 `long`으로는 표현 범위가 넓어지므로 명시적 형변환 없이 확장 변환할 수 있다."},
       {"key": "C", "content": "`long`을 `int`로 대입", "displayOrder": 2, "rationaleMarkdown": "`long`에서 `int`로는 축소 변환이므로 상위 비트 정보가 버려질 수 있어 명시적 형변환이 필요하다."},
       {"key": "D", "content": "`double`을 `float`로 대입", "displayOrder": 3, "rationaleMarkdown": "`double`에서 `float`으로의 변환은 정밀도와 범위를 줄이는 변환이므로 확장 변환이 아니다."}
     ],
     "correctChoiceKey": "B",
-    "explanationMarkdown": "`int`에서 `long`으로의 **확장 원시 타입 변환(widening primitive conversion)**은 별도 형변환 없이 허용됩니다. 반대 방향처럼 표현 범위가 좁아지는 변환에는 값 손실 가능성이 있으므로 명시적 축소 변환(narrowing conversion)이 필요합니다."
+    "explanationMarkdown": "상수 변수가 아닌 변수의 일반 대입에서는 int→long 확장 변환만 보기 중 형변환 없이 허용됩니다. int→byte, long→int, double→float은 축소 변환입니다. 단, byte 범위 안의 int 상수 식은 대입 문맥에서 예외적으로 허용됩니다. final 변수도 원시 타입 또는 String이고 상수 식으로 초기화되어야 상수 변수가 됩니다."
   },
   {
     "kind": "question",
@@ -288,10 +288,10 @@
       {"key": "A", "content": "`a + b`에는 이항 숫자 승격(binary numeric promotion)이 적용되어 결과 타입이 `int`가 되므로, `byte` 대입에는 축소 변환이 필요하다", "displayOrder": 0, "rationaleMarkdown": "`byte` 피연산자끼리 더해도 이항 숫자 승격(binary numeric promotion)에 따라 결과 타입은 `int`가 됩니다. `byte` 변수에 대입하려면 축소 변환이 필요합니다."},
       {"key": "B", "content": "`byte` 두 개의 덧셈은 항상 `byte` 값 3으로 남는다", "displayOrder": 1, "rationaleMarkdown": "피연산자가 모두 `byte`여도 산술식 결과는 `byte`로 남지 않고 `int`로 승격된다."},
       {"key": "C", "content": "`byte` 덧셈은 항상 `long`으로 승격된다", "displayOrder": 2, "rationaleMarkdown": "이항 숫자 승격은 `byte`를 `int`로 승격한다. `long`으로 바로 승격하지 않는다."},
-      {"key": "D", "content": "`a`와 `b`가 `final`이 아니기 때문에만 오류가 난다", "displayOrder": 3, "rationaleMarkdown": "`a`와 `b`가 `final`인지 여부가 원인이 아니다. 덧셈에서 적용되는 승격 규칙 때문이다."}
+      {"key": "D", "content": "final만 붙이면 초기화 식이나 값의 범위와 관계없이 byte 대입이 항상 허용된다", "displayOrder": 3, "rationaleMarkdown": "final이라는 사실만으로 충분하지 않다. 이 코드의 a와 b를 final byte로 선언하면 상수 식 1, 2로 초기화한 상수 변수가 되고, a+b도 int 상수 식이며 값 3이 byte 범위 안이라 대입이 허용된다. 실행 중 얻은 값으로 초기화한 final 변수에는 이 예외를 적용할 수 없다."}
     ],
     "correctChoiceKey": "A",
-    "explanationMarkdown": "변수 `a`와 `b`의 덧셈에는 **이항 숫자 승격(binary numeric promotion)**이 적용되어 연산 타입이 `int`가 된다. 따라서 그 결과를 `byte` 변수에 다시 넣으려면 값 범위를 책임지는 명시적 축소 변환이 필요하다."
+    "explanationMarkdown": "현재 a와 b는 상수 변수가 아니므로 a+b는 int 타입의 비상수 식입니다. 따라서 byte 대입에는 명시적 축소 변환이 필요합니다. 반면 final byte a=1, b=2로 선언하면 이항 승격으로 결과 타입은 여전히 int이지만, 식 전체가 상수이고 값 3이 byte 범위 안이라 대입이 허용됩니다. 승격 규칙과 상수 식의 대입 예외를 구분해야 합니다."
   },
   {
     "kind": "question",
@@ -381,7 +381,7 @@
   {
     "kind": "question",
     "contentKey": "java.core.language-types.boxing-unboxing-wrapper.q6",
-    "promptMarkdown": "다음 반복문에서 먼저 확인해야 할 실행 위험은 무엇인가요?\n\n```java\nfor (Integer n : values) {\n    total += n;\n}\n```",
+    "promptMarkdown": "다음 반복문에서 먼저 확인해야 할 실행 위험은 무엇인가요?\n\n```java\njava.util.List<Integer> values = java.util.Arrays.asList(1, null, 2);\nint total = 0;\nfor (Integer n : values) {\n    total += n;\n}\n```",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
@@ -829,13 +829,13 @@
     "status": "PUBLISHED",
     "conceptKeys": ["java.core.language-types.string-pool-interning"],
     "choices": [
-      {"key": "A", "content": "`a == \"java\"`와 `b == \"java\"`가 모두 true다", "displayOrder": 0, "rationaleMarkdown": "`part`가 변수이면 결합은 실행 시점에 평가된다. 같은 문자 결과여도 리터럴과 객체 동일성이 같다고 보장되지 않는다."},
-      {"key": "B", "content": "`a == \"java\"`는 false이고 `b == \"java\"`는 true다", "displayOrder": 1, "rationaleMarkdown": "첫 식은 컴파일 시점 상수 문자열 결합이므로 intern된 리터럴과 객체 동일성이 같지만 변수 포함 결합은 그 동일성이 보장되지 않는다."},
-      {"key": "C", "content": "`a == \"java\"`는 true이고 `b == \"java\"`는 false다", "displayOrder": 2, "rationaleMarkdown": "두 리터럴 상수의 결합은 컴파일 시점 상수 식이므로 intern된 리터럴과 같은 참조값을 사용한다. 변수를 포함한 결합은 실행 시점에 이루어져 같은 참조값을 사용하지 않는다."},
+      {"key": "A", "content": "`a == \"java\"`와 `b == \"java\"`가 모두 true다", "displayOrder": 0, "rationaleMarkdown": "이 코드의 part는 상수 변수가 아니다. 비상수 문자열 연결은 새 String을 만들므로 b는 리터럴과 다른 참조다."},
+      {"key": "B", "content": "`a == \"java\"`는 false이고 `b == \"java\"`는 true다", "displayOrder": 1, "rationaleMarkdown": "a는 intern된 상수 문자열 참조라 true이고, b는 비상수 연결로 만든 새 객체라 false다. 제시된 두 결과가 반대다."},
+      {"key": "C", "content": "`a == \"java\"`는 true이고 `b == \"java\"`는 false다", "displayOrder": 2, "rationaleMarkdown": "a는 문자열 상수 식의 intern된 참조이며 b는 비상수 연결로 만든 새 String 객체다. 따라서 true, false다."},
       {"key": "D", "content": "두 비교는 모두 컴파일 오류다", "displayOrder": 3, "rationaleMarkdown": "두 식과 참조 비교는 모두 Java 문법상 유효하며, 두 참조의 동일성 비교 결과는 서로 다를 수 있습니다."}
     ],
     "correctChoiceKey": "C",
-    "explanationMarkdown": "`\"ja\" + \"va\"`는 컴파일 시점 상수 식이므로 컴파일할 때 `\"java\"` 리터럴로 결합되어 문자열 풀에 들어간 참조를 사용합니다. 따라서 `a == \"java\"`는 `true`입니다. `part`는 변수이므로 `part + \"va\"`는 실행 시점에 결합되며 같은 문자열 풀 참조를 사용한다고 보장되지 않아 `b == \"java\"`는 `false`입니다. 이 차이는 참조 동일성을 설명하는 예시일 뿐, 문자열 내용을 비교할 때 `==`를 쓰라는 규칙은 아닙니다."
+    "explanationMarkdown": "\"ja\" + \"va\"는 문자열 상수 식이므로 intern된 \"java\" 리터럴과 같은 참조를 사용합니다. 반면 이 코드의 part는 상수 변수가 아니어서 part + \"va\"는 비상수 문자열 연결입니다. JLS는 이 경우 새 String 객체를 만들도록 규정하므로 b == \"java\"는 false입니다. final String part = \"ja\"로 선언하면 상수 변수가 되어 연결도 상수 식이지만, 메서드 호출로 초기화한 final 변수까지 상수인 것은 아닙니다. 실제 내용 비교에는 equals를 사용합니다."
   },
   {
     "kind": "question",

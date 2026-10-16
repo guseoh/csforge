@@ -46,7 +46,7 @@ System.out.println(name); // kim
 `toUpperCase()`가 기존 `String` 객체를 `"KIM"`으로 바꾼 것이 아닙니다. 결과 문자열이 필요하면 반환값을 받아야 합니다.
 
 ```java
-name = name.toUpperCase();
+name = name.toUpperCase(java.util.Locale.ROOT);
 System.out.println(name); // KIM
 ```
 

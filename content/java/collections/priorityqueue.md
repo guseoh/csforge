@@ -78,7 +78,7 @@ PriorityQueue<Job> jobs = new PriorityQueue<>(
 
 ```java
 Job job = new Job(5);
-queue.offer(job);
+jobs.offer(job);
 job.changePriority(1);
 ```
 

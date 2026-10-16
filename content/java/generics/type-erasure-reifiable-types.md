@@ -101,11 +101,17 @@ System.out.println(value instanceof List<?>); // 가능
 
 ```java
 static <T> T[] newArray(Class<T> type, int length) {
+    java.util.Objects.requireNonNull(type);
+    if (type.isPrimitive()) {
+        throw new IllegalArgumentException("참조 타입의 Class 토큰만 지원합니다");
+    }
     @SuppressWarnings("unchecked")
     T[] result = (T[]) Array.newInstance(type, length);
     return result;
 }
 ```
+
+이 helper는 `String.class` 같은 참조 타입 토큰만 지원합니다. `int.class`도 `Class<Integer>`로 전달할 수 있지만 `Array.newInstance(int.class, n)`은 `Integer[]`가 아닌 `int[]`를 만들기 때문에, 위의 `T[]` 캐스트를 안전하게 적용할 수 없습니다. `isPrimitive()`로 `void.class`를 포함한 원시 타입 토큰을 먼저 거절합니다. `Integer[]`가 필요하면 `Integer.class`를 전달해야 합니다.
 
 이 경우 reflection이 타입 소거를 되돌린 것이 아닙니다. **호출자가 런타임에 필요한 타입 정보를 별도 값으로 제공한 것**입니다.
 

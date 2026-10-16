@@ -89,7 +89,11 @@ Node를 큐에 넣은 뒤 `distance`만 바꿔도 PriorityQueue가 자동으로 
 
 ```java
 record State(int distance, int node) { }
-queue.offer(new State(newDistance, node));
+PriorityQueue<State> states = new PriorityQueue<>(
+        Comparator.comparingInt(State::distance).thenComparingInt(State::node)
+);
+// newDistance와 node는 새로 계산한 int 값
+states.offer(new State(newDistance, node));
 ```
 
 최단 경로처럼 예전 entry가 남을 수 있는 알고리즘에서는 꺼낸 값의 유효성을 별도로 검사할 수 있지만, 그 이유는 알고리즘 Topic에서 다룹니다. 여기서의 Java API 핵심은 **이미 삽입된 원소 내부의 우선순위 변경을 큐가 추적하지 않는다**는 점입니다.
@@ -99,8 +103,8 @@ queue.offer(new State(newDistance, node));
 `peek()`과 `poll()`은 비어 있으면 `null`을 반환하고, `element()`과 `remove()` 계열은 예외를 던질 수 있습니다. 일반적인 코딩테스트에서는 다음처럼 빈 상태를 명시적으로 확인하는 경우가 많습니다.
 
 ```java
-while (!queue.isEmpty()) {
-    State state = queue.poll();
+while (!states.isEmpty()) {
+    State state = states.poll();
     // 처리
 }
 ```

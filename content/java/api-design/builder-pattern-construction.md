@@ -42,7 +42,6 @@ Builder는 이런 경우 **완성 전의 구성 상태를 별도 객체에 모�
 SearchOption option = SearchOption.builder("java")
         .page(1)
         .size(50)
-        .includeClosed(true)
         .build();
 ```
 

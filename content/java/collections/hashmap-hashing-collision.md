@@ -74,6 +74,9 @@ a.hashCode() == b.hashCode()
 ```java
 class Key {
     String value;
+    Key(String value) {
+        this.value = java.util.Objects.requireNonNull(value);
+    }
     // value를 기준으로 equals/hashCode
 }
 ```

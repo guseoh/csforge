@@ -38,7 +38,7 @@ Map<String, Member> byEmail = members.stream()
         ));
 ```
 
-이 merge 함수는 같은 이메일이 나오면 첫 값을 유지합니다. 최신 값을 유지하려면 `second`를 선택할 수도 있습니다.
+이 merge 함수는 같은 이메일이 나오면 첫 값을 유지합니다. 입력에서 나중에 만난 값을 유지하려면 `second`를 선택할 수도 있습니다. 이것이 시간상 최신 값이라는 뜻은 아니며, 입력이 시각순으로 정렬되어 있다는 별도 전제가 필요합니다.
 
 하지만 **어떤 값을 남길지 코드만 편하게 결정하기 전에 중복 자체가 정상인지**를 물어야 합니다. 이메일이 원래 유일해야 하는 도메인이라면 조용히 하나를 버리는 merge는 데이터 오류를 숨길 수 있습니다.
 
@@ -76,7 +76,7 @@ Map<String, List<Member>> grouped = members.stream()
 `toMap`에서 발생하는 예외를 단순 API 함정으로 외우지 말고 **Map 키의 의미와 데이터 계약 문제**로 이해하면 실무에서도 도움이 됩니다.
 
 ```java
-Map<String, Order> latestByUser = orders.stream()
+Map<String, Order> lastEncounteredByUser = orders.stream()
     .collect(Collectors.toMap(
         Order::userId,
         Function.identity(),

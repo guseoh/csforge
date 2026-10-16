@@ -87,11 +87,11 @@ String part = "ja";
 String a = part + "va";
 String b = "java";
 
-System.out.println(a == b);      // 내용 비교를 ==에 기대하면 안 됨
+System.out.println(a == b);      // false: 비상수 문자열 연결은 새 객체 생성
 System.out.println(a.equals(b)); // true
 ```
 
-`part`는 변수이므로 `part + "va"`는 위의 문자열 상수 표현식과 같은 경우가 아닙니다. 결과의 문자열 내용은 `"java"`와 같지만 같은 객체라는 보장은 없습니다.
+이 코드의 `part`는 상수 변수가 아니므로 `part + "va"`는 상수 표현식이 아닙니다. JLS의 문자열 연결 규칙에 따라 새 `String` 객체가 만들어지므로, 내용은 `"java"`와 같아도 리터럴과의 `==` 결과는 `false`입니다. 반면 `final String part = "ja";`라면 상수 변수이므로 `part + "va"`도 상수 표현식이 되어 intern된 같은 참조를 사용합니다. 모든 `final String`이 상수인 것은 아니며 상수 식으로 초기화해야 합니다.
 
 ### 실무에서는 내용 비교와 객체 동일성을 분리한다
 

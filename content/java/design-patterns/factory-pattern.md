@@ -102,7 +102,8 @@ Money.won(10_000)
 정적 팩터리는 보통 한 타입이 자신의 생성 의미를 제공하는 API입니다.
 
 ```java
-PaymentProcessorFactory.create(type)
+PaymentProcessorFactory factory = new PaymentProcessorFactory(config);
+PaymentProcessor processor = factory.create(type);
 ```
 
 별도 Factory는 여러 구현과 설정·의존성을 선택하고 조립하는 생성 정책이 독립적인 책임일 때 자연스럽습니다.

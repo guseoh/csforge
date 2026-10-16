@@ -67,7 +67,7 @@ abstract class ImportJob {
 
 ### hook이 많아질수록 상속 결합도 커진다
 
-하위 클래스는 단순히 메서드 시그니처뿐 아니라 **상위 클래스가 어떤 순서로 hook을 호출하는지**에도 의존할 수 있습니다.
+하위 클래스는 단순히 메서드 시그니처뿐 아니라 **상위 클래스가 어떤 순서로 hook을 호출하는지**에도 의존할 수 있습니다. 다음은 그 의존성을 보이는 발췌로, 필수 `validate()` 구현과 `ParsedData`, `parseCsv()`, `audit()`의 정의는 생략했습니다.
 
 ```java
 class CsvImportJob extends ImportJob {

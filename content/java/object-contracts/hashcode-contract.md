@@ -91,6 +91,10 @@ final class Money {
 class Key {
     String value;
 
+    Key(String value) {
+        this.value = java.util.Objects.requireNonNull(value);
+    }
+
     @Override
     public boolean equals(Object other) {
         return other instanceof Key key
