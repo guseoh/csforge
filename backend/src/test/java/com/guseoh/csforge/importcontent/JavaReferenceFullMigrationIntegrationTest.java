@@ -194,7 +194,7 @@ class JavaReferenceFullMigrationIntegrationTest {
         assertTrue(learningQueryService.getConcept(pathId).references().stream()
                 .anyMatch(reference -> reference.url().equals("https://d2.naver.com/helloworld/1219")
                         && reference.title().equals("JDK 7")
-                        && reference.relationNote().contains("NIO.2")));
+                        && reference.relationNote().contains("Path·Files")));
 
         int previewItemCount = 0;
         for (CanonicalBootstrapBatch batch : batchPlanner.plan(contentSource.load()).batches()) {
