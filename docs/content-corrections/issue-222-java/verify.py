@@ -18,7 +18,6 @@ BASE = "2ab1ccbb29ca0bc07858c20f56ae3a4826018d4f"
 DOC_PREFIX = "docs/content-corrections/issue-222-java/"
 AUXILIARY_PATHS = {
     "backend/src/test/java/com/guseoh/csforge/importcontent/JavaReferenceCorrectionIntegrationTest.java",
-    ".github/workflows/repository-validation.yml",  # temporary PR-only CI instrumentation
 }
 CHANGED_CONCEPTS = {
     "api-design/static-factory-method",
