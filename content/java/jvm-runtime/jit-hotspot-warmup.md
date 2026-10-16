@@ -22,11 +22,11 @@ references:
     displayOrder: 2
     relationNote: HotSpot JIT와 계층형 컴파일 구현 범위 확인
   - url: "https://techblog.woowahan.com/2588/"
-    title: "새로운 포인트 적립 시스템 개발기"
+    title: "신규 포인트 시스템 전환기 #2 – 오픈 준비 단계"
     referenceType: COMPANY_TECH_BLOG
     language: ko
     displayOrder: 3
-    relationNote: JVM 워밍업과 실제 서비스 성능 측정 맥락을 보충
+    relationNote: "7-1절 '자바 어플리케이션 성능 테스트시 주의 사항'의 JVM 워밍업/성능 측정 사례. 첫 실행 폐기는 해당 서비스의 측정 선택이며 모든 JVM·워크로드에 통용되는 2회 측정 규칙이 아니다."
 ---
 # JIT·HotSpot과 워밍업(warm-up)
 

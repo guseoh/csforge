@@ -15,12 +15,6 @@ references:
     language: en
     displayOrder: 1
     relationNote: 클래스와 생성자 규칙 확인
-  - url: "https://tecoble.techcourse.co.kr/post/2021-05-17-constructor/"
-    title: "Tecoble: java에서 객체를 생성하는 다양한 방법"
-    referenceType: KOREAN_BLOG
-    language: ko
-    displayOrder: 2
-    relationNote: 생성자 오버로딩과 이름 있는 생성 API를 비교하는 입문 예시 보충
 ---
 # 클래스, 객체와 생성자
 

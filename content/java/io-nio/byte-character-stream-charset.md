@@ -26,7 +26,7 @@ references:
     referenceType: COMPANY_TECH_BLOG
     language: ko
     displayOrder: 3
-    relationNote: Unicode와 UTF-8의 바이트 표현, Java 문자열·입출력 인코딩의 배경 이해. 기본 charset 관련 내용은 JDK 18 이전 기준이므로 Java 25 공식 문서를 우선한다.
+    relationNote: "Unicode 코드 포인트·UTF-8 및 한글의 바이트 인코딩 예시를 보충한다. 2012년 글의 Unicode 버전·기본 charset·String.getBytes() 결과는 Java 25의 현행 규칙과 구분한다."
 ---
 # 바이트·문자 스트림과 Charset
 

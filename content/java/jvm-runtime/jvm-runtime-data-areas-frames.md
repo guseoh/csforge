@@ -20,7 +20,7 @@ references:
     referenceType: COMPANY_TECH_BLOG
     language: ko
     displayOrder: 2
-    relationNote: Java 객체와 참조가 런타임 메모리 모델에서 연결되는 방식 보충
+    relationNote: "'GC와 Reachability'의 스택 지역 참조·힙 객체·root set 연결 도식을 읽는다. 2013년 HotSpot 기준 메모리 배치를 JVM 명세가 고정한 물리 구조로 이해하지 않는다."
 ---
 # JVM 런타임 데이터 영역(Runtime Data Area)과 프레임(Frame)
 

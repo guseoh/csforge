@@ -26,7 +26,7 @@ references:
     referenceType: COMPANY_TECH_BLOG
     language: ko
     displayOrder: 3
-    relationNote: Java 날짜·시간 API가 local time과 timezone-aware time을 분리한 배경을 한국어로 함께 확인
+    relationNote: "기존 Date/Calendar의 시간대·서머타임 처리 문제와 Java 8 날짜·시간 API 도입 배경을 읽는다. 과거 버전의 사례와 Java 25 java.time API 계약·시간대 데이터는 구분한다."
 ---
 # Instant·LocalDateTime·ZonedDateTime
 

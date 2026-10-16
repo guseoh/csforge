@@ -20,7 +20,7 @@ references:
     referenceType: COMPANY_TECH_BLOG
     language: ko
     displayOrder: 2
-    relationNote: 참조가 GC 도달 가능성과 어떻게 연결되는지 더 깊게 볼 때 참고
+    relationNote: "'GC와 Reachability'의 객체 참조·GC root 설명을 보충해서 읽는다. 2013년 글의 finalization/PhantomReference 설명과 JVM 구현 세부는 Java 25의 일반 규칙으로 받아들이지 않는다."
 ---
 # 원시 값과 참조 값
 

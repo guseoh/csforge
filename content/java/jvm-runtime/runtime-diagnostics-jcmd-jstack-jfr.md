@@ -32,7 +32,7 @@ references:
     referenceType: COMPANY_TECH_BLOG
     language: ko
     displayOrder: 4
-    relationNote: GC 관측 지표와 도구 선택의 실제 맥락 보충
+    relationNote: "2012년 HotSpot의 jstat·GC 로그·모니터링 기법과 관측 목적을 비교해 읽는다. 당시 -verbosegc·도구/옵션/출력 형식은 Java 25 JFR·jcmd의 현재 사용법과 같다고 가정하지 않는다."
 ---
 # jcmd·jstack·JFR로 JVM 진단하기
 

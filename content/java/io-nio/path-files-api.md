@@ -22,11 +22,11 @@ references:
     displayOrder: 2
     relationNote: 파일 생성·읽기·쓰기·복사·이동과 stream API 확인
   - url: "https://d2.naver.com/helloworld/1219"
-    title: "네이버 D2: JDK 7의 NIO.2와 파일 API"
+    title: "JDK 7"
     referenceType: COMPANY_TECH_BLOG
     language: ko
     displayOrder: 3
-    relationNote: Path·Files와 try-with-resources를 실제 파일 처리 흐름으로 연결
+    relationNote: "'More New I/O APIs'와 'Improved Filesystem Interface'의 Path·Files·DirectoryStream 예제를 읽는다. JDK 7 도입 시점 자료이며 try-with-resources 절은 별도 학습 주제로 구분한다."
 ---
 # Path와 Files API
 

@@ -15,12 +15,6 @@ references:
     language: en
     displayOrder: 1
     relationNote: stream pipeline, laziness, non-interference와 consumption 계약 확인
-  - url: "https://d2.naver.com/helloworld/4911107"
-    title: "네이버 D2: 람다가 이끌어 갈 모던 Java"
-    referenceType: COMPANY_TECH_BLOG
-    language: ko
-    displayOrder: 2
-    relationNote: lambda와 stream을 실제 Java 코드에 적용하는 흐름 보충
 ---
 # Stream 파이프라인(Stream Pipeline)과 지연 실행
 

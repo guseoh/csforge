@@ -22,11 +22,11 @@ references:
     displayOrder: 2
     relationNote: suppressed exception 조회 계약 확인
   - url: "https://d2.naver.com/helloworld/1219"
-    title: "네이버 D2: JDK 7의 NIO.2와 파일 API"
+    title: "JDK 7"
     referenceType: COMPANY_TECH_BLOG
     language: ko
     displayOrder: 3
-    relationNote: try-with-resources와 JDK 7 자원 관리 문법을 한국어 사례로 보충
+    relationNote: "'try-with-resource statement' 절의 AutoCloseable, 자원 해제 순서와 suppressed exception 처리 예제를 읽는다. JDK 7 도입 시점의 코드·설명임을 구분한다."
 ---
 # try-with-resources와 억제 예외(suppressed exception)
 

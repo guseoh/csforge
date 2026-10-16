@@ -26,7 +26,7 @@ references:
     referenceType: COMPANY_TECH_BLOG
     language: ko
     displayOrder: 3
-    relationNote: GC의 세대별 흐름과 stop-the-world 관찰 포인트 보충
+    relationNote: "2012년 HotSpot의 Young/Old 세대, GC·STW 및 카드 테이블 설명을 역사적 구현 사례로 읽는다. Permanent Generation, 수집기 옵션과 세대별 동작을 Java 25 공통 GC 모델로 취급하지 않는다."
 ---
 # GC 기본 원리와 수집기(Collector)
 

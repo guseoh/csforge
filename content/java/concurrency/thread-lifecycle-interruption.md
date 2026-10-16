@@ -30,7 +30,7 @@ references:
     depth: article
     recommendation: "JVM thread dump에서 lock owner와 waiter를 연결해 deadlock cycle을 해석하는 실제 사례를 확인한다."
     displayOrder: 3
-    relationNote: thread 상태와 blocked/waiting 진단을 실제 장애 흐름으로 연결
+    relationNote: "'스레드 상태'와 '스레드 덤프 유형별 패턴'의 BLOCKED·WAITING, monitor 소유자/대기자 분석 사례를 읽는다. 오래된 HotSpot 덤프 형식과 API 사용법은 Java 25 공식 도구 문서로 다시 확인한다."
 ---
 # Thread 생명주기와 중단
 

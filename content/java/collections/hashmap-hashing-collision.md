@@ -26,7 +26,7 @@ references:
     referenceType: COMPANY_TECH_BLOG
     language: ko
     displayOrder: 3
-    relationNote: hash·bucket·collision과 Java HashMap 구현 흐름을 시각적으로 보충
+    relationNote: "Java 7·8 기준 HashMap의 hash, bucket, 충돌 처리 및 트리화 구현 사례를 읽는다. 내부 구조의 수치·규칙을 모든 Java 25 구현의 API 보장으로 일반화하지 않는다."
 ---
 # HashMap 조회와 해시 충돌
 

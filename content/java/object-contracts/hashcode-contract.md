@@ -15,12 +15,6 @@ references:
     language: en
     displayOrder: 1
     relationNote: hashCode 공식 계약 확인
-  - url: "https://tecoble.techcourse.co.kr/post/2020-07-29-equals-and-hashCode/"
-    title: "equals와 hashCode는 왜 같이 재정의해야 할까?"
-    referenceType: KOREAN_BLOG
-    language: ko
-    displayOrder: 2
-    relationNote: hash 기반 컬렉션에서 equals와 hashCode 계약이 함께 필요한 이유를 한국어 예제로 복습
 ---
 # hashCode와 equals의 계약
 

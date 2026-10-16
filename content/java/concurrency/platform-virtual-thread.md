@@ -20,13 +20,13 @@ references:
     referenceType: OFFICIAL
     language: en
     displayOrder: 2
-    relationNote: JDK 24부터 synchronized가 가상 스레드를 캐리어에 고정하지 않도록 바뀐 구현 경계 확인
+    relationNote: "JEP 491의 JDK 24 synchronized 구간 가상 스레드 pinning 개선을 확인한다. 원문 페이지가 접근 제한될 경우 Oracle JDK 24 변경점과 Java 25 가상 스레드 안내서로 교차 확인하며, JNI·native 코드 등 다른 pinning 가능성까지 전부 사라졌다고 해석하지 않는다."
   - url: "https://d2.naver.com/news/1203723"
     title: "네이버 D2: Virtual Thread의 기본 개념 이해하기"
     referenceType: COMPANY_TECH_BLOG
     language: ko
     displayOrder: 3
-    relationNote: Java 스레드와 Executor를 운영 관점에서 연결해 이해
+    relationNote: "2024년 JDK 21 가상 스레드 도입 배경, carrier thread와 mount/unmount 실행 모델을 읽는다. 글의 JDK 21 시점 synchronized pinning 주장은 JDK 24 이후의 JEP 491 변경과 구분한다."
 ---
 # 플랫폼 스레드(Platform Thread)와 가상 스레드(Virtual Thread)
 
