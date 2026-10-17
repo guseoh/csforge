@@ -68,6 +68,10 @@ jobs:
           set -Eeuo pipefail
           export R1_PLAYWRIGHT_ROOT="$RUNNER_TEMP/csforge-r1-playwright"
           npm install --silent --prefix "$R1_PLAYWRIGHT_ROOT" --no-save playwright@1.56.1
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq --no-install-recommends fonts-noto-cjk
+          fc-cache -f
+          fc-match -f "%{family}\n" "sans:lang=ko" | grep -i "Noto Sans CJK"
           if command -v google-chrome >/dev/null 2>&1; then
             export R1_CHROME_PATH="$(command -v google-chrome)"
           else
