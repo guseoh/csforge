@@ -72,3 +72,9 @@ Wave 1~4의 과거 미확정 데이터와 최근 수정 사항을 대조해 사�
 - [DSA 관계별 재검토 및 검색 색인·공식 저자 코드 근거](dsa-preliminary.md) 추가. 70관계/18URL을 전부 추적하고, 원문 읽을 범위 점검이 우선인 7관계를 구분.
 - Princeton 7개 canonical URL 직접 확인은 403, 일부 본문·저자 코드는 검색 색인에서 확인. **직접 원문 검증으로 승격하지 않고** DSA 70관계는 계속 후속 검토 대기.
 - 이 업데이트는 canonical 변경/새 확정 결함/추가 15건 VERIFIED를 의미하지 않으며 현재 R2 감사 집계 **15 verified / 138 pending 유지**. 다른 교정 PR과 중복 수정 없음.
+
+## R2 DSA/CA 관계 단위 후속 검사 — 2026-10-17
+
+- [DSA 70관계 / 18개 고유 URL 조사표](dsa-preliminary.md): 선행 7개 Concept와 Princeton 공식 출처의 indexed excerpt·저자 Java 구현을 대조, **6관계 scope-note 수정 검토 권고 / 1관계 기존 안내 유지 가능**. 원래 canonical 직접 403 때문에 `DIRECT_CONTENT_VERIFIED`로 일괄 승격하지 않았다. 실제 콘텐츠 수정은 독립 검증 후 별도 PR.
+- [Computer Architecture 46관계 / 10개 URL 조사표](computer-architecture-preliminary.md): UMD 강의 URL 8개에 44관계 집중, IEEE 754·OpenJDK JMH 각 1관계. `floating-point`의 IEEE document ID와 표준 DOI 관계, `hardware-memory-reordering`의 ISA/언어 계약 경계, PDF 미열람을 우선 확인 대상으로 분리.
+- 2개 문서는 **전체 116관계의 기존 미확정 상태와 후속 작업을 명확하게 추적**하지만 116개 외부 본문 검증이 끝났다는 의미가 아니다. 감사 원본과 canonical key, 기존 `verified-relations.json` 15건 및 잔여 **138 후보 수치는 불변**. 링크 접근 실패를 임의 broken 판정하거나 기존 #227/#229/#230/#231 교정 PR과 중복 수정하지 않는다.
