@@ -49,3 +49,12 @@ Wave 1~4의 과거 미확정 데이터와 최근 수정 사항을 대조해 사�
 | `performance.core.observability.signals-context` | 카카오 MATRIX 운영 사례 | 지표·분산 추적·운영 분석 사례. OTel API 계약 아님 |
 
 추가로 Network & HTTP의 RFC 10025는 2026년 7월 정식 Cookie 문서로 검색·저자 원문이 확인되나 **기존 RFC-Editor canonical URL 직접 접근 성공과 Concept별 최종 검증을 별도로 확인하기 전에는 3개 관계의 미확정 상태를 유지**한다. 접근 도구의 404/403/빈 페이지만으로 삭제하지 않는다.
+
+## R2 관계 대조 검증 완료
+
+- 기준: 일회성 [Repository Validation #38992865607](https://github.com/guseoh/csforge/actions/runs/38992865607) SUCCESS. 전체 JSON 증거: `csforge-r2-reference-gap-report` Artifact.
+- 전체 **15Area / 721 Concept / 1,038 관계 / 621URL**, 글로벌 URL 메타 충돌 **0**, Concept 내 URL 중복 **0**, displayOrder 중복 **0**.
+- Wave 3 과거 186개 원본 관계 **전부 최신 canonical에 존재**, 그중 NEEDS_REVIEW 146개 (CA46/DSA70/OS26/Network4).
+- Java Wave 4 과거 272관계 중 PR #225에서 5관계 제거 → 현재 267. 옛 NEEDS_REVIEW 16 중 1관계 제거/15관계 R1에서 판정 완료. 증거 원본의 상태 변경 아님.
+- 중복 제거 기준 비Java 과거 미확정 후보 **153관계**, 이 가운데 5개를 독립 원문 대조해 KEEP 판단; **남은 148관계**는 오류 확정 수가 아닌 후속 검토 대기 건수.
+- 일회성 workflow 검사 스텝 제거 후 기존 Repository Validation 정의로 복귀; 본 PR에는 **감사 코드·기록·결정 근거만 포함**.
