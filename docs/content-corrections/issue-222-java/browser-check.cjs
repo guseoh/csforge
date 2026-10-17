@@ -100,7 +100,7 @@ try {
  const home=page.url(),popupEvent=page.waitForEvent('popup',{timeout:20000});
  await page.keyboard.press('Enter');
  const popup=await popupEvent;
- assert.ok(popup.url().startsWith('https://d2.naver.com/helloworld/1219'),'Unexpected link '+popup.url());
+ await popup.waitForURL(url => url.toString().startsWith('https://d2.naver.com/helloworld/1219'), {timeout:20000, waitUntil:'commit'});
  await popup.close();assert.equal(page.url(),home);
  report.popup='PASS';
  assert.equal(report.errors.length,0,'Browser errors '+JSON.stringify(report.errors));
