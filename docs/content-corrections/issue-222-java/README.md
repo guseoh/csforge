@@ -50,5 +50,18 @@
 - 정확성 P0 3그룹(총 4관계) 제거, Strategy P1 관계 보완, Woowa/JVM/serialization P2 관계 보완. NEEDS_REVIEW 16관계는 **모두 명시적 유지/제거/한정 판정**, 단 원문 직접 접근 제한은 남김.
 - 수정 파일 **Java Concept 22개**. 기존 전체 Java 145 Concept/841 Question의 `contentKey`, 비-Reference 메타데이터/본문/Question/개인 이력 보호. 신규 URL 0, 관계 제거 5, 글로벌 title 변경이 있는 URL 2종(`/1219`, `/2588`). `displayOrder`의 불필요한 재정렬은 하지 않음.
 - `python docs/content-corrections/issue-222-java/verify.py`: 15개 영역 전체 URL-global metadata 일치, 중복 관계, 변경 범위·본문 무변경·예상 relation 삭제 검증. 스크립트가 원문 의미의 신뢰도를 자동 보증하지는 않음.
-- **필수 잔여 검증:** 개발/테스트 PostgreSQL로 전체 Pack Preview(Errors 0) → Apply 성공 → 동일 Pack 재import 전부 UNCHANGED → identity/개인 이력·Reference snapshot 보존. Java 영역 전체 관련 Reference 독립 리뷰 및 Reader 사용성 확인 후 병합 승인. 기존 `Reference` 엔티티와 relation 삭제가 Import에서 정상 반영되는지 특히 검증. **Production Apply/배포 없음**.
+- **후속 확인(2026-10-17 완료):** 격리 PostgreSQL의 PR 이전 22개 Reference → 교정 22개 Preview/Apply, 전 항목 exact reimport 3,380 UNCHANGED, identity·개인 이력·Reference 연결 보존은 `JavaReferenceFullMigrationIntegrationTest`에서 통과. 실제 Java Reader UI/Reference 표시 및 링크·키보드 사용성도 아래 독립 브라우저 검증 통과. **Production Apply/배포 없음**.
 - #222 R2(15Area 전체 Reference 품질 재검토), R3(Concept Reader UX) 별도. 위 검증이 끝나기 전에는 PR은 Draft, 병합 보류.
+
+## R1 격리 브라우저 Human Usage Check (2026-10-17)
+
+**결과: PASS / 비운영 환경 검증.** [GitHub Actions #38989730460](https://github.com/guseoh/csforge/actions/runs/38989730460)의 일회성 Ubuntu runner에서 PostgreSQL 16.4(컨테이너), Java 25 Spring backend(local auth mode), Vite, Chromium, Noto CJK 한국어 글꼴을 사용했다. 실행 종료 시 일회성 DB/서버 정리. Google OAuth, 운영 DB, Vercel/Cloud Run 배포 사용 없음.
+
+- 실제 `POST /api/canonical-bootstrap`: 처음 `EMPTY` → 12 batches, **3,380 CREATED / ERROR 0 → READY**.
+- Java Concept 10개에서 기존 잘못된 Tecoble 4개/Stream D2 1개 URL 미노출, 공식 Reference 유지, D2 `JDK 7` 두 Concept title 일치/관계별 `relationNote` 차이, JEP 491 JDK 24 주의, JIT Woowa 교정 제목 확인.
+- 실제 Reader 브라우저: 정적 팩터리(375/light), Path/Files(375/dark), 플랫폼·가상 스레드(1280/light), JIT 워밍업(1280/dark), 참조 강도(375/light). 5개에서 API의 URL/title/note와 실제 DOM 일치, HTML viewport **가로 넘침 0**, Reference 카드 배치 정상. 한국어 폰트 적용 후 실제 스크린샷 수동 열람까지 완료.
+- 키보드 Reference 링크 focus → **Enter로 새 탭 URL 이동** → 외부 탭 닫기 → 원래 Reader URL 유지 **PASS**. 외부 D2 원문 내용 전문을 새로 검증한 결과는 아님.
+- 콘솔 예외/앱 오류 없음. **주의:** `http://127.0.0.1:5173/favicon.ico` 미존재로 404 리소스 경고 1건 발견. Reference 수정과 무관한 favicon 경로의 일반 UI 문제로 별도 점검 가능. 이를 콘솔 완전 무경고로 보고하지 않음.
+- 증거: [검증 성공 Actions Run 및 `pr225-reference-browser-evidence` Artifact](https://github.com/guseoh/csforge/actions/runs/38989730460), `report.json` 및 브라우저 스크린샷 PNG 5개. 임시 GitHub Actions workflow 서비스/실행 Step과 일회성 스크립트는 검증 후 PR diff에서 제거했다.
+
+**R1 판정:** 실제 표시·운영 이력 격리·Reference 연결·UI Human Usage 모두 검증됨. 기존 D2 사이트 전체 원문 접근 및 JEP491 원문 접근 제약은 초기 감사 판정대로 보존한다. PR 병합 여부는 사용자 별도 승인; Issue #222 R2 전체 학습영역과 R3 Reader UX는 별도 후속.
