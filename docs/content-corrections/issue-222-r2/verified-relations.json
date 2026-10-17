@@ -1,0 +1,47 @@
+[
+  {
+    "contentKey": "backend.core.concurrency-transaction.optimistic",
+    "url": "https://jakarta.ee/specifications/persistence/3.2/apidocs/jakarta.persistence/jakarta/persistence/version",
+    "decision": "KEEP",
+    "evidenceLevel": "DIRECT_CONTENT_VERIFIED",
+    "reviewDate": "2026-10-17",
+    "basis": "Jakarta Persistence 3.2의 @Version 공식 API 원문: entity revision 및 optimistic lock failure 조건을 확인. Concept에서 충돌 감지와 비즈니스 정책의 분리는 맞다.",
+    "limits": "@Version 자체가 일괄 재시도나 충돌 병합을 약속하지 않는다."
+  },
+  {
+    "contentKey": "spring.core.data-jpa.entity-lifecycle",
+    "url": "https://jakarta.ee/specifications/persistence/3.2/jakarta-persistence-spec-3.2.html",
+    "decision": "KEEP",
+    "evidenceLevel": "DIRECT_CONTENT_VERIFIED",
+    "reviewDate": "2026-10-17",
+    "basis": "Jakarta Persistence 3.2 원문 3.1/3.2/3.3절의 managed/detached/removed, persistence context 객체 정체성, merge 계약과 Concept 본문 대응.",
+    "limits": "JPA 표준 계약과 provider의 실제 flush SQL 타이밍을 구분한다."
+  },
+  {
+    "contentKey": "spring.core.data-jpa.fetch-plan",
+    "url": "https://jakarta.ee/specifications/persistence/3.2/jakarta-persistence-spec-3.2.html",
+    "decision": "KEEP",
+    "evidenceLevel": "DIRECT_CONTENT_VERIFIED",
+    "reviewDate": "2026-10-17",
+    "basis": "Jakarta Persistence 3.2 원문 3.8 Entity Graph, 4.4.5.3 Fetch Join 및 6.3.4 Fetch Join을 대조. Concept의 EAGER/LAZY·fetch join 안내와 직접 부합.",
+    "limits": "일부 Hibernate 최적화/쿼리 개수 및 모든 collection fetch pagination 보장은 명세와 구분."
+  },
+  {
+    "contentKey": "messaging.core.semantics.message-model",
+    "url": "https://engineering.linecorp.com/ko/blog/how-to-use-kafka-in-line-1/",
+    "decision": "KEEP",
+    "evidenceLevel": "DIRECT_CONTENT_VERIFIED",
+    "reviewDate": "2026-10-17",
+    "basis": "LINE 엔지니어링 한국어 기사에서 다수 서비스가 Kafka를 범용 플랫폼으로 사용하며 분산 큐를 백그라운드 작업 처리에 사용하는 구체 사례 확인. Concept의 명령/이벤트 구별에 대한 실무 보충으로 관련성 있다.",
+    "limits": "LINE의 Kafka 활용 사례가 command/event의 형식 명세를 정의하지는 않으며, 해당 정의는 Microsoft Architecture Center/Apache Kafka 공식 자료가 우선."
+  },
+  {
+    "contentKey": "performance.core.observability.signals-context",
+    "url": "https://tech.kakao.com/posts/747",
+    "decision": "KEEP",
+    "evidenceLevel": "DIRECT_CONTENT_VERIFIED",
+    "reviewDate": "2026-10-17",
+    "basis": "2025년 카카오 기술 블로그 원문에서 MATRIX 서비스의 관측 신호, 분산 추적 기반 서비스 호출 경로, 운영 분석과 AI 적용 실제 사례 확인. Concept의 마지막 운영 활용 사례를 보완한다.",
+    "limits": "이 사례의 운영 플랫폼과 OpenTelemetry Context Propagation 일반 규칙을 동일시하지 않는다."
+  }
+]

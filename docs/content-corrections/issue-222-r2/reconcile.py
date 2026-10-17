@@ -149,7 +149,26 @@ def reconcile():
             live["evidenceFlags"].append("JAVA_WAVE_4_OLD_NEEDS_REVIEW_R1_TRIAGED")
             java_pending.append(item)
 
+    verified = load_json(ROOT / "docs/content-corrections/issue-222-r2/verified-relations.json")
+    manually_resolved = []
+    seen = set()
+    for record in verified:
+        identity = (record["contentKey"], record["url"])
+        assert identity not in seen, ("duplicate review decision", identity)
+        seen.add(identity)
+        live = by_key_url.get(identity)
+        assert live is not None, ("review target no longer in canonical", identity)
+        assert live["evidenceFlags"], ("review target has no historical unresolved flag", identity)
+        assert record["decision"] == "KEEP" and record["evidenceLevel"] == "DIRECT_CONTENT_VERIFIED", identity
+        live["r2ManualResolution"] = {
+            "decision": record["decision"],
+            "evidenceLevel": record["evidenceLevel"],
+            "limits": record["limits"],
+        }
+        manually_resolved.append(record)
+
     flagged = [x for x in rows if x["evidenceFlags"]]
+    remaining_nonjava = [x for x in flagged if x["area"] != "java" and not x.get("r2ManualResolution")]
     by_area = {}
     for area in sorted(EXPECTED_AREAS):
         all_rows = [r for r in rows if r["area"] == area]
@@ -178,6 +197,8 @@ def reconcile():
         },
         "byArea": by_area,
         "historicalFlaggedRelations": len(flagged),
+        "r2ManualVerifiedRelations": len(manually_resolved),
+        "remainingNonJavaReviewCandidates": len(remaining_nonjava),
         "currentRelations": rows,
         "confirmedExternalFindings": [
             {"key": "infrastructure.core.reliability.backup-restore",
@@ -206,6 +227,8 @@ def main():
         "Wave3": {k: v for k, v in result["historicalWave3"].items() if not isinstance(v, list)},
         "JavaWave4": {k: v for k, v in result["historicalJavaWave4"].items() if not isinstance(v, list)},
         "flaggedRelations": result["historicalFlaggedRelations"],
+        "manualVerified": result["r2ManualVerifiedRelations"],
+        "nonJavaRemaining": result["remainingNonJavaReviewCandidates"],
     }, ensure_ascii=False, sort_keys=True))
     print("R2_AREA_SUMMARY " + json.dumps(result["byArea"], ensure_ascii=False, sort_keys=True))
     if args.out:
