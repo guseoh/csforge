@@ -15,7 +15,7 @@ references:
     language: en
     depth: chapter
     recommendation: "process 안에서 thread가 공유하는 주소 공간과 thread별 실행 context를 확인한다."
-    relationNote: "이 Concept에서는 사용자 공간 런타임이 논리 스레드를 하나 이상의 커널 스레드에 매핑할 때의 전환 비용과 블로킹 경계를 중심으로 읽는다."
+    relationNote: "26장 Concurrency: An Introduction의 프로세스 내 공유 주소 공간, 스레드별 PC·레지스터·스택, 생성·전환의 기초만 읽는다. 이 장은 사용자 수준 스레드의 M:N 매핑·런타임 스케줄링·블로킹 처리 모델을 직접 설명하지 않으므로 해당 내용을 이 자료의 근거로 사용하지 않는다."
     displayOrder: 1
 ---
 # 사용자 수준 스레드(User-Level Thread)
