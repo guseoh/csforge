@@ -155,3 +155,14 @@
 | `dsa.core.recursion-backtracking.recursion-call-state` | **NOTE_FIX_RECOMMENDED** | [교재 2.2](https://algs4.cs.princeton.edu/22mergesort/index.php)는 재귀 top-down mergesort, `lo/mid/hi` 분할과 반환 후 merge의 실행 순서를 설명함. JVM/OS의 실제 stack frame 레이아웃·오버플로 한계는 직접 다루지 않음 | `relationNote`에 ‘merge-sort의 재귀 호출 전개·복귀 추적’만 안내하고 호출 프레임의 런타임 보장은 별도 자료로 구분 |
 
 **집계:** 이 표는 7개 관계에서 **6개 scope-note 권고 + 1개 제한 조건 하 KEEP**이다. `NOTE_FIX_RECOMMENDED`는 오류 6건 확정이 아니며, 원문 전면 확인·Import/Reader QA가 없는 상태에서 본 작업만으로 ‘R2 완료 7건 추가’라고 세지 않는다. DSA 역사적 미확정 70건 / 18URL은 후속 후보로 남기며, 전역 15 verified / 138 pending 집계를 그대로 둔다.
+
+## 나머지 URL군 중 추가로 발견한 자료 범위 주의점
+
+공식 Princeton 검색 색인을 재대조했을 때 두 원문은 상단에 **`under major construction`** 안내를 표시한다. 이는 404/사실 오류가 아니라 **학습 자료 범위와 완성도**에 대한 신호이며, 별도 구현·강의 슬라이드의 존재와 구분한다.
+
+- `dsa.core.trees.trie` → [Princeton §5.2 Tries](https://algs4.cs.princeton.edu/52trie/): prefix search, `TrieST.java`, `TST.java`가 소개되어 관련성은 있다. 다만 구성 중인 자료 하나만으로 deletion, terminal-state, wildcard 등 Concept 전체 학습을 완결했다고 판정하지 않는다. 후속 `SCOPE_CHECK`; 기존 canonical 링크 변경 없음.
+- `dsa.core.search-sort.counting-sort`, `dsa.core.search-sort.radix-sort`, `dsa.core.algorithm-selection.data-shape` → [Princeton §5.1 String Sorts](https://algs4.cs.princeton.edu/51radix/): LSD/MSD 및 key-indexed counting과 관련 있지만 원문은 구성 중이라고 명시한다. 문자·고정 길이 key 조건에 대한 설명과 임의 정수 범위 `O(n+k)` 구현의 동일성을 섣불리 주장하지 않는다. 3관계 후속 `SCOPE_CHECK`.
+- [§2.5 Sorting Applications — Stability](https://algs4.cs.princeton.edu/25applications/)는 실제 안정 정렬 의미와 다중 키 정렬 상황을 인덱스에서 확인해 `dsa.core.search-sort.stable-sort`와 관련성이 높다. 단 원래 canonical 직접 접근 실패가 남아 있으므로 `INDEXED_EXCERPT_ONLY` 유지.
+- [Princeton §3.4 Hash Tables](https://algs4.cs.princeton.edu/34hash/)는 separate chaining과 open addressing의 `load factor` 정의가 다름을 실제 본문 색인에서 설명한다. 따라서 `hashing.load-factor`, `hashing.separate-chaining`, `hashing.open-addressing` 세 관계의 주제 연결은 타당하지만, 두 방식을 같은 임계값/기대 probe 비용으로 일반화하지 않는다.
+
+추가 `SCOPE_CHECK` **4관계**는 우선 검증/읽을 위치 점검만 기록한다. 앞의 7개에 합쳐 ‘11건 기술 오류’라는 뜻이 아니며, **R2 검증 완료 15 / 잔여 후보 138 수치 불변**이다.
