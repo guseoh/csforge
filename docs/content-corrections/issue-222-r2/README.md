@@ -48,7 +48,7 @@ Wave 1~4의 과거 미확정 데이터와 최근 수정 사항을 대조해 사�
 | `messaging.core.semantics.message-model` | LINE Kafka 플랫폼 사례 | 작업 큐/플랫폼 사례. Command/Event의 규범적 계약 아님 |
 | `performance.core.observability.signals-context` | 카카오 MATRIX 운영 사례 | 지표·분산 추적·운영 분석 사례. OTel API 계약 아님 |
 
-추가로 Network & HTTP의 RFC 10025는 2026년 7월 정식 Cookie 문서로 검색·저자 원문이 확인되나 **기존 RFC-Editor canonical URL 직접 접근 성공과 Concept별 최종 검증을 별도로 확인하기 전에는 3개 관계의 미확정 상태를 유지**한다. 접근 도구의 404/403/빈 페이지만으로 삭제하지 않는다.
+추가로 Network & HTTP의 RFC-to-be 10025 저자 원고는 2026년 7월 발행 형식의 머리글을 포함하지만, **RFC Editor 공식 Queue는 2026-10-17 기준 Final Review**로 표시한다. 따라서 출판 완료로 해석하지 않고, 기존 RFC 10025 안내 3관계의 교정은 독립 Draft [#229](https://github.com/guseoh/csforge/pull/229)에서 추적한다. 원문 접근 제한만으로 404/삭제를 판단하지 않는다.
 
 ## R2 관계 대조 검증 완료
 
@@ -66,3 +66,9 @@ Wave 1~4의 과거 미확정 데이터와 최근 수정 사항을 대조해 사�
 - **Operating Systems OSTEP 원문 직접 확인**: [Chapter 26 PDF](https://pages.cs.wisc.edu/~remzi/OSTEP/threads-intro.pdf)의 서론·26.1·26.2·26.3 원문을 확인해 11개 관계를 Concept별로 대조. **10관계 KEEP**은 `verified-relations.json`에 각 근거·제한을 추가했고, 사용자 스레드 매핑까지 보장하는 듯한 relationNote 1관계는 [#231](https://github.com/guseoh/csforge/pull/231) Draft로 최소 한정 수정. 원문 전체가 자동 검증되었다는 뜻은 아니다.
 - 원래 집계 **비Java 과거 미확정 153관계**, 직접 검증 5→**15관계**, **잔여 후보 148→138관계**로 내려간다. 이 수치는 오류·실패 수가 아니고, #229/#230/#231의 미병합 수정을 자동 반영해 감한 값도 아니다. 정확한 수치는 `reconcile.py` 재실행 후 확정한다.
 - R2 브랜치 자체는 **감사/근거 전용**이며 canonical 수정·운영 DB 적용·병합 없음. [#227](https://github.com/guseoh/csforge/pull/227), [#229](https://github.com/guseoh/csforge/pull/229), [#230](https://github.com/guseoh/csforge/pull/230), [#231](https://github.com/guseoh/csforge/pull/231)은 별도의 독립 교정 Draft PR이다.
+
+## DSA 70관계 / 18URL 1차 독립 대조
+
+- [DSA 관계별 재검토 및 검색 색인·공식 저자 코드 근거](dsa-preliminary.md) 추가. 70관계/18URL을 전부 추적하고, 원문 읽을 범위 점검이 우선인 7관계를 구분.
+- Princeton 7개 canonical URL 직접 확인은 403, 일부 본문·저자 코드는 검색 색인에서 확인. **직접 원문 검증으로 승격하지 않고** DSA 70관계는 계속 후속 검토 대기.
+- 이 업데이트는 canonical 변경/새 확정 결함/추가 15건 VERIFIED를 의미하지 않으며 현재 R2 감사 집계 **15 verified / 138 pending 유지**. 다른 교정 PR과 중복 수정 없음.
