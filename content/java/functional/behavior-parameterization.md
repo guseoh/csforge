@@ -20,7 +20,7 @@ references:
     referenceType: COMPANY_TECH_BLOG
     language: ko
     displayOrder: 2
-    relationNote: 람다와 invokedynamic의 연결을 읽을 수 있는 보조 자료
+    relationNote: "Java 8 람다 도입 배경과 동작 전달의 언어적 의미를 보충한다. 글의 invokedynamic/JVM 구현 설명을 람다의 언어 명세가 강제하는 유일한 실행 방식으로 보지 않는다."
 ---
 # 행동을 매개변수로 전달하기
 

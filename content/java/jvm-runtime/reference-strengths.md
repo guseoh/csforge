@@ -26,7 +26,7 @@ references:
     referenceType: COMPANY_TECH_BLOG
     language: ko
     displayOrder: 3
-    relationNote: 강한·소프트·약한·팬텀 참조의 학습 흐름 보충
+    relationNote: "'Soft, Weak, Phantom Reference'와 reachability 유형의 개념을 비교해 읽는다. 글의 PhantomReference와 finalization 필수 순서·clear() 필수 회수 설명은 Java 25의 현행 Reference API와 다르므로 그대로 적용하지 않는다."
 ---
 # 강한·소프트·약한·팬텀 참조
 

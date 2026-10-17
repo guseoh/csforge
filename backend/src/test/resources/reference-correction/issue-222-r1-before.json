@@ -1,0 +1,204 @@
+{
+  "base": "2ab1ccbb29ca0bc07858c20f56ae3a4826018d4f",
+  "description": "Reversible changed hunk fixtures derived from PR #225; restore exactly old Reference frontmatter for test-only migration checks.",
+  "files": [
+    {
+      "path": "java/api-design/static-factory-method.md",
+      "hunks": [
+        {
+          "current": "    language: en\n    displayOrder: 1\n    relationNote: class method와 constructor의 언어 규칙 확인\n---\n# 정적 팩터리 메서드\n\n",
+          "previous": "    language: en\n    displayOrder: 1\n    relationNote: class method와 constructor의 언어 규칙 확인\n  - url: \"https://tecoble.techcourse.co.kr/post/2020-05-26-static-factory-method/\"\n    title: \"정적 팩토리 메서드(Static Factory Method)는 왜 사용할까?\"\n    referenceType: KOREAN_BLOG\n    language: ko\n    displayOrder: 2\n    relationNote: 이름 있는 생성과 하위 타입 반환 등 정적 팩터리의 대표적인 사용 이유를 한국어 예제로 복습\n---\n# 정적 팩터리 메서드\n\n"
+        }
+      ]
+    },
+    {
+      "path": "java/collections/hashmap-hashing-collision.md",
+      "hunks": [
+        {
+          "current": "    referenceType: COMPANY_TECH_BLOG\n    language: ko\n    displayOrder: 3\n    relationNote: \"Java 7·8 기준 HashMap의 hash, bucket, 충돌 처리 및 트리화 구현 사례를 읽는다. 내부 구조의 수치·규칙을 모든 Java 25 구현의 API 보장으로 일반화하지 않는다.\"\n---\n# HashMap 조회와 해시 충돌\n\n",
+          "previous": "    referenceType: COMPANY_TECH_BLOG\n    language: ko\n    displayOrder: 3\n    relationNote: hash·bucket·collision과 Java HashMap 구현 흐름을 시각적으로 보충\n---\n# HashMap 조회와 해시 충돌\n\n"
+        }
+      ]
+    },
+    {
+      "path": "java/concurrency/platform-virtual-thread.md",
+      "hunks": [
+        {
+          "current": "    referenceType: OFFICIAL\n    language: en\n    displayOrder: 2\n    relationNote: \"JEP 491의 JDK 24 synchronized 구간 가상 스레드 pinning 개선을 확인한다. 원문 페이지가 접근 제한될 경우 Oracle JDK 24 변경점과 Java 25 가상 스레드 안내서로 교차 확인하며, JNI·native 코드 등 다른 pinning 가능성까지 전부 사라졌다고 해석하지 않는다.\"\n  - url: \"https://d2.naver.com/news/1203723\"\n    title: \"네이버 D2: Virtual Thread의 기본 개념 이해하기\"\n    referenceType: COMPANY_TECH_BLOG\n    language: ko\n    displayOrder: 3\n    relationNote: \"2024년 JDK 21 가상 스레드 도입 배경, carrier thread와 mount/unmount 실행 모델을 읽는다. 글의 JDK 21 시점 synchronized pinning 주장은 JDK 24 이후의 JEP 491 변경과 구분한다.\"\n---\n# 플랫폼 스레드(Platform Thread)와 가상 스레드(Virtual Thread)\n\n",
+          "previous": "    referenceType: OFFICIAL\n    language: en\n    displayOrder: 2\n    relationNote: JDK 24부터 synchronized가 가상 스레드를 캐리어에 고정하지 않도록 바뀐 구현 경계 확인\n  - url: \"https://d2.naver.com/news/1203723\"\n    title: \"네이버 D2: Virtual Thread의 기본 개념 이해하기\"\n    referenceType: COMPANY_TECH_BLOG\n    language: ko\n    displayOrder: 3\n    relationNote: Java 스레드와 Executor를 운영 관점에서 연결해 이해\n---\n# 플랫폼 스레드(Platform Thread)와 가상 스레드(Virtual Thread)\n\n"
+        }
+      ]
+    },
+    {
+      "path": "java/concurrency/thread-lifecycle-interruption.md",
+      "hunks": [
+        {
+          "current": "    depth: article\n    recommendation: \"JVM thread dump에서 lock owner와 waiter를 연결해 deadlock cycle을 해석하는 실제 사례를 확인한다.\"\n    displayOrder: 3\n    relationNote: \"'스레드 상태'와 '스레드 덤프 유형별 패턴'의 BLOCKED·WAITING, monitor 소유자/대기자 분석 사례를 읽는다. 오래된 HotSpot 덤프 형식과 API 사용법은 Java 25 공식 도구 문서로 다시 확인한다.\"\n---\n# Thread 생명주기와 중단\n\n",
+          "previous": "    depth: article\n    recommendation: \"JVM thread dump에서 lock owner와 waiter를 연결해 deadlock cycle을 해석하는 실제 사례를 확인한다.\"\n    displayOrder: 3\n    relationNote: thread 상태와 blocked/waiting 진단을 실제 장애 흐름으로 연결\n---\n# Thread 생명주기와 중단\n\n"
+        }
+      ]
+    },
+    {
+      "path": "java/design-patterns/strategy-pattern.md",
+      "hunks": [
+        {
+          "current": "    referenceType: KOREAN_BLOG\n    language: ko\n    displayOrder: 2\n    relationNote: \"Strategy의 정책 위임과 Command 비교 절만 참고. 글의 Command 코드에 타입/이름 오류가 있고 Strategy의 인자 차이를 반드시 overload로 처리해야 한다는 설명은 일반 규칙이 아니므로 예제 그대로 복사하지 않는다.\"\n---\n# 전략(Strategy) 패턴과 정책 교체\n\n",
+          "previous": "    referenceType: KOREAN_BLOG\n    language: ko\n    displayOrder: 2\n    relationNote: Strategy가 변하는 로직을 공통 계약 뒤로 분리하는 구조와 Command와의 차이를 한국어 예제로 복습\n---\n# 전략(Strategy) 패턴과 정책 교체\n\n"
+        }
+      ]
+    },
+    {
+      "path": "java/exceptions-resources/try-with-resources-suppressed.md",
+      "hunks": [
+        {
+          "current": "    displayOrder: 2\n    relationNote: suppressed exception 조회 계약 확인\n  - url: \"https://d2.naver.com/helloworld/1219\"\n    title: \"JDK 7\"\n    referenceType: COMPANY_TECH_BLOG\n    language: ko\n    displayOrder: 3\n    relationNote: \"'try-with-resource statement' 절의 AutoCloseable, 자원 해제 순서와 suppressed exception 처리 예제를 읽는다. JDK 7 도입 시점의 코드·설명임을 구분한다.\"\n---\n# try-with-resources와 억제 예외(suppressed exception)\n\n",
+          "previous": "    displayOrder: 2\n    relationNote: suppressed exception 조회 계약 확인\n  - url: \"https://d2.naver.com/helloworld/1219\"\n    title: \"네이버 D2: JDK 7의 NIO.2와 파일 API\"\n    referenceType: COMPANY_TECH_BLOG\n    language: ko\n    displayOrder: 3\n    relationNote: try-with-resources와 JDK 7 자원 관리 문법을 한국어 사례로 보충\n---\n# try-with-resources와 억제 예외(suppressed exception)\n\n"
+        }
+      ]
+    },
+    {
+      "path": "java/functional/behavior-parameterization.md",
+      "hunks": [
+        {
+          "current": "    referenceType: COMPANY_TECH_BLOG\n    language: ko\n    displayOrder: 2\n    relationNote: \"Java 8 람다 도입 배경과 동작 전달의 언어적 의미를 보충한다. 글의 invokedynamic/JVM 구현 설명을 람다의 언어 명세가 강제하는 유일한 실행 방식으로 보지 않는다.\"\n---\n# 행동을 매개변수로 전달하기\n\n",
+          "previous": "    referenceType: COMPANY_TECH_BLOG\n    language: ko\n    displayOrder: 2\n    relationNote: 람다와 invokedynamic의 연결을 읽을 수 있는 보조 자료\n---\n# 행동을 매개변수로 전달하기\n\n"
+        }
+      ]
+    },
+    {
+      "path": "java/io-nio/byte-character-stream-charset.md",
+      "hunks": [
+        {
+          "current": "    referenceType: COMPANY_TECH_BLOG\n    language: ko\n    displayOrder: 3\n    relationNote: \"Unicode 코드 포인트·UTF-8 및 한글의 바이트 인코딩 예시를 보충한다. 2012년 글의 Unicode 버전·기본 charset·String.getBytes() 결과는 Java 25의 현행 규칙과 구분한다.\"\n---\n# 바이트·문자 스트림과 Charset\n\n",
+          "previous": "    referenceType: COMPANY_TECH_BLOG\n    language: ko\n    displayOrder: 3\n    relationNote: Unicode와 UTF-8의 바이트 표현, Java 문자열·입출력 인코딩의 배경 이해. 기본 charset 관련 내용은 JDK 18 이전 기준이므로 Java 25 공식 문서를 우선한다.\n---\n# 바이트·문자 스트림과 Charset\n\n"
+        }
+      ]
+    },
+    {
+      "path": "java/io-nio/path-files-api.md",
+      "hunks": [
+        {
+          "current": "    displayOrder: 2\n    relationNote: 파일 생성·읽기·쓰기·복사·이동과 stream API 확인\n  - url: \"https://d2.naver.com/helloworld/1219\"\n    title: \"JDK 7\"\n    referenceType: COMPANY_TECH_BLOG\n    language: ko\n    displayOrder: 3\n    relationNote: \"'More New I/O APIs'와 'Improved Filesystem Interface'의 Path·Files·DirectoryStream 예제를 읽는다. JDK 7 도입 시점 자료이며 try-with-resources 절은 별도 학습 주제로 구분한다.\"\n---\n# Path와 Files API\n\n",
+          "previous": "    displayOrder: 2\n    relationNote: 파일 생성·읽기·쓰기·복사·이동과 stream API 확인\n  - url: \"https://d2.naver.com/helloworld/1219\"\n    title: \"네이버 D2: JDK 7의 NIO.2와 파일 API\"\n    referenceType: COMPANY_TECH_BLOG\n    language: ko\n    displayOrder: 3\n    relationNote: Path·Files와 try-with-resources를 실제 파일 처리 흐름으로 연결\n---\n# Path와 Files API\n\n"
+        }
+      ]
+    },
+    {
+      "path": "java/jvm-runtime/gc-fundamentals-collectors.md",
+      "hunks": [
+        {
+          "current": "    referenceType: COMPANY_TECH_BLOG\n    language: ko\n    displayOrder: 3\n    relationNote: \"2012년 HotSpot의 Young/Old 세대, GC·STW 및 카드 테이블 설명을 역사적 구현 사례로 읽는다. Permanent Generation, 수집기 옵션과 세대별 동작을 Java 25 공통 GC 모델로 취급하지 않는다.\"\n---\n# GC 기본 원리와 수집기(Collector)\n\n",
+          "previous": "    referenceType: COMPANY_TECH_BLOG\n    language: ko\n    displayOrder: 3\n    relationNote: GC의 세대별 흐름과 stop-the-world 관찰 포인트 보충\n---\n# GC 기본 원리와 수집기(Collector)\n\n"
+        }
+      ]
+    },
+    {
+      "path": "java/jvm-runtime/gc-reachability-roots.md",
+      "hunks": [
+        {
+          "current": "    referenceType: COMPANY_TECH_BLOG\n    language: ko\n    displayOrder: 3\n    relationNote: \"'GC와 Reachability'·'Reference와 Reachability'의 root set과 참조 사슬 개념을 복습한다. 2013년 글의 finalization·회수 순서 설명은 현행 Java 25 계약으로 옮기지 않는다.\"\n---\n# GC 도달 가능성과 루트(Root)\n\n",
+          "previous": "    referenceType: COMPANY_TECH_BLOG\n    language: ko\n    displayOrder: 3\n    relationNote: Java 객체와 GC reachability를 함께 복습\n---\n# GC 도달 가능성과 루트(Root)\n\n"
+        }
+      ]
+    },
+    {
+      "path": "java/jvm-runtime/jit-hotspot-warmup.md",
+      "hunks": [
+        {
+          "current": "    displayOrder: 2\n    relationNote: HotSpot JIT와 계층형 컴파일 구현 범위 확인\n  - url: \"https://techblog.woowahan.com/2588/\"\n    title: \"신규 포인트 시스템 전환기 #2 – 오픈 준비 단계\"\n    referenceType: COMPANY_TECH_BLOG\n    language: ko\n    displayOrder: 3\n    relationNote: \"7-1절 '자바 어플리케이션 성능 테스트시 주의 사항'의 JVM 워밍업/성능 측정 사례. 첫 실행 폐기는 해당 서비스의 측정 선택이며 모든 JVM·워크로드에 통용되는 2회 측정 규칙이 아니다.\"\n---\n# JIT·HotSpot과 워밍업(warm-up)\n\n",
+          "previous": "    displayOrder: 2\n    relationNote: HotSpot JIT와 계층형 컴파일 구현 범위 확인\n  - url: \"https://techblog.woowahan.com/2588/\"\n    title: \"새로운 포인트 적립 시스템 개발기\"\n    referenceType: COMPANY_TECH_BLOG\n    language: ko\n    displayOrder: 3\n    relationNote: JVM 워밍업과 실제 서비스 성능 측정 맥락을 보충\n---\n# JIT·HotSpot과 워밍업(warm-up)\n\n"
+        }
+      ]
+    },
+    {
+      "path": "java/jvm-runtime/jvm-runtime-data-areas-frames.md",
+      "hunks": [
+        {
+          "current": "    referenceType: COMPANY_TECH_BLOG\n    language: ko\n    displayOrder: 2\n    relationNote: \"'GC와 Reachability'의 스택 지역 참조·힙 객체·root set 연결 도식을 읽는다. 2013년 HotSpot 기준 메모리 배치를 JVM 명세가 고정한 물리 구조로 이해하지 않는다.\"\n---\n# JVM 런타임 데이터 영역(Runtime Data Area)과 프레임(Frame)\n\n",
+          "previous": "    referenceType: COMPANY_TECH_BLOG\n    language: ko\n    displayOrder: 2\n    relationNote: Java 객체와 참조가 런타임 메모리 모델에서 연결되는 방식 보충\n---\n# JVM 런타임 데이터 영역(Runtime Data Area)과 프레임(Frame)\n\n"
+        }
+      ]
+    },
+    {
+      "path": "java/jvm-runtime/reference-strengths.md",
+      "hunks": [
+        {
+          "current": "    referenceType: COMPANY_TECH_BLOG\n    language: ko\n    displayOrder: 3\n    relationNote: \"'Soft, Weak, Phantom Reference'와 reachability 유형의 개념을 비교해 읽는다. 글의 PhantomReference와 finalization 필수 순서·clear() 필수 회수 설명은 Java 25의 현행 Reference API와 다르므로 그대로 적용하지 않는다.\"\n---\n# 강한·소프트·약한·팬텀 참조\n\n",
+          "previous": "    referenceType: COMPANY_TECH_BLOG\n    language: ko\n    displayOrder: 3\n    relationNote: 강한·소프트·약한·팬텀 참조의 학습 흐름 보충\n---\n# 강한·소프트·약한·팬텀 참조\n\n"
+        }
+      ]
+    },
+    {
+      "path": "java/jvm-runtime/runtime-diagnostics-jcmd-jstack-jfr.md",
+      "hunks": [
+        {
+          "current": "    referenceType: COMPANY_TECH_BLOG\n    language: ko\n    displayOrder: 4\n    relationNote: \"2012년 HotSpot의 jstat·GC 로그·모니터링 기법과 관측 목적을 비교해 읽는다. 당시 -verbosegc·도구/옵션/출력 형식은 Java 25 JFR·jcmd의 현재 사용법과 같다고 가정하지 않는다.\"\n---\n# jcmd·jstack·JFR로 JVM 진단하기\n\n",
+          "previous": "    referenceType: COMPANY_TECH_BLOG\n    language: ko\n    displayOrder: 4\n    relationNote: GC 관측 지표와 도구 선택의 실제 맥락 보충\n---\n# jcmd·jstack·JFR로 JVM 진단하기\n\n"
+        }
+      ]
+    },
+    {
+      "path": "java/language-types/primitive-reference-values.md",
+      "hunks": [
+        {
+          "current": "    referenceType: COMPANY_TECH_BLOG\n    language: ko\n    displayOrder: 2\n    relationNote: \"'GC와 Reachability'의 객체 참조·GC root 설명을 보충해서 읽는다. 2013년 글의 finalization/PhantomReference 설명과 JVM 구현 세부는 Java 25의 일반 규칙으로 받아들이지 않는다.\"\n---\n# 원시 값과 참조 값\n\n",
+          "previous": "    referenceType: COMPANY_TECH_BLOG\n    language: ko\n    displayOrder: 2\n    relationNote: 참조가 GC 도달 가능성과 어떻게 연결되는지 더 깊게 볼 때 참고\n---\n# 원시 값과 참조 값\n\n"
+        }
+      ]
+    },
+    {
+      "path": "java/metadata-compatibility/serialization-contract-risk.md",
+      "hunks": [
+        {
+          "current": "    referenceType: COMPANY_TECH_BLOG\n    language: ko\n    displayOrder: 3\n    relationNote: \"Java 내장 직렬화의 사용법, 장점과 기본 적용처를 소개하는 입문 글. 장기 버전 호환성과 역직렬화 보안 위험은 이 글의 심화 범위가 아니므로 앞의 공식 Serialization Specification을 우선한다.\"\n---\n# 직렬화가 만드는 장기 계약\n\n",
+          "previous": "    referenceType: COMPANY_TECH_BLOG\n    language: ko\n    displayOrder: 3\n    relationNote: native serialization을 장기 데이터 계약과 운영 위험 관점에서 보충\n---\n# 직렬화가 만드는 장기 계약\n\n"
+        }
+      ]
+    },
+    {
+      "path": "java/object-contracts/equals-contract.md",
+      "hunks": [
+        {
+          "current": "    language: en\n    displayOrder: 1\n    relationNote: equals의 공식 계약 확인\n---\n# equals 계약과 논리적 동등성\n\n",
+          "previous": "    language: en\n    displayOrder: 1\n    relationNote: equals의 공식 계약 확인\n  - url: \"https://tecoble.techcourse.co.kr/post/2020-06-11-value-object/\"\n    title: \"VO(Value Object)란 무엇일까?\"\n    referenceType: KOREAN_BLOG\n    language: ko\n    displayOrder: 2\n    relationNote: 값 객체의 동일성·동등성 구분과 equals/hashCode 재정의를 한국어 예제로 복습\n---\n# equals 계약과 논리적 동등성\n\n"
+        }
+      ]
+    },
+    {
+      "path": "java/object-contracts/hashcode-contract.md",
+      "hunks": [
+        {
+          "current": "    language: en\n    displayOrder: 1\n    relationNote: hashCode 공식 계약 확인\n---\n# hashCode와 equals의 계약\n\n",
+          "previous": "    language: en\n    displayOrder: 1\n    relationNote: hashCode 공식 계약 확인\n  - url: \"https://tecoble.techcourse.co.kr/post/2020-07-29-equals-and-hashCode/\"\n    title: \"equals와 hashCode는 왜 같이 재정의해야 할까?\"\n    referenceType: KOREAN_BLOG\n    language: ko\n    displayOrder: 2\n    relationNote: hash 기반 컬렉션에서 equals와 hashCode 계약이 함께 필요한 이유를 한국어 예제로 복습\n---\n# hashCode와 equals의 계약\n\n"
+        }
+      ]
+    },
+    {
+      "path": "java/object-model/class-object-constructor.md",
+      "hunks": [
+        {
+          "current": "    language: en\n    displayOrder: 1\n    relationNote: 클래스와 생성자 규칙 확인\n---\n# 클래스, 객체와 생성자\n\n",
+          "previous": "    language: en\n    displayOrder: 1\n    relationNote: 클래스와 생성자 규칙 확인\n  - url: \"https://tecoble.techcourse.co.kr/post/2021-05-17-constructor/\"\n    title: \"Tecoble: java에서 객체를 생성하는 다양한 방법\"\n    referenceType: KOREAN_BLOG\n    language: ko\n    displayOrder: 2\n    relationNote: 생성자 오버로딩과 이름 있는 생성 API를 비교하는 입문 예시 보충\n---\n# 클래스, 객체와 생성자\n\n"
+        }
+      ]
+    },
+    {
+      "path": "java/streams/stream-pipeline-laziness.md",
+      "hunks": [
+        {
+          "current": "    language: en\n    displayOrder: 1\n    relationNote: stream pipeline, laziness, non-interference와 consumption 계약 확인\n---\n# Stream 파이프라인(Stream Pipeline)과 지연 실행\n\n",
+          "previous": "    language: en\n    displayOrder: 1\n    relationNote: stream pipeline, laziness, non-interference와 consumption 계약 확인\n  - url: \"https://d2.naver.com/helloworld/4911107\"\n    title: \"네이버 D2: 람다가 이끌어 갈 모던 Java\"\n    referenceType: COMPANY_TECH_BLOG\n    language: ko\n    displayOrder: 2\n    relationNote: lambda와 stream을 실제 Java 코드에 적용하는 흐름 보충\n---\n# Stream 파이프라인(Stream Pipeline)과 지연 실행\n\n"
+        }
+      ]
+    },
+    {
+      "path": "java/time-numeric/instant-local-zoned-time.md",
+      "hunks": [
+        {
+          "current": "    referenceType: COMPANY_TECH_BLOG\n    language: ko\n    displayOrder: 3\n    relationNote: \"기존 Date/Calendar의 시간대·서머타임 처리 문제와 Java 8 날짜·시간 API 도입 배경을 읽는다. 과거 버전의 사례와 Java 25 java.time API 계약·시간대 데이터는 구분한다.\"\n---\n# Instant·LocalDateTime·ZonedDateTime\n\n",
+          "previous": "    referenceType: COMPANY_TECH_BLOG\n    language: ko\n    displayOrder: 3\n    relationNote: Java 날짜·시간 API가 local time과 timezone-aware time을 분리한 배경을 한국어로 함께 확인\n---\n# Instant·LocalDateTime·ZonedDateTime\n\n"
+        }
+      ]
+    }
+  ]
+}

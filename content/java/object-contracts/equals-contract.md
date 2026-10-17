@@ -15,12 +15,6 @@ references:
     language: en
     displayOrder: 1
     relationNote: equals의 공식 계약 확인
-  - url: "https://tecoble.techcourse.co.kr/post/2020-06-11-value-object/"
-    title: "VO(Value Object)란 무엇일까?"
-    referenceType: KOREAN_BLOG
-    language: ko
-    displayOrder: 2
-    relationNote: 값 객체의 동일성·동등성 구분과 equals/hashCode 재정의를 한국어 예제로 복습
 ---
 # equals 계약과 논리적 동등성
 

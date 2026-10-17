@@ -15,12 +15,6 @@ references:
     language: en
     displayOrder: 1
     relationNote: class method와 constructor의 언어 규칙 확인
-  - url: "https://tecoble.techcourse.co.kr/post/2020-05-26-static-factory-method/"
-    title: "정적 팩토리 메서드(Static Factory Method)는 왜 사용할까?"
-    referenceType: KOREAN_BLOG
-    language: ko
-    displayOrder: 2
-    relationNote: 이름 있는 생성과 하위 타입 반환 등 정적 팩터리의 대표적인 사용 이유를 한국어 예제로 복습
 ---
 # 정적 팩터리 메서드
 

@@ -26,7 +26,7 @@ references:
     referenceType: COMPANY_TECH_BLOG
     language: ko
     displayOrder: 3
-    relationNote: native serialization을 장기 데이터 계약과 운영 위험 관점에서 보충
+    relationNote: "Java 내장 직렬화의 사용법, 장점과 기본 적용처를 소개하는 입문 글. 장기 버전 호환성과 역직렬화 보안 위험은 이 글의 심화 범위가 아니므로 앞의 공식 Serialization Specification을 우선한다."
 ---
 # 직렬화가 만드는 장기 계약
 

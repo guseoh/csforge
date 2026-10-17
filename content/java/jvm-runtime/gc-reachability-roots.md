@@ -26,7 +26,7 @@ references:
     referenceType: COMPANY_TECH_BLOG
     language: ko
     displayOrder: 3
-    relationNote: Java 객체와 GC reachability를 함께 복습
+    relationNote: "'GC와 Reachability'·'Reference와 Reachability'의 root set과 참조 사슬 개념을 복습한다. 2013년 글의 finalization·회수 순서 설명은 현행 Java 25 계약으로 옮기지 않는다."
 ---
 # GC 도달 가능성과 루트(Root)
 

@@ -20,7 +20,7 @@ references:
     referenceType: KOREAN_BLOG
     language: ko
     displayOrder: 2
-    relationNote: Strategy가 변하는 로직을 공통 계약 뒤로 분리하는 구조와 Command와의 차이를 한국어 예제로 복습
+    relationNote: "Strategy의 정책 위임과 Command 비교 절만 참고. 글의 Command 코드에 타입/이름 오류가 있고 Strategy의 인자 차이를 반드시 overload로 처리해야 한다는 설명은 일반 규칙이 아니므로 예제 그대로 복사하지 않는다."
 ---
 # 전략(Strategy) 패턴과 정책 교체
 
