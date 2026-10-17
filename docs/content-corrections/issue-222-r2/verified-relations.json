@@ -43,5 +43,95 @@
     "reviewDate": "2026-10-17",
     "basis": "2025년 카카오 기술 블로그 원문에서 MATRIX 서비스의 관측 신호, 분산 추적 기반 서비스 호출 경로, 운영 분석과 AI 적용 실제 사례 확인. Concept의 마지막 운영 활용 사례를 보완한다.",
     "limits": "이 사례의 운영 플랫폼과 OpenTelemetry Context Propagation 일반 규칙을 동일시하지 않는다."
+  },
+  {
+    "contentKey": "operating-systems.core.race-critical-section.critical-section",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/threads-intro.pdf",
+    "decision": "KEEP",
+    "evidenceLevel": "DIRECT_CONTENT_VERIFIED",
+    "reviewDate": "2026-10-17",
+    "basis": "OSTEP Threads: An Introduction(Chapter 26) 직접 PDF 열람; 서론 스레드의 공유 주소 공간과 26.3 공유 데이터가 왜 임계 구역의 보호 대상이 생기는지 설명하는 배경 근거.",
+    "limits": "이 장은 mutual exclusion·progress·bounded waiting의 알고리즘적 보장을 완결적으로 설명하지 않는다."
+  },
+  {
+    "contentKey": "operating-systems.core.race-critical-section.interleaving",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/threads-intro.pdf",
+    "decision": "KEEP",
+    "evidenceLevel": "DIRECT_CONTENT_VERIFIED",
+    "reviewDate": "2026-10-17",
+    "basis": "OSTEP Threads: An Introduction(Chapter 26) 직접 PDF 열람; 26.2 서로 다른 스레드 실행 순서의 사례와 26.3 공유 counter의 실행 교차 예시.",
+    "limits": "관찰 순서를 Java Memory Model 결과 보장으로 확대하지 않는다."
+  },
+  {
+    "contentKey": "operating-systems.core.race-critical-section.race-condition",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/threads-intro.pdf",
+    "decision": "KEEP",
+    "evidenceLevel": "DIRECT_CONTENT_VERIFIED",
+    "reviewDate": "2026-10-17",
+    "basis": "OSTEP Threads: An Introduction(Chapter 26) 직접 PDF 열람; 26.3 공유 counter의 비원자 read-modify-write가 결과를 바꾸는 문제를 제시한다.",
+    "limits": "Java의 data race 정의는 JLS 17의 별도 명세를 우선한다."
+  },
+  {
+    "contentKey": "operating-systems.core.race-critical-section.shared-mutable-state",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/threads-intro.pdf",
+    "decision": "KEEP",
+    "evidenceLevel": "DIRECT_CONTENT_VERIFIED",
+    "reviewDate": "2026-10-17",
+    "basis": "OSTEP Threads: An Introduction(Chapter 26) 직접 PDF 열람; 26.3 두 스레드가 공유 counter를 갱신하는 사례, 서론의 공유 주소 공간 설명.",
+    "limits": "OS 텍스트는 모든 언어의 불변 조건·동기화 정책을 자동 보장하지 않는다."
+  },
+  {
+    "contentKey": "operating-systems.core.threads.concurrency-vs-parallelism",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/threads-intro.pdf",
+    "decision": "KEEP",
+    "evidenceLevel": "DIRECT_CONTENT_VERIFIED",
+    "reviewDate": "2026-10-17",
+    "basis": "OSTEP Threads: An Introduction(Chapter 26) 직접 PDF 열람; 26.1 CPU 계산의 병렬화와 블로킹 I/O를 겹쳐 사용하는 이유를 직접 비교한다.",
+    "limits": "실제 throughput 향상·코어 수 관계는 워크로드 의존이다."
+  },
+  {
+    "contentKey": "operating-systems.core.threads.process-vs-thread",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/threads-intro.pdf",
+    "decision": "KEEP",
+    "evidenceLevel": "DIRECT_CONTENT_VERIFIED",
+    "reviewDate": "2026-10-17",
+    "basis": "OSTEP Threads: An Introduction(Chapter 26) 직접 PDF 열람; 서론: 동일 주소 공간을 공유하되 PC·레지스터·stack은 별도로 유지함.",
+    "limits": "프로세스/스레드가 어느 환경에서나 동일한 생성비용이라는 뜻은 아니다."
+  },
+  {
+    "contentKey": "operating-systems.core.threads.thread-count-workload",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/threads-intro.pdf",
+    "decision": "KEEP",
+    "evidenceLevel": "DIRECT_CONTENT_VERIFIED",
+    "reviewDate": "2026-10-17",
+    "basis": "OSTEP Threads: An Introduction(Chapter 26) 직접 PDF 열람; 26.1 compute-heavy parallelism와 I/O 대기 동안 다른 작업을 진행하는 실행 이유.",
+    "limits": "정량적 worker pool sizing, 커넥션 제한 및 최적 스레드 수 공식은 설명하지 않는다."
+  },
+  {
+    "contentKey": "operating-systems.core.threads.thread-create-switch-cost",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/threads-intro.pdf",
+    "decision": "KEEP",
+    "evidenceLevel": "DIRECT_CONTENT_VERIFIED",
+    "reviewDate": "2026-10-17",
+    "basis": "OSTEP Threads: An Introduction(Chapter 26) 직접 PDF 열람; 서론: TCB와 register save/restore, 스레드별 stack을 설명한다.",
+    "limits": "캐시 비용·전환 성능의 정량 비교는 직접 검증되지 않았다."
+  },
+  {
+    "contentKey": "operating-systems.core.threads.thread-private-state",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/threads-intro.pdf",
+    "decision": "KEEP",
+    "evidenceLevel": "DIRECT_CONTENT_VERIFIED",
+    "reviewDate": "2026-10-17",
+    "basis": "OSTEP Threads: An Introduction(Chapter 26) 직접 PDF 열람; 서론: 별도 프로그램 카운터, 레지스터 문맥 및 스택이 각 스레드의 실행 상태임.",
+    "limits": "stack 안의 참조가 가리키는 heap 객체 자체의 소유권까지 개인 전용이라 보장하지 않는다."
+  },
+  {
+    "contentKey": "operating-systems.core.threads.thread-shared-state",
+    "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/threads-intro.pdf",
+    "decision": "KEEP",
+    "evidenceLevel": "DIRECT_CONTENT_VERIFIED",
+    "reviewDate": "2026-10-17",
+    "basis": "OSTEP Threads: An Introduction(Chapter 26) 직접 PDF 열람; 서론: 코드/힙/주소 공간의 스레드 공유, 26.3 shared counter 실례.",
+    "limits": "스레드 간 공유가 원자성 또는 동기화를 자동 제공하지 않는다."
   }
 ]

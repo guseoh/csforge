@@ -58,3 +58,11 @@ Wave 1~4의 과거 미확정 데이터와 최근 수정 사항을 대조해 사�
 - Java Wave 4 과거 272관계 중 PR #225에서 5관계 제거 → 현재 267. 옛 NEEDS_REVIEW 16 중 1관계 제거/15관계 R1에서 판정 완료. 증거 원본의 상태 변경 아님.
 - 중복 제거 기준 비Java 과거 미확정 후보 **153관계**, 이 가운데 5개를 독립 원문 대조해 KEEP 판단; **남은 148관계**는 오류 확정 수가 아닌 후속 검토 대기 건수.
 - 일회성 workflow 검사 스텝 제거 후 기존 Repository Validation 정의로 복귀; 본 PR에는 **감사 코드·기록·결정 근거만 포함**.
+
+## R2 후속 정리 — 2026-10-17 (OSTEP 원문·중복 PR)
+
+- **중복 PR #226 종료**: 같은 NIST `backup-restore` 변경을 독립 재작성한 [#230](https://github.com/guseoh/csforge/pull/230)에 old→new Testcontainers 회귀 검증까지 포함되어 단일 진행 PR로 채택. #226은 병합하지 않음.
+- **발행 상태 교정 [#229](https://github.com/guseoh/csforge/pull/229)**: HTTP 쿠키 3관계가 참조하던 RFC-to-be 10025는 공식 RFC Editor Final Review 페이지에서 아직 미출판이다. 정식 RFC 6265와 변경 가능한 6265bis draft를 분리했다. 실제 old→new / Reader 최종 게이트는 별도.
+- **Operating Systems OSTEP 원문 직접 확인**: [Chapter 26 PDF](https://pages.cs.wisc.edu/~remzi/OSTEP/threads-intro.pdf)의 서론·26.1·26.2·26.3 원문을 확인해 11개 관계를 Concept별로 대조. **10관계 KEEP**은 `verified-relations.json`에 각 근거·제한을 추가했고, 사용자 스레드 매핑까지 보장하는 듯한 relationNote 1관계는 [#231](https://github.com/guseoh/csforge/pull/231) Draft로 최소 한정 수정. 원문 전체가 자동 검증되었다는 뜻은 아니다.
+- 원래 집계 **비Java 과거 미확정 153관계**, 직접 검증 5→**15관계**, **잔여 후보 148→138관계**로 내려간다. 이 수치는 오류·실패 수가 아니고, #229/#230/#231의 미병합 수정을 자동 반영해 감한 값도 아니다. 정확한 수치는 `reconcile.py` 재실행 후 확정한다.
+- R2 브랜치 자체는 **감사/근거 전용**이며 canonical 수정·운영 DB 적용·병합 없음. [#227](https://github.com/guseoh/csforge/pull/227), [#229](https://github.com/guseoh/csforge/pull/229), [#230](https://github.com/guseoh/csforge/pull/230), [#231](https://github.com/guseoh/csforge/pull/231)은 별도의 독립 교정 Draft PR이다.
