@@ -9,12 +9,12 @@ level: 2
 status: PUBLISHED
 displayOrder: 30
 references:
-  - url: "https://docs.spring.io/spring-security/reference/servlet/authentication/passwords/user-details.html"
+  - url: "https://docs.spring.io/spring-security/reference/servlet/authentication/passwords/user-details-service.html"
     title: "Spring Security Reference: UserDetailsService"
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
-    relationNote: "DaoAuthenticationProvider와 UserDetailsService의 협력 확인"
+    relationNote: "UserDetailsService의 사용자 계정 조회 책임을 확인한다. 실제 패스워드 검증은 DaoAuthenticationProvider와 PasswordEncoder에 속한다."
   - url: "https://docs.spring.io/spring-security/reference/features/authentication/password-storage.html"
     title: "Spring Security Reference: Password Storage"
     referenceType: OFFICIAL
