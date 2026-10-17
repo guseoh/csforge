@@ -31,3 +31,21 @@
 - RFC Editor Final Review: https://queue.rfc-editor.org/final-review/rfc10025/
 - Published RFC 6265: https://www.rfc-editor.org/rfc/rfc6265.html
 - HTTPWG RFC 6265bis latest draft: https://httpwg.org/http-extensions/draft-ietf-httpbis-rfc6265bis.html
+
+## 검증 결과 — 2026-10-17
+
+**PostgreSQL old→new 이력 보존 및 전체 Import: PASS.**
+
+- 격리 PostgreSQL Testcontainers `NetworkCookieReferenceCorrectionIntegrationTest`: 처음 canonical `3,380`개 생성, RFC10025 old 3개 Concept Preview·Apply `UPDATED 3`, 교정본 Preview·Apply `UPDATED 3`; 기존 Concept ID·personal_note·attempt·wrong_note 보존, 기존 URL 관계 3개 제거, RFC6265 및 미발행 초안 관계 각 3개, Reader application API 실제 표출 검증. 전체 재import **3,380 UNCHANGED**, errors/failed 0.
+- [Repository Validation #38994005558](https://github.com/guseoh/csforge/actions/runs/38994005558) **SUCCESS**(Backend tests/build + frontend validation + Compose), Cloud Run deploy SKIPPED.
+
+**실제 Chromium Reader 및 Canonical Bootstrap: PASS.**
+
+- [일회성 격리 browser run #38994397181](https://github.com/guseoh/csforge/actions/runs/38994397181) **SUCCESS**, PostgreSQL 16.4 + Java 25 local auth backend + Vite + Chromium + Noto CJK. 본 실행용 서비스/DB는 runner 종료로 폐기됐고 Production 접근/Import 없음.
+- 실제 `POST /api/canonical-bootstrap`: `EMPTY → 3,380 CREATED / ERROR 0 → READY`. 3개 Concept Reader API의 실제 두 URL/title/relationNote 및 RFC/초안 구분 PASS.
+- 실제 React Reader에서 `cookie` 375px/light, `set-cookie` 375px/dark, `cookie-scope` 1280px/light + dark의 4개 화면의 제목·한글 관련 절 설명·URL 정확, 가로 overflow 0, 키보드 focus→Enter→외부 새 탭→Reader 복귀 PASS.
+- 브라우저 console exception 0. 비차단 `http://127.0.0.1:5173/favicon.ico` 404 경고 1건은 기존 개발 서버의 아이콘 요청이며 Reference 자체 장애 아님. "콘솔 무경고"라 주장하지 않음.
+- [Actions #38994397181 Artifact](https://github.com/guseoh/csforge/actions/runs/38994397181)의 `pr229-cookie-browser-evidence`에는 `report.json`과 한글 화면 캡처 4장. 실제 PNG를 열어 수동 육안 확인함.
+- 브라우저 검증을 위해 임시 사용한 `.github/workflows/repository-validation.yml` 변경 및 `browser-check.cjs`를 최종 PR diff에서 **완전히 제거**. 최종 원래 Repository Validation으로 재검증한다.
+
+**남은 사항:** R2 15개 Area 전체 감사(다른 Wave 불확정 URL 및 발견)와 다른 Area들의 독립 교정은 #222에서 이어간다. PR #229는 사용자 별도 명시 승인 전 **Draft / 미병합**, Production DB Apply 없음.
