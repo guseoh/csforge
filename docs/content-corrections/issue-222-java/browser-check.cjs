@@ -25,6 +25,7 @@ const cases=[
  {title:'JIT·HotSpot과 워밍업(warm-up)',url:'https://techblog.woowahan.com/2588/',refTitle:'신규 포인트 시스템 전환기 #2 – 오픈 준비 단계',note:'7-1절'},
  {title:'강한·소프트·약한·팬텀 참조',url:'https://d2.naver.com/helloworld/329631',note:'Java 25'}
 ];
+async function main(){
 let browser;
 try {
  const prev=await api('/api/canonical-bootstrap/status');
@@ -110,3 +111,5 @@ try {
  fs.writeFileSync(path.join(out,'report.json'),JSON.stringify(report,null,2));
  if(browser)await browser.close();
 }
+}
+main().catch(err=>{console.error('R1_UNCAUGHT',err);process.exitCode=1;});
