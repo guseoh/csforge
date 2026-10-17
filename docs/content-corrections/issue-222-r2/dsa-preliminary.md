@@ -139,3 +139,19 @@
 1. SCOPE_CHECK 7관계부터 공식 원문 본문/저자 코드 경계를 구체 절 단위로 확정한 뒤 KEEP/NOTE_FIX/ACCESS_UNRESOLVED 중 선택한다. 자료 접근 실패와 자료의 의미 불일치를 구분.
 2. 이미 동일 URL의 Concept가 있다면 global `title/referenceType/language/depth/recommendation`는 변경하지 않고, 필요한 경우 관계별 `relationNote`의 최소 변화만 별도 DSA Content PR로 제안.
 3. Computer Architecture 46관계는 DSA 결과와 독립 추적. R2 감사 원본 및 기존 15건의 완료 증거를 덮어쓰지 않는다.
+
+## DSA 우선 7관계 심화 검토 (동일 날짜, 공식 저자 코드·색인 교차 확인)
+
+> **판정 수준 안내:** 원래 canonical Princeton 주소(예: `/13stacks/`)를 `open`한 결과 403이었다. 이하 근거는 **공식 발행자 인덱싱된 절·저자 Java 코드 검색 결과**이므로 `DIRECT_CONTENT_VERIFIED`로 승격하지 않는다. 권고는 교정 우선순위이며, 아직 canonical 메타데이터·원본 ledger 또는 `verified-relations.json`을 변경하지 않는다.
+
+| contentKey | 판단 | 공식 출처의 확인 가능한 학습 범위와 결정 | 필요한 최소 변경 |
+| --- | --- | --- | --- |
+| `dsa.core.graph-path.floyd-warshall` | **NOTE_FIX_RECOMMENDED** | [교재 4.4 연습문항 11](https://algs4.cs.princeton.edu/44sp/index.php)은 Floyd–Warshall을 별도로 지목하며 [저자 구현](https://algs4.cs.princeton.edu/code/edu/princeton/cs/algs4/FloydWarshall.java.html)의 all-pairs·V³시간·V²공간을 설명함. 현재 전역 recommendation은 Dijkstra/Bellman–Ford만 명시 | 개별 `relationNote`에 ‘4.4 연습문항 11 및 FloydWarshall.java의 모든 쌍 최단 경로·음수 사이클 조건’을 안내. global recommendation은 동일 URL의 다른 두 관계와 공유하므로 단일 관계에서만 고치지 않음 |
+| `dsa.core.sequential.doubly-linked-list` | **NOTE_FIX_RECOMMENDED** | [1.3 교재](https://algs4.cs.princeton.edu/13stacks/index.php) 기본 연결 리스트는 단일 next 기반 입문이고, [DoublyLinkedList.java](https://algs4.cs.princeton.edu/13stacks/DoublyLinkedList.java.html)에 `pre/post` sentinel과 `prev/next` 이중 갱신 코드가 있음 | `relationNote`에 본문 일반 연결 리스트와 별도 이중 연결 리스트 예제를 명확히 구분 |
+| `dsa.core.stack-queue-deque.monotonic-stack-queue` | **NOTE_FIX_RECOMMENDED** | [1.3 Web Exercises 62: Stock prices](https://algs4.cs.princeton.edu/13stacks/index.php)에 stack-of-indices의 선형 시간 풀이 힌트가 있음. 이 자료가 sliding-window monotonic deque의 불변식/구현까지 설명한다고 근거 없이 확대하면 안 됨 | `relationNote`에 ‘연습문항 62의 다음 큰 값/인덱스 스택 예시만 보조’ 한정, 단조 덱의 정의·증명은 Concept 본문을 우선 |
+| `dsa.core.stack-queue-deque.circular-queue` | **KEEP_SCOPE_LIMITED** | [ResizingArrayQueue.java](https://algs4.cs.princeton.edu/code/edu/princeton/cs/algs4/ResizingArrayQueue.java.html)는 `first/last/n`, 인덱스 wraparound, resize 시 논리적 FIFO 순서 재배치, size 기반 full/empty를 구현. Concept에서 설명하는 핵심 원형 인덱스와 일치함 | 원본 URL 및 현재 recommendation 유지 가능. 구현은 크기 조정 가능한 원형 배열 큐이며 ‘고정 배열 전용’ 구현이라고 표현하지 않음. 선택적 `relationNote`만 검토 |
+| `dsa.core.algorithm-selection.preprocessing-query-cost` | **NOTE_FIX_RECOMMENDED** | [교재 1.4](https://algs4.cs.princeton.edu/14analysis/)는 실행 횟수·연산 비용 모델·분할 상환 분석을 다루지만 본 Concept의 `전처리 + Q×질의 + 갱신` 비용 식 자체를 명시하는 절의 증거는 확보하지 못함 | 관계별 `relationNote`는 ‘비용 모델·기본 연산 분석 배경’만 지목. 전처리·질의 수식의 직접 증명이라는 주장 금지 |
+| `dsa.core.trees.binary-tree-traversal` | **NOTE_FIX_RECOMMENDED** | [교재 3.2](https://algs4.cs.princeton.edu/32bst/)는 BST 정렬 조건에 기반한 inorder 순회를 직접 설명하고 level-order는 별도 연습 7을 언급. 모든 일반 binary tree의 preorder/postorder traversal을 이 URL만으로 정밀 보장하지 않음 | `relationNote`에서 ‘BST inorder·정렬된 순회 및 level-order 연습’으로 범위를 명시, 나머지 DFS 순회는 Concept 자체를 우선 |
+| `dsa.core.recursion-backtracking.recursion-call-state` | **NOTE_FIX_RECOMMENDED** | [교재 2.2](https://algs4.cs.princeton.edu/22mergesort/index.php)는 재귀 top-down mergesort, `lo/mid/hi` 분할과 반환 후 merge의 실행 순서를 설명함. JVM/OS의 실제 stack frame 레이아웃·오버플로 한계는 직접 다루지 않음 | `relationNote`에 ‘merge-sort의 재귀 호출 전개·복귀 추적’만 안내하고 호출 프레임의 런타임 보장은 별도 자료로 구분 |
+
+**집계:** 이 표는 7개 관계에서 **6개 scope-note 권고 + 1개 제한 조건 하 KEEP**이다. `NOTE_FIX_RECOMMENDED`는 오류 6건 확정이 아니며, 원문 전면 확인·Import/Reader QA가 없는 상태에서 본 작업만으로 ‘R2 완료 7건 추가’라고 세지 않는다. DSA 역사적 미확정 70건 / 18URL은 후속 후보로 남기며, 전역 15 verified / 138 pending 집계를 그대로 둔다.
