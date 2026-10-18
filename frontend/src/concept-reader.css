@@ -580,6 +580,13 @@
   white-space: nowrap;
 }
 
+/* Legacy .reference-item span styling must not reduce the actual reading guidance. */
+.reference-list .reference-item-guidance > span:last-child {
+  color: var(--text-default);
+  font-size: 0.88rem;
+  line-height: 1.65;
+}
+
 .reference-list .reference-item-open {
   flex: 0 0 auto;
   padding-top: 3px;
