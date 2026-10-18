@@ -86,3 +86,10 @@ Wave 1~4의 과거 미확정 데이터와 최근 수정 사항을 대조해 사�
 - **교정은 감사 PR이 아닌 독립 [Draft PR #233](https://github.com/guseoh/csforge/pull/233)에만 분리**했다. 한 Concept의 출처 개선을 CA 46개 전체의 직접 검증 완료로 전파하지 않는다.
 - UMD 강의 자료 44관계는 canonical 본문 원문을 여전히 읽을 수 없어 재검토 대기. OpenJDK JMH 1관계는 공식 [openjdk/jmh](https://github.com/openjdk/jmh) 저장소 공개를 확인했으나 기존 홈페이지의 접속 제한 자체를 링크 파손으로 판정하지 않는다.
 - 전체 R2 `15 VERIFIED / 138 NEEDS_REVIEW`는 과거 범위와 통합 감사의 현재 스냅샷으로 유지. 신규 PR의 수정 완료 및 Reader/Import 증거는 **별도 상태로 기록**하고, 병합 전에는 main의 완료 숫자로 재집계하지 않는다.
+
+## 2026-10-18 UMD 44관계·JMH 1관계 개별 판정
+
+- [UMD 44관계/8URL 관계별 조사 및 ACCESS_UNRESOLVED 보존](umd-44-relationship-review.md): 원본 7 HTML + 1 PDF 직접 접근 403/불가, 별도 메릴랜드대 공식 강의 및 Linux/RISC-V 보조 출처와 구별. 확정된 broken 0, 새 원본 검증 0. 원본 관계·global metadata·canonical 내용 변경 없음.
+- JMH 1관계는 **공식 OpenJDK 저장소 README를 실제 열람하고**, 기존 openjdk.org 프로젝트 소개 URL이 이 환경에서 403을 보인다는 조건부 사용자 사용성 문제를 분리함. 접근 가능한 공식 https://github.com/openjdk/jmh 로 변경하는 독립 [Draft PR #234](https://github.com/guseoh/csforge/pull/234)를 생성해 검증. 기존 원본이 영구 dead라는 결론 아님.
+- 기존 IEEE 754 교정 [Draft PR #233](https://github.com/guseoh/csforge/pull/233)과 파일·범위 중복 없음.
+- 통합 감사 집계 15 verified / 138 pending을 임의 수정하지 않으며 UMD 44개도 새로 verified 분류하지 않음. #234는 교정 PR의 검증 결과가 확보될 때까지 merge/Production과 별개.
