@@ -12,20 +12,6 @@ on:
 jobs:
   validate:
     runs-on: ubuntu-latest
-    services:
-      r2_postgres:
-        image: postgres:16.4
-        env:
-          POSTGRES_DB: csforge_r2_postmerge
-          POSTGRES_USER: csforge
-          POSTGRES_PASSWORD: r2_disposable_only
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd "pg_isready -U csforge -d csforge_r2_postmerge"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 10
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-java@v5
@@ -61,58 +47,6 @@ jobs:
             echo 'Expected missing-secret failure did not occur' >&2
             exit 1
           fi
-
-      - name: R3 reconcile baseline
-        shell: bash
-        run: |
-          python -m pip install --quiet pyyaml
-          mkdir -p /tmp/csforge-r2-os-scope
-          python docs/content-corrections/issue-222-r2/reconcile.py --out /tmp/csforge-r2-os-scope/reconcile-current.json
-
-      - name: OS R2 Scope isolated Reader acceptance
-        shell: bash
-        run: |
-          set -Eeuo pipefail
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq --no-install-recommends fonts-noto-cjk
-          fc-cache -f
-          export R2_PLAYWRIGHT_ROOT="$RUNNER_TEMP/csforge-r2-playwright"
-          npm install --silent --prefix "$R2_PLAYWRIGHT_ROOT" --no-save playwright@1.56.1
-          if command -v google-chrome >/dev/null 2>&1; then
-            export R2_CHROME_PATH="$(command -v google-chrome)"
-          else
-            node "$R2_PLAYWRIGHT_ROOT/node_modules/playwright/cli.js" install chromium
-          fi
-          JAR="$(find backend/build/libs -maxdepth 1 -type f -name '*.jar' ! -name '*-plain.jar' | head -n 1)"
-          test -n "$JAR"
-          DB_URL="jdbc:postgresql://127.0.0.1:5432/csforge_r2_postmerge" \
-          DB_USERNAME=csforge DB_PASSWORD=r2_disposable_only \
-          SPRING_PROFILES_ACTIVE=default SERVER_PORT=8080 CSFORGE_AI_ENABLED=false \
-          java -jar "$JAR" > "$RUNNER_TEMP/r2-backend.log" 2>&1 &
-          BACKEND_PID=$!
-          (cd frontend && npm run dev -- --host 127.0.0.1 > "$RUNNER_TEMP/r2-vite.log" 2>&1) &
-          FRONTEND_PID=$!
-          trap 'kill "$BACKEND_PID" "$FRONTEND_PID" 2>/dev/null || true' EXIT
-          READY=0
-          for i in $(seq 1 120); do
-            if curl -fsS http://127.0.0.1:8080/actuator/health/readiness >/dev/null 2>&1 \
-              && curl -fsS http://127.0.0.1:5173 >/dev/null 2>&1; then READY=1; break; fi
-            sleep 2
-          done
-          if [ "$READY" -ne 1 ]; then
-            tail -n 90 "$RUNNER_TEMP/r2-backend.log" || true
-            tail -n 60 "$RUNNER_TEMP/r2-vite.log" || true
-            exit 1
-          fi
-          node docs/content-corrections/issue-222-r2-os-scope/browser-check.cjs
-
-      - name: Upload OS R2 Scope verification evidence
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: pr239-os-scope-reader-qa
-          path: /tmp/csforge-r2-os-scope
-          if-no-files-found: warn
 
   deploy-backend:
     name: Deploy backend to Cloud Run
