@@ -26,7 +26,10 @@ async function main(){
   assert.equal(b.success,true,JSON.stringify(b));assert.equal(b.totalItems,3380);assert.equal(b.totals.errors,0);assert.equal(b.totals.failed,0);
   assert.equal((await api('/api/canonical-bootstrap/status')).state,'READY');
   report.bootstrap={before:'EMPTY',after:'READY',created:b.totals.created,error:b.totals.errors};
-  const outline=await api('/api/learning-areas/dsa/outline?page=0&size=200');
+  const areas=await api('/api/learning-areas');
+  const area=areas.find(x=>x.name.includes('Data Structures')||x.name.includes('자료구조')||x.slug.includes('algorithm'));
+  assert.ok(area,'Missing DSA area in '+JSON.stringify(areas.map(x=>({name:x.name,slug:x.slug}))));
+  const outline=await api('/api/learning-areas/'+area.slug+'/outline?page=0&size=200');
   const byTitle=new Map(outline.items.map(x=>[x.title,x.id]));
   for(const c of cases){
    c.id=byTitle.get(c.title);assert.ok(Number.isInteger(c.id),'Missing Concept: '+c.title);
