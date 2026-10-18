@@ -86,7 +86,7 @@ async function verify(){
       assert.equal(card.title,ref.title);
       assert.ok(card.meta.includes('영어'),'Untranslated language '+card.meta);
       assert.ok(!card.meta.includes(' · en')&&!card.meta.includes(' · section'));
-      assert.ok(card.open.includes('새 탭에서 열기'));
+      assert.ok(card.opening.includes('새 탭에서 열기'));
       assert.ok(card.description.includes(ref.relationNote));
       if(ref.recommendation) assert.ok(card.description.includes(ref.recommendation));
       assert.equal(card.target,'_blank');
