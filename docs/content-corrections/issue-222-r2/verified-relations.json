@@ -133,5 +133,23 @@
     "reviewDate": "2026-10-17",
     "basis": "OSTEP Threads: An Introduction(Chapter 26) 직접 PDF 열람; 서론: 코드/힙/주소 공간의 스레드 공유, 26.3 shared counter 실례.",
     "limits": "스레드 간 공유가 원자성 또는 동기화를 자동 제공하지 않는다."
+  },
+  {
+    "contentKey": "operating-systems.core.kernel-boundary.user-kernel-mode",
+    "url": "https://docs.riscv.org/reference/isa/priv/priv-intro.html",
+    "decision": "KEEP",
+    "evidenceLevel": "DIRECT_CONTENT_VERIFIED",
+    "reviewDate": "2026-10-19",
+    "basis": "공식 RISC-V Ratified Specifications Library의 원래 priv-intro.html이 isa/v20260120/priv/priv-intro.html로 redirect되는 실제 본문을 직접 열람. Privilege Levels 절(Table 1/2)에서 U(User/Application), S(Supervisor), M(Machine), 모드별 보호 및 U-mode application이 trap으로 고권한 처리기로 이동하는 예시를 Concept의 사용자/커널 권한 구분과 대조.",
+    "limits": "RISC-V M-mode만 필수이고 U/S-mode 지원 여부는 구현에 따라 다르다. 이 출처는 모든 CPU·OS의 두 모드 구현, syscall마다 context switch 발생, 또는 모든 플랫폼의 페이지 보호 메커니즘을 공통 보장하지 않는다."
+  },
+  {
+    "contentKey": "operating-systems.core.kernel-boundary.privilege-protection",
+    "url": "https://docs.riscv.org/reference/isa/priv/priv-intro.html",
+    "decision": "KEEP",
+    "evidenceLevel": "DIRECT_CONTENT_VERIFIED",
+    "reviewDate": "2026-10-19",
+    "basis": "공식 RISC-V Privileged Architecture Introduction 직접 열람: Privilege Levels의 권한 수준 표, 현 모드에서 허용되지 않는 연산이 exception/trap을 일으키는 규칙, supervisor OS와 실행 환경 경계(ABI/SBI) 설명을 Concept의 강제 가능한 권한 보호 문제와 관계별 대조.",
+    "limits": "일반적인 주소별 R/W/X 페이지 접근 권한, PMP의 범위와 강제 방식은 Introduction 절만으로 포괄 확인하지 않는다. 해당 세부 계약은 별도 RISC-V page-table/PMP 장에서 검증해야 하며 OS 모든 구현으로 일반화하지 않는다."
   }
 ]
