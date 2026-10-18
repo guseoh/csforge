@@ -9,14 +9,14 @@ level: 2
 status: PUBLISHED
 displayOrder: 20
 references:
-  - url: "https://csrc.nist.gov/pubs/sp/800/34/r1/final"
-    title: "NIST SP 800-34 Rev. 1: Contingency Planning Guide"
+  - url: "https://csrc.nist.gov/pubs/sp/800/34/r1/upd1/final"
+    title: "NIST SP 800-34 Rev. 1 (2010 Updated): Contingency Planning Guide"
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "정보시스템의 contingency·복구 계획과 테스트 절차를 확인한다."
+    recommendation: "2010년 갱신된 정식 NIST 지침에서 재해 복구·비상계획 수립과 복구 절차 검증을 읽는다. 특정 서비스의 현재 운영 기준이나 RPO/RTO 목표를 대신하는 것은 아니다."
     displayOrder: 1
-    relationNote: "백업·복구 계획과 복구 절차 확인"
+    relationNote: "시스템별 복구 우선순위, 대체 처리·복구 절차 및 정기 시험 근거를 확인한다. 종전 /r1/final은 Withdrawn 및 다운로드 불가이므로 갱신된 /r1/upd1/final을 읽는다."
   - url: "https://www.postgresql.org/docs/current/continuous-archiving.html"
     title: "PostgreSQL Documentation: Continuous Archiving and PITR"
     referenceType: OFFICIAL
