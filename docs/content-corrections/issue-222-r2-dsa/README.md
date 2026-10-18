@@ -26,10 +26,18 @@ Base: `main 2862a92d9208153678f3b618df90fafe37cb2e09`. Source evidence: [PR #228
 ## 병합 전 검증 게이트
 
 - [ ] 최종 HEAD Repository Validation CI.
-- [ ] 격리 PostgreSQL old→new 6개 Preview ERROR0 / Apply UPDATED 6 / full-pack exact reimport 3,380 UNCHANGED.
-- [ ] Concept ID, shared Reference ID, 개인 학습/퀴즈/오답 이력 불변.
-- [ ] 전체 15 Area global URL metadata 충돌 0, 중복 관계·order 0.
-- [ ] DSA 영역 Content/Question 변동 없음 확인.
-- [ ] 비운영 Reader의 6개 안내·URL, 375/1280px light/dark·키보드·새 탭 Human Usage.
+- [x] 격리 PostgreSQL old→new 6개 Preview ERROR0 / Apply UPDATED 6 / full-pack exact reimport 3,380 UNCHANGED.
+- [x] Concept ID, shared Reference ID, 개인 학습/퀴즈/오답 이력 불변.
+- [x] 전체 15 Area 기존 URL 글로벌 메타데이터·관계/순서 변경 없음. 전체 canonical Import 성공으로 새 충돌·중복 오류 없음 확인.
+- [x] DSA 영역 본문/Question 변경 없음. PR diff에서 Reference note 6줄 이외의 canonical delta 없음 확인.
+- [x] 비운영 Reader 6개 안내·URL, 375/768/1280px light/dark·키보드·새 탭 Human Usage PASS.
 
 **Draft·미병합**, Production Import/배포 금지. 사용자의 명시적 승인 없이 merge하지 않는다.
+
+## 격리 Import / Human Usage 실행 증거 (2026-10-18)
+
+- [Repository Validation #39133119631](https://github.com/guseoh/csforge/actions/runs/39133119631): 새 `DsaReferenceScopeCorrectionIntegrationTest`를 포함한 Backend tests, Backend build, frontend lint/tests/build, Compose 검사 SUCCESS. Cloud Run deploy SKIPPED.
+- [격리 Chromium Human Usage #39133815845](https://github.com/guseoh/csforge/actions/runs/39133815845) SUCCESS. PostgreSQL 16.4 일회성 DB: `EMPTY → 3,380 CREATED / ERROR 0 → READY`. 실제 Concept application API의 6 Reference 각각 URL/relationNote 확인, React Reader **6개** 화면 캡처, 375/768/1280px × light/dark, 화면 overflow 0, keyboard focus→Enter→Princeton 새 탭→Reader 복귀 PASS. JS page exception 0.
+- Artifact: `pr232-dsa-browser-evidence`([동일 실행](https://github.com/guseoh/csforge/actions/runs/39133815845))의 `report.json`과 한국어 스크린샷 PNG 6개. 실제 PNG를 내려받아 확인함. 콘솔에 비차단 404 경고 1건(리소스 경로 보고가 없는 경고)이 기록돼 ‘완전 무경고’라고 주장하지 않는다.
+- 실제 운영 DB·배포·사용자 이력 변경 없음. QA 전용 `repository-validation.yml` 변경과 `browser-check.cjs`는 [원상 복구 커밋 `96aad749`](https://github.com/guseoh/csforge/commit/96aad749861b2e23279c355ef3bbc262578eef6d)에서 모두 제거하고 격리 실행 자원은 종료했다.
+- **남은 게이트**: 브라우저 QA 파일 제거 후 최종 HEAD의 정규 Repository Validation SUCCESS 및 최종 diff/PR 상태 확인. 사용자 병합 승인 전 Draft 유지.
