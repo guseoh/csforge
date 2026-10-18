@@ -3,6 +3,7 @@ import { Link, useParams } from '@tanstack/react-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { EmptyState, ErrorState, PageSkeleton } from '../components/AsyncStates'
 import { ConceptLearningRail } from '../components/ConceptLearningRail'
+import { ConceptReferences } from '../components/ConceptReferences'
 import { InterviewRecallSection } from '../components/InterviewRecallSection'
 import { MarkdownContent } from '../components/MarkdownContent'
 import { useToast } from '../components/toast/ToastProvider'
@@ -13,7 +14,6 @@ import {
   updateConceptProgress,
   type ConceptDetail as ConceptDetailModel,
   type LearningStatus,
-  type ReferenceType,
 } from '../lib/learning-api'
 import { defaultLearningSearch } from '../lib/learning-search'
 import { defaultQuizSearch } from '../lib/quiz-search'
@@ -23,16 +23,6 @@ type TocHeading = {
   id: string
   label: string
   level: 2 | 3
-}
-
-const referenceTypeLabels: Record<ReferenceType, string> = {
-  OFFICIAL: '공식 자료',
-  KOREAN_BLOG: '한글 기술 자료',
-  COMPANY_TECH_BLOG: '기업 기술 블로그',
-  BOOK: '책',
-  PAPER: '논문',
-  COURSE: '강의',
-  OTHER: '기타',
 }
 
 const learningStatusLabels: Record<LearningStatus, string> = {
@@ -203,18 +193,7 @@ function ConceptContent({ data, conceptId }: { data: ConceptDetailModel; concept
           <span className="result-count">{data.references.length}</span>
         </div>
         {data.references.length === 0 ? <EmptyState message="등록된 참고 자료가 없습니다." /> : (
-          <div className="reference-list">
-            {data.references.map((reference) => (
-              <a className="reference-item" key={reference.id} href={reference.url} target="_blank" rel="noreferrer">
-                <div>
-                  <strong>{reference.title}</strong>
-                  <span>{referenceTypeLabels[reference.type]}{reference.language ? ` · ${reference.language}` : ''}{reference.depth ? ` · ${reference.depth}` : ''}</span>
-                  {reference.relationNote && <small>{reference.relationNote}</small>}
-                </div>
-                <span className="external-icon" aria-hidden="true">↗</span>
-              </a>
-            ))}
-          </div>
+          <ConceptReferences references={data.references} />
         )}
       </section>
 
