@@ -9,13 +9,22 @@ level: 2
 status: PUBLISHED
 displayOrder: 30
 references:
-  - url: "https://www.rfc-editor.org/rfc/rfc10025.html"
-    title: "Cookies: HTTP State Management Mechanism"
+  - url: "https://www.rfc-editor.org/rfc/rfc6265.html"
+    title: "RFC 6265: HTTP State Management Mechanism"
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "Cookie·Set-Cookie 필드 문법과 사용자 에이전트의 저장·전송 규칙을 확인한다."
+    recommendation: "정식 발행된 2011년 Cookie/Set-Cookie 기본 명세다. SameSite는 이후 확장으로 별도 확인한다."
     displayOrder: 1
+    relationNote: "RFC 6265의 5.1.3 Domain 매칭·5.1.4 Path 매칭 및 5.2의 Secure/HttpOnly를 확인한다. SameSite는 당시 명세에 없다."
+  - url: "https://httpwg.org/http-extensions/draft-ietf-httpbis-rfc6265bis.html"
+    title: "HTTPWG RFC 6265bis: Cookies (Internet-Draft, 미발행)"
+    referenceType: OFFICIAL
+    language: en
+    depth: section
+    recommendation: "SameSite 등 최신 쿠키 동작을 다루지만 2026-10-17 현재 발행 전의 변경 가능한 초안이다."
+    displayOrder: 2
+    relationNote: "6265bis 초안의 5.2 same-site/cross-site, 5.6.7 SameSite, 5.8 반환 모델을 확인한다. 정식 RFC가 아닌 작업 문서임을 구분한다."
 ---
 # 쿠키의 전송 범위와 SameSite
 
