@@ -127,7 +127,7 @@ class CaJmhReferenceCorrectionIntegrationTest {
         var shown = learningQueryService.getConcept(conceptId).references();
         assertEquals(1, shown.size());
         assertTrue(shown.stream().anyMatch(ref -> ref.url().equals(NEW_URL)
-                && ref.title().contains("OpenJDK JMH")
+                && ref.title().equals("OpenJDK Java Microbenchmark Harness (JMH)")
                 && ref.relationNote().contains("Basic Considerations")));
         assertEquals(notesBefore, jdbc.queryForList("select * from personal_note order by id"));
         assertEquals(attemptsBefore, jdbc.queryForList("select * from attempt order by id"));
