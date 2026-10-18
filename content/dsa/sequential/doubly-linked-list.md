@@ -16,6 +16,7 @@ references:
     depth: section
     recommendation: "스택·큐의 LIFO/FIFO 계약과 배열, 크기 조정 배열, linked-list 구현을 비교한다."
     displayOrder: 1
+    relationNote: "1.3절의 연결 리스트 입문과 별도 DoublyLinkedList.java 예제를 구분해 읽는다. 이중 연결 예제의 pre/post 센티널 및 prev/next 연결 갱신을 확인한다."
 ---
 # 이중 연결 리스트(Doubly Linked List)
 

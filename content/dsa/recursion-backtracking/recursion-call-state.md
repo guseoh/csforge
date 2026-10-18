@@ -16,6 +16,7 @@ references:
     depth: section
     recommendation: "분할 정복 재귀 구조, merge 비용, 점화식과 comparison-sort 하한을 확인한다."
     displayOrder: 1
+    relationNote: "2.2절 Top-down mergesort의 lo/mid/hi 분할, 재귀 호출과 복귀 뒤 merge 순서를 추적한다. JVM 호출 프레임의 실제 메모리 배치나 스택 한계를 규정하는 근거는 아니다."
 ---
 # 재귀 호출 상태
 

@@ -16,6 +16,7 @@ references:
     depth: section
     recommendation: "BST 정렬 불변식, 탐색 경로, 순회와 트리 높이가 연산 비용에 미치는 영향을 확인한다."
     displayOrder: 1
+    relationNote: "3.2절 BST의 중위 순회(inorder)와 정렬 불변식, Exercises 7의 레벨 순회(level-order) 사례를 읽는다. 일반 이진 트리의 모든 전위·후위 순회를 설명하는 자료로 확대하지 않는다."
 ---
 # 이진 트리 순회(Binary Tree Traversal)
 
