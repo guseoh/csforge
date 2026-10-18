@@ -16,6 +16,7 @@ references:
     depth: section
     recommendation: "가중 그래프의 Dijkstra·Bellman–Ford와 최단 경로 조건을 확인한다."
     displayOrder: 1
+    relationNote: "4.4절 연습문항 11과 저자 FloydWarshall.java에서 모든 정점 쌍 최단 경로 및 음수 사이클 처리 범위를 확인한다. 본문 중심 주제인 Dijkstra·Bellman–Ford 설명과 구분해 읽는다."
 ---
 # 플로이드–워셜 알고리즘(Floyd–Warshall)
 

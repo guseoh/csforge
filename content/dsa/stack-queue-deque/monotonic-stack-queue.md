@@ -16,6 +16,7 @@ references:
     depth: section
     recommendation: "스택·큐의 LIFO/FIFO 계약과 배열, 크기 조정 배열, linked-list 구현을 비교한다."
     displayOrder: 1
+    relationNote: "1.3절 Web Exercises 62(Stock prices)의 인덱스 스택과 다음 큰 값 탐색 사례만 참고한다. 이 연습문항이 슬라이딩 윈도 단조 덱의 전체 구현을 설명하는 것은 아니다."
 ---
 # 단조 스택·큐(Monotonic Stack and Queue)
 
