@@ -9,13 +9,22 @@ level: 2
 status: PUBLISHED
 displayOrder: 50
 references:
-  - url: "https://ieeexplore.ieee.org/document/8766227"
-    title: "IEEE Standard for Floating-Point Arithmetic"
+  - url: "https://standards.ieee.org/ieee/754/6210/"
+    title: "IEEE 754-2019: Standard for Floating-Point Arithmetic"
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "부동소수점의 표현 폭과 반올림 경계를 확인한다."
+    recommendation: "IEEE 754-2019의 공식 표준 소개에서 이진·십진 부동소수점 형식, 반올림과 예외 처리의 계약 범위를 확인한다. 표준 전문은 구독 또는 구매가 필요하다."
     displayOrder: 1
+    relationNote: "IEEE Standards Association의 2019년 발행 상태와 표준 범위를 확인한다. 공개 소개 페이지에 binary32 비트 배치나 세부 반올림 예제의 전문이 실려 있다고 해석하지 않는다."
+  - url: "https://docs.oracle.com/cd/E19957-01/806-3568/ncg_math.html"
+    title: "Oracle Numerical Computation Guide: IEEE Arithmetic"
+    referenceType: OFFICIAL
+    language: en
+    depth: section
+    recommendation: "Chapter 2의 Single Format과 반올림 규칙에서 binary32 sign·exponent·fraction, subnormal, Infinity, NaN의 구체적인 표현을 확인한다."
+    displayOrder: 2
+    relationNote: "공개된 Single Format 표와 반올림 설명으로 현재 Concept의 비트·특수값 사례를 검증한다. 이 가이드는 역사적으로 IEEE 754-1985를 설명하므로 2019 개정 표준 전체의 대체 자료는 아니다."
 ---
 # 부동소수점 표현과 반올림(Floating-Point)
 
