@@ -22,6 +22,7 @@ references:
     language: ko
     depth: article
     recommendation: "Kubernetes 자원 설정이 실제 Linux cgroup 메모리 설정으로 연결되는 과정을 운영 사례로 확인한다."
+    relationNote: "이 글의 실습은 cgroups v1의 memory.limit_in_bytes·memory.soft_limit_in_bytes와 Kubernetes request/limit 연결 사례다. Concept의 cgroups v2 memory.max·memory.oom.group의 동작은 이 v1 예제로 확인할 수 없으며 별도 커널 문서를 기준으로 판단한다."
     displayOrder: 2
 ---
 # cgroup

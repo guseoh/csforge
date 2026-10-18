@@ -21,7 +21,8 @@ references:
     referenceType: COMPANY_TECH_BLOG
     language: ko
     depth: article
-    recommendation: "실시간 messaging server에서 io_uring 도입을 검토하며 syscall/context-switch 비용과 실제 성능을 평가한 사례를 확인한다."
+    recommendation: "실시간 메시징 서버에서 io_uring의 syscall 비용·SQ/CQ·SQPOLL을 검토했지만 Go 런타임 통합 문제로 도입을 보류한 판단 사례로 읽는다."
+    relationNote: "io_uring 검토 절에서 제출·완료 큐와 SQPOLL의 CPU 사용 절충, 실제 도입을 보류한 이유를 확인한다. 이 글을 io_uring 운영 적용이나 성능 측정 완료의 근거로 읽지 않는다."
     displayOrder: 2
 ---
 # 비동기 입출력(Asynchronous I/O)
