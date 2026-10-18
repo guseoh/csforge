@@ -93,3 +93,10 @@ Wave 1~4의 과거 미확정 데이터와 최근 수정 사항을 대조해 사�
 - JMH 1관계는 **공식 OpenJDK 저장소 README를 실제 열람하고**, 기존 openjdk.org 프로젝트 소개 URL이 이 환경에서 403을 보인다는 조건부 사용자 사용성 문제를 분리함. 접근 가능한 공식 https://github.com/openjdk/jmh 로 변경하는 독립 [Draft PR #234](https://github.com/guseoh/csforge/pull/234)를 생성해 검증. 기존 원본이 영구 dead라는 결론 아님.
 - 기존 IEEE 754 교정 [Draft PR #233](https://github.com/guseoh/csforge/pull/233)과 파일·범위 중복 없음.
 - 통합 감사 집계 15 verified / 138 pending을 임의 수정하지 않으며 UMD 44개도 새로 verified 분류하지 않음. #234는 교정 PR의 검증 결과가 확보될 때까지 merge/Production과 별개.
+
+## R2 병합 후 재검증 — 2026-10-19
+
+- 이전의 **15 verified / 138 pending**은 병합 전 `main 2862a92` 기준 snapshot이다. [병합 후 별도 QA/재집계 기록](../issue-222-postmerge/README.md) 및 [Actions #39140901504](https://github.com/guseoh/csforge/actions/runs/39140901504)에서 현행 `main 66aa3a69`을 직접 대조한 결과 **1,042관계/622URL/15Area/721Concept, 전역 충돌·중복 0, 독립 verified 15, 비Java 후속 후보 133관계**.
+- Wave3 과거 186관계 중 변경된 옛 URL 5관계(IEEE1/JMH1/RFC10025 3)는 현재 canonical에 더 이상 존재하지 않는다. **다른 옛 미확정 관계에 대한 자동 VERIFIED 승격은 하지 않는다.**
+- #227/#230/#231은 격리 DB + 실제 React Reader QA를 추가 수행했고, 3 Concept/5링크/18화면·키보드 새 탭, full-pack 3,380 exact UNCHANGED 검증 PASS. 원본 Waves·`verified-relations.json`을 수정하지 않았다.
+- #222는 R2 나머지 133 후보의 의미 검토 및 R3 Reader UX 미완료로 **Open 유지**.
