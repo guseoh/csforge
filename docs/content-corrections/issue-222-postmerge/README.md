@@ -42,15 +42,21 @@
 
 **주의:** `133`은 오류 건수가 아니라 과거 Wave의 관계 수준 판정에 남아 있는 **후속 후보** 수치다. #232 DSA Note 6관계, #231 OS Note 1관계 등 URL은 그대로인 내용 개선은 기존 미확정 직접 열람 기준을 자동 승격하지 않으므로 남는다. 원본 Wave 파일과 수동 `verified-relations.json` 15건은 덮어쓰지 않았다.
 
-### 남은 세부 후보의 중심 범위
+### 남은 세부 후보의 영역별 상태
 
-| Area | 현재 historical flagged (독립 15건은 별도 차감) |
-| --- | ---: |
-| DSA | 70 |
-| Computer Architecture | 44 (UMD 8URL; 접근 제한) |
-| Operating Systems | 26 (OSTEP 독립 검증 10건 포함) |
-| 그 외 8 Area | 일부 관계 각각 후속 검토 |
-| Java | 과거 15관계가 R1에서 적용 범위 판정됨; 이번 비Java 후속 후보 133에는 미포함 |
+이 표는 `historicalFlaggedRelations`에서 **독립 원문 검증 KEEP 15관계**를 실제 Concept별로 제외한 결과다.
+
+| LearningArea | 과거 미확정 flag | 독립 verified KEEP | 현재 비Java 후속 후보 |
+| --- | ---: | ---: | ---: |
+| DSA | 70 | 0 | **70** |
+| Computer Architecture | 44 | 0 | **44** |
+| Operating Systems | 26 | 10 | **16** |
+| Distributed Systems | 2 | 0 | **2** |
+| Network & HTTP | 1 | 0 | **1** |
+| Backend Engineering / Spring / Messaging / Performance | 5 | 5 | **0** |
+| **비Java 소계** | **148** | **15** | **133** |
+
+Java의 과거 `NEEDS_REVIEW` 15관계는 R1에서 학습 범위를 판정했기 때문에 본 표의 비Java 133건에 포함하지 않는다. **이 표의 133은 직접 확인이 끝나지 않은 역사적 검토 후보**이므로, 내용 오류 133건이나 링크 파손 133건으로 읽지 않는다.
 
 ## C. Issue #222의 다음 독립 Slice
 
