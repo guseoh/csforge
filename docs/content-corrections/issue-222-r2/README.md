@@ -107,3 +107,8 @@ Wave 1~4의 과거 미확정 데이터와 최근 수정 사항을 대조해 사�
 - Princeton Saga TR-070-87 원 URL은 403(공식 서지·Abstract 검색 인덱스만 확인); ACM CAP DOI도 403이나 MIT 저자 소속의 13쪽 논문 원고는 직접 열어 `§2.1–2.3` 및 `§3.1` 실제 내용 확인. **원래 ACM URL이 열렸다고 판정하지 않음**.
 - Kakao Wcache Part 1은 원 URL 직접 open이 제목/menu shell이나 공식 같은 URL 검색 인덱스에서 저장 구조·분산·hot item·2계층의 원문 발췌가 드러남. **INDEXED_EXCERPT_ONLY**, 지금의 서비스 성능 사실로 일반화하지 않음.
 - 수동 원문 직접 검증 **15→17**, 남은 비Java 후보 **133→131**은 `reconcile.py`로 재확인 대상. canonical/Question, 공유 URL metadata, 감사 원본, Production Import/배포는 변경하지 않음. Issue #222의 R3 UX는 [#236](https://github.com/guseoh/csforge/pull/236)에서 이미 병합 완료되었으므로 미완료 표시를 반복 적용하지 않음.
+
+## 2026-10-19 Operating Systems 잔여 14관계/11 URL 전수 재검토
+
+- [전체 contentKey×원 URL·기술 범위·접근 한계](operating-systems-14-relationship-review.md)를 기록. D2 8 URL의 직접 HTML은 메뉴 shell만, Kakao 1 URL은 title/menu, JEP491 403, OSTEP 26장 원본은 이번 timeout으로 **새 원문 직접 검증 0건**. 다만 동일 URL의 색인된 실제 본문으로 소유자–대기자 cycle, NAPI/softirq, Chrome IPC, cgroups v1, 카카오 io_uring 검토·보류 등 주제 적합성을 각각 확인했음. 검색 인덱스를 원 URL 직접 열람 증거로 승격하지 않음.
+- Canonical의 독서 안내 개선 **2건**(Kakao io_uring의 '실제 성능 평가' 과장, NAVER D2 cgroups v1과 Concept v2 설정 혼동)을 발견했으며 별도 최소 교정 PR로 분리한다. 기존 Wave/verified 17/남은 131 수치는 유지하고 OS 14건을 끝났다고 임의 0으로 만들지 않음.
