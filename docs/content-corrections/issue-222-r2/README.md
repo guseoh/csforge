@@ -100,3 +100,10 @@ Wave 1~4의 과거 미확정 데이터와 최근 수정 사항을 대조해 사�
 - Wave3 과거 186관계 중 변경된 옛 URL 5관계(IEEE1/JMH1/RFC10025 3)는 현재 canonical에 더 이상 존재하지 않는다. **다른 옛 미확정 관계에 대한 자동 VERIFIED 승격은 하지 않는다.**
 - #227/#230/#231은 격리 DB + 실제 React Reader QA를 추가 수행했고, 3 Concept/5링크/18화면·키보드 새 탭, full-pack 3,380 exact UNCHANGED 검증 PASS. 원본 Waves·`verified-relations.json`을 수정하지 않았다.
 - #222는 R2 나머지 133 후보의 의미 검토 및 R3 Reader UX 미완료로 **Open 유지**.
+
+## 2026-10-19 R2 출처 직접 검증: RISC-V 2개 완료, Distributed/Network 3개 증거 구분
+
+- [관계별 원본 재대조 및 접근 한계](os-distributed-network-followup.md): 현행 `main 2d63e679`의 **OS 2 / Distributed 2 / Network 1 관계를 독립적으로 재검토**. 동일 RISC-V canonical `priv-intro.html`이 공식 최신 버전 `isa/v20260120/priv/priv-intro.html`로 안내됨을 확인하고 **실제 Privilege Levels 문서 전체를 직접 읽어** `user-kernel-mode` / `privilege-protection`의 적용 범위를 각각 확인, `verified-relations.json`에 2개 KEEP 추가.
+- Princeton Saga TR-070-87 원 URL은 403(공식 서지·Abstract 검색 인덱스만 확인); ACM CAP DOI도 403이나 MIT 저자 소속의 13쪽 논문 원고는 직접 열어 `§2.1–2.3` 및 `§3.1` 실제 내용 확인. **원래 ACM URL이 열렸다고 판정하지 않음**.
+- Kakao Wcache Part 1은 원 URL 직접 open이 제목/menu shell이나 공식 같은 URL 검색 인덱스에서 저장 구조·분산·hot item·2계층의 원문 발췌가 드러남. **INDEXED_EXCERPT_ONLY**, 지금의 서비스 성능 사실로 일반화하지 않음.
+- 수동 원문 직접 검증 **15→17**, 남은 비Java 후보 **133→131**은 `reconcile.py`로 재확인 대상. canonical/Question, 공유 URL metadata, 감사 원본, Production Import/배포는 변경하지 않음. Issue #222의 R3 UX는 [#236](https://github.com/guseoh/csforge/pull/236)에서 이미 병합 완료되었으므로 미완료 표시를 반복 적용하지 않음.
