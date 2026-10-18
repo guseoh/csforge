@@ -18,9 +18,17 @@
 
 ## 완료 조건
 
-- [ ] 격리 PostgreSQL 초기 canonical 3,380 → 기존 URL 상태 old Preview/Apply → 신규 URL 2개 Preview/Apply 오류 0 → 전체 재import 3,380 UNCHANGED 및 Concept·personal/history 데이터 보존.
-- [ ] 최종 HEAD Repository Validation PASS, global URL metadata collision/duplicate 0.
-- [ ] 실제 비운영 Reader에서 표준 안내/Oracle 2개 링크, note, 언어·유형·displayOrder, 375/768/1280px + light/dark + 새 탭/키보드 확인.
-- [ ] PR 전체 delta가 최소 Content 1개+회귀 테스트+이 evidence인 것을 확인.
+- [x] 격리 PostgreSQL 초기 canonical 3,380 → 기존 URL 상태 old Preview/Apply → 신규 URL 2개 Preview/Apply 오류 0 → 전체 재import 3,380 UNCHANGED 및 Concept·personal/history 데이터 보존.
+- [ ] 임시 QA 삭제 이후 최종 HEAD 정규 Repository Validation PASS. 초기 정규 CI 및 격리 QA 모두 성공; 전체 3,380 canonical Import에서 global URL metadata collision/duplicate 오류 0.
+- [x] 실제 비운영 Reader에서 공식 IEEE/Oracle 두 URL·제목·relationNote·순서 확인, 375/768/1280px × light/dark 6 화면과 키보드→새 탭 확인.
+- [x] 임시 workflow 및 browser-check.cjs를 원복했으며 PR diff의 변경 범위를 Content 1개 + 회귀 테스트 1개 + evidence README 1개로 유지.
 
 **Draft / 사용자 승인 전 merge 금지 / Production DB Import·배포 금지.** R2 전체 감사 및 R3 Reader UX는 계속 진행.
+
+## 실제 검증 결과 — 2026-10-18
+
+- [최초 정규 Repository Validation #39135238711](https://github.com/guseoh/csforge/actions/runs/39135238711) **SUCCESS**: 추가된 `CaFloatingPointReferenceCorrectionIntegrationTest`가 실행된 Backend tests/build, frontend validation, Compose 검사. Cloud Run deploy skipped.
+- [일회성 격리 Chromium Reader QA #39135629752](https://github.com/guseoh/csforge/actions/runs/39135629752) **SUCCESS**: 빈 PostgreSQL 16.4 → canonical bootstrap 3,380 CREATED/ERROR0 → READY. 앱 API에서 IEEE SA/Oracle URL·Reference note·제목 2개를 읽고 실제 React Reader **375·768·1280px × 라이트·다크 6화면**, overflow 0, 키보드 focus→Enter→두 외부 새 탭→Reader 복귀 통과. JavaScript page error 0.
+- 실행 Artifact `pr233-ca-ieee-browser-evidence`에는 `report.json` 및 6개 한글 화면 PNG. 실제 캡처를 내려받아 모바일/데스크톱 화면 내용을 확인함. 개발 서버에서 비차단 404 console warning **1건**이 있어 무경고로 주장하지 않는다.
+- QA 전용 PostgreSQL 서비스, `.github/workflows/repository-validation.yml` 임시 변경, `browser-check.cjs`는 성공 후 [커밋 `79344d72`](https://github.com/guseoh/csforge/commit/79344d720584b4a7e0d62edb8013dd1a7bac3488)로 전부 PR 최종 diff에서 제거. Production DB/배포 접근 없음.
+- **남음:** 임시 스크립트 원복 이후 final HEAD 정규 CI SUCCESS와 마지막 branch HEAD·base drift·diff 확인. PR 병합은 사용자 승인 대기.
