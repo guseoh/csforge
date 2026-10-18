@@ -10,13 +10,11 @@ status: PUBLISHED
 displayOrder: 70
 references:
   - url: "https://github.com/openjdk/jmh"
-    title: "OpenJDK JMH: Java Microbenchmark Harness"
+    title: "OpenJDK Java Microbenchmark Harness (JMH)"
     referenceType: OFFICIAL
     language: en
-    depth: section
-    recommendation: "공식 JMH README의 standalone benchmark 설정·annotation/bytecode processor·실행 절차와 Samples에서 측정 함정을 확인한다."
     displayOrder: 1
-    relationNote: "README의 Usage와 Basic Considerations, Samples·Pre-Requisite Steps를 읽는다. JMH가 JIT 워밍업과 측정 반복 설정을 돕더라도 결과가 대표적인 전체 시스템 성능이라는 뜻은 아니다."
+    relationNote: "README의 Usage·Basic Considerations·Samples에서 standalone benchmark 환경 구성, annotation processor, 반복 측정의 함정을 확인한다. 하네스로 작은 경로를 측정해도 전체 시스템 성능을 대표하지는 않는다."
 ---
 # 마이크로벤치마크의 측정 경계(Microbenchmark Boundary)
 
