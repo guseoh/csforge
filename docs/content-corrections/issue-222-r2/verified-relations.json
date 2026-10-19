@@ -1495,5 +1495,16 @@
     "limits": "UMD 원문은 접근 제한으로 미검증. 대체 자료의 지정 절만 직접 확인했으며 원본과 동일 판본이라고 주장하지 않는다.",
     "replacesUrl": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/virtual-memory/index.html",
     "evidenceDocument": "docs/content-corrections/issue-222-r2/umd-readable-sources-20261019.md"
+  },
+  {
+    "contentKey": "distributed.core.coordination.cap-tradeoffs",
+    "url": "https://groups.csail.mit.edu/tds/papers/Gilbert/Brewer6.pdf",
+    "decision": "KEEP",
+    "evidenceLevel": "DIRECT_CONTENT_VERIFIED",
+    "reviewDate": "2026-10-19",
+    "basis": "MIT 저자 논문 목록의 직접 링크 및 13쪽 원고 §2.1–2.3, §3.1 Theorem 1을 직접 열람·렌더링 확인. 선형화 가능성, 정상 노드 모든 요청의 eventual response(시간 상한 없음), 임의 메시지 손실 모델과 비동기 불가능성 정리를 대조.",
+    "limits": "MIT 제공 저자 원고만 직접 검증. ACM 서지·abstract는 확인했지만 출판본 전문은 접근 미해결이며 동일 판면·최종 판본을 주장하지 않는다.",
+    "supplementsUrl": "https://dl.acm.org/doi/10.1145/564585.564601",
+    "evidenceDocument": "docs/content-corrections/issue-222-r2/cap-author-manuscript-20261019.md"
   }
 ]
