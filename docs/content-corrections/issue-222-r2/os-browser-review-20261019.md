@@ -14,7 +14,7 @@ key에는 `operating-systems.core.` prefix를 붙인다. D2 URL prefix는 `https
 
 | contentKey suffix | 원 URL | 직접 읽은 절·버전 | 판단과 범위 한계 |
 | --- | --- | --- | --- |
-| deadlock.deadlock-detection-recovery | D2 `10963` | 2012-02-04, 데드락 상태인 경우·세 DEADLOCK_TEST owner/waiter | cycle 진단 사례 KEEP. 자동 복구/자원 회수 정책의 근거 아님 |
+| deadlock.deadlock-detection-recovery | D2 `10963` | 2012-02-03, 데드락 상태인 경우·세 DEADLOCK_TEST owner/waiter | cycle 진단 사례 KEEP. 자동 복구/자원 회수 정책의 근거 아님 |
 | deadlock.deadlock | D2 `10963` | 동일 세 스레드가 각각 다음 monitor를 기다리는 dump | 상호 보유/대기와 진행 불가의 실제 사례 KEEP |
 | deadlock.resource-allocation-graph | D2 `10963` | locked/waiting-to-lock 주소를 따라 연결하는 사례 | 단일 monitor 의존 cycle 보조 KEEP. 다중 인스턴스 RAG의 cycle 충분조건으로 확대하지 않음 |
 | io.async-io | https://tech.kakao.com/posts/680 | io_uring 검토, SQ/CQ·SQPOLL·Go 결합 우려·도입 보류 | #239 recommendation/relationNote가 원문과 일치. io_uring 도입/성능 측정 완료 근거 제외 |
