@@ -75,7 +75,7 @@ class CaReadableReferencesIntegrationTest {
         for (HistoricalReference entry : historical) {
             var source = canonical.get(entry.path());
             assertNotNull(source);
-            String after = new String(source.content(), StandardCharsets.UTF_8);
+            String after = new String(source.content(), StandardCharsets.UTF_8).replace("\r\n", "\n");
             int start = after.indexOf("references:\n");
             int end = after.indexOf("\n---\n", start);
             assertTrue(start > 0 && end > start);
