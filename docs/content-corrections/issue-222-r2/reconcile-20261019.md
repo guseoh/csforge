@@ -14,7 +14,7 @@
 | --- | --- | ---: | ---: | --- |
 | DSA | [#241](https://github.com/guseoh/csforge/pull/241) / `b687307f` | 70 | 0 | [#39192401273](https://github.com/guseoh/csforge/actions/runs/39192401273), SUCCESS 확인 |
 | CA UMD | [#242](https://github.com/guseoh/csforge/pull/242) / `7c88ccc` | 0 | 44 | [#39192496368](https://github.com/guseoh/csforge/actions/runs/39192496368), SUCCESS 확인 |
-| OS | [#243](https://github.com/guseoh/csforge/pull/243) / `8d80713f` | 14 | 0 | [#39192710064](https://github.com/guseoh/csforge/actions/runs/39192710064), SUCCESS 확인 |
+| OS | [#243](https://github.com/guseoh/csforge/pull/243) / `f5dcbbd8af11cba88f8e6b2e8c68bce83ec0b26a` | 14 | 0 | [#39194703061](https://github.com/guseoh/csforge/actions/runs/39194703061), SUCCESS 확인 |
 | Distributed | [#244](https://github.com/guseoh/csforge/pull/244) / `076dc22b` | 1 Saga | 1 CAP | [#39193091577](https://github.com/guseoh/csforge/actions/runs/39193091577), 최종 결과는 PR checks 참조 |
 | Network | [#245](https://github.com/guseoh/csforge/pull/245) / `78a24a7e` | 1 | 0 | [#39193168933](https://github.com/guseoh/csforge/actions/runs/39193168933), 최종 결과는 PR checks 참조 |
 | **이번 잔여 대상** | **131관계** | **86** | **45** | 최종 reconcile PR checks도 별도 확인 |
