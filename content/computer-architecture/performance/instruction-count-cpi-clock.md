@@ -9,13 +9,14 @@ level: 2
 status: PUBLISHED
 displayOrder: 30
 references:
-  - url: "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/performance/index.html"
-    title: "Computer Architecture: Performance"
+  - url: "https://courses.cs.cornell.edu/cs3410/2026sp/notes/pipelining.html"
+    title: "Cornell CS 3410 Spring 2026: Pipelining and Performance"
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "CPU execution time, latency/throughput와 speedup을 구분해 성능을 계산하는 방법을 확인한다."
+    recommendation: "명령어 수·CPI·클록 주기와 파이프라인 처리량을 비교한다."
     displayOrder: 1
+    relationNote: "Iron Law와 multi-cycle 명령어 혼합의 가중 평균 CPI를 확인한다."
 ---
 # 명령어 수·CPI·클록(Instruction Count, CPI and Clock)
 

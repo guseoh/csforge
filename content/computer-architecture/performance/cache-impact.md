@@ -9,13 +9,14 @@ level: 2
 status: PUBLISHED
 displayOrder: 50
 references:
-  - url: "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/performance/index.html"
-    title: "Computer Architecture: Performance"
+  - url: "https://www.cs.cornell.edu/courses/cs3410/2026sp/notes/caches.html"
+    title: "Cornell CS 3410 Spring 2026: Caches"
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "CPU execution time, latency/throughput와 speedup을 구분해 성능을 계산하는 방법을 확인한다."
+    recommendation: "캐시의 지역성·매핑·쓰기 정책과 평균 접근 시간을 학습한다."
     displayOrder: 1
+    relationNote: "Understanding Cache Performance의 AMAT를 확인한다. CPU 전체 CPI와 AMAT를 동일한 지표로 보지 않는다."
 ---
 # 캐시가 CPU 성능에 미치는 영향(Cache Impact)
 

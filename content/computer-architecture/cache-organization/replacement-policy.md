@@ -9,13 +9,14 @@ level: 2
 status: PUBLISHED
 displayOrder: 50
 references:
-  - url: "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/cache-organization/index.html"
-    title: "Cache Organization"
+  - url: "https://www.cs.cornell.edu/courses/cs3410/2026sp/notes/caches.html"
+    title: "Cornell CS 3410 Spring 2026: Caches"
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "direct-mapped·set-associative·fully-associative mapping, tag/index/offset, replacement과 write policy를 확인한다."
+    recommendation: "캐시의 지역성·매핑·쓰기 정책과 평균 접근 시간을 학습한다."
     displayOrder: 1
+    relationNote: "Replacement Policies의 LRU·NMRU·FIFO와 비용을 확인한다."
 ---
 # 캐시 교체 정책(Cache Replacement Policy)
 

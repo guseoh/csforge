@@ -9,13 +9,6 @@ level: 3
 status: PUBLISHED
 displayOrder: 50
 references:
-  - url: "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/multiprocessors/index.html"
-    title: "Multiprocessors"
-    referenceType: OFFICIAL
-    language: en
-    depth: section
-    recommendation: "multicore cache sharing, coherence protocol, false sharing과 shared-memory ordering 경계를 확인한다."
-    displayOrder: 1
   - url: "https://www.kernel.org/doc/html/latest/kernel-hacking/false-sharing.html"
     title: "False Sharing — The Linux Kernel documentation"
     referenceType: OFFICIAL
@@ -23,6 +16,7 @@ references:
     depth: section
     recommendation: "서로 다른 field가 같은 cache line을 공유할 때 coherence contention이 생기는 사례와 탐지 방법을 확인한다."
     displayOrder: 2
+    relationNote: "What is False Sharing의 같은 cache line 내 독립 field와 write/read 간섭을 확인한다."
 ---
 # 거짓 공유(False Sharing)
 

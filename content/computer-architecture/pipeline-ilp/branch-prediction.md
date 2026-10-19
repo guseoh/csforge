@@ -9,13 +9,14 @@ level: 2
 status: PUBLISHED
 displayOrder: 40
 references:
-  - url: "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/pipelining-mips-implementation/index.html"
-    title: "Pipelining: MIPS Implementation"
+  - url: "https://www.cs.cornell.edu/courses/cs3410/2018fa/schedule/slides/06-pipeline-bw.pdf"
+    title: "Cornell CS 3410 Fall 2018: Pipelining"
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "pipeline stages, structural/data/control hazards, forwarding/stall, branch prediction과 recovery를 확인한다."
+    recommendation: "교육용 5단계 파이프라인의 hazard·forwarding·분기 예측 비용을 학습한다."
     displayOrder: 1
+    relationNote: "pp. 75–90의 잘못된 경로 flush와 방향 예측·정확도·CPI 예제를 확인한다."
 ---
 # 분기 예측(Branch Prediction)
 

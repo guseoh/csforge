@@ -158,7 +158,15 @@ def reconcile():
         seen.add(identity)
         live = by_key_url.get(identity)
         assert live is not None, ("review target no longer in canonical", identity)
-        assert live["evidenceFlags"], ("review target has no historical unresolved flag", identity)
+        if not live["evidenceFlags"]:
+            # A readable replacement has a new URL, so its historical flag remains
+            # attached to the retired URL. Require that exact historical relation.
+            retired = (record["contentKey"], record.get("replacesUrl"))
+            assert retired not in by_key_url, ("replacement still present", retired)
+            assert any((item["contentKey"], item["url"]) == retired
+                       and item["verification"]["status"] == "NEEDS_REVIEW"
+                       for item in wave3), ("replacement lacks historical target", identity)
+            assert (ROOT / record["evidenceDocument"]).is_file(), identity
         assert record["decision"] == "KEEP" and record["evidenceLevel"] == "DIRECT_CONTENT_VERIFIED", identity
         live["r2ManualResolution"] = {
             "decision": record["decision"],

@@ -9,13 +9,14 @@ level: 1
 status: PUBLISHED
 displayOrder: 20
 references:
-  - url: "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/number-systems/index.html"
-    title: "Computer Architecture: Number Systems"
+  - url: "https://www.cs.cornell.edu/courses/cs3410/2026sp/notes/numbers.html"
+    title: "Cornell CS 3410 Spring 2026: From Switches to Numbers"
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "고정 폭 정수와 수 표현의 기초를 확인한다."
+    recommendation: "비트·진법 변환과 2의 보수 표현을 학습한다."
     displayOrder: 1
+    relationNote: "Binary Numbers와 Some Important Bases의 진법·자릿값을 확인한다."
 ---
 # 2진수와 16진수(Binary and Hexadecimal)
 
