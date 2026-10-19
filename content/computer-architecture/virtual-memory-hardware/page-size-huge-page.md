@@ -9,13 +9,6 @@ level: 3
 status: PUBLISHED
 displayOrder: 70
 references:
-  - url: "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/virtual-memory/index.html"
-    title: "Virtual Memory"
-    referenceType: OFFICIAL
-    language: en
-    depth: section
-    recommendation: "MMU의 translation·protection 경계를 확인한다."
-    displayOrder: 1
   - url: "https://www.kernel.org/doc/html/latest/mm/page_tables.html"
     title: "Page Tables — The Linux Kernel documentation"
     referenceType: OFFICIAL
@@ -30,6 +23,7 @@ references:
     depth: section
     recommendation: "Linux HugeTLB의 TLB 이점과 allocation·reservation 제약을 확인한다."
     displayOrder: 3
+    relationNote: "Overview와 hugepagesz의 TLB 자원·다중 페이지 크기, 연속 메모리 확보 제약을 확인한다."
 ---
 # 페이지 크기와 대형 페이지(Page Size and Huge Page)
 

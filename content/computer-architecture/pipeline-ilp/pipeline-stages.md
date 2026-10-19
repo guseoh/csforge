@@ -9,13 +9,14 @@ level: 1
 status: PUBLISHED
 displayOrder: 10
 references:
-  - url: "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/pipelining-mips-implementation/index.html"
-    title: "Pipelining: MIPS Implementation"
+  - url: "https://courses.cs.cornell.edu/cs3410/2026sp/notes/pipelining.html"
+    title: "Cornell CS 3410 Spring 2026: Pipelining and Performance"
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "pipeline stages, structural/data/control hazards, forwarding/stall, branch prediction과 recovery를 확인한다."
+    recommendation: "명령어 수·CPI·클록 주기와 파이프라인 처리량을 비교한다."
     displayOrder: 1
+    relationNote: "Pipelined Processors의 단계 중첩과 pipeline register, 이상적인 CPI를 확인한다."
 ---
 # 파이프라인 단계(Pipeline Stages)
 

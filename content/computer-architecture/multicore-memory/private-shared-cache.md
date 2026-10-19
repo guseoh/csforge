@@ -9,13 +9,14 @@ level: 2
 status: PUBLISHED
 displayOrder: 20
 references:
-  - url: "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/multiprocessors/index.html"
-    title: "Multiprocessors"
+  - url: "https://www.cs.cornell.edu/courses/cs3410/2011sp/lecture/19-vm1-i-g.pdf"
+    title: "Cornell CS 3410 Spring 2011: Virtual Memory 1"
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "multicore cache sharing, coherence protocol, false sharing과 shared-memory ordering 경계를 확인한다."
+    recommendation: "교육용 캐시 계층과 가상 주소 변환의 도표를 확인한다."
     displayOrder: 1
+    relationNote: "pp. 5, 22의 코어별 L1·공유 L2 예시와 다중 CPU 캐시 도표를 확인한다. 2009년 장비 사례를 일반 규칙으로 보지 않는다."
 ---
 # 코어별 캐시와 공유 캐시(Private and Shared Cache)
 

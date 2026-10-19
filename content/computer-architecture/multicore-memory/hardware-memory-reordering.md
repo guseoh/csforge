@@ -9,13 +9,6 @@ level: 3
 status: PUBLISHED
 displayOrder: 60
 references:
-  - url: "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/multiprocessors/index.html"
-    title: "Multiprocessors"
-    referenceType: OFFICIAL
-    language: en
-    depth: section
-    recommendation: "multicore cache sharing, coherence protocol, false sharing과 shared-memory ordering 경계를 확인한다."
-    displayOrder: 1
   - url: "https://docs.riscv.org/reference/isa/unpriv/rvwmo.html"
     title: "RVWMO Memory Consistency Model"
     referenceType: OFFICIAL
@@ -23,6 +16,7 @@ references:
     depth: section
     recommendation: "weak memory ordering에서 preserved program order와 explicit synchronization이 어떤 순서를 보존하는지 확인한다."
     displayOrder: 2
+    relationNote: "RVWMO v2.0의 Preserved Program Order와 Explicit Synchronization을 확인한다. 단일 주소 coherence와 여러 주소의 순서를 구분한다."
 ---
 # 하드웨어 메모리 순서(Hardware Memory Ordering)
 

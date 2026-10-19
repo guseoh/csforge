@@ -9,13 +9,14 @@ level: 2
 status: PUBLISHED
 displayOrder: 40
 references:
-  - url: "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/performance/index.html"
-    title: "Computer Architecture: Performance"
+  - url: "https://www.cs.cornell.edu/courses/cs3410/2026sp/notes/parallel-perf.html"
+    title: "Cornell CS 3410 Spring 2026: Performance in Parallel Programming"
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "CPU execution time, latency/throughput와 speedup을 구분해 성능을 계산하는 방법을 확인한다."
+    recommendation: "순차 구간·병렬 구간·동기화 비용과 암달의 법칙을 확인한다."
     displayOrder: 1
+    relationNote: "Modeling Parallel Performance의 직렬 비율과 speedup 한계를 확인한다."
 ---
 # 암달의 법칙(Amdahl's Law)
 

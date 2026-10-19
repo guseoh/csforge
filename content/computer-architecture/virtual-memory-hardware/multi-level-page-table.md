@@ -9,13 +9,6 @@ level: 2
 status: PUBLISHED
 displayOrder: 60
 references:
-  - url: "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/virtual-memory/index.html"
-    title: "Virtual Memory"
-    referenceType: OFFICIAL
-    language: en
-    depth: section
-    recommendation: "MMU의 translation·protection 경계를 확인한다."
-    displayOrder: 1
   - url: "https://www.kernel.org/doc/html/latest/mm/page_tables.html"
     title: "Page Tables — The Linux Kernel documentation"
     referenceType: OFFICIAL
@@ -23,6 +16,7 @@ references:
     depth: section
     recommendation: "hierarchical page table과 large-page mapping의 실제 OS 구조를 확인한다."
     displayOrder: 2
+    relationNote: "Page Tables와 Page Table Folding의 희소 계층·상위 leaf·아키텍처별 단계 수를 확인한다."
 ---
 # 다단계 페이지 테이블(Multi-Level Page Table)
 
