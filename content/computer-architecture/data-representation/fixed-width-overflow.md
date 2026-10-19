@@ -9,13 +9,14 @@ level: 1
 status: PUBLISHED
 displayOrder: 40
 references:
-  - url: "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/number-systems/index.html"
-    title: "Computer Architecture: Number Systems"
+  - url: "https://www.cs.cornell.edu/courses/cs3410/2011sp/lecture/03-numbers-and-arithmetic-i-g.pdf"
+    title: "Cornell CS 3410 Spring 2011: Numbers and Arithmetic"
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "고정 폭 정수와 수 표현의 기초를 확인한다."
+    recommendation: "고정 폭 가산기와 2의 보수 오버플로 검출을 확인한다."
     displayOrder: 1
+    relationNote: "pp. 33, 38–43의 고정 폭 결과·carry-out·부호 있는 overflow를 비교한다. 언어별 overflow 계약과 구분한다."
 ---
 # 고정 폭 산술과 오버플로(Fixed-Width Arithmetic and Overflow)
 

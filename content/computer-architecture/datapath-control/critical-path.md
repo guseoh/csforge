@@ -9,13 +9,14 @@ level: 2
 status: PUBLISHED
 displayOrder: 40
 references:
-  - url: "https://www.cs.umd.edu/~meesh/cmsc311/clin-cmsc311/Lectures/lecture30/datapath.pdf"
-    title: "Computer Organization: Datapath"
+  - url: "https://www.cs.cornell.edu/courses/cs3410/2011sp/lecture/07-perf-pipe-i-g.pdf"
+    title: "Cornell CS 3410 Spring 2011: CPU Performance and Pipelines"
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "register와 combinational datapath 사이의 timing 관계를 확인한다."
+    recommendation: "임계 경로·클록 주기와 평균 CPI의 관계를 확인한다."
     displayOrder: 1
+    relationNote: "pp. 10–12의 register 출력→입력 최장 경로와 최소 클록 주기를 확인한다. 예제는 setup time 등을 생략한다."
 ---
 # 임계 경로(Critical Path)
 

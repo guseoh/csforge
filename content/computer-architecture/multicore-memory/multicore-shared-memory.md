@@ -9,13 +9,14 @@ level: 1
 status: PUBLISHED
 displayOrder: 10
 references:
-  - url: "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/multiprocessors/index.html"
-    title: "Multiprocessors"
+  - url: "https://www.cs.cornell.edu/courses/cs3410/2025sp/notes/cachecoherency.html"
+    title: "Cornell CS 3410 Spring 2025: Cache Coherency"
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "multicore cache sharing, coherence protocol, false sharing과 shared-memory ordering 경계를 확인한다."
+    recommendation: "공유 메모리의 캐시 복사본과 VI·MSI 상태, false sharing을 확인한다."
     displayOrder: 1
+    relationNote: "도입부의 코어별 캐시와 단일 물리 주소 공간, 공유 복사본을 확인한다."
 ---
 # 멀티코어 공유 메모리(Multicore Shared Memory)
 

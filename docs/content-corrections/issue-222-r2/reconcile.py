@@ -159,10 +159,18 @@ def reconcile():
         live = by_key_url.get(identity)
         assert live is not None, ("review target no longer in canonical", identity)
         if not live["evidenceFlags"]:
-            # A directly read supplement must be tied to an unresolved canonical
-            # relation; it does not promote that original URL's access status.
-            supported = by_key_url.get((record["contentKey"], record.get("supplementsUrl")))
-            assert supported and supported["evidenceFlags"], ("supplement lacks historical target", identity)
+            # A new verified URL must trace to an explicitly unresolved original.
+            if record.get("supplementsUrl"):
+                supported = by_key_url.get((record["contentKey"], record["supplementsUrl"]))
+                assert supported and supported["evidenceFlags"], ("supplement lacks historical target", identity)
+            elif record.get("replacesUrl"):
+                retired = (record["contentKey"], record["replacesUrl"])
+                assert retired not in by_key_url, ("replacement still present", retired)
+                assert any((item["contentKey"], item["url"]) == retired
+                           and item["verification"]["status"] == "NEEDS_REVIEW"
+                           for item in wave3), ("replacement lacks historical target", identity)
+            else:
+                raise AssertionError(("unflagged relation lacks origin", identity))
             assert (ROOT / record["evidenceDocument"]).is_file(), identity
         assert record["decision"] == "KEEP" and record["evidenceLevel"] == "DIRECT_CONTENT_VERIFIED", identity
         live["r2ManualResolution"] = {

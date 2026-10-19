@@ -9,13 +9,14 @@ level: 2
 status: PUBLISHED
 displayOrder: 40
 references:
-  - url: "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/virtual-memory/index.html"
-    title: "Virtual Memory"
+  - url: "https://www.cs.cornell.edu/courses/cs3410/2026sp/notes/vm.html"
+    title: "Cornell CS 3410 Spring 2026: Virtual Memory"
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "MMU의 translation·protection 경계를 확인한다."
+    recommendation: "가상·물리 주소, MMU의 변환·권한과 페이지 테이블·TLB를 학습한다."
     displayOrder: 1
+    relationNote: "A Cache for the Page Table의 변환 캐시와 다단계 lookup 비용을 확인한다. TLB miss 자체를 page fault로 보지 않는다."
 ---
 # 주소 변환 버퍼(TLB, Translation Lookaside Buffer)
 

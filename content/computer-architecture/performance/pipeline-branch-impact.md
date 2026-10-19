@@ -9,13 +9,14 @@ level: 2
 status: PUBLISHED
 displayOrder: 60
 references:
-  - url: "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/performance/index.html"
-    title: "Computer Architecture: Performance"
+  - url: "https://www.cs.cornell.edu/courses/cs3410/2018fa/schedule/slides/06-pipeline-bw.pdf"
+    title: "Cornell CS 3410 Fall 2018: Pipelining"
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "CPU execution time, latency/throughput와 speedup을 구분해 성능을 계산하는 방법을 확인한다."
+    recommendation: "교육용 5단계 파이프라인의 hazard·forwarding·분기 예측 비용을 학습한다."
     displayOrder: 1
+    relationNote: "pp. 78, 84, 89–90의 분기 빈도 × 실패율 × 복구 주기와 추가 CPI를 확인한다. 단순 교육용 모델이다."
 ---
 # 파이프라인과 분기가 CPI에 미치는 영향(Pipeline and Branch Impact)
 

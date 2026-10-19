@@ -9,14 +9,14 @@ level: 2
 status: PUBLISHED
 displayOrder: 20
 references:
-  - url: "https://www.cs.umd.edu/~meesh/cmsc311/clin-cmsc311/Lectures/lecture30/datapath.pdf"
-    title: "Computer Organization: Datapath"
+  - url: "https://www.cs.cornell.edu/courses/cs3410/2011sp/lecture/06-cpu-i-g.pdf"
+    title: "Cornell CS 3410 Spring 2011: A Simple CPU"
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "register와 combinational datapath 사이의 timing 관계를 확인한다."
-    relationNote: "명령어 해독이 ALU 연산, 메모리 접근, 레지스터 쓰기와 멀티플렉서 제어 신호로 이어지는 부분을 확인한다."
+    recommendation: "교육용 MIPS의 레지스터·ALU·메모리와 제어 경로를 확인한다."
     displayOrder: 1
+    relationNote: "pp. 10–15의 instruction decode와 ALU·register 제어 경로를 확인한다."
 ---
 # 제어 장치(Control Unit)
 

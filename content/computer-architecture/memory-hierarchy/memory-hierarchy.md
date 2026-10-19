@@ -9,13 +9,14 @@ level: 1
 status: PUBLISHED
 displayOrder: 10
 references:
-  - url: "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/memory-hierarchy-design/index.html"
-    title: "Memory Hierarchy Design"
+  - url: "https://www.cs.cornell.edu/courses/cs3410/2026sp/notes/caches.html"
+    title: "Cornell CS 3410 Spring 2026: Caches"
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "memory hierarchy, temporal/spatial locality, cache line, hit/miss와 AMAT 관계를 확인한다."
+    recommendation: "캐시의 지역성·매핑·쓰기 정책과 평균 접근 시간을 학습한다."
     displayOrder: 1
+    relationNote: "The Memory Bottleneck과 A Hierarchy of Caches의 용량·비용·지연 절충을 확인한다."
 ---
 # 메모리 계층 구조(Memory Hierarchy)
 

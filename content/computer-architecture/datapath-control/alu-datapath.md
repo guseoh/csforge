@@ -9,13 +9,14 @@ level: 1
 status: PUBLISHED
 displayOrder: 10
 references:
-  - url: "https://www.cs.umd.edu/~meesh/cmsc311/clin-cmsc311/Lectures/lecture30/datapath.pdf"
-    title: "Computer Organization: Datapath"
+  - url: "https://www.cs.cornell.edu/courses/cs3410/2011sp/lecture/06-cpu-i-g.pdf"
+    title: "Cornell CS 3410 Spring 2011: A Simple CPU"
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "register와 combinational datapath 사이의 timing 관계를 확인한다."
+    recommendation: "교육용 MIPS의 레지스터·ALU·메모리와 제어 경로를 확인한다."
     displayOrder: 1
+    relationNote: "pp. 4, 8–15의 register file·ALU·control 배선을 따라간다. 교육용 MIPS 구현이다."
 ---
 # ALU와 데이터패스(ALU and Datapath)
 

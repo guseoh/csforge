@@ -9,13 +9,14 @@ level: 1
 status: PUBLISHED
 displayOrder: 10
 references:
-  - url: "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/virtual-memory/index.html"
-    title: "Virtual Memory"
+  - url: "https://www.cs.cornell.edu/courses/cs3410/2026sp/notes/vm.html"
+    title: "Cornell CS 3410 Spring 2026: Virtual Memory"
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "MMU의 translation·protection 경계를 확인한다."
+    recommendation: "가상·물리 주소, MMU의 변환·권한과 페이지 테이블·TLB를 학습한다."
     displayOrder: 1
+    relationNote: "Virtual vs. Physical Memory Addresses와 Pages and Page Tables의 VPN→PPN·offset을 확인한다."
 ---
 # 가상 주소와 물리 주소(Virtual and Physical Address)
 

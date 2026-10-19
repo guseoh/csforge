@@ -9,13 +9,14 @@ level: 2
 status: PUBLISHED
 displayOrder: 50
 references:
-  - url: "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/memory-hierarchy-design/index.html"
-    title: "Memory Hierarchy Design"
+  - url: "https://www.cs.cornell.edu/courses/cs5220/2024fa/slides/03-single-core.html"
+    title: "Cornell CS 5220 Fall 2024: Single Core Architecture"
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "memory hierarchy, temporal/spatial locality, cache line, hit/miss와 AMAT 관계를 확인한다."
+    recommendation: "Memory Matters의 지연 시간·대역폭·지역성과 캐시 구조를 학습한다."
     displayOrder: 1
+    relationNote: "Act 2: Memory Matters의 Basic Problem과 How Caches Help를 확인한다. 슬라이드는 방향키로 이동한다."
 ---
 # 지연 시간과 대역폭(Latency versus Bandwidth)
 

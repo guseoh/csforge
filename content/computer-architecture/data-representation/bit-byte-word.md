@@ -9,13 +9,14 @@ level: 1
 status: PUBLISHED
 displayOrder: 10
 references:
-  - url: "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/number-systems/index.html"
-    title: "Computer Architecture: Number Systems"
+  - url: "https://www.cs.cornell.edu/courses/cs3410/2011sp/lecture/06-cpu-i-g.pdf"
+    title: "Cornell CS 3410 Spring 2011: A Simple CPU"
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "고정 폭 정수와 수 표현의 기초를 확인한다."
+    recommendation: "교육용 MIPS의 레지스터·ALU·메모리와 제어 경로를 확인한다."
     displayOrder: 1
+    relationNote: "pp. 7–9의 MIPS 32-bit register와 byte-addressed word를 확인한다. word 폭은 ISA에 따라 다르다."
 ---
 # 비트·바이트·워드(Bit, Byte and Word)
 
