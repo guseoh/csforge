@@ -1,0 +1,43 @@
+{
+  "kind": "ISOLATED_QA_DB_ONLY",
+  "umdHead": "5689629532e11722b668c12dd5c58073e6e8d809",
+  "capHead": "6f0895b82467f4dd81e5a348a329379bcb3e0da2",
+  "preview": {
+    "created": 0,
+    "updated": 44,
+    "unchanged": 1,
+    "skipped": 0,
+    "errors": 0
+  },
+  "apply": {
+    "created": 0,
+    "updated": 44,
+    "unchanged": 1,
+    "skipped": 0,
+    "failed": 0
+  },
+  "exactReimport": {
+    "created": 0,
+    "updated": 0,
+    "unchanged": 45,
+    "skipped": 0,
+    "failed": 0
+  },
+  "historyPreserved": [
+    "personal_note",
+    "quiz_session",
+    "attempt",
+    "wrong_note",
+    "review_schedule",
+    "review_history",
+    "concept_progress"
+  ],
+  "identitiesPreserved": [
+    "concept",
+    "question"
+  ],
+  "activeReferenceCounts": {
+    "relations": 1038,
+    "urls": 628
+  }
+}
