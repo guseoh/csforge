@@ -7,9 +7,10 @@
 | 작업 | Draft PR / 최종 HEAD | Repository Validation |
 |---|---|---|
 | Computer Architecture UMD | [#247](https://github.com/guseoh/csforge/pull/247), `5689629532e11722b668c12dd5c58073e6e8d809` | [39214844165](https://github.com/guseoh/csforge/actions/runs/39214844165) **SUCCESS** |
-| Distributed Systems CAP | [#248](https://github.com/guseoh/csforge/pull/248), `6f0895b82467f4dd81e5a348a329379bcb3e0da2` | [39214250705](https://github.com/guseoh/csforge/actions/runs/39214250705) **SUCCESS** |
+| Distributed Systems CAP 독립 원고 감사 | [#248](https://github.com/guseoh/csforge/pull/248)의 최초 HEAD `6f0895b82467f4dd81e5a348a329379bcb3e0da2` | [39214250705](https://github.com/guseoh/csforge/actions/runs/39214250705) **SUCCESS** |
+| UMD + CAP **실제 Git 통합** | [#248](https://github.com/guseoh/csforge/pull/248) 통합 HEAD `70299bdc97a9db01aafcad41b4c8a05b66d3a302` | [39220508450](https://github.com/guseoh/csforge/actions/runs/39220508450) **SUCCESS** |
 
-두 실행 모두 backend tests/build, frontend validation, Compose validation 성공. #247의 후속 커밋은 Windows CRLF에서도 회귀 테스트가 실행되도록 문자열 처리 한 줄만 보강했다. 최종 파일로 로컬 Testcontainers 테스트를 다시 실행해 통과했다. #248도 동일한 줄바꿈 경계를 수정한 뒤 테스트가 통과했다. 최종 reconcile PR의 HEAD/CI는 PR 설명에서 추적한다.
+위 각 실행 모두 backend tests/build, frontend validation, Compose validation 성공. #247의 후속 커밋은 Windows CRLF에서도 회귀 테스트가 실행되도록 문자열 처리 한 줄만 보강했다. 최종 파일로 로컬 Testcontainers 테스트를 다시 실행해 통과했다. #248도 동일한 줄바꿈 경계를 수정한 뒤 테스트가 통과했다. 최종 reconcile PR의 HEAD/CI는 PR 설명에서 추적한다.
 
 ## 관계별 결정과 실제 원문 근거
 
@@ -48,6 +49,20 @@ canonical이 기준 main과 동일한 checkout 및 두 Git 객체, PyYAML이 필
 - 실제 Reader: UMD 대표 6개 Concept × light/dark, CAP 1개 Concept × light/dark, 1280×720. 관계 설명·자료 소개·긴 제목 줄바꿈, Tab으로 Reference 진입, 외부 링크 `_blank`/`noopener noreferrer`, 가로 넘침 없음 확인. UMD 44개 교정 관계 전체는 Reader API의 URL·relationNote 일치도 확인했다. 다른 viewport나 전체 45개 화면의 시각 QA를 주장하지 않는다.
 - 격리 자원: `csforge-r2-reader-umd` DB :15482/backend :18082/frontend :15173, `csforge-r2-reader-cap` DB :15483/backend :18083/frontend :15174. Production Import·DB 변경·수동 배포 없음.
 - `reconcile.py`(각 콘텐츠 PR), proposal reconcile, 기존 103행 보존 검사, `git diff --check`: PASS. 감사 전용 PR은 canonical·test·API·DB 파일을 수정하지 않는다.
+
+## 실제 Git 통합 후 추가 검증 (ChatGPT 직접 수행)
+
+기존 #249의 `reconcile-remaining45-proposal.py`와 `remaining45-reconcile-20261019.json`은 **#247/`56896295`와 최초 #248/`6f0895b8`의 미병합 제안 스냅샷**이다. 기존 148/1 계산 근거를 보존하며 현재 `main`의 결과나 갱신된 #248 브랜치 자체의 실행 결과로 재표기하지 않는다.
+
+2026-10-19에 [#248 통합 HEAD `70299bdc97a9db01aafcad41b4c8a05b66d3a302`](https://github.com/guseoh/csforge/commit/70299bdc97a9db01aafcad41b4c8a05b66d3a302)을 생성했다. 이는 **CAP 기존 HEAD와 UMD #247 HEAD를 부모로 갖는 실제 병합 커밋**으로, 두 영역의 canonical 파일, 103 + 44 + 1 = 148행의 단일 `verified-relations.json`, 두 이력 검증 가드가 결합된 `reconcile.py`를 함께 포함한다. 기존 #247/#248의 개별 회귀 테스트와 source evidence는 보존한다.
+
+통합 브랜치에 `R2Remaining45CombinedIntegrationTest`를 추가했다. 격리 PostgreSQL에서 우선 역사적 UMD 44파일과 CAP 구버전 1파일을 **같은 Import Preview/Apply**로 복원하고, 개인 노트·풀이·오답·복습 기록 및 Concept/Question ID를 캡처한 뒤, 변경된 45파일을 **같은 Preview/Apply**로 적용하도록 검증한다. 기대 결과는 **45 UPDATED / 0 UNCHANGED**, 재실행 **45 UNCHANGED / 0 UPDATED**, 전체 canonical exact bootstrap **3,380 UNCHANGED** 및 기록·identity 보존이다.
+
+최종 통합 HEAD의 [Repository Validation #39220508450](https://github.com/guseoh/csforge/actions/runs/39220508450)은 **completed / SUCCESS**로 backend tests/build, frontend validation, Compose validation을 통과했다. 기존 결합 HTTP QA의 `44 UPDATED / 1 UNCHANGED`와 새 통합 회귀 테스트의 **historical 45 → corrected 45** 실행 조건을 구별한다.
+
+Reader는 기존 R3 구성 요소를 변경하지 않았으며, 기존 1280×720 light/dark QA 근거가 있다. CSS에는 최대 680px에서 Reference 행을 한 열로 변경하고 제목·설명을 줄바꿈하는 규칙이 존재한다. **375px 모바일 실제 브라우저 확인은 이번 직접 통합 작업에서 수행하지 않았으며 완료로 주장하지 않는다.**
+
+#247, #248 및 본 #249는 모두 Draft·미병합이고, `main`은 이 결합 제안의 데이터를 아직 반영하지 않았다. 실제 `main` 병합 후에는 `reconcile.py`를 최종 main에서 별도 실행해 148 verified / ACM 전문 1 pending을 재확인해야 한다.
 
 ## 미해결 1건과 #222 완료 판단
 
