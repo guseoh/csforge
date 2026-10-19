@@ -1011,5 +1011,16 @@
     "basis": "실제 브라우저에서 2017-10-23 Wcache Part 1의 Overview/저장 구조/분산 구성/결론을 읽음. BigFile·metadata·LRU, consistent hashing의 hot item 집중과 SSD/HDD 두 계층이 현행 추천 범위와 일치.",
     "limits": "2017년 운영 사례. 현재 TPS/hit율 검증이나 HTTP 신선도·재검증 계약 인증 아님. RFC9111 우선. Part2는 미검증.",
     "evidenceDocument": "https://github.com/guseoh/csforge/blob/78a24a7eff77f392698292255aa8b25c08d71cd8/docs/content-corrections/issue-222-r2/network-browser-review-20261019.md"
+  },
+  {
+    "contentKey": "distributed.core.coordination.cap-tradeoffs",
+    "url": "https://groups.csail.mit.edu/tds/papers/Gilbert/Brewer6.pdf",
+    "decision": "KEEP",
+    "evidenceLevel": "DIRECT_CONTENT_VERIFIED",
+    "reviewDate": "2026-10-19",
+    "basis": "MIT 저자 논문 목록의 직접 링크 및 13쪽 원고 §2.1–2.3, §3.1 Theorem 1을 직접 열람·렌더링 확인. 선형화 가능성, 정상 노드 모든 요청의 eventual response(시간 상한 없음), 임의 메시지 손실 모델과 비동기 불가능성 정리를 대조.",
+    "limits": "MIT 제공 저자 원고만 직접 검증. ACM 서지·abstract는 확인했지만 출판본 전문은 접근 미해결이며 동일 판면·최종 판본을 주장하지 않는다.",
+    "supplementsUrl": "https://dl.acm.org/doi/10.1145/564585.564601",
+    "evidenceDocument": "docs/content-corrections/issue-222-r2/cap-author-manuscript-20261019.md"
   }
 ]

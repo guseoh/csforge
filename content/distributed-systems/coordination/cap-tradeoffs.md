@@ -14,13 +14,21 @@ references:
     referenceType: OTHER
     language: en
     displayOrder: 1
-    relationNote: "CAP 절충을 정식화한 논문의 일관성·가용성·네트워크 분할 정의 확인"
+    relationNote: "출판 서지·DOI 확인용(ACM SIGACT News 33(2), 2002). 정의·정리 본문은 MIT 저자 원고에서 읽는다. ACM 출판본 전문은 직접 검증하지 못했다."
   - url: "https://etcd.io/docs/v3.7/op-guide/failures/"
     title: "etcd Documentation: Failure modes"
     referenceType: OFFICIAL
     language: en
     displayOrder: 2
     relationNote: "네트워크 분할 중 다수 노드 가용성과 쓰기 중단 동작 확인"
+  - url: "https://groups.csail.mit.edu/tds/papers/Gilbert/Brewer6.pdf"
+    title: "Gilbert and Lynch: Brewer's Conjecture and the Feasibility of Consistent, Available, Partition-Tolerant Web Services (MIT author manuscript)"
+    referenceType: OTHER
+    language: en
+    depth: section
+    recommendation: "저자 소속 MIT가 제공하는 원고에서 CAP 정의와 비동기 네트워크의 불가능성 정리를 읽는다."
+    displayOrder: 3
+    relationNote: "§2.1–2.3과 §3.1 Theorem 1을 확인한다. availability는 실패하지 않은 노드의 모든 요청이 결국 응답하는 성질이며 응답 시간 상한은 없다. 13쪽 저자 원고로, ACM 출판본과 판면·문구가 동일하다고 단정하지 않는다."
 ---
 # 네트워크 분할에서 CAP 절충
 
