@@ -108,9 +108,9 @@ def main():
         "decision": "Readable learning relations secured; ACM publication full-text comparison and approval remain",
     }
     if args.out:
-        args.out.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        args.out.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
     if args.ledger_out:
-        args.ledger_out.write_text(encoded_ledger, encoding="utf-8")
+        args.ledger_out.write_text(encoded_ledger, encoding="utf-8", newline="\n")
     print(json.dumps({k: v for k, v in report.items() if k not in ("originalContentAccessPending", "evidenceDocuments")},
                      ensure_ascii=False, sort_keys=True))
 
