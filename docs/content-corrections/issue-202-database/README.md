@@ -62,3 +62,11 @@ PostgreSQL 공식 계약 기준으로 내용과 구현 의존성을 구별한다
 - Quiz는 `database.core.sql.select-order.q1` 실제 교정 JSON의 단답형 입력을 375/1280px × light/dark 4개 조건에서 점검했다. 총 **16개 브라우저 조건 PASS**, 16개 screenshot을 `database-reader-quiz-screenshots` artifact에 보존했다.
 - 검증 화면은 실제 React Reader/Quiz 경로이지만 **API fixture** 기반이며 실제 backend 연결/Production 이용자 Human Usage Check를 대체하지 않는다. PostgreSQL 역시 격리 컨테이너이며 운영 DB를 변경하지 않았다.
 - 일회성 regression test/script/workflow는 성공 후 삭제하되 GitHub Actions 실행 이력·artifact와 본 증거 문서는 유지한다. 이후 최종 정리 HEAD에서 Repository Validation을 재검증한다.
+
+## 최종 통합 리뷰 보완 (2026-10-21)
+
+- `normalization.md`의 삽입/삭제 이상 설명을 점검하면서 FK `ON DELETE CASCADE`의 **삭제 방향**이 모호하게 읽힐 수 있음을 추가 발견했다.
+- `orders.member_id → member.id` 관계에서 **회원(참조 대상) 삭제 → 주문(참조 행) 삭제**로 방향을 명확히 했다. **주문 삭제 → 회원 삭제**가 CASCADE의 의미는 아니라는 점을 명시했다.
+- 확인 근거: [PostgreSQL 16 §5.4 Foreign Keys](https://www.postgresql.org/docs/16/ddl-constraints.html).
+- 동일한 기존 Concept의 본문만 보강했으며 contentKey, frontmatter, Reference, Question 및 메타데이터는 유지한다.
+- 앞서 실행한 area 별 PostgreSQL·Chromium QA는 이전 교정 HEAD 기준이다. 이 추가 문구를 포함한 HEAD의 Repository Validation 및 3 Area 합본 라이브 QA는 후속 실행에서 별도 확인한다.
