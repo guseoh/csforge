@@ -67,7 +67,7 @@ try{
   await page.goto('http://127.0.0.1:4179/quiz/904',{waitUntil:'domcontentloaded'});
   const card=page.locator('article.quiz-focus-card');
   await card.waitFor({state:'visible',timeout:15000});
-  assert((await card.textContent()).includes('HAVING'));
+  assert((await card.textContent()).includes('AVG(salary)'), 'Actual short-answer prompt not rendered');
   await card.locator('textarea.quiz-answer-editor').fill('HAVING');
   assert.equal(await page.locator('html').getAttribute('data-theme'),theme);
   const g=await page.evaluate(()=>({scroll:document.documentElement.scrollWidth,width:window.innerWidth}));
