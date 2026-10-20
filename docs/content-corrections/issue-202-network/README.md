@@ -43,3 +43,56 @@ Network & HTTP 교정 1차는 **P0 4 + P1 6 = 10개** 발견을 최소 보강한
 4. 시각화/Reader 모바일·라이트/다크 및 Quiz/Wrong Note 학습 이력 보존·Human Usage Check 필요.
 5. Database 38/75 및 DSA 84개 Concept 전수 리뷰·변경까지 수행하고 Issue #202 전체가 완료된 뒤 종료. 그 전까지 이 PR/Issue를 완료로 판정하지 않는다.
 6. 사용자 명시 승인 없이 PR merge 및 Production DB import를 수행하지 않는다.
+
+
+## P2 후속 20건 처리 결과 (2026-10-20)
+
+- 현재 사용자 승인 범위는 **Issue #202 다음 실행 단계**. 기존 P0/P1 10건에 이어 [Wave3 findings](../../content-audit/learning-experience-2026/wave-3-findings.json) 중 P2 20건의 최신 main과 연관 canonical을 다시 대조했다.
+- **MINIMAL_FIX 19 / ALREADY_RESOLVED 1 / DEFER 0**. 다른 Area나 Issue 범위로 전가하지 않고 기존 판정 ID와 연결한다.
+- W3-NET-029는 #222 R2 PR #229에서 **정식 RFC 6265 + 공식 6265bis Internet-Draft**로 바뀐 3개 Reference를 재사용한다. RFC10025를 현재 본문에 다시 추가하거나 출판됐다고 단정하지 않는다.
+- 새 Concept/Question, 영역 이동, SVG, 원래 Question 정답 키·Concept 연결, 기존 contentKey 변경 없음. 1차 P0/P1과 합쳐 현재 변경된 것은 **21개 Question / 19개 Concept**, 소스 파일 **29개** 및 감사 문서 1개다.
+
+| Finding | 판정 | 교정·유지 근거 |
+| --- | --- | --- |
+| W3-NET-028 | MINIMAL_FIX | 중개 캐시 신선도·no-cache·Vary 근접 오답 |
+| W3-NET-015 | MINIMAL_FIX | HTTP/1.1 request-line과 HTTP/2·3 의사 헤더 구별 |
+| W3-NET-016 | MINIMAL_FIX | origin-form request-target / Host authority 구별 |
+| W3-NET-017 | MINIMAL_FIX | HTTP 응답·콘텐츠 협상 근접 오답 |
+| W3-NET-019 | MINIMAL_FIX | Accept 미충족 시 406 또는 협상 필드 무시 가능 |
+| W3-NET-029 | ALREADY_RESOLVED | Issue #222/PR #229의 정식 RFC 6265 + 미발행 6265bis 초안 연결 유지, 중복 편집 없음 |
+| W3-NET-022 | MINIMAL_FIX | HTTP/1.1 모든 요청 Host 필수·누락/중복/invalid 400 |
+| W3-NET-023 | MINIMAL_FIX | 위반한 새 스트림 ID는 connection PROTOCOL_ERROR 필수 |
+| W3-NET-024 | MINIMAL_FIX | QPACK 공식 RFC 9204 §2.1.2 직접 자료 |
+| W3-NET-004 | MINIMAL_FIX | CIDR/최장 일치의 RFC 4632 직접 근거 |
+| W3-NET-005 | MINIMAL_FIX | IPv6 Hop Limit의 RFC 8200 직접 근거 |
+| W3-NET-001 | MINIMAL_FIX | Cisco MAC 학습·전달/VLAN 공식 자료 2개 Concept 공유 |
+| W3-NET-002 | MINIMAL_FIX | 같은 물리 스위치·IP prefix 혼동 distractor |
+| W3-NET-006 | MINIMAL_FIX | PAT 공통 destination/public IP와 출발지 포트만 다른 4-tuple |
+| W3-NET-007 | MINIMAL_FIX | outbound 매핑과 임의 inbound 수신의 혼동 distractor |
+| W3-NET-008 | MINIMAL_FIX | failover state loss 후 재연결 vs 계획된 draining 분리 |
+| W3-NET-013 | MINIMAL_FIX | No route to host 로컬/원격 ICMP 원인 구별 |
+| W3-NET-014 | MINIMAL_FIX | DNS→라우팅·QUIC transport·TLS over QUIC 직접 원문 |
+| W3-NET-012 | MINIMAL_FIX | RFC 8446 → RFC 9846 최신 기본 규격 7 TLS+1 journey 관계, PKI/Forwarded 원문 |
+| W3-NET-010 | MINIMAL_FIX | IPv6 UDP checksum RFC 8200 §8.1 직접 원문 |
+
+### P2 Reference 보강 및 주의점
+
+- [RFC 9846](https://www.rfc-editor.org/rfc/rfc9846.html) (2026-07, TLS 1.3, **RFC 8446 obsoletes**)을 TLS 7개 Concept 및 request-journey 1개에 추가했다. 8446은 버전 경계가 적힌 역사적 기본 참고로 보존한다. **동일 URL의 global 메타데이터를 전 8관계에서 동일하게 유지**했다.
+- [RFC 9204 §2.1.2](https://www.rfc-editor.org/rfc/rfc9204.html#section-2.1.2), [RFC 9000 §2](https://www.rfc-editor.org/rfc/rfc9000.html#section-2), [RFC 9001 §4](https://www.rfc-editor.org/rfc/rfc9001.html#section-4)를 직접 QPACK/QUIC 경계에 연결한다. QPACK의 Required Insert Count가 미도착일 때는 특정 스트림 디코딩이 막히고 table 갱신 뒤 풀린다.
+- [RFC 4632 §3](https://www.rfc-editor.org/rfc/rfc4632.html#section-3), [RFC 8200 §3/8.1](https://www.rfc-editor.org/rfc/rfc8200.html), [RFC 1122 §3.3.1](https://www.rfc-editor.org/rfc/rfc1122.html#section-3.3.1)을 prefix, IPv6 Hop Limit/UDP checksum, 호스트 라우팅에 배치.
+- [Cisco LAN switching 공식 문서](https://www.cisco.com/c/en/us/support/docs/lan-switching/ethernet/12006-chapter22.html)는 MAC 학습·unknown unicast·VLAN별 broadcast domain을 직접 설명하므로 switch-forwarding과 broadcast-domain의 기존 RFC 826 (ARP)와 함께 보조 자료로 추가했다.
+- [RFC 5280 §6.1](https://www.rfc-editor.org/rfc/rfc5280.html#section-6.1)과 [RFC 7239 §8.1](https://www.rfc-editor.org/rfc/rfc7239.html#section-8.1)은 각각 PKI 경로 및 TLS 종료 후 전달 헤더 신뢰의 구별에 활용한다.
+- 기존 전역 URL을 새로운 title/metadata와 다르게 재정의하지 않는다. 기존 Reference의 title/type/language/recommendation은 유지했고, RFC 8446의 대체 관계는 Concept별 **relationNote**로 표현했다.
+
+### 검증 체크포인트 및 명확한 한계
+
+- `main 392ffccf90b733dfe191e222b2af15b407e42033`에서 분기. 모든 수정은 `content/network-http/**` 및 이 README 안에 국한한다.
+- Network 질문 JSON **15개** 직접 파싱: **381 Question 전부** key 중복·필수 필드·MULTIPLE_CHOICE 단일 정답 key 및 choice rationale, SHORT_ANSWER acceptedAnswers 존재 검사를 통과함. **21개 변경 Question**은 main과 동일 순서/유형/난도/status/정답 key/Concept 관계를 파일별 비교하여 불변 확인함.
+- 변경된 Concept MD **19개**는 각 Reference URL의 중복·displayOrder 중복과 기본 속성을 확인하고, 동일 URL의 새로운 관계 메타데이터가 일치하도록 작성. Network Concept MD는 전체 파일 트리에서 **127개**를 확인. (이는 전체 127 본문을 현재 턴에서 새로 수기 재검토했다는 의미가 아님. 기존 Wave3 전수 감사 + 변경 부분의 재검토 결과다.)
+- [Repository Validation](https://github.com/guseoh/csforge/actions) 은 **최신 PR HEAD 완료 결과를 별도로 확인해야 함**. 중간 커밋에서 CI가 성공해도 최신 결과를 대체하지 않는다.
+- 아직 **격리 PostgreSQL에서 이전 canonical 상태→수정 pack 실제 Preview/Apply→동일 pack reimport UNCHANGED + personal/history digest 불변**을 재현하지 않았다. 기존 bootstrap CI 통과와 이 실험을 구별한다.
+- Reader/Quiz/Reference의 실제 브라우저 휴먼 사용성, 내용/Reference 전역 관계 병합 충돌·길이 경계 검증, 사용자 승인 후 merge 등 남은 완료 게이트가 있다. Production DB 미변경.
+
+### #202 전체 남은 범위
+
+Network slice 최종 import·Reader QA 이후 Database **38 Concept / 75 Question**, DSA **84 Concept 및 전체 Question**를 차례대로 진행한다. 이 기록이나 Draft PR #253을 #202 완료 판정으로 사용하지 않는다.
