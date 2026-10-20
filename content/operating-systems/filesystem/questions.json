@@ -679,7 +679,7 @@
   {
     "kind": "question",
     "contentKey": "operating-systems.core.filesystem.write-flush-fsync.q2",
-    "promptMarkdown": "`write → library flush → fsync`가 각각 다른 완료 경계인 이유를 설명하라.",
+    "promptMarkdown": "시스템 콜 `write(fd, ...)`, 사용자 공간 버퍼링 라이브러리의 `flush()`, 파일의 `fsync()`가 **각각 다른 완료 경계**인 이유를 비교하라. 이 API들을 모든 프로그램에서 반드시 `write → flush → fsync` 순서로 호출해야 한다는 뜻은 아니다.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
