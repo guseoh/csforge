@@ -336,7 +336,7 @@
   {
     "kind": "question",
     "contentKey": "operating-systems.core.scheduling.round-robin.q2",
-    "promptMarkdown": "A와 B 두 CPU 중심 작업의 버스트가 각각 5이고 시간 할당량이 2다. A가 먼저 실행된다고 할 때 CPU 실행 순서를 할당량 단위로 적어라.",
+    "promptMarkdown": "단일 논리 CPU에서 CPU 중심 작업 A와 B가 **처음부터 모두 준비**되어 있고 A가 먼저 대기열에 있다. 각 버스트는 5, 시간 할당량은 2이며 문맥 전환 비용은 무시한다. CPU 실행 순서를 할당량 단위로 적어라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
