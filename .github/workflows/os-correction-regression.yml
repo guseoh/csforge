@@ -1,0 +1,45 @@
+name: OS correction import regression
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'content/operating-systems/**'
+      - 'backend/src/test/java/com/guseoh/csforge/importcontent/OsCorrectionSnapshotIntegrationTest.java'
+      - '.github/workflows/os-correction-regression.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  historical-os-import:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: gradle
+      - name: Materialize immutable pre-PR Operating Systems pack
+        run: |
+          mkdir -p /tmp/csforge-os-baseline
+          git cat-file -e 4dc4dd2989a3aefbddeaf3610c20f2162d5cc2a2^{commit}
+          git archive 4dc4dd2989a3aefbddeaf3610c20f2162d5cc2a2 content/operating-systems | tar -x -C /tmp/csforge-os-baseline
+          test -f /tmp/csforge-os-baseline/content/operating-systems/io/questions.json
+      - name: Real OS old-to-new PostgreSQL preview/apply/exact-reimport/history
+        working-directory: backend
+        env:
+          CSFORGE_OS_BASELINE_DIR: /tmp/csforge-os-baseline/content/operating-systems
+        run: |
+          chmod +x gradlew
+          ./gradlew test --tests 'com.guseoh.csforge.importcontent.OsCorrectionSnapshotIntegrationTest' --no-daemon --stacktrace
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: os-correction-regression-test-results
+          path: backend/build/test-results/test/*.xml
+          if-no-files-found: warn
