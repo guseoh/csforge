@@ -32,6 +32,6 @@ h >= log2(n!)
 
 병합 정렬처럼 O(n log n) comparison으로 정렬하는 알고리즘은 이 model에서 asymptotically lower bound와 같은 차수에 도달한다.
 
-이 하한은 **모든 정렬 알고리즘**에 적용되는 것이 아니다. 계수 정렬나 기수 정렬은 key의 범위나 digit representation 같은 추가 정보를 사용하므로 comparison-only model 밖에 있다. 대신 key range, 추가 메모리, 여러 pass 같은 다른 제약을 지불한다.
+이 하한은 **모든 정렬 알고리즘**에 적용되는 것이 아니다. 계수 정렬이나 기수 정렬은 key의 범위나 digit representation 같은 추가 정보를 사용하므로 comparison-only model 밖에 있다. 대신 key range, 추가 메모리, 여러 pass 같은 다른 제약을 지불한다.
 
 따라서 `정렬은 무조건 Ω(n log n)`이 아니라, **일반 comparison-based sorting에서는 Ω(n log n)이 필요하다**고 구분해야 한다.
