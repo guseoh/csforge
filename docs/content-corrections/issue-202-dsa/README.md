@@ -65,3 +65,14 @@
 2. 격리 PostgreSQL 16.4에서 실제 이전 main snapshot → 교정 적용, exact reimport UNCHANGED, 기존 학습/오답/복습 이력·stable ID 보존 확인.
 3. Reader/Quiz 실제 프런트엔드 라우트를 375/1280px × light/dark에서 검증하되 API fixture 기반 자동 QA와 **실제 백엔드가 연결된 Human Usage Check**를 구별한다.
 4. 사용자 승인 전 merge 금지, Production Import 금지. 다른 Area Draft PR #253/#254의 branch와 독립 유지.
+
+
+## Historical PostgreSQL / Chromium 증거 (2026-10-20)
+
+- [DSA correction historical import & Reader/Quiz #39420862319](https://github.com/guseoh/csforge/actions/runs/39420862319): **SUCCESS**, `historical-dsa-import`와 `dsa-reader-quiz` 모두 성공. 검증 HEAD `abf651a09448663865c617eac7a6da34b8e9bc58`.
+- Testcontainers PostgreSQL 16.4에 전체 canonical 3,380개를 먼저 bootstrap한 후 **이전 main SHA `392ffccf`의 `content/dsa` Git archive snapshot**에서 바뀐 23개 파일을 복원. **12 Concept + 21 Question = 33 UPDATED**, 오류/생성/실패 0.
+- 이후 교정된 23개 파일을 Preview/Apply하여 **33 UPDATED**로 복구했고, 동일 교정 파일의 exact replay는 **UPDATED 0**, 전체 canonical bootstrap 재import는 **3,380 UNCHANGED**, 오류 0.
+- `personal_note`, `quiz_session`, `attempt`, `wrong_note`, `review_schedule`, `review_history`, `concept_progress` 등 개인/history 기록과 모든 Concept/Question ID 및 Reference 관계 총량의 변경 없음을 확인했다.
+- Chromium에서는 실제 React Reader 4개 Concept (이진 탐색 경계, Hash resize, DP 계산 순서, lazy Prim) × 375/1280px × light/dark = **16조건**, 구간 스케줄링 SCENARIO Quiz 실제 교정 JSON 기반 답변 입력 × 4조건으로 **총 20조건 PASS**. `dsa-reader-quiz-light-dark` artifact에 screenshot 20장을 보존했다.
+- 브라우저 QA는 실제 프런트엔드 컴포넌트/라우트를 실행했지만 **백엔드 API는 fixture**다. 실제 백엔드 연동 Human Usage Check는 미수행이며 Production/실제 사용자 데이터를 변경하지 않았다. 본 검증만으로 전체 84 Concept/293 Question 독립 신규 전수 재채점을 주장하지 않는다.
+- 전용 일회성 test/script/workflow는 검증 성공 후 제거하고 실행 결과/JUnit XML/screenshot/본 근거 문서만 유지한다. 최종 정리 HEAD Repository Validation과 review thread/base drift를 별도로 확인한다.
