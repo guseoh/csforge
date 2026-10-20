@@ -217,3 +217,56 @@
     scroll-behavior: auto;
   }
 }
+
+/* 큰 SVG는 모바일 확대창에서도 원본 크기를 유지해 좌우로 읽을 수 있게 한다. */
+.markdown-image-pan-hint {
+  display: none;
+}
+
+@media (max-width: 600px) {
+  .markdown-image-dialog {
+    overflow: auto;
+    overscroll-behavior-x: contain;
+  }
+
+  .markdown-image-dialog-content {
+    display: block;
+    width: max-content;
+    min-width: 100%;
+    padding: 12px;
+  }
+
+  .markdown-image-dialog .markdown-image-close {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    margin-bottom: 10px;
+    border-color: var(--border-default);
+    background: var(--surface-elevated);
+  }
+
+  .markdown-image-dialog .markdown-image-pan-hint {
+    position: sticky;
+    left: 0;
+    display: block;
+    width: min(310px, calc(96vw - 40px));
+    max-width: none;
+    margin: 0 0 10px;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+  }
+
+  .markdown-image-dialog img {
+    display: block;
+    width: auto;
+    max-width: none;
+    max-height: none;
+  }
+
+  .markdown-image-dialog-content > p:last-child {
+    position: sticky;
+    left: 0;
+    width: min(310px, calc(96vw - 40px));
+    margin-top: 10px;
+  }
+}
