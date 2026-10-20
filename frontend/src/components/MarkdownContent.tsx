@@ -162,9 +162,12 @@ export function MarkdownContent({ children, className, fallback, dedupeLeadingHe
         ? splitKoreanParticle(source)
         : null
 
-      // Linked images remain ordinary links; never nest the image-viewer button inside <a>.
+      // react-markdown may wrap a custom img renderer in its own element type.
+      // Identify linked images from the HAST structure, never by comparing component identity.
+      const linkedImageNode = node?.children.length === 1 && node.children[0]?.type === 'element'
+        && node.children[0]?.tagName === 'img'
       const soleChild = Array.isArray(linkChildren) ? (linkChildren.length === 1 ? linkChildren[0] : null) : linkChildren
-      if (isValidElement<{ src?: string; alt?: string; title?: string }>(soleChild) && soleChild.type === MarkdownImage) {
+      if (linkedImageNode && isValidElement<{ src?: string; alt?: string; title?: string }>(soleChild)) {
         const { src, alt, title } = soleChild.props
         return <a href={href} {...props}><img src={src} alt={alt} title={title} loading="lazy" /></a>
       }
