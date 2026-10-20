@@ -24,7 +24,7 @@ jobs:
           set -euo pipefail
           git fetch origin refs/pull/253/head:refs/remotes/origin/issue202net refs/pull/254/head:refs/remotes/origin/issue202db
           test "$(git rev-parse refs/remotes/origin/issue202net)" = a9ecdb84275f1f97faaf42c36ebb129b1e5c2991
-          test "$(git rev-parse refs/remotes/origin/issue202db)" = 3da2be966b55927b86e5ca16e5f188fce02705d1
+          test "$(git rev-parse refs/remotes/origin/issue202db)" = 9840cba0dd1d357a3bd119af1c4e091cbf58a208
           git restore --source=refs/remotes/origin/issue202net -- content/network-http backend/src/test/java/com/guseoh/csforge/importcontent/R2Remaining45CombinedIntegrationTest.java
           git restore --source=refs/remotes/origin/issue202db -- content/database
           test -f content/network-http/tls/tls-handshake.md
