@@ -210,7 +210,7 @@
   {
     "kind": "question",
     "contentKey": "operating-systems.core.scheduling.fcfs.q1",
-    "promptMarkdown": "FCFS에서 CPU 버스트가 각각 A=8 ms, B=2 ms, C=1 ms이고 세 작업이 A→B→C 순서로 준비되었다. B가 CPU를 처음 받기까지 기다리는 시간은?",
+    "promptMarkdown": "단일 논리 CPU에서 세 작업 A=8 ms, B=2 ms, C=1 ms가 모두 시각 0에 준비되었고, FCFS 대기열 순서가 A→B→C이다. 문맥 전환 비용을 무시하면 B가 CPU를 처음 받기까지 기다리는 시간은?",
     "questionType": "SHORT_ANSWER",
     "difficulty": "EASY",
     "status": "PUBLISHED",
@@ -227,7 +227,7 @@
   {
     "kind": "question",
     "contentKey": "operating-systems.core.scheduling.fcfs.q2",
-    "promptMarkdown": "같은 A=8, B=2, C=1에서 FCFS 순서가 A→B→C일 때 각 작업의 대기 시간과 평균 대기 시간을 계산하라.",
+    "promptMarkdown": "단일 논리 CPU에서 A=8 ms, B=2 ms, C=1 ms가 모두 시각 0에 준비되었고 FCFS 대기열 순서가 A→B→C이다. 문맥 전환 비용을 무시할 때 각 작업의 대기 시간과 평균 대기 시간을 계산하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
@@ -240,7 +240,7 @@
   {
     "kind": "question",
     "contentKey": "operating-systems.core.scheduling.fcfs.q3",
-    "promptMarkdown": "같은 세 작업의 실행 순서를 C→B→A로 바꾸면 평균 대기 시간은 얼마이며, 이 결과가 FCFS의 어떤 한계를 보여 주는가?",
+    "promptMarkdown": "단일 논리 CPU에서 A=8 ms, B=2 ms, C=1 ms가 모두 시각 0에 준비되었다. 문맥 전환 비용을 무시하고 이 세 작업의 FCFS 대기열 순서를 C→B→A로 바꾸면 평균 대기 시간은 얼마이며, 이 결과가 FCFS의 어떤 한계를 보여 주는가?",
     "questionType": "SCENARIO",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
@@ -328,7 +328,8 @@
     "acceptedAnswers": [
       "FCFS",
       "First Come First Served",
-      "First-Come First-Served"
+      "First-Come First-Served",
+      "선착순 스케줄링"
     ],
     "explanationMarkdown": "시간 할당량이 각 작업의 CPU 버스트보다 충분히 크면 첫 작업이 할당 시간이 끝나기 전에 사실상 완료되므로 다음 작업으로 넘어가는 모습이 **FCFS와 가까워진다.**"
   },
