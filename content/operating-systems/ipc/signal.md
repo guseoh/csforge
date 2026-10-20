@@ -4,7 +4,7 @@ contentKey: operating-systems.core.ipc.signal
 topicContentKey: operating-systems.core.ipc
 slug: signal
 title: "시그널(Signal)"
-summary: "작은 비동기 알림과 시그널 핸들러 실행의 제약을 설명한다."
+summary: "비동기 알림과 동기 예외에서 발생하는 시그널 및 핸들러의 제약을 설명한다."
 level: 1
 status: PUBLISHED
 displayOrder: 20
@@ -19,7 +19,7 @@ references:
 ---
 # 시그널(Signal)
 
-시그널은 프로세스나 스레드에 **작은 비동기 사건을 알리는 제어 메커니즘**이다. 종료 요청, 자식 프로세스 상태 변화, 터미널 사건, 타이머 만료 등을 전달할 수 있지만 일반적인 바이트 스트림이나 대용량 메시지 채널을 대신하는 IPC는 아니다.
+시그널은 프로세스나 스레드에 사건을 알리고 기본 동작 또는 처리 방식을 선택하는 **제어 메커니즘**이다. 종료 요청, 자식 프로세스 상태 변화, 타이머 만료 같은 비동기 사건뿐 아니라, 명령 실행 중 잘못된 메모리 접근으로 발생하는 `SIGSEGV`, 산술 오류에 따른 `SIGFPE`처럼 동기 예외에서 생성되는 시그널도 있다. 일반적인 바이트 스트림이나 대용량 메시지 채널을 대신하는 IPC는 아니다.
 
 ### 시그널 발생과 실제 전달은 같은 순간이 아니다
 
