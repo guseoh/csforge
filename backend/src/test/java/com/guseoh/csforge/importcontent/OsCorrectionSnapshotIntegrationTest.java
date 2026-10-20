@@ -70,9 +70,9 @@ class OsCorrectionSnapshotIntegrationTest {
         for (ImportSourceFile old : oldParts) {
             var command = new ImportFilesCommand(List.of(old));
             var preview = previewService.preview(command);
-            assertTrue(preview.canApply(), () -> "Old snapshot preview failed: " + old.path() + " " + preview);
+            assertTrue(preview.canApply(), () -> "Old snapshot preview failed: " + old.fileName() + " " + preview);
             assertEquals(0, preview.errors());
-            assertTrue(preview.updated() > 0, "No change for " + old.path());
+            assertTrue(preview.updated() > 0, "No change for " + old.fileName());
             var result = applyService.apply(command, preview.previewDigest());
             reverted += result.updated();
         }
@@ -114,7 +114,7 @@ class OsCorrectionSnapshotIntegrationTest {
         for (ImportSourceFile corrected : correctedParts) {
             var command = new ImportFilesCommand(List.of(corrected));
             var preview = previewService.preview(command);
-            assertTrue(preview.canApply(), () -> "Corrected preview failed: " + corrected.path() + " " + preview);
+            assertTrue(preview.canApply(), () -> "Corrected preview failed: " + corrected.fileName() + " " + preview);
             errors += preview.errors();
             updated += applyService.apply(command, preview.previewDigest()).updated();
         }
@@ -127,7 +127,7 @@ class OsCorrectionSnapshotIntegrationTest {
             var preview = previewService.preview(command);
             assertTrue(preview.canApply());
             assertEquals(0, preview.errors());
-            assertEquals(0, preview.updated(), corrected.path());
+            assertEquals(0, preview.updated(), corrected.fileName());
             unchanged += preview.unchanged();
             assertEquals(0, applyService.apply(command, preview.previewDigest()).updated());
         }
