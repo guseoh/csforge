@@ -16,6 +16,13 @@ references:
     depth: section
     recommendation: "UDP datagram과 application reliability 경계를 확인한다."
     displayOrder: 1
+  - url: "https://www.rfc-editor.org/rfc/rfc8200.html#section-8.1"
+    title: "RFC 8200 §8.1: IPv6 Upper-Layer Checksums"
+    referenceType: OFFICIAL
+    language: en
+    depth: section
+    recommendation: "IPv6 UDP checksum 일반 필수 조건과 제한된 터널 예외를 확인한다."
+    displayOrder: 2
 ---
 # UDP 체크섬
 
