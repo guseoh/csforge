@@ -80,10 +80,10 @@ class CaCorrectionSnapshotIntegrationTest {
 
         Long conceptId = jdbc.queryForObject(
                 "select id from concept where content_key = ?",
-                Long.class, "computer-architecture.core.io.non-blocking-io");
+                Long.class, "computer-architecture.core.virtual-memory-hardware.mmu");
         Long questionId = jdbc.queryForObject(
                 "select id from question where content_key = ?",
-                Long.class, "computer-architecture.core.virtual-memory.page-fault.q1");
+                Long.class, "computer-architecture.core.performance.pipeline-branch-impact.q1");
         Long selectedChoiceId = jdbc.queryForObject(
                 "select id from question_choice where question_id=? and choice_key='D'", Long.class, questionId);
         jdbc.update("insert into personal_note (concept_id, content) values (?, 'CA correction history snapshot')", conceptId);
