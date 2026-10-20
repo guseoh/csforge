@@ -96,3 +96,39 @@ Network & HTTP 교정 1차는 **P0 4 + P1 6 = 10개** 발견을 최소 보강한
 ### #202 전체 남은 범위
 
 Network slice 최종 import·Reader QA 이후 Database **38 Concept / 75 Question**, DSA **84 Concept 및 전체 Question**를 차례대로 진행한다. 이 기록이나 Draft PR #253을 #202 완료 판정으로 사용하지 않는다.
+
+
+## Network historical Import / Reader·Quiz 자동 QA (2026-10-20)
+
+### 검증한 버전과 결과
+
+- 이전 canonical: `main 392ffccf90b733dfe191e222b2af15b407e42033` (실제 Git archive snapshot).
+- 교정본 및 전용 검증 HEAD: `8d87ce9b2cdc2a55a94e6499c3d98901b6ccce0c`.
+- [Network correction PostgreSQL regression #39412871720](https://github.com/guseoh/csforge/actions/runs/39412871720): **SUCCESS**, `network-historical-import` 및 `reader-quiz-browser` 모두 **SUCCESS**.
+- 검증 산출물: Actions artifact `network-correction-regression-test-results` (JUnit XML), `network-reader-quiz-light-dark-mobile-desktop` (스크린샷 16장).
+
+### 격리 PostgreSQL 실제 검증
+
+1. Testcontainers PostgreSQL 16.4에 **교정된 canonical 전체 3,380개**를 bootstrap했다. 오류 0.
+2. git archive로 고정된 이전 `main` Network source를 사용해 **19 Concept Markdown + 10 Question JSON 파일**을 과거 상태로 되돌렸다. 실제 복원 대상 **40개** (19 Concept + 21 Question), Preview/Apply 성공.
+3. 변경된 Concept/Question을 참조하는 개인 노트와 풀이 Attempt, QuizSession, WrongNote, ReviewSchedule, ReviewHistory를 직접 구성하고, `concept_progress`를 포함한 personal/history 테이블 및 전체 Concept/Question ID를 기록했다.
+4. 해당 29개 파일의 교정본을 다시 Preview/Apply하여 **40 UPDATED / 0 ERROR / 0 FAILED**로 복원했다.
+5. 같은 교정 파일을 다시 적용했을 때 추가 UPDATE **0**, 정식 bootstrap의 전체 **3,380 UNCHANGED**, 오류/실패 0을 확인했다.
+6. Import 전후 개인/history 테이블 레코드 전체 내용 및 Concept/Question ID 불변, canonical Reference 관계 총량 복귀, 중복 관계 0, Reader 조회에서 RFC 9846 연결을 확인했다.
+7. 이력 테스트는 **격리 컨테이너**만 사용했으며 Production DB에 쓰지 않았다.
+
+### Chromium Reader/Quiz QA
+
+실제 프런트엔드 Vite 라우트에서 API fixture로 **PR의 교정된 Markdown·JSON**을 표시한 자동화 브라우저 검증이다.
+
+- Reader: TLS 핸드셰이크 / Content-Length·Transfer-Encoding / QPACK 헤더 압축 각 1개, `375px`/ `1280px` × `light`/`dark` = 12개.
+- Quiz: 실제 교정된 `last-modified.q1` 객관식에서 선택 후 `negative-cache.q2` 서술형으로 이동·답변하는 동작을 각 화면 조건에서 확인 = 4개.
+- 텍스트 노출, RFC 9846 Reference 링크, 테마 반영, 가로 오버플로, 선택지·답안 조작 및 브라우저 런타임 오류를 검사. 스크린샷 16장 확보.
+- 이 검증은 실제 컴포넌트/라우트를 실행했지만 **백엔드 API는 fixture**이며 Production 사용자 세션의 수동 Human Usage Check를 대체하지 않는다.
+
+### 검증 범위 및 후속 Gate
+
+- 콘텐츠는 기존 Wave 3 Area 전체 수기 감사 결과 + 최신 변경 부분/Reference 점검에 의거한다. 이번 검증만으로 127 Concept/381 Question 전부를 새로 독립 수기 재채점했다고 주장하지 않는다.
+- 원본 Source를 복제한 일회성 테스트·워크플로·스크립트는 성공 후 PR에서 제거한다. 실행 이력·artifact·이 문서의 근거는 남긴다.
+- 최종 경량화 HEAD Repository Validation 재확인, PR review/branch drift 확인, 사용자 실제 사용성 점검 및 별도 merge 승인 필요.
+- #202의 Database 38 Concept/75 Question, DSA 84 Concept/전체 연계 문항은 별도 Area Slice로 남는다. #202는 계속 Open.
