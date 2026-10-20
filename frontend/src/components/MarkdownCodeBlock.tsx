@@ -5,6 +5,7 @@ interface MarkdownCodeBlockProps {
 }
 
 const LANGUAGE_LABELS: Record<string, string> = {
+  asm: 'Assembly',
   java: 'Java',
   sql: 'SQL',
   bash: 'Bash',
