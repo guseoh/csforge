@@ -16,6 +16,14 @@ references:
     depth: section
     recommendation: "TCP 연결, 바이트 스트림, 시퀀스·ACK와 연결 상태의 기본 규칙을 확인한다."
     displayOrder: 1
+  - url: "https://www.rfc-editor.org/rfc/rfc9000.html#section-2"
+    title: "RFC 9000 §2: QUIC Streams"
+    referenceType: OFFICIAL
+    language: en
+    depth: section
+    recommendation: "QUIC의 연결 안에 있는 신뢰성 있는 스트림과 UDP 데이터그램 운반 경계를 확인한다."
+    displayOrder: 2
+    relationNote: "TCP 연결과 QUIC 연결·스트림이 서로 다른 전송 모델이라는 점을 비교한다."
 ---
 # 전송 연결 수립
 
