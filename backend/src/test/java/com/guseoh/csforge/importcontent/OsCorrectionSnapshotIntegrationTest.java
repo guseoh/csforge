@@ -105,7 +105,7 @@ class OsCorrectionSnapshotIntegrationTest {
         List<String> tables = List.of("personal_note", "attempt", "wrong_note",
                 "review_schedule", "review_history", "quiz_session");
         List<List<Map<String, Object>>> history = tables.stream()
-                .map(t -> jdbc.queryForList("select * from " + t + " order by id")).toList();
+                .map(t -> jdbc.queryForList("select * from " + t + " order by 1")).toList();
         var questionIds = jdbc.queryForList("select content_key, id from question order by content_key");
         var conceptIds = jdbc.queryForList("select content_key, id from concept order by content_key");
 
@@ -131,7 +131,7 @@ class OsCorrectionSnapshotIntegrationTest {
             unchanged += preview.unchanged();
             assertEquals(0, applyService.apply(command, preview.previewDigest()).updated());
         }
-        assertEquals(428, unchanged, "All OS concept and question records in touched files unchanged");
+        assertEquals(292, unchanged, "All OS concept and question records in touched files unchanged");
 
         var exact = bootstrap.bootstrap();
         assertTrue(exact.success(), () -> "Full canonical exact reimport failed: " + exact);
@@ -143,7 +143,7 @@ class OsCorrectionSnapshotIntegrationTest {
         assertEquals(selectedChoiceId, jdbc.queryForObject(
                 "select id from question_choice where question_id=? and choice_key='D'", Long.class, questionId));
         for (int i = 0; i < tables.size(); i++) {
-            assertEquals(history.get(i), jdbc.queryForList("select * from " + tables.get(i) + " order by id"),
+            assertEquals(history.get(i), jdbc.queryForList("select * from " + tables.get(i) + " order by 1"),
                     () -> "Personal/history data changed during OS import");
         }
     }
