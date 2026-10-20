@@ -8,7 +8,7 @@ const root='http://127.0.0.1:4179';
 const out=join(process.cwd(),'issue202-live-evidence');
 await mkdir(out,{recursive:true});
 const ids=[
- {area:'Network',id:Number(process.env.LIVE_NETWORK_CONCEPT),term:'RFC 9846',ref:'https://www.rfc-editor.org/rfc/rfc9846'},
+ {area:'Network',id:Number(process.env.LIVE_NETWORK_CONCEPT),term:'ClientHello',ref:'https://www.rfc-editor.org/rfc/rfc9846'},
  {area:'Database',id:Number(process.env.LIVE_DATABASE_CONCEPT),term:'xmin'},
  {area:'DSA',id:Number(process.env.LIVE_DSA_CONCEPT),term:'정답 경계'},
 ];
