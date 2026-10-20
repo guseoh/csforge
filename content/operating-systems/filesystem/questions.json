@@ -348,7 +348,7 @@
   {
     "kind": "question",
     "contentKey": "operating-systems.core.filesystem.inode.q4",
-    "promptMarkdown": "inode와 파일 이름을 분리하면 (1) 여러 이름이 한 파일 객체를 가리키게 하고, (2) 파일 내용을 복사하지 않고 이름을 바꾸는 동작을 각각 어떻게 가능하게 하는가? **(1), (2) 순서**로 두 동작의 이름을 쓰라.",
+    "promptMarkdown": "inode와 파일 이름을 분리하면 (1) 여러 이름이 한 파일 객체를 가리키게 하고, (2) 파일 내용을 복사하지 않고 이름을 바꾸는 동작을 각각 어떻게 가능하게 하는가? 두 동작의 이름을 쓰라.",
     "questionType": "SHORT_ANSWER",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
