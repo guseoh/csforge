@@ -1,15 +1,19 @@
 import { useEffect, useRef, useState, type ImgHTMLAttributes } from 'react'
+import { createPortal } from 'react-dom'
 
 type MarkdownImageProps = ImgHTMLAttributes<HTMLImageElement>
 
 /** 확대 이미지는 브라우저 기본 modal dialog로 열어 ESC·포커스·배경 스크롤을 관리한다. */
 export function MarkdownImage({ alt = '', src, ...props }: MarkdownImageProps) {
   const [open, setOpen] = useState(false)
+  const [mounted, setMounted] = useState(false)
   const triggerRef = useRef<HTMLButtonElement>(null)
   const dialogRef = useRef<HTMLDialogElement>(null)
 
+  useEffect(() => setMounted(true), [])
+
   useEffect(() => {
-    if (!open) return
+    if (!open || !mounted) return
     const dialog = dialogRef.current
     if (!dialog) return
 
@@ -39,23 +43,26 @@ export function MarkdownImage({ alt = '', src, ...props }: MarkdownImageProps) {
       >
         <img {...props} src={src} alt={alt} loading="lazy" decoding="async" />
       </button>
-      <dialog
-        ref={dialogRef}
-        className="markdown-image-dialog"
-        aria-label={alt + ' 이미지 확대'}
-        onCancel={() => setOpen(false)}
-        onClick={(event) => {
-          if (event.target === event.currentTarget) setOpen(false)
-        }}
-      >
-        <div className="markdown-image-dialog-content">
-          <button className="markdown-image-close" type="button" onClick={() => setOpen(false)} autoFocus>
-            닫기
-          </button>
-          <img src={src} alt={alt} />
-          <p>{alt}</p>
-        </div>
-      </dialog>
+{mounted ? createPortal(
+        <dialog
+          ref={dialogRef}
+          className="markdown-image-dialog"
+          aria-label={alt + ' 이미지 확대'}
+          onCancel={() => setOpen(false)}
+          onClick={(event) => {
+            if (event.target === event.currentTarget) setOpen(false)
+          }}
+        >
+          <div className="markdown-image-dialog-content">
+            <button className="markdown-image-close" type="button" onClick={() => setOpen(false)} autoFocus>
+              닫기
+            </button>
+            <img src={src} alt={alt} />
+            <p>{alt}</p>
+          </div>
+        </dialog>,
+        document.body,
+      ) : null}
     </>
   )
 }
