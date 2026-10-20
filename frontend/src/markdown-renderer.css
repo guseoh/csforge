@@ -36,7 +36,7 @@
 }
 
 .markdown-content .markdown-code-actions button,
-.markdown-content .markdown-image-close {
+.markdown-image-close {
   min-height: 30px;
   padding: 5px 9px;
   border: 1px solid transparent;
@@ -49,7 +49,7 @@
 
 .markdown-content .markdown-code-actions button:hover,
 .markdown-content .markdown-code-actions button[aria-pressed="true"],
-.markdown-content .markdown-image-close:hover {
+.markdown-image-close:hover {
   border-color: var(--border-default);
   background: var(--surface-interactive);
 }
@@ -158,7 +158,7 @@
   display: block;
 }
 
-.markdown-content .markdown-image-dialog {
+.markdown-image-dialog {
   position: fixed;
   width: min(96vw, 1400px);
   max-width: 96vw;
@@ -172,30 +172,30 @@
   overflow: auto;
 }
 
-.markdown-content .markdown-image-dialog::backdrop {
+.markdown-image-dialog::backdrop {
   background: rgb(0 0 0 / 0.8);
 }
 
-.markdown-content .markdown-image-dialog-content {
+.markdown-image-dialog-content {
   display: grid;
   justify-items: center;
   gap: 12px;
   padding: 16px;
 }
 
-.markdown-content .markdown-image-close {
+.markdown-image-close {
   justify-self: end;
   border-color: var(--border-default);
 }
 
-.markdown-content .markdown-image-dialog img {
+.markdown-image-dialog img {
   width: auto;
   max-width: 100%;
   max-height: calc(96dvh - 125px);
   object-fit: contain;
 }
 
-.markdown-content .markdown-image-dialog p {
+.markdown-image-dialog p {
   max-width: 85ch;
   margin: 0;
   font-size: 0.86rem;
