@@ -50,3 +50,15 @@ PostgreSQL 공식 계약 기준으로 내용과 구현 의존성을 구별한다
 3. 실제 Reader/Quiz를 375/1280px 및 light/dark에서 본문·단답 문항·누적합 표·코드 출력 검증. 자동 UI fixture QA와 실제 백엔드 연계 Human Usage Check를 구분.
 4. 사용자 승인 없이 PR merge 또는 Production Import 금지. Network PR #253과 충돌 없이 별도 Slice 진행.
 5. #202의 DSA 84 Concept/전체 문항 작업은 별도 Slice로 남음. Issue #202는 Open 유지.
+
+
+## 격리 PostgreSQL 및 Chromium 자동 검증 증거 (2026-10-20)
+
+- [Database correction historical import #39417962339](https://github.com/guseoh/csforge/actions/runs/39417962339): **SUCCESS**, `historical-database-import`와 `database-reader-quiz` 모두 PASS. 검증 당시 HEAD `b34b4771e31a46f6471dc81e8005f7db6d6cf01e`.
+- 기준 원본은 불변 `main 392ffccf90b733dfe191e222b2af15b407e42033`의 `content/database`를 `git archive`로 추출했다. Testcontainers PostgreSQL 16.4에서 교정된 canonical 전체 3,380개 bootstrap 후 6 Concept/4 Question의 이전 파일 내용을 복원·적용했다.
+- 이전 상태로 되돌리기와 교정본 복귀 각각 **10 UPDATED, 0 ERROR/FAILED**. 동일 교정 파일의 반복 Import는 UPDATED 0, 전체 canonical bootstrap 반복은 **3,380 UNCHANGED**를 확인했다.
+- `personal_note`, `quiz_session`, `attempt`, `wrong_note`, `review_schedule`, `review_history`, `concept_progress` 테이블 내용과 전체 Concept/Question stable ID, Reference 관계 총수 불변을 검증했다.
+- Chromium Reader는 MVCC visibility / window function / serializable 3개 본문 × 375/1280px × light/dark 총 12개 조건에서 표시, 오류 없음 및 수평 overflow 여부를 검사했다.
+- Quiz는 `database.core.sql.select-order.q1` 실제 교정 JSON의 단답형 입력을 375/1280px × light/dark 4개 조건에서 점검했다. 총 **16개 브라우저 조건 PASS**, 16개 screenshot을 `database-reader-quiz-screenshots` artifact에 보존했다.
+- 검증 화면은 실제 React Reader/Quiz 경로이지만 **API fixture** 기반이며 실제 backend 연결/Production 이용자 Human Usage Check를 대체하지 않는다. PostgreSQL 역시 격리 컨테이너이며 운영 DB를 변경하지 않았다.
+- 일회성 regression test/script/workflow는 성공 후 삭제하되 GitHub Actions 실행 이력·artifact와 본 증거 문서는 유지한다. 이후 최종 정리 HEAD에서 Repository Validation을 재검증한다.
