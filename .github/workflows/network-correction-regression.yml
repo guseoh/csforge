@@ -7,6 +7,7 @@ on:
       - 'content/network-http/**'
       - 'backend/src/test/java/com/guseoh/csforge/importcontent/NetworkCorrectionSnapshotIntegrationTest.java'
       - '.github/workflows/network-correction-regression.yml'
+      - 'frontend/scripts/network-reader-quiz-browser-qa.mjs'
 
 permissions:
   contents: read
@@ -43,4 +44,36 @@ jobs:
         with:
           name: network-correction-regression-test-results
           path: backend/build/test-results/test/*.xml
+          if-no-files-found: warn
+
+  reader-quiz-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install Chromium and frontend
+        working-directory: frontend
+        run: |
+          npm ci
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Browser Reader and Quiz 375/1280 light/dark
+        working-directory: frontend
+        run: |
+          npm run dev -- --host 127.0.0.1 --port 4179 > /tmp/network-vite.log 2>&1 &
+          for attempt in $(seq 1 45); do
+            if curl -fsS http://127.0.0.1:4179/ > /dev/null; then break; fi
+            sleep 2
+          done
+          node scripts/network-reader-quiz-browser-qa.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: network-reader-quiz-light-dark-mobile-desktop
+          path: frontend/network-browser-evidence/*.png
           if-no-files-found: warn
