@@ -118,7 +118,7 @@ class NetworkCorrectionSnapshotIntegrationTest {
         assertEquals(40, importChanged(corrected), "Expected all 40 canonical corrections");
         assertEquals(referenceRelations, jdbc.queryForObject("select count(*) from concept_reference", Long.class));
         assertEquals(1, learningQueryService.getConcept(conceptId).references().stream()
-                .filter(ref -> "https://www.rfc-editor.org/rfc/rfc9846.html".equals(ref.url())).count());
+                .filter(ref -> "https://www.rfc-editor.org/rfc/rfc9846".equals(ref.url())).count());
         assertEquals(0, jdbc.queryForObject("select count(*) from ("
                 + "select concept_id, reference_id from concept_reference "
                 + "group by concept_id, reference_id having count(*) > 1) duplicates", Integer.class));
