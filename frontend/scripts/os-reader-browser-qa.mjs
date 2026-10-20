@@ -68,6 +68,17 @@ try {
     await dialog.waitFor({ state: 'visible', timeout: 8000 });
     assert.equal(await dialog.evaluate(el => el.open), true);
     assert.equal(await page.evaluate(() => document.body.style.overflow), 'hidden');
+    if (width === 375) {
+      const zoom = await dialog.evaluate(el => ({
+        clientWidth: el.clientWidth, scrollWidth: el.scrollWidth,
+        imageWidth: el.querySelector('img')?.getBoundingClientRect().width,
+      }));
+      assert(zoom.imageWidth >= 900, `Zoom image must keep native SVG resolution: ${JSON.stringify(zoom)}`);
+      assert(zoom.scrollWidth > zoom.clientWidth + 300, `Zoom should allow horizontal panning: ${JSON.stringify(zoom)}`);
+      await dialog.evaluate(el => { el.scrollLeft = 200; });
+      assert((await dialog.evaluate(el => el.scrollLeft)) >= 150, 'Touch-size horizontal pan area must scroll');
+      await dialog.evaluate(el => { el.scrollLeft = 0; });
+    }
     await page.screenshot({ path: join(evidenceDir, `${concept.slug}-${mode}-${width}-zoom.png`) });
     await page.keyboard.press('Escape');
     await dialog.waitFor({ state: 'hidden', timeout: 8000 });
