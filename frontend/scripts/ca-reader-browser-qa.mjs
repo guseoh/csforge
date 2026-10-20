@@ -48,7 +48,9 @@ try {
     await article.getByText(entry.slug === 'procedure-call-machine-level'
       ? '표준 RISC-V ABI에서 스택 프레임이 실제로 변하는 흐름'
       : '소프트웨어 TLB refill 모델도 있다').waitFor({ state: 'visible' });
-    const block = article.locator('.markdown-code-block').first();
+    const block = entry.slug === 'procedure-call-machine-level'
+      ? article.locator('.markdown-code-block').filter({ hasText: 'addi sp, sp, -32' }).first()
+      : article.locator('.markdown-code-block').first();
     await block.waitFor({ state: 'visible' });
     const code = block.locator('pre');
     assert.equal(await page.locator('html').getAttribute('data-theme'), theme);
