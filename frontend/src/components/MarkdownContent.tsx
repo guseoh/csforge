@@ -3,6 +3,9 @@ import { Fragment } from 'react'
 import ReactMarkdown, { type Components } from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { removeDuplicateLeadingHeading } from '../lib/markdown'
+import { MarkdownCodeBlock } from './MarkdownCodeBlock'
+import { MarkdownImage } from './MarkdownImage'
+import { highlightSimpleCode } from './SyntaxHighlightedCode'
 
 interface MarkdownContentProps {
   children: string
@@ -169,14 +172,21 @@ export function MarkdownContent({ children, className, fallback, dedupeLeadingHe
       )
     },
     code: ({ className: codeClassName, children: codeChildren }) => {
-      const language = codeClassName?.match(/language-([\w-]+)/)?.[1]
+      const language = codeClassName?.match(/language-([\w-]+)/)?.[1]?.toLowerCase()
       const source = String(codeChildren).replace(/\n$/, '')
       return (
         <code className={codeClassName} data-language={language}>
-          {language === 'java' ? tokenizeJava(source) : codeChildren}
+          {language === 'java' ? tokenizeJava(source) : language ? highlightSimpleCode(source, language) : codeChildren}
         </code>
       )
     },
+    pre: ({ node: _node, ...props }) => <MarkdownCodeBlock>{props.children}</MarkdownCodeBlock>,
+    table: ({ node: _node, ...props }) => (
+      <div className="markdown-table-scroll" role="region" aria-label="비교 표, 가로 스크롤 가능" tabIndex={0}>
+        <table {...props} />
+      </div>
+    ),
+    img: ({ node: _node, ...props }) => <MarkdownImage {...props} />,
   }
 
   return (
