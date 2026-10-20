@@ -27,7 +27,7 @@ value:   1 2 2 2 5 8
            ↑ lower bound
 ```
 
-Half-open 구간 `[left, right)`를 사용한다면 답 후보가 항상 그 구간 안에 있다는 불변식을 유지할 수 있다. Mid가 조건을 만족하면 mid도 답일 수 있으므로 `right = mid`, 만족하지 않으면 mid까지는 답이 아니므로 `left = mid + 1`로 이동한다.
+비감소 순으로 정렬된 배열의 lower bound에서 `[left, right)`는 **아직 확인하지 않은 원소의 구간**이고, 가능한 정답 경계 위치는 **닫힌 구간 `[left, right]`**에 남는다. `[0,left)`는 이미 false, `[right,n)`은 이미 true라고 확인된 원소다. Mid가 조건을 만족하면 `right = mid`로 갱신해 `mid`를 미확인 구간에서는 제거하되 **정답 경계로는 보존**한다. 만족하지 않으면 `left = mid + 1`로 이동해 false인 `mid`까지 제거한다. 모든 값이 false면 정답은 `n`이므로 `[left,right)` 안에 정답 원소가 반드시 존재한다는 식으로 설명하면 안 된다.
 
 ```text
 while left < right:
