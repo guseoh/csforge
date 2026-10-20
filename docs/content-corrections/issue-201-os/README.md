@@ -64,3 +64,12 @@
 2. Preview Reader의 **실제 화면**에서 파일 시스템 블록 할당 및 IPC Concept의 두 그림을 desktop/mobile 375px, dark/light, 이미지 dialog/zoom로 Human Usage Check. 소스 검증·Vercel READY를 화면 테스트와 혼동하지 말 것.
 3. 필요 시 변경된 OS canonical 데이터로 격리 PostgreSQL에서 **기존 OS 데이터/개인 학습 이력 생성 → corrected pack Preview ERROR0 → Apply → exact reimport UNCHANGED → history digest 동일**을 별도 재현. 기존 전체 Testcontainers 통합 검증과 구분해 기록.
 4. 최종 commit CI, PR HEAD/main·리뷰 대화·미해결 thread를 다시 확인하고 사용자 사전 승인이 유효한 조건에서만 squash merge. 그 후 Computer Architecture Slice 착수.
+
+
+## 최종 OS Import · Reader 검증 증거 (2026-10-20)
+
+- **Historical Import:** [OS correction import regression #39378824445](https://github.com/guseoh/csforge/actions/runs/39378824445)의 `historical-os-import` **SUCCESS**. 최초 full canonical bootstrap 후, 합쳐진 이전 main `4dc4dd2989a3aefbddeaf3610c20f2162d5cc2a2`의 실제 Operating Systems 20개 pack 원본을 `git archive`로 가져와 10 Concept·26 Question(36건)을 이전 값으로 복구한 뒤, 같은 20개 파일을 교정본으로 다시 Preview→Apply하고 36건 UPDATED를 확인했다. 이후 동일 20개 pack exact reimport의 전 항목 UNCHANGED, 전체 canonical exact bootstrap UNCHANGED, Concept/Question/선택지 ID와 personal_note/attempt/wrong_note/review_schedule/review_history/quiz_session의 변경 전후 스냅샷 불변을 검증했다. 격리 PostgreSQL Testcontainers이며 Production DB는 미변경.
+- **실제 Reader 브라우저:** 같은 run의 `reader-browser` **SUCCESS**. GitHub Actions Ubuntu Chromium에서 React/Vite의 **실제 `/concepts/:id` Reader route**에 저장소의 두 canonical Markdown 본문을 API fixture로 주입해 (OS Reader 관련 백엔드 HTTP는 모킹), block allocation과 IPC 도식 각각 `375px/1280px × light/dark` **8개 조건** 확인. SVG 다운로드·디코딩, 본문 영역 수평 삐져나옴 방지, 이미지 클릭 → native dialog 열기, body scroll lock, ESC 종료·포커스 복구, 닫기 버튼 검증. 각 경우 일반/확대 screenshot 총 16장 artifact 보존.
+- **시각 검토에서 추가 발견/수정:** 첫 브라우저 screenshot에서 375px 확대 이미지가 원본 960px 그림을 축소한 채 보여 세부 글자를 읽기 어려웠다. CSS/MarkdownImage에서 컨트롤·설명 영역과 SVG 전용 가로 pan을 분리했고, 재검증에서 확대 원본 폭 ≥900px, 독립 scroll width와 실제 scrollLeft 이동 ≥150px, 안내 문구 표시를 확인했다. 375px 확대 screenshot도 직접 눈으로 확인했다.
+- **검증 경계:** Reader route는 실제 컴포넌트/스타일/두 SVG를 사용하지만, API 데이터는 테스트 fixture이며 운영 DB나 로그인 사용자 상태를 변경하거나 실제 Cloud Run 생산 데이터를 호출하지 않았다. 브라우저 자동화와 스크린샷 점검을 수행했으며 사용자 개인의 수동 클릭 검증을 했다고 주장하지 않는다.
+- **임시 검증 구현:** `OsCorrectionSnapshotIntegrationTest.java`, `os-reader-browser-qa.mjs`, `os-correction-regression.yml`은 고정 이전 main SHA 기반 이번 PR 전용 검증 수단이다. 향후 일반 CI와 합치지 않으며 성공 증거를 기록한 뒤 PR에서 제거해 본래 Content Slice와 Reader zoom 최소 패치만 남긴다.
