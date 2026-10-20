@@ -58,7 +58,9 @@ export function MarkdownImage({ alt = '', src, ...props }: MarkdownImageProps) {
               닫기
             </button>
             <p className="markdown-image-pan-hint">확대된 그림은 좌우로 스크롤해 세부 내용을 확인할 수 있습니다.</p>
-            <img src={src} alt={alt} />
+            <div className="markdown-image-dialog-pan" role="region" aria-label={alt + ' 확대 이미지, 가로 스크롤 가능'} tabIndex={0}>
+              <img src={src} alt={alt} />
+            </div>
             <p>{alt}</p>
           </div>
         </dialog>,
