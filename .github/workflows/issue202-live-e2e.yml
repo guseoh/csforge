@@ -1,0 +1,128 @@
+name: Issue 202 combined live backend QA
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/issue202-live-e2e.yml'
+      - 'frontend/scripts/issue202-live-e2e.mjs'
+
+permissions:
+  contents: read
+
+jobs:
+  live-integrated-reader-quiz:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Stage all three PR content packs in runner ONLY (no push/merge)
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin refs/pull/253/head:refs/remotes/origin/issue202net refs/pull/254/head:refs/remotes/origin/issue202db
+          test "$(git rev-parse refs/remotes/origin/issue202net)" = a9ecdb84275f1f97faaf42c36ebb129b1e5c2991
+          test "$(git rev-parse refs/remotes/origin/issue202db)" = 3da2be966b55927b86e5ca16e5f188fce02705d1
+          git restore --source=refs/remotes/origin/issue202net -- content/network-http backend/src/test/java/com/guseoh/csforge/importcontent/R2Remaining45CombinedIntegrationTest.java
+          git restore --source=refs/remotes/origin/issue202db -- content/database
+          test -f content/network-http/tls/tls-handshake.md
+          test -f content/database/mvcc/visibility.md
+          test -f content/dsa/search-sort/binary-search-boundary.md
+          git diff --stat
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: gradle
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Start isolated PostgreSQL and Redis
+        run: |
+          docker compose up -d postgres redis
+          for i in $(seq 1 60); do
+            if docker compose exec -T postgres pg_isready -U csforge -d csforge; then exit 0; fi
+            sleep 2
+          done
+          docker compose logs postgres
+          exit 1
+      - name: Start REAL Spring backend on merged-in-runner content
+        run: |
+          cd backend
+          chmod +x gradlew
+          nohup ./gradlew bootRun --no-daemon > /tmp/csforge-live-backend.log 2>&1 < /dev/null &
+          echo $! > /tmp/csforge-live-backend.pid
+          for i in $(seq 1 180); do
+            if curl -fsS http://127.0.0.1:8080/actuator/health/readiness >/dev/null 2>&1; then
+              echo "Spring backend READY"
+              exit 0
+            fi
+            if ! kill -0 "$(cat /tmp/csforge-live-backend.pid)" 2>/dev/null; then break; fi
+            sleep 2
+          done
+          tail -n 150 /tmp/csforge-live-backend.log
+          exit 1
+      - name: Bootstrap 3 Area corrected packs and verify idempotent reimport
+        run: |
+          set -euo pipefail
+          curl -fsS -X POST http://127.0.0.1:8080/api/canonical-bootstrap > /tmp/issue202-first.json
+          python3 - <<'PY'
+          import json
+          d=json.load(open('/tmp/issue202-first.json'))
+          assert d['success'] and d['totalItems']==3380, d
+          assert d['totals']['errors']==0 and d['totals']['failed']==0, d
+          print('First combined canonical import:', d['totals'])
+          PY
+          curl -fsS -X POST http://127.0.0.1:8080/api/canonical-bootstrap > /tmp/issue202-second.json
+          python3 - <<'PY'
+          import json
+          d=json.load(open('/tmp/issue202-second.json'))
+          assert d['success'] and d['totalItems']==3380, d
+          assert d['totals']['unchanged']==3380, d
+          assert d['totals']['updated']==0 and d['totals']['errors']==0 and d['totals']['failed']==0, d
+          print('Combined exact reimport: 3380 UNCHANGED')
+          PY
+      - name: Capture real database IDs for three corrected Areas
+        shell: bash
+        run: |
+          set -euo pipefail
+          query() {
+            docker compose exec -T postgres psql -U csforge -d csforge -A -t -c "SELECT id FROM $1 WHERE content_key='$2'"
+          }
+          echo "LIVE_NETWORK_CONCEPT=$(query concept network-http.core.tls.tls-handshake)" >> "$GITHUB_ENV"
+          echo "LIVE_DATABASE_CONCEPT=$(query concept database.core.mvcc.visibility)" >> "$GITHUB_ENV"
+          echo "LIVE_DSA_CONCEPT=$(query concept dsa.core.search-sort.binary-search-boundary)" >> "$GITHUB_ENV"
+          echo "LIVE_NETWORK_QUESTION=$(query question network-http.core.http-cache.last-modified.q1)" >> "$GITHUB_ENV"
+          echo "LIVE_DATABASE_QUESTION=$(query question database.core.sql.select-order.q1)" >> "$GITHUB_ENV"
+          echo "LIVE_DSA_QUESTION=$(query question dsa.core.greedy.interval-scheduling.q3)" >> "$GITHUB_ENV"
+      - name: Install frontend and Chromium
+        working-directory: frontend
+        run: |
+          npm ci
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Test actual Reader/Quiz UI against live API and PostgreSQL
+        working-directory: frontend
+        run: |
+          npm run dev -- --host 127.0.0.1 --port 4179 > /tmp/issue202-vite.log 2>&1 &
+          for i in $(seq 1 60); do
+            if curl -fsS http://127.0.0.1:4179/ > /dev/null 2>&1; then break; fi
+            sleep 2
+          done
+          node scripts/issue202-live-e2e.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: issue202-combined-live-backend-reader-quiz
+          path: frontend/issue202-live-evidence/*.png
+          if-no-files-found: warn
+      - name: Output safe backend diagnostics on failure only
+        if: failure()
+        run: |
+          tail -n 160 /tmp/csforge-live-backend.log || true
+          tail -n 80 /tmp/issue202-vite.log || true
+          docker compose ps || true
