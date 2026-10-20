@@ -32,7 +32,9 @@
 | P1 | W3-OS-027 | Linux sendfile zero-copy 경로에서 상대 소비 전 원본 데이터 변경 금지 | sendfile-zero-copy.md |
 | P1 | W3-OS-035 | namespace PID1 종료 후 SIGKILL과 종료 전 signal/reap 순서 분리 | container-process-model.q3 |
 
-현재까지 **20개 Question의 prompt/model/explanation/accepted/choice-rationale 및 7개 Concept 본문**을 최소 교정했다. `signal.md`의 summary도 본문 정의와 맞게 업데이트했다. 새로운 Question/Concept/SVG/Reference 추가 또는 key 변경 없음.
+추가로 교육 효과가 명확한 P2 **9건(W3-OS-007/010/011/014/017/022/023/031/033)**을 최소 보강했다. Round Robin 독립 전제, worker 시작 시점, 가변 상태 용어, 자기 교착, page-table 권한 오해, 0-based 오프셋, `write`/`flush`의 비순차 경계, IPC 선택 기준과 mode bit distractor가 해당한다.
+
+현재까지 **26개 Question의 prompt/model/explanation/accepted/choice-rationale 및 10개 Concept 본문**을 최소 교정했다. `signal.md`의 summary도 본문 정의와 맞게 업데이트했다. 새로운 Question/Concept/SVG/Reference 추가 또는 key 변경 없음.
 
 ### 외부 1차 근거 (읽은 원문)
 
@@ -49,12 +51,12 @@
 
 - Changed JSON 파일의 Concept/Question count와 순서·contentKey 유지, 각 Question의 `questionType`, `difficulty`, `status`, `conceptKeys`, `correctChoiceKey` 전후 일치(현재 branch vs base 파일 직접 비교).
 - JSON 한 줄 한 Question인 저장소 포맷 유지.
-- MD 7개 중 signal 외 YAML frontmatter 무변경, fenced 코드 경계 보존.
+- MD 10개 중 signal 외 YAML frontmatter 무변경, fenced 코드 경계 보존.
 - **미실시**: 97C/331Q 수정본 전체 의미 재검토, 모든 단답 조합 수기 검수, 실제 Import Preview→Apply→exact reimport/history 비교, SVG/Reader QA, 최종 repo CI. 전 항목 PASS 주장이 아님.
 
 ### 다음 작업
 
-1. P2 12건에서 reference-only/이미 해결된 항목 격리, 교육 효과가 분명한 최소 항목만 적용.
+1. P2 잔여 3건: W3-OS-016은 Issue #222의 Reference 교정으로 범위 분리; W3-OS-024/032는 SVG 의미 오류·모바일/두 테마 검증이 필요한 도식 보강 후 결정.
 2. OS 전수 변경 영향(97C/331Q/Reader/Reference) 확인 및 공식 자료 고위험 대조.
 3. validator/test/build 및 **격리 PostgreSQL** Import ERROR0→Apply→exact UNCHANGED/기존 history digest.
 4. ChatGPT Full Content Review + Human Usage Check → 승인된 squash merge. Production DB 직접 Apply는 이 PR 범위 밖.
