@@ -87,6 +87,6 @@ try {
   console.log(`PASS LIVE Quiz ${item.area}: ${data.questions[0].gradingStatus}`);
   await page.close();
  }
- await api.dispose();
+ await api.close();
 } finally {await browser.close();}
 console.log('PASS Issue #202 combined source: live PostgreSQL/Spring Reader(12) and Quiz(3) checks');
