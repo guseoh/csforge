@@ -38,6 +38,7 @@ import './step7-quiz.css'
 import './step7-result-width.css'
 import './step8-review.css'
 import './step8-wrong-note-alignment.css'
+import './markdown-renderer.css'
 
 const queryClient = new QueryClient({
   defaultOptions: {
