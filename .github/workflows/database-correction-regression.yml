@@ -6,6 +6,7 @@ on:
       - 'content/database/**'
       - 'backend/src/test/java/com/guseoh/csforge/importcontent/DatabaseCorrectionSnapshotIntegrationTest.java'
       - '.github/workflows/database-correction-regression.yml'
+      - 'frontend/scripts/database-reader-quiz-browser-qa.mjs'
 permissions:
   contents: read
 jobs:
@@ -39,4 +40,36 @@ jobs:
         with:
           name: database-correction-regression-test-results
           path: backend/build/test-results/test/*.xml
+          if-no-files-found: warn
+
+  database-reader-quiz:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install frontend and Chromium
+        working-directory: frontend
+        run: |
+          npm ci
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Verify Database Reader and Quiz light/dark mobile/desktop
+        working-directory: frontend
+        run: |
+          npm run dev -- --host 127.0.0.1 --port 4179 > /tmp/database-vite.log 2>&1 &
+          for attempt in $(seq 1 45); do
+            if curl -fsS http://127.0.0.1:4179/ > /dev/null; then break; fi
+            sleep 2
+          done
+          node scripts/database-reader-quiz-browser-qa.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: database-reader-quiz-screenshots
+          path: frontend/database-browser-evidence/*.png
           if-no-files-found: warn
