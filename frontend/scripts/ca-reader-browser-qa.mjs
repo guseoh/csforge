@@ -13,7 +13,7 @@ const concepts = [
 ];
 for (const entry of concepts) {
   const source = await readFile(join(root, entry.file), 'utf8');
-  const matches = [...source.matchAll(/^---\\s*$/gm)];
+  const matches = [...source.matchAll(/^---\s*$/gm)];
   assert(matches.length >= 2, 'Missing Markdown frontmatter ' + entry.file);
   entry.markdown = source.slice(matches[1].index + matches[1][0].length).trim();
 }
