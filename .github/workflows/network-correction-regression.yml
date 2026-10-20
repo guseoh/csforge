@@ -1,0 +1,46 @@
+name: Network correction PostgreSQL regression
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'content/network-http/**'
+      - 'backend/src/test/java/com/guseoh/csforge/importcontent/NetworkCorrectionSnapshotIntegrationTest.java'
+      - '.github/workflows/network-correction-regression.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  network-historical-import:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: gradle
+      - name: Extract exact pre-PR Network canonical source
+        run: |
+          mkdir -p /tmp/csforge-network-baseline
+          git cat-file -e 392ffccf90b733dfe191e222b2af15b407e42033^{commit}
+          git archive 392ffccf90b733dfe191e222b2af15b407e42033 content/network-http | tar -x -C /tmp/csforge-network-baseline
+          test -f /tmp/csforge-network-baseline/content/network-http/tls/tls-handshake.md
+          test -f /tmp/csforge-network-baseline/content/network-http/dns/questions.json
+      - name: Historical PostgreSQL Preview Apply Reimport History
+        working-directory: backend
+        env:
+          CSFORGE_NETWORK_BASELINE_DIR: /tmp/csforge-network-baseline/content/network-http
+        run: |
+          chmod +x gradlew
+          ./gradlew test --tests 'com.guseoh.csforge.importcontent.NetworkCorrectionSnapshotIntegrationTest' --no-daemon --stacktrace
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: network-correction-regression-test-results
+          path: backend/build/test-results/test/*.xml
+          if-no-files-found: warn
