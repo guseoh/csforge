@@ -7,6 +7,7 @@ on:
       - 'content/operating-systems/**'
       - 'backend/src/test/java/com/guseoh/csforge/importcontent/OsCorrectionSnapshotIntegrationTest.java'
       - '.github/workflows/os-correction-regression.yml'
+      - 'frontend/scripts/os-reader-browser-qa.mjs'
 
 permissions:
   contents: read
@@ -42,4 +43,36 @@ jobs:
         with:
           name: os-correction-regression-test-results
           path: backend/build/test-results/test/*.xml
+          if-no-files-found: warn
+
+  reader-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install frontend and browser test driver
+        working-directory: frontend
+        run: |
+          npm ci
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Real Reader route mobile/desktop light/dark image dialog checks
+        working-directory: frontend
+        run: |
+          npm run dev -- --host 127.0.0.1 --port 4179 > /tmp/os-vite.log 2>&1 &
+          for attempt in $(seq 1 45); do
+            if curl -fsS http://127.0.0.1:4179/ > /dev/null; then break; fi
+            sleep 2
+          done
+          node scripts/os-reader-browser-qa.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: os-reader-light-dark-mobile-desktop
+          path: frontend/os-qa-evidence/*.png
           if-no-files-found: warn
