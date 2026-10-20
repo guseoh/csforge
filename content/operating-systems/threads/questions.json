@@ -420,7 +420,7 @@
   {
     "kind": "question",
     "contentKey": "operating-systems.core.threads.concurrency-vs-parallelism.q1",
-    "promptMarkdown": "단일 코어 CPU에서도 가능한 실행 구성은 무엇인가? 영문 용어로 답하라.",
+    "promptMarkdown": "SMT 없이 하나의 논리 CPU만 실행 자원으로 사용하는 환경에서 여러 CPU-bound 작업을 시간을 나누어 번갈아 진행시키는 실행 구성은 무엇인가? 영문 용어로 답하라.",
     "questionType": "SHORT_ANSWER",
     "difficulty": "EASY",
     "status": "PUBLISHED",
@@ -430,7 +430,7 @@
     "acceptedAnswers": [
       "concurrency"
     ],
-    "explanationMarkdown": "단일 코어에서도 여러 작업을 번갈아 실행해 같은 시간 구간 안에서 함께 진행시키는 **동시성(concurrency)**은 가능하다. 반면 CPU 계산을 같은 순간 실제로 병렬 실행하려면 둘 이상의 실행 자원이 필요하다."
+    "explanationMarkdown": "하나의 논리 CPU만 사용하는 환경에서도 여러 작업을 번갈아 실행해 같은 시간 구간 안에서 함께 진행시키는 **동시성(concurrency)**은 가능하다. 반면 CPU 계산을 같은 순간 실제로 병렬 실행하려면 둘 이상의 실행 자원이 필요하다."
   },
   {
     "kind": "question",
@@ -588,7 +588,9 @@
       "operating-systems.core.threads.java-virtual-thread-boundary"
     ],
     "acceptedAnswers": [
-      "carrier"
+      "carrier",
+      "carrier thread",
+      "carrier platform thread"
     ],
     "explanationMarkdown": "JDK 스케줄러가 가상 스레드를 실행하도록 올려놓는 플랫폼 스레드를 **carrier**라고 부른다. 가상 스레드는 수명 전체 동안 하나의 carrier에 고정될 필요가 없으며 다른 carrier에 다시 올라가 실행될 수 있다."
   },

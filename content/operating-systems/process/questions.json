@@ -221,7 +221,9 @@
       "ready",
       "runnable",
       "ready 상태",
-      "runnable 상태"
+      "runnable 상태",
+      "준비",
+      "준비 상태"
     ],
     "explanationMarkdown": "**Ready 또는 runnable(실행 가능)**은 실행 조건은 갖췄지만 CPU 실행 기회를 기다리는 상태다. I/O 같은 사건 자체를 기다리는 blocked/waiting 상태와 구분해야 한다."
   },
@@ -487,9 +489,11 @@
       "waitpid",
       "wait 계열",
       "wait()",
-      "waitpid()"
+      "waitpid()",
+      "waitid",
+      "waitid()"
     ],
-    "explanationMarkdown": "대표적인 인터페이스는 `wait()`와 `waitpid()` 같은 **wait 계열 호출**이다. 종료된 자식의 상태를 수집하면서 남아 있던 종료 메타데이터를 회수하는 역할과 연결된다."
+    "explanationMarkdown": "대표적인 인터페이스는 `wait()`, `waitpid()`, `waitid()` 같은 **wait 계열 호출**이다. 종료된 자식의 상태를 수집하면서 남아 있던 종료 메타데이터를 회수하는 역할과 연결된다."
   },
   {
     "kind": "question",

@@ -217,3 +217,54 @@
     scroll-behavior: auto;
   }
 }
+
+/* 이미지의 자연스러운 확대 크기와 대화상자 컨트롤 영역의 스크롤 경계를 분리한다. */
+.markdown-image-dialog-pan {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+}
+
+.markdown-image-dialog-pan img {
+  display: block;
+  margin: 0 auto;
+}
+
+.markdown-image-pan-hint {
+  display: none;
+}
+
+@media (max-width: 600px) {
+  .markdown-image-dialog-content {
+    min-width: 0;
+    width: 100%;
+    justify-items: stretch;
+    padding: 12px;
+  }
+
+  .markdown-image-dialog .markdown-image-close {
+    justify-self: end;
+  }
+
+  .markdown-image-dialog .markdown-image-pan-hint {
+    display: block;
+    max-width: 100%;
+    margin: 0 0 4px;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    text-align: left;
+  }
+
+  .markdown-image-dialog .markdown-image-dialog-pan img {
+    width: auto;
+    max-width: none;
+    max-height: none;
+  }
+
+  .markdown-image-dialog-content > p:last-child {
+    max-width: 100%;
+    margin-top: 8px;
+  }
+}
