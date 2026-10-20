@@ -1,0 +1,45 @@
+name: DSA correction historical import
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'content/dsa/**'
+      - 'backend/src/test/java/com/guseoh/csforge/importcontent/DsaCorrectionSnapshotIntegrationTest.java'
+      - '.github/workflows/dsa-correction-regression.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  historical-dsa-import:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: gradle
+      - name: Extract immutable pre-PR DSA canonical pack
+        run: |
+          mkdir -p /tmp/csforge-dsa-baseline
+          git cat-file -e 392ffccf90b733dfe191e222b2af15b407e42033^{commit}
+          git archive 392ffccf90b733dfe191e222b2af15b407e42033 content/dsa | tar -x -C /tmp/csforge-dsa-baseline
+          test -f /tmp/csforge-dsa-baseline/content/dsa/hashing/resize.md
+      - name: Historical PostgreSQL Preview Apply Reimport History
+        working-directory: backend
+        env:
+          CSFORGE_DSA_BASELINE_DIR: /tmp/csforge-dsa-baseline/content/dsa
+        run: |
+          chmod +x gradlew
+          ./gradlew test --tests 'com.guseoh.csforge.importcontent.DsaCorrectionSnapshotIntegrationTest' --no-daemon --stacktrace
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: dsa-correction-regression-results
+          path: backend/build/test-results/test/*.xml
+          if-no-files-found: warn
