@@ -69,5 +69,5 @@
 
 ### 마무리 게이트
 
-- [ ] 일회성 `CaCorrectionSnapshotIntegrationTest`, browser script, Workflow를 검증 증거 보존 후 PR에서 제거. 최종 Reader 어셈블리 라벨 포함 Repository Validation 최종 HEAD 통과 확인.
+- [x] 검증 증거를 GitHub Actions artifact 및 이 문서에 보존하고 일회성 `CaCorrectionSnapshotIntegrationTest`, browser script, Workflow 제거 완료. [x] Reader 어셈블리 언어 라벨 보완. [ ] 정리된 최종 PR HEAD의 Repository Validation 성공 확인.
 - [ ] 최종 PR diff·review threads·base drift 및 mergeable 재조회. 별도 사용자 승인 없이 병합하지 않음.
