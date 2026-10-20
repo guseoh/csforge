@@ -62,10 +62,15 @@ for (int attempt = 1; attempt <= MAX_RETRIES; attempt++) {
         runWholeTransaction();
         return;
     } catch (SerializationFailure e) {
-        backoff(attempt);
+        if (attempt == MAX_RETRIES) {
+            throw e; // 재시도 예산 소진: 호출자에게 실패 전달
+        }
+        backoff(attempt); // 다음 재시도가 있을 때만 대기
     }
 }
 ```
+
+이 코드는 재시도 경계를 보여 주기 위한 의사 Java 코드이며, 실제 `SerializationFailure` 유형 및 transaction 시작·종료는 사용하는 Spring/드라이버 계약에 맞춰야 합니다. 마지막 시도도 실패하면 예외를 호출자에게 전달하여 **성공으로 오인하지 않게** 하고, backoff는 다시 시도할 때만 실행합니다. 운영에서는 재시도 소진을 관측하고 계속 충돌한다면 요청에 명시적으로 실패를 돌려줘야 합니다.
 
 실제 구현에서는 Spring exception translation, SQLSTATE `40001`, retry 횟수/backoff와 side effect 존재 여부를 확인해야 합니다. transaction 내부에서 외부 이메일이나 결제를 이미 전송했다면 단순 재시도가 중복 side effect를 만들 수 있습니다. 재시도 가능한 DB transaction과 외부 side effect의 idempotency 경계를 따로 설계해야 합니다.
 
