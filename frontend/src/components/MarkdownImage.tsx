@@ -57,6 +57,7 @@ export function MarkdownImage({ alt = '', src, ...props }: MarkdownImageProps) {
             <button className="markdown-image-close" type="button" onClick={() => setOpen(false)} autoFocus>
               닫기
             </button>
+            <p className="markdown-image-pan-hint">확대된 그림은 좌우로 스크롤해 세부 내용을 확인할 수 있습니다.</p>
             <img src={src} alt={alt} />
             <p>{alt}</p>
           </div>
