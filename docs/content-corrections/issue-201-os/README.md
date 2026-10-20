@@ -47,18 +47,20 @@
 - [Linux sendfile(2)](https://man7.org/linux/man-pages/man2/sendfile.2.html) — zero-copy 출력 대상이 데이터를 소비할 때까지 source 부분 불변
 - deadlock 실행 방향과 스케줄링 수치·단답은 기존 Wave3 전체 감사 근거를 재사용한다.
 
-### 변경 무결성 사전 점검
+### 변경 무결성 및 후속 검증
 
 - Changed JSON 파일의 Concept/Question count와 순서·contentKey 유지, 각 Question의 `questionType`, `difficulty`, `status`, `conceptKeys`, `correctChoiceKey` 전후 일치(현재 branch vs base 파일 직접 비교).
 - JSON 한 줄 한 Question인 저장소 포맷 유지.
 - MD 10개 중 signal 외 YAML frontmatter 무변경, fenced 코드 경계 보존.
-- **미실시**: 97C/331Q 수정본 전체 의미 재검토, 모든 단답 조합 수기 검수, 실제 Import Preview→Apply→exact reimport/history 비교, SVG/Reader QA, 최종 repo CI. 전 항목 PASS 주장이 아님.
+- **전체 구조 검사**: OS 97 Concept Markdown과 331 Question JSON(12파일)을 branch HEAD에서 재조회. 모든 Concept의 Reference 존재·이미지 경로·코드 펜스 균형, Question key 중복·유형별 정답/해설/선택지 rationale/acceptedAnswers의 구조 이상 0. 기존 main과 전체 Question을 key 순서·type·difficulty·status·conceptKeys·correctChoiceKey 기준 대조해 차이 0. 수정 문항 26건의 prompt/answer/rationale 의미 별도 확인.
+- **P2 SVG 2건 교정**: W3-OS-024(`block-allocation-tradeoff.svg`)에 indexed entry[0..2] → B7/B20/B9 대상 블록과 명시적 연결선 추가. W3-OS-032(`ipc-tradeoff.svg`)에서 근거 없는 좌→우 격리·공유상태 서열 continuum 제거, 방식별 계약 주석으로 교체. 기존 문서 이미지 경로 유지 및 두 SVG에 접근성 title/desc 추가.
+- **자동 검증**: 코드+SVG HEAD `3e7b5ffc348b71e0f500a8a7a4e2192ab1983c30`의 [Repository Validation #39374308356](https://github.com/guseoh/csforge/actions/runs/39374308356) SUCCESS. Backend tests/build, Frontend lint/test/build, Compose validation 성공. 기존 Testcontainers `CanonicalBootstrapIdempotencyIntegrationTest`는 PostgreSQL 전체 canonical bootstrap, preview ERROR0 및 identical reimport UNCHANGED, 학습 이력 보존을 검증하며 이번 test 단계가 통과함. 다만 별도의 *main 이전 OS snapshot → 이번 36개 canonical 교정* 시나리오를 직접 Import한 것은 아님.
+- **Vercel Preview**: 동일 HEAD deployment `dpl_P9umv5NcBj7Dryi3woSWJHgpLWSA` READY 확인. [Preview](https://csforge-git-content-issue-201-os-corrections-guseoh.vercel.app).
+- **미완료 게이트**: 실제 Preview Reader에서 OS 두 SVG의 375px 모바일/desktop 및 light/dark, zoom/dialog와 삽입 위치를 직접 조작·시각 확인하지 못함. 이전 Wave3 수기 감사와 이번 97C/331Q 구조 및 변경 26Q의 검토는 완료했지만 수정본 **전체 331문항을 한 줄씩 새로 독립 수기 재채점**한 것처럼 주장하지 않음. Production DB Apply 없음. 따라서 아직 완료/merge PASS 아님.
 
-### 다음 작업
+### 다음 작업 / 병합 게이트
 
-1. P2 잔여 3건: W3-OS-016은 Issue #222의 Reference 교정으로 범위 분리; W3-OS-024/032는 SVG 의미 오류·모바일/두 테마 검증이 필요한 도식 보강 후 결정.
-2. OS 전수 변경 영향(97C/331Q/Reader/Reference) 확인 및 공식 자료 고위험 대조.
-3. validator/test/build 및 **격리 PostgreSQL** Import ERROR0→Apply→exact UNCHANGED/기존 history digest.
-4. ChatGPT Full Content Review + Human Usage Check → 승인된 squash merge. Production DB 직접 Apply는 이 PR 범위 밖.
-
-기존 Issue #222의 Reference 수정은 본 PR에서 중복하지 않음.
+1. 남은 W3-OS-016은 **Issue #222 Reference-only** 범위로 유지. 기존 SVG 두 건 W3-OS-024/032는 소스 교정까지 완료.
+2. Preview Reader의 **실제 화면**에서 파일 시스템 블록 할당 및 IPC Concept의 두 그림을 desktop/mobile 375px, dark/light, 이미지 dialog/zoom로 Human Usage Check. 소스 검증·Vercel READY를 화면 테스트와 혼동하지 말 것.
+3. 필요 시 변경된 OS canonical 데이터로 격리 PostgreSQL에서 **기존 OS 데이터/개인 학습 이력 생성 → corrected pack Preview ERROR0 → Apply → exact reimport UNCHANGED → history digest 동일**을 별도 재현. 기존 전체 Testcontainers 통합 검증과 구분해 기록.
+4. 최종 commit CI, PR HEAD/main·리뷰 대화·미해결 thread를 다시 확인하고 사용자 사전 승인이 유효한 조건에서만 squash merge. 그 후 Computer Architecture Slice 착수.
