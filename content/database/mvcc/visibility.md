@@ -65,6 +65,26 @@ COMMIT
 
 PostgreSQL REPEATABLE READ는 SQL 표준이 이 격리 수준에 최소한으로 요구하는 것보다 강하게 phantom read도 허용하지 않는 구현 특성이 있습니다. 다른 DBMS의 같은 이름 격리 수준과 세부 동작을 기계적으로 동일시하면 안 됩니다.
 
+### PostgreSQL의 xmin·xmax와 커밋 상태를 함께 읽는다
+
+PostgreSQL의 일반적인 heap tuple(행 버전)에는 이를 만든 트랜잭션의 ID인 `xmin`이 있고, 그 버전의 삭제·교체 등에 관계된 `xmax`도 있습니다. `UPDATE`는 기존 버전의 값을 그 자리에서 단순 덮어쓰기보다 **기존 버전을 더 이상 쓰지 않도록 표시하고 새 버전을 생성하는 방식**으로 이해하면 됩니다. 하지만 실제 읽기 가시성은 숫자 두 개만 비교하는 것이 아니라 **스냅샷에 기록된 진행 중 트랜잭션과 각 트랜잭션의 커밋/중단 상태**도 확인해야 합니다.
+
+```text
+행 id=1, price=10,000        old tuple: xmin=T10, xmax=없음
+                                   │
+                            T20 UPDATE price=12,000
+                                   │
+            old tuple: xmin=T10, xmax=T20
+            new tuple: xmin=T20, xmax=없음
+
+T20 미커밋   → T20 이전 버전을 볼 수 있던 다른 트랜잭션은 보통 old(10,000)
+T20 COMMIT   → 이후 새 스냅샷 S2에서는 new(12,000)
+S1이 T20 이전부터 유지된 REPEATABLE READ 스냅샷이라면 → old(10,000)
+T20 ROLLBACK → new는 유효한 커밋 버전이 아니며 old가 계속 보임
+```
+
+위 표는 **다른 트랜잭션의 일반 SELECT**를 단순화한 것입니다. 변경한 T20 자신의 후속 읽기는 미커밋 상태라도 자신의 변경을 볼 수 있습니다. 또한 `xmax`는 삭제·갱신뿐 아니라 행 잠금 또는 다중 트랜잭션 잠금(MultiXact) 정보로도 사용되므로 **`xmax != 0`이면 반드시 삭제됐다고 판단하면 안 됩니다.** 실제 구현은 hint bit 등 다른 메타데이터와 상태도 사용합니다. 이 때문에 트랜잭션 ID의 단순 대소나 `xmin`/`xmax`의 값만으로 가시성을 계산하는 암기법은 위험합니다. [PostgreSQL heap page layout 문서](https://www.postgresql.org/docs/current/storage-page-layout.html)는 tuple header 위치와 생성/무효화 트랜잭션 필드를 설명합니다.
+
 ### 가시성과 최신성은 trade-off가 있다
 
 오래 유지되는 스냅샷은 여러 쿼리가 같은 시점 기준으로 일관된 데이터를 보게 해주지만, 다른 트랜잭션의 최신 커밋을 즉시 반영하지 않습니다. 리포트처럼 일관된 스냅샷이 중요한 작업에는 유리하지만 “방금 다른 요청이 수정한 최신 상태”를 계속 봐야 하는 흐름에는 기대와 다를 수 있습니다.
