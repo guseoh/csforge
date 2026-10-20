@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { Fragment } from 'react'
+import { Fragment, isValidElement } from 'react'
 import ReactMarkdown, { type Components } from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { removeDuplicateLeadingHeading } from '../lib/markdown'
@@ -162,6 +162,12 @@ export function MarkdownContent({ children, className, fallback, dedupeLeadingHe
         ? splitKoreanParticle(source)
         : null
 
+      // Linked images remain ordinary links; never nest the image-viewer button inside <a>.
+      const soleChild = Array.isArray(linkChildren) ? (linkChildren.length === 1 ? linkChildren[0] : null) : linkChildren
+      if (isValidElement<{ src?: string; alt?: string; title?: string }>(soleChild) && soleChild.type === MarkdownImage) {
+        const { src, alt, title } = soleChild.props
+        return <a href={href} {...props}><img src={src} alt={alt} title={title} loading="lazy" /></a>
+      }
       if (!linkedText) return <a href={href} {...props}>{linkChildren}</a>
 
       return (
