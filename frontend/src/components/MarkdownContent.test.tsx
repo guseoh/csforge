@@ -85,7 +85,8 @@ describe('MarkdownContent shared learning media', () => {
     expect(html).toContain('CPU와 캐시의 연결 이미지 확대')
     expect(html).toContain('src="/learning/java/cache.svg"')
     expect(html).toContain('alt="CPU와 캐시의 연결"')
-    expect(html).toContain('markdown-image-dialog')
+    // The native dialog is mounted into document.body after hydration, never inside a Markdown <p>.
+    expect(html).not.toContain('<dialog')
   })
 
   it('keeps decorative images non-interactive and raw HTML inert', () => {
