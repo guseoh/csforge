@@ -102,7 +102,7 @@
   {
     "kind": "question",
     "contentKey": "dsa.core.recursion-backtracking.recurrence.q3",
-    "promptMarkdown": "`T(n)=T(n-1)+O(1)`과 `T(n)=2T(n/2)+O(n)`은 모두 재귀다. 재귀 깊이와 총 비용이 왜 다른지 비교하라.",
+    "promptMarkdown": "기저 비용 `T(1)=Θ(1)`이고 추가 작업이 각각 명시된 크기라고 가정하자. `T(n)=T(n-1)+Θ(1)`과 `T(n)=2T(n/2)+Θ(n)`(두 번째는 n이 2의 거듭제곱)은 모두 재귀다. 재귀 깊이와 총 비용이 왜 다른지 비교하라.",
     "questionType": "SCENARIO",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
