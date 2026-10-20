@@ -14,6 +14,15 @@ references:
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
+    relationNote: "RFC 8446은 RFC 9846(2026년)에 의해 대체되었다. TLS 1.3 기존 모델의 역사적 설명 근거로 읽는다."
+  - url: "https://www.rfc-editor.org/rfc/rfc9846"
+    title: "RFC 9846: TLS 1.3"
+    referenceType: OFFICIAL
+    language: en
+    depth: section
+    recommendation: "현행 TLS 1.3 표준의 핸드셰이크·키·보안 요구사항을 확인한다."
+    displayOrder: 2
+    relationNote: "RFC 9846 §1.2의 8446 대비 변경 요약과 현재 개념에 해당하는 본문 절을 읽는다."
 ---
 # 키 합의(Key Agreement)
 
