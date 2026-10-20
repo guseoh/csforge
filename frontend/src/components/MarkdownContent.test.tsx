@@ -89,6 +89,13 @@ describe('MarkdownContent shared learning media', () => {
     expect(html).not.toContain('<dialog')
   })
 
+  it('preserves linked images without nesting a viewer button inside an anchor', () => {
+    const html = renderMarkdown('[![diagram](/diagram.svg)](https://example.com/guide)')
+    expect(html).toContain('href="https://example.com/guide"')
+    expect(html).toContain('src="/diagram.svg"')
+    expect(html).not.toContain('markdown-image-trigger')
+  })
+
   it('keeps decorative images non-interactive and raw HTML inert', () => {
     const html = renderMarkdown('![](/icon.svg)\n\n<script>alert("unsafe")</script>')
     expect(html).toContain('alt=""')
