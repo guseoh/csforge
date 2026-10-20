@@ -22,7 +22,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-/** PR #251 전용: 실제 구 main CA snapshot에서 교정본으로 변경해 개인 이력 불변을 검증한다. */
+/** PR #252 전용: 실제 구 main CA snapshot에서 교정본으로 변경해 개인 이력 불변을 검증한다. */
 @Testcontainers
 @SpringBootTest
 class CaCorrectionSnapshotIntegrationTest {
