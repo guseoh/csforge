@@ -14,6 +14,23 @@ references:
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
+    relationNote: "RFC 8446은 2026년 RFC 9846으로 대체되었다. 이 링크는 초기 TLS 1.3 규격의 근거다."
+  - url: "https://www.rfc-editor.org/rfc/rfc9846"
+    title: "RFC 9846: TLS 1.3"
+    referenceType: OFFICIAL
+    language: en
+    depth: section
+    recommendation: "현행 TLS 1.3 표준의 핸드셰이크·키·보안 요구사항을 확인한다."
+    displayOrder: 2
+    relationNote: "RFC 9846 §1.2와 TLS 1.3 보안 상태 구성을 확인한다."
+  - url: "https://www.rfc-editor.org/rfc/rfc9001.html#section-4"
+    title: "RFC 9001 §4: Using TLS to Secure QUIC"
+    referenceType: OFFICIAL
+    language: en
+    depth: section
+    recommendation: "TLS 1.3 핸드셰이크와 QUIC CRYPTO 프레임의 관계를 확인한다."
+    displayOrder: 3
+    relationNote: "HTTP/3가 별도 TLS 레코드 계층 대신 QUIC의 CRYPTO 프레임으로 키 합의를 운반하는 방식을 읽는다."
 ---
 # HTTP 전 TLS 연결
 
