@@ -1,0 +1,42 @@
+name: Database correction historical import
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'content/database/**'
+      - 'backend/src/test/java/com/guseoh/csforge/importcontent/DatabaseCorrectionSnapshotIntegrationTest.java'
+      - '.github/workflows/database-correction-regression.yml'
+permissions:
+  contents: read
+jobs:
+  historical-database-import:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: gradle
+      - name: Extract immutable pre-PR Database pack
+        run: |
+          mkdir -p /tmp/csforge-database-baseline
+          git cat-file -e 392ffccf90b733dfe191e222b2af15b407e42033^{commit}
+          git archive 392ffccf90b733dfe191e222b2af15b407e42033 content/database | tar -x -C /tmp/csforge-database-baseline
+          test -f /tmp/csforge-database-baseline/content/database/mvcc/visibility.md
+      - name: PostgreSQL historical Preview Apply exact reimport and history
+        working-directory: backend
+        env:
+          CSFORGE_DATABASE_BASELINE_DIR: /tmp/csforge-database-baseline/content/database
+        run: |
+          chmod +x gradlew
+          ./gradlew test --tests 'com.guseoh.csforge.importcontent.DatabaseCorrectionSnapshotIntegrationTest' --no-daemon --stacktrace
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: database-correction-regression-test-results
+          path: backend/build/test-results/test/*.xml
+          if-no-files-found: warn
