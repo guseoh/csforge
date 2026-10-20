@@ -7,7 +7,7 @@ title: "다단계 페이지 테이블(Multi-Level Page Table)"
 summary: "큰 희소 가상 주소 공간을 계층으로 나눠 필요한 페이지 테이블만 만들면서 순회 깊이라는 비용을 지불하는 이유를 설명한다."
 level: 2
 status: PUBLISHED
-displayOrder: 60
+displayOrder: 50
 references:
   - url: "https://www.kernel.org/doc/html/latest/mm/page_tables.html"
     title: "Page Tables — The Linux Kernel documentation"

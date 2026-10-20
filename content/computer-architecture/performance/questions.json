@@ -204,7 +204,7 @@
     "conceptKeys": ["computer-architecture.core.performance.pipeline-branch-impact"],
     "choices": [
       {"key": "A", "content": "0.01", "displayOrder": 0, "rationaleMarkdown": "명령어당 잘못된 예측 비율은 분기 비율과 분기 중 실패 비율의 곱인 `0.20×0.05=0.01`이다. 이 1%에 12사이클 패널티를 적용해야 한다."},
-      {"key": "B", "content": "1.2", "displayOrder": 1, "rationaleMarkdown": "`1.2`는 20%의 분기마다 모두 예측에 실패한다고 본 계산에 가깝다. 실제 패널티는 전체 명령어 중 잘못 예측한 1%에만 적용된다."},
+      {"key": "B", "content": "1.2", "displayOrder": 1, "rationaleMarkdown": "`1.2 = 0.20 × 0.50 × 12`는 분기 예측 실패율 5%를 50%로 잘못 적용한 결과다. 모든 분기에서 예측에 실패한다면 증가량은 `0.20 × 1.00 × 12 = 2.4`가 되며, 문제의 정답은 `0.20 × 0.05 × 12 = 0.12`다."},
       {"key": "C", "content": "12", "displayOrder": 2, "rationaleMarkdown": "12사이클은 단일 예측 실패가 치르는 패널티다. 평균 CPI 증가는 예측 실패가 얼마나 자주 발생하는지까지 반영해 더 작아진다."},
       {"key": "D", "content": "0.12", "displayOrder": 3, "rationaleMarkdown": "전체 명령어 중 예측 실패는 `20%×5%=1%`이고 각 사건이 12사이클을 추가한다. 따라서 평균 추가 CPI는 `0.01×12=0.12`다."}
     ],

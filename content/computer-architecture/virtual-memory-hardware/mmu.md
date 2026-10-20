@@ -50,7 +50,9 @@ virtual page → TLB
    └─ miss → page-table walk → translation 확보
 ```
 
-TLB miss는 page fault와 같은 뜻이 아니다. TLB에 엔트리가 없어도 페이지 테이블에 유효한 매핑이 있으면 순회 후 정상적으로 접근을 계속할 수 있다.
+위 그림의 **TLB miss → 하드웨어 페이지 테이블 순회**는 하드웨어 주소 변환 walker를 갖춘 구현의 대표 흐름이다. TLB를 소프트웨어가 관리하는 아키텍처에서는 TLB miss가 예외를 일으키고 OS의 refill handler가 매핑을 찾아 TLB 엔트리를 설치할 수도 있다. 대표적으로 MIPS R4000 계열에는 소프트웨어 TLB refill 경로가 있다.
+
+TLB miss는 page fault와 같은 뜻이 아니다. TLB에 엔트리가 없어도 페이지 테이블에 유효하고 접근 가능한 매핑이 있다면 하드웨어 순회 또는 소프트웨어 refill 후 정상적으로 접근을 계속할 수 있다.
 
 ### MMU는 메모리 정책을 결정하는 주체가 아니다
 

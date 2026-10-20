@@ -112,9 +112,9 @@
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
-    "conceptKeys": ["computer-architecture.core.memory-hierarchy.cache-line"],
+    "conceptKeys": ["computer-architecture.core.memory-hierarchy.cache-line","computer-architecture.core.multicore-memory.false-sharing"],
     "modelAnswer": "캐시 일관성이 필드가 아니라 캐시 라인 단위로 소유권과 상태를 관리하므로 서로 다른 카운터라도 같은 라인에 있으면 각 코어의 쓰기가 라인 소유권을 반복해서 이동시킬 수 있다. 이것이 거짓 공유(false sharing)다. 데이터 배치를 바꿔 자주 쓰는 독립 쓰기 변수가 서로 다른 라인에 놓이도록 패딩하거나 분할하는 방법을 검토하되 실제 카운터와 하드웨어 지표로 효과를 확인해야 한다.",
-    "explanationMarkdown": "거짓 공유는 변수의 논리적 공유 여부가 아니라 같은 캐시 라인을 쓰는지에서 생긴다. 서로 다른 카운터도 같은 라인에 있으면 소유권 이동이 반복될 수 있어 배치를 분리하는 것이 개선책이 될 수 있다."
+    "explanationMarkdown": "거짓 공유는 변수의 논리적 공유 여부가 아니라 여러 코어가 쓰는 변수가 **동일 캐시 라인**에 놓여 있는 데서 생긴다. 서로 다른 카운터도 같은 라인을 서로 쓰기 위해 반복해서 소유권을 옮길 수 있으므로 성능이 나빠질 수 있다. 배치 분리·패딩·코어별 카운터 분할의 이점과 메모리 증가·병합 비용을 측정해 판단한다. 이 문항은 뒤의 심화 Concept인 **거짓 공유(False Sharing)**의 캐시 라인 소유권 이동 설명을 함께 학습한 뒤 푸는 응용 문제다."
   },
   {
     "kind": "question",
