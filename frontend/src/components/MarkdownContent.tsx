@@ -1,8 +1,11 @@
 import type { ReactNode } from 'react'
-import { Fragment } from 'react'
+import { Fragment, isValidElement } from 'react'
 import ReactMarkdown, { type Components } from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { removeDuplicateLeadingHeading } from '../lib/markdown'
+import { MarkdownCodeBlock } from './MarkdownCodeBlock'
+import { MarkdownImage } from './MarkdownImage'
+import { highlightSimpleCode } from './SyntaxHighlightedCode'
 
 interface MarkdownContentProps {
   children: string
@@ -159,6 +162,15 @@ export function MarkdownContent({ children, className, fallback, dedupeLeadingHe
         ? splitKoreanParticle(source)
         : null
 
+      // react-markdown may wrap a custom img renderer in its own element type.
+      // Identify linked images from the HAST structure, never by comparing component identity.
+      const linkedImageNode = node?.children.length === 1 && node.children[0]?.type === 'element'
+        && node.children[0]?.tagName === 'img'
+      const soleChild = Array.isArray(linkChildren) ? (linkChildren.length === 1 ? linkChildren[0] : null) : linkChildren
+      if (linkedImageNode && isValidElement<{ src?: string; alt?: string; title?: string }>(soleChild)) {
+        const { src, alt, title } = soleChild.props
+        return <a href={href} {...props}><img src={src} alt={alt} title={title} loading="lazy" /></a>
+      }
       if (!linkedText) return <a href={href} {...props}>{linkChildren}</a>
 
       return (
@@ -169,14 +181,21 @@ export function MarkdownContent({ children, className, fallback, dedupeLeadingHe
       )
     },
     code: ({ className: codeClassName, children: codeChildren }) => {
-      const language = codeClassName?.match(/language-([\w-]+)/)?.[1]
+      const language = codeClassName?.match(/language-([\w-]+)/)?.[1]?.toLowerCase()
       const source = String(codeChildren).replace(/\n$/, '')
       return (
         <code className={codeClassName} data-language={language}>
-          {language === 'java' ? tokenizeJava(source) : codeChildren}
+          {language === 'java' ? tokenizeJava(source) : language ? highlightSimpleCode(source, language) : codeChildren}
         </code>
       )
     },
+    pre: ({ node: _node, ...props }) => <MarkdownCodeBlock>{props.children}</MarkdownCodeBlock>,
+    table: ({ node: _node, ...props }) => (
+      <div className="markdown-table-scroll" role="region" aria-label="비교 표, 가로 스크롤 가능" tabIndex={0}>
+        <table {...props} />
+      </div>
+    ),
+    img: ({ node: _node, ...props }) => <MarkdownImage {...props} />,
   }
 
   return (

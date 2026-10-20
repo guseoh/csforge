@@ -1,0 +1,219 @@
+/* Issue #208 — shared Markdown rendering; owns code/table/image widgets in every learning route. */
+.markdown-content .markdown-code-block,
+.markdown-content .markdown-table-scroll {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.markdown-content .markdown-code-block {
+  margin: 1.5em 0;
+  overflow: hidden;
+  border: 1px solid var(--border-code);
+  border-radius: 9px;
+  color: var(--text-code);
+  background: var(--surface-code);
+}
+
+.markdown-content .markdown-code-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-height: 38px;
+  padding: 6px 10px 6px 14px;
+  border-bottom: 1px solid var(--border-code);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+}
+
+.markdown-content .markdown-code-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.markdown-content .markdown-code-actions button,
+.markdown-image-close {
+  min-height: 30px;
+  padding: 5px 9px;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  color: var(--text-default);
+  background: transparent;
+  font-family: inherit;
+  font-size: 0.8rem;
+}
+
+.markdown-content .markdown-code-actions button:hover,
+.markdown-content .markdown-code-actions button[aria-pressed="true"],
+.markdown-image-close:hover {
+  border-color: var(--border-default);
+  background: var(--surface-interactive);
+}
+
+.markdown-content .markdown-code-block pre,
+.concept-reading-content .markdown-content .markdown-code-block pre,
+.quiz-result-question .markdown-content .markdown-code-block pre {
+  display: block;
+  max-width: 100%;
+  margin: 0;
+  padding: 14px 16px 16px;
+  border: 0;
+  border-radius: 0;
+  color: var(--text-code);
+  background: transparent;
+  white-space: pre;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  font-size: 0.92rem;
+  line-height: 1.7;
+  tab-size: 4;
+}
+
+.concept-reading-content .markdown-content .markdown-code-block pre:has(code.language-java) {
+  padding: 14px 16px 16px;
+  border: 0;
+  background: transparent;
+}
+
+.concept-reading-content .markdown-content .markdown-code-block pre:has(code.language-java)::before {
+  content: none;
+}
+
+.markdown-content .markdown-code-block pre > code,
+.concept-reading-content .markdown-content .markdown-code-block pre > code {
+  padding: 0;
+  border: 0;
+  color: inherit;
+  background: transparent;
+  font: inherit;
+  white-space: inherit;
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
+.markdown-content .markdown-code-wrapped pre,
+.markdown-content .markdown-code-wrapped pre > code {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.markdown-content .markdown-code-feedback {
+  display: block;
+  padding: 0 16px;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.markdown-content .markdown-code-feedback:not(:empty) {
+  padding: 5px 16px 10px;
+}
+
+.markdown-content .markdown-code-block .code-keyword { color: var(--syntax-keyword); }
+.markdown-content .markdown-code-block .code-type { color: var(--syntax-type); }
+.markdown-content .markdown-code-block .code-string { color: var(--syntax-string); }
+.markdown-content .markdown-code-block .code-number { color: var(--syntax-number); }
+.markdown-content .markdown-code-block .code-annotation { color: var(--syntax-annotation); }
+.markdown-content .markdown-code-block .code-comment { color: var(--syntax-comment); }
+
+.markdown-content .markdown-table-scroll {
+  margin: 1.5em 0;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+}
+
+.markdown-content .markdown-table-scroll table,
+.concept-reading-content .markdown-content .markdown-table-scroll table,
+.quiz-result-question .markdown-content .markdown-table-scroll table {
+  display: table;
+  width: max-content;
+  min-width: min(100%, 420px);
+  max-width: none;
+  margin: 0;
+  border-collapse: collapse;
+}
+
+.markdown-content .markdown-image-trigger {
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  margin: 1.5em auto;
+  padding: 0;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  cursor: zoom-in;
+}
+
+.markdown-content .markdown-image-trigger img,
+.markdown-content img {
+  max-width: 100%;
+  height: auto;
+}
+
+.markdown-content .markdown-image-trigger img {
+  display: block;
+}
+
+.markdown-image-dialog {
+  position: fixed;
+  width: min(96vw, 1400px);
+  max-width: 96vw;
+  max-height: 96dvh;
+  padding: 0;
+  border: 1px solid var(--border-default);
+  border-radius: 10px;
+  color: var(--text-default);
+  background: var(--surface-elevated);
+  box-shadow: 0 12px 52px rgb(0 0 0 / 0.3);
+  overflow: auto;
+}
+
+.markdown-image-dialog::backdrop {
+  background: rgb(0 0 0 / 0.8);
+}
+
+.markdown-image-dialog-content {
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  padding: 16px;
+}
+
+.markdown-image-close {
+  justify-self: end;
+  border-color: var(--border-default);
+}
+
+.markdown-image-dialog img {
+  width: auto;
+  max-width: 100%;
+  max-height: calc(96dvh - 125px);
+  object-fit: contain;
+}
+
+.markdown-image-dialog p {
+  max-width: 85ch;
+  margin: 0;
+  font-size: 0.86rem;
+  line-height: 1.6;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.markdown-content .markdown-code-block pre:focus-visible,
+.markdown-content .markdown-table-scroll:focus-visible,
+.markdown-content .markdown-image-trigger:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .markdown-content .markdown-code-block,
+  .markdown-content .markdown-image-trigger {
+    scroll-behavior: auto;
+  }
+}
