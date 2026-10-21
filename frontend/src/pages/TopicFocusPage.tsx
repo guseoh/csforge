@@ -49,7 +49,6 @@ export function TopicFocusPage() {
   const back = <Link to="/learning/$areaSlug" params={{ areaSlug }} search={defaultLearningSearch}>영역으로 돌아가기</Link>
 
   if (!valid) return <ErrorState message="유효하지 않은 Topic 번호입니다." onRetry={() => window.history.back()} />
-  if (areaQuery.isPending || first.isPending || remaining.some(query => query.isPending)) return <PageSkeleton rows={5} />
   if (areaQuery.isError || first.isError || remaining.some(query => query.isError)) return (
     <ErrorState message="Topic 학습 경로를 불러오지 못했습니다." onRetry={() => {
       if (areaQuery.isError) void areaQuery.refetch()
@@ -57,6 +56,7 @@ export function TopicFocusPage() {
       remaining.filter(q => q.isError).forEach(q => { void q.refetch() })
     }} />
   )
+  if (areaQuery.isPending || first.isPending || remaining.some(query => query.isPending)) return <PageSkeleton rows={5} />
   if (!topic) return <section className="page-section topic-focus-page">
     <EmptyState message="해당 학습 영역에 공개된 Topic이 없습니다." />{back}
   </section>
