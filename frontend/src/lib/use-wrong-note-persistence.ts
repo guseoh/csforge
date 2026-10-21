@@ -146,5 +146,7 @@ export function useWrongNotePersistence({ id, detail }: WrongNotePersistenceOpti
     setDirty(true)
   }
 
-  return { note, dirty, updateNote, noteMutation }
+  const retryNoteSave = () => saveRef.current()
+
+  return { note, dirty, updateNote, noteMutation, retryNoteSave }
 }

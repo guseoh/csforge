@@ -159,3 +159,27 @@
     flex-direction: column;
   }
 }
+
+/* #213: timing legend is a small explanation, not another dashboard metric. */
+.review-count-guidance {
+  flex-basis: 100%;
+  margin: 6px 0 0;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  line-height: 1.65;
+}
+
+.review-window-toolbar {
+  flex-wrap: wrap;
+}
+
+.review-list-item .review-list-copy,
+.review-list-item .review-list-side {
+  min-width: 0;
+}
+
+@media (max-width: 720px) {
+  .review-count-guidance {
+    margin-top: 0;
+  }
+}

@@ -19,6 +19,7 @@ import { wrongAnswerAnalysisPollingInterval } from '../lib/wrong-answer-analysis
 import { defaultWrongNoteSearch } from '../lib/wrong-note-search'
 import { useWrongNotePersistence } from '../lib/use-wrong-note-persistence'
 import { useIdempotencyKey } from '../lib/use-idempotency-key'
+import { wrongNoteReviewLabel, wrongNoteAttemptOutcome, wrongNoteAttemptAnswer } from '../lib/wrong-note-display'
 
 const questionTypeLabels = { MULTIPLE_CHOICE: '객관식', SHORT_ANSWER: '단답형', DESCRIPTIVE: '서술형', SCENARIO: '시나리오' }
 const difficultyLabels = { EASY: '쉬움', MEDIUM: '보통', HARD: '어려움' }
@@ -69,7 +70,7 @@ export function WrongNoteDetailPage() {
     getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
     enabled: Number.isSafeInteger(id) && id > 0,
   })
-  const { note, dirty, updateNote, noteMutation } = useWrongNotePersistence({ id, detail: detail.data })
+  const { note, dirty, updateNote, noteMutation, retryNoteSave } = useWrongNotePersistence({ id, detail: detail.data })
   const retryRequest = useIdempotencyKey()
   const retryMutation = useMutation({
     mutationFn: () => retryWrongNote(
@@ -125,13 +126,12 @@ export function WrongNoteDetailPage() {
           <MarkdownContent className="detail-question-prompt wrong-note-detail-prompt">{item.question.promptMarkdown}</MarkdownContent>
           <ConceptContext concepts={item.concepts} />
         </div>
-        <button className="primary-button" onClick={() => retryMutation.mutate()} disabled={retryMutation.isPending}>이 문제 다시 풀기</button>
       </header>
 
       <div className="wrong-note-status-row" aria-label="오답 복습 상태">
         <div><span>오답</span><strong>{item.state.wrongCount}회</strong></div>
         <div><span>복습 단계</span><strong>{item.state.reviewStage ?? '—'}</strong></div>
-        <div><span>다음 복습</span><strong>{item.state.dueAt ? new Date(item.state.dueAt).toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' }) : '정리 완료'}</strong></div>
+        <div><span>복습 일정</span><strong>{wrongNoteReviewLabel(item.state.reviewStatus, item.state.dueAt)}</strong></div>
       </div>
 
       <section className="detail-section wrong-note-recovery-section">
@@ -196,8 +196,11 @@ export function WrongNoteDetailPage() {
         <p className="eyebrow">개인 메모</p>
         <h2>왜 틀렸을까요?</h2>
         <p className="helper-text">실수 원인과 다음 풀이에서 확인할 기준을 짧게 남겨두세요.</p>
-        <textarea rows={5} value={note} onChange={(event) => updateNote(event.target.value)} placeholder="실수 원인과 다음에 확인할 점을 적어보세요." />
-        <p className={`save-state ${noteMutation.isError ? 'error' : noteMutation.isPending ? 'saving' : dirty ? 'saving' : 'saved'}`}>{noteMutation.isError ? '저장 실패' : noteMutation.isPending ? '저장 중' : dirty ? '변경 사항 저장 대기 중' : '저장됨'} · Ctrl/Cmd+S</p>
+        <textarea rows={5} aria-label="내 오답 원인 메모" value={note} onChange={(event) => updateNote(event.target.value)} placeholder="실수 원인과 다음에 확인할 점을 적어보세요." />
+        <p className={`save-state ${noteMutation.isError ? 'error' : noteMutation.isPending ? 'saving' : dirty ? 'saving' : 'saved'}`} role="status">{noteMutation.isError ? '메모 저장 실패 — 입력한 내용은 임시 보관됩니다.' : noteMutation.isPending ? '저장 중' : dirty ? '변경 사항 저장 대기 중' : '저장됨'} · Ctrl/Cmd+S</p>
+        {noteMutation.isError && dirty && (
+          <button className="secondary-button wrong-note-save-retry" type="button" disabled={noteMutation.isPending} onClick={retryNoteSave}>메모 다시 저장</button>
+        )}
       </section>
 
       <section className="detail-section related-learning-section wrong-note-secondary-section">
@@ -210,6 +213,13 @@ export function WrongNoteDetailPage() {
           concepts={item.concepts}
           linkLabel={(concept) => `개념 보기 · ${concept.title}`}
         />
+        <div className="wrong-note-retry-area">
+          <button className="primary-button" type="button" onClick={() => retryMutation.mutate()} disabled={retryMutation.isPending}>
+            {retryMutation.isPending ? '새 문제 준비 중…' : '이 문제 다시 풀기'}
+          </button>
+          <span className="helper-text">관련 개념을 확인한 뒤 다시 풀어보세요. 기존 풀이·오답 이력은 보존되고 새 Quiz가 생성됩니다.</span>
+          {retryMutation.isError && <span className="helper-text error-text" role="alert">새 문제를 시작하지 못했습니다. 다시 시도해 주세요.</span>}
+        </div>
       </section>
 
       {aiAvailable && <section className="detail-section ai-analysis-section wrong-note-secondary-section">
@@ -236,10 +246,19 @@ export function WrongNoteDetailPage() {
       <details className="detail-section wrong-note-history-disclosure">
         <summary>
           <div><p className="eyebrow">풀이 기록</p><h2>시도 이력</h2></div>
-          <span className="result-count">{history.length > 0 ? `${history.length}개` : '보기'}</span>
+          <span className="result-count">{history.length > 0 ? `${history.length}개 조회됨` : '보기'}</span>
         </summary>
         <div className="wrong-note-history-content">
-          {attemptsQuery.isPending ? <div className="state-card" aria-busy="true">시도 기록을 불러오는 중입니다…</div> : attemptsQuery.isError && !hasAttemptHistoryData ? <ErrorState message="시도 기록을 불러오지 못했습니다." onRetry={() => void attemptsQuery.refetch()} /> : history.length === 0 ? <div className="state-card"><strong>아직 시도 기록이 없습니다.</strong><span>이 문제를 푼 기록이 생기면 여기에 시간순으로 쌓입니다.</span></div> : <div className="history-list">{history.map((attempt) => <div className="history-row" key={attempt.attemptId}><strong>{attempt.correct === true ? '정답' : attempt.correct === false ? '오답' : gradingStatusLabels[attempt.gradingStatus] ?? attempt.gradingStatus}</strong><span>{sourceLabel(attempt.source)} · {gradingStatusLabels[attempt.gradingStatus] ?? attempt.gradingStatus}</span><time>{new Date(attempt.updatedAt).toLocaleString('ko-KR')}</time></div>)}</div>}
+          {attemptsQuery.isPending ? <div className="state-card" aria-busy="true">시도 기록을 불러오는 중입니다…</div> : attemptsQuery.isError && !hasAttemptHistoryData ? <ErrorState message="시도 기록을 불러오지 못했습니다." onRetry={() => void attemptsQuery.refetch()} /> : history.length === 0 ? <div className="state-card"><strong>아직 시도 기록이 없습니다.</strong><span>이 문제를 푼 기록이 생기면 여기에 시간순으로 쌓입니다.</span></div> : <div className="history-list">{history.map((attempt) => <div className="history-row wrong-note-attempt-row" key={attempt.attemptId}>
+              <strong>{wrongNoteAttemptOutcome(attempt)}</strong>
+              <div className="wrong-note-attempt-detail">
+                <span>{sourceLabel(attempt.source)} · {gradingStatusLabels[attempt.gradingStatus] ?? attempt.gradingStatus}</span>
+                <span className="wrong-note-attempt-answer">{wrongNoteAttemptAnswer(attempt)}</span>
+                {attempt.attemptId === latestAttempt?.attemptId && <span className="helper-text">현재 비교 중인 최근 오답</span>}
+                {attempt.gradingStatus === 'SELF_CHECK_REQUIRED' && <span className="helper-text">아직 판정되지 않은 답안으로, 오답 횟수에 포함된다고 가정하지 않습니다.</span>}
+              </div>
+              <time dateTime={attempt.updatedAt}>{new Date(attempt.updatedAt).toLocaleString('ko-KR')}</time>
+            </div>)}</div>}
           {attemptsQuery.hasNextPage && <div className="load-more-row"><button className="secondary-button" type="button" disabled={attemptsQuery.isFetchingNextPage} onClick={() => void attemptsQuery.fetchNextPage()}>{attemptsQuery.isFetchingNextPage ? '불러오는 중…' : attemptsQuery.isFetchNextPageError ? '다시 시도' : '더 불러오기'}</button>{attemptsQuery.isFetchNextPageError && <span className="helper-text error-text">추가 기록을 불러오지 못했습니다.</span>}</div>}
         </div>
       </details>
