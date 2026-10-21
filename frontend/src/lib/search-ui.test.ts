@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { addRecentSearch, primarySearchDestination, segmentSearchHighlight } from './search-ui'
+import { addRecentSearch, primarySearchDestination, segmentSearchHighlight, shouldIgnorePaletteShortcut } from './search-ui'
 import type { SearchSuggestion } from './search-api'
 
 describe('Search UI helpers', () => {
@@ -32,5 +32,12 @@ describe('Search UI helpers', () => {
     expect(primarySearchDestination(questionWithoutId)).toBeNull()
     expect(primarySearchDestination(wrongNote)).toEqual({ kind: 'wrong-note', questionId: 11 })
     expect(primarySearchDestination(reference)).toEqual({ kind: 'external', url: 'https://example.com' })
+  })
+  it('ignores palette commands during Korean IME and modified shortcuts', () => {
+    expect(shouldIgnorePaletteShortcut({ isComposing: true, key: 'k', altKey: false, shiftKey: false })).toBe(true)
+    expect(shouldIgnorePaletteShortcut({ isComposing: false, key: 'Process', altKey: false, shiftKey: false })).toBe(true)
+    expect(shouldIgnorePaletteShortcut({ isComposing: false, key: 'k', altKey: true, shiftKey: false })).toBe(true)
+    expect(shouldIgnorePaletteShortcut({ isComposing: false, key: 'k', altKey: false, shiftKey: true })).toBe(true)
+    expect(shouldIgnorePaletteShortcut({ isComposing: false, key: 'k', altKey: false, shiftKey: false })).toBe(false)
   })
 })
