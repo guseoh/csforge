@@ -1,0 +1,7 @@
+# Issue #207 — Distributed causal ordering Content Pack
+- Base main: f9166dcd9dfc1b927d629aeb4c237656c5469bf6. Existing three Topics / 9 Concepts / 27 Questions reviewed. Clocks/deadlines, partial failure, failure detector, quorum vs consensus, leader, fencing, Saga and CAP: KEEP.
+- Gap: cross-process happens-before vs independent events and Lamport clocks. New Level-2 CORE concept causal-ordering within time-failure Topic (order 40), inline ASCII DIAGRAM.
+- Three Questions: MC/EASY choice C, SCENARIO/MEDIUM receiving logical clock 5 then local 6, DESCRIPTIVE/HARD causal flow vs independent event and idempotent retry. All original keys/answers preserved.
+- Primary sources: https://www.microsoft.com/en-us/research/publication/time-clocks-ordering-events-distributed-system/ and https://doi.org/10.1145/359545.359563. Lamport timestamps preserve causality in one direction, do not prove it by comparing integers; message ordering does not guarantee business DB effect.
+- [ ] Isolated actual LOCAL Spring Boot/PostgreSQL Preview→Apply, exact reimport and existing 10 history table digests; expected baseline 3,396, created 4, unchanged existing Questions 9, exact 13 UNCHANGED.
+- [ ] Remove QA runner, final HEAD CI and review threads, squash merge. Test-only inventory: 875 files / 726 Concepts / 2540 Questions / 3400 total items. No runtime deployment configuration changes; no production data touched. Human Usage Check excluded by current user directive.
