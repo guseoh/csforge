@@ -64,6 +64,7 @@ class CanonicalBootstrapIdempotencyIntegrationTest {
         assertEquals(0, first.totals().failed());
 
         assertCanonicalConceptAvailabilityAndNavigation();
+        assertPredictionQuestionsImportedAndLinked();
 
         long questionId = jdbc.queryForObject(
                 "select id from question where content_key = ?",
@@ -248,6 +249,40 @@ class CanonicalBootstrapIdempotencyIntegrationTest {
                     () -> "Concept CTA availability differs from published Question links: " + concept.contentKey());
             assertTrue(quizAvailability > 0,
                     () -> "Canonical Concept CTA has no available Questions: " + concept.contentKey());
+        }
+    }
+
+    private void assertPredictionQuestionsImportedAndLinked() {
+        List<String> keys = List.of(
+                "java.core.exceptions-resources.try-with-resources-suppressed.q9",
+                "java.core.language-types.numeric-conversion-overflow.q6",
+                "database.core.sql.join-semantics.q3",
+                "database.core.mvcc.visibility.q3",
+                "network-http.core.http-cache.if-none-match.q4",
+                "network-http.core.http-status.409-412.q4");
+
+        for (String key : keys) {
+            Map<String, Object> question = jdbc.queryForMap("""
+                    select id, question_type, status, prompt_markdown, explanation_markdown
+                    from question where content_key = ?
+                    """, key);
+            long id = ((Number) question.get("id")).longValue();
+            assertEquals("MULTIPLE_CHOICE", question.get("question_type"), key);
+            assertEquals("PUBLISHED", question.get("status"), key);
+            assertTrue(((String) question.get("prompt_markdown")).contains("결과 예측"), key);
+            assertTrue(((String) question.get("explanation_markdown")).length() >= 150, key);
+            assertEquals(4, jdbc.queryForObject(
+                    "select count(*) from question_choice where question_id = ?", Integer.class, id), key);
+            assertEquals(1, jdbc.queryForObject(
+                    "select count(*) from question_answer where question_id = ? and answer_kind = 'CORRECT_CHOICE'",
+                    Integer.class, id), key);
+            assertEquals(1, jdbc.queryForObject(
+                    "select count(*) from question_concept where question_id = ?", Integer.class, id), key);
+            assertEquals(0, jdbc.queryForObject("""
+                    select count(*)
+                    from question_choice qc
+                    where qc.question_id = ? and (qc.rationale_markdown is null or btrim(qc.rationale_markdown) = '')
+                    """, Integer.class, id), key);
         }
     }
 
