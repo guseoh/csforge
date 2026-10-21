@@ -44,7 +44,6 @@ export function ConceptLearningRail({ concept }: { concept: ConceptDetail }) {
   const totalConcepts = topics.reduce((total, topic) => total + topic.publishedConceptCount, 0)
   const completedConcepts = topics.reduce((total, topic) => total + topic.completedConceptCount, 0)
   const progress = completionPercent(completedConcepts, totalConcepts)
-  const loadingOutline = areaQuery.isPending || topicConceptsQuery.isPending
   const toggleLabel = collapsed ? '학습 목차 펼치기' : '학습 목차 접기'
 
   return (
@@ -80,30 +79,48 @@ export function ConceptLearningRail({ concept }: { concept: ConceptDetail }) {
           <p className="rail-kicker">학습 가이드</p>
           <h2>{concept.area.name}</h2>
 
-          <div className="rail-progress">
-            <div className="rail-progress-label">
-              <span>전체 진행률</span>
-              <strong>{progress}%</strong>
+          {areaQuery.isError ? (
+            <div className="rail-inline-error" role="alert">
+              <span>진행률을 불러오지 못했습니다.</span>
+              <button className="text-button" type="button" onClick={() => void areaQuery.refetch()}>다시 시도</button>
             </div>
-            <div className="progress-track" aria-hidden="true">
-              <span style={{ width: `${progress}%` }} />
+          ) : areaQuery.isPending ? (
+            <p className="rail-muted" role="status">진행률 불러오는 중…</p>
+          ) : (
+            <div className="rail-progress">
+              <div className="rail-progress-label">
+                <span>전체 진행률</span>
+                <strong>{progress}%</strong>
+              </div>
+              <div className="progress-track" aria-hidden="true">
+                <span style={{ width: `${progress}%` }} />
+              </div>
+              <p className="rail-progress-copy">{completedConcepts}/{totalConcepts}개 개념 완료</p>
             </div>
-            <p className="rail-progress-copy">{completedConcepts}/{totalConcepts}개 개념 완료</p>
-          </div>
+          )}
         </div>
 
         <div className="learning-rail-scroll">
           <div className="concept-rail-current">
             <div className="rail-section-title-row concept-rail-current-heading">
               <p className="rail-section-title">현재 주제</p>
-              <span className="rail-muted">{currentTopicConcepts.length}개</span>
+              <span className="rail-muted">
+                {topicConceptsQuery.isPending ? '불러오는 중' : topicConceptsQuery.isError ? '조회 오류' : currentTopicConcepts.length + '개'}
+              </span>
             </div>
             <strong className="concept-rail-current-title">{concept.topic.title}</strong>
           </div>
 
           <nav className="rail-concept-list" aria-label={`${concept.topic.title} 개념`}>
-            {loadingOutline && currentTopicConcepts.length === 0 ? (
-              <span className="rail-muted">개념 목록 불러오는 중…</span>
+            {topicConceptsQuery.isPending ? (
+              <span className="rail-muted" role="status">개념 목록 불러오는 중…</span>
+            ) : topicConceptsQuery.isError ? (
+              <div className="rail-inline-error" role="alert">
+                <span>개념 목록을 불러오지 못했습니다.</span>
+                <button className="text-button" type="button" onClick={() => void topicConceptsQuery.refetch()}>다시 시도</button>
+              </div>
+            ) : currentTopicConcepts.length === 0 ? (
+              <span className="rail-muted">이 주제에 공개된 개념이 없습니다.</span>
             ) : currentTopicConcepts.map((item, index) => (
               <Link
                 className={`rail-concept${item.id === concept.id ? ' active' : ''}`}
@@ -124,11 +141,15 @@ export function ConceptLearningRail({ concept }: { concept: ConceptDetail }) {
           <details className="rail-topic-disclosure">
             <summary>
               <span>전체 주제 보기</span>
-              <small>{topics.length}개</small>
+              <small>{areaQuery.isPending ? '불러오는 중' : areaQuery.isError ? '조회 오류' : topics.length + '개'}</small>
             </summary>
             <nav aria-label="전체 학습 주제">
               <div className="rail-topic-list">
-                {topics.map((topic, index) => {
+                {areaQuery.isPending ? (
+                  <span className="rail-muted" role="status">주제 불러오는 중…</span>
+                ) : areaQuery.isError ? (
+                  <span className="rail-muted">주제 목록을 불러오지 못했습니다. 위에서 다시 시도하세요.</span>
+                ) : topics.map((topic, index) => {
                   const active = topic.id === concept.topic.id
                   const completed = topic.publishedConceptCount > 0
                     && topic.completedConceptCount === topic.publishedConceptCount

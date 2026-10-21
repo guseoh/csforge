@@ -715,3 +715,24 @@
     transition: none;
   }
 }
+
+/* Keep rail API errors visible instead of rendering a misleading empty outline. */
+.concept-learning-rail .rail-inline-error {
+  display: grid;
+  gap: 8px;
+  padding: 8px 0 12px;
+  color: var(--state-error-text);
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+.concept-learning-rail .rail-inline-error .text-button {
+  width: fit-content;
+  min-height: 36px;
+  text-align: left;
+}
+
+.concept-learning-rail .rail-inline-error .text-button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
