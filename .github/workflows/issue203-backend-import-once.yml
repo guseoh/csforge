@@ -1,0 +1,135 @@
+name: Issue 203 Backend isolated historical import
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/issue203-backend-import-once.yml'
+permissions:
+  contents: read
+jobs:
+  isolated-import:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Stage baseline and corrected sources
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/issue203-backend-old /tmp/issue203-backend-new
+          for path in layering/orchestration-rule.md api/methods-status.md bulk-batch/file-api.md time-money/instant-zone.md evolution/migration.md testing-recovery/testing-strategy.md domain/questions.json; do
+            name="$(basename "$path")"
+            git show fffa3e789df5ce00b3708af073481d6de1c7d8e6:"content/backend-engineering/$path" > "/tmp/issue203-backend-old/$name"
+            cp "content/backend-engineering/$path" "/tmp/issue203-backend-new/$name"
+          done
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: gradle
+      - name: Start disposable PostgreSQL 16.4 and Redis
+        run: |
+          docker compose up -d postgres redis
+          for i in $(seq 1 60); do
+            if docker compose exec -T postgres pg_isready -U csforge -d csforge; then exit 0; fi
+            sleep 2
+          done
+          exit 1
+      - name: Start actual Spring Boot backend
+        run: |
+          cd backend
+          chmod +x gradlew
+          nohup ./gradlew bootRun --no-daemon > /tmp/issue203-backend-boot.log 2>&1 < /dev/null &
+          echo $! >/tmp/issue203-backend-boot.pid
+          for i in $(seq 1 160); do
+            if curl -fsS http://127.0.0.1:8080/actuator/health/readiness > /dev/null 2>&1; then exit 0; fi
+            sleep 2
+          done
+          tail -n 150 /tmp/issue203-backend-boot.log
+          exit 1
+      - name: Check historical data persistence across actual Preview Apply and exact reimport
+        run: |
+          python3 - <<'PY'
+          import json,pathlib,subprocess,urllib.request,uuid
+          API='http://127.0.0.1:8080'
+          NAMES=['orchestration-rule.md','methods-status.md','file-api.md','instant-zone.md','migration.md','testing-strategy.md','questions.json']
+          KEYS=['backend.core.layering.orchestration-rule','backend.core.api.methods-status',
+            'backend.core.bulk-batch.file-api','backend.core.time-money.instant-zone',
+            'backend.core.evolution.migration','backend.core.testing-recovery.testing-strategy']
+          def sql(q):
+            return subprocess.check_output(['docker','compose','exec','-T','postgres','psql','-U','csforge','-d','csforge','-At','-c',q],text=True).strip()
+          def call(path,method='GET',data=None):
+            b=None if data is None else json.dumps(data,ensure_ascii=False).encode()
+            headers={'Accept':'application/json'}
+            if b is not None: headers['Content-Type']='application/json'
+            if method=='POST': headers['Idempotency-Key']=str(uuid.uuid4())
+            req=urllib.request.Request(API+path,headers=headers,data=b,method=method)
+            with urllib.request.urlopen(req,timeout=180) as res:
+              content=res.read()
+              return json.loads(content) if content else None
+          def multipart(folder,digest=None):
+            boundary='issue203'+uuid.uuid4().hex
+            data=b''
+            for n in NAMES:
+              typ='application/json' if n.endswith('.json') else 'text/markdown'
+              data+=(f'--{boundary}\r\nContent-Disposition: form-data; name="files"; filename="{n}"\r\nContent-Type: {typ}\r\n\r\n').encode()+pathlib.Path(folder,n).read_bytes()+b'\r\n'
+            if digest is not None:
+              data+=f'--{boundary}\r\nContent-Disposition: form-data; name="previewDigest"\r\n\r\n{digest}\r\n'.encode()
+            data+=f'--{boundary}--\r\n'.encode()
+            return data,'multipart/form-data; boundary='+boundary
+          def post(path,data,mime):
+            req=urllib.request.Request(API+path,data=data,method='POST',headers={'Content-Type':mime})
+            with urllib.request.urlopen(req,timeout=180) as response:return json.load(response)
+          def apply(folder):
+            p=post('/api/imports/preview',*multipart(folder))
+            assert p['canApply'] and p['totals']['errors']==0,p
+            a=post('/api/imports/apply',*multipart(folder,p['previewDigest']))
+            assert a['totals']['failed']==0,(p,a)
+            return p,a
+          def digest(table):
+            return sql("select md5(coalesce(string_agg(row_to_json(t)::text,chr(10) order by row_to_json(t)::text),'')) from "+table+" t")
+          assert call('/api/auth/session')['mode']=='LOCAL'
+          first=call('/api/canonical-bootstrap','POST')
+          assert first['success'] and first['totalItems']==3380 and first['totals']['created']==3380,first
+          ids={k:int(sql("select id from concept where content_key='"+k+"'")) for k in KEYS}
+          for k,ident in ids.items():
+            assert call('/api/concepts/'+str(ident))['contentKey']==k
+          q=int(sql("select id from question where content_key like 'backend.%' and question_type='MULTIPLE_CHOICE' order by id limit 1"))
+          correct=sql("select c.choice_key from question_answer a join question_choice c on c.id=a.choice_id where a.question_id="+str(q)+" and a.answer_kind='CORRECT_CHOICE'")
+          quiz=call('/api/quizzes/questions/'+str(q)+'/practice','POST')
+          session=call('/api/quizzes/'+str(quiz['quizId']))
+          wrong=next(c['choiceKey'] for c in session['questions'][0]['choices'] if c['choiceKey']!=correct)
+          call('/api/quizzes/'+str(quiz['quizId'])+'/questions/'+str(q)+'/answer','PUT',{'selectedChoiceKey':wrong,'answerText':None,'reviewNeeded':True})
+          call('/api/quizzes/'+str(quiz['quizId'])+'/submit','POST')
+          assert call('/api/quizzes/'+str(quiz['quizId'])+'/result')['wrong']==1
+          assert int(sql('select count(*) from wrong_note'))==1
+          assert int(sql('select count(*) from review_schedule'))==1
+          call('/api/concepts/'+str(ids[KEYS[0]])+'/note','PUT',{'content':'issue203-backend-private-note'})
+          call('/api/wrong-notes/'+str(q)+'/note','PUT',{'content':'issue203-backend-wrongnote-text'})
+          tables=['personal_note','concept_progress','quiz_session','attempt','wrong_note','review_schedule','review_history','question_answer','question_concept','concept_reference']
+          before={t:digest(t) for t in tables}
+          oldp,olda=apply('/tmp/issue203-backend-old')
+          assert oldp['totals']['updated']==7 and olda['totals']['updated']==7, (oldp['totals'],olda['totals'])
+          newp,newa=apply('/tmp/issue203-backend-new')
+          assert newp['totals']['updated']==7 and newa['totals']['updated']==7, (newp['totals'],newa['totals'])
+          replayp,replaya=apply('/tmp/issue203-backend-new')
+          assert replayp['totals']['updated']==0 and replayp['totals']['unchanged']==15,replayp
+          assert replaya['totals']['updated']==0 and replaya['totals']['unchanged']==15,replaya
+          whole=call('/api/canonical-bootstrap','POST')
+          assert whole['success'] and whole['totals']['unchanged']==3380 and whole['totals']['updated']==0 and whole['totals']['errors']==0,whole
+          assert before=={t:digest(t) for t in tables},'history or relationships mutated'
+          assert ids=={k:int(sql("select id from concept where content_key='"+k+"'")) for k in KEYS}
+          assert call('/api/quizzes/'+str(quiz['quizId'])+'/result')['wrong']==1
+          updated=sql("select count(*) from question_concept qc join question q on q.id=qc.question_id where q.content_key='backend.core.domain.invariant-lifecycle.q3'")
+          assert int(updated)==4,updated
+          print('PASS original→corrected 7 UPDATED; second Preview+Apply 15 UNCHANGED')
+          print('PASS complete canonical rebootstrap 3380 UNCHANGED/0 UPDATED')
+          print('PASS 10 table personal/history/reference relation digests and stable concept IDs')
+          print('PASS linked HARD scenario four concepts and pre-existing WrongNote/Review')
+          PY
+      - name: Print diagnostics only if failure
+        if: failure()
+        run: |
+          tail -n 180 /tmp/issue203-backend-boot.log || true
+          docker compose ps || true
