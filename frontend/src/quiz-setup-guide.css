@@ -222,3 +222,25 @@
     justify-content: space-between;
   }
 }
+
+/* #212: applied filter summary is quieter than the quick-start action. */
+.quiz-selection-summary {
+  display: grid;
+  gap: 5px;
+  margin: 18px 0 0;
+  padding: 12px 0;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.quiz-selection-summary strong {
+  color: var(--text-strong);
+  font-size: 0.82rem;
+}
+
+.quiz-selection-summary p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.83rem;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
