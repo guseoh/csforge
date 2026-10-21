@@ -75,7 +75,9 @@ export function DashboardPage() {
     ...(recentAreaInPool ? [recentAreaInPool] : []),
     ...areaPool.filter((area) => area.areaSlug !== recentAreaInPool?.areaSlug),
   ].slice(0, 4)
-  const fallbackArea = featuredAreas[0] ?? dashboard.areaProgress[0] ?? null
+  const fallbackArea = featuredAreas.find((area) => area.publishedConceptCount > 0)
+    ?? dashboard.areaProgress.find((area) => area.publishedConceptCount > 0)
+    ?? null
   const primaryKind = dashboard.activeQuiz
     ? 'quiz'
     : dashboard.today.reviewDueCount > 0

@@ -235,6 +235,16 @@ describe('DashboardPage', () => {
     expect(html).not.toContain('NaN%')
   })
 
+  it('does not suggest a new Concept in an area without any published content', () => {
+    const html = render(dashboard({
+      today: { solvedCount: 0, correctCount: 0, wrongCount: 0, accuracyPercent: 0, reviewDueCount: 0 },
+      areaProgress: [{ areaSlug: 'java', areaName: 'Java', completedConceptCount: 0, startedConceptCount: 0, publishedConceptCount: 0, completionPercent: 0, levels: [] }],
+    }))
+    expect(html).toContain('공개된 개념 없음')
+    expect(html).toContain('학습 영역에서 시작하기')
+    expect(html).not.toContain('개념 찾기 →')
+  })
+
   it('does not block the main dashboard when recent-concept lookup is pending or unavailable', () => {
     mocks.recentConcepts.isPending = true
     expect(render(dashboard())).toContain('오늘의 학습')
