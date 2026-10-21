@@ -6,6 +6,7 @@ import { ConceptReferences } from '../components/ConceptReferences'
 import { MarkdownContent } from '../components/MarkdownContent'
 import { getConcept, getConcepts, type ConceptDetail } from '../lib/learning-api'
 import { defaultQuizSearch } from '../lib/quiz-search'
+import { defaultLearningSearch } from '../lib/learning-search'
 import type { CompareSearch } from '../lib/compare-search'
 
 type Heading = { id: string; title: string; sub: boolean }
@@ -83,7 +84,7 @@ export function ConceptComparePage() {
   }, [])
 
   return <section className="page-section compare-page">
-    <nav className="breadcrumb" aria-label="탐색 경로"><Link to="/learning">학습</Link><span>/</span><strong>개념 비교</strong></nav>
+    <nav className="breadcrumb" aria-label="탐색 경로"><Link to="/learning" search={defaultLearningSearch}>학습</Link><span>/</span><strong>개념 비교</strong></nav>
     <header className="compare-heading">
       <p className="eyebrow">개념 비교 읽기</p><h1>두 개념 나란히 읽기</h1>
       <p className="lead">두 설명을 직접 비교해 적용 상황을 판단하세요. 본문을 기계적으로 diff하거나 AI로 판정하지 않습니다.</p>
