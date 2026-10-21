@@ -16,6 +16,7 @@ const mocks = vi.hoisted(() => ({
     fetchNextPage: vi.fn(),
   },
   navigate: vi.fn(),
+  ai: { data: null as unknown, isPending: false, isError: false, refetch: vi.fn() },
   note: { isError: false, isPending: false, dirty: false, retry: vi.fn() },
 }))
 
@@ -30,7 +31,7 @@ vi.mock('@tanstack/react-query', () => ({
     ? mocks.session
     : queryKey[0] === 'wrong-note'
       ? mocks.detail
-      : { data: null, isPending: false, isError: false, refetch: vi.fn() },
+      : mocks.ai,
   useInfiniteQuery: () => mocks.attempts,
   useMutation: () => ({ isPending: false, isError: false, mutate: vi.fn() }),
 }))
@@ -108,6 +109,9 @@ describe('WrongNoteDetailPage', () => {
     mocks.detail.isPending = false
     mocks.detail.isError = false
     mocks.navigate.mockReset()
+    mocks.ai.data = null
+    mocks.ai.isPending = false
+    mocks.ai.isError = false
     mocks.note.isError = false
     mocks.note.isPending = false
     mocks.note.dirty = false
@@ -183,6 +187,21 @@ describe('WrongNoteDetailPage', () => {
     expect(html).toContain('자기채점 대기')
     expect(html).toContain('더 불러오기')
     expect(html).not.toContain('복습 일정 없음')
+  })
+
+  it('leaves personal notes, answer explanations and related concepts available if AI analysis fails', () => {
+    mocks.session.data = { mode: 'LOCAL' }
+    mocks.ai.data = { status: 'FAILED', retryable: true }
+    const failed = renderToStaticMarkup(<WrongNoteDetailPage />)
+    expect(failed).toContain('AI 분석에 실패했습니다.')
+    expect(failed).toContain('내가 놓친 전제')
+    expect(failed).toContain('기존 전체 해설')
+    expect(failed).toContain('개념 보기 · 관련 개념')
+    mocks.ai.data = { status: 'PENDING' }
+    const pending = renderToStaticMarkup(<WrongNoteDetailPage />)
+    expect(pending).toContain('분석 작업을 준비하는 중입니다.')
+    expect(pending).toContain('내가 놓친 전제')
+    expect(pending).toContain('기존 전체 해설')
   })
 
   it('does not invent a mastered status when an active wrong note has no schedule', () => {
