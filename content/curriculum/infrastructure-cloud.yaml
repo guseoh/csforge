@@ -78,7 +78,7 @@ topics:
 - key: infrastructure.core.reliability
   title: 저장소와 배포 신뢰성
   order: 30
-  scope: 객체·블록·파일 저장소, 백업·복구, IaC와 불변 인프라 배포를 다룬다.
+  scope: 객체·블록·파일 저장소, 백업·복구, IaC·배포 및 AZ 장애 영역과 공통 의존성을 다룬다.
   boundary: Database 영역의 기준 데이터와 인프라 백업·복구, 애플리케이션 데이터 마이그레이션을 혼동하지 않는다.
   concepts:
   - key: infrastructure.core.reliability.storage-models
@@ -100,6 +100,13 @@ topics:
     order: 30
     level: 3
     objective: 선언형 인프라 상태, drift·검토·rollback과 blue/green·rolling 배포의 실패 경계를 판단한다.
+    density: CORE
+    visualization: DIAGRAM
+  - key: infrastructure.core.reliability.failure-domains
+    title: 장애 영역과 가용성 배치
+    order: 40
+    level: 2
+    objective: 단일 AZ 손실 시 앱·LB·DB·스토리지·공통 의존성의 배치와 실패 범위를 추적하고 남은 처리 용량, 트래픽 전환, 데이터 RPO/RTO를 구분해 판단한다.
     density: CORE
     visualization: DIAGRAM
 boundaries:
