@@ -37,4 +37,4 @@ Rotation 전후 inorder sequence는 모두 `A, x, B, y, C`다. 즉 key의 정렬
 
 Rotation 자체가 balance policy는 아니다. 언제 left/right rotation을 할지, 한 번 또는 두 번 수행할지, 어떤 metadata를 갱신할지는 AVL이나 red-black tree 같은 별도의 balance 불변식이 결정한다.
 
-따라서 rotation을 이해할 때는 pointer 배치만 외우기보다 **inorder ordering은 보존되고, local shape만 바뀐다는 불변식**를 기준으로 전후 상태를 추적하는 것이 중요하다.
+따라서 rotation을 이해할 때는 pointer 배치만 외우기보다 **inorder ordering은 보존되고, local shape만 바뀐다는 불변식**을 기준으로 전후 상태를 추적하는 것이 중요하다.

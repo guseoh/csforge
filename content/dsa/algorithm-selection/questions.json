@@ -163,7 +163,7 @@
   {
     "kind": "question",
     "contentKey": "dsa.core.algorithm-selection.preprocessing-query-cost.q2",
-    "promptMarkdown": "같은 조건에서 질의가 10번이면 선형 탐색 방식과 전처리 방식의 총 예상 시간을 각각 계산하라.",
+    "promptMarkdown": "같은 데이터를 대상으로 질의 10번을 실행한다. 선형 탐색은 질의마다 100 ms가 들고, 전처리 방식은 최초 800 ms를 한 번 지불한 뒤 질의마다 5 ms가 든다고 가정한다(10번 동안 데이터 변경 없음). 두 방식의 총 예상 시간을 각각 계산하라.",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",

@@ -19,7 +19,7 @@ references:
 ---
 # 힙(Heap)
 
-Binary heap은 **complete binary tree shape**와 **parent-child priority 불변식**를 함께 사용하는 자료구조다. Min-heap에서는 모든 parent가 자신의 자식보다 작거나 같고, max-heap에서는 반대다. 이 조건 때문에 루트에는 전체 원소 중 최소값 또는 최대값이 위치한다.
+Binary heap은 **complete binary tree shape**와 **parent-child priority 불변식**을 함께 사용하는 자료구조다. Min-heap에서는 모든 parent가 자신의 자식보다 작거나 같고, max-heap에서는 반대다. 이 조건 때문에 루트에는 전체 원소 중 최소값 또는 최대값이 위치한다.
 
 ```text
 min-heap

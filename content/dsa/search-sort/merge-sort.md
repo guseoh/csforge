@@ -35,4 +35,4 @@ Merge 단계에서는 두 sequence의 현재 첫 원소를 비교해 더 작은 
 
 배열 기반 구현은 보통 merge 결과를 담기 위한 O(n) 보조 공간을 사용한다. 대신 equal key에서 왼쪽 원소를 먼저 선택하면 기존 상대 순서를 보존해 stable하게 구현할 수 있다.
 
-병합 정렬의 핵심은 분할 자체가 아니라 **두 정렬된 수열을 선형 시간에 합치는 불변식**다. Time complexity, stability, auxiliary space를 함께 보고 선택해야 한다.
+병합 정렬의 핵심은 분할 자체가 아니라 **두 정렬된 수열을 선형 시간에 합치는 불변식**이다. Time complexity, stability, auxiliary space를 함께 보고 선택해야 한다.
