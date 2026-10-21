@@ -297,7 +297,7 @@ class LearningIntegrationTest {
         assertTrue(before.get("lastAssessedAt").isNull());
         assertEquals(0, before.get("evidence").get("uniqueQuestions").asInt());
 
-        request("PATCH", "/api/concepts/" + firstConceptId + "/progress", "{\\"status\\":\\"COMPLETED\\"}");
+        request("PATCH", "/api/concepts/" + firstConceptId + "/progress", "{\"status\":\"COMPLETED\"}");
         JsonNode completed = json(request("GET", "/api/concepts/" + firstConceptId + "/understanding", null));
         assertEquals("COMPLETED", completed.get("learningStatus").asText());
         assertEquals("NOT_ENOUGH_EVIDENCE", completed.get("assessmentStatus").asText());
