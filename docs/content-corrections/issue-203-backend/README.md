@@ -32,7 +32,19 @@
 ## 검증 범위 및 미완료
 1. 13 Topic 전체 기존 수기 의미 감사의 findings/source를 이용해 **7건 수정/1건 유지**로 판정. 이번 변경만으로 108 Question을 새로 독립적으로 한 줄씩 채점했다고 주장하지 않는다.
 2. Concept frontmatter, Markdown fenced code, Question JSON parse, changed keys/links and correct answers/type/difficulty/model/explanation 불변 확인.
-3. **격리 PostgreSQL actual Preview → Apply → exact reimport, history/personal IDs/Reference 보존**: 실행 결과 별도 기록.
+3. **격리 PostgreSQL actual Preview → Apply → exact reimport, history/personal IDs/Reference 보존**: [자동 회귀 #39540979259](https://github.com/guseoh/csforge/actions/runs/39540979259) **SUCCESS**.
 4. GitHub Repository Validation: 최종 정리 HEAD에서 PASS 여부 확인.
 5. **Human Usage Check는 현재 사용자 요청으로 이 slice의 필수 검증에서 제외**한다. 자동화 UX나 실제 사용자 시연을 완료했다고 주장하지 않는다.
 6. Production DB sync/import/deploy 금지. #203 전체 종료는 Spring·Security 영역과의 통합 상태도 별도 확인한 뒤 판정; 병합은 사용자 명시적 승인 뒤 수행.
+
+## Spring / PostgreSQL 실제 Import 회귀 증거
+
+[GitHub Actions #39540979259](https://github.com/guseoh/csforge/actions/runs/39540979259) — **SUCCESS** (검증 브랜치 임시 HEAD `1aa40fe0e75b8381a1f6b5979ec99067f33125a1`).
+
+- Java 25 Spring Boot local mode, 새 Docker Compose PostgreSQL 16.4 및 Redis. `/api/auth/session`의 LOCAL 모드 확인, 빈 DB 최초 canonical **3,380 CREATED**.
+- Backend Engineering 기존/교정 `6 Concept MD + 1 questions.json`을 실제 **Multipart Import Preview → Apply**로 순차 복원/적용: 원문 7 UPDATED, 교정본 7 UPDATED. JSON 파일 내 다른 8개 Question은 불변.
+- 동일 7 source file 재import Preview **15 UNCHANGED / 0 UPDATED**, Apply **15 UNCHANGED / 0 UPDATED**. 전체 classpath canonical bootstrap **3,380 UNCHANGED / 0 UPDATED**.
+- 다른 Backend Question의 실제 객관식 오답을 제출해 WrongNote·ReviewSchedule을 만든 뒤, Concept personal note와 WrongNote 메모를 저장하고 import 수행.
+- `personal_note`, `concept_progress`, `quiz_session`, `attempt`, `wrong_note`, `review_schedule`, `review_history`, `question_answer`, `question_concept`, `concept_reference` 10개 테이블 전체 JSON-row digest와 6개 Concept stable ID, 기존 wrong Quiz result 그대로 보존됨. 추가 연결한 HARD Question의 4개 Concept 관계도 실제 DB 확인.
+- 이 검증은 실제 API/DB import와 이력 보존 증거. **Human Usage Check는 최신 사용자 승인 정책상 요구하지 않으며 수행됐다고 주장하지 않는다**.
+- 임시 workflow 제거 후 [최종 Repository Validation](https://github.com/guseoh/csforge/pull/257/checks) 결과를 따로 확인한다. Production 변경·병합 없음.
