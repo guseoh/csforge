@@ -36,13 +36,19 @@ AuthenticationManager
 UserDetailsService / 사용자 조회
       │
       ▼
+계정·자격 증명 상태 검사 (잠김/비활성/만료 등)
+      │ 실패 → 인증 실패
+      ▼
 PasswordEncoder.matches(원문, 저장된 해시)
+      │ 불일치 → 인증 실패
+      ▼
+비밀번호 외 필수 인증 검사 완료 (자격 증명 만료 등)
+      │ 실패 → 인증 실패
+      ▼
+AuthenticationManager가 완료된 Authentication 반환
       │
-      ├─ 실패 → 인증 실패
-      └─ 성공 → 인증 완료된 Authentication
-                     │
-                     ▼
-               SecurityContext
+      ▼
+인증 성공 처리를 담당하는 필터가 SecurityContext에 설정
 ```
 
 서버는 저장된 비밀번호 해시를 복호화하지 않습니다. 사용자가 입력한 비밀번호를 같은 해시 알고리즘으로 계산해 저장된 값과 비교합니다.
