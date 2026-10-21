@@ -136,3 +136,34 @@ describe('AreaPage outline loading', () => {
     })
   })
 })
+
+describe('AreaPage #211 next action and filter behavior', () => {
+  it('offers separate next-learning and review actions in curriculum order', () => {
+    mocks.firstOutlineQuery = {
+      data: {
+        items: [
+          { ...concept(1), learningStatus: 'COMPLETED' },
+          { ...concept(2), learningStatus: 'REVIEW_NEEDED' },
+          { ...concept(3), learningStatus: 'UNSEEN' },
+          { ...concept(4), learningStatus: 'LEARNING' },
+        ],
+        page: { page: 0, size: 200, totalElements: 4, totalPages: 1, hasNext: false, hasPrevious: false },
+      },
+      isPending: false, isError: false, refetch: vi.fn(),
+    }
+    mocks.remainingOutlinePages = []
+    const html = renderToStaticMarkup(<AreaPage />)
+    expect(html).toContain('학습 중인 개념 이어가기')
+    expect(html).toContain('복습 필요: Outline 2')
+    expect(html).toContain('L1')
+    expect(html).toContain('L2')
+    expect(html).toContain('L3')
+    expect(html).toContain('커리큘럼 순서')
+  })
+
+  it('does not request the entire outline when showing filtered results', () => {
+    mocks.search = { ...mocks.search, topic: 57, level: '1' }
+    renderToStaticMarkup(<AreaPage />)
+    expect(mocks.remainingOutlineQueries).toHaveLength(0)
+  })
+})

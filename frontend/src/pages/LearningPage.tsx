@@ -84,7 +84,8 @@ export function LearningPage() {
   if (areasQuery.isError) return <ErrorState onRetry={() => void areasQuery.refetch()} />
 
   const recentConcepts = recentConceptsQuery.data ? selectRecentConcepts(recentConceptsQuery.data.items) : []
-  const nextConcept = inProgressQuery.data?.items[0] ?? unseenQuery.data?.items[0]
+  const nextConcept = inProgressQuery.data?.items[0]
+    ?? (!inProgressQuery.isPending && !inProgressQuery.isError ? unseenQuery.data?.items[0] : undefined)
   const nextPending = hasPublishedConcepts && (inProgressQuery.isPending || (!nextConcept && unseenQuery.isPending))
   const nextError = !nextConcept && (inProgressQuery.isError || unseenQuery.isError)
 
