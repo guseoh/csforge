@@ -1,0 +1,157 @@
+name: Issue 203 Security isolated historical import
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/issue203-security-import-once.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  isolated-import:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Stage baseline and corrected Security sources
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/issue203-security-old /tmp/issue203-security-new
+          while IFS='|' read -r source filename; do
+            git show 2c9664211e3d746ed33990a8e65ffd0992a30a6c:"content/security/$source" > "/tmp/issue203-security-old/$filename"
+            cp "content/security/$source" "/tmp/issue203-security-new/$filename"
+          done <<'END_FILES'
+          authn-authz/authentication.md|authentication.md
+          session-cookie/cookie-flags.md|cookie-flags.md
+          browser/cors-preflight.md|cors-preflight.md
+          access/vertical.md|vertical.md
+          context-authz/method-security.md|method-security.md
+          filter-chain/servlet-filter.md|servlet-filter.md
+          filter-chain/security-filter-chain.md|security-filter-chain.md
+          tokens-oauth/oauth-oidc.md|oauth-oidc.md
+          abuse/file-path.md|file-path.md
+          authn-authz/questions.json|authn-authz-questions.json
+          context-authz/questions.json|context-authz-questions.json
+          foundations/questions.json|foundations-questions.json
+          END_FILES
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: gradle
+      - name: Start disposable PostgreSQL 16.4 and Redis
+        run: |
+          docker compose up -d postgres redis
+          for i in $(seq 1 60); do
+            if docker compose exec -T postgres pg_isready -U csforge -d csforge; then exit 0; fi
+            sleep 2
+          done
+          exit 1
+      - name: Start actual local Spring Boot backend
+        run: |
+          cd backend
+          chmod +x gradlew
+          nohup ./gradlew bootRun --no-daemon > /tmp/issue203-security-boot.log 2>&1 < /dev/null &
+          echo $! > /tmp/issue203-security-boot.pid
+          for i in $(seq 1 160); do
+            if curl -fsS http://127.0.0.1:8080/actuator/health/readiness >/dev/null 2>&1; then exit 0; fi
+            sleep 2
+          done
+          tail -n 180 /tmp/issue203-security-boot.log
+          exit 1
+      - name: Verify historical Preview Apply exact reimport and personal data preservation
+        run: |
+          python3 - <<'PY'
+          import json,pathlib,subprocess,urllib.request,uuid
+          API='http://127.0.0.1:8080'
+          NAMES=['authentication.md','cookie-flags.md','cors-preflight.md','vertical.md','method-security.md','servlet-filter.md',
+            'security-filter-chain.md','oauth-oidc.md','file-path.md',
+            'authn-authz-questions.json','context-authz-questions.json','foundations-questions.json']
+          KEYS=['security.core.authn-authz.authentication','security.core.session-cookie.cookie-flags',
+            'security.core.browser.cors-preflight','security.core.access.vertical','security.core.context-authz.method-security',
+            'security.core.filter-chain.servlet-filter','security.core.filter-chain.security-filter-chain',
+            'security.core.tokens-oauth.oauth-oidc','security.core.abuse.file-path']
+          def sql(q):
+            return subprocess.check_output(['docker','compose','exec','-T','postgres','psql','-U','csforge','-d','csforge','-At','-c',q],text=True).strip()
+          def call(path,method='GET',data=None):
+            body=None if data is None else json.dumps(data,ensure_ascii=False).encode()
+            headers={'Accept':'application/json'}
+            if body is not None: headers['Content-Type']='application/json'
+            if method=='POST': headers['Idempotency-Key']=str(uuid.uuid4())
+            request=urllib.request.Request(API+path,headers=headers,data=body,method=method)
+            with urllib.request.urlopen(request,timeout=180) as response:
+              content=response.read()
+              return json.loads(content) if content else None
+          def multipart(folder,digest=None):
+            boundary='sec203'+uuid.uuid4().hex
+            body=b''
+            for filename in NAMES:
+              typ='application/json' if filename.endswith('.json') else 'text/markdown'
+              content=pathlib.Path(folder,filename).read_bytes()
+              body+=(f'--{boundary}\r\nContent-Disposition: form-data; name="files"; filename="{filename}"\r\nContent-Type: {typ}\r\n\r\n').encode()+content+b'\r\n'
+            if digest is not None:
+              body+=f'--{boundary}\r\nContent-Disposition: form-data; name="previewDigest"\r\n\r\n{digest}\r\n'.encode()
+            body+=f'--{boundary}--\r\n'.encode()
+            return body,'multipart/form-data; boundary='+boundary
+          def post(path,body,mime):
+            request=urllib.request.Request(API+path,data=body,method='POST',headers={'Content-Type':mime})
+            with urllib.request.urlopen(request,timeout=180) as response: return json.load(response)
+          def apply(folder):
+            preview=post('/api/imports/preview',*multipart(folder))
+            assert preview['canApply'] and preview['totals']['errors']==0,preview
+            applied=post('/api/imports/apply',*multipart(folder,preview['previewDigest']))
+            assert applied['totals']['failed']==0,(preview,applied)
+            return preview,applied
+          def digest(table):
+            return sql("select md5(coalesce(string_agg(row_to_json(t)::text,chr(10) order by row_to_json(t)::text),'')) from "+table+" t")
+
+          assert call('/api/auth/session')['mode']=='LOCAL'
+          init=call('/api/canonical-bootstrap','POST')
+          assert init['success'] and init['totalItems']==3380 and init['totals']['created']==3380,init
+          ids={k:int(sql("select id from concept where content_key='"+k+"'")) for k in KEYS}
+          assert len(ids)==9
+          for key,ident in ids.items():
+            assert call('/api/concepts/'+str(ident))['contentKey']==key
+          q=int(sql("select id from question where content_key like 'security.%' and question_type='MULTIPLE_CHOICE' order by id limit 1"))
+          correct=sql("select c.choice_key from question_answer a join question_choice c on c.id=a.choice_id where a.question_id="+str(q)+" and a.answer_kind='CORRECT_CHOICE'")
+          started=call('/api/quizzes/questions/'+str(q)+'/practice','POST')
+          assert started['questionCount']==1
+          session=call('/api/quizzes/'+str(started['quizId']))
+          wrong=next(c['choiceKey'] for c in session['questions'][0]['choices'] if c['choiceKey']!=correct)
+          call('/api/quizzes/'+str(started['quizId'])+'/questions/'+str(q)+'/answer','PUT',{'selectedChoiceKey':wrong,'answerText':None,'reviewNeeded':True})
+          call('/api/quizzes/'+str(started['quizId'])+'/submit','POST')
+          assert call('/api/quizzes/'+str(started['quizId'])+'/result')['wrong']==1
+          assert int(sql('select count(*) from wrong_note'))>=1
+          assert int(sql('select count(*) from review_schedule'))>=1
+          call('/api/concepts/'+str(ids[KEYS[0]])+'/note','PUT',{'content':'issue203-security-personal-note'})
+          call('/api/wrong-notes/'+str(q)+'/note','PUT',{'content':'issue203-security-wrong-note'})
+          tables=['personal_note','concept_progress','quiz_session','attempt','wrong_note','review_schedule','review_history','question_answer','question_concept','concept_reference']
+          before={table:digest(table) for table in tables}
+          oldp,olda=apply('/tmp/issue203-security-old')
+          assert oldp['totals']['updated']==12 and olda['totals']['updated']==12,(oldp['totals'],olda['totals'])
+          newp,newa=apply('/tmp/issue203-security-new')
+          assert newp['totals']['updated']==12 and newa['totals']['updated']==12,(newp['totals'],newa['totals'])
+          againp,againa=apply('/tmp/issue203-security-new')
+          assert againp['totals']['updated']==0 and againp['totals']['unchanged']==27,againp
+          assert againa['totals']['updated']==0 and againa['totals']['unchanged']==27,againa
+          final=call('/api/canonical-bootstrap','POST')
+          assert final['success'] and final['totals']['unchanged']==3380 and final['totals']['updated']==0 and final['totals']['errors']==0,final
+          assert before=={t:digest(t) for t in tables},'personal/history/reference relations changed'
+          assert ids=={k:int(sql("select id from concept where content_key='"+k+"'")) for k in KEYS}
+          assert call('/api/quizzes/'+str(started['quizId'])+'/result')['wrong']==1
+          authq=int(sql("select count(*) from question_concept qc join question q on q.id=qc.question_id where q.content_key='security.core.context-authz.context-holder.q2'"))
+          assert authq==2,authq
+          print('PASS baseline -> correction Preview/Apply 12 UPDATED each')
+          print('PASS exact reimport 27 UNCHANGED and full rebootstrap 3380 UNCHANGED')
+          print('PASS 10 table digests + 9 stable Concept IDs, WrongNote/Review, 2 linked async Concepts')
+          PY
+      - name: Diagnostics on failure only
+        if: failure()
+        run: |
+          tail -n 150 /tmp/issue203-security-boot.log || true
+          docker compose ps || true
