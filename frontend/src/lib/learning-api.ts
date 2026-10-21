@@ -164,6 +164,11 @@ export interface ConceptUnderstanding {
   lastAssessedAt: string | null
 }
 
+export interface ConceptUnderstandingPage {
+  items: ConceptUnderstanding[]
+  page: ConceptPage['page']
+}
+
 export interface ProgressResponse {
   learningStatus: LearningStatus
   bookmarked: boolean
@@ -223,6 +228,18 @@ export function getConcept(conceptId: number): Promise<ConceptDetail> {
 /** Separate read-only assessment; never changes ConceptProgress. */
 export function getConceptUnderstanding(conceptId: number): Promise<ConceptUnderstanding> {
   return request<ConceptUnderstanding>(`/api/concepts/${conceptId}/understanding`)
+}
+
+export function getLearningAreaUnderstanding(
+  areaSlug: string,
+  topicId: number,
+  page: number,
+  size = 10,
+): Promise<ConceptUnderstandingPage> {
+  const params = new URLSearchParams({ topicId: String(topicId), page: String(page), size: String(size) })
+  return request<ConceptUnderstandingPage>(
+    `/api/learning-areas/${encodeURIComponent(areaSlug)}/understanding?${params.toString()}`,
+  )
 }
 
 export function recordConceptView(conceptId: number): Promise<ProgressResponse> {

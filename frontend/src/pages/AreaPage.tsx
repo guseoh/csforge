@@ -3,12 +3,76 @@ import { Link, useNavigate, useParams, useSearch } from '@tanstack/react-router'
 import { useQueries, useQuery } from '@tanstack/react-query'
 import { AreaLearningRail } from '../components/AreaLearningRail'
 import { EmptyState, ErrorState, PageSkeleton } from '../components/AsyncStates'
-import { getConcepts, getLearningArea, getLearningAreaOutline, type LearningStatus } from '../lib/learning-api'
+import { getConcepts, getLearningArea, getLearningAreaOutline, getLearningAreaUnderstanding, type LearningStatus, type ConceptUnderstandingPage } from '../lib/learning-api'
 import { defaultLearningSearch, type LearningSearch } from '../lib/learning-search'
 import { csvParam, defaultQuizSearch } from '../lib/quiz-search'
 import { chooseNextConcept, chooseReviewConcept } from '../lib/learning-next'
 
 const PAGE_SIZE = 12
+
+const assessmentLabels = {
+  NOT_ENOUGH_EVIDENCE: '근거 부족',
+  NEEDS_PRACTICE: '추가 연습 필요',
+  DEVELOPING: '이해 근거 축적 중',
+  CONSISTENT: '최근 정답 일관',
+} as const
+
+export function TopicUnderstandingResults({ data, onPageChange }: {
+  data: ConceptUnderstandingPage
+  onPageChange: (nextPage: number) => void
+}) {
+  return (
+    <>
+      <div className="topic-understanding-rows">
+        {data.items.map((item) => (
+          <div className="topic-understanding-row" key={item.conceptId}>
+            <Link to="/concepts/$conceptId" params={{ conceptId: String(item.conceptId) }}>개념 #{item.conceptId} 문제 근거 보기 →</Link>
+            <strong>{assessmentLabels[item.assessmentStatus]}</strong>
+            <span>{item.evidence.uniqueQuestions}개 서로 다른 문제 중 {item.evidence.correctQuestions}개 정답
+              {' · '}확정 {item.evidence.finalizedAttempts}회
+              {item.evidence.pendingSelfCheckCount > 0 ? ` · 자기채점 대기 ${item.evidence.pendingSelfCheckCount}회` : ''}
+            </span>
+          </div>
+        ))}
+      </div>
+      {data.page.totalPages > 1 && (
+        <nav className="topic-understanding-pagination" aria-label="문제 풀이 근거 페이지">
+          <button className="secondary-button" type="button" disabled={!data.page.hasPrevious} onClick={() => onPageChange(data.page.page - 1)}>이전</button>
+          <span>{data.page.page + 1} / {data.page.totalPages}</span>
+          <button className="secondary-button" type="button" disabled={!data.page.hasNext} onClick={() => onPageChange(data.page.page + 1)}>다음</button>
+        </nav>
+      )}
+    </>
+  )
+}
+
+function TopicUnderstandingEvidence({ areaSlug, topicId }: { areaSlug: string; topicId: number }) {
+  const [expanded, setExpanded] = useState(false)
+  const [page, setPage] = useState(0)
+  const query = useQuery({
+    queryKey: ['learning-area-understanding', areaSlug, topicId, page],
+    queryFn: () => getLearningAreaUnderstanding(areaSlug, topicId, page),
+    enabled: expanded,
+  })
+  return (
+    <section className="topic-understanding-preview" aria-label="문제 풀이 이해도 근거">
+      <button className="text-button" type="button" aria-expanded={expanded} onClick={() => setExpanded(!expanded)}>
+        {expanded ? '문제 풀이 근거 접기' : '문제 풀이 근거 확인하기'} {expanded ? '↑' : '↓'}
+      </button>
+      {expanded && (query.isPending ? (
+        <p className="helper-text" role="status">문제 풀이 근거 불러오는 중…</p>
+      ) : query.isError || !query.data ? (
+        <div className="topic-understanding-error" role="alert">
+          <span>문제 풀이 근거를 불러오지 못했습니다.</span>
+          <button className="text-button" type="button" onClick={() => void query.refetch()}>다시 시도</button>
+        </div>
+      ) : query.data.items.length === 0 ? (
+        <p className="helper-text">이 주제에 표시할 개념이 없습니다.</p>
+      ) : <TopicUnderstandingResults data={query.data} onPageChange={setPage} />)}
+    </section>
+  )
+}
+
 
 const learningStatusLabels: Record<LearningStatus, string> = {
   UNSEEN: '미학습',
@@ -196,7 +260,8 @@ export function AreaPage() {
                     <span>개념 읽기 완료</span>
                   </div>
                 </header>
-                <p className="topic-order-note">읽기 완료와 문제 풀이에 근거한 이해도는 다릅니다. 각 개념 상세 화면에서 최근 확정 정답과 자기채점 대기를 따로 확인할 수 있습니다.</p>
+                <p className="topic-order-note">읽기 완료와 문제 풀이에 근거한 이해도는 다릅니다. 아래에서 주제별 확정 정답 근거를 펼쳐 확인하거나 개념 상세에서 개별 근거를 볼 수 있습니다.</p>
+                <TopicUnderstandingEvidence key={selectedTopic.id} areaSlug={area.slug} topicId={selectedTopic.id} />
 
                 <div className="topic-concept-list curriculum-concept-list">
                   {selectedTopicConcepts.map((concept, conceptIndex) => (
