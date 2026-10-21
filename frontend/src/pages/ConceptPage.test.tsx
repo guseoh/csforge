@@ -93,6 +93,9 @@ describe('ConceptPage', () => {
     expect(markup).toContain('학습 마무리')
     expect(markup).toContain('이 개념 문제 풀기')
     expect(markup).toContain('concept-reader-meta')
+    expect(markup).toContain('핵심 내용을 스스로 설명해 보기')
+    expect(markup.indexOf('concept-reading-content')).toBeLessThan(markup.indexOf('active-recall-section'))
+    expect(markup.indexOf('active-recall-section')).toBeLessThan(markup.indexOf('concept-completion-section'))
     expect(markup).not.toContain('chip-row')
   })
 

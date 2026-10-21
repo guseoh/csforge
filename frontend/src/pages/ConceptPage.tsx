@@ -5,6 +5,7 @@ import { EmptyState, ErrorState, PageSkeleton } from '../components/AsyncStates'
 import { ConceptLearningRail } from '../components/ConceptLearningRail'
 import { ConceptReferences } from '../components/ConceptReferences'
 import { InterviewRecallSection } from '../components/InterviewRecallSection'
+import { ActiveRecallSection } from '../components/ActiveRecallSection'
 import { MarkdownContent } from '../components/MarkdownContent'
 import { useToast } from '../components/toast/ToastProvider'
 import { extractInterviewSection } from '../lib/interview-section'
@@ -50,6 +51,7 @@ function useConceptArticleToc(conceptId: number, contentMarkdown: string) {
       document.querySelectorAll<HTMLElement>('.concept-reading-content h2, .concept-reading-content h3'),
     )
     const extraSectionCandidates: { element: HTMLElement | null; heading: TocHeading }[] = [
+      { element: document.getElementById('active-recall'), heading: { id: 'active-recall', label: '스스로 설명해 보기', level: 2 } },
       { element: document.getElementById('interview'), heading: { id: 'interview', label: '면접에서 이렇게 나옵니다', level: 2 } },
       { element: document.getElementById('learning-actions'), heading: { id: 'learning-actions', label: '학습 마무리', level: 2 } },
       { element: document.getElementById('personal-note'), heading: { id: 'personal-note', label: '학습 노트', level: 2 } },
@@ -239,9 +241,11 @@ function ConceptContent({ data, conceptId, tocProps }: { data: ConceptDetailMode
 
       <CompactConceptArticleToc {...tocProps} />
 
-      <article className="concept-reading-content" aria-label={`${data.title} 학습 노트`}>
+      <article id="concept-reading-start" className="concept-reading-content" aria-label={`${data.title} 학습 노트`}>
         <MarkdownContent dedupeLeadingHeading={data.title}>{bodyMarkdown}</MarkdownContent>
       </article>
+
+      <ActiveRecallSection key={data.contentKey} contentKey={data.contentKey} bodyMarkdown={bodyMarkdown} />
 
       {interview && <InterviewRecallSection section={interview} />}
 
