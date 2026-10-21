@@ -183,6 +183,11 @@
   background: var(--surface-interactive);
 }
 
+/* The mobile theme options live inside the utility popover to preserve header space. */
+.utility-menu-theme {
+  display: none;
+}
+
 .search-palette-trigger {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
@@ -486,5 +491,35 @@
   .account-menu > button {
     width: 36px;
     height: 36px;
+  }
+}
+
+@media (max-width: 680px) {
+  .topbar-actions > .theme-control {
+    display: none;
+  }
+
+  .utility-menu-panel {
+    width: min(224px, calc(100vw - 32px));
+  }
+
+  .utility-menu-theme {
+    display: grid;
+    gap: 8px;
+    padding: 10px 8px 4px;
+    border-top: 1px solid var(--border-subtle);
+    color: var(--text-muted);
+    font-size: var(--type-meta);
+  }
+
+  .utility-menu-theme .theme-control {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .utility-menu-theme .theme-control button {
+    width: 44px;
+    height: 44px;
   }
 }
