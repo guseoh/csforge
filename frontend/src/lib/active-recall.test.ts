@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { selectActiveRecallPrompt } from './active-recall'
+import { extractInterviewSection } from './interview-section'
 
 describe('selectActiveRecallPrompt', () => {
   it('uses a reviewed, content-specific explanatory passage without manufacturing an answer', () => {
@@ -45,6 +46,24 @@ describe('selectActiveRecallPrompt', () => {
     expect(exercise?.sourceHeading).toBe(null)
     expect(exercise?.guideMarkdown).toContain('형식을 먼저 결정')
     expect(exercise?.prompt).toContain('문제 상황과 핵심 원리')
+  })
+
+  it('keeps curated interview Q&A separate from the general active recall passage', () => {
+    const markdown = [
+      '# JDBC 트랜잭션',
+      '트랜잭션을 시작할 때는 작업 단위를 지정하고 실패 시 되돌릴 수 있어야 합니다. 실무에서는 처리 경계와 예외 발생 시점을 함께 판단해야 합니다.',
+      '### 트랜잭션 실패와 롤백',
+      '오류가 발생한 경우 같은 트랜잭션으로 묶인 작업을 되돌리는 과정이 필요합니다. 연결 반환 전에 상태를 복원하지 않으면 다음 요청에도 영향을 미칠 수 있습니다.',
+      '### 면접에서 이렇게 나옵니다',
+      '#### Q. 트랜잭션의 실패 시에는 어떻게 해야 하나요?',
+      '원문 면접 답변은 예외 상황과 롤백 정책을 구분합니다.',
+    ].join('\\n')
+    const extracted = extractInterviewSection(markdown)
+    expect(extracted.interview?.questions).toHaveLength(1)
+    const exercise = selectActiveRecallPrompt(extracted.bodyMarkdown)
+    expect(exercise?.sourceHeading).toBe('트랜잭션 실패와 롤백')
+    expect(exercise?.guideMarkdown).not.toContain('원문 면접 답변')
+    expect(extracted.interview?.questions[0].answerMarkdown).toContain('롤백 정책')
   })
 
   it('does not create an unsupported response for content with no meaningful explanation', () => {
