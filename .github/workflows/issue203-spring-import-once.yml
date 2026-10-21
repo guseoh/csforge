@@ -1,0 +1,197 @@
+name: Issue 203 Spring historical import and Reader QA
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/issue203-spring-import-once.yml'
+      - 'frontend/scripts/issue203-spring-reader-once.mjs'
+
+permissions:
+  contents: read
+
+jobs:
+  spring-precision-live-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Stage original and corrected Spring files for isolated import
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/issue203-spring-old /tmp/issue203-spring-new
+          for p in container/application-context mvc/dispatcher-servlet scope-lifecycle/scope-proxy data-jpa/fetch-plan; do
+            name="$(basename "$p").md"
+            git show fffa3e789df5ce00b3708af073481d6de1c7d8e6:"content/spring/$p.md" > "/tmp/issue203-spring-old/$name"
+            cp "content/spring/$p.md" "/tmp/issue203-spring-new/$name"
+          done
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: gradle
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Start isolated PostgreSQL and Redis
+        run: |
+          docker compose up -d postgres redis
+          for i in $(seq 1 60); do
+            if docker compose exec -T postgres pg_isready -U csforge -d csforge; then exit 0; fi
+            sleep 2
+          done
+          exit 1
+      - name: Start actual Spring backend from corrected PR source
+        run: |
+          cd backend
+          chmod +x gradlew
+          nohup ./gradlew bootRun --no-daemon > /tmp/issue203-spring-backend.log 2>&1 < /dev/null &
+          echo $! > /tmp/issue203-spring-backend.pid
+          for i in $(seq 1 180); do
+            if curl -fsS http://127.0.0.1:8080/actuator/health/readiness >/dev/null 2>&1; then
+              echo 'Spring ready'
+              exit 0
+            fi
+            sleep 2
+          done
+          tail -n 140 /tmp/issue203-spring-backend.log
+          exit 1
+      - name: Create persisted learning history then run historical import and exact reimport
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json
+          import pathlib
+          import subprocess
+          import urllib.request
+          import uuid
+          import hashlib
+
+          BASE='http://127.0.0.1:8080'
+          names=['application-context.md','dispatcher-servlet.md','scope-proxy.md','fetch-plan.md']
+          def sql(q):
+              return subprocess.check_output(
+                  ['docker','compose','exec','-T','postgres','psql','-U','csforge','-d','csforge','-At','-c',q],text=True).strip()
+          def api(path,method='GET',payload=None):
+              data=None if payload is None else json.dumps(payload,ensure_ascii=False).encode()
+              headers={'Accept':'application/json'}
+              if data is not None: headers['Content-Type']='application/json'
+              if method=='POST': headers['Idempotency-Key']=str(uuid.uuid4())
+              request=urllib.request.Request(BASE+path,headers=headers,data=data,method=method)
+              with urllib.request.urlopen(request,timeout=180) as resp:
+                  body=resp.read()
+                  return json.loads(body) if body else None
+          def import_files(folder):
+              def form_parts(digest=None):
+                  boundary='Issue203'+uuid.uuid4().hex
+                  parts=[]
+                  for name in names:
+                      content=pathlib.Path(folder,name).read_bytes()
+                      parts.append((f'--{boundary}\r\nContent-Disposition: form-data; name="files"; filename="{name}"\r\nContent-Type: text/markdown\r\n\r\n'.encode()+content+b'\r\n'))
+                  if digest is not None:
+                      parts.append(f'--{boundary}\r\nContent-Disposition: form-data; name="previewDigest"\r\n\r\n{digest}\r\n'.encode())
+                  parts.append(f'--{boundary}--\r\n'.encode())
+                  return b''.join(parts),f'multipart/form-data; boundary={boundary}'
+              def post(path,body,mime):
+                  req=urllib.request.Request(BASE+path,data=body,method='POST',headers={'Content-Type':mime})
+                  with urllib.request.urlopen(req,timeout=180) as res: return json.load(res)
+              body,mime=form_parts()
+              preview=post('/api/imports/preview',body,mime)
+              assert preview['canApply'] and preview['totals']['errors']==0,preview
+              body,mime=form_parts(preview['previewDigest'])
+              applied=post('/api/imports/apply',body,mime)
+              assert applied['totals']['failed']==0,applied
+              return preview,applied
+          def digest(table):
+              return sql("select md5(coalesce(string_agg(row_to_json(t)::text,chr(10) order by row_to_json(t)::text),'')) from "+table+" t")
+
+          assert api('/api/auth/session')['mode']=='LOCAL'
+          initial=api('/api/canonical-bootstrap','POST')
+          assert initial['success'] and initial['totalItems']==3380 and initial['totals']['created']==3380,initial
+          print('PASS first canonical import 3380 CREATED')
+          ck=['spring.core.container.application-context','spring.core.mvc.dispatcher-servlet','spring.core.scope-lifecycle.scope-proxy','spring.core.data-jpa.fetch-plan']
+          ids={k:int(sql("select id from concept where content_key='"+k+"'")) for k in ck}
+          for k,cid in ids.items():
+              detail=api('/api/concepts/'+str(cid))
+              assert detail['contentKey']==k
+          qid=int(sql("select id from question where content_key like 'spring.%' and question_type='MULTIPLE_CHOICE' order by id limit 1"))
+          correct=sql("select c.choice_key from question_answer a join question_choice c on c.id=a.choice_id where a.question_id="+str(qid)+" and a.answer_kind='CORRECT_CHOICE'")
+          start=api('/api/quizzes/questions/'+str(qid)+'/practice','POST')
+          assert start['questionCount']==1
+          session=api('/api/quizzes/'+str(start['quizId']))
+          wrongChoice=next(c['choiceKey'] for c in session['questions'][0]['choices'] if c['choiceKey']!=correct)
+          api('/api/quizzes/'+str(start['quizId'])+'/questions/'+str(qid)+'/answer','PUT',{'selectedChoiceKey':wrongChoice,'answerText':None,'reviewNeeded':True})
+          api('/api/quizzes/'+str(start['quizId'])+'/submit','POST')
+          result=api('/api/quizzes/'+str(start['quizId'])+'/result')
+          assert result['wrong']==1
+          assert int(sql('select count(*) from wrong_note'))>=1
+          assert int(sql('select count(*) from review_schedule'))>=1
+          api('/api/concepts/'+str(ids[ck[0]])+'/note','PUT',{'content':'issue203-spring-note-preserve'})
+          api('/api/wrong-notes/'+str(qid)+'/note','PUT',{'content':'issue203-spring-wrongnote-preserve'})
+          tables=['personal_note','concept_progress','quiz_session','attempt','wrong_note','review_schedule','review_history','question_answer','question_concept','concept_reference']
+          baseline={t:digest(t) for t in tables}
+          oldP,oldA=import_files('/tmp/issue203-spring-old')
+          assert oldP['totals']['updated']==4 and oldA['totals']['updated']==4,(oldP['totals'],oldA['totals'])
+          newP,newA=import_files('/tmp/issue203-spring-new')
+          assert newP['totals']['updated']==4 and newA['totals']['updated']==4,(newP['totals'],newA['totals'])
+          repeatP,repeatA=import_files('/tmp/issue203-spring-new')
+          assert repeatP['totals']['unchanged']==4 and repeatP['totals']['updated']==0,repeatP
+          assert repeatA['totals']['unchanged']==4 and repeatA['totals']['updated']==0,repeatA
+          replay=api('/api/canonical-bootstrap','POST')
+          assert replay['success'] and replay['totals']['unchanged']==3380 and replay['totals']['updated']==0 and replay['totals']['errors']==0,replay
+          assert baseline=={t:digest(t) for t in tables},'student history/reference relationships changed'
+          assert ids=={k:int(sql("select id from concept where content_key='"+k+"'")) for k in ck}
+          assert api('/api/quizzes/'+str(start['quizId'])+'/result')['wrong']==1
+          for k,cid in ids.items():
+              body=api('/api/concepts/'+str(cid))['contentMarkdown']
+              terms=['BeanPostProcessor 초기화 후 처리','HandlerExceptionResolver','prototype scoped proxy','@EntityGraph']
+              assert terms[ck.index(k)] in body,k
+          pathlib.Path('/tmp/issue203-spring-reader-ids.json').write_text(json.dumps(ids))
+          print('PASS old→corrected Preview/Apply 4 UPDATED each, reimport 4 UNCHANGED and full bootstrap 3380 UNCHANGED')
+          print('PASS 10-table personal/history and Reference relationship digests, 4 Concept stable IDs, WrongNote/ReviewSchedule, results')
+          PY
+      - name: Pass real concept IDs to browser
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json,os
+          ids=json.load(open('/tmp/issue203-spring-reader-ids.json'))
+          envs={'LIVE_SPRING_CONTEXT_ID':'spring.core.container.application-context',
+           'LIVE_SPRING_MVC_ID':'spring.core.mvc.dispatcher-servlet',
+           'LIVE_SPRING_SCOPE_ID':'spring.core.scope-lifecycle.scope-proxy',
+           'LIVE_SPRING_FETCH_ID':'spring.core.data-jpa.fetch-plan'}
+          with open(os.environ['GITHUB_ENV'],'a') as w:
+              for k,v in envs.items(): w.write(k+'='+str(ids[v])+'\n')
+          PY
+      - name: Install React and Chromium
+        working-directory: frontend
+        run: |
+          npm ci
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Test all four Readers in light and dark mobile and desktop with real API
+        working-directory: frontend
+        run: |
+          npm run dev -- --host 127.0.0.1 --port 4179 > /tmp/issue203-vite.log 2>&1 &
+          for i in $(seq 1 60); do
+            if curl -fsS http://127.0.0.1:4179/ >/dev/null 2>&1; then break; fi
+            sleep 2
+          done
+          node scripts/issue203-spring-reader-once.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: issue203-spring-live-reader-screenshots
+          path: frontend/issue203-spring-reader-evidence/*.png
+          if-no-files-found: warn
+      - name: Safe diagnostics on failure
+        if: failure()
+        run: |
+          tail -n 140 /tmp/issue203-spring-backend.log || true
+          tail -n 80 /tmp/issue203-vite.log || true
+          docker compose ps || true
