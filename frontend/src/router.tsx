@@ -14,6 +14,7 @@ import { defaultQuizSearch, parseQuizSearch } from './lib/quiz-search'
 import { defaultWrongNoteSearch, parseWrongNoteSearch } from './lib/wrong-note-search'
 import { parseReviewSearch } from './lib/review-search'
 import { parseSearchSearch } from './lib/search-search'
+import { parseInsightsSearch } from './lib/insights-search'
 import { isStaleLazyChunkError } from './lib/route-errors'
 
 const AreaPage = lazyRouteComponent(() => import('./pages/AreaPage'), 'AreaPage')
@@ -225,7 +226,7 @@ const rootRoute = createRootRoute({
   notFoundComponent: NotFoundPage,
 })
 
-const indexRoute = createRoute({ getParentRoute: () => rootRoute, path: '/', component: DashboardPage })
+const indexRoute = createRoute({ getParentRoute: () => rootRoute, path: '/', validateSearch: (search) => parseInsightsSearch(search), component: DashboardPage })
 const loginRoute = createRoute({ getParentRoute: () => rootRoute, path: '/login', component: LoginPage })
 
 const learningRoute = createRoute({
