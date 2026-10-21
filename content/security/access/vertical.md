@@ -52,6 +52,17 @@ public void publishCanonicalContent(...) { ... }
 
 컨트롤러 외의 호출자가 서비스를 사용할 수 있거나 유스케이스 자체가 높은 권한을 요구한다면 메서드 보안을 추가할 수 있습니다. 다만 모든 계층에 애너테이션을 중복해 정책의 위치를 불분명하게 만들지 않습니다.
 
+메서드에 `@PreAuthorize`를 **붙이는 것만으로 보안 검사 동작이 보장되지는 않습니다.** 예를 들어 Spring 설정에 `@EnableMethodSecurity`를 활성화하고, Spring이 관리하는 빈을 **프록시 경유**로 호출해야 기본 메서드 보안 인터셉터가 적용됩니다.
+
+```java
+@Configuration
+@EnableMethodSecurity
+class MethodSecurityConfig {
+}
+```
+
+단순히 `new AdminService()`로 만든 객체나 같은 빈 내부의 `this.publishCanonicalContent()`처럼 프록시를 우회하는 호출에는 일반적인 proxy 기반 인가가 적용되지 않을 수 있습니다. 실제 일반 사용자로 관리자 메서드를 호출하는 **거부 테스트**까지 확인해야 합니다. 관련 L3 Concept인 `security.core.context-authz.method-security`에서 호출 경계를 더 깊게 다룹니다.
+
 ### 역할 hierarchy를 과도하게 단순화하지 않는다
 
 관리자가 모든 데이터에 접근할 수 있어야 하는지, 고객 지원 담당자는 환불 없이 조회만 할 수 있어야 하는지처럼 권한을 기능 단위로 나눌 필요가 있습니다.

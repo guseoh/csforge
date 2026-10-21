@@ -41,6 +41,17 @@ Spring Security 메서드 보안은 Spring AOP 인터셉터가 메서드 호출 
     대상 메서드
 ```
 
+다음처럼 설정에서 `@EnableMethodSecurity`를 활성화해야 애너테이션 기반 메서드 보안의 인터셉터가 구성됩니다.
+
+```java
+@Configuration
+@EnableMethodSecurity
+class MethodSecurityConfig {
+}
+```
+
+기본적인 Spring AOP 프록시 방식에서는 **Spring 관리 빈을 프록시를 통해 호출한 경우**에만 인터셉터를 거칩니다. 직접 생성한 객체나 같은 인스턴스 내부의 `this.method()` 호출에서는 `@PreAuthorize`가 평가되지 않을 수 있습니다. 따라서 설정 활성화와 실제 호출 경로를 함께 검증하고, 애너테이션 존재 여부가 아니라 **인가되지 않은 호출이 실제로 거부되는지** 테스트해야 합니다.
+
 ### 메서드 인자가 필요한 소유권 정책도 표현할 수 있다
 
 ```java

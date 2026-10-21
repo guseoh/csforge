@@ -20,7 +20,7 @@ references:
     referenceType: OFFICIAL
     language: en
     displayOrder: 2
-    relationNote: "`../` 경로 조작으로 기준 디렉터리를 벗어나는 위험 확인"
+    relationNote: "`../` 등 경로 조작과 허용 저장 경로 검증에 관한 설명을 참고한다. 이 문서의 구형 `%00`(NUL) 확장자 우회 예시는 현재 Java NIO의 일반적인 동작으로 해석하지 않는다."
 ---
 # 파일 업로드와 경로 순회(path traversal) 경계
 
@@ -34,7 +34,7 @@ Path target = uploadRoot.resolve(originalFilename); // 위험할 수 있음
 uploadRoot = /app/uploads
 filename   = ../../config/secret.yml
 
-resolve 결과가 기준 디렉터리 밖으로 벗어남할 수 있음
+resolve 결과가 기준 디렉터리 밖으로 벗어날 수 있음
 ```
 
 ### 저장 이름과 사용자 표시 이름을 분리한다
