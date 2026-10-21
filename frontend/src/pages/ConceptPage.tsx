@@ -326,10 +326,16 @@ function ConceptContent({ data, conceptId, tocProps }: { data: ConceptDetailMode
           {data.previous ? <Link className="navigation-card" to="/concepts/$conceptId" params={{ conceptId: String(data.previous.id) }}><span>← 이전 개념</span><strong>{data.previous.title}</strong></Link> : <span />}
           {data.next ? <Link className="navigation-card next" to="/concepts/$conceptId" params={{ conceptId: String(data.next.id) }}><span>다음 개념 →</span><strong>{data.next.title}</strong></Link> : <span />}
         </div>
+        <Link className="secondary-button" to="/compare" search={{ left: conceptId }}>이 개념 비교하기</Link>
         {data.relatedConcepts.length > 0 && (
           <div className="concept-related-list">
             <p className="eyebrow">이 주제의 관련 개념</p>
-            {data.relatedConcepts.map((related) => <Link key={related.id} to="/concepts/$conceptId" params={{ conceptId: String(related.id) }}>{related.title} <span>레벨 {related.level}</span></Link>)}
+            {data.relatedConcepts.map((related) => (
+              <div className="compare-area-row" key={related.id}>
+                <Link to="/concepts/$conceptId" params={{ conceptId: String(related.id) }}>{related.title} <span>레벨 {related.level}</span></Link>
+                <Link className="compare-source-link" to="/compare" search={{ left: conceptId, right: related.id }}>나란히 읽기</Link>
+              </div>
+            ))}
           </div>
         )}
       </section>

@@ -285,6 +285,7 @@ export function SearchPage() {
                     <div className="search-result-actions">
                       {primary?.kind === 'question' && <QuestionPracticeAction questionId={primary.questionId} />}
                       {primary && primary.kind !== 'question' && <button className="secondary-button" type="button" onClick={() => openResult(item)}>{primary.kind === 'external' ? '자료 열기' : item.documentType === 'WRONG_NOTE' ? '오답 노트 열기' : '개념 열기'}</button>}
+                      {item.documentType === 'CONCEPT' && <button className="text-button" type="button" onClick={() => void navigate({ to: '/compare', search: { left: item.sourceId } })}>개념 비교하기</button>}
                       {(item.documentType === 'REFERENCE' || item.documentType === 'QUESTION') && related?.kind === 'concept' && <button className="text-button" type="button" onClick={() => void navigate({ to: '/concepts/$conceptId', params: { conceptId: String(related.conceptId) } })}>관련 개념 보기</button>}
                     </div>
                   </article>

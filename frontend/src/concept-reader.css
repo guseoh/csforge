@@ -892,3 +892,7 @@
     text-align: center;
   }
 }
+
+/* #219: comparison entry on related concepts. */
+.concept-related-list .compare-area-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.concept-related-list .compare-area-row > a:first-child { flex: 1; min-width: 0; }

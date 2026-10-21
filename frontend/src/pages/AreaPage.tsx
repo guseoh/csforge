@@ -273,7 +273,8 @@ export function AreaPage() {
 
                 <div className="topic-concept-list curriculum-concept-list">
                   {selectedTopicConcepts.map((concept, conceptIndex) => (
-                    <Link className="topic-concept-row curriculum-concept-row" key={concept.id} to="/concepts/$conceptId" params={{ conceptId: String(concept.id) }}>
+                    <div className="compare-area-row" key={concept.id}>
+                      <Link className="topic-concept-row curriculum-concept-row" to="/concepts/$conceptId" params={{ conceptId: String(concept.id) }}>
                       <span className="topic-concept-index">{String(conceptIndex + 1).padStart(2, '0')}</span>
                       <span className="topic-concept-copy">
                         <strong>{concept.title}</strong>
@@ -284,7 +285,9 @@ export function AreaPage() {
                         {concept.learningStatus === 'COMPLETED' ? '✓ 완료' : learningStatusLabels[concept.learningStatus]}
                       </span>
                       <span className="topic-guide-arrow" aria-hidden="true">→</span>
-                    </Link>
+                      </Link>
+                      <Link className="compare-source-link" to="/compare" search={{ left: concept.id }} aria-label={`${concept.title} 비교하기`}>비교하기</Link>
+                    </div>
                   ))}
                 </div>
 
@@ -386,7 +389,8 @@ export function AreaPage() {
             </div>
             <div className="concept-list">
               {conceptsQuery.data.items.map((concept) => (
-                <Link className="concept-list-item" key={concept.id} to="/concepts/$conceptId" params={{ conceptId: String(concept.id) }}>
+                <div className="compare-area-row" key={concept.id}>
+                  <Link className="concept-list-item" to="/concepts/$conceptId" params={{ conceptId: String(concept.id) }}>
                   <div className="concept-list-main">
                     <h3>{concept.title}</h3>
                     <p>{concept.summary ?? '요약이 아직 없습니다.'}</p>
@@ -397,7 +401,9 @@ export function AreaPage() {
                     </div>
                   </div>
                   <span className="concept-topic">{concept.topicTitle}</span>
-                </Link>
+                  </Link>
+                  <Link className="compare-source-link" to="/compare" search={{ left: concept.id }} aria-label={`${concept.title} 비교하기`}>비교하기</Link>
+                </div>
               ))}
             </div>
             <div className="pagination" aria-label="개념 페이지네이션">
