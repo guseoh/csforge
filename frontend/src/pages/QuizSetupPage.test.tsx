@@ -179,9 +179,8 @@ describe('QuizSetupPage concept practice count', () => {
     expect(markup).toContain('<button class="primary-button" type="button" disabled="">선택 조건으로 시작</button>')
     expect(mocks.createMutationFn).not.toBeNull()
   })
-})
 
-describe('QuizSetupPage applied filters and recovery', () => {
+  // Applied settings scenarios reuse the same quiz-query fixtures.
   it('summarizes concept scope, question count, and time limit without hiding quick presets', () => {
     mocks.search = {
       ...mocks.search,

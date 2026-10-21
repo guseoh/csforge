@@ -110,9 +110,8 @@ describe('QuizSessionPage submit recovery', () => {
     expect(mocks.persistence && (mocks.persistence as { clearLocalDrafts: ReturnType<typeof vi.fn> }).clearLocalDrafts).toHaveBeenCalled()
     expect(mocks.navigate).toHaveBeenCalledWith({ to: '/quiz/$quizId/result', params: { quizId: '41' } })
   })
-})
 
-describe('QuizSessionPage accessibility and shortcut boundaries', () => {
+  // Shortcut and persistence regression cases share the complete active-session fixture.
   it.each([
     ['IN_PROGRESS', false, true],
     ['IN_PROGRESS', true, false],
