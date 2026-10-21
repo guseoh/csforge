@@ -39,7 +39,7 @@ type ArticleTocProps = {
   onNavigate: (id: string) => void
 }
 
-function useConceptArticleToc(conceptId: number) {
+function useConceptArticleToc(conceptId: number, contentMarkdown: string) {
   const [headings, setHeadings] = useState<TocHeading[]>([])
   const [activeId, setActiveId] = useState('')
 
@@ -105,7 +105,7 @@ function useConceptArticleToc(conceptId: number) {
       window.removeEventListener('resize', scheduleSync)
       window.removeEventListener('hashchange', syncHash)
     }
-  }, [conceptId])
+  }, [conceptId, contentMarkdown])
 
   const navigateToHeading = (id: string) => {
     setActiveId(id)
@@ -159,7 +159,7 @@ export function CompactConceptArticleToc({ headings, activeId, onNavigate }: Art
   )
 }
 
-function ConceptContent({ data, conceptId }: { data: ConceptDetailModel; conceptId: number }) {
+function ConceptContent({ data, conceptId, tocProps }: { data: ConceptDetailModel; conceptId: number; tocProps: ArticleTocProps }) {
   const { noteContent, noteState, updateNote, flushNote } = useConceptNotePersistence(conceptId, data.personalNote?.content ?? '')
   const { bodyMarkdown, interview } = extractInterviewSection(data.contentMarkdown)
   const isCompleted = data.progress.learningStatus === 'COMPLETED'
@@ -184,6 +184,8 @@ function ConceptContent({ data, conceptId }: { data: ConceptDetailModel; concept
           {data.progress.bookmarked && <span>북마크됨</span>}
         </div>
       </header>
+
+      <CompactConceptArticleToc {...tocProps} />
 
       <article className="concept-reading-content" aria-label={`${data.title} 학습 노트`}>
         <MarkdownContent dedupeLeadingHeading={data.title}>{bodyMarkdown}</MarkdownContent>
@@ -383,7 +385,7 @@ export function ConceptPage() {
 }
 
 function ConceptReaderLayout({ data, conceptId }: { data: ConceptDetailModel; conceptId: number }) {
-  const { headings, activeId, navigateToHeading } = useConceptArticleToc(conceptId)
+  const { headings, activeId, navigateToHeading } = useConceptArticleToc(conceptId, data.contentMarkdown)
   const tocProps = { headings, activeId, onNavigate: navigateToHeading }
 
   return (
@@ -404,8 +406,7 @@ function ConceptReaderLayout({ data, conceptId }: { data: ConceptDetailModel; co
           <span>/</span>
           <strong>{data.topic.title}</strong>
         </nav>
-        <CompactConceptArticleToc {...tocProps} />
-        <ConceptContent key={conceptId} data={data} conceptId={conceptId} />
+        <ConceptContent key={conceptId} data={data} conceptId={conceptId} tocProps={tocProps} />
       </section>
       <ConceptArticleToc {...tocProps} />
     </div>
