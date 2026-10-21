@@ -47,7 +47,7 @@ export function selectActiveRecallPrompt(markdown: string): ActiveRecallPrompt |
     const passage = lines.slice(header.index + 1, end).join('\n').trim()
     // Ignore sections that contain only headings, an image, or a short definition.
     const plain = passage.replace(/```[\s\S]*?```/g, '').replace(/!\[[^\]]*\]\([^)]*\)/g, '').trim()
-    if (plain.length < 80) return
+    if (plain.length < 60) return
     sections.push({ heading: header.title, markdown: passage, score: FOCUSED_HEADING.test(header.title) ? 1 : 0 })
   })
 
@@ -66,7 +66,7 @@ export function selectActiveRecallPrompt(markdown: string): ActiveRecallPrompt |
     .split(/\n\s*\n/)
     .filter((paragraph) => !/^\s*(?:```|!\[|\|)/.test(paragraph.trim()))
     .slice(0, 2).join('\n\n').trim()
-  if (body.length < 80) return null
+  if (body.length < 60) return null
   return {
     sourceHeading: null,
     prompt: '본문에서 설명한 문제 상황과 핵심 원리를 예시와 함께 자신의 말로 정리해 보세요.',

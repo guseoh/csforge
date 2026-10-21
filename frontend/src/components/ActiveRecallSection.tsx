@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { MarkdownContent } from './MarkdownContent'
 import { selectActiveRecallPrompt } from '../lib/active-recall'
 import { clearRecallDraft, MAX_RECALL_DRAFT_LENGTH, readRecallDraft, writeRecallDraft } from '../lib/active-recall-draft'
@@ -10,7 +10,7 @@ export function ActiveRecallSection({ contentKey, bodyMarkdown }: {
   contentKey: string
   bodyMarkdown: string
 }) {
-  const exercise = selectActiveRecallPrompt(bodyMarkdown)
+  const exercise = useMemo(() => selectActiveRecallPrompt(bodyMarkdown), [bodyMarkdown])
   const [text, setText] = useState(() => readRecallDraft(contentKey))
   const [autoSave, setAutoSave] = useState(true)
   const [storageError, setStorageError] = useState(false)
