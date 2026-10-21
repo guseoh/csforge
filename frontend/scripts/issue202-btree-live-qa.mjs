@@ -9,7 +9,7 @@ const answer='B-tree는 키를 정렬된 상태로 유지하므로 하한 위치
 const contentKey='database.core.index.btree.q2';
 const file='../content/database/index/questions.json';
 const pg=(sql)=>execFileSync('docker',['compose','exec','-T','postgres','psql','-U','csforge','-d','csforge','-At','-c',sql],{cwd:'..',encoding:'utf8'}).trim();
-const api=async (path,method='GET',body=null)=>{const r=await fetch('http://127.0.0.1:8080'+path,{method,headers:{'Content-Type':'application/json','Idempotency-Key':randomUUID()},body:body?JSON.stringify(body):undefined});assert(r.ok,`${method} ${path}: ${r.status} ${await r.text()}`);return r.json();};
+const api=async (path,method='GET',body=null)=>{const r=await fetch('http://127.0.0.1:8080'+path,{method,headers:{'Content-Type':'application/json','Idempotency-Key':randomUUID()},body:body?JSON.stringify(body):undefined});if(!r.ok)throw new Error(`${method} ${path}: ${r.status} ${await r.text()}`);return r.json();};
 const qid=Number(pg(`select id from question where content_key='${contentKey}'`));
 assert(qid>0);
 const count=()=>Number(pg(`select count(*) from question_answer where question_id=${qid} and answer_kind='ACCEPTED_TEXT'`));
