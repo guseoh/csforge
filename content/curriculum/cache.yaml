@@ -24,7 +24,7 @@ topics:
 - key: cache.core.models
   title: 캐시 모델과 키
   order: 10
-  scope: Cache-Aside, write-through/write-behind 선택과 키 네임스페이스·직렬화 경계를 다룬다.
+  scope: Cache-Aside, write-through/write-behind, 키·직렬화 계약과 인스턴스별 L1/공유 L2 복사본의 수명을 다룬다.
   boundary: Redis 명령 자체보다 애플리케이션 사용 사례의 캐시 계약과 PostgreSQL 원본 상태를 우선한다.
   concepts:
   - key: cache.core.models.cache-aside
@@ -48,6 +48,13 @@ topics:
     objective: 키 네임스페이스, 테넌트·버전 구분과 직렬화 스키마 변경이 키 충돌·호환성에 미치는 영향을 판단한다.
     density: STANDARD
     visualization: NONE
+  - key: cache.core.models.local-shared-cache
+    title: 로컬 캐시와 공유 캐시의 최신성 경계
+    order: 40
+    level: 2
+    objective: 인스턴스별 로컬(L1)·공유 Redis(L2) 캐시의 복사본 수명과 원본 DB의 책임을 구별하고 무효화 누락·연결 단절·재연결 상황의 TTL·버전 검증·로컬 캐시 비우기 판단을 설명한다.
+    density: CORE
+    visualization: DIAGRAM
 - key: cache.core.consistency
   title: 캐시 최신성과 무효화
   order: 20

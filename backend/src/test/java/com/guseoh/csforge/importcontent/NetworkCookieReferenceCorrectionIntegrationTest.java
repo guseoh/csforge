@@ -72,7 +72,7 @@ class NetworkCookieReferenceCorrectionIntegrationTest {
     void threePublishedAndDraftReferenceCorrectionsPreserveHistoryAndReimport() {
         CanonicalBootstrapExecutionResult initial = bootstrapService.bootstrap();
         assertTrue(initial.success(), () -> "Initial canonical bootstrap: " + initial);
-        assertEquals(3380, initial.totalItems());
+        assertEquals(CanonicalInventory.TOTAL_ITEMS, initial.totalItems());
         assertEquals(0, initial.totals().errors());
 
         Map<String, CanonicalContentFile> canonical = new LinkedHashMap<>();
@@ -164,7 +164,7 @@ class NetworkCookieReferenceCorrectionIntegrationTest {
 
         CanonicalBootstrapExecutionResult repeated = bootstrapService.bootstrap();
         assertTrue(repeated.success(), () -> "Full-pack reimport: " + repeated);
-        assertEquals(3380, repeated.totals().unchanged());
+        assertEquals(CanonicalInventory.TOTAL_ITEMS, repeated.totals().unchanged());
         assertEquals(0, repeated.totals().errors());
         assertEquals(0, repeated.totals().failed());
         assertEquals(notesBefore, jdbc.queryForList("select * from personal_note order by id"));
