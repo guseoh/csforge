@@ -70,9 +70,27 @@ CSS import 순서와 selector specificity가 모두 cascade에 영향을 준다.
 - `components/UtilityMenu.tsx`, `header-search.css`: 680px 이하 헤더의 3버튼 테마 경쟁 제거. 도구 팝오버에서 system/light/dark 그대로 제공, 44px 터치 타깃.
 - `router.tsx`: Route 이동·팝오버 전환 시 모바일 탐색 메뉴 닫기, Escape 시 트리거로 focus 복귀.
 - `app-update.css`: 업데이트 배너를 정상 흐름 안에서 wrap하고 모바일 액션을 44px 터치 영역으로 유지.
+- `foundation.css`: primary/secondary disabled의 전역 opacity 희석을 semantic neutral 상태로 교체.
 - `components/UtilityMenu.test.tsx`: 도구 메뉴에서 세 테마 옵션과 펼침 상태의 마크업 회귀 방지.
 
 삭제한 CSS 파일은 **0개**다. 파일 수 기준 일괄 정리를 하지 않는다.
+
+## 정적 토큰 대비 점검 (브라우저 판정과 구분)
+
+`foundation.css`의 표면색과 텍스트색을 WCAG 상대 휘도 수식으로 계산한 **기본 토큰 조합**의 대비다. 반투명도, 중첩 배경, 실제 computed style, 배경 이미지, 전체 상태 조합은 포함하지 않으므로 최종 시각 QA의 대체가 아니다.
+
+| 용도 | Light 대비 | Dark 대비 |
+| --- | ---: | ---: |
+| 일반 본문 / page surface | 12.03:1 | 12.58:1 |
+| muted text / page surface | 6.31:1 | 7.50:1 |
+| faint text / page surface | 5.28:1 | 5.22:1 |
+| accent link / page surface | 5.17:1 | 9.07:1 |
+| inline/code text / code surface | 11.57:1 | 13.27:1 |
+| success / semantic surface | 6.56:1 | 8.84:1 |
+| warning / semantic surface | 6.05:1 | 10.77:1 |
+| error / semantic surface | 5.80:1 | 8.02:1 |
+
+`styles.css`의 전역 `button:disabled { opacity: 0.55; }`는 버튼의 **배경과 글자 전체**를 투명 처리하므로, 기본 토큰 대비가 충분하더라도 비활성 Primary 버튼에서 시각적 대비가 크게 떨어질 수 있다. 공용 Primary/Secondary 버튼에 한하여 `foundation.css`가 opacity를 1로 복구하고, neutral muted text + interactive surface 조합으로 비활성 상태를 구분한다. 다른 특수 버튼은 각자 의미 상태를 가지므로 일괄 변경하지 않는다.
 
 ## 검증 게이트 (증거가 없는 항목은 PASS로 기록하지 않는다)
 

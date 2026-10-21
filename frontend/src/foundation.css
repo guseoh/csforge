@@ -321,6 +321,17 @@ textarea {
   background: var(--surface-interactive);
 }
 
+/* Native disabled opacity would wash primary text and fill together, losing contrast. */
+.primary-button:disabled,
+.secondary-button:disabled {
+  opacity: 1;
+  border-color: var(--border-default);
+  color: var(--text-muted);
+  background: var(--surface-interactive);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
 .text-link,
 .text-button,
 button.text-link {
