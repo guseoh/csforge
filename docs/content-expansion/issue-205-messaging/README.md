@@ -11,12 +11,12 @@
 ## Real isolated import and history
 - [Actions #39549684405](https://github.com/guseoh/csforge/actions/runs/39549684405) **SUCCESS**. Isolated Postgres 16, Java 25 Spring Boot LOCAL, old canonical baseline **3,380 CREATED**. Uploaded new MD + full existing Topic's Question JSON: **4 CREATED + 9 existing Question UNCHANGED**, 0 ERROR. Exact replay **13 UNCHANGED / 0 UPDATED**, new MC correctly graded.
 - Existing Concept/Question IDs, historic WrongNote/Review/Quiz/personal note and **10 history/relation filtered digests** unchanged.
-- This QA happened against the pre-Cache base and tests **this independent Messaging delta**, not both new concepts together. After Cache merges, canonical should contain 2 new Concepts + 6 Questions and require the shared test inventory to become 872 source files / 723 concepts / 2,531 Questions / 3,388 items. Rebase against latest `main` before final CI.
+- This QA happened against the pre-Cache base and tests **this independent Messaging delta**, not both new concepts together. Following [Cache PR #261](https://github.com/guseoh/csforge/pull/261) merge commit `2a77fb00fb9fc57ffbba56c2c910dd7cfae2616c`, this branch has been reconciled with the latest `main` via a two-parent merge commit. The combined canonical test inventory is **872 source files / 723 Concepts / 2,531 Questions / 3,388 items**. Full combined canonical regression runs in final Repository Validation; independent QA remains historical evidence.
 - No production canonical Import; disposable QA workflow removed after success.
 
 ## Gate
 - [x] Existing Area and new Concept/Question review + primary sources
 - [x] Real isolated new Pack Import + exact replay + history/ID protection
-- [ ] Rebase onto latest post-Cache main, adjust central test inventory to final corpus
+- [x] Reconcile with post-Cache main, adjust shared test inventory to the final combined corpus (3,388 items)
 - [ ] Final Repository Validation, diff/review threads, squash merge
 - [ ] Human Usage Check excluded, not performed
