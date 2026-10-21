@@ -70,3 +70,14 @@ PostgreSQL 공식 계약 기준으로 내용과 구현 의존성을 구별한다
 - 확인 근거: [PostgreSQL 16 §5.4 Foreign Keys](https://www.postgresql.org/docs/16/ddl-constraints.html).
 - 동일한 기존 Concept의 본문만 보강했으며 contentKey, frontmatter, Reference, Question 및 메타데이터는 유지한다.
 - 앞서 실행한 area 별 PostgreSQL·Chromium QA는 이전 교정 HEAD 기준이다. 이 추가 문구를 포함한 HEAD의 Repository Validation 및 3 Area 합본 라이브 QA는 후속 실행에서 별도 확인한다.
+
+## Issue #202 — 실제 Human Usage Check 발견 단답형 오채점 교정 (2026-10-21)
+
+- 근거: [Issue #202의 사용자 주도 Sandbox Human Usage Check](https://github.com/guseoh/csforge/issues/202#issuecomment-6305601913). `database.core.index.btree.q2`의 정렬/하한 탐색/인접 리프 순회 설명이 의미상 올바르지만 `ShortAnswerGradingStrategy`의 trim+lowercase 후 `acceptedAnswers` **완전 일치** 정책으로 오답 처리되는 false negative를 재현.
+- 교정: `content/database/index/questions.json`의 기존 문항에 수동 검증 입력 `B-tree는 키를 정렬된 상태로 유지하므로 하한 위치를 찾은 뒤 인접한 리프 엔트리를 순서대로 스캔할 수 있다.`를 **정확히 하나의 acceptedAnswers로 추가**(8 → 9). 해당 문항 외 Question·Concept, 난도/유형, 정답 설명, contentKey, Reference, 채점 알고리즘은 변경하지 않았다.
+- [일회성 격리 Spring/PostgreSQL/Chromium 회귀 #39530733270](https://github.com/guseoh/csforge/actions/runs/39530733270) **SUCCESS** (검증 HEAD `8d4c6e3c0c918e8c01e9b78e038145ec99860774`). Job `btree-live-postgres-browser` 성공; screenshot artifact `issue202-btree-corrected-result`, ID `12315218063`.
+- 실증 순서: 새 격리 PostgreSQL에 이전 PR #254 HEAD(`9840cba0`)로 전체 canonical **3,380 CREATED, ERROR 0** → 해당 문항의 허용 답안 8개 확인 → 동일 답을 실제 API로 제출하여 **오답 판정, Wrong Note 1건, ReviewSchedule 1건** 생성 → 수정된 9개 허용 답안 파일의 실제 **Import Preview(1 UPDATED) → Apply(1 UPDATED)** → 재import **8 UNCHANGED, UPDATED 0** → 기존 question ID 및 허용 답안 행 ID·WrongNote/Attempt/ReviewSchedule/QuizSession 건수 보존 → 새 Quiz를 Chromium 실제 프런트에서 열어 동일 답을 입력·제출, **결과 `GRADED`, `correct=true`** 및 DB에 맞는 정답 Attempt가 저장됨을 확인. 이전 오답 기록은 오답 그대로 남음.
+- `CanonicalBootstrapService`는 실행 중인 백엔드의 classpath 패키징된 `canonical-content`를 읽으므로, 실행 후 소스 파일을 수정하고 bootstrap 호출만으로 변경을 감지한다고 가정하면 안 된다. 이 테스트는 최종적으로 **Multipart `/api/imports/preview` + `/api/imports/apply`**의 실제 경로로 재검증했다.
+- 실패한 앞선 회귀 시도는 테스트 하네스의 성공 응답 body 이중 소비 및 실행 중 패키징 리소스 갱신 가정 때문이며, 콘텐츠 교정 자체의 실패 증거가 아니다. 성공한 런의 증거를 기준으로 판정한다.
+- 검증용 script/workflow는 실행 성공 후 제거하고 이 문서·실행 로그·스크린샷만 유지한다. 사용자 Work Sandbox의 데이터는 폐기되는 임시 환경으로, 여기서 기존 WrongNote를 직접 변경하거나 재채점하지 않았다.
+- **한계/남은 게이트**: 이는 *해당 재현 답안 한 건*의 정답 false negative 해소이며 자유 서술 전체에 대한 의미 채점 보장은 아님. 3 Area 전체 Content Full Review, 사용자 승인, 합본 Preview/Apply 및 실사용 Human Usage Check 최종 판정은 Issue #202의 별도 게이트. 세 PR Draft·미병합, Production DB 변경 없음.
