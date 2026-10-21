@@ -452,8 +452,69 @@
     column-gap: 28px;
   }
 
-  .concept-toc {
+  .concept-toc-desktop {
     display: none;
+  }
+
+  .concept-toc-compact {
+    display: block;
+    margin: 0 0 24px;
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+    background: var(--surface-raised);
+  }
+
+  .concept-toc-compact summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 44px;
+    gap: 12px;
+    padding: 10px 16px;
+    color: var(--text-strong);
+    font-weight: 650;
+    cursor: pointer;
+  }
+
+  .concept-toc-compact summary span {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    font-weight: 450;
+  }
+
+  .concept-toc-compact summary:focus-visible,
+  .concept-toc-compact a:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .concept-toc-compact nav {
+    display: grid;
+    max-height: min(46vh, 360px);
+    overflow-y: auto;
+    padding: 4px 12px 12px;
+    border-top: 1px solid var(--border-subtle);
+  }
+
+  .concept-toc-compact a {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 9px 12px;
+    color: var(--text-muted);
+    font-size: 0.87rem;
+    text-decoration: none;
+    overflow-wrap: anywhere;
+  }
+
+  .concept-toc-compact a.toc-level-3 {
+    padding-left: 24px;
+  }
+
+  .concept-toc-compact a:hover,
+  .concept-toc-compact a.active {
+    color: var(--text-strong);
+    background: var(--surface-interactive);
   }
 }
 
@@ -529,6 +590,15 @@
     justify-items: start;
     text-align: left;
   }
+}
+
+/* Anchor targets remain visible below the sticky header after TOC navigation. */
+.concept-reading-content h2,
+.concept-reading-content h3,
+#interview,
+#personal-note,
+#references {
+  scroll-margin-top: 96px;
 }
 
 /* R3: Reference guidance is supporting reading material, not a competing card layout. */

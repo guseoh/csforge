@@ -32,7 +32,14 @@ const learningStatusLabels: Record<LearningStatus, string> = {
   REVIEW_NEEDED: '복습 필요',
 }
 
-function ConceptArticleToc({ conceptId }: { conceptId: number }) {
+
+type ArticleTocProps = {
+  headings: TocHeading[]
+  activeId: string
+  onNavigate: (id: string) => void
+}
+
+function useConceptArticleToc(conceptId: number) {
   const [headings, setHeadings] = useState<TocHeading[]>([])
   const [activeId, setActiveId] = useState('')
 
@@ -40,59 +47,112 @@ function ConceptArticleToc({ conceptId }: { conceptId: number }) {
     const articleHeadings = Array.from(
       document.querySelectorAll<HTMLElement>('.concept-reading-content h2, .concept-reading-content h3'),
     )
-    const extraSectionCandidates: { element: HTMLElement | null; heading: TocHeading }[] = [
+    const extras: { element: HTMLElement | null; heading: TocHeading }[] = [
       { element: document.getElementById('interview'), heading: { id: 'interview', label: '면접에서 이렇게 나옵니다', level: 2 } },
       { element: document.getElementById('learning-actions'), heading: { id: 'learning-actions', label: '학습 마무리', level: 2 } },
       { element: document.getElementById('personal-note'), heading: { id: 'personal-note', label: '학습 노트', level: 2 } },
       { element: document.getElementById('references'), heading: { id: 'references', label: '함께 볼 자료', level: 2 } },
-    ]
-    const extraSections = extraSectionCandidates.filter(
-      (item): item is { element: HTMLElement; heading: TocHeading } => item.element !== null,
-    )
-    const trackedElements = [...articleHeadings, ...extraSections.map((item) => item.element)]
-    const mappedHeadings: TocHeading[] = articleHeadings.map((heading, index) => {
-      const id = `concept-${conceptId}-section-${index + 1}`
+    ].filter((item): item is { element: HTMLElement; heading: TocHeading } => item.element !== null)
+    const mapped = articleHeadings.map((heading, index): TocHeading => {
+      const id = 'concept-' + conceptId + '-section-' + (index + 1)
       heading.id = id
+      heading.tabIndex = -1
       return {
         id,
-        label: heading.textContent?.trim() || `섹션 ${index + 1}`,
+        label: heading.textContent?.trim() || '섹션 ' + (index + 1),
         level: heading.tagName === 'H3' ? 3 : 2,
       }
     })
-    const sectionHeadings = extraSections.map((item) => item.heading)
+    const targets = [...articleHeadings, ...extras.map((item) => item.element)]
+    const items = [...mapped, ...extras.map((item) => item.heading)]
+    extras.forEach((item) => { item.element.tabIndex = -1 })
+    setHeadings(items)
 
-    setHeadings([...mappedHeadings, ...sectionHeadings])
-    setActiveId(mappedHeadings[0]?.id ?? sectionHeadings[0]?.id ?? '')
+    let pendingFrame = 0
+    const syncActiveSection = () => {
+      pendingFrame = 0
+      let current = targets[0]?.id ?? ''
+      for (const target of targets) {
+        if (target.getBoundingClientRect().top <= 132) current = target.id
+        else break
+      }
+      setActiveId(current)
+    }
+    const scheduleSync = () => {
+      if (!pendingFrame) pendingFrame = window.requestAnimationFrame(syncActiveSection)
+    }
+    const syncHash = () => {
+      const hash = window.location.hash.slice(1)
+      if (targets.some((target) => target.id === hash)) {
+        setActiveId(hash)
+        document.getElementById(hash)?.scrollIntoView({ block: 'start' })
+      } else {
+        scheduleSync()
+      }
+    }
+    window.addEventListener('scroll', scheduleSync, { passive: true })
+    window.addEventListener('resize', scheduleSync)
+    window.addEventListener('hashchange', syncHash)
+    const initialFrame = window.requestAnimationFrame(syncHash)
 
-    const observer = new IntersectionObserver((entries) => {
-      const visible = entries
-        .filter((entry) => entry.isIntersecting)
-        .sort((left, right) => left.boundingClientRect.top - right.boundingClientRect.top)[0]
-      if (visible?.target.id) setActiveId(visible.target.id)
-    }, { rootMargin: '-18% 0px -72% 0px', threshold: [0, 1] })
-
-    trackedElements.forEach((element) => observer.observe(element))
-    return () => observer.disconnect()
+    return () => {
+      window.cancelAnimationFrame(initialFrame)
+      if (pendingFrame) window.cancelAnimationFrame(pendingFrame)
+      window.removeEventListener('scroll', scheduleSync)
+      window.removeEventListener('resize', scheduleSync)
+      window.removeEventListener('hashchange', syncHash)
+    }
   }, [conceptId])
 
-  if (headings.length === 0) return null
+  const navigateToHeading = (id: string) => {
+    setActiveId(id)
+    window.requestAnimationFrame(() => document.getElementById(id)?.focus({ preventScroll: true }))
+  }
 
+  return { headings, activeId, navigateToHeading }
+}
+
+function ConceptArticleToc({ headings, activeId, onNavigate }: ArticleTocProps) {
+  if (headings.length === 0) return null
   return (
-    <aside className="concept-toc" aria-label="이 글의 목차">
+    <aside className="concept-toc concept-toc-desktop" aria-label="이 글의 목차">
       <p className="concept-toc-title">이 글에서</p>
       <nav>
         {headings.map((heading) => (
           <a
-            className={`${heading.level === 3 ? 'toc-level-3' : 'toc-level-2'}${activeId === heading.id ? ' active' : ''}`}
-            href={`#${heading.id}`}
+            className={(heading.level === 3 ? 'toc-level-3' : 'toc-level-2') + (activeId === heading.id ? ' active' : '')}
+            href={'#' + heading.id}
             key={heading.id}
             aria-current={activeId === heading.id ? 'location' : undefined}
+            onClick={() => onNavigate(heading.id)}
           >
             {heading.label}
           </a>
         ))}
       </nav>
     </aside>
+  )
+}
+
+function CompactConceptArticleToc({ headings, activeId, onNavigate }: ArticleTocProps) {
+  if (headings.length === 0) return null
+  return (
+    <details className="concept-toc-compact">
+      <summary>이 글의 목차 <span>{headings.length}개 섹션</span></summary>
+      <nav aria-label="이 글의 목차">
+        {headings.map((heading) => (
+          <a
+            className={(heading.level === 3 ? 'toc-level-3' : 'toc-level-2') + (activeId === heading.id ? ' active' : '')}
+            href={'#' + heading.id}
+            key={heading.id}
+            aria-current={activeId === heading.id ? 'location' : undefined}
+            onClick={() => onNavigate(heading.id)}
+          >
+            {heading.label}
+          </a>
+        ))}
+      </nav>
+    </details>
   )
 }
 
@@ -316,7 +376,13 @@ export function ConceptPage() {
   if (conceptQuery.isPending) return <PageSkeleton rows={6} />
   if (conceptQuery.isError || !conceptQuery.data) return <ErrorState message="개념을 불러오지 못했습니다." onRetry={() => void conceptQuery.refetch()} />
 
-  const data = conceptQuery.data
+  return <ConceptReaderLayout data={conceptQuery.data} conceptId={conceptId} />
+}
+
+function ConceptReaderLayout({ data, conceptId }: { data: ConceptDetailModel; conceptId: number }) {
+  const { headings, activeId, navigateToHeading } = useConceptArticleToc(conceptId)
+  const tocProps = { headings, activeId, onNavigate: navigateToHeading }
+
   return (
     <div className="concept-workspace concept-reading-workspace">
       <ConceptLearningRail concept={data} />
@@ -328,16 +394,17 @@ export function ConceptPage() {
             to="/learning/$areaSlug"
             params={{ areaSlug: data.area.slug }}
             search={defaultLearningSearch}
-            hash={`topic-${data.topic.id}`}
+            hash={'topic-' + data.topic.id}
           >
             {data.area.name}
           </Link>
           <span>/</span>
           <strong>{data.topic.title}</strong>
         </nav>
+        <CompactConceptArticleToc {...tocProps} />
         <ConceptContent key={conceptId} data={data} conceptId={conceptId} />
       </section>
-      <ConceptArticleToc conceptId={conceptId} />
+      <ConceptArticleToc {...tocProps} />
     </div>
   )
 }
