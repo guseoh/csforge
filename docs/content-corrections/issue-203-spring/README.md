@@ -32,9 +32,18 @@
 ## 검증/남은 게이트
 
 1. Draft PR Repository Validation, 변경 파일 목록과 기존 key/frontmatter/질문 불변 확인.
-2. 전체 canonical에 포함된 **Spring Pack 격리 PostgreSQL Preview → Apply → exact reimport UNCHANGED**. 기존 personal/history 데이터 보존과 shared Reference identity 확인. **미완료**.
+2. 전체 canonical에 포함된 **Spring Pack 격리 PostgreSQL Preview → Apply → exact reimport UNCHANGED**. 기존 personal/history 데이터 보존과 shared Reference identity 확인. **2026-10-21 자동 회귀 PASS** (아래 증거).
 3. 기존 Wave 2 **37 Concept/77 Question 감사 결과를 교정본과 대조하는 ChatGPT 최종 전 범위 Content Review**. 현재 신규 77문항 독립 수기 전수 채점 완료를 주장하지 않는다.
-4. 독립 브라우저의 Reader, 모바일 375/데스크톱 1280, light/dark, 도식 가독성, 관련 Quiz 흐름 Human Usage Check. **미완료**.
+4. 독립 브라우저의 Reader, 모바일 375/데스크톱 1280, light/dark, 도식 가독성, 관련 Quiz 흐름 Human Usage Check. **16개 자동 live Reader 조건 PASS, 사람의 수동 Human Usage Check 미완료**.
 5. 사용자의 명시적 추가 승인 이전에는 **Draft 유지·병합 금지**. Production DB/Import/deploy 작업을 실행하지 않는다.
 
 #203의 나머지 Backend Engineering과 Security는 별도 순차 Slice로 진행한다.
+
+## 격리 PostgreSQL / 실제 Reader QA 자동 증거 (2026-10-21)
+
+- [GitHub Actions #39539474754](https://github.com/guseoh/csforge/actions/runs/39539474754) **SUCCESS** (당시 HEAD `db83d3561db99876367b7515205cc6833969f410`). 테스트는 ephemeral runner에서만 수행했고 운영 DB나 사용자 데이터에 접근하지 않았다.
+- 최종 Spring 교정본으로 Spring Boot/Java 25 + 별도 PostgreSQL/Redis 기동, canonical 전체 3,380개 `CREATED`.
+- Spring 원문 4개 파일을 **실제 Multipart Preview → Apply**로 되돌릴 때 `4 UPDATED`, 다시 PR 교정본으로 동일 API를 실행할 때 `4 UPDATED`. 다음 exact 4-file import: **4 UNCHANGED**. 전체 canonical rebootstrap: **3,380 UNCHANGED / 0 UPDATED / 0 ERROR**.
+- 변경 적용 전 격리 DB에 Spring 문제 오답 1건, WrongNote·ReviewSchedule, Concept 개인 노트 및 WrongNote 개인 메모를 먼저 저장했다. `personal_note`, `concept_progress`, `quiz_session`, `attempt`, `wrong_note`, `review_schedule`, `review_history`, `question_answer`, `question_concept`, `concept_reference` 총 10개 테이블 digest와 4 Concept ID 및 퀴즈 결과가 원문 복원·교정본 적용·정확한 재import 전후 동일했다.
+- 실제 backend 응답을 쓰는 React/Chromium Reader 4개 × light/dark × 375/1280px **16조건 PASS**. 교정된 핵심 문구 렌더·document overflow 없음·JS pageerror 없음 확인. Screenshot artifact: `issue203-spring-live-reader-screenshots` (ID `12319525217`, 16장).
+- **검증 한계:** 자동 Reader QA는 실제 사람의 가독성·인터랙션 검사 및 37 Concept/77 Question 독립 최종 내용 리뷰를 대체하지 않는다. 일회성 QA workflow/script는 성공 후 제거하고 GitHub Actions 기록과 이 문서만 유지한다.
