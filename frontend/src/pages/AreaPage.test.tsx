@@ -193,6 +193,23 @@ describe('AreaPage #211 next action and filter behavior', () => {
     expect(html).toContain('커리큘럼 순서')
   })
 
+  it('prefers a topic with unfinished learning over a review-only topic', () => {
+    const data = mocks.areaQuery.data as { topics: Array<Record<string, unknown>> }
+    data.topics = [
+      { ...data.topics[0], title: '복습만 남은 주제', unseenCount: 0, learningCount: 0, reviewNeededCount: 2 },
+      { ...data.topics[0], id: 58, title: '새로 학습할 주제', unseenCount: 1, learningCount: 0, reviewNeededCount: 0 },
+    ]
+    mocks.firstOutlineQuery = {
+      data: {
+        items: [concept(10, 57), concept(11, 58)],
+        page: { page: 0, size: 200, totalElements: 2, totalPages: 1, hasNext: false, hasPrevious: false },
+      },
+      isPending: false, isError: false, refetch: vi.fn(),
+    }
+    const html = renderToStaticMarkup(<AreaPage />)
+    expect(html).toContain('현재 주제</p><h2 id="topic-index-heading">새로 학습할 주제')
+  })
+
   it('does not request the entire outline when showing filtered results', () => {
     mocks.search = { ...mocks.search, topic: 57, level: '1' }
     renderToStaticMarkup(<AreaPage />)

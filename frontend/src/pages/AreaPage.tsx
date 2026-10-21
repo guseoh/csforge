@@ -91,8 +91,9 @@ export function AreaPage() {
   const outlineIsError = outlineQueries.some((query) => query.isError)
   const totalConcepts = area.topics.reduce((total, topic) => total + topic.publishedConceptCount, 0)
   const completedConcepts = area.topics.reduce((total, topic) => total + topic.completedConceptCount, 0)
-  const preferredTopic = area.topics.find((topic) => topic.learningCount > 0 || topic.reviewNeededCount > 0)
-    ?? area.topics.find((topic) => topic.completedConceptCount < topic.publishedConceptCount)
+  const preferredTopic = area.topics.find((topic) => topic.learningCount > 0)
+    ?? area.topics.find((topic) => topic.unseenCount > 0)
+    ?? area.topics.find((topic) => topic.reviewNeededCount > 0)
     ?? area.topics[0]
   const selectedTopic = area.topics.find((topic) => topic.id === selectedTopicId) ?? preferredTopic
   const selectedTopicIndex = selectedTopic ? area.topics.findIndex((topic) => topic.id === selectedTopic.id) : -1
