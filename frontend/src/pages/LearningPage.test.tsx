@@ -142,6 +142,26 @@ describe('LearningPage canonical bootstrap recovery', () => {
 })
 
 describe('LearningPage next-step navigation', () => {
+  beforeEach(() => {
+    mocks.areas.data = [area()]
+    mocks.areas.isPending = false
+    mocks.areas.isError = false
+    mocks.concepts.data = { items: [] }
+    mocks.concepts.isPending = false
+    mocks.concepts.isError = false
+    mocks.started.data = { items: [] }
+    mocks.started.isPending = false
+    mocks.started.isError = false
+    mocks.unseen.data = { items: [] }
+    mocks.unseen.isPending = false
+    mocks.unseen.isError = false
+    mocks.bootstrap.data = bootstrapStatus('READY')
+    mocks.mutation.data = null
+    mocks.mutation.isPending = false
+    mocks.mutation.isError = false
+    mocks.queryOptions = []
+  })
+
   const next = (id: number, learningStatus: ConceptListItem['learningStatus']): ConceptListItem => ({
     id, learningStatus, contentStatus: 'PUBLISHED', areaSlug: 'java', areaName: 'Java',
     topicId: 2, topicSlug: 'java-basics', topicTitle: '기본 문법',

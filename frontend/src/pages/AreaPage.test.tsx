@@ -138,6 +138,38 @@ describe('AreaPage outline loading', () => {
 })
 
 describe('AreaPage #211 next action and filter behavior', () => {
+  beforeEach(() => {
+    vi.stubGlobal('window', {
+      location: { hash: '' },
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+    })
+    mocks.search = { topic: undefined, q: '', level: 'all', status: 'ALL', bookmarked: 'false', sort: 'curriculum', page: 0 }
+    mocks.areaQuery = {
+      data: {
+        id: 1, slug: 'java', name: 'Java', description: null,
+        topics: [{
+          id: 57, slug: 'java-basics', title: 'Java basics', description: null,
+          publishedConceptCount: 4, completedConceptCount: 1, bookmarkedConceptCount: 0,
+          level1Count: 4, level2Count: 0, level3Count: 0, unseenCount: 1,
+          learningCount: 1, reviewNeededCount: 1,
+        }],
+      },
+      isPending: false, isError: false, refetch: vi.fn(),
+    }
+    mocks.firstOutlineQuery = {
+      data: {
+        items: [concept(1), concept(2), concept(3), concept(4)],
+        page: { page: 0, size: 200, totalElements: 4, totalPages: 1, hasNext: false, hasPrevious: false },
+      },
+      isPending: false, isError: false, refetch: vi.fn(),
+    }
+    mocks.remainingOutlinePages = []
+    mocks.remainingOutlineQueries = []
+    mocks.conceptQuery = { data: undefined, isPending: false, isError: false }
+    mocks.links = []
+  })
+
   it('offers separate next-learning and review actions in curriculum order', () => {
     mocks.firstOutlineQuery = {
       data: {
