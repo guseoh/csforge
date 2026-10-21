@@ -1,4 +1,3 @@
-import type { AttemptGradingStatus } from './quiz-api'
 import type { ReviewScheduleStatus, WrongNoteAttempt } from './wrong-note-api'
 
 /** Display schedule state without treating a missing due date as mastery. */
