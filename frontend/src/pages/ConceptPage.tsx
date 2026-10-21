@@ -473,6 +473,9 @@ function ConceptReaderLayout({ data, conceptId }: { data: ConceptDetailModel; co
           <span>/</span>
           <strong>{data.topic.title}</strong>
         </nav>
+        <Link className="topic-focus-back-link" to="/learning/$areaSlug/topics/$topicId/focus" params={{ areaSlug: data.area.slug, topicId: String(data.topic.id) }}>
+          Topic 집중 학습으로 돌아가기
+        </Link>
         <ConceptContent key={conceptId} data={data} conceptId={conceptId} tocProps={tocProps} />
       </section>
       <ConceptArticleToc {...tocProps} />

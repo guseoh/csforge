@@ -20,6 +20,7 @@ import { parseBookmarksSearch } from './lib/bookmarks-search'
 import { isStaleLazyChunkError } from './lib/route-errors'
 
 const AreaPage = lazyRouteComponent(() => import('./pages/AreaPage'), 'AreaPage')
+const TopicFocusPage = lazyRouteComponent(() => import('./pages/TopicFocusPage'), 'TopicFocusPage')
 const ConceptPage = lazyRouteComponent(() => import('./pages/ConceptPage'), 'ConceptPage')
 const ConceptComparePage = lazyRouteComponent(() => import('./pages/ConceptComparePage'), 'ConceptComparePage')
 const BookmarksPage = lazyRouteComponent(() => import('./pages/BookmarksPage'), 'BookmarksPage')
@@ -247,6 +248,8 @@ const areaRoute = createRoute({
   component: AreaPage,
 })
 
+const topicFocusRoute = createRoute({ getParentRoute: () => rootRoute, path: '/learning/$areaSlug/topics/$topicId/focus', component: TopicFocusPage })
+
 const conceptRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/concepts/$conceptId',
@@ -275,6 +278,7 @@ const routeTree = rootRoute.addChildren([
   loginRoute,
   learningRoute,
   areaRoute,
+  topicFocusRoute,
   conceptRoute,
   compareRoute,
   bookmarksRoute,
