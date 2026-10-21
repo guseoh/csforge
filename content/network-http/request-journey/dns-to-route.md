@@ -14,6 +14,14 @@ references:
     referenceType: OFFICIAL
     language: en
     displayOrder: 1
+  - url: "https://www.rfc-editor.org/rfc/rfc1122.html#section-3.3.1"
+    title: "RFC 1122 §3.3.1: IP Routing"
+    referenceType: OFFICIAL
+    language: en
+    depth: section
+    recommendation: "호스트의 IP 라우팅 및 next-hop 선택 경계를 확인한다."
+    displayOrder: 2
+    relationNote: "DNS 조회 이후 IP 주소·라우팅·출력 인터페이스로 이어지는 별도 단계를 확인한다."
 ---
 # DNS 조회에서 라우팅까지
 

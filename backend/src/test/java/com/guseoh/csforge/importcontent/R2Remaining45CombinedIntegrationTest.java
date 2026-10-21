@@ -69,6 +69,8 @@ class R2Remaining45CombinedIntegrationTest {
         assertTrue(bootstrap.success(), () -> "Bootstrap: " + bootstrap);
         assertEquals(3380, bootstrap.totalItems());
         assertEquals(0, bootstrap.totals().errors());
+        long canonicalReferenceRelations = jdbc.queryForObject(
+                "select count(*) from concept_reference", Long.class);
 
         HistoricalReference[] historical;
         try (var input = getClass().getResourceAsStream(
@@ -153,7 +155,7 @@ class R2Remaining45CombinedIntegrationTest {
             }
         }
         long totalRelations = jdbc.queryForObject("select count(*) from concept_reference", Long.class);
-        assertEquals(1038L, totalRelations);
+        assertEquals(canonicalReferenceRelations, totalRelations);
         assertEquals(0, jdbc.queryForObject("select count(*) from (select concept_id, reference_id "
                 + "from concept_reference group by concept_id, reference_id having count(*)>1) duplicates", Integer.class));
         assertEquals(3, learningQueryService.getConcept(concept).references().size());

@@ -16,6 +16,13 @@ references:
     depth: section
     recommendation: "IPv4 주소, 헤더와 패킷 전달의 기본 규칙을 확인한다."
     displayOrder: 1
+  - url: "https://www.rfc-editor.org/rfc/rfc8200.html#section-3"
+    title: "RFC 8200 §3: IPv6 Hop Limit"
+    referenceType: OFFICIAL
+    language: en
+    depth: section
+    recommendation: "IPv6 Hop Limit 감소·폐기 조건과 IPv4 TTL의 차이를 확인한다."
+    displayOrder: 2
 ---
 # TTL과 Hop Limit
 

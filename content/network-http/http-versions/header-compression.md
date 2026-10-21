@@ -16,6 +16,14 @@ references:
     depth: section
     recommendation: "HTTP header compression state와 privacy 경계를 확인한다."
     displayOrder: 1
+  - url: "https://www.rfc-editor.org/rfc/rfc9204.html#section-2.1.2"
+    title: "RFC 9204 §2.1.2: QPACK Blocked Streams"
+    referenceType: OFFICIAL
+    language: en
+    depth: section
+    recommendation: "QPACK의 Required Insert Count·encoder stream·blocked decoding을 확인한다."
+    displayOrder: 2
+    relationNote: "QPACK은 HPACK과 달리 독립 스트림의 갱신 도착 순서에 따라 일시적으로 block될 수 있는 이유를 읽는다."
 ---
 # HTTP 헤더 압축과 HPACK
 

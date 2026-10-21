@@ -16,6 +16,13 @@ references:
     depth: section
     recommendation: "IPv4 주소, 헤더와 패킷 전달의 기본 규칙을 확인한다."
     displayOrder: 1
+  - url: "https://www.rfc-editor.org/rfc/rfc4632.html#section-3"
+    title: "RFC 4632 §3: CIDR Address Prefixes"
+    referenceType: OFFICIAL
+    language: en
+    depth: section
+    recommendation: "IPv4 접두사 표기, classless 주소 범위와 최장 접두사 선호 규칙을 확인한다."
+    displayOrder: 2
 ---
 # CIDR prefix와 서브넷
 

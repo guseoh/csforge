@@ -16,6 +16,14 @@ references:
     depth: section
     recommendation: "로컬 링크에서 IPv4 주소와 이더넷 주소를 대응시키는 ARP 동작을 확인한다."
     displayOrder: 1
+  - url: "https://www.cisco.com/c/en/us/support/docs/lan-switching/ethernet/12006-chapter22.html"
+    title: "Cisco: Troubleshoot LAN Switching Environments"
+    referenceType: OFFICIAL
+    language: en
+    depth: section
+    recommendation: "스위치 MAC 주소 학습·프레임 전달과 VLAN별 브로드캐스트 도메인을 확인한다."
+    displayOrder: 2
+    relationNote: "같은 VLAN의 브로드캐스트 범위와 물리 스위치·VLAN 경계의 구별을 중심으로 읽는다."
 ---
 # 브로드캐스트 도메인
 
