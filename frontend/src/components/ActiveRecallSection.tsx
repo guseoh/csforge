@@ -59,6 +59,13 @@ export function ActiveRecallSection({ contentKey, bodyMarkdown }: {
             maxLength={MAX_RECALL_DRAFT_LENGTH}
             value={text}
             onChange={(event) => updateAnswer(event.target.value)}
+            onKeyDown={(event) => {
+              if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 's') {
+                event.preventDefault()
+                event.stopPropagation()
+                if (autoSave) setStorageError(!writeRecallDraft(contentKey, text))
+              }
+            }}
             placeholder="글을 보지 않고 핵심 원리, 예시, 주의점을 떠올려 적어보세요."
           />
           <div className="active-recall-draft-controls">
