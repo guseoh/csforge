@@ -78,12 +78,13 @@ public class LearningController {
             @RequestParam(required = false) Short level,
             @RequestParam(required = false) LearningStatus learningStatus,
             @RequestParam(required = false) Boolean bookmarked,
+            @RequestParam(required = false) Long bookmarkCategoryId,
             @RequestParam(required = false) String q,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "30") int size,
             @RequestParam(defaultValue = "CURRICULUM") String sort) {
         return apiMapper.toResponse(queryService.listConcepts(new ConceptSearchCriteria(
-                area, topicId, level, learningStatus, bookmarked, q, page, size, ConceptSort.from(sort))));
+                area, topicId, level, learningStatus, bookmarked, q, page, size, ConceptSort.from(sort), bookmarkCategoryId)));
     }
 
     @GetMapping("/concepts/{conceptId}")

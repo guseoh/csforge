@@ -3,6 +3,7 @@ package com.guseoh.csforge.learning.application;
 import java.time.Clock;
 import java.time.Instant;
 
+import com.guseoh.csforge.learning.domain.BookmarkCategoryAssignmentRepository;
 import com.guseoh.csforge.learning.domain.Concept;
 import com.guseoh.csforge.learning.domain.ConceptProgress;
 import com.guseoh.csforge.learning.domain.ConceptProgressRepository;
@@ -23,6 +24,7 @@ public class LearningCommandService {
 
     private final ConceptRepository conceptRepository;
     private final ConceptProgressRepository progressRepository;
+    private final BookmarkCategoryAssignmentRepository categoryAssignments;
     private final ConceptViewHistoryRepository viewHistoryRepository;
     private final PersonalNoteRepository noteRepository;
     private final Clock clock;
@@ -53,7 +55,11 @@ public class LearningCommandService {
 
         applyStatus(progress, requestedStatus, changedAt);
         applyBookmark(progress, requestedBookmarked);
-        return toProgressView(progressRepository.saveAndFlush(progress));
+        ConceptProgress saved = progressRepository.saveAndFlush(progress);
+        if (Boolean.FALSE.equals(requestedBookmarked)) {
+            categoryAssignments.findById(conceptId).ifPresent(categoryAssignments::delete);
+        }
+        return toProgressView(saved);
     }
 
     @Transactional

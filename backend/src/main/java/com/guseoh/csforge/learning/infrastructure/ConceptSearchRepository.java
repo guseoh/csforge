@@ -15,6 +15,7 @@ import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Order;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.Subquery;
 import org.springframework.stereotype.Repository;
 
 import com.guseoh.csforge.learning.application.ConceptSearchCriteria;
@@ -59,7 +60,7 @@ public class ConceptSearchRepository {
                 builder.coalesce(progress.<LearningStatus>get("status"), LearningStatus.UNSEEN),
                 builder.coalesce(progress.<Boolean>get("bookmarked"), false),
                 progress.get("lastViewedAt")));
-        dataQuery.where(predicates(builder, concept, topic, area, progress, criteria));
+        dataQuery.where(predicates(dataQuery, builder, concept, topic, area, progress, criteria));
         dataQuery.orderBy(orderBy(builder, concept, topic, area, progress, criteria));
 
         TypedQuery<ConceptSearchItem> query = entityManager.createQuery(dataQuery);
@@ -78,11 +79,12 @@ public class ConceptSearchRepository {
         Join<Concept, ConceptProgress> progress = concept.join("progress", JoinType.LEFT);
 
         countQuery.select(builder.count(concept));
-        countQuery.where(predicates(builder, concept, topic, area, progress, criteria));
+        countQuery.where(predicates(countQuery, builder, concept, topic, area, progress, criteria));
         return entityManager.createQuery(countQuery).getSingleResult();
     }
 
     private Predicate[] predicates(
+            CriteriaQuery<?> parentQuery,
             CriteriaBuilder builder,
             Root<Concept> concept,
             Join<Concept, Topic> topic,
@@ -112,6 +114,18 @@ public class ConceptSearchRepository {
         if (criteria.bookmarked() != null) {
             Expression<Boolean> bookmarked = builder.coalesce(progress.<Boolean>get("bookmarked"), false);
             predicates.add(builder.equal(bookmarked, criteria.bookmarked()));
+        }
+        if (criteria.bookmarkCategoryId() != null) {
+
+            Subquery<Long> match = parentQuery.subquery(Long.class);
+            Root<com.guseoh.csforge.learning.domain.BookmarkCategoryAssignment> assignment =
+                    match.from(com.guseoh.csforge.learning.domain.BookmarkCategoryAssignment.class);
+            match.select(assignment.get("conceptId"));
+            match.where(
+                    builder.equal(assignment.get("conceptId"), concept.get("id")),
+                    builder.equal(assignment.get("category").get("id"), criteria.bookmarkCategoryId()));
+            predicates.add(builder.isTrue(progress.get("bookmarked")));
+            predicates.add(builder.exists(match));
         }
         if (criteria.query() != null) {
             String pattern = "%" + criteria.query().toLowerCase(Locale.ROOT) + "%";

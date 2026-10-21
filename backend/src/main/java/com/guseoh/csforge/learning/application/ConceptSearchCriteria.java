@@ -11,7 +11,8 @@ public record ConceptSearchCriteria(
         String query,
         int page,
         int size,
-        ConceptSort sort) {
+        ConceptSort sort,
+        Long bookmarkCategoryId) {
 
     public ConceptSearchCriteria {
         areaSlug = normalize(areaSlug);
@@ -31,9 +32,17 @@ public record ConceptSearchCriteria(
         if (query != null && query.length() > 200) {
             throw new LearningBadRequestException("q must be at most 200 characters");
         }
+        if (bookmarkCategoryId != null && bookmarkCategoryId <= 0) {
+            throw new LearningBadRequestException("bookmarkCategoryId must be a positive id");
+        }
         if (sort == null) {
             sort = ConceptSort.CURRICULUM;
         }
+    }
+
+    public ConceptSearchCriteria(String areaSlug, Long topicId, Short level, LearningStatus learningStatus,
+            Boolean bookmarked, String query, int page, int size, ConceptSort sort) {
+        this(areaSlug, topicId, level, learningStatus, bookmarked, query, page, size, sort, null);
     }
 
     private static String normalize(String value) {
