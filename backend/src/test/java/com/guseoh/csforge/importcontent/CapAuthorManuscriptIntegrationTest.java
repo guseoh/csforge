@@ -56,7 +56,7 @@ class CapAuthorManuscriptIntegrationTest {
     void addsReadableManuscriptOnceAndPreservesBibliographyAndLearningState() {
         var first = bootstrapService.bootstrap();
         assertTrue(first.success(), () -> "Bootstrap: " + first);
-        assertEquals(3380, first.totalItems());
+        assertEquals(CanonicalInventory.TOTAL_ITEMS, first.totalItems());
         assertEquals(0, first.totals().errors());
         String after = new String(contentSource.load().stream().filter(f -> f.path().equals(PATH))
                 .findFirst().orElseThrow().content(), StandardCharsets.UTF_8).replace("\r\n", "\n");
@@ -90,7 +90,7 @@ class CapAuthorManuscriptIntegrationTest {
         assertEquals(0, repeatPreview.updated());
         var repeat = bootstrapService.bootstrap();
         assertTrue(repeat.success());
-        assertEquals(3380, repeat.totals().unchanged());
+        assertEquals(CanonicalInventory.TOTAL_ITEMS, repeat.totals().unchanged());
         assertEquals(0, repeat.totals().errors());
         assertEquals(0, repeat.totals().failed());
         assertEquals(notes, jdbc.queryForList("select * from personal_note order by id"));

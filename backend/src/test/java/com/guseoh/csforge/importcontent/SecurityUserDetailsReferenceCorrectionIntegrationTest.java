@@ -65,7 +65,7 @@ class SecurityUserDetailsReferenceCorrectionIntegrationTest {
     void replacesUserDetailsUrlWithoutChangingQuestionOrPersonalHistory() {
         CanonicalBootstrapExecutionResult initial = bootstrapService.bootstrap();
         assertTrue(initial.success(), () -> "Initial canonical bootstrap: " + initial);
-        assertEquals(3380, initial.totalItems());
+        assertEquals(CanonicalInventory.TOTAL_ITEMS, initial.totalItems());
         assertEquals(0, initial.totals().errors());
 
         CanonicalContentFile source = contentSource.load().stream()
@@ -126,7 +126,7 @@ class SecurityUserDetailsReferenceCorrectionIntegrationTest {
 
         CanonicalBootstrapExecutionResult reimport = bootstrapService.bootstrap();
         assertTrue(reimport.success(), () -> "Full canonical exact reimport: " + reimport);
-        assertEquals(3380, reimport.totals().unchanged());
+        assertEquals(CanonicalInventory.TOTAL_ITEMS, reimport.totals().unchanged());
         assertEquals(0, reimport.totals().errors());
         assertEquals(0, reimport.totals().failed());
         assertEquals(notesBefore, jdbc.queryForList("select * from personal_note order by id"));

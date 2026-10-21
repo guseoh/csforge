@@ -67,7 +67,7 @@ class R2Remaining45CombinedIntegrationTest {
     void appliesAll45TogetherOnceAndPreservesLearningHistory() throws Exception {
         var bootstrap = bootstrapService.bootstrap();
         assertTrue(bootstrap.success(), () -> "Bootstrap: " + bootstrap);
-        assertEquals(3380, bootstrap.totalItems());
+        assertEquals(CanonicalInventory.TOTAL_ITEMS, bootstrap.totalItems());
         assertEquals(0, bootstrap.totals().errors());
         long canonicalReferenceRelations = jdbc.queryForObject(
                 "select count(*) from concept_reference", Long.class);
@@ -172,7 +172,7 @@ class R2Remaining45CombinedIntegrationTest {
         assertEquals(0, repeatApply.failed());
         var exact = bootstrapService.bootstrap();
         assertTrue(exact.success(), () -> "Full exact reimport: " + exact);
-        assertEquals(3380, exact.totals().unchanged());
+        assertEquals(CanonicalInventory.TOTAL_ITEMS, exact.totals().unchanged());
         assertEquals(0, exact.totals().errors());
         assertEquals(0, exact.totals().failed());
         assertEquals(history, history());

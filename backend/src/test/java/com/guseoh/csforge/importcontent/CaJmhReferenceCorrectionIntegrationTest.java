@@ -66,7 +66,7 @@ class CaJmhReferenceCorrectionIntegrationTest {
     void changesJmhLearningUrlWhileKeepingReferenceIdAndPersonalHistory() {
         CanonicalBootstrapExecutionResult first = bootstrapService.bootstrap();
         assertTrue(first.success(), () -> "Initial bootstrap: " + first);
-        assertEquals(3380, first.totalItems());
+        assertEquals(CanonicalInventory.TOTAL_ITEMS, first.totalItems());
         assertEquals(0, first.totals().errors());
 
         CanonicalContentFile file = contentSource.load().stream()
@@ -135,7 +135,7 @@ class CaJmhReferenceCorrectionIntegrationTest {
 
         CanonicalBootstrapExecutionResult repeated = bootstrapService.bootstrap();
         assertTrue(repeated.success(), () -> "Full canonical exact reimport: " + repeated);
-        assertEquals(3380, repeated.totals().unchanged());
+        assertEquals(CanonicalInventory.TOTAL_ITEMS, repeated.totals().unchanged());
         assertEquals(0, repeated.totals().errors());
         assertEquals(0, repeated.totals().failed());
         assertEquals(notesBefore, jdbc.queryForList("select * from personal_note order by id"));

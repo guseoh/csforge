@@ -62,7 +62,7 @@ class OsSourceScopeReferenceCorrectionIntegrationTest {
     void correctsTwoReadingGuidesWithoutRecreatingReferencesOrHistory() {
         CanonicalBootstrapExecutionResult initial = bootstrapService.bootstrap();
         assertTrue(initial.success(), () -> "Initial canonical bootstrap: " + initial);
-        assertEquals(3380, initial.totalItems());
+        assertEquals(CanonicalInventory.TOTAL_ITEMS, initial.totalItems());
         assertEquals(0, initial.totals().errors());
 
         String kafka = canonical(KAKAO_PATH);
@@ -124,7 +124,7 @@ class OsSourceScopeReferenceCorrectionIntegrationTest {
 
         CanonicalBootstrapExecutionResult repeated = bootstrapService.bootstrap();
         assertTrue(repeated.success(), () -> "Exact canonical reimport: " + repeated);
-        assertEquals(3380, repeated.totals().unchanged());
+        assertEquals(CanonicalInventory.TOTAL_ITEMS, repeated.totals().unchanged());
         assertEquals(0, repeated.totals().errors());
         assertEquals(0, repeated.totals().failed());
         assertEquals(kakaoRef, referenceId(kakaoId, KAKAO_URL));

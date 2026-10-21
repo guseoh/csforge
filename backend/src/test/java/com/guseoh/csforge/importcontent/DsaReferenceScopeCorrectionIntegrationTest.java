@@ -75,7 +75,7 @@ class DsaReferenceScopeCorrectionIntegrationTest {
     void updatesSixNotesAndPreservesFullCanonicalImportAndPersonalHistory() {
         CanonicalBootstrapExecutionResult initial = bootstrapService.bootstrap();
         assertTrue(initial.success(), () -> "Initial canonical import: " + initial);
-        assertEquals(3380, initial.totalItems());
+        assertEquals(CanonicalInventory.TOTAL_ITEMS, initial.totalItems());
         assertEquals(0, initial.totals().errors());
 
         Map<String, CanonicalContentFile> filesByPath = new LinkedHashMap<>();
@@ -170,7 +170,7 @@ class DsaReferenceScopeCorrectionIntegrationTest {
 
         CanonicalBootstrapExecutionResult repeated = bootstrapService.bootstrap();
         assertTrue(repeated.success(), () -> "Full-pack exact reimport: " + repeated);
-        assertEquals(3380, repeated.totals().unchanged());
+        assertEquals(CanonicalInventory.TOTAL_ITEMS, repeated.totals().unchanged());
         assertEquals(0, repeated.totals().errors());
         assertEquals(0, repeated.totals().failed());
         assertEquals(personalBefore, jdbc.queryForList("select * from personal_note order by id"));

@@ -61,7 +61,7 @@ class OsThreadReferenceScopeIntegrationTest {
     void limitsThreadIntroductionNoteWithoutRecreatingLinksOrErasingHistory() {
         CanonicalBootstrapExecutionResult first = bootstrapService.bootstrap();
         assertTrue(first.success(), () -> "Initial bootstrap: " + first);
-        assertEquals(3380, first.totalItems());
+        assertEquals(CanonicalInventory.TOTAL_ITEMS, first.totalItems());
         assertEquals(0, first.totals().errors());
 
         CanonicalContentFile input = contentSource.load().stream()
@@ -122,7 +122,7 @@ class OsThreadReferenceScopeIntegrationTest {
 
         CanonicalBootstrapExecutionResult repeated = bootstrapService.bootstrap();
         assertTrue(repeated.success(), () -> "Full-pack exact reimport: " + repeated);
-        assertEquals(3380, repeated.totals().unchanged());
+        assertEquals(CanonicalInventory.TOTAL_ITEMS, repeated.totals().unchanged());
         assertEquals(0, repeated.totals().errors());
         assertEquals(0, repeated.totals().failed());
         assertEquals(referenceIdBefore, referenceId(id));
