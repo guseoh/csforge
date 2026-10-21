@@ -53,6 +53,19 @@ chain.doFilter(request, response);
 
 인증 필터가 실패 응답을 반환하면 MVC 컨트롤러는 호출되지 않습니다. 컨트롤러의 중단점에 도달하지 않고 401이 발생한다면 먼저 보안 필터 체인을 확인합니다.
 
+### 요청 본문 스트림을 필터에서 먼저 소비하면?
+
+서블릿의 요청 본문은 공유되는 입력 스트림입니다. 인증·감사 로깅 필터가 `request.getInputStream()`을 읽어 버리면 뒤의 MVC 메시지 변환기(`@RequestBody` 파싱)가 기대한 본문을 받지 못할 수 있습니다.
+
+```text
+POST /orders {"itemId":17}
+  → Filter에서 InputStream 끝까지 읽기
+  → chain.doFilter(...)
+  → MVC에서 @RequestBody 읽기 시 empty stream / 역직렬화 오류
+```
+
+본문을 반드시 검사해야 한다면 먼저 헤더나 식별자만으로 처리할 수 있는지 확인하고, 필요한 경우에는 **전체 용량 상한이 있는 요청 래퍼**로 바이트를 복사하고 downstream에 재생 가능한 스트림을 제공하는 명시적 설계를 사용해야 합니다. Spring의 `ContentCachingRequestWrapper`는 읽힌 내용을 캐시하는 데 도움을 주지만 **다운스트림 요청 본문을 자동으로 되감아 재생해 주는 래퍼는 아닙니다.** 로그에서는 비밀번호·토큰·개인정보를 제거하고, 큰 본문을 무제한 버퍼링하지 않습니다.
+
 ### Spring 빈과 서블릿 필터를 연결한다
 
 Spring Security는 `DelegatingFilterProxy`와 `FilterChainProxy`로 서블릿 컨테이너의 필터와 Spring이 관리하는 보안 필터를 연결합니다.
