@@ -57,7 +57,7 @@ describe('selectActiveRecallPrompt', () => {
       '### 면접에서 이렇게 나옵니다',
       '#### Q. 트랜잭션의 실패 시에는 어떻게 해야 하나요?',
       '원문 면접 답변은 예외 상황과 롤백 정책을 구분합니다.',
-    ].join('\\n')
+    ].join('\n')
     const extracted = extractInterviewSection(markdown)
     expect(extracted.interview?.questions).toHaveLength(1)
     const exercise = selectActiveRecallPrompt(extracted.bodyMarkdown)
