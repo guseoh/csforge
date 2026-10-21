@@ -47,12 +47,15 @@ function useConceptArticleToc(conceptId: number) {
     const articleHeadings = Array.from(
       document.querySelectorAll<HTMLElement>('.concept-reading-content h2, .concept-reading-content h3'),
     )
-    const extras: { element: HTMLElement | null; heading: TocHeading }[] = [
+    const extraSectionCandidates: { element: HTMLElement | null; heading: TocHeading }[] = [
       { element: document.getElementById('interview'), heading: { id: 'interview', label: '면접에서 이렇게 나옵니다', level: 2 } },
       { element: document.getElementById('learning-actions'), heading: { id: 'learning-actions', label: '학습 마무리', level: 2 } },
       { element: document.getElementById('personal-note'), heading: { id: 'personal-note', label: '학습 노트', level: 2 } },
       { element: document.getElementById('references'), heading: { id: 'references', label: '함께 볼 자료', level: 2 } },
-    ].filter((item): item is { element: HTMLElement; heading: TocHeading } => item.element !== null)
+    ]
+    const extras = extraSectionCandidates.filter(
+      (item): item is { element: HTMLElement; heading: TocHeading } => item.element !== null,
+    )
     const mapped = articleHeadings.map((heading, index): TocHeading => {
       const id = 'concept-' + conceptId + '-section-' + (index + 1)
       heading.id = id
