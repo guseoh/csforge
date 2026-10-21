@@ -61,7 +61,7 @@ class MethodSecurityConfig {
 }
 ```
 
-단순히 `new AdminService()`로 만든 객체나 같은 빈 내부의 `this.publishCanonicalContent()`처럼 프록시를 우회하는 호출에는 일반적인 proxy 기반 인가가 적용되지 않을 수 있습니다. 실제 일반 사용자로 관리자 메서드를 호출하는 **거부 테스트**까지 확인해야 합니다. L3 [메서드 보안과 유스케이스 인가](../context-authz/method-security.md)에서 호출 경계를 더 깊게 다룹니다.
+단순히 `new AdminService()`로 만든 객체나 같은 빈 내부의 `this.publishCanonicalContent()`처럼 프록시를 우회하는 호출에는 일반적인 proxy 기반 인가가 적용되지 않을 수 있습니다. 실제 일반 사용자로 관리자 메서드를 호출하는 **거부 테스트**까지 확인해야 합니다. 관련 L3 Concept인 `security.core.context-authz.method-security`에서 호출 경계를 더 깊게 다룹니다.
 
 ### 역할 hierarchy를 과도하게 단순화하지 않는다
 
