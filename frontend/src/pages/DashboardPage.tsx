@@ -2,6 +2,7 @@ import { Link, useNavigate } from '@tanstack/react-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { EmptyState, ErrorState, PageSkeleton } from '../components/AsyncStates'
 import { CanonicalBootstrapCard } from '../components/CanonicalBootstrapCard'
+import { LearningInsightsSection } from '../components/LearningInsightsSection'
 import { getDashboard, type Dashboard, type DashboardHeatmapDay } from '../lib/dashboard-api'
 import { getConcepts } from '../lib/learning-api'
 import { selectRecentConcepts } from '../lib/learning-recent'
@@ -248,6 +249,8 @@ export function DashboardPage() {
           {dashboard.weakTopics.length === 0 ? <EmptyState message="최근 30일에 3회 이상 시도한 약점 주제가 없습니다." /> : <div className="dashboard-list">{dashboard.weakTopics.map((topic) => <Link className="dashboard-list-item" key={topic.topicId} to="/learning/$areaSlug" params={{ areaSlug: topic.areaSlug }} search={defaultLearningSearch}><div><strong>{topic.topicTitle}</strong><span>{topic.areaName}</span></div><div className="dashboard-list-metric"><strong>{percent(topic.accuracyPercent)}</strong><span>{topic.attemptCount}회 시도 · 오답 {topic.wrongCount}</span></div></Link>)}</div>}
         </section>
       </div>
+
+      <LearningInsightsSection areas={dashboard.areaProgress} />
 
       <details className="home-stats-disclosure">
         <summary><span><span className="eyebrow">학습 통계</span><strong>오늘 기록과 장기 활동 보기</strong></span><span>펼치기 <span aria-hidden="true">⌄</span></span></summary>

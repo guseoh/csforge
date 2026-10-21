@@ -520,3 +520,134 @@
   outline: 2px solid var(--accent);
   outline-offset: 3px;
 }
+
+/* #218: secondary period comparison without a second primary dashboard. */
+.learning-insights-section {
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 24px;
+}
+
+.insights-filters {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin: 14px 0 20px;
+}
+
+.insights-filters label {
+  display: grid;
+  gap: 6px;
+  min-width: min(220px, 100%);
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.insights-filters select {
+  width: 100%;
+  min-height: 44px;
+}
+
+.insights-results {
+  display: grid;
+  gap: 20px;
+}
+
+.insights-periods {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.insights-period {
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 16px;
+  display: grid;
+  gap: 12px;
+}
+
+.insights-period > strong {
+  font-size: 0.88rem;
+  color: var(--text-strong);
+}
+
+.insights-stats {
+  display: grid;
+  gap: 8px;
+}
+
+.insights-stats > span {
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  font-size: 0.83rem;
+  color: var(--text-muted);
+}
+
+.insights-stats b {
+  color: var(--text-strong);
+}
+
+.insights-comparison {
+  margin: 0;
+}
+
+.insights-due {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.insights-weak-list {
+  display: grid;
+}
+
+.insights-weak-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 15px 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.insights-weak-row > div:first-child {
+  display: grid;
+  min-width: 0;
+  gap: 5px;
+}
+
+.insights-weak-row span,
+.insights-weak-row small {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.insights-weak-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.insights-error {
+  display: grid;
+  gap: 10px;
+  justify-items: start;
+  color: var(--state-error);
+}
+
+@media (max-width: 680px) {
+  .insights-periods {
+    grid-template-columns: 1fr;
+  }
+
+  .insights-filters label {
+    flex: 1 1 100%;
+  }
+
+  .insights-weak-actions {
+    width: 100%;
+  }
+}

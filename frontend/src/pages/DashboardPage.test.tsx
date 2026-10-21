@@ -22,6 +22,7 @@ const mocks = vi.hoisted(() => ({
 vi.mock('@tanstack/react-router', () => ({
   Link: ({ children }: { children: ReactNode }) => <a href="#">{children}</a>,
   useNavigate: () => mocks.navigate,
+  useSearch: () => ({ insightsOpen: '0', insightsRange: '7d', insightsArea: '' }),
 }))
 
 vi.mock('@tanstack/react-query', () => ({
@@ -243,6 +244,14 @@ describe('DashboardPage', () => {
     expect(html).toContain('공개된 개념 없음')
     expect(html).toContain('학습 영역에서 시작하기')
     expect(html).not.toContain('개념 찾기 →')
+  })
+
+  it('offers diagnosis without adding an eager insights query to the main Dashboard', () => {
+    const html = render(dashboard())
+    expect(html).toContain('7·30일 학습 진단')
+    expect(html).toContain('학습 진단 펼치기')
+    expect(html).not.toContain('진단 근거 불러오는 중')
+    expect(html).toContain('최근 365일 학습 활동')
   })
 
   it('does not block the main dashboard when recent-concept lookup is pending or unavailable', () => {
