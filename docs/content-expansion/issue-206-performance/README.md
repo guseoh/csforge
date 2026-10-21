@@ -25,5 +25,5 @@
 ## 병합 전 게이트
 - [x] Area 전체 학습 목표·Question review, 공식 근거, 수치·반례·도식 검토
 - [x] 격리 Import Preview/Apply/exact replay/개인 이력 보존
-- [ ] Infrastructure PR 병합 뒤 통합 소스·test inventory 재검증
+- [x] Infrastructure PR #263 병합 후 통합 소스·test inventory(3,396 canonical items) 정리
 - [ ] 최종 HEAD Repository Validation, conflict/review threads 및 squash merge
