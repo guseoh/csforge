@@ -24,7 +24,7 @@ topics:
 - key: performance.core.measurement
   title: 성능 측정
   order: 10
-  scope: 지연 시간·처리량·포화, 대기열과 프로파일링·부하 테스트를 다룬다.
+  scope: 지연 시간·처리량·포화, 대기열, 프로파일링·부하 테스트와 요청 구간별 지연 귀속을 다룬다.
   boundary: Java·데이터베이스·네트워크 자체의 상세 구현보다 실제 부하에서 성능을 측정하고 판단하는 방법을 다룬다.
   concepts:
   - key: performance.core.measurement.latency-throughput
@@ -48,6 +48,13 @@ topics:
     objective: 프로파일러·마이크로벤치마크·부하 테스트가 답하는 질문과 한계를 구분하고 재현 가능한 성능 실험을 설계한다.
     density: CORE
     visualization: TEXT
+  - key: performance.core.measurement.latency-attribution
+    title: 요청 지연 구간 분해와 병목 원인 검증
+    order: 40
+    level: 2
+    objective: 같은 요청의 end-to-end HTTP 시간과 연결 풀 대기·SQL 실행·외부 I/O를 구별하고 Span 중첩과 p99 표본 경계를 지켜 원인 가설·조치 전후 효과를 검증한다.
+    density: CORE
+    visualization: DIAGRAM
 - key: performance.core.observability
   title: 관측 신호와 서비스 목표
   order: 20
