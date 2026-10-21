@@ -1,11 +1,249 @@
 [
-  {"kind":"question","contentKey":"system-design.core.architecture.sync-async.q1","promptMarkdown":"같은 요청에서 완료 결과를 기다리는 방식과 작업을 접수한 뒤 완료 결과를 나중에 전달하는 방식을 각각 무엇이라 부르는가? 순서대로 두 이름을 쉼표로 구분해 쓰라.","questionType":"SHORT_ANSWER","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["system-design.core.architecture.sync-async"],"acceptedAnswers":["synchronous는 caller가 같은 요청에서 결과를 기다리고 asynchronous는 작업을 접수한 뒤 나중에 상태나 알림으로 outcome을 전달한다","synchronous는 즉시 응답을 기다리는 흐름이고 asynchronous는 durable operation을 나중에 처리한다","sync: 결과를 기다림, async: 접수 후 나중에 결과 전달","synchronous: 결과 대기, asynchronous: 나중에 결과 전달","동기 처리는 요청한 곳에서 완료 결과를 기다리고, 비동기 처리는 작업을 접수한 뒤 나중에 상태나 알림으로 결과를 전달한다","동기 처리, 비동기 처리","동기 처리 / 비동기 처리","동기와 비동기","동기, 비동기","동기 처리,비동기 처리","동기,비동기","동기 처리와 비동기 처리"],"explanationMarkdown":"동기 처리는 완료 결과를 같은 요청에서 기다리고 비동기 처리는 접수와 완료 시점을 분리한다."},
-  {"kind":"question","contentKey":"system-design.core.architecture.sync-async.q2","promptMarkdown":"CSV 가져오기는 다음 단계로 처리되며 수 초 안에 끝나지 않는다.\n\n1. 요청 검증\n2. 데이터 가져오기\n3. 외부 검색 색인 갱신\n\nAPI 응답과 작업 상태 모델을 어떻게 설계해야 하는가?","questionType":"SCENARIO","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["system-design.core.architecture.sync-async"],"modelAnswer":"요청을 검증하고 작업을 PENDING 상태로 영속 저장한 뒤 operationId를 반환한다. 작업자(worker)가 검증·가져오기·색인 갱신을 단계별로 수행하고 진행률, COMPLETE/FAILED/CANCELLED 상태와 오류를 저장한다. 재시도·DLQ(dead-letter queue)·멱등성(idempotency)·정합성 대사(reconciliation)를 마련하고 상태 조회나 알림으로 결과를 제공한다.","explanationMarkdown":"시간이 오래 걸리는 작업을 동기 요청 스레드에 묶어 두지 말고 접수와 완료를 분리한다."},
-  {"kind":"question","contentKey":"system-design.core.architecture.sync-async.q3","promptMarkdown":"하나의 API 요청에서 다음 작업을 모두 동기 처리하려 한다.\n\n- 결제 승인: 즉시 결과가 필요함\n- 검색 색인 갱신: 지연 가능함\n\n이 설계의 문제와 두 작업의 경계를 분리할 때 필요한 계약을 설명하라.","questionType":"DESCRIPTIVE","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["system-design.core.architecture.sync-async"],"modelAnswer":"모든 작업을 동기 요청에 묶으면 색인 갱신 지연이 결제 응답을 늦추고 스레드·연결을 점유하며, 일부 단계가 성공한 뒤 시간 초과가 나면 처리 결과를 알 수 없게 된다. 결제 결과와 작업 ID를 먼저 트랜잭션으로 확정하고, 색인 갱신은 outbox/event를 이용한 비동기 파생 작업으로 분리한다. API는 결제 접수와 완료, 색인의 최신성을 구분하고 중복 방지·재시도·상태 조회·재구성을 제공한다.","explanationMarkdown":"동기/비동기 선택은 호출 방식만의 문제가 아니라 사용자에게 약속하는 결과와 부수 효과의 트랜잭션·최신성 경계를 정하는 일이다."},
-  {"kind":"question","contentKey":"system-design.core.architecture.read-write-models.q1","promptMarkdown":"읽기 모델을 따로 두는 주된 이유는?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["system-design.core.architecture.read-write-models"],"choices":[{"key":"A","content":"query shape와 read 지연 시간에 맞춘 projection을 canonical write model과 분리하기 위해서","displayOrder":0,"rationaleMarkdown":"조회 요구가 기준 쓰기 모델과 크게 다르면 전용 파생 뷰로 조회 형태와 응답 지연을 맞출 수 있다. 다만 동기화 지연·재생성·추가 쓰기 비용을 감수할 가치가 있어야 한다."},{"key":"B","content":"projection이 canonical state보다 항상 더 최신이 되기 때문에","displayOrder":1,"rationaleMarkdown":"파생 뷰는 원본 변경을 전달받거나 다시 계산해야 하므로 보통 기준 상태보다 늦게 반영된다. 읽기 모델을 따로 둔다고 저절로 최신 상태가 되지는 않는다."},{"key":"C","content":"read model이 모든 write invariant를 자동으로 보호하기 때문에","displayOrder":2,"rationaleMarkdown":"쓰기 불변 조건은 기준 데이터 소유자의 트랜잭션 경계에서 지켜야 한다. 조회용 파생 뷰는 원본 변경의 정합성을 자동으로 보장하지 않는다."},{"key":"D","content":"read model을 만들면 backfill과 rebuild가 필요 없어지기 때문에","displayOrder":3,"rationaleMarkdown":"파생 뷰 갱신은 실패할 수 있고 구조가 바뀔 수도 있다. 원본을 바탕으로 과거 데이터를 다시 채우고 뷰를 재구성하는 절차가 중요하다."}],"correctChoiceKey":"A","explanationMarkdown":"읽기용 파생 모델은 조회 형태와 지연을 최적화할 수 있지만, 동기화 지연·재생성·추가 쓰기 비용을 감수할 가치가 있을 때만 둔다."},
-  {"kind":"question","contentKey":"system-design.core.architecture.read-write-models.q2","promptMarkdown":"다음 순서에서 최신성 문제가 드러났다.\n\n1. 사용자가 퀴즈를 완료한다.\n2. 기준 데이터 쓰기는 성공한다.\n3. 학습 대시보드의 파생 뷰는 30초 늦게 갱신된다.\n4. 사용자는 방금 완료한 결과를 보지 못한다.\n\n기준 데이터의 쓰기 정확성을 해치지 않으면서 어떤 대안을 선택할 수 있는가?","questionType":"SCENARIO","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["system-design.core.architecture.read-write-models"],"modelAnswer":"퀴즈 완료는 원본 데이터베이스 트랜잭션으로 확정하고 응답에 확정된 결과를 포함한다. 직후 해당 사용자나 세션의 조회를 기본 데이터베이스에서 처리하거나 파생 뷰의 revision이 따라잡을 때까지 응답을 조정한다. 갱신 지연을 표시하고 관측하며, event replay/rebuild로 누락을 복구한다.","explanationMarkdown":"파생 뷰의 갱신 지연을 줄이기 위해 기준 데이터 쓰기를 뷰 갱신에 종속시키지 않는다."},
-  {"kind":"question","contentKey":"system-design.core.architecture.read-write-models.q3","promptMarkdown":"검색용 비정규화 읽기 모델을 도입할 때 다음 순서로 검토할 사항을 설명하라.\n\n1. 기준 데이터의 소유권과 쓰기 불변 조건\n2. 조회 형태와 최신성 목표\n3. 파생 뷰 갱신 비용과 지연\n4. 과거 데이터 채우기(backfill)·재구성 가능성과 대체 처리","questionType":"DESCRIPTIVE","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["system-design.core.architecture.read-write-models"],"modelAnswer":"먼저 기준 쓰기 모델과 불변 조건을 고정하고 조회 지연 시간·필터·정렬·최신성 목표를 측정한다. 다음으로 파생 뷰 갱신 비용, 이벤트 지연·중복·순서 역전, 과거 데이터 채우기와 전체 재구성 시간, 저장소·색인 비용을 계산한다. 파생 뷰에 원본 revision을 기록하고 outbox/event 또는 원본 전체 조회로 다시 만들 수 있게 한다. 쓰기 직후 읽기와 파생 뷰 장애 시 대체 처리도 설계한다.","explanationMarkdown":"읽기 최적화를 위해 원본을 복제하는 대신 원본에서 다시 만들 수 있는 파생 경계를 추가한다."},
-  {"kind":"question","contentKey":"system-design.core.architecture.modular-monolith-services.q1","promptMarkdown":"모듈형 모놀리스에서 서비스를 분리할 가장 강한 근거는?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["system-design.core.architecture.modular-monolith-services"],"choices":[{"key":"A","content":"shared database를 그대로 둔 채 process만 나누면 된다.","displayOrder":0,"rationaleMarkdown":"프로세스만 분리하고 DB 소유권을 공유하면 배포 단위는 나뉘어도 스키마·트랜잭션 결합은 남는다. 독립 서비스의 이점을 얻으려면 데이터 변경 권한과 계약도 분리해야 한다."},{"key":"B","content":"repository 파일 수가 많아 보인다.","displayOrder":1,"rationaleMarkdown":"파일 수나 저장소 크기만으로 실행 경계를 정할 수 없다. 모듈로 책임을 나눌 수 있는지, 독립 운영 요구가 실제로 있는지 먼저 살펴야 한다."},{"key":"C","content":"process를 나누면 network 실패와 distributed transaction 비용이 줄어든다.","displayOrder":2,"rationaleMarkdown":"프로세스 분리는 호출을 네트워크 경계로 옮겨 시간 초과·부분 실패를 만든다. 한 데이터베이스 트랜잭션으로 처리하던 변경에도 별도의 일관성 설계가 필요할 수 있다."},{"key":"D","content":"독립적인 scale·release·실패·security boundary와 명확한 data ownership이 실제로 필요하다.","displayOrder":3,"rationaleMarkdown":"독립 배포·확장·장애 격리·보안 경계가 실제로 필요하고 데이터 소유권을 명확히 나눌 수 있을 때 서비스 분리 비용을 정당화할 수 있다."}],"correctChoiceKey":"D","explanationMarkdown":"서비스는 독립 경계를 제공하지만 네트워크 통신·운영·데이터 일관성 비용도 추가한다."},
-  {"kind":"question","contentKey":"system-design.core.architecture.modular-monolith-services.q2","promptMarkdown":"주문 모듈을 별도 서비스로 분리했지만 다음과 같이 쓰기 상태가 겹친다.\n\n| 행위 주체 | 동작 |\n| --- | --- |\n| 기존 애플리케이션 | 주문 테이블에 직접 기록 |\n| 분리한 서비스 | 같은 주문 테이블에 직접 기록 |\n\n이 분리가 왜 위험하며 다음 단계는 무엇인가?","questionType":"SCENARIO","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["system-design.core.architecture.modular-monolith-services"],"modelAnswer":"프로세스만 나뉘고 데이터베이스 쓰기 권한이 공유되어 소유권·스키마 변경·트랜잭션 경계가 불분명한 분산 모놀리스가 된다. 주문 상태와 불변 조건의 기준 소유자를 정하고 명령/API/이벤트를 통해서만 접근하게 한다. 데이터 이행·호환 가능한 스키마 변경·시간 초과·SLO·복구와 단계적인 트래픽 전환을 준비한다.","explanationMarkdown":"실행 단위 분리보다 데이터 소유권, 변경 권한, 장애 경계를 먼저 만들고 검증해야 한다."},
-  {"kind":"question","contentKey":"system-design.core.architecture.modular-monolith-services.q3","promptMarkdown":"모듈형 모놀리스를 유지할지 서비스를 분리할지 다음 관점에서 판단하는 방법을 설명하라.\n\n- 팀 자율성과 결합도\n- 장애 격리\n- 배포와 운영 비용\n- 데이터 소유권\n- 이행과 롤백 위험","questionType":"DESCRIPTIVE","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["system-design.core.architecture.modular-monolith-services"],"modelAnswer":"변경 이유와 도메인 모듈의 공개 API·데이터 소유자·불변 조건을 먼저 명확히 하고 아키텍처 테스트로 모듈 경계를 검증한다. 규모·배포 주기·보안·장애 영역을 독립시켜야 할 때 얻는 이점을 네트워크 지연·분산 일관성·관측·당직 운영·이행 비용과 비교한다. 분리할 때는 공유 쓰기를 끊고 이벤트와 스키마·SLO·롤백·정합성 대사를 함께 옮긴다. 실제 부하와 장애 기록을 근거로 다음 경계를 정한다.","explanationMarkdown":"분리 여부는 유행이 아니라 현재 결합도와 독립 운영으로 얻는 측정 가능한 이점을 비교해 결정한다."}
+  {
+    "kind": "question",
+    "contentKey": "system-design.core.architecture.sync-async.q1",
+    "promptMarkdown": "같은 요청에서 완료 결과를 기다리는 방식과 작업을 접수한 뒤 완료 결과를 나중에 전달하는 방식을 각각 무엇이라 부르는가? 순서대로 두 이름을 쉼표로 구분해 쓰라.",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "system-design.core.architecture.sync-async"
+    ],
+    "acceptedAnswers": [
+      "synchronous는 caller가 같은 요청에서 결과를 기다리고 asynchronous는 작업을 접수한 뒤 나중에 상태나 알림으로 outcome을 전달한다",
+      "synchronous는 즉시 응답을 기다리는 흐름이고 asynchronous는 durable operation을 나중에 처리한다",
+      "sync: 결과를 기다림, async: 접수 후 나중에 결과 전달",
+      "synchronous: 결과 대기, asynchronous: 나중에 결과 전달",
+      "동기 처리는 요청한 곳에서 완료 결과를 기다리고, 비동기 처리는 작업을 접수한 뒤 나중에 상태나 알림으로 결과를 전달한다",
+      "동기 처리, 비동기 처리",
+      "동기 처리 / 비동기 처리",
+      "동기와 비동기",
+      "동기, 비동기",
+      "동기 처리,비동기 처리",
+      "동기,비동기",
+      "동기 처리와 비동기 처리"
+    ],
+    "explanationMarkdown": "동기 처리는 완료 결과를 같은 요청에서 기다리고 비동기 처리는 접수와 완료 시점을 분리한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "system-design.core.architecture.sync-async.q2",
+    "promptMarkdown": "CSV 가져오기는 다음 단계로 처리되며 수 초 안에 끝나지 않는다.\n\n1. 요청 검증\n2. 데이터 가져오기\n3. 외부 검색 색인 갱신\n\nAPI 응답과 작업 상태 모델을 어떻게 설계해야 하는가?",
+    "questionType": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "system-design.core.architecture.sync-async"
+    ],
+    "modelAnswer": "요청을 검증하고 작업을 PENDING 상태로 영속 저장한 뒤 operationId를 반환한다. 작업자(worker)가 검증·가져오기·색인 갱신을 단계별로 수행하고 진행률, COMPLETE/FAILED/CANCELLED 상태와 오류를 저장한다. 재시도·DLQ(dead-letter queue)·멱등성(idempotency)·정합성 대사(reconciliation)를 마련하고 상태 조회나 알림으로 결과를 제공한다.",
+    "explanationMarkdown": "시간이 오래 걸리는 작업을 동기 요청 스레드에 묶어 두지 말고 접수와 완료를 분리한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "system-design.core.architecture.sync-async.q3",
+    "promptMarkdown": "하나의 API 요청에서 다음 작업을 모두 동기 처리하려 한다.\n\n- 결제 승인: 즉시 결과가 필요함\n- 검색 색인 갱신: 지연 가능함\n\n이 설계의 문제와 두 작업의 경계를 분리할 때 필요한 계약을 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "system-design.core.architecture.sync-async"
+    ],
+    "modelAnswer": "모든 작업을 동기 요청에 묶으면 색인 갱신 지연이 결제 응답을 늦추고 스레드·연결을 점유하며, 일부 단계가 성공한 뒤 시간 초과가 나면 처리 결과를 알 수 없게 된다. 결제 결과와 작업 ID를 먼저 트랜잭션으로 확정하고, 색인 갱신은 outbox/event를 이용한 비동기 파생 작업으로 분리한다. API는 결제 접수와 완료, 색인의 최신성을 구분하고 중복 방지·재시도·상태 조회·재구성을 제공한다.",
+    "explanationMarkdown": "동기/비동기 선택은 호출 방식만의 문제가 아니라 사용자에게 약속하는 결과와 부수 효과의 트랜잭션·최신성 경계를 정하는 일이다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "system-design.core.architecture.read-write-models.q1",
+    "promptMarkdown": "읽기 모델을 따로 두는 주된 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "system-design.core.architecture.read-write-models"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "query shape와 read 지연 시간에 맞춘 projection을 canonical write model과 분리하기 위해서",
+        "displayOrder": 0,
+        "rationaleMarkdown": "조회 요구가 기준 쓰기 모델과 크게 다르면 전용 파생 뷰로 조회 형태와 응답 지연을 맞출 수 있다. 다만 동기화 지연·재생성·추가 쓰기 비용을 감수할 가치가 있어야 한다."
+      },
+      {
+        "key": "B",
+        "content": "projection이 canonical state보다 항상 더 최신이 되기 때문에",
+        "displayOrder": 1,
+        "rationaleMarkdown": "파생 뷰는 원본 변경을 전달받거나 다시 계산해야 하므로 보통 기준 상태보다 늦게 반영된다. 읽기 모델을 따로 둔다고 저절로 최신 상태가 되지는 않는다."
+      },
+      {
+        "key": "C",
+        "content": "read model이 모든 write invariant를 자동으로 보호하기 때문에",
+        "displayOrder": 2,
+        "rationaleMarkdown": "쓰기 불변 조건은 기준 데이터 소유자의 트랜잭션 경계에서 지켜야 한다. 조회용 파생 뷰는 원본 변경의 정합성을 자동으로 보장하지 않는다."
+      },
+      {
+        "key": "D",
+        "content": "read model을 만들면 backfill과 rebuild가 필요 없어지기 때문에",
+        "displayOrder": 3,
+        "rationaleMarkdown": "파생 뷰 갱신은 실패할 수 있고 구조가 바뀔 수도 있다. 원본을 바탕으로 과거 데이터를 다시 채우고 뷰를 재구성하는 절차가 중요하다."
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "읽기용 파생 모델은 조회 형태와 지연을 최적화할 수 있지만, 동기화 지연·재생성·추가 쓰기 비용을 감수할 가치가 있을 때만 둔다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "system-design.core.architecture.read-write-models.q2",
+    "promptMarkdown": "다음 순서에서 최신성 문제가 드러났다.\n\n1. 사용자가 퀴즈를 완료한다.\n2. 기준 데이터 쓰기는 성공한다.\n3. 학습 대시보드의 파생 뷰는 30초 늦게 갱신된다.\n4. 사용자는 방금 완료한 결과를 보지 못한다.\n\n기준 데이터의 쓰기 정확성을 해치지 않으면서 어떤 대안을 선택할 수 있는가?",
+    "questionType": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "system-design.core.architecture.read-write-models"
+    ],
+    "modelAnswer": "퀴즈 완료는 원본 데이터베이스 트랜잭션으로 확정하고 응답에 확정된 결과를 포함한다. 직후 해당 사용자나 세션의 조회를 기본 데이터베이스에서 처리하거나 파생 뷰의 revision이 따라잡을 때까지 응답을 조정한다. 갱신 지연을 표시하고 관측하며, event replay/rebuild로 누락을 복구한다.",
+    "explanationMarkdown": "파생 뷰의 갱신 지연을 줄이기 위해 기준 데이터 쓰기를 뷰 갱신에 종속시키지 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "system-design.core.architecture.read-write-models.q3",
+    "promptMarkdown": "검색용 비정규화 읽기 모델을 도입할 때 다음 순서로 검토할 사항을 설명하라.\n\n1. 기준 데이터의 소유권과 쓰기 불변 조건\n2. 조회 형태와 최신성 목표\n3. 파생 뷰 갱신 비용과 지연\n4. 과거 데이터 채우기(backfill)·재구성 가능성과 대체 처리",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "system-design.core.architecture.read-write-models"
+    ],
+    "modelAnswer": "먼저 기준 쓰기 모델과 불변 조건을 고정하고 조회 지연 시간·필터·정렬·최신성 목표를 측정한다. 다음으로 파생 뷰 갱신 비용, 이벤트 지연·중복·순서 역전, 과거 데이터 채우기와 전체 재구성 시간, 저장소·색인 비용을 계산한다. 파생 뷰에 원본 revision을 기록하고 outbox/event 또는 원본 전체 조회로 다시 만들 수 있게 한다. 쓰기 직후 읽기와 파생 뷰 장애 시 대체 처리도 설계한다.",
+    "explanationMarkdown": "읽기 최적화를 위해 원본을 복제하는 대신 원본에서 다시 만들 수 있는 파생 경계를 추가한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "system-design.core.architecture.modular-monolith-services.q1",
+    "promptMarkdown": "모듈형 모놀리스에서 서비스를 분리할 가장 강한 근거는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "system-design.core.architecture.modular-monolith-services"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "shared database를 그대로 둔 채 process만 나누면 된다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "프로세스만 분리하고 DB 소유권을 공유하면 배포 단위는 나뉘어도 스키마·트랜잭션 결합은 남는다. 독립 서비스의 이점을 얻으려면 데이터 변경 권한과 계약도 분리해야 한다."
+      },
+      {
+        "key": "B",
+        "content": "repository 파일 수가 많아 보인다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "파일 수나 저장소 크기만으로 실행 경계를 정할 수 없다. 모듈로 책임을 나눌 수 있는지, 독립 운영 요구가 실제로 있는지 먼저 살펴야 한다."
+      },
+      {
+        "key": "C",
+        "content": "process를 나누면 network 실패와 distributed transaction 비용이 줄어든다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "프로세스 분리는 호출을 네트워크 경계로 옮겨 시간 초과·부분 실패를 만든다. 한 데이터베이스 트랜잭션으로 처리하던 변경에도 별도의 일관성 설계가 필요할 수 있다."
+      },
+      {
+        "key": "D",
+        "content": "독립적인 scale·release·실패·security boundary와 명확한 data ownership이 실제로 필요하다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "독립 배포·확장·장애 격리·보안 경계가 실제로 필요하고 데이터 소유권을 명확히 나눌 수 있을 때 서비스 분리 비용을 정당화할 수 있다."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "서비스는 독립 경계를 제공하지만 네트워크 통신·운영·데이터 일관성 비용도 추가한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "system-design.core.architecture.modular-monolith-services.q2",
+    "promptMarkdown": "주문 모듈을 별도 서비스로 분리했지만 다음과 같이 쓰기 상태가 겹친다.\n\n| 행위 주체 | 동작 |\n| --- | --- |\n| 기존 애플리케이션 | 주문 테이블에 직접 기록 |\n| 분리한 서비스 | 같은 주문 테이블에 직접 기록 |\n\n이 분리가 왜 위험하며 다음 단계는 무엇인가?",
+    "questionType": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "system-design.core.architecture.modular-monolith-services"
+    ],
+    "modelAnswer": "프로세스만 나뉘고 데이터베이스 쓰기 권한이 공유되어 소유권·스키마 변경·트랜잭션 경계가 불분명한 분산 모놀리스가 된다. 주문 상태와 불변 조건의 기준 소유자를 정하고 명령/API/이벤트를 통해서만 접근하게 한다. 데이터 이행·호환 가능한 스키마 변경·시간 초과·SLO·복구와 단계적인 트래픽 전환을 준비한다.",
+    "explanationMarkdown": "실행 단위 분리보다 데이터 소유권, 변경 권한, 장애 경계를 먼저 만들고 검증해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "system-design.core.architecture.modular-monolith-services.q3",
+    "promptMarkdown": "모듈형 모놀리스를 유지할지 서비스를 분리할지 다음 관점에서 판단하는 방법을 설명하라.\n\n- 팀 자율성과 결합도\n- 장애 격리\n- 배포와 운영 비용\n- 데이터 소유권\n- 이행과 롤백 위험",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "system-design.core.architecture.modular-monolith-services"
+    ],
+    "modelAnswer": "변경 이유와 도메인 모듈의 공개 API·데이터 소유자·불변 조건을 먼저 명확히 하고 아키텍처 테스트로 모듈 경계를 검증한다. 규모·배포 주기·보안·장애 영역을 독립시켜야 할 때 얻는 이점을 네트워크 지연·분산 일관성·관측·당직 운영·이행 비용과 비교한다. 분리할 때는 공유 쓰기를 끊고 이벤트와 스키마·SLO·롤백·정합성 대사를 함께 옮긴다. 실제 부하와 장애 기록을 근거로 다음 경계를 정한다.",
+    "explanationMarkdown": "분리 여부는 유행이 아니라 현재 결합도와 독립 운영으로 얻는 측정 가능한 이점을 비교해 결정한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "system-design.core.architecture.decision-evidence.q1",
+    "promptMarkdown": "검색 API 아키텍처를 정할 때 ADR(Architecture Decision Record)에 포함해야 할 내용으로 가장 적절한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "system-design.core.architecture.decision-evidence"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "선택한 기술의 이름만 기록하고 검토한 다른 후보와 제외한 이유는 기록하지 않는다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "결정 당시의 맥락과 대안·결과가 없으면 변경 이유를 재평가할 수 없다."
+      },
+      {
+        "key": "B",
+        "content": "요구사항과 측정 근거, 대안·선택 이유, 수용한 비용 및 재검토 조건을 함께 기록한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "ADR은 선택의 맥락·결정·결과를 남기고 새 조건에서 재검토할 수 있게 만든다."
+      },
+      {
+        "key": "C",
+        "content": "처음 채택한 기술은 이후 지표가 나빠져도 바꾸지 않는다는 규칙을 적는다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "ADR은 결정의 전제가 바뀌면 새 제안을 만들고 기존 기록을 보존하며 대체할 수 있다."
+      },
+      {
+        "key": "D",
+        "content": "모든 요청을 더 빠르게 처리하는 최신 기술을 선택한다고만 기록한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "구체적인 목표·측정 경계나 trade-off가 없어 검증 가능한 설계 근거가 되지 않는다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "맥락(context)·후보(options)·결정(decision)·결과(consequences)는 설계 기록의 핵심이다. 운영 지표와 대안을 재검토할 조건을 연결해야 단순한 기술 선호 기록이 되지 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "system-design.core.architecture.decision-evidence.q2",
+    "promptMarkdown": "검색 API는 현재 peak 500 QPS에서 p99=180ms로 측정됐고 목표는 p99<300ms이다. 사용자에게 표시할 검색 데이터의 허용 지연은 최대 5초다. 후보 A는 기존 PostgreSQL 조회 경로를 유지·측정하는 것이고, 후보 B는 비동기 Projection인데 현재 측정상 갱신 지연이 최대 30초다.\n\n주어진 조건에서 어떤 결정을 ADR에 기록할 수 있으며, 무엇을 계측하면 재검토해야 하는지 설명하라. (다른 미제공 비용·내구성 정보는 가정하지 않는다.)",
+    "questionType": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "system-design.core.architecture.decision-evidence"
+    ],
+    "modelAnswer": "제시된 데이터만 보면 A는 지연 목표를 충족하고 B는 최신성 5초 요구를 위반할 수 있으므로 A 유지가 타당하다. 단 현재 측정의 데이터셋, 요청 구성, 캐시 준비, 성공/타임아웃 포함 여부를 명시하고 A의 DB 포화, p95/p99·오류율과 peak 부하를 지속 관측한다. p99 목표 위반이 반복되거나 검색 데이터 크기·쿼리 형태·허용 최신성이 변하면 기존 SQL/인덱스 개선과 Projection의 업데이트 지연·운영 비용을 같은 조건에서 비교하도록 재검토 트리거를 기록한다. 해당 트리거는 B 자동 도입 명령이 아니다.",
+    "explanationMarkdown": "측정상 충분한 현재 경로와 최신성 요구를 어기는 신규 경로 사이에서는 과잉 확장을 정답으로 삼을 수 없다. 결정과 전제, 반증 가능한 운영 신호를 분리해 기록한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "system-design.core.architecture.decision-evidence.q3",
+    "promptMarkdown": "초기 ADR-007은 peak 500 QPS, 검색 p99 목표 300ms, stale 최대 5초 조건에서 PostgreSQL 단일 읽기 경로를 채택했다. 6개월 뒤 peak가 3,000 QPS로 커지고 같은 측정 경계에서 p99=450ms와 DB 연결 풀 대기 증가가 관측됐다. 팀은 별도 Projection을 즉시 도입하자고 한다.\n\n기존 ADR과 신규 제안을 어떻게 관리하고, 원인 가설·실험·최신성·운영 비용·복구·롤백을 연결해 결정할지 설명하라. 특정 기술 한 개만 정답으로 강제하지 않는 판정 기준을 포함하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "system-design.core.architecture.decision-evidence"
+    ],
+    "modelAnswer": "기존 ADR-007의 당시 context, Accepted 결정과 결과는 삭제하지 않는다. 요구 및 계측 변화(p99 450ms/목표 300ms, peak 3000QPS, pool 대기 증가)를 기록하고 원인이 SQL 실행, 연결 보유·동시성 또는 DB 포화인지 먼저 측정한다. 동일 부하·데이터에서 트랜잭션 단축·SQL 개선·연결 예산 조정 같은 기존 경로 개선과 별도 Projection 후보를 비교하며 p99·오류율·성공 처리량·DB 부하·비용을 평가한다. Projection은 5초 stale 조건, backfill/rebuild, 갱신 누락 및 앱 롤백 이후 파생 상태를 다루는 계획이 필요하다. 근거를 통해 결정이 바뀔 경우 새 ADR을 Proposed→Accepted로 승인하고 과거 ADR은 Superseded로 표시해 이력과 연결한다. 둘 중 어느 대안이 적합한지는 실제 계측 및 허용 최신성·비용 충족 여부로 판정해야 한다.",
+    "explanationMarkdown": "SLO 위반은 설계 재검토의 출발점일 뿐 미리 정한 기술 채택의 증거가 아니다. 기존 결정의 근거·대안·결과를 남기고 원인·새 조건·실험 결과에 따라 새 결정을 검증한다."
+  }
 ]
