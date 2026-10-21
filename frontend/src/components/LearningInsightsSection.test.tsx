@@ -2,7 +2,7 @@ import type { ReactNode } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { LearningInsights } from '../lib/insights-api'
-import { defaultInsightsSearch } from '../lib/insights-search'
+
 
 const mocks = vi.hoisted(() => ({
   search: { insightsOpen: '0', insightsRange: '7d', insightsArea: '' },
@@ -47,7 +47,7 @@ function sample(overrides: Partial<LearningInsights> = {}): LearningInsights {
 }
 
 beforeEach(() => {
-  mocks.search = { ...defaultInsightsSearch }
+  mocks.search = { insightsOpen: '0', insightsRange: '7d', insightsArea: '' }
   mocks.query.data = null
   mocks.query.isPending = false
   mocks.query.isError = false
