@@ -10,9 +10,11 @@ import { useToast } from '../components/toast/ToastProvider'
 import { extractInterviewSection } from '../lib/interview-section'
 import {
   getConcept,
+  getConceptUnderstanding,
   recordConceptView,
   updateConceptProgress,
   type ConceptDetail as ConceptDetailModel,
+  type ConceptAssessmentStatus,
   type LearningStatus,
 } from '../lib/learning-api'
 import { defaultLearningSearch } from '../lib/learning-search'
@@ -159,6 +161,56 @@ export function CompactConceptArticleToc({ headings, activeId, onNavigate }: Art
   )
 }
 
+const assessmentLabels: Record<ConceptAssessmentStatus, string> = {
+  NOT_ENOUGH_EVIDENCE: '판단할 문제 근거가 아직 부족합니다',
+  NEEDS_PRACTICE: '추가 문제 풀이가 필요합니다',
+  DEVELOPING: '문제 풀이 근거가 쌓이고 있습니다',
+  CONSISTENT: '최근 정답 근거가 비교적 일관됩니다',
+}
+
+export function ConceptUnderstandingSection({ conceptId }: { conceptId: number }) {
+  const query = useQuery({
+    queryKey: ['concept-understanding', conceptId],
+    queryFn: () => getConceptUnderstanding(conceptId),
+  })
+
+  return (
+    <section className="detail-section concept-understanding-section" aria-labelledby="concept-understanding-title">
+      <div className="section-heading">
+        <div>
+          <p className="eyebrow">문제 풀이 근거</p>
+          <h2 id="concept-understanding-title">실제 정답으로 확인하기</h2>
+        </div>
+      </div>
+      <p className="helper-text">읽기 완료·복습 필요는 학습 행동 기록입니다. 아래 수치는 연결된 문제의 확정 채점을 기반으로 한 참고 정보이며 완전한 숙달 판정이 아닙니다.</p>
+      {query.isPending ? (
+        <p className="helper-text" role="status">채점 근거 불러오는 중…</p>
+      ) : query.isError || !query.data ? (
+        <div className="concept-understanding-error" role="alert">
+          <span>채점 근거를 불러오지 못했습니다. 읽기와 노트 작성은 계속할 수 있습니다.</span>
+          <button className="text-button" type="button" onClick={() => void query.refetch()}>다시 시도</button>
+        </div>
+      ) : (
+        <div className="concept-understanding-data">
+          <strong>{assessmentLabels[query.data.assessmentStatus]}</strong>
+          <p>
+            최근 서로 다른 문제 {query.data.evidence.uniqueQuestions}개 중 {query.data.evidence.correctQuestions}개 정답
+            {query.data.assessmentStatus !== 'NOT_ENOUGH_EVIDENCE' && query.data.recentAccuracyPercent !== null
+              ? ` · 최근 정답 비율 ${Math.round(query.data.recentAccuracyPercent)}%` : ''}
+          </p>
+          <span className="helper-text">
+            전체 확정 풀이 {query.data.evidence.finalizedAttempts}회 · 자기채점 대기 {query.data.evidence.pendingSelfCheckCount}회
+            {' · '}표본은 서로 다른 최근 문제 최대 10개, 최소 3개부터 추세 분류
+          </span>
+          <p className="helper-text">
+            하나의 문제가 여러 개념과 연결될 수 있으므로 이 수치는 해당 개념만의 실력을 분리 측정한 값이 아닙니다.
+          </p>
+        </div>
+      )}
+    </section>
+  )
+}
+
 function ConceptContent({ data, conceptId, tocProps }: { data: ConceptDetailModel; conceptId: number; tocProps: ArticleTocProps }) {
   const { noteContent, noteState, updateNote, flushNote } = useConceptNotePersistence(conceptId, data.personalNote?.content ?? '')
   const { bodyMarkdown, interview } = extractInterviewSection(data.contentMarkdown)
@@ -227,6 +279,8 @@ function ConceptContent({ data, conceptId, tocProps }: { data: ConceptDetailMode
           </div>
         </div>
       </section>
+
+      <ConceptUnderstandingSection conceptId={conceptId} />
 
       <section className="detail-section personal-note-section" id="personal-note">
         <div className="section-heading">

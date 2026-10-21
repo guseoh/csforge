@@ -193,9 +193,10 @@ export function AreaPage() {
                   </div>
                   <div className="selected-topic-progress" aria-label={`${selectedTopic.completedConceptCount}/${selectedTopic.publishedConceptCount}개 완료`}>
                     <strong>{selectedTopic.completedConceptCount}/{selectedTopic.publishedConceptCount}</strong>
-                    <span>개념 완료</span>
+                    <span>개념 읽기 완료</span>
                   </div>
                 </header>
+                <p className="topic-order-note">읽기 완료와 문제 풀이에 근거한 이해도는 다릅니다. 각 개념 상세 화면에서 최근 확정 정답과 자기채점 대기를 따로 확인할 수 있습니다.</p>
 
                 <div className="topic-concept-list curriculum-concept-list">
                   {selectedTopicConcepts.map((concept, conceptIndex) => (

@@ -736,3 +736,35 @@
   outline: 2px solid var(--accent);
   outline-offset: 3px;
 }
+
+/* #215: assessment is supplementary reading evidence, not a mastery badge. */
+.concept-understanding-section {
+  margin-top: 30px;
+}
+.concept-understanding-data {
+  display: grid;
+  gap: 8px;
+  padding: 14px 0;
+  border-top: 1px solid var(--border-subtle);
+}
+.concept-understanding-data > strong {
+  color: var(--text-strong);
+  font-size: 0.95rem;
+}
+.concept-understanding-data p {
+  margin: 0;
+  line-height: 1.65;
+}
+.concept-understanding-data .helper-text {
+  max-width: 760px;
+  line-height: 1.6;
+}
+.concept-understanding-error {
+  display: grid;
+  gap: 8px;
+  color: var(--state-error);
+}
+.concept-understanding-error .text-button {
+  min-height: 40px;
+  width: fit-content;
+}

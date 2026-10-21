@@ -148,6 +148,22 @@ export interface ConceptDetail {
   relatedConcepts: ConceptNavigation[]
 }
 
+export type ConceptAssessmentStatus = 'NOT_ENOUGH_EVIDENCE' | 'NEEDS_PRACTICE' | 'DEVELOPING' | 'CONSISTENT'
+
+export interface ConceptUnderstanding {
+  conceptId: number
+  learningStatus: LearningStatus
+  evidence: {
+    uniqueQuestions: number
+    finalizedAttempts: number
+    correctQuestions: number
+    pendingSelfCheckCount: number
+  }
+  recentAccuracyPercent: number | null
+  assessmentStatus: ConceptAssessmentStatus
+  lastAssessedAt: string | null
+}
+
 export interface ProgressResponse {
   learningStatus: LearningStatus
   bookmarked: boolean
@@ -202,6 +218,11 @@ export function getConcepts(filters: {
 
 export function getConcept(conceptId: number): Promise<ConceptDetail> {
   return request<ConceptDetail>(`/api/concepts/${conceptId}`)
+}
+
+/** Separate read-only assessment; never changes ConceptProgress. */
+export function getConceptUnderstanding(conceptId: number): Promise<ConceptUnderstanding> {
+  return request<ConceptUnderstanding>(`/api/concepts/${conceptId}/understanding`)
 }
 
 export function recordConceptView(conceptId: number): Promise<ProgressResponse> {

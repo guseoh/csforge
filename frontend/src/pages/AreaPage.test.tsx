@@ -191,6 +191,7 @@ describe('AreaPage #211 next action and filter behavior', () => {
     expect(html).toContain('L2')
     expect(html).toContain('L3')
     expect(html).toContain('커리큘럼 순서')
+    expect(html).toContain('읽기 완료와 문제 풀이에 근거한 이해도는 다릅니다')
   })
 
   it('prefers a topic with unfinished learning over a review-only topic', () => {

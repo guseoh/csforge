@@ -10,6 +10,12 @@ const mocks = vi.hoisted(() => ({
     isError: false,
     refetch: vi.fn(),
   },
+  understanding: {
+    data: null as import('../lib/learning-api').ConceptUnderstanding | null,
+    isPending: false,
+    isError: false,
+    refetch: vi.fn(),
+  },
 }))
 
 vi.mock('@tanstack/react-router', () => ({
@@ -18,7 +24,8 @@ vi.mock('@tanstack/react-router', () => ({
 }))
 
 vi.mock('@tanstack/react-query', () => ({
-  useQuery: () => mocks.query,
+  useQuery: ({ queryKey }: { queryKey: readonly unknown[] }) =>
+    queryKey[0] === 'concept-understanding' ? mocks.understanding : mocks.query,
   useQueryClient: () => ({ setQueryData: vi.fn(), invalidateQueries: vi.fn() }),
   useMutation: () => ({ mutate: vi.fn(), isPending: false, isError: false, data: undefined }),
 }))
@@ -39,7 +46,7 @@ vi.mock('../components/toast/ToastProvider', () => ({
   useToast: () => ({ showToast: vi.fn() }),
 }))
 
-import { CompactConceptArticleToc, ConceptPage } from './ConceptPage'
+import { CompactConceptArticleToc, ConceptPage, ConceptUnderstandingSection } from './ConceptPage'
 
 const concept: ConceptDetail = {
   id: 17,
@@ -71,6 +78,9 @@ describe('ConceptPage', () => {
     mocks.query.data = concept
     mocks.query.isPending = false
     mocks.query.isError = false
+    mocks.understanding.data = null
+    mocks.understanding.isPending = false
+    mocks.understanding.isError = false
   })
 
   it('keeps the article before the learning actions', () => {
@@ -125,5 +135,50 @@ describe('CompactConceptArticleToc', () => {
     expect(renderToStaticMarkup(
       <CompactConceptArticleToc headings={[]} activeId="" onNavigate={() => {}} />,
     )).toBe('')
+  })
+})
+
+describe('ConceptUnderstandingSection', () => {
+  beforeEach(() => {
+    mocks.understanding.data = null
+    mocks.understanding.isPending = false
+    mocks.understanding.isError = false
+  })
+
+  it('never equates reading completion with assessed understanding when no attempts exist', () => {
+    mocks.understanding.data = {
+      conceptId: 17, learningStatus: 'COMPLETED',
+      evidence: { uniqueQuestions: 0, finalizedAttempts: 0, correctQuestions: 0, pendingSelfCheckCount: 0 },
+      recentAccuracyPercent: null, assessmentStatus: 'NOT_ENOUGH_EVIDENCE', lastAssessedAt: null,
+    }
+    const html = renderToStaticMarkup(<ConceptUnderstandingSection conceptId={17} />)
+    expect(html).toContain('판단할 문제 근거가 아직 부족합니다')
+    expect(html).toContain('최근 서로 다른 문제 0개 중 0개 정답')
+    expect(html).not.toContain('최근 정답 비율 0%')
+    expect(html).toContain('학습 행동 기록')
+  })
+
+  it('reports repeated attempts separately and pending self-check outside the finalized sample', () => {
+    mocks.understanding.data = {
+      conceptId: 17, learningStatus: 'LEARNING',
+      evidence: { uniqueQuestions: 3, finalizedAttempts: 12, correctQuestions: 2, pendingSelfCheckCount: 1 },
+      recentAccuracyPercent: 66.66666667, assessmentStatus: 'DEVELOPING', lastAssessedAt: '2026-10-21T10:00:00Z',
+    }
+    const html = renderToStaticMarkup(<ConceptUnderstandingSection conceptId={17} />)
+    expect(html).toContain('문제 풀이 근거가 쌓이고 있습니다')
+    expect(html).toContain('최근 정답 비율 67%')
+    expect(html).toContain('전체 확정 풀이 12회')
+    expect(html).toContain('자기채점 대기 1회')
+    expect(html).toContain('여러 개념과 연결')
+  })
+
+  it('handles pending and failed reads without blocking the Concept reader', () => {
+    mocks.understanding.isPending = true
+    expect(renderToStaticMarkup(<ConceptUnderstandingSection conceptId={17} />)).toContain('채점 근거 불러오는 중')
+    mocks.understanding.isPending = false
+    mocks.understanding.isError = true
+    const html = renderToStaticMarkup(<ConceptUnderstandingSection conceptId={17} />)
+    expect(html).toContain('읽기와 노트 작성은 계속할 수 있습니다')
+    expect(html).toContain('다시 시도')
   })
 })
