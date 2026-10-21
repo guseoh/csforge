@@ -15,7 +15,7 @@ const mocks = vi.hoisted(() => ({
   },
   location: { searchStr: '?concepts=506&count=10' },
   areas: { data: [], isPending: false, isError: false, refetch: vi.fn() },
-  active: { data: null, isPending: false, isError: false },
+  active: { data: null, isPending: false, isError: false, refetch: vi.fn() },
   availability: { data: { availableCount: 3 }, isPending: false, isError: false, refetch: vi.fn() },
   navigate: vi.fn(),
   createQuiz: vi.fn(async (_payload: unknown, _requestId: string) => ({ quizId: 95 })),
@@ -93,6 +93,7 @@ describe('QuizSetupPage concept practice count', () => {
     mocks.areas.isPending = false
     mocks.areas.isError = false
     mocks.active.data = null
+    mocks.active.isError = false
     mocks.availability = {
       data: { availableCount: 3 },
       isPending: false,
@@ -177,5 +178,31 @@ describe('QuizSetupPage concept practice count', () => {
     expect(markup).toContain('<strong>10문제</strong>')
     expect(markup).toContain('<button class="primary-button" type="button" disabled="">선택 조건으로 시작</button>')
     expect(mocks.createMutationFn).not.toBeNull()
+  })
+})
+
+describe('QuizSetupPage applied filters and recovery', () => {
+  it('summarizes concept scope, question count, and time limit without hiding quick presets', () => {
+    mocks.search = {
+      ...mocks.search,
+      areas: '', concepts: '506', levels: '2',
+      difficulties: 'HARD', questionTypes: 'SCENARIO',
+      state: 'WRONG', count: 5, timeLimitSeconds: 600,
+    }
+    mocks.location.searchStr = '?concepts=506&levels=2&state=WRONG'
+    const html = renderToStaticMarkup(<QuizSetupPage />)
+    expect(html).toContain('현재 적용된 문제 조건')
+    expect(html).toContain('개념 1개 · 오답 · L2 · 난이도 어려움 · 유형 시나리오 · 5문항 요청 · 10분 제한')
+    expect(html).toContain('빠른 시작')
+    expect(html).toContain('직접 설정')
+  })
+
+  it('distinguishes a failed resume lookup from a missing active session', () => {
+    mocks.active.isError = true
+    const html = renderToStaticMarkup(<QuizSetupPage />)
+    expect(html).toContain('이어 풀 수 있는 세션을 확인하지 못했습니다.')
+    expect(html).toContain('다시 확인')
+    expect(html).not.toContain('진행 중인 문제가 있습니다.')
+    mocks.active.isError = false
   })
 })

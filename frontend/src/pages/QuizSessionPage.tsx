@@ -34,6 +34,11 @@ function choiceLabel(index: number) {
   return String.fromCharCode(65 + index)
 }
 
+/** Keep answer-editing shortcuts inert after submission or timer expiry. */
+export function canEditQuizAnswerByShortcut(status: string | undefined, expired: boolean) {
+  return status === 'IN_PROGRESS' && !expired
+}
+
 export function QuizSessionPage() {
   const { quizId: quizIdParam } = useParams({ from: '/quiz/$quizId' })
   const quizId = Number(quizIdParam)
@@ -115,7 +120,7 @@ export function QuizSessionPage() {
         event.preventDefault()
         moveTo(position - 1)
       }
-      if (session?.status !== 'IN_PROGRESS' || expired) return
+      if (!canEditQuizAnswerByShortcut(session?.status, expired)) return
       if (event.key.toLowerCase() === 'r') {
         event.preventDefault()
         updateDraft({ reviewNeeded: !draft.reviewNeeded })
@@ -220,7 +225,6 @@ export function QuizSessionPage() {
                 type="button"
                 className={draft.selectedChoiceKey === choice.choiceKey ? 'choice-button selected' : 'choice-button'}
                 aria-pressed={draft.selectedChoiceKey === choice.choiceKey}
-                aria-label={`선택지 ${choiceLabel(index)}${draft.selectedChoiceKey === choice.choiceKey ? ', 선택됨' : ''}`}
                 disabled={expired || session.status !== 'IN_PROGRESS' || submitMutation.isPending}
                 onClick={() => updateDraft({ selectedChoiceKey: choice.choiceKey, answerText: null })}
               >
