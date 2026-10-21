@@ -133,7 +133,7 @@ export function ReviewPage() {
               {reviews.data.items.map((item) => {
                 const timing = reviewTiming(item.dueAt, item.status)
                 return (
-                  <Link className="review-list-item" key={item.questionId} to="/wrong-notes/$questionId" params={{ questionId: String(item.questionId) }}>
+                  <article className="review-list-item" key={item.questionId}>
                     <div className="review-list-copy">
                       <h3>{compactMarkdownPreview(item.promptMarkdown)}</h3>
                       <p className="review-concept-path">{item.concepts.map((concept) => `${concept.areaName} · ${concept.title} · 레벨 ${concept.level}`).join(', ')}</p>
@@ -146,9 +146,17 @@ export function ReviewPage() {
                     <div className="review-list-side">
                       <span className={`review-timing-label review-timing-${timing.className}`}>{timing.label}</span>
                       <strong className="review-due-date">{item.dueAt ? new Date(item.dueAt).toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' }) : '정리 완료'}</strong>
-                      <span className="review-row-action" aria-hidden="true">기록 보기 →</span>
+                      {item.concepts.length > 0 ? (
+                        <Link
+                          className="review-row-action"
+                          to="/concepts/$conceptId"
+                          params={{ conceptId: String(item.concepts[0].id) }}
+                        >
+                          관련 개념 읽기 →
+                        </Link>
+                      ) : <span className="review-row-action review-row-info">연결된 개념 없음 · 복습은 위에서 시작</span>}
                     </div>
-                  </Link>
+                  </article>
                 )
               })}
             </div>

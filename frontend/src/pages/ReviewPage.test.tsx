@@ -90,5 +90,19 @@ describe('ReviewPage timing and recovery', () => {
     expect(html).toContain('정리 완료')
     expect(html).toContain('오래된 복습')
     expect(html).toContain('완료된 복습')
+    expect(html).toContain('<article class="review-list-item">')
+    expect(html).not.toContain('/wrong-notes/$questionId')
+  })
+
+  it('navigates to an existing concept rather than assuming every review has a wrong note', () => {
+    mocks.summary.data = { overdue: 1, dueNow: 0, next24Hours: 0, next7Days: 0, mastered: 0 }
+    mocks.reviews.data.items = [
+      { questionId: 44, promptMarkdown: '맞았지만 복습 표시한 문제', concepts: [{ id: 90, title: '연결된 개념', areaName: 'Java', level: 1 }], status: 'SCHEDULED', stage: 1, dueAt: '2001-01-01T00:00:00Z', lastReviewedAt: null },
+    ]
+    const html = renderToStaticMarkup(<ReviewPage />)
+    expect(html).toContain('관련 개념 읽기 →')
+    expect(html).toContain('연결된 개념')
+    expect(html).toContain('복습 시작')
+    expect(html).not.toContain('/wrong-notes/$questionId')
   })
 })
