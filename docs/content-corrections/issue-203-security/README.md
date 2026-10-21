@@ -42,3 +42,12 @@
 3. 최종 Repository Validation PASS, file diff 범위와 base drift·review thread 재검토.
 4. **Human Usage Check는 최신 사용자 결정으로 제외**. 시각화는 기존 text/ASCII/HTTP 예제면 충분하며 UI 수동 판정을 수행했다고 주장하지 않는다.
 5. 필요 없는 인프라·서비스·코드 변경, Production canonical sync, 무승인 병합 금지. 사용자로부터 "검토 후 병합 가능하면 진행" 승인을 받은 범위에서만 최종 검증이 모두 통과한 PR을 squash merge.
+
+## 격리 실제 Spring/PostgreSQL Historical Import 결과 (2026-10-21)
+
+- [GitHub Actions #39543127401](https://github.com/guseoh/csforge/actions/runs/39543127401) **SUCCESS** (임시 QA 포함 HEAD `67ccd795e7483e5ba71ea6b30195de847848b1cd`).
+- 별도 PostgreSQL 16.4·Java 25 Spring Boot local mode. `/api/auth/session` 응답의 LOCAL 모드와 빈 DB 최초 canonical import **3,380 CREATED** 확인.
+- 변경 전 9 Concept MD + 3 Question JSON을 원문으로 되돌린 뒤 실제 multipart `Preview/Apply` **12 UPDATED**; 교정본을 같은 방식으로 적용할 때 **12 UPDATED**. 동일 12 source 파일 exact reimport: **27 UNCHANGED / 0 UPDATED**(9 Concept, 18 Question); 전체 canonical rebootstrap: **3,380 UNCHANGED / 0 UPDATED / 0 ERROR**.
+- 실제 Security MC 오답 Quiz → Result/WrongNote/ReviewSchedule 및 개인 Concept note/오답 메모 생성 후 import. 10 테이블 `personal_note`, `concept_progress`, `quiz_session`, `attempt`, `wrong_note`, `review_schedule`, `review_history`, `question_answer`, `question_concept`, `concept_reference` 전체 digest가 원문·교정본 apply 및 exact import 전후 동일. 9개 Concept stable ID와 이전 오답 Quiz 결과도 보존.
+- `security.core.context-authz.context-holder.q2`의 관련 Concept가 실제 DB에서 **2개**(context-holder + async-context)임을 검증.
+- 임시 QA workflow는 성공 후 제거하고 Actions 로그·이 문서에 증거 유지. **Human Usage Check는 사용자 결정에 따라 제외**. Production DB/기존 사용자 데이터 변경 없음.
