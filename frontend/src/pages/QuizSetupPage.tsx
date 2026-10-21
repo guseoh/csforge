@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef } from 'react'
 import { Link, useLocation, useNavigate, useSearch } from '@tanstack/react-router'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { ErrorState, PageSkeleton } from '../components/AsyncStates'
+import { SavedQuizSets } from '../components/SavedQuizSets'
 import {
   createQuiz,
   getActiveQuiz,
@@ -318,6 +319,8 @@ export function QuizSetupPage() {
           </button>
         </div>
       </section>
+
+      <SavedQuizSets current={search} onApply={navigateToSettings} />
 
       <details className="quiz-config-disclosure" open={hasDetailedSettings ? true : undefined}>
         <summary>

@@ -48,7 +48,7 @@ export function TopicFocusPage() {
   const quizSearch = { ...defaultQuizSearch, areas: areaSlug, concepts: idSignature }
   const back = <Link to="/learning/$areaSlug" params={{ areaSlug }} search={defaultLearningSearch}>영역으로 돌아가기</Link>
 
-  if (!valid) return <ErrorState message="유효하지 않은 Topic 번호입니다." />
+  if (!valid) return <ErrorState message="유효하지 않은 Topic 번호입니다." onRetry={() => window.history.back()} />
   if (areaQuery.isPending || first.isPending || remaining.some(query => query.isPending)) return <PageSkeleton rows={5} />
   if (areaQuery.isError || first.isError || remaining.some(query => query.isError)) return (
     <ErrorState message="Topic 학습 경로를 불러오지 못했습니다." onRetry={() => {
