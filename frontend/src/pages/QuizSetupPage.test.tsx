@@ -11,7 +11,7 @@ const mocks = vi.hoisted(() => ({
     questionTypes: '',
     state: 'ALL',
     count: 10,
-    timeLimitSeconds: null,
+    timeLimitSeconds: null as number | null,
   },
   location: { searchStr: '?concepts=506&count=10' },
   areas: { data: [], isPending: false, isError: false, refetch: vi.fn() },
