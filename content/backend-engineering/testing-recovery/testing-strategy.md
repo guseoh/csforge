@@ -33,6 +33,7 @@ references:
 | 계산·상태 전이 버그 | 단위 테스트 |
 | Controller 검증·HTTP 상태 | MVC/API slice 테스트 |
 | JPA mapping·query | DB 통합 테스트 |
+| 외부 vendor API의 실패·스키마·timeout | HTTP client + 응답 stub/mock server 기반 계약 테스트 |
 | migration·import 멱등성 | 실제 PostgreSQL 통합 테스트 |
 | 전체 사용자 흐름 | 소수의 end-to-end 테스트 |
 
