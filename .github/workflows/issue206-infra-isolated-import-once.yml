@@ -1,0 +1,157 @@
+name: Issue 206 Infrastructure isolated historical import
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/issue206-infra-isolated-import-once.yml'
+permissions:
+  contents: read
+jobs:
+  isolated-import:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Stage new pack and simulate preceding canonical baseline
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/issue206-new
+          cp 'content/infrastructure-cloud/reliability/questions.json' /tmp/issue206-new/questions.json
+          cp 'content/infrastructure-cloud/reliability/failure-domains.md' /tmp/issue206-new/concept.md
+          git show 'a0bb36fdc00bbc8228220cbbbcafa3c785929df1:content/infrastructure-cloud/reliability/questions.json' > 'content/infrastructure-cloud/reliability/questions.json'
+          rm 'content/infrastructure-cloud/reliability/failure-domains.md'
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: gradle
+      - name: Start disposable PostgreSQL 16 and Redis
+        run: |
+          docker compose up -d postgres redis
+          for i in $(seq 1 60); do
+            if docker compose exec -T postgres pg_isready -U csforge -d csforge; then exit 0; fi
+            sleep 2
+          done
+          exit 1
+      - name: Start real local-mode Spring Boot with preceding canonical data
+        run: |
+          cd backend
+          chmod +x gradlew
+          nohup ./gradlew bootRun --no-daemon > /tmp/issue206-infra-boot.log 2>&1 < /dev/null &
+          for i in $(seq 1 160); do
+            if curl -fsS http://127.0.0.1:8080/actuator/health/readiness >/dev/null 2>&1; then exit 0; fi
+            sleep 2
+          done
+          tail -n 180 /tmp/issue206-infra-boot.log
+          exit 1
+      - name: Import newly authored pack with exact replay and history checks
+        env:
+          NEW_KEY: 'infrastructure.core.reliability.failure-domains'
+          PREVIOUS_CONCEPT_KEY: 'infrastructure.core.reliability.iac-rollout'
+          PREVIOUS_QUESTION_KEY: 'infrastructure.core.reliability.iac-rollout.q1'
+        run: |
+          python3 - <<'PY'
+          import json,os,pathlib,subprocess,urllib.request,uuid
+          API='http://127.0.0.1:8080'
+          NEW=os.environ['NEW_KEY']
+          OLD=os.environ['PREVIOUS_CONCEPT_KEY']
+          OQ=os.environ['PREVIOUS_QUESTION_KEY']
+          dir=pathlib.Path('/tmp/issue206-new')
+          data=json.loads((dir/'questions.json').read_text())
+          assert len(data)==12 and len(set(x['contentKey'] for x in data))==12,data
+          new_questions=[x for x in data if x['contentKey'].startswith(NEW+'.q')]
+          assert len(new_questions)==3 and all(x['conceptKeys']==[NEW] for x in new_questions)
+          assert sum(x['questionType']=='MULTIPLE_CHOICE' for x in new_questions)==1
+          assert NEW in (dir/'concept.md').read_text()
+          def sql(q):
+            return subprocess.check_output(['docker','compose','exec','-T','postgres','psql','-U','csforge','-d','csforge','-At','-c',q],text=True).strip()
+          def call(path,method='GET',data=None):
+            raw=None if data is None else json.dumps(data,ensure_ascii=False).encode()
+            headers={'Accept':'application/json'}
+            if raw is not None:headers['Content-Type']='application/json'
+            if method=='POST':headers['Idempotency-Key']=str(uuid.uuid4())
+            req=urllib.request.Request(API+path,headers=headers,data=raw,method=method)
+            with urllib.request.urlopen(req,timeout=180) as resp:
+              content=resp.read()
+              return json.loads(content) if content else None
+          def multipart(digest=None):
+            boundary='csf206'+uuid.uuid4().hex
+            body=b''
+            for name,mime in [('concept.md','text/markdown'),('questions.json','application/json')]:
+              content=(dir/name).read_bytes()
+              body+=(f'--{boundary}\r\nContent-Disposition: form-data; name="files"; filename="{name}"\r\nContent-Type: {mime}\r\n\r\n').encode()+content+b'\r\n'
+            if digest is not None:
+              body+=f'--{boundary}\r\nContent-Disposition: form-data; name="previewDigest"\r\n\r\n{digest}\r\n'.encode()
+            return body+f'--{boundary}--\r\n'.encode(),'multipart/form-data; boundary='+boundary
+          def post(path,body,mime):
+            req=urllib.request.Request(API+path,data=body,method='POST',headers={'Content-Type':mime})
+            with urllib.request.urlopen(req,timeout=180) as resp:return json.load(resp)
+          def import_once():
+            p=post('/api/imports/preview',*multipart())
+            assert p['canApply'] and p['totals']['errors']==0,p
+            a=post('/api/imports/apply',*multipart(p['previewDigest']))
+            assert a['totals']['failed']==0,(p,a)
+            return p,a
+          def digest(t,clause=''):
+            return sql("select md5(coalesce(string_agg(row_to_json(t)::text,chr(10) order by row_to_json(t)::text),'')) from (select * from "+t+" "+clause+") t")
+          def existing_history():
+            tables=['personal_note','concept_progress','quiz_session','attempt','wrong_note','review_schedule','review_history','question_answer','question_concept','concept_reference']
+            outputs={}
+            for t in tables:
+              clause=''
+              if t in ('question_answer','question_concept'):
+                clause="where question_id not in (select id from question where content_key like '"+NEW+".q%')"
+              elif t=='concept_reference':
+                clause="where concept_id not in (select id from concept where content_key='"+NEW+"')"
+              outputs[t]=digest(t,clause)
+            return outputs
+          auth=call('/api/auth/session')
+          assert auth['authenticated'] and auth['mode']=='LOCAL',auth
+          boot=call('/api/canonical-bootstrap','POST')
+          assert boot['success'] and boot['totalItems']==3388 and boot['totals']['created']==3388,boot
+          old_cid=int(sql("select id from concept where content_key='"+OLD+"'"))
+          old_qid=int(sql("select id from question where content_key='"+OQ+"'"))
+          correct=sql("select c.choice_key from question_answer a join question_choice c on c.id=a.choice_id where a.question_id="+str(old_qid)+" and a.answer_kind='CORRECT_CHOICE'")
+          start=call('/api/quizzes/questions/'+str(old_qid)+'/practice','POST')
+          record=call('/api/quizzes/'+str(start['quizId']))
+          wrong=next(x['choiceKey'] for x in record['questions'][0]['choices'] if x['choiceKey']!=correct)
+          call('/api/quizzes/'+str(start['quizId'])+'/questions/'+str(old_qid)+'/answer','PUT',{'selectedChoiceKey':wrong,'answerText':None,'reviewNeeded':True})
+          call('/api/quizzes/'+str(start['quizId'])+'/submit','POST')
+          assert call('/api/quizzes/'+str(start['quizId'])+'/result')['wrong']==1
+          call('/api/concepts/'+str(old_cid)+'/note','PUT',{'content':'issue206-existing-note'})
+          call('/api/wrong-notes/'+str(old_qid)+'/note','PUT',{'content':'issue206-existing-wrong-note'})
+          before=existing_history()
+          p,a=import_once()
+          assert p['totals']['created']==4 and a['totals']['created']==4,(p['totals'],a['totals'])
+          assert p['totals']['unchanged']==9 and a['totals']['unchanged']==9,(p['totals'],a['totals'])
+          concept_id=int(sql("select id from concept where content_key='"+NEW+"'"))
+          question_ids={x['contentKey']:int(sql("select id from question where content_key='"+x['contentKey']+"'")) for x in new_questions}
+          assert call('/api/concepts/'+str(concept_id))['contentKey']==NEW
+          p,a=import_once()
+          assert p['totals']['unchanged']==13 and a['totals']['unchanged']==13,(p['totals'],a['totals'])
+          assert p['totals']['created']==0 and p['totals']['updated']==0,p
+          assert before==existing_history(),'Old personal history or relation changed'
+          assert old_cid==int(sql("select id from concept where content_key='"+OLD+"'"))
+          assert old_qid==int(sql("select id from question where content_key='"+OQ+"'"))
+          assert call('/api/quizzes/'+str(start['quizId'])+'/result')['wrong']==1
+          assert concept_id==int(sql("select id from concept where content_key='"+NEW+"'"))
+          for key,ident in question_ids.items():
+            assert ident==int(sql("select id from question where content_key='"+key+"'"))
+          mc=next(x for x in new_questions if x['questionType']=='MULTIPLE_CHOICE')
+          qid=question_ids[mc['contentKey']]
+          practice=call('/api/quizzes/questions/'+str(qid)+'/practice','POST')
+          call('/api/quizzes/'+str(practice['quizId'])+'/questions/'+str(qid)+'/answer','PUT',{'selectedChoiceKey':mc['correctChoiceKey'],'answerText':None,'reviewNeeded':False})
+          call('/api/quizzes/'+str(practice['quizId'])+'/submit','POST')
+          assert call('/api/quizzes/'+str(practice['quizId'])+'/result')['correct']==1
+          print('PASS NEW pack Preview/Apply 4 CREATED, 9 existing Question UNCHANGED')
+          print('PASS exact replay 13 UNCHANGED / 0 UPDATED, new Question grading correct')
+          print('PASS existing Concept/Question stable IDs and 10 personal/history/relation table digests')
+          PY
+      - name: Diagnostics on failure only
+        if: failure()
+        run: |
+          tail -n 150 /tmp/issue206-infra-boot.log || true
+          docker compose ps || true
