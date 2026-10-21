@@ -44,6 +44,7 @@ function AppLayout() {
 
   useEffect(() => {
     setActivePopover(null)
+    setMobileNavOpen(false)
   }, [location.pathname, location.searchStr, location.hash])
 
   useEffect(() => {
@@ -72,7 +73,20 @@ function AppLayout() {
     }
   }, [activePopover])
 
+  useEffect(() => {
+    if (!mobileNavOpen) return
+
+    const closeMobileNavigationOnEscape = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return
+      setMobileNavOpen(false)
+      document.querySelector<HTMLButtonElement>('.mobile-menu-toggle')?.focus()
+    }
+    document.addEventListener('keydown', closeMobileNavigationOnEscape)
+    return () => document.removeEventListener('keydown', closeMobileNavigationOnEscape)
+  }, [mobileNavOpen])
+
   const togglePopover = (popover: HeaderPopoverId) => {
+    setMobileNavOpen(false)
     setActivePopover((current) => toggleHeaderPopover(current, popover))
   }
   const closePopover = () => setActivePopover(null)
@@ -111,7 +125,10 @@ function AppLayout() {
               aria-controls="primary-navigation"
               aria-expanded={mobileNavOpen}
               aria-label={mobileNavOpen ? '주요 메뉴 닫기' : '주요 메뉴 열기'}
-              onClick={() => setMobileNavOpen((open) => !open)}
+              onClick={() => {
+                setActivePopover(null)
+                setMobileNavOpen((open) => !open)
+              }}
             >
               <span aria-hidden="true">{mobileNavOpen ? '×' : '☰'}</span>
             </button>

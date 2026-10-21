@@ -1,4 +1,5 @@
 import { Link } from '@tanstack/react-router'
+import { ThemeControl } from './ThemeControl'
 
 type UtilityMenuProps = {
   open: boolean
@@ -27,6 +28,10 @@ export function UtilityMenu({ open, onToggle, onClose }: UtilityMenuProps) {
       </button>
       <div className="utility-menu-panel" id="utility-menu-panel" hidden={!open}>
         <Link className="utility-menu-link" to="/settings/import" onClick={onClose}>콘텐츠 가져오기</Link>
+        <div className="utility-menu-theme">
+          <span>테마 선택</span>
+          <ThemeControl />
+        </div>
       </div>
     </div>
   )
