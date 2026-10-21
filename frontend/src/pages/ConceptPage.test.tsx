@@ -39,7 +39,7 @@ vi.mock('../components/toast/ToastProvider', () => ({
   useToast: () => ({ showToast: vi.fn() }),
 }))
 
-import { ConceptPage } from './ConceptPage'
+import { CompactConceptArticleToc, ConceptPage } from './ConceptPage'
 
 const concept: ConceptDetail = {
   id: 17,
@@ -96,5 +96,34 @@ describe('ConceptPage', () => {
 
     expect(markup).toContain('문제로 이해를 확인해보세요.')
     expect(markup).toContain('class="primary-button concept-quiz-action"')
+  })
+})
+
+describe('CompactConceptArticleToc', () => {
+  const headings = [
+    { id: 'concept-17-section-1', label: '핵심 설명', level: 2 as const },
+    { id: 'concept-17-section-2', label: '동작 예시', level: 3 as const },
+    { id: 'learning-actions', label: '학습 마무리', level: 2 as const },
+  ]
+
+  it('keeps a collapsible accessible article outline with the active location', () => {
+    const markup = renderToStaticMarkup(
+      <CompactConceptArticleToc headings={headings} activeId="concept-17-section-2" onNavigate={() => {}} />,
+    )
+
+    expect(markup).toContain('class="concept-toc-compact"')
+    expect(markup).toContain('<summary>')
+    expect(markup).toContain('3개 섹션')
+    expect(markup).toContain('aria-label="이 글의 목차"')
+    expect(markup).toContain('href="#concept-17-section-1"')
+    expect(markup).toContain('class="toc-level-3 active"')
+    expect(markup).toContain('aria-current="location"')
+    expect(markup).toContain('href="#learning-actions"')
+  })
+
+  it('omits the outline when there are no navigable sections', () => {
+    expect(renderToStaticMarkup(
+      <CompactConceptArticleToc headings={[]} activeId="" onNavigate={() => {}} />,
+    )).toBe('')
   })
 })

@@ -438,6 +438,10 @@
   background: var(--surface-interactive);
 }
 
+.concept-toc-compact {
+  display: none;
+}
+
 @media (max-width: 1280px) {
   .concept-reading-workspace,
   .concept-reading-workspace:has(.concept-learning-rail[data-collapsed='true']) {

@@ -134,7 +134,7 @@ function ConceptArticleToc({ headings, activeId, onNavigate }: ArticleTocProps) 
   )
 }
 
-function CompactConceptArticleToc({ headings, activeId, onNavigate }: ArticleTocProps) {
+export function CompactConceptArticleToc({ headings, activeId, onNavigate }: ArticleTocProps) {
   if (headings.length === 0) return null
   return (
     <details className="concept-toc-compact">
