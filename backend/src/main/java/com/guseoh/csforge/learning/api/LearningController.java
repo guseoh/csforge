@@ -61,6 +61,16 @@ public class LearningController {
                 new LearningAreaOutlineCriteria(areaSlug, page, size)));
     }
 
+    @GetMapping("/learning-areas/{areaSlug}/understanding")
+    public ConceptUnderstandingPageResponse getAreaUnderstanding(
+            @PathVariable String areaSlug,
+            @RequestParam(required = false) Long topicId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return ConceptUnderstandingPageResponse.from(
+                understandingService.getAreaUnderstanding(areaSlug, topicId, page, size));
+    }
+
     @GetMapping("/concepts")
     public ConceptPageResponse listConcepts(
             @RequestParam(required = false) String area,
