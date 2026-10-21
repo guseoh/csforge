@@ -24,7 +24,7 @@ topics:
 - key: distributed.core.time-failure
   title: 분산 환경의 시간과 장애
   order: 10
-  scope: 시계·요청 기한, 부분 장애와 장애 감지기의 한계를 다룬다.
+  scope: 시계·요청 기한, 부분 장애·장애 감지기와 분산 사건의 인과적 순서를 다룬다.
   boundary: Network & HTTP의 프로토콜 의미론과 Backend/Messaging의 재시도 구현을 반복하지 않고 분산 실행의 장애 모델을 다룬다.
   concepts:
   - key: distributed.core.time-failure.clocks-deadlines
@@ -46,6 +46,13 @@ topics:
     order: 30
     level: 2
     objective: 시간 초과 기반 생존 판단의 오탐·미탐과 복구 상태를 다루고, 장애 의심과 split-brain 방지 장치를 구분한다.
+    density: CORE
+    visualization: DIAGRAM
+  - key: distributed.core.time-failure.causal-ordering
+    title: 분산 사건의 인과적 순서와 논리 시계
+    order: 40
+    level: 2
+    objective: 프로세스 내부 순서·메시지 전달의 happens-before와 독립적인 동시 사건을 구분하고 Lamport 논리 시계의 단방향 보장과 역추론 한계를 판단한다.
     density: CORE
     visualization: DIAGRAM
 - key: distributed.core.consistency
