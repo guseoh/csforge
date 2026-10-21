@@ -1,0 +1,152 @@
+name: Issue 202 final three-area stateful import regression
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/issue202-final-stateful-import.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  final-integrated-content:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Stage three immutable PR snapshots without merge
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin refs/pull/253/head:refs/remotes/origin/issue202network refs/pull/254/head:refs/remotes/origin/issue202database
+          test "$(git rev-parse refs/remotes/origin/issue202network)" = a9ecdb84275f1f97faaf42c36ebb129b1e5c2991
+          test "$(git rev-parse refs/remotes/origin/issue202database)" = cdddcf10fc6875247884dff80765f53bd9a3dc05
+          git restore --source=refs/remotes/origin/issue202network -- content/network-http
+          git restore --source=refs/remotes/origin/issue202database -- content/database
+          test -f content/network-http/tls/tls-handshake.md
+          test -f content/database/index/questions.json
+          test -f content/dsa/search-sort/binary-search-boundary.md
+          python3 - <<'PY'
+          import json
+          p=json.load(open('content/database/index/questions.json'))
+          q=next(q for q in p if q['contentKey']=='database.core.index.btree.q2')
+          assert len(q['acceptedAnswers'])==9
+          assert 'B-tree는 키를 정렬된 상태로 유지하므로 하한 위치를 찾은 뒤 인접한 리프 엔트리를 순서대로 스캔할 수 있다.' in q['acceptedAnswers']
+          print('PASS final Database corrected B-tree acceptedAnswers 9')
+          PY
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: gradle
+      - name: Start isolated PostgreSQL/Redis with disposable Docker volumes
+        run: |
+          docker compose up -d postgres redis
+          for i in $(seq 1 60); do
+            if docker compose exec -T postgres pg_isready -U csforge -d csforge; then exit 0; fi
+            sleep 2
+          done
+          exit 1
+      - name: Start real Spring Boot with latest combined canonical classpath
+        run: |
+          cd backend
+          chmod +x gradlew
+          nohup ./gradlew bootRun --no-daemon > /tmp/issue202-final-backend.log 2>&1 < /dev/null &
+          echo $! > /tmp/issue202-final-backend.pid
+          for i in $(seq 1 160); do
+            if curl -fsS http://127.0.0.1:8080/actuator/health/readiness >/dev/null 2>&1; then
+              echo 'Spring readiness SUCCESS'
+              exit 0
+            fi
+            sleep 2
+          done
+          tail -n 140 /tmp/issue202-final-backend.log
+          exit 1
+      - name: Import final combined 3 areas, persist study history and exact reimport
+        run: |
+          python3 - <<'PY'
+          import json
+          import subprocess
+          import urllib.request
+          import uuid
+          BASE='http://127.0.0.1:8080'
+          ANSWER='B-tree는 키를 정렬된 상태로 유지하므로 하한 위치를 찾은 뒤 인접한 리프 엔트리를 순서대로 스캔할 수 있다.'
+          def api(path,method='GET',payload=None):
+              body=None if payload is None else json.dumps(payload,ensure_ascii=False).encode('utf8')
+              headers={'Accept':'application/json'}
+              if body is not None: headers['Content-Type']='application/json'
+              if method=='POST': headers['Idempotency-Key']=str(uuid.uuid4())
+              request=urllib.request.Request(BASE+path,data=body,headers=headers,method=method)
+              try:
+                  with urllib.request.urlopen(request,timeout=180) as response:
+                      data=response.read()
+                      return json.loads(data) if data else None
+              except urllib.error.HTTPError as e:
+                  raise AssertionError(f'{method} {path} -> {e.code}: {e.read()[:400]!r}') from e
+          def sql(statement):
+              out=subprocess.check_output(['docker','compose','exec','-T','postgres','psql','-U','csforge','-d','csforge','-At','-c',statement],text=True)
+              return out.strip()
+          assert api('/api/auth/session')['mode']=='LOCAL'
+          first=api('/api/canonical-bootstrap','POST')
+          assert first['success'] and first['totalItems']==3380 and first['totals']['created']==3380,first
+          assert first['totals']['errors']==0 and first['totals']['failed']==0,first
+          print('PASS final combined initial import: 3380 CREATED')
+          ck={
+              'net':'network-http.core.tls.tls-handshake',
+              'db':'database.core.mvcc.visibility',
+              'dsa':'dsa.core.search-sort.binary-search-boundary',
+          }
+          ids={k:int(sql("select id from concept where content_key='"+v+"'")) for k,v in ck.items()}
+          expected={'net':'ClientHello','db':'xmin','dsa':'정답 경계'}
+          for k,concept_id in ids.items():
+              concept=api('/api/concepts/'+str(concept_id))
+              assert expected[k] in concept['contentMarkdown'], (k,concept_id)
+          print('PASS three corrected areas fetched from real Spring/JPA PostgreSQL')
+          question=int(sql("select id from question where content_key='database.core.index.btree.q2'"))
+          assert int(sql("select count(*) from question_answer where question_id="+str(question)+" and answer_kind='ACCEPTED_TEXT'"))==9
+          def practice(answer):
+              q=api('/api/quizzes/questions/'+str(question)+'/practice','POST')
+              assert q['questionCount']==1
+              quiz=q['quizId']
+              api('/api/quizzes/'+str(quiz)+'/questions/'+str(question)+'/answer','PUT',{'selectedChoiceKey':None,'answerText':answer,'reviewNeeded':False})
+              api('/api/quizzes/'+str(quiz)+'/submit','POST')
+              return api('/api/quizzes/'+str(quiz)+'/result')
+          correct=practice(ANSWER)
+          assert correct['correct']==1 and correct['questions'][0]['correct'] is True,correct
+          wrong=practice('잘못된 답변')
+          assert wrong['wrong']==1 and wrong['questions'][0]['correct'] is False,wrong
+          assert int(sql('select count(*) from wrong_note'))==1
+          assert int(sql('select count(*) from review_schedule'))==1
+          note=api('/api/concepts/'+str(ids['db'])+'/note','PUT',{'content':'issue202-final-check-reader-note'})
+          assert 'issue202-final-check-reader-note' in str(note),note
+          wn=api('/api/wrong-notes/'+str(question)+'/note','PUT',{'content':'issue202-final-check-wrong-note'})
+          assert 'issue202-final-check-wrong-note' in str(wn),wn
+          review=api('/api/reviews/summary')
+          assert review is not None
+          print('PASS live correct+wrong B-tree Quiz, wrong-note, review schedule, concept note and wrong-note memo')
+          tables=['personal_note','concept_progress','quiz_session','attempt','wrong_note','review_schedule','review_history','question_answer','question_concept','concept_reference']
+          def digest(table):
+              # Sort complete rows by their JSON representation for deterministic snapshots.
+              return sql('select md5(coalesce(string_agg(row_to_json(t)::text,chr(10) order by row_to_json(t)::text),\'\')) from '+table+' t')
+          before={table:digest(table) for table in tables}
+          before_ids={k:sql('select id from concept where content_key=\''+v+'\'') for k,v in ck.items()}
+          second=api('/api/canonical-bootstrap','POST')
+          assert second['success'] and second['totalItems']==3380,second
+          assert second['totals']['unchanged']==3380 and second['totals']['updated']==0 and second['totals']['errors']==0 and second['totals']['failed']==0,second
+          after={table:digest(table) for table in tables}
+          assert before==after,[(t,before[t],after[t]) for t in tables if before[t]!=after[t]]
+          assert before_ids=={k:sql('select id from concept where content_key=\''+v+'\'') for k,v in ck.items()}
+          assert api('/api/quizzes/'+str(correct['quizId'])+'/result')['correct']==1
+          assert api('/api/quizzes/'+str(wrong['quizId'])+'/result')['wrong']==1
+          print('PASS complete second bootstrap: 3380 UNCHANGED / 0 UPDATED / 0 ERROR')
+          print('PASS personal/history digests unchanged for '+', '.join(tables))
+          print('PASS stable IDs and prior wrong/correct Quiz results unchanged')
+          PY
+      - name: Safe diagnostics if failure
+        if: failure()
+        run: |
+          tail -n 150 /tmp/issue202-final-backend.log || true
+          docker compose ps || true
