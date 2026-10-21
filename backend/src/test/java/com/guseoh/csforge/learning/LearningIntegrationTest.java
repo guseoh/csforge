@@ -287,6 +287,84 @@ class LearningIntegrationTest {
         assertEquals("content", validation.get("fieldErrors").get(0).get("field").asText());
     }
 
+
+    @Test
+    void understandingIsUnknownWithoutGradedEvidenceEvenIfReadingIsCompleted() throws Exception {
+        JsonNode before = json(request("GET", "/api/concepts/" + firstConceptId + "/understanding", null));
+        assertEquals("UNSEEN", before.get("learningStatus").asText());
+        assertEquals("NOT_ENOUGH_EVIDENCE", before.get("assessmentStatus").asText());
+        assertTrue(before.get("recentAccuracyPercent").isNull());
+        assertTrue(before.get("lastAssessedAt").isNull());
+        assertEquals(0, before.get("evidence").get("uniqueQuestions").asInt());
+
+        request("PATCH", "/api/concepts/" + firstConceptId + "/progress", "{\\"status\\":\\"COMPLETED\\"}");
+        JsonNode completed = json(request("GET", "/api/concepts/" + firstConceptId + "/understanding", null));
+        assertEquals("COMPLETED", completed.get("learningStatus").asText());
+        assertEquals("NOT_ENOUGH_EVIDENCE", completed.get("assessmentStatus").asText());
+        assertTrue(completed.get("recentAccuracyPercent").isNull());
+        assertEquals(0, completed.get("evidence").get("finalizedAttempts").asInt());
+        assertEquals(404, request("GET", "/api/concepts/99999999/understanding", null).statusCode());
+    }
+
+    @Test
+    void understandingUsesLatestOfDistinctQuestionsAndKeepsRepeatedAttemptsSeparate() throws Exception {
+        long q1 = insertPublishedQuestion("understanding-a", "First", firstConceptId, secondConceptId);
+        long q2 = insertPublishedQuestion("understanding-b", "Second", firstConceptId);
+        long q3 = insertPublishedQuestion("understanding-c", "Third", firstConceptId);
+        for (int i = 0; i < 9; i++) insertAttempt(q1, "GRADED", true);
+        insertAttempt(q1, "GRADED", false);
+        insertAttempt(q2, "GRADED", true);
+        insertAttempt(q3, "SELF_CHECKED", true);
+        insertAttempt(q2, "SELF_CHECK_REQUIRED", null);
+
+        JsonNode evidence = json(request("GET", "/api/concepts/" + firstConceptId + "/understanding", null));
+        assertEquals(3, evidence.get("evidence").get("uniqueQuestions").asInt());
+        assertEquals(12, evidence.get("evidence").get("finalizedAttempts").asInt());
+        assertEquals(2, evidence.get("evidence").get("correctQuestions").asInt());
+        assertEquals(1, evidence.get("evidence").get("pendingSelfCheckCount").asInt());
+        assertEquals("DEVELOPING", evidence.get("assessmentStatus").asText());
+        assertEquals(66.66666666666667, evidence.get("recentAccuracyPercent").asDouble(), 0.0001);
+        assertNotNull(evidence.get("lastAssessedAt"));
+
+        JsonNode shared = json(request("GET", "/api/concepts/" + secondConceptId + "/understanding", null));
+        assertEquals(1, shared.get("evidence").get("uniqueQuestions").asInt());
+        assertEquals(10, shared.get("evidence").get("finalizedAttempts").asInt());
+        assertEquals("NOT_ENOUGH_EVIDENCE", shared.get("assessmentStatus").asText());
+        assertEquals(0.0, shared.get("recentAccuracyPercent").asDouble());
+        assertEquals("UNSEEN", shared.get("learningStatus").asText());
+
+        insertAttempt(q1, "SELF_CHECKED", true);
+        JsonNode selfChecked = json(request("GET", "/api/concepts/" + firstConceptId + "/understanding", null));
+        assertEquals(13, selfChecked.get("evidence").get("finalizedAttempts").asInt());
+        assertEquals(3, selfChecked.get("evidence").get("correctQuestions").asInt());
+        assertEquals("CONSISTENT", selfChecked.get("assessmentStatus").asText());
+        assertEquals(100.0, selfChecked.get("recentAccuracyPercent").asDouble(), 0.001);
+    }
+
+    @Test
+    void understandingSamplesOnlyTenRecentQuestionsAndIgnoresUnsubmittedSessions() throws Exception {
+        long first = 0L;
+        for (int i = 0; i < 12; i++) {
+            long questionId = insertPublishedQuestion("understanding-bound-" + i, "Question " + i, firstConceptId);
+            if (i == 0) first = questionId;
+            insertAttempt(questionId, "GRADED", i >= 2);
+        }
+        Timestamp at = Timestamp.valueOf("2026-09-04 00:00:00");
+        long sessionId = jdbc.queryForObject(
+                "INSERT INTO quiz_session (status, source, started_at) VALUES (?, ?, ?) RETURNING id",
+                Long.class, "IN_PROGRESS", "STANDARD", at);
+        jdbc.update("""
+                INSERT INTO attempt (quiz_session_id, question_id, grading_status, correct, graded_at)
+                VALUES (?, ?, 'GRADED', false, ?)
+                """, sessionId, first, at);
+
+        JsonNode evidence = json(request("GET", "/api/concepts/" + firstConceptId + "/understanding", null));
+        assertEquals(10, evidence.get("evidence").get("uniqueQuestions").asInt());
+        assertEquals(12, evidence.get("evidence").get("finalizedAttempts").asInt());
+        assertEquals(10, evidence.get("evidence").get("correctQuestions").asInt());
+        assertEquals("CONSISTENT", evidence.get("assessmentStatus").asText());
+    }
+
     private HttpResponse<String> request(String method, String path, String body) throws IOException, InterruptedException {
         HttpRequest.Builder builder = HttpRequest.newBuilder(URI.create("http://localhost:" + port + path))
                 .header("Accept", "application/json");
