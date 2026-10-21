@@ -1,0 +1,8 @@
+# Issue #207 — System Design ADR Content Pack
+- Base main: f9166dcd9dfc1b927d629aeb4c237656c5469bf6. Existing three Topics / 9 Concepts / 27 Questions reviewed and KEEP: requirements/QPS/ownership, synchronous vs async, read/write projections, modular monolith, SLO, fault isolation and rollout.
+- New gap: how to document an evidence-based architecture choice and **supersede it** when constraints change. One Level-2 CORE concept system-design.core.architecture.decision-evidence in existing architecture Topic(order 40), ASCII candidate trade-off/decision loop DIAGRAM.
+- New MC(EASY; B), SCENARIO(MEDIUM; 500QPS/180ms vs 300ms objective, projection stale up to 30s violates 5s), DESCRIPTIVE(HARD; 3000QPS/450ms, pool wait investigation, decision supersession). Existing Question contentKeys and scoring remain.
+- Official evidence: AWS ADR Process https://docs.aws.amazon.com/prescriptive-guidance/latest/architectural-decision-records/adr-process.html and Best Practices https://docs.aws.amazon.com/prescriptive-guidance/latest/architectural-decision-records/best-practices.html . Context/alternatives/decision/consequences, accepted ADR immutability and Superseded history.
+- [ ] Real isolated PostgreSQL 16 / Java 25 LOCAL pack Preview/Apply + exact replay and 10-table legacy history digest checks.
+- [ ] Merge Distributed #265 first, reconcile test inventory to final combined corpus, final CI and expected-SHA squash merge.
+- Standalone baseline inventory 875 sources / 726 Concepts / 2540 Questions / 3400 canonical items; both Packs combined will be 876 sources /727 Concepts/2543 Questions/3404 total. Human Usage Check intentionally excluded; no Production canonical Import.

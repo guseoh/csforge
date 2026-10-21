@@ -51,7 +51,7 @@ topics:
 - key: system-design.core.architecture
   title: 아키텍처 구성
   order: 20
-  scope: 동기/비동기 처리, 읽기/쓰기 모델, 모듈형 모놀리스와 서비스 분리 선택을 다룬다.
+  scope: 동기/비동기 처리, 읽기/쓰기 모델, 모듈형 모놀리스·서비스 분리와 근거 기반 의사결정 기록을 다룬다.
   boundary: 메시징·분산 시스템의 기본 메커니즘을 반복하지 않고 요구사항에 맞는 구성과 이후 분리할 수 있는 경계를 다룬다.
   concepts:
   - key: system-design.core.architecture.sync-async
@@ -75,6 +75,13 @@ topics:
     objective: 모듈 경계·팀 자율성·배포 결합도·운영 비용을 고려해 분리 시점을 판단한다.
     density: CORE
     visualization: TEXT
+  - key: system-design.core.architecture.decision-evidence
+    title: 설계 결정의 근거와 변경 조건
+    order: 40
+    level: 2
+    objective: 요구사항·수치/실험 증거·대안 및 비용을 ADR에 연결하고, 전제가 바뀌었을 때 과거 기록을 보존하며 재검토·대체 여부를 판단한다.
+    density: CORE
+    visualization: DIAGRAM
 - key: system-design.core.reliability
   title: 신뢰성과 점진적 변화
   order: 30
