@@ -1,0 +1,98 @@
+name: Issue 202 B-tree live grading regression
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'frontend/scripts/issue202-btree-live-qa.mjs'
+      - '.github/workflows/issue202-btree-live-qa.yml'
+      - 'content/database/index/questions.json'
+
+permissions:
+  contents: read
+
+jobs:
+  btree-live-postgres-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Stage exact previously rejected canonical question
+        run: |
+          set -euo pipefail
+          git cat-file -e 9840cba0dd1d357a3bd119af1c4e091cbf58a208^{commit}
+          git show 9840cba0dd1d357a3bd119af1c4e091cbf58a208:content/database/index/questions.json > content/database/index/questions.json
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: gradle
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Start isolated PostgreSQL 16.4 and Redis
+        run: |
+          docker compose up -d postgres redis
+          for i in $(seq 1 60); do
+            if docker compose exec -T postgres pg_isready -U csforge -d csforge; then exit 0; fi
+            sleep 2
+          done
+          docker compose logs postgres
+          exit 1
+      - name: Start real Spring Boot backend
+        run: |
+          cd backend
+          chmod +x gradlew
+          nohup ./gradlew bootRun --no-daemon > /tmp/issue202-btree-backend.log 2>&1 < /dev/null &
+          echo $! > /tmp/issue202-btree-backend.pid
+          for i in $(seq 1 180); do
+            if curl -fsS http://127.0.0.1:8080/actuator/health/readiness >/dev/null 2>&1; then
+              echo "Backend healthy"
+              exit 0
+            fi
+            if ! kill -0 "$(cat /tmp/issue202-btree-backend.pid)" 2>/dev/null; then break; fi
+            sleep 2
+          done
+          tail -n 160 /tmp/issue202-btree-backend.log
+          exit 1
+      - name: Import pre-fix full canonical into fresh PostgreSQL
+        run: |
+          curl -fsS -X POST http://127.0.0.1:8080/api/canonical-bootstrap > /tmp/issue202-btree-bootstrap.json
+          python3 - <<'PY'
+          import json
+          d=json.load(open('/tmp/issue202-btree-bootstrap.json'))
+          assert d['success'] and d['totalItems']==3380, d
+          assert d['totals']['created']==3380 and d['totals']['errors']==0 and d['totals']['failed']==0, d
+          print('PASS pre-fix bootstrap:',d['totals'])
+          PY
+      - name: Install React frontend and Chromium
+        working-directory: frontend
+        run: |
+          npm ci
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Reproduce wrong result and reimport corrected question against live backend
+        working-directory: frontend
+        run: |
+          npm run dev -- --host 127.0.0.1 --port 4179 > /tmp/issue202-btree-vite.log 2>&1 &
+          for i in $(seq 1 60); do
+            if curl -fsS http://127.0.0.1:4179/ > /dev/null 2>&1; then break; fi
+            sleep 2
+          done
+          node scripts/issue202-btree-live-qa.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: issue202-btree-corrected-result
+          path: frontend/issue202-btree-evidence/*.png
+          if-no-files-found: warn
+      - name: Safe diagnostics on failure
+        if: failure()
+        run: |
+          tail -n 160 /tmp/issue202-btree-backend.log || true
+          tail -n 90 /tmp/issue202-btree-vite.log || true
+          docker compose ps || true
