@@ -330,7 +330,7 @@ class LearningIntegrationTest {
         assertEquals(1, shared.get("evidence").get("uniqueQuestions").asInt());
         assertEquals(10, shared.get("evidence").get("finalizedAttempts").asInt());
         assertEquals("NOT_ENOUGH_EVIDENCE", shared.get("assessmentStatus").asText());
-        assertEquals(0.0, shared.get("recentAccuracyPercent").asDouble());
+        assertTrue(shared.get("recentAccuracyPercent").isNull());
         assertEquals("UNSEEN", shared.get("learningStatus").asText());
 
         insertAttempt(q1, "SELF_CHECKED", true);
@@ -363,6 +363,57 @@ class LearningIntegrationTest {
         assertEquals(12, evidence.get("evidence").get("finalizedAttempts").asInt());
         assertEquals(10, evidence.get("evidence").get("correctQuestions").asInt());
         assertEquals("CONSISTENT", evidence.get("assessmentStatus").asText());
+    }
+
+
+    @Test
+    void areaUnderstandingHasStableTopicPagingAndMatchesConceptEvidence() throws Exception {
+        long shared = insertPublishedQuestion("area-understanding-shared", "Shared question", firstConceptId, secondConceptId);
+        long single = insertPublishedQuestion("area-understanding-first", "First-only question", firstConceptId);
+        insertAttempt(shared, "GRADED", true);
+        insertAttempt(single, "SELF_CHECK_REQUIRED", null);
+
+        JsonNode first = json(request("GET",
+                "/api/learning-areas/java/understanding?topicId=" + topicId + "&page=0&size=1", null));
+        assertEquals(2, first.get("page").get("totalElements").asInt());
+        assertEquals(2, first.get("page").get("totalPages").asInt());
+        assertTrue(first.get("page").get("hasNext").asBoolean());
+        JsonNode firstItem = first.get("items").get(0);
+        assertEquals(firstConceptId, firstItem.get("conceptId").asLong());
+        assertEquals(1, firstItem.get("evidence").get("uniqueQuestions").asInt());
+        assertEquals(1, firstItem.get("evidence").get("finalizedAttempts").asInt());
+        assertEquals(1, firstItem.get("evidence").get("pendingSelfCheckCount").asInt());
+        assertTrue(firstItem.get("recentAccuracyPercent").isNull());
+
+        JsonNode second = json(request("GET",
+                "/api/learning-areas/java/understanding?topicId=" + topicId + "&page=1&size=1", null));
+        assertFalse(second.get("page").get("hasNext").asBoolean());
+        assertEquals(secondConceptId, second.get("items").get(0).get("conceptId").asLong());
+        assertEquals(1, second.get("items").get(0).get("evidence").get("finalizedAttempts").asInt());
+        JsonNode direct = json(request("GET", "/api/concepts/" + secondConceptId + "/understanding", null));
+        assertEquals(direct.get("evidence"), second.get("items").get(0).get("evidence"));
+
+        JsonNode empty = json(request("GET",
+                "/api/learning-areas/java/understanding?topicId=" + topicId + "&page=2&size=1", null));
+        assertEquals(0, empty.get("items").size());
+        assertEquals(404, request("GET", "/api/learning-areas/missing/understanding", null).statusCode());
+        assertEquals(400, request("GET", "/api/learning-areas/java/understanding?size=51", null).statusCode());
+    }
+
+    @Test
+    void areaUnderstandingBatchDoesNotCountPendingAsFinalizedAcrossConcepts() throws Exception {
+        long question = insertPublishedQuestion("area-understanding-multi", "Related", firstConceptId, secondConceptId);
+        insertAttempt(question, "SELF_CHECK_REQUIRED", null);
+        JsonNode area = json(request("GET", "/api/learning-areas/java/understanding?size=10", null));
+        assertEquals(3, area.get("items").size());
+        for (int index = 0; index < 2; index++) {
+            JsonNode item = area.get("items").get(index);
+            assertEquals(0, item.get("evidence").get("finalizedAttempts").asInt());
+            assertEquals(1, item.get("evidence").get("pendingSelfCheckCount").asInt());
+            assertEquals(0, item.get("evidence").get("uniqueQuestions").asInt());
+            assertTrue(item.get("recentAccuracyPercent").isNull());
+        }
+        assertEquals(0, area.get("items").get(2).get("evidence").get("pendingSelfCheckCount").asInt());
     }
 
     private HttpResponse<String> request(String method, String path, String body) throws IOException, InterruptedException {

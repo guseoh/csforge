@@ -53,7 +53,8 @@ public class ConceptUnderstandingQueryService {
                 conceptId, PageRequest.of(0, ConceptUnderstandingPolicy.RECENT_DISTINCT_QUESTIONS));
         int questionCount = recent.size();
         int correctCount = (int) recent.stream().filter(row -> Boolean.TRUE.equals(row.correct())).count();
-        Double accuracy = questionCount == 0 ? null : correctCount * 100.0 / questionCount;
+        Double accuracy = questionCount < ConceptUnderstandingPolicy.MIN_UNIQUE_QUESTIONS
+                ? null : correctCount * 100.0 / questionCount;
 
         return new ConceptUnderstandingView(
                 conceptId,
@@ -82,7 +83,8 @@ public class ConceptUnderstandingQueryService {
             int correct = row == null ? 0 : ((Number) row[4]).intValue();
             return new ConceptUnderstandingView(item.id(), item.learningStatus(),
                     new ConceptUnderstandingView.Evidence(sampled, finalized, correct, pending),
-                    sampled == 0 ? null : correct * 100.0 / sampled,
+                    sampled < ConceptUnderstandingPolicy.MIN_UNIQUE_QUESTIONS
+                            ? null : correct * 100.0 / sampled,
                     ConceptUnderstandingPolicy.classify(sampled, correct),
                     row == null ? null : toInstant(row[5]));
         }).toList();
