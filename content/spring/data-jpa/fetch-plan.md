@@ -76,6 +76,21 @@ Order 2 - Item D
 
 DB는 네 행을 보지만 애플리케이션은 Order 두 개를 원합니다. 이런 쿼리에 SQL 수준의 `LIMIT`을 적용하면 “부모 Order 20개”라는 페이지 단위와 맞지 않을 수 있고, JPA provider의 처리 전략에 따라 메모리 페이지네이션이나 추가 작업이 생길 수 있습니다.
 
+### Entity graph는 조회 메서드마다 필요한 연관관계를 지정한다
+
+같은 `Order.member`를 읽더라도 주문만 조회하는 기능과 회원 이름까지 표시하는 기능은 필요한 데이터가 다릅니다. Spring Data JPA에서는 별도 JPQL fetch join 없이 Repository 조회 메서드에 `@EntityGraph`를 지정할 수 있습니다.
+
+```java
+interface OrderRepository extends JpaRepository<Order, Long> {
+    @EntityGraph(attributePaths = "member")
+    Page<Order> findByStatus(OrderStatus status, Pageable pageable);
+}
+```
+
+이 예시는 해당 메서드로 주문 페이지를 조회할 때 `member`를 함께 로딩하도록 **조회 계획을 지정**합니다. `@EntityGraph`의 기본 `FETCH` 유형은 지정한 속성의 즉시 로딩을 요구하고, 지정하지 않은 속성은 지연 로딩으로 취급합니다. `LOAD` 유형은 지정한 속성을 즉시 로딩하고, 나머지는 매핑에 선언된 fetch type을 따릅니다. 다만 JPA 제공자는 요구된 범위를 넘어 추가 속성을 가져올 수 있고, **Entity graph를 썼다는 이유만으로 SQL이 반드시 JOIN 한 번으로 끝난다고 보장할 수는 없습니다.**
+
+`member`처럼 to-one 연관관계만 필요한 목록은 fetch join이나 entity graph가 후보지만, to-many collection을 함께 읽으면 중복 행·페이지네이션 문제가 다시 생길 수 있습니다. `Page`의 데이터 조회와 전체 개수 집계 쿼리까지 포함한 SQL 실행 횟수, 실제 가져온 행 수, 필요한 DTO 모양을 함께 확인해야 합니다.
+
 ### batch fetch는 LAZY를 유지하면서 추가 쿼리를 묶는다
 
 연관관계를 한 개씩 조회하는 대신 여러 식별자를 모아 다음처럼 가져올 수 있습니다.
