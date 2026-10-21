@@ -506,6 +506,9 @@ class LearningIntegrationTest {
                 .get("page").get("totalElements").asInt());
         assertEquals(0, jdbc.queryForObject(
                 "SELECT count(*) FROM bookmark_category_concept WHERE concept_id = ?", Integer.class, firstConceptId));
+        JsonNode concept = json(request("GET", "/api/concepts/" + firstConceptId, null));
+        assertEquals("UNSEEN", concept.get("progress").get("learningStatus").asText());
+        assertTrue(concept.get("progress").get("firstViewedAt").isNull());
     }
 
     @Test

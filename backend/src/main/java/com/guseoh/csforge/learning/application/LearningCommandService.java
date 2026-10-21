@@ -49,7 +49,7 @@ public class LearningCommandService {
         requireProgressChange(requestedStatus, requestedBookmarked);
 
         Concept concept = findPublishedConcept(conceptId);
-        ConceptProgress progress = progressRepository.findById(conceptId)
+        ConceptProgress progress = progressRepository.findForUpdate(conceptId)
                 .orElseGet(() -> new ConceptProgress(concept));
         Instant changedAt = Instant.now(clock);
 

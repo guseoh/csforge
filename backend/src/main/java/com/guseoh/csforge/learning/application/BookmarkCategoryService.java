@@ -53,7 +53,7 @@ public class BookmarkCategoryService {
     @Transactional
     public Long assign(long conceptId, Long categoryId) {
         ensurePublished(conceptId);
-        ConceptProgress progress = progressRepository.findById(conceptId)
+        ConceptProgress progress = progressRepository.findForUpdate(conceptId)
                 .orElseThrow(() -> new LearningBadRequestException("Bookmark the concept before classifying it"));
         if (!progress.isBookmarked()) {
             throw new LearningBadRequestException("Bookmark the concept before classifying it");
