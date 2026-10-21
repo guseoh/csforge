@@ -3,7 +3,7 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 const mocks = vi.hoisted(() => ({
-  search: { topic: undefined, q: '', level: 'all', status: 'ALL', bookmarked: 'false', sort: 'curriculum', page: 0 },
+  search: { topic: undefined as number | undefined, q: '', level: 'all', status: 'ALL', bookmarked: 'false', sort: 'curriculum', page: 0 },
   areaQuery: { data: null as unknown, isPending: false, isError: false, refetch: vi.fn() },
   firstOutlineQuery: { data: null as unknown, isPending: false, isError: false, refetch: vi.fn() },
   conceptQuery: { data: undefined as unknown, isPending: false, isError: false },
