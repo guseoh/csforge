@@ -50,7 +50,7 @@ public class LearningInsightsQueryService {
         Instant from = fromDay.atStartOfDay(studyZoneId).toInstant();
         Instant previousFrom = previousDay.atStartOfDay(studyZoneId).toInstant();
         // Exclusive upper bound includes all recorded activity up to the query instant.
-        Instant until = asOf.plusNanos(1);
+        Instant until = asOf.plus(1, java.time.temporal.ChronoUnit.MICROS);
 
         LearningInsightsView.Period current = period(fromDay, today, from, until, area);
         LearningInsightsView.Period previous = period(previousDay, fromDay.minusDays(1), previousFrom, from, area);
@@ -62,7 +62,7 @@ public class LearningInsightsQueryService {
         Tuple reviews = repository.reviewDue(asOf, today.atStartOfDay(studyZoneId).toInstant(), area);
         List<Tuple> candidates = repository.weakCandidates(from, until, area, MAX_CANDIDATES);
         List<Long> ids = candidates.stream().map(row -> row.get("conceptId", Long.class)).toList();
-        Map<Long, Object[]> evidence = understandingRepository.summarizeConceptIds(ids).stream()
+        Map<Long, Object[]> evidence = (ids.isEmpty() ? java.util.List.<Object[]>of() : understandingRepository.summarizeConceptIds(ids)).stream()
                 .collect(Collectors.toMap(row -> ((Number) row[0]).longValue(), Function.identity()));
         Map<Long, Long> due = repository.dueByConcept(ids, asOf).stream()
                 .collect(Collectors.toMap(row -> row.get("conceptId", Long.class), row -> row.get("due", Long.class)));
@@ -88,11 +88,11 @@ public class LearningInsightsQueryService {
     private LearningInsightsView.Period period(LocalDate first, LocalDate last,
                                                Instant from, Instant until, String area) {
         Tuple summary = repository.attemptSummary(from, until, area);
-        long finalized = summary.get("finalized", Long.class);
-        long correct = summary.get("correct", Long.class);
+        long finalized = summary.get("finalizedCount", Long.class);
+        long correct = summary.get("correctCount", Long.class);
         return new LearningInsightsView.Period(first, last, finalized, correct,
-                summary.get("wrong", Long.class), summary.get("questions", Long.class),
-                summary.get("pending", Long.class), repository.viewedConcepts(from, until, area),
+                summary.get("wrongCount", Long.class), summary.get("questionCount", Long.class),
+                summary.get("pendingCount", Long.class), repository.viewedConcepts(from, until, area),
                 finalized == 0 ? null : correct * 100.0 / finalized);
     }
 }

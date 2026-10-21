@@ -19,21 +19,21 @@ public class LearningInsightsQueryRepository {
         return entityManager.createQuery("""
                 select count(case when a.gradingStatus in (
                           com.guseoh.csforge.quiz.domain.AttemptGradingStatus.GRADED,
-                          com.guseoh.csforge.quiz.domain.AttemptGradingStatus.SELF_CHECKED) then 1 end) as finalized,
+                          com.guseoh.csforge.quiz.domain.AttemptGradingStatus.SELF_CHECKED) then 1 end) as finalizedCount,
                        count(case when a.gradingStatus in (
                           com.guseoh.csforge.quiz.domain.AttemptGradingStatus.GRADED,
                           com.guseoh.csforge.quiz.domain.AttemptGradingStatus.SELF_CHECKED)
-                          and a.correct = true then 1 end) as correct,
+                          and a.correct = true then 1 end) as correctCount,
                        count(case when a.gradingStatus in (
                           com.guseoh.csforge.quiz.domain.AttemptGradingStatus.GRADED,
                           com.guseoh.csforge.quiz.domain.AttemptGradingStatus.SELF_CHECKED)
-                          and a.correct = false then 1 end) as wrong,
+                          and a.correct = false then 1 end) as wrongCount,
                        count(distinct case when a.gradingStatus in (
                           com.guseoh.csforge.quiz.domain.AttemptGradingStatus.GRADED,
                           com.guseoh.csforge.quiz.domain.AttemptGradingStatus.SELF_CHECKED)
-                          then a.question.id end) as questions,
+                          then a.question.id end) as questionCount,
                        count(case when a.gradingStatus =
-                          com.guseoh.csforge.quiz.domain.AttemptGradingStatus.SELF_CHECK_REQUIRED then 1 end) as pending
+                          com.guseoh.csforge.quiz.domain.AttemptGradingStatus.SELF_CHECK_REQUIRED then 1 end) as pendingCount
                 from Attempt a
                 where a.gradedAt >= :from and a.gradedAt < :until
                   and a.answeredAt is not null
