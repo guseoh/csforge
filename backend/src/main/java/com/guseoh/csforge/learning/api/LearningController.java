@@ -6,6 +6,7 @@ import com.guseoh.csforge.learning.application.ConceptSearchCriteria;
 import com.guseoh.csforge.learning.application.ConceptSort;
 import com.guseoh.csforge.learning.application.LearningAreaOutlineCriteria;
 import com.guseoh.csforge.learning.application.LearningCommandService;
+import com.guseoh.csforge.learning.application.ConceptUnderstandingQueryService;
 import com.guseoh.csforge.learning.application.LearningQueryService;
 import com.guseoh.csforge.learning.application.PersonalNoteView;
 import com.guseoh.csforge.learning.domain.LearningStatus;
@@ -26,14 +27,17 @@ import org.springframework.web.bind.annotation.RestController;
 public class LearningController {
 
     private final LearningQueryService queryService;
+    private final ConceptUnderstandingQueryService understandingService;
     private final LearningCommandService commandService;
     private final LearningApiMapper apiMapper;
 
     public LearningController(
             LearningQueryService queryService,
+            ConceptUnderstandingQueryService understandingService,
             LearningCommandService commandService,
             LearningApiMapper apiMapper) {
         this.queryService = queryService;
+        this.understandingService = understandingService;
         this.commandService = commandService;
         this.apiMapper = apiMapper;
     }
@@ -75,6 +79,11 @@ public class LearningController {
     @GetMapping("/concepts/{conceptId}")
     public ConceptDetailResponse getConcept(@PathVariable long conceptId) {
         return apiMapper.toResponse(queryService.getConcept(conceptId));
+    }
+
+    @GetMapping("/concepts/{conceptId}/understanding")
+    public ConceptUnderstandingResponse getUnderstanding(@PathVariable long conceptId) {
+        return ConceptUnderstandingResponse.from(understandingService.getUnderstanding(conceptId));
     }
 
     @PostMapping("/concepts/{conceptId}/view")
