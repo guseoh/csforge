@@ -6,7 +6,7 @@ const mocks = vi.hoisted(() => ({
   session: { data: { mode: 'CLOUD' }, isPending: false, isError: false, refetch: vi.fn() },
   detail: { data: null as unknown, isPending: false, isError: false, refetch: vi.fn() },
   attempts: {
-    data: { pages: [{ items: [] as Record<string, unknown>[], nextCursor: null }] },
+    data: { pages: [{ items: [] as Record<string, unknown>[], nextCursor: null as string | null }] },
     hasNextPage: false,
     isPending: false,
     isError: false,
