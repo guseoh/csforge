@@ -203,6 +203,7 @@ export function getConcepts(filters: {
   level?: number
   learningStatus?: LearningStatus
   bookmarked?: boolean
+  bookmarkCategoryId?: number
   q?: string
   page: number
   size: number
@@ -214,6 +215,7 @@ export function getConcepts(filters: {
   if (filters.level) params.set('level', String(filters.level))
   if (filters.learningStatus) params.set('learningStatus', filters.learningStatus)
   if (filters.bookmarked) params.set('bookmarked', 'true')
+  if (filters.bookmarkCategoryId !== undefined) params.set('bookmarkCategoryId', String(filters.bookmarkCategoryId))
   if (filters.q) params.set('q', filters.q)
   params.set('page', String(filters.page))
   params.set('size', String(filters.size))

@@ -4,6 +4,7 @@ import { EmptyState, ErrorState, PageSkeleton } from '../components/AsyncStates'
 import { CanonicalBootstrapCard } from '../components/CanonicalBootstrapCard'
 import { getConcepts, getLearningAreas, type AreaSummary, type ConceptListItem } from '../lib/learning-api'
 import { defaultLearningSearch } from '../lib/learning-search'
+import { defaultBookmarksSearch } from '../lib/bookmarks-search'
 import { selectRecentConcepts } from '../lib/learning-recent'
 import { defaultQuizSearch } from '../lib/quiz-search'
 
@@ -99,6 +100,8 @@ export function LearningPage() {
         </div>
         <div className="learning-index-summary"><strong>{areasQuery.data.length}</strong><span>개 영역<br />커리큘럼 색인</span></div>
       </header>
+
+      <Link className="secondary-button" to="/bookmarks" search={defaultBookmarksSearch}>내 북마크 모아보기</Link>
 
       <CanonicalBootstrapCard />
 

@@ -3,6 +3,7 @@ import { Link, useParams } from '@tanstack/react-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { EmptyState, ErrorState, PageSkeleton } from '../components/AsyncStates'
 import { ConceptLearningRail } from '../components/ConceptLearningRail'
+import { BookmarkCategoryPicker } from '../components/BookmarkCategoryPicker'
 import { ConceptReferences } from '../components/ConceptReferences'
 import { InterviewRecallSection } from '../components/InterviewRecallSection'
 import { ActiveRecallSection } from '../components/ActiveRecallSection'
@@ -281,6 +282,7 @@ function ConceptContent({ data, conceptId, tocProps }: { data: ConceptDetailMode
             />
             <BookmarkButton conceptId={conceptId} bookmarked={data.progress.bookmarked} />
           </div>
+          {data.progress.bookmarked && <BookmarkCategoryPicker conceptId={conceptId} />}
         </div>
       </section>
 
@@ -355,6 +357,7 @@ function BookmarkButton({ conceptId, bookmarked }: { conceptId: number; bookmark
       void queryClient.invalidateQueries({ queryKey: ['learning-areas'] })
       void queryClient.invalidateQueries({ queryKey: ['learning-area'] })
       void queryClient.invalidateQueries({ queryKey: ['learning-outline'] })
+      void queryClient.invalidateQueries({ queryKey: ['bookmark-assignment', conceptId] })
     },
     onError: () => showToast('error', '북마크 저장에 실패했습니다.'),
   })

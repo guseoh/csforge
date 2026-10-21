@@ -16,11 +16,13 @@ import { parseReviewSearch } from './lib/review-search'
 import { parseSearchSearch } from './lib/search-search'
 import { parseInsightsSearch } from './lib/insights-search'
 import { parseCompareSearch } from './lib/compare-search'
+import { parseBookmarksSearch } from './lib/bookmarks-search'
 import { isStaleLazyChunkError } from './lib/route-errors'
 
 const AreaPage = lazyRouteComponent(() => import('./pages/AreaPage'), 'AreaPage')
 const ConceptPage = lazyRouteComponent(() => import('./pages/ConceptPage'), 'ConceptPage')
 const ConceptComparePage = lazyRouteComponent(() => import('./pages/ConceptComparePage'), 'ConceptComparePage')
+const BookmarksPage = lazyRouteComponent(() => import('./pages/BookmarksPage'), 'BookmarksPage')
 const LearningPage = lazyRouteComponent(() => import('./pages/LearningPage'), 'LearningPage')
 const QuizResultPage = lazyRouteComponent(() => import('./pages/QuizResultPage'), 'QuizResultPage')
 const QuizSessionPage = lazyRouteComponent(() => import('./pages/QuizSessionPage'), 'QuizSessionPage')
@@ -251,6 +253,7 @@ const conceptRoute = createRoute({
   component: ConceptPage,
 })
 
+const bookmarksRoute = createRoute({ getParentRoute: () => rootRoute, path: '/bookmarks', validateSearch: parseBookmarksSearch, component: BookmarksPage })
 const compareRoute = createRoute({ getParentRoute: () => rootRoute, path: '/compare', validateSearch: parseCompareSearch, component: ConceptComparePage })
 
 const quizRoute = createRoute({
@@ -274,6 +277,7 @@ const routeTree = rootRoute.addChildren([
   areaRoute,
   conceptRoute,
   compareRoute,
+  bookmarksRoute,
   quizRoute,
   quizSessionRoute,
   quizResultRoute,
