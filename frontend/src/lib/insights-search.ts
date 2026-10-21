@@ -1,9 +1,9 @@
 import { z } from 'zod'
 
 export const insightsSearchSchema = z.object({
-  insightsOpen: z.enum(['0', '1']).catch('0'),
-  insightsRange: z.enum(['7d', '30d']).catch('7d'),
-  insightsArea: z.string().catch(''),
+  insightsOpen: z.enum(['0', '1']).optional().catch(undefined),
+  insightsRange: z.enum(['7d', '30d']).optional().catch(undefined),
+  insightsArea: z.string().optional().catch(undefined),
 })
 
 export type InsightsSearch = z.infer<typeof insightsSearchSchema>

@@ -84,8 +84,8 @@ export function LearningInsightsSection({ areas }: { areas: DashboardAreaProgres
   const navigate = useNavigate({ from: '/' })
   const open = search.insightsOpen === '1'
   const query = useQuery({
-    queryKey: ['learning-insights', search.insightsRange, search.insightsArea],
-    queryFn: () => getLearningInsights(search.insightsRange, search.insightsArea),
+    queryKey: ['learning-insights', search.insightsRange ?? '7d', search.insightsArea ?? ''],
+    queryFn: () => getLearningInsights(search.insightsRange ?? '7d', search.insightsArea ?? ''),
     enabled: open,
   })
   const update = (next: Partial<InsightsSearch>) => {
@@ -105,14 +105,14 @@ export function LearningInsightsSection({ areas }: { areas: DashboardAreaProgres
           <p className="helper-text">학습 이력을 수정하지 않는 조회입니다. 기간과 영역은 주소에 유지됩니다.</p>
           <div className="insights-filters">
             <label>분석 기간
-              <select value={search.insightsRange}
+              <select value={search.insightsRange ?? '7d'}
                 onChange={(event) => update({ insightsRange: event.target.value === '30d' ? '30d' : '7d' })}>
                 <option value="7d">최근 7일</option>
                 <option value="30d">최근 30일</option>
               </select>
             </label>
             <label>학습 영역
-              <select value={search.insightsArea} onChange={(event) => update({ insightsArea: event.target.value })}>
+              <select value={search.insightsArea ?? ''} onChange={(event) => update({ insightsArea: event.target.value })}>
                 <option value="">전체 영역</option>
                 {areas.map((area) => <option key={area.areaSlug} value={area.areaSlug}>{area.areaName}</option>)}
               </select>
