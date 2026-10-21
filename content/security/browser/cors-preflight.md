@@ -57,6 +57,32 @@ Access-Control-Allow-Methods: POST
 
 사용자 정의 헤더나 특정 본문 형식·HTTP 메서드 조합은 사전 요청 대상이 될 수 있습니다.
 
+### JSON POST의 preflight와 실제 전송을 구별한다
+
+`https://app.example.com`에서 `https://api.example.com`으로 `Content-Type: application/json`을 설정한 `fetch` POST를 실행하면 `application/json`은 CORS-safelisted 요청 본문 유형이 아니므로 일반적으로 OPTIONS 사전 요청이 발생합니다.
+
+```http
+OPTIONS /orders HTTP/1.1
+Origin: https://app.example.com
+Access-Control-Request-Method: POST
+Access-Control-Request-Headers: content-type
+
+HTTP/1.1 204 No Content
+Access-Control-Allow-Origin: https://app.example.com
+Access-Control-Allow-Methods: POST
+Access-Control-Allow-Headers: content-type
+
+POST /orders HTTP/1.1
+Origin: https://app.example.com
+Content-Type: application/json
+
+{"itemId":17}
+```
+
+`Access-Control-Request-Headers`는 브라우저가 실제 요청에서 사용할 비-safelisted 헤더를 미리 알리고, 서버는 `Access-Control-Allow-Headers` 등으로 해당 사용을 허용합니다. 브라우저가 사전 검사를 거부하면 **이 실제 POST는 전송되지 않습니다.** 반면 사전 요청이 필요 없는 교차 출처 요청이나 사전 요청을 통과한 본 요청에서는 서버가 요청을 처리했어도 응답 노출만 차단될 수 있습니다.
+
+표준 CORS preflight에는 쿠키 같은 자격 증명을 포함하지 않습니다. 이후 본 요청에 쿠키를 포함하려면 클라이언트의 `credentials: "include"` 설정, 서버의 명시적 허용 출처와 `Access-Control-Allow-Credentials: true`, 쿠키 자체의 Domain/Secure/SameSite 전송 조건이 별도로 맞아야 합니다. CORS 허용은 그 요청이 해당 사용자에게 **인가되었다는 뜻이 아닙니다.**
+
 ### 자격 증명을 보낼 때는 허용 출처를 명시한다
 
 세션 쿠키 같은 자격 증명을 교차 출처 요청에 포함하려면 브라우저의 자격 증명 전송 설정과 서버의 `Access-Control-Allow-Credentials: true` 등이 필요합니다. 이때 `Access-Control-Allow-Origin: *`를 사용할 수 없으며 허용할 출처를 구체적으로 지정해야 합니다.
