@@ -36,22 +36,37 @@ console.log('PASS reproduced previous false-negative in actual Spring/Postgres',
 const current=execFileSync('git',['show',`${process.env.GITHUB_SHA}:content/database/index/questions.json`],{cwd:'..',encoding:'utf8'});
 assert(JSON.parse(current).find(x=>x.contentKey===contentKey).acceptedAnswers.includes(answer));
 await writeFile(file,current);
-const updated=await api('/api/canonical-bootstrap','POST');
-assert(updated.success,JSON.stringify(updated));
-assert.equal(updated.totals.updated,1,'only B-tree q2 should update');
-assert.equal(updated.totals.unchanged,3379);
+const expectedEntries=JSON.parse(current).length;
+async function importCorrected(){
+ const filePart=new Blob([current],{type:'application/json'});
+ const form=new FormData();form.append('files',filePart,'questions.json');
+ const previewResp=await fetch('http://127.0.0.1:8080/api/imports/preview',{method:'POST',body:form});
+ assert(previewResp.ok,`Import Preview HTTP ${previewResp.status}: ${await previewResp.clone().text()}`);
+ const preview=await previewResp.json();assert(preview.canApply,JSON.stringify(preview));
+ const applyForm=new FormData();applyForm.append('files',filePart,'questions.json');applyForm.append('previewDigest',preview.previewDigest);
+ const appliedResp=await fetch('http://127.0.0.1:8080/api/imports/apply',{method:'POST',body:applyForm});
+ assert(appliedResp.ok,`Import Apply HTTP ${appliedResp.status}: ${await appliedResp.clone().text()}`);
+ const applied=await appliedResp.json();
+ return {preview,applied};
+}
+const first=await importCorrected();
+assert.equal(first.preview.totals.updated,1,'B-tree q2 preview change');
+assert.equal(first.preview.totals.unchanged,expectedEntries-1);
+assert.equal(first.applied.totals.updated,1,'B-tree q2 apply changed');
+assert.equal(first.applied.totals.failed,0);
 assert.equal(Number(pg(`select id from question where content_key='${contentKey}'`)),qid);
 assert.equal(count(),9);
-const afterIds=pg(`select id from question_answer where question_id=${qid} and answer_kind='ACCEPTED_TEXT' order by id`).split('\n');
+const afterIds=pg(`select id from question_answer where question_id=${qid} and answer_kind='ACCEPTED_TEXT' order by id`).split(String.fromCharCode(10));
 for(const id of oldIds)assert(afterIds.includes(id),'existing canonical accepted-answer ID disappeared');
 for(const [table,oldCount] of [['wrong_note',before.noteCount],['attempt',before.attemptCount],['review_schedule',before.reviewCount],['quiz_session',before.quizCount]]){
  assert.equal(pg(`select count(*) from ${table}`),oldCount, `history modified on import: ${table}`);
 }
-const replay=await api('/api/canonical-bootstrap','POST');
-assert(replay.success);
-assert.equal(replay.totals.updated,0);
-assert.equal(replay.totals.unchanged,3380);
-console.log('PASS corrected import exactly one UPDATE, personal/history data preserved, exact reimport 3380 UNCHANGED');
+const replay=await importCorrected();
+assert.equal(replay.preview.totals.updated,0);
+assert.equal(replay.preview.totals.unchanged,expectedEntries);
+assert.equal(replay.applied.totals.updated,0);
+assert.equal(replay.applied.totals.unchanged,expectedEntries);
+console.log(`PASS direct Preview/Apply: 1 UPDATED, replay ${expectedEntries} UNCHANGED, history/IDs preserved`);
 
 const browser=await chromium.launch({headless:true});
 try{
