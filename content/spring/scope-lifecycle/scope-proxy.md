@@ -94,4 +94,20 @@ class AuditService {
 
 이 방식은 조회가 코드에 드러나지만 애플리케이션 서비스가 Spring의 `ObjectProvider` API를 알게 됩니다. scoped proxy는 기존 타입을 그대로 사용할 수 있지만 호출 시 실제 객체 조회가 일어난다는 사실이 코드에서 덜 보입니다. 어느 방식이 더 읽기 좋은지는 경계와 사용 빈도에 따라 결정합니다.
 
+### prototype도 같은 방식으로 다룰 수 있을까
+
+request scope는 한 HTTP 요청 안에서 같은 대상 객체를 다시 찾는 반면, `prototype`은 **Bean을 조회할 때마다 새 인스턴스를 만드는 범위**입니다. singleton 생성자의 인자로 prototype 객체를 직접 주입하면 생성 시점에 받은 객체 하나가 계속 유지되므로, 이후 메서드를 호출할 때마다 새 인스턴스로 바뀌지 않습니다.
+
+```text
+singleton 생성 시 prototype 직접 주입 -> WorkUnit #1 고정
+ObjectProvider.getObject()를 작업 시작에 1회 호출
+                                   -> 그 작업에서 WorkUnit #2 유지
+prototype scoped proxy             -> 첫 method 호출: WorkUnit #3
+                                   -> 다음 method 호출: WorkUnit #4
+request scoped proxy               -> 같은 요청의 두 method 호출: RequestContext #A 유지
+                                   -> 다음 요청의 method 호출: RequestContext #B
+```
+
+예를 들어 `WorkUnit.begin()`이 대상 객체 안에 진행 상태를 저장하고 `WorkUnit.finish()`가 그 상태를 읽는다면, **prototype scoped proxy의 각 메서드 호출은 서로 다른 대상**에 위임될 수 있습니다. 이 경우 작업 시작 때 `ObjectProvider<WorkUnit>.getObject()`를 한 번 호출하고 해당 작업 동안 그 객체를 사용하는 편이 의도에 맞습니다. 단순히 “짧은 수명을 가진 Bean은 모두 request scoped proxy와 같은 방식으로 동작한다”고 일반화하면 안 됩니다.
+
 Bean 범위 불일치의 핵심은 proxy annotation을 외우는 것이 아니라 **두 객체의 수명이 다르기 때문에 실제 객체를 언제 결정할 것인가**라는 문제입니다.
