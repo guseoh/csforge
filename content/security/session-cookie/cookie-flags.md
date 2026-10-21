@@ -50,6 +50,18 @@ Set-Cookie: SESSION=S123; HttpOnly
 
 외부 신원 제공자로 이동했다가 돌아오거나 교차 사이트에서 페이지를 포함해야 한다면 `Strict`가 기능을 방해할 수 있습니다. 실제 페이지 이동 흐름을 함께 확인해야 합니다.
 
+### SameSite의 site와 SOP/CORS의 origin은 같은 경계가 아니다
+
+브라우저가 SameSite 쿠키를 판단할 때 사용하는 **schemeful site**는 대체로 **scheme + 등록 가능한 도메인(registrable domain)** 경계입니다. 반면 **origin은 scheme + host + port** 조합입니다.
+
+| 요청 관계 | site 관점 | origin 관점 |
+| --- | --- | --- |
+| `https://app.example.com` → `https://api.example.com` | 같은 site | 다른 origin |
+| `https://example.com:443` → `https://example.com:8443` | 같은 site | 다른 origin |
+| `http://app.example.com` → `https://api.example.com` | 다른 site (scheme이 다름) | 다른 origin |
+
+따라서 app/API가 같은 site라도 **다른 origin의 스크립트가 응답을 읽으려면 CORS 조건을 충족**해야 합니다. 또한 `SameSite=Lax`/ `Strict` 조건을 통과해도 쿠키의 `Domain`, `Path`, `Secure` 등의 전송 조건을 따로 만족해야 합니다. `Domain`이 없는 host-only 쿠키는 기본적으로 발급한 호스트에만 전송되며, `Domain=example.com`처럼 설정하면 관련 하위 도메인으로 범위가 확장될 수 있습니다. 같은 site에서 발생한 공격이나 잘못된 서버 인가까지 SameSite가 차단하는 것은 아닙니다.
+
 ### Domain과 Path를 인가로 쓰지 않는다
 
 쿠키의 `Path=/admin`은 브라우저 전송 범위를 조절하지만 같은 출처의 스크립트를 격리하는 보안 경계는 아닙니다. 관리자 인가는 서버에서 별도로 검사해야 합니다.
