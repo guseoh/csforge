@@ -463,6 +463,75 @@ class LearningIntegrationTest {
                 "The latest-attempt-per-question query should execute window aggregation");
     }
 
+    @Test
+    void bookmarkCategoryClassificationIsOptionalAndNeverChangesLearningHistory() throws Exception {
+        JsonNode categories = json(request("GET", "/api/bookmark-categories", null));
+        assertEquals(3, categories.size());
+        assertEquals("다시 읽기", categories.get(0).get("name").asText());
+        long first = categories.get(0).get("id").asLong();
+        long second = categories.get(1).get("id").asLong();
+        String assignmentPath = "/api/concepts/" + firstConceptId + "/bookmark-category";
+
+        assertEquals(400, request("PUT", assignmentPath,
+                "{\"categoryId\":" + first + "}").statusCode());
+        assertEquals(200, request("PATCH", "/api/concepts/" + firstConceptId + "/progress",
+                "{\"bookmarked\":true}").statusCode());
+        assertEquals(200, request("PUT", assignmentPath, "{\"categoryId\":" + first + "}").statusCode());
+        assertEquals(200, request("PUT", assignmentPath, "{\"categoryId\":" + first + "}").statusCode());
+        assertEquals(first, json(request("GET", assignmentPath, null)).get("categoryId").asLong());
+        assertEquals(1, json(request("GET",
+                "/api/concepts?bookmarked=true&bookmarkCategoryId=" + first, null))
+                .get("page").get("totalElements").asInt());
+
+        assertEquals(200, request("PUT", assignmentPath, "{\"categoryId\":" + second + "}").statusCode());
+        assertEquals(0, json(request("GET",
+                "/api/concepts?bookmarkCategoryId=" + first, null))
+                .get("page").get("totalElements").asInt());
+        assertEquals(1, json(request("GET",
+                "/api/concepts?bookmarkCategoryId=" + second, null))
+                .get("page").get("totalElements").asInt());
+
+        assertEquals(200, request("PUT", assignmentPath, "{\"categoryId\":null}").statusCode());
+        assertTrue(json(request("GET", assignmentPath, null)).get("categoryId").isNull());
+        assertEquals(1, json(request("GET", "/api/concepts?bookmarked=true", null))
+                .get("page").get("totalElements").asInt());
+        assertEquals(0, jdbc.queryForObject(
+                "SELECT count(*) FROM bookmark_category_concept WHERE concept_id = ?", Integer.class, firstConceptId));
+
+        request("PUT", assignmentPath, "{\"categoryId\":" + first + "}");
+        assertEquals(200, request("PATCH", "/api/concepts/" + firstConceptId + "/progress",
+                "{\"bookmarked\":false}").statusCode());
+        assertTrue(json(request("GET", assignmentPath, null)).get("categoryId").isNull());
+        assertEquals(0, json(request("GET", "/api/concepts?bookmarked=true", null))
+                .get("page").get("totalElements").asInt());
+        assertEquals(0, jdbc.queryForObject(
+                "SELECT count(*) FROM bookmark_category_concept WHERE concept_id = ?", Integer.class, firstConceptId));
+    }
+
+    @Test
+    void bookmarkCategoryRenameIsValidatedAndExistingBookmarkDoesNotDisappear() throws Exception {
+        JsonNode categories = json(request("GET", "/api/bookmark-categories", null));
+        long first = categories.get(0).get("id").asLong();
+        String original = categories.get(0).get("name").asText();
+        String secondName = categories.get(1).get("name").asText();
+        String path = "/api/bookmark-categories/" + first;
+        assertEquals(400, request("PATCH", path, "{\"name\":\"  \"}").statusCode());
+        assertEquals(400, request("PATCH", path,
+                "{\"name\":\"" + secondName + "\"}").statusCode());
+        request("PATCH", "/api/concepts/" + firstConceptId + "/progress", "{\"bookmarked\":true}");
+        assertEquals(404, request("PUT", "/api/concepts/" + firstConceptId + "/bookmark-category",
+                "{\"categoryId\":987654}").statusCode());
+        try {
+            HttpResponse<String> response = request("PATCH", path, "{\"name\":\"나중에 복습\"}");
+            assertEquals(200, response.statusCode());
+            assertEquals("나중에 복습", json(response).get("name").asText());
+            assertEquals("나중에 복습", json(request("GET", "/api/bookmark-categories", null))
+                    .get(0).get("name").asText());
+        } finally {
+            request("PATCH", path, "{\"name\":\"" + original + "\"}");
+        }
+    }
+
     private HttpResponse<String> request(String method, String path, String body) throws IOException, InterruptedException {
         HttpRequest.Builder builder = HttpRequest.newBuilder(URI.create("http://localhost:" + port + path))
                 .header("Accept", "application/json");
