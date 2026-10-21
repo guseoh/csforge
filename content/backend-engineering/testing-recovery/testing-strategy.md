@@ -37,6 +37,17 @@ references:
 | migration·import 멱등성 | 실제 PostgreSQL 통합 테스트 |
 | 전체 사용자 흐름 | 소수의 end-to-end 테스트 |
 
+예를 들어 결제 공급자 adapter에 **순수 fake**를 주입하면 결제 성공·실패라는 유스케이스 분기와 도메인 상태를 빠르게 검증할 수 있지만, 실제 HTTP client의 직렬화·헤더·timeout 처리까지 검증한 것은 아닙니다. 반면 로컬 **stub/mock HTTP 서버**에 실제 client를 붙이면 응답 코드와 본문이 어떻게 해석되는지 검증할 수 있습니다.
+
+```text
+200 OK + 필수 transactionId 누락 → 정상으로 저장하지 않고 응답 계약 오류
+429 Too Many Requests           → Retry-After/남은 deadline/멱등성 정책 확인
+500 Internal Server Error        → 재시도 가능한지와 실패 기록 확인
+응답 없는 timeout               → 원격 요청이 성공했을 가능성도 유지하고 대사
+```
+
+테스트용 provider fixture에는 실제 계약의 **버전/샘플 생성 근거**를 기록하고 토큰·고객 식별자 같은 민감값을 제거해야 합니다. HTTP stub이 통과해도 실제 공급자가 그 계약을 지킨다는 보장은 없으므로, 필요하면 provider sandbox 검증과 운영 관측으로 계약의 외부 경계를 보완합니다.
+
 mock repository로 테스트가 통과했다고 해서 실제 UNIQUE 제약, isolation, lazy loading이 맞다는 보장은 없습니다. 반대로 모든 작은 계산을 실제 DB와 함께 테스트하면 느리고 실패 원인도 흐려집니다.
 
 ### 테스트는 구현 상세가 아니라 계약에 붙인다
