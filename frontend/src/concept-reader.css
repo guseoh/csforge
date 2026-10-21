@@ -465,7 +465,7 @@
     margin: 0 0 24px;
     border: 1px solid var(--border-subtle);
     border-radius: 10px;
-    background: var(--surface-raised);
+    background: var(--surface-elevated);
   }
 
   .concept-toc-compact summary {
