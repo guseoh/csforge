@@ -35,14 +35,22 @@ BeanFactoryPostProcessor 등 Bean 정의 단계 처리
 Bean 객체 생성 + 의존성 해결
         │
         ▼
-BeanPostProcessor 전/후 처리
+BeanPostProcessor 초기화 전 처리
+(@PostConstruct 등 일부 초기화 처리도 이 단계에 포함)
         │
         ▼
-초기화 콜백
+InitializingBean.afterPropertiesSet()
+및 명시적으로 지정한 init 메서드
+        │
+        ▼
+BeanPostProcessor 초기화 후 처리
+(일반적인 AOP 자동 프록시 적용 단계)
         │
         ▼
 애플리케이션에서 사용할 수 있는 객체 그래프
 ```
+
+Spring의 `BeanPostProcessor`에는 **초기화 콜백 전**과 **초기화 콜백 후**에 호출되는 서로 다른 확장 지점이 있습니다. `@PostConstruct`는 관련 후처리기에 의해 초기화 전 처리 단계에서 실행될 수 있고, `InitializingBean.afterPropertiesSet()` 및 설정한 초기화 메서드 이후에 초기화 후 처리 단계가 이어집니다. 따라서 두 후처리 단계 모두 끝난 다음에 초기화 콜백이 실행된다고 이해하면 실제 순서를 거꾸로 추적하게 됩니다. 구체적인 Bean·후처리기 구성에 따라 단계별 참여 여부는 달라질 수 있습니다.
 
 ### Bean 조회보다 중요한 것은 “누가 그래프를 완성하는가”다
 
