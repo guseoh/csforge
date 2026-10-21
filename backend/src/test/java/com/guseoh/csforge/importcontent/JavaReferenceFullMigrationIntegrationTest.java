@@ -74,7 +74,7 @@ class JavaReferenceFullMigrationIntegrationTest {
         CanonicalBootstrapExecutionResult initial = bootstrapService.bootstrap();
         assertTrue(initial.success(), () -> "Initial canonical bootstrap: " + initial);
         assertEquals(0, initial.totals().errors());
-        assertEquals(3380, initial.totalItems());
+        assertEquals(CanonicalInventory.TOTAL_ITEMS, initial.totalItems());
 
         Map<String, CanonicalContentFile> canonical = new HashMap<>();
         for (CanonicalContentFile file : contentSource.load()) canonical.put(file.path(), file);
@@ -207,10 +207,10 @@ class JavaReferenceFullMigrationIntegrationTest {
                 previewItemCount++;
             }
         }
-        assertEquals(3380, previewItemCount);
+        assertEquals(CanonicalInventory.TOTAL_ITEMS, previewItemCount);
         CanonicalBootstrapExecutionResult repeated = bootstrapService.bootstrap();
         assertTrue(repeated.success(), () -> "Exact full-pack reimport: " + repeated);
-        assertEquals(3380, repeated.totals().unchanged());
+        assertEquals(CanonicalInventory.TOTAL_ITEMS, repeated.totals().unchanged());
         assertEquals(0, repeated.totals().errors());
         assertEquals(0, repeated.totals().failed());
         assertEquals(historyBefore, historySnapshot());

@@ -27,11 +27,11 @@ class CanonicalBootstrapBatchPlannerTest {
     void canonicalPackIsStableAndDependencyOrdered() {
         CanonicalBootstrapPlan plan = planner.plan(source.files());
 
-        assertEquals(870, plan.sourceFileCount());
+        assertEquals(CanonicalInventory.SOURCE_FILES, plan.sourceFileCount());
         assertEquals(134, plan.topicCount());
-        assertEquals(721, plan.conceptCount());
-        assertEquals(2_525, plan.questionCount());
-        assertEquals(3_380, plan.totalItemCount());
+        assertEquals(CanonicalInventory.CONCEPTS, plan.conceptCount());
+        assertEquals(CanonicalInventory.QUESTIONS, plan.questionCount());
+        assertEquals(CanonicalInventory.TOTAL_ITEMS, plan.totalItemCount());
         assertFalse(plan.batches().isEmpty());
         assertEquals(List.of(ImportItemKind.TOPIC, ImportItemKind.CONCEPT, ImportItemKind.QUESTION),
                 plan.batches().stream().map(CanonicalBootstrapBatch::kind).distinct().toList());

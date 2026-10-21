@@ -53,7 +53,7 @@ class JavaReferenceCorrectionIntegrationTest {
         CanonicalBootstrapExecutionResult initial = bootstrapService.bootstrap();
         assertTrue(initial.success(), () -> "Initial canonical import: " + initial);
         assertEquals(0, initial.totals().errors());
-        assertEquals(3380, initial.totalItems());
+        assertEquals(CanonicalInventory.TOTAL_ITEMS, initial.totalItems());
 
         long conceptId = jdbc.queryForObject(
                 "select id from concept where content_key = ?", Long.class, CONCEPT_KEY);

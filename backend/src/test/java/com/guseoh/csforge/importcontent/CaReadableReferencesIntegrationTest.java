@@ -58,7 +58,7 @@ class CaReadableReferencesIntegrationTest {
     void replacesOrConsolidatesAll44RelationsWithoutLosingIdentityOrHistory() throws Exception {
         var first = bootstrapService.bootstrap();
         assertTrue(first.success(), () -> "Bootstrap: " + first);
-        assertEquals(3380, first.totalItems());
+        assertEquals(CanonicalInventory.TOTAL_ITEMS, first.totalItems());
         assertEquals(0, first.totals().errors());
 
         HistoricalReference[] historical;
@@ -144,7 +144,7 @@ class CaReadableReferencesIntegrationTest {
         assertEquals(0, repeatedPreview.updated());
         var repeated = bootstrapService.bootstrap();
         assertTrue(repeated.success(), () -> "Full exact reimport: " + repeated);
-        assertEquals(3380, repeated.totals().unchanged());
+        assertEquals(CanonicalInventory.TOTAL_ITEMS, repeated.totals().unchanged());
         assertEquals(0, repeated.totals().errors());
         assertEquals(0, repeated.totals().failed());
         assertEquals(history, history());

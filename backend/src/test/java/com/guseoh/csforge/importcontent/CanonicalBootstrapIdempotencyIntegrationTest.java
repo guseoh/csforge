@@ -221,7 +221,7 @@ class CanonicalBootstrapIdempotencyIntegrationTest {
                 result.getLong("area_id"), result.getString("area_slug")));
         assertEquals(15, jdbc.queryForObject(
                 "select count(*) from learning_area where active = true", Integer.class));
-        assertEquals(721, concepts.size(), "canonical PUBLISHED Concept inventory changed");
+        assertEquals(CanonicalInventory.CONCEPTS, concepts.size(), "canonical PUBLISHED Concept inventory changed");
 
         for (int index = 0; index < concepts.size(); index++) {
             CanonicalConceptNavigationCase concept = concepts.get(index);
