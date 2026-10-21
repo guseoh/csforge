@@ -27,7 +27,14 @@
 
 ## 검증 상태
 
-- [ ] 변경 Concept 단독 Preview/Apply, exact reimport UNCHANGED, 기존 개인/history 관계 보존을 실제 격리 DB에서 확인.
-- [ ] 최종 PR HEAD CI SUCCESS, 변경 범위·base drift·review thread 확인.
+- [x] 변경 Concept 단독 Preview/Apply, exact reimport UNCHANGED, 기존 개인/history 관계 보존을 격리 DB에서 확인 — [Actions #39546707584](https://github.com/guseoh/csforge/actions/runs/39546707584) SUCCESS.
+- [ ] 최종 정리 HEAD CI SUCCESS, 변경 범위·base drift·review thread 확인.
 - [ ] 상위 Issue #204의 Human Usage Check 관련 완료 조건은 자동 검증으로 대체하지 않는다.
 - [ ] 운영 PostgreSQL Import 실행 금지(별도 승인/절차).
+
+## 격리 QA 결과 (2026-10-21)
+
+- [PostgreSQL 16.4 / Java 25 Spring Boot #39546707584](https://github.com/guseoh/csforge/actions/runs/39546707584): SUCCESS. 전용 runner, 로컬 인증 `mode=LOCAL`, 초기 canonical **3,380 CREATED**.
+- 이전 `backup-restore.md` → 교정 `backup-restore.md` 실제 Multipart Import **Preview/Apply 각 1 UPDATED**. 동일 파일 재import **1 UNCHANGED**, 전체 canonical exact replay **3,380 UNCHANGED / 0 UPDATED / 0 ERROR**.
+- 기존 Infrastructure Quiz의 의도적 오답, WrongNote·ReviewSchedule 및 Concept/WrongNote 개인 메모를 생성한 상태에서 **10개 개인/history/관계 테이블 digest**와 stable Concept ID, Quiz 결과 불변 검증.
+- 수정 전후 Reader API가 실제 오래된/새 RTO 시간 설명을 반환하는지 확인. 임시 QA Workflow는 성공 후 제거, 운영 PostgreSQL에 접속하거나 Import하지 않음.
