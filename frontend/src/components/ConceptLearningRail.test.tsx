@@ -6,8 +6,8 @@ import type { ConceptDetail } from '../lib/learning-api'
 const mocks = vi.hoisted(() => ({ mode: 'success' as 'success' | 'pending' | 'error' | 'empty' }))
 
 vi.mock('@tanstack/react-router', () => ({
-  Link: ({ children, className }: { children: ReactNode; className?: string }) => (
-    <a href="#" className={className}>{children}</a>
+  Link: ({ children, className, 'aria-current': current }: { children: ReactNode; className?: string; 'aria-current'?: 'page' | 'location' }) => (
+    <a href="#" className={className} aria-current={current}>{children}</a>
   ),
 }))
 
