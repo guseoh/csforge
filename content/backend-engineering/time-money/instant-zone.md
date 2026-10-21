@@ -71,4 +71,31 @@ DB 저장 형식
 
 두 번째 규칙을 먼저 임의의 UTC 시각으로 바꾼 뒤 원래 지역 규칙을 버리면 DST나 정책 변경을 다시 계산하기 어려워질 수 있습니다.
 
+### DST 전환일에는 같은 지역 시각이 0개 또는 2개의 시점을 가리킨다
+
+2026년 `America/New_York`에서는 **3월 8일 02:30**이 시계를 02:00에서 03:00으로 앞당기는 구간에 걸려 존재하지 않는 지역 시각(gap)입니다. 반대로 **11월 1일 01:30**은 시계를 02:00에서 01:00으로 되돌리면서 두 번 나타나는 지역 시각(overlap)입니다.
+
+```text
+LocalDateTime + ZoneId("America/New_York")
+  2026-03-08 02:30 → valid offsets 0개 → gap: 존재하지 않는 예약 시각
+  2026-11-01 01:30 → valid offsets 2개 → overlap: 두 개의 가능한 Instant
+  평상시 지역 시각     → valid offsets 1개 → 하나의 Instant
+```
+
+Java에서는 `zone.getRules().getValidOffsets(localDateTime)`로 유효한 offset을 확인할 수 있습니다. 예약 계약에서 gap은 **입력 거절** 또는 명시적으로 다음 유효 시각으로 이동하는 정책을 고르고, overlap은 **더 이른 offset / 더 늦은 offset** 중 어느 쪽을 선택할지 결정해야 합니다. 같은 지역 시각을 다시 받았을 때 같은 시점으로 해석해야 한다면 결정한 offset이나 확정된 `Instant`도 보존해야 합니다.
+
+```java
+ZoneId zone = ZoneId.of("America/New_York");
+LocalDateTime local = LocalDateTime.of(2026, 11, 1, 1, 30);
+List<ZoneOffset> candidates = zone.getRules().getValidOffsets(local);
+
+if (candidates.size() != 1) {
+    // 예약 정책으로 gap/overlap을 명시적으로 처리한 뒤 Instant 확정
+    throw new IllegalArgumentException("지역 시각이 유일하지 않습니다.");
+}
+Instant reservedAt = local.toInstant(candidates.get(0));
+```
+
+이 코드는 유일하지 않은 시각을 거절하는 **예시 업무 정책**이며, Java `atZone()`의 기본 겹침/공백 해석 규칙을 뜻하지 않습니다. 향후 반복 예약은 확정된 단발성 `Instant`만 아니라 원래 지역 규칙을 함께 보존해야 다음 실행일을 올바르게 계산할 수 있습니다.
+
 백엔드에서 시간 모델링의 핵심은 Java 시간 API를 많이 쓰는 것이 아니라 **저장·전송·정책 계산 사이에서 시간의 의미를 보존하는 것**입니다.
