@@ -34,6 +34,18 @@ FilterChainProxy
 
 두 경로가 겹치므로 체인 A를 먼저 두면 관리자 요청도 A에서 처리됩니다. 관리자 요청에 별도 인증·인가가 필요하다면 `/api/admin/**` 체인을 먼저 배치하고, 일반 `/api/**` 체인을 그 뒤에 둬야 합니다. 등록 순서만 믿지 말고 실제 요청이 어느 체인에 일치하는지도 확인해야 합니다.
 
+### 어느 체인에도 일치하지 않으면?
+
+`http.securityMatcher("/api/**")`는 **이 SecurityFilterChain이 적용되는 요청 범위**를 결정합니다. 그 안의 `authorizeHttpRequests().requestMatchers(...)`나 `anyRequest()`는 **이미 선택된 체인 내부**의 인가 규칙만 평가합니다.
+
+```text
+등록된 체인 A: securityMatcher("/api/**")
+  /api/orders   → 체인 A 선택 → A 내부 anyRequest().authenticated() 검사
+  /admin/users  → A와 일치하지 않음 → 다른 체인 없으면 Spring Security 보호 밖
+```
+
+예를 들어 별도로 `/admin/**` 체인을 만들지 않았고 catch-all 체인도 없다면 `/admin/users`는 A 내부의 `anyRequest().authenticated()`에 의해 보호되지 않습니다. 서비스 정책에 맞는 마지막 catch-all 체인을 명시적으로 배치해 인증 또는 거부 규칙을 적용하고, **체인 밖에서 누락되는 경로가 없는지 실제 요청으로 확인**해야 합니다. 모든 경로를 단순히 `permitAll`로 설정하는 것과, 체인 자체가 일치하지 않는 것은 서로 다릅니다.
+
 ### 필터 실행 순서가 보안 동작을 결정한다
 
 인가 필터가 현재 `Authentication`을 사용하려면 앞선 단계에서 인증 결과가 보안 컨텍스트에 준비돼 있어야 합니다. 예외 처리 필터도 자신이 감싸는 필터에서 발생한 예외를 처리하므로 위치가 중요합니다.
