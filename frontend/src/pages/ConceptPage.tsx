@@ -10,6 +10,7 @@ import { ActiveRecallSection } from '../components/ActiveRecallSection'
 import { MarkdownContent } from '../components/MarkdownContent'
 import { useToast } from '../components/toast/ToastProvider'
 import { extractInterviewSection } from '../lib/interview-section'
+import { appendInterviewDraftToNote } from '../lib/interview-practice'
 import {
   getConcept,
   getConceptUnderstanding,
@@ -248,7 +249,18 @@ function ConceptContent({ data, conceptId, tocProps }: { data: ConceptDetailMode
 
       <ActiveRecallSection key={data.contentKey} contentKey={data.contentKey} bodyMarkdown={bodyMarkdown} />
 
-      {interview && <InterviewRecallSection section={interview} />}
+      {interview && <InterviewRecallSection
+        section={interview}
+        contentKey={data.contentKey}
+        conceptId={conceptId}
+        areaSlug={data.area.slug}
+        relatedConcepts={data.relatedConcepts}
+        noteState={noteState}
+        onCopyToNote={(question, answer) => {
+          const next = appendInterviewDraftToNote(noteContent, question, answer)
+          if (next !== noteContent) updateNote(next)
+        }}
+      />}
 
       <section className="concept-completion-section" id="learning-actions" aria-labelledby="learning-actions-title">
         <div className="concept-completion-copy">
