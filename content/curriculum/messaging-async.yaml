@@ -51,7 +51,7 @@ topics:
 - key: messaging.core.delivery
   title: 전달 보장·재시도·순서
   order: 20
-  scope: 최대 1회(at-most-once)·최소 1회(at-least-once) 전달, exactly-once 표현의 보장 경계, 멱등 소비자, 재시도·DLQ와 순서·독성 메시지를 다룬다.
+  scope: Producer 발행 확인·내구성, 최대 1회(at-most-once)·최소 1회(at-least-once) 전달, exactly-once 보장 경계, 멱등 소비자, 재시도·DLQ와 순서·독성 메시지를 다룬다.
   boundary: 브로커의 전달 보장이나 트랜잭션 기능만으로 외부 업무 효과가 자동으로 exactly-once가 된다고 설명하지 않는다.
   concepts:
   - key: messaging.core.delivery.at-least-once-idempotency
@@ -73,6 +73,13 @@ topics:
     order: 30
     level: 3
     objective: 파티션 내 순서(partition-local ordering)와 컨슈머 동시 처리(concurrency)·병렬성의 절충을 업무 순서에 적용한다.
+    density: CORE
+    visualization: DIAGRAM
+  - key: messaging.core.delivery.producer-ack-durability
+    title: Producer 발행 확인과 레코드 내구성
+    order: 40
+    level: 2
+    objective: acks, ISR, min.insync.replicas와 Producer 재시도·멱등성이 Kafka 발행의 확인·내구성·결과 불명을 어떻게 결정하는지 설명하고, Consumer offset 및 Outbox/외부 DB의 처리 완료와 구별한다.
     density: CORE
     visualization: DIAGRAM
 - key: messaging.core.workflow
