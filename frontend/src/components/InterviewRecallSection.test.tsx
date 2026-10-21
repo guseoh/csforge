@@ -14,7 +14,7 @@ import { InterviewRecallSection } from './InterviewRecallSection'
 
 const question = (num: number) => ({
   question: `질문 ${num}: 실행 원리를 설명하세요.`,
-  answerMarkdown: `**정답 ${num}**\n\n```java\nSystem.out.println(${num});\n````,
+  answerMarkdown: ['**정답 ' + num + '**', '', '```java', 'System.out.println(' + num + ');', '```'].join('\n'),
 })
 const props = (section: InterviewSection) => ({
   section, contentKey: 'java.core.value', conceptId: 17, areaSlug: 'java',
