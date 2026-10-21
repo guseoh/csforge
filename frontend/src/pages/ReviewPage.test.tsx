@@ -17,7 +17,9 @@ const mocks = vi.hoisted(() => ({
 }))
 
 vi.mock('@tanstack/react-router', () => ({
-  Link: ({ children }: { children: ReactNode }) => <a href="#">{children}</a>,
+  Link: ({ children, to, params }: { children: ReactNode; to?: string; params?: Record<string, string> }) => (
+    <a href={to?.replace(/\$(\w+)/g, (_match, key: string) => params?.[key] ?? '') ?? '#'}>{children}</a>
+  ),
   useSearch: () => mocks.search,
   useNavigate: () => mocks.navigate,
 }))
@@ -103,6 +105,7 @@ describe('ReviewPage timing and recovery', () => {
     expect(html).toContain('관련 개념 읽기 →')
     expect(html).toContain('연결된 개념')
     expect(html).toContain('복습 시작')
-    expect(html).not.toContain('/wrong-notes/$questionId')
+    expect(html).toContain('href="/concepts/90"')
+    expect(html).not.toContain('/wrong-notes/44')
   })
 })
