@@ -12,6 +12,13 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.sql.Timestamp;
+import java.util.List;
+
+import jakarta.persistence.EntityManagerFactory;
+import org.hibernate.SessionFactory;
+import org.hibernate.stat.Statistics;
+import org.springframework.data.jpa.repository.Query;
+import com.guseoh.csforge.learning.infrastructure.ConceptUnderstandingBatchRepository;
 
 import com.guseoh.csforge.test.PostgresIntegrationTestSupport;
 import tools.jackson.databind.JsonNode;
@@ -48,6 +55,9 @@ class LearningIntegrationTest {
 
     @Autowired
     ObjectMapper objectMapper;
+
+    @Autowired
+    EntityManagerFactory entityManagerFactory;
 
     @Value("${local.server.port}")
     int port;
@@ -414,6 +424,43 @@ class LearningIntegrationTest {
             assertTrue(item.get("recentAccuracyPercent").isNull());
         }
         assertEquals(0, area.get("items").get(2).get("evidence").get("pendingSelfCheckCount").asInt());
+    }
+
+
+    @Test
+    void areaUnderstandingQueryCountIsIndependentOfRequestedConceptCountAndExplainRuns() throws Exception {
+        long q1 = insertPublishedQuestion("understanding-plan-one", "Plan one", firstConceptId);
+        long q2 = insertPublishedQuestion("understanding-plan-two", "Plan two", firstConceptId, secondConceptId);
+        insertAttempt(q1, "GRADED", true);
+        insertAttempt(q2, "GRADED", false);
+
+        Statistics statistics = entityManagerFactory.unwrap(SessionFactory.class).getStatistics();
+        boolean previous = statistics.isStatisticsEnabled();
+        statistics.setStatisticsEnabled(true);
+        try {
+            long beforeSmall = statistics.getPrepareStatementCount();
+            assertEquals(200, request("GET", "/api/learning-areas/java/understanding?page=0&size=1", null).statusCode());
+            long small = statistics.getPrepareStatementCount() - beforeSmall;
+
+            long beforeFull = statistics.getPrepareStatementCount();
+            assertEquals(200, request("GET", "/api/learning-areas/java/understanding?page=0&size=3", null).statusCode());
+            long full = statistics.getPrepareStatementCount() - beforeFull;
+
+            assertTrue(small <= 8, "Unexpected repeated database queries for one Concept: " + small);
+            assertEquals(small, full, "Area batch evidence must not issue per-Concept queries");
+        } finally {
+            statistics.setStatisticsEnabled(previous);
+        }
+
+        String select = ConceptUnderstandingBatchRepository.class
+                .getMethod("summarizeConceptIds", List.class)
+                .getAnnotation(Query.class).value();
+        List<String> plan = jdbc.queryForList(
+                "EXPLAIN (ANALYZE, BUFFERS, FORMAT TEXT) " + select.replace(":conceptIds", String.valueOf(firstConceptId)),
+                String.class);
+        assertFalse(plan.isEmpty());
+        assertTrue(plan.stream().anyMatch(row -> row.contains("WindowAgg")),
+                "The latest-attempt-per-question query should execute window aggregation");
     }
 
     private HttpResponse<String> request(String method, String path, String body) throws IOException, InterruptedException {
