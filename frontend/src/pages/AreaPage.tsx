@@ -6,6 +6,7 @@ import { EmptyState, ErrorState, PageSkeleton } from '../components/AsyncStates'
 import { getConcepts, getLearningArea, getLearningAreaOutline, type LearningStatus } from '../lib/learning-api'
 import { defaultLearningSearch, type LearningSearch } from '../lib/learning-search'
 import { csvParam, defaultQuizSearch } from '../lib/quiz-search'
+import { chooseNextConcept, chooseReviewConcept } from '../lib/learning-next'
 
 const PAGE_SIZE = 12
 
@@ -45,10 +46,11 @@ export function AreaPage() {
   const firstOutlineQuery = useQuery({
     queryKey: ['learning-outline', areaSlug, 0],
     queryFn: () => getLearningAreaOutline(areaSlug, 0),
+    enabled: !hasActiveFilters,
   })
   const outlinePageCount = firstOutlineQuery.data?.page.totalPages ?? 1
   const laterOutlineQueries = useQueries({
-    queries: Array.from({ length: Math.max(0, outlinePageCount - 1) }, (_, index) => {
+    queries: Array.from({ length: hasActiveFilters ? 0 : Math.max(0, outlinePageCount - 1) }, (_, index) => {
       const page = index + 1
       return {
         queryKey: ['learning-outline', areaSlug, page],
@@ -97,6 +99,8 @@ export function AreaPage() {
   const selectedTopicConcepts = selectedTopic
     ? outlineConcepts.filter((concept) => concept.topicId === selectedTopic.id)
     : []
+  const suggestedConcept = chooseNextConcept(selectedTopicConcepts)
+  const reviewConcept = chooseReviewConcept(selectedTopicConcepts)
   const previousTopic = selectedTopicIndex > 0 ? area.topics[selectedTopicIndex - 1] : null
   const nextTopic = selectedTopicIndex >= 0 && selectedTopicIndex < area.topics.length - 1
     ? area.topics[selectedTopicIndex + 1]
@@ -150,6 +154,32 @@ export function AreaPage() {
                     <p className="eyebrow">현재 주제</p>
                     <h2 id="topic-index-heading">{selectedTopic.title}</h2>
                     <p>{selectedTopic.description ?? '이 주제의 개념을 커리큘럼 순서대로 학습하세요.'}</p>
+                    <p className="topic-order-note">표시된 개념은 커리큘럼 순서입니다. 레벨은 개념의 학습 단계이며, 복습 필요는 다음 미학습 개념과 별도로 표시됩니다.</p>
+                    <nav className="topic-level-links" aria-label="레벨별 개념 보기">
+                      {([1, 2, 3] as const).map((level) => (
+                        <Link
+                          className="topic-level-link"
+                          key={level}
+                          to="/learning/$areaSlug"
+                          params={{ areaSlug: area.slug }}
+                          search={{ ...defaultLearningSearch, topic: selectedTopic.id, level: String(level) as '1' | '2' | '3' }}
+                        >
+                          L{level} <span>{level === 1 ? selectedTopic.level1Count : level === 2 ? selectedTopic.level2Count : selectedTopic.level3Count}개</span>
+                        </Link>
+                      ))}
+                    </nav>
+                    {suggestedConcept && (
+                      <Link className="topic-next-concept-link" to="/concepts/$conceptId" params={{ conceptId: String(suggestedConcept.id) }}>
+                        <span>{suggestedConcept.learningStatus === 'LEARNING' ? '학습 중인 개념 이어가기' : '다음 미학습 개념'}</span>
+                        <strong>{suggestedConcept.title}</strong>
+                        <span aria-hidden="true">→</span>
+                      </Link>
+                    )}
+                    {reviewConcept && (
+                      <Link className="topic-review-concept-link" to="/concepts/$conceptId" params={{ conceptId: String(reviewConcept.id) }}>
+                        복습 필요: {reviewConcept.title} <span aria-hidden="true">→</span>
+                      </Link>
+                    )}
                     {selectedTopicConcepts.length > 0 ? (
                       <Link
                         className="secondary-button topic-quiz-link"
