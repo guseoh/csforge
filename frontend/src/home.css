@@ -514,3 +514,9 @@
     gap: 4px;
   }
 }
+
+/* #214: secondary continuations are visible to keyboard users without competing with the main action. */
+.home-follow-up-row:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
