@@ -1,0 +1,123 @@
+name: Issue 204 Infrastructure isolated historical import
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/issue204-infra-import-once.yml'
+permissions:
+  contents: read
+jobs:
+  isolated-import:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Stage original and corrected Concept
+        run: |
+          mkdir -p /tmp/infra-old /tmp/infra-new
+          git show acd47851637838c2a7db6ea522308ebb32db3914:content/infrastructure-cloud/reliability/backup-restore.md > /tmp/infra-old/backup-restore.md
+          cp content/infrastructure-cloud/reliability/backup-restore.md /tmp/infra-new/backup-restore.md
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: gradle
+      - name: Start disposable PostgreSQL and Redis
+        run: |
+          docker compose up -d postgres redis
+          for i in $(seq 1 60); do
+            if docker compose exec -T postgres pg_isready -U csforge -d csforge; then exit 0; fi
+            sleep 2
+          done
+          exit 1
+      - name: Start actual local Spring Boot
+        run: |
+          cd backend
+          chmod +x gradlew
+          nohup ./gradlew bootRun --no-daemon > /tmp/issue204-infra-boot.log 2>&1 < /dev/null &
+          for i in $(seq 1 160); do
+            if curl -fsS http://127.0.0.1:8080/actuator/health/readiness >/dev/null 2>&1; then exit 0; fi
+            sleep 2
+          done
+          tail -n 150 /tmp/issue204-infra-boot.log
+          exit 1
+      - name: Assert real Concept import history and exact replay
+        run: |
+          python3 - <<'PY'
+          import json,pathlib,subprocess,urllib.request,uuid
+          API='http://127.0.0.1:8080'
+          KEY='infrastructure.core.reliability.backup-restore'
+          OLD=pathlib.Path('/tmp/infra-old/backup-restore.md').read_text()
+          NEW=pathlib.Path('/tmp/infra-new/backup-restore.md').read_text()
+          assert OLD!=NEW and '총 60분' in NEW and '총 55분' in NEW
+          assert NEW.count('contentKey: '+KEY)==1
+          def sql(q):
+            return subprocess.check_output(['docker','compose','exec','-T','postgres','psql','-U','csforge','-d','csforge','-At','-c',q],text=True).strip()
+          def call(path,method='GET',data=None):
+            raw=None if data is None else json.dumps(data,ensure_ascii=False).encode()
+            headers={'Accept':'application/json'}
+            if raw is not None: headers['Content-Type']='application/json'
+            if method=='POST': headers['Idempotency-Key']=str(uuid.uuid4())
+            req=urllib.request.Request(API+path,headers=headers,data=raw,method=method)
+            with urllib.request.urlopen(req,timeout=180) as resp:
+              content=resp.read()
+              return json.loads(content) if content else None
+          def multipart(folder,digest=None):
+            boundary='infra204'+uuid.uuid4().hex
+            name='backup-restore.md'
+            content=pathlib.Path(folder,name).read_bytes()
+            body=(f'--{boundary}\r\nContent-Disposition: form-data; name="files"; filename="{name}"\r\nContent-Type: text/markdown\r\n\r\n').encode()+content+b'\r\n'
+            if digest is not None:
+              body+=f'--{boundary}\r\nContent-Disposition: form-data; name="previewDigest"\r\n\r\n{digest}\r\n'.encode()
+            return body+f'--{boundary}--\r\n'.encode(),'multipart/form-data; boundary='+boundary
+          def post(path,body,mime):
+            req=urllib.request.Request(API+path,data=body,method='POST',headers={'Content-Type':mime})
+            with urllib.request.urlopen(req,timeout=180) as resp:return json.load(resp)
+          def apply(folder):
+            preview=post('/api/imports/preview',*multipart(folder))
+            assert preview['canApply'] and preview['totals']['errors']==0,preview
+            applied=post('/api/imports/apply',*multipart(folder,preview['previewDigest']))
+            assert applied['totals']['failed']==0,(preview,applied)
+            return preview,applied
+          def digest(t):
+            return sql("select md5(coalesce(string_agg(row_to_json(t)::text,chr(10) order by row_to_json(t)::text),'')) from "+t+" t")
+          assert call('/api/auth/session')['mode']=='LOCAL'
+          bootstrap=call('/api/canonical-bootstrap','POST')
+          assert bootstrap['success'] and bootstrap['totalItems']==3380 and bootstrap['totals']['created']==3380,bootstrap
+          cid=int(sql("select id from concept where content_key='"+KEY+"'"))
+          assert '총 60분' in call('/api/concepts/'+str(cid))['contentMarkdown']
+          q=int(sql("select id from question where content_key='infrastructure.core.reliability.iac-rollout.q1'"))
+          correct=sql("select c.choice_key from question_answer a join question_choice c on c.id=a.choice_id where a.question_id="+str(q)+" and a.answer_kind='CORRECT_CHOICE'")
+          started=call('/api/quizzes/questions/'+str(q)+'/practice','POST')
+          session=call('/api/quizzes/'+str(started['quizId']))
+          wrong=next(c['choiceKey'] for c in session['questions'][0]['choices'] if c['choiceKey']!=correct)
+          call('/api/quizzes/'+str(started['quizId'])+'/questions/'+str(q)+'/answer','PUT',{'selectedChoiceKey':wrong,'answerText':None,'reviewNeeded':True})
+          call('/api/quizzes/'+str(started['quizId'])+'/submit','POST')
+          assert call('/api/quizzes/'+str(started['quizId'])+'/result')['wrong']==1
+          call('/api/concepts/'+str(cid)+'/note','PUT',{'content':'issue204-infra-concept-history'})
+          call('/api/wrong-notes/'+str(q)+'/note','PUT',{'content':'issue204-infra-wrong-history'})
+          tables=['personal_note','concept_progress','quiz_session','attempt','wrong_note','review_schedule','review_history','question_answer','question_concept','concept_reference']
+          before={t:digest(t) for t in tables}
+          a,b=apply('/tmp/infra-old')
+          assert a['totals']['updated']==1 and b['totals']['updated']==1,(a['totals'],b['totals'])
+          assert '약 55분' in call('/api/concepts/'+str(cid))['contentMarkdown']
+          a,b=apply('/tmp/infra-new')
+          assert a['totals']['updated']==1 and b['totals']['updated']==1,(a['totals'],b['totals'])
+          assert '총 60분' in call('/api/concepts/'+str(cid))['contentMarkdown']
+          a,b=apply('/tmp/infra-new')
+          assert a['totals']['unchanged']==1 and b['totals']['unchanged']==1,(a['totals'],b['totals'])
+          final=call('/api/canonical-bootstrap','POST')
+          assert final['success'] and final['totals']['unchanged']==3380 and final['totals']['updated']==0 and final['totals']['errors']==0,final
+          assert before=={t:digest(t) for t in tables}
+          assert cid==int(sql("select id from concept where content_key='"+KEY+"'"))
+          assert call('/api/quizzes/'+str(started['quizId'])+'/result')['wrong']==1
+          print('PASS Infrastructure old/corrected Preview/Apply 1 UPDATED each')
+          print('PASS exact 1 UNCHANGED, canonical 3380 UNCHANGED, 10 table history digests, stable Concept ID')
+          PY
+      - name: Diagnostics on failure only
+        if: failure()
+        run: |
+          tail -n 180 /tmp/issue204-infra-boot.log || true
+          docker compose ps || true
