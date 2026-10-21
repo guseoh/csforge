@@ -17,16 +17,17 @@ const assessmentLabels = {
   CONSISTENT: '최근 정답 일관',
 } as const
 
-export function TopicUnderstandingResults({ data, onPageChange }: {
+export function TopicUnderstandingResults({ data, onPageChange, titlesById = {} }: {
   data: ConceptUnderstandingPage
   onPageChange: (nextPage: number) => void
+  titlesById?: Record<number, string>
 }) {
   return (
     <>
       <div className="topic-understanding-rows">
         {data.items.map((item) => (
           <div className="topic-understanding-row" key={item.conceptId}>
-            <Link to="/concepts/$conceptId" params={{ conceptId: String(item.conceptId) }}>개념 #{item.conceptId} 문제 근거 보기 →</Link>
+            <Link to="/concepts/$conceptId" params={{ conceptId: String(item.conceptId) }}>{titlesById[item.conceptId] ?? `개념 #${item.conceptId}`} · 문제 근거 보기 →</Link>
             <strong>{assessmentLabels[item.assessmentStatus]}</strong>
             <span>{item.evidence.uniqueQuestions}개 서로 다른 문제 중 {item.evidence.correctQuestions}개 정답
               {' · '}확정 {item.evidence.finalizedAttempts}회
@@ -46,7 +47,9 @@ export function TopicUnderstandingResults({ data, onPageChange }: {
   )
 }
 
-function TopicUnderstandingEvidence({ areaSlug, topicId }: { areaSlug: string; topicId: number }) {
+function TopicUnderstandingEvidence({ areaSlug, topicId, titlesById }: {
+  areaSlug: string; topicId: number; titlesById: Record<number, string>
+}) {
   const [expanded, setExpanded] = useState(false)
   const [page, setPage] = useState(0)
   const query = useQuery({
@@ -68,7 +71,7 @@ function TopicUnderstandingEvidence({ areaSlug, topicId }: { areaSlug: string; t
         </div>
       ) : query.data.items.length === 0 ? (
         <p className="helper-text">이 주제에 표시할 개념이 없습니다.</p>
-      ) : <TopicUnderstandingResults data={query.data} onPageChange={setPage} />)}
+      ) : <TopicUnderstandingResults data={query.data} onPageChange={setPage} titlesById={titlesById} />)}
     </section>
   )
 }
@@ -261,7 +264,12 @@ export function AreaPage() {
                   </div>
                 </header>
                 <p className="topic-order-note">읽기 완료와 문제 풀이에 근거한 이해도는 다릅니다. 아래에서 주제별 확정 정답 근거를 펼쳐 확인하거나 개념 상세에서 개별 근거를 볼 수 있습니다.</p>
-                <TopicUnderstandingEvidence key={selectedTopic.id} areaSlug={area.slug} topicId={selectedTopic.id} />
+                <TopicUnderstandingEvidence
+                  key={selectedTopic.id}
+                  areaSlug={area.slug}
+                  topicId={selectedTopic.id}
+                  titlesById={Object.fromEntries(selectedTopicConcepts.map((concept) => [concept.id, concept.title]))}
+                />
 
                 <div className="topic-concept-list curriculum-concept-list">
                   {selectedTopicConcepts.map((concept, conceptIndex) => (

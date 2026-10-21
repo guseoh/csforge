@@ -233,8 +233,10 @@ describe('TopicUnderstandingResults', () => {
       ],
       page: { page: 0, size: 2, totalElements: 3, totalPages: 2, hasNext: true, hasPrevious: false },
     }
-    const html = renderToStaticMarkup(<TopicUnderstandingResults data={data} onPageChange={() => {}} />)
+    const html = renderToStaticMarkup(<TopicUnderstandingResults data={data} onPageChange={() => {}} titlesById={{ 17: '원시형과 참조형', 18: '메모리 모델' }} />)
     expect(html).toContain('근거 부족')
+    expect(html).toContain('원시형과 참조형 · 문제 근거 보기')
+    expect(html).toContain('메모리 모델 · 문제 근거 보기')
     expect(html).toContain('이해 근거 축적 중')
     expect(html).toContain('확정 12회')
     expect(html).toContain('자기채점 대기 1회')
