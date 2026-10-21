@@ -57,6 +57,31 @@ references:
 
 클라이언트는 인가 요청 전에 예측하기 어려운 `code_verifier`를 만들고 그 값에서 `code_challenge`를 계산합니다. 인가 서버는 인가 코드와 챌린지를 연결해 보관합니다. 토큰 요청이 오면 서버가 제출된 검증자로 챌린지를 다시 계산해 비교하므로, 코드를 가로챈 공격자는 검증자 없이 토큰으로 교환할 수 없습니다. OAuth 보안 모범 사례(RFC 9700)는 공개 클라이언트에 PKCE를 요구하고 기밀 클라이언트에도 권고하며, 검증자를 직접 노출하지 않는 `S256` 방식을 권고합니다.
 
+### 인가 코드가 브라우저를 지나 API 호출까지 이어지는 전체 경계
+
+다음은 사용자(리소스 소유자)가 브라우저(user agent)를 통해 클라이언트에 권한을 위임하는 인가 코드 흐름입니다. 클라이언트는 인가 서버(Authorization Server, AS)와 리소스 서버(Resource Server, RS)를 별도 신뢰 경계로 다뤄야 합니다.
+
+```text
+사용자·브라우저        Client 앱                AS                    RS(API)
+     │                   │                    │                      │
+     │ 로그인/연결 요청  ─►│                    │                      │
+     │◄── 302 AS authorize (client_id, redirect_uri, scope,
+     │                    state 또는 적절한 CSRF 바인딩, code_challenge)
+     ├────── 로그인·동의 (AS에서) ──────────►│                      │
+     │◄───────── 302 redirect_uri?code=... ──┤                      │
+     ├── callback(code, state 등) ─►│        │                      │
+     │                   ├── token endpoint: code + code_verifier + client/redirect binding
+     │                   │───────────────────►│                      │
+     │                   │◄──── access token ─┤                      │
+     │                   │ (+ OIDC면 ID token) │                      │
+     │                   ├──────────── access token ────────────────►│
+     │                   │◄────────── 리소스 응답 ───────────────────┤
+```
+
+**인가 코드(code)**는 브라우저를 경유해 클라이언트의 redirect callback으로 돌아오지만, 일반적으로 **토큰 교환은 클라이언트가 AS의 토큰 엔드포인트와 수행하는 별도 요청**입니다. AS는 코드가 올바른 클라이언트·redirect URI 및 PKCE 챌린지와 연결되어 있는지 검증합니다. 클라이언트는 응답이 자신이 시작한 로그인/위임 요청에 속하는지 검사하고, 여러 AS를 쓴다면 발급자 혼동(mix-up)에 대한 방어도 필요합니다.
+
+RFC 9700은 클라이언트의 callback CSRF 방어를 요구하되, **항상 `state`, PKCE, OIDC `nonce` 세 가지를 동시에 필수로 요구하지는 않습니다.** AS의 PKCE 지원을 확실히 검증하고 요청별 verifier를 사용자 에이전트에 안전하게 묶었다면 PKCE가 CSRF 방어를 제공할 수 있고, OIDC의 해당 `nonce` 검증이나 적절히 바인딩한 일회용 `state`도 프로토콜 조건에 따라 사용됩니다. 그러나 `state`를 앱 내부 이동 상태로 사용하는 경우에는 그 값의 변조·교체 위험을 별도로 통제해야 합니다. OIDC `nonce`를 쓴다면 발급받은 ID 토큰의 값과 반드시 대조해야 하며, **PKCE와 nonce의 목적·제약이 항상 동일하다고 일반화하면 안 됩니다.**
+
 ### 액세스 토큰과 ID 토큰은 사용 대상이 다르다
 
 ```text
