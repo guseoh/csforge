@@ -721,7 +721,7 @@
   display: grid;
   gap: 8px;
   padding: 8px 0 12px;
-  color: var(--state-error-text);
+  color: var(--state-error);
   font-size: 0.82rem;
   line-height: 1.5;
 }
