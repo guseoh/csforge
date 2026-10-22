@@ -39,6 +39,17 @@ public interface ConceptRepository extends JpaRepository<Concept, Long> {
     @Query("select c from Concept c where c.id = :id and c.status = com.guseoh.csforge.learning.domain.ContentStatus.PUBLISHED")
     Optional<Concept> findPublishedByIdForUpdate(@Param("id") Long id);
 
+    /** Bounded status check shared by saved Quiz presets and canonical question selection. */
+    @Query("""
+            select c.id from Concept c
+            join c.topic t join t.learningArea a
+            where c.id in :ids
+              and c.status = com.guseoh.csforge.learning.domain.ContentStatus.PUBLISHED
+              and t.active = true and a.active = true
+            order by c.id
+            """)
+    List<Long> findAvailableIdsForPractice(@Param("ids") Collection<Long> ids);
+
     @Query("""
             select new com.guseoh.csforge.learning.domain.ConceptNavigationSummary(c.id, c.title, c.level)
             from Concept c

@@ -77,6 +77,15 @@ public class LearningQueryService {
         return area;
     }
 
+    /** Validate saved Quiz scope before allowing it to silently shrink. */
+    public List<Long> availableConceptIdsForPractice(List<Long> requestedIds) {
+        if (requestedIds == null || requestedIds.isEmpty() || requestedIds.size() > 100
+                || requestedIds.stream().anyMatch(id -> id == null || id <= 0)) {
+            throw new LearningBadRequestException("1 to 100 positive concept ids are required");
+        }
+        return conceptRepository.findAvailableIdsForPractice(requestedIds.stream().distinct().toList());
+    }
+
     public ConceptPageView listConcepts(ConceptSearchCriteria criteria) {
         ConceptSearchResult result = conceptSearchRepository.search(criteria);
         int totalPages = result.totalElements() == 0

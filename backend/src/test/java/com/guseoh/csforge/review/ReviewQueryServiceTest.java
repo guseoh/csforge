@@ -30,6 +30,7 @@ class ReviewQueryServiceTest {
                 schedules,
                 mock(ReviewScheduleSearchRepository.class),
                 mock(QuestionConceptRepository.class),
+                mock(com.guseoh.csforge.wrongnote.domain.WrongNoteRepository.class),
                 Clock.fixed(NOW, SEOUL),
                 SEOUL);
         Instant startOfToday = Instant.parse("2026-09-03T15:00:00Z");

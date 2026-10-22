@@ -223,6 +223,12 @@ export function getConcepts(filters: {
   return request<ConceptPage>(`/api/concepts?${params.toString()}`)
 }
 
+/** One bounded read-only query: do not silently lose saved Concept IDs. */
+export function getAvailableConceptIdsForPractice(ids: number[]): Promise<number[]> {
+  const params = new URLSearchParams({ ids: ids.join(',') })
+  return request<number[]>(`/api/concepts/published-ids?${params.toString()}`)
+}
+
 export function getConcept(conceptId: number): Promise<ConceptDetail> {
   return request<ConceptDetail>(`/api/concepts/${conceptId}`)
 }

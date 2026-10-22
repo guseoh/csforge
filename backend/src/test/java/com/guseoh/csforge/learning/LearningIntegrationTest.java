@@ -122,6 +122,23 @@ class LearningIntegrationTest {
     }
 
     @Test
+    void savedQuizScopeDoesNotSilentlyLoseUnpublishedConcepts() throws Exception {
+        JsonNode available = json(request("GET",
+                "/api/concepts/published-ids?ids=" + firstConceptId + "," + secondConceptId + ",9999999", null));
+        assertEquals(2, available.size());
+        assertEquals(firstConceptId, available.get(0).asLong());
+        assertEquals(secondConceptId, available.get(1).asLong());
+        jdbc.update("UPDATE concept SET status = 'DRAFT' WHERE id = ?", secondConceptId);
+        JsonNode partial = json(request("GET",
+                "/api/concepts/published-ids?ids=" + firstConceptId + "," + secondConceptId, null));
+        assertEquals(1, partial.size());
+        assertEquals(firstConceptId, partial.get(0).asLong());
+        assertEquals(0, json(request("GET",
+                "/api/concepts/published-ids?ids=" + secondConceptId, null)).size());
+        assertEquals(400, request("GET", "/api/concepts/published-ids?ids=-1", null).statusCode());
+    }
+
+    @Test
     void conceptListSupportsFiltersPaginationAndStableTitleSort() throws Exception {
         HttpResponse<String> firstPage = request("GET",
                 "/api/concepts?area=java&level=1&size=1&page=0&sort=title", null);

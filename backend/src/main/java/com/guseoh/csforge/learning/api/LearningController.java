@@ -87,6 +87,11 @@ public class LearningController {
                 area, topicId, level, learningStatus, bookmarked, q, page, size, ConceptSort.from(sort), bookmarkCategoryId)));
     }
 
+    @GetMapping("/concepts/published-ids")
+    public List<Long> publishedConceptIds(@RequestParam List<Long> ids) {
+        return queryService.availableConceptIdsForPractice(ids);
+    }
+
     @GetMapping("/concepts/{conceptId}")
     public ConceptDetailResponse getConcept(@PathVariable long conceptId) {
         return apiMapper.toResponse(queryService.getConcept(conceptId));
