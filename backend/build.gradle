@@ -51,6 +51,11 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
+    // Preserve failure diagnostics for isolated integration tests in CI logs.
+    testLogging {
+        events 'failed'
+        exceptionFormat 'full'
+    }
 }
 
 springBoot {
