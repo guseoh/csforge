@@ -109,7 +109,7 @@ export function SavedQuizSets({ current, onApply }: { current: QuizSearch; onApp
         {staleScope.activeIds.length === 0 && <p>사용 가능한 Concept가 없습니다. 세트의 범위를 변경하세요. 전체 문제로 자동 전환하지 않습니다.</p>}
         <button type="button" className="text-button" onClick={() => setStaleScope(null)}>취소</button>
       </div>
-    </div>
+    </div>}
     {sets.length === 0 ? <p className="helper-text">저장한 세트가 없습니다. 위에서 현재 Quiz 조건을 저장하세요.</p> :
       <ul className="saved-quiz-list">
         {sets.map(item => <li key={item.id}>
