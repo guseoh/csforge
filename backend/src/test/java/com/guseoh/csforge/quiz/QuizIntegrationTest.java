@@ -147,6 +147,55 @@ class QuizIntegrationTest {
     }
 
     @Test
+    void refactorDailyLoopPreservesNoteBookmarkAttemptsAndReviewAcrossReadModels() throws Exception {
+        // One connected transaction flow, using the app HTTP API and isolated PostgreSQL.
+        assertEquals(200, request("POST", "/api/concepts/" + conceptId + "/view", null).statusCode());
+        assertEquals(200, request("PUT", "/api/concepts/" + conceptId + "/note",
+                "{\"content\":\"Original learner note\"}").statusCode());
+        assertEquals(200, request("PATCH", "/api/concepts/" + conceptId + "/progress",
+                "{\"status\":\"LEARNING\",\"bookmarked\":true}").statusCode());
+        JsonNode categories = json(request("GET", "/api/bookmark-categories", null));
+        long categoryId = categories.get(0).get("id").asLong();
+        assertEquals(200, request("PUT", "/api/concepts/" + conceptId + "/bookmark-category",
+                "{\"categoryId\":" + categoryId + "}").statusCode());
+        assertEquals(1, json(request("GET",
+                "/api/concepts?bookmarked=true&bookmarkCategoryId=" + categoryId, null))
+                .get("page").get("totalElements").asInt());
+
+        long quizId = createQuiz(1, null);
+        assertEquals(200, request("PUT", "/api/quizzes/" + quizId + "/questions/"
+                + multipleChoiceId + "/answer",
+                "{\"selectedChoiceKey\":\"B\",\"answerText\":null,\"reviewNeeded\":false}").statusCode());
+        assertEquals(200, request("POST", "/api/quizzes/" + quizId + "/submit", null).statusCode());
+        JsonNode result = json(request("GET", "/api/quizzes/" + quizId + "/result", null));
+        assertEquals(1, result.get("wrong").asInt());
+        assertEquals("SCHEDULED", result.get("questions").get(0).get("reviewScheduleStatus").asText());
+        assertEquals(200, request("GET", "/api/wrong-notes/" + multipleChoiceId, null).statusCode());
+        assertEquals(1, json(request("GET", "/api/reviews?size=20", null)).get("items").size());
+        assertTrue(json(request("GET", "/api/search?q=Quiz", null)).get("items").size() > 0);
+
+        JsonNode understanding = json(request("GET",
+                "/api/concepts/" + conceptId + "/understanding", null));
+        assertEquals(1, understanding.get("evidence").get("finalizedAttempts").asInt());
+        assertEquals(1, understanding.get("evidence").get("uniqueQuestions").asInt());
+        assertEquals("NOT_ENOUGH_EVIDENCE", understanding.get("assessmentStatus").asText());
+        JsonNode insights = json(request("GET", "/api/learning-insights?range=7d&area=java", null));
+        assertEquals(1, insights.get("current").get("wrongAttempts").asInt());
+        assertEquals(1, insights.get("current").get("viewedConcepts").asInt());
+
+        JsonNode after = json(request("GET", "/api/concepts/" + conceptId, null));
+        assertEquals("Original learner note", after.get("personalNote").get("content").asText());
+        assertTrue(after.get("progress").get("bookmarked").asBoolean());
+        assertEquals(categoryId, json(request("GET",
+                "/api/concepts/" + conceptId + "/bookmark-category", null))
+                .get("categoryId").asLong());
+        assertEquals(1, jdbc.queryForObject("select count(*) from attempt where quiz_session_id = ?",
+                Integer.class, quizId));
+        assertEquals(1, jdbc.queryForObject("select count(*) from wrong_note where question_id = ?",
+                Integer.class, multipleChoiceId));
+    }
+
+    @Test
     void availabilityFiltersPublishedLinkedQuestionsAndCreationUsesStableOrderWithoutLeakage() throws Exception {
         JsonNode availability = json(request(
                 "GET",
