@@ -158,9 +158,16 @@ class QuizIntegrationTest {
         long categoryId = categories.get(0).get("id").asLong();
         assertEquals(200, request("PUT", "/api/concepts/" + conceptId + "/bookmark-category",
                 "{\"categoryId\":" + categoryId + "}").statusCode());
-        assertEquals(1, json(request("GET",
+        int filteredBookmarkCount = json(request("GET",
                 "/api/concepts?bookmarked=true&bookmarkCategoryId=" + categoryId, null))
-                .get("page").get("totalElements").asInt());
+                .get("page").get("totalElements").asInt();
+        // Distinguish a broken fixture from a regression in the public search projection.
+        assertTrue(jdbc.queryForObject(
+                "select bookmarked from concept_progress where concept_id = ?",
+                Boolean.class, conceptId));
+        assertEquals(categoryId, jdbc.queryForObject(
+                "select category_id from bookmark_category_concept where concept_id = ?",
+                Long.class, conceptId));
 
         long quizId = createQuiz(1, null);
         assertEquals(200, request("PUT", "/api/quizzes/" + quizId + "/questions/"
@@ -193,6 +200,9 @@ class QuizIntegrationTest {
                 Integer.class, quizId));
         assertEquals(1, jdbc.queryForObject("select count(*) from wrong_note where question_id = ?",
                 Integer.class, multipleChoiceId));
+        // Keep the observed search defect failing at the end, after all other read models are tested.
+        assertEquals(1, filteredBookmarkCount,
+                "Issue #268: bookmark classification exists in the DB, but the combined filter loses it");
     }
 
     @Test
