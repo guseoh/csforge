@@ -16,6 +16,7 @@ export function LearningInsightsResults({ data }: { data: LearningInsights }) {
       <p className="helper-text">
         기준: {data.studyDate} · {data.zoneId} · 확정된 답이 있는 풀이만 정확도 분모에 포함합니다.
         미응답·진행 중·자기채점 대기는 분모에서 제외합니다.
+        선택 기간에는 아직 끝나지 않은 오늘이 포함됩니다(기준 시각: {data.asOf}). 이전 기간은 완료된 날짜 전체이므로 실제 관찰 시간은 같지 않습니다.
       </p>
       <div className="insights-periods">
         <div className="insights-period">
@@ -29,7 +30,7 @@ export function LearningInsightsResults({ data }: { data: LearningInsights }) {
           </div>
         </div>
         <div className="insights-period">
-          <strong>이전 동일 기간 · {previous.from} ~ {previous.through}</strong>
+          <strong>이전 {data.range === '30d' ? '30' : '7'}일(완료된 기간) · {previous.from} ~ {previous.through}</strong>
           <div className="insights-stats">
             <span>풀이 활동 <b>{previous.finalizedAttempts}회</b></span>
             <span>고유 문제 <b>{previous.uniqueQuestions}개</b></span>

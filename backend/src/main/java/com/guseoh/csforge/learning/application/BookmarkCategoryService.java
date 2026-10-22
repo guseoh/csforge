@@ -52,7 +52,10 @@ public class BookmarkCategoryService {
 
     @Transactional
     public Long assign(long conceptId, Long categoryId) {
-        ensurePublished(conceptId);
+        // Order matches LearningCommandService: lock canonical parent then progress.
+        if (conceptId <= 0 || concepts.findPublishedByIdForUpdate(conceptId).isEmpty()) {
+            throw new LearningNotFoundException("Published concept not found: " + conceptId);
+        }
         ConceptProgress progress = progressRepository.findForUpdate(conceptId)
                 .orElseThrow(() -> new LearningBadRequestException("Bookmark the concept before classifying it"));
         if (!progress.isBookmarked()) {

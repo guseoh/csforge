@@ -48,7 +48,10 @@ public class LearningCommandService {
             Boolean requestedBookmarked) {
         requireProgressChange(requestedStatus, requestedBookmarked);
 
-        Concept concept = findPublishedConcept(conceptId);
+        // Bookmark and category changes lock the same parent before the optional progress row.
+        Concept concept = requestedBookmarked == null ? findPublishedConcept(conceptId)
+                : conceptRepository.findPublishedByIdForUpdate(conceptId)
+                        .orElseThrow(() -> new LearningNotFoundException("Published concept not found: " + conceptId));
         ConceptProgress progress = progressRepository.findForUpdate(conceptId)
                 .orElseGet(() -> new ConceptProgress(concept));
         Instant changedAt = Instant.now(clock);

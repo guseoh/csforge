@@ -8,7 +8,7 @@ const mocks = vi.hoisted(() => ({
   reviews: {
     data: { items: [] as Array<{
       questionId: number; promptMarkdown: string; concepts: Array<{ id: number; title: string; areaName: string; level: number }>;
-      status: 'SCHEDULED' | 'MASTERED'; stage: number; dueAt: string | null; lastReviewedAt: string | null
+      status: 'SCHEDULED' | 'MASTERED'; stage: number; dueAt: string | null; lastReviewedAt: string | null; wrongNoteAvailable: boolean
     }>, page: { page: 0, totalPages: 1, hasPrevious: false, hasNext: false } },
     isPending: false, isError: false, refetch: vi.fn(),
   },
@@ -84,8 +84,8 @@ describe('ReviewPage timing and recovery', () => {
   it('keeps distinct status labels for overdue, due and mastered rows', () => {
     mocks.summary.data = { overdue: 1, dueNow: 1, next24Hours: 0, next7Days: 0, mastered: 1 }
     mocks.reviews.data.items = [
-      { questionId: 1, promptMarkdown: '오래된 복습', concepts: [], status: 'SCHEDULED', stage: 1, dueAt: '2001-01-01T00:00:00Z', lastReviewedAt: null },
-      { questionId: 2, promptMarkdown: '완료된 복습', concepts: [], status: 'MASTERED', stage: 3, dueAt: null, lastReviewedAt: null },
+      { questionId: 1, promptMarkdown: '오래된 복습', concepts: [], status: 'SCHEDULED', stage: 1, dueAt: '2001-01-01T00:00:00Z', lastReviewedAt: null, wrongNoteAvailable: true },
+      { questionId: 2, promptMarkdown: '완료된 복습', concepts: [], status: 'MASTERED', stage: 3, dueAt: null, lastReviewedAt: null, wrongNoteAvailable: false },
     ]
     const html = renderToStaticMarkup(<ReviewPage />)
     expect(html).toContain('기한 지남')
@@ -93,13 +93,14 @@ describe('ReviewPage timing and recovery', () => {
     expect(html).toContain('오래된 복습')
     expect(html).toContain('완료된 복습')
     expect(html).toContain('<article class="review-list-item">')
-    expect(html).not.toContain('/wrong-notes/$questionId')
+    expect(html).toContain('href="/wrong-notes/1"')
+    expect(html).not.toContain('href="/wrong-notes/2"')
   })
 
   it('navigates to an existing concept rather than assuming every review has a wrong note', () => {
     mocks.summary.data = { overdue: 1, dueNow: 0, next24Hours: 0, next7Days: 0, mastered: 0 }
     mocks.reviews.data.items = [
-      { questionId: 44, promptMarkdown: '맞았지만 복습 표시한 문제', concepts: [{ id: 90, title: '연결된 개념', areaName: 'Java', level: 1 }], status: 'SCHEDULED', stage: 1, dueAt: '2001-01-01T00:00:00Z', lastReviewedAt: null },
+      { questionId: 44, promptMarkdown: '맞았지만 복습 표시한 문제', concepts: [{ id: 90, title: '연결된 개념', areaName: 'Java', level: 1 }], status: 'SCHEDULED', stage: 1, dueAt: '2001-01-01T00:00:00Z', lastReviewedAt: null, wrongNoteAvailable: false },
     ]
     const html = renderToStaticMarkup(<ReviewPage />)
     expect(html).toContain('관련 개념 읽기 →')

@@ -111,6 +111,12 @@ describe('LearningInsightsResults', () => {
     expect(html).not.toContain('정답률 차이:')
   })
 
+  it('distinguishes current partial day and previous full 30-day period', () => {
+    const html = renderToStaticMarkup(<LearningInsightsResults data={sample({ range: '30d' })} />)
+    expect(html).toContain('이전 30일(완료된 기간)')
+    expect(html).toContain('실제 관찰 시간은 같지 않습니다')
+  })
+
   it('labels well-supported differences as percentage points rather than confirmed growth', () => {
     const current = sample().current
     const previous = sample().previous
@@ -122,6 +128,8 @@ describe('LearningInsightsResults', () => {
     })
     const html = renderToStaticMarkup(<LearningInsightsResults data={data} />)
     expect(html).toContain('20.0%p')
+    expect(html).toContain('아직 끝나지 않은 오늘')
+    expect(html).toContain('이전 7일(완료된 기간)')
     expect(html).toContain('인과적 학습 성장 판정은 아닙니다')
   })
 })

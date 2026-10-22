@@ -36,6 +36,6 @@ public class ReviewApiMapper {
     private ReviewListItemResponse toItem(ReviewListItemView item) {
         return new ReviewListItemResponse(item.questionId(), item.promptMarkdown(), item.questionType(), item.difficulty(),
                 item.concepts().stream().map(concept -> new ReviewConceptResponse(concept.id(), concept.slug(), concept.title(), concept.areaSlug(), concept.areaName(), concept.level())).toList(),
-                item.status(), item.stage(), item.dueAt(), item.lastReviewedAt());
+                item.status(), item.stage(), item.dueAt(), item.lastReviewedAt(), item.wrongNoteAvailable());
     }
 }

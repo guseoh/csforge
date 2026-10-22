@@ -146,6 +146,11 @@ export function ReviewPage() {
                     <div className="review-list-side">
                       <span className={`review-timing-label review-timing-${timing.className}`}>{timing.label}</span>
                       <strong className="review-due-date">{item.dueAt ? new Date(item.dueAt).toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' }) : '정리 완료'}</strong>
+                      {item.wrongNoteAvailable && <Link
+                        className="review-row-action"
+                        to="/wrong-notes/$questionId"
+                        params={{ questionId: String(item.questionId) }}
+                      >오답 기록 보기 →</Link>}
                       {item.concepts.length > 0 ? (
                         <Link
                           className="review-row-action"

@@ -180,7 +180,9 @@ class QuizIntegrationTest {
         assertEquals(1, result.get("wrong").asInt());
         assertEquals("SCHEDULED", result.get("questions").get(0).get("reviewScheduleStatus").asText());
         assertEquals(200, request("GET", "/api/wrong-notes/" + multipleChoiceId, null).statusCode());
-        assertEquals(1, json(request("GET", "/api/reviews?size=20", null)).get("items").size());
+        JsonNode reviewRows = json(request("GET", "/api/reviews?size=20", null)).get("items");
+        assertEquals(1, reviewRows.size());
+        assertTrue(reviewRows.get(0).get("wrongNoteAvailable").asBoolean());
         assertTrue(json(request("GET", "/api/search?q=Quiz", null)).get("items").size() > 0);
 
         JsonNode understanding = json(request("GET",

@@ -6,6 +6,8 @@ import java.util.Collection;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.data.jpa.repository.Lock;
+import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -31,6 +33,11 @@ public interface ConceptRepository extends JpaRepository<Concept, Long> {
               and c.status = com.guseoh.csforge.learning.domain.ContentStatus.PUBLISHED
             """)
     Optional<Concept> findPublishedById(@Param("id") Long id);
+
+    /** Stable canonical parent lock shared by bookmark status and category writes. */
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("select c from Concept c where c.id = :id and c.status = com.guseoh.csforge.learning.domain.ContentStatus.PUBLISHED")
+    Optional<Concept> findPublishedByIdForUpdate(@Param("id") Long id);
 
     @Query("""
             select new com.guseoh.csforge.learning.domain.ConceptNavigationSummary(c.id, c.title, c.level)
