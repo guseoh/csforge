@@ -99,6 +99,8 @@ class QuizIntegrationTest {
     @BeforeEach
     void setUpFixture() {
         TEST_CLOCK.set(BASE_TIME);
+        // Another test temporarily deactivates the Java area: restore fixture isolation.
+        jdbc.update("UPDATE learning_area SET active = true WHERE slug = 'java'");
         jdbc.update("DELETE FROM attempt");
         jdbc.update("DELETE FROM quiz_question");
         jdbc.update("DELETE FROM quiz_session");
