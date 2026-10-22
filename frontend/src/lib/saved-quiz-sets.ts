@@ -1,4 +1,4 @@
-import type { QuizSearch } from './quiz-search'
+import { csvValues, type QuizSearch } from './quiz-search'
 
 export const SAVED_QUIZ_SETS_KEY = 'csforge.quiz.saved-sets.v1'
 export const MAX_SAVED_QUIZ_SETS = 20
@@ -83,6 +83,16 @@ export function renameQuizSet(sets: SavedQuizSet[], id: string, name: string): S
     throw new Error('같은 이름의 세트가 이미 있습니다.')
   }
   return sets.map(item => item.id === id ? { ...item, name: label } : item)
+}
+
+/** Preserve the exact requested scope until a user explicitly accepts a reduced one. */
+export function checkSavedQuizConceptScope(settings: QuizSearch, availableIds: readonly number[]) {
+  const requested = csvValues(settings.concepts).map(Number)
+  const present = new Set(availableIds)
+  return {
+    activeIds: requested.filter(id => present.has(id)),
+    missingIds: requested.filter(id => !present.has(id)),
+  }
 }
 
 export function deleteQuizSet(sets: SavedQuizSet[], id: string): SavedQuizSet[] {

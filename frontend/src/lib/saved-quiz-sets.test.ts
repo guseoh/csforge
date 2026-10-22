@@ -1,8 +1,29 @@
 import { describe, expect, it } from 'vitest'
 import { defaultQuizSearch } from './quiz-search'
-import { decodeSavedQuizSets, deleteQuizSet, encodeSavedQuizSets, renameQuizSet, saveQuizSet } from './saved-quiz-sets'
+import { checkSavedQuizConceptScope, decodeSavedQuizSets, deleteQuizSet, encodeSavedQuizSets, renameQuizSet, saveQuizSet } from './saved-quiz-sets'
 
 describe('saved Quiz sets (client preferences only)', () => {
+  it('compares every requested Concept rather than silently reducing a partly deleted set', () => {
+    const settings = { ...defaultQuizSearch, concepts: '17,18,19', count: 10 }
+    expect(checkSavedQuizConceptScope(settings, [17, 19])).toEqual({
+      activeIds: [17, 19], missingIds: [18],
+    })
+    expect(checkSavedQuizConceptScope(settings, [19, 17, 18])).toEqual({
+      activeIds: [17, 18, 19], missingIds: [],
+    })
+    expect(settings.concepts).toBe('17,18,19')
+  })
+
+  it('does not widen an entirely unavailable saved scope into all questions', () => {
+    const settings = { ...defaultQuizSearch, concepts: '17,18' }
+    expect(checkSavedQuizConceptScope(settings, [])).toEqual({
+      activeIds: [], missingIds: [17, 18],
+    })
+    expect(checkSavedQuizConceptScope(defaultQuizSearch, [])).toEqual({
+      activeIds: [], missingIds: [],
+    })
+  })
+
   it('can save, rename, delete, and round-trip explicit URL conditions', () => {
     const config = { ...defaultQuizSearch, concepts: '17,18', areas: 'java', count: 5 }
     const one = saveQuizSet([], ' 자바 기초 ', config, 'id-1')

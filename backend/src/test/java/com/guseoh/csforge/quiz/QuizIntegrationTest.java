@@ -877,6 +877,8 @@ class QuizIntegrationTest {
         JsonNode scheduled = json(request("GET", "/api/reviews?size=20", null));
         assertEquals(1, scheduled.get("items").size());
         assertEquals(1, scheduled.get("items").get(0).get("stage").asInt());
+        assertFalse(scheduled.get("items").get(0).get("wrongNoteAvailable").asBoolean(),
+                "Correct answers explicitly scheduled for review must not link to a missing Wrong Note");
     }
 
     private void completeReviewCorrectly(int days) throws Exception {

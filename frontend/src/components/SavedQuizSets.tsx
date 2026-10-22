@@ -3,7 +3,7 @@ import { getAvailableConceptIdsForPractice } from '../lib/learning-api'
 import { csvValues } from '../lib/quiz-search'
 import type { QuizSearch } from '../lib/quiz-search'
 import {
-  SAVED_QUIZ_SETS_KEY, decodeSavedQuizSets, deleteQuizSet, encodeSavedQuizSets,
+  SAVED_QUIZ_SETS_KEY, checkSavedQuizConceptScope, decodeSavedQuizSets, deleteQuizSet, encodeSavedQuizSets,
   renameQuizSet, saveQuizSet, type SavedQuizSet,
 } from '../lib/saved-quiz-sets'
 
@@ -58,12 +58,13 @@ export function SavedQuizSets({ current, onApply }: { current: QuizSearch; onApp
     }
     setCheckingId(item.id)
     try {
-      const active = new Set(await getAvailableConceptIdsForPractice(requested))
-      const missingIds = requested.filter(id => !active.has(id))
+      const { activeIds, missingIds } = checkSavedQuizConceptScope(
+        item.settings, await getAvailableConceptIdsForPractice(requested),
+      )
       if (!missingIds.length) {
         onApply({ ...item.settings })
       } else {
-        setStaleScope({ item, activeIds: requested.filter(id => active.has(id)), missingIds })
+        setStaleScope({ item, activeIds, missingIds })
       }
     } catch {
       setError('저장된 Concept 범위를 확인하지 못했습니다. 서버 연결을 확인하고 다시 불러오세요.')
